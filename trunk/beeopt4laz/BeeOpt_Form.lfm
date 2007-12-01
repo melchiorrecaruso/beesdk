@@ -1,0 +1,220 @@
+object MainForm: TMainForm
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'Bee optimizer'
+  ClientHeight = 240
+  ClientWidth = 300
+  Constraints.MaxHeight = 241
+  Constraints.MaxWidth = 300
+  Constraints.MinHeight = 240
+  Constraints.MinWidth = 300
+  Font.Height = -13
+  Font.Name = 'MS Sans Serif'
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  Position = poDefault
+  ShowHint = True
+  TextHeight = 16
+  Visible = True
+  HorzScrollBar.Page = 299
+  VertScrollBar.Page = 239
+  Left = 390
+  Height = 240
+  Top = 193
+  Width = 300
+  object PageControl: TPageControl
+    ActivePage = TabSheet1
+    Align = alClient
+    BorderSpacing.Around = 2
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    TabIndex = 0
+    TabOrder = 0
+    Left = 2
+    Height = 216
+    Top = 2
+    Width = 296
+    object TabSheet1: TTabSheet
+      Caption = 'Progress...'
+      ClientHeight = 187
+      ClientWidth = 288
+      Height = 187
+      Width = 288
+      object Label_Extension: TLabel
+        Caption = 'Optimization of Extensions:'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 17
+        Height = 17
+        Top = 5
+        Width = 159
+      end
+      object Label_ExtensionValue: TLabel
+        Caption = '...'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 199
+        Height = 17
+        Top = 5
+        Width = 10
+      end
+      object Label_VariantsEstimated: TLabel
+        Caption = 'Variants was estimated:'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 34
+        Height = 17
+        Top = 28
+        Width = 142
+      end
+      object Label_VariantsEstimatedValue: TLabel
+        Caption = '?%'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 199
+        Height = 17
+        Top = 28
+        Width = 20
+      end
+      object Label_LevelValue: TLabel
+        Caption = '? (?%)'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 199
+        Height = 17
+        Top = 62
+        Width = 38
+      end
+      object Label_PercentOfImprovements: TLabel
+        Caption = 'Percent of Improvements:'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 24
+        Height = 17
+        Top = 45
+        Width = 152
+      end
+      object Label_PercentOfImprovementsValue: TLabel
+        Caption = '0.000%'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 199
+        Height = 17
+        Top = 45
+        Width = 44
+      end
+      object Label_SampleSize: TLabel
+        Caption = 'Size of Sample Files:'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 50
+        Height = 17
+        Top = 117
+        Width = 126
+      end
+      object Label_SampleSizeValue: TLabel
+        Caption = '?'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 199
+        Height = 17
+        Top = 117
+        Width = 8
+      end
+      object Label_PackedSize: TLabel
+        Caption = 'Current Size of Packed:'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 37
+        Height = 17
+        Top = 135
+        Width = 139
+      end
+      object Label_PackedSizeValue: TLabel
+        Caption = '?'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 199
+        Height = 17
+        Top = 135
+        Width = 8
+      end
+      object Label_DictionaryLevel: TLabel
+        Caption = 'Dictionary Level:'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        Left = 76
+        Height = 17
+        Top = 88
+        Width = 100
+      end
+      object Label_DictionaryLevelValue: TLabel
+        Caption = '?'
+        Color = clNone
+        ParentColor = False
+        Left = 199
+        Height = 14
+        Top = 88
+        Width = 6
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'About'
+      ClientHeight = 187
+      ClientWidth = 288
+      ImageIndex = 2
+      Height = 187
+      Width = 288
+      object Label_About: TLabel
+        Caption = 'BeeOpt 0.7.7.f (C) 1999-2005 Andrew Filinsky'#13#10'Freeware version, Feb 2005'#13#10#13#10'This program calculates parameters for Bee 0.7.7 archiver utility, then better compression ratio will be available by using them. '#13#10#13#10'Please, send constructed *.ini and *.dat files'#13#10'to e-mail: filinsky@mail.ru'
+        Color = clNone
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        ParentColor = False
+        WordWrap = True
+        Left = 4
+        Height = 144
+        Top = 4
+        Width = 265
+      end
+    end
+  end
+  object StatusBar: TStatusBar
+    Panels = <    
+      item
+        Alignment = taRightJustify
+        Text = 'Initialization... '
+        Width = 100
+      end>
+    SimplePanel = False
+    Height = 20
+    Top = 220
+    Width = 300
+  end
+end
