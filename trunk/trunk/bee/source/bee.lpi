@@ -25,7 +25,7 @@
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="3">
+    <Units Count="2">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -40,20 +40,11 @@
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
         <CursorPos X="40" Y="151"/>
-        <TopLine Value="124"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit1>
-      <Unit2>
-        <Filename Value="bee_mainpacker.pas"/>
-        <UnitName Value="Bee_MainPacker"/>
-        <CursorPos X="20" Y="30"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit2>
     </Units>
     <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
