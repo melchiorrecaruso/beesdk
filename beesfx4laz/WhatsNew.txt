@@ -1,0 +1,29 @@
+Description of history of the BeeSfx:
+
+
+2005.08.12
+   
+  [*] BeeSfx run correctly.
+
+
+2005.08.14
+   
+  [+] TSFXThread class added;
+  [*] Form layout changed.
+
+
+2005.10.22
+
+  [*] Main form layout changed;
+  [+] Progress form added;
+  [+] Password form added.
+  
+  Version 0.1.0 build 0055 maked.
+
+
+2005.12.24
+
+  [*] Bug fixed in BeeSfx (console application).
+
+  Version 0.1.0 build 0056 maked.
+
