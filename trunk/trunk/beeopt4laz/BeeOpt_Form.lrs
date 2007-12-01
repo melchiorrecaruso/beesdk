@@ -1,0 +1,68 @@
+{ Questo è un file risorse generato automaticamente da Lazarus }
+
+LazarusResources.Add('TMainForm','FORMDATA',[
+  'TPF0'#9'TMainForm'#8'MainForm'#11'BorderIcons'#11#12'biSystemMenu'#10'biMini'
+  +'mize'#0#11'BorderStyle'#7#8'bsSingle'#7'Caption'#6#13'Bee optimizer'#12'Cli'
+  +'entHeight'#3#240#0#11'ClientWidth'#3','#1#21'Constraints.MaxHeight'#3#241#0
+  +#20'Constraints.MaxWidth'#3','#1#21'Constraints.MinHeight'#3#240#0#20'Constr'
+  +'aints.MinWidth'#3','#1#11'Font.Height'#2#243#9'Font.Name'#6#13'MS Sans Seri'
+  +'f'#7'OnClose'#7#9'FormClose'#8'OnCreate'#7#10'FormCreate'#9'OnDestroy'#7#11
+  +'FormDestroy'#13'PixelsPerInch'#2'`'#8'Position'#7#9'poDefault'#8'ShowHint'#9
+  +#10'TextHeight'#2#16#7'Visible'#9#18'HorzScrollBar.Page'#3'+'#1#18'VertScrol'
+  +'lBar.Page'#3#239#0#4'Left'#3#134#1#6'Height'#3#240#0#3'Top'#3#193#0#5'Width'
+  +#3','#1#0#12'TPageControl'#11'PageControl'#10'ActivePage'#7#9'TabSheet1'#5'A'
+  +'lign'#7#8'alClient'#20'BorderSpacing.Around'#2#2#11'Font.Height'#2#243#9'Fo'
+  +'nt.Name'#6#13'MS Sans Serif'#8'TabIndex'#2#0#8'TabOrder'#2#0#4'Left'#2#2#6
+  +'Height'#3#216#0#3'Top'#2#2#5'Width'#3'('#1#0#9'TTabSheet'#9'TabSheet1'#7'Ca'
+  +'ption'#6#11'Progress...'#12'ClientHeight'#3#187#0#11'ClientWidth'#3' '#1#6
+  +'Height'#3#187#0#5'Width'#3' '#1#0#6'TLabel'#15'Label_Extension'#7'Caption'#6
+  +#27'Optimization of Extensions:'#5'Color'#7#6'clNone'#11'Font.Height'#2#243#9
+  +'Font.Name'#6#13'MS Sans Serif'#11'ParentColor'#8#4'Left'#2#17#6'Height'#2#17
+  +#3'Top'#2#5#5'Width'#3#159#0#0#0#6'TLabel'#20'Label_ExtensionValue'#7'Captio'
+  +'n'#6#3'...'#5'Color'#7#6'clNone'#11'Font.Height'#2#243#9'Font.Name'#6#13'MS'
+  +' Sans Serif'#11'ParentColor'#8#4'Left'#3#199#0#6'Height'#2#17#3'Top'#2#5#5
+  +'Width'#2#10#0#0#6'TLabel'#23'Label_VariantsEstimated'#7'Caption'#6#23'Varia'
+  +'nts was estimated:'#5'Color'#7#6'clNone'#11'Font.Height'#2#243#9'Font.Name'
+  +#6#13'MS Sans Serif'#11'ParentColor'#8#4'Left'#2'"'#6'Height'#2#17#3'Top'#2
+  +#28#5'Width'#3#142#0#0#0#6'TLabel'#28'Label_VariantsEstimatedValue'#7'Captio'
+  +'n'#6#2'?%'#5'Color'#7#6'clNone'#11'Font.Height'#2#243#9'Font.Name'#6#13'MS '
+  +'Sans Serif'#11'ParentColor'#8#4'Left'#3#199#0#6'Height'#2#17#3'Top'#2#28#5
+  +'Width'#2#20#0#0#6'TLabel'#16'Label_LevelValue'#7'Caption'#6#6'? (?%)'#5'Col'
+  +'or'#7#6'clNone'#11'Font.Height'#2#243#9'Font.Name'#6#13'MS Sans Serif'#11'P'
+  +'arentColor'#8#4'Left'#3#199#0#6'Height'#2#17#3'Top'#2'>'#5'Width'#2'&'#0#0#6
+  +'TLabel'#27'Label_PercentOfImprovements'#7'Caption'#6#24'Percent of Improvem'
+  +'ents:'#5'Color'#7#6'clNone'#11'Font.Height'#2#243#9'Font.Name'#6#13'MS Sans'
+  +' Serif'#11'ParentColor'#8#4'Left'#2#24#6'Height'#2#17#3'Top'#2'-'#5'Width'#3
+  +#152#0#0#0#6'TLabel Label_PercentOfImprovementsValue'#7'Caption'#6#6'0.000%'
+  +#5'Color'#7#6'clNone'#11'Font.Height'#2#243#9'Font.Name'#6#13'MS Sans Serif'
+  +#11'ParentColor'#8#4'Left'#3#199#0#6'Height'#2#17#3'Top'#2'-'#5'Width'#2','#0
+  +#0#6'TLabel'#16'Label_SampleSize'#7'Caption'#6#21'Size of Sample Files:'#5'C'
+  +'olor'#7#6'clNone'#11'Font.Height'#2#243#9'Font.Name'#6#13'MS Sans Serif'#11
+  +'ParentColor'#8#4'Left'#2'2'#6'Height'#2#17#3'Top'#2'u'#5'Width'#2'~'#0#0#6
+  +'TLabel'#21'Label_SampleSizeValue'#7'Caption'#6#1'?'#5'Color'#7#6'clNone'#11
+  +'Font.Height'#2#243#9'Font.Name'#6#13'MS Sans Serif'#11'ParentColor'#8#4'Lef'
+  +'t'#3#199#0#6'Height'#2#17#3'Top'#2'u'#5'Width'#2#8#0#0#6'TLabel'#16'Label_P'
+  +'ackedSize'#7'Caption'#6#23'Current Size of Packed:'#5'Color'#7#6'clNone'#11
+  +'Font.Height'#2#243#9'Font.Name'#6#13'MS Sans Serif'#11'ParentColor'#8#4'Lef'
+  +'t'#2'%'#6'Height'#2#17#3'Top'#3#135#0#5'Width'#3#139#0#0#0#6'TLabel'#21'Lab'
+  +'el_PackedSizeValue'#7'Caption'#6#1'?'#5'Color'#7#6'clNone'#11'Font.Height'#2
+  +#243#9'Font.Name'#6#13'MS Sans Serif'#11'ParentColor'#8#4'Left'#3#199#0#6'He'
+  +'ight'#2#17#3'Top'#3#135#0#5'Width'#2#8#0#0#6'TLabel'#21'Label_DictionaryLev'
+  +'el'#7'Caption'#6#17'Dictionary Level:'#5'Color'#7#6'clNone'#11'Font.Height'
+  +#2#243#9'Font.Name'#6#13'MS Sans Serif'#11'ParentColor'#8#4'Left'#2'L'#6'Hei'
+  +'ght'#2#17#3'Top'#2'X'#5'Width'#2'd'#0#0#6'TLabel'#26'Label_DictionaryLevelV'
+  +'alue'#7'Caption'#6#1'?'#5'Color'#7#6'clNone'#11'ParentColor'#8#4'Left'#3#199
+  +#0#6'Height'#2#14#3'Top'#2'X'#5'Width'#2#6#0#0#0#9'TTabSheet'#9'TabSheet3'#7
+  +'Caption'#6#5'About'#12'ClientHeight'#3#187#0#11'ClientWidth'#3' '#1#10'Imag'
+  +'eIndex'#2#2#6'Height'#3#187#0#5'Width'#3' '#1#0#6'TLabel'#11'Label_About'#7
+  +'Caption'#12#29#1#0#0'BeeOpt 0.7.7.f (C) 1999-2005 Andrew Filinsky'#13#10'Fr'
+  +'eeware version, Feb 2005'#13#10#13#10'This program calculates parameters fo'
+  +'r Bee 0.7.7 archiver utility, then better compression ratio will be availab'
+  +'le by using them. '#13#10#13#10'Please, send constructed *.ini and *.dat fi'
+  +'les'#13#10'to e-mail: filinsky@mail.ru'#5'Color'#7#6'clNone'#11'Font.Height'
+  +#2#243#9'Font.Name'#6#13'MS Sans Serif'#11'ParentColor'#8#8'WordWrap'#9#4'Le'
+  +'ft'#2#4#6'Height'#3#144#0#3'Top'#2#4#5'Width'#3#9#1#0#0#0#0#10'TStatusBar'#9
+  +'StatusBar'#6'Panels'#14#1#9'Alignment'#7#14'taRightJustify'#4'Text'#6#18'In'
+  +'itialization... '#5'Width'#2'd'#0#0#11'SimplePanel'#8#6'Height'#2#20#3'Top'
+  +#3#220#0#5'Width'#3','#1#0#0#0
+]);
