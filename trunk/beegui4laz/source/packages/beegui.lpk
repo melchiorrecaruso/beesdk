@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Package Version="3">
+    <PathDelim Value="\"/>
+    <Name Value="beegui"/>
+    <Author Value="Melchiorre Caruso"/>
+    <CompilerOptions>
+      <Version Value="5"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="include\"/>
+        <OtherUnitFiles Value="..\..\..\bee\source\"/>
+        <UnitOutputDirectory Value="$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <CStyleOperator Value="False"/>
+          <AllowLabel Value="False"/>
+          <CPPInline Value="False"/>
+          <DelphiCompat Value="True"/>
+          <UseAnsiStrings Value="True"/>
+        </SyntaxOptions>
+      </Parsing>
+      <CodeGeneration>
+        <SmartLinkUnit Value="True"/>
+        <Generate Value="Faster"/>
+        <Optimizations>
+          <VariablesInRegisters Value="True"/>
+          <UncertainOptimizations Value="True"/>
+          <OptimizationLevel Value="3"/>
+        </Optimizations>
+      </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <UseLineInfoUnit Value="False"/>
+        </Debugging>
+      </Linking>
+      <Other>
+        <WriteFPCLogo Value="False"/>
+        <CompilerPath Value="$(CompPath)"/>
+      </Other>
+    </CompilerOptions>
+    <License Value="GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+"/>
+    <Version Major="1" Release="5" Build="41"/>
+    <Files Count="8">
+      <Item1>
+        <Filename Value="beegui_addtreeview.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_AddTreeView"/>
+      </Item1>
+      <Item2>
+        <Filename Value="beegui_archivetreeview.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_ArchiveTreeView"/>
+      </Item2>
+      <Item3>
+        <Filename Value="beegui_foldertreeview.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_FolderTreeView"/>
+      </Item3>
+      <Item4>
+        <Filename Value="beegui_statusprogressbar.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_StatusProgressBar"/>
+      </Item4>
+      <Item5>
+        <Filename Value="beegui_iconlist.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_IconList"/>
+      </Item5>
+      <Item6>
+        <Filename Value="beegui_appviewer.pas"/>
+        <UnitName Value="BeeGui_AppViewer"/>
+      </Item6>
+      <Item7>
+        <Filename Value="beegui_sysutils.pas"/>
+        <UnitName Value="BeeGui_SysUtils"/>
+      </Item7>
+      <Item8>
+        <Filename Value="beegui_archivelistview.pas"/>
+        <UnitName Value="BeeGui_ArchiveListView"/>
+      </Item8>
+    </Files>
+    <Type Value="RunAndDesignTime"/>
+    <RequiredPkgs Count="1">
+      <Item1>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item1>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)\"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

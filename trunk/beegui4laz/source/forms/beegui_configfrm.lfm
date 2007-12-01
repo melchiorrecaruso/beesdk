@@ -1,0 +1,388 @@
+object ConfigFrm: TConfigFrm
+  Left = 411
+  Height = 407
+  Top = 156
+  Width = 475
+  HorzScrollBar.Page = 474
+  VertScrollBar.Page = 406
+  ActiveControl = BtnOk
+  Caption = 'Configuration'
+  ClientHeight = 407
+  ClientWidth = 475
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Icon.Data = {
+    FE0200000000010001002020100000000000E802000016000000280000002000
+    0000400000000100040000000000800200000000000000000000000000000000
+    0000000000000000800000800000008080008000000080008000808000008080
+    8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+    FF00000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000F0000000F000000000000000
+    000000FFFFF000FFFFF000000000000000000FFFFFFF0FFFFFFF000000000000
+    00000FFFFFFF0FFFFFFF00000000000000000FFFFFFF0FFFFFFF000000000000
+    000000FFFFF000FFFFF000000000000000000000F000F000F000F00000000000
+    0000000000FFFFF000FFFFF000000000000000000FFFFFFF0FFFFFFF00000000
+    000000000FFFFFFF0FFFFFFF00000000000000000FFFFFFF0FFFFFFF00000000
+    0000000000FFFFF000FFFFF00000000000000000F000F000F000F00000000000
+    000000FFFFF000FFFFF000000000000000000FFFFFFF0FFFFFFF000000000000
+    00000FFFFFFF0FFFFFFF00000000000000000FFFFFFF0FFFFFFF000000000000
+    000000FFFFF000FFFFF000000000000000000000F000F000F000F0000000F000
+    0000000000FFFFF000FFFFF000FFFFF0000000000FFFFFFF0FFFFFFF0FFFFFFF
+    000000000FFFFFFF0FFFFFFF0FFFFFFF000000000FFFFFFF0FFFFFFF0FFFFFFF
+    0000000000FFFFF000FFFFF000FFFFF0000000000000F0000000F0000000F000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000F7F7FFFFF7F7FFFFE3E3FFFF8080FFFF00003FFF00007FFF00007FFF0000
+    7FFF00003FFF80000FFFE00003FFF00007FFF00007FFF00007FFE00003FF8000
+    0FFF00003FFF00007FFF00007FFF00007FFF00003E3E80000808E0000003F000
+    0007F0000007F0000007E0000003880808083E3E3E3E7F7F7F7F7F7F7F7F7F7F
+    7F7F
+  }
+  OnCreate = FormCreate
+  object BtnOk: TBitBtn
+    Left = 396
+    Height = 23
+    Top = 376
+    Width = 75
+    Anchors = [akRight, akBottom]
+    BorderSpacing.InnerBorder = 2
+    Caption = 'OK'
+    Default = True
+    ModalResult = 1
+    NumGlyphs = 2
+    ParentShowHint = False
+    TabOrder = 1
+  end
+  object ConfigFrm_Tree: TTreeView
+    Left = 4
+    Height = 350
+    Top = 4
+    Width = 140
+    Anchors = [akTop, akLeft, akBottom]
+    Constraints.MaxWidth = 140
+    Constraints.MinWidth = 140
+    DefaultItemHeight = 15
+    HideSelection = False
+    Indent = 20
+    ParentShowHint = False
+    RightClickSelect = True
+    RowSelect = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+    OnChange = ConfigFrm_TreeChange
+    Options = [tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoRightClickSelect, tvoRowSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
+    Items.Data = {
+      F9FFFFFF0100030000000000000000000000FFFFFFFFFFFFFFFF000000000000
+      000000000000000B000000416464204F7074696F6E730000000000000000FFFF
+      FFFFFFFFFFFF000000000000000000000000000F00000045787472616374204F
+      7074696F6E730000000000000000FFFFFFFFFFFFFFFF00000000000000000000
+      0000000700000047656E6572616C
+    }
+  end
+  object ConfigFrm_AddGB: TGroupBox
+    Left = 150
+    Height = 350
+    Top = 4
+    Width = 321
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Caption = 'Add Options'
+    ClientHeight = 332
+    ClientWidth = 317
+    ParentShowHint = False
+    TabOrder = 2
+    object AddFrm_OptionsGB: TGroupBox
+      Left = 8
+      Height = 134
+      Top = 130
+      Width = 301
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Around = 8
+      Caption = 'Options'
+      ClientHeight = 116
+      ClientWidth = 297
+      ParentShowHint = False
+      TabOrder = 2
+      object AddFrm_rOption: TCheckBox
+        Left = 8
+        Height = 19
+        Top = 8
+        Width = 281
+        Align = alTop
+        BorderSpacing.Around = 8
+        Caption = 'Recurse subdirectories'
+        Checked = True
+        ParentShowHint = False
+        State = cbChecked
+        TabOrder = 0
+      end
+      object AddFrm_sOption: TCheckBox
+        Left = 8
+        Height = 19
+        Top = 35
+        Width = 281
+        Align = alTop
+        BorderSpacing.Around = 8
+        Caption = 'Create a solid archive'
+        ParentShowHint = False
+        TabOrder = 1
+      end
+      object AddFrm_tOption: TCheckBox
+        Left = 8
+        Height = 19
+        Top = 62
+        Width = 281
+        Align = alTop
+        BorderSpacing.Around = 8
+        Caption = 'Test files after adding'
+        ParentShowHint = False
+        TabOrder = 2
+      end
+      object AddFrm_kOption: TCheckBox
+        Left = 8
+        Height = 19
+        Top = 89
+        Width = 281
+        Align = alTop
+        BorderSpacing.Around = 8
+        Caption = 'Crypt files with password'
+        ParentShowHint = False
+        TabOrder = 3
+      end
+    end
+    object AddFrm_MethodGB: TGroupBox
+      Left = 8
+      Height = 55
+      Top = 4
+      Width = 301
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 8
+      BorderSpacing.Bottom = 8
+      Caption = 'Method'
+      ClientHeight = 37
+      ClientWidth = 297
+      ParentShowHint = False
+      TabOrder = 0
+      object AddFrm_Method: TComboBox
+        Left = 8
+        Height = 21
+        Top = 8
+        Width = 281
+        Align = alTop
+        AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+        BorderSpacing.Around = 8
+        ItemHeight = 13
+        Items.Strings = (
+          '0 - Store'
+          '1 - Low'
+          '2 - Good'
+          '3 - Maximal'
+        )
+        MaxLength = 0
+        ParentShowHint = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+    end
+    object AddFrm_DictionaryGB: TGroupBox
+      Left = 8
+      Height = 55
+      Top = 67
+      Width = 301
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Around = 8
+      Caption = 'Dictionary'
+      ClientHeight = 37
+      ClientWidth = 297
+      ParentShowHint = False
+      TabOrder = 1
+      object AddFrm_Dictionary: TComboBox
+        Left = 8
+        Height = 21
+        Top = 8
+        Width = 281
+        Align = alTop
+        AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+        BorderSpacing.Around = 8
+        ItemHeight = 13
+        Items.Strings = (
+          'Level  0   (dictionary size  <       2 MB)'
+          'Level  1   (dictionary size  <       5 MB)'
+          'Level  2   (dictionary size  <     10 MB)'
+          'Level  3   (dictionary size  <     20 MB)'
+          'Level  4   (dictionary size  <     40 MB)'
+          'Level  5   (dictionary size  <     80 MB)'
+          'Level  6   (dictionary size  <   160 MB)'
+          'Level  7   (dictionary size  <   320 MB)'
+          'Level  8   (dictionary size  <   640 MB)'
+          'Level  9   (dictionary size  < 1280 MB)'
+        )
+        MaxLength = 0
+        ParentShowHint = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+    end
+  end
+  object ConfigFrm_ExtractGB: TGroupBox
+    Left = 150
+    Height = 350
+    Top = 4
+    Width = 321
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Caption = 'Extract Options'
+    ClientHeight = 332
+    ClientWidth = 317
+    ParentShowHint = False
+    TabOrder = 3
+    object ExtractFrm_OverwriteGB: TGroupBox
+      Left = 8
+      Height = 55
+      Top = 4
+      Width = 301
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 8
+      BorderSpacing.Bottom = 8
+      Caption = 'Overwrite mode'
+      ClientHeight = 37
+      ClientWidth = 297
+      ParentShowHint = False
+      TabOrder = 0
+      object ExtractFrm_Overwrite: TComboBox
+        Left = 8
+        Height = 21
+        Top = 8
+        Width = 281
+        Align = alTop
+        AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+        BorderSpacing.Around = 8
+        ItemHeight = 13
+        Items.Strings = (
+          'Skip pre-existing files'
+          'Overwrite pre-existing files'
+          'Query if Overwrite pre-existing files'
+        )
+        MaxLength = 0
+        ParentShowHint = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+    end
+    object ExtractFrm_OptionsGB: TGroupBox
+      Left = 8
+      Height = 47
+      Top = 67
+      Width = 301
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Around = 8
+      Caption = 'Options'
+      ClientHeight = 29
+      ClientWidth = 297
+      ParentShowHint = False
+      TabOrder = 1
+      object ExtractFrm_xOption: TCheckBox
+        Left = 8
+        Height = 13
+        Top = 8
+        Width = 281
+        Align = alTop
+        AutoSize = False
+        BorderSpacing.Around = 8
+        Caption = 'Extract and recreate the relative pathname '
+        Checked = True
+        ParentShowHint = False
+        State = cbChecked
+        TabOrder = 0
+      end
+    end
+  end
+  object ConfigFrm_GeneralGB: TGroupBox
+    Left = 150
+    Height = 350
+    Top = 4
+    Width = 321
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Caption = 'General'
+    ClientHeight = 332
+    ClientWidth = 317
+    ParentShowHint = False
+    TabOrder = 4
+    object ConfigFrm_OptionsGB: TGroupBox
+      Left = 8
+      Height = 47
+      Top = 67
+      Width = 301
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Around = 8
+      Caption = 'Options'
+      ClientHeight = 29
+      ClientWidth = 297
+      ParentShowHint = False
+      TabOrder = 0
+      object ConfigFrm_mkOption: TCheckBox
+        Left = 8
+        Height = 13
+        Top = 8
+        Width = 281
+        Align = alTop
+        AutoSize = False
+        BorderSpacing.Around = 8
+        Caption = 'Mask text when insert a password'
+        Checked = True
+        ParentShowHint = False
+        State = cbChecked
+        TabOrder = 0
+      end
+    end
+    object ConfigFrm_PriorityGB: TGroupBox
+      Left = 8
+      Height = 55
+      Top = 4
+      Width = 301
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 8
+      BorderSpacing.Bottom = 8
+      Caption = 'Process priority'
+      ClientHeight = 37
+      ClientWidth = 297
+      ParentShowHint = False
+      TabOrder = 1
+      object ConfigFrm_Priority: TComboBox
+        Left = 8
+        Height = 21
+        Top = 8
+        Width = 281
+        Align = alTop
+        AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+        BorderSpacing.Around = 8
+        ItemHeight = 13
+        Items.Strings = (
+          '3 - Real time (unstable)'
+          '2 - Higth (unstable)'
+          '1 - Normal '
+          '0 - Idle'
+        )
+        MaxLength = 0
+        ParentShowHint = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+    end
+  end
+  object ConfigFrm_Storage: TXMLPropStorage
+    StoredValues = <>
+    top = 368
+  end
+end
