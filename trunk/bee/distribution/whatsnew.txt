@@ -1344,23 +1344,23 @@ Description of history of the Bee:
 
   v0.7.9 build 316 maked.
   
-2007.11.17
+2007.12.02
 
   Update sources by Melchiorre Caruso:
 
   [*] Bee_Modeller.pas, minor code optimization (for FreePascal Compiler);
   [*] Bee_Files.pas, some changes for FPC compatibility;
   [*] Bee_Interface.pas, added OnFatalError and OnRequest events;
-  [*] Replaced wildcard "*\*" with "!", filemask recursive mode; 
+  [*] Replaced wildcard "*\*" with "*!", filemask recursive mode; 
   [*] Renamed "-c" option into "-cd" (bugfix); 
   [+] Added wilcard "?" and FileName-Matching functions;
   [*] Bee_Assembler.AddCardinal function, fixed source code incompatibility with FPC;
   [*] Bee_Headers.SearchNews renamed to ScanFileSystem;
   [*] compiler.inc added filenamecasesensitive directive;
   [*] Bee_Common.pas, renamed some functions;
-  [+] Updated source code, platform independent  
+  [+] Updated source code, platform independent;  
   [+] Bee_App.pas, added Tick function, if bee runs then result is true;
-  [+] Bee_Modeller.pas, some changment to stop active process;
+  [+] Bee_Modeller.pas, some changement to stop an active process;
   [+] Bee_App.OpenArchive procedure, fixed dangerous bug; 
       if archive is unknow it raises FatalError events and abort process;
   [+] Added "-l" option, archive list after an upgrade; 
@@ -1368,16 +1368,7 @@ Description of history of the Bee:
   [*] Unsignificant source code rearrangement performed;
   [*] Matrix.txt updated;
   [*] Usage.txt updated;
-  [*] Bee_App.pas, bug fixed in AlreadyFileExists function and RenameShell procedure
-  
-  v0.7.9 build 493 maked.
-      
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  [*] Bee_App.pas, bug fixed in AlreadyFileExists function and RenameShell procedure;
+  [*] Bee_Files.pas, some changements for FPC compatibility.  
+
+  v0.7.9 build 521 maked.

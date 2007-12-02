@@ -1,4 +1,4 @@
-The Bee 0.7.9 build 0497 archiver utility, freeware version, Nov 2007.
+The Bee 0.7.9 build 0521 archiver utility, freeware version, Dec 2007.
 (C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.
 
   Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>
