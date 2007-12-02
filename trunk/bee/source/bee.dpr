@@ -34,7 +34,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-  v0.7.9 build 0521 - 2007.12.02 by Melchiorre Caruso.
+  v0.7.9 build 0523 - 2007.12.02 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -59,9 +59,11 @@ type
     AppKey: string;
     AppInterface: TAppInterface;
     AppParams: TStringList;
+    procedure OnFatalError;
     procedure OnOverWrite;
     procedure OnWarning;
     procedure OnDisplay;
+    procedure OnRequest;
     procedure OnRename;
     procedure OnError;
     procedure OnClear;
@@ -83,9 +85,11 @@ type
     I: integer;
   begin
     AppInterface := TAppInterface.Create;
+    AppInterface.OnFatalError := OnFatalError;
     AppInterface.OnOverWrite := OnOverWrite;
     AppInterface.OnWarning := OnWarning;
     AppInterface.OnDisplay := OnDisplay;
+    AppInterface.OnRequest := OnRequest;
     AppInterface.OnRename := OnRename;
     AppInterface.OnClear := OnClear;
     AppInterface.OnError := OnError;
@@ -112,6 +116,11 @@ type
   procedure TConsole.Execute;
   begin
     App.Execute;
+  end;
+
+  procedure Tconsole.OnFatalError;
+  begin
+    Writeln(ParamToOem(AppInterface.cMsg));
   end;
 
   procedure TConsole.OnOverWrite;
@@ -155,6 +164,11 @@ type
   end;
 
   procedure TConsole.OnDisplay;
+  begin
+    Writeln(ParamToOem(AppInterface.cMsg));
+  end;
+
+  procedure Tconsole.OnRequest;
   begin
     Writeln(ParamToOem(AppInterface.cMsg));
   end;
