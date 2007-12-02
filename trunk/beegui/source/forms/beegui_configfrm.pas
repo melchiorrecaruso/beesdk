@@ -37,6 +37,7 @@ uses
   ComCtrls,
   ExtCtrls,
   FileCtrl,
+  //
   BeeGui_FormStorage;
 
 type
