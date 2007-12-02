@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0511 - 2007.12.01 by Melchiorre Caruso.
+  v0.7.9 build 0515 - 2007.12.02 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -90,10 +90,7 @@ type
     //
     procedure SetPriority(aPriority: integer);
   protected
-    // string sub-routines
-    function SizeToStr(Size: integer): string;
-    function RatioToStr(PackedSize, Size: integer): string;
-    function AttrToStr(Attr: integer): string;
+    // string routines
     function VersionToStr(VersionId: cardinal): string;
     function MethodToStr(P: THeader; Method, Dictionary: integer): string;
 
@@ -148,7 +145,7 @@ begin
   inherited Create(aAppInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0511 archiver utility, freeware version, Nov 2007.'
+  SelfName := 'The Bee 0.7.9 build 0515 archiver utility, freeware version, Nov 2007.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   ArcName  := '';
@@ -1484,29 +1481,7 @@ end;
 
 {$ENDIF}
 
-// string sub-routines
-
-function TBeeApp.SizeToStr(Size: integer): string;
-begin
-  Result := Format('%u', [Size]);
-end;
-
-function TBeeApp.RatioToStr(PackedSize, Size: integer): string;
-begin
-  if Size > 0 then
-    Result := Format('%u%%', [MulDiv(PackedSize, 100, Size)])
-  else
-    Result := Format('%u%%', [100]);
-end;
-
-function TBeeApp.AttrToStr(Attr: integer): string;
-begin
-  Result := '..RHSA';
-  if Attr and faReadOnly = 0 then Result[3] := '.';
-  if Attr and faHidden   = 0 then Result[4] := '.';
-  if Attr and faSysFile  = 0 then Result[5] := '.';
-  if Attr and faArchive  = 0 then Result[6] := '.';
-end;
+// string routines
 
 function TBeeApp.MethodToStr(P: THeader; Method, Dictionary: integer): string;
 begin

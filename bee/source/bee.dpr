@@ -34,7 +34,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-  v0.7.9 build 0511 - 2007.12.01 by Melchiorre Caruso.
+  v0.7.9 build 0515 - 2007.12.02 by Melchiorre Caruso.
 }
 
 program Bee;
