@@ -62,7 +62,6 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    
     procedure LoadFromFile(const FileName: string); override;
     procedure SaveToFile(const FileName: string); override;
     function GetTable(const Ext: string; var T: TTableParameters): boolean;
@@ -70,7 +69,6 @@ type
     function GetData(const Name: string; var Data; aCount: integer): boolean;
     procedure Selector(const Name: string);
     function Split(const S: string; var Name, Value: string): boolean;
-
   public
     CurrentSection: TConfigSection;
   end;
