@@ -34,7 +34,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-  v0.7.9 build 0523 - 2007.12.02 by Melchiorre Caruso.
+  v0.7.9 build 0525 - 2007.12.02 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -103,7 +103,7 @@ type
     begin
       AppParams.Add(ParamStr(I));
     end;
-    App := TBeeApp.Create(AppInterface, AppParams);
+    App := TBeeApp.Create(AppInterface, AppParams, nil);
   end;
 
   destructor TConsole.Destroy;
@@ -118,7 +118,7 @@ type
     App.Execute;
   end;
 
-  procedure Tconsole.OnFatalError;
+  procedure TConsole.OnFatalError;
   begin
     Writeln(ParamToOem(AppInterface.cMsg));
   end;

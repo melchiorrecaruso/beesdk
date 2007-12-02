@@ -43,7 +43,8 @@ uses
   Graphics,
   ExtCtrls,
   Controls,
-  LResources, XMLPropStorage;
+  LResources,
+  XMLPropStorage;
 
 type 
 
@@ -84,7 +85,7 @@ uses
   var
     CfgFolder: string;
   begin
-    CfgFolder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir);
+    CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir);
     if ForceDirectories(CfgFolder) then
     begin
       PasswordFrm_Storage.FileName := CfgFolder + ('passwordfrm.xml');

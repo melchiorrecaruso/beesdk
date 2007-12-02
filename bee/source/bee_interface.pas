@@ -24,7 +24,7 @@
 
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0485 - 2007.11.17 by Melchiorre Caruso.
+  v0.7.9 build 0525 - 2007.12.02 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -92,7 +92,8 @@ type
   public
     AppInterface: TAppInterface;
   public
-    constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
+    constructor Create(aAppInterface: TAppInterface;
+      aAppParams: TStringList; aAppTerminate: TNotifyEvent);
     procedure Syn(aMethod: TThreadMethod);
     destructor Destroy; override;
   end;
@@ -101,13 +102,18 @@ implementation
 
 // TApp class ...
 
-constructor TApp.Create(aAppInterface: TAppInterface; aAppParams: TStringList);
+constructor TApp.Create(aAppInterface: TAppInterface;
+  aAppParams: TStringList; aAppTerminate: TNotifyEvent);
 begin
   inherited Create(True);
   FreeOnTerminate := True;
-  
-  AppInterface := aAppInterface;
+
   AppParams := aAppParams;
+  AppInterface := aAppInterface;
+  if Assigned(aAppTerminate) then
+  begin
+    OnTerminate := aAppTerminate;
+  end;
 end;
 
 destructor TApp.Destroy;

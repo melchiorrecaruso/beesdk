@@ -42,47 +42,50 @@ uses
   { directories routines }
   
   {$IFDEF WIN32}
-  //function DiskInDrive (Drive: char): boolean;
+  function DiskInDrive (Drive: char): boolean;
   {$ENDIF}
 
   procedure GetDrivers(var Drives: TStringList);
   function GetDirectories(const PathName: string; var DirList: TStringList): boolean;
+
+  function DirectoryExists(const DirName: string): boolean;
+  function ForceDirectories(const Dir: string): boolean;
   
-  //procedure DeleteDirectory(const DirName: string);
-  //procedure ClearDirectory(const DirName: string);
+  procedure DeleteDirectory(const DirName: string);
+  procedure ClearDirectory(const DirName: string);
   
-  //function GetApplicationCheckOutDir: string;
-  //function GetApplicationConfigDir: string;
-  //function GetApplicationTempDir: string;
+  function GetApplicationCheckOutDir: string;
+  function GetApplicationConfigDir: string;
+  function GetApplicationTempDir: string;
   // ---
-  //function ExtractFirstFolder(const FullPath: string): string;
+  function ExtractFirstFolder(const FullPath: string): string;
 
   { string routines }
 
-  //function AnsiCompareText (const Str1, Str2: string): integer;
-  //function AnsiPosText(const Substr, S: string): integer; inline;
-  //function AnsiIncludeTrailingBackSlash(const DirName: string): string;
+  function AnsiCompareText (const Str1, Str2: string): integer;
+  function AnsiPosText(const Substr, S: string): integer; inline;
+  function AnsiIncludeTrailingBackSlash(const DirName: string): string;
   
-  //function SizeToStr(Size: integer): string;
-  //function RatioToStr(Ratio: integer): string;
-  //function AttrToStr(Attr: integer): string;
+  function SizeToStr(Size: integer): string;
+  function RatioToStr(Ratio: integer): string;
+  function AttrToStr(Attr: integer): string;
   
   { shell routines }
   
-  //function  ShellExec(const FileName: string; const PathName: string): integer;
+  function  ShellExec(const FileName: string; const PathName: string): integer;
   
   { files routines }
   
-  //function  SizeOfFile(const FileName: string): integer;
+  function  SizeOfFile(const FileName: string): integer;
   
-  //function CopyFile(const FileName, NewFileName: string): boolean;
-  //function CopyFiles(SrcDir, DstDir: string): boolean;
+  function CopyFile(const FileName, NewFileName: string): boolean;
+  function CopyFiles(SrcDir, DstDir: string): boolean;
   
   { register file type routines }
   
-  //procedure RegisterFileType (const prefix: string; const exepfad: string);
-  //procedure UnRegisterFileType (const prefix: string; const exepfad: string);
-  //function  CheckRegisterFileType (const prefix: string; const exepfad: string): boolean;
+  procedure RegisterFileType (const prefix: string; const exepfad: string);
+  procedure UnRegisterFileType (const prefix: string; const exepfad: string);
+  function  CheckRegisterFileType (const prefix: string; const exepfad: string): boolean;
   
 implementation
 
@@ -175,6 +178,32 @@ implementation
       end;
       SysUtils.FindClose(Info);
       Result := True;
+    end;
+  end;
+  
+  function DirectoryExists(const DirName: string): boolean;
+  var
+    Code: integer;
+  begin
+    Code := FileGetAttr(DirName);
+    Result := (Code <> -1) and (faDirectory and Code <> 0);
+  end;
+
+  function ForceDirectories(const Dir: string): boolean;
+  begin
+    Result := True;
+    if Dir = '' then Exit;
+
+    if Dir[Length(Dir)] = PathDelim then
+      Result := ForceDirectories(Copy(Dir, 1, Length(Dir) - 1))
+    else
+    begin
+      if DirectoryExists(Dir) or (ExtractFilePath(Dir) = Dir) then Exit;
+
+      if ForceDirectories(ExtractFilePath(Dir)) then
+        Result := CreateDir(Dir)
+      else
+        Result := False;
     end;
   end;
   
