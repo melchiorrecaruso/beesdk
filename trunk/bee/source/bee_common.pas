@@ -27,7 +27,7 @@
   v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0487 - 2007.11.17 by Melchiorre Caruso.
+  v0.7.9 build 0515 - 2007.12.02 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -105,6 +105,12 @@ function SelfName: string;
 function SelfPath: string;
 function GenerateFileName(const Path: string): string;
 
+// string routines
+
+function SizeToStr(Size: integer): string;
+function RatioToStr(PackedSize, Size: integer): string;
+function AttrToStr(Attr: integer): string;
+
 // time handling routines ...
 
 function TimeDifference(X: double): string;
@@ -116,8 +122,6 @@ function Hex(const Data; Count: integer): string;
 function HexToData(const S: string; var Data; Count: integer): boolean;
 
 // low level functions ...
-
-procedure CopyBytes(const Source, Dest; Count: cardinal);
 
 function CreateText(var T: Text; const Name: string): boolean;
 function AppendText(var T: Text; const Name: string): boolean;
@@ -133,6 +137,9 @@ function SetPriority(Priority: integer): boolean; // Priority is 0..3
 {$ENDIF}
 
 implementation
+
+uses
+  Bee_Assembler;
 
 const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
@@ -498,6 +505,30 @@ begin
   until FileAge(Result) = -1;
 end;
 
+// string routines
+
+function SizeToStr(Size: integer): string;
+begin
+  Result := Format('%u', [Size]);
+end;
+
+function RatioToStr(PackedSize, Size: integer): string;
+begin
+  if Size > 0 then
+    Result := Format('%u%%', [MulDiv(PackedSize, 100, Size)])
+  else
+    Result := Format('%u%%', [100]);
+end;
+
+function AttrToStr(Attr: integer): string;
+begin
+  Result := '..RHSA';
+  if Attr and faReadOnly = 0 then Result[3] := '.';
+  if Attr and faHidden   = 0 then Result[4] := '.';
+  if Attr and faSysFile  = 0 then Result[5] := '.';
+  if Attr and faArchive  = 0 then Result[6] := '.';
+end;
+
 // hex routines ...
 
 function Hex(const Data; Count: integer): string;
@@ -535,21 +566,6 @@ begin
 end;
 
 // low level functions...
-
-procedure CopyBytes(const Source, Dest; Count: cardinal);
-asm
-  xchg esi, Source
-  xchg edi, Dest
-  push Count
-  shr Count, 2
-  cld
-  rep movsd
-  pop Count
-  and Count, $03
-  rep movsb
-  mov esi, Source
-  mov edi, Dest
-end;
 
 function CreateText(var T: Text; const Name: string): boolean;
 begin
