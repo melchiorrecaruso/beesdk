@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0515 - 2007.12.02 by Melchiorre Caruso.
+  v0.7.9 build 0521 - 2007.12.02 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -145,7 +145,7 @@ begin
   inherited Create(aAppInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0515 archiver utility, freeware version, Nov 2007.'
+  SelfName := 'The Bee 0.7.9 build 0521 archiver utility, freeware version, Nov 2007.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   ArcName  := '';
@@ -464,6 +464,19 @@ begin
       begin
         xOption.Strings[I] := xOption.Strings[I] + '!';
       end;
+    end;
+  end;
+  if FileMasks.Count = 0 then
+  begin
+    case Command of
+      'A': FileMasks.Add('*!');
+     {'D': nothing to do}
+      'E': FileMasks.Add('*!');
+      'L': FileMasks.Add('*!');
+     {'R': nothing to do}
+      'T': FileMasks.Add('*!');
+      'X': FileMasks.Add('*!');
+     {'?': nothing to do}
     end;
   end;
 end;
