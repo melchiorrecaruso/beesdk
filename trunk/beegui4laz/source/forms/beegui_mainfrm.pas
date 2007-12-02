@@ -1832,6 +1832,11 @@ uses
   /// TMainFrm.AppCreate
 
   procedure TMainFrm.AppCreate(CreateLogFile: boolean);
+  //type
+    //TAppCreateProc = procedure(aAppInterface: TAppInterface; aAppParams: TStringList; aAppTerminate: TNotifyEvent);
+  //var
+    //LibHandle: TLibHandle;
+    //AppCreateProc: TAppCreateProc;
   begin
     MainFrm_UpdateButtons(False);
     MainFrm_UpdateCursor(crHourGlass);
@@ -1841,8 +1846,15 @@ uses
       AppLogFile := TStringList.Create;
     end;
     // ---
-    App := TBeeApp.Create(AppInterface, AppParams);
-    App.OnTerminate := MainFrm.OnAppTerminate;
+
+    //LibHandle := LoadLibrary('beecore.dll');
+    //AppCreateProc  := GetProcedureAddress(LibHandle, 'AppCreate');
+    //if Assigned(AppCreateProc) then
+    //begin
+    //  AppCreateProc(AppInterface, AppParams, MainFrm.OnAppTerminate);
+    //end;
+    
+    App := TBeeApp.Create(AppInterface, AppParams, MainFrm.OnAppTerminate);
     AppTerminatedWithError := False;
     AppTerminated := False;
     App.Suspended := False;

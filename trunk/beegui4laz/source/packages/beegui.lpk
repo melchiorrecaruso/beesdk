@@ -43,7 +43,7 @@
     <License Value="GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 "/>
     <Version Major="1" Release="5" Build="41"/>
-    <Files Count="8">
+    <Files Count="7">
       <Item1>
         <Filename Value="beegui_addtreeview.pas"/>
         <HasRegisterProc Value="True"/>
@@ -77,10 +77,6 @@
         <Filename Value="beegui_sysutils.pas"/>
         <UnitName Value="BeeGui_SysUtils"/>
       </Item7>
-      <Item8>
-        <Filename Value="beegui_archivelistview.pas"/>
-        <UnitName Value="BeeGui_ArchiveListView"/>
-      </Item8>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="1">

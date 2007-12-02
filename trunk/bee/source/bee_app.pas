@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0523 - 2007.12.02 by Melchiorre Caruso.
+  v0.7.9 build 0525 - 2007.12.02 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -48,7 +48,8 @@ uses
 type
   TBeeApp = class(TApp)
   public
-    constructor Create(aAppInterface: TAppInterface; aParams: TStringList);
+    constructor Create(aAppInterface: TAppInterface;
+      aAppParams: TStringList; aAppTerminate: TNotifyEvent);
     destructor Destroy; override;
     procedure Execute; override;
     function Tick: boolean;
@@ -140,12 +141,13 @@ uses
 
 // TBeeApp ...
 
-constructor TBeeApp.Create(aAppInterface: TAppInterface; aParams: TStringList);
+constructor TBeeApp.Create(aAppInterface: TAppInterface;
+  aAppParams: TStringList; aAppTerminate: TNotifyEvent);
 begin
-  inherited Create(aAppInterface, aParams);
+  inherited Create(aAppInterface, aAppParams, aAppTerminate);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0523 archiver utility, freeware version, Dec 2007.'
+  SelfName := 'The Bee 0.7.9 build 0525 archiver utility, freeware version, Dec 2007.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   ArcName  := '';

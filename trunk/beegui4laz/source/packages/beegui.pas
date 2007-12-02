@@ -9,7 +9,7 @@ interface
 uses
   BeeGui_AddTreeView, BeeGui_ArchiveTreeView, BeeGui_FolderTreeView, 
     BeeGui_StatusProgressBar, BeeGui_IconList, BeeGui_AppViewer, 
-    BeeGui_SysUtils, BeeGui_ArchiveListView, LazarusPackageIntf; 
+    BeeGui_SysUtils, LazarusPackageIntf; 
 
 implementation
 
