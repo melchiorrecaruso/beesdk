@@ -150,7 +150,7 @@
 			<VersionInfo Name="MajorVer">1</VersionInfo>
 			<VersionInfo Name="MinorVer">0</VersionInfo>
 			<VersionInfo Name="Release">5</VersionInfo>
-			<VersionInfo Name="Build">447</VersionInfo>
+			<VersionInfo Name="Build">451</VersionInfo>
 			<VersionInfo Name="Debug">False</VersionInfo>
 			<VersionInfo Name="PreRelease">False</VersionInfo>
 			<VersionInfo Name="Special">False</VersionInfo>
@@ -162,7 +162,7 @@
 		<VersionInfoKeys>
 			<VersionInfoKeys Name="CompanyName">Melchiorre Caruso, Salemi city (Italy).</VersionInfoKeys>
 			<VersionInfoKeys Name="FileDescription">BeeGui Archiver Utility</VersionInfoKeys>
-			<VersionInfoKeys Name="FileVersion">1.0.5.447</VersionInfoKeys>
+			<VersionInfoKeys Name="FileVersion">1.0.5.451</VersionInfoKeys>
 			<VersionInfoKeys Name="InternalName">BeeGui</VersionInfoKeys>
 			<VersionInfoKeys Name="LegalCopyright">(C) 2007 Melchiorre Caruso, Salemi city (Italy).</VersionInfoKeys>
 			<VersionInfoKeys Name="LegalTrademarks">BeeGui</VersionInfoKeys>

@@ -83,8 +83,6 @@ object ConfigFrm: TConfigFrm
       Left = 0
       Top = 0
       Caption = 'Add4Bee'
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ConfigFrm_Notebook_Add4Bee: TGroupBox
         Left = 0
         Top = 0
@@ -303,7 +301,7 @@ object ConfigFrm: TConfigFrm
             Style = csDropDownList
             Anchors = [akLeft, akTop, akRight]
             DropDownCount = 10
-            ItemHeight = 13
+            ItemHeight = 0
             ItemIndex = 0
             ParentShowHint = False
             ShowHint = False
@@ -523,7 +521,7 @@ object ConfigFrm: TConfigFrm
             Style = csDropDownList
             Anchors = [akLeft, akTop, akRight]
             DropDownCount = 10
-            ItemHeight = 13
+            ItemHeight = 0
             ItemIndex = 1
             ParentShowHint = False
             ShowHint = False
