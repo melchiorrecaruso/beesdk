@@ -2512,7 +2512,7 @@ begin
     'e': Result := (Pos(FAppArcExt, '|.bee|.zip|.tar|.tgz|.gz|.cab|') > 0);
     'x': Result := (Pos(FAppArcExt, '|.bee|.zip|.tar|.tgz|.gz|.cab|') > 0);
     'l': Result := (Pos(FAppArcExt, '|.bee|.zip|.tar|.tgz|.gz|.cab|') > 0);
-    't': Result := (Pos(FAppArcExt, '|.bee|.zip|                   ') > 0);
+    't': Result := (Pos(FAppArcExt, '|.bee|                        ') > 0);
     'r': Result := (Pos(FAppArcExt, '|.bee|.zip|.tar|.tgz|.gz|.cab|') > 0);
     else Result := False;
   end;
