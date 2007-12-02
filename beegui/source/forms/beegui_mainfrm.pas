@@ -935,7 +935,8 @@ begin
                Result := rfAbortAndClose;
              end;
         end;
-      end;
+      end else
+        Result := rfContinue;
     end else
     begin
       if (MainFrm.Cursor = crHourGlass) then

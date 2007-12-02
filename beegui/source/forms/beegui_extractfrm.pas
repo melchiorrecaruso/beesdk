@@ -147,8 +147,8 @@ procedure TExtractFrm.GetOptions(aConfigFrm: TConfigFrm);
 begin
   ExtractFrm_OverWrite.ItemIndex := aConfigFrm.ExtractFrm_OverWrite.ItemIndex;
   ExtractFrm_xCommand.Checked := aConfigFrm.ExtractFrm_xCommand.Checked;
-  ExtractFrm_cOption.Checked  := aConfigFrm.ExtractFrm_cOption.Checked;
-  General_Priority.ItemIndex  := aConfigFrm.General_Priority.ItemIndex;
+  ExtractFrm_cOption.Checked := aConfigFrm.ExtractFrm_cOption.Checked;
+  General_Priority.ItemIndex := aConfigFrm.General_Priority.ItemIndex;
 end;
 
 end.
