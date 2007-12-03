@@ -54,7 +54,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="172">
+    <Units Count="173">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -71,7 +71,7 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_mainfrm.lrs"/>
         <UnitName Value="BeeGui_MainFrm"/>
-        <CursorPos X="7" Y="1836"/>
+        <CursorPos X="5" Y="1861"/>
         <TopLine Value="1834"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
@@ -1276,13 +1276,15 @@
         <TopLine Value="4"/>
         <UsageCount Value="10"/>
       </Unit171>
+      <Unit172>
+        <Filename Value="..\..\..\..\lazarus\lcl\dialogs.pp"/>
+        <UnitName Value="Dialogs"/>
+        <CursorPos X="11" Y="479"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit172>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
-      <Position1>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1857" Column="76" TopLine="1833"/>
-      </Position1>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
