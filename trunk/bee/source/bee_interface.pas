@@ -125,11 +125,7 @@ end;
 
 procedure TApp.Syn(aMethod: TThreadMethod);
 begin
-  {$IFDEF THREADOFF}
-  aMethod;
-  {$ELSE}
   inherited Synchronize(aMethod);
-  {$ENDIF}
 end;
 
 end.
