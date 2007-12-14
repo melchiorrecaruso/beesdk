@@ -18,11 +18,11 @@
 
 { Contains:
 
-  Project compiler directives
+  Bee project compiler directives
 
   Modifyed:
 
-  v0.7.9 build 0485 - 2007.11.17 by Melchiorre Caruso.
+  v1.0.3 build XXXX - 2007.11.23 by Melchiorre Caruso.
 }
 
 {$R-}
@@ -31,6 +31,7 @@
 {$I-}
 
 {$DEFINE CONSOLEAPPLICATION}
+{*$DEFINE THREADSYNCHRONIZER}
 
 {$IFDEF MSWINDOWS}
   {*$DEFINE FILENAMECASESENSITIVE}
@@ -41,5 +42,3 @@
     todo: define filenamecasesensitive
   {$ENDIF}
 {$ENDIF}
-
-

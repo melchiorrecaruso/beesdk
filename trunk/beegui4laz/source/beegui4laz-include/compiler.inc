@@ -18,7 +18,7 @@
 
 { Contains:
 
-  Project compiler directives
+  BeeGui4Laz project compiler directives
 
   Modifyed:
 

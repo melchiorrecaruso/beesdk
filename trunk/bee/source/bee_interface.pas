@@ -34,6 +34,9 @@ unit Bee_Interface;
 interface
 
 uses
+  {$IFDEF THREADSYNCHRONIZER}
+  Bee_Interface_Base,
+  {$ENDIF}
   Classes;
 
 // TAppItem class
@@ -86,7 +89,11 @@ type
 // TApp class
 
 type
+  {$IFDEF THREADSYNCHRONIZER}
+  TApp = class(TThreadEx)
+  {$ELSE}
   TApp = class(TThread)
+  {$ENDIF}
   protected
     AppParams: TStringList;
   public
@@ -125,7 +132,11 @@ end;
 
 procedure TApp.Syn(aMethod: TThreadMethod);
 begin
+  {$IFDEF THREADSYNCHRONIZER}
+    Synchronizer.Synchronize(aMethod);
+  {$ELSE}
   inherited Synchronize(aMethod);
+  {$ENDIF}
 end;
 
 end.
