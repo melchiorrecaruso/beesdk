@@ -18,7 +18,7 @@
 
 { Contains:
 
-  Project compiler directives
+  Bee project compiler directives
 
   Modifyed:
 
@@ -30,9 +30,8 @@
 {$S-}
 {$I-}
 
-{$DEFINE USETHREAD}
-
-{*$DEFINE CONSOLEAPPLICATION}
+{$DEFINE CONSOLEAPPLICATION}
+{*$DEFINE THREADSYNCHRONIZER}
 
 {$IFDEF MSWINDOWS}
   {*$DEFINE FILENAMECASESENSITIVE}
