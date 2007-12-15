@@ -43,15 +43,15 @@
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="BeeGui"/>
+        <MinVersion Major="1" Release="3" Build="1" Valid="True"/>
       </Item1>
       <Item2>
         <PackageName Value="FCL"/>
         <MinVersion Major="1" Valid="True"/>
       </Item2>
       <Item3>
-        <PackageName Value="BeeGui"/>
-        <MinVersion Major="1" Release="3" Build="1" Valid="True"/>
+        <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
     <Units Count="173">
@@ -59,8 +59,8 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
-        <CursorPos X="7" Y="87"/>
-        <TopLine Value="48"/>
+        <CursorPos X="29" Y="22"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -71,8 +71,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_mainfrm.lrs"/>
         <UnitName Value="BeeGui_MainFrm"/>
-        <CursorPos X="5" Y="1861"/>
-        <TopLine Value="1834"/>
+        <CursorPos X="8" Y="350"/>
+        <TopLine Value="330"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -224,8 +224,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_passwordfrm.lrs"/>
         <UnitName Value="BeeGui_PasswordFrm"/>
-        <CursorPos X="66" Y="88"/>
-        <TopLine Value="68"/>
+        <CursorPos X="6" Y="93"/>
+        <TopLine Value="73"/>
         <UsageCount Value="200"/>
       </Unit19>
       <Unit20>
@@ -423,8 +423,8 @@
       <Unit44>
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="7" Y="98"/>
-        <TopLine Value="82"/>
+        <CursorPos X="5" Y="74"/>
+        <TopLine Value="48"/>
         <UsageCount Value="10"/>
       </Unit44>
       <Unit45>
@@ -985,7 +985,7 @@
         <UnitName Value="BeeGui_StatusBarProgressBar"/>
         <CursorPos X="35" Y="13"/>
         <TopLine Value="1"/>
-        <UsageCount Value="113"/>
+        <UsageCount Value="114"/>
       </Unit127>
       <Unit128>
         <Filename Value="packages\beegui_statusprogressbar.pas"/>
@@ -1148,7 +1148,7 @@
         <UnitName Value="BeeGui_ArchiveListView"/>
         <CursorPos X="18" Y="30"/>
         <TopLine Value="1"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="61"/>
       </Unit152>
       <Unit153>
         <Filename Value="..\..\..\..\FreePascal.org\lazarus\lcl\widgetset\wsstdctrls.pp"/>
@@ -1284,13 +1284,22 @@
         <UsageCount Value="10"/>
       </Unit172>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="2" HistoryIndex="1">
+      <Position1>
+        <Filename Value="forms\beegui_mainfrm.pas"/>
+        <Caret Line="1846" Column="53" TopLine="1826"/>
+      </Position1>
+      <Position2>
+        <Filename Value="forms\beegui_mainfrm.pas"/>
+        <Caret Line="350" Column="5" TopLine="330"/>
+      </Position2>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="include\"/>
+      <IncludeFiles Value="beegui4laz-include\"/>
       <OtherUnitFiles Value="forms\;packages\;..\..\bee\source\"/>
       <UnitOutputDirectory Value="..\distribution"/>
       <SrcPath Value="$(LazarusDir)\lcl\;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType)\"/>

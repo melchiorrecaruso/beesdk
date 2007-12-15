@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0505 - 2007.11.25 by Melchiorre Caruso.
+  v0.7.9 build 0543 - 2007.12.15 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -129,7 +129,7 @@ begin
   App.AppInterface.cFileSize := Header.Size;
   App.AppInterface.cFileTime := Header.Time;
 
-  App.Syn(App.AppInterface.OnKey);
+  App.Sync(App.AppInterface.OnKey);
   Result := App.AppInterface.cMsg;
 
   if Length(App.AppInterface.cMsg) < MinKeyLength then
@@ -170,7 +170,7 @@ begin
     if Mode = emNorm then
     begin
       App.AppInterface.cMsg := msgUpdating + Header.GetName;
-      App.Syn(App.AppInterface.OnDisplay);
+      App.Sync(App.AppInterface.OnDisplay);
     end;
 
     Header.Size := SrcFile.Size;
@@ -215,11 +215,11 @@ begin
     Header.PackedSize := Stream.Seek(0, 1) - Header.StartPos; // last stream flush
     TFileWriter(Stream).BlowFish.Finish; // finish after last stream flush
 
-    App.Syn(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface.OnClear);
   end else
   begin
     App.AppInterface.cMsg := ('Error: can''t open file ' + Header.Name);
-    App.Syn(App.AppInterface.OnError);
+    App.Sync(App.AppInterface.OnError);
   end;
 
   if (not (foMoved in Header.Flags)) and (Header.PackedSize >= Header.Size) then
@@ -261,7 +261,7 @@ begin
     if Mode = emNorm then
     begin
       App.AppInterface.cMsg := msgEncoding + Header.Name;
-      App.Syn(App.AppInterface.OnDisplay);
+      App.Sync(App.AppInterface.OnDisplay);
     end;
 
     SrcPosition := Header.StartPos;
@@ -310,11 +310,11 @@ begin
     Header.PackedSize := Stream.Seek(0, 1) - Header.StartPos; // last stream flush
     TFileWriter(Stream).BlowFish.Finish; // finish after last stream flush
 
-    App.Syn(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface.OnClear);
   end else
   begin
     App.AppInterface.cMsg := ('Error: stream  not found');
-    App.Syn(App.AppInterface.OnError);
+    App.Sync(App.AppInterface.OnError);
   end;
 
   if (not (foMoved in Header.Flags)) and (Header.PackedSize >= Header.Size) then
@@ -355,7 +355,7 @@ begin
     if Mode = emNorm then
     begin
       App.AppInterface.cMsg := msgCopying + Header.Name;
-      App.Syn(App.AppInterface.OnDisplay);
+      App.Sync(App.AppInterface.OnDisplay);
     end;
 
     SrcFile.Seek(Header.StartPos, 0);
@@ -372,11 +372,11 @@ begin
       Stream.Write(Symbol, 1);
     end;
 
-    App.Syn(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface.OnClear);
   end else
   begin
     App.AppInterface.cMsg := ('Error: stream  not found');
-    App.Syn(App.AppInterface.OnError);
+    App.Sync(App.AppInterface.OnError);
   end;
 
   Result := True;
@@ -404,7 +404,7 @@ begin
   App.AppInterface.cFileSize := Header.Size;
   App.AppInterface.cFileTime := Header.Time;
 
-  App.Syn(App.AppInterface.OnKey);
+  App.Sync(App.AppInterface.OnKey);
   Result := App.AppInterface.cMsg;
 end;
 
@@ -435,7 +435,7 @@ begin
       Exit;
     end;
   end;
-  App.Syn(App.AppInterface.OnDisplay);
+  App.Sync(App.AppInterface.OnDisplay);
 
   Stream.Seek(Header.StartPos, 0); // stream flush
   Crc := cardinal(-1);
@@ -498,7 +498,7 @@ begin
     if Mode = pmNorm then
       FileSetAttr(Header.Name, Header.Attr);
 
-    App.Syn(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface.OnClear);
   end;
 
   Result := Header.Crc = Crc;
@@ -508,7 +508,7 @@ begin
       App.AppInterface.cMsg := ('Error: can''t open file ' + Header.Name)
     else
       App.AppInterface.cMsg := msgCRCERROR + Header.Name;
-    App.Syn(App.AppInterface.OnError);
+    App.Sync(App.AppInterface.OnError);
   end;
 end;
 
@@ -539,7 +539,7 @@ begin
       Exit;
     end;
   end;
-  App.Syn(App.AppInterface.OnDisplay);
+  App.Sync(App.AppInterface.OnDisplay);
 
   Stream.Seek(Header.StartPos, 0);
   Crc := cardinal(-1);
@@ -600,7 +600,7 @@ begin
     end;
     TFileWriter(DstFile).BlowFish.Finish; // finish after last stream flush
 
-    App.Syn(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface.OnClear);
   end;
 
   Result := Header.Crc = Crc;
@@ -610,7 +610,7 @@ begin
       App.AppInterface.cMsg := ('Error: stream not found')
     else
       App.AppInterface.cMsg := msgCRCERROR + Header.Name;
-    App.Syn(App.AppInterface.OnError);
+    App.Sync(App.AppInterface.OnError);
   end;
 end;
 

@@ -2520,7 +2520,6 @@ object MainFrm: TMainFrm
     Max = 100
   end
   object MainFrm_OpenDialog: TOpenDialog
-    Title = 'Apri file esistenti'
     FilterIndex = 0
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     left = 16
@@ -2622,7 +2621,6 @@ object MainFrm: TMainFrm
     end
   end
   object MainFrm_FontDialog: TFontDialog
-    Title = 'Selezionare un font'
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     left = 112
@@ -2822,7 +2820,6 @@ object MainFrm: TMainFrm
     end
   end
   object MainFrm_SaveDialog: TSaveDialog
-    Title = 'Salva con nome'
     Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|Any file (*.*)|*.*'
     FilterIndex = 0
     Options = [ofHideReadOnly, ofPathMustExist, ofEnableSizing]

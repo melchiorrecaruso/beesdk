@@ -22,7 +22,7 @@
 
   Modifyed:
 
-  v1.0.3 build XXXX - 2007.11.23 by Melchiorre Caruso.
+  v0.7.9 build 0541 - 2007.12.14 by Melchiorre Caruso.
 }
 
 {$R-}

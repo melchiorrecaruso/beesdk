@@ -19,9 +19,9 @@
 program BeeGui;
 
 uses
-  {$IFDEF UNIX}
+  {$IFDEF FPC} {$IFDEF UNIX}
   cthreads,
-  {$ENDIF}
+  {$ENDIF} {$ENDIF}
   // this includes the LCL widgetset
   Interfaces,
   SysUtils,
