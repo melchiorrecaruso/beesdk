@@ -301,6 +301,9 @@ type
     procedure MainFrm_UpdateCursor(Value: TCursor);
     procedure MainFrm_UpdateButtons(Value: boolean); overload;
   end;
+  
+
+function CreateObject(aAppInterface: TAppInterface; aAppParams: string): TApp; external 'beecore.dll';
 
 var
   MainFrm: TMainFrm;
@@ -310,7 +313,6 @@ implementation
 uses
   dynlibs,
 
-  Bee_App,
   // ---
   BeeGui_SysUtils,
   // ---
@@ -345,7 +347,7 @@ uses
     AppParams                := TStringList.Create;
     AppLogFile               := nil;
     // ---
-    AppInterface              := TAppInterface.Create;
+    // AppInterface              := TAppInterface.Create;
     AppInterface.OnKey        := MainFrm.OnAppKey;
     AppInterface.OnList       := MainFrm.OnAppList;
     AppInterface.OnTick       := MainFrm.OnAppTick;
@@ -1832,13 +1834,6 @@ uses
   /// TMainFrm.AppCreate
 
   procedure TMainFrm.AppCreate(CreateLogFile: boolean);
-  type
-    TAppCreateProc =
-      function(aAppInterface: TAppInterface;
-      aAppParams: TStringList; aAppTerminate: TNotifyEvent): TApp;
-  var
-    LibHandle: TLibHandle;
-    AppCreateProc: TAppCreateProc;
   begin
     MainFrm_UpdateButtons(False);
     MainFrm_UpdateCursor(crHourGlass);
@@ -1847,18 +1842,12 @@ uses
     begin
       AppLogFile := TStringList.Create;
     end;
-    // ---
-    LibHandle := LoadLibrary('beecore.dll');
-    AppCreateProc  := GetProcedureAddress(LibHandle, 'AppCreate');
-    if Assigned(AppCreateProc) then
-    begin
-      App := AppCreateProc(AppInterface, AppParams, MainFrm.OnAppTerminate);
-    end;
-    
-    // App := TBeeApp.Create(AppInterface, AppParams, MainFrm.OnAppTerminate);
+
+    App := CreateObject(AppInterface, AppParams.Text);
+    App.OnTerminate := OnAppTerminate;
     AppTerminatedWithError := False;
     AppTerminated := False;
-    App.Suspended := False;
+    App.Resume;
   end;
 
   /// TMainFrm.OnAppTerminate

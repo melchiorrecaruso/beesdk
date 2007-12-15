@@ -39,11 +39,10 @@ uses
   {$ENDIF}
   Classes;
 
-// TAppItem class
+// TAppItem 
 
 type
-  TAppItem = class
-  public
+  TAppItemRec = packed record
     FileName: string;
     FilePath: string;
     FileType: string;
@@ -61,18 +60,21 @@ type
     FileIcon: integer;
   end;
 
-// TAppInterface class
+type
+  TAppItemPtr = ^TAppItemRec;
+
+// TAppInterface
 
 type
-  TAppInterface = class
-  public
-    cMsg:  string;
+  TAppInterface = packed record
+  // public
+    cMsg: string;
     cList: TList;
     cFileName: string;
     cFileSize: integer;
     cFileTime: integer;
     cPercentage: integer;
-  public
+  // public
     OnFatalError: TThreadMethod;
     OnOverWrite: TThreadMethod;
     OnRename: TThreadMethod;
@@ -85,7 +87,7 @@ type
     OnClear: TThreadMethod;
     OnKey: TThreadMethod;
   end;
-  
+
 // TApp class
 
 type
@@ -99,9 +101,8 @@ type
   public
     AppInterface: TAppInterface;
   public
-    constructor Create(aAppInterface: TAppInterface;
-      aAppParams: TStringList; aAppTerminate: TNotifyEvent);
-    procedure Syn(aMethod: TThreadMethod);
+    constructor Create(aAppInterface: TAppInterface; aAppParams: string);
+    procedure Sync(aMethod: TThreadMethod);
     destructor Destroy; override;
   end;
 
@@ -109,31 +110,28 @@ implementation
 
 // TApp class ...
 
-constructor TApp.Create(aAppInterface: TAppInterface;
-  aAppParams: TStringList; aAppTerminate: TNotifyEvent);
+constructor TApp.Create(aAppInterface: TAppInterface; aAppParams: string);
 begin
   inherited Create(True);
   FreeOnTerminate := True;
 
-  AppParams := aAppParams;
   AppInterface := aAppInterface;
-  if Assigned(aAppTerminate) then
-  begin
-    OnTerminate := aAppTerminate;
-  end;
+
+  AppParams := TStringList.Create;
+  AppParams.Text := aAppParams;
 end;
 
 destructor TApp.Destroy;
 begin
-  AppInterface := nil;
-  AppParams := nil;
+  // AppInterface := nil;
+  AppParams.Destroy;
   inherited Destroy;
 end;
 
-procedure TApp.Syn(aMethod: TThreadMethod);
+procedure TApp.Sync(aMethod: TThreadMethod);
 begin
   {$IFDEF THREADSYNCHRONIZER}
-    Synchronizer.Synchronize(aMethod);
+  Synchronizer.Synchronize(aMethod); 
   {$ELSE}
   inherited Synchronize(aMethod);
   {$ENDIF}
