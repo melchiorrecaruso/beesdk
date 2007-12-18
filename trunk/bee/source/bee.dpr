@@ -43,7 +43,7 @@ program Bee;
 
 uses
   {$IFDEF FPC} {$IFDEF UNIX}
-  cthreads,
+  cThreads,
   {$ENDIF} {$ENDIF}
   Classes,
   SysUtils,
