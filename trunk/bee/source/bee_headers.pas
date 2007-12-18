@@ -89,7 +89,7 @@ type
     Time: integer;
     Attr: integer;
     Crc:  cardinal;
-    PackedSize: integer;
+    Pack: integer;
     StartPos: integer;
     Name: string;
     // end file header
@@ -243,7 +243,7 @@ var
   J: integer;
 const
   sSecondPart = SizeOf(Size) + SizeOf(Time) + SizeOf(Attr) +
-    SizeOf(Crc) + SizeOf(PackedSize) + SizeOf(StartPos);
+    SizeOf(Crc) + SizeOf(Pack) + SizeOf(StartPos);
 begin
   Action := aAction;
   Option := '';
@@ -270,7 +270,7 @@ begin
   SetLength(Name, J);
   if Stream.Read(Name[1], J) <> J then Fail;
 
-  Bee_Common.DoDirSeparators(Name);
+  Name := Bee_Common.DoDirSeparators(Name);
 end;
 
 destructor THeader.Destroy;
@@ -286,7 +286,7 @@ var
   LFName: integer;
 const
   sSecondPart = SizeOf(Size) + SizeOf(Time) + SizeOf(Attr) +
-    SizeOf(Crc) + SizeOf(PackedSize) + SizeOf(StartPos);
+    SizeOf(Crc) + SizeOf(Pack) + SizeOf(StartPos);
 begin
   Stream.Write(Flags, SizeOf(Flags));
 
@@ -883,7 +883,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action = aAction then
     begin
-      Inc(Result, THeader(Items[I]).PackedSize);
+      Inc(Result, THeader(Items[I]).Pack);
     end;
 end;
 
@@ -907,7 +907,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action in Actions then
     begin
-      Inc(Result, THeader(Items[I]).PackedSize);
+      Inc(Result, THeader(Items[I]).Pack);
     end;
 end;
 
