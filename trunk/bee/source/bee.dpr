@@ -84,18 +84,17 @@ type
   var
     I: integer;
   begin
-    AppInterface := TAppInterface.Create;
-    AppInterface.OnFatalError := OnFatalError;
-    AppInterface.OnOverWrite := OnOverWrite;
-    AppInterface.OnWarning := OnWarning;
-    AppInterface.OnDisplay := OnDisplay;
-    AppInterface.OnRequest := OnRequest;
-    AppInterface.OnRename := OnRename;
-    AppInterface.OnClear := OnClear;
-    AppInterface.OnError := OnError;
-    AppInterface.OnList := OnList;
-    AppInterface.OnTick := OnTick;
-    AppInterface.OnKey := OnKey;
+    AppInterface.OnFatalError.Method := OnFatalError;
+    AppInterface.OnOverWrite.Method := OnOverWrite;
+    AppInterface.OnWarning.Method := OnWarning;
+    AppInterface.OnDisplay.Method := OnDisplay;
+    AppInterface.OnRequest.Method := OnRequest;
+    AppInterface.OnRename.Method := OnRename;
+    AppInterface.OnClear.Method := OnClear;
+    AppInterface.OnError.Method := OnError;
+    AppInterface.OnList.Method := OnList;
+    AppInterface.OnTick.Method := OnTick;
+    AppInterface.OnKey.Method := OnKey;
 
     AppKey := '';
     AppParams := TStringList.Create;
@@ -103,12 +102,11 @@ type
     begin
       AppParams.Add(ParamStr(I));
     end;
-    App := TBeeApp.Create(AppInterface, AppParams);
+    App := TBeeApp.Create(@AppInterface, AppParams.Text);
   end;
 
   destructor TConsole.Destroy;
   begin
-    AppInterface.Free;
     AppParams.Free;
     AppKey := '';
   end;
@@ -120,18 +118,18 @@ type
 
   procedure TConsole.OnFatalError;
   begin
-    Writeln(ParamToOem(AppInterface.cMsg));
+    Writeln(ParamToOem(AppInterface.OnFatalError.Data.Msg));
   end;
 
   procedure TConsole.OnOverWrite;
   begin
     Writeln;
-    Writeln('"' + ParamToOem(AppInterface.cFileName) + '" already exists.');
+    Writeln('"' + ParamToOem(AppInterface.OnOverWrite.Data.FileName) + '" already exists.');
     Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
-    Readln(AppInterface.cMsg);
+    Readln(AppInterface.OnOverWrite.Answer);
     Writeln;
     // convert oem to param
-    AppInterface.cMsg := UpperCase(OemToParam(AppInterface.cMsg));
+    AppInterface.OnOverWrite.Answer := UpCase(OemToParam(AppInterface.OnOverWrite.Answer)[1]);
   end;
 
   procedure TConsole.OnKey;
@@ -145,48 +143,48 @@ type
       // convert oem to param
       AppKey := OemToParam(AppKey);
     end;
-    AppInterface.cMsg := AppKey;
+    AppInterface.OnKey.Answer := AppKey;
   end;
 
   procedure TConsole.OnRename;
   begin
     Writeln;
-    Write('Rename file "' + ParamToOem(AppInterface.cFileName) + '" as (empty to skip):');
-    Readln(AppInterface.cMsg);
+    Write('Rename file "' + ParamToOem(AppInterface.OnRename.Data.FileName) + '" as (empty to skip):');
+    Readln(AppInterface.OnRename.Answer);
     Writeln;
     // convert oem to param
-    AppInterface.cMsg := OemToParam(AppInterface.cMsg);
+    AppInterface.OnRename.Answer := OemToParam(AppInterface.OnRename.Answer);
   end;
 
   procedure TConsole.OnWarning;
   begin
-    Writeln(ParamToOem(AppInterface.cMsg));
+    Writeln(ParamToOem(AppInterface.OnWarning.Data.Msg));
   end;
 
   procedure TConsole.OnDisplay;
   begin
-    Writeln(ParamToOem(AppInterface.cMsg));
+    Writeln(ParamToOem(AppInterface.OnDisplay.Data.Msg));
   end;
 
   procedure Tconsole.OnRequest;
   begin
-    Writeln(ParamToOem(AppInterface.cMsg));
+    Writeln(ParamToOem(AppInterface.OnRequest.Data.Msg));
   end;
 
   procedure TConsole.OnError;
   begin
-    Writeln(ParamToOem(AppInterface.cMsg));
+    Writeln(ParamToOem(AppInterface.OnError.Data.Msg));
   end;
 
   procedure TConsole.OnList;
   begin
-    AppInterface.cList := nil;
+    // nothing to do
   end;
 
   procedure TConsole.OnTick;
   begin
     // not convert oem to param
-    Write(#8#8#8#8#8#8#8 + Format('  (%d%%)', [AppInterface.cPercentage]));
+    Write(#8#8#8#8#8#8#8 + Format('  (%d%%)', [AppInterface.OnTick.Data.Percentage]));
   end;
 
   procedure TConsole.OnClear;

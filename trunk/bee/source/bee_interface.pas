@@ -187,7 +187,7 @@ type
     OnDisplay: TAppDisplayEvent;
     OnRequest: TAppRequestEvent;
     OnError: TAppErrorEvent;
-    OnListError: TAppListEvent;
+    OnList: TAppListEvent;
     OnTick: TAppTickEvent;
     OnClear: TAppClearEvent;
     OnKey: TAppKeyEvent;
