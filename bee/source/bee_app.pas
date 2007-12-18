@@ -50,7 +50,7 @@ uses
 type
   TBeeApp = class(TApp)
   public
-    constructor Create(aAppInterface: TAppInterface; aAppParams: string);
+    constructor Create(aAppInterface: TAppInterfacePtr; const aAppParams: string);
     destructor Destroy; override;
     procedure Execute; override;
     function Tick: boolean;
@@ -142,7 +142,7 @@ uses
 
 // TBeeApp ...
 
-constructor TBeeApp.Create(aAppInterface: TAppInterface; aAppParams: string);
+constructor TBeeApp.Create(aAppInterface: TAppInterfacePtr; const aAppParams: string);
 begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
@@ -193,49 +193,43 @@ end;
 
 procedure TBeeApp.DisplayUsage;
 begin
-  AppInterface.cMsg := (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := (Cr + '  Commands:' + Cr); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    a   Add files to archive'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    d   Delete files from archive'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    e   Extract files from archive'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    x   eXtract files from archive with path name'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    l   List archive'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    t   Test archive files'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    r   Rename files in archive'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := (Cr + '  Options:' + Cr); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    r       Recurse subdirectories'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    u       Update files'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    f       Freshen files'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    e       force file Extention'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    s       create Solid archive'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    a       add self-extrActor module'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    o<mode> set overwrite file Mode (Q-Query (default), A-All, S-Skip all)'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    m<0..3> set compression Method (0-store...1-default...3-maximal)'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    x       eXclude filenames'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    t       Test archive after process'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    l       List archive after process'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    y       set temporany directory'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    k       use blowfish crypter/decrypter (min key-length 4 bytes)'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    cd<dir> set current archive directory' + Cr); Sync(AppInterface.OnDisplay);
-
-  AppInterface.cMsg := ('    cfg<filename> use specified configuration file'); Sync(AppInterface.OnDisplay);
-  AppInterface.cMsg := ('    pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)'); Sync(AppInterface.OnDisplay);
-
-  AppInterface.cMsg := (Cr + '  Use BeeOpt to make most optimal parameters.'); Sync(AppInterface.OnDisplay);
+                                       AppInterface^.OnDisplay.Data.Msg := (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := (Cr + '  Commands:' + Cr);
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    a   Add files to archive');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    d   Delete files from archive');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    e   Extract files from archive');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    x   eXtract files from archive with path name');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    l   List archive');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    t   Test archive files');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    r   Rename files in archive');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := (Cr + '  Options:' + Cr);
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    r       Recurse subdirectories');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    u       Update files');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    f       Freshen files');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    e       force file Extention');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    s       create Solid archive');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    a       add self-extrActor module');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    o<mode> set overwrite file Mode (Q-Query (default), A-All, S-Skip all)');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr);
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    x       eXclude filenames');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    t       Test archive after process');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    l       List archive after process');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    y       set temporany directory');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    cd<dir> set current archive directory' + Cr);
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    cfg<filename> use specified configuration file');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := (Cr + '  Use BeeOpt to make most optimal parameters.');
+  Sync(AppInterface^.OnDisplay.Method);
 end;
 
 procedure TBeeApp.Execute;
 const
   SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
-
-  ShowMessage('Start');
-  AppInterface.cMsg := SelfName;
-  Sync(AppInterface.OnDisplay);
-
-  ShowMessage('End');
-
+  AppInterface^.OnDisplay.Data.Msg := SelfName;
+  Sync(AppInterface^.OnDisplay.Method);
   /// process command
   if ((Command in SetOfCommands) and (ArcName > '')) or (Command = '?') then
     case Command of
@@ -254,8 +248,8 @@ end;
 
 function TBeeApp.Tick: boolean;
 begin
-  AppInterface.cPercentage := MulDiv(RemainSize, 100, GeneralSize);
-  Sync(AppInterface.OnTick);
+  AppInterface^.OnTick.Data.Percentage := MulDiv(RemainSize, 100, GeneralSize);
+  Sync(AppInterface^.OnTick.Method);
   Result := Terminated;
 end;
 
@@ -296,13 +290,13 @@ begin
       Headers.ReadItems(ArcFile, aAction);
       if (Headers.Count = 0) and (ArcFile.Size <> 0) then
       begin
-        AppInterface.cMsg := ('Error: can''t open archive');
-        Sync(AppInterface.OnFatalError);
+        AppInterface^.OnFatalError.Data.Msg := ('Error: can''t open archive');
+        Sync(AppInterface^.OnFatalError.Method);
         Result := False;
       end;
     except
-      AppInterface.cMsg := ('Error: can''t open archive');
-      Sync(AppInterface.OnFatalError);
+      AppInterface^.OnFatalError.Data.Msg := ('Error: can''t open archive');
+      Sync(AppInterface^.OnFatalError.Method);
       Result := False;
     end;
   end;
@@ -334,9 +328,9 @@ begin
   // process configuration
   if not FileExists(CfgName) then
   begin
-    AppInterface.cMsg := (Cr + 'Configuration file '
+    AppInterface^.OnWarning.Data.Msg := (Cr + 'Configuration file '
       + CfgName + ' not found, using default settings' + Cr);
-    Sync(AppInterface.OnWarning);
+    Sync(AppInterface^.OnWarning.Method);
   end else
     Cfg.LoadFromFile(CfgName);
 
@@ -526,20 +520,22 @@ begin
   I := 0;
   while I < Headers.Count do
   begin
-    if (THeader(Headers.Items[I]).Action = toExtract) and (FileExists(THeader(Headers.Items[I]).Name) = True) then
+    if (THeader(Headers.Items[I]).Action = toExtract) and
+       (FileExists(THeader(Headers.Items[I]).Name) = True) then
     begin
       if (oOption in ['A', 'Q', 'S']) = False then
       begin
         repeat
-          AppInterface.cFileName := THeader(Headers.Items[I]).Name;
-          AppInterface.cFileSize := THeader(Headers.Items[I]).Size;
-          AppInterface.cFileTime := THeader(Headers.Items[I]).Time;
-          AppInterface.cMsg := 'A';
+          AppInterface^.OnOverWrite.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
+          AppInterface^.OnOverWrite.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
+          AppInterface^.OnOverWrite.Data.FileSize := THeader(Headers.Items[I]).Size;
+          AppInterface^.OnOverWrite.Data.FileTime := THeader(Headers.Items[I]).Time;
 
-          Sync(AppInterface.OnOverWrite);
-        until (Length(AppInterface.cMsg) = 1) and (AppInterface.cMsg[1] in ['A', 'N', 'R', 'S', 'Q', 'Y']);
+          AppInterface^.OnOverWrite.Answer := 'A';
+          Sync(AppInterface^.OnOverWrite.Method);
+        until AppInterface^.OnOverWrite.Answer in ['A', 'N', 'R', 'S', 'Q', 'Y'];
 
-        oOption := AppInterface.cMsg[1];
+        oOption := AppInterface^.OnOverWrite.Answer;
       end;
 
       case UpCase(oOption) of
@@ -548,18 +544,19 @@ begin
         'R': begin
                while True do
                begin
-                 AppInterface.cFileName := THeader(Headers.Items[I]).Name;
-                 AppInterface.cFileSize := THeader(Headers.Items[I]).Size;
-                 AppInterface.cFileTime := THeader(Headers.Items[I]).Time;
-                 AppInterface.cMsg := '';
+                 AppInterface^.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
+                 AppInterface^.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
+                 AppInterface^.OnRename.Data.FileSize := THeader(Headers.Items[I]).Size;
+                 AppInterface^.OnRename.Data.FileTime := THeader(Headers.Items[I]).Time;
 
-                 Sync(AppInterface.OnRename);
-
-                 NewFileName := Bee_Common.FixFileName(AppInterface.cMsg);
+                 AppInterface^.OnRename.Answer := '';
+                 Sync(AppInterface^.OnRename.Method);
+                 
+                 NewFileName := Bee_Common.FixFileName(AppInterface^.OnRename.Answer);
                  if (FileExists(NewFileName) = True) or (AlreadyFileExists(Headers, I, [toExtract], NewFileName) <> -1) then
                  begin
-                   AppInterface.cMsg := ('File "' + NewFileName + '" already exists!');
-                   Sync(AppInterface.OnWarning);
+                   AppInterface^.OnWarning.Data.Msg := ('File "' + NewFileName + '" already exists!');
+                   Sync(AppInterface^.OnWarning.Method);
                  end else
                    Break;
                end;

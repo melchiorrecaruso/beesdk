@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0543 - 2007.12.15 by Melchiorre Caruso.
+  v0.7.9 build 0553 - 2007.12.15 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -42,7 +42,8 @@ uses
   Bee_App,
   Bee_Codec,    // TSecondaryEncoder, TSecondaryDecoder...
   Bee_Headers,
-  Bee_Modeller; // TBaseCoder...
+  Bee_Modeller, // TBaseCoder...
+  Bee_Interface;
 
 // Extracting Modes:
 //   pmNorm  Extract files
@@ -125,14 +126,15 @@ end;
 
 function TEncoder.GetKey(Header: THeader): string;
 begin
-  App.AppInterface.cFileName := Header.Name;
-  App.AppInterface.cFileSize := Header.Size;
-  App.AppInterface.cFileTime := Header.Time;
+  App.AppInterface^.OnKey.Data.FileName := ExtractFileName(Header.Name);
+  App.AppInterface^.OnKey.Data.FilePath := ExtractFilePath(Header.Name);
+  App.AppInterface^.OnKey.Data.FileSize := Header.Size;
+  App.AppInterface^.OnKey.Data.FileTime := Header.Time;
 
-  App.Sync(App.AppInterface.OnKey);
-  Result := App.AppInterface.cMsg;
-
-  if Length(App.AppInterface.cMsg) < MinKeyLength then
+  App.Sync(App.AppInterface^.OnKey.Method);
+  Result := App.AppInterface^.OnKey.Answer;
+  
+  if Length(Result) < MinKeyLength then
   begin
     Exclude(Header.Flags, foPassword);
   end;
@@ -169,8 +171,8 @@ begin
   
     if Mode = emNorm then
     begin
-      App.AppInterface.cMsg := msgUpdating + Header.GetName;
-      App.Sync(App.AppInterface.OnDisplay);
+      App.AppInterface^.OnDisplay.Data.Msg := msgUpdating + Header.GetName;
+      App.Sync(App.AppInterface^.OnDisplay.Method);
     end;
 
     Header.Size := SrcFile.Size;
@@ -212,17 +214,17 @@ begin
     end;
     SrcFile.Free;
 
-    Header.PackedSize := Stream.Seek(0, 1) - Header.StartPos; // last stream flush
+    Header.Pack := Stream.Seek(0, 1) - Header.StartPos; // last stream flush
     TFileWriter(Stream).BlowFish.Finish; // finish after last stream flush
 
-    App.Sync(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface^.OnClear.Method);
   end else
   begin
-    App.AppInterface.cMsg := ('Error: can''t open file ' + Header.Name);
-    App.Sync(App.AppInterface.OnError);
+    App.AppInterface^.OnError.Data.Msg := ('Error: can''t open file ' + Header.Name);
+    App.Sync(App.AppInterface^.OnError.Method);
   end;
 
-  if (not (foMoved in Header.Flags)) and (Header.PackedSize >= Header.Size) then
+  if (not (foMoved in Header.Flags)) and (Header.Pack >= Header.Size) then
   begin
     Include(Header.Flags, foTear);
     Include(Header.Flags, foMoved);
@@ -260,8 +262,8 @@ begin
 
     if Mode = emNorm then
     begin
-      App.AppInterface.cMsg := msgEncoding + Header.Name;
-      App.Sync(App.AppInterface.OnDisplay);
+      App.AppInterface^.OnDisplay.Data.Msg := msgEncoding + Header.Name;
+      App.Sync(App.AppInterface^.OnDisplay.Method);
     end;
 
     SrcPosition := Header.StartPos;
@@ -273,7 +275,7 @@ begin
     if foPassword in Header.Flags then
     begin
       TFileReader(SrcFile).BlowFish.Start(GetKey(Header));
-      TFileWriter(Stream).BlowFish.Start(App.AppInterface.cMsg);
+      TFileWriter(Stream).BlowFish.Start(App.AppInterface^.OnKey.Answer);
     end;
 
     if foMoved in Header.Flags then
@@ -307,17 +309,17 @@ begin
     end;
     TFileReader(SrcFile).BlowFish.Finish;
 
-    Header.PackedSize := Stream.Seek(0, 1) - Header.StartPos; // last stream flush
+    Header.Pack := Stream.Seek(0, 1) - Header.StartPos; // last stream flush
     TFileWriter(Stream).BlowFish.Finish; // finish after last stream flush
 
-    App.Sync(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface^.OnClear.Method);
   end else
   begin
-    App.AppInterface.cMsg := ('Error: stream  not found');
-    App.Sync(App.AppInterface.OnError);
+    App.AppInterface^.OnError.Data.Msg := ('Error: stream  not found');
+    App.Sync(App.AppInterface^.OnError.Method);
   end;
 
-  if (not (foMoved in Header.Flags)) and (Header.PackedSize >= Header.Size) then
+  if (not (foMoved in Header.Flags)) and (Header.Pack >= Header.Size) then
   begin
     Include(Header.Flags, foTear);
     Include(Header.Flags, foMoved);
@@ -354,14 +356,14 @@ begin
 
     if Mode = emNorm then
     begin
-      App.AppInterface.cMsg := msgCopying + Header.Name;
-      App.Sync(App.AppInterface.OnDisplay);
+      App.AppInterface^.OnDisplay.Data.Msg := msgCopying + Header.Name;
+      App.Sync(App.AppInterface^.OnDisplay.Method);
     end;
 
     SrcFile.Seek(Header.StartPos, 0);
     Header.StartPos := Stream.Seek(0, 1);
 
-    for I := 1 to Header.PackedSize do
+    for I := 1 to Header.Pack do
     begin
       if App.RemainSize and $FFFF = 0 then
       begin
@@ -372,11 +374,11 @@ begin
       Stream.Write(Symbol, 1);
     end;
 
-    App.Sync(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface^.OnClear.Method);
   end else
   begin
-    App.AppInterface.cMsg := ('Error: stream  not found');
-    App.Sync(App.AppInterface.OnError);
+    App.AppInterface^.OnError.Data.Msg := ('Error: stream  not found');
+    App.Sync(App.AppInterface^.OnError.Method);
   end;
 
   Result := True;
@@ -400,12 +402,13 @@ end;
 
 function TDecoder.GetKey(Header: THeader): string;
 begin
-  App.AppInterface.cFileName := Header.Name;
-  App.AppInterface.cFileSize := Header.Size;
-  App.AppInterface.cFileTime := Header.Time;
+  App.AppInterface^.OnKey.Data.FileName := ExtractFileName(Header.Name);
+  App.AppInterface^.OnKey.Data.FilePath := ExtractFilePath(Header.Name);
+  App.AppInterface^.OnKey.Data.FileSize := Header.Size;
+  App.AppInterface^.OnKey.Data.FileTime := Header.Time;
 
-  App.Sync(App.AppInterface.OnKey);
-  Result := App.AppInterface.cMsg;
+  App.Sync(App.AppInterface^.OnKey.Method);
+  Result := App.AppInterface^.OnKey.Answer;
 end;
 
 function TDecoder.DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
@@ -426,16 +429,16 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.AppInterface.cMsg := msgSkipping   + Header.Name;
-    pmTest: App.AppInterface.cMsg := msgTesting    + Header.Name;
-    pmNorm: App.AppInterface.cMsg := msgExtracting + Header.Name;
+    pmSkip: App.AppInterface^.OnDisplay.Data.Msg := msgSkipping   + Header.Name;
+    pmTest: App.AppInterface^.OnDisplay.Data.Msg := msgTesting    + Header.Name;
+    pmNorm: App.AppInterface^.OnDisplay.Data.Msg := msgExtracting + Header.Name;
     pmQuit:
     begin
       Result := True;
       Exit;
     end;
   end;
-  App.Sync(App.AppInterface.OnDisplay);
+  App.Sync(App.AppInterface^.OnDisplay.Method);
 
   Stream.Seek(Header.StartPos, 0); // stream flush
   Crc := cardinal(-1);
@@ -498,17 +501,17 @@ begin
     if Mode = pmNorm then
       FileSetAttr(Header.Name, Header.Attr);
 
-    App.Sync(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface^.OnClear.Method);
   end;
 
   Result := Header.Crc = Crc;
   if Result = False then
   begin
     if Crc = cardinal(-1) then
-      App.AppInterface.cMsg := ('Error: can''t open file ' + Header.Name)
+      App.AppInterface^.OnError.Data.Msg := ('Error: can''t open file ' + Header.Name)
     else
-      App.AppInterface.cMsg := msgCRCERROR + Header.Name;
-    App.Sync(App.AppInterface.OnError);
+      App.AppInterface^.OnError.Data.Msg := msgCRCERROR + Header.Name;
+    App.Sync(App.AppInterface^.OnError.Method);
   end;
 end;
 
@@ -530,16 +533,16 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.AppInterface.cMsg := msgSkipping + Header.Name;
-    pmTest: App.AppInterface.cMsg := msgTesting  + Header.Name;
-    pmNorm: App.AppInterface.cMsg := msgDecoding + Header.Name;
+    pmSkip: App.AppInterface^.OnDisplay.Data.Msg := msgSkipping + Header.Name;
+    pmTest: App.AppInterface^.OnDisplay.Data.Msg := msgTesting  + Header.Name;
+    pmNorm: App.AppInterface^.OnDisplay.Data.Msg := msgDecoding + Header.Name;
     pmQuit:
     begin
       Result := True;
       Exit;
     end;
   end;
-  App.Sync(App.AppInterface.OnDisplay);
+  App.Sync(App.AppInterface^.OnDisplay.Method);
 
   Stream.Seek(Header.StartPos, 0);
   Crc := cardinal(-1);
@@ -560,7 +563,7 @@ begin
     if foPassword in Header.Flags then
     begin
       TFileReader(Stream).BlowFish.Start(GetKey(Header));
-      TFileWriter(DstFile).BlowFish.Start(App.AppInterface.cMsg);
+      TFileWriter(DstFile).BlowFish.Start(App.AppInterface^.OnKey.Answer);
     end;
 
     if foMoved in Header.Flags then
@@ -600,17 +603,17 @@ begin
     end;
     TFileWriter(DstFile).BlowFish.Finish; // finish after last stream flush
 
-    App.Sync(App.AppInterface.OnClear);
+    App.Sync(App.AppInterface^.OnClear.Method);
   end;
 
   Result := Header.Crc = Crc;
   if Result = False then
   begin
     if Crc = cardinal(-1) then
-      App.AppInterface.cMsg := ('Error: stream not found')
+      App.AppInterface^.OnError.Data.Msg := ('Error: stream not found')
     else
-      App.AppInterface.cMsg := msgCRCERROR + Header.Name;
-    App.Sync(App.AppInterface.OnError);
+      App.AppInterface^.OnError.Data.Msg := msgCRCERROR + Header.Name;
+    App.Sync(App.AppInterface^.OnError.Method);
   end;
 end;
 
