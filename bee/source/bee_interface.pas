@@ -166,7 +166,7 @@ type
   
   TAppClearEvent = packed record
     Method: TThreadMethod;
-    Data: TAppTickData;
+    Data: TAppClearData;
     Answer: string;
   end;
   
