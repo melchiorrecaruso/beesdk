@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0547 - 2007.12.18 by Melchiorre Caruso.
+  v0.7.9 build 0551 - 2007.12.18 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -147,7 +147,7 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0547 archiver utility, freeware version, Dec 2007.'
+  SelfName := 'The Bee 0.7.9 build 0551 archiver utility, freeware version, Dec 2007.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   ArcName  := '';
@@ -533,9 +533,9 @@ begin
 
           AppInterface^.OnOverWrite.Answer := 'A';
           Sync(AppInterface^.OnOverWrite.Method);
-        until AppInterface^.OnOverWrite.Answer in ['A', 'N', 'R', 'S', 'Q', 'Y'];
+        until UpCase(AppInterface^.OnOverWrite.Answer) in ['A', 'N', 'R', 'S', 'Q', 'Y'];
 
-        oOption := AppInterface^.OnOverWrite.Answer;
+        oOption := UpCase(AppInterface^.OnOverWrite.Answer);
       end;
 
       case UpCase(oOption) of
@@ -976,14 +976,13 @@ begin
 
         if not Terminated then
         begin
-          AppInterface^.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size)
-            + ' bytes - ' + Bee_Common.TimeDifference(Time) + ' seconds');
+          AppInterface^.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + Bee_Common.TimeDifference(Time) + ' seconds');
+          Sync(AppInterface^.OnDisplay.Method);
         end else
         begin
-          AppInterface^.OnDisplay.Data.Msg := (Cr + 'Process aborted - '
-            + Bee_Common.TimeDifference(Time) + ' seconds');
+          AppInterface^.OnError.Data.Msg := (Cr + 'Process aborted - ' + Bee_Common.TimeDifference(Time) + ' seconds');
+          Sync(AppInterface^.OnError.Method);
         end;
-        Sync(AppInterface^.OnDisplay.Method);
 
         if Assigned(SwapFile) then FreeAndNil(SwapFile);
         if Assigned(ArcFile)  then FreeAndNil(ArcFile);
@@ -1253,11 +1252,12 @@ begin
         begin
           while True do
           begin
-            AppInterface^.OnRename.Data.FileName := THeader(Headers.Items[I]).Name;
+            AppInterface^.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
+            AppInterface^.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
             AppInterface^.OnRename.Data.FileSize := THeader(Headers.Items[I]).Size;
             AppInterface^.OnRename.Data.FileTime := THeader(Headers.Items[I]).Time;
 
-            AppInterface^.OnRename.Answer := '';
+            SetLength(AppInterface^.OnRename.Answer, 0);
             Sync(AppInterface^.OnRename.Method);
 
             NewFileName := Bee_Common.FixFileName(AppInterface^.OnRename.Answer);
@@ -1269,7 +1269,9 @@ begin
               Break;
           end;
           if Length(NewFileName) > 0 then
+          begin
             THeader(Headers.Items[I]).Name := NewFileName;
+          end;
         end;
       end;
 
@@ -1354,8 +1356,7 @@ begin
 
     if (Info.GetNext(0, toList) > -1) then
     begin
-      AppInterface^.OnDisplay.Data.Msg := (Cr + 'Name' + StringOfChar(' ', 18)
-        + 'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
+      AppInterface^.OnDisplay.Data.Msg := (Cr + 'Name' + StringOfChar(' ', 18) + 'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
       Sync(AppInterface^.OnDisplay.Method);
 
       AppInterface^.OnDisplay.Data.Msg := StringOfChar('-', 79);
@@ -1432,21 +1433,18 @@ var
   P: THeader;
   I: integer;
   Info: THeaders;
-  Version, Method, Dictionary: integer;
-  Node: TAppItemPtr;
+  Dictionary: integer;
+  Version: integer;
+  Method: integer;
 begin
-  AppInterface.cMsg := (Cr + msgOpening + 'archive ' + ArcName);
-  Sync(AppInterface.OnDisplay);
+  AppInterface^.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  Sync(AppInterface^.OnDisplay.Method);
 
-  AppInterface.cList := nil;
-  Sync(AppInterface.OnList);
-  if Assigned(AppInterface.cList) then
+  Info := THeaders.Create;
+  if OpenArchive(Info, toNone) then
   begin
-    Info := THeaders.Create;
-    if OpenArchive(Info, toNone) then
-    begin
-      AppInterface.cMsg := (msgScanning + '...');
-      Sync(AppInterface.OnDisplay);
+    AppInterface^.OnDisplay.Data.Msg := (msgScanning + '...');
+    Sync(AppInterface.OnDisplay);
 
       Version := -1;
       Method  := -1;
@@ -1483,7 +1481,7 @@ begin
         Node^.FileAttr := P.Attr;
         Node^.FileTime := P.Time;
         Node^.FileComm := '';
-        Node^.FileCrc  := P.Crc;
+        Node^.FileCrc := P.Crc;
         Node^.FileMethod := MethodToStr(P, Method, Dictionary);
         Node^.FileVersion := VersionToStr(Version);
 

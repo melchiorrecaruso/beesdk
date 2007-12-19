@@ -34,7 +34,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-  v0.7.9 build 0543 - 2007.12.15 by Melchiorre Caruso.
+  v0.7.9 build 0551 - 2007.12.15 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -96,7 +96,7 @@ type
     AppInterface.OnTick.Method := OnTick;
     AppInterface.OnKey.Method := OnKey;
 
-    AppKey := '';
+    SetLength(AppKey, 0);
     AppParams := TStringList.Create;
     for I := 1 to ParamCount do
     begin
@@ -107,8 +107,8 @@ type
 
   destructor TConsole.Destroy;
   begin
-    AppParams.Free;
-    AppKey := '';
+    SetLength(AppKey, 0);
+    AppParams.Destroy;
   end;
 
   procedure TConsole.Execute;
@@ -124,12 +124,14 @@ type
   procedure TConsole.OnOverWrite;
   begin
     Writeln;
-    Writeln('"' + ParamToOem(AppInterface.OnOverWrite.Data.FileName) + '" already exists.');
+    with AppInterface.OnOverWrite.Data do
+    begin
+      Writeln('"' + ParamToOem(FilePath + FileName) + '" already exists.');
+    end;
     Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
+    // not convert oem to param
     Readln(AppInterface.OnOverWrite.Answer);
     Writeln;
-    // convert oem to param
-    AppInterface.OnOverWrite.Answer := UpCase(OemToParam(AppInterface.OnOverWrite.Answer)[1]);
   end;
 
   procedure TConsole.OnKey;
@@ -149,7 +151,10 @@ type
   procedure TConsole.OnRename;
   begin
     Writeln;
-    Write('Rename file "' + ParamToOem(AppInterface.OnRename.Data.FileName) + '" as (empty to skip):');
+    with AppInterface.OnRename.Data do
+    begin
+      Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
+    end;
     Readln(AppInterface.OnRename.Answer);
     Writeln;
     // convert oem to param
