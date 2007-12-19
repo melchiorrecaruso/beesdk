@@ -47,6 +47,7 @@ uses
   StdCtrls,
   ExtCtrls,
   LResources,
+  LibSyncMgr,
   XMLPropStorage,
   // --
   Bee_Interface,
@@ -303,7 +304,7 @@ type
   end;
   
 
-function CreateObject(aAppInterface: TAppInterfacePtr; const aAppParams: string): TApp; external 'beecore.dll';
+// function CreateObject(aAppInterface: TAppInterfacePtr; const aAppParams: string): TApp; external 'beecore.dll';
 
 var
   MainFrm: TMainFrm;
@@ -311,7 +312,7 @@ var
 implementation
 
 uses
-  dynlibs,
+  DynLibs,
 
   // ---
   BeeGui_SysUtils,
@@ -326,6 +327,10 @@ uses
   BeeGui_PasswordFrm,
   BeeGui_OverwriteFrm,
   BeeGui_IntViewerFrm;
+  
+type
+  TCreateObjectFunc = function (aAppInterface: TAppInterfacePtr; const aAppParams: string): TApp;
+
 
   // - Section ------------------------------------------------------------ //
   //                                                                        //
@@ -1686,9 +1691,9 @@ uses
   var
     f: TOverWriteFrm;
   begin
-    if App.Suspended = False then
+    //if App.Suspended = False then
     begin;
-      App.Suspended := True;
+      // App.Suspended := True;
       f := TOverWriteFrm.Create (Self);
       try
         f.OverWriteFrm_The.Caption     := f.OverWriteFrm_The    .Caption + ' "' + AppInterface.OnOverWrite.Data.FileName + '".';
@@ -1711,7 +1716,7 @@ uses
       finally
         f.Free;
       end;
-      App.Suspended := False;
+    //  App.Suspended := False;
     end;
   end;
   
@@ -1721,9 +1726,9 @@ uses
   var
     f: TRenameFrm;
   begin
-    if App.Suspended = False then
+    //if App.Suspended = False then
     begin;
-      App.Suspended := True;
+      // App.Suspended := True;
       if AppRenameFolder = False then
       begin
         f := TRenameFrm.Create(Self);
@@ -1743,7 +1748,7 @@ uses
         Delete(AppInterface.OnRename.Answer, 1, Length(AppRenameFolderFrom));
         AppInterface.OnRename.Answer := AppRenameFolderTo + AppInterface.OnRename.Answer;
       end;
-      App.Suspended := False;
+      //App.Suspended := False;
     end;
   end;
   
@@ -1779,8 +1784,7 @@ uses
   
   procedure TMainFrm.OnAppRequest;
   begin
-  
-  
+    ShowMessage(Appinterface.OnRequest.Data.Msg);
   end;
   
   /// TMainFrm.OnAppDisplay
@@ -1812,28 +1816,32 @@ uses
 
   procedure TMainFrm.OnAppList;
   begin
-    // da implementare
+    // ShowMessage(AppInterface.OnList.Data.FileName);
   end;
 
   /// TMainFrm.OnAppKey
 
   procedure TMainFrm.OnAppKey;
   begin
-    if App.Suspended = False then
+    // if App.Suspended = False then
     begin;
-      App.Suspended := True;
+      // App.Suspended := True;
       if Length(AppKey) = 0 then
       begin
         MainFrm_MainMenu_Options_PasswordClick(Self);
       end;
       AppInterface.OnKey.Answer := AppKey;
-      App.Suspended := False;
+      // App.Suspended := False;
     end;
   end;
 
   /// TMainFrm.AppCreate
 
   procedure TMainFrm.AppCreate(CreateLogFile: boolean);
+  var
+    CreateObject: TCreateObjectFunc;
+    LibSyncMgr: TLibSyncMgr;
+    LibHandle: TLibHandle;
   begin
     MainFrm_UpdateButtons(False);
     MainFrm_UpdateCursor(crHourGlass);
@@ -1843,11 +1851,19 @@ uses
       AppLogFile := TStringList.Create;
     end;
 
-    App := CreateObject(@AppInterface, AppParams.Text);
-    App.OnTerminate := OnAppTerminate;
-    AppTerminatedWithError := False;
-    AppTerminated := False;
-    App.Resume;
+    LibHandle := LoadLibrary('beecore.dll');
+    LibSyncMgr := TLibSyncMgr.Create(Self);
+    LibSyncMgr.LibHandle := LibHandle;
+
+    CreateObject := GetProcedureAddress(LibHandle, 'CreateObject');
+    if Assigned(CreateObject) then
+    begin
+      App := CreateObject(@AppInterface, AppParams.Text);
+      App.OnTerminate := OnAppTerminate;
+      AppTerminatedWithError := False;
+      AppTerminated := False;
+      App.Resume;
+    end;
   end;
 
   /// TMainFrm.OnAppTerminate

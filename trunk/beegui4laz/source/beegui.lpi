@@ -71,8 +71,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_mainfrm.lrs"/>
         <UnitName Value="BeeGui_MainFrm"/>
-        <CursorPos X="1" Y="306"/>
-        <TopLine Value="283"/>
+        <CursorPos X="1" Y="1861"/>
+        <TopLine Value="1846"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -1284,92 +1284,7 @@
         <UsageCount Value="10"/>
       </Unit172>
     </Units>
-    <JumpHistory Count="21" HistoryIndex="20">
-      <Position1>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="350" Column="8" TopLine="330"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="306" Column="10" TopLine="286"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="350" Column="5" TopLine="331"/>
-      </Position3>
-      <Position4>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="351" Column="13" TopLine="331"/>
-      </Position4>
-      <Position5>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="268" Column="26" TopLine="248"/>
-      </Position5>
-      <Position6>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1694" Column="121" TopLine="1674"/>
-      </Position6>
-      <Position7>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1698" Column="158" TopLine="1675"/>
-      </Position7>
-      <Position8>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1702" Column="83" TopLine="1681"/>
-      </Position8>
-      <Position9>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1709" Column="54" TopLine="1685"/>
-      </Position9>
-      <Position10>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1732" Column="55" TopLine="1714"/>
-      </Position10>
-      <Position11>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1736" Column="41" TopLine="1714"/>
-      </Position11>
-      <Position12>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1742" Column="76" TopLine="1717"/>
-      </Position12>
-      <Position13>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1744" Column="89" TopLine="1723"/>
-      </Position13>
-      <Position14>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1758" Column="51" TopLine="1738"/>
-      </Position14>
-      <Position15>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1771" Column="46" TopLine="1751"/>
-      </Position15>
-      <Position16>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1794" Column="72" TopLine="1774"/>
-      </Position16>
-      <Position17>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1801" Column="62" TopLine="1781"/>
-      </Position17>
-      <Position18>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1815" Column="23" TopLine="1795"/>
-      </Position18>
-      <Position19>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1829" Column="32" TopLine="1809"/>
-      </Position19>
-      <Position20>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="306" Column="4" TopLine="298"/>
-      </Position20>
-      <Position21>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1846" Column="5" TopLine="1826"/>
-      </Position21>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

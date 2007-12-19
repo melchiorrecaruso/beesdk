@@ -202,7 +202,7 @@ type
   {$IFDEF THREADSYNCHRONIZER}
   TApp = class(TThreadEx)
   {$ELSE}
-  TApp = class(TThread)
+  TApp = class(TThread) 
   {$ENDIF}
   protected
     AppParams: TStringList;
@@ -238,9 +238,9 @@ end;
 procedure TApp.Sync(aMethod: TThreadMethod);
 begin
   {$IFDEF THREADSYNCHRONIZER}
-  Synchronizer.Synchronize(aMethod); 
+  Synchronizer.Synchronize(aMethod);  
   {$ELSE}
-  inherited Synchronize(aMethod);
+  Synchronize(aMethod);
   {$ENDIF}
 end;
 
