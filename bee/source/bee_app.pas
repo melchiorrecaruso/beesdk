@@ -1444,7 +1444,7 @@ begin
   if OpenArchive(Info, toNone) then
   begin
     AppInterface^.OnDisplay.Data.Msg := (msgScanning + '...');
-    Sync(AppInterface^.OnDisplay.Method);
+    // Sync(AppInterface^.OnDisplay.Method);
 
     Version    := -1;
     Method     := -1;
@@ -1483,7 +1483,10 @@ begin
         AppInterface^.OnList.Data.FilePassword := 'No';
 
       AppInterface^.OnList.Data.FilePosition := I;
-      Sync(AppInterface^.OnList.Method);
+      // Sync(AppInterface^.OnList.Method);
+
+      AppInterface^.OnRequest.Data.Msg := 'Ok';
+      Sync(AppInterface^.OnRequest.Method);
     end;
     Info.Free;
 
