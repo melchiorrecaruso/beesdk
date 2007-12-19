@@ -303,7 +303,7 @@ type
   end;
   
 
-function CreateObject(aAppInterface: TAppInterface; aAppParams: string): TApp; external 'beecore.dll';
+function CreateObject(aAppInterface: TAppInterfacePtr; const aAppParams: string): TApp; external 'beecore.dll';
 
 var
   MainFrm: TMainFrm;
@@ -347,18 +347,18 @@ uses
     AppParams                := TStringList.Create;
     AppLogFile               := nil;
     // ---
-    // AppInterface              := TAppInterface.Create;
-    AppInterface.OnKey        := MainFrm.OnAppKey;
-    AppInterface.OnList       := MainFrm.OnAppList;
-    AppInterface.OnTick       := MainFrm.OnAppTick;
-    AppInterface.OnError      := MainFrm.OnAppError;
-    AppInterface.OnClear      := MainFrm.OnAppClear;
-    AppInterface.OnRename     := MainFrm.OnAppRename;
-    AppInterface.OnWarning    := MainFrm.OnAppWarning;
-    AppInterface.OnDisplay    := MainFrm.OnAppDisplay;
-    AppInterface.OnOverWrite  := MainFrm.OnAppOverWrite;
-    AppInterface.OnFatalError := MainFrm.OnAppFatalError;
-    AppInterface.OnRequest    := MainFrm.OnAppRequest;
+
+    AppInterface.OnKey.Method        := MainFrm.OnAppKey;
+    AppInterface.OnList.Method       := MainFrm.OnAppList;
+    AppInterface.OnTick.Method       := MainFrm.OnAppTick;
+    AppInterface.OnError.Method      := MainFrm.OnAppError;
+    AppInterface.OnClear.Method      := MainFrm.OnAppClear;
+    AppInterface.OnRename.Method     := MainFrm.OnAppRename;
+    AppInterface.OnWarning.Method    := MainFrm.OnAppWarning;
+    AppInterface.OnDisplay.Method    := MainFrm.OnAppDisplay;
+    AppInterface.OnOverWrite.Method  := MainFrm.OnAppOverWrite;
+    AppInterface.OnFatalError.Method := MainFrm.OnAppFatalError;
+    AppInterface.OnRequest.Method    := MainFrm.OnAppRequest;
 
     // ---
     MainFrm_SmallIconList.Initialize(ExtractFilePath(ParamStr(0)) + 'smallicons');
@@ -1691,22 +1691,22 @@ uses
       App.Suspended := True;
       f := TOverWriteFrm.Create (Self);
       try
-        f.OverWriteFrm_The.Caption     := f.OverWriteFrm_The    .Caption + ' "' + ExtractFileName(AppInterface.cFileName) + '".';
-        f.OverWriteFrm_NewSize.Caption := f.OverWriteFrm_NewSize.Caption + '  ' + IntToStr(AppInterface.cFileSize);
-        f.OverWriteFrm_NewDate.Caption := f.OverWriteFrm_NewDate.Caption + '  ' + DateTimeToStr(FileDateToDateTime(AppInterface.cFileTime));
-        f.OverWriteFrm_OldSize.Caption := f.OverWriteFrm_OldSize.Caption + '  ' + SizeToStr(SizeOfFile(AppInterface.cFileName));
-        f.OverWriteFrm_OldDate.Caption := f.OverWriteFrm_OldDate.Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileAge(AppInterface.cFileName)));
+        f.OverWriteFrm_The.Caption     := f.OverWriteFrm_The    .Caption + ' "' + AppInterface.OnOverWrite.Data.FileName + '".';
+        f.OverWriteFrm_NewSize.Caption := f.OverWriteFrm_NewSize.Caption + '  ' + IntToStr(AppInterface.OnOverWrite.Data.FileSize);
+        f.OverWriteFrm_NewDate.Caption := f.OverWriteFrm_NewDate.Caption + '  ' + DateTimeToStr(FileDateToDateTime(AppInterface.OnOverWrite.Data.FileTime));
+        f.OverWriteFrm_OldSize.Caption := f.OverWriteFrm_OldSize.Caption + '  ' + SizeToStr(SizeOfFile(AppInterface.OnOverWrite.Data.FileName));
+        f.OverWriteFrm_OldDate.Caption := f.OverWriteFrm_OldDate.Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileAge(AppInterface.OnOverWrite.Data.FileName)));
         with TIconList(MainFrm_LargeIconList) do
         begin
-          GetBitmap(GetIconIndex(ExtractFileExt(AppInterface.cFileName)), f.OverWriteFrm_OldImage.Picture.Bitmap);
-          GetBitmap(GetIconIndex(ExtractFileExt(AppInterface.cFileName)), f.OverWriteFrm_NewImage.Picture.Bitmap);
+          GetBitmap(GetIconIndex(ExtractFileExt(AppInterface.OnOverWrite.Data.FileName)), f.OverWriteFrm_OldImage.Picture.Bitmap);
+          GetBitmap(GetIconIndex(ExtractFileExt(AppInterface.OnOverWrite.Data.FileName)), f.OverWriteFrm_NewImage.Picture.Bitmap);
         end;
         case f.ShowModal of
-          mrAbort   : AppInterface.cMsg := 'Q';
-          mrNoToAll : AppInterface.cMsg := 'S';
-          mrYesToAll: AppInterface.cMsg := 'A';
-          mrNo      : AppInterface.cMsg := 'N';
-          mrYes     : AppInterface.cMsg := 'Y';
+          mrAbort   : AppInterface.OnOverWrite.Answer := 'Q';
+          mrNoToAll : AppInterface.OnOverWrite.Answer := 'S';
+          mrYesToAll: AppInterface.OnOverWrite.Answer := 'A';
+          mrNo      : AppInterface.OnOverWrite.Answer := 'N';
+          mrYes     : AppInterface.OnOverWrite.Answer := 'Y';
         end;
       finally
         f.Free;
@@ -1729,19 +1729,19 @@ uses
         f := TRenameFrm.Create(Self);
         try
           f.Caption := 'Rename file';
-          f.RenameFrm_To.Text := AppInterface.cFileName;
+          f.RenameFrm_To.Text := AppInterface.OnRename.Data.FilePath + AppInterface.OnRename.Data.FileName;
           if f.ShowModal = mrOk then
-            AppInterface.cMsg := f.RenameFrm_To.Text
+            AppInterface.OnRename.Answer := f.RenameFrm_To.Text
           else
-            AppInterface.cMsg := '';
+            AppInterface.OnRename.Answer := '';
         finally
           f.Free;
         end;
       end else
       begin
-        AppInterface.cMsg := AppInterface.cFileName;
-        Delete(AppInterface.cMsg, 1, Length(AppRenameFolderFrom));
-        AppInterface.cMsg := AppRenameFolderTo + AppInterface.cMsg;
+        AppInterface.OnRename.Answer := AppInterface.OnRename.Data.FilePath + AppInterface.OnRename.Data.FileName;
+        Delete(AppInterface.OnRename.Answer, 1, Length(AppRenameFolderFrom));
+        AppInterface.OnRename.Answer := AppRenameFolderTo + AppInterface.OnRename.Answer;
       end;
       App.Suspended := False;
     end;
@@ -1755,7 +1755,7 @@ uses
     begin
       AppLogFile := TStringList.Create;
     end;
-    AppLogFile.Add(AppInterface.cMsg);
+    AppLogFile.Add(AppInterface.OnWarning.Data.Msg);
   end;
 
   /// TMainFrm.OnAppError
@@ -1768,7 +1768,7 @@ uses
     begin
       AppLogFile := TStringList.Create;
     end;
-    AppLogFile.Add(AppInterface.cMsg);
+    AppLogFile.Add(AppInterface.OnError.Data.Msg);
   end;
   
   procedure TMainFrm.OnAppFatalError;
@@ -1789,16 +1789,16 @@ uses
   begin
     if Assigned(AppLogFile) then
     begin
-      AppLogFile.Add(AppInterface.cMsg);
+      AppLogFile.Add(AppInterface.OnDisplay.Data.Msg);
     end;
-    MainFrm_StatusBar.Panels[0].Text := AppInterface.cMsg;
+    MainFrm_StatusBar.Panels[0].Text := AppInterface.OnDisplay.Data.Msg;
   end;
 
   /// TMainFrm.OnAppTick
 
   procedure TMainFrm.OnAppTick;
   begin
-    MainFrm_ProgressBar.Position := AppInterface.cPercentage;
+    MainFrm_ProgressBar.Position := AppInterface.OnTick.Data.Percentage;
   end;
 
   /// TMainFrm.OnAppClear
@@ -1812,7 +1812,7 @@ uses
 
   procedure TMainFrm.OnAppList;
   begin
-    AppInterface.cList := MainFrm_ArchiveTreeView.ArchiveFiles;
+    // da implementare
   end;
 
   /// TMainFrm.OnAppKey
@@ -1826,7 +1826,7 @@ uses
       begin
         MainFrm_MainMenu_Options_PasswordClick(Self);
       end;
-      AppInterface.cMsg := AppKey;
+      AppInterface.OnKey.Answer := AppKey;
       App.Suspended := False;
     end;
   end;
@@ -1843,7 +1843,7 @@ uses
       AppLogFile := TStringList.Create;
     end;
 
-    App := CreateObject(AppInterface, AppParams.Text);
+    App := CreateObject(@AppInterface, AppParams.Text);
     App.OnTerminate := OnAppTerminate;
     AppTerminatedWithError := False;
     AppTerminated := False;

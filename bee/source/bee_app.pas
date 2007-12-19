@@ -1444,61 +1444,46 @@ begin
   if OpenArchive(Info, toNone) then
   begin
     AppInterface^.OnDisplay.Data.Msg := (msgScanning + '...');
-    Sync(AppInterface.OnDisplay);
+    Sync(AppInterface^.OnDisplay.Method);
 
-      Version := -1;
-      Method  := -1;
-      Dictionary := -1;
+    Version    := -1;
+    Method     := -1;
+    Dictionary := -1;
 
-      for I := 0 to Info.Count - 1 do
-      begin
-        AppInterface.cPercentage := MulDiv(I, 100, Info.Count);
-        Sync(AppInterface.OnTick);
+    for I := 0 to Info.Count - 1 do
+    begin
+      AppInterface^.OnTick.Data.Percentage := MulDiv(I, 100, Info.Count);
+      Sync(AppInterface^.OnTick.Method);
 
-        P := Info.Items[I];
+      P := Info.Items[I];
 
-        if foVersion in P.Flags then
-          Version := P.Version;
+      if foVersion in P.Flags then
+        Version := P.Version;
 
-        if foMethod in P.Flags then
-          Method := P.Method;
+      if foMethod in P.Flags then
+        Method := P.Method;
 
-        if foDictionary in P.Flags then
-          Dictionary := P.Dictionary;
+      if foDictionary in P.Flags then
+        Dictionary := P.Dictionary;
 
-        GetMem(Node, SizeOf(TAppItemRec));
+      AppInterface^.OnList.Data.FileName := ExtractFileName(P.Name);
+      AppInterface^.OnList.Data.FilePath := ExtractFilePath(P.Name);
+      AppInterface^.OnList.Data.FileSize := P.Size;
+      AppInterface^.OnList.Data.FilePack := P.Pack;
+      AppInterface^.OnList.Data.FileAttr := P.Attr;
+      AppInterface^.OnList.Data.FileTime := P.Time;
+      AppInterface^.OnList.Data.FileComm := '';
+      AppInterface^.OnList.Data.FileCrc := P.Crc;
+      AppInterface^.OnList.Data.FileMethod := MethodToStr(P, Method, Dictionary);
+      AppInterface^.OnList.Data.FileVersion := VersionToStr(Version);
 
-        Node^.FileName := ExtractFileName(P.Name);
-        Node^.FilePath := ExtractFilePath(P.Name);
-        Node^.FileSize := P.Size;
-        Node^.FilePacked := P.PackedSize;
+      if foPassword in P.Flags then
+        AppInterface^.OnList.Data.FilePassword := 'Yes'
+      else
+        AppInterface^.OnList.Data.FilePassword := 'No';
 
-        if Node^.FileSize = 0 then
-          Node^.FileRatio := 0
-        else
-          Node^.FileRatio := MulDiv(Node^.FilePacked, 100, Node^.FileSize);
-
-        Node^.FileAttr := P.Attr;
-        Node^.FileTime := P.Time;
-        Node^.FileComm := '';
-        Node^.FileCrc := P.Crc;
-        Node^.FileMethod := MethodToStr(P, Method, Dictionary);
-        Node^.FileVersion := VersionToStr(Version);
-
-        if foPassword in P.Flags then
-          Node^.FilePassword := 'Yes'
-        else
-          Node^.FilePassword := 'No';
-
-        Node^.FilePosition := I;
-        Node^.FileIcon := -1;
-
-        ShowMEssage('ok');
-
-        AppInterface.cList.Add(Node);
-
-        ShowMEssage('ok2');
-      end;
+      AppInterface^.OnList.Data.FilePosition := I;
+      Sync(AppInterface^.OnList.Method);
     end;
     Info.Free;
 
