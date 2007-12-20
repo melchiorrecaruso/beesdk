@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <PathDelim Value="\"/>
+    <Version Value="6"/>
+    <General>
+      <MainUnit Value="0"/>
+      <IconPath Value="./"/>
+      <TargetFileExt Value=".exe"/>
+      <ActiveEditorIndexAtStart Value="1"/>
+    </General>
+    <VersionInfo>
+      <ProjectVersion Value=""/>
+      <Language Value=""/>
+      <CharSet Value=""/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="1">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+    </RequiredPackages>
+    <Units Count="8">
+      <Unit0>
+        <Filename Value="zipapp.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <CursorPos X="20" Y="11"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="..\..\..\..\bee\source\bee_configuration.pas"/>
+        <UnitName Value="Bee_Configuration"/>
+        <CursorPos X="15" Y="66"/>
+        <TopLine Value="6"/>
+        <UsageCount Value="10"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\..\..\..\bee\source\bee_common.pas"/>
+        <UnitName Value="Bee_Common"/>
+        <CursorPos X="5" Y="49"/>
+        <TopLine Value="31"/>
+        <UsageCount Value="10"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\..\..\..\bee\source\bee_headers.pas"/>
+        <UnitName Value="Bee_Headers"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="26"/>
+        <UsageCount Value="10"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\..\..\..\bee\source\bee_assembler.pas"/>
+        <UnitName Value="Bee_Assembler"/>
+        <CursorPos X="1" Y="49"/>
+        <TopLine Value="26"/>
+        <UsageCount Value="10"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <UnitName Value="BeeGui_ZipApp"/>
+        <CursorPos X="47" Y="159"/>
+        <TopLine Value="133"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\..\..\..\bee\source\bee_app.pas"/>
+        <UnitName Value="Bee_App"/>
+        <CursorPos X="52" Y="225"/>
+        <TopLine Value="198"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\..\..\..\bee\source\compiler.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit7>
+    </Units>
+    <JumpHistory Count="15" HistoryIndex="14">
+      <Position1>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="25" Column="6" TopLine="1"/>
+      </Position1>
+      <Position2>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="117" Column="5" TopLine="85"/>
+      </Position2>
+      <Position3>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="115" Column="56" TopLine="93"/>
+      </Position3>
+      <Position4>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="1320" Column="5" TopLine="1276"/>
+      </Position4>
+      <Position5>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="1313" Column="17" TopLine="1276"/>
+      </Position5>
+      <Position6>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="25" Column="9" TopLine="11"/>
+      </Position6>
+      <Position7>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="128" Column="7" TopLine="111"/>
+      </Position7>
+      <Position8>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="199" Column="5" TopLine="176"/>
+      </Position8>
+      <Position9>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="417" Column="13" TopLine="324"/>
+      </Position9>
+      <Position10>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="579" Column="26" TopLine="556"/>
+      </Position10>
+      <Position11>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="583" Column="57" TopLine="560"/>
+      </Position11>
+      <Position12>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="1109" Column="35" TopLine="1086"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="1115" Column="34" TopLine="1092"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="1130" Column="37" TopLine="1107"/>
+      </Position14>
+      <Position15>
+        <Filename Value="..\beegui_zipapp.pas"/>
+        <Caret Line="1134" Column="34" TopLine="1111"/>
+      </Position15>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="5"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <IncludeFiles Value="..\;..\..\..\..\bee\source\;source\"/>
+      <OtherUnitFiles Value="..\;..\..\..\..\bee\source\;source\"/>
+      <UnitOutputDirectory Value="C:\working\beesdk\trunk\bee\temp"/>
+    </SearchPaths>
+    <Parsing>
+      <Style Value="1"/>
+      <SyntaxOptions>
+        <CStyleOperator Value="False"/>
+        <AllowLabel Value="False"/>
+        <CPPInline Value="False"/>
+        <DelphiCompat Value="True"/>
+        <UseAnsiStrings Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
+      <Generate Value="Smaller"/>
+      <Optimizations>
+        <VariablesInRegisters Value="True"/>
+        <UncertainOptimizations Value="True"/>
+        <OptimizationLevel Value="3"/>
+      </Optimizations>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
+    </Linking>
+    <Other>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="2">
+      <Item1>
+        <Name Value="ECodetoolError"/>
+      </Item1>
+      <Item2>
+        <Name Value="EFOpenError"/>
+      </Item2>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
