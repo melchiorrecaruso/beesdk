@@ -50,7 +50,7 @@ uses
 type
   TBeeApp = class(TApp)
   public
-    constructor Create(aAppInterface: TAppInterfacePtr; const aAppParams: string);
+    constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
     destructor Destroy; override;
     procedure Execute; override;
     function Tick: boolean;
@@ -142,7 +142,7 @@ uses
 
 // TBeeApp ...
 
-constructor TBeeApp.Create(aAppInterface: TAppInterfacePtr; const aAppParams: string);
+constructor TBeeApp.Create(aAppInterface: TAppInterface; aAppParams: TStringList);
 begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
@@ -193,43 +193,43 @@ end;
 
 procedure TBeeApp.DisplayUsage;
 begin
-                                       AppInterface^.OnDisplay.Data.Msg := (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := (Cr + '  Commands:' + Cr);
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    a   Add files to archive');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    d   Delete files from archive');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    e   Extract files from archive');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    x   eXtract files from archive with path name');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    l   List archive');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    t   Test archive files');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    r   Rename files in archive');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := (Cr + '  Options:' + Cr);
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    r       Recurse subdirectories');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    u       Update files');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    f       Freshen files');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    e       force file Extention');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    s       create Solid archive');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    a       add self-extrActor module');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    o<mode> set overwrite file Mode (Q-Query (default), A-All, S-Skip all)');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr);
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    x       eXclude filenames');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    t       Test archive after process');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    l       List archive after process');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    y       set temporany directory');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    cd<dir> set current archive directory' + Cr);
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    cfg<filename> use specified configuration file');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := ('    pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
-  Sync(AppInterface^.OnDisplay.Method); AppInterface^.OnDisplay.Data.Msg := (Cr + '  Use BeeOpt to make most optimal parameters.');
-  Sync(AppInterface^.OnDisplay.Method);
+                                        AppInterface.OnDisplay.Data.Msg := (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := (Cr + '  Commands:' + Cr);
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    a   Add files to archive');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    d   Delete files from archive');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    e   Extract files from archive');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    x   eXtract files from archive with path name');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    l   List archive');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    t   Test archive files');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    r   Rename files in archive');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := (Cr + '  Options:' + Cr);
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    r       Recurse subdirectories');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    u       Update files');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    f       Freshen files');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    e       force file Extention');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    s       create Solid archive');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    a       add self-extrActor module');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    o<mode> set overwrite file Mode (Q-Query (default), A-All, S-Skip all)');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr);
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    x       eXclude filenames');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    t       Test archive after process');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    l       List archive after process');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    y       set temporany directory');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    cd<dir> set current archive directory' + Cr);
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    cfg<filename> use specified configuration file');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  Sync(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := (Cr + '  Use BeeOpt to make most optimal parameters.');
+  Sync(AppInterface.OnDisplay.Method);
 end;
 
 procedure TBeeApp.Execute;
 const
   SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
-  AppInterface^.OnDisplay.Data.Msg := SelfName;
-  Sync(AppInterface^.OnDisplay.Method);
+  AppInterface.OnDisplay.Data.Msg := SelfName;
+  Sync(AppInterface.OnDisplay.Method);
   /// process command
   if ((Command in SetOfCommands) and (ArcName > '')) or (Command = '?') then
     case Command of
@@ -248,8 +248,8 @@ end;
 
 function TBeeApp.Tick: boolean;
 begin
-  AppInterface^.OnTick.Data.Percentage := MulDiv(RemainSize, 100, GeneralSize);
-  Sync(AppInterface^.OnTick.Method);
+  AppInterface.OnTick.Data.Percentage := MulDiv(RemainSize, 100, GeneralSize);
+  Sync(AppInterface.OnTick.Method);
   Result := Terminated;
 end;
 
@@ -290,13 +290,13 @@ begin
       Headers.ReadItems(ArcFile, aAction);
       if (Headers.Count = 0) and (ArcFile.Size <> 0) then
       begin
-        AppInterface^.OnFatalError.Data.Msg := ('Error: can''t open archive');
-        Sync(AppInterface^.OnFatalError.Method);
+        AppInterface.OnFatalError.Data.Msg := ('Error: can''t open archive');
+        Sync(AppInterface.OnFatalError.Method);
         Result := False;
       end;
     except
-      AppInterface^.OnFatalError.Data.Msg := ('Error: can''t open archive');
-      Sync(AppInterface^.OnFatalError.Method);
+      AppInterface.OnFatalError.Data.Msg := ('Error: can''t open archive');
+      Sync(AppInterface.OnFatalError.Method);
       Result := False;
     end;
   end;
@@ -328,9 +328,8 @@ begin
   // process configuration
   if not FileExists(CfgName) then
   begin
-    AppInterface^.OnWarning.Data.Msg := (Cr + 'Configuration file '
-      + CfgName + ' not found, using default settings' + Cr);
-    Sync(AppInterface^.OnWarning.Method);
+    AppInterface.OnWarning.Data.Msg := (Cr + 'Configuration file ' + CfgName + ' not found, using default settings' + Cr);
+    Sync(AppInterface.OnWarning.Method);
   end else
     Cfg.LoadFromFile(CfgName);
 
@@ -526,16 +525,16 @@ begin
       if (oOption in ['A', 'Q', 'S']) = False then
       begin
         repeat
-          AppInterface^.OnOverWrite.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
-          AppInterface^.OnOverWrite.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
-          AppInterface^.OnOverWrite.Data.FileSize := THeader(Headers.Items[I]).Size;
-          AppInterface^.OnOverWrite.Data.FileTime := THeader(Headers.Items[I]).Time;
+          AppInterface.OnOverWrite.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
+          AppInterface.OnOverWrite.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
+          AppInterface.OnOverWrite.Data.FileSize := THeader(Headers.Items[I]).Size;
+          AppInterface.OnOverWrite.Data.FileTime := THeader(Headers.Items[I]).Time;
 
-          AppInterface^.OnOverWrite.Answer := 'A';
-          Sync(AppInterface^.OnOverWrite.Method);
-        until UpCase(AppInterface^.OnOverWrite.Answer) in ['A', 'N', 'R', 'S', 'Q', 'Y'];
+          AppInterface.OnOverWrite.Answer := 'A';
+          Sync(AppInterface.OnOverWrite.Method);
+        until UpCase(AppInterface.OnOverWrite.Answer) in ['A', 'N', 'R', 'S', 'Q', 'Y'];
 
-        oOption := UpCase(AppInterface^.OnOverWrite.Answer);
+        oOption := UpCase(AppInterface.OnOverWrite.Answer);
       end;
 
       case UpCase(oOption) of
@@ -544,19 +543,19 @@ begin
         'R': begin
                while True do
                begin
-                 AppInterface^.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
-                 AppInterface^.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
-                 AppInterface^.OnRename.Data.FileSize := THeader(Headers.Items[I]).Size;
-                 AppInterface^.OnRename.Data.FileTime := THeader(Headers.Items[I]).Time;
+                 AppInterface.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
+                 AppInterface.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
+                 AppInterface.OnRename.Data.FileSize := THeader(Headers.Items[I]).Size;
+                 AppInterface.OnRename.Data.FileTime := THeader(Headers.Items[I]).Time;
 
-                 AppInterface^.OnRename.Answer := '';
-                 Sync(AppInterface^.OnRename.Method);
+                 AppInterface.OnRename.Answer := '';
+                 Sync(AppInterface.OnRename.Method);
                  
-                 NewFileName := Bee_Common.FixFileName(AppInterface^.OnRename.Answer);
+                 NewFileName := Bee_Common.FixFileName(AppInterface.OnRename.Answer);
                  if (FileExists(NewFileName) = True) or (AlreadyFileExists(Headers, I, [toExtract], NewFileName) <> -1) then
                  begin
-                   AppInterface^.OnWarning.Data.Msg := ('File "' + NewFileName + '" already exists!');
-                   Sync(AppInterface^.OnWarning.Method);
+                   AppInterface.OnWarning.Data.Msg := ('File "' + NewFileName + '" already exists!');
+                   Sync(AppInterface.OnWarning.Method);
                  end else
                    Break;
                end;
@@ -918,8 +917,8 @@ var
   Headers: THeaders;
   Time: double;
 begin
-  AppInterface^.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
-  Sync(AppInterface^.OnDisplay.Method);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  Sync(AppInterface.OnDisplay.Method);
 
   Headers := THeaders.Create;
   if OpenArchive(Headers, toCopy) then
@@ -929,8 +928,8 @@ begin
     Headers.uOption := uOption;
     Headers.xOption := xOption;
 
-    AppInterface^.OnDisplay.Data.Msg := (msgScanning + '...');
-    Sync(AppInterface^.OnDisplay.Method);
+    AppInterface.OnDisplay.Data.Msg := (msgScanning + '...');
+    Sync(AppInterface.OnDisplay.Method);
 
     // process FileMasks and xFileMasks
     Inc(GeneralSize, Headers.AddItems(FileMasks, rOption));
@@ -976,12 +975,12 @@ begin
 
         if not Terminated then
         begin
-          AppInterface^.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + Bee_Common.TimeDifference(Time) + ' seconds');
-          Sync(AppInterface^.OnDisplay.Method);
+          AppInterface.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + Bee_Common.TimeDifference(Time) + ' seconds');
+          Sync(AppInterface.OnDisplay.Method);
         end else
         begin
-          AppInterface^.OnError.Data.Msg := (Cr + 'Process aborted - ' + Bee_Common.TimeDifference(Time) + ' seconds');
-          Sync(AppInterface^.OnError.Method);
+          AppInterface.OnError.Data.Msg := (Cr + 'Process aborted - ' + Bee_Common.TimeDifference(Time) + ' seconds');
+          Sync(AppInterface.OnError.Method);
         end;
 
         if Assigned(SwapFile) then FreeAndNil(SwapFile);
@@ -994,8 +993,8 @@ begin
           SysUtils.DeleteFile(ArcName);
           if not RenameFile(TmpFileName, ArcName) then
           begin
-            AppInterface^.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + ArcName);
-            Sync(AppInterface^.OnError.Method);
+            AppInterface.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + ArcName);
+            Sync(AppInterface.OnError.Method);
           end else
           begin
             ProcesstOption; // process tOption
@@ -1013,14 +1012,14 @@ begin
         SysUtils.DeleteFile(SwapName);
         SysUtils.DeleteFile(TmpFileName);
 
-        AppInterface^.OnError.Data.Msg := ('Error: can''t decode solid sequences');
-        Sync(AppInterface^.OnError.Method);
+        AppInterface.OnError.Data.Msg := ('Error: can''t decode solid sequences');
+        Sync(AppInterface.OnError.Method);
       end;
 
     end else // if Headers.GetCount
     begin
-      AppInterface^.OnWarning.Data.Msg := ('Warning: no files to process');
-      Sync(AppInterface^.OnWarning.Method);
+      AppInterface.OnWarning.Data.Msg := ('Warning: no files to process');
+      Sync(AppInterface.OnWarning.Method);
     end;
   end;
   Headers.Free;
@@ -1036,14 +1035,14 @@ var
   Time: double;
   I: integer;
 begin
-  AppInterface^.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
-  Sync(AppInterface^.OnDisplay.Method);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  Sync(AppInterface.OnDisplay.Method);
 
   Headers := THeaders.Create;
   if OpenArchive(Headers, toNone) then
   begin
-    AppInterface^.OnDisplay.Data.Msg := (msgScanning + '...');
-    Sync(AppInterface^.OnDisplay.Method);
+    AppInterface.OnDisplay.Data.Msg := (msgScanning + '...');
+    Sync(AppInterface.OnDisplay.Method);
 
     Headers.MarkItems(FileMasks, toNone, Action);
     Headers.MarkItems(xOption, Action, toNone);
@@ -1079,23 +1078,23 @@ begin
       begin
         if Return = True then
         begin
-          AppInterface^.OnDisplay.Data.Msg := (Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
-          Sync(AppInterface^.OnDisplay.Method);
+          AppInterface.OnDisplay.Data.Msg := (Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
+          Sync(AppInterface.OnDisplay.Method);
         end else
         begin
-          AppInterface^.OnError.Data.Msg := (Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(Time) + ' seconds');
-          Sync(AppInterface^.OnError.Method);
+          AppInterface.OnError.Data.Msg := (Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(Time) + ' seconds');
+          Sync(AppInterface.OnError.Method);
         end
       end else
       begin
-        AppInterface^.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
-        Sync(AppInterface^.OnError.Method);
+        AppInterface.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
+        Sync(AppInterface.OnError.Method);
       end;
       
     end else // if Headers.GetNext
     begin
-      AppInterface^.OnWarning.Data.Msg := ('Warning: no files to decode');
-      Sync(AppInterface^.OnWarning.Method);
+      AppInterface.OnWarning.Data.Msg := ('Warning: no files to decode');
+      Sync(AppInterface.OnWarning.Method);
     end;
   end;
   Headers.Free;
@@ -1112,14 +1111,14 @@ var
   Headers: THeaders;
   Encoder: TEncoder;
 begin
-  AppInterface^.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
-  Sync(AppInterface^.OnDisplay.Method);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  Sync(AppInterface.OnDisplay.Method);
 
   Headers := THeaders.Create;
   if OpenArchive(Headers, toCopy) then
   begin
-    AppInterface^.OnDisplay.Data.Msg := (msgScanning + '...');
-    Sync(AppInterface^.OnDisplay.Method);
+    AppInterface.OnDisplay.Data.Msg := (msgScanning + '...');
+    Sync(AppInterface.OnDisplay.Method);
 
     Headers.MarkItems(FileMasks, toCopy, toDelete);
     Headers.MarkItems(xOption, toDelete, toCopy);
@@ -1154,8 +1153,8 @@ begin
               toCopy:   Encoder.CopyStrm(Headers.Items[I], emNorm, ArcFile);
               toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, SwapFile);
               toDelete: begin
-                          AppInterface^.OnDisplay.Data.Msg := (msgDeleting + THeader(Headers.Items[I]).Name);
-                          Sync(AppInterface^.OnDisplay.Method);
+                          AppInterface.OnDisplay.Data.Msg := (msgDeleting + THeader(Headers.Items[I]).Name);
+                          Sync(AppInterface.OnDisplay.Method);
                         end;
             end;
           end;
@@ -1164,12 +1163,12 @@ begin
 
         if not Terminated then
         begin
-          AppInterface^.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
-          Sync(AppInterface^.OnDisplay.Method);
+          AppInterface.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
+          Sync(AppInterface.OnDisplay.Method);
         end else
         begin
-          AppInterface^.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
-          Sync(AppInterface^.OnError.Method);
+          AppInterface.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
+          Sync(AppInterface.OnError.Method);
         end;
 
         if Assigned(SwapFile) then FreeAndNil(SwapFile);
@@ -1182,8 +1181,8 @@ begin
           SysUtils.DeleteFile(ArcName);
           if not RenameFile(TmpFileName, ArcName) then
           begin
-            AppInterface^.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + ArcName);
-            Sync(AppInterface^.OnError.Method);
+            AppInterface.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + ArcName);
+            Sync(AppInterface.OnError.Method);
           end else
           begin
             ProcesstOption; // process tOption
@@ -1201,14 +1200,14 @@ begin
         SysUtils.DeleteFile(SwapName);
         SysUtils.DeleteFile(TmpFileName);
 
-        AppInterface^.OnError.Data.Msg := ('Error: can''t decode solid sequences');
-        Sync(AppInterface^.OnError.Method);
+        AppInterface.OnError.Data.Msg := ('Error: can''t decode solid sequences');
+        Sync(AppInterface.OnError.Method);
       end;
 
     end else // if Headers.GetNext
     begin
-      AppInterface^.OnWarning.Data.Msg := ('Warning: no files to delete');
-      Sync(AppInterface^.OnWarning.Method);
+      AppInterface.OnWarning.Data.Msg := ('Warning: no files to delete');
+      Sync(AppInterface.OnWarning.Method);
     end;
   end;
   Headers.Free;
@@ -1226,14 +1225,14 @@ var
   Time: double;
   I: integer;
 begin
-  AppInterface^.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
-  Sync(AppInterface^.OnDisplay.Method);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  Sync(AppInterface.OnDisplay.Method);
 
   Headers := THeaders.Create;
   if OpenArchive(Headers, toCopy) then
   begin
-    AppInterface^.OnDisplay.Data.Msg := (msgScanning + '...');
-    Sync(AppInterface^.OnDisplay.Method);
+    AppInterface.OnDisplay.Data.Msg := (msgScanning + '...');
+    Sync(AppInterface.OnDisplay.Method);
 
     Headers.MarkItems(FileMasks, toCopy, toRename);
     Headers.MarkItems(xOption, toRename, toCopy);
@@ -1252,19 +1251,19 @@ begin
         begin
           while True do
           begin
-            AppInterface^.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
-            AppInterface^.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
-            AppInterface^.OnRename.Data.FileSize := THeader(Headers.Items[I]).Size;
-            AppInterface^.OnRename.Data.FileTime := THeader(Headers.Items[I]).Time;
+            AppInterface.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
+            AppInterface.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
+            AppInterface.OnRename.Data.FileSize := THeader(Headers.Items[I]).Size;
+            AppInterface.OnRename.Data.FileTime := THeader(Headers.Items[I]).Time;
 
-            SetLength(AppInterface^.OnRename.Answer, 0);
-            Sync(AppInterface^.OnRename.Method);
+            SetLength(AppInterface.OnRename.Answer, 0);
+            Sync(AppInterface.OnRename.Method);
 
-            NewFileName := Bee_Common.FixFileName(AppInterface^.OnRename.Answer);
+            NewFileName := Bee_Common.FixFileName(AppInterface.OnRename.Answer);
             if (AlreadyFileExists(Headers, I, [toCopy, toRename], NewFileName) <> -1) then
             begin
-              AppInterface^.OnWarning.Data.Msg := ('File "' + NewFileName + '" already existing in archive!');
-              Sync(AppInterface^.OnWarning.Method);
+              AppInterface.OnWarning.Data.Msg := ('File "' + NewFileName + '" already existing in archive!');
+              Sync(AppInterface.OnWarning.Method);
             end else
               Break;
           end;
@@ -1290,12 +1289,12 @@ begin
 
       if not Terminated then
       begin
-        AppInterface^.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
-        Sync(AppInterface^.OnDisplay.Method);
+        AppInterface.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
+        Sync(AppInterface.OnDisplay.Method);
       end else
       begin
-        AppInterface^.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
-        Sync(AppInterface^.OnError.Method);
+        AppInterface.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
+        Sync(AppInterface.OnError.Method);
       end;
 
       if Assigned(ArcFile) then FreeAndNil(ArcFile);
@@ -1306,8 +1305,8 @@ begin
         SysUtils.DeleteFile(ArcName);
         if not RenameFile(TmpFileName, ArcName) then
         begin
-          AppInterface^.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + ArcName);
-          Sync(AppInterface^.OnError.Method);
+          AppInterface.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + ArcName);
+          Sync(AppInterface.OnError.Method);
         end else
         begin
           ProcesstOption; // process tOption
@@ -1318,8 +1317,8 @@ begin
 
     end else // if Headers.GetNext
     begin
-      AppInterface^.OnWarning.Data.Msg := ('Warning: no files to rename');
-      Sync(AppInterface^.OnWarning.Method);
+      AppInterface.OnWarning.Data.Msg := ('Warning: no files to rename');
+      Sync(AppInterface.OnWarning.Method);
     end;
   end;
   Headers.Free;
@@ -1338,14 +1337,14 @@ var
   TotalPack, TotalSize: integer;
   CountFiles: integer;
 begin
-  AppInterface^.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
-  Sync(AppInterface^.OnDisplay.Method);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  Sync(AppInterface.OnDisplay.Method);
 
   Info := THeaders.Create;
   if OpenArchive(Info, toNone) then
   begin
-    AppInterface^.OnDisplay.Data.Msg := (msgScanning + '...');
-    Sync(AppInterface^.OnDisplay.Method);
+    AppInterface.OnDisplay.Data.Msg := (msgScanning + '...');
+    Sync(AppInterface.OnDisplay.Method);
 
     TotalSize  := 0;
     TotalPack  := 0;
@@ -1356,11 +1355,11 @@ begin
 
     if (Info.GetNext(0, toList) > -1) then
     begin
-      AppInterface^.OnDisplay.Data.Msg := (Cr + 'Name' + StringOfChar(' ', 18) + 'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
-      Sync(AppInterface^.OnDisplay.Method);
+      AppInterface.OnDisplay.Data.Msg := (Cr + 'Name' + StringOfChar(' ', 18) + 'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
+      Sync(AppInterface.OnDisplay.Method);
 
-      AppInterface^.OnDisplay.Data.Msg := StringOfChar('-', 79);
-      Sync(AppInterface^.OnDisplay.Method);
+      AppInterface.OnDisplay.Data.Msg := StringOfChar('-', 79);
+      Sync(AppInterface.OnDisplay.Method);
 
       for I := 0 to Info.Count - 1 do
         if THeader(Info.Items[I]).Action = toList then
@@ -1379,10 +1378,10 @@ begin
           if (Dictionary > -1) and (Dictionary < Info.Count) then
             Dictionary := THeader(Info.Items[Dictionary]).Dictionary;
 
-          AppInterface^.OnDisplay.Data.Msg := (P.Name);
-          Sync(AppInterface^.OnDisplay.Method);
+          AppInterface.OnDisplay.Data.Msg := (P.Name);
+          Sync(AppInterface.OnDisplay.Method);
 
-          AppInterface^.OnDisplay.Data.Msg := (StringOfChar(' ', 15)
+          AppInterface.OnDisplay.Data.Msg := (StringOfChar(' ', 15)
             + Format(' %10s %10s %5s %14s %6s %8.8x %4s',
             [SizeToStr(P.Size),
              SizeToStr(P.Pack),
@@ -1392,32 +1391,32 @@ begin
              P.Crc,
              MethodToStr(P, Method, Dictionary)]));
 
-          Sync(AppInterface^.OnDisplay.Method);
+          Sync(AppInterface.OnDisplay.Method);
 
           Inc(TotalSize, P.Size);
           Inc(TotalPack, P.Pack);
           Inc(CountFiles);
         end;
 
-      AppInterface^.OnDisplay.Data.Msg := StringOfChar('-', 79);
-      Sync(AppInterface^.OnDisplay.Method);
+      AppInterface.OnDisplay.Data.Msg := StringOfChar('-', 79);
+      Sync(AppInterface.OnDisplay.Method);
 
-      AppInterface^.OnDisplay.Data.Msg := (Format('%d files', [CountFiles]))
+      AppInterface.OnDisplay.Data.Msg := (Format('%d files', [CountFiles]))
         + StringOfChar(' ', 15 - Length((Format('%d files', [CountFiles]))))
         + (Format(' %10s %10s %5s' + Cr, [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)]));
-      Sync(AppInterface^.OnDisplay.Method);
+      Sync(AppInterface.OnDisplay.Method);
 
       // self-extractor module size
       if Info.GetSFXsize > 0 then
       begin
-        AppInterface^.OnDisplay.Data.Msg := ('Note: Bee Self-Extractor module founded' + Cr);
-        Sync(AppInterface^.OnDisplay.Method);
+        AppInterface.OnDisplay.Data.Msg := ('Note: Bee Self-Extractor module founded' + Cr);
+        Sync(AppInterface.OnDisplay.Method);
       end;
 
     end else
     begin
-      AppInterface^.OnWarning.Data.Msg := ('Warning: no files to list');
-      Sync(AppInterface^.OnWarning.Method);
+      AppInterface.OnWarning.Data.Msg := ('Warning: no files to list');
+      Sync(AppInterface.OnWarning.Method);
     end;
 
   end;

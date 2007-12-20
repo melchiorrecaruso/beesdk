@@ -179,7 +179,7 @@ type
 // TAppInterface record
   
 type
-  TAppInterface = packed record
+  TAppInterface = class
     OnFatalError: TAppFatalErrorEvent;
     OnOverWrite: TAppOverWriteEvent;
     OnRename: TAppRenameEvent;
@@ -192,9 +192,6 @@ type
     OnClear: TAppClearEvent;
     OnKey: TAppKeyEvent;
   end;
-  
-type
-  TAppInterfacePtr = ^TAppInterface;
 
 // TApp class
 
@@ -207,9 +204,9 @@ type
   protected
     AppParams: TStringList;
   public
-    AppInterface: TAppInterfacePtr;
+    AppInterface: TAppInterface;
   public
-    constructor Create(aAppInterface: TAppInterfacePtr; const aAppParams: string);
+    constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
     procedure Sync(aMethod: TThreadMethod);
     destructor Destroy; override;
   end;
@@ -218,20 +215,19 @@ implementation
 
 // TApp class
 
-constructor TApp.Create(aAppInterface: TAppInterfacePtr; const aAppParams: string);
+constructor TApp.Create(aAppInterface: TAppInterface; aAppParams: TStringList);
 begin
   inherited Create(True);
   FreeOnTerminate := True;
   // ---
   AppInterface := aAppInterface;
-  // ---
-  AppParams := TStringList.Create;
-  AppParams.Text := aAppParams;
+  AppParams := aAppParams;
 end;
 
 destructor TApp.Destroy;
 begin
-  AppParams.Destroy;
+  AppInterface := nil;
+  AppParams := nil;
   inherited Destroy;
 end;
 

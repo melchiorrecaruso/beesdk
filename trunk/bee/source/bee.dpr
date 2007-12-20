@@ -84,6 +84,7 @@ type
   var
     I: integer;
   begin
+    AppInterface := TAppInterface.Create;
     AppInterface.OnFatalError.Method := OnFatalError;
     AppInterface.OnOverWrite.Method := OnOverWrite;
     AppInterface.OnWarning.Method := OnWarning;
@@ -102,12 +103,13 @@ type
     begin
       AppParams.Add(ParamStr(I));
     end;
-    App := TBeeApp.Create(@AppInterface, AppParams.Text);
+    App := TBeeApp.Create(AppInterface, AppParams);
   end;
 
   destructor TConsole.Destroy;
   begin
     SetLength(AppKey, 0);
+    AppInterface.Destroy;
     AppParams.Destroy;
   end;
 
