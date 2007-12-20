@@ -43,15 +43,15 @@
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="BeeGui"/>
+        <MinVersion Major="1" Release="3" Build="1" Valid="True"/>
       </Item1>
       <Item2>
         <PackageName Value="FCL"/>
         <MinVersion Major="1" Valid="True"/>
       </Item2>
       <Item3>
-        <PackageName Value="BeeGui"/>
-        <MinVersion Major="1" Release="3" Build="1" Valid="True"/>
+        <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
     <Units Count="173">
