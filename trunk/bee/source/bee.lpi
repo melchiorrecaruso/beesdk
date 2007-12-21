@@ -31,7 +31,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
         <CursorPos X="52" Y="106"/>
-        <TopLine Value="82"/>
+        <TopLine Value="171"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="67"/>
         <Loaded Value="True"/>
@@ -40,7 +40,7 @@
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
         <CursorPos X="25" Y="1421"/>
-        <TopLine Value="44"/>
+        <TopLine Value="209"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
@@ -57,14 +57,83 @@
       <Unit3>
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="45" Y="162"/>
-        <TopLine Value="218"/>
+        <CursorPos X="3" Y="254"/>
+        <TopLine Value="188"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit3>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="17" HistoryIndex="16">
+      <Position1>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="112" Column="31" TopLine="83"/>
+      </Position1>
+      <Position2>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="130" Column="28" TopLine="102"/>
+      </Position2>
+      <Position3>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="44" Column="22" TopLine="25"/>
+      </Position3>
+      <Position4>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="45" Column="24" TopLine="25"/>
+      </Position4>
+      <Position5>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="49" Column="23" TopLine="29"/>
+      </Position5>
+      <Position6>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="56" Column="20" TopLine="36"/>
+      </Position6>
+      <Position7>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="63" Column="21" TopLine="43"/>
+      </Position7>
+      <Position8>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="67" Column="21" TopLine="47"/>
+      </Position8>
+      <Position9>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="71" Column="21" TopLine="51"/>
+      </Position9>
+      <Position10>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="75" Column="19" TopLine="55"/>
+      </Position10>
+      <Position11>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="79" Column="18" TopLine="59"/>
+      </Position11>
+      <Position12>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="94" Column="18" TopLine="74"/>
+      </Position12>
+      <Position13>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="98" Column="19" TopLine="78"/>
+      </Position13>
+      <Position14>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="102" Column="18" TopLine="82"/>
+      </Position14>
+      <Position15>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="112" Column="25" TopLine="92"/>
+      </Position15>
+      <Position16>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="118" Column="24" TopLine="98"/>
+      </Position16>
+      <Position17>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="124" Column="21" TopLine="104"/>
+      </Position17>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
@@ -85,7 +154,6 @@
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
       <Generate Value="Faster"/>
-      <TargetProcessor Value="1"/>
       <Optimizations>
         <VariablesInRegisters Value="True"/>
         <UncertainOptimizations Value="True"/>

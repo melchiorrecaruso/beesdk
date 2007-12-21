@@ -72,7 +72,7 @@ type
     Msg: string;
   end;
   
-  TAppErrorData = packed record
+  TAppErrorData = record
     Msg: string;
   end;
   
