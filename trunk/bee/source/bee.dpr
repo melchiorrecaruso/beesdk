@@ -104,7 +104,6 @@ type
       AppParams.Add(ParamStr(I));
     end;
     App := TBeeApp.Create(AppInterface, AppParams);
-    App.OnTerminate := nil;
   end;
 
   destructor TConsole.Destroy;
