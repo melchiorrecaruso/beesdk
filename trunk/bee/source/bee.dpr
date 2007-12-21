@@ -34,7 +34,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-  v0.7.9 build 0551 - 2007.12.15 by Melchiorre Caruso.
+  v0.7.9 build 0557 - 2007.12.21 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -47,7 +47,7 @@ uses
   {$ENDIF} {$ENDIF}
   Classes,
   SysUtils,
-
+  // ---
   Bee_App,
   Bee_Common,
   Bee_Interface;
@@ -84,6 +84,7 @@ type
   var
     I: integer;
   begin
+    inherited Create;
     AppInterface := TAppInterface.Create;
     AppInterface.OnFatalError.Method := OnFatalError;
     AppInterface.OnOverWrite.Method := OnOverWrite;
@@ -111,6 +112,7 @@ type
     SetLength(AppKey, 0);
     AppInterface.Destroy;
     AppParams.Destroy;
+    inherited Destroy;
   end;
 
   procedure TConsole.Execute;
