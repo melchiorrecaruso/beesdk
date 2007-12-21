@@ -18,6 +18,8 @@
 
 program BeeGui;
 
+{$I compiler.inc}
+
 uses
   {$IFDEF FPC} {$IFDEF UNIX}
   cthreads,

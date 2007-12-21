@@ -2,9 +2,9 @@
 
 LazarusResources.Add('TMainFrm','FORMDATA',[
   'TPF0'#8'TMainFrm'#7'MainFrm'#4'Left'#3'U'#1#6'Height'#3#254#1#3'Top'#3#163#0
-  +#5'Width'#3#250#2#18'HorzScrollBar.Page'#3#249#2#18'VertScrollBar.Page'#3#234
+  +#5'Width'#3#250#2#18'HorzScrollBar.Page'#3#249#2#18'VertScrollBar.Page'#3#253
   +#1#13'ActiveControl'#7#23'MainFrm_ArchiveTreeView'#7'Caption'#6#21'BeeGui BE'
-  +'TA - Welcome'#12'ClientHeight'#3#235#1#11'ClientWidth'#3#250#2#21'Constrain'
+  +'TA - Welcome'#12'ClientHeight'#3#254#1#11'ClientWidth'#3#250#2#21'Constrain'
   +'ts.MinHeight'#3#180#0#20'Constraints.MinWidth'#3#220#0#12'Font.CharSet'#7#12
   +'ANSI_CHARSET'#9'Icon.Data'#10#209#4#0#0#205#4#0#0'/* XPM */'#10'static char'
   +' *graphic[] = {'#10'"32 32 2 1",'#10'". c #FFFFFF",'#10'", c None",'#10'".,'
@@ -2798,15 +2798,15 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +#255#6'Layout'#7#10'blGlyphTop'#9'NumGlyphs'#2#2#7'Spacing'#2#1#11'Transpare'
   +'nt'#8#7'OnClick'#7#31'MainFrm_MainMenu_File_OpenClick'#10'ParentFont'#9#14
   +'ParentShowHint'#8#0#0#0#16'TArchiveTreeView'#23'MainFrm_ArchiveTreeView'#6
-  +'Height'#3#142#1#3'Top'#2'I'#5'Width'#3#250#2#5'Align'#7#8'alClient'#17'Bord'
+  +'Height'#3#161#1#3'Top'#2'I'#5'Width'#3#250#2#5'Align'#7#8'alClient'#17'Bord'
   +'erSpacing.Top'#2#5#15'BackgroundColor'#7#16'clInactiveBorder'#17'DefaultIte'
-  +'mHeight'#2#16#6'Images'#7#21'MainFrm_SmallIconList'#6'Indent'#2#24#9'PopupM'
+  +'mHeight'#2#18#6'Images'#7#21'MainFrm_SmallIconList'#6'Indent'#2#24#9'PopupM'
   +'enu'#7#17'MainFrm_PopupMenu'#10'ScrollBars'#7#10'ssAutoBoth'#8'TabOrder'#2#1
   +#8'ToolTips'#8#10'OnDblClick'#7'"MainFrm_MainMenu_Actions_ViewClick'#18'OnSe'
   +'lectionChanged'#7'''MainFrm_ArchiveTreeViewSelectionChanged'#7'Options'#11
   +#19'tvoAllowMultiselect'#17'tvoAutoItemHeight'#16'tvoHideSelection'#21'tvoKe'
   +'epCollapsedNodes'#14'tvoShowButtons'#12'tvoShowLines'#11'tvoShowRoot'#0#0#0
-  +#18'TStatusProgressBar'#17'MainFrm_StatusBar'#6'Height'#2#20#3'Top'#3#215#1#5
+  +#18'TStatusProgressBar'#17'MainFrm_StatusBar'#6'Height'#2#20#3'Top'#3#234#1#5
   +'Width'#3#250#2#6'Panels'#14#1#5'Width'#3#244#1#0#1#5'Bevel'#7#6'pbNone'#5'W'
   +'idth'#2'2'#0#0#11'SimplePanel'#8#11'ProgressBar'#7#19'MainFrm_ProgressBar'#0
   +#0#12'TProgressBar'#19'MainFrm_ProgressBar'#4'Left'#2#16#6'Height'#2#16#3'To'

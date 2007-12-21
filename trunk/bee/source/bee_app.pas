@@ -1434,14 +1434,14 @@ var
   Version: integer;
   Method: integer;
 begin
-  AppInterface^.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
-  Sync(AppInterface^.OnDisplay.Method);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  Sync(AppInterface.OnDisplay.Method);
 
   Info := THeaders.Create;
   if OpenArchive(Info, toNone) then
   begin
-    AppInterface^.OnDisplay.Data.Msg := (msgScanning + '...');
-    // Sync(AppInterface^.OnDisplay.Method);
+    AppInterface.OnDisplay.Data.Msg := (msgScanning + '...');
+    Sync(AppInterface.OnDisplay.Method);
 
     Version    := -1;
     Method     := -1;
@@ -1449,8 +1449,8 @@ begin
 
     for I := 0 to Info.Count - 1 do
     begin
-      AppInterface^.OnTick.Data.Percentage := MulDiv(I, 100, Info.Count);
-      Sync(AppInterface^.OnTick.Method);
+      AppInterface.OnTick.Data.Percentage := MulDiv(I, 100, Info.Count);
+      Sync(AppInterface.OnTick.Method);
 
       P := Info.Items[I];
 
@@ -1463,27 +1463,27 @@ begin
       if foDictionary in P.Flags then
         Dictionary := P.Dictionary;
 
-      AppInterface^.OnList.Data.FileName := ExtractFileName(P.Name);
-      AppInterface^.OnList.Data.FilePath := ExtractFilePath(P.Name);
-      AppInterface^.OnList.Data.FileSize := P.Size;
-      AppInterface^.OnList.Data.FilePack := P.Pack;
-      AppInterface^.OnList.Data.FileAttr := P.Attr;
-      AppInterface^.OnList.Data.FileTime := P.Time;
-      AppInterface^.OnList.Data.FileComm := '';
-      AppInterface^.OnList.Data.FileCrc := P.Crc;
-      AppInterface^.OnList.Data.FileMethod := MethodToStr(P, Method, Dictionary);
-      AppInterface^.OnList.Data.FileVersion := VersionToStr(Version);
+      AppInterface.OnList.Data.FileName := ExtractFileName(P.Name);
+      AppInterface.OnList.Data.FilePath := ExtractFilePath(P.Name);
+      AppInterface.OnList.Data.FileSize := P.Size;
+      AppInterface.OnList.Data.FilePack := P.Pack;
+      AppInterface.OnList.Data.FileAttr := P.Attr;
+      AppInterface.OnList.Data.FileTime := P.Time;
+      AppInterface.OnList.Data.FileComm := '';
+      AppInterface.OnList.Data.FileCrc := P.Crc;
+      AppInterface.OnList.Data.FileMethod := MethodToStr(P, Method, Dictionary);
+      AppInterface.OnList.Data.FileVersion := VersionToStr(Version);
 
       if foPassword in P.Flags then
-        AppInterface^.OnList.Data.FilePassword := 'Yes'
+        AppInterface.OnList.Data.FilePassword := 'Yes'
       else
-        AppInterface^.OnList.Data.FilePassword := 'No';
+        AppInterface.OnList.Data.FilePassword := 'No';
 
-      AppInterface^.OnList.Data.FilePosition := I;
-      // Sync(AppInterface^.OnList.Method);
+      AppInterface.OnList.Data.FilePosition := I;
+      Sync(AppInterface.OnList.Method);
 
-      AppInterface^.OnRequest.Data.Msg := 'Ok';
-      Sync(AppInterface^.OnRequest.Method);
+      AppInterface.OnRequest.Data.Msg := 'Ok';
+      Sync(AppInterface.OnRequest.Method);
     end;
     Info.Free;
 

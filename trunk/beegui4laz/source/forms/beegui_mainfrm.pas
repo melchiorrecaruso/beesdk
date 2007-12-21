@@ -32,6 +32,8 @@
 
 unit BeeGui_MainFrm;
 
+{$I compiler.inc}
+
 interface
 
 uses
@@ -47,9 +49,9 @@ uses
   StdCtrls,
   ExtCtrls,
   LResources,
-  LibSyncMgr,
   XMLPropStorage,
   // --
+  Bee_App,
   Bee_Interface,
   BeeGui_IconList,
   BeeGui_AppViewer,
@@ -302,9 +304,6 @@ type
     procedure MainFrm_UpdateCursor(Value: TCursor);
     procedure MainFrm_UpdateButtons(Value: boolean); overload;
   end;
-  
-
-// function CreateObject(aAppInterface: TAppInterfacePtr; const aAppParams: string): TApp; external 'beecore.dll';
 
 var
   MainFrm: TMainFrm;
@@ -312,9 +311,6 @@ var
 implementation
 
 uses
-  DynLibs,
-
-  // ---
   BeeGui_SysUtils,
   // ---
   BeeGui_AddFrm,
@@ -327,10 +323,6 @@ uses
   BeeGui_PasswordFrm,
   BeeGui_OverwriteFrm,
   BeeGui_IntViewerFrm;
-  
-type
-  TCreateObjectFunc = function (aAppInterface: TAppInterfacePtr; const aAppParams: string): TApp;
-
 
   // - Section ------------------------------------------------------------ //
   //                                                                        //
@@ -352,19 +344,18 @@ type
     AppParams                := TStringList.Create;
     AppLogFile               := nil;
     // ---
-
-    AppInterface.OnKey.Method        := MainFrm.OnAppKey;
-    AppInterface.OnList.Method       := MainFrm.OnAppList;
-    AppInterface.OnTick.Method       := MainFrm.OnAppTick;
-    AppInterface.OnError.Method      := MainFrm.OnAppError;
-    AppInterface.OnClear.Method      := MainFrm.OnAppClear;
-    AppInterface.OnRename.Method     := MainFrm.OnAppRename;
-    AppInterface.OnWarning.Method    := MainFrm.OnAppWarning;
-    AppInterface.OnDisplay.Method    := MainFrm.OnAppDisplay;
-    AppInterface.OnOverWrite.Method  := MainFrm.OnAppOverWrite;
-    AppInterface.OnFatalError.Method := MainFrm.OnAppFatalError;
-    AppInterface.OnRequest.Method    := MainFrm.OnAppRequest;
-
+    AppInterface := TAppInterface.Create;
+    AppInterface.OnFatalError.Method := OnAppFatalError;
+    AppInterface.OnOverWrite.Method := OnAppOverWrite;
+    AppInterface.OnWarning.Method := OnAppWarning;
+    AppInterface.OnDisplay.Method := OnAppDisplay;
+    AppInterface.OnRequest.Method := OnAppRequest;
+    AppInterface.OnRename.Method := OnAppRename;
+    AppInterface.OnClear.Method := OnAppClear;
+    AppInterface.OnError.Method := OnAppError;
+    AppInterface.OnList.Method := OnAppList;
+    AppInterface.OnTick.Method := OnAppTick;
+    AppInterface.OnKey.Method := OnAppKey;
     // ---
     MainFrm_SmallIconList.Initialize(ExtractFilePath(ParamStr(0)) + 'smallicons');
     MainFrm_LargeIconList.Initialize(ExtractFilePath(ParamStr(0)) + 'largeicons');
@@ -374,6 +365,8 @@ type
     begin
       MainFrm_Storage.FileName := CfgFolder + ('mainfrm.xml');
     end;
+    ShowMEssage('ok');
+
     {$I beegui_mainfrm.inc}
     MainFrm_Storage.Restore;
     // ---
@@ -385,7 +378,7 @@ type
   
   procedure TMainFrm.FormDestroy(Sender: TObject);
   begin
-    // ---
+    AppInterface.Destroy;
   end;
 
   /// TMainFrm.FormCloseQuery
@@ -1838,10 +1831,6 @@ type
   /// TMainFrm.AppCreate
 
   procedure TMainFrm.AppCreate(CreateLogFile: boolean);
-  var
-    CreateObject: TCreateObjectFunc;
-    LibSyncMgr: TLibSyncMgr;
-    LibHandle: TLibHandle;
   begin
     MainFrm_UpdateButtons(False);
     MainFrm_UpdateCursor(crHourGlass);
@@ -1851,19 +1840,11 @@ type
       AppLogFile := TStringList.Create;
     end;
 
-    LibHandle := LoadLibrary('beecore.dll');
-    LibSyncMgr := TLibSyncMgr.Create(Self);
-    LibSyncMgr.LibHandle := LibHandle;
-
-    CreateObject := GetProcedureAddress(LibHandle, 'CreateObject');
-    if Assigned(CreateObject) then
-    begin
-      App := CreateObject(@AppInterface, AppParams.Text);
-      App.OnTerminate := OnAppTerminate;
-      AppTerminatedWithError := False;
-      AppTerminated := False;
-      App.Resume;
-    end;
+    App := TBeeApp.Create(AppInterface, AppParams);
+    App.OnTerminate := OnAppTerminate;
+    AppTerminatedWithError := False;
+    AppTerminated := False;
+    App.Resume;
   end;
 
   /// TMainFrm.OnAppTerminate
