@@ -30,17 +30,17 @@
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <CursorPos X="25" Y="112"/>
-        <TopLine Value="80"/>
+        <CursorPos X="16" Y="119"/>
+        <TopLine Value="97"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="66"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="24" Y="1402"/>
-        <TopLine Value="1381"/>
+        <CursorPos X="25" Y="1421"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
@@ -48,7 +48,7 @@
       <Unit2>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <CursorPos X="30" Y="616"/>
+        <CursorPos X="36" Y="600"/>
         <TopLine Value="580"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="13"/>
@@ -57,8 +57,8 @@
       <Unit3>
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="20" Y="230"/>
-        <TopLine Value="203"/>
+        <CursorPos X="18" Y="228"/>
+        <TopLine Value="208"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -72,7 +72,28 @@
         <Loaded Value="True"/>
       </Unit4>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="5" HistoryIndex="4">
+      <Position1>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="157" Column="32" TopLine="1"/>
+      </Position1>
+      <Position2>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="184" Column="34" TopLine="172"/>
+      </Position2>
+      <Position3>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="107" Column="14" TopLine="96"/>
+      </Position3>
+      <Position4>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="228" Column="21" TopLine="200"/>
+      </Position4>
+      <Position5>
+        <Filename Value="bee.dpr"/>
+        <Caret Line="76" Column="22" TopLine="37"/>
+      </Position5>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

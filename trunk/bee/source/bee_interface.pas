@@ -42,33 +42,33 @@ uses
 // TAppEventData records
 
 type
-  TAppFatalErrorData = packed record
+  TAppFatalErrorData = record
     Msg: string;
   end;
 
-  TAppOverWriteData = packed record
+  TAppOverWriteData = record
     FileName: string;
     FilePath: string;
     FileTime: integer;
     FileSize: integer;
   end;
   
-  TAppRenameData = packed record
+  TAppRenameData = record
     FileName: string;
     FilePath: string;
     FileTime: integer;
     FileSize: integer;
   end;
   
-  TAppWarningData = packed record
+  TAppWarningData = record
     Msg: string;
   end;
   
-  TAppDisplayData = packed record
+  TAppDisplayData = record
     Msg: string;
   end;
   
-  TAppRequestData = packed record
+  TAppRequestData = record
     Msg: string;
   end;
   
@@ -76,7 +76,7 @@ type
     Msg: string;
   end;
   
-  TAppListData = packed record
+  TAppListData = record
     FileName: string;
     FilePath: string;
     FileSize: integer;
@@ -91,86 +91,85 @@ type
     FilePosition: integer;
   end;
   
-  TAppTickData = packed record
+  TAppTickData = record
     Percentage: integer;
   end;
   
-  TAppClearData = packed record
+  TAppClearData = record
     Msg: string;
   end;
   
-  TAppKeyData = packed record
+  TAppKeyData =  record
     FileName: string;
     FilePath: string;
     FileTime: integer;
     FileSize: integer;
   end;
   
-  
 // TAppEvent records
   
 type
-  TAppFatalErrorEvent = packed record
+  TAppFatalErrorEvent = record
     Method: TThreadMethod;
     Data: TAppFatalErrorData;
     Answer: string;
   end;
   
-  TAppOverWriteEvent = packed record
+  TAppOverWriteEvent = record
     Method: TThreadMethod;
     Data: TAppOverWriteData;
     Answer: char;
   end;
   
-  TAppRenameEvent = packed record
+  TAppRenameEvent = record
     Method: TThreadMethod;
     Data: TAppRenameData;
     Answer: string;
   end;
 
-  TAppWarningEvent = packed record
+  TAppWarningEvent = record
     Method: TThreadMethod;
     Data: TAppWarningData;
     Answer: string;
   end;
 
-  TAppDisplayEvent = packed record
+  TAppDisplayEvent = record
     Method: TThreadMethod;
     Data: TAppDisplayData;
     Answer: string;
   end;
   
-  TAppRequestEvent = packed record
+  TAppRequestEvent = record
     Method: TThreadMethod;
     Data: TAppRequestData;
     Answer: string;
   end;
   
-  TAppErrorEvent = packed record
+  TAppErrorEvent = record
     Method: TThreadMethod;
     Data: TAppErrorData;
     Answer: string;
   end;
   
-  TAppListEvent = packed record
+  TAppListEvent = record
     Method: TThreadMethod;
     Data: TAppListData;
     Answer: string;
   end;
   
-  TAppTickEvent = packed record
+  TAppTickEvent = record
     Method: TThreadMethod;
     Data: TAppTickData;
     Answer: string;
   end;
   
-  TAppClearEvent = packed record
+  TAppClearEvent = record
     Method: TThreadMethod;
     Data: TAppClearData;
     Answer: string;
   end;
   
-  TAppKeyEvent = packed record
+  TAppKeyEvent = record
     Method: TThreadMethod;
     Data: TAppKeyData;
     Answer: string;
@@ -180,6 +179,10 @@ type
   
 type
   TAppInterface = class
+  public
+    constructor Create;
+    destructor Destroy; override;
+  public
     OnFatalError: TAppFatalErrorEvent;
     OnOverWrite: TAppOverWriteEvent;
     OnRename: TAppRenameEvent;
@@ -213,6 +216,18 @@ type
 
 implementation
 
+// TAppInterface class
+
+constructor TAppInterface.Create;
+begin
+  inherited Create;
+end;
+
+destructor TAppInterface.Destroy;
+begin
+  inherited Destroy;
+end;
+
 // TApp class
 
 constructor TApp.Create(aAppInterface: TAppInterface; aAppParams: TStringList);
@@ -234,7 +249,7 @@ end;
 procedure TApp.Sync(aMethod: TThreadMethod);
 begin
   {$IFDEF THREADSYNCHRONIZER}
-  Synchronizer.Synchronize(aMethod);  
+  Synchronizer.Synchronize(aMethod);
   {$ELSE}
   Synchronize(aMethod);
   {$ENDIF}
