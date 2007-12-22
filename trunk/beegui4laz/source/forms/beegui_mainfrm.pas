@@ -365,8 +365,6 @@ uses
     begin
       MainFrm_Storage.FileName := CfgFolder + ('mainfrm.xml');
     end;
-    ShowMEssage('ok');
-
     {$I beegui_mainfrm.inc}
     MainFrm_Storage.Restore;
     // ---
@@ -1684,9 +1682,9 @@ uses
   var
     f: TOverWriteFrm;
   begin
-    //if App.Suspended = False then
+    if App.Suspended = False then
     begin;
-      // App.Suspended := True;
+      App.Suspended := True;
       f := TOverWriteFrm.Create (Self);
       try
         f.OverWriteFrm_The.Caption     := f.OverWriteFrm_The    .Caption + ' "' + AppInterface.OnOverWrite.Data.FileName + '".';
@@ -1709,7 +1707,7 @@ uses
       finally
         f.Free;
       end;
-    //  App.Suspended := False;
+      App.Suspended := False;
     end;
   end;
   
@@ -1719,9 +1717,9 @@ uses
   var
     f: TRenameFrm;
   begin
-    //if App.Suspended = False then
+    if App.Suspended = False then
     begin;
-      // App.Suspended := True;
+      App.Suspended := True;
       if AppRenameFolder = False then
       begin
         f := TRenameFrm.Create(Self);
@@ -1741,7 +1739,7 @@ uses
         Delete(AppInterface.OnRename.Answer, 1, Length(AppRenameFolderFrom));
         AppInterface.OnRename.Answer := AppRenameFolderTo + AppInterface.OnRename.Answer;
       end;
-      //App.Suspended := False;
+      App.Suspended := False;
     end;
   end;
   
@@ -1809,22 +1807,22 @@ uses
 
   procedure TMainFrm.OnAppList;
   begin
-    // ShowMessage(AppInterface.OnList.Data.FileName);
+    ShowMessage(AppInterface.OnList.Data.FileName);
   end;
 
   /// TMainFrm.OnAppKey
 
   procedure TMainFrm.OnAppKey;
   begin
-    // if App.Suspended = False then
+    if App.Suspended = False then
     begin;
-      // App.Suspended := True;
+      App.Suspended := True;
       if Length(AppKey) = 0 then
       begin
         MainFrm_MainMenu_Options_PasswordClick(Self);
       end;
       AppInterface.OnKey.Answer := AppKey;
-      // App.Suspended := False;
+      App.Suspended := False;
     end;
   end;
 
