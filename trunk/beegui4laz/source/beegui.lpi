@@ -11,7 +11,6 @@
       <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <i18n>
-      <EnableI18N Value="True"/>
       <OutDir Value="resources\po"/>
     </i18n>
     <VersionInfo>
@@ -43,15 +42,15 @@
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="BeeGui"/>
+        <MinVersion Major="1" Release="3" Build="1" Valid="True"/>
       </Item1>
       <Item2>
         <PackageName Value="FCL"/>
         <MinVersion Major="1" Valid="True"/>
       </Item2>
       <Item3>
-        <PackageName Value="BeeGui"/>
-        <MinVersion Major="1" Release="3" Build="1" Valid="True"/>
+        <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
     <Units Count="177">
@@ -60,7 +59,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
         <CursorPos X="3" Y="53"/>
-        <TopLine Value="42"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -71,8 +70,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_mainfrm.lrs"/>
         <UnitName Value="BeeGui_MainFrm"/>
-        <CursorPos X="36" Y="549"/>
-        <TopLine Value="539"/>
+        <CursorPos X="34" Y="30"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -424,10 +423,8 @@
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="17" Y="183"/>
-        <TopLine Value="18"/>
-        <EditorIndex Value="2"/>
+        <TopLine Value="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit44>
       <Unit45>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\objpas\classes\classesh.inc"/>

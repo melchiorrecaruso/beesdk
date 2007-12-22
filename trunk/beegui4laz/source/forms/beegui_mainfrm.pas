@@ -27,7 +27,7 @@
     v1.0.1 build 9160 - 2005.08.03 by Melchiorre Caruso;
     v1.0.2 build 0276 - 2006.01.05 by Melchiorre Caruso;
 
-    v1.0.3 build 0130 - 2006.12.28 by Melchiorre Caruso.
+    v1.0.3 build 0130 - 2006.12.18 by Melchiorre Caruso.
 }
 
 unit BeeGui_MainFrm;
