@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <i18n>
       <OutDir Value="resources\po"/>
@@ -59,7 +59,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
         <CursorPos X="3" Y="53"/>
-        <TopLine Value="1"/>
+        <TopLine Value="52"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -70,11 +70,9 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_mainfrm.lrs"/>
         <UnitName Value="BeeGui_MainFrm"/>
-        <CursorPos X="34" Y="30"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="1"/>
+        <CursorPos X="3" Y="1772"/>
+        <TopLine Value="1564"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\fileutil.pas"/>
@@ -408,8 +406,8 @@
       <Unit42>
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="1" Y="37"/>
-        <TopLine Value="1"/>
+        <CursorPos X="42" Y="1483"/>
+        <TopLine Value="1460"/>
         <UsageCount Value="11"/>
       </Unit42>
       <Unit43>
@@ -654,8 +652,8 @@
       <Unit78>
         <Filename Value="packages\beegui_archivetreeview.pas"/>
         <UnitName Value="BeeGui_ArchiveTreeView"/>
-        <CursorPos X="18" Y="33"/>
-        <TopLine Value="491"/>
+        <CursorPos X="29" Y="411"/>
+        <TopLine Value="393"/>
         <UsageCount Value="54"/>
       </Unit78>
       <Unit79>
@@ -984,7 +982,7 @@
         <UnitName Value="BeeGui_StatusBarProgressBar"/>
         <CursorPos X="35" Y="13"/>
         <TopLine Value="1"/>
-        <UsageCount Value="115"/>
+        <UsageCount Value="117"/>
       </Unit127>
       <Unit128>
         <Filename Value="packages\beegui_statusprogressbar.pas"/>
@@ -1145,9 +1143,9 @@
         <Filename Value="packages\beegui_archivelistview.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_ArchiveListView"/>
-        <CursorPos X="18" Y="30"/>
-        <TopLine Value="1"/>
-        <UsageCount Value="62"/>
+        <CursorPos X="15" Y="55"/>
+        <TopLine Value="26"/>
+        <UsageCount Value="64"/>
       </Unit152>
       <Unit153>
         <Filename Value="..\..\..\..\FreePascal.org\lazarus\lcl\widgetset\wsstdctrls.pp"/>

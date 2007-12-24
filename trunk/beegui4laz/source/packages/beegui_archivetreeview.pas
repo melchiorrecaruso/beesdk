@@ -403,9 +403,12 @@ uses
 
   function TArchiveTreeView.GetArchiveFiles: TArchiveList;
   begin
-    FArchiveFilesUpdate :=  True;
+    if FArchiveFilesUpdate = False then
+    begin
+      FArchiveFilesUpdate :=  True;
+      FArchiveFiles.Clear;
+    end;
     Result := FArchiveFiles;
-    Result.Clear;
   end;
   
   function TArchiveTreeView.AndString(const str1, str2: string): string;

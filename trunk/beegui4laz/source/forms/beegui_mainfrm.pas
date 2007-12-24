@@ -1770,12 +1770,11 @@ uses
   procedure TMainFrm.OnAppFatalError;
   begin
   
-  
   end;
   
   procedure TMainFrm.OnAppRequest;
   begin
-    ShowMessage(Appinterface.OnRequest.Data.Msg);
+
   end;
   
   /// TMainFrm.OnAppDisplay
@@ -1806,8 +1805,35 @@ uses
   /// TMainFrm.OnAppList
 
   procedure TMainFrm.OnAppList;
+  var
+    Item: TArchiveListItem;
   begin
-    ShowMessage(AppInterface.OnList.Data.FileName);
+    if App.Suspended = False then
+    begin;
+      App.Suspended := True;
+
+      Item := TArchiveListItem.Create;
+      Item.FileName      := AppInterface.OnList.Data.FileName;
+      Item.FilePath      := AppInterface.OnList.Data.FilePath;
+      // Item.FileType
+      Item.FileSize      := AppInterface.OnList.Data.FileSize;
+      Item.FilePacked    := AppInterface.OnList.Data.FilePack;
+
+      Item.FileRatio     := 0;
+    
+      Item.FileAttr      := AppInterface.OnList.Data.FileAttr;
+      Item.FileTime      := AppInterface.OnList.Data.FileTime;
+      Item.FileComm      := AppInterface.OnList.Data.FileComm;
+      Item.FileCrc       := AppInterface.OnList.Data.FileCrc;
+      Item.FileMethod    := AppInterface.OnList.Data.FileMethod;
+      Item.FileVersion   := AppInterface.OnList.Data.FileVersion;
+      Item.FilePassword  := AppInterface.OnList.Data.FilePassword;
+      Item.FilePosition  := AppInterface.OnList.Data.FilePosition;
+      // Item.FileIconIndex
+    
+      MainFrm_ArchiveTreeView.ArchiveFiles.Add(Item);
+      App.Suspended := False;
+    end;
   end;
 
   /// TMainFrm.OnAppKey

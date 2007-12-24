@@ -1,14 +1,11 @@
 object MainFrm: TMainFrm
-  Left = 341
   Height = 510
-  Top = 163
+  Top = 998
   Width = 762
   HorzScrollBar.Page = 761
-  VertScrollBar.Page = 509
+  VertScrollBar.Page = 490
   ActiveControl = MainFrm_ArchiveTreeView
   Caption = 'BeeGui BETA - Welcome'
-  ClientHeight = 510
-  ClientWidth = 762
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -2480,13 +2477,13 @@ object MainFrm: TMainFrm
     end
   end
   object MainFrm_ArchiveTreeView: TArchiveTreeView
-    Height = 417
+    Height = 398
     Top = 73
     Width = 762
     Align = alClient
     BorderSpacing.Top = 5
     BackgroundColor = clInactiveBorder
-    DefaultItemHeight = 18
+    DefaultItemHeight = 16
     Images = MainFrm_SmallIconList
     Indent = 24
     PopupMenu = MainFrm_PopupMenu
@@ -2499,7 +2496,7 @@ object MainFrm: TMainFrm
   end
   object MainFrm_StatusBar: TStatusProgressBar
     Height = 20
-    Top = 490
+    Top = 471
     Width = 762
     Panels = <    
       item

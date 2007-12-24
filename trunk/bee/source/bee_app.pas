@@ -1481,9 +1481,6 @@ begin
 
       AppInterface.OnList.Data.FilePosition := I;
       Sync(AppInterface.OnList.Method);
-
-      AppInterface.OnRequest.Data.Msg := 'Ok';
-      Sync(AppInterface.OnRequest.Method);
     end;
     Info.Free;
 
