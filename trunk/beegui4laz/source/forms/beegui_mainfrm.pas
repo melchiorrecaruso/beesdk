@@ -57,7 +57,7 @@ uses
   BeeGui_AppViewer,
   BeeGui_AddTreeView,
   BeeGui_ArchiveTreeView,
-  BeeGui_StatusProgressBar;
+  BeeGui_StatusProgressBar, BeeGui_ArchiveListView;
 
 type
   TTerminateWith = (twNone, twNewArc, twCheckOut,
@@ -1832,6 +1832,8 @@ uses
       // Item.FileIconIndex
     
       MainFrm_ArchiveTreeView.ArchiveFiles.Add(Item);
+      // MainFrm_ArchiveListView.Files.Add(Item);
+
       App.Suspended := False;
     end;
   end;
@@ -1880,7 +1882,11 @@ uses
       AppTerminated := True;
       // ---
       MainFrm_ProgressBar.Position := 0;
+
       MainFrm_ArchiveTreeView.Initialize;
+      // MainFrm_ArchiveListView.Init;
+      
+      
       if (AppTerminateWith <> twViewExt) then
       begin
         MainFrm_UpdateButtons(True);

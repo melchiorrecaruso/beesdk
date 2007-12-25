@@ -39,64 +39,21 @@ uses
   SysUtils,
   Controls,
   ComCtrls,
+  LResources,
   // ---
   Bee_Common,
-  BeeGui_IconList;
-
-{ TArchiveListItem }
-
-type
-  TArchiveListItem = class
-  public
-    FileName: string;
-    FilePath: string;
-    FileType: string;
-    FileSize: integer;
-    FilePacked: integer;
-    FileRatio: integer;
-    FileAttr: integer;
-    FileTime: integer;
-    FileComm: string;
-    FileCrc:  cardinal;
-    FileMethod: string;
-    FileVersion: string;
-    FilePassword: string;
-    FilePosition: integer;
-    FileIcon: integer;
-  end;
-
-  { TArchiveList }
-
-  TArchiveList = class(TList)
-  public
-    procedure Clear; override;
-    destructor Destroy; override;
-    function IndexOf(const Path: string; const Name: string): integer;
-  end;
-
-  { TArchiveListDetails }
-
-  TArchiveListDetails = class
-  public
-    FilesCount: integer;
-    FilesSize: integer;
-    FilesPacked: integer;
-    FilesCrypted: integer;
-    DirectoriesCount: integer;
-    Version: extended;
-    LastTime: integer;
-  public
-    procedure Clear;
-    procedure Update(Item: TArchiveListItem);
-  end;
+  BeeGui_IconList,
+  BeeGui_ArchiveTreeView;
 
   { TArchiveListColumns }
-
+  
+type
   TArchiveListColumns = (csName, csSize, csPacked, csRatio, csType, csTime,
     csAttr, csMethod, csPassword, csCrc, csPath, csPosition);
 
   { TArchiveListManager }
-
+  
+type
   TArchiveListView = class(TListView)
   private
     FCurrFiles: TList;
@@ -146,6 +103,10 @@ type
     property DirectionSort: boolean Read FDirectionSort Write FDirectionSort default True;
     property ListMode: boolean Read FListMode Write SetListMode default False;
   end;
+  
+ { Register }
+  
+  procedure Register;
 
 implementation
 
@@ -153,76 +114,6 @@ uses
   Graphics,
   // ---
   BeeGui_SysUtils;
-
-{ TArchiveList }
-
-destructor TArchiveList.Destroy;
-begin
-  Clear;
-  inherited Destroy;
-end;
-
-procedure TArchiveList.Clear;
-var
-  I: integer;
-begin
-  for I := Count - 1 downto 0 do
-  begin
-    TArchiveListItem(Items[I]).Free;
-  end;
-  inherited Clear;
-end;
-
-function TArchiveList.IndexOf(const Path: string; const Name: string): integer;
-var
-  I: integer;
-begin
-  Result := -1;
-  for I := 0 to Count - 1 do
-  begin
-    if AnsiCompareFileName(TArchiveListItem(Items[I]).FileName, Name) = 0 then
-    begin
-      if AnsiCompareFileName(TArchiveListItem(Items[I]).FilePath, Path) = 0 then
-      begin
-        Result := I;
-        Break;
-      end;
-    end;
-  end;
-end;
-
-{ TArchiveListDetails }
-
-procedure TArchiveListDetails.Clear;
-begin
-  FilesCount := 0;
-  FilesSize := 0;
-  FilesPacked := 0;
-  FilesCrypted := 0;
-  DirectoriesCount := 0;
-  Version  := 0;
-  LastTime := 0;
-end;
-
-procedure TArchiveListDetails.Update(Item: TArchiveListItem);
-begin
-  if (Item.FileAttr and faDirectory) = 0 then
-  begin
-    Inc(FilesCount);
-    Inc(FilesSize, Item.FileSize);
-    Inc(FilesPacked, Item.FilePacked);
-    if CompareText(Item.FilePassword, 'Yes') = 0 then
-      Inc(FilesCrypted);
-    LastTime := Max(LastTime, Item.FileTime);
-    try
-      // Version := Max(Version, StrToCurr(Item.FileVersion));
-    except
-      Version := 0;
-    end;
-  end
-  else
-    Inc(DirectoriesCount);
-end;
 
 // TArchiveListView
 
@@ -593,7 +484,7 @@ procedure TArchiveListView.GetImageIndex(Sender: TObject; Item: TListItem);
 begin
   if Assigned(Item) then
   begin
-    Item.ImageIndex := TArchiveListItem(FCurrFiles.Items[Item.Index]).FileIcon;
+    Item.ImageIndex := TArchiveListItem(FCurrFiles.Items[Item.Index]).FileIconIndex;
   end;
 end;
 
@@ -617,7 +508,11 @@ begin
         Item.SubItems.Add(AttrToStr(FileAttr));                //  6 Attr
         Item.SubItems.Add(FileMethod);                         //  7 Method
         Item.SubItems.Add(FilePassword);                       //  8 Password
-        Item.SubItems.Add(HexToStr(FileCRC, SizeOf(FileCRC))); //  9 CRC
+
+        Item.SubItems.Add(IntToStr(FileCRC));
+        // Item.SubItems.Add(HexToStr(FileCRC, SizeOf(FileCRC))); //  9 CRC
+
+
         Item.SubItems.Add(FilePath);                           // 10 Path
         Item.SubItems.Add(IntToStr(FilePosition));             // 11 Position
       end else
@@ -637,6 +532,13 @@ begin
     end;
   end;
 end;
+
+  { Register }
+
+  procedure Register;
+  begin
+    RegisterComponents('BeeGui', [TArchiveListView]);
+  end;
 
 initialization
 

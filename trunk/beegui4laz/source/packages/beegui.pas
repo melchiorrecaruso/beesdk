@@ -8,8 +8,8 @@ interface
 
 uses
   BeeGui_AddTreeView, BeeGui_ArchiveTreeView, BeeGui_FolderTreeView, 
-    BeeGui_StatusProgressBar, BeeGui_IconList, BeeGui_AppViewer, 
-    BeeGui_SysUtils, LazarusPackageIntf; 
+    BeeGui_ArchiveListView, BeeGui_StatusProgressBar, BeeGui_IconList, 
+    BeeGui_AppViewer, BeeGui_SysUtils, LazarusPackageIntf; 
 
 implementation
 
@@ -18,6 +18,7 @@ begin
   RegisterUnit('BeeGui_AddTreeView', @BeeGui_AddTreeView.Register); 
   RegisterUnit('BeeGui_ArchiveTreeView', @BeeGui_ArchiveTreeView.Register); 
   RegisterUnit('BeeGui_FolderTreeView', @BeeGui_FolderTreeView.Register); 
+  RegisterUnit('BeeGui_ArchiveListView', @BeeGui_ArchiveListView.Register); 
   RegisterUnit('BeeGui_StatusProgressBar', @BeeGui_StatusProgressBar.Register); 
   RegisterUnit('BeeGui_IconList', @BeeGui_IconList.Register); 
 end; 
