@@ -1,0 +1,211 @@
+object ExtractFrm: TExtractFrm
+  Left = 363
+  Height = 430
+  Top = 201
+  Width = 560
+  HorzScrollBar.Page = 559
+  VertScrollBar.Page = 429
+  Caption = 'Extraction Path and Options'
+  ClientHeight = 430
+  ClientWidth = 560
+  Constraints.MinHeight = 430
+  Constraints.MinWidth = 560
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Icon.Data = {
+    FE0200000000010001002020100000000000E802000016000000280000002000
+    0000400000000100040000000000800200000000000000000000000000000000
+    0000000000000000800000800000008080008000000080008000808000008080
+    8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+    FF00000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000F0000000F000000000000000
+    000000FFFFF000FFFFF000000000000000000FFFFFFF0FFFFFFF000000000000
+    00000FFFFFFF0FFFFFFF00000000000000000FFFFFFF0FFFFFFF000000000000
+    000000FFFFF000FFFFF000000000000000000000F000F000F000F00000000000
+    0000000000FFFFF000FFFFF000000000000000000FFFFFFF0FFFFFFF00000000
+    000000000FFFFFFF0FFFFFFF00000000000000000FFFFFFF0FFFFFFF00000000
+    0000000000FFFFF000FFFFF00000000000000000F000F000F000F00000000000
+    000000FFFFF000FFFFF000000000000000000FFFFFFF0FFFFFFF000000000000
+    00000FFFFFFF0FFFFFFF00000000000000000FFFFFFF0FFFFFFF000000000000
+    000000FFFFF000FFFFF000000000000000000000F000F000F000F0000000F000
+    0000000000FFFFF000FFFFF000FFFFF0000000000FFFFFFF0FFFFFFF0FFFFFFF
+    000000000FFFFFFF0FFFFFFF0FFFFFFF000000000FFFFFFF0FFFFFFF0FFFFFFF
+    0000000000FFFFF000FFFFF000FFFFF0000000000000F0000000F0000000F000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000F7F7FFFFF7F7FFFFE3E3FFFF8080FFFF00003FFF00007FFF00007FFF0000
+    7FFF00003FFF80000FFFE00003FFF00007FFF00007FFF00007FFE00003FF8000
+    0FFF00003FFF00007FFF00007FFF00007FFF00003E3E80000808E0000003F000
+    0007F0000007F0000007E0000003880808083E3E3E3E7F7F7F7F7F7F7F7F7F7F
+    7F7F
+  }
+  OnCreate = FormCreate
+  object FolderLabel: TLabel
+    Left = 10
+    Height = 14
+    Top = 10
+    Width = 79
+    Caption = 'Extraction path:'
+    ParentColor = False
+    ParentShowHint = False
+  end
+  object priOptionLabel: TLabel
+    Left = 10
+    Height = 14
+    Top = 60
+    Width = 255
+    AutoSize = False
+    Caption = 'Process priority:'
+    ParentColor = False
+    ParentShowHint = False
+  end
+  object oOptionLabel: TLabel
+    Left = 10
+    Height = 14
+    Top = 110
+    Width = 255
+    AutoSize = False
+    Caption = 'Extraction path:'
+    ParentColor = False
+    ParentShowHint = False
+  end
+  object Options: TGroupBox
+    Left = 10
+    Height = 80
+    Top = 160
+    Width = 255
+    Caption = 'Options'
+    ClientHeight = 62
+    ClientWidth = 251
+    ParentShowHint = False
+    TabOrder = 1
+    object xCommand: TCheckBox
+      Left = 10
+      Height = 19
+      Top = 10
+      Width = 234
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Extract and Recreate the relative pathname '
+      Checked = True
+      ParentShowHint = False
+      State = cbChecked
+      TabOrder = 0
+    end
+    object cdOption: TCheckBox
+      Left = 10
+      Height = 19
+      Top = 32
+      Width = 234
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Set surrent archive directory'
+      Checked = True
+      ParentShowHint = False
+      State = cbChecked
+      TabOrder = 1
+    end
+  end
+  object BtnOk: TBitBtn
+    Left = 475
+    Height = 23
+    Top = 401
+    Width = 75
+    Anchors = [akRight, akBottom]
+    BorderSpacing.InnerBorder = 2
+    Caption = 'OK'
+    Default = True
+    ModalResult = 1
+    NumGlyphs = 0
+    ParentShowHint = False
+    TabOrder = 2
+  end
+  object BtnCancel: TBitBtn
+    Left = 390
+    Height = 23
+    Top = 401
+    Width = 75
+    Anchors = [akRight, akBottom]
+    BorderSpacing.InnerBorder = 2
+    Caption = 'Cancel'
+    ModalResult = 2
+    NumGlyphs = 0
+    ParentShowHint = False
+    TabOrder = 3
+  end
+  object Folder: TEdit
+    Left = 10
+    Height = 21
+    Top = 30
+    Width = 540
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 0
+  end
+  object oOption: TComboBox
+    Left = 10
+    Height = 21
+    Top = 130
+    Width = 255
+    AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+    ItemHeight = 13
+    ItemIndex = 2
+    Items.Strings = (
+      'Skip pre-existing files'
+      'Overwrite pre-existing files'
+      'Query if Overwrite pre-existing files'
+    )
+    MaxLength = 0
+    ParentShowHint = False
+    Style = csDropDownList
+    TabOrder = 4
+    Text = 'Query if Overwrite pre-existing files'
+  end
+  object priOption: TComboBox
+    Left = 10
+    Height = 21
+    Top = 80
+    Width = 255
+    AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+    ItemHeight = 13
+    ItemIndex = 2
+    Items.Strings = (
+      '3 - Real time (unstable)'
+      '2 - Higth (unstable)'
+      '1 - Normal '
+      '0 - Idle'
+    )
+    MaxLength = 0
+    ParentShowHint = False
+    Style = csDropDownList
+    TabOrder = 5
+    Text = '1 - Normal '
+  end
+  object Folders: TTreeView
+    Left = 280
+    Height = 330
+    Top = 60
+    Width = 270
+    DefaultItemHeight = 16
+    Images = Icons
+    ReadOnly = True
+    TabOrder = 6
+    OnClick = FoldersClick
+    OnDblClick = FoldersDblClick
+    OnExpanding = FoldersExpanding
+    Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
+  end
+  object Storage: TXMLPropStorage
+    StoredValues = <>
+    left = 8
+    top = 248
+  end
+  object FoldersMgr: TFolderTreeViewMgr
+    FolderEdit = Folder
+    FolderTree = Folders
+    FolderIcons = Icons
+    left = 72
+    top = 248
+  end
+  object Icons: TIconList
+    left = 40
+    top = 248
+  end
+end

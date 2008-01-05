@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2007 Andrew Filinsky
+  Copyright (c) 2003-2008 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 
 unit Bee_Assembler;
 
-{$I compiler.inc}
+{$i compiler.inc}
 
 interface
 

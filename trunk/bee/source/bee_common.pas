@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2008 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 
 unit Bee_Common;
 
-{$I compiler.inc}
+{$i compiler.inc}
 
 interface
 

@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2005-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2005-2008 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,9 +34,6 @@ unit Bee_Interface;
 interface
 
 uses
-  {$IFDEF THREADSYNCHRONIZER}
-  Bee_Interface_Base,
-  {$ENDIF}
   Classes;
   
 // TAppInterface class
@@ -146,11 +143,7 @@ type
 // TApp class
 
 type
-  {$IFDEF THREADSYNCHRONIZER}
-  TApp = class(TThreadEx)
-  {$ELSE}
   TApp = class(TThread) 
-  {$ENDIF}
   protected
     AppParams: TStringList;
   public
@@ -183,11 +176,7 @@ end;
 
 procedure TApp.Sync(aMethod: TThreadMethod);
 begin
-  {$IFDEF THREADSYNCHRONIZER}
-  Synchronizer.Synchronize(aMethod);
-  {$ELSE}
   Synchronize(aMethod);
-  {$ENDIF}
 end;
 
 end.

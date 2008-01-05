@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Package Version="3">
+    <PathDelim Value="\"/>
+    <Name Value="BeeCorePack"/>
+    <Author Value="Melchiorre Caruso"/>
+    <AutoUpdate Value="Manually"/>
+    <CompilerOptions>
+      <Version Value="5"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="include\"/>
+        <OtherUnitFiles Value="..\..\..\bee\source\"/>
+        <UnitOutputDirectory Value="..\..\temp"/>
+        <SrcPath Value="..\..\..\bee\source\"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <CStyleOperator Value="False"/>
+          <AllowLabel Value="False"/>
+          <CPPInline Value="False"/>
+          <DelphiCompat Value="True"/>
+          <UseAnsiStrings Value="True"/>
+        </SyntaxOptions>
+      </Parsing>
+      <CodeGeneration>
+        <SmartLinkUnit Value="True"/>
+        <Generate Value="Faster"/>
+        <Optimizations>
+          <VariablesInRegisters Value="True"/>
+          <UncertainOptimizations Value="True"/>
+          <OptimizationLevel Value="3"/>
+        </Optimizations>
+      </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <UseLineInfoUnit Value="False"/>
+        </Debugging>
+      </Linking>
+      <Other>
+        <WriteFPCLogo Value="False"/>
+        <CompilerPath Value="$(CompPath)"/>
+      </Other>
+    </CompilerOptions>
+    <Description Value="BeeCore Package
+"/>
+    <License Value="GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+"/>
+    <Version Minor="1"/>
+    <Files Count="9">
+      <Item1>
+        <Filename Value="beecore_iconlist.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeCore_IconList"/>
+      </Item1>
+      <Item2>
+        <Filename Value="beecore_iconlist.lrs"/>
+        <Type Value="LRS"/>
+      </Item2>
+      <Item3>
+        <Filename Value="beecore_addtreeviewmgr.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeCore_AddTreeViewMgr"/>
+      </Item3>
+      <Item4>
+        <Filename Value="beecore_addtreeviewmgr.lrs"/>
+        <Type Value="LRS"/>
+      </Item4>
+      <Item5>
+        <Filename Value="beecore_foldertreeviewmgr.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeCore_FolderTreeViewMgr"/>
+      </Item5>
+      <Item6>
+        <Filename Value="beecore_foldertreeviewmgr.lrs"/>
+        <Type Value="LRS"/>
+      </Item6>
+      <Item7>
+        <Filename Value="..\..\..\bee\source\bee_common.pas"/>
+        <UnitName Value="Bee_Common"/>
+      </Item7>
+      <Item8>
+        <Filename Value="..\..\..\bee\source\bee_interface.pas"/>
+        <UnitName Value="Bee_Interface"/>
+      </Item8>
+      <Item9>
+        <Filename Value="..\..\..\bee\source\bee_assembler.pas"/>
+        <UnitName Value="Bee_Assembler"/>
+      </Item9>
+    </Files>
+    <Type Value="RunAndDesignTime"/>
+    <RequiredPkgs Count="2">
+      <Item1>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item2>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)\"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
