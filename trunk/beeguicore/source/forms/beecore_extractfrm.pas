@@ -65,7 +65,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FoldersClick(Sender: TObject);
     procedure FoldersDblClick(Sender: TObject);
-    procedure FoldersExpanding(Sender: TObject; Node: TTreeNode; var AllowExpansion: Boolean);
+    procedure FoldersExpanding(Sender: TObject; Node: TTreeNode;
+      var AllowExpansion: Boolean);
   public
     { public declarations }
   private

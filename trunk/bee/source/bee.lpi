@@ -31,7 +31,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
         <CursorPos X="20" Y="37"/>
-        <TopLine Value="14"/>
+        <TopLine Value="22"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="72"/>
         <Loaded Value="True"/>
@@ -39,8 +39,8 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="40" Y="148"/>
-        <TopLine Value="121"/>
+        <CursorPos X="33" Y="32"/>
+        <TopLine Value="111"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
@@ -48,20 +48,45 @@
       <Unit2>
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="77" Y="159"/>
-        <TopLine Value="139"/>
+        <CursorPos X="45" Y="154"/>
+        <TopLine Value="52"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit2>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="6" HistoryIndex="5">
+      <Position1>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="42" Column="25" TopLine="29"/>
+      </Position1>
+      <Position2>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="36" Column="3" TopLine="26"/>
+      </Position2>
+      <Position3>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="152" Column="81" TopLine="135"/>
+      </Position3>
+      <Position4>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="161" Column="82" TopLine="141"/>
+      </Position4>
+      <Position5>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="148" Column="31" TopLine="127"/>
+      </Position5>
+      <Position6>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="41" Column="25" TopLine="27"/>
+      </Position6>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="bee-include\"/>
+      <IncludeFiles Value="bee.include\"/>
       <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
     <Parsing>

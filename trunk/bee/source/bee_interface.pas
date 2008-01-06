@@ -18,13 +18,13 @@
 
 { Contains:
 
-  TApp, abstract class of Thread.
+    TApp, abstract class of Thread.
 
   Modifyed:
 
-  v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
+    v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0561 - 2007.12.24 by Melchiorre Caruso.
+    v0.7.9 build 0567 - 2007.12.24 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -36,11 +36,11 @@ interface
 uses
   Classes;
   
-// TAppInterface class
-  
 type
+
+  // TAppInterface class
+
   TAppInterface = class
-  public
     OnFatalError: record
       Method: TThreadMethod;
       Answer: string;

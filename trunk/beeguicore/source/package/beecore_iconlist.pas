@@ -29,9 +29,6 @@ unit BeeCore_IconList;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
   Classes,
   Dialogs,
   Controls,
@@ -45,19 +42,16 @@ type
   
   TIconList = class(TImageList)
   private
-    {$IFNDEF MSWINDOWS}
     FIconFolder: string;
     FExtentions: TStringList;
     procedure SetIconFolder(Value: string);
-    {$ENDIF}
   public
-    function IconIndex(const FileExt: string): integer;
+    function FileIcon(const FileExt: string): integer;
+    function FileType(const  FileExt: string): string;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
-    {$IFNDEF MSWINDOWS}
     property IconFolder: string read FIconFolder write SetIconFolder;
-    {$ENDIF}
   end;
   
   { Register }
@@ -69,28 +63,9 @@ implementation
   { TIconImageList }
   
   constructor TIconList.Create(AOwner: TComponent);
-  {$IFDEF MSWINDOWS}
-  var
-    SysImageList: uint;
-    SFI: TSHFileInfo;
-  {$ENDIF}
   begin
     inherited Create(AOwner);
-    {$IFDEF MSWINDOWS}
-    if SmallIcon then
-    begin
-      SysImageList := SHGetFileInfo('', 0, SFI, SizeOf(TSHFileInfo),
-        SHGFI_SYSICONINDEX or SHGFI_SMALLICON);
-    end else
-    begin
-      SysImageList := SHGetFileInfo('', 0, SFI, SizeOf(TSHFileInfo),
-        SHGFI_SYSICONINDEX or SHGFI_LARGEICON);
-    end;
-    Handle := SysImageList;
-    ShareImages := True;
-    {$ENDIF}
     FExtentions := TStringList.Create;
-    {$ENDIF}
   end;
 
   destructor TIconList.Destroy;
@@ -99,13 +74,18 @@ implementation
     inherited Destroy;
   end;
   
-  function TIconList.IconIndex(const FileExt: string): integer;
+  function TIconList.FileIcon(const FileExt: string): integer;
   begin
     Result := FExtentions.IndexOf(FileExt);
     if Result = -1 then
     begin
       Result := FExtentions.IndexOf('unknow');
     end;
+  end;
+  
+  function TIconList.FileType(const FileExt: string): string;
+  begin
+    Result := 'File ' + FileExt;
   end;
   
   procedure TIconList.SetIconFolder(Value: string);

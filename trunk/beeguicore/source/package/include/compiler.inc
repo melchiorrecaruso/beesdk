@@ -18,11 +18,11 @@
 
 { Contains:
 
-  BeeCore project compiler directives
+  Bee project compiler directives
 
   Modifyed:
 
-  v0.1.0 build 0050 - 2007.12.28 by Melchiorre Caruso.
+  v0.7.9 build 0567 - 2008.01.06 by Melchiorre Caruso.
 }
 
 {$R-}
@@ -30,7 +30,7 @@
 {$S-}
 {$I-}
 
-{*$DEFINE CONSOLEAPPLICATION}
+{$DEFINE CONSOLEAPPLICATION}
 
 {$IFDEF MSWINDOWS}
   {*$DEFINE FILENAMECASESENSITIVE}

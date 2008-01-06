@@ -104,7 +104,7 @@ implementation
           Node := FFolderTree.Items.Add(FFolderTree.Items.GetFirstNode, Drives.Strings[I]);
           if Assigned(FFolderIcons) then
           begin
-            Node.SelectedIndex := FFolderIcons.IconIndex('harddrive');
+            Node.SelectedIndex := FFolderIcons.FileIcon('harddrive');
             Node.ImageIndex := Node.SelectedIndex;
             Node.StateIndex := Node.SelectedIndex;
            end;
@@ -227,8 +227,8 @@ implementation
           TMP := FFolderTree.Items.AddChild(Start, Folders.Strings[I]);
           if Assigned(FFolderIcons) then
           begin
-            TMP.ImageIndex := FFolderIcons.IconIndex('folderclose');
-            TMP.SelectedIndex := FFolderIcons.IconIndex('folderopen');
+            TMP.ImageIndex := FFolderIcons.FileIcon('folderclose');
+            TMP.SelectedIndex := FFolderIcons.FileIcon('folderopen');
             TMP.StateIndex := TMP.ImageIndex;
           end;
           TMP := FFolderTree.Items.AddChild(TMP, '');
