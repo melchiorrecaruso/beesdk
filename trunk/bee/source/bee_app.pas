@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0567 - 2008.01.06 by Melchiorre Caruso.
+  v0.7.9 build 0573 - 2008.01.08 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -68,6 +68,7 @@ type
     procedure ProcessFilesToDecode(Headers: THeaders; aAction: THeaderAction);
     procedure ProcessFilesToExtract(Headers: THeaders);
     procedure ProcessFilesToOverWrite(Headers: THeaders);
+    function ProcessFilesToRename(Headers: THeaders): boolean;
 
     procedure ProcessFilesDeleted(Headers: THeaders);
     // overwrite sub-routines
@@ -145,7 +146,7 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0567 archiver utility, freeware version, Dec 2007.'
+  SelfName := 'The Bee 0.7.9 build 0573 archiver utility, freeware version, Dec 2007.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   ArcName  := '';
@@ -545,6 +546,7 @@ begin
                  AppInterface.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
                  AppInterface.OnRename.Data.FileSize := THeader(Headers.Items[I]).Size;
                  AppInterface.OnRename.Data.FileTime := THeader(Headers.Items[I]).Time;
+                 AppInterface.OnRename.Data.FileAttr := THeader(Headers.Items[I]).Attr;
 
                  AppInterface.OnRename.Answer := '';
                  Sync(AppInterface.OnRename.Method);
@@ -669,6 +671,63 @@ begin
     else
       THeader(Headers.Items[FileIndex]).Action := toNone;
   end;
+end;
+
+function TBeeApp.ProcessFilesToRename(Headers: THeaders): boolean;
+var
+  i: integer;
+  iFileName: string;
+  iFolderName: string;
+begin
+  Headers.MarkItems(FileMasks, toCopy, toRename);
+  Headers.MarkItems(xOption, toRename, toCopy);
+
+  if Headers.GetNext(0, toRename) = -1 then
+  begin
+    if FileMasks.Count = 1 then
+      for i := 0 to Headers.Count - 1 do
+      begin
+        { TODO 5 : Rename folder feature }
+      end;
+  end else
+  begin
+    for i := 0 to Headers.Count - 1 do
+    begin
+      if (THeader(Headers.Items[i]).Action = toRename) then
+      begin
+        while True do
+        begin
+          AppInterface.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[i]).Name);
+          AppInterface.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[i]).Name);
+          AppInterface.OnRename.Data.FileSize := THeader(Headers.Items[i]).Size;
+          AppInterface.OnRename.Data.FileTime := THeader(Headers.Items[i]).Time;
+          AppInterface.OnRename.Data.FileAttr := THeader(Headers.Items[i]).Attr;
+
+          SetLength(AppInterface.OnRename.Answer, 0);
+          Sync(AppInterface.OnRename.Method);
+
+          iFileName := Bee_Common.FixFileName(AppInterface.OnRename.Answer);
+          if (AlreadyFileExists(Headers, I, [toCopy, toRename], iFileName) <> -1) then
+          begin
+            AppInterface.OnWarning.Data.Msg := ('File "' + iFileName + '" already existing in archive!');
+            Sync(AppInterface.OnWarning.Method);
+          end else
+            Break;
+        end;
+
+        if Length(iFileName) > 0 then
+        begin
+          THeader(Headers.Items[i]).Name := iFileName;
+        end;
+      end;
+    end;
+  end;
+  
+
+  if (Headers.GetNext(0, toRename) > -1) then
+    Result := True
+  else
+    Result := ((Length(aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) ;
 end;
 
 // Sequences processing
@@ -1231,46 +1290,14 @@ begin
   begin
     AppInterface.OnDisplay.Data.Msg := (msgScanning + '...');
     Sync(AppInterface.OnDisplay.Method);
-
-    Headers.MarkItems(FileMasks, toCopy, toRename);
-    Headers.MarkItems(xOption, toRename, toCopy);
-
-    GeneralSize := Headers.GetPackedSize([toCopy, toRename]);
-
-    if (Headers.GetNext(0, toRename) > -1) or ((Length(aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
+    
+    if ProcessFilesToRename(Headers) then
     begin
       Time := Now;
       TmpFileName := GenerateFileName(yOption);
       TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
 
-      for I := 0 to Headers.Count - 1 do
-      begin
-        if (THeader(Headers.Items[I]).Action = toRename) then
-        begin
-          while True do
-          begin
-            AppInterface.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Name);
-            AppInterface.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Name);
-            AppInterface.OnRename.Data.FileSize := THeader(Headers.Items[I]).Size;
-            AppInterface.OnRename.Data.FileTime := THeader(Headers.Items[I]).Time;
-
-            SetLength(AppInterface.OnRename.Answer, 0);
-            Sync(AppInterface.OnRename.Method);
-
-            NewFileName := Bee_Common.FixFileName(AppInterface.OnRename.Answer);
-            if (AlreadyFileExists(Headers, I, [toCopy, toRename], NewFileName) <> -1) then
-            begin
-              AppInterface.OnWarning.Data.Msg := ('File "' + NewFileName + '" already existing in archive!');
-              Sync(AppInterface.OnWarning.Method);
-            end else
-              Break;
-          end;
-          if Length(NewFileName) > 0 then
-          begin
-            THeader(Headers.Items[I]).Name := NewFileName;
-          end;
-        end;
-      end;
+      GeneralSize := Headers.GetPackedSize([toCopy, toRename]);
 
       // set sfx module
       if Length(aOption) > 0 then Headers.SetSFX(aOption);
@@ -1313,7 +1340,7 @@ begin
       end else
         SysUtils.DeleteFile(TmpFileName);
 
-    end else // if Headers.GetNext
+    end else // if ProcessFilesToRename
     begin
       AppInterface.OnWarning.Data.Msg := ('Warning: no files to rename');
       Sync(AppInterface.OnWarning.Method);

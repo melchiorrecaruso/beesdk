@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.7.9 build 0567 - 2007.12.24 by Melchiorre Caruso.
+    v0.7.9 build 0573 - 2008.01.08 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -66,6 +66,7 @@ type
         FilePath: string;
         FileTime: integer;
         FileSize: integer;
+        FileAttr: integer;
       end;
     end;
     OnWarning: record
@@ -118,7 +119,8 @@ type
       Method: TThreadMethod;
       Answer: string;
       Data: record
-        Percentage: integer
+        Percentage: integer;
+        Speed: integer;
       end;
     end;
     OnClear: record

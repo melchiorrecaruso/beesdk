@@ -31,10 +31,14 @@ uses
   cThreads,
   {$ENDIF}
   Interfaces,
+  SysUtils,
+
+  Controls,
   Classes,
   Forms,
   // ---
   Bee_App,
+  Bee_Common,
   Bee_Interface,
   // ---
   BeeCore_AddFrm,
@@ -49,10 +53,9 @@ type
 
   TCore = class
   private
-    FInterface: TAppInterface;
-
     App: TBeeApp;
     AppKey: string;
+    AppLog: TStringList;
     AppInterface: TAppInterface;
     AppParams: TStringList;
 
@@ -78,16 +81,101 @@ type
   constructor TCore.Create;
   begin
     inherited Create;
+    AppLog := TStringList.Create;
   end;
   
   destructor TCore.Destroy;
   begin
+    AppLog.Free;
     inherited Destroy;
   end;
   
   procedure TCore.Execute;
   begin
 
+  end;
+  
+  procedure TCore.OnFatalError;
+  begin
+    AppLog.Add(AppInterface.OnFatalError.Data.Msg);
+  end;
+  
+  procedure TCore.OnOverwrite;
+  var
+    F: TOverWriteFrm;
+  begin
+    if App.Suspended = False then
+    begin;
+      App.Suspended := True;
+      // ---
+      F := TOverWriteFrm.Create(nil);
+      with AppInterface.OnOverWrite.Data do
+      begin
+        F.TheFolder.Caption := F.TheFolder.Caption + ' "' + FileName + '".';
+        F.NewSize  .Caption := F.NewSize  .Caption + '  ' + SizeToStr(FileSize);
+        F.NewDate  .Caption := F.NewDate  .Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileTime));
+
+        F.OldSize  .Caption := F.OldSize  .Caption + '  ' + SizeToStr(SizeOfFile(FileName));
+        F.OldDate  .Caption := F.OldDate  .Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileAge(FileName)));
+      end;
+      case F.ShowModal of
+        mrAbort   : AppInterface.OnOverWrite.Answer := 'Q';
+        mrNoToAll : AppInterface.OnOverWrite.Answer := 'S';
+        mrYesToAll: AppInterface.OnOverWrite.Answer := 'A';
+        mrNo      : AppInterface.OnOverWrite.Answer := 'N';
+        mrYes     : AppInterface.OnOverWrite.Answer := 'Y';
+      end;
+      F.Free;
+      // ---
+      App.Suspended := False;
+    end;
+  end;
+  
+  procedure TCore.OnWarning;
+  begin
+    AppLog.Add(AppInterface.OnWarning.Data.Msg);
+  end;
+  
+  procedure TCore.OnDisplay;
+  begin
+    AppLog.Add(AppInterface.OnDisplay.Data.Msg);
+  end;
+  
+  procedure TCore.OnRequest;
+  begin
+    AppLog.Add(AppInterface.OnRequest.Data.Msg);
+  end;
+  
+  procedure TCore.OnRename;
+  var
+    F: TRenameFrm;
+  begin
+    if App.Suspended = False then
+    begin;
+      App.Suspended := True;
+
+
+      if AppRenameFolder = False then
+      begin
+        f := TRenameFrm.Create(Self);
+        try
+          f.Caption := 'Rename file';
+          f.RenameFrm_To.Text := AppInterface.OnRename.Data.FilePath + AppInterface.OnRename.Data.FileName;
+          if f.ShowModal = mrOk then
+            AppInterface.OnRename.Answer := f.RenameFrm_To.Text
+          else
+            AppInterface.OnRename.Answer := '';
+        finally
+          f.Free;
+        end;
+      end else
+      begin
+        AppInterface.OnRename.Answer := AppInterface.OnRename.Data.FilePath + AppInterface.OnRename.Data.FileName;
+        Delete(AppInterface.OnRename.Answer, 1, Length(AppRenameFolderFrom));
+        AppInterface.OnRename.Answer := AppRenameFolderTo + AppInterface.OnRename.Answer;
+      end;
+      App.Suspended := False;
+    end;
   end;
   
 var

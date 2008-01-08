@@ -31,22 +31,22 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="35">
+    <Units Count="36">
       <Unit0>
         <Filename Value="beecore.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="11" Y="34"/>
-        <TopLine Value="21"/>
+        <CursorPos X="6" Y="151"/>
+        <TopLine Value="136"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="48"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\..\..\..\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
-        <CursorPos X="3" Y="1358"/>
-        <TopLine Value="1338"/>
+        <CursorPos X="14" Y="507"/>
+        <TopLine Value="487"/>
         <UsageCount Value="10"/>
       </Unit1>
       <Unit2>
@@ -289,12 +289,39 @@
         <TopLine Value="1"/>
         <UsageCount Value="10"/>
       </Unit34>
+      <Unit35>
+        <Filename Value="..\..\beegui4laz\source\forms\beegui_mainfrm.pas"/>
+        <ComponentName Value="MainFrm"/>
+        <HasResources Value="True"/>
+        <UnitName Value="BeeGui_MainFrm"/>
+        <CursorPos X="1" Y="1717"/>
+        <TopLine Value="1710"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit35>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="44" Column="23" TopLine="29"/>
+        <Caret Line="36" Column="12" TopLine="26"/>
       </Position1>
+      <Position2>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="120" Column="11" TopLine="100"/>
+      </Position2>
+      <Position3>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="136" Column="38" TopLine="102"/>
+      </Position3>
+      <Position4>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="141" Column="38" TopLine="112"/>
+      </Position4>
+      <Position5>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="146" Column="31" TopLine="112"/>
+      </Position5>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
