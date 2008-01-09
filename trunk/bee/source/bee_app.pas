@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0573 - 2008.01.08 by Melchiorre Caruso.
+  v0.7.9 build 0575 - 2008.01.09 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -687,7 +687,7 @@ begin
     if FileMasks.Count = 1 then
       for i := 0 to Headers.Count - 1 do
       begin
-        { TODO 5 : Rename folder feature }
+
       end;
   end else
   begin

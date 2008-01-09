@@ -27,7 +27,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-  v0.7.9 build 0497 - 2007.11.18 by Melchiorre Caruso;
+  v0.7.9 build 0575 - 2008.01.09 by Melchiorre Caruso;
 }
 
 unit Bee_Headers;
@@ -129,7 +129,8 @@ type
     destructor Destroy; override;
 
     function AddItems(Masks: TStringList; rOption: boolean): integer;
-    procedure MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction);
+    procedure MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction); overload;
+    procedure MarkItems(const Mask: string; MaskAct, aAction: THeaderAction); overload;
     procedure MarkItem(Index: integer; aAction: THeaderAction);
     procedure MarkAll(aAction: THeaderAction);
 
@@ -501,6 +502,20 @@ begin
     with THeader(Items[I]) do
     begin
       if (Action = MaskAct) and (FileNameMatch(Name, Masks)) then
+      begin
+        Action := aAction;
+      end;
+    end;
+end;
+
+procedure THeaders.MarkItems(const Mask: string; MaskAct: THeaderAction; aAction: THeaderAction);
+var
+  I: integer;
+begin
+  for I := 0 to Count - 1 do
+    with THeader(Items[I]) do
+    begin
+      if (Action = MaskAct) and (FileNameMatch(Name, Mask)) then
       begin
         Action := aAction;
       end;
