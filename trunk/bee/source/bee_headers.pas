@@ -27,7 +27,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-  v0.7.9 build 0575 - 2008.01.09 by Melchiorre Caruso;
+  v0.7.9 build 0581 - 2008.01.11 by Melchiorre Caruso;
 }
 
 unit Bee_Headers;
@@ -40,97 +40,109 @@ uses
   {$IFDEF MSWINDOWS}
   Windows,
   {$ENDIF}
-  Classes,  // TList
   SysUtils, // TSearchRec
+  Classes,  // TList
 
   Bee_Configuration;
 
-// Id marker
-
 const
+
+  // Id marker
+
   Marker: integer = 442852674;
 
-// Header flags
-
 type
+
+  // Header flag
+
   THeaderFlag =
-    (foVersion, foMethod, foDictionary, foTable, foTear, foMoved, foLast,
-    foPassword, fo09Unused, fo10Unused, fo11Unused, fo12Unused, fo13Unused, fo14Unused,
-    fo15Unused, fo16Unused, fo17Unused, fo18Unused, fo19Unused, fo20Unused, fo21Unused,
-    fo22Unused, fo23Unused, fo24Unused, fo25Unused, fo26Unused, fo27Unused, fo28Unused,
-    fo29Unused, fo30Unused, fo31Unused, fo32Unused);
+    (foVersion,  foMethod,   foDictionary, foTable,    foTear,     foMoved,
+     foLast,     foPassword, fo09Unused,   fo10Unused, fo11Unused, fo12Unused,
+     fo13Unused, fo14Unused, fo15Unused,   fo16Unused, fo17Unused, fo18Unused,
+     fo19Unused, fo20Unused, fo21Unused,   fo22Unused, fo23Unused, fo24Unused,
+     fo25Unused, fo26Unused, fo27Unused,   fo28Unused, fo29Unused, fo30Unused,
+     fo31Unused, fo32Unused);
 
 type
+
+  // Header flags
+
   THeaderFlags = set of THeaderFlag;
 
-// Header action
+type
+
+  // Header action
+
+  THeaderAction = (toUpdate, toFresh, toCopy,   toSwap,   toExtract, toTest,
+                   toSkip,   toQuit,  toDelete, toRename, toList,    toNone);
 
 type
-  THeaderAction = (toUpdate, toFresh, toCopy, toSwap, toExtract,
-    toTest, toSkip, toQuit, toDelete, toRename, toList, toNone);
 
-// Headers actions
+  // Headers actions
 
-type
   THeaderActions = set of THeaderAction;
 
-// Header structure, order of fields is significant
-
 type
+
+  // Header structure, order of fields is significant
+
   THeader = class
   public
-    // start file header
-    Flags: THeaderFlags;
-    Version: byte;
-    Method: byte;
-    Dictionary: byte;
-    Table: TTableParameters;
-    Size: integer;
-    Time: integer;
-    Attr: integer;
-    Crc:  cardinal;
-    Pack: integer;
-    StartPos: integer;
-    Name: string;
-    // end file header
+    // Start file header
+    FileFlags: THeaderFlags;
+    FileVersion: byte;
+    FileMethod: byte;
+    FileDictionary: byte;
+    FileTable: TTableParameters;
+    FileSize: integer;
+    FileTime: integer;
+    FileAttr: integer;
+    FileCrc:  cardinal;
+    FilePacked: integer;
+    FileStartPos: integer;
+    FileName: string;
+    // End file header
   public
     Action: THeaderAction;
-    Option: string;
-    RecSize: integer;
-    constructor Create(const cdOption: string; const Rec: TSearchRec; const RecPath: string);
-    function Fresh(const cdOption: string; const Rec: TSearchRec; const RecPath: string): integer;
+    FileNameLink: string;
+  public
+    constructor Create(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
+    procedure Fresh(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
     constructor Read(Stream: TStream; aAction: THeaderAction);
     function SetTable(Config: TConfiguration): boolean;
     procedure Write(Stream: TStream);
     destructor Destroy; override;
-    function GetName: string;
   end;
 
-// Sort headers list
-
 type
-  TSortHeaders = class(TList)
+
+  // Sorted headers list
+
+  TSortedHeaders = class(TList)
   public
     function InsertItem(Item: pointer): integer;
     function SearchItem(const FileName: string): pointer;
   end;
 
-// Headers list
-
 type
+
+  // Headers list
+
   THeaders = class(TList)
   public
-    cdOption: string;
-    fOption: boolean;
-    uOption: boolean;
-    xOption: TStringList;
-
     constructor Create;
     destructor Destroy; override;
+    procedure AddItems(
+      Masks: TStringList;
+      const cdOption: string;
+             fOption: boolean;
+             rOption: boolean;
+             uOption: boolean;
+             xOption: TStringList;
+        var Size: integer);
 
-    function AddItems(Masks: TStringList; rOption: boolean): integer;
-    procedure MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction); overload;
-    procedure MarkItems(const Mask: string; MaskAct, aAction: THeaderAction); overload;
+    function MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction): integer; overload;
+    function MarkItems(const Mask: string; MaskAct, aAction: THeaderAction): integer; overload;
     procedure MarkItem(Index: integer; aAction: THeaderAction);
     procedure MarkAll(aAction: THeaderAction);
 
@@ -144,10 +156,10 @@ type
     function GetNext(Child: integer; aAction: THeaderAction): integer; overload;
     function GetBack(Child: integer; Flag: THeaderFlag): integer; overload;
     function GetNext(Child: integer; Flag: THeaderFlag): integer; overload;
-    function GetBack(Child: integer; aAction: THeaderAction; const aName: string): integer; overload;
-    function GetNext(Child: integer; aAction: THeaderAction; const aName: string): integer; overload;
-    function GetBack(Child: integer; aActions: THeaderActions; const aName: string): integer; overload;
-    function GetNext(Child: integer; aActions: THeaderActions; const aName: string): integer; overload;
+    function GetBack(Child: integer; aAction: THeaderAction; const aFileName: string): integer; overload;
+    function GetNext(Child: integer; aAction: THeaderAction; const aFileName: string): integer; overload;
+    function GetBack(Child: integer; aActions: THeaderActions; const aFileName: string): integer; overload;
+    function GetNext(Child: integer; aActions: THeaderActions; const aFileName: string): integer; overload;
 
     function GetSize(aAction: THeaderAction): integer; overload;
     function GetSize(Actions: THeaderActions): integer; overload;
@@ -156,17 +168,25 @@ type
 
     function GetCount(Actions: THeaderActions): integer;
 
-    function SetSFX(const FileName: string): boolean;
-    function GetSFXsize: integer;
+    function SetModule(const FileName: string): boolean;
+    function GetModule: integer;
   private
-    SfxStrm:  TStream;
-
-    procedure MarkLast(Last: THeaderAction);
-    procedure ExpandMask(const Mask: string; Masks: TStringList);
-    
+    Module:  TStream;
+  private
     procedure QuickSort(L, R: integer);
+    procedure MarkAsLast(Action: THeaderAction);
     function  FindFirstMarker(Stream: TStream): integer;
-    procedure ScanFileSystem(SortHeaders: TSortHeaders; Mask: string; var Size: integer);
+
+    procedure ExpandMask(const Mask: string; Masks: TStringList);
+    procedure ScanFileSystem(
+      Mask: string;
+      Sorted: TSortedHeaders;
+      const cdOption: string;
+             fOption: boolean;
+             rOption: boolean;
+             uOption: boolean;
+             xOption: TStringList;
+        var Size: integer);
   end;
 
 implementation
@@ -179,151 +199,154 @@ uses
 
 function CompareFn(L: TList; Index1, Index2: integer): integer;
 var
-  bool1, bool2: boolean;
+  Bool1, Bool2: boolean;
 begin
-  with THeader(L.Items[Index1]) do bool1 := (Action = toUpdate);
-  with THeader(L.Items[Index2]) do bool2 := (Action = toUpdate);
+  with THeader(L.Items[Index1]) do Bool1 := (Action = toUpdate);
+  with THeader(L.Items[Index2]) do Bool2 := (Action = toUpdate);
 
-  if (bool1 and bool2) then
+  if (Bool1 and Bool2) then
   begin
     Result := CompareFileName(
-      ExtractFileExt(THeader(L.Items[Index1]).Name),
-      ExtractFileExt(THeader(L.Items[Index2]).Name));
+      ExtractFileExt(THeader(L.Items[Index1]).FileName),
+      ExtractFileExt(THeader(L.Items[Index2]).FileName));
 
     if Result = 0 then
       Result := CompareFileName(
-        ExtractFileName(THeader(L.Items[Index1]).Name),
-        ExtractFileName(THeader(L.Items[Index2]).Name));
+        ExtractFileName(THeader(L.Items[Index1]).FileName),
+        ExtractFileName(THeader(L.Items[Index2]).FileName));
 
     if Result = 0 then
       Result := CompareFileName(
-        THeader(L.Items[Index1]).Name,
-        THeader(L.Items[Index2]).Name);
+        THeader(L.Items[Index1]).FileName,
+        THeader(L.Items[Index2]).FileName);
   end else
-    if bool1 then
+    if Bool1 then
       Result := 1
     else
-      if bool2 then
+      if Bool2 then
         Result := -1
       else
         Result := Index1 - Index2;
 end;
 
-// THeader
+// THeader class
 
-constructor THeader.Create(const cdOption: string; const Rec: TSearchRec; const RecPath: string);
+constructor THeader.Create(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
 begin
   Action := toUpdate;
-  Option := cdOption;
-  RecSize := Rec.Size;
 
-  Flags := [foTear, foTable];
-  Version := 1; // bee 0.3.x
-  Method := 1;
-  Dictionary := 2;
-  Time := Rec.Time;
-  Crc  := cardinal(-1);
-  Name := RecPath + Rec.Name;
+  FileFlags := [foTear, foTable];
+  FileVersion := 1; // Bee 0.3.x
+  FileMethod := 1;
+  FileDictionary := 2;
+  FileTime := Rec.Time;
+  FileCrc := cardinal(-1);
+  FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
+  // ---
+  FileNameLink := RecPath + Rec.Name;
 end;
 
-function THeader.Fresh(const cdOption: string; const Rec: TSearchRec; const RecPath: string): integer;
+procedure THeader.Fresh(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
 begin
-  Time    := Rec.Time;
-  Name    := RecPath + Rec.Name;
-  Result  := Rec.Size - RecSize;
-
-  Option  := cdOption;
-  RecSize := Rec.Size;
-
   if Action = toCopy then
+  begin
     Action := toFresh;
+  end;
+
+  FileTime := Rec.Time;
+  FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
+  // ---
+  FileNameLink := RecPath + Rec.Name;
 end;
 
 constructor THeader.Read(Stream: TStream; aAction: THeaderAction);
 var
-  J: integer;
+  j: integer;
 const
-  sSecondPart = SizeOf(Size) + SizeOf(Time) + SizeOf(Attr) +
-    SizeOf(Crc) + SizeOf(Pack) + SizeOf(StartPos);
+  sSecondPart = SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
+                SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos);
 begin
   Action := aAction;
-  Option := '';
-  RecSize := 0;
 
-  if Stream.Read(Flags, SizeOf(Flags)) <> SizeOf(Flags) then Fail;
+  if Stream.Read(FileFlags, SizeOf(FileFlags)) <> SizeOf(FileFlags) then Fail;
 
-  if foVersion in Flags then
-    if Stream.Read(Version, SizeOf(Version)) <> SizeOf(Version) then Fail;
+  if foVersion in FileFlags then
+    if Stream.Read(FileVersion, SizeOf(FileVersion)) <> SizeOf(FileVersion) then Fail;
 
-  if foMethod in Flags then
-    if Stream.Read(Method, SizeOf(Method)) <> SizeOf(Method) then Fail;
+  if foMethod in FileFlags then
+    if Stream.Read(FileMethod, SizeOf(FileMethod)) <> SizeOf(FileMethod) then Fail;
 
-  if foDictionary in Flags then
-    if Stream.Read(Dictionary, SizeOf(Dictionary)) <> SizeOf(Dictionary) then Fail;
+  if foDictionary in FileFlags then
+    if Stream.Read(FileDictionary, SizeOf(FileDictionary)) <> SizeOf(FileDictionary) then Fail;
 
-  if foTable in Flags then
-    if Stream.Read(Table, SizeOf(Table)) <> SizeOf(Table) then Fail;
+  if foTable in FileFlags then
+    if Stream.Read(FileTable, SizeOf(FileTable)) <> SizeOf(FileTable) then Fail;
       
-  if Stream.Read(Size, sSecondPart) <> sSecondPart then Fail;
+  if Stream.Read(FileSize, sSecondPart) <> sSecondPart then Fail;
 
-  if Stream.Read(J, SizeOf(integer)) <> SizeOf(J) then Fail;
-
-  SetLength(Name, J);
-  if Stream.Read(Name[1], J) <> J then Fail;
-
-  Name := Bee_Common.DoDirSeparators(Name);
+  if Stream.Read(j, SizeOf(j)) = SizeOf(j) then
+    SetLength(FileName, j)
+  else
+    Fail;
+  
+  if j > 0 then
+  begin
+    if Stream.Read(FileName[1], j) = j then
+    begin
+      FileName := DoDirSeparators(FileName);
+      FileNameLink := FileName;
+    end else
+      Fail;
+  end;
 end;
 
 destructor THeader.Destroy;
 begin
-  SetLength(Name, 0);
-  SetLength(Option, 0);
+  SetLength(FileName, 0);
+  SetLength(FileNameLink, 0);
   inherited Destroy;
 end;
 
 procedure THeader.Write(Stream: TStream);
 var
-  FName: string;
-  LFName: integer;
+  j: integer;
 const
-  sSecondPart = SizeOf(Size) + SizeOf(Time) + SizeOf(Attr) +
-    SizeOf(Crc) + SizeOf(Pack) + SizeOf(StartPos);
+  sSecondPart = SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
+                SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos);
 begin
-  Stream.Write(Flags, SizeOf(Flags));
+  Stream.Write(FileFlags, SizeOf(FileFlags));
 
-  if foVersion in Flags then
-    Stream.Write(Version, SizeOf(Version));
+  if foVersion in FileFlags then
+    Stream.Write(FileVersion, SizeOf(FileVersion));
 
-  if foMethod in Flags then
-    Stream.Write(Method, SizeOf(Method));
+  if foMethod in FileFlags then
+    Stream.Write(FileMethod, SizeOf(FileMethod));
 
-  if foDictionary in Flags then
-    Stream.Write(Dictionary, SizeOf(Dictionary));
+  if foDictionary in FileFlags then
+    Stream.Write(FileDictionary, SizeOf(FileDictionary));
 
-  if foTable in Flags then
-    Stream.Write(Table, SizeOf(Table));
+  if foTable in FileFlags then
+    Stream.Write(FileTable, SizeOf(FileTable));
 
-  Stream.Write(Size, sSecondPart);
+  Stream.Write(FileSize, sSecondPart);
 
-  FName := GetName;
-  LFName := Length(FName);
-  Stream.Write(LFName, SizeOf(integer));
-  Stream.Write(FName[1], LFName);
+  j := Length(FileName);
+  Stream.Write(j, SizeOf(j));
+
+  if j > 0 then
+  begin
+    Stream.Write(FileName[1], j);
+  end;
 end;
 
 function THeader.SetTable(Config: TConfiguration): boolean;
 begin
-  Result := Config.GetTable(ExtractFileExt(Name), Table);
+  Result := Config.GetTable(ExtractFileExt(FileName), FileTable);
 end;
 
-function THeader.GetName: string;
-begin
-  Result := Option + Bee_Common.DeleteFileDrive(Name);
-end;
+/// Sorted header list class
 
-/// Sort header list
-
-function TSortHeaders.SearchItem(const FileName: string): pointer;
+function TSortedHeaders.SearchItem(const FileName: string): pointer;
 var
   L, M, H: integer;
 begin
@@ -334,10 +357,10 @@ begin
   while H >= L do
   begin
     M := (L + H) div 2;
-    if CompareFileName(FileName, THeader(Items[M]).GetName) > 0 then
+    if CompareFileName(FileName, THeader(Items[M]).FileName) > 0 then
       L := M + 1
     else
-      if CompareFileName(FileName,THeader(Items[M]).GetName) < 0 then
+      if CompareFileName(FileName,THeader(Items[M]).FileName) < 0 then
         H := M - 1
       else
         H := -2;
@@ -349,7 +372,7 @@ begin
     Result := Items[M];
 end;
 
-function TSortHeaders.InsertItem(Item: pointer): integer;
+function TSortedHeaders.InsertItem(Item: pointer): integer;
 var
   L, M, H: integer;
   FName: string;
@@ -358,14 +381,14 @@ begin
   M := -1;
   H := Count - 1;
 
-  FName := THeader(Item).GetName;
+  FName := THeader(Item).FileName;
   while H >= L do
   begin
     M := (L + H) div 2;
-    if  CompareFileName(FName, THeader(Items[M]).GetName) > 0 then
+    if  CompareFileName(FName, THeader(Items[M]).FileName) > 0 then
       L := M + 1
     else
-      if CompareFileName(FName, THeader(Items[M]).GetName) < 0 then
+      if CompareFileName(FName, THeader(Items[M]).FileName) < 0 then
         H := M - 1
       else
         H := -2;
@@ -374,7 +397,7 @@ begin
   if M = -1 then
     Result := 0
   else
-    if CompareFileName(FName, THeader(Items[M]).GetName) < 0 then
+    if CompareFileName(FName, THeader(Items[M]).FileName) < 0 then
       Result := M
     else
       Result := M + 1;
@@ -382,27 +405,22 @@ begin
   Insert(Result, Item);
 end;
 
-/// THeaders list
+/// THeaders list class
 
 constructor THeaders.Create;
 begin
   inherited Create;
-  cdOption := '';
-  fOption := False;
-  uOption := False;
-  xOption := nil;
-
-  SfxStrm := TMemoryStream.Create;
+  Module := TMemoryStream.Create;
 end;
 
 destructor THeaders.Destroy;
 var
   I: integer;
 begin
-  FreeAndNil(SfxStrm);
+  Module.Free;
   for I := Count - 1 downto 0 do
   begin
-    THeader(Items[I]).Destroy;
+    THeader(Items[I]).Free;
   end;
   inherited Destroy;
 end;
@@ -468,17 +486,24 @@ begin
   end;
 end;
 
-function THeaders.AddItems(Masks: TStringList; rOption: boolean): integer;
+procedure THeaders.AddItems(
+  Masks: TStringList;
+  const cdOption: string;
+         fOption: boolean;
+         rOption: boolean;
+         uOption: boolean;
+         xOption: TStringList;
+    var Size: integer);
 var
   I, J: integer;
   CurrMasks: TStringList;
-  SortHeaders: TSortHeaders;
+  Sorted: TSortedHeaders;
 begin
-  Result := 0;
-  SortHeaders := TSortHeaders.Create;
+  // Create sorted list item
+  Sorted := TSortedHeaders.Create;
   for I := 0 to Count - 1 do
   begin
-    SortHeaders.InsertItem(Items[I]);
+    Sorted.InsertItem(Items[I]);
   end;
   
   for I := 0 to Masks.Count - 1 do
@@ -487,37 +512,49 @@ begin
     ExpandMask(Masks.Strings[I], CurrMasks);
     for J := 0 to CurrMasks.Count - 1 do
     begin
-      ScanFileSystem(SortHeaders, CurrMasks.Strings[J], Result);
+      ScanFileSystem(
+        CurrMasks.Strings[J],
+        Sorted,
+        cdOption,
+         fOption,
+         rOption,
+         uOption,
+         xOption,
+        Size);
     end;
-    FreeAndNil(CurrMasks);
+    CurrMasks.Free;
   end;
-  FreeAndNil(SortHeaders);
+  Sorted.Free;
 end;
 
-procedure THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction);
+function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction): integer;
 var
   I: integer;
 begin
+  Result := 0;
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = MaskAct) and (FileNameMatch(Name, Masks)) then
+      if (Action = MaskAct) and (FileNameMatch(FileName, Masks)) then
       begin
         Action := aAction;
+        Inc(Result);
       end;
     end;
 end;
 
-procedure THeaders.MarkItems(const Mask: string; MaskAct: THeaderAction; aAction: THeaderAction);
+function THeaders.MarkItems(const Mask: string; MaskAct: THeaderAction; aAction: THeaderAction): integer;
 var
   I: integer;
 begin
+  Result := 0;
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = MaskAct) and (FileNameMatch(Name, Mask)) then
+      if (Action = MaskAct) and (FileNameMatch(FileName, Mask)) then
       begin
         Action := aAction;
+        Inc(Result);
       end;
     end;
 end;
@@ -540,7 +577,7 @@ end;
 procedure THeaders.SortNews(Config: TConfiguration; sOption: Boolean; kOption: Boolean; const eOption: string);
 var
   P: THeader;
-  First, I, Method, Dictionary: integer;
+  I, First, Method, Dictionary: integer;
   CurrentExt, PreviousExt: string;
 begin
   QuickSort(0, Count - 1);
@@ -560,34 +597,34 @@ begin
 
       if I = First then
       begin
-        P.Flags := P.Flags + [foVersion, foMethod, foDictionary];
+        P.FileFlags := P.FileFlags + [foVersion, foMethod, foDictionary];
       end;
       
-      P.Method := Method;
-      P.Dictionary := Dictionary;
+      P.FileMethod := Method;
+      P.FileDictionary := Dictionary;
       PreviousExt := CurrentExt;
 
       if Length(eOption) = 0 then
-        CurrentExt := ExtractFileExt(P.Name)
+        CurrentExt := ExtractFileExt(P.FileName)
       else
         CurrentExt := eOption;
 
       if kOption then
-        Include(P.Flags, foPassword);
+        Include(P.FileFlags, foPassword);
 
-      if (Method = 0) or (not Config.GetTable(CurrentExt, P.Table)) then
+      if (Method = 0) or (not Config.GetTable(CurrentExt, P.FileTable)) then
       begin
-        Include(P.Flags, foMoved);
-        Exclude(P.Flags, foTable);
+        Include(P.FileFlags, foMoved);
+        Exclude(P.FileFlags, foTable);
       end else
         if CompareFileName(CurrentExt, PreviousExt) <> 0 then
         begin
-          Include(P.Flags, foTable);
+          Include(P.FileFlags, foTable);
         end else
         begin
-          Exclude(P.Flags, foTable);
+          Exclude(P.FileFlags, foTable);
           if sOption then
-            Exclude(P.Flags, foTear);
+            Exclude(P.FileFlags, foTear);
         end;
 
       Inc(I);
@@ -595,28 +632,30 @@ begin
   end;
 end;
 
-function THeaders.SetSFX(const FileName: string): boolean;
+function THeaders.SetModule(const FileName: string): boolean;
 var
   Strm: TStream;
 begin
   Result := False;
-  SfxStrm.Size := 0;
-  if FileExists(ExtractFilePath(ParamStr(0)) + FileName) then
+  Module.Size := 0;
+  if FileExists(FileName) then
   begin
-    Strm := TFileReader.Create(ExtractFilePath(ParamStr(0)) + FileName, fmOpenRead);
+    Strm := TFileReader.Create(FileName, fmOpenRead);
     try
-      SfxStrm.CopyFrom(Strm, Strm.Size);
-      Result := True;
+      if Module.CopyFrom(Strm, Strm.Size) = Strm.Size then
+        Result := True
+      else
+        Module.Size := 0;
     finally
       FreeAndNil(Strm);
     end;
   end;
 end;
 
-function THeaders.GetSFXSize: integer;
+function THeaders.GetModule: integer;
 begin
-  if Assigned(SfxStrm) then
-    Result := SfxStrm.Size
+  if Assigned(Module) then
+    Result := Module.Size
   else
     Result := -1;
 end;
@@ -644,8 +683,8 @@ begin
   if Result > 0 then
   begin
     Stream.Seek(0, 0);
-    SfxStrm.Size := 0;
-    SfxStrm.CopyFrom(Stream, Result);
+    Module.Size := 0;
+    Module.CopyFrom(Stream, Result);
   end;
 end;
 
@@ -684,11 +723,11 @@ begin
     end else
       Break;
 
-  until (P <> nil) and (foLast in P.Flags);
+  until (P <> nil) and (foLast in P.FileFlags);
 
   if P <> nil then
   begin
-    Exclude(P.Flags, foLast);
+    Exclude(P.FileFlags, foLast);
   end;
 end;
 
@@ -713,11 +752,11 @@ begin
           P := nil;
         end
       else Break;
-    until (P <> nil) and (foLast in P.Flags);
+    until (P <> nil) and (foLast in P.FileFlags);
 
     if P <> nil then
     begin
-      Exclude(P.Flags, foLast);
+      Exclude(P.FileFlags, foLast);
     end;
   end else
     ReadItemsB4b(Stream, aAction);
@@ -729,15 +768,15 @@ var
 begin
   if Stream.Seek(0, 1) = 0 then
   begin
-    if SfxStrm.Size > 0 then
+    if Module.Size > 0 then
     begin
-      SfxStrm.Seek(0, 0);
-      Stream.CopyFrom(SfxStrm, SfxStrm.Size);
+      Module.Seek(0, 0);
+      Stream.CopyFrom(Module, Module.Size);
     end;
   end else
-    Stream.Seek(SfxStrm.Size, 0);
+    Stream.Seek(Module.Size, 0);
 
-  MarkLast(toDelete);
+  MarkAsLast(toDelete);
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action <> toDelete then
     begin
@@ -767,7 +806,7 @@ begin
     if THeader(Items[I]).Action = aAction then
     begin
       Result := I;
-      Exit;
+      Break;
     end;
 end;
 
@@ -780,7 +819,7 @@ begin
     if THeader(Items[I]).Action = aAction then
     begin
       Result := I;
-      Exit;
+      Break;
     end;
 end;
 
@@ -791,10 +830,10 @@ begin
   Result := -1;
   for I := Child to Count - 1 do
   begin
-    if Flag in THeader(Items[I]).Flags then
+    if Flag in THeader(Items[I]).FileFlags then
     begin
       Result := I;
-      Exit;
+      Break;
     end;
   end;
 end;
@@ -806,15 +845,15 @@ begin
   Result := -1;
   for I := Child downto 0 do
   begin
-    if Flag in THeader(Items[I]).Flags then
+    if Flag in THeader(Items[I]).FileFlags then
     begin
       Result := I;
-      Exit;
+      Break;
     end;
   end;
 end;
 
-function THeaders.GetNext(Child: integer; aAction: THeaderAction; const aName: string): integer;
+function THeaders.GetNext(Child: integer; aAction: THeaderAction; const aFileName: string): integer;
 var
   I: integer;
 begin
@@ -822,15 +861,15 @@ begin
   for I := Child to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = aAction) and (CompareFileName(Name, aName) = 0) then
+      if (Action = aAction) and (CompareFileName(FileName, aFileName) = 0) then
       begin
         Result := I;
-        Exit;
+        Break;
       end;
     end;
 end;
 
-function THeaders.GetBack(Child: integer; aActions: THeaderActions; const aName: string): integer;
+function THeaders.GetBack(Child: integer; aActions: THeaderActions; const aFileName: string): integer;
 var
   I: integer;
 begin
@@ -838,15 +877,15 @@ begin
   for I := Child downto 0 do
     with THeader(Items[I]) do
     begin
-      if (Action in aActions) and (CompareFileName(Name, aName) = 0) then
+      if (Action in aActions) and (CompareFileName(FileName, aFileName) = 0) then
       begin
         Result := I;
-        Exit;
+        Break;
       end;
     end;
 end;
 
-function THeaders.GetNext(Child: integer; aActions: THeaderActions; const aName: string): integer;
+function THeaders.GetNext(Child: integer; aActions: THeaderActions; const aFileName: string): integer;
 var
   I: integer;
 begin
@@ -854,15 +893,15 @@ begin
   for I := Child to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action in aActions) and (CompareFileName(Name, aName) = 0) then
+      if (Action in aActions) and (CompareFileName(FileName, aFileName) = 0) then
       begin
         Result := I;
-        Exit;
+        Break;
       end;
     end;
 end;
 
-function THeaders.GetBack(Child: integer; aAction: THeaderAction; const aName: string): integer;
+function THeaders.GetBack(Child: integer; aAction: THeaderAction; const aFileName: string): integer;
 var
   I: integer;
 begin
@@ -870,10 +909,10 @@ begin
   for I := Child downto 0 do
     with THeader(Items[I]) do
     begin
-      if (Action = aAction) and (CompareFileName(Name, aName) = 0) then
+      if (Action = aAction) and (CompareFileName(FileName, aFileName) = 0) then
       begin
         Result := I;
-        Exit;
+        Break;
       end;
     end;
 end;
@@ -886,7 +925,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action = aAction then
     begin
-      Inc(Result, THeader(Items[I]).Size);
+      Inc(Result, THeader(Items[I]).FileSize);
     end;
 end;
 
@@ -898,7 +937,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action = aAction then
     begin
-      Inc(Result, THeader(Items[I]).Pack);
+      Inc(Result, THeader(Items[I]).FilePacked);
     end;
 end;
 
@@ -910,7 +949,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action in Actions then
     begin
-      Inc(Result, THeader(Items[I]).Size);
+      Inc(Result, THeader(Items[I]).FileSize);
     end;
 end;
 
@@ -922,7 +961,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action in Actions then
     begin
-      Inc(Result, THeader(Items[I]).Pack);
+      Inc(Result, THeader(Items[I]).FilePacked);
     end;
 end;
 
@@ -963,19 +1002,26 @@ begin
   until I >= R;
 end;
 
-procedure THeaders.MarkLast(Last: THeaderAction);
+procedure THeaders.MarkAsLast(Action: THeaderAction);
 var
   I: integer;
 begin
   for I := Count - 1 downto 0 do
-    if THeader(Items[I]).Action <> Last then
+    if THeader(Items[I]).Action <> Action then
     begin
-      Include(THeader(Items[I]).Flags, foLast);
-      Exit;
+      Include(THeader(Items[I]).FileFlags, foLast);
+      Break;
     end;
 end;
 
-procedure THeaders.ScanFileSystem(SortHeaders: TSortHeaders; Mask: string; var Size: integer);
+procedure THeaders.ScanFileSystem(Mask: string;
+   Sorted: TSortedHeaders;
+  const cdOption: string;
+         fOption: boolean;
+         rOption: boolean;
+         uOption: boolean;
+         xOption: TStringList;
+    var Size: integer);
 var
   P: THeader;
   I: integer;
@@ -999,12 +1045,12 @@ begin
 
   if (Length(Mask) > 0) and (Mask[Length(Mask)] = PathDelim) then
   begin
-    Mask := Bee_Common.IncludeTrailingBackSlash(Mask) + '*';
+    Mask := IncludeTrailingBackSlash(Mask) + '*';
     Recursive := True;
   end else
-    if Bee_Common.DirectoryExists(Mask) then
+    if DirectoryExists(Mask) then
     begin
-      Mask := Bee_Common.IncludeTrailingBackSlash(Mask) + '*';
+      Mask := IncludeTrailingBackSlash(Mask) + '*';
       Recursive := True;
     end;
 
@@ -1018,32 +1064,38 @@ begin
       if (FileNameMatch(RecName, Mask)) then
         if (FileNameMatch(RecName, xOption) = False) then
         begin
-          J := SortHeaders.SearchItem(cdOption + Bee_Common.DeleteFileDrive(RecName));
+          J := Sorted.SearchItem(cdOption + DeleteFileDrive(RecName));
           if not (fOption xor uOption) then
           begin
             if (J = nil) then
             begin
-              P := THeader.Create(cdOption, Rec, RecPath);
-              SortHeaders.InsertItem(P);
+              P := THeader.Create(cdOption, RecPath, Rec);
+              Sorted.InsertItem(P);
               Add(P);
-              Inc(Size, Rec.Size);
+              Size := Size + Rec.Size;
             end else
-            if (Rec.Time > THeader(J).Time) then
-              Size := Size + THeader(J).Fresh(cdOption, Rec, RecPath);
+            if (Rec.Time > THeader(J).FileTime) then
+            begin
+              THeader(J).Fresh(cdOption, RecPath, Rec);
+              Size := Size + (Rec.Size -THeader(J).FileSize);
+            end;
           end else
           begin
             if fOption then
             begin
-              if (not (J = nil)) and (Rec.Time > THeader(J).Time) then
-                Size := Size + THeader(J).Fresh(cdOption, Rec, RecPath);
+              if (not (J = nil)) and (Rec.Time > THeader(J).FileTime) then
+              begin
+                THeader(J).Fresh(cdOption, RecPath, Rec);
+                Size := Size + (Rec.Size -THeader(J).FileSize);
+              end;
             end else
             begin
               if (J = nil) then
               begin
-                P := THeader.Create(cdOption, Rec, RecPath);
-                SortHeaders.InsertItem(P);
+                P := THeader.Create(cdOption, RecPath, Rec);
+                Sorted.InsertItem(P);
                 Add(P);
-                Inc(Size, Rec.Size);
+                Size := Size + Rec.Size;
               end;
             end;
           end;
@@ -1052,8 +1104,15 @@ begin
     begin
       if Recursive and (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
-        ScanFileSystem(SortHeaders, Bee_Common.IncludeTrailingBackSlash(RecName) +
-          ExtractFileName(Mask) + '!', Size);
+        ScanFileSystem(
+          IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask) + '!',
+          Sorted,
+          cdOption,
+           fOption,
+           rOption,
+           uOption,
+           xOption,
+          Size);
       end;
     end;
     Error := FindNext(Rec);
