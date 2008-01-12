@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0581 - 2000.01.11 by Melchiorre Caruso.
+  v0.7.9 build 0593 - 2000.01.12 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;

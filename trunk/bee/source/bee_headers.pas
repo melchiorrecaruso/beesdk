@@ -27,7 +27,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-  v0.7.9 build 0581 - 2008.01.11 by Melchiorre Caruso;
+  v0.7.9 build 0593 - 2008.01.12 by Melchiorre Caruso;
 }
 
 unit Bee_Headers;
@@ -294,7 +294,7 @@ begin
     if Stream.Read(FileName[1], j) = j then
     begin
       FileName := DoDirSeparators(FileName);
-      FileNameLink := FileName;
+      FileNameLink := '';
     end else
       Fail;
   end;
@@ -1077,7 +1077,7 @@ begin
             if (Rec.Time > THeader(J).FileTime) then
             begin
               THeader(J).Fresh(cdOption, RecPath, Rec);
-              Size := Size + (Rec.Size -THeader(J).FileSize);
+              Size := Size + (Rec.Size - THeader(J).FileSize);
             end;
           end else
           begin
@@ -1086,7 +1086,7 @@ begin
               if (not (J = nil)) and (Rec.Time > THeader(J).FileTime) then
               begin
                 THeader(J).Fresh(cdOption, RecPath, Rec);
-                Size := Size + (Rec.Size -THeader(J).FileSize);
+                Size := Size + (Rec.Size - THeader(J).FileSize);
               end;
             end else
             begin
