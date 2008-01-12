@@ -677,16 +677,11 @@ function TBeeApp.ProcessFilesToRename(Headers: THeaders): boolean;
 var
   i: integer;
   iFileName: string;
-  iFolderName: string;
 begin
   Headers.MarkItems(FileMasks, toCopy, toRename);
   Headers.MarkItems(xOption, toRename, toCopy);
 
-  if Headers.GetNext(0, toRename) = -1 then
-  begin
-
-
-  end else
+  if (Headers.GetNext(0, toRename) > -1) then
   begin
     for i := 0 to Headers.Count - 1 do
     begin
@@ -718,12 +713,8 @@ begin
         end;
       end;
     end;
-  end;
-  
-
-  if (Headers.GetNext(0, toRename) > -1) then
-    Result := True
-  else
+    Result := True;
+  end else
     Result := ((Length(aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) ;
 end;
 
