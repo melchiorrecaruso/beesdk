@@ -104,7 +104,7 @@ type
     // End file header
   public
     Action: THeaderAction;
-    FileNameLink: string;
+    FileLink: string;
   public
     constructor Create(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
     procedure Fresh(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
@@ -243,7 +243,7 @@ begin
   FileCrc := cardinal(-1);
   FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
   // ---
-  FileNameLink := RecPath + Rec.Name;
+  FileLink := RecPath + Rec.Name;
 end;
 
 procedure THeader.Fresh(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
@@ -256,7 +256,7 @@ begin
   FileTime := Rec.Time;
   FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
   // ---
-  FileNameLink := RecPath + Rec.Name;
+  FileLink := RecPath + Rec.Name;
 end;
 
 constructor THeader.Read(Stream: TStream; aAction: THeaderAction);
@@ -294,7 +294,7 @@ begin
     if Stream.Read(FileName[1], j) = j then
     begin
       FileName := DoDirSeparators(FileName);
-      FileNameLink := '';
+      FileLink := '';
     end else
       Fail;
   end;
@@ -302,8 +302,8 @@ end;
 
 destructor THeader.Destroy;
 begin
-  SetLength(FileName, 0);
-  SetLength(FileNameLink, 0);
+  FileName := '';
+  FileLink := '';
   inherited Destroy;
 end;
 

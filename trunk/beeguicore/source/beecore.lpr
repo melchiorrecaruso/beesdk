@@ -42,6 +42,7 @@ uses
   Bee_Interface,
   // ---
   BeeCore_AddFrm,
+  BeeCore_TickFrm,
   BeeCore_ViewFrm,
   BeeCore_AboutFrm,
   BeeCore_RenameFrm,
@@ -58,7 +59,6 @@ type
     AppLog: TStringList;
     AppInterface: TAppInterface;
     AppParams: TStringList;
-
     procedure OnFatalError;
     procedure OnOverWrite;
     procedure OnWarning;
@@ -79,20 +79,47 @@ type
   // implementation
   
   constructor TCore.Create;
+  var
+    i: integer;
   begin
     inherited Create;
     AppLog := TStringList.Create;
+
+    AppInterface := TAppInterface.Create;
+    AppInterface.OnFatalError.Method := OnFatalError;
+    AppInterface.OnOverWrite.Method := OnOverWrite;
+    AppInterface.OnWarning.Method := OnWarning;
+    AppInterface.OnDisplay.Method := OnDisplay;
+    AppInterface.OnRequest.Method := OnRequest;
+    AppInterface.OnRename.Method := OnRename;
+    AppInterface.OnClear.Method := OnClear;
+    AppInterface.OnError.Method := OnError;
+    AppInterface.OnList.Method := OnList;
+    AppInterface.OnTick.Method := OnTick;
+    AppInterface.OnKey.Method := OnKey;
+
+    SetLength(AppKey, 0);
+    AppParams := TStringList.Create;
+    for i := 1 to ParamCount do
+    begin
+      AppParams.Add(ParamStr(i));
+    end;
+    App := TBeeApp.Create(AppInterface, AppParams);
   end;
   
   destructor TCore.Destroy;
   begin
+    AppKey := '';
+    // ---
     AppLog.Free;
+    AppParams.Free;
+    AppInterface.Free;
     inherited Destroy;
   end;
   
   procedure TCore.Execute;
   begin
-
+    App.Execute;
   end;
   
   procedure TCore.OnFatalError;
@@ -153,30 +180,53 @@ type
     if App.Suspended = False then
     begin;
       App.Suspended := True;
+      F := TRenameFrm.Create(nil);
+      F.Caption := 'Rename file';
+      F.RenameTo.Text :=
+        AppInterface.OnRename.Data.FilePath +
+        AppInterface.OnRename.Data.FileName;
+        
+      if F.ShowModal = mrOk then
+        AppInterface.OnRename.Answer := F.RenameTo.Text
+      else
+        AppInterface.OnRename.Answer := '';
 
-
-      if AppRenameFolder = False then
-      begin
-        f := TRenameFrm.Create(Self);
-        try
-          f.Caption := 'Rename file';
-          f.RenameFrm_To.Text := AppInterface.OnRename.Data.FilePath + AppInterface.OnRename.Data.FileName;
-          if f.ShowModal = mrOk then
-            AppInterface.OnRename.Answer := f.RenameFrm_To.Text
-          else
-            AppInterface.OnRename.Answer := '';
-        finally
-          f.Free;
-        end;
-      end else
-      begin
-        AppInterface.OnRename.Answer := AppInterface.OnRename.Data.FilePath + AppInterface.OnRename.Data.FileName;
-        Delete(AppInterface.OnRename.Answer, 1, Length(AppRenameFolderFrom));
-        AppInterface.OnRename.Answer := AppRenameFolderTo + AppInterface.OnRename.Answer;
-      end;
+      F.Free;
       App.Suspended := False;
     end;
   end;
+  
+  procedure TCore.OnError;
+  begin
+    AppLog.Add(AppInterface.OnError.Data.Msg);
+  end;
+  
+  procedure TCore.OnClear;
+  begin
+    // nothing to do
+  end;
+  
+  procedure TCore.OnList;
+  begin
+
+  end;
+  
+  procedure TCore.OnTick;
+  begin
+    if not Assigned(TickFrm) then
+    begin
+      TickFrm := TTickFrm.Create(nil);
+    end;
+    TickFrm.Caption := AppInterface.OnDisplay.Data.Msg;
+    TickFrm.Show;
+  end;
+  
+  procedure TCore.OnKey;
+  begin
+  
+  end;
+  
+  // -- implemenattion -- //
   
 var
   Core: TCore;
@@ -184,6 +234,6 @@ var
 begin
   Core := TCore.Create;
   Core.Execute;
-  Core.Free;
+  Core.Destroy;
 end.
 

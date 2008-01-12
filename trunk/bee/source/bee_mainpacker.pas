@@ -165,7 +165,7 @@ begin
   Header.FileCrc := cardinal(-1);
 
   try
-    SrcFile := TFileReader.Create(Header.FileNameLink, fmOpenRead + fmShareDenyWrite);
+    SrcFile := TFileReader.Create(Header.FileLink, fmOpenRead + fmShareDenyWrite);
   except
     SrcFile := nil;
   end;

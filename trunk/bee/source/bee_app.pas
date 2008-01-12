@@ -713,7 +713,7 @@ begin
         end;
       end;
     end;
-    Result := True;
+    Result := True
   end else
     Result := ((Length(aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) ;
 end;

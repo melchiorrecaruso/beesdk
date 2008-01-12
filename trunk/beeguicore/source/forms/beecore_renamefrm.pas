@@ -18,7 +18,7 @@
 
 { Contains:
 
-    BeeGui Rename form.
+    BeeCore Rename form.
 
   Modifyed:
 
