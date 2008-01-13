@@ -31,9 +31,15 @@ uses
   cThreads,
   {$ENDIF}
   Interfaces,
+
+
   SysUtils,
 
   Controls,
+  Dialogs,
+  StdCtrls,
+  ExtCtrls,
+  ComCtrls,
   Classes,
   Forms,
   // ---
@@ -52,13 +58,15 @@ uses
 
 type
 
-  TCore = class
+  TCore = class (TThread)
   private
     App: TBeeApp;
     AppKey: string;
     AppLog: TStringList;
     AppInterface: TAppInterface;
     AppParams: TStringList;
+    AppTerminated: boolean;
+    AppShowTick: boolean;
     procedure OnFatalError;
     procedure OnOverWrite;
     procedure OnWarning;
@@ -70,19 +78,22 @@ type
     procedure OnList;
     procedure OnTick;
     procedure OnKey;
+  private
+    procedure DoTerminate; override;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Execute;
+    procedure Execute; override;
   end;
   
   // implementation
-  
+
   constructor TCore.Create;
   var
     i: integer;
   begin
-    inherited Create;
+    inherited Create(True);
+    
     AppLog := TStringList.Create;
 
     AppInterface := TAppInterface.Create;
@@ -105,6 +116,8 @@ type
       AppParams.Add(ParamStr(i));
     end;
     App := TBeeApp.Create(AppInterface, AppParams);
+    AppTerminated := False;
+    AppShowTick := False;
   end;
   
   destructor TCore.Destroy;
@@ -121,7 +134,19 @@ type
   begin
     App.Execute;
   end;
-  
+
+  procedure TCore.DoTerminate;
+  begin
+    if TickFrm.BtnCancel.ModalResult = mrCancel then
+    begin
+      TickFrm.BtnCancel.ModalResult := mrOk;
+      TickFrm.BtnCancel.Click;
+      
+      TickFrm.Visible := False;
+    end;
+    inherited DoTerminate;
+  end;
+
   procedure TCore.OnFatalError;
   begin
     AppLog.Add(AppInterface.OnFatalError.Data.Msg);
@@ -165,7 +190,7 @@ type
   
   procedure TCore.OnDisplay;
   begin
-    AppLog.Add(AppInterface.OnDisplay.Data.Msg);
+    TickFrm.Msg.Caption := AppInterface.OnDisplay.Data.Msg;
   end;
   
   procedure TCore.OnRequest;
@@ -213,27 +238,48 @@ type
   
   procedure TCore.OnTick;
   begin
-    if not Assigned(TickFrm) then
+    TickFrm.Tick.Position := AppInterface.OnTick.Data.Percentage;
+    if AppInterface.OnTick.Data.Bytes > 1024 then
     begin
-      TickFrm := TTickFrm.Create(nil);
+      AppShowTick := True;
     end;
-    TickFrm.Caption := AppInterface.OnDisplay.Data.Msg;
-    TickFrm.Show;
   end;
   
   procedure TCore.OnKey;
   begin
   
   end;
-  
+
   // -- implemenattion -- //
-  
+
 var
   Core: TCore;
 
+
 begin
+  Application.Initialize;
+  // ---
+  TickFrm := TTickFrm.Create(Application);
+  // ---
   Core := TCore.Create;
-  Core.Execute;
-  Core.Destroy;
+  Core.Resume;
+
+  repeat
+    if Core.AppTerminated then
+      Break
+    else
+      Application.ProcessMessages;
+  until Core.AppShowTick;
+  
+  if Core.AppShowTick then
+    case TickFrm.ShowModal of
+      mrCancel: begin
+                  ShowMessage('Cancel');
+                end;
+      mrOk:     begin
+                  ShowMessage('Ok');
+                end;
+    end;
+  Core.Free;
 end.
 

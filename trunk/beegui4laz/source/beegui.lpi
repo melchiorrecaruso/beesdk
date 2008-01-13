@@ -42,15 +42,15 @@
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="BeeGui"/>
+        <MinVersion Major="1" Release="3" Build="1" Valid="True"/>
       </Item1>
       <Item2>
         <PackageName Value="FCL"/>
         <MinVersion Major="1" Valid="True"/>
       </Item2>
       <Item3>
-        <PackageName Value="BeeGui"/>
-        <MinVersion Major="1" Release="3" Build="1" Valid="True"/>
+        <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
     <Units Count="178">
@@ -1318,24 +1318,7 @@
         <UsageCount Value="10"/>
       </Unit177>
     </Units>
-    <JumpHistory Count="4" HistoryIndex="3">
-      <Position1>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1836" Column="10" TopLine="1808"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1838" Column="60" TopLine="1813"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="69" Column="26" TopLine="69"/>
-      </Position3>
-      <Position4>
-        <Filename Value="forms\beegui_mainfrm.pas"/>
-        <Caret Line="1835" Column="10" TopLine="1815"/>
-      </Position4>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

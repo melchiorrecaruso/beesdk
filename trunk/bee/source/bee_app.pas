@@ -247,7 +247,9 @@ end;
 
 function TBeeApp.Tick: boolean;
 begin
-  AppInterface.OnTick.Data.Percentage := MulDiv(RemainSize, 100, GeneralSize);
+  AppInterface.OnTick.Data.Percentage  := MulDiv(RemainSize, 100, GeneralSize);
+  AppInterface.OnTick.Data.Bytes := RemainSize;
+
   Sync(AppInterface.OnTick.Method);
   Result := Terminated;
 end;

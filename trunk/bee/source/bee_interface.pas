@@ -120,7 +120,7 @@ type
       Answer: string;
       Data: record
         Percentage: integer;
-        Speed: integer;
+        Bytes: integer;
       end;
     end;
     OnClear: record
