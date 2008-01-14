@@ -32,15 +32,13 @@ uses
   {$ENDIF}
   Interfaces,
 
-
   SysUtils,
-
   Controls,
-  Dialogs,
   StdCtrls,
   ExtCtrls,
   ComCtrls,
   Classes,
+  Dialogs,
   Forms,
   // ---
   Bee_App,
@@ -58,15 +56,20 @@ uses
 
 type
 
-  TCore = class (TThread)
+  { TGui Application class }
+
+  TGui = class
   private
-    App: TBeeApp;
-    AppKey: string;
-    AppLog: TStringList;
-    AppInterface: TAppInterface;
-    AppParams: TStringList;
-    AppTerminated: boolean;
-    AppShowTick: boolean;
+    FApp: TBeeApp;
+    FAppKey: string;
+    FAppLog: TStringList;
+    FAppInterface: TAppInterface;
+    FAppParams: TStringList;
+    FAppTerminated: boolean;
+    FTickFrm: TTickFrm;
+    FTickBool: boolean;
+  private
+    procedure OnTerminate(Sender: TObject);
     procedure OnFatalError;
     procedure OnOverWrite;
     procedure OnWarning;
@@ -76,92 +79,84 @@ type
     procedure OnError;
     procedure OnClear;
     procedure OnList;
-    procedure OnTick;
+    procedure On1Tick;
+    procedure On2Tick;
     procedure OnKey;
-  private
-    procedure DoTerminate; override;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Execute; override;
   end;
   
   // implementation
 
-  constructor TCore.Create;
+  constructor TGui.Create;
   var
     i: integer;
   begin
-    inherited Create(True);
-    
-    AppLog := TStringList.Create;
+    inherited Create;
+    FAppInterface := TAppInterface.Create;
+    FAppInterface.OnFatalError.Method := OnFatalError;
+    FAppInterface.OnOverWrite.Method := OnOverWrite;
+    FAppInterface.OnWarning.Method := OnWarning;
+    FAppInterface.OnDisplay.Method := OnDisplay;
+    FAppInterface.OnRequest.Method := OnRequest;
+    FAppInterface.OnRename.Method := OnRename;
+    FAppInterface.OnClear.Method := OnClear;
+    FAppInterface.OnError.Method := OnError;
+    FAppInterface.OnList.Method := OnList;
+    FAppInterface.OnTick.Method := On1Tick;
+    FAppInterface.OnKey.Method := OnKey;
 
-    AppInterface := TAppInterface.Create;
-    AppInterface.OnFatalError.Method := OnFatalError;
-    AppInterface.OnOverWrite.Method := OnOverWrite;
-    AppInterface.OnWarning.Method := OnWarning;
-    AppInterface.OnDisplay.Method := OnDisplay;
-    AppInterface.OnRequest.Method := OnRequest;
-    AppInterface.OnRename.Method := OnRename;
-    AppInterface.OnClear.Method := OnClear;
-    AppInterface.OnError.Method := OnError;
-    AppInterface.OnList.Method := OnList;
-    AppInterface.OnTick.Method := OnTick;
-    AppInterface.OnKey.Method := OnKey;
-
-    SetLength(AppKey, 0);
-    AppParams := TStringList.Create;
+    FAppKey:= '';
+    FAppLog := TStringList.Create;
+    FAppParams := TStringList.Create;
     for i := 1 to ParamCount do
     begin
-      AppParams.Add(ParamStr(i));
+      FAppParams.Add(ParamStr(i));
     end;
-    App := TBeeApp.Create(AppInterface, AppParams);
-    AppTerminated := False;
-    AppShowTick := False;
+    FTickFrm := TTickFrm.Create(Application);
+    FTickBool := False;
+    // ---
+    FApp := TBeeApp.Create(FAppInterface, FAppParams);
+    FApp.OnTerminate := OnTerminate;
+    FAppTerminated := False;
+    FApp.Resume;
   end;
   
-  destructor TCore.Destroy;
+  destructor TGui.Destroy;
   begin
-    AppKey := '';
-    // ---
-    AppLog.Free;
-    AppParams.Free;
-    AppInterface.Free;
+    FAppKey := '';
+    FAppLog.Free;
+    FAppParams.Free;
+    FAppInterface.Free;
     inherited Destroy;
   end;
-  
-  procedure TCore.Execute;
-  begin
-    App.Execute;
-  end;
 
-  procedure TCore.DoTerminate;
+  procedure TGui.OnTerminate(Sender: TObject);
   begin
-    if TickFrm.BtnCancel.ModalResult = mrCancel then
+    if FTickFrm.BtnCancel.ModalResult = mrCancel then
     begin
-      TickFrm.BtnCancel.ModalResult := mrOk;
-      TickFrm.BtnCancel.Click;
+      FTickFrm.BtnCancel.ModalResult := mrOk;
+      FTickFrm.BtnCancel.Click;
       
-      TickFrm.Visible := False;
+      FTickFrm.Visible := False;
     end;
-    inherited DoTerminate;
   end;
 
-  procedure TCore.OnFatalError;
+  procedure TGui.OnFatalError;
   begin
-    AppLog.Add(AppInterface.OnFatalError.Data.Msg);
+    FAppLog.Add(FAppInterface.OnFatalError.Data.Msg);
   end;
   
-  procedure TCore.OnOverwrite;
+  procedure TGui.OnOverwrite;
   var
     F: TOverWriteFrm;
   begin
-    if App.Suspended = False then
+    if FApp.Suspended = False then
     begin;
-      App.Suspended := True;
-      // ---
+      FApp.Suspended := True;
       F := TOverWriteFrm.Create(nil);
-      with AppInterface.OnOverWrite.Data do
+      with FAppInterface.OnOverWrite.Data do
       begin
         F.TheFolder.Caption := F.TheFolder.Caption + ' "' + FileName + '".';
         F.NewSize  .Caption := F.NewSize  .Caption + '  ' + SizeToStr(FileSize);
@@ -171,81 +166,85 @@ type
         F.OldDate  .Caption := F.OldDate  .Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileAge(FileName)));
       end;
       case F.ShowModal of
-        mrAbort   : AppInterface.OnOverWrite.Answer := 'Q';
-        mrNoToAll : AppInterface.OnOverWrite.Answer := 'S';
-        mrYesToAll: AppInterface.OnOverWrite.Answer := 'A';
-        mrNo      : AppInterface.OnOverWrite.Answer := 'N';
-        mrYes     : AppInterface.OnOverWrite.Answer := 'Y';
+        mrAbort   : FAppInterface.OnOverWrite.Answer := 'Q';
+        mrNoToAll : FAppInterface.OnOverWrite.Answer := 'S';
+        mrYesToAll: FAppInterface.OnOverWrite.Answer := 'A';
+        mrNo      : FAppInterface.OnOverWrite.Answer := 'N';
+        mrYes     : FAppInterface.OnOverWrite.Answer := 'Y';
       end;
       F.Free;
-      // ---
-      App.Suspended := False;
+      FApp.Suspended := False;
     end;
   end;
   
-  procedure TCore.OnWarning;
+  procedure TGui.OnWarning;
   begin
-    AppLog.Add(AppInterface.OnWarning.Data.Msg);
+    FAppLog.Add(FAppInterface.OnWarning.Data.Msg);
   end;
   
-  procedure TCore.OnDisplay;
+  procedure TGui.OnDisplay;
   begin
-    TickFrm.Msg.Caption := AppInterface.OnDisplay.Data.Msg;
+    FTickFrm.Msg.Caption := FAppInterface.OnDisplay.Data.Msg;
   end;
   
-  procedure TCore.OnRequest;
+  procedure TGui.OnRequest;
   begin
-    AppLog.Add(AppInterface.OnRequest.Data.Msg);
+    FAppLog.Add(FAppInterface.OnRequest.Data.Msg);
   end;
   
-  procedure TCore.OnRename;
+  procedure TGui.OnRename;
   var
     F: TRenameFrm;
   begin
-    if App.Suspended = False then
+    if FApp.Suspended = False then
     begin;
-      App.Suspended := True;
+      FApp.Suspended := True;
       F := TRenameFrm.Create(nil);
       F.Caption := 'Rename file';
       F.RenameTo.Text :=
-        AppInterface.OnRename.Data.FilePath +
-        AppInterface.OnRename.Data.FileName;
+        FAppInterface.OnRename.Data.FilePath +
+        FAppInterface.OnRename.Data.FileName;
         
       if F.ShowModal = mrOk then
-        AppInterface.OnRename.Answer := F.RenameTo.Text
+        FAppInterface.OnRename.Answer := F.RenameTo.Text
       else
-        AppInterface.OnRename.Answer := '';
+        FAppInterface.OnRename.Answer := '';
 
       F.Free;
-      App.Suspended := False;
+      FApp.Suspended := False;
     end;
   end;
   
-  procedure TCore.OnError;
+  procedure TGui.OnError;
   begin
-    AppLog.Add(AppInterface.OnError.Data.Msg);
+    FAppLog.Add(FAppInterface.OnError.Data.Msg);
   end;
   
-  procedure TCore.OnClear;
+  procedure TGui.OnClear;
   begin
     // nothing to do
   end;
   
-  procedure TCore.OnList;
+  procedure TGui.OnList;
   begin
 
   end;
   
-  procedure TCore.OnTick;
+  procedure TGui.On1Tick;
   begin
-    TickFrm.Tick.Position := AppInterface.OnTick.Data.Percentage;
-    if AppInterface.OnTick.Data.Bytes > 1024 then
+    if FAppInterface.OnTick.Data.Bytes > 1024 then
     begin
-      AppShowTick := True;
+      FAppInterface.OnTick.Method := On2Tick;
+      FTickBool := True;
     end;
   end;
   
-  procedure TCore.OnKey;
+  procedure TGui.On2Tick;
+  begin
+    FTickFrm.Tick.Position := FAppInterface.OnTick.Data.Percentage;
+  end;
+  
+  procedure TGui.OnKey;
   begin
   
   end;
@@ -253,33 +252,25 @@ type
   // -- implemenattion -- //
 
 var
-  Core: TCore;
-
+  Gui: TGui;
 
 begin
   Application.Initialize;
-  // ---
-  TickFrm := TTickFrm.Create(Application);
-  // ---
-  Core := TCore.Create;
-  Core.Resume;
-
+  Gui := TGui.Create;
   repeat
-    if Core.AppTerminated then
+    if Gui.FAppTerminated then
       Break
     else
       Application.ProcessMessages;
-  until Core.AppShowTick;
+  until Gui.FTickBool;
   
-  if Core.AppShowTick then
-    case TickFrm.ShowModal of
-      mrCancel: begin
-                  ShowMessage('Cancel');
-                end;
-      mrOk:     begin
-                  ShowMessage('Ok');
-                end;
+  if Gui.FTickBool then
+  begin
+    if Gui.FTickFrm.ShowModal = mrCancel then
+    begin
+      ShowMessage('Cancel');
     end;
-  Core.Free;
+  end;
+  Gui.Free;
 end.
 
