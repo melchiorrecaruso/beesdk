@@ -1,14 +1,14 @@
 object ViewFrm: TViewFrm
-  Left = 375
-  Height = 480
-  Top = 236
-  Width = 519
-  HorzScrollBar.Page = 518
-  VertScrollBar.Page = 479
+  Left = 395
+  Height = 551
+  Top = 156
+  Width = 599
+  HorzScrollBar.Page = 598
+  VertScrollBar.Page = 550
   ActiveControl = Memo
   Caption = 'View:'
-  ClientHeight = 480
-  ClientWidth = 519
+  ClientHeight = 551
+  ClientWidth = 599
   Constraints.MinHeight = 90
   Constraints.MinWidth = 248
   Font.CharSet = ANSI_CHARSET
@@ -17,8 +17,8 @@ object ViewFrm: TViewFrm
   OnCreate = FormCreate
   Position = poDefault
   object Memo: TMemo
-    Height = 441
-    Width = 519
+    Height = 512
+    Width = 599
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     ReadOnly = True
@@ -28,7 +28,7 @@ object ViewFrm: TViewFrm
   object BtnFont: TBitBtn
     Left = 5
     Height = 24
-    Top = 449
+    Top = 520
     Width = 75
     Anchors = [akLeft, akBottom]
     BorderSpacing.InnerBorder = 2
@@ -38,9 +38,9 @@ object ViewFrm: TViewFrm
     TabOrder = 1
   end
   object BtnOk: TBitBtn
-    Left = 438
+    Left = 518
     Height = 24
-    Top = 449
+    Top = 520
     Width = 75
     Anchors = [akRight, akBottom]
     BorderSpacing.InnerBorder = 2
@@ -53,7 +53,7 @@ object ViewFrm: TViewFrm
   object BtnSave: TBitBtn
     Left = 86
     Height = 24
-    Top = 449
+    Top = 520
     Width = 75
     Anchors = [akLeft, akBottom]
     Caption = 'Save'

@@ -52,9 +52,6 @@ type
     destructor Destroy; override;
     procedure Execute; override;
     function Tick: boolean;
-  public
-    GeneralSize: integer;
-    RemainSize:  integer;
   private
     function OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 
@@ -146,17 +143,20 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0593 archiver utility, freeware version, Jan 2008.'
+  SelfName := 'The Bee 0.7.9 build 0601 archiver utility, freeware version, Jan 2008.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   ArcName  := '';
   ArcFile  := nil;
   SwapName := '';
   SwapFile := nil;
-
-  GeneralSize := 0;
-  RemainSize  := 0;
-
+  
+  with AppInterface.OnTick.Data do
+  begin
+    GeneralSize := 0;
+    RemainSize := 0;
+  end;
+  
   CfgName := Bee_Common.SelfPath + 'bee.ini';
   Cfg := TConfiguration.Create;
 
@@ -247,9 +247,10 @@ end;
 
 function TBeeApp.Tick: boolean;
 begin
-  AppInterface.OnTick.Data.Percentage  := MulDiv(RemainSize, 100, GeneralSize);
-  AppInterface.OnTick.Data.Bytes := RemainSize;
-
+  with AppInterface.OnTick.Data do
+  begin
+    Percentage  := MulDiv(RemainSize, 100, GeneralSize);
+  end;
   Sync(AppInterface.OnTick.Method);
   Result := Terminated;
 end;
@@ -745,16 +746,19 @@ begin
         case THeader(Headers.Items[J]).Action of
            toCopy: begin
                     THeader(Headers.Items[J]).Action := toSwap;
-                    Inc(GeneralSize, THeader(Headers.Items[J]).FileSize * 2); // decoding  and Encoding size
+                    Inc(AppInterface.OnTick.Data.GeneralSize, // decoding  and Encoding size
+                      THeader(Headers.Items[J]).FileSize * 2);
                    end;
-          toFresh: Inc(GeneralSize, THeader(Headers.Items[J]).FileSize); // decoding size
+          toFresh: Inc(AppInterface.OnTick.Data.GeneralSize, // decoding size
+                     THeader(Headers.Items[J]).FileSize);
         end;
       end;
       I := BackTear;
     end;
     I := Headers.GetBack(I - 1, toFresh);
   end;
-  Inc(GeneralSize, Headers.GetPackedSize(toCopy));
+  Inc(AppInterface.OnTick.Data.GeneralSize,
+    Headers.GetPackedSize(toCopy));
 end;
 
 procedure TBeeApp.ProcessFilesToDelete;
@@ -782,16 +786,19 @@ begin
           case THeader(Headers.Items[J]).Action of
             toCopy:   begin
                         THeader(Headers.Items[J]).Action := toSwap;
-                        Inc(GeneralSize, THeader(Headers.Items[J]).FileSize * 2);
+                        Inc(AppInterface.OnTick.Data.GeneralSize,
+                          THeader(Headers.Items[J]).FileSize * 2);
                       end;
-            toDelete: Inc(GeneralSize, THeader(Headers.Items[J]).FileSize);
+            toDelete: Inc(AppInterface.OnTick.Data.GeneralSize,
+                        THeader(Headers.Items[J]).FileSize);
           end;
       end;
       I := BackTear;
     end;
     I := Headers.GetBack(I - 1, toDelete);
   end;
-  Inc(GeneralSize, Headers.GetPackedSize(toCopy));
+  Inc(AppInterface.OnTick.Data.GeneralSize,
+    Headers.GetPackedSize(toCopy));
 end;
 
 function TBeeApp.ProcessFilesToSwap(Headers: THeaders): boolean;
@@ -910,7 +917,8 @@ begin
       if THeader(Headers.Items[J]).Action in [toNone, toQuit] then
       begin
         THeader(Headers.Items[J]).Action := toSkip;
-        Inc(GeneralSize, THeader(Headers.Items[J]).FileSize);
+        Inc(AppInterface.OnTick.Data.GeneralSize,
+          THeader(Headers.Items[J]).FileSize);
       end;
 
     if (iDictionary > -1) and (THeader(Headers.Items[iDictionary]).Action = toNone) then
@@ -929,9 +937,11 @@ procedure TBeeApp.ProcesstOption;
 begin
   if tOption then
   begin
-    GeneralSize := 0;
-    RemainSize  := 0;
-
+    with AppInterface.OnTick.Data do
+    begin
+      GeneralSize := 0;
+      RemainSize  := 0;
+    end;
     xOption.Clear; // clear xOption
     FileMasks.Clear; // clear FileMasks
     FileMasks.Add('*!');
@@ -943,9 +953,11 @@ procedure TBeeApp.ProcesslOption;
 begin
   if lOption then
   begin
-    GeneralSize := 0;
-    RemainSize  := 0;
-
+    with AppInterface.OnTick.Data do
+    begin
+      GeneralSize := 0;
+      RemainSize  := 0;
+    end;
     xOption.Clear; // clear xOption
     FileMasks.Clear; // clear FileMasks
     FileMasks.Add('*!');
@@ -975,14 +987,15 @@ begin
 
     // process FileMasks and xFileMasks
 
-    Headers.AddItems(
-      FileMasks,
-      cdOption,
-       fOption,
-       rOption,
-       uOption,
-       xOption,
-      GeneralSize);
+    with AppInterface.OnTick.Data do
+      Headers.AddItems(
+        FileMasks,
+        cdOption,
+         fOption,
+         rOption,
+         uOption,
+         xOption,
+        GeneralSize);
 
     if (Headers.GetCount([toUpdate, toFresh]) > 0) or
       ((Length(aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
@@ -1103,7 +1116,7 @@ begin
       ProcessFilesToOverWrite(Headers);
     end;
 
-    GeneralSize := Headers.GetSize(Action);
+    AppInterface.OnTick.Data.GeneralSize := Headers.GetSize(Action);
     if (Headers.GetNext(0, Action) > -1) then // action = toTest or toExtract
     begin
       Time := Now;
@@ -1290,7 +1303,8 @@ begin
       TmpFileName := GenerateFileName(yOption);
       TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
 
-      GeneralSize := Headers.GetPackedSize([toCopy, toRename]);
+      AppInterface.OnTick.Data.GeneralSize :=
+        Headers.GetPackedSize([toCopy, toRename]);
 
       // set sfx module
       if Length(aOption) > 0 then Headers.SetModule(aOption);

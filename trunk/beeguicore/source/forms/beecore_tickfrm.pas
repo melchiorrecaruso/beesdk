@@ -47,6 +47,7 @@ type
   { TTickFrm }
 
   TTickFrm = class(TForm)
+    BtnPause: TBitBtn;
     Storage: TXMLPropStorage;
     Tick: TProgressBar;
     Msg: TLabel;
@@ -54,10 +55,12 @@ type
     BtnBackGround: TBitBtn;
     BtnCancel: TBitBtn;
     BtnRun: TBitBtn;
+    procedure BtnPauseClick(Sender: TObject);
+    procedure BtnRunClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BtnBackGroundClick(Sender: TObject);
     procedure BtnForegroundClick(Sender: TObject);
-    constructor Create(AOwner: TComponent; AThread: TThread = nil);
+    constructor Create(AOwner: TComponent; AThread: TThread);
   private
     { public declarations }
     FThread: TThread;
@@ -74,10 +77,15 @@ uses
 
   { TTickFrm class }
   
-  constructor TTickFrm.Create(AOwner: TComponent; AThread: TThread = nil);
+  constructor TTickFrm.Create(AOwner: TComponent; AThread: TThread);
   begin
     inherited Create(AOwner);
     FThread := AThread;
+    // ---
+    BtnRun.Top := BtnPause.Top;
+    BtnRun.Left := BtnPause.Left;
+    BtnForeground.Top := BtnBackground.Top;
+    BtnForeground.Left := BtnBackground.Left;
   end;
 
   procedure TTickFrm.FormCreate(Sender: TObject);
@@ -91,6 +99,20 @@ uses
     end;
     {$I beecore_tickfrm.inc}
     Storage.Restore;
+  end;
+
+  procedure TTickFrm.BtnRunClick(Sender: TObject);
+  begin
+    FThread.Suspended := False;
+    BtnPause.Visible := True;
+    BtnRun.Visible := False;
+  end;
+
+  procedure TTickFrm.BtnPauseClick(Sender: TObject);
+  begin
+    FThread.Suspended := True;
+    BtnPause.Visible := False;
+    BtnRun.Visible := True;
   end;
 
   procedure TTickFrm.BtnBackGroundClick(Sender: TObject);

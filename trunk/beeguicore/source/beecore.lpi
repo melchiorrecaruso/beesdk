@@ -7,7 +7,7 @@
       <MainUnit Value="0"/>
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -31,15 +31,15 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="46">
+    <Units Count="49">
       <Unit0>
         <Filename Value="beecore.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="23" Y="55"/>
-        <TopLine Value="55"/>
+        <CursorPos X="27" Y="324"/>
+        <TopLine Value="290"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="66"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -55,9 +55,11 @@
         <HasResources Value="True"/>
         <ResourceFilename Value="forms\beecore_tickfrm.lrs"/>
         <UnitName Value="BeeCore_TickFrm"/>
-        <CursorPos X="7" Y="67"/>
-        <TopLine Value="59"/>
-        <UsageCount Value="21"/>
+        <CursorPos X="39" Y="107"/>
+        <TopLine Value="86"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\..\..\lazarus\lcl\interfaces\win32\interfaces.pp"/>
@@ -240,9 +242,11 @@
         <HasResources Value="True"/>
         <ResourceFilename Value="forms\beecore_aboutfrm.lrs"/>
         <UnitName Value="BeeCore_AboutFrm"/>
-        <CursorPos X="1" Y="75"/>
-        <TopLine Value="46"/>
-        <UsageCount Value="10"/>
+        <CursorPos X="36" Y="120"/>
+        <TopLine Value="98"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="13"/>
+        <Loaded Value="True"/>
       </Unit28>
       <Unit29>
         <Filename Value="..\..\..\..\lazarus\lcl\lclclasses.pp"/>
@@ -280,7 +284,7 @@
         <ResourceFilename Value="forms\beecore_overwritefrm.lrs"/>
         <UnitName Value="BeeCore_OverWriteFrm"/>
         <CursorPos X="31" Y="50"/>
-        <TopLine Value="61"/>
+        <TopLine Value="1"/>
         <UsageCount Value="10"/>
       </Unit33>
       <Unit34>
@@ -317,6 +321,7 @@
         <Filename Value="forms\beecore_renamefrm.pas"/>
         <ComponentName Value="RenameFrm"/>
         <HasResources Value="True"/>
+        <ResourceFilename Value="forms\beecore_renamefrm.lrs"/>
         <UnitName Value="BeeCore_RenameFrm"/>
         <CursorPos X="12" Y="21"/>
         <TopLine Value="55"/>
@@ -369,8 +374,42 @@
         <UsageCount Value="10"/>
         <SyntaxHighlighter Value="LFM"/>
       </Unit45>
+      <Unit46>
+        <Filename Value="..\..\bee\source\bee_app.pas"/>
+        <UnitName Value="Bee_App"/>
+        <CursorPos X="28" Y="251"/>
+        <TopLine Value="231"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="..\..\bee\source\bee_interface_base.pas"/>
+        <UnitName Value="Bee_Interface_Base"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="..\..\bee\source\bee_interface.pas"/>
+        <UnitName Value="Bee_Interface"/>
+        <CursorPos X="20" Y="122"/>
+        <TopLine Value="106"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit48>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="2" HistoryIndex="1">
+      <Position1>
+        <Filename Value="..\..\bee\source\bee_app.pas"/>
+        <Caret Line="428" Column="22" TopLine="405"/>
+      </Position1>
+      <Position2>
+        <Filename Value="..\..\bee\source\bee_app.pas"/>
+        <Caret Line="250" Column="28" TopLine="230"/>
+      </Position2>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

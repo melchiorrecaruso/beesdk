@@ -94,6 +94,7 @@ type
     i: integer;
   begin
     inherited Create;
+
     FAppInterface := TAppInterface.Create;
     FAppInterface.OnFatalError.Method := OnFatalError;
     FAppInterface.OnOverWrite.Method := OnOverWrite;
@@ -114,18 +115,21 @@ type
     begin
       FAppParams.Add(ParamStr(i));
     end;
-    FTickFrm := TTickFrm.Create(Application);
-    FTickBool := False;
-    // ---
+
     FApp := TBeeApp.Create(FAppInterface, FAppParams);
     FApp.OnTerminate := OnTerminate;
     FAppTerminated := False;
+    // ---
+    FTickFrm := TTickFrm.Create(Application, FApp);
+    FTickBool := False;
+    // ---
     FApp.Resume;
   end;
   
   destructor TGui.Destroy;
   begin
     FAppKey := '';
+
     FAppLog.Free;
     FAppParams.Free;
     FAppInterface.Free;
@@ -134,12 +138,14 @@ type
 
   procedure TGui.OnTerminate(Sender: TObject);
   begin
-    if FTickFrm.BtnCancel.ModalResult = mrCancel then
+    if FAppTerminated = False then
     begin
-      FTickFrm.BtnCancel.ModalResult := mrOk;
-      FTickFrm.BtnCancel.Click;
-      
-      FTickFrm.Visible := False;
+      FAppTerminated := True;
+      if FTickFrm.BtnCancel.ModalResult = mrCancel then
+      begin
+        FTickFrm.BtnCancel.ModalResult := mrOk;
+        FTickFrm.BtnCancel.Click;
+      end;
     end;
   end;
 
@@ -232,7 +238,7 @@ type
   
   procedure TGui.On1Tick;
   begin
-    if FAppInterface.OnTick.Data.Bytes > 1024 then
+    if FAppInterface.OnTick.Data.Bytes > $FFFF then
     begin
       FAppInterface.OnTick.Method := On2Tick;
       FTickBool := True;
@@ -253,24 +259,72 @@ type
 
 var
   Gui: TGui;
+  S: string;
+  k: integer;
 
+  Command: char;
+  ArcName: string;
+  Options: TStringList;
+  FileMasks: TStringList;
 begin
-  Application.Initialize;
-  Gui := TGui.Create;
-  repeat
-    if Gui.FAppTerminated then
-      Break
-    else
-      Application.ProcessMessages;
-  until Gui.FTickBool;
-  
-  if Gui.FTickBool then
+  // ---
+  Command := ' ';
+  ArcName := '';
+  Options := TStringList.Create;
+  FileMasks := TStringList.Create;
+  for k := 1 to ParamCount do
   begin
-    if Gui.FTickFrm.ShowModal = mrCancel then
+    S := ParamStr(k);
+    if (Length(S) > 1) and (S[1] = '-') then
     begin
-      ShowMessage('Cancel');
+      Options.Add(S);
+    end else
+    begin
+      if Command = ' ' then
+      begin
+        if Length(S) = 1 then
+          Command := UpCase(S[1])
+        else
+          Command := '?';
+      end else
+        if ArcName = '' then
+        begin
+          ArcName := S;
+          if ExtractFileExt(ArcName) = '' then
+          begin
+            ArcName := ChangeFileExt(ArcName, '.bee');
+          end;
+        end else
+          FileMasks.Add(Bee_Common.DoDirSeparators(S));
     end;
   end;
-  Gui.Free;
+  FileMasks.Free;
+  Options.Free;
+  // ---
+
+  Application.Initialize;
+  if Command = '?' then
+  begin
+     AboutFrm := TAboutFrm.Create(Application);
+     AboutFrm.ShowModal;
+  end else
+  begin
+    Gui := TGui.Create;
+    repeat
+      if Gui.FAppTerminated then
+        Break
+      else
+        Application.ProcessMessages;
+    until Gui.FTickBool;
+  
+    if Gui.FTickBool then
+    begin
+      if Gui.FTickFrm.ShowModal = mrCancel then
+      begin
+        Gui.FApp.Terminate;
+      end;
+    end;
+    Gui.Free;
+  end;
 end.
 

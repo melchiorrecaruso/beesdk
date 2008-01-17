@@ -139,7 +139,7 @@ type
              rOption: boolean;
              uOption: boolean;
              xOption: TStringList;
-        var Size: integer);
+        var Size: cardinal);
 
     function MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction): integer; overload;
     function MarkItems(const Mask: string; MaskAct, aAction: THeaderAction): integer; overload;
@@ -186,7 +186,7 @@ type
              rOption: boolean;
              uOption: boolean;
              xOption: TStringList;
-        var Size: integer);
+        var Size: cardinal);
   end;
 
 implementation
@@ -493,7 +493,7 @@ procedure THeaders.AddItems(
          rOption: boolean;
          uOption: boolean;
          xOption: TStringList;
-    var Size: integer);
+    var Size: cardinal);
 var
   I, J: integer;
   CurrMasks: TStringList;
@@ -1021,7 +1021,7 @@ procedure THeaders.ScanFileSystem(Mask: string;
          rOption: boolean;
          uOption: boolean;
          xOption: TStringList;
-    var Size: integer);
+    var Size: cardinal);
 var
   P: THeader;
   I: integer;

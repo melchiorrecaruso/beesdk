@@ -1,11 +1,12 @@
 object AboutFrm: TAboutFrm
-  Left = 587
+  Left = 595
   Height = 155
-  Top = 250
+  Top = 298
   Width = 360
   HorzScrollBar.Page = 359
   VertScrollBar.Page = 154
   ActiveControl = BtnLicense
+  BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'About to...'
   ClientHeight = 155
   ClientWidth = 360
