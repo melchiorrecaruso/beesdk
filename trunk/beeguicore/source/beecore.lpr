@@ -26,6 +26,8 @@
 
 program BeeCore;
 
+{$r beecore-ico.res}
+
 uses
   {$IFDEF UNIX}
   cThreads,
@@ -67,8 +69,11 @@ type
     FAppParams: TStringList;
     FAppTerminated: boolean;
     FTickFrm: TTickFrm;
-    FTickBool: boolean;
+    FTickFrmBool: boolean;
+    FTimer: TTimer;
+    FTime: integer;
   private
+    procedure OnTimer(Sender: TObject);
     procedure OnTerminate(Sender: TObject);
     procedure OnFatalError;
     procedure OnOverWrite;
@@ -108,7 +113,8 @@ type
     FAppInterface.OnTick.Method := On1Tick;
     FAppInterface.OnKey.Method := OnKey;
 
-    FAppKey:= '';
+    FTime := 0;
+    FAppKey := '';
     FAppLog := TStringList.Create;
     FAppParams := TStringList.Create;
     for i := 1 to ParamCount do
@@ -121,7 +127,12 @@ type
     FAppTerminated := False;
     // ---
     FTickFrm := TTickFrm.Create(Application, FApp);
-    FTickBool := False;
+    FTickFrmBool := False;
+    // ---
+    FTimer := TTImer.Create(Application);
+    FTimer.OnTimer := OnTimer;
+    FTimer.Interval := 1000;
+    FTimer.Enabled := False;
     // ---
     FApp.Resume;
   end;
@@ -134,6 +145,59 @@ type
     FAppParams.Free;
     FAppInterface.Free;
     inherited Destroy;
+  end;
+
+  procedure TGui.OnTimer(Sender: TObject);
+  var
+    iSpeed: integer;
+    iRemainSize: integer;
+  begin
+    if FApp.AppInterface.OnTick.Data.GeneralSize < 1024 then
+    begin
+      FTickFrm.GeneralSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.GeneralSize);
+      FTickFrm.GeneralSizeUnit.Caption := 'B';
+    end else
+      if FApp.AppInterface.OnTick.Data.GeneralSize < 1024 * 1024 then
+      begin
+        FTickFrm.GeneralSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.GeneralSize div 1024);
+        FTickFrm.GeneralSizeUnit.Caption := 'KB';
+      end else
+        if FApp.AppInterface.OnTick.Data.GeneralSize < 1024 * 1024 * 1024 then
+        begin
+          FTickFrm.GeneralSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.GeneralSize div (1024 * 1024));
+          FTickFrm.GeneralSizeUnit.Caption := 'MB';
+        end;
+
+    if FApp.AppInterface.OnTick.Data.ProcessedSize < 1024 then
+    begin
+      FTickFrm.ProcessedSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.ProcessedSize);
+      FTickFrm.ProcessedSizeUnit.Caption := 'B';
+    end else
+      if FApp.AppInterface.OnTick.Data.ProcessedSize < 1024 * 1024 then
+      begin
+        FTickFrm.ProcessedSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.ProcessedSize div 1024);
+        FTickFrm.ProcessedSizeUnit.Caption := 'KB';
+      end else
+        if FApp.AppInterface.OnTick.Data.ProcessedSize < 1024 * 1024 * 1024 then
+        begin
+          FTickFrm.ProcessedSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.ProcessedSize div (1024 * 1024));
+          FTickFrm.ProcessedSizeUnit.Caption := 'MB';
+        end;
+
+    with FApp.AppInterface.OnTick.Data do
+    begin
+      Inc(FTime);
+      
+      iSpeed := ProcessedSize div FTime;
+      iRemainSize := GeneralSize - ProcessedSize;
+
+      FTickFrm.Time.Caption := TimeToStr(FTime);
+      FTickFrm.Speed.Caption := IntToStr(iSpeed div 1024);
+      FTickFrm.RemainingTime.Caption := TimeToStr(iRemainSize div iSpeed);
+      
+      FTickFrm.Tick.Position := FAppInterface.OnTick.Data.Percentage;
+      FTickFrm.Caption := Format('%d%% Processing...', [FApp.AppInterface.OnTick.Data.Percentage]);
+    end;
   end;
 
   procedure TGui.OnTerminate(Sender: TObject);
@@ -238,16 +302,17 @@ type
   
   procedure TGui.On1Tick;
   begin
-    if FAppInterface.OnTick.Data.Bytes > $FFFF then
+    if FAppInterface.OnTick.Data.GeneralSize > $FFFF then
     begin
       FAppInterface.OnTick.Method := On2Tick;
-      FTickBool := True;
+      FTimer.Enabled := True;
+      FTickFrmBool := True;
     end;
   end;
   
   procedure TGui.On2Tick;
   begin
-    FTickFrm.Tick.Position := FAppInterface.OnTick.Data.Percentage;
+
   end;
   
   procedure TGui.OnKey;
@@ -315,9 +380,9 @@ begin
         Break
       else
         Application.ProcessMessages;
-    until Gui.FTickBool;
+    until Gui.FTickFrmBool;
   
-    if Gui.FTickBool then
+    if Gui.FTickFrmBool then
     begin
       if Gui.FTickFrm.ShowModal = mrCancel then
       begin

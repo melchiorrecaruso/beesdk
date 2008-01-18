@@ -117,7 +117,7 @@ uses
     {$i beecore_aboutfrm.inc}
     Storage.Restore;
     // ---
-    VerValue.Caption   := '0.1.0.20';
+    VerValue.Caption   := '0.1.0.30';
   end;
 
   procedure TAboutFrm.FormDestroy(Sender: TObject);

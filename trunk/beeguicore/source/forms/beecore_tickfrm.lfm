@@ -1,75 +1,164 @@
 object TickFrm: TTickFrm
-  Left = 530
-  Height = 185
-  Top = 209
-  Width = 500
-  HorzScrollBar.Page = 499
-  VertScrollBar.Page = 184
-  Caption = 'Progress...'
-  ClientHeight = 185
-  ClientWidth = 500
-  Constraints.MinHeight = 90
-  Constraints.MinWidth = 280
+  Left = 381
+  Height = 162
+  Top = 276
+  Width = 420
+  HorzScrollBar.Page = 419
+  VertScrollBar.Page = 161
+  BorderIcons = [biSystemMenu, biMinimize]
+  Caption = '0% Processing...'
+  ClientHeight = 162
+  ClientWidth = 420
+  Constraints.MaxHeight = 162
+  Constraints.MinHeight = 162
+  Constraints.MinWidth = 420
   Font.Height = -11
   Font.Name = 'Tahoma'
-  Icon.Data = {
-    EB0400002F2A2058504D202A2F0A7374617469632063686172202A6772617068
-    69635B5D203D207B0A22333220333220342031222C0A222E2063204E6F6E6522
-    2C0A222C20632023303030303030222C0A222D20632023464646463030222C0A
-    222A20632023464638303430222C0A222E2E2E2E2E2E2E2E2C2E2E2E2E2E2E2E
-    2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E2E222C0A222C2E2E2E2E2E2E2E2C2E2E2E
-    2E2E2E2E2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E2E222C0A222C2E2E2E2E2E2E2E
-    2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E2E222C0A222C2C2E2E
-    2E2E2E2C2C2C2E2E2E2E2E2C2C2C2E2E2E2E2E2C2C2C2E2E2E2E2E2C222C0A22
-    2E2C2C2C2E2C2C2C2D2C2C2C2E2C2C2C2A2C2C2C2E2C2C2C2A2C2C2C2E2C2C2C
-    222C0A222E2E2E2C2C2C2D2D2D2D2D2C2C2C2A2A2A2A2A2C2C2C2A2A2A2A2A2C
-    2C2C2E2E222C0A222E2E2E2E2C2D2D2D2D2D2D2D2C2A2A2A2A2A2A2A2C2A2A2A
-    2A2A2A2A2C2E2E2E222C0A222E2E2E2E2C2D2D2D2D2D2D2D2C2A2A2A2A2A2A2A
-    2C2A2A2A2A2A2A2A2C2E2E2E222C0A222E2E2E2E2C2D2D2D2D2D2D2D2C2A2A2A
-    2A2A2A2A2C2A2A2A2A2A2A2A2C2E2E2E222C0A222E2E2E2C2C2C2D2D2D2D2D2C
-    2C2C2A2A2A2A2A2C2C2C2A2A2A2A2A2C2C2C2E2E222C0A222E2C2C2C2D2C2C2C
-    2D2C2C2C2A2C2C2C2A2C2C2C2E2C2C2C2A2C2C2C2E2C2C2C222C0A222C2C2D2D
-    2D2D2D2C2C2C2A2A2A2A2A2C2C2C2E2E2E2E2E2C2C2C2E2E2E2E2E2C222C0A22
-    2C2D2D2D2D2D2D2D2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E
-    222C0A222C2D2D2D2D2D2D2D2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E2E
-    2E2E2E2E222C0A222C2D2D2D2D2D2D2D2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E
-    2E2E2E2E2E2E2E2E222C0A222C2C2D2D2D2D2D2C2C2C2A2A2A2A2A2C2C2C2E2E
-    2E2E2E2E2E2E2E2E2E2E2E2E222C0A222E2C2C2C2D2C2C2C2A2C2C2C2A2C2C2C
-    2A2C2C2C2E2E2E2E2E2E2E2E2E2E2E2E222C0A222E2E2E2C2C2C2A2A2A2A2A2C
-    2C2C2A2A2A2A2A2C2C2C2E2E2E2E2E2E2E2E2E2E222C0A222E2E2E2E2C2A2A2A
-    2A2A2A2A2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E2E222C0A222E2E2E2E
-    2C2A2A2A2A2A2A2A2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E2E222C0A22
-    2E2E2E2E2C2A2A2A2A2A2A2A2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E2E
-    222C0A222E2E2E2C2C2C2A2A2A2A2A2C2C2C2A2A2A2A2A2C2C2C2E2E2E2E2E2E
-    2E2E2E2E222C0A222E2C2C2C2D2C2C2C2A2C2C2C2D2C2C2C2A2C2C2C2E2E2E2E
-    2E2E2E2E2E2E2E2E222C0A222C2C2D2D2D2D2D2C2C2C2D2D2D2D2D2C2C2C2E2E
-    2E2E2E2E2E2E2E2E2E2E2E2E222C0A222C2D2D2D2D2D2D2D2C2D2D2D2D2D2D2D
-    2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E222C0A222C2D2D2D2D2D2D2D2C2D2D2D
-    2D2D2D2D2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E222C0A222C2D2D2D2D2D2D2D
-    2C2D2D2D2D2D2D2D2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E222C0A222C2C2D2D
-    2D2D2D2C2C2C2D2D2D2D2D2C2C2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E222C0A22
-    2E2C2C2C2D2C2C2C2E2C2C2C2D2C2C2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E
-    222C0A222E2E2E2C2C2C2E2E2E2E2E2C2C2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E
-    2E2E2E2E222C0A222E2E2E2E2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E2E2E2E2E2E
-    2E2E2E2E2E2E2E2E222C0A222E2E2E2E2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E2E
-    2E2E2E2E2E2E2E2E2E2E2E2E227D0A
-  }
   OnCreate = FormCreate
   object Msg: TLabel
     Left = 8
     Height = 16
-    Top = 88
-    Width = 482
+    Top = 75
+    Width = 402
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
-    Caption = 'Msg'
+    Caption = '...'
+    ParentColor = False
+  end
+  object GeneralSize: TLabel
+    Left = 328
+    Height = 14
+    Top = 10
+    Width = 44
+    Alignment = taRightJustify
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = '0'
+    ParentColor = False
+  end
+  object ProcessedSize: TLabel
+    Left = 328
+    Height = 14
+    Top = 30
+    Width = 44
+    Alignment = taRightJustify
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = '0'
+    ParentColor = False
+  end
+  object Speed: TLabel
+    Left = 328
+    Height = 14
+    Top = 50
+    Width = 44
+    Alignment = taRightJustify
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = '0'
+    ParentColor = False
+  end
+  object SpeedUnit: TLabel
+    Left = 380
+    Height = 14
+    Top = 50
+    Width = 30
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = 'KB/s'
+    ParentColor = False
+  end
+  object ProcessedSizeUnit: TLabel
+    Left = 380
+    Height = 14
+    Top = 30
+    Width = 30
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = 'KB'
+    ParentColor = False
+  end
+  object GeneralSizeUnit: TLabel
+    Left = 380
+    Height = 14
+    Top = 10
+    Width = 30
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = 'KB'
+    ParentColor = False
+  end
+  object GeneralSizeLabel: TLabel
+    Left = 224
+    Height = 14
+    Top = 10
+    Width = 90
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = 'Total size:'
+    ParentColor = False
+  end
+  object ProcessedSizeLabel: TLabel
+    Left = 224
+    Height = 14
+    Top = 30
+    Width = 90
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = 'Processed size:'
+    ParentColor = False
+  end
+  object SpeedLabel: TLabel
+    Left = 224
+    Height = 14
+    Top = 50
+    Width = 90
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = 'Speed:'
+    ParentColor = False
+  end
+  object TimeLabel: TLabel
+    Left = 8
+    Height = 14
+    Top = 10
+    Width = 88
+    AutoSize = False
+    Caption = 'Time elapsed:'
+    ParentColor = False
+  end
+  object RemainingTimeLabel: TLabel
+    Left = 8
+    Height = 14
+    Top = 30
+    Width = 88
+    AutoSize = False
+    Caption = 'Remaining time:'
+    ParentColor = False
+  end
+  object Time: TLabel
+    Left = 104
+    Height = 14
+    Top = 10
+    Width = 60
+    AutoSize = False
+    Caption = '00:00:00'
+    ParentColor = False
+  end
+  object RemainingTime: TLabel
+    Left = 104
+    Height = 14
+    Top = 30
+    Width = 60
+    AutoSize = False
+    Caption = '00:00:00'
     ParentColor = False
   end
   object BtnCancel: TBitBtn
-    Left = 390
+    Left = 335
     Height = 23
-    Top = 152
-    Width = 100
+    Top = 130
+    Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Cancel'
     ModalResult = 2
@@ -77,10 +166,10 @@ object TickFrm: TTickFrm
     TabOrder = 0
   end
   object BtnBackGround: TBitBtn
-    Left = 160
+    Left = 166
     Height = 23
-    Top = 152
-    Width = 100
+    Top = 130
+    Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Background'
     NumGlyphs = 0
@@ -88,10 +177,10 @@ object TickFrm: TTickFrm
     TabOrder = 1
   end
   object BtnRun: TBitBtn
-    Left = 275
+    Left = 251
     Height = 23
-    Top = 8
-    Width = 100
+    Top = 130
+    Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Run'
     NumGlyphs = 0
@@ -101,16 +190,16 @@ object TickFrm: TTickFrm
   object Tick: TProgressBar
     Left = 8
     Height = 20
-    Top = 112
-    Width = 482
+    Top = 98
+    Width = 402
     Anchors = [akTop, akLeft, akRight]
     Max = 100
   end
   object BtnForeground: TBitBtn
-    Left = 160
+    Left = 166
     Height = 23
-    Top = 8
-    Width = 100
+    Top = 130
+    Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Foreground'
     NumGlyphs = 0
@@ -118,10 +207,10 @@ object TickFrm: TTickFrm
     TabOrder = 3
   end
   object BtnPause: TBitBtn
-    Left = 275
+    Left = 251
     Height = 23
-    Top = 152
-    Width = 100
+    Top = 130
+    Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Pause'
     NumGlyphs = 0
@@ -131,6 +220,6 @@ object TickFrm: TTickFrm
   object Storage: TXMLPropStorage
     StoredValues = <>
     left = 8
-    top = 144
+    top = 128
   end
 end

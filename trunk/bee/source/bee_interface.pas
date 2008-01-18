@@ -119,9 +119,9 @@ type
       Method: TThreadMethod;
       Answer: string;
       Data: record
-        GeneralSize: cardinal;
-        RemainSize: cardinal;
-        Percentage: cardinal;
+        GeneralSize: integer;
+        ProcessedSize: integer;
+        Percentage: integer;
       end;
     end;
     OnClear: record

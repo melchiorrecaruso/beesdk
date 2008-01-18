@@ -143,7 +143,7 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0601 archiver utility, freeware version, Jan 2008.'
+  SelfName := 'The Bee 0.7.9 build 0603 archiver utility, freeware version, Jan 2008.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   ArcName  := '';
@@ -154,7 +154,7 @@ begin
   with AppInterface.OnTick.Data do
   begin
     GeneralSize := 0;
-    RemainSize := 0;
+    ProcessedSize := 0;
   end;
   
   CfgName := Bee_Common.SelfPath + 'bee.ini';
@@ -249,7 +249,7 @@ function TBeeApp.Tick: boolean;
 begin
   with AppInterface.OnTick.Data do
   begin
-    Percentage  := MulDiv(RemainSize, 100, GeneralSize);
+    Percentage  := MulDiv(ProcessedSize, 100, GeneralSize);
   end;
   Sync(AppInterface.OnTick.Method);
   Result := Terminated;
@@ -940,7 +940,7 @@ begin
     with AppInterface.OnTick.Data do
     begin
       GeneralSize := 0;
-      RemainSize  := 0;
+      ProcessedSize  := 0;
     end;
     xOption.Clear; // clear xOption
     FileMasks.Clear; // clear FileMasks
@@ -956,7 +956,7 @@ begin
     with AppInterface.OnTick.Data do
     begin
       GeneralSize := 0;
-      RemainSize  := 0;
+      ProcessedSize  := 0;
     end;
     xOption.Clear; // clear xOption
     FileMasks.Clear; // clear FileMasks

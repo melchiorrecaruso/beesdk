@@ -40,7 +40,7 @@ uses
   StdCtrls,
   ExtCtrls,
   LResources,
-  XMLPropStorage;
+  XMLPropStorage, Spin, EditBtn, FileCtrl;
 
 type
 
@@ -48,6 +48,19 @@ type
 
   TTickFrm = class(TForm)
     BtnPause: TBitBtn;
+    GeneralSize: TLabel;
+    GeneralSizeLabel: TLabel;
+    ProcessedSizeLabel: TLabel;
+    SpeedLabel: TLabel;
+    TimeLabel: TLabel;
+    RemainingTimeLabel: TLabel;
+    Time: TLabel;
+    RemainingTime: TLabel;
+    SpeedUnit: TLabel;
+    ProcessedSizeUnit: TLabel;
+    GeneralSizeUnit: TLabel;
+    ProcessedSize: TLabel;
+    Speed: TLabel;
     Storage: TXMLPropStorage;
     Tick: TProgressBar;
     Msg: TLabel;
@@ -81,11 +94,6 @@ uses
   begin
     inherited Create(AOwner);
     FThread := AThread;
-    // ---
-    BtnRun.Top := BtnPause.Top;
-    BtnRun.Left := BtnPause.Left;
-    BtnForeground.Top := BtnBackground.Top;
-    BtnForeground.Left := BtnBackground.Left;
   end;
 
   procedure TTickFrm.FormCreate(Sender: TObject);
@@ -99,6 +107,11 @@ uses
     end;
     {$I beecore_tickfrm.inc}
     Storage.Restore;
+    // ---
+    BtnRun.Top := BtnPause.Top;
+    BtnRun.Left := BtnPause.Left;
+    BtnForeground.Top := BtnBackground.Top;
+    BtnForeground.Left := BtnBackground.Left;
   end;
 
   procedure TTickFrm.BtnRunClick(Sender: TObject);

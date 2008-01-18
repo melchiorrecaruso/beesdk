@@ -191,11 +191,11 @@ begin
     begin
       for I := 1 to Header.FileSize do
       begin
-        if App.AppInterface.OnTick.Data.RemainSize and $FFFF = 0 then
+        if App.AppInterface.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
           if App.Tick then Break;
         end;
-        Inc(App.AppInterface.OnTick.Data.RemainSize);
+        Inc(App.AppInterface.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
@@ -205,11 +205,11 @@ begin
       SecondaryCodec.Start;
       for I := 1 to Header.FileSize do
       begin
-        if App.AppInterface.OnTick.Data.RemainSize and $FFFF = 0 then
+        if App.AppInterface.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
           if App.Tick then Break;
         end;
-        Inc(App.AppInterface.OnTick.Data.RemainSize);
+        Inc(App.AppInterface.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
@@ -234,7 +234,7 @@ begin
     Include(Header.FileFlags, foMoved);
     Stream.Size := Header.FileStartPos;
 
-    Dec(App.AppInterface.OnTick.Data.RemainSize, Header.FileSize);
+    Dec(App.AppInterface.OnTick.Data.ProcessedSize, Header.FileSize);
     Result := EncodeFile(Header, emOpt);
   end else
     Result := True;
@@ -286,11 +286,11 @@ begin
     begin
       for I := 1 to Header.FileSize do
       begin
-        if App.AppInterface.OnTick.Data.RemainSize and $FFFF = 0 then
+        if App.AppInterface.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
           if App.Tick then Break;
         end;
-        Inc(App.AppInterface.OnTick.Data.RemainSize);
+        Inc(App.AppInterface.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
@@ -300,11 +300,11 @@ begin
       SecondaryCodec.Start;
       for I := 1 to Header.FileSize do
       begin
-        if App.AppInterface.OnTick.Data.RemainSize and $FFFF = 0 then
+        if App.AppInterface.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
           if App.Tick then Break;
         end;
-        Inc(App.AppInterface.OnTick.Data.RemainSize);
+        Inc(App.AppInterface.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
@@ -330,7 +330,7 @@ begin
     Stream.Size := Header.FileStartPos;
     Header.FileStartPos := SrcPosition;
 
-    Dec(App.AppInterface.OnTick.Data.RemainSize, Header.FileSize);
+    Dec(App.AppInterface.OnTick.Data.ProcessedSize, Header.FileSize);
     Result := EncodeStrm(Header, emOpt, SrcStrm);
   end else
     Result := True;
@@ -369,11 +369,11 @@ begin
 
     for I := 1 to Header.FilePacked do
     begin
-      if App.AppInterface.OnTick.Data.RemainSize and $FFFF = 0 then
+      if App.AppInterface.OnTick.Data.ProcessedSize and $FFFF = 0 then
       begin
         if App.Tick then Break;
       end;
-      Inc(App.AppInterface.OnTick.Data.RemainSize);
+      Inc(App.AppInterface.OnTick.Data.ProcessedSize);
       SrcFile.Read(Symbol, 1);
       Stream.Write(Symbol, 1);
     end;
@@ -468,11 +468,11 @@ begin
     begin
       for I := 1 to Header.FileSize do
       begin
-        if App.AppInterface.OnTick.Data.RemainSize and $FFFF = 0 then
+        if App.AppInterface.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
           if App.Tick then Break;
         end;
-        Inc(App.AppInterface.OnTick.Data.RemainSize);
+        Inc(App.AppInterface.OnTick.Data.ProcessedSize);
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
@@ -482,11 +482,11 @@ begin
       SecondaryCodec.Start;
       for I := 1 to Header.FileSize do
       begin
-        if App.AppInterface.OnTick.Data.RemainSize and $FFFF = 0 then
+        if App.AppInterface.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
           if App.Tick then Break;
         end;
-        Inc(App.AppInterface.OnTick.Data.RemainSize);
+        Inc(App.AppInterface.OnTick.Data.ProcessedSize);
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
@@ -574,11 +574,11 @@ begin
     begin
       for I := 1 to Header.FileSize do
       begin
-        if App.AppInterface.OnTick.Data.RemainSize and $FFFF = 0 then
+        if App.AppInterface.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
           if App.Tick then Break;
         end;
-        Inc(App.AppInterface.OnTick.Data.RemainSize);
+        Inc(App.AppInterface.OnTick.Data.ProcessedSize);
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
@@ -588,11 +588,11 @@ begin
       SecondaryCodec.Start;
       for I := 1 to Header.FileSize do
       begin
-        if App.AppInterface.OnTick.Data.RemainSize and $FFFF = 0 then
+        if App.AppInterface.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
           if App.Tick then Break;
         end;
-        Inc(App.AppInterface.OnTick.Data.RemainSize);
+        Inc(App.AppInterface.OnTick.Data.ProcessedSize);
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);

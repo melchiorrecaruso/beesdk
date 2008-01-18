@@ -111,10 +111,12 @@ function SizeToStr(Size: integer): string;
 function RatioToStr(PackedSize, Size: integer): string;
 function AttrToStr(Attr: integer): string;
 
+
 // time handling routines ...
 
 function TimeDifference(X: double): string;
 function DateTimeToString(X: TDateTime): string;
+function TimeToStr(T: Integer): string;
 
 // hex routines ...
 
@@ -451,6 +453,34 @@ end;
 function DateTimeToString(X: TDateTime): string;
 begin
   SysUtils.DateTimeToString(Result, 'dd/mm/yy hh:mm', X);
+end;
+
+function TimeToStr(T: integer): string;
+var
+  H, M, S: string;
+  ZH, ZM, ZS: integer;
+begin
+  ZH := T div 3600;
+  ZM := T div 60 - ZH * 60;
+  ZS := T - (ZH * 3600 + ZM * 60);
+
+  if ZH < 10 then
+    H := '0' + IntToStr(ZH)
+  else
+    H := IntToStr(ZH);
+
+  if ZM < 10 then
+    M := '0' + IntToStr(ZM)
+  else
+    M := IntToStr(ZM);
+
+
+  if ZS < 10 then
+    S := '0' + IntToStr(ZS)
+  else
+    S := IntToStr(ZS);
+
+  Result := H + ':' + M + ':' + S;
 end;
 
 function DirectoryExists(const DirName: string): boolean;
