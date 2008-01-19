@@ -40,52 +40,50 @@ uses
   StdCtrls,
   ExtCtrls,
   LResources,
-  XMLPropStorage, Spin, EditBtn, FileCtrl;
+  XMLPropStorage;
 
 type
 
   { TTickFrm }
 
   TTickFrm = class(TForm)
-    BtnPause: TBitBtn;
+    Storage: TXMLPropStorage;
+    TimeLabel: TLabel;
+    Time: TLabel;
+    RemainingTimeLabel: TLabel;
+    RemainingTime: TLabel;
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
-    ProcessedSizeLabel: TLabel;
-    SpeedLabel: TLabel;
-    TimeLabel: TLabel;
-    RemainingTimeLabel: TLabel;
-    Time: TLabel;
-    RemainingTime: TLabel;
-    SpeedUnit: TLabel;
-    ProcessedSizeUnit: TLabel;
     GeneralSizeUnit: TLabel;
+    ProcessedSizeLabel: TLabel;
     ProcessedSize: TLabel;
+    ProcessedSizeUnit: TLabel;
+    SpeedLabel: TLabel;
     Speed: TLabel;
-    Storage: TXMLPropStorage;
-    Tick: TProgressBar;
+    SpeedUnit: TLabel;
     Msg: TLabel;
+    Tick: TProgressBar;
     BtnForeground: TBitBtn;
     BtnBackGround: TBitBtn;
     BtnCancel: TBitBtn;
+    BtnPause: TBitBtn;
     BtnRun: TBitBtn;
-    procedure BtnPauseClick(Sender: TObject);
-    procedure BtnRunClick(Sender: TObject);
+    constructor Create(AOwner: TComponent; AThread: TThread);
     procedure FormCreate(Sender: TObject);
     procedure BtnBackGroundClick(Sender: TObject);
     procedure BtnForegroundClick(Sender: TObject);
-    constructor Create(AOwner: TComponent; AThread: TThread);
+    procedure BtnPauseClick(Sender: TObject);
+    procedure BtnRunClick(Sender: TObject);
   private
     { public declarations }
     FThread: TThread;
   public
     { public declarations }
-
   end;
 
 implementation
 
 uses
-  Bee_Common,
   BeeCore_SysUtils;
 
   { TTickFrm class }

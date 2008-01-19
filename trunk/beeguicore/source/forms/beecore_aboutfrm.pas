@@ -64,6 +64,7 @@ type
     BtnOk: TButton;
     BtnLicense: TButton;
     // ---
+    procedure BtnOkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormMouseMove (Sender: TObject; Shift: TShiftState; X, Y: Integer);
@@ -118,6 +119,11 @@ uses
     Storage.Restore;
     // ---
     VerValue.Caption   := '0.1.0.30';
+  end;
+
+  procedure TAboutFrm.BtnOkClick(Sender: TObject);
+  begin
+    Close;
   end;
 
   procedure TAboutFrm.FormDestroy(Sender: TObject);

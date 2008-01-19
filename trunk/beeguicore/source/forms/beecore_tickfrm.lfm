@@ -1,7 +1,7 @@
 object TickFrm: TTickFrm
-  Left = 381
+  Left = 511
   Height = 162
-  Top = 276
+  Top = 311
   Width = 420
   HorzScrollBar.Page = 419
   VertScrollBar.Page = 161

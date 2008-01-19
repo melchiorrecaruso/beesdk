@@ -176,8 +176,8 @@ LazarusResources.Add('TAboutFrm','FORMDATA',[
   +#3'Top'#2'}'#5'Width'#2'K'#25'BorderSpacing.InnerBorder'#2#4#7'Caption'#6#7
   +'License'#7'OnClick'#7#15'BtnLicenseClick'#8'TabOrder'#2#0#0#0#7'TButton'#5
   +'BtnOk'#4'Left'#3#24#1#6'Height'#2#23#3'Top'#2'}'#5'Width'#2'K'#25'BorderSpa'
-  +'cing.InnerBorder'#2#4#7'Caption'#6#2'Ok'#11'ModalResult'#2#1#8'TabOrder'#2#1
-  +#0#0#8'TProcess'#7'Process'#8'Priority'#7#8'ppNormal'#4'left'#2'('#3'top'#2
-  +'x'#0#0#15'TXMLPropStorage'#7'Storage'#12'StoredValues'#14#0#4'left'#2#8#3't'
-  +'op'#2'x'#0#0#0
+  +'cing.InnerBorder'#2#4#7'Caption'#6#2'Ok'#7'OnClick'#7#10'BtnOkClick'#8'TabO'
+  +'rder'#2#1#0#0#8'TProcess'#7'Process'#8'Priority'#7#8'ppNormal'#4'left'#2'('
+  +#3'top'#2'x'#0#0#15'TXMLPropStorage'#7'Storage'#12'StoredValues'#14#0#4'left'
+  +#2#8#3'top'#2'x'#0#0#0
 ]);

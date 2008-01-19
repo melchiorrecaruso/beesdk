@@ -312,7 +312,8 @@ type
   
   procedure TGui.On2Tick;
   begin
-
+    FTickFrm.Tick.Position := FAppInterface.OnTick.Data.Percentage;
+    FTickFrm.Caption := Format('%d%% Processing...', [FApp.AppInterface.OnTick.Data.Percentage]);
   end;
   
   procedure TGui.OnKey;
@@ -370,8 +371,8 @@ begin
   Application.Initialize;
   if Command = '?' then
   begin
-     AboutFrm := TAboutFrm.Create(Application);
-     AboutFrm.ShowModal;
+     Application.CreateForm(TAboutFrm, AboutFrm);
+     Application.Run;
   end else
   begin
     Gui := TGui.Create;

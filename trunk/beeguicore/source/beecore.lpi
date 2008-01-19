@@ -34,8 +34,8 @@
         <Filename Value="beecore.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="12" Y="29"/>
-        <TopLine Value="18"/>
+        <CursorPos X="22" Y="375"/>
+        <TopLine Value="354"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="77"/>
         <Loaded Value="True"/>
@@ -53,9 +53,9 @@
         <HasResources Value="True"/>
         <ResourceFilename Value="forms\beecore_tickfrm.lrs"/>
         <UnitName Value="BeeCore_TickFrm"/>
-        <CursorPos X="32" Y="56"/>
-        <TopLine Value="109"/>
-        <EditorIndex Value="1"/>
+        <CursorPos X="5" Y="31"/>
+        <TopLine Value="107"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="28"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -240,9 +240,11 @@
         <HasResources Value="True"/>
         <ResourceFilename Value="forms\beecore_aboutfrm.lrs"/>
         <UnitName Value="BeeCore_AboutFrm"/>
-        <CursorPos X="37" Y="118"/>
-        <TopLine Value="98"/>
+        <CursorPos X="11" Y="126"/>
+        <TopLine Value="104"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="12"/>
+        <Loaded Value="True"/>
       </Unit28>
       <Unit29>
         <Filename Value="..\..\..\..\lazarus\lcl\lclclasses.pp"/>
@@ -429,7 +431,16 @@
         <UsageCount Value="10"/>
       </Unit54>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="2" HistoryIndex="1">
+      <Position1>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="374" Column="48" TopLine="354"/>
+      </Position1>
+      <Position2>
+        <Filename Value="forms\beecore_aboutfrm.pas"/>
+        <Caret Line="68" Column="5" TopLine="67"/>
+      </Position2>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

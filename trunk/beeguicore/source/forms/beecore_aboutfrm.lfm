@@ -277,7 +277,7 @@ object AboutFrm: TAboutFrm
     Width = 75
     BorderSpacing.InnerBorder = 4
     Caption = 'Ok'
-    ModalResult = 1
+    OnClick = BtnOkClick
     TabOrder = 1
   end
   object Process: TProcess
