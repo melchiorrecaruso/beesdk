@@ -69,6 +69,7 @@ type
     BtnPause: TBitBtn;
     BtnRun: TBitBtn;
     Timer: TTimer;
+    TrayIcon: TTrayIcon;
     procedure FormCreate(Sender: TObject);
     procedure BtnBackGroundClick(Sender: TObject);
     procedure BtnForegroundClick(Sender: TObject);
