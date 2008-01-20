@@ -89,23 +89,6 @@ uses
 
   { TAboutFrm class }
 
-  procedure TAboutFrm.BtnLicenseClick(Sender: TObject);
-  begin
-    ShellExec(ExtractFilePath(ParamStr(0))
-      + IncludeTrailingBackSlash('docs') + 'license.htm', '');
-  end;
-
-  procedure TAboutFrm.LinkClick(Sender: TObject);
-  begin
-    ShellExec(Link.Caption, '');
-  end;
-
-  procedure TAboutFrm.FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-  begin
-    Link.Font.Style := [];
-    Link.Font.Color := clBlack;
-  end;
-
   procedure TAboutFrm.FormCreate(Sender: TObject);
   var
     CfgFolder: string;
@@ -118,25 +101,42 @@ uses
     {$i beecore_aboutfrm.inc}
     Storage.Restore;
     // ---
-    VerValue.Caption   := '0.1.0.30';
-  end;
-
-  procedure TAboutFrm.BtnOkClick(Sender: TObject);
-  begin
-    Close;
+    VerValue.Caption   := '0.1.0.40';
   end;
 
   procedure TAboutFrm.FormDestroy(Sender: TObject);
   begin
     Storage.Destroy;
   end;
-
+  
+  procedure TAboutFrm.FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+  begin
+    Link.Font.Style := [];
+    Link.Font.Color := clBlack;
+  end;
+  
   procedure TAboutFrm.LinkMouseMove(Sender: TObject;Shift: TShiftState; X, Y: Integer);
   begin
     Link.Font.Style := [fsUnderline];
     Link.Font.Color := clBlue;
   end;
   
+  procedure TAboutFrm.LinkClick(Sender: TObject);
+  begin
+    ShellExec(Link.Caption, '');
+  end;
+  
+  procedure TAboutFrm.BtnLicenseClick(Sender: TObject);
+  begin
+    ShellExec(ExtractFilePath(ParamStr(0))
+      + IncludeTrailingBackSlash('docs') + 'license.htm', '');
+  end;
+  
+  procedure TAboutFrm.BtnOkClick(Sender: TObject);
+  begin
+    Close;
+  end;
+
 initialization
 
   {$I beecore_aboutfrm.lrs}

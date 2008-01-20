@@ -33,7 +33,7 @@ object TickFrm: TTickFrm
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     AutoSize = False
-    Caption = '0'
+    Caption = '-'
     ParentColor = False
   end
   object ProcessedSize: TLabel
@@ -44,7 +44,7 @@ object TickFrm: TTickFrm
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     AutoSize = False
-    Caption = '0'
+    Caption = '-'
     ParentColor = False
   end
   object Speed: TLabel
@@ -55,7 +55,7 @@ object TickFrm: TTickFrm
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     AutoSize = False
-    Caption = '0'
+    Caption = '-'
     ParentColor = False
   end
   object SpeedUnit: TLabel
@@ -151,7 +151,7 @@ object TickFrm: TTickFrm
     Top = 30
     Width = 60
     AutoSize = False
-    Caption = '00:00:00'
+    Caption = '--:--:--'
     ParentColor = False
   end
   object BtnCancel: TBitBtn
@@ -161,8 +161,8 @@ object TickFrm: TTickFrm
     Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Cancel'
-    ModalResult = 2
     NumGlyphs = 0
+    OnClick = BtnCancelClick
     TabOrder = 0
   end
   object BtnBackGround: TBitBtn
@@ -194,6 +194,7 @@ object TickFrm: TTickFrm
     Width = 402
     Anchors = [akTop, akLeft, akRight]
     Max = 100
+    TabOrder = 5
   end
   object BtnForeground: TBitBtn
     Left = 166
@@ -220,6 +221,11 @@ object TickFrm: TTickFrm
   object Storage: TXMLPropStorage
     StoredValues = <>
     left = 8
+    top = 128
+  end
+  object Timer: TTimer
+    Enabled = False
+    left = 40
     top = 128
   end
 end

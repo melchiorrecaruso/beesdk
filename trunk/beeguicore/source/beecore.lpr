@@ -69,11 +69,12 @@ type
     FAppParams: TStringList;
     FAppTerminated: boolean;
     FTickFrm: TTickFrm;
-    FTickFrmBool: boolean;
-    FTimer: TTimer;
+    FSwitch: boolean;
     FTime: integer;
   private
+    procedure OnStartTimer(Sender: TObject);
     procedure OnTimer(Sender: TObject);
+  private
     procedure OnTerminate(Sender: TObject);
     procedure OnFatalError;
     procedure OnOverWrite;
@@ -84,21 +85,29 @@ type
     procedure OnError;
     procedure OnClear;
     procedure OnList;
-    procedure On1Tick;
-    procedure On2Tick;
+    procedure OnSwitch;
+    procedure OnTick;
     procedure OnKey;
   public
-    constructor Create;
+    property Switch: boolean read FSwitch;
+  public
+    constructor Create(ATickFrm: TTickFrm);
     destructor Destroy; override;
   end;
   
   // implementation
 
-  constructor TGui.Create;
+  constructor TGui.Create(ATickFrm: TTickFrm);
   var
     i: integer;
   begin
     inherited Create;
+    FTickFrm := ATickFrm;
+    FTickFrm.Timer.OnStartTimer := OnStartTimer;
+    FTickFrm.Timer.OnTimer := OnTimer;
+
+    FSwitch := False;
+    FTime := 0;
 
     FAppInterface := TAppInterface.Create;
     FAppInterface.OnFatalError.Method := OnFatalError;
@@ -110,10 +119,9 @@ type
     FAppInterface.OnClear.Method := OnClear;
     FAppInterface.OnError.Method := OnError;
     FAppInterface.OnList.Method := OnList;
-    FAppInterface.OnTick.Method := On1Tick;
+    FAppInterface.OnTick.Method := OnSwitch;
     FAppInterface.OnKey.Method := OnKey;
 
-    FTime := 0;
     FAppKey := '';
     FAppLog := TStringList.Create;
     FAppParams := TStringList.Create;
@@ -121,36 +129,21 @@ type
     begin
       FAppParams.Add(ParamStr(i));
     end;
-
     FApp := TBeeApp.Create(FAppInterface, FAppParams);
     FApp.OnTerminate := OnTerminate;
     FAppTerminated := False;
-    // ---
-    FTickFrm := TTickFrm.Create(Application, FApp);
-    FTickFrmBool := False;
-    // ---
-    FTimer := TTImer.Create(Application);
-    FTimer.OnTimer := OnTimer;
-    FTimer.Interval := 1000;
-    FTimer.Enabled := False;
-    // ---
     FApp.Resume;
   end;
   
   destructor TGui.Destroy;
   begin
-    FAppKey := '';
-
     FAppLog.Free;
     FAppParams.Free;
     FAppInterface.Free;
     inherited Destroy;
   end;
-
-  procedure TGui.OnTimer(Sender: TObject);
-  var
-    iSpeed: integer;
-    iRemainSize: integer;
+  
+  procedure TGui.OnStartTimer(Sender: TObject);
   begin
     if FApp.AppInterface.OnTick.Data.GeneralSize < 1024 then
     begin
@@ -167,7 +160,13 @@ type
           FTickFrm.GeneralSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.GeneralSize div (1024 * 1024));
           FTickFrm.GeneralSizeUnit.Caption := 'MB';
         end;
+  end;
 
+  procedure TGui.OnTimer(Sender: TObject);
+  var
+    iSpeed: integer;
+    iRemainSize: integer;
+  begin
     if FApp.AppInterface.OnTick.Data.ProcessedSize < 1024 then
     begin
       FTickFrm.ProcessedSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.ProcessedSize);
@@ -184,20 +183,18 @@ type
           FTickFrm.ProcessedSizeUnit.Caption := 'MB';
         end;
 
+    Inc(FTime);
     with FApp.AppInterface.OnTick.Data do
     begin
-      Inc(FTime);
-      
       iSpeed := ProcessedSize div FTime;
       iRemainSize := GeneralSize - ProcessedSize;
-
-      FTickFrm.Time.Caption := TimeToStr(FTime);
-      FTickFrm.Speed.Caption := IntToStr(iSpeed div 1024);
-      FTickFrm.RemainingTime.Caption := TimeToStr(iRemainSize div iSpeed);
-      
-      FTickFrm.Tick.Position := FAppInterface.OnTick.Data.Percentage;
-      FTickFrm.Caption := Format('%d%% Processing...', [FApp.AppInterface.OnTick.Data.Percentage]);
     end;
+    FTickFrm.Time.Caption := TimeToStr(FTime);
+    FTickFrm.Speed.Caption := IntToStr(iSpeed div 1024);
+    FTickFrm.RemainingTime.Caption := TimeToStr(iRemainSize div iSpeed);
+
+    FTickFrm.Tick.Position := FAppInterface.OnTick.Data.Percentage;
+    FTickFrm.Caption := Format('%d%% Processing...', [FApp.AppInterface.OnTick.Data.Percentage]);
   end;
 
   procedure TGui.OnTerminate(Sender: TObject);
@@ -205,11 +202,7 @@ type
     if FAppTerminated = False then
     begin
       FAppTerminated := True;
-      if FTickFrm.BtnCancel.ModalResult = mrCancel then
-      begin
-        FTickFrm.BtnCancel.ModalResult := mrOk;
-        FTickFrm.BtnCancel.Click;
-      end;
+      FTickFrm.Close;
     end;
   end;
 
@@ -300,17 +293,18 @@ type
 
   end;
   
-  procedure TGui.On1Tick;
+  procedure TGui.OnSwitch;
   begin
     if FAppInterface.OnTick.Data.GeneralSize > $FFFF then
     begin
-      FAppInterface.OnTick.Method := On2Tick;
-      FTimer.Enabled := True;
-      FTickFrmBool := True;
+      FAppInterface.OnTick.Method := OnTick;
+      FTickFrm.Timer.Enabled := True;
+      FTickFrm.Thread := FApp;
+      FSwitch := True;
     end;
   end;
   
-  procedure TGui.On2Tick;
+  procedure TGui.OnTick;
   begin
     FTickFrm.Tick.Position := FAppInterface.OnTick.Data.Percentage;
     FTickFrm.Caption := Format('%d%% Processing...', [FApp.AppInterface.OnTick.Data.Percentage]);
@@ -332,8 +326,9 @@ var
   ArcName: string;
   Options: TStringList;
   FileMasks: TStringList;
+  
 begin
-  // ---
+  // Process command line
   Command := ' ';
   ArcName := '';
   Options := TStringList.Create;
@@ -366,8 +361,8 @@ begin
   end;
   FileMasks.Free;
   Options.Free;
-  // ---
 
+  // Application run
   Application.Initialize;
   if Command = '?' then
   begin
@@ -375,20 +370,18 @@ begin
      Application.Run;
   end else
   begin
-    Gui := TGui.Create;
+    Application.CreateForm(TTickFrm, TickFrm);
+    Gui := TGui.Create(TickFrm);
     repeat
       if Gui.FAppTerminated then
         Break
       else
         Application.ProcessMessages;
-    until Gui.FTickFrmBool;
+    until Gui.Switch;
   
-    if Gui.FTickFrmBool then
+    if Gui.Switch then
     begin
-      if Gui.FTickFrm.ShowModal = mrCancel then
-      begin
-        Gui.FApp.Terminate;
-      end;
+      Application.Run;
     end;
     Gui.Free;
   end;

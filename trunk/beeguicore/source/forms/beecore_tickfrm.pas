@@ -68,18 +68,22 @@ type
     BtnCancel: TBitBtn;
     BtnPause: TBitBtn;
     BtnRun: TBitBtn;
-    constructor Create(AOwner: TComponent; AThread: TThread);
+    Timer: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure BtnBackGroundClick(Sender: TObject);
     procedure BtnForegroundClick(Sender: TObject);
     procedure BtnPauseClick(Sender: TObject);
     procedure BtnRunClick(Sender: TObject);
+    procedure BtnCancelClick(Sender: TObject);
   private
     { public declarations }
-    FThread: TThread;
   public
     { public declarations }
+    Thread: TThread;
   end;
+  
+var
+  TickFrm: TTickFrm;
 
 implementation
 
@@ -87,12 +91,6 @@ uses
   BeeCore_SysUtils;
 
   { TTickFrm class }
-  
-  constructor TTickFrm.Create(AOwner: TComponent; AThread: TThread);
-  begin
-    inherited Create(AOwner);
-    FThread := AThread;
-  end;
 
   procedure TTickFrm.FormCreate(Sender: TObject);
   var
@@ -105,39 +103,61 @@ uses
     end;
     {$I beecore_tickfrm.inc}
     Storage.Restore;
-    // ---
-    BtnRun.Top := BtnPause.Top;
-    BtnRun.Left := BtnPause.Left;
-    BtnForeground.Top := BtnBackground.Top;
-    BtnForeground.Left := BtnBackground.Left;
+    Thread := nil;
   end;
 
   procedure TTickFrm.BtnRunClick(Sender: TObject);
   begin
-    FThread.Suspended := False;
-    BtnPause.Visible := True;
-    BtnRun.Visible := False;
+    Timer.Enabled := True;
+    if Assigned(Thread) then
+    begin
+      Thread.Suspended := False;
+      BtnPause.Visible := True;
+      BtnRun.Visible := False;
+    end;
   end;
 
   procedure TTickFrm.BtnPauseClick(Sender: TObject);
   begin
-    FThread.Suspended := True;
-    BtnPause.Visible := False;
-    BtnRun.Visible := True;
+    Timer.Enabled := False;
+    if Assigned(Thread) then
+    begin
+      Thread.Suspended := True;
+      BtnPause.Visible := False;
+      BtnRun.Visible := True;
+    end;
   end;
 
   procedure TTickFrm.BtnBackGroundClick(Sender: TObject);
   begin
-    FThread.Priority := tpIdle;
-    BtnBackground.Visible := False;
-    BtnForeground.Visible := True;
+    if Assigned(Thread) then
+    begin
+      Thread.Priority := tpIdle;
+      BtnBackground.Visible := False;
+      BtnForeground.Visible := True;
+    end;
   end;
 
   procedure TTickFrm.BtnForegroundClick(Sender: TObject);
   begin
-    FThread.Priority := tpNormal;
-    BtnBackground.Visible := True;
-    BtnForeground.Visible := False;
+    if Assigned(Thread) then
+    begin
+      Thread.Priority := tpNormal;
+      BtnBackground.Visible := True;
+      BtnForeground.Visible := False;
+    end;
+  end;
+  
+  procedure TTickFrm.BtnCancelClick(Sender: TObject);
+  begin
+    if Assigned(Thread) then
+    begin
+      if Thread.Suspended then
+      begin
+        Thread.Resume;
+      end;
+      Thread.Terminate;
+    end;
   end;
   
 initialization
