@@ -35,12 +35,12 @@ uses
   Buttons,
   SysUtils,
   Graphics,
-  Controls,
+  Controls,     Windows,
   ComCtrls,
   StdCtrls,
   ExtCtrls,
   LResources,
-  XMLPropStorage;
+  XMLPropStorage, Menus;
 
 type
 
@@ -77,9 +77,11 @@ type
     procedure BtnRunClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
   private
-    { public declarations }
+    { private declarations }
   public
     { public declarations }
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     Thread: TThread;
   end;
   
@@ -92,6 +94,18 @@ uses
   BeeCore_SysUtils;
 
   { TTickFrm class }
+  
+  constructor TTickFrm.Create(AOwner: TComponent);
+  begin
+    inherited Create(AOwner);
+    Thread := nil;
+  end;
+  
+  destructor TTickFrm.Destroy;
+  begin
+    Thread := nil;
+    inherited Destroy;
+  end;
 
   procedure TTickFrm.FormCreate(Sender: TObject);
   var
@@ -104,7 +118,10 @@ uses
     end;
     {$I beecore_tickfrm.inc}
     Storage.Restore;
-    Thread := nil;
+    
+    TrayIcon.Icon.Handle := Icon.Handle;
+
+    
   end;
 
   procedure TTickFrm.BtnRunClick(Sender: TObject);
@@ -141,6 +158,8 @@ uses
 
   procedure TTickFrm.BtnForegroundClick(Sender: TObject);
   begin
+    TrayIcon.Visible := True;
+
     if Assigned(Thread) then
     begin
       Thread.Priority := tpNormal;

@@ -26,7 +26,7 @@
 
 program BeeCore;
 
-{$r beecore-ico.res}
+{$R beecore.ico.res}
 
 uses
   {$IFDEF UNIX}
@@ -308,6 +308,8 @@ type
   begin
     FTickFrm.Tick.Position := FAppInterface.OnTick.Data.Percentage;
     FTickFrm.Caption := Format('%d%% Processing...', [FApp.AppInterface.OnTick.Data.Percentage]);
+    // ---
+    Application.Title := FTickFrm.Caption;
   end;
   
   procedure TGui.OnKey;
