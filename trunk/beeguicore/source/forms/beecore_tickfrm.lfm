@@ -1,7 +1,7 @@
 object TickFrm: TTickFrm
-  Left = 511
+  Left = 396
   Height = 162
-  Top = 311
+  Top = 286
   Width = 420
   HorzScrollBar.Page = 419
   VertScrollBar.Page = 161
@@ -57,6 +57,8 @@ object TickFrm: TTickFrm
     2E2E2E2E2E2E2E2E2E2E2E2E227D0A
   }
   OnCreate = FormCreate
+  ShowInTaskBar = stAlways
+  OnWindowStateChange = FormWindowStateChange
   object Msg: TLabel
     Left = 8
     Height = 16
@@ -268,11 +270,6 @@ object TickFrm: TTickFrm
   object Timer: TTimer
     Enabled = False
     left = 40
-    top = 128
-  end
-  object TrayIcon: TTrayIcon
-    BalloonTimeout = 0
-    left = 72
     top = 128
   end
 end

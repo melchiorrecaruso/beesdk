@@ -26,27 +26,25 @@
 
 program BeeCore;
 
-{$R beecore.ico.res}
+{$R beegui.ico.res}
 
 uses
   {$IFDEF UNIX}
   cThreads,
   {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF}
   Interfaces,
-
   SysUtils,
   Controls,
-  StdCtrls,
-  ExtCtrls,
-  ComCtrls,
   Classes,
-  Dialogs,
   Forms,
-  // ---
+  // Bee project units
   Bee_App,
   Bee_Common,
   Bee_Interface,
-  // ---
+  // BeeCore project units
   BeeCore_AddFrm,
   BeeCore_TickFrm,
   BeeCore_ViewFrm,
@@ -55,6 +53,126 @@ uses
   BeeCore_ExtractFrm,
   BeeCore_PasswordFrm,
   BeeCore_OverwriteFrm;
+
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  TCommandLine Application class                                        //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
+
+type
+
+  { TCommandLine Application class }
+
+  TCmdLine = class (TStringList)
+  private
+    FCommand: char;
+    FArcName: string;
+    FParams: TStringList;
+  private
+    FRun: boolean;
+    F0Option: pointer;
+    F1Option: boolean;
+    F2Option: boolean;
+  private
+    procedure Process2Option;
+  public
+    constructor Create;
+    destructor Destroy; override;
+  public
+    property Command: char read FCommand;
+    property ArcName: string read FArcName;
+    property Params: TStringList read FParams;
+    property Ptr: Pointer read F0Option;
+    property Log: boolean read F1Option;
+    property Run: boolean read FRun;
+  end;
+
+  constructor TCmdLine.Create;
+  var
+    i: integer;
+    S: string;
+  begin
+    inherited Create;
+    FCommand := ' ';
+    FArcName := '';
+    FParams := TStringList.Create;
+
+    FRun := True;
+    F0Option := nil;
+    F1Option := False;
+    F2Option := False;
+
+    for i := 1 to ParamCount do
+    begin
+      S := ParamStr(i);
+      if (Length(S) > 1) and (S[1] = '-') then
+      begin
+        case UpCase(S[2]) of
+          '0': begin
+                 System.Delete(S, 1, 2);
+                 F0Option := Pointer(StrToInt(S));
+               end;
+          '1': begin
+                 F1Option := True;
+               end;
+          '2': begin
+                 F2Option := True;
+               end;
+          else begin
+                 FParams.Add(S);
+               end;
+        end;
+      end else
+      begin
+        FParams.Add(S);
+        if FCommand = ' ' then
+        begin
+          if Length(S) = 1 then
+            FCommand := UpCase(S[1])
+          else
+            FCommand := '?';
+        end else
+          if FArcName = '' then
+          begin
+            FArcName := S;
+            if ExtractFileExt(FArcName) = '' then
+            begin
+              FArcName := ChangeFileExt(FArcName, '.bee');
+            end;
+          end;
+      end;
+    end;
+
+    if F2Option then
+    begin
+      Process2Option;
+    end;
+  end;
+
+  destructor TCmdLine.Destroy;
+  begin
+    FParams.Free;
+    F0Option := nil;
+    inherited Destroy;
+  end;
+
+  procedure TCmdLine.Process2Option;
+  begin
+    case FCommand of
+      'A': FRun := ConfirmAdd(FParams);
+      'E': FRun := ConfirmExtract(FParams);
+      'X': FRun := ConfirmExtract(FParams);
+      'T': FRun := ConfirmExtract(FParams);
+      else FRun := False;
+    end;
+  end;
+  
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  TGui Application class                                                //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
 
 type
 
@@ -66,9 +184,9 @@ type
     FAppKey: string;
     FAppLog: TStringList;
     FAppInterface: TAppInterface;
-    FAppParams: TStringList;
     FAppTerminated: boolean;
     FTickFrm: TTickFrm;
+    FCmdLine: TCmdLine;
     FSwitch: boolean;
     FTime: integer;
   private
@@ -91,13 +209,13 @@ type
   public
     property Switch: boolean read FSwitch;
   public
-    constructor Create(ATickFrm: TTickFrm);
+    constructor Create(ATickFrm: TTickFrm; ACmdLine: TCmdLine);
     destructor Destroy; override;
   end;
-  
+
   // implementation
 
-  constructor TGui.Create(ATickFrm: TTickFrm);
+  constructor TGui.Create(ATickFrm: TTickFrm; ACmdLine: TCmdLine);
   var
     i: integer;
   begin
@@ -105,10 +223,7 @@ type
     FTickFrm := ATickFrm;
     FTickFrm.Timer.OnStartTimer := OnStartTimer;
     FTickFrm.Timer.OnTimer := OnTimer;
-
-    FSwitch := False;
-    FTime := 0;
-
+    // ---
     FAppInterface := TAppInterface.Create;
     FAppInterface.OnFatalError.Method := OnFatalError;
     FAppInterface.OnOverWrite.Method := OnOverWrite;
@@ -122,27 +237,27 @@ type
     FAppInterface.OnTick.Method := OnSwitch;
     FAppInterface.OnKey.Method := OnKey;
 
+    FTime := 0;
+    FSwitch := False;
+    FCmdLine := ACmdLine;
+    // ---
     FAppKey := '';
     FAppLog := TStringList.Create;
-    FAppParams := TStringList.Create;
-    for i := 1 to ParamCount do
-    begin
-      FAppParams.Add(ParamStr(i));
-    end;
-    FApp := TBeeApp.Create(FAppInterface, FAppParams);
+    // ---
+    FApp := TBeeApp.Create(FAppInterface, FCmdLine.Params);
     FApp.OnTerminate := OnTerminate;
     FAppTerminated := False;
     FApp.Resume;
   end;
-  
+
   destructor TGui.Destroy;
   begin
     FAppLog.Free;
-    FAppParams.Free;
+    FCmdLine := nil;
     FAppInterface.Free;
     inherited Destroy;
   end;
-  
+
   procedure TGui.OnStartTimer(Sender: TObject);
   begin
     if FApp.AppInterface.OnTick.Data.GeneralSize < 1024 then
@@ -206,11 +321,6 @@ type
     end;
   end;
 
-  procedure TGui.OnFatalError;
-  begin
-    FAppLog.Add(FAppInterface.OnFatalError.Data.Msg);
-  end;
-  
   procedure TGui.OnOverwrite;
   var
     F: TOverWriteFrm;
@@ -239,22 +349,7 @@ type
       FApp.Suspended := False;
     end;
   end;
-  
-  procedure TGui.OnWarning;
-  begin
-    FAppLog.Add(FAppInterface.OnWarning.Data.Msg);
-  end;
-  
-  procedure TGui.OnDisplay;
-  begin
-    FTickFrm.Msg.Caption := FAppInterface.OnDisplay.Data.Msg;
-  end;
-  
-  procedure TGui.OnRequest;
-  begin
-    FAppLog.Add(FAppInterface.OnRequest.Data.Msg);
-  end;
-  
+
   procedure TGui.OnRename;
   var
     F: TRenameFrm;
@@ -267,7 +362,7 @@ type
       F.RenameTo.Text :=
         FAppInterface.OnRename.Data.FilePath +
         FAppInterface.OnRename.Data.FileName;
-        
+
       if F.ShowModal = mrOk then
         FAppInterface.OnRename.Answer := F.RenameTo.Text
       else
@@ -277,22 +372,47 @@ type
       FApp.Suspended := False;
     end;
   end;
-  
+
+  procedure TGui.OnFatalError;
+  begin
+    FAppLog.Add(FAppInterface.OnFatalError.Data.Msg);
+  end;
+
   procedure TGui.OnError;
   begin
     FAppLog.Add(FAppInterface.OnError.Data.Msg);
   end;
-  
+
+  procedure TGui.OnWarning;
+  begin
+    FAppLog.Add(FAppInterface.OnWarning.Data.Msg);
+  end;
+
+  procedure TGui.OnDisplay;
+  begin
+    FTickFrm.Msg.Caption := FAppInterface.OnDisplay.Data.Msg;
+  end;
+
+  procedure TGui.OnRequest;
+  begin
+    FAppLog.Add(FAppInterface.OnRequest.Data.Msg);
+  end;
+
   procedure TGui.OnClear;
   begin
     // nothing to do
   end;
-  
+
   procedure TGui.OnList;
   begin
 
   end;
-  
+
+  procedure TGui.OnKey;
+  begin
+
+  end;
+
   procedure TGui.OnSwitch;
   begin
     if FAppInterface.OnTick.Data.GeneralSize > $FFFF then
@@ -303,7 +423,7 @@ type
       FSwitch := True;
     end;
   end;
-  
+
   procedure TGui.OnTick;
   begin
     FTickFrm.Tick.Position := FAppInterface.OnTick.Data.Percentage;
@@ -311,81 +431,45 @@ type
     // ---
     Application.Title := FTickFrm.Caption;
   end;
-  
-  procedure TGui.OnKey;
-  begin
-  
-  end;
 
-  // -- implemenattion -- //
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Main Block                                                            //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
 
 var
   Gui: TGui;
-  S: string;
-  k: integer;
+  CmdLine: TCmdLine;
 
-  Command: char;
-  ArcName: string;
-  Options: TStringList;
-  FileMasks: TStringList;
-  
 begin
-  // Process command line
-  Command := ' ';
-  ArcName := '';
-  Options := TStringList.Create;
-  FileMasks := TStringList.Create;
-  for k := 1 to ParamCount do
+  Application.Initialize;
+  Application.Title := 'BeeCore';
+  CmdLine := TCmdLine.Create;
+  if CmdLine.Run then
   begin
-    S := ParamStr(k);
-    if (Length(S) > 1) and (S[1] = '-') then
+    if CmdLine.Command = '?' then
     begin
-      Options.Add(S);
+       Application.CreateForm(TAboutFrm, AboutFrm);
+       Application.Run;
     end else
     begin
-      if Command = ' ' then
-      begin
-        if Length(S) = 1 then
-          Command := UpCase(S[1])
+      Application.CreateForm(TTickFrm, TickFrm);
+      Gui := TGui.Create(TickFrm, CmdLine);
+      repeat
+        if Gui.FAppTerminated then
+          Break
         else
-          Command := '?';
-      end else
-        if ArcName = '' then
-        begin
-          ArcName := S;
-          if ExtractFileExt(ArcName) = '' then
-          begin
-            ArcName := ChangeFileExt(ArcName, '.bee');
-          end;
-        end else
-          FileMasks.Add(Bee_Common.DoDirSeparators(S));
-    end;
-  end;
-  FileMasks.Free;
-  Options.Free;
+          Application.ProcessMessages;
+      until Gui.Switch;
 
-  // Application run
-  Application.Initialize;
-  if Command = '?' then
-  begin
-     Application.CreateForm(TAboutFrm, AboutFrm);
-     Application.Run;
-  end else
-  begin
-    Application.CreateForm(TTickFrm, TickFrm);
-    Gui := TGui.Create(TickFrm);
-    repeat
-      if Gui.FAppTerminated then
-        Break
-      else
-        Application.ProcessMessages;
-    until Gui.Switch;
-  
-    if Gui.Switch then
-    begin
-      Application.Run;
+      if Gui.Switch then
+      begin
+        Application.Run;
+      end;
+      Gui.Free;
     end;
-    Gui.Free;
+    CmdLine.Free;
   end;
 end.
 

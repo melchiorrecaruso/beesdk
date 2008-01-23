@@ -30,15 +30,15 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="56">
+    <Units Count="65">
       <Unit0>
         <Filename Value="beecore.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="26" Y="368"/>
-        <TopLine Value="328"/>
+        <CursorPos X="34" Y="166"/>
+        <TopLine Value="148"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="81"/>
+        <UsageCount Value="90"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -54,11 +54,9 @@
         <HasResources Value="True"/>
         <ResourceFilename Value="forms\beecore_tickfrm.lrs"/>
         <UnitName Value="BeeCore_TickFrm"/>
-        <CursorPos X="5" Y="123"/>
-        <TopLine Value="105"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="30"/>
-        <Loaded Value="True"/>
+        <CursorPos X="24" Y="27"/>
+        <TopLine Value="152"/>
+        <UsageCount Value="32"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\..\..\lazarus\lcl\interfaces\win32\interfaces.pp"/>
@@ -103,9 +101,11 @@
         <HasResources Value="True"/>
         <ResourceFilename Value="forms\beecore_addfrm.lrs"/>
         <UnitName Value="BeeCore_AddFrm"/>
-        <CursorPos X="1" Y="119"/>
-        <TopLine Value="96"/>
+        <CursorPos X="6" Y="335"/>
+        <TopLine Value="100"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="14"/>
+        <Loaded Value="True"/>
       </Unit8>
       <Unit9>
         <Filename Value="forms\beecore_addfrm.inc"/>
@@ -138,9 +138,11 @@
         <HasResources Value="True"/>
         <ResourceFilename Value="forms\beecore_extractfrm.lrs"/>
         <UnitName Value="BeeCore_ExtractFrm"/>
-        <CursorPos X="39" Y="57"/>
-        <TopLine Value="81"/>
-        <UsageCount Value="14"/>
+        <CursorPos X="20" Y="65"/>
+        <TopLine Value="46"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
       </Unit13>
       <Unit14>
         <Filename Value="package\beecore_iconlist.pas"/>
@@ -199,9 +201,9 @@
       <Unit22>
         <Filename Value="..\..\..\..\lazarus\ide\lazarus.pp"/>
         <UnitName Value="Lazarus"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <CursorPos X="11" Y="74"/>
+        <TopLine Value="54"/>
+        <UsageCount Value="10"/>
       </Unit22>
       <Unit23>
         <Filename Value="..\..\..\..\lazarus\lcl\graphics.pp"/>
@@ -241,11 +243,9 @@
         <HasResources Value="True"/>
         <ResourceFilename Value="forms\beecore_aboutfrm.lrs"/>
         <UnitName Value="BeeCore_AboutFrm"/>
-        <CursorPos X="35" Y="104"/>
+        <CursorPos X="36" Y="104"/>
         <TopLine Value="89"/>
-        <EditorIndex Value="1"/>
-        <UsageCount Value="13"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
       </Unit28>
       <Unit29>
         <Filename Value="..\..\..\..\lazarus\lcl\lclclasses.pp"/>
@@ -256,8 +256,8 @@
       </Unit29>
       <Unit30>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\classes\classesh.inc"/>
-        <CursorPos X="3" Y="110"/>
-        <TopLine Value="90"/>
+        <CursorPos X="15" Y="576"/>
+        <TopLine Value="556"/>
         <UsageCount Value="10"/>
       </Unit30>
       <Unit31>
@@ -376,8 +376,8 @@
       <Unit46>
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="20" Y="959"/>
-        <TopLine Value="939"/>
+        <CursorPos X="33" Y="377"/>
+        <TopLine Value="359"/>
         <UsageCount Value="14"/>
       </Unit46>
       <Unit47>
@@ -438,8 +438,84 @@
         <UsageCount Value="10"/>
         <SyntaxHighlighter Value="XML"/>
       </Unit55>
+      <Unit56>
+        <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\win\wininc\ascdef.inc"/>
+        <CursorPos X="10" Y="279"/>
+        <TopLine Value="259"/>
+        <UsageCount Value="10"/>
+      </Unit56>
+      <Unit57>
+        <Filename Value="beecore.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit57>
+      <Unit58>
+        <Filename Value="beecore_cmdline.inc"/>
+        <CursorPos X="44" Y="127"/>
+        <TopLine Value="8"/>
+        <UsageCount Value="12"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="beecore_tcmdline.inc"/>
+        <CursorPos X="23" Y="8"/>
+        <TopLine Value="2"/>
+        <UsageCount Value="11"/>
+      </Unit59>
+      <Unit60>
+        <Filename Value="beecore_tgui.int"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+        <SyntaxHighlighter Value="None"/>
+      </Unit60>
+      <Unit61>
+        <Filename Value="beecore_tgui.inc"/>
+        <CursorPos X="57" Y="238"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="11"/>
+      </Unit61>
+      <Unit62>
+        <Filename Value="beecore_gui.inc"/>
+        <CursorPos X="23" Y="36"/>
+        <TopLine Value="16"/>
+        <UsageCount Value="12"/>
+      </Unit62>
+      <Unit63>
+        <Filename Value="beecore.include\beecore_cmdline.inc"/>
+        <CursorPos X="20" Y="133"/>
+        <TopLine Value="93"/>
+        <UsageCount Value="10"/>
+      </Unit63>
+      <Unit64>
+        <Filename Value="beecore.include\beecore_gui.inc"/>
+        <CursorPos X="16" Y="284"/>
+        <TopLine Value="244"/>
+        <UsageCount Value="10"/>
+      </Unit64>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="5" HistoryIndex="4">
+      <Position1>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="59" Column="37" TopLine="33"/>
+      </Position1>
+      <Position2>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="170" Column="1" TopLine="149"/>
+      </Position2>
+      <Position3>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="434" Column="28" TopLine="4"/>
+      </Position3>
+      <Position4>
+        <Filename Value="forms\beecore_extractfrm.pas"/>
+        <Caret Line="67" Column="5" TopLine="66"/>
+      </Position4>
+      <Position5>
+        <Filename Value="forms\beecore_extractfrm.pas"/>
+        <Caret Line="108" Column="7" TopLine="100"/>
+      </Position5>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
@@ -462,9 +538,7 @@
       <SmartLinkUnit Value="True"/>
       <Generate Value="Faster"/>
       <Optimizations>
-        <VariablesInRegisters Value="True"/>
-        <UncertainOptimizations Value="True"/>
-        <OptimizationLevel Value="3"/>
+        <OptimizationLevel Value="0"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>

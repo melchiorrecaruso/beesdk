@@ -35,12 +35,12 @@ uses
   Buttons,
   SysUtils,
   Graphics,
-  Controls,     Windows,
+  Controls,
   ComCtrls,
   StdCtrls,
   ExtCtrls,
   LResources,
-  XMLPropStorage, Menus;
+  XMLPropStorage;
 
 type
 
@@ -69,13 +69,14 @@ type
     BtnPause: TBitBtn;
     BtnRun: TBitBtn;
     Timer: TTimer;
-    TrayIcon: TTrayIcon;
     procedure FormCreate(Sender: TObject);
     procedure BtnBackGroundClick(Sender: TObject);
     procedure BtnForegroundClick(Sender: TObject);
     procedure BtnPauseClick(Sender: TObject);
     procedure BtnRunClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
+    procedure FormWindowStateChange(Sender: TObject);
+    procedure HandleClick(Sender: TObject);
   private
     { private declarations }
   public
@@ -91,6 +92,9 @@ var
 implementation
 
 uses
+  {$ifdef Windows}
+  Windows,
+  {$endif}
   BeeCore_SysUtils;
 
   { TTickFrm class }
@@ -100,7 +104,7 @@ uses
     inherited Create(AOwner);
     Thread := nil;
   end;
-  
+
   destructor TTickFrm.Destroy;
   begin
     Thread := nil;
@@ -118,10 +122,17 @@ uses
     end;
     {$I beecore_tickfrm.inc}
     Storage.Restore;
-    
-    TrayIcon.Icon.Handle := Icon.Handle;
-
-    
+    //{$ifdef Windows}
+    //TrayIcon.Icon.Handle := LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+    //{$endif}
+    //TrayIcon.Hint := 'BeeCore';
+    //TrayIcon.OnClick := HandleClick;
+    //TrayIcon.PopUpMenu := PopupMenu;
+  end;
+  
+  procedure TTickFrm.HandleClick(Sender: TObject);
+  begin
+    WindowState := wsNormal;
   end;
 
   procedure TTickFrm.BtnRunClick(Sender: TObject);
@@ -158,8 +169,6 @@ uses
 
   procedure TTickFrm.BtnForegroundClick(Sender: TObject);
   begin
-    TrayIcon.Visible := True;
-
     if Assigned(Thread) then
     begin
       Thread.Priority := tpNormal;
@@ -177,6 +186,17 @@ uses
         Thread.Resume;
       end;
       Thread.Terminate;
+    end;
+  end;
+
+  procedure TTickFrm.FormWindowStateChange(Sender: TObject);
+  begin
+    if WindowState = wsNormal then
+    begin
+      //TrayIcon.Visible := False;
+    end else
+    begin
+      //TrayIcon.Visible := True;
     end;
   end;
   

@@ -40,7 +40,7 @@ uses
   ComCtrls,
   LResources,
   XMLPropStorage,
-  BeeCore_AddTreeViewMgr, ExtCtrls;
+  BeeCore_AddTreeViewMgr;
 
 type
 
@@ -103,7 +103,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FilesSelectionChanged(Sender: TObject);
-    procedure FormDropFiles(Sender: TObject; const FileNames: array of String);
+    procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure PagesPageChanged(Sender: TObject);
     // ---
     procedure PopupMenu_AddFolderClick(Sender: TObject);
@@ -122,9 +122,11 @@ type
     { private declarations }
   end;
   
-var
-  AddFrm: TAddFrm;
 
+  { Confirm Add routines }
+
+  function ConfirmAdd(const AParams: TStringList): boolean;
+  
 implementation
 
 uses
@@ -315,6 +317,22 @@ uses
       AllowdropFiles := True
     else
       AllowDropFiles := False;
+  end;
+  
+  { Confirm Add routines }
+
+  function ConfirmAdd(const AParams: TStringList): boolean;
+  var
+    F: TAddFrm;
+  begin
+    F := TAddFrm.Create(Application);
+    if F.ShowModal = mrOk then
+    begin
+      Result := True;
+      
+    end else
+      Result := False;
+    F.Free;
   end;
 
 initialization
