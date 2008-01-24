@@ -143,7 +143,7 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0605 archiver utility, freeware version, Jan 2008.'
+  SelfName := 'The Bee 0.7.9 build 0609 archiver utility, freeware version, Jan 2008.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   ArcName  := '';
@@ -343,12 +343,48 @@ begin
     begin
       // options...
       case UpCase(S[2]) of
-        'S': sOption := True;
-        'U': uOption := True;
-        'F': fOption := True;
-        'T': tOption := True;
-        'L': lOption := True;
-        'K': kOption := True;
+        'S': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 sOption := True
+               else
+                 if (S = '-') then sOption := False;
+             end;
+        'U': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 uOption := True
+               else
+                 if (S = '-') then uOption := False;
+             end;
+        'F': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 fOption := True
+               else
+                 if (S = '-') then fOption := False;
+             end;
+        'T': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 tOption := True
+               else
+                 if (S = '-') then tOption := False;
+             end;
+        'L': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 lOption := True
+               else
+                 if (S = '-') then lOption := False;
+             end;
+        'K': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 kOption := True
+               else
+                 if (S = '-') then kOption := False;
+             end;
         'R': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
@@ -405,7 +441,10 @@ begin
              end;
         'X': begin
                Delete(S, 1, 2);
-               xOption.Add(S);
+               if Length(S) > 0 then
+               begin
+                 xOption.Add(S);
+               end;
              end;
         else if FileNamePos('-pri', S) = 1 then
              begin
@@ -419,7 +458,10 @@ begin
                if FileNamePos('-cd', S) = 1 then
                begin
                  Delete(S, 1, 3);
-                 cdOption := Bee_Common.IncludeTrailingBackslash(Bee_Common.FixDirName(S));
+                 if Length(cdOption) > 0 then
+                 begin
+                   cdOption := Bee_Common.IncludeTrailingBackslash(Bee_Common.FixDirName(S));
+                 end;
                end;
              end;
         end; // end case
