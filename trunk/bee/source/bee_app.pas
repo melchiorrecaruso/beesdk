@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0593 - 2008.01.12 by Melchiorre Caruso.
+  v0.7.9 build 0611 - 2008.01.26 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -143,7 +143,7 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0609 archiver utility, freeware version, Jan 2008.'
+  SelfName := 'The Bee 0.7.9 build 0611 archiver utility, freeware version, Jan 2008.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   ArcName  := '';
@@ -1442,33 +1442,33 @@ begin
 
           Version := Info.GetBack(I, foVersion);
           if (Version > -1) and (Version < Info.Count) then
-            Version := THeader(Info.Items[Version]).Version;
+            Version := THeader(Info.Items[Version]).FileVersion;
 
           Method := Info.GetBack(I, foMethod);
           if (Method > -1) and (Method < Info.Count) then
-            Method := THeader(Info.Items[Method]).Method;
+            Method := THeader(Info.Items[Method]).FileMethod;
 
           Dictionary := Info.GetBack(I, foDictionary);
           if (Dictionary > -1) and (Dictionary < Info.Count) then
-            Dictionary := THeader(Info.Items[Dictionary]).Dictionary;
+            Dictionary := THeader(Info.Items[Dictionary]).FileDictionary;
 
-          AppInterface.OnDisplay.Data.Msg := (P.Name);
+          AppInterface.OnDisplay.Data.Msg := (P.FileName);
           Sync(AppInterface.OnDisplay.Method);
 
           AppInterface.OnDisplay.Data.Msg := (StringOfChar(' ', 15)
             + Format(' %10s %10s %5s %14s %6s %8.8x %4s',
-            [SizeToStr(P.Size),
-             SizeToStr(P.Pack),
-             RatioToStr(P.Pack, P.Size),
-             Bee_Common.DateTimeToString(FileDateToDateTime(P.Time)),
-             AttrToStr(P.Attr),
-             P.Crc,
+            [SizeToStr(P.FileSize),
+             SizeToStr(P.FilePacked),
+             RatioToStr(P.FilePacked, P.FileSize),
+             Bee_Common.DateTimeToString(FileDateToDateTime(P.FileTime)),
+             AttrToStr(P.FileAttr),
+             P.FileCrc,
              MethodToStr(P, Method, Dictionary)]));
 
           Sync(AppInterface.OnDisplay.Method);
 
-          Inc(TotalSize, P.Size);
-          Inc(TotalPack, P.Pack);
+          Inc(TotalSize, P.FileSize);
+          Inc(TotalPack, P.FilePacked);
           Inc(CountFiles);
         end;
 
@@ -1481,7 +1481,7 @@ begin
       Sync(AppInterface.OnDisplay.Method);
 
       // self-extractor module size
-      if Info.GetSFXsize > 0 then
+      if Info.GetModule > 0 then
       begin
         AppInterface.OnDisplay.Data.Msg := ('Note: Bee Self-Extractor module founded' + Cr);
         Sync(AppInterface.OnDisplay.Method);
