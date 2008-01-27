@@ -128,6 +128,7 @@ type
     procedure BtnOpenClick(Sender: TObject);
   public
     { public declarations }
+    ArchivePath: string;
   private
     { private declarations }
   end;
@@ -165,10 +166,18 @@ uses
   end;
   
   procedure TAddFrm.BtnOpenClick(Sender: TObject);
+  var
+    S: string;
   begin
+    S := ExcludeTrailingBackSlash(ArchivePath);
+
+    if DirectoryExists(S) then
+      OpenDialog.InitialDir := S;
+
     if OpenDialog.Execute then
     begin
-      ArchiveName.Text := OpenDialog.FileName;
+      ArchivePath := ExtractFilePath(OpenDialog.FileName);
+      ArchiveName.Text := ExtractFileName(OpenDialog.FileName);
     end;
   end;
   

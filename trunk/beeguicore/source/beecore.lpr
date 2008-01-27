@@ -461,7 +461,8 @@ type
       F.cfgOption.Text := FcfgOption;
 
     F.priOption.ItemIndex := FpriOption;
-    F.ArchiveName.Text := FArcName;
+    F.ArchivePath := ExtractFilePath(FArcName);
+    F.ArchiveName.Text := ExtractFileName(FArcName);
 
     for i := 0 to FFileMasks.Count - 1 do
     begin
@@ -471,9 +472,7 @@ type
         F.FilesMgr.AddFolder(FFileMasks.Strings[i])
     end;
     
-    
-    
-    
+    // Form.ShowModal
     if F.ShowModal = mrOk then
     begin
       FrOption := F.rOption.Checked;
