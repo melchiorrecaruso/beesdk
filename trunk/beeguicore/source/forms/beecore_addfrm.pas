@@ -47,38 +47,40 @@ type
   { TAddFrm class }
 
   TAddFrm = class(TForm)
-    aOptionStr: TComboBox;
-    cfgOptionStr: TComboBox;
-    BtnOpen2: TBitBtn;
-    yOption: TCheckBox;
-    yOptionStr: TEdit;
+    aOptionCheck: TCheckBox;
+    aOption: TComboBox;
+    ArchiveName: TComboBox;
+    ArchiveNameLabel: TLabel;
+
+    cfgOption: TComboBox;
+    cfgOption1: TComboBox;
+    cfgOptionBtn: TBitBtn;
+    cfgOptionBtn1: TBitBtn;
+    cdOption: TEdit;
+    dOption: TComboBox;
+    dOptionLabel: TLabel;
+    eOption: TEdit;
+    Label1: TLabel;
+    cdOptionLabel: TLabel;
+    eOptionLabel: TLabel;
+    mOption: TComboBox;
+    mOptionLabel: TLabel;
+    priOption: TComboBox;
+    priOptionLabel: TLabel;
+    ufOption: TComboBox;
+    ufOptionLabel: TLabel;
+    yOptionLabel: TLabel;
     lOption: TCheckBox;
-    BtnOpen1: TBitBtn;
-    cdOption: TCheckBox;
-    cdOptionStr: TEdit;
     Storage: TXMLPropStorage;
     OpenDialog: TOpenDialog;
     Pages: TPageControl;
     PageGeneral: TTabSheet;
-    ArchiveNameLabel: TLabel;
-    ArchiveName: TComboBox;
     Advanced: TTabSheet;
-    ufOptionLabel: TLabel;
-    ufOption: TComboBox;
-    mOptionLabel: TLabel;
-    mOption: TComboBox;
-    dOptionLabel: TLabel;
-    dOption: TComboBox;
-    priOptionLabel: TLabel;
-    priOption: TComboBox;
-    eOptionLabel: TLabel;
-    eOption: TEdit;
     Options: TGroupBox;
     rOption: TCheckBox;
     sOption: TCheckBox;
     tOption: TCheckBox;
     kOption: TCheckBox;
-    aOption: TCheckBox;
     PageFiles: TTabSheet;
     FilesLabel: TLabel;
     Files: TTreeView;
@@ -96,7 +98,6 @@ type
     PopupMenu_PlusMinus: TMenuItem;
     PopupMenu_Modify: TMenuItem;
     PopupMenu_Delete: TMenuItem;
-    // ---
     BtnOpen: TBitBtn;
     BtnDown: TBitBtn;
     BtnUp: TBitBtn;
@@ -109,8 +110,8 @@ type
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
     // ---
+    procedure aOptionCheckChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure FilesSelectionChanged(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure PagesPageChanged(Sender: TObject);
@@ -134,7 +135,7 @@ type
 
   { Confirm Add routines }
 
-  function ConfirmAdd(const AParams: TStringList): boolean;
+  function ConfirmAdd(const AppParams: TStringList): boolean;
   
 implementation
 
@@ -150,7 +151,6 @@ uses
     CfgFolder: string;
   begin
     Pages.ActivePage := PageGeneral;
-    // ---
     CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir);
     if ForceDirectories(CfgFolder) then
     begin
@@ -159,9 +159,14 @@ uses
     {$i beecore_addfrm.inc}
     Storage.Restore;
   end;
-  
-  procedure TAddFrm.FormDestroy (Sender: TObject);
+
+  procedure TAddFrm.aOptionCheckChange(Sender: TObject);
   begin
+    aOption.Enabled := aOptionCheck.Checked;
+    if aOption.Enabled then
+      aOption.Color := clWindow
+    else
+      aOption.Color := clBtnFace;
   end;
   
   procedure TAddFrm.BtnOpenClick(Sender: TObject);
@@ -330,17 +335,172 @@ uses
   
   { Confirm Add routines }
 
-  function ConfirmAdd(const AParams: TStringList): boolean;
+  function ConfirmAdd(const AppParams: TStringList): boolean;
   var
+    fOption: boolean;
+    uOption: boolean;
     F: TAddFrm;
     i: integer;
     S: string;
   begin
+    fOption := True;
+    uOption := True;
+
     F := TAddFrm.Create(Application);
-    for I := 0 to AParams.Count -1 do
+    // catch options, command, archive name and name of files
+    for i := 0 to AppParams.Count - 1 do
     begin
-    
+      S := AppParams.Strings[I];
+      if (Length(S) > 1) and (S[1] = '-') then
+      begin
+        // options...
+        case UpCase(S[2]) of
+          'S': begin
+                 Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   F.sOption.Checked := True
+                 else
+                   if (S = '-') then F.sOption.Checked := False;
+               end;
+          'U': begin
+                 Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   uOption := True
+                 else
+                   if (S = '-') then uOption := False;
+               end;
+        'F': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 fOption := True
+               else
+                 if (S = '-') then fOption := False;
+             end;
+        'T': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 tOption := True
+               else
+                 if (S = '-') then tOption := False;
+             end;
+        'L': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 lOption := True
+               else
+                 if (S = '-') then lOption := False;
+             end;
+        'K': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 kOption := True
+               else
+                 if (S = '-') then kOption := False;
+             end;
+        'R': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 rOption := True
+               else
+                 if (S = '-') then rOption := False;
+             end;
+        'Y': begin
+               Delete(S, 1, 2);
+               if Bee_Common.DirectoryExists(Bee_Common.ExcludeTrailingBackslash(S)) then
+               begin
+                 yOption := Bee_Common.ExcludeTrailingBackslash(S);
+               end;
+             end;
+        'A': begin
+               Delete(S, 1, 2);
+               if (S = '+') or (Length(S) = 0) then
+                 aOption := 'beesfx.bin'
+               else
+                 if (S = '-') then
+                   aOption := 'beesfx.empty'
+                 else
+                   aOption := S;
+             end;
+        'M': begin
+               Delete(S, 1, 2);
+               if (Length(S)= 1) and (S[1] in ['0'..'3']) then
+               begin
+                 Cfg.Selector('\main');
+                 Cfg.CurrentSection.Values['Method'] := S;
+               end;
+             end;
+        'O': begin
+               Delete(S, 1, 2);
+               if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
+               begin
+                 oOption := UpCase(S[1]);
+               end;
+             end;
+        'D': begin
+               Delete(S, 1, 2);
+               if (Length(S)= 1) and (S[1] in ['0'..'9']) then
+               begin
+                 Cfg.Selector('\main');
+                 Cfg.CurrentSection.Values['Dictionary'] := S;
+               end;
+             end;
+        'E': begin
+               Delete(S, 1, 2);
+               if ExtractFileExt('.' + S) <> '.' then
+               begin
+                 eOption := ExtractFileExt('.' + S);
+               end;
+             end;
+        'X': begin
+               Delete(S, 1, 2);
+               if Length(S) > 0 then
+               begin
+                 xOption.Add(S);
+               end;
+             end;
+        else if FileNamePos('-pri', S) = 1 then
+             begin
+               Delete(S, 1, 4);
+               if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
+               begin
+                 SetPriority(StrToInt(S[1]));
+               end;
+             end else
+             begin
+               if FileNamePos('-cd', S) = 1 then
+               begin
+                 Delete(S, 1, 3);
+                 if Length(cdOption) > 0 then
+                 begin
+                   cdOption := Bee_Common.IncludeTrailingBackslash(Bee_Common.FixDirName(S));
+                 end;
+               end;
+             end;
+        end; // end case
+    end else
+    begin
+      // command or filenames...
+      if Command = ' ' then
+      begin
+        if Length(S) = 1 then
+          Command := UpCase(S[1])
+        else
+          Command := '?';
+      end else
+        if ArcName = '' then
+        begin
+          ArcName := S;
+          if ExtractFileExt(ArcName) = '' then
+          begin
+            ArcName := ChangeFileExt(ArcName, '.bee');
+          end;
+        end else
+          FileMasks.Add(Bee_Common.DoDirSeparators(S));
     end;
+  end; // end for loop
+
+
+
     if F.ShowModal = mrOk then
     begin
       Result := True;

@@ -163,7 +163,7 @@ type
       'A': FRun := ConfirmAdd(FParams);
       'E': FRun := ConfirmExtract(FParams);
       'X': FRun := ConfirmExtract(FParams);
-      'T': FRun := ConfirmExtract(FParams);
+      'T': FRun := ConfirmAdd(FParams);
       else FRun := False;
     end;
   end;

@@ -1,7 +1,7 @@
 object ExtractFrm: TExtractFrm
-  Left = 363
+  Left = 497
   Height = 424
-  Top = 201
+  Top = 206
   Width = 560
   HorzScrollBar.Page = 559
   VertScrollBar.Page = 423
@@ -168,18 +168,18 @@ object ExtractFrm: TExtractFrm
   end
   object Storage: TXMLPropStorage
     StoredValues = <>
-    left = 8
-    top = 248
+    left = 344
+    top = 392
   end
   object FoldersMgr: TFolderTreeViewMgr
     FolderEdit = Folder
     FolderTree = Folders
     FolderIcons = Icons
-    left = 72
-    top = 248
+    left = 312
+    top = 392
   end
   object Icons: TIconList
-    left = 40
-    top = 248
+    left = 280
+    top = 392
   end
 end

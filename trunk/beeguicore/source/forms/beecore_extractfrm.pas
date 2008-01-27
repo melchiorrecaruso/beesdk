@@ -48,6 +48,8 @@ type
   { TExtractFrm }
 
   TExtractFrm = class(TForm)
+    BtnOpen2: TBitBtn;
+    cfgOptionStr: TComboBox;
     Storage: TXMLPropStorage;
     FolderLabel: TLabel;
     Folder: TEdit;
