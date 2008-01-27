@@ -148,7 +148,7 @@ type
     F1Option := False;
     F2Option := False;
     FParams := TStringList.Create;
-
+    // Start Process Params
     ProcessOptions;
   end;
   
@@ -163,9 +163,9 @@ type
       S := ParamStr(i);
       if (Length(S) > 1) and (S[1] = '-') then
       begin
-        // Options...
+        // options...
         case UpCase(S[2]) of
-          // BeeCore Options
+          // beecore options
           '0': begin
                  System.Delete(S, 1, 2);
                  F0Option := Pointer(StrToInt(S));
@@ -176,7 +176,7 @@ type
           '2': begin
                  F2Option := True;
                end;
-          // Bee Options
+          // bee options
           'S': begin
                  System.Delete(S, 1, 2);
                  if (S = '+') or (Length(S) = 0) then
@@ -757,7 +757,7 @@ begin
   CmdLine := TCmdLine.Create;
   if CmdLine.Run then
   begin
-    if CmdLine.Command = '?' then
+    if CmdLine.Command in [' ', '?'] then
     begin
        Application.CreateForm(TAboutFrm, AboutFrm);
        Application.Run;
