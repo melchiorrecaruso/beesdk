@@ -54,24 +54,7 @@ uses
   BeeCore_PasswordFrm,
   BeeCore_OverwriteFrm;
   
-  { Confirm Add routines }
 
-  function ConfirmAdd(const AppParams: TStringList): boolean;
-  var
-    App: TBeeApp;
-    F: TAddFrm;
-  begin
-    F := TAddFrm.Create(Application);
-
-
-
-    if F.ShowModal = mrOk then
-    begin
-      Result := True;
-    end else
-      Result := False;
-    F.Free;
-  end;
 
   // ---------------------------------------------------------------------- //
   //                                                                        //
@@ -85,16 +68,41 @@ type
 
   TCmdLine = class (TStringList)
   private
+    // Bee Command Line
     FCommand: char;
-    FArcName: string;
-    FParams: TStringList;
+    FaOption: string;
+    FcdOption: string;
+    FeOption: string;
+    FfOption: boolean;
+    FkOption: boolean;
+    FlOption: boolean;
+    FoOption: char;
+    FmOption: integer;
+    FdOption: integer;
+    FrOption: boolean;
+    FsOption: boolean;
+    FtOption: boolean;
+    FuOption: boolean;
+    FxOption: TStringList;
+    FyOption: string;
+    FcfgOption: string;
+    FpriOption: integer;
+
+    FArcName:  string;
+
+    FFileMasks: TStringList;
   private
+    // BeeCore Command Line
     FRun: boolean;
     F0Option: pointer;
     F1Option: boolean;
     F2Option: boolean;
+    FParams: TStringList;
   private
-    procedure Process2Option;
+    procedure ProcessOptions;
+    procedure ProcessParams;
+    function ConfirmAdd: boolean;
+    function ConfirmExtract: boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -113,21 +121,51 @@ type
     S: string;
   begin
     inherited Create;
+    // Bee Command Line
     FCommand := ' ';
-    FArcName := '';
-    FParams := TStringList.Create;
-
-    FRun := True;
+    FaOption := '';
+    FcdOption := '';
+    FeOption := ''; // forced file extension
+    FfOption := False;
+    FkOption := False;
+    FlOption := False;
+    FoOption := 'Y';
+    FmOption := 1;
+    FdOption := 3;
+    FrOption := False;
+    FsOption := False;
+    FtOption := False;
+    FuOption := False;
+    FxOption := TStringList.Create;
+    FyOption := '';
+    FcfgOption := '';
+    FpriOption := 2;
+    FArcName  := '';
+    FFileMasks := TStringList.Create;
+    // BeeCore Command Line
+    FRun := False;
     F0Option := nil;
     F1Option := False;
     F2Option := False;
+    FParams := TStringList.Create;
 
+    ProcessOptions;
+  end;
+  
+  procedure TCmdLine.ProcessOptions;
+  var
+    S: string;
+    i: integer;
+  begin
+    // catch options, command, archive name and name of files
     for i := 1 to ParamCount do
     begin
       S := ParamStr(i);
       if (Length(S) > 1) and (S[1] = '-') then
       begin
+        // Options...
         case UpCase(S[2]) of
+          // BeeCore Options
           '0': begin
                  System.Delete(S, 1, 2);
                  F0Option := Pointer(StrToInt(S));
@@ -138,13 +176,140 @@ type
           '2': begin
                  F2Option := True;
                end;
-          else begin
-                 FParams.Add(S);
+          // Bee Options
+          'S': begin
+                 System.Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   FsOption := True
+                 else
+                   if (S = '-') then FsOption := False;
                end;
-        end;
+          'U': begin
+                 System.Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   FuOption := True
+                 else
+                 if (S = '-') then FuOption := False;
+               end;
+          'F': begin
+                 System.Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   FfOption := True
+                 else
+                   if (S = '-') then FfOption := False;
+               end;
+          'T': begin
+                 System.Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   FtOption := True
+                 else
+                   if (S = '-') then FtOption := False;
+               end;
+          'L': begin
+                 System.Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   FlOption := True
+                 else
+                   if (S = '-') then FlOption := False;
+               end;
+          'K': begin
+                 System.Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   FkOption := True
+                 else
+                   if (S = '-') then FkOption := False;
+                end;
+          'R': begin
+                 System.Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   FrOption := True
+                 else
+                   if (S = '-') then FrOption := False;
+               end;
+          'Y': begin
+                 System.Delete(S, 1, 2);
+                 if DirectoryExists(ExcludeTrailingBackslash(S)) then
+                 begin
+                   FyOption := ExcludeTrailingBackslash(S);
+                 end;
+               end;
+          'A': begin
+                 System.Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   FaOption := 'beesfx.bin'
+                 else
+                   if (S = '-') then
+                     FaOption := 'beesfx.empty'
+                   else
+                     FaOption := S;
+               end;
+          'M': begin
+                 System.Delete(S, 1, 2);
+                 if (Length(S)= 1) and (S[1] in ['0'..'3']) then
+                 begin
+                   FmOption := StrToInt(S[1]);
+                 end;
+               end;
+          'O': begin
+                 System.Delete(S, 1, 2);
+                 if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
+                 begin
+                   FoOption := UpCase(S[1]);
+                 end;
+               end;
+          'D': begin
+                 System.Delete(S, 1, 2);
+                 if (Length(S)= 1) and (S[1] in ['0'..'9']) then
+                 begin
+                   FdOption := StrToInt(S[1]);
+                 end;
+               end;
+          'E': begin
+                 System.Delete(S, 1, 2);
+                 if ExtractFileExt('.' + S) <> '.' then
+                 begin
+                   FeOption := ExtractFileExt('.' + S);
+                 end;
+               end;
+          'X': begin
+                 System.Delete(S, 1, 2);
+                 if Length(S) > 0 then
+                 begin
+                   FxOption.Add(S);
+                 end;
+               end;
+          else if FileNamePos('-pri', S) = 1 then
+               begin
+                 System.Delete(S, 1, 4);
+                 if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
+                 begin
+                   FpriOption := StrToInt(S[1]);
+                 end;
+               end else
+               begin
+                 if FileNamePos('-cd', S) = 1 then
+                 begin
+                   System.Delete(S, 1, 3);
+                   if Length(S) > 0 then
+                   begin
+                     FcdOption := IncludeTrailingBackslash(FixDirName(S));
+                   end;
+                 end else
+                 begin
+                   if FileNamePos('-cfg', S) = 1 then
+                   begin
+                     System.Delete(S, 1, 4);
+                     if Length(S) > 0 then
+                     begin
+                       FcfgOption := S;
+                     end;
+                   end;
+                 end;
+               end;
+          end; // end case
       end else
       begin
-        FParams.Add(S);
+        // command or filenames...
         if FCommand = ' ' then
         begin
           if Length(S) = 1 then
@@ -159,14 +324,11 @@ type
             begin
               FArcName := ChangeFileExt(FArcName, '.bee');
             end;
-          end;
+          end else
+            FFileMasks.Add(DoDirSeparators(S));
       end;
-    end;
-
-    if F2Option then
-    begin
-      Process2Option;
-    end;
+    end; // end for loop
+    ProcessParams;
   end;
 
   destructor TCmdLine.Destroy;
@@ -176,15 +338,143 @@ type
     inherited Destroy;
   end;
 
-  procedure TCmdLine.Process2Option;
+  procedure TCmdLine.ProcessParams;
+  var
+    i: integer;
   begin
-    case FCommand of
-      'A': FRun := ConfirmAdd(FParams);
-      'E': FRun := ConfirmExtract(FParams);
-      'X': FRun := ConfirmExtract(FParams);
-      'T': FRun := ConfirmAdd(FParams);
-      else FRun := False;
+    FRun := True;
+    if F2Option then
+    begin
+      case FCommand of
+        'A': FRun := ConfirmAdd;
+        'E': FRun := ConfirmExtract;
+        'X': FRun := ConfirmExtract;
+        'T': FRun := ConfirmAdd;
+        else FRun := False;
+      end;
     end;
+
+    if FRun then
+    begin
+      FParams.Add(FCommand);
+
+      FParams.Add('-a'   +    FaOption);
+      FParams.Add('-cd'  +   FcdOption);
+      FParams.Add('-e'   +    FeOption);
+      FParams.Add('-o'   +    FoOption);
+      FParams.Add('-y'   +    FyOption);
+      FParams.Add('-cfg' +  FcfgOption);
+
+      if FrOption then FParams.Add('-r+') else FParams.Add('-r-');
+      if FuOption then FParams.Add('-u+') else FParams.Add('-u-');
+      if FfOption then FParams.Add('-f+') else FParams.Add('-f-');
+      if FkOption then FParams.Add('-k+') else FParams.Add('-k-');
+      if FsOption then FParams.Add('-s+') else FParams.Add('-s-');
+      if FtOption then FParams.Add('-t+') else FParams.Add('-t-');
+      if FlOption then FParams.Add('-l+') else FParams.Add('-l-');
+
+      FParams.Add('-m'   + IntToStr(  FmOption));
+      FParams.Add('-d'   + IntToStr(  FdOption));
+      FParams.Add('-pri' + IntTostr(FpriOption));
+
+      for i := 0 to FxOption.Count -1 do
+        FParams.Add('-x' + FxOption.Strings[i]);
+
+      FParams.Add(FArcName);
+
+      for i := 0 to FFileMasks.Count-1 do
+        FParams.Add(FFileMasks.Strings[i]);
+    end;
+  end;
+  
+  function TCmdLine.ConfirmAdd: boolean;
+  var
+    i: integer;
+    F: TAddFrm;
+  begin
+    F := TAddFrm.Create(Application);
+
+    F.ArchiveName.Text := ExtractFileName(FArcName);
+
+    if (FuOption xor FfOption) then
+    begin
+      if FuOption then
+        F.ufOption.ItemIndex := 0
+      else
+        F.ufOption.ItemIndex := 1;
+    end else
+    begin
+      F.ufOption.ItemIndex := 2;
+    end;
+
+    F.  mOption.ItemIndex := FmOption;
+    F.  dOption.ItemIndex := FdOption;
+    F.priOption.ItemIndex := FpriOption;
+
+    F.eOption.Text    := FeOption;
+    F.rOption.Checked := FrOption;
+    F.sOption.Checked := FsOption;
+    F.tOption.Checked := FtOption;
+    F.kOption.Checked := FkOption;
+    F.lOption.Checked := FlOption;
+
+    for i := 0 to FFileMasks.Count -1 do
+    begin
+      if FileExists(FFileMasks.Strings[i]) then
+        F.FilesMgr.AddFile(FFileMasks.Strings[i])
+      else
+        F.FilesMgr.AddFolder(FFileMasks.Strings[i])
+    end;
+    
+    for i := 0 to FxOption.Count -1 do
+    begin
+      if FileExists(FxOption.Strings[i]) then
+        F.FilesMgr.AddFile(FxOption.Strings[i])
+      else
+        F.FilesMgr.AddFolder(FxOption.Strings[i])
+    end;
+    
+    if Length(FaOption) > 0 then
+    begin
+      F.aOptionCheck.Checked := True;
+      
+    end else
+      F.aOptionCheck.Checked := False;
+    
+    if Length(FcdOption) > 0 then
+    begin
+      F.cdOption.Text := FcdOption;
+    end;
+
+    if Length(FcfgOption) > 0 then
+    begin
+      F.cfgOption.Text := FcfgOption;
+    end;
+
+    if Length(FyOption) > 0 then
+    begin
+      F.yOption.Text := FyOption;
+    end;
+
+    if F.ShowModal = mrOk then
+    begin
+      Result := True;
+    end else
+      Result := False;
+
+    F.Free;
+  end;
+  
+  function TCmdLine.ConfirmExtract: boolean;
+  var
+    F: TExtractFrm;
+  begin
+    F := TExtractFrm.Create(Application);
+    if F.ShowModal = mrOk then
+    begin
+      Result := True;
+    end else
+      Result := False;
   end;
   
   // ---------------------------------------------------------------------- //

@@ -119,24 +119,6 @@ type
     FyOption: string;
 
     FFileMasks: TStringList; // file masks
-  public
-    property SelfName: string read FSelfName;
-    property ArcName:  string read FArcName;
-    property Command: char read FCommand;
-    property aOption: string read FaOption;
-    property cdOption: string read FcdOption;
-    property eOption: string read FeOption;
-    property fOption: boolean read FfOption;
-    property kOption: boolean read FkOption;
-    property lOption: boolean read FlOption;
-    property oOption: char read FoOption;
-    property rOption: boolean read FrOption;
-    property sOption: boolean read FsOption;
-    property tOption: boolean read FtOption;
-    property uOption: boolean read FuOption;
-    property xOption: TStringList read FxOption;
-    property yOption: string read FyOption;
-    property FileMasks: TStringList read FFileMasks;
   end;
 
 implementation
@@ -160,7 +142,7 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0615 archiver utility, freeware version, Jan 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0619 archiver utility, freeware version, Jan 2008.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -688,9 +670,9 @@ begin
               ProcessFileToOverWrite(Headers, I);
           end;
         end;
+
   end else
 
-  if (FuOption and FfOption) then
   begin
     for I := 0 to Headers.Count - 1 do
       if FileExists(THeader(Headers.Items[I]).FileName) = True then
@@ -703,7 +685,6 @@ begin
       end else
         ProcessFileToOverWrite(Headers, I);
   end;
-
 end;
 
 function TBeeApp.AlreadyFileExists(Headers: THeaders; FileIndex: integer;
