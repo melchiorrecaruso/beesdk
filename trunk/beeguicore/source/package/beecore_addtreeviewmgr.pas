@@ -63,8 +63,8 @@ type
     destructor Destroy; override;
     procedure Update;
   public
-    procedure AddFile(const FileName: string);
-    procedure AddFolder(const FolderName: string);
+    function AddFile(const FileName: string): integer;
+    function AddFolder(const FolderName: string): integer;
     procedure DeleteFile(FileIndex: integer);
     procedure DeleteFolder(FolderIndex: integer);
     procedure PlusMinus(Index: integer);
@@ -226,10 +226,11 @@ uses
     end;
   end;
 
-  procedure TAddTreeViewMgr.AddFile(const FileName: string);
+  function TAddTreeViewMgr.AddFile(const FileName: string): integer;
   var
     Node: TTreeNode;
   begin
+    Result := -1;
     if Assigned(FTree) then
     begin
       FTree.Items.BeginUpdate;
@@ -240,16 +241,18 @@ uses
       FFileBool.Add('+');
 
       Node := FTree.Items.Add(FTree.Items.GetLastNode, 'nil');
+      Result := Node.AbsoluteIndex;
       
       FTree.Items.EndUpdate;
       Update;
     end;
   end;
   
-  procedure TAddTreeViewMgr.AddFolder(const FolderName: string);
+  function TAddTreeViewMgr.AddFolder(const FolderName: string): integer;
   var
     Node: TTreeNode;
   begin
+    Result := -1;
     if Assigned(FTree) then
     begin
       FTree.Items.BeginUpdate;
@@ -263,6 +266,7 @@ uses
       FFileBool.Add('+');
 
       Node := FTree.Items.Add(FTree.Items.GetLastNode, 'nil');
+      Result := Node.AbsoluteIndex;
 
       FTree.Items.EndUpdate;
       Update;

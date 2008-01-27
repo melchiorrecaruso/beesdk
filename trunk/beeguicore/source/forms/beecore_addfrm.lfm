@@ -624,7 +624,7 @@ object AddFrm: TAddFrm
         Top = 30
         Width = 309
         Anchors = [akTop, akLeft, akRight, akBottom]
-        DefaultItemHeight = 16
+        DefaultItemHeight = 18
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
@@ -739,7 +739,7 @@ object AddFrm: TAddFrm
         BorderSpacing.Around = 10
         TabOrder = 4
       end
-      object cfgOption1: TComboBox
+      object yOption: TComboBox
         Left = 10
         Height = 21
         Top = 195

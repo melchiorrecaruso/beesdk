@@ -53,7 +53,7 @@ type
     ArchiveNameLabel: TLabel;
 
     cfgOption: TComboBox;
-    cfgOption1: TComboBox;
+    yOption: TComboBox;
     cfgOptionBtn: TBitBtn;
     cfgOptionBtn1: TBitBtn;
     cdOption: TEdit;
@@ -131,11 +131,6 @@ type
   private
     { private declarations }
   end;
-  
-
-  { Confirm Add routines }
-
-  function ConfirmAdd(const AppParams: TStringList): boolean;
   
 implementation
 
@@ -331,183 +326,6 @@ uses
       AllowdropFiles := True
     else
       AllowDropFiles := False;
-  end;
-  
-  { Confirm Add routines }
-
-  function ConfirmAdd(const AppParams: TStringList): boolean;
-  var
-    fOption: boolean;
-    uOption: boolean;
-    F: TAddFrm;
-    i: integer;
-    S: string;
-  begin
-    fOption := True;
-    uOption := True;
-
-    F := TAddFrm.Create(Application);
-    // catch options, command, archive name and name of files
-    for i := 0 to AppParams.Count - 1 do
-    begin
-      S := AppParams.Strings[I];
-      if (Length(S) > 1) and (S[1] = '-') then
-      begin
-        // options...
-        case UpCase(S[2]) of
-          'S': begin
-                 Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   F.sOption.Checked := True
-                 else
-                   if (S = '-') then F.sOption.Checked := False;
-               end;
-          'U': begin
-                 Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   uOption := True
-                 else
-                   if (S = '-') then uOption := False;
-               end;
-        'F': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 fOption := True
-               else
-                 if (S = '-') then fOption := False;
-             end;
-        'T': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 tOption := True
-               else
-                 if (S = '-') then tOption := False;
-             end;
-        'L': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 lOption := True
-               else
-                 if (S = '-') then lOption := False;
-             end;
-        'K': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 kOption := True
-               else
-                 if (S = '-') then kOption := False;
-             end;
-        'R': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 rOption := True
-               else
-                 if (S = '-') then rOption := False;
-             end;
-        'Y': begin
-               Delete(S, 1, 2);
-               if Bee_Common.DirectoryExists(Bee_Common.ExcludeTrailingBackslash(S)) then
-               begin
-                 yOption := Bee_Common.ExcludeTrailingBackslash(S);
-               end;
-             end;
-        'A': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 aOption := 'beesfx.bin'
-               else
-                 if (S = '-') then
-                   aOption := 'beesfx.empty'
-                 else
-                   aOption := S;
-             end;
-        'M': begin
-               Delete(S, 1, 2);
-               if (Length(S)= 1) and (S[1] in ['0'..'3']) then
-               begin
-                 Cfg.Selector('\main');
-                 Cfg.CurrentSection.Values['Method'] := S;
-               end;
-             end;
-        'O': begin
-               Delete(S, 1, 2);
-               if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
-               begin
-                 oOption := UpCase(S[1]);
-               end;
-             end;
-        'D': begin
-               Delete(S, 1, 2);
-               if (Length(S)= 1) and (S[1] in ['0'..'9']) then
-               begin
-                 Cfg.Selector('\main');
-                 Cfg.CurrentSection.Values['Dictionary'] := S;
-               end;
-             end;
-        'E': begin
-               Delete(S, 1, 2);
-               if ExtractFileExt('.' + S) <> '.' then
-               begin
-                 eOption := ExtractFileExt('.' + S);
-               end;
-             end;
-        'X': begin
-               Delete(S, 1, 2);
-               if Length(S) > 0 then
-               begin
-                 xOption.Add(S);
-               end;
-             end;
-        else if FileNamePos('-pri', S) = 1 then
-             begin
-               Delete(S, 1, 4);
-               if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
-               begin
-                 SetPriority(StrToInt(S[1]));
-               end;
-             end else
-             begin
-               if FileNamePos('-cd', S) = 1 then
-               begin
-                 Delete(S, 1, 3);
-                 if Length(cdOption) > 0 then
-                 begin
-                   cdOption := Bee_Common.IncludeTrailingBackslash(Bee_Common.FixDirName(S));
-                 end;
-               end;
-             end;
-        end; // end case
-    end else
-    begin
-      // command or filenames...
-      if Command = ' ' then
-      begin
-        if Length(S) = 1 then
-          Command := UpCase(S[1])
-        else
-          Command := '?';
-      end else
-        if ArcName = '' then
-        begin
-          ArcName := S;
-          if ExtractFileExt(ArcName) = '' then
-          begin
-            ArcName := ChangeFileExt(ArcName, '.bee');
-          end;
-        end else
-          FileMasks.Add(Bee_Common.DoDirSeparators(S));
-    end;
-  end; // end for loop
-
-
-
-    if F.ShowModal = mrOk then
-    begin
-      Result := True;
-      
-    end else
-      Result := False;
-    F.Free;
   end;
 
 initialization

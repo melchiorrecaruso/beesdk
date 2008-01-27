@@ -53,6 +53,25 @@ uses
   BeeCore_ExtractFrm,
   BeeCore_PasswordFrm,
   BeeCore_OverwriteFrm;
+  
+  { Confirm Add routines }
+
+  function ConfirmAdd(const AppParams: TStringList): boolean;
+  var
+    App: TBeeApp;
+    F: TAddFrm;
+  begin
+    F := TAddFrm.Create(Application);
+
+
+
+    if F.ShowModal = mrOk then
+    begin
+      Result := True;
+    end else
+      Result := False;
+    F.Free;
+  end;
 
   // ---------------------------------------------------------------------- //
   //                                                                        //

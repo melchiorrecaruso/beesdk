@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0611 - 2008.01.26 by Melchiorre Caruso.
+  v0.7.9 build 0615 - 2008.01.28 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -93,33 +93,50 @@ type
     function MethodToStr(P: THeader; Method, Dictionary: integer): string;
 
   private
-    SelfName: string;
+    FSelfName: string;
 
-    ArcName:  string;  // archive file name
-    ArcFile:  TStream; // archive file stream
-    SwapName: string;  // swap file name
-    SwapFile: TStream; // swap file stream
+    FArcName:  string;  // archive file name
+    FArcFile:  TStream; // archive file stream
+    FSwapName: string;  // swap file name
+    FSwapFile: TStream; // swap file stream
 
-    CfgName: string;
-    Cfg: TConfiguration;
+    FCfgName: string;
+    FCfg: TConfiguration;
 
-    Command: char;     // command
-    aOption: string;
-    cdOption: string;
-    eOption: string;   // forced file extension
-    fOption: boolean;
-    kOption: boolean;
-    lOption: boolean;
-    oOption: char;
-    pOption: boolean;
-    rOption: boolean;
-    sOption: boolean;
-    tOption: boolean;
-    uOption: boolean;
-    xOption: TStringList;
-    yOption: string;
+    FCommand: char;     // command
+    FaOption: string;
+    FcdOption: string;
+    FeOption: string;   // forced file extension
+    FfOption: boolean;
+    FkOption: boolean;
+    FlOption: boolean;
+    FoOption: char;
+    FrOption: boolean;
+    FsOption: boolean;
+    FtOption: boolean;
+    FuOption: boolean;
+    FxOption: TStringList;
+    FyOption: string;
 
-    FileMasks: TStringList; // file masks
+    FFileMasks: TStringList; // file masks
+  public
+    property SelfName: string read FSelfName;
+    property ArcName:  string read FArcName;
+    property Command: char read FCommand;
+    property aOption: string read FaOption;
+    property cdOption: string read FcdOption;
+    property eOption: string read FeOption;
+    property fOption: boolean read FfOption;
+    property kOption: boolean read FkOption;
+    property lOption: boolean read FlOption;
+    property oOption: char read FoOption;
+    property rOption: boolean read FrOption;
+    property sOption: boolean read FsOption;
+    property tOption: boolean read FtOption;
+    property uOption: boolean read FuOption;
+    property xOption: TStringList read FxOption;
+    property yOption: string read FyOption;
+    property FileMasks: TStringList read FFileMasks;
   end;
 
 implementation
@@ -143,13 +160,13 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  SelfName := 'The Bee 0.7.9 build 0611 archiver utility, freeware version, Jan 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0615 archiver utility, freeware version, Jan 2008.'
     + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
 
-  ArcName  := '';
-  ArcFile  := nil;
-  SwapName := '';
-  SwapFile := nil;
+  FArcName  := '';
+  FArcFile  := nil;
+  FSwapName := '';
+  FSwapFile := nil;
   
   with AppInterface.OnTick.Data do
   begin
@@ -157,26 +174,25 @@ begin
     ProcessedSize := 0;
   end;
   
-  CfgName := Bee_Common.SelfPath + 'bee.ini';
-  Cfg := TConfiguration.Create;
+  FCfgName := Bee_Common.SelfPath + 'bee.ini';
+  FCfg := TConfiguration.Create;
 
-  Command := ' ';
-  aOption := '';
-  cdOption := '';
-  eOption := ''; // forced file extension
-  fOption := False;
-  kOption := False;
-  lOption := False;
-  oOption := 'Y';
-  pOption := False;
-  rOption := False;
-  sOption := False;
-  tOption := False;
-  uOption := False;
-  xOption := TStringList.Create;
-  yOption := '';
+  FCommand := ' ';
+  FaOption := '';
+  FcdOption := '';
+  FeOption := ''; // forced file extension
+  FfOption := False;
+  FkOption := False;
+  FlOption := False;
+  FoOption := 'Y';
+  FrOption := False;
+  FsOption := False;
+  FtOption := False;
+  FuOption := False;
+  FxOption := TStringList.Create;
+  FyOption := '';
 
-  FileMasks := TStringList.Create;
+  FFileMasks := TStringList.Create;
 
   ProcessOptions; // process options
   ProcessMasks; // porcess masks
@@ -184,9 +200,9 @@ end;
 
 destructor TBeeApp.Destroy;
 begin
-  Cfg.Free;
-  xOption.Free;
-  FileMasks.Free;
+  FCfg.Free;
+  FxOption.Free;
+  FFileMasks.Free;
   inherited Destroy;
 end;
 
@@ -230,8 +246,8 @@ begin
   AppInterface.OnDisplay.Data.Msg := SelfName;
   Sync(AppInterface.OnDisplay.Method);
   /// process command
-  if ((Command in SetOfCommands) and (ArcName > '')) or (Command = '?') then
-    case Command of
+  if ((FCommand in SetOfCommands) and (FArcName > '')) or (FCommand = '?') then
+    case FCommand of
       'A': EncodeShell;
       'D': DeleteShell;
       'E': DecodeShell(toExtract);
@@ -285,12 +301,12 @@ end;
 function TBeeApp.OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 begin
   Result := True;
-  if FileExists(ArcName) then
+  if FileExists(FArcName) then
   begin
     try
-      ArcFile := TFileReader.Create(ArcName, fmOpenRead + fmShareDenyWrite);
-      Headers.ReadItems(ArcFile, aAction);
-      if (Headers.Count = 0) and (ArcFile.Size <> 0) then
+      FArcFile := TFileReader.Create(FArcName, fmOpenRead + fmShareDenyWrite);
+      Headers.ReadItems(FArcFile, aAction);
+      if (Headers.Count = 0) and (FArcFile.Size <> 0) then
       begin
         AppInterface.OnFatalError.Data.Msg := ('Error: can''t open archive');
         Sync(AppInterface.OnFatalError.Method);
@@ -318,22 +334,23 @@ begin
     if FileNamePos('-cfg', S) = 1 then
     begin
       Delete(S, 1, 4);
-      CfgName := S;
+      FCfgName := S;
     end;
   end;
 
   // default configuration
-  Cfg.Selector('\main');
-  Cfg.CurrentSection.Values['Method'] := '1';
-  Cfg.CurrentSection.Values['Dictionary'] := '2';
+  FCfg.Selector('\main');
+  FCfg.CurrentSection.Values['Method'] := '1';
+  FCfg.CurrentSection.Values['Dictionary'] := '2';
 
   // process configuration
-  if not FileExists(CfgName) then
+  if not FileExists(FCfgName) then
   begin
-    AppInterface.OnWarning.Data.Msg := (Cr + 'Configuration file ' + CfgName + ' not found, using default settings' + Cr);
+    AppInterface.OnWarning.Data.Msg := (Cr + 'Configuration file '
+      + FCfgName + ' not found, using default settings' + Cr);
     Sync(AppInterface.OnWarning.Method);
   end else
-    Cfg.LoadFromFile(CfgName);
+    FCfg.LoadFromFile(FCfgName);
 
   // catch options, command, archive name and name of files
   for I := 0 to AppParams.Count - 1 do
@@ -346,104 +363,104 @@ begin
         'S': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
-                 sOption := True
+                 FsOption := True
                else
-                 if (S = '-') then sOption := False;
+                 if (S = '-') then FsOption := False;
              end;
         'U': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
-                 uOption := True
+                 FuOption := True
                else
-                 if (S = '-') then uOption := False;
+                 if (S = '-') then FuOption := False;
              end;
         'F': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
-                 fOption := True
+                 FfOption := True
                else
-                 if (S = '-') then fOption := False;
+                 if (S = '-') then FfOption := False;
              end;
         'T': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
-                 tOption := True
+                 FtOption := True
                else
-                 if (S = '-') then tOption := False;
+                 if (S = '-') then FtOption := False;
              end;
         'L': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
-                 lOption := True
+                 FlOption := True
                else
-                 if (S = '-') then lOption := False;
+                 if (S = '-') then FlOption := False;
              end;
         'K': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
-                 kOption := True
+                 FkOption := True
                else
-                 if (S = '-') then kOption := False;
+                 if (S = '-') then FkOption := False;
              end;
         'R': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
-                 rOption := True
+                 FrOption := True
                else
-                 if (S = '-') then rOption := False;
+                 if (S = '-') then FrOption := False;
              end;
         'Y': begin
                Delete(S, 1, 2);
-               if Bee_Common.DirectoryExists(Bee_Common.ExcludeTrailingBackslash(S)) then
+               if DirectoryExists(ExcludeTrailingBackslash(S)) then
                begin
-                 yOption := Bee_Common.ExcludeTrailingBackslash(S);
+                 FyOption := ExcludeTrailingBackslash(S);
                end;
              end;
         'A': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
-                 aOption := 'beesfx.bin'
+                 FaOption := 'beesfx.bin'
                else
                  if (S = '-') then
-                   aOption := 'beesfx.empty'
+                   FaOption := 'beesfx.empty'
                  else
-                   aOption := S;
+                   FaOption := S;
              end;
         'M': begin
                Delete(S, 1, 2);
                if (Length(S)= 1) and (S[1] in ['0'..'3']) then
                begin
-                 Cfg.Selector('\main');
-                 Cfg.CurrentSection.Values['Method'] := S;
+                 FCfg.Selector('\main');
+                 FCfg.CurrentSection.Values['Method'] := S;
                end;
              end;
         'O': begin
                Delete(S, 1, 2);
                if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
                begin
-                 oOption := UpCase(S[1]);
+                 FoOption := UpCase(S[1]);
                end;
              end;
         'D': begin
                Delete(S, 1, 2);
                if (Length(S)= 1) and (S[1] in ['0'..'9']) then
                begin
-                 Cfg.Selector('\main');
-                 Cfg.CurrentSection.Values['Dictionary'] := S;
+                 FCfg.Selector('\main');
+                 FCfg.CurrentSection.Values['Dictionary'] := S;
                end;
              end;
         'E': begin
                Delete(S, 1, 2);
                if ExtractFileExt('.' + S) <> '.' then
                begin
-                 eOption := ExtractFileExt('.' + S);
+                 FeOption := ExtractFileExt('.' + S);
                end;
              end;
         'X': begin
                Delete(S, 1, 2);
                if Length(S) > 0 then
                begin
-                 xOption.Add(S);
+                 FxOption.Add(S);
                end;
              end;
         else if FileNamePos('-pri', S) = 1 then
@@ -458,9 +475,9 @@ begin
                if FileNamePos('-cd', S) = 1 then
                begin
                  Delete(S, 1, 3);
-                 if Length(cdOption) > 0 then
+                 if Length(S) > 0 then
                  begin
-                   cdOption := Bee_Common.IncludeTrailingBackslash(Bee_Common.FixDirName(S));
+                   FcdOption := IncludeTrailingBackslash(FixDirName(S));
                  end;
                end;
              end;
@@ -468,22 +485,22 @@ begin
     end else
     begin
       // command or filenames...
-      if Command = ' ' then
+      if FCommand = ' ' then
       begin
         if Length(S) = 1 then
-          Command := UpCase(S[1])
+          FCommand := UpCase(S[1])
         else
-          Command := '?';
+          FCommand := '?';
       end else
-        if ArcName = '' then
+        if FArcName = '' then
         begin
-          ArcName := S;
-          if ExtractFileExt(ArcName) = '' then
+          FArcName := S;
+          if ExtractFileExt(FArcName) = '' then
           begin
-            ArcName := ChangeFileExt(ArcName, '.bee');
+            FArcName := ChangeFileExt(FArcName, '.bee');
           end;
         end else
-          FileMasks.Add(Bee_Common.DoDirSeparators(S));
+          FFileMasks.Add(DoDirSeparators(S));
     end;
   end; // end for loop
 end;
@@ -492,34 +509,34 @@ procedure TBeeApp.ProcessMasks;
 var
   I: integer;
 begin
-  if rOption then
+  if FrOption then
   begin
-    for I := 0 to FileMasks.Count - 1 do
+    for I := 0 to FFileMasks.Count - 1 do
     begin
-      if System.Pos('!', FileMasks.Strings[I]) = 0 then
+      if System.Pos('!', FFileMasks.Strings[I]) = 0 then
       begin
-        FileMasks.Strings[I] := FileMasks.Strings[I] + '!';
+        FFileMasks.Strings[I] := FFileMasks.Strings[I] + '!';
       end;
     end;
 
-    for I := 0 to xOption.Count - 1 do
+    for I := 0 to FxOption.Count - 1 do
     begin
-      if System.Pos('!', xOption.Strings[I]) = 0 then
+      if System.Pos('!', FxOption.Strings[I]) = 0 then
       begin
-        xOption.Strings[I] := xOption.Strings[I] + '!';
+        FxOption.Strings[I] := FxOption.Strings[I] + '!';
       end;
     end;
   end;
-  if FileMasks.Count = 0 then
+  if FFileMasks.Count = 0 then
   begin
-    case Command of
-      'A': FileMasks.Add('*!');
+    case FCommand of
+      'A': FFileMasks.Add('*!');
      {'D': nothing to do}
-      'E': FileMasks.Add('*!');
-      'L': FileMasks.Add('*!');
+      'E': FFileMasks.Add('*!');
+      'L': FFileMasks.Add('*!');
      {'R': nothing to do}
-      'T': FileMasks.Add('*!');
-      'X': FileMasks.Add('*!');
+      'T': FFileMasks.Add('*!');
+      'X': FFileMasks.Add('*!');
      {'?': nothing to do}
     end;
   end;
@@ -529,17 +546,17 @@ procedure TBeeApp.ProcessFilesToExtract;
 var
   I: integer;
 begin
-  if Command = 'E' then
+  if FCommand = 'E' then
   begin
     for I := 0 to Headers.Count - 1 do
       with THeader(Headers.Items[I]) do
         FileName := ExtractFileName(FileName);
   end else
-    if Length(cdOption) > 0 then
+    if Length(FcdOption) > 0 then
     begin
       for I := 0 to Headers.Count - 1 do
         with THeader(Headers.Items[I]) do
-          FileName := DeleteFilePath(cdOption, FileName);
+          FileName := DeleteFilePath(FcdOption, FileName);
     end;
 end;
 
@@ -547,7 +564,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToOverWrite;
 begin
-  if (uOption = False) and (fOption = False) then
+  if (FuOption = False) and (FfOption = False) then
     ProcessFilesToOverWriteDefault(Headers)
   else
     ProcessFilesToOverWriteAdvanced(Headers);
@@ -566,7 +583,7 @@ begin
     if (THeader(Headers.Items[I]).Action = toExtract) and
        (FileExists(THeader(Headers.Items[I]).FileName) = True) then
     begin
-      if (oOption in ['A', 'Q', 'S']) = False then
+      if (FoOption in ['A', 'Q', 'S']) = False then
       begin
         repeat
           AppInterface.OnOverWrite.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).FileName);
@@ -578,10 +595,10 @@ begin
           Sync(AppInterface.OnOverWrite.Method);
         until UpCase(AppInterface.OnOverWrite.Answer) in ['A', 'N', 'R', 'S', 'Q', 'Y'];
 
-        oOption := UpCase(AppInterface.OnOverWrite.Answer);
+        FoOption := UpCase(AppInterface.OnOverWrite.Answer);
       end;
 
-      case UpCase(oOption) of
+      case UpCase(FoOption) of
         'A': Break;
         'N': THeader(Headers.Items[I]).Action := toNone;
         'R': begin
@@ -643,10 +660,10 @@ procedure TBeeApp.ProcessFilesToOverWriteAdvanced(Headers: THeaders);
 var
   I: integer;
 begin
-  if (uOption xor fOption) then
+  if (FuOption xor FfOption) then
   begin
 
-    if uOption then
+    if FuOption then
     begin
       for I := 0 to Headers.Count - 1 do
         if (THeader(Headers.Items[I]).Action = toExtract) then
@@ -673,7 +690,7 @@ begin
         end;
   end else
 
-  if (uOption and fOption) then
+  if (FuOption and FfOption) then
   begin
     for I := 0 to Headers.Count - 1 do
       if FileExists(THeader(Headers.Items[I]).FileName) = True then
@@ -723,8 +740,8 @@ var
   i: integer;
   iFileName: string;
 begin
-  Headers.MarkItems(FileMasks, toCopy, toRename);
-  Headers.MarkItems(xOption, toRename, toCopy);
+  Headers.MarkItems(FFileMasks, toCopy, toRename);
+  Headers.MarkItems(FxOption, toRename, toCopy);
 
   if (Headers.GetNext(0, toRename) > -1) then
   begin
@@ -760,7 +777,7 @@ begin
     end;
     Result := True
   end else
-    Result := ((Length(aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) ;
+    Result := ((Length(FaOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) ;
 end;
 
 // Sequences processing
@@ -854,13 +871,13 @@ begin
   I := Headers.GetBack(Headers.Count - 1, toSwap);
   if (I > -1) and (not Terminated) then
   begin
-    SwapName := Bee_Common.GenerateFileName(yOption);
-    SwapFile := TFileWriter.Create(SwapName, fmCreate);
+    FSwapName := GenerateFileName(FyOption);
+    FSwapFile := TFileWriter.Create(FSwapName, fmCreate);
 
     CurrDictionary := Headers.Count;
     CurrTable := Headers.Count;
 
-    Decoder := TDecoder.Create(ArcFile, Self); // get GeneralSize
+    Decoder := TDecoder.Create(FArcFile, Self); // get GeneralSize
     while (I > -1) and (not Terminated) do
     begin
       iDictionary := Headers.GetBack(I, foDictionary); // find dictionary info
@@ -870,13 +887,13 @@ begin
       if (iDictionary > -1) and (iDictionary <> CurrDictionary) and (iDictionary <> iTear) then
       begin
         CurrDictionary := iDictionary;
-        Decoder.DecodeStrm(THeader(Headers.Items[iDictionary]), pmQuit, SwapFile);
+        Decoder.DecodeStrm(THeader(Headers.Items[iDictionary]), pmQuit, FSwapFile);
       end;
 
       if (iTable > -1) and (iTable <> CurrTable) and (iTable <> iTear) then
       begin
         CurrTable := iTable;
-        Decoder.DecodeStrm(THeader(Headers.Items[iTable]), pmQuit, SwapFile);
+        Decoder.DecodeStrm(THeader(Headers.Items[iTable]), pmQuit, FSwapFile);
       end;
 
       for J := iTear to I do
@@ -884,9 +901,9 @@ begin
         if not Terminated then
         begin
           if THeader(Headers.Items[J]).Action = toSwap then
-            Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, SwapFile)
+            Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, FSwapFile)
           else
-            Result := Decoder.DecodeStrm(Headers.Items[J], pmSkip, SwapFile);
+            Result := Decoder.DecodeStrm(Headers.Items[J], pmSkip, FSwapFile);
         end else
           Result := True;
 
@@ -897,7 +914,7 @@ begin
       I := Headers.GetBack(iTear - 1, toSwap);
     end;
     Decoder.Destroy;
-    FreeAndNil(SwapFile);
+    FreeAndNil(FSwapFile);
   end;
 end;
 
@@ -977,32 +994,32 @@ end;
 
 procedure TBeeApp.ProcesstOption;
 begin
-  if tOption then
+  if FtOption then
   begin
     with AppInterface.OnTick.Data do
     begin
       GeneralSize := 0;
       ProcessedSize  := 0;
     end;
-    xOption.Clear; // clear xOption
-    FileMasks.Clear; // clear FileMasks
-    FileMasks.Add('*!');
+    FxOption.Clear; // clear xOption
+    FFileMasks.Clear; // clear FileMasks
+    FFileMasks.Add('*!');
     DecodeShell(toTest);
   end;
 end;
 
 procedure TBeeApp.ProcesslOption;
 begin
-  if lOption then
+  if FlOption then
   begin
     with AppInterface.OnTick.Data do
     begin
       GeneralSize := 0;
       ProcessedSize  := 0;
     end;
-    xOption.Clear; // clear xOption
-    FileMasks.Clear; // clear FileMasks
-    FileMasks.Add('*!');
+    FxOption.Clear; // clear xOption
+    FFileMasks.Clear; // clear FileMasks
+    FFileMasks.Add('*!');
     ListShell;
   end;
 end;
@@ -1018,7 +1035,7 @@ var
   Headers: THeaders;
   Time: double;
 begin
-  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
   Sync(AppInterface.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -1031,19 +1048,19 @@ begin
 
     with AppInterface.OnTick.Data do
       Headers.AddItems(
-        FileMasks,
-        cdOption,
-         fOption,
-         rOption,
-         uOption,
-         xOption,
+        FFileMasks,
+        FcdOption,
+         FfOption,
+         FrOption,
+         FuOption,
+         FxOption,
         GeneralSize);
 
     if (Headers.GetCount([toUpdate, toFresh]) > 0) or
-      ((Length(aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
+      ((Length(FaOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
       Time := Now;
-      TmpFileName := Bee_Common.GenerateFileName(yOption);
+      TmpFileName := Bee_Common.GenerateFileName(FyOption);
       TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
 
       // find sequences and...
@@ -1052,14 +1069,14 @@ begin
       if ProcessFilesToSwap(Headers) then
       begin
         // sort headers (only toUpdate headers)
-        Headers.SortNews(Cfg, sOption, kOption, eOption);
+        Headers.SortNews(FCfg, FsOption, FkOption, FeOption);
 
         // if exists a modified solid sequence open Swap file
-        if Length(SwapName) > 0 then
-          SwapFile := TFileReader.Create(SwapName, fmOpenRead + fmShareDenyWrite);
+        if Length(FSwapName) > 0 then
+          FSwapFile := TFileReader.Create(FSwapName, fmOpenRead + fmShareDenyWrite);
 
         // set sfx module
-        if Length(aOption) > 0 then Headers.SetModule(aOption);
+        if Length(FaOption) > 0 then Headers.SetModule(FaOption);
 
         // write Headers
         Headers.WriteItems(TmpFile);
@@ -1068,8 +1085,8 @@ begin
           if not Terminated then
           begin
             case THeader(Headers.Items[I]).Action of
-              toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, ArcFile);
-              toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, SwapFile);
+              toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, FArcFile);
+              toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, FSwapFile);
               toFresh:  Encoder.EncodeFile(Headers.Items[I], emNorm);
               toUpdate: Encoder.EncodeFile(Headers.Items[I], emNorm);
             end;
@@ -1088,17 +1105,17 @@ begin
           Sync(AppInterface.OnError.Method);
         end;
 
-        if Assigned(SwapFile) then FreeAndNil(SwapFile);
-        if Assigned(ArcFile)  then FreeAndNil(ArcFile);
+        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
-        DeleteFile(SwapName);
+        DeleteFile(FSwapName);
         if not Terminated then
         begin
-          SysUtils.DeleteFile(ArcName);
-          if not RenameFile(TmpFileName, ArcName) then
+          SysUtils.DeleteFile(FArcName);
+          if not RenameFile(TmpFileName, FArcName) then
           begin
-            AppInterface.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + ArcName);
+            AppInterface.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FArcName);
             Sync(AppInterface.OnError.Method);
           end else
           begin
@@ -1110,11 +1127,11 @@ begin
 
       end else // if ProcessFilesToSwap
       begin
-        if Assigned(SwapFile) then FreeAndNil(SwapFile);
-        if Assigned(ArcFile)  then FreeAndNil(ArcFile);
+        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
-        SysUtils.DeleteFile(SwapName);
+        SysUtils.DeleteFile(FSwapName);
         SysUtils.DeleteFile(TmpFileName);
 
         AppInterface.OnError.Data.Msg := ('Error: can''t decode solid sequences');
@@ -1129,7 +1146,7 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(ArcFile) then FreeAndNil(ArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.DecodeShell(Action: THeaderAction);
@@ -1140,7 +1157,7 @@ var
   Time: double;
   I: integer;
 begin
-  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
   Sync(AppInterface.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -1149,8 +1166,8 @@ begin
     AppInterface.OnDisplay.Data.Msg := (msgScanning + '...');
     Sync(AppInterface.OnDisplay.Method);
 
-    Headers.MarkItems(FileMasks, toNone, Action);
-    Headers.MarkItems(xOption, Action, toNone);
+    Headers.MarkItems(FFileMasks, toNone, Action);
+    Headers.MarkItems(FxOption, Action, toNone);
 
     if (Action = toExtract) then
     begin
@@ -1165,7 +1182,7 @@ begin
       ProcessFilesToDecode(Headers, Action);
 
       Return  := True;
-      Decoder := TDecoder.Create(ArcFile, Self);
+      Decoder := TDecoder.Create(FArcFile, Self);
       for I := 0 to Headers.Count - 1 do
         if Terminated = False then
         begin
@@ -1204,7 +1221,7 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(ArcFile) then FreeAndNil(ArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.DeleteShell;
@@ -1216,7 +1233,7 @@ var
   Headers: THeaders;
   Encoder: TEncoder;
 begin
-  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
   Sync(AppInterface.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -1225,13 +1242,13 @@ begin
     AppInterface.OnDisplay.Data.Msg := (msgScanning + '...');
     Sync(AppInterface.OnDisplay.Method);
 
-    Headers.MarkItems(FileMasks, toCopy, toDelete);
-    Headers.MarkItems(xOption, toDelete, toCopy);
+    Headers.MarkItems(FFileMasks, toCopy, toDelete);
+    Headers.MarkItems(FxOption, toDelete, toCopy);
 
-    if (Headers.GetNext(0, toDelete) > -1) or ((Length(aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
+    if (Headers.GetNext(0, toDelete) > -1) or ((Length(FaOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
       Time := Now;
-      TmpFileName := GenerateFileName(yOption);
+      TmpFileName := GenerateFileName(FyOption);
       TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
 
       // find sequences
@@ -1242,11 +1259,11 @@ begin
         ProcessFilesDeleted(Headers);
 
         // if SwapSequences has found a modified sequence open Swap file
-        if Length(SwapName) > 0 then
-          SwapFile := TFileReader.Create(SwapName, fmOpenRead + fmShareDenyWrite);
+        if Length(FSwapName) > 0 then
+          FSwapFile := TFileReader.Create(FSwapName, fmOpenRead + fmShareDenyWrite);
 
         // set sfx module
-        if Length(aOption) > 0 then Headers.SetModule(aOption);
+        if Length(FaOption) > 0 then Headers.SetModule(FaOption);
 
         // write Headers
         Headers.WriteItems(TmpFile);
@@ -1255,8 +1272,8 @@ begin
           if not Terminated then
           begin
             case THeader(Headers.Items[I]).Action of
-              toCopy:   Encoder.CopyStrm(Headers.Items[I], emNorm, ArcFile);
-              toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, SwapFile);
+              toCopy:   Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
+              toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, FSwapFile);
               toDelete: begin
                           AppInterface.OnDisplay.Data.Msg := (msgDeleting + THeader(Headers.Items[I]).FileName);
                           Sync(AppInterface.OnDisplay.Method);
@@ -1276,17 +1293,17 @@ begin
           Sync(AppInterface.OnError.Method);
         end;
 
-        if Assigned(SwapFile) then FreeAndNil(SwapFile);
-        if Assigned(ArcFile)  then FreeAndNil(ArcFile);
+        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
-        SysUtils.DeleteFile(SwapName);
+        SysUtils.DeleteFile(FSwapName);
         if not Terminated then
         begin
-          SysUtils.DeleteFile(ArcName);
-          if not RenameFile(TmpFileName, ArcName) then
+          SysUtils.DeleteFile(FArcName);
+          if not RenameFile(TmpFileName, FArcName) then
           begin
-            AppInterface.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + ArcName);
+            AppInterface.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FArcName);
             Sync(AppInterface.OnError.Method);
           end else
           begin
@@ -1298,11 +1315,11 @@ begin
 
       end else // if ProcessFilesToSwap
       begin
-        if Assigned(SwapFile) then FreeAndNil(SwapFile);
-        if Assigned(ArcFile)  then FreeAndNil(ArcFile);
+        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
-        SysUtils.DeleteFile(SwapName);
+        SysUtils.DeleteFile(FSwapName);
         SysUtils.DeleteFile(TmpFileName);
 
         AppInterface.OnError.Data.Msg := ('Error: can''t decode solid sequences');
@@ -1317,7 +1334,7 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(ArcFile) then FreeAndNil(ArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.RenameShell;
@@ -1330,7 +1347,7 @@ var
   Time: double;
   I: integer;
 begin
-  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
   Sync(AppInterface.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -1342,21 +1359,21 @@ begin
     if ProcessFilesToRename(Headers) then
     begin
       Time := Now;
-      TmpFileName := GenerateFileName(yOption);
+      TmpFileName := GenerateFileName(FyOption);
       TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
 
       AppInterface.OnTick.Data.GeneralSize :=
         Headers.GetPackedSize([toCopy, toRename]);
 
       // set sfx module
-      if Length(aOption) > 0 then Headers.SetModule(aOption);
+      if Length(FaOption) > 0 then Headers.SetModule(FaOption);
 
       Headers.WriteItems(TmpFile);
       Encoder := TEncoder.Create(TmpFile, Self);
       for I := 0 to Headers.Count - 1 do
         if not Terminated then
         begin
-          Encoder.CopyStrm(Headers.Items[I], emNorm, ArcFile);
+          Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
         end;
       Encoder.Destroy;
       Headers.WriteItems(TmpFile);
@@ -1371,15 +1388,15 @@ begin
         Sync(AppInterface.OnError.Method);
       end;
 
-      if Assigned(ArcFile) then FreeAndNil(ArcFile);
+      if Assigned(FArcFile) then FreeAndNil(FArcFile);
       if Assigned(TmpFile) then FreeAndNil(TmpFile);
 
       if not Terminated then
       begin
-        SysUtils.DeleteFile(ArcName);
-        if not RenameFile(TmpFileName, ArcName) then
+        SysUtils.DeleteFile(FArcName);
+        if not RenameFile(TmpFileName, FArcName) then
         begin
-          AppInterface.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + ArcName);
+          AppInterface.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FArcName);
           Sync(AppInterface.OnError.Method);
         end else
         begin
@@ -1397,7 +1414,7 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(ArcFile) then FreeAndNil(ArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 {$IFDEF CONSOLEAPPLICATION}
@@ -1496,7 +1513,7 @@ begin
   end;
   Info.Free;
 
-  if Assigned(ArcFile) then FreeAndNil(ArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 {$ELSE}
@@ -1510,7 +1527,7 @@ var
   Version: integer;
   Method: integer;
 begin
-  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
   Sync(AppInterface.OnDisplay.Method);
 
   Info := THeaders.Create;
@@ -1560,7 +1577,7 @@ begin
     end;
     Info.Free;
 
-    if Assigned(ArcFile) then FreeAndNil(ArcFile);
+    if Assigned(FArcFile) then FreeAndNil(FArcFile);
   end;
 end;
 
