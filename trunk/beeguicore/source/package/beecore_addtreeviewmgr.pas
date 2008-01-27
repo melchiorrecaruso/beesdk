@@ -55,6 +55,7 @@ type
     procedure SetTree(Value: TTreeView);
     function GetCount: integer;
     function GetSel(Index: integer): boolean;
+    function GetBool(Index: integer): boolean;
     function GetItem(Index: integer): string;
     function GetRootValue(SpinValue: integer): string;
     function And4Str(const Str1, Str2: string): string;
@@ -73,6 +74,7 @@ type
     property Count: integer read GetCount;
     property Items[Index: integer]: string read GetItem;
     property Selected[Index: integer]: boolean read GetSel;
+    property Excluded[Index: integer]: boolean read GetBool;
   published
     property Tree: TTreeView read FTree write SetTree default nil;
     property Root: TEdit read FRoot write SetRoot default nil;
@@ -330,6 +332,18 @@ uses
     if Assigned(FTree) and (Index > -1) and (Index < FFilePath.Count) then
     begin
       Result := FTree.Items[Index].Selected;
+    end else
+      Result := False;
+  end;
+  
+  function TAddTreeViewMgr.GetBool(Index: integer): boolean;
+  begin
+    if (Index > -1) and (Index < FFilePath.Count) then
+    begin
+      if FFileBool.Strings[Index] = '+' then
+        Result := True
+      else
+        Result := False;
     end else
       Result := False;
   end;

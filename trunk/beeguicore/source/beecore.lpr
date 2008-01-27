@@ -54,8 +54,6 @@ uses
   BeeCore_PasswordFrm,
   BeeCore_OverwriteFrm;
   
-
-
   // ---------------------------------------------------------------------- //
   //                                                                        //
   //  TCommandLine Application class                                        //
@@ -68,31 +66,27 @@ type
 
   TCmdLine = class (TStringList)
   private
-    // Bee Command Line
     FCommand: char;
-    FaOption: string;
-    FcdOption: string;
-    FeOption: string;
+    FrOption: boolean;
+    FuOption: boolean;
     FfOption: boolean;
-    FkOption: boolean;
-    FlOption: boolean;
+    FeOption: string;
+    FsOption: boolean;
+    FaOption: string;
     FoOption: char;
     FmOption: integer;
     FdOption: integer;
-    FrOption: boolean;
-    FsOption: boolean;
-    FtOption: boolean;
-    FuOption: boolean;
     FxOption: TStringList;
+    FtOption: boolean;
+    FlOption: boolean;
     FyOption: string;
+    FkOption: boolean;
+    FcdOption: string;
     FcfgOption: string;
     FpriOption: integer;
-
     FArcName:  string;
-
     FFileMasks: TStringList;
   private
-    // BeeCore Command Line
     FRun: boolean;
     F0Option: pointer;
     F1Option: boolean;
@@ -121,34 +115,34 @@ type
     S: string;
   begin
     inherited Create;
-    // Bee Command Line
+    // ---
     FCommand := ' ';
-    FaOption := '';
-    FcdOption := '';
-    FeOption := ''; // forced file extension
+    FrOption := False;
+    FuOption := False;
     FfOption := False;
-    FkOption := False;
-    FlOption := False;
+    FeOption := '';
+    FsOption := False;
+    FaOption := '';
     FoOption := 'Y';
     FmOption := 1;
     FdOption := 3;
-    FrOption := False;
-    FsOption := False;
-    FtOption := False;
-    FuOption := False;
     FxOption := TStringList.Create;
+    FtOption := False;
+    FlOption := False;
     FyOption := '';
+    FkOption := False;
+    FcdOption := '';
     FcfgOption := '';
     FpriOption := 2;
     FArcName  := '';
     FFileMasks := TStringList.Create;
-    // BeeCore Command Line
+    // ---
     FRun := False;
     F0Option := nil;
     F1Option := False;
     F2Option := False;
     FParams := TStringList.Create;
-    // Start Process Params
+    // ---
     ProcessOptions;
   end;
   
@@ -165,7 +159,6 @@ type
       begin
         // options...
         case UpCase(S[2]) of
-          // beecore options
           '0': begin
                  System.Delete(S, 1, 2);
                  F0Option := Pointer(StrToInt(S));
@@ -176,13 +169,12 @@ type
           '2': begin
                  F2Option := True;
                end;
-          // bee options
-          'S': begin
+          'R': begin
                  System.Delete(S, 1, 2);
                  if (S = '+') or (Length(S) = 0) then
-                   FsOption := True
+                   FrOption := True
                  else
-                   if (S = '-') then FsOption := False;
+                   if (S = '-') then FrOption := False;
                end;
           'U': begin
                  System.Delete(S, 1, 2);
@@ -198,6 +190,58 @@ type
                  else
                    if (S = '-') then FfOption := False;
                end;
+          'E': begin
+                 System.Delete(S, 1, 2);
+                 if ExtractFileExt('.' + S) <> '.' then
+                 begin
+                   FeOption := ExtractFileExt('.' + S);
+                 end;
+               end;
+          'S': begin
+                 System.Delete(S, 1, 2);
+                 if (S = '+') or (Length(S) = 0) then
+                   FsOption := True
+                 else
+                   if (S = '-') then FsOption := False;
+               end;
+          'A': begin
+                 System.Delete(S, 1, 2);
+                 if (S = 'GUI') or (Length(S) = 0) then
+                   FaOption := 'beecore.sfx'
+                 else
+                   if (S = 'CMD') then
+                     FaOption := 'bee.sfx'
+                   else
+                     FaOption := 'nul';
+               end;
+          'O': begin
+                 System.Delete(S, 1, 2);
+                 if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
+                 begin
+                   FoOption := UpCase(S[1]);
+                 end;
+               end;
+          'M': begin
+                 System.Delete(S, 1, 2);
+                 if (Length(S)= 1) and (S[1] in ['0'..'3']) then
+                 begin
+                   FmOption := StrToInt(S[1]);
+                 end;
+               end;
+          'D': begin
+                 System.Delete(S, 1, 2);
+                 if (Length(S)= 1) and (S[1] in ['0'..'9']) then
+                 begin
+                   FdOption := StrToInt(S[1]);
+                 end;
+               end;
+          'X': begin
+                 System.Delete(S, 1, 2);
+                 if Length(S) > 0 then
+                 begin
+                   FxOption.Add(S);
+                 end;
+               end;
           'T': begin
                  System.Delete(S, 1, 2);
                  if (S = '+') or (Length(S) = 0) then
@@ -212,20 +256,6 @@ type
                  else
                    if (S = '-') then FlOption := False;
                end;
-          'K': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   FkOption := True
-                 else
-                   if (S = '-') then FkOption := False;
-                end;
-          'R': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   FrOption := True
-                 else
-                   if (S = '-') then FrOption := False;
-               end;
           'Y': begin
                  System.Delete(S, 1, 2);
                  if DirectoryExists(ExcludeTrailingBackslash(S)) then
@@ -233,80 +263,42 @@ type
                    FyOption := ExcludeTrailingBackslash(S);
                  end;
                end;
-          'A': begin
+          'K': begin
                  System.Delete(S, 1, 2);
                  if (S = '+') or (Length(S) = 0) then
-                   FaOption := 'beesfx.bin'
+                   FkOption := True
                  else
-                   if (S = '-') then
-                     FaOption := 'beesfx.empty'
-                   else
-                     FaOption := S;
-               end;
-          'M': begin
-                 System.Delete(S, 1, 2);
-                 if (Length(S)= 1) and (S[1] in ['0'..'3']) then
-                 begin
-                   FmOption := StrToInt(S[1]);
-                 end;
-               end;
-          'O': begin
-                 System.Delete(S, 1, 2);
-                 if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
-                 begin
-                   FoOption := UpCase(S[1]);
-                 end;
-               end;
-          'D': begin
-                 System.Delete(S, 1, 2);
-                 if (Length(S)= 1) and (S[1] in ['0'..'9']) then
-                 begin
-                   FdOption := StrToInt(S[1]);
-                 end;
-               end;
-          'E': begin
-                 System.Delete(S, 1, 2);
-                 if ExtractFileExt('.' + S) <> '.' then
-                 begin
-                   FeOption := ExtractFileExt('.' + S);
-                 end;
-               end;
-          'X': begin
-                 System.Delete(S, 1, 2);
-                 if Length(S) > 0 then
-                 begin
-                   FxOption.Add(S);
-                 end;
-               end;
-          else if FileNamePos('-pri', S) = 1 then
-               begin
-                 System.Delete(S, 1, 4);
-                 if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
-                 begin
-                   FpriOption := StrToInt(S[1]);
-                 end;
-               end else
-               begin
-                 if FileNamePos('-cd', S) = 1 then
-                 begin
-                   System.Delete(S, 1, 3);
-                   if Length(S) > 0 then
-                   begin
-                     FcdOption := IncludeTrailingBackslash(FixDirName(S));
-                   end;
-                 end else
-                 begin
-                   if FileNamePos('-cfg', S) = 1 then
-                   begin
-                     System.Delete(S, 1, 4);
-                     if Length(S) > 0 then
-                     begin
-                       FcfgOption := S;
-                     end;
-                   end;
-                 end;
-               end;
-          end; // end case
+                   if (S = '-') then FkOption := False;
+                end;
+          else  if FileNamePos('-cd', S) = 1 then
+                begin
+                  System.Delete(S, 1, 3);
+                  if Length(S) > 0 then
+                  begin
+                    FcdOption := IncludeTrailingBackslash(FixDirName(S));
+                  end;
+                end else
+                begin
+                  if FileNamePos('-cfg', S) = 1 then
+                  begin
+                    System.Delete(S, 1, 4);
+                    if (Length(S) > 0) and FileExists(S) then
+                    begin
+                      FcfgOption := S;
+                    end;
+                  end else
+                  begin
+                    if FileNamePos('-pri', S) = 1 then
+                    begin
+                      System.Delete(S, 1, 4);
+                      if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
+                      begin
+                        FpriOption := StrToInt(S[1]);
+                      end;
+                    end
+                  end;
+                end;
+        end; // end case
       end else
       begin
         // command or filenames...
@@ -333,6 +325,9 @@ type
 
   destructor TCmdLine.Destroy;
   begin
+    FxOption.Free;
+    FFileMasks.Free;
+
     FParams.Free;
     F0Option := nil;
     inherited Destroy;
@@ -358,31 +353,49 @@ type
     begin
       FParams.Add(FCommand);
 
-      FParams.Add('-a'   +    FaOption);
-      FParams.Add('-cd'  +   FcdOption);
-      FParams.Add('-e'   +    FeOption);
-      FParams.Add('-o'   +    FoOption);
-      FParams.Add('-y'   +    FyOption);
-      FParams.Add('-cfg' +  FcfgOption);
-
       if FrOption then FParams.Add('-r+') else FParams.Add('-r-');
       if FuOption then FParams.Add('-u+') else FParams.Add('-u-');
       if FfOption then FParams.Add('-f+') else FParams.Add('-f-');
-      if FkOption then FParams.Add('-k+') else FParams.Add('-k-');
-      if FsOption then FParams.Add('-s+') else FParams.Add('-s-');
+
+      if Length(FeOption) > 0 then
+        FParams.Add('-e' + FeOption);
+
+      if FsOption then
+        FParams.Add('-s+')
+      else
+        FParams.Add('-s-');
+      
+      if Length(FaOption) > 0 then
+        FParams.Add('-a' + FaOption);
+
+      FParams.Add('-o'+ FoOption);
+      FParams.Add('-m'+ IntToStr(FmOption));
+      FParams.Add('-d'+ IntToStr(FdOption));
+      
+      for i := 0 to FxOption.Count - 1 do
+        FParams.Add('-x' + FxOption.Strings[i]);
+
       if FtOption then FParams.Add('-t+') else FParams.Add('-t-');
       if FlOption then FParams.Add('-l+') else FParams.Add('-l-');
 
-      FParams.Add('-m'   + IntToStr(  FmOption));
-      FParams.Add('-d'   + IntToStr(  FdOption));
+      if Length(fyOption) > 0 then
+        FParams.Add('-y' + FyOption);
+        
+      if FkOption then
+        FParams.Add('-k+')
+      else
+        FParams.Add('-k-');
+
+      if Length(FcdOption) > 0 then
+        FParams.Add('-cd' + FcdOption);
+
+      if Length(FcfgOption) > 0 then
+        FParams.Add('-cfg' +  FcfgOption);
+
       FParams.Add('-pri' + IntTostr(FpriOption));
-
-      for i := 0 to FxOption.Count -1 do
-        FParams.Add('-x' + FxOption.Strings[i]);
-
       FParams.Add(FArcName);
 
-      for i := 0 to FFileMasks.Count-1 do
+      for i := 0 to FFileMasks.Count - 1 do
         FParams.Add(FFileMasks.Strings[i]);
     end;
   end;
@@ -393,9 +406,7 @@ type
     F: TAddFrm;
   begin
     F := TAddFrm.Create(Application);
-
-    F.ArchiveName.Text := ExtractFileName(FArcName);
-
+    F.rOption.Checked := FrOption;
     if (FuOption xor FfOption) then
     begin
       if FuOption then
@@ -406,19 +417,53 @@ type
     begin
       F.ufOption.ItemIndex := 2;
     end;
-
-    F.  mOption.ItemIndex := FmOption;
-    F.  dOption.ItemIndex := FdOption;
-    F.priOption.ItemIndex := FpriOption;
-
-    F.eOption.Text    := FeOption;
-    F.rOption.Checked := FrOption;
+    F.eOption.Text := FeOption;
     F.sOption.Checked := FsOption;
+
+    if Length(FaOption) > 0 then
+    begin
+      F.aOptionCheck.Checked := True;
+      if FaOption = 'beecore.sfx' then
+        F.aOption.ItemIndex := 0
+      else
+        if FaOption = 'bee.sfx' then
+          F.aOption.ItemIndex := 1
+        else
+          if FaOption = 'nul' then
+            F.aOption.ItemIndex := 2;
+    end else
+      F.aOptionCheck.Checked := False;
+
+    //FoOption nothing to do
+    
+    F.mOption.ItemIndex := FmOption;
+    F.dOption.ItemIndex := FdOption;
+
+    for i := 0 to FxOption.Count -1  do
+    begin
+      if FileExists(FxOption.Strings[i]) then
+        F.FilesMgr.PlusMinus(F.FilesMgr.AddFile(FxOption.Strings[i]))
+      else
+        F.FilesMgr.PlusMinus(F.FilesMgr.AddFolder(FxOption.Strings[i]));
+    end;
     F.tOption.Checked := FtOption;
-    F.kOption.Checked := FkOption;
     F.lOption.Checked := FlOption;
 
-    for i := 0 to FFileMasks.Count -1 do
+    if Length(fyOption) > 0 then
+      F.yOption.Text := FyOption;
+
+    F.kOption.Checked := FkOption;
+
+    if Length(FcdOption) > 0 then
+      F.cdOption.Text := FcdOption;
+
+    if Length(FcfgOption) > 0 then
+      F.cfgOption.Text := FcfgOption;
+
+    F.priOption.ItemIndex := FpriOption;
+    F.ArchiveName.Text := FArcName;
+
+    for i := 0 to FFileMasks.Count - 1 do
     begin
       if FileExists(FFileMasks.Strings[i]) then
         F.FilesMgr.AddFile(FFileMasks.Strings[i])
@@ -426,38 +471,65 @@ type
         F.FilesMgr.AddFolder(FFileMasks.Strings[i])
     end;
     
-    for i := 0 to FxOption.Count -1 do
-    begin
-      if FileExists(FxOption.Strings[i]) then
-        F.FilesMgr.AddFile(FxOption.Strings[i])
-      else
-        F.FilesMgr.AddFolder(FxOption.Strings[i])
-    end;
     
-    if Length(FaOption) > 0 then
-    begin
-      F.aOptionCheck.Checked := True;
-      
-    end else
-      F.aOptionCheck.Checked := False;
     
-    if Length(FcdOption) > 0 then
-    begin
-      F.cdOption.Text := FcdOption;
-    end;
-
-    if Length(FcfgOption) > 0 then
-    begin
-      F.cfgOption.Text := FcfgOption;
-    end;
-
-    if Length(FyOption) > 0 then
-    begin
-      F.yOption.Text := FyOption;
-    end;
-
+    
     if F.ShowModal = mrOk then
     begin
+      FrOption := F.rOption.Checked;
+
+      case F.ufOption.ItemIndex of
+        0: begin
+             FuOption := True;
+             FfOption := False;
+           end;
+        1: begin
+             FuOption := False;
+             FfOption := True;
+           end;
+        2: begin
+             FuOption := True;
+             FfOption := True;
+           end;
+      end;
+
+      FeOption := F.eOption.Text;
+      FsOption := F.sOption.Checked;
+
+      if F.aOptionCheck.Checked then
+      begin
+        case F.aOption.ItemIndex of
+          0: FaOption := 'beecore.sfx';
+          1: FaOption := 'bee.sfx';
+          2: FaOption := 'nul';
+        end;
+      end;
+
+      // FoOption nothing to do
+      FmOption := F.mOption.ItemIndex;
+      FdOption := F.dOption.ItemIndex;
+
+      FxOption.Clear;
+      for i := 0 to F.FilesMgr.Count - 1 do
+        if F.FilesMgr.Excluded[i] then
+          FxOption.Add(F.FilesMgr.Items[i]);
+
+      FtOption := F.tOption.Checked;
+      FlOption := F.lOption.Checked;
+      FyOption := F.yOption.Text;
+      FkOption := F.kOption.Checked;
+
+      FcdOption := F.cdOption.Text;
+      FcfgOption := F.cfgOption.Text;
+      FpriOption := F.priOption.ItemIndex;
+
+      FArcName :=  F.ArchiveName.Text;
+
+      FFileMasks.Clear;
+      for i := 0 to F.FilesMgr.Count - 1 do
+        if F.FilesMgr.Excluded[i] = False then
+          FFileMasks.Add(F.FilesMgr.Items[i]);
+      
       Result := True;
     end else
       Result := False;
