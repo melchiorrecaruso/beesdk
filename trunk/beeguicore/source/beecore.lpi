@@ -518,28 +518,7 @@
         <Loaded Value="True"/>
       </Unit67>
     </Units>
-    <JumpHistory Count="5" HistoryIndex="4">
-      <Position1>
-        <Filename Value="beecore.lpr"/>
-        <Caret Line="316" Column="61" TopLine="323"/>
-      </Position1>
-      <Position2>
-        <Filename Value="beecore.lpr"/>
-        <Caret Line="70" Column="3" TopLine="50"/>
-      </Position2>
-      <Position3>
-        <Filename Value="beecore.lpr"/>
-        <Caret Line="560" Column="3" TopLine="544"/>
-      </Position3>
-      <Position4>
-        <Filename Value="forms\beecore_addfrm.pas"/>
-        <Caret Line="166" Column="48" TopLine="123"/>
-      </Position4>
-      <Position5>
-        <Filename Value="beecore.lpr"/>
-        <Caret Line="350" Column="32" TopLine="325"/>
-      </Position5>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
