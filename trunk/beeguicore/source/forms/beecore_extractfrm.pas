@@ -76,11 +76,6 @@ type
     { private declarations }
   end;
   
-  
-  { Confirm Extraction routines }
-  
-  function ConfirmExtract(const AParams: TStringList): boolean;
-  
 implementation
 
 uses
@@ -123,22 +118,6 @@ uses
   begin
     AllowExpansion := True;
     FoldersMgr.Expand(Node);
-  end;
-  
-  { Confirm Extract routines }
-
-  function ConfirmExtract(const AParams: TStringList): boolean;
-  var
-    F: TExtractFrm;
-  begin
-    F := TExtractFrm.Create(Application);
-    if F.ShowModal = mrOk then
-    begin
-      Result := True;
-
-    end else
-      Result := False;
-    F.Free;
   end;
 
 initialization

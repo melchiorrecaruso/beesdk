@@ -40,6 +40,9 @@ uses
   Controls,
   Classes,
   Forms,
+  
+  Dialogs,
+  
   // Bee project units
   Bee_App,
   Bee_Common,
@@ -64,7 +67,7 @@ type
 
   { TCommandLine Application class }
 
-  TCmdLine = class (TStringList)
+  TCmdLine = class
   private
     FCommand: char;
     FrOption: boolean;
@@ -311,7 +314,7 @@ type
         end else
           if FArcName = '' then
           begin
-            FArcName := S;
+            FArcName := ExpandFileName(S);
             if ExtractFileExt(FArcName) = '' then
             begin
               FArcName := ChangeFileExt(FArcName, '.bee');
@@ -348,7 +351,7 @@ type
         else FRun := False;
       end;
     end;
-
+    
     if FRun then
     begin
       FParams.Add(FCommand);
@@ -440,12 +443,9 @@ type
     F.dOption.ItemIndex := FdOption;
 
     for i := 0 to FxOption.Count -1  do
-    begin
-      if FileExists(FxOption.Strings[i]) then
-        F.FilesMgr.PlusMinus(F.FilesMgr.AddFile(FxOption.Strings[i]))
-      else
-        F.FilesMgr.PlusMinus(F.FilesMgr.AddFolder(FxOption.Strings[i]));
-    end;
+      F.FilesMgr.PlusMinus(F.FilesMgr.AddFile(
+        ExpandFileName(FxOption.Strings[i])));
+
     F.tOption.Checked := FtOption;
     F.lOption.Checked := FlOption;
 
@@ -461,20 +461,16 @@ type
       F.cfgOption.Text := FcfgOption;
 
     F.priOption.ItemIndex := FpriOption;
-    F.ArchivePath := ExtractFilePath(FArcName);
-    F.ArchiveName.Text := ExtractFileName(FArcName);
+    F.ArchivePath := ExtractFilePath(ExpandFileName(FArcName));
+    F.ArchiveName.Text := ExtractFileName(ExpandFileName(FArcName));
 
     for i := 0 to FFileMasks.Count - 1 do
-    begin
-      if FileExists(FFileMasks.Strings[i]) then
-        F.FilesMgr.AddFile(FFileMasks.Strings[i])
-      else
-        F.FilesMgr.AddFolder(FFileMasks.Strings[i])
-    end;
-    
+      F.FilesMgr.AddFile(ExpandFileName(FFileMasks.Strings[i]));
+
     // Form.ShowModal
     if F.ShowModal = mrOk then
     begin
+      (*
       FrOption := F.rOption.Checked;
 
       case F.ufOption.ItemIndex of
@@ -529,11 +525,14 @@ type
         if F.FilesMgr.Excluded[i] = False then
           FFileMasks.Add(F.FilesMgr.Items[i]);
       
+      if Length(F.FilesMgr.RootValue) > 0 then
+        SetCurrentDir(F.FilesMgr.RootValue);
+      *)
       Result := True;
     end else
       Result := False;
 
-    F.Free;
+    FreeAndNil(F);
   end;
   
   function TCmdLine.ConfirmExtract: boolean;
@@ -546,6 +545,7 @@ type
       Result := True;
     end else
       Result := False;
+    FreeAndNil(F);
   end;
   
   // ---------------------------------------------------------------------- //
@@ -593,8 +593,6 @@ type
     destructor Destroy; override;
   end;
 
-  // implementation
-
   constructor TGui.Create(ATickFrm: TTickFrm; ACmdLine: TCmdLine);
   var
     i: integer;
@@ -627,7 +625,7 @@ type
     FApp := TBeeApp.Create(FAppInterface, FCmdLine.Params);
     FApp.OnTerminate := OnTerminate;
     FAppTerminated := False;
-    FApp.Resume;
+    FApp.Suspended := False;
   end;
 
   destructor TGui.Destroy;
@@ -755,6 +753,7 @@ type
 
   procedure TGui.OnFatalError;
   begin
+    ShowMEssage(FAppInterface.OnFatalError.Data.Msg);
     FAppLog.Add(FAppInterface.OnFatalError.Data.Msg);
   end;
 
@@ -847,9 +846,9 @@ begin
       begin
         Application.Run;
       end;
-      Gui.Free;
+      FreeAndNil(Gui);
     end;
-    CmdLine.Free;
+    FreeAndNil(CmdLine);
   end;
 end.
 

@@ -44,6 +44,7 @@ type
   TAddTreeViewMgr = class (TComponent)
   private
     FRoot: TEdit;
+    FRootValue: string;
     FSpin: integer;
     FTree: TTreeView;
     FFilePath: TStringList;
@@ -77,8 +78,9 @@ type
     property Excluded[Index: integer]: boolean read GetBool;
   published
     property Tree: TTreeView read FTree write SetTree default nil;
-    property Root: TEdit read FRoot write SetRoot default nil;
     property Spin: integer read FSpin write SetSpin default 0;
+    property Root: TEdit read FRoot write SetRoot default nil;
+    property RootValue: string read FRootValue;
   end;
 
   { Register }
@@ -95,6 +97,8 @@ uses
   constructor TAddTreeViewMgr.Create(AOwner: TComponent);
   begin
     inherited Create(AOwner);
+    FRootValue := '';
+    
     FFilePath := TStringList.Create;
     FFileName := TStringList.Create;
     FFileMask := TStringList.Create;
@@ -175,10 +179,20 @@ uses
   end;
   
   function TAddTreeViewMgr.GetItem(Index: integer): string;
+  var
+    R: string;
   begin
     if (Index > -1) and (Index < FFilePath.Count) then
-      Result := FFilePath.Strings[Index] + FFileName.Strings[Index] + FFileMask.Strings[Index]
-    else
+    begin
+      Result :=
+        FFilePath.Strings[Index] +
+        FFileName.Strings[Index] +
+        FFileMask.Strings[Index];
+
+      R := IncludeTrailingBackSlash(FRootValue);
+      if FileNamePos(R, Result) = 1 then
+        Delete(Result, 1, Length(R));
+    end else
       Result := '';
   end;
 
@@ -222,6 +236,7 @@ uses
       end;
     end;
 
+    FRootValue := R;
     if Assigned (FRoot) then
     begin
       FRoot.Text := R;

@@ -1165,8 +1165,8 @@ begin
       Return  := True;
       Decoder := TDecoder.Create(FArcFile, Self);
       for I := 0 to Headers.Count - 1 do
+      begin
         if Terminated = False then
-        begin
           case THeader(Headers.Items[I]).Action of
             toExtract: Return := Decoder.DecodeFile(Headers.Items[I], pmNorm);
             toTest:    Return := Decoder.DecodeFile(Headers.Items[I], pmTest);

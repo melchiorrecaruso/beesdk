@@ -166,14 +166,8 @@ uses
   end;
   
   procedure TAddFrm.BtnOpenClick(Sender: TObject);
-  var
-    S: string;
   begin
-    S := ExcludeTrailingBackSlash(ArchivePath);
-
-    if DirectoryExists(S) then
-      OpenDialog.InitialDir := S;
-
+    OpenDialog.FileName := ArchivePath + ArchiveName.Text;
     if OpenDialog.Execute then
     begin
       ArchivePath := ExtractFilePath(OpenDialog.FileName);

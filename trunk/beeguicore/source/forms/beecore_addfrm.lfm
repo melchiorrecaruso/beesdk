@@ -364,7 +364,6 @@ object AddFrm: TAddFrm
         AutoSize = True
         BorderSpacing.Around = 8
         ItemHeight = 13
-        ItemIndex = 2
         Items.Strings = (
           'Update files'
           'Freshen files'
@@ -374,7 +373,6 @@ object AddFrm: TAddFrm
         ParentShowHint = False
         Style = csDropDownList
         TabOrder = 3
-        Text = 'Update and freshen files'
       end
       object mOption: TComboBox
         Left = 10
@@ -384,7 +382,6 @@ object AddFrm: TAddFrm
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 8
         ItemHeight = 13
-        ItemIndex = 2
         Items.Strings = (
           '0 - Store'
           '1 - Low'
@@ -395,7 +392,6 @@ object AddFrm: TAddFrm
         ParentShowHint = False
         Style = csDropDownList
         TabOrder = 4
-        Text = '2 - Good'
       end
       object dOption: TComboBox
         Left = 10
@@ -405,7 +401,6 @@ object AddFrm: TAddFrm
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 8
         ItemHeight = 13
-        ItemIndex = 3
         Items.Strings = (
           'Level  0   (dictionary size  <       2 MB)'
           'Level  1   (dictionary size  <       5 MB)'
@@ -422,7 +417,6 @@ object AddFrm: TAddFrm
         ParentShowHint = False
         Style = csDropDownList
         TabOrder = 5
-        Text = 'Level  3   (dictionary size  <     20 MB)'
       end
       object priOption: TComboBox
         Left = 10
@@ -432,7 +426,6 @@ object AddFrm: TAddFrm
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 8
         ItemHeight = 13
-        ItemIndex = 2
         Items.Strings = (
           '3 - Real time (unstable)'
           '2 - Higth (unstable)'
@@ -443,7 +436,6 @@ object AddFrm: TAddFrm
         ParentShowHint = False
         Style = csDropDownList
         TabOrder = 6
-        Text = '1 - Normal '
       end
       object eOption: TEdit
         Left = 10
@@ -622,7 +614,7 @@ object AddFrm: TAddFrm
         Top = 30
         Width = 309
         Anchors = [akTop, akLeft, akRight, akBottom]
-        DefaultItemHeight = 16
+        DefaultItemHeight = 18
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
@@ -688,7 +680,6 @@ object AddFrm: TAddFrm
         Color = clInactiveBorder
         Enabled = False
         ItemHeight = 13
-        ItemIndex = 0
         Items.Strings = (
           'GUI Self Extractor Module'
           'Command-Line Self Extractor Module'
@@ -698,7 +689,6 @@ object AddFrm: TAddFrm
         ParentShowHint = False
         Style = csDropDownList
         TabOrder = 1
-        Text = 'GUI Self Extractor Module'
       end
       object cfgOption: TComboBox
         Left = 10

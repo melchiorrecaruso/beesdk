@@ -1,7 +1,7 @@
 object ExtractFrm: TExtractFrm
-  Left = 424
+  Left = 415
   Height = 424
-  Top = 200
+  Top = 205
   Width = 560
   HorzScrollBar.Page = 559
   VertScrollBar.Page = 423
@@ -98,6 +98,7 @@ object ExtractFrm: TExtractFrm
     Width = 75
     Anchors = [akRight, akBottom]
     BorderSpacing.InnerBorder = 2
+    Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
     NumGlyphs = 0
