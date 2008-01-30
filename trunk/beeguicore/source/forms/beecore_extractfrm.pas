@@ -26,6 +26,8 @@
 
 unit BeeCore_ExtractFrm;
 
+{$I compiler.inc}
+
 interface
 
 uses

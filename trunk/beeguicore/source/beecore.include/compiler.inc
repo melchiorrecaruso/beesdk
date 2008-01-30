@@ -29,6 +29,7 @@
 {$Q-}
 {$S-}
 {$I-}
+{$H+}
 
 {*$DEFINE CONSOLEAPPLICATION}
 

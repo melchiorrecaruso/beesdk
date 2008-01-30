@@ -1,7 +1,7 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TAddFrm','FORMDATA',[
-  'TPF0'#7'TAddFrm'#6'AddFrm'#4'Left'#3#30#2#6'Height'#3#159#1#3'Top'#3#201#0#5
+  'TPF0'#7'TAddFrm'#6'AddFrm'#4'Left'#3#205#1#6'Height'#3#159#1#3'Top'#3#198#0#5
   +'Width'#3#194#1#18'HorzScrollBar.Page'#3#193#1#18'VertScrollBar.Page'#3#158#1
   +#13'ActiveControl'#7#5'Pages'#8'AutoSize'#9#7'Caption'#6#24'Archive Name and'
   +' Options'#12'ClientHeight'#3#159#1#11'ClientWidth'#3#194#1#21'Constraints.M'
@@ -306,7 +306,7 @@ LazarusResources.Add('TAddFrm','FORMDATA',[
   +#255#0#0#0#9'NumGlyphs'#2#0#7'OnClick'#7#10'BtnUpClick'#8'TabOrder'#2#8#0#0#9
   +'TTreeView'#5'Files'#4'Left'#2#10#6'Height'#3#245#0#3'Top'#2#30#5'Width'#3'5'
   +#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#17'DefaultItemH'
-  +'eight'#2#18#6'Images'#7#11'FilesImages'#9'PopupMenu'#7#9'PopupMenu'#8'ReadO'
+  +'eight'#2#16#6'Images'#7#11'FilesImages'#9'PopupMenu'#7#9'PopupMenu'#8'ReadO'
   +'nly'#9#8'TabOrder'#2#9#18'OnSelectionChanged'#7#21'FilesSelectionChanged'#7
   +'Options'#11#19'tvoAllowMultiselect'#17'tvoAutoItemHeight'#16'tvoHideSelecti'
   +'on'#21'tvoKeepCollapsedNodes'#11'tvoReadOnly'#14'tvoShowButtons'#12'tvoShow'

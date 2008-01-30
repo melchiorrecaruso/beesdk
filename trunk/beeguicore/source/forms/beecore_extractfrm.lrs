@@ -1,8 +1,8 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TExtractFrm','FORMDATA',[
-  'TPF0'#11'TExtractFrm'#10'ExtractFrm'#4'Left'#3#159#1#6'Height'#3#168#1#3'Top'
-  +#3#205#0#5'Width'#3'0'#2#18'HorzScrollBar.Page'#3'/'#2#18'VertScrollBar.Page'
+  'TPF0'#11'TExtractFrm'#10'ExtractFrm'#4'Left'#3'z'#1#6'Height'#3#168#1#3'Top'
+  +#3#253#0#5'Width'#3'0'#2#18'HorzScrollBar.Page'#3'/'#2#18'VertScrollBar.Page'
   +#3#167#1#7'Caption'#6#27'Extraction Path and Options'#12'ClientHeight'#3#168
   +#1#11'ClientWidth'#3'0'#2#21'Constraints.MinHeight'#3#168#1#20'Constraints.M'
   +'inWidth'#3'0'#2#11'Font.Height'#2#245#9'Font.Name'#6#6'Tahoma'#8'OnCreate'#7

@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0615 - 2008.01.28 by Melchiorre Caruso.
+  v0.7.9 build 0619 - 2008.01.29 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -1409,7 +1409,7 @@ var
   TotalPack, TotalSize: integer;
   CountFiles: integer;
 begin
-  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + ArcName);
+  AppInterface.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
   Sync(AppInterface.OnDisplay.Method);
 
   Info := THeaders.Create;
@@ -1422,8 +1422,8 @@ begin
     TotalPack  := 0;
     CountFiles := 0;
 
-    Info.MarkItems(FileMasks, toNone, toList);
-    Info.MarkItems(xOption, toList, toNone);
+    Info.MarkItems(FFileMasks, toNone, toList);
+    Info.MarkItems(FxOption, toList, toNone);
 
     if (Info.GetNext(0, toList) > -1) then
     begin

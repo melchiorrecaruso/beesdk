@@ -25,6 +25,8 @@
 
 unit BeeCore_AddFrm;
 
+{$I compiler.inc}
+
 interface
 
 uses

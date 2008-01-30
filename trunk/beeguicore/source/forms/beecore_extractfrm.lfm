@@ -1,7 +1,7 @@
 object ExtractFrm: TExtractFrm
-  Left = 415
+  Left = 378
   Height = 424
-  Top = 205
+  Top = 253
   Width = 560
   HorzScrollBar.Page = 559
   VertScrollBar.Page = 423

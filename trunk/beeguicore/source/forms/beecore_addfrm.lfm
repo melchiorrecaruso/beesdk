@@ -1,7 +1,7 @@
 object AddFrm: TAddFrm
-  Left = 542
+  Left = 461
   Height = 415
-  Top = 201
+  Top = 198
   Width = 450
   HorzScrollBar.Page = 449
   VertScrollBar.Page = 414
@@ -614,7 +614,7 @@ object AddFrm: TAddFrm
         Top = 30
         Width = 309
         Anchors = [akTop, akLeft, akRight, akBottom]
-        DefaultItemHeight = 18
+        DefaultItemHeight = 16
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True

@@ -26,6 +26,8 @@
 
 unit BeeCore_AboutFrm;
 
+{$I compiler.inc}
+
 interface
 
 uses
@@ -101,7 +103,7 @@ uses
     {$i beecore_aboutfrm.inc}
     Storage.Restore;
     // ---
-    VerValue.Caption   := '0.1.0.73';
+    VerValue.Caption   := '0.1.0.79';
   end;
 
   procedure TAboutFrm.FormDestroy(Sender: TObject);
