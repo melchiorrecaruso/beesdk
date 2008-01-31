@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,11 +18,10 @@
 
 { Contains:
 
-  BeeGui4Laz project compiler directives
+  Bee File Manager project compiler directives
 
   Modifyed:
 
-  v1.0.3 build XXXX - 2007.11.23 by Melchiorre Caruso.
 }
 
 {$R-}
