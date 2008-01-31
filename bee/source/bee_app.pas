@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0619 - 2008.01.29 by Melchiorre Caruso.
+  v0.7.9 build 0621 - 2008.01.31 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -142,8 +142,8 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0619 archiver utility, freeware version, Jan 2008.'
-    + Cr + '(C) 1999-2007 Andrew Filinsky and Melchiorre Caruso.';
+  FSelfName := 'The Bee 0.7.9 build 0621 archiver utility, freeware version, Jan 2008.'
+    + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
   FArcFile  := nil;
@@ -225,7 +225,7 @@ procedure TBeeApp.Execute;
 const
   SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
-  AppInterface.OnDisplay.Data.Msg := SelfName;
+  AppInterface.OnDisplay.Data.Msg := FSelfName;
   Sync(AppInterface.OnDisplay.Method);
   /// process command
   if ((FCommand in SetOfCommands) and (FArcName > '')) or (FCommand = '?') then
