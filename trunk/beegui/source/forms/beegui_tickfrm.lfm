@@ -1,0 +1,372 @@
+object TickFrm: TTickFrm
+  Left = 432
+  Height = 190
+  Top = 249
+  Width = 450
+  HorzScrollBar.Page = 449
+  VertScrollBar.Page = 189
+  ActiveControl = Notebook
+  BorderIcons = [biSystemMenu, biMinimize]
+  Caption = '0% Processing...'
+  ClientHeight = 190
+  ClientWidth = 450
+  Constraints.MinHeight = 190
+  Constraints.MinWidth = 450
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Icon.Data = {
+    EB0400002F2A2058504D202A2F0A7374617469632063686172202A6772617068
+    69635B5D203D207B0A22333220333220342031222C0A222E2063204E6F6E6522
+    2C0A222C20632023303030303030222C0A222D20632023464646463030222C0A
+    222A20632023464638303430222C0A222E2E2E2E2E2E2E2E2E2C2E2E2E2E2E2E
+    2E2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E222C0A222E2E2E2E2E2E2E2E2E2C2E2E
+    2E2E2E2E2E2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E222C0A222E2E2C2E2E2E2E2E
+    2C2C2C2E2E2E2E2E2C2C2C2E2E2E2E2E2C2C2C2E2E2E2E2E222C0A222E2E2C2C
+    2C2E2C2C2C2D2C2C2C2E2C2C2C2A2C2C2C2E2C2C2C2A2C2C2C2E2C2C222C0A22
+    2E2E2E2E2C2C2C2D2D2D2D2D2C2C2C2A2A2A2A2A2C2C2C2A2A2A2A2A2C2C2C2E
+    222C0A222E2E2E2E2E2C2D2D2D2D2D2D2D2C2A2A2A2A2A2A2A2C2A2A2A2A2A2A
+    2A2C2E2E222C0A222E2E2E2E2E2C2D2D2D2D2D2D2D2C2A2A2A2A2A2A2A2C2A2A
+    2A2A2A2A2A2C2E2E222C0A222E2E2E2E2E2C2D2D2D2D2D2D2D2C2A2A2A2A2A2A
+    2A2C2A2A2A2A2A2A2A2C2E2E222C0A222E2E2E2E2C2C2C2D2D2D2D2D2C2C2C2A
+    2A2A2A2A2C2C2C2A2A2A2A2A2C2C2C2E222C0A222E2E2C2C2C2D2C2C2C2D2C2C
+    2C2A2C2C2C2A2C2C2C2E2C2C2C2A2C2C2C2E2C2C222C0A222E2C2C2D2D2D2D2D
+    2C2C2C2A2A2A2A2A2C2C2C2E2E2E2E2E2C2C2C2E2E2E2E2E222C0A222E2C2D2D
+    2D2D2D2D2D2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E222C0A22
+    2E2C2D2D2D2D2D2D2D2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E
+    222C0A222E2C2D2D2D2D2D2D2D2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E
+    2E2E2E2E222C0A222E2C2C2D2D2D2D2D2C2C2C2A2A2A2A2A2C2C2C2E2E2E2E2E
+    2E2E2E2E2E2E2E2E222C0A222E2E2C2C2C2D2C2C2C2A2C2C2C2A2C2C2C2A2C2C
+    2C2E2C2C2E2E2E2E2E2E2E2E222C0A222E2E2E2E2C2C2C2A2A2A2A2A2C2C2C2A
+    2A2A2A2A2C2C2C2E2E2E2E2E2E2E2E2E222C0A222E2E2E2E2E2C2A2A2A2A2A2A
+    2A2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E222C0A222E2E2E2E2E2C2A2A
+    2A2A2A2A2A2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E222C0A222E2E2E2E
+    2E2C2A2A2A2A2A2A2A2C2A2A2A2A2A2A2A2C2E2E2E2E2E2E2E2E2E2E222C0A22
+    2E2E2E2E2C2C2C2A2A2A2A2A2C2C2C2A2A2A2A2A2C2C2C2E2E2E2E2E2E2E2E2E
+    222C0A222E2E2C2C2C2D2C2C2C2A2C2C2C2D2C2C2C2A2C2C2C2E2C2E2E2E2E2E
+    2E2E2E2E222C0A222E2C2C2D2D2D2D2D2C2C2C2D2D2D2D2D2C2C2C2E2E2E2E2E
+    2E2E2E2E2E2E2E2E222C0A222E2C2D2D2D2D2D2D2D2C2D2D2D2D2D2D2D2C2E2E
+    2E2E2E2E2E2E2E2E2E2E2E2E222C0A222E2C2D2D2D2D2D2D2D2C2D2D2D2D2D2D
+    2D2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E222C0A222E2C2D2D2D2D2D2D2D2C2D2D
+    2D2D2D2D2D2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E222C0A222E2C2C2D2D2D2D2D
+    2C2C2C2D2D2D2D2D2C2C2C2E2E2E2E2E2E2E2E2E2E2E2E2E222C0A222E2E2C2C
+    2C2D2C2C2C2E2C2C2C2D2C2C2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E222C0A22
+    2E2E2E2E2C2C2C2E2E2E2E2E2C2C2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E
+    222C0A222E2E2E2E2E2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E2E2E2E2E2E2E2E2E
+    2E2E2E2E222C0A222E2E2E2E2E2C2E2E2E2E2E2E2E2C2E2E2E2E2E2E2E2E2E2E
+    2E2E2E2E2E2E2E2E222C0A222E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E
+    2E2E2E2E2E2E2E2E2E2E2E2E227D0A
+  }
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  ShowInTaskBar = stAlways
+  OnWindowStateChange = FormWindowStateChange
+  object BtnCancel: TBitBtn
+    Left = 366
+    Height = 26
+    Top = 158
+    Width = 78
+    Align = alRight
+    BorderSpacing.Around = 6
+    Caption = 'Blocca'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
+    Kind = bkAbort
+    ModalResult = 3
+    NumGlyphs = 0
+    OnClick = BtnCancelClick
+    TabOrder = 0
+  end
+  object BtnBackForeGround: TBitBtn
+    Left = 204
+    Height = 26
+    Top = 158
+    Width = 75
+    Align = alRight
+    BorderSpacing.Around = 6
+    Caption = 'Background'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 75
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 75
+    NumGlyphs = 0
+    OnClick = BtnBackForeGroundClick
+    TabOrder = 4
+  end
+  object BtnPauseRun: TBitBtn
+    Left = 285
+    Height = 26
+    Top = 158
+    Width = 75
+    Align = alRight
+    BorderSpacing.Around = 6
+    Caption = 'Pause'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 75
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 75
+    NumGlyphs = 0
+    OnClick = BtnPauseRunClick
+    TabOrder = 5
+  end
+  object Notebook: TNotebook
+    Left = 6
+    Height = 146
+    Top = 6
+    Width = 438
+    Align = alTop
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Around = 6
+    PageIndex = 0
+    TabOrder = 1
+    object GeneralPage: TPage
+      Caption = 'General'
+      ClientWidth = 430
+      ClientHeight = 120
+      object TimeLabel: TLabel
+        Left = 6
+        Height = 18
+        Top = 10
+        Width = 90
+        AutoSize = False
+        Caption = 'Time elapsed:'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object Time: TLabel
+        Left = 98
+        Height = 18
+        Top = 10
+        Width = 60
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = '00:00:00'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object RemainingTime: TLabel
+        Left = 98
+        Height = 18
+        Top = 30
+        Width = 60
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = '--:--:--'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object RemainingTimeLabel: TLabel
+        Left = 6
+        Height = 18
+        Top = 30
+        Width = 90
+        AutoSize = False
+        Caption = 'Remaining time:'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object GeneralSizeLabel: TLabel
+        Left = 250
+        Height = 18
+        Top = 10
+        Width = 90
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = 'Total size:'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object ProcessedSizeLabel: TLabel
+        Left = 250
+        Height = 18
+        Top = 30
+        Width = 90
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = 'Processed size:'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object SpeedLabel: TLabel
+        Left = 250
+        Height = 18
+        Top = 50
+        Width = 90
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = 'Speed:'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object GeneralSize: TLabel
+        Left = 342
+        Height = 18
+        Top = 10
+        Width = 48
+        Alignment = taRightJustify
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = '-'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object ProcessedSize: TLabel
+        Left = 342
+        Height = 18
+        Top = 30
+        Width = 48
+        Alignment = taRightJustify
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = '-'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object Speed: TLabel
+        Left = 342
+        Height = 18
+        Top = 50
+        Width = 48
+        Alignment = taRightJustify
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = '-'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object SpeedUnit: TLabel
+        Left = 394
+        Height = 18
+        Top = 50
+        Width = 30
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = 'KB/s'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object ProcessedSizeUnit: TLabel
+        Left = 394
+        Height = 18
+        Top = 30
+        Width = 30
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = 'KB'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object GeneralSizeUnit: TLabel
+        Left = 394
+        Height = 18
+        Top = 10
+        Width = 30
+        Anchors = [akTop, akRight]
+        AutoSize = False
+        Caption = 'KB'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object Msg: TLabel
+        Left = 6
+        Height = 18
+        Top = 70
+        Width = 418
+        Align = alBottom
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        AutoSize = False
+        BorderSpacing.Around = 6
+        Caption = '...'
+        Constraints.MaxHeight = 18
+        Constraints.MinHeight = 18
+        Layout = tlBottom
+        ParentColor = False
+      end
+      object Tick: TProgressBar
+        Left = 6
+        Height = 20
+        Top = 94
+        Width = 418
+        Align = alBottom
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderSpacing.Around = 6
+        Constraints.MaxHeight = 20
+        Constraints.MinHeight = 20
+        Max = 100
+        TabOrder = 0
+      end
+    end
+    object ReportPage: TPage
+      Caption = 'Report'
+      ClientWidth = 430
+      ClientHeight = 120
+      object Report: TMemo
+        Height = 118
+        Top = 2
+        Width = 430
+        Align = alClient
+        BorderSpacing.Top = 2
+        ReadOnly = True
+        ScrollBars = ssAutoVertical
+        TabOrder = 0
+      end
+    end
+  end
+  object BtnSave: TBitBtn
+    Left = 6
+    Height = 26
+    Top = 158
+    Width = 75
+    Align = alLeft
+    BorderSpacing.Around = 6
+    Caption = ' Save'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 75
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 75
+    Enabled = False
+    NumGlyphs = 0
+    OnClick = BtnSaveClick
+    TabOrder = 2
+  end
+  object BtnFont: TBitBtn
+    Left = 87
+    Height = 26
+    Top = 158
+    Width = 75
+    Align = alLeft
+    BorderSpacing.Around = 6
+    Caption = 'Font'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 75
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 75
+    Enabled = False
+    NumGlyphs = 0
+    OnClick = BtnFontClick
+    TabOrder = 3
+  end
+  object Storage: TXMLPropStorage
+    StoredValues = <>
+    left = 184
+    top = 32
+  end
+  object Timer: TIdleTimer
+    Enabled = False
+    OnTimer = OnTimer
+    OnStartTimer = OnStartTimer
+    OnStopTimer = OnStopTimer
+    left = 184
+    top = 64
+  end
+  object SaveDialog: TSaveDialog
+    Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
+    left = 216
+    top = 32
+  end
+  object FontDialog: TFontDialog
+    left = 216
+    top = 64
+  end
+end

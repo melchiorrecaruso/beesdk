@@ -1,0 +1,79 @@
+object ViewFrm: TViewFrm
+  Left = 354
+  Height = 304
+  Top = 265
+  Width = 453
+  HorzScrollBar.Page = 452
+  VertScrollBar.Page = 303
+  ActiveControl = BtnOk
+  Caption = 'View:'
+  ClientHeight = 304
+  ClientWidth = 453
+  Constraints.MinHeight = 90
+  Constraints.MinWidth = 248
+  Font.CharSet = ANSI_CHARSET
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  OnCreate = FormCreate
+  object Memo: TMemo
+    Height = 265
+    Width = 453
+    Align = alTop
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ScrollBars = ssBoth
+    TabOrder = 1
+  end
+  object BtnFont: TBitBtn
+    Left = 5
+    Height = 24
+    Top = 273
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    BorderSpacing.InnerBorder = 2
+    Caption = '&Font'
+    NumGlyphs = 0
+    OnClick = BtnFontClick
+    TabOrder = 2
+  end
+  object BtnOk: TBitBtn
+    Left = 372
+    Height = 24
+    Top = 273
+    Width = 75
+    Anchors = [akRight, akBottom]
+    BorderSpacing.InnerBorder = 2
+    Cancel = True
+    Caption = 'Ok'
+    Default = True
+    ModalResult = 1
+    NumGlyphs = 2
+    OnClick = BtnOkClick
+    TabOrder = 0
+  end
+  object BtnSave: TBitBtn
+    Left = 86
+    Height = 24
+    Top = 273
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Caption = 'Save'
+    NumGlyphs = 0
+    OnClick = BtnSaveClick
+    TabOrder = 3
+  end
+  object FontDialog: TFontDialog
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    left = 8
+    top = 8
+  end
+  object Storage: TXMLPropStorage
+    StoredValues = <>
+    left = 72
+    top = 8
+  end
+  object SaveDialog: TSaveDialog
+    left = 40
+    top = 8
+  end
+end
