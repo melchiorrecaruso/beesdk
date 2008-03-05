@@ -27,7 +27,7 @@
   v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0515 - 2007.12.02 by Melchiorre Caruso.
+  v0.7.9 build 0627 - 2008.02.11 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -111,12 +111,13 @@ function SizeToStr(Size: integer): string;
 function RatioToStr(PackedSize, Size: integer): string;
 function AttrToStr(Attr: integer): string;
 
-
 // time handling routines ...
-
 function TimeDifference(X: double): string;
-function DateTimeToString(X: TDateTime): string;
 function TimeToStr(T: Integer): string;
+function DateTimeToString(X: TDateTime): string; overload;
+function DateTimeToString(X: TDateTime; const Format: string): string; overload;
+function FileTimeToString(X: integer): string; overload;
+function FileTimeToString(X: integer; const Format: string): string; overload;
 
 // hex routines ...
 
@@ -145,7 +146,8 @@ uses
 
 const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
-  HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
+  HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0,
+                                         0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
 
   DoublePathDelim = PathDelim + PathDelim;
 
@@ -295,8 +297,7 @@ begin
     iMaskPath := ExtractFilePath(iMask);
     for I := 1 to CharCount(iFileName, PathDelim) - CharCount(iMask, PathDelim) do
     begin
-      iMaskPath := Bee_Common.IncludeTrailingBackSlash(iMaskPath) +
-                   Bee_Common.IncludeTrailingBackSlash('*');
+      iMaskPath := IncludeTrailingBackSlash(iMaskPath) + IncludeTrailingBackSlash('*');
     end;
     iMask := iMaskPath + ExtractFileName(iMask);
   end;
@@ -362,8 +363,8 @@ function FixFileName(const FileName: string): string;
 var
   I: integer;
 begin
-  Result := Bee_Common.DoDirSeparators(FileName);
-  Result := Bee_Common.DeleteFileDrive(Result);
+  Result := DoDirSeparators(FileName);
+  Result := DeleteFileDrive(Result);
 
   I := System.Pos('*', Result);
   while I > 0 do
@@ -386,15 +387,15 @@ begin
     I := System.Pos('!', Result);
   end;
 
-  Result := Bee_Common.ExcludeTrailingBackSlash(Result);
+  Result := ExcludeTrailingBackSlash(Result);
 end;
 
 function FixDirName(const DirName: string): string;
 var
   I: integer;
 begin
-  Result := Bee_Common.DoDirSeparators(DirName);
-  Result := Bee_Common.DeleteFileDrive(Result);
+  Result := DoDirSeparators(DirName);
+  Result := DeleteFileDrive(Result);
 
   I := System.Pos('*', Result);
   while I > 0 do
@@ -450,11 +451,6 @@ begin
   Result := Format('%0.2f', [(Now - X) * (24 * 60 * 60)]);
 end;
 
-function DateTimeToString(X: TDateTime): string;
-begin
-  SysUtils.DateTimeToString(Result, 'dd/mm/yy hh:mm', X);
-end;
-
 function TimeToStr(T: integer): string;
 var
   H, M, S: string;
@@ -483,6 +479,26 @@ begin
   Result := H + ':' + M + ':' + S;
 end;
 
+function DateTimeToString(X: TDateTime): string;
+begin
+  SysUtils.DateTimeToString(Result, 'dd/mm/yy hh:mm', X);
+end;
+
+function DateTimeToString(X: TDateTime; const Format: string): string;
+begin
+  SysUtils.DateTimeToString(Result, Format, X);
+end;
+
+function FileTimeToString(X: integer): string;
+begin
+  Result := DateTimeToString(FileDateToDateTime(X));
+end;
+
+function FileTimeToString(X: integer; const Format: string): string;
+begin
+  Result := DateTimeToString(FileDateToDateTime(X));
+end;
+
 function DirectoryExists(const DirName: string): boolean;
 var
   Code: integer;
@@ -497,12 +513,12 @@ begin
   if Dir = '' then Exit;
 
   if Dir[Length(Dir)] = PathDelim then
-    Result := Bee_Common.ForceDirectories(Copy(Dir, 1, Length(Dir) - 1))
+    Result := ForceDirectories(Copy(Dir, 1, Length(Dir) - 1))
   else
   begin
-    if Bee_Common.DirectoryExists(Dir) or (ExtractFilePath(Dir) = Dir) then Exit;
+    if DirectoryExists(Dir) or (ExtractFilePath(Dir) = Dir) then Exit;
 
-    if Bee_Common.ForceDirectories(ExtractFilePath(Dir)) then
+    if ForceDirectories(ExtractFilePath(Dir)) then
       Result := CreateDir(Dir)
     else
       Result := False;
@@ -531,7 +547,7 @@ begin
     begin
       Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
     end;
-    Result := Bee_Common.IncludeTrailingBackSlash(Path) + Result;
+    Result := IncludeTrailingBackSlash(Path) + Result;
   until FileAge(Result) = -1;
 end;
 

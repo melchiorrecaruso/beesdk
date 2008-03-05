@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.7.9 build 0573 - 2008.01.08 by Melchiorre Caruso.
+    v0.7.9 build 0627 - 2008.02.11 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -104,7 +104,8 @@ type
         FileName: string;
         FilePath: string;
         FileSize: integer;
-        FilePack: integer;
+        FilePacked: integer;
+        FileRatio: integer;
         FileAttr: integer;
         FileTime: integer;
         FileComm: string;
@@ -143,9 +144,12 @@ type
     end;
   end;
 
-// TApp class
+
 
 type
+
+  // TApp class
+
   TApp = class(TThread) 
   protected
     AppParams: TStringList;
@@ -165,6 +169,7 @@ constructor TApp.Create(aAppInterface: TAppInterface; aAppParams: TStringList);
 begin
   inherited Create(True);
   FreeOnTerminate := True;
+  Priority := tpNormal;
   // ---
   AppInterface := aAppInterface;
   AppParams := aAppParams;
