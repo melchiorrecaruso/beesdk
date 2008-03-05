@@ -34,7 +34,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-  v0.7.9 build 0619 - 2008.01.29 by Melchiorre Caruso.
+  v0.7.9 build 0627 - 2008.02.11 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -53,6 +53,9 @@ uses
   Bee_Interface;
 
 type
+
+  // TConsole class
+
   TConsole = class
   private
     App: TBeeApp;
@@ -188,7 +191,20 @@ type
 
   procedure TConsole.OnList;
   begin
-    // nothing to do
+    with AppInterface.OnList.Data do
+    begin
+      Writeln(ParamToOem(FilePath + FileName));
+      Writeln(ParamToOem(StringOfChar(' ', 15) +
+        Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
+        [SizeToStr(FileSize),
+         SizeToStr(FilePacked),
+         FileRatio,
+         FileTimeToString(FileTime),
+         AttrToStr(FileAttr),
+         FileCrc,
+         FileMethod
+        ])));
+    end;
   end;
 
   procedure TConsole.OnTick;
