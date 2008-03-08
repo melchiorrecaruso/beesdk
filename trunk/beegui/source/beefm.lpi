@@ -8,10 +8,12 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="6"/>
+      <UseAppBundle Value="False"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <i18n>
-      <OutDir Value="resources\po"/>
+      <EnableI18N Value="True"/>
+      <OutDir Value="languages\po"/>
     </i18n>
     <VersionInfo>
       <CurrentVersionNr Value="1"/>
@@ -42,15 +44,15 @@
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
-        <PackageName Value="FCL"/>
-        <MinVersion Major="1" Valid="True"/>
+        <PackageName Value="beegui_package"/>
+        <MinVersion Minor="1" Valid="True"/>
       </Item1>
       <Item2>
         <PackageName Value="LCL"/>
       </Item2>
       <Item3>
-        <PackageName Value="beegui_package"/>
-        <MinVersion Minor="1" Valid="True"/>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
     <Units Count="238">
@@ -70,8 +72,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="58" Y="245"/>
-        <TopLine Value="226"/>
+        <CursorPos X="1" Y="47"/>
+        <TopLine Value="31"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -1313,8 +1315,8 @@
       <Unit180>
         <Filename Value="packages\beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="33" Y="61"/>
-        <TopLine Value="61"/>
+        <CursorPos X="19" Y="90"/>
+        <TopLine Value="66"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="40"/>
         <Loaded Value="True"/>
