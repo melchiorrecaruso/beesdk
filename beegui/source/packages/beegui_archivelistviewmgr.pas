@@ -141,7 +141,6 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure InitColumns;
     procedure Initialize;
     // ---
     procedure OpenArchive(const FileName, FileLink: string);
@@ -344,33 +343,6 @@ uses
     // ---
     Color := clInactiveBorder;
     Enabled := False;
-  end;
-  
-  procedure TCustomArcListView.InitColumns;
-    procedure AddCol(const aCaption: string; aWidth: integer; aAlign: TAlignment);
-    var
-      Col: TListColumn;
-    begin
-      Col := Columns.Add;
-      Col.Caption := aCaption;
-      Col.AutoSize := False;
-      Col.Alignment := aAlign;
-      Col.Width := aWidth;
-    end;
-  begin
-    Columns.Clear;
-    AddCol('Name', 80, taLeftJustify);
-    AddCol('Size', 50, taRightJustify);
-    AddCol('Packed', 50, taRightJustify);
-    AddCol('Ratio', 50, taRightJustify);
-    AddCol('Type', 70, taLeftJustify);
-    AddCol('Modified', 70, taLeftJustify);
-    AddCol('Attribute', 55, taRightJustify);
-    AddCol('Method', 50, taRightJustify);
-    AddCol('Password', 40, taRightJustify);
-    AddCol('Crc', 50, taRightJustify);
-    AddCol('Path', 60, taLeftJustify);
-    AddCol('Position', 40, taRightJustify);
   end;
   
   destructor TCustomArcListView.Destroy;

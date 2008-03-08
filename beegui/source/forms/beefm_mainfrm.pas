@@ -36,6 +36,7 @@ uses
   Classes,
   Dialogs,
   Buttons,
+  IniFiles,
   SysUtils,
   Graphics,
   Controls,
@@ -47,32 +48,28 @@ uses
   // ---
   BeeGui_IconList,
   BeeGui_ArchiveProcess,
-  BeeGui_ArchiveListViewMgr,
-  BeeGui_ArchiveFolderBox;
-
-type
-  TTerminateWith = (twNone, twNewArc, twCheckOut,
-    twViewInt, twViewExt, twDrag, twClose);
+  BeeGui_ArchiveFolderBox,
+  BeeGui_ArchiveListViewMgr;
 
 type
   { TMainFrm }
 
   TMainFrm = class(TForm)
-    ArchiveListView: TArcListView;
-    Storage: TXMLPropStorage;
+    ListView: TArcListView;
     FolderBox: TArchiveFolderBox;
-    FolderBoxToolBar: TToolBar;
+    DownToolBar: TToolBar;
+    MMenuFileProperty: TMenuItem;
     StatusBar: TStatusBar;
-    LargeIcons: TIconList;
-    SmallIcons: TIconList;
-    ArchiveProcess: TArchiveProcess;
-    ArchiveProcessTimer: TIdleTimer;
+    LargeImages: TIconList;
+    SmallImages: TIconList;
+    Process: TArchiveProcess;
+    ProcessTimer: TIdleTimer;
     // ---
     OpenDialog: TOpenDialog;
     SaveDialog: TSaveDialog;
     FontDialog: TFontDialog;
     // ---
-    ButtonsToolBar: TToolBar;
+    UpToolBar: TToolBar;
     BevelFirst: TBevel;
     BevelSecond: TBevel;
     BevelThird: TBevel;
@@ -89,219 +86,199 @@ type
     BtnView: TSpeedButton;
     BtnUp: TSpeedButton;
     // ---
-    MainMenu: TMainMenu;
-    MainMenu_File: TMenuItem;
-    MainMenu_File_New: TMenuItem;
-    MainMenu_File_Open: TMenuItem;
-    MainMenu_File_Close: TMenuItem;
-    MainMenu_File_N1: TMenuItem;
-    MainMenu_File_Property: TMenuItem;
-    MainMenu_File_N2: TMenuItem;
-    MainMenu_File_Move: TMenuItem;
-    MainMenu_File_Copy: TMenuItem;
-    MainMenu_File_Rename: TMenuItem;
-    MainMenu_File_Delete: TMenuItem;
-    MainMenu_File_N3: TMenuItem;
-    MainMenu_File_Exit: TMenuItem;
+    MMenu: TMainMenu;
+    MMenuFile: TMenuItem;
+    MMenuFileNew: TMenuItem;
+    MMenuFileOpen: TMenuItem;
+    MMenuFileClose: TMenuItem;
+    MMenuFileN1: TMenuItem;
+    MMenuFileN2: TMenuItem;
+    MMenuFileMove: TMenuItem;
+    MMenuFileCopy: TMenuItem;
+    MMenuFileRename: TMenuItem;
+    MMenuFileDelete: TMenuItem;
+    MMenuFileN3: TMenuItem;
+    MMenuFileExit: TMenuItem;
     // ---
-    MainMenu_View: TMenuItem;
-    MainMenu_View_Toolbars: TMenuItem;
-    MainMenu_View_Toolbars_Buttons: TMenuItem;
-    MainMenu_View_Toolbars_AddressBar: TMenuItem;
-    MainMenu_View_StatusBar: TMenuItem;
-    MainMenu_View_N1: TMenuItem;
-    MainMenu_View_LargeIcons: TMenuItem;
-    MainMenu_View_SmallIcons: TMenuItem;
-    MainMenu_View_List: TMenuItem;
-    MainMenu_View_Report: TMenuItem;
-    MainMenu_View_N2: TMenuItem;
-    MainMenu_View_RowSelect: TMenuItem;
-    MainMenu_View_GridLines: TMenuItem;
-    MainMenu_View_ListMode: TMenuItem;
-    MainMenu_View_N3: TMenuItem;
-    MainMenu_View_OrderBy: TMenuItem;
-    MainMenu_View_OrderBy_Name: TMenuItem;
-    MainMenu_View_OrderBy_Crc: TMenuItem;
-    MainMenu_View_OrderBy_Path: TMenuItem;
-    MainMenu_View_OrderBy_Position: TMenuItem;
-    MainMenu_View_OrderBy_Size: TMenuItem;
-    MainMenu_View_OrderBy_Packed: TMenuItem;
-    MainMenu_View_OrderBy_Ratio: TMenuItem;
-    MainMenu_View_OrderBy_Type: TMenuItem;
-    MainMenu_View_OrderBy_Modified: TMenuItem;
-    MainMenu_View_OrderBy_Attributes: TMenuItem;
-    MainMenu_View_OrderBy_Method: TMenuItem;
-    MainMenu_View_OrderBy_Password: TMenuItem;
+    MMenuView: TMenuItem;
+    MMenuViewToolbars: TMenuItem;
+    MMenuViewButtons: TMenuItem;
+    MMenuViewAddressBar: TMenuItem;
+    MMenuViewStatusBar: TMenuItem;
+    MMenuViewN1: TMenuItem;
+    MMenuViewLargeIcons: TMenuItem;
+    MMenuViewSmallIcons: TMenuItem;
+    MMenuViewList: TMenuItem;
+    MMenuViewReport: TMenuItem;
+    MMenuViewN2: TMenuItem;
+    MMenuViewRowSelect: TMenuItem;
+    MMenuViewGridLines: TMenuItem;
+    MMenuViewListMode: TMenuItem;
+    MMenuViewN3: TMenuItem;
+    MMenuViewOrderBy: TMenuItem;
+    MMenuViewOrderByName: TMenuItem;
+    MMenuViewOrderByCrc: TMenuItem;
+    MMenuViewOrderByPath: TMenuItem;
+    MMenuViewOrderByPosition: TMenuItem;
+    MMenuViewOrderBySize: TMenuItem;
+    MMenuViewOrderByPacked: TMenuItem;
+    MMenuViewOrderByRatio: TMenuItem;
+    MMenuViewOrderByType: TMenuItem;
+    MMenuViewOrderByModified: TMenuItem;
+    MMenuViewOrderByAttributes: TMenuItem;
+    MMenuViewOrderByMethod: TMenuItem;
+    MMenuViewOrderByPassword: TMenuItem;
     // ---
-    MainMenu_View_Details: TMenuItem;
-    MainMenu_View_Details_Name: TMenuItem;
-    MainMenu_View_Details_CRC: TMenuItem;
-    MainMenu_View_Details_Path: TMenuItem;
-    MainMenu_View_Details_Position: TMenuItem;
-    MainMenu_View_Details_Size: TMenuItem;
-    MainMenu_View_Details_Packed: TMenuItem;
-    MainMenu_View_Details_Ratio: TMenuItem;
-    MainMenu_View_Details_Type: TMenuItem;
-    MainMenu_View_Details_Modified: TMenuItem;
-    MainMenu_View_Details_Attributes: TMenuItem;
-    MainMenu_View_Details_Method: TMenuItem;
-    MainMenu_View_Details_Password: TMenuItem;
+    MMenuViewDetails: TMenuItem;
+    MMenuViewDetailsName: TMenuItem;
+    MMenuViewDetailsCRC: TMenuItem;
+    MMenuViewDetailsPath: TMenuItem;
+    MMenuViewDetailsPosition: TMenuItem;
+    MMenuViewDetailsSize: TMenuItem;
+    MMenuViewDetailsPacked: TMenuItem;
+    MMenuViewDetailsRatio: TMenuItem;
+    MMenuViewDetailsType: TMenuItem;
+    MMenuViewDetailsModified: TMenuItem;
+    MMenuViewDetailsAttributes: TMenuItem;
+    MMenuViewDetailsMethod: TMenuItem;
+    MMenuViewDetailsPassword: TMenuItem;
     // ---
-    MainMenu_Actions: TMenuItem;
-    MainMenu_Actions_Add: TMenuItem;
-    MainMenu_Actions_Delete: TMenuItem;
-    MainMenu_Actions_Extract: TMenuItem;
-    MainMenu_Actions_ExtractAll: TMenuItem;
-    MainMenu_Actions_Test: TMenuItem;
-    MainMenu_Actions_Rename: TMenuItem;
-    MainMenu_Actions_View: TMenuItem;
-    MainMenu_Actions_N1: TMenuItem;
-    MainMenu_Actions_SelectAll: TMenuItem;
-    MainMenu_Actions_SelectMask: TMenuItem;
-    MainMenu_Actions_DeselectAll: TMenuItem;
-    MainMenu_Actions_DeselectMask: TMenuItem;
-    MainMenu_Actions_Invert: TMenuItem;
-    MainMenu_Actions_N2: TMenuItem;
-    MainMenu_Actions_CheckOut: TMenuItem;
-    MainMenu_Actions_TestAll: TMenuItem;
+    MMenuActions: TMenuItem;
+    MMenuActionsAdd: TMenuItem;
+    MMenuActionsDelete: TMenuItem;
+    MMenuActionsExtract: TMenuItem;
+    MMenuActionsExtractAll: TMenuItem;
+    MMenuActionsTest: TMenuItem;
+    MMenuActionsRename: TMenuItem;
+    MMenuActionsView: TMenuItem;
+    MMenuActionsN1: TMenuItem;
+    MMenuActionsSelectAll: TMenuItem;
+    MMenuActionsSelectMask: TMenuItem;
+    MMenuActionsDeselectAll: TMenuItem;
+    MMenuActionsDeselectMask: TMenuItem;
+    MMenuActionsInvert: TMenuItem;
+    MMenuActionsN2: TMenuItem;
+    MMenuActionsCheckOut: TMenuItem;
+    MMenuActionsTestAll: TMenuItem;
     // ---
-    MainMenu_Options: TMenuItem;
-    MainMenu_Options_N1: TMenuItem;
-    MainMenu_Options_N2: TMenuItem;
-    MainMenu_Options_Configuration: TMenuItem;
-    MainMenu_Options_Password: TMenuItem;
-    MainMenu_Options_SaveOnExit: TMenuItem;
-    MainMenu_Options_SaveNow: TMenuItem;
-    MainMenu_Options_DefaultSetting: TMenuItem;
-    MainMenu_Options_LogReport: TMenuItem;
+    MMenuOptions: TMenuItem;
+    MMenuOptionsN1: TMenuItem;
+    MMenuOptionsN2: TMenuItem;
+    MMenuOptionsConfiguration: TMenuItem;
+    MMenuOptionsPassword: TMenuItem;
+    MMenuOptionsSaveOnExit: TMenuItem;
+    MMenuOptionsSaveNow: TMenuItem;
+    MMenuOptionsDefault: TMenuItem;
+    MMenuOptionsLogReport: TMenuItem;
     // ---
-    MainMenu_Help: TMenuItem;
-    MainMenu_Help_N1: TMenuItem;
-    MainMenu_Help_N2: TMenuItem;
-    MainMenu_Help_F1: TMenuItem;
-    MainMenu_Help_Internet: TMenuItem;
-    MainMenu_Help_License: TMenuItem;
-    MainMenu_Help_About: TMenuItem;
+    MMenuHelp: TMenuItem;
+    MMenuHelpN1: TMenuItem;
+    MMenuHelpN2: TMenuItem;
+    MMenuHelpF1: TMenuItem;
+    MMenuHelpInternet: TMenuItem;
+    MMenuHelpLicense: TMenuItem;
+    MMenuHelpAbout: TMenuItem;
     // ---
-    PopupMenu: TPopupMenu;
-    PopupMenu_N1: TMenuItem;
-    PopupMenu_N2: TMenuItem;
-    PopupMenu_N3: TMenuItem;
-    PopupMenu_N4: TMenuItem;
-    PopupMenu_Open: TMenuItem;
-    PopupMenu_Open_IntViewer: TMenuItem;
-    PopupMenu_Delete: TMenuItem;
-    PopupMenu_Extract: TMenuItem;
-    PopupMenu_ExtractAll: TMenuItem;
-    PopupMenu_Test: TMenuItem;
-    PopupMenu_Rename: TMenuItem;
-    PopupMenu_SelectDeselect: TMenuItem;
-    PopupMenu_SelectAll: TMenuItem;
-    PopupMenu_SelectMask: TMenuItem;
-    PopupMenu_DeselectAll: TMenuItem;
-    PopupMenu_DeselectMask: TMenuItem;
-    PopupMenu_Invert: TMenuItem;
-    PopupMenu_Property: TMenuItem;
+    PMenu: TPopupMenu;
+    PMenuN1: TMenuItem;
+    PMenuN2: TMenuItem;
+    PMenuN3: TMenuItem;
+    PMenuN4: TMenuItem;
+    PMenuOpen: TMenuItem;
+    PMenuOpenIntViewer: TMenuItem;
+    PMenuDelete: TMenuItem;
+    PMenuExtract: TMenuItem;
+    PMenuExtractAll: TMenuItem;
+    PMenuTest: TMenuItem;
+    PMenuRename: TMenuItem;
+    PMenuSelectDeselect: TMenuItem;
+    PMenuSelectAll: TMenuItem;
+    PMenuSelectMask: TMenuItem;
+    PMenuDeselectAll: TMenuItem;
+    PMenuDeselectMask: TMenuItem;
+    PMenuInvert: TMenuItem;
+    PMenuProperty: TMenuItem;
     // ---
-    PopupMenu_Buttons: TPopupMenu;
-    PopupMenu_Buttons_N1: TMenuItem;
-    PopupMenu_Buttons_N2: TMenuItem;
-    PopupMenu_Buttons_N3: TMenuItem;
-    PopupMenu_Buttons_New: TMenuItem;
-    PopupMenu_Buttons_Open: TMenuItem;
-    PopupMenu_Buttons_Add: TMenuItem;
-    PopupMenu_Buttons_Extract: TMenuItem;
-    PopupMenu_Buttons_View: TMenuItem;
-    PopupMenu_Buttons_Delete: TMenuItem;
-    PopupMenu_Buttons_Test: TMenuItem;
-    PopupMenu_Buttons_CheckOut: TMenuItem;
-    PopupMenu_Buttons_Configuration: TMenuItem;
-    PopupMenu_Buttons_Help: TMenuItem;
-    PopupMenu_Buttons_Exit: TMenuItem;
+    BMenu: TPopupMenu;
+    BMenuN1: TMenuItem;
+    BMenuN2: TMenuItem;
+    BMenuN3: TMenuItem;
+    BMenuNew: TMenuItem;
+    BMenuOpen: TMenuItem;
+    BMenuAdd: TMenuItem;
+    BMenuExtract: TMenuItem;
+    BMenuView: TMenuItem;
+    BMenuDelete: TMenuItem;
+    BMenuTest: TMenuItem;
+    BMenuCheckOut: TMenuItem;
+    BMenuConfiguration: TMenuItem;
+    BMenuHelp: TMenuItem;
+    BMenuExit: TMenuItem;
     // ---
-    procedure ArchiveListViewColumnClick(Sender: TObject; Column: TListColumn);
-    procedure ArchiveProcessTimerTimer(Sender: TObject);
-    procedure FolderBoxSelect(Sender: TObject);
-
-    procedure MainMenu_Actions_AddClick(Sender: TObject);
-
-    // ---
-    procedure MainMenu_File_NewClick (Sender: TObject);
-    procedure MainMenu_File_OpenClick (Sender: TObject);
-    procedure MainMenu_File_CloseClick (Sender: TObject);
-    procedure MainMenu_File_PropertyClick (Sender: TObject);
-    procedure MainMenu_File_MoveClick (Sender: TObject);
-    procedure MainMenu_File_CopyClick (Sender: TObject);
-    procedure MainMenu_File_RenameClick (Sender: TObject);
-    procedure MainMenu_File_DeleteClick (Sender: TObject);
-    procedure MainMenu_File_ExitClick (Sender: TObject);
-    procedure MainMenu_View_GridLinesClick(Sender: TObject);
-    // ---
-
-    procedure MainMenu_View_ListModeClick(Sender: TObject);
-    procedure MainMenu_View_RowSelectClick(Sender: TObject);
-    procedure MainMenu_View_ViewStyle_Click(Sender: TObject);
-    procedure MainMenu_View_OrderBy_Click(Sender: TObject);
+    procedure MMenuFileNewClick(Sender: TObject);
+    procedure MMenuFileOpenClick(Sender: TObject);
+    procedure MMenuFileCloseClick(Sender: TObject);
+    procedure MMenuFilePropertyClick(Sender: TObject);
+    procedure MMenuFileMoveClick(Sender: TObject);
+    procedure MMenuFileCopyClick(Sender: TObject);
+    procedure MMenuFileRenameClick(Sender: TObject);
+    procedure MMenuFileDeleteClick(Sender: TObject);
+    procedure MMenuFileExitClick(Sender: TObject);
     // ----
-    procedure MainMenu_Actions_DeleteClick (Sender: TObject);
-    procedure MainMenu_Actions_ExtractClick (Sender: TObject);
-    procedure MainMenu_Actions_ExtractAllClick (Sender: TObject);
-    procedure MainMenu_Actions_TestClick (Sender: TObject);
-    procedure MainMenu_Actions_RenameClick (Sender: TObject);
-    procedure MainMenu_Actions_ViewClick (Sender: TObject);
-    procedure MainMenu_Actions_SelectAllClick (Sender: TObject);
-    procedure MainMenu_Actions_SelectMaskClick (Sender: TObject);
+    procedure MMenuActionsAddClick(Sender: TObject);
+    procedure MMenuActionsDeleteClick (Sender: TObject);
+    procedure MMenuActionsExtractClick (Sender: TObject);
+    procedure MMenuActionsExtractAllClick (Sender: TObject);
+    procedure MMenuActionsTestClick (Sender: TObject);
+    procedure MMenuActionsRenameClick (Sender: TObject);
+    procedure MMenuActionsViewClick (Sender: TObject);
+    procedure MMenuActionsSelectAllClick (Sender: TObject);
+    procedure MMenuActionsSelectMaskClick (Sender: TObject);
     procedure MainMenu_Actions_DeselectMasksClick (Sender: TObject);
-    procedure MainMenu_Actions_DeselectAllClick(Sender: TObject);
-    procedure MainMenu_Actions_InvertClick (Sender: TObject);
-    procedure MainMenu_Actions_TestAllClick (Sender: TObject);
-    procedure MainMenu_Actions_CheckOutClick (Sender: TObject);
+    procedure MMenuActionsDeselectAllClick(Sender: TObject);
+    procedure MMenuActionsInvertClick (Sender: TObject);
+    procedure MMenuActionsTestAllClick (Sender: TObject);
+    procedure MMenuActionsCheckOutClick (Sender: TObject);
     // ---
-    procedure MainMenu_Options_ConfigurationClick (Sender: TObject);
-    procedure MainMenu_Options_SaveNowClick (Sender: TObject);
-    procedure MainMenu_Options_DefaultSettingClick (Sender: TObject);
-    procedure MainMenu_Options_PasswordClick (Sender: TObject);
-    procedure MainMenu_Options_LogReportClick (Sender: TObject);
-    procedure MainMenu_Options_SaveOnExitClick (Sender: TObject);
+    procedure MMenuOptionsConfigurationClick (Sender: TObject);
+    procedure MMenuOptionsSaveNowClick (Sender: TObject);
+    procedure MMenuOptionsDefaultClick (Sender: TObject);
     // ---
-    procedure MainMenu_Help_F1Click (Sender: TObject);
-    procedure MainMenu_Help_InternetClick (Sender: TObject);
-    procedure MainMenu_Help_LicenseClick (Sender: TObject);
-    procedure MainMenu_Help_AboutClick (Sender: TObject);
-
+    procedure MMenuHelpF1Click (Sender: TObject);
+    procedure MMenuHelpInternetClick (Sender: TObject);
+    procedure MMenuHelpLicenseClick (Sender: TObject);
+    procedure MMenuHelpAboutClick (Sender: TObject);
     // ---
-    procedure PopupMenuPopup(Sender: TObject);
-    procedure PopupMenu_Open_IntViewerClick(Sender: TObject);
-    procedure PopupMenu_PropertyClick(Sender: TObject);
-    // ---
-    procedure PopupMenu_Buttons_AddClick(Sender: TObject);
-    procedure PopupMenu_Buttons_CheckOutClick(Sender: TObject);
-    procedure PopupMenu_Buttons_ConfigurationClick(Sender: TObject);
-    procedure PopupMenu_Buttons_DeleteClick(Sender: TObject);
-    procedure PopupMenu_Buttons_ExitClick(Sender: TObject);
-    procedure PopupMenu_Buttons_ExtractClick(Sender: TObject);
-    procedure PopupMenu_Buttons_HelpClick(Sender: TObject);
-    procedure PopupMenu_Buttons_N1Click(Sender: TObject);
-    procedure PopupMenu_Buttons_N2Click(Sender: TObject);
-    procedure PopupMenu_Buttons_N3Click(Sender: TObject);
-    procedure PopupMenu_Buttons_NewClick(Sender: TObject);
-    procedure PopupMenu_Buttons_OpenClick(Sender: TObject);
-    procedure PopupMenu_Buttons_TestClick(Sender: TObject);
-    procedure PopupMenu_Buttons_ViewClick(Sender: TObject);
+    procedure PMenuPopup(Sender: TObject);
+    procedure PMenuOpenIntViewerClick(Sender: TObject);
+    procedure PMenuPropertyClick(Sender: TObject);
     // ---
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    // ---
+
+    procedure ProcessTimerTimer(Sender: TObject);
+    procedure FolderBoxSelect(Sender: TObject);
 
 
+    // ---
+    procedure ColumnClick(Sender: TObject; Column: TListColumn);
+    procedure ViewStyleClick(Sender: TObject);
+    procedure ViewStyleClick2(Sender: TObject);
+    procedure OrderByClick(Sender: TObject);
+    procedure OptionsClick(Sender: TObject);
+    procedure BMenuClick(Sender: TObject);
     procedure BtnUpClick(Sender: TObject);
+    // ---
   private
     procedure MainFrm_UpdateButtons; overload;
     procedure MainFrm_UpdateButtons(Value: boolean); overload;
     procedure MainFrm_UpdateCursor(Value: TCursor);
-    procedure MainFrm_UpdateStyle;
+
+
+    procedure UpdateStyle;
   end;
 
 var
@@ -324,68 +301,28 @@ uses
   procedure TMainFrm.FormCreate(Sender: TObject);
   var
     CfgFolder: string;
+    Storage: TIniFile;
   begin
-    ArchiveListView.InitColumns;
-    // ---
-    SmallIcons.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
-    LargeIcons.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
-    // ---
-    CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      Storage.FileName := CfgFolder + ('mainfrm.xml');
-    end;
-    {$I beefm_mainfrm.inc}
-    Storage.Restore;
-    // ---
+    SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
+    LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
+
+    {$I beefm_mainfrm_load.inc}
     MainFrm_UpdateButtons(False);
     MainFrm_UpdateButtons;
-    MainFrm_UpdateStyle;
+    UpdateStyle;
   end;
   
   procedure TMainFrm.FormDestroy(Sender: TObject);
-  begin
-  
-  end;
-
-  procedure TMainFrm.ArchiveProcessTimerTimer(Sender: TObject);
   var
-    F: TViewFrm;
+    CfgFolder: string;
+    Storage: TIniFile;
   begin
-    with ArchiveProcess do
+    if MMenuOptionsSaveOnExit.Checked then
     begin
-      if Running = False then
-      begin
-        ArchiveProcessTimer.Enabled := False;
-        ArchiveListView.OpenArchive(ArchiveName, ArchiveLink);
-        MainFrm_UpdateButtons(True);
-      end;
+      {$I beefm_mainfrm_save.inc}
     end;
   end;
-
-  procedure TMainFrm.FolderBoxSelect(Sender: TObject);
-  begin
-    ArchiveListView.Folder := FolderBox.Text;
-  end;
-
-  procedure TMainFrm.ArchiveListViewColumnClick(Sender: TObject; Column: TListColumn);
-  begin
-    case Column.Index of
-      0: MainMenu_View_OrderBy_Name.Click;
-      1: MainMenu_View_OrderBy_Size.Click;
-      2: MainMenu_View_OrderBy_Packed.Click;
-      3: MainMenu_View_OrderBy_Ratio.Click;
-      4: MainMenu_View_OrderBy_Type.Click;
-      5: MainMenu_View_OrderBy_Modified.Click;
-      6: MainMenu_View_OrderBy_Attributes.Click;
-      7: MainMenu_View_OrderBy_Method.Click;
-      8: MainMenu_View_OrderBy_Password.Click;
-      9: MainMenu_View_OrderBy_Crc.Click;
-     10: MainMenu_View_OrderBy_Path.Click;
-     11: MainMenu_View_OrderBy_Position.Click;
-    end;
-  end;
-
+  
   procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   begin
     if Cursor = crHourGlass then
@@ -396,37 +333,94 @@ uses
       CanClose := True;
     end;
   end;
-
-  procedure TMainFrm.BtnUpClick(Sender: TObject);
-  begin
-    ArchiveListView.Up;
-  end;
-
+  
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
   begin
-    if not MainMenu_Options_SaveOnExit.Checked then
-    begin
-      MainFrm.SessionProperties := '';
-      // ConfigFrm.SessionProperties := '';
-    end;
     if Cursor = crHourGlass then
     begin
-    
+
     end else
     begin
-      MainMenu_File_Close.Click;
+      MMenuFileClose.Click;
+    end;
+  end;
+  
+  procedure TMainFrm.BMenuClick(Sender: TObject);
+  begin
+    TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
+    MainFrm_UpdateButtons;
+  end;
+  
+  procedure TMainFrm.FolderBoxSelect(Sender: TObject);
+  begin
+    ListView.Folder := FolderBox.Text;
+  end;
+  
+  procedure TMainFrm.BtnUpClick(Sender: TObject);
+  begin
+    ListView.Up;
+  end;
+  
+  procedure TMainFrm.ColumnClick(Sender: TObject; Column: TListColumn);
+  begin
+    case Column.Index of
+      0: MMenuViewOrderByName.Click;
+      1: MMenuViewOrderBySize.Click;
+      2: MMenuViewOrderByPacked.Click;
+      3: MMenuViewOrderByRatio.Click;
+      4: MMenuViewOrderByType.Click;
+      5: MMenuViewOrderByModified.Click;
+      6: MMenuViewOrderByAttributes.Click;
+      7: MMenuViewOrderByMethod.Click;
+      8: MMenuViewOrderByPassword.Click;
+      9: MMenuViewOrderByCrc.Click;
+     10: MMenuViewOrderByPath.Click;
+     11: MMenuViewOrderByPosition.Click;
+    end;
+  end;
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  procedure TMainFrm.ProcessTimerTimer(Sender: TObject);
+  var
+    F: TViewFrm;
+  begin
+    with Process do
+    begin
+      if Running = False then
+      begin
+        ProcessTimer.Enabled := False;
+        ListView.OpenArchive(ArchiveName, ArchiveLink);
+        MainFrm_UpdateButtons(True);
+      end;
     end;
   end;
 
-  procedure TMainFrm.FormResize(Sender: TObject);
-  begin
-    (*
-    MainFrm_StatusBar.Panels[0].Width := MainFrm_StatusBar.Width * 2 div 3;
-    MainFrm_StatusBar.Panels[1].Width := MainFrm_StatusBar.Width * 1 div 3;
-    // ---
-    MainFrm_StatusBar.DrawProgressBar(1);
-    *)
-  end;
+
+
+
+
+
+
+
+
+
 
   procedure TMainFrm.MainFrm_UpdateButtons;
   var
@@ -455,7 +449,7 @@ uses
     CurrLeft := 6;
     for I:= Low(Buttons) to High(Buttons) do
     begin
-      Buttons[I].Visible := PopupMenu_Buttons.Items[I].Checked;
+      Buttons[I].Visible := BMenu.Items[I].Checked;
       if Buttons[I].Visible then
       begin
         Buttons[I].Top := CurrTop;
@@ -492,46 +486,53 @@ uses
     BtnTest    .Enabled := Value;  BtnTest    .Font := MainFrm.Font;
     BtnCheckOut.Enabled := Value;  BtnCheckOut.Font := MainFrm.Font;
     // ---
-    MainMenu_File_Close .Enabled := Value;
-    MainMenu_File_Property  .Enabled := Value;
-    MainMenu_File_Move  .Enabled := Value;
-    MainMenu_File_Copy  .Enabled := Value;
-    MainMenu_File_Rename.Enabled := Value;
-    MainMenu_File_Delete.Enabled := Value;
+    MMenuFileClose   .Enabled := Value;
+    MMenuFileProperty.Enabled := Value;
+    MMenuFileMove    .Enabled := Value;
+    MMenuFileCopy    .Enabled := Value;
+    MMenuFileRename  .Enabled := Value;
+    MMenuFileDelete  .Enabled := Value;
     // ---
-    for I := 0 to MainMenu_Actions.Count -1 do
+    for I := 0 to MMenuActions.Count -1 do
     begin
-      MainMenu_Actions.Items[I].Enabled := Value;
+      MMenuActions.Items[I].Enabled := Value;
     end;
   end;
   
-  procedure TMainFrm.MainFrm_UpdateStyle;
+  procedure TMainFrm.UpdateStyle;
   begin
-    if MainMenu_View_LargeIcons.Checked then
-      ArchiveListView.ViewStyle := vsIcon
+    if MMenuViewLargeIcons.Checked then
+      ListView.ViewStyle := vsIcon
     else
-    if MainMenu_View_SmallIcons.Checked then
-      ArchiveListView.ViewStyle := vsSmallIcon
+    if MMenuViewSmallIcons.Checked then
+      ListView.ViewStyle := vsSmallIcon
     else
-    if MainMenu_View_List.Checked then
-      ArchiveListView.ViewStyle := vsList
+    if MMenuViewList.Checked then
+      ListView.ViewStyle := vsList
     else
-    if MainMenu_View_Report.Checked then
-      ArchiveListView.ViewStyle := vsReport;
+    if MMenuViewReport.Checked then
+      ListView.ViewStyle := vsReport;
       
-    ArchiveListView.RowSelect  := MainMenu_View_RowSelect.Checked;
-    ArchiveListView.GridLines  := MainMenu_View_GridLines.Checked;
-    ArchiveListView.SimpleList := MainMenu_View_ListMode.Checked;
+    ListView.RowSelect  := MMenuViewRowSelect.Checked;
+    ListView.GridLines  := MMenuViewGridLines.Checked;
+    ListView.SimpleList := MMenuViewListMode.Checked;
     
-    FolderBoxToolBar.Visible := not ArchiveListView.SimpleList;
-    if FolderBoxToolBar.Visible then
-      ButtonsToolBar.EdgeBorders := [ebLeft, ebTop, ebRight]
+    DownToolBar.Visible := not ListView.SimpleList;
+    if DownToolBar.Visible then
+      UpToolBar.EdgeBorders := [ebLeft, ebTop, ebRight]
     else
-      ButtonsToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
-    FolderBoxToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
+      UpToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
+    DownToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
   end;
 
-  procedure TMainFrm.MainMenu_File_NewClick(Sender: TObject);
+
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Main Menu File                                                        //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
+
+  procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
   var
     CmdLine: string;
   begin
@@ -540,9 +541,9 @@ uses
       SaveDialog.FileName := '';
       if SaveDialog.Execute then
       begin
-        MainMenu_File_Close.Click;
+        MMenuFileClose.Click;
 
-        with ArchiveProcess do
+        with Process do
         begin
           ArchiveName := SaveDialog.FileName;
           case SaveDialog.FilterIndex of
@@ -554,20 +555,20 @@ uses
         // ---
         CmdLine := 'BeeGui ';
         // ---
-        ArchiveProcess.CommandLine := CmdLine;
-        ArchiveProcess.Execute;
-        ArchiveProcessTimer.Enabled := True;
+        Process.CommandLine := CmdLine;
+        Process.Execute;
+        ProcessTimer.Enabled := True;
       end;
     end else
       MessageDlg('An process active', mtInformation, [mbOk], 0);
   end;
 
-  procedure TMainFrm.MainMenu_Actions_AddClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
   begin
 
   end;
 
-  procedure TMainFrm.MainMenu_File_OpenClick(Sender: TObject);
+  procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   var
     CmdLine: string;
   begin
@@ -581,39 +582,39 @@ uses
 
       if OpenDialog.Execute then
       begin
-        MainMenu_File_Close.Click;
+        MMenuFileClose.Click;
 
-        ArchiveProcess.ArchiveName := OpenDialog.FileName;
-        Caption := 'BeeFM' + ' - ' + ExtractFileName(ArchiveProcess.ArchiveName);
+        Process.ArchiveName := OpenDialog.FileName;
+        Caption := 'BeeFM' + ' - ' + ExtractFileName(Process.ArchiveName);
         // ---
         CmdLine := 'BeeGui';
         CmdLine := CmdLine + ' L ';
-        if MainMenu_Options_LogReport.Checked then
+        if MMenuOptionsLogReport.Checked then
           CmdLine := CmdLine + ' -1+ '
         else
           CmdLine := CmdLine + ' -1- ';
-        CmdLine := CmdLine + '"' + ArchiveProcess.ArchiveName + '"';
+        CmdLine := CmdLine + '"' + Process.ArchiveName + '"';
         CmdLine := CmdLine + ' *!';
         // ---
-        ArchiveProcess.CommandLine := CmdLine;
-        ArchiveProcessTimer.Enabled := True;
-        ArchiveProcess.Execute;
+        Process.CommandLine := CmdLine;
+        ProcessTimer.Enabled := True;
+        Process.Execute;
       end;
     end else
       MessageDlg('An process active', mtInformation, [mbOk], 0);
   end;
 
-  procedure TMainFrm.MainMenu_File_CloseClick(Sender: TObject);
+  procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
   begin
     Caption := 'BeeFM';
     
     MainFrm_UpdateCursor(crDefault);
     MainFrm_UpdateButtons(False);
     
-    ArchiveListView.CloseArchive;
+    ListView.CloseArchive;
   end;
 
-  procedure TMainFrm.MainMenu_File_MoveClick(Sender: TObject);
+  procedure TMainFrm.MMenuFileMoveClick(Sender: TObject);
   var
     NewName: string;
   begin
@@ -622,22 +623,22 @@ uses
     // ---
     if SelectDirectory('Move archive to:', '', NewName) then
     begin
-      NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArchiveProcess.ArchiveName);
-      if RenameFile(ArchiveProcess.ArchiveName, NewName) then
-        ArchiveProcess.ArchiveName := NewName
+      NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(Process.ArchiveName);
+      if RenameFile(Process.ArchiveName, NewName) then
+        Process.ArchiveName := NewName
       else
         MessageDlg('Error moving archive', mtError, [mbOk], 0);
     end;
   end;
 
-  procedure TMainFrm.MainMenu_File_PropertyClick(Sender: TObject);
+  procedure TMainFrm.MMenuFilePropertyClick(Sender: TObject);
   var
     F: TInfoFrm;
   begin
     if Cursor = crHourGlass then Exit;
     // ---
     F := TInfoFrm.Create(Self);
-    if F.UpdateAInfo(ArchiveProcess.ArchiveName, ArchiveListView.Details) then
+    if F.UpdateAInfo(Process.ArchiveName, ListView.Details) then
     begin
       F.ShowModal;
     end else
@@ -645,7 +646,7 @@ uses
     F.Free;
   end;
 
-  procedure TMainFrm.MainMenu_File_CopyClick(Sender: TObject);
+  procedure TMainFrm.MMenuFileCopyClick(Sender: TObject);
   var
     NewName: string;
   begin
@@ -654,16 +655,16 @@ uses
       NewName := '';
       if SelectDirectory('Copy archive to:', '', NewName) then
       begin
-        NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArchiveProcess.ArchiveName);
-        if CopyFile(ArchiveProcess.ArchiveName, NewName) then
-          ArchiveProcess.ArchiveName := NewName
+        NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(Process.ArchiveName);
+        if CopyFile(Process.ArchiveName, NewName) then
+          Process.ArchiveName := NewName
         else
           MessageDlg('Error copying archive', mtError, [mbOk], 0);
       end;
     end;
   end;
 
-  procedure TMainFrm.MainMenu_File_RenameClick(Sender: TObject);
+  procedure TMainFrm.MMenuFileRenameClick(Sender: TObject);
   begin
   (*
   var
@@ -683,7 +684,7 @@ uses
           NewName := ExtractFilePath(AppArcName) + f.RenameFrm_To.Text;
           if RenameFile (AppArcName, NewName) then
           begin
-            MainMenu_File_Close.Click;
+            MMenuFileClose.Click;
             AppArcName := NewName;
 
             Caption := 'Bee' + ' - ' + ExtractFileName(AppArcName);
@@ -696,58 +697,92 @@ uses
     *)
   end;
 
-  procedure TMainFrm.MainMenu_File_DeleteClick(Sender: TObject);
+  procedure TMainFrm.MMenuFileDeleteClick(Sender: TObject);
   begin
     if Cursor <> crHourGlass then
     begin
       if MessageDlg('Delete archive?', mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
-        if DeleteFile(ArchiveProcess.ArchiveName) then
-          MainMenu_File_Close.Click
+        if DeleteFile(Process.ArchiveName) then
+          MMenuFileClose.Click
         else
           MessageDlg('Error on deleting archive.', mtError, [mbOk], 0);
       end;
     end;
   end;
 
-  procedure TMainFrm.MainMenu_File_ExitClick(Sender: TObject);
+  procedure TMainFrm.MMenuFileExitClick(Sender: TObject);
   begin
-    Close;
-  end;
-
-
-
-  procedure TMainFrm.MainMenu_View_ViewStyle_Click(Sender: TObject);
-  begin
-    if Sender <> nil then
-    begin
-      MainMenu_View_LargeIcons.Checked := Sender = MainMenu_View_LargeIcons;
-      MainMenu_View_SmallIcons.Checked := Sender = MainMenu_View_SmallIcons;
-      MainMenu_View_Report    .Checked := Sender = MainMenu_View_Report;
-      MainMenu_View_List      .Checked := Sender = MainMenu_View_List;
-    end;
-    MainFrm_UpdateStyle;
+    MMenuFileClose.Click;
   end;
   
-  procedure TMainFrm.MainMenu_View_RowSelectClick(Sender: TObject);
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Main Menu View                                                        //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
+
+  procedure TMainFrm.ViewStyleClick(Sender: TObject);
   begin
-    MainMenu_View_RowSelect.Checked := not MainMenu_View_RowSelect.Checked;
-    MainFrm_UpdateStyle;
-  end;
-  
-  procedure TMainFrm.MainMenu_View_GridLinesClick(Sender: TObject);
-  begin
-    MainMenu_View_GridLines.Checked := not MainMenu_View_GridLines.Checked;
-    MainFrm_UpdateStyle;
-  end;
-  
-  procedure TMainFrm.MainMenu_View_ListModeClick(Sender: TObject);
-  begin
-    MainMenu_View_ListMode.Checked := not MainMenu_View_ListMode.Checked;
-    MainFrm_UpdateStyle;
+    MMenuViewLargeIcons.Checked := Sender = MMenuViewLargeIcons;
+    MMenuViewSmallIcons.Checked := Sender = MMenuViewSmallIcons;
+    MMenuViewReport.Checked := Sender = MMenuViewReport;
+    MMenuViewList.Checked := Sender = MMenuViewList;
+    UpdateStyle;
   end;
 
-  procedure TMainFrm.MainMenu_Actions_DeleteClick(Sender: TObject);
+  procedure TMainFrm.ViewStyleClick2(Sender: TObject);
+  begin
+    TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
+    UpdateStyle;
+  end;
+  
+  procedure TMainFrm.OrderByClick(Sender: TObject);
+  begin
+    if Sender = MMenuViewOrderByName then
+      ListView.SortCol := alvcName
+    else
+    if Sender = MMenuViewOrderBySize then
+      ListView.SortCol := alvcSize
+    else
+    if Sender = MMenuViewOrderByPacked then
+      ListView.SortCol := alvcPacked
+    else
+    if Sender = MMenuViewOrderByRatio then
+      ListView.SortCol := alvcRatio
+    else
+    if Sender = MMenuViewOrderByType then
+      ListView.SortCol := alvcType
+    else
+    if Sender = MMenuViewOrderByModified then
+      ListView.SortCol := alvcTime
+    else
+    if Sender = MMenuViewOrderByAttributes then
+      ListView.SortCol := alvcAttr
+    else
+    if Sender = MMenuViewOrderByMethod then
+      ListView.SortCol := alvcMethod
+    else
+    if Sender = MMenuViewOrderByPassword then
+      ListView.SortCol := alvcPassword
+    else
+    if Sender = MMenuViewOrderByCrc then
+      ListView.SortCol := alvcCRC
+    else
+    if Sender = MMenuViewOrderByPath then
+      ListView.SortCol := alvcPath
+    else
+    if Sender = MMenuViewOrderByPosition then
+      ListView.SortCol := alvcPosition;
+  end;
+
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Main Menu Action                                                      //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
+
+  procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   begin
     if Cursor <> crHourGlass then
     begin
@@ -758,11 +793,11 @@ uses
     end;
   end;
 
-  procedure TMainFrm.MainMenu_Actions_ExtractClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsExtractClick(Sender: TObject);
   begin
   end;
 
-  procedure TMainFrm.MainMenu_Actions_ExtractAllClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsExtractAllClick(Sender: TObject);
   begin
   (*
   var
@@ -777,7 +812,7 @@ uses
   *)
   end;
 
-  procedure TMainFrm.MainMenu_Actions_TestClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
   begin
     if Cursor <> crHourGlass then
     begin
@@ -785,23 +820,23 @@ uses
     end;
   end;
 
-  procedure TMainFrm.MainMenu_Actions_RenameClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);
   begin
     if Cursor <> crHourGlass then
     begin
     end;
   end;
 
-  procedure TMainFrm.MainMenu_Actions_ViewClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsViewClick(Sender: TObject);
   begin
     if Cursor <> crHourGlass then
     begin
-      if ArchiveListView.Selected <> nil then
+      if ListView.Selected <> nil then
       begin
-        if Length(ArchiveListView.Selected.SubItems[ArchiveListView.Columns.Count - 2]) = 0 then
+        if Length(ListView.Selected.SubItems[ListView.Columns.Count - 2]) = 0 then
         begin
-          ArchiveListView.Folder :=IncludeTrailingBackSlash(
-            ArchiveListView.Folder) + ArchiveListView.Selected.Caption;
+          ListView.Folder :=IncludeTrailingBackSlash(
+            ListView.Folder) + ListView.Selected.Caption;
         end else
         begin
           // file Extraction
@@ -810,7 +845,7 @@ uses
     end;
   end;
 
-  procedure TMainFrm.MainMenu_Actions_CheckOutClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);
   begin
     if Cursor <> crHourGlass then
     begin
@@ -818,7 +853,7 @@ uses
     end;
   end;
 
-  procedure TMainFrm.MainMenu_Actions_TestAllClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsTestAllClick(Sender: TObject);
   begin
     if Cursor <> crHourGlass then
     begin
@@ -826,7 +861,7 @@ uses
     end;
   end;
 
-  procedure TMainFrm.MainMenu_Actions_SelectAllClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsSelectAllClick(Sender: TObject);
   begin
   (*
   var
@@ -846,7 +881,7 @@ uses
     *)
   end;
 
-  procedure TMainFrm.MainMenu_Actions_SelectMaskClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsSelectMaskClick(Sender: TObject);
   begin
   (*
   var
@@ -870,7 +905,7 @@ uses
     *)
   end;
 
-  procedure TMainFrm.MainMenu_Actions_DeselectAllClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsDeselectAllClick(Sender: TObject);
   begin
   (*
   var
@@ -914,7 +949,7 @@ uses
     *)
   end;
 
-  procedure TMainFrm.MainMenu_Actions_InvertClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsInvertClick(Sender: TObject);
   begin
   (*
   var
@@ -933,47 +968,51 @@ uses
     end;
     *)
   end;
+  
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Main Menu Options                                                     //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
 
-  procedure TMainFrm.MainMenu_Options_ConfigurationClick(Sender: TObject);
+  procedure TMainFrm.MMenuOptionsConfigurationClick(Sender: TObject);
   begin
     ConfigFrm.ShowModal;
   end;
 
-  procedure TMainFrm.MainMenu_Options_PasswordClick(Sender: TObject);
+  procedure TMainFrm.OptionsClick(Sender: TObject);
   begin
+    TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
   end;
 
-  procedure TMainFrm.MainMenu_Options_SaveOnExitClick(Sender: TObject);
+  procedure TMainFrm.MMenuOptionsSaveNowClick(Sender: TObject);
+  var
+    CfgFolder: string;
+    Storage: TIniFile;
   begin
-    MainMenu_Options_SaveOnExit.Checked := not MainMenu_Options_SaveOnExit.Checked;
+    {$I beefm_mainfrm_save.inc}
   end;
 
-  procedure TMainFrm.MainMenu_Options_SaveNowClick(Sender: TObject);
-  begin
-    Storage.Save;
-  end;
-
-  procedure TMainFrm.MainMenu_Options_DefaultSettingClick(Sender: TObject);
+  procedure TMainFrm.MMenuOptionsDefaultClick(Sender: TObject);
   begin
     if Cursor <> crHourGlass then
     begin
       if MessageDlg('Default setting?', mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
-        MainMenu_File_Exit.Click;
         ClearDirectory(GetApplicationConfigDir('BeeGui'));
-        // ---
-        ShellExec(ParamStr(0), '');
+        // ShellExec(ParamStr(0), '');
       end;
     end else
       MessageDlg('An active process. Please wait.', mtInformation, [mbOk], 0);
   end;
+  
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Main Menu Options                                                     //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
 
-  procedure TMainFrm.MainMenu_Options_LogReportClick (Sender: TObject);
-  begin
-    MainMenu_Options_LogReport.Checked := not MainMenu_Options_LogReport.Checked;
-  end;
-
-  procedure TMainFrm.MainMenu_Help_AboutClick(Sender: TObject);
+  procedure TMainFrm.MMenuHelpAboutClick(Sender: TObject);
   var
     F: TForm;
   begin
@@ -983,46 +1022,8 @@ uses
   end;
 
 
-  procedure TMainFrm.MainMenu_View_OrderBy_Click(Sender: TObject);
-  begin
-    if Sender = MainMenu_View_OrderBy_Name then
-      ArchiveListView.SortCol := alvcName
-    else
-    if Sender = MainMenu_View_OrderBy_Size then
-      ArchiveListView.SortCol := alvcSize
-    else
-    if Sender = MainMenu_View_OrderBy_Packed then
-      ArchiveListView.SortCol := alvcPacked
-    else
-    if Sender = MainMenu_View_OrderBy_Ratio then
-      ArchiveListView.SortCol := alvcRatio
-    else
-    if Sender = MainMenu_View_OrderBy_Type then
-      ArchiveListView.SortCol := alvcType
-    else
-    if Sender = MainMenu_View_OrderBy_Modified then
-      ArchiveListView.SortCol := alvcTime
-    else
-    if Sender = MainMenu_View_OrderBy_Attributes then
-      ArchiveListView.SortCol := alvcAttr
-    else
-    if Sender = MainMenu_View_OrderBy_Method then
-      ArchiveListView.SortCol := alvcMethod
-    else
-    if Sender = MainMenu_View_OrderBy_Password then
-      ArchiveListView.SortCol := alvcPassword
-    else
-    if Sender = MainMenu_View_OrderBy_Crc then
-      ArchiveListView.SortCol := alvcCRC
-    else
-    if Sender = MainMenu_View_OrderBy_Path then
-      ArchiveListView.SortCol := alvcPath
-    else
-    if Sender = MainMenu_View_OrderBy_Position then
-      ArchiveListView.SortCol := alvcPosition;
-  end;
 
-  procedure TMainFrm.MainMenu_Help_F1Click(Sender: TObject);
+  procedure TMainFrm.MMenuHelpF1Click(Sender: TObject);
   var
     Help_FileName: string;
     Help_FilePath: string;
@@ -1033,7 +1034,7 @@ uses
     ShellExec(Help_FileName, Help_FilePath);
   end;
 
-  procedure TMainFrm.MainMenu_Help_InternetClick(Sender: TObject);
+  procedure TMainFrm.MMenuHelpInternetClick(Sender: TObject);
   var
     F: TAboutFrm;
   begin
@@ -1042,7 +1043,7 @@ uses
     F.Free;
   end;
 
-  procedure TMainFrm.MainMenu_Help_LicenseClick(Sender: TObject);
+  procedure TMainFrm.MMenuHelpLicenseClick(Sender: TObject);
   var
     f: TAboutFrm;
   begin
@@ -1050,96 +1051,8 @@ uses
     f.BtnLicense.Click;
     f.Free;
   end;
-
-  // ---------------------------------------------------------------------- //
-  //                                                                        //
-  //  PopupnMenu Buttons Click                                              //
-  //                                                                        //
-  // ---------------------------------------------------------------------- //
   
-  procedure TMainFrm.PopupMenu_Buttons_NewClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_New.Checked := not PopupMenu_Buttons_New.Checked;
-    MainFrm_UpdateButtons;
-  end;
 
-  procedure TMainFrm.PopupMenu_Buttons_OpenClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_Open.Checked := not PopupMenu_Buttons_Open.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_N1Click(Sender: TObject);
-  begin
-    PopupMenu_Buttons_N1.Checked := not PopupMenu_Buttons_N1.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_AddClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_Add.Checked := not PopupMenu_Buttons_Add.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_ExtractClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_Extract.Checked := not PopupMenu_Buttons_Extract.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_ViewClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_View.Checked := not PopupMenu_Buttons_View.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_DeleteClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_Delete.Checked := not PopupMenu_Buttons_Delete.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_N2Click(Sender: TObject);
-  begin
-    PopupMenu_Buttons_N2.Checked := not PopupMenu_Buttons_N2.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_TestClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_Test.Checked := not PopupMenu_Buttons_Test.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_CheckOutClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_CheckOut.Checked := not PopupMenu_Buttons_CheckOut.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_N3Click(Sender: TObject);
-  begin
-    PopupMenu_Buttons_N3.Checked := not PopupMenu_Buttons_N3.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_ConfigurationClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_Configuration.Checked := not PopupMenu_Buttons_Configuration.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_HelpClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_Help.Checked := not PopupMenu_Buttons_Help.Checked;
-    MainFrm_UpdateButtons;
-  end;
-
-  procedure TMainFrm.PopupMenu_Buttons_ExitClick(Sender: TObject);
-  begin
-    PopupMenu_Buttons_Exit.Checked := not PopupMenu_Buttons_Exit.Checked;
-    MainFrm_UpdateButtons;
-  end;
 
   // ---------------------------------------------------------------------- //
   //                                                                        //
@@ -1147,22 +1060,22 @@ uses
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
-  procedure TMainFrm.PopupMenu_Open_IntViewerClick (Sender: TObject);
+  procedure TMainFrm.PMenuOpenIntViewerClick (Sender: TObject);
   begin
 
   end;
 
-  procedure TMainFrm.PopupMenu_PropertyClick(Sender: TObject);
+  procedure TMainFrm.PMenuPropertyClick(Sender: TObject);
   begin
   end;
   
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  PopupMenu Events                                                      //
+  //  PMenu Events                                                      //
   //                                                                        //
   // ---------------------------------------------------------------------- //
   
-  procedure TMainFrm.PopupMenuPopup(Sender: TObject);
+  procedure TMainFrm.PMenuPopup(Sender: TObject);
   begin
 
   end;

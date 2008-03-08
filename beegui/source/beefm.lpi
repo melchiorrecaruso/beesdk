@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="6"/>
     </General>
     <i18n>
       <OutDir Value="resources\po"/>
@@ -53,7 +53,7 @@
         <MinVersion Minor="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="228">
+    <Units Count="238">
       <Unit0>
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -70,8 +70,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="9" Y="475"/>
-        <TopLine Value="434"/>
+        <CursorPos X="58" Y="245"/>
+        <TopLine Value="226"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -81,28 +81,28 @@
         <UnitName Value="FileUtil"/>
         <CursorPos X="2" Y="120"/>
         <TopLine Value="99"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_components.pas"/>
         <UnitName Value="beegui_components"/>
         <CursorPos X="18" Y="3"/>
         <TopLine Value="1"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit3>
       <Unit4>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\comctrls.pp"/>
         <UnitName Value="ComCtrls"/>
         <CursorPos X="14" Y="2322"/>
         <TopLine Value="2304"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\stdctrls.pp"/>
         <UnitName Value="StdCtrls"/>
         <CursorPos X="3" Y="1193"/>
         <TopLine Value="1174"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_aboutfrm.pas"/>
@@ -112,13 +112,13 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="42" Y="117"/>
         <TopLine Value="95"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_aboutfrm.lfm"/>
         <CursorPos X="23" Y="11"/>
         <TopLine Value="11"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
         <SyntaxHighlighter Value="LFM"/>
       </Unit7>
       <Unit8>
@@ -128,13 +128,13 @@
         <UnitName Value="frmExploreMenu"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="15"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\..\..\..\FPC\lazarus\examples\exploremenu\README.txt"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
         <SyntaxHighlighter Value="None"/>
       </Unit9>
       <Unit10>
@@ -143,7 +143,7 @@
         <ResourceFilename Value="..\..\beegui4laz\source\forms\beegui_aboutfrm.lfm.lrs"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
         <SyntaxHighlighter Value="None"/>
       </Unit10>
       <Unit11>
@@ -153,14 +153,14 @@
         <UnitName Value="beegui_propertyfrm"/>
         <CursorPos X="14" Y="49"/>
         <TopLine Value="33"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="15"/>
       </Unit11>
       <Unit12>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
         <CursorPos X="15" Y="475"/>
         <TopLine Value="456"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit12>
       <Unit13>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_infofrm.pas"/>
@@ -170,28 +170,28 @@
         <UnitName Value="BeeGui_InfoFrm"/>
         <CursorPos X="35" Y="138"/>
         <TopLine Value="123"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit13>
       <Unit14>
         <Filename Value="..\..\beegui4laz\source\package\BeeGui_Components.pas"/>
         <UnitName Value="BeeGui_Components"/>
         <CursorPos X="1" Y="611"/>
         <TopLine Value="590"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\..\beegui4laz\source\package\BeeGui_Common.pas"/>
         <UnitName Value="BeeGui_Common"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\..\beegui4laz\source\package\BeeGui_WinOS.pas"/>
         <UnitName Value="BeeGui_WinOS"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit16>
       <Unit17>
         <Filename Value="..\..\BeeGui4Delphi\source\forms\BeeGui_AddFrm.pas"/>
@@ -200,7 +200,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_addfrm.pas"/>
@@ -210,7 +210,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="35" Y="29"/>
         <TopLine Value="1"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit18>
       <Unit19>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_passwordfrm.pas"/>
@@ -220,7 +220,7 @@
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="6" Y="93"/>
         <TopLine Value="73"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit19>
       <Unit20>
         <Filename Value="forms\beefm_configfrm.pas"/>
@@ -229,21 +229,23 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beefm_configfrm.lrs"/>
         <UnitName Value="BeeFM_ConfigFrm"/>
-        <CursorPos X="10" Y="109"/>
-        <TopLine Value="95"/>
+        <CursorPos X="31" Y="102"/>
+        <TopLine Value="90"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_configfrm.lrs"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_mainfrm.lrs"/>
         <CursorPos X="1" Y="591"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit22>
       <Unit23>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_renamefrm.pas"/>
@@ -253,31 +255,31 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="33" Y="29"/>
         <TopLine Value="1"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit23>
       <Unit24>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_addfrm.lrs"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit24>
       <Unit25>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_propertyfrm.lrs"/>
         <CursorPos X="65" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_aboutfrm.lrs"/>
         <CursorPos X="1" Y="569"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_mainfrm.lfm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
         <SyntaxHighlighter Value="LFM"/>
       </Unit27>
       <Unit28>
@@ -288,7 +290,7 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="35" Y="29"/>
         <TopLine Value="1"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit28>
       <Unit29>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_viewfrm.pas"/>
@@ -298,7 +300,7 @@
         <UnitName Value="BeeGui_ViewFrm"/>
         <CursorPos X="35" Y="27"/>
         <TopLine Value="1"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_intviewerfrm.pas"/>
@@ -308,13 +310,13 @@
         <UnitName Value="BeeGui_IntViewerFrm"/>
         <CursorPos X="35" Y="29"/>
         <TopLine Value="13"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit30>
       <Unit31>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_intviewerfrm.lrs"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit31>
       <Unit32>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_sedesefrm.pas"/>
@@ -324,14 +326,14 @@
         <UnitName Value="BeeGui_SeDeseFrm"/>
         <CursorPos X="35" Y="29"/>
         <TopLine Value="1"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit32>
       <Unit33>
         <Filename Value="..\..\Bee\source\bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
         <CursorPos X="29" Y="373"/>
         <TopLine Value="458"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit33>
       <Unit34>
         <Filename Value="..\..\beegui4laz\source\beegui_overwritefrm.pas"/>
@@ -341,7 +343,7 @@
         <UnitName Value="beegui_overwritefrm"/>
         <CursorPos X="7" Y="110"/>
         <TopLine Value="73"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
       </Unit34>
       <Unit35>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_overwritefrm.pas"/>
@@ -351,80 +353,80 @@
         <UnitName Value="BeeGui_OverWriteFrm"/>
         <CursorPos X="35" Y="29"/>
         <TopLine Value="1"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit35>
       <Unit36>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_infofrm.lrs"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit36>
       <Unit37>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_config.pas"/>
         <UnitName Value="beegui_config"/>
         <CursorPos X="24" Y="415"/>
         <TopLine Value="1"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit37>
       <Unit38>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
         <CursorPos X="23" Y="1225"/>
         <TopLine Value="1208"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
         <CursorPos X="17" Y="36"/>
         <TopLine Value="18"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit39>
       <Unit40>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\imglist.pp"/>
         <UnitName Value="ImgList"/>
         <CursorPos X="15" Y="158"/>
         <TopLine Value="63"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit40>
       <Unit41>
         <Filename Value="..\..\Bee\source\compiler.inc"/>
         <CursorPos X="3" Y="3"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit41>
       <Unit42>
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
         <CursorPos X="42" Y="1483"/>
         <TopLine Value="1315"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit42>
       <Unit43>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\graphtype.pp"/>
         <UnitName Value="GraphType"/>
         <CursorPos X="15" Y="25"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit43>
       <Unit44>
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="1" Y="104"/>
         <TopLine Value="86"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit44>
       <Unit45>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\objpas\classes\classesh.inc"/>
         <CursorPos X="14" Y="1228"/>
         <TopLine Value="325"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit45>
       <Unit46>
         <Filename Value="..\..\Bee\source\Compiler.inc.bak"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
         <SyntaxHighlighter Value="None"/>
       </Unit46>
       <Unit47>
@@ -432,223 +434,223 @@
         <UnitName Value="BeeGui_WinOS"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="17"/>
+        <UsageCount Value="16"/>
       </Unit47>
       <Unit48>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\packages\extra\winunits\shellapi.pp"/>
         <UnitName Value="ShellApi"/>
         <CursorPos X="10" Y="94"/>
         <TopLine Value="76"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit48>
       <Unit49>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\win32\wininc\base.inc"/>
         <CursorPos X="6" Y="146"/>
         <TopLine Value="128"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit49>
       <Unit50>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\win32\wininc\redef.inc"/>
         <CursorPos X="10" Y="302"/>
         <TopLine Value="284"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit50>
       <Unit51>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\include\graphic.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="19"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit51>
       <Unit52>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\interfaces\win32\interfaces.pp"/>
         <UnitName Value="Interfaces"/>
         <CursorPos X="12" Y="32"/>
         <TopLine Value="8"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit52>
       <Unit53>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\interfacebase.pp"/>
         <UnitName Value="InterfaceBase"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="25"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit53>
       <Unit54>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\fcl\inc\inifiles.pp"/>
         <UnitName Value="IniFiles"/>
         <CursorPos X="3" Y="151"/>
         <TopLine Value="135"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit54>
       <Unit55>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\objpas\sysutils\diskh.inc"/>
         <CursorPos X="10" Y="22"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit55>
       <Unit56>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_common.pas"/>
         <UnitName Value="BeeGui_Common"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit56>
       <Unit57>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_sysutils.pas"/>
         <UnitName Value="BeeGui_SysUtils"/>
         <CursorPos X="10" Y="203"/>
         <TopLine Value="181"/>
-        <UsageCount Value="200"/>
+        <UsageCount Value="199"/>
       </Unit57>
       <Unit58>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\win32\wininc\func.inc"/>
         <CursorPos X="10" Y="138"/>
         <TopLine Value="120"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit58>
       <Unit59>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_treeview.pas"/>
         <UnitName Value="beegui_archivetreeview"/>
         <CursorPos X="6" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit59>
       <Unit60>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_language.pas"/>
         <UnitName Value="BeeGui_Language"/>
         <CursorPos X="1" Y="8"/>
         <TopLine Value="163"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit60>
       <Unit61>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\win32\classes.pp"/>
         <UnitName Value="Classes"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="3"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit61>
       <Unit62>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\include\customgroupbox.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit62>
       <Unit63>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\include\customcheckbox.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="123"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit63>
       <Unit64>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_configuration.pas"/>
         <UnitName Value="BeeGui_Configuration"/>
         <CursorPos X="33" Y="290"/>
         <TopLine Value="56"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit64>
       <Unit65>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_optioncombobox.pas"/>
         <UnitName Value="beegui_findcombobox"/>
         <CursorPos X="40" Y="60"/>
         <TopLine Value="28"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit65>
       <Unit66>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_findcombobox.pas"/>
         <UnitName Value="BeeGui_FindComboBox"/>
         <CursorPos X="55" Y="49"/>
         <TopLine Value="25"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit66>
       <Unit67>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_foldertreeview.pas"/>
         <UnitName Value="BeeGui_FolderTreeView"/>
         <CursorPos X="32" Y="229"/>
         <TopLine Value="1"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="15"/>
       </Unit67>
       <Unit68>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_iconimagelist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
         <CursorPos X="6" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit68>
       <Unit69>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
         <CursorPos X="18" Y="30"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit69>
       <Unit70>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_folderedit.pas"/>
         <UnitName Value="BeeGui_FolderEdit"/>
         <CursorPos X="11" Y="9"/>
         <TopLine Value="1"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
       </Unit70>
       <Unit71>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_storedcombobox.pas"/>
         <UnitName Value="BeeGui_StoredComboBox"/>
         <CursorPos X="11" Y="8"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit71>
       <Unit72>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_storedlabel.pas"/>
         <UnitName Value="BeeGui_StoredLabel"/>
         <CursorPos X="6" Y="12"/>
         <TopLine Value="3"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit72>
       <Unit73>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_storedcheckbox.pas"/>
         <UnitName Value="BeeGui_StoredCheckBox"/>
         <CursorPos X="27" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit73>
       <Unit74>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_addtreeview.pas"/>
         <UnitName Value="BeeGui_AddTreeView"/>
         <CursorPos X="18" Y="30"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit74>
       <Unit75>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_unstoredlabel.pas"/>
         <UnitName Value="BeeGui_UnStoredLabel"/>
         <CursorPos X="38" Y="59"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit75>
       <Unit76>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_registry.pas"/>
         <UnitName Value="BeeGui_Registry"/>
         <CursorPos X="1" Y="36"/>
         <TopLine Value="1"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="15"/>
       </Unit76>
       <Unit77>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\buttons.pp"/>
         <UnitName Value="Buttons"/>
         <CursorPos X="17" Y="363"/>
         <TopLine Value="346"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit77>
       <Unit78>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_archivetreeview.pas"/>
         <UnitName Value="BeeGui_ArchiveTreeView"/>
         <CursorPos X="29" Y="411"/>
         <TopLine Value="393"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="51"/>
       </Unit78>
       <Unit79>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_extractfrm.lfm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
         <SyntaxHighlighter Value="LFM"/>
       </Unit79>
       <Unit80>
@@ -656,114 +658,114 @@
         <UnitName Value="Lazarus"/>
         <CursorPos X="15" Y="25"/>
         <TopLine Value="1"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit80>
       <Unit81>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\inc\systemh.inc"/>
         <CursorPos X="11" Y="489"/>
         <TopLine Value="474"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit81>
       <Unit82>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\inc\wstringh.inc"/>
         <CursorPos X="11" Y="30"/>
         <TopLine Value="11"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit82>
       <Unit83>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\extctrls.pp"/>
         <UnitName Value="ExtCtrls"/>
         <CursorPos X="59" Y="942"/>
         <TopLine Value="924"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit83>
       <Unit84>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\include\treeview.inc"/>
         <CursorPos X="14" Y="1827"/>
         <TopLine Value="1810"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit84>
       <Unit85>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\objpas\sysutils\sysstrh.inc"/>
         <CursorPos X="10" Y="80"/>
         <TopLine Value="61"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit85>
       <Unit86>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_appview.pas"/>
         <UnitName Value="BeeGui_AppView"/>
         <CursorPos X="24" Y="24"/>
         <TopLine Value="6"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit86>
       <Unit87>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
         <CursorPos X="10" Y="434"/>
         <TopLine Value="415"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit87>
       <Unit88>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_3dprogressbar.pas"/>
         <UnitName Value="beegui_3dprogressbar"/>
         <CursorPos X="37" Y="52"/>
         <TopLine Value="19"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="197"/>
       </Unit88>
       <Unit89>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\checklst.pas"/>
         <UnitName Value="CheckLst"/>
         <CursorPos X="14" Y="43"/>
         <TopLine Value="136"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit89>
       <Unit90>
         <Filename Value="..\..\bee\source\bee_common.pas"/>
         <UnitName Value="Bee_Common"/>
         <CursorPos X="10" Y="78"/>
         <TopLine Value="58"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="17"/>
       </Unit90>
       <Unit91>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_appviewer.pas"/>
         <UnitName Value="BeeGui_AppViewer"/>
         <CursorPos X="18" Y="30"/>
         <TopLine Value="17"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="19"/>
       </Unit91>
       <Unit92>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\fcl\inc\process.pp"/>
         <UnitName Value="process"/>
         <CursorPos X="55" Y="93"/>
         <TopLine Value="69"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit92>
       <Unit93>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\win32\wininc\defines.inc"/>
         <CursorPos X="6" Y="1034"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit93>
       <Unit94>
         <Filename Value="..\..\BeeGui4Delphi\source\package\BeeGui_Components.pas"/>
         <UnitName Value="BeeGui_Components"/>
         <CursorPos X="23" Y="8"/>
         <TopLine Value="8"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit94>
       <Unit95>
         <Filename Value="..\..\BeeGui4Delphi\source\package\BeeGui_Common.pas"/>
         <UnitName Value="BeeGui_Common"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit95>
       <Unit96>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\lclclasses.pp"/>
         <UnitName Value="LCLClasses"/>
         <CursorPos X="21" Y="32"/>
         <TopLine Value="14"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit96>
       <Unit97>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_fileinfofrm.pas"/>
@@ -772,65 +774,65 @@
         <UnitName Value="BeeGui_FileInfoFrm"/>
         <CursorPos X="30" Y="52"/>
         <TopLine Value="1"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="13"/>
       </Unit97>
       <Unit98>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\menus.pp"/>
         <UnitName Value="Menus"/>
         <CursorPos X="73" Y="203"/>
         <TopLine Value="247"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit98>
       <Unit99>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\objpas\sysutils\finah.inc"/>
         <CursorPos X="10" Y="37"/>
         <TopLine Value="16"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit99>
       <Unit100>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\win32\wininc\ascdef.inc"/>
         <CursorPos X="10" Y="123"/>
         <TopLine Value="108"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit100>
       <Unit101>
         <Filename Value="..\..\Bee\source\bee_headers.pas"/>
         <UnitName Value="Bee_Headers"/>
         <CursorPos X="74" Y="811"/>
         <TopLine Value="804"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit101>
       <Unit102>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\objpas\sysutils\sysutilh.inc"/>
         <CursorPos X="28" Y="199"/>
         <TopLine Value="184"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit102>
       <Unit103>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\win32\system.pp"/>
         <UnitName Value="System"/>
         <CursorPos X="2" Y="33"/>
         <TopLine Value="18"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit103>
       <Unit104>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\objpas\sysutils\sysansih.inc"/>
         <CursorPos X="10" Y="21"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit104>
       <Unit105>
         <Filename Value="..\..\beegui4laz\source\packages\beegui.pas"/>
         <UnitName Value="beegui"/>
         <CursorPos X="29" Y="12"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit105>
       <Unit106>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_addtreeview.pas.bak"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
         <SyntaxHighlighter Value="None"/>
       </Unit106>
       <Unit107>
@@ -838,475 +840,475 @@
         <UnitName Value="BeeGui_WinOS"/>
         <CursorPos X="52" Y="99"/>
         <TopLine Value="305"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit107>
       <Unit108>
         <Filename Value="..\..\..\..\FPC\2.0.2\fpc\rtl\win32\windows.pp"/>
         <UnitName Value="windows"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="17"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit108>
       <Unit109>
         <Filename Value="..\..\beegui4laz\source\include\compiler.inc"/>
         <CursorPos X="21" Y="27"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit109>
       <Unit110>
         <Filename Value="..\..\Bee\source\include\compiler.inc"/>
         <CursorPos X="2" Y="3"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit110>
       <Unit111>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\propertystorage.pas"/>
         <UnitName Value="PropertyStorage"/>
         <CursorPos X="30" Y="135"/>
         <TopLine Value="106"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit111>
       <Unit112>
         <Filename Value="..\..\beegui4laz\source\include\beegui_mainfrm.inc"/>
         <CursorPos X="44" Y="25"/>
         <TopLine Value="1"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit112>
       <Unit113>
         <Filename Value="..\..\beegui4laz\source\include\beegui_configfrm.inc"/>
         <CursorPos X="35" Y="22"/>
         <TopLine Value="1"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit113>
       <Unit114>
         <Filename Value="..\..\beegui4laz\source\include\beegui_aboutfrm.inc"/>
         <CursorPos X="31" Y="6"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit114>
       <Unit115>
         <Filename Value="..\..\beegui4laz\source\include\beegui_viewfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit115>
       <Unit116>
         <Filename Value="..\..\beegui4laz\source\include\beegui_extractfrm.inc"/>
         <CursorPos X="35" Y="12"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit116>
       <Unit117>
         <Filename Value="..\..\bee\source\bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
         <CursorPos X="1" Y="110"/>
         <TopLine Value="17"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit117>
       <Unit118>
         <Filename Value="..\..\Bee\source\bee_rangecoder1m.pas"/>
         <UnitName Value="Bee_RangeCoder1m"/>
         <CursorPos X="61" Y="92"/>
         <TopLine Value="170"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit118>
       <Unit119>
         <Filename Value="..\..\Bee\source\bee_codec.pas"/>
         <UnitName Value="bee_codec"/>
         <CursorPos X="45" Y="55"/>
         <TopLine Value="39"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit119>
       <Unit120>
         <Filename Value="..\..\Bee\source\bee_configuration.pas"/>
         <UnitName Value="bee_configuration"/>
         <CursorPos X="29" Y="108"/>
         <TopLine Value="92"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit120>
       <Unit121>
         <Filename Value="..\..\Bee\source\bee_crc.pas"/>
         <UnitName Value="Bee_Crc"/>
         <CursorPos X="56" Y="119"/>
         <TopLine Value="103"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit121>
       <Unit122>
         <Filename Value="..\..\bee\source\bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
         <CursorPos X="41" Y="132"/>
         <TopLine Value="109"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit122>
       <Unit123>
         <Filename Value="..\..\..\..\FPC\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\sysutils\filutilh.inc"/>
         <CursorPos X="10" Y="94"/>
         <TopLine Value="69"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit123>
       <Unit124>
         <Filename Value="..\..\..\..\FPC\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\sysutils\diskh.inc"/>
         <CursorPos X="11" Y="17"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit124>
       <Unit125>
         <Filename Value="..\..\..\..\FPC\fpcbuild_2.0.4_exp\fpcsrc\rtl\win32\sysutils.pp"/>
         <UnitName Value="sysutils"/>
         <CursorPos X="18" Y="450"/>
         <TopLine Value="442"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit125>
       <Unit126>
         <Filename Value="..\..\beegui4laz\source\include\regcmd.inc"/>
         <CursorPos X="46" Y="11"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit126>
       <Unit127>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_statusbarprogressbar.pas"/>
         <UnitName Value="BeeGui_StatusBarProgressBar"/>
         <CursorPos X="35" Y="13"/>
         <TopLine Value="1"/>
-        <UsageCount Value="115"/>
+        <UsageCount Value="114"/>
       </Unit127>
       <Unit128>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_statusprogressbar.pas"/>
         <UnitName Value="BeeGui_StatusProgressBar"/>
         <CursorPos X="52" Y="53"/>
         <TopLine Value="33"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit128>
       <Unit129>
         <Filename Value="..\..\beegui4laz\source\include\beegui_addfrm.inc"/>
         <CursorPos X="37" Y="10"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit129>
       <Unit130>
         <Filename Value="..\..\beegui4laz\source\root\Desktop\lazarus\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\sysutils\finah.inc"/>
         <CursorPos X="10" Y="37"/>
         <TopLine Value="1"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit130>
       <Unit131>
         <Filename Value="..\..\beegui4laz\source\root\Desktop\lazarus\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\sysutils\sysutilh.inc"/>
         <CursorPos X="3" Y="202"/>
         <TopLine Value="181"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit131>
       <Unit132>
         <Filename Value="..\..\beegui4laz\source\root\Desktop\lazarus\fpcbuild_2.0.4_exp\fpcsrc\rtl\unix\sysutils.pp"/>
         <UnitName Value="sysutils"/>
         <CursorPos X="20" Y="1063"/>
         <TopLine Value="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit132>
       <Unit133>
         <Filename Value="..\..\beegui4laz\source\root\Desktop\lazarus\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\sysutils\osutilsh.inc"/>
         <CursorPos X="25" Y="37"/>
         <TopLine Value="15"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit133>
       <Unit134>
         <Filename Value="..\..\beegui4laz\source\root\Desktop\lazarus\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\sysutils\sysstrh.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="104"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit134>
       <Unit135>
         <Filename Value="..\..\beegui4laz\source\root\Desktop\lazarus\fpcbuild_2.0.4_exp\fpcsrc\fcl\inc\process.pp"/>
         <UnitName Value="process"/>
         <CursorPos X="17" Y="95"/>
         <TopLine Value="78"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit135>
       <Unit136>
         <Filename Value="..\..\beegui4laz\source\root\Desktop\lazarus\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\classes\classesh.inc"/>
         <CursorPos X="17" Y="1228"/>
         <TopLine Value="1211"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit136>
       <Unit137>
         <Filename Value="..\..\..\..\FPC\fpcbuild_2.0.4_exp\fpcsrc\rtl\win32\wininc\ascdef.inc"/>
         <CursorPos X="10" Y="254"/>
         <TopLine Value="236"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit137>
       <Unit138>
         <Filename Value="..\..\..\..\FPC\fpcbuild_2.0.4_exp\fpcsrc\rtl\win32\wininc\base.inc"/>
         <CursorPos X="6" Y="147"/>
         <TopLine Value="129"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit138>
       <Unit139>
         <Filename Value="..\..\beegui4laz\source\home\quacquero\lazarus\lcl\interfaces\gnome\gnomeint.pp"/>
         <UnitName Value="GnomeInt"/>
         <CursorPos X="11" Y="271"/>
         <TopLine Value="238"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit139>
       <Unit140>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_plugin.pas"/>
         <UnitName Value="BeeGui_Plugin"/>
         <CursorPos X="36" Y="17"/>
         <TopLine Value="1"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="15"/>
       </Unit140>
       <Unit141>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\widgetset\wscontrols.pp"/>
         <UnitName Value="WSControls"/>
         <CursorPos X="7" Y="256"/>
         <TopLine Value="165"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit141>
       <Unit142>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_plugins.pas"/>
         <UnitName Value="BeeGui_Plugins"/>
         <CursorPos X="28" Y="236"/>
         <TopLine Value="352"/>
-        <UsageCount Value="33"/>
+        <UsageCount Value="32"/>
       </Unit142>
       <Unit143>
         <Filename Value="..\..\..\..\Programmi\FPC\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\sysutils\datih.inc"/>
         <CursorPos X="23" Y="120"/>
         <TopLine Value="95"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit143>
       <Unit144>
         <Filename Value="..\..\..\..\Programmi\FPC\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\sysutils\sysstrh.inc"/>
         <CursorPos X="52" Y="102"/>
         <TopLine Value="167"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit144>
       <Unit145>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\widgetset\wslclclasses.pp"/>
         <UnitName Value="WSLCLClasses"/>
         <CursorPos X="33" Y="32"/>
         <TopLine Value="14"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit145>
       <Unit146>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcsrc\fcl\inc\process.pp"/>
         <UnitName Value="process"/>
         <CursorPos X="14" Y="127"/>
         <TopLine Value="117"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit146>
       <Unit147>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcsrc\fcl\inc\pipes.pp"/>
         <UnitName Value="Pipes"/>
         <CursorPos X="3" Y="31"/>
         <TopLine Value="13"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit147>
       <Unit148>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcsrc\rtl\objpas\sysutils\sysstrh.inc"/>
         <CursorPos X="19" Y="88"/>
         <TopLine Value="70"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit148>
       <Unit149>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcsrc\rtl\inc\systemh.inc"/>
         <CursorPos X="11" Y="504"/>
         <TopLine Value="65"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit149>
       <Unit150>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcsrc\rtl\inc\wstringh.inc"/>
         <CursorPos X="10" Y="27"/>
         <TopLine Value="1"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit150>
       <Unit151>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcsrc\rtl\win32\system.pp"/>
         <UnitName Value="System"/>
         <CursorPos X="6" Y="16"/>
         <TopLine Value="85"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit151>
       <Unit152>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_archivelistview.pas"/>
         <UnitName Value="BeeGui_ArchiveListView"/>
         <CursorPos X="3" Y="57"/>
         <TopLine Value="1"/>
-        <UsageCount Value="62"/>
+        <UsageCount Value="61"/>
       </Unit152>
       <Unit153>
         <Filename Value="..\..\..\..\FreePascal.org\lazarus\lcl\widgetset\wsstdctrls.pp"/>
         <UnitName Value="WSStdCtrls"/>
         <CursorPos X="25" Y="449"/>
         <TopLine Value="417"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit153>
       <Unit154>
         <Filename Value="..\..\..\..\FreePascal.org\lazarus\components\virtualtrees-4.0.17.22\Src\virtualstringtree.pas"/>
         <UnitName Value="VirtualStringTree"/>
         <CursorPos X="19" Y="7"/>
         <TopLine Value="1"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit154>
       <Unit155>
         <Filename Value="..\..\..\..\FreePascal.org\lazarus\components\virtualtrees-4.0.17.22\Src\VirtualTrees.pas"/>
         <UnitName Value="VirtualTrees"/>
         <CursorPos X="3" Y="263"/>
         <TopLine Value="245"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit155>
       <Unit156>
         <Filename Value="..\..\..\..\FreePascal.org\lazarus\lcl\comctrls.pp"/>
         <UnitName Value="ComCtrls"/>
         <CursorPos X="14" Y="1838"/>
         <TopLine Value="1820"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit156>
       <Unit157>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcsrc\rtl\objpas\sysutils\datih.inc"/>
         <CursorPos X="10" Y="120"/>
         <TopLine Value="98"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit157>
       <Unit158>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcsrc\rtl\objpas\sysutils\filutilh.inc"/>
         <CursorPos X="1" Y="46"/>
         <TopLine Value="32"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit158>
       <Unit159>
         <Filename Value="..\..\Bee\source\bee.pas"/>
         <UnitName Value="bee"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit159>
       <Unit160>
         <Filename Value="..\..\beegui4laz\source\beegui-include\compiler.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit160>
       <Unit161>
         <Filename Value="..\..\..\..\FreePascal.org\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
         <CursorPos X="1" Y="483"/>
         <TopLine Value="465"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit161>
       <Unit162>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcsrc\rtl\objpas\classes\classesh.inc"/>
         <CursorPos X="3" Y="1199"/>
         <TopLine Value="1181"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit162>
       <Unit163>
         <Filename Value="..\..\..\..\FreePascal.org\lazarus\lcl\interfaces\win32\interfaces.pp"/>
         <UnitName Value="Interfaces"/>
         <CursorPos X="12" Y="45"/>
         <TopLine Value="21"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit163>
       <Unit164>
         <Filename Value="..\..\..\..\Programmi\FPC\2.0.4\fpcbuild_2.0.4_exp\fpcsrc\rtl\objpas\classes\classesh.inc"/>
         <CursorPos X="3" Y="1186"/>
         <TopLine Value="349"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit164>
       <Unit165>
         <Filename Value="..\..\Bee4Laz\source\Bee_Assembler.pas"/>
         <UnitName Value="Bee_Assembler"/>
         <CursorPos X="3" Y="51"/>
         <TopLine Value="27"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit165>
       <Unit166>
         <Filename Value="..\..\Bee4Laz\source\bee_headers.pas"/>
         <UnitName Value="Bee_Headers"/>
         <CursorPos X="73" Y="101"/>
         <TopLine Value="81"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit166>
       <Unit167>
         <Filename Value="..\..\Bee4Laz\source\bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
         <CursorPos X="3" Y="366"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit167>
       <Unit168>
         <Filename Value="..\..\..\..\..\Programmi\FPC\fpcbuild-2.2.0\fpcsrc\rtl\objpas\classes\classesh.inc"/>
         <CursorPos X="22" Y="1231"/>
         <TopLine Value="1211"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit168>
       <Unit169>
         <Filename Value="..\..\..\..\..\Programmi\FPC\fpcbuild-2.2.0\fpcsrc\rtl\inc\dynlibs.pas"/>
         <UnitName Value="dynlibs"/>
         <CursorPos X="29" Y="37"/>
         <TopLine Value="16"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit169>
       <Unit170>
         <Filename Value="..\..\beecore\source\beecore.lpi"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
         <SyntaxHighlighter Value="XML"/>
       </Unit170>
       <Unit171>
         <Filename Value="..\..\..\..\..\Programmi\FPC\fpcbuild-2.2.0\fpcsrc\rtl\win\dynlibs.inc"/>
         <CursorPos X="12" Y="27"/>
         <TopLine Value="4"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit171>
       <Unit172>
         <Filename Value="..\..\..\..\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
         <CursorPos X="11" Y="479"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit172>
       <Unit173>
         <Filename Value="..\..\..\..\lazarus\lcl\interfaces\win32\win32wscontrols.pp"/>
         <UnitName Value="Win32WSControls"/>
         <CursorPos X="1" Y="233"/>
         <TopLine Value="213"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit173>
       <Unit174>
         <Filename Value="..\..\beegui4laz\source\beegui4laz-include\beegui_mainfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit174>
       <Unit175>
         <Filename Value="..\..\..\..\lazarus\lcl\include\customform.inc"/>
         <CursorPos X="1" Y="1410"/>
         <TopLine Value="1390"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit175>
       <Unit176>
         <Filename Value="..\..\..\..\lazarus\lcl\include\application.inc"/>
         <CursorPos X="1" Y="1752"/>
         <TopLine Value="1732"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit176>
       <Unit177>
         <Filename Value="..\..\beegui4laz\source\packages\beegui_archivelistview.lrs"/>
         <CursorPos X="17" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit177>
       <Unit178>
         <Filename Value="..\..\beegui4laz\source\beegui4laz-include\compiler.inc"/>
         <CursorPos X="1" Y="24"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit178>
       <Unit179>
         <Filename Value="beefm.include\compiler.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit179>
       <Unit180>
         <Filename Value="packages\beegui_iconlist.pas"/>
@@ -1314,7 +1316,7 @@
         <CursorPos X="33" Y="61"/>
         <TopLine Value="61"/>
         <EditorIndex Value="2"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
       </Unit180>
       <Unit181>
@@ -1322,7 +1324,7 @@
         <UnitName Value="BeeGui_AppViewer"/>
         <CursorPos X="17" Y="60"/>
         <TopLine Value="33"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit181>
       <Unit182>
         <Filename Value="forms\beegui_aboutfrm.pas"/>
@@ -1332,20 +1334,20 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="31" Y="108"/>
         <TopLine Value="77"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="20"/>
       </Unit182>
       <Unit183>
         <Filename Value="packages\beegui_sysutils.pas"/>
         <UnitName Value="BeeGui_SysUtils"/>
         <CursorPos X="12" Y="54"/>
         <TopLine Value="34"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit183>
       <Unit184>
         <Filename Value="forms\beegui_mainfrm.inc"/>
         <CursorPos X="36" Y="22"/>
         <TopLine Value="1"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit184>
       <Unit185>
         <Filename Value="forms\beegui_infofrm.pas"/>
@@ -1354,7 +1356,7 @@
         <UnitName Value="BeeGui_InfoFrm"/>
         <CursorPos X="26" Y="51"/>
         <TopLine Value="31"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit185>
       <Unit186>
         <Filename Value="forms\beegui_addfrm.pas"/>
@@ -1364,7 +1366,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="13" Y="53"/>
         <TopLine Value="52"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit186>
       <Unit187>
         <Filename Value="forms\beegui_renamefrm.pas"/>
@@ -1374,7 +1376,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="13" Y="93"/>
         <TopLine Value="55"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit187>
       <Unit188>
         <Filename Value="forms\beegui_extractfrm.pas"/>
@@ -1384,14 +1386,14 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="15" Y="55"/>
         <TopLine Value="50"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit188>
       <Unit189>
         <Filename Value="packages\beegui_foldertreeviewmgr.pas"/>
         <UnitName Value="BeeGui_FolderTreeViewMgr"/>
         <CursorPos X="1" Y="281"/>
         <TopLine Value="253"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="14"/>
       </Unit189>
       <Unit190>
         <Filename Value="forms\beegui_passwordfrm.pas"/>
@@ -1401,96 +1403,96 @@
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="13" Y="157"/>
         <TopLine Value="119"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit190>
       <Unit191>
         <Filename Value="packages\beegui.include\compiler.inc"/>
         <CursorPos X="5" Y="32"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit191>
       <Unit192>
         <Filename Value="packages\beegui_addtreeviewmgr.pas"/>
         <UnitName Value="BeeGui_AddTreeViewMgr"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit192>
       <Unit193>
         <Filename Value="packages\beegui_archivelistmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListMgr"/>
         <CursorPos X="6" Y="28"/>
         <TopLine Value="11"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit193>
       <Unit194>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="1" Y="577"/>
-        <TopLine Value="558"/>
+        <CursorPos X="14" Y="157"/>
+        <TopLine Value="137"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="45"/>
         <Loaded Value="True"/>
       </Unit194>
       <Unit195>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\osutilsh.inc"/>
         <CursorPos X="25" Y="37"/>
         <TopLine Value="16"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit195>
       <Unit196>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\win\sysutils.pp"/>
         <UnitName Value="sysutils"/>
         <CursorPos X="3" Y="1038"/>
         <TopLine Value="1025"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit196>
       <Unit197>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\datih.inc"/>
         <CursorPos X="11" Y="124"/>
         <TopLine Value="103"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit197>
       <Unit198>
         <Filename Value="packages\beegui_process.pas"/>
         <UnitName Value="beegui_process"/>
         <CursorPos X="7" Y="26"/>
         <TopLine Value="1"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="59"/>
       </Unit198>
       <Unit199>
         <Filename Value="packages\beegui_appprocess.pas"/>
         <UnitName Value="BeeGui_ArchiveProcess"/>
         <CursorPos X="42" Y="128"/>
         <TopLine Value="6"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit199>
       <Unit200>
         <Filename Value="packages\beegui_package.pas"/>
         <UnitName Value="beegui_package"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit200>
       <Unit201>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\packages\fcl-base\src\inc\process.pp"/>
         <UnitName Value="process"/>
         <CursorPos X="3" Y="44"/>
         <TopLine Value="69"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit201>
       <Unit202>
         <Filename Value="packages\beegui_appprocess.lrs"/>
         <CursorPos X="30" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit202>
       <Unit203>
         <Filename Value="packages\beegui_archiveprocess.pas"/>
         <UnitName Value="BeeGui_ArchiveProcess"/>
         <CursorPos X="30" Y="110"/>
         <TopLine Value="1"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="25"/>
       </Unit203>
       <Unit204>
         <Filename Value="forms\beegui_viewfrm.pas"/>
@@ -1500,13 +1502,13 @@
         <UnitName Value="BeeGui_ViewFrm"/>
         <CursorPos X="19" Y="118"/>
         <TopLine Value="78"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit204>
       <Unit205>
         <Filename Value="forms\beegui_viewfrm.lrs"/>
         <CursorPos X="1" Y="2"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit205>
       <Unit206>
         <Filename Value="forms\beefm_propertyfrm.pas"/>
@@ -1516,131 +1518,129 @@
         <UnitName Value="BeeFM_PropertyFrm"/>
         <CursorPos X="77" Y="317"/>
         <TopLine Value="284"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit206>
       <Unit207>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\classes\classesh.inc"/>
-        <CursorPos X="14" Y="210"/>
-        <TopLine Value="190"/>
+        <CursorPos X="3" Y="353"/>
+        <TopLine Value="338"/>
         <UsageCount Value="9"/>
       </Unit207>
       <Unit208>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\classes\stringl.inc"/>
         <CursorPos X="3" Y="694"/>
         <TopLine Value="678"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit208>
       <Unit209>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\sysansih.inc"/>
         <CursorPos X="10" Y="21"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit209>
       <Unit210>
         <Filename Value="..\..\..\stable\1.0.0\BeeGui\source\forms\BeeGui_MainFrm.pas"/>
         <UnitName Value="BeeGui_MainFrm"/>
         <CursorPos X="1" Y="1598"/>
         <TopLine Value="1587"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit210>
       <Unit211>
         <Filename Value="forms\beefm_mainfrm.inc"/>
         <CursorPos X="23" Y="15"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="4"/>
-        <UsageCount Value="13"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="12"/>
       </Unit211>
       <Unit212>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\sysstrh.inc"/>
         <CursorPos X="10" Y="110"/>
         <TopLine Value="85"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit212>
       <Unit213>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\packages\base\winunits\shellapi.pp"/>
         <UnitName Value="ShellApi"/>
         <CursorPos X="8" Y="777"/>
         <TopLine Value="757"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit213>
       <Unit214>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\win\wininc\base.inc"/>
         <CursorPos X="6" Y="182"/>
         <TopLine Value="162"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit214>
       <Unit215>
         <Filename Value="..\..\..\..\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
         <CursorPos X="64" Y="1253"/>
         <TopLine Value="1228"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit215>
       <Unit216>
         <Filename Value="..\..\..\..\lazarus\lcl\imglist.pp"/>
         <UnitName Value="ImgList"/>
         <CursorPos X="3" Y="109"/>
         <TopLine Value="144"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit216>
       <Unit217>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\win\wininc\redef.inc"/>
         <CursorPos X="10" Y="507"/>
         <TopLine Value="487"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit217>
       <Unit218>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\win\wininc\ascdef.inc"/>
         <CursorPos X="63" Y="327"/>
         <TopLine Value="312"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit218>
       <Unit219>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\inc\systemh.inc"/>
         <CursorPos X="11" Y="542"/>
         <TopLine Value="522"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit219>
       <Unit220>
         <Filename Value="packages\beegui_archivefolderbox.pas"/>
         <UnitName Value="BeeGui_ArchiveFolderBox"/>
         <CursorPos X="35" Y="89"/>
         <TopLine Value="63"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="26"/>
       </Unit220>
       <Unit221>
         <Filename Value="..\..\..\..\lazarus\lcl\stdctrls.pp"/>
         <UnitName Value="StdCtrls"/>
         <CursorPos X="14" Y="406"/>
         <TopLine Value="376"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit221>
       <Unit222>
         <Filename Value="..\..\..\..\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
         <CursorPos X="14" Y="1030"/>
         <TopLine Value="1010"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit222>
       <Unit223>
         <Filename Value="..\..\..\..\lazarus\lcl\lcltype.pp"/>
         <UnitName Value="LCLType"/>
         <CursorPos X="3" Y="1001"/>
         <TopLine Value="981"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit223>
       <Unit224>
         <Filename Value="..\..\..\..\lazarus\lcl\comctrls.pp"/>
         <UnitName Value="ComCtrls"/>
         <CursorPos X="22" Y="1541"/>
         <TopLine Value="1521"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit224>
       <Unit225>
         <Filename Value="..\..\..\..\lazarus\lcl\menus.pp"/>
         <UnitName Value="Menus"/>
-        <CursorPos X="15" Y="210"/>
+        <CursorPos X="20" Y="210"/>
         <TopLine Value="190"/>
         <UsageCount Value="10"/>
       </Unit225>
@@ -1648,15 +1648,85 @@
         <Filename Value="..\..\..\..\lazarus\lcl\include\customlistview.inc"/>
         <CursorPos X="3" Y="490"/>
         <TopLine Value="485"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit226>
       <Unit227>
         <Filename Value="..\..\..\..\lazarus\lcl\toolwin.pp"/>
         <UnitName Value="Toolwin"/>
         <CursorPos X="50" Y="51"/>
         <TopLine Value="33"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit227>
+      <Unit228>
+        <Filename Value="forms\beefm_mainfrm_language.inc"/>
+        <CursorPos X="41" Y="40"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="9"/>
+      </Unit228>
+      <Unit229>
+        <Filename Value="forms\beefm_mainfrm_configuration.inc"/>
+        <CursorPos X="38" Y="67"/>
+        <TopLine Value="29"/>
+        <UsageCount Value="9"/>
+      </Unit229>
+      <Unit230>
+        <Filename Value="..\..\..\..\lazarus\lcl\inipropstorage.pas"/>
+        <UnitName Value="IniPropStorage"/>
+        <CursorPos X="37" Y="23"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="9"/>
+      </Unit230>
+      <Unit231>
+        <Filename Value="..\..\..\..\lazarus\lcl\propertystorage.pas"/>
+        <UnitName Value="PropertyStorage"/>
+        <CursorPos X="15" Y="161"/>
+        <TopLine Value="141"/>
+        <UsageCount Value="9"/>
+      </Unit231>
+      <Unit232>
+        <Filename Value="forms\beefm_mainfrm_save.inc"/>
+        <CursorPos X="36" Y="87"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
+      </Unit232>
+      <Unit233>
+        <Filename Value="forms\beefm_mainfrm_load.inc"/>
+        <CursorPos X="11" Y="9"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
+      </Unit233>
+      <Unit234>
+        <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\packages\fcl-base\src\inc\inifiles.pp"/>
+        <UnitName Value="IniFiles"/>
+        <CursorPos X="3" Y="160"/>
+        <TopLine Value="15"/>
+        <UsageCount Value="10"/>
+      </Unit234>
+      <Unit235>
+        <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\packages\fcl-xml\src\xmlcfg.pp"/>
+        <UnitName Value="XMLCfg"/>
+        <CursorPos X="38" Y="32"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit235>
+      <Unit236>
+        <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\packages\fcl-xml\src\xmlwrite.pp"/>
+        <UnitName Value="XMLWrite"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit236>
+      <Unit237>
+        <Filename Value="..\..\..\..\lazarus\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <CursorPos X="26" Y="661"/>
+        <TopLine Value="632"/>
+        <UsageCount Value="10"/>
+      </Unit237>
     </Units>
     <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
