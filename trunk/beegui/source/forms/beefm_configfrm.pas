@@ -76,6 +76,7 @@ type
     ConfigFrm_Priority: TComboBox;
     ConfigFrm_OptionsGB: TGroupBox;
     ConfigFrm_mkOption: TCheckBox;
+    // ---
     BtnOk: TBitBtn;
     // ---
     procedure FormCreate(Sender: TObject);

@@ -1,9 +1,6 @@
 SessionProperties :=
 
-   'ArchiveListView.Columns;'
- + 'ArchiveListView.SortCol;'
-
- + 'BtnAdd.Caption;'
+   'BtnAdd.Caption;'
  + 'BtnCheckOut.Caption;'
  + 'BtnConfig.Caption;'
  + 'BtnDelete.Caption;'
@@ -48,6 +45,7 @@ SessionProperties :=
  + 'MainMenu_Help_F1.Caption;'
  + 'MainMenu_Help_Internet.Caption;'
  + 'MainMenu_Help_License.Caption;'
+ 
  + 'MainMenu_Options.Caption;'
  + 'MainMenu_Options_Configuration.Caption;'
  + 'MainMenu_Options_DefaultSetting.Caption;'
@@ -55,6 +53,7 @@ SessionProperties :=
  + 'MainMenu_Options_Password.Caption;'
  + 'MainMenu_Options_SaveNow.Caption;'
  + 'MainMenu_Options_SaveOnExit.Caption;'
+ 
  + 'MainMenu_View.Caption;'
  + 'MainMenu_View_Details.Caption;'
  + 'MainMenu_View_Details_Attributes.Caption;'
@@ -69,10 +68,12 @@ SessionProperties :=
  + 'MainMenu_View_Details_Ratio.Caption;'
  + 'MainMenu_View_Details_Size.Caption;'
  + 'MainMenu_View_Details_Type.Caption;'
+ 
  + 'MainMenu_View_GridLines.Caption;'
  + 'MainMenu_View_LargeIcons.Caption;'
  + 'MainMenu_View_List.Caption;'
  + 'MainMenu_View_ListMode.Caption;'
+ 
  + 'MainMenu_View_OrderBy.Caption;'
  + 'MainMenu_View_OrderBy_Attributes.Caption;'
  + 'MainMenu_View_OrderBy_Crc.Caption;'
@@ -86,10 +87,12 @@ SessionProperties :=
  + 'MainMenu_View_OrderBy_Ratio.Caption;'
  + 'MainMenu_View_OrderBy_Size.Caption;'
  + 'MainMenu_View_OrderBy_Type.Caption;'
+ 
  + 'MainMenu_View_Report.Caption;'
  + 'MainMenu_View_RowSelect.Caption;'
  + 'MainMenu_View_SmallIcons.Caption;'
  + 'MainMenu_View_StatusBar.Caption;'
+
  + 'MainMenu_View_Toolbars.Caption;'
  + 'MainMenu_View_Toolbars_AddressBar.Caption;'
  + 'MainMenu_View_Toolbars_Buttons.Caption;'
@@ -105,6 +108,7 @@ SessionProperties :=
  + 'PopupMenu_Buttons_Open.Caption;'
  + 'PopupMenu_Buttons_Test.Caption;'
  + 'PopupMenu_Buttons_View.Caption;'
+ 
  + 'PopupMenu_Delete.Caption;'
  + 'PopupMenu_DeselectAll.Caption;'
  + 'PopupMenu_DeselectMask.Caption;'
