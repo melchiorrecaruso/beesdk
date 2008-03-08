@@ -32,6 +32,7 @@ interface
 uses
   Forms,
   Menus,
+  GetText,
   ToolWin,
   Classes,
   Dialogs,
@@ -44,6 +45,7 @@ uses
   StdCtrls,
   ExtCtrls,
   LResources,
+  Traslations,
   XMLPropStorage,
   // ---
   BeeGui_IconList,
@@ -302,7 +304,13 @@ uses
   var
     CfgFolder: string;
     Storage: TIniFile;
+    Lang: string;
+    PODirectory: string;
+    FallbackLang: string;
   begin
+
+
+
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
 
