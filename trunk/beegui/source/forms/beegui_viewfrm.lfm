@@ -1,7 +1,7 @@
 object ViewFrm: TViewFrm
-  Left = 354
+  Left = 388
   Height = 304
-  Top = 265
+  Top = 281
   Width = 453
   HorzScrollBar.Page = 452
   VertScrollBar.Page = 303
@@ -15,6 +15,7 @@ object ViewFrm: TViewFrm
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnCreate = FormCreate
+  LCLVersion = '0.9.25'
   object Memo: TMemo
     Height = 265
     Width = 453

@@ -1,7 +1,7 @@
 object ExtractFrm: TExtractFrm
-  Left = 378
+  Left = 408
   Height = 424
-  Top = 253
+  Top = 231
   Width = 560
   HorzScrollBar.Page = 559
   VertScrollBar.Page = 423
@@ -14,51 +14,57 @@ object ExtractFrm: TExtractFrm
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnCreate = FormCreate
+  LCLVersion = '0.9.25'
   object FolderLabel: TLabel
-    Left = 10
-    Height = 14
-    Top = 10
-    Width = 79
-    Caption = 'Extraction path:'
-    ParentColor = False
-    ParentShowHint = False
-  end
-  object priOptionLabel: TLabel
-    Left = 10
-    Height = 14
-    Top = 60
-    Width = 255
+    Left = 6
+    Height = 18
+    Top = 8
+    Width = 548
+    Align = alTop
+    Anchors = [akRight]
     AutoSize = False
-    Caption = 'Process priority:'
+    BorderSpacing.Left = 2
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 2
+    BorderSpacing.Around = 4
+    Caption = 'Extraction path:'
+    Layout = tlBottom
     ParentColor = False
     ParentShowHint = False
   end
   object oOptionLabel: TLabel
-    Left = 10
-    Height = 14
-    Top = 110
-    Width = 255
+    AnchorSideTop.Control = Folder
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Folders
+    Left = 6
+    Height = 18
+    Top = 55
+    Width = 260
+    Anchors = [akTop, akLeft, akRight]
     AutoSize = False
-    Caption = 'Extraction path:'
+    Caption = 'Overwrite mode:'
+    Layout = tlBottom
     ParentColor = False
     ParentShowHint = False
   end
   object Options: TGroupBox
-    Left = 10
-    Height = 80
-    Top = 160
-    Width = 255
+    Left = 6
+    Height = 107
+    Top = 110
+    Width = 260
+    Anchors = [akTop, akLeft, akRight]
     Caption = 'Options'
-    ClientHeight = 62
-    ClientWidth = 251
+    ClientHeight = 89
+    ClientWidth = 256
     ParentShowHint = False
     TabOrder = 1
     object xCommand: TCheckBox
-      Left = 10
+      Left = 6
       Height = 19
-      Top = 10
-      Width = 234
-      Anchors = [akTop, akLeft, akRight]
+      Top = 6
+      Width = 244
+      Align = alTop
+      BorderSpacing.Around = 6
       Caption = 'Extract and Recreate the relative pathname '
       Checked = True
       ParentShowHint = False
@@ -66,59 +72,92 @@ object ExtractFrm: TExtractFrm
       TabOrder = 0
     end
     object cdOption: TCheckBox
-      Left = 10
+      Left = 6
       Height = 19
-      Top = 32
-      Width = 234
-      Anchors = [akTop, akLeft, akRight]
-      Caption = 'Set surrent archive directory'
-      Checked = True
+      Top = 31
+      Width = 244
+      Align = alTop
+      BorderSpacing.Around = 6
+      Caption = 'Use Current Archive Directory (-cd Option)'
       ParentShowHint = False
-      State = cbChecked
       TabOrder = 1
+    end
+    object cdOptonEdit: TEdit
+      Left = 6
+      Height = 22
+      Top = 56
+      Width = 244
+      Color = clInactiveBorder
+      Enabled = False
+      TabOrder = 2
     end
   end
   object BtnOk: TBitBtn
-    Left = 475
-    Height = 23
-    Top = 395
+    AnchorSideRight.Control = BtnCancel
+    Left = 395
+    Height = 26
+    Top = 392
     Width = 75
-    Anchors = [akRight, akBottom]
-    BorderSpacing.InnerBorder = 2
-    Caption = 'OK'
+    Anchors = [akRight]
+    BorderSpacing.Around = 6
+    Caption = '&OK'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 75
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 75
     Default = True
+    Kind = bkOK
     ModalResult = 1
     NumGlyphs = 0
     ParentShowHint = False
     TabOrder = 2
   end
   object BtnCancel: TBitBtn
-    Left = 390
-    Height = 23
-    Top = 395
-    Width = 75
-    Anchors = [akRight, akBottom]
-    BorderSpacing.InnerBorder = 2
-    Caption = 'Cancel'
+    AnchorSideTop.Control = Folders
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Side = asrCenter
+    AnchorSideBottom.Side = asrBottom
+    Left = 476
+    Height = 26
+    Top = 392
+    Width = 78
+    Anchors = [akTop]
+    BorderSpacing.Around = 6
+    Cancel = True
+    Caption = 'Annulla'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
+    Kind = bkCancel
     ModalResult = 2
     NumGlyphs = 0
     ParentShowHint = False
     TabOrder = 3
   end
   object Folder: TEdit
-    Left = 10
+    AnchorSideTop.Control = FolderLabel
+    AnchorSideTop.Side = asrBottom
+    Left = 6
     Height = 21
     Top = 30
-    Width = 540
+    Width = 548
     Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Left = 2
+    BorderSpacing.Right = 2
+    BorderSpacing.Around = 4
     TabOrder = 0
   end
   object oOption: TComboBox
-    Left = 10
+    AnchorSideTop.Control = oOptionLabel
+    AnchorSideTop.Side = asrBottom
+    Left = 6
     Height = 21
-    Top = 130
-    Width = 255
+    Top = 79
+    Width = 260
+    Anchors = [akTop, akLeft, akRight]
     AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+    BorderSpacing.Around = 6
     ItemHeight = 13
     ItemIndex = 2
     Items.Strings = (
@@ -132,54 +171,42 @@ object ExtractFrm: TExtractFrm
     TabOrder = 4
     Text = 'Query if Overwrite pre-existing files'
   end
-  object priOption: TComboBox
-    Left = 10
-    Height = 21
-    Top = 80
-    Width = 255
-    AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-    ItemHeight = 13
-    ItemIndex = 2
-    Items.Strings = (
-      '3 - Real time (unstable)'
-      '2 - Higth (unstable)'
-      '1 - Normal '
-      '0 - Idle'
-    )
-    MaxLength = 0
-    ParentShowHint = False
-    Style = csDropDownList
-    TabOrder = 5
-    Text = '1 - Normal '
-  end
   object Folders: TTreeView
-    Left = 280
-    Height = 324
+    AnchorSideLeft.Control = Options
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = Folder
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Side = asrCenter
+    Left = 274
+    Height = 326
     Top = 60
-    Width = 270
+    Width = 280
     Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 2
+    BorderSpacing.Top = 3
+    BorderSpacing.Around = 6
     DefaultItemHeight = 15
     ReadOnly = True
-    TabOrder = 6
+    TabOrder = 5
     OnClick = FoldersClick
     OnDblClick = FoldersDblClick
     OnExpanding = FoldersExpanding
     Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
   end
-  object Storage: TXMLPropStorage
-    StoredValues = <>
-    left = 16
-    top = 248
-  end
   object Icons: TIconList
-    left = 48
-    top = 248
+    left = 8
+    top = 224
   end
   object FoldersMgr: TFolderTreeViewMgr
     FolderEdit = Folder
     FolderTree = Folders
     FolderIcons = Icons
-    left = 80
-    top = 248
+    left = 40
+    top = 224
+  end
+  object Storage: TXMLPropStorage
+    StoredValues = <>
+    left = 72
+    top = 224
   end
 end

@@ -50,34 +50,32 @@ type
   { TConfigFrm }
 
   TConfigFrm = class(TForm)
+    AddFrm_Dictionary1: TComboBox;
+    AddFrm_DictionaryGB1: TGroupBox;
+    AddFrm_Method1: TComboBox;
+    AddFrm_MethodGB1: TGroupBox;
+    BtnOk: TBitBtn;
     // ---
     ConfigFrm_Tree: TTreeView;
     ConfigFrm_AddGB: TGroupBox;
     ConfigFrm_ExtractGB: TGroupBox;
     ConfigFrm_GeneralGB: TGroupBox;
     ConfigFrm_Storage: TXMLPropStorage;
-    // ---
-    AddFrm_DictionaryGB: TGroupBox;
-    AddFrm_Dictionary: TComboBox;
-    AddFrm_MethodGB: TGroupBox;
-    AddFrm_Method: TComboBox;
-    AddFrm_OptionsGB: TGroupBox;
-    AddFrm_kOption: TCheckBox;
-    AddFrm_rOption: TCheckBox;
-    AddFrm_sOption: TCheckBox;
-    AddFrm_tOption: TCheckBox;
-    // ---
-    ExtractFrm_OptionsGB: TGroupBox;
-    ExtractFrm_xOption: TCheckBox;
-    ExtractFrm_OverwriteGB: TGroupBox;
-    ExtractFrm_Overwrite: TComboBox;
-    // ---
-    ConfigFrm_PriorityGB: TGroupBox;
-    ConfigFrm_Priority: TComboBox;
+    dOption: TComboBox;
+    dOptionLabel: TLabel;
     ConfigFrm_OptionsGB: TGroupBox;
-    ConfigFrm_mkOption: TCheckBox;
-    // ---
-    BtnOk: TBitBtn;
+    kOption: TCheckBox;
+    lOption: TCheckBox;
+    mOption: TComboBox;
+    mOptionLabel: TLabel;
+    oOption: TComboBox;
+    oOptionLabel: TLabel;
+    Options: TGroupBox;
+    Options1: TGroupBox;
+    rOption: TCheckBox;
+    sOption: TCheckBox;
+    tOption: TCheckBox;
+    xCommand: TCheckBox;
     // ---
     procedure FormCreate(Sender: TObject);
     procedure ConfigFrm_TreeChange(Sender: TObject; Node: TTreeNode);

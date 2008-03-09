@@ -1,27 +1,26 @@
 {
-    Copyright (c) 2006 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2006 Andrew Filinsky and Melchiorre Caruso
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{   Contains:
+{ Contains:
 
     BeeCore Exctract form.
 
-    Modifyed:
-
+  Modifyed:
 }
 
 unit BeeGui_ExtractFrm;
@@ -50,21 +49,18 @@ type
   { TExtractFrm }
 
   TExtractFrm = class(TForm)
-    BtnOpen2: TBitBtn;
-    cfgOptionStr: TComboBox;
-    FoldersMgr: TFolderTreeViewMgr;
-    Icons: TIconList;
     Storage: TXMLPropStorage;
+    FoldersMgr: TFolderTreeViewMgr;
     FolderLabel: TLabel;
+    Folders: TTreeView;
     Folder: TEdit;
-    priOptionLabel: TLabel;
-    priOption: TComboBox;
-    oOptionLabel: TLabel;
-    oOption: TComboBox;
     Options: TGroupBox;
     xCommand: TCheckBox;
+    oOptionLabel: TLabel;
+    oOption: TComboBox;
+    cdOptonEdit: TEdit;
     cdOption: TCheckBox;
-    Folders: TTreeView;
+    Icons: TIconList;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
     procedure FormCreate(Sender: TObject);
@@ -89,17 +85,22 @@ uses
   var
     CfgFolder: string;
   begin
+    Icons.IconFolder := ExtractFilePath(ParamStr(0)) +
+      IncludeTrailingBackSlash('icons') + 'smallicons';
+    // ---
     CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
     if ForceDirectories(CfgFolder) then
     begin
       Storage.FileName := CfgFolder+ ('extractfrm.xml');
     end;
-    {$I beegui_extractfrm.inc}
+    SessionProperties := 'WindowState;';
+    if WindowState = wsNormal then
+    begin
+      SessionProperties :=
+        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
+    end;
     Storage.Restore;
     // ---
-    Icons.IconFolder := ExtractFilePath(ParamStr(0))
-      + IncludeTrailingBackSlash('icons') + 'smallicons';
-
     FoldersMgr.Initialize;
     FoldersMgr.FolderName := Folder.Text;
   end;

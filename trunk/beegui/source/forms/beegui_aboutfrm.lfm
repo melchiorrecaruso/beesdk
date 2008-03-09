@@ -1,23 +1,23 @@
 object AboutFrm: TAboutFrm
-  Left = 424
-  Height = 155
-  Top = 157
+  Left = 548
+  Height = 160
+  Top = 163
   Width = 360
   HorzScrollBar.Page = 359
-  VertScrollBar.Page = 154
-  ActiveControl = BtnOk
+  VertScrollBar.Page = 159
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'About to...'
-  ClientHeight = 155
+  ClientHeight = 160
   ClientWidth = 360
   Color = clWhite
-  Constraints.MaxHeight = 155
+  Constraints.MaxHeight = 160
   Constraints.MaxWidth = 360
-  Constraints.MinHeight = 155
+  Constraints.MinHeight = 160
   Constraints.MinWidth = 360
   Font.Name = 'Default'
   OnCreate = FormCreate
   OnMouseMove = FormMouseMove
+  LCLVersion = '0.9.25'
   object Logo: TImage
     Left = 18
     Height = 96
@@ -282,27 +282,37 @@ object AboutFrm: TAboutFrm
     Caption = '????'
     ParentColor = False
   end
-  object BtnLicense: TButton
-    Left = 199
-    Height = 23
-    Top = 125
+  object BtnOk: TBitBtn
+    Left = 278
+    Height = 26
+    Top = 128
     Width = 75
-    BorderSpacing.InnerBorder = 4
-    Caption = 'License'
-    OnClick = BtnLicenseClick
-    TabOrder = 1
-  end
-  object BtnOk: TButton
-    Left = 280
-    Height = 23
-    Top = 125
-    Width = 75
-    BorderSpacing.InnerBorder = 4
     Cancel = True
-    Caption = 'Ok'
+    Caption = '&OK'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 75
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 75
     Default = True
+    Kind = bkOK
+    ModalResult = 1
+    NumGlyphs = 0
     OnClick = BtnOkClick
     TabOrder = 0
+  end
+  object BtnLicense: TBitBtn
+    Left = 193
+    Height = 26
+    Top = 128
+    Width = 78
+    Caption = 'License'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
+    NumGlyphs = 0
+    OnClick = BtnLicenseClick
+    TabOrder = 1
   end
   object Process: TProcess
     Priority = ppNormal
