@@ -32,6 +32,7 @@ interface
 
 uses
   Forms,
+  GetText,
   Process,
   Dialogs,
   Buttons,
@@ -42,12 +43,15 @@ uses
   ExtCtrls,
   SysUtils,
   LResources,
+  Translations,
   XMLPropStorage;
 
 type
   { TAboutFrm }
 
   TAboutFrm = class(TForm)
+    BtnLicense: TBitBtn;
+    BtnOk: TBitBtn;
     Storage: TXMLPropStorage;
     Process: TProcess;
     // ---
@@ -65,9 +69,6 @@ type
     Web: TLabel;
     Link: TLabel;
     // ---
-    BtnOk: TButton;
-    BtnLicense: TButton;
-    // ---
     procedure FormCreate(Sender: TObject);
     procedure FormMouseMove (Sender: TObject; Shift: TShiftState; X, Y: Integer);
     // ---
@@ -77,11 +78,13 @@ type
     procedure BtnOkClick(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
   public
-    { public declarations }
+    procedure LoadProperties;
+    procedure SaveProperties;
   private
-    { private declarations }
+    procedure LoadLanguage;
+    procedure SaveLanguage;
   end;
-  
+
 var
   AboutFrm: TAboutFrm;
 
@@ -92,6 +95,8 @@ uses
 
   { TAboutFrm class }
 
+  {$I beegui_aboutfrm.inc}
+
   procedure TAboutFrm.FormCreate(Sender: TObject);
   var
     CfgFolder: string;
@@ -101,11 +106,16 @@ uses
     begin
       Storage.FileName := CfgFolder + ('aboutfrm.xml');
     end;
-    {$i beegui_aboutfrm.inc}
+    SessionProperties := 'WindowState;';
+    if WindowState = wsNormal then
+    begin
+      SessionProperties :=
+        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
+    end;
     Storage.Restore;
     // ---
     VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '118';
+    BuildValue.Caption := '126';
   end;
   
   procedure TAboutFrm.FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);

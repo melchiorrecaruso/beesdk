@@ -88,7 +88,12 @@ uses
     begin
       Storage.FileName := CfgFolder + ('passwordfrm.xml');
     end;
-    {$I beegui_passwordfrm.inc}
+    SessionProperties := 'WindowState;';
+    if WindowState = wsNormal then
+    begin
+      SessionProperties :=
+        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
+    end;
     Storage.Restore;
   end;
   

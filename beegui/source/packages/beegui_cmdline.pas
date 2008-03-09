@@ -21,7 +21,6 @@
     BeeGui CmdLine class.
 
   Modifyed:
-
 }
 
 unit BeeGui_CmdLine;

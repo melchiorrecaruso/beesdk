@@ -1,7 +1,7 @@
 object OverwriteFrm: TOverwriteFrm
-  Left = 367
+  Left = 403
   Height = 254
-  Top = 314
+  Top = 378
   Width = 450
   HorzScrollBar.Page = 449
   VertScrollBar.Page = 253
@@ -19,6 +19,7 @@ object OverwriteFrm: TOverwriteFrm
   Font.Name = 'Tahoma'
   OnCreate = FormCreate
   OnShow = FormShow
+  LCLVersion = '0.9.25'
   object Image: TImage
     Left = 14
     Height = 32
@@ -127,7 +128,6 @@ object OverwriteFrm: TOverwriteFrm
       0000000000000000000000000000000000000000000000000000000000000000
       0000
     }
-    Transparent = False
   end
   object OldIcon: TImage
     Left = 72
@@ -207,67 +207,92 @@ object OverwriteFrm: TOverwriteFrm
     ParentShowHint = False
   end
   object BtnYes: TBitBtn
-    Left = 370
-    Height = 23
-    Top = 225
-    Width = 75
+    Left = 366
+    Height = 26
+    Top = 222
+    Width = 78
     Anchors = [akRight, akBottom]
     BorderSpacing.InnerBorder = 2
-    Cancel = True
-    Caption = '&Yes'
+    Caption = '&Si'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
     Default = True
+    Kind = bkYes
     ModalResult = 6
     NumGlyphs = 0
     ParentShowHint = False
     TabOrder = 0
   end
   object BtnNo: TBitBtn
-    Left = 289
-    Height = 23
-    Top = 225
-    Width = 75
+    Left = 285
+    Height = 26
+    Top = 222
+    Width = 78
     Anchors = [akRight, akBottom]
     BorderSpacing.InnerBorder = 2
+    Cancel = True
     Caption = '&No'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
+    Kind = bkNo
     ModalResult = 7
     NumGlyphs = 0
     ParentShowHint = False
     TabOrder = 1
   end
   object BtnNoAll: TBitBtn
-    Left = 86
-    Height = 23
-    Top = 225
-    Width = 75
+    Left = 87
+    Height = 26
+    Top = 222
+    Width = 78
     Anchors = [akLeft, akBottom]
     BorderSpacing.InnerBorder = 2
-    Caption = 'No All'
+    Caption = 'No a tutto'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
+    Kind = bkNoToAll
     ModalResult = 9
     NumGlyphs = 0
     ParentShowHint = False
     TabOrder = 3
   end
   object BtnYesAll: TBitBtn
-    Left = 167
-    Height = 23
-    Top = 225
-    Width = 75
+    Left = 168
+    Height = 26
+    Top = 222
+    Width = 78
     Anchors = [akLeft, akBottom]
     BorderSpacing.InnerBorder = 2
-    Caption = 'Yes All'
+    Caption = 'Si a &All'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
+    Kind = bkYesToAll
     ModalResult = 10
     NumGlyphs = 0
     ParentShowHint = False
     TabOrder = 4
   end
   object BtnAbort: TBitBtn
-    Left = 5
-    Height = 23
-    Top = 225
-    Width = 75
+    Left = 6
+    Height = 26
+    Top = 222
+    Width = 78
     Anchors = [akLeft, akBottom]
     BorderSpacing.InnerBorder = 2
-    Caption = 'Abort'
+    Caption = 'Blocca'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
+    Kind = bkAbort
     ModalResult = 3
     NumGlyphs = 0
     ParentShowHint = False
@@ -277,5 +302,11 @@ object OverwriteFrm: TOverwriteFrm
     StoredValues = <>
     left = 416
     top = 8
+  end
+  object Images: TIconList
+    Height = 32
+    Width = 32
+    left = 416
+    top = 40
   end
 end

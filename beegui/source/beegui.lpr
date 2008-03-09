@@ -21,7 +21,6 @@
     BeeGui application.
 
   Modifyed:
-
 }
 
 program BeeGui;
@@ -35,9 +34,17 @@ uses
   Interfaces,
   Forms,
   // ---
+  BeeGui_Package,
   BeeGui_CmdLine,
+  // ---
+  BeeGui_AddFrm,
   BeeGui_TickFrm,
-  BeeGui_AboutFrm;
+  BeeGui_ViewFrm,
+  BeeGui_AboutFrm,
+  BeeGui_RenameFrm,
+  BeeGui_ExtractFrm,
+  BeeGui_PasswordFrm,
+  BeeGui_OverWriteFrm, Unit1;
 
 var
   CmdLine: TCmdLine;

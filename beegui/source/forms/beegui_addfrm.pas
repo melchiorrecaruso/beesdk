@@ -149,12 +149,18 @@ uses
     CfgFolder: string;
   begin
     Pages.ActivePage := PageGeneral;
+    // ---
     CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
     if ForceDirectories(CfgFolder) then
     begin
       Storage.FileName := CfgFolder + ('addfrm.xml');
     end;
-    {$i beegui_addfrm.inc}
+    SessionProperties := 'WindowState;';
+    if WindowState = wsNormal then
+    begin
+      SessionProperties :=
+        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
+    end;
     Storage.Restore;
   end;
 

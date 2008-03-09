@@ -147,7 +147,7 @@ var
 implementation
 
 uses
-  {$ifdef Windows}
+  {$ifdef MSWINDOWS}
   Windows,
   {$endif}
   BeeGui_SysUtils;
@@ -200,7 +200,12 @@ uses
     begin
       Storage.FileName := CfgFolder + ('tickfrm.xml');
     end;
-    {$I beegui_tickfrm.inc}
+    SessionProperties := 'WindowState;';
+    if WindowState = wsNormal then
+    begin
+      SessionProperties :=
+        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
+    end;
     Storage.Restore;
     //{$ifdef Windows}
     //TrayIcon.Icon.Handle := LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));

@@ -39,7 +39,9 @@ uses
   StdCtrls,
   ExtCtrls,
   LResources,
-  XMLPropStorage;
+  XMLPropStorage,
+  // ---
+  BeeGui_IconList;
 
 type
 
@@ -47,6 +49,7 @@ type
 
   TOverwriteFrm = class(TForm)
     Storage: TXMLPropStorage;
+    Images: TIconList;
     Image: TImage;
     TheFolder: TLabel;
     WouldYou: TLabel;
@@ -84,12 +87,19 @@ uses
   var
    CfgFolder: string;
   begin
+    Images.IconFolder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('largeicons') ;
+    // ---
     CfgFolder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
     if ForceDirectories(CfgFolder) then
     begin
       Storage.FileName := CfgFolder + ('overwritefrm.xml');
     end;
-    {$I beegui_overwritefrm.inc}
+    SessionProperties := 'WindowState;';
+    if WindowState = wsNormal then
+    begin
+      SessionProperties :=
+        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
+    end;
     Storage.Restore;
   end;
   
@@ -100,6 +110,7 @@ uses
     Image.Transparent   := True;
     OldIcon.Transparent := True;
     NewIcon.Transparent := True;
+    // load file icons
   end;
     
 initialization

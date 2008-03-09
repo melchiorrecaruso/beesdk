@@ -286,13 +286,10 @@ type
 var
   MainFrm: TMainFrm;
   
-resourcestring
-  C001 = 'OK';
-  
 implementation
 
 uses
-  Bee_common,
+  Bee_Common,
 
   BeeGui_ViewFrm,
   BeeGui_AboutFrm,
@@ -307,19 +304,11 @@ uses
   var
     CfgFolder: string;
     Storage: TIniFile;
-    Lang: string;
-    PODirectory: string;
-    FallbackLang: string;
   begin
-    // PODirectory := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('languages');
-    // GetLanguageIDs(Lang, FallbackLang);
-    // TranslateUnitResourceStrings('beefm', PODirectory + 'beefm.it.po', Lang, FallbackLang);
-
-
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
 
-    {$I beefm_mainfrm_load.inc}
+    {$I beefm_mainfrm_loadproperty.inc}
     MainFrm_UpdateButtons(False);
     MainFrm_UpdateButtons;
     UpdateStyle;
@@ -332,7 +321,7 @@ uses
   begin
     if MMenuOptionsSaveOnExit.Checked then
     begin
-      {$I beefm_mainfrm_save.inc}
+      {$I beefm_mainfrm_saveproperty.inc}
     end;
   end;
   
@@ -1003,7 +992,7 @@ uses
     CfgFolder: string;
     Storage: TIniFile;
   begin
-    {$I beefm_mainfrm_save.inc}
+    {$I beefm_mainfrm_saveproperty.inc}
   end;
 
   procedure TMainFrm.MMenuOptionsDefaultClick(Sender: TObject);

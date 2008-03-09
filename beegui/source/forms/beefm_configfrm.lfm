@@ -1,77 +1,152 @@
 object ConfigFrm: TConfigFrm
-  Left = 411
-  Height = 407
-  Top = 156
-  Width = 475
-  HorzScrollBar.Page = 474
-  VertScrollBar.Page = 406
-  ActiveControl = BtnOk
+  Left = 434
+  Height = 327
+  Top = 167
+  Width = 626
+  HorzScrollBar.Page = 625
+  VertScrollBar.Page = 326
   Caption = 'Configuration'
-  ClientHeight = 407
-  ClientWidth = 475
+  ClientHeight = 327
+  ClientWidth = 626
   Font.Height = -11
   Font.Name = 'Tahoma'
   Icon.Data = {
-    DC0400002F2A2058504D202A2F0A7374617469632063686172202A6772617068
-    69635B5D203D207B0A22333220333220332031222C0A222E2063202330303030
-    3030222C0A222C2063204E6F6E65222C0A222D20632023464646464646222C0A
-    222E2C2C2C2C2C2C2C2E2C2C2C2C2C2C2C2E2C2C2C2C2C2C2C2E2C2C2C2C2C2C
-    2C222C0A222E2C2C2C2C2C2C2C2E2C2C2C2C2C2C2C2E2C2C2C2C2C2C2C2E2C2C
-    2C2C2C2C2C222C0A222E2C2C2C2C2C2C2C2E2C2C2C2C2C2C2C2E2C2C2C2C2C2C
-    2C2E2C2C2C2C2C2C2C222C0A222E2E2C2C2C2C2C2E2E2E2C2C2C2C2C2E2E2E2C
-    2C2C2C2C2E2E2E2C2C2C2C2C2E222C0A222C2E2E2E2C2E2E2E2D2E2E2E2C2E2E
-    2E2D2E2E2E2C2E2E2E2D2E2E2E2C2E2E2E222C0A222C2C2C2E2E2E2D2D2D2D2D
-    2E2E2E2D2D2D2D2D2E2E2E2D2D2D2D2D2E2E2E2C2C222C0A222C2C2C2C2E2D2D
-    2D2D2D2D2D2E2D2D2D2D2D2D2D2E2D2D2D2D2D2D2D2E2C2C2C222C0A222C2C2C
-    2C2E2D2D2D2D2D2D2D2E2D2D2D2D2D2D2D2E2D2D2D2D2D2D2D2E2C2C2C222C0A
-    222C2C2C2C2E2D2D2D2D2D2D2D2E2D2D2D2D2D2D2D2E2D2D2D2D2D2D2D2E2C2C
-    2C222C0A222C2C2C2E2E2E2D2D2D2D2D2E2E2E2D2D2D2D2D2E2E2E2D2D2D2D2D
-    2E2E2E2C2C222C0A222C2E2E2E2D2E2E2E2D2E2E2E2D2E2E2E2D2E2E2E2C2E2E
-    2E2D2E2E2E2C2E2E2E222C0A222E2E2D2D2D2D2D2E2E2E2D2D2D2D2D2E2E2E2C
-    2C2C2C2C2E2E2E2C2C2C2C2C2E222C0A222E2D2D2D2D2D2D2D2E2D2D2D2D2D2D
-    2D2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C222C0A222E2D2D2D2D2D2D2D2E2D2D
-    2D2D2D2D2D2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C222C0A222E2D2D2D2D2D2D
-    2D2E2D2D2D2D2D2D2D2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C222C0A222E2E2D
-    2D2D2D2D2E2E2E2D2D2D2D2D2E2E2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C222C0A
-    222C2E2E2E2D2E2E2E2D2E2E2E2D2E2E2E2D2E2E2E2C2C2C2C2C2C2C2C2C2C2C
-    2C222C0A222C2C2C2E2E2E2D2D2D2D2D2E2E2E2D2D2D2D2D2E2E2E2C2C2C2C2C
-    2C2C2C2C2C222C0A222C2C2C2C2E2D2D2D2D2D2D2D2E2D2D2D2D2D2D2D2E2C2C
-    2C2C2C2C2C2C2C2C2C222C0A222C2C2C2C2E2D2D2D2D2D2D2D2E2D2D2D2D2D2D
-    2D2E2C2C2C2C2C2C2C2C2C2C2C222C0A222C2C2C2C2E2D2D2D2D2D2D2D2E2D2D
-    2D2D2D2D2D2E2C2C2C2C2C2C2C2C2C2C2C222C0A222C2C2C2E2E2E2D2D2D2D2D
-    2E2E2E2D2D2D2D2D2E2E2E2C2C2C2C2C2C2C2C2C2C222C0A222C2E2E2E2D2E2E
-    2E2D2E2E2E2D2E2E2E2D2E2E2E2C2C2C2C2C2C2C2C2C2C2C2C222C0A222E2E2D
-    2D2D2D2D2E2E2E2D2D2D2D2D2E2E2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C222C0A
-    222E2D2D2D2D2D2D2D2E2D2D2D2D2D2D2D2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C
-    2C222C0A222E2D2D2D2D2D2D2D2E2D2D2D2D2D2D2D2E2C2C2C2C2C2C2C2C2C2C
-    2C2C2C2C2C222C0A222E2D2D2D2D2D2D2D2E2D2D2D2D2D2D2D2E2C2C2C2C2C2C
-    2C2C2C2C2C2C2C2C2C222C0A222E2E2D2D2D2D2D2E2E2E2D2D2D2D2D2E2E2E2C
-    2C2C2C2C2C2C2C2C2C2C2C2C2C222C0A222C2E2E2E2D2E2E2E2C2E2E2E2D2E2E
-    2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C222C0A222C2C2C2E2E2E2C2C2C2C2C
-    2E2E2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C222C0A222C2C2C2C2E2C2C
-    2C2C2C2C2C2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C222C0A222C2C2C
-    2C2E2C2C2C2C2C2C2C2E2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C227D0A
+    36100000424D3610000000000000360000002800000020000000200000000100
+    2000000000000010000064000000640000000000000000000000000000000000
+    00000000000000000000000000FF000000000000000000000000000000000000
+    00000000000000000000000000FF000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    00000000000000000000000000FF000000000000000000000000000000000000
+    00000000000000000000000000FF000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    000000000000000000FF000000FF000000FF0000000000000000000000000000
+    000000000000000000FF000000FF000000FF0000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FF000000000000
+    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FF000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
+    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
+    00FF000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
+    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
+    00FF000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FF00000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    000000000000000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FF0000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    000000000000000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FF0000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FF00000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
+    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
+    00FF000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
+    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
+    00FF0000000000000000000000000000000000000000000000FF000000FF0000
+    00FF0000000000000000000000000000000000000000000000FF000000000000
+    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FF00000000000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FF00000000000000FF000000FF000000FF000000000000
+    000000000000000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FF0000000000000000000000000000
+    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
+    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
+    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
+    000000000000000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    FFFFFFFFFFFF000000FF000000FF000000FF0000000000000000000000000000
+    00FF000000FF000000FF00000000000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FF00000000000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FF00000000000000FF000000FF000000FFFFFFFFFF0000
+    00FF000000FF000000FF00000000000000FF000000FF000000FF000000FF0000
+    00FF0000000000000000000000000000000000000000000000FF000000FF0000
+    00FF0000000000000000000000000000000000000000000000FF000000FF0000
+    00FF0000000000000000000000000000000000000000000000FF000000FF0000
+    00FF0000000000000000000000000000000000000000000000FF000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000000000FF0000
+    0000000000000000000000000000000000000000000000000000
   }
   OnCreate = FormCreate
   LCLVersion = '0.9.25'
-  object BtnOk: TBitBtn
-    Left = 396
-    Height = 23
-    Top = 376
-    Width = 75
-    Anchors = [akRight, akBottom]
-    BorderSpacing.InnerBorder = 2
-    Cancel = True
-    Caption = 'OK'
-    Default = True
-    ModalResult = 1
-    NumGlyphs = 2
-    ParentShowHint = False
-    TabOrder = 1
-  end
   object ConfigFrm_Tree: TTreeView
     Left = 4
-    Height = 350
+    Height = 281
     Top = 4
     Width = 140
     Anchors = [akTop, akLeft, akBottom]
@@ -97,222 +172,243 @@ object ConfigFrm: TConfigFrm
   end
   object ConfigFrm_AddGB: TGroupBox
     Left = 150
-    Height = 350
+    Height = 281
     Top = 4
-    Width = 321
+    Width = 472
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'Add Options'
-    ClientHeight = 332
-    ClientWidth = 317
+    ClientHeight = 263
+    ClientWidth = 468
     ParentShowHint = False
-    TabOrder = 2
-    object AddFrm_OptionsGB: TGroupBox
+    TabOrder = 1
+    object mOptionLabel: TLabel
       Left = 8
-      Height = 134
-      Top = 130
-      Width = 301
+      Height = 18
+      Top = 4
+      Width = 452
       Align = alTop
-      AutoSize = True
+      AutoSize = False
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
+      BorderSpacing.Bottom = 4
+      BorderSpacing.Around = 4
+      Caption = 'Compression method:'
+      Constraints.MaxHeight = 18
+      Constraints.MinHeight = 18
+      Layout = tlBottom
+      ParentColor = False
+    end
+    object dOptionLabel: TLabel
+      Left = 8
+      Height = 18
+      Top = 59
+      Width = 452
+      Align = alTop
+      AutoSize = False
       BorderSpacing.Around = 8
+      Caption = 'Dictionary size:'
+      Constraints.MaxHeight = 18
+      Constraints.MinHeight = 18
+      Layout = tlBottom
+      ParentColor = False
+    end
+    object Options: TGroupBox
+      Left = 7
+      Height = 154
+      Top = 114
+      Width = 454
+      Align = alTop
+      Anchors = [akRight]
+      BorderSpacing.Around = 7
       Caption = 'Options'
-      ClientHeight = 116
-      ClientWidth = 297
+      ClientHeight = 136
+      ClientWidth = 450
       ParentShowHint = False
-      TabOrder = 2
-      object AddFrm_rOption: TCheckBox
-        Left = 8
+      TabOrder = 0
+      object rOption: TCheckBox
+        Left = 6
         Height = 19
-        Top = 8
-        Width = 281
+        Top = 6
+        Width = 438
         Align = alTop
-        BorderSpacing.Around = 8
+        BorderSpacing.Around = 6
         Caption = 'Recurse subdirectories'
         Checked = True
+        ParentColor = False
         ParentShowHint = False
         State = cbChecked
         TabOrder = 0
       end
-      object AddFrm_sOption: TCheckBox
-        Left = 8
+      object sOption: TCheckBox
+        Left = 6
         Height = 19
-        Top = 35
-        Width = 281
+        Top = 31
+        Width = 438
         Align = alTop
-        BorderSpacing.Around = 8
+        BorderSpacing.Around = 6
         Caption = 'Create a solid archive'
+        ParentColor = False
         ParentShowHint = False
         TabOrder = 1
       end
-      object AddFrm_tOption: TCheckBox
-        Left = 8
+      object tOption: TCheckBox
+        Left = 6
         Height = 19
-        Top = 62
-        Width = 281
+        Top = 56
+        Width = 438
         Align = alTop
-        BorderSpacing.Around = 8
+        BorderSpacing.Around = 6
         Caption = 'Test files after adding'
+        ParentColor = False
         ParentShowHint = False
         TabOrder = 2
       end
-      object AddFrm_kOption: TCheckBox
-        Left = 8
+      object kOption: TCheckBox
+        Left = 6
         Height = 19
-        Top = 89
-        Width = 281
+        Top = 81
+        Width = 438
         Align = alTop
-        BorderSpacing.Around = 8
+        BorderSpacing.Around = 6
         Caption = 'Crypt files with password'
+        ParentColor = False
         ParentShowHint = False
         TabOrder = 3
       end
-    end
-    object AddFrm_MethodGB: TGroupBox
-      Left = 8
-      Height = 55
-      Top = 4
-      Width = 301
-      Align = alTop
-      AutoSize = True
-      BorderSpacing.Left = 8
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 8
-      BorderSpacing.Bottom = 8
-      Caption = 'Method'
-      ClientHeight = 37
-      ClientWidth = 297
-      ParentShowHint = False
-      TabOrder = 0
-      object AddFrm_Method: TComboBox
-        Left = 8
-        Height = 21
-        Top = 8
-        Width = 281
+      object lOption: TCheckBox
+        Left = 6
+        Height = 19
+        Top = 106
+        Width = 438
         Align = alTop
-        AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-        BorderSpacing.Around = 8
-        ItemHeight = 13
-        Items.Strings = (
-          '0 - Store'
-          '1 - Low'
-          '2 - Good'
-          '3 - Maximal'
-        )
-        MaxLength = 0
+        BorderSpacing.Around = 6
+        Caption = 'List archive after process'
+        ParentColor = False
         ParentShowHint = False
-        Style = csDropDownList
-        TabOrder = 0
+        TabOrder = 4
+        Visible = False
       end
     end
-    object AddFrm_DictionaryGB: TGroupBox
+    object mOption: TComboBox
       Left = 8
-      Height = 55
-      Top = 67
-      Width = 301
+      Height = 21
+      Top = 30
+      Width = 452
       Align = alTop
-      AutoSize = True
+      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Around = 8
-      Caption = 'Dictionary'
-      ClientHeight = 37
-      ClientWidth = 297
+      ItemHeight = 13
+      ItemIndex = 1
+      Items.Strings = (
+        '0 - Store'
+        '1 - Low'
+        '2 - Good'
+        '3 - Maximal'
+      )
+      MaxLength = 0
       ParentShowHint = False
+      Style = csDropDownList
       TabOrder = 1
-      object AddFrm_Dictionary: TComboBox
-        Left = 8
-        Height = 21
-        Top = 8
-        Width = 281
-        Align = alTop
-        AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-        BorderSpacing.Around = 8
-        ItemHeight = 13
-        Items.Strings = (
-          'Level  0   (dictionary size  <       2 MB)'
-          'Level  1   (dictionary size  <       5 MB)'
-          'Level  2   (dictionary size  <     10 MB)'
-          'Level  3   (dictionary size  <     20 MB)'
-          'Level  4   (dictionary size  <     40 MB)'
-          'Level  5   (dictionary size  <     80 MB)'
-          'Level  6   (dictionary size  <   160 MB)'
-          'Level  7   (dictionary size  <   320 MB)'
-          'Level  8   (dictionary size  <   640 MB)'
-          'Level  9   (dictionary size  < 1280 MB)'
-        )
-        MaxLength = 0
-        ParentShowHint = False
-        Style = csDropDownList
-        TabOrder = 0
-      end
+      Text = '1 - Low'
+    end
+    object dOption: TComboBox
+      Left = 8
+      Height = 21
+      Top = 85
+      Width = 452
+      Align = alTop
+      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+      BorderSpacing.Around = 8
+      ItemHeight = 13
+      ItemIndex = 3
+      Items.Strings = (
+        'Level  0   (dictionary size  <       2 MB)'
+        'Level  1   (dictionary size  <       5 MB)'
+        'Level  2   (dictionary size  <     10 MB)'
+        'Level  3   (dictionary size  <     20 MB)'
+        'Level  4   (dictionary size  <     40 MB)'
+        'Level  5   (dictionary size  <     80 MB)'
+        'Level  6   (dictionary size  <   160 MB)'
+        'Level  7   (dictionary size  <   320 MB)'
+        'Level  8   (dictionary size  <   640 MB)'
+        'Level  9   (dictionary size  < 1280 MB)'
+      )
+      MaxLength = 0
+      ParentShowHint = False
+      Style = csDropDownList
+      TabOrder = 2
+      Text = 'Level  3   (dictionary size  <     20 MB)'
     end
   end
   object ConfigFrm_ExtractGB: TGroupBox
     Left = 150
-    Height = 350
+    Height = 281
     Top = 4
-    Width = 321
+    Width = 472
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'Extract Options'
-    ClientHeight = 332
-    ClientWidth = 317
+    ClientHeight = 263
+    ClientWidth = 468
     ParentShowHint = False
-    TabOrder = 3
-    object ExtractFrm_OverwriteGB: TGroupBox
+    TabOrder = 2
+    object oOptionLabel: TLabel
       Left = 8
-      Height = 55
+      Height = 18
       Top = 4
-      Width = 301
+      Width = 452
       Align = alTop
-      AutoSize = True
-      BorderSpacing.Left = 8
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 8
-      BorderSpacing.Bottom = 8
-      Caption = 'Overwrite mode'
-      ClientHeight = 37
-      ClientWidth = 297
+      AutoSize = False
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
+      BorderSpacing.Bottom = 4
+      BorderSpacing.Around = 4
+      Caption = 'Extraction path:'
+      Layout = tlBottom
+      ParentColor = False
       ParentShowHint = False
-      TabOrder = 0
-      object ExtractFrm_Overwrite: TComboBox
-        Left = 8
-        Height = 21
-        Top = 8
-        Width = 281
-        Align = alTop
-        AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-        BorderSpacing.Around = 8
-        ItemHeight = 13
-        Items.Strings = (
-          'Skip pre-existing files'
-          'Overwrite pre-existing files'
-          'Query if Overwrite pre-existing files'
-        )
-        MaxLength = 0
-        ParentShowHint = False
-        Style = csDropDownList
-        TabOrder = 0
-      end
     end
-    object ExtractFrm_OptionsGB: TGroupBox
+    object oOption: TComboBox
       Left = 8
-      Height = 47
-      Top = 67
-      Width = 301
+      Height = 21
+      Top = 30
+      Width = 452
       Align = alTop
-      AutoSize = True
+      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+      BorderSpacing.Around = 8
+      ItemHeight = 13
+      ItemIndex = 2
+      Items.Strings = (
+        'Skip pre-existing files'
+        'Overwrite pre-existing files'
+        'Query if Overwrite pre-existing files'
+      )
+      MaxLength = 0
+      ParentShowHint = False
+      Style = csDropDownList
+      TabOrder = 0
+      Text = 'Query if Overwrite pre-existing files'
+    end
+    object Options1: TGroupBox
+      Left = 8
+      Height = 80
+      Top = 59
+      Width = 452
+      Align = alTop
       BorderSpacing.Around = 8
       Caption = 'Options'
-      ClientHeight = 29
-      ClientWidth = 297
+      ClientHeight = 62
+      ClientWidth = 448
       ParentShowHint = False
       TabOrder = 1
-      object ExtractFrm_xOption: TCheckBox
-        Left = 8
-        Height = 13
-        Top = 8
-        Width = 281
+      object xCommand: TCheckBox
+        Left = 6
+        Height = 19
+        Top = 6
+        Width = 436
         Align = alTop
-        AutoSize = False
-        BorderSpacing.Around = 8
-        Caption = 'Extract and recreate the relative pathname '
+        Anchors = [akRight]
+        BorderSpacing.Around = 6
+        Caption = 'Extract and Recreate the relative pathname '
         Checked = True
         ParentShowHint = False
         State = cbChecked
@@ -322,83 +418,51 @@ object ConfigFrm: TConfigFrm
   end
   object ConfigFrm_GeneralGB: TGroupBox
     Left = 150
-    Height = 350
+    Height = 281
     Top = 4
-    Width = 321
+    Width = 472
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'General'
-    ClientHeight = 332
-    ClientWidth = 317
+    ClientHeight = 263
+    ClientWidth = 468
     ParentShowHint = False
-    TabOrder = 4
+    TabOrder = 3
     object ConfigFrm_OptionsGB: TGroupBox
       Left = 8
-      Height = 47
-      Top = 67
-      Width = 301
+      Height = 239
+      Top = 4
+      Width = 452
       Align = alTop
       AutoSize = True
-      BorderSpacing.Around = 8
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
+      BorderSpacing.Bottom = 4
+      BorderSpacing.Around = 4
       Caption = 'Options'
-      ClientHeight = 29
-      ClientWidth = 297
       ParentShowHint = False
       TabOrder = 0
-      object ConfigFrm_mkOption: TCheckBox
-        Left = 8
-        Height = 13
-        Top = 8
-        Width = 281
-        Align = alTop
-        AutoSize = False
-        BorderSpacing.Around = 8
-        Caption = 'Mask text when insert a password'
-        Checked = True
-        ParentShowHint = False
-        State = cbChecked
-        TabOrder = 0
-      end
     end
-    object ConfigFrm_PriorityGB: TGroupBox
-      Left = 8
-      Height = 55
-      Top = 4
-      Width = 301
-      Align = alTop
-      AutoSize = True
-      BorderSpacing.Left = 8
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 8
-      BorderSpacing.Bottom = 8
-      Caption = 'Process priority'
-      ClientHeight = 37
-      ClientWidth = 297
-      ParentShowHint = False
-      TabOrder = 1
-      object ConfigFrm_Priority: TComboBox
-        Left = 8
-        Height = 21
-        Top = 8
-        Width = 281
-        Align = alTop
-        AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-        BorderSpacing.Around = 8
-        ItemHeight = 13
-        Items.Strings = (
-          '3 - Real time (unstable)'
-          '2 - Higth (unstable)'
-          '1 - Normal '
-          '0 - Idle'
-        )
-        MaxLength = 0
-        ParentShowHint = False
-        Style = csDropDownList
-        TabOrder = 0
-      end
-    end
+  end
+  object BtnOk: TBitBtn
+    Left = 544
+    Height = 26
+    Top = 297
+    Width = 78
+    Anchors = [akRight, akBottom]
+    Caption = '&OK'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
+    Default = True
+    Kind = bkOK
+    ModalResult = 1
+    NumGlyphs = 0
+    TabOrder = 4
   end
   object ConfigFrm_Storage: TXMLPropStorage
     StoredValues = <>
-    top = 368
+    left = 8
+    top = 289
   end
 end
