@@ -45,7 +45,7 @@ uses
   StdCtrls,
   ExtCtrls,
   LResources,
-  Traslations,
+  Translations,
   XMLPropStorage,
   // ---
   BeeGui_IconList,
@@ -282,9 +282,12 @@ type
 
     procedure UpdateStyle;
   end;
-
+  
 var
   MainFrm: TMainFrm;
+  
+resourcestring
+  C001 = 'OK';
   
 implementation
 
@@ -297,7 +300,7 @@ uses
 
   BeeFm_ConfigFrm,
   BeeFM_PropertyFrm;
-
+  
   { TMainFrm }
 
   procedure TMainFrm.FormCreate(Sender: TObject);
@@ -308,7 +311,9 @@ uses
     PODirectory: string;
     FallbackLang: string;
   begin
-
+    // PODirectory := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('languages');
+    // GetLanguageIDs(Lang, FallbackLang);
+    // TranslateUnitResourceStrings('beefm', PODirectory + 'beefm.it.po', Lang, FallbackLang);
 
 
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
