@@ -145,6 +145,7 @@ object AddFrm: TAddFrm
     0000000000000000000000000000000000000000000000000000000000FF0000
     0000000000000000000000000000000000000000000000000000
   }
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDropFiles = FormDropFiles
   LCLVersion = '0.9.25'
@@ -153,12 +154,12 @@ object AddFrm: TAddFrm
     Height = 291
     Top = 6
     Width = 438
-    ActivePage = PageGeneral
+    ActivePage = PageAdvanced
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -639,11 +640,11 @@ object AddFrm: TAddFrm
         Options = [tvoAllowMultiselect, tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
       end
     end
-    object Advanced: TTabSheet
-      Caption = 'Advanced'
+    object PageAdvanced: TTabSheet
+      Caption = 'PageAdvanced'
       ClientHeight = 265
       ClientWidth = 430
-      object Label1: TLabel
+      object cfgOptionLabel: TLabel
         Left = 6
         Height = 18
         Top = 110
@@ -731,7 +732,7 @@ object AddFrm: TAddFrm
         ParentShowHint = False
         TabOrder = 2
       end
-      object cfgOptionBtn: TBitBtn
+      object yOptionBtn: TBitBtn
         Left = 349
         Height = 43
         Top = 162
@@ -769,7 +770,7 @@ object AddFrm: TAddFrm
         ParentShowHint = False
         TabOrder = 5
       end
-      object cfgOptionBtn1: TBitBtn
+      object cfgOptionBtn: TBitBtn
         Left = 349
         Height = 43
         Top = 110
@@ -943,15 +944,10 @@ object AddFrm: TAddFrm
     left = 40
     top = 304
   end
-  object Storage: TXMLPropStorage
-    StoredValues = <>
-    left = 104
-    top = 304
-  end
   object FilesMgr: TAddTreeViewMgr
     Tree = Files
     Root = Root
-    left = 136
-    top = 304
+    left = 104
+    top = 305
   end
 end
