@@ -40,8 +40,8 @@ uses
   Controls,
   StdCtrls,
   ComCtrls,
+  IniFiles,
   LResources,
-  XMLPropStorage,
   // ---
   BeeGui_AddTreeViewMgr;
 
@@ -60,13 +60,13 @@ type
 
     cfgOption: TComboBox;
     yOption: TComboBox;
+    yOptionBtn: TBitBtn;
     cfgOptionBtn: TBitBtn;
-    cfgOptionBtn1: TBitBtn;
     cdOption: TEdit;
     dOption: TComboBox;
     dOptionLabel: TLabel;
     eOption: TEdit;
-    Label1: TLabel;
+    cfgOptionLabel: TLabel;
     cdOptionLabel: TLabel;
     eOptionLabel: TLabel;
     mOption: TComboBox;
@@ -75,11 +75,10 @@ type
     ufOptionLabel: TLabel;
     yOptionLabel: TLabel;
     lOption: TCheckBox;
-    Storage: TXMLPropStorage;
     OpenDialog: TOpenDialog;
     Pages: TPageControl;
     PageGeneral: TTabSheet;
-    Advanced: TTabSheet;
+    PageAdvanced: TTabSheet;
     Options: TGroupBox;
     rOption: TCheckBox;
     sOption: TCheckBox;
@@ -112,6 +111,7 @@ type
     BtnFolder: TBitBtn;
     // ---
     procedure aOptionCheckChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FilesSelectionChanged(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
@@ -146,22 +146,21 @@ uses
  
   procedure TAddFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
+    {$I beegui_addfrm_loadlanguage.inc}
+    {$I beegui_addfrm_loadproperty.inc}
     Pages.ActivePage := PageGeneral;
-    // ---
-    CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      Storage.FileName := CfgFolder + ('addfrm.xml');
-    end;
-    SessionProperties := 'WindowState;';
-    if WindowState = wsNormal then
-    begin
-      SessionProperties :=
-        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
-    end;
-    Storage.Restore;
+  end;
+  
+  procedure TAddFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+    {*$I beegui_addfrm_savelanguage.inc}
+    {$I beegui_addfrm_saveproperty.inc}
   end;
 
   procedure TAddFrm.aOptionCheckChange(Sender: TObject);
