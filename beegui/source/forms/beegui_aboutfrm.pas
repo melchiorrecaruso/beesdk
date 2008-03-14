@@ -32,28 +32,26 @@ interface
 
 uses
   Forms,
-  GetText,
   Process,
   Dialogs,
   Buttons,
   Classes,
   Controls,
+  IniFiles,
   StdCtrls,
   Graphics,
   ExtCtrls,
   SysUtils,
-  LResources,
-  Translations,
-  XMLPropStorage;
+  LResources;
 
 type
   { TAboutFrm }
 
   TAboutFrm = class(TForm)
+    Process: TProcess;
+    // ---
     BtnLicense: TBitBtn;
     BtnOk: TBitBtn;
-    Storage: TXMLPropStorage;
-    Process: TProcess;
     // ---
     Logo: TImage;
     Version: TLabel;
@@ -69,6 +67,7 @@ type
     Web: TLabel;
     Link: TLabel;
     // ---
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormMouseMove (Sender: TObject; Shift: TShiftState; X, Y: Integer);
     // ---
@@ -78,11 +77,9 @@ type
     procedure BtnOkClick(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
   public
-    procedure LoadProperties;
-    procedure SaveProperties;
+    { public declarations }
   private
-    procedure LoadLanguage;
-    procedure SaveLanguage;
+    { private declarations }
   end;
 
 var
@@ -95,27 +92,25 @@ uses
 
   { TAboutFrm class }
 
-  {$I beegui_aboutfrm.inc}
-
   procedure TAboutFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    CfgFolder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      Storage.FileName := CfgFolder + ('aboutfrm.xml');
-    end;
-    SessionProperties := 'WindowState;';
-    if WindowState = wsNormal then
-    begin
-      SessionProperties :=
-        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
-    end;
-    Storage.Restore;
+    {$I beegui_aboutfrm_loadlanguage.inc}
+    {$I beegui_aboutfrm_loadproperty.inc}
     // ---
     VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '126';
+    BuildValue.Caption := '130';
+  end;
+
+  procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+    {*$I beegui_aboutfrm_savelanguage.inc}
+    {$I beegui_aboutfrm_saveproperty.inc}
   end;
   
   procedure TAboutFrm.FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);

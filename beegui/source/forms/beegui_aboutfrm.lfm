@@ -1,7 +1,7 @@
 object AboutFrm: TAboutFrm
-  Left = 548
+  Left = 399
   Height = 160
-  Top = 163
+  Top = 298
   Width = 360
   HorzScrollBar.Page = 359
   VertScrollBar.Page = 159
@@ -15,6 +15,7 @@ object AboutFrm: TAboutFrm
   Constraints.MinHeight = 160
   Constraints.MinWidth = 360
   Font.Name = 'Default'
+  OnClose = FormClose
   OnCreate = FormCreate
   OnMouseMove = FormMouseMove
   LCLVersion = '0.9.25'
@@ -316,11 +317,6 @@ object AboutFrm: TAboutFrm
   end
   object Process: TProcess
     Priority = ppNormal
-    left = 40
-    top = 120
-  end
-  object Storage: TXMLPropStorage
-    StoredValues = <>
     left = 8
     top = 120
   end

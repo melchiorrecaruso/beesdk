@@ -44,7 +44,7 @@ uses
   BeeGui_RenameFrm,
   BeeGui_ExtractFrm,
   BeeGui_PasswordFrm,
-  BeeGui_OverWriteFrm, Unit1;
+  BeeGui_OverWriteFrm;
 
 var
   CmdLine: TCmdLine;

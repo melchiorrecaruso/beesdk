@@ -10,9 +10,9 @@
       <SearchPaths>
         <IncludeFiles Value="beegui.include\"/>
         <Libraries Value="$(LazarusDir)\lcl\;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType)\"/>
-        <OtherUnitFiles Value="..\..\..\bee\source\;..\forms\"/>
+        <OtherUnitFiles Value="..\..\..\bee\source\"/>
         <UnitOutputDirectory Value="..\..\temp"/>
-        <SrcPath Value="..\..\..\bee\source\;..\forms\"/>
+        <SrcPath Value="..\..\..\bee\source\"/>
       </SearchPaths>
       <Parsing>
         <SyntaxOptions>
@@ -47,7 +47,7 @@
     <License Value="GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 "/>
     <Version Minor="1"/>
-    <Files Count="12">
+    <Files Count="11">
       <Item1>
         <Filename Value="beegui_addtreeviewmgr.lrs"/>
         <Type Value="LRS"/>
@@ -58,50 +58,46 @@
         <UnitName Value="BeeGui_AddTreeViewMgr"/>
       </Item2>
       <Item3>
-        <Filename Value="beegui_cmdline.pas"/>
-        <UnitName Value="BeeGui_CmdLine"/>
-      </Item3>
-      <Item4>
         <Filename Value="beegui_foldertreeviewmgr.lrs"/>
         <Type Value="LRS"/>
-      </Item4>
-      <Item5>
+      </Item3>
+      <Item4>
         <Filename Value="beegui_foldertreeviewmgr.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BeeGui_FolderTreeViewMgr"/>
-      </Item5>
-      <Item6>
+      </Item4>
+      <Item5>
         <Filename Value="beegui_iconlist.lrs"/>
         <Type Value="LRS"/>
-      </Item6>
-      <Item7>
+      </Item5>
+      <Item6>
         <Filename Value="beegui_iconlist.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BeeGui_IconList"/>
-      </Item7>
-      <Item8>
+      </Item6>
+      <Item7>
         <Filename Value="beegui_archivelistviewmgr.lrs"/>
         <Type Value="LRS"/>
-      </Item8>
-      <Item9>
+      </Item7>
+      <Item8>
         <Filename Value="beegui_archivelistviewmgr.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-      </Item9>
-      <Item10>
+      </Item8>
+      <Item9>
         <Filename Value="beegui_archiveprocess.lrs"/>
         <Type Value="LRS"/>
-      </Item10>
-      <Item11>
+      </Item9>
+      <Item10>
         <Filename Value="beegui_archiveprocess.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BeeGui_ArchiveProcess"/>
-      </Item11>
-      <Item12>
+      </Item10>
+      <Item11>
         <Filename Value="beegui_archivefolderbox.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BeeGui_ArchiveFolderBox"/>
-      </Item12>
+      </Item11>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">
