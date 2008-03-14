@@ -245,11 +245,12 @@ uses
       if FilesMgr.Selected[I] then
       begin
         F := TRenameFrm.Create(Self);
-        F.RenameTo.Caption := ExtractFileName(FilesMgr.Items[I]);
-
+        F.ToFN.Text := ExtractFileName(FilesMgr.Items[I]);
+        F.FromFN.Caption := ExtractFileName(FilesMgr.Items[I]);
+        
         if F.ShowModal = mrOk then
         begin
-          NewMask := ExcludeTrailingBackSlash(F.RenameTo.Text);
+          NewMask := ExcludeTrailingBackSlash(F.ToFN.Text);
           while Pos(PathDelim, NewMask) = 1 do
           begin
             Delete(NewMask, 1, 1);

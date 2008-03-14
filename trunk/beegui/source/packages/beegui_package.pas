@@ -7,9 +7,9 @@ unit beegui_package;
 interface
 
 uses
-  BeeGui_AddTreeViewMgr, BeeGui_CmdLine, BeeGui_FolderTreeViewMgr, 
-    BeeGui_IconList, BeeGui_ArchiveListViewMgr, BeeGui_ArchiveProcess, 
-    BeeGui_ArchiveFolderBox, LazarusPackageIntf; 
+  BeeGui_AddTreeViewMgr, BeeGui_FolderTreeViewMgr, BeeGui_IconList, 
+    BeeGui_ArchiveListViewMgr, BeeGui_ArchiveProcess, BeeGui_ArchiveFolderBox, 
+    LazarusPackageIntf; 
 
 implementation
 

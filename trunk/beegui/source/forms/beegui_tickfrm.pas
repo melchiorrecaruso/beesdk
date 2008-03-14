@@ -35,6 +35,7 @@ uses
   Classes,
   Dialogs,
   Buttons,
+  IniFiles,
   SysUtils,
   Graphics,
   Controls,
@@ -42,7 +43,6 @@ uses
   StdCtrls,
   ExtCtrls,
   LResources,
-  XMLPropStorage,
   // ---
   Bee_App,
   Bee_Common,
@@ -63,7 +63,6 @@ type
   TTickFrm = class(TForm)
     FontDialog: TFontDialog;
     SaveDialog: TSaveDialog;
-    Storage: TXMLPropStorage;
     Timer: TIdleTimer;
     // ---
     Notebook: TNotebook;
@@ -86,12 +85,13 @@ type
     ReportPage: TPage;
     Report: TMemo;
     // ---
-    BtnBackForeGround: TBitBtn;
-    BtnPauseRun: TBitBtn;
     BtnSave: TBitBtn;
     BtnFont: TBitBtn;
+    BtnBackForeGround: TBitBtn;
+    BtnPauseRun: TBitBtn;
     BtnCancel: TBitBtn;
     // ---
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormWindowStateChange(Sender: TObject);
@@ -143,15 +143,22 @@ type
   
 var
   TickFrm: TTickFrm;
-
+  
 implementation
 
 uses
-  {$ifdef MSWINDOWS}
+  {$IFDEF MSWINDOWS}
   Windows,
-  {$endif}
-  BeeGui_SysUtils;
-
+  {$ENDIF}
+  BeeGui_SysUtils,
+  BeeGui_Messages;
+  
+var
+  rsBtnForeGroundCaption : string = 'Foreground';
+  rsBtnBackGroundCaption : string = 'Background';
+  rsBtnPauseCaption : string = 'Pause';
+  rsBtnRunCaption : string = 'Run';
+  
   { TTickFrm class }
   
   constructor TTickFrm.Create(AOwner: TComponent);
@@ -193,20 +200,11 @@ uses
   
   procedure TTickFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      Storage.FileName := CfgFolder + ('tickfrm.xml');
-    end;
-    SessionProperties := 'WindowState;';
-    if WindowState = wsNormal then
-    begin
-      SessionProperties :=
-        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
-    end;
-    Storage.Restore;
+    {$I beegui_tickfrm_loadlanguage.inc}
+    {$I beegui_tickfrm_loadproperty.inc}
     //{$ifdef Windows}
     //TrayIcon.Icon.Handle := LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
     //{$endif}
@@ -216,6 +214,9 @@ uses
     // --
     ActiveControl := BtnCancel;
     Notebook.ActivePageComponent := GeneralPage;
+    // ---
+    BtnBackForeGround.Caption := rsBtnBackGroundCaption;
+    BtnPauseRun.Caption := rsBtnPauseCaption;
   end;
 
   procedure TTickFrm.FormWindowStateChange(Sender: TObject);
@@ -233,9 +234,9 @@ uses
   begin
     if FAppTerminated = False then
     begin
-      CanClose := MessageDlg('Confirm','Do you want abort process?',
-                    mtConfirmation, [mbYes, mbNo], '') = mrYes;
-
+      CanClose := MessageDlg(rsConfirm, rsConfirmAbort,
+        mtConfirmation, [mbYes, mbNo], '') = mrYes;
+      
       if CanClose and (FAppTerminated = False) then
       begin
         Timer.Enabled := True;
@@ -247,6 +248,15 @@ uses
       end;
     end else
       CanClose := True;
+  end;
+  
+  procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+    {$I beegui_tickfrm_savelanguage.inc}
+    {$I beegui_tickfrm_saveproperty.inc}
   end;
 
   procedure TTickFrm.HandleClick(Sender: TObject);
@@ -335,7 +345,7 @@ uses
       RemainingTime.Caption := TimeToStr(0);
 
       Tick.Position := 100;
-      Caption := 'Process Terminated';
+      Caption := rsProcessTerminated;
       Application.Title := Caption;
     end;
   end;
@@ -350,12 +360,12 @@ uses
       begin
         Timer.Enabled  := True;
         FApp.Suspended := False;
-        BtnPauseRun.Caption := 'Pause';
+        BtnPauseRun.Caption := rsBtnPauseCaption;
       end else
       begin
         Timer.Enabled  := False;
         FApp.Suspended := True;
-        BtnPauseRun.Caption := 'Run';
+        BtnPauseRun.Caption := rsBtnRunCaption
       end
     end;
   end;
@@ -367,11 +377,11 @@ uses
       if FApp.Priority = tpIdle then
       begin
         FApp.Priority := tpNormal;
-        BtnBackForeGround.Caption := 'Background';
+        BtnBackForeGround.Caption := rsBtnBackGroundCaption;
       end else
       begin
         FApp.Priority := tpIdle;
-        BtnBackForeGround.Caption := 'Foreground';
+        BtnBackForeGround.Caption := rsBtnForeGroundCaption;
       end;
     end;
   end;
@@ -390,10 +400,10 @@ uses
     FileName: string;
   begin
     SaveDialog.FileName := '';
-    SaveDialog.Filter :=
-        'Txt file (*.txt)|*.txt|' +
-        'Log file (*.log)|*.log|' +
-        'all files  (*.*)|*.*|';
+    SaveDialog.Filter := 'Txt file  (*.txt)|*.txt|' +
+                         'Log file  (*.log)|*.log|' +
+                         'All files (*.*)|*.*|';
+
     if SaveDialog.Execute then
     begin
       FileName := SaveDialog.FileName;
@@ -480,13 +490,14 @@ uses
     begin;
       FApp.Suspended := True;
       F := TRenameFrm.Create(nil);
-      F.Caption := 'Rename file';
-      F.RenameTo.Text :=
-        FAppInterface.OnRename.Data.FilePath +
-        FAppInterface.OnRename.Data.FileName;
-
+      F.Caption := rsRenameFile;
+      with FAppInterface.OnRename.Data do
+      begin
+        F.ToFN.Text := FilePath + FileName;
+      end;
+      
       if F.ShowModal = mrOk then
-        FAppInterface.OnRename.Answer := F.RenameTo.Text
+        FAppInterface.OnRename.Answer := F.ToFN.Text
       else
         FAppInterface.OnRename.Answer := '';
 
@@ -570,7 +581,7 @@ uses
   procedure TTickFrm.OnTick;
   begin
     Tick.Position := FAppInterface.OnTick.Data.Percentage;
-    Caption := Format('%d%% Processing...', [FApp.AppInterface.OnTick.Data.Percentage]);
+    Caption := Format(rsProcessStatus, [FApp.AppInterface.OnTick.Data.Percentage]);
     Application.Title := Caption;
   end;
   

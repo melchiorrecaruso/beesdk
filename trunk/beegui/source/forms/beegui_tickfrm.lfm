@@ -1,7 +1,7 @@
 object TickFrm: TTickFrm
-  Left = 432
+  Left = 443
   Height = 190
-  Top = 249
+  Top = 364
   Width = 450
   HorzScrollBar.Page = 449
   VertScrollBar.Page = 189
@@ -56,6 +56,7 @@ object TickFrm: TTickFrm
     2E2E2E2E2E2E2E2E222C0A222E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E
     2E2E2E2E2E2E2E2E2E2E2E2E227D0A
   }
+  OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnWindowStateChange = FormWindowStateChange
@@ -80,17 +81,17 @@ object TickFrm: TTickFrm
     TabOrder = 0
   end
   object BtnBackForeGround: TBitBtn
-    Left = 204
+    Left = 194
     Height = 26
     Top = 158
-    Width = 75
+    Width = 85
     Align = alRight
     BorderSpacing.Around = 6
     Caption = 'Background'
     Constraints.MaxHeight = 26
-    Constraints.MaxWidth = 75
+    Constraints.MaxWidth = 85
     Constraints.MinHeight = 26
-    Constraints.MinWidth = 75
+    Constraints.MinWidth = 85
     NumGlyphs = 0
     OnClick = BtnBackForeGroundClick
     TabOrder = 4
@@ -348,17 +349,12 @@ object TickFrm: TTickFrm
     OnClick = BtnFontClick
     TabOrder = 3
   end
-  object Storage: TXMLPropStorage
-    StoredValues = <>
-    left = 184
-    top = 32
-  end
   object Timer: TIdleTimer
     Enabled = False
     OnTimer = OnTimer
     OnStartTimer = OnStartTimer
     OnStopTimer = OnStopTimer
-    left = 184
+    left = 216
     top = 64
   end
   object SaveDialog: TSaveDialog
@@ -367,7 +363,7 @@ object TickFrm: TTickFrm
     top = 32
   end
   object FontDialog: TFontDialog
-    left = 216
-    top = 64
+    left = 184
+    top = 32
   end
 end

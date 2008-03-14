@@ -12,7 +12,7 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
+  along with this program; if not, write To To the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
@@ -26,6 +26,8 @@
 
 unit BeeGui_RenameFrm;
 
+{$I compiler.inc}
+
 interface
 
 uses
@@ -33,28 +35,27 @@ uses
   Classes,
   Dialogs,
   Buttons,
+  IniFiles,
   SysUtils,
   Graphics,
   Controls,
   StdCtrls,
   ExtCtrls,
-  LResources,
-  XMLPropStorage;
+  LResources;
 
 type
 
   { TRenameFrm }
 
   TRenameFrm = class(TForm)
-    Storage: TXMLPropStorage;
-    RenameFromLabel: TLabel;
-    RenameFrom: TLabel;
-    RenameToLabel: TLabel;
-    RenameTo: TEdit;
+    FromFNLabel: TLabel;
+    FromFN: TLabel;
+    ToFNLabel: TLabel;
+    ToFN: TEdit;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   private
     { public declarations }
   public
@@ -65,32 +66,27 @@ implementation
 
 uses
   Bee_Common,
-  BeeGui_SysUtils;
+  BeeGui_SysUtils,
+  BeeGui_Messages;
 
   { TRenameFrm class }
 
-  procedure TRenameFrm.FormShow(Sender: TObject);
-  begin
-    RenameFrom.Caption := RenameTo.Caption;
-    RenameTo.SetFocus;
-  end;
-
   procedure TRenameFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      Storage.FileName := CfgFolder + ('renamefrm.xml');
-    end;
-    SessionProperties := 'WindowState;';
-    if WindowState = wsNormal then
-    begin
-      SessionProperties :=
-        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
-    end;
-    Storage.Restore;
+    {$I beegui_renamefrm_loadlanguage.inc}
+    {$I beegui_renamefrm_loadproperty.inc}
+  end;
+
+  procedure TRenameFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+    {$I beegui_renamefrm_savelanguage.inc}
+    {$I beegui_renamefrm_saveproperty.inc}
   end;
   
 initialization
