@@ -21,7 +21,7 @@
     
     Storage.WriteString('TGroupBox', 'Options.Caption', Options.Caption);
     Storage.WriteString('TCheckBox', 'xCommand.Caption', xCommand.Caption);
-    Storage.WriteString('TCheckBox', 'cdOption.Caption', cdOption.Caption);
+    Storage.WriteString('TCheckBox', 'cdOption.Caption', cdOptionCheck.Caption);
 
     // ---
 

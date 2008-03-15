@@ -21,7 +21,7 @@
 
     Options.Caption  := Storage.ReadString('TGroupBox', 'Options.Caption', Options.Caption);
     xCommand.Caption := Storage.ReadString('TCheckBox', 'xCommand.Caption', xCommand.Caption);
-    cdOption.Caption := Storage.ReadString('TCheckBox', 'cdOption.Caption', cdOption.Caption);
+    cdOptionCheck.Caption := Storage.ReadString('TCheckBox', 'cdOption.Caption', cdOptionCheck.Caption);
 
     // ---
 
