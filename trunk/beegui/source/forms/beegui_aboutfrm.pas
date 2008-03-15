@@ -101,7 +101,7 @@ uses
     {$I beegui_aboutfrm_loadproperty.inc}
     // ---
     VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '130';
+    BuildValue.Caption := '142';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -109,7 +109,7 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {*$I beegui_aboutfrm_savelanguage.inc}
+    {$I beegui_aboutfrm_savelanguage.inc}
     {$I beegui_aboutfrm_saveproperty.inc}
   end;
   

@@ -13,6 +13,7 @@ object ExtractFrm: TExtractFrm
   Constraints.MinWidth = 560
   Font.Height = -11
   Font.Name = 'Tahoma'
+  OnClose = FormClose
   OnCreate = FormCreate
   LCLVersion = '0.9.25'
   object FolderLabel: TLabel
@@ -202,11 +203,6 @@ object ExtractFrm: TExtractFrm
     FolderTree = Folders
     FolderIcons = Icons
     left = 40
-    top = 224
-  end
-  object Storage: TXMLPropStorage
-    StoredValues = <>
-    left = 72
     top = 224
   end
 end

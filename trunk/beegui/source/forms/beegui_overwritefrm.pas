@@ -26,6 +26,8 @@
 
 unit BeeGui_OverWriteFrm;
 
+{$I compiler.inc}
+
 interface
 
 uses
@@ -33,13 +35,13 @@ uses
   Buttons,
   Dialogs,
   Classes,
+  IniFiles,
   SysUtils,
   Graphics,
   Controls,
   StdCtrls,
   ExtCtrls,
   LResources,
-  XMLPropStorage,
   // ---
   BeeGui_IconList;
 
@@ -48,7 +50,6 @@ type
   { TOverwriteFrm }
 
   TOverwriteFrm = class(TForm)
-    Storage: TXMLPropStorage;
     Images: TIconList;
     Image: TImage;
     TheFolder: TLabel;
@@ -65,6 +66,7 @@ type
     BtnYesAll: TBitBtn;
     BtnYes: TBitBtn;
     BtnNo: TBitBtn;
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   public
@@ -85,22 +87,22 @@ uses
 
   procedure TOverwriteFrm.FormCreate(Sender: TObject);
   var
-   CfgFolder: string;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
     Images.IconFolder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('largeicons') ;
     // ---
-    CfgFolder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      Storage.FileName := CfgFolder + ('overwritefrm.xml');
-    end;
-    SessionProperties := 'WindowState;';
-    if WindowState = wsNormal then
-    begin
-      SessionProperties :=
-        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
-    end;
-    Storage.Restore;
+    {$I beegui_overwritefrm_loadlanguage.inc}
+    {$I beegui_overwritefrm_loadproperty.inc}
+  end;
+
+  procedure TOverwriteFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+    {$I beegui_overwritefrm_savelanguage.inc}
+    {$I beegui_overwritefrm_saveproperty.inc}
   end;
   
   procedure TOverwriteFrm.FormShow(Sender: TObject);
@@ -111,6 +113,7 @@ uses
     OldIcon.Transparent := True;
     NewIcon.Transparent := True;
     // load file icons
+    { TODO -oMelchiorre : Da terminare }
   end;
     
 initialization

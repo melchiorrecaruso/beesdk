@@ -234,7 +234,7 @@ var
   begin
     if FAppTerminated = False then
     begin
-      CanClose := MessageDlg(rsConfirm, rsConfirmAbort,
+      CanClose := MessageDlg(rsConfirmation, rsConfirmAbort,
         mtConfirmation, [mbYes, mbNo], '') = mrYes;
       
       if CanClose and (FAppTerminated = False) then

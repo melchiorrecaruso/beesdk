@@ -26,6 +26,8 @@
 
 unit BeeGui_ViewFrm;
 
+{$I compiler.inc}
+
 interface
 
 uses
@@ -33,18 +35,19 @@ uses
   Buttons,
   Classes,
   Dialogs,
+  Graphics,
+  IniFiles,
   ComCtrls,
   StdCtrls,
   Controls,
-  LResources,
-  XMLPropStorage;
+  SysUtils,
+  LResources;
 
 type
 
   { TViewFrm }
 
   TViewFrm = class(TForm)
-    Storage: TXMLPropStorage;
     FontDialog: TFontDialog;
     SaveDialog: TSaveDialog;
     Memo: TMemo;
@@ -52,6 +55,7 @@ type
     BtnSave: TBitBtn;
     BtnOk: TBitBtn;
     procedure BtnOkClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure BtnFontClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
@@ -71,20 +75,20 @@ uses
 
   procedure TViewFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      Storage.FileName := CfgFolder + ('viewfrm.xml');
-    end;
-    SessionProperties := 'WindowState;';
-    if WindowState = wsNormal then
-    begin
-      SessionProperties :=
-        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
-    end;
-    Storage.Restore;
+    {$I beegui_viewfrm_loadlanguage.inc}
+    {$I beegui_viewfrm_loadproperty.inc}
+  end;
+  
+  procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+    {$I beegui_viewfrm_savelanguage.inc}
+    {$I beegui_viewfrm_saveproperty.inc}
   end;
 
   procedure TViewFrm.BtnOkClick(Sender: TObject);
