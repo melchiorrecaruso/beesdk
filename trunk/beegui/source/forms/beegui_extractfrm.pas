@@ -57,8 +57,8 @@ type
     xCommand: TCheckBox;
     oOptionLabel: TLabel;
     oOption: TComboBox;
-    cdOptonEdit: TEdit;
-    cdOption: TCheckBox;
+    cdOption: TEdit;
+    cdOptionCheck: TCheckBox;
     Icons: TIconList;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;

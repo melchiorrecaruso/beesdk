@@ -515,9 +515,9 @@ uses
           FFileMasks.Add(F.FilesMgr.Items[i]);
 
       if Length(F.FilesMgr.RootValue) > 0 then
-        SetCurrentDir(F.FilesMgr.RootValue);
-
-      Result := True;
+        Result := SetCurrentDir(F.FilesMgr.RootValue)
+      else
+        Result := True;
     end else
       Result := False;
 
@@ -530,74 +530,95 @@ uses
   begin
     F := TExtractFrm.Create(Application);
 
+    F.xCommand.Checked := FCommand = 'X';
+
     // F.rOption.Checked := FrOption;
     
-    if (FuOption xor FfOption) then
-    begin
-      if FuOption then
-        F.ufOption.ItemIndex := 0
-      else
-        F.ufOption.ItemIndex := 1;
-    end else
-    begin
-      F.ufOption.ItemIndex := 2;
-    end;
+    // if (FuOption xor FfOption) then
+    // begin
+    //   if FuOption then
+    //     F.ufOption.ItemIndex := 0
+    //   else
+    //     F.ufOption.ItemIndex := 1;
+    // end else
+    // begin
+    //   F.ufOption.ItemIndex := 2;
+    // end;
     
     // F.eOption.Text := FeOption;
-    F.sOption.Checked := FsOption;
+    // F.sOption.Checked := FsOption;
 
-    if Length(FaOption) > 0 then
+    // if Length(FaOption) > 0 then
+    // begin
+    //   F.aOptionCheck.Checked := True;
+    //   if FaOption = 'beecore.sfx' then
+    //     F.aOption.ItemIndex := 0
+    //   else
+    //     if FaOption = 'bee.sfx' then
+    //       F.aOption.ItemIndex := 1
+    //     else
+    //       if FaOption = 'nul' then
+    //         F.aOption.ItemIndex := 2;
+    // end else
+    //   F.aOptionCheck.Checked := False;
+
+    case FoOption of
+      'S': F.oOption.ItemIndex := 0;
+      'A': F.oOption.ItemIndex := 1;
+      else F.oOption.ItemIndex := 2;
+    end;
+
+    // F.mOption.ItemIndex := FmOption;
+    // F.dOption.ItemIndex := FdOption;
+
+    // for i := 0 to FxOption.Count -1  do
+    //   F.FilesMgr.PlusMinus(F.FilesMgr.AddFile(
+    //     ExpandFileName(FxOption.Strings[i])));
+
+    // F.tOption.Checked := FtOption;
+    // F.lOption.Checked := FlOption;
+
+    // if Length(fyOption) > 0 then
+    //   F.yOption.Text := FyOption;
+
+    // F.kOption.Checked := FkOption;
+
+    F.cdOptionCheck.Enabled := Length(FcdOption) > 0;
+    if F.cdOptionCheck .Enabled then
     begin
-      F.aOptionCheck.Checked := True;
-      if FaOption = 'beecore.sfx' then
-        F.aOption.ItemIndex := 0
-      else
-        if FaOption = 'bee.sfx' then
-          F.aOption.ItemIndex := 1
-        else
-          if FaOption = 'nul' then
-            F.aOption.ItemIndex := 2;
-    end else
-      F.aOptionCheck.Checked := False;
-
-    //FoOption nothing to do
-
-    F.mOption.ItemIndex := FmOption;
-    F.dOption.ItemIndex := FdOption;
-
-    for i := 0 to FxOption.Count -1  do
-      F.FilesMgr.PlusMinus(F.FilesMgr.AddFile(
-        ExpandFileName(FxOption.Strings[i])));
-
-    F.tOption.Checked := FtOption;
-    F.lOption.Checked := FlOption;
-
-    if Length(fyOption) > 0 then
-      F.yOption.Text := FyOption;
-
-    F.kOption.Checked := FkOption;
-
-    if Length(FcdOption) > 0 then
       F.cdOption.Text := FcdOption;
+    end;
 
-    if Length(FcfgOption) > 0 then
-      F.cfgOption.Text := FcfgOption;
+    // if Length(FcfgOption) > 0 then
+    //  F.cfgOption.Text := FcfgOption;
 
     // F.priOption.ItemIndex := FpriOption;
-    F.ArchivePath := ExtractFilePath(ExpandFileName(FArcName));
-    F.ArchiveName.Text := ExtractFileName(ExpandFileName(FArcName));
+    // F.ArchivePath := ExtractFilePath(ExpandFileName(FArcName));
+    // F.ArchiveName.Text := ExtractFileName(ExpandFileName(FArcName));
 
-    for i := 0 to FFileMasks.Count - 1 do
-      F.FilesMgr.AddFile(ExpandFileName(FFileMasks.Strings[i]));
+    // for i := 0 to FFileMasks.Count - 1 do
+    //  F.FilesMgr.AddFile(ExpandFileName(FFileMasks.Strings[i]));
 
     // Form.ShowModal
     if F.ShowModal = mrOk then
     begin
+      if F.xCommand.Checked then
+        FCommand := 'X'
+      else
+        FCommand := 'E';
 
+      case F.oOption.ItemIndex of
+        0: FoOption := 'S';
+        1: FoOption := 'A';
+      else FoOption := 'Y';
+      end;
 
-
-
-      Result := True;
+      if F.cdOptionCheck .Enabled then
+        FcdOption := F.cdOption.Text
+      else
+        FcdOption := '';
+      
+      Result := SetCurrentDir(F.Folder.Text);
     end else
       Result := False;
 
