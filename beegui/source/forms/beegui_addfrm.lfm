@@ -154,12 +154,12 @@ object AddFrm: TAddFrm
     Height = 291
     Top = 6
     Width = 438
-    ActivePage = PageAdvanced
+    ActivePage = PageGeneral
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -254,10 +254,10 @@ object AddFrm: TAddFrm
           Top = 6
           Width = 193
           Align = alTop
+          AutoSize = False
           BorderSpacing.Around = 6
           Caption = 'Recurse subdirectories'
           Checked = True
-          ParentColor = False
           ParentShowHint = False
           State = cbChecked
           TabOrder = 0
@@ -268,9 +268,9 @@ object AddFrm: TAddFrm
           Top = 31
           Width = 193
           Align = alTop
+          AutoSize = False
           BorderSpacing.Around = 6
           Caption = 'Create a solid archive'
-          ParentColor = False
           ParentShowHint = False
           TabOrder = 1
         end
@@ -280,9 +280,9 @@ object AddFrm: TAddFrm
           Top = 56
           Width = 193
           Align = alTop
+          AutoSize = False
           BorderSpacing.Around = 6
           Caption = 'Test files after adding'
-          ParentColor = False
           ParentShowHint = False
           TabOrder = 2
         end
@@ -292,9 +292,9 @@ object AddFrm: TAddFrm
           Top = 81
           Width = 193
           Align = alTop
+          AutoSize = False
           BorderSpacing.Around = 6
           Caption = 'Crypt files with password'
-          ParentColor = False
           ParentShowHint = False
           TabOrder = 3
         end
@@ -304,9 +304,9 @@ object AddFrm: TAddFrm
           Top = 106
           Width = 193
           Align = alTop
+          AutoSize = False
           BorderSpacing.Around = 6
           Caption = 'List archive after process'
-          ParentColor = False
           ParentShowHint = False
           TabOrder = 4
           Visible = False
@@ -692,7 +692,6 @@ object AddFrm: TAddFrm
         BorderSpacing.Around = 6
         Caption = 'Add self-extractor module (-a Option)'
         OnChange = aOptionCheckChange
-        ParentColor = False
         ParentShowHint = False
         TabOrder = 0
       end

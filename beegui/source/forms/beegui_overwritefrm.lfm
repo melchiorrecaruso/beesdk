@@ -17,6 +17,7 @@ object OverwriteFrm: TOverwriteFrm
   Constraints.MinWidth = 450
   Font.Height = -11
   Font.Name = 'Tahoma'
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '0.9.25'
@@ -298,15 +299,10 @@ object OverwriteFrm: TOverwriteFrm
     ParentShowHint = False
     TabOrder = 2
   end
-  object Storage: TXMLPropStorage
-    StoredValues = <>
-    left = 416
-    top = 8
-  end
   object Images: TIconList
     Height = 32
     Width = 32
-    left = 416
-    top = 40
+    left = 16
+    top = 48
   end
 end

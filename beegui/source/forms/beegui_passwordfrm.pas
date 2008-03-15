@@ -33,20 +33,21 @@ uses
   Classes,
   Dialogs,
   Buttons,
+  IniFiles,
   SysUtils,
   StdCtrls,
   Graphics,
   ExtCtrls,
   Controls,
-  LResources,
-  XMLPropStorage;
+  LResources;
 
 type 
 
   { TPasswordFrm }
 
   TPasswordFrm = class(TForm)
-    Storage: TXMLPropStorage;
+    BtnOk: TBitBtn;
+    BtnCancel: TBitBtn;
     Panel: TPanel;
     KeyImage: TImage;
     KeyLabel: TLabel;
@@ -54,9 +55,8 @@ type
     ConfirmKeyLabel: TLabel;
     ConfirmKey: TEdit;
     MaskKey: TCheckBox;
-    BtnCancel: TBitBtn;
     BtnClear: TBitBtn;
-    BtnOk: TBitBtn;
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -77,24 +77,25 @@ var
 implementation
 
 uses
+  BeeGui_Messages,
   BeeGui_SysUtils;
 
   procedure TPasswordFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      Storage.FileName := CfgFolder + ('passwordfrm.xml');
-    end;
-    SessionProperties := 'WindowState;';
-    if WindowState = wsNormal then
-    begin
-      SessionProperties :=
-        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
-    end;
-    Storage.Restore;
+    {$I beegui_passwordfrm_loadlanguage.inc}
+    {$I beegui_passwordfrm_loadproperty.inc}
+  end;
+
+  procedure TPasswordFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+    {$I beegui_passwordfrm_savelanguage.inc}
+    {$I beegui_passwordfrm_saveproperty.inc}
   end;
   
   procedure TPasswordFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -108,7 +109,7 @@ uses
           CanClose := True
         else
         begin
-          MessageDlg ('Password not confirmed.', mtWarning, [mbOk], 0);
+          MessageDlg(rsWarning, rsPasswordNotConfirmed, mtWarning, [mbOk], 0);
           CanClose := False;
         end;
     end else

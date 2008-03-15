@@ -34,12 +34,12 @@ uses
   Dialogs,
   Buttons,
   Classes,
+  IniFiles,
   ComCtrls,
   StdCtrls,
   Controls,
   SysUtils,
   LResources,
-  XMLPropStorage,
   // ---
   BeeGui_IconList,
   BeeGui_FolderTreeViewMgr;
@@ -49,7 +49,6 @@ type
   { TExtractFrm }
 
   TExtractFrm = class(TForm)
-    Storage: TXMLPropStorage;
     FoldersMgr: TFolderTreeViewMgr;
     FolderLabel: TLabel;
     Folders: TTreeView;
@@ -63,6 +62,7 @@ type
     Icons: TIconList;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FoldersClick(Sender: TObject);
     procedure FoldersDblClick(Sender: TObject);
@@ -83,26 +83,27 @@ uses
 
   procedure TExtractFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
+    F: string;
+    Storage: TMemIniFile;
   begin
     Icons.IconFolder := ExtractFilePath(ParamStr(0)) +
       IncludeTrailingBackSlash('icons') + 'smallicons';
     // ---
-    CfgFolder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      Storage.FileName := CfgFolder+ ('extractfrm.xml');
-    end;
-    SessionProperties := 'WindowState;';
-    if WindowState = wsNormal then
-    begin
-      SessionProperties :=
-        SessionProperties + 'Top;' + 'Left;' + 'Width;' + 'Height;';
-    end;
-    Storage.Restore;
+    {$I beegui_extractfrm_loadlanguage.inc}
+    {$I beegui_extractfrm_loadproperty.inc}
+
     // ---
     FoldersMgr.Initialize;
     FoldersMgr.FolderName := Folder.Text;
+  end;
+
+  procedure TExtractFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    F: string;
+    Storage: TMemIniFile;
+  begin
+    {$I beegui_extractfrm_savelanguage.inc}
+    {$I beegui_extractfrm_saveproperty.inc}
   end;
 
   procedure TExtractFrm.FoldersClick(Sender: TObject);
