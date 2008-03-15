@@ -14,7 +14,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -44,8 +44,8 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="22" Y="47"/>
-        <TopLine Value="1"/>
+        <CursorPos X="44" Y="50"/>
+        <TopLine Value="27"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="184"/>
         <Loaded Value="True"/>
@@ -382,9 +382,11 @@
       <Unit46>
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="37" Y="293"/>
-        <TopLine Value="1474"/>
+        <CursorPos X="1" Y="143"/>
+        <TopLine Value="158"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="23"/>
+        <Loaded Value="True"/>
       </Unit46>
       <Unit47>
         <Filename Value="..\..\bee\source\bee_interface_base.pas"/>
@@ -580,9 +582,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_extractfrm.lrs"/>
         <UnitName Value="BeeGui_ExtractFrm"/>
-        <CursorPos X="33" Y="92"/>
-        <TopLine Value="2"/>
+        <CursorPos X="20" Y="34"/>
+        <TopLine Value="37"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="41"/>
+        <Loaded Value="True"/>
       </Unit75>
       <Unit76>
         <Filename Value="forms\beegui_infofrm.pas"/>
@@ -649,9 +653,11 @@
         <Filename Value="packages\beegui_cmdline.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_CmdLine"/>
-        <CursorPos X="12" Y="23"/>
-        <TopLine Value="1"/>
+        <CursorPos X="5" Y="533"/>
+        <TopLine Value="521"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="41"/>
+        <Loaded Value="True"/>
       </Unit82>
       <Unit83>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
@@ -1066,7 +1072,24 @@
         <UsageCount Value="10"/>
       </Unit147>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="4" HistoryIndex="3">
+      <Position1>
+        <Filename Value="packages\beegui_cmdline.pas"/>
+        <Caret Line="535" Column="5" TopLine="513"/>
+      </Position1>
+      <Position2>
+        <Filename Value="packages\beegui_cmdline.pas"/>
+        <Caret Line="534" Column="5" TopLine="515"/>
+      </Position2>
+      <Position3>
+        <Filename Value="..\..\bee\source\bee_app.pas"/>
+        <Caret Line="293" Column="37" TopLine="1474"/>
+      </Position3>
+      <Position4>
+        <Filename Value="packages\beegui_cmdline.pas"/>
+        <Caret Line="353" Column="1" TopLine="134"/>
+      </Position4>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

@@ -197,7 +197,6 @@ uses
                    if (S = '-') then FsOption := False;
                end;
           'A': begin
-                 // Rimettere come prima
                  System.Delete(S, 1, 2);
                  if (S = 'GUI') or (Length(S) = 0) then
                    FaOption := 'beegui.sfx'
@@ -355,10 +354,7 @@ uses
       if Length(FeOption) > 0 then
         FParams.Add('-e' + FeOption);
 
-      if FsOption then
-        FParams.Add('-s+')
-      else
-        FParams.Add('-s-');
+      if FsOption then FParams.Add('-s+') else FParams.Add('-s-');
 
       if Length(FaOption) > 0 then
         FParams.Add('-a' + FaOption);
@@ -373,13 +369,10 @@ uses
       if FtOption then FParams.Add('-t+') else FParams.Add('-t-');
       if FlOption then FParams.Add('-l+') else FParams.Add('-l-');
 
-      if Length(fyOption) > 0 then
+      if Length(FyOption) > 0 then
         FParams.Add('-y' + FyOption);
 
-      if FkOption then
-        FParams.Add('-k+')
-      else
-        FParams.Add('-k-');
+      if FkOption then FParams.Add('-k+') else FParams.Add('-k-');
 
       if Length(FcdOption) > 0 then
         FParams.Add('-cd' + FcdOption);
@@ -402,6 +395,7 @@ uses
   begin
     F := TAddFrm.Create(Application);
     F.rOption.Checked := FrOption;
+
     if (FuOption xor FfOption) then
     begin
       if FuOption then
@@ -412,7 +406,144 @@ uses
     begin
       F.ufOption.ItemIndex := 2;
     end;
+
     F.eOption.Text := FeOption;
+    F.sOption.Checked := FsOption;
+
+    if Length(FaOption) > 0 then
+    begin
+      F.aOptionCheck.Checked := True;
+      if FaOption = 'beecore.sfx' then
+        F.aOption.ItemIndex := 0
+      else
+        if FaOption = 'bee.sfx' then
+          F.aOption.ItemIndex := 1
+        else
+          if FaOption = 'nul' then
+            F.aOption.ItemIndex := 2;
+    end else
+      F.aOptionCheck.Checked := False;
+
+    // FoOption
+
+    F.mOption.ItemIndex := FmOption;
+    F.dOption.ItemIndex := FdOption;
+
+    for i := 0 to FxOption.Count -1  do
+      F.FilesMgr.PlusMinus(F.FilesMgr.AddFile(
+        ExpandFileName(FxOption.Strings[i])));
+
+    F.tOption.Checked := FtOption;
+    F.lOption.Checked := FlOption;
+
+    if Length(fyOption) > 0 then
+      F.yOption.Text := FyOption;
+
+    F.kOption.Checked := FkOption;
+
+    if Length(FcdOption) > 0 then
+      F.cdOption.Text := FcdOption;
+
+    if Length(FcfgOption) > 0 then
+      F.cfgOption.Text := FcfgOption;
+
+    // F.priOption.ItemIndex := FpriOption;
+
+    F.ArchivePath := ExtractFilePath(ExpandFileName(FArcName));
+    F.ArchiveName.Text := ExtractFileName(ExpandFileName(FArcName));
+
+    for i := 0 to FFileMasks.Count - 1 do
+      F.FilesMgr.AddFile(ExpandFileName(FFileMasks.Strings[i]));
+
+    // Form.ShowModal
+    if F.ShowModal = mrOk then
+    begin
+      FrOption := F.rOption.Checked;
+
+      case F.ufOption.ItemIndex of
+        0: begin
+             FuOption := True;
+             FfOption := False;
+           end;
+        1: begin
+             FuOption := False;
+             FfOption := True;
+           end;
+        2: begin
+             FuOption := True;
+             FfOption := True;
+           end;
+      end;
+
+      FeOption := F.eOption.Text;
+      FsOption := F.sOption.Checked;
+
+      if F.aOptionCheck.Checked then
+      begin
+        case F.aOption.ItemIndex of
+          0: FaOption := 'beecore.sfx';
+          1: FaOption := 'bee.sfx';
+          2: FaOption := 'nul';
+        end;
+      end;
+
+      // FoOption
+
+      FmOption := F.mOption.ItemIndex;
+      FdOption := F.dOption.ItemIndex;
+
+      FxOption.Clear;
+      for i := 0 to F.FilesMgr.Count - 1 do
+        if F.FilesMgr.Excluded[i] then
+          FxOption.Add(F.FilesMgr.Items[i]);
+
+      FtOption := F.tOption.Checked;
+      FlOption := F.lOption.Checked;
+      FyOption := F.yOption.Text;
+      FkOption := F.kOption.Checked;
+
+      FcdOption := F.cdOption.Text;
+      FcfgOption := F.cfgOption.Text;
+
+      // FpriOption := F.priOption.ItemIndex;
+
+      FArcName :=  F.ArchiveName.Text;
+
+      FFileMasks.Clear;
+      for i := 0 to F.FilesMgr.Count - 1 do
+        if F.FilesMgr.Excluded[i] = False then
+          FFileMasks.Add(F.FilesMgr.Items[i]);
+
+      if Length(F.FilesMgr.RootValue) > 0 then
+        SetCurrentDir(F.FilesMgr.RootValue);
+
+      Result := True;
+    end else
+      Result := False;
+
+    F.Free;
+  end;
+
+  function TCmdLine.ConfirmExtract: boolean;
+  var
+    F: TExtractFrm;
+  begin
+    F := TExtractFrm.Create(Application);
+
+    // F.rOption.Checked := FrOption;
+    
+    if (FuOption xor FfOption) then
+    begin
+      if FuOption then
+        F.ufOption.ItemIndex := 0
+      else
+        F.ufOption.ItemIndex := 1;
+    end else
+    begin
+      F.ufOption.ItemIndex := 2;
+    end;
+    
+    // F.eOption.Text := FeOption;
     F.sOption.Checked := FsOption;
 
     if Length(FaOption) > 0 then
@@ -462,78 +593,7 @@ uses
     // Form.ShowModal
     if F.ShowModal = mrOk then
     begin
-      FrOption := F.rOption.Checked;
 
-      case F.ufOption.ItemIndex of
-        0: begin
-             FuOption := True;
-             FfOption := False;
-           end;
-        1: begin
-             FuOption := False;
-             FfOption := True;
-           end;
-        2: begin
-             FuOption := True;
-             FfOption := True;
-           end;
-      end;
-
-      FeOption := F.eOption.Text;
-      FsOption := F.sOption.Checked;
-
-      if F.aOptionCheck.Checked then
-      begin
-        case F.aOption.ItemIndex of
-          0: FaOption := 'beecore.sfx';
-          1: FaOption := 'bee.sfx';
-          2: FaOption := 'nul';
-        end;
-      end;
-
-      // FoOption nothing to do
-      FmOption := F.mOption.ItemIndex;
-      FdOption := F.dOption.ItemIndex;
-
-      FxOption.Clear;
-      for i := 0 to F.FilesMgr.Count - 1 do
-        if F.FilesMgr.Excluded[i] then
-          FxOption.Add(F.FilesMgr.Items[i]);
-
-      FtOption := F.tOption.Checked;
-      FlOption := F.lOption.Checked;
-      FyOption := F.yOption.Text;
-      FkOption := F.kOption.Checked;
-
-      FcdOption := F.cdOption.Text;
-      FcfgOption := F.cfgOption.Text;
-      // FpriOption := F.priOption.ItemIndex;
-
-      FArcName :=  F.ArchiveName.Text;
-
-      FFileMasks.Clear;
-      for i := 0 to F.FilesMgr.Count - 1 do
-        if F.FilesMgr.Excluded[i] = False then
-          FFileMasks.Add(F.FilesMgr.Items[i]);
-
-      if Length(F.FilesMgr.RootValue) > 0 then
-        SetCurrentDir(F.FilesMgr.RootValue);
-
-      Result := True;
-    end else
-      Result := False;
-
-    F.Free;
-  end;
-
-  function TCmdLine.ConfirmExtract: boolean;
-  var
-    F: TExtractFrm;
-  begin
-    F := TExtractFrm.Create(Application);
-    if F.ShowModal = mrOk then
-    begin
-      { TODO : completare }
 
 
 
