@@ -1023,8 +1023,6 @@ uses
     F.Free;
   end;
 
-
-
   procedure TMainFrm.MMenuHelpF1Click(Sender: TObject);
   var
     Help_FileName: string;
