@@ -21,7 +21,9 @@
     Storage.WriteString('TBitBtn', 'BtnForeGround.Caption', rsBtnForeGroundCaption);
     Storage.WriteString('TBitBtn', 'BtnPause.Caption', rsBtnPauseCaption);
     Storage.WriteString('TBitBtn', 'BtnRun.Caption', rsBtnRunCaption);
-    Storage.WriteString('TBitBtn', 'BtnCancel.Caption', BtnCancel.Caption);
+    Storage.WriteString('TBitBtn', 'BtnCancelCaption.Caption', rsBtnCancelCaption);
+    Storage.WriteString('TBitBtn', 'BtnClose.Caption', rsBtnCloseCaption);
+
     Storage.WriteString('TBitBtn', 'BtnSave.Caption', BtnSave.Caption);
     Storage.WriteString('TBitBtn', 'BtnFont.Caption', BtnFont.Caption);
     

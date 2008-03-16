@@ -583,11 +583,8 @@ uses
 
     // F.kOption.Checked := FkOption;
 
-    F.cdOptionCheck.Enabled := Length(FcdOption) > 0;
-    if F.cdOptionCheck .Enabled then
-    begin
-      F.cdOption.Text := FcdOption;
-    end;
+    F.cdOptionCheck.Checked := Length(FcdOption) > 0;
+    F.cdOption.Text := FcdOption;
 
     // if Length(FcfgOption) > 0 then
     //  F.cfgOption.Text := FcfgOption;

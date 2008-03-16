@@ -18,6 +18,10 @@
     Storage.WriteInteger('TForm', 'ExtractFrm.WindowState', Ord(WindowState));
 
     // ---
+    
+    Storage.WriteString('TEdit', 'Folder.Text', Folder.Text);
+    
+    // ---
 
     Storage.Free;
   end;

@@ -18,6 +18,10 @@
     WindowState := TWindowState(Storage.ReadInteger('TForm', 'ExtractFrm.WindowState', Ord(WindowState)));
 
     // ---
+    
+    Folder.Text := Storage.ReadString('TEdit', 'Folder.Text', Folder.Text);
+    
+    // ---
 
     Storage.Free;
   end;

@@ -17,9 +17,9 @@
     Storage.WriteString('TLabel', 'WithFile.Caption', WithFile.Caption);
     
     Storage.WriteString('TLabel', 'OldSize.Caption', OldSize.Caption);
-    Storage.WriteString('TLabel', 'OldDate.Caption', OldDate.Caption);
+    Storage.WriteString('TLabel', 'OldTime.Caption', OldTime.Caption);
     Storage.WriteString('TLabel', 'NewSize.Caption', NewSize.Caption);
-    Storage.WriteString('TLabel', 'NewDate.Caption', NewDate.Caption);
+    Storage.WriteString('TLabel', 'NewTime.Caption', NewTime.Caption);
     
     Storage.WriteString('TBitBtn', 'BtnYes.Caption', BtnYes.Caption);
     Storage.WriteString('TBitBtn', 'BtnYesAll.Caption', BtnYesAll.Caption);
