@@ -52,7 +52,7 @@
     <Version Value="5"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="bee.include\"/>
+      <IncludeFiles Value="include\"/>
       <Libraries Value="C:\Programmi\cygwin\lib\;C:\Programmi\MinGW\lib\;C:\Programmi\MinGW\lib\gcc\mingw32\3.4.5\"/>
       <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
