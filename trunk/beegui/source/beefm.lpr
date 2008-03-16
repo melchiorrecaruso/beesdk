@@ -32,6 +32,8 @@ uses
   Interfaces,
   Forms,
   // ---
+  BeeGui_Package,
+  // ---
   BeeFM_MainFrm,
   BeeFM_ConfigFrm;
 
