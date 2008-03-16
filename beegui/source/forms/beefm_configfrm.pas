@@ -18,12 +18,14 @@
 
 {   Contains:
 
-    BeeGui Config form.
+      BeeGui Config form.
 
     Modifyed:
 }
 
 unit BeeFM_ConfigFrm;
+
+{$I compiler.inc}
 
 interface
 
@@ -33,19 +35,15 @@ uses
   Buttons,
   Classes,
   Dialogs,
+  IniFiles,
   SysUtils,
   Graphics,
   Controls,
   StdCtrls,
   ComCtrls,
   ExtCtrls,
-  LResources,
-  XMLPropStorage,
-  // ---
-  BeeGui_AddFrm,
-  BeeGui_ExtractFrm,
-  BeeGui_PasswordFrm;
-
+  LResources;
+  
 type
   { TConfigFrm }
 
@@ -60,7 +58,6 @@ type
     ConfigFrm_AddGB: TGroupBox;
     ConfigFrm_ExtractGB: TGroupBox;
     ConfigFrm_GeneralGB: TGroupBox;
-    ConfigFrm_Storage: TXMLPropStorage;
     dOption: TComboBox;
     dOptionLabel: TLabel;
     ConfigFrm_OptionsGB: TGroupBox;
@@ -96,16 +93,9 @@ uses
 
   procedure TConfigFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
+    Folder: string;
   begin
-    CfgFolder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      ConfigFrm_Storage.FileName := CfgFolder + ('configfrm.xml');
-    end;
-    {$I beefm_configfrm.inc}
-    ConfigFrm_Storage.Restore;
-    //---
+
   end;
   
   procedure TConfigFrm.ConfigFrm_TreeChange(Sender: TObject; Node: TTreeNode);

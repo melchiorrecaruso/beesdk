@@ -32,7 +32,6 @@ interface
 uses
   Forms,
   Menus,
-  GetText,
   ToolWin,
   Classes,
   Dialogs,
@@ -45,8 +44,6 @@ uses
   StdCtrls,
   ExtCtrls,
   LResources,
-  Translations,
-  XMLPropStorage,
   // ---
   BeeGui_IconList,
   BeeGui_ArchiveProcess,
@@ -57,10 +54,10 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
-    ListView: TArcListView;
-    FolderBox: TArchiveFolderBox;
+    UpToolBar: TToolBar;
     DownToolBar: TToolBar;
-    MMenuFileProperty: TMenuItem;
+    FolderBox: TArchiveFolderBox;
+    ListView: TArcListView;
     StatusBar: TStatusBar;
     LargeImages: TIconList;
     SmallImages: TIconList;
@@ -71,7 +68,6 @@ type
     SaveDialog: TSaveDialog;
     FontDialog: TFontDialog;
     // ---
-    UpToolBar: TToolBar;
     BevelFirst: TBevel;
     BevelSecond: TBevel;
     BevelThird: TBevel;
@@ -94,6 +90,7 @@ type
     MMenuFileOpen: TMenuItem;
     MMenuFileClose: TMenuItem;
     MMenuFileN1: TMenuItem;
+    MMenuFileProperty: TMenuItem;
     MMenuFileN2: TMenuItem;
     MMenuFileMove: TMenuItem;
     MMenuFileCopy: TMenuItem;
@@ -167,7 +164,6 @@ type
     MMenuOptionsN1: TMenuItem;
     MMenuOptionsN2: TMenuItem;
     MMenuOptionsConfiguration: TMenuItem;
-    MMenuOptionsPassword: TMenuItem;
     MMenuOptionsSaveOnExit: TMenuItem;
     MMenuOptionsSaveNow: TMenuItem;
     MMenuOptionsDefault: TMenuItem;
@@ -261,6 +257,8 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     // ---
 
+
+
     procedure ProcessTimerTimer(Sender: TObject);
     procedure FolderBoxSelect(Sender: TObject);
 
@@ -271,16 +269,15 @@ type
     procedure ViewStyleClick2(Sender: TObject);
     procedure OrderByClick(Sender: TObject);
     procedure OptionsClick(Sender: TObject);
+
     procedure BMenuClick(Sender: TObject);
     procedure BtnUpClick(Sender: TObject);
     // ---
   private
-    procedure MainFrm_UpdateButtons; overload;
-    procedure MainFrm_UpdateButtons(Value: boolean); overload;
-    procedure MainFrm_UpdateCursor(Value: TCursor);
-
-
     procedure UpdateStyle;
+    procedure UpdateButtons; overload;
+    procedure UpdateButtons(Value: boolean); overload;
+    procedure UpdateCursor(Value: TCursor);
   end;
   
 var
@@ -293,6 +290,8 @@ uses
 
   BeeGui_ViewFrm,
   BeeGui_AboutFrm,
+
+  BeeGui_Messages,
   BeeGui_SysUtils,
 
   BeeFm_ConfigFrm,
@@ -302,23 +301,24 @@ uses
 
   procedure TMainFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
-    Storage: TIniFile;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
-
+    {$I beefm_mainfrm_loadlanguage.inc}
     {$I beefm_mainfrm_loadproperty.inc}
-    MainFrm_UpdateButtons(False);
-    MainFrm_UpdateButtons;
+    UpdateButtons(False);
+    UpdateButtons;
     UpdateStyle;
   end;
   
   procedure TMainFrm.FormDestroy(Sender: TObject);
   var
-    CfgFolder: string;
-    Storage: TIniFile;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
+    {$I beefm_mainfrm_savelanguage.inc}
     if MMenuOptionsSaveOnExit.Checked then
     begin
       {$I beefm_mainfrm_saveproperty.inc}
@@ -329,7 +329,7 @@ uses
   begin
     if Cursor = crHourGlass then
     begin
-      CanClose := MessageDlg('Active proces. Terminate it?', mtWarning, [mbYes, mbNo], 0) = mrYes;
+      CanClose := MessageDlg(rsAbortProcess , mtWarning, [mbYes, mbNo], 0) = mrYes;
     end else
     begin
       CanClose := True;
@@ -347,10 +347,17 @@ uses
     end;
   end;
   
+  
+  
+  
+  
+  
+  
+  
   procedure TMainFrm.BMenuClick(Sender: TObject);
   begin
     TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
-    MainFrm_UpdateButtons;
+    UpdateButtons;
   end;
   
   procedure TMainFrm.FolderBoxSelect(Sender: TObject);
@@ -409,22 +416,18 @@ uses
       begin
         ProcessTimer.Enabled := False;
         ListView.OpenArchive(ArchiveName, ArchiveLink);
-        MainFrm_UpdateButtons(True);
+        UpdateButtons(True);
       end;
     end;
   end;
 
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Update Buttons and Style                                              //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
 
-
-
-
-
-
-
-
-
-
-  procedure TMainFrm.MainFrm_UpdateButtons;
+  procedure TMainFrm.UpdateButtons;
   var
     Buttons: array [0..13] of TControl;
     CurrLeft:integer;
@@ -471,22 +474,32 @@ uses
     end;
   end;
 
-  procedure TMainFrm.MainFrm_UpdateCursor(Value: TCursor);
+  procedure TMainFrm.UpdateCursor(Value: TCursor);
   begin
     MainFrm.Cursor := Value;
   end;
 
-  procedure TMainFrm.MainFrm_UpdateButtons(Value: boolean);
+  procedure TMainFrm.UpdateButtons(Value: boolean);
   var
     I: integer;
   begin
-    // Lazarus bug
-    BtnAdd     .Enabled := Value;  BtnAdd     .Font := MainFrm.Font;
-    BtnExtract .Enabled := Value;  BtnExtract .Font := MainFrm.Font;
-    BtnView    .Enabled := Value;  BtnView    .Font := MainFrm.Font;
-    BtnDelete  .Enabled := Value;  BtnDelete  .Font := MainFrm.Font;
-    BtnTest    .Enabled := Value;  BtnTest    .Font := MainFrm.Font;
-    BtnCheckOut.Enabled := Value;  BtnCheckOut.Font := MainFrm.Font;
+    BtnAdd     .Enabled := Value;
+    BtnAdd     .Font := MainFrm.Font;
+
+    BtnExtract .Enabled := Value;
+    BtnExtract .Font := MainFrm.Font;
+
+    BtnView    .Enabled := Value;
+    BtnView    .Font := MainFrm.Font;
+
+    BtnDelete  .Enabled := Value;
+    BtnDelete  .Font := MainFrm.Font;
+
+    BtnTest    .Enabled := Value;
+    BtnTest    .Font := MainFrm.Font;
+
+    BtnCheckOut.Enabled := Value;
+    BtnCheckOut.Font := MainFrm.Font;
     // ---
     MMenuFileClose   .Enabled := Value;
     MMenuFileProperty.Enabled := Value;
@@ -565,11 +578,6 @@ uses
       MessageDlg('An process active', mtInformation, [mbOk], 0);
   end;
 
-  procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
-  begin
-
-  end;
-
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   var
     CmdLine: string;
@@ -610,8 +618,8 @@ uses
   begin
     Caption := 'BeeFM';
     
-    MainFrm_UpdateCursor(crDefault);
-    MainFrm_UpdateButtons(False);
+    UpdateCursor(crDefault);
+    UpdateButtons(False);
     
     ListView.CloseArchive;
   end;
@@ -783,6 +791,11 @@ uses
   //  Main Menu Action                                                      //
   //                                                                        //
   // ---------------------------------------------------------------------- //
+
+  procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
+  begin
+
+  end;
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   begin
@@ -988,7 +1001,7 @@ uses
 
   procedure TMainFrm.MMenuOptionsSaveNowClick(Sender: TObject);
   var
-    CfgFolder: string;
+    Folder: string;
     Storage: TIniFile;
   begin
     {$I beefm_mainfrm_saveproperty.inc}

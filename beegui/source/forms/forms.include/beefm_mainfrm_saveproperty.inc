@@ -1,10 +1,10 @@
 
   // ---
   
-  CfgFolder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-  if ForceDirectories(CfgFolder) then
+  Folder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
+  if ForceDirectories(Folder) then
   begin
-    Storage := TMemIniFile.Create(CfgFolder + ('mainfrm.ini'));
+    Storage := TMemIniFile.Create(Folder + ('mainfrm.ini'));
 
     // ---
 
