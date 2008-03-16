@@ -207,8 +207,8 @@ object AboutFrm: TAboutFrm
     Left = 128
     Height = 32
     Top = 5
-    Width = 93
-    Caption = 'BeeGui'
+    Width = 127
+    Caption = 'AppName'
     Font.CharSet = ANSI_CHARSET
     Font.Height = -26
     Font.Pitch = fpVariable
@@ -231,8 +231,8 @@ object AboutFrm: TAboutFrm
     Left = 130
     Height = 14
     Top = 40
-    Width = 91
-    Caption = 'Bee archiver Utility'
+    Width = 40
+    Caption = 'AppInfo'
     ParentColor = False
   end
   object Copyright: TLabel

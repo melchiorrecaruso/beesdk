@@ -48,13 +48,12 @@ type
   { TViewFrm }
 
   TViewFrm = class(TForm)
+    BtnOk: TBitBtn;
     FontDialog: TFontDialog;
     SaveDialog: TSaveDialog;
     Memo: TMemo;
     BtnFont: TBitBtn;
     BtnSave: TBitBtn;
-    BtnOk: TBitBtn;
-    procedure BtnOkClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure BtnFontClick(Sender: TObject);
@@ -89,11 +88,6 @@ uses
   begin
     {$I beegui_viewfrm_savelanguage.inc}
     {$I beegui_viewfrm_saveproperty.inc}
-  end;
-
-  procedure TViewFrm.BtnOkClick(Sender: TObject);
-  begin
-    Close;
   end;
 
   procedure TViewFrm.BtnFontClick(Sender: TObject);

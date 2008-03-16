@@ -1,13 +1,12 @@
 object ViewFrm: TViewFrm
   Left = 390
-  Height = 304
+  Height = 310
   Top = 273
   Width = 453
   HorzScrollBar.Page = 452
-  VertScrollBar.Page = 303
-  ActiveControl = BtnOk
+  VertScrollBar.Page = 309
   Caption = 'View:'
-  ClientHeight = 304
+  ClientHeight = 310
   ClientWidth = 453
   Constraints.MinHeight = 90
   Constraints.MinWidth = 248
@@ -18,49 +17,59 @@ object ViewFrm: TViewFrm
   OnCreate = FormCreate
   LCLVersion = '0.9.25'
   object Memo: TMemo
-    Height = 265
+    Height = 269
     Width = 453
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     ScrollBars = ssBoth
-    TabOrder = 1
+    TabOrder = 0
   end
   object BtnFont: TBitBtn
-    Left = 5
-    Height = 24
-    Top = 273
-    Width = 75
+    Left = 8
+    Height = 26
+    Top = 278
+    Width = 78
     Anchors = [akLeft, akBottom]
     BorderSpacing.InnerBorder = 2
     Caption = '&Font'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
     NumGlyphs = 0
     OnClick = BtnFontClick
+    TabOrder = 1
+  end
+  object BtnSave: TBitBtn
+    Left = 96
+    Height = 26
+    Top = 278
+    Width = 78
+    Anchors = [akLeft, akBottom]
+    Caption = 'Save'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 78
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 78
+    NumGlyphs = 0
+    OnClick = BtnSaveClick
     TabOrder = 2
   end
   object BtnOk: TBitBtn
-    Left = 372
-    Height = 24
-    Top = 273
+    Left = 368
+    Height = 26
+    Top = 278
     Width = 75
-    Anchors = [akRight, akBottom]
-    BorderSpacing.InnerBorder = 2
     Cancel = True
-    Caption = 'Ok'
+    Caption = '&OK'
+    Constraints.MaxHeight = 26
+    Constraints.MaxWidth = 75
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 75
     Default = True
+    Kind = bkOK
     ModalResult = 1
-    NumGlyphs = 2
-    OnClick = BtnOkClick
-    TabOrder = 0
-  end
-  object BtnSave: TBitBtn
-    Left = 86
-    Height = 24
-    Top = 273
-    Width = 75
-    Anchors = [akLeft, akBottom]
-    Caption = 'Save'
     NumGlyphs = 0
-    OnClick = BtnSaveClick
     TabOrder = 3
   end
   object FontDialog: TFontDialog
