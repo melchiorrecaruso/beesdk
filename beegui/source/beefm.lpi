@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <CurrentVersionNr Value="1"/>
@@ -55,8 +55,8 @@
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beefm"/>
-        <CursorPos X="18" Y="35"/>
-        <TopLine Value="6"/>
+        <CursorPos X="5" Y="28"/>
+        <TopLine Value="3"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -67,8 +67,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="7" Y="995"/>
-        <TopLine Value="975"/>
+        <CursorPos X="8" Y="324"/>
+        <TopLine Value="303"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -1759,23 +1759,14 @@
         <UsageCount Value="12"/>
       </Unit243>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
-      <Position1>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="311" Column="25" TopLine="291"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="324" Column="9" TopLine="291"/>
-      </Position2>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
     <PathDelim Value="\"/>
     <SearchPaths>
       <IncludeFiles Value="packages\beegui.include\"/>
-      <OtherUnitFiles Value="forms\;packages\;..\..\bee\source\;C:\working\beesdk\trunk\beegui\distribution\languages\"/>
+      <OtherUnitFiles Value="forms\;packages\;..\..\bee\source\"/>
       <UnitOutputDirectory Value="..\distribution"/>
       <SrcPath Value="$(LazarusDir)\lcl\;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType)\"/>
     </SearchPaths>
