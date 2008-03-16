@@ -1016,9 +1016,11 @@ uses
 
   procedure TMainFrm.MMenuHelpAboutClick(Sender: TObject);
   var
-    F: TForm;
+    F: TAboutFrm;
   begin
     F := TAboutFrm.Create(Self);
+    F.Title.Caption := 'BeeFM';
+    F.MoreInfo.Caption := 'Bee archive file manager';
     F.ShowModal;
     F.Free;
   end;
@@ -1038,22 +1040,20 @@ uses
   var
     F: TAboutFrm;
   begin
-    F := TaboutFrm.Create(Self);
+    F := TAboutFrm.Create(Self);
     F.LinkClick(Self);
     F.Free;
   end;
 
   procedure TMainFrm.MMenuHelpLicenseClick(Sender: TObject);
   var
-    f: TAboutFrm;
+    F: TAboutFrm;
   begin
-    f := TaboutFrm.Create(Self);
-    f.BtnLicense.Click;
-    f.Free;
+    F := TAboutFrm.Create(Self);
+    F.BtnLicense.Click;
+    F.Free;
   end;
   
-
-
   // ---------------------------------------------------------------------- //
   //                                                                        //
   //  PopupnMenu Click                                                      //
@@ -1067,6 +1067,7 @@ uses
 
   procedure TMainFrm.PMenuPropertyClick(Sender: TObject);
   begin
+  
   end;
   
   // ---------------------------------------------------------------------- //

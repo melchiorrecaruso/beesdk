@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -50,7 +50,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="244">
+    <Units Count="245">
       <Unit0>
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -67,8 +67,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="1" Y="1025"/>
-        <TopLine Value="1017"/>
+        <CursorPos X="30" Y="1022"/>
+        <TopLine Value="1003"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -1308,10 +1308,10 @@
       <Unit180>
         <Filename Value="packages\beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="70" Y="111"/>
-        <TopLine Value="86"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="42"/>
+        <CursorPos X="2" Y="29"/>
+        <TopLine Value="9"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="43"/>
         <Loaded Value="True"/>
       </Unit180>
       <Unit181>
@@ -1328,9 +1328,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="33" Y="92"/>
+        <CursorPos X="9" Y="89"/>
         <TopLine Value="77"/>
-        <UsageCount Value="20"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
       </Unit182>
       <Unit183>
         <Filename Value="packages\beegui_sysutils.pas"/>
@@ -1495,10 +1497,10 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_viewfrm.lrs"/>
         <UnitName Value="BeeGui_ViewFrm"/>
-        <CursorPos X="6" Y="81"/>
-        <TopLine Value="61"/>
+        <CursorPos X="28" Y="80"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit204>
       <Unit205>
@@ -1732,7 +1734,7 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="10" Y="4"/>
         <TopLine Value="1"/>
-        <UsageCount Value="29"/>
+        <UsageCount Value="31"/>
         <SyntaxHighlighter Value="None"/>
       </Unit239>
       <Unit240>
@@ -1762,24 +1764,50 @@
         <TopLine Value="1"/>
         <UsageCount Value="12"/>
       </Unit243>
+      <Unit244>
+        <Filename Value="forms\forms.include\beegui_viewfrm_loadlanguage.inc"/>
+        <CursorPos X="24" Y="7"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit244>
     </Units>
-    <JumpHistory Count="4" HistoryIndex="3">
+    <JumpHistory Count="9" HistoryIndex="8">
       <Position1>
-        <Filename Value="beefm.lpr"/>
-        <Caret Line="28" Column="5" TopLine="3"/>
+        <Filename Value="forms\beegui_viewfrm.pas"/>
+        <Caret Line="81" Column="6" TopLine="61"/>
       </Position1>
       <Position2>
         <Filename Value="forms\beegui_viewfrm.pas"/>
-        <Caret Line="118" Column="19" TopLine="78"/>
+        <Caret Line="92" Column="7" TopLine="82"/>
       </Position2>
       <Position3>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="324" Column="8" TopLine="303"/>
+        <Filename Value="forms\beegui_viewfrm.pas"/>
+        <Caret Line="56" Column="20" TopLine="37"/>
       </Position3>
       <Position4>
-        <Filename Value="beefm.lpr"/>
-        <Caret Line="42" Column="1" TopLine="8"/>
+        <Filename Value="forms\beegui_viewfrm.pas"/>
+        <Caret Line="55" Column="22" TopLine="37"/>
       </Position4>
+      <Position5>
+        <Filename Value="forms\beegui_viewfrm.pas"/>
+        <Caret Line="80" Column="28" TopLine="62"/>
+      </Position5>
+      <Position6>
+        <Filename Value="packages\beegui_iconlist.pas"/>
+        <Caret Line="113" Column="10" TopLine="86"/>
+      </Position6>
+      <Position7>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="54" Column="13" TopLine="41"/>
+      </Position7>
+      <Position8>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="1051" Column="5" TopLine="1031"/>
+      </Position8>
+      <Position9>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="1022" Column="7" TopLine="1017"/>
+      </Position9>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

@@ -109,7 +109,8 @@ uses
     if Result = -1 then
     begin
       { TODO -oTIconList -cDebug : Disabilitare per test local icons }
-      Result := GetSysFileIcon(FileName, FileAttr);
+
+      // Result := GetSysFileIcon(FileName, FileAttr);
 
       if Result = -1 then
       begin
