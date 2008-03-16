@@ -1095,12 +1095,7 @@
         <UsageCount Value="11"/>
       </Unit151>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
-      <Position1>
-        <Filename Value="beegui.lpr"/>
-        <Caret Line="52" Column="36" TopLine="42"/>
-      </Position1>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
