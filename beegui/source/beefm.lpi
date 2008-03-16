@@ -55,7 +55,7 @@
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beefm"/>
-        <CursorPos X="49" Y="43"/>
+        <CursorPos X="18" Y="35"/>
         <TopLine Value="6"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
@@ -67,9 +67,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="23" Y="311"/>
-        <TopLine Value="20"/>
+        <CursorPos X="7" Y="995"/>
+        <TopLine Value="975"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\..\..\..\FPC\lazarus\lcl\fileutil.pas"/>
@@ -1306,9 +1308,11 @@
       <Unit180>
         <Filename Value="packages\beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="19" Y="90"/>
-        <TopLine Value="66"/>
+        <CursorPos X="70" Y="111"/>
+        <TopLine Value="86"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="42"/>
+        <Loaded Value="True"/>
       </Unit180>
       <Unit181>
         <Filename Value="packages\beegui_appviewer.pas"/>
@@ -1755,7 +1759,16 @@
         <UsageCount Value="12"/>
       </Unit243>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="2" HistoryIndex="1">
+      <Position1>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="311" Column="25" TopLine="291"/>
+      </Position1>
+      <Position2>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="324" Column="9" TopLine="291"/>
+      </Position2>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

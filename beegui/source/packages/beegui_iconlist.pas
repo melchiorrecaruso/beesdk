@@ -108,7 +108,9 @@ uses
     Result := FExtentions.IndexOf(FileExt);
     if Result = -1 then
     begin
-      // Result := GetSysFileIcon(FileName, FileAttr);
+      { TODO -oTIconList -cDebug : Disabilitare per test local icons }
+      Result := GetSysFileIcon(FileName, FileAttr);
+
       if Result = -1 then
       begin
         Result := GetFileIcon(FileName, FileAttr);
