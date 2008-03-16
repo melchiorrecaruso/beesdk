@@ -35,7 +35,7 @@ uses
   BeeGui_Package,
   // ---
   BeeFM_MainFrm,
-  BeeFM_ConfigFrm;
+  BeeFM_ConfigFrm, BeeGui_ViewFrm, BeeGui_AboutFrm;
 
 begin
   Application.Initialize;

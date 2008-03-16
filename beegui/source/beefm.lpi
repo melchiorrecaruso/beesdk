@@ -8,19 +8,19 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
+      <AutoIncrementBuild Value="True"/>
       <CurrentVersionNr Value="1"/>
-      <CurrentMinorRevNr Value="3"/>
-      <CurrentBuildNr Value="372"/>
-      <ProjectVersion Value="1.0.3"/>
+      <CurrentMinorRevNr Value="5"/>
+      <ProjectVersion Value="1.0.5"/>
       <Language Value="0809"/>
       <Comments Value="The Bee Archiver"/>
       <CompanyName Value="Andrew Filinsky and Melchiorre Caruso"/>
       <FileDescription Value="The Bee Archiver"/>
       <InternalName Value="BeeGui"/>
-      <LegalCopyright Value="2006 Andrew Filinsky and Melchiorre Caruso"/>
+      <LegalCopyright Value="2008 Andrew Filinsky and Melchiorre Caruso"/>
       <OriginalFilename Value="BeeGui"/>
       <ProductName Value="BeeGui"/>
     </VersionInfo>
@@ -55,8 +55,8 @@
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beefm"/>
-        <CursorPos X="5" Y="28"/>
-        <TopLine Value="3"/>
+        <CursorPos X="51" Y="38"/>
+        <TopLine Value="8"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -67,9 +67,9 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="8" Y="324"/>
-        <TopLine Value="303"/>
-        <EditorIndex Value="1"/>
+        <CursorPos X="1" Y="1025"/>
+        <TopLine Value="1017"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -1310,7 +1310,7 @@
         <UnitName Value="BeeGui_IconList"/>
         <CursorPos X="70" Y="111"/>
         <TopLine Value="86"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="42"/>
         <Loaded Value="True"/>
       </Unit180>
@@ -1325,6 +1325,7 @@
         <Filename Value="forms\beegui_aboutfrm.pas"/>
         <ComponentName Value="AboutFrm"/>
         <HasResources Value="True"/>
+        <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="33" Y="92"/>
@@ -1491,11 +1492,14 @@
         <Filename Value="forms\beegui_viewfrm.pas"/>
         <ComponentName Value="ViewFrm"/>
         <HasResources Value="True"/>
+        <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_viewfrm.lrs"/>
         <UnitName Value="BeeGui_ViewFrm"/>
-        <CursorPos X="19" Y="118"/>
-        <TopLine Value="78"/>
-        <UsageCount Value="7"/>
+        <CursorPos X="6" Y="81"/>
+        <TopLine Value="61"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
       </Unit204>
       <Unit205>
         <Filename Value="forms\beegui_viewfrm.lrs"/>
@@ -1759,13 +1763,30 @@
         <UsageCount Value="12"/>
       </Unit243>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="4" HistoryIndex="3">
+      <Position1>
+        <Filename Value="beefm.lpr"/>
+        <Caret Line="28" Column="5" TopLine="3"/>
+      </Position1>
+      <Position2>
+        <Filename Value="forms\beegui_viewfrm.pas"/>
+        <Caret Line="118" Column="19" TopLine="78"/>
+      </Position2>
+      <Position3>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="324" Column="8" TopLine="303"/>
+      </Position3>
+      <Position4>
+        <Filename Value="beefm.lpr"/>
+        <Caret Line="42" Column="1" TopLine="8"/>
+      </Position4>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="packages\beegui.include\"/>
+      <IncludeFiles Value="packages\packages.include\;forms\forms.include\"/>
       <OtherUnitFiles Value="forms\;packages\;..\..\bee\source\"/>
       <UnitOutputDirectory Value="..\distribution"/>
       <SrcPath Value="$(LazarusDir)\lcl\;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType)\"/>
