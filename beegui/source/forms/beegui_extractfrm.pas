@@ -38,11 +38,12 @@ uses
   ComCtrls,
   StdCtrls,
   Controls,
+  Graphics,
   SysUtils,
   LResources,
   // ---
   BeeGui_IconList,
-  BeeGui_FolderTreeViewMgr;
+  BeeGui_FolderTreeViewMgr, BeeGui_ArchiveFolderBox;
 
 type
 
@@ -62,6 +63,7 @@ type
     Icons: TIconList;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
+    procedure cdOptionCheckChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FoldersClick(Sender: TObject);
@@ -86,8 +88,7 @@ uses
     F: string;
     Storage: TMemIniFile;
   begin
-    Icons.IconFolder := ExtractFilePath(ParamStr(0)) +
-      IncludeTrailingBackSlash('icons') + 'smallicons';
+    Icons.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     // ---
     {$I beegui_extractfrm_loadlanguage.inc}
     {$I beegui_extractfrm_loadproperty.inc}
@@ -102,8 +103,17 @@ uses
     F: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_extractfrm_savelanguage.inc}
+    {*$I beegui_extractfrm_savelanguage.inc}
     {$I beegui_extractfrm_saveproperty.inc}
+  end;
+
+  procedure TExtractFrm.cdOptionCheckChange(Sender: TObject);
+  begin
+    cdOption.Enabled := cdOptionCheck.Checked;
+    if cdOption.Enabled then
+      cdOption.Color := clWindow
+    else
+      cdOption.Color := clInactiveCaptionText;
   end;
 
   procedure TExtractFrm.FoldersClick(Sender: TObject);

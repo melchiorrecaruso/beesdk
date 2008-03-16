@@ -154,10 +154,12 @@ uses
   BeeGui_Messages;
   
 var
-  rsBtnForeGroundCaption : string = 'Foreground';
-  rsBtnBackGroundCaption : string = 'Background';
-  rsBtnPauseCaption : string = 'Pause';
-  rsBtnRunCaption : string = 'Run';
+  rsBtnForeGroundCaption: string = 'Foreground';
+  rsBtnBackGroundCaption: string = 'Background';
+  rsBtnPauseCaption: string = 'Pause';
+  rsBtnRunCaption: string = 'Run';
+  rsBtnCancelCaption: string = 'Cancel';
+  rsBtnCloseCaption: string = 'Close';
   
   { TTickFrm class }
   
@@ -217,6 +219,7 @@ var
     // ---
     BtnBackForeGround.Caption := rsBtnBackGroundCaption;
     BtnPauseRun.Caption := rsBtnPauseCaption;
+    BtnCancel.Caption := rsBtnCancelCaption;
   end;
 
   procedure TTickFrm.FormWindowStateChange(Sender: TObject);
@@ -434,6 +437,7 @@ var
       BtnBackForeGround.Enabled := False;
       BtnPauseRun.Enabled := False;
       BtnCancel.Kind := bkClose;
+      BtnCancel.Caption := rsBtnCloseCaption;
 
       if Report.Lines.Count > 0 then
       begin
@@ -463,12 +467,11 @@ var
       F := TOverWriteFrm.Create(nil);
       with FAppInterface.OnOverWrite.Data do
       begin
-        F.TheFolder.Caption := F.TheFolder.Caption + ' "' + FileName + '".';
-        F.NewSize  .Caption := F.NewSize  .Caption + '  ' + SizeToStr(FileSize);
-        F.NewDate  .Caption := F.NewDate  .Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileTime));
-
-        F.OldSize  .Caption := F.OldSize  .Caption + '  ' + SizeToStr(SizeOfFile(FileName));
-        F.OldDate  .Caption := F.OldDate  .Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileAge(FileName)));
+        F.SetFileName(FileName);
+        F.SetNewFileTime(FileTime);
+        F.SetNewFileSize(FileSize);
+        F.SetOldFileTime(FileAge(FileName));
+        F.SetOldFileSize(SizeOfFile(FileName));
       end;
       case F.ShowModal of
         mrAbort   : FAppInterface.OnOverWrite.Answer := 'Q';
@@ -476,6 +479,7 @@ var
         mrYesToAll: FAppInterface.OnOverWrite.Answer := 'A';
         mrNo      : FAppInterface.OnOverWrite.Answer := 'N';
         mrYes     : FAppInterface.OnOverWrite.Answer := 'Y';
+        else        FAppInterface.OnOverWrite.Answer := 'N';
       end;
       F.Free;
       FApp.Suspended := False;

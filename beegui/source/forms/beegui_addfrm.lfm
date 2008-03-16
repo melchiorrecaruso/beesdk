@@ -631,7 +631,7 @@ object AddFrm: TAddFrm
         Top = 28
         Width = 335
         Anchors = [akTop, akLeft, akRight, akBottom]
-        DefaultItemHeight = 16
+        DefaultItemHeight = 18
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True

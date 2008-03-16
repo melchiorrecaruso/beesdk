@@ -50,12 +50,12 @@ object ExtractFrm: TExtractFrm
   end
   object Options: TGroupBox
     Left = 6
-    Height = 107
+    Height = 100
     Top = 110
     Width = 260
     Anchors = [akTop, akLeft, akRight]
     Caption = 'Options'
-    ClientHeight = 89
+    ClientHeight = 82
     ClientWidth = 256
     ParentShowHint = False
     TabOrder = 1
@@ -80,15 +80,16 @@ object ExtractFrm: TExtractFrm
       Align = alTop
       BorderSpacing.Around = 6
       Caption = 'Use Current Archive Directory (-cd Option)'
+      OnChange = cdOptionCheckChange
       ParentShowHint = False
       TabOrder = 1
     end
     object cdOption: TEdit
-      Left = 6
-      Height = 22
-      Top = 56
-      Width = 244
-      Color = clInactiveBorder
+      Left = 25
+      Height = 21
+      Top = 53
+      Width = 225
+      Color = clInactiveCaptionText
       Enabled = False
       TabOrder = 2
     end
@@ -186,7 +187,8 @@ object ExtractFrm: TExtractFrm
     BorderSpacing.Left = 2
     BorderSpacing.Top = 3
     BorderSpacing.Around = 6
-    DefaultItemHeight = 15
+    DefaultItemHeight = 16
+    Images = Icons
     ReadOnly = True
     TabOrder = 5
     OnClick = FoldersClick

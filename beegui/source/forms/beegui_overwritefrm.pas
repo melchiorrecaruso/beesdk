@@ -56,11 +56,11 @@ type
     WouldYou: TLabel;
     OldIcon: TImage;
     OldSize: TLabel;
-    OldDate: TLabel;
+    OldTime: TLabel;
     WithFile: TLabel;
     NewIcon: TImage;
     NewSize: TLabel;
-    NewDate: TLabel;
+    NewTime: TLabel;
     BtnAbort: TBitBtn;
     BtnNoAll: TBitBtn;
     BtnYesAll: TBitBtn;
@@ -71,6 +71,11 @@ type
     procedure FormShow(Sender: TObject);
   public
     { public declarations }
+    procedure SetFileName(const FileName: string);
+    procedure SetOldFileTime(FileTime: integer);
+    procedure SetOldFileSize(FileSize: integer);
+    procedure SetNewFileTime(FileTime: integer);
+    procedure SetNewFileSize(FileSize: integer);
   private
     { private declarations }
   end;
@@ -101,7 +106,7 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_overwritefrm_savelanguage.inc}
+    {*$I beegui_overwritefrm_savelanguage.inc}
     {$I beegui_overwritefrm_saveproperty.inc}
   end;
   
@@ -112,8 +117,34 @@ uses
     Image.Transparent   := True;
     OldIcon.Transparent := True;
     NewIcon.Transparent := True;
-    // load file icons
-    { TODO -oMelchiorre : Da terminare }
+  end;
+  
+  procedure TOverwriteFrm.SetFileName(const FileName: string);
+  begin
+    TheFolder.Caption := TheFolder.Caption + ' "' + FileName + '".';
+    // ---
+    Images.GetBitmap(Images.FileIcon(FileName, 0), OldIcon.Picture.Bitmap);
+    Images.GetBitmap(Images.FileIcon(FileName, 0), NewIcon.Picture.Bitmap);
+  end;
+  
+  procedure TOverwriteFrm.SetOldFileTime(FileTime: integer);
+  begin
+    OldTime.Caption := OldTime.Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileTime));
+  end;
+  
+  procedure TOverwriteFrm.SetOldFileSize(FileSize: integer);
+  begin
+    OldSize.Caption := OldSize.Caption + '  ' + SizeToStr(FileSize);
+  end;
+  
+  procedure TOverwriteFrm.SetNewFileTime(FileTime: integer);
+  begin
+    NewTime.Caption := NewTime.Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileTime));
+  end;
+
+  procedure TOverwriteFrm.SetNewFileSize(FileSize: integer);
+  begin
+    NewSize.Caption := NewSize.Caption + '  ' + SizeToStr(FileSize);
   end;
     
 initialization
