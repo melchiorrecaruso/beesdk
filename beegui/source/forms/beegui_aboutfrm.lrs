@@ -160,34 +160,34 @@ LazarusResources.Add('TAboutFrm','FORMDATA',[
   +'ght'#2#14#3'Top'#2'^'#5'Width'#2'-'#7'Caption'#6#9'Internet:'#12'Font.CharS'
   +'et'#7#12'ANSI_CHARSET'#11'ParentColor'#8#14'ParentShowHint'#8#11'OnMouseMov'
   +'e'#7#13'FormMouseMove'#0#0#6'TLabel'#5'Title'#4'Left'#3#128#0#6'Height'#2' '
-  +#3'Top'#2#5#5'Width'#2''#7'Caption'#6#7'AppName'#12'Font.CharSet'#7#12'ANSI'
-  +'_CHARSET'#11'Font.Height'#2#230#10'Font.Pitch'#7#10'fpVariable'#10'Font.Sty'
-  +'le'#11#6'fsBold'#0#11'ParentColor'#8#0#0#6'TLabel'#4'Link'#6'Cursor'#7#11'c'
-  +'rHandPoint'#4'Left'#3#184#0#6'Height'#2#14#3'Top'#2'^'#5'Width'#2'q'#7'Capt'
-  +'ion'#6#21'http://www.beegui.org'#10'Font.Color'#7#6'clBlue'#11'ParentColor'
-  +#8#7'OnClick'#7#9'LinkClick'#11'OnMouseMove'#7#13'LinkMouseMove'#0#0#6'TLabe'
-  +'l'#8'MoreInfo'#4'Left'#3#130#0#6'Height'#2#14#3'Top'#2'('#5'Width'#2'('#7'C'
-  +'aption'#6#7'AppInfo'#11'ParentColor'#8#0#0#6'TLabel'#9'Copyright'#4'Left'#3
-  +#130#0#6'Height'#2#14#3'Top'#2'8'#5'Width'#2'w'#7'Caption'#6#23'Copyright (c'
-  +') 2003-2008'#11'ParentColor'#8#0#0#6'TLabel'#7'Authors'#4'Left'#3#128#0#6'H'
-  +'eight'#2#14#3'Top'#2'H'#5'Width'#3#188#0#7'Caption'#6'&Andrew Filinsky and '
-  +' Melchiorre Caruso'#11'ParentColor'#8#0#0#6'TLabel'#12'VersionValue'#4'Left'
-  +#3'C'#1#6'Height'#2#14#3'Top'#2#12#5'Width'#2#24#9'Alignment'#7#14'taRightJu'
-  +'stify'#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#5'?.?.?'#11'ParentC'
-  +'olor'#8#0#0#6'TLabel'#5'Build'#4'Left'#3#29#1#6'Height'#2#14#3'Top'#2#28#5
-  +'Width'#2#27#9'Alignment'#7#14'taRightJustify'#7'Anchors'#11#5'akTop'#7'akRi'
-  +'ght'#0#7'Caption'#6#6'Build:'#12'Font.CharSet'#7#12'ANSI_CHARSET'#11'Parent'
-  +'Color'#8#14'ParentShowHint'#8#0#0#6'TLabel'#10'BuildValue'#4'Left'#3'F'#1#6
-  +'Height'#2#14#3'Top'#2#28#5'Width'#2#21#9'Alignment'#7#14'taRightJustify'#7
-  +'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#4'????'#11'ParentColor'#8#0#0
-  +#7'TBitBtn'#5'BtnOk'#4'Left'#3#22#1#6'Height'#2#26#3'Top'#3#128#0#5'Width'#2
-  +'K'#6'Cancel'#9#7'Caption'#6#3'&OK'#21'Constraints.MaxHeight'#2#26#20'Constr'
-  +'aints.MaxWidth'#2'K'#21'Constraints.MinHeight'#2#26#20'Constraints.MinWidth'
-  +#2'K'#7'Default'#9#4'Kind'#7#4'bkOK'#11'ModalResult'#2#1#9'NumGlyphs'#2#0#7
-  +'OnClick'#7#10'BtnOkClick'#8'TabOrder'#2#0#0#0#7'TBitBtn'#10'BtnLicense'#4'L'
-  +'eft'#3#193#0#6'Height'#2#26#3'Top'#3#128#0#5'Width'#2'N'#7'Caption'#6#7'Lic'
-  +'ense'#21'Constraints.MaxHeight'#2#26#20'Constraints.MaxWidth'#2'N'#21'Const'
-  +'raints.MinHeight'#2#26#20'Constraints.MinWidth'#2'N'#9'NumGlyphs'#2#0#7'OnC'
-  +'lick'#7#15'BtnLicenseClick'#8'TabOrder'#2#1#0#0#8'TProcess'#7'Process'#8'Pr'
-  +'iority'#7#8'ppNormal'#4'left'#2#8#3'top'#2'x'#0#0#0
+  +#3'Top'#2#5#5'Width'#2']'#7'Caption'#6#6'BeeGui'#12'Font.CharSet'#7#12'ANSI_'
+  +'CHARSET'#11'Font.Height'#2#230#10'Font.Pitch'#7#10'fpVariable'#10'Font.Styl'
+  +'e'#11#6'fsBold'#0#11'ParentColor'#8#0#0#6'TLabel'#4'Link'#6'Cursor'#7#11'cr'
+  +'HandPoint'#4'Left'#3#184#0#6'Height'#2#14#3'Top'#2'^'#5'Width'#2'q'#7'Capti'
+  +'on'#6#21'http://www.beegui.org'#10'Font.Color'#7#6'clBlue'#11'ParentColor'#8
+  +#7'OnClick'#7#9'LinkClick'#11'OnMouseMove'#7#13'LinkMouseMove'#0#0#6'TLabel'
+  +#8'MoreInfo'#4'Left'#3#130#0#6'Height'#2#14#3'Top'#2'('#5'Width'#2'Z'#7'Capt'
+  +'ion'#6#20'Bee archiver utility'#11'ParentColor'#8#0#0#6'TLabel'#9'Copyright'
+  +#4'Left'#3#130#0#6'Height'#2#14#3'Top'#2'8'#5'Width'#2'w'#7'Caption'#6#23'Co'
+  +'pyright (c) 2003-2008'#11'ParentColor'#8#0#0#6'TLabel'#7'Authors'#4'Left'#3
+  +#128#0#6'Height'#2#14#3'Top'#2'H'#5'Width'#3#188#0#7'Caption'#6'&Andrew Fili'
+  +'nsky and  Melchiorre Caruso'#11'ParentColor'#8#0#0#6'TLabel'#12'VersionValu'
+  +'e'#4'Left'#3'C'#1#6'Height'#2#14#3'Top'#2#12#5'Width'#2#24#9'Alignment'#7#14
+  +'taRightJustify'#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#5'?.?.?'#11
+  +'ParentColor'#8#0#0#6'TLabel'#5'Build'#4'Left'#3#29#1#6'Height'#2#14#3'Top'#2
+  +#28#5'Width'#2#27#9'Alignment'#7#14'taRightJustify'#7'Anchors'#11#5'akTop'#7
+  +'akRight'#0#7'Caption'#6#6'Build:'#12'Font.CharSet'#7#12'ANSI_CHARSET'#11'Pa'
+  +'rentColor'#8#14'ParentShowHint'#8#0#0#6'TLabel'#10'BuildValue'#4'Left'#3'F'
+  +#1#6'Height'#2#14#3'Top'#2#28#5'Width'#2#21#9'Alignment'#7#14'taRightJustify'
+  +#7'Anchors'#11#5'akTop'#7'akRight'#0#7'Caption'#6#4'????'#11'ParentColor'#8#0
+  +#0#7'TBitBtn'#5'BtnOk'#4'Left'#3#22#1#6'Height'#2#26#3'Top'#3#128#0#5'Width'
+  +#2'K'#6'Cancel'#9#7'Caption'#6#3'&OK'#21'Constraints.MaxHeight'#2#26#20'Cons'
+  +'traints.MaxWidth'#2'K'#21'Constraints.MinHeight'#2#26#20'Constraints.MinWid'
+  +'th'#2'K'#7'Default'#9#4'Kind'#7#4'bkOK'#11'ModalResult'#2#1#9'NumGlyphs'#2#0
+  +#7'OnClick'#7#10'BtnOkClick'#8'TabOrder'#2#0#0#0#7'TBitBtn'#10'BtnLicense'#4
+  +'Left'#3#193#0#6'Height'#2#26#3'Top'#3#128#0#5'Width'#2'N'#7'Caption'#6#7'Li'
+  +'cense'#21'Constraints.MaxHeight'#2#26#20'Constraints.MaxWidth'#2'N'#21'Cons'
+  +'traints.MinHeight'#2#26#20'Constraints.MinWidth'#2'N'#9'NumGlyphs'#2#0#7'On'
+  +'Click'#7#15'BtnLicenseClick'#8'TabOrder'#2#1#0#0#8'TProcess'#7'Process'#8'P'
+  +'riority'#7#8'ppNormal'#4'left'#2#8#3'top'#2'x'#0#0#0
 ]);
