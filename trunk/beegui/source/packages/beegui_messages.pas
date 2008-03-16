@@ -20,6 +20,8 @@ var
   
   rsWarning: string = 'Warning';
   rsPasswordNotConfirmed: string = 'Password not confirmed.';
+  
+  rsAbortProcess: string = 'Active proces. Terminate it?';
 
 implementation
 
@@ -46,6 +48,8 @@ implementation
       
       rsWarning              := Storage.ReadString('ResourceString', 'rsWarning', rsWarning);
       rsPasswordNotConfirmed := Storage.ReadString('ResourceString', 'rsPasswordNotConfirmed', rsPasswordNotConfirmed);
+      
+      rsAbortProcess := Storage.ReadString('ResourceString', 'rsAbortProcess', rsAbortProcess);
 
       // ---
 
@@ -76,6 +80,8 @@ implementation
       
       Storage.WriteString('ResourceString', 'rsWarning', rsWarning);
       Storage.WriteString('ResourceString', 'rsPasswordNotConfirmed', rsPasswordNotConfirmed);
+      
+      Storage.WriteString('ResourceString', 'rsAbortProcess', rsAbortProcess);
 
       // ---
 
