@@ -18,7 +18,7 @@
 
 {   Contains:
 
-    BeeGui Main form.
+      BeeGui Main form.
 
     Modifyed:
 }
@@ -837,8 +837,7 @@ uses
       begin
         if Length(ListView.Selected.SubItems[ListView.Columns.Count - 2]) = 0 then
         begin
-          ListView.Folder :=IncludeTrailingBackSlash(
-            ListView.Folder) + ListView.Selected.Caption;
+          ListView.Folder :=IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
         end else
         begin
           // file Extraction
@@ -1019,8 +1018,6 @@ uses
     F: TAboutFrm;
   begin
     F := TAboutFrm.Create(Self);
-    F.Title.Caption := 'BeeFM';
-    F.MoreInfo.Caption := 'Bee archive file manager';
     F.ShowModal;
     F.Free;
   end;
