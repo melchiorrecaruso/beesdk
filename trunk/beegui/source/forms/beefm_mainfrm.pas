@@ -308,7 +308,7 @@ uses
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
 
-    {*$I beefm_mainfrm_loadproperty.inc}
+    {$I beefm_mainfrm_loadproperty.inc}
     MainFrm_UpdateButtons(False);
     MainFrm_UpdateButtons;
     UpdateStyle;
@@ -321,7 +321,7 @@ uses
   begin
     if MMenuOptionsSaveOnExit.Checked then
     begin
-      {*$I beefm_mainfrm_saveproperty.inc}
+      {$I beefm_mainfrm_saveproperty.inc}
     end;
   end;
   
@@ -992,7 +992,7 @@ uses
     CfgFolder: string;
     Storage: TIniFile;
   begin
-    {*$I beefm_mainfrm_saveproperty.inc}
+    {$I beefm_mainfrm_saveproperty.inc}
   end;
 
   procedure TMainFrm.MMenuOptionsDefaultClick(Sender: TObject);
