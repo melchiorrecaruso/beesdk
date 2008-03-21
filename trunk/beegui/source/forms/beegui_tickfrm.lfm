@@ -1,12 +1,10 @@
 object TickFrm: TTickFrm
-  Left = 443
+  Left = 444
   Height = 190
-  Top = 364
+  Top = 270
   Width = 450
   HorzScrollBar.Page = 449
   VertScrollBar.Page = 189
-  ActiveControl = Notebook
-  BorderIcons = [biSystemMenu, biMinimize]
   Caption = '0% Processing...'
   ClientHeight = 190
   ClientWidth = 450
@@ -82,20 +80,43 @@ object TickFrm: TTickFrm
     OnClick = BtnCancelClick
     TabOrder = 0
   end
-  object BtnBackForeGround: TBitBtn
-    Left = 194
+  object BtnPriority: TBitBtn
+    Left = 204
     Height = 26
     Top = 158
-    Width = 85
+    Width = 75
     Align = alRight
     BorderSpacing.Around = 6
-    Caption = 'Background'
+    Caption = 'Priority'
     Constraints.MaxHeight = 26
-    Constraints.MaxWidth = 85
+    Constraints.MaxWidth = 75
     Constraints.MinHeight = 26
-    Constraints.MinWidth = 85
+    Constraints.MinWidth = 75
+    Glyph.Data = {
+      46020000424D46020000000000003600000028000000100000000B0000000100
+      18000000000010020000C40E0000C40E00000000000000000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+      00FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000000000000000FF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+      00FF000000000000000000000000000000FF00FFFF00FFFF00FFFF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FF0000000000000000000000000000000000
+      00000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+      0000000000000000000000000000000000000000000000FF00FFFF00FFFF00FF
+      FF00FFFF00FFFF00FF0000000000000000000000000000000000000000000000
+      00000000000000000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FF
+    }
+    Layout = blGlyphRight
     NumGlyphs = 0
-    OnClick = BtnBackForeGroundClick
+    OnClick = BtnPriorityClick
+    PopupMenu = Popup
     TabOrder = 4
   end
   object BtnPauseRun: TBitBtn
@@ -143,7 +164,7 @@ object TickFrm: TTickFrm
         Height = 18
         Top = 10
         Width = 60
-        Alignment = taRightJustify
+        Alignment = taCenter
         AutoSize = False
         Caption = '00:00:00'
         Layout = tlCenter
@@ -154,7 +175,7 @@ object TickFrm: TTickFrm
         Height = 18
         Top = 30
         Width = 60
-        Alignment = taRightJustify
+        Alignment = taCenter
         AutoSize = False
         Caption = '--:--:--'
         Layout = tlCenter
@@ -367,5 +388,34 @@ object TickFrm: TTickFrm
   object FontDialog: TFontDialog
     left = 184
     top = 32
+  end
+  object Popup: TPopupMenu
+    AutoPopup = False
+    left = 184
+    top = 64
+    object Popup_Idle: TMenuItem
+      Caption = 'Idle'
+      RadioItem = True
+      ShortCut = 16432
+      OnClick = PopupClick
+    end
+    object Popup_Normal: TMenuItem
+      Caption = 'Normal'
+      RadioItem = True
+      ShortCut = 16433
+      OnClick = PopupClick
+    end
+    object Popup_Higher: TMenuItem
+      Caption = 'Higher'
+      RadioItem = True
+      ShortCut = 16434
+      OnClick = PopupClick
+    end
+    object Popup_TimeCritical: TMenuItem
+      Caption = 'Time critical'
+      RadioItem = True
+      ShortCut = 16435
+      OnClick = PopupClick
+    end
   end
 end

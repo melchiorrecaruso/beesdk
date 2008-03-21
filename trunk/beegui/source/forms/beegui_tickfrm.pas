@@ -54,7 +54,7 @@ uses
   BeeGui_ViewFrm,
   BeeGui_RenameFrm,
   BeeGui_PasswordFrm,
-  BeeGui_OverwriteFrm;
+  BeeGui_OverwriteFrm, Menus;
 
 type
 
@@ -62,6 +62,11 @@ type
 
   TTickFrm = class(TForm)
     FontDialog: TFontDialog;
+    Popup_Idle: TMenuItem;
+    Popup_TimeCritical: TMenuItem;
+    Popup_Higher: TMenuItem;
+    Popup_Normal: TMenuItem;
+    Popup: TPopupMenu;
     SaveDialog: TSaveDialog;
     Timer: TIdleTimer;
     // ---
@@ -87,7 +92,7 @@ type
     // ---
     BtnSave: TBitBtn;
     BtnFont: TBitBtn;
-    BtnBackForeGround: TBitBtn;
+    BtnPriority: TBitBtn;
     BtnPauseRun: TBitBtn;
     BtnCancel: TBitBtn;
     // ---
@@ -95,11 +100,13 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormWindowStateChange(Sender: TObject);
+    // ---
     procedure HandleClick(Sender: TObject);
+    procedure PopupClick(Sender: TObject);
     // ---
     procedure BtnFontClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
-    procedure BtnBackForeGroundClick(Sender: TObject);
+    procedure BtnPriorityClick(Sender: TObject);
     procedure BtnPauseRunClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
     // ---
@@ -107,6 +114,7 @@ type
     procedure OnStopTimer(Sender: TObject);
     procedure OnTimer(Sender: TObject);
   private
+    // ---
     procedure OnTerminate(Sender: TObject);
     procedure OnFatalError;
     procedure OnOverWrite;
@@ -134,11 +142,11 @@ type
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
-    procedure Execute(ACmdLine: TCmdLine);
     destructor Destroy; override;
+    procedure Execute(ACmdLine: TCmdLine);
   public
-    property Switch: boolean read FSwitch;
     property Terminated: boolean read FAppTerminated;
+    property Switch: boolean read FSwitch;
   end;
   
 var
@@ -154,12 +162,10 @@ uses
   BeeGui_Messages;
   
 var
-  rsBtnForeGroundCaption: string = 'Foreground';
-  rsBtnBackGroundCaption: string = 'Background';
-  rsBtnPauseCaption: string = 'Pause';
-  rsBtnRunCaption: string = 'Run';
-  rsBtnCancelCaption: string = 'Cancel';
-  rsBtnCloseCaption: string = 'Close';
+  rsBtnPauseCaption:      string = 'Pause';
+  rsBtnRunCaption:        string = 'Run';
+  rsBtnCancelCaption:     string = 'Cancel';
+  rsBtnCloseCaption:      string = 'Close';
   
   { TTickFrm class }
   
@@ -167,9 +173,9 @@ var
   begin
     inherited Create(AOwner);
     // ---
-    FAppKey := '';
     FAppContents := TStringList.Create;
     FAppTerminated := False;
+    FAppKey := '';
     // ---
     FAppInterface := TAppInterface.Create;
     FAppInterface.OnFatalError.Method := OnFatalError;
@@ -184,19 +190,22 @@ var
     FAppInterface.OnTick.Method := OnSwitch;
     FAppInterface.OnKey.Method := OnKey;
     // ---
+    FCmdLine := nil;
+    // ---
     FTime := 0;
     FSwitch := False;
     FSwitchValue := $FFFF;
-    // ---
-    FCmdLine := nil;
   end;
   
   destructor TTickFrm.Destroy;
   begin
-    FAppKey := '';
     FAppContents.Free;
+    FAppKey := '';
+    // ---
     FAppInterface.Free;
+    // ---
     FCmdLine := nil;
+    // ---
     inherited Destroy;
   end;
   
@@ -212,12 +221,11 @@ var
     //{$endif}
     //TrayIcon.Hint := 'BeeCore';
     //TrayIcon.OnClick := HandleClick;
-    //TrayIcon.PopUpMenu := PopupMenu;
+    //TrayIcon.Popup := Popup;
     // --
     ActiveControl := BtnCancel;
     Notebook.ActivePageComponent := GeneralPage;
     // ---
-    BtnBackForeGround.Caption := rsBtnBackGroundCaption;
     BtnPauseRun.Caption := rsBtnPauseCaption;
     BtnCancel.Caption := rsBtnCancelCaption;
   end;
@@ -226,10 +234,10 @@ var
   begin
     if WindowState = wsNormal then
     begin
-      //TrayIcon.Visible := False;
+      // TrayIcon.Visible := False;
     end else
     begin
-      //TrayIcon.Visible := True;
+      // TrayIcon.Visible := True;
     end;
   end;
   
@@ -267,6 +275,22 @@ var
     WindowState := wsNormal;
   end;
   
+  procedure TTickFrm.PopupClick(Sender: TObject);
+  begin
+    Popup_Idle        .Checked := Sender = Popup_Idle;
+    Popup_Normal      .Checked := Sender = Popup_Normal;
+    Popup_Higher      .Checked := Sender = Popup_Higher;
+    Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
+
+    if FAppTerminated = False then
+    begin
+      if Popup_Idle        .Checked then FApp.Priority := tpIdle;
+      if Popup_Normal      .Checked then FApp.Priority := tpNormal;
+      if Popup_Higher      .Checked then FApp.Priority := tpHigher;
+      if Popup_TimeCritical.Checked then FApp.Priority := tpTimeCritical;
+    end;
+  end;
+  
   procedure TTickFrm.Execute(ACmdLine: TCmdLine);
   begin
     FCmdLine := ACmdLine;
@@ -280,25 +304,31 @@ var
     FApp.Suspended := False;
   end;
   
-  // Timer Events
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  // Timer Events                                                             //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
   
   procedure TTickFrm.OnStartTimer(Sender: TObject);
   begin
-    if FAppInterface.OnTick.Data.GeneralSize < 1024 then
+    with FAppInterface.OnTick.Data do
     begin
-      GeneralSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.GeneralSize);
-      GeneralSizeUnit.Caption := 'B';
-    end else
-      if FAppInterface.OnTick.Data.GeneralSize < 1024 * 1024 then
+      if GeneralSize < (1024) then
       begin
-        GeneralSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.GeneralSize div 1024);
-        GeneralSizeUnit.Caption := 'KB';
+        Self.GeneralSize.Caption := IntToStr(GeneralSize);
+        Self.GeneralSizeUnit.Caption := 'B';
       end else
-        if FAppInterface.OnTick.Data.GeneralSize < 1024 * 1024 * 1024 then
+        if GeneralSize < (1024*1024) then
         begin
-          GeneralSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.GeneralSize div (1024 * 1024));
-          GeneralSizeUnit.Caption := 'MB';
+          Self.GeneralSize.Caption := IntToStr(GeneralSize shr 10);
+          Self.GeneralSizeUnit.Caption := 'KB';
+        end else
+        begin
+          Self.GeneralSize.Caption := IntToStr(GeneralSize shr 20);
+          Self.GeneralSizeUnit.Caption := 'MB';
         end;
+    end;
   end;
 
   procedure TTickFrm.OnTimer(Sender: TObject);
@@ -306,31 +336,32 @@ var
     iSpeed: integer;
     iRemainSize: integer;
   begin
-    if FAppInterface.OnTick.Data.ProcessedSize < 1024 then
+    with FAppInterface.OnTick.Data do
     begin
-      ProcessedSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.ProcessedSize);
-      ProcessedSizeUnit.Caption := 'B';
-    end else
-      if FAppInterface.OnTick.Data.ProcessedSize < 1024 * 1024 then
+      if ProcessedSize < (1024) then
       begin
-        ProcessedSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.ProcessedSize div 1024);
-        ProcessedSizeUnit.Caption := 'KB';
+        Self.ProcessedSize.Caption := IntToStr(ProcessedSize);
+        Self.ProcessedSizeUnit.Caption := 'B';
       end else
-        if FAppInterface.OnTick.Data.ProcessedSize < 1024 * 1024 * 1024 then
+        if ProcessedSize < (1024*1024) then
         begin
-          ProcessedSize.Caption := IntToStr(FApp.AppInterface.OnTick.Data.ProcessedSize div (1024 * 1024));
-          ProcessedSizeUnit.Caption := 'MB';
+          Self.ProcessedSize.Caption := IntToStr(ProcessedSize shr 10);
+          Self.ProcessedSizeUnit.Caption := 'KB';
+        end else
+        begin
+          Self.ProcessedSize.Caption := IntToStr(ProcessedSize shr 20);
+          Self.ProcessedSizeUnit.Caption := 'MB';
         end;
-
-    Inc(FTime);
-    with FApp.AppInterface.OnTick.Data do
-    begin
+      Inc(FTime);
       iSpeed := ProcessedSize div FTime;
       iRemainSize := GeneralSize - ProcessedSize;
     end;
     Time.Caption := TimeToStr(FTime);
-    Speed.Caption := IntToStr(iSpeed div 1024);
-    RemainingTime.Caption := TimeToStr(iRemainSize div iSpeed);
+    Speed.Caption := IntToStr(iSpeed shr 10);
+    if iSpeed > 0 then
+      RemainingTime.Caption := TimeToStr(iRemainSize div iSpeed)
+    else
+      RemainingTime.Caption := '--:--:--';
   end;
   
   procedure TTickFrm.OnStopTimer(Sender: TObject);
@@ -340,20 +371,25 @@ var
   begin
     if FAppTerminated then
     begin
+      Caption := rsProcessTerminated;
+      Application.Title := rsProcessTerminated;
+
+      Time.Caption := TimeToStr(FTime);
+      RemainingTime.Caption := TimeToStr(0);
+
       ProcessedSize.Caption := GeneralSize.Caption;
       ProcessedSizeUnit.Caption := GeneralSizeUnit.Caption;
 
-      Time.Caption := TimeToStr(FTime);
       Speed.Caption := IntToStr(0);
-      RemainingTime.Caption := TimeToStr(0);
-
-      Tick.Position := 100;
-      Caption := rsProcessTerminated;
-      Application.Title := Caption;
+      Tick.Position := 0;
     end;
   end;
 
-  // Buttons Click procedure
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  // Buttons click procedure                                                  //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
 
   procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
   begin
@@ -361,32 +397,29 @@ var
     begin
       if FApp.Suspended then
       begin
+        BtnPauseRun.Caption := rsBtnPauseCaption;
         Timer.Enabled  := True;
         FApp.Suspended := False;
-        BtnPauseRun.Caption := rsBtnPauseCaption;
       end else
       begin
+        BtnPauseRun.Caption := rsBtnRunCaption;
         Timer.Enabled  := False;
         FApp.Suspended := True;
-        BtnPauseRun.Caption := rsBtnRunCaption
       end
     end;
   end;
 
-  procedure TTickFrm.BtnBackForeGroundClick(Sender: TObject);
+  procedure TTickFrm.BtnPriorityClick(Sender: TObject);
+  var
+    R: TRect;
   begin
-    if FAppTerminated = False then
-    begin
-      if FApp.Priority = tpIdle then
-      begin
-        FApp.Priority := tpNormal;
-        BtnBackForeGround.Caption := rsBtnBackGroundCaption;
-      end else
-      begin
-        FApp.Priority := tpIdle;
-        BtnBackForeGround.Caption := rsBtnForeGroundCaption;
-      end;
-    end;
+    Popup_Idle        .Checked := FApp.Priority = tpIdle;
+    Popup_Normal      .Checked := FApp.Priority = tpNormal;
+    Popup_Higher      .Checked := FApp.Priority = tpHigher;
+    Popup_TimeCritical.Checked := FApp.Priority = tpTimeCritical;
+
+    GetWindowRect(BtnPriority.Handle, R);
+    Popup.PopUp(R.TopLeft.X -1, R.BottomRight.Y);
   end;
 
   procedure TTickFrm.BtnFontClick(Sender: TObject);
@@ -403,9 +436,10 @@ var
     FileName: string;
   begin
     SaveDialog.FileName := '';
-    SaveDialog.Filter := 'Txt file  (*.txt)|*.txt|' +
-                         'Log file  (*.log)|*.log|' +
-                         'All files (*.*)|*.*|';
+    SaveDialog.Filter :=
+      'Txt file  (*.txt)|*.txt|' +
+      'Log file  (*.log)|*.log|' +
+      'All files (*.*)|*.*|';
 
     if SaveDialog.Execute then
     begin
@@ -434,17 +468,18 @@ var
       FAppTerminated := True;
       Timer.Enabled := False;
 
-      BtnBackForeGround.Enabled := False;
-      BtnPauseRun.Enabled := False;
       BtnCancel.Kind := bkClose;
       BtnCancel.Caption := rsBtnCloseCaption;
-
+      BtnPriority.Enabled := False;
+      BtnPauseRun.Enabled := False;
+      
       if Report.Lines.Count > 0 then
       begin
+        ActiveControl := BtnCancel;
+        Notebook.ActivePageComponent := ReportPage;
+
         BtnSave.Enabled := True;
         BtnFont.Enabled := True;
-
-        Notebook.ActivePageComponent := ReportPage;
       end else
       begin;
         Close;
@@ -498,6 +533,7 @@ var
       with FAppInterface.OnRename.Data do
       begin
         F.ToFN.Text := FilePath + FileName;
+        F.FromFN.Caption := F.ToFN.Text;
       end;
       
       if F.ShowModal = mrOk then
