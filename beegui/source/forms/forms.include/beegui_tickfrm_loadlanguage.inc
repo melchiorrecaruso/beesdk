@@ -16,14 +16,13 @@
     GeneralSizeLabel.Caption   := Storage.ReadString('TLabel', 'GeneralSizeLabel.Caption', GeneralSizeLabel.Caption);
     ProcessedSizeLabel.Caption := Storage.ReadString('TLabel', 'ProcessedSizeLabel.Caption', ProcessedSizeLabel.Caption);
     SpeedLabel.Caption         := Storage.ReadString('TLabel', 'SpeedLabel.Caption', SpeedLabel.Caption);
-
-    rsBtnBackGroundCaption     := Storage.ReadString('TBitBtn', 'BtnBackGround.Caption', rsBtnBackGroundCaption);
-    rsBtnForeGroundCaption     := Storage.ReadString('TBitBtn', 'BtnForeGround.Caption', rsBtnForeGroundCaption);
+    
     rsBtnPauseCaption          := Storage.ReadString('TBitBtn', 'BtnPause.Caption', rsBtnPauseCaption);
     rsBtnRunCaption            := Storage.ReadString('TBitBtn', 'BtnRun.Caption', rsBtnRunCaption);
     rsBtnCancelCaption         := Storage.ReadString('TBitBtn', 'BtnCancelCaption.Caption', rsBtnCancelCaption);
     rsBtnCloseCaption          := Storage.ReadString('TBitBtn', 'BtnClose.Caption', rsBtnCloseCaption);
 
+    BtnPriority.Caption        := Storage.ReadString('TBitBtn', 'BtnPriority.Caption', BtnPriority.Caption);
     BtnSave.Caption            := Storage.ReadString('TBitBtn', 'BtnSave.Caption', BtnSave.Caption);
     BtnFont.Caption            := Storage.ReadString('TBitBtn', 'BtnFont.Caption', BtnFont.Caption);
     

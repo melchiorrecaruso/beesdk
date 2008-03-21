@@ -14,7 +14,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -39,15 +39,15 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="152">
+    <Units Count="156">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="2" Y="28"/>
-        <TopLine Value="8"/>
+        <CursorPos X="1" Y="81"/>
+        <TopLine Value="42"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="194"/>
+        <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -55,7 +55,7 @@
         <UnitName Value="Forms"/>
         <CursorPos X="14" Y="507"/>
         <TopLine Value="487"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit1>
       <Unit2>
         <Filename Value="forms\beecore_tickfrm.pas"/>
@@ -65,28 +65,28 @@
         <UnitName Value="BeeCore_TickFrm"/>
         <CursorPos X="24" Y="27"/>
         <TopLine Value="152"/>
-        <UsageCount Value="29"/>
+        <UsageCount Value="27"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\..\..\lazarus\lcl\interfaces\win32\interfaces.pp"/>
         <UnitName Value="Interfaces"/>
         <CursorPos X="20" Y="41"/>
         <TopLine Value="5"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit3>
       <Unit4>
         <Filename Value="..\..\bee\source\bee_common.pas"/>
         <UnitName Value="Bee_Common"/>
         <CursorPos X="3" Y="558"/>
         <TopLine Value="1"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="9"/>
       </Unit4>
       <Unit5>
         <Filename Value="package\beegui_sysutils.pas"/>
         <UnitName Value="BeeCore_SysUtils"/>
         <CursorPos X="35" Y="55"/>
         <TopLine Value="21"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit5>
       <Unit6>
         <Filename Value="forms\beegui_passwordfrm.pas"/>
@@ -97,13 +97,13 @@
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="30" Y="88"/>
         <TopLine Value="61"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="67"/>
       </Unit6>
       <Unit7>
         <Filename Value="forms\beecore_passwordfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit7>
       <Unit8>
         <Filename Value="forms\beecore_addfrm.pas"/>
@@ -113,32 +113,32 @@
         <UnitName Value="BeeCore_AddFrm"/>
         <CursorPos X="18" Y="28"/>
         <TopLine Value="1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="23"/>
       </Unit8>
       <Unit9>
         <Filename Value="forms\beecore_addfrm.inc"/>
         <CursorPos X="19" Y="7"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\finah.inc"/>
         <CursorPos X="10" Y="28"/>
         <TopLine Value="5"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit10>
       <Unit11>
         <Filename Value="package\beecore_addtreeviewmgr.pas"/>
         <UnitName Value="BeeCore_AddTreeViewMgr"/>
         <CursorPos X="26" Y="192"/>
         <TopLine Value="174"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="11"/>
       </Unit11>
       <Unit12>
         <Filename Value="forms\beecore_renamefrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit12>
       <Unit13>
         <Filename Value="forms\beecore_extractfrm.pas"/>
@@ -148,100 +148,100 @@
         <UnitName Value="BeeCore_ExtractFrm"/>
         <CursorPos X="18" Y="29"/>
         <TopLine Value="7"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="24"/>
       </Unit13>
       <Unit14>
         <Filename Value="package\beecore_iconlist.pas"/>
         <UnitName Value="BeeCore_IconList"/>
         <CursorPos X="1" Y="79"/>
         <TopLine Value="64"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="9"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\..\..\..\lazarus\lcl\imglist.pp"/>
         <UnitName Value="ImgList"/>
         <CursorPos X="15" Y="179"/>
         <TopLine Value="159"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\..\..\..\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
         <CursorPos X="24" Y="1245"/>
         <TopLine Value="1225"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit16>
       <Unit17>
         <Filename Value="package\beecore_foldertreeviewmgr.pas"/>
         <UnitName Value="BeeCore_FolderTreeViewMgr"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="61"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\..\..\..\lazarus\lcl\comctrls.pp"/>
         <UnitName Value="ComCtrls"/>
         <CursorPos X="3" Y="2374"/>
         <TopLine Value="2389"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit18>
       <Unit19>
         <Filename Value="forms\beecore_extractfrm.inc"/>
         <CursorPos X="17" Y="9"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit19>
       <Unit20>
         <Filename Value="forms\beecore_extractfrm.lrs"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit20>
       <Unit21>
         <Filename Value="package\beecore_foldertreeview.pas"/>
         <UnitName Value="BeeCore_FolderTreeView"/>
         <CursorPos X="29" Y="288"/>
         <TopLine Value="251"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\..\..\..\lazarus\ide\lazarus.pp"/>
         <UnitName Value="Lazarus"/>
         <CursorPos X="11" Y="74"/>
         <TopLine Value="54"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit22>
       <Unit23>
         <Filename Value="..\..\..\..\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
         <CursorPos X="3" Y="49"/>
         <TopLine Value="29"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit23>
       <Unit24>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\filutilh.inc"/>
         <CursorPos X="10" Y="84"/>
         <TopLine Value="61"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit24>
       <Unit25>
         <Filename Value="..\..\bee\source\bee_headers.pas"/>
         <UnitName Value="Bee_Headers"/>
         <CursorPos X="3" Y="924"/>
         <TopLine Value="920"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\..\..\..\lazarus\lcl\include\imglist.inc"/>
         <CursorPos X="1" Y="40"/>
         <TopLine Value="20"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit26>
       <Unit27>
         <Filename Value="package\beecore_foldertreeviewmgr.lrs"/>
         <CursorPos X="47" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit27>
       <Unit28>
         <Filename Value="forms\beecore_aboutfrm.pas"/>
@@ -251,19 +251,19 @@
         <UnitName Value="BeeCore_AboutFrm"/>
         <CursorPos X="36" Y="106"/>
         <TopLine Value="72"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="14"/>
       </Unit28>
       <Unit29>
         <Filename Value="..\..\..\..\lazarus\lcl\lclclasses.pp"/>
         <UnitName Value="LCLClasses"/>
         <CursorPos X="39" Y="65"/>
         <TopLine Value="45"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\classes\classesh.inc"/>
-        <CursorPos X="14" Y="1262"/>
-        <TopLine Value="1242"/>
+        <CursorPos X="67" Y="1208"/>
+        <TopLine Value="1188"/>
         <UsageCount Value="10"/>
       </Unit30>
       <Unit31>
@@ -274,13 +274,13 @@
         <UnitName Value="BeeCore_ViewFrm"/>
         <CursorPos X="52" Y="60"/>
         <TopLine Value="35"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit31>
       <Unit32>
         <Filename Value="forms\beecore_viewfrm.inc"/>
         <CursorPos X="5" Y="9"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit32>
       <Unit33>
         <Filename Value="forms\beecore_overwritefrm.pas"/>
@@ -290,13 +290,13 @@
         <UnitName Value="BeeCore_OverWriteFrm"/>
         <CursorPos X="31" Y="50"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit33>
       <Unit34>
         <Filename Value="forms\beecore_overwritefrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit34>
       <Unit35>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_mainfrm.pas"/>
@@ -305,7 +305,7 @@
         <UnitName Value="BeeGui_MainFrm"/>
         <CursorPos X="1" Y="1275"/>
         <TopLine Value="1252"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit35>
       <Unit36>
         <Filename Value="forms\beecore_tickfrm.lrs"/>
@@ -313,13 +313,13 @@
         <ResourceFilename Value="forms\beecore_tickfrm.lrs"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="14"/>
       </Unit36>
       <Unit37>
         <Filename Value="forms\beecore_tickfrm.lfm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <SyntaxHighlighter Value="LFM"/>
       </Unit37>
       <Unit38>
@@ -330,225 +330,225 @@
         <UnitName Value="BeeCore_RenameFrm"/>
         <CursorPos X="12" Y="21"/>
         <TopLine Value="55"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\packages\fcl-base\src\inc\custapp.pp"/>
         <UnitName Value="CustApp"/>
         <CursorPos X="15" Y="42"/>
         <TopLine Value="22"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit39>
       <Unit40>
         <Filename Value="..\..\..\..\lazarus\lcl\actnlist.pas"/>
         <UnitName Value="ActnList"/>
         <CursorPos X="3" Y="69"/>
         <TopLine Value="49"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit40>
       <Unit41>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\inc\objpash.inc"/>
         <CursorPos X="23" Y="147"/>
         <TopLine Value="127"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit41>
       <Unit42>
         <Filename Value="forms\beecore_tickfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit42>
       <Unit43>
         <Filename Value="..\..\..\..\lazarus\lcl\extctrls.pp"/>
         <UnitName Value="ExtCtrls"/>
         <CursorPos X="14" Y="24"/>
         <TopLine Value="16"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit43>
       <Unit44>
         <Filename Value="..\..\..\..\lazarus\lcl\customtimer.pas"/>
         <UnitName Value="CustomTimer"/>
         <CursorPos X="27" Y="58"/>
         <TopLine Value="38"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit44>
       <Unit45>
         <Filename Value="forms\beecore_extractfrm.lfm"/>
         <CursorPos X="8" Y="15"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <SyntaxHighlighter Value="LFM"/>
       </Unit45>
       <Unit46>
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="21" Y="52"/>
-        <TopLine Value="42"/>
-        <UsageCount Value="23"/>
+        <CursorPos X="36" Y="460"/>
+        <TopLine Value="439"/>
+        <UsageCount Value="22"/>
       </Unit46>
       <Unit47>
         <Filename Value="..\..\bee\source\bee_interface_base.pas"/>
         <UnitName Value="Bee_Interface_Base"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit47>
       <Unit48>
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="29" Y="172"/>
-        <TopLine Value="150"/>
-        <UsageCount Value="11"/>
+        <CursorPos X="24" Y="172"/>
+        <TopLine Value="135"/>
+        <UsageCount Value="9"/>
       </Unit48>
       <Unit49>
         <Filename Value="..\..\bee\source\bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
         <CursorPos X="55" Y="595"/>
         <TopLine Value="571"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit49>
       <Unit50>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\sysstrh.inc"/>
-        <CursorPos X="85" Y="122"/>
-        <TopLine Value="102"/>
-        <UsageCount Value="7"/>
+        <CursorPos X="10" Y="70"/>
+        <TopLine Value="50"/>
+        <UsageCount Value="8"/>
       </Unit50>
       <Unit51>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\sysinth.inc"/>
         <CursorPos X="3" Y="34"/>
         <TopLine Value="24"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit51>
       <Unit52>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\inc\systemh.inc"/>
-        <CursorPos X="11" Y="652"/>
-        <TopLine Value="633"/>
-        <UsageCount Value="9"/>
+        <CursorPos X="11" Y="578"/>
+        <TopLine Value="558"/>
+        <UsageCount Value="8"/>
       </Unit52>
       <Unit53>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\datih.inc"/>
         <CursorPos X="27" Y="124"/>
         <TopLine Value="103"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit53>
       <Unit54>
         <Filename Value="forms\beecore_aboutfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit54>
       <Unit55>
         <Filename Value="beecore.lpi"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <SyntaxHighlighter Value="XML"/>
       </Unit55>
       <Unit56>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\win\wininc\ascdef.inc"/>
         <CursorPos X="10" Y="279"/>
         <TopLine Value="259"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit56>
       <Unit57>
         <Filename Value="beecore.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit57>
       <Unit58>
         <Filename Value="beecore_cmdline.inc"/>
         <CursorPos X="44" Y="127"/>
         <TopLine Value="8"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit58>
       <Unit59>
         <Filename Value="beecore_tcmdline.inc"/>
         <CursorPos X="23" Y="8"/>
         <TopLine Value="2"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit59>
       <Unit60>
         <Filename Value="beecore_tgui.int"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <SyntaxHighlighter Value="None"/>
       </Unit60>
       <Unit61>
         <Filename Value="beecore_tgui.inc"/>
         <CursorPos X="57" Y="238"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit61>
       <Unit62>
         <Filename Value="beecore_gui.inc"/>
         <CursorPos X="23" Y="36"/>
         <TopLine Value="16"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit62>
       <Unit63>
         <Filename Value="beecore.include\beecore_cmdline.inc"/>
         <CursorPos X="20" Y="133"/>
         <TopLine Value="93"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit63>
       <Unit64>
         <Filename Value="beecore.include\beecore_gui.inc"/>
         <CursorPos X="16" Y="284"/>
         <TopLine Value="244"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit64>
       <Unit65>
         <Filename Value="..\..\..\..\lazarus\lcl\include\application.inc"/>
         <CursorPos X="3" Y="1727"/>
         <TopLine Value="1735"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit65>
       <Unit66>
         <Filename Value="package\include\compiler.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="3"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit66>
       <Unit67>
         <Filename Value="beecore.include\compiler.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="6"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit67>
       <Unit68>
         <Filename Value="beecore_cmdline.pas"/>
         <UnitName Value="beecore_cmdline"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="71"/>
+        <UsageCount Value="69"/>
       </Unit68>
       <Unit69>
         <Filename Value="beecore_gui.pas"/>
         <UnitName Value="BeeCore_Gui"/>
         <CursorPos X="5" Y="293"/>
         <TopLine Value="199"/>
-        <UsageCount Value="70"/>
+        <UsageCount Value="68"/>
       </Unit69>
       <Unit70>
         <Filename Value="..\..\..\..\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
         <CursorPos X="3" Y="63"/>
         <TopLine Value="38"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit70>
       <Unit71>
         <Filename Value="..\..\..\..\lazarus\lcl\include\messagedialogs.inc"/>
         <CursorPos X="3" Y="117"/>
         <TopLine Value="97"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit71>
       <Unit72>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_mainfrm.lfm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <SyntaxHighlighter Value="LFM"/>
       </Unit72>
       <Unit73>
@@ -560,7 +560,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="7" Y="162"/>
         <TopLine Value="145"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="67"/>
       </Unit73>
       <Unit74>
         <Filename Value="forms\beegui_viewfrm.pas"/>
@@ -570,7 +570,7 @@
         <UnitName Value="BeeGui_ViewFrm"/>
         <CursorPos X="23" Y="91"/>
         <TopLine Value="68"/>
-        <UsageCount Value="50"/>
+        <UsageCount Value="48"/>
       </Unit74>
       <Unit75>
         <Filename Value="forms\beegui_extractfrm.pas"/>
@@ -581,7 +581,7 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="53" Y="91"/>
         <TopLine Value="81"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="67"/>
       </Unit75>
       <Unit76>
         <Filename Value="forms\beegui_infofrm.pas"/>
@@ -591,7 +591,7 @@
         <UnitName Value="BeeGui_InfoFrm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit76>
       <Unit77>
         <Filename Value="forms\beegui_overwritefrm.pas"/>
@@ -602,7 +602,7 @@
         <UnitName Value="BeeGui_OverWriteFrm"/>
         <CursorPos X="69" Y="104"/>
         <TopLine Value="114"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="67"/>
       </Unit77>
       <Unit78>
         <Filename Value="forms\beegui_renamefrm.pas"/>
@@ -611,9 +611,9 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_renamefrm.lrs"/>
         <UnitName Value="BeeGui_RenameFrm"/>
-        <CursorPos X="22" Y="71"/>
-        <TopLine Value="54"/>
-        <UsageCount Value="51"/>
+        <CursorPos X="41" Y="76"/>
+        <TopLine Value="56"/>
+        <UsageCount Value="67"/>
       </Unit78>
       <Unit79>
         <Filename Value="forms\beegui_tickfrm.pas"/>
@@ -622,10 +622,10 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="18" Y="382"/>
-        <TopLine Value="51"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="57"/>
+        <CursorPos X="30" Y="422"/>
+        <TopLine Value="403"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
       </Unit79>
       <Unit80>
@@ -637,51 +637,49 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="31" Y="104"/>
         <TopLine Value="72"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="67"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages\beegui_gui.pas"/>
         <UnitName Value="BeeGui_Gui"/>
         <CursorPos X="1" Y="5"/>
         <TopLine Value="1"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="13"/>
       </Unit81>
       <Unit82>
         <Filename Value="packages\beegui_cmdline.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_CmdLine"/>
-        <CursorPos X="29" Y="13"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="1"/>
-        <UsageCount Value="51"/>
-        <Loaded Value="True"/>
+        <CursorPos X="7" Y="572"/>
+        <TopLine Value="520"/>
+        <UsageCount Value="67"/>
       </Unit82>
       <Unit83>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
         <CursorPos X="23" Y="37"/>
         <TopLine Value="712"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit83>
       <Unit84>
         <Filename Value="..\..\bee\source\bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="46"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit84>
       <Unit85>
         <Filename Value="..\..\bee\source\bee_assembler.pas"/>
         <UnitName Value="Bee_Assembler"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit85>
       <Unit86>
         <Filename Value="forms\beegui_viewfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="9"/>
       </Unit86>
       <Unit87>
         <Filename Value="forms\beefm_mainfrm.pas"/>
@@ -690,45 +688,45 @@
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="43" Y="480"/>
         <TopLine Value="465"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit87>
       <Unit88>
         <Filename Value="packages\beegui_sysutils.pas"/>
         <UnitName Value="BeeGui_SysUtils"/>
-        <CursorPos X="5" Y="187"/>
-        <TopLine Value="51"/>
-        <UsageCount Value="9"/>
+        <CursorPos X="12" Y="38"/>
+        <TopLine Value="25"/>
+        <UsageCount Value="11"/>
       </Unit88>
       <Unit89>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\fina.inc"/>
         <CursorPos X="39" Y="221"/>
         <TopLine Value="218"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit89>
       <Unit90>
         <Filename Value="forms\beegui_tickfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit90>
       <Unit91>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\osutilsh.inc"/>
         <CursorPos X="25" Y="37"/>
         <TopLine Value="16"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit91>
       <Unit92>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\win\sysutils.pp"/>
         <UnitName Value="sysutils"/>
         <CursorPos X="3" Y="1038"/>
         <TopLine Value="1020"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit92>
       <Unit93>
         <Filename Value="forms\beegui_aboutfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit93>
       <Unit94>
         <Filename Value="forms\beefm_configfrm.pas"/>
@@ -738,165 +736,165 @@
         <UnitName Value="BeeFM_ConfigFrm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit94>
       <Unit95>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\dati.inc"/>
         <CursorPos X="10" Y="518"/>
         <TopLine Value="653"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit95>
       <Unit96>
         <Filename Value="packages\beegui.include\compiler.inc"/>
         <CursorPos X="5" Y="21"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit96>
       <Unit97>
         <Filename Value="packages\beegui_archiveprocess.pas"/>
         <UnitName Value="BeeGui_ArchiveProcess"/>
         <CursorPos X="65" Y="93"/>
         <TopLine Value="68"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="20"/>
       </Unit97>
       <Unit98>
         <Filename Value="..\..\..\..\lazarus\lcl\stdctrls.pp"/>
         <UnitName Value="StdCtrls"/>
         <CursorPos X="17" Y="799"/>
         <TopLine Value="779"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit98>
       <Unit99>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\packages\fcl-base\src\inc\inifiles.pp"/>
         <UnitName Value="IniFiles"/>
         <CursorPos X="25" Y="176"/>
         <TopLine Value="156"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit99>
       <Unit100>
         <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\diskh.inc"/>
         <CursorPos X="10" Y="19"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit100>
       <Unit101>
         <Filename Value="forms\beegui_overwritefrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit101>
       <Unit102>
         <Filename Value="forms\beegui_passwordfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit102>
       <Unit103>
         <Filename Value="forms\beegui_renamefrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit103>
       <Unit104>
         <Filename Value="forms\beegui_addfrm.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit104>
       <Unit105>
         <Filename Value="..\..\..\..\lazarus\lcl\translations.pas"/>
         <UnitName Value="Translations"/>
         <CursorPos X="57" Y="97"/>
         <TopLine Value="77"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit105>
       <Unit106>
         <Filename Value="forms\beegui_aboutfrm..inc"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="35" Y="2"/>
         <TopLine Value="1"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="64"/>
       </Unit106>
       <Unit107>
         <Filename Value="forms\beegui_aboutfrm_saveproperty.inc"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="18" Y="12"/>
         <TopLine Value="1"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="63"/>
       </Unit107>
       <Unit108>
         <Filename Value="forms\beefm_mainfrm_saveproperty.inc"/>
         <CursorPos X="1" Y="89"/>
         <TopLine Value="52"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit108>
       <Unit109>
         <Filename Value="forms\beegui_aboutfrm_loadproperty.inc"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="63"/>
       </Unit109>
       <Unit110>
         <Filename Value="forms\beegui.include\beegui_aboutfrm_loadlanguage.inc"/>
         <CursorPos X="24" Y="18"/>
         <TopLine Value="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit110>
       <Unit111>
         <Filename Value="forms\beegui.include\beegui_aboutfrm_loadproperty.inc"/>
         <CursorPos X="14" Y="13"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit111>
       <Unit112>
         <Filename Value="forms\beegui.include\beegui_aboutfrm_savelanguage.inc"/>
         <CursorPos X="63" Y="11"/>
         <TopLine Value="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit112>
       <Unit113>
         <Filename Value="forms\beegui.include\beegui_aboutfrm_saveproperty.inc"/>
         <CursorPos X="33" Y="21"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit113>
       <Unit114>
         <Filename Value="forms\beegui.include\beefm_mainfrm_loadproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="34"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit114>
       <Unit115>
         <Filename Value="forms\beegui.include\beegui_tickfrm_loadproperty.inc"/>
         <CursorPos X="25" Y="34"/>
         <TopLine Value="13"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit115>
       <Unit116>
         <Filename Value="forms\beegui.include\beegui_tickfrm_saveproperty.inc"/>
         <CursorPos X="11" Y="20"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit116>
       <Unit117>
         <Filename Value="..\..\..\..\lazarus\lcl\graphtype.pp"/>
         <UnitName Value="GraphType"/>
         <CursorPos X="3" Y="39"/>
         <TopLine Value="19"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit117>
       <Unit118>
         <Filename Value="forms\beegui.include\beegui_tickfrm_savelanguage.inc"/>
         <CursorPos X="43" Y="8"/>
         <TopLine Value="1"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="9"/>
       </Unit118>
       <Unit119>
         <Filename Value="forms\beegui.include\beegui_tickfrm_loadlanguage.inc"/>
         <CursorPos X="100" Y="23"/>
         <TopLine Value="1"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="9"/>
       </Unit119>
       <Unit120>
         <Filename Value="packages\beegui_messages.pas"/>
@@ -904,196 +902,223 @@
         <UnitName Value="BeeGui_Messages"/>
         <CursorPos X="21" Y="7"/>
         <TopLine Value="31"/>
-        <UsageCount Value="41"/>
+        <UsageCount Value="57"/>
       </Unit120>
       <Unit121>
         <Filename Value="forms\beegui.include\beegui_renamefrm_loadlanguage.inc"/>
         <CursorPos X="41" Y="6"/>
         <TopLine Value="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit121>
       <Unit122>
         <Filename Value="forms\beegui.include\beegui_renamefrm_loadproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit122>
       <Unit123>
         <Filename Value="forms\beegui.include\beegui_renamefrm_savelanguage.inc"/>
         <CursorPos X="24" Y="15"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit123>
       <Unit124>
         <Filename Value="forms\beegui.include\beegui_renamefrm_saveproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit124>
       <Unit125>
         <Filename Value="forms\beegui.include\beegui_addfrm_loadlanguage.inc"/>
         <CursorPos X="26" Y="82"/>
         <TopLine Value="48"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit125>
       <Unit126>
         <Filename Value="forms\beegui.include\beegui_addfrm_loadproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit126>
       <Unit127>
         <Filename Value="forms\beegui.include\beegui_addfrm_savelanguage.inc"/>
         <CursorPos X="70" Y="85"/>
         <TopLine Value="16"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit127>
       <Unit128>
         <Filename Value="forms\beegui.include\beegui_addfrm_saveproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit128>
       <Unit129>
         <Filename Value="forms\forms.include\beegui_passwordfrm_loadproperty.inc"/>
         <CursorPos X="68" Y="8"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit129>
       <Unit130>
         <Filename Value="forms\forms.include\beegui_passwordfrm_saveproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit130>
       <Unit131>
         <Filename Value="forms\forms.include\beegui_passwordfrm_savelanguage.inc"/>
         <CursorPos X="1" Y="11"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit131>
       <Unit132>
         <Filename Value="forms\forms.include\beegui_passwordfrm_loadlanguage.inc"/>
         <CursorPos X="1" Y="23"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit132>
       <Unit133>
         <Filename Value="forms\forms.include\beegui_viewfrm_loadlanguage.inc"/>
         <CursorPos X="42" Y="17"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit133>
       <Unit134>
         <Filename Value="forms\forms.include\beegui_aboutfrm_loadlanguage.inc"/>
         <CursorPos X="19" Y="4"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit134>
       <Unit135>
         <Filename Value="forms\forms.include\beegui_viewfrm_loadproperty.inc"/>
         <CursorPos X="33" Y="4"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit135>
       <Unit136>
         <Filename Value="forms\forms.include\beegui_tickfrm_loadproperty.inc"/>
-        <CursorPos X="1" Y="20"/>
-        <TopLine Value="13"/>
-        <UsageCount Value="9"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
       </Unit136>
       <Unit137>
         <Filename Value="forms\forms.include\beegui_viewfrm_saveproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit137>
       <Unit138>
         <Filename Value="forms\forms.include\beegui_tickfrm_saveproperty.inc"/>
-        <CursorPos X="72" Y="49"/>
-        <TopLine Value="12"/>
-        <UsageCount Value="9"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
       </Unit138>
       <Unit139>
         <Filename Value="forms\forms.include\beegui_viewfrm_savelanguage.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit139>
       <Unit140>
         <Filename Value="forms\forms.include\beegui_overwritefrm_loadlanguage.inc"/>
         <CursorPos X="12" Y="22"/>
         <TopLine Value="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit140>
       <Unit141>
         <Filename Value="forms\forms.include\beegui_overwritefrm_loadproperty.inc"/>
         <CursorPos X="60" Y="9"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit141>
       <Unit142>
         <Filename Value="forms\forms.include\beegui_overwritefrm_saveproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit142>
       <Unit143>
         <Filename Value="forms\forms.include\beegui_overwritefrm_savelanguage.inc"/>
         <CursorPos X="43" Y="22"/>
         <TopLine Value="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit143>
       <Unit144>
         <Filename Value="forms\forms.include\beegui_extractfrm_loadlanguage.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit144>
       <Unit145>
         <Filename Value="forms\forms.include\beegui_extractfrm_loadproperty.inc"/>
         <CursorPos X="20" Y="22"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit145>
       <Unit146>
         <Filename Value="forms\forms.include\beegui_extractfrm_savelanguage.inc"/>
         <CursorPos X="36" Y="2"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit146>
       <Unit147>
         <Filename Value="forms\forms.include\beegui_extractfrm_saveproperty.inc"/>
         <CursorPos X="62" Y="22"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit147>
       <Unit148>
         <Filename Value="packages\beegui_foldertreeviewmgr.pas"/>
         <UnitName Value="BeeGui_FolderTreeViewMgr"/>
         <CursorPos X="59" Y="109"/>
         <TopLine Value="93"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit148>
       <Unit149>
         <Filename Value="packages\beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
         <CursorPos X="13" Y="108"/>
         <TopLine Value="91"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit149>
       <Unit150>
         <Filename Value="forms\forms.include\beegui_tickfrm_savelanguage.inc"/>
-        <CursorPos X="31" Y="27"/>
+        <CursorPos X="70" Y="25"/>
         <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="10"/>
       </Unit150>
       <Unit151>
         <Filename Value="forms\forms.include\beegui_tickfrm_loadlanguage.inc"/>
-        <CursorPos X="1" Y="26"/>
+        <CursorPos X="99" Y="25"/>
         <TopLine Value="1"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit151>
+      <Unit152>
+        <Filename Value="..\..\..\..\lazarus\components\rx\apputils.pp"/>
+        <UnitName Value="AppUtils"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="41"/>
+        <UsageCount Value="9"/>
+      </Unit152>
+      <Unit153>
+        <Filename Value="..\..\..\..\lazarus\components\rx\placement.pp"/>
+        <UnitName Value="Placement"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="9"/>
+      </Unit153>
+      <Unit154>
+        <Filename Value="..\..\..\..\lazarus\lcl\menus.pp"/>
+        <UnitName Value="Menus"/>
+        <CursorPos X="15" Y="363"/>
+        <TopLine Value="343"/>
+        <UsageCount Value="11"/>
+      </Unit154>
+      <Unit155>
+        <Filename Value="..\..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\win\wininc\redef.inc"/>
+        <CursorPos X="10" Y="628"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit155>
     </Units>
     <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>

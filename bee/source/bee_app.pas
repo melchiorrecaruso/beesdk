@@ -316,7 +316,7 @@ begin
   for I := 0 to AppParams.Count - 1 do
   begin
     S := AppParams.Strings[I];
-    if FileNamePos('-cfg', S) = 1 then
+    if Pos('-CFG', UpCase(S)) = 1 then
     begin
       Delete(S, 1, 4);
       FCfgName := S;
@@ -404,10 +404,10 @@ begin
         'A': begin
                Delete(S, 1, 2);
                if (S = '+') or (Length(S) = 0) then
-                 FaOption := 'beesfx.bin'
+                 FaOption := 'bee.sfx'
                else
                  if (S = '-') then
-                   FaOption := 'beesfx.empty'
+                   FaOption := 'nul'
                  else
                    FaOption := S;
              end;
@@ -448,7 +448,7 @@ begin
                  FxOption.Add(S);
                end;
              end;
-        else if FileNamePos('-pri', S) = 1 then
+        else if Pos('-PRI', UpCase(S)) = 1 then
              begin
                Delete(S, 1, 4);
                if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
@@ -457,7 +457,7 @@ begin
                end;
              end else
              begin
-               if FileNamePos('-cd', S) = 1 then
+               if Pos('-CD', UpCase(S)) = 1 then
                begin
                  Delete(S, 1, 3);
                  if Length(S) > 0 then
