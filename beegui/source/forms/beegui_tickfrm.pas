@@ -173,10 +173,6 @@ var
   begin
     inherited Create(AOwner);
     // ---
-    FAppContents := TStringList.Create;
-    FAppTerminated := False;
-    FAppKey := '';
-    // ---
     FAppInterface := TAppInterface.Create;
     FAppInterface.OnFatalError.Method := OnFatalError;
     FAppInterface.OnOverWrite.Method := OnOverWrite;
@@ -190,22 +186,23 @@ var
     FAppInterface.OnTick.Method := OnSwitch;
     FAppInterface.OnKey.Method := OnKey;
     // ---
-    FCmdLine := nil;
+    FAppContents := TStringList.Create;
+    FAppTerminated := False;
+    FAppKey := '';
     // ---
     FTime := 0;
+    FCmdLine := nil;
     FSwitch := False;
     FSwitchValue := $FFFF;
   end;
   
   destructor TTickFrm.Destroy;
   begin
+    FAppInterface.Free;
     FAppContents.Free;
     FAppKey := '';
     // ---
-    FAppInterface.Free;
-    // ---
     FCmdLine := nil;
-    // ---
     inherited Destroy;
   end;
   
@@ -496,7 +493,7 @@ var
   var
     F: TOverWriteFrm;
   begin
-    if FApp.Suspended = False then
+    if FAppTerminated = False then
     begin;
       FApp.Suspended := True;
       F := TOverWriteFrm.Create(nil);
@@ -525,7 +522,7 @@ var
   var
     F: TRenameFrm;
   begin
-    if FApp.Suspended = False then
+    if FAppTerminated = False then
     begin;
       FApp.Suspended := True;
       F := TRenameFrm.Create(nil);
@@ -578,7 +575,7 @@ var
     if MessageDlg(FAppInterface.OnRequest.Data.Msg,
       mtConfirmation, [mbYes], 0) = mrYes then
     begin
-
+      FAppInterface.OnRequest.Answer := 'Y';
     end;
   end;
 
@@ -629,13 +626,14 @@ var
   var
     F: TPasswordFrm;
   begin
-    if FApp.Suspended = False then
+    if FAppTerminated = False then
     begin
       FApp.Suspended := True;
       if Length(FAppKey) = 0 then
       begin
         F := TPasswordFrm.Create(Application);
         F.SetKey(FAppKey);
+
         if F.ShowModal = mrOK then
         begin
           FAppKey := F.Key.Text;
