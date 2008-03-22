@@ -97,7 +97,7 @@ end;
 procedure TRangeCoder.StartEncode;
 begin
   Range := $FFFFFFFF;
-  Low := 0;
+  Low   := 0;
   FFNum := 0;
   Carry := 0;
 end;
