@@ -22,13 +22,12 @@
 
   Modifyed:
 
-  v0.7.9 build 0611 - 2008.01.26 by Melchiorre Caruso.
+  v0.7.9 build 0613 - 2008.03.22 by Melchiorre Caruso.
 }
 
 {$R-}
 {$Q-}
-{$S-}            
-{$I-}
+{$S-}
 
 {$DEFINE CONSOLEAPPLICATION}
              
