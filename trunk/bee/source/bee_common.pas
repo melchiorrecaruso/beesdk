@@ -72,71 +72,71 @@ const
 
 // filename handling routines ...
 
-function FileNamePos(const Substr, Str: string): integer;
-function FileNameLastPos(const Substr, Str: string): integer;
+function FileNamePos(const Substr, Str: string): integer; inline;
+function FileNameLastPos(const Substr, Str: string): integer; inline;
 
-function IncludeTrailingBackSlash(const DirName: string): string;
-function ExcludeTrailingBackSlash(const DirName: string): string;
+function IncludeTrailingBackSlash(const DirName: string): string; inline;
+function ExcludeTrailingBackSlash(const DirName: string): string; inline;
 
-function FileNameUseWildcards(const FileName: string): boolean;
-function FileNameMatch(const FileName, Mask: string): boolean; overload;
-function FileNameMatch(const FileName: string; Masks: TStringList): boolean; overload;
+function FileNameUseWildcards(const FileName: string): boolean; inline;
+function FileNameMatch(const FileName, Mask: string): boolean; overload; inline;
+function FileNameMatch(const FileName: string; Masks: TStringList): boolean; overload; inline;
 
-function CompareFileName(const S1, S2: string): integer;
-function DeleteFilePath(const FilePath, FileName: string): string;
-function DeleteFileDrive(const FileName: string): string;
-function DoDirSeparators(const FileName: string): string;
-function FixFileName(const FileName: string): string;
-function FixDirName(const DirName: string): string;
+function CompareFileName(const S1, S2: string): integer; inline;
+function DeleteFilePath(const FilePath, FileName: string): string; inline;
+function DeleteFileDrive(const FileName: string): string; inline;
+function DoDirSeparators(const FileName: string): string; inline;
+function FixFileName(const FileName: string): string; inline;
+function FixDirName(const DirName: string): string; inline;
 
 // directory handling routines ...
 
-function DirectoryExists(const DirName: string): boolean;
-function ForceDirectories(const Dir: string): boolean;
+function DirectoryExists(const DirName: string): boolean; inline;
+function ForceDirectories(const Dir: string): boolean; inline;
 
 // oem-ansi charset functions
 
-function ParamToOem(const Param: string): string;
-function OemToParam(const Param: string): string;
+function ParamToOem(const Param: string): string; inline;
+function OemToParam(const Param: string): string; inline;
 
 // filename handling routines ...
 
-function SelfName: string;
-function SelfPath: string;
-function GenerateFileName(const Path: string): string;
+function SelfName: string; inline;
+function SelfPath: string; inline;
+function GenerateFileName(const Path: string): string; inline;
 
 // string routines
 
 function SizeToStr(Size: integer): string;
-function RatioToStr(PackedSize, Size: integer): string;
-function AttrToStr(Attr: integer): string;
+function RatioToStr(PackedSize, Size: integer): string; inline;
+function AttrToStr(Attr: integer): string; inline;
 
 // time handling routines ...
-function TimeDifference(X: double): string;
-function TimeToStr(T: Integer): string;
-function DateTimeToString(X: TDateTime): string; overload;
-function DateTimeToString(X: TDateTime; const Format: string): string; overload;
-function FileTimeToString(X: integer): string; overload;
-function FileTimeToString(X: integer; const Format: string): string; overload;
+function TimeDifference(X: double): string; inline;
+function TimeToStr(T: Integer): string; inline;
+function DateTimeToString(X: TDateTime): string; overload; inline;
+function DateTimeToString(X: TDateTime; const Format: string): string; overload; inline;
+function FileTimeToString(X: integer): string; overload; inline;
+function FileTimeToString(X: integer; const Format: string): string; overload; inline;
 
 // hex routines ...
 
-function Hex(const Data; Count: integer): string;
-function HexToData(const S: string; var Data; Count: integer): boolean;
+function Hex(const Data; Count: integer): string; inline;
+function HexToData(const S: string; var Data; Count: integer): boolean; inline;
 
 // low level functions ...
 
-function CreateText(var T: Text; const Name: string): boolean;
-function AppendText(var T: Text; const Name: string): boolean;
-function OpenText(var T: Text; const Name: string): boolean;
-function WriteText(const FileName, S: string): boolean;
+function CreateText(var T: Text; const Name: string): boolean; inline;
+function AppendText(var T: Text; const Name: string): boolean; inline;
+function OpenText(var T: Text; const Name: string): boolean; inline;
+function WriteText(const FileName, S: string): boolean; inline;
 
-function SizeOfFile(const FileName: string): integer;
+function SizeOfFile(const FileName: string): integer; inline;
 
 // system control
 
 {$IFDEF MSWINDOWS}
-function SetPriority(Priority: integer): boolean; // Priority is 0..3
+function SetPriority(Priority: integer): boolean; inline; // Priority is 0..3
 {$ENDIF}
 
 implementation
