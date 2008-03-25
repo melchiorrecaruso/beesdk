@@ -14,7 +14,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -39,7 +39,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="156">
+    <Units Count="157">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -622,7 +622,7 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="11" Y="350"/>
+        <CursorPos X="13" Y="29"/>
         <TopLine Value="8"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="75"/>
@@ -1119,8 +1119,21 @@
         <TopLine Value="1"/>
         <UsageCount Value="10"/>
       </Unit155>
+      <Unit156>
+        <Filename Value="packages\packages.include\compiler.inc"/>
+        <CursorPos X="8" Y="32"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit156>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="1" HistoryIndex="0">
+      <Position1>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="29" Column="13" TopLine="8"/>
+      </Position1>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
