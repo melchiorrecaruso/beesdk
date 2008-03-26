@@ -145,7 +145,7 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0661 archiver utility, freeware version, Jan 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0665 archiver utility, freeware version, Jan 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';

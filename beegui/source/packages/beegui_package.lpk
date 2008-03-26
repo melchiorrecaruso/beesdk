@@ -11,7 +11,7 @@
         <IncludeFiles Value="packages.include\"/>
         <OtherUnitFiles Value="..\..\..\bee\source\"/>
         <UnitOutputDirectory Value="$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)"/>
-        <SrcPath Value="..\..\..\bee\source\;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType)\"/>
+        <SrcPath Value="..\..\..\bee\source\"/>
       </SearchPaths>
       <Parsing>
         <SyntaxOptions>
