@@ -57,6 +57,7 @@
       <UnitOutputDirectory Value="..\distribution"/>
     </SearchPaths>
     <Parsing>
+      <Style Value="1"/>
       <SyntaxOptions>
         <CStyleOperator Value="False"/>
         <AllowLabel Value="False"/>
@@ -77,6 +78,7 @@
     <Linking>
       <Debugging>
         <UseLineInfoUnit Value="False"/>
+        <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
