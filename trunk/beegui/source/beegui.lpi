@@ -1155,10 +1155,10 @@
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
       <Generate Value="Faster"/>
-      <TargetProcessor Value="1"/>
       <Optimizations>
         <VariablesInRegisters Value="True"/>
         <UncertainOptimizations Value="True"/>
+        <OptimizationLevel Value="3"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>

@@ -101,7 +101,7 @@ uses
     {$I beegui_aboutfrm_loadproperty.inc}
     // ---
     VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '159';
+    BuildValue.Caption := '165';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
