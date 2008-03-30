@@ -1790,20 +1790,7 @@
         <UsageCount Value="10"/>
       </Unit248>
     </Units>
-    <JumpHistory Count="3" HistoryIndex="2">
-      <Position1>
-        <Filename Value="forms\beefm_configfrm.pas"/>
-        <Caret Line="45" Column="21" TopLine="21"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beefm_configfrm.pas"/>
-        <Caret Line="62" Column="42" TopLine="42"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms\beefm_configfrm.pas"/>
-        <Caret Line="61" Column="36" TopLine="42"/>
-      </Position3>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

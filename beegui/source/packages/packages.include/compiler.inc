@@ -22,16 +22,15 @@
 
   Modifyed:
 
-  v0.7.9 build 0567 - 2008.01.06 by Melchiorre Caruso.
+  v0.7.9 build 0683 - 2008.30.03 by Melchiorre Caruso.
 }
 
 {$R-}
 {$Q-}
 {$S-}
-{$I-}
 {$H+}
 
-{*$DEFINE CONSOLEAPPLICATION}
+{$DEFINE CONSOLEAPPLICATION}
 
 {$IFDEF MSWINDOWS}
   {*$DEFINE FILENAMECASESENSITIVE}
