@@ -50,12 +50,12 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="249">
+    <Units Count="250">
       <Unit0>
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beefm"/>
-        <CursorPos X="19" Y="28"/>
+        <CursorPos X="9" Y="28"/>
         <TopLine Value="8"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
@@ -226,7 +226,7 @@
         <UnitName Value="BeeFM_ConfigFrm"/>
         <CursorPos X="28" Y="43"/>
         <TopLine Value="32"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit20>
@@ -1789,8 +1789,21 @@
         <TopLine Value="54"/>
         <UsageCount Value="10"/>
       </Unit248>
+      <Unit249>
+        <Filename Value="packages\packages.include\compiler.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="2"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit249>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="1" HistoryIndex="0">
+      <Position1>
+        <Filename Value="beefm.lpr"/>
+        <Caret Line="28" Column="9" TopLine="8"/>
+      </Position1>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

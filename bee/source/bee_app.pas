@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0627 - 2008.02.11 by Melchiorre Caruso.
+  v0.7.9 build 0687 - 2008.03.30 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -41,6 +41,7 @@ interface
 uses
   Classes, // TStringList, ...
   //
+  Bee_Files,
   Bee_Headers,
   Bee_Interface,
   Bee_Configuration; // TConfiguration, TTable;
@@ -98,10 +99,10 @@ type
   private
     FSelfName: string;
 
-    FArcName:  string;  // archive file name
-    FArcFile:  TStream; // archive file stream
-    FSwapName: string;  // swap file name
-    FSwapFile: TStream; // swap file stream
+    FArcName:  string;      // archive file name
+    FArcFile:  TFileReader; // archive file stream
+    FSwapName: string;      // swap file name
+    FSwapFile: TFileReader; // swap file stream
 
     FCfgName: string;
     FCfg: TConfiguration;
@@ -133,7 +134,6 @@ uses
   {$ENDIF}
   SysUtils, // faReadOnly, ...
 
-  Bee_Files,
   Bee_Common, // Various helper routines
   Bee_Assembler,
   Bee_MainPacker; // TEncoder...
@@ -145,7 +145,7 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0683 archiver utility, freeware version, Jan 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0687 archiver utility, freeware version, Jan 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -848,6 +848,7 @@ function TBeeApp.ProcessFilesToSwap(Headers: THeaders): boolean;
 var
   I, J: integer;
   Decoder: TDecoder;
+  FSwapStrm: TFileWriter;
   iDictionary, iTable, iTear: integer;
   CurrDictionary, CurrTable: integer;
 begin
@@ -856,7 +857,7 @@ begin
   if (I > -1) and (not Terminated) then
   begin
     FSwapName := GenerateFileName(FyOption);
-    FSwapFile := TFileWriter.Create(FSwapName, fmCreate);
+    FSwapStrm := TFileWriter.Create(FSwapName, fmCreate);
 
     CurrDictionary := Headers.Count;
     CurrTable := Headers.Count;
@@ -871,13 +872,13 @@ begin
       if (iDictionary > -1) and (iDictionary <> CurrDictionary) and (iDictionary <> iTear) then
       begin
         CurrDictionary := iDictionary;
-        Decoder.DecodeStrm(THeader(Headers.Items[iDictionary]), pmQuit, FSwapFile);
+        Decoder.DecodeStrm(THeader(Headers.Items[iDictionary]), pmQuit, FSwapStrm);
       end;
 
       if (iTable > -1) and (iTable <> CurrTable) and (iTable <> iTear) then
       begin
         CurrTable := iTable;
-        Decoder.DecodeStrm(THeader(Headers.Items[iTable]), pmQuit, FSwapFile);
+        Decoder.DecodeStrm(THeader(Headers.Items[iTable]), pmQuit, FSwapStrm);
       end;
 
       for J := iTear to I do
@@ -885,9 +886,9 @@ begin
         if not Terminated then
         begin
           if THeader(Headers.Items[J]).Action = toSwap then
-            Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, FSwapFile)
+            Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, FSwapStrm)
           else
-            Result := Decoder.DecodeStrm(Headers.Items[J], pmSkip, FSwapFile);
+            Result := Decoder.DecodeStrm(Headers.Items[J], pmSkip, FSwapStrm);
         end else
           Result := True;
 
@@ -898,7 +899,7 @@ begin
       I := Headers.GetBack(iTear - 1, toSwap);
     end;
     Decoder.Destroy;
-    FreeAndNil(FSwapFile);
+    FreeAndNil(FSwapStrm);
   end;
 end;
 
@@ -1256,7 +1257,7 @@ begin
           if not Terminated then
           begin
             case THeader(Headers.Items[I]).Action of
-              toCopy:   Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
+              toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, FArcFile);
               toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, FSwapFile);
               toDelete: begin
                           AppInterface.OnDisplay.Data.Msg := (msgDeleting + THeader(Headers.Items[I]).FileName);
