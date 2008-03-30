@@ -49,7 +49,7 @@ type
 type
   TBlowFish = class
   private
-    fStarted: boolean;
+    FStarted: boolean;
     P: array [1..18] of cardinal;
     S: array [1.. 4, 0..255] of cardinal;
   private
@@ -71,11 +71,11 @@ type
     { Initialization of a key is needed before performing any encryption
       or decryption of data.
     }
-    procedure Finish; virtual;
+    procedure Finish;
     function Encode(var aData; Count: longint): longint; overload;
     function Decode(var aData; Count: longint): longint; overload;
-  published
-    property Started: boolean Read fStarted;
+  public
+    property Started: boolean read FStarted;
   end;
 
 implementation
@@ -279,10 +279,10 @@ const
 
 constructor TBlowFish.Create;
 begin
-  fStarted := False;
+  FStarted := False;
 end;
 
-procedure TBlowFish.Initialize;
+procedure TBlowFish.Initialize(const Key: string);
 var
   i, j, k: integer;
   Data, Datal, Datar: cardinal;
@@ -357,12 +357,7 @@ begin
     }
 end;
 
-procedure TBlowFish.Finish;
-begin
-  fStarted := False;
-end;
-
-function TBlowFish.F;
+function TBlowFish.F(Input: cardinal): cardinal;
 var
   PInput: ^LArray;
 begin
@@ -437,16 +432,21 @@ begin
   pXr^ := Xr;
 end;
 
-procedure TBlowFish.Start;
+procedure TBlowFish.Start(const Key: string);
 begin
   if Length(Key) < MinKeyLength then
   begin
-    fStarted := False
+    FStarted := False
   end else
   begin
-    fStarted := True;
+    FStarted := True;
     Initialize(Key);
   end;
+end;
+
+procedure TBlowFish.Finish;
+begin
+  FStarted := False;
 end;
 
 function TBlowFish.Encode(var aData; Count: longint): longint;
