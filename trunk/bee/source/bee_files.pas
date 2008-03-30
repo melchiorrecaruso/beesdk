@@ -27,7 +27,7 @@
   v0.7.8 build 0148 - 2005.06.23 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   
-  v0.7.9 build 0511 - 2007.12.01 by Melchiorre Caruso.
+  v0.7.9 build 0685 - 2008.03.30 by Melchiorre Caruso.
 }
 
 unit Bee_Files;
@@ -39,7 +39,7 @@ interface
 uses
   Classes,
   SysUtils,
-
+  // ---
   Bee_BlowFish;
 
 type
@@ -74,15 +74,13 @@ type
   end;
 
 type
-  TNulWriter = class(TStream)
+  TNulWriter = class(TFileWriter)
   public
     constructor Create;
     destructor Destroy; override;
     function Read(var Buffer; Count: longint): longint; override;
     function Write(const Buffer; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
-  public
-    BlowFish: TBlowFish;
   protected
     procedure SetSize(NewSize: longint); override;
   private
@@ -101,12 +99,11 @@ constructor TFileReader.Create(const FileName: string; Mode: word);
 begin
   if Mode = fmCreate then
   begin
-    Bee_Common.ForceDirectories(ExtractFilePath(FileName));
+    ForceDirectories(ExtractFilePath(FileName));
   end;
   BlowFish := TBlowFish.Create;
   Readed := 0;
   Size := 0;
-
   inherited Create(FileName, Mode);
 end;
 
@@ -166,11 +163,10 @@ constructor TFileWriter.Create(const FileName: string; Mode: word);
 begin
   if Mode = fmCreate then
   begin
-    Bee_Common.ForceDirectories(ExtractFilePath(FileName));
+    ForceDirectories(ExtractFilePath(FileName));
   end;
   BlowFish := TBlowFish.Create;
   Size := 0;
-
   inherited Create(FileName, Mode);
 end;
 
@@ -179,9 +175,7 @@ begin
   if BlowFish.Started then
     Size := BlowFish.Encode(LocalBuffer, Size);
 
-  if inherited Write(LocalBuffer, Size) <> Size then
-    raise EWriteError.Create('SWriteError');
-
+  inherited Write(LocalBuffer, Size);
   Size := 0;
 end;
 
@@ -242,7 +236,7 @@ end;
 
 constructor TNulWriter.Create;
 begin
-  inherited Create;
+  // inherited Create;
   BlowFish := TBlowFish.Create;
   Current  := 0;
   Longest  := 0;
@@ -251,7 +245,7 @@ end;
 destructor TNulWriter.Destroy;
 begin
   BlowFish.Free;
-  inherited Destroy;
+  // inherited Destroy;
 end;
 
 function TNulWriter.Read(var Buffer; Count: longint): longint;

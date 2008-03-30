@@ -40,6 +40,7 @@ uses
   Classes,      // TStream
 
   Bee_App,
+  Bee_Files,    // TFileReader, TFileWriter...
   Bee_Codec,    // TSecondaryEncoder, TSecondaryDecoder...
   Bee_Headers,
   Bee_Modeller, // TBaseCoder...
@@ -69,16 +70,16 @@ type
 
   TEncoder = class
   public
-    constructor Create(aStream: TStream; aApp: TBeeApp);
+    constructor Create(aStream: TFileWriter; aApp: TBeeApp);
     destructor Destroy; override;
     function EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
-    function EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TStream): boolean;
-    function CopyStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TStream): boolean;
+    function EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
+    function CopyStrm  (Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
   private
     function GetKey(Header: THeader): string;
   private
     App: TBeeApp;
-    Stream: TStream;
+    Stream: TFileWriter;
     PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
   end;
@@ -89,15 +90,15 @@ type
 
   TDecoder = class
   public
-    constructor Create(aStream: TStream; aApp: TBeeApp);
+    constructor Create(aStream: TFileReader; aApp: TBeeApp);
     destructor Destroy; override;
     function DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
-    function DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TStream): boolean;
+    function DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
   private
     function GetKey(Header: THeader): string;
   private
     App: TBeeApp;
-    Stream: TStream;
+    Stream: TFileReader;
     PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
   end;
@@ -108,13 +109,12 @@ uses
   SysUtils,     // FileSetAttr...
   // ---
   Bee_Crc,      // UpdCrc32...
-  Bee_Files,    // TBufferizedReader
-  Bee_Common,   // Diag...
-  Bee_BlowFish;
+  Bee_Common,   // ForceDirecotires, ...
+  Bee_BlowFish; // TBlowFish...
 
 /// TEncoder
 
-constructor TEncoder.Create(aStream: TStream; aApp: TBeeApp);
+constructor TEncoder.Create(aStream: TFileWriter; aApp: TBeeApp);
 begin
   App := aApp;
   Stream := aStream;
@@ -184,7 +184,7 @@ begin
 
     if foPassword in Header.FileFlags then
     begin
-      TFileWriter(Stream).BlowFish.Start(GetKey(Header));
+      Stream.BlowFish.Start(GetKey(Header));
     end;
 
     if foMoved in Header.FileFlags then
@@ -219,7 +219,7 @@ begin
     SrcFile.Free;
 
     Header.FilePacked := Stream.Seek(0, 1) - Header.FileStartPos; // last stream flush
-    TFileWriter(Stream).BlowFish.Finish; // finish after last stream flush
+    Stream.BlowFish.Finish; // finish after last stream flush
 
     App.Sync(App.AppInterface.OnClear.Method);
   end else
@@ -240,9 +240,9 @@ begin
     Result := True;
 end;
 
-function TEncoder.EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TStream): boolean;
+function TEncoder.EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
 var
-  SrcFile: TStream;
+  SrcFile: TFileReader;
   SrcPosition: integer;
   Symbol: byte;
   I: integer;
@@ -258,8 +258,8 @@ begin
   else
     PPM.FreshSolid;
 
-  SrcPosition := 0;
   SrcFile := SrcStrm;
+  SrcPosition := 0;
 
   if (SrcFile <> nil) then
   begin
@@ -278,8 +278,8 @@ begin
 
     if foPassword in Header.FileFlags then
     begin
-      TFileReader(SrcFile).BlowFish.Start(GetKey(Header));
-      TFileWriter(Stream).BlowFish.Start(App.AppInterface.OnKey.Answer);
+      SrcFile.BlowFish.Start(GetKey(Header));
+      Stream.BlowFish.Start(App.AppInterface.OnKey.Answer);
     end;
 
     if foMoved in Header.FileFlags then
@@ -311,10 +311,10 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
-    TFileReader(SrcFile).BlowFish.Finish;
+    SrcFile.BlowFish.Finish;
 
     Header.FilePacked := Stream.Seek(0, 1) - Header.FileStartPos; // last stream flush
-    TFileWriter(Stream).BlowFish.Finish; // finish after last stream flush
+    Stream.BlowFish.Finish; // finish after last stream flush
 
     App.Sync(App.AppInterface.OnClear.Method);
   end else
@@ -336,9 +336,9 @@ begin
     Result := True;
 end;
 
-function TEncoder.CopyStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TStream): boolean;
+function TEncoder.CopyStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
 var
-  SrcFile: TStream;
+  SrcFile: TFileReader;
   Symbol: byte;
   I: integer;
 begin
@@ -390,7 +390,7 @@ end;
 
 /// TDecoder
 
-constructor TDecoder.Create(aStream: TStream; aApp: TBeeApp);
+constructor TDecoder.Create(aStream: TFileReader; aApp: TBeeApp);
 begin
   App := aApp;
   Stream := aStream;
@@ -417,7 +417,7 @@ end;
 
 function TDecoder.DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
 var
-  DstFile: TStream;
+  DstFile: TFileWriter;
   I, Crc: cardinal;
   Symbol: byte;
 begin
@@ -461,7 +461,7 @@ begin
 
     if foPassword in Header.FileFlags then
     begin
-      TFileReader(Stream).BlowFish.Start(GetKey(Header));
+      Stream.BlowFish.Start(GetKey(Header));
     end;
 
     if foMoved in Header.FileFlags then
@@ -493,12 +493,12 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
-    TFileReader(Stream).BlowFish.Finish;
+    Stream.BlowFish.Finish;
 
     if Mode = pmNorm then
     begin
-      TFileWriter(DstFile).Flush;
-      FileSetDate(TFileWriter(DstFile).Handle, Header.FileTime);
+      DstFile.Flush;
+      FileSetDate(DstFile.Handle, Header.FileTime);
     end;
     DstFile.Free;
 
@@ -519,9 +519,9 @@ begin
   end;
 end;
 
-function TDecoder.DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TStream): boolean;
+function TDecoder.DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
 var
-  DstFile: TStream;
+  DstFile: TFileWriter;
   I, Crc: cardinal;
   Symbol: byte;
 begin
@@ -566,8 +566,8 @@ begin
 
     if foPassword in Header.FileFlags then
     begin
-      TFileReader(Stream).BlowFish.Start(GetKey(Header));
-      TFileWriter(DstFile).BlowFish.Start(App.AppInterface.OnKey.Answer);
+      Stream.BlowFish.Start(GetKey(Header));
+      DstFile.BlowFish.Start(App.AppInterface.OnKey.Answer);
     end;
 
     if foMoved in Header.FileFlags then
@@ -599,13 +599,13 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
-    TFileReader(Stream).BlowFish.Finish;
+    Stream.BlowFish.Finish;
 
     if Mode = pmNorm then
     begin
-      TFileWriter(DstFile).Flush; // last stream flush
+      DstFile.Flush; // last stream flush
     end;
-    TFileWriter(DstFile).BlowFish.Finish; // finish after last stream flush
+    DstFile.BlowFish.Finish; // finish after last stream flush
 
     App.Sync(App.AppInterface.OnClear.Method);
   end;
