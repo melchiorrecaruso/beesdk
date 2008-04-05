@@ -71,8 +71,6 @@ type
   private
     procedure ProcessOptions;
     procedure ProcessParams;
-    function ConfirmAdd: boolean;
-    function ConfirmExtract: boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -109,7 +107,7 @@ uses
     FaOption := '';
     FoOption := 'Y';
     FmOption := 1;
-    FdOption := 3;
+    FdOption := 2;
     FxOption := TStringList.Create;
     FtOption := False;
     FlOption := False;
@@ -387,137 +385,7 @@ uses
     end;
   end;
 
-  function TCmdLine.ConfirmAdd: boolean;
-  var
-    i: integer;
-    F: TAddFrm;
-  begin
-    F := TAddFrm.Create(Application);
-    F.rOption.Checked := FrOption;
 
-    if (FuOption xor FfOption) then
-    begin
-      if FuOption then
-        F.ufOption.ItemIndex := 0
-      else
-        F.ufOption.ItemIndex := 1;
-    end else
-    begin
-      F.ufOption.ItemIndex := 2;
-    end;
-
-    F.eOption.Text := FeOption;
-    F.sOption.Checked := FsOption;
-
-    if Length(FaOption) > 0 then
-    begin
-      F.aOptionCheck.Checked := True;
-      if CompareFileName(FaOption, 'beegui.sfx') = 0 then
-        F.aOption.ItemIndex := 0
-      else
-        if CompareFileName(FaOption, 'bee.sfx') = 0 then
-          F.aOption.ItemIndex := 1
-        else
-          if FaOption = 'nul' then
-            F.aOption.ItemIndex := 2;
-
-    end else
-      F.aOptionCheck.Checked := False;
-
-    F.mOption.ItemIndex := FmOption;
-    F.dOption.ItemIndex := FdOption;
-
-    for i := 0 to FxOption.Count -1  do
-      F.FilesMgr.PlusMinus(F.FilesMgr.AddFile(
-        ExpandFileName(FxOption.Strings[i])));
-
-    F.tOption.Checked := FtOption;
-    F.lOption.Checked := FlOption;
-
-    if Length(fyOption) > 0 then
-      F.yOption.Text := FyOption;
-
-    F.kOption.Checked := FkOption;
-
-    if Length(FcdOption) > 0 then
-      F.cdOption.Text := FcdOption;
-
-    if Length(FcfgOption) > 0 then
-      F.cfgOption.Text := FcfgOption;
-
-    F.ArchivePath := ExtractFilePath(ExpandFileName(FArcName));
-    F.ArchiveName.Text := ExtractFileName(ExpandFileName(FArcName));
-
-    for i := 0 to FFileMasks.Count - 1 do
-      F.FilesMgr.AddFile(ExpandFileName(FFileMasks.Strings[i]));
-
-    if F.ShowModal = mrOk then
-    begin
-      FrOption := F.rOption.Checked;
-
-      case F.ufOption.ItemIndex of
-        0:   begin
-               FuOption := True;
-               FfOption := False;
-             end;
-        1:   begin
-               FuOption := False;
-               FfOption := True;
-             end;
-        else begin
-               FuOption := True;
-               FfOption := True;
-             end;
-      end;
-
-      FeOption := F.eOption.Text;
-      FsOption := F.sOption.Checked;
-
-      if F.aOptionCheck.Checked then
-      begin
-        case F.aOption.ItemIndex of
-          0: FaOption := 'beegui.sfx';
-          1: FaOption := 'bee.sfx';
-          2: FaOption := 'nul';
-        end;
-      end;
-
-      FmOption := F.mOption.ItemIndex;
-      FdOption := F.dOption.ItemIndex;
-
-      FxOption.Clear;
-      for i := 0 to F.FilesMgr.Count - 1 do
-        if F.FilesMgr.Excluded[i] then
-          FxOption.Add(F.FilesMgr.Items[i]);
-
-      FtOption := F.tOption.Checked;
-      FlOption := F.lOption.Checked;
-      FyOption := F.yOption.Text;
-      FkOption := F.kOption.Checked;
-
-      FcdOption := F.cdOption.Text;
-      FcfgOption := F.cfgOption.Text;
-
-      FArcName :=  F.ArchiveName.Text;
-
-      FFileMasks.Clear;
-      for i := 0 to F.FilesMgr.Count - 1 do
-        if F.FilesMgr.Excluded[i] = False then
-          FFileMasks.Add(F.FilesMgr.Items[i]);
-
-      if (FFileMasks.Count > 0) or (F.aOptionCheck.Checked) then
-      begin
-        if Length(F.FilesMgr.RootValue) > 0 then
-          Result := SetCurrentDir(F.FilesMgr.RootValue)
-        else
-          Result := True;
-      end else
-        Result := False;
-    end else
-      Result := False;
-
-    F.Free;
-  end;
 
   function TCmdLine.ConfirmExtract: boolean;
   var
