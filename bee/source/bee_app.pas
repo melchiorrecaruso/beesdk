@@ -485,7 +485,7 @@ begin
             FArcName := ChangeFileExt(FArcName, '.bee');
           end;
         end else
-          FFileMasks.Add(DoDirSeparators(S));
+          FFileMasks.Add(S);
     end;
   end; // end for loop
 end;

@@ -14,7 +14,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -39,13 +39,13 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="157">
+    <Units Count="158">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="22" Y="47"/>
-        <TopLine Value="1"/>
+        <CursorPos X="20" Y="38"/>
+        <TopLine Value="27"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -97,7 +97,7 @@
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="30" Y="88"/>
         <TopLine Value="61"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="70"/>
       </Unit6>
       <Unit7>
         <Filename Value="forms\beecore_passwordfrm.inc"/>
@@ -558,9 +558,9 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_addfrm.lrs"/>
         <UnitName Value="BeeGui_AddFrm"/>
-        <CursorPos X="7" Y="162"/>
-        <TopLine Value="145"/>
-        <UsageCount Value="69"/>
+        <CursorPos X="7" Y="136"/>
+        <TopLine Value="114"/>
+        <UsageCount Value="70"/>
       </Unit73>
       <Unit74>
         <Filename Value="forms\beegui_viewfrm.pas"/>
@@ -581,9 +581,7 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="53" Y="91"/>
         <TopLine Value="81"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="69"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="70"/>
       </Unit75>
       <Unit76>
         <Filename Value="forms\beegui_infofrm.pas"/>
@@ -604,7 +602,7 @@
         <UnitName Value="BeeGui_OverWriteFrm"/>
         <CursorPos X="69" Y="104"/>
         <TopLine Value="114"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="70"/>
       </Unit77>
       <Unit78>
         <Filename Value="forms\beegui_renamefrm.pas"/>
@@ -615,7 +613,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="41" Y="76"/>
         <TopLine Value="56"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="70"/>
       </Unit78>
       <Unit79>
         <Filename Value="forms\beegui_tickfrm.pas"/>
@@ -624,11 +622,9 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="13" Y="29"/>
-        <TopLine Value="8"/>
-        <EditorIndex Value="1"/>
-        <UsageCount Value="75"/>
-        <Loaded Value="True"/>
+        <CursorPos X="14" Y="52"/>
+        <TopLine Value="211"/>
+        <UsageCount Value="76"/>
       </Unit79>
       <Unit80>
         <Filename Value="forms\beegui_aboutfrm.pas"/>
@@ -638,10 +634,8 @@
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="31" Y="104"/>
-        <TopLine Value="93"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="69"/>
-        <Loaded Value="True"/>
+        <TopLine Value="86"/>
+        <UsageCount Value="70"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages\beegui_gui.pas"/>
@@ -654,9 +648,11 @@
         <Filename Value="packages\beegui_cmdline.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_CmdLine"/>
-        <CursorPos X="7" Y="572"/>
-        <TopLine Value="520"/>
-        <UsageCount Value="69"/>
+        <CursorPos X="28" Y="72"/>
+        <TopLine Value="54"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="70"/>
+        <Loaded Value="True"/>
       </Unit82>
       <Unit83>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
@@ -817,14 +813,14 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="35" Y="2"/>
         <TopLine Value="1"/>
-        <UsageCount Value="66"/>
+        <UsageCount Value="67"/>
       </Unit106>
       <Unit107>
         <Filename Value="forms\beegui_aboutfrm_saveproperty.inc"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="18" Y="12"/>
         <TopLine Value="1"/>
-        <UsageCount Value="65"/>
+        <UsageCount Value="66"/>
       </Unit107>
       <Unit108>
         <Filename Value="forms\beefm_mainfrm_saveproperty.inc"/>
@@ -837,7 +833,7 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="65"/>
+        <UsageCount Value="66"/>
       </Unit109>
       <Unit110>
         <Filename Value="forms\beegui.include\beegui_aboutfrm_loadlanguage.inc"/>
@@ -906,7 +902,7 @@
         <UnitName Value="BeeGui_Messages"/>
         <CursorPos X="21" Y="7"/>
         <TopLine Value="31"/>
-        <UsageCount Value="59"/>
+        <UsageCount Value="60"/>
       </Unit120>
       <Unit121>
         <Filename Value="forms\beegui.include\beegui_renamefrm_loadlanguage.inc"/>
@@ -1125,12 +1121,35 @@
       </Unit155>
       <Unit156>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="8" Y="32"/>
-        <TopLine Value="2"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
         <UsageCount Value="10"/>
       </Unit156>
+      <Unit157>
+        <Filename Value="packages\beegui_forms.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="BeeGui_Forms"/>
+        <CursorPos X="1" Y="43"/>
+        <TopLine Value="31"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit157>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="3" HistoryIndex="2">
+      <Position1>
+        <Filename Value="packages\beegui_cmdline.pas"/>
+        <Caret Line="28" Column="10" TopLine="1"/>
+      </Position1>
+      <Position2>
+        <Filename Value="packages\beegui_cmdline.pas"/>
+        <Caret Line="18" Column="22" TopLine="156"/>
+      </Position2>
+      <Position3>
+        <Filename Value="packages\beegui_cmdline.pas"/>
+        <Caret Line="390" Column="3" TopLine="375"/>
+      </Position3>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
@@ -1153,6 +1172,7 @@
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
       <Generate Value="Faster"/>
+      <TargetProcessor Value="1"/>
       <Optimizations>
         <VariablesInRegisters Value="True"/>
         <UncertainOptimizations Value="True"/>
@@ -1162,6 +1182,7 @@
     <Linking>
       <Debugging>
         <UseLineInfoUnit Value="False"/>
+        <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
       <Options>

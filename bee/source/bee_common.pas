@@ -27,7 +27,7 @@
   v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0695 - 2008.04.05 by Melchiorre Caruso.
+  v0.7.9 build 0703 - 2008.04.05 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -72,71 +72,73 @@ const
 
 // filename handling routines ...
 
-function FileNamePos(const Substr, Str: string): integer; inline;
-function FileNameLastPos(const Substr, Str: string): integer; inline;
+function FileNamePos(const Substr, Str: string): integer;
+function FileNameLastPos(const Substr, Str: string): integer;
 
-function IncludeTrailingBackSlash(const DirName: string): string; inline;
-function ExcludeTrailingBackSlash(const DirName: string): string; inline;
+function IncludeTrailingBackSlash(const DirName: string): string;
+function ExcludeTrailingBackSlash(const DirName: string): string;
 
-function FileNameUseWildcards(const FileName: string): boolean; inline;
-function FileNameMatch(const FileName, Mask: string): boolean; overload; inline;
-function FileNameMatch(const FileName: string; Masks: TStringList): boolean; overload; inline;
+function FileNameUseWildcards(const FileName: string): boolean;
+function FileNameMatch(const FileName, Mask: string): boolean; overload;
+function FileNameMatch(const FileName: string; Masks: TStringList): boolean; overload;
 
-function CompareFileName(const S1, S2: string): integer; inline;
-function DeleteFilePath(const FilePath, FileName: string): string; inline;
-function DeleteFileDrive(const FileName: string): string; inline;
-function DoDirSeparators(const FileName: string): string; inline;
-function FixFileName(const FileName: string): string; inline;
-function FixDirName(const DirName: string): string; inline;
+function CompareFileName(const S1, S2: string): integer;
+function ExtractFileDrive(const FileName: string): string;
+
+function DeleteFilePath(const FilePath, FileName: string): string;
+function DeleteFileDrive(const FileName: string): string;
+function DoDirSeparators(const FileName: string): string;
+function FixFileName(const FileName: string): string;
+function FixDirName(const DirName: string): string;
 
 // directory handling routines ...
 
-function DirectoryExists(const DirName: string): boolean; inline;
-function ForceDirectories(const Dir: string): boolean; inline;
+function DirectoryExists(const DirName: string): boolean;
+function ForceDirectories(const Dir: string): boolean;
 
 // oem-ansi charset functions
 
-function ParamToOem(const Param: string): string; inline;
-function OemToParam(const Param: string): string; inline;
+function ParamToOem(const Param: string): string;
+function OemToParam(const Param: string): string;
 
 // filename handling routines ...
 
-function SelfName: string; inline;
-function SelfPath: string; inline;
-function GenerateFileName(const Path: string): string; inline;
+function SelfName: string;
+function SelfPath: string;
+function GenerateFileName(const Path: string): string;
 
 // string routines
 
 function SizeToStr(Size: integer): string;
-function RatioToStr(PackedSize, Size: integer): string; inline;
-function AttrToStr(Attr: integer): string; inline;
+function RatioToStr(PackedSize, Size: integer): string;
+function AttrToStr(Attr: integer): string;
 
 // time handling routines ...
-function TimeDifference(X: double): string; inline;
-function TimeToStr(T: Integer): string; inline;
-function DateTimeToString(X: TDateTime): string; overload; inline;
-function DateTimeToString(X: TDateTime; const Format: string): string; overload; inline;
-function FileTimeToString(X: integer): string; overload; inline;
-function FileTimeToString(X: integer; const Format: string): string; overload; inline;
+function TimeDifference(X: double): string;
+function TimeToStr(T: Integer): string;
+function DateTimeToString(X: TDateTime): string; overload;
+function DateTimeToString(X: TDateTime; const Format: string): string; overload;
+function FileTimeToString(X: integer): string; overload;
+function FileTimeToString(X: integer; const Format: string): string; overload;
 
 // hex routines ...
 
-function Hex(const Data; Count: integer): string; inline;
-function HexToData(const S: string; var Data; Count: integer): boolean; inline;
+function Hex(const Data; Count: integer): string;
+function HexToData(const S: string; var Data; Count: integer): boolean;
 
 // low level functions ...
 
-function CreateText(var T: Text; const Name: string): boolean; inline;
-function AppendText(var T: Text; const Name: string): boolean; inline;
-function OpenText(var T: Text; const Name: string): boolean; inline;
-function WriteText(const FileName, S: string): boolean; inline;
+function CreateText(var T: Text; const Name: string): boolean;
+function AppendText(var T: Text; const Name: string): boolean;
+function OpenText(var T: Text; const Name: string): boolean;
+function WriteText(const FileName, S: string): boolean;
 
-function SizeOfFile(const FileName: string): integer; inline;
+function SizeOfFile(const FileName: string): integer;
 
 // system control
 
 {$IFDEF MSWINDOWS}
-function SetPriority(Priority: integer): boolean; inline; // Priority is 0..3
+function SetPriority(Priority: integer): boolean; // Priority is 0..3
 {$ENDIF}
 
 implementation
@@ -153,7 +155,7 @@ const
 
 // string handling routines ...
 
-function FileNamePos(const Substr, Str: string): integer;
+function FileNamePos(const Substr, Str: string): integer; inline;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
   Result := System.Pos(SubStr, Str)
@@ -162,7 +164,7 @@ begin
   {$ENDIF}
 end;
 
-function FileNameLastPos(const Substr, Str: string): integer;
+function FileNameLastPos(const Substr, Str: string): integer; inline;
 begin
   Result := Length(Str);
   while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)), Substr) <> 0) do
@@ -171,7 +173,7 @@ begin
   end;
 end;
 
-function CompareFileName(const S1, S2: string): integer;
+function CompareFileName(const S1, S2: string): integer; inline;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
   Result := SysUtils.CompareStr(S1, S2)
@@ -180,7 +182,23 @@ begin
   {$ENDIF}
 end;
 
-function DeleteFilePath(const FilePath, FileName: string): string;
+function ExtractFileDrive(const FileName: string): string; inline;
+var
+  I, L: integer;
+begin
+  L := Length(FileName);
+  I := Pos(':', FileName);
+  while I < L do
+  begin
+    if FileName[I + 1] in AllowDirectorySeparators then
+      Inc(I)
+    else
+      Break;
+  end;
+  Result := Copy(FileName, 1, I);
+end;
+
+function DeleteFilePath(const FilePath, FileName: string): string; inline;
 begin
   Result := FileName;
   if FileNamePos(FilePath, Result) = 1 then
@@ -189,7 +207,7 @@ begin
   end;
 end;
 
-function DeleteFileDrive(const FileName: string): string;
+function DeleteFileDrive(const FileName: string): string; inline;
 var
   Drive: string;
 begin
@@ -198,38 +216,34 @@ begin
   begin
     Drive := ExtractFileDrive(Result);
     System.Delete(Result, 1, Length(Drive));
-    while System.Pos(PathDelim, Result) = 1 do
-    begin
-      Delete(Result, 1, 1);
-    end;
   end;
 end;
 
-function IncludeTrailingBackSlash(const DirName: string): string;
+function IncludeTrailingBackSlash(const DirName: string): string; inline;
 var
-  I: integer;
+  L : Integer;
 begin
-  if Length(DirName) = 0 then
+  Result := DirName;
+  L := Length(Result);
+  if (L > 0) and (not (Result[L] in AllowDirectorySeparators)) then
   begin
-    Result := '';
-  end else
-  begin
-    Result := SysUtils.IncludeTrailingBackSlash(DirName);
-    I := System.Pos(DoublePathDelim, Result);
-    while I > 0 do
-    begin
-      Delete(Result, I, 1);
-      I := System.Pos(DoublePathDelim, Result);
-    end;
+    Result:= Result + PathDelim;
   end;
 end;
 
-function ExcludeTrailingBackSlash(const DirName: string): string;
+function ExcludeTrailingBackSlash(const DirName: string): string; inline;
+var
+  L : Integer;
 begin
-  Result := SysUtils.ExcludeTrailingPathDelimiter(DirName);
+  L := Length(DirName);
+  if (L > 0) and (DirName[L] in AllowDirectorySeparators) then
+  begin
+    Dec(L);
+  end;
+  Result := Copy(DirName, 1, L);
 end;
 
-function MatchPattern(Element, Pattern: PChar): boolean;
+function MatchPattern(Element, Pattern: PChar): boolean; inline;
 begin
   if 0 = StrComp(Pattern, '*') then
     Result := True
@@ -261,7 +275,7 @@ begin
   end;
 end;
 
-function CharCount(const S: string; C: char): integer;
+function CharCount(const S: string; C: char): integer; inline;
 var
   I: integer;
 begin
@@ -272,7 +286,7 @@ begin
   end;
 end;
 
-function FileNameMatch(const FileName, Mask: string): boolean;
+function FileNameMatch(const FileName, Mask: string): boolean; inline;
 var
   iFileDrive: string;
   iFileName: string;
@@ -323,7 +337,7 @@ begin
     Result := False;
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList): boolean;
+function FileNameMatch(const FileName: string; Masks: TStringList): boolean; inline;
 var
   I: integer;
 begin
@@ -341,7 +355,7 @@ begin
   end;
 end;
 
-function FileNameUseWildcards(const FileName: string): boolean;
+function FileNameUseWildcards(const FileName: string): boolean; inline;
 begin
   if System.Pos('*', FileName) > 0 then
     Result := True
@@ -355,21 +369,22 @@ begin
         Result := False;
 end;
 
-function DoDirSeparators(const FileName: string): string;
+function DoDirSeparators(const FileName: string): string; inline;
 var
-  I: longint;
+  I, L: longint;
 begin
   Result := FileName;
-  for I := 1 to Length(FileName) do
+  L := Length(Result);
+  for I := 1 to L do
   begin
-    if Result[I] in ['\', '/'] then
+    if Result[I] in AllowDirectorySeparators then
     begin
       Result[I] := PathDelim;
     end;
   end;
 end;
 
-function FixFileName(const FileName: string): string;
+function FixFileName(const FileName: string): string; inline;
 var
   I: integer;
 begin
@@ -400,7 +415,7 @@ begin
   Result := ExcludeTrailingBackSlash(Result);
 end;
 
-function FixDirName(const DirName: string): string;
+function FixDirName(const DirName: string): string; inline;
 var
   I: integer;
 begin
@@ -424,7 +439,7 @@ end;
 
 // oem-ansi charset functions
 
-function ParamToOem(const Param: string): string;
+function ParamToOem(const Param: string): string; inline;
 begin
   if (Param = '') then
   begin
@@ -440,7 +455,7 @@ begin
   end;
 end;
 
-function OemToParam(const Param: string): string;
+function OemToParam(const Param: string): string; inline;
 begin
   if (Param = '') then
   begin
@@ -456,12 +471,12 @@ begin
   end;
 end;
 
-function TimeDifference(X: double): string;
+function TimeDifference(X: double): string; inline;
 begin
   Result := Format('%0.2f', [(Now - X) * (24 * 60 * 60)]);
 end;
 
-function TimeToStr(T: integer): string;
+function TimeToStr(T: integer): string; inline;
 var
   H, M, S: string;
   ZH, ZM, ZS: integer;
@@ -489,27 +504,27 @@ begin
   Result := H + ':' + M + ':' + S;
 end;
 
-function DateTimeToString(X: TDateTime): string;
+function DateTimeToString(X: TDateTime): string; inline;
 begin
   SysUtils.DateTimeToString(Result, 'dd/mm/yy hh:mm', X);
 end;
 
-function DateTimeToString(X: TDateTime; const Format: string): string;
+function DateTimeToString(X: TDateTime; const Format: string): string; inline;
 begin
   SysUtils.DateTimeToString(Result, Format, X);
 end;
 
-function FileTimeToString(X: integer): string;
+function FileTimeToString(X: integer): string; inline;
 begin
   Result := DateTimeToString(FileDateToDateTime(X));
 end;
 
-function FileTimeToString(X: integer; const Format: string): string;
+function FileTimeToString(X: integer; const Format: string): string; inline;
 begin
   Result := DateTimeToString(FileDateToDateTime(X));
 end;
 
-function DirectoryExists(const DirName: string): boolean;
+function DirectoryExists(const DirName: string): boolean; inline;
 var
   Code: integer;
 begin
@@ -517,7 +532,7 @@ begin
   Result := (Code <> -1) and (faDirectory and Code <> 0);
 end;
 
-function ForceDirectories(const Dir: string): boolean;
+function ForceDirectories(const Dir: string): boolean; inline;
 begin
   Result := True;
   if Dir = '' then Exit;
@@ -537,17 +552,17 @@ end;
 
 // filename handling routines ...
 
-function SelfName: string;
+function SelfName: string; inline;
 begin
   Result := ExtractFileName(ParamStr(0));
 end;
 
-function SelfPath: string;
+function SelfPath: string; inline;
 begin
   Result := ExtractFilePath(ParamStr(0));
 end;
 
-function GenerateFileName(const Path: string): string;
+function GenerateFileName(const Path: string): string; inline;
 var
   I: integer;
 begin
@@ -563,12 +578,12 @@ end;
 
 // string routines
 
-function SizeToStr(Size: integer): string;
+function SizeToStr(Size: integer): string; inline;
 begin
   Result := Format('%u', [Size]);
 end;
 
-function RatioToStr(PackedSize, Size: integer): string;
+function RatioToStr(PackedSize, Size: integer): string; inline;
 begin
   if Size > 0 then
     Result := Format('%u%%', [MulDiv(PackedSize, 100, Size)])
@@ -576,7 +591,7 @@ begin
     Result := Format('%u%%', [100]);
 end;
 
-function AttrToStr(Attr: integer): string;
+function AttrToStr(Attr: integer): string; inline;
 begin
   Result := '..RHSA';
   if Attr and faReadOnly = 0 then Result[3] := '.';
@@ -587,7 +602,7 @@ end;
 
 // hex routines ...
 
-function Hex(const Data; Count: integer): string;
+function Hex(const Data; Count: integer): string; inline;
 var
   I, J: integer;
   K: cardinal;
@@ -604,7 +619,7 @@ begin
   end;
 end;
 
-function HexToData(const S: string; var Data; Count: integer): boolean;
+function HexToData(const S: string; var Data; Count: integer): boolean; inline;
 var
   I: integer;
 begin
@@ -623,7 +638,7 @@ end;
 
 // low level functions...
 
-function CreateText(var T: Text; const Name: string): boolean;
+function CreateText(var T: Text; const Name: string): boolean; inline;
 begin
   {$I-}
   Assign(T, Name);
@@ -632,7 +647,7 @@ begin
   Result := IOResult = 0;
 end;
 
-function AppendText(var T: Text; const Name: string): boolean;
+function AppendText(var T: Text; const Name: string): boolean; inline;
 begin
   {$I-}
   Assign(T, Name);
@@ -641,7 +656,7 @@ begin
   Result := IOResult = 0;
 end;
 
-function OpenText(var T: Text; const Name: string): boolean;
+function OpenText(var T: Text; const Name: string): boolean; inline;
 begin
   {$I-}
   Assign(T, Name);
@@ -650,7 +665,7 @@ begin
   Result := IOResult = 0;
 end;
 
-function WriteText(const FileName, S: string): boolean;
+function WriteText(const FileName, S: string): boolean; inline;
 var
   T: Text;
 begin
@@ -663,7 +678,7 @@ begin
     Result := False;
 end;
 
-function SizeOfFile(const FileName: string): integer;
+function SizeOfFile(const FileName: string): integer; inline;
 var
   Err: Integer;
   Rec: TSearchRec;
@@ -679,7 +694,7 @@ end;
 // system control
 
 {$IFDEF MSWINDOWS}
-function SetPriority(Priority: integer): boolean; // Priority is 0..3
+function SetPriority(Priority: integer): boolean; inline; // Priority is 0..3
 const
   PriorityValue: array [0..3] of integer = (IDLE_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS);
 begin

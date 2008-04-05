@@ -162,10 +162,10 @@ uses
   BeeGui_Messages;
   
 var
-  rsBtnPauseCaption:      string = 'Pause';
-  rsBtnRunCaption:        string = 'Run';
-  rsBtnCancelCaption:     string = 'Cancel';
-  rsBtnCloseCaption:      string = 'Close';
+  rsBtnPauseCaption:  string = 'Pause';
+  rsBtnRunCaption:    string = 'Run';
+  rsBtnCancelCaption: string = 'Cancel';
+  rsBtnCloseCaption:  string = 'Close';
   
   { TTickFrm class }
   

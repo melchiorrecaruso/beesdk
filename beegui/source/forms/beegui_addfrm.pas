@@ -43,6 +43,7 @@ uses
   IniFiles,
   LResources,
   // ---
+  BeeGui_CmdLine,
   BeeGui_AddTreeViewMgr;
 
 type
@@ -159,7 +160,7 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {*$I beegui_addfrm_savelanguage.inc}
+    {$I beegui_addfrm_savelanguage.inc}
     {$I beegui_addfrm_saveproperty.inc}
   end;
 

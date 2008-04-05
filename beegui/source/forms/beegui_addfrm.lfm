@@ -154,12 +154,12 @@ object AddFrm: TAddFrm
     Height = 291
     Top = 6
     Width = 438
-    ActivePage = PageGeneral
+    ActivePage = PageAdvanced
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -631,7 +631,7 @@ object AddFrm: TAddFrm
         Top = 28
         Width = 335
         Anchors = [akTop, akLeft, akRight, akBottom]
-        DefaultItemHeight = 18
+        DefaultItemHeight = 16
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
@@ -641,7 +641,7 @@ object AddFrm: TAddFrm
       end
     end
     object PageAdvanced: TTabSheet
-      Caption = 'PageAdvanced'
+      Caption = 'Advanced'
       ClientHeight = 265
       ClientWidth = 430
       object cfgOptionLabel: TLabel
@@ -823,7 +823,7 @@ object AddFrm: TAddFrm
   end
   object PopupMenu: TPopupMenu
     left = 8
-    top = 304
+    top = 296
     object PopupMenu_AddFolder: TMenuItem
       Caption = 'Add folder'
       ShortCut = 16452
@@ -867,7 +867,7 @@ object AddFrm: TAddFrm
   end
   object FilesImages: TImageList
     left = 72
-    top = 304
+    top = 296
     Bitmap = {
       4C69020000001000000010000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -941,12 +941,12 @@ object AddFrm: TAddFrm
     FilterIndex = 0
     Options = [ofHideReadOnly, ofAllowMultiSelect, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     left = 40
-    top = 304
+    top = 296
   end
   object FilesMgr: TAddTreeViewMgr
     Tree = Files
     Root = Root
     left = 104
-    top = 305
+    top = 296
   end
 end
