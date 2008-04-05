@@ -1798,12 +1798,7 @@
         <Loaded Value="True"/>
       </Unit249>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
-      <Position1>
-        <Filename Value="beefm.lpr"/>
-        <Caret Line="28" Column="9" TopLine="8"/>
-      </Position1>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
