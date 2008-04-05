@@ -14,7 +14,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="4"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -45,7 +45,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
         <CursorPos X="22" Y="47"/>
-        <TopLine Value="32"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -581,7 +581,7 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="53" Y="91"/>
         <TopLine Value="81"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="69"/>
         <Loaded Value="True"/>
       </Unit75>
@@ -638,8 +638,8 @@
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="31" Y="104"/>
-        <TopLine Value="72"/>
-        <EditorIndex Value="4"/>
+        <TopLine Value="93"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="69"/>
         <Loaded Value="True"/>
       </Unit80>
@@ -1126,10 +1126,8 @@
       <Unit156>
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="8" Y="32"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
+        <TopLine Value="2"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit156>
     </Units>
     <JumpHistory Count="0" HistoryIndex="-1"/>
