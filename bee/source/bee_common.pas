@@ -27,7 +27,7 @@
   v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0627 - 2008.02.11 by Melchiorre Caruso.
+  v0.7.9 build 0695 - 2008.04.05 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -274,6 +274,7 @@ end;
 
 function FileNameMatch(const FileName, Mask: string): boolean;
 var
+  iFileDrive: string;
   iFileName: string;
   iMaskPath: string;
   iMask: string;
@@ -286,6 +287,15 @@ begin
   iFileName := UpperCase(FileName);
   iMask := UpperCase(Mask);
   {$ENDIF}
+
+  if ExtractFileDrive(iMask) = '' then
+  begin
+    iFileDrive := ExtractFileDrive(iFileName);
+    if iFileDrive <> '' then
+    begin
+      iMask := IncludeTrailingBackSlash(iFileDrive) + iMask;
+    end;
+  end;
 
   I := System.Pos('!', iMask);
   if I > 0 then
