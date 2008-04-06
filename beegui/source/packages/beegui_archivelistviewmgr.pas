@@ -30,10 +30,12 @@ unit BeeGui_ArchiveListViewMgr;
 interface
 
 uses
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF}
   Math,
   Classes,
   Dialogs,
-  Windows,
   ExtCtrls,
   StdCtrls,
   SysUtils,
