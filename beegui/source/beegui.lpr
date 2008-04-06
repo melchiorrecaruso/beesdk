@@ -26,7 +26,10 @@
 program BeeGui;
 
 {$I compiler.inc}
-{$R beegui.res}
+
+{$IFDEF MSWINDOWS}
+  {$R beegui.res}
+{$ENDIF}
 
 uses
   {$IFDEF UNIX} cThreads, {$ENDIF}
@@ -34,19 +37,14 @@ uses
   Interfaces,
   Forms,
   // ---
-  BeeGui_Package,
   BeeGui_CmdLine,
   // ---
-  BeeGui_AddFrm,
   BeeGui_TickFrm,
-  BeeGui_ViewFrm,
-  BeeGui_AboutFrm,
-  BeeGui_RenameFrm,
-  BeeGui_ExtractFrm,
-  BeeGui_PasswordFrm,
-  BeeGui_OverWriteFrm;
+  BeeGui_AboutFrm;
 
 var
+  AboutFrm: TAboutFrm = nil;
+  TickFrm: TTickFrm = nil;
   CmdLine: TCmdLine;
 
 begin
@@ -74,7 +72,6 @@ begin
       begin
         Application.Run;
       end;
-      TickFrm.Free;
     end;
   end;
   CmdLine.Free;

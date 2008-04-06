@@ -79,9 +79,6 @@ type
   private
     { private declarations }
   end;
-  
-var
-  OverwriteFrm: TOverwriteFrm;
 
 implementation
 
@@ -106,7 +103,7 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {*$I beegui_overwritefrm_savelanguage.inc}
+    {$I beegui_overwritefrm_savelanguage.inc}
     {$I beegui_overwritefrm_saveproperty.inc}
   end;
   

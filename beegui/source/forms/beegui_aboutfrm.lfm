@@ -1,10 +1,11 @@
 object AboutFrm: TAboutFrm
-  Left = 399
+  Left = 675
   Height = 160
-  Top = 298
+  Top = 277
   Width = 360
   HorzScrollBar.Page = 359
   VertScrollBar.Page = 159
+  ActiveControl = BtnLicense
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'About to...'
   ClientHeight = 160
@@ -180,10 +181,10 @@ object AboutFrm: TAboutFrm
     Transparent = False
   end
   object Version: TLabel
-    Left = 272
-    Height = 14
+    Left = 273
+    Height = 20
     Top = 12
-    Width = 40
+    Width = 39
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = 'Version:'
@@ -194,9 +195,9 @@ object AboutFrm: TAboutFrm
   end
   object Web: TLabel
     Left = 130
-    Height = 14
+    Height = 20
     Top = 94
-    Width = 45
+    Width = 40
     Caption = 'Internet:'
     Font.CharSet = ANSI_CHARSET
     ParentColor = False
@@ -205,9 +206,9 @@ object AboutFrm: TAboutFrm
   end
   object Title: TLabel
     Left = 128
-    Height = 32
+    Height = 33
     Top = 5
-    Width = 93
+    Width = 108
     Caption = 'BeeGui'
     Font.CharSet = ANSI_CHARSET
     Font.Height = -26
@@ -218,9 +219,9 @@ object AboutFrm: TAboutFrm
   object Link: TLabel
     Cursor = crHandPoint
     Left = 184
-    Height = 14
+    Height = 20
     Top = 94
-    Width = 113
+    Width = 109
     Caption = 'http://www.beegui.org'
     Font.Color = clBlue
     ParentColor = False
@@ -229,33 +230,33 @@ object AboutFrm: TAboutFrm
   end
   object MoreInfo: TLabel
     Left = 130
-    Height = 14
+    Height = 20
     Top = 40
-    Width = 90
+    Width = 87
     Caption = 'Bee archiver utility'
     ParentColor = False
   end
   object Copyright: TLabel
     Left = 130
-    Height = 14
+    Height = 20
     Top = 56
-    Width = 119
+    Width = 114
     Caption = 'Copyright (c) 2003-2008'
     ParentColor = False
   end
   object Authors: TLabel
     Left = 128
-    Height = 14
+    Height = 20
     Top = 72
-    Width = 188
+    Width = 186
     Caption = 'Andrew Filinsky and  Melchiorre Caruso'
     ParentColor = False
   end
   object VersionValue: TLabel
-    Left = 323
-    Height = 14
+    Left = 322
+    Height = 20
     Top = 12
-    Width = 24
+    Width = 25
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = '?.?.?'
@@ -263,7 +264,7 @@ object AboutFrm: TAboutFrm
   end
   object Build: TLabel
     Left = 285
-    Height = 14
+    Height = 20
     Top = 28
     Width = 27
     Alignment = taRightJustify
@@ -274,10 +275,10 @@ object AboutFrm: TAboutFrm
     ParentShowHint = False
   end
   object BuildValue: TLabel
-    Left = 326
-    Height = 14
+    Left = 322
+    Height = 20
     Top = 28
-    Width = 21
+    Width = 25
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = '????'

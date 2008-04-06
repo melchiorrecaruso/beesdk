@@ -115,49 +115,50 @@ LazarusResources.Add('TOverwriteFrm','FORMDATA',[
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
-  +#0#0#0#6'TImage'#7'OldIcon'#4'Left'#2'W'#6'Height'#2' '#3'Top'#2'H'#5'Width'
-  +#2' '#11'Transparent'#8#0#0#6'TImage'#7'NewIcon'#4'Left'#2'W'#6'Height'#2' '
-  +#3'Top'#3#144#0#5'Width'#2' '#11'Transparent'#8#0#0#6'TLabel'#9'TheFolder'#4
-  +'Left'#2'A'#6'Height'#2#14#3'Top'#2#16#5'Width'#3#132#0#7'Caption'#6#27'The '
-  +'folder already contains'#11'ParentColor'#8#14'ParentShowHint'#8#0#0#6'TLabe'
-  +'l'#8'WouldYou'#4'Left'#2'A'#6'Height'#2#14#3'Top'#2'0'#5'Width'#3#197#0#7'C'
-  +'aption'#6'+Would you like to replace the existing file'#11'ParentColor'#8#14
-  +'ParentShowHint'#8#0#0#6'TLabel'#8'WithFile'#4'Left'#2'A'#6'Height'#2#14#3'T'
-  +'op'#2'u'#5'Width'#2'C'#7'Caption'#6#14'with this one?'#11'ParentColor'#8#14
-  +'ParentShowHint'#8#0#0#6'TLabel'#7'OldSize'#4'Left'#3#132#0#6'Height'#2#14#3
-  +'Top'#2'H'#5'Width'#2#23#7'Caption'#6#5'size:'#11'ParentColor'#8#14'ParentSh'
-  +'owHint'#8#0#0#6'TLabel'#7'NewSize'#4'Left'#3#132#0#6'Height'#2#14#3'Top'#3
-  +#144#0#5'Width'#2#23#7'Caption'#6#5'size:'#11'ParentColor'#8#14'ParentShowHi'
-  +'nt'#8#0#0#6'TLabel'#7'OldTime'#4'Left'#3#132#0#6'Height'#2#14#3'Top'#2'X'#5
-  ,'Width'#2'-'#7'Caption'#6#9'modified:'#11'ParentColor'#8#14'ParentShowHint'#8
-  +#0#0#6'TLabel'#7'NewTime'#4'Left'#3#132#0#6'Height'#2#14#3'Top'#3#160#0#5'Wi'
-  +'dth'#2'-'#7'Caption'#6#9'modified:'#11'ParentColor'#8#14'ParentShowHint'#8#0
-  +#0#7'TBitBtn'#6'BtnYes'#4'Left'#3't'#1#6'Height'#2#26#3'Top'#3#200#0#5'Width'
-  +#2'N'#7'Anchors'#11#7'akRight'#8'akBottom'#0#25'BorderSpacing.InnerBorder'#2
-  +#2#7'Caption'#6#3'&Si'#21'Constraints.MaxHeight'#2#26#20'Constraints.MaxWidt'
-  +'h'#2'N'#21'Constraints.MinHeight'#2#26#20'Constraints.MinWidth'#2'N'#7'Defa'
-  +'ult'#9#4'Kind'#7#5'bkYes'#11'ModalResult'#2#6#9'NumGlyphs'#2#0#14'ParentSho'
-  +'wHint'#8#8'TabOrder'#2#1#0#0#7'TBitBtn'#5'BtnNo'#4'Left'#3#31#1#6'Height'#2
-  +#26#3'Top'#3#200#0#5'Width'#2'N'#7'Anchors'#11#7'akRight'#8'akBottom'#0#25'B'
-  +'orderSpacing.InnerBorder'#2#2#6'Cancel'#9#7'Caption'#6#3'&No'#21'Constraint'
-  +'s.MaxHeight'#2#26#20'Constraints.MaxWidth'#2'N'#21'Constraints.MinHeight'#2
-  +#26#20'Constraints.MinWidth'#2'N'#4'Kind'#7#4'bkNo'#11'ModalResult'#2#7#9'Nu'
-  +'mGlyphs'#2#0#14'ParentShowHint'#8#8'TabOrder'#2#0#0#0#7'TBitBtn'#8'BtnNoAll'
-  +#4'Left'#2'_'#6'Height'#2#26#3'Top'#3#200#0#5'Width'#2'N'#7'Anchors'#11#6'ak'
-  +'Left'#8'akBottom'#0#25'BorderSpacing.InnerBorder'#2#2#7'Caption'#6#10'No a '
-  +'tutto'#21'Constraints.MaxHeight'#2#26#20'Constraints.MaxWidth'#2'N'#21'Cons'
-  +'traints.MinHeight'#2#26#20'Constraints.MinWidth'#2'N'#4'Kind'#7#9'bkNoToAll'
-  +#11'ModalResult'#2#9#9'NumGlyphs'#2#0#14'ParentShowHint'#8#8'TabOrder'#2#3#0
-  +#0#7'TBitBtn'#9'BtnYesAll'#4'Left'#3#180#0#6'Height'#2#26#3'Top'#3#200#0#5'W'
-  +'idth'#2'N'#7'Anchors'#11#6'akLeft'#8'akBottom'#0#25'BorderSpacing.InnerBord'
-  +'er'#2#2#7'Caption'#6#9'Si a &All'#21'Constraints.MaxHeight'#2#26#20'Constra'
-  +'ints.MaxWidth'#2'N'#21'Constraints.MinHeight'#2#26#20'Constraints.MinWidth'
-  +#2'N'#4'Kind'#7#10'bkYesToAll'#11'ModalResult'#2#10#9'NumGlyphs'#2#0#14'Pare'
-  +'ntShowHint'#8#8'TabOrder'#2#4#0#0#7'TBitBtn'#8'BtnAbort'#4'Left'#2#10#6'Hei'
-  +'ght'#2#26#3'Top'#3#200#0#5'Width'#2'N'#7'Anchors'#11#6'akLeft'#8'akBottom'#0
-  +#25'BorderSpacing.InnerBorder'#2#2#7'Caption'#6#6'Blocca'#21'Constraints.Max'
-  +'Height'#2#26#20'Constraints.MaxWidth'#2'N'#21'Constraints.MinHeight'#2#26#20
-  +'Constraints.MinWidth'#2'N'#4'Kind'#7#7'bkAbort'#11'ModalResult'#2#3#9'NumGl'
-  +'yphs'#2#0#14'ParentShowHint'#8#8'TabOrder'#2#2#0#0#9'TIconList'#6'Images'#6
-  +'Height'#2' '#5'Width'#2' '#4'left'#2#16#3'top'#2'8'#0#0#0
+  +#0#11'Transparent'#8#0#0#6'TImage'#7'OldIcon'#4'Left'#2'W'#6'Height'#2' '#3
+  +'Top'#2'H'#5'Width'#2' '#11'Transparent'#8#0#0#6'TImage'#7'NewIcon'#4'Left'#2
+  +'W'#6'Height'#2' '#3'Top'#3#144#0#5'Width'#2' '#11'Transparent'#8#0#0#6'TLab'
+  +'el'#9'TheFolder'#4'Left'#2'A'#6'Height'#2#20#3'Top'#2#16#5'Width'#3#129#0#7
+  +'Caption'#6#27'The folder already contains'#11'ParentColor'#8#14'ParentShowH'
+  +'int'#8#0#0#6'TLabel'#8'WouldYou'#4'Left'#2'A'#6'Height'#2#20#3'Top'#2'0'#5
+  +'Width'#3#193#0#7'Caption'#6'+Would you like to replace the existing file'#11
+  +'ParentColor'#8#14'ParentShowHint'#8#0#0#6'TLabel'#8'WithFile'#4'Left'#2'A'#6
+  +'Height'#2#20#3'Top'#2'u'#5'Width'#2'B'#7'Caption'#6#14'with this one?'#11'P'
+  +'arentColor'#8#14'ParentShowHint'#8#0#0#6'TLabel'#7'OldSize'#4'Left'#3#132#0
+  +#6'Height'#2#20#3'Top'#2'H'#5'Width'#2#22#7'Caption'#6#5'size:'#11'ParentCol'
+  +'or'#8#14'ParentShowHint'#8#0#0#6'TLabel'#7'NewSize'#4'Left'#3#132#0#6'Heigh'
+  +'t'#2#20#3'Top'#3#144#0#5'Width'#2#22#7'Caption'#6#5'size:'#11'ParentColor'#8
+  +#14'ParentShowHint'#8#0#0#6'TLabel'#7'OldTime'#4'Left'#3#132#0#6'Height'#2#20
+  ,#3'Top'#2'X'#5'Width'#2'+'#7'Caption'#6#9'modified:'#11'ParentColor'#8#14'Pa'
+  +'rentShowHint'#8#0#0#6'TLabel'#7'NewTime'#4'Left'#3#132#0#6'Height'#2#20#3'T'
+  +'op'#3#160#0#5'Width'#2'+'#7'Caption'#6#9'modified:'#11'ParentColor'#8#14'Pa'
+  +'rentShowHint'#8#0#0#7'TBitBtn'#6'BtnYes'#4'Left'#3't'#1#6'Height'#2#26#3'To'
+  +'p'#3#200#0#5'Width'#2'N'#7'Anchors'#11#7'akRight'#8'akBottom'#0#25'BorderSp'
+  +'acing.InnerBorder'#2#2#7'Caption'#6#3'&Si'#21'Constraints.MaxHeight'#2#26#20
+  +'Constraints.MaxWidth'#2'N'#21'Constraints.MinHeight'#2#26#20'Constraints.Mi'
+  +'nWidth'#2'N'#7'Default'#9#4'Kind'#7#5'bkYes'#11'ModalResult'#2#6#9'NumGlyph'
+  +'s'#2#0#14'ParentShowHint'#8#8'TabOrder'#2#1#0#0#7'TBitBtn'#5'BtnNo'#4'Left'
+  +#3#31#1#6'Height'#2#26#3'Top'#3#200#0#5'Width'#2'N'#7'Anchors'#11#7'akRight'
+  +#8'akBottom'#0#25'BorderSpacing.InnerBorder'#2#2#6'Cancel'#9#7'Caption'#6#3
+  +'&No'#21'Constraints.MaxHeight'#2#26#20'Constraints.MaxWidth'#2'N'#21'Constr'
+  +'aints.MinHeight'#2#26#20'Constraints.MinWidth'#2'N'#4'Kind'#7#4'bkNo'#11'Mo'
+  +'dalResult'#2#7#9'NumGlyphs'#2#0#14'ParentShowHint'#8#8'TabOrder'#2#0#0#0#7
+  +'TBitBtn'#8'BtnNoAll'#4'Left'#2'_'#6'Height'#2#26#3'Top'#3#200#0#5'Width'#2
+  +'N'#7'Anchors'#11#6'akLeft'#8'akBottom'#0#25'BorderSpacing.InnerBorder'#2#2#7
+  +'Caption'#6#10'No a tutto'#21'Constraints.MaxHeight'#2#26#20'Constraints.Max'
+  +'Width'#2'N'#21'Constraints.MinHeight'#2#26#20'Constraints.MinWidth'#2'N'#4
+  +'Kind'#7#9'bkNoToAll'#11'ModalResult'#2#9#9'NumGlyphs'#2#0#14'ParentShowHint'
+  +#8#8'TabOrder'#2#3#0#0#7'TBitBtn'#9'BtnYesAll'#4'Left'#3#180#0#6'Height'#2#26
+  +#3'Top'#3#200#0#5'Width'#2'N'#7'Anchors'#11#6'akLeft'#8'akBottom'#0#25'Borde'
+  +'rSpacing.InnerBorder'#2#2#7'Caption'#6#9'Si a &All'#21'Constraints.MaxHeigh'
+  +'t'#2#26#20'Constraints.MaxWidth'#2'N'#21'Constraints.MinHeight'#2#26#20'Con'
+  +'straints.MinWidth'#2'N'#4'Kind'#7#10'bkYesToAll'#11'ModalResult'#2#10#9'Num'
+  +'Glyphs'#2#0#14'ParentShowHint'#8#8'TabOrder'#2#4#0#0#7'TBitBtn'#8'BtnAbort'
+  +#4'Left'#2#10#6'Height'#2#26#3'Top'#3#200#0#5'Width'#2'N'#7'Anchors'#11#6'ak'
+  +'Left'#8'akBottom'#0#25'BorderSpacing.InnerBorder'#2#2#7'Caption'#6#6'Blocca'
+  +#21'Constraints.MaxHeight'#2#26#20'Constraints.MaxWidth'#2'N'#21'Constraints'
+  +'.MinHeight'#2#26#20'Constraints.MinWidth'#2'N'#4'Kind'#7#7'bkAbort'#11'Moda'
+  +'lResult'#2#3#9'NumGlyphs'#2#0#14'ParentShowHint'#8#8'TabOrder'#2#2#0#0#9'TI'
+  +'conList'#6'Images'#6'Height'#2' '#5'Width'#2' '#4'left'#2#16#3'top'#2'8'#0#0
+  +#0
 ]);

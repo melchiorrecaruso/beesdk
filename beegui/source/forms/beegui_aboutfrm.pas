@@ -82,9 +82,6 @@ type
     { private declarations }
   end;
 
-var
-  AboutFrm: TAboutFrm;
-
 implementation
 
 uses
@@ -101,7 +98,7 @@ uses
     {$I beegui_aboutfrm_loadproperty.inc}
     // ---
     VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '191';
+    BuildValue.Caption := '195';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
