@@ -28,6 +28,7 @@
 {$R-}
 {$Q-}
 {$S-}
+{$INLINE ON}
 
 {*$DEFINE CONSOLEAPPLICATION}
 

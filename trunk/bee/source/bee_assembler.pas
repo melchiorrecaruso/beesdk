@@ -24,7 +24,7 @@
 
   v0.7.9 build 0383 - 2007.06.27 by Andrew Filinsky;
 
-  v0.7.9 build 0705 - 2008.04.06 by Melchiorre Caruso.
+  v0.7.9 build 0707 - 2008.04.06 by Melchiorre Caruso.
 }
 
 unit Bee_Assembler;
@@ -45,7 +45,7 @@ function MulDecDiv(A, B, C: cardinal): cardinal;
 
 implementation
 
-procedure CopyBytes(const Source, Dest; Count: cardinal); inline;
+procedure CopyBytes(const Source, Dest; Count: cardinal);
 asm
   xchg esi, Source
   xchg edi, Dest
@@ -59,7 +59,7 @@ asm
   mov  edi, Dest
 end;
 
-procedure FillCardinal(const Data; const Count, Value: cardinal); inline;
+procedure FillCardinal(const Data; const Count, Value: cardinal);
 asm
   push edi
   mov  edi, Data
@@ -69,7 +69,7 @@ asm
   pop  edi
 end;
 
-procedure AddCardinal(const Data; const Count, Value: cardinal); inline;
+procedure AddCardinal(const Data; const Count, Value: cardinal);
 asm
   @1:
   add [Data], Value
@@ -78,7 +78,7 @@ asm
   jne @1
 end;
 
-procedure ClearCardinal(const Data; const Count: cardinal); inline;
+procedure ClearCardinal(const Data; const Count: cardinal);
 asm
   mov  ecx, Count
   mov  edx, edi
@@ -88,7 +88,7 @@ asm
   mov  edi, edx
 end;
 
-procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal); inline;
+procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal);
 asm
   xchg esi, Source
   xchg edi, Dest
@@ -97,13 +97,13 @@ asm
   mov  edi, Dest
 end;
 
-function MulDiv(A, B, C: cardinal): cardinal; inline;
+function MulDiv(A, B, C: cardinal): cardinal;
 asm
   mul  B
   div  C
 end;
 
-function MulDecDiv(A, B, C: cardinal): cardinal; inline;
+function MulDecDiv(A, B, C: cardinal): cardinal;
 asm
   mul  B
   sub  eax, 1

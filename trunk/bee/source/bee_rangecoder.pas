@@ -125,7 +125,7 @@ begin
   // nothing to do...
 end;
 
-procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: cardinal);
+procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: cardinal); inline;
 var
   Tmp: cardinal;
 begin
@@ -140,7 +140,7 @@ begin
   end;
 end;
 
-procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: cardinal);
+procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: cardinal); inline;
 begin
   Code := Code - MulDiv(Range, CumFreq, TotFreq);
   Range := MulDiv(Range, Freq, TotFreq);
@@ -151,12 +151,12 @@ begin
   end;
 end;
 
-function TRangeCoder.GetFreq(TotFreq: cardinal): cardinal;
+function TRangeCoder.GetFreq(TotFreq: cardinal): cardinal; inline;
 begin
   Result := MulDecDiv(Code + 1, TotFreq, Range);
 end;
 
-procedure TRangeCoder.ShiftLow;
+procedure TRangeCoder.ShiftLow; inline;
 begin
   if (Low < Thres) or (Carry <> 0) then
   begin
@@ -173,7 +173,7 @@ begin
   Low := Low shl 8;
 end;
 
-function TRangeCoder.InputByte: cardinal;
+function TRangeCoder.InputByte: cardinal; inline;
 var
   Value: byte;
 begin
@@ -181,7 +181,7 @@ begin
   Result := Value;
 end;
 
-procedure TRangeCoder.OutputByte(aValue: cardinal);
+procedure TRangeCoder.OutputByte(aValue: cardinal); inline;
 begin
   FStream.Write(aValue, 1);
 end;
