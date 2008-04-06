@@ -75,21 +75,38 @@ type
     constructor Create;
     destructor Destroy; override;
   public
-    property Command: char read FCommand;
-    property ArcName: string read FArcName;
-    property Params: TStringList read FParams;
+    property Run: boolean read FRun;
     property Link: string read F0Option;
     property Log: boolean read F1Option;
-    property Run: boolean read FRun;
+    property Params: TStringList read FParams;
+  public
+    property Command: char read FCommand write FCommand;
+    property rOption: boolean read FrOption write FrOption;
+    property uOption: boolean read FuOption write FuOption;
+    property fOption: boolean read FfOption write FfOption;
+    property eOption: string read FeOption write FeOption;
+    property sOption: boolean read FsOption write FsOption;
+    property aOption: string read FaOption write FaOption;
+    property oOption: char read FoOption write FoOption;
+    property mOption: integer read FmOption write FmOption;
+    property dOption: integer read FdOption write FdOption;
+    property xOption: TStringList read FxOption;
+    property tOption: boolean read FtOption write FtOption;
+    property lOption: boolean read FlOption write FlOption;
+    property yOption: string read FyOption write FyOption;
+    property kOption: boolean read FkOption write FkOption;
+    property cdOption: string read FcdOption write FcdOption;
+    property cfgOption: string read FcfgOption write FcfgOption;
+    property priOption: integer read FpriOption write FpriOption;
+    property ArcName: string read FArcName write FArcName;
+    property FileMasks: TStringList read FFileMasks;
   end;
 
 implementation
 
 uses
   Bee_Common,
-  // ---
-  BeeGui_AddFrm,
-  BeeGui_ExtractFrm;
+  BeeGui_Forms;
 
   constructor TCmdLine.Create;
   var
@@ -116,7 +133,7 @@ uses
     FcdOption := '';
     FcfgOption := '';
     FpriOption := 1;
-    FArcName  := '';
+    FArcName := '';
     FFileMasks := TStringList.Create;
     // ---
     FRun := False;
@@ -126,6 +143,7 @@ uses
     FParams := TStringList.Create;
     // ---
     ProcessOptions;
+    ProcessParams;
   end;
 
   procedure TCmdLine.ProcessOptions;
@@ -311,17 +329,16 @@ uses
               FArcName := ChangeFileExt(FArcName, '.bee');
             end;
           end else
-            FFileMasks.Add(DoDirSeparators(S));
+            FFileMasks.Add(S);
       end;
     end; // end for loop
-    ProcessParams;
   end;
 
   destructor TCmdLine.Destroy;
   begin
     FxOption.Free;
     FFileMasks.Free;
-
+    // ---
     FParams.Free;
     inherited Destroy;
   end;
@@ -331,15 +348,16 @@ uses
     i: integer;
   begin
     FRun := True;
+    FParams.Clear;
     if F2Option then
     begin
       case FCommand of
-        'A': FRun := ConfirmAdd;
-        'E': FRun := ConfirmExtract;
-        'X': FRun := ConfirmExtract;
+        'A': FRun := ConfirmAdd(Self);
+        'E': FRun := ConfirmExtract(Self);
+        'X': FRun := ConfirmExtract(Self);
       end;
     end;
-    
+
     if FRun then
     begin
       FParams.Add(FCommand);
@@ -383,65 +401,6 @@ uses
       for i := 0 to FFileMasks.Count - 1 do
         FParams.Add(FFileMasks.Strings[i]);
     end;
-  end;
-
-
-
-  function TCmdLine.ConfirmExtract: boolean;
-  var
-    F: TExtractFrm;
-  begin
-    F := TExtractFrm.Create(Application);
-
-    F.xCommand.Checked := FCommand = 'X';
-    
-    { TODO : Aggiungere nella overwriteBox altri valori }
-    
-    // if (FuOption xor FfOption) then
-    // begin
-    //   if FuOption then
-    //     F.ufOption.ItemIndex := 0
-    //   else
-    //     F.ufOption.ItemIndex := 1;
-    // end else
-    // begin
-    //   F.ufOption.ItemIndex := 2;
-    // end;
-
-    case UpCase(FoOption) of
-      'S': F.oOption.ItemIndex := 0;
-      'A': F.oOption.ItemIndex := 1;
-      'Q': F.oOption.ItemIndex := 2;
-    end;
-
-    F.cdOptionCheck.Checked := Length(FcdOption) > 0;
-    F.cdOption.Text := FcdOption;
-
-    if F.ShowModal = mrOk then
-    begin
-      if F.xCommand.Checked then
-        FCommand := 'X'
-      else
-        FCommand := 'E';
-
-      { TODO : sistemare con uOption ed fOption }
-
-      case F.oOption.ItemIndex of
-        0: FoOption := 'S';
-        1: FoOption := 'A';
-        2: FoOption := 'Q';
-      end;
-
-      if F.cdOptionCheck .Enabled then
-        FcdOption := F.cdOption.Text
-      else
-        FcdOption := '';
-      
-      Result := SetCurrentDir(F.Folder.Text);
-    end else
-      Result := False;
-
-    F.Free;
   end;
 
 end.
