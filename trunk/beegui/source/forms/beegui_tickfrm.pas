@@ -31,6 +31,7 @@ unit BeeGui_TickFrm;
 interface
 
 uses
+  Menus,
   Forms,
   Classes,
   Dialogs,
@@ -54,7 +55,7 @@ uses
   BeeGui_ViewFrm,
   BeeGui_RenameFrm,
   BeeGui_PasswordFrm,
-  BeeGui_OverwriteFrm, Menus;
+  BeeGui_OverwriteFrm;
 
 type
 
@@ -148,9 +149,6 @@ type
     property Terminated: boolean read FAppTerminated;
     property Switch: boolean read FSwitch;
   end;
-  
-var
-  TickFrm: TTickFrm;
   
 implementation
 
@@ -408,15 +406,20 @@ var
 
   procedure TTickFrm.BtnPriorityClick(Sender: TObject);
   var
-    R: TRect;
+    // R: TRect;
+    X, Y: integer;
   begin
     Popup_Idle        .Checked := FApp.Priority = tpIdle;
     Popup_Normal      .Checked := FApp.Priority = tpNormal;
     Popup_Higher      .Checked := FApp.Priority = tpHigher;
     Popup_TimeCritical.Checked := FApp.Priority = tpTimeCritical;
 
-    GetWindowRect(BtnPriority.Handle, R);
-    Popup.PopUp(R.TopLeft.X -1, R.BottomRight.Y);
+    // GetWindowRect(BtnPriority.Handle, R);
+    // Popup.PopUp(R.TopLeft.X -1, R.BottomRight.Y);
+
+    X := Left + BtnPriority.Left - 1;
+    Y := Top + BtnPriority.Top + BtnPriority.Height;
+    Popup.PopUp(X, Y);
   end;
 
   procedure TTickFrm.BtnFontClick(Sender: TObject);
@@ -496,7 +499,7 @@ var
     if FAppTerminated = False then
     begin;
       FApp.Suspended := True;
-      F := TOverWriteFrm.Create(nil);
+      F := TOverWriteFrm.Create(Application);
       with FAppInterface.OnOverWrite.Data do
       begin
         F.SetFileName(FileName);
@@ -525,7 +528,7 @@ var
     if FAppTerminated = False then
     begin;
       FApp.Suspended := True;
-      F := TRenameFrm.Create(nil);
+      F := TRenameFrm.Create(Application);
       F.Caption := rsRenameFile;
       with FAppInterface.OnRename.Data do
       begin
