@@ -27,7 +27,7 @@
   v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0707 - 2008.04.06 by Melchiorre Caruso.
+  v0.7.9 build 0711 - 2008.04.06 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -190,7 +190,7 @@ begin
   I := Pos(':', FileName);
   while I < L do
   begin
-    if FileName[I + 1] in AllowDirectorySeparators then
+    if FileName[I + 1] in ['\', '/'] then
       Inc(I)
     else
       Break;
@@ -225,7 +225,7 @@ var
 begin
   Result := DirName;
   L := Length(Result);
-  if (L > 0) and (not (Result[L] in AllowDirectorySeparators)) then
+  if (L > 0) and (not (Result[L] in ['\', '/'])) then
   begin
     Result:= Result + PathDelim;
   end;
@@ -236,7 +236,7 @@ var
   L : Integer;
 begin
   L := Length(DirName);
-  if (L > 0) and (DirName[L] in AllowDirectorySeparators) then
+  if (L > 0) and (DirName[L] in ['\', '/']) then
   begin
     Dec(L);
   end;
@@ -379,7 +379,7 @@ begin
   L := Length(Result);
   for I := 1 to L do
   begin
-    if Result[I] in AllowDirectorySeparators then
+    if Result[I] in ['\', '/'] then
     begin
       Result[I] := PathDelim;
     end;
