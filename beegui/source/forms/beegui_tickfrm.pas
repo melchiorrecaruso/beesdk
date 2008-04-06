@@ -131,7 +131,7 @@ type
     procedure OnKey;
   private
     { private declarations }
-    FApp: TBeeApp;
+
     FAppKey: string;
     FAppContents: TStringList;
     FAppInterface: TAppInterface;
@@ -164,6 +164,8 @@ var
   rsBtnRunCaption:    string = 'Run';
   rsBtnCancelCaption: string = 'Cancel';
   rsBtnCloseCaption:  string = 'Close';
+  
+  FApp: TBeeApp;
   
   { TTickFrm class }
   
@@ -406,7 +408,6 @@ var
 
   procedure TTickFrm.BtnPriorityClick(Sender: TObject);
   var
-    // R: TRect;
     X, Y: integer;
   begin
     Popup_Idle        .Checked := FApp.Priority = tpIdle;
@@ -414,11 +415,8 @@ var
     Popup_Higher      .Checked := FApp.Priority = tpHigher;
     Popup_TimeCritical.Checked := FApp.Priority = tpTimeCritical;
 
-    // GetWindowRect(BtnPriority.Handle, R);
-    // Popup.PopUp(R.TopLeft.X -1, R.BottomRight.Y);
-
-    X := Left + BtnPriority.Left - 1;
-    Y := Top + BtnPriority.Top + BtnPriority.Height;
+    X := Left + BtnPriority.Left + 3;
+    Y := Top + BtnPriority.Top + BtnPriority.Height + 23;
     Popup.PopUp(X, Y);
   end;
 
