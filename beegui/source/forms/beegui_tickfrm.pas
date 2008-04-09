@@ -131,7 +131,7 @@ type
     procedure OnKey;
   private
     { private declarations }
-
+    FApp: TBeeApp;
     FAppKey: string;
     FAppContents: TStringList;
     FAppInterface: TAppInterface;
@@ -164,8 +164,6 @@ var
   rsBtnRunCaption:    string = 'Run';
   rsBtnCancelCaption: string = 'Cancel';
   rsBtnCloseCaption:  string = 'Close';
-  
-  FApp: TBeeApp;
   
   { TTickFrm class }
   
@@ -466,8 +464,8 @@ var
       FAppTerminated := True;
       Timer.Enabled := False;
 
-      BtnCancel.Kind := bkClose;
-      BtnCancel.Caption := rsBtnCloseCaption;
+      BtnCancel.Kind      := bkClose;
+      BtnCancel.Caption   := rsBtnCloseCaption;
       BtnPriority.Enabled := False;
       BtnPauseRun.Enabled := False;
       
