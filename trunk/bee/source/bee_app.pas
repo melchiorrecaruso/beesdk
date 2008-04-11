@@ -1109,7 +1109,7 @@ begin
           end;
         end else
           DeleteFile(TmpFileName);
-
+        
       end else // if ProcessFilesToSwap
       begin
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);

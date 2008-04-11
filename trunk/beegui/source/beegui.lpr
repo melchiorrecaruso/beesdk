@@ -68,7 +68,7 @@ begin
           Application.ProcessMessages;
       until TickFrm.Switch;
 
-      // if TickFrm.Switch then
+      if TickFrm.Switch then
       begin
         Application.Run;
       end;
