@@ -400,7 +400,7 @@ var
         BtnPauseRun.Caption := rsBtnRunCaption;
         Timer.Enabled  := False;
         FApp.Suspended := True;
-      end
+      end;
     end;
   end;
 
