@@ -118,20 +118,20 @@ LazarusResources.Add('TOverwriteFrm','FORMDATA',[
   +#0#11'Transparent'#8#0#0#6'TImage'#7'OldIcon'#4'Left'#2'W'#6'Height'#2' '#3
   +'Top'#2'H'#5'Width'#2' '#11'Transparent'#8#0#0#6'TImage'#7'NewIcon'#4'Left'#2
   +'W'#6'Height'#2' '#3'Top'#3#144#0#5'Width'#2' '#11'Transparent'#8#0#0#6'TLab'
-  +'el'#9'TheFolder'#4'Left'#2'A'#6'Height'#2#20#3'Top'#2#16#5'Width'#3#129#0#7
+  +'el'#9'TheFolder'#4'Left'#2'A'#6'Height'#2#20#3'Top'#2#16#5'Width'#3#132#0#7
   +'Caption'#6#27'The folder already contains'#11'ParentColor'#8#14'ParentShowH'
   +'int'#8#0#0#6'TLabel'#8'WouldYou'#4'Left'#2'A'#6'Height'#2#20#3'Top'#2'0'#5
-  +'Width'#3#193#0#7'Caption'#6'+Would you like to replace the existing file'#11
+  +'Width'#3#197#0#7'Caption'#6'+Would you like to replace the existing file'#11
   +'ParentColor'#8#14'ParentShowHint'#8#0#0#6'TLabel'#8'WithFile'#4'Left'#2'A'#6
-  +'Height'#2#20#3'Top'#2'u'#5'Width'#2'B'#7'Caption'#6#14'with this one?'#11'P'
+  +'Height'#2#20#3'Top'#2'u'#5'Width'#2'C'#7'Caption'#6#14'with this one?'#11'P'
   +'arentColor'#8#14'ParentShowHint'#8#0#0#6'TLabel'#7'OldSize'#4'Left'#3#132#0
-  +#6'Height'#2#20#3'Top'#2'H'#5'Width'#2#22#7'Caption'#6#5'size:'#11'ParentCol'
+  +#6'Height'#2#20#3'Top'#2'H'#5'Width'#2#23#7'Caption'#6#5'size:'#11'ParentCol'
   +'or'#8#14'ParentShowHint'#8#0#0#6'TLabel'#7'NewSize'#4'Left'#3#132#0#6'Heigh'
-  +'t'#2#20#3'Top'#3#144#0#5'Width'#2#22#7'Caption'#6#5'size:'#11'ParentColor'#8
+  +'t'#2#20#3'Top'#3#144#0#5'Width'#2#23#7'Caption'#6#5'size:'#11'ParentColor'#8
   +#14'ParentShowHint'#8#0#0#6'TLabel'#7'OldTime'#4'Left'#3#132#0#6'Height'#2#20
-  ,#3'Top'#2'X'#5'Width'#2'+'#7'Caption'#6#9'modified:'#11'ParentColor'#8#14'Pa'
+  ,#3'Top'#2'X'#5'Width'#2'-'#7'Caption'#6#9'modified:'#11'ParentColor'#8#14'Pa'
   +'rentShowHint'#8#0#0#6'TLabel'#7'NewTime'#4'Left'#3#132#0#6'Height'#2#20#3'T'
-  +'op'#3#160#0#5'Width'#2'+'#7'Caption'#6#9'modified:'#11'ParentColor'#8#14'Pa'
+  +'op'#3#160#0#5'Width'#2'-'#7'Caption'#6#9'modified:'#11'ParentColor'#8#14'Pa'
   +'rentShowHint'#8#0#0#7'TBitBtn'#6'BtnYes'#4'Left'#3't'#1#6'Height'#2#26#3'To'
   +'p'#3#200#0#5'Width'#2'N'#7'Anchors'#11#7'akRight'#8'akBottom'#0#25'BorderSp'
   +'acing.InnerBorder'#2#2#7'Caption'#6#3'&Si'#21'Constraints.MaxHeight'#2#26#20

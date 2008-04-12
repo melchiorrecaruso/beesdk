@@ -43,10 +43,10 @@ uses
   BeeGui_AboutFrm;
 
 var
+  CmdLine: TCmdLine   = nil;
   AboutFrm: TAboutFrm = nil;
-  TickFrm: TTickFrm = nil;
-  CmdLine: TCmdLine;
-
+  TickFrm: TTickFrm   = nil;
+  
 begin
   Application.Initialize;
   Application.Title := 'BeeGui';
@@ -57,6 +57,7 @@ begin
     begin
        Application.CreateForm(TAboutFrm, AboutFrm);
        Application.Run;
+       AboutFrm := nil;
     end else
     begin
       Application.CreateForm(TTickFrm, TickFrm);
@@ -71,6 +72,7 @@ begin
       if TickFrm.Switch then
       begin
         Application.Run;
+        TickFrm := nil;
       end;
     end;
   end;
