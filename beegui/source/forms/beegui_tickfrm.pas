@@ -63,6 +63,7 @@ type
 
   TTickFrm = class(TForm)
     FontDialog: TFontDialog;
+    Closer: TIdleTimer;
     Popup_Idle: TMenuItem;
     Popup_TimeCritical: TMenuItem;
     Popup_Higher: TMenuItem;
@@ -97,6 +98,8 @@ type
     BtnPauseRun: TBitBtn;
     BtnCancel: TBitBtn;
     // ---
+    procedure CloserStartTimer(Sender: TObject);
+    procedure CloserTimer(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
@@ -136,6 +139,7 @@ type
     FAppContents: TStringList;
     FAppInterface: TAppInterface;
     FAppTerminated: boolean;
+    FAppCanClose: boolean;
     FTime: integer;
     FSwitch: boolean;
     FSwitchValue: integer;
@@ -147,6 +151,7 @@ type
     procedure Execute(ACmdLine: TCmdLine);
   public
     property Terminated: boolean read FAppTerminated;
+    property CanClose: boolean read FAppCanClose;
     property Switch: boolean read FSwitch;
   end;
   
@@ -186,6 +191,7 @@ var
     // ---
     FAppContents := TStringList.Create;
     FAppTerminated := False;
+    FAppCanClose := False;
     FAppKey := '';
     // ---
     FTime := 0;
@@ -227,33 +233,13 @@ var
 
   procedure TTickFrm.FormWindowStateChange(Sender: TObject);
   begin
-    if WindowState = wsNormal then
-    begin
+    //if WindowState = wsNormal then
+    //begin
       // TrayIcon.Visible := False;
-    end else
-    begin
+    //end else
+    //begin
       // TrayIcon.Visible := True;
-    end;
-  end;
-  
-  procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
-  begin
-    if FAppTerminated = False then
-    begin
-      CanClose := MessageDlg(rsConfirmation, rsConfirmAbort,
-        mtConfirmation, [mbYes, mbNo], '') = mrYes;
-      
-      if CanClose and (FAppTerminated = False) then
-      begin
-        Timer.Enabled := True;
-        if FApp.Suspended then
-        begin
-          FApp.Resume;
-        end;
-        FApp.Terminate;
-      end;
-    end else
-      CanClose := True;
+    //end;
   end;
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -265,6 +251,47 @@ var
     {$I beegui_tickfrm_saveproperty.inc}
   end;
 
+  procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+  begin
+    CanClose := FAppCanClose;
+    if not FAppCanClose then
+    begin
+      Closer.Enabled := True;
+    end;
+  end;
+
+  procedure TTickFrm.CloserStartTimer(Sender: TObject);
+  begin
+    if FAppTerminated = False then
+    begin
+      FAppCanClose := MessageDlg(rsConfirmation, rsConfirmAbort,
+        mtConfirmation, [mbYes, mbNo], '') = mrYes;
+
+      if FAppCanClose and (FAppTerminated = False) then
+      begin
+        Timer.Enabled := True;
+        if FApp.Suspended then
+        begin
+          FApp.Resume;
+        end;
+        FApp.Terminate;
+      end;
+    end else
+    begin
+      FAppCanClose := True;
+      Closer.Enabled := True;
+    end;
+  end;
+  
+  procedure TTickFrm.CloserTimer(Sender: TObject);
+  begin
+    if FAppCanClose then
+    begin
+      Closer.Enabled := False;
+      Close;
+    end;
+  end;
+  
   procedure TTickFrm.HandleClick(Sender: TObject);
   begin
     WindowState := wsNormal;
@@ -478,7 +505,8 @@ var
         BtnFont.Enabled := True;
       end else
       begin;
-        Close;
+        FAppCanClose := True;
+        Closer.Enabled := True;
       end;
       
       if (FAppContents.Count > 0) and (FCmdLine.Link <> '') then
