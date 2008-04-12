@@ -1176,36 +1176,7 @@
         <UsageCount Value="10"/>
       </Unit164>
     </Units>
-    <JumpHistory Count="7" HistoryIndex="6">
-      <Position1>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="268" Column="34" TopLine="241"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="498" Column="45" TopLine="471"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="496" Column="46" TopLine="475"/>
-      </Position3>
-      <Position4>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="104" Column="70" TopLine="103"/>
-      </Position4>
-      <Position5>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="256" Column="35" TopLine="239"/>
-      </Position5>
-      <Position6>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="259" Column="29" TopLine="244"/>
-      </Position6>
-      <Position7>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="243" Column="18" TopLine="237"/>
-      </Position7>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
