@@ -103,7 +103,7 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_overwritefrm_savelanguage.inc}
+    {*$I beegui_overwritefrm_savelanguage.inc}
     {$I beegui_overwritefrm_saveproperty.inc}
   end;
   

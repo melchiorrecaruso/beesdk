@@ -149,7 +149,7 @@ object OverwriteFrm: TOverwriteFrm
     Left = 65
     Height = 20
     Top = 16
-    Width = 129
+    Width = 132
     Caption = 'The folder already contains'
     ParentColor = False
     ParentShowHint = False
@@ -158,7 +158,7 @@ object OverwriteFrm: TOverwriteFrm
     Left = 65
     Height = 20
     Top = 48
-    Width = 193
+    Width = 197
     Caption = 'Would you like to replace the existing file'
     ParentColor = False
     ParentShowHint = False
@@ -167,7 +167,7 @@ object OverwriteFrm: TOverwriteFrm
     Left = 65
     Height = 20
     Top = 117
-    Width = 66
+    Width = 67
     Caption = 'with this one?'
     ParentColor = False
     ParentShowHint = False
@@ -176,7 +176,7 @@ object OverwriteFrm: TOverwriteFrm
     Left = 132
     Height = 20
     Top = 72
-    Width = 22
+    Width = 23
     Caption = 'size:'
     ParentColor = False
     ParentShowHint = False
@@ -185,7 +185,7 @@ object OverwriteFrm: TOverwriteFrm
     Left = 132
     Height = 20
     Top = 144
-    Width = 22
+    Width = 23
     Caption = 'size:'
     ParentColor = False
     ParentShowHint = False
@@ -194,7 +194,7 @@ object OverwriteFrm: TOverwriteFrm
     Left = 132
     Height = 20
     Top = 88
-    Width = 43
+    Width = 45
     Caption = 'modified:'
     ParentColor = False
     ParentShowHint = False
@@ -203,7 +203,7 @@ object OverwriteFrm: TOverwriteFrm
     Left = 132
     Height = 20
     Top = 160
-    Width = 43
+    Width = 45
     Caption = 'modified:'
     ParentColor = False
     ParentShowHint = False

@@ -98,7 +98,6 @@ type
     BtnPauseRun: TBitBtn;
     BtnCancel: TBitBtn;
     // ---
-    procedure CloserStartTimer(Sender: TObject);
     procedure CloserTimer(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -198,6 +197,12 @@ var
     FCmdLine := nil;
     FSwitch := False;
     FSwitchValue := $FFFF;
+    {$IFDEF UNIX}
+      BtnPriority.Enabled := False;
+      // BtnPriority.Visible := False;
+      BtnPauseRun.Enabled := False;
+      // BtnPauseRun.Visible := False;
+    {$ENDIF}
   end;
   
   destructor TTickFrm.Destroy;
@@ -254,33 +259,26 @@ var
   procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
   begin
     CanClose := FAppCanClose;
-    if not FAppCanClose then
+    if FAppCanClose = False then
     begin
-      Closer.Enabled := True;
-    end;
-  end;
-
-  procedure TTickFrm.CloserStartTimer(Sender: TObject);
-  begin
-    if FAppTerminated = False then
-    begin
-      FAppCanClose := MessageDlg(rsConfirmation, rsConfirmAbort,
-        mtConfirmation, [mbYes, mbNo], '') = mrYes;
-
-      if FAppCanClose and (FAppTerminated = False) then
+      if FAppTerminated = False then
       begin
-        Timer.Enabled := True;
-        if FApp.Suspended then
+        FAppCanClose := MessageDlg(rsConfirmation, rsConfirmAbort,
+          mtConfirmation, [mbYes, mbNo], '') = mrYes;
+
+        if FAppCanClose and (FAppTerminated = False) then
         begin
-          FApp.Resume;
+          Timer.Enabled := True;
+          if FApp.Suspended then
+          begin
+            FApp.Resume;
+          end;
         end;
         FApp.Terminate;
       end;
     end else
-    begin
-      FAppCanClose := True;
-      Closer.Enabled := True;
-    end;
+      if FAppTerminated then
+        Closer.Enabled := True;
   end;
   
   procedure TTickFrm.CloserTimer(Sender: TObject);
@@ -323,7 +321,7 @@ var
     // ---
     FApp := TBeeApp.Create(FAppInterface, FCmdLine.Params);
     FApp.OnTerminate := OnTerminate;
-    FApp.Suspended := False;
+    FApp.Resume;
   end;
   
   // ------------------------------------------------------------------------ //
@@ -403,6 +401,7 @@ var
       ProcessedSizeUnit.Caption := GeneralSizeUnit.Caption;
 
       Speed.Caption := IntToStr(0);
+      Msg.Caption := '...';
       Tick.Position := 0;
     end;
   end;
@@ -421,12 +420,12 @@ var
       begin
         BtnPauseRun.Caption := rsBtnPauseCaption;
         Timer.Enabled  := True;
-        FApp.Suspended := False;
+        FApp.Resume;
       end else
       begin
         BtnPauseRun.Caption := rsBtnRunCaption;
         Timer.Enabled  := False;
-        FApp.Suspended := True;
+        FApp.Suspend;
       end;
     end;
   end;
@@ -440,8 +439,16 @@ var
     Popup_Higher      .Checked := FApp.Priority = tpHigher;
     Popup_TimeCritical.Checked := FApp.Priority = tpTimeCritical;
 
-    X := Left + BtnPriority.Left + 3;
-    Y := Top + BtnPriority.Top + BtnPriority.Height + 23;
+    X := Left + BtnPriority.Left;
+    Y := Top + BtnPriority.Top + BtnPriority.Height;
+
+    {$IFDEF MSWINDOWS}
+    Inc(X, 3);
+    Inc(Y, 23);
+    {$ELSE}
+    Inc(X, 6);
+    Inc(Y, 26);
+    {$ENDIF}
     Popup.PopUp(X, Y);
   end;
 
@@ -522,7 +529,6 @@ var
   begin
     if FAppTerminated = False then
     begin;
-      FApp.Suspended := True;
       F := TOverWriteFrm.Create(Application);
       with FAppInterface.OnOverWrite.Data do
       begin
@@ -541,7 +547,6 @@ var
         else        FAppInterface.OnOverWrite.Answer := 'N';
       end;
       F.Free;
-      FApp.Suspended := False;
     end;
   end;
 
@@ -551,7 +556,6 @@ var
   begin
     if FAppTerminated = False then
     begin;
-      FApp.Suspended := True;
       F := TRenameFrm.Create(Application);
       F.Caption := rsRenameFile;
       with FAppInterface.OnRename.Data do
@@ -566,7 +570,6 @@ var
         FAppInterface.OnRename.Answer := '';
 
       F.Free;
-      FApp.Suspended := False;
     end;
   end;
 
@@ -655,7 +658,6 @@ var
   begin
     if FAppTerminated = False then
     begin
-      FApp.Suspended := True;
       if Length(FAppKey) = 0 then
       begin
         F := TPasswordFrm.Create(Application);
@@ -668,7 +670,6 @@ var
         F.Free;
       end;
       FAppInterface.OnKey.Answer := FAppKey;
-      FApp.Suspended := False;
     end;
   end;
   
