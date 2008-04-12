@@ -254,7 +254,6 @@ var
       end;
     end else
       CanClose := True;
-    CanClose := False;
   end;
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
