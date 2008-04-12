@@ -44,7 +44,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
         <CursorPos X="1" Y="78"/>
-        <TopLine Value="39"/>
+        <TopLine Value="29"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -621,8 +621,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="5" Y="480"/>
-        <TopLine Value="165"/>
+        <CursorPos X="11" Y="414"/>
+        <TopLine Value="411"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="93"/>
         <Loaded Value="True"/>
