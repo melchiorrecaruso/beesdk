@@ -1,20 +1,20 @@
 object AboutFrm: TAboutFrm
-  Left = 426
-  Height = 170
-  Top = 306
-  Width = 380
-  HorzScrollBar.Page = 379
-  VertScrollBar.Page = 169
+  Left = 431
+  Height = 175
+  Top = 309
+  Width = 425
+  HorzScrollBar.Page = 424
+  VertScrollBar.Page = 174
   ActiveControl = BtnLicense
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'About to...'
-  ClientHeight = 170
-  ClientWidth = 380
+  ClientHeight = 175
+  ClientWidth = 425
   Color = clWhite
-  Constraints.MaxHeight = 170
-  Constraints.MaxWidth = 380
-  Constraints.MinHeight = 170
-  Constraints.MinWidth = 380
+  Constraints.MaxHeight = 175
+  Constraints.MaxWidth = 425
+  Constraints.MinHeight = 175
+  Constraints.MinWidth = 425
   Font.Name = 'Default'
   OnClose = FormClose
   OnCreate = FormCreate
@@ -23,7 +23,7 @@ object AboutFrm: TAboutFrm
   object Logo: TImage
     Left = 16
     Height = 96
-    Top = 16
+    Top = 15
     Width = 96
     OnMouseMove = FormMouseMove
     Picture.Data = {
@@ -181,14 +181,16 @@ object AboutFrm: TAboutFrm
     Transparent = False
   end
   object Version: TLabel
-    Left = 280
+    Left = 288
     Height = 20
     Top = 10
-    Width = 49
+    Width = 70
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
+    AutoSize = False
     Caption = 'Version:'
     Font.CharSet = ANSI_CHARSET
+    Layout = tlBottom
     ParentColor = False
     ParentShowHint = False
     OnMouseMove = FormMouseMove
@@ -196,34 +198,42 @@ object AboutFrm: TAboutFrm
   object Web: TLabel
     Left = 130
     Height = 20
-    Top = 100
-    Width = 51
+    Top = 105
+    Width = 65
+    AutoSize = False
     Caption = 'Internet:'
     Font.CharSet = ANSI_CHARSET
+    Layout = tlBottom
     ParentColor = False
     ParentShowHint = False
     OnMouseMove = FormMouseMove
   end
   object Title: TLabel
-    Left = 130
-    Height = 33
+    Left = 128
+    Height = 35
     Top = 10
-    Width = 108
+    Width = 145
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'BeeGui'
     Font.CharSet = ANSI_CHARSET
     Font.Height = -26
     Font.Pitch = fpVariable
     Font.Style = [fsBold]
+    Layout = tlCenter
     ParentColor = False
   end
   object Link: TLabel
     Cursor = crHandPoint
-    Left = 195
+    Left = 200
     Height = 20
-    Top = 100
-    Width = 133
+    Top = 105
+    Width = 215
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'http://www.beegui.org'
     Font.Color = clBlue
+    Layout = tlBottom
     ParentColor = False
     OnClick = LinkClick
     OnMouseMove = LinkMouseMove
@@ -231,63 +241,80 @@ object AboutFrm: TAboutFrm
   object MoreInfo: TLabel
     Left = 130
     Height = 20
-    Top = 42
-    Width = 106
+    Top = 45
+    Width = 143
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'Bee archiver utility'
+    Layout = tlBottom
+    ParentBidiMode = False
     ParentColor = False
   end
   object Copyright: TLabel
     Left = 130
     Height = 20
-    Top = 60
-    Width = 140
+    Top = 65
+    Width = 285
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'Copyright (c) 2003-2008'
+    Layout = tlBottom
     ParentColor = False
   end
   object Authors: TLabel
     Left = 130
     Height = 20
-    Top = 78
-    Width = 227
+    Top = 85
+    Width = 285
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'Andrew Filinsky and  Melchiorre Caruso'
+    Layout = tlBottom
     ParentColor = False
   end
   object VersionValue: TLabel
-    Left = 343
+    Left = 360
     Height = 20
     Top = 10
-    Width = 27
+    Width = 55
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
-    Caption = '?.?.?'
+    AutoSize = False
+    Caption = '0.0.0'
+    Layout = tlBottom
     ParentColor = False
+    OnClick = VersionValueClick
   end
   object Build: TLabel
-    Left = 296
+    Left = 288
     Height = 20
     Top = 30
-    Width = 33
+    Width = 70
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
+    AutoSize = False
     Caption = 'Build:'
     Font.CharSet = ANSI_CHARSET
+    Layout = tlBottom
     ParentColor = False
     ParentShowHint = False
   end
   object BuildValue: TLabel
-    Left = 345
+    Left = 360
     Height = 20
     Top = 30
-    Width = 25
+    Width = 55
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
-    Caption = '????'
+    AutoSize = False
+    Caption = '0000'
+    Layout = tlBottom
     ParentColor = False
   end
   object BtnOk: TBitBtn
-    Left = 299
+    Left = 344
     Height = 28
-    Top = 136
+    Top = 141
     Width = 75
     Anchors = [akRight, akBottom]
     BorderSpacing.Around = 6
@@ -305,9 +332,9 @@ object AboutFrm: TAboutFrm
     TabOrder = 0
   end
   object BtnLicense: TBitBtn
-    Left = 215
+    Left = 260
     Height = 28
-    Top = 136
+    Top = 141
     Width = 78
     Anchors = [akRight, akBottom]
     Caption = 'License'

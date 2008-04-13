@@ -76,6 +76,7 @@ type
     // ---
     procedure BtnOkClick(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
+    procedure VersionValueClick(Sender: TObject);
   public
     { public declarations }
   private
@@ -132,6 +133,11 @@ uses
   begin
     ShellExec(ExtractFilePath(ParamStr(0))
       + IncludeTrailingBackSlash('docs') + 'license.htm', '');
+  end;
+
+  procedure TAboutFrm.VersionValueClick(Sender: TObject);
+  begin
+
   end;
 
   procedure TAboutFrm.BtnOkClick(Sender: TObject);
