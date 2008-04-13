@@ -72,8 +72,6 @@ type
     // ---
     procedure BtnOkClick(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
-    procedure VersionValueClick(Sender: TObject);
-    procedure WebClick(Sender: TObject);
   public
     { public declarations }
   private
@@ -97,7 +95,7 @@ uses
     // ---
     Logo.Transparent := True;
     VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '200';
+    BuildValue.Caption := '201';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -131,15 +129,6 @@ uses
     ShellExec(ExtractFilePath(ParamStr(0))
       + IncludeTrailingBackSlash('docs') + 'license.htm', '');
   end;
-
-  procedure TAboutFrm.VersionValueClick(Sender: TObject);
-  begin
-
-  end;
-
-  procedure TAboutFrm.WebClick(Sender: TObject);
-  begin
-     end;
 
   procedure TAboutFrm.BtnOkClick(Sender: TObject);
   begin

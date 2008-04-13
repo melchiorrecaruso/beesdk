@@ -633,8 +633,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms/beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="31" Y="100"/>
-        <TopLine Value="63"/>
+        <CursorPos X="31" Y="98"/>
+        <TopLine Value="78"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="98"/>
         <Loaded Value="True"/>
@@ -1197,7 +1197,28 @@
         <UsageCount Value="10"/>
       </Unit167>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="5" HistoryIndex="4">
+      <Position1>
+        <Filename Value="forms/beegui_aboutfrm.pas"/>
+        <Caret Line="75" Column="46" TopLine="74"/>
+      </Position1>
+      <Position2>
+        <Filename Value="forms/beegui_aboutfrm.pas"/>
+        <Caret Line="138" Column="27" TopLine="118"/>
+      </Position2>
+      <Position3>
+        <Filename Value="forms/beegui_aboutfrm.pas"/>
+        <Caret Line="134" Column="7" TopLine="113"/>
+      </Position3>
+      <Position4>
+        <Filename Value="forms/beegui_aboutfrm.pas"/>
+        <Caret Line="74" Column="48" TopLine="54"/>
+      </Position4>
+      <Position5>
+        <Filename Value="forms/beegui_aboutfrm.pas"/>
+        <Caret Line="133" Column="1" TopLine="102"/>
+      </Position5>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
