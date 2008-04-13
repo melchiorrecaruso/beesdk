@@ -60,7 +60,8 @@ begin
     begin
        Application.CreateForm(TAboutFrm, AboutFrm);
        Application.Run;
-       AboutFrm := nil;
+       AboutFrm.Free;
+       AboutFrm:=nil;
     end else
     begin
       Application.CreateForm(TTickFrm, TickFrm);
@@ -75,11 +76,12 @@ begin
       if TickFrm.Switch then
       begin
         Application.Run;
-        TickFrm := nil;
+        TickFrm.Free;
+        TickFrm:=nil;
       end;
     end;
   end;
   CmdLine.Free;
-  CmdLine := nil;
+  CmdLine:=nil;
 end.
 
