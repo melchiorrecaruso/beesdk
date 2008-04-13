@@ -1,20 +1,20 @@
 object AboutFrm: TAboutFrm
-  Left = 431
-  Height = 160
-  Top = 309
-  Width = 355
-  HorzScrollBar.Page = 354
-  VertScrollBar.Page = 159
+  Left = 440
+  Height = 180
+  Top = 343
+  Width = 365
+  HorzScrollBar.Page = 364
+  VertScrollBar.Page = 179
   ActiveControl = BtnLicense
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'About to...'
-  ClientHeight = 160
-  ClientWidth = 355
+  ClientHeight = 180
+  ClientWidth = 365
   Color = clWhite
-  Constraints.MaxHeight = 160
-  Constraints.MaxWidth = 355
-  Constraints.MinHeight = 160
-  Constraints.MinWidth = 355
+  Constraints.MaxHeight = 180
+  Constraints.MaxWidth = 365
+  Constraints.MinHeight = 180
+  Constraints.MinWidth = 365
   Font.Name = 'Default'
   OnClose = FormClose
   OnCreate = FormCreate
@@ -181,7 +181,7 @@ object AboutFrm: TAboutFrm
     Transparent = False
   end
   object Version: TLabel
-    Left = 249
+    Left = 259
     Height = 18
     Top = 10
     Width = 55
@@ -189,20 +189,19 @@ object AboutFrm: TAboutFrm
     Anchors = [akTop, akRight]
     AutoSize = False
     Caption = 'Version:'
-    Color = clScrollBar
     Font.CharSet = ANSI_CHARSET
-    Layout = tlBottom
+    Layout = tlCenter
     ParentColor = False
     ParentShowHint = False
-    Transparent = False
     OnMouseMove = FormMouseMove
   end
   object Title: TLabel
     Left = 128
-    Height = 32
+    Height = 35
     Top = 10
-    Width = 120
+    Width = 130
     Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'BeeGui'
     Font.CharSet = ANSI_CHARSET
     Font.Height = -26
@@ -214,10 +213,11 @@ object AboutFrm: TAboutFrm
   object Link: TLabel
     Cursor = crHandPoint
     Left = 128
-    Height = 14
-    Top = 95
-    Width = 217
+    Height = 18
+    Top = 120
+    Width = 227
     Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'http://www.beegui.org'
     Font.Color = clBlue
     Layout = tlCenter
@@ -227,19 +227,18 @@ object AboutFrm: TAboutFrm
   end
   object MoreInfo: TLabel
     Left = 128
-    Height = 40
+    Height = 65
     Top = 50
-    Width = 217
+    Width = 227
     Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'Bee archiver utility'#10'Copyright (c) 2003-2008'#10'Andrew Filinsky and  Melchiorre Caruso'
-    Color = clScrollBar
     Layout = tlCenter
     ParentBidiMode = False
     ParentColor = False
-    Transparent = False
   end
   object VersionValue: TLabel
-    Left = 305
+    Left = 315
     Height = 18
     Top = 10
     Width = 40
@@ -247,12 +246,12 @@ object AboutFrm: TAboutFrm
     Anchors = [akTop, akRight]
     AutoSize = False
     Caption = '0.0.0'
-    Layout = tlBottom
+    Layout = tlCenter
     ParentColor = False
     OnClick = VersionValueClick
   end
   object Build: TLabel
-    Left = 249
+    Left = 259
     Height = 18
     Top = 30
     Width = 55
@@ -260,15 +259,13 @@ object AboutFrm: TAboutFrm
     Anchors = [akTop, akRight]
     AutoSize = False
     Caption = 'Build:'
-    Color = clScrollBar
     Font.CharSet = ANSI_CHARSET
-    Layout = tlBottom
+    Layout = tlCenter
     ParentColor = False
     ParentShowHint = False
-    Transparent = False
   end
   object BuildValue: TLabel
-    Left = 305
+    Left = 315
     Height = 18
     Top = 30
     Width = 40
@@ -276,13 +273,13 @@ object AboutFrm: TAboutFrm
     Anchors = [akTop, akRight]
     AutoSize = False
     Caption = '0000'
-    Layout = tlBottom
+    Layout = tlCenter
     ParentColor = False
   end
   object BtnOk: TBitBtn
-    Left = 274
+    Left = 284
     Height = 28
-    Top = 126
+    Top = 146
     Width = 75
     Anchors = [akRight, akBottom]
     BorderSpacing.Around = 6
@@ -300,9 +297,9 @@ object AboutFrm: TAboutFrm
     TabOrder = 0
   end
   object BtnLicense: TBitBtn
-    Left = 190
+    Left = 200
     Height = 28
-    Top = 126
+    Top = 146
     Width = 78
     Anchors = [akRight, akBottom]
     Caption = 'License'
@@ -317,6 +314,6 @@ object AboutFrm: TAboutFrm
   object Process: TProcess
     Priority = ppNormal
     left = 8
-    top = 136
+    top = 132
   end
 end
