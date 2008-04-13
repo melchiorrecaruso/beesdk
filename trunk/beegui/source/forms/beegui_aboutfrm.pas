@@ -50,18 +50,21 @@ type
   TAboutFrm = class(TForm)
     Process: TProcess;
     // ---
-    BtnLicense: TBitBtn;
-    BtnOk: TBitBtn;
-    // ---
     Logo: TImage;
-    Version: TLabel;
-    Build: TLabel;
-    VersionValue: TLabel;
-    // ---
     Title: TLabel;
     MoreInfo: TLabel;
-    BuildValue: TLabel;
+    Copyright: TLabel;
+    Autors: TLabel;
+    Internet: TLabel;
     Link: TLabel;
+    // ---
+    Version: TLabel;
+    VersionValue: TLabel;
+    Build: TLabel;
+    BuildValue: TLabel;
+    // ---
+    BtnLicense: TBitBtn;
+    BtnOk: TBitBtn;
     // ---
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -95,7 +98,7 @@ uses
     // ---
     Logo.Transparent := True;
     VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '201';
+    BuildValue.Caption := '205';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
