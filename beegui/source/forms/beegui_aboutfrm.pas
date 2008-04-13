@@ -97,6 +97,7 @@ uses
     {$I beegui_aboutfrm_loadlanguage.inc}
     {$I beegui_aboutfrm_loadproperty.inc}
     // ---
+    Logo.Transparent := True;
     VersionValue.Caption   := '1.0.5';
     BuildValue.Caption := '195';
   end;
