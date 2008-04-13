@@ -60,11 +60,7 @@ type
     // ---
     Title: TLabel;
     MoreInfo: TLabel;
-    Copyright: TLabel;
-    Authors: TLabel;
     BuildValue: TLabel;
-    // ---
-    Web: TLabel;
     Link: TLabel;
     // ---
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -77,6 +73,7 @@ type
     procedure BtnOkClick(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
     procedure VersionValueClick(Sender: TObject);
+    procedure WebClick(Sender: TObject);
   public
     { public declarations }
   private
@@ -100,7 +97,7 @@ uses
     // ---
     Logo.Transparent := True;
     VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '195';
+    BuildValue.Caption := '200';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -139,6 +136,10 @@ uses
   begin
 
   end;
+
+  procedure TAboutFrm.WebClick(Sender: TObject);
+  begin
+     end;
 
   procedure TAboutFrm.BtnOkClick(Sender: TObject);
   begin
