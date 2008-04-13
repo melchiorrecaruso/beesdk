@@ -1,20 +1,20 @@
 object AboutFrm: TAboutFrm
   Left = 431
-  Height = 175
+  Height = 180
   Top = 309
-  Width = 425
-  HorzScrollBar.Page = 424
-  VertScrollBar.Page = 174
+  Width = 355
+  HorzScrollBar.Page = 354
+  VertScrollBar.Page = 179
   ActiveControl = BtnLicense
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'About to...'
-  ClientHeight = 175
-  ClientWidth = 425
+  ClientHeight = 180
+  ClientWidth = 355
   Color = clWhite
-  Constraints.MaxHeight = 175
-  Constraints.MaxWidth = 425
-  Constraints.MinHeight = 175
-  Constraints.MinWidth = 425
+  Constraints.MaxHeight = 180
+  Constraints.MaxWidth = 355
+  Constraints.MinHeight = 180
+  Constraints.MinWidth = 355
   Font.Name = 'Default'
   OnClose = FormClose
   OnCreate = FormCreate
@@ -181,10 +181,10 @@ object AboutFrm: TAboutFrm
     Transparent = False
   end
   object Version: TLabel
-    Left = 288
+    Left = 249
     Height = 20
     Top = 10
-    Width = 70
+    Width = 55
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     AutoSize = False
@@ -199,7 +199,7 @@ object AboutFrm: TAboutFrm
     Left = 130
     Height = 20
     Top = 105
-    Width = 65
+    Width = 55
     AutoSize = False
     Caption = 'Internet:'
     Font.CharSet = ANSI_CHARSET
@@ -212,7 +212,7 @@ object AboutFrm: TAboutFrm
     Left = 128
     Height = 35
     Top = 10
-    Width = 145
+    Width = 115
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
     Caption = 'BeeGui'
@@ -225,10 +225,10 @@ object AboutFrm: TAboutFrm
   end
   object Link: TLabel
     Cursor = crHandPoint
-    Left = 200
+    Left = 190
     Height = 20
     Top = 105
-    Width = 215
+    Width = 155
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
     Caption = 'http://www.beegui.org'
@@ -242,7 +242,7 @@ object AboutFrm: TAboutFrm
     Left = 130
     Height = 20
     Top = 45
-    Width = 143
+    Width = 98
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
     Caption = 'Bee archiver utility'
@@ -254,7 +254,7 @@ object AboutFrm: TAboutFrm
     Left = 130
     Height = 20
     Top = 65
-    Width = 285
+    Width = 215
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
     Caption = 'Copyright (c) 2003-2008'
@@ -265,7 +265,7 @@ object AboutFrm: TAboutFrm
     Left = 130
     Height = 20
     Top = 85
-    Width = 285
+    Width = 215
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
     Caption = 'Andrew Filinsky and  Melchiorre Caruso'
@@ -273,10 +273,10 @@ object AboutFrm: TAboutFrm
     ParentColor = False
   end
   object VersionValue: TLabel
-    Left = 360
+    Left = 305
     Height = 20
     Top = 10
-    Width = 55
+    Width = 40
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     AutoSize = False
@@ -286,10 +286,10 @@ object AboutFrm: TAboutFrm
     OnClick = VersionValueClick
   end
   object Build: TLabel
-    Left = 288
+    Left = 249
     Height = 20
     Top = 30
-    Width = 70
+    Width = 55
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     AutoSize = False
@@ -300,10 +300,10 @@ object AboutFrm: TAboutFrm
     ParentShowHint = False
   end
   object BuildValue: TLabel
-    Left = 360
+    Left = 305
     Height = 20
     Top = 30
-    Width = 55
+    Width = 40
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     AutoSize = False
@@ -312,9 +312,9 @@ object AboutFrm: TAboutFrm
     ParentColor = False
   end
   object BtnOk: TBitBtn
-    Left = 344
+    Left = 274
     Height = 28
-    Top = 141
+    Top = 146
     Width = 75
     Anchors = [akRight, akBottom]
     BorderSpacing.Around = 6
@@ -332,9 +332,9 @@ object AboutFrm: TAboutFrm
     TabOrder = 0
   end
   object BtnLicense: TBitBtn
-    Left = 260
+    Left = 190
     Height = 28
-    Top = 141
+    Top = 146
     Width = 78
     Anchors = [akRight, akBottom]
     Caption = 'License'
