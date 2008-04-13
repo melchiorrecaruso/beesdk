@@ -147,7 +147,7 @@ type
     { public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Execute(ACmdLine: TCmdLine);
+    procedure StartApp(ACmdLine: TCmdLine);
   public
     property Terminated: boolean read FAppTerminated;
     property CanClose: boolean read FAppCanClose;
@@ -311,7 +311,7 @@ var
     end;
   end;
   
-  procedure TTickFrm.Execute(ACmdLine: TCmdLine);
+  procedure TTickFrm.StartApp(ACmdLine: TCmdLine);
   begin
     FCmdLine := ACmdLine;
     if FCmdLine.Log then

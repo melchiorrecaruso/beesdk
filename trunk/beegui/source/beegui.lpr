@@ -32,20 +32,23 @@ program BeeGui;
 {$ENDIF}
 
 uses
-  {$IFDEF UNIX} cThreads, {$ENDIF}
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF UNIX}
+  cThreads,
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF}
   Interfaces,
   Forms,
-  // ---
+  // --- //
   BeeGui_CmdLine,
-  // ---
   BeeGui_TickFrm,
   BeeGui_AboutFrm;
 
 var
-  CmdLine: TCmdLine   = nil;
+  CmdLine:  TCmdLine  = nil;
+  TickFrm:  TTickFrm  = nil;
   AboutFrm: TAboutFrm = nil;
-  TickFrm: TTickFrm   = nil;
   
 begin
   Application.Initialize;
@@ -61,7 +64,7 @@ begin
     end else
     begin
       Application.CreateForm(TTickFrm, TickFrm);
-      TickFrm.Execute(CmdLine);
+      TickFrm.StartApp(CmdLine);
       repeat
         if TickFrm.Terminated then
           Break
@@ -77,5 +80,6 @@ begin
     end;
   end;
   CmdLine.Free;
+  CmdLine := nil;
 end.
 
