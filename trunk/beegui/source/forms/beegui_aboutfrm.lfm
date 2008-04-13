@@ -1,19 +1,19 @@
 object AboutFrm: TAboutFrm
-  Left = 440
-  Height = 180
-  Top = 343
+  Left = 452
+  Height = 185
+  Top = 344
   Width = 365
   HorzScrollBar.Page = 364
-  VertScrollBar.Page = 179
+  VertScrollBar.Page = 184
   ActiveControl = BtnLicense
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'About to...'
-  ClientHeight = 180
+  ClientHeight = 185
   ClientWidth = 365
   Color = clWhite
-  Constraints.MaxHeight = 180
+  Constraints.MaxHeight = 185
   Constraints.MaxWidth = 365
-  Constraints.MinHeight = 180
+  Constraints.MinHeight = 185
   Constraints.MinWidth = 365
   Font.Name = 'Default'
   OnClose = FormClose
@@ -227,7 +227,7 @@ object AboutFrm: TAboutFrm
   end
   object MoreInfo: TLabel
     Left = 128
-    Height = 65
+    Height = 66
     Top = 50
     Width = 227
     Anchors = [akTop, akLeft, akRight]
@@ -248,7 +248,6 @@ object AboutFrm: TAboutFrm
     Caption = '0.0.0'
     Layout = tlCenter
     ParentColor = False
-    OnClick = VersionValueClick
   end
   object Build: TLabel
     Left = 259
@@ -279,7 +278,7 @@ object AboutFrm: TAboutFrm
   object BtnOk: TBitBtn
     Left = 284
     Height = 28
-    Top = 146
+    Top = 151
     Width = 75
     Anchors = [akRight, akBottom]
     BorderSpacing.Around = 6
@@ -299,7 +298,7 @@ object AboutFrm: TAboutFrm
   object BtnLicense: TBitBtn
     Left = 200
     Height = 28
-    Top = 146
+    Top = 151
     Width = 78
     Anchors = [akRight, akBottom]
     Caption = 'License'
