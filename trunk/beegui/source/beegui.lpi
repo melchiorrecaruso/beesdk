@@ -12,7 +12,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -558,7 +558,9 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="39" Y="81"/>
         <TopLine Value="271"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="106"/>
+        <Loaded Value="True"/>
       </Unit73>
       <Unit74>
         <Filename Value="forms/beegui_viewfrm.pas"/>

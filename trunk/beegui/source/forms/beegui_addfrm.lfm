@@ -22,18 +22,18 @@ object AddFrm: TAddFrm
     Height = 294
     Top = 6
     Width = 438
-    ActivePage = PageAdvanced
+    ActivePage = PageGeneral
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
     object PageGeneral: TTabSheet
       Caption = 'General'
-      ClientHeight = 263
+      ClientHeight = 266
       ClientWidth = 434
       ParentShowHint = False
       object ArchiveNameLabel: TLabel
@@ -86,7 +86,7 @@ object AddFrm: TAddFrm
       object eOptionLabel: TLabel
         Left = 6
         Height = 16
-        Top = 214
+        Top = 217
         Width = 422
         Anchors = [akLeft, akBottom]
         AutoSize = False
@@ -98,10 +98,11 @@ object AddFrm: TAddFrm
       end
       object Options: TGroupBox
         Left = 215
-        Height = 153
+        Height = 150
         Top = 55
         Width = 213
         Anchors = [akTop, akLeft, akRight, akBottom]
+        AutoSize = True
         Caption = 'Options'
         ClientHeight = 134
         ClientWidth = 209
@@ -208,7 +209,7 @@ object AddFrm: TAddFrm
       end
       object ufOption: TComboBox
         Left = 6
-        Height = 29
+        Height = 26
         Top = 73
         Width = 200
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
@@ -227,7 +228,7 @@ object AddFrm: TAddFrm
       end
       object mOption: TComboBox
         Left = 6
-        Height = 29
+        Height = 26
         Top = 126
         Width = 200
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
@@ -247,7 +248,7 @@ object AddFrm: TAddFrm
       end
       object dOption: TComboBox
         Left = 6
-        Height = 29
+        Height = 26
         Top = 179
         Width = 200
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
@@ -274,7 +275,7 @@ object AddFrm: TAddFrm
       object eOption: TEdit
         Left = 6
         Height = 25
-        Top = 232
+        Top = 235
         Width = 422
         Align = alBottom
         BorderSpacing.Around = 6
@@ -283,7 +284,7 @@ object AddFrm: TAddFrm
     end
     object PageFiles: TTabSheet
       Caption = 'Files'
-      ClientHeight = 263
+      ClientHeight = 266
       ClientWidth = 434
       ImageIndex = 2
       ParentShowHint = False
@@ -304,7 +305,7 @@ object AddFrm: TAddFrm
       object RootLabel: TLabel
         Left = 6
         Height = 16
-        Top = 214
+        Top = 217
         Width = 339
         Anchors = [akLeft, akRight, akBottom]
         AutoSize = False
@@ -317,7 +318,7 @@ object AddFrm: TAddFrm
       object Root: TEdit
         Left = 6
         Height = 25
-        Top = 232
+        Top = 235
         Width = 340
         Anchors = [akLeft, akRight, akBottom]
         Color = clBtnFace
@@ -429,7 +430,7 @@ object AddFrm: TAddFrm
       object BtnDown: TBitBtn
         Left = 393
         Height = 43
-        Top = 214
+        Top = 217
         Width = 35
         Anchors = [akRight, akBottom]
         BorderSpacing.InnerBorder = 2
@@ -458,7 +459,7 @@ object AddFrm: TAddFrm
       object BtnUp: TBitBtn
         Left = 353
         Height = 43
-        Top = 214
+        Top = 217
         Width = 35
         Anchors = [akRight, akBottom]
         BorderSpacing.InnerBorder = 2
@@ -485,11 +486,11 @@ object AddFrm: TAddFrm
       end
       object Files: TTreeView
         Left = 6
-        Height = 184
+        Height = 187
         Top = 24
         Width = 340
         Anchors = [akTop, akLeft, akRight, akBottom]
-        DefaultItemHeight = 16
+        DefaultItemHeight = 18
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
@@ -500,7 +501,7 @@ object AddFrm: TAddFrm
     end
     object PageAdvanced: TTabSheet
       Caption = 'Advanced'
-      ClientHeight = 263
+      ClientHeight = 266
       ClientWidth = 434
       object cfgOptionLabel: TLabel
         Left = 8
@@ -556,7 +557,7 @@ object AddFrm: TAddFrm
       end
       object aOption: TComboBox
         Left = 6
-        Height = 29
+        Height = 26
         Top = 29
         Width = 422
         Anchors = [akTop, akLeft, akRight]
@@ -605,7 +606,7 @@ object AddFrm: TAddFrm
       end
       object cdOption: TEdit
         Left = 6
-        Height = 25
+        Height = 22
         Top = 82
         Width = 422
         Anchors = [akTop, akLeft, akRight]
