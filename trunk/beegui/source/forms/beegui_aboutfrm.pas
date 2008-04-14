@@ -98,7 +98,7 @@ uses
     // ---
     Logo.Transparent := True;
     VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '205';
+    BuildValue.Caption := '207';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);

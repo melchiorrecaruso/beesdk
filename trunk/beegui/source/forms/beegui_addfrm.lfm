@@ -1,199 +1,65 @@
 object AddFrm: TAddFrm
   Left = 406
-  Height = 333
+  Height = 343
   Top = 203
   Width = 450
   HorzScrollBar.Page = 449
-  VertScrollBar.Page = 332
+  VertScrollBar.Page = 342
   ActiveControl = Pages
   Caption = 'Archive Name and Options'
-  ClientHeight = 333
+  ClientHeight = 343
   ClientWidth = 450
-  Constraints.MinHeight = 333
+  Constraints.MinHeight = 343
   Constraints.MinWidth = 450
   Font.Height = -11
   Font.Name = 'Tahoma'
-  Icon.Data = {
-    36100000424D3610000000000000360000002800000020000000200000000100
-    2000000000000010000064000000640000000000000000000000000000000000
-    00000000000000000000000000FF000000000000000000000000000000000000
-    00000000000000000000000000FF000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    00000000000000000000000000FF000000000000000000000000000000000000
-    00000000000000000000000000FF000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    000000000000000000FF000000FF000000FF0000000000000000000000000000
-    000000000000000000FF000000FF000000FF0000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FF000000000000
-    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FF000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
-    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
-    00FF000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
-    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
-    00FF000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FF00000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    000000000000000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FF0000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    000000000000000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FF0000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000000000
-    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FF00000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
-    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
-    00FF000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF
-    FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF0000
-    0000000000000000000000000000000000000000000000000000000000000000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
-    00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
-    00FF0000000000000000000000000000000000000000000000FF000000FF0000
-    00FF0000000000000000000000000000000000000000000000FF000000000000
-    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FFFFFFFFFF000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FF00000000000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FF00000000000000FF000000FF000000FF000000000000
-    000000000000000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FF0000000000000000000000000000
-    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
-    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
-    00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFFFFFFFFFF000000FF000000000000000000000000000000000000
-    000000000000000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    FFFFFFFFFFFF000000FF000000FF000000FF0000000000000000000000000000
-    00FF000000FF000000FF00000000000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FF00000000000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FF00000000000000FF000000FF000000FFFFFFFFFF0000
-    00FF000000FF000000FF00000000000000FF000000FF000000FF000000FF0000
-    00FF0000000000000000000000000000000000000000000000FF000000FF0000
-    00FF0000000000000000000000000000000000000000000000FF000000FF0000
-    00FF0000000000000000000000000000000000000000000000FF000000FF0000
-    00FF0000000000000000000000000000000000000000000000FF000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000000000FF0000
-    0000000000000000000000000000000000000000000000000000
-  }
   OnClose = FormClose
   OnCreate = FormCreate
   OnDropFiles = FormDropFiles
   LCLVersion = '0.9.25'
   object Pages: TPageControl
     Left = 6
-    Height = 291
+    Height = 297
     Top = 6
     Width = 438
-    ActivePage = PageAdvanced
+    ActivePage = PageGeneral
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
     object PageGeneral: TTabSheet
       Caption = 'General'
-      ClientHeight = 265
-      ClientWidth = 430
+      ClientHeight = 266
+      ClientWidth = 434
       ParentShowHint = False
       object ArchiveNameLabel: TLabel
         Left = 6
-        Height = 18
+        Height = 16
         Top = 6
-        Width = 335
+        Width = 339
         Align = alCustom
         Anchors = [akTop, akLeft, akRight]
         AutoSize = False
         BorderSpacing.Around = 6
         Caption = 'Archive name:'
-        Constraints.MaxHeight = 18
-        Constraints.MinHeight = 18
-        Layout = tlBottom
+        Layout = tlCenter
         ParentColor = False
       end
       object ufOptionLabel: TLabel
         Left = 6
-        Height = 18
-        Top = 58
+        Height = 16
+        Top = 55
         Width = 200
         AutoSize = False
         BorderSpacing.Around = 6
         Caption = 'Update mode:'
-        Constraints.MaxHeight = 18
-        Constraints.MinHeight = 18
-        Layout = tlBottom
+        Constraints.MaxHeight = 16
+        Constraints.MinHeight = 16
+        Layout = tlCenter
         ParentColor = False
       end
       object mOptionLabel: TLabel
@@ -206,53 +72,52 @@ object AddFrm: TAddFrm
         Caption = 'Compression method:'
         Constraints.MaxHeight = 18
         Constraints.MinHeight = 18
-        Layout = tlBottom
+        Layout = tlCenter
         ParentColor = False
       end
       object dOptionLabel: TLabel
         Left = 6
         Height = 18
-        Top = 162
+        Top = 165
         Width = 200
         AutoSize = False
         BorderSpacing.Around = 6
         Caption = 'Dictionary size:'
         Constraints.MaxHeight = 18
         Constraints.MinHeight = 18
-        Layout = tlBottom
+        Layout = tlCenter
         ParentColor = False
       end
       object eOptionLabel: TLabel
         Left = 6
-        Height = 18
-        Top = 214
-        Width = 418
-        Align = alBottom
+        Height = 16
+        Top = 219
+        Width = 422
         Anchors = [akLeft, akBottom]
         AutoSize = False
         BorderSpacing.Around = 6
         Caption = 'Force file extention (-e Option)'
-        Constraints.MaxHeight = 18
-        Constraints.MinHeight = 18
-        Layout = tlBottom
+        Constraints.MaxHeight = 16
+        Constraints.MinHeight = 16
+        Layout = tlCenter
         ParentColor = False
       end
       object Options: TGroupBox
         Left = 215
-        Height = 147
-        Top = 58
-        Width = 209
+        Height = 158
+        Top = 55
+        Width = 213
         Anchors = [akTop, akLeft, akRight, akBottom]
         Caption = 'Options'
-        ClientHeight = 129
-        ClientWidth = 205
+        ClientHeight = 139
+        ClientWidth = 209
         ParentShowHint = False
         TabOrder = 0
         object rOption: TCheckBox
           Left = 6
           Height = 19
           Top = 6
-          Width = 193
+          Width = 197
           Align = alTop
           AutoSize = False
           BorderSpacing.Around = 6
@@ -266,7 +131,7 @@ object AddFrm: TAddFrm
           Left = 6
           Height = 19
           Top = 31
-          Width = 193
+          Width = 197
           Align = alTop
           AutoSize = False
           BorderSpacing.Around = 6
@@ -278,7 +143,7 @@ object AddFrm: TAddFrm
           Left = 6
           Height = 19
           Top = 56
-          Width = 193
+          Width = 197
           Align = alTop
           AutoSize = False
           BorderSpacing.Around = 6
@@ -290,7 +155,7 @@ object AddFrm: TAddFrm
           Left = 6
           Height = 19
           Top = 81
-          Width = 193
+          Width = 197
           Align = alTop
           AutoSize = False
           BorderSpacing.Around = 6
@@ -302,7 +167,7 @@ object AddFrm: TAddFrm
           Left = 6
           Height = 19
           Top = 106
-          Width = 193
+          Width = 197
           Align = alTop
           AutoSize = False
           BorderSpacing.Around = 6
@@ -315,29 +180,28 @@ object AddFrm: TAddFrm
       object ArchiveName: TComboBox
         Left = 6
         Height = 21
-        Top = 28
-        Width = 335
+        Top = 25
+        Width = 339
         Align = alCustom
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         AutoSize = False
         BorderSpacing.Around = 6
-        ItemHeight = 13
         MaxLength = 0
         ParentShowHint = False
         TabOrder = 1
       end
       object BtnOpen: TBitBtn
-        Left = 349
-        Height = 43
+        Left = 353
+        Height = 40
         Top = 6
         Width = 75
         Anchors = [akTop, akRight]
         BorderSpacing.Around = 6
         Caption = 'Open'
-        Constraints.MaxHeight = 43
+        Constraints.MaxHeight = 40
         Constraints.MaxWidth = 75
-        Constraints.MinHeight = 43
+        Constraints.MinHeight = 40
         Constraints.MinWidth = 75
         NumGlyphs = 0
         OnClick = BtnOpenClick
@@ -345,12 +209,11 @@ object AddFrm: TAddFrm
       end
       object ufOption: TComboBox
         Left = 6
-        Height = 21
-        Top = 80
+        Height = 29
+        Top = 74
         Width = 200
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 8
-        ItemHeight = 13
         ItemIndex = 2
         Items.Strings = (
           'Update files'
@@ -365,12 +228,11 @@ object AddFrm: TAddFrm
       end
       object mOption: TComboBox
         Left = 6
-        Height = 21
-        Top = 132
+        Height = 29
+        Top = 129
         Width = 200
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 6
-        ItemHeight = 13
         ItemIndex = 1
         Items.Strings = (
           '0 - Store'
@@ -386,12 +248,11 @@ object AddFrm: TAddFrm
       end
       object dOption: TComboBox
         Left = 6
-        Height = 21
+        Height = 29
         Top = 184
         Width = 200
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 6
-        ItemHeight = 13
         ItemIndex = 3
         Items.Strings = (
           'Level  0   (dictionary size  <       2 MB)'
@@ -414,8 +275,8 @@ object AddFrm: TAddFrm
       object eOption: TEdit
         Left = 6
         Height = 21
-        Top = 238
-        Width = 418
+        Top = 239
+        Width = 422
         Align = alBottom
         BorderSpacing.Around = 6
         TabOrder = 6
@@ -423,15 +284,15 @@ object AddFrm: TAddFrm
     end
     object PageFiles: TTabSheet
       Caption = 'Files'
-      ClientHeight = 265
-      ClientWidth = 430
+      ClientHeight = 266
+      ClientWidth = 434
       ImageIndex = 2
       ParentShowHint = False
       object FilesLabel: TLabel
         Left = 6
         Height = 18
         Top = 6
-        Width = 418
+        Width = 422
         Align = alTop
         AutoSize = False
         BorderSpacing.Around = 6
@@ -445,8 +306,8 @@ object AddFrm: TAddFrm
       object RootLabel: TLabel
         Left = 6
         Height = 18
-        Top = 214
-        Width = 335
+        Top = 215
+        Width = 339
         Anchors = [akLeft, akRight, akBottom]
         AutoSize = False
         Caption = 'Current root directory'
@@ -459,8 +320,8 @@ object AddFrm: TAddFrm
       object Root: TEdit
         Left = 6
         Height = 21
-        Top = 238
-        Width = 335
+        Top = 239
+        Width = 339
         Anchors = [akLeft, akRight, akBottom]
         Color = clBtnFace
         ParentShowHint = False
@@ -469,7 +330,7 @@ object AddFrm: TAddFrm
         TabOrder = 0
       end
       object BtnFolder: TBitBtn
-        Left = 350
+        Left = 354
         Height = 26
         Top = 28
         Width = 75
@@ -485,7 +346,7 @@ object AddFrm: TAddFrm
         TabOrder = 1
       end
       object BtnFiles: TBitBtn
-        Left = 349
+        Left = 353
         Height = 26
         Top = 56
         Width = 75
@@ -501,7 +362,7 @@ object AddFrm: TAddFrm
         TabOrder = 2
       end
       object BtnPlusMinus: TBitBtn
-        Left = 349
+        Left = 353
         Height = 26
         Top = 112
         Width = 75
@@ -518,7 +379,7 @@ object AddFrm: TAddFrm
         TabOrder = 3
       end
       object BtnDelete: TBitBtn
-        Left = 349
+        Left = 353
         Height = 26
         Top = 168
         Width = 75
@@ -535,7 +396,7 @@ object AddFrm: TAddFrm
         TabOrder = 4
       end
       object BtnModify: TBitBtn
-        Left = 349
+        Left = 353
         Height = 26
         Top = 140
         Width = 75
@@ -552,7 +413,7 @@ object AddFrm: TAddFrm
         TabOrder = 5
       end
       object BtnView: TBitBtn
-        Left = 349
+        Left = 353
         Height = 26
         Top = 84
         Width = 75
@@ -569,9 +430,9 @@ object AddFrm: TAddFrm
         TabOrder = 6
       end
       object BtnDown: TBitBtn
-        Left = 389
+        Left = 393
         Height = 45
-        Top = 214
+        Top = 215
         Width = 35
         Anchors = [akRight, akBottom]
         BorderSpacing.InnerBorder = 2
@@ -598,9 +459,9 @@ object AddFrm: TAddFrm
         TabOrder = 7
       end
       object BtnUp: TBitBtn
-        Left = 349
+        Left = 353
         Height = 45
-        Top = 214
+        Top = 215
         Width = 35
         Anchors = [akRight, akBottom]
         BorderSpacing.InnerBorder = 2
@@ -627,11 +488,11 @@ object AddFrm: TAddFrm
       end
       object Files: TTreeView
         Left = 6
-        Height = 177
+        Height = 178
         Top = 28
-        Width = 335
+        Width = 339
         Anchors = [akTop, akLeft, akRight, akBottom]
-        DefaultItemHeight = 16
+        DefaultItemHeight = 19
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
@@ -642,13 +503,13 @@ object AddFrm: TAddFrm
     end
     object PageAdvanced: TTabSheet
       Caption = 'Advanced'
-      ClientHeight = 265
-      ClientWidth = 430
+      ClientHeight = 266
+      ClientWidth = 434
       object cfgOptionLabel: TLabel
         Left = 6
         Height = 18
         Top = 110
-        Width = 335
+        Width = 339
         Anchors = [akTop, akLeft, akRight]
         AutoSize = False
         BorderSpacing.Around = 6
@@ -674,7 +535,7 @@ object AddFrm: TAddFrm
         Left = 6
         Height = 18
         Top = 162
-        Width = 335
+        Width = 339
         Anchors = [akTop, akLeft, akRight]
         AutoSize = False
         BorderSpacing.Around = 6
@@ -685,7 +546,7 @@ object AddFrm: TAddFrm
       end
       object aOptionCheck: TCheckBox
         Left = 6
-        Height = 19
+        Height = 20
         Top = 6
         Width = 418
         AutoSize = False
@@ -697,15 +558,14 @@ object AddFrm: TAddFrm
       end
       object aOption: TComboBox
         Left = 6
-        Height = 21
-        Top = 28
-        Width = 418
+        Height = 29
+        Top = 26
+        Width = 422
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 6
         Color = clInactiveBorder
         Enabled = False
-        ItemHeight = 13
         ItemIndex = 0
         Items.Strings = (
           'GUI Self Extractor Module'
@@ -720,19 +580,18 @@ object AddFrm: TAddFrm
       end
       object cfgOption: TComboBox
         Left = 6
-        Height = 21
+        Height = 25
         Top = 132
-        Width = 335
+        Width = 339
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 6
-        ItemHeight = 13
         MaxLength = 0
         ParentShowHint = False
         TabOrder = 2
       end
       object yOptionBtn: TBitBtn
-        Left = 349
+        Left = 353
         Height = 43
         Top = 162
         Width = 75
@@ -748,9 +607,9 @@ object AddFrm: TAddFrm
       end
       object cdOption: TEdit
         Left = 6
-        Height = 21
+        Height = 25
         Top = 80
-        Width = 418
+        Width = 422
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
         BorderSpacing.Around = 6
@@ -758,19 +617,18 @@ object AddFrm: TAddFrm
       end
       object yOption: TComboBox
         Left = 6
-        Height = 21
+        Height = 22
         Top = 184
-        Width = 335
+        Width = 339
         Anchors = [akTop, akLeft, akRight, akBottom]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 6
-        ItemHeight = 13
         MaxLength = 0
         ParentShowHint = False
         TabOrder = 5
       end
       object cfgOptionBtn: TBitBtn
-        Left = 349
+        Left = 353
         Height = 43
         Top = 110
         Width = 75
@@ -787,16 +645,16 @@ object AddFrm: TAddFrm
     end
   end
   object BtnOk: TBitBtn
-    Left = 285
-    Height = 26
-    Top = 303
+    Left = 283
+    Height = 30
+    Top = 309
     Width = 75
     Align = alRight
     BorderSpacing.Around = 6
     Caption = '&OK'
-    Constraints.MaxHeight = 26
+    Constraints.MaxHeight = 30
     Constraints.MaxWidth = 75
-    Constraints.MinHeight = 26
+    Constraints.MinHeight = 30
     Constraints.MinWidth = 75
     Default = True
     Kind = bkOK
@@ -805,17 +663,17 @@ object AddFrm: TAddFrm
     TabOrder = 1
   end
   object BtnCancel: TBitBtn
-    Left = 366
-    Height = 26
-    Top = 303
-    Width = 78
+    Left = 364
+    Height = 30
+    Top = 309
+    Width = 80
     Align = alRight
     BorderSpacing.Around = 6
     Caption = 'Annulla'
-    Constraints.MaxHeight = 26
-    Constraints.MaxWidth = 78
-    Constraints.MinHeight = 26
-    Constraints.MinWidth = 78
+    Constraints.MaxHeight = 30
+    Constraints.MaxWidth = 80
+    Constraints.MinHeight = 30
+    Constraints.MinWidth = 80
     Kind = bkCancel
     ModalResult = 2
     NumGlyphs = 0
@@ -823,7 +681,7 @@ object AddFrm: TAddFrm
   end
   object PopupMenu: TPopupMenu
     left = 8
-    top = 296
+    top = 304
     object PopupMenu_AddFolder: TMenuItem
       Caption = 'Add folder'
       ShortCut = 16452
@@ -867,7 +725,7 @@ object AddFrm: TAddFrm
   end
   object FilesImages: TImageList
     left = 72
-    top = 296
+    top = 304
     Bitmap = {
       4C69020000001000000010000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -941,12 +799,12 @@ object AddFrm: TAddFrm
     FilterIndex = 0
     Options = [ofHideReadOnly, ofAllowMultiSelect, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     left = 40
-    top = 296
+    top = 304
   end
   object FilesMgr: TAddTreeViewMgr
     Tree = Files
     Root = Root
     left = 104
-    top = 296
+    top = 304
   end
 end
