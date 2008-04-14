@@ -12,7 +12,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -95,7 +95,7 @@
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="30" Y="88"/>
         <TopLine Value="61"/>
-        <UsageCount Value="101"/>
+        <UsageCount Value="102"/>
       </Unit6>
       <Unit7>
         <Filename Value="forms/beecore_passwordfrm.inc"/>
@@ -556,9 +556,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms/beegui_addfrm.lrs"/>
         <UnitName Value="BeeGui_AddFrm"/>
-        <CursorPos X="7" Y="136"/>
-        <TopLine Value="114"/>
-        <UsageCount Value="101"/>
+        <CursorPos X="39" Y="76"/>
+        <TopLine Value="54"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="102"/>
+        <Loaded Value="True"/>
       </Unit73>
       <Unit74>
         <Filename Value="forms/beegui_viewfrm.pas"/>
@@ -579,7 +581,7 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="53" Y="91"/>
         <TopLine Value="81"/>
-        <UsageCount Value="101"/>
+        <UsageCount Value="102"/>
       </Unit75>
       <Unit76>
         <Filename Value="forms/beegui_infofrm.pas"/>
@@ -600,7 +602,7 @@
         <UnitName Value="BeeGui_OverWriteFrm"/>
         <CursorPos X="7" Y="106"/>
         <TopLine Value="108"/>
-        <UsageCount Value="101"/>
+        <UsageCount Value="102"/>
       </Unit77>
       <Unit78>
         <Filename Value="forms/beegui_renamefrm.pas"/>
@@ -611,7 +613,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="41" Y="76"/>
         <TopLine Value="56"/>
-        <UsageCount Value="101"/>
+        <UsageCount Value="102"/>
       </Unit78>
       <Unit79>
         <Filename Value="forms/beegui_tickfrm.pas"/>
@@ -623,7 +625,7 @@
         <CursorPos X="56" Y="22"/>
         <TopLine Value="1"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="107"/>
+        <UsageCount Value="108"/>
         <Loaded Value="True"/>
       </Unit79>
       <Unit80>
@@ -633,11 +635,9 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms/beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="22" Y="58"/>
-        <TopLine Value="102"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="101"/>
-        <Loaded Value="True"/>
+        <CursorPos X="31" Y="101"/>
+        <TopLine Value="78"/>
+        <UsageCount Value="102"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages/beegui_gui.pas"/>
@@ -652,7 +652,7 @@
         <UnitName Value="BeeGui_CmdLine"/>
         <CursorPos X="14" Y="78"/>
         <TopLine Value="273"/>
-        <UsageCount Value="101"/>
+        <UsageCount Value="102"/>
       </Unit82>
       <Unit83>
         <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
@@ -813,14 +813,14 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="35" Y="2"/>
         <TopLine Value="1"/>
-        <UsageCount Value="98"/>
+        <UsageCount Value="99"/>
       </Unit106>
       <Unit107>
         <Filename Value="forms/beegui_aboutfrm_saveproperty.inc"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="18" Y="12"/>
         <TopLine Value="1"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
       </Unit107>
       <Unit108>
         <Filename Value="forms/beefm_mainfrm_saveproperty.inc"/>
@@ -833,7 +833,7 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="98"/>
       </Unit109>
       <Unit110>
         <Filename Value="forms/beegui.include/beegui_aboutfrm_loadlanguage.inc"/>
@@ -902,7 +902,7 @@
         <UnitName Value="BeeGui_Messages"/>
         <CursorPos X="21" Y="7"/>
         <TopLine Value="31"/>
-        <UsageCount Value="91"/>
+        <UsageCount Value="92"/>
       </Unit120>
       <Unit121>
         <Filename Value="forms/beegui.include/beegui_renamefrm_loadlanguage.inc"/>
@@ -1131,7 +1131,7 @@
         <UnitName Value="BeeGui_Forms"/>
         <CursorPos X="21" Y="36"/>
         <TopLine Value="36"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="53"/>
       </Unit157>
       <Unit158>
         <Filename Value="forms/forms.include/beegui_aboutfrm_loadproperty.inc"/>
