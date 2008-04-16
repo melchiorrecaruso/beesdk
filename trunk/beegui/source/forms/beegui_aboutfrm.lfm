@@ -1,7 +1,7 @@
 object AboutFrm: TAboutFrm
-  Left = 568
+  Left = 505
   Height = 175
-  Top = 513
+  Top = 330
   Width = 365
   HorzScrollBar.Page = 364
   VertScrollBar.Page = 174

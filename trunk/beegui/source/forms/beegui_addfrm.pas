@@ -51,8 +51,6 @@ type
   { TAddFrm class }
 
   TAddFrm = class(TForm)
-    BtnCancel: TBitBtn;
-    BtnOk: TBitBtn;
     FilesMgr: TAddTreeViewMgr;
     aOptionCheck: TCheckBox;
     aOption: TComboBox;
@@ -110,6 +108,8 @@ type
     BtnDelete: TBitBtn;
     BtnPlusMinus: TBitBtn;
     BtnFolder: TBitBtn;
+    BtnCancel: TBitBtn;
+    BtnOk: TBitBtn;
     // ---
     procedure aOptionCheckChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);

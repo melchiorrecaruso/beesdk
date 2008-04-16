@@ -1,12 +1,14 @@
+{ Questo è un file risorse generato automaticamente da Lazarus }
+
 LazarusResources.Add('TAboutFrm','FORMDATA',[
-  'TPF0'#9'TAboutFrm'#8'AboutFrm'#4'Left'#3'8'#2#6'Height'#3#175#0#3'Top'#3#1#2
-  +#5'Width'#3'm'#1#18'HorzScrollBar.Page'#3'l'#1#18'VertScrollBar.Page'#3#174#0
-  +#13'ActiveControl'#7#10'BtnLicense'#11'BorderIcons'#11#12'biSystemMenu'#10'b'
-  +'iMinimize'#0#7'Caption'#6#11'About to...'#12'ClientHeight'#3#175#0#11'Clien'
-  +'tWidth'#3'm'#1#5'Color'#7#7'clWhite'#21'Constraints.MaxHeight'#3#175#0#20'C'
-  +'onstraints.MaxWidth'#3'm'#1#21'Constraints.MinHeight'#3#175#0#20'Constraint'
-  +'s.MinWidth'#3'm'#1#9'Font.Name'#6#7'Default'#7'OnClose'#7#9'FormClose'#8'On'
-  +'Create'#7#10'FormCreate'#11'OnMouseMove'#7#13'FormMouseMove'#10'LCLVersion'
+  'TPF0'#9'TAboutFrm'#8'AboutFrm'#4'Left'#3#249#1#6'Height'#3#175#0#3'Top'#3'J'
+  +#1#5'Width'#3'm'#1#18'HorzScrollBar.Page'#3'l'#1#18'VertScrollBar.Page'#3#174
+  +#0#13'ActiveControl'#7#10'BtnLicense'#11'BorderIcons'#11#12'biSystemMenu'#10
+  +'biMinimize'#0#7'Caption'#6#11'About to...'#12'ClientHeight'#3#175#0#11'Clie'
+  +'ntWidth'#3'm'#1#5'Color'#7#7'clWhite'#21'Constraints.MaxHeight'#3#175#0#20
+  +'Constraints.MaxWidth'#3'm'#1#21'Constraints.MinHeight'#3#175#0#20'Constrain'
+  +'ts.MinWidth'#3'm'#1#9'Font.Name'#6#7'Default'#7'OnClose'#7#9'FormClose'#8'O'
+  +'nCreate'#7#10'FormCreate'#11'OnMouseMove'#7#13'FormMouseMove'#10'LCLVersion'
   +#6#6'0.9.25'#0#6'TImage'#4'Logo'#4'Left'#2#16#6'Height'#2'`'#3'Top'#2#15#5'W'
   +'idth'#2'`'#11'OnMouseMove'#7#13'FormMouseMove'#12'Picture.Data'#10#130#18#0
   +#0#7'TBitmapv'#18#0#0'BMv'#18#0#0#0#0#0#0'v'#0#0#0'('#0#0#0'`'#0#0#0'`'#0#0#0
