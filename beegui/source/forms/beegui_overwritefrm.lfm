@@ -1,20 +1,19 @@
 object OverwriteFrm: TOverwriteFrm
-  Left = 430
+  Left = 463
   Height = 235
-  Top = 348
-  Width = 460
-  HorzScrollBar.Page = 459
+  Top = 401
+  Width = 470
+  HorzScrollBar.Page = 469
   VertScrollBar.Page = 234
   ActiveControl = BtnYes
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Confirm File Overwirte'
   ClientHeight = 235
-  ClientWidth = 460
+  ClientWidth = 470
   Constraints.MaxHeight = 235
-  Constraints.MaxWidth = 460
   Constraints.MinHeight = 235
-  Constraints.MinWidth = 460
+  Constraints.MinWidth = 470
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
@@ -129,7 +128,6 @@ object OverwriteFrm: TOverwriteFrm
       0000000000000000000000000000000000000000000000000000000000000000
       0000
     }
-    Transparent = False
   end
   object OldIcon: TImage
     Left = 87
@@ -147,79 +145,107 @@ object OverwriteFrm: TOverwriteFrm
   end
   object TheFolder: TLabel
     Left = 65
-    Height = 20
+    Height = 16
     Top = 16
-    Width = 132
+    Width = 399
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'The folder already contains'
+    Constraints.MaxHeight = 16
+    Constraints.MinHeight = 16
     ParentColor = False
     ParentShowHint = False
   end
   object WouldYou: TLabel
     Left = 65
-    Height = 20
+    Height = 16
     Top = 48
-    Width = 197
+    Width = 399
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'Would you like to replace the existing file'
+    Constraints.MaxHeight = 16
+    Constraints.MinHeight = 16
     ParentColor = False
     ParentShowHint = False
   end
   object WithFile: TLabel
     Left = 65
-    Height = 20
+    Height = 16
     Top = 117
-    Width = 67
+    Width = 399
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'with this one?'
+    Constraints.MaxHeight = 16
+    Constraints.MinHeight = 16
     ParentColor = False
     ParentShowHint = False
   end
   object OldSize: TLabel
     Left = 132
-    Height = 20
+    Height = 16
     Top = 72
-    Width = 23
+    Width = 332
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'size:'
+    Constraints.MaxHeight = 16
+    Constraints.MinHeight = 16
     ParentColor = False
     ParentShowHint = False
   end
   object NewSize: TLabel
     Left = 132
-    Height = 20
+    Height = 16
     Top = 144
-    Width = 23
+    Width = 332
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'size:'
+    Constraints.MaxHeight = 16
+    Constraints.MinHeight = 16
     ParentColor = False
     ParentShowHint = False
   end
   object OldTime: TLabel
     Left = 132
-    Height = 20
+    Height = 16
     Top = 88
-    Width = 45
+    Width = 332
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'modified:'
+    Constraints.MaxHeight = 16
+    Constraints.MinHeight = 16
     ParentColor = False
     ParentShowHint = False
   end
   object NewTime: TLabel
     Left = 132
-    Height = 20
+    Height = 16
     Top = 160
-    Width = 45
+    Width = 332
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'modified:'
+    Constraints.MaxHeight = 16
+    Constraints.MinHeight = 16
     ParentColor = False
     ParentShowHint = False
   end
   object BtnYes: TBitBtn
-    Left = 372
-    Height = 26
+    Left = 384
+    Height = 30
     Top = 200
-    Width = 78
+    Width = 80
     Anchors = [akRight, akBottom]
-    BorderSpacing.InnerBorder = 2
+    BorderSpacing.Around = 6
     Caption = '&Si'
-    Constraints.MaxHeight = 26
-    Constraints.MaxWidth = 78
-    Constraints.MinHeight = 26
-    Constraints.MinWidth = 78
+    Constraints.MaxHeight = 30
+    Constraints.MaxWidth = 80
+    Constraints.MinHeight = 30
+    Constraints.MinWidth = 80
     Default = True
     Kind = bkYes
     ModalResult = 6
@@ -228,18 +254,17 @@ object OverwriteFrm: TOverwriteFrm
     TabOrder = 1
   end
   object BtnNo: TBitBtn
-    Left = 287
-    Height = 26
+    Left = 298
+    Height = 30
     Top = 200
-    Width = 78
+    Width = 80
     Anchors = [akRight, akBottom]
-    BorderSpacing.InnerBorder = 2
     Cancel = True
     Caption = '&No'
-    Constraints.MaxHeight = 26
-    Constraints.MaxWidth = 78
-    Constraints.MinHeight = 26
-    Constraints.MinWidth = 78
+    Constraints.MaxHeight = 30
+    Constraints.MaxWidth = 80
+    Constraints.MinHeight = 30
+    Constraints.MinWidth = 80
     Kind = bkNo
     ModalResult = 7
     NumGlyphs = 0
@@ -247,17 +272,16 @@ object OverwriteFrm: TOverwriteFrm
     TabOrder = 0
   end
   object BtnNoAll: TBitBtn
-    Left = 95
-    Height = 26
+    Left = 97
+    Height = 30
     Top = 200
-    Width = 78
+    Width = 85
     Anchors = [akLeft, akBottom]
-    BorderSpacing.InnerBorder = 2
     Caption = 'No a tutto'
-    Constraints.MaxHeight = 26
-    Constraints.MaxWidth = 78
-    Constraints.MinHeight = 26
-    Constraints.MinWidth = 78
+    Constraints.MaxHeight = 30
+    Constraints.MaxWidth = 85
+    Constraints.MinHeight = 30
+    Constraints.MinWidth = 85
     Kind = bkNoToAll
     ModalResult = 9
     NumGlyphs = 0
@@ -265,17 +289,16 @@ object OverwriteFrm: TOverwriteFrm
     TabOrder = 3
   end
   object BtnYesAll: TBitBtn
-    Left = 180
-    Height = 26
+    Left = 188
+    Height = 30
     Top = 200
-    Width = 78
+    Width = 85
     Anchors = [akLeft, akBottom]
-    BorderSpacing.InnerBorder = 2
     Caption = 'Si a &All'
-    Constraints.MaxHeight = 26
-    Constraints.MaxWidth = 78
-    Constraints.MinHeight = 26
-    Constraints.MinWidth = 78
+    Constraints.MaxHeight = 30
+    Constraints.MaxWidth = 85
+    Constraints.MinHeight = 30
+    Constraints.MinWidth = 85
     Kind = bkYesToAll
     ModalResult = 10
     NumGlyphs = 0
@@ -283,17 +306,16 @@ object OverwriteFrm: TOverwriteFrm
     TabOrder = 4
   end
   object BtnAbort: TBitBtn
-    Left = 10
-    Height = 26
+    Left = 6
+    Height = 30
     Top = 200
-    Width = 78
+    Width = 85
     Anchors = [akLeft, akBottom]
-    BorderSpacing.InnerBorder = 2
     Caption = 'Blocca'
-    Constraints.MaxHeight = 26
-    Constraints.MaxWidth = 78
-    Constraints.MinHeight = 26
-    Constraints.MinWidth = 78
+    Constraints.MaxHeight = 30
+    Constraints.MaxWidth = 85
+    Constraints.MinHeight = 30
+    Constraints.MinWidth = 85
     Kind = bkAbort
     ModalResult = 3
     NumGlyphs = 0
