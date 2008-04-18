@@ -50,6 +50,7 @@ type
   { TExtractFrm }
 
   TExtractFrm = class(TForm)
+    cdOption: TEdit;
     FoldersMgr: TFolderTreeViewMgr;
     FolderLabel: TLabel;
     Folders: TTreeView;
@@ -58,7 +59,6 @@ type
     xCommand: TCheckBox;
     oOptionLabel: TLabel;
     oOption: TComboBox;
-    cdOption: TEdit;
     cdOptionCheck: TCheckBox;
     Icons: TIconList;
     BtnCancel: TBitBtn;
