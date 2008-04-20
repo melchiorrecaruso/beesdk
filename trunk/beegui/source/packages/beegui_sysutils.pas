@@ -32,6 +32,7 @@ uses
   Windows,
   Registry,
   {$ELSE}
+  Process,
   {$ENDIF}
   Math,
   Classes,
@@ -317,14 +318,22 @@ implementation
   
   { shell routines }
   
+  {$IFDEF WIN32}
   function ShellExec(const FileName: string; const PathName: string): integer;
   begin
-    {$IFDEF WIN32}
     Result := ShellExecute(0, 'open', PChar(FileName), nil, PChar(PathName), SW_SHOW);
-    {$ELSE}
-    //todo: Result := Shell(FileName);
-    {$ENDIF}
   end;
+  {$ELSE}
+  function ShellExec(const FileName: string; const PathName: string): integer;
+  var
+    AProcess: TProcess;
+  begin
+   AProcess := TProcess.Create(nil);
+   AProcess.CommandLine := Format('epiphany %s', [FileName]);
+   AProcess.Execute;
+   AProcess.Free;
+  end;
+  {$ENDIF}
   
   {  }
   
