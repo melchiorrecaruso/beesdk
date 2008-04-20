@@ -48,10 +48,10 @@ type
   { TAboutFrm }
 
   TAboutFrm = class(TForm)
+    Build1: TLabel;
     Process: TProcess;
     // ---
     Logo: TImage;
-    Title: TLabel;
     MoreInfo: TLabel;
     Copyright: TLabel;
     Autors: TLabel;
@@ -59,9 +59,7 @@ type
     Link: TLabel;
     // ---
     Version: TLabel;
-    VersionValue: TLabel;
     Build: TLabel;
-    BuildValue: TLabel;
     // ---
     BtnLicense: TBitBtn;
     BtnOk: TBitBtn;
@@ -97,8 +95,8 @@ uses
     {$I beegui_aboutfrm_loadproperty.inc}
     // ---
     Logo.Transparent := True;
-    VersionValue.Caption   := '1.0.5';
-    BuildValue.Caption := '211';
+    Version.Caption   := 'Version #: 1.0.5';
+    Build.Caption := 'Data: 20-04-2008';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
