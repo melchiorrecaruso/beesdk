@@ -1,11 +1,12 @@
 object AboutFrm: TAboutFrm
-  Left = 475
+  Left = 414
   Height = 208
-  Top = 279
+  Top = 308
   Width = 263
   HorzScrollBar.Page = 262
   VertScrollBar.Page = 207
   ActiveControl = BtnOk
+  AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'About to...'
   ClientHeight = 208
@@ -14,6 +15,7 @@ object AboutFrm: TAboutFrm
   Font.Style = [fsBold]
   OnClose = FormClose
   OnCreate = FormCreate
+  OnShow = FormShow
   LCLVersion = '0.9.25'
   object Logo: TImage
     Left = 6
@@ -153,7 +155,7 @@ object AboutFrm: TAboutFrm
     BorderSpacing.Top = 1
     BorderSpacing.Right = 6
     BorderSpacing.Bottom = 1
-    Caption = '© 2003-2008 Andrew Filinsky and  Melchiorre Caruso'
+    Caption = '? 2003-2008 Andrew Filinsky and  Melchiorre Caruso'
     Layout = tlCenter
     ParentColor = False
   end
@@ -199,14 +201,14 @@ object AboutFrm: TAboutFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
     Left = 182
     Height = 30
     Top = 172
     Width = 75
-    Anchors = [akTop, akRight]
-    BorderSpacing.Top = 6
-    BorderSpacing.Right = 6
-    BorderSpacing.Bottom = 6
+    Anchors = [akTop, akRight, akBottom]
+    BorderSpacing.Around = 6
     Cancel = True
     Caption = '&OK'
     Constraints.MaxHeight = 30
@@ -222,15 +224,17 @@ object AboutFrm: TAboutFrm
   end
   object BtnLicense: TBitBtn
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = BtnOk
+    AnchorSideTop.Control = Bevel1
+    AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = BtnOk
+    AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 6
+    Left = 96
     Height = 30
     Top = 172
     Width = 80
-    BorderSpacing.Left = 6
-    BorderSpacing.Right = 6
+    Anchors = [akTop, akRight, akBottom]
+    BorderSpacing.Around = 6
     Caption = 'License'
     Constraints.MaxHeight = 30
     Constraints.MaxWidth = 80
