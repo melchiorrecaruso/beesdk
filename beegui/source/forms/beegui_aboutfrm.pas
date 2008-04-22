@@ -48,18 +48,13 @@ type
   { TAboutFrm }
 
   TAboutFrm = class(TForm)
-    Build1: TLabel;
+    Version: TLabel;
     Process: TProcess;
     // ---
     Logo: TImage;
     MoreInfo: TLabel;
     Copyright: TLabel;
-    Autors: TLabel;
-    Internet: TLabel;
     Link: TLabel;
-    // ---
-    Version: TLabel;
-    Build: TLabel;
     // ---
     BtnLicense: TBitBtn;
     BtnOk: TBitBtn;
@@ -95,8 +90,7 @@ uses
     {$I beegui_aboutfrm_loadproperty.inc}
     // ---
     Logo.Transparent := True;
-    Version.Caption   := 'Version #: 1.0.5';
-    Build.Caption := 'Data: 20-04-2008';
+    Version.Caption   := 'BeeGui 1.0.5 [build 211]';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
