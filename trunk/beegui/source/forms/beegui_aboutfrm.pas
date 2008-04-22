@@ -48,6 +48,7 @@ type
   { TAboutFrm }
 
   TAboutFrm = class(TForm)
+    Bevel1: TBevel;
     Version: TLabel;
     Process: TProcess;
     // ---
@@ -61,10 +62,6 @@ type
     // ---
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure FormMouseMove (Sender: TObject; Shift: TShiftState; X, Y: Integer);
-    // ---
-    procedure LinkClick (Sender: TObject);
-    procedure LinkMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     // ---
     procedure BtnOkClick(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
@@ -89,8 +86,9 @@ uses
     {$I beegui_aboutfrm_loadlanguage.inc}
     {$I beegui_aboutfrm_loadproperty.inc}
     // ---
-    Logo.Transparent := True;
+    Logo.Transparent  := True;
     Version.Caption   := 'BeeGui 1.0.5 [build 211]';
+    Copyright.Caption := '© 2003-2008 Andrew Filinsky and  Melchiorre Caruso'
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -100,23 +98,6 @@ uses
   begin
     {$I beegui_aboutfrm_savelanguage.inc}
     {$I beegui_aboutfrm_saveproperty.inc}
-  end;
-  
-  procedure TAboutFrm.FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-  begin
-    Link.Font.Style := [];
-    Link.Font.Color := clBlack;
-  end;
-  
-  procedure TAboutFrm.LinkMouseMove(Sender: TObject;Shift: TShiftState; X, Y: Integer);
-  begin
-    Link.Font.Style := [fsUnderline];
-    Link.Font.Color := clBlue;
-  end;
-  
-  procedure TAboutFrm.LinkClick(Sender: TObject);
-  begin
-    ShellExec(Link.Caption, '');
   end;
   
   procedure TAboutFrm.BtnLicenseClick(Sender: TObject);
