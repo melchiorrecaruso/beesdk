@@ -632,7 +632,7 @@
         <ResourceFilename Value="forms/beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="29" Y="122"/>
-        <TopLine Value="94"/>
+        <TopLine Value="92"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="118"/>
         <Loaded Value="True"/>
@@ -1208,24 +1208,7 @@
         <UsageCount Value="10"/>
       </Unit169>
     </Units>
-    <JumpHistory Count="4" HistoryIndex="3">
-      <Position1>
-        <Filename Value="forms/beegui_aboutfrm.pas"/>
-        <Caret Line="112" Column="34" TopLine="74"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms/beegui_aboutfrm.pas"/>
-        <Caret Line="70" Column="43" TopLine="69"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms/beegui_aboutfrm.pas"/>
-        <Caret Line="118" Column="7" TopLine="89"/>
-      </Position3>
-      <Position4>
-        <Filename Value="forms/beegui_aboutfrm.pas"/>
-        <Caret Line="70" Column="41" TopLine="69"/>
-      </Position4>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
