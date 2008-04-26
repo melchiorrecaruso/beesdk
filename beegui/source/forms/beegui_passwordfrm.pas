@@ -46,14 +46,14 @@ type
   { TPasswordFrm }
 
   TPasswordFrm = class(TForm)
+    Bevel: TBevel;
     BtnOk: TBitBtn;
     BtnCancel: TBitBtn;
-    Panel: TPanel;
+    ConfirmKey: TEdit;
+    ConfirmKeyLabel: TLabel;
+    Key: TEdit;
     KeyImage: TImage;
     KeyLabel: TLabel;
-    Key: TEdit;
-    ConfirmKeyLabel: TLabel;
-    ConfirmKey: TEdit;
     MaskKey: TCheckBox;
     BtnClear: TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -119,6 +119,13 @@ uses
   procedure TPasswordFrm.FormShow(Sender: TObject);
   begin
     SetConfirmKey(MaskKey.Checked);
+    if Constraints.MaxHeight = 0 then
+    begin
+      Constraints.MaxHeight := Height;
+      Constraints.MinHeight := Height;
+      Constraints.MaxWidth := Width;
+      Constraints.MinWidth := Width
+    end;
   end;
 
   procedure TPasswordFrm.MaskKeyClick (Sender: TObject);

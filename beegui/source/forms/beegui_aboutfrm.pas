@@ -48,26 +48,22 @@ type
   { TAboutFrm }
 
   TAboutFrm = class(TForm)
-    Bevel1: TBevel;
-    Version: TLabel;
-    Process: TProcess;
-    // ---
     Logo: TImage;
+    Version: TLabel;
     MoreInfo: TLabel;
     Copyright: TLabel;
     Link: TLabel;
+    Bevel: TBevel;
     // ---
     BtnLicense: TBitBtn;
     BtnOk: TBitBtn;
     // ---
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    // ---
-    procedure FormConstraints;
+    procedure FormShow(Sender: TObject);
     // ---
     procedure BtnOkClick(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   public
     { public declarations }
   private
@@ -88,9 +84,8 @@ uses
   begin
     {$I beegui_aboutfrm_loadlanguage.inc}
     {$I beegui_aboutfrm_loadproperty.inc}
-    // ---
     Logo.Transparent  := True;
-    Version.Caption   := 'BeeGui 1.0.5 [build 211]';
+    Version.Caption   := 'BeeGui 1.0.5 [build 213]';
     Copyright.Caption := '© 2003-2008 Andrew Filinsky and  Melchiorre Caruso';
   end;
 
@@ -103,14 +98,6 @@ uses
     {$I beegui_aboutfrm_saveproperty.inc}
   end;
   
-  procedure TAboutFrm.FormConstraints;
-  begin
-    Constraints.MaxHeight := Height;
-    Constraints.MinHeight := Height;
-    Constraints.MaxWidth := Width;
-    Constraints.MinWidth := Width;
-  end;
-  
   procedure TAboutFrm.BtnLicenseClick(Sender: TObject);
   begin
     ShellExec(ExtractFilePath(ParamStr(0))
@@ -119,7 +106,13 @@ uses
 
   procedure TAboutFrm.FormShow(Sender: TObject);
   begin
-    FormConstraints;
+    if Constraints.MaxHeight = 0 then
+    begin
+      Constraints.MaxHeight := Height;
+      Constraints.MinHeight := Height;
+      Constraints.MaxWidth := Width;
+      Constraints.MinWidth := Width
+    end;
   end;
 
   procedure TAboutFrm.BtnOkClick(Sender: TObject);

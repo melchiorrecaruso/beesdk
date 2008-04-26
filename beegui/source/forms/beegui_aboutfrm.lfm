@@ -1,7 +1,7 @@
 object AboutFrm: TAboutFrm
-  Left = 414
+  Left = 649
   Height = 208
-  Top = 308
+  Top = 500
   Width = 263
   HorzScrollBar.Page = 262
   VertScrollBar.Page = 207
@@ -99,6 +99,7 @@ object AboutFrm: TAboutFrm
       1111111111111111111111001111111111111100111111111111110011111111
       1111
     }
+    Transparent = False
   end
   object Link: TLabel
     AnchorSideLeft.Control = Owner
@@ -173,11 +174,11 @@ object AboutFrm: TAboutFrm
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
     BorderSpacing.Right = 6
-    Caption = 'BeeGui'
+    Caption = 'BeeGui 0.0.0 [build 000]'
     Font.Style = [fsBold]
     ParentColor = False
   end
-  object Bevel1: TBevel
+  object Bevel: TBevel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Link
     AnchorSideTop.Side = asrBottom
@@ -196,7 +197,7 @@ object AboutFrm: TAboutFrm
     Constraints.MinHeight = 2
   end
   object BtnOk: TBitBtn
-    AnchorSideTop.Control = Bevel1
+    AnchorSideTop.Control = Bevel
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
@@ -223,7 +224,7 @@ object AboutFrm: TAboutFrm
   end
   object BtnLicense: TBitBtn
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Bevel1
+    AnchorSideTop.Control = Bevel
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = BtnOk
     AnchorSideBottom.Control = Owner
@@ -242,10 +243,5 @@ object AboutFrm: TAboutFrm
     NumGlyphs = 0
     OnClick = BtnLicenseClick
     TabOrder = 1
-  end
-  object Process: TProcess
-    Priority = ppNormal
-    left = 40
-    top = 32
   end
 end

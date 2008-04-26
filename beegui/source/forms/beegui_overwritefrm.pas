@@ -50,6 +50,7 @@ type
   { TOverwriteFrm }
 
   TOverwriteFrm = class(TForm)
+    Bevel: TBevel;
     Images: TIconList;
     Image: TImage;
     TheFolder: TLabel;
@@ -109,8 +110,6 @@ uses
   
   procedure TOverwriteFrm.FormShow(Sender: TObject);
   begin
-    Width := TheFolder.Left + TheFolder.Width + 20;
-    // ---
     Image.Transparent   := True;
     OldIcon.Transparent := True;
     NewIcon.Transparent := True;
