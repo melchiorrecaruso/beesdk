@@ -56,6 +56,7 @@ type
     BtnOk: TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { public declarations }
   public
@@ -87,6 +88,17 @@ uses
   begin
     {$I beegui_renamefrm_savelanguage.inc}
     {$I beegui_renamefrm_saveproperty.inc}
+  end;
+  
+  procedure TRenameFrm.FormShow(Sender: TObject);
+  begin
+    if Constraints.MaxHeight = 0 then
+    begin
+      Constraints.MaxHeight := Height;
+      Constraints.MinHeight := Height;
+      Constraints.MaxWidth := Width;
+      Constraints.MinWidth := Width
+    end;
   end;
   
 initialization
