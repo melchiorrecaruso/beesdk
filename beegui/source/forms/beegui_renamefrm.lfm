@@ -1,18 +1,18 @@
 object RenameFrm: TRenameFrm
-  Left = 520
-  Height = 96
-  Top = 326
-  Width = 267
-  HorzScrollBar.Page = 266
+  Left = 467
+  Height = 28
+  Top = 296
+  Width = 156
+  HorzScrollBar.Page = 155
   HorzScrollBar.Range = 35
-  VertScrollBar.Page = 95
+  VertScrollBar.Page = 27
   VertScrollBar.Range = 53
   ActiveControl = BtnOk
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Rename'
-  ClientHeight = 96
-  ClientWidth = 267
+  ClientHeight = 28
+  ClientWidth = 156
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
@@ -81,7 +81,7 @@ object RenameFrm: TRenameFrm
   object BtnOk: TBitBtn
     AnchorSideTop.Control = BtnCancel
     AnchorSideRight.Control = BtnCancel
-    Left = 100
+    Left = -11
     Height = 30
     Top = 60
     Width = 75
@@ -106,7 +106,7 @@ object RenameFrm: TRenameFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 181
+    Left = 70
     Height = 30
     Top = 60
     Width = 80

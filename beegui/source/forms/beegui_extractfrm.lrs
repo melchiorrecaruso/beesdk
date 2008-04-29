@@ -1,8 +1,8 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TExtractFrm','FORMDATA',[
-  'TPF0'#11'TExtractFrm'#10'ExtractFrm'#4'Left'#3''#1#6'Height'#3#168#1#3'Top'
-  +#3#206#0#5'Width'#3'0'#2#18'HorzScrollBar.Page'#3'/'#2#18'VertScrollBar.Page'
+  'TPF0'#11'TExtractFrm'#10'ExtractFrm'#4'Left'#3#156#1#6'Height'#3#168#1#3'Top'
+  +#3#10#1#5'Width'#3'0'#2#18'HorzScrollBar.Page'#3'/'#2#18'VertScrollBar.Page'
   +#3#167#1#13'ActiveControl'#7#5'BtnOk'#7'Caption'#6#27'Extraction Path and Op'
   +'tions'#12'ClientHeight'#3#168#1#11'ClientWidth'#3'0'#2#21'Constraints.MinHe'
   +'ight'#3#168#1#20'Constraints.MinWidth'#3'0'#2#11'Font.Height'#2#245#9'Font.'
@@ -16,76 +16,76 @@ LazarusResources.Add('TExtractFrm','FORMDATA',[
   +'rentColor'#8#14'ParentShowHint'#8#0#0#6'TLabel'#12'oOptionLabel'#22'AnchorS'
   +'ideLeft.Control'#7#5'Owner'#21'AnchorSideTop.Control'#7#6'Folder'#18'Anchor'
   +'SideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#7'Folders'#4'Lef'
-  +'t'#2#6#6'Height'#2#20#3'Top'#2';'#5'Width'#3#29#1#7'Anchors'#11#5'akTop'#6
-  +'akLeft'#7'akRight'#0#18'BorderSpacing.Left'#2#6#17'BorderSpacing.Top'#2#6#19
-  +'BorderSpacing.Right'#2#6#7'Caption'#6#15'Overwrite mode:'#11'ParentColor'#8
-  +#14'ParentShowHint'#8#0#0#9'TGroupBox'#7'Options'#22'AnchorSideLeft.Control'
-  +#7#5'Owner'#21'AnchorSideTop.Control'#7#7'oOption'#18'AnchorSideTop.Side'#7#9
-  +'asrBottom'#23'AnchorSideRight.Control'#7#7'Folders'#4'Left'#2#6#6'Height'#2
-  +'j'#3'Top'#2't'#5'Width'#3#29#1#8'AutoSize'#9#18'BorderSpacing.Left'#2#6#17
-  +'BorderSpacing.Top'#2#6#7'Caption'#6#7'Options'#12'ClientHeight'#2'W'#11'Cli'
-  +'entWidth'#3#25#1#14'ParentShowHint'#8#8'TabOrder'#2#1#0#9'TCheckBox'#8'xCom'
-  +'mand'#22'AnchorSideLeft.Control'#7#7'Options'#21'AnchorSideTop.Control'#7#7
-  +'Options'#4'Left'#2#6#6'Height'#2#21#3'Top'#2#6#5'Width'#3#19#1#18'BorderSpa'
-  +'cing.Left'#2#6#17'BorderSpacing.Top'#2#6#7'Caption'#6'+Extract and Recreate'
-  +' the relative pathname '#7'Checked'#9#14'ParentShowHint'#8#5'State'#7#9'cbC'
-  +'hecked'#8'TabOrder'#2#0#0#0#9'TCheckBox'#13'cdOptionCheck'#22'AnchorSideLef'
-  +'t.Control'#7#7'Options'#21'AnchorSideTop.Control'#7#8'xCommand'#18'AnchorSi'
-  +'deTop.Side'#7#9'asrBottom'#4'Left'#2#6#6'Height'#2#21#3'Top'#2'!'#5'Width'#3
-  +#9#1#18'BorderSpacing.Left'#2#6#17'BorderSpacing.Top'#2#6#7'Caption'#6'*Use '
-  +'Current Archive Directory (-cd Option)'#8'OnChange'#7#19'cdOptionCheckChang'
-  +'e'#14'ParentShowHint'#8#8'TabOrder'#2#1#0#0#5'TEdit'#8'cdOption'#21'AnchorS'
-  +'ideTop.Control'#7#13'cdOptionCheck'#18'AnchorSideTop.Side'#7#9'asrBottom'#20
-  +'AnchorSideRight.Side'#7#9'asrBottom'#21'AnchorSideBottom.Side'#7#9'asrBotto'
-  +'m'#4'Left'#2#25#6'Height'#2#25#3'Top'#2'8'#5'Width'#3#250#0#5'Align'#7#8'al'
-  +'Bottom'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#8'AutoSiz'
-  +'e'#9#18'BorderSpacing.Left'#2#25#17'BorderSpacing.Top'#2#2#19'BorderSpacing'
-  +'.Right'#2#6#20'BorderSpacing.Bottom'#2#6#8'TabOrder'#2#2#0#0#0#7'TBitBtn'#5
-  +'BtnOk'#23'AnchorSideRight.Control'#7#9'BtnCancel'#24'AnchorSideBottom.Contr'
-  +'ol'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#3#138#1#6'H'
-  +'eight'#2#30#3'Top'#3#132#1#5'Width'#2'K'#7'Anchors'#11#7'akRight'#8'akBotto'
-  +'m'#0#19'BorderSpacing.Right'#2#6#20'BorderSpacing.Bottom'#2#6#7'Caption'#6#3
-  +'&OK'#21'Constraints.MaxHeight'#2#30#20'Constraints.MaxWidth'#2'K'#21'Constr'
-  +'aints.MinHeight'#2#30#20'Constraints.MinWidth'#2'K'#7'Default'#9#4'Kind'#7#4
-  +'bkOK'#11'ModalResult'#2#1#9'NumGlyphs'#2#0#14'ParentShowHint'#8#8'TabOrder'
-  +#2#2#0#0#7'TBitBtn'#9'BtnCancel'#21'AnchorSideTop.Control'#7#7'Folders'#18'A'
-  +'nchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#5'Owner'#20
-  +'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSideBottom.Control'#7#5'Owner'
-  +#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#3#219#1#6'Height'#2#30#3'T'
-  +'op'#3#132#1#5'Width'#2'P'#7'Anchors'#11#7'akRight'#8'akBottom'#0#19'BorderS'
-  +'pacing.Right'#2#5#20'BorderSpacing.Bottom'#2#6#6'Cancel'#9#7'Caption'#6#7'A'
-  +'nnulla'#21'Constraints.MaxHeight'#2#30#20'Constraints.MaxWidth'#2'P'#21'Con'
-  +'straints.MinHeight'#2#30#20'Constraints.MinWidth'#2'P'#4'Kind'#7#8'bkCancel'
-  +#11'ModalResult'#2#2#9'NumGlyphs'#2#0#14'ParentShowHint'#8#8'TabOrder'#2#3#0
-  +#0#5'TEdit'#6'Folder'#22'AnchorSideLeft.Control'#7#5'Owner'#21'AnchorSideTop'
-  +'.Control'#7#11'FolderLabel'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'Anchor'
-  +'SideRight.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'#4'Lef'
-  +'t'#2#6#6'Height'#2#25#3'Top'#2#28#5'Width'#3'$'#2#7'Anchors'#11#5'akTop'#6
-  +'akLeft'#7'akRight'#0#8'AutoSize'#9#18'BorderSpacing.Left'#2#6#17'BorderSpac'
-  +'ing.Top'#2#2#19'BorderSpacing.Right'#2#6#21'Constraints.MaxHeight'#2#25#21
-  +'Constraints.MinHeight'#2#25#8'TabOrder'#2#0#0#0#9'TComboBox'#7'oOption'#22
-  +'AnchorSideLeft.Control'#7#5'Owner'#21'AnchorSideTop.Control'#7#12'oOptionLa'
-  ,'bel'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#7
-  +'Folders'#4'Left'#2#6#6'Height'#2#29#3'Top'#2'Q'#5'Width'#3#29#1#7'Anchors'
-  +#11#5'akTop'#6'akLeft'#7'akRight'#0#16'AutoCompleteText'#11#22'cbactEndOfLin'
-  +'eComplete'#20'cbactSearchAscending'#0#18'BorderSpacing.Left'#2#6#17'BorderS'
-  +'pacing.Top'#2#2#19'BorderSpacing.Right'#2#6#9'ItemIndex'#2#2#13'Items.Strin'
-  +'gs'#1#6#23'Skip pre-existing files'#6#28'Overwrite pre-existing files'#6'%Q'
-  +'uery if Overwrite pre-existing files'#0#9'MaxLength'#2#0#14'ParentShowHint'
-  +#8#5'Style'#7#14'csDropDownList'#8'TabOrder'#2#4#4'Text'#6'%Query if Overwri'
-  +'te pre-existing files'#0#0#9'TTreeView'#7'Folders'#22'AnchorSideLeft.Contro'
-  +'l'#7#7'Options'#19'AnchorSideLeft.Side'#7#9'asrBottom'#21'AnchorSideTop.Con'
-  +'trol'#7#6'Folder'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.'
-  +'Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSideBo'
-  +'ttom.Control'#7#9'BtnCancel'#4'Left'#3')'#1#6'Height'#3'C'#1#3'Top'#2';'#5
-  +'Width'#3#1#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#18'B'
-  +'orderSpacing.Left'#2#6#17'BorderSpacing.Top'#2#6#19'BorderSpacing.Right'#2#6
-  +#20'BorderSpacing.Bottom'#2#6#17'DefaultItemHeight'#2#19#6'Images'#7#5'Icons'
-  +#8'ReadOnly'#9#8'TabOrder'#2#5#7'OnClick'#7#12'FoldersClick'#10'OnDblClick'#7
-  +#15'FoldersDblClick'#11'OnExpanding'#7#16'FoldersExpanding'#7'Options'#11#17
-  +'tvoAutoItemHeight'#16'tvoHideSelection'#21'tvoKeepCollapsedNodes'#11'tvoRea'
-  +'dOnly'#14'tvoShowButtons'#12'tvoShowLines'#11'tvoShowRoot'#11'tvoToolTips'#0
-  +#0#0#9'TIconList'#5'Icons'#4'left'#2#8#3'top'#3#232#0#0#0#18'TFolderTreeView'
-  +'Mgr'#10'FoldersMgr'#10'FolderEdit'#7#6'Folder'#10'FolderTree'#7#7'Folders'
-  +#11'FolderIcons'#7#5'Icons'#4'left'#2'('#3'top'#3#232#0#0#0#0
+  +'t'#2#6#6'Height'#2#20#3'Top'#2'6'#5'Width'#2'R'#18'BorderSpacing.Left'#2#6
+  +#17'BorderSpacing.Top'#2#6#19'BorderSpacing.Right'#2#6#7'Caption'#6#15'Overw'
+  +'rite mode:'#6'Layout'#7#8'tlBottom'#11'ParentColor'#8#14'ParentShowHint'#8#0
+  +#0#9'TGroupBox'#7'Options'#22'AnchorSideLeft.Control'#7#5'Owner'#21'AnchorSi'
+  +'deTop.Control'#7#7'oOption'#18'AnchorSideTop.Side'#7#9'asrBottom'#21'Anchor'
+  +'SideBottom.Side'#7#9'asrBottom'#4'Left'#2#6#6'Height'#2'b'#3'Top'#2'j'#5'Wi'
+  +'dth'#3#251#0#8'AutoSize'#9#20'BorderSpacing.Around'#2#6#7'Caption'#6#7'Opti'
+  +'ons'#12'ClientHeight'#2'R'#11'ClientWidth'#3#247#0#14'ParentShowHint'#8#8'T'
+  +'abOrder'#2#1#0#9'TCheckBox'#8'xCommand'#22'AnchorSideLeft.Control'#7#7'Opti'
+  +'ons'#21'AnchorSideTop.Control'#7#7'Options'#4'Left'#2#6#6'Height'#2#21#3'To'
+  +'p'#2#6#5'Width'#3#235#0#18'BorderSpacing.Left'#2#6#17'BorderSpacing.Top'#2#6
+  +#19'BorderSpacing.Right'#2#6#7'Caption'#6'*Extract and Recreate the relative'
+  +' pathname'#7'Checked'#9#14'ParentShowHint'#8#5'State'#7#9'cbChecked'#8'TabO'
+  +'rder'#2#0#0#0#9'TCheckBox'#13'cdOptionCheck'#22'AnchorSideLeft.Control'#7#7
+  +'Options'#21'AnchorSideTop.Control'#7#8'xCommand'#18'AnchorSideTop.Side'#7#9
+  +'asrBottom'#4'Left'#2#6#6'Height'#2#21#3'Top'#2'!'#5'Width'#3#228#0#18'Borde'
+  +'rSpacing.Left'#2#6#17'BorderSpacing.Top'#2#6#19'BorderSpacing.Right'#2#6#7
+  +'Caption'#6'*Use Current Archive Directory (-cd Option)'#8'OnChange'#7#19'cd'
+  +'OptionCheckChange'#14'ParentShowHint'#8#8'TabOrder'#2#1#0#0#5'TEdit'#8'cdOp'
+  +'tion'#22'AnchorSideLeft.Control'#7#13'cdOptionCheck'#21'AnchorSideTop.Contr'
+  +'ol'#7#13'cdOptionCheck'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSide'
+  +'Right.Control'#7#13'cdOptionCheck'#20'AnchorSideRight.Side'#7#9'asrBottom'
+  +#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2#26#6'Height'#2#22#3'Top'
+  +#2'6'#5'Width'#3#208#0#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#8'AutoS'
+  +'ize'#9#18'BorderSpacing.Left'#2#20#20'BorderSpacing.Bottom'#2#6#8'TabOrder'
+  +#2#2#0#0#0#7'TBitBtn'#5'BtnOk'#23'AnchorSideRight.Control'#7#9'BtnCancel'#24
+  +'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBotto'
+  +'m'#4'Left'#3#138#1#6'Height'#2#30#3'Top'#3#132#1#5'Width'#2'K'#7'Anchors'#11
+  +#7'akRight'#8'akBottom'#0#19'BorderSpacing.Right'#2#6#20'BorderSpacing.Botto'
+  +'m'#2#6#7'Caption'#6#3'&OK'#21'Constraints.MaxHeight'#2#30#20'Constraints.Ma'
+  +'xWidth'#2'K'#21'Constraints.MinHeight'#2#30#20'Constraints.MinWidth'#2'K'#7
+  +'Default'#9#4'Kind'#7#4'bkOK'#11'ModalResult'#2#1#9'NumGlyphs'#2#0#14'Parent'
+  +'ShowHint'#8#8'TabOrder'#2#2#0#0#7'TBitBtn'#9'BtnCancel'#21'AnchorSideTop.Co'
+  +'ntrol'#7#7'Folders'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRigh'
+  +'t.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSide'
+  +'Bottom.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'
+  +#3#219#1#6'Height'#2#30#3'Top'#3#132#1#5'Width'#2'P'#7'Anchors'#11#7'akRight'
+  +#8'akBottom'#0#19'BorderSpacing.Right'#2#5#20'BorderSpacing.Bottom'#2#6#6'Ca'
+  +'ncel'#9#7'Caption'#6#7'Annulla'#21'Constraints.MaxHeight'#2#30#20'Constrain'
+  +'ts.MaxWidth'#2'P'#21'Constraints.MinHeight'#2#30#20'Constraints.MinWidth'#2
+  +'P'#4'Kind'#7#8'bkCancel'#11'ModalResult'#2#2#9'NumGlyphs'#2#0#14'ParentShow'
+  +'Hint'#8#8'TabOrder'#2#3#0#0#5'TEdit'#6'Folder'#22'AnchorSideLeft.Control'#7
+  +#5'Owner'#21'AnchorSideTop.Control'#7#11'FolderLabel'#18'AnchorSideTop.Side'
+  +#7#9'asrBottom'#23'AnchorSideRight.Control'#7#5'Owner'#20'AnchorSideRight.Si'
+  +'de'#7#9'asrBottom'#4'Left'#2#6#6'Height'#2#22#3'Top'#2#26#5'Width'#3'$'#2#7
+  +'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#8'AutoSize'#9#18'BorderSpacing.'
+  +'Left'#2#6#19'BorderSpacing.Right'#2#6#20'BorderSpacing.Bottom'#2#6#8'TabOrd'
+  +'er'#2#0#0#0#9'TComboBox'#7'oOption'#22'AnchorSideLeft.Control'#7#5'Owner'#21
+  +'AnchorSideTop.Control'#7#12'oOptionLabel'#18'AnchorSideTop.Side'#7#9'asrBot'
+  ,'tom'#23'AnchorSideRight.Control'#7#7'Options'#20'AnchorSideRight.Side'#7#9
+  +'asrBottom'#4'Left'#2#6#6'Height'#2#26#3'Top'#2'J'#5'Width'#3#251#0#7'Anchor'
+  +'s'#11#5'akTop'#6'akLeft'#7'akRight'#0#16'AutoCompleteText'#11#22'cbactEndOf'
+  +'LineComplete'#20'cbactSearchAscending'#0#18'BorderSpacing.Left'#2#6#20'Bord'
+  +'erSpacing.Bottom'#2#6#9'ItemIndex'#2#2#13'Items.Strings'#1#6#23'Skip pre-ex'
+  +'isting files'#6#28'Overwrite pre-existing files'#6'%Query if Overwrite pre-'
+  +'existing files'#0#9'MaxLength'#2#0#14'ParentShowHint'#8#5'Style'#7#14'csDro'
+  +'pDownList'#8'TabOrder'#2#4#4'Text'#6'%Query if Overwrite pre-existing files'
+  +#0#0#9'TTreeView'#7'Folders'#22'AnchorSideLeft.Control'#7#7'Options'#19'Anch'
+  +'orSideLeft.Side'#7#9'asrBottom'#21'AnchorSideTop.Control'#7#6'Folder'#18'An'
+  +'chorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#5'Owner'#20
+  +'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSideBottom.Control'#7#9'BtnCa'
+  +'ncel'#4'Left'#3#7#1#6'Height'#3'H'#1#3'Top'#2'6'#5'Width'#3'#'#1#7'Anchors'
+  +#11#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#18'BorderSpacing.Left'#2#6#17
+  +'BorderSpacing.Top'#2#6#19'BorderSpacing.Right'#2#6#20'BorderSpacing.Bottom'
+  +#2#6#17'DefaultItemHeight'#2#16#6'Images'#7#5'Icons'#8'ReadOnly'#9#8'TabOrde'
+  +'r'#2#5#7'OnClick'#7#12'FoldersClick'#10'OnDblClick'#7#15'FoldersDblClick'#11
+  +'OnExpanding'#7#16'FoldersExpanding'#7'Options'#11#17'tvoAutoItemHeight'#16
+  +'tvoHideSelection'#21'tvoKeepCollapsedNodes'#11'tvoReadOnly'#14'tvoShowButto'
+  +'ns'#12'tvoShowLines'#11'tvoShowRoot'#11'tvoToolTips'#0#0#0#9'TIconList'#5'I'
+  +'cons'#4'left'#2#8#3'top'#3#216#0#0#0#18'TFolderTreeViewMgr'#10'FoldersMgr'
+  +#10'FolderEdit'#7#6'Folder'#10'FolderTree'#7#7'Folders'#11'FolderIcons'#7#5
+  +'Icons'#4'left'#2'0'#3'top'#3#216#0#0#0#0
 ]);

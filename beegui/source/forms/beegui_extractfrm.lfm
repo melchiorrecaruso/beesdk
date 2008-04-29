@@ -1,7 +1,7 @@
 object ExtractFrm: TExtractFrm
-  Left = 383
+  Left = 412
   Height = 424
-  Top = 206
+  Top = 266
   Width = 560
   HorzScrollBar.Page = 559
   VertScrollBar.Page = 423
@@ -41,13 +41,13 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Folders
     Left = 6
     Height = 20
-    Top = 59
-    Width = 285
-    Anchors = [akTop, akLeft, akRight]
+    Top = 54
+    Width = 82
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
     BorderSpacing.Right = 6
     Caption = 'Overwrite mode:'
+    Layout = tlBottom
     ParentColor = False
     ParentShowHint = False
   end
@@ -55,17 +55,16 @@ object ExtractFrm: TExtractFrm
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = oOption
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Folders
+    AnchorSideBottom.Side = asrBottom
     Left = 6
-    Height = 106
-    Top = 116
-    Width = 285
+    Height = 98
+    Top = 106
+    Width = 251
     AutoSize = True
-    BorderSpacing.Left = 6
-    BorderSpacing.Top = 6
+    BorderSpacing.Around = 6
     Caption = 'Options'
-    ClientHeight = 87
-    ClientWidth = 281
+    ClientHeight = 82
+    ClientWidth = 247
     ParentShowHint = False
     TabOrder = 1
     object xCommand: TCheckBox
@@ -74,10 +73,11 @@ object ExtractFrm: TExtractFrm
       Left = 6
       Height = 21
       Top = 6
-      Width = 275
+      Width = 235
       BorderSpacing.Left = 6
       BorderSpacing.Top = 6
-      Caption = 'Extract and Recreate the relative pathname '
+      BorderSpacing.Right = 6
+      Caption = 'Extract and Recreate the relative pathname'
       Checked = True
       ParentShowHint = False
       State = cbChecked
@@ -90,29 +90,29 @@ object ExtractFrm: TExtractFrm
       Left = 6
       Height = 21
       Top = 33
-      Width = 265
+      Width = 228
       BorderSpacing.Left = 6
       BorderSpacing.Top = 6
+      BorderSpacing.Right = 6
       Caption = 'Use Current Archive Directory (-cd Option)'
       OnChange = cdOptionCheckChange
       ParentShowHint = False
       TabOrder = 1
     end
     object cdOption: TEdit
+      AnchorSideLeft.Control = cdOptionCheck
       AnchorSideTop.Control = cdOptionCheck
       AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = cdOptionCheck
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Left = 25
-      Height = 25
-      Top = 56
-      Width = 250
-      Align = alBottom
-      Anchors = [akTop, akLeft, akRight, akBottom]
+      Left = 26
+      Height = 22
+      Top = 54
+      Width = 208
+      Anchors = [akTop, akLeft, akRight]
       AutoSize = True
-      BorderSpacing.Left = 25
-      BorderSpacing.Top = 2
-      BorderSpacing.Right = 6
+      BorderSpacing.Left = 20
       BorderSpacing.Bottom = 6
       TabOrder = 2
     end
@@ -173,32 +173,30 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 25
-    Top = 28
+    Height = 22
+    Top = 26
     Width = 548
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Left = 6
-    BorderSpacing.Top = 2
     BorderSpacing.Right = 6
-    Constraints.MaxHeight = 25
-    Constraints.MinHeight = 25
+    BorderSpacing.Bottom = 6
     TabOrder = 0
   end
   object oOption: TComboBox
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = oOptionLabel
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Folders
+    AnchorSideRight.Control = Options
+    AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 29
-    Top = 81
-    Width = 285
+    Height = 26
+    Top = 74
+    Width = 251
     Anchors = [akTop, akLeft, akRight]
     AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
     BorderSpacing.Left = 6
-    BorderSpacing.Top = 2
-    BorderSpacing.Right = 6
+    BorderSpacing.Bottom = 6
     ItemIndex = 2
     Items.Strings = (
       'Skip pre-existing files'
@@ -219,16 +217,16 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
-    Left = 297
-    Height = 323
-    Top = 59
-    Width = 257
+    Left = 263
+    Height = 328
+    Top = 54
+    Width = 291
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
     BorderSpacing.Right = 6
     BorderSpacing.Bottom = 6
-    DefaultItemHeight = 19
+    DefaultItemHeight = 16
     Images = Icons
     ReadOnly = True
     TabOrder = 5
@@ -239,13 +237,13 @@ object ExtractFrm: TExtractFrm
   end
   object Icons: TIconList
     left = 8
-    top = 232
+    top = 216
   end
   object FoldersMgr: TFolderTreeViewMgr
     FolderEdit = Folder
     FolderTree = Folders
     FolderIcons = Icons
-    left = 40
-    top = 232
+    left = 48
+    top = 216
   end
 end
