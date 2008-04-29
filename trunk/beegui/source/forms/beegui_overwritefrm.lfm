@@ -1,16 +1,16 @@
 object OverwriteFrm: TOverwriteFrm
-  Left = 322
-  Height = 230
-  Top = 373
-  Width = 460
-  HorzScrollBar.Page = 459
-  VertScrollBar.Page = 229
+  Left = 450
+  Height = 323
+  Top = 273
+  Width = 494
+  HorzScrollBar.Page = 493
+  VertScrollBar.Page = 322
   ActiveControl = BtnYes
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Confirm File Overwirte'
-  ClientHeight = 230
-  ClientWidth = 460
+  ClientHeight = 323
+  ClientWidth = 494
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
@@ -128,6 +128,7 @@ object OverwriteFrm: TOverwriteFrm
       0000000000000000000000000000000000000000000000000000000000000000
       0000
     }
+    Transparent = False
   end
   object OldIcon: TImage
     AnchorSideLeft.Control = WouldYou
@@ -252,7 +253,7 @@ object OverwriteFrm: TOverwriteFrm
     Left = 6
     Height = 2
     Top = 186
-    Width = 448
+    Width = 482
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Around = 6
     Constraints.MinWidth = 448
@@ -262,7 +263,7 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 374
+    Left = 408
     Height = 30
     Top = 194
     Width = 80
@@ -284,7 +285,7 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideTop.Control = Bevel
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = BtnYes
-    Left = 288
+    Left = 322
     Height = 30
     Top = 194
     Width = 80
@@ -330,10 +331,11 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = BtnNo
     AnchorSideRight.Side = asrCenter
-    Left = 188
+    Left = 205
     Height = 30
     Top = 194
     Width = 85
+    Anchors = [akTop]
     BorderSpacing.Around = 6
     Caption = 'Si a &All'
     Constraints.MaxHeight = 30
