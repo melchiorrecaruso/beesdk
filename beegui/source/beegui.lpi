@@ -12,7 +12,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="4"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -643,8 +643,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms/beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="37" Y="87"/>
-        <TopLine Value="84"/>
+        <CursorPos X="50" Y="88"/>
+        <TopLine Value="51"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="126"/>
         <Loaded Value="True"/>
@@ -1220,7 +1220,12 @@
         <UsageCount Value="10"/>
       </Unit169>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="1" HistoryIndex="0">
+      <Position1>
+        <Filename Value="forms/beegui_aboutfrm.pas"/>
+        <Caret Line="87" Column="37" TopLine="84"/>
+      </Position1>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
