@@ -254,6 +254,11 @@ begin
   end;
   Sync(AppInterface.OnTick.Method);
   Result := Terminated;
+  
+  while AppPause do
+  begin
+    Sleep(100);
+  end;
 end;
 
 procedure TBeeApp.SetPriority(aPriority: integer); // Priority is 0..3

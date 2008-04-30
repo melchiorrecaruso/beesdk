@@ -1,14 +1,14 @@
 object ExtractFrm: TExtractFrm
-  Left = 412
-  Height = 424
-  Top = 266
-  Width = 560
-  HorzScrollBar.Page = 559
-  VertScrollBar.Page = 423
+  Left = 347
+  Height = 472
+  Top = 198
+  Width = 595
+  HorzScrollBar.Page = 594
+  VertScrollBar.Page = 471
   ActiveControl = BtnOk
   Caption = 'Extraction Path and Options'
-  ClientHeight = 424
-  ClientWidth = 560
+  ClientHeight = 472
+  ClientWidth = 595
   Constraints.MinHeight = 424
   Constraints.MinWidth = 560
   Font.Height = -11
@@ -24,7 +24,7 @@ object ExtractFrm: TExtractFrm
     Left = 6
     Height = 20
     Top = 6
-    Width = 548
+    Width = 583
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
@@ -121,9 +121,9 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = BtnCancel
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 394
+    Left = 429
     Height = 30
-    Top = 388
+    Top = 436
     Width = 75
     Anchors = [akRight, akBottom]
     BorderSpacing.Right = 6
@@ -147,9 +147,9 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 475
+    Left = 510
     Height = 30
-    Top = 388
+    Top = 436
     Width = 80
     Anchors = [akRight, akBottom]
     BorderSpacing.Right = 5
@@ -175,7 +175,7 @@ object ExtractFrm: TExtractFrm
     Left = 6
     Height = 22
     Top = 26
-    Width = 548
+    Width = 583
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Left = 6
@@ -218,9 +218,9 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
     Left = 263
-    Height = 328
+    Height = 376
     Top = 54
-    Width = 291
+    Width = 326
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6

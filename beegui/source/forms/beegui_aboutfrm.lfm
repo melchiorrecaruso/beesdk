@@ -1,15 +1,15 @@
 object AboutFrm: TAboutFrm
-  Left = 749
-  Height = 208
-  Top = 288
+  Left = 751
+  Height = 298
+  Top = 246
   Width = 263
   HorzScrollBar.Page = 262
-  VertScrollBar.Page = 207
+  VertScrollBar.Page = 297
   ActiveControl = BtnOk
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'About to...'
-  ClientHeight = 208
+  ClientHeight = 298
   ClientWidth = 263
   Font.Name = 'Default'
   Font.Style = [fsBold]
