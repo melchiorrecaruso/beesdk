@@ -64,29 +64,34 @@ type
   TTickFrm = class(TForm)
     FontDialog: TFontDialog;
     Closer: TIdleTimer;
+    GeneralSize: TLabel;
+    GeneralSizeLabel: TLabel;
+    GeneralSizeUnit: TLabel;
+    ProcessedSizeLabel: TLabel;
+    SizeLabelPanel: TPanel;
+    SpeedLabel: TLabel;
+    TimePanel: TPanel;
+    RemainingTime: TLabel;
+    Time: TLabel;
+    UnitPanel: TPanel;
+    ProcessedSize: TLabel;
+    ProcessedSizeUnit: TLabel;
+    SizePanel: TPanel;
+    Speed: TLabel;
+    SpeedUnit: TLabel;
+    TimeLabelPanel: TPanel;
     Popup_Idle: TMenuItem;
     Popup_TimeCritical: TMenuItem;
     Popup_Higher: TMenuItem;
     Popup_Normal: TMenuItem;
     Popup: TPopupMenu;
+    RemainingTimeLabel: TLabel;
     SaveDialog: TSaveDialog;
+    TimeLabel: TLabel;
     Timer: TIdleTimer;
     // ---
     Notebook: TNotebook;
     GeneralPage: TPage;
-    TimeLabel: TLabel;
-    Time: TLabel;
-    RemainingTimeLabel: TLabel;
-    RemainingTime: TLabel;
-    GeneralSizeLabel: TLabel;
-    GeneralSize: TLabel;
-    GeneralSizeUnit: TLabel;
-    ProcessedSizeLabel: TLabel;
-    ProcessedSize: TLabel;
-    ProcessedSizeUnit: TLabel;
-    SpeedLabel: TLabel;
-    Speed: TLabel;
-    SpeedUnit: TLabel;
     Msg: TLabel;
     Tick: TProgressBar;
     ReportPage: TPage;
@@ -198,9 +203,9 @@ var
     FSwitch := False;
     FSwitchValue := $FFFF;
     {$IFDEF UNIX}
-      BtnPriority.Enabled := False;
+      // BtnPriority.Enabled := False;
       // BtnPriority.Visible := False;
-      BtnPauseRun.Enabled := False;
+      // BtnPauseRun.Enabled := False;
       // BtnPauseRun.Visible := False;
     {$ENDIF}
   end;
@@ -269,9 +274,9 @@ var
         if FAppCanClose and (FAppTerminated = False) then
         begin
           Timer.Enabled := True;
-          if FApp.Suspended then
+          if FApp.AppPause then
           begin
-            FApp.Resume;
+            FApp.AppPause := False;
           end;
         end;
         FApp.Terminate;
@@ -416,16 +421,16 @@ var
   begin
     if FAppTerminated = False then
     begin
-      if FApp.Suspended then
+      if FApp.AppPause then
       begin
-        BtnPauseRun.Caption := rsBtnPauseCaption;
+        FApp.AppPause := False;
         Timer.Enabled  := True;
-        FApp.Resume;
+        BtnPauseRun.Caption := rsBtnPauseCaption;
       end else
       begin
-        BtnPauseRun.Caption := rsBtnRunCaption;
+        FApp.AppPause := True;
         Timer.Enabled  := False;
-        FApp.Suspend;
+        BtnPauseRun.Caption := rsBtnRunCaption;
       end;
     end;
   end;

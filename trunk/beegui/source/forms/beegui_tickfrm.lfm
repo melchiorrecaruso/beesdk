@@ -1,15 +1,15 @@
 object TickFrm: TTickFrm
-  Left = 431
-  Height = 200
-  Top = 306
+  Left = 309
+  Height = 210
+  Top = 246
   Width = 430
   HorzScrollBar.Page = 429
-  VertScrollBar.Page = 199
+  VertScrollBar.Page = 209
   ActiveControl = Notebook
   Caption = '0% Processing...'
-  ClientHeight = 200
+  ClientHeight = 210
   ClientWidth = 430
-  Constraints.MinHeight = 200
+  Constraints.MinHeight = 210
   Constraints.MinWidth = 430
   Font.Height = -11
   Font.Name = 'Tahoma'
@@ -62,16 +62,19 @@ object TickFrm: TTickFrm
   ShowInTaskBar = stAlways
   LCLVersion = '0.9.25'
   object BtnCancel: TBitBtn
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
     Left = 344
     Height = 30
-    Top = 164
+    Top = 174
     Width = 80
-    Align = alRight
+    Anchors = [akRight, akBottom]
+    AutoSize = True
     BorderSpacing.Around = 6
     Cancel = True
     Caption = 'Blocca'
-    Constraints.MaxHeight = 30
-    Constraints.MaxWidth = 80
     Constraints.MinHeight = 30
     Constraints.MinWidth = 80
     Default = True
@@ -82,15 +85,17 @@ object TickFrm: TTickFrm
     TabOrder = 0
   end
   object BtnPriority: TBitBtn
+    AnchorSideRight.Control = BtnPauseRun
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
     Left = 177
     Height = 30
-    Top = 164
+    Top = 174
     Width = 80
-    Align = alRight
+    Anchors = [akRight, akBottom]
+    AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Priority'
-    Constraints.MaxHeight = 30
-    Constraints.MaxWidth = 80
     Constraints.MinHeight = 30
     Constraints.MinWidth = 80
     Glyph.Data = {
@@ -121,15 +126,17 @@ object TickFrm: TTickFrm
     TabOrder = 4
   end
   object BtnPauseRun: TBitBtn
+    AnchorSideRight.Control = BtnCancel
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
     Left = 263
     Height = 30
-    Top = 164
+    Top = 174
     Width = 75
-    Align = alRight
+    Anchors = [akRight, akBottom]
+    AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Pause'
-    Constraints.MaxHeight = 30
-    Constraints.MaxWidth = 75
     Constraints.MinHeight = 30
     Constraints.MinWidth = 75
     NumGlyphs = 0
@@ -137,11 +144,15 @@ object TickFrm: TTickFrm
     TabOrder = 5
   end
   object Notebook: TNotebook
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = BtnCancel
     Left = 6
-    Height = 152
+    Height = 162
     Top = 6
     Width = 418
-    Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     PageIndex = 0
@@ -149,145 +160,19 @@ object TickFrm: TTickFrm
     object GeneralPage: TPage
       Caption = 'General'
       ClientWidth = 414
-      ClientHeight = 124
-      object TimeLabel: TLabel
-        Left = 6
-        Height = 18
-        Top = 10
-        Width = 110
-        AutoSize = False
-        Caption = 'Time elapsed:'
-        ParentColor = False
-      end
-      object Time: TLabel
-        Left = 116
-        Height = 18
-        Top = 10
-        Width = 70
-        Alignment = taCenter
-        AutoSize = False
-        Caption = '00:00:00'
-        ParentColor = False
-      end
-      object RemainingTime: TLabel
-        Left = 116
-        Height = 18
-        Top = 28
-        Width = 70
-        Alignment = taCenter
-        AutoSize = False
-        Caption = '--:--:--'
-        ParentColor = False
-      end
-      object RemainingTimeLabel: TLabel
-        Left = 6
-        Height = 18
-        Top = 28
-        Width = 110
-        AutoSize = False
-        Caption = 'Remaining time:'
-        ParentColor = False
-      end
-      object GeneralSizeLabel: TLabel
-        Left = 220
-        Height = 18
-        Top = 10
-        Width = 100
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'Total size:'
-        ParentColor = False
-      end
-      object ProcessedSizeLabel: TLabel
-        Left = 220
-        Height = 18
-        Top = 28
-        Width = 100
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'Processed size:'
-        ParentColor = False
-      end
-      object SpeedLabel: TLabel
-        Left = 220
-        Height = 18
-        Top = 46
-        Width = 100
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'Speed:'
-        ParentColor = False
-      end
-      object GeneralSize: TLabel
-        Left = 320
-        Height = 18
-        Top = 10
-        Width = 50
-        Alignment = taRightJustify
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        ParentColor = False
-      end
-      object ProcessedSize: TLabel
-        Left = 320
-        Height = 18
-        Top = 28
-        Width = 50
-        Alignment = taRightJustify
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = '-'
-        ParentColor = False
-      end
-      object Speed: TLabel
-        Left = 320
-        Height = 18
-        Top = 46
-        Width = 50
-        Alignment = taRightJustify
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = '-'
-        ParentColor = False
-      end
-      object SpeedUnit: TLabel
-        Left = 375
-        Height = 18
-        Top = 46
-        Width = 30
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'KB/s'
-        ParentColor = False
-      end
-      object ProcessedSizeUnit: TLabel
-        Left = 375
-        Height = 18
-        Top = 28
-        Width = 30
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'KB'
-        ParentColor = False
-      end
-      object GeneralSizeUnit: TLabel
-        Left = 375
-        Height = 18
-        Top = 10
-        Width = 30
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'KB'
-        ParentColor = False
-      end
+      ClientHeight = 134
       object Msg: TLabel
+        AnchorSideLeft.Control = GeneralPage
+        AnchorSideBottom.Control = Tick
         Left = 6
         Height = 18
-        Top = 74
-        Width = 402
-        Align = alBottom
-        AutoSize = False
-        BorderSpacing.Around = 6
+        Top = 84
+        Width = 13
+        Anchors = [akLeft, akBottom]
+        BorderSpacing.Left = 6
+        BorderSpacing.Top = 2
+        BorderSpacing.Right = 6
+        BorderSpacing.Bottom = 2
         Caption = '...'
         Constraints.MaxHeight = 18
         Constraints.MinHeight = 18
@@ -295,11 +180,16 @@ object TickFrm: TTickFrm
         ParentColor = False
       end
       object Tick: TProgressBar
+        AnchorSideLeft.Control = GeneralPage
+        AnchorSideRight.Control = GeneralPage
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Control = GeneralPage
+        AnchorSideBottom.Side = asrBottom
         Left = 6
         Height = 20
-        Top = 98
+        Top = 108
         Width = 402
-        Align = alBottom
+        Anchors = [akLeft, akRight, akBottom]
         BorderSpacing.Around = 6
         Constraints.MaxHeight = 20
         Constraints.MinHeight = 20
@@ -307,14 +197,313 @@ object TickFrm: TTickFrm
         Smooth = True
         TabOrder = 0
       end
+      object TimeLabelPanel: TPanel
+        AnchorSideLeft.Control = GeneralPage
+        AnchorSideTop.Control = GeneralPage
+        AnchorSideBottom.Control = Msg
+        Left = 6
+        Height = 72
+        Top = 6
+        Width = 89
+        Anchors = [akTop, akLeft, akBottom]
+        AutoSize = True
+        BorderSpacing.Around = 6
+        BevelOuter = bvNone
+        ClientHeight = 72
+        ClientWidth = 89
+        TabOrder = 1
+        object TimeLabel: TLabel
+          AnchorSideLeft.Control = TimeLabelPanel
+          AnchorSideTop.Control = TimeLabelPanel
+          Left = 6
+          Height = 20
+          Top = 6
+          Width = 67
+          BorderSpacing.Left = 6
+          BorderSpacing.Top = 6
+          BorderSpacing.Right = 6
+          BorderSpacing.Bottom = 2
+          Caption = 'Time elapsed:'
+          Layout = tlBottom
+          ParentColor = False
+        end
+        object RemainingTimeLabel: TLabel
+          AnchorSideLeft.Control = TimeLabelPanel
+          AnchorSideTop.Control = TimeLabel
+          AnchorSideTop.Side = asrBottom
+          Left = 6
+          Height = 20
+          Top = 28
+          Width = 77
+          BorderSpacing.Left = 6
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 6
+          BorderSpacing.Bottom = 2
+          Caption = 'Remaining time:'
+          Layout = tlBottom
+          ParentColor = False
+        end
+      end
+      object SizePanel: TPanel
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = GeneralPage
+        AnchorSideRight.Control = UnitPanel
+        AnchorSideBottom.Control = Msg
+        Left = 315
+        Height = 72
+        Top = 6
+        Width = 53
+        Anchors = [akTop, akRight, akBottom]
+        AutoSize = True
+        BorderSpacing.Around = 6
+        BevelOuter = bvNone
+        ClientHeight = 72
+        ClientWidth = 53
+        TabOrder = 2
+        object GeneralSize: TLabel
+          AnchorSideTop.Control = SizePanel
+          AnchorSideRight.Control = SizePanel
+          AnchorSideRight.Side = asrBottom
+          Left = 40
+          Height = 20
+          Top = 6
+          Width = 13
+          Alignment = taRightJustify
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 40
+          BorderSpacing.Top = 6
+          BorderSpacing.Bottom = 2
+          Caption = '---'
+          ParentColor = False
+        end
+        object ProcessedSize: TLabel
+          AnchorSideTop.Control = GeneralSize
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = SizePanel
+          AnchorSideRight.Side = asrBottom
+          Left = 40
+          Height = 20
+          Top = 28
+          Width = 13
+          Alignment = taRightJustify
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 40
+          BorderSpacing.Top = 2
+          BorderSpacing.Bottom = 2
+          Caption = '---'
+          ParentColor = False
+        end
+        object Speed: TLabel
+          AnchorSideTop.Control = ProcessedSize
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = SizePanel
+          AnchorSideRight.Side = asrBottom
+          Left = 40
+          Height = 20
+          Top = 50
+          Width = 13
+          Alignment = taRightJustify
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 40
+          BorderSpacing.Top = 2
+          BorderSpacing.Bottom = 2
+          Caption = '---'
+          ParentColor = False
+        end
+      end
+      object UnitPanel: TPanel
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = GeneralPage
+        AnchorSideRight.Control = GeneralPage
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Control = Msg
+        Left = 374
+        Height = 72
+        Top = 6
+        Width = 34
+        Anchors = [akTop, akRight, akBottom]
+        AutoSize = True
+        BorderSpacing.Around = 6
+        BevelOuter = bvNone
+        ClientHeight = 72
+        ClientWidth = 34
+        TabOrder = 3
+        object SpeedUnit: TLabel
+          AnchorSideLeft.Control = UnitPanel
+          AnchorSideTop.Control = ProcessedSizeUnit
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = UnitPanel
+          AnchorSideRight.Side = asrBottom
+          Left = 6
+          Height = 20
+          Top = 50
+          Width = 22
+          Anchors = [akTop, akLeft, akRight]
+          BorderSpacing.Left = 6
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 6
+          BorderSpacing.Bottom = 2
+          Caption = 'KB/s'
+          ParentColor = False
+        end
+        object ProcessedSizeUnit: TLabel
+          AnchorSideLeft.Control = UnitPanel
+          AnchorSideTop.Control = GeneralSizeUnit
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = SpeedUnit
+          AnchorSideRight.Side = asrBottom
+          Left = 6
+          Height = 20
+          Top = 28
+          Width = 13
+          BorderSpacing.Left = 6
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 6
+          BorderSpacing.Bottom = 2
+          Caption = 'KB'
+          ParentColor = False
+        end
+        object GeneralSizeUnit: TLabel
+          AnchorSideLeft.Control = UnitPanel
+          AnchorSideTop.Control = UnitPanel
+          AnchorSideRight.Control = SpeedUnit
+          AnchorSideRight.Side = asrBottom
+          Left = 6
+          Height = 20
+          Top = 6
+          Width = 13
+          BorderSpacing.Left = 6
+          BorderSpacing.Top = 6
+          BorderSpacing.Right = 6
+          BorderSpacing.Bottom = 2
+          Caption = 'KB'
+          ParentColor = False
+        end
+      end
+      object TimePanel: TPanel
+        AnchorSideLeft.Control = TimeLabelPanel
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = GeneralPage
+        AnchorSideBottom.Control = Msg
+        Left = 101
+        Height = 72
+        Top = 6
+        Width = 95
+        Anchors = [akTop, akLeft, akBottom]
+        AutoSize = True
+        BorderSpacing.Around = 6
+        BevelOuter = bvNone
+        ClientHeight = 72
+        ClientWidth = 95
+        TabOrder = 4
+        object RemainingTime: TLabel
+          AnchorSideTop.Control = Time
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = TimePanel
+          AnchorSideRight.Side = asrBottom
+          Left = 40
+          Height = 20
+          Top = 28
+          Width = 45
+          Alignment = taCenter
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 40
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
+          Caption = '00:00:00'
+          Layout = tlBottom
+          ParentColor = False
+        end
+        object Time: TLabel
+          AnchorSideTop.Control = TimePanel
+          AnchorSideRight.Control = TimePanel
+          AnchorSideRight.Side = asrBottom
+          Left = 40
+          Height = 20
+          Top = 6
+          Width = 45
+          Alignment = taCenter
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 40
+          BorderSpacing.Top = 6
+          BorderSpacing.Right = 10
+          Caption = '00:00:00'
+          Layout = tlBottom
+          ParentColor = False
+        end
+      end
+      object SizeLabelPanel: TPanel
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = GeneralPage
+        AnchorSideRight.Control = SizePanel
+        AnchorSideBottom.Control = Msg
+        Left = 222
+        Height = 72
+        Top = 6
+        Width = 87
+        Anchors = [akTop, akRight, akBottom]
+        AutoSize = True
+        BorderSpacing.Around = 6
+        BevelOuter = bvNone
+        ClientHeight = 72
+        ClientWidth = 87
+        TabOrder = 5
+        object GeneralSizeLabel: TLabel
+          AnchorSideLeft.Control = SizeLabelPanel
+          AnchorSideTop.Control = SizeLabelPanel
+          Left = 6
+          Height = 20
+          Top = 6
+          Width = 50
+          BorderSpacing.Left = 6
+          BorderSpacing.Top = 6
+          BorderSpacing.Right = 6
+          BorderSpacing.Bottom = 2
+          Caption = 'Total size:'
+          Layout = tlBottom
+          ParentColor = False
+        end
+        object ProcessedSizeLabel: TLabel
+          AnchorSideLeft.Control = SizeLabelPanel
+          AnchorSideTop.Control = GeneralSizeLabel
+          AnchorSideTop.Side = asrBottom
+          Left = 6
+          Height = 20
+          Top = 28
+          Width = 75
+          BorderSpacing.Left = 6
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 6
+          BorderSpacing.Bottom = 2
+          Caption = 'Processed size:'
+          Layout = tlBottom
+          ParentColor = False
+        end
+        object SpeedLabel: TLabel
+          AnchorSideLeft.Control = SizeLabelPanel
+          AnchorSideTop.Control = ProcessedSizeLabel
+          AnchorSideTop.Side = asrBottom
+          Left = 6
+          Height = 20
+          Top = 50
+          Width = 35
+          BorderSpacing.Left = 6
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 6
+          BorderSpacing.Bottom = 2
+          Caption = 'Speed:'
+          ParentColor = False
+        end
+      end
     end
     object ReportPage: TPage
       Caption = 'Report'
       ClientWidth = 414
-      ClientHeight = 124
+      ClientHeight = 134
       object Report: TMemo
         Left = 6
-        Height = 112
+        Height = 122
         Top = 6
         Width = 402
         Align = alClient
@@ -326,15 +515,17 @@ object TickFrm: TTickFrm
     end
   end
   object BtnSave: TBitBtn
+    AnchorSideLeft.Control = Owner
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
     Left = 6
     Height = 30
-    Top = 164
+    Top = 174
     Width = 75
-    Align = alLeft
+    Anchors = [akLeft, akBottom]
+    AutoSize = True
     BorderSpacing.Around = 6
     Caption = ' Save'
-    Constraints.MaxHeight = 30
-    Constraints.MaxWidth = 75
     Constraints.MinHeight = 30
     Constraints.MinWidth = 75
     Enabled = False
@@ -343,15 +534,18 @@ object TickFrm: TTickFrm
     TabOrder = 2
   end
   object BtnFont: TBitBtn
+    AnchorSideLeft.Control = BtnSave
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
     Left = 87
     Height = 30
-    Top = 164
+    Top = 174
     Width = 75
-    Align = alLeft
+    Anchors = [akLeft, akBottom]
+    AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Font'
-    Constraints.MaxHeight = 30
-    Constraints.MaxWidth = 75
     Constraints.MinHeight = 30
     Constraints.MinWidth = 75
     Enabled = False

@@ -155,6 +155,7 @@ type
     AppParams: TStringList;
   public
     AppInterface: TAppInterface;
+    AppPause: boolean;
   public
     constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
     procedure Sync(aMethod: TThreadMethod);
@@ -173,6 +174,7 @@ begin
   // ---
   AppInterface := aAppInterface;
   AppParams := aAppParams;
+  AppPause := False;
 end;
 
 destructor TApp.Destroy;

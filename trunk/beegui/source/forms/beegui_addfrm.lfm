@@ -1,7 +1,7 @@
 object AddFrm: TAddFrm
-  Left = 427
+  Left = 396
   Height = 339
-  Top = 176
+  Top = 183
   Width = 450
   HorzScrollBar.Page = 449
   VertScrollBar.Page = 338
@@ -27,11 +27,11 @@ object AddFrm: TAddFrm
     Height = 291
     Top = 6
     Width = 438
-    ActivePage = PageGeneral
+    ActivePage = PageAdvanced
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -594,7 +594,7 @@ object AddFrm: TAddFrm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        DefaultItemHeight = 18
+        DefaultItemHeight = 16
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
