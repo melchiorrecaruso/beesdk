@@ -85,8 +85,8 @@ uses
     {$I beegui_aboutfrm_loadlanguage.inc}
     {$I beegui_aboutfrm_loadproperty.inc}
     Logo.Transparent  := True;
-    Version.Caption   := 'BeeGui 1.0.5 [build 231]';
-    Copyright.Caption := '© 2003-2008 Andrew Filinsky and  Melchiorre Caruso';
+    Version.Caption   := 'BeeGui 1.0.5 [build 239]';
+    Copyright.Caption := '(C) 2003-2008 Andrew Filinsky and  Melchiorre Caruso';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -106,6 +106,7 @@ uses
 
   procedure TAboutFrm.FormShow(Sender: TObject);
   begin
+    (*
     if Constraints.MaxHeight = 0 then
     begin
       Constraints.MaxHeight := Height;
@@ -113,6 +114,7 @@ uses
       Constraints.MaxWidth := Width;
       Constraints.MinWidth := Width
     end;
+    *)
   end;
 
   procedure TAboutFrm.BtnOkClick(Sender: TObject);
