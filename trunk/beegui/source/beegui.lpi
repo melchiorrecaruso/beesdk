@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="5"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -383,7 +383,7 @@
         <UnitName Value="Bee_App"/>
         <CursorPos X="3" Y="257"/>
         <TopLine Value="233"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit46>
@@ -397,8 +397,8 @@
       <Unit48>
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="18" Y="151"/>
-        <TopLine Value="10"/>
+        <CursorPos X="17" Y="153"/>
+        <TopLine Value="133"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -562,7 +562,7 @@
         <ResourceFilename Value="forms\beegui_addfrm.lrs"/>
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="11" Y="68"/>
-        <TopLine Value="66"/>
+        <TopLine Value="56"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="130"/>
         <Loaded Value="True"/>
@@ -627,9 +627,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="40" Y="393"/>
-        <TopLine Value="393"/>
+        <CursorPos X="26" Y="431"/>
+        <TopLine Value="411"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="136"/>
+        <Loaded Value="True"/>
       </Unit79>
       <Unit80>
         <Filename Value="forms\beegui_aboutfrm.pas"/>
@@ -638,9 +640,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="37" Y="110"/>
-        <TopLine Value="87"/>
+        <CursorPos X="50" Y="88"/>
+        <TopLine Value="77"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="130"/>
+        <Loaded Value="True"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages\beegui_gui.pas"/>
@@ -1226,11 +1230,9 @@
       </Unit171>
       <Unit172>
         <Filename Value="..\..\..\fpc\svn\rtl\objpas\classes\classesh.inc"/>
-        <CursorPos X="50" Y="1399"/>
-        <TopLine Value="1358"/>
-        <EditorIndex Value="3"/>
+        <CursorPos X="51" Y="1394"/>
+        <TopLine Value="1408"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit172>
       <Unit173>
         <Filename Value="packages\beegui_addtreeviewmgr.pas"/>
@@ -1240,11 +1242,27 @@
         <UsageCount Value="10"/>
       </Unit173>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
-        <Filename Value="..\..\bee\source\bee_interface.pas"/>
-        <Caret Line="151" Column="18" TopLine="150"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="393" Column="40" TopLine="393"/>
       </Position1>
+      <Position2>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="277" Column="31" TopLine="257"/>
+      </Position2>
+      <Position3>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="279" Column="30" TopLine="259"/>
+      </Position3>
+      <Position4>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="424" Column="27" TopLine="404"/>
+      </Position4>
+      <Position5>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="426" Column="26" TopLine="406"/>
+      </Position5>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

@@ -274,9 +274,9 @@ var
         if FAppCanClose and (FAppTerminated = False) then
         begin
           Timer.Enabled := True;
-          if FApp.AppPause then
+          if FApp.AppSuspended then
           begin
-            FApp.AppPause := False;
+            FApp.AppSuspended := False;
           end;
         end;
         FApp.Terminate;
@@ -421,14 +421,14 @@ var
   begin
     if FAppTerminated = False then
     begin
-      if FApp.AppPause then
+      if FApp.AppSuspended then
       begin
-        FApp.AppPause := False;
+        FApp.AppSuspended := False;
         Timer.Enabled  := True;
         BtnPauseRun.Caption := rsBtnPauseCaption;
       end else
       begin
-        FApp.AppPause := True;
+        FApp.AppSuspended := True;
         Timer.Enabled  := False;
         BtnPauseRun.Caption := rsBtnRunCaption;
       end;
