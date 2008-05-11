@@ -144,13 +144,11 @@ type
     end;
   end;
 
-
-
 type
 
   // TApp class
 
-  TApp = class(TThread) 
+  TApp = class(TThread)
   protected
     AppParams: TStringList;
   public

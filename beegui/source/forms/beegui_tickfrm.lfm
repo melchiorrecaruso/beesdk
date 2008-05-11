@@ -683,7 +683,7 @@ object TickFrm: TTickFrm
   end
   object Closer: TIdleTimer
     Enabled = False
-    Interval = 1500
+    Interval = 50
     OnTimer = CloserTimer
     left = 392
   end

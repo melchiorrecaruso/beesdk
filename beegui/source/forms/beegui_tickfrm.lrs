@@ -340,5 +340,5 @@ LazarusResources.Add('TTickFrm','FORMDATA',[
   +#7'Caption'#6#6'Higher'#8'ShortCut'#3'2@'#7'OnClick'#7#10'PopupClick'#0#0#9
   +'TMenuItem'#18'Popup_TimeCritical'#7'Caption'#6#13'Time critical'#8'ShortCut'
   +#3'3@'#7'OnClick'#7#10'PopupClick'#0#0#0#10'TIdleTimer'#6'Closer'#7'Enabled'
-  +#8#8'Interval'#3#220#5#7'OnTimer'#7#11'CloserTimer'#4'left'#3#136#1#0#0#0
+  +#8#8'Interval'#2'2'#7'OnTimer'#7#11'CloserTimer'#4'left'#3#136#1#0#0#0
 ]);
