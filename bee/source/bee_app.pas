@@ -55,7 +55,7 @@ type
     constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
     destructor Destroy; override;
     procedure Execute; override;
-    function Tick: boolean;
+    function Tick: boolean; override;
   private
     function OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 
@@ -145,7 +145,7 @@ begin
   inherited Create(aAppInterface, aAppParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0719 archiver utility, freeware version, Jan 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0725 archiver utility, freeware version, May 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -253,12 +253,7 @@ begin
     Percentage  := MulDiv(ProcessedSize, 100, GeneralSize);
   end;
   Sync(AppInterface.OnTick.Method);
-  Result := Terminated;
-  
-  while AppPause do
-  begin
-    Sleep(250);
-  end;
+  Result := inherited Tick;
 end;
 
 procedure TBeeApp.SetPriority(aPriority: integer); // Priority is 0..3

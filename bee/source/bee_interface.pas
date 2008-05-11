@@ -34,7 +34,8 @@ unit Bee_Interface;
 interface
 
 uses
-  Classes;
+  Classes,
+  SysUtils;
   
 type
 
@@ -148,16 +149,17 @@ type
 
   // TApp class
 
-  TApp = class(TThread)
+  TApp = class (TThread)
   protected
     AppParams: TStringList;
   public
     AppInterface: TAppInterface;
-    AppPause: boolean;
+    AppSuspended: boolean;
   public
     constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
-    procedure Sync(aMethod: TThreadMethod);
     destructor Destroy; override;
+    procedure Sync(aMethod: TThreadMethod);
+    function Tick: boolean; virtual;
   end;
 
 implementation
@@ -172,7 +174,7 @@ begin
   // ---
   AppInterface := aAppInterface;
   AppParams := aAppParams;
-  AppPause := False;
+  AppSuspended := False;
 end;
 
 destructor TApp.Destroy;
@@ -185,6 +187,12 @@ end;
 procedure TApp.Sync(aMethod: TThreadMethod);
 begin
   Synchronize(aMethod);
+end;
+
+function TApp.Tick: boolean;
+begin
+  while AppSuspended do Sleep(250);
+  Result := Terminated;
 end;
 
 end.
