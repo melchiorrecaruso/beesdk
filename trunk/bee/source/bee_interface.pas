@@ -143,7 +143,20 @@ type
         FileSize: integer;
       end;
     end;
+    Methods: record
+      Synchronize: procedure (aMethod: TThreadMethod) of object;
+      Tick: function: boolean of object;
+    end;
+    Properties: record
+      Suspended: boolean;
+    end;
   end;
+  
+type
+
+  // TAppParams
+  
+  TAppParams = TStringList;
 
 type
 
@@ -154,11 +167,9 @@ type
     AppParams: TStringList;
   public
     AppInterface: TAppInterface;
-    AppSuspended: boolean;
   public
-    constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
+    constructor Create(aAppInterface: TAppInterface; aAppParams: TAppParams);
     destructor Destroy; override;
-    procedure Sync(aMethod: TThreadMethod);
     function Tick: boolean; virtual;
   end;
 
@@ -172,9 +183,12 @@ begin
   FreeOnTerminate := True;
   Priority := tpNormal;
   // ---
-  AppInterface := aAppInterface;
   AppParams := aAppParams;
-  AppSuspended := False;
+  // Initialize interface
+  AppInterface := aAppInterface;
+  AppInterface.Properties.Suspended := False;
+  AppInterface.Methods.Synchronize := Synchronize;
+  AppInterface.Methods.Tick := Tick;
 end;
 
 destructor TApp.Destroy;
@@ -184,14 +198,9 @@ begin
   inherited Destroy;
 end;
 
-procedure TApp.Sync(aMethod: TThreadMethod);
-begin
-  Synchronize(aMethod);
-end;
-
 function TApp.Tick: boolean;
 begin
-  while AppSuspended do Sleep(250);
+  while AppInterface.Properties.Suspended do Sleep(250);
   Result := Terminated;
 end;
 

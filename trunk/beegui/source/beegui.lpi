@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="4"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -397,8 +397,8 @@
       <Unit48>
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="17" Y="153"/>
-        <TopLine Value="133"/>
+        <CursorPos X="79" Y="159"/>
+        <TopLine Value="148"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -640,11 +640,9 @@
         <IsPartOfProject Value="True"/>
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="50" Y="88"/>
-        <TopLine Value="77"/>
-        <EditorIndex Value="5"/>
+        <CursorPos X="7" Y="99"/>
+        <TopLine Value="1"/>
         <UsageCount Value="130"/>
-        <Loaded Value="True"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages\beegui_gui.pas"/>
@@ -1242,28 +1240,7 @@
         <UsageCount Value="10"/>
       </Unit173>
     </Units>
-    <JumpHistory Count="5" HistoryIndex="4">
-      <Position1>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="393" Column="40" TopLine="393"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="277" Column="31" TopLine="257"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="279" Column="30" TopLine="259"/>
-      </Position3>
-      <Position4>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="424" Column="27" TopLine="404"/>
-      </Position4>
-      <Position5>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="426" Column="26" TopLine="406"/>
-      </Position5>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
