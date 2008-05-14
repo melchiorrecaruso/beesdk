@@ -149,6 +149,7 @@ type
     end;
     Properties: record
       Suspended: boolean;
+      Terminated: boolean;
     end;
   end;
   
@@ -170,7 +171,6 @@ type
   public
     constructor Create(aAppInterface: TAppInterface; aAppParams: TAppParams);
     destructor Destroy; override;
-    function Tick: boolean; virtual;
   end;
 
 implementation
@@ -184,11 +184,7 @@ begin
   Priority := tpNormal;
   // ---
   AppParams := aAppParams;
-  // Initialize interface
   AppInterface := aAppInterface;
-  AppInterface.Properties.Suspended := False;
-  AppInterface.Methods.Synchronize := Synchronize;
-  AppInterface.Methods.Tick := Tick;
 end;
 
 destructor TApp.Destroy;
@@ -196,12 +192,6 @@ begin
   AppInterface := nil;
   AppParams := nil;
   inherited Destroy;
-end;
-
-function TApp.Tick: boolean;
-begin
-  while AppInterface.Properties.Suspended do Sleep(250);
-  Result := Terminated;
 end;
 
 end.

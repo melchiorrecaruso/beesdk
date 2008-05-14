@@ -55,7 +55,7 @@ type
     constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
     destructor Destroy; override;
     procedure Execute; override;
-    function Tick: boolean; override;
+    function Tick: boolean;
   private
     function OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 
@@ -143,21 +143,29 @@ uses
 constructor TBeeApp.Create(aAppInterface: TAppInterface; aAppParams: TStringList);
 begin
   inherited Create(aAppInterface, aAppParams);
+
+  // Initilize AppInterface - START
+  
+  AppInterface.OnTick.Data.GeneralSize   := 0;
+  AppInterface.OnTick.Data.ProcessedSize := 0;
+
+  AppInterface.Properties.Suspended  := False;
+  AppInterface.Properties.Terminated := False;
+  
+  AppInterface.Methods.Synchronize := Synchronize;
+  AppInterface.Methods.Tick        := Tick;
+
+  // Initilize AppInterface - END
+
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0725 archiver utility, freeware version, May 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0727 archiver utility, freeware version, May 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
   FArcFile  := nil;
   FSwapName := '';
   FSwapFile := nil;
-  
-  with AppInterface.OnTick.Data do
-  begin
-    GeneralSize := 0;
-    ProcessedSize := 0;
-  end;
   
   FCfgName := SelfPath + 'bee.ini';
   FCfg := TConfiguration.Create;
@@ -185,6 +193,13 @@ end;
 
 destructor TBeeApp.Destroy;
 begin
+  // Finalize AppInterface - START
+
+  AppInterface.Properties.Suspended  := False;
+  AppInterface.Properties.Terminated := True;
+
+  // Finalize AppInterface - END
+
   FCfg.Free;
   FxOption.Free;
   FFileMasks.Free;
@@ -193,7 +208,7 @@ end;
 
 procedure TBeeApp.DisplayUsage;
 begin
-                                       AppInterface.OnDisplay.Data.Msg := (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
+                                                                   AppInterface.OnDisplay.Data.Msg := (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
   AppInterface.Methods.Synchronize(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := (Cr + '  Commands:' + Cr);
   AppInterface.Methods.Synchronize(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    a   Add files to archive');
   AppInterface.Methods.Synchronize(AppInterface.OnDisplay.Method); AppInterface.OnDisplay.Data.Msg := ('    d   Delete files from archive');
@@ -253,7 +268,7 @@ begin
     Percentage  := MulDiv(ProcessedSize, 100, GeneralSize);
   end;
   AppInterface.Methods.Synchronize(AppInterface.OnTick.Method);
-  Result := inherited Tick;
+  Result := Terminated;
 end;
 
 procedure TBeeApp.SetPriority(aPriority: integer); // Priority is 0..3
