@@ -227,12 +227,12 @@ var
   begin
     {$I beegui_tickfrm_loadlanguage.inc}
     {$I beegui_tickfrm_loadproperty.inc}
-    //{$ifdef Windows}
-    //TrayIcon.Icon.Handle := LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
-    //{$endif}
-    //TrayIcon.Hint := 'BeeCore';
-    //TrayIcon.OnClick := HandleClick;
-    //TrayIcon.Popup := Popup;
+    // {$ifdef Windows}
+    // TrayIcon.Icon.Handle := LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+    // {$endif}
+    // TrayIcon.Hint := 'BeeCore';
+    // TrayIcon.OnClick := HandleClick;
+    // TrayIcon.Popup := Popup;
     // --
     ActiveControl := BtnCancel;
     Notebook.ActivePageComponent := GeneralPage;
@@ -243,13 +243,13 @@ var
 
   procedure TTickFrm.FormWindowStateChange(Sender: TObject);
   begin
-    //if WindowState = wsNormal then
-    //begin
-      // TrayIcon.Visible := False;
-    //end else
-    //begin
-      // TrayIcon.Visible := True;
-    //end;
+    // if WindowState = wsNormal then
+    // begin
+    //  TrayIcon.Visible := False;
+    // end else
+    // begin
+    //  TrayIcon.Visible := True;
+    // end;
   end;
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -268,8 +268,7 @@ var
     begin
       if FAppTerminated = False then
       begin
-        FAppCanClose := MessageDlg(rsConfirmation, rsConfirmAbort,
-          mtConfirmation, [mbYes, mbNo], '') = mrYes;
+        FAppCanClose := MessageDlg(rsConfirmation, rsConfirmAbort, mtConfirmation, [mbYes, mbNo], '') = mrYes;
 
         if FAppCanClose and (FAppTerminated = False) then
         begin
@@ -279,7 +278,7 @@ var
             FAppInterface.Properties.Suspended := False;
           end;
         end;
-        FApp.Terminate;
+        FAppInterface.Properties.Terminated := True;
       end;
     end else
       if FAppTerminated then
@@ -423,14 +422,14 @@ var
     begin
       if FAppInterface.Properties.Suspended then
       begin
-        FAppInterface.Properties.Suspended := False;
         Timer.Enabled  := True;
         BtnPauseRun.Caption := rsBtnPauseCaption;
+        FAppInterface.Properties.Suspended := False;
       end else
       begin
-        FAppInterface.Properties.Suspended := True;
         Timer.Enabled  := False;
         BtnPauseRun.Caption := rsBtnRunCaption;
+        FAppInterface.Properties.Suspended := True;
       end;
     end;
   end;
@@ -500,6 +499,7 @@ var
   begin
     if FAppTerminated = False then
     begin
+      FAppCanClose   := True;
       FAppTerminated := True;
       Timer.Enabled := False;
 
@@ -517,7 +517,6 @@ var
         BtnFont.Enabled := True;
       end else
       begin;
-        FAppCanClose := True;
         Closer.Enabled := True;
       end;
       
@@ -653,7 +652,7 @@ var
   procedure TTickFrm.OnTick;
   begin
     Tick.Position := FAppInterface.OnTick.Data.Percentage;
-    Caption := Format(rsProcessStatus, [FApp.AppInterface.OnTick.Data.Percentage]);
+    Caption := Format(rsProcessStatus, [FAppInterface.OnTick.Data.Percentage]);
     Application.Title := Caption;
   end;
   
