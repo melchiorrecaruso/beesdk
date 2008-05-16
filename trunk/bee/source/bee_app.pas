@@ -159,7 +159,7 @@ begin
 
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0727 archiver utility, freeware version, May 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0731 archiver utility, freeware version, May 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -268,7 +268,9 @@ begin
     Percentage  := MulDiv(ProcessedSize, 100, GeneralSize);
   end;
   AppInterface.Methods.Synchronize(AppInterface.OnTick.Method);
-  Result := Terminated;
+
+  while AppInterface.Properties.Suspended do Sleep(250);
+  Result := AppInterface.Properties.Terminated;
 end;
 
 procedure TBeeApp.SetPriority(aPriority: integer); // Priority is 0..3
@@ -869,7 +871,7 @@ var
 begin
   Result := True;
   I := Headers.GetBack(Headers.Count - 1, toSwap);
-  if (I > -1) and (not Terminated) then
+  if (I > -1) and (AppInterface.Properties.Terminated = False) then
   begin
     FSwapName := GenerateFileName(FyOption);
     FSwapStrm := TFileWriter.Create(FSwapName, fmCreate);
@@ -878,7 +880,7 @@ begin
     CurrTable := Headers.Count;
 
     Decoder := TDecoder.Create(FArcFile, AppInterface); // get GeneralSize
-    while (I > -1) and (not Terminated) do
+    while (I > -1) and (AppInterface.Properties.Terminated = False) do
     begin
       iDictionary := Headers.GetBack(I, foDictionary); // find dictionary info
       iTable := Headers.GetBack(I, foTable); // find table info
@@ -898,7 +900,7 @@ begin
 
       for J := iTear to I do
       begin
-        if not Terminated then
+        if AppInterface.Properties.Terminated = False then
         begin
           if THeader(Headers.Items[J]).Action = toSwap then
             Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, FSwapStrm)
@@ -1082,7 +1084,7 @@ begin
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, AppInterface);
         for I := 0 to Headers.Count - 1 do
-          if not Terminated then
+          if AppInterface.Properties.Terminated = False then
           begin
             case THeader(Headers.Items[I]).Action of
               toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, FArcFile);
@@ -1095,7 +1097,7 @@ begin
         // rewrite Headers
         Headers.WriteItems(TmpFile);
 
-        if not Terminated then
+        if AppInterface.Properties.Terminated = False then
         begin
           AppInterface.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
           AppInterface.Methods.Synchronize(AppInterface.OnDisplay.Method);
@@ -1110,7 +1112,7 @@ begin
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
         DeleteFile(FSwapName);
-        if not Terminated then
+        if AppInterface.Properties.Terminated = False then
         begin
           SysUtils.DeleteFile(FArcName);
           if not RenameFile(TmpFileName, FArcName) then
@@ -1185,7 +1187,7 @@ begin
       Decoder := TDecoder.Create(FArcFile, AppInterface);
       for I := 0 to Headers.Count - 1 do
       begin
-        if Terminated = False then
+        if AppInterface.Properties.Terminated = False then
           case THeader(Headers.Items[I]).Action of
             toExtract: Return := Decoder.DecodeFile(Headers.Items[I], pmNorm);
             toTest:    Return := Decoder.DecodeFile(Headers.Items[I], pmTest);
@@ -1196,7 +1198,7 @@ begin
         end;
       Decoder.Destroy;
 
-      if Terminated = False then
+      if AppInterface.Properties.Terminated = False then
       begin
         if Return = True then
         begin
@@ -1269,7 +1271,7 @@ begin
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, AppInterface);
         for I := 0 to Headers.Count - 1 do
-          if not Terminated then
+          if AppInterface.Properties.Terminated = False then
           begin
             case THeader(Headers.Items[I]).Action of
               toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, FArcFile);
@@ -1283,7 +1285,7 @@ begin
         Encoder.Destroy;
         Headers.WriteItems(TmpFile);
 
-        if not Terminated then
+        if AppInterface.Properties.Terminated = False then
         begin
           AppInterface.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
           AppInterface.Methods.Synchronize(AppInterface.OnDisplay.Method);
@@ -1298,7 +1300,7 @@ begin
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(FSwapName);
-        if not Terminated then
+        if AppInterface.Properties.Terminated = False then
         begin
           SysUtils.DeleteFile(FArcName);
           if not RenameFile(TmpFileName, FArcName) then
@@ -1371,14 +1373,14 @@ begin
       Headers.WriteItems(TmpFile);
       Encoder := TEncoder.Create(TmpFile, AppInterface);
       for I := 0 to Headers.Count - 1 do
-        if not Terminated then
+        if AppInterface.Properties.Terminated = False then
         begin
           Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
         end;
       Encoder.Destroy;
       Headers.WriteItems(TmpFile);
 
-      if not Terminated then
+      if AppInterface.Properties.Terminated = False then
       begin
         AppInterface.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
         AppInterface.Methods.Synchronize(AppInterface.OnDisplay.Method);
@@ -1391,7 +1393,7 @@ begin
       if Assigned(FArcFile) then FreeAndNil(FArcFile);
       if Assigned(TmpFile) then FreeAndNil(TmpFile);
 
-      if not Terminated then
+      if AppInterface.Properties.Terminated = False then
       begin
         SysUtils.DeleteFile(FArcName);
         if not RenameFile(TmpFileName, FArcName) then

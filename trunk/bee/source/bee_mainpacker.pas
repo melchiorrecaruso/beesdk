@@ -69,7 +69,7 @@ type
 
   TEncoder = class
   public
-    constructor Create(aStream: TFileWriter; aAppInterface: TAppInterface);
+    constructor Create(aStream: TFileWriter; const aAppInterface: TAppInterface);
     destructor Destroy; override;
     function EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
     function EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
@@ -89,7 +89,7 @@ type
 
   TDecoder = class
   public
-    constructor Create(aStream: TFileReader; aAppInterface: TAppInterface);
+    constructor Create(aStream: TFileReader; const aAppInterface: TAppInterface);
     destructor Destroy; override;
     function DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
     function DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
@@ -113,7 +113,7 @@ uses
 
 /// TEncoder
 
-constructor TEncoder.Create(aStream: TFileWriter; aAppInterface: TAppInterface);
+constructor TEncoder.Create(aStream: TFileWriter; const aAppInterface: TAppInterface);
 begin
   Stream := aStream;
   SecondaryCodec := TSecondaryEncoder.Create(Stream);
@@ -393,7 +393,7 @@ end;
 
 /// TDecoder
 
-constructor TDecoder.Create(aStream: TFileReader; aAppInterface: TAppInterface);
+constructor TDecoder.Create(aStream: TFileReader; const aAppInterface: TAppInterface);
 begin
   Stream := aStream;
   SecondaryCodec := TSecondaryDecoder.Create(Stream);

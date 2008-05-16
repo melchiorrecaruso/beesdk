@@ -42,6 +42,7 @@ type
   // TAppInterface class
 
   TAppInterface = class
+  public
     OnFatalError: record
       Method: TThreadMethod;
       Answer: string;
@@ -166,10 +167,10 @@ type
   TApp = class (TThread)
   protected
     AppParams: TStringList;
-  public
     AppInterface: TAppInterface;
   public
     constructor Create(aAppInterface: TAppInterface; aAppParams: TAppParams);
+    procedure Synchronize(AMethod: TThreadMethod); overload;
     destructor Destroy; override;
   end;
 
@@ -183,8 +184,8 @@ begin
   FreeOnTerminate := True;
   Priority := tpNormal;
   // ---
-  AppParams := aAppParams;
   AppInterface := aAppInterface;
+  AppParams := aAppParams;
 end;
 
 destructor TApp.Destroy;
@@ -192,6 +193,11 @@ begin
   AppInterface := nil;
   AppParams := nil;
   inherited Destroy;
+end;
+
+procedure TApp.Synchronize(AMethod: TThreadMethod);
+begin
+  inherited Synchronize(AMethod);
 end;
 
 end.
