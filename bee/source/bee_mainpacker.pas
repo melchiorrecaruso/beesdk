@@ -44,7 +44,7 @@ uses
   Bee_Headers,
   Bee_Modeller, // TBaseCoder...
   Bee_Interface;
-
+  
 type
 
   // Extracting Modes:
@@ -62,7 +62,7 @@ type
   //   emOpt   Encode files to nul, with no messages
 
   TEncodingMode = (emNorm, emOpt);
-
+  
 type
 
   // Encoder ...

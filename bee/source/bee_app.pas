@@ -55,7 +55,7 @@ type
     constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
     destructor Destroy; override;
     procedure Execute; override;
-    function Tick: boolean;
+    function Tick: boolean; overload;
   private
     function OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 
@@ -95,7 +95,7 @@ type
     // string routines
     function VersionToStr(VersionId: cardinal): string;
     function MethodToStr(P: THeader; Method, Dictionary: integer): string;
-
+    
   private
     FSelfName: string;
 
@@ -143,23 +143,9 @@ uses
 constructor TBeeApp.Create(aAppInterface: TAppInterface; aAppParams: TStringList);
 begin
   inherited Create(aAppInterface, aAppParams);
-
-  // Initilize AppInterface - START
-  
-  AppInterface.OnTick.Data.GeneralSize   := 0;
-  AppInterface.OnTick.Data.ProcessedSize := 0;
-
-  AppInterface.Properties.Suspended  := False;
-  AppInterface.Properties.Terminated := False;
-  
-  AppInterface.Methods.Synchronize := Synchronize;
-  AppInterface.Methods.Tick        := Tick;
-
-  // Initilize AppInterface - END
-
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0737 archiver utility, freeware version, May 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0741 archiver utility, freeware version, May 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -193,13 +179,6 @@ end;
 
 destructor TBeeApp.Destroy;
 begin
-  // Finalize AppInterface - START
-
-  AppInterface.Properties.Suspended  := False;
-  AppInterface.Properties.Terminated := True;
-
-  // Finalize AppInterface - END
-
   FCfg.Free;
   FxOption.Free;
   FFileMasks.Free;
@@ -263,14 +242,12 @@ end;
 
 function TBeeApp.Tick: boolean;
 begin
+  Result := inherited Tick;
   with AppInterface.OnTick.Data do
   begin
-    Percentage  := MulDiv(ProcessedSize, 100, GeneralSize);
+    Percentage  := MulDiv(ProcessedSize, 100, TotalSize);
   end;
   AppInterface.Methods.Synchronize(AppInterface.OnTick.Method);
-
-  while AppInterface.Properties.Suspended do Sleep(250);
-  Result := AppInterface.Properties.Terminated;
 end;
 
 procedure TBeeApp.SetPriority(aPriority: integer); // Priority is 0..3
@@ -806,10 +783,10 @@ begin
         case THeader(Headers.Items[J]).Action of
            toCopy: begin
                     THeader(Headers.Items[J]).Action := toSwap;
-                    Inc(AppInterface.OnTick.Data.GeneralSize, // decoding  and Encoding size
+                    Inc(AppInterface.OnTick.Data.TotalSize, // decoding  and Encoding size
                       THeader(Headers.Items[J]).FileSize * 2);
                    end;
-          toFresh: Inc(AppInterface.OnTick.Data.GeneralSize, // decoding size
+          toFresh: Inc(AppInterface.OnTick.Data.TotalSize, // decoding size
                      THeader(Headers.Items[J]).FileSize);
         end;
       end;
@@ -817,7 +794,7 @@ begin
     end;
     I := Headers.GetBack(I - 1, toFresh);
   end;
-  Inc(AppInterface.OnTick.Data.GeneralSize,
+  Inc(AppInterface.OnTick.Data.TotalSize,
     Headers.GetPackedSize(toCopy));
 end;
 
@@ -846,10 +823,10 @@ begin
           case THeader(Headers.Items[J]).Action of
             toCopy:   begin
                         THeader(Headers.Items[J]).Action := toSwap;
-                        Inc(AppInterface.OnTick.Data.GeneralSize,
+                        Inc(AppInterface.OnTick.Data.TotalSize,
                           THeader(Headers.Items[J]).FileSize * 2);
                       end;
-            toDelete: Inc(AppInterface.OnTick.Data.GeneralSize,
+            toDelete: Inc(AppInterface.OnTick.Data.TotalSize,
                         THeader(Headers.Items[J]).FileSize);
           end;
       end;
@@ -857,7 +834,7 @@ begin
     end;
     I := Headers.GetBack(I - 1, toDelete);
   end;
-  Inc(AppInterface.OnTick.Data.GeneralSize,
+  Inc(AppInterface.OnTick.Data.TotalSize,
     Headers.GetPackedSize(toCopy));
 end;
 
@@ -978,7 +955,7 @@ begin
       if THeader(Headers.Items[J]).Action in [toNone, toQuit] then
       begin
         THeader(Headers.Items[J]).Action := toSkip;
-        Inc(AppInterface.OnTick.Data.GeneralSize,
+        Inc(AppInterface.OnTick.Data.TotalSize,
           THeader(Headers.Items[J]).FileSize);
       end;
 
@@ -1000,7 +977,7 @@ begin
   begin
     with AppInterface.OnTick.Data do
     begin
-      GeneralSize := 0;
+      TotalSize := 0;
       ProcessedSize  := 0;
     end;
     FxOption.Clear; // clear xOption
@@ -1016,7 +993,7 @@ begin
   begin
     with AppInterface.OnTick.Data do
     begin
-      GeneralSize := 0;
+      TotalSize := 0;
       ProcessedSize  := 0;
     end;
     FxOption.Clear; // clear xOption
@@ -1056,7 +1033,7 @@ begin
          FrOption,
          FuOption,
          FxOption,
-        GeneralSize);
+        TotalSize);
 
     if (Headers.GetCount([toUpdate, toFresh]) > 0) or
       ((Length(FaOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
@@ -1177,7 +1154,7 @@ begin
       ProcessFilesToOverWrite(Headers);
     end;
 
-    AppInterface.OnTick.Data.GeneralSize := Headers.GetSize(Action);
+    AppInterface.OnTick.Data.TotalSize := Headers.GetSize(Action);
     if (Headers.GetNext(0, Action) > -1) then // action = toTest or toExtract
     begin
       Time := Now;
@@ -1364,7 +1341,7 @@ begin
       TmpFileName := GenerateFileName(FyOption);
       TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
 
-      AppInterface.OnTick.Data.GeneralSize :=
+      AppInterface.OnTick.Data.TotalSize :=
         Headers.GetPackedSize([toCopy, toRename]);
 
       // set sfx module

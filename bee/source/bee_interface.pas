@@ -122,7 +122,7 @@ type
       Method: TThreadMethod;
       Answer: string;
       Data: record
-        GeneralSize: integer;
+        TotalSize: integer;
         ProcessedSize: integer;
         Percentage: integer;
       end;
@@ -170,8 +170,9 @@ type
     AppInterface: TAppInterface;
   public
     constructor Create(aAppInterface: TAppInterface; aAppParams: TAppParams);
-    procedure Synchronize(AMethod: TThreadMethod); overload;
     destructor Destroy; override;
+    function Tick: boolean;
+    procedure Synchronize(aMethod: TThreadMethod); overload;
   end;
 
 implementation
@@ -186,18 +187,59 @@ begin
   // ---
   AppInterface := aAppInterface;
   AppParams := aAppParams;
+  // ---
+  with AppInterface.Methods do
+  begin
+    Synchronize := Synchronize;
+    Tick := Tick;
+  end;
+  with AppInterface.OnTick.Data do
+  begin
+    TotalSize := 0;
+    ProcessedSize := 0;
+  end;
+  with AppInterface.Properties do
+  begin
+    Suspended := False;
+    Terminated := False;
+  end;
 end;
 
 destructor TApp.Destroy;
 begin
+  with AppInterface.Methods do
+  begin
+    Synchronize := nil;
+    Tick := nil;
+  end;
+  with AppInterface.OnTick.Data do
+  begin
+    TotalSize := 0;
+    ProcessedSize := 0;
+  end;
+  with AppInterface.Properties do
+  begin
+    Suspended := False;
+    Terminated := True;
+  end;
+  // ---
   AppInterface := nil;
   AppParams := nil;
   inherited Destroy;
 end;
 
-procedure TApp.Synchronize(AMethod: TThreadMethod);
+procedure TApp.Synchronize(aMethod: TThreadMethod);
 begin
-  inherited Synchronize(AMethod);
+  inherited Synchronize(aMethod);
+end;
+
+function TApp.Tick: boolean;
+begin
+  while AppInterface.Properties.Suspended do
+  begin
+    Sleep(250);
+  end;
+  Result := AppInterface.Properties.Terminated;
 end;
 
 end.
