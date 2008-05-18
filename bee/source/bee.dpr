@@ -45,9 +45,6 @@ uses
   {$IFDEF FPC} {$IFDEF UNIX}
   cThreads,
   {$ENDIF} {$ENDIF}
-  {$IFDEF PROFILING}
-  uLkProfiler,
-  {$ENDIF PROFILING}  
   Classes,
   SysUtils,
   // ---
@@ -227,9 +224,7 @@ var
   Console: TConsole;
 
 begin
-  {$IFDEF PROFILING} ProfileStart('Main Block'); {$ENDIF PROFILING}
   Console := TConsole.Create;
   Console.Execute;
   Console.Destroy;
-  {$IFDEF PROFILING} ProfileStop; {$ENDIF PROFILING}
 end.

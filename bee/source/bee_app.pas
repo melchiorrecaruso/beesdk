@@ -159,7 +159,7 @@ begin
 
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0733 archiver utility, freeware version, May 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0735 archiver utility, freeware version, May 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
