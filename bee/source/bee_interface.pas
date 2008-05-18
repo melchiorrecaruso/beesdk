@@ -171,7 +171,7 @@ type
   public
     constructor Create(aAppInterface: TAppInterface; aAppParams: TAppParams);
     destructor Destroy; override;
-    function Tick: boolean;
+    function  Tick: boolean; virtual;
     procedure Synchronize(aMethod: TThreadMethod); overload;
   end;
 
@@ -188,11 +188,8 @@ begin
   AppInterface := aAppInterface;
   AppParams := aAppParams;
   // ---
-  with AppInterface.Methods do
-  begin
-    Synchronize := Synchronize;
-    Tick := Tick;
-  end;
+  AppInterface.Methods.Synchronize := Synchronize;
+  AppInterface.Methods.Tick := Tick;
   with AppInterface.OnTick.Data do
   begin
     TotalSize := 0;
@@ -207,11 +204,8 @@ end;
 
 destructor TApp.Destroy;
 begin
-  with AppInterface.Methods do
-  begin
-    Synchronize := nil;
-    Tick := nil;
-  end;
+  AppInterface.Methods.Synchronize := nil;
+  AppInterface.Methods.Tick := nil;
   with AppInterface.OnTick.Data do
   begin
     TotalSize := 0;

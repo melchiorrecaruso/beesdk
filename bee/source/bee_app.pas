@@ -55,7 +55,7 @@ type
     constructor Create(aAppInterface: TAppInterface; aAppParams: TStringList);
     destructor Destroy; override;
     procedure Execute; override;
-    function Tick: boolean; overload;
+    function Tick: boolean; override;
   private
     function OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 
