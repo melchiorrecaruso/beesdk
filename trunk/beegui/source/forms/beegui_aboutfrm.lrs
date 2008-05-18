@@ -1,3 +1,5 @@
+{ Questo è un file risorse generato automaticamente da Lazarus }
+
 LazarusResources.Add('TAboutFrm','FORMDATA',[
   'TPF0'#9'TAboutFrm'#8'AboutFrm'#4'Left'#3#8#2#6'Height'#3#188#0#3'Top'#3#217#0
   +#5'Width'#3#15#1#18'HorzScrollBar.Page'#3#14#1#18'VertScrollBar.Page'#3#187#0

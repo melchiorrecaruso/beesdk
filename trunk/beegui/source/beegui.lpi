@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -383,7 +383,7 @@
         <UnitName Value="Bee_App"/>
         <CursorPos X="37" Y="149"/>
         <TopLine Value="128"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit46>
@@ -628,7 +628,7 @@
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="16" Y="513"/>
-        <TopLine Value="494"/>
+        <TopLine Value="489"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="137"/>
         <Loaded Value="True"/>
@@ -638,11 +638,14 @@
         <ComponentName Value="AboutFrm"/>
         <HasResources Value="True"/>
         <IsPartOfProject Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="7" Y="99"/>
-        <TopLine Value="1"/>
+        <CursorPos X="50" Y="88"/>
+        <TopLine Value="61"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="131"/>
+        <Loaded Value="True"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages\beegui_gui.pas"/>
@@ -1269,6 +1272,9 @@
       </Optimizations>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
       <LinkSmart Value="True"/>
       <Options>
         <Win32>
