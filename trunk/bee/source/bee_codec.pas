@@ -25,8 +25,9 @@
   Modifyed:
 
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-
-  v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky.
+  v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
+  
+  v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
 }
 
 unit Bee_Codec;
@@ -106,7 +107,7 @@ var
 begin
   // Count CumFreq...
   CumFreq := 0;
-  I := 0;
+  I := CumFreq;
   while I < aSymbol do
   begin
     Inc(CumFreq, Freq[I]);
@@ -165,7 +166,7 @@ begin
   CumFreq := GetFreq(TotFreq);
   // Search aSymbol...
   SumFreq := 0;
-  aSymbol := 0;
+  aSymbol := SumFreq;
   while SumFreq + Freq[aSymbol] <= CumFreq do
   begin
     Inc(SumFreq, Freq[aSymbol]);
