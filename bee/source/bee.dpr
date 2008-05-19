@@ -20,21 +20,21 @@
 
   The data compression utility.
 
-  Features:
+    Features:
 
-  1. Uses context modelling and some variant of arithmetic encoding.
-  2. Uses integer arithmetic only.
-  3. Uses half-byte alphabet.
+    1. Uses context modelling and some variant of arithmetic encoding.
+    2. Uses integer arithmetic only.
+    3. Uses half-byte alphabet.
 
   Modifyed:
 
-  v0.7.8 build 0150 - 2005.06.27 by Melchiorre Caruso;
-  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-  v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
-  v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
-  v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
+    v0.7.8 build 0150 - 2005.06.27 by Melchiorre Caruso;
+    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+    v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
+    v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
+    v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-  v0.7.9 build 0725 - 2008.05.11 by Melchiorre Caruso.
+    v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -60,8 +60,8 @@ type
   private
     App: TBeeApp;
     AppKey: string;
-    AppInterface: TAppInterface;
-    AppParams: TStringList;
+    AppInterfaces: TInterfaces;
+    AppParams: TParams;
     procedure OnFatalError;
     procedure OnOverWrite;
     procedure OnWarning;
@@ -88,19 +88,18 @@ type
     I: integer;
   begin
     inherited Create;
-
-    AppInterface := TAppInterface.Create;
-    AppInterface.OnFatalError.Method := OnFatalError;
-    AppInterface.OnOverWrite.Method := OnOverWrite;
-    AppInterface.OnWarning.Method := OnWarning;
-    AppInterface.OnDisplay.Method := OnDisplay;
-    AppInterface.OnRequest.Method := OnRequest;
-    AppInterface.OnRename.Method := OnRename;
-    AppInterface.OnClear.Method := OnClear;
-    AppInterface.OnError.Method := OnError;
-    AppInterface.OnList.Method := OnList;
-    AppInterface.OnTick.Method := OnTick;
-    AppInterface.OnKey.Method := OnKey;
+    AppInterfaces := TInterfaces.Create;
+    AppInterfaces.OnFatalError.Method := OnFatalError;
+    AppInterfaces.OnOverWrite.Method := OnOverWrite;
+    AppInterfaces.OnWarning.Method := OnWarning;
+    AppInterfaces.OnDisplay.Method := OnDisplay;
+    AppInterfaces.OnRequest.Method := OnRequest;
+    AppInterfaces.OnRename.Method := OnRename;
+    AppInterfaces.OnClear.Method := OnClear;
+    AppInterfaces.OnError.Method := OnError;
+    AppInterfaces.OnList.Method := OnList;
+    AppInterfaces.OnTick.Method := OnTick;
+    AppInterfaces.OnKey.Method := OnKey;
 
     SetLength(AppKey, 0);
     AppParams := TStringList.Create;
@@ -108,13 +107,13 @@ type
     begin
       AppParams.Add(ParamStr(I));
     end;
-    App := TBeeApp.Create(AppInterface, AppParams);
+    App := TBeeApp.Create(AppInterfaces, AppParams);
   end;
 
   destructor TConsole.Destroy;
   begin
     SetLength(AppKey, 0);
-    AppInterface.Destroy;
+    AppInterfaces.Destroy;
     AppParams.Destroy;
     inherited Destroy;
   end;
@@ -126,19 +125,19 @@ type
 
   procedure TConsole.OnFatalError;
   begin
-    Writeln(ParamToOem(AppInterface.OnFatalError.Data.Msg));
+    Writeln(ParamToOem(AppInterfaces.OnFatalError.Data.Msg));
   end;
 
   procedure TConsole.OnOverWrite;
   begin
     Writeln;
-    with AppInterface.OnOverWrite.Data do
+    with AppInterfaces.OnOverWrite.Data do
     begin
       Writeln('"' + ParamToOem(FilePath + FileName) + '" already exists.');
     end;
     Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
     // not convert oem to param
-    Readln(AppInterface.OnOverWrite.Answer);
+    Readln(AppInterfaces.OnOverWrite.Answer);
     Writeln;
   end;
 
@@ -153,45 +152,45 @@ type
       // convert oem to param
       AppKey := OemToParam(AppKey);
     end;
-    AppInterface.OnKey.Answer := AppKey;
+    AppInterfaces.OnKey.Answer := AppKey;
   end;
 
   procedure TConsole.OnRename;
   begin
     Writeln;
-    with AppInterface.OnRename.Data do
+    with AppInterfaces.OnRename.Data do
     begin
       Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
     end;
-    Readln(AppInterface.OnRename.Answer);
+    Readln(AppInterfaces.OnRename.Answer);
     Writeln;
     // convert oem to param
-    AppInterface.OnRename.Answer := OemToParam(AppInterface.OnRename.Answer);
+    AppInterfaces.OnRename.Answer := OemToParam(AppInterfaces.OnRename.Answer);
   end;
 
   procedure TConsole.OnWarning;
   begin
-    Writeln(ParamToOem(AppInterface.OnWarning.Data.Msg));
+    Writeln(ParamToOem(AppInterfaces.OnWarning.Data.Msg));
   end;
 
   procedure TConsole.OnDisplay;
   begin
-    Writeln(ParamToOem(AppInterface.OnDisplay.Data.Msg));
+    Writeln(ParamToOem(AppInterfaces.OnDisplay.Data.Msg));
   end;
 
   procedure Tconsole.OnRequest;
   begin
-    Writeln(ParamToOem(AppInterface.OnRequest.Data.Msg));
+    Writeln(ParamToOem(AppInterfaces.OnRequest.Data.Msg));
   end;
 
   procedure TConsole.OnError;
   begin
-    Writeln(ParamToOem(AppInterface.OnError.Data.Msg));
+    Writeln(ParamToOem(AppInterfaces.OnError.Data.Msg));
   end;
 
   procedure TConsole.OnList;
   begin
-    with AppInterface.OnList.Data do
+    with AppInterfaces.OnList.Data do
     begin
       Writeln(ParamToOem(FilePath + FileName));
       Writeln(ParamToOem(StringOfChar(' ', 15) +
@@ -210,7 +209,7 @@ type
   procedure TConsole.OnTick;
   begin
     // not convert oem to param
-    Write(#8#8#8#8#8#8#8 + Format('  (%d%%)', [AppInterface.OnTick.Data.Percentage]));
+    Write(#8#8#8#8#8#8#8 + Format('  (%d%%)', [AppInterfaces.OnTick.Data.Percentage]));
   end;
 
   procedure TConsole.OnClear;

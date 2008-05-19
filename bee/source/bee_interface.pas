@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.7.9 build 0627 - 2008.02.11 by Melchiorre Caruso.
+    v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -39,9 +39,9 @@ uses
   
 type
 
-  // TAppInterface class
+  // TInterfaces class
 
-  TAppInterface = class
+  TInterfaces = class
   public
     OnFatalError: record
       Method: TThreadMethod;
@@ -144,10 +144,6 @@ type
         FileSize: integer;
       end;
     end;
-    Methods: record
-      Synchronize: procedure (aMethod: TThreadMethod) of object;
-      Tick: function: boolean of object;
-    end;
     Properties: record
       Suspended: boolean;
       Terminated: boolean;
@@ -156,84 +152,63 @@ type
   
 type
 
-  // TAppParams
+  // TParams ...
   
-  TAppParams = TStringList;
+  TParams = TStringList;
+  
+type
+
+  // TSynchronizer ...
+
+  TSynchronizer =  procedure (aMethod: TThreadMethod) of object;
 
 type
 
-  // TApp class
+  // TApp class ...
 
   TApp = class (TThread)
   protected
-    AppParams: TStringList;
-    AppInterface: TAppInterface;
+    Interfaces: TInterfaces;
+    Params: TStringList;
   public
-    constructor Create(aAppInterface: TAppInterface; aAppParams: TAppParams);
-    destructor Destroy; override;
-    function  Tick: boolean; virtual;
+    constructor Create(aInterfaces: TInterfaces; aParams: TParams);
     procedure Synchronize(aMethod: TThreadMethod); overload;
+    destructor Destroy; override;
   end;
 
 implementation
 
-// TApp class
+// TApp class ...
 
-constructor TApp.Create(aAppInterface: TAppInterface; aAppParams: TStringList);
+constructor TApp.Create(aInterfaces: TInterfaces; aParams: TParams);
 begin
   inherited Create(True);
   FreeOnTerminate := True;
   Priority := tpNormal;
   // ---
-  AppInterface := aAppInterface;
-  AppParams := aAppParams;
-  // ---
-  AppInterface.Methods.Synchronize := Synchronize;
-  AppInterface.Methods.Tick := Tick;
-  with AppInterface.OnTick.Data do
-  begin
-    TotalSize := 0;
-    ProcessedSize := 0;
-  end;
-  with AppInterface.Properties do
-  begin
-    Suspended := False;
-    Terminated := False;
-  end;
+  Params := aParams;
+  Interfaces := aInterfaces;
+  Interfaces.OnTick.Data.TotalSize := 0;
+  Interfaces.OnTick.Data.ProcessedSize := 0;
+  Interfaces.Properties.Suspended := False;
+  Interfaces.Properties.Terminated := False;
 end;
 
 destructor TApp.Destroy;
 begin
-  AppInterface.Methods.Synchronize := nil;
-  AppInterface.Methods.Tick := nil;
-  with AppInterface.OnTick.Data do
-  begin
-    TotalSize := 0;
-    ProcessedSize := 0;
-  end;
-  with AppInterface.Properties do
-  begin
-    Suspended := False;
-    Terminated := True;
-  end;
+  Interfaces.OnTick.Data.TotalSize := 0;
+  Interfaces.OnTick.Data.ProcessedSize := 0;
+  Interfaces.Properties.Suspended := False;
+  Interfaces.Properties.Terminated := True;
   // ---
-  AppInterface := nil;
-  AppParams := nil;
+  Params := nil;
+  Interfaces := nil;
   inherited Destroy;
 end;
 
 procedure TApp.Synchronize(aMethod: TThreadMethod);
 begin
   inherited Synchronize(aMethod);
-end;
-
-function TApp.Tick: boolean;
-begin
-  while AppInterface.Properties.Suspended do
-  begin
-    Sleep(250);
-  end;
-  Result := AppInterface.Properties.Terminated;
 end;
 
 end.

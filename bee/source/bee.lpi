@@ -10,7 +10,7 @@
       <MainUnit Value="0"/>
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="12"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
@@ -25,53 +25,184 @@
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="3">
+    <Units Count="19">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <CursorPos X="56" Y="111"/>
-        <TopLine Value="120"/>
+        <CursorPos X="3" Y="37"/>
+        <TopLine Value="11"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="135"/>
+        <UsageCount Value="140"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="37" Y="174"/>
-        <TopLine Value="148"/>
+        <CursorPos X="1" Y="32"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="17"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="bee_app.pas"/>
-        <UnitName Value="Bee_App"/>
-        <CursorPos X="14" Y="58"/>
-        <TopLine Value="38"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="12"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <UnitName Value="Bee_MainPacker"/>
+        <CursorPos X="26" Y="30"/>
+        <TopLine Value="11"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit2>
-    </Units>
-    <JumpHistory Count="4" HistoryIndex="3">
-      <Position1>
-        <Filename Value="bee_interface.pas"/>
-        <Caret Line="149" Column="8" TopLine="130"/>
-      </Position1>
-      <Position2>
-        <Filename Value="bee_interface.pas"/>
-        <Caret Line="194" Column="6" TopLine="173"/>
-      </Position2>
-      <Position3>
-        <Filename Value="bee_interface.pas"/>
-        <Caret Line="149" Column="7" TopLine="127"/>
-      </Position3>
-      <Position4>
+      <Unit3>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="58" Column="37" TopLine="47"/>
-      </Position4>
+        <UnitName Value="Bee_App"/>
+        <CursorPos X="33" Y="32"/>
+        <TopLine Value="21"/>
+        <EditorIndex Value="9"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="bee.include\compiler.inc"/>
+        <CursorPos X="30" Y="25"/>
+        <TopLine Value="2"/>
+        <EditorIndex Value="18"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="bee_assembler.pas"/>
+        <UnitName Value="Bee_Assembler"/>
+        <CursorPos X="33" Y="27"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="10"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="bee_blowfish.pas"/>
+        <UnitName Value="Bee_BlowFish"/>
+        <CursorPos X="55" Y="31"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="11"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="bee_codec.pas"/>
+        <UnitName Value="Bee_Codec"/>
+        <CursorPos X="6" Y="95"/>
+        <TopLine Value="10"/>
+        <EditorIndex Value="12"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="bee_common.pas"/>
+        <UnitName Value="Bee_Common"/>
+        <CursorPos X="33" Y="30"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="13"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="bee_configuration.pas"/>
+        <UnitName Value="Bee_Configuration"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="16"/>
+        <EditorIndex Value="14"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="bee_crc.pas"/>
+        <UnitName Value="Bee_Crc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="15"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="bee_files.pas"/>
+        <UnitName Value="Bee_Files"/>
+        <CursorPos X="33" Y="30"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="16"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="bee_headers.pas"/>
+        <UnitName Value="Bee_Headers"/>
+        <CursorPos X="55" Y="30"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="17"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="bee_interface_base.pas"/>
+        <UnitName Value="Bee_Interface_Base"/>
+        <CursorPos X="18" Y="30"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="bee_modeller.pas"/>
+        <UnitName Value="Bee_Modeller"/>
+        <CursorPos X="33" Y="29"/>
+        <TopLine Value="11"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="bee_rangecoder0.pas"/>
+        <UnitName Value="Bee_RangeCoder0"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="bee_rangecoder1.pas"/>
+        <UnitName Value="Bee_RangeCoder1"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="bee_rangecoder.pas"/>
+        <UnitName Value="Bee_RangeCoder"/>
+        <CursorPos X="54" Y="43"/>
+        <TopLine Value="21"/>
+        <EditorIndex Value="7"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="bee_rangecoderb.pas"/>
+        <UnitName Value="Bee_RangeCoderB"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="8"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit18>
+    </Units>
+    <JumpHistory Count="1" HistoryIndex="0">
+      <Position1>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="45" Column="33" TopLine="36"/>
+      </Position1>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
