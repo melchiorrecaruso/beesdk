@@ -26,7 +26,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-  v0.7.9 build 0485 - 2007.11.17 by Melchiorre Caruso.
+  v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
 }
 
 unit Bee_Modeller;

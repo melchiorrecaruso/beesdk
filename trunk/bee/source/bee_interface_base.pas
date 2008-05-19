@@ -1,4 +1,33 @@
+{
+  Copyright (c) 2005-2008 Andrew Filinsky and Melchiorre Caruso
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
+
+{ Contains:
+
+    TThreadEx, abstract class of Thread.
+
+  Modifyed:
+
+    v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso;
+}
+
 unit Bee_Interface_Base;
+
+{$I compiler.inc}
 
 interface
 
