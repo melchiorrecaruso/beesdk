@@ -284,7 +284,6 @@ object TickFrm: TTickFrm
         Constraints.MaxHeight = 20
         Constraints.MinHeight = 20
         Max = 100
-        Smooth = True
         TabOrder = 0
       end
       object TimeLabelPanel: TPanel
@@ -680,11 +679,5 @@ object TickFrm: TTickFrm
       ShortCut = 16435
       OnClick = PopupClick
     end
-  end
-  object Closer: TIdleTimer
-    Enabled = False
-    Interval = 50
-    OnTimer = CloserTimer
-    left = 392
   end
 end

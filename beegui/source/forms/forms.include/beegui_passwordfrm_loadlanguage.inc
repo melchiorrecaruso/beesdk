@@ -12,10 +12,10 @@
 
     // ---
 
-    KeyLabel.Caption        := Storage.ReadString('TLabel', 'KeyLabel.Caption', KeyLabel.Caption);
-    ConfirmKeyLabel.Caption := Storage.ReadString('TLabel', 'ConfirmKeyLabel.Caption', ConfirmKeyLabel.Caption);
+    PasswordLabel.Caption        := Storage.ReadString('TLabel', 'PasswordLabel.Caption', PasswordLabel.Caption);
+    ConfirmPasswordLabel.Caption := Storage.ReadString('TLabel', 'ConfirmPasswordLabel.Caption', ConfirmPasswordLabel.Caption);
 
-    MaskKey.Caption         := Storage.ReadString('TCheckBox', 'MaskKey.Caption', MaskKey.Caption);
+    MaskPassword.Caption         := Storage.ReadString('TCheckBox', 'MaskPassword.Caption', MaskPassword.Caption);
 
     BtnClear.Caption  := Storage.ReadString('TBitBtn', 'BtnClear.Caption', BtnClear.Caption);
     BtnOk.Caption     := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);

@@ -160,7 +160,7 @@ begin
   Sync(Interfaces.OnTick.Method);
 
   while Interfaces.Properties.Suspended do Sleep(250);
-  Result := Interfaces.Properties.Terminated;
+  Result := Interfaces.Properties.Aborted;
 end;
 
 function TEncoder.EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
@@ -451,7 +451,7 @@ begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
   end;
   Sync(Interfaces.OnTick.Method);
-  Result := Interfaces.Properties.Terminated;
+  Result := Interfaces.Properties.Aborted;
 end;
 
 function TDecoder.DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;

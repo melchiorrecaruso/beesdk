@@ -12,10 +12,10 @@
 
     // ---
 
-    Storage.WriteString('TLabel', 'KeyLabel.Caption', KeyLabel.Caption);
-    Storage.WriteString('TLabel', 'ConfirmKeyLabel.Caption', ConfirmKeyLabel.Caption);
+    Storage.WriteString('TLabel', 'PasswordLabel.Caption', PasswordLabel.Caption);
+    Storage.WriteString('TLabel', 'ConfirmPasswordLabel.Caption', ConfirmPasswordLabel.Caption);
     
-    Storage.WriteString('TCheckBox', 'MaskKey.Caption', MaskKey.Caption);
+    Storage.WriteString('TCheckBox', 'MaskPassword.Caption', MaskPassword.Caption);
     
     Storage.WriteString('TBitBtn', 'BtnClear.Caption', BtnClear.Caption);
     Storage.WriteString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);

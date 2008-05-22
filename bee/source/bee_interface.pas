@@ -145,8 +145,9 @@ type
       end;
     end;
     Properties: record
-      Suspended: boolean;
       Terminated: boolean;
+      Suspended: boolean;
+      Aborted: boolean;
     end;
   end;
   
@@ -190,16 +191,18 @@ begin
   Interfaces := aInterfaces;
   Interfaces.OnTick.Data.TotalSize := 0;
   Interfaces.OnTick.Data.ProcessedSize := 0;
-  Interfaces.Properties.Suspended := False;
   Interfaces.Properties.Terminated := False;
+  Interfaces.Properties.Suspended := False;
+  Interfaces.Properties.Aborted := False;
 end;
 
 destructor TApp.Destroy;
 begin
   Interfaces.OnTick.Data.TotalSize := 0;
   Interfaces.OnTick.Data.ProcessedSize := 0;
-  Interfaces.Properties.Suspended := False;
   Interfaces.Properties.Terminated := True;
+  Interfaces.Properties.Suspended := False;
+  Interfaces.Properties.Aborted := False;
   // ---
   Params := nil;
   Interfaces := nil;
