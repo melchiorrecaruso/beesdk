@@ -63,7 +63,6 @@ type
 
   TTickFrm = class(TForm)
     FontDialog: TFontDialog;
-    Closer: TIdleTimer;
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
     GeneralSizeUnit: TLabel;
@@ -103,7 +102,6 @@ type
     BtnPauseRun: TBitBtn;
     BtnCancel: TBitBtn;
     // ---
-    procedure CloserTimer(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
@@ -133,30 +131,23 @@ type
     procedure OnError;
     procedure OnClear;
     procedure OnList;
-    procedure OnSwitch;
     procedure OnTick;
     procedure OnKey;
   private
     { private declarations }
-    FApp: TBeeApp;
-    FAppKey: string;
-    FAppContents: TStringList;
-    FAppInterface: TAppInterface;
-    FAppTerminated: boolean;
-    FAppCanClose: boolean;
-    FTime: integer;
-    FSwitch: boolean;
-    FSwitchValue: integer;
+    FInterfaces: TInterfaces;
+    FContents: TStringList;
     FCmdLine: TCmdLine;
+    FPassword: string;
+    FTime: integer;
+    FApp: TBeeApp;
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure StartApp(ACmdLine: TCmdLine);
   public
-    property Terminated: boolean read FAppTerminated;
-    property CanClose: boolean read FAppCanClose;
-    property Switch: boolean read FSwitch;
+    property Terminated: boolean read FInterfaces.Properties.Terminated;
   end;
   
 implementation
@@ -176,32 +167,27 @@ var
   
   { TTickFrm class }
   
-  constructor TTickFrm.Create(AOwner: TComponent);
+  constructor TTickFrm.Create(AOwner: TComponent); //OK
   begin
     inherited Create(AOwner);
     // ---
-    FAppInterface := TAppInterface.Create;
-    FAppInterface.OnFatalError.Method := OnFatalError;
-    FAppInterface.OnOverWrite.Method := OnOverWrite;
-    FAppInterface.OnWarning.Method := OnWarning;
-    FAppInterface.OnDisplay.Method := OnDisplay;
-    FAppInterface.OnRequest.Method := OnRequest;
-    FAppInterface.OnRename.Method := OnRename;
-    FAppInterface.OnClear.Method := OnClear;
-    FAppInterface.OnError.Method := OnError;
-    FAppInterface.OnList.Method := OnList;
-    FAppInterface.OnTick.Method := OnSwitch;
-    FAppInterface.OnKey.Method := OnKey;
+    FInterfaces := TInterfaces.Create;
+    FInterfaces.OnFatalError.Method := OnFatalError;
+    FInterfaces.OnOverWrite.Method := OnOverWrite;
+    FInterfaces.OnWarning.Method := OnWarning;
+    FInterfaces.OnDisplay.Method := OnDisplay;
+    FInterfaces.OnRequest.Method := OnRequest;
+    FInterfaces.OnRename.Method := OnRename;
+    FInterfaces.OnClear.Method := OnClear;
+    FInterfaces.OnError.Method := OnError;
+    FInterfaces.OnList.Method := OnList;
+    FInterfaces.OnTick.Method := OnTick;
+    FInterfaces.OnKey.Method := OnKey;
     // ---
-    FAppContents := TStringList.Create;
-    FAppTerminated := False;
-    FAppCanClose := False;
-    FAppKey := '';
-    // ---
-    FTime := 0;
+    FContents := TStringList.Create;
     FCmdLine := nil;
-    FSwitch := False;
-    FSwitchValue := $FFFF;
+    FPassword := '';
+    FTime := 0;
     {$IFDEF UNIX}
       // BtnPriority.Enabled := False;
       // BtnPriority.Visible := False;
@@ -210,13 +196,13 @@ var
     {$ENDIF}
   end;
   
-  destructor TTickFrm.Destroy;
+  destructor TTickFrm.Destroy; //OK
   begin
-    FAppInterface.Free;
-    FAppContents.Free;
-    FAppKey := '';
-    // ---
+    FInterfaces.Free;
+    FContents.Free;
     FCmdLine := nil;
+    FPassword := '';
+    // ---
     inherited Destroy;
   end;
   
@@ -234,11 +220,11 @@ var
     // TrayIcon.OnClick := HandleClick;
     // TrayIcon.Popup := Popup;
     // --
-    ActiveControl := BtnCancel;
-    Notebook.ActivePageComponent := GeneralPage;
-    // ---
     BtnPauseRun.Caption := rsBtnPauseCaption;
-    BtnCancel.Caption := rsBtnCancelCaption;
+    BtnCancel  .Caption := rsBtnCancelCaption;
+    // ---
+    ActiveControl                := BtnCancel;
+    Notebook.ActivePageComponent := GeneralPage;
   end;
 
   procedure TTickFrm.FormWindowStateChange(Sender: TObject);
@@ -263,34 +249,21 @@ var
 
   procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
   begin
-    CanClose := FAppCanClose;
-    if FAppCanClose = False then
+    if FInterfaces.Properties.Terminated then
     begin
-      if FAppTerminated = False then
-      begin
-        FAppCanClose := MessageDlg(rsConfirmation, rsConfirmAbort, mtConfirmation, [mbYes, mbNo], '') = mrYes;
 
-        if FAppCanClose and (FAppTerminated = False) then
-        begin
-          Timer.Enabled := True;
-          if FAppInterface.Properties.Suspended then
-          begin
-            FAppInterface.Properties.Suspended := False;
-          end;
-        end;
-        FAppInterface.Properties.Terminated := True;
-      end;
+    
+    
     end else
-      if FAppTerminated then
-        Closer.Enabled := True;
-  end;
-  
-  procedure TTickFrm.CloserTimer(Sender: TObject);
-  begin
-    if FAppCanClose then
     begin
-      Closer.Enabled := False;
-      Close;
+      if MessageDlg(rsConfirmation, rsConfirmAbort, mtConfirmation, [mbYes, mbNo], '') = mrYes then
+      begin
+        if FInterfaces.Properties.Suspended then
+        begin
+          FInterfaces.Properties.Suspended := False;
+        end;
+        FInterfaces.Properties.Terminated := True;
+      end;
     end;
   end;
   
@@ -306,7 +279,7 @@ var
     Popup_Higher      .Checked := Sender = Popup_Higher;
     Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
 
-    if FAppTerminated = False then
+    if FInterfaces.Properties.Terminated = False then
     begin
       if Popup_Idle        .Checked then FApp.Priority := tpIdle;
       if Popup_Normal      .Checked then FApp.Priority := tpNormal;
@@ -320,10 +293,10 @@ var
     FCmdLine := ACmdLine;
     if FCmdLine.Log then
     begin
-      FSwitchValue := -1;
+
     end;
     // ---
-    FApp := TBeeApp.Create(FAppInterface, FCmdLine.Params);
+    FApp := TBeeApp.Create(FInterfaces, FCmdLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
   end;
@@ -336,20 +309,20 @@ var
   
   procedure TTickFrm.OnStartTimer(Sender: TObject);
   begin
-    with FAppInterface.OnTick.Data do
+    with FInterfaces.OnTick.Data do
     begin
-      if GeneralSize < (1024) then
+      if TotalSize < (1024) then
       begin
-        Self.GeneralSize.Caption := IntToStr(GeneralSize);
+        Self.GeneralSize.Caption := IntToStr(TotalSize);
         Self.GeneralSizeUnit.Caption := 'B';
       end else
-        if GeneralSize < (1024*1024) then
+        if TotalSize < (1024*1024) then
         begin
-          Self.GeneralSize.Caption := IntToStr(GeneralSize shr 10);
+          Self.GeneralSize.Caption := IntToStr(TotalSize shr 10);
           Self.GeneralSizeUnit.Caption := 'KB';
         end else
         begin
-          Self.GeneralSize.Caption := IntToStr(GeneralSize shr 20);
+          Self.GeneralSize.Caption := IntToStr(TotalSize shr 20);
           Self.GeneralSizeUnit.Caption := 'MB';
         end;
     end;
@@ -360,7 +333,7 @@ var
     iSpeed: integer;
     iRemainSize: integer;
   begin
-    with FAppInterface.OnTick.Data do
+    with FInterfaces.OnTick.Data do
     begin
       if ProcessedSize < (1024) then
       begin
@@ -378,7 +351,7 @@ var
         end;
       Inc(FTime);
       iSpeed := ProcessedSize div FTime;
-      iRemainSize := GeneralSize - ProcessedSize;
+      iRemainSize := TotalSize - ProcessedSize;
     end;
     Time.Caption := TimeToStr(FTime);
     Speed.Caption := IntToStr(iSpeed shr 10);
@@ -393,7 +366,7 @@ var
     F: TViewFrm;
     I: integer;
   begin
-    if FAppTerminated then
+    if FInterfaces.Properties.Terminated then
     begin
       Caption := rsProcessTerminated;
       Application.Title := rsProcessTerminated;
@@ -418,18 +391,18 @@ var
 
   procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
   begin
-    if FAppTerminated = False then
+    if FInterfaces.Properties.Terminated = False then
     begin
-      if FAppInterface.Properties.Suspended then
+      if FInterfaces.Properties.Suspended then
       begin
         Timer.Enabled  := True;
         BtnPauseRun.Caption := rsBtnPauseCaption;
-        FAppInterface.Properties.Suspended := False;
+        FInterfaces.Properties.Suspended := False;
       end else
       begin
         Timer.Enabled  := False;
         BtnPauseRun.Caption := rsBtnRunCaption;
-        FAppInterface.Properties.Suspended := True;
+        FInterfaces.Properties.Suspended := True;
       end;
     end;
   end;
@@ -494,13 +467,9 @@ var
   // BeeApp Events
   
   procedure TTickFrm.OnTerminate(Sender: TObject);
-  var
-    F: TViewFrm;
   begin
-    if FAppTerminated = False then
+    if FInterfaces.Properties.Terminated = False then
     begin
-      FAppCanClose   := True;
-      FAppTerminated := True;
       Timer.Enabled := False;
 
       BtnCancel.Kind      := bkClose;
@@ -520,96 +489,124 @@ var
         Closer.Enabled := True;
       end;
       
-      if (FAppContents.Count > 0) and (FCmdLine.Link <> '') then
+      if (FContents.Count > 0) and (FCmdLine.Link <> '') then
       begin
-        FAppContents.SaveToFile(FCmdLine.Link);
+        FContents.SaveToFile(FCmdLine.Link);
       end;
     end;
   end;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // 0K
+  
   procedure TTickFrm.OnOverwrite;
   var
     F: TOverWriteFrm;
   begin
-    if FAppTerminated = False then
+    if FInterfaces.Properties.Terminated = False then
     begin;
       F := TOverWriteFrm.Create(Application);
-      with FAppInterface.OnOverWrite.Data do
+      with FInterfaces.OnOverWrite do
       begin
-        F.SetFileName(FileName);
-        F.SetNewFileTime(FileTime);
-        F.SetNewFileSize(FileSize);
-        F.SetOldFileTime(FileAge(FileName));
-        F.SetOldFileSize(SizeOfFile(FileName));
-      end;
-      case F.ShowModal of
-        mrAbort   : FAppInterface.OnOverWrite.Answer := 'Q';
-        mrNoToAll : FAppInterface.OnOverWrite.Answer := 'S';
-        mrYesToAll: FAppInterface.OnOverWrite.Answer := 'A';
-        mrNo      : FAppInterface.OnOverWrite.Answer := 'N';
-        mrYes     : FAppInterface.OnOverWrite.Answer := 'Y';
-        else        FAppInterface.OnOverWrite.Answer := 'N';
+        F.SetFileName(Data.FileName);
+        F.SetNewFileTime(Data.FileTime);
+        F.SetNewFileSize(Data.FileSize);
+        F.SetOldFileTime(FileAge(Data.FileName));
+        F.SetOldFileSize(SizeOfFile(Data.FileName));
+
+        case F.ShowModal of
+          mrAbort   : Answer := 'Q';
+          mrNoToAll : Answer := 'S';
+          mrYesToAll: Answer := 'A';
+          mrNo      : Answer := 'N';
+          mrYes     : Answer := 'Y';
+          else        Answer := 'N';
+        end;
       end;
       F.Free;
     end;
   end;
-
+  
   procedure TTickFrm.OnRename;
   var
     F: TRenameFrm;
   begin
-    if FAppTerminated = False then
+    if FInterfaces.Properties.Terminated = False then
     begin;
       F := TRenameFrm.Create(Application);
       F.Caption := rsRenameFile;
-      with FAppInterface.OnRename.Data do
+      with FInterfaces.OnRename do
       begin
-        F.ToFN.Text := FilePath + FileName;
-        F.FromFN.Caption := F.ToFN.Text;
-      end;
-      
-      if F.ShowModal = mrOk then
-        FAppInterface.OnRename.Answer := F.ToFN.Text
-      else
-        FAppInterface.OnRename.Answer := '';
+        F.ToFN.Text      := Data.FilePath + Data.FileName;
+        F.FromFN.Caption := Data.FilePath + Data.FileName;
 
+        if F.ShowModal = mrOk then
+          Answer := F.ToFN.Text
+        else
+          Answer := '';
+      end;
       F.Free;
     end;
   end;
-
+  
   procedure TTickFrm.OnFatalError;
   begin
-    FSwitchValue := -1;
-    Report.Append(FAppInterface.OnFatalError.Data.Msg);
+    with FInterfaces.OnFatalError do
+    begin
+      Report.Append(Data.Msg);
+    end;
   end;
-
+  
   procedure TTickFrm.OnError;
   begin
-    FSwitchValue := -1;
-    Report.Append(FAppInterface.OnError.Data.Msg);
+    with FInterfaces.OnError do
+    begin
+      Report.Append(Data.Msg);
+    end;
   end;
-
+  
   procedure TTickFrm.OnWarning;
   begin
-    FSwitchValue := -1;
-    Report.Append(FAppInterface.OnWarning.Data.Msg);
+    with FInterfaces.OnWarning do
+    begin
+      Report.Append(Data.Msg);
+    end;
   end;
 
   procedure TTickFrm.OnDisplay;
   begin
-    if FCmdLine.Log then
+    with FInterfaces.OnDisplay do
     begin
-      Report.Append(FAppInterface.OnDisplay.Data.Msg);
+      if FCmdLine.Log then
+      begin
+        Report.Append(Data.Msg);
+      end;
+      Msg.Caption := Data.Msg;
     end;
-    Msg.Caption := FAppInterface.OnDisplay.Data.Msg;
   end;
-
+  
   procedure TTickFrm.OnRequest;
   begin
-    if MessageDlg(FAppInterface.OnRequest.Data.Msg,
-      mtConfirmation, [mbYes], 0) = mrYes then
+    with FInterfaces.OnRequest do
     begin
-      FAppInterface.OnRequest.Answer := 'Y';
+      if MessageDlg(Data.Msg, mtConfirmation, [mbYes], 0) = mrYes then
+      begin
+        Answer := 'Y';
+      end;
     end;
   end;
 
@@ -620,39 +617,28 @@ var
 
   procedure TTickFrm.OnList;
   begin
-    with FAppInterface.OnList.Data do
+    with FInterfaces.OnList.Data do
     begin
-      FAppContents.Add(FileName);               // 01
-      FAppContents.Add(FilePath);               // 02
-      FAppContents.Add(IntToStr(FileSize));     // 03
-      FAppContents.Add(IntTostr(FilePacked));   // 04
-      FAppContents.Add(IntTostr(FileRatio));    // 05
-      FAppContents.Add(IntTostr(FileAttr));     // 06
-      FAppContents.Add(IntTostr(FileTime));     // 07
-      FAppContents.Add(FileComm);               // 08
-      FAppContents.Add(IntTostr(FileCrc));      // 09
-      FAppContents.Add(FileMethod);             // 10
-      FAppContents.Add(FileVersion);            // 11
-      FAppContents.Add(FilePassword);           // 12
-      FAppContents.Add(IntTostr(FilePosition)); // 13
+      FContents.Add(FileName);               // 01
+      FContents.Add(FilePath);               // 02
+      FContents.Add(IntToStr(FileSize));     // 03
+      FContents.Add(IntTostr(FilePacked));   // 04
+      FContents.Add(IntTostr(FileRatio));    // 05
+      FContents.Add(IntTostr(FileAttr));     // 06
+      FContents.Add(IntTostr(FileTime));     // 07
+      FContents.Add(FileComm);               // 08
+      FContents.Add(IntTostr(FileCrc));      // 09
+      FContents.Add(FileMethod);             // 10
+      FContents.Add(FileVersion);            // 11
+      FContents.Add(FilePassword);           // 12
+      FContents.Add(IntTostr(FilePosition)); // 13
     end;
-  end;
-
-  procedure TTickFrm.OnSwitch;
-  begin
-    if FAppInterface.OnTick.Data.GeneralSize > FSwitchValue then
-    begin
-      FAppInterface.OnTick.Method := OnTick;
-      Timer.Enabled := True;
-      FSwitch := True;
-    end;
-    OnTick;
   end;
 
   procedure TTickFrm.OnTick;
   begin
-    Tick.Position := FAppInterface.OnTick.Data.Percentage;
-    Caption := Format(rsProcessStatus, [FAppInterface.OnTick.Data.Percentage]);
+    Tick.Position := FInterfaces.OnTick.Data.Percentage;
+    Caption := Format(rsProcessStatus, [FInterfaces.OnTick.Data.Percentage]);
     Application.Title := Caption;
   end;
   
@@ -660,20 +646,19 @@ var
   var
     F: TPasswordFrm;
   begin
-    if FAppTerminated = False then
+    if FInterfaces.Properties.Terminated = False then
     begin
-      if Length(FAppKey) = 0 then
+      if FPassword <> '' then
       begin
         F := TPasswordFrm.Create(Application);
-        F.SetKey(FAppKey);
-
+        F.SetPassword(FPassword);
         if F.ShowModal = mrOK then
         begin
-          FAppKey := F.Key.Text;
+          FPassword := F.Password.Text;
         end;
         F.Free;
       end;
-      FAppInterface.OnKey.Answer := FAppKey;
+      FInterfaces.OnKey.Answer := FPassword;
     end;
   end;
   

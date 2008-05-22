@@ -26,6 +26,8 @@
 
 unit BeeGui_PasswordFrm;
 
+{$I compiler.inc}
+
 interface
 
 uses
@@ -46,33 +48,30 @@ type
   { TPasswordFrm }
 
   TPasswordFrm = class(TForm)
+    PasswordImage: TImage;
+    PasswordLabel: TLabel;
+    Password: TEdit;
+    ConfirmPasswordLabel: TLabel;
+    ConfirmPassword: TEdit;
+    MaskPassword: TCheckBox;
     Bevel: TBevel;
+    BtnClear: TBitBtn;
     BtnOk: TBitBtn;
     BtnCancel: TBitBtn;
-    ConfirmKey: TEdit;
-    ConfirmKeyLabel: TLabel;
-    Key: TEdit;
-    KeyImage: TImage;
-    KeyLabel: TLabel;
-    MaskKey: TCheckBox;
-    BtnClear: TBitBtn;
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormShow(Sender: TObject);
+    procedure MaskPasswordClick (Sender: TObject);
+    procedure PasswordChange (Sender: TObject);
     procedure BtnClearClick (Sender: TObject);
-    procedure MaskKeyClick (Sender: TObject);
-    procedure KeyChange (Sender: TObject);
   private
     { Private declarations }
-    procedure SetConfirmKey(Value: boolean);
+    procedure SetConfirmPassword(Value: boolean);
   public
     { Public declarations }    
-    procedure SetKey(const Value: string);
+    procedure SetPassword(const Value: string);
   end;
-  
-var
-  PasswordFrm: TPasswordFrm;
 
 implementation
 
@@ -102,10 +101,10 @@ uses
   begin
     if ModalResult = mrOk then
     begin
-      if not MaskKey.Checked then
+      if not MaskPassword.Checked then
         CanClose := True
       else
-        if CompareStr(Key.Text, ConfirmKey.Text) = 0 then
+        if CompareStr(Password.Text, ConfirmPassword.Text) = 0 then
           CanClose := True
         else
         begin
@@ -118,7 +117,7 @@ uses
   
   procedure TPasswordFrm.FormShow(Sender: TObject);
   begin
-    SetConfirmKey(MaskKey.Checked);
+    SetConfirmPassword(MaskPassword.Checked);
     if Constraints.MaxHeight = 0 then
     begin
       Constraints.MaxHeight := Height;
@@ -128,41 +127,41 @@ uses
     end;
   end;
 
-  procedure TPasswordFrm.MaskKeyClick (Sender: TObject);
+  procedure TPasswordFrm.MaskPasswordClick (Sender: TObject);
   begin
-    SetConfirmKey(MaskKey.Checked);
+    SetConfirmPassword(MaskPassword.Checked);
   end;
 
-  procedure TPasswordFrm.KeyChange (Sender: TObject);
+  procedure TPasswordFrm.PasswordChange (Sender: TObject);
   begin
-    ConfirmKey.Text := '';
+    ConfirmPassword.Text := '';
   end;
 
-  procedure TPasswordFrm.SetConfirmKey;
+  procedure TPasswordFrm.SetConfirmPassword;
   begin
     if Value then
     begin
-      Key.PasswordChar := '*';
-      ConfirmKey.Color := clWindow;
+      Password.PasswordChar := '*';
+      ConfirmPassword.Color := clWindow;
     end else
     begin
-      Key.PasswordChar := #0;
-      ConfirmKey.Text  := '';
-      ConfirmKey.Color := clBtnFace;
+      Password.PasswordChar := #0;
+      ConfirmPassword.Text  := '';
+      ConfirmPassword.Color := clBtnFace;
     end;
-    ConfirmKey.Enabled := Value;
+    ConfirmPassword.Enabled := Value;
   end;
 
-  procedure TPasswordFrm.SetKey;
+  procedure TPasswordFrm.SetPassword;
   begin
-    Key.Text := Value;
-    ConfirmKey.Text := Value;
+    Password.Text := Value;
+    ConfirmPassword.Text := Value;
   end;
 
   procedure TPasswordFrm.BtnClearClick (Sender: TObject);
   begin
-    Key.Clear;
-    ConfirmKey.Clear;
+    Password.Clear;
+    ConfirmPassword.Clear;
   end;
   
 initialization

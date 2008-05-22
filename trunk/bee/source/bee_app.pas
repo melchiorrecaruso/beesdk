@@ -144,7 +144,7 @@ begin
   inherited Create(aInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0751 archiver utility, freeware version, May 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0755 archiver utility, freeware version, May 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -836,7 +836,7 @@ var
 begin
   Result := True;
   I := Headers.GetBack(Headers.Count - 1, toSwap);
-  if (I > -1) and (Interfaces.Properties.Terminated = False) then
+  if (I > -1) and (Interfaces.Properties.Aborted = False) then
   begin
     FSwapName := GenerateFileName(FyOption);
     FSwapStrm := TFileWriter.Create(FSwapName, fmCreate);
@@ -845,7 +845,7 @@ begin
     CurrTable := Headers.Count;
 
     Decoder := TDecoder.Create(FArcFile, Interfaces, Synchronize); // get GeneralSize
-    while (I > -1) and (Interfaces.Properties.Terminated = False) do
+    while (I > -1) and (Interfaces.Properties.Aborted = False) do
     begin
       iDictionary := Headers.GetBack(I, foDictionary); // find dictionary info
       iTable := Headers.GetBack(I, foTable); // find table info
@@ -865,7 +865,7 @@ begin
 
       for J := iTear to I do
       begin
-        if Interfaces.Properties.Terminated = False then
+        if Interfaces.Properties.Aborted = False then
         begin
           if THeader(Headers.Items[J]).Action = toSwap then
             Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, FSwapStrm)
@@ -1049,7 +1049,7 @@ begin
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
         for I := 0 to Headers.Count - 1 do
-          if Interfaces.Properties.Terminated = False then
+          if Interfaces.Properties.Aborted = False then
           begin
             case THeader(Headers.Items[I]).Action of
               toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, FArcFile);
@@ -1062,7 +1062,7 @@ begin
         // rewrite Headers
         Headers.WriteItems(TmpFile);
 
-        if Interfaces.Properties.Terminated = False then
+        if Interfaces.Properties.Aborted = False then
         begin
           Interfaces.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
@@ -1077,7 +1077,7 @@ begin
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
         DeleteFile(FSwapName);
-        if Interfaces.Properties.Terminated = False then
+        if Interfaces.Properties.Aborted = False then
         begin
           SysUtils.DeleteFile(FArcName);
           if not RenameFile(TmpFileName, FArcName) then
@@ -1152,7 +1152,7 @@ begin
       Decoder := TDecoder.Create(FArcFile, Interfaces, Synchronize);
       for I := 0 to Headers.Count - 1 do
       begin
-        if Interfaces.Properties.Terminated = False then
+        if Interfaces.Properties.Aborted = False then
           case THeader(Headers.Items[I]).Action of
             toExtract: Return := Decoder.DecodeFile(Headers.Items[I], pmNorm);
             toTest:    Return := Decoder.DecodeFile(Headers.Items[I], pmTest);
@@ -1163,7 +1163,7 @@ begin
         end;
       Decoder.Destroy;
 
-      if Interfaces.Properties.Terminated = False then
+      if Interfaces.Properties.Aborted = False then
       begin
         if Return = True then
         begin
@@ -1236,7 +1236,7 @@ begin
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
         for I := 0 to Headers.Count - 1 do
-          if Interfaces.Properties.Terminated = False then
+          if Interfaces.Properties.Aborted = False then
           begin
             case THeader(Headers.Items[I]).Action of
               toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, FArcFile);
@@ -1250,7 +1250,7 @@ begin
         Encoder.Destroy;
         Headers.WriteItems(TmpFile);
 
-        if Interfaces.Properties.Terminated = False then
+        if Interfaces.Properties.Aborted = False then
         begin
           Interfaces.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
@@ -1265,7 +1265,7 @@ begin
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(FSwapName);
-        if Interfaces.Properties.Terminated = False then
+        if Interfaces.Properties.Aborted = False then
         begin
           SysUtils.DeleteFile(FArcName);
           if not RenameFile(TmpFileName, FArcName) then
@@ -1338,14 +1338,14 @@ begin
       Headers.WriteItems(TmpFile);
       Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
       for I := 0 to Headers.Count - 1 do
-        if Interfaces.Properties.Terminated = False then
+        if Interfaces.Properties.Aborted = False then
         begin
           Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
         end;
       Encoder.Destroy;
       Headers.WriteItems(TmpFile);
 
-      if Interfaces.Properties.Terminated = False then
+      if Interfaces.Properties.Aborted = False then
       begin
         Interfaces.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
         Synchronize(Interfaces.OnDisplay.Method);
@@ -1358,7 +1358,7 @@ begin
       if Assigned(FArcFile) then FreeAndNil(FArcFile);
       if Assigned(TmpFile) then FreeAndNil(TmpFile);
 
-      if Interfaces.Properties.Terminated = False then
+      if Interfaces.Properties.Aborted = False then
       begin
         SysUtils.DeleteFile(FArcName);
         if not RenameFile(TmpFileName, FArcName) then
