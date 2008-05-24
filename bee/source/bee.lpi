@@ -10,7 +10,7 @@
       <MainUnit Value="0"/>
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="4"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
@@ -25,7 +25,7 @@
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -63,60 +63,21 @@
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="..\..\..\lazarus\ide\startlazarus.lpr"/>
+        <UnitName Value="StartLazarus"/>
+        <CursorPos X="1" Y="51"/>
+        <TopLine Value="12"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit4>
     </Units>
-    <JumpHistory Count="13" HistoryIndex="12">
+    <JumpHistory Count="1" HistoryIndex="0">
       <Position1>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="161" Column="6" TopLine="148"/>
+        <Filename Value="..\..\..\lazarus\ide\startlazarus.lpr"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position1>
-      <Position2>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="154" Column="24" TopLine="134"/>
-      </Position2>
-      <Position3>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="217" Column="20" TopLine="194"/>
-      </Position3>
-      <Position4>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="234" Column="19" TopLine="211"/>
-      </Position4>
-      <Position5>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="321" Column="19" TopLine="298"/>
-      </Position5>
-      <Position6>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="338" Column="19" TopLine="315"/>
-      </Position6>
-      <Position7>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="410" Column="9" TopLine="387"/>
-      </Position7>
-      <Position8>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="161" Column="34" TopLine="217"/>
-      </Position8>
-      <Position9>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="454" Column="31" TopLine="149"/>
-      </Position9>
-      <Position10>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="406" Column="1" TopLine="391"/>
-      </Position10>
-      <Position11>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="523" Column="14" TopLine="501"/>
-      </Position11>
-      <Position12>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="541" Column="13" TopLine="513"/>
-      </Position12>
-      <Position13>
-        <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="639" Column="19" TopLine="616"/>
-      </Position13>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
