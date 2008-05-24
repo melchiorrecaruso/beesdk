@@ -147,7 +147,7 @@ type
     destructor Destroy; override;
     procedure StartApp(ACmdLine: TCmdLine);
   public
-    property Terminated: boolean read FInterfaces.Properties.Terminated;
+    property Terminated: boolean read FInterfaces.Properties.sTerminated;
   end;
   
 implementation
