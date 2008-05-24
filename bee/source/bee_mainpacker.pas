@@ -76,7 +76,7 @@ type
     function CopyStrm  (Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
   private
     function GetKey(Header: THeader): string;
-    function Tick: boolean;
+    procedure Tick;
   private
     Stream: TFileWriter;
     PPM: TBaseCoder;
@@ -97,7 +97,7 @@ type
     function DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
   private
     function GetKey(Header: THeader): string;
-    function Tick: boolean;
+    procedure Tick;
   private
     Stream: TFileReader;
     PPM: TBaseCoder;
@@ -151,16 +151,14 @@ begin
   end;
 end;
 
-function TEncoder.Tick: boolean;
+procedure TEncoder.Tick;
 begin
+  while Interfaces.Properties.Suspended do Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
   end;
   Sync(Interfaces.OnTick.Method);
-
-  while Interfaces.Properties.Suspended do Sleep(250);
-  Result := Interfaces.Properties.Aborted;
 end;
 
 function TEncoder.EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
@@ -212,7 +210,10 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Tick then Break;
+          if Interfaces.Properties.Aborted = False then
+            Tick
+          else
+            Break;
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
@@ -226,7 +227,10 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Tick then Break;
+          if Interfaces.Properties.Aborted = False then
+            Tick
+          else
+            Break;
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
@@ -310,7 +314,10 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Tick then Break;
+          if Interfaces.Properties.Aborted = False then
+            Tick
+          else
+            Break;
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
@@ -324,7 +331,10 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Tick then Break;
+          if Interfaces.Properties.Aborted = False then
+            Tick
+          else
+            Break;
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
@@ -393,7 +403,10 @@ begin
     begin
       if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
       begin
-        if Tick then Break;
+        if Interfaces.Properties.Aborted = False then
+          Tick
+        else
+          Break;
       end;
       Inc(Interfaces.OnTick.Data.ProcessedSize);
       SrcFile.Read(Symbol, 1);
@@ -440,18 +453,14 @@ begin
   Result := Interfaces.OnKey.Answer;
 end;
 
-function TDecoder.Tick: boolean;
+procedure TDecoder.Tick;
 begin
-  while Interfaces.Properties.Suspended do
-  begin
-    Sleep(250);
-  end;
+  while Interfaces.Properties.Suspended do Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
   end;
   Sync(Interfaces.OnTick.Method);
-  Result := Interfaces.Properties.Aborted;
 end;
 
 function TDecoder.DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
@@ -509,7 +518,10 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Tick then Break;
+          if Interfaces.Properties.Aborted = False then
+            Tick
+          else
+            Break;
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         Stream.Read(Symbol, 1);
@@ -523,7 +535,10 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Tick then Break;
+          if Interfaces.Properties.Aborted = False then
+            Tick
+          else
+            Break;
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         Symbol := PPM.UpdateModel(0);
@@ -618,7 +633,10 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Tick then Break;
+          if Interfaces.Properties.Aborted = False then
+            Tick
+          else
+            Break;
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         Stream.Read(Symbol, 1);
@@ -632,7 +650,10 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Tick then Break;
+          if Interfaces.Properties.Aborted = False then
+            Tick
+          else
+            Break;
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         Symbol := PPM.UpdateModel(0);
