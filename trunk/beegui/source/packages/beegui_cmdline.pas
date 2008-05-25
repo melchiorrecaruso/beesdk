@@ -106,6 +106,7 @@ implementation
 
 uses
   Bee_Common,
+  // ---
   BeeGui_Forms;
 
   constructor TCmdLine.Create;

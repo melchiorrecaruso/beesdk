@@ -31,9 +31,11 @@ interface
 
 uses
   Forms,
+  Dialogs,
   Classes,
   Controls,
   SysUtils,
+  // ---
   BeeGui_CmdLine;
   
 function ConfirmAdd(CmdLine: TCmdLine): boolean;
@@ -43,6 +45,7 @@ implementation
 
 uses
   Bee_Common,
+  // ---
   BeeGui_AddFrm,
   BeeGui_ExtractFrm;
 
@@ -107,8 +110,8 @@ uses
     F.ArchivePath      := ExtractFilePath(ExpandFileName(CmdLine.ArcName));
     F.ArchiveName.Text := ExtractFileName(ExpandFileName(CmdLine.ArcName));
 
-    for i := 0 to CmdLine.FileMasks.Count - 1 do
-      F.FilesMgr.AddFile(ExpandFileName(CmdLine.FileMasks.Strings[i]));
+    for I := 0 to CmdLine.FileMasks.Count - 1 do
+      F.FilesMgr.AddFile(ExpandFileName(CmdLine.FileMasks.Strings[I]));
 
     if F.ShowModal = mrOk then
     begin
@@ -145,9 +148,9 @@ uses
       CmdLine.dOption := F.dOption.ItemIndex;
 
       CmdLine.xOption.Clear;
-      for i := 0 to F.FilesMgr.Count - 1 do
-        if F.FilesMgr.Excluded[i] then
-          CmdLine.xOption.Add(F.FilesMgr.Items[i]);
+      for I := 0 to F.FilesMgr.Count - 1 do
+        if F.FilesMgr.Excluded[I] = True then
+          CmdLine.xOption.Add(F.FilesMgr.Items[I]);
 
       CmdLine.tOption := F.tOption.Checked;
       CmdLine.lOption := F.lOption.Checked;
@@ -157,12 +160,12 @@ uses
       CmdLine.cdOption := F.cdOption.Text;
       CmdLine.cfgOption := F.cfgOption.Text;
 
-      CmdLine.ArcName :=  F.ArchivePath + F.ArchiveName.Text;
+      CmdLine.ArcName := '"' + F.ArchivePath + F.ArchiveName.Text + '"';
 
       CmdLine.FileMasks.Clear;
-      for i := 0 to F.FilesMgr.Count - 1 do
-        if F.FilesMgr.Excluded[i] = False then
-          CmdLine.FileMasks.Add(F.FilesMgr.Items[i]);
+      for I := 0 to F.FilesMgr.Count - 1 do
+        if F.FilesMgr.Excluded[I] = False then
+          CmdLine.FileMasks.Add('"' + F.FilesMgr.Items[I] + '"');
 
       if (CmdLine.FileMasks.Count > 0) or (F.aOptionCheck.Checked) then
       begin
