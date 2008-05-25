@@ -109,18 +109,18 @@ type
     // ---
     procedure HandleClick(Sender: TObject);
     procedure PopupClick(Sender: TObject);
-    // --- OK
+    // ---
     procedure BtnFontClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
     procedure BtnPriorityClick(Sender: TObject);
     procedure BtnPauseRunClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
-    // --- OK
+    // ---
     procedure OnStartTimer(Sender: TObject);
     procedure OnStopTimer(Sender: TObject);
     procedure OnTimer(Sender: TObject);
   private
-    // --- OK
+    // ---
     procedure OnTerminate(Sender: TObject);
     procedure OnFatalError;
     procedure OnOverWrite;
@@ -130,6 +130,7 @@ type
     procedure OnRename;
     procedure OnError;
     procedure OnClear;
+    procedure OnStart;
     procedure OnList;
     procedure OnTick;
     procedure OnKey;
@@ -139,14 +140,15 @@ type
     FContents: TStringList;
     FCmdLine: TCmdLine;
     FPassword: string;
+    FTime: integer;
     FApp: TBeeApp;
-    FElapsedTime: integer;
-    FRemainingTime: integer;
+  public
+    { public declarations }
+    property Interfaces: TInterfaces read FInterfaces;
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
-    procedure InitInterfaces(AInterfaces: TInterfaces);
-    procedure InitCmdLine(ACmdLine: TCmdLine);
+    procedure Start(ACmdLine: TCmdLine);
     destructor Destroy; override;
   end;
   
@@ -170,30 +172,8 @@ var
   constructor TTickFrm.Create(AOwner: TComponent); //OK
   begin
     inherited Create(AOwner);
-    FPassword := '';
-    FCmdLine := nil;
-    FInterfaces := nil;
-    FContents := TStringList.Create;
-    {$IFDEF UNIX}
-    BtnPriority.Enabled := False;
-    {$ENDIF}
-    FElapsedTime := 0;
-    FRemainingTime := 0;
-  end;
-
-  destructor TTickFrm.Destroy; //OK
-  begin
-    FPassword := '';
-    FContents.Free;
-    FContents := nil;
-    FInterfaces := nil;
-    FCmdLine := nil;
-    inherited Destroy;
-  end;
-
-  procedure TTickFrm.InitInterfaces(AInterfaces: TInterfaces);
-  begin
-    FInterfaces := AInterfaces;
+    // ---
+    FInterfaces := TInterfaces.Create;
     FInterfaces.OnFatalError.Method := OnFatalError;
     FInterfaces.OnOverWrite.Method := OnOverWrite;
     FInterfaces.OnWarning.Method := OnWarning;
@@ -203,11 +183,30 @@ var
     FInterfaces.OnClear.Method := OnClear;
     FInterfaces.OnError.Method := OnError;
     FInterfaces.OnList.Method := OnList;
-    FInterfaces.OnTick.Method := OnTick;
+    FInterfaces.OnTick.Method := OnStart;
     FInterfaces.OnKey.Method := OnKey;
+    // ---
+    FContents := TStringList.Create;
+    FCmdLine := nil;
+    FPassword := '';
+    FTime := 0;
+    {$IFDEF UNIX}
+      BtnPriority.Enabled := False;
+    {$ENDIF}
+  end;
+
+  destructor TTickFrm.Destroy; //OK
+  begin
+    FInterfaces.Free;
+    FInterfaces := nil;
+    FContents.Free;
+    FContents := nil;
+    FCmdLine := nil;
+    FPassword := '';
+    inherited Destroy;
   end;
   
-  procedure TTickFrm.InitCmdLine(ACmdLine: TCmdLine);
+  procedure TTickFrm.Start(ACmdLine: TCmdLine);
   begin
     FCmdLine := ACmdLine;
     if FCmdLine.Log then
@@ -217,28 +216,7 @@ var
     FApp := TBeeApp.Create(FInterfaces, FCmdLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
-    // ---
-    Timer.Enabled := True;
   end;
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   procedure TTickFrm.FormCreate(Sender: TObject);
   var
@@ -256,7 +234,7 @@ var
     // --
     Notebook.ActivePageComponent := GeneralPage;
     BtnPauseRun.Caption := rsBtnPauseCaption;
-    BtnCancel.Caption   := rsBtnCancelCaption;
+    BtnCancel.Caption := rsBtnCancelCaption;
     ActiveControl := BtnCancel;
   end;
 
@@ -296,10 +274,6 @@ var
     end;
   end;
   
-
-  
-
-  
   procedure TTickFrm.HandleClick(Sender: TObject);
   begin
     WindowState := wsNormal;
@@ -320,8 +294,6 @@ var
       if Popup_TimeCritical.Checked then FApp.Priority := tpTimeCritical;
     end;
   end;
-  
-
   
   // ------------------------------------------------------------------------ //
   //                                                                          //
@@ -371,22 +343,16 @@ var
           Self.ProcessedSize.Caption := IntToStr(ProcessedSize shr 20);
           Self.ProcessedSizeUnit.Caption := 'MB';
         end;
-      Inc(FElapsedTime);
-      iSpeed := ProcessedSize div FElapsedTime;
+      Inc(FTime);
+      iSpeed := ProcessedSize div FTime;
       iRemainSize := TotalSize - ProcessedSize;
     end;
-    Time.Caption := TimeToStr(FElapsedTime);
+    Time.Caption := TimeToStr(FTime);
     Speed.Caption := IntToStr(iSpeed shr 10);
-
     if iSpeed > 0 then
-    begin
-      FRemainingTime := iRemainSize div iSpeed;
-      RemainingTime.Caption := TimeToStr(FRemainingTime);
-    end else
-    begin
-      FRemainingTime := 0;
+      RemainingTime.Caption := TimeToStr(iRemainSize div iSpeed)
+    else
       RemainingTime.Caption := '--:--:--';
-    end;
   end;
   
   procedure TTickFrm.OnStopTimer(Sender: TObject);
@@ -394,12 +360,15 @@ var
     F: TViewFrm;
     I: integer;
   begin
-    if FInterfaces.Properties.Terminated then
+    if FInterfaces.Properties.Terminated = True then
     begin
-      Caption := rsProcessTerminated;
-      Application.Title := rsProcessTerminated;
+      if FInterfaces.Properties.Aborted = False then
+        Application.Title := rsProcessTerminated
+      else
+        Application.Title := rsProcessAborted;
 
-      Time.Caption := TimeToStr(FElapsedTime);
+      Caption := Application.Title;
+      Time.Caption := TimeToStr(FTime);
       RemainingTime.Caption := TimeToStr(0);
 
       ProcessedSize.Caption := GeneralSize.Caption;
@@ -431,6 +400,7 @@ var
         Timer.Enabled  := False;
         BtnPauseRun.Caption := rsBtnRunCaption;
         FInterfaces.Properties.Suspended := True;
+        Caption := rsProcessPaused;
       end;
     end;
   end;
@@ -661,6 +631,13 @@ var
       FContents.Add(FilePassword);           // 12
       FContents.Add(IntTostr(FilePosition)); // 13
     end;
+  end;
+  
+  procedure TTickFrm.OnStart;
+  begin
+    FInterfaces.OnTick.Method := OnTick;
+    Timer.Enabled := True;
+    OnTick;
   end;
 
   procedure TTickFrm.OnTick;

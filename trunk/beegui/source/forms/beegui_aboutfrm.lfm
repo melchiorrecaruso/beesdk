@@ -102,7 +102,6 @@ object AboutFrm: TAboutFrm
       1111111111111111111111001111111111111100111111111111110011111111
       1111
     }
-    Transparent = False
   end
   object Link: TLabel
     AnchorSideLeft.Control = Copyright
