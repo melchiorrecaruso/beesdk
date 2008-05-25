@@ -1139,7 +1139,7 @@
         <Filename Value="packages/beegui_forms.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Forms"/>
-        <CursorPos X="46" Y="152"/>
+        <CursorPos X="52" Y="168"/>
         <TopLine Value="143"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="108"/>
@@ -1243,7 +1243,7 @@
         <Filename Value="packages/beegui_addtreeviewmgr.pas"/>
         <UnitName Value="BeeGui_AddTreeViewMgr"/>
         <CursorPos X="39" Y="360"/>
-        <TopLine Value="356"/>
+        <TopLine Value="355"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -1268,40 +1268,7 @@
         <UsageCount Value="10"/>
       </Unit176>
     </Units>
-    <JumpHistory Count="8" HistoryIndex="7">
-      <Position1>
-        <Filename Value="packages/beegui_cmdline.pas"/>
-        <Caret Line="109" Column="12" TopLine="97"/>
-      </Position1>
-      <Position2>
-        <Filename Value="packages/beegui_forms.pas"/>
-        <Caret Line="162" Column="75" TopLine="145"/>
-      </Position2>
-      <Position3>
-        <Filename Value="packages/beegui_forms.pas"/>
-        <Caret Line="172" Column="29" TopLine="142"/>
-      </Position3>
-      <Position4>
-        <Filename Value="packages/beegui_forms.pas"/>
-        <Caret Line="175" Column="29" TopLine="142"/>
-      </Position4>
-      <Position5>
-        <Filename Value="packages/beegui_forms.pas"/>
-        <Caret Line="34" Column="11" TopLine="13"/>
-      </Position5>
-      <Position6>
-        <Filename Value="packages/beegui_forms.pas"/>
-        <Caret Line="173" Column="49" TopLine="155"/>
-      </Position6>
-      <Position7>
-        <Filename Value="packages/beegui_forms.pas"/>
-        <Caret Line="152" Column="25" TopLine="143"/>
-      </Position7>
-      <Position8>
-        <Filename Value="packages/beegui_addtreeviewmgr.pas"/>
-        <Caret Line="80" Column="56" TopLine="54"/>
-      </Position8>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

@@ -160,12 +160,12 @@ uses
       CmdLine.cdOption := F.cdOption.Text;
       CmdLine.cfgOption := F.cfgOption.Text;
 
-      CmdLine.ArcName := '"' + F.ArchivePath + F.ArchiveName.Text + '"';
+      CmdLine.ArcName := F.ArchivePath + F.ArchiveName.Text;
 
       CmdLine.FileMasks.Clear;
       for I := 0 to F.FilesMgr.Count - 1 do
         if F.FilesMgr.Excluded[I] = False then
-          CmdLine.FileMasks.Add('"' + F.FilesMgr.Items[I] + '"');
+          CmdLine.FileMasks.Add(F.FilesMgr.Items[I]);
 
       if (CmdLine.FileMasks.Count > 0) or (F.aOptionCheck.Checked) then
       begin
