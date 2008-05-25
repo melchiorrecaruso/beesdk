@@ -191,21 +191,15 @@ begin
   // ---
   Params := aParams;
   Interfaces := aInterfaces;
-  Interfaces.OnTick.Data.TotalSize := 0;
+  Interfaces.OnTick.Data.TotalSize     := 0;
   Interfaces.OnTick.Data.ProcessedSize := 0;
   Interfaces.Properties.Terminated := False;
-  Interfaces.Properties.Suspended := False;
-  Interfaces.Properties.Aborted := False;
+  Interfaces.Properties.Suspended  := False;
+  Interfaces.Properties.Aborted    := False;
 end;
 
 destructor TApp.Destroy;
 begin
-  Interfaces.OnTick.Data.TotalSize := 0;
-  Interfaces.OnTick.Data.ProcessedSize := 0;
-  Interfaces.Properties.Terminated := True;
-  Interfaces.Properties.Suspended := False;
-  Interfaces.Properties.Aborted := False;
-  // ---
   Params := nil;
   Interfaces := nil;
   inherited Destroy;
