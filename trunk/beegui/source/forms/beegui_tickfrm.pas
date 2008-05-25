@@ -115,12 +115,12 @@ type
     procedure BtnPriorityClick(Sender: TObject);
     procedure BtnPauseRunClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
-    // ---
+    // --- OK
     procedure OnStartTimer(Sender: TObject);
     procedure OnStopTimer(Sender: TObject);
     procedure OnTimer(Sender: TObject);
   private
-    // ---
+    // --- OK
     procedure OnTerminate(Sender: TObject);
     procedure OnFatalError;
     procedure OnOverWrite;
