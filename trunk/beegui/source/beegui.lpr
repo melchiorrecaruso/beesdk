@@ -39,6 +39,8 @@ uses
   Windows,
   {$ENDIF}
   Interfaces,
+  SysUtils,
+  Dialogs,
   Forms,
   // --- //
   BeeGui_CmdLine,
@@ -66,19 +68,22 @@ begin
     begin
       Application.CreateForm(TTickFrm, TickFrm);
       TickFrm.Start(CmdLine);
-      repeat
-        if TickFrm.Interfaces.Properties.Terminated = False then
-          Application.ProcessMessages
-        else
-          Break;
-      until TickFrm.Interfaces.OnTick.Data.TotalSize > $FFFF;
-
-      if TickFrm.Interfaces.OnTick.Data.TotalSize > $FFFF then
+      with TickFrm.Interfaces do
       begin
-        Application.Run;
-        TickFrm.Free;
-        TickFrm:=nil;
+        while (OnTick.Data.TotalSize < $3FFFC) and (CmdLine.Log = False) do
+        begin
+          if Properties.Terminated = False then
+            Application.ProcessMessages
+          else
+            Break;
+        end;
+        if (OnTick.Data.TotalSize >= $3FFFC) or (CmdLine.Log = True) then
+        begin
+          Application.Run;
+        end;
       end;
+      TickFrm.Free;
+      TickFrm:=nil;
     end;
   end;
   CmdLine.Free;

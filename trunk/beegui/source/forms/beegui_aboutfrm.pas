@@ -85,7 +85,7 @@ uses
     {$I beegui_aboutfrm_loadlanguage.inc}
     {$I beegui_aboutfrm_loadproperty.inc}
     Logo.Transparent  := True;
-    Version.Caption   := 'BeeGui 1.0.5 [build 261]';
+    Version.Caption   := 'BeeGui 1.0.5 [build 267]';
     Copyright.Caption := '(C) 2003-2008 Andrew Filinsky and  Melchiorre Caruso';
   end;
 
