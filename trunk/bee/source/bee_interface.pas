@@ -171,6 +171,8 @@ type
   protected
     Interfaces: TInterfaces;
     Params: TStringList;
+  protected
+    procedure DoTerminate; override;
   public
     constructor Create(aInterfaces: TInterfaces; aParams: TParams);
     procedure Synchronize(aMethod: TThreadMethod); overload;
@@ -207,6 +209,12 @@ begin
   Params := nil;
   Interfaces := nil;
   inherited Destroy;
+end;
+
+procedure TApp.DoTerminate;
+begin
+  Interfaces.Properties.Terminated := True;
+  inherited DoTerminate;
 end;
 
 procedure TApp.Synchronize(aMethod: TThreadMethod);

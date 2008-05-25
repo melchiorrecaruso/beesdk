@@ -41,15 +41,18 @@ uses
   Interfaces,
   Forms,
   // --- //
+  Bee_Interface,
+  // --- //
   BeeGui_CmdLine,
   BeeGui_TickFrm,
   BeeGui_AboutFrm;
 
 var
-  CmdLine:  TCmdLine  = nil;
-  TickFrm:  TTickFrm  = nil;
-  AboutFrm: TAboutFrm = nil;
-  
+  CmdLine:    TCmdLine    = nil;
+  TickFrm:    TTickFrm    = nil;
+  AboutFrm:   TAboutFrm   = nil;
+  Interfaces: TInterfaces = nil;
+
 begin
   Application.Initialize;
   Application.Title := 'BeeGui';
@@ -65,20 +68,25 @@ begin
     end else
     begin
       Application.CreateForm(TTickFrm, TickFrm);
-      TickFrm.StartApp(CmdLine);
+      Interfaces := TInterfaces.Create;
+
+      TickFrm.InitInterfaces(Interfaces);
+      TickFrm.InitCmdLine(CmdLine);
       repeat
-        if TickFrm.Terminated then
+        if Interfaces.Properties.Terminated then
           Break
         else
           Application.ProcessMessages;
-      until TickFrm.Switch;
+      until Interfaces.OnTick.Data.TotalSize > $FFFF;
 
-      if TickFrm.Switch then
+      if Interfaces.OnTick.Data.TotalSize > $FFFF then
       begin
         Application.Run;
         TickFrm.Free;
         TickFrm := nil;
       end;
+      Interfaces.Free;
+      Interfaces := nil;
     end;
   end;
   CmdLine.Free;

@@ -109,7 +109,7 @@ type
     // ---
     procedure HandleClick(Sender: TObject);
     procedure PopupClick(Sender: TObject);
-    // ---
+    // --- OK
     procedure BtnFontClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
     procedure BtnPriorityClick(Sender: TObject);
@@ -139,15 +139,15 @@ type
     FContents: TStringList;
     FCmdLine: TCmdLine;
     FPassword: string;
-    FTime: integer;
     FApp: TBeeApp;
+    FElapsedTime: integer;
+    FRemainingTime: integer;
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
+    procedure InitInterfaces(AInterfaces: TInterfaces);
+    procedure InitCmdLine(ACmdLine: TCmdLine);
     destructor Destroy; override;
-    procedure StartApp(ACmdLine: TCmdLine);
-  public
-    property Terminated: boolean read FInterfaces.Properties.sTerminated;
   end;
   
 implementation
@@ -170,8 +170,33 @@ var
   constructor TTickFrm.Create(AOwner: TComponent); //OK
   begin
     inherited Create(AOwner);
-    // ---
-    FInterfaces := TInterfaces.Create;
+    FPassword := '';
+    FCmdLine := nil;
+    FInterfaces := nil;
+    FContents := TStringList.Create;
+    {$IFDEF UNIX}
+    // BtnPriority.Enabled := False;
+    // BtnPriority.Visible := False;
+    // BtnPauseRun.Enabled := False;
+    // BtnPauseRun.Visible := False;
+    {$ENDIF}
+    FElapsedTime := 0;
+    FRemainingTime := 0;
+  end;
+
+  destructor TTickFrm.Destroy; //OK
+  begin
+    FPassword := '';
+    FContents.Free;
+    FContents := nil;
+    FInterfaces := nil;
+    FCmdLine := nil;
+    inherited Destroy;
+  end;
+
+  procedure TTickFrm.InitInterfaces(AInterfaces: TInterfaces);
+  begin
+    FInterfaces := AInterfaces;
     FInterfaces.OnFatalError.Method := OnFatalError;
     FInterfaces.OnOverWrite.Method := OnOverWrite;
     FInterfaces.OnWarning.Method := OnWarning;
@@ -183,28 +208,38 @@ var
     FInterfaces.OnList.Method := OnList;
     FInterfaces.OnTick.Method := OnTick;
     FInterfaces.OnKey.Method := OnKey;
-    // ---
-    FContents := TStringList.Create;
-    FCmdLine := nil;
-    FPassword := '';
-    FTime := 0;
-    {$IFDEF UNIX}
-      // BtnPriority.Enabled := False;
-      // BtnPriority.Visible := False;
-      // BtnPauseRun.Enabled := False;
-      // BtnPauseRun.Visible := False;
-    {$ENDIF}
   end;
   
-  destructor TTickFrm.Destroy; //OK
+  procedure TTickFrm.InitCmdLine(ACmdLine: TCmdLine);
   begin
-    FInterfaces.Free;
-    FContents.Free;
-    FCmdLine := nil;
-    FPassword := '';
-    // ---
-    inherited Destroy;
+    FCmdLine := ACmdLine;
+    if FCmdLine.Log then
+    begin
+      // completare
+    end;
+    FApp := TBeeApp.Create(FInterfaces, FCmdLine.Params);
+    FApp.OnTerminate := OnTerminate;
+    FApp.Resume;
   end;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   procedure TTickFrm.FormCreate(Sender: TObject);
   var
@@ -220,11 +255,10 @@ var
     // TrayIcon.OnClick := HandleClick;
     // TrayIcon.Popup := Popup;
     // --
-    BtnPauseRun.Caption := rsBtnPauseCaption;
-    BtnCancel  .Caption := rsBtnCancelCaption;
-    // ---
-    ActiveControl                := BtnCancel;
     Notebook.ActivePageComponent := GeneralPage;
+    BtnPauseRun.Caption := rsBtnPauseCaption;
+    BtnCancel.Caption   := rsBtnCancelCaption;
+    ActiveControl := BtnCancel;
   end;
 
   procedure TTickFrm.FormWindowStateChange(Sender: TObject);
@@ -249,12 +283,8 @@ var
 
   procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
   begin
-    if FInterfaces.Properties.Terminated then
-    begin
-
-    
-    
-    end else
+    CanClose := FInterfaces.Properties.Terminated;
+    if CanClose = False then
     begin
       if MessageDlg(rsConfirmation, rsConfirmAbort, mtConfirmation, [mbYes, mbNo], '') = mrYes then
       begin
@@ -262,10 +292,14 @@ var
         begin
           FInterfaces.Properties.Suspended := False;
         end;
-        FInterfaces.Properties.Terminated := True;
+        FInterfaces.Properties.Aborted := True;
       end;
     end;
   end;
+  
+
+  
+
   
   procedure TTickFrm.HandleClick(Sender: TObject);
   begin
@@ -288,18 +322,7 @@ var
     end;
   end;
   
-  procedure TTickFrm.StartApp(ACmdLine: TCmdLine);
-  begin
-    FCmdLine := ACmdLine;
-    if FCmdLine.Log then
-    begin
 
-    end;
-    // ---
-    FApp := TBeeApp.Create(FInterfaces, FCmdLine.Params);
-    FApp.OnTerminate := OnTerminate;
-    FApp.Resume;
-  end;
   
   // ------------------------------------------------------------------------ //
   //                                                                          //
@@ -349,16 +372,22 @@ var
           Self.ProcessedSize.Caption := IntToStr(ProcessedSize shr 20);
           Self.ProcessedSizeUnit.Caption := 'MB';
         end;
-      Inc(FTime);
-      iSpeed := ProcessedSize div FTime;
+      Inc(FElapsedTime);
+      iSpeed := ProcessedSize div FElapsedTime;
       iRemainSize := TotalSize - ProcessedSize;
     end;
-    Time.Caption := TimeToStr(FTime);
+    Time.Caption := TimeToStr(FElapsedTime);
     Speed.Caption := IntToStr(iSpeed shr 10);
+
     if iSpeed > 0 then
-      RemainingTime.Caption := TimeToStr(iRemainSize div iSpeed)
-    else
+    begin
+      FRemainingTime := iRemainSize div iSpeed;
+      RemainingTime.Caption := TimeToStr(FRemainingTime);
+    end else
+    begin
+      FRemainingTime := 0;
       RemainingTime.Caption := '--:--:--';
+    end;
   end;
   
   procedure TTickFrm.OnStopTimer(Sender: TObject);
@@ -371,7 +400,7 @@ var
       Caption := rsProcessTerminated;
       Application.Title := rsProcessTerminated;
 
-      Time.Caption := TimeToStr(FTime);
+      Time.Caption := TimeToStr(FElapsedTime);
       RemainingTime.Caption := TimeToStr(0);
 
       ProcessedSize.Caption := GeneralSize.Caption;
@@ -468,9 +497,9 @@ var
   
   procedure TTickFrm.OnTerminate(Sender: TObject);
   begin
-    if FInterfaces.Properties.Terminated = False then
+    if FInterfaces.Properties.Terminated = True then
     begin
-      Timer.Enabled := False;
+      Timer.Enabled       := False;
 
       BtnCancel.Kind      := bkClose;
       BtnCancel.Caption   := rsBtnCloseCaption;
@@ -486,7 +515,7 @@ var
         BtnFont.Enabled := True;
       end else
       begin;
-        Closer.Enabled := True;
+        Close;
       end;
       
       if (FContents.Count > 0) and (FCmdLine.Link <> '') then
