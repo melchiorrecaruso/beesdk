@@ -357,7 +357,7 @@ uses
   begin
     if (Index > -1) and (Index < FFilePath.Count) then
     begin
-      if FFileBool.Strings[Index] = '+' then
+      if FFileBool.Strings[Index] = '-' then
         Result := True
       else
         Result := False;

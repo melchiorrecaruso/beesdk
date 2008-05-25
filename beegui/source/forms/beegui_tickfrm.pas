@@ -447,6 +447,7 @@ var
     if FInterfaces.Properties.Terminated = True then
     begin
       Timer.Enabled       := False;
+
       BtnPriority.Enabled := False;
       BtnPauseRun.Enabled := False;
       BtnCancel.Kind      := bkClose;
@@ -454,11 +455,10 @@ var
 
       if Report.Lines.Count > 0 then
       begin
+        Notebook.ActivePageComponent := ReportPage;
+        ActiveControl   := BtnCancel;
         BtnSave.Enabled := True;
         BtnFont.Enabled := True;
-
-        ActiveControl   := BtnCancel;
-        Notebook.ActivePageComponent := ReportPage;
       end else
       begin;
         Close;
