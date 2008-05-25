@@ -144,7 +144,7 @@ begin
   inherited Create(aInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0761 archiver utility, freeware version, May 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0763 archiver utility, freeware version, May 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -1075,7 +1075,7 @@ begin
 
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
-        if Assigned(TmpFile)  then FreeAndNil(TmpFile);
+        if Assigned(TmpFile)   then FreeAndNil(TmpFile);
 
         DeleteFile(FSwapName);
         if Interfaces.Properties.Aborted = False then
@@ -1097,7 +1097,7 @@ begin
       begin
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
-        if Assigned(TmpFile)  then FreeAndNil(TmpFile);
+        if Assigned(TmpFile)   then FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(FSwapName);
         SysUtils.DeleteFile(TmpFileName);
