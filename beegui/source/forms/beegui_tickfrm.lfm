@@ -58,7 +58,6 @@ object TickFrm: TTickFrm
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  OnWindowStateChange = FormWindowStateChange
   ShowInTaskBar = stAlways
   LCLVersion = '0.9.25'
   object BtnCancel: TBitBtn

@@ -102,12 +102,10 @@ type
     BtnPauseRun: TBitBtn;
     BtnCancel: TBitBtn;
     // ---
+    procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
-    procedure FormCreate(Sender: TObject);
-    procedure FormWindowStateChange(Sender: TObject);
     // ---
-    procedure HandleClick(Sender: TObject);
     procedure PopupClick(Sender: TObject);
     // ---
     procedure BtnFontClick(Sender: TObject);
@@ -195,7 +193,7 @@ var
     {$ENDIF}
   end;
 
-  destructor TTickFrm.Destroy; //OK
+  destructor TTickFrm.Destroy;
   begin
     FInterfaces.Free;
     FInterfaces := nil;
@@ -209,10 +207,6 @@ var
   procedure TTickFrm.Start(ACmdLine: TCmdLine);
   begin
     FCmdLine := ACmdLine;
-    if FCmdLine.Log then
-    begin
-      // completare
-    end;
     FApp := TBeeApp.Create(FInterfaces, FCmdLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
@@ -225,28 +219,12 @@ var
   begin
     {$I beegui_tickfrm_loadlanguage.inc}
     {$I beegui_tickfrm_loadproperty.inc}
-    // {$ifdef Windows}
-    // TrayIcon.Icon.Handle := LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
-    // {$endif}
-    // TrayIcon.Hint := 'BeeCore';
-    // TrayIcon.OnClick := HandleClick;
-    // TrayIcon.Popup := Popup;
-    // --
-    Notebook.ActivePageComponent := GeneralPage;
+    // ---
     BtnPauseRun.Caption := rsBtnPauseCaption;
     BtnCancel.Caption := rsBtnCancelCaption;
+    
+    Notebook.ActivePageComponent := GeneralPage;
     ActiveControl := BtnCancel;
-  end;
-
-  procedure TTickFrm.FormWindowStateChange(Sender: TObject);
-  begin
-    // if WindowState = wsNormal then
-    // begin
-    //  TrayIcon.Visible := False;
-    // end else
-    // begin
-    //  TrayIcon.Visible := True;
-    // end;
   end;
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -265,18 +243,13 @@ var
     begin
       if MessageDlg(rsConfirmation, rsConfirmAbort, mtConfirmation, [mbYes, mbNo], '') = mrYes then
       begin
+        FInterfaces.Properties.Aborted := True;
         if FInterfaces.Properties.Suspended then
         begin
-          FInterfaces.Properties.Suspended := False;
+          BtnPauseRun.Click;
         end;
-        FInterfaces.Properties.Aborted := True;
       end;
     end;
-  end;
-  
-  procedure TTickFrm.HandleClick(Sender: TObject);
-  begin
-    WindowState := wsNormal;
   end;
   
   procedure TTickFrm.PopupClick(Sender: TObject);
@@ -366,8 +339,8 @@ var
         Application.Title := rsProcessTerminated
       else
         Application.Title := rsProcessAborted;
-
       Caption := Application.Title;
+
       Time.Caption := TimeToStr(FTime);
       RemainingTime.Caption := TimeToStr(0);
 
@@ -377,6 +350,10 @@ var
       Speed.Caption := IntToStr(0);
       Msg.Caption := '...';
       Tick.Position := 0;
+    end else
+    begin
+      Application.Title := rsProcessPaused;
+      Caption := Application.Title
     end;
   end;
 
@@ -390,17 +367,14 @@ var
   begin
     if FInterfaces.Properties.Terminated = False then
     begin
-      if FInterfaces.Properties.Suspended then
+      Timer.Enabled := not Timer.Enabled;
+      with FInterfaces.Properties do
       begin
-        Timer.Enabled  := True;
-        BtnPauseRun.Caption := rsBtnPauseCaption;
-        FInterfaces.Properties.Suspended := False;
-      end else
-      begin
-        Timer.Enabled  := False;
-        BtnPauseRun.Caption := rsBtnRunCaption;
-        FInterfaces.Properties.Suspended := True;
-        Caption := rsProcessPaused;
+        Suspended := not Suspended;
+        if Suspended then
+          BtnPauseRun.Caption := rsBtnRunCaption
+        else
+          BtnPauseRun.Caption := rsBtnPauseCaption;
       end;
     end;
   end;
@@ -415,7 +389,7 @@ var
     Popup_TimeCritical.Checked := FApp.Priority = tpTimeCritical;
 
     X := Left + BtnPriority.Left;
-    Y := Top + BtnPriority.Top + BtnPriority.Height;
+    Y := Top  + BtnPriority.Top + BtnPriority.Height;
 
     {$IFDEF MSWINDOWS}
     Inc(X, 3);
@@ -462,26 +436,29 @@ var
     Close;
   end;
   
-  // BeeApp Events
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  // BeeApp Events                                                            //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
   
   procedure TTickFrm.OnTerminate(Sender: TObject);
   begin
     if FInterfaces.Properties.Terminated = True then
     begin
       Timer.Enabled       := False;
-
-      BtnCancel.Kind      := bkClose;
-      BtnCancel.Caption   := rsBtnCloseCaption;
       BtnPriority.Enabled := False;
       BtnPauseRun.Enabled := False;
-      
+      BtnCancel.Kind      := bkClose;
+      BtnCancel.Caption   := rsBtnCloseCaption;
+
       if Report.Lines.Count > 0 then
       begin
-        ActiveControl := BtnCancel;
-        Notebook.ActivePageComponent := ReportPage;
-
         BtnSave.Enabled := True;
         BtnFont.Enabled := True;
+
+        ActiveControl   := BtnCancel;
+        Notebook.ActivePageComponent := ReportPage;
       end else
       begin;
         Close;
@@ -494,23 +471,6 @@ var
     end;
   end;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // 0K
-  
   procedure TTickFrm.OnOverwrite;
   var
     F: TOverWriteFrm;
@@ -643,8 +603,8 @@ var
   procedure TTickFrm.OnTick;
   begin
     Tick.Position := FInterfaces.OnTick.Data.Percentage;
-    Caption := Format(rsProcessStatus, [FInterfaces.OnTick.Data.Percentage]);
-    Application.Title := Caption;
+    Application.Title := Format(rsProcessStatus, [FInterfaces.OnTick.Data.Percentage]);
+    Caption := Application.Title;
   end;
   
   procedure TTickFrm.OnKey;
