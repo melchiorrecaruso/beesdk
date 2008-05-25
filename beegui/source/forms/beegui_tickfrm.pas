@@ -175,10 +175,7 @@ var
     FInterfaces := nil;
     FContents := TStringList.Create;
     {$IFDEF UNIX}
-    // BtnPriority.Enabled := False;
-    // BtnPriority.Visible := False;
-    // BtnPauseRun.Enabled := False;
-    // BtnPauseRun.Visible := False;
+    BtnPriority.Enabled := False;
     {$ENDIF}
     FElapsedTime := 0;
     FRemainingTime := 0;
@@ -220,6 +217,8 @@ var
     FApp := TBeeApp.Create(FInterfaces, FCmdLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
+    // ---
+    Timer.Enabled := True;
   end;
   
   
