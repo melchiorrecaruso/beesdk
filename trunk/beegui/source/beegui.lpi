@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="5"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -561,7 +561,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="27" Y="149"/>
         <TopLine Value="187"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="157"/>
         <Loaded Value="True"/>
       </Unit73>
@@ -630,7 +630,7 @@
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="33" Y="461"/>
         <TopLine Value="440"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="163"/>
         <Loaded Value="True"/>
       </Unit79>
@@ -642,8 +642,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="50" Y="88"/>
-        <TopLine Value="61"/>
+        <CursorPos X="26" Y="96"/>
+        <TopLine Value="76"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="157"/>
         <Loaded Value="True"/>
@@ -1132,9 +1132,11 @@
       </Unit155>
       <Unit156>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="40" Y="26"/>
-        <TopLine Value="3"/>
-        <UsageCount Value="9"/>
+        <CursorPos X="17" Y="33"/>
+        <TopLine Value="4"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit156>
       <Unit157>
         <Filename Value="packages\beegui_forms.pas"/>
@@ -1269,7 +1271,12 @@
         <UsageCount Value="10"/>
       </Unit176>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="1" HistoryIndex="0">
+      <Position1>
+        <Filename Value="forms\beegui_aboutfrm.pas"/>
+        <Caret Line="29" Column="9" TopLine="16"/>
+      </Position1>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
