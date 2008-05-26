@@ -1,16 +1,16 @@
 object AboutFrm: TAboutFrm
   Left = 520
-  Height = 212
+  Height = 188
   Top = 217
   Width = 271
   HorzScrollBar.Page = 270
-  VertScrollBar.Page = 211
+  VertScrollBar.Page = 187
   ActiveControl = BtnOk
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'About to...'
-  ClientHeight = 212
+  ClientHeight = 188
   ClientWidth = 271
   Font.Name = 'Default'
   Font.Style = [fsBold]
@@ -112,8 +112,8 @@ object AboutFrm: TAboutFrm
     AnchorSideBottom.Control = BtnOk
     AnchorSideBottom.Side = asrCenter
     Left = 10
-    Height = 20
-    Top = 142
+    Height = 14
+    Top = 124
     Width = 251
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
@@ -130,8 +130,8 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Copyright
     AnchorSideRight.Side = asrBottom
     Left = 10
-    Height = 20
-    Top = 98
+    Height = 14
+    Top = 92
     Width = 251
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
@@ -148,8 +148,8 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 10
-    Height = 20
-    Top = 120
+    Height = 14
+    Top = 108
     Width = 251
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
@@ -168,7 +168,7 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Copyright
     AnchorSideRight.Side = asrBottom
     Left = 10
-    Height = 20
+    Height = 14
     Top = 76
     Width = 251
     Alignment = taCenter
@@ -187,7 +187,7 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Side = asrBottom
     Left = 6
     Height = 2
-    Top = 168
+    Top = 144
     Width = 259
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Around = 6
@@ -203,7 +203,7 @@ object AboutFrm: TAboutFrm
     AnchorSideBottom.Side = asrBottom
     Left = 190
     Height = 30
-    Top = 176
+    Top = 152
     Width = 75
     Anchors = [akTop, akRight]
     BorderSpacing.Around = 6
@@ -229,7 +229,7 @@ object AboutFrm: TAboutFrm
     AnchorSideBottom.Side = asrBottom
     Left = 104
     Height = 30
-    Top = 176
+    Top = 152
     Width = 80
     Anchors = [akTop, akRight, akBottom]
     BorderSpacing.Around = 6

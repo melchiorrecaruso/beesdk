@@ -94,7 +94,9 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_aboutfrm_savelanguage.inc}
+    {$IFDEF DEBUG}
+      {$I beegui_aboutfrm_savelanguage.inc}
+    {$ENDIF}
     {$I beegui_aboutfrm_saveproperty.inc}
   end;
   
