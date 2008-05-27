@@ -54,16 +54,12 @@ type
     Copyright: TLabel;
     Link: TLabel;
     Bevel: TBevel;
-    // ---
-    BtnLicense: TBitBtn;
     BtnOk: TBitBtn;
-    // ---
+    BtnLicense: TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
-    // ---
-    procedure BtnOkClick(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
+    procedure BtnOkClick(Sender: TObject);
   public
     { public declarations }
   private
@@ -85,7 +81,7 @@ uses
     {$I beegui_aboutfrm_loadlanguage.inc}
     {$I beegui_aboutfrm_loadproperty.inc}
     Logo.Transparent  := True;
-    Version.Caption   := 'BeeGui 1.0.5 [build 271]';
+    Version.Caption   := 'BeeGui ' + {$I version.inc};
     Copyright.Caption := '(C) 2003-2008 Andrew Filinsky and  Melchiorre Caruso';
   end;
 
@@ -104,19 +100,6 @@ uses
   begin
     ShellExec(ExtractFilePath(ParamStr(0))
       + IncludeTrailingBackSlash('docs') + 'license.htm', '');
-  end;
-
-  procedure TAboutFrm.FormShow(Sender: TObject);
-  begin
-    (*
-    if Constraints.MaxHeight = 0 then
-    begin
-      Constraints.MaxHeight := Height;
-      Constraints.MinHeight := Height;
-      Constraints.MaxWidth := Width;
-      Constraints.MinWidth := Width
-    end;
-    *)
   end;
 
   procedure TAboutFrm.BtnOkClick(Sender: TObject);
