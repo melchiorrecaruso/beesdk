@@ -1,13 +1,13 @@
 object AboutFrm: TAboutFrm
-  Left = 520
+  Left = 504
   Height = 188
-  Top = 217
+  Top = 205
   Width = 271
   HorzScrollBar.Page = 270
   VertScrollBar.Page = 187
   ActiveControl = BtnOk
   AutoSize = True
-  BorderIcons = [biSystemMenu, biMinimize]
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'About to...'
   ClientHeight = 188
@@ -16,17 +16,16 @@ object AboutFrm: TAboutFrm
   Font.Style = [fsBold]
   OnClose = FormClose
   OnCreate = FormCreate
-  OnShow = FormShow
   LCLVersion = '0.9.25'
   object Logo: TImage
     AnchorSideLeft.Control = Copyright
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Copyright
     AnchorSideRight.Side = asrBottom
-    Left = 10
+    Left = 6
     Height = 64
     Top = 6
-    Width = 251
+    Width = 259
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Top = 6
@@ -111,10 +110,10 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnOk
     AnchorSideBottom.Side = asrCenter
-    Left = 10
+    Left = 6
     Height = 14
     Top = 124
-    Width = 251
+    Width = 259
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 2
@@ -129,10 +128,10 @@ object AboutFrm: TAboutFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Copyright
     AnchorSideRight.Side = asrBottom
-    Left = 10
+    Left = 6
     Height = 14
     Top = 92
-    Width = 251
+    Width = 259
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 2
@@ -147,15 +146,14 @@ object AboutFrm: TAboutFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 10
+    Left = 6
     Height = 14
     Top = 108
-    Width = 251
+    Width = 259
     Alignment = taCenter
-    Anchors = [akTop, akLeft, akRight]
-    BorderSpacing.Left = 10
+    BorderSpacing.Left = 6
     BorderSpacing.Top = 2
-    BorderSpacing.Right = 10
+    BorderSpacing.Right = 6
     BorderSpacing.Bottom = 2
     Caption = '? 2003-2008 Andrew Filinsky and  Melchiorre Caruso'
     Layout = tlCenter
@@ -163,14 +161,15 @@ object AboutFrm: TAboutFrm
   end
   object Version: TLabel
     AnchorSideLeft.Control = Copyright
+    AnchorSideLeft.Side = asrCenter
     AnchorSideTop.Control = Logo
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Copyright
     AnchorSideRight.Side = asrBottom
-    Left = 10
+    Left = 6
     Height = 14
     Top = 76
-    Width = 251
+    Width = 259
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 6
@@ -180,24 +179,25 @@ object AboutFrm: TAboutFrm
     ParentColor = False
   end
   object Bevel: TBevel
-    AnchorSideLeft.Control = Owner
+    AnchorSideLeft.Control = Copyright
     AnchorSideTop.Control = Link
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
+    AnchorSideRight.Control = Copyright
     AnchorSideRight.Side = asrBottom
     Left = 6
     Height = 2
     Top = 144
     Width = 259
     Anchors = [akTop, akLeft, akRight]
-    BorderSpacing.Around = 6
+    BorderSpacing.Top = 6
+    BorderSpacing.Bottom = 6
     Constraints.MaxHeight = 2
     Constraints.MinHeight = 2
   end
   object BtnOk: TBitBtn
     AnchorSideTop.Control = Bevel
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
+    AnchorSideRight.Control = Copyright
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
@@ -206,7 +206,9 @@ object AboutFrm: TAboutFrm
     Top = 152
     Width = 75
     Anchors = [akTop, akRight]
-    BorderSpacing.Around = 6
+    BorderSpacing.Left = 6
+    BorderSpacing.Top = 6
+    BorderSpacing.Bottom = 6
     Cancel = True
     Caption = '&OK'
     Constraints.MaxHeight = 30
@@ -231,7 +233,7 @@ object AboutFrm: TAboutFrm
     Height = 30
     Top = 152
     Width = 80
-    Anchors = [akTop, akRight, akBottom]
+    Anchors = [akTop, akRight]
     BorderSpacing.Around = 6
     Caption = 'License'
     Constraints.MaxHeight = 30
