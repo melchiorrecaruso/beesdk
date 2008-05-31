@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -43,8 +43,8 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="18" Y="48"/>
-        <TopLine Value="48"/>
+        <CursorPos X="48" Y="72"/>
+        <TopLine Value="57"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -626,9 +626,11 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="33" Y="461"/>
-        <TopLine Value="440"/>
+        <CursorPos X="1" Y="343"/>
+        <TopLine Value="461"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="165"/>
+        <Loaded Value="True"/>
       </Unit79>
       <Unit80>
         <Filename Value="forms\beegui_aboutfrm.pas"/>
@@ -639,7 +641,7 @@
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="45" Y="84"/>
-        <TopLine Value="64"/>
+        <TopLine Value="79"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="159"/>
         <Loaded Value="True"/>
@@ -655,9 +657,11 @@
         <Filename Value="packages\beegui_cmdline.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_CmdLine"/>
-        <CursorPos X="9" Y="109"/>
-        <TopLine Value="121"/>
+        <CursorPos X="27" Y="262"/>
+        <TopLine Value="245"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="159"/>
+        <Loaded Value="True"/>
       </Unit82>
       <Unit83>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
@@ -1266,57 +1270,14 @@
       </Unit177>
       <Unit178>
         <Filename Value="version.inc"/>
-        <CursorPos X="21" Y="1"/>
+        <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit178>
     </Units>
-    <JumpHistory Count="11" HistoryIndex="10">
-      <Position1>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="107" Column="7" TopLine="78"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="85" Column="32" TopLine="77"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="99" Column="30" TopLine="77"/>
-      </Position3>
-      <Position4>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="66" Column="41" TopLine="65"/>
-      </Position4>
-      <Position5>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="115" Column="22" TopLine="83"/>
-      </Position5>
-      <Position6>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="111" Column="22" TopLine="90"/>
-      </Position6>
-      <Position7>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="86" Column="31" TopLine="75"/>
-      </Position7>
-      <Position8>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="100" Column="30" TopLine="85"/>
-      </Position8>
-      <Position9>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="111" Column="68" TopLine="90"/>
-      </Position9>
-      <Position10>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="107" Column="7" TopLine="101"/>
-      </Position10>
-      <Position11>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="84" Column="45" TopLine="64"/>
-      </Position11>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
