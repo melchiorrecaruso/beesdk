@@ -189,6 +189,7 @@ var
     FPassword := '';
     FTime := 0;
     {$IFDEF UNIX}
+      Tick.Smooth := True;
       BtnPriority.Enabled := False;
     {$ENDIF}
   end;
@@ -219,12 +220,11 @@ var
   begin
     {$I beegui_tickfrm_loadlanguage.inc}
     {$I beegui_tickfrm_loadproperty.inc}
+    ActiveControl := BtnCancel;
+    Notebook.ActivePageComponent := GeneralPage;
     // ---
     BtnPauseRun.Caption := rsBtnPauseCaption;
     BtnCancel.Caption := rsBtnCancelCaption;
-    
-    Notebook.ActivePageComponent := GeneralPage;
-    ActiveControl := BtnCancel;
   end;
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -340,16 +340,6 @@ var
       else
         Application.Title := rsProcessAborted;
       Caption := Application.Title;
-
-      Time.Caption := TimeToStr(FTime);
-      RemainingTime.Caption := TimeToStr(0);
-
-      ProcessedSize.Caption := GeneralSize.Caption;
-      ProcessedSizeUnit.Caption := GeneralSizeUnit.Caption;
-
-      Speed.Caption := IntToStr(0);
-      Msg.Caption := '...';
-      Tick.Position := 0;
     end else
     begin
       Application.Title := rsProcessPaused;
@@ -446,7 +436,10 @@ var
   begin
     if FInterfaces.Properties.Terminated = True then
     begin
-      Timer.Enabled       := False;
+      if Timer.Enabled then
+        Timer.Enabled := False
+      else
+        OnStopTimer(Timer);
 
       BtnPriority.Enabled := False;
       BtnPauseRun.Enabled := False;
@@ -455,7 +448,7 @@ var
 
       if Report.Lines.Count > 0 then
       begin
-        Notebook.ActivePageComponent := ReportPage;
+        GeneralPage.TabVisible := False;
         ActiveControl   := BtnCancel;
         BtnSave.Enabled := True;
         BtnFont.Enabled := True;

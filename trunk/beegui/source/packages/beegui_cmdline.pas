@@ -254,8 +254,10 @@ uses
           'T': begin
                  System.Delete(S, 1, 2);
                  if (S = '+') or (Length(S) = 0) then
-                   FtOption := True
-                 else
+                 begin
+                   FtOption := True;
+                   F1Option := True;
+                 end else
                    if (S = '-') then FtOption := False;
                end;
           'L': begin
