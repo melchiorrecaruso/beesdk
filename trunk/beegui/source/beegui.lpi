@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -1303,16 +1303,7 @@
         <UsageCount Value="10"/>
       </Unit182>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
-      <Position1>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="222" Column="28" TopLine="205"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="236" Column="28" TopLine="205"/>
-      </Position2>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
