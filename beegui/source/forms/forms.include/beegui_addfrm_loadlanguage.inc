@@ -1,17 +1,11 @@
 
-  // ---
-
   Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('addfrm.ini'));
-
-    // ---
-
-    PageGeneral.Caption := Storage.ReadString('TPages', 'PageGeneral.Caption', PageGeneral.Caption);
-
+    
+    PageGeneral.Caption      := Storage.ReadString('TPages', 'PageGeneral.Caption', PageGeneral.Caption);
     ArchiveNameLabel.Caption := Storage.ReadString('TLabel', 'ArchiveName', ArchiveNameLabel.Caption);
-    BtnOpen.Caption :=          Storage.ReadString('TBitBtn', 'BtnOpen.Caption', BtnOpen.Caption);
 
     ufOptionLabel.Caption := Storage.ReadString('TLabel', 'ufOption', ufOptionLabel.Caption);
     ufOption.Items[0] := Storage.ReadString('TComboBox', 'ufOption[0]', ufOption.Items[0]);
@@ -36,8 +30,6 @@
     dOption.Items[8] := Storage.ReadString('TComboBox', 'dOption[8]', dOption.Items[8]);
     dOption.Items[9] := Storage.ReadString('TComboBox', 'dOption[9]', dOption.Items[9]);
 
-    eOptionLabel.Caption := Storage.ReadString('TLabel', 'eOption', eOptionLabel.Caption);
-
     Options.Caption := Storage.ReadString('TGroupBox', 'Options.Caption', Options.Caption);
     rOption.Caption := Storage.ReadString('TCheckBox', 'rOption.Caption', rOption.Caption);
     sOption.Caption := Storage.ReadString('TCheckBox', 'sOption.Caption', sOption.Caption);
@@ -45,12 +37,13 @@
     kOption.Caption := Storage.ReadString('TCheckBox', 'kOption.Caption', kOption.Caption);
     lOption.Caption := Storage.ReadString('TCheckBox', 'lOption.Caption', lOption.Caption);
 
-    // ---
+    eOptionLabel.Caption := Storage.ReadString('TLabel', 'eOption', eOptionLabel.Caption);
+
 
     PageFiles.Caption := Storage.ReadString('TPages', 'PageFiles.Caption', PageFiles.Caption);
 
     FilesLabel.Caption := Storage.ReadString('TLabel', 'Files', FilesLabel.Caption);
-    RootLabel.Caption := Storage.ReadString('TLabel', 'Root', RootLabel.Caption);
+    RootLabel.Caption  := Storage.ReadString('TLabel', 'Root', RootLabel.Caption);
 
     BtnFolder.Caption    := Storage.ReadString('TBitBtn', 'BtnFolder.Caption', BtnFolder.Caption);
     BtnFiles.Caption     := Storage.ReadString('TBitBtn', 'BtnFiles.Caption', BtnFiles.Caption);
@@ -58,8 +51,6 @@
     BtnPlusMinus.Caption := Storage.ReadString('TBitBtn', 'BtnPlusMinus.Caption', BtnPlusMinus.Caption);
     BtnModify.Caption    := Storage.ReadString('TBitBtn', 'BtnModify.Caption', BtnModify.Caption);
     BtnDelete.Caption    := Storage.ReadString('TBitBtn', 'BtnDelete.Caption', BtnDelete.Caption);
-
-    // ---
 
     PageAdvanced.Caption := Storage.ReadString('TPages', 'PageAdvanced.Caption', PageAdvanced.Caption);
 
@@ -76,12 +67,9 @@
     yOptionLabel.Caption := Storage.ReadString('TLabel', 'yOption', yOptionLabel.Caption);
     yOptionBtn.Caption   := Storage.ReadString('TBitBtn', 'yOptionBtn.Caption', yOptionBtn.Caption);
 
-    // ---
-
     BtnCancel.Caption := Storage.ReadString('TBitBtn', 'BtnCancel.Caption', BtnCancel.Caption);
+    BtnOpen.Caption   := Storage.ReadString('TBitBtn', 'BtnOpen.Caption', BtnOpen.Caption);
     BtnOk.Caption     := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
-
-    // ---
 
     Storage.Free;
   end;

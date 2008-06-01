@@ -1,12 +1,8 @@
 
-  // ---
-
   Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('addfrm.ini'));
-
-    // ---
     
     Storage.WriteString('TPages', 'PageGeneral.Caption', PageGeneral.Caption);
 
