@@ -116,6 +116,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FilesSelectionChanged(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
+    procedure OptionsClick(Sender: TObject);
     procedure PagesPageChanged(Sender: TObject);
     // ---
     procedure PopupMenu_AddFolderClick(Sender: TObject);
@@ -160,7 +161,9 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_addfrm_savelanguage.inc}
+    {$IFDEF DEBUG}
+      {$I beegui_addfrm_savelanguage.inc}
+    {$ENDIF}
     {$I beegui_addfrm_saveproperty.inc}
   end;
 
@@ -330,6 +333,11 @@ uses
       else
         FilesMgr.AddFile(FileNames[I]);
     end;
+  end;
+
+  procedure TAddFrm.OptionsClick(Sender: TObject);
+  begin
+
   end;
 
   procedure TAddFrm.PagesPageChanged(Sender: TObject);
