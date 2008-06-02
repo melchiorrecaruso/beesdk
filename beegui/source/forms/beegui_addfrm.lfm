@@ -368,6 +368,7 @@ object AddFrm: TAddFrm
         Width = 234
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Files and/or Directories to Add and/or to Exclude'
         Layout = tlBottom
         ParentColor = False
@@ -378,10 +379,11 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Control = Root
         Left = 6
         Height = 14
-        Top = 206
+        Top = 204
         Width = 107
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Current root directory'
         Layout = tlBottom
         ParentColor = False
@@ -608,13 +610,13 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = BtnFolder
         AnchorSideBottom.Control = RootLabel
         Left = 6
-        Height = 180
-        Top = 20
+        Height = 176
+        Top = 22
         Width = 287
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        DefaultItemHeight = 18
+        DefaultItemHeight = 16
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
@@ -633,10 +635,11 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         Left = 6
         Height = 14
-        Top = 94
+        Top = 98
         Width = 219
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Use selected parameters .ini file (-cfg Option)'
         Layout = tlBottom
         ParentColor = False
@@ -647,10 +650,11 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         Left = 6
         Height = 14
-        Top = 52
+        Top = 54
         Width = 206
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Use Current Archive Directory (-cd Option)'
         Layout = tlBottom
         ParentColor = False
@@ -661,10 +665,11 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         Left = 6
         Height = 14
-        Top = 135
+        Top = 141
         Width = 89
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Set work directory'
         ParentColor = False
       end
@@ -677,6 +682,7 @@ object AddFrm: TAddFrm
         Width = 197
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Add self-extractor module (-a Option)'
         Color = clInactiveBorder
         OnChange = aOptionCheckChange
@@ -692,7 +698,7 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         Left = 6
         Height = 21
-        Top = 25
+        Top = 27
         Width = 368
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
@@ -720,7 +726,7 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = cfgOptionBtn
         Left = 6
         Height = 21
-        Top = 108
+        Top = 114
         Width = 287
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
@@ -738,8 +744,8 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Control = yOption
         AnchorSideBottom.Side = asrBottom
         Left = 299
-        Height = 35
-        Top = 135
+        Height = 37
+        Top = 141
         Width = 75
         Anchors = [akTop, akRight, akBottom]
         BorderSpacing.Right = 6
@@ -757,7 +763,7 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         Left = 6
         Height = 22
-        Top = 66
+        Top = 70
         Width = 368
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -771,7 +777,7 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         Left = 6
         Height = 21
-        Top = 149
+        Top = 157
         Width = 285
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
@@ -788,8 +794,8 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Control = cfgOption
         AnchorSideBottom.Side = asrBottom
         Left = 299
-        Height = 35
-        Top = 94
+        Height = 37
+        Top = 98
         Width = 75
         Anchors = [akTop, akRight, akBottom]
         BorderSpacing.Right = 6

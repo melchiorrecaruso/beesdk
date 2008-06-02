@@ -110,22 +110,18 @@ type
     BtnFolder: TBitBtn;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
-    // ---
-    procedure aOptionCheckChange(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FilesSelectionChanged(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
-    procedure OptionsClick(Sender: TObject);
+    procedure aOptionCheckChange(Sender: TObject);
     procedure PagesPageChanged(Sender: TObject);
-    // ---
     procedure PopupMenu_AddFolderClick(Sender: TObject);
     procedure PopupMenu_AddFilesClick(Sender: TObject);
     procedure PopupMenu_ViewClick(Sender: TObject);
     procedure PopupMenu_PlusMinusClick(Sender: TObject);
     procedure PopupMenu_ModifyClick(Sender: TObject);
     procedure PopupMenu_DeleteClick(Sender: TObject);
-    // ---
     procedure BtnUpClick(Sender: TObject);
     procedure BtnDownClick(Sender: TObject);
     procedure BtnOpenClick(Sender: TObject);
@@ -333,11 +329,6 @@ uses
       else
         FilesMgr.AddFile(FileNames[I]);
     end;
-  end;
-
-  procedure TAddFrm.OptionsClick(Sender: TObject);
-  begin
-
   end;
 
   procedure TAddFrm.PagesPageChanged(Sender: TObject);
