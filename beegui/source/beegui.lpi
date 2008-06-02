@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="4"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -95,9 +95,9 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_passwordfrm.lrs"/>
         <UnitName Value="BeeGui_PasswordFrm"/>
-        <CursorPos X="74" Y="95"/>
-        <TopLine Value="79"/>
-        <EditorIndex Value="5"/>
+        <CursorPos X="16" Y="101"/>
+        <TopLine Value="138"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="162"/>
         <Loaded Value="True"/>
       </Unit6>
@@ -620,7 +620,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="13" Y="90"/>
         <TopLine Value="63"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="162"/>
         <Loaded Value="True"/>
       </Unit78>
@@ -632,9 +632,11 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="26" Y="402"/>
-        <TopLine Value="215"/>
+        <CursorPos X="35" Y="236"/>
+        <TopLine Value="445"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="168"/>
+        <Loaded Value="True"/>
       </Unit79>
       <Unit80>
         <Filename Value="forms\beegui_aboutfrm.pas"/>
@@ -1327,40 +1329,7 @@
         <UsageCount Value="10"/>
       </Unit186>
     </Units>
-    <JumpHistory Count="8" HistoryIndex="7">
-      <Position1>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="150" Column="30" TopLine="143"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="151" Column="28" TopLine="143"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="28" Column="9" TopLine="15"/>
-      </Position3>
-      <Position4>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="161" Column="30" TopLine="143"/>
-      </Position4>
-      <Position5>
-        <Filename Value="forms\beegui_renamefrm.pas"/>
-        <Caret Line="79" Column="33" TopLine="63"/>
-      </Position5>
-      <Position6>
-        <Filename Value="forms\beegui_renamefrm.pas"/>
-        <Caret Line="89" Column="28" TopLine="63"/>
-      </Position6>
-      <Position7>
-        <Filename Value="forms\beegui_passwordfrm.pas"/>
-        <Caret Line="87" Column="33" TopLine="79"/>
-      </Position7>
-      <Position8>
-        <Filename Value="forms\beegui_passwordfrm.pas"/>
-        <Caret Line="97" Column="35" TopLine="79"/>
-      </Position8>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
