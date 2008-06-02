@@ -3,6 +3,8 @@
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('renamefrm.ini'));
+    
+    Caption := Storage.ReadString('TForm','Caption', Caption);
 
     FromFNLabel.Caption := Storage.ReadString('TLabel','From', FromFNLabel.Caption);
     ToFNLabel.Caption   := Storage.ReadString('TLabel','To', ToFNLabel.Caption);

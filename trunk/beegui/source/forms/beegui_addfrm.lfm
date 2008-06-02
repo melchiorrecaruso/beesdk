@@ -135,7 +135,6 @@ object AddFrm: TAddFrm
         ParentBidiMode = False
         ParentShowHint = False
         TabOrder = 0
-        OnClick = OptionsClick
         object rOption: TCheckBox
           AnchorSideLeft.Control = Options
           AnchorSideTop.Control = Options
@@ -616,7 +615,7 @@ object AddFrm: TAddFrm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        DefaultItemHeight = 16
+        DefaultItemHeight = 18
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True

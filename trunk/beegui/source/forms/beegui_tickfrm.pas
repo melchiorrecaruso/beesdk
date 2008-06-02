@@ -232,7 +232,9 @@ var
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_tickfrm_savelanguage.inc}
+    {$IFDEF DEBUG}
+      {$I beegui_tickfrm_savelanguage.inc}
+    {$ENDIF}
     {$I beegui_tickfrm_saveproperty.inc}
   end;
 

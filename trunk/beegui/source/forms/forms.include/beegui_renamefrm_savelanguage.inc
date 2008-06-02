@@ -4,6 +4,8 @@
   begin
     Storage := TMemIniFile.Create(Folder + ('renamefrm.ini'));
 
+    Storage.WriteString('TForm','Caption', Caption);
+
     Storage.WriteString('TLabel','From', FromFNLabel.Caption);
     Storage.WriteString('TLabel','To', ToFNLabel.Caption);
 

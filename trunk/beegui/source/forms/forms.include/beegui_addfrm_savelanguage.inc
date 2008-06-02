@@ -4,6 +4,8 @@
   begin
     Storage := TMemIniFile.Create(Folder + ('addfrm.ini'));
     
+    Storage.WriteString('TForm', 'Caption', Caption);
+    
     Storage.WriteString('TPages', 'PageGeneral.Caption', PageGeneral.Caption);
 
     Storage.WriteString('TLabel', 'ArchiveName', ArchiveNameLabel.Caption);

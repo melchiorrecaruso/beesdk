@@ -1,12 +1,8 @@
 
-  // ---
-
   Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('beegui'));
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('tickfrm.ini'));
-
-    // ---
 
     if WindowState = wsNormal then
     begin
@@ -17,36 +13,32 @@
     end;
     WindowState := TWindowState(Storage.ReadInteger('TForm', 'TickFrm.WindowState', Ord(WindowState)));
 
-    // ---
+    Report.Font.CharSet := TFontCharSet(Storage.ReadInteger('TFont', 'Report.Font.Charset',    (Report.Font.CharSet)));
+    Report.Font.Color   := TColor      (Storage.ReadInteger('TFont', 'Report.Font.Color'  ,    (Report.Font.Color)));
+    Report.Font.Name    :=              Storage.ReadString ('TFont', 'Report.Font.Name'   ,     Report.Font.Name);
+    Report.Font.Height  :=              Storage.ReadInteger('TFont', 'Report.Font.Height' ,     Report.Font.Height);
+    Report.Font.Pitch   := TFontPitch  (Storage.ReadInteger('TFont', 'Report.Font.Pitch'  , Ord(Report.Font.Pitch)));
+    Report.Font.Size    :=              Storage.ReadInteger('TFont', 'Report.Font.Size'   ,     Report.Font.Size);
 
-    FontDialog.Font.CharSet := TFontCharSet(Storage.ReadInteger('TFont', 'FontDialog.Charset', Ord(FontDialog.Font.CharSet)));
-    FontDialog.Font.Color   := TColor      (Storage.ReadInteger('TFont', 'FontDialog.Color'  , Ord(FontDialog.Font.Color)));
-    FontDialog.Font.Name    :=              Storage.ReadString ('TFont', 'FontDialog.Name'   ,     FontDialog.Font.Name);
-    FontDialog.Font.Height  :=              Storage.ReadInteger('TFont', 'FontDialog.Height' ,     FontDialog.Font.Height);
-    FontDialog.Font.Pitch   := TFontPitch  (Storage.ReadInteger('TFont', 'FontDialog.Pitch'  , Ord(FontDialog.Font.Pitch)));
-    FontDialog.Font.Size    :=              Storage.ReadInteger('TFont', 'FontDialog.Size'   ,     FontDialog.Font.Size);
-
-    if Storage.ReadBool('TFont', 'FontDialog.Style[fsBold]', False) then
-      FontDialog.Font.Style := FontDialog.Font.Style + [fsBold]
+    if Storage.ReadBool('TFont', 'Report.Font.Style[fsBold]', False) then
+      Report.Font.Style := Report.Font.Style + [fsBold]
     else
-      FontDialog.Font.Style := FontDialog.Font.Style - [fsBold];
+      Report.Font.Style := Report.Font.Style - [fsBold];
 
-    if Storage.ReadBool ('TFont', 'FontDialog.Style[fsItalic]', False) then
-      FontDialog.Font.Style := FontDialog.Font.Style + [fsItalic]
+    if Storage.ReadBool ('TFont', 'Report.Font.Style[fsItalic]', False) then
+      Report.Font.Style := Report.Font.Style + [fsItalic]
     else
-      FontDialog.Font.Style := FontDialog.Font.Style - [fsItalic];
+      Report.Font.Style := Report.Font.Style - [fsItalic];
 
-    if Storage.ReadBool ('TFont', 'FontDialog.Style[fsUnderline]', False) then
-      FontDialog.Font.Style := FontDialog.Font.Style + [fsUnderline]
+    if Storage.ReadBool ('TFont', 'Report.Font.Style[fsUnderline]', False) then
+      Report.Font.Style := Report.Font.Style + [fsUnderline]
     else
-      FontDialog.Font.Style := FontDialog.Font.Style - [fsUnderline];
+      Report.Font.Style := Report.Font.Style - [fsUnderline];
 
-    if Storage.ReadBool ('TFont', 'FontDialog.Style[fsStrikeOut]', False) then
-      FontDialog.Font.Style := FontDialog.Font.Style + [fsStrikeOut]
+    if Storage.ReadBool ('TFont', 'Report.Font.Style[fsStrikeOut]', False) then
+      Report.Font.Style := Report.Font.Style + [fsStrikeOut]
     else
-      FontDialog.Font.Style := FontDialog.Font.Style - [fsStrikeOut];
-
-    // ---
+      Report.Font.Style := Report.Font.Style - [fsStrikeOut];
 
     Storage.Free;
   end;
