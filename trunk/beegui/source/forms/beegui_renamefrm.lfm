@@ -1,29 +1,29 @@
 object RenameFrm: TRenameFrm
-  Left = 448
-  Height = 96
-  Top = 312
+  Left = 585
+  Height = 90
+  Top = 240
   Width = 267
   HorzScrollBar.Page = 266
   HorzScrollBar.Range = 35
-  VertScrollBar.Page = 95
+  VertScrollBar.Page = 89
   VertScrollBar.Range = 53
   ActiveControl = BtnOk
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = 'Rename'
-  ClientHeight = 96
+  ClientHeight = 90
   ClientWidth = 267
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
-  OnShow = FormShow
   LCLVersion = '0.9.25'
   object FromFNLabel: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     Left = 6
-    Height = 20
+    Height = 14
     Top = 6
     Width = 29
     Alignment = taRightJustify
@@ -36,17 +36,16 @@ object RenameFrm: TRenameFrm
   object ToFNLabel: TLabel
     AnchorSideTop.Control = ToFN
     AnchorSideRight.Control = ToFN
-    AnchorSideBottom.Control = ToFN
     AnchorSideBottom.Side = asrBottom
     Left = 18
-    Height = 22
-    Top = 32
+    Height = 14
+    Top = 26
     Width = 17
     Alignment = taRightJustify
-    Anchors = [akTop, akRight, akBottom]
+    Anchors = [akTop, akRight]
     BorderSpacing.Right = 6
     Caption = 'To:'
-    Layout = tlBottom
+    Layout = tlCenter
     ParentColor = False
     ParentShowHint = False
   end
@@ -54,10 +53,11 @@ object RenameFrm: TRenameFrm
     AnchorSideLeft.Control = FromFNLabel
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
-    Left = 41
-    Height = 20
+    Left = 44
+    Height = 14
     Top = 6
     Width = 64
+    BorderSpacing.Left = 3
     BorderSpacing.Around = 6
     Caption = 'ArchiveName'
     Layout = tlBottom
@@ -71,7 +71,7 @@ object RenameFrm: TRenameFrm
     AnchorSideTop.Side = asrBottom
     Left = 41
     Height = 22
-    Top = 32
+    Top = 26
     Width = 220
     AutoSize = True
     BorderSpacing.Around = 6
@@ -83,9 +83,9 @@ object RenameFrm: TRenameFrm
     AnchorSideRight.Control = BtnCancel
     Left = 100
     Height = 30
-    Top = 60
+    Top = 54
     Width = 75
-    Anchors = [akTop, akRight, akBottom]
+    Anchors = [akTop, akRight]
     BorderSpacing.Right = 6
     BorderSpacing.InnerBorder = 2
     Caption = '&OK'
@@ -104,11 +104,10 @@ object RenameFrm: TRenameFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 181
     Height = 30
-    Top = 60
+    Top = 54
     Width = 80
     Anchors = [akTop, akRight]
     AutoSize = True

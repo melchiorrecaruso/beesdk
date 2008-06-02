@@ -38,12 +38,12 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="183">
+    <Units Count="187">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="48" Y="72"/>
+        <CursorPos X="31" Y="69"/>
         <TopLine Value="57"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
@@ -559,9 +559,11 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_addfrm.lrs"/>
         <UnitName Value="BeeGui_AddFrm"/>
-        <CursorPos X="13" Y="166"/>
-        <TopLine Value="149"/>
+        <CursorPos X="80" Y="116"/>
+        <TopLine Value="47"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="160"/>
+        <Loaded Value="True"/>
       </Unit73>
       <Unit74>
         <Filename Value="forms\beegui_viewfrm.pas"/>
@@ -614,9 +616,11 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_renamefrm.lrs"/>
         <UnitName Value="BeeGui_RenameFrm"/>
-        <CursorPos X="12" Y="71"/>
-        <TopLine Value="1"/>
+        <CursorPos X="5" Y="91"/>
+        <TopLine Value="63"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="160"/>
+        <Loaded Value="True"/>
       </Unit78>
       <Unit79>
         <Filename Value="forms\beegui_tickfrm.pas"/>
@@ -628,9 +632,7 @@
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="28" Y="236"/>
         <TopLine Value="205"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="166"/>
-        <Loaded Value="True"/>
       </Unit79>
       <Unit80>
         <Filename Value="forms\beegui_aboutfrm.pas"/>
@@ -642,7 +644,7 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="13" Y="95"/>
         <TopLine Value="79"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="160"/>
         <Loaded Value="True"/>
       </Unit80>
@@ -1005,9 +1007,7 @@
         <Filename Value="forms\forms.include\beegui_tickfrm_loadproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="6"/>
-        <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit136>
       <Unit137>
         <Filename Value="forms\forms.include\beegui_viewfrm_saveproperty.inc"/>
@@ -1019,9 +1019,7 @@
         <Filename Value="forms\forms.include\beegui_tickfrm_saveproperty.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit138>
       <Unit139>
         <Filename Value="forms\forms.include\beegui_viewfrm_savelanguage.inc"/>
@@ -1302,8 +1300,41 @@
         <TopLine Value="49"/>
         <UsageCount Value="10"/>
       </Unit182>
+      <Unit183>
+        <Filename Value="forms\forms.include\beegui_renamefrm_loadproperty.inc"/>
+        <CursorPos X="8" Y="13"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit183>
+      <Unit184>
+        <Filename Value="forms\forms.include\beegui_renamefrm_saveproperty.inc"/>
+        <CursorPos X="78" Y="13"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit184>
+      <Unit185>
+        <Filename Value="forms\forms.include\beegui_renamefrm_loadlanguage.inc"/>
+        <CursorPos X="71" Y="8"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit185>
+      <Unit186>
+        <Filename Value="forms\forms.include\beegui_renamefrm_savelanguage.inc"/>
+        <CursorPos X="1" Y="10"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit186>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="1" HistoryIndex="0">
+      <Position1>
+        <Filename Value="forms\beegui_addfrm.pas"/>
+        <Caret Line="333" Column="7" TopLine="312"/>
+      </Position1>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
