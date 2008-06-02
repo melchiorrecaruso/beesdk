@@ -608,7 +608,7 @@ var
   begin
     if FInterfaces.Properties.Terminated = False then
     begin
-      if FPassword <> '' then
+      if FPassword = '' then
       begin
         F := TPasswordFrm.Create(Application);
         F.SetPassword(FPassword);
