@@ -93,7 +93,9 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_passwordfrm_savelanguage.inc}
+    {$IFDEF DEBUG}
+      {$I beegui_passwordfrm_savelanguage.inc}
+    {$ENDIF}
     {$I beegui_passwordfrm_saveproperty.inc}
   end;
   

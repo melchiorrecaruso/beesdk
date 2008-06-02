@@ -3,6 +3,8 @@
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('addfrm.ini'));
+
+    Caption := Storage.ReadString('TForm', 'Caption', Caption);
     
     PageGeneral.Caption      := Storage.ReadString('TPages', 'PageGeneral.Caption', PageGeneral.Caption);
     ArchiveNameLabel.Caption := Storage.ReadString('TLabel', 'ArchiveName', ArchiveNameLabel.Caption);
