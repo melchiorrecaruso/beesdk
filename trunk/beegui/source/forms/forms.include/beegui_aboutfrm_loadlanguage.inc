@@ -3,11 +3,10 @@
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('aboutfrm.ini'));
-    Caption := Storage.ReadString('TForm', 'Caption', Caption);
-
-    BtnLicense.Caption := Storage.ReadString('TBitBtn', 'BtnLicense.Caption', BtnLicense.Caption);
-    BtnOk.Caption      := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
-
+    begin
+	  Caption            := Storage.ReadString('TForm', 'Caption', Caption);
+      BtnLicense.Caption := Storage.ReadString('TBitBtn', 'BtnLicense.Caption', BtnLicense.Caption);
+      BtnOk.Caption      := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
+    end;
     Storage.Free;
   end;
-

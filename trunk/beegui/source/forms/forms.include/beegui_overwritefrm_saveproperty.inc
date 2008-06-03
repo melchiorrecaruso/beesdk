@@ -1,22 +1,11 @@
 
-  // ---
-
-  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('beegui'));
+  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
   if ForceDirectories(Folder) then
   begin
-    Storage := TMemIniFile.Create(Folder + ('overwritefrm.ini'));
-
-    // ---
-
-    if WindowState = wsNormal then
+    Storage := TMemIniFile.Create(Folder + ('overwritefrm.ini'));        
     begin
-      Storage.WriteInteger('TForm', 'OverwriteFrm.Top', Top);
-      Storage.WriteInteger('TForm', 'OverwriteFrm.Left', Left);
-      Storage.WriteInteger('TForm', 'OverwriteFrm.Width', Width);
-      Storage.WriteInteger('TForm', 'OverwriteFrm.Height', Height);
-    end;
-    Storage.WriteInteger('TForm', 'OverwriteFrm.WindowState', Ord(WindowState));
-    // ---
-
+      Storage.WriteInteger('TForm', 'Top', Top);
+      Storage.WriteInteger('TForm', 'Left', Left);      
+    end;    
     Storage.Free;
   end;

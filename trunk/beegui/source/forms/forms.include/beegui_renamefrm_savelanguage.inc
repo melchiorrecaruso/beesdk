@@ -3,15 +3,15 @@
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('renamefrm.ini'));
-
-    Storage.WriteString('TForm','Caption', Caption);
-
-    Storage.WriteString('TLabel','From', FromFNLabel.Caption);
-    Storage.WriteString('TLabel','To', ToFNLabel.Caption);
-
-    Storage.WriteString('TBitBtn','BtnCancel', BtnCancel.Caption);
-    Storage.WriteString('TBitBtn','BtnOk', BtnOk.Caption);
-
+    begin
+      Storage.WriteString('TForm','Caption', Caption);
+	  
+      Storage.WriteString('TLabel','FromFNLabel', FromFNLabel.Caption);
+      Storage.WriteString('TLabel','ToFNLabel', ToFNLabel.Caption);
+	  
+      Storage.WriteString('TBitBtn','BtnCancel', BtnCancel.Caption);
+      Storage.WriteString('TBitBtn','BtnOk', BtnOk.Caption);
+    end;
     Storage.Free;
   end;
 

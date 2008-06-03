@@ -1,28 +1,19 @@
 
-  // ---
-
-  F := IncludeTrailingBackSlash(GetApplicationConfigDir('beegui'));
+  F := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
   if ForceDirectories(F) then
   begin
     Storage := TMemIniFile.Create(F + ('extractfrm.ini'));
-
-    // ---
-
-    if WindowState = wsNormal then
     begin
-      Top    := Storage.ReadInteger('TForm', 'ExtractFrm.Top', Top);
-      Left   := Storage.ReadInteger('TForm', 'ExtractFrm.Left', Left);
-      Width  := Storage.ReadInteger('TForm', 'ExtractFrm.Width', Width);
-      Height := Storage.ReadInteger('TForm', 'ExtractFrm.Height', Height);
-    end;
-    WindowState := TWindowState(Storage.ReadInteger('TForm', 'ExtractFrm.WindowState', Ord(WindowState)));
-
-    // ---
-    
-    Folder.Text := Storage.ReadString('TEdit', 'Folder.Text', Folder.Text);
-    
-    // ---
-
+	  if WindowState = wsNormal then
+      begin
+        Top    := Storage.ReadInteger('TForm', 'Top', Top);
+        Left   := Storage.ReadInteger('TForm', 'Left', Left);
+        Width  := Storage.ReadInteger('TForm', 'Width', Width);
+        Height := Storage.ReadInteger('TForm', 'Height', Height);
+      end;
+      WindowState := TWindowState(Storage.ReadInteger('TForm', 'WindowState', Ord(WindowState)));   
+      Folder.Text := Storage.ReadString('TEdit', 'Folder.Text', Folder.Text);
+    end;   
     Storage.Free;
   end;
 
