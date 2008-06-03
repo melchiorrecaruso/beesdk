@@ -45,6 +45,7 @@ var
   rsWarning:              string = 'Warning';
   rsPasswordNotConfirmed: string = 'Password not confirmed.';
   rsAbortProcess:         string = 'Active proces. Terminate it?';
+  rsSelectFolder:         string = 'Select folder';
 
 implementation
 
@@ -53,11 +54,10 @@ implementation
     Folder: string;
     Storage: TMemIniFile;
   begin
-    Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');;
+    Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
     if ForceDirectories(Folder) then
     begin
       Storage := TMemIniFile.Create(Folder + ('messages.ini'));
-      // ---
       rsConfirmation         := Storage.ReadString('ResourceString', 'rsConfirmation', rsConfirmation);
       rsConfirmAbort         := Storage.ReadString('ResourceString', 'rsConfirmAbort', rsConfirmAbort);
       rsProcessStatus        := Storage.ReadString('ResourceString', 'rsProcessStatus', rsProcessStatus);
@@ -69,7 +69,7 @@ implementation
       rsWarning              := Storage.ReadString('ResourceString', 'rsWarning', rsWarning);
       rsPasswordNotConfirmed := Storage.ReadString('ResourceString', 'rsPasswordNotConfirmed', rsPasswordNotConfirmed);
       rsAbortProcess         := Storage.ReadString('ResourceString', 'rsAbortProcess', rsAbortProcess);
-      // ---
+      rsSelectFolder         := Storage.ReadString('ResourceString', 'rsSelectFolder', rsSelectFolder);
       Storage.Free;
     end;
   end;
@@ -79,11 +79,10 @@ implementation
     Folder: string;
     Storage: TMemIniFile;
   begin
-    Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');;
+    Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
     if ForceDirectories(Folder) then
     begin
       Storage := TMemIniFile.Create(Folder + ('messages.ini'));
-      // ---
       Storage.WriteString('ResourceString', 'rsConfirmation', rsConfirmation);
       Storage.WriteString('ResourceString', 'rsConfirmAbort', rsConfirmAbort);
       Storage.WriteString('ResourceString', 'rsProcessStatus', rsProcessStatus);
@@ -95,7 +94,7 @@ implementation
       Storage.WriteString('ResourceString', 'rsWarning', rsWarning);
       Storage.WriteString('ResourceString', 'rsPasswordNotConfirmed', rsPasswordNotConfirmed);
       Storage.WriteString('ResourceString', 'rsAbortProcess', rsAbortProcess);
-      // ---
+      Storage.WriteString('ResourceString', 'rsSelectFolder', rsSelectFolder);
       Storage.Free;
     end;
   end;
