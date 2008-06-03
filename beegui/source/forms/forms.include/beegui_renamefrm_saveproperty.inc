@@ -1,15 +1,11 @@
 
-  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('beegui'));
+  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
   if ForceDirectories(Folder) then
   begin
-    Storage := TMemIniFile.Create(Folder + ('renamefrm.ini'));
-    if WindowState = wsNormal then
+    Storage := TMemIniFile.Create(Folder + ('renamefrm.ini'));    
     begin
-      Storage.WriteInteger('TForm', 'RenameFrm.Top', Top);
-      Storage.WriteInteger('TForm', 'RenameFrm.Left', Left);
-      Storage.WriteInteger('TForm', 'RenameFrm.Width', Width);
-      Storage.WriteInteger('TForm', 'RenameFrm.Height', Height);
-    end;
-    Storage.WriteInteger('TForm', 'RenameFrm.WindowState', Ord(WindowState));
+      Storage.WriteInteger('TForm', 'Top', Top);
+      Storage.WriteInteger('TForm', 'Left', Left);      
+    end;   
     Storage.Free;
   end;
