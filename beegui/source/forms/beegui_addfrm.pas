@@ -43,7 +43,6 @@ uses
   IniFiles,
   LResources,
   // ---
-  BeeGui_CmdLine,
   BeeGui_AddTreeViewMgr;
 
 type
@@ -136,9 +135,8 @@ implementation
 
 uses
   BeeGui_RenameFrm,
-  BeeGui_SysUtils,
-  // ---
-  Bee_Common;
+  BeeGui_Messages,
+  BeeGui_SysUtils;
 
  { TAddFrm class }
  
@@ -187,7 +185,7 @@ uses
     FolderName: string;
   begin
     FolderName := '';
-    if SelectDirectory('AddFrm_MSG_SelectDir', '', FolderName) then
+    if SelectDirectory(rsSelectFolder, '', FolderName) then
     begin
       FilesMgr.AddFolder(FolderName);
     end;
