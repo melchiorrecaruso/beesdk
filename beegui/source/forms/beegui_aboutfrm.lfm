@@ -1,16 +1,16 @@
 object AboutFrm: TAboutFrm
-  Left = 716
-  Height = 218
-  Top = 187
+  Left = 687
+  Height = 184
+  Top = 200
   Width = 263
   HorzScrollBar.Page = 262
-  VertScrollBar.Page = 217
+  VertScrollBar.Page = 183
   ActiveControl = BtnOk
   AutoSize = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'About to...'
-  ClientHeight = 218
+  ClientHeight = 184
   ClientWidth = 263
   Font.Name = 'Default'
   Font.Style = [fsBold]
@@ -111,8 +111,8 @@ object AboutFrm: TAboutFrm
     AnchorSideBottom.Control = BtnOk
     AnchorSideBottom.Side = asrCenter
     Left = 6
-    Height = 20
-    Top = 142
+    Height = 14
+    Top = 124
     Width = 251
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
@@ -129,8 +129,8 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Copyright
     AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 20
-    Top = 98
+    Height = 14
+    Top = 92
     Width = 251
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
@@ -147,8 +147,8 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 20
-    Top = 120
+    Height = 14
+    Top = 108
     Width = 251
     Alignment = taCenter
     BorderSpacing.Left = 6
@@ -165,10 +165,10 @@ object AboutFrm: TAboutFrm
     AnchorSideTop.Control = Logo
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Left = 73
-    Height = 20
+    Left = 64
+    Height = 14
     Top = 76
-    Width = 117
+    Width = 134
     Alignment = taCenter
     BorderSpacing.Top = 6
     BorderSpacing.Bottom = 2
@@ -184,7 +184,7 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Side = asrBottom
     Left = 6
     Height = 2
-    Top = 168
+    Top = 144
     Width = 251
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 6
@@ -200,8 +200,8 @@ object AboutFrm: TAboutFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 182
-    Height = 36
-    Top = 176
+    Height = 26
+    Top = 152
     Width = 75
     Anchors = [akTop, akRight]
     AutoSize = True
@@ -221,17 +221,16 @@ object AboutFrm: TAboutFrm
   end
   object BtnLicense: TBitBtn
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Bevel
-    AnchorSideTop.Side = asrBottom
+    AnchorSideTop.Control = BtnOk
     AnchorSideRight.Control = BtnOk
-    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Control = BtnOk
     AnchorSideBottom.Side = asrBottom
     Left = 96
     Height = 26
-    Top = 176
+    Top = 152
     Width = 80
-    Anchors = [akTop, akRight]
-    BorderSpacing.Around = 6
+    Anchors = [akTop, akRight, akBottom]
+    BorderSpacing.Right = 6
     Caption = 'License'
     Constraints.MaxWidth = 80
     Constraints.MinWidth = 80
