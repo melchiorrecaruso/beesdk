@@ -349,7 +349,7 @@ var
     {$IFDEF MSWINDOWS}
       BtnPriority.Enabled := False;
     {$ENDIF}
-    BtnPauseRun.Enabled := False;
+    BtnPauseRun.Enabled := True;
   end;
 
   // ------------------------------------------------------------------------ //
