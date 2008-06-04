@@ -189,7 +189,6 @@ var
     FTime := 0;
     {$IFDEF UNIX}
       Tick.Smooth := True;
-      BtnPriority.Enabled := False;
     {$ENDIF}
   end;
 
@@ -294,6 +293,10 @@ var
           Self.GeneralSizeUnit.Caption := 'MB';
         end;
     end;
+    {$IFDEF MSWINDOWS}
+      BtnPriority.Enabled := True;
+    {$ENDIF}
+    BtnPauseRun.Enabled := True;
   end;
 
   procedure TTickFrm.OnTimer(Sender: TObject);
@@ -343,6 +346,10 @@ var
       Application.Title := rsProcessPaused;
       Caption := Application.Title
     end;
+    {$IFDEF MSWINDOWS}
+      BtnPriority.Enabled := False;
+    {$ENDIF}
+    BtnPauseRun.Enabled := False;
   end;
 
   // ------------------------------------------------------------------------ //
