@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -44,7 +44,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
         <CursorPos X="18" Y="48"/>
-        <TopLine Value="48"/>
+        <TopLine Value="52"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -96,8 +96,8 @@
         <ResourceFilename Value="forms\beegui_passwordfrm.lrs"/>
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="16" Y="101"/>
-        <TopLine Value="138"/>
-        <EditorIndex Value="9"/>
+        <TopLine Value="133"/>
+        <EditorIndex Value="10"/>
         <UsageCount Value="162"/>
         <Loaded Value="True"/>
       </Unit6>
@@ -571,11 +571,14 @@
         <Filename Value="forms\beegui_viewfrm.pas"/>
         <ComponentName Value="ViewFrm"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_viewfrm.lrs"/>
         <UnitName Value="BeeGui_ViewFrm"/>
-        <CursorPos X="23" Y="91"/>
-        <TopLine Value="68"/>
+        <CursorPos X="6" Y="80"/>
+        <TopLine Value="35"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="47"/>
+        <Loaded Value="True"/>
       </Unit74>
       <Unit75>
         <Filename Value="forms\beegui_extractfrm.pas"/>
@@ -619,8 +622,8 @@
         <ResourceFilename Value="forms\beegui_renamefrm.lrs"/>
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="13" Y="90"/>
-        <TopLine Value="63"/>
-        <EditorIndex Value="8"/>
+        <TopLine Value="58"/>
+        <EditorIndex Value="9"/>
         <UsageCount Value="162"/>
         <Loaded Value="True"/>
       </Unit78>
@@ -633,8 +636,8 @@
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="21" Y="611"/>
-        <TopLine Value="593"/>
-        <EditorIndex Value="7"/>
+        <TopLine Value="589"/>
+        <EditorIndex Value="8"/>
         <UsageCount Value="168"/>
         <Loaded Value="True"/>
       </Unit79>
@@ -662,8 +665,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_CmdLine"/>
         <CursorPos X="27" Y="262"/>
-        <TopLine Value="375"/>
-        <EditorIndex Value="4"/>
+        <TopLine Value="370"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="162"/>
         <Loaded Value="True"/>
       </Unit82>
@@ -914,8 +917,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Messages"/>
         <CursorPos X="60" Y="97"/>
-        <TopLine Value="73"/>
-        <EditorIndex Value="3"/>
+        <TopLine Value="71"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="152"/>
         <Loaded Value="True"/>
       </Unit120>
@@ -1137,8 +1140,8 @@
       <Unit156>
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="2" Y="33"/>
-        <TopLine Value="9"/>
-        <EditorIndex Value="6"/>
+        <TopLine Value="4"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit156>
@@ -1148,7 +1151,7 @@
         <UnitName Value="BeeGui_Forms"/>
         <CursorPos X="52" Y="168"/>
         <TopLine Value="155"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="113"/>
         <Loaded Value="True"/>
       </Unit157>
@@ -1335,7 +1338,12 @@
         <UsageCount Value="10"/>
       </Unit186>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="1" HistoryIndex="0">
+      <Position1>
+        <Filename Value="forms\beegui_viewfrm.pas"/>
+        <Caret Line="91" Column="23" TopLine="68"/>
+      </Position1>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
