@@ -1,20 +1,19 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
-    <PathDelim Value="\"/>
+    <PathDelim Value="/"/>
     <Version Value="6"/>
     <General>
       <Flags>
         <SaveClosedFiles Value="False"/>
       </Flags>
       <MainUnit Value="0"/>
-      <IconPath Value=".\"/>
+      <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
-      <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
       <IgnoreBinaries Value="False"/>
       <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
       <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
@@ -22,7 +21,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
     <Units Count="4">
@@ -49,7 +48,7 @@
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="25" Y="205"/>
-        <TopLine Value="177"/>
+        <TopLine Value="176"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -68,10 +67,9 @@
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
-    <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="bee.include\"/>
-      <UnitOutputDirectory Value="..\distribution"/>
+      <IncludeFiles Value="bee.include/"/>
+      <UnitOutputDirectory Value="../distribution"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
