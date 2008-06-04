@@ -52,7 +52,6 @@ uses
   // ---
   BeeGui_CmdLine,
   // ---
-  BeeGui_ViewFrm,
   BeeGui_RenameFrm,
   BeeGui_PasswordFrm,
   BeeGui_OverwriteFrm;
@@ -331,9 +330,6 @@ var
   end;
   
   procedure TTickFrm.OnStopTimer(Sender: TObject);
-  var
-    F: TViewFrm;
-    I: integer;
   begin
     if FInterfaces.Properties.Terminated = True then
     begin
