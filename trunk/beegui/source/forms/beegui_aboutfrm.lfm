@@ -1,17 +1,17 @@
 object AboutFrm: TAboutFrm
   Left = 459
-  Height = 335
+  Height = 212
   Top = 295
-  Width = 419
-  HorzScrollBar.Page = 418
-  VertScrollBar.Page = 334
+  Width = 273
+  HorzScrollBar.Page = 272
+  VertScrollBar.Page = 211
   ActiveControl = BtnOk
   AutoSize = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'About to...'
-  ClientHeight = 335
-  ClientWidth = 419
+  ClientHeight = 212
+  ClientWidth = 273
   Font.Name = 'Default'
   Font.Style = [fsBold]
   OnClose = FormClose

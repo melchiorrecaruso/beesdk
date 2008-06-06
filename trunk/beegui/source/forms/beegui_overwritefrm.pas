@@ -110,9 +110,18 @@ uses
   
   procedure TOverwriteFrm.FormShow(Sender: TObject);
   begin
+    // Fix Laz Bug
     Image.Transparent   := True;
     OldIcon.Transparent := True;
     NewIcon.Transparent := True;
+    // Fix Laz bug
+    if Constraints.MaxWidth = 0 then
+    begin
+      Constraints.MaxWidth  := Width;
+      Constraints.MaxHeight := Height;
+      Constraints.MinWidth  := Width;
+      Constraints.MinHeight := Height;
+    end;
   end;
   
   procedure TOverwriteFrm.SetFileName(const FileName: string);
