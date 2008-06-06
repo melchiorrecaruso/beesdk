@@ -1,23 +1,24 @@
 object RenameFrm: TRenameFrm
   Left = 594
-  Height = 106
+  Height = 102
   Top = 338
   Width = 287
   HorzScrollBar.Page = 286
   HorzScrollBar.Range = 35
-  VertScrollBar.Page = 105
+  VertScrollBar.Page = 101
   VertScrollBar.Range = 53
   ActiveControl = BtnOk
   AutoSize = True
-  BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
   Caption = 'Rename'
-  ClientHeight = 106
+  ClientHeight = 102
   ClientWidth = 287
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
+  OnShow = FormShow
   LCLVersion = '0.9.25'
   object FromFNLabel: TLabel
     AnchorSideLeft.Control = Owner
