@@ -961,4 +961,8 @@ object AddFrm: TAddFrm
     left = 104
     top = 288
   end
+  object SaveDialog: TSaveDialog
+    left = 136
+    top = 288
+  end
 end

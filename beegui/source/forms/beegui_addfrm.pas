@@ -57,6 +57,8 @@ type
     ArchiveNameLabel: TLabel;
 
     cfgOption: TComboBox;
+    OpenDialog: TOpenDialog;
+    SaveDialog: TSaveDialog;
     yOption: TComboBox;
     yOptionBtn: TBitBtn;
     cfgOptionBtn: TBitBtn;
@@ -73,7 +75,6 @@ type
     ufOptionLabel: TLabel;
     yOptionLabel: TLabel;
     lOption: TCheckBox;
-    OpenDialog: TOpenDialog;
     Pages: TPageControl;
     PageGeneral: TTabSheet;
     PageAdvanced: TTabSheet;
@@ -172,11 +173,11 @@ uses
   
   procedure TAddFrm.BtnOpenClick(Sender: TObject);
   begin
-    OpenDialog.FileName := ArchivePath + ArchiveName.Text;
-    if OpenDialog.Execute then
+    SaveDialog.FileName := ArchivePath + ArchiveName.Text;
+    if SaveDialog.Execute then
     begin
-      ArchivePath := ExtractFilePath(OpenDialog.FileName);
-      ArchiveName.Text := ExtractFileName(OpenDialog.FileName);
+      ArchivePath := ExtractFilePath(SaveDialog.FileName);
+      ArchiveName.Text := ExtractFileName(SaveDialog.FileName);
     end;
   end;
   
