@@ -27,18 +27,18 @@ object AddFrm: TAddFrm
     Height = 272
     Top = 6
     Width = 388
-    ActivePage = PageAdvanced
+    ActivePage = PageFiles
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 2
+    TabIndex = 1
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
     object PageGeneral: TTabSheet
       Caption = 'General'
-      ClientHeight = 246
+      ClientHeight = 244
       ClientWidth = 384
       ParentShowHint = False
       object ArchiveNameLabel: TLabel
@@ -129,7 +129,7 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Right = 6
         Caption = 'Options'
-        ClientHeight = 145
+        ClientHeight = 133
         ClientWidth = 166
         Constraints.MinWidth = 170
         ParentBidiMode = False
@@ -335,7 +335,7 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrBottom
         Left = 6
-        Height = 20
+        Height = 18
         Top = 220
         Width = 372
         Align = alBottom
@@ -350,7 +350,7 @@ object AddFrm: TAddFrm
     end
     object PageFiles: TTabSheet
       Caption = 'Files'
-      ClientHeight = 246
+      ClientHeight = 244
       ClientWidth = 384
       ImageIndex = 2
       ParentShowHint = False
@@ -358,7 +358,7 @@ object AddFrm: TAddFrm
         AnchorSideLeft.Control = PageFiles
         AnchorSideTop.Control = PageFiles
         Left = 6
-        Height = 14
+        Height = 20
         Top = 6
         Width = 234
         BorderSpacing.Left = 6
@@ -373,8 +373,8 @@ object AddFrm: TAddFrm
         AnchorSideLeft.Control = PageFiles
         AnchorSideBottom.Control = Root
         Left = 6
-        Height = 14
-        Top = 202
+        Height = 20
+        Top = 194
         Width = 107
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 6
@@ -391,7 +391,7 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Side = asrBottom
         Left = 6
         Height = 22
-        Top = 218
+        Top = 216
         Width = 286
         Anchors = [akLeft, akRight, akBottom]
         AutoSize = True
@@ -410,7 +410,7 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = PageFiles
         AnchorSideRight.Side = asrBottom
         Left = 298
-        Height = 27
+        Height = 28
         Top = 6
         Width = 80
         Anchors = [akTop, akRight]
@@ -431,8 +431,8 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
         Left = 298
-        Height = 27
-        Top = 37
+        Height = 28
+        Top = 38
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -451,8 +451,8 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
         Left = 298
-        Height = 27
-        Top = 99
+        Height = 28
+        Top = 102
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -472,8 +472,8 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
         Left = 298
-        Height = 27
-        Top = 161
+        Height = 28
+        Top = 166
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -493,8 +493,8 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
         Left = 298
-        Height = 27
-        Top = 130
+        Height = 28
+        Top = 134
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -514,8 +514,8 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
         Left = 298
-        Height = 27
-        Top = 68
+        Height = 28
+        Top = 70
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -537,7 +537,7 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Side = asrBottom
         Left = 341
         Height = 22
-        Top = 218
+        Top = 216
         Width = 37
         Anchors = [akTop, akRight, akBottom]
         BorderSpacing.Left = 6
@@ -569,7 +569,7 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Side = asrBottom
         Left = 298
         Height = 22
-        Top = 218
+        Top = 216
         Width = 37
         Anchors = [akTop, akLeft, akBottom]
         BorderSpacing.InnerBorder = 2
@@ -598,13 +598,13 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = BtnFolder
         AnchorSideBottom.Control = RootLabel
         Left = 6
-        Height = 174
-        Top = 22
+        Height = 160
+        Top = 28
         Width = 286
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        DefaultItemHeight = 18
+        DefaultItemHeight = 16
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True

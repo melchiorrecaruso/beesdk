@@ -650,7 +650,7 @@
         <ResourceFilename Value="forms/beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="1" Y="113"/>
-        <TopLine Value="84"/>
+        <TopLine Value="83"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="167"/>
         <Loaded Value="True"/>
@@ -1332,20 +1332,7 @@
         <UsageCount Value="10"/>
       </Unit186>
     </Units>
-    <JumpHistory Count="3" HistoryIndex="2">
-      <Position1>
-        <Filename Value="forms/beegui_overwritefrm.pas"/>
-        <Caret Line="55" Column="29" TopLine="62"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms/beegui_passwordfrm.pas"/>
-        <Caret Line="101" Column="16" TopLine="129"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms/beegui_renamefrm.pas"/>
-        <Caret Line="59" Column="41" TopLine="54"/>
-      </Position3>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
