@@ -65,14 +65,14 @@ object TickFrm: TTickFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 344
-    Height = 34
-    Top = 170
-    Width = 80
+    Left = 342
+    Height = 30
+    Top = 174
+    Width = 82
     Anchors = [akRight, akBottom]
     AutoSize = True
     BorderSpacing.Around = 6
-    BorderSpacing.InnerBorder = 1
+    BorderSpacing.InnerBorder = 2
     Cancel = True
     Caption = 'Blocca'
     Constraints.MinWidth = 80
@@ -88,14 +88,15 @@ object TickFrm: TTickFrm
     AnchorSideRight.Control = BtnPauseRun
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
-    Left = 177
-    Height = 34
-    Top = 170
+    Left = 175
+    Height = 30
+    Top = 174
     Width = 80
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
     BorderSpacing.Right = 6
+    BorderSpacing.InnerBorder = 2
     Caption = 'Priority'
     Constraints.MinWidth = 80
     Enabled = False
@@ -131,14 +132,15 @@ object TickFrm: TTickFrm
     AnchorSideRight.Control = BtnCancel
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
-    Left = 263
-    Height = 34
-    Top = 170
+    Left = 261
+    Height = 30
+    Top = 174
     Width = 75
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
     BorderSpacing.Right = 6
+    BorderSpacing.InnerBorder = 2
     Caption = 'Pause'
     Constraints.MinWidth = 75
     Enabled = False
@@ -153,7 +155,7 @@ object TickFrm: TTickFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
     Left = 6
-    Height = 158
+    Height = 162
     Top = 6
     Width = 418
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -162,14 +164,14 @@ object TickFrm: TTickFrm
     TabOrder = 1
     object GeneralPage: TPage
       Caption = 'General'
-      ClientWidth = 414
-      ClientHeight = 130
+      ClientWidth = 410
+      ClientHeight = 136
       object Msg: TLabel
         AnchorSideLeft.Control = GeneralPage
         AnchorSideBottom.Control = Tick
         Left = 6
         Height = 18
-        Top = 80
+        Top = 86
         Width = 13
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 6
@@ -190,8 +192,8 @@ object TickFrm: TTickFrm
         AnchorSideBottom.Side = asrBottom
         Left = 6
         Height = 20
-        Top = 104
-        Width = 402
+        Top = 110
+        Width = 398
         Anchors = [akLeft, akRight, akBottom]
         BorderSpacing.Around = 6
         Constraints.MaxHeight = 20
@@ -204,21 +206,21 @@ object TickFrm: TTickFrm
         AnchorSideTop.Control = GeneralPage
         AnchorSideBottom.Control = Msg
         Left = 6
-        Height = 68
+        Height = 74
         Top = 6
         Width = 89
         Anchors = [akTop, akLeft, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 68
+        ClientHeight = 74
         ClientWidth = 89
         TabOrder = 1
         object TimeLabel: TLabel
           AnchorSideLeft.Control = TimeLabelPanel
           AnchorSideTop.Control = TimeLabelPanel
           Left = 6
-          Height = 20
+          Height = 14
           Top = 6
           Width = 67
           BorderSpacing.Left = 6
@@ -234,8 +236,8 @@ object TickFrm: TTickFrm
           AnchorSideTop.Control = TimeLabel
           AnchorSideTop.Side = asrBottom
           Left = 6
-          Height = 20
-          Top = 28
+          Height = 14
+          Top = 22
           Width = 77
           BorderSpacing.Left = 6
           BorderSpacing.Top = 2
@@ -251,15 +253,15 @@ object TickFrm: TTickFrm
         AnchorSideTop.Control = GeneralPage
         AnchorSideRight.Control = UnitPanel
         AnchorSideBottom.Control = Msg
-        Left = 308
-        Height = 68
+        Left = 304
+        Height = 74
         Top = 6
         Width = 60
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 68
+        ClientHeight = 74
         ClientWidth = 60
         TabOrder = 2
         object GeneralSize: TLabel
@@ -267,7 +269,7 @@ object TickFrm: TTickFrm
           AnchorSideRight.Control = SizePanel
           AnchorSideRight.Side = asrBottom
           Left = 10
-          Height = 20
+          Height = 14
           Top = 6
           Width = 50
           Alignment = taRightJustify
@@ -285,8 +287,8 @@ object TickFrm: TTickFrm
           AnchorSideRight.Control = SizePanel
           AnchorSideRight.Side = asrBottom
           Left = 10
-          Height = 20
-          Top = 28
+          Height = 14
+          Top = 22
           Width = 50
           Alignment = taRightJustify
           Anchors = [akTop, akRight]
@@ -303,8 +305,8 @@ object TickFrm: TTickFrm
           AnchorSideRight.Control = SizePanel
           AnchorSideRight.Side = asrBottom
           Left = 10
-          Height = 20
-          Top = 50
+          Height = 14
+          Top = 38
           Width = 50
           Alignment = taRightJustify
           Anchors = [akTop, akRight]
@@ -322,15 +324,15 @@ object TickFrm: TTickFrm
         AnchorSideRight.Control = GeneralPage
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Msg
-        Left = 374
-        Height = 68
+        Left = 370
+        Height = 74
         Top = 6
         Width = 34
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 68
+        ClientHeight = 74
         ClientWidth = 34
         TabOrder = 3
         object SpeedUnit: TLabel
@@ -340,8 +342,8 @@ object TickFrm: TTickFrm
           AnchorSideRight.Control = UnitPanel
           AnchorSideRight.Side = asrBottom
           Left = 6
-          Height = 20
-          Top = 50
+          Height = 14
+          Top = 38
           Width = 22
           Anchors = [akTop, akLeft, akRight]
           BorderSpacing.Left = 6
@@ -358,8 +360,8 @@ object TickFrm: TTickFrm
           AnchorSideRight.Control = SpeedUnit
           AnchorSideRight.Side = asrBottom
           Left = 6
-          Height = 20
-          Top = 28
+          Height = 14
+          Top = 22
           Width = 13
           BorderSpacing.Left = 6
           BorderSpacing.Top = 2
@@ -374,7 +376,7 @@ object TickFrm: TTickFrm
           AnchorSideRight.Control = SpeedUnit
           AnchorSideRight.Side = asrBottom
           Left = 6
-          Height = 20
+          Height = 14
           Top = 6
           Width = 13
           BorderSpacing.Left = 6
@@ -391,14 +393,14 @@ object TickFrm: TTickFrm
         AnchorSideTop.Control = GeneralPage
         AnchorSideBottom.Control = Msg
         Left = 101
-        Height = 68
+        Height = 74
         Top = 6
         Width = 95
         Anchors = [akTop, akLeft, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 68
+        ClientHeight = 74
         ClientWidth = 95
         TabOrder = 4
         object RemainingTime: TLabel
@@ -407,8 +409,8 @@ object TickFrm: TTickFrm
           AnchorSideRight.Control = TimePanel
           AnchorSideRight.Side = asrBottom
           Left = 40
-          Height = 20
-          Top = 28
+          Height = 14
+          Top = 22
           Width = 45
           Alignment = taCenter
           Anchors = [akTop, akRight]
@@ -425,7 +427,7 @@ object TickFrm: TTickFrm
           AnchorSideRight.Control = TimePanel
           AnchorSideRight.Side = asrBottom
           Left = 40
-          Height = 20
+          Height = 14
           Top = 6
           Width = 45
           Alignment = taCenter
@@ -443,22 +445,22 @@ object TickFrm: TTickFrm
         AnchorSideTop.Control = GeneralPage
         AnchorSideRight.Control = SizePanel
         AnchorSideBottom.Control = Msg
-        Left = 215
-        Height = 68
+        Left = 211
+        Height = 74
         Top = 6
         Width = 87
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 68
+        ClientHeight = 74
         ClientWidth = 87
         TabOrder = 5
         object GeneralSizeLabel: TLabel
           AnchorSideLeft.Control = SizeLabelPanel
           AnchorSideTop.Control = SizeLabelPanel
           Left = 6
-          Height = 20
+          Height = 14
           Top = 6
           Width = 50
           BorderSpacing.Left = 6
@@ -474,8 +476,8 @@ object TickFrm: TTickFrm
           AnchorSideTop.Control = GeneralSizeLabel
           AnchorSideTop.Side = asrBottom
           Left = 6
-          Height = 20
-          Top = 28
+          Height = 14
+          Top = 22
           Width = 75
           BorderSpacing.Left = 6
           BorderSpacing.Top = 2
@@ -490,8 +492,8 @@ object TickFrm: TTickFrm
           AnchorSideTop.Control = ProcessedSizeLabel
           AnchorSideTop.Side = asrBottom
           Left = 6
-          Height = 20
-          Top = 50
+          Height = 14
+          Top = 38
           Width = 35
           BorderSpacing.Left = 6
           BorderSpacing.Top = 2
@@ -525,13 +527,14 @@ object TickFrm: TTickFrm
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
     Left = 6
-    Height = 34
-    Top = 170
+    Height = 30
+    Top = 174
     Width = 75
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
     BorderSpacing.Right = 6
+    BorderSpacing.InnerBorder = 2
     Caption = ' Save'
     Constraints.MinWidth = 75
     Enabled = False
@@ -546,13 +549,14 @@ object TickFrm: TTickFrm
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
     Left = 87
-    Height = 34
-    Top = 170
+    Height = 30
+    Top = 174
     Width = 75
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
     BorderSpacing.Right = 6
+    BorderSpacing.InnerBorder = 2
     Caption = 'Font'
     Constraints.MinWidth = 75
     Enabled = False
@@ -565,18 +569,18 @@ object TickFrm: TTickFrm
     OnTimer = OnTimer
     OnStartTimer = OnStartTimer
     OnStopTimer = OnStopTimer
-    left = 360
+    left = 392
   end
   object SaveDialog: TSaveDialog
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
-    left = 264
+    left = 296
   end
   object FontDialog: TFontDialog
-    left = 296
+    left = 328
   end
   object Popup: TPopupMenu
     AutoPopup = False
-    left = 328
+    left = 360
     object Popup_Idle: TMenuItem
       Caption = 'Idle'
       ShortCut = 16432
