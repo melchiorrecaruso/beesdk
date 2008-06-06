@@ -60,6 +60,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
     procedure BtnOkClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   public
     { public declarations }
   private
@@ -105,6 +106,18 @@ uses
   procedure TAboutFrm.BtnOkClick(Sender: TObject);
   begin
     Close;
+  end;
+
+  procedure TAboutFrm.FormShow(Sender: TObject);
+  begin
+    // Fix bug
+    if Constraints.MaxWidth = 0 then
+    begin
+      Constraints.MaxWidth  := Width;
+      Constraints.MaxHeight := Height;
+      Constraints.MinWidth  := Width;
+      Constraints.MinHeight := Height;
+    end;
   end;
 
 initialization
