@@ -29,6 +29,7 @@ object ExtractFrm: TExtractFrm
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
     BorderSpacing.Right = 6
+    BorderSpacing.Bottom = 2
     Caption = 'Extraction path:'
     Layout = tlBottom
     ParentColor = False
@@ -41,11 +42,12 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Folders
     Left = 6
     Height = 14
-    Top = 48
+    Top = 50
     Width = 82
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
     BorderSpacing.Right = 6
+    BorderSpacing.Bottom = 2
     Caption = 'Overwrite mode:'
     Layout = tlBottom
     ParentColor = False
@@ -57,13 +59,13 @@ object ExtractFrm: TExtractFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 6
-    Height = 96
-    Top = 89
+    Height = 102
+    Top = 93
     Width = 248
     AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Options'
-    ClientHeight = 78
+    ClientHeight = 84
     ClientWidth = 244
     ParentShowHint = False
     TabOrder = 1
@@ -74,9 +76,7 @@ object ExtractFrm: TExtractFrm
       Height = 19
       Top = 6
       Width = 232
-      BorderSpacing.Left = 6
-      BorderSpacing.Top = 6
-      BorderSpacing.Right = 6
+      BorderSpacing.Around = 6
       Caption = 'Extract and Recreate the relative pathname'
       Checked = True
       ParentShowHint = False
@@ -91,9 +91,7 @@ object ExtractFrm: TExtractFrm
       Height = 19
       Top = 31
       Width = 224
-      BorderSpacing.Left = 6
-      BorderSpacing.Top = 6
-      BorderSpacing.Right = 6
+      BorderSpacing.Around = 6
       Caption = 'Use Current Archive Directory (-cd Option)'
       OnChange = cdOptionCheckChange
       ParentShowHint = False
@@ -108,11 +106,12 @@ object ExtractFrm: TExtractFrm
       AnchorSideBottom.Side = asrBottom
       Left = 26
       Height = 22
-      Top = 50
+      Top = 56
       Width = 204
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Left = 20
+      BorderSpacing.Top = 6
       BorderSpacing.Bottom = 6
       TabOrder = 2
     end
@@ -122,7 +121,7 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = BtnCancel
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
-    Left = 430
+    Left = 429
     Height = 30
     Top = 436
     Width = 70
@@ -140,20 +139,18 @@ object ExtractFrm: TExtractFrm
     TabOrder = 2
   end
   object BtnCancel: TBitBtn
-    AnchorSideTop.Control = Folders
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 506
+    Left = 505
     Height = 30
     Top = 436
     Width = 84
     Anchors = [akRight, akBottom]
     AutoSize = True
-    BorderSpacing.Right = 5
-    BorderSpacing.Bottom = 6
+    BorderSpacing.Around = 6
     BorderSpacing.InnerBorder = 2
     Cancel = True
     Caption = 'Annulla'
@@ -172,7 +169,7 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Side = asrBottom
     Left = 6
     Height = 22
-    Top = 20
+    Top = 22
     Width = 583
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
@@ -189,7 +186,7 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Side = asrBottom
     Left = 6
     Height = 21
-    Top = 62
+    Top = 66
     Width = 248
     Anchors = [akTop, akLeft, akRight]
     AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
@@ -217,8 +214,8 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
     Left = 260
-    Height = 382
-    Top = 48
+    Height = 380
+    Top = 50
     Width = 329
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 6
