@@ -238,7 +238,7 @@ object AddFrm: TAddFrm
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Right = 6
-        Caption = 'Save'
+        Caption = 'Save ...'
         Constraints.MinWidth = 70
         NumGlyphs = 0
         OnClick = BtnSaveClick
@@ -602,7 +602,7 @@ object AddFrm: TAddFrm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        DefaultItemHeight = 18
+        DefaultItemHeight = 16
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
@@ -738,7 +738,7 @@ object AddFrm: TAddFrm
         AutoSize = True
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
-        Caption = 'Open'
+        Caption = 'Open ...'
         Constraints.MinWidth = 70
         NumGlyphs = 0
         OnClick = yOptionBtnClick
@@ -792,7 +792,7 @@ object AddFrm: TAddFrm
         AutoSize = True
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
-        Caption = 'Open'
+        Caption = 'Open ...'
         Constraints.MinWidth = 70
         NumGlyphs = 0
         OnClick = cfgOptionBtnClick
