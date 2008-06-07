@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -559,8 +559,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_addfrm.lrs"/>
         <UnitName Value="BeeGui_AddFrm"/>
-        <CursorPos X="29" Y="161"/>
-        <TopLine Value="128"/>
+        <CursorPos X="11" Y="28"/>
+        <TopLine Value="23"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="173"/>
         <Loaded Value="True"/>
@@ -659,7 +659,7 @@
         <UnitName Value="BeeGui_CmdLine"/>
         <CursorPos X="14" Y="101"/>
         <TopLine Value="301"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="173"/>
         <Loaded Value="True"/>
       </Unit82>
@@ -1130,8 +1130,8 @@
       </Unit155>
       <Unit156>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="2" Y="33"/>
-        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="4"/>
         <UsageCount Value="10"/>
       </Unit156>
       <Unit157>
@@ -1140,7 +1140,7 @@
         <UnitName Value="BeeGui_Forms"/>
         <CursorPos X="45" Y="162"/>
         <TopLine Value="139"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="124"/>
         <Loaded Value="True"/>
       </Unit157>
@@ -1243,7 +1243,7 @@
         <UnitName Value="BeeGui_AddTreeViewMgr"/>
         <CursorPos X="36" Y="232"/>
         <TopLine Value="216"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit173>
@@ -1301,10 +1301,8 @@
       <Unit182>
         <Filename Value="forms\forms.include\beegui_addfrm_savelanguage.inc"/>
         <CursorPos X="46" Y="13"/>
-        <TopLine Value="34"/>
-        <EditorIndex Value="3"/>
+        <TopLine Value="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit182>
       <Unit183>
         <Filename Value="forms\forms.include\beegui_renamefrm_loadproperty.inc"/>
@@ -1349,15 +1347,11 @@
         <UsageCount Value="10"/>
       </Unit189>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
+    <JumpHistory Count="1" HistoryIndex="0">
       <Position1>
         <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="150" Column="30" TopLine="128"/>
+        <Caret Line="28" Column="11" TopLine="23"/>
       </Position1>
-      <Position2>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="161" Column="29" TopLine="128"/>
-      </Position2>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
