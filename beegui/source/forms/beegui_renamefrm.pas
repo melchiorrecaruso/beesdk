@@ -56,7 +56,6 @@ type
     BtnOk: TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   private
     { public declarations }
   public
@@ -79,18 +78,6 @@ uses
   begin
     {$I beegui_renamefrm_loadlanguage.inc}
     {$I beegui_renamefrm_loadproperty.inc}
-  end;
-
-  procedure TRenameFrm.FormShow(Sender: TObject);
-  begin
-    // Fix Laz bug
-    if Constraints.MaxWidth = 0 then
-    begin
-      Constraints.MaxWidth  := Width;
-      Constraints.MaxHeight := Height;
-      Constraints.MinWidth  := Width;
-      Constraints.MinHeight := Height;
-    end;
   end;
 
   procedure TRenameFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);

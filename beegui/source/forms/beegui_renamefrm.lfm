@@ -18,7 +18,6 @@ object RenameFrm: TRenameFrm
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
-  OnShow = FormShow
   LCLVersion = '0.9.25'
   object FromFNLabel: TLabel
     AnchorSideLeft.Control = Owner

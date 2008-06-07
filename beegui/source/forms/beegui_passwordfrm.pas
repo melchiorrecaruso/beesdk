@@ -120,14 +120,6 @@ uses
   procedure TPasswordFrm.FormShow(Sender: TObject);
   begin
     SetConfirmPassword(MaskPassword.Checked);
-    // Fix Laz bug
-    if Constraints.MaxWidth = 0 then
-    begin
-      Constraints.MaxWidth  := Width;
-      Constraints.MaxHeight := Height;
-      Constraints.MinWidth  := Width;
-      Constraints.MinHeight := Height;
-    end;
   end;
 
   procedure TPasswordFrm.MaskPasswordClick (Sender: TObject);
