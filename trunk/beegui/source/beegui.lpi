@@ -560,7 +560,9 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="43" Y="66"/>
         <TopLine Value="41"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="167"/>
+        <Loaded Value="True"/>
       </Unit73>
       <Unit74>
         <Filename Value="forms/beegui_viewfrm.pas"/>
@@ -641,9 +643,7 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="27" Y="64"/>
         <TopLine Value="42"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="167"/>
-        <Loaded Value="True"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages/beegui_gui.pas"/>
