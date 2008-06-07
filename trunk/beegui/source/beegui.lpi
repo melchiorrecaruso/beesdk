@@ -12,7 +12,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -617,9 +617,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="43" Y="58"/>
         <TopLine Value="38"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="167"/>
-        <Loaded Value="True"/>
       </Unit78>
       <Unit79>
         <Filename Value="forms/beegui_tickfrm.pas"/>
@@ -631,9 +629,7 @@
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="41" Y="300"/>
         <TopLine Value="283"/>
-        <EditorIndex Value="3"/>
         <UsageCount Value="173"/>
-        <Loaded Value="True"/>
       </Unit79>
       <Unit80>
         <Filename Value="forms/beegui_aboutfrm.pas"/>
@@ -645,7 +641,9 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="43" Y="62"/>
         <TopLine Value="42"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="167"/>
+        <Loaded Value="True"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages/beegui_gui.pas"/>
@@ -1324,12 +1322,7 @@
         <UsageCount Value="10"/>
       </Unit186>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
-      <Position1>
-        <Filename Value="forms/beegui_renamefrm.pas"/>
-        <Caret Line="82" Column="7" TopLine="58"/>
-      </Position1>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
