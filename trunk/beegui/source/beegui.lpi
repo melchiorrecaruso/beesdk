@@ -639,7 +639,7 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms/beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="43" Y="62"/>
+        <CursorPos X="27" Y="64"/>
         <TopLine Value="42"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="167"/>
