@@ -69,7 +69,6 @@ type
     BtnNo: TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   public
     { public declarations }
     procedure SetFileName(const FileName: string);
@@ -106,22 +105,6 @@ uses
   begin
     {*$I beegui_overwritefrm_savelanguage.inc}
     {$I beegui_overwritefrm_saveproperty.inc}
-  end;
-  
-  procedure TOverwriteFrm.FormShow(Sender: TObject);
-  begin
-    // Fix Laz Bug
-    Image.Transparent   := True;
-    OldIcon.Transparent := True;
-    NewIcon.Transparent := True;
-    // Fix Laz bug
-    if Constraints.MaxWidth = 0 then
-    begin
-      Constraints.MaxWidth  := Width;
-      Constraints.MaxHeight := Height;
-      Constraints.MinWidth  := Width;
-      Constraints.MinHeight := Height;
-    end;
   end;
   
   procedure TOverwriteFrm.SetFileName(const FileName: string);
