@@ -1,17 +1,17 @@
 object AboutFrm: TAboutFrm
   Left = 459
-  Height = 222
+  Height = 212
   Top = 295
-  Width = 592
-  HorzScrollBar.Page = 591
-  VertScrollBar.Page = 221
+  Width = 273
+  HorzScrollBar.Page = 272
+  VertScrollBar.Page = 211
   ActiveControl = BtnOk
   AutoSize = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'About to...'
-  ClientHeight = 222
-  ClientWidth = 592
+  ClientHeight = 212
+  ClientWidth = 273
   Font.Name = 'Default'
   Font.Style = [fsBold]
   OnClose = FormClose
@@ -25,7 +25,7 @@ object AboutFrm: TAboutFrm
     Left = 6
     Height = 64
     Top = 6
-    Width = 580
+    Width = 261
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Top = 6
@@ -113,7 +113,7 @@ object AboutFrm: TAboutFrm
     Left = 6
     Height = 20
     Top = 142
-    Width = 580
+    Width = 261
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 2
@@ -131,7 +131,7 @@ object AboutFrm: TAboutFrm
     Left = 6
     Height = 20
     Top = 98
-    Width = 580
+    Width = 261
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 2
@@ -149,7 +149,7 @@ object AboutFrm: TAboutFrm
     Left = 6
     Height = 20
     Top = 120
-    Width = 580
+    Width = 261
     Alignment = taCenter
     BorderSpacing.Left = 6
     BorderSpacing.Top = 2
@@ -165,10 +165,10 @@ object AboutFrm: TAboutFrm
     AnchorSideTop.Control = Logo
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Left = 167
+    Left = 78
     Height = 20
     Top = 76
-    Width = 258
+    Width = 117
     Alignment = taCenter
     BorderSpacing.Top = 6
     BorderSpacing.Bottom = 2
@@ -185,7 +185,7 @@ object AboutFrm: TAboutFrm
     Left = 6
     Height = 2
     Top = 168
-    Width = 580
+    Width = 261
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 6
     BorderSpacing.Bottom = 6
@@ -199,8 +199,8 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 516
-    Height = 40
+    Left = 197
+    Height = 30
     Top = 176
     Width = 70
     Anchors = [akTop, akRight]
@@ -224,10 +224,10 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = BtnOk
     AnchorSideBottom.Control = BtnOk
     AnchorSideBottom.Side = asrBottom
-    Left = 419
-    Height = 40
+    Left = 111
+    Height = 30
     Top = 176
-    Width = 91
+    Width = 80
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
     BorderSpacing.Right = 6
