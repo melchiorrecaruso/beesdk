@@ -10,7 +10,7 @@
       PageAdvanced.Caption := Storage.ReadString('TPages', 'PageAdvanced.Caption', PageAdvanced.Caption);
 
       ArchiveNameLabel.Caption := Storage.ReadString('TLabel', 'ArchiveName', ArchiveNameLabel.Caption);
-      BtnOpen.Caption          := Storage.ReadString('TBitBtn', 'BtnOpen.Caption', BtnOpen.Caption);
+      BtnSave.Caption          := Storage.ReadString('TBitBtn', 'BtnSave.Caption', BtnSave.Caption);
     
 	  ufOptionLabel.Caption := Storage.ReadString('TLabel', 'ufOption', ufOptionLabel.Caption);
       ufOption.Items[0] := Storage.ReadString('TComboBox', 'ufOption[0]', ufOption.Items[0]);

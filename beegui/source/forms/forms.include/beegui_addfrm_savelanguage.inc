@@ -10,7 +10,7 @@
 	  Storage.WriteString('TPages', 'PageAdvanced.Caption', PageAdvanced.Caption);
 
       Storage.WriteString('TLabel', 'ArchiveName', ArchiveNameLabel.Caption);
-      Storage.WriteString('TBitBtn', 'BtnOpen.Caption', BtnOpen.Caption);
+      Storage.WriteString('TBitBtn', 'BtnSave.Caption', BtnSave.Caption);
       Storage.WriteString('TLabel', 'ufOption', ufOptionLabel.Caption);
       Storage.WriteString('TComboBox', 'ufOption[0]', ufOption.Items[0]);
       Storage.WriteString('TComboBox', 'ufOption[1]', ufOption.Items[1]);

@@ -99,7 +99,7 @@ type
     PopupMenu_PlusMinus: TMenuItem;
     PopupMenu_Modify: TMenuItem;
     PopupMenu_Delete: TMenuItem;
-    BtnOpen: TBitBtn;
+    BtnSave: TBitBtn;
     BtnDown: TBitBtn;
     BtnUp: TBitBtn;
     BtnFiles: TBitBtn;
@@ -125,7 +125,7 @@ type
     procedure PopupMenu_DeleteClick(Sender: TObject);
     procedure BtnUpClick(Sender: TObject);
     procedure BtnDownClick(Sender: TObject);
-    procedure BtnOpenClick(Sender: TObject);
+    procedure BtnSaveClick(Sender: TObject);
     procedure yOptionBtnClick(Sender: TObject);
   public
     { public declarations }
@@ -172,7 +172,7 @@ uses
       aOption.Color := clBtnFace;
   end;
   
-  procedure TAddFrm.BtnOpenClick(Sender: TObject);
+  procedure TAddFrm.BtnSaveClick(Sender: TObject);
   begin
     SaveDialog.FileName := ArchiveName.Text;
     if SaveDialog.Execute then
