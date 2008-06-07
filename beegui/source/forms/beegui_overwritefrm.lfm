@@ -1,17 +1,17 @@
 object OverwriteFrm: TOverwriteFrm
   Left = 414
-  Height = 237
+  Height = 201
   Top = 268
-  Width = 471
-  HorzScrollBar.Page = 470
-  VertScrollBar.Page = 236
+  Width = 478
+  HorzScrollBar.Page = 477
+  VertScrollBar.Page = 200
   ActiveControl = BtnYes
   AutoSize = True
-  BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = 'Confirm File Overwirte'
-  ClientHeight = 237
-  ClientWidth = 471
+  ClientHeight = 201
+  ClientWidth = 478
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
@@ -138,10 +138,10 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideTop.Side = asrBottom
     Left = 67
     Height = 32
-    Top = 61
+    Top = 50
     Width = 32
     AutoSize = True
-    BorderSpacing.Top = 1
+    BorderSpacing.Top = 2
     BorderSpacing.Around = 5
   end
   object NewIcon: TImage
@@ -150,10 +150,10 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideTop.Side = asrBottom
     Left = 67
     Height = 32
-    Top = 144
+    Top = 115
     Width = 32
     AutoSize = True
-    BorderSpacing.Top = 1
+    BorderSpacing.Top = 2
     BorderSpacing.Around = 5
   end
   object TheFolder: TLabel
@@ -161,7 +161,7 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
     Left = 62
-    Height = 20
+    Height = 14
     Top = 10
     Width = 151
     BorderSpacing.Left = 10
@@ -176,8 +176,8 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideTop.Control = TheFolder
     AnchorSideTop.Side = asrBottom
     Left = 62
-    Height = 20
-    Top = 35
+    Height = 14
+    Top = 29
     Width = 197
     BorderSpacing.Around = 5
     Caption = 'Would you like to replace the existing file'
@@ -190,8 +190,8 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideTop.Control = OldTime
     AnchorSideTop.Side = asrBottom
     Left = 62
-    Height = 20
-    Top = 114
+    Height = 14
+    Top = 91
     Width = 67
     BorderSpacing.Around = 10
     Caption = 'with this one?'
@@ -202,10 +202,11 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideLeft.Control = OldIcon
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = OldIcon
-    Left = 104
-    Height = 20
-    Top = 61
+    Left = 105
+    Height = 14
+    Top = 50
     Width = 42
+    BorderSpacing.Left = 6
     Caption = 'size: %s'
     ParentColor = False
     ParentShowHint = False
@@ -214,10 +215,11 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideLeft.Control = NewIcon
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = NewIcon
-    Left = 104
-    Height = 20
-    Top = 144
+    Left = 105
+    Height = 14
+    Top = 115
     Width = 42
+    BorderSpacing.Left = 6
     Caption = 'size: %s'
     ParentColor = False
     ParentShowHint = False
@@ -227,10 +229,11 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = OldSize
     AnchorSideTop.Side = asrBottom
-    Left = 104
-    Height = 20
-    Top = 84
+    Left = 105
+    Height = 14
+    Top = 67
     Width = 64
+    BorderSpacing.Left = 6
     BorderSpacing.Top = 3
     Caption = 'modified: %s'
     ParentColor = False
@@ -241,10 +244,11 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = NewSize
     AnchorSideTop.Side = asrBottom
-    Left = 104
-    Height = 20
-    Top = 167
+    Left = 105
+    Height = 14
+    Top = 132
     Width = 64
+    BorderSpacing.Left = 6
     BorderSpacing.Top = 3
     Caption = 'modified: %s'
     ParentColor = False
@@ -258,8 +262,8 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideRight.Side = asrBottom
     Left = 6
     Height = 2
-    Top = 191
-    Width = 459
+    Top = 162
+    Width = 466
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 15
     BorderSpacing.Bottom = 6
@@ -272,9 +276,9 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnAbort
     AnchorSideBottom.Side = asrBottom
-    Left = 380
-    Height = 32
-    Top = 199
+    Left = 387
+    Height = 26
+    Top = 170
     Width = 85
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
@@ -295,9 +299,9 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideTop.Control = BtnAbort
     AnchorSideBottom.Control = BtnAbort
     AnchorSideBottom.Side = asrBottom
-    Left = 289
-    Height = 32
-    Top = 199
+    Left = 296
+    Height = 26
+    Top = 170
     Width = 85
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
@@ -319,9 +323,9 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideBottom.Control = BtnAbort
     AnchorSideBottom.Side = asrBottom
     Left = 97
-    Height = 32
-    Top = 199
-    Width = 85
+    Height = 26
+    Top = 170
+    Width = 92
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
@@ -342,9 +346,9 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideRight.Side = asrCenter
     AnchorSideBottom.Control = BtnAbort
     AnchorSideBottom.Side = asrBottom
-    Left = 188
-    Height = 32
-    Top = 199
+    Left = 195
+    Height = 26
+    Top = 170
     Width = 85
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
@@ -363,8 +367,8 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideTop.Control = Bevel
     AnchorSideTop.Side = asrBottom
     Left = 6
-    Height = 32
-    Top = 199
+    Height = 26
+    Top = 170
     Width = 85
     AutoSize = True
     BorderSpacing.Around = 6

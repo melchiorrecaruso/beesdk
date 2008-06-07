@@ -110,6 +110,7 @@ type
     BtnFolder: TBitBtn;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
+    procedure cfgOptionBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FilesSelectionChanged(Sender: TObject);
@@ -125,9 +126,9 @@ type
     procedure BtnUpClick(Sender: TObject);
     procedure BtnDownClick(Sender: TObject);
     procedure BtnOpenClick(Sender: TObject);
+    procedure yOptionBtnClick(Sender: TObject);
   public
     { public declarations }
-    ArchivePath: string;
   private
     { private declarations }
   end;
@@ -173,14 +174,33 @@ uses
   
   procedure TAddFrm.BtnOpenClick(Sender: TObject);
   begin
-    SaveDialog.FileName := ArchivePath + ArchiveName.Text;
+    SaveDialog.FileName := ArchiveName.Text;
     if SaveDialog.Execute then
     begin
-      ArchivePath := ExtractFilePath(SaveDialog.FileName);
-      ArchiveName.Text := ExtractFileName(SaveDialog.FileName);
+      ArchiveName.Text := SaveDialog.FileName;
+    end;
+  end;
+
+  procedure TAddFrm.yOptionBtnClick(Sender: TObject);
+  var
+    FolderName: string;
+  begin
+    FolderName := '';
+    if SelectDirectory(rsSelectFolder, '', FolderName) then
+    begin
+      yOption.Text := FolderName;
     end;
   end;
   
+  procedure TAddFrm.cfgOptionBtnClick(Sender: TObject);
+  begin
+    OpenDialog.FileName := cfgOption.Text;
+    if OpenDialog.Execute then
+    begin
+      cfgOption.Text := OpenDialog.FileName;
+    end;
+  end;
+
   procedure TAddFrm.PopupMenu_AddFolderClick(Sender: TObject);
   var
     FolderName: string;

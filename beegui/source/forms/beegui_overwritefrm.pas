@@ -93,7 +93,6 @@ uses
     Storage: TMemIniFile;
   begin
     Images.IconFolder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('largeicons') ;
-    // ---
     {$I beegui_overwritefrm_loadlanguage.inc}
     {$I beegui_overwritefrm_loadproperty.inc}
   end;
@@ -103,14 +102,15 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {*$I beegui_overwritefrm_savelanguage.inc}
+    {$IFDEF DEBUG}
+      {$I beegui_overwritefrm_savelanguage.inc}
+    {$ENDIF}
     {$I beegui_overwritefrm_saveproperty.inc}
   end;
   
   procedure TOverwriteFrm.SetFileName(const FileName: string);
   begin
     TheFolder.Caption := TheFolder.Caption + ' "' + FileName + '".';
-    // ---
     Images.GetBitmap(Images.FileIcon(FileName, 0), OldIcon.Picture.Bitmap);
     Images.GetBitmap(Images.FileIcon(FileName, 0), NewIcon.Picture.Bitmap);
   end;

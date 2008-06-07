@@ -106,9 +106,8 @@ uses
 
     if Length(CmdLine.cfgOption) > 0 then
       F.cfgOption.Text := CmdLine.cfgOption;
-
-    F.ArchivePath      := ExtractFilePath(ExpandFileName(CmdLine.ArcName));
-    F.ArchiveName.Text := ExtractFileName(ExpandFileName(CmdLine.ArcName));
+      
+    F.ArchiveName.Text := ExpandFileName(CmdLine.ArcName);
 
     for I := 0 to CmdLine.FileMasks.Count - 1 do
       F.FilesMgr.AddFile(ExpandFileName(CmdLine.FileMasks.Strings[I]));
@@ -160,7 +159,7 @@ uses
       CmdLine.cdOption := F.cdOption.Text;
       CmdLine.cfgOption := F.cfgOption.Text;
 
-      CmdLine.ArcName := F.ArchivePath + F.ArchiveName.Text;
+      CmdLine.ArcName := F.ArchiveName.Text;
 
       CmdLine.FileMasks.Clear;
       for I := 0 to F.FilesMgr.Count - 1 do
