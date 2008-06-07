@@ -89,11 +89,8 @@ uses
     Storage: TMemIniFile;
   begin
     Icons.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
-    // ---
     {$I beegui_extractfrm_loadlanguage.inc}
     {$I beegui_extractfrm_loadproperty.inc}
-
-    // ---
     FoldersMgr.Initialize;
     FoldersMgr.FolderName := Folder.Text;
   end;
@@ -103,7 +100,9 @@ uses
     F: string;
     Storage: TMemIniFile;
   begin
-    {*$I beegui_extractfrm_savelanguage.inc}
+    {$IFDEF DEBUG}
+      {$I beegui_extractfrm_savelanguage.inc}
+    {$ENDIF}
     {$I beegui_extractfrm_saveproperty.inc}
   end;
 

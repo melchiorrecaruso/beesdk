@@ -1,15 +1,15 @@
 object AddFrm: TAddFrm
   Left = 468
-  Height = 351
+  Height = 316
   Top = 197
-  Width = 400
-  HorzScrollBar.Page = 399
-  VertScrollBar.Page = 350
-  ActiveControl = aOptionCheck
+  Width = 411
+  HorzScrollBar.Page = 410
+  VertScrollBar.Page = 315
+  ActiveControl = Pages
   Caption = 'Archive Name and Options'
-  ClientHeight = 351
-  ClientWidth = 400
-  Constraints.MinHeight = 322
+  ClientHeight = 316
+  ClientWidth = 411
+  Constraints.MinHeight = 316
   Constraints.MinWidth = 400
   Font.Height = -11
   Font.Name = 'Tahoma'
@@ -24,34 +24,35 @@ object AddFrm: TAddFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
     Left = 6
-    Height = 301
+    Height = 272
     Top = 6
-    Width = 388
-    ActivePage = PageAdvanced
+    Width = 399
+    ActivePage = PageGeneral
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
     object PageGeneral: TTabSheet
       Caption = 'General'
-      ClientHeight = 273
-      ClientWidth = 384
+      ClientHeight = 246
+      ClientWidth = 391
       ParentShowHint = False
       object ArchiveNameLabel: TLabel
         AnchorSideLeft.Control = PageGeneral
         AnchorSideTop.Control = PageGeneral
         Left = 6
-        Height = 20
+        Height = 14
         Top = 6
         Width = 70
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Archive name:'
-        Layout = tlBottom
+        Layout = tlCenter
         ParentColor = False
       end
       object ufOptionLabel: TLabel
@@ -59,12 +60,14 @@ object AddFrm: TAddFrm
         AnchorSideTop.Control = ArchiveName
         AnchorSideTop.Side = asrBottom
         Left = 6
-        Height = 20
-        Top = 57
+        Height = 14
+        Top = 49
         Width = 69
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Update mode:'
+        Layout = tlCenter
         ParentColor = False
       end
       object mOptionLabel: TLabel
@@ -72,12 +75,14 @@ object AddFrm: TAddFrm
         AnchorSideTop.Control = ufOption
         AnchorSideTop.Side = asrBottom
         Left = 6
-        Height = 20
-        Top = 109
+        Height = 14
+        Top = 92
         Width = 105
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Compression method:'
+        Layout = tlCenter
         ParentColor = False
       end
       object dOptionLabel: TLabel
@@ -85,12 +90,14 @@ object AddFrm: TAddFrm
         AnchorSideTop.Control = mOption
         AnchorSideTop.Side = asrBottom
         Left = 6
-        Height = 20
-        Top = 161
+        Height = 14
+        Top = 135
         Width = 74
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Dictionary size:'
+        Layout = tlCenter
         ParentColor = False
       end
       object eOptionLabel: TLabel
@@ -99,13 +106,13 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = eOption
         Left = 6
-        Height = 20
-        Top = 220
+        Height = 14
+        Top = 204
         Width = 150
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
         Caption = 'Force file extention (-e Option)'
-        Layout = tlBottom
+        Layout = tlCenter
         ParentColor = False
       end
       object Options: TGroupBox
@@ -115,16 +122,16 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = dOption
         AnchorSideBottom.Side = asrBottom
-        Left = 208
-        Height = 157
-        Top = 57
+        Left = 215
+        Height = 149
+        Top = 49
         Width = 170
         Anchors = [akTop, akRight]
         AutoSize = True
         BorderSpacing.Top = 6
         BorderSpacing.Right = 6
         Caption = 'Options'
-        ClientHeight = 141
+        ClientHeight = 131
         ClientWidth = 166
         Constraints.MinWidth = 170
         ParentBidiMode = False
@@ -134,9 +141,9 @@ object AddFrm: TAddFrm
           AnchorSideLeft.Control = Options
           AnchorSideTop.Control = Options
           Left = 6
-          Height = 21
+          Height = 19
           Top = 6
-          Width = 132
+          Width = 134
           BorderSpacing.Around = 6
           Caption = 'Recurse subdirectories'
           Checked = True
@@ -149,9 +156,9 @@ object AddFrm: TAddFrm
           AnchorSideTop.Control = rOption
           AnchorSideTop.Side = asrBottom
           Left = 6
-          Height = 21
-          Top = 33
-          Width = 127
+          Height = 19
+          Top = 31
+          Width = 128
           BorderSpacing.Around = 6
           Caption = 'Create a solid archive'
           ParentShowHint = False
@@ -162,9 +169,9 @@ object AddFrm: TAddFrm
           AnchorSideTop.Control = sOption
           AnchorSideTop.Side = asrBottom
           Left = 6
-          Height = 21
-          Top = 60
-          Width = 128
+          Height = 19
+          Top = 56
+          Width = 127
           BorderSpacing.Around = 6
           Caption = 'Test files after adding'
           ParentShowHint = False
@@ -175,9 +182,9 @@ object AddFrm: TAddFrm
           AnchorSideTop.Control = tOption
           AnchorSideTop.Side = asrBottom
           Left = 6
-          Height = 21
-          Top = 87
-          Width = 144
+          Height = 19
+          Top = 81
+          Width = 141
           BorderSpacing.Around = 6
           Caption = 'Crypt files with password'
           ParentShowHint = False
@@ -188,8 +195,8 @@ object AddFrm: TAddFrm
           AnchorSideTop.Control = kOption
           AnchorSideTop.Side = asrBottom
           Left = 6
-          Height = 21
-          Top = 114
+          Height = 19
+          Top = 106
           Width = 144
           BorderSpacing.Around = 6
           Caption = 'List archive after process'
@@ -206,13 +213,14 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = BtnOpen
         Left = 6
-        Height = 25
-        Top = 26
-        Width = 291
+        Height = 21
+        Top = 22
+        Width = 303
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
+        ItemHeight = 13
         MaxLength = 0
         ParentShowHint = False
         TabOrder = 1
@@ -223,15 +231,15 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = ArchiveName
         AnchorSideBottom.Side = asrBottom
-        Left = 303
-        Height = 45
+        Left = 315
+        Height = 37
         Top = 6
-        Width = 75
+        Width = 70
         Anchors = [akTop, akRight, akBottom]
+        AutoSize = True
         BorderSpacing.Right = 6
         Caption = 'Open'
-        Constraints.MaxWidth = 75
-        Constraints.MinWidth = 75
+        Constraints.MinWidth = 70
         NumGlyphs = 0
         OnClick = BtnOpenClick
         TabOrder = 2
@@ -242,13 +250,14 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Options
         Left = 6
-        Height = 26
-        Top = 77
-        Width = 196
+        Height = 21
+        Top = 65
+        Width = 203
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
+        ItemHeight = 13
         ItemIndex = 2
         Items.Strings = (
           'Update files'
@@ -267,13 +276,14 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Options
         Left = 6
-        Height = 26
-        Top = 129
-        Width = 196
+        Height = 21
+        Top = 108
+        Width = 203
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
+        ItemHeight = 13
         ItemIndex = 1
         Items.Strings = (
           '0 - Store'
@@ -293,13 +303,14 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Options
         Left = 6
-        Height = 26
-        Top = 181
-        Width = 196
+        Height = 21
+        Top = 151
+        Width = 203
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
+        ItemHeight = 13
         ItemIndex = 2
         Items.Strings = (
           'Level  0   (2 MB)'
@@ -325,9 +336,9 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrBottom
         Left = 6
-        Height = 27
-        Top = 240
-        Width = 372
+        Height = 22
+        Top = 218
+        Width = 379
         Align = alBottom
         Anchors = [akTop, akLeft, akRight, akBottom]
         AutoSize = True
@@ -339,21 +350,22 @@ object AddFrm: TAddFrm
     end
     object PageFiles: TTabSheet
       Caption = 'Files'
-      ClientHeight = 273
-      ClientWidth = 384
+      ClientHeight = 246
+      ClientWidth = 391
       ImageIndex = 2
       ParentShowHint = False
       object FilesLabel: TLabel
         AnchorSideLeft.Control = PageFiles
         AnchorSideTop.Control = PageFiles
         Left = 6
-        Height = 20
+        Height = 14
         Top = 6
         Width = 234
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Files and/or Directories to Add and/or to Exclude'
-        Layout = tlBottom
+        Layout = tlCenter
         ParentColor = False
         ParentShowHint = False
       end
@@ -361,11 +373,12 @@ object AddFrm: TAddFrm
         AnchorSideLeft.Control = PageFiles
         AnchorSideBottom.Control = Root
         Left = 6
-        Height = 20
-        Top = 225
+        Height = 14
+        Top = 202
         Width = 107
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 6
+        BorderSpacing.Bottom = 2
         Caption = 'Current root directory'
         Layout = tlCenter
         ParentColor = False
@@ -378,31 +391,29 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Side = asrBottom
         Left = 6
         Height = 22
-        Top = 245
-        Width = 286
+        Top = 218
+        Width = 293
         Anchors = [akLeft, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
         Color = clBtnFace
-        CharCase = ecLowerCase
         ParentShowHint = False
         ReadOnly = True
         TabStop = False
         TabOrder = 0
       end
       object BtnFolder: TBitBtn
-        AnchorSideTop.Control = PageFiles
+        AnchorSideTop.Control = FilesLabel
         AnchorSideRight.Control = PageFiles
         AnchorSideRight.Side = asrBottom
-        Left = 298
-        Height = 28
+        Left = 305
+        Height = 27
         Top = 6
         Width = 80
         Anchors = [akTop, akRight]
         AutoSize = True
-        BorderSpacing.Top = 6
         BorderSpacing.Right = 6
         BorderSpacing.InnerBorder = 2
         Caption = 'Add folder'
@@ -417,9 +428,9 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
-        Left = 298
-        Height = 28
-        Top = 38
+        Left = 305
+        Height = 27
+        Top = 37
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -437,9 +448,9 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
-        Left = 298
-        Height = 28
-        Top = 102
+        Left = 305
+        Height = 27
+        Top = 99
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -458,9 +469,9 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
-        Left = 298
-        Height = 28
-        Top = 166
+        Left = 305
+        Height = 27
+        Top = 161
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -479,9 +490,9 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
-        Left = 298
-        Height = 28
-        Top = 134
+        Left = 305
+        Height = 27
+        Top = 130
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -500,9 +511,9 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = BtnFolder
         AnchorSideRight.Side = asrBottom
-        Left = 298
-        Height = 28
-        Top = 70
+        Left = 305
+        Height = 27
+        Top = 68
         Width = 80
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
@@ -522,15 +533,15 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Root
         AnchorSideBottom.Side = asrBottom
-        Left = 341
+        Left = 345
         Height = 22
-        Top = 245
-        Width = 37
+        Top = 218
+        Width = 40
         Anchors = [akTop, akRight, akBottom]
         BorderSpacing.Left = 6
         BorderSpacing.InnerBorder = 2
-        Constraints.MaxWidth = 37
-        Constraints.MinWidth = 37
+        Constraints.MaxWidth = 40
+        Constraints.MinWidth = 40
         Glyph.Data = {
           3E010000424D3E010000000000003600000028000000070000000B0000000100
           18000000000008010000C40E0000C40E00000000000000000000FFFFFFFFFFFF
@@ -554,14 +565,14 @@ object AddFrm: TAddFrm
         AnchorSideTop.Control = Root
         AnchorSideBottom.Control = Root
         AnchorSideBottom.Side = asrBottom
-        Left = 298
+        Left = 305
         Height = 22
-        Top = 245
-        Width = 37
+        Top = 218
+        Width = 40
         Anchors = [akTop, akLeft, akBottom]
         BorderSpacing.InnerBorder = 2
-        Constraints.MaxWidth = 37
-        Constraints.MinWidth = 37
+        Constraints.MaxWidth = 40
+        Constraints.MinWidth = 40
         Glyph.Data = {
           3E010000424D3E010000000000003600000028000000070000000B0000000100
           18000000000008010000C40E0000C40E00000000000000000000FFFFFFFFFFFF
@@ -585,9 +596,9 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = BtnFolder
         AnchorSideBottom.Control = RootLabel
         Left = 6
-        Height = 193
-        Top = 26
-        Width = 286
+        Height = 174
+        Top = 22
+        Width = 293
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
@@ -602,21 +613,21 @@ object AddFrm: TAddFrm
     end
     object PageAdvanced: TTabSheet
       Caption = 'Advanced'
-      ClientHeight = 273
-      ClientWidth = 384
+      ClientHeight = 246
+      ClientWidth = 391
       object cfgOptionLabel: TLabel
         AnchorSideLeft.Control = PageAdvanced
         AnchorSideTop.Control = cdOption
         AnchorSideTop.Side = asrBottom
         Left = 6
-        Height = 20
-        Top = 111
+        Height = 14
+        Top = 98
         Width = 219
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Use selected parameters .ini file (-cfg Option)'
-        Layout = tlBottom
+        Layout = tlCenter
         ParentColor = False
       end
       object cdOptionLabel: TLabel
@@ -624,8 +635,8 @@ object AddFrm: TAddFrm
         AnchorSideTop.Control = aOption
         AnchorSideTop.Side = asrBottom
         Left = 6
-        Height = 20
-        Top = 61
+        Height = 14
+        Top = 54
         Width = 206
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
@@ -639,22 +650,23 @@ object AddFrm: TAddFrm
         AnchorSideTop.Control = cfgOption
         AnchorSideTop.Side = asrBottom
         Left = 6
-        Height = 20
-        Top = 164
+        Height = 14
+        Top = 141
         Width = 89
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Set work directory'
+        Layout = tlCenter
         ParentColor = False
       end
       object aOptionCheck: TCheckBox
         AnchorSideLeft.Control = PageAdvanced
         AnchorSideTop.Control = PageAdvanced
         Left = 6
-        Height = 21
+        Height = 19
         Top = 6
-        Width = 204
+        Width = 197
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
@@ -672,15 +684,16 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = PageAdvanced
         AnchorSideRight.Side = asrBottom
         Left = 6
-        Height = 26
-        Top = 29
-        Width = 372
+        Height = 21
+        Top = 27
+        Width = 379
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
         Color = clInactiveBorder
         Enabled = False
+        ItemHeight = 13
         ItemIndex = 0
         Items.Strings = (
           'GUI Self Extractor Module'
@@ -699,13 +712,14 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = cfgOptionBtn
         Left = 6
-        Height = 25
-        Top = 133
-        Width = 291
+        Height = 21
+        Top = 114
+        Width = 303
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
+        ItemHeight = 13
         MaxLength = 0
         ParentShowHint = False
         TabOrder = 2
@@ -716,16 +730,18 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = yOption
         AnchorSideBottom.Side = asrBottom
-        Left = 303
-        Height = 47
-        Top = 164
-        Width = 75
+        Left = 315
+        Height = 37
+        Top = 141
+        Width = 70
         Anchors = [akTop, akRight, akBottom]
+        AutoSize = True
+        BorderSpacing.Left = 6
         BorderSpacing.Right = 6
         Caption = 'Open'
-        Constraints.MaxWidth = 75
-        Constraints.MinWidth = 75
+        Constraints.MinWidth = 70
         NumGlyphs = 0
+        OnClick = yOptionBtnClick
         TabOrder = 3
       end
       object cdOption: TEdit
@@ -736,8 +752,8 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         Left = 6
         Height = 22
-        Top = 83
-        Width = 372
+        Top = 70
+        Width = 379
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
         BorderSpacing.Left = 6
@@ -748,13 +764,16 @@ object AddFrm: TAddFrm
         AnchorSideLeft.Control = PageAdvanced
         AnchorSideTop.Control = yOptionLabel
         AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = yOptionBtn
         Left = 6
-        Height = 25
-        Top = 186
-        Width = 289
+        Height = 21
+        Top = 157
+        Width = 303
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
+        BorderSpacing.Right = 6
+        ItemHeight = 13
         MaxLength = 0
         ParentShowHint = False
         TabOrder = 5
@@ -765,16 +784,18 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = cfgOption
         AnchorSideBottom.Side = asrBottom
-        Left = 303
-        Height = 47
-        Top = 111
-        Width = 75
+        Left = 315
+        Height = 37
+        Top = 98
+        Width = 70
         Anchors = [akTop, akRight, akBottom]
+        AutoSize = True
+        BorderSpacing.Left = 6
         BorderSpacing.Right = 6
         Caption = 'Open'
-        Constraints.MaxWidth = 75
-        Constraints.MinWidth = 75
+        Constraints.MinWidth = 70
         NumGlyphs = 0
+        OnClick = cfgOptionBtnClick
         TabOrder = 6
       end
     end
@@ -785,9 +806,9 @@ object AddFrm: TAddFrm
     AnchorSideRight.Control = BtnCancel
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
-    Left = 238
-    Height = 32
-    Top = 313
+    Left = 249
+    Height = 26
+    Top = 284
     Width = 70
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -805,9 +826,9 @@ object AddFrm: TAddFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 314
-    Height = 32
-    Top = 313
+    Left = 325
+    Height = 26
+    Top = 284
     Width = 80
     Anchors = [akRight, akBottom]
     AutoSize = True
@@ -822,7 +843,7 @@ object AddFrm: TAddFrm
   end
   object PopupMenu: TPopupMenu
     left = 8
-    top = 312
+    top = 280
     object PopupMenu_AddFolder: TMenuItem
       Caption = 'Add folder'
       ShortCut = 16452
@@ -866,7 +887,7 @@ object AddFrm: TAddFrm
   end
   object FilesImages: TImageList
     left = 72
-    top = 312
+    top = 280
     Bitmap = {
       4C69020000001000000010000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -936,20 +957,22 @@ object AddFrm: TAddFrm
     }
   end
   object OpenDialog: TOpenDialog
-    Filter = 'Bee file|*.bee|Exe file|*.exe|All files|*.*'
+    Filter = 'All files (*.*)|*'
     FilterIndex = 0
-    Options = [ofHideReadOnly, ofAllowMultiSelect, ofPathMustExist, ofFileMustExist, ofEnableSizing]
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     left = 40
-    top = 312
+    top = 280
   end
   object FilesMgr: TAddTreeViewMgr
     Tree = Files
     Root = Root
     left = 104
-    top = 312
+    top = 280
   end
   object SaveDialog: TSaveDialog
+    Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
+    Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
     left = 136
-    top = 312
+    top = 280
   end
 end
