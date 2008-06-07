@@ -211,7 +211,7 @@ object AddFrm: TAddFrm
         AnchorSideLeft.Control = PageGeneral
         AnchorSideTop.Control = ArchiveNameLabel
         AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = BtnOpen
+        AnchorSideRight.Control = BtnSave
         Left = 6
         Height = 21
         Top = 22
@@ -225,7 +225,7 @@ object AddFrm: TAddFrm
         ParentShowHint = False
         TabOrder = 1
       end
-      object BtnOpen: TBitBtn
+      object BtnSave: TBitBtn
         AnchorSideTop.Control = ArchiveNameLabel
         AnchorSideRight.Control = PageGeneral
         AnchorSideRight.Side = asrBottom
@@ -238,10 +238,10 @@ object AddFrm: TAddFrm
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Right = 6
-        Caption = 'Open'
+        Caption = 'Save'
         Constraints.MinWidth = 70
         NumGlyphs = 0
-        OnClick = BtnOpenClick
+        OnClick = BtnSaveClick
         TabOrder = 2
       end
       object ufOption: TComboBox
@@ -602,7 +602,7 @@ object AddFrm: TAddFrm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        DefaultItemHeight = 16
+        DefaultItemHeight = 18
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
