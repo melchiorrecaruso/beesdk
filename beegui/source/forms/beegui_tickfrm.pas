@@ -521,6 +521,7 @@ var
   
   procedure TTickFrm.OnFatalError;
   begin
+    FCmdLine.Log := True;
     with FInterfaces.OnFatalError do
     begin
       Report.Append(Data.Msg);
@@ -529,6 +530,7 @@ var
   
   procedure TTickFrm.OnError;
   begin
+    FCmdLine.Log := True;
     with FInterfaces.OnError do
     begin
       Report.Append(Data.Msg);
@@ -537,6 +539,7 @@ var
   
   procedure TTickFrm.OnWarning;
   begin
+    FCmdLine.Log := True;
     with FInterfaces.OnWarning do
     begin
       Report.Append(Data.Msg);

@@ -77,7 +77,7 @@ type
   public
     property Run: boolean read FRun;
     property Link: string read F0Option;
-    property Log: boolean read F1Option;
+    property Log: boolean read F1Option write F1Option;
     property Params: TStringList read FParams;
   public
     property Command: char read FCommand write FCommand;
@@ -326,7 +326,7 @@ uses
         end else
           if FArcName = '' then
           begin
-            FArcName := ExpandFileName(S);
+            FArcName := S;
             if ExtractFileExt(FArcName) = '' then
             begin
               FArcName := ChangeFileExt(FArcName, '.bee');
@@ -365,32 +365,32 @@ uses
     begin
       FParams.Add(FCommand);
 
-      if FrOption then FParams.Add('-r+') else FParams.Add('-r-');
-      if FuOption then FParams.Add('-u+') else FParams.Add('-u-');
-      if FfOption then FParams.Add('-f+') else FParams.Add('-f-');
+      if FrOption then FParams.Add('-R+') else FParams.Add('-R-');
+      if FuOption then FParams.Add('-U+') else FParams.Add('-U-');
+      if FfOption then FParams.Add('-F+') else FParams.Add('-F-');
 
       if Length(FeOption) > 0 then
-        FParams.Add('-e' + FeOption);
+        FParams.Add('-E' + FeOption);
 
-      if FsOption then FParams.Add('-s+') else FParams.Add('-s-');
+      if FsOption then FParams.Add('-S+') else FParams.Add('-S-');
 
       if Length(FaOption) > 0 then
-        FParams.Add('-a' + FaOption);
+        FParams.Add('-A' + FaOption);
 
-      FParams.Add('-o'+ FoOption);
-      FParams.Add('-m'+ IntToStr(FmOption));
-      FParams.Add('-d'+ IntToStr(FdOption));
+      FParams.Add('-O'+ FoOption);
+      FParams.Add('-M'+ IntToStr(FmOption));
+      FParams.Add('-D'+ IntToStr(FdOption));
 
       for i := 0 to FxOption.Count - 1 do
-        FParams.Add('-x' + FxOption.Strings[i]);
+        FParams.Add('-X' + FxOption.Strings[i]);
 
-      if FtOption then FParams.Add('-t+') else FParams.Add('-t-');
-      if FlOption then FParams.Add('-l+') else FParams.Add('-l-');
+      if FtOption then FParams.Add('-T+') else FParams.Add('-T-');
+      if FlOption then FParams.Add('-L+') else FParams.Add('-L-');
 
       if Length(FyOption) > 0 then
-        FParams.Add('-y' + FyOption);
+        FParams.Add('-Y' + FyOption);
 
-      if FkOption then FParams.Add('-k+') else FParams.Add('-k-');
+      if FkOption then FParams.Add('-K+') else FParams.Add('-K-');
 
       if Length(FcdOption) > 0 then
         FParams.Add('-CD' + FcdOption);

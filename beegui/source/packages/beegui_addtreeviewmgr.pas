@@ -61,6 +61,7 @@ type
     function GetBool(Index: integer): boolean;
     function GetItem(Index: integer): string;
     function GetRootValue(SpinValue: integer): string;
+    procedure SetRootValue(Value: string);
     function And4Str(const Str1, Str2: string): string;
   public
     constructor Create(AOwner: TComponent); override;
@@ -82,7 +83,7 @@ type
     property Tree: TTreeView read FTree write SetTree default nil;
     property Spin: integer read FSpin write SetSpin default 0;
     property Root: TEdit read FRoot write SetRoot default nil;
-    property RootValue: string read FRootValue;
+    property RootValue: string read FRootValue write SetRootValue;
   end;
 
   { Register }
@@ -180,6 +181,24 @@ uses
     S.Free;
   end;
   
+  procedure TAddTreeViewMgr.SetRootValue(Value: string);
+  var
+    I: integer;
+  begin
+    Spin := 0;
+    Value := IncludeTrailingBackSlash(Value);
+    while CompareFileName(RootValue, Value) <> 0 do
+    begin
+      I := Spin;
+      Spin := I + 1;
+      if Spin = I then
+      begin
+        Spin := 0;
+        Break;
+      end;
+    end;
+  end;
+  
   function TAddTreeViewMgr.GetItem(Index: integer): string;
   var
     R: string;
@@ -275,12 +294,15 @@ uses
     if Assigned(FTree) then
     begin
       FTree.Items.BeginUpdate;
-
+      (*
       FFilePath.Add(ExtractFilePath(FolderName));
       if Length(ExtractFileName(FolderName)) = 0 then
         FFileName.Add('')
       else
         FFileName.Add(IncludeTrailingBackslash(ExtractFileName(FolderName)));
+      *)
+      FFilePath.Add(IncludeTrailingBackslash(FolderName));
+      FFileName.Add('');
       FFileMask.Add('*');
       FFileBool.Add('+');
 
@@ -305,6 +327,7 @@ uses
         FTree.Items[FileIndex].Delete;
         Update;
       end;
+      if FFilePath.Count = 0 then FSpin := 0;
     end;
   end;
   
@@ -321,6 +344,7 @@ uses
         FTree.Items[FolderIndex].Delete;
         Update;
       end;
+      if FFilePath.Count = 0 then FSpin := 0;
     end;
   end;
   
