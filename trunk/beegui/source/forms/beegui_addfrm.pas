@@ -58,7 +58,9 @@ type
 
     cfgOption: TComboBox;
     OpenDialog: TOpenDialog;
+    SelectFilesDialog: TOpenDialog;
     SaveDialog: TSaveDialog;
+    UpDown: TUpDown;
     yOption: TComboBox;
     yOptionBtn: TBitBtn;
     cfgOptionBtn: TBitBtn;
@@ -100,8 +102,6 @@ type
     PopupMenu_Modify: TMenuItem;
     PopupMenu_Delete: TMenuItem;
     BtnSave: TBitBtn;
-    BtnDown: TBitBtn;
-    BtnUp: TBitBtn;
     BtnFiles: TBitBtn;
     BtnView: TBitBtn;
     BtnModify: TBitBtn;
@@ -123,9 +123,8 @@ type
     procedure PopupMenu_PlusMinusClick(Sender: TObject);
     procedure PopupMenu_ModifyClick(Sender: TObject);
     procedure PopupMenu_DeleteClick(Sender: TObject);
-    procedure BtnUpClick(Sender: TObject);
-    procedure BtnDownClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
+    procedure UpDownClick(Sender: TObject; Button: TUDBtnType);
     procedure yOptionBtnClick(Sender: TObject);
   public
     { public declarations }
@@ -181,6 +180,14 @@ uses
     end;
   end;
 
+  procedure TAddFrm.UpDownClick(Sender: TObject; Button: TUDBtnType);
+  begin
+    case Button of
+      btNext: FilesMgr.Spin := FilesMgr.Spin - 1;
+      btPrev:  FilesMgr.Spin := FilesMgr.Spin + 1;
+    end;
+  end;
+
   procedure TAddFrm.yOptionBtnClick(Sender: TObject);
   var
     FolderName: string;
@@ -209,6 +216,10 @@ uses
     if SelectDirectory(rsSelectFolder, '', FolderName) then
     begin
       FilesMgr.AddFolder(FolderName);
+      if (FilesMgr.Count = 1) and (FilesMgr.Spin = 0) then
+      begin
+        FilesMgr.Spin := 1;
+      end;
     end;
     Files.Selected := nil;
   end;
@@ -217,11 +228,11 @@ uses
   var
     I: integer;
   begin
-    if OpenDialog.Execute then
+    if SelectFilesDialog.Execute then
     begin
-      for I := 0 to OpenDialog.Files.Count - 1 do
+      for I := 0 to SelectFilesDialog.Files.Count - 1 do
       begin
-        FilesMgr.AddFile(OpenDialog.Files[I]);
+        FilesMgr.AddFile(SelectFilesDialog.Files[I]);
       end;
       Files.Selected := nil;
     end;
@@ -295,16 +306,6 @@ uses
         FilesMgr.DeleteFile(I);
       end;
     end;
-  end;
-  
-  procedure TAddFrm.BtnUpClick (Sender: TObject);
-  begin
-    FilesMgr.Spin := FilesMgr.Spin + 1;
-  end;
-
-  procedure TAddFrm.BtnDownClick(Sender: TObject);
-  begin
-    FilesMgr.Spin := FilesMgr.Spin - 1;
   end;
 
   procedure TAddFrm.FilesSelectionChanged (Sender: TObject);

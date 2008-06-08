@@ -108,9 +108,12 @@ uses
       F.cfgOption.Text := CmdLine.cfgOption;
       
     F.ArchiveName.Text := ExpandFileName(CmdLine.ArcName);
-
+    
     for I := 0 to CmdLine.FileMasks.Count - 1 do
+    begin
       F.FilesMgr.AddFile(ExpandFileName(CmdLine.FileMasks.Strings[I]));
+    end;
+    F.FilesMgr.RootValue := GetCurrentDir;
 
     if F.ShowModal = mrOk then
     begin
