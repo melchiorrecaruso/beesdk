@@ -103,36 +103,36 @@ uses
     Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beegui_overwritefrm_savelanguage.inc}
+      {*$I beegui_overwritefrm_savelanguage.inc}
     {$ENDIF}
     {$I beegui_overwritefrm_saveproperty.inc}
   end;
   
   procedure TOverwriteFrm.SetFileName(const FileName: string);
   begin
-    TheFolder.Caption := TheFolder.Caption + ' "' + FileName + '".';
+    TheFolder.Caption := Format(TheFolder.Caption, [' "' + FileName + '".']);
     Images.GetBitmap(Images.FileIcon(FileName, 0), OldIcon.Picture.Bitmap);
     Images.GetBitmap(Images.FileIcon(FileName, 0), NewIcon.Picture.Bitmap);
   end;
   
   procedure TOverwriteFrm.SetOldFileTime(FileTime: integer);
   begin
-    OldTime.Caption := OldTime.Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileTime));
+    OldTime.Caption := Format(OldTime.Caption, [DateTimeToStr(FileDateToDateTime(FileTime))]);
   end;
   
   procedure TOverwriteFrm.SetOldFileSize(FileSize: integer);
   begin
-    OldSize.Caption := OldSize.Caption + '  ' + SizeToStr(FileSize);
+    OldSize.Caption := Format(OldSize.Caption, [SizeToStr(FileSize)]);
   end;
   
   procedure TOverwriteFrm.SetNewFileTime(FileTime: integer);
   begin
-    NewTime.Caption := NewTime.Caption + '  ' + DateTimeToStr(FileDateToDateTime(FileTime));
+    NewTime.Caption := Format(NewTime.Caption, [DateTimeToStr(FileDateToDateTime(FileTime))]);
   end;
 
   procedure TOverwriteFrm.SetNewFileSize(FileSize: integer);
   begin
-    NewSize.Caption := NewSize.Caption + '  ' + SizeToStr(FileSize);
+    NewSize.Caption := Format(NewSize.Caption, [SizeToStr(FileSize)]);
   end;
     
 initialization
