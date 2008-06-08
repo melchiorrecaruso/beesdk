@@ -24,7 +24,7 @@
 
 }
 
-unit BeeGui_ViewFrm;
+unit BeeFM_ViewFrm;
 
 {$I compiler.inc}
 
@@ -77,8 +77,8 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_viewfrm_loadlanguage.inc}
-    {$I beegui_viewfrm_loadproperty.inc}
+    {$I beefm_viewfrm_loadlanguage.inc}
+    {$I beefm_viewfrm_loadproperty.inc}
   end;
   
   procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -86,8 +86,8 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_viewfrm_savelanguage.inc}
-    {$I beegui_viewfrm_saveproperty.inc}
+    {$I beefm_viewfrm_savelanguage.inc}
+    {$I beefm_viewfrm_saveproperty.inc}
   end;
 
   procedure TViewFrm.BtnFontClick(Sender: TObject);
@@ -116,6 +116,6 @@ uses
   
 initialization
 
-  {$I beegui_viewfrm.lrs}
+  {$I beefm_viewfrm.lrs}
 
 end.

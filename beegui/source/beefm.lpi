@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -50,13 +50,13 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="250">
+    <Units Count="251">
       <Unit0>
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beefm"/>
-        <CursorPos X="9" Y="28"/>
-        <TopLine Value="8"/>
+        <CursorPos X="3" Y="40"/>
+        <TopLine Value="10"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -65,10 +65,11 @@
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <ComponentName Value="MainFrm"/>
         <IsPartOfProject Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="19" Y="60"/>
-        <TopLine Value="51"/>
+        <CursorPos X="52" Y="38"/>
+        <TopLine Value="18"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -224,11 +225,12 @@
         <ComponentName Value="ConfigFrm"/>
         <HasResources Value="True"/>
         <IsPartOfProject Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_configfrm.lrs"/>
         <UnitName Value="BeeFM_ConfigFrm"/>
         <CursorPos X="28" Y="43"/>
         <TopLine Value="32"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit20>
@@ -1312,7 +1314,7 @@
         <UnitName Value="BeeGui_IconList"/>
         <CursorPos X="3" Y="49"/>
         <TopLine Value="24"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="43"/>
         <Loaded Value="True"/>
       </Unit180>
@@ -1426,9 +1428,9 @@
       <Unit194>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="31" Y="108"/>
+        <CursorPos X="14" Y="108"/>
         <TopLine Value="98"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="47"/>
         <Loaded Value="True"/>
       </Unit194>
@@ -1513,11 +1515,14 @@
         <Filename Value="forms\beefm_propertyfrm.pas"/>
         <ComponentName Value="InfoFrm"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_propertyfrm.lrs"/>
         <UnitName Value="BeeFM_PropertyFrm"/>
-        <CursorPos X="77" Y="317"/>
-        <TopLine Value="284"/>
+        <CursorPos X="28" Y="26"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit206>
       <Unit207>
         <Filename Value="..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\classes\classesh.inc"/>
@@ -1803,6 +1808,19 @@
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit249>
+      <Unit250>
+        <Filename Value="forms\beefm_viewfrm.pas"/>
+        <ComponentName Value="ViewFrm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <ResourceFilename Value="forms\beefm_viewfrm.lrs"/>
+        <UnitName Value="BeeFM_ViewFrm"/>
+        <CursorPos X="12" Y="119"/>
+        <TopLine Value="81"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit250>
     </Units>
     <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>

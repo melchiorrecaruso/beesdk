@@ -51,7 +51,7 @@
     <License Value="GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 "/>
     <Version Major="1" Release="5" Build="155"/>
-    <Files Count="9">
+    <Files Count="11">
       <Item1>
         <Filename Value="beegui_addtreeviewmgr.lrs"/>
         <Type Value="LRS"/>
@@ -93,6 +93,15 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="BeeGui_IconList"/>
       </Item9>
+      <Item10>
+        <Filename Value="beegui_archiveprocess.lrs"/>
+        <Type Value="LRS"/>
+      </Item10>
+      <Item11>
+        <Filename Value="beegui_archiveprocess.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_ArchiveProcess"/>
+      </Item11>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">

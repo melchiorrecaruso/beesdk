@@ -288,7 +288,7 @@ implementation
 uses
   Bee_Common,
 
-  BeeGui_ViewFrm,
+  BeeFm_ViewFrm,
   BeeGui_AboutFrm,
 
   BeeGui_Messages,
@@ -1051,7 +1051,7 @@ uses
     F: TAboutFrm;
   begin
     F := TAboutFrm.Create(Self);
-    F.LinkClick(Self);
+    // F.LinkClick(Self);
     F.Free;
   end;
 
