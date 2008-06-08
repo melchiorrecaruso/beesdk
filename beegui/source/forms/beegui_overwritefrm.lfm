@@ -1,16 +1,16 @@
 object OverwriteFrm: TOverwriteFrm
   Left = 414
-  Height = 201
+  Height = 202
   Top = 268
   Width = 478
   HorzScrollBar.Page = 477
-  VertScrollBar.Page = 200
+  VertScrollBar.Page = 201
   ActiveControl = BtnYes
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Confirm File Overwirte'
-  ClientHeight = 201
+  ClientHeight = 202
   ClientWidth = 478
   Font.Height = -11
   Font.Name = 'Tahoma'

@@ -8,10 +8,10 @@
       begin
         Top    := Storage.ReadInteger('TForm', 'Top', Top);
         Left   := Storage.ReadInteger('TForm', 'Left', Left);
-        Width  := Storage.ReadInteger('TForm', 'Width', Width);
-        Height := Storage.ReadInteger('TForm', 'Height', Height);
+        // Width  := Storage.ReadInteger('TForm', 'Width', Width);
+        // Height := Storage.ReadInteger('TForm', 'Height', Height);
       end;
-      WindowState := TWindowState(Storage.ReadInteger('TForm', 'WindowState', Ord(WindowState)));
+      // WindowState := TWindowState(Storage.ReadInteger('TForm', 'WindowState', Ord(WindowState)));
 
       Report.Font.CharSet := TFontCharSet(Storage.ReadInteger('TFont', 'Report.Font.Charset',    (Report.Font.CharSet)));
       Report.Font.Color   := TColor      (Storage.ReadInteger('TFont', 'Report.Font.Color'  ,    (Report.Font.Color)));
