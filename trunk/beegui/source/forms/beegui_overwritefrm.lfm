@@ -1,7 +1,7 @@
 object OverwriteFrm: TOverwriteFrm
-  Left = 414
+  Left = 302
   Height = 202
-  Top = 268
+  Top = 179
   Width = 478
   HorzScrollBar.Page = 477
   VertScrollBar.Page = 201
@@ -160,13 +160,16 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideLeft.Control = Image
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
+    AnchorSideRight.Side = asrBottom
     Left = 62
     Height = 14
     Top = 10
-    Width = 151
+    Width = 410
     BorderSpacing.Left = 10
     BorderSpacing.Top = 10
+    BorderSpacing.Right = 6
     Caption = 'The folder already contains %s'
+    Constraints.MinWidth = 410
     ParentColor = False
     ParentShowHint = False
   end
@@ -273,6 +276,7 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideLeft.Control = BtnNo
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = BtnAbort
+    AnchorSideRight.Control = TheFolder
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnAbort
     AnchorSideBottom.Side = asrBottom
@@ -280,10 +284,9 @@ object OverwriteFrm: TOverwriteFrm
     Height = 26
     Top = 170
     Width = 85
-    Anchors = [akTop, akLeft, akBottom]
+    Anchors = [akTop, akRight, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
-    BorderSpacing.Right = 6
     Caption = '&Si'
     Constraints.MinWidth = 85
     Default = True
@@ -297,13 +300,14 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideLeft.Control = BtnYesAll
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = BtnAbort
+    AnchorSideRight.Control = BtnYes
     AnchorSideBottom.Control = BtnAbort
     AnchorSideBottom.Side = asrBottom
     Left = 296
     Height = 26
     Top = 170
     Width = 85
-    Anchors = [akTop, akLeft, akBottom]
+    Anchors = [akTop, akRight, akBottom]
     AutoSize = True
     BorderSpacing.Left = 16
     BorderSpacing.Right = 6

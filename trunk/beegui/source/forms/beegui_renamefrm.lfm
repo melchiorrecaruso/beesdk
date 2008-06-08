@@ -1,7 +1,7 @@
 object RenameFrm: TRenameFrm
-  Left = 483
+  Left = 457
   Height = 90
-  Top = 339
+  Top = 373
   Width = 287
   HorzScrollBar.Page = 286
   HorzScrollBar.Range = 35
@@ -56,10 +56,11 @@ object RenameFrm: TRenameFrm
     Left = 44
     Height = 14
     Top = 6
-    Width = 13
+    Width = 237
     BorderSpacing.Left = 3
     BorderSpacing.Around = 6
     Caption = '...'
+    Constraints.MinWidth = 237
     Layout = tlBottom
     ParentColor = False
     ParentShowHint = False
@@ -69,12 +70,16 @@ object RenameFrm: TRenameFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = FromFN
     AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = FromFN
+    AnchorSideRight.Side = asrBottom
     Left = 41
     Height = 22
     Top = 26
     Width = 240
+    Anchors = [akTop, akLeft, akRight]
     AutoSize = True
-    BorderSpacing.Around = 6
+    BorderSpacing.Left = 6
+    BorderSpacing.Top = 6
     ParentShowHint = False
     TabOrder = 0
   end
@@ -103,7 +108,7 @@ object RenameFrm: TRenameFrm
   object BtnCancel: TBitBtn
     AnchorSideTop.Control = ToFN
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = ToFN
+    AnchorSideRight.Control = FromFN
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 201
