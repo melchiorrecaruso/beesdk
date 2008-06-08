@@ -144,7 +144,7 @@ begin
   inherited Create(aInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0767 archiver utility, freeware version, May 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0768 archiver utility, freeware version, May 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -202,7 +202,7 @@ begin
   Synchronize(Interfaces.OnDisplay.Method); Interfaces.OnDisplay.Data.Msg := ('    e       force file Extention');
   Synchronize(Interfaces.OnDisplay.Method); Interfaces.OnDisplay.Data.Msg := ('    s       create Solid archive');
   Synchronize(Interfaces.OnDisplay.Method); Interfaces.OnDisplay.Data.Msg := ('    a       add self-extrActor module');
-  Synchronize(Interfaces.OnDisplay.Method); Interfaces.OnDisplay.Data.Msg := ('    o<mode> set overwrite file Mode (Q-Query (default), A-All, S-Skip all)');
+  Synchronize(Interfaces.OnDisplay.Method); Interfaces.OnDisplay.Data.Msg := ('    o<mode> set overwrite file Mode (Q-Quit, A-All, S-Skip all)');
   Synchronize(Interfaces.OnDisplay.Method); Interfaces.OnDisplay.Data.Msg := ('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
   Synchronize(Interfaces.OnDisplay.Method); Interfaces.OnDisplay.Data.Msg := ('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr);
   Synchronize(Interfaces.OnDisplay.Method); Interfaces.OnDisplay.Data.Msg := ('    x       eXclude filenames');
