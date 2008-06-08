@@ -1,7 +1,7 @@
 object RenameFrm: TRenameFrm
-  Left = 594
+  Left = 483
   Height = 90
-  Top = 338
+  Top = 339
   Width = 287
   HorzScrollBar.Page = 286
   HorzScrollBar.Range = 35
@@ -76,7 +76,7 @@ object RenameFrm: TRenameFrm
     AutoSize = True
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabOrder = 2
+    TabOrder = 0
   end
   object BtnOk: TBitBtn
     AnchorSideTop.Control = BtnCancel
@@ -98,7 +98,7 @@ object RenameFrm: TRenameFrm
     ModalResult = 1
     NumGlyphs = 0
     ParentShowHint = False
-    TabOrder = 0
+    TabOrder = 2
   end
   object BtnCancel: TBitBtn
     AnchorSideTop.Control = ToFN

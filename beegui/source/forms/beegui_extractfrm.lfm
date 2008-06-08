@@ -68,7 +68,7 @@ object ExtractFrm: TExtractFrm
     ClientHeight = 84
     ClientWidth = 244
     ParentShowHint = False
-    TabOrder = 1
+    TabOrder = 2
     object xCommand: TCheckBox
       AnchorSideLeft.Control = Options
       AnchorSideTop.Control = Options
@@ -135,7 +135,7 @@ object ExtractFrm: TExtractFrm
     ModalResult = 1
     NumGlyphs = 0
     ParentShowHint = False
-    TabOrder = 2
+    TabOrder = 5
   end
   object BtnCancel: TBitBtn
     AnchorSideTop.Side = asrBottom
@@ -157,7 +157,7 @@ object ExtractFrm: TExtractFrm
     ModalResult = 2
     NumGlyphs = 0
     ParentShowHint = False
-    TabOrder = 3
+    TabOrder = 4
   end
   object Folder: TEdit
     AnchorSideLeft.Control = Owner
@@ -200,7 +200,7 @@ object ExtractFrm: TExtractFrm
     MaxLength = 0
     ParentShowHint = False
     Style = csDropDownList
-    TabOrder = 4
+    TabOrder = 1
     Text = 'Query if Overwrite pre-existing files'
   end
   object Folders: TTreeView
@@ -223,7 +223,7 @@ object ExtractFrm: TExtractFrm
     DefaultItemHeight = 16
     Images = Icons
     ReadOnly = True
-    TabOrder = 5
+    TabOrder = 3
     OnClick = FoldersClick
     OnDblClick = FoldersDblClick
     OnExpanding = FoldersExpanding

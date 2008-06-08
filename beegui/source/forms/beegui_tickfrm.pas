@@ -577,6 +577,13 @@ var
 
   procedure TTickFrm.OnList;
   begin
+    {$IFDEF DEBUG}
+    if FCmdLine.Link = '' then
+    begin
+      with FInterfaces.OnList.Data do
+        Report.Append(FilePath + FileName);
+    end else
+    {$ENDIF}
     with FInterfaces.OnList.Data do
     begin
       FContents.Add(FileName);               // 01

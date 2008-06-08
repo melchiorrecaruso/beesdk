@@ -57,7 +57,7 @@ type
     procedure SetSpin(Value: integer);
     procedure SetTree(Value: TTreeView);
     function GetCount: integer;
-    function GetSel(Index: integer): boolean;
+    function GetMultiSel(Index: integer): boolean;
     function GetBool(Index: integer): boolean;
     function GetItem(Index: integer): string;
     function GetRootValue(SpinValue: integer): string;
@@ -77,7 +77,7 @@ type
   public
     property Count: integer read GetCount;
     property Items[Index: integer]: string read GetItem;
-    property Selected[Index: integer]: boolean read GetSel;
+    property MultiSelected[Index: integer]: boolean read GetMultiSel;
     property Excluded[Index: integer]: boolean read GetBool;
   published
     property Tree: TTreeView read FTree write SetTree default nil;
@@ -327,7 +327,6 @@ uses
         FTree.Items[FileIndex].Delete;
         Update;
       end;
-      if FFilePath.Count = 0 then FSpin := 0;
     end;
   end;
   
@@ -344,7 +343,6 @@ uses
         FTree.Items[FolderIndex].Delete;
         Update;
       end;
-      if FFilePath.Count = 0 then FSpin := 0;
     end;
   end;
   
@@ -368,11 +366,11 @@ uses
     end;
   end;
   
-  function TAddTreeViewMgr.GetSel(Index: integer): boolean;
+  function TAddTreeViewMgr.GetMultiSel(Index: integer): boolean;
   begin
     if Assigned(FTree) and (Index > -1) and (Index < FFilePath.Count) then
     begin
-      Result := FTree.Items[Index].Selected;
+      Result := FTree.Items[Index].MultiSelected;
     end else
       Result := False;
   end;

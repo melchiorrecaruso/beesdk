@@ -27,12 +27,12 @@ object AddFrm: TAddFrm
     Height = 272
     Top = 6
     Width = 399
-    ActivePage = PageFiles
+    ActivePage = PageGeneral
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -136,7 +136,7 @@ object AddFrm: TAddFrm
         Constraints.MinWidth = 170
         ParentBidiMode = False
         ParentShowHint = False
-        TabOrder = 0
+        TabOrder = 6
         object rOption: TCheckBox
           AnchorSideLeft.Control = Options
           AnchorSideTop.Control = Options
@@ -223,7 +223,7 @@ object AddFrm: TAddFrm
         ItemHeight = 13
         MaxLength = 0
         ParentShowHint = False
-        TabOrder = 1
+        TabOrder = 0
       end
       object BtnSave: TBitBtn
         AnchorSideTop.Control = ArchiveNameLabel
@@ -242,7 +242,7 @@ object AddFrm: TAddFrm
         Constraints.MinWidth = 70
         NumGlyphs = 0
         OnClick = BtnSaveClick
-        TabOrder = 2
+        TabOrder = 1
       end
       object ufOption: TComboBox
         AnchorSideLeft.Control = PageGeneral
@@ -267,7 +267,7 @@ object AddFrm: TAddFrm
         MaxLength = 0
         ParentShowHint = False
         Style = csDropDownList
-        TabOrder = 3
+        TabOrder = 2
         Text = 'Update and freshen files'
       end
       object mOption: TComboBox
@@ -294,7 +294,7 @@ object AddFrm: TAddFrm
         MaxLength = 0
         ParentShowHint = False
         Style = csDropDownList
-        TabOrder = 4
+        TabOrder = 3
         Text = '1 - Low'
       end
       object dOption: TComboBox
@@ -327,7 +327,7 @@ object AddFrm: TAddFrm
         MaxLength = 0
         ParentShowHint = False
         Style = csDropDownList
-        TabOrder = 5
+        TabOrder = 4
         Text = 'Level  2   (10 MB)'
       end
       object eOption: TEdit
@@ -345,7 +345,7 @@ object AddFrm: TAddFrm
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        TabOrder = 6
+        TabOrder = 5
       end
     end
     object PageFiles: TTabSheet
@@ -402,7 +402,7 @@ object AddFrm: TAddFrm
         ParentShowHint = False
         ReadOnly = True
         TabStop = False
-        TabOrder = 0
+        TabOrder = 1
       end
       object BtnFolder: TBitBtn
         AnchorSideTop.Control = Files
@@ -420,7 +420,7 @@ object AddFrm: TAddFrm
         Constraints.MinWidth = 90
         NumGlyphs = 0
         OnClick = PopupMenu_AddFolderClick
-        TabOrder = 1
+        TabOrder = 2
       end
       object BtnFiles: TBitBtn
         AnchorSideLeft.Control = BtnFolder
@@ -439,7 +439,7 @@ object AddFrm: TAddFrm
         Constraints.MinWidth = 80
         NumGlyphs = 0
         OnClick = PopupMenu_AddFilesClick
-        TabOrder = 2
+        TabOrder = 3
       end
       object BtnPlusMinus: TBitBtn
         AnchorSideLeft.Control = BtnFolder
@@ -459,7 +459,7 @@ object AddFrm: TAddFrm
         Enabled = False
         NumGlyphs = 0
         OnClick = PopupMenu_PlusMinusClick
-        TabOrder = 3
+        TabOrder = 5
       end
       object BtnDelete: TBitBtn
         AnchorSideLeft.Control = BtnFolder
@@ -480,7 +480,7 @@ object AddFrm: TAddFrm
         Enabled = False
         NumGlyphs = 0
         OnClick = PopupMenu_DeleteClick
-        TabOrder = 4
+        TabOrder = 7
       end
       object BtnModify: TBitBtn
         AnchorSideLeft.Control = BtnFolder
@@ -500,7 +500,7 @@ object AddFrm: TAddFrm
         Enabled = False
         NumGlyphs = 0
         OnClick = PopupMenu_ModifyClick
-        TabOrder = 5
+        TabOrder = 6
       end
       object BtnView: TBitBtn
         AnchorSideLeft.Control = BtnFolder
@@ -521,7 +521,7 @@ object AddFrm: TAddFrm
         Enabled = False
         NumGlyphs = 0
         OnClick = PopupMenu_ViewClick
-        TabOrder = 6
+        TabOrder = 4
       end
       object Files: TTreeView
         AnchorSideTop.Control = FilesLabel
@@ -535,11 +535,12 @@ object AddFrm: TAddFrm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        DefaultItemHeight = 16
+        DefaultItemHeight = 18
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True
-        TabOrder = 7
+        SortType = stText
+        TabOrder = 0
         OnSelectionChanged = FilesSelectionChanged
         Options = [tvoAllowMultiselect, tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
       end
@@ -671,7 +672,7 @@ object AddFrm: TAddFrm
         ItemHeight = 13
         MaxLength = 0
         ParentShowHint = False
-        TabOrder = 2
+        TabOrder = 3
       end
       object yOptionBtn: TBitBtn
         AnchorSideTop.Control = yOptionLabel
@@ -691,7 +692,7 @@ object AddFrm: TAddFrm
         Constraints.MinWidth = 70
         NumGlyphs = 0
         OnClick = yOptionBtnClick
-        TabOrder = 3
+        TabOrder = 6
       end
       object cdOption: TEdit
         AnchorSideLeft.Control = PageAdvanced
@@ -707,7 +708,7 @@ object AddFrm: TAddFrm
         AutoSize = True
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
-        TabOrder = 4
+        TabOrder = 2
       end
       object yOption: TComboBox
         AnchorSideLeft.Control = PageAdvanced
@@ -745,7 +746,7 @@ object AddFrm: TAddFrm
         Constraints.MinWidth = 70
         NumGlyphs = 0
         OnClick = cfgOptionBtnClick
-        TabOrder = 6
+        TabOrder = 4
       end
     end
   end
@@ -768,7 +769,7 @@ object AddFrm: TAddFrm
     Kind = bkOK
     ModalResult = 1
     NumGlyphs = 0
-    TabOrder = 1
+    TabOrder = 2
   end
   object BtnCancel: TBitBtn
     AnchorSideRight.Control = Owner
@@ -788,7 +789,7 @@ object AddFrm: TAddFrm
     Kind = bkCancel
     ModalResult = 2
     NumGlyphs = 0
-    TabOrder = 2
+    TabOrder = 1
   end
   object PopupMenu: TPopupMenu
     left = 8

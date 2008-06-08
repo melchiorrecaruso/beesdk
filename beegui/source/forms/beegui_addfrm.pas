@@ -244,7 +244,7 @@ uses
   begin
     for I := 0 to FilesMgr.Count - 1 do
     begin
-      if FilesMgr.Selected[I] then
+      if FilesMgr.MultiSelected[I] then
       begin
         ShellExec(ExcludeTrailingBackSlash(ExtractFilePath(FilesMgr.Items[I])), '');
       end;
@@ -271,7 +271,7 @@ uses
     NewMask: string;
   begin
     for I := 0 to FilesMgr.Count - 1 do
-      if FilesMgr.Selected[I] then
+      if FilesMgr.MultiSelected[I] then
       begin
         F := TRenameFrm.Create(Self);
         F.ToFN.Text := ExtractFileName(FilesMgr.Items[I]);
@@ -301,7 +301,7 @@ uses
   begin
     for I := FilesMgr.Count - 1 downto 0 do
     begin
-      if FilesMgr.Selected[I] then
+      if FilesMgr.MultiSelected[I] then
       begin
         FilesMgr.DeleteFile(I);
       end;
