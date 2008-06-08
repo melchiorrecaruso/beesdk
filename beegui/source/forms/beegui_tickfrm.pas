@@ -450,6 +450,7 @@ var
       BtnPauseRun.Enabled := False;
       BtnCancel.Kind      := bkClose;
       BtnCancel.Caption   := rsBtnCloseCaption;
+      BtnCancel.Cancel    := True;
 
       if Report.Lines.Count > 0 then
       begin
