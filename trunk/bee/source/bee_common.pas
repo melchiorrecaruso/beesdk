@@ -518,12 +518,20 @@ end;
 
 function FileTimeToString(X: integer): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
-  Result := DateTimeToString(FileDateToDateTime(X));
+  try
+    Result := DateTimeToString(FileDateToDateTime(X));
+  except
+    Result := '--/--/-- --:--';
+  end;
 end;
 
 function FileTimeToString(X: integer; const Format: string): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
-  Result := DateTimeToString(FileDateToDateTime(X));
+  try
+    Result := DateTimeToString(FileDateToDateTime(X), Format);
+  except
+    Result := '--/--/-- --:--';
+  end;
 end;
 
 function DirectoryExists(const DirName: string): boolean; {$IFDEF FPC} inline; {$ENDIF}

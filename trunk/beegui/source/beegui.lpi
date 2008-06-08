@@ -1357,16 +1357,7 @@
         <UsageCount Value="9"/>
       </Unit191>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
-      <Position1>
-        <Filename Value="forms\beegui_overwritefrm.pas"/>
-        <Caret Line="71" Column="5" TopLine="70"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beegui_overwritefrm.pas"/>
-        <Caret Line="110" Column="7" TopLine="103"/>
-      </Position2>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
