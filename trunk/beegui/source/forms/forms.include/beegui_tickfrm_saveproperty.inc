@@ -8,10 +8,10 @@
       begin
         Storage.WriteInteger('TForm', 'Top', Top);
         Storage.WriteInteger('TForm', 'Left', Left);
-        Storage.WriteInteger('TForm', 'Width', Width);
-        Storage.WriteInteger('TForm', 'Height', Height);
+        // Storage.WriteInteger('TForm', 'Width', Width);
+        // Storage.WriteInteger('TForm', 'Height', Height);
       end;
-      Storage.WriteInteger('TForm', 'WindowState', Ord(WindowState));
+      // Storage.WriteInteger('TForm', 'WindowState', Ord(WindowState));
     
       Storage.WriteInteger('TFont', 'Report.Font.Charset',    (Report.Font.CharSet));
       Storage.WriteInteger('TFont', 'Report.Font.Color'  ,    (Report.Font.Color));

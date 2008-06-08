@@ -1,19 +1,20 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
-    <PathDelim Value="/"/>
+    <PathDelim Value="\"/>
     <Version Value="6"/>
     <General>
       <Flags>
         <SaveClosedFiles Value="False"/>
       </Flags>
       <MainUnit Value="0"/>
-      <IconPath Value="./"/>
+      <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
+      <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
       <IgnoreBinaries Value="False"/>
       <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
       <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
@@ -21,10 +22,10 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="4">
+    <Units Count="3">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -38,8 +39,8 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="32" Y="1362"/>
-        <TopLine Value="1342"/>
+        <CursorPos X="41" Y="147"/>
+        <TopLine Value="126"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -48,28 +49,20 @@
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="25" Y="205"/>
-        <TopLine Value="175"/>
+        <TopLine Value="164"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit2>
-      <Unit3>
-        <Filename Value="bee_mainpacker.pas"/>
-        <UnitName Value="Bee_MainPacker"/>
-        <CursorPos X="36" Y="653"/>
-        <TopLine Value="633"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
-      </Unit3>
     </Units>
     <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
+    <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="bee.include/"/>
-      <UnitOutputDirectory Value="../distribution"/>
+      <IncludeFiles Value="bee.include\"/>
+      <UnitOutputDirectory Value="..\distribution"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
