@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="5"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -1335,8 +1335,8 @@
       <Unit183>
         <Filename Value="packages\beegui_sysutils.pas"/>
         <UnitName Value="BeeGui_SysUtils"/>
-        <CursorPos X="12" Y="54"/>
-        <TopLine Value="34"/>
+        <CursorPos X="23" Y="56"/>
+        <TopLine Value="35"/>
         <UsageCount Value="11"/>
       </Unit183>
       <Unit184>
@@ -1486,8 +1486,8 @@
       <Unit203>
         <Filename Value="packages\beegui_archiveprocess.pas"/>
         <UnitName Value="BeeGui_ArchiveProcess"/>
-        <CursorPos X="61" Y="94"/>
-        <TopLine Value="70"/>
+        <CursorPos X="53" Y="92"/>
+        <TopLine Value="68"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
@@ -1825,20 +1825,7 @@
         <UsageCount Value="10"/>
       </Unit251>
     </Units>
-    <JumpHistory Count="3" HistoryIndex="2">
-      <Position1>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="60" Column="21" TopLine="40"/>
-      </Position1>
-      <Position2>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="843" Column="7" TopLine="830"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="217" Column="5" TopLine="216"/>
-      </Position3>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
