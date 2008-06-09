@@ -145,7 +145,7 @@ type
     destructor Destroy; override;
     procedure Initialize;
     // ---
-    procedure OpenArchive(const FileName, FileLink: string);
+    function OpenArchive(const FileName, FileLink: string): boolean;
     procedure CloseArchive;
     function Up: boolean;
   protected
@@ -214,7 +214,7 @@ type
 //    property OnCustomDraw;
 //    property OnCustomDrawItem;
 //    property OnCustomDrawSubItem;
-//    property OnDblClick;
+      property OnDblClick;
 //    property OnDeletion;
 //    property OnDragDrop;
 //    property OnDragOver;
@@ -617,12 +617,13 @@ uses
       Result := False;
   end;
   
-  procedure TCustomArcListView.OpenArchive(const FileName, FileLink: string);
+  function TCustomArcListView.OpenArchive(const FileName, FileLink: string): boolean;
   var
     FContents: TStringList;
     I, J, K: integer;
     Node: TArcItem;
   begin
+    Result := False;
     CloseArchive;
     if FileExists(FileName) and FileExists(FileLink) then
     begin
@@ -678,6 +679,7 @@ uses
           FFiles.Add(Node);
           Inc(I, 13);
         end;
+        Result := True;
       finally
         FContents.Free;
       end;

@@ -135,13 +135,16 @@ type
     { private declarations }
     FInterfaces: TInterfaces;
     FContents: TStringList;
+    FCanClose: boolean;
     FCmdLine: TCmdLine;
     FPassword: string;
-    FTime: integer;
     FApp: TBeeApp;
+    FElapsedTime: integer;
+    FRemainingTime: integer;
   public
     { public declarations }
-    property Interfaces: TInterfaces read FInterfaces;
+    property CanClose: boolean read FCanClose;
+    property RemaingTime: integer read FRemainingTime;
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -184,9 +187,11 @@ var
     FInterfaces.OnKey.Method := OnKey;
     // ---
     FContents := TStringList.Create;
+    FCanClose := False;
     FCmdLine := nil;
     FPassword := '';
-    FTime := 0;
+    FElapsedTime := 0;
+    FRemainingTime := 0;
     {$IFDEF UNIX}
       Tick.Smooth := True;
     {$ENDIF}
@@ -320,14 +325,15 @@ var
           Self.ProcessedSize.Caption := IntToStr(ProcessedSize shr 20);
           Self.ProcessedSizeUnit.Caption := 'MB';
         end;
-      Inc(FTime);
-      iSpeed := ProcessedSize div FTime;
+      Inc(FElapsedTime);
+      iSpeed := ProcessedSize div FElapsedTime;
       iRemainSize := TotalSize - ProcessedSize;
+      FRemainingTime := iRemainSize div iSpeed;
     end;
-    Time.Caption := TimeToStr(FTime);
+    Time.Caption := TimeToStr(FElapsedTime);
     Speed.Caption := IntToStr(iSpeed shr 10);
     if iSpeed > 0 then
-      RemainingTime.Caption := TimeToStr(iRemainSize div iSpeed)
+      RemainingTime.Caption := TimeToStr(FRemainingTime)
     else
       RemainingTime.Caption := '--:--:--';
   end;
@@ -441,6 +447,7 @@ var
   begin
     if FInterfaces.Properties.Terminated = True then
     begin
+      { TODO : Forse non più necessario }
       if Timer.Enabled then
         Timer.Enabled := False
       else
@@ -467,6 +474,7 @@ var
       begin
         FContents.SaveToFile(FCmdLine.Link);
       end;
+      FCanClose := True;
     end;
   end;
 
@@ -577,13 +585,6 @@ var
 
   procedure TTickFrm.OnList;
   begin
-    {$IFDEF DEBUG}
-    if FCmdLine.Link = '' then
-    begin
-      with FInterfaces.OnList.Data do
-        Report.Append(FilePath + FileName);
-    end else
-    {$ENDIF}
     with FInterfaces.OnList.Data do
     begin
       FContents.Add(FileName);               // 01
