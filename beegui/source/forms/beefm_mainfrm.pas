@@ -213,6 +213,7 @@ type
     BMenuHelp: TMenuItem;
     BMenuExit: TMenuItem;
     // ---
+    procedure ListViewDblClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
     procedure MMenuFileCloseClick(Sender: TObject);
@@ -229,7 +230,6 @@ type
     procedure MMenuActionsExtractAllClick (Sender: TObject);
     procedure MMenuActionsTestClick (Sender: TObject);
     procedure MMenuActionsRenameClick (Sender: TObject);
-    procedure MMenuActionsViewClick (Sender: TObject);
     procedure MMenuActionsSelectAllClick (Sender: TObject);
     procedure MMenuActionsSelectMaskClick (Sender: TObject);
     procedure MainMenu_Actions_DeselectMasksClick (Sender: TObject);
@@ -578,6 +578,23 @@ uses
       MessageDlg('An process active', mtInformation, [mbOk], 0);
   end;
 
+  procedure TMainFrm.ListViewDblClick(Sender: TObject);
+  begin
+    if Cursor <> crHourGlass then
+    begin
+      if ListView.Selected <> nil then
+      begin
+        if Length(ListView.Selected.SubItems[ListView.Columns.Count - 2]) = 0 then
+        begin
+          ListView.Folder :=IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
+        end else
+        begin
+          { TODO 2 : Estrazione e visualizzazione file }
+        end;
+      end;
+    end;
+  end;
+
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   var
     CmdLine: string;
@@ -588,7 +605,7 @@ uses
       OpenDialog.Filter :=
         'bee file (*.bee)|*.bee|' +
         'exe file (*.bee)|*.exe|' +
-        'all files  (*.*)|*.*|';
+        'all files  (*.*)|*|';
 
       if OpenDialog.Execute then
       begin
@@ -597,7 +614,7 @@ uses
         Process.ArchiveName := OpenDialog.FileName;
         Caption := 'BeeFM' + ' - ' + ExtractFileName(Process.ArchiveName);
         // ---
-        CmdLine := 'BeeGui';
+        CmdLine := 'beegui';
         CmdLine := CmdLine + ' L ';
         if MMenuOptionsLogReport.Checked then
           CmdLine := CmdLine + ' -1+ '
@@ -839,23 +856,6 @@ uses
   begin
     if Cursor <> crHourGlass then
     begin
-    end;
-  end;
-
-  procedure TMainFrm.MMenuActionsViewClick(Sender: TObject);
-  begin
-    if Cursor <> crHourGlass then
-    begin
-      if ListView.Selected <> nil then
-      begin
-        if Length(ListView.Selected.SubItems[ListView.Columns.Count - 2]) = 0 then
-        begin
-          ListView.Folder :=IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
-        end else
-        begin
-          // file Extraction
-        end;
-      end;
     end;
   end;
 

@@ -47,6 +47,9 @@ uses
   BeeGui_TickFrm,
   BeeGui_AboutFrm;
 
+const
+  MinSec = 2;
+
 var
   CmdLine:  TCmdLine  = nil;
   TickFrm:  TTickFrm  = nil;
@@ -60,24 +63,22 @@ begin
   begin
     if CmdLine.Command in [' ', '?'] then
     begin
-       Application.CreateForm(TAboutFrm, AboutFrm);
-       Application.Run;
-       AboutFrm.Free;
-       AboutFrm:=nil;
+      Application.CreateForm(TAboutFrm, AboutFrm);
+      Application.Run;
+      AboutFrm.Free;
+      AboutFrm:=nil;
     end else
     begin
       Application.CreateForm(TTickFrm, TickFrm);
-      TickFrm.Start(CmdLine);
-      with TickFrm.Interfaces do
+      with TickFrm do
       begin
-        while (OnTick.Data.TotalSize < $3FFFC) and (CmdLine.Log = False) do
-        begin
-          if Properties.Terminated = False then
-            Application.ProcessMessages
-          else
-            Break;
-        end;
-        if (OnTick.Data.TotalSize >= $3FFFC) or (CmdLine.Log = True) then
+        Start(CmdLine);
+        repeat
+          if CmdLine.Log then Break;
+          if RemaingTime > MinSec then Break;
+          Application.ProcessMessages;
+        until CanClose;
+        if CmdLine.Log or (CanClose = False) then
         begin
           Application.Run;
         end;

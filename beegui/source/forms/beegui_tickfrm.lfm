@@ -1,7 +1,7 @@
 object TickFrm: TTickFrm
-  Left = 350
+  Left = 474
   Height = 210
-  Top = 276
+  Top = 238
   Width = 430
   HorzScrollBar.Page = 429
   VertScrollBar.Page = 209
@@ -651,6 +651,7 @@ object TickFrm: TTickFrm
   end
   object Timer: TIdleTimer
     Enabled = False
+    Interval = 100
     OnTimer = OnTimer
     OnStartTimer = OnStartTimer
     OnStopTimer = OnStopTimer
