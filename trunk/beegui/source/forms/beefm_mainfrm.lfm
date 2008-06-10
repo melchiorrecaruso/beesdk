@@ -2631,6 +2631,7 @@ object MainFrm: TMainFrm
     SmallImages = SmallImages
     TabOrder = 3
     ViewStyle = vsReport
+    OnColumnClick = ColumnClick
     OnDblClick = ListViewDblClick
   end
   object OpenDialog: TOpenDialog
@@ -2825,39 +2826,51 @@ object MainFrm: TMainFrm
         Caption = 'Order by'
         object MMenuViewOrderByName: TMenuItem
           Caption = 'Name'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderBySize: TMenuItem
           Caption = 'Size'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByPacked: TMenuItem
           Caption = 'Packed'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByRatio: TMenuItem
           Caption = 'Ratio'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByType: TMenuItem
           Caption = 'Type'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByModified: TMenuItem
           Caption = 'Modified'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByAttributes: TMenuItem
           Caption = 'Attributes'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByMethod: TMenuItem
           Caption = 'Method'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByPassword: TMenuItem
           Caption = 'Password'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByCrc: TMenuItem
           Caption = 'CRC'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByPath: TMenuItem
           Caption = 'Path'
+          OnClick = OrderByClick
         end
         object MMenuViewOrderByPosition: TMenuItem
           Caption = 'Position'
+          OnClick = OrderByClick
         end
       end
       object MMenuViewDetails: TMenuItem

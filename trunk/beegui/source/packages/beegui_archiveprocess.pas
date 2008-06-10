@@ -89,7 +89,6 @@ uses
     FArchiveLink := IncludeTrailingBackSlash(GetApplicationTempDir('BeeGui')) +
       ExtractFileName(ChangeFileExt(FArchiveName, '.ini'));
 
-    // ShowMessage(GetApplicationTempDir('BeeGui'));
     CommandLine := CommandLine + ' -0"' + FArchiveLink +'"';
     inherited Execute;
   end;

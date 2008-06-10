@@ -318,7 +318,9 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beefm_mainfrm_savelanguage.inc}
+    {$IFDEF DEBUG}
+      {$I beefm_mainfrm_savelanguage.inc}
+    {$ENDIF}
     if MMenuOptionsSaveOnExit.Checked then
     begin
       {$I beefm_mainfrm_saveproperty.inc}
@@ -373,18 +375,18 @@ uses
   procedure TMainFrm.ColumnClick(Sender: TObject; Column: TListColumn);
   begin
     case Column.Index of
-      0: MMenuViewOrderByName.Click;
-      1: MMenuViewOrderBySize.Click;
-      2: MMenuViewOrderByPacked.Click;
-      3: MMenuViewOrderByRatio.Click;
-      4: MMenuViewOrderByType.Click;
-      5: MMenuViewOrderByModified.Click;
-      6: MMenuViewOrderByAttributes.Click;
-      7: MMenuViewOrderByMethod.Click;
-      8: MMenuViewOrderByPassword.Click;
-      9: MMenuViewOrderByCrc.Click;
-     10: MMenuViewOrderByPath.Click;
-     11: MMenuViewOrderByPosition.Click;
+      0: OrderByClick(MMenuViewOrderByName);
+      1: OrderByClick(MMenuViewOrderBySize);
+      2: OrderByClick(MMenuViewOrderByPacked);
+      3: OrderByClick(MMenuViewOrderByRatio);
+      4: OrderByClick(MMenuViewOrderByType);
+      5: OrderByClick(MMenuViewOrderByModified);
+      6: OrderByClick(MMenuViewOrderByAttributes);
+      7: OrderByClick(MMenuViewOrderByMethod);
+      8: OrderByClick(MMenuViewOrderByPassword);
+      9: OrderByClick(MMenuViewOrderByCrc);
+     10: OrderByClick(MMenuViewOrderByPath);
+     11: OrderByClick(MMenuViewOrderByPosition);
     end;
   end;
   

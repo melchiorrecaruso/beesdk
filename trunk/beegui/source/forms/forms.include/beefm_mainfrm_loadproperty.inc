@@ -1,24 +1,21 @@
 
-  // ---
-
   Folder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('mainfrm.ini'));
-
-    // ---
-
     if WindowState = wsNormal then
     begin
-      Top := Storage.ReadInteger('MainFrm', 'Top', Top);
-      Left := Storage.ReadInteger('MainFrm', 'Left', Left);
-      Width := Storage.ReadInteger('MainFrm', 'Width', Width);
-      Height := Storage.ReadInteger('MainFrm', 'Height', Height);
+      Top := Storage.ReadInteger('TForm', 'Top', Top);
+      Left := Storage.ReadInteger('TForm', 'Left', Left);
+      Width := Storage.ReadInteger('TForm', 'Width', Width);
+      Height := Storage.ReadInteger('TForm', 'Height', Height);
     end;
-    WindowState := TWindowState(Storage.ReadInteger('MainFrm', 'WindowState', Ord(WindowState)));
+    WindowState := TWindowState(Storage.ReadInteger('TForm', 'WindowState', Ord(WindowState)));
 
-    // ---
 
+    // --- OK
+
+    (*
     MMenuViewAddressBar.Checked        := Storage.ReadBool('MMenu', 'View.AddressBar.Checked'         , MMenuViewAddressBar.Checked);
     MMenuViewLargeIcons.Checked        := Storage.ReadBool('MMenu', 'View.LargeIcons.Checked'         , MMenuViewLargeIcons.Checked);
     MMenuViewSmallIcons.Checked        := Storage.ReadBool('MMenu', 'View.SmallIcons.Checked'         , MMenuViewSmallIcons.Checked);
@@ -85,12 +82,7 @@
     Storage.WriteBool('BtnsMenu', 'Configuration.Checked', BMenuConfiguration.Checked);
     Storage.WriteBool('BtnsMenu', 'Help.Checked'         , BMenuHelp.Checked);
     Storage.WriteBool('BtnsMenu', 'Exit.Checked'         , BMenuExit.Checked);
-
-    // ---
-
-
-
-
+    *)
     Storage.Free;
   end;
 

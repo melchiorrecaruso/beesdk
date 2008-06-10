@@ -1,23 +1,21 @@
 
-  // ---
-  
   Folder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('mainfrm.ini'));
-
-    // ---
-
     if WindowState = wsNormal then
     begin
-      Storage.WriteInteger('MainFrm', 'Top', Top);
-      Storage.WriteInteger('MainFrm', 'Left', Left);
-      Storage.WriteInteger('MainFrm', 'Width', Width);
-      Storage.WriteInteger('MainFrm', 'Height', Height);
+      Storage.WriteInteger('TForm', 'Top', Top);
+      Storage.WriteInteger('TForm', 'Left', Left);
+      Storage.WriteInteger('TForm', 'Width', Width);
+      Storage.WriteInteger('TForm', 'Height', Height);
     end;
-    Storage.WriteInteger('MainFrm', 'WindowState', Ord(WindowState));
+    Storage.WriteInteger('TForm', 'WindowState', Ord(WindowState));
 
-    // ---
+
+    // --- OK
+
+    (*
 
     Storage.WriteBool('MMenu', 'View.AddressBar.Checked'         , MMenuViewAddressBar.Checked);
     Storage.WriteBool('MMenu', 'View.LargeIcons.Checked'         , MMenuViewLargeIcons.Checked);
@@ -87,6 +85,6 @@
     Storage.WriteBool('BtnsMenu', 'Exit.Checked'         , BMenuExit.Checked);
 
     // ---
-
+    *)
     Storage.Free;
   end;

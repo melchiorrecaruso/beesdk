@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -50,7 +50,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="252">
+    <Units Count="254">
       <Unit0>
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -68,8 +68,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="56" Y="592"/>
-        <TopLine Value="571"/>
+        <CursorPos X="21" Y="366"/>
+        <TopLine Value="365"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -1330,13 +1330,13 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="31" Y="104"/>
         <TopLine Value="77"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="24"/>
       </Unit182>
       <Unit183>
         <Filename Value="packages\beegui_sysutils.pas"/>
         <UnitName Value="BeeGui_SysUtils"/>
-        <CursorPos X="23" Y="56"/>
-        <TopLine Value="35"/>
+        <CursorPos X="32" Y="186"/>
+        <TopLine Value="178"/>
         <UsageCount Value="11"/>
       </Unit183>
       <Unit184>
@@ -1424,9 +1424,9 @@
       <Unit194>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="3" Y="208"/>
-        <TopLine Value="192"/>
-        <EditorIndex Value="4"/>
+        <CursorPos X="50" Y="154"/>
+        <TopLine Value="128"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="47"/>
         <Loaded Value="True"/>
       </Unit194>
@@ -1486,9 +1486,9 @@
       <Unit203>
         <Filename Value="packages\beegui_archiveprocess.pas"/>
         <UnitName Value="BeeGui_ArchiveProcess"/>
-        <CursorPos X="53" Y="92"/>
-        <TopLine Value="68"/>
-        <EditorIndex Value="5"/>
+        <CursorPos X="1" Y="91"/>
+        <TopLine Value="13"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
       </Unit203>
@@ -1501,7 +1501,7 @@
         <UnitName Value="BeeGui_ViewFrm"/>
         <CursorPos X="28" Y="80"/>
         <TopLine Value="1"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="24"/>
       </Unit204>
       <Unit205>
         <Filename Value="forms\beegui_viewfrm.lrs"/>
@@ -1607,7 +1607,7 @@
         <UnitName Value="BeeGui_ArchiveFolderBox"/>
         <CursorPos X="3" Y="43"/>
         <TopLine Value="23"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="26"/>
         <Loaded Value="True"/>
       </Unit220>
@@ -1737,7 +1737,7 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="10" Y="4"/>
         <TopLine Value="1"/>
-        <UsageCount Value="32"/>
+        <UsageCount Value="33"/>
         <SyntaxHighlighter Value="None"/>
       </Unit239>
       <Unit240>
@@ -1781,15 +1781,19 @@
       </Unit245>
       <Unit246>
         <Filename Value="forms\forms.include\beefm_mainfrm_loadproperty.inc"/>
-        <CursorPos X="41" Y="7"/>
+        <CursorPos X="14" Y="16"/>
         <TopLine Value="1"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit246>
       <Unit247>
         <Filename Value="forms\forms.include\beefm_mainfrm_saveproperty.inc"/>
-        <CursorPos X="10" Y="4"/>
+        <CursorPos X="14" Y="16"/>
         <TopLine Value="1"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit247>
       <Unit248>
         <Filename Value="packages\beegui_messages.pas"/>
@@ -1800,7 +1804,7 @@
       </Unit248>
       <Unit249>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="1" Y="1"/>
+        <CursorPos X="3" Y="43"/>
         <TopLine Value="4"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
@@ -1824,6 +1828,18 @@
         <TopLine Value="967"/>
         <UsageCount Value="10"/>
       </Unit251>
+      <Unit252>
+        <Filename Value="..\..\..\..\Programmi\FPC\2.2.0\source\rtl\objpas\sysutils\diskh.inc"/>
+        <CursorPos X="26" Y="22"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit252>
+      <Unit253>
+        <Filename Value="..\..\..\..\Programmi\FPC\2.2.0\source\rtl\objpas\sysutils\sysutils.inc"/>
+        <CursorPos X="3" Y="543"/>
+        <TopLine Value="521"/>
+        <UsageCount Value="10"/>
+      </Unit253>
     </Units>
     <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
