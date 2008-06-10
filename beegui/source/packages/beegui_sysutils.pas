@@ -181,18 +181,27 @@ implementation
   begin
     Result := ExtractFilePath(GetAppConfigDir(FALSE)) +
       IncludeTrailingBackSlash(aApplicationName) + 'checkout';
+      
+    if DirectoryExists(Result) = False then
+      ForceDirectories(Result);
   end;
   
   function GetApplicationConfigDir(const aApplicationName:  string): string;
   begin
     Result := ExtractFilePath(GetAppConfigDir(FALSE)) +
       IncludeTrailingBackSlash(aApplicationName) + ('configuration');
+
+    if DirectoryExists(Result) = False then
+      ForceDirectories(Result);
   end;
   
   function GetApplicationTempDir(const aApplicationName:  string): string;
   begin
     Result := ExtractFilePath(GetAppConfigDir(FALSE)) +
       IncludeTrailingBackSlash(aApplicationName) + ('temp');
+
+    if DirectoryExists(Result) = False then
+      ForceDirectories(Result);
   end;
   
   procedure ClearDirectoryScan(const DirName: String);
