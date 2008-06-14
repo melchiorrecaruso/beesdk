@@ -22,13 +22,14 @@
 
   Modifyed:
 
-  v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
+  v0.7.9 build 0780 - 2008.06.14 by Melchiorre Caruso.
 }
 
 {$R-}
 {$Q-}
 {$S-}
 
+{$INLINE ON}
 {$DEFINE CONSOLEAPPLICATION}
 
 {$IFDEF MSWINDOWS}

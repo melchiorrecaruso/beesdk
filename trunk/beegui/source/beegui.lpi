@@ -43,8 +43,8 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="10" Y="81"/>
-        <TopLine Value="53"/>
+        <CursorPos X="11" Y="40"/>
+        <TopLine Value="30"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -628,9 +628,9 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="12" Y="193"/>
-        <TopLine Value="441"/>
-        <EditorIndex Value="2"/>
+        <CursorPos X="11" Y="29"/>
+        <TopLine Value="9"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="197"/>
         <Loaded Value="True"/>
       </Unit79>
@@ -1128,9 +1128,11 @@
       </Unit155>
       <Unit156>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="4"/>
+        <CursorPos X="2" Y="34"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit156>
       <Unit157>
         <Filename Value="packages\beegui_forms.pas"/>
@@ -1270,7 +1272,7 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit178>
@@ -1384,6 +1386,9 @@
       </Optimizations>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
       <LinkSmart Value="True"/>
       <Options>
         <Win32>
@@ -1392,6 +1397,8 @@
       </Options>
     </Linking>
     <Other>
+      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2
+"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
