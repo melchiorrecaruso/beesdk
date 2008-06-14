@@ -153,7 +153,7 @@ end;
 
 procedure TEncoder.Tick;
 begin
-  while Interfaces.Properties.Suspended do Sleep(250);
+  while Interfaces.Suspended do Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
@@ -210,7 +210,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Properties.Aborted = False then
+          if Interfaces.ExitCode < 2 then
             Tick
           else
             Break;
@@ -227,7 +227,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Properties.Aborted = False then
+          if Interfaces.ExitCode < 2 then
             Tick
           else
             Break;
@@ -314,7 +314,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Properties.Aborted = False then
+          if Interfaces.ExitCode < 2 then
             Tick
           else
             Break;
@@ -331,7 +331,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Properties.Aborted = False then
+          if Interfaces.ExitCode < 2 then
             Tick
           else
             Break;
@@ -403,7 +403,7 @@ begin
     begin
       if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
       begin
-        if Interfaces.Properties.Aborted = False then
+        if Interfaces.ExitCode < 2 then
           Tick
         else
           Break;
@@ -455,7 +455,7 @@ end;
 
 procedure TDecoder.Tick;
 begin
-  while Interfaces.Properties.Suspended do Sleep(250);
+  while Interfaces.Suspended do Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
@@ -518,7 +518,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Properties.Aborted = False then
+          if Interfaces.ExitCode < 2 then
             Tick
           else
             Break;
@@ -535,7 +535,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Properties.Aborted = False then
+          if Interfaces.ExitCode < 2 then
             Tick
           else
             Break;
@@ -633,7 +633,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Properties.Aborted = False then
+          if Interfaces.ExitCode < 2 then
             Tick
           else
             Break;
@@ -650,7 +650,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Properties.Aborted = False then
+          if Interfaces.ExitCode < 2 then
             Tick
           else
             Break;

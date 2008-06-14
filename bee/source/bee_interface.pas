@@ -144,11 +144,16 @@ type
         FileSize: integer;
       end;
     end;
-    Properties: record
-      Terminated: boolean;
-      Suspended: boolean;
-      Aborted: boolean;
-    end;
+    Terminated: boolean;
+    Suspended: boolean;
+    ExitCode: integer;
+    // Exit code value
+    //  0   = No Error
+    //  1   = Warning
+    //  2   = Fatal Error
+    //  7   = Command line error
+    //  8   = No Memory
+    //  255 = User stopped process
   end;
   
 type
@@ -173,6 +178,7 @@ type
     Params: TStringList;
   protected
     procedure DoTerminate; override;
+    procedure SetExitCode(Code: integer);
   public
     constructor Create(aInterfaces: TInterfaces; aParams: TParams);
     procedure Synchronize(aMethod: TThreadMethod); overload;
@@ -191,11 +197,11 @@ begin
   // ---
   Params := aParams;
   Interfaces := aInterfaces;
-  Interfaces.OnTick.Data.TotalSize     := 0;
+  Interfaces.ExitCode := 0;
+  Interfaces.Terminated := False;
+  Interfaces.Suspended := False;
+  Interfaces.OnTick.Data.TotalSize := 0;
   Interfaces.OnTick.Data.ProcessedSize := 0;
-  Interfaces.Properties.Terminated := False;
-  Interfaces.Properties.Suspended  := False;
-  Interfaces.Properties.Aborted    := False;
 end;
 
 destructor TApp.Destroy;
@@ -207,13 +213,22 @@ end;
 
 procedure TApp.DoTerminate;
 begin
-  Interfaces.Properties.Terminated := True;
+  ExitCode := Interfaces.ExitCode;
+  Interfaces.Terminated := True;
+  Interfaces.Suspended := False;
   inherited DoTerminate;
 end;
 
 procedure TApp.Synchronize(aMethod: TThreadMethod);
 begin
   inherited Synchronize(aMethod);
+end;
+
+procedure TApp.SetExitCode(Code: integer);
+begin
+  with Interfaces do
+    if ExitCode < Code then
+      ExitCode := Code;
 end;
 
 end.
