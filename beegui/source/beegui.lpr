@@ -56,6 +56,8 @@ var
   AboutFrm: TAboutFrm = nil;
 
 begin
+  MaxKeptOSChunks := 8;
+  // ---
   Application.Initialize;
   Application.Title := 'BeeGui';
   CmdLine := TCmdLine.Create;

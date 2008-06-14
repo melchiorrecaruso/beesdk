@@ -22,7 +22,7 @@
 
   Modifyed:
 
-  v0.7.9 build 0709 - 2008.04.06 by Melchiorre Caruso.
+  v1.0.5 build 0392 - 2008.06.14 by Melchiorre Caruso.
 }
 
 {$R-}
@@ -30,7 +30,7 @@
 {$S-}
 
 {$INLINE ON}
-{$DEFINE DEBUG}
+{*$DEFINE DEBUG}
 {*$DEFINE CONSOLEAPPLICATION}
 
 {$IFDEF MSWINDOWS}
