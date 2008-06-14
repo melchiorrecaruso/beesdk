@@ -12,6 +12,19 @@
     end;
     Storage.WriteInteger('TForm', 'WindowState', Ord(WindowState));
 
+    Storage.WriteInteger('ListView', 'Column[00].Width', ListView.Column[ 0].Width);
+    Storage.WriteInteger('ListView', 'Column[01].Width', ListView.Column[ 1].Width);
+    Storage.WriteInteger('ListView', 'Column[02].Width', ListView.Column[ 2].Width);
+    Storage.WriteInteger('ListView', 'Column[03].Width', ListView.Column[ 3].Width);
+    Storage.WriteInteger('ListView', 'Column[04].Width', ListView.Column[ 4].Width);
+    Storage.WriteInteger('ListView', 'Column[05].Width', ListView.Column[ 5].Width);
+    Storage.WriteInteger('ListView', 'Column[06].Width', ListView.Column[ 6].Width);
+    Storage.WriteInteger('ListView', 'Column[07].Width', ListView.Column[ 7].Width);
+    Storage.WriteInteger('ListView', 'Column[08].Width', ListView.Column[ 8].Width);
+    Storage.WriteInteger('ListView', 'Column[09].Width', ListView.Column[ 9].Width);
+    Storage.WriteInteger('ListView', 'Column[10].Width', ListView.Column[10].Width);
+    Storage.WriteInteger('ListView', 'Column[11].Width', ListView.Column[11].Width);
+
 
     // --- OK
 
@@ -55,18 +68,7 @@
 
     // ---
 
-    Storage.WriteInteger('ListView', 'Column[00].Width', ListView.Column[ 0].Width);
-    Storage.WriteInteger('ListView', 'Column[01].Width', ListView.Column[ 1].Width);
-    Storage.WriteInteger('ListView', 'Column[02].Width', ListView.Column[ 2].Width);
-    Storage.WriteInteger('ListView', 'Column[03].Width', ListView.Column[ 3].Width);
-    Storage.WriteInteger('ListView', 'Column[04].Width', ListView.Column[ 4].Width);
-    Storage.WriteInteger('ListView', 'Column[05].Width', ListView.Column[ 5].Width);
-    Storage.WriteInteger('ListView', 'Column[06].Width', ListView.Column[ 6].Width);
-    Storage.WriteInteger('ListView', 'Column[07].Width', ListView.Column[ 7].Width);
-    Storage.WriteInteger('ListView', 'Column[08].Width', ListView.Column[ 8].Width);
-    Storage.WriteInteger('ListView', 'Column[09].Width', ListView.Column[ 9].Width);
-    Storage.WriteInteger('ListView', 'Column[10].Width', ListView.Column[10].Width);
-    Storage.WriteInteger('ListView', 'Column[11].Width', ListView.Column[11].Width);
+
 
     Storage.WriteInteger('ListView', 'Column', Ord(ListView.SortCol));
 

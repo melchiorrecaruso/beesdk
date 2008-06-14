@@ -169,7 +169,6 @@ uses
         finally
           Icon.Free;
         end;
-        (* elena ama maurizio tanto tanto *)
         FExtentions.Add(FileExt);
         if Pos('@', FileExt) = 0 then
           FTypes.Add('File .' + FileExt)
