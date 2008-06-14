@@ -243,13 +243,13 @@ var
 
   procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
   begin
-    CanClose := FInterfaces.Properties.Terminated;
+    CanClose := FInterfaces.Terminated;
     if CanClose = False then
     begin
       if MessageDlg(rsConfirmation, rsConfirmAbort, mtConfirmation, [mbYes, mbNo], '') = mrYes then
       begin
-        FInterfaces.Properties.Aborted := True;
-        if FInterfaces.Properties.Suspended then
+        FInterfaces.ExitCode := 255;
+        if FInterfaces.Suspended then
         begin
           BtnPauseRun.Click;
         end;
@@ -264,7 +264,7 @@ var
     Popup_Higher      .Checked := Sender = Popup_Higher;
     Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
 
-    if FInterfaces.Properties.Terminated = False then
+    if FInterfaces.Terminated = False then
     begin
       if Popup_Idle        .Checked then FApp.Priority := tpIdle;
       if Popup_Normal      .Checked then FApp.Priority := tpNormal;
@@ -340,9 +340,9 @@ var
   
   procedure TTickFrm.OnStopTimer(Sender: TObject);
   begin
-    if FInterfaces.Properties.Terminated = True then
+    if FInterfaces.Terminated = True then
     begin
-      if FInterfaces.Properties.Aborted = False then
+      if FInterfaces.ExitCode < 2 then
         Application.Title := rsProcessTerminated
       else
         Application.Title := rsProcessAborted;
@@ -366,10 +366,10 @@ var
 
   procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
   begin
-    if FInterfaces.Properties.Terminated = False then
+    if FInterfaces.Terminated = False then
     begin
       Timer.Enabled := not Timer.Enabled;
-      with FInterfaces.Properties do
+      with FInterfaces do
       begin
         Suspended := not Suspended;
         if Suspended then
@@ -445,7 +445,7 @@ var
   
   procedure TTickFrm.OnTerminate(Sender: TObject);
   begin
-    if FInterfaces.Properties.Terminated = True then
+    if FInterfaces.Terminated = True then
     begin
       { TODO : Forse non più necessario }
       if Timer.Enabled then
@@ -482,7 +482,7 @@ var
   var
     F: TOverWriteFrm;
   begin
-    if FInterfaces.Properties.Terminated = False then
+    if FInterfaces.Terminated = False then
     begin;
       F := TOverWriteFrm.Create(Application);
       with FInterfaces.OnOverWrite do
@@ -510,7 +510,7 @@ var
   var
     F: TRenameFrm;
   begin
-    if FInterfaces.Properties.Terminated = False then
+    if FInterfaces.Terminated = False then
     begin;
       F := TRenameFrm.Create(Application);
       F.Caption := rsRenameFile;
@@ -621,7 +621,7 @@ var
   var
     F: TPasswordFrm;
   begin
-    if FInterfaces.Properties.Terminated = False then
+    if FInterfaces.Terminated = False then
     begin
       if FPassword = '' then
       begin
