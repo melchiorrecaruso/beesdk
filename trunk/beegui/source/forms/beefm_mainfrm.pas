@@ -252,7 +252,6 @@ type
     procedure PMenuPropertyClick(Sender: TObject);
     // ---
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     // ---
@@ -313,11 +312,33 @@ uses
     UpdateStyle;
   end;
   
-  procedure TMainFrm.FormDestroy(Sender: TObject);
+  procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   var
     Folder: string;
     Storage: TMemIniFile;
   begin
+    if Cursor = crHourGlass then
+    begin
+      CanClose := MessageDlg(rsAbortProcess , mtWarning, [mbYes, mbNo], 0) = mrYes;
+    end else
+    begin
+      CanClose := True;
+    end;
+
+  end;
+  
+  procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+    if Cursor = crHourGlass then
+    begin
+
+    end else
+    begin
+      MMenuFileClose.Click;
+    end;
     {$IFDEF DEBUG}
       {$I beefm_mainfrm_savelanguage.inc}
     {$ENDIF}
@@ -327,107 +348,17 @@ uses
     end;
   end;
   
-  procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-  begin
-    if Cursor = crHourGlass then
-    begin
-      CanClose := MessageDlg(rsAbortProcess , mtWarning, [mbYes, mbNo], 0) = mrYes;
-    end else
-    begin
-      CanClose := True;
-    end;
-  end;
-  
-  procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
-  begin
-    if Cursor = crHourGlass then
-    begin
-
-    end else
-    begin
-      MMenuFileClose.Click;
-    end;
-  end;
-  
-  
-  
-  
-  
-  
-  
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Buttons Popup Menu                                                    //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
   
   procedure TMainFrm.BMenuClick(Sender: TObject);
   begin
     TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
     UpdateButtons;
   end;
-  
-  procedure TMainFrm.FolderBoxSelect(Sender: TObject);
-  begin
-    ListView.Folder := FolderBox.Text;
-  end;
-  
-  procedure TMainFrm.BtnUpClick(Sender: TObject);
-  begin
-    ListView.Up;
-  end;
-  
-  procedure TMainFrm.ColumnClick(Sender: TObject; Column: TListColumn);
-  begin
-    case Column.Index of
-      0: OrderByClick(MMenuViewOrderByName);
-      1: OrderByClick(MMenuViewOrderBySize);
-      2: OrderByClick(MMenuViewOrderByPacked);
-      3: OrderByClick(MMenuViewOrderByRatio);
-      4: OrderByClick(MMenuViewOrderByType);
-      5: OrderByClick(MMenuViewOrderByModified);
-      6: OrderByClick(MMenuViewOrderByAttributes);
-      7: OrderByClick(MMenuViewOrderByMethod);
-      8: OrderByClick(MMenuViewOrderByPassword);
-      9: OrderByClick(MMenuViewOrderByCrc);
-     10: OrderByClick(MMenuViewOrderByPath);
-     11: OrderByClick(MMenuViewOrderByPosition);
-    end;
-  end;
-  
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-  procedure TMainFrm.ProcessTimerTimer(Sender: TObject);
-  var
-    F: TViewFrm;
-  begin
-    with Process do
-    begin
-      if Running = False then
-      begin
-        ProcessTimer.Enabled := False;
-        ListView.OpenArchive(ArchiveName, ArchiveLink);
-        UpdateButtons(True);
-      end;
-    end;
-  end;
-
-  // ---------------------------------------------------------------------- //
-  //                                                                        //
-  //  Update Buttons and Style                                              //
-  //                                                                        //
-  // ---------------------------------------------------------------------- //
 
   procedure TMainFrm.UpdateButtons;
   var
@@ -464,7 +395,6 @@ uses
         Inc(CurrLeft, Buttons[I].Width + 4);
       end;
     end;
-    // ---
     Check := False;
     for I:= Low(Buttons) to High(Buttons) do
     begin
@@ -475,6 +405,111 @@ uses
       end;;
     end;
   end;
+  
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  ListView                                                              //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
+  
+  procedure TMainFrm.ColumnClick(Sender: TObject; Column: TListColumn);
+  begin
+    case Column.Index of
+      0: OrderByClick(MMenuViewOrderByName);
+      1: OrderByClick(MMenuViewOrderBySize);
+      2: OrderByClick(MMenuViewOrderByPacked);
+      3: OrderByClick(MMenuViewOrderByRatio);
+      4: OrderByClick(MMenuViewOrderByType);
+      5: OrderByClick(MMenuViewOrderByModified);
+      6: OrderByClick(MMenuViewOrderByAttributes);
+      7: OrderByClick(MMenuViewOrderByMethod);
+      8: OrderByClick(MMenuViewOrderByPassword);
+      9: OrderByClick(MMenuViewOrderByCrc);
+     10: OrderByClick(MMenuViewOrderByPath);
+     11: OrderByClick(MMenuViewOrderByPosition);
+    end;
+  end;
+  
+  procedure TMainFrm.ListViewDblClick(Sender: TObject);
+  begin
+    if Cursor <> crHourGlass then
+    begin
+      if ListView.Selected <> nil then
+      begin
+        if Length(ListView.Selected.SubItems[ListView.Columns.Count - 2]) = 0 then
+        begin
+          ListView.Folder :=IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
+        end else
+        begin
+          { TODO 2 : Estrazione e visualizzazione file }
+        end;
+      end;
+    end;
+  end;
+
+  // ---
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  
+  procedure TMainFrm.FolderBoxSelect(Sender: TObject);
+  begin
+    ListView.Folder := FolderBox.Text;
+  end;
+  
+  procedure TMainFrm.BtnUpClick(Sender: TObject);
+  begin
+    ListView.Up;
+  end;
+  
+
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  procedure TMainFrm.ProcessTimerTimer(Sender: TObject);
+  var
+    F: TViewFrm;
+  begin
+    with Process do
+    begin
+      if Running = False then
+      begin
+        ProcessTimer.Enabled := False;
+        ListView.OpenArchive(ArchiveName, ArchiveLink);
+        UpdateButtons(True);
+      end;
+    end;
+  end;
+
+
+
 
   procedure TMainFrm.UpdateCursor(Value: TCursor);
   begin
@@ -580,23 +615,6 @@ uses
       MessageDlg('An process active', mtInformation, [mbOk], 0);
   end;
 
-  procedure TMainFrm.ListViewDblClick(Sender: TObject);
-  begin
-    if Cursor <> crHourGlass then
-    begin
-      if ListView.Selected <> nil then
-      begin
-        if Length(ListView.Selected.SubItems[ListView.Columns.Count - 2]) = 0 then
-        begin
-          ListView.Folder :=IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
-        end else
-        begin
-          { TODO 2 : Estrazione e visualizzazione file }
-        end;
-      end;
-    end;
-  end;
-
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   var
     CmdLine: string;
@@ -636,11 +654,9 @@ uses
   procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
   begin
     Caption := 'BeeFM';
-    
+    ListView.CloseArchive;
     UpdateCursor(crDefault);
     UpdateButtons(False);
-    
-    ListView.CloseArchive;
   end;
 
   procedure TMainFrm.MMenuFileMoveClick(Sender: TObject);
@@ -1084,7 +1100,7 @@ uses
   
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  PMenu Events                                                      //
+  //  PMenu Events                                                          //
   //                                                                        //
   // ---------------------------------------------------------------------- //
   
