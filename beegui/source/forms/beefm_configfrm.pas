@@ -79,6 +79,7 @@ type
   private
     procedure SetPageIndex(PageIndex: integer);
   public
+    function AddOptions: string;
   end;
 
 var
@@ -124,6 +125,19 @@ uses
       1: ConfigFrm_ExtractGB.Visible := True;
       2: ConfigFrm_GeneralGB.Visible := True;
     end;
+  end;
+  
+  function TConfigFrm.AddOptions: string;
+  begin
+    Result :=
+      ' -m' + IntToStr(mOption.ItemIndex) +
+      ' -d' + IntToStr(dOption.ItemIndex);
+      
+    if rOption.Checked then Result := Result + ' -r+' else Result := Result + ' -r-';
+    if sOption.Checked then Result := Result + ' -s+' else Result := Result + ' -s-';
+    if tOption.Checked then Result := Result + ' -t+' else Result := Result + ' -t-';
+    if kOption.Checked then Result := Result + ' -k+' else Result := Result + ' -k-';
+    if lOption.Checked then Result := Result + ' -l+' else Result := Result + ' -l-';
   end;
     
 initialization

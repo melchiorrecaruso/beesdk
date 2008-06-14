@@ -2723,6 +2723,7 @@ object MainFrm: TMainFrm
     OnDblClick = ListViewDblClick
   end
   object OpenDialog: TOpenDialog
+    Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
     FilterIndex = 0
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     left = 16
@@ -3133,8 +3134,7 @@ object MainFrm: TMainFrm
     end
   end
   object SaveDialog: TSaveDialog
-    Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|Any file (*.*)|*.*'
-    FilterIndex = 0
+    Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
     Options = [ofHideReadOnly, ofPathMustExist, ofEnableSizing]
     left = 48
     top = 216
