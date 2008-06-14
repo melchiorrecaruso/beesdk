@@ -594,7 +594,6 @@ uses
       if SaveDialog.Execute then
       begin
         MMenuFileClose.Click;
-
         with Process do
         begin
           ArchiveName := SaveDialog.FileName;
@@ -602,12 +601,15 @@ uses
             1: ArchiveName := ChangeFileExt(ArchiveName, '.bee');
             2: ArchiveName := ChangeFileExt(ArchiveName, '.exe');
           end;
-          Caption := 'Bee' + ' - ' + ExtractFileName(ArchiveName);
+          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArchiveName);
         end;
-        // ---
-        CmdLine := 'BeeGui ';
-        // ---
-        Process.CommandLine := CmdLine;
+        CmdLine := 'beegui a' + ' -2+';
+        if MMenuOptionsLogReport.Checked then
+          CmdLine := CmdLine + ' -1+'
+        else
+          CmdLine := CmdLine + ' -1-';
+        CmdLine := CmdLine + ConfigFrm.AddOptions + ' "' + Process.ArchiveName + '"';
+        Process.CommandLine :=  CmdLine;
         Process.Execute;
         ProcessTimer.Enabled := True;
       end;
@@ -622,27 +624,20 @@ uses
     if Cursor <> crHourGlass then
     begin
       OpenDialog.FileName := '';
-      OpenDialog.Filter :=
-        'bee file (*.bee)|*.bee|' +
-        'exe file (*.bee)|*.exe|' +
-        'all files  (*.*)|*|';
-
       if OpenDialog.Execute then
       begin
         MMenuFileClose.Click;
-
-        Process.ArchiveName := OpenDialog.FileName;
-        Caption := 'BeeFM' + ' - ' + ExtractFileName(Process.ArchiveName);
-        // ---
-        CmdLine := 'beegui';
-        CmdLine := CmdLine + ' L ';
+        with Process do
+        begin
+          ArchiveName := OpenDialog.FileName;
+          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArchiveName);
+        end;
+        CmdLine := 'beegui l';
         if MMenuOptionsLogReport.Checked then
-          CmdLine := CmdLine + ' -1+ '
+          CmdLine := CmdLine + ' -1+'
         else
-          CmdLine := CmdLine + ' -1- ';
-        CmdLine := CmdLine + '"' + Process.ArchiveName + '"';
-        CmdLine := CmdLine + ' *!';
-        // ---
+          CmdLine := CmdLine + ' -1-';
+        CmdLine := CmdLine + ' "' + Process.ArchiveName + '"' + ' *!';
         Process.CommandLine := CmdLine;
         ProcessTimer.Enabled := True;
         Process.Execute;
