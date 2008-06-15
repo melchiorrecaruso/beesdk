@@ -213,6 +213,7 @@ type
     BMenuHelp: TMenuItem;
     BMenuExit: TMenuItem;
     // ---
+    procedure FormShow(Sender: TObject);
     procedure ListViewDblClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
@@ -308,8 +309,6 @@ uses
     {$I beefm_mainfrm_loadlanguage.inc}
     {$I beefm_mainfrm_loadproperty.inc}
     UpdateButtons(False);
-    UpdateButtons;
-    UpdateStyle;
   end;
   
   procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -345,6 +344,12 @@ uses
     begin
       {$I beefm_mainfrm_saveproperty.inc}
     end;
+  end;
+  
+  procedure TMainFrm.FormShow(Sender: TObject);
+  begin
+    UpdateButtons;
+    UpdateStyle;
   end;
   
   // ---------------------------------------------------------------------- //
@@ -446,6 +451,8 @@ uses
     end;
   end;
 
+
+
   // ---
   
   
@@ -501,8 +508,10 @@ uses
       if Running = False then
       begin
         ProcessTimer.Enabled := False;
-        ListView.OpenArchive(ArchiveName, ArchiveLink);
-        UpdateButtons(True);
+        if ListView.OpenArchive(ArchiveName, ArchiveLink) then
+        begin
+          UpdateButtons(True);
+        end;
       end;
     end;
   end;
