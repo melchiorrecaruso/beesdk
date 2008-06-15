@@ -68,7 +68,7 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="34" Y="661"/>
+        <CursorPos X="11" Y="765"/>
         <TopLine Value="652"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
@@ -1903,31 +1903,11 @@
         <UsageCount Value="10"/>
       </Unit261>
     </Units>
-    <JumpHistory Count="6" HistoryIndex="5">
+    <JumpHistory Count="1" HistoryIndex="0">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="312" Column="11" TopLine="295"/>
+        <Caret Line="661" Column="34" TopLine="652"/>
       </Position1>
-      <Position2>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="217" Column="5" TopLine="216"/>
-      </Position2>
-      <Position3>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="324" Column="34" TopLine="858"/>
-      </Position3>
-      <Position4>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="510" Column="25" TopLine="503"/>
-      </Position4>
-      <Position5>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="511" Column="23" TopLine="503"/>
-      </Position5>
-      <Position6>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="522" Column="64" TopLine="503"/>
-      </Position6>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
