@@ -293,9 +293,10 @@ uses
 
   BeeGui_Messages,
   BeeGui_SysUtils,
+  BeeGui_RenameFrm,
 
   BeeFm_ConfigFrm,
-  BeeFM_PropertyFrm;
+  BeeFm_PropertyFrm;
   
   { TMainFrm }
 
@@ -656,10 +657,23 @@ uses
 
   procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
   begin
-    Caption := 'BeeFM';
     ListView.CloseArchive;
     UpdateCursor(crDefault);
     UpdateButtons(False);
+    Caption := 'BeeFM';
+  end;
+  
+  procedure TMainFrm.MMenuFilePropertyClick(Sender: TObject);
+  var
+    F: TInfoFrm;
+  begin
+    F := TInfoFrm.Create(Self);
+    if F.UpdateAInfo(Process.ArchiveName, ListView.Details) then
+    begin
+      F.ShowModal;
+    end else
+      MessageDlg('Can''t load archive infomations.', mtInformation, [mbOk], 0);
+    F.Free;
   end;
   
   procedure TMainFrm.MMenuFileMoveClick(Sender: TObject);
@@ -667,8 +681,6 @@ uses
     NewName: string;
   begin
     NewName := '';
-    if Cursor = crHourGlass then Exit;
-    // ---
     if SelectDirectory('Move archive to:', '', NewName) then
     begin
       NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(Process.ArchiveName);
@@ -679,83 +691,54 @@ uses
     end;
   end;
 
-  procedure TMainFrm.MMenuFilePropertyClick(Sender: TObject);
-  var
-    F: TInfoFrm;
-  begin
-    if Cursor = crHourGlass then Exit;
-    // ---
-    F := TInfoFrm.Create(Self);
-    if F.UpdateAInfo(Process.ArchiveName, ListView.Details) then
-    begin
-      F.ShowModal;
-    end else
-      MessageDlg('Can''t load archive infomations.', mtInformation, [mbOk], 0);
-    F.Free;
-  end;
-
   procedure TMainFrm.MMenuFileCopyClick(Sender: TObject);
   var
     NewName: string;
   begin
-    if Cursor <> crHourGlass then
+    NewName := '';
+    if SelectDirectory('Copy archive to:', '', NewName) then
     begin
-      NewName := '';
-      if SelectDirectory('Copy archive to:', '', NewName) then
-      begin
-        NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(Process.ArchiveName);
-        if CopyFile(Process.ArchiveName, NewName) then
-          Process.ArchiveName := NewName
-        else
-          MessageDlg('Error copying archive', mtError, [mbOk], 0);
-      end;
+      NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(Process.ArchiveName);
+      if CopyFile(Process.ArchiveName, NewName) then
+        Process.ArchiveName := NewName
+      else
+        MessageDlg('Error copying archive', mtError, [mbOk], 0);
     end;
   end;
 
   procedure TMainFrm.MMenuFileRenameClick(Sender: TObject);
-  begin
-  (*
   var
     F: TRenameFrm;
     NewName: string;
   begin
-    if MainFrm_ArchiveTreeView.Cursor <> crHourGlass then
+    F := TRenameFrm.Create(Self);
+    F.Caption := 'Rename archive';
+    F.ToFN.Text := ExtractFileName(Process.ArchiveName);
+    F.FromFN.Caption := ExtractFileName(Process.ArchiveName);
+    if F.ShowModal = mrOk then
     begin
-      F := TRenameFrm.Create(Self);
-      F.Caption := 'Rename archive';
-      F.RenameFrm_To.Text := ExtractFileName(AppArcName);
-
-      if f.ShowModal = mrOk then
+      if AnsiCompareFileName(F.ToFN.Text, F.FromFN.Caption) <> 0 then
       begin
-        if AnsiCompareFileName(f.RenameFrm_From.Caption, f.RenameFrm_To.Text) <> 0 then
+        NewName := ExtractFilePath(Process.ArchiveName) + F.ToFN.Text;
+        if RenameFile(Process.ArchiveName, NewName) then
         begin
-          NewName := ExtractFilePath(AppArcName) + f.RenameFrm_To.Text;
-          if RenameFile (AppArcName, NewName) then
-          begin
-            MMenuFileClose.Click;
-            AppArcName := NewName;
-
-            Caption := 'Bee' + ' - ' + ExtractFileName(AppArcName);
-          end else
-            MessageDlg('Error on renaming archive', mtError, [mbOk], 0);
-        end;
+          Process.ArchiveName := NewName;
+          Caption := 'BeeFM' + ' - ' + ExtractFileName(Process.ArchiveName);
+        end else
+          MessageDlg('Error on renaming archive', mtError, [mbOk], 0);
       end;
-      f.Free;
     end;
-    *)
+    F.Free;
   end;
 
   procedure TMainFrm.MMenuFileDeleteClick(Sender: TObject);
   begin
-    if Cursor <> crHourGlass then
+    if MessageDlg('Delete archive?', mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
-      if MessageDlg('Delete archive?', mtInformation, [mbYes, mbNo], 0) = mrYes then
-      begin
-        if DeleteFile(Process.ArchiveName) then
-          MMenuFileClose.Click
-        else
-          MessageDlg('Error on deleting archive.', mtError, [mbOk], 0);
-      end;
+      if DeleteFile(Process.ArchiveName) then
+        MMenuFileClose.Click
+      else
+        MessageDlg('Error on deleting archive.', mtError, [mbOk], 0);
     end;
   end;
 
