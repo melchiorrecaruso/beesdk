@@ -762,6 +762,7 @@ uses
   procedure TMainFrm.MMenuFileExitClick(Sender: TObject);
   begin
     MMenuFileClose.Click;
+    Close;
   end;
   
   // ---------------------------------------------------------------------- //
