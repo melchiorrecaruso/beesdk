@@ -265,9 +265,10 @@ type
 
     // ---
     procedure ColumnClick(Sender: TObject; Column: TListColumn);
+    procedure ListViewStyleClick(Sender: TObject);
     procedure ViewStyleClick(Sender: TObject);
-    procedure ViewStyleClick2(Sender: TObject);
     procedure OrderByClick(Sender: TObject);
+    procedure DetailsClick(Sender: TObject);
     procedure OptionsClick(Sender: TObject);
 
     procedure BMenuClick(Sender: TObject);
@@ -712,7 +713,7 @@ uses
     NewName: string;
   begin
     F := TRenameFrm.Create(Self);
-    F.Caption := 'Rename archive';
+    F.Caption := rsRenameArchive;
     F.ToFN.Text := ExtractFileName(Process.ArchiveName);
     F.FromFN.Caption := ExtractFileName(Process.ArchiveName);
     if F.ShowModal = mrOk then
@@ -756,21 +757,29 @@ uses
 
   procedure TMainFrm.ViewStyleClick(Sender: TObject);
   begin
+    TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
+    UpdateStyle;
+  end;
+
+  procedure TMainFrm.ListViewStyleClick(Sender: TObject);
+  begin
     MMenuViewLargeIcons.Checked := Sender = MMenuViewLargeIcons;
     MMenuViewSmallIcons.Checked := Sender = MMenuViewSmallIcons;
     MMenuViewReport.Checked := Sender = MMenuViewReport;
     MMenuViewList.Checked := Sender = MMenuViewList;
     UpdateStyle;
   end;
-
-  procedure TMainFrm.ViewStyleClick2(Sender: TObject);
-  begin
-    TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
-    UpdateStyle;
-  end;
   
   procedure TMainFrm.OrderByClick(Sender: TObject);
+  var
+    I: integer;
   begin
+    for I := 0 to MMenuViewOrderBy.Count - 1 do
+    begin
+      MMenuViewOrderBy.Items[I].Checked := False;
+    end;
+    TMenuItem(Sender).Checked := True;
+    
     if Sender = MMenuViewOrderByName then
       ListView.SortCol := alvcName
     else
@@ -807,6 +816,19 @@ uses
     if Sender = MMenuViewOrderByPosition then
       ListView.SortCol := alvcPosition;
   end;
+  
+   procedure TMainFrm.DetailsClick(Sender: TObject);
+   var
+     I: integer;
+   begin
+     TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
+     for I := 0 to ListView.Columns.Count -1 do
+     begin
+       ListView.Columns[I].Visible := MMenuViewDetails.Items[I].Checked;
+       if ListView.Columns[I].Width = 0 then
+         ListView.Columns[I].Width := 50;
+     end;
+   end;
 
   // ---------------------------------------------------------------------- //
   //                                                                        //
