@@ -125,8 +125,8 @@ type
     FFolderBoxSign: string;
     // ---
     FSimpleList: boolean;
-    FSortDir: boolean;
     FSortCol: TArcListViewColumn;
+    FSortDir: boolean;
   private
     function CompareFn(L: TList; I1, I2: integer): integer;
     procedure QuickSort(List: TList; L, R: integer);
@@ -340,7 +340,7 @@ uses
     FFolders := TArcList.Create;
     FFolder := '';
     // --
-    FSortDir := False;
+    FSortDir := True;
     FSimpleList := False;
     // ---
     Color := clInactiveBorder;

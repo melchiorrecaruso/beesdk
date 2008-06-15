@@ -47,9 +47,6 @@ uses
   BeeGui_TickFrm,
   BeeGui_AboutFrm;
 
-const
-  MinSec = 2;
-
 var
   CmdLine:  TCmdLine  = nil;
   TickFrm:  TTickFrm  = nil;
@@ -77,7 +74,7 @@ begin
         Start(CmdLine);
         repeat
           if CmdLine.Log then Break;
-          if RemaingTime > MinSec then Break;
+          if RemaingTime > 2 then Break;
           Application.ProcessMessages;
         until CanClose;
         if CmdLine.Log or (CanClose = False) then

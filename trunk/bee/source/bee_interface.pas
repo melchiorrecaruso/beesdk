@@ -145,15 +145,8 @@ type
       end;
     end;
     Terminated: boolean;
-    Suspended: boolean;
-    ExitCode: integer;
-    // Exit code value
-    //  0   = No Error
-    //  1   = Warning
-    //  2   = Fatal Error
-    //  7   = Command line error
-    //  8   = No Memory
-    //  255 = User stopped process
+    Suspend: boolean;
+    Stop: boolean;
   end;
   
 type
@@ -194,12 +187,13 @@ begin
   inherited Create(True);
   FreeOnTerminate := True;
   Priority := tpNormal;
+  ExitCode := 0;
   // ---
   Params := aParams;
   Interfaces := aInterfaces;
-  Interfaces.ExitCode := 0;
   Interfaces.Terminated := False;
-  Interfaces.Suspended := False;
+  Interfaces.Suspend := False;
+  Interfaces.Stop := False;
   Interfaces.OnTick.Data.TotalSize := 0;
   Interfaces.OnTick.Data.ProcessedSize := 0;
 end;
@@ -213,9 +207,7 @@ end;
 
 procedure TApp.DoTerminate;
 begin
-  ExitCode := Interfaces.ExitCode;
   Interfaces.Terminated := True;
-  Interfaces.Suspended := False;
   inherited DoTerminate;
 end;
 
@@ -226,9 +218,7 @@ end;
 
 procedure TApp.SetExitCode(Code: integer);
 begin
-  with Interfaces do
-    if ExitCode < Code then
-      ExitCode := Code;
+  if ExitCode < Code then ExitCode := Code;
 end;
 
 end.

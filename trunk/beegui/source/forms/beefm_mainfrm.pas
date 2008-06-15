@@ -324,7 +324,6 @@ uses
     begin
       CanClose := True;
     end;
-
   end;
   
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -653,7 +652,7 @@ uses
     UpdateCursor(crDefault);
     UpdateButtons(False);
   end;
-
+  
   procedure TMainFrm.MMenuFileMoveClick(Sender: TObject);
   var
     NewName: string;

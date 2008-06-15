@@ -109,9 +109,7 @@ uses
     if Result = -1 then
     begin
       { TODO -oTIconList -cDebug : Disabilitare per test local icons }
-
       // Result := GetSysFileIcon(FileName, FileAttr);
-
       if Result = -1 then
       begin
         Result := GetFileIcon(FileName, FileAttr);
@@ -147,7 +145,8 @@ uses
 
   function TIconList.GetFileIcon(const FileName: string; FileAttr: integer): integer;
   var
-    Icon: TIcon;
+    Bmp: TBitmap;
+    Picture: TPicture;
     Error: integer;
     FileExt: string;
     Rec: TSearchRec;
@@ -162,12 +161,20 @@ uses
       Error := FindFirst(FIconFolder + FileExt + '.bmp', faAnyFile, Rec);
       if (Error = 0) and ((Rec.Attr and faDirectory) = 0) then
       begin
-        Icon := TIcon.Create;
+        Picture := TPicture.Create;
+        Bmp := TBitmap.Create;
         try
-          Icon.LoadFromFile(FIconFolder + Rec.Name);
-          Result := Add(Icon, nil);
+          Picture.LoadFromFile(FIconFolder + Rec.Name);
+          Bmp.Height := Picture.Bitmap.Height;
+          Bmp.Width := Picture.Bitmap.Width;
+          Bmp.Canvas.FillRect(Bounds(0, 0, Width, Height));
+          Bmp.Canvas.Draw(0, 0, Picture.Bitmap);
+          Bmp.TransparentMode := tmAuto;
+          Bmp.Transparent := True;
+          Result := Add(Bmp, nil);
         finally
-          Icon.Free;
+          Bmp.Free;
+          Picture.Free;
         end;
         FExtentions.Add(FileExt);
         if Pos('@', FileExt) = 0 then
