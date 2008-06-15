@@ -248,8 +248,8 @@ var
     begin
       if MessageDlg(rsConfirmation, rsConfirmAbort, mtConfirmation, [mbYes, mbNo], '') = mrYes then
       begin
-        FInterfaces.ExitCode := 255;
-        if FInterfaces.Suspended then
+        FInterfaces.Stop := True;
+        if FInterfaces.Suspend then
         begin
           BtnPauseRun.Click;
         end;
@@ -342,7 +342,7 @@ var
   begin
     if FInterfaces.Terminated = True then
     begin
-      if FInterfaces.ExitCode < 2 then
+      if ExitCode < 2 then
         Application.Title := rsProcessTerminated
       else
         Application.Title := rsProcessAborted;
@@ -371,8 +371,8 @@ var
       Timer.Enabled := not Timer.Enabled;
       with FInterfaces do
       begin
-        Suspended := not Suspended;
-        if Suspended then
+        Suspend := not Suspend;
+        if Suspend then
           BtnPauseRun.Caption := rsBtnRunCaption
         else
           BtnPauseRun.Caption := rsBtnPauseCaption;

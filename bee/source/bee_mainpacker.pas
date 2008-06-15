@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
+  v0.7.9 build 0787 - 2008.06.14 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -153,7 +153,7 @@ end;
 
 procedure TEncoder.Tick;
 begin
-  while Interfaces.Suspended do Sleep(250);
+  while Interfaces.Suspend do Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
@@ -210,7 +210,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.ExitCode < 2 then
+          if Interfaces.Stop = False then
             Tick
           else
             Break;
@@ -227,7 +227,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.ExitCode < 2 then
+          if Interfaces.Stop = False then
             Tick
           else
             Break;
@@ -314,7 +314,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.ExitCode < 2 then
+          if Interfaces.Stop = False then
             Tick
           else
             Break;
@@ -331,7 +331,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.ExitCode < 2 then
+          if Interfaces.Stop = False then
             Tick
           else
             Break;
@@ -403,7 +403,7 @@ begin
     begin
       if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
       begin
-        if Interfaces.ExitCode < 2 then
+        if Interfaces.Stop = False then
           Tick
         else
           Break;
@@ -455,7 +455,7 @@ end;
 
 procedure TDecoder.Tick;
 begin
-  while Interfaces.Suspended do Sleep(250);
+  while Interfaces.Suspend do Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
@@ -518,7 +518,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.ExitCode < 2 then
+          if Interfaces.Stop = False then
             Tick
           else
             Break;
@@ -535,7 +535,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.ExitCode < 2 then
+          if Interfaces.Stop = False then
             Tick
           else
             Break;
@@ -633,7 +633,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.ExitCode < 2 then
+          if Interfaces.Stop = False then
             Tick
           else
             Break;
@@ -650,7 +650,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.ExitCode < 2 then
+          if Interfaces.Stop = False then
             Tick
           else
             Break;

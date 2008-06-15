@@ -11,7 +11,7 @@
       Height := Storage.ReadInteger('TForm', 'Height', Height);
     end;
     WindowState := TWindowState(Storage.ReadInteger('TForm', 'WindowState', Ord(WindowState)));
-
+    // ListView
     ListView.Column[ 0].Width := Storage.ReadInteger('ListView', 'Column[00].Width', ListView.Column[ 0].Width);
     ListView.Column[ 1].Width := Storage.ReadInteger('ListView', 'Column[01].Width', ListView.Column[ 1].Width);
     ListView.Column[ 2].Width := Storage.ReadInteger('ListView', 'Column[02].Width', ListView.Column[ 2].Width);
@@ -24,11 +24,8 @@
     ListView.Column[ 9].Width := Storage.ReadInteger('ListView', 'Column[09].Width', ListView.Column[ 9].Width);
     ListView.Column[10].Width := Storage.ReadInteger('ListView', 'Column[10].Width', ListView.Column[10].Width);
     ListView.Column[11].Width := Storage.ReadInteger('ListView', 'Column[11].Width', ListView.Column[11].Width);
-
-
-    // --- OK
-
-    (*
+    ListView.SortCol := TArcListViewColumn(Storage.ReadInteger('ListView', 'Column', Ord(ListView.SortCol)));
+    // Main Menu View
     MMenuViewAddressBar.Checked        := Storage.ReadBool('MMenu', 'View.AddressBar.Checked'         , MMenuViewAddressBar.Checked);
     MMenuViewLargeIcons.Checked        := Storage.ReadBool('MMenu', 'View.LargeIcons.Checked'         , MMenuViewLargeIcons.Checked);
     MMenuViewSmallIcons.Checked        := Storage.ReadBool('MMenu', 'View.SmallIcons.Checked'         , MMenuViewSmallIcons.Checked);
@@ -61,6 +58,9 @@
     MMenuViewDetailsCRC.Checked        := Storage.ReadBool('MMenu', 'View.Details.CRC.Checked'        , MMenuViewDetailsCRC.Checked);
     MMenuViewDetailsPath.Checked       := Storage.ReadBool('MMenu', 'View.Details.Path.Checked'       , MMenuViewDetailsPath.Checked);
     MMenuViewDetailsPosition.Checked   := Storage.ReadBool('MMenu', 'View.Details.Position.Checked'   , MMenuViewDetailsPosition.Checked);
+    // --- OK
+
+    (*
 
     MMenuOptionsSaveOnExit.Checked     := Storage.ReadBool('MMenu', 'Options.SaveOnExit.Checked'      , MMenuOptionsSaveOnExit.Checked);
     MMenuOptionsLogReport.Checked      := Storage.ReadBool('MMenu', 'Options.LogReport.Checked'       , MMenuOptionsLogReport.Checked);
@@ -68,7 +68,6 @@
     // ---
 
 
-    ListView.SortCol := TArcListViewColumn(Storage.ReadInteger('ListView', 'Column', Ord(ListView.SortCol)));
 
     // ---
 
