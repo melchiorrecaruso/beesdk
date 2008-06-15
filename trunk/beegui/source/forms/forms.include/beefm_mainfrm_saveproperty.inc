@@ -14,22 +14,23 @@
     // ListView
     if ListView.ViewStyle = vsReport then
     begin
-      Storage.WriteInteger('ListView', 'Column[00].Width', ListView.Column[ 0].Width);
-      Storage.WriteInteger('ListView', 'Column[01].Width', ListView.Column[ 1].Width);
-      Storage.WriteInteger('ListView', 'Column[02].Width', ListView.Column[ 2].Width);
-      Storage.WriteInteger('ListView', 'Column[03].Width', ListView.Column[ 3].Width);
-      Storage.WriteInteger('ListView', 'Column[04].Width', ListView.Column[ 4].Width);
-      Storage.WriteInteger('ListView', 'Column[05].Width', ListView.Column[ 5].Width);
-      Storage.WriteInteger('ListView', 'Column[06].Width', ListView.Column[ 6].Width);
-      Storage.WriteInteger('ListView', 'Column[07].Width', ListView.Column[ 7].Width);
-      Storage.WriteInteger('ListView', 'Column[08].Width', ListView.Column[ 8].Width);
-      Storage.WriteInteger('ListView', 'Column[09].Width', ListView.Column[ 9].Width);
-      Storage.WriteInteger('ListView', 'Column[10].Width', ListView.Column[10].Width);
-      Storage.WriteInteger('ListView', 'Column[11].Width', ListView.Column[11].Width);
+      if ListView.Column[ 0].Width > 0 then Storage.WriteInteger('ListView', 'Column[00].Width', ListView.Column[ 0].Width);
+      if ListView.Column[ 1].Width > 0 then Storage.WriteInteger('ListView', 'Column[01].Width', ListView.Column[ 1].Width);
+      if ListView.Column[ 2].Width > 0 then Storage.WriteInteger('ListView', 'Column[02].Width', ListView.Column[ 2].Width);
+      if ListView.Column[ 3].Width > 0 then Storage.WriteInteger('ListView', 'Column[03].Width', ListView.Column[ 3].Width);
+      if ListView.Column[ 4].Width > 0 then Storage.WriteInteger('ListView', 'Column[04].Width', ListView.Column[ 4].Width);
+      if ListView.Column[ 5].Width > 0 then Storage.WriteInteger('ListView', 'Column[05].Width', ListView.Column[ 5].Width);
+      if ListView.Column[ 6].Width > 0 then Storage.WriteInteger('ListView', 'Column[06].Width', ListView.Column[ 6].Width);
+      if ListView.Column[ 7].Width > 0 then Storage.WriteInteger('ListView', 'Column[07].Width', ListView.Column[ 7].Width);
+      if ListView.Column[ 8].Width > 0 then Storage.WriteInteger('ListView', 'Column[08].Width', ListView.Column[ 8].Width);
+      if ListView.Column[ 9].Width > 0 then Storage.WriteInteger('ListView', 'Column[09].Width', ListView.Column[ 9].Width);
+      if ListView.Column[10].Width > 0 then Storage.WriteInteger('ListView', 'Column[10].Width', ListView.Column[10].Width);
+      if ListView.Column[11].Width > 0 then Storage.WriteInteger('ListView', 'Column[11].Width', ListView.Column[11].Width);
       Storage.WriteInteger('ListView', 'Column', Ord(ListView.SortCol));
     end;
     // Main Menu View
     Storage.WriteBool('MMenu', 'View.AddressBar.Checked'         , MMenuViewAddressBar.Checked);
+    Storage.WriteBool('MMenu', 'View.StatusBar.Checked'          , MMenuViewStatusBar.Checked);
     Storage.WriteBool('MMenu', 'View.LargeIcons.Checked'         , MMenuViewLargeIcons.Checked);
     Storage.WriteBool('MMenu', 'View.SmallIcons.Checked'         , MMenuViewSmallIcons.Checked);
     Storage.WriteBool('MMenu', 'View.List.Checked'               , MMenuViewList.Checked);

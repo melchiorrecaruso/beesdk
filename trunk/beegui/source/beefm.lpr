@@ -26,7 +26,10 @@
 program BeeFm;
 
 {$I compiler.inc}
-{$R beegui.res}
+
+{$IFDEF MSWINDOWS}
+  {$R beegui.res}
+{$ENDIF}
 
 uses
   Interfaces,

@@ -109,7 +109,7 @@ uses
     if Result = -1 then
     begin
       { TODO -oTIconList -cDebug : Disabilitare per test local icons }
-      // Result := GetSysFileIcon(FileName, FileAttr);
+      Result := GetSysFileIcon(FileName, FileAttr);
       if Result = -1 then
       begin
         Result := GetFileIcon(FileName, FileAttr);
@@ -190,7 +190,7 @@ uses
   {$IFDEF MSWINDOWS}
   var
     I: cardinal;
-    Icon: TIcon;
+    Bmp: TBitmap;
     IconInfo: TIconInfo;
     FI : TSHFileInfo;
     FileExt: string;
@@ -211,18 +211,22 @@ uses
     
     if SHGetFileInfo(PChar(FileName), FileAttr, FI, SizeOf(FI), I) <> 0 then
     begin
-      Icon := TIcon.Create;
-      if (FI.hIcon <> 0) and GetIconInfo(FI.hIcon, IconInfo) then
-      begin
-        Icon.Handle := IconInfo.hbmColor;
-        Icon.MaskHandle := IconInfo.hbmMask;
+      Bmp := TBitmap.Create;
+      try
+        if (FI.hIcon <> 0) and GetIconInfo(FI.hIcon, IconInfo) then
+        begin
+          Bmp.Handle := IconInfo.hbmColor;
+          Bmp.MaskHandle := IconInfo.hbmMask;
+        end;
+        // Bmp.TransparentMode := tmAuto;
+        // Bmp.Transparent := True;
+        Result := Add(Bmp, nil);
+      finally
+        Bmp.Free;
       end;
-      Result := Add(Icon, nil);
-      Icon.Free;
-
       FileExt := ExtractFileExt(FileName);
-       while Pos('.', FileExt) = 1 do
-        System.Delete(FileExt, 1, 1);
+        while Pos('.', FileExt) = 1 do
+          System.Delete(FileExt, 1, 1);
             
       FExtentions.Add(FileExt);
       FTypes.Add(FI.szTypeName);

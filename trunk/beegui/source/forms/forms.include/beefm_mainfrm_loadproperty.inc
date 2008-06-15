@@ -27,6 +27,7 @@
     ListView.SortCol := TArcListViewColumn(Storage.ReadInteger('ListView', 'Column', Ord(ListView.SortCol)));
     // Main Menu View
     MMenuViewAddressBar.Checked        := Storage.ReadBool('MMenu', 'View.AddressBar.Checked'         , MMenuViewAddressBar.Checked);
+    MMenuViewstatusBar.Checked         := Storage.ReadBool('MMenu', 'View.StatusBar.Checked'          , MMenuViewStatusBar.Checked);
     MMenuViewLargeIcons.Checked        := Storage.ReadBool('MMenu', 'View.LargeIcons.Checked'         , MMenuViewLargeIcons.Checked);
     MMenuViewSmallIcons.Checked        := Storage.ReadBool('MMenu', 'View.SmallIcons.Checked'         , MMenuViewSmallIcons.Checked);
     MMenuViewList.Checked              := Storage.ReadBool('MMenu', 'View.List.Checked'               , MMenuViewList.Checked);
