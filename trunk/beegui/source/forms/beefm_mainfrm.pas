@@ -563,6 +563,7 @@ uses
   
   procedure TMainFrm.UpdateStyle;
   begin
+    DetailsClick(nil);
     if MMenuViewLargeIcons.Checked then
       ListView.ViewStyle := vsIcon
     else
@@ -821,8 +822,11 @@ uses
    var
      I: integer;
    begin
-     TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
-     for I := 0 to ListView.Columns.Count -1 do
+     if Sender <> nil then
+     begin
+       TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
+     end;
+     for I := 0 to MMenuViewDetails.Count -1 do
      begin
        ListView.Columns[I].Visible := MMenuViewDetails.Items[I].Checked;
        if ListView.Columns[I].Width = 0 then
