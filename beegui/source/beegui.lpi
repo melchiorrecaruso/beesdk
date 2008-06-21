@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -43,7 +43,7 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="1" Y="30"/>
+        <CursorPos X="4" Y="31"/>
         <TopLine Value="22"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
@@ -398,7 +398,7 @@
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="44" Y="221"/>
         <TopLine Value="184"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
       </Unit48>
@@ -632,7 +632,7 @@
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="19" Y="375"/>
         <TopLine Value="354"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="197"/>
         <Loaded Value="True"/>
       </Unit79>
@@ -644,9 +644,11 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="19" Y="93"/>
+        <CursorPos X="16" Y="84"/>
         <TopLine Value="62"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="191"/>
+        <Loaded Value="True"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages\beegui_gui.pas"/>
@@ -1132,7 +1134,7 @@
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="2" Y="34"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit156>
@@ -1274,7 +1276,7 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit178>

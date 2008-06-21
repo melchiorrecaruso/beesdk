@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="6"/>
+      <ActiveEditorIndexAtStart Value="5"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -228,7 +228,7 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_configfrm.lrs"/>
         <UnitName Value="BeeFM_ConfigFrm"/>
-        <CursorPos X="37" Y="131"/>
+        <CursorPos X="8" Y="83"/>
         <TopLine Value="77"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="200"/>
@@ -1933,67 +1933,63 @@
         <UsageCount Value="10"/>
       </Unit265>
     </Units>
-    <JumpHistory Count="15" HistoryIndex="14">
+    <JumpHistory Count="14" HistoryIndex="13">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="777" Column="5" TopLine="753"/>
       </Position1>
       <Position2>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="684" Column="5" TopLine="770"/>
+        <Caret Line="740" Column="32" TopLine="735"/>
       </Position2>
       <Position3>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="740" Column="32" TopLine="735"/>
+        <Caret Line="661" Column="5" TopLine="649"/>
       </Position3>
       <Position4>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="661" Column="5" TopLine="649"/>
+        <Caret Line="748" Column="28" TopLine="735"/>
       </Position4>
       <Position5>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="748" Column="28" TopLine="735"/>
+        <Caret Line="250" Column="54" TopLine="249"/>
       </Position5>
       <Position6>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="250" Column="54" TopLine="249"/>
+        <Caret Line="1064" Column="7" TopLine="1056"/>
       </Position6>
       <Position7>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1064" Column="7" TopLine="1056"/>
+        <Caret Line="249" Column="53" TopLine="230"/>
       </Position7>
       <Position8>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="249" Column="53" TopLine="230"/>
+        <Caret Line="760" Column="5" TopLine="758"/>
       </Position8>
       <Position9>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="760" Column="5" TopLine="758"/>
+        <Caret Line="768" Column="20" TopLine="764"/>
       </Position9>
       <Position10>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="768" Column="20" TopLine="764"/>
+        <Caret Line="760" Column="5" TopLine="758"/>
       </Position10>
       <Position11>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="760" Column="5" TopLine="758"/>
+        <Caret Line="777" Column="5" TopLine="773"/>
       </Position11>
       <Position12>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="777" Column="5" TopLine="773"/>
+        <Caret Line="811" Column="2" TopLine="805"/>
       </Position12>
       <Position13>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="811" Column="2" TopLine="805"/>
+        <Caret Line="354" Column="11" TopLine="346"/>
       </Position13>
       <Position14>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="354" Column="11" TopLine="346"/>
-      </Position14>
-      <Position15>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="566" Column="12" TopLine="559"/>
-      </Position15>
+      </Position14>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
