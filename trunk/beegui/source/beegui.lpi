@@ -97,7 +97,9 @@
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="18" Y="112"/>
         <TopLine Value="83"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="191"/>
+        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="forms\beecore_passwordfrm.inc"/>
@@ -398,7 +400,7 @@
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="44" Y="221"/>
         <TopLine Value="184"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
       </Unit48>
@@ -608,7 +610,9 @@
         <UnitName Value="BeeGui_OverWriteFrm"/>
         <CursorPos X="20" Y="69"/>
         <TopLine Value="50"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="191"/>
+        <Loaded Value="True"/>
       </Unit77>
       <Unit78>
         <Filename Value="forms\beegui_renamefrm.pas"/>
@@ -620,7 +624,9 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="43" Y="58"/>
         <TopLine Value="38"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="191"/>
+        <Loaded Value="True"/>
       </Unit78>
       <Unit79>
         <Filename Value="forms\beegui_tickfrm.pas"/>
@@ -632,7 +638,7 @@
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="19" Y="375"/>
         <TopLine Value="354"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="197"/>
         <Loaded Value="True"/>
       </Unit79>
@@ -644,7 +650,7 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="16" Y="84"/>
+        <CursorPos X="11" Y="62"/>
         <TopLine Value="62"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="191"/>
@@ -1134,7 +1140,7 @@
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="2" Y="34"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit156>
@@ -1276,7 +1282,7 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="8"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit178>
