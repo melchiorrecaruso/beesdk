@@ -1,6 +1,6 @@
 object AboutFrm: TAboutFrm
   Left = 459
-  Height = 216
+  Height = 184
   Top = 295
   Width = 273
   ActiveControl = BtnOk
@@ -8,7 +8,7 @@ object AboutFrm: TAboutFrm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'About to...'
-  ClientHeight = 216
+  ClientHeight = 184
   ClientWidth = 273
   Font.Name = 'Default'
   Font.Style = [fsBold]
@@ -417,7 +417,6 @@ object AboutFrm: TAboutFrm
       FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
       00FF
     }
-    Transparent = True
   end
   object Link: TLabel
     AnchorSideLeft.Control = Copyright

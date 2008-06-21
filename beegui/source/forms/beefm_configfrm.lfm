@@ -1,5 +1,5 @@
 object ConfigFrm: TConfigFrm
-  Left = 502
+  Left = 351
   Height = 440
   Top = 298
   Width = 626

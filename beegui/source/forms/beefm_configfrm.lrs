@@ -1,7 +1,7 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TConfigFrm','FORMDATA',[
-  'TPF0'#10'TConfigFrm'#9'ConfigFrm'#4'Left'#3#246#1#6'Height'#3#184#1#3'Top'#3
+  'TPF0'#10'TConfigFrm'#9'ConfigFrm'#4'Left'#3'_'#1#6'Height'#3#184#1#3'Top'#3
   +'*'#1#5'Width'#3'r'#2#7'Caption'#6#13'Configuration'#12'ClientHeight'#3#184#1
   +#11'ClientWidth'#3'r'#2#11'Font.Height'#2#245#9'Font.Name'#6#6'Tahoma'#8'OnC'
   +'reate'#7#10'FormCreate'#10'LCLVersion'#6#6'0.9.25'#0#9'TTreeView'#14'Config'
@@ -101,8 +101,8 @@ LazarusResources.Add('TConfigFrm','FORMDATA',[
   +'straints.MaxHeight'#2#26#20'Constraints.MaxWidth'#2'N'#21'Constraints.MinHe'
   +'ight'#2#26#20'Constraints.MinWidth'#2'N'#7'Default'#9#4'Kind'#7#4'bkOK'#11
   +'ModalResult'#2#1#9'NumGlyphs'#2#0#8'TabOrder'#2#4#0#0#0#10'TConfigFrm'#9'Co'
-  +'nfigFrm'#4'Left'#3#246#1#6'Height'#3#184#1#3'Top'#3'*'#1#5'Width'#3'r'#2#7
-  +'Caption'#6#13'Configuration'#12'ClientHeight'#3#184#1#11'ClientWidth'#3'r'#2
+  +'nfigFrm'#4'Left'#3'_'#1#6'Height'#3#184#1#3'Top'#3'*'#1#5'Width'#3'r'#2#7'C'
+  +'aption'#6#13'Configuration'#12'ClientHeight'#3#184#1#11'ClientWidth'#3'r'#2
   +#11'Font.Height'#2#245#9'Font.Name'#6#6'Tahoma'#8'OnCreate'#7#10'FormCreate'
   +#10'LCLVersion'#6#6'0.9.25'#0#9'TTreeView'#14'ConfigFrm_Tree'#4'Left'#2#4#6
   +'Height'#3#138#1#3'Top'#2#4#5'Width'#3#140#0#7'Anchors'#11#5'akTop'#6'akLeft'

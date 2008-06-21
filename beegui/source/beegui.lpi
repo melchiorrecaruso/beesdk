@@ -43,7 +43,7 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="4" Y="31"/>
+        <CursorPos X="1" Y="32"/>
         <TopLine Value="22"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
@@ -98,7 +98,7 @@
         <CursorPos X="18" Y="112"/>
         <TopLine Value="83"/>
         <EditorIndex Value="3"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="192"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
@@ -565,7 +565,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="19" Y="317"/>
         <TopLine Value="286"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="192"/>
       </Unit73>
       <Unit74>
         <Filename Value="forms\beegui_viewfrm.pas"/>
@@ -588,7 +588,7 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="44" Y="93"/>
         <TopLine Value="77"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="192"/>
       </Unit75>
       <Unit76>
         <Filename Value="forms\beegui_infofrm.pas"/>
@@ -611,7 +611,7 @@
         <CursorPos X="20" Y="69"/>
         <TopLine Value="50"/>
         <EditorIndex Value="2"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="192"/>
         <Loaded Value="True"/>
       </Unit77>
       <Unit78>
@@ -625,7 +625,7 @@
         <CursorPos X="43" Y="58"/>
         <TopLine Value="38"/>
         <EditorIndex Value="4"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="192"/>
         <Loaded Value="True"/>
       </Unit78>
       <Unit79>
@@ -639,7 +639,7 @@
         <CursorPos X="19" Y="375"/>
         <TopLine Value="354"/>
         <EditorIndex Value="5"/>
-        <UsageCount Value="197"/>
+        <UsageCount Value="198"/>
         <Loaded Value="True"/>
       </Unit79>
       <Unit80>
@@ -651,9 +651,9 @@
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="11" Y="62"/>
-        <TopLine Value="62"/>
+        <TopLine Value="67"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="192"/>
         <Loaded Value="True"/>
       </Unit80>
       <Unit81>
@@ -669,7 +669,7 @@
         <UnitName Value="BeeGui_CmdLine"/>
         <CursorPos X="55" Y="80"/>
         <TopLine Value="370"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="192"/>
       </Unit82>
       <Unit83>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
@@ -830,14 +830,14 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="35" Y="2"/>
         <TopLine Value="1"/>
-        <UsageCount Value="188"/>
+        <UsageCount Value="189"/>
       </Unit106>
       <Unit107>
         <Filename Value="forms\beegui_aboutfrm_saveproperty.inc"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="18" Y="12"/>
         <TopLine Value="1"/>
-        <UsageCount Value="187"/>
+        <UsageCount Value="188"/>
       </Unit107>
       <Unit108>
         <Filename Value="forms\beefm_mainfrm_saveproperty.inc"/>
@@ -850,7 +850,7 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="187"/>
+        <UsageCount Value="188"/>
       </Unit109>
       <Unit110>
         <Filename Value="forms\beegui.include\beegui_aboutfrm_loadlanguage.inc"/>
@@ -919,7 +919,7 @@
         <UnitName Value="BeeGui_Messages"/>
         <CursorPos X="60" Y="97"/>
         <TopLine Value="68"/>
-        <UsageCount Value="181"/>
+        <UsageCount Value="182"/>
       </Unit120>
       <Unit121>
         <Filename Value="forms\beegui.include\beegui_renamefrm_loadlanguage.inc"/>
@@ -1150,7 +1150,7 @@
         <UnitName Value="BeeGui_Forms"/>
         <CursorPos X="54" Y="170"/>
         <TopLine Value="148"/>
-        <UsageCount Value="142"/>
+        <UsageCount Value="143"/>
       </Unit157>
       <Unit158>
         <Filename Value="forms\forms.include\beegui_aboutfrm_loadproperty.inc"/>

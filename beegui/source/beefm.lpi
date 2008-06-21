@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -68,8 +68,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="22" Y="825"/>
-        <TopLine Value="816"/>
+        <CursorPos X="5" Y="635"/>
+        <TopLine Value="641"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -230,9 +230,7 @@
         <UnitName Value="BeeFM_ConfigFrm"/>
         <CursorPos X="8" Y="83"/>
         <TopLine Value="77"/>
-        <EditorIndex Value="5"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_configfrm.lrs"/>
@@ -1312,9 +1310,9 @@
       <Unit180>
         <Filename Value="packages\beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="10" Y="112"/>
-        <TopLine Value="98"/>
-        <EditorIndex Value="11"/>
+        <CursorPos X="45" Y="169"/>
+        <TopLine Value="148"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="49"/>
         <Loaded Value="True"/>
       </Unit180>
@@ -1341,9 +1339,7 @@
         <UnitName Value="BeeGui_SysUtils"/>
         <CursorPos X="5" Y="354"/>
         <TopLine Value="349"/>
-        <EditorIndex Value="4"/>
         <UsageCount Value="14"/>
-        <Loaded Value="True"/>
       </Unit183>
       <Unit184>
         <Filename Value="forms\beegui_mainfrm.inc"/>
@@ -1379,9 +1375,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="5" Y="54"/>
         <TopLine Value="58"/>
-        <EditorIndex Value="3"/>
         <UsageCount Value="13"/>
-        <Loaded Value="True"/>
       </Unit187>
       <Unit188>
         <Filename Value="forms\beegui_extractfrm.pas"/>
@@ -1435,9 +1429,7 @@
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
         <CursorPos X="14" Y="148"/>
         <TopLine Value="128"/>
-        <EditorIndex Value="9"/>
         <UsageCount Value="54"/>
-        <Loaded Value="True"/>
       </Unit194>
       <Unit195>
         <Filename Value="..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\osutilsh.inc"/>
@@ -1497,9 +1489,7 @@
         <UnitName Value="BeeGui_ArchiveProcess"/>
         <CursorPos X="14" Y="50"/>
         <TopLine Value="26"/>
-        <EditorIndex Value="10"/>
         <UsageCount Value="32"/>
-        <Loaded Value="True"/>
       </Unit203>
       <Unit204>
         <Filename Value="forms\beegui_viewfrm.pas"/>
@@ -1616,9 +1606,7 @@
         <UnitName Value="BeeGui_ArchiveFolderBox"/>
         <CursorPos X="3" Y="43"/>
         <TopLine Value="63"/>
-        <EditorIndex Value="8"/>
         <UsageCount Value="33"/>
-        <Loaded Value="True"/>
       </Unit220>
       <Unit221>
         <Filename Value="..\..\..\..\lazarus\lcl\stdctrls.pp"/>
@@ -1792,26 +1780,20 @@
         <Filename Value="forms\forms.include\beefm_mainfrm_loadproperty.inc"/>
         <CursorPos X="120" Y="30"/>
         <TopLine Value="11"/>
-        <EditorIndex Value="7"/>
         <UsageCount Value="17"/>
-        <Loaded Value="True"/>
       </Unit246>
       <Unit247>
         <Filename Value="forms\forms.include\beefm_mainfrm_saveproperty.inc"/>
         <CursorPos X="52" Y="26"/>
         <TopLine Value="10"/>
-        <EditorIndex Value="6"/>
         <UsageCount Value="17"/>
-        <Loaded Value="True"/>
       </Unit247>
       <Unit248>
         <Filename Value="packages\beegui_messages.pas"/>
         <UnitName Value="BeeGui_Messages"/>
         <CursorPos X="22" Y="68"/>
         <TopLine Value="34"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="13"/>
-        <Loaded Value="True"/>
       </Unit248>
       <Unit249>
         <Filename Value="packages\packages.include\compiler.inc"/>
@@ -1933,7 +1915,7 @@
         <UsageCount Value="10"/>
       </Unit265>
     </Units>
-    <JumpHistory Count="14" HistoryIndex="13">
+    <JumpHistory Count="15" HistoryIndex="14">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="777" Column="5" TopLine="753"/>
@@ -1990,6 +1972,10 @@
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="566" Column="12" TopLine="559"/>
       </Position14>
+      <Position15>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="828" Column="7" TopLine="816"/>
+      </Position15>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

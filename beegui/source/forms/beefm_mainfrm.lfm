@@ -245,7 +245,6 @@ object MainFrm: TMainFrm
       Layout = blGlyphTop
       NumGlyphs = 2
       Spacing = 1
-      Transparent = False
       OnClick = MMenuFileNewClick
       ParentFont = True
       ParentShowHint = False
