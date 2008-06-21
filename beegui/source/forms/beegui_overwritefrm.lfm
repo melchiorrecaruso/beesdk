@@ -3,8 +3,6 @@ object OverwriteFrm: TOverwriteFrm
   Height = 202
   Top = 179
   Width = 478
-  HorzScrollBar.Page = 477
-  VertScrollBar.Page = 201
   ActiveControl = BtnYes
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
