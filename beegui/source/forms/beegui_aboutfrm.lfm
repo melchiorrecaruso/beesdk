@@ -3,7 +3,12 @@ object AboutFrm: TAboutFrm
   Height = 184
   Top = 295
   Width = 273
+  HorzScrollBar.Page = 272
+  HorzScrollBar.Range = 267
+  VertScrollBar.Page = 183
+  VertScrollBar.Range = 178
   ActiveControl = BtnOk
+  AutoScroll = False
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
