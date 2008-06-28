@@ -25,12 +25,12 @@ object AddFrm: TAddFrm
     Height = 272
     Top = 6
     Width = 399
-    ActivePage = PageFiles
+    ActivePage = PageAdvanced
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 1
+    TabIndex = 2
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged

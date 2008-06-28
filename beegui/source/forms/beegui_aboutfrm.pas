@@ -80,7 +80,6 @@ uses
   begin
     {$I beegui_aboutfrm_loadlanguage.inc}
     {$I beegui_aboutfrm_loadproperty.inc}
-    Logo.Transparent  := True;
     Version.Caption   := 'BeeGui ' + {$I version.inc};
     Copyright.Caption := '(C) 2003-2008 Andrew Filinsky and  Melchiorre Caruso';
   end;
