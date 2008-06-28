@@ -74,7 +74,7 @@ begin
         Start(CmdLine);
         repeat
           if CmdLine.Log then Break;
-          if RemaingTime > 2 then Break;
+          if RemaingTime > 0 then Break;
           Application.ProcessMessages;
         until CanClose;
         if CmdLine.Log or (CanClose = False) then

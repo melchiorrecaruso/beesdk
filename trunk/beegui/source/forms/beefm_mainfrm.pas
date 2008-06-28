@@ -841,8 +841,21 @@ uses
   // ---------------------------------------------------------------------- //
 
   procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
+  var
+    CmdLine: string;
   begin
-
+    if Cursor <> crHourGlass then
+    begin
+      CmdLine := 'beegui a -2' + ConfigFrm.AddOptions;
+      if MMenuOptionsLogReport.Checked then
+        CmdLine := CmdLine + ' -1+'
+      else
+        CmdLine := CmdLine + ' -1-';
+      CmdLine := CmdLine + ' "' + Process.ArchiveName + '"';
+      Process.CommandLine := CmdLine;
+      ProcessTimer.Enabled := True;
+      Process.Execute;
+    end;
   end;
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
