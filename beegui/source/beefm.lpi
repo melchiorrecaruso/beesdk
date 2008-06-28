@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="8"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -50,7 +50,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="268">
+    <Units Count="269">
       <Unit0>
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -230,9 +230,7 @@
         <UnitName Value="BeeFM_ConfigFrm"/>
         <CursorPos X="8" Y="83"/>
         <TopLine Value="77"/>
-        <EditorIndex Value="5"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\..\beegui4laz\source\forms\beegui_configfrm.lrs"/>
@@ -1312,11 +1310,9 @@
       <Unit180>
         <Filename Value="packages\beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="7" Y="112"/>
+        <CursorPos X="10" Y="112"/>
         <TopLine Value="103"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="49"/>
-        <Loaded Value="True"/>
       </Unit180>
       <Unit181>
         <Filename Value="packages\beegui_appviewer.pas"/>
@@ -1335,9 +1331,7 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="31" Y="104"/>
         <TopLine Value="73"/>
-        <EditorIndex Value="7"/>
         <UsageCount Value="42"/>
-        <Loaded Value="True"/>
       </Unit182>
       <Unit183>
         <Filename Value="packages\beegui_sysutils.pas"/>
@@ -1434,9 +1428,7 @@
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
         <CursorPos X="1" Y="651"/>
         <TopLine Value="631"/>
-        <EditorIndex Value="4"/>
         <UsageCount Value="54"/>
-        <Loaded Value="True"/>
       </Unit194>
       <Unit195>
         <Filename Value="..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\osutilsh.inc"/>
@@ -1496,9 +1488,7 @@
         <UnitName Value="BeeGui_ArchiveProcess"/>
         <CursorPos X="1" Y="92"/>
         <TopLine Value="66"/>
-        <EditorIndex Value="3"/>
         <UsageCount Value="32"/>
-        <Loaded Value="True"/>
       </Unit203>
       <Unit204>
         <Filename Value="forms\beegui_viewfrm.pas"/>
@@ -1524,11 +1514,9 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_propertyfrm.lrs"/>
         <UnitName Value="BeeFM_PropertyFrm"/>
-        <CursorPos X="28" Y="26"/>
+        <CursorPos X="43" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="8"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit206>
       <Unit207>
         <Filename Value="..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\classes\classesh.inc"/>
@@ -1929,9 +1917,7 @@
         <Filename Value="..\..\..\..\Programmi\FPC\2.2.2rc1\source\rtl\objpas\sysutils\sysstrh.inc"/>
         <CursorPos X="21" Y="112"/>
         <TopLine Value="92"/>
-        <EditorIndex Value="6"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit266>
       <Unit267>
         <Filename Value="..\..\..\..\Programmi\FPC\2.2.2rc1\source\rtl\objpas\sysutils\sysstr.inc"/>
@@ -1939,8 +1925,16 @@
         <TopLine Value="786"/>
         <UsageCount Value="10"/>
       </Unit267>
+      <Unit268>
+        <Filename Value="version.inc"/>
+        <CursorPos X="19" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit268>
     </Units>
-    <JumpHistory Count="18" HistoryIndex="17">
+    <JumpHistory Count="15" HistoryIndex="14">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="777" Column="5" TopLine="753"/>
@@ -2001,18 +1995,6 @@
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="828" Column="7" TopLine="816"/>
       </Position15>
-      <Position16>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="652" Column="1" TopLine="627"/>
-      </Position16>
-      <Position17>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="648" Column="20" TopLine="631"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\..\..\..\Programmi\FPC\2.2.2rc1\source\rtl\objpas\sysutils\sysstrh.inc"/>
-        <Caret Line="112" Column="17" TopLine="92"/>
-      </Position18>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
