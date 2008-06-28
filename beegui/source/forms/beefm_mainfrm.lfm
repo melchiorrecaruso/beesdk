@@ -2991,6 +2991,7 @@ object MainFrm: TMainFrm
       object MMenuOptionsSaveOnExit: TMenuItem
         Caption = 'Save Setting on Exit'
         Checked = True
+        OnClick = OptionsClick
       end
       object MMenuOptionsSaveNow: TMenuItem
         Caption = 'Save Setting Now'
@@ -3005,6 +3006,7 @@ object MainFrm: TMainFrm
       end
       object MMenuOptionsLogReport: TMenuItem
         Caption = 'Create Log Report'
+        OnClick = OptionsClick
       end
     end
     object MMenuHelp: TMenuItem

@@ -247,6 +247,7 @@ type
     procedure MMenuHelpInternetClick (Sender: TObject);
     procedure MMenuHelpLicenseClick (Sender: TObject);
     procedure MMenuHelpAboutClick (Sender: TObject);
+    procedure MMenuOptionsSaveOnExitClick(Sender: TObject);
     // ---
     procedure PMenuPopup(Sender: TObject);
     procedure PMenuOpenIntViewerClick(Sender: TObject);
@@ -859,40 +860,65 @@ uses
   end;
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
+  var
+    CmdLine: string;
   begin
+    if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
       if MessageDlg('Delete selected files?' , mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
-
+        CmdLine := 'beegui d' + ConfigFrm.DeleteOptions;
+        if MMenuOptionsLogReport.Checked then
+          CmdLine := CmdLine + ' -1+'
+        else
+          CmdLine := CmdLine + ' -1-';
+        CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.FileMasks;
+        Process.CommandLine := CmdLine;
+        ProcessTimer.Enabled := True;
+        Process.Execute;
       end;
     end;
   end;
 
   procedure TMainFrm.MMenuActionsExtractClick(Sender: TObject);
+  var
+    CmdLine: string;
   begin
+    if ListView.SelCount = 0 then Exit;
+    if Cursor <> crHourGlass then
+    begin
+      if MessageDlg('Delete selected files?' , mtInformation, [mbYes, mbNo], 0) = mrYes then
+      begin
+        CmdLine := 'beegui d' + ConfigFrm.DeleteOptions;
+        if MMenuOptionsLogReport.Checked then
+          CmdLine := CmdLine + ' -1+'
+        else
+          CmdLine := CmdLine + ' -1-';
+        CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.FileMasks;
+        Process.CommandLine := CmdLine;
+        ProcessTimer.Enabled := True;
+        Process.Execute;
+      end;
+    end;
   end;
 
   procedure TMainFrm.MMenuActionsExtractAllClick(Sender: TObject);
   begin
-  (*
-  var
-    F: TSeDeseFrm;
-  begin
-    if MainFrm_ArchiveTreeView.Cursor <> crHourGlass then
-    begin
-      F := TSeDeseFrm.Create (Self);
-      F.DeSelectAll (MainFrm_ArchiveTreeView);
-      F.Free;
-    end;
-  *)
   end;
 
   procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
+  var
+    CmdLine: string;
   begin
     if Cursor <> crHourGlass then
     begin
-
+      CmdLine := 'beegui t -1+';
+      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.FileMasks;
+      ShowMessage(CmdLine);
+      Process.CommandLine := CmdLine;
+      ProcessTimer.Enabled := True;
+      Process.Execute;
     end;
   end;
 
@@ -920,23 +946,17 @@ uses
   end;
 
   procedure TMainFrm.MMenuActionsSelectAllClick(Sender: TObject);
-  begin
-  (*
   var
     F: TSeDeseFrm;
   begin
-    if Cursor <> crHourGlass then
-    begin
-      MainFrm_ArchiveTreeView.SetFocus;
-      F := TSeDeseFrm.Create(Self);
-      try
-        F.SelectAll(MainFrm_ArchiveTreeView);
-      finally
-        F.Free;
-      end;
-      MainFrm_ArchiveTreeViewSelectionChanged(Self);
+    ListView.SetFocus;
+    F := TSeDeseFrm.Create(Self);
+    try
+      F.SelectAll(MainFrm_ArchiveTreeView);
+    finally
+      F.Free;
     end;
-    *)
+    MainFrm_ArchiveTreeViewSelectionChanged(Self);
   end;
 
   procedure TMainFrm.MMenuActionsSelectMaskClick(Sender: TObject);
@@ -1077,6 +1097,11 @@ uses
     F := TAboutFrm.Create(Self);
     F.ShowModal;
     F.Free;
+  end;
+
+    procedure TMainFrm.MMenuOptionsSaveOnExitClick(Sender: TObject);
+  begin
+
   end;
 
   procedure TMainFrm.MMenuHelpF1Click(Sender: TObject);

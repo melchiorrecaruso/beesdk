@@ -144,7 +144,7 @@ begin
   inherited Create(aInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0795 archiver utility, freeware version, Jun 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0797 archiver utility, freeware version, Jun 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -1410,6 +1410,7 @@ var
   Version, Method, Dictionary: integer;
   TotalPack, TotalSize: integer;
   CountFiles: integer;
+  Time: double;
 begin
   Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
   Synchronize(Interfaces.OnDisplay.Method);
@@ -1433,6 +1434,8 @@ begin
 
     if (Info.GetNext(0, toList) > -1) then
     begin
+      Time := Now;
+      
       {$IFDEF CONSOLEAPPLICATION}
       Interfaces.OnDisplay.Data.Msg := (Cr + 'Name' + StringOfChar(' ', 18)
         + 'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
@@ -1503,6 +1506,8 @@ begin
         Synchronize(Interfaces.OnDisplay.Method);
       end;
       {$ENDIF}
+       Interfaces.OnDisplay.Data.Msg := (Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
+       Synchronize(Interfaces.OnDisplay.Method);
     end else
     begin
       Interfaces.OnWarning.Data.Msg := ('Warning: no files to list');
