@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="6"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -38,13 +38,13 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="193">
+    <Units Count="195">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="becore"/>
-        <CursorPos X="1" Y="32"/>
-        <TopLine Value="1"/>
+        <CursorPos X="5" Y="34"/>
+        <TopLine Value="33"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -398,8 +398,8 @@
       <Unit48>
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="44" Y="221"/>
-        <TopLine Value="184"/>
+        <CursorPos X="9" Y="112"/>
+        <TopLine Value="87"/>
         <EditorIndex Value="8"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
@@ -638,8 +638,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="19" Y="375"/>
-        <TopLine Value="354"/>
+        <CursorPos X="51" Y="595"/>
+        <TopLine Value="557"/>
         <EditorIndex Value="6"/>
         <UsageCount Value="198"/>
         <Loaded Value="True"/>
@@ -653,7 +653,7 @@
         <ResourceFilename Value="forms\beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="42" Y="82"/>
-        <TopLine Value="67"/>
+        <TopLine Value="53"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="192"/>
         <Loaded Value="True"/>
@@ -1375,8 +1375,35 @@
         <UsageCount Value="10"/>
         <SyntaxHighlighter Value="LFM"/>
       </Unit192>
+      <Unit193>
+        <Filename Value="..\..\..\..\Programmi\FPC\2.2.2rc1\source\rtl\inc\cmem.pp"/>
+        <UnitName Value="cmem"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit193>
+      <Unit194>
+        <Filename Value="..\..\..\..\Programmi\FPC\2.2.2rc1\source\rtl\win\sharemem.pp"/>
+        <UnitName Value="sharemem"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="10"/>
+        <UsageCount Value="10"/>
+      </Unit194>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="3" HistoryIndex="2">
+      <Position1>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="596" Column="34" TopLine="579"/>
+      </Position1>
+      <Position2>
+        <Filename Value="..\..\bee\source\bee_interface.pas"/>
+        <Caret Line="112" Column="14" TopLine="92"/>
+      </Position2>
+      <Position3>
+        <Filename Value="beegui.lpr"/>
+        <Caret Line="35" Column="8" TopLine="1"/>
+      </Position3>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>

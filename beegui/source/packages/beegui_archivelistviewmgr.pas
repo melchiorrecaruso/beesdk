@@ -642,11 +642,12 @@ uses
           Node.FileName := (FContents.Strings[I +  0]);
           Node.FilePath := (FContents.Strings[I +  1]);
 
-          TryStrToInt(FContents.Strings[I +  2], Node.FileSize);
-          TryStrToInt(FContents.Strings[I +  3], Node.FilePacked);
-          TryStrToInt(FContents.Strings[I +  4], Node.FileRatio);
-          TryStrToInt(FContents.Strings[I +  5], Node.FileAttr);
-          TryStrToInt(FContents.Strings[I +  6], Node.FileTime);
+          TryStrToInt(FContents.Strings[I + 2], Node.FileSize);
+          TryStrToInt(FContents.Strings[I + 3], Node.FilePacked);
+          TryStrToInt(FContents.Strings[I + 4], Node.FileRatio);
+          TryStrToInt(FContents.Strings[I + 5], Node.FileAttr);
+          Node.FileAttr := Max(0, Node.FileAttr);
+          TryStrToInt(FContents.Strings[I + 6], Node.FileTime);
 
           Node.FileComm :=           (FContents.Strings[I +  7]);
           Node.FileCrc  := StrToQWord(FContents.Strings[I +  8]);
