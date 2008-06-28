@@ -148,6 +148,8 @@ type
     function OpenArchive(const FileName, FileLink: string): boolean;
     procedure CloseArchive;
     function Up: boolean;
+    // ---
+    function FileMasks: string;
   protected
     property FileName: string read FFileName;
     property FileLink: string read FFileLink;
@@ -615,6 +617,25 @@ uses
       SetFolder(D)
     else
       Result := False;
+  end;
+  
+  function TCustomArcListView.FileMasks;
+  var
+    I: integer;
+    Node: TArcItem;
+  begin
+    Result := '';
+    for I := 0 to FFolderFiles.Count -1 do
+    begin
+      if Items[I].Selected then
+      begin
+        Node := TArcItem(FFolderFiles.Items[I]);
+        if (Node.FileAttr and faDirectory) = faDirectory then
+          Result := Result + ' "' + Node.FilePath + IncludeTrailingBackSlash(Node.FileName) + '*!"'
+        else
+          Result := Result + ' "' + Node.FilePath + Node.FileName + '"';
+      end;
+    end;
   end;
   
   function TCustomArcListView.OpenArchive(const FileName, FileLink: string): boolean;

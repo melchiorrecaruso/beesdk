@@ -80,6 +80,8 @@ type
     procedure SetPageIndex(PageIndex: integer);
   public
     function AddOptions: string;
+    function DeleteOptions: string;
+    function ExtractOptions: string;
   end;
 
 var
@@ -138,6 +140,16 @@ uses
     if tOption.Checked then Result := Result + ' -t+' else Result := Result + ' -t-';
     if kOption.Checked then Result := Result + ' -k+' else Result := Result + ' -k-';
     if lOption.Checked then Result := Result + ' -l+' else Result := Result + ' -l-';
+  end;
+  
+  function TConfigFrm.DeleteOptions: string;
+  begin
+    Result := ' -l+';
+  end;
+  
+  function TConfigFrm.ExtractOptions: string;
+  begin
+    Result := '';
   end;
     
 initialization
