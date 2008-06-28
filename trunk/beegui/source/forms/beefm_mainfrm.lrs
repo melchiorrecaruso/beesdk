@@ -1,7 +1,7 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TMainFrm','FORMDATA',[
-  'TPF0'#8'TMainFrm'#7'MainFrm'#4'Left'#3'e'#1#6'Height'#3'2'#2#3'Top'#3#217#0#5
+  'TPF0'#8'TMainFrm'#7'MainFrm'#4'Left'#3'@'#1#6'Height'#3'2'#2#3'Top'#3#209#0#5
   +'Width'#3#28#3#7'Caption'#6#26'Bee File Manager - Welcome'#12'ClientHeight'#3
   +#31#2#11'ClientWidth'#3#28#3#21'Constraints.MinHeight'#3#180#0#20'Constraint'
   +'s.MinWidth'#3#220#0#12'Font.CharSet'#7#12'ANSI_CHARSET'#4'Menu'#7#5'MMenu'#7
@@ -2995,7 +2995,7 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +#10'TIdleTimer'#12'ProcessTimer'#7'Enabled'#8#8'Interval'#2'd'#7'OnTimer'#7
   +#17'ProcessTimerTimer'#4'left'#2'0'#3'top'#3'8'#1#0#0#15'TArchiveProcess'#7
   +'Process'#8'Priority'#7#8'ppNormal'#4'left'#2#16#3'top'#3'8'#1#0#0#0#8'TMain'
-  +'Frm'#7'MainFrm'#4'Left'#3'e'#1#6'Height'#3'2'#2#3'Top'#3#217#0#5'Width'#3#28
+  +'Frm'#7'MainFrm'#4'Left'#3'@'#1#6'Height'#3'2'#2#3'Top'#3#209#0#5'Width'#3#28
   +#3#7'Caption'#6#26'Bee File Manager - Welcome'#12'ClientHeight'#3#31#2#11'Cl'
   +'ientWidth'#3#28#3#21'Constraints.MinHeight'#3#180#0#20'Constraints.MinWidth'
   +#3#220#0#12'Font.CharSet'#7#12'ANSI_CHARSET'#4'Menu'#7#5'MMenu'#7'OnClose'#7
