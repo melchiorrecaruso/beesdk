@@ -86,7 +86,9 @@ uses
   
   procedure TArchiveProcess.Execute;
   begin
-    FArchiveLink := IncludeTrailingBackSlash(GetApplicationTempDir('BeeGui')) +
+    FArchiveLink :=
+    // IncludeTrailingBackSlash(GetApplicationTempDir('BeeGui')) +
+    'C:\Documents and Settings\quacquero\Desktop\' +
       ExtractFileName(ChangeFileExt(FArchiveName, '.ini'));
 
     CommandLine := CommandLine + ' -0"' + FArchiveLink +'"';
