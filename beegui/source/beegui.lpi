@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="6"/>
+      <ActiveEditorIndexAtStart Value="7"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -386,7 +386,7 @@
         <UnitName Value="Bee_App"/>
         <CursorPos X="23" Y="58"/>
         <TopLine Value="1469"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
       </Unit46>
@@ -656,7 +656,7 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="42" Y="82"/>
         <TopLine Value="53"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <UsageCount Value="193"/>
         <Loaded Value="True"/>
       </Unit80>
@@ -672,8 +672,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_CmdLine"/>
         <CursorPos X="55" Y="80"/>
-        <TopLine Value="370"/>
+        <TopLine Value="111"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="193"/>
+        <Loaded Value="True"/>
       </Unit82>
       <Unit83>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>

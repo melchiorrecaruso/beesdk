@@ -941,7 +941,11 @@ uses
     if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
-      CmdLine := 'beegui r -1+';
+      CmdLine := 'beegui r';
+      if MMenuOptionsLogReport.Checked then
+        CmdLine := CmdLine + ' -1+'
+      else
+        CmdLine := CmdLine + ' -1-';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
       Process.CommandLine := CmdLine;
       ProcessTimer.Enabled := True;
