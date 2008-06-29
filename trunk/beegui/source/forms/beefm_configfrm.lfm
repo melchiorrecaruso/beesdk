@@ -269,7 +269,21 @@ object ConfigFrm: TConfigFrm
       ClientWidth = 448
       ParentShowHint = False
       TabOrder = 1
-      object xCommand: TCheckBox
+      object cdOption: TCheckBox
+        Left = 6
+        Height = 19
+        Top = 31
+        Width = 436
+        Align = alTop
+        Anchors = [akRight]
+        BorderSpacing.Around = 6
+        Caption = 'Extract and Recreate the relative pathname '
+        Checked = True
+        ParentShowHint = False
+        State = cbChecked
+        TabOrder = 0
+      end
+      object xCommand1: TCheckBox
         Left = 6
         Height = 19
         Top = 6
@@ -281,7 +295,7 @@ object ConfigFrm: TConfigFrm
         Checked = True
         ParentShowHint = False
         State = cbChecked
-        TabOrder = 0
+        TabOrder = 1
       end
     end
   end

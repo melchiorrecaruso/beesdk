@@ -848,7 +848,7 @@ uses
   begin
     if Cursor <> crHourGlass then
     begin
-      CmdLine := 'beegui a -2' + ConfigFrm.AddOptions;
+      CmdLine := 'beegui a -2+' + ConfigFrm.AddOptions;
       if MMenuOptionsLogReport.Checked then
         CmdLine := CmdLine + ' -1+'
       else
@@ -889,14 +889,14 @@ uses
     if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
-      CmdLine := 'beegui' + ConfigFrm.ExtractOptions;
+      CmdLine := 'beegui -2+' + ConfigFrm.ExtractOptions(ListView.Folder);
       if MMenuOptionsLogReport.Checked then
         CmdLine := CmdLine + ' -1+'
       else
         CmdLine := CmdLine + ' -1-';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
       Process.CommandLine := CmdLine;
-      ProcessTimer.Enabled := True;
+      ProcessTimer.Enabled := False;
       Process.Execute;
     end;
   end;
@@ -905,17 +905,16 @@ uses
   var
     CmdLine: string;
   begin
-    if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
-      CmdLine := 'beegui' + ConfigFrm.ExtractOptions;
+      CmdLine := 'beegui -2+' + ConfigFrm.ExtractOptions(ListView.Folder);
       if MMenuOptionsLogReport.Checked then
         CmdLine := CmdLine + ' -1+'
       else
         CmdLine := CmdLine + ' -1-';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + '*!';
       Process.CommandLine := CmdLine;
-      ProcessTimer.Enabled := True;
+      ProcessTimer.Enabled := False;
       Process.Execute;
     end;
   end;
@@ -924,12 +923,13 @@ uses
   var
     CmdLine: string;
   begin
+    if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
       CmdLine := 'beegui t -1+';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
       Process.CommandLine := CmdLine;
-      ProcessTimer.Enabled := True;
+      ProcessTimer.Enabled := False;
       Process.Execute;
     end;
   end;
@@ -962,10 +962,16 @@ uses
   end;
 
   procedure TMainFrm.MMenuActionsTestAllClick(Sender: TObject);
+  var
+    CmdLine: string;
   begin
     if Cursor <> crHourGlass then
     begin
-
+      CmdLine := 'beegui t -1+';
+      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + '*!';
+      Process.CommandLine := CmdLine;
+      ProcessTimer.Enabled := False;
+      Process.Execute;
     end;
   end;
 
@@ -1013,8 +1019,6 @@ uses
     F.Free;
   end;
 
-
-  
   // ---------------------------------------------------------------------- //
   //                                                                        //
   //  Main Menu Options                                                     //

@@ -72,7 +72,8 @@ type
     rOption: TCheckBox;
     sOption: TCheckBox;
     tOption: TCheckBox;
-    xCommand: TCheckBox;
+    cdOption: TCheckBox;
+    xCommand1: TCheckBox;
     // ---
     procedure FormCreate(Sender: TObject);
     procedure ConfigFrm_TreeChange(Sender: TObject; Node: TTreeNode);
@@ -81,7 +82,7 @@ type
   public
     function AddOptions: string;
     function DeleteOptions: string;
-    function ExtractOptions: string;
+    function ExtractOptions(const Folder: string): string;
   end;
 
 var
@@ -147,12 +148,23 @@ uses
     Result := ' -l+';
   end;
   
-  function TConfigFrm.ExtractOptions: string;
+  function TConfigFrm.ExtractOptions(const Folder: string): string;
   begin
-    if xCommand.Checked then
+    if cdOption.Checked then
       Result := ' x'
     else
       Result := ' e';
+      
+    case oOption.ItemIndex of
+      0:   Result := Result + ' -oS'; // Skip all
+      1:   Result := Result + ' -oA'; // OverWrite all
+      else Result := Result + ' -oY'; //
+    end;
+    
+    if cdOption.Checked then
+    begin
+      Result := Result + ' -cd' + Folder;
+    end;
   end;
     
 initialization

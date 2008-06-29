@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="7"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -588,8 +588,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_extractfrm.lrs"/>
         <UnitName Value="BeeGui_ExtractFrm"/>
-        <CursorPos X="44" Y="93"/>
-        <TopLine Value="77"/>
+        <CursorPos X="8" Y="94"/>
+        <TopLine Value="87"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="193"/>
         <Loaded Value="True"/>
