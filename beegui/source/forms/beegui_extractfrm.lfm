@@ -3,8 +3,6 @@ object ExtractFrm: TExtractFrm
   Height = 472
   Top = 198
   Width = 595
-  HorzScrollBar.Page = 594
-  VertScrollBar.Page = 471
   ActiveControl = BtnOk
   Caption = 'Extraction Path and Options'
   ClientHeight = 472
@@ -113,6 +111,8 @@ object ExtractFrm: TExtractFrm
       BorderSpacing.Left = 20
       BorderSpacing.Top = 6
       BorderSpacing.Bottom = 6
+      Color = clInactiveCaptionText
+      Enabled = False
       TabOrder = 2
     end
   end
