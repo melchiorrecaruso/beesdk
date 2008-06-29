@@ -2939,6 +2939,7 @@ object MainFrm: TMainFrm
       object MMenuActionsView: TMenuItem
         Caption = 'View File...'
         ShortCut = 8278
+        OnClick = MMenuActionsViewClick
       end
       object MMenuActionsN1: TMenuItem
         Caption = '-'

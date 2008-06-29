@@ -215,6 +215,7 @@ type
     // ---
     procedure FormShow(Sender: TObject);
     procedure ListViewDblClick(Sender: TObject);
+    procedure MMenuActionsViewClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
     procedure MMenuFileCloseClick(Sender: TObject);
@@ -454,6 +455,8 @@ uses
       end;
     end;
   end;
+
+
 
 
 
@@ -951,6 +954,22 @@ uses
       ProcessTimer.Enabled := True;
       Process.Execute;
     end;
+  end;
+  
+  procedure TMainFrm.MMenuActionsViewClick(Sender: TObject);
+  var
+    CmdLine: string;
+  begin
+    if ListView.SelCount <> 1 then Exit;
+    if Cursor <> crHourGlass then
+    begin
+      CmdLine := 'beegui e';
+      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
+      Process.CommandLine := CmdLine;
+      ProcessTimer.Enabled := True;
+      Process.Execute;
+    end;
+  
   end;
 
   procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);
