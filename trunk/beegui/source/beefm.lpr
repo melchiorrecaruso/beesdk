@@ -40,7 +40,7 @@ uses
   BeeFM_MainFrm,
   BeeFM_ViewFrm,
   BeeFM_ConfigFrm,
-  BeeGui_AboutFrm, BeeFM_PropertyFrm;
+  BeeGui_AboutFrm, BeeFM_PropertyFrm, BeeFm_SelectFrm;
 
 begin
   Application.Initialize;

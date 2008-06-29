@@ -212,7 +212,7 @@ object ConfigFrm: TConfigFrm
   object ConfigFrm_ExtractGB: TGroupBox
     Left = 56
     Height = 394
-    Top = 296
+    Top = 200
     Width = 472
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'Extract Options'

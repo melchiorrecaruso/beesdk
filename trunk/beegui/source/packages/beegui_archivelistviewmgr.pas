@@ -149,7 +149,10 @@ type
     procedure CloseArchive;
     function Up: boolean;
     // ---
-    function FileMasks: string;
+    procedure ClearMasks;
+    procedure InvertMasks;
+    function GetMasks: string;
+    procedure SetMask(const Mask: string; Value: boolean);
   protected
     property FileName: string read FFileName;
     property FileLink: string read FFileLink;
@@ -346,6 +349,7 @@ uses
     FSimpleList := False;
     // ---
     Color := clInactiveBorder;
+    MultiSelect := True;
     Enabled := False;
   end;
   
@@ -619,7 +623,7 @@ uses
       Result := False;
   end;
   
-  function TCustomArcListView.FileMasks;
+  function TCustomArcListView.GetMasks: string;
   var
     I: integer;
     Node: TArcItem;
@@ -634,6 +638,42 @@ uses
           Result := Result + ' "' + Node.FilePath + IncludeTrailingBackSlash(Node.FileName) + '*!"'
         else
           Result := Result + ' "' + Node.FilePath + Node.FileName + '"';
+      end;
+    end;
+  end;
+  
+  procedure TCustomArcListView.ClearMasks;
+  var
+    I: integer;
+  begin
+    for I := 0 to FolderFiles.Count -1 do
+    begin
+      TListItem(Items[I]).Selected := False;
+    end;
+  end;
+  
+  procedure TCustomArcListView.InvertMasks;
+  var
+    I: integer;
+  begin
+    for I := 0 to FolderFiles.Count -1 do
+    begin
+      with TListItem(Items[I]) do
+        Selected := not Selected;
+    end;
+  end;
+  
+  procedure TCustomArcListView.SetMask(const Mask: string; Value: boolean);
+  var
+    I: integer;
+    Node: TArcItem;
+  begin
+    for I := 0 to FolderFiles.Count -1 do
+    begin
+      Node := TArcItem(FolderFiles[I]);
+      if FileNameMatch(Node.FileName, Mask) then
+      begin
+        TListItem(Items[I]).Selected := Value;
       end;
     end;
   end;

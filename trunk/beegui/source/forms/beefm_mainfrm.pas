@@ -298,6 +298,7 @@ uses
   BeeGui_RenameFrm,
 
   BeeFm_ConfigFrm,
+  BeeFm_SelectFrm,
   BeeFm_PropertyFrm;
   
   { TMainFrm }
@@ -873,7 +874,7 @@ uses
           CmdLine := CmdLine + ' -1+'
         else
           CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.FileMasks;
+        CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
         Process.CommandLine := CmdLine;
         ProcessTimer.Enabled := True;
         Process.Execute;
@@ -888,23 +889,35 @@ uses
     if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
-      if MessageDlg('Delete selected files?' , mtInformation, [mbYes, mbNo], 0) = mrYes then
-      begin
-        CmdLine := 'beegui d' + ConfigFrm.DeleteOptions;
-        if MMenuOptionsLogReport.Checked then
-          CmdLine := CmdLine + ' -1+'
-        else
-          CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.FileMasks;
-        Process.CommandLine := CmdLine;
-        ProcessTimer.Enabled := True;
-        Process.Execute;
-      end;
+      CmdLine := 'beegui' + ConfigFrm.ExtractOptions;
+      if MMenuOptionsLogReport.Checked then
+        CmdLine := CmdLine + ' -1+'
+      else
+        CmdLine := CmdLine + ' -1-';
+      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
+      Process.CommandLine := CmdLine;
+      ProcessTimer.Enabled := True;
+      Process.Execute;
     end;
   end;
 
   procedure TMainFrm.MMenuActionsExtractAllClick(Sender: TObject);
+  var
+    CmdLine: string;
   begin
+    if ListView.SelCount = 0 then Exit;
+    if Cursor <> crHourGlass then
+    begin
+      CmdLine := 'beegui' + ConfigFrm.ExtractOptions;
+      if MMenuOptionsLogReport.Checked then
+        CmdLine := CmdLine + ' -1+'
+      else
+        CmdLine := CmdLine + ' -1-';
+      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + '*!';
+      Process.CommandLine := CmdLine;
+      ProcessTimer.Enabled := True;
+      Process.Execute;
+    end;
   end;
 
   procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
@@ -914,8 +927,7 @@ uses
     if Cursor <> crHourGlass then
     begin
       CmdLine := 'beegui t -1+';
-      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.FileMasks;
-      ShowMessage(CmdLine);
+      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
       Process.CommandLine := CmdLine;
       ProcessTimer.Enabled := True;
       Process.Execute;
@@ -923,9 +935,17 @@ uses
   end;
 
   procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);
+  var
+    CmdLine: string;
   begin
+    if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
+      CmdLine := 'beegui r -1+';
+      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
+      Process.CommandLine := CmdLine;
+      ProcessTimer.Enabled := True;
+      Process.Execute;
     end;
   end;
 
@@ -946,106 +966,50 @@ uses
   end;
 
   procedure TMainFrm.MMenuActionsSelectAllClick(Sender: TObject);
-  var
-    F: TSeDeseFrm;
   begin
+    ListView.SetMask('*', True);
     ListView.SetFocus;
-    F := TSeDeseFrm.Create(Self);
-    try
-      F.SelectAll(MainFrm_ArchiveTreeView);
-    finally
-      F.Free;
-    end;
-    MainFrm_ArchiveTreeViewSelectionChanged(Self);
+  end;
+  
+  procedure TMainFrm.MMenuActionsDeselectAllClick(Sender: TObject);
+  begin
+    ListView.SetMask('*', False);
+    ListView.SetFocus;
+  end;
+  
+  procedure TMainFrm.MMenuActionsInvertClick(Sender: TObject);
+  begin
+    ListView.InvertMasks;
+    ListView.SetFocus;
   end;
 
   procedure TMainFrm.MMenuActionsSelectMaskClick(Sender: TObject);
-  begin
-  (*
   var
-    F: TSeDeseFrm;
+    F: TSelectFrm;
   begin
-    if MainFrm_ArchiveTreeView.Cursor <> crHourGlass then
+    F := TSelectFrm.Create(Self);
+    if F.ShowModal = mrOk then
     begin
-      MainFrm_ArchiveTreeView.SetFocus;
-      f := TSeDeseFrm.Create(Self);
-      try
-        f.Caption := 'Select mask';
-        if f.ShowModal = mrOk then
-        begin
-          f.SelectItems(MainFrm_ArchiveTreeView);
-        end;
-      finally
-        f.Free;
-      end;
-      MainFrm_ArchiveTreeViewSelectionChanged(Self);
+      ListView.SetMask(F.SelectFrm_Mask.Text, True);
+      ListView.SetFocus;
     end;
-    *)
-  end;
-
-  procedure TMainFrm.MMenuActionsDeselectAllClick(Sender: TObject);
-  begin
-  (*
-  var
-    f: TSeDeseFrm;
-  begin
-    if MainFrm_ArchiveTreeView.Cursor <> crHourGlass then
-    begin
-      MainFrm_ArchiveTreeView.SetFocus;
-      f := TSeDeseFrm.Create(Self);
-      try
-        f.DeSelectAll(MainFrm_ArchiveTreeView);
-      finally
-        f.Free;
-      end;
-      MainFrm_ArchiveTreeViewSelectionChanged(Self);
-    end;
-    *)
+    F.Free;
   end;
 
   procedure TMainFrm.MainMenu_Actions_DeselectMasksClick (Sender: TObject);
-  begin
-  (*
   var
-    F: TSeDeseFrm;
+    F: TSelectFrm;
   begin
-    if MainFrm_ArchiveTreeView.Cursor <> crHourGlass then
+    F := TSelectFrm.Create(Self);
+    if F.ShowModal = mrOk then
     begin
-      MainFrm_ArchiveTreeView.SetFocus;
-      f := TSeDeseFrm.Create(Self);
-      try
-        f.Caption := 'Deselect mask';
-        if f.ShowModal = mrOk then
-        begin
-          f.DeselectItems(MainFrm_ArchiveTreeView);
-        end;
-      finally
-        f.Free;
-      end;
-      MainFrm_ArchiveTreeViewSelectionChanged(Self);
+      ListView.SetMask(F.SelectFrm_Mask.Text, False);
+      ListView.SetFocus;
     end;
-    *)
+    F.Free;
   end;
 
-  procedure TMainFrm.MMenuActionsInvertClick(Sender: TObject);
-  begin
-  (*
-  var
-    f: TSeDeseFrm;
-  begin
-    if MainFrm_ArchiveTreeView.Cursor <> crHourGlass then
-    begin
-      MainFrm_ArchiveTreeView.SetFocus;
-      f := TSeDeseFrm.Create(Self);
-      try
-        f.InvertSelection(MainFrm_ArchiveTreeView);
-      finally
-        f.Free;
-      end;
-      MainFrm_ArchiveTreeViewSelectionChanged(Self);
-    end;
-    *)
-  end;
+
   
   // ---------------------------------------------------------------------- //
   //                                                                        //

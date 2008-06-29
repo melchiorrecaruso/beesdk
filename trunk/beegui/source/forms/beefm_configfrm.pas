@@ -149,7 +149,10 @@ uses
   
   function TConfigFrm.ExtractOptions: string;
   begin
-    Result := '';
+    if xCommand.Checked then
+      Result := ' x'
+    else
+      Result := ' e';
   end;
     
 initialization
