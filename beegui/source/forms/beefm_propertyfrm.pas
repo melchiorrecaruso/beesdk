@@ -267,7 +267,7 @@ uses
     begin
       InfoFrm_Storage.FileName := CfgFolder + ('infofrm.xml');
     end;
-    {$I beefm_infofrm.inc}
+    // {$I beefm_infofrm.inc}
     InfoFrm_Storage.Restore;
   end;
 

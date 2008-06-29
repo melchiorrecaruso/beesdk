@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="6"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -97,7 +97,9 @@
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="18" Y="112"/>
         <TopLine Value="83"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="193"/>
+        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="forms\beecore_passwordfrm.inc"/>
@@ -384,7 +386,7 @@
         <UnitName Value="Bee_App"/>
         <CursorPos X="23" Y="58"/>
         <TopLine Value="1469"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="8"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
       </Unit46>
@@ -588,7 +590,9 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="44" Y="93"/>
         <TopLine Value="77"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="193"/>
+        <Loaded Value="True"/>
       </Unit75>
       <Unit76>
         <Filename Value="forms\beegui_infofrm.pas"/>
@@ -610,7 +614,9 @@
         <UnitName Value="BeeGui_OverWriteFrm"/>
         <CursorPos X="18" Y="82"/>
         <TopLine Value="33"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="193"/>
+        <Loaded Value="True"/>
       </Unit77>
       <Unit78>
         <Filename Value="forms\beegui_renamefrm.pas"/>
@@ -622,7 +628,9 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="30" Y="59"/>
         <TopLine Value="38"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="193"/>
+        <Loaded Value="True"/>
       </Unit78>
       <Unit79>
         <Filename Value="forms\beegui_tickfrm.pas"/>
@@ -634,7 +642,7 @@
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="88" Y="323"/>
         <TopLine Value="576"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="199"/>
         <Loaded Value="True"/>
       </Unit79>
@@ -648,7 +656,9 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="42" Y="82"/>
         <TopLine Value="53"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="193"/>
+        <Loaded Value="True"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages\beegui_gui.pas"/>

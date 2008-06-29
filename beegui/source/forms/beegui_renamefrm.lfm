@@ -1,12 +1,8 @@
 object RenameFrm: TRenameFrm
-  Left = 457
+  Left = 416
   Height = 90
-  Top = 373
+  Top = 543
   Width = 287
-  HorzScrollBar.Page = 286
-  HorzScrollBar.Range = 35
-  VertScrollBar.Page = 89
-  VertScrollBar.Range = 53
   ActiveControl = BtnOk
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
