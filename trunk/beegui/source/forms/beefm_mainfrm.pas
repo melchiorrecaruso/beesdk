@@ -625,7 +625,8 @@ uses
         else
           CmdLine := CmdLine + ' -1-';
         CmdLine := CmdLine + ConfigFrm.AddOptions + ' "' + Process.ArchiveName + '"';
-        Process.CommandLine :=  CmdLine;
+        Process.CommandLine := CmdLine;
+        Process.CurrentDirectory := '';
         Process.Execute;
         ProcessTimer.Enabled := True;
       end;
@@ -655,6 +656,7 @@ uses
           CmdLine := CmdLine + ' -1-';
         CmdLine := CmdLine + ' "' + Process.ArchiveName + '"' + ' *!';
         Process.CommandLine := CmdLine;
+        Process.CurrentDirectory := '';
         ProcessTimer.Enabled := True;
         Process.Execute;
       end;
@@ -858,6 +860,7 @@ uses
         CmdLine := CmdLine + ' -1-';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '"';
       Process.CommandLine := CmdLine;
+      Process.CurrentDirectory := '';
       ProcessTimer.Enabled := True;
       Process.Execute;
     end;
@@ -879,6 +882,7 @@ uses
           CmdLine := CmdLine + ' -1-';
         CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
         Process.CommandLine := CmdLine;
+        Process.CurrentDirectory := '';
         ProcessTimer.Enabled := True;
         Process.Execute;
       end;
@@ -899,6 +903,7 @@ uses
         CmdLine := CmdLine + ' -1-';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
       Process.CommandLine := CmdLine;
+      Process.CurrentDirectory := '';
       ProcessTimer.Enabled := False;
       Process.Execute;
     end;
@@ -917,6 +922,7 @@ uses
         CmdLine := CmdLine + ' -1-';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + '*!';
       Process.CommandLine := CmdLine;
+      Process.CurrentDirectory := '';
       ProcessTimer.Enabled := False;
       Process.Execute;
     end;
@@ -932,6 +938,7 @@ uses
       CmdLine := 'beegui t -1+';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
       Process.CommandLine := CmdLine;
+      Process.CurrentDirectory := '';
       ProcessTimer.Enabled := False;
       Process.Execute;
     end;
@@ -951,6 +958,7 @@ uses
         CmdLine := CmdLine + ' -1-';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
       Process.CommandLine := CmdLine;
+      Process.CurrentDirectory := '';
       ProcessTimer.Enabled := True;
       Process.Execute;
     end;
@@ -963,13 +971,13 @@ uses
     if ListView.SelCount <> 1 then Exit;
     if Cursor <> crHourGlass then
     begin
-      CmdLine := 'beegui e';
+      CmdLine := 'beegui e -oA';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
+      Process.CurrentDirectory := 'C:\Documents and Settings\quacquero\Desktop'; // GetApplicationTempDir(Application.Name);
       Process.CommandLine := CmdLine;
-      ProcessTimer.Enabled := True;
+      ProcessTimer.Enabled := False;
       Process.Execute;
     end;
-  
   end;
 
   procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);
@@ -989,6 +997,7 @@ uses
       CmdLine := 'beegui t -1+';
       CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + '*!';
       Process.CommandLine := CmdLine;
+      Process.CurrentDirectory := '';
       ProcessTimer.Enabled := False;
       Process.Execute;
     end;
