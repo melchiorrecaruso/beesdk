@@ -54,7 +54,6 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
-    Process: TArchiveProcess;
     UpToolBar: TToolBar;
     DownToolBar: TToolBar;
     FolderBox: TArchiveFolderBox;

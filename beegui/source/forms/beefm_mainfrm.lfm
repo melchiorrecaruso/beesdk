@@ -3136,9 +3136,4 @@ object MainFrm: TMainFrm
     left = 48
     top = 312
   end
-  object Process: TArchiveProcess
-    Priority = ppNormal
-    left = 16
-    top = 312
-  end
 end
