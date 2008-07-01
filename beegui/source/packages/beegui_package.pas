@@ -1,4 +1,4 @@
-{ Questo file è stato creato automaticamente da Lazarus. Da non modificare!
+{ Questo file Ã¨ stato creato automaticamente da Lazarus. Da non modificare!
 Questo sorgente viene usato solo per compilare ed installare il pacchetto.
  }
 
@@ -8,8 +8,7 @@ interface
 
 uses
   BeeGui_AddTreeViewMgr, BeeGui_ArchiveFolderBox, BeeGui_ArchiveListViewMgr, 
-    BeeGui_FolderTreeViewMgr, BeeGui_IconList, BeeGui_ArchiveProcess, 
-    LazarusPackageIntf; 
+    BeeGui_FolderTreeViewMgr, BeeGui_IconList, LazarusPackageIntf; 
 
 implementation
 
@@ -21,7 +20,6 @@ begin
     ); 
   RegisterUnit('BeeGui_FolderTreeViewMgr', @BeeGui_FolderTreeViewMgr.Register); 
   RegisterUnit('BeeGui_IconList', @BeeGui_IconList.Register); 
-  RegisterUnit('BeeGui_ArchiveProcess', @BeeGui_ArchiveProcess.Register); 
 end; 
 
 initialization
