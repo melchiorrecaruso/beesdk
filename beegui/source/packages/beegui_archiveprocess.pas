@@ -43,8 +43,8 @@ type
   TArchiveProcess = class(TProcess)
   private
     FArchiveContents: TStringList;
-    FArchiveLink: string;
     FArchiveName: string;
+    FArchiveLink: string;
   private
   public
     property ArchiveName: string read FArchiveName write FArchiveName;
@@ -54,6 +54,8 @@ type
     destructor Destroy; override;
     procedure Execute; override;
   published
+  
+  
   end;
   
   { Register }
@@ -72,15 +74,15 @@ uses
   begin
     inherited Create(AOwner);
     FArchiveContents := TStringList.Create;
-    FArchiveLink := '';
     FArchiveName := '';
+    FArchiveLink := '';
   end;
   
   destructor TArchiveProcess.Destroy;
   begin
-    FArchiveContents.Free;
     FArchiveLink := '';
     FArchiveName := '';
+    FArchiveContents.Free;
     inherited Destroy;
   end;
   

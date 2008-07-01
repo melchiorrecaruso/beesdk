@@ -54,6 +54,7 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
+    Process: TArchiveProcess;
     UpToolBar: TToolBar;
     DownToolBar: TToolBar;
     FolderBox: TArchiveFolderBox;
@@ -61,7 +62,6 @@ type
     StatusBar: TStatusBar;
     LargeImages: TIconList;
     SmallImages: TIconList;
-    Process: TArchiveProcess;
     ProcessTimer: TIdleTimer;
     // ---
     OpenDialog: TOpenDialog;
@@ -285,6 +285,7 @@ type
   
 var
   MainFrm: TMainFrm;
+
   
 implementation
 
