@@ -3133,6 +3133,16 @@ object MainFrm: TMainFrm
     Enabled = False
     Interval = 100
     OnTimer = ProcessTimerTimer
+    left = 80
+    top = 312
+  end
+  object ArcProcess: TArcProcess
+    Priority = ppNormal
+    left = 16
+    top = 312
+  end
+  object FileProcess: TFileProcess
+    Priority = ppNormal
     left = 48
     top = 312
   end
