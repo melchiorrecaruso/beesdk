@@ -44,7 +44,8 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title:='BeeFM';
+  Application.Name := 'BeeFM';
+  Application.Title := 'BeeFM';
   Application.HelpFile := '';
   Application.CreateForm(TMainFrm, MainFrm);
   Application.CreateForm(TConfigFrm, ConfigFrm);

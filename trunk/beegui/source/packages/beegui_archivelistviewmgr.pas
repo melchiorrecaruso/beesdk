@@ -145,7 +145,7 @@ type
     destructor Destroy; override;
     procedure Initialize;
     // ---
-    function OpenArchive(const FileName, FileLink: string): boolean;
+    function Open(const FileName, FileLink: string): boolean;
     procedure CloseArchive;
     function Up: boolean;
     // ---
@@ -678,7 +678,7 @@ uses
     end;
   end;
   
-  function TCustomArcListView.OpenArchive(const FileName, FileLink: string): boolean;
+  function TCustomArcListView.Open(const FileName, FileLink: string): boolean;
   var
     FContents: TStringList;
     I, J, K: integer;

@@ -48,7 +48,8 @@ uses
   BeeGui_IconList,
   BeeGui_ArchiveProcess,
   BeeGui_ArchiveFolderBox,
-  BeeGui_ArchiveListViewMgr, BeeGui_Process;
+  BeeGui_ArchiveListViewMgr,
+  BeeGui_Process;
 
 type
   { TMainFrm }
@@ -63,7 +64,7 @@ type
     StatusBar: TStatusBar;
     LargeImages: TIconList;
     SmallImages: TIconList;
-    ProcessTimer: TIdleTimer;
+    Idle: TIdleTimer;
     // ---
     OpenDialog: TOpenDialog;
     SaveDialog: TSaveDialog;
@@ -261,8 +262,9 @@ type
     // ---
 
 
+    procedure OnArcTimer(Sender: TObject);
+    procedure OnFileTimer(Sender: TObject);
 
-    procedure ProcessTimerTimer(Sender: TObject);
     procedure FolderBoxSelect(Sender: TObject);
 
 
@@ -286,7 +288,6 @@ type
   
 var
   MainFrm: TMainFrm;
-
   
 implementation
 
@@ -508,21 +509,31 @@ uses
   
   
 
-  procedure TMainFrm.ProcessTimerTimer(Sender: TObject);
+  procedure TMainFrm.OnArcTimer(Sender: TObject);
+  begin
+    with ArcProcess do
+      if Running = False then
+      begin
+        Idle.Enabled := False;
+        Idle.OnTimer := nil;
+        if ListView.Open(ArcName, ArcLink) then
+          UpdateButtons(True)
+        else
+          UpdateButtons(False);
+      end;
+  end;
+  
+  procedure TMainFrm.OnFileTimer(Sender: TObject);
   var
     F: TViewFrm;
   begin
     with ArcProcess do
-    begin
       if Running = False then
       begin
-        ProcessTimer.Enabled := False;
-        if ListView.OpenArchive(ArcName, ArcLink) then
-        begin
-          UpdateButtons(True);
-        end;
+        Idle.Enabled := False;
+        Idle.OnTimer := nil;
+        FileProcess.Execute;
       end;
-    end;
   end;
 
 
@@ -630,7 +641,8 @@ uses
         ArcProcess.CommandLine := CmdLine;
         ArcProcess.CurrentDirectory := '';
         ArcProcess.Execute;
-        ProcessTimer.Enabled := True;
+        Idle.OnTimer := OnArcTimer;
+        Idle.Enabled := True;
       end;
     end else
       MessageDlg('An process active', mtInformation, [mbOk], 0);
@@ -646,21 +658,22 @@ uses
       if OpenDialog.Execute then
       begin
         MMenuFileClose.Click;
-        with Process do
+        with ArcProcess do
         begin
-          ArchiveName := OpenDialog.FileName;
-          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArchiveName);
+          ArcName := OpenDialog.FileName;
+          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArcName);
         end;
         CmdLine := 'beegui l';
         if MMenuOptionsLogReport.Checked then
           CmdLine := CmdLine + ' -1+'
         else
           CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ' "' + Process.ArchiveName + '"' + ' *!';
-        Process.CommandLine := CmdLine;
-        Process.CurrentDirectory := '';
-        ProcessTimer.Enabled := True;
-        Process.Execute;
+        CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '"' + ' *!';
+        ArcProcess.CommandLine := CmdLine;
+        ArcProcess.CurrentDirectory := '';
+        ArcProcess.Execute;
+        Idle.OnTimer := OnArcTimer;
+        Idle.Enabled := True;
       end;
     end else
       MessageDlg('An process active', mtInformation, [mbOk], 0);
@@ -679,7 +692,7 @@ uses
     F: TInfoFrm;
   begin
     F := TInfoFrm.Create(Self);
-    if F.UpdateAInfo(Process.ArchiveName, ListView.Details) then
+    if F.UpdateAInfo(ArcProcess.ArcName, ListView.Details) then
     begin
       F.ShowModal;
     end else
@@ -694,9 +707,9 @@ uses
     NewName := '';
     if SelectDirectory('Move archive to:', '', NewName) then
     begin
-      NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(Process.ArchiveName);
-      if RenameFile(Process.ArchiveName, NewName) then
-        Process.ArchiveName := NewName
+      NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArcName);
+      if RenameFile(ArcProcess.ArcName, NewName) then
+        ArcProcess.ArcName := NewName
       else
         MessageDlg('Error moving archive', mtError, [mbOk], 0);
     end;
@@ -709,9 +722,9 @@ uses
     NewName := '';
     if SelectDirectory('Copy archive to:', '', NewName) then
     begin
-      NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(Process.ArchiveName);
-      if CopyFile(Process.ArchiveName, NewName) then
-        Process.ArchiveName := NewName
+      NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArcName);
+      if CopyFile(ArcProcess.ArcName, NewName) then
+        ArcProcess.ArcName := NewName
       else
         MessageDlg('Error copying archive', mtError, [mbOk], 0);
     end;
@@ -724,17 +737,17 @@ uses
   begin
     F := TRenameFrm.Create(Self);
     F.Caption := rsRenameArchive;
-    F.ToFN.Text := ExtractFileName(Process.ArchiveName);
-    F.FromFN.Caption := ExtractFileName(Process.ArchiveName);
+    F.ToFN.Text := ExtractFileName(ArcProcess.ArcName);
+    F.FromFN.Caption := ExtractFileName(ArcProcess.ArcName);
     if F.ShowModal = mrOk then
     begin
       if AnsiCompareFileName(F.ToFN.Text, F.FromFN.Caption) <> 0 then
       begin
-        NewName := ExtractFilePath(Process.ArchiveName) + F.ToFN.Text;
-        if RenameFile(Process.ArchiveName, NewName) then
+        NewName := ExtractFilePath(ArcProcess.ArcName) + F.ToFN.Text;
+        if RenameFile(ArcProcess.ArcName, NewName) then
         begin
-          Process.ArchiveName := NewName;
-          Caption := 'BeeFM' + ' - ' + ExtractFileName(Process.ArchiveName);
+          ArcProcess.ArcName := NewName;
+          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArcProcess.ArcName);
         end else
           MessageDlg('Error on renaming archive', mtError, [mbOk], 0);
       end;
@@ -746,7 +759,7 @@ uses
   begin
     if MessageDlg('Delete archive?', mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
-      if DeleteFile(Process.ArchiveName) then
+      if DeleteFile(ArcProcess.ArcName) then
         MMenuFileClose.Click
       else
         MessageDlg('Error on deleting archive.', mtError, [mbOk], 0);
@@ -860,11 +873,12 @@ uses
         CmdLine := CmdLine + ' -1+'
       else
         CmdLine := CmdLine + ' -1-';
-      CmdLine := CmdLine + ' "' + Process.ArchiveName + '"';
-      Process.CommandLine := CmdLine;
-      Process.CurrentDirectory := '';
-      ProcessTimer.Enabled := True;
-      Process.Execute;
+      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '"';
+      ArcProcess.CommandLine := CmdLine;
+      ArcProcess.CurrentDirectory := '';
+      ArcProcess.Execute;
+      Idle.OnTimer := OnArcTimer;
+      Idle.Enabled := True;
     end;
   end;
 
@@ -882,11 +896,12 @@ uses
           CmdLine := CmdLine + ' -1+'
         else
           CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
-        Process.CommandLine := CmdLine;
-        Process.CurrentDirectory := '';
-        ProcessTimer.Enabled := True;
-        Process.Execute;
+        CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
+        ArcProcess.CommandLine := CmdLine;
+        ArcProcess.CurrentDirectory := '';
+        ArcProcess.Execute;
+        Idle.OnTimer := OnArcTimer;
+        Idle.Enabled := True;
       end;
     end;
   end;
@@ -903,11 +918,12 @@ uses
         CmdLine := CmdLine + ' -1+'
       else
         CmdLine := CmdLine + ' -1-';
-      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
-      Process.CommandLine := CmdLine;
-      Process.CurrentDirectory := '';
-      ProcessTimer.Enabled := False;
-      Process.Execute;
+      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
+      ArcProcess.CommandLine := CmdLine;
+      ArcProcess.CurrentDirectory := '';
+      ArcProcess.Execute;
+      Idle.OnTimer := nil;
+      Idle.Enabled := False;
     end;
   end;
 
@@ -922,11 +938,12 @@ uses
         CmdLine := CmdLine + ' -1+'
       else
         CmdLine := CmdLine + ' -1-';
-      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + '*!';
-      Process.CommandLine := CmdLine;
-      Process.CurrentDirectory := '';
-      ProcessTimer.Enabled := False;
-      Process.Execute;
+      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + '*!';
+      ArcProcess.CommandLine := CmdLine;
+      ArcProcess.CurrentDirectory := '';
+      ArcProcess.Execute;
+      Idle.OnTimer := nil;
+      Idle.Enabled := False;
     end;
   end;
 
@@ -938,11 +955,12 @@ uses
     if Cursor <> crHourGlass then
     begin
       CmdLine := 'beegui t -1+';
-      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
-      Process.CommandLine := CmdLine;
-      Process.CurrentDirectory := '';
-      ProcessTimer.Enabled := False;
-      Process.Execute;
+      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
+      ArcProcess.CommandLine := CmdLine;
+      ArcProcess.CurrentDirectory := '';
+      ArcProcess.Execute;
+      Idle.OnTimer := nil;
+      Idle.Enabled := False;
     end;
   end;
 
@@ -958,11 +976,12 @@ uses
         CmdLine := CmdLine + ' -1+'
       else
         CmdLine := CmdLine + ' -1-';
-      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
-      Process.CommandLine := CmdLine;
-      Process.CurrentDirectory := '';
-      ProcessTimer.Enabled := True;
-      Process.Execute;
+      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
+      ArcProcess.CommandLine := CmdLine;
+      ArcProcess.CurrentDirectory := '';
+      ArcProcess.Execute;
+      Idle.OnTimer := OnArcTimer;
+      Idle.Enabled := True;
     end;
   end;
   
@@ -973,12 +992,15 @@ uses
     if ListView.SelCount <> 1 then Exit;
     if Cursor <> crHourGlass then
     begin
-      CmdLine := 'beegui e -oA';
-      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + ListView.GetMasks;
-      Process.CurrentDirectory := 'C:\Documents and Settings\quacquero\Desktop'; // GetApplicationTempDir(Application.Name);
-      Process.CommandLine := CmdLine;
-      ProcessTimer.Enabled := False;
-      Process.Execute;
+      CmdLine := 'beegui x -oA';
+      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
+      FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
+      FileProcess.FileName := ListView.GetMasks;
+      ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
+      ArcProcess.CommandLine := CmdLine;
+      ArcProcess.Execute;
+      Idle.OnTimer := OnFileTimer;
+      Idle.Enabled := True;
     end;
   end;
 
@@ -997,11 +1019,12 @@ uses
     if Cursor <> crHourGlass then
     begin
       CmdLine := 'beegui t -1+';
-      CmdLine := CmdLine + ' "' + Process.ArchiveName + '" ' + '*!';
-      Process.CommandLine := CmdLine;
-      Process.CurrentDirectory := '';
-      ProcessTimer.Enabled := False;
-      Process.Execute;
+      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + '*!';
+      ArcProcess.CommandLine := CmdLine;
+      ArcProcess.CurrentDirectory := '';
+      ArcProcess.Execute;
+      Idle.OnTimer := nil;
+      Idle.Enabled := False;
     end;
   end;
 
