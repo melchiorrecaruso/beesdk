@@ -8,7 +8,8 @@ interface
 
 uses
   BeeGui_AddTreeViewMgr, BeeGui_ArchiveFolderBox, BeeGui_ArchiveListViewMgr, 
-    BeeGui_FolderTreeViewMgr, BeeGui_IconList, LazarusPackageIntf; 
+    BeeGui_FolderTreeViewMgr, BeeGui_IconList, BeeGui_Process, 
+    LazarusPackageIntf; 
 
 implementation
 
@@ -20,6 +21,7 @@ begin
     ); 
   RegisterUnit('BeeGui_FolderTreeViewMgr', @BeeGui_FolderTreeViewMgr.Register); 
   RegisterUnit('BeeGui_IconList', @BeeGui_IconList.Register); 
+  RegisterUnit('BeeGui_Process', @BeeGui_Process.Register); 
 end; 
 
 initialization

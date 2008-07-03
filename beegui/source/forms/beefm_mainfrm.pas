@@ -48,12 +48,14 @@ uses
   BeeGui_IconList,
   BeeGui_ArchiveProcess,
   BeeGui_ArchiveFolderBox,
-  BeeGui_ArchiveListViewMgr;
+  BeeGui_ArchiveListViewMgr, BeeGui_Process;
 
 type
   { TMainFrm }
 
   TMainFrm = class(TForm)
+    ArcProcess: TArcProcess;
+    FileProcess: TFileProcess;
     UpToolBar: TToolBar;
     DownToolBar: TToolBar;
     FolderBox: TArchiveFolderBox;
@@ -510,12 +512,12 @@ uses
   var
     F: TViewFrm;
   begin
-    with Process do
+    with ArcProcess do
     begin
       if Running = False then
       begin
         ProcessTimer.Enabled := False;
-        if ListView.OpenArchive(ArchiveName, ArchiveLink) then
+        if ListView.OpenArchive(ArcName, ArcLink) then
         begin
           UpdateButtons(True);
         end;
@@ -610,24 +612,24 @@ uses
       if SaveDialog.Execute then
       begin
         MMenuFileClose.Click;
-        with Process do
+        with ArcProcess do
         begin
-          ArchiveName := SaveDialog.FileName;
+          ArcName := SaveDialog.FileName;
           case SaveDialog.FilterIndex of
-            1: ArchiveName := ChangeFileExt(ArchiveName, '.bee');
-            2: ArchiveName := ChangeFileExt(ArchiveName, '.exe');
+            1: ArcName := ChangeFileExt(ArcName, '.bee');
+            2: ArcName := ChangeFileExt(ArcName, '.exe');
           end;
-          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArchiveName);
+          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArcName);
         end;
         CmdLine := 'beegui a' + ' -2+';
         if MMenuOptionsLogReport.Checked then
           CmdLine := CmdLine + ' -1+'
         else
           CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ConfigFrm.AddOptions + ' "' + Process.ArchiveName + '"';
-        Process.CommandLine := CmdLine;
-        Process.CurrentDirectory := '';
-        Process.Execute;
+        CmdLine := CmdLine + ConfigFrm.AddOptions + ' "' + ArcProcess.ArcName + '"';
+        ArcProcess.CommandLine := CmdLine;
+        ArcProcess.CurrentDirectory := '';
+        ArcProcess.Execute;
         ProcessTimer.Enabled := True;
       end;
     end else

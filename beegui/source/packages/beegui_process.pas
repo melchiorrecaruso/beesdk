@@ -18,18 +18,22 @@
 
 {   Contains:
 
-    TAppProcess class.
+    TArcProcess class;
+    TFileProcess class.
 
     Modifyed:
 }
 
-unit BeeGui_ArchiveProcess;
+unit BeeGui_Process;
 
 {$I compiler.inc}
 
 interface
 
 uses
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF}
   Process,
   Dialogs,
   Classes,
@@ -56,8 +60,13 @@ type
   TFileProcess = class(TProcess)
   private
     FFileName: string;
+    FFileTime: integer;
+    FFileExec: string;
+    function GetFileName: string;
+    function GetFileExec: string;
+    procedure SetFileName(Value: string);
   public
-    property FileName: string read FFileName write FFileName;
+    property FileName: string read GetFileName write SetFileName;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -107,11 +116,15 @@ uses
   begin
     inherited Create(AOwner);
     FFileName := '';
+    FFileTime :=  0;
+    FFileExec := '';
   end;
 
   destructor TFileProcess.Destroy;
   begin
     FFileName := '';
+    FFileTime :=  0;
+    FFileExec := '';
     inherited Destroy;
   end;
 
@@ -120,16 +133,86 @@ uses
     inherited Execute;
   end;
   
+  procedure TFileProcess.SetFileName(Value: string);
+  begin
+    FFileName := '';
+    FFileTime :=  0;
+    FFileExec := '';
+    if FileExists(Value) then
+    begin
+      FFileName := '"' + Value + '"';
+      FFileTime := FileAge(Value);
+      FFileExec := GetFileExec;
+    end;
+  end;
+  
+  function TFileProcess.GetFileName: string;
+  var
+    I: integer;
+  begin
+    Result := FFileName;
+    I := Pos('"', Result);
+    while I > 0 do
+    begin
+      Delete(Result, I, 1);
+      I := Pos('"', Result);
+    end;
+  end;
+  
+  function TFileProcess.GetFileExec: string;
+  var
+    {$IFDEF MSWINDOWS}
+    P: PChar;
+    Res: HINST;
+    Buffer: array[0..MAX_PATH] of char;
+    {$ENDIF}
+    OpenDialog: TOpenDialog;
+  begin
+    Result := '';
+    {$IFDEF MSWINDOWS}
+    P := nil;
+    FillChar(Buffer, SizeOf(Buffer), #0);
+    Res := FindExecutable(PChar(FFileName), P, Buffer);
+    if Res > 32 then
+    begin
+      P := Buffer;
+      while PWord(P)^ <> 0 do
+      begin
+        if P^ = #0 then P^ := #32;
+        Inc(P);
+      end;
+      Result := Buffer;
+    end;
+    {$ENDIF}
+    if Result = '' then
+    begin
+      OpenDialog := TOpenDialog.Create(nil);
+      try
+        OpenDialog.Title := 'Open file with';
+        OpenDialog.Options := [ofPathMustExist, ofFileMustExist];
+        if OpenDialog.Execute then
+        begin
+          Result := OpenDialog.FileName;
+          if DirectoryExists(Result) then Result := '';
+        end else
+          Result := '';
+      finally
+        OpenDialog.Free;
+      end;
+    end;
+  end;
+  
   { Register }
 
   procedure Register;
   begin
-    RegisterComponents ('BeePackage', [TArcProcess]);
+    RegisterComponents ('Bee Controls', [TArcProcess]);
+    RegisterComponents ('Bee Controls', [TFileProcess]);
   end;
 
 initialization
 
-  {$i beegui_archiveprocess.lrs }
+  {$i beegui_process.lrs }
 
 end.
 
