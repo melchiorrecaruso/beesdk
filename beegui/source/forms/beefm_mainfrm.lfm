@@ -3129,12 +3129,11 @@ object MainFrm: TMainFrm
     left = 48
     top = 280
   end
-  object ProcessTimer: TIdleTimer
+  object Idle: TIdleTimer
     Enabled = False
     Interval = 100
-    OnTimer = ProcessTimerTimer
     left = 80
-    top = 312
+    top = 280
   end
   object ArcProcess: TArcProcess
     Priority = ppNormal
