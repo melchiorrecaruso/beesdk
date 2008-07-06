@@ -71,9 +71,9 @@ uses
     F.eOption.Text := CmdLine.eOption;
     F.sOption.Checked := CmdLine.sOption;
 
-    if Length(CmdLine.aOption) > 0 then
+    F.aOptionCheck.Checked := Length(CmdLine.aOption) > 0;
+    if F.aOptionCheck.Checked then
     begin
-      F.aOptionCheck.Checked := True;
       if CompareFileName(CmdLine.aOption, 'beegui.sfx') = 0 then
         F.aOption.ItemIndex := 0
       else
@@ -82,9 +82,7 @@ uses
         else
           if CmdLine.aOption = 'nul' then
             F.aOption.ItemIndex := 2;
-
-    end else
-      F.aOptionCheck.Checked := False;
+    end;
 
     F.mOption.ItemIndex := CmdLine.mOption;
     F.dOption.ItemIndex := CmdLine.dOption;
@@ -101,9 +99,12 @@ uses
 
     F.kOption.Checked := CmdLine.kOption;
 
-    if Length(CmdLine.cdOption) > 0 then
+    F.cdOptionCheck.Checked := Length(CmdLine.cdOption) > 0;
+    if  F.cdOptionCheck.Checked then
+    begin
       F.cdOption.Text := CmdLine.cdOption;
-
+    end;
+    
     if Length(CmdLine.cfgOption) > 0 then
       F.cfgOption.Text := CmdLine.cfgOption;
       
@@ -159,9 +160,12 @@ uses
       CmdLine.yOption := F.yOption.Text;
       CmdLine.kOption := F.kOption.Checked;
 
-      CmdLine.cdOption := F.cdOption.Text;
-      CmdLine.cfgOption := F.cfgOption.Text;
+      if F.cdOptionCheck.Checked then
+        CmdLine.cdOption := F.cdOption.Text
+      else
+        CmdLine.cdOption := '';
 
+      CmdLine.cfgOption := F.cfgOption.Text;
       CmdLine.ArcName := F.ArchiveName.Text;
 
       CmdLine.FileMasks.Clear;

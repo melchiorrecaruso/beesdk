@@ -46,7 +46,6 @@ uses
   LResources,
   // ---
   BeeGui_IconList,
-  BeeGui_ArchiveProcess,
   BeeGui_ArchiveFolderBox,
   BeeGui_ArchiveListViewMgr,
   BeeGui_Process;
@@ -994,11 +993,14 @@ uses
     begin
       CmdLine := 'beegui x -oA';
       CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
+
       FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
       FileProcess.FileName := ListView.GetMasks;
+
       ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
       ArcProcess.CommandLine := CmdLine;
       ArcProcess.Execute;
+
       Idle.OnTimer := OnFileTimer;
       Idle.Enabled := True;
     end;

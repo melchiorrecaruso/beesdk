@@ -130,20 +130,18 @@ uses
 
   procedure TFileProcess.Execute;
   begin
+    if FFileExec <> '' then
+    begin
+      CommandLine :=  FFileExec + ' ' + FFileName
+    end;
     inherited Execute;
   end;
   
   procedure TFileProcess.SetFileName(Value: string);
   begin
-    FFileName := '';
-    FFileTime :=  0;
-    FFileExec := '';
-    if FileExists(Value) then
-    begin
-      FFileName := '"' + Value + '"';
-      FFileTime := FileAge(Value);
-      FFileExec := GetFileExec;
-    end;
+    FFileName := '"' + Value + '"';
+    FFileTime := FileAge(Value);
+    FFileExec := GetFileExec;
   end;
   
   function TFileProcess.GetFileName: string;
@@ -170,9 +168,8 @@ uses
   begin
     Result := '';
     {$IFDEF MSWINDOWS}
-    P := nil;
     FillChar(Buffer, SizeOf(Buffer), #0);
-    Res := FindExecutable(PChar(FFileName), P, Buffer);
+    Res := FindExecutable(PChar(FileName), PChar(nil), Buffer);
     if Res > 32 then
     begin
       P := Buffer;

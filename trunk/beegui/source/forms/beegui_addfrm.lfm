@@ -396,7 +396,7 @@ object AddFrm: TAddFrm
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        Color = clBtnFace
+        Color = clInactiveCaptionText
         ParentShowHint = False
         ReadOnly = True
         TabStop = False
@@ -569,27 +569,12 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         Left = 6
         Height = 14
-        Top = 98
+        Top = 103
         Width = 219
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Use selected parameters .ini file (-cfg Option)'
-        Layout = tlCenter
-        ParentColor = False
-      end
-      object cdOptionLabel: TLabel
-        AnchorSideLeft.Control = PageAdvanced
-        AnchorSideTop.Control = aOption
-        AnchorSideTop.Side = asrBottom
-        Left = 6
-        Height = 14
-        Top = 54
-        Width = 206
-        BorderSpacing.Left = 6
-        BorderSpacing.Top = 6
-        BorderSpacing.Bottom = 2
-        Caption = 'Use Current Archive Directory (-cd Option)'
         Layout = tlCenter
         ParentColor = False
       end
@@ -599,7 +584,7 @@ object AddFrm: TAddFrm
         AnchorSideTop.Side = asrBottom
         Left = 6
         Height = 14
-        Top = 141
+        Top = 146
         Width = 89
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
@@ -639,7 +624,7 @@ object AddFrm: TAddFrm
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
-        Color = clInactiveBorder
+        Color = clInactiveCaptionText
         Enabled = False
         ItemHeight = 13
         ItemIndex = 0
@@ -661,7 +646,7 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = cfgOptionBtn
         Left = 6
         Height = 21
-        Top = 114
+        Top = 119
         Width = 303
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
@@ -680,7 +665,7 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Side = asrBottom
         Left = 315
         Height = 37
-        Top = 141
+        Top = 146
         Width = 70
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
@@ -694,18 +679,20 @@ object AddFrm: TAddFrm
       end
       object cdOption: TEdit
         AnchorSideLeft.Control = PageAdvanced
-        AnchorSideTop.Control = cdOptionLabel
+        AnchorSideTop.Control = cdOptionCheck
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = PageAdvanced
         AnchorSideRight.Side = asrBottom
         Left = 6
         Height = 22
-        Top = 70
+        Top = 75
         Width = 379
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
+        Color = clInactiveCaptionText
+        Enabled = False
         TabOrder = 2
       end
       object yOption: TComboBox
@@ -715,7 +702,7 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = yOptionBtn
         Left = 6
         Height = 21
-        Top = 157
+        Top = 162
         Width = 303
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
@@ -734,7 +721,7 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Side = asrBottom
         Left = 315
         Height = 37
-        Top = 98
+        Top = 103
         Width = 70
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
@@ -745,6 +732,22 @@ object AddFrm: TAddFrm
         NumGlyphs = 0
         OnClick = cfgOptionBtnClick
         TabOrder = 4
+      end
+      object cdOptionCheck: TCheckBox
+        AnchorSideLeft.Control = PageAdvanced
+        AnchorSideTop.Control = aOption
+        AnchorSideTop.Side = asrBottom
+        Left = 6
+        Height = 19
+        Top = 54
+        Width = 224
+        BorderSpacing.Left = 6
+        BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 2
+        Caption = 'Use Current Archive Directory (-cd Option)'
+        OnChange = cdOptionCheckChange
+        ParentShowHint = False
+        TabOrder = 7
       end
     end
   end
