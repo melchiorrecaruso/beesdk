@@ -547,20 +547,20 @@ uses
   var
     I: integer;
   begin
-    BtnAdd     .Enabled := Value;
-    BtnAdd     .Font := MainFrm.Font;
+    BtnAdd.Enabled := Value;
+    BtnAdd.Font := MainFrm.Font;
 
-    BtnExtract .Enabled := Value;
-    BtnExtract .Font := MainFrm.Font;
+    BtnExtract.Enabled := Value;
+    BtnExtract.Font := MainFrm.Font;
 
-    BtnView    .Enabled := Value;
-    BtnView    .Font := MainFrm.Font;
+    BtnView.Enabled := Value;
+    BtnView.Font := MainFrm.Font;
 
-    BtnDelete  .Enabled := Value;
-    BtnDelete  .Font := MainFrm.Font;
+    BtnDelete.Enabled := Value;
+    BtnDelete.Font := MainFrm.Font;
 
-    BtnTest    .Enabled := Value;
-    BtnTest    .Font := MainFrm.Font;
+    BtnTest.Enabled := Value;
+    BtnTest.Font := MainFrm.Font;
 
     BtnCheckOut.Enabled := Value;
     BtnCheckOut.Font := MainFrm.Font;
@@ -576,6 +576,8 @@ uses
     begin
       MMenuActions.Items[I].Enabled := Value;
     end;
+    BtnUp.Enabled := Value;
+    BtnUp.Font := MainFrm.Font;
   end;
   
   procedure TMainFrm.UpdateStyle;
@@ -636,7 +638,7 @@ uses
           CmdLine := CmdLine + ' -1+'
         else
           CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ConfigFrm.AddOptions + ' "' + ArcProcess.ArcName + '"';
+        CmdLine := CmdLine + ConfigFrm.AddOptions('') + ' "' + ArcProcess.ArcName + '"';
         ArcProcess.CommandLine := CmdLine;
         ArcProcess.CurrentDirectory := '';
         ArcProcess.Execute;
@@ -867,7 +869,7 @@ uses
   begin
     if Cursor <> crHourGlass then
     begin
-      CmdLine := 'beegui a -2+' + ConfigFrm.AddOptions;
+      CmdLine := 'beegui a -2+' + ConfigFrm.AddOptions(ListView.Folder);
       if MMenuOptionsLogReport.Checked then
         CmdLine := CmdLine + ' -1+'
       else

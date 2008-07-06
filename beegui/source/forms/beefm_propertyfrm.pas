@@ -40,8 +40,8 @@ uses
   Controls,
   ComCtrls,
   SysUtils,
+  IniFiles,
   LResources,
-  XMLPropStorage,
   // ---
   BeeGui_SysUtils,
   BeeGui_ArchiveListViewMgr;
@@ -106,7 +106,6 @@ type
     InfoFrm_FUpFull: TImage;
     InfoFrm_FVersion: TLabel;
     InfoFrm_FVersion_: TLabel;
-    InfoFrm_Storage: TXMLPropStorage;
     InfoFrm_FPage: TTabSheet;
 
     InfoFrm_ArchiveName_1: TLabel;
@@ -137,6 +136,7 @@ type
     BtnOk: TBitBtn;
     InfoFrm_APanel: TPanel;
     InfoFrm_FPanel: TPanel;
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormPaint(Sender: TObject);
   private
@@ -260,15 +260,18 @@ uses
 
   procedure TInfoFrm.FormCreate(Sender: TObject);
   var
-    CfgFolder: string;
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    CfgFolder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
-    if ForceDirectories(CfgFolder) then
-    begin
-      InfoFrm_Storage.FileName := CfgFolder + ('infofrm.xml');
-    end;
-    // {$I beefm_infofrm.inc}
-    InfoFrm_Storage.Restore;
+
+  end;
+
+  procedure TInfoFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+
   end;
 
   function TInfoFrm.UpdateAInfo(const ArcName: string; AInfo: TArcDetails): boolean;

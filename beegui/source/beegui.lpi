@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="4"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -384,9 +384,7 @@
         <UnitName Value="Bee_App"/>
         <CursorPos X="23" Y="58"/>
         <TopLine Value="1469"/>
-        <EditorIndex Value="6"/>
         <UsageCount Value="24"/>
-        <Loaded Value="True"/>
       </Unit46>
       <Unit47>
         <Filename Value="..\..\bee\source\bee_interface_base.pas"/>
@@ -632,9 +630,11 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="88" Y="323"/>
+        <CursorPos X="90" Y="586"/>
         <TopLine Value="576"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit79>
       <Unit80>
         <Filename Value="forms\beegui_aboutfrm.pas"/>
@@ -646,9 +646,7 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="42" Y="82"/>
         <TopLine Value="53"/>
-        <EditorIndex Value="5"/>
         <UsageCount Value="194"/>
-        <Loaded Value="True"/>
       </Unit80>
       <Unit81>
         <Filename Value="packages\beegui_gui.pas"/>
@@ -1144,9 +1142,7 @@
         <UnitName Value="BeeGui_Forms"/>
         <CursorPos X="44" Y="164"/>
         <TopLine Value="145"/>
-        <EditorIndex Value="4"/>
         <UsageCount Value="145"/>
-        <Loaded Value="True"/>
       </Unit157>
       <Unit158>
         <Filename Value="forms\forms.include\beegui_aboutfrm_loadproperty.inc"/>
@@ -1278,9 +1274,7 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="22"/>
-        <Loaded Value="True"/>
       </Unit178>
       <Unit179>
         <Filename Value="forms\forms.include\beegui_addfrm_loadlanguage.inc"/>
@@ -1391,7 +1385,7 @@
         <SyntaxHighlighter Value="None"/>
       </Unit195>
     </Units>
-    <JumpHistory Count="12" HistoryIndex="11">
+    <JumpHistory Count="10" HistoryIndex="9">
       <Position1>
         <Filename Value="beegui.lpr"/>
         <Caret Line="35" Column="8" TopLine="1"/>
@@ -1421,25 +1415,17 @@
         <Caret Line="358" Column="29" TopLine="336"/>
       </Position7>
       <Position8>
-        <Filename Value="packages\beegui_forms.pas"/>
-        <Caret Line="99" Column="20" TopLine="82"/>
+        <Filename Value="forms\beegui_addfrm.pas"/>
+        <Caret Line="72" Column="28" TopLine="52"/>
       </Position8>
       <Position9>
         <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="72" Column="28" TopLine="52"/>
+        <Caret Line="114" Column="5" TopLine="113"/>
       </Position9>
       <Position10>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="114" Column="5" TopLine="113"/>
-      </Position10>
-      <Position11>
         <Filename Value="packages\beegui_cmdline.pas"/>
         <Caret Line="358" Column="28" TopLine="351"/>
-      </Position11>
-      <Position12>
-        <Filename Value="packages\beegui_forms.pas"/>
-        <Caret Line="166" Column="37" TopLine="147"/>
-      </Position12>
+      </Position10>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

@@ -1,7 +1,7 @@
 object ConfigFrm: TConfigFrm
-  Left = 337
+  Left = 346
   Height = 570
-  Top = 215
+  Top = 187
   Width = 805
   Caption = 'Configuration'
   ClientHeight = 570
@@ -80,14 +80,14 @@ object ConfigFrm: TConfigFrm
     end
     object Options: TGroupBox
       Left = 7
-      Height = 154
+      Height = 178
       Top = 114
       Width = 633
       Align = alTop
       Anchors = [akRight]
       BorderSpacing.Around = 7
       Caption = 'Options'
-      ClientHeight = 136
+      ClientHeight = 160
       ClientWidth = 629
       ParentShowHint = False
       TabOrder = 0
@@ -98,9 +98,8 @@ object ConfigFrm: TConfigFrm
         Width = 617
         Align = alTop
         BorderSpacing.Around = 6
-        Caption = 'Recurse subdirectories'
+        Caption = 'Recurse subdirectories (-r Option)'
         Checked = True
-        ParentColor = False
         ParentShowHint = False
         State = cbChecked
         TabOrder = 0
@@ -112,8 +111,7 @@ object ConfigFrm: TConfigFrm
         Width = 617
         Align = alTop
         BorderSpacing.Around = 6
-        Caption = 'Create a solid archive'
-        ParentColor = False
+        Caption = 'Create a solid archive (-s Option)'
         ParentShowHint = False
         TabOrder = 1
       end
@@ -124,8 +122,7 @@ object ConfigFrm: TConfigFrm
         Width = 617
         Align = alTop
         BorderSpacing.Around = 6
-        Caption = 'Test files after adding'
-        ParentColor = False
+        Caption = 'Test files after adding (-t Option)'
         ParentShowHint = False
         TabOrder = 2
       end
@@ -136,8 +133,7 @@ object ConfigFrm: TConfigFrm
         Width = 617
         Align = alTop
         BorderSpacing.Around = 6
-        Caption = 'Crypt files with password'
-        ParentColor = False
+        Caption = 'Crypt files with password (-k Option)'
         ParentShowHint = False
         TabOrder = 3
       end
@@ -148,14 +144,26 @@ object ConfigFrm: TConfigFrm
         Width = 617
         Align = alTop
         BorderSpacing.Around = 6
-        Caption = 'List archive after process'
+        Caption = 'List archive after process (-l Option)'
         Checked = True
         Enabled = False
-        ParentColor = False
         ParentShowHint = False
         State = cbChecked
         TabOrder = 4
         Visible = False
+      end
+      object cdAOption: TCheckBox
+        Left = 6
+        Height = 19
+        Top = 131
+        Width = 617
+        Align = alTop
+        BorderSpacing.Around = 6
+        Caption = 'Use current archive directory (-cd Option)'
+        Checked = True
+        ParentShowHint = False
+        State = cbChecked
+        TabOrder = 5
       end
     end
     object mOption: TComboBox
@@ -212,7 +220,7 @@ object ConfigFrm: TConfigFrm
   object ConfigFrm_ExtractGB: TGroupBox
     Left = 184
     Height = 524
-    Top = 320
+    Top = 336
     Width = 651
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'Extract Options'
@@ -245,17 +253,15 @@ object ConfigFrm: TConfigFrm
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Around = 8
       ItemHeight = 13
-      ItemIndex = 2
       Items.Strings = (
         'Skip pre-existing files'
         'Overwrite pre-existing files'
-        'Query if Overwrite pre-existing files'
+        'Query if overwrite pre-existing files'
       )
       MaxLength = 0
       ParentShowHint = False
       Style = csDropDownList
       TabOrder = 0
-      Text = 'Query if Overwrite pre-existing files'
     end
     object Options1: TGroupBox
       Left = 8
@@ -269,7 +275,7 @@ object ConfigFrm: TConfigFrm
       ClientWidth = 627
       ParentShowHint = False
       TabOrder = 1
-      object cdOption: TCheckBox
+      object cdEOption: TCheckBox
         Left = 6
         Height = 19
         Top = 31
@@ -277,7 +283,7 @@ object ConfigFrm: TConfigFrm
         Align = alTop
         Anchors = [akRight]
         BorderSpacing.Around = 6
-        Caption = 'Extract and Recreate the relative pathname '
+        Caption = 'Use current archive directory (-cd Option)'
         Checked = True
         ParentShowHint = False
         State = cbChecked
@@ -291,7 +297,7 @@ object ConfigFrm: TConfigFrm
         Align = alTop
         Anchors = [akRight]
         BorderSpacing.Around = 6
-        Caption = 'Extract and Recreate the relative pathname '
+        Caption = 'Extract and recreate the relative pathname '
         Checked = True
         ParentShowHint = False
         State = cbChecked
@@ -300,9 +306,9 @@ object ConfigFrm: TConfigFrm
     end
   end
   object ConfigFrm_GeneralGB: TGroupBox
-    Left = 384
+    Left = 344
     Height = 524
-    Top = 192
+    Top = 320
     Width = 651
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'General'
