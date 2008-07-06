@@ -50,6 +50,7 @@ type
   { TAddFrm class }
 
   TAddFrm = class(TForm)
+    cdOptionCheck: TCheckBox;
     FilesMgr: TAddTreeViewMgr;
     aOptionCheck: TCheckBox;
     aOption: TComboBox;
@@ -69,7 +70,6 @@ type
     dOptionLabel: TLabel;
     eOption: TEdit;
     cfgOptionLabel: TLabel;
-    cdOptionLabel: TLabel;
     eOptionLabel: TLabel;
     mOption: TComboBox;
     mOptionLabel: TLabel;
@@ -110,6 +110,7 @@ type
     BtnFolder: TBitBtn;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
+    procedure cdOptionCheckChange(Sender: TObject);
     procedure cfgOptionBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -168,7 +169,16 @@ uses
     if aOption.Enabled then
       aOption.Color := clWindow
     else
-      aOption.Color := clBtnFace;
+      aOption.Color := clInactiveCaptionText;
+  end;
+  
+  procedure TAddFrm.cdOptionCheckChange(Sender: TObject);
+  begin
+    cdOption.Enabled := cdOptionCheck.Checked;
+    if cdOption.Enabled then
+      cdOption.Color := clWindow
+    else
+      cdOption.Color := clInactiveCaptionText;
   end;
   
   procedure TAddFrm.BtnSaveClick(Sender: TObject);

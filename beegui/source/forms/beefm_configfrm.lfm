@@ -1,18 +1,18 @@
 object ConfigFrm: TConfigFrm
-  Left = 351
-  Height = 440
-  Top = 298
-  Width = 626
+  Left = 337
+  Height = 570
+  Top = 215
+  Width = 805
   Caption = 'Configuration'
-  ClientHeight = 440
-  ClientWidth = 626
+  ClientHeight = 570
+  ClientWidth = 805
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnCreate = FormCreate
   LCLVersion = '0.9.25'
   object ConfigFrm_Tree: TTreeView
     Left = 4
-    Height = 394
+    Height = 524
     Top = 4
     Width = 140
     Anchors = [akTop, akLeft, akBottom]
@@ -38,20 +38,20 @@ object ConfigFrm: TConfigFrm
   end
   object ConfigFrm_AddGB: TGroupBox
     Left = 150
-    Height = 394
+    Height = 524
     Top = 4
-    Width = 472
+    Width = 651
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'Add Options'
-    ClientHeight = 376
-    ClientWidth = 468
+    ClientHeight = 506
+    ClientWidth = 647
     ParentShowHint = False
     TabOrder = 1
     object mOptionLabel: TLabel
       Left = 8
       Height = 18
       Top = 4
-      Width = 452
+      Width = 631
       Align = alTop
       AutoSize = False
       BorderSpacing.Left = 4
@@ -68,7 +68,7 @@ object ConfigFrm: TConfigFrm
       Left = 8
       Height = 18
       Top = 59
-      Width = 452
+      Width = 631
       Align = alTop
       AutoSize = False
       BorderSpacing.Around = 8
@@ -82,20 +82,20 @@ object ConfigFrm: TConfigFrm
       Left = 7
       Height = 154
       Top = 114
-      Width = 454
+      Width = 633
       Align = alTop
       Anchors = [akRight]
       BorderSpacing.Around = 7
       Caption = 'Options'
       ClientHeight = 136
-      ClientWidth = 450
+      ClientWidth = 629
       ParentShowHint = False
       TabOrder = 0
       object rOption: TCheckBox
         Left = 6
         Height = 19
         Top = 6
-        Width = 438
+        Width = 617
         Align = alTop
         BorderSpacing.Around = 6
         Caption = 'Recurse subdirectories'
@@ -109,7 +109,7 @@ object ConfigFrm: TConfigFrm
         Left = 6
         Height = 19
         Top = 31
-        Width = 438
+        Width = 617
         Align = alTop
         BorderSpacing.Around = 6
         Caption = 'Create a solid archive'
@@ -121,7 +121,7 @@ object ConfigFrm: TConfigFrm
         Left = 6
         Height = 19
         Top = 56
-        Width = 438
+        Width = 617
         Align = alTop
         BorderSpacing.Around = 6
         Caption = 'Test files after adding'
@@ -133,7 +133,7 @@ object ConfigFrm: TConfigFrm
         Left = 6
         Height = 19
         Top = 81
-        Width = 438
+        Width = 617
         Align = alTop
         BorderSpacing.Around = 6
         Caption = 'Crypt files with password'
@@ -145,7 +145,7 @@ object ConfigFrm: TConfigFrm
         Left = 6
         Height = 19
         Top = 106
-        Width = 438
+        Width = 617
         Align = alTop
         BorderSpacing.Around = 6
         Caption = 'List archive after process'
@@ -162,7 +162,7 @@ object ConfigFrm: TConfigFrm
       Left = 8
       Height = 21
       Top = 30
-      Width = 452
+      Width = 631
       Align = alTop
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Around = 8
@@ -184,7 +184,7 @@ object ConfigFrm: TConfigFrm
       Left = 8
       Height = 21
       Top = 85
-      Width = 452
+      Width = 631
       Align = alTop
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Around = 8
@@ -210,21 +210,21 @@ object ConfigFrm: TConfigFrm
     end
   end
   object ConfigFrm_ExtractGB: TGroupBox
-    Left = 56
-    Height = 394
-    Top = 200
-    Width = 472
+    Left = 184
+    Height = 524
+    Top = 320
+    Width = 651
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'Extract Options'
-    ClientHeight = 376
-    ClientWidth = 468
+    ClientHeight = 506
+    ClientWidth = 647
     ParentShowHint = False
     TabOrder = 2
     object oOptionLabel: TLabel
       Left = 8
       Height = 18
       Top = 4
-      Width = 452
+      Width = 631
       Align = alTop
       AutoSize = False
       BorderSpacing.Left = 4
@@ -240,7 +240,7 @@ object ConfigFrm: TConfigFrm
       Left = 8
       Height = 21
       Top = 30
-      Width = 452
+      Width = 631
       Align = alTop
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Around = 8
@@ -261,19 +261,19 @@ object ConfigFrm: TConfigFrm
       Left = 8
       Height = 80
       Top = 59
-      Width = 452
+      Width = 631
       Align = alTop
       BorderSpacing.Around = 8
       Caption = 'Options'
       ClientHeight = 62
-      ClientWidth = 448
+      ClientWidth = 627
       ParentShowHint = False
       TabOrder = 1
       object cdOption: TCheckBox
         Left = 6
         Height = 19
         Top = 31
-        Width = 436
+        Width = 615
         Align = alTop
         Anchors = [akRight]
         BorderSpacing.Around = 6
@@ -287,7 +287,7 @@ object ConfigFrm: TConfigFrm
         Left = 6
         Height = 19
         Top = 6
-        Width = 436
+        Width = 615
         Align = alTop
         Anchors = [akRight]
         BorderSpacing.Around = 6
@@ -301,20 +301,20 @@ object ConfigFrm: TConfigFrm
   end
   object ConfigFrm_GeneralGB: TGroupBox
     Left = 384
-    Height = 394
+    Height = 524
     Top = 192
-    Width = 472
+    Width = 651
     Anchors = [akTop, akLeft, akRight, akBottom]
     Caption = 'General'
-    ClientHeight = 376
-    ClientWidth = 468
+    ClientHeight = 506
+    ClientWidth = 647
     ParentShowHint = False
     TabOrder = 3
     object ConfigFrm_OptionsGB: TGroupBox
       Left = 8
       Height = 239
       Top = 4
-      Width = 452
+      Width = 631
       Align = alTop
       AutoSize = True
       BorderSpacing.Left = 4
@@ -327,9 +327,9 @@ object ConfigFrm: TConfigFrm
     end
   end
   object BtnOk: TBitBtn
-    Left = 544
+    Left = 723
     Height = 26
-    Top = 410
+    Top = 540
     Width = 78
     Anchors = [akRight, akBottom]
     Caption = '&OK'

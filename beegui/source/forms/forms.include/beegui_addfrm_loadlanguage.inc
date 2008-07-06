@@ -59,7 +59,7 @@
       aOption.Items[1] := Storage.ReadString('TComboBox', 'aOption[1]', aOption.Items[1]);
       aOption.Items[2] := Storage.ReadString('TComboBox', 'aOption[2]', aOption.Items[2]);
 
-      cdOptionLabel.Caption := Storage.ReadString('TLabel', 'cdOption', cdOptionLabel.Caption);
+      cdOptionCheck.Caption := Storage.ReadString('TLabel', 'cdOption', cdOptionCheck.Caption);
 
       cfgOptionLabel.Caption := Storage.ReadString('TLabel', 'cfgOption', cfgOptionLabel.Caption);
       cfgOptionBtn.Caption   := Storage.ReadString('TBitBtn', 'cfgOptionBtn.Caption', cfgOptionBtn.Caption);
