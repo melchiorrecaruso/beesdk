@@ -2504,6 +2504,7 @@ object MainFrm: TMainFrm
         FFFF00FFFF00FFFF00FF
       }
       NumGlyphs = 0
+      Transparent = False
       OnClick = BtnUpClick
     end
     object FolderBox: TArchiveFolderBox

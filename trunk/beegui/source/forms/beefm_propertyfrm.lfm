@@ -1,7 +1,7 @@
 object InfoFrm: TInfoFrm
-  Left = 316
+  Left = 399
   Height = 474
-  Top = 162
+  Top = 182
   Width = 367
   ActiveControl = InfoFrm_Pages
   Caption = 'Properties'
@@ -11,35 +11,38 @@ object InfoFrm: TInfoFrm
   Constraints.MinWidth = 367
   Font.Height = -11
   Font.Name = 'Tahoma'
+  OnClose = FormClose
   OnCreate = FormCreate
   OnPaint = FormPaint
   LCLVersion = '0.9.25'
   object InfoFrm_Pages: TPageControl
-    Left = 8
-    Height = 423
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = BtnOk
+    Left = 6
+    Height = 430
     Top = 6
-    Width = 351
+    Width = 355
     ActivePage = InfoFrm_APage
-    Align = alClient
-    BorderSpacing.Left = 8
-    BorderSpacing.Top = 6
-    BorderSpacing.Right = 8
-    BorderSpacing.Bottom = 45
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Around = 6
     ParentShowHint = False
     TabIndex = 0
     TabOrder = 1
     object InfoFrm_APage: TTabSheet
       Caption = 'General'
-      ClientHeight = 397
-      ClientWidth = 343
+      ClientHeight = 404
+      ClientWidth = 347
       ParentShowHint = False
       object InfoFrm_APanel: TPanel
-        Height = 397
-        Width = 343
+        Height = 404
+        Width = 347
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 397
-        ClientWidth = 343
+        ClientHeight = 404
+        ClientWidth = 347
         TabOrder = 0
         object InfoFrm_AUpEmpty: TImage
           Left = 14
@@ -8954,7 +8957,7 @@ object InfoFrm: TInfoFrm
         object InfoFrm_ADownFull: TImage
           Left = 14
           Height = 11
-          Top = 344
+          Top = 351
           Width = 33
           Anchors = [akLeft, akBottom]
           AutoSize = True
@@ -9001,7 +9004,7 @@ object InfoFrm: TInfoFrm
         object InfoFrm_ADownEmpty: TImage
           Left = 14
           Height = 16
-          Top = 360
+          Top = 367
           Width = 33
           Anchors = [akLeft, akBottom]
           AutoSize = True
@@ -9085,7 +9088,7 @@ object InfoFrm: TInfoFrm
           Left = 85
           Height = 2
           Top = 60
-          Width = 242
+          Width = 246
           Anchors = [akTop, akLeft, akRight]
         end
         object InfoFrm_AFiles_: TLabel
@@ -9132,7 +9135,7 @@ object InfoFrm: TInfoFrm
           Left = 85
           Height = 2
           Top = 140
-          Width = 242
+          Width = 246
           Anchors = [akTop, akLeft, akRight]
         end
         object InfoFrm_AFilesCrypted_: TLabel
@@ -9169,7 +9172,7 @@ object InfoFrm: TInfoFrm
           Left = 206
           Height = 13
           Top = 182
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -9181,7 +9184,7 @@ object InfoFrm: TInfoFrm
           Left = 206
           Height = 13
           Top = 166
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -9193,7 +9196,7 @@ object InfoFrm: TInfoFrm
           Left = 206
           Height = 13
           Top = 150
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -9205,7 +9208,7 @@ object InfoFrm: TInfoFrm
           Left = 206
           Height = 13
           Top = 118
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -9217,7 +9220,7 @@ object InfoFrm: TInfoFrm
           Left = 206
           Height = 13
           Top = 102
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -9229,7 +9232,7 @@ object InfoFrm: TInfoFrm
           Left = 206
           Height = 13
           Top = 86
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -9241,7 +9244,7 @@ object InfoFrm: TInfoFrm
           Left = 206
           Height = 13
           Top = 70
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -9253,7 +9256,7 @@ object InfoFrm: TInfoFrm
           Left = 206
           Height = 13
           Top = 38
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -9265,7 +9268,7 @@ object InfoFrm: TInfoFrm
           Left = 206
           Height = 13
           Top = 22
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18858,24 +18861,26 @@ object InfoFrm: TInfoFrm
     end
   end
   object BtnOk: TBitBtn
-    Left = 284
-    Height = 23
-    Top = 440
-    Width = 75
+    AnchorSideTop.Control = InfoFrm_Pages
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 291
+    Height = 26
+    Top = 442
+    Width = 70
     Anchors = [akRight, akBottom]
-    BorderSpacing.InnerBorder = 2
-    Cancel = True
-    Caption = 'OK'
+    AutoSize = True
+    BorderSpacing.Around = 6
+    Caption = '&OK'
+    Constraints.MinWidth = 70
     Default = True
+    Kind = bkOK
     ModalResult = 1
     NumGlyphs = 0
     ParentShowHint = False
-    Spacing = 0
     TabOrder = 0
-  end
-  object InfoFrm_Storage: TXMLPropStorage
-    StoredValues = <>
-    left = 248
-    top = 440
   end
 end

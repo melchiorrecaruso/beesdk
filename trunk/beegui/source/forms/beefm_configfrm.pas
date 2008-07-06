@@ -53,6 +53,7 @@ type
     AddFrm_Method1: TComboBox;
     AddFrm_MethodGB1: TGroupBox;
     BtnOk: TBitBtn;
+    cdAOption: TCheckBox;
     // ---
     ConfigFrm_Tree: TTreeView;
     ConfigFrm_AddGB: TGroupBox;
@@ -72,7 +73,7 @@ type
     rOption: TCheckBox;
     sOption: TCheckBox;
     tOption: TCheckBox;
-    cdOption: TCheckBox;
+    cdEOption: TCheckBox;
     xCommand1: TCheckBox;
     // ---
     procedure FormCreate(Sender: TObject);
@@ -80,8 +81,8 @@ type
   private
     procedure SetPageIndex(PageIndex: integer);
   public
-    function AddOptions: string;
     function DeleteOptions: string;
+    function AddOptions(const Folder: string): string;
     function ExtractOptions(const Folder: string): string;
   end;
 
@@ -130,7 +131,7 @@ uses
     end;
   end;
   
-  function TConfigFrm.AddOptions: string;
+  function TConfigFrm.AddOptions(const Folder: string): string;
   begin
     Result :=
       ' -m' + IntToStr(mOption.ItemIndex) +
@@ -141,6 +142,11 @@ uses
     if tOption.Checked then Result := Result + ' -t+' else Result := Result + ' -t-';
     if kOption.Checked then Result := Result + ' -k+' else Result := Result + ' -k-';
     if lOption.Checked then Result := Result + ' -l+' else Result := Result + ' -l-';
+
+    if cdAOption.Checked then
+    begin
+      Result := Result + ' -cd' + Folder;
+    end;
   end;
   
   function TConfigFrm.DeleteOptions: string;
@@ -150,7 +156,7 @@ uses
   
   function TConfigFrm.ExtractOptions(const Folder: string): string;
   begin
-    if cdOption.Checked then
+    if cdEOption.Checked then
       Result := ' x'
     else
       Result := ' e';
@@ -161,7 +167,7 @@ uses
       else Result := Result + ' -oY'; //
     end;
     
-    if cdOption.Checked then
+    if cdEOption.Checked then
     begin
       Result := Result + ' -cd' + Folder;
     end;
