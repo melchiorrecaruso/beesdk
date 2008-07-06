@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -230,7 +230,7 @@
         <UnitName Value="BeeFM_ConfigFrm"/>
         <CursorPos X="1" Y="28"/>
         <TopLine Value="3"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit20>
@@ -1333,9 +1333,7 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="1" Y="77"/>
         <TopLine Value="63"/>
-        <EditorIndex Value="3"/>
         <UsageCount Value="61"/>
-        <Loaded Value="True"/>
       </Unit182>
       <Unit183>
         <Filename Value="packages\beegui_sysutils.pas"/>
@@ -1433,7 +1431,7 @@
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
         <CursorPos X="19" Y="634"/>
         <TopLine Value="626"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="61"/>
         <Loaded Value="True"/>
       </Unit194>
@@ -1524,7 +1522,7 @@
         <UnitName Value="BeeFM_PropertyFrm"/>
         <CursorPos X="14" Y="44"/>
         <TopLine Value="28"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="39"/>
         <Loaded Value="True"/>
       </Unit206>
@@ -1976,7 +1974,7 @@
         <UnitName Value="BeeFm_SelectFrm"/>
         <CursorPos X="18" Y="34"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="37"/>
         <Loaded Value="True"/>
       </Unit272>
@@ -2037,12 +2035,10 @@
         <UnitName Value="IniFiles"/>
         <CursorPos X="3" Y="190"/>
         <TopLine Value="170"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit281>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="1005" Column="11" TopLine="985"/>
@@ -2129,40 +2125,36 @@
       </Position21>
       <Position22>
         <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="270" Column="8" TopLine="280"/>
+        <Caret Line="53" Column="22" TopLine="52"/>
       </Position22>
       <Position23>
         <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="53" Column="22" TopLine="52"/>
+        <Caret Line="52" Column="26" TopLine="52"/>
       </Position23>
       <Position24>
         <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="52" Column="26" TopLine="52"/>
+        <Caret Line="108" Column="31" TopLine="69"/>
       </Position24>
       <Position25>
         <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="108" Column="31" TopLine="69"/>
+        <Caret Line="267" Column="30" TopLine="247"/>
       </Position25>
       <Position26>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="267" Column="30" TopLine="247"/>
-      </Position26>
-      <Position27>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="567" Column="36" TopLine="545"/>
+      </Position26>
+      <Position27>
+        <Filename Value="forms\beefm_propertyfrm.pas"/>
+        <Caret Line="140" Column="5" TopLine="139"/>
       </Position27>
       <Position28>
         <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="140" Column="5" TopLine="139"/>
+        <Caret Line="272" Column="26" TopLine="249"/>
       </Position28>
       <Position29>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="272" Column="26" TopLine="249"/>
-      </Position29>
-      <Position30>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="338" Column="18" TopLine="335"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
