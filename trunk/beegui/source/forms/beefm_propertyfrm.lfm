@@ -3,7 +3,7 @@ object InfoFrm: TInfoFrm
   Height = 474
   Top = 182
   Width = 367
-  ActiveControl = InfoFrm_Pages
+  ActiveControl = Pages
   Caption = 'Properties'
   ClientHeight = 474
   ClientWidth = 367
@@ -15,7 +15,7 @@ object InfoFrm: TInfoFrm
   OnCreate = FormCreate
   OnPaint = FormPaint
   LCLVersion = '0.9.25'
-  object InfoFrm_Pages: TPageControl
+  object Pages: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
@@ -25,18 +25,18 @@ object InfoFrm: TInfoFrm
     Height = 430
     Top = 6
     Width = 355
-    ActivePage = InfoFrm_APage
+    ActivePage = FPage
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 1
-    object InfoFrm_APage: TTabSheet
+    object APage: TTabSheet
       Caption = 'General'
       ClientHeight = 404
       ClientWidth = 347
       ParentShowHint = False
-      object InfoFrm_APanel: TPanel
+      object APanel: TPanel
         Height = 404
         Width = 347
         Align = alClient
@@ -44,7 +44,7 @@ object InfoFrm: TInfoFrm
         ClientHeight = 404
         ClientWidth = 347
         TabOrder = 0
-        object InfoFrm_AUpEmpty: TImage
+        object AUpEmpty: TImage
           Left = 14
           Height = 11
           Top = 16
@@ -90,7 +90,7 @@ object InfoFrm: TInfoFrm
             FFFFFFFFFFFFFFFFFFFFFFFFFF00
           }
         end
-        object InfoFrm_AUpFull: TImage
+        object AUpFull: TImage
           Left = 14
           Height = 11
           Top = 32
@@ -136,7 +136,7 @@ object InfoFrm: TInfoFrm
             FFFFFFFFFFFFFFFFFFFFFFFFFF00
           }
         end
-        object InfoFrm_AEmpty: TImage
+        object AEmpty: TImage
           Left = 14
           Height = 67
           Top = 60
@@ -4522,7 +4522,7 @@ object InfoFrm: TInfoFrm
             FF00
           }
         end
-        object InfoFrm_ALevel: TImage
+        object ALevel: TImage
           Left = 14
           Height = 11
           Top = 144
@@ -4568,7 +4568,7 @@ object InfoFrm: TInfoFrm
             84FF8484FF8484FFFFFFFFFFFF00
           }
         end
-        object InfoFrm_AFull: TImage
+        object AFull: TImage
           Left = 14
           Height = 69
           Top = 164
@@ -8954,7 +8954,7 @@ object InfoFrm: TInfoFrm
             FF00
           }
         end
-        object InfoFrm_ADownFull: TImage
+        object ADownFull: TImage
           Left = 14
           Height = 11
           Top = 351
@@ -9001,7 +9001,7 @@ object InfoFrm: TInfoFrm
             C68C42C68C42C6FFFFFFFFFFFF00
           }
         end
-        object InfoFrm_ADownEmpty: TImage
+        object ADownEmpty: TImage
           Left = 14
           Height = 16
           Top = 367
@@ -9064,7 +9064,7 @@ object InfoFrm: TInfoFrm
             FF00
           }
         end
-        object InfoFrm_AName_: TLabel
+        object AName: TLabel
           Left = 85
           Height = 13
           Top = 22
@@ -9074,7 +9074,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AVersion_: TLabel
+        object AVersion: TLabel
           Left = 85
           Height = 13
           Top = 38
@@ -9084,14 +9084,14 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_Bevel_1: TBevel
+        object Bevel01: TBevel
           Left = 85
           Height = 2
           Top = 60
           Width = 246
           Anchors = [akTop, akLeft, akRight]
         end
-        object InfoFrm_AFiles_: TLabel
+        object AFiles: TLabel
           Left = 85
           Height = 13
           Top = 70
@@ -9101,7 +9101,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_ASize_: TLabel
+        object ASize: TLabel
           Left = 85
           Height = 13
           Top = 86
@@ -9111,7 +9111,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_APacked_: TLabel
+        object APacked: TLabel
           Left = 85
           Height = 13
           Top = 102
@@ -9121,7 +9121,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_ARatio_: TLabel
+        object ARatio: TLabel
           Left = 85
           Height = 13
           Top = 118
@@ -9131,14 +9131,14 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_Bevel_2: TBevel
+        object Bevel02: TBevel
           Left = 85
           Height = 2
           Top = 140
           Width = 246
           Anchors = [akTop, akLeft, akRight]
         end
-        object InfoFrm_AFilesCrypted_: TLabel
+        object ACrypted: TLabel
           Left = 85
           Height = 13
           Top = 150
@@ -9148,7 +9148,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AArcSize_: TLabel
+        object AArcSize: TLabel
           Left = 85
           Height = 13
           Top = 166
@@ -9158,7 +9158,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AModified_: TLabel
+        object AModified: TLabel
           Left = 85
           Height = 13
           Top = 182
@@ -9168,7 +9168,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AModified: TLabel
+        object AModifiedValue: TLabel
           Left = 206
           Height = 13
           Top = 182
@@ -9180,7 +9180,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AArcSize: TLabel
+        object AArcSizeValue: TLabel
           Left = 206
           Height = 13
           Top = 166
@@ -9192,7 +9192,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AFilesCrypted: TLabel
+        object AFilesCryptedValue: TLabel
           Left = 206
           Height = 13
           Top = 150
@@ -9204,7 +9204,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_ARatio: TLabel
+        object ARatioValue: TLabel
           Left = 206
           Height = 13
           Top = 118
@@ -9216,7 +9216,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_APacked: TLabel
+        object APackedValue: TLabel
           Left = 206
           Height = 13
           Top = 102
@@ -9228,7 +9228,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_ASize: TLabel
+        object ASizeValue: TLabel
           Left = 206
           Height = 13
           Top = 86
@@ -9240,7 +9240,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AFiles: TLabel
+        object AFilesValue: TLabel
           Left = 206
           Height = 13
           Top = 70
@@ -9252,7 +9252,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AVersion: TLabel
+        object AVersionValue: TLabel
           Left = 206
           Height = 13
           Top = 38
@@ -9264,7 +9264,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AName: TLabel
+        object ANameValue: TLabel
           Left = 206
           Height = 13
           Top = 22
@@ -9276,7 +9276,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_AR: TLabel
+        object AR: TLabel
           Left = 50
           Height = 14
           Top = 100
@@ -9290,328 +9290,19 @@ object InfoFrm: TInfoFrm
         end
       end
     end
-    object InfoFrm_FPage: TTabSheet
+    object FPage: TTabSheet
       Caption = 'General'
-      ClientHeight = 397
-      ClientWidth = 343
-      object InfoFrm_PageGeneral1: TTabSheet
-        Caption = 'General'
-        ParentShowHint = False
-        object InfoFrm_ArchiveName_1: TLabel
-          Left = 85
-          Height = 13
-          Top = 32
-          Width = 135
-          AutoSize = False
-          Caption = 'Archive Name'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Version_1: TLabel
-          Left = 85
-          Height = 13
-          Top = 48
-          Width = 135
-          AutoSize = False
-          Caption = 'Version'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Files_1: TLabel
-          Left = 85
-          Height = 13
-          Top = 80
-          Width = 135
-          AutoSize = False
-          Caption = 'Files'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Packed_1: TLabel
-          Left = 85
-          Height = 13
-          Top = 112
-          Width = 135
-          AutoSize = False
-          Caption = 'Files size packed'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Packed1: TLabel
-          Left = 220
-          Height = 13
-          Top = 112
-          Width = 107
-          Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
-          Caption = 'ERROR'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Ratio_1: TLabel
-          Left = 85
-          Height = 13
-          Top = 128
-          Width = 135
-          AutoSize = False
-          Caption = 'Ratio'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Ratio1: TLabel
-          Left = 220
-          Height = 13
-          Top = 128
-          Width = 107
-          Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
-          Caption = 'ERROR'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Size_1: TLabel
-          Left = 85
-          Height = 13
-          Top = 96
-          Width = 135
-          AutoSize = False
-          Caption = 'Files size'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Size1: TLabel
-          Left = 220
-          Height = 13
-          Top = 96
-          Width = 107
-          Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
-          Caption = 'ERROR'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Files1: TLabel
-          Left = 220
-          Height = 13
-          Top = 80
-          Width = 107
-          Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
-          Caption = 'ERROR'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Modified_1: TLabel
-          Left = 85
-          Height = 13
-          Top = 192
-          Width = 135
-          AutoSize = False
-          Caption = 'Modified'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_Modified1: TLabel
-          Left = 220
-          Height = 13
-          Top = 192
-          Width = 107
-          Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
-          Caption = 'ERROR'
-          ParentColor = False
-          ParentShowHint = False
-        end
-        object InfoFrm_UpEmpty1: TImage
-          Left = 14
-          Height = 11
-          Top = 16
-          Width = 33
-          AutoSize = True
-          Picture.Data = {
-            07544269746D617082040000424D820400000000000036000000280000002100
-            00000B00000001001800000000004C040000C40E0000C40E0000000000000000
-            0000C0C0C0FFFFFFE06868E06868E06868E06868E06868E06868E06868E06868
-            E06868E06868E06868E06868E06868FFFFFFFFFFFFFFFFFFFF8080FF8080FF80
-            80FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF
-            FFFFC0C0C000C0C0C0FFFFFFE06868E06868E06868E06868E06868E06868E068
-            68E06868E06868E06868FFFFFFFFFFFFFFFFFFFF8080FF8080FF8080FFFFFFFF
-            FFFFFFFFFFFF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080
-            FF8080FFFFFFC0C0C000C0C0C0FFFFFFE06868E06868E06868E06868E06868E0
-            6868E06868FFFFFFFFFFFFFFFFFFFF8080FF8080FF8080FF8080FF8080FF8080
-            FF8080FF8080FF8080FFFFFFFFFFFFFFFFFFFF8080FF8080FF8080FF8080FF80
-            80FF8080FF8080FFFFFFC0C0C000C0C0C0FFFFFFE06868E06868E06868E06868
-            FFFFFFFFFFFFFFFFFFFF8080FF8080FF8080FF8080FF8080FF8080FF8080FF80
-            80FF8080FF8080FF8080FF8080FF8080FF8080FF8080FFFFFFFFFFFFFFFFFFFF
-            8080FF8080FF8080FF8080FFFFFFC0C0C000C0C0C0FFFFFFE06868FFFFFFFFFF
-            FFFFFFFFFF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF
-            8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080
-            FF8080FFFFFFFFFFFFFFFFFFFF8080FFFFFFC0C0C000C0C0C0FFFFFFFFFFFFFF
-            8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080
-            FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF80
-            80FF8080FF8080FF8080FF8080FF8080FFFFFFFFFFFFC0C0C000C0C0C0C0C0C0
-            C0C0C0FFFFFFFFFFFFFFFFFFFF8080FF8080FF8080FF8080FF8080FF8080FF80
-            80FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF
-            8080FF8080FF8080FF8080FFFFFFFFFFFFFFFFFFC0C0C0C0C0C0C0C0C000C0C0
-            C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0FFFFFFFFFFFFFFFFFFFF8080FF8080FF
-            8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080
-            FF8080FF8080FFFFFFFFFFFFFFFFFFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0FFFFFF
-            FFFFFFFFFFFFFF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF80
-            80FFFFFFFFFFFFFFFFFFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C0C0C0C0C0C0FFFFFFFFFFFFFFFFFFFF8080FF8080FF8080FFFFFFFF
-            FFFFFFFFFFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C0C0C0C0C000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0FFFFFFFFFFFFFFFFFF
-            C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C0C0C0C0C0C0C0C0C000
-          }
-        end
-        object InfoFrm_DownFull1: TImage
-          Left = 14
-          Height = 11
-          Top = 343
-          Width = 33
-          Anchors = [akLeft, akBottom]
-          AutoSize = True
-          Picture.Data = {
-            07544269746D617082040000424D820400000000000036000000280000002100
-            00000B00000001001800000000004C040000C40E0000C40E0000000000000000
-            0000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0FFFFFFFFFFFFFFFFFFC0C0C0C0C0C0C0C0
-            C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C0C0C0C0C0C0FFFFFFFFFFFFFFFFFF7A408CFFFFFF7A408CFFFFFFFF
-            FFFFFFFFFFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C0C0C0C0C000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C0FFFFFFFFFFFFFFFFFF7A408C7A408C7A408C7A408CFFFFFF7A408C
-            7A408C7A408C7A408CFFFFFFFFFFFFFFFFFFC0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            C0C0C0C0C0C0C0C0C0C0C0C0C000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-            FFFFFFFFFFFFFFFFFF7A408C7A408C7A408C7A408C7A408C7A408C7A408CFFFF
-            FF7A408C7A408C7A408C7A408C7A408C7A408C7A408CFFFFFFFFFFFFFFFFFFC0
-            C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000C0C0C0C0C0C0C0C0C0FFFFFFFFFF
-            FFFFFFFF7A408C7A408C7A408C7A408C7A408C7A408C7A408C7A408C7A408C7A
-            408CFFFFFF7A408C7A408C7A408C7A408C7A408C7A408C7A408C7A408C7A408C
-            7A408CFFFFFFFFFFFFFFFFFFC0C0C0C0C0C0C0C0C000C0C0C0FFFFFFFFFFFF7A
-            408C7A408C7A408C7A408C7A408C7A408C7A408C7A408C7A408C7A408C7A408C
-            7A408C7A408CFFFFFF7A408C7A408C7A408C7A408C7A408C7A408C7A408C7A40
-            8C7A408C7A408C7A408C7A408C7A408CFFFFFFFFFFFFC0C0C000C0C0C0FFFFFF
-            823C9664408C64408C64408C7A408C7A408C7A408C7A408C7A408C7A408C7A40
-            8C7A408C7A408C7A408CFFFFFF7A408C7A408C7A408C7A408C7A408C7A408C7A
-            408C7A408C7A408C7A408C64408C64408C64408C8C42C0FFFFFFC0C0C000C0C0
-            C0FFFFFF823C96823C96823C96823C9664408C64408C64408C7A408C7A408C7A
-            408C7A408C7A408C7A408C7A408CFFFFFF7A408C7A408C7A408C7A408C7A408C
-            7A408C7A408C64408C64408C64408C8C42C08C42C08C42C08C42C0FFFFFFC0C0
-            C000C0C0C0FFFFFF823C96823C96823C96823C96823C96823C96823C9664408C
-            64408C64408C7A408C7A408C7A408C7A408CFFFFFF7A408C7A408C7A408C7A40
-            8C64408C64408C64408C8C42C08C42C08C42C08C42C08C42C08C42C08C42C0FF
-            FFFFC0C0C000C0C0C0FFFFFF823C96823C96823C96823C96823C96823C96823C
-            96823C96823C96823C9664408C64408C64408C7A408CFFFFFF7A408C64408C64
-            408C64408C8C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C0
-            8C42C0FFFFFFC0C0C000C0C0C0FFFFFF823C96823C96823C96823C96823C9682
-            3C96823C96823C96823C96823C96823C96823C96823C9664408CFFFFFF64408C
-            8C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42
-            C08C42C08C42C0FFFFFFC0C0C000
-          }
-        end
-        object InfoFrm_Level1: TImage
-          Left = 14
-          Height = 11
-          Top = 144
-          Width = 33
-          AutoSize = True
-          Picture.Data = {
-            07544269746D617082040000424D820400000000000036000000280000002100
-            00000B00000001001800000000004C040000C40E0000C40E0000000000000000
-            0000C0C0C0FFFFFF823C96823C96823C96823C96823C96823C96823C96823C96
-            823C96823C96823C96823C96823C968060A0FFFFFF8060A08C42C08C42C08C42
-            C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C0FF
-            FFFFC0C0C000C0C0C0FFFFFF823C96823C96823C96823C96823C96823C96823C
-            96823C96823C96823C968060A08060A08060A0A060A0FFFFFFA060A08060A080
-            60A08060A08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C0
-            8C42C0FFFFFFC0C0C000C0C0C0FFFFFF823C96823C96823C96823C96823C9682
-            3C96823C968060A08060A08060A0A060A0A060A0A060A0A060A0FFFFFFA060A0
-            A060A0A060A0A060A08060A08060A08060A08C42C08C42C08C42C08C42C08C42
-            C08C42C08C42C0FFFFFFC0C0C000C0C0C0FFFFFF823C96823C96823C96823C96
-            8060A08060A08060A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0FFFF
-            FFA060A0A060A0A060A0A060A0A060A0A060A0A060A08060A08060A08060A08C
-            42C08C42C08C42C08C42C0FFFFFFC0C0C000C0C0C0FFFFFF823C968060A08060
-            A08060A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0A0
-            60A0FFFFFFA060A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0
-            A060A08060A08060A08060A08C42C0FFFFFFC0C0C000C0C0C0FFFFFF8060A0A0
-            60A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0A060A0
-            A060A0A060A0FFFFFFA060A0A060A0A060A0A060A0A060A0A060A0A060A0A060
-            A0A060A0A060A0A060A0A060A0A060A08060A0FFFFFFC0C0C000C0C0C0FFFFFF
-            E068688060A08060A08060A0A060A0A060A0A060A0A060A0A060A0A060A0A060
-            A0A060A0A060A0A060A0FFFFFFA060A0A060A0A060A0A060A0A060A0A060A0A0
-            60A0A060A0A060A0A060A08060A08060A08060A0FF8080FFFFFFC0C0C000C0C0
-            C0FFFFFFE06868E06868E06868E068688060A08060A08060A0A060A0A060A0A0
-            60A0A060A0A060A0A060A0A060A0FFFFFFA060A0A060A0A060A0A060A0A060A0
-            A060A0A060A08060A08060A08060A0FF8080FF8080FF8080FF8080FFFFFFC0C0
-            C000C0C0C0FFFFFFE06868E06868E06868E06868E06868E06868E068688060A0
-            8060A08060A0A060A0A060A0A060A0A060A0FFFFFFA060A0A060A0A060A0A060
-            A08060A08060A08060A0FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF
-            FFFFC0C0C000C0C0C0FFFFFFE06868E06868E06868E06868E06868E06868E068
-            68E06868E06868E068688060A08060A08060A0A060A0FFFFFFA060A08060A080
-            60A08060A0FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080
-            FF8080FFFFFFC0C0C000C0C0C0FFFFFFE06868E06868E06868E06868E06868E0
-            6868E06868E06868E06868E06868E06868E06868E068688060A0FFFFFF8060A0
-            FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF80
-            80FF8080FF8080FFFFFFC0C0C000
-          }
-        end
-        object InfoFrm_Empty1: TImage
-          Left = 14
-          Height = 65
-          Top = 64
-          Width = 33
-          Picture.Data = {
-            07544269746D61709A000000424D9A0000000000000036000000280000002100
-            000001000000010018000000000064000000C40E0000C40E0000000000000000
-            0000C0C0C0FFFFFFE06868E06868E06868E06868E06868E06868E06868E06868
-            E06868E06868E06868E06868E06868E06868FFFFFFFF8080FF8080FF8080FF80
-            80FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF8080FF
-            FFFFC0C0C000
-          }
-          Stretch = True
-        end
-        object InfoFrm_Full1: TImage
-          Left = 14
-          Height = 73
-          Top = 192
-          Width = 33
-          Picture.Data = {
-            07544269746D61709A000000424D9A0000000000000036000000280000002100
-            000001000000010018000000000064000000C40E0000C40E0000000000000000
-            0000C0C0C0FFFFFF823C96823C96823C96823C96823C96823C96823C96823C96
-            823C96823C96823C96823C96823C96823C96FFFFFF8C42C08C42C08C42C08C42
-            C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C08C42C0FF
-            FFFFC0C0C000
-          }
-          Stretch = True
-        end
-        object InfoFrm_Bevel_3: TBevel
-          Left = 85
-          Height = 2
-          Width = 50
-          Anchors = [akTop, akLeft, akRight]
-        end
-      end
-      object InfoFrm_FPanel: TPanel
-        Height = 397
-        Width = 343
+      ClientHeight = 404
+      ClientWidth = 347
+      object FPanel: TPanel
+        Height = 404
+        Width = 347
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 397
-        ClientWidth = 343
-        TabOrder = 1
-        object InfoFrm_FUpEmpty: TImage
+        ClientHeight = 404
+        ClientWidth = 347
+        TabOrder = 0
+        object FUpEmpty: TImage
           Left = 14
           Height = 11
           Top = 16
@@ -9657,7 +9348,7 @@ object InfoFrm: TInfoFrm
             FFFFFFFFFFFFFFFFFFFFFFFFFF00
           }
         end
-        object InfoFrm_FUpFull: TImage
+        object FUpFull: TImage
           Left = 14
           Height = 11
           Top = 32
@@ -9703,7 +9394,7 @@ object InfoFrm: TInfoFrm
             FFFFFFFFFFFFFFFFFFFFFFFFFF00
           }
         end
-        object InfoFrm_FEmpty: TImage
+        object FEmpty: TImage
           Left = 14
           Height = 65
           Top = 64
@@ -14090,7 +13781,7 @@ object InfoFrm: TInfoFrm
           }
           Stretch = True
         end
-        object InfoFrm_FLevel: TImage
+        object FLevel: TImage
           Left = 14
           Height = 11
           Top = 144
@@ -14136,7 +13827,7 @@ object InfoFrm: TInfoFrm
             84FF8484FF8484FFFFFFFFFFFF00
           }
         end
-        object InfoFrm_FFull: TImage
+        object FFull: TImage
           Left = 14
           Height = 73
           Top = 192
@@ -18523,10 +18214,10 @@ object InfoFrm: TInfoFrm
           }
           Stretch = True
         end
-        object InfoFrm_FDownFull: TImage
+        object FDownFull: TImage
           Left = 14
           Height = 11
-          Top = 343
+          Top = 350
           Width = 33
           Anchors = [akLeft, akBottom]
           AutoSize = True
@@ -18570,10 +18261,10 @@ object InfoFrm: TInfoFrm
             C68C42C68C42C6FFFFFFFFFFFF00
           }
         end
-        object InfoFrm_FDownEmpty: TImage
+        object FDownEmpty: TImage
           Left = 14
           Height = 16
-          Top = 359
+          Top = 366
           Width = 33
           Anchors = [akLeft, akBottom]
           AutoSize = True
@@ -18633,7 +18324,7 @@ object InfoFrm: TInfoFrm
             FF00
           }
         end
-        object InfoFrm_FName_: TLabel
+        object FName: TLabel
           Left = 85
           Height = 13
           Top = 22
@@ -18643,7 +18334,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FVersion_: TLabel
+        object FVersion: TLabel
           Left = 85
           Height = 13
           Top = 38
@@ -18653,14 +18344,14 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_Bevel_5: TBevel
+        object Bevel03: TBevel
           Left = 85
           Height = 2
           Top = 60
-          Width = 242
+          Width = 246
           Anchors = [akTop, akLeft, akRight]
         end
-        object InfoFrm_FSize_: TLabel
+        object FSize: TLabel
           Left = 85
           Height = 13
           Top = 70
@@ -18670,7 +18361,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FPacked_: TLabel
+        object FPacked: TLabel
           Left = 85
           Height = 13
           Top = 86
@@ -18680,7 +18371,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FRatio_: TLabel
+        object FRatio: TLabel
           Left = 85
           Height = 13
           Top = 102
@@ -18690,7 +18381,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FAttribute_: TLabel
+        object FAttribute: TLabel
           Left = 85
           Height = 13
           Top = 118
@@ -18700,14 +18391,14 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_Bevel_4: TBevel
+        object Bevel04: TBevel
           Left = 85
           Height = 2
           Top = 140
-          Width = 242
+          Width = 246
           Anchors = [akTop, akLeft, akRight]
         end
-        object InfoFrm_FPassword_: TLabel
+        object FPassword: TLabel
           Left = 85
           Height = 13
           Top = 150
@@ -18717,7 +18408,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FMethod_: TLabel
+        object FMethod: TLabel
           Left = 85
           Height = 13
           Top = 166
@@ -18727,7 +18418,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FModified_: TLabel
+        object FModified: TLabel
           Left = 85
           Height = 13
           Top = 182
@@ -18737,11 +18428,11 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FModified: TLabel
+        object FModifiedValue: TLabel
           Left = 206
           Height = 13
           Top = 182
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18749,11 +18440,11 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FMethod: TLabel
+        object FMethodValue: TLabel
           Left = 206
           Height = 13
           Top = 166
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18761,11 +18452,11 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FPassword: TLabel
+        object FPasswordValue: TLabel
           Left = 206
           Height = 13
           Top = 150
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18773,11 +18464,11 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FAttribute: TLabel
+        object FAttributeValue: TLabel
           Left = 206
           Height = 13
           Top = 118
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18785,11 +18476,11 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FRatio: TLabel
+        object FRatioValue: TLabel
           Left = 206
           Height = 13
           Top = 102
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18797,11 +18488,11 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FPacked: TLabel
+        object FPackedValue: TLabel
           Left = 206
           Height = 13
           Top = 86
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18809,11 +18500,11 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FSize: TLabel
+        object FSizeValue: TLabel
           Left = 206
           Height = 13
           Top = 70
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18821,11 +18512,11 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FVersion: TLabel
+        object FVersionValue: TLabel
           Left = 206
           Height = 13
           Top = 38
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18833,11 +18524,11 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FName: TLabel
+        object FNameValue: TLabel
           Left = 206
           Height = 13
           Top = 22
-          Width = 121
+          Width = 125
           Alignment = taRightJustify
           Anchors = [akTop, akLeft, akRight]
           AutoSize = False
@@ -18845,7 +18536,7 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           ParentShowHint = False
         end
-        object InfoFrm_FR: TLabel
+        object FR: TLabel
           Left = 50
           Height = 14
           Top = 240
@@ -18861,7 +18552,7 @@ object InfoFrm: TInfoFrm
     end
   end
   object BtnOk: TBitBtn
-    AnchorSideTop.Control = InfoFrm_Pages
+    AnchorSideTop.Control = Pages
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
