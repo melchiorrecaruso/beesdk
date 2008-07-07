@@ -50,92 +50,73 @@ type
   { TInfoFrm }
 
   TInfoFrm = class(TForm)
-    InfoFrm_AArcSize: TLabel;
-    InfoFrm_AArcSize_: TLabel;
-    InfoFrm_ADownEmpty: TImage;
-    InfoFrm_ADownFull: TImage;
-    InfoFrm_AEmpty: TImage;
-    InfoFrm_AFiles: TLabel;
-    InfoFrm_AFilesCrypted: TLabel;
-    InfoFrm_AFilesCrypted_: TLabel;
-    InfoFrm_AFiles_: TLabel;
-    InfoFrm_AFull: TImage;
-    InfoFrm_ALevel: TImage;
-    InfoFrm_AModified: TLabel;
-    InfoFrm_AModified_: TLabel;
-    InfoFrm_AName: TLabel;
-    InfoFrm_AName_: TLabel;
-    InfoFrm_APacked: TLabel;
-    InfoFrm_APacked_: TLabel;
-    InfoFrm_AR: TLabel;
-    InfoFrm_ARatio: TLabel;
-    InfoFrm_ARatio_: TLabel;
-    InfoFrm_ASize: TLabel;
-    InfoFrm_ASize_: TLabel;
-    InfoFrm_AUpEmpty: TImage;
-    InfoFrm_AUpFull: TImage;
-    InfoFrm_AVersion: TLabel;
-    InfoFrm_AVersion_: TLabel;
-    InfoFrm_Bevel_1: TBevel;
-    InfoFrm_Bevel_2: TBevel;
-    InfoFrm_Bevel_4: TBevel;
-    InfoFrm_Bevel_5: TBevel;
-    InfoFrm_FAttribute: TLabel;
-    InfoFrm_FAttribute_: TLabel;
-    InfoFrm_FModified: TLabel;
-    InfoFrm_FModified_: TLabel;
-    InfoFrm_FDownEmpty: TImage;
-    InfoFrm_FDownFull: TImage;
-    InfoFrm_FEmpty: TImage;
-    InfoFrm_FFull: TImage;
-    InfoFrm_FLevel: TImage;
-    InfoFrm_FMethod: TLabel;
-    InfoFrm_FMethod_: TLabel;
-    InfoFrm_FName: TLabel;
-    InfoFrm_FName_: TLabel;
-    InfoFrm_FPacked: TLabel;
-    InfoFrm_FPacked_: TLabel;
-    InfoFrm_FPassword: TLabel;
-    InfoFrm_FPassword_: TLabel;
-    InfoFrm_FR: TLabel;
-    InfoFrm_FRatio: TLabel;
-    InfoFrm_FRatio_: TLabel;
-    InfoFrm_FSize: TLabel;
-    InfoFrm_FSize_: TLabel;
-    InfoFrm_FUpEmpty: TImage;
-    InfoFrm_FUpFull: TImage;
-    InfoFrm_FVersion: TLabel;
-    InfoFrm_FVersion_: TLabel;
-    InfoFrm_FPage: TTabSheet;
+    AArcSizeValue: TLabel;
+    AArcSize: TLabel;
+    ADownEmpty: TImage;
+    ADownFull: TImage;
+    AEmpty: TImage;
+    AFilesValue: TLabel;
+    AFilesCryptedValue: TLabel;
+    ACrypted: TLabel;
+    AFiles: TLabel;
+    AFull: TImage;
+    ALevel: TImage;
+    AModifiedValue: TLabel;
+    AModified: TLabel;
+    ANameValue: TLabel;
+    AName: TLabel;
+    APackedValue: TLabel;
+    APacked: TLabel;
+    AR: TLabel;
+    ARatioValue: TLabel;
+    ARatio: TLabel;
+    ASizeValue: TLabel;
+    ASize: TLabel;
+    AUpEmpty: TImage;
+    AUpFull: TImage;
+    AVersionValue: TLabel;
+    AVersion: TLabel;
+    Bevel01: TBevel;
+    Bevel02: TBevel;
+    Bevel04: TBevel;
+    Bevel03: TBevel;
+    FAttributeValue: TLabel;
+    FAttribute: TLabel;
+    FModifiedValue: TLabel;
+    FModified: TLabel;
+    FDownEmpty: TImage;
+    FDownFull: TImage;
+    FEmpty: TImage;
+    FFull: TImage;
+    FLevel: TImage;
+    FMethodValue: TLabel;
+    FMethod: TLabel;
+    FNameValue: TLabel;
+    FName: TLabel;
+    FPackedValue: TLabel;
+    FPacked: TLabel;
+    FPasswordValue: TLabel;
+    FPassword: TLabel;
+    FR: TLabel;
+    FRatioValue: TLabel;
+    FRatio: TLabel;
+    FSizeValue: TLabel;
+    FSize: TLabel;
+    FUpEmpty: TImage;
+    FUpFull: TImage;
+    FVersionValue: TLabel;
+    FVersion: TLabel;
+    FPage: TTabSheet;
 
-    InfoFrm_ArchiveName_1: TLabel;
-    InfoFrm_Bevel_3: TBevel;
-    InfoFrm_DownFull1: TImage;
-    InfoFrm_Empty1: TImage;
-    InfoFrm_Files1: TLabel;
-    InfoFrm_Files_1: TLabel;
-    InfoFrm_Full1: TImage;
-    InfoFrm_Level1: TImage;
-    InfoFrm_Modified1: TLabel;
-    InfoFrm_Modified_1: TLabel;
-    InfoFrm_Packed1: TLabel;
-    InfoFrm_Packed_1: TLabel;
-    InfoFrm_PageGeneral1: TTabSheet;
-    InfoFrm_Pages: TPageControl;
-    InfoFrm_APage: TTabSheet;
-
-    InfoFrm_Ratio1: TLabel;
-    InfoFrm_Ratio_1: TLabel;
-    InfoFrm_Size1: TLabel;
-    InfoFrm_Size_1: TLabel;
-    InfoFrm_UpEmpty1: TImage;
+    Pages: TPageControl;
+    APage: TTabSheet;
 
 
-    InfoFrm_Version_1: TLabel;
+
 
     BtnOk: TBitBtn;
-    InfoFrm_APanel: TPanel;
-    InfoFrm_FPanel: TPanel;
+    APanel: TPanel;
+    FPanel: TPanel;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormPaint(Sender: TObject);
@@ -230,30 +211,30 @@ uses
 
   procedure TInfoFrm.FormPaint(Sender: TObject);
   begin
-    if Assigned(InfoFrm_APage) then
+    if Assigned(APage) then
     begin
       UpdateProgressBar(
-        InfoFrm_AUpEmpty,
-        InfoFrm_AUpFull,
-        InfoFrm_AEmpty,
-        InfoFrm_ALevel,
-        InfoFrm_AFull,
-        InfoFrm_ADownFull,
-        InfoFrm_ADownEmpty,
-        InfoFrm_AR,
+        AUpEmpty,
+        AUpFull,
+        AEmpty,
+        ALevel,
+        AFull,
+        ADownFull,
+        ADownEmpty,
+        AR,
         Ratio);
     end;
-    if Assigned(InfoFrm_FPage) then
+    if Assigned(FPage) then
     begin
       UpdateProgressBar(
-        InfoFrm_FUpEmpty,
-        InfoFrm_FUpFull,
-        InfoFrm_FEmpty,
-        InfoFrm_FLevel,
-        InfoFrm_FFull,
-        InfoFrm_FDownFull,
-        InfoFrm_FDownEmpty,
-        InfoFrm_FR,
+        FUpEmpty,
+        FUpFull,
+        FEmpty,
+        FLevel,
+        FFull,
+        FDownFull,
+        FDownEmpty,
+        FR,
         Ratio);
     end;
   end;
@@ -263,7 +244,8 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-
+    {$I beegui_propertyfrm_loadlanguage.inc}
+    {*$I beegui_infofrm_loadproperty.inc}
   end;
 
   procedure TInfoFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -271,7 +253,10 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-
+    {$IFDEF DEBUG}
+      {*$I beegui_infofrm_savelanguage.inc}
+    {$ENDIF}
+    {*$I beegui_infofrm_saveproperty.inc}
   end;
 
   function TInfoFrm.UpdateAInfo(const ArcName: string; AInfo: TArcDetails): boolean;
@@ -284,19 +269,19 @@ uses
       else
         Ratio := Round(100 * (AInfo.FilesPacked / AInfo.FilesSize));
 
-      InfoFrm_AName.Caption         := ExtractFileName(ArcName);
-      InfoFrm_AVersion.Caption      := FloatToStr(AInfo.Version);
-      InfoFrm_AFiles.Caption        := IntToStr(AInfo.FilesCount);
-      InfoFrm_ASize.Caption         := SizeToStr(AInfo.FilesSize);
-      InfoFrm_APacked.Caption       := SizeToStr(AInfo.FilesPacked);
-      InfoFrm_ARatio.Caption        := IntToStr(Ratio) + '%';
-      InfoFrm_AFilesCrypted.Caption := IntToStr(AInfo.FilesCrypted);
-      InfoFrm_AArcSize.Caption      := SizeToStr(SizeOfFile (ArcName));
-      InfoFrm_AModified.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(ArcName)));
+      ANameValue.Caption         := ExtractFileName(ArcName);
+      AVersionValue.Caption      := FloatToStr(AInfo.Version);
+      AFilesValue.Caption        := IntToStr(AInfo.FilesCount);
+      ASizeValue.Caption         := SizeToStr(AInfo.FilesSize);
+      APackedValue.Caption       := SizeToStr(AInfo.FilesPacked);
+      ARatioValue.Caption        := IntToStr(Ratio) + '%';
+      AFilesCryptedValue.Caption := IntToStr(AInfo.FilesCrypted);
+      AArcSizeValue.Caption      := SizeToStr(SizeOfFile (ArcName));
+      AModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(ArcName)));
     except
       Result := False;
     end;
-    if Assigned(InfoFrm_FPage) then InfoFrm_FPage.Free;
+    if Assigned(FPage) then FPage.Free;
   end;
   
   function TInfoFrm.UpdateFInfo(FInfo: TArcItem): boolean;
@@ -309,19 +294,19 @@ uses
       else
         Ratio := Round(100 * (TArcItem(FInfo).FilePacked / TArcItem(FInfo).FileSize));
 
-      InfoFrm_FName.Caption         := TArcItem(FInfo).FileName;
-      InfoFrm_FVersion.Caption      := TArcItem(FInfo).FileVersion;
-      InfoFrm_FSize.Caption         := SizeToStr(TArcItem(FInfo).FileSize);
-      InfoFrm_FPacked.Caption       := SizeToStr(TArcItem(FInfo).FilePacked);
-      InfoFrm_FRatio.Caption        := IntToStr(Ratio) + '%';
-      InfoFrm_FAttribute.Caption    := AttrToStr(TArcItem(FInfo).FileAttr);
-      InfoFrm_FPassword.Caption     := TArcItem(FInfo).FilePassword;
-      InfoFrm_FMethod.Caption       := TArcItem(FInfo).FileMethod;
-      InfoFrm_FModified.Caption     := DateTimeToStr(FileDateToDateTime(TArcItem(FInfo).FileTime));
+      FNameValue.Caption         := TArcItem(FInfo).FileName;
+      FVersionValue.Caption      := TArcItem(FInfo).FileVersion;
+      FSizeValue.Caption         := SizeToStr(TArcItem(FInfo).FileSize);
+      FPackedValue.Caption       := SizeToStr(TArcItem(FInfo).FilePacked);
+      FRatioValue.Caption        := IntToStr(Ratio) + '%';
+      FAttributeValue.Caption    := AttrToStr(TArcItem(FInfo).FileAttr);
+      FPasswordValue.Caption     := TArcItem(FInfo).FilePassword;
+      FMethodValue.Caption       := TArcItem(FInfo).FileMethod;
+      FModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(TArcItem(FInfo).FileTime));
     except
       Result := False;
     end;
-    if Assigned(InfoFrm_APage) then InfoFrm_APage.Free;
+    if Assigned(APage) then APage.Free;
   end;
   
 initialization
