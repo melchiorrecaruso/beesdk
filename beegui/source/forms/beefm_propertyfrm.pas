@@ -254,7 +254,7 @@ uses
     Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {*$I beegui_infofrm_savelanguage.inc}
+      {$I beegui_infofrm_savelanguage.inc}
     {$ENDIF}
     {*$I beegui_infofrm_saveproperty.inc}
   end;
