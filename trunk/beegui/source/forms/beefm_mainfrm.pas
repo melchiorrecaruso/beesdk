@@ -509,16 +509,21 @@ uses
   
 
   procedure TMainFrm.OnArcTimer(Sender: TObject);
+  var
+    LastFolder: string;
   begin
     with ArcProcess do
       if Running = False then
       begin
         Idle.Enabled := False;
         Idle.OnTimer := nil;
+        
+        LastFolder := ListView.Folder;
         if ListView.Open(ArcName, ArcLink) then
           UpdateButtons(True)
         else
           UpdateButtons(False);
+        ListView.Folder := LastFolder;
       end;
   end;
   
@@ -972,7 +977,7 @@ uses
     if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
-      CmdLine := 'beegui r';
+      CmdLine := 'beegui r -l+';
       if MMenuOptionsLogReport.Checked then
         CmdLine := CmdLine + ' -1+'
       else
