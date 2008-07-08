@@ -180,7 +180,6 @@ uses
       end;
       Result := Buffer;
     end;
-    ShowMessage(Result);
     {$ENDIF}
     if Result = '' then
     begin

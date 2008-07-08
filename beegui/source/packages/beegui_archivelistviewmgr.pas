@@ -145,7 +145,7 @@ type
     destructor Destroy; override;
     procedure Initialize;
     // ---
-    function Open(const FileName, FileLink: string): boolean;
+    function Open(const AFileName, AFileLink: string): boolean;
     procedure CloseArchive;
     function Up: boolean;
     // ---
@@ -678,20 +678,20 @@ uses
     end;
   end;
   
-  function TCustomArcListView.Open(const FileName, FileLink: string): boolean;
+  function TCustomArcListView.Open(const AFileName, AFileLink: string): boolean;
   var
+    FLastFolder: string;
     FContents: TStringList;
     I, J, K: integer;
     Node: TArcItem;
   begin
-    Result := False;
     CloseArchive;
-    if FileExists(FileName) and FileExists(FileLink) then
+    if FileExists(AFileName) and FileExists(AFileLink) then
     begin
-      FFileLink := FileLink;
-      FFileName := FileName;
-      FFolderBoxSign := IncludeTrailingBackSlash(ExtractFileName(FFileName));
-      // ---
+      FFileName := AFileName;
+      FFileLink := AFileLink;
+      FFolderBoxSign := ExtractFileName(FFileName) + PathDelim;
+
       FContents := TStringList.Create;
       FContents.LoadFromFile(FFileLink);
       try
@@ -755,7 +755,8 @@ uses
       end;
       Color := clWindow;
       Enabled := True;
-    end;
+    end else
+      Result := False;
   end;
   
   function TCustomArcListView.UpdateFolders: boolean;
