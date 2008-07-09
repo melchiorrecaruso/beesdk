@@ -244,8 +244,8 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {$I beegui_propertyfrm_loadlanguage.inc}
-    {$I beegui_propertyfrm_loadproperty.inc}
+    {$I beefm_propertyfrm_loadlanguage.inc}
+    {$I beefm_propertyfrm_loadproperty.inc}
   end;
 
   procedure TInfoFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -254,9 +254,9 @@ uses
     Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beegui_propertyfrm_savelanguage.inc}
+      {$I beefm_propertyfrm_savelanguage.inc}
     {$ENDIF}
-    {$I beegui_propertyfrm_saveproperty.inc}
+    {$I beefm_propertyfrm_saveproperty.inc}
   end;
 
   function TInfoFrm.UpdateAInfo(const ArcName: string; AInfo: TArcDetails): boolean;
@@ -281,7 +281,7 @@ uses
     except
       Result := False;
     end;
-    if Assigned(FPage) then FPage.Free;
+    if Assigned(FPage) then FreeAndNil(FPage);
   end;
   
   function TInfoFrm.UpdateFInfo(FInfo: TArcItem): boolean;
@@ -306,7 +306,7 @@ uses
     except
       Result := False;
     end;
-    if Assigned(APage) then APage.Free;
+    if Assigned(APage) then FreeAndNil(APage);
   end;
   
 initialization
