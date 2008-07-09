@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -50,7 +50,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="288">
+    <Units Count="291">
       <Unit0>
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1329,7 +1329,7 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="17" Y="82"/>
         <TopLine Value="63"/>
-        <UsageCount Value="68"/>
+        <UsageCount Value="70"/>
       </Unit182>
       <Unit183>
         <Filename Value="packages\beegui_sysutils.pas"/>
@@ -1498,7 +1498,7 @@
         <UnitName Value="BeeGui_ViewFrm"/>
         <CursorPos X="28" Y="80"/>
         <TopLine Value="1"/>
-        <UsageCount Value="68"/>
+        <UsageCount Value="70"/>
       </Unit204>
       <Unit205>
         <Filename Value="forms\beegui_viewfrm.lrs"/>
@@ -1514,10 +1514,10 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_propertyfrm.lrs"/>
         <UnitName Value="BeeFM_PropertyFrm"/>
-        <CursorPos X="26" Y="257"/>
-        <TopLine Value="228"/>
+        <CursorPos X="34" Y="309"/>
+        <TopLine Value="277"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="46"/>
+        <UsageCount Value="48"/>
         <Loaded Value="True"/>
       </Unit206>
       <Unit207>
@@ -1735,7 +1735,7 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="10" Y="4"/>
         <TopLine Value="1"/>
-        <UsageCount Value="77"/>
+        <UsageCount Value="79"/>
         <SyntaxHighlighter Value="None"/>
       </Unit239>
       <Unit240>
@@ -1798,9 +1798,11 @@
       </Unit248>
       <Unit249>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="3" Y="43"/>
-        <TopLine Value="1"/>
-        <UsageCount Value="16"/>
+        <CursorPos X="2" Y="33"/>
+        <TopLine Value="5"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="17"/>
+        <Loaded Value="True"/>
       </Unit249>
       <Unit250>
         <Filename Value="forms\beefm_viewfrm.pas"/>
@@ -1931,8 +1933,8 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="12"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit268>
       <Unit269>
@@ -1970,7 +1972,7 @@
         <UnitName Value="BeeFm_SelectFrm"/>
         <CursorPos X="53" Y="24"/>
         <TopLine Value="1"/>
-        <UsageCount Value="44"/>
+        <UsageCount Value="46"/>
       </Unit272>
       <Unit273>
         <Filename Value="..\..\..\..\Programmi\FPC\2.2.2rc1\source\rtl\inc\systemh.inc"/>
@@ -2067,8 +2069,30 @@
         <TopLine Value="1"/>
         <UsageCount Value="10"/>
       </Unit287>
+      <Unit288>
+        <Filename Value="forms\forms.include\beefm_propertyfrm_savelanguage.inc"/>
+        <CursorPos X="34" Y="14"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit288>
+      <Unit289>
+        <Filename Value="forms\forms.include\beefm_propertyfrm_saveproperty.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit289>
+      <Unit290>
+        <Filename Value="forms\forms.include\beefm_propertyfrm_loadlanguage.inc"/>
+        <CursorPos X="34" Y="9"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit290>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
+    <JumpHistory Count="8" HistoryIndex="7">
       <Position1>
         <Filename Value="forms\beefm_propertyfrm.pas"/>
         <Caret Line="259" Column="6" TopLine="227"/>
@@ -2077,6 +2101,30 @@
         <Filename Value="forms\beefm_propertyfrm.pas"/>
         <Caret Line="248" Column="6" TopLine="239"/>
       </Position2>
+      <Position3>
+        <Filename Value="forms\forms.include\beefm_propertyfrm_savelanguage.inc"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position3>
+      <Position4>
+        <Filename Value="forms\beefm_propertyfrm.pas"/>
+        <Caret Line="257" Column="31" TopLine="228"/>
+      </Position4>
+      <Position5>
+        <Filename Value="forms\beefm_propertyfrm.pas"/>
+        <Caret Line="259" Column="31" TopLine="228"/>
+      </Position5>
+      <Position6>
+        <Filename Value="forms\beefm_propertyfrm.pas"/>
+        <Caret Line="247" Column="32" TopLine="228"/>
+      </Position6>
+      <Position7>
+        <Filename Value="forms\forms.include\beefm_propertyfrm_loadlanguage.inc"/>
+        <Caret Line="10" Column="72" TopLine="1"/>
+      </Position7>
+      <Position8>
+        <Filename Value="forms\forms.include\beefm_propertyfrm_savelanguage.inc"/>
+        <Caret Line="9" Column="19" TopLine="1"/>
+      </Position8>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

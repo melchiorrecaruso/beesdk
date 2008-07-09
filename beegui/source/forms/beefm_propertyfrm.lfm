@@ -25,11 +25,11 @@ object InfoFrm: TInfoFrm
     Height = 430
     Top = 6
     Width = 355
-    ActivePage = FPage
+    ActivePage = APage
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 1
     object APage: TTabSheet
       Caption = 'General'
