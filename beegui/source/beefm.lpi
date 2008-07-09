@@ -50,7 +50,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="287">
+    <Units Count="288">
       <Unit0>
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -2039,7 +2039,7 @@
       </Unit282>
       <Unit283>
         <Filename Value="forms\forms.include\beegui_propertyfrm_loadlanguage.inc"/>
-        <CursorPos X="77" Y="9"/>
+        <CursorPos X="60" Y="3"/>
         <TopLine Value="1"/>
         <UsageCount Value="10"/>
       </Unit283>
@@ -2061,6 +2061,12 @@
         <TopLine Value="1"/>
         <UsageCount Value="10"/>
       </Unit286>
+      <Unit287>
+        <Filename Value="forms\forms.include\beegui_renamefrm_loadlanguage.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit287>
     </Units>
     <JumpHistory Count="2" HistoryIndex="1">
       <Position1>
