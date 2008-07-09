@@ -245,7 +245,7 @@ uses
     Storage: TMemIniFile;
   begin
     {$I beegui_propertyfrm_loadlanguage.inc}
-    {*$I beegui_infofrm_loadproperty.inc}
+    {$I beegui_propertyfrm_loadproperty.inc}
   end;
 
   procedure TInfoFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -254,9 +254,9 @@ uses
     Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beegui_infofrm_savelanguage.inc}
+      {$I beegui_propertyfrm_savelanguage.inc}
     {$ENDIF}
-    {*$I beegui_infofrm_saveproperty.inc}
+    {$I beegui_propertyfrm_saveproperty.inc}
   end;
 
   function TInfoFrm.UpdateAInfo(const ArcName: string; AInfo: TArcDetails): boolean;
