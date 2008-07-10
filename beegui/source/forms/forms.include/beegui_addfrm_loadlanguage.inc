@@ -9,21 +9,20 @@
       PageFiles.Caption    := Storage.ReadString('TPages', 'PageFiles.Caption', PageFiles.Caption);
       PageAdvanced.Caption := Storage.ReadString('TPages', 'PageAdvanced.Caption', PageAdvanced.Caption);
 
-      ArchiveNameLabel.Caption := Storage.ReadString('TLabel', 'ArchiveName', ArchiveNameLabel.Caption);
-      BtnSave.Caption          := Storage.ReadString('TBitBtn', 'BtnSave.Caption', BtnSave.Caption);
-    
-	  ufOptionLabel.Caption := Storage.ReadString('TLabel', 'ufOption', ufOptionLabel.Caption);
+      ArchiveNameLabel.Caption := Storage.ReadString('TLabel', 'ArchiveName.Caption', ArchiveNameLabel.Caption);
+      
+	  ufOptionLabel.Caption := Storage.ReadString('TLabel', 'ufOption.Caption', ufOptionLabel.Caption);
       ufOption.Items[0] := Storage.ReadString('TComboBox', 'ufOption[0]', ufOption.Items[0]);
       ufOption.Items[1] := Storage.ReadString('TComboBox', 'ufOption[1]', ufOption.Items[1]);
       ufOption.Items[2] := Storage.ReadString('TComboBox', 'ufOption[2]', ufOption.Items[2]);
 
-      mOptionLabel.Caption := Storage.ReadString('TLabel', 'mOption', mOptionLabel.Caption);
+      mOptionLabel.Caption := Storage.ReadString('TLabel', 'mOption.Caption', mOptionLabel.Caption);
       mOption.Items[0] := Storage.ReadString('TComboBox', 'mOption[0]', mOption.Items[0]);
       mOption.Items[1] := Storage.ReadString('TComboBox', 'mOption[1]', mOption.Items[1]);
       mOption.Items[2] := Storage.ReadString('TComboBox', 'mOption[2]', mOption.Items[2]);
       mOption.Items[3] := Storage.ReadString('TComboBox', 'mOption[3]', mOption.Items[3]);
 
-      dOptionLabel.Caption := Storage.ReadString('TLabel', 'dOption', dOptionLabel.Caption);
+      dOptionLabel.Caption := Storage.ReadString('TLabel', 'dOption.Caption', dOptionLabel.Caption);
       dOption.Items[0] := Storage.ReadString('TComboBox', 'dOption[0]', dOption.Items[0]);
       dOption.Items[1] := Storage.ReadString('TComboBox', 'dOption[1]', dOption.Items[1]);
       dOption.Items[2] := Storage.ReadString('TComboBox', 'dOption[2]', dOption.Items[2]);
@@ -42,10 +41,23 @@
       kOption.Caption := Storage.ReadString('TCheckBox', 'kOption.Caption', kOption.Caption);
       lOption.Caption := Storage.ReadString('TCheckBox', 'lOption.Caption', lOption.Caption);
 
-      eOptionLabel.Caption := Storage.ReadString('TLabel', 'eOption', eOptionLabel.Caption);
+      eOptionLabel.Caption := Storage.ReadString('TLabel', 'eOption.Caption', eOptionLabel.Caption);
 
       FilesLabel.Caption := Storage.ReadString('TLabel', 'Files', FilesLabel.Caption);
       RootLabel.Caption  := Storage.ReadString('TLabel', 'Root', RootLabel.Caption);
+
+      aOptionCheck.Caption := Storage.ReadString('TCheckBox', 'aOption.Caption', aOptionCheck.Caption);
+      aOption.Items[0] := Storage.ReadString('TComboBox', 'aOption[0]', aOption.Items[0]);
+      aOption.Items[1] := Storage.ReadString('TComboBox', 'aOption[1]', aOption.Items[1]);
+      aOption.Items[2] := Storage.ReadString('TComboBox', 'aOption[2]', aOption.Items[2]);
+
+      cdOptionCheck.Caption := Storage.ReadString('TLabel', 'cdOption.Caption', cdOptionCheck.Caption);
+
+      cfgOptionLabel.Caption := Storage.ReadString('TLabel', 'cfgOption.Caption', cfgOptionLabel.Caption);
+      cfgOptionBtn.Caption   := Storage.ReadString('TBitBtn', 'cfgOptionBtn.Caption', cfgOptionBtn.Caption);
+
+      yOptionLabel.Caption := Storage.ReadString('TLabel', 'yOption.Caption', yOptionLabel.Caption);
+      yOptionBtn.Caption   := Storage.ReadString('TBitBtn', 'yOptionBtn.Caption', yOptionBtn.Caption);
 
       BtnFolder.Caption    := Storage.ReadString('TBitBtn', 'BtnFolder.Caption', BtnFolder.Caption);
       BtnFiles.Caption     := Storage.ReadString('TBitBtn', 'BtnFiles.Caption', BtnFiles.Caption);
@@ -53,22 +65,9 @@
       BtnPlusMinus.Caption := Storage.ReadString('TBitBtn', 'BtnPlusMinus.Caption', BtnPlusMinus.Caption);
       BtnModify.Caption    := Storage.ReadString('TBitBtn', 'BtnModify.Caption', BtnModify.Caption);
       BtnDelete.Caption    := Storage.ReadString('TBitBtn', 'BtnDelete.Caption', BtnDelete.Caption);
-
-      aOptionCheck.Caption := Storage.ReadString('TCheckBox', 'aOption.Caption', aOptionCheck.Caption);
-      aOption.Items[0] := Storage.ReadString('TComboBox', 'aOption[0]', aOption.Items[0]);
-      aOption.Items[1] := Storage.ReadString('TComboBox', 'aOption[1]', aOption.Items[1]);
-      aOption.Items[2] := Storage.ReadString('TComboBox', 'aOption[2]', aOption.Items[2]);
-
-      cdOptionCheck.Caption := Storage.ReadString('TLabel', 'cdOption', cdOptionCheck.Caption);
-
-      cfgOptionLabel.Caption := Storage.ReadString('TLabel', 'cfgOption', cfgOptionLabel.Caption);
-      cfgOptionBtn.Caption   := Storage.ReadString('TBitBtn', 'cfgOptionBtn.Caption', cfgOptionBtn.Caption);
-
-      yOptionLabel.Caption := Storage.ReadString('TLabel', 'yOption', yOptionLabel.Caption);
-      yOptionBtn.Caption   := Storage.ReadString('TBitBtn', 'yOptionBtn.Caption', yOptionBtn.Caption);
-
-      BtnCancel.Caption := Storage.ReadString('TBitBtn', 'BtnCancel.Caption', BtnCancel.Caption);
-      BtnOk.Caption     := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
+	  BtnSave.Caption      := Storage.ReadString('TBitBtn', 'BtnSave.Caption', BtnSave.Caption);
+      BtnCancel.Caption    := Storage.ReadString('TBitBtn', 'BtnCancel.Caption', BtnCancel.Caption);
+      BtnOk.Caption        := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
     end;
     Storage.Free;
   end;

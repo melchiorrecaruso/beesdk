@@ -1,5 +1,5 @@
 
-  Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');;
+  Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('tickfrm.ini'));

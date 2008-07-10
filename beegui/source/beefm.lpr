@@ -18,7 +18,7 @@
 
 {   Contains:
 
-    Bee File Manager
+      Bee File Manager
 
     Modifyed:
 }
@@ -37,12 +37,13 @@ uses
   // ---
   BeeGui_Package,
   // ---
+  BeeGui_AboutFrm,
+  // ---
   BeeFM_MainFrm,
   BeeFM_ViewFrm,
   BeeFM_ConfigFrm,
-  BeeGui_AboutFrm,
-  BeeFM_PropertyFrm,
-  BeeFm_SelectFrm;
+  BeeFm_SelectFrm,
+  BeeFM_PropertyFrm;
 
 begin
   Application.Initialize;

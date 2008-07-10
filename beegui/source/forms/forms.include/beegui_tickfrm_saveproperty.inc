@@ -1,5 +1,5 @@
 
-  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
+  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('beegui'));
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('tickfrm.ini'));
@@ -7,11 +7,8 @@
       if WindowState = wsNormal then
       begin
         Storage.WriteInteger('TForm', 'Top', Top);
-        Storage.WriteInteger('TForm', 'Left', Left);
-        // Storage.WriteInteger('TForm', 'Width', Width);
-        // Storage.WriteInteger('TForm', 'Height', Height);
-      end;
-      // Storage.WriteInteger('TForm', 'WindowState', Ord(WindowState));
+        Storage.WriteInteger('TForm', 'Left', Left);        
+      end;      
     
       Storage.WriteInteger('TFont', 'Report.Font.Charset',    (Report.Font.CharSet));
       Storage.WriteInteger('TFont', 'Report.Font.Color'  ,    (Report.Font.Color));

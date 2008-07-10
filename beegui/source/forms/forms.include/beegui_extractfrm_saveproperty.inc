@@ -1,5 +1,5 @@
 
-  F := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
+  F := IncludeTrailingBackSlash(GetApplicationConfigDir('beegui'));
   if ForceDirectories(F) then
   begin
     Storage := TMemIniFile.Create(F + ('extractfrm.ini'));

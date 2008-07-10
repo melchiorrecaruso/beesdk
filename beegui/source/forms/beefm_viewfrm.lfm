@@ -1,10 +1,8 @@
 object ViewFrm: TViewFrm
-  Left = 390
+  Left = 563
   Height = 310
   Top = 273
   Width = 453
-  HorzScrollBar.Page = 452
-  VertScrollBar.Page = 309
   Caption = 'View:'
   ClientHeight = 310
   ClientWidth = 453
@@ -79,6 +77,8 @@ object ViewFrm: TViewFrm
     top = 8
   end
   object SaveDialog: TSaveDialog
+    Filter = 'Log files (*.log)|*.log|Txt files (*.txt)|*.txt|All files (*.*)|*'
+    Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
     left = 40
     top = 8
   end
