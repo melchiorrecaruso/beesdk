@@ -6,11 +6,8 @@
     begin
       Storage.WriteString('TForm', 'Caption', Caption);
 
-      if Assigned(APage) then
-        Storage.WriteString('TTabSheet', 'APage.Caption', APage.Caption);
-
-      if Assigned(FPage) then
-        Storage.WriteString('TTabSheet', 'FPage.Caption', FPage.Caption);
+      if Assigned(APage) then Storage.WriteString('TTabSheet', 'APage.Caption', APage.Caption);
+      if Assigned(FPage) then Storage.WriteString('TTabSheet', 'FPage.Caption', FPage.Caption);
       
       Storage.WriteString('TLabel', 'AName.Caption',     AName.Caption);
       Storage.WriteString('TLabel', 'AVersion.Caption',  AVersion.Caption);

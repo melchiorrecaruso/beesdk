@@ -6,11 +6,8 @@
     begin
       Caption := Storage.ReadString('TForm', 'Caption', Caption);
 
-      if Assigned(APage) then
-        APage.Caption := Storage.ReadString('TTabSheet', 'APage.Caption', APage.Caption);
-
-      if Assigned(FPage) then
-        FPage.Caption := Storage.ReadString('TTabSheet', 'FPage.Caption', FPage.Caption);
+      APage.Caption := Storage.ReadString('TTabSheet', 'APage.Caption', APage.Caption);
+      FPage.Caption := Storage.ReadString('TTabSheet', 'FPage.Caption', FPage.Caption);
 
       AName    .Caption := Storage.ReadString('TLabel', 'AName.Caption',     AName.Caption);
       AVersion .Caption := Storage.ReadString('TLabel', 'AVersion.Caption',  AVersion.Caption);

@@ -9,10 +9,10 @@
       Storage.WriteString('TLabel', 'PasswordLabel.Caption', PasswordLabel.Caption);
       Storage.WriteString('TLabel', 'ConfirmPasswordLabel.Caption', ConfirmPasswordLabel.Caption);    
       Storage.WriteString('TCheckBox', 'MaskPassword.Caption', MaskPassword.Caption);
-    
-      Storage.WriteString('TBitBtn', 'BtnClear.Caption', BtnClear.Caption);
-      Storage.WriteString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
+
       Storage.WriteString('TBitBtn', 'BtnCancel.Caption', BtnCancel.Caption);
+      Storage.WriteString('TBitBtn', 'BtnClear.Caption', BtnClear.Caption);
+      Storage.WriteString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);      
     end;
     Storage.Free;
   end;

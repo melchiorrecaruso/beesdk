@@ -1,12 +1,12 @@
 
-  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('BeeGui'));
+  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('beegui'));
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('aboutfrm.ini'));
     if WindowState = wsNormal then
     begin
-      Top    := Storage.ReadInteger('TForm', 'Top', Top);
-      Left   := Storage.ReadInteger('TForm', 'Left', Left);
+      Top  := Storage.ReadInteger('TForm', 'Top', Top);
+      Left := Storage.ReadInteger('TForm', 'Left', Left);
     end;
     Storage.Free;
   end;

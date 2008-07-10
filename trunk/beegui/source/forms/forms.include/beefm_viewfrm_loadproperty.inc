@@ -1,13 +1,9 @@
 
-  // ---
-
   Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('beegui'));
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('viewfrm.ini'));
-
-    // ---
-
+	
     if WindowState = wsNormal then
     begin
       Top    := Storage.ReadInteger('TForm', 'ViewFrm.Top', Top);
@@ -16,8 +12,6 @@
       Height := Storage.ReadInteger('TForm', 'ViewFrm.Height', Height);
     end;
     WindowState := TWindowState(Storage.ReadInteger('TForm', 'ViewFrm.WindowState', Ord(WindowState)));
-
-    // ---
 
     FontDialog.Font.CharSet := TFontCharSet(Storage.ReadInteger('TFont', 'FontDialog.Charset', Ord(FontDialog.Font.CharSet)));
     FontDialog.Font.Color   := TColor      (Storage.ReadInteger('TFont', 'FontDialog.Color'  , Ord(FontDialog.Font.Color)));
@@ -45,9 +39,7 @@
       FontDialog.Font.Style := FontDialog.Font.Style + [fsStrikeOut]
     else
       FontDialog.Font.Style := FontDialog.Font.Style - [fsStrikeOut];
-
-    // ---
-
+	  
     Storage.Free;
   end;
 
