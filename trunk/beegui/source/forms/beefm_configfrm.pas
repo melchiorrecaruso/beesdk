@@ -50,13 +50,11 @@ type
   TConfigFrm = class(TForm)
     BtnOk: TBitBtn;
     cdAOption: TCheckBox;
-    ConfigFrm_Tree: TTreeView;
-    ConfigFrm_AddGB: TGroupBox;
-    ConfigFrm_ExtractGB: TGroupBox;
-    ConfigFrm_GeneralGB: TGroupBox;
+    Tree: TTreeView;
+    AddPage: TGroupBox;
+    ExtractPage: TGroupBox;
     dOption: TComboBox;
     dOptionLabel: TLabel;
-    ConfigFrm_OptionsGB: TGroupBox;
     kOption: TCheckBox;
     lOption: TCheckBox;
     mOption: TComboBox;
@@ -73,7 +71,7 @@ type
     // ---
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure ConfigFrm_TreeChange(Sender: TObject; Node: TTreeNode);
+    procedure TreeChange(Sender: TObject; Node: TTreeNode);
   private
     procedure SetPageIndex(PageIndex: integer);
   public
@@ -97,7 +95,7 @@ uses
     Folder: string;
     Storage: TMemIniFile;
   begin
-    {*$I beefm_configfrm_loadlanguage.inc}
+    {$I beefm_configfrm_loadlanguage.inc}
     {$I beefm_configfrm_loadproperty.inc}
   end;
 
@@ -107,26 +105,27 @@ uses
     Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {*$I beefm_configfrm_savelanguage.inc}
+      {$I beefm_configfrm_savelanguage.inc}
     {$ENDIF}
     {$I beefm_configfrm_saveproperty.inc}
   end;
   
-  procedure TConfigFrm.ConfigFrm_TreeChange(Sender: TObject; Node: TTreeNode);
+  procedure TConfigFrm.TreeChange(Sender: TObject; Node: TTreeNode);
   begin
-    SetPageIndex(ConfigFrm_Tree.Selected.AbsoluteIndex);
+    SetPageIndex(Tree.Selected.AbsoluteIndex);
   end;
 
   procedure TConfigFrm.SetPageIndex(PageIndex: integer);
+  var
+    I: integer;
   begin
-    ConfigFrm_AddGB    .Visible := False;
-    ConfigFrm_ExtractGB.Visible := False;
-    ConfigFrm_GeneralGB.Visible := False;
+    AddPage    .Visible := False;
+    ExtractPage.Visible := False;
     case PageIndex of
-      0: ConfigFrm_AddGB    .Visible := True;
-      1: ConfigFrm_ExtractGB.Visible := True;
-      2: ConfigFrm_GeneralGB.Visible := True;
+      0: AddPage    .Visible := True;
+      1: ExtractPage.Visible := True;
     end;
+    Tree.Items[PageIndex].Selected := True;
   end;
   
   function TConfigFrm.AddOptions(const Folder: string): string;
