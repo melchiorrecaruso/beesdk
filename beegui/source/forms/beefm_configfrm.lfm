@@ -1,26 +1,26 @@
 object ConfigFrm: TConfigFrm
   Left = 305
-  Height = 489
+  Height = 403
   Top = 156
-  Width = 656
-  HorzScrollBar.Page = 655
+  Width = 561
+  HorzScrollBar.Page = 560
   HorzScrollBar.Range = 156
-  VertScrollBar.Page = 488
+  VertScrollBar.Page = 402
   AutoScroll = False
   Caption = 'Configuration'
-  ClientHeight = 489
-  ClientWidth = 656
+  ClientHeight = 403
+  ClientWidth = 561
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
   LCLVersion = '0.9.25'
-  object ConfigFrm_Tree: TTreeView
+  object Tree: TTreeView
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     AnchorSideBottom.Control = BtnOk
     Left = 6
-    Height = 445
+    Height = 359
     Top = 6
     Width = 150
     Anchors = [akTop, akLeft, akBottom]
@@ -34,43 +34,42 @@ object ConfigFrm: TConfigFrm
     RowSelect = True
     ScrollBars = ssAutoBoth
     TabOrder = 0
-    OnChange = ConfigFrm_TreeChange
+    OnChange = TreeChange
     Options = [tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoRightClickSelect, tvoRowSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
     Items.Data = {
-      F9FFFFFF0100030000000000000000000000FFFFFFFFFFFFFFFF000000000000
+      F9FFFFFF0100020000000000000000000000FFFFFFFFFFFFFFFF000000000000
       000000000000000B000000416464204F7074696F6E730000000000000000FFFF
       FFFFFFFFFFFF000000000000000000000000000F00000045787472616374204F
-      7074696F6E730000000000000000FFFFFFFFFFFFFFFF00000000000000000000
-      0000000700000047656E6572616C
+      7074696F6E73
     }
   end
-  object ConfigFrm_AddGB: TGroupBox
-    AnchorSideLeft.Control = ConfigFrm_Tree
+  object AddPage: TGroupBox
+    AnchorSideLeft.Control = Tree
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnOk
     Left = 162
-    Height = 445
+    Height = 359
     Top = 6
-    Width = 488
+    Width = 393
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     Caption = 'Add Options'
-    ClientHeight = 427
-    ClientWidth = 484
+    ClientHeight = 341
+    ClientWidth = 389
     ParentShowHint = False
     TabOrder = 1
     object mOptionLabel: TLabel
-      AnchorSideLeft.Control = ConfigFrm_AddGB
-      AnchorSideTop.Control = ConfigFrm_AddGB
-      AnchorSideRight.Control = ConfigFrm_AddGB
+      AnchorSideLeft.Control = AddPage
+      AnchorSideTop.Control = AddPage
+      AnchorSideRight.Control = AddPage
       AnchorSideRight.Side = asrBottom
       Left = 12
       Height = 14
       Top = 6
-      Width = 466
+      Width = 371
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 12
       BorderSpacing.Top = 6
@@ -89,7 +88,7 @@ object ConfigFrm: TConfigFrm
       Left = 12
       Height = 18
       Top = 49
-      Width = 466
+      Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       BorderSpacing.Top = 6
@@ -107,20 +106,20 @@ object ConfigFrm: TConfigFrm
       Left = 12
       Height = 174
       Top = 96
-      Width = 466
+      Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Top = 6
       Caption = 'Options'
       ClientHeight = 156
-      ClientWidth = 462
+      ClientWidth = 367
       ParentShowHint = False
       TabOrder = 0
       object rOption: TCheckBox
         Left = 12
         Height = 19
         Top = 6
-        Width = 444
+        Width = 349
         Align = alTop
         BorderSpacing.Left = 6
         BorderSpacing.Around = 6
@@ -139,7 +138,7 @@ object ConfigFrm: TConfigFrm
         Left = 12
         Height = 19
         Top = 31
-        Width = 444
+        Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6
@@ -156,7 +155,7 @@ object ConfigFrm: TConfigFrm
         Left = 12
         Height = 19
         Top = 81
-        Width = 444
+        Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6
@@ -173,7 +172,7 @@ object ConfigFrm: TConfigFrm
         Left = 12
         Height = 19
         Top = 56
-        Width = 444
+        Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6
@@ -190,7 +189,7 @@ object ConfigFrm: TConfigFrm
         Left = 12
         Height = 19
         Top = 106
-        Width = 444
+        Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6
@@ -211,7 +210,7 @@ object ConfigFrm: TConfigFrm
         Left = 12
         Height = 19
         Top = 131
-        Width = 444
+        Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6
@@ -231,7 +230,7 @@ object ConfigFrm: TConfigFrm
       Left = 12
       Height = 21
       Top = 22
-      Width = 466
+      Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Top = 2
@@ -259,7 +258,7 @@ object ConfigFrm: TConfigFrm
       Left = 12
       Height = 21
       Top = 69
-      Width = 466
+      Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Top = 2
@@ -285,22 +284,22 @@ object ConfigFrm: TConfigFrm
       Text = 'Level  3   (dictionary size  <     20 MB)'
     end
   end
-  object ConfigFrm_ExtractGB: TGroupBox
-    AnchorSideLeft.Control = ConfigFrm_Tree
+  object ExtractPage: TGroupBox
+    AnchorSideLeft.Control = Tree
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnOk
     Left = 162
-    Height = 446
-    Top = 5
-    Width = 489
+    Height = 359
+    Top = 6
+    Width = 393
     Anchors = [akTop, akLeft, akRight, akBottom]
-    BorderSpacing.Around = 5
+    BorderSpacing.Around = 6
     Caption = 'Extract Options'
-    ClientHeight = 428
-    ClientWidth = 485
+    ClientHeight = 341
+    ClientWidth = 389
     ParentShowHint = False
     TabOrder = 2
     Visible = False
@@ -310,7 +309,7 @@ object ConfigFrm: TConfigFrm
       Left = 12
       Height = 14
       Top = 6
-      Width = 467
+      Width = 371
       Align = alTop
       BorderSpacing.Left = 12
       BorderSpacing.Top = 6
@@ -330,14 +329,14 @@ object ConfigFrm: TConfigFrm
       Left = 12
       Height = 74
       Top = 49
-      Width = 467
+      Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Top = 6
       BorderSpacing.Bottom = 2
       Caption = 'Options'
       ClientHeight = 56
-      ClientWidth = 463
+      ClientWidth = 367
       ParentShowHint = False
       TabOrder = 0
       object cdEOption: TCheckBox
@@ -349,7 +348,7 @@ object ConfigFrm: TConfigFrm
         Left = 12
         Height = 19
         Top = 31
-        Width = 445
+        Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6
@@ -363,7 +362,7 @@ object ConfigFrm: TConfigFrm
         Left = 12
         Height = 19
         Top = 6
-        Width = 445
+        Width = 349
         Align = alTop
         BorderSpacing.Left = 6
         BorderSpacing.Around = 6
@@ -383,7 +382,7 @@ object ConfigFrm: TConfigFrm
       Left = 12
       Height = 21
       Top = 22
-      Width = 467
+      Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Top = 2
@@ -402,49 +401,14 @@ object ConfigFrm: TConfigFrm
       Text = 'Query if Overwrite pre-existing files'
     end
   end
-  object ConfigFrm_GeneralGB: TGroupBox
-    AnchorSideLeft.Control = ConfigFrm_Tree
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = Owner
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = BtnOk
-    Left = 162
-    Height = 445
-    Top = 6
-    Width = 488
-    Anchors = [akTop, akLeft, akRight, akBottom]
-    BorderSpacing.Around = 6
-    Caption = 'General'
-    ClientHeight = 427
-    ClientWidth = 484
-    ParentShowHint = False
-    TabOrder = 3
-    Visible = False
-    object ConfigFrm_OptionsGB: TGroupBox
-      AnchorSideLeft.Control = ConfigFrm_GeneralGB
-      AnchorSideTop.Control = ConfigFrm_GeneralGB
-      AnchorSideRight.Control = ConfigFrm_GeneralGB
-      Left = 6
-      Height = 239
-      Top = 6
-      Width = 472
-      Align = alTop
-      AutoSize = True
-      BorderSpacing.Around = 6
-      Caption = 'Options'
-      ParentShowHint = False
-      TabOrder = 0
-    end
-  end
   object BtnOk: TBitBtn
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 572
+    Left = 477
     Height = 26
-    Top = 457
+    Top = 371
     Width = 78
     Anchors = [akRight, akBottom]
     BorderSpacing.Around = 6
@@ -457,6 +421,6 @@ object ConfigFrm: TConfigFrm
     Kind = bkOK
     ModalResult = 1
     NumGlyphs = 0
-    TabOrder = 4
+    TabOrder = 3
   end
 end
