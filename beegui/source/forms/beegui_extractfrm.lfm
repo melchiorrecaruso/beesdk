@@ -59,12 +59,12 @@ object ExtractFrm: TExtractFrm
     Left = 6
     Height = 102
     Top = 93
-    Width = 248
+    Width = 254
     AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Options'
     ClientHeight = 84
-    ClientWidth = 244
+    ClientWidth = 250
     ParentShowHint = False
     TabOrder = 2
     object xCommand: TCheckBox
@@ -73,7 +73,7 @@ object ExtractFrm: TExtractFrm
       Left = 6
       Height = 19
       Top = 6
-      Width = 232
+      Width = 238
       BorderSpacing.Around = 6
       Caption = 'Extract and Recreate the relative pathname'
       Checked = True
@@ -88,7 +88,7 @@ object ExtractFrm: TExtractFrm
       Left = 6
       Height = 19
       Top = 31
-      Width = 224
+      Width = 231
       BorderSpacing.Around = 6
       Caption = 'Use Current Archive Directory (-cd Option)'
       OnChange = cdOptionCheckChange
@@ -105,7 +105,7 @@ object ExtractFrm: TExtractFrm
       Left = 26
       Height = 22
       Top = 56
-      Width = 204
+      Width = 211
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Left = 20
@@ -185,7 +185,7 @@ object ExtractFrm: TExtractFrm
     Left = 6
     Height = 21
     Top = 66
-    Width = 248
+    Width = 254
     Anchors = [akTop, akLeft, akRight]
     AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
     BorderSpacing.Left = 6
@@ -211,33 +211,21 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
-    Left = 260
+    Left = 266
     Height = 384
     Top = 50
-    Width = 329
+    Width = 323
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
     BorderSpacing.Right = 6
     BorderSpacing.Bottom = 6
-    DefaultItemHeight = 16
-    Images = Icons
+    DefaultItemHeight = 15
     ReadOnly = True
     TabOrder = 3
     OnClick = FoldersClick
     OnDblClick = FoldersDblClick
     OnExpanding = FoldersExpanding
     Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
-  end
-  object Icons: TIconList
-    left = 8
-    top = 216
-  end
-  object FoldersMgr: TFolderTreeViewMgr
-    FolderEdit = Folder
-    FolderTree = Folders
-    FolderIcons = Icons
-    left = 48
-    top = 216
   end
 end
