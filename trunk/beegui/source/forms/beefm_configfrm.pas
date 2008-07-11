@@ -48,13 +48,8 @@ type
   { TConfigFrm }
 
   TConfigFrm = class(TForm)
-    AddFrm_Dictionary1: TComboBox;
-    AddFrm_DictionaryGB1: TGroupBox;
-    AddFrm_Method1: TComboBox;
-    AddFrm_MethodGB1: TGroupBox;
     BtnOk: TBitBtn;
     cdAOption: TCheckBox;
-    // ---
     ConfigFrm_Tree: TTreeView;
     ConfigFrm_AddGB: TGroupBox;
     ConfigFrm_ExtractGB: TGroupBox;
@@ -66,16 +61,17 @@ type
     lOption: TCheckBox;
     mOption: TComboBox;
     mOptionLabel: TLabel;
+    AddingOptions: TGroupBox;
+    ExtractingOptions: TGroupBox;
     oOption: TComboBox;
     oOptionLabel: TLabel;
-    Options: TGroupBox;
-    Options1: TGroupBox;
     rOption: TCheckBox;
     sOption: TCheckBox;
     tOption: TCheckBox;
     cdEOption: TCheckBox;
-    xCommand1: TCheckBox;
+    xCommand: TCheckBox;
     // ---
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure ConfigFrm_TreeChange(Sender: TObject; Node: TTreeNode);
   private
@@ -99,8 +95,21 @@ uses
   procedure TConfigFrm.FormCreate(Sender: TObject);
   var
     Folder: string;
+    Storage: TMemIniFile;
   begin
+    {*$I beefm_configfrm_loadlanguage.inc}
+    {$I beefm_configfrm_loadproperty.inc}
+  end;
 
+  procedure TConfigFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+    {$IFDEF DEBUG}
+      {*$I beefm_configfrm_savelanguage.inc}
+    {$ENDIF}
+    {$I beefm_configfrm_saveproperty.inc}
   end;
   
   procedure TConfigFrm.ConfigFrm_TreeChange(Sender: TObject; Node: TTreeNode);
@@ -110,17 +119,6 @@ uses
 
   procedure TConfigFrm.SetPageIndex(PageIndex: integer);
   begin
-    ConfigFrm_AddGB    .Left := 152;
-    ConfigFrm_ExtractGB.Left := 152;
-    ConfigFrm_GeneralGB.Left := 152;
-    // ---
-    ConfigFrm_AddGB    .Top  := 10;
-    ConfigFrm_ExtractGB.Top  := 10;
-    ConfigFrm_GeneralGB.Top  := 10;
-    // ---
-    Height := 400;
-    Width  := 501;
-    // ---
     ConfigFrm_AddGB    .Visible := False;
     ConfigFrm_ExtractGB.Visible := False;
     ConfigFrm_GeneralGB.Visible := False;

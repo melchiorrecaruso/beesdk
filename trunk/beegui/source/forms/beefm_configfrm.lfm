@@ -1,23 +1,31 @@
 object ConfigFrm: TConfigFrm
-  Left = 346
-  Height = 570
-  Top = 187
-  Width = 805
+  Left = 305
+  Height = 489
+  Top = 156
+  Width = 656
+  HorzScrollBar.Page = 655
+  HorzScrollBar.Range = 156
+  VertScrollBar.Page = 488
+  AutoScroll = False
   Caption = 'Configuration'
-  ClientHeight = 570
-  ClientWidth = 805
+  ClientHeight = 489
+  ClientWidth = 656
   Font.Height = -11
   Font.Name = 'Tahoma'
+  OnClose = FormClose
   OnCreate = FormCreate
   LCLVersion = '0.9.25'
   object ConfigFrm_Tree: TTreeView
-    Left = 4
-    Height = 524
-    Top = 4
-    Width = 140
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideBottom.Control = BtnOk
+    Left = 6
+    Height = 445
+    Top = 6
+    Width = 150
     Anchors = [akTop, akLeft, akBottom]
-    Constraints.MaxWidth = 140
-    Constraints.MinWidth = 140
+    BorderSpacing.Around = 6
+    Constraints.MinWidth = 150
     DefaultItemHeight = 15
     HideSelection = False
     Indent = 20
@@ -37,66 +45,84 @@ object ConfigFrm: TConfigFrm
     }
   end
   object ConfigFrm_AddGB: TGroupBox
-    Left = 150
-    Height = 524
-    Top = 4
-    Width = 651
+    AnchorSideLeft.Control = ConfigFrm_Tree
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = BtnOk
+    Left = 162
+    Height = 445
+    Top = 6
+    Width = 488
     Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Around = 6
     Caption = 'Add Options'
-    ClientHeight = 506
-    ClientWidth = 647
+    ClientHeight = 427
+    ClientWidth = 484
     ParentShowHint = False
     TabOrder = 1
     object mOptionLabel: TLabel
-      Left = 8
-      Height = 18
-      Top = 4
-      Width = 631
-      Align = alTop
-      AutoSize = False
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
-      BorderSpacing.Bottom = 4
-      BorderSpacing.Around = 4
+      AnchorSideLeft.Control = ConfigFrm_AddGB
+      AnchorSideTop.Control = ConfigFrm_AddGB
+      AnchorSideRight.Control = ConfigFrm_AddGB
+      AnchorSideRight.Side = asrBottom
+      Left = 12
+      Height = 14
+      Top = 6
+      Width = 466
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 12
+      BorderSpacing.Top = 6
+      BorderSpacing.Right = 6
+      BorderSpacing.Bottom = 2
       Caption = 'Compression method:'
-      Constraints.MaxHeight = 18
-      Constraints.MinHeight = 18
-      Layout = tlBottom
+      Layout = tlCenter
       ParentColor = False
     end
     object dOptionLabel: TLabel
-      Left = 8
+      AnchorSideLeft.Control = mOptionLabel
+      AnchorSideTop.Control = mOption
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = mOptionLabel
+      AnchorSideRight.Side = asrBottom
+      Left = 12
       Height = 18
-      Top = 59
-      Width = 631
-      Align = alTop
+      Top = 49
+      Width = 466
+      Anchors = [akTop, akLeft, akRight]
       AutoSize = False
-      BorderSpacing.Around = 8
+      BorderSpacing.Top = 6
+      BorderSpacing.Bottom = 2
       Caption = 'Dictionary size:'
-      Constraints.MaxHeight = 18
-      Constraints.MinHeight = 18
-      Layout = tlBottom
+      Layout = tlCenter
       ParentColor = False
     end
-    object Options: TGroupBox
-      Left = 7
-      Height = 178
-      Top = 114
-      Width = 633
-      Align = alTop
-      Anchors = [akRight]
-      BorderSpacing.Around = 7
+    object AddingOptions: TGroupBox
+      AnchorSideLeft.Control = mOptionLabel
+      AnchorSideTop.Control = dOption
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = mOptionLabel
+      AnchorSideRight.Side = asrBottom
+      Left = 12
+      Height = 174
+      Top = 96
+      Width = 466
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = True
+      BorderSpacing.Top = 6
       Caption = 'Options'
-      ClientHeight = 160
-      ClientWidth = 629
+      ClientHeight = 156
+      ClientWidth = 462
       ParentShowHint = False
       TabOrder = 0
       object rOption: TCheckBox
-        Left = 6
+        Left = 12
         Height = 19
         Top = 6
-        Width = 617
+        Width = 444
         Align = alTop
+        BorderSpacing.Left = 6
         BorderSpacing.Around = 6
         Caption = 'Recurse subdirectories (-r Option)'
         Checked = True
@@ -105,45 +131,69 @@ object ConfigFrm: TConfigFrm
         TabOrder = 0
       end
       object sOption: TCheckBox
-        Left = 6
+        AnchorSideLeft.Control = rOption
+        AnchorSideTop.Control = rOption
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = rOption
+        AnchorSideRight.Side = asrBottom
+        Left = 12
         Height = 19
         Top = 31
-        Width = 617
-        Align = alTop
-        BorderSpacing.Around = 6
+        Width = 444
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 6
         Caption = 'Create a solid archive (-s Option)'
         ParentShowHint = False
         TabOrder = 1
       end
       object tOption: TCheckBox
-        Left = 6
+        AnchorSideLeft.Control = kOption
+        AnchorSideTop.Control = kOption
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = kOption
+        AnchorSideRight.Side = asrBottom
+        Left = 12
         Height = 19
-        Top = 56
-        Width = 617
-        Align = alTop
-        BorderSpacing.Around = 6
+        Top = 81
+        Width = 444
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 6
         Caption = 'Test files after adding (-t Option)'
         ParentShowHint = False
         TabOrder = 2
       end
       object kOption: TCheckBox
-        Left = 6
+        AnchorSideLeft.Control = sOption
+        AnchorSideTop.Control = sOption
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = sOption
+        AnchorSideRight.Side = asrBottom
+        Left = 12
         Height = 19
-        Top = 81
-        Width = 617
-        Align = alTop
-        BorderSpacing.Around = 6
+        Top = 56
+        Width = 444
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 6
         Caption = 'Crypt files with password (-k Option)'
         ParentShowHint = False
         TabOrder = 3
       end
       object lOption: TCheckBox
-        Left = 6
+        AnchorSideLeft.Control = tOption
+        AnchorSideTop.Control = tOption
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = tOption
+        AnchorSideRight.Side = asrBottom
+        Left = 12
         Height = 19
         Top = 106
-        Width = 617
-        Align = alTop
-        BorderSpacing.Around = 6
+        Width = 444
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 6
         Caption = 'List archive after process (-l Option)'
         Checked = True
         Enabled = False
@@ -153,12 +203,18 @@ object ConfigFrm: TConfigFrm
         Visible = False
       end
       object cdAOption: TCheckBox
-        Left = 6
+        AnchorSideLeft.Control = lOption
+        AnchorSideTop.Control = lOption
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = lOption
+        AnchorSideRight.Side = asrBottom
+        Left = 12
         Height = 19
         Top = 131
-        Width = 617
-        Align = alTop
-        BorderSpacing.Around = 6
+        Width = 444
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 6
         Caption = 'Use current archive directory (-cd Option)'
         Checked = True
         ParentShowHint = False
@@ -167,13 +223,19 @@ object ConfigFrm: TConfigFrm
       end
     end
     object mOption: TComboBox
-      Left = 8
+      AnchorSideLeft.Control = mOptionLabel
+      AnchorSideTop.Control = mOptionLabel
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = mOptionLabel
+      AnchorSideRight.Side = asrBottom
+      Left = 12
       Height = 21
-      Top = 30
-      Width = 631
-      Align = alTop
+      Top = 22
+      Width = 466
+      Anchors = [akTop, akLeft, akRight]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-      BorderSpacing.Around = 8
+      BorderSpacing.Top = 2
+      BorderSpacing.Bottom = 2
       ItemHeight = 13
       ItemIndex = 1
       Items.Strings = (
@@ -189,13 +251,19 @@ object ConfigFrm: TConfigFrm
       Text = '1 - Low'
     end
     object dOption: TComboBox
-      Left = 8
+      AnchorSideLeft.Control = dOptionLabel
+      AnchorSideTop.Control = dOptionLabel
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = dOptionLabel
+      AnchorSideRight.Side = asrBottom
+      Left = 12
       Height = 21
-      Top = 85
-      Width = 631
-      Align = alTop
+      Top = 69
+      Width = 466
+      Anchors = [akTop, akLeft, akRight]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-      BorderSpacing.Around = 8
+      BorderSpacing.Top = 2
+      BorderSpacing.Bottom = 2
       ItemHeight = 13
       ItemIndex = 3
       Items.Strings = (
@@ -218,84 +286,86 @@ object ConfigFrm: TConfigFrm
     end
   end
   object ConfigFrm_ExtractGB: TGroupBox
-    Left = 184
-    Height = 524
-    Top = 336
-    Width = 651
+    AnchorSideLeft.Control = ConfigFrm_Tree
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = BtnOk
+    Left = 162
+    Height = 446
+    Top = 5
+    Width = 489
     Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Around = 5
     Caption = 'Extract Options'
-    ClientHeight = 506
-    ClientWidth = 647
+    ClientHeight = 428
+    ClientWidth = 485
     ParentShowHint = False
     TabOrder = 2
+    Visible = False
     object oOptionLabel: TLabel
-      Left = 8
-      Height = 18
-      Top = 4
-      Width = 631
+      AnchorSideLeft.Control = Owner
+      AnchorSideTop.Side = asrBottom
+      Left = 12
+      Height = 14
+      Top = 6
+      Width = 467
       Align = alTop
-      AutoSize = False
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
-      BorderSpacing.Bottom = 4
-      BorderSpacing.Around = 4
-      Caption = 'Extraction path:'
+      BorderSpacing.Left = 12
+      BorderSpacing.Top = 6
+      BorderSpacing.Right = 6
+      BorderSpacing.Bottom = 2
+      Caption = 'Overwrite mode:'
       Layout = tlBottom
       ParentColor = False
       ParentShowHint = False
     end
-    object oOption: TComboBox
-      Left = 8
-      Height = 21
-      Top = 30
-      Width = 631
-      Align = alTop
-      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-      BorderSpacing.Around = 8
-      ItemHeight = 13
-      Items.Strings = (
-        'Skip pre-existing files'
-        'Overwrite pre-existing files'
-        'Query if overwrite pre-existing files'
-      )
-      MaxLength = 0
-      ParentShowHint = False
-      Style = csDropDownList
-      TabOrder = 0
-    end
-    object Options1: TGroupBox
-      Left = 8
-      Height = 80
-      Top = 59
-      Width = 631
-      Align = alTop
-      BorderSpacing.Around = 8
+    object ExtractingOptions: TGroupBox
+      AnchorSideLeft.Control = oOption
+      AnchorSideTop.Control = oOption
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = oOptionLabel
+      AnchorSideRight.Side = asrBottom
+      Left = 12
+      Height = 74
+      Top = 49
+      Width = 467
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = True
+      BorderSpacing.Top = 6
+      BorderSpacing.Bottom = 2
       Caption = 'Options'
-      ClientHeight = 62
-      ClientWidth = 627
+      ClientHeight = 56
+      ClientWidth = 463
       ParentShowHint = False
-      TabOrder = 1
+      TabOrder = 0
       object cdEOption: TCheckBox
-        Left = 6
+        AnchorSideLeft.Control = xCommand
+        AnchorSideTop.Control = xCommand
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = xCommand
+        AnchorSideRight.Side = asrBottom
+        Left = 12
         Height = 19
         Top = 31
-        Width = 615
-        Align = alTop
-        Anchors = [akRight]
-        BorderSpacing.Around = 6
+        Width = 445
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 6
+        BorderSpacing.Bottom = 6
         Caption = 'Use current archive directory (-cd Option)'
         Checked = True
         ParentShowHint = False
         State = cbChecked
         TabOrder = 0
       end
-      object xCommand1: TCheckBox
-        Left = 6
+      object xCommand: TCheckBox
+        Left = 12
         Height = 19
         Top = 6
-        Width = 615
+        Width = 445
         Align = alTop
-        Anchors = [akRight]
+        BorderSpacing.Left = 6
         BorderSpacing.Around = 6
         Caption = 'Extract and recreate the relative pathname '
         Checked = True
@@ -304,40 +374,80 @@ object ConfigFrm: TConfigFrm
         TabOrder = 1
       end
     end
+    object oOption: TComboBox
+      AnchorSideLeft.Control = oOptionLabel
+      AnchorSideTop.Control = oOptionLabel
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = oOptionLabel
+      AnchorSideRight.Side = asrBottom
+      Left = 12
+      Height = 21
+      Top = 22
+      Width = 467
+      Anchors = [akTop, akLeft, akRight]
+      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+      BorderSpacing.Top = 2
+      BorderSpacing.Bottom = 2
+      ItemHeight = 13
+      ItemIndex = 2
+      Items.Strings = (
+        'Skip pre-existing files'
+        'Overwrite pre-existing files'
+        'Query if Overwrite pre-existing files'
+      )
+      MaxLength = 0
+      ParentShowHint = False
+      Style = csDropDownList
+      TabOrder = 1
+      Text = 'Query if Overwrite pre-existing files'
+    end
   end
   object ConfigFrm_GeneralGB: TGroupBox
-    Left = 344
-    Height = 524
-    Top = 320
-    Width = 651
+    AnchorSideLeft.Control = ConfigFrm_Tree
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = BtnOk
+    Left = 162
+    Height = 445
+    Top = 6
+    Width = 488
     Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Around = 6
     Caption = 'General'
-    ClientHeight = 506
-    ClientWidth = 647
+    ClientHeight = 427
+    ClientWidth = 484
     ParentShowHint = False
     TabOrder = 3
+    Visible = False
     object ConfigFrm_OptionsGB: TGroupBox
-      Left = 8
+      AnchorSideLeft.Control = ConfigFrm_GeneralGB
+      AnchorSideTop.Control = ConfigFrm_GeneralGB
+      AnchorSideRight.Control = ConfigFrm_GeneralGB
+      Left = 6
       Height = 239
-      Top = 4
-      Width = 631
+      Top = 6
+      Width = 472
       Align = alTop
       AutoSize = True
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
-      BorderSpacing.Bottom = 4
-      BorderSpacing.Around = 4
+      BorderSpacing.Around = 6
       Caption = 'Options'
       ParentShowHint = False
       TabOrder = 0
     end
   end
   object BtnOk: TBitBtn
-    Left = 723
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 572
     Height = 26
-    Top = 540
+    Top = 457
     Width = 78
     Anchors = [akRight, akBottom]
+    BorderSpacing.Around = 6
     Caption = '&OK'
     Constraints.MaxHeight = 26
     Constraints.MaxWidth = 78
