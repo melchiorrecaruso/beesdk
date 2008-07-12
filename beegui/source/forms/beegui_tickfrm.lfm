@@ -76,6 +76,7 @@ object TickFrm: TTickFrm
       FFFF00FFFF00FF000000
     }
     Layout = blGlyphRight
+    NumGlyphs = 0
     OnClick = BtnPriorityClick
     PopupMenu = Popup
     Spacing = 5

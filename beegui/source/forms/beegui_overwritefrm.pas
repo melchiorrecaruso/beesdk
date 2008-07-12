@@ -76,6 +76,12 @@ type
     procedure SetOldFileSize(FileSize: integer);
     procedure SetNewFileTime(FileTime: integer);
     procedure SetNewFileSize(FileSize: integer);
+  public
+    { public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   private
     { private declarations }
   end;
@@ -88,26 +94,25 @@ uses
   BeeGui_SysUtils;
 
   { TOverwriteFrm class }
+  
+  {$I beegui_overwritefrm_saveproperty.inc}
+  {$I beegui_overwritefrm_loadproperty.inc}
+  {$I beegui_overwritefrm_savelanguage.inc}
+  {$I beegui_overwritefrm_loadlanguage.inc}
 
   procedure TOverwriteFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
+    LoadLanguage;
+    LoadProperty;
     Images.IconFolder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('largeicons') ;
-    {$I beegui_overwritefrm_loadlanguage.inc}
-    {$I beegui_overwritefrm_loadproperty.inc}
   end;
 
   procedure TOverwriteFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {*$I beegui_overwritefrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-    {$I beegui_overwritefrm_saveproperty.inc}
+    SaveProperty;
   end;
   
   procedure TOverwriteFrm.SetFileName(const FileName: string);

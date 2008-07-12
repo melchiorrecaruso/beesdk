@@ -1,12 +1,18 @@
 
-  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
-  if ForceDirectories(Folder) then
+  procedure TPasswordFrm.LoadProperty;
+  var
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    Storage := TMemIniFile.Create(Folder + ('passwordfrm.ini'));        
+    Folder := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
+    if ForceDirectories(Folder) then
     begin
-      Top  := Storage.ReadInteger('TForm', 'Top', Top);
-      Left := Storage.ReadInteger('TForm', 'Left', Left);      
-    end;     
-    Storage.Free;
+      Storage := TMemIniFile.Create(Folder + ('passwordfrm.ini'));
+      begin
+        Top  := Storage.ReadInteger('TForm', 'Top', Top);
+        Left := Storage.ReadInteger('TForm', 'Left', Left);
+      end;
+      Storage.Free;
+    end;
   end;
 

@@ -147,6 +147,12 @@ type
     property RemaingTime: integer read FRemainingTime;
   public
     { public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
+  public
+    { public declarations }
     constructor Create(AOwner: TComponent); override;
     procedure Start(ACmdLine: TCmdLine);
     destructor Destroy; override;
@@ -170,7 +176,12 @@ var
   
   { TTickFrm class }
   
-  constructor TTickFrm.Create(AOwner: TComponent); //OK
+  {$I beegui_tickfrm_saveproperty.inc}
+  {$I beegui_tickfrm_loadproperty.inc}
+  {$I beegui_tickfrm_savelanguage.inc}
+  {$I beegui_tickfrm_loadlanguage.inc}
+  
+  constructor TTickFrm.Create(AOwner: TComponent);
   begin
     inherited Create(AOwner);
     // ---
@@ -218,12 +229,10 @@ var
   end;
   
   procedure TTickFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
-    {$I beegui_tickfrm_loadlanguage.inc}
-    {$I beegui_tickfrm_loadproperty.inc}
+    LoadLanguage;
+    LoadProperty;
+    // ---
     ActiveControl := BtnCancel;
     Notebook.ActivePageComponent := GeneralPage;
     // ---
@@ -232,14 +241,11 @@ var
   end;
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beegui_tickfrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-    {$I beegui_tickfrm_saveproperty.inc}
+    SaveProperty;
   end;
 
   procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
