@@ -50,7 +50,7 @@ uses
 begin
   Application.Initialize;
   Application.Name := cApplicationName;
-  Application.Title := cApplicationName;
+  Application.Title := cApplicationTitle;
   Application.HelpFile := '';
   Application.CreateForm(TMainFrm, MainFrm);
   Application.CreateForm(TConfigFrm, ConfigFrm);

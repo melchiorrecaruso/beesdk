@@ -28,12 +28,12 @@ unit BeeGui_Consts;
 interface
   
 const
-
-  cApplicationName  = 'BeeGui';
+  cApplicationName    = 'BeeGuiA';
+  cApplicationTitle   = 'Bee File Manager';
+  cApplicationCaption = 'Bee File Manager';
   
-  cApplicationHomePage = 'http://www.beegui.org';
+  cApplicationHomePage       = 'http://www.beegui.org';
   cApplicationLanguageFolder = 'language';
-  
   
 implementation
 

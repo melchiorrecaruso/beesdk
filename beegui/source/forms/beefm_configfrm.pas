@@ -76,7 +76,9 @@ type
   private
     procedure SetPageIndex(PageIndex: integer);
   public
-    function DeleteOptions: string;
+    procedure SaveProperty;
+  public
+     function DeleteOptions: string;
     function AddOptions(const Folder: string): string;
     function ExtractOptions(const Folder: string): string;
   end;
@@ -103,13 +105,22 @@ uses
   end;
 
   procedure TConfigFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  {$IFDEF DEBUG}
   var
     Folder: string;
     Storage: TMemIniFile;
+  {$ENDIF}
   begin
     {$IFDEF DEBUG}
       {$I beefm_configfrm_savelanguage.inc}
     {$ENDIF}
+  end;
+  
+  procedure TConfigFrm.SaveProperty;
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
     {$I beefm_configfrm_saveproperty.inc}
   end;
   

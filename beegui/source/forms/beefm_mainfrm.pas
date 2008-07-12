@@ -351,6 +351,7 @@ uses
     if MMenuOptionsSaveOnExit.Checked then
     begin
       {$I beefm_mainfrm_saveproperty.inc}
+      ConfigFrm.SaveProperty;
     end;
   end;
   
@@ -1115,6 +1116,7 @@ uses
         ClearDirectory(GetApplicationConfigDir(cApplicationName));
         if ShellExec(ParamStr(0), '') then
         begin
+          MMenuOptionsSaveOnExit.Checked := False;
           MMenuFileExit.Click;
         end;
       end;

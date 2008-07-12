@@ -247,8 +247,6 @@ implementation
     if not SetCurrentDir(DirName) then Exit;
     if not SetCurrentDir(ExtractFilePath(DirName)) then Exit;
 
-    ShowMessage(DirName);
-    
     ClearDirectoryScan(DirName);
   end;
   
