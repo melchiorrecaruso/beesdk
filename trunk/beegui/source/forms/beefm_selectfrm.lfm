@@ -1,0 +1,90 @@
+object SelectFrm: TSelectFrm
+  Left = 403
+  Height = 85
+  Top = 333
+  Width = 271
+  HorzScrollBar.Page = 270
+  HorzScrollBar.Range = 265
+  VertScrollBar.Page = 84
+  VertScrollBar.Range = 79
+  AutoScroll = False
+  AutoSize = True
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = '(Un)Select...'
+  ClientHeight = 85
+  ClientWidth = 271
+  Font.Height = -11
+  Font.Name = 'Default'
+  OnShow = FormShow
+  LCLVersion = '0.9.25'
+  object SelectFrm_Mask_: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    Left = 6
+    Height = 14
+    Top = 6
+    Width = 61
+    BorderSpacing.Around = 6
+    Caption = 'Insert mask:'
+    ParentColor = False
+    ParentShowHint = False
+  end
+  object BtnOk: TBitBtn
+    AnchorSideTop.Control = BtnCancel
+    AnchorSideRight.Control = BtnCancel
+    AnchorSideBottom.Control = BtnCancel
+    AnchorSideBottom.Side = asrBottom
+    Left = 109
+    Height = 26
+    Top = 53
+    Width = 70
+    Anchors = [akTop, akRight, akBottom]
+    AutoSize = True
+    BorderSpacing.Right = 6
+    Caption = '&OK'
+    Constraints.MinWidth = 70
+    Default = True
+    Kind = bkOK
+    ModalResult = 1
+    NumGlyphs = 0
+    ParentShowHint = False
+    TabOrder = 0
+  end
+  object BtnCancel: TBitBtn
+    AnchorSideTop.Control = SelectFrm_Mask
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = SelectFrm_Mask
+    AnchorSideRight.Side = asrBottom
+    Left = 185
+    Height = 26
+    Top = 53
+    Width = 80
+    Anchors = [akTop, akRight]
+    AutoSize = True
+    BorderSpacing.Left = 6
+    BorderSpacing.Top = 6
+    BorderSpacing.Bottom = 6
+    Cancel = True
+    Caption = 'Annulla'
+    Constraints.MinWidth = 80
+    Kind = bkCancel
+    ModalResult = 2
+    NumGlyphs = 0
+    ParentShowHint = False
+    TabOrder = 1
+  end
+  object SelectFrm_Mask: TEdit
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = SelectFrm_Mask_
+    AnchorSideTop.Side = asrBottom
+    Left = 6
+    Height = 21
+    Top = 26
+    Width = 259
+    BorderSpacing.Around = 6
+    ParentShowHint = False
+    TabOrder = 2
+    Text = '*'
+  end
+end
