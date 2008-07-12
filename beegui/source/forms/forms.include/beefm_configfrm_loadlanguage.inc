@@ -15,13 +15,13 @@
       ExtractPage.Caption := Storage.ReadString('TGroupBox', 'ExtractPage.Caption' ,ExtractPage.Caption);
       ExtractingOptions.Caption := Storage.ReadString('TGroupBox', 'ExtractingOptions.Caption' ,ExtractingOptions.Caption);
 
-      mOption.Caption  := Storage.ReadString('TLabel', 'mOption.Caption' ,mOptionLabel.Caption);
+      mOptionLabel.Caption  := Storage.ReadString('TLabel', 'mOption.Caption' ,mOptionLabel.Caption);
       mOption.Items[0] := Storage.ReadString('TComboBox', 'mOption[0]' ,mOption.Items[0]);
       mOption.Items[1] := Storage.ReadString('TComboBox', 'mOption[1]' ,mOption.Items[1]);
       mOption.Items[2] := Storage.ReadString('TComboBox', 'mOption[2]' ,mOption.Items[2]);
       mOption.Items[3] := Storage.ReadString('TComboBox', 'mOption[3]' ,mOption.Items[3]);
 
-      dOption.Caption  := Storage.ReadString('TLabel', 'dOption.Caption' ,dOptionLabel.Caption);
+      dOptionLabel.Caption  := Storage.ReadString('TLabel', 'dOption.Caption' ,dOptionLabel.Caption);
       dOption.Items[0] := Storage.ReadString('TComboBox', 'dOption[0]' ,dOption.Items[0]);
       dOption.Items[1] := Storage.ReadString('TComboBox', 'dOption[1]' ,dOption.Items[1]);
       dOption.Items[2] := Storage.ReadString('TComboBox', 'dOption[2]' ,dOption.Items[2]);
@@ -33,7 +33,7 @@
       dOption.Items[8] := Storage.ReadString('TComboBox', 'dOption[8]' ,dOption.Items[8]);
       dOption.Items[9] := Storage.ReadString('TComboBox', 'dOption[9]' ,dOption.Items[9]);
       
-      oOption.Caption := Storage.ReadString('TComboBox', 'oOption.Caption' ,oOptionLabel.Caption);
+      oOptionLabel.Caption := Storage.ReadString('TComboBox', 'oOption.Caption' ,oOptionLabel.Caption);
       oOption.Items[0] := Storage.ReadString('TComboBox', 'oOption[0]' ,oOption.Items[0]);
       oOption.Items[1] := Storage.ReadString('TComboBox', 'oOption[1]' ,oOption.Items[1]);
       oOption.Items[2] := Storage.ReadString('TComboBox', 'oOption[2]' ,oOption.Items[2]);
@@ -46,6 +46,8 @@
       cdAOption.Caption := Storage.ReadString('TCheckBox', 'cdAOption.Caption', cdAOption.Caption);
       xCommand.Caption := Storage.ReadString('TCheckBox', 'xCommand.Caption',  xCommand.Caption);
       cdEOption.Caption := Storage.ReadString('TCheckBox', 'cdEOption.Caption', cdEOption.Caption);
+      
+      BtnOk.Caption := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
     end;
     Storage.Free;
   end;
