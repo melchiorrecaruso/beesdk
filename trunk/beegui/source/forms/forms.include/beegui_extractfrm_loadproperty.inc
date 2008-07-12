@@ -1,19 +1,24 @@
 
-  F := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
-  if ForceDirectories(F) then
+  procedure TExtractFrm.LoadProperty;
+  var
+    F: string;
+    Storage: TMemIniFile;
   begin
-    Storage := TMemIniFile.Create(F + ('extractfrm.ini'));
+    F := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
+    if ForceDirectories(F) then
     begin
-	  if WindowState = wsNormal then
+      Storage := TMemIniFile.Create(F + ('extractfrm.ini'));
       begin
-        Top    := Storage.ReadInteger('TForm', 'Top', Top);
-        Left   := Storage.ReadInteger('TForm', 'Left', Left);
-        Width  := Storage.ReadInteger('TForm', 'Width', Width);
-        Height := Storage.ReadInteger('TForm', 'Height', Height);
+        if WindowState = wsNormal then
+        begin
+          Top    := Storage.ReadInteger('TForm', 'Top', Top);
+          Left   := Storage.ReadInteger('TForm', 'Left', Left);
+          Width  := Storage.ReadInteger('TForm', 'Width', Width);
+          Height := Storage.ReadInteger('TForm', 'Height', Height);
+        end;
+        WindowState := TWindowState(Storage.ReadInteger('TForm', 'WindowState', Ord(WindowState)));
+        Folder.Text := Storage.ReadString('TEdit', 'Folder.Text', Folder.Text);
       end;
-      WindowState := TWindowState(Storage.ReadInteger('TForm', 'WindowState', Ord(WindowState)));   
-      Folder.Text := Storage.ReadString('TEdit', 'Folder.Text', Folder.Text);
-    end;   
-    Storage.Free;
+      Storage.Free;
+    end;
   end;
-

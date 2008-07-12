@@ -129,6 +129,10 @@ type
     procedure yOptionBtnClick(Sender: TObject);
   public
     { public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   private
     { private declarations }
   end;
@@ -143,25 +147,24 @@ uses
 
  { TAddFrm class }
  
+ {$I beegui_addfrm_saveproperty.inc}
+ {$I beegui_addfrm_loadproperty.inc}
+ {$I beegui_addfrm_savelanguage.inc}
+ {$I beegui_addfrm_loadlanguage.inc}
+ 
   procedure TAddFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
-    {$I beegui_addfrm_loadlanguage.inc}
-    {$I beegui_addfrm_loadproperty.inc}
+    LoadLanguage;
+    LoadProperty;
     Pages.ActivePage := PageGeneral;
   end;
   
   procedure TAddFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beegui_addfrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-    {$I beegui_addfrm_saveproperty.inc}
+    SaveProperty;
   end;
 
   procedure TAddFrm.aOptionCheckChange(Sender: TObject);

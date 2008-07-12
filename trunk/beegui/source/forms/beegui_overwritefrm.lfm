@@ -327,7 +327,7 @@ object OverwriteFrm: TOverwriteFrm
     Left = 97
     Height = 26
     Top = 170
-    Width = 92
+    Width = 94
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
@@ -348,7 +348,7 @@ object OverwriteFrm: TOverwriteFrm
     AnchorSideRight.Side = asrCenter
     AnchorSideBottom.Control = BtnAbort
     AnchorSideBottom.Side = asrBottom
-    Left = 195
+    Left = 197
     Height = 26
     Top = 170
     Width = 85

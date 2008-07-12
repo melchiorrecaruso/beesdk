@@ -71,6 +71,12 @@ type
   public
     { Public declarations }    
     procedure SetPassword(const Value: string);
+  public
+    { Public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   end;
 
 implementation
@@ -79,25 +85,26 @@ uses
   BeeGui_Consts, 
   BeeGui_Messages,
   BeeGui_SysUtils;
+  
+  { TPasswordFrm }
+  
+  {$I beegui_passwordfrm_saveproperty.inc}
+  {$I beegui_passwordfrm_loadproperty.inc}
+  {$I beegui_passwordfrm_savelanguage.inc}
+  {$I beegui_passwordfrm_loadlanguage.inc}
 
   procedure TPasswordFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
-    {$I beegui_passwordfrm_loadlanguage.inc}
-    {$I beegui_passwordfrm_loadproperty.inc}
+    LoadLanguage;
+    LoadProperty;
   end;
 
   procedure TPasswordFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beegui_passwordfrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-    {$I beegui_passwordfrm_saveproperty.inc}
+    SaveProperty;
   end;
   
   procedure TPasswordFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);

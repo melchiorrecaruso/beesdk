@@ -1,11 +1,17 @@
 
-  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
-  if ForceDirectories(Folder) then
+  procedure TOverWriteFrm.SaveProperty;
+  var
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    Storage := TMemIniFile.Create(Folder + ('overwritefrm.ini'));        
+    Folder := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
+    if ForceDirectories(Folder) then
     begin
-      Storage.WriteInteger('TForm', 'Top', Top);
-      Storage.WriteInteger('TForm', 'Left', Left);      
-    end;    
-    Storage.Free;
+      Storage := TMemIniFile.Create(Folder + ('overwritefrm.ini'));
+      begin
+        Storage.WriteInteger('TForm', 'Top', Top);
+        Storage.WriteInteger('TForm', 'Left', Left);
+      end;
+      Storage.Free;
+    end;
   end;

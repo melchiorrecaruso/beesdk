@@ -43,19 +43,20 @@ uses
   LResources,
   // ---
   BeeGui_IconList,
-  BeeGui_FolderTreeViewMgr, BeeGui_ArchiveFolderBox;
+  BeeGui_FolderTreeViewMgr,
+  BeeGui_ArchiveFolderBox;
 
 type
 
   { TExtractFrm }
 
   TExtractFrm = class(TForm)
-    cdOption: TEdit;
     FoldersMgr: TFolderTreeViewMgr;
     FolderLabel: TLabel;
     Folders: TTreeView;
     Folder: TEdit;
     Options: TGroupBox;
+    cdOption: TEdit;
     xCommand: TCheckBox;
     oOptionLabel: TLabel;
     oOption: TComboBox;
@@ -71,6 +72,10 @@ type
     procedure FoldersExpanding(Sender: TObject; Node: TTreeNode; var AllowExpansion: Boolean);
   public
     { public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   private
     { private declarations }
   end;
@@ -78,34 +83,35 @@ type
 implementation
 
 uses
-  Bee_Common  
+  Bee_Common,
   BeeGui_Consts,
   BeeGui_Messages,
   BeeGui_SysUtils;
 
   { TExtractFrm class}
+  
+  {$I beegui_extractfrm_saveproperty.inc}
+  {$I beegui_extractfrm_loadproperty.inc}
+  {$I beegui_extractfrm_savelanguage.inc}
+  {$I beegui_extractfrm_loadlanguage.inc}
 
   procedure TExtractFrm.FormCreate(Sender: TObject);
-  var
-    F: string;
-    Storage: TMemIniFile;
   begin
     Icons.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
-    {$I beegui_extractfrm_loadlanguage.inc}
-    {$I beegui_extractfrm_loadproperty.inc}
+
+    LoadLanguage;
+    LoadProperty;
+    
     FoldersMgr.Initialize;
     FoldersMgr.FolderName := Folder.Text;
   end;
 
   procedure TExtractFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  var
-    F: string;
-    Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beegui_extractfrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-    {$I beegui_extractfrm_saveproperty.inc}
+    SaveProperty;
   end;
 
   procedure TExtractFrm.cdOptionCheckChange(Sender: TObject);
