@@ -51,7 +51,7 @@
       Storage.WriteString('TComboBox', 'aOption[1]', aOption.Items[1]);
       Storage.WriteString('TComboBox', 'aOption[2]', aOption.Items[2]);
 
-      Storage.WriteString('TLabel', 'cdOption.Caption', cdOptionLabel.Caption);
+      Storage.WriteString('TLabel', 'cdOption.Caption', cdOptionCheck.Caption);
 
       Storage.WriteString('TLabel', 'cfgOption.Caption', cfgOptionLabel.Caption);
       Storage.WriteString('TBitBtn', 'cfgOptionBtn.Caption', cfgOptionBtn.Caption);

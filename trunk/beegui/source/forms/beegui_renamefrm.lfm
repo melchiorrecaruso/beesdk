@@ -1,7 +1,7 @@
 object RenameFrm: TRenameFrm
-  Left = 416
+  Left = 524
   Height = 90
-  Top = 543
+  Top = 299
   Width = 287
   ActiveControl = BtnOk
   AutoSize = True

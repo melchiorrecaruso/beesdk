@@ -12,7 +12,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -95,8 +95,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_passwordfrm.lrs"/>
         <UnitName Value="BeeGui_PasswordFrm"/>
-        <CursorPos X="18" Y="112"/>
-        <TopLine Value="83"/>
+        <CursorPos X="51" Y="113"/>
+        <TopLine Value="93"/>
         <UsageCount Value="194"/>
       </Unit6>
       <Unit7>
@@ -561,9 +561,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="15" Y="175"/>
         <TopLine Value="157"/>
-        <EditorIndex Value="1"/>
         <UsageCount Value="194"/>
-        <Loaded Value="True"/>
       </Unit73>
       <Unit74>
         <Filename Value="forms\beegui_viewfrm.pas"/>
@@ -630,11 +628,9 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="90" Y="586"/>
-        <TopLine Value="576"/>
-        <EditorIndex Value="2"/>
+        <CursorPos X="58" Y="249"/>
+        <TopLine Value="229"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit79>
       <Unit80>
         <Filename Value="forms\beegui_aboutfrm.pas"/>
@@ -661,9 +657,7 @@
         <UnitName Value="BeeGui_CmdLine"/>
         <CursorPos X="28" Y="358"/>
         <TopLine Value="351"/>
-        <EditorIndex Value="3"/>
         <UsageCount Value="194"/>
-        <Loaded Value="True"/>
       </Unit82>
       <Unit83>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
@@ -1274,7 +1268,9 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="22"/>
+        <Loaded Value="True"/>
       </Unit178>
       <Unit179>
         <Filename Value="forms\forms.include\beegui_addfrm_loadlanguage.inc"/>
@@ -1296,9 +1292,9 @@
       </Unit181>
       <Unit182>
         <Filename Value="forms\forms.include\beegui_addfrm_savelanguage.inc"/>
-        <CursorPos X="46" Y="13"/>
-        <TopLine Value="1"/>
-        <UsageCount Value="9"/>
+        <CursorPos X="70" Y="54"/>
+        <TopLine Value="34"/>
+        <UsageCount Value="10"/>
       </Unit182>
       <Unit183>
         <Filename Value="forms\forms.include\beegui_renamefrm_loadproperty.inc"/>
@@ -1385,7 +1381,7 @@
         <SyntaxHighlighter Value="None"/>
       </Unit195>
     </Units>
-    <JumpHistory Count="10" HistoryIndex="9">
+    <JumpHistory Count="3" HistoryIndex="2">
       <Position1>
         <Filename Value="beegui.lpr"/>
         <Caret Line="35" Column="8" TopLine="1"/>
@@ -1398,34 +1394,6 @@
         <Filename Value="beegui.lpr"/>
         <Caret Line="80" Column="32" TopLine="52"/>
       </Position3>
-      <Position4>
-        <Filename Value="packages\beegui_cmdline.pas"/>
-        <Caret Line="359" Column="30" TopLine="346"/>
-      </Position4>
-      <Position5>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="317" Column="19" TopLine="286"/>
-      </Position5>
-      <Position6>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="53" Column="30" TopLine="52"/>
-      </Position6>
-      <Position7>
-        <Filename Value="packages\beegui_cmdline.pas"/>
-        <Caret Line="358" Column="29" TopLine="336"/>
-      </Position7>
-      <Position8>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="72" Column="28" TopLine="52"/>
-      </Position8>
-      <Position9>
-        <Filename Value="forms\beegui_addfrm.pas"/>
-        <Caret Line="114" Column="5" TopLine="113"/>
-      </Position9>
-      <Position10>
-        <Filename Value="packages\beegui_cmdline.pas"/>
-        <Caret Line="358" Column="28" TopLine="351"/>
-      </Position10>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

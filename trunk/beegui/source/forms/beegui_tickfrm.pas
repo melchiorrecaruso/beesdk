@@ -158,8 +158,9 @@ uses
   {$IFDEF MSWINDOWS}
   Windows,
   {$ENDIF}
-  BeeGui_SysUtils,
-  BeeGui_Messages;
+  BeeGui_Consts,
+  BeeGui_Messages,
+  BeeGui_SysUtils;
   
 var
   rsBtnPauseCaption:  string = 'Pause';
@@ -246,7 +247,7 @@ var
     CanClose := FInterfaces.Terminated;
     if CanClose = False then
     begin
-      if MessageDlg(rsConfirmation, rsConfirmAbort, mtConfirmation, [mbYes, mbNo], '') = mrYes then
+      if MessageDlg(rsConfirmation, rsConfirmAbortProcess, mtConfirmation, [mbYes, mbNo], '') = mrYes then
       begin
         FInterfaces.Stop := True;
         if FInterfaces.Suspend then

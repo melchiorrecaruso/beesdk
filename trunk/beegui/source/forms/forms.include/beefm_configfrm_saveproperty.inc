@@ -1,5 +1,5 @@
 
-  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir('beegui'));
+  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
   if ForceDirectories(Folder) then
   begin
     Storage := TMemIniFile.Create(Folder + ('configfrm.ini'));

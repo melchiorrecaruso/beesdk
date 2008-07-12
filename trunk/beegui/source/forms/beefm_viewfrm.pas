@@ -68,6 +68,8 @@ type
 implementation
 
 uses
+  BeeGui_Consts,
+  BeeGui_Messages,
   BeeGui_SysUtils;
 
   { TViewFrm class }

@@ -66,8 +66,9 @@ implementation
 
 uses
   Bee_Common,
-  BeeGui_SysUtils,
-  BeeGui_Messages;
+  BeeGui_Consts,
+  BeeGui_Messages,  
+  BeeGui_SysUtils;
 
   { TRenameFrm class }
 

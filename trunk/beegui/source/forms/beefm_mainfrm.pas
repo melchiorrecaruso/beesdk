@@ -296,6 +296,7 @@ uses
   BeeFm_ViewFrm,
   BeeGui_AboutFrm,
 
+  BeeGui_Consts,
   BeeGui_Messages,
   BeeGui_SysUtils,
   BeeGui_RenameFrm,
@@ -325,7 +326,7 @@ uses
   begin
     if Cursor = crHourGlass then
     begin
-      CanClose := MessageDlg(rsAbortProcess , mtWarning, [mbYes, mbNo], 0) = mrYes;
+      CanClose := MessageDlg(rsConfirmAbortProcess , mtWarning, [mbYes, mbNo], 0) = mrYes;
     end else
     begin
       CanClose := True;
@@ -651,7 +652,7 @@ uses
         Idle.Enabled := True;
       end;
     end else
-      MessageDlg('An process active', mtInformation, [mbOk], 0);
+      MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
   end;
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
@@ -682,7 +683,7 @@ uses
         Idle.Enabled := True;
       end;
     end else
-      MessageDlg('An process active', mtInformation, [mbOk], 0);
+      MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
   end;
 
   procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
@@ -692,7 +693,7 @@ uses
     UpdateButtons(False);
     Caption := 'BeeFM';
   end;
-  
+
   procedure TMainFrm.MMenuFilePropertyClick(Sender: TObject);
   var
     F: TInfoFrm;
@@ -702,22 +703,22 @@ uses
     begin
       F.ShowModal;
     end else
-      MessageDlg('Can''t load archive infomations.', mtInformation, [mbOk], 0);
+      MessageDlg(rseReadArcProperty, mtInformation, [mbOk], 0);
     F.Free;
   end;
-  
+
   procedure TMainFrm.MMenuFileMoveClick(Sender: TObject);
   var
     NewName: string;
   begin
     NewName := '';
-    if SelectDirectory('Move archive to:', '', NewName) then
+    if SelectDirectory(rsMoveArcTo, '', NewName) then
     begin
       NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArcName);
       if RenameFile(ArcProcess.ArcName, NewName) then
         ArcProcess.ArcName := NewName
       else
-        MessageDlg('Error moving archive', mtError, [mbOk], 0);
+        MessageDlg(rseMoveArcTo, mtError, [mbOk], 0);
     end;
   end;
 
@@ -726,13 +727,13 @@ uses
     NewName: string;
   begin
     NewName := '';
-    if SelectDirectory('Copy archive to:', '', NewName) then
+    if SelectDirectory(rsCopyArcTo, '', NewName) then
     begin
       NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArcName);
       if CopyFile(ArcProcess.ArcName, NewName) then
         ArcProcess.ArcName := NewName
       else
-        MessageDlg('Error copying archive', mtError, [mbOk], 0);
+        MessageDlg(rseCopyArcTo, mtError, [mbOk], 0);
     end;
   end;
 
@@ -742,12 +743,12 @@ uses
     NewName: string;
   begin
     F := TRenameFrm.Create(Self);
-    F.Caption := rsRenameArchive;
+    F.Caption := rsRenameArc;
     F.ToFN.Text := ExtractFileName(ArcProcess.ArcName);
     F.FromFN.Caption := ExtractFileName(ArcProcess.ArcName);
     if F.ShowModal = mrOk then
     begin
-      if AnsiCompareFileName(F.ToFN.Text, F.FromFN.Caption) <> 0 then
+      if CompareFileName(F.ToFN.Text, F.FromFN.Caption) <> 0 then
       begin
         NewName := ExtractFilePath(ArcProcess.ArcName) + F.ToFN.Text;
         if RenameFile(ArcProcess.ArcName, NewName) then
@@ -755,7 +756,7 @@ uses
           ArcProcess.ArcName := NewName;
           Caption := 'BeeFM' + ' - ' + ExtractFileName(ArcProcess.ArcName);
         end else
-          MessageDlg('Error on renaming archive', mtError, [mbOk], 0);
+          MessageDlg(rseRenameArc, mtError, [mbOk], 0);
       end;
     end;
     F.Free;
@@ -763,12 +764,12 @@ uses
 
   procedure TMainFrm.MMenuFileDeleteClick(Sender: TObject);
   begin
-    if MessageDlg('Delete archive?', mtInformation, [mbYes, mbNo], 0) = mrYes then
+    if MessageDlg(rsConfirmDeleteArc, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
       if DeleteFile(ArcProcess.ArcName) then
         MMenuFileClose.Click
       else
-        MessageDlg('Error on deleting archive.', mtError, [mbOk], 0);
+        MessageDlg(rseDeleteArc, mtError, [mbOk], 0);
     end;
   end;
 
@@ -895,7 +896,7 @@ uses
     if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
-      if MessageDlg('Delete selected files?' , mtInformation, [mbYes, mbNo], 0) = mrYes then
+      if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
         CmdLine := 'beegui d' + ConfigFrm.DeleteOptions;
         if MMenuOptionsLogReport.Checked then
@@ -1109,13 +1110,16 @@ uses
   begin
     if Cursor <> crHourGlass then
     begin
-      if MessageDlg('Default setting?', mtInformation, [mbYes, mbNo], 0) = mrYes then
+      if MessageDlg(rsConfirmDefault, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
-        ClearDirectory(GetApplicationConfigDir('BeeGui'));
-        // ShellExec(ParamStr(0), '');
+        ClearDirectory(GetApplicationConfigDir(cApplicationName));
+        if ShellExec(ParamStr(0), '') then
+        begin
+          MMenuFileExit.Click;
+        end;
       end;
     end else
-      MessageDlg('An active process. Please wait.', mtInformation, [mbOk], 0);
+      MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
   end;
   
   // ---------------------------------------------------------------------- //
@@ -1133,29 +1137,25 @@ uses
     F.Free;
   end;
 
-    procedure TMainFrm.MMenuOptionsSaveOnExitClick(Sender: TObject);
+  procedure TMainFrm.MMenuOptionsSaveOnExitClick(Sender: TObject);
   begin
 
   end;
 
   procedure TMainFrm.MMenuHelpF1Click(Sender: TObject);
   var
-    Help_FileName: string;
-    Help_FilePath: string;
+    hFileName: string;
+    hFilePath: string;
   begin
-    Help_FilePath := ExtractFilePath(ParamStr(0));
-    Help_FileName := Help_FilePath + 'docs' + PathDelim + 'help.htm';
+    hFilePath := ExtractFilePath(ParamStr(0));
+    hFileName := hFilePath + IncludeTrailingBackSlash('docs') + 'help.htm';
 
-    ShellExec(Help_FileName, Help_FilePath);
+    ShellExec(hFileName, hFilePath);
   end;
 
   procedure TMainFrm.MMenuHelpInternetClick(Sender: TObject);
-  var
-    F: TAboutFrm;
   begin
-    F := TAboutFrm.Create(Self);
-    // F.LinkClick(Self);
-    F.Free;
+    ShellExec(cApplicationHomePage, '');
   end;
 
   procedure TMainFrm.MMenuHelpLicenseClick(Sender: TObject);

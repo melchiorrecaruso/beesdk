@@ -35,20 +35,22 @@ uses
   Interfaces,
   Forms,
   // ---
+  BeeGui_Consts,
   BeeGui_Package,
   // ---
   BeeGui_AboutFrm,
+  BeeGui_RenameFrm,
   // ---
   BeeFM_MainFrm,
   BeeFM_ViewFrm,
   BeeFM_ConfigFrm,
-  BeeFm_SelectFrm,
+  BeeFM_SelectFrm,
   BeeFM_PropertyFrm;
 
 begin
   Application.Initialize;
-  Application.Name := 'BeeFM';
-  Application.Title := 'BeeFM';
+  Application.Name := cApplicationName;
+  Application.Title := cApplicationName;
   Application.HelpFile := '';
   Application.CreateForm(TMainFrm, MainFrm);
   Application.CreateForm(TConfigFrm, ConfigFrm);

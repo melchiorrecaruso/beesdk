@@ -78,8 +78,10 @@ type
 implementation
 
 uses
-  BeeGui_SysUtils,
-  Bee_Common;
+  Bee_Common  
+  BeeGui_Consts,
+  BeeGui_Messages,
+  BeeGui_SysUtils;
 
   { TExtractFrm class}
 

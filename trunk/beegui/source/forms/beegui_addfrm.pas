@@ -136,8 +136,9 @@ type
 implementation
 
 uses
-  BeeGui_RenameFrm,
+  BeeGui_Consts,
   BeeGui_Messages,
+  BeeGui_RenameFrm,
   BeeGui_SysUtils;
 
  { TAddFrm class }
