@@ -38,6 +38,8 @@ var
   rsConfirmation:         string = 'Confirmation';
 
   rsSelectFolder:         string = 'Select folder';
+  rsSelectFrmCaption:     string = 'Select';
+  rsDeselectFrmCaption:   string = 'Deselect';
   
   rsConfirmDeleteArc:     string = 'Do you want to delete archive?';
   rsConfirmDeleteFiles:   string = 'Do you want to delete selected files?';
@@ -82,6 +84,8 @@ implementation
       rsConfirmation         := Storage.ReadString('ResourceString', 'rsConfirmation', rsConfirmation);
       
       rsSelectFolder         := Storage.ReadString('ResourceString', 'rsSelectFolder', rsSelectFolder);
+      rsSelectFrmCaption     := Storage.ReadString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
+      rsDeSelectFrmCaption   := Storage.ReadString('ResourceString', 'rsDeSelectFrmCaption', rsDeSelectFrmCaption);
 
       rsConfirmDeleteArc     := Storage.ReadString('ResourceString', 'rsConfirmDeleteArc', rsConfirmDeleteArc);
       rsConfirmDeleteFiles   := Storage.ReadString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);
@@ -125,6 +129,8 @@ implementation
       Storage.WriteString('ResourceString', 'rsConfirmation', rsConfirmation);
 
       Storage.WriteString('ResourceString', 'rsSelectFolder', rsSelectFolder);
+      Storage.WriteString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
+      Storage.WriteString('ResourceString', 'rsDeselectFrmCaption', rsDeselectFrmCaption);
 
       Storage.WriteString('ResourceString', 'rsConfirmDeleteArc', rsConfirmDeleteArc);
       Storage.WriteString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);

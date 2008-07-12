@@ -279,10 +279,17 @@ type
     procedure BtnUpClick(Sender: TObject);
     // ---
   private
+    { private declarations }
     procedure UpdateStyle;
     procedure UpdateButtons; overload;
     procedure UpdateButtons(Value: boolean); overload;
     procedure UpdateCursor(Value: TCursor);
+  public
+    { public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   end;
   
 var
@@ -307,22 +314,21 @@ uses
   
   { TMainFrm }
 
+  {$I beefm_mainfrm_saveproperty.inc}
+  {$I beefm_mainfrm_loadproperty.inc}
+  {$I beefm_mainfrm_savelanguage.inc}
+  {$I beefm_mainfrm_loadlanguage.inc}
+
   procedure TMainFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
-    {$I beefm_mainfrm_loadlanguage.inc}
-    {$I beefm_mainfrm_loadproperty.inc}
     UpdateButtons(False);
+    LoadLanguage;
+    LoadProperty;
   end;
   
   procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     if Cursor = crHourGlass then
     begin
@@ -334,9 +340,6 @@ uses
   end;
   
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     if Cursor = crHourGlass then
     begin
@@ -346,11 +349,11 @@ uses
       MMenuFileClose.Click;
     end;
     {$IFDEF DEBUG}
-      {$I beefm_mainfrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
     if MMenuOptionsSaveOnExit.Checked then
     begin
-      {$I beefm_mainfrm_saveproperty.inc}
+      SaveProperty;
       ConfigFrm.SaveProperty;
     end;
   end;
@@ -1062,9 +1065,10 @@ uses
     F: TSelectFrm;
   begin
     F := TSelectFrm.Create(Self);
+    F.Caption := rsSelectFrmCaption;
     if F.ShowModal = mrOk then
     begin
-      ListView.SetMask(F.SelectFrm_Mask.Text, True);
+      ListView.SetMask(F.Mask.Text, True);
       ListView.SetFocus;
     end;
     F.Free;
@@ -1075,9 +1079,10 @@ uses
     F: TSelectFrm;
   begin
     F := TSelectFrm.Create(Self);
+    F.Caption := rsDeselectFrmCaption;
     if F.ShowModal = mrOk then
     begin
-      ListView.SetMask(F.SelectFrm_Mask.Text, False);
+      ListView.SetMask(F.Mask.Text, False);
       ListView.SetFocus;
     end;
     F.Free;
@@ -1100,11 +1105,8 @@ uses
   end;
 
   procedure TMainFrm.MMenuOptionsSaveNowClick(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TIniFile;
   begin
-    {$I beefm_mainfrm_saveproperty.inc}
+    SaveProperty;
   end;
 
   procedure TMainFrm.MMenuOptionsDefaultClick(Sender: TObject);

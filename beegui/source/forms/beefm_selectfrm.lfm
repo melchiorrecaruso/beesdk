@@ -18,7 +18,7 @@ object SelectFrm: TSelectFrm
   Font.Name = 'Default'
   OnShow = FormShow
   LCLVersion = '0.9.25'
-  object SelectFrm_Mask_: TLabel
+  object MaskLabel: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     Left = 6
@@ -52,9 +52,9 @@ object SelectFrm: TSelectFrm
     TabOrder = 0
   end
   object BtnCancel: TBitBtn
-    AnchorSideTop.Control = SelectFrm_Mask
+    AnchorSideTop.Control = Mask
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = SelectFrm_Mask
+    AnchorSideRight.Control = Mask
     AnchorSideRight.Side = asrBottom
     Left = 185
     Height = 26
@@ -74,9 +74,9 @@ object SelectFrm: TSelectFrm
     ParentShowHint = False
     TabOrder = 1
   end
-  object SelectFrm_Mask: TEdit
+  object Mask: TEdit
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = SelectFrm_Mask_
+    AnchorSideTop.Control = MaskLabel
     AnchorSideTop.Side = asrBottom
     Left = 6
     Height = 21

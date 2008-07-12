@@ -1,26 +1,26 @@
 {
-    Copyright (c) 2006 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2006 Andrew Filinsky and Melchiorre Caruso
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{   Contains:
+{ Contains:
 
     BeeFM Information form.
 
-    Modifyed:
+  Modifyed:
 }
 
 unit BeeFM_PropertyFrm;
@@ -50,6 +50,11 @@ type
   { TInfoFrm }
 
   TInfoFrm = class(TForm)
+    Pages: TPageControl;
+    APanel: TPanel;
+    FPanel: TPanel;
+    APage: TTabSheet;
+    FPage: TTabSheet;
     AArcSizeValue: TLabel;
     AArcSize: TLabel;
     ADownEmpty: TImage;
@@ -106,25 +111,23 @@ type
     FUpFull: TImage;
     FVersionValue: TLabel;
     FVersion: TLabel;
-    FPage: TTabSheet;
-
-    Pages: TPageControl;
-    APage: TTabSheet;
-
-
-
-
     BtnOk: TBitBtn;
-    APanel: TPanel;
-    FPanel: TPanel;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormPaint(Sender: TObject);
   private
+    { private declarations }
     Ratio : integer;
   public
+    { public declarations }
     function UpdateAInfo(const ArcName: string; AInfo: TArcDetails): boolean;
     function UpdateFInfo(FInfo: TArcItem): boolean;
+  public
+    { public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   end;
   
 implementation
@@ -133,8 +136,6 @@ uses
   BeeGui_Consts,
   BeeGui_Messages,
   BeeFM_ConfigFrm;
-
-  // ---
 
   procedure UpdateProgressBar(UpEmpty, UpFull, Empty, Level, Full, DownFull, DownEmpty: TImage; R:TLabel; Percentage: integer);
   begin
@@ -210,7 +211,12 @@ uses
   end;
 
   { TInfoFrm class }
-
+  
+  {$I beefm_propertyfrm_saveproperty.inc}
+  {$I beefm_propertyfrm_loadproperty.inc}
+  {$I beefm_propertyfrm_savelanguage.inc}
+  {$I beefm_propertyfrm_loadlanguage.inc}
+  
   procedure TInfoFrm.FormPaint(Sender: TObject);
   begin
     if Assigned(APage) then
@@ -242,23 +248,17 @@ uses
   end;
 
   procedure TInfoFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
-    {$I beefm_propertyfrm_loadlanguage.inc}
-    {$I beefm_propertyfrm_loadproperty.inc}
+    LoadLanguage;
+    LoadProperty;
   end;
 
   procedure TInfoFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beefm_propertyfrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-    {$I beefm_propertyfrm_saveproperty.inc}
+    SaveProperty;
   end;
 
   function TInfoFrm.UpdateAInfo(const ArcName: string; AInfo: TArcDetails): boolean;

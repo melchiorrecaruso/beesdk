@@ -74,11 +74,17 @@ type
     procedure FormCreate(Sender: TObject);
     procedure TreeChange(Sender: TObject; Node: TTreeNode);
   private
+    { private declarations }
     procedure SetPageIndex(PageIndex: integer);
   public
+    { public declarations }
     procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   public
-     function DeleteOptions: string;
+    { public declarations }
+    function DeleteOptions: string;
     function AddOptions(const Folder: string): string;
     function ExtractOptions(const Folder: string): string;
   end;
@@ -95,33 +101,22 @@ uses
 
   { TConfigFrm }
 
+  {$I beefm_configfrm_saveproperty.inc}
+  {$I beefm_configfrm_loadproperty.inc}
+  {$I beefm_configfrm_savelanguage.inc}
+  {$I beefm_configfrm_loadlanguage.inc}
+
   procedure TConfigFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
-    {$I beefm_configfrm_loadlanguage.inc}
-    {$I beefm_configfrm_loadproperty.inc}
+    LoadLanguage;
+    LoadProperty;
   end;
 
   procedure TConfigFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  {$IFDEF DEBUG}
-  var
-    Folder: string;
-    Storage: TMemIniFile;
-  {$ENDIF}
   begin
     {$IFDEF DEBUG}
-      {$I beefm_configfrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-  end;
-  
-  procedure TConfigFrm.SaveProperty;
-  var
-    Folder: string;
-    Storage: TMemIniFile;
-  begin
-    {$I beefm_configfrm_saveproperty.inc}
   end;
   
   procedure TConfigFrm.TreeChange(Sender: TObject; Node: TTreeNode);

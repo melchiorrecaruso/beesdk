@@ -60,6 +60,10 @@ type
     { public declarations }
   public
     { public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   end;
 
 implementation
@@ -71,25 +75,24 @@ uses
   BeeGui_SysUtils;
 
   { TRenameFrm class }
+  
+  {$I beegui_renamefrm_saveproperty.inc}
+  {$I beegui_renamefrm_loadproperty.inc}
+  {$I beegui_renamefrm_savelanguage.inc}
+  {$I beegui_renamefrm_loadlanguage.inc}
 
   procedure TRenameFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
-    {$I beegui_renamefrm_loadlanguage.inc}
-    {$I beegui_renamefrm_loadproperty.inc}
+    LoadLanguage;
+    LoadProperty;
   end;
 
   procedure TRenameFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beegui_renamefrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-    {$I beegui_renamefrm_saveproperty.inc}
+    SaveProperty;
   end;
   
 initialization
