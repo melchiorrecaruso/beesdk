@@ -1,8 +1,11 @@
 object MainFrm: TMainFrm
+  Left = 316
   Height = 562
-  Top = 998
+  Top = 217
   Width = 796
   Caption = 'Bee File Manager - Welcome'
+  ClientHeight = 543
+  ClientWidth = 796
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET

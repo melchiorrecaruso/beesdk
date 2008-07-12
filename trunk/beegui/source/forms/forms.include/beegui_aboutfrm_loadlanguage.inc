@@ -1,12 +1,17 @@
-
-  Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
-  if ForceDirectories(Folder) then
+  procedure TAboutFrm.LoadLanguage;
+  var
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    Storage := TMemIniFile.Create(Folder + ('aboutfrm.ini'));
+    Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
+    if ForceDirectories(Folder) then
     begin
-	  Caption            := Storage.ReadString('TForm', 'Caption', Caption);
-	  BtnOk.Caption      := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
-      BtnLicense.Caption := Storage.ReadString('TBitBtn', 'BtnLicense.Caption', BtnLicense.Caption);
+      Storage := TMemIniFile.Create(Folder + ('aboutfrm.ini'));
+      begin
+        Caption            := Storage.ReadString('TForm', 'Caption', Caption);
+        BtnOk.Caption      := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
+        BtnLicense.Caption := Storage.ReadString('TBitBtn', 'BtnLicense.Caption', BtnLicense.Caption);
+      end;
+      Storage.Free;
     end;
-    Storage.Free;
   end;

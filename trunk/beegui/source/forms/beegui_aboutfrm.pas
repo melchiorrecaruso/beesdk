@@ -1,9 +1,9 @@
 {
-  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
+    Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
 
   This program is distributed in the hope that it will be useful,
@@ -18,7 +18,7 @@
 
 { Contains:
 
-    BeeGui AboutTo form.
+    AboutTo form.
 
   Modifyed:
 
@@ -62,6 +62,10 @@ type
     procedure BtnOkClick(Sender: TObject);
   public
     { public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   private
     { private declarations }
   end;
@@ -74,33 +78,32 @@ uses
   BeeGui_SysUtils;
 
   { TAboutFrm class }
+  
+  {$I beegui_aboutfrm_saveproperty.inc}
+  {$I beegui_aboutfrm_loadproperty.inc}
+  {$I beegui_aboutfrm_savelanguage.inc}
+  {$I beegui_aboutfrm_loadlanguage.inc}
 
   procedure TAboutFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
-    {$I beegui_aboutfrm_loadlanguage.inc}
-    {$I beegui_aboutfrm_loadproperty.inc}
-    Version.Caption   := 'BeeGui ' + {$I version.inc};
+    LoadLanguage;
+    LoadProperty;
+    // ---
+    Version.Caption := cApplicationName + ' ' + {$I version.inc};
     Copyright.Caption := '(C) 2003-2008 Andrew Filinsky and  Melchiorre Caruso';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beegui_aboutfrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-    {$I beegui_aboutfrm_saveproperty.inc}
+    SaveProperty;
   end;
   
   procedure TAboutFrm.BtnLicenseClick(Sender: TObject);
   begin
-    ShellExec(ExtractFilePath(ParamStr(0))
-      + IncludeTrailingBackSlash('docs') + 'license.htm', '');
+    ShellExec(ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('docs') + 'license.htm', '');
   end;
 
   procedure TAboutFrm.BtnOkClick(Sender: TObject);
