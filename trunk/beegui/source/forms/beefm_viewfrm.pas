@@ -61,6 +61,10 @@ type
     procedure BtnSaveClick(Sender: TObject);
   public
     { public declarations }
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   private
     { private declarations }
   end;
@@ -73,25 +77,24 @@ uses
   BeeGui_SysUtils;
 
   { TViewFrm class }
+  
+  {$I beefm_viewfrm_saveproperty.inc}
+  {$I beefm_viewfrm_loadproperty.inc}
+  {$I beefm_viewfrm_savelanguage.inc}
+  {$I beefm_viewfrm_loadlanguage.inc}
 
   procedure TViewFrm.FormCreate(Sender: TObject);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
-    {$I beefm_viewfrm_loadlanguage.inc}
-    {$I beefm_viewfrm_loadproperty.inc}
+    LoadLanguage;
+    LoadProperty;
   end;
   
   procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  var
-    Folder: string;
-    Storage: TMemIniFile;
   begin
     {$IFDEF DEBUG}
-      {$I beefm_viewfrm_savelanguage.inc}
+      SaveLanguage;
     {$ENDIF}
-    {$I beefm_viewfrm_saveproperty.inc}
+    SaveProperty;
   end;
 
   procedure TViewFrm.BtnFontClick(Sender: TObject);

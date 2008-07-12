@@ -1,3 +1,10 @@
+
+  procedure TMainFrm.SaveLanguage;
+  var
+    Folder: string;
+    Storage: TMemIniFile;
+  begin
+  
 SessionProperties :=
 
    'BtnAdd.Caption;'
@@ -124,3 +131,4 @@ SessionProperties :=
  + 'PopupMenu_SelectMask.Caption;'
  + 'PopupMenu_Test.Caption;';
 
+  end;

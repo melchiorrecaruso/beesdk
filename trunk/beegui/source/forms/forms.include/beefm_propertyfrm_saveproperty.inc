@@ -1,15 +1,21 @@
 
-  Folder := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
-  if ForceDirectories(Folder) then
+  procedure TInfoFrm.SaveProperty;
+  var
+    Folder: string;
+    Storage: TMemIniFile;
   begin
-    Storage := TMemIniFile.Create(Folder + ('propertyfrm.ini'));
-    if WindowState = wsNormal then
+    Folder := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
+    if ForceDirectories(Folder) then
     begin
-      Storage.WriteInteger('TForm', 'Top', Top);
-      Storage.WriteInteger('TForm', 'Left', Left);
-      Storage.WriteInteger('TForm', 'Height', Height);
-      Storage.WriteInteger('TForm', 'Width', Width);
+      Storage := TMemIniFile.Create(Folder + ('propertyfrm.ini'));
+      if WindowState = wsNormal then
+      begin
+        Storage.WriteInteger('TForm', 'Top', Top);
+        Storage.WriteInteger('TForm', 'Left', Left);
+        Storage.WriteInteger('TForm', 'Height', Height);
+        Storage.WriteInteger('TForm', 'Width', Width);
+      end;
+      Storage.WriteInteger('TForm', 'WindowState', Ord(WindowState));
+      Storage.Free;
     end;
-    Storage.WriteInteger('TForm', 'WindowState', Ord(WindowState));
-    Storage.Free;
   end;
