@@ -18,12 +18,11 @@
 
 {   Contains:
 
-      BeeGui View form.
+      BeeFm View form.
 
     Modifyed:
     
       v1.0.5 build 0450 - 2008.07.10 by Melchiorre Caruso.
-
 }
 
 unit BeeFM_ViewFrm;
@@ -111,8 +110,8 @@ uses
     begin
       FileName := SaveDialog.FileName;
       case SaveDialog.FilterIndex of
-        1:   FileName := ChangeFileExt(FileName, '.log');
-        2:   FileName := ChangeFileExt(FileName, '.txt');
+        1: FileName := ChangeFileExt(FileName, '.log');
+        2: FileName := ChangeFileExt(FileName, '.txt');
       end;
       Memo.Lines.SaveToFile(FileName);
     end;

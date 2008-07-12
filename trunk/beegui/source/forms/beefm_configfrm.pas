@@ -18,9 +18,11 @@
 
 {   Contains:
 
-      BeeGui Config form.
+      BeeFm Configuration form.
 
     Modifyed:
+    
+      v1.0.5 build 0462 - 2008.07.12 by Melchiorre Caruso.
 }
 
 unit BeeFM_ConfigFrm;
@@ -48,27 +50,26 @@ type
   { TConfigFrm }
 
   TConfigFrm = class(TForm)
-    BtnOk: TBitBtn;
-    cdAOption: TCheckBox;
     Tree: TTreeView;
     AddPage: TGroupBox;
     ExtractPage: TGroupBox;
-    dOption: TComboBox;
-    dOptionLabel: TLabel;
-    kOption: TCheckBox;
-    lOption: TCheckBox;
-    mOption: TComboBox;
-    mOptionLabel: TLabel;
     AddingOptions: TGroupBox;
     ExtractingOptions: TGroupBox;
-    oOption: TComboBox;
+    mOptionLabel: TLabel;
+    dOptionLabel: TLabel;
     oOptionLabel: TLabel;
+    dOption: TComboBox;
+    mOption: TComboBox;
+    oOption: TComboBox;
     rOption: TCheckBox;
     sOption: TCheckBox;
     tOption: TCheckBox;
-    cdEOption: TCheckBox;
+    kOption: TCheckBox;
+    lOption: TCheckBox;
+    cdAOption: TCheckBox;
     xCommand: TCheckBox;
-    // ---
+    cdEOption: TCheckBox;
+    BtnOk: TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure TreeChange(Sender: TObject; Node: TTreeNode);
@@ -119,7 +120,7 @@ uses
   var
     I: integer;
   begin
-    AddPage    .Visible := False;
+    AddPage.Visible := False;
     ExtractPage.Visible := False;
     case PageIndex of
       0: AddPage    .Visible := True;
@@ -159,9 +160,9 @@ uses
       Result := ' e';
       
     case oOption.ItemIndex of
-      0:   Result := Result + ' -oS'; // Skip all
-      1:   Result := Result + ' -oA'; // OverWrite all
-      else Result := Result + ' -oY'; //
+      0:   Result := Result + ' -oS';
+      1:   Result := Result + ' -oA';
+      else Result := Result + ' -oY';
     end;
     
     if cdEOption.Checked then

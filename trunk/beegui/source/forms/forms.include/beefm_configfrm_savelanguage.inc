@@ -46,6 +46,8 @@
       Storage.WriteString('TCheckBox', 'cdAOption.Caption', cdAOption.Caption);
       Storage.WriteString('TCheckBox', 'xCommand.Caption',  xCommand.Caption);
       Storage.WriteString('TCheckBox', 'cdEOption.Caption', cdEOption.Caption);
+      
+      Storage.WriteString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
     end;
     Storage.Free;
   end;
