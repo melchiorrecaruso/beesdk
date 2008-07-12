@@ -76,6 +76,7 @@ type
 implementation
 
 uses
+  BeeGui_Consts, 
   BeeGui_Messages,
   BeeGui_SysUtils;
 
@@ -110,7 +111,7 @@ uses
           CanClose := True
         else
         begin
-          MessageDlg(rsWarning, rsPasswordNotConfirmed, mtWarning, [mbOk], 0);
+          MessageDlg(rsWarning, rseConfirmPassword, mtWarning, [mbOk], 0);
           CanClose := False;
         end;
     end else

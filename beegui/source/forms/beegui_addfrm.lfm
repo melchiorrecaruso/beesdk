@@ -25,12 +25,12 @@ object AddFrm: TAddFrm
     Height = 272
     Top = 6
     Width = 388
-    ActivePage = PageGeneral
+    ActivePage = PageAdvanced
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -561,8 +561,8 @@ object AddFrm: TAddFrm
     end
     object PageAdvanced: TTabSheet
       Caption = 'Advanced'
-      ClientHeight = 310
-      ClientWidth = 416
+      ClientHeight = 246
+      ClientWidth = 380
       object cfgOptionLabel: TLabel
         AnchorSideLeft.Control = PageAdvanced
         AnchorSideTop.Control = cdOption
@@ -619,7 +619,7 @@ object AddFrm: TAddFrm
         Left = 6
         Height = 21
         Top = 27
-        Width = 404
+        Width = 368
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
@@ -647,7 +647,7 @@ object AddFrm: TAddFrm
         Left = 6
         Height = 21
         Top = 119
-        Width = 328
+        Width = 292
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
@@ -663,7 +663,7 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = yOption
         AnchorSideBottom.Side = asrBottom
-        Left = 340
+        Left = 304
         Height = 37
         Top = 146
         Width = 70
@@ -686,7 +686,7 @@ object AddFrm: TAddFrm
         Left = 6
         Height = 22
         Top = 75
-        Width = 404
+        Width = 368
         Anchors = [akTop, akLeft, akRight]
         AutoSize = True
         BorderSpacing.Left = 6
@@ -703,7 +703,7 @@ object AddFrm: TAddFrm
         Left = 6
         Height = 21
         Top = 162
-        Width = 328
+        Width = 292
         Anchors = [akTop, akLeft, akRight]
         AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Left = 6
@@ -719,7 +719,7 @@ object AddFrm: TAddFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = cfgOption
         AnchorSideBottom.Side = asrBottom
-        Left = 340
+        Left = 304
         Height = 37
         Top = 103
         Width = 70

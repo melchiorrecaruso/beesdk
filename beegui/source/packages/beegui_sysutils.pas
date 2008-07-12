@@ -28,19 +28,20 @@ unit BeeGui_SysUtils;
 interface
 
 uses
-  {$IFDEF WIN32}
+  {$IFDEF MSWINDOWS}
   Windows,
   Registry,
   {$ELSE}
   Process,
   {$ENDIF}
   Math,
+  Dialogs,
   Classes,
   SysUtils;
   
   { directories routines }
   
-  {$IFDEF WIN32}
+  {$IFDEF MSWINDOWS}
   function DiskInDrive (Drive: char): boolean;
   {$ENDIF}
 
@@ -68,7 +69,7 @@ uses
   
   { shell routines }
   
-  function  ShellExec(const FileName: string; const PathName: string): integer;
+  function ShellExec(const FileName: string; const ExecName: string): boolean;
   
   { files routines }
   
@@ -89,7 +90,7 @@ implementation
 
   { directories routines }
 
-  {$IFDEF WIN32}
+  {$IFDEF MSWINDOWS}
   function DiskInDrive (Drive: char): boolean;
   var
     ErrorMode: word;
@@ -112,7 +113,7 @@ implementation
   {$ENDIF}
 
   procedure GetDrivers(var Drives: TStringList);
-  {$IFDEF WIN32}
+  {$IFDEF MSWINDOWS}
   var
     i, PX: Integer;
     TPC: PChar;
@@ -122,7 +123,7 @@ implementation
     if Assigned(Drives) then
     begin
       Drives.Clear;
-      {$IFDEF WIN32}
+      {$IFDEF MSWINDOWS}
       DM := '';
       GetMem(TPC, 100);
       PX := GetLogicalDriveStrings(100, TPC);
@@ -157,7 +158,7 @@ implementation
     if Assigned(DirList) then
     begin
       DirList.Clear;
-      {$IFDEF WIN32}
+      {$IFDEF MSWINDOWS}
       if Length(PathName) = 0 then Exit;
       if not DiskInDrive(PathName[1]) then Exit;
       {$ENDIF}
@@ -245,6 +246,9 @@ implementation
   begin
     if not SetCurrentDir(DirName) then Exit;
     if not SetCurrentDir(ExtractFilePath(DirName)) then Exit;
+
+    ShowMessage(DirName);
+    
     ClearDirectoryScan(DirName);
   end;
   
@@ -258,7 +262,7 @@ implementation
   
   function AnsiCompareText(const Str1, Str2: string): integer; inline;
   begin
-    {$IFDEF WIN32}
+    {$IFDEF MSWINDOWS}
     Result := CompareText(Str1, Str2);
     {$ELSE}
     Result := CompareStr(Str1, Str2);
@@ -267,7 +271,7 @@ implementation
   
   function AnsiPosText(const Substr, S: string): integer; inline;
   begin
-    {$IFDEF WIN32}
+    {$IFDEF MSWINDOWS}
     Result := Pos(LowerCase(Substr), LowerCase(S));
     {$ELSE}
     Result := Pos(Substr, S);
@@ -327,20 +331,27 @@ implementation
   
   { shell routines }
   
-  {$IFDEF WIN32}
-  function ShellExec(const FileName: string; const PathName: string): integer;
+  {$IFDEF MSWINDOWS}
+  function ShellExec(const FileName: string; const ExecName: string): boolean;
   begin
-    Result := ShellExecute(0, 'open', PChar(FileName), nil, PChar(PathName), SW_SHOW);
+    Result := ShellExecute(0, 'open', PChar(FileName), nil, nil, SW_SHOW) > 32
   end;
   {$ELSE}
-  function ShellExec(const FileName: string; const PathName: string): integer;
+  function ShellExec(const FileName: string; const ExecName: string): boolean;
   var
-    AProcess: TProcess;
+    aExecName: string;
+    aProcess: TProcess;
   begin
-   AProcess := TProcess.Create(nil);
-   AProcess.CommandLine := Format('epiphany %s', [FileName]);
-   AProcess.Execute;
-   AProcess.Free;
+    aExecName := ExpandFileName(ExecName);
+
+    Result := FileExists(aExecName);
+    if Result then
+    begin
+      aProcess := TProcess.Create(nil);
+      aProcess.CommandLine := Format(aExecName + ' %s', [FileName]);
+      aProcess.Execute;
+      aProcess.Free;
+    end;
   end;
   {$ENDIF}
   
@@ -353,7 +364,7 @@ implementation
   begin
     Result := False;
     if FileExists(NewFileName) then Exit;
-    {$IFDEF WIN32}
+    {$IFDEF MSWINDOWS}
     Result := Windows.CopyFile(PChar(FileName), PChar(NewFileName), True);
     {$ELSE}
     try
@@ -421,12 +432,12 @@ implementation
     { register file type routines }
     
     procedure RegisterFileType (const prefix: string; const exepfad: string);
-    {$IFDEF WIN32}
+    {$IFDEF MSWINDOWS}
     var
       reg: TRegistry;
     {$ENDIF}
     begin
-      {$IFDEF WIN32}
+      {$IFDEF MSWINDOWS}
       reg := TRegistry.Create;
       try
         reg.RootKey := HKEY_CLASSES_ROOT;
@@ -463,12 +474,12 @@ implementation
     end;
     
     function CheckRegisterFileType (const prefix: string; const exepfad: string): boolean;
-    {$IFDEF WIN32}
+    {$IFDEF MSWINDOWS}
     var
       reg: TRegistry;
     {$ENDIF}
     begin
-      {$IFDEF WIN32}
+      {$IFDEF MSWINDOWS}
       reg := TRegistry.Create;
       try
         reg.RootKey := HKEY_CLASSES_ROOT;
@@ -485,11 +496,11 @@ implementation
     end;
 
     procedure UnRegisterFileType (const prefix: string; const exepfad: string);
-    {$IFDEF WIN32}
+    {$IFDEF MSWINDOWS}
     var
       reg: TRegistry;
     {$ENDIF}
-    {$IFDEF WIN32}
+    {$IFDEF MSWINDOWS}
       procedure DeleteRegKey (reg: TRegistry; const key: string);
       begin
         if reg.OpenKey (key, False) then
@@ -502,7 +513,7 @@ implementation
       end;
     {$ENDIF}
     begin
-      {$IFDEF WIN32}
+      {$IFDEF MSWINDOWS}
       if CheckRegisterFileType (prefix, exepfad) then
       begin
         reg := TRegistry.Create;

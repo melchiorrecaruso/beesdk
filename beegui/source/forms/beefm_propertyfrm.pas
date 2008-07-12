@@ -130,6 +130,8 @@ type
 implementation
 
 uses
+  BeeGui_Consts,
+  BeeGui_Messages,
   BeeFM_ConfigFrm;
 
   // ---
