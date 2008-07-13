@@ -57,15 +57,15 @@ type
     FPage: TTabSheet;
     AArcSizeValue: TLabel;
     AArcSize: TLabel;
-    ADownEmpty: TImage;
-    ADownFull: TImage;
-    AEmpty: TImage;
+    AED: TImage;
+    AFD: TImage;
+    AE: TImage;
     AFilesValue: TLabel;
     AFilesCryptedValue: TLabel;
     ACrypted: TLabel;
     AFiles: TLabel;
-    AFull: TImage;
-    ALevel: TImage;
+    AF: TImage;
+    AL: TImage;
     AModifiedValue: TLabel;
     AModified: TLabel;
     ANameValue: TLabel;
@@ -77,8 +77,8 @@ type
     ARatio: TLabel;
     ASizeValue: TLabel;
     ASize: TLabel;
-    AUpEmpty: TImage;
-    AUpFull: TImage;
+    AEU: TImage;
+    AFU: TImage;
     AVersionValue: TLabel;
     AVersion: TLabel;
     Bevel01: TBevel;
@@ -89,11 +89,11 @@ type
     FAttribute: TLabel;
     FModifiedValue: TLabel;
     FModified: TLabel;
-    FDownEmpty: TImage;
-    FDownFull: TImage;
-    FEmpty: TImage;
-    FFull: TImage;
-    FLevel: TImage;
+    FED: TImage;
+    FFD: TImage;
+    FE: TImage;
+    FF: TImage;
+    FL: TImage;
     FMethodValue: TLabel;
     FMethod: TLabel;
     FNameValue: TLabel;
@@ -107,8 +107,8 @@ type
     FRatio: TLabel;
     FSizeValue: TLabel;
     FSize: TLabel;
-    FUpEmpty: TImage;
-    FUpFull: TImage;
+    FEU: TImage;
+    FFU: TImage;
     FVersionValue: TLabel;
     FVersion: TLabel;
     BtnOk: TBitBtn;
@@ -120,7 +120,6 @@ type
     procedure PaintProgressBar(EU, FU, E, L, F, FD, ED: TImage; R:TLabel);
   public
     { public declarations }
-    function UpdateFInfo(FInfo: TArcItem): boolean;
   public
     { public declarations }
     procedure SaveProperty;
@@ -213,30 +212,11 @@ uses
   
   procedure TInfoFrm.FormPaint(Sender: TObject);
   begin
-    if Assigned(APage) then
-    begin
-      PaintProgressBar(
-        AUpEmpty,
-        AUpFull,
-        AEmpty,
-        ALevel,
-        AFull,
-        ADownFull,
-        ADownEmpty,
-        AR);
-    end;
-    if Assigned(FPage) then
-    begin
-      PaintProgressBar(
-        FUpEmpty,
-        FUpFull,
-        FEmpty,
-        FLevel,
-        FFull,
-        FDownFull,
-        FDownEmpty,
-        FR);
-    end;
+    if APage.TabVisible then
+      PaintProgressBar(AEU, AFU, AE, AL, AF, AFD, AED, AR);
+
+    if FPage.TabVisible then
+      PaintProgressBar(FEU, FFU, FE, FL, FF, FFD, FED, FR);
   end;
 
   procedure TInfoFrm.FormCreate(Sender: TObject);
@@ -251,33 +231,6 @@ uses
       SaveLanguage;
     {$ENDIF}
     SaveProperty;
-  end;
-  
-  function TInfoFrm.UpdateFInfo(FInfo: TArcItem): boolean;
-  var
-    Ratio: integer;
-  begin
-    Result := True;
-    if Assigned(FInfo) then
-    try
-      if TArcItem(FInfo).FileSize = 0 then
-        Ratio  := 0
-      else
-        Ratio := Round(100 * (TArcItem(FInfo).FilePacked / TArcItem(FInfo).FileSize));
-
-      FNameValue.Caption         := TArcItem(FInfo).FileName;
-      FVersionValue.Caption      := TArcItem(FInfo).FileVersion;
-      FSizeValue.Caption         := SizeToStr(TArcItem(FInfo).FileSize);
-      FPackedValue.Caption       := SizeToStr(TArcItem(FInfo).FilePacked);
-      FRatioValue.Caption        := IntToStr(Ratio) + '%';
-      FAttributeValue.Caption    := AttrToStr(TArcItem(FInfo).FileAttr);
-      FPasswordValue.Caption     := TArcItem(FInfo).FilePassword;
-      FMethodValue.Caption       := TArcItem(FInfo).FileMethod;
-      FModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(TArcItem(FInfo).FileTime));
-    except
-      Result := False;
-    end;
-    if Assigned(APage) then FreeAndNil(APage);
   end;
   
 initialization
