@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -68,8 +68,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="31" Y="691"/>
-        <TopLine Value="685"/>
+        <CursorPos X="9" Y="1230"/>
+        <TopLine Value="1202"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -1519,9 +1519,7 @@
         <UnitName Value="BeeFM_PropertyFrm"/>
         <CursorPos X="14" Y="166"/>
         <TopLine Value="178"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="68"/>
-        <Loaded Value="True"/>
       </Unit206>
       <Unit207>
         <Filename Value="..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\classes\classesh.inc"/>
@@ -2271,127 +2269,71 @@
         <UsageCount Value="10"/>
       </Unit320>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="16" HistoryIndex="15">
       <Position1>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="119" Column="29" TopLine="108"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="711" Column="17" TopLine="684"/>
       </Position1>
       <Position2>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="138" Column="105" TopLine="120"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="705" Column="61" TopLine="685"/>
       </Position2>
       <Position3>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="140" Column="29" TopLine="120"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="683" Column="1" TopLine="662"/>
       </Position3>
       <Position4>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="122" Column="38" TopLine="111"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="1185" Column="5" TopLine="1177"/>
       </Position4>
       <Position5>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="140" Column="25" TopLine="120"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="704" Column="22" TopLine="685"/>
       </Position5>
       <Position6>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="138" Column="54" TopLine="122"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="713" Column="33" TopLine="681"/>
       </Position6>
       <Position7>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="142" Column="5" TopLine="122"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="705" Column="35" TopLine="685"/>
       </Position7>
       <Position8>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="711" Column="17" TopLine="684"/>
+        <Caret Line="1200" Column="5" TopLine="1100"/>
       </Position8>
       <Position9>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="705" Column="61" TopLine="685"/>
+        <Caret Line="692" Column="34" TopLine="685"/>
       </Position9>
       <Position10>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="683" Column="1" TopLine="662"/>
+        <Caret Line="1206" Column="7" TopLine="1190"/>
       </Position10>
       <Position11>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1185" Column="5" TopLine="1177"/>
-      </Position11>
-      <Position12>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="137" Column="39" TopLine="118"/>
-      </Position12>
-      <Position13>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="245" Column="12" TopLine="213"/>
-      </Position13>
-      <Position14>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="175" Column="38" TopLine="151"/>
-      </Position14>
-      <Position15>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="188" Column="25" TopLine="161"/>
-      </Position15>
-      <Position16>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="207" Column="24" TopLine="174"/>
-      </Position16>
-      <Position17>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="199" Column="28" TopLine="179"/>
-      </Position17>
-      <Position18>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="217" Column="25" TopLine="190"/>
-      </Position18>
-      <Position19>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="704" Column="22" TopLine="685"/>
-      </Position19>
-      <Position20>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="713" Column="33" TopLine="681"/>
-      </Position20>
-      <Position21>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="209" Column="22" TopLine="205"/>
-      </Position21>
-      <Position22>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="210" Column="26" TopLine="205"/>
-      </Position22>
-      <Position23>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="211" Column="24" TopLine="205"/>
-      </Position23>
-      <Position24>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="212" Column="28" TopLine="205"/>
-      </Position24>
-      <Position25>
-        <Filename Value="forms\beefm_propertyfrm.pas"/>
-        <Caret Line="211" Column="25" TopLine="205"/>
-      </Position25>
-      <Position26>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="705" Column="35" TopLine="685"/>
-      </Position26>
-      <Position27>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1200" Column="5" TopLine="1100"/>
-      </Position27>
-      <Position28>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="692" Column="34" TopLine="685"/>
-      </Position28>
-      <Position29>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1206" Column="7" TopLine="1190"/>
-      </Position29>
-      <Position30>
         <Filename Value="beefm.lpr"/>
         <Caret Line="56" Column="49" TopLine="18"/>
-      </Position30>
+      </Position11>
+      <Position12>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="691" Column="31" TopLine="685"/>
+      </Position12>
+      <Position13>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="1014" Column="52" TopLine="1006"/>
+      </Position13>
+      <Position14>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="1227" Column="7" TopLine="1196"/>
+      </Position14>
+      <Position15>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="1229" Column="11" TopLine="1193"/>
+      </Position15>
+      <Position16>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="1221" Column="42" TopLine="1191"/>
+      </Position16>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
