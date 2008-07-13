@@ -25,11 +25,11 @@ object InfoFrm: TInfoFrm
     Height = 430
     Top = 6
     Width = 355
-    ActivePage = FPage
+    ActivePage = APage
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 1
     object APage: TTabSheet
       Caption = 'General'
@@ -9084,7 +9084,7 @@ object InfoFrm: TInfoFrm
           Top = 22
           Width = 105
           AutoSize = False
-          Caption = 'Archive Name'
+          Caption = 'Archive name'
           ParentColor = False
           ParentShowHint = False
         end
@@ -18357,7 +18357,7 @@ object InfoFrm: TInfoFrm
           Top = 22
           Width = 105
           AutoSize = False
-          Caption = 'File Name'
+          Caption = 'File name'
           ParentColor = False
           ParentShowHint = False
         end
