@@ -151,7 +151,7 @@ type
     // ---
     procedure ClearMasks;
     procedure InvertMasks;
-    function GetMasks: string;
+    function  GetMasks: string;
     procedure SetMask(const Mask: string; Value: boolean);
   protected
     property FileName: string read FFileName;

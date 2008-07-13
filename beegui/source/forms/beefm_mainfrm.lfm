@@ -2585,12 +2585,13 @@ object MainFrm: TMainFrm
         Width = 40
       end>
     LargeImages = LargeImages
+    PopupMenu = PMenu
     ScrollBars = ssAutoBoth
     SmallImages = SmallImages
     TabOrder = 3
     ViewStyle = vsReport
     OnColumnClick = ColumnClick
-    OnDblClick = ListViewDblClick
+    OnDblClick = MMenuActionsViewClick
   end
   object OpenDialog: TOpenDialog
     Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
@@ -2606,6 +2607,7 @@ object MainFrm: TMainFrm
     object PMenuOpen: TMenuItem
       Caption = 'Open...'
       Default = True
+      OnClick = MMenuActionsViewClick
     end
     object PMenuOpenIntViewer: TMenuItem
       Caption = 'Open with internal viewer'

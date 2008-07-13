@@ -56,10 +56,10 @@ type
     Bevel: TBevel;
     BtnOk: TBitBtn;
     BtnLicense: TBitBtn;
+    procedure BtnOkClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
-    procedure BtnOkClick(Sender: TObject);
   public
     { public declarations }
     procedure SaveProperty;
@@ -105,7 +105,7 @@ uses
   begin
     ShellExec(ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('docs') + 'license.htm', '');
   end;
-
+  
   procedure TAboutFrm.BtnOkClick(Sender: TObject);
   begin
     Close;

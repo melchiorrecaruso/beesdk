@@ -214,8 +214,7 @@ type
     BMenuHelp: TMenuItem;
     BMenuExit: TMenuItem;
     // ---
-    procedure FormShow(Sender: TObject);
-    procedure ListViewDblClick(Sender: TObject);
+
     procedure MMenuActionsViewClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
@@ -249,7 +248,6 @@ type
     procedure MMenuHelpInternetClick (Sender: TObject);
     procedure MMenuHelpLicenseClick (Sender: TObject);
     procedure MMenuHelpAboutClick (Sender: TObject);
-    procedure MMenuOptionsSaveOnExitClick(Sender: TObject);
     // ---
     procedure PMenuPopup(Sender: TObject);
     procedure PMenuOpenIntViewerClick(Sender: TObject);
@@ -258,6 +256,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormShow(Sender: TObject);
     // ---
 
 
@@ -445,23 +444,8 @@ uses
      11: OrderByClick(MMenuViewOrderByPosition);
     end;
   end;
-  
-  procedure TMainFrm.ListViewDblClick(Sender: TObject);
-  begin
-    if Cursor <> crHourGlass then
-    begin
-      if ListView.Selected <> nil then
-      begin
-        if Length(ListView.Selected.SubItems[ListView.Columns.Count - 2]) = 0 then
-        begin
-          ListView.Folder :=IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
-        end else
-        begin
-          { TODO 2 : Estrazione e visualizzazione file }
-        end;
-      end;
-    end;
-  end;
+
+
 
 
 
@@ -692,22 +676,40 @@ uses
 
   procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
   begin
+    Caption := cApplicationTitle;
     ListView.CloseArchive;
     UpdateCursor(crDefault);
     UpdateButtons(False);
-    Caption := 'BeeFM';
   end;
 
   procedure TMainFrm.MMenuFilePropertyClick(Sender: TObject);
   var
     F: TInfoFrm;
+    Ratio: integer;
   begin
     F := TInfoFrm.Create(Self);
-    if F.UpdateAInfo(ArcProcess.ArcName, ListView.Details) then
     begin
-      F.ShowModal;
-    end else
-      MessageDlg(rseReadArcProperty, mtInformation, [mbOk], 0);
+      F.ANameValue.Caption         := ExtractFileName(ArcProcess.ArcName);
+      F.AVersionValue.Caption      := FloatToStr(ListView.Details.Version);
+      F.AVersionValue.Caption      := FloatToStr(ListView.Details.Version);
+      F.AFilesValue.Caption        := IntToStr(ListView.Details.FilesCount);
+      F.ASizeValue.Caption         := SizeToStr(ListView.Details.FilesSize);
+      F.APackedValue.Caption       := SizeToStr(ListView.Details.FilesPacked);
+
+      if ListView.Details.FilesSize = 0 then
+        Ratio  := 0
+      else
+        Ratio := Round(100 * (ListView.Details.FilesPacked / ListView.Details.FilesSize));
+
+      F.AR.Caption                 := IntToStr(Ratio) + '%';
+      F.ARatioValue.Caption        := IntToStr(Ratio) + '%';
+      F.AFilesCryptedValue.Caption := IntToStr(ListView.Details.FilesCrypted);
+      F.AArcSizeValue.Caption      := SizeToStr(SizeOfFile(ArcProcess.ArcName));
+      F.AModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(ArcProcess.ArcName)));
+    end;
+    if Assigned(F.FPage) then
+      FreeAndNil(F.FPage);
+    F.ShowModal;
     F.Free;
   end;
 
@@ -1000,21 +1002,30 @@ uses
   var
     CmdLine: string;
   begin
-    if ListView.SelCount <> 1 then Exit;
-    if Cursor <> crHourGlass then
+    if ListView.Selected <> nil then
     begin
-      CmdLine := 'beegui x -oA';
-      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
+      with ListView do
+      begin
+        if Pos('D', Selected.SubItems[5]) > 0 then
+        begin
+          Folder :=IncludeTrailingBackSlash(Folder) + Selected.Caption;
+        end else
+          if Cursor <> crHourGlass then
+          begin
+            CmdLine := 'beegui x -oA';
+            CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
 
-      FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
-      FileProcess.FileName := ListView.GetMasks;
+             FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
+             FileProcess.FileName := ListView.GetMasks;
 
-      ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
-      ArcProcess.CommandLine := CmdLine;
-      ArcProcess.Execute;
+             ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
+             ArcProcess.CommandLine := CmdLine;
+             ArcProcess.Execute;
 
-      Idle.OnTimer := OnFileTimer;
-      Idle.Enabled := True;
+             Idle.OnTimer := OnFileTimer;
+             Idle.Enabled := True;
+            end;
+      end;
     end;
   end;
 
@@ -1141,20 +1152,10 @@ uses
     F.Free;
   end;
 
-  procedure TMainFrm.MMenuOptionsSaveOnExitClick(Sender: TObject);
-  begin
-
-  end;
-
   procedure TMainFrm.MMenuHelpF1Click(Sender: TObject);
-  var
-    hFileName: string;
-    hFilePath: string;
   begin
-    hFilePath := ExtractFilePath(ParamStr(0));
-    hFileName := hFilePath + IncludeTrailingBackSlash('docs') + 'help.htm';
-
-    ShellExec(hFileName, hFilePath);
+    ShellExec(ExtractFilePath(ParamStr(0)) +
+      IncludeTrailingBackSlash('docs') + 'help.htm', '');
   end;
 
   procedure TMainFrm.MMenuHelpInternetClick(Sender: TObject);
@@ -1178,8 +1179,16 @@ uses
   // ---------------------------------------------------------------------- //
 
   procedure TMainFrm.PMenuOpenIntViewerClick (Sender: TObject);
+  var
+    F: TInfoFrm;
   begin
-
+    F := TInfoFrm.Create(Self);
+    //if F.UpdateFInfo() then
+    begin
+      F.ShowModal;
+    end; // else
+      // MessageDlg(rseReadArcProperty, mtInformation, [mbOk], 0);
+    F.Free;
   end;
 
   procedure TMainFrm.PMenuPropertyClick(Sender: TObject);
