@@ -1200,27 +1200,36 @@ uses
   var
     F: TInfoFrm;
   begin
-    F := TInfoFrm.Create(Self);
-    F.Caption := rsFileProperty;
-    begin
-      F.FNameValue.Caption      := ListView.Selected.Caption;
+    if ListView.Selected <> nil then
+      with ListView do
+      begin
+        if Pos('D', Selected.SubItems[5]) = 0 then
+        begin
+          F := TInfoFrm.Create(Self);
+          F.Caption := rsFileProperty;
+          begin
+            F.FNameValue.Caption      := Selected.Caption;
+            F.FVersionValue.Caption   := FloatToStr(Details.Version);
 
-      F.FVersionValue.Caption   := FloatToStr(ListView.Details.Version);
-
-      F.FSizeValue.Caption      := ListView.Selected.SubItems[0];
-      F.FPackedValue.Caption    := ListView.Selected.SubItems[1];
-      F.FRatioValue.Caption     := ListView.Selected.SubItems[2];
-      F.FR.Caption              := ListView.Selected.SubItems[2];
-      F.FAttributeValue.Caption := ListView.Selected.SubItems[5];
-      F.FPasswordValue.Caption  := ListView.Selected.SubItems[7];
-      F.FMethodValue.Caption    := ListView.Selected.SubItems[6];
-      F.FModifiedValue.Caption  := ListView.Selected.SubItems[4];
-    end;
-    F.Pages.ActivePage := F.FPage;
-    F.APage.TabVisible := False;
-    F.FPage.TabVisible := True;
-    F.ShowModal;
-    F.Free;
+            F.FSizeValue.Caption      := Selected.SubItems[0];
+            F.FPackedValue.Caption    := Selected.SubItems[1];
+            F.FRatioValue.Caption     := Selected.SubItems[2];
+            F.FR.Caption              := Selected.SubItems[2];
+            F.FAttributeValue.Caption := Selected.SubItems[5];
+            F.FPasswordValue.Caption  := Selected.SubItems[7];
+            F.FMethodValue.Caption    := Selected.SubItems[6];
+            F.FModifiedValue.Caption  := Selected.SubItems[4];
+          end;
+          F.Pages.ActivePage := F.FPage;
+          F.APage.TabVisible := False;
+          F.FPage.TabVisible := True;
+          F.ShowModal;
+          F.Free;
+        end else
+        begin
+          { TODO : Property per le directory }
+        end;
+      end;
   end;
   
   // ---------------------------------------------------------------------- //
