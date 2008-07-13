@@ -117,10 +117,9 @@ type
     procedure FormPaint(Sender: TObject);
   private
     { private declarations }
-    Ratio : integer;
+    procedure PaintProgressBar(EU, FU, E, L, F, FD, ED: TImage; R:TLabel);
   public
     { public declarations }
-    function UpdateAInfo(const ArcName: string; AInfo: TArcDetails): boolean;
     function UpdateFInfo(FInfo: TArcItem): boolean;
   public
     { public declarations }
@@ -137,75 +136,70 @@ uses
   BeeGui_Messages,
   BeeFM_ConfigFrm;
 
-  procedure UpdateProgressBar(UpEmpty, UpFull, Empty, Level, Full, DownFull, DownEmpty: TImage; R:TLabel; Percentage: integer);
+  procedure TInfoFrm.PaintProgressBar(EU, FU, E, L, F, FD, ED: TImage; R:TLabel);
+  var
+    S: string;
+    Percentage: integer;
   begin
-    UpEmpty  .Transparent := True;
-    UpFull   .Transparent := True;
-    Empty    .Transparent := True;
-    Level    .Transparent := True;
-    Full     .Transparent := True;
-    DownFull .Transparent := True;
-    DownEmpty.Transparent := True;
+    S := R.Caption;
+    while Pos('%', S) > 0 do
+    begin
+      Delete(S, Pos('%', S), 1);
+    end;
+    TryStrToInt(S, PErcentage);
+  
+    EU.Transparent := True;  EU.Visible := False;
+    FU.Transparent := True;  FU.Visible := False;  FU.Left := EU.Left;
+    E .Transparent := True;  E .Visible := False;  E .Left := EU.Left;
+    L .Transparent := True;  L .Visible := False;  L .Left := EU.Left;
+    F .Transparent := True;  F .Visible := False;  F .Left := EU.Left;
+    FD.Transparent := True;  FD.Visible := False;  FD.Left := EU.Left;
+    ED.Transparent := True;  ED.Visible := False;  ED.Left := EU.Left;
 
-    UpEmpty  .Visible := False;
-    UpFull   .Visible := False;
-    Empty    .Visible := False;
-    Level    .Visible := False;
-    Full     .Visible := False;
-    DownFull .Visible := False;
-    DownEmpty.Visible := False;
-
-    UpFull   .Left := UpEmpty.Left;
-    Empty    .Left := UpEmpty.Left;
-    Level    .Left := UpEmpty.Left;
-    Full     .Left := UpEmpty.Left;
-    DownFull .Left := UpEmpty.Left;
-    DownEmpty.Left := UpEmpty.Left;
-
-    UpFull  .Top   := UpEmpty.Top;
-    DownFull.Top   := DownEmpty.Top + DownEmpty.Height - DownFull.Height;
+    FU.Top := EU.Top;
+    FD.Top := ED.Top + ED.Height - FD.Height;
 
     R.Caption := IntToStr(Percentage) + '%';
     if Percentage > 100 then Percentage := 100;
     case Percentage of
     0..6 : begin
-             Empty.Top    := UpEmpty  .Top + UpEmpty.Height;
-             Empty.Height := DownEmpty.Top - Empty.Top;
+             E.Top    := EU.Top + EU.Height;
+             E.Height := ED.Top - E.Top;
 
-             UpEmpty  .Visible := True;
-             Empty    .Visible := True;
-             DownEmpty.Visible := True;
+             EU.Visible := True;
+             E .Visible := True;
+             ED.Visible := True;
 
-             R.Top := DownEmpty.Top - 3;
+             R.Top := ED.Top - 3;
            end;
     7..99: begin
              case Percentage of
              97..99: Percentage := 96;
              end;
-             Full.Height := 1 + (DownFull.Top - UpEmpty.Top - UpEmpty.Height - Level.Height-1) * (Percentage - 7) div (96 - 7);
+             F.Height := 1 + (FD.Top - EU.Top - EU.Height - L.Height-1) * (Percentage - 7) div (96 - 7);
 
-             Full .Top    := DownFull.Top - Full.Height;
-             Level.Top    := Full    .Top - Level.Height;
-             Empty.Top    := UpEmpty .Top + UpEmpty.Height;
-             Empty.Height := Level   .Top - Empty.Top;
+             F.Top    := FD.Top - F .Height;
+             L.Top    := F .Top - L .Height;
+             E.Top    := EU.Top + EU.Height;
+             E.Height := L .Top - E .Top;
 
-             UpEmpty .Visible := True;
-             Empty   .Visible := True;
-             Level   .Visible := True;
-             Full    .Visible := True;
-             DownFull.Visible := True;
+             EU.Visible := True;
+             E .Visible := True;
+             L .Visible := True;
+             F .Visible := True;
+             FD.Visible := True;
 
-             R.Top := Level.Top;
+             R.Top := L.Top;
            end;
       100: begin
-             Full.Top    := UpFull  .Top + UpFull.Height;
-             Full.Height := DownFull.Top - Full.Top;
+             F.Top  := FU.Top + FU.Height;
+             F.Height := FD.Top - F .Top;
 
-             UpFull  .Visible := True;
-             Full    .Visible := True;
-             DownFull.Visible := True;
-
-             R.Top := UpFull.Top;
+             FU.Visible := True;
+             F .Visible := True;
+             FD.Visible := True;
+             
+             R.Top := FU.Top;
            end;
     end;
   end;
@@ -221,7 +215,7 @@ uses
   begin
     if Assigned(APage) then
     begin
-      UpdateProgressBar(
+      PaintProgressBar(
         AUpEmpty,
         AUpFull,
         AEmpty,
@@ -229,12 +223,11 @@ uses
         AFull,
         ADownFull,
         ADownEmpty,
-        AR,
-        Ratio);
+        AR);
     end;
     if Assigned(FPage) then
     begin
-      UpdateProgressBar(
+      PaintProgressBar(
         FUpEmpty,
         FUpFull,
         FEmpty,
@@ -242,8 +235,7 @@ uses
         FFull,
         FDownFull,
         FDownEmpty,
-        FR,
-        Ratio);
+        FR);
     end;
   end;
 
@@ -260,33 +252,10 @@ uses
     {$ENDIF}
     SaveProperty;
   end;
-
-  function TInfoFrm.UpdateAInfo(const ArcName: string; AInfo: TArcDetails): boolean;
-  begin
-    Result := True;
-    if Assigned(AInfo) then
-    try
-      if AInfo.FilesSize = 0 then
-        Ratio  := 0
-      else
-        Ratio := Round(100 * (AInfo.FilesPacked / AInfo.FilesSize));
-
-      ANameValue.Caption         := ExtractFileName(ArcName);
-      AVersionValue.Caption      := FloatToStr(AInfo.Version);
-      AFilesValue.Caption        := IntToStr(AInfo.FilesCount);
-      ASizeValue.Caption         := SizeToStr(AInfo.FilesSize);
-      APackedValue.Caption       := SizeToStr(AInfo.FilesPacked);
-      ARatioValue.Caption        := IntToStr(Ratio) + '%';
-      AFilesCryptedValue.Caption := IntToStr(AInfo.FilesCrypted);
-      AArcSizeValue.Caption      := SizeToStr(SizeOfFile (ArcName));
-      AModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(ArcName)));
-    except
-      Result := False;
-    end;
-    if Assigned(FPage) then FreeAndNil(FPage);
-  end;
   
   function TInfoFrm.UpdateFInfo(FInfo: TArcItem): boolean;
+  var
+    Ratio: integer;
   begin
     Result := True;
     if Assigned(FInfo) then

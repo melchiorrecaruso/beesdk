@@ -1,26 +1,26 @@
 {
-    Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{   Contains:
+{ Contains:
 
     Various helper system routines.
 
-    Modifyed:
+  Modifyed:
 }
 
 unit BeeGui_SysUtils;
@@ -31,12 +31,11 @@ uses
   {$IFDEF MSWINDOWS}
   Windows,
   Registry,
-  {$ELSE}
-  Process,
   {$ENDIF}
   Math,
   Dialogs,
   Classes,
+  Process,
   SysUtils;
   
   { directories routines }
@@ -329,29 +328,30 @@ implementation
   
   { shell routines }
   
-  {$IFDEF MSWINDOWS}
-  function ShellExec(const FileName: string; const ExecName: string): boolean;
-  begin
-    Result := ShellExecute(0, 'open', PChar(FileName), nil, nil, SW_SHOW) > 32
-  end;
-  {$ELSE}
   function ShellExec(const FileName: string; const ExecName: string): boolean;
   var
     aExecName: string;
     aProcess: TProcess;
   begin
-    aExecName := ExpandFileName(ExecName);
-
-    Result := FileExists(aExecName);
-    if Result then
+    if ExecName = '' then
     begin
-      aProcess := TProcess.Create(nil);
-      aProcess.CommandLine := Format(aExecName + ' %s', [FileName]);
-      aProcess.Execute;
-      aProcess.Free;
+      {$IFDEF MSWINDOWS}
+      Result := ShellExecute(0, 'open', PChar(FileName), nil, nil, SW_SHOW) > 32
+      {$ENDIF}
+    end else
+    begin
+      aExecName := ExpandFileName(ExecName);
+
+      Result := FileExists(aExecName);
+      if Result then
+      begin
+        aProcess := TProcess.Create(nil);
+        aProcess.CommandLine := Format(aExecName + ' %s', [FileName]);
+        aProcess.Execute;
+        aProcess.Free;
+      end;
     end;
   end;
-  {$ENDIF}
   
   {  }
   
