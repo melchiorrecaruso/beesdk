@@ -1,7 +1,7 @@
 object InfoFrm: TInfoFrm
-  Left = 399
+  Left = 653
   Height = 474
-  Top = 182
+  Top = 230
   Width = 367
   ActiveControl = Pages
   Caption = 'Properties'
@@ -25,11 +25,11 @@ object InfoFrm: TInfoFrm
     Height = 430
     Top = 6
     Width = 355
-    ActivePage = APage
+    ActivePage = FPage
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 1
     object APage: TTabSheet
       Caption = 'General'
@@ -44,12 +44,15 @@ object InfoFrm: TInfoFrm
         ClientHeight = 404
         ClientWidth = 347
         TabOrder = 0
-        object AUpEmpty: TImage
-          Left = 14
+        object AEU: TImage
+          AnchorSideLeft.Control = APanel
+          AnchorSideTop.Control = APanel
+          Left = 15
           Height = 11
-          Top = 16
+          Top = 20
           Width = 33
-          AutoSize = True
+          BorderSpacing.Left = 15
+          BorderSpacing.Top = 20
           Picture.Data = {
             07544269746D617082040000424D820400000000000036000000280000002100
             00000B00000001001800000000004C0400006400000064000000000000000000
@@ -90,12 +93,15 @@ object InfoFrm: TInfoFrm
             FFFFFFFFFFFFFFFFFFFFFFFFFF00
           }
         end
-        object AUpFull: TImage
-          Left = 14
+        object AFU: TImage
+          AnchorSideLeft.Control = APanel
+          AnchorSideTop.Control = APanel
+          Left = 15
           Height = 11
-          Top = 32
+          Top = 20
           Width = 33
-          AutoSize = True
+          BorderSpacing.Left = 15
+          BorderSpacing.Top = 20
           Picture.Data = {
             07544269746D617082040000424D820400000000000036000000280000002100
             00000B00000001001800000000004C0400006400000064000000000000000000
@@ -136,10 +142,10 @@ object InfoFrm: TInfoFrm
             FFFFFFFFFFFFFFFFFFFFFFFFFF00
           }
         end
-        object AEmpty: TImage
-          Left = 14
+        object AE: TImage
+          Left = 15
           Height = 67
-          Top = 60
+          Top = 70
           Width = 33
           Picture.Data = {
             07544269746D617016230200424D162302000000000036000000280000002100
@@ -4522,12 +4528,12 @@ object InfoFrm: TInfoFrm
             FF00
           }
         end
-        object ALevel: TImage
-          Left = 14
+        object AL: TImage
+          Left = 15
           Height = 11
-          Top = 144
+          Top = 188
           Width = 33
-          AutoSize = True
+          Anchors = [akTop]
           Picture.Data = {
             07544269746D617082040000424D820400000000000036000000280000002100
             00000B00000001001800000000004C0400006400000064000000000000000000
@@ -4568,10 +4574,10 @@ object InfoFrm: TInfoFrm
             84FF8484FF8484FFFFFFFFFFFF00
           }
         end
-        object AFull: TImage
-          Left = 14
+        object AF: TImage
+          Left = 15
           Height = 69
-          Top = 164
+          Top = 220
           Width = 33
           Picture.Data = {
             07544269746D617016230200424D162302000000000036000000280000002100
@@ -8954,13 +8960,17 @@ object InfoFrm: TInfoFrm
             FF00
           }
         end
-        object ADownFull: TImage
-          Left = 14
+        object AFD: TImage
+          AnchorSideLeft.Control = APanel
+          AnchorSideBottom.Control = APanel
+          AnchorSideBottom.Side = asrBottom
+          Left = 15
           Height = 11
-          Top = 351
+          Top = 373
           Width = 33
           Anchors = [akLeft, akBottom]
-          AutoSize = True
+          BorderSpacing.Left = 15
+          BorderSpacing.Bottom = 20
           Picture.Data = {
             07544269746D617082040000424D820400000000000036000000280000002100
             00000B00000001001800000000004C0400006400000064000000000000000000
@@ -9001,13 +9011,17 @@ object InfoFrm: TInfoFrm
             C68C42C68C42C6FFFFFFFFFFFF00
           }
         end
-        object ADownEmpty: TImage
-          Left = 14
+        object AED: TImage
+          AnchorSideLeft.Control = APanel
+          AnchorSideBottom.Control = APanel
+          AnchorSideBottom.Side = asrBottom
+          Left = 15
           Height = 16
-          Top = 367
+          Top = 368
           Width = 33
           Anchors = [akLeft, akBottom]
-          AutoSize = True
+          BorderSpacing.Left = 15
+          BorderSpacing.Bottom = 20
           Picture.Data = {
             07544269746D617076060000424D760600000000000036000000280000002100
             0000100000000100180000000000400600006400000064000000000000000000
@@ -9302,12 +9316,15 @@ object InfoFrm: TInfoFrm
         ClientHeight = 404
         ClientWidth = 347
         TabOrder = 0
-        object FUpEmpty: TImage
-          Left = 14
+        object FEU: TImage
+          AnchorSideLeft.Control = FPanel
+          AnchorSideTop.Control = FPanel
+          Left = 15
           Height = 11
-          Top = 16
+          Top = 20
           Width = 33
-          AutoSize = True
+          BorderSpacing.Left = 15
+          BorderSpacing.Top = 20
           Picture.Data = {
             07544269746D617082040000424D820400000000000036000000280000002100
             00000B00000001001800000000004C0400006400000064000000000000000000
@@ -9348,12 +9365,15 @@ object InfoFrm: TInfoFrm
             FFFFFFFFFFFFFFFFFFFFFFFFFF00
           }
         end
-        object FUpFull: TImage
-          Left = 14
+        object FFU: TImage
+          AnchorSideLeft.Control = FPanel
+          AnchorSideTop.Control = FPanel
+          Left = 15
           Height = 11
-          Top = 32
+          Top = 20
           Width = 33
-          AutoSize = True
+          BorderSpacing.Left = 15
+          BorderSpacing.Top = 20
           Picture.Data = {
             07544269746D617082040000424D820400000000000036000000280000002100
             00000B00000001001800000000004C0400006400000064000000000000000000
@@ -9394,8 +9414,8 @@ object InfoFrm: TInfoFrm
             FFFFFFFFFFFFFFFFFFFFFFFFFF00
           }
         end
-        object FEmpty: TImage
-          Left = 14
+        object FE: TImage
+          Left = 15
           Height = 65
           Top = 64
           Width = 33
@@ -13781,12 +13801,11 @@ object InfoFrm: TInfoFrm
           }
           Stretch = True
         end
-        object FLevel: TImage
+        object FL: TImage
           Left = 14
           Height = 11
           Top = 144
           Width = 33
-          AutoSize = True
           Picture.Data = {
             07544269746D617082040000424D820400000000000036000000280000002100
             00000B00000001001800000000004C0400006400000064000000000000000000
@@ -13827,7 +13846,7 @@ object InfoFrm: TInfoFrm
             84FF8484FF8484FFFFFFFFFFFF00
           }
         end
-        object FFull: TImage
+        object FF: TImage
           Left = 14
           Height = 73
           Top = 192
@@ -18214,13 +18233,17 @@ object InfoFrm: TInfoFrm
           }
           Stretch = True
         end
-        object FDownFull: TImage
-          Left = 14
+        object FFD: TImage
+          AnchorSideLeft.Control = FPanel
+          AnchorSideBottom.Control = FPanel
+          AnchorSideBottom.Side = asrBottom
+          Left = 15
           Height = 11
-          Top = 350
+          Top = 373
           Width = 33
           Anchors = [akLeft, akBottom]
-          AutoSize = True
+          BorderSpacing.Left = 15
+          BorderSpacing.Bottom = 20
           Picture.Data = {
             07544269746D617082040000424D820400000000000036000000280000002100
             00000B00000001001800000000004C0400006400000064000000000000000000
@@ -18261,13 +18284,17 @@ object InfoFrm: TInfoFrm
             C68C42C68C42C6FFFFFFFFFFFF00
           }
         end
-        object FDownEmpty: TImage
-          Left = 14
+        object FED: TImage
+          AnchorSideLeft.Control = FPanel
+          AnchorSideBottom.Control = FPanel
+          AnchorSideBottom.Side = asrBottom
+          Left = 15
           Height = 16
-          Top = 366
+          Top = 368
           Width = 33
           Anchors = [akLeft, akBottom]
-          AutoSize = True
+          BorderSpacing.Left = 15
+          BorderSpacing.Bottom = 20
           Picture.Data = {
             07544269746D617076060000424D760600000000000036000000280000002100
             0000100000000100180000000000400600006400000064000000000000000000

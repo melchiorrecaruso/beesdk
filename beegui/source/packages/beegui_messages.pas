@@ -37,6 +37,9 @@ var
   rsWarning:              string = 'Warning';
   rsConfirmation:         string = 'Confirmation';
 
+  rsArcProperty:          string = 'Archive property';
+  rsFileProperty:         string = 'File property';
+  
   rsSelectFolder:         string = 'Select folder';
   rsSelectFrmCaption:     string = 'Select';
   rsDeselectFrmCaption:   string = 'Deselect';
@@ -83,6 +86,9 @@ implementation
       rsWarning              := Storage.ReadString('ResourceString', 'rsWarning', rsWarning);
       rsConfirmation         := Storage.ReadString('ResourceString', 'rsConfirmation', rsConfirmation);
       
+      rsFileProperty         := Storage.ReadString('ResourceString', 'rsFileProperty', rsFileProperty);
+      rsArcProperty          := Storage.ReadString('ResourceString', 'rsArcProperty', rsArcProperty);
+      
       rsSelectFolder         := Storage.ReadString('ResourceString', 'rsSelectFolder', rsSelectFolder);
       rsSelectFrmCaption     := Storage.ReadString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
       rsDeSelectFrmCaption   := Storage.ReadString('ResourceString', 'rsDeSelectFrmCaption', rsDeSelectFrmCaption);
@@ -127,6 +133,9 @@ implementation
       begin
       Storage.WriteString('ResourceString', 'rsWarning', rsWarning);
       Storage.WriteString('ResourceString', 'rsConfirmation', rsConfirmation);
+      
+      Storage.WriteString('ResourceString', 'rsFileProperty', rsFileProperty);
+      Storage.WriteString('ResourceString', 'rsArcProperty', rsArcProperty);
 
       Storage.WriteString('ResourceString', 'rsSelectFolder', rsSelectFolder);
       Storage.WriteString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);

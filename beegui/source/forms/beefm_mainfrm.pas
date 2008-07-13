@@ -688,6 +688,7 @@ uses
     Ratio: integer;
   begin
     F := TInfoFrm.Create(Self);
+    F.Caption := rsArcProperty;
     begin
       F.ANameValue.Caption         := ExtractFileName(ArcProcess.ArcName);
       F.AVersionValue.Caption      := FloatToStr(ListView.Details.Version);
@@ -696,10 +697,13 @@ uses
       F.ASizeValue.Caption         := SizeToStr(ListView.Details.FilesSize);
       F.APackedValue.Caption       := SizeToStr(ListView.Details.FilesPacked);
 
-      if ListView.Details.FilesSize = 0 then
-        Ratio  := 0
-      else
-        Ratio := Round(100 * (ListView.Details.FilesPacked / ListView.Details.FilesSize));
+      with ListView.Details do
+      begin
+        if FilesSize <> 0 then
+          Ratio := Round(100 * FilesPacked / FilesSize)
+        else
+          Ratio := 0;
+      end;
 
       F.AR.Caption                 := IntToStr(Ratio) + '%';
       F.ARatioValue.Caption        := IntToStr(Ratio) + '%';
@@ -707,8 +711,9 @@ uses
       F.AArcSizeValue.Caption      := SizeToStr(SizeOfFile(ArcProcess.ArcName));
       F.AModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(ArcProcess.ArcName)));
     end;
-    if Assigned(F.FPage) then
-      FreeAndNil(F.FPage);
+    F.Pages.ActivePage := F.APage;
+    F.FPage.TabVisible := False;
+    F.APage.TabVisible := True;
     F.ShowModal;
     F.Free;
   end;
@@ -1192,8 +1197,30 @@ uses
   end;
 
   procedure TMainFrm.PMenuPropertyClick(Sender: TObject);
+  var
+    F: TInfoFrm;
   begin
-  
+    F := TInfoFrm.Create(Self);
+    F.Caption := rsFileProperty;
+    begin
+      F.FNameValue.Caption      := ListView.Selected.Caption;
+
+      F.FVersionValue.Caption   := FloatToStr(ListView.Details.Version);
+
+      F.FSizeValue.Caption      := ListView.Selected.SubItems[0];
+      F.FPackedValue.Caption    := ListView.Selected.SubItems[1];
+      F.FRatioValue.Caption     := ListView.Selected.SubItems[2];
+      F.FR.Caption              := ListView.Selected.SubItems[2];
+      F.FAttributeValue.Caption := ListView.Selected.SubItems[5];
+      F.FPasswordValue.Caption  := ListView.Selected.SubItems[7];
+      F.FMethodValue.Caption    := ListView.Selected.SubItems[6];
+      F.FModifiedValue.Caption  := ListView.Selected.SubItems[4];
+    end;
+    F.Pages.ActivePage := F.FPage;
+    F.APage.TabVisible := False;
+    F.FPage.TabVisible := True;
+    F.ShowModal;
+    F.Free;
   end;
   
   // ---------------------------------------------------------------------- //
