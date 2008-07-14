@@ -322,7 +322,9 @@ uses
   begin
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
+    // --- //
     UpdateButtons(False);
+    // --- //
     LoadLanguage;
     LoadProperty;
   end;
@@ -365,7 +367,7 @@ uses
   
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  Buttons Popup Menu                                                    //
+  //  Buttons popup menu - Events                                           //
   //                                                                        //
   // ---------------------------------------------------------------------- //
   
@@ -604,7 +606,7 @@ uses
 
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  Main Menu File                                                        //
+  //  Main Menu - File                                                      //
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
@@ -625,7 +627,7 @@ uses
             1: ArcName := ChangeFileExt(ArcName, '.bee');
             2: ArcName := ChangeFileExt(ArcName, '.exe');
           end;
-          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArcName);
+          Caption := cApplicationName + ' - ' + ExtractFileName(ArcName);
         end;
         CmdLine := 'beegui a' + ' -2+';
         if MMenuOptionsLogReport.Checked then
@@ -656,7 +658,7 @@ uses
         with ArcProcess do
         begin
           ArcName := OpenDialog.FileName;
-          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArcName);
+          Caption := cApplicationName + ' - ' + ExtractFileName(ArcName);
         end;
         CmdLine := 'beegui l';
         if MMenuOptionsLogReport.Checked then
@@ -765,7 +767,7 @@ uses
         if RenameFile(ArcProcess.ArcName, NewName) then
         begin
           ArcProcess.ArcName := NewName;
-          Caption := 'BeeFM' + ' - ' + ExtractFileName(ArcProcess.ArcName);
+          Caption := cApplicationName + ' - ' + ExtractFileName(ArcProcess.ArcName);
         end else
           MessageDlg(rseRenameArc, mtError, [mbOk], 0);
       end;
@@ -792,7 +794,7 @@ uses
   
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  Main Menu View                                                        //
+  //  Main Menu - View                                                      //
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
