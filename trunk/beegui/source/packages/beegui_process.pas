@@ -62,11 +62,10 @@ type
     FFileName: string;
     FFileTime: integer;
     FFileExec: string;
-    function GetFileName: string;
     function GetFileExec: string;
     procedure SetFileName(Value: string);
   public
-    property FileName: string read GetFileName write SetFileName;
+    property FileName: string read FFileName write SetFileName;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -130,31 +129,25 @@ uses
 
   procedure TFileProcess.Execute;
   begin
-    if FFileExec <> '' then
+    ShowMessage(FFileName);
+    if FileExists(FFileName) then
     begin
-      CommandLine :=  FFileExec + ' ' + FFileName
+      if FFileExec <> '' then
+      begin
+        CommandLine :=  FFileExec + ' "' + FFileName + '"';
+      end;
+      ShowMessage(CommandLine);
+      inherited Execute;
     end;
-    inherited Execute;
   end;
   
   procedure TFileProcess.SetFileName(Value: string);
   begin
-    FFileName := '"' + Value + '"';
+    ShowMEssage(Value);
+
+    FFileName := Value;
     FFileTime := FileAge(Value);
     FFileExec := GetFileExec;
-  end;
-  
-  function TFileProcess.GetFileName: string;
-  var
-    I: integer;
-  begin
-    Result := FFileName;
-    I := Pos('"', Result);
-    while I > 0 do
-    begin
-      Delete(Result, I, 1);
-      I := Pos('"', Result);
-    end;
   end;
   
   function TFileProcess.GetFileExec: string;
@@ -168,6 +161,8 @@ uses
   begin
     Result := '';
     {$IFDEF MSWINDOWS}
+    ShowMessage('GetFileExec ' + FileName);
+
     FillChar(Buffer, SizeOf(Buffer), #0);
     Res := FindExecutable(PChar(FileName), PChar(nil), Buffer);
     if Res > 32 then

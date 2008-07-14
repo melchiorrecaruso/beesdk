@@ -508,7 +508,7 @@ uses
       begin
         Idle.Enabled := False;
         Idle.OnTimer := nil;
-        
+
         LastFolder := ListView.Folder;
         if ListView.Open(ArcName, ArcLink) then
           UpdateButtons(True)
@@ -527,6 +527,7 @@ uses
       begin
         Idle.Enabled := False;
         Idle.OnTimer := nil;
+        // ---
         FileProcess.Execute;
       end;
   end;
@@ -1028,16 +1029,16 @@ uses
             CmdLine := 'beegui x -oA';
             CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
 
-             FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
-             FileProcess.FileName := ListView.GetMasks;
+            FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
+            FileProcess.FileName := IncludeTrailingBackSlash(FileProcess.CurrentDirectory) + ListView.GetMasks;
 
-             ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
-             ArcProcess.CommandLine := CmdLine;
-             ArcProcess.Execute;
-             // ---
-             Idle.OnTimer := OnFileTimer;
-             Idle.Enabled := True;
-            end;
+            ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
+            ArcProcess.CommandLine := CmdLine;
+            ArcProcess.Execute;
+            // ---
+            Idle.OnTimer := OnFileTimer;
+            Idle.Enabled := True;
+           end;
       end;
     end;
   end;
