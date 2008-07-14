@@ -876,7 +876,7 @@ uses
 
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  Main Menu Action                                                      //
+  //  Main Menu - Actions                                                   //
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
@@ -895,6 +895,7 @@ uses
       ArcProcess.CommandLine := CmdLine;
       ArcProcess.CurrentDirectory := '';
       ArcProcess.Execute;
+      // ---
       Idle.OnTimer := OnArcTimer;
       Idle.Enabled := True;
     end;
@@ -918,6 +919,7 @@ uses
         ArcProcess.CommandLine := CmdLine;
         ArcProcess.CurrentDirectory := '';
         ArcProcess.Execute;
+        // ---
         Idle.OnTimer := OnArcTimer;
         Idle.Enabled := True;
       end;
@@ -940,6 +942,7 @@ uses
       ArcProcess.CommandLine := CmdLine;
       ArcProcess.CurrentDirectory := '';
       ArcProcess.Execute;
+      // ---
       Idle.OnTimer := nil;
       Idle.Enabled := False;
     end;
@@ -960,6 +963,7 @@ uses
       ArcProcess.CommandLine := CmdLine;
       ArcProcess.CurrentDirectory := '';
       ArcProcess.Execute;
+      // ---
       Idle.OnTimer := nil;
       Idle.Enabled := False;
     end;
@@ -977,6 +981,7 @@ uses
       ArcProcess.CommandLine := CmdLine;
       ArcProcess.CurrentDirectory := '';
       ArcProcess.Execute;
+      // ---
       Idle.OnTimer := nil;
       Idle.Enabled := False;
     end;
@@ -998,6 +1003,7 @@ uses
       ArcProcess.CommandLine := CmdLine;
       ArcProcess.CurrentDirectory := '';
       ArcProcess.Execute;
+      // ---
       Idle.OnTimer := OnArcTimer;
       Idle.Enabled := True;
     end;
@@ -1026,7 +1032,7 @@ uses
              ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
              ArcProcess.CommandLine := CmdLine;
              ArcProcess.Execute;
-
+             // ---
              Idle.OnTimer := OnFileTimer;
              Idle.Enabled := True;
             end;
@@ -1053,6 +1059,7 @@ uses
       ArcProcess.CommandLine := CmdLine;
       ArcProcess.CurrentDirectory := '';
       ArcProcess.Execute;
+      // ---
       Idle.OnTimer := nil;
       Idle.Enabled := False;
     end;
@@ -1106,7 +1113,7 @@ uses
 
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  Main Menu Options                                                     //
+  //  Main Menu - Options                                                   //
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
@@ -1144,7 +1151,7 @@ uses
   
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  Main Menu Options                                                     //
+  //  Main Menu - Help                                                      //
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
@@ -1160,7 +1167,7 @@ uses
   procedure TMainFrm.MMenuHelpF1Click(Sender: TObject);
   begin
     ShellExec(ExtractFilePath(ParamStr(0)) +
-      IncludeTrailingBackSlash('docs') + 'help.htm', '');
+      IncludeTrailingBackSlash(cApplicationDocsFolder) + cApplicationHelpFile, '');
   end;
 
   procedure TMainFrm.MMenuHelpInternetClick(Sender: TObject);
@@ -1179,21 +1186,13 @@ uses
   
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  PopupnMenu Click                                                      //
+  //  Popup menu - Events                                                   //
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
-  procedure TMainFrm.PMenuOpenIntViewerClick (Sender: TObject);
-  var
-    F: TInfoFrm;
+  procedure TMainFrm.PMenuOpenIntViewerClick(Sender: TObject);
   begin
-    F := TInfoFrm.Create(Self);
-    //if F.UpdateFInfo() then
-    begin
-      F.ShowModal;
-    end; // else
-      // MessageDlg(rseReadArcProperty, mtInformation, [mbOk], 0);
-    F.Free;
+    { TODO : Open with internal viewer (da terminate) }
   end;
 
   procedure TMainFrm.PMenuPropertyClick(Sender: TObject);
@@ -1225,22 +1224,49 @@ uses
           F.FPage.TabVisible := True;
           F.ShowModal;
           F.Free;
-        end else
-        begin
-          { TODO : Property per le directory }
         end;
       end;
   end;
   
-  // ---------------------------------------------------------------------- //
-  //                                                                        //
-  //  PMenu Events                                                          //
-  //                                                                        //
-  // ---------------------------------------------------------------------- //
-  
   procedure TMainFrm.PMenuPopup(Sender: TObject);
+  var
+    Selection: integer;
   begin
+    with ListView do
+    begin
+      if SelCount = 1 then
+      begin
+        if Pos('D',Selected.SubItems[5]) > 0 then
+          Selection := 2
+        else
+          Selection := 1;
+      end else
+        Selection := 3;
+    end;
 
+    case Selection of
+      1: begin
+           PMenuOpen         .Visible := True;
+           PMenuOpenIntViewer.Visible := True;
+           PMenuN1           .Visible := True;
+           PMenuN4           .Visible := True;
+           PMenuProperty     .Visible := True;
+         end;
+      2: begin
+           PMenuOpen         .Visible := True;
+           PMenuOpenIntViewer.Visible := False;
+           PMenuN1           .Visible := True;
+           PMenuN4           .Visible := False;
+           PMenuProperty     .Visible := False;
+         end;
+      3: begin
+           PMenuOpen         .Visible := False;
+           PMenuOpenIntViewer.Visible := False;
+           PMenuN1           .Visible := False;
+           PMenuN4           .Visible := False;
+           PMenuProperty     .Visible := False;
+         end;
+    end;
   end;
   
 initialization

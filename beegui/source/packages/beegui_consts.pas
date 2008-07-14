@@ -33,6 +33,9 @@ const
   cApplicationCaption = 'Bee File Manager';
   
   cApplicationHomePage       = 'http://www.beegui.org';
+
+  cApplicationHelpFile       = 'help.htm';
+  cApplicationDocsFolder     = 'docs';
   cApplicationLanguageFolder = 'language';
   
 implementation
