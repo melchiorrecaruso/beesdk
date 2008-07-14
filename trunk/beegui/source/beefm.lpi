@@ -68,8 +68,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="13" Y="1062"/>
-        <TopLine Value="1206"/>
+        <CursorPos X="34" Y="370"/>
+        <TopLine Value="554"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -2156,7 +2156,7 @@
         <Filename Value="packages\beegui_consts.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Consts"/>
-        <CursorPos X="1" Y="36"/>
+        <CursorPos X="19" Y="31"/>
         <TopLine Value="5"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="31"/>
