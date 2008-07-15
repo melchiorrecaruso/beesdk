@@ -403,9 +403,9 @@
       <Unit49>
         <Filename Value="..\..\bee\source\bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <CursorPos X="12" Y="211"/>
-        <TopLine Value="135"/>
-        <UsageCount Value="9"/>
+        <CursorPos X="22" Y="502"/>
+        <TopLine Value="489"/>
+        <UsageCount Value="10"/>
       </Unit49>
       <Unit50>
         <Filename Value="..\..\..\..\Programmi\FPC\2.2.0\fpcsrc\rtl\objpas\sysutils\sysstrh.inc"/>
