@@ -132,6 +132,7 @@ uses
     if FileExists(FFileName) then
     begin
       FFileExec := GetFileExec;
+      FFileTime := FileAge(FFileName);
       if FileExists(FFileExec) then
       begin
         CommandLine :=  FFileExec + ' "' + FFileName + '"';
@@ -141,21 +142,51 @@ uses
   end;
   
   procedure TFileProcess.SetFileName(Value: string);
+  var
+    I: integer;
   begin
+    I := System.Pos('*', Value);
+    while I > 0 do
+    begin
+      Delete(Value, I, 1);
+      I := System.Pos('*', Value);
+    end;
+
+    I := System.Pos('?', Value);
+    while I > 0 do
+    begin
+      Delete(Value, I, 1);
+      I := System.Pos('?', Value);
+    end;
+
+    I := System.Pos('!', Value);
+    while I > 0 do
+    begin
+      Delete(Value, I, 1);
+      I := System.Pos('!', Value);
+    end;
+
+    I := System.Pos('"', Value);
+    while I > 0 do
+    begin
+      Delete(Value, I, 1);
+      I := System.Pos('"', Value);
+    end;
+    
     FFileName := Value;
-    FFileTime := FileAge(Value);
+    FFileTime := 0;
+    FFileExec := '';
   end;
   
   function TFileProcess.GetFileExec: string;
   var
-    Res: integer;
     {$IFDEF MSWINDOWS}
     P: PChar;
+    Res: integer;
     Buffer: array[0..MAX_PATH] of char;
     {$ENDIF}
     OpenDialog: TOpenDialog;
   begin
-    Res := $FFFF;
     Result := '';
     {$IFDEF MSWINDOWS}
     FillChar(Buffer, SizeOf(Buffer), #0);
@@ -171,7 +202,7 @@ uses
       Result := Buffer;
     end;
     {$ENDIF}
-    if (Res > 32) and (Result = '') then
+    if FileExists(Result) = False then
     begin
       OpenDialog := TOpenDialog.Create(nil);
       try

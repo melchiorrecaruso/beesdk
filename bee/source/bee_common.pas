@@ -439,6 +439,13 @@ begin
     Delete(Result, I, 1);
     I := System.Pos('!', Result);
   end;
+  
+  I := System.Pos('"', Result);
+  while I > 0 do
+  begin
+    Delete(Result, I, 1);
+    I := System.Pos('"', Result);
+  end;
 
   Result := ExcludeTrailingBackSlash(Result);
 end;
@@ -462,6 +469,13 @@ begin
   begin
     Delete(Result, I, 1);
     I := System.Pos('?', Result);
+  end;
+  
+  I := System.Pos('"', Result);
+  while I > 0 do
+  begin
+    Delete(Result, I, 1);
+    I := System.Pos('"', Result);
   end;
 end;
 

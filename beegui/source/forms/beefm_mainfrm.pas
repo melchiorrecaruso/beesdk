@@ -1029,6 +1029,8 @@ uses
             CmdLine := 'beegui x -oA';
             CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
 
+            ShowMessage(CmdLine);
+            
             FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
             FileProcess.FileName := IncludeTrailingBackSlash(FileProcess.CurrentDirectory) + ListView.GetMasks;
             
