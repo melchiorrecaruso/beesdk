@@ -129,42 +129,37 @@ uses
 
   procedure TFileProcess.Execute;
   begin
-    ShowMessage(FFileName);
     if FileExists(FFileName) then
     begin
-      if FFileExec <> '' then
+      FFileExec := GetFileExec;
+      if FileExists(FFileExec) then
       begin
         CommandLine :=  FFileExec + ' "' + FFileName + '"';
+        inherited Execute;
       end;
-      ShowMessage(CommandLine);
-      inherited Execute;
     end;
   end;
   
   procedure TFileProcess.SetFileName(Value: string);
   begin
-    ShowMEssage(Value);
-
     FFileName := Value;
     FFileTime := FileAge(Value);
-    FFileExec := GetFileExec;
   end;
   
   function TFileProcess.GetFileExec: string;
   var
+    Res: integer;
     {$IFDEF MSWINDOWS}
     P: PChar;
-    Res: HINST;
     Buffer: array[0..MAX_PATH] of char;
     {$ENDIF}
     OpenDialog: TOpenDialog;
   begin
+    Res := $FFFF;
     Result := '';
     {$IFDEF MSWINDOWS}
-    ShowMessage('GetFileExec ' + FileName);
-
     FillChar(Buffer, SizeOf(Buffer), #0);
-    Res := FindExecutable(PChar(FileName), PChar(nil), Buffer);
+    Res := FindExecutable(PChar(FFileName), nil, Buffer);
     if Res > 32 then
     begin
       P := Buffer;
@@ -176,7 +171,7 @@ uses
       Result := Buffer;
     end;
     {$ENDIF}
-    if Result = '' then
+    if (Res > 32) and (Result = '') then
     begin
       OpenDialog := TOpenDialog.Create(nil);
       try

@@ -75,6 +75,9 @@ const
 function FileNamePos(const Substr, Str: string): integer;
 function FileNameLastPos(const Substr, Str: string): integer;
 
+function IncludeTrailingBackSpace(const DirName: string): string;
+function ExcludeTrailingBackSpace(const DirName: string): string;
+
 function IncludeTrailingBackSlash(const DirName: string): string;
 function ExcludeTrailingBackSlash(const DirName: string): string;
 
@@ -223,12 +226,12 @@ function IncludeTrailingBackSlash(const DirName: string): string; {$IFDEF FPC} i
 var
   L : Integer;
 begin
-  Result := DirName;
-  L := Length(Result);
-  if (L > 0) and (not (Result[L] in ['\', '/'])) then
+  L := Length(DirName);
+  if (L > 0) and (not (DirName[L] in ['\', '/'])) then
   begin
-    Result:= Result + PathDelim;
-  end;
+    Result := DirName + PathDelim;
+  end else
+    Result := DirName;
 end;
 
 function ExcludeTrailingBackSlash(const DirName: string): string; {$IFDEF FPC} inline; {$ENDIF}
@@ -238,9 +241,32 @@ begin
   L := Length(DirName);
   if (L > 0) and (DirName[L] in ['\', '/']) then
   begin
-    Dec(L);
-  end;
-  Result := Copy(DirName, 1, L);
+    Result := Copy(DirName, 1, L - 1);
+  end else
+    Result := DirName;
+end;
+
+function IncludeTrailingBackSpace(const DirName: string): string; {$IFDEF FPC} inline; {$ENDIF}
+var
+  L : Integer;
+begin
+  L := Length(DirName);
+  if (L > 0) and (not (DirName[L] in [' '])) then
+    Result := DirName + ' '
+  else
+    Result := DirName;
+end;
+
+function ExcludeTrailingBackSpace(const DirName: string): string; {$IFDEF FPC} inline; {$ENDIF}
+var
+  L : Integer;
+begin
+  L := Length(DirName);
+  if (L > 0) and (DirName[L] in [' ']) then
+  begin
+    Result := Copy(DirName, 1, L - 1);
+  end else
+    Result := DirName;
 end;
 
 function MatchPattern(Element, Pattern: PChar): boolean; {$IFDEF FPC} inline; {$ENDIF}

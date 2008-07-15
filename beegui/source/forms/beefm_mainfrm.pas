@@ -666,7 +666,7 @@ uses
           CmdLine := CmdLine + ' -1+'
         else
           CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '"' + ' *!';
+        CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" *!';
         ArcProcess.CommandLine := CmdLine;
         ArcProcess.CurrentDirectory := '';
         ArcProcess.Execute;
@@ -962,7 +962,7 @@ uses
         CmdLine := CmdLine + ' -1+'
       else
         CmdLine := CmdLine + ' -1-';
-      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + '*!';
+      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" *!';
       ArcProcess.CommandLine := CmdLine;
       ArcProcess.CurrentDirectory := '';
       ArcProcess.Execute;
@@ -1031,7 +1031,7 @@ uses
 
             FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
             FileProcess.FileName := IncludeTrailingBackSlash(FileProcess.CurrentDirectory) + ListView.GetMasks;
-
+            
             ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
             ArcProcess.CommandLine := CmdLine;
             ArcProcess.Execute;
@@ -1058,7 +1058,7 @@ uses
     if Cursor <> crHourGlass then
     begin
       CmdLine := 'beegui t -1+';
-      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + '*!';
+      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" *!';
       ArcProcess.CommandLine := CmdLine;
       ArcProcess.CurrentDirectory := '';
       ArcProcess.Execute;
