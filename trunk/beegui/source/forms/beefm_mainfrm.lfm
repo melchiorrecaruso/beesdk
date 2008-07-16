@@ -3143,10 +3143,4 @@ object MainFrm: TMainFrm
     left = 16
     top = 312
   end
-  object FileProcess: TFileProcess
-    Options = [poWaitOnExit]
-    Priority = ppNormal
-    left = 48
-    top = 312
-  end
 end
