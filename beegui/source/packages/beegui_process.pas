@@ -56,22 +56,37 @@ type
     destructor Destroy; override;
     procedure Execute; override;
   end;
-  
-  TFileProcess = class(TProcess)
+
+  TFileThread = class(TThread)
   private
-    FFileName: string;
-    FFileTime: integer;
-    FFileExec: string;
-    function GetFileExec: string;
-    procedure SetFileName(Value: string);
+    FCmdLine: string;
+    FProcess: TProcess;
   public
-    property FileName: string read FFileName write SetFileName;
-  public
-    constructor Create(AOwner: TComponent); override;
+    constructor Create(const CmdLine: string);
     destructor Destroy; override;
     procedure Execute; override;
   end;
   
+  TFileProcess = class(TComponent)
+  private
+    FFileName: string;
+    FFileExec: string;
+    FFileTime: integer;
+    FFileThread: TFileThread;
+    function GetFileExec: string;
+    function GetIsUpdated: boolean;
+    procedure SetFileName(Value: string);
+    procedure OnTerminate(Sender: TObject);
+  public
+    property FileName: string read FFileName write SetFileName;
+    property IsUpdated: boolean read GetIsUpdated;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure Execute;
+  end;
+  
+
   { Register }
 
   procedure Register;
@@ -108,6 +123,29 @@ uses
     CommandLine := CommandLine + ' -0"' + FArcLink +'"';
     inherited Execute;
   end;
+  
+  { TFileThread class }
+  
+  constructor TFileThread.Create(const CmdLine: string);
+  begin
+    inherited Create(True);
+    FreeOnTerminate := True;
+    Priority := tpNormal;
+    FCmdLine := CmdLine;
+  end;
+  
+  procedure TFileThread.Execute;
+  begin
+    inherited Execute;
+    FProcess := TProcess.Create(nil);
+    FProcess.CommandLine := FCmdLine;
+    FProcess.Execute;
+  end;
+  
+  destructor TFileThread.Destroy;
+  begin
+    inherited Destroy;
+  end;
 
   { TFileProcess class }
   
@@ -135,13 +173,14 @@ uses
       FFileTime := FileAge(FFileName);
       if FileExists(FFileExec) then
       begin
-        CommandLine :=  FFileExec + ' "' + FFileName + '"';
-        inherited Execute;
+        FFileThread.Create(FFileExec + ' "' + FFileName + '"');
+        FFileThread.OnTerminate := OnTerminate;
+        FFileThread.Execute;
       end;
     end;
   end;
   
-  procedure TFileProcess.SetFileName(Value: string);
+  proedure TFileProcess.SetFileName(Value: string);
   var
     I: integer;
   begin
@@ -174,7 +213,7 @@ uses
     end;
     
     FFileName := Value;
-    FFileTime := 0;
+    FFileTime :=  0;
     FFileExec := '';
   end;
   

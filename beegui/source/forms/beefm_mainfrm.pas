@@ -55,7 +55,6 @@ type
 
   TMainFrm = class(TForm)
     ArcProcess: TArcProcess;
-    FileProcess: TFileProcess;
     UpToolBar: TToolBar;
     DownToolBar: TToolBar;
     FolderBox: TArchiveFolderBox;
@@ -276,7 +275,6 @@ type
 
     procedure BMenuClick(Sender: TObject);
     procedure BtnUpClick(Sender: TObject);
-    // ---
   private
     { private declarations }
     procedure UpdateStyle;
@@ -293,6 +291,7 @@ type
   
 var
   MainFrm: TMainFrm;
+
   
 implementation
 
@@ -508,13 +507,15 @@ uses
       begin
         Idle.Enabled := False;
         Idle.OnTimer := nil;
-
-        LastFolder := ListView.Folder;
-        if ListView.Open(ArcName, ArcLink) then
-          UpdateButtons(True)
-        else
-          UpdateButtons(False);
-        ListView.Folder := LastFolder;
+        // if ArcProcess.ExitStatus = 0 then
+        begin
+          LastFolder := ListView.Folder;
+          if ListView.Open(ArcName, ArcLink) then
+            UpdateButtons(True)
+          else
+            UpdateButtons(False);
+          ListView.Folder := LastFolder;
+        end;
       end;
   end;
   
@@ -527,8 +528,10 @@ uses
       begin
         Idle.Enabled := False;
         Idle.OnTimer := nil;
-        // ---
-        FileProcess.Execute;
+        if ArcProcess.ExitStatus = 0 then
+        begin
+          // FileProcess.Execute;
+        end;
       end;
   end;
 
@@ -1029,10 +1032,8 @@ uses
             CmdLine := 'beegui x -oA';
             CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
 
-            ShowMessage(CmdLine);
-            
-            FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
-            FileProcess.FileName := IncludeTrailingBackSlash(FileProcess.CurrentDirectory) + ListView.GetMasks;
+            //FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
+            //FileProcess.FileName := IncludeTrailingBackSlash(FileProcess.CurrentDirectory) + ListView.GetMasks;
             
             ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
             ArcProcess.CommandLine := CmdLine;
