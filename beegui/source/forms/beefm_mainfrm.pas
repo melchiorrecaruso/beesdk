@@ -55,6 +55,7 @@ type
 
   TMainFrm = class(TForm)
     ArcProcess: TArcProcess;
+    FileProcess: TFileProcess;
     UpToolBar: TToolBar;
     DownToolBar: TToolBar;
     FolderBox: TArchiveFolderBox;
@@ -260,8 +261,9 @@ type
 
 
     procedure OnArcTimer(Sender: TObject);
-    procedure OnFileTimer(Sender: TObject);
-
+    procedure OnFileViewTimer(Sender: TObject);
+    procedure OnFileUpdateTimer(Sender: TObject);
+    
     procedure FolderBoxSelect(Sender: TObject);
 
 
@@ -519,9 +521,7 @@ uses
       end;
   end;
   
-  procedure TMainFrm.OnFileTimer(Sender: TObject);
-  var
-    F: TViewFrm;
+  procedure TMainFrm.OnFileViewTimer(Sender: TObject);
   begin
     with ArcProcess do
       if Running = False then
@@ -530,7 +530,25 @@ uses
         Idle.OnTimer := nil;
         if ArcProcess.ExitStatus = 0 then
         begin
-          // FileProcess.Execute;
+          FileProcess.Execute;
+          Idle.OnTimer := OnFileUpdateTimer;
+          Idle.Enabled := True;
+        end;
+      end;
+  end;
+  
+  procedure TMainFrm.OnFileUpdateTimer(Sender: TObject);
+  var
+    F: TViewFrm;
+  begin
+    with FileProcess do
+      if Running = False then
+      begin
+        Idle.Enabled := False;
+        Idle.OnTimer := nil;
+        if FileProcess.FileIsUpdated then
+        begin
+          ShowMessage('2# Aggiornare file');
         end;
       end;
   end;
@@ -1032,14 +1050,14 @@ uses
             CmdLine := 'beegui x -oA';
             CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
 
-            //FileProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
-            //FileProcess.FileName := IncludeTrailingBackSlash(FileProcess.CurrentDirectory) + ListView.GetMasks;
+            FileProcess.FileName := IncludeTrailingBackSlash(
+              GetApplicationTempDir(Application.Name)) + ListView.GetMasks;
             
             ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
             ArcProcess.CommandLine := CmdLine;
             ArcProcess.Execute;
             // ---
-            Idle.OnTimer := OnFileTimer;
+            Idle.OnTimer := OnFileViewTimer;
             Idle.Enabled := True;
            end;
       end;

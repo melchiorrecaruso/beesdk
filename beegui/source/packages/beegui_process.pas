@@ -70,16 +70,18 @@ type
   TFileProcess = class(TComponent)
   private
     FFileName: string;
-    FFileExec: string;
     FFileTime: integer;
+    FFileExec: string;
+    FRunning: boolean;
+    FFileIsUpdated: boolean;
     FFileThread: TFileThread;
     function GetFileExec: string;
-    function GetIsUpdated: boolean;
     procedure SetFileName(Value: string);
     procedure OnTerminate(Sender: TObject);
   public
     property FileName: string read FFileName write SetFileName;
-    property IsUpdated: boolean read GetIsUpdated;
+    property FileIsUpdated: boolean read FFileIsUpdated;
+    property Running: boolean read FRunning;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -136,9 +138,9 @@ uses
   
   procedure TFileThread.Execute;
   begin
-    inherited Execute;
     FProcess := TProcess.Create(nil);
     FProcess.CommandLine := FCmdLine;
+    FProcess.Options := [poWaitOnExit];
     FProcess.Execute;
   end;
   
@@ -155,6 +157,8 @@ uses
     FFileName := '';
     FFileTime :=  0;
     FFileExec := '';
+    FRunning := False;
+    FFileIsUpdated := False;
   end;
 
   destructor TFileProcess.Destroy;
@@ -162,6 +166,8 @@ uses
     FFileName := '';
     FFileTime :=  0;
     FFileExec := '';
+    FRunning := False;
+    FFileIsUpdated := False;
     inherited Destroy;
   end;
 
@@ -173,14 +179,25 @@ uses
       FFileTime := FileAge(FFileName);
       if FileExists(FFileExec) then
       begin
-        FFileThread.Create(FFileExec + ' "' + FFileName + '"');
+        FFileThread := TFileThread.Create(FFileExec + ' "' + FFileName + '"');
         FFileThread.OnTerminate := OnTerminate;
-        FFileThread.Execute;
+        FFileThread.Resume;
+        FRunning := True;
       end;
     end;
   end;
   
-  proedure TFileProcess.SetFileName(Value: string);
+  procedure TFileProcess.OnTerminate(Sender: TObject);
+  begin
+    if FFileThread.FProcess.ExitStatus = 0 then
+      if FileAge(FFileName) > FFileTime then
+      begin
+        FFileIsUpdated := True;
+      end;
+    FRunning := False;
+  end;
+  
+  procedure TFileProcess.SetFileName(Value: string);
   var
     I: integer;
   begin
@@ -215,6 +232,8 @@ uses
     FFileName := Value;
     FFileTime :=  0;
     FFileExec := '';
+    FRunning := False;
+    FFileIsUpdated := False;
   end;
   
   function TFileProcess.GetFileExec: string;
