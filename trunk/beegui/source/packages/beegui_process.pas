@@ -56,39 +56,41 @@ type
     destructor Destroy; override;
     procedure Execute; override;
   end;
+  
+  { TFileThread class }
 
   TFileThread = class(TThread)
   private
-    FCmdLine: string;
+    FFileName: string;
+    FRootFolder: string;
     FProcess: TProcess;
+  private
+    function GetFileExec: string;
   public
-    constructor Create(const CmdLine: string);
+    constructor Create(const AFileName, ARootFolder: string);
     destructor Destroy; override;
     procedure Execute; override;
+  public
+    property FileName: string read FFileName;
+    property RootFolder: string read FRootFolder;
   end;
+  
+  { TFileProcess class }
   
   TFileProcess = class(TComponent)
   private
-    FFileName: string;
-    FFileTime: integer;
-    FFileExec: string;
-    FRunning: boolean;
-    FFileIsUpdated: boolean;
-    FFileThread: TFileThread;
-    function GetFileExec: string;
-    procedure SetFileName(Value: string);
+    FProcessList: TList;
+    function GetFileThread(AIndex: integer): TFileThread;
     procedure OnTerminate(Sender: TObject);
   public
-    property FileName: string read FFileName write SetFileName;
-    property FileIsUpdated: boolean read FFileIsUpdated;
-    property Running: boolean read FRunning;
+    property FileThread[AIndex: integer]: TFileThread read GetFileThread;
   public
+    procedure Schedule(const FileName, RootFolder: string);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Execute;
+    procedure Execute(Index: integer);
   end;
   
-
   { Register }
 
   procedure Register;
@@ -110,8 +112,8 @@ uses
   
   destructor TArcProcess.Destroy;
   begin
-    FArcLink := '';
     FArcName := '';
+    FArcLink := '';
     inherited Destroy;
   end;
   
@@ -128,115 +130,43 @@ uses
   
   { TFileThread class }
   
-  constructor TFileThread.Create(const CmdLine: string);
+  constructor TFileThread.Create(const AFileName, ARootFolder: string);
   begin
     inherited Create(True);
     FreeOnTerminate := True;
     Priority := tpNormal;
-    FCmdLine := CmdLine;
+    // ---
+    FFileName := AFileName;
+    FRootFolder := AFileName;
+    FProcess := TProcess.Create(nil);
   end;
   
   procedure TFileThread.Execute;
+  var
+    FFileTime: integer;
   begin
-    FProcess := TProcess.Create(nil);
-    FProcess.CommandLine := FCmdLine;
-    FProcess.Options := [poWaitOnExit];
-    FProcess.Execute;
+    if FileExists(FFileName) then
+    begin
+      FFileTime := FileAge(FFileName);
+      FProcess.CommandLine := GetFileExec + ' "' + FFileName + '"';
+      FProcess.Options := [poWaitOnExit];
+      FProcess.Execute;
+      if FileAge(FFileName) > FFileTime then
+      begin
+        FreeOnTerminate := False;
+      end;
+    end;
   end;
   
   destructor TFileThread.Destroy;
   begin
+    FProcess.Free;
+    FFileName := '';
+    FRootFolder := '';
     inherited Destroy;
   end;
-
-  { TFileProcess class }
   
-  constructor TFileProcess.Create(AOwner: TComponent);
-  begin
-    inherited Create(AOwner);
-    FFileName := '';
-    FFileTime :=  0;
-    FFileExec := '';
-    FRunning := False;
-    FFileIsUpdated := False;
-  end;
-
-  destructor TFileProcess.Destroy;
-  begin
-    FFileName := '';
-    FFileTime :=  0;
-    FFileExec := '';
-    FRunning := False;
-    FFileIsUpdated := False;
-    inherited Destroy;
-  end;
-
-  procedure TFileProcess.Execute;
-  begin
-    if FileExists(FFileName) then
-    begin
-      FFileExec := GetFileExec;
-      FFileTime := FileAge(FFileName);
-      if FileExists(FFileExec) then
-      begin
-        FFileThread := TFileThread.Create(FFileExec + ' "' + FFileName + '"');
-        FFileThread.OnTerminate := OnTerminate;
-        FFileThread.Resume;
-        FRunning := True;
-      end;
-    end;
-  end;
-  
-  procedure TFileProcess.OnTerminate(Sender: TObject);
-  begin
-    if FFileThread.FProcess.ExitStatus = 0 then
-      if FileAge(FFileName) > FFileTime then
-      begin
-        FFileIsUpdated := True;
-      end;
-    FRunning := False;
-  end;
-  
-  procedure TFileProcess.SetFileName(Value: string);
-  var
-    I: integer;
-  begin
-    I := System.Pos('*', Value);
-    while I > 0 do
-    begin
-      Delete(Value, I, 1);
-      I := System.Pos('*', Value);
-    end;
-
-    I := System.Pos('?', Value);
-    while I > 0 do
-    begin
-      Delete(Value, I, 1);
-      I := System.Pos('?', Value);
-    end;
-
-    I := System.Pos('!', Value);
-    while I > 0 do
-    begin
-      Delete(Value, I, 1);
-      I := System.Pos('!', Value);
-    end;
-
-    I := System.Pos('"', Value);
-    while I > 0 do
-    begin
-      Delete(Value, I, 1);
-      I := System.Pos('"', Value);
-    end;
-    
-    FFileName := Value;
-    FFileTime :=  0;
-    FFileExec := '';
-    FRunning := False;
-    FFileIsUpdated := False;
-  end;
-  
-  function TFileProcess.GetFileExec: string;
+ function TFileThread.GetFileExec: string;
   var
     {$IFDEF MSWINDOWS}
     P: PChar;
@@ -277,7 +207,65 @@ uses
       end;
     end;
   end;
+
+  { TFileProcess class }
   
+  constructor TFileProcess.Create(AOwner: TComponent);
+  begin
+    inherited Create(AOwner);
+    FProcessList := TList.Create;
+  end;
+
+  destructor TFileProcess.Destroy;
+  var
+    I: integer;
+  begin
+    for I := FProcessList.Count -1 downto 0 do
+      if Assigned(FProcessList.Items[I]) then
+      begin
+        TFileThread(FProcessList.Items[I]).Free;
+      end;
+    FProcessList.Clear;
+    FProcessList.Free;
+    inherited Destroy;
+  end;
+
+  procedure TFileProcess.Execute(Index: integer);
+  begin
+    if Index < FProcessList.Count then
+    begin
+      TFileThread(FProcessList.Items[Index]).Execute;
+    end;
+  end;
+  
+  procedure TFileProcess.OnTerminate(Sender: TObject);
+  var
+    I: integer;
+  begin
+    for I := FProcessList.Count -1 downto 0 do
+    begin
+      if Sender = TFileThread(FProcessList.Items[I]) then
+      begin
+
+
+      end;
+    end;
+  end;
+  
+  proce TFileProcess.SetFileName(Value: string);
+  var
+    I: integer;
+  begin
+
+    
+    FFileName := Value;
+    FFileTime :=  0;
+    FFileExec := '';
+    FRunning := False;
+    FFileIsUpdated := False;
+  end;
+  
+
   { Register }
 
   procedure Register;
