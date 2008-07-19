@@ -76,19 +76,20 @@ type
   end;
   
   { TFileProcess class }
+
+  TFPTerminateEvent = procedure(Sender: TObject; const FileName, RootFolder: string) of object;
   
   TFileProcess = class(TComponent)
   private
     FProcessList: TList;
-    function GetFileThread(AIndex: integer): TFileThread;
+    FOnTerminate: TFPTerminateEvent
     procedure OnTerminate(Sender: TObject);
   public
-    property FileThread[AIndex: integer]: TFileThread read GetFileThread;
-  public
-    procedure Schedule(const FileName, RootFolder: string);
+    procedure Execute(const AFileName, ARootFolder: string);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Execute(Index: integer);
+  published
+    property OnTerminate: TFPTerminateEvent read FOnTerminate write FOnTerminate;
   end;
   
   { Register }
@@ -230,11 +231,11 @@ uses
     inherited Destroy;
   end;
 
-  procedure TFileProcess.Execute(Index: integer);
+  procedure TFileProcess.Execute(AIndex: integer);
   begin
-    if Index < FProcessList.Count then
+    if AIndex < FProcessList.Count then
     begin
-      TFileThread(FProcessList.Items[Index]).Execute;
+      TFileThread(FProcessList.Items[AIndex]).Execute;
     end;
   end;
   
@@ -252,19 +253,18 @@ uses
     end;
   end;
   
-  procedure TFileProcess.SetFileName(Value: string);
-  var
-    I: integer;
+  function TFileProcess.GetFileThread(AIndex: integer): TFileThread;
   begin
-
-    
-    FFileName := Value;
-    FFileTime :=  0;
-    FFileExec := '';
-    FRunning := False;
-    FFileIsUpdated := False;
+    if AIndex < FProcessList.Count then
+    begin
+      Result := FProcessList.Items[AIndex];
+    end;
   end;
   
+  procedure TFileProcess.Schedule(const AFileName, ARootFolder: string);
+  begin
+    FProcessList.Add(TFileThread.Create(AFileName, ARootFolder));
+  end;
 
   { Register }
 
