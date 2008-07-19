@@ -252,7 +252,7 @@ uses
     end;
   end;
   
-  proce TFileProcess.SetFileName(Value: string);
+  procedure TFileProcess.SetFileName(Value: string);
   var
     I: integer;
   begin
