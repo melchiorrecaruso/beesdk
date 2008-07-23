@@ -77,19 +77,15 @@ type
   
   { TFileProcess class }
 
-  TFPTerminateEvent = procedure(Sender: TObject; const FileName, RootFolder: string) of object;
+  // TFPTerminateEvent = procedure(Sender: TObject; const FileName, RootFolder: string) of object;
   
   TFileProcess = class(TComponent)
   private
     FProcessList: TList;
-    FOnTerminate: TFPTerminateEvent
-    procedure OnTerminate(Sender: TObject);
   public
     procedure Execute(const AFileName, ARootFolder: string);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-  published
-    property OnTerminate: TFPTerminateEvent read FOnTerminate write FOnTerminate;
   end;
   
   { Register }
