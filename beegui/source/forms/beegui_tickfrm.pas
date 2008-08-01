@@ -18,7 +18,7 @@
 
 { Contains:
 
-    BeeCore Tick form.
+    BeeGui Tick form.
 
   Modifyed:
 
@@ -173,7 +173,7 @@ var
   rsBtnRunCaption:    string = 'Run';
   rsBtnCancelCaption: string = 'Cancel';
   rsBtnCloseCaption:  string = 'Close';
-  
+
   { TTickFrm class }
   
   {$I beegui_tickfrm_saveproperty.inc}
@@ -454,7 +454,7 @@ var
   begin
     if FInterfaces.Terminated = True then
     begin
-      { TODO : Forse non più necessario }
+      { TODO : Forse non piÃ¹ necessario }
       if Timer.Enabled then
         Timer.Enabled := False
       else

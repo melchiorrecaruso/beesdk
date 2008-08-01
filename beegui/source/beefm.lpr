@@ -32,6 +32,9 @@ program BeeFm;
 {$ENDIF}
 
 uses
+  {$IFDEF UNIX}
+  cThreads,
+  {$ENDIF}
   Interfaces,
   Forms,
   // ---
@@ -49,9 +52,9 @@ uses
 
 begin
   Application.Initialize;
+  Application.HelpFile := '';
   Application.Name := cApplicationName;
   Application.Title := cApplicationTitle;
-  Application.HelpFile := '';
   Application.CreateForm(TMainFrm, MainFrm);
   Application.CreateForm(TConfigFrm, ConfigFrm);
   Application.Run;

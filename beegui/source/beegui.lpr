@@ -43,6 +43,7 @@ uses
   Dialogs,
   Forms,
   // --- //
+  BeeGui_Consts,
   BeeGui_CmdLine,
   BeeGui_TickFrm,
   BeeGui_AboutFrm;
@@ -54,9 +55,9 @@ var
 
 begin
   MaxKeptOSChunks := 8;
-  // ---
   Application.Initialize;
-  Application.Title := 'BeeGui';
+  Application.HelpFile := '';
+  Application.Title:='BeeGui';
   CmdLine := TCmdLine.Create;
   if CmdLine.Run then
   begin
@@ -64,8 +65,8 @@ begin
     begin
       Application.CreateForm(TAboutFrm, AboutFrm);
       Application.Run;
-      AboutFrm.Free;
-      AboutFrm:=nil;
+      // AboutFrm.Free;
+      // AboutFrm := nil;
     end else
     begin
       Application.CreateForm(TTickFrm, TickFrm);
@@ -82,11 +83,11 @@ begin
           Application.Run;
         end;
       end;
-      TickFrm.Free;
-      TickFrm:=nil;
+      // TickFrm.Free;
+      // TickFrm := nil;
     end;
   end;
   CmdLine.Free;
-  CmdLine:=nil;
+  CmdLine := nil;
 end.
 

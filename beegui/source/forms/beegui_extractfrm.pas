@@ -18,7 +18,7 @@
 
 { Contains:
 
-    BeeCore Exctract form.
+    BeeGui Exctract form.
 
   Modifyed:
 }

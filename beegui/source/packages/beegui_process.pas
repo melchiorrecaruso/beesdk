@@ -38,25 +38,37 @@ uses
   Dialogs,
   Classes,
   SysUtils,
+  ExtCtrls,
+  CustomTimer,
   LResources;
   
 type
 
   { TArcProcess class }
 
-  TArcProcess = class(TProcess)
+  TArcProcess = class(TCustomTimer)
   private
-    FArcName: string;
-    FArcLink: string;
-  public
-    property ArcName: string read FArcName write FArcName;
-    property ArcLink: string read FArcLink;
+    FArchiveName: string;
+    FArchiveLink: string;
+    FCommandLines: TStringList;
+    FCurrentDirectories: TStringList;
+    FProcess: TProcess;
+    FOnTerminate: TNotifyEvent;
+  protected
+    procedure DoOnTimer; override;
+  private
+    procedure SetArchiveName(const Value: string);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Execute; override;
+    procedure Append(const CommandLine, CurrentDirectory: string);
+  public
+    property ArchiveName: string read FArchiveName write SetArchiveName;
+    property ArchiveLink: string read FArchiveLink;
+    property OnTerminate: TNotifyEvent read FOnTerminate write FOnTerminate;
   end;
   
+  (*
   { TFileThread class }
 
   TFileThread = class(TThread)
@@ -87,6 +99,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
+  *)
   
   { Register }
 
@@ -96,6 +109,7 @@ implementation
 
 uses
   Bee_Common,
+  BeeGui_Consts,
   BeeGui_SysUtils;
 
   { TArcProcess class }
@@ -103,28 +117,68 @@ uses
   constructor TArcProcess.Create(AOwner: TComponent);
   begin
     inherited Create(AOwner);
-    FArcName := '';
-    FArcLink := '';
+    FArchiveName := '';
+    FArchiveLink := '';
+    FCommandLines := TStringList.Create;
+    FCurrentDirectories := TStringList.Create;
+    FProcess := TProcess.Create(Self);
   end;
   
   destructor TArcProcess.Destroy;
   begin
-    FArcName := '';
-    FArcLink := '';
+    FArchiveName := '';
+    FArchiveLink := '';
+    FCommandLines.Free;
+    FCurrentDirectories.Free;
+    FProcess.Free;
     inherited Destroy;
   end;
   
-  procedure TArcProcess.Execute;
+  procedure TArcProcess.DoOnTimer;
   begin
-    FArcLink :=
-    // IncludeTrailingBackSlash(GetApplicationTempDir('BeeGui')) +
-    'C:\Documents and Settings\quacquero\Desktop\' +
-      ExtractFileName(ChangeFileExt(FArcName, '.ini'));
-
-    CommandLine := CommandLine + ' -0"' + FArcLink +'"';
-    inherited Execute;
+    if FProcess.Running = False then
+    begin
+      if FCommandLines.Count > 0 then
+      begin
+        FProcess.CurrentDirectory := FCurrentDirectories.Strings[0];
+        FProcess.CommandLine := FCommandLines.Strings[0] + ' -0' + FArchiveLink;
+        FProcess.Execute;
+        
+        FCurrentDirectories.Delete(0);
+        FCommandLines.Delete(0);
+      end else
+      begin
+        Enabled := False;
+        if Assigned(FOnTerminate) and (FProcess.ExitStatus = 0) then;
+        begin
+          FOnTerminate(Self);
+        end;
+      end;
+    end;
+    inherited DoOnTimer;
   end;
   
+  procedure TArcProcess.Append(const CommandLine, CurrentDirectory: string);
+  begin
+    if Assigned(FOnTerminate) = False then
+    begin
+      FCommandLines.Add(CommandLine);
+      FCurrentDirectories.Add(CurrentDirectory);
+    end;
+  end;
+  
+  procedure TArcProcess.SetArchiveName(const Value: string);
+  begin
+    if Enabled = False then
+    begin
+      FArchiveName := Value;
+      FArchiveLink := GenerateFileName(GetApplicationTempDir(cApplicationName));
+      FCommandLines.Clear;
+      FCurrentDirectories.Clear;
+    end;
+  end;
+  
+  (*
   { TFileThread class }
   
   constructor TFileThread.Create(const AFileName, ARootFolder: string);
@@ -261,18 +315,18 @@ uses
   begin
     FProcessList.Add(TFileThread.Create(AFileName, ARootFolder));
   end;
-
+  *)
+  
   { Register }
 
   procedure Register;
   begin
-    RegisterComponents ('Bee Controls', [TArcProcess]);
-    RegisterComponents ('Bee Controls', [TFileProcess]);
+    RegisterComponents('BeePackage', [TArcProcess]);
   end;
 
 initialization
 
-  {$i beegui_process.lrs }
+  {$I beegui_process.lrs }
 
 end.
 

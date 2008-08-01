@@ -28,7 +28,7 @@ unit BeeGui_Consts;
 interface
   
 const
-  cApplicationName    = 'BeeGuiA';
+  cApplicationName    = 'BeeGui';
   cApplicationTitle   = 'Bee File Manager';
   cApplicationCaption = 'Bee File Manager';
   
