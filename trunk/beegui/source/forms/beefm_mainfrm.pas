@@ -55,7 +55,6 @@ type
 
   TMainFrm = class(TForm)
     ArcProcess: TArcProcess;
-    FileProcess: TFileProcess;
     UpToolBar: TToolBar;
     DownToolBar: TToolBar;
     FolderBox: TArchiveFolderBox;
@@ -63,7 +62,6 @@ type
     StatusBar: TStatusBar;
     LargeImages: TIconList;
     SmallImages: TIconList;
-    Idle: TIdleTimer;
     // ---
     OpenDialog: TOpenDialog;
     SaveDialog: TSaveDialog;
@@ -293,7 +291,6 @@ type
   
 var
   MainFrm: TMainFrm;
-
   
 implementation
 
@@ -504,25 +501,20 @@ uses
   var
     LastFolder: string;
   begin
+    LastFolder := ListView.Folder;
     with ArcProcess do
-      if Running = False then
-      begin
-        Idle.Enabled := False;
-        Idle.OnTimer := nil;
-        // if ArcProcess.ExitStatus = 0 then
-        begin
-          LastFolder := ListView.Folder;
-          if ListView.Open(ArcName, ArcLink) then
-            UpdateButtons(True)
-          else
-            UpdateButtons(False);
-          ListView.Folder := LastFolder;
-        end;
-      end;
+    begin
+      if ListView.Open(ArchiveName, ArchiveLink) then
+        UpdateButtons(True)
+      else
+        UpdateButtons(False);
+    end;
+    ListView.Folder := LastFolder;
   end;
   
   procedure TMainFrm.OnFileViewTimer(Sender: TObject);
   begin
+    (*
     with ArcProcess do
       if Running = False then
       begin
@@ -535,12 +527,14 @@ uses
           Idle.Enabled := True;
         end;
       end;
+    *)
   end;
   
   procedure TMainFrm.OnFileUpdateTimer(Sender: TObject);
   var
     F: TViewFrm;
   begin
+    (*
     with FileProcess do
       if Running = False then
       begin
@@ -551,6 +545,7 @@ uses
           ShowMessage('2# Aggiornare file');
         end;
       end;
+    *)
   end;
 
 
@@ -634,34 +629,34 @@ uses
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
   var
-    CmdLine: string;
+    CommandLine: string;
+    ArchiveName: string;
   begin
-    if Cursor <> crHourGlass then
+    if ArcProcess.Enabled = False then
     begin
       SaveDialog.FileName := '';
       if SaveDialog.Execute then
       begin
         MMenuFileClose.Click;
-        with ArcProcess do
-        begin
-          ArcName := SaveDialog.FileName;
-          case SaveDialog.FilterIndex of
-            1: ArcName := ChangeFileExt(ArcName, '.bee');
-            2: ArcName := ChangeFileExt(ArcName, '.exe');
-          end;
-          Caption := cApplicationName + ' - ' + ExtractFileName(ArcName);
+        // Archive name //
+        ArchiveName := SaveDialog.FileName;
+        case SaveDialog.FilterIndex of
+          1: ArchiveName := ChangeFileExt(ArchiveName, '.bee');
+          2: ArchiveName := ChangeFileExt(ArchiveName, '.exe');
         end;
-        CmdLine := 'beegui a' + ' -2+';
+        Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
+        // Command line //
+        CommandLine := 'beegui a' + ' -2+';
         if MMenuOptionsLogReport.Checked then
-          CmdLine := CmdLine + ' -1+'
+          CommandLine := CommandLine + ' -1+'
         else
-          CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ConfigFrm.AddOptions('') + ' "' + ArcProcess.ArcName + '"';
-        ArcProcess.CommandLine := CmdLine;
-        ArcProcess.CurrentDirectory := '';
-        ArcProcess.Execute;
-        Idle.OnTimer := OnArcTimer;
-        Idle.Enabled := True;
+          CommandLine := CommandLine + ' -1-';
+        CommandLine := CommandLine + ConfigFrm.AddOptions('') + ' "' + ArchiveName + '"';
+        // Archive process //
+        ArcProcess.ArchiveName := ArchiveName;
+        ArcProcess.OnTerminate := OnArcTimer;
+        ArcProcess.Append(CommandLine, '');
+        ArcProcess.Enabled := True;
       end;
     end else
       MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
@@ -669,30 +664,30 @@ uses
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   var
-    CmdLine: string;
+    CommandLine: string;
+    ArchiveName: string;
   begin
-    if Cursor <> crHourGlass then
+    if ArcProcess.Enabled = False then
     begin
       OpenDialog.FileName := '';
       if OpenDialog.Execute then
       begin
         MMenuFileClose.Click;
-        with ArcProcess do
-        begin
-          ArcName := OpenDialog.FileName;
-          Caption := cApplicationName + ' - ' + ExtractFileName(ArcName);
-        end;
-        CmdLine := 'beegui l';
+        // Archive name //
+        ArchiveName := OpenDialog.FileName;
+        Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
+        // Command line //
+        CommandLine := 'beegui l';
         if MMenuOptionsLogReport.Checked then
-          CmdLine := CmdLine + ' -1+'
+          CommandLine := CommandLine + ' -1+'
         else
-          CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" *!';
-        ArcProcess.CommandLine := CmdLine;
-        ArcProcess.CurrentDirectory := '';
-        ArcProcess.Execute;
-        Idle.OnTimer := OnArcTimer;
-        Idle.Enabled := True;
+          CommandLine := CommandLine + ' -1-';
+        CommandLine := CommandLine + ' "' + ArchiveName + '" *!';
+        // Archive Process //
+        ArcProcess.ArchiveName := ArchiveName;
+        ArcProcess.OnTerminate := OnArcTimer;
+        ArcProcess.Append(CommandLine, '');
+        ArcProcess.Enabled := True;
       end;
     end else
       MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
@@ -711,6 +706,7 @@ uses
     F: TInfoFrm;
     Ratio: integer;
   begin
+    (*
     F := TInfoFrm.Create(Self);
     F.Caption := rsArcProperty;
     begin
@@ -740,12 +736,14 @@ uses
     F.APage.TabVisible := True;
     F.ShowModal;
     F.Free;
+    *)
   end;
 
   procedure TMainFrm.MMenuFileMoveClick(Sender: TObject);
   var
     NewName: string;
   begin
+    (*
     NewName := '';
     if SelectDirectory(rsMoveArcTo, '', NewName) then
     begin
@@ -755,12 +753,14 @@ uses
       else
         MessageDlg(rseMoveArcTo, mtError, [mbOk], 0);
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuFileCopyClick(Sender: TObject);
   var
     NewName: string;
   begin
+    (*
     NewName := '';
     if SelectDirectory(rsCopyArcTo, '', NewName) then
     begin
@@ -770,6 +770,7 @@ uses
       else
         MessageDlg(rseCopyArcTo, mtError, [mbOk], 0);
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuFileRenameClick(Sender: TObject);
@@ -777,6 +778,7 @@ uses
     F: TRenameFrm;
     NewName: string;
   begin
+    (*
     F := TRenameFrm.Create(Self);
     F.Caption := rsRenameArc;
     F.ToFN.Text := ExtractFileName(ArcProcess.ArcName);
@@ -795,10 +797,12 @@ uses
       end;
     end;
     F.Free;
+    *)
   end;
 
   procedure TMainFrm.MMenuFileDeleteClick(Sender: TObject);
   begin
+    (*
     if MessageDlg(rsConfirmDeleteArc, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
       if DeleteFile(ArcProcess.ArcName) then
@@ -806,6 +810,7 @@ uses
       else
         MessageDlg(rseDeleteArc, mtError, [mbOk], 0);
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuFileExitClick(Sender: TObject);
@@ -908,6 +913,7 @@ uses
   var
     CmdLine: string;
   begin
+    (*
     if Cursor <> crHourGlass then
     begin
       CmdLine := 'beegui a -2+' + ConfigFrm.AddOptions(ListView.Folder);
@@ -923,12 +929,14 @@ uses
       Idle.OnTimer := OnArcTimer;
       Idle.Enabled := True;
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   var
     CmdLine: string;
   begin
+    (*
     if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
@@ -948,12 +956,14 @@ uses
         Idle.Enabled := True;
       end;
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuActionsExtractClick(Sender: TObject);
   var
     CmdLine: string;
   begin
+    (*
     if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
@@ -970,12 +980,14 @@ uses
       Idle.OnTimer := nil;
       Idle.Enabled := False;
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuActionsExtractAllClick(Sender: TObject);
   var
     CmdLine: string;
   begin
+    (*
     if Cursor <> crHourGlass then
     begin
       CmdLine := 'beegui -2+' + ConfigFrm.ExtractOptions(ListView.Folder);
@@ -991,12 +1003,14 @@ uses
       Idle.OnTimer := nil;
       Idle.Enabled := False;
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
   var
     CmdLine: string;
   begin
+    (*
     if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
@@ -1009,12 +1023,14 @@ uses
       Idle.OnTimer := nil;
       Idle.Enabled := False;
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);
   var
     CmdLine: string;
   begin
+    (*
     if ListView.SelCount = 0 then Exit;
     if Cursor <> crHourGlass then
     begin
@@ -1031,12 +1047,14 @@ uses
       Idle.OnTimer := OnArcTimer;
       Idle.Enabled := True;
     end;
+    *)
   end;
   
   procedure TMainFrm.MMenuActionsViewClick(Sender: TObject);
   var
     CmdLine: string;
   begin
+    (*
     if ListView.Selected <> nil then
     begin
       with ListView do
@@ -1062,6 +1080,7 @@ uses
            end;
       end;
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);
@@ -1076,6 +1095,7 @@ uses
   var
     CmdLine: string;
   begin
+    (*
     if Cursor <> crHourGlass then
     begin
       CmdLine := 'beegui t -1+';
@@ -1087,6 +1107,7 @@ uses
       Idle.OnTimer := nil;
       Idle.Enabled := False;
     end;
+    *)
   end;
 
   procedure TMainFrm.MMenuActionsSelectAllClick(Sender: TObject);

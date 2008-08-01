@@ -174,51 +174,51 @@ type
     procedure SetExitCode(Code: integer);
   public
     constructor Create(aInterfaces: TInterfaces; aParams: TParams);
-    procedure Synchronize(aMethod: TThreadMethod); overload;
+    procedure Synchronize(aMethod: TThreadMethod);
     destructor Destroy; override;
   end;
 
 implementation
 
-// TApp class ...
+  // TApp class ...
 
-constructor TApp.Create(aInterfaces: TInterfaces; aParams: TParams);
-begin
-  inherited Create(True);
-  FreeOnTerminate := True;
-  Priority := tpNormal;
-  ExitCode := 0;
-  // ---
-  Params := aParams;
-  Interfaces := aInterfaces;
-  Interfaces.Terminated := False;
-  Interfaces.Suspend := False;
-  Interfaces.Stop := False;
-  Interfaces.OnTick.Data.TotalSize := 0;
-  Interfaces.OnTick.Data.ProcessedSize := 0;
-end;
+  constructor TApp.Create(aInterfaces: TInterfaces; aParams: TParams);
+  begin
+    inherited Create(True);
+    FreeOnTerminate := True;
+    Priority := tpNormal;
+    ExitCode := 0;
+    // ---
+    Params := aParams;
+    Interfaces := aInterfaces;
+    Interfaces.Terminated := False;
+    Interfaces.Suspend := False;
+    Interfaces.Stop := False;
+    Interfaces.OnTick.Data.TotalSize := 0;
+    Interfaces.OnTick.Data.ProcessedSize := 0;
+  end;
 
-destructor TApp.Destroy;
-begin
-  Params := nil;
-  Interfaces := nil;
-  inherited Destroy;
-end;
+  destructor TApp.Destroy;
+  begin
+    Params := nil;
+    Interfaces := nil;
+    inherited Destroy;
+  end;
 
-procedure TApp.DoTerminate;
-begin
-  Interfaces.Terminated := True;
-  inherited DoTerminate;
-end;
+  procedure TApp.DoTerminate;
+  begin
+    Interfaces.Terminated := True;
+    inherited DoTerminate;
+  end;
 
-procedure TApp.Synchronize(aMethod: TThreadMethod);
-begin
-  inherited Synchronize(aMethod);
-end;
+  procedure TApp.Synchronize(aMethod: TThreadMethod);
+  begin
+    inherited Synchronize(aMethod);
+  end;
 
-procedure TApp.SetExitCode(Code: integer);
-begin
-  if ExitCode < Code then ExitCode := Code;
-end;
+  procedure TApp.SetExitCode(Code: integer);
+  begin
+    if ExitCode < Code then ExitCode := Code;
+  end;
 
 end.

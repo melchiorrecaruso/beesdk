@@ -1,10 +1,11 @@
 object MainFrm: TMainFrm
-  Left = 333
+  Left = 386
   Height = 562
-  Top = 183
+  Top = 215
   Width = 796
+  ActiveControl = FolderBox
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 543
+  ClientHeight = 538
   ClientWidth = 796
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
@@ -16,8 +17,8 @@ object MainFrm: TMainFrm
   OnShow = FormShow
   LCLVersion = '0.9.25'
   object StatusBar: TStatusBar
-    Height = 20
-    Top = 523
+    Height = 18
+    Top = 520
     Width = 796
     Panels = <>
   end
@@ -2526,7 +2527,7 @@ object MainFrm: TMainFrm
     end
   end
   object ListView: TArcListView
-    Height = 415
+    Height = 412
     Top = 108
     Width = 796
     FolderBox = FolderBox
@@ -2582,7 +2583,7 @@ object MainFrm: TMainFrm
       item
         Alignment = taRightJustify
         Caption = 'Position'
-        Width = 40
+        Width = 171
       end>
     LargeImages = LargeImages
     PopupMenu = PMenu
@@ -3132,19 +3133,10 @@ object MainFrm: TMainFrm
     left = 48
     top = 280
   end
-  object Idle: TIdleTimer
+  object ArcProcess: TArcProcess
     Enabled = False
-    Interval = 100
+    Interval = 250
     left = 80
     top = 280
-  end
-  object ArcProcess: TArcProcess
-    Priority = ppNormal
-    left = 16
-    top = 312
-  end
-  object FileProcess: TFileProcess
-    left = 48
-    top = 312
   end
 end
