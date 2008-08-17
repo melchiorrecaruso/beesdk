@@ -27,7 +27,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-  v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
+  v0.7.9 build 0828 - 2008.08.04 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
@@ -141,8 +141,8 @@ type
              xOption: TStringList;
         var Size: integer);
 
-    function MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction): integer; overload;
-    function MarkItems(const Mask: string; MaskAct, aAction: THeaderAction): integer; overload;
+    function MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction; rOption: boolean): integer; overload;
+    function MarkItems(const Mask: string; MaskAct, aAction: THeaderAction; rOption: boolean): integer; overload;
     procedure MarkItem(Index: integer; aAction: THeaderAction);
     procedure MarkAll(aAction: THeaderAction);
 
@@ -177,7 +177,7 @@ type
     procedure MarkAsLast(Action: THeaderAction);
     function  FindFirstMarker(Stream: TStream): integer;
 
-    procedure ExpandMask(const Mask: string; Masks: TStringList);
+    procedure ExpandMask(const Mask: string; Masks: TStringList; rOption: boolean);
     procedure ScanFileSystem(
       Mask: string;
       Sorted: TSortedHeaders;
@@ -426,7 +426,7 @@ begin
 end;
 
 
-procedure THeaders.ExpandMask(const Mask: string; Masks: TStringList);
+procedure THeaders.ExpandMask(const Mask: string; Masks: TStringList; rOption: boolean);
 var
   I: integer;
   Error: integer;
@@ -469,12 +469,11 @@ begin
     Error := FindFirst(FolderPath + '*', faAnyFile, Rec);
     while Error = 0 do
     begin
-      if ((Rec.Attr and faDirectory) > 0) and (Rec.Name[1] <> '.') then
+      if ((Rec.Attr and faDirectory) = faDirectory) and (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
       begin
-        if FileNameMatch(Rec.Name, FolderName) then
+        if FileNameMatch(Rec.Name, FolderName, rOption) then
         begin
-          ExpandMask(FolderPath + Rec.Name +
-            Copy(Mask, LastSlash, (Length(Mask) + 1) - LastSlash), Masks);
+          ExpandMask(FolderPath + Rec.Name + Copy(Mask, LastSlash, (Length(Mask) + 1) - LastSlash), Masks, rOption);
         end;
       end;
       Error := FindNext(Rec);
@@ -509,7 +508,7 @@ begin
   for I := 0 to Masks.Count - 1 do
   begin
     CurrMasks := TStringList.Create;
-    ExpandMask(Masks.Strings[I], CurrMasks);
+    ExpandMask(Masks.Strings[I], CurrMasks, rOption);
     for J := 0 to CurrMasks.Count - 1 do
     begin
       ScanFileSystem(
@@ -527,7 +526,7 @@ begin
   Sorted.Free;
 end;
 
-function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction): integer;
+function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction; rOption: boolean): integer;
 var
   I: integer;
 begin
@@ -535,7 +534,7 @@ begin
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = MaskAct) and (FileNameMatch(FileName, Masks)) then
+      if (Action = MaskAct) and (FileNameMatch(FileName, Masks, rOption)) then
       begin
         Action := aAction;
         Inc(Result);
@@ -543,7 +542,7 @@ begin
     end;
 end;
 
-function THeaders.MarkItems(const Mask: string; MaskAct: THeaderAction; aAction: THeaderAction): integer;
+function THeaders.MarkItems(const Mask: string; MaskAct: THeaderAction; aAction: THeaderAction; rOption: boolean): integer;
 var
   I: integer;
 begin
@@ -551,7 +550,7 @@ begin
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = MaskAct) and (FileNameMatch(FileName, Mask)) then
+      if (Action = MaskAct) and (FileNameMatch(FileName, Mask, rOption)) then
       begin
         Action := aAction;
         Inc(Result);
@@ -1014,8 +1013,9 @@ begin
     end;
 end;
 
-procedure THeaders.ScanFileSystem(Mask: string;
-   Sorted: TSortedHeaders;
+procedure THeaders.ScanFileSystem(
+  Mask: string;
+  Sorted: TSortedHeaders;
   const cdOption: string;
          fOption: boolean;
          rOption: boolean;
@@ -1030,28 +1030,16 @@ var
   Rec: TSearchRec;
   RecPath: string;
   RecName: string;
-  Recursive: boolean;
 begin
-  I := System.Pos('!', Mask);
-  if I > 0 then
-  begin
-    Recursive := True;
-    repeat
-      System.Delete(Mask, I, 1);
-      I := System.Pos('!', Mask);
-    until I = 0;
-  end else
-    Recursive := False;
-
   if (Length(Mask) > 0) and (Mask[Length(Mask)] = PathDelim) then
   begin
     Mask := IncludeTrailingBackSlash(Mask) + '*';
-    Recursive := True;
+    rOption := True
   end else
     if DirectoryExists(Mask) then
     begin
       Mask := IncludeTrailingBackSlash(Mask) + '*';
-      Recursive := True;
+      rOption := True;
     end;
 
   RecPath := ExtractFilePath(Mask);
@@ -1061,8 +1049,8 @@ begin
     RecName := RecPath + Rec.Name;
     if (Rec.Attr and faDirectory) = 0 then
     begin
-      if (FileNameMatch(RecName, Mask)) then
-        if (FileNameMatch(RecName, xOption) = False) then
+      if (FileNameMatch(RecName, Mask, rOption)) then
+        if (FileNameMatch(RecName, xOption, rOption) = False) then
         begin
           J := Sorted.SearchItem(cdOption + DeleteFileDrive(RecName));
           if not (fOption xor uOption) then
@@ -1102,10 +1090,10 @@ begin
         end;
     end else
     begin
-      if Recursive and (Rec.Name <> '.') and (Rec.Name <> '..') then
+      if rOption and (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
         ScanFileSystem(
-          IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask) + '!',
+          IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask),
           Sorted,
           cdOption,
            fOption,

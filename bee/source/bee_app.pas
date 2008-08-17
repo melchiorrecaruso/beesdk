@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0780 - 2008.06.14 by Melchiorre Caruso.
+  v0.7.9 build 0828 - 2008.08.04 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -58,6 +58,7 @@ type
   private
     function OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 
+    procedure ProcessOption(var S: string; var Option: boolean);
     procedure ProcessOptions;
     procedure ProcessMasks;
     // decode solid sequences using a swapfile
@@ -144,7 +145,7 @@ begin
   inherited Create(aInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0800 archiver utility, freeware version, Aug 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0831 archiver utility, freeware version, Aug 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -293,93 +294,44 @@ end;
 
 // Options processing
 
+procedure TBeeApp.ProcessOption(var S: string; var Option: boolean);
+begin
+  if Length(S) > 1 then
+  begin
+    Delete(S, 1, 2);
+    if (S = '') or (S = '+') then
+      Option := True
+    else
+      if (S = '-') then
+        Option := False;
+  end;
+end;
+
 procedure TBeeApp.ProcessOptions;
 var
   I: integer;
   S: string;
 begin
-  // catch -cfg option
-  for I := 0 to Params.Count - 1 do
-  begin
-    S := Params.Strings[I];
-    if Pos('-CFG', UpperCase(S)) = 1 then
-    begin
-      Delete(S, 1, 4);
-      FCfgName := S;
-    end;
-  end;
-
   // default configuration
   FCfg.Selector('\main');
   FCfg.CurrentSection.Values['Method'] := '1';
   FCfg.CurrentSection.Values['Dictionary'] := '2';
 
-  // process configuration
-  if not FileExists(FCfgName) then
-  begin
-    Interfaces.OnWarning.Data.Msg := (Cr + 'Configuration file ' + FCfgName + ' not found, using default settings' + Cr);
-    Synchronize(Interfaces.OnWarning.Method);
-    SetExitCode(1);
-  end else
-    FCfg.LoadFromFile(FCfgName);
-
   // catch options, command, archive name and name of files
   for I := 0 to Params.Count - 1 do
   begin
     S := Params.Strings[I];
-    if (Length(S) > 1) and (S[1] = '-') then
+    if (FArcName = '') and (Length(S) > 1) and (S[1] = '-') then
     begin
       // options...
       case UpCase(S[2]) of
-        'S': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 FsOption := True
-               else
-                 if (S = '-') then FsOption := False;
-             end;
-        'U': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 FuOption := True
-               else
-                 if (S = '-') then FuOption := False;
-             end;
-        'F': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 FfOption := True
-               else
-                 if (S = '-') then FfOption := False;
-             end;
-        'T': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 FtOption := True
-               else
-                 if (S = '-') then FtOption := False;
-             end;
-        'L': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 FlOption := True
-               else
-                 if (S = '-') then FlOption := False;
-             end;
-        'K': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 FkOption := True
-               else
-                 if (S = '-') then FkOption := False;
-             end;
-        'R': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 FrOption := True
-               else
-                 if (S = '-') then FrOption := False;
-             end;
+        'S': ProcessOption(S, FsOption);
+        'U': ProcessOption(S, FuOption);
+        'F': ProcessOption(S, FfOption);
+        'T': ProcessOption(S, FtOption);
+        'L': ProcessOption(S, FlOption);
+        'K': ProcessOption(S, FkOption);
+        'R': ProcessOption(S, FrOption);
         'Y': begin
                Delete(S, 1, 2);
                if DirectoryExists(ExcludeTrailingBackslash(S)) then
@@ -450,6 +402,13 @@ begin
                  begin
                    FcdOption := IncludeTrailingBackslash(FixDirName(S));
                  end;
+               end else
+               begin
+                 if Pos('-CFG', UpperCase(S)) = 1 then
+                 begin
+                   Delete(S, 1, 4);
+                   FCfgName := S;
+                 end;
                end;
              end;
         end; // end case
@@ -474,42 +433,34 @@ begin
           FFileMasks.Add(S);
     end;
   end; // end for loop
+
+  // process configuration
+  if not FileExists(FCfgName) then
+  begin
+    Interfaces.OnWarning.Data.Msg := (Cr + 'Configuration file ' + FCfgName + ' not found, using default settings' + Cr);
+    Synchronize(Interfaces.OnWarning.Method);
+    SetExitCode(1);
+  end else
+    FCfg.LoadFromFile(FCfgName);
 end;
 
 procedure TBeeApp.ProcessMasks;
 var
   I: integer;
 begin
-  if FrOption then
-  begin
-    for I := 0 to FFileMasks.Count - 1 do
-    begin
-      if System.Pos('!', FFileMasks.Strings[I]) = 0 then
-      begin
-        FFileMasks.Strings[I] := FFileMasks.Strings[I] + '!';
-      end;
-    end;
-
-    for I := 0 to FxOption.Count - 1 do
-    begin
-      if System.Pos('!', FxOption.Strings[I]) = 0 then
-      begin
-        FxOption.Strings[I] := FxOption.Strings[I] + '!';
-      end;
-    end;
-  end;
   if FFileMasks.Count = 0 then
   begin
     case FCommand of
-      'A': FFileMasks.Add('*!');
+     {'a': nothing to do}
      {'D': nothing to do}
-      'E': FFileMasks.Add('*!');
-      'L': FFileMasks.Add('*!');
+      'E': FFileMasks.Add('*');
+      'L': FFileMasks.Add('*');
      {'R': nothing to do}
-      'T': FFileMasks.Add('*!');
-      'X': FFileMasks.Add('*!');
+      'T': FFileMasks.Add('*');
+      'X': FFileMasks.Add('*');
      {'?': nothing to do}
     end;
+    FrOption := True; // force recursion
   end;
 end;
 
@@ -710,8 +661,8 @@ var
   i: integer;
   iFileName: string;
 begin
-  Headers.MarkItems(FFileMasks, toCopy, toRename);
-  Headers.MarkItems(FxOption, toRename, toCopy);
+  Headers.MarkItems(FFileMasks, toCopy, toRename, FrOption);
+  Headers.MarkItems(FxOption, toRename, toCopy, FrOption);
 
   if (Headers.GetNext(0, toRename) > -1) then
   begin
@@ -972,9 +923,10 @@ begin
       TotalSize := 0;
       ProcessedSize  := 0;
     end;
+    FrOption := True; // force recursion
     FxOption.Clear; // clear xOption
     FFileMasks.Clear; // clear FileMasks
-    FFileMasks.Add('*!');
+    FFileMasks.Add('*');
     DecodeShell(toTest);
   end;
 end;
@@ -988,9 +940,10 @@ begin
       TotalSize := 0;
       ProcessedSize  := 0;
     end;
+    FrOption := True; // force recursion
     FxOption.Clear; // clear xOption
     FFileMasks.Clear; // clear FileMasks
-    FFileMasks.Add('*!');
+    FFileMasks.Add('*');
     ListShell;
   end;
 end;
@@ -1141,8 +1094,8 @@ begin
     Interfaces.OnDisplay.Data.Msg := (msgScanning + '...');
     Synchronize(Interfaces.OnDisplay.Method);
 
-    Headers.MarkItems(FFileMasks, toNone, Action);
-    Headers.MarkItems(FxOption, Action, toNone);
+    Headers.MarkItems(FFileMasks, toNone, Action, FrOption);
+    Headers.MarkItems(FxOption, Action, toNone, FrOption);
 
     if (Action = toExtract) then
     begin
@@ -1220,8 +1173,8 @@ begin
     Interfaces.OnDisplay.Data.Msg := (msgScanning + '...');
     Synchronize(Interfaces.OnDisplay.Method);
 
-    Headers.MarkItems(FFileMasks, toCopy, toDelete);
-    Headers.MarkItems(FxOption, toDelete, toCopy);
+    Headers.MarkItems(FFileMasks, toCopy, toDelete, FrOption);
+    Headers.MarkItems(FxOption, toDelete, toCopy, FrOption);
 
     if (Headers.GetNext(0, toDelete) > -1) or ((Length(FaOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
@@ -1429,8 +1382,8 @@ begin
     TotalPack  := 0;
     CountFiles := 0;
 
-    Info.MarkItems(FFileMasks, toNone, toList);
-    Info.MarkItems(FxOption, toList, toNone);
+    Info.MarkItems(FFileMasks, toNone, toList, FrOption);
+    Info.MarkItems(FxOption, toList, toNone, FrOption);
 
     if (Info.GetNext(0, toList) > -1) then
     begin
