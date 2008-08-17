@@ -1351,7 +1351,7 @@ Description of history of the Bee:
   [*] Bee_Modeller.pas, minor code optimization (for FreePascal Compiler);
   [*] Bee_Files.pas, some changes for FPC compatibility;
   [*] Bee_Interface.pas, added OnFatalError and OnRequest events;
-  [*] Replaced wildcard "*\*" with "*!", filemask recursive mode; 
+  [*] Fixed some wilcard prolems;  
   [*] Renamed "-c" option into "-cd" (bugfix); 
   [+] Added wilcard "?" and FileName-Matching functions;
   [*] Bee_Assembler.AddCardinal function, fixed source code incompatibility with FPC;
@@ -1371,4 +1371,4 @@ Description of history of the Bee:
   [*] Bee_App.pas, bug fixed in AlreadyFileExists function and RenameShell procedure;
   [*] Bee_Files.pas, some changements for FPC compatibility.  
 
-  v0.7.9 build 521 maked.
+  v0.7.9 build 828 maked.

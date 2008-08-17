@@ -27,7 +27,7 @@
   v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
+  v0.7.9 build 0828 - 2008.08.04 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -82,8 +82,8 @@ function IncludeTrailingBackSlash(const DirName: string): string;
 function ExcludeTrailingBackSlash(const DirName: string): string;
 
 function FileNameUseWildcards(const FileName: string): boolean;
-function FileNameMatch(const FileName, Mask: string): boolean; overload;
-function FileNameMatch(const FileName: string; Masks: TStringList): boolean; overload;
+function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean; overload;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean; overload;
 
 function CompareFileName(const S1, S2: string): integer;
 function ExtractFileDrive(const FileName: string): string;
@@ -314,7 +314,7 @@ begin
   end;
 end;
 
-function FileNameMatch(const FileName, Mask: string): boolean; {$IFDEF FPC} inline; {$ENDIF}
+function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean; {$IFDEF FPC} inline; {$ENDIF}
 var
   iFileDrive: string;
   iFileName: string;
@@ -339,13 +339,8 @@ begin
     end;
   end;
 
-  I := System.Pos('!', iMask);
-  if I > 0 then
+  if Recursive then
   begin
-    repeat
-      Delete(iMask, I, 1);
-      I := System.Pos('!', iMask);
-    until I = 0;    
     iMaskPath := ExtractFilePath(iMask);
     for I := 1 to CharCount(iFileName, PathDelim) - CharCount(iMask, PathDelim) do
     begin
@@ -365,7 +360,7 @@ begin
     Result := False;
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList): boolean; {$IFDEF FPC} inline; {$ENDIF}
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: integer;
 begin
@@ -374,7 +369,7 @@ begin
   begin
     for I := 0 to Masks.Count - 1 do
     begin
-      if FileNameMatch(FileName, Masks.Strings[I]) then
+      if FileNameMatch(FileName, Masks.Strings[I], Recursive) then
       begin
         Result := True;
         Break;
@@ -391,10 +386,7 @@ begin
     if System.Pos('?', FileName) > 0 then
       Result := True
     else
-      if System.Pos('!', FileName) > 0 then
-        Result := True
-      else
-        Result := False;
+      Result := False;
 end;
 
 function DoDirSeparators(const FileName: string): string; {$IFDEF FPC} inline; {$ENDIF}
@@ -431,13 +423,6 @@ begin
   begin
     Delete(Result, I, 1);
     I := System.Pos('?', Result);
-  end;
-
-  I := System.Pos('!', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('!', Result);
   end;
   
   I := System.Pos('"', Result);
