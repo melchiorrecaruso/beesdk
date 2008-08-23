@@ -43,25 +43,24 @@ uses
   LResources,
   // ---
   BeeGui_IconList,
-  BeeGui_FolderTreeViewMgr,
-  BeeGui_ArchiveFolderBox;
+  BeeGui_FolderTreeViewMgr;
 
 type
 
   { TExtractFrm }
 
   TExtractFrm = class(TForm)
-    FoldersMgr: TFolderTreeViewMgr;
     FolderLabel: TLabel;
     Folders: TTreeView;
     Folder: TEdit;
+    FoldersMgr: TFolderTreeViewMgr;
+    Icons: TIconList;
     Options: TGroupBox;
     cdOption: TEdit;
     xCommand: TCheckBox;
     oOptionLabel: TLabel;
     oOption: TComboBox;
     cdOptionCheck: TCheckBox;
-    Icons: TIconList;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
     procedure cdOptionCheckChange(Sender: TObject);

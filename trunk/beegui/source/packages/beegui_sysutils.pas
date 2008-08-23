@@ -29,10 +29,10 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
+  Math,
   Windows,
   Registry,
   {$ENDIF}
-  Math,
   Dialogs,
   Classes,
   Process,
@@ -50,9 +50,9 @@ uses
   procedure DeleteDirectory(const DirName: string);
   procedure ClearDirectory(const DirName: string);
   
-  function GetApplicationCheckOutDir(const aApplicationName:  string): string;
-  function GetApplicationConfigDir(const aApplicationName:  string): string;
-  function GetApplicationTempDir(const aApplicationName:  string): string;
+  function GetApplicationCheckOutDir(const aApplicationName: string): string;
+  function GetApplicationConfigDir(const aApplicationName: string): string;
+  function GetApplicationTempDir(const aApplicationName: string): string;
   // ---
   function ExtractFirstFolder(const FullPath: string): string;
 
@@ -177,28 +177,28 @@ implementation
     end;
   end;
   
-  function GetApplicationCheckOutDir(const aApplicationName:  string): string;
+  function GetApplicationCheckOutDir(const aApplicationName: string): string;
   begin
-    Result := ExtractFilePath(GetAppConfigDir(FALSE)) +
-      IncludeTrailingBackSlash(aApplicationName) + 'checkout';
+    Result := IncludeTrailingBackSlash(GetUserDir) + '.' +
+      IncludeTrailingBackSlash(LowerCase(aApplicationName)) + ('checkout');
       
     if DirectoryExists(Result) = False then
       ForceDirectories(Result);
   end;
   
-  function GetApplicationConfigDir(const aApplicationName:  string): string;
+  function GetApplicationConfigDir(const aApplicationName: string): string;
   begin
-    Result := ExtractFilePath(GetAppConfigDir(FALSE)) +
-      IncludeTrailingBackSlash(aApplicationName) + ('configuration');
+    Result := IncludeTrailingBackSlash(GetUserDir) + '.' +
+      IncludeTrailingBackSlash(LowerCase(aApplicationName)) + ('configuration');
 
     if DirectoryExists(Result) = False then
       ForceDirectories(Result);
   end;
   
-  function GetApplicationTempDir(const aApplicationName:  string): string;
+  function GetApplicationTempDir(const aApplicationName: string): string;
   begin
-    Result := ExtractFilePath(GetAppConfigDir(FALSE)) +
-      IncludeTrailingBackSlash(aApplicationName) + ('temp');
+    Result := IncludeTrailingBackSlash(GetUserDir) + '.' +
+      IncludeTrailingBackSlash(LowerCase(aApplicationName)) + ('temp');
 
     if DirectoryExists(Result) = False then
       ForceDirectories(Result);

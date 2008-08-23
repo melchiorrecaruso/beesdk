@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0828 - 2008.08.04 by Melchiorre Caruso.
+  v0.7.9 build 0846 - 2008.08.20 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -128,8 +128,8 @@ type
 implementation
 
 uses
-  Math,
   {$IFDEF MSWINDOWS}
+  Math,
   Windows,
   {$ENDIF}
   SysUtils, // faReadOnly, ...
@@ -145,7 +145,7 @@ begin
   inherited Create(aInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0831 archiver utility, freeware version, Aug 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0844 archiver utility, freeware version, Aug 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -222,7 +222,7 @@ procedure TBeeApp.Execute;
 const
   SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
-  inherited Execute;
+  // inherited Execute;
   Interfaces.OnDisplay.Data.Msg := FSelfName;
   Synchronize(Interfaces.OnDisplay.Method);
   /// process command
@@ -445,8 +445,6 @@ begin
 end;
 
 procedure TBeeApp.ProcessMasks;
-var
-  I: integer;
 begin
   if FFileMasks.Count = 0 then
   begin
@@ -515,9 +513,10 @@ begin
 
           Interfaces.OnOverWrite.Answer := 'A';
           Synchronize(Interfaces.OnOverWrite.Method);
-        until UpCase(Interfaces.OnOverWrite.Answer) in ['A', 'N', 'R', 'S', 'Q', 'Y'];
+        until (Length(Interfaces.OnOverWrite.Answer) = 1)
+          and (UpCase(Interfaces.OnOverWrite.Answer[1]) in ['A', 'N', 'R', 'S', 'Q', 'Y']);
 
-        FoOption := UpCase(Interfaces.OnOverWrite.Answer);
+        FoOption := UpCase(Interfaces.OnOverWrite.Answer[1]);
       end;
 
       case UpCase(FoOption) of
@@ -538,7 +537,7 @@ begin
                  NewFileName := FixFileName(Interfaces.OnRename.Answer);
                  if (FileExists(NewFileName) = True) or (AlreadyFileExists(Headers, I, [toExtract], NewFileName) <> -1) then
                  begin
-                   Interfaces.OnWarning.Data.Msg := ('File "' + NewFileName + '" already exists!');
+                   Interfaces.OnWarning.Data.Msg := ('Warning: file "' + NewFileName + '" already exists.');
                    Synchronize(Interfaces.OnDisplay.Method);
                  end else
                    Break;
@@ -684,8 +683,8 @@ begin
           iFileName := FixFileName(Interfaces.OnRename.Answer);
           if (AlreadyFileExists(Headers, I, [toCopy, toRename], iFileName) <> -1) then
           begin
-            Interfaces.OnWarning.Data.Msg := ('File "' + iFileName + '" already existing in archive!');
-            Synchronize(Interfaces.OnDisplay.Method);
+            Interfaces.OnWarning.Data.Msg := ('Warning: file "' + iFileName + '" already existing in archive.');
+            Synchronize(Interfaces.OnWarning.Method);
           end else
             Break;
         end;
@@ -921,7 +920,7 @@ begin
     with Interfaces.OnTick.Data do
     begin
       TotalSize := 0;
-      ProcessedSize  := 0;
+      ProcessedSize := 0;
     end;
     FrOption := True; // force recursion
     FxOption.Clear; // clear xOption
@@ -938,7 +937,7 @@ begin
     with Interfaces.OnTick.Data do
     begin
       TotalSize := 0;
-      ProcessedSize  := 0;
+      ProcessedSize := 0;
     end;
     FrOption := True; // force recursion
     FxOption.Clear; // clear xOption
@@ -1276,7 +1275,6 @@ procedure TBeeApp.RenameShell;
 var
   TmpFile: TFileWriter;
   TmpFileName: string;
-  NewFileName: string;
   Headers: THeaders;
   Encoder: TEncoder;
   Time: double;
@@ -1390,7 +1388,10 @@ begin
       Time := Now;
       
       {$IFDEF CONSOLEAPPLICATION}
-      Interfaces.OnDisplay.Data.Msg := (Cr + 'Name' + StringOfChar(' ', 18)
+      Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
+      Synchronize(Interfaces.OnDisplay.Method);
+
+      Interfaces.OnDisplay.Data.Msg := ('Name' + StringOfChar(' ', 18)
         + 'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
       Synchronize(Interfaces.OnDisplay.Method);
 
@@ -1447,7 +1448,7 @@ begin
 
       Interfaces.OnDisplay.Data.Msg := (Format('%d files', [CountFiles]))
         + StringOfChar(' ', 15 - Length((Format('%d files', [CountFiles]))))
-        + (Format(' %10s %10s %5s' + Cr, [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)]));
+        + (Format(' %10s %10s %5s', [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)]));
       Synchronize(Interfaces.OnDisplay.Method);
       {$ENDIF}
       
@@ -1455,7 +1456,7 @@ begin
       // self-extractor module size
       if Info.GetModule > 0 then
       begin
-        Interfaces.OnDisplay.Data.Msg := ('Note: Bee Self-Extractor module founded' + Cr);
+        Interfaces.OnDisplay.Data.Msg := (Cr + 'Note: Bee Self-Extractor module founded');
         Synchronize(Interfaces.OnDisplay.Method);
       end;
       {$ENDIF}

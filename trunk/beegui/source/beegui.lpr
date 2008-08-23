@@ -56,8 +56,7 @@ var
 begin
   MaxKeptOSChunks := 8;
   Application.Initialize;
-  Application.HelpFile := '';
-  Application.Title:='BeeGui';
+  Application.Title:= cApplicationName;
   CmdLine := TCmdLine.Create;
   if CmdLine.Run then
   begin

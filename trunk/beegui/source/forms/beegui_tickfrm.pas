@@ -47,7 +47,6 @@ uses
   // ---
   Bee_App,
   Bee_Common,
-  Bee_Assembler,
   Bee_Interface,
   // ---
   BeeGui_CmdLine,
@@ -184,7 +183,6 @@ var
   constructor TTickFrm.Create(AOwner: TComponent);
   begin
     inherited Create(AOwner);
-    // ---
     FInterfaces := TInterfaces.Create;
     FInterfaces.OnFatalError.Method := OnFatalError;
     FInterfaces.OnOverWrite.Method := OnOverWrite;
@@ -350,15 +348,12 @@ var
     if FInterfaces.Terminated = True then
     begin
       if ExitCode < 2 then
-        Application.Title := rsProcessTerminated
+        Caption := rsProcessTerminated
       else
-        Application.Title := rsProcessAborted;
-      Caption := Application.Title;
+        Caption := rsProcessAborted;
     end else
-    begin
-      Application.Title := rsProcessPaused;
-      Caption := Application.Title
-    end;
+      Caption := rsProcessPaused;
+    Application.Title := Caption;
     {$IFDEF MSWINDOWS}
       BtnPriority.Enabled := False;
     {$ENDIF}
@@ -476,7 +471,7 @@ var
       begin;
         Close;
       end;
-      
+
       if (FContents.Count > 0) and (FCmdLine.Link <> '') then
       begin
         FContents.SaveToFile(FCmdLine.Link);
@@ -607,6 +602,10 @@ var
       FContents.Add(FileVersion);            // 11
       FContents.Add(FilePassword);           // 12
       FContents.Add(IntTostr(FilePosition)); // 13
+      if FCmdLine.Log then
+      begin
+        Report.Append(FilePath + FileName);
+      end;
     end;
   end;
   
@@ -620,8 +619,8 @@ var
   procedure TTickFrm.OnTick;
   begin
     Tick.Position := FInterfaces.OnTick.Data.Percentage;
-    Application.Title := Format(rsProcessStatus, [FInterfaces.OnTick.Data.Percentage]);
-    Caption := Application.Title;
+    Caption := Format(rsProcessStatus, [FInterfaces.OnTick.Data.Percentage]);
+    Application.Title := Caption;
   end;
   
   procedure TTickFrm.OnKey;

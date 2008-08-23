@@ -1024,7 +1024,6 @@ procedure THeaders.ScanFileSystem(
     var Size: integer);
 var
   P: THeader;
-  I: integer;
   J: pointer;
   Error: integer;
   Rec: TSearchRec;

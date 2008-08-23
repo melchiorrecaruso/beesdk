@@ -48,25 +48,13 @@ uses
   BeeGui_IconList,
   BeeGui_ArchiveFolderBox,
   BeeGui_ArchiveListViewMgr,
-  BeeGui_Process;
+  BeeGui_Process, process;
 
 type
   { TMainFrm }
 
   TMainFrm = class(TForm)
     ArcProcess: TArcProcess;
-    UpToolBar: TToolBar;
-    DownToolBar: TToolBar;
-    FolderBox: TArchiveFolderBox;
-    ListView: TArcListView;
-    StatusBar: TStatusBar;
-    LargeImages: TIconList;
-    SmallImages: TIconList;
-    // ---
-    OpenDialog: TOpenDialog;
-    SaveDialog: TSaveDialog;
-    FontDialog: TFontDialog;
-    // ---
     BevelFirst: TBevel;
     BevelSecond: TBevel;
     BevelThird: TBevel;
@@ -80,8 +68,20 @@ type
     BtnNew: TSpeedButton;
     BtnOpen: TSpeedButton;
     BtnTest: TSpeedButton;
-    BtnView: TSpeedButton;
     BtnUp: TSpeedButton;
+    BtnView: TSpeedButton;
+    FileProcess: TFileProcess;
+    FolderBox: TArchiveFolderBox;
+    DownToolBar: TPanel;
+    StatusBar: TStatusBar;
+    UpToolBar: TPanel;
+    ListView: TArcListView;
+    LargeImages: TIconList;
+    SmallImages: TIconList;
+    // ---
+    OpenDialog: TOpenDialog;
+    SaveDialog: TSaveDialog;
+    FontDialog: TFontDialog;
     // ---
     MMenu: TMainMenu;
     MMenuFile: TMenuItem;
@@ -213,6 +213,7 @@ type
     BMenuExit: TMenuItem;
     // ---
 
+    procedure ArcProcessTimer(Sender: TObject);
     procedure MMenuActionsViewClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
@@ -613,11 +614,11 @@ uses
     ListView.SimpleList := MMenuViewListMode.Checked;
     
     DownToolBar.Visible := not ListView.SimpleList;
-    if DownToolBar.Visible then
-      UpToolBar.EdgeBorders := [ebLeft, ebTop, ebRight]
-    else
-      UpToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
-    DownToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
+    //if DownToolBar.Visible then
+    //  UpToolBar.EdgeBorders := [ebLeft, ebTop, ebRight]
+    //else
+    //  UpToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
+    // DownToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
   end;
 
 
@@ -629,8 +630,9 @@ uses
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
   var
-    CommandLine: string;
     ArchiveName: string;
+    ArchiveLink: string;
+    CommandLine: string;
   begin
     if ArcProcess.Enabled = False then
     begin
@@ -638,24 +640,25 @@ uses
       if SaveDialog.Execute then
       begin
         MMenuFileClose.Click;
-        // Archive name //
+        // Archive name/link //
         ArchiveName := SaveDialog.FileName;
+        ArchiveLink := GenerateArchiveLink;
         case SaveDialog.FilterIndex of
           1: ArchiveName := ChangeFileExt(ArchiveName, '.bee');
           2: ArchiveName := ChangeFileExt(ArchiveName, '.exe');
         end;
         Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
         // Command line //
-        CommandLine := 'beegui a' + ' -2+';
+        CommandLine := 'beegui a -2+ "-0' + ArchiveLink + '"';
         if MMenuOptionsLogReport.Checked then
           CommandLine := CommandLine + ' -1+'
         else
           CommandLine := CommandLine + ' -1-';
         CommandLine := CommandLine + ConfigFrm.AddOptions('') + ' "' + ArchiveName + '"';
         // Archive process //
-        ArcProcess.ArchiveName := ArchiveName;
-        ArcProcess.OnTerminate := OnArcTimer;
-        ArcProcess.Append(CommandLine, '');
+        ArcProcess.Initialize(ArchiveName, ArchiveLink);
+        ArcProcess.Add(CommandLine, '');
+        ArcProcess.Finalize(OnArcTimer);
         ArcProcess.Enabled := True;
       end;
     end else
@@ -664,8 +667,9 @@ uses
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   var
-    CommandLine: string;
     ArchiveName: string;
+    ArchiveLink: string;
+    CommandLine: string;
   begin
     if ArcProcess.Enabled = False then
     begin
@@ -673,20 +677,21 @@ uses
       if OpenDialog.Execute then
       begin
         MMenuFileClose.Click;
-        // Archive name //
+        // Archive name/link //
         ArchiveName := OpenDialog.FileName;
+        ArchiveLink := GenerateArchiveLink;
         Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
         // Command line //
-        CommandLine := 'beegui l';
+        CommandLine := 'beegui l -r+ "-0' + ArchiveLink + '"';
         if MMenuOptionsLogReport.Checked then
           CommandLine := CommandLine + ' -1+'
         else
           CommandLine := CommandLine + ' -1-';
-        CommandLine := CommandLine + ' "' + ArchiveName + '" *!';
+        CommandLine := CommandLine + ' "' + ArchiveName + '" *';
         // Archive Process //
-        ArcProcess.ArchiveName := ArchiveName;
-        ArcProcess.OnTerminate := OnArcTimer;
-        ArcProcess.Append(CommandLine, '');
+        ArcProcess.Initialize(ArchiveName, ArchiveLink);
+        ArcProcess.Add(CommandLine, '');
+        ArcProcess.Finalize(OnArcTimer);
         ArcProcess.Enabled := True;
       end;
     end else
@@ -695,10 +700,10 @@ uses
 
   procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
   begin
-    Caption := cApplicationTitle;
-    ListView.CloseArchive;
     UpdateCursor(crDefault);
     UpdateButtons(False);
+    ListView.CloseArchive;
+    Caption := cApplicationTitle;
   end;
 
   procedure TMainFrm.MMenuFilePropertyClick(Sender: TObject);
@@ -706,11 +711,10 @@ uses
     F: TInfoFrm;
     Ratio: integer;
   begin
-    (*
     F := TInfoFrm.Create(Self);
     F.Caption := rsArcProperty;
     begin
-      F.ANameValue.Caption         := ExtractFileName(ArcProcess.ArcName);
+      F.ANameValue.Caption         := ExtractFileName(ArcProcess.ArchiveName);
       F.AVersionValue.Caption      := FloatToStr(ListView.Details.Version);
       F.AVersionValue.Caption      := FloatToStr(ListView.Details.Version);
       F.AFilesValue.Caption        := IntToStr(ListView.Details.FilesCount);
@@ -728,49 +732,50 @@ uses
       F.AR.Caption                 := IntToStr(Ratio) + '%';
       F.ARatioValue.Caption        := IntToStr(Ratio) + '%';
       F.AFilesCryptedValue.Caption := IntToStr(ListView.Details.FilesCrypted);
-      F.AArcSizeValue.Caption      := SizeToStr(SizeOfFile(ArcProcess.ArcName));
-      F.AModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(ArcProcess.ArcName)));
+      F.AArcSizeValue.Caption      := SizeToStr(SizeOfFile(ArcProcess.ArchiveName));
+      F.AModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(ArcProcess.ArchiveName)));
     end;
     F.Pages.ActivePage := F.APage;
     F.FPage.TabVisible := False;
     F.APage.TabVisible := True;
     F.ShowModal;
     F.Free;
-    *)
   end;
 
   procedure TMainFrm.MMenuFileMoveClick(Sender: TObject);
   var
     NewName: string;
   begin
-    (*
-    NewName := '';
-    if SelectDirectory(rsMoveArcTo, '', NewName) then
+    if ArcProcess.Enabled = False then
     begin
-      NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArcName);
-      if RenameFile(ArcProcess.ArcName, NewName) then
-        ArcProcess.ArcName := NewName
-      else
-        MessageDlg(rseMoveArcTo, mtError, [mbOk], 0);
+      NewName := '';
+      if SelectDirectory(rsMoveArcTo, '', NewName) then
+      begin
+        NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArchiveName);
+        if RenameFile(ArcProcess.ArchiveName, NewName) then
+          ArcProcess.Initialize(NewName, GenerateArchiveLink)
+        else
+          MessageDlg(rseMoveArcTo, mtError, [mbOk], 0);
+      end;
     end;
-    *)
   end;
 
   procedure TMainFrm.MMenuFileCopyClick(Sender: TObject);
   var
     NewName: string;
   begin
-    (*
-    NewName := '';
-    if SelectDirectory(rsCopyArcTo, '', NewName) then
+    if ArcProcess.Enabled = False then
     begin
-      NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArcName);
-      if CopyFile(ArcProcess.ArcName, NewName) then
-        ArcProcess.ArcName := NewName
-      else
-        MessageDlg(rseCopyArcTo, mtError, [mbOk], 0);
+      NewName := '';
+      if SelectDirectory(rsCopyArcTo, '', NewName) then
+      begin
+        NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArchiveName);
+        if CopyFile(ArcProcess.ArchiveName, NewName) then
+          ArcProcess.Initialize(NewName, GenerateArchiveLink)
+        else
+          MessageDlg(rseCopyArcTo, mtError, [mbOk], 0);
+      end;
     end;
-    *)
   end;
 
   procedure TMainFrm.MMenuFileRenameClick(Sender: TObject);
@@ -778,39 +783,41 @@ uses
     F: TRenameFrm;
     NewName: string;
   begin
-    (*
-    F := TRenameFrm.Create(Self);
-    F.Caption := rsRenameArc;
-    F.ToFN.Text := ExtractFileName(ArcProcess.ArcName);
-    F.FromFN.Caption := ExtractFileName(ArcProcess.ArcName);
-    if F.ShowModal = mrOk then
+    if ArcProcess.Enabled = False then
     begin
-      if CompareFileName(F.ToFN.Text, F.FromFN.Caption) <> 0 then
+      F := TRenameFrm.Create(Self);
+      F.Caption := rsRenameArc;
+      F.ToFN.Text := ExtractFileName(ArcProcess.ArchiveName);
+      F.FromFN.Caption := ExtractFileName(ArcProcess.ArchiveName);
+      if F.ShowModal = mrOk then
       begin
-        NewName := ExtractFilePath(ArcProcess.ArcName) + F.ToFN.Text;
-        if RenameFile(ArcProcess.ArcName, NewName) then
+        if CompareFileName(F.ToFN.Text, F.FromFN.Caption) <> 0 then
         begin
-          ArcProcess.ArcName := NewName;
-          Caption := cApplicationName + ' - ' + ExtractFileName(ArcProcess.ArcName);
-        end else
-          MessageDlg(rseRenameArc, mtError, [mbOk], 0);
+          NewName := ExtractFilePath(ArcProcess.ArchiveName) + F.ToFN.Text;
+          if RenameFile(ArcProcess.ArchiveName, NewName) then
+          begin
+            ArcProcess.Initialize(NewName, GenerateArchiveLink);
+            Caption := cApplicationName + ' - ' + ExtractFileName(ArcProcess.ArchiveName);
+          end else
+            MessageDlg(rseRenameArc, mtError, [mbOk], 0);
+        end;
       end;
+      F.Free;
     end;
-    F.Free;
-    *)
   end;
 
   procedure TMainFrm.MMenuFileDeleteClick(Sender: TObject);
   begin
-    (*
-    if MessageDlg(rsConfirmDeleteArc, mtInformation, [mbYes, mbNo], 0) = mrYes then
+    if ArcProcess.Enabled = False then
     begin
-      if DeleteFile(ArcProcess.ArcName) then
-        MMenuFileClose.Click
-      else
-        MessageDlg(rseDeleteArc, mtError, [mbOk], 0);
+      if MessageDlg(rsConfirmDeleteArc, mtInformation, [mbYes, mbNo], 0) = mrYes then
+      begin
+        if DeleteFile(ArcProcess.ArchiveName) then
+          MMenuFileClose.Click
+        else
+          MessageDlg(rseDeleteArc, mtError, [mbOk], 0);
+      end;
     end;
-    *)
   end;
 
   procedure TMainFrm.MMenuFileExitClick(Sender: TObject);
@@ -1052,35 +1059,34 @@ uses
   
   procedure TMainFrm.MMenuActionsViewClick(Sender: TObject);
   var
-    CmdLine: string;
+    CommandLine: string;
+    FileName : string;
+    FilePath: string;
   begin
-    (*
     if ListView.Selected <> nil then
     begin
-      with ListView do
+      if Pos('D', ListView.Selected.SubItems[5]) > 0 then
       begin
-        if Pos('D', Selected.SubItems[5]) > 0 then
+        ListView.Folder :=IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
+      end else
+        if Cursor <> crHourGlass then
         begin
-          Folder :=IncludeTrailingBackSlash(Folder) + Selected.Caption;
-        end else
-          if Cursor <> crHourGlass then
-          begin
-            CmdLine := 'beegui x -oA';
-            CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
+          CommandLine := 'beegui x -oA "' + ArcProcess.ArchiveName + '" ' + ListView.GetMasks;
 
-            FileProcess.FileName := IncludeTrailingBackSlash(
-              GetApplicationTempDir(Application.Name)) + ListView.GetMasks;
-            
-            ArcProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
-            ArcProcess.CommandLine := CmdLine;
-            ArcProcess.Execute;
-            // ---
-            Idle.OnTimer := OnFileViewTimer;
-            Idle.Enabled := True;
-           end;
-      end;
+          FileName := IncludeTrailingBackSlash(GetApplicationTempDir(Application.Name)) + ListView.GetMasks;
+          FilePath := GetApplicationTempDir(cApplicationName);
+          FileProcess.Initialize(FileName, FilePath);
+
+          ArcProcess.Add(CommandLine, FilePath);
+          ArcProcess.Finalize(OnFileViewTimer);
+          ArcProcess.Enabled := True;
+         end;
     end;
-    *)
+  end;
+
+  procedure TMainFrm.ArcProcessTimer(Sender: TObject);
+  begin
+    // ---
   end;
 
   procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);

@@ -50,8 +50,8 @@ type
   { TAddFrm class }
 
   TAddFrm = class(TForm)
-    cdOptionCheck: TCheckBox;
     FilesMgr: TAddTreeViewMgr;
+    cdOptionCheck: TCheckBox;
     aOptionCheck: TCheckBox;
     aOption: TComboBox;
     ArchiveName: TComboBox;
