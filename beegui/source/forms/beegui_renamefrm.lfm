@@ -1,25 +1,26 @@
 object RenameFrm: TRenameFrm
   Left = 524
-  Height = 90
-  Top = 299
-  Width = 287
+  Height = 102
+  Top = 375
+  Width = 303
   ActiveControl = BtnOk
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Rename'
-  ClientHeight = 90
-  ClientWidth = 287
+  ClientHeight = 102
+  ClientWidth = 303
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
+  OnShow = FormShow
   LCLVersion = '0.9.25'
   object FromFNLabel: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     Left = 6
-    Height = 14
+    Height = 20
     Top = 6
     Width = 29
     Alignment = taRightJustify
@@ -34,8 +35,8 @@ object RenameFrm: TRenameFrm
     AnchorSideRight.Control = ToFN
     AnchorSideBottom.Side = asrBottom
     Left = 18
-    Height = 14
-    Top = 26
+    Height = 20
+    Top = 32
     Width = 17
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
@@ -50,7 +51,7 @@ object RenameFrm: TRenameFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
     Left = 44
-    Height = 14
+    Height = 20
     Top = 6
     Width = 237
     BorderSpacing.Left = 3
@@ -66,12 +67,12 @@ object RenameFrm: TRenameFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = FromFN
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = FromFN
+    AnchorSideRight.Control = Spacer
     AnchorSideRight.Side = asrBottom
     Left = 41
     Height = 22
-    Top = 26
-    Width = 240
+    Top = 32
+    Width = 256
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Left = 6
@@ -84,9 +85,9 @@ object RenameFrm: TRenameFrm
     AnchorSideRight.Control = BtnCancel
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
-    Left = 125
-    Height = 26
-    Top = 58
+    Left = 141
+    Height = 32
+    Top = 64
     Width = 70
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -95,6 +96,7 @@ object RenameFrm: TRenameFrm
     BorderSpacing.InnerBorder = 2
     Caption = '&OK'
     Constraints.MinWidth = 70
+    Default = True
     Kind = bkOK
     ModalResult = 1
     NumGlyphs = 0
@@ -104,12 +106,12 @@ object RenameFrm: TRenameFrm
   object BtnCancel: TBitBtn
     AnchorSideTop.Control = ToFN
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = FromFN
+    AnchorSideRight.Control = Spacer
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
-    Left = 201
-    Height = 26
-    Top = 58
+    Left = 217
+    Height = 32
+    Top = 64
     Width = 80
     Anchors = [akTop, akRight]
     AutoSize = True
@@ -119,11 +121,27 @@ object RenameFrm: TRenameFrm
     Cancel = True
     Caption = 'Annulla'
     Constraints.MinWidth = 80
-    Default = True
     Kind = bkCancel
     ModalResult = 2
     NumGlyphs = 0
     ParentShowHint = False
     TabOrder = 1
+  end
+  object Spacer: TPanel
+    AnchorSideLeft.Control = FromFN
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = FromFN
+    AnchorSideBottom.Control = FromFN
+    AnchorSideBottom.Side = asrBottom
+    Left = 287
+    Height = 20
+    Top = 6
+    Width = 10
+    Anchors = [akTop, akLeft, akBottom]
+    BorderSpacing.Right = 6
+    BevelOuter = bvNone
+    Constraints.MaxWidth = 10
+    Constraints.MinWidth = 10
+    TabOrder = 3
   end
 end

@@ -4,7 +4,7 @@
     Folder: string;
     Storage: TMemIniFile;
   begin
-    Folder := AnsiIncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
+    Folder := IncludeTrailingBackSlash(GetApplicationConfigDir(cApplicationName));
     if ForceDirectories(Folder) then
     begin
       Storage := TMemIniFile.Create(Folder + ('mainfrm.ini'));

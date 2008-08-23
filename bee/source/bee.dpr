@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.7.9 build 0828 - 2008.08.04 by Melchiorre Caruso.
+    v0.7.9 build 0846 - 2008.08.20 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -130,25 +130,21 @@ type
 
   procedure TConsole.OnOverWrite;
   begin
-    Writeln;
     with AppInterfaces.OnOverWrite.Data do
     begin
-      Writeln('"' + ParamToOem(FilePath + FileName) + '" already exists.');
+      Writeln('Warning: file "' + ParamToOem(FilePath + FileName) + '" already exists.');
+      Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
     end;
-    Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
     // not convert oem to param
     Readln(AppInterfaces.OnOverWrite.Answer);
-    Writeln;
   end;
 
   procedure TConsole.OnKey;
   begin
     if Length(AppKey) = 0 then
     begin
-      Writeln;
       Write('Insert a key (min length 4 char): ');
       Readln(AppKey);
-      Writeln;
       // convert oem to param
       AppKey := OemToParam(AppKey);
     end;
@@ -157,13 +153,11 @@ type
 
   procedure TConsole.OnRename;
   begin
-    Writeln;
     with AppInterfaces.OnRename.Data do
     begin
       Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
     end;
     Readln(AppInterfaces.OnRename.Answer);
-    Writeln;
     // convert oem to param
     AppInterfaces.OnRename.Answer := OemToParam(AppInterfaces.OnRename.Answer);
   end;

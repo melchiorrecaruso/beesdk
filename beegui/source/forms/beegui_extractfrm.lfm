@@ -1,12 +1,12 @@
 object ExtractFrm: TExtractFrm
-  Left = 347
-  Height = 472
-  Top = 198
-  Width = 595
+  Left = 332
+  Height = 424
+  Top = 271
+  Width = 560
   ActiveControl = BtnOk
   Caption = 'Extraction Path and Options'
-  ClientHeight = 472
-  ClientWidth = 595
+  ClientHeight = 424
+  ClientWidth = 560
   Constraints.MinHeight = 424
   Constraints.MinWidth = 560
   Font.Height = -11
@@ -20,9 +20,9 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 14
+    Height = 20
     Top = 6
-    Width = 583
+    Width = 548
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
@@ -39,8 +39,8 @@ object ExtractFrm: TExtractFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Folders
     Left = 6
-    Height = 14
-    Top = 50
+    Height = 20
+    Top = 56
     Width = 82
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
@@ -57,23 +57,23 @@ object ExtractFrm: TExtractFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 6
-    Height = 102
-    Top = 93
-    Width = 254
+    Height = 104
+    Top = 110
+    Width = 251
     AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Options'
-    ClientHeight = 84
-    ClientWidth = 250
+    ClientHeight = 88
+    ClientWidth = 247
     ParentShowHint = False
     TabOrder = 2
     object xCommand: TCheckBox
       AnchorSideLeft.Control = Options
       AnchorSideTop.Control = Options
       Left = 6
-      Height = 19
+      Height = 21
       Top = 6
-      Width = 238
+      Width = 235
       BorderSpacing.Around = 6
       Caption = 'Extract and Recreate the relative pathname'
       Checked = True
@@ -86,9 +86,9 @@ object ExtractFrm: TExtractFrm
       AnchorSideTop.Control = xCommand
       AnchorSideTop.Side = asrBottom
       Left = 6
-      Height = 19
-      Top = 31
-      Width = 231
+      Height = 21
+      Top = 33
+      Width = 228
       BorderSpacing.Around = 6
       Caption = 'Use Current Archive Directory (-cd Option)'
       OnChange = cdOptionCheckChange
@@ -104,8 +104,8 @@ object ExtractFrm: TExtractFrm
       AnchorSideBottom.Side = asrBottom
       Left = 26
       Height = 22
-      Top = 56
-      Width = 211
+      Top = 60
+      Width = 208
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Left = 20
@@ -121,9 +121,9 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = BtnCancel
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
-    Left = 433
-    Height = 26
-    Top = 440
+    Left = 398
+    Height = 32
+    Top = 386
     Width = 70
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -143,9 +143,9 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 509
-    Height = 26
-    Top = 440
+    Left = 474
+    Height = 32
+    Top = 386
     Width = 80
     Anchors = [akRight, akBottom]
     AutoSize = True
@@ -167,8 +167,8 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Side = asrBottom
     Left = 6
     Height = 22
-    Top = 22
-    Width = 583
+    Top = 28
+    Width = 548
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Left = 6
@@ -183,14 +183,13 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Options
     AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 21
-    Top = 66
-    Width = 254
+    Height = 26
+    Top = 78
+    Width = 251
     Anchors = [akTop, akLeft, akRight]
     AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
     BorderSpacing.Left = 6
     BorderSpacing.Bottom = 6
-    ItemHeight = 13
     ItemIndex = 2
     Items.Strings = (
       'Skip pre-existing files'
@@ -211,21 +210,34 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
-    Left = 266
-    Height = 384
-    Top = 50
-    Width = 323
+    Left = 263
+    Height = 324
+    Top = 56
+    Width = 291
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
     BorderSpacing.Right = 6
     BorderSpacing.Bottom = 6
-    DefaultItemHeight = 15
+    DefaultItemHeight = 16
+    Images = Icons
     ReadOnly = True
+    ScrollBars = ssAutoBoth
     TabOrder = 3
     OnClick = FoldersClick
     OnDblClick = FoldersDblClick
     OnExpanding = FoldersExpanding
     Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
+  end
+  object FoldersMgr: TFolderTreeViewMgr
+    FolderEdit = Folder
+    FolderTree = Folders
+    FolderIcons = Icons
+    left = 8
+    top = 216
+  end
+  object Icons: TIconList
+    left = 40
+    top = 216
   end
 end

@@ -69,6 +69,7 @@ type
     F2Option: boolean;
     FParams: TStringList;
   private
+    procedure ProcessOption(var S: string; var Option: boolean);
     procedure ProcessOptions;
     procedure ProcessParams;
   public
@@ -110,9 +111,6 @@ uses
   BeeGui_Forms;
 
   constructor TCmdLine.Create;
-  var
-    i: integer;
-    S: string;
   begin
     inherited Create;
     // ---
@@ -147,6 +145,16 @@ uses
     ProcessParams;
   end;
 
+  procedure TCmdLine.ProcessOption(var S: string; var Option: boolean);
+  begin
+    System.Delete(S, 1, 2);
+    if (S = '') or (S = '+') then
+      Option := True
+    else
+      if (S = '-') then
+        Option := False;
+  end;
+
   procedure TCmdLine.ProcessOptions;
   var
     S: string;
@@ -156,7 +164,8 @@ uses
     for i := 1 to ParamCount do
     begin
       S := ParamStr(i);
-      if (Length(S) > 1) and (S[1] = '-') then
+
+      if (FArcName = '') and (Length(S) > 1) and (S[1] = '-') then
       begin
         // options...
         case UpCase(S[2]) of
@@ -164,41 +173,11 @@ uses
                  System.Delete(S, 1, 2);
                  F0Option := S;
                end;
-          '1': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   F1Option := True
-                 else
-                   if (S = '-') then F1Option := False;
-               end;
-          '2': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   F2Option := True
-                 else
-                   if (S = '-') then F2Option := False;
-               end;
-          'R': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   FrOption := True
-                 else
-                   if (S = '-') then FrOption := False;
-               end;
-          'U': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   FuOption := True
-                 else
-                 if (S = '-') then FuOption := False;
-               end;
-          'F': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   FfOption := True
-                 else
-                   if (S = '-') then FfOption := False;
-               end;
+          '1': ProcessOption(S, F1Option);
+          '2': ProcessOption(S, F2Option);
+          'R': ProcessOption(S, FrOption);
+          'U': ProcessOption(S, FuOption);
+          'F': ProcessOption(S, FfOption);
           'E': begin
                  System.Delete(S, 1, 2);
                  if ExtractFileExt('.' + S) <> '.' then
@@ -206,13 +185,7 @@ uses
                    FeOption := ExtractFileExt('.' + S);
                  end;
                end;
-          'S': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   FsOption := True
-                 else
-                   if (S = '-') then FsOption := False;
-               end;
+          'S': ProcessOption(S, FsOption);
           'A': begin
                  System.Delete(S, 1, 2);
                  if (S = '+') or (Length(S) = 0) then
@@ -252,21 +225,13 @@ uses
                  end;
                end;
           'T': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
+                 ProcessOption(S, FtOption);
+                 if FtOption then
                  begin
-                   FtOption := True;
                    F1Option := True;
-                 end else
-                   if (S = '-') then FtOption := False;
+                 end;
                end;
-          'L': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   FlOption := True
-                 else
-                   if (S = '-') then FlOption := False;
-               end;
+          'L': ProcessOption(S, FlOption);
           'Y': begin
                  System.Delete(S, 1, 2);
                  if DirectoryExists(ExcludeTrailingBackslash(S)) then
@@ -274,41 +239,35 @@ uses
                    FyOption := ExcludeTrailingBackslash(S);
                  end;
                end;
-          'K': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   FkOption := True
-                 else
-                   if (S = '-') then FkOption := False;
-                end;
-          else  if Pos('-CD', UpCase(S)) = 1 then
-                begin
-                  System.Delete(S, 1, 3);
-                  if Length(S) > 0 then
-                  begin
-                    FcdOption := IncludeTrailingBackslash(FixDirName(S));
-                  end;
-                end else
-                begin
-                  if Pos('-CFG', UpCase(S)) = 1 then
-                  begin
-                    System.Delete(S, 1, 4);
-                    if (Length(S) > 0) and FileExists(S) then
-                    begin
-                      FcfgOption := S;
-                    end;
-                  end else
-                  begin
-                    if Pos('-PRI', UpCase(S)) = 1 then
-                    begin
-                      System.Delete(S, 1, 4);
-                      if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
-                      begin
-                        FpriOption := StrToInt(S[1]);
-                      end;
-                    end
-                  end;
-                end;
+          'K': ProcessOption(S, FkOption);
+          else if Pos('-CD', UpCase(S)) = 1 then
+               begin
+                 System.Delete(S, 1, 3);
+                 if Length(S) > 0 then
+                 begin
+                   FcdOption := IncludeTrailingBackslash(FixDirName(S));
+                 end;
+               end else
+               begin
+                 if Pos('-CFG', UpCase(S)) = 1 then
+                 begin
+                   System.Delete(S, 1, 4);
+                   if (Length(S) > 0) and FileExists(S) then
+                   begin
+                     FcfgOption := S;
+                   end;
+                 end else
+                 begin
+                   if Pos('-PRI', UpCase(S)) = 1 then
+                   begin
+                     System.Delete(S, 1, 4);
+                     if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
+                     begin
+                       FpriOption := StrToInt(S[1]);
+                     end;
+                   end
+                 end;
+               end;
         end; // end case
       end else
       begin

@@ -151,7 +151,7 @@ uses
   begin
     Result := '';
     S := TStringList.Create;
-    for I := 0 to FFilePath.Count -1 do
+    for I := 0 to FFilePath.Count - 1 do
     begin
       if FFileBool.Strings[I] = '+' then
       begin

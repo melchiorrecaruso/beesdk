@@ -44,7 +44,7 @@ type
   protected
     procedure DrawItem(Index: Integer; ARect: TRect; State: TOwnerDrawState); override;
   public
-    constructor Create(AOwner: TComponent);
+    constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
   

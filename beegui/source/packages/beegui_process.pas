@@ -46,7 +46,7 @@ type
 
   { TArcProcess class }
 
-  TArcProcess = class(TCustomTimer)
+  TArcProcess = class(TIdleTimer)
   private
     FArchiveName: string;
     FArchiveLink: string;
@@ -56,50 +56,41 @@ type
     FOnTerminate: TNotifyEvent;
   protected
     procedure DoOnTimer; override;
-  private
-    procedure SetArchiveName(const Value: string);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Append(const CommandLine, CurrentDirectory: string);
-  public
-    property ArchiveName: string read FArchiveName write SetArchiveName;
+    procedure Initialize(const aArchiveName: string; const aArchiveLink: string);
+    procedure Add(const aCommandLine :string; const aCurrentDirectory: string);
+    procedure Finalize(const aOnTerminate: TNotifyEvent);
+   public
+    property ArchiveName: string read FArchiveName;
     property ArchiveLink: string read FArchiveLink;
-    property OnTerminate: TNotifyEvent read FOnTerminate write FOnTerminate;
+    property OnTerminate: TNotifyEvent read FOnTerminate;
   end;
-  
-  (*
-  { TFileThread class }
 
-  TFileThread = class(TThread)
+
+  { TFileProcess class }
+
+  TFileProcess = class(TIdleTimer)
   private
     FFileName: string;
     FRootFolder: string;
     FProcess: TProcess;
-  private
+  protected
+    procedure DoOnTimer; override;
     function GetFileExec: string;
   public
-    constructor Create(const AFileName, ARootFolder: string);
+    constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Execute; override;
+    procedure Initialize(const aFileName: string; const aRootFolder: string);
   public
     property FileName: string read FFileName;
     property RootFolder: string read FRootFolder;
   end;
-  
-  { TFileProcess class }
 
-  // TFPTerminateEvent = procedure(Sender: TObject; const FileName, RootFolder: string) of object;
-  
-  TFileProcess = class(TComponent)
-  private
-    FProcessList: TList;
-  public
-    procedure Execute(const AFileName, ARootFolder: string);
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
-  end;
-  *)
+  { Routines }
+
+  function GenerateArchiveLink: string;
   
   { Register }
 
@@ -112,6 +103,22 @@ uses
   BeeGui_Consts,
   BeeGui_SysUtils;
 
+  function GenerateArchiveLink: string;
+  var
+    I: integer;
+    Path: string;
+  begin
+    Path := GetApplicationTempDir(cApplicationName);
+    repeat
+      Result := '????????.ini';
+      for I := 1 to 8 do
+      begin
+        Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
+      end;
+      Result := IncludeTrailingBackSlash(Path) + Result;
+    until FileAge(Result) = -1;
+  end;
+
   { TArcProcess class }
 
   constructor TArcProcess.Create(AOwner: TComponent);
@@ -122,15 +129,17 @@ uses
     FCommandLines := TStringList.Create;
     FCurrentDirectories := TStringList.Create;
     FProcess := TProcess.Create(Self);
+    FProcess.StartupOptions := [];
+    FProcess.Options := [];
   end;
   
   destructor TArcProcess.Destroy;
   begin
+    FProcess.Free;
     FArchiveName := '';
     FArchiveLink := '';
     FCommandLines.Free;
     FCurrentDirectories.Free;
-    FProcess.Free;
     inherited Destroy;
   end;
   
@@ -141,9 +150,9 @@ uses
       if FCommandLines.Count > 0 then
       begin
         FProcess.CurrentDirectory := FCurrentDirectories.Strings[0];
-        FProcess.CommandLine := FCommandLines.Strings[0] + ' -0' + FArchiveLink;
+        FProcess.CommandLine := FCommandLines.Strings[0];
         FProcess.Execute;
-        
+
         FCurrentDirectories.Delete(0);
         FCommandLines.Delete(0);
       end else
@@ -153,63 +162,83 @@ uses
         begin
           FOnTerminate(Self);
         end;
+        FOnTerminate := nil;
       end;
     end;
     inherited DoOnTimer;
   end;
   
-  procedure TArcProcess.Append(const CommandLine, CurrentDirectory: string);
+  procedure TArcProcess.Add(const aCommandLine :string; const aCurrentDirectory: string);
   begin
     if Assigned(FOnTerminate) = False then
     begin
-      FCommandLines.Add(CommandLine);
-      FCurrentDirectories.Add(CurrentDirectory);
+      FCommandLines.Add(aCommandLine);
+      FCurrentDirectories.Add(aCurrentDirectory);
     end;
   end;
   
-  procedure TArcProcess.SetArchiveName(const Value: string);
+  procedure TArcProcess.Initialize(const aArchiveName: string; const aArchiveLink: string);
   begin
     if Enabled = False then
     begin
-      FArchiveName := Value;
-      FArchiveLink := GenerateFileName(GetApplicationTempDir(cApplicationName));
+      FOnTerminate := nil;
       FCommandLines.Clear;
       FCurrentDirectories.Clear;
+      FArchiveName := aArchiveName;
+      FArchiveLink := aArchiveLink;
+    end;
+  end;
+
+  procedure TArcProcess.Finalize(const aOnTerminate: TNotifyEvent);
+  begin
+    if Assigned(FOnTerminate) = False then
+    begin
+      FOnTerminate := aOnTerminate;
     end;
   end;
   
-  (*
-  { TFileThread class }
+  { TFileProcess class }
   
-  constructor TFileThread.Create(const AFileName, ARootFolder: string);
+  constructor TFileProcess.Create(AOwner: TComponent);
   begin
-    inherited Create(True);
-    FreeOnTerminate := True;
-    Priority := tpNormal;
-    // ---
-    FFileName := AFileName;
-    FRootFolder := AFileName;
-    FProcess := TProcess.Create(nil);
+    inherited Create(AOwner);
+    FProcess := TProcess.Create(Self);
+    FRootFolder := '';
+    FFileName := '';
   end;
   
-  procedure TFileThread.Execute;
+  procedure TFileProcess.Initialize(const aFileName: string; const aRootFolder: string);
+  begin
+    if FProcess.Running = False then
+    begin
+      FFileName := aFileName;
+      FRootFolder := aRootFolder;
+    end;
+  end;
+
+  procedure TFileProcess.DoOnTimer;
   var
     FFileTime: integer;
   begin
-    if FileExists(FFileName) then
+    if FProcess.Running = False then
     begin
-      FFileTime := FileAge(FFileName);
-      FProcess.CommandLine := GetFileExec + ' "' + FFileName + '"';
-      FProcess.Options := [poWaitOnExit];
-      FProcess.Execute;
-      if FileAge(FFileName) > FFileTime then
+      if FileExists(FFileName) then
       begin
-        FreeOnTerminate := False;
+        FFileTime := FileAge(FFileName);
+        FProcess.CommandLine := GetFileExec + ' "' + FFileName + '"';
+        FProcess.Options := [poWaitOnExit];
+        FProcess.Execute;
+        if FileAge(FFileName) > FFileTime then
+        begin
+          Enabled := False;
+          // Aggiornare //
+        end;
       end;
     end;
+    inherited DoOnTimer;
   end;
   
-  destructor TFileThread.Destroy;
+  destructor TFileProcess.Destroy;
   begin
     FProcess.Free;
     FFileName := '';
@@ -217,7 +246,7 @@ uses
     inherited Destroy;
   end;
   
- function TFileThread.GetFileExec: string;
+ function TFileProcess.GetFileExec: string;
   var
     {$IFDEF MSWINDOWS}
     P: PChar;
@@ -259,69 +288,12 @@ uses
     end;
   end;
 
-  { TFileProcess class }
-  
-  constructor TFileProcess.Create(AOwner: TComponent);
-  begin
-    inherited Create(AOwner);
-    FProcessList := TList.Create;
-  end;
-
-  destructor TFileProcess.Destroy;
-  var
-    I: integer;
-  begin
-    for I := FProcessList.Count -1 downto 0 do
-      if Assigned(FProcessList.Items[I]) then
-      begin
-        TFileThread(FProcessList.Items[I]).Free;
-      end;
-    FProcessList.Clear;
-    FProcessList.Free;
-    inherited Destroy;
-  end;
-
-  procedure TFileProcess.Execute(AIndex: integer);
-  begin
-    if AIndex < FProcessList.Count then
-    begin
-      TFileThread(FProcessList.Items[AIndex]).Execute;
-    end;
-  end;
-  
-  procedure TFileProcess.OnTerminate(Sender: TObject);
-  var
-    I: integer;
-  begin
-    for I := FProcessList.Count -1 downto 0 do
-    begin
-      if Sender = TFileThread(FProcessList.Items[I]) then
-      begin
-
-
-      end;
-    end;
-  end;
-  
-  function TFileProcess.GetFileThread(AIndex: integer): TFileThread;
-  begin
-    if AIndex < FProcessList.Count then
-    begin
-      Result := FProcessList.Items[AIndex];
-    end;
-  end;
-  
-  procedure TFileProcess.Schedule(const AFileName, ARootFolder: string);
-  begin
-    FProcessList.Add(TFileThread.Create(AFileName, ARootFolder));
-  end;
-  *)
-  
   { Register }
 
   procedure Register;
   begin
     RegisterComponents('BeePackage', [TArcProcess]);
+    RegisterComponents('BeePackage', [TFileProcess]);
   end;
 
 initialization

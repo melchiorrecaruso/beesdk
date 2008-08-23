@@ -3,10 +3,7 @@ object ViewFrm: TViewFrm
   Height = 328
   Top = 237
   Width = 411
-  HorzScrollBar.Page = 410
-  HorzScrollBar.Range = 166
-  VertScrollBar.Page = 327
-  AutoScroll = False
+  ActiveControl = Memo
   Caption = 'View'
   ClientHeight = 328
   ClientWidth = 411
@@ -24,7 +21,7 @@ object ViewFrm: TViewFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnOk
-    Height = 290
+    Height = 286
     Width = 411
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 6
@@ -37,8 +34,8 @@ object ViewFrm: TViewFrm
     AnchorSideBottom.Control = BtnOk
     AnchorSideBottom.Side = asrBottom
     Left = 6
-    Height = 26
-    Top = 296
+    Height = 30
+    Top = 292
     Width = 75
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
@@ -57,8 +54,8 @@ object ViewFrm: TViewFrm
     AnchorSideBottom.Control = BtnFont
     AnchorSideBottom.Side = asrBottom
     Left = 87
-    Height = 26
-    Top = 296
+    Height = 30
+    Top = 292
     Width = 75
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
@@ -76,8 +73,8 @@ object ViewFrm: TViewFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 335
-    Height = 26
-    Top = 296
+    Height = 30
+    Top = 292
     Width = 70
     Anchors = [akRight, akBottom]
     AutoSize = True

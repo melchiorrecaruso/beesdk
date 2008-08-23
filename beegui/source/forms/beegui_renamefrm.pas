@@ -50,12 +50,14 @@ type
   TRenameFrm = class(TForm)
     FromFNLabel: TLabel;
     FromFN: TLabel;
+    Spacer: TPanel;
     ToFNLabel: TLabel;
     ToFN: TEdit;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { public declarations }
   public
@@ -93,6 +95,11 @@ uses
       SaveLanguage;
     {$ENDIF}
     SaveProperty;
+  end;
+
+  procedure TRenameFrm.FormShow(Sender: TObject);
+  begin
+    ToFN.SetFocus;
   end;
   
 initialization

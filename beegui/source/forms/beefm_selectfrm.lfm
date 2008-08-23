@@ -1,18 +1,14 @@
 object SelectFrm: TSelectFrm
   Left = 403
-  Height = 85
+  Height = 97
   Top = 333
   Width = 271
-  HorzScrollBar.Page = 270
-  HorzScrollBar.Range = 265
-  VertScrollBar.Page = 84
-  VertScrollBar.Range = 79
-  AutoScroll = False
+  ActiveControl = Mask
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = '(Un)Select...'
-  ClientHeight = 85
+  ClientHeight = 97
   ClientWidth = 271
   Font.Height = -11
   Font.Name = 'Default'
@@ -22,7 +18,7 @@ object SelectFrm: TSelectFrm
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     Left = 6
-    Height = 14
+    Height = 20
     Top = 6
     Width = 61
     BorderSpacing.Around = 6
@@ -36,8 +32,8 @@ object SelectFrm: TSelectFrm
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
     Left = 109
-    Height = 26
-    Top = 53
+    Height = 32
+    Top = 59
     Width = 70
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -57,8 +53,8 @@ object SelectFrm: TSelectFrm
     AnchorSideRight.Control = Mask
     AnchorSideRight.Side = asrBottom
     Left = 185
-    Height = 26
-    Top = 53
+    Height = 32
+    Top = 59
     Width = 80
     Anchors = [akTop, akRight]
     AutoSize = True
@@ -80,7 +76,7 @@ object SelectFrm: TSelectFrm
     AnchorSideTop.Side = asrBottom
     Left = 6
     Height = 21
-    Top = 26
+    Top = 32
     Width = 259
     BorderSpacing.Around = 6
     ParentShowHint = False

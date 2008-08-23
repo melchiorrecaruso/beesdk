@@ -671,7 +671,7 @@ uses
     for I := 0 to FolderFiles.Count -1 do
     begin
       Node := TArcItem(FolderFiles[I]);
-      if FileNameMatch(Node.FileName, Mask) then
+      if FileNameMatch(Node.FileName, Mask, False) then
       begin
         TListItem(Items[I]).Selected := Value;
       end;
@@ -744,6 +744,7 @@ uses
         Result := True;
       finally
         FContents.Free;
+        DeleteFile(FFileLink);
       end;
       UpdateFolders;
       UpdateFolder;

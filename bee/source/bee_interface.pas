@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
+    v0.7.9 build 0844 - 2008.08.20 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -52,7 +52,7 @@ type
     end;
     OnOverWrite: record
       Method: TThreadMethod;
-      Answer: char;
+      Answer: string;
       Data: record
         FileName: string;
         FilePath: string;

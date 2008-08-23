@@ -32,9 +32,6 @@ program BeeFm;
 {$ENDIF}
 
 uses
-  {$IFDEF UNIX}
-  cThreads,
-  {$ENDIF}
   Interfaces,
   Forms,
   // ---
