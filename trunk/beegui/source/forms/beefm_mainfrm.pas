@@ -326,6 +326,14 @@ uses
     // --- //
     LoadLanguage;
     LoadProperty;
+    // --- //
+    {$IFDEF MSWINDOWS}
+    //UpToolBar.BevelInner := bvRaised;
+    UpToolBar.BevelOuter := bvNone;
+    //DownToolBar.BevelInner := bvRaised;
+    DownToolBar.BevelOuter := bvNone;
+
+    {$ENDIF}
   end;
   
   procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
