@@ -1,11 +1,16 @@
 object MainFrm: TMainFrm
   Left = 374
-  Height = 531
+  Height = 547
   Top = 244
-  Width = 894
+  Width = 916
+  HorzScrollBar.Page = 915
+  HorzScrollBar.Range = 894
+  VertScrollBar.Page = 527
+  VertScrollBar.Range = 506
+  AutoScroll = False
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 512
-  ClientWidth = 894
+  ClientHeight = 528
+  ClientWidth = 916
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -22,9 +27,9 @@ object MainFrm: TMainFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = StatusBar
-    Height = 390
-    Top = 102
-    Width = 894
+    Height = 408
+    Top = 100
+    Width = 916
     FolderBox = FolderBox
     Anchors = [akTop, akLeft, akRight, akBottom]
     Columns = <    
@@ -90,92 +95,14 @@ object MainFrm: TMainFrm
     OnColumnClick = ColumnClick
     OnDblClick = MMenuActionsViewClick
   end
-  object DownToolBar: TPanel
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = UpToolBar
-    AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    Height = 32
-    Top = 66
-    Width = 894
-    Anchors = [akTop, akLeft, akRight]
-    AutoSize = True
-    BorderSpacing.Bottom = 4
-    ClientHeight = 32
-    ClientWidth = 894
-    Constraints.MaxHeight = 32
-    Constraints.MinHeight = 32
-    TabOrder = 1
-    object BtnUp: TSpeedButton
-      AnchorSideBottom.Side = asrBottom
-      Left = 7
-      Height = 30
-      Top = 1
-      Width = 60
-      Align = alLeft
-      BorderSpacing.Left = 6
-      BorderSpacing.Right = 6
-      Caption = 'Up'
-      Color = clBtnFace
-      Flat = True
-      Glyph.Data = {
-        E6010000424DE60100000000000036000000280000000C0000000C0000000100
-        180000000000B0010000C40E0000C40E00000000000000000000FF00FFFF00FF
-        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-        FFFF00FFFF00FFFF00FF000000000000000000000000000000000000000000FF
-        00FFFF00FFFF00FFFF00FFFF00FF000000000000000000000000000000000000
-        000000FF00FFFF00FFFF00FFFF00FFFF00FF000000000000000000FF00FFFF00
-        FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000000000000000FF
-        00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000000000
-        000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0000000000000000000000
-        00000000000000000000000000000000FF00FFFF00FFFF00FFFF00FF00000000
-        0000000000000000000000000000000000FF00FFFF00FFFF00FFFF00FFFF00FF
-        FF00FF000000000000000000000000000000FF00FFFF00FFFF00FFFF00FFFF00
-        FFFF00FFFF00FFFF00FF000000000000000000FF00FFFF00FFFF00FFFF00FFFF
-        00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FF
-        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-        FFFF00FFFF00FFFF00FF
-      }
-      NumGlyphs = 0
-      OnClick = BtnUpClick
-    end
-    object FolderBox: TArchiveFolderBox
-      AnchorSideLeft.Control = BtnUp
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = DownToolBar
-      AnchorSideRight.Control = DownToolBar
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = DownToolBar
-      AnchorSideBottom.Side = asrBottom
-      Left = 73
-      Height = 22
-      Top = 6
-      Width = 815
-      Anchors = [akTop, akLeft, akRight, akBottom]
-      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-      BorderSpacing.Around = 6
-      Color = clInactiveBorder
-      Enabled = False
-      ItemHeight = 16
-      MaxLength = 0
-      OnSelect = FolderBoxSelect
-      ReadOnly = True
-      Style = csOwnerDrawVariable
-      TabOrder = 0
-    end
-  end
   object UpToolBar: TPanel
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Owner
-    AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Height = 66
-    Width = 894
-    Anchors = [akTop, akLeft, akRight]
+    Width = 916
+    Align = alTop
     ClientHeight = 66
-    ClientWidth = 894
-    TabOrder = 2
+    ClientWidth = 916
+    TabOrder = 1
     object BtnNew: TSpeedButton
       Left = 6
       Height = 55
@@ -2594,9 +2521,80 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Height = 20
-    Top = 492
-    Width = 894
+    Top = 508
+    Width = 916
     Panels = <>
+  end
+  object DownToolBar: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = UpToolBar
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Height = 34
+    Top = 66
+    Width = 916
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = True
+    ClientHeight = 34
+    ClientWidth = 916
+    TabOrder = 3
+    object BtnUp: TSpeedButton
+      AnchorSideLeft.Control = DownToolBar
+      AnchorSideTop.Control = FolderBox
+      AnchorSideBottom.Control = FolderBox
+      AnchorSideBottom.Side = asrBottom
+      Left = 6
+      Height = 21
+      Top = 7
+      Width = 54
+      Anchors = [akTop, akLeft, akBottom]
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 6
+      Caption = 'Up'
+      Color = clBtnFace
+      Flat = True
+      Glyph.Data = {
+        E6010000424DE60100000000000036000000280000000C0000000C0000000100
+        180000000000B0010000C40E0000C40E00000000000000000000FF00FFFF00FF
+        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+        FFFF00FFFF00FFFF00FF000000000000000000000000000000000000000000FF
+        00FFFF00FFFF00FFFF00FFFF00FF000000000000000000000000000000000000
+        000000FF00FFFF00FFFF00FFFF00FFFF00FF000000000000000000FF00FFFF00
+        FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000000000000000FF
+        00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000000000
+        000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0000000000000000000000
+        00000000000000000000000000000000FF00FFFF00FFFF00FFFF00FF00000000
+        0000000000000000000000000000000000FF00FFFF00FFFF00FFFF00FFFF00FF
+        FF00FF000000000000000000000000000000FF00FFFF00FFFF00FFFF00FFFF00
+        FFFF00FFFF00FFFF00FF000000000000000000FF00FFFF00FFFF00FFFF00FFFF
+        00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FF
+        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+        FFFF00FFFF00FFFF00FF
+      }
+      NumGlyphs = 0
+    end
+    object FolderBox: TArchiveFolderBox
+      AnchorSideLeft.Control = BtnUp
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Side = asrBottom
+      Left = 66
+      Height = 21
+      Top = 7
+      Width = 843
+      Align = alRight
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
+      BorderSpacing.Around = 6
+      Color = clInactiveBorder
+      Enabled = False
+      ItemHeight = 16
+      MaxLength = 0
+      ReadOnly = True
+      Style = csOwnerDrawVariable
+      TabOrder = 0
+    end
   end
   object OpenDialog: TOpenDialog
     Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
