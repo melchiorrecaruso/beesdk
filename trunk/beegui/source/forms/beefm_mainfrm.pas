@@ -332,7 +332,6 @@ uses
     UpToolBar.BevelOuter := bvNone;
     //DownToolBar.BevelInner := bvRaised;
     DownToolBar.BevelOuter := bvNone;
-
     {$ENDIF}
   end;
   

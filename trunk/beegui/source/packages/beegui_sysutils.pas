@@ -68,7 +68,7 @@ uses
   
   { shell routines }
   
-  function ShellExec(const FileName: string; const ExecName: string): boolean;
+  function ShellExec(const FileName: string; ExecName: string): boolean;
   
   { files routines }
   
@@ -328,28 +328,28 @@ implementation
   
   { shell routines }
   
-  function ShellExec(const FileName: string; const ExecName: string): boolean;
+  function ShellExec(const FileName: string; ExecName: string): boolean;
   var
-    aExecName: string;
     aProcess: TProcess;
   begin
-    if ExecName = '' then
+    ExecName := ExpandFileName(ExecName);
+    if FileExists(ExecName) = False then
     begin
       {$IFDEF MSWINDOWS}
-      Result := ShellExecute(0, 'open', PChar(FileName), nil, nil, SW_SHOW) > 32
+        Result := ShellExecute(0, 'open', PChar(FileName), nil, nil, SW_SHOW) > 32
+      {$ELSE}
+        Result := False;
       {$ENDIF}
     end else
     begin
-      aExecName := ExpandFileName(ExecName);
-
-      Result := FileExists(aExecName);
-      if Result then
-      begin
-        aProcess := TProcess.Create(nil);
-        aProcess.CommandLine := Format(aExecName + ' %s', [FileName]);
-        aProcess.Execute;
-        aProcess.Free;
-      end;
+      aProcess := TProcess.Create(nil);
+      aProcess.CommandLine := Format(ExecName + ' %s', [FileName]);
+      aProcess.Execute;
+      if aProcess.ExitStatus = 0 then
+        Result := True
+      else
+        Result := False;
+      aProcess.Free;
     end;
   end;
   
@@ -398,7 +398,7 @@ implementation
       begin
         SrcDir := IncludeTrailingBackSlash(SrcDir);
         DstDir := IncludeTrailingBackSlash(DstDir);
-        // ---
+
         Error := SysUtils.FindFirst(SrcDir + '*', faAnyFile, T);
         while Error = 0 do
         begin
