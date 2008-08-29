@@ -1,11 +1,11 @@
 object MainFrm: TMainFrm
-  Left = 405
+  Left = 374
   Height = 531
-  Top = 183
-  Width = 878
+  Top = 244
+  Width = 894
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 512
-  ClientWidth = 878
+  ClientWidth = 894
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -24,20 +24,23 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Control = StatusBar
     Height = 390
     Top = 102
-    Width = 878
+    Width = 894
+    FolderBox = FolderBox
     Anchors = [akTop, akLeft, akRight, akBottom]
     Columns = <    
       item
         Caption = 'Name'
-        Width = 80
+        Width = 150
       end    
       item
         Alignment = taRightJustify
         Caption = 'Size'
+        Width = 60
       end    
       item
         Alignment = taRightJustify
         Caption = 'Packed'
+        Width = 60
       end    
       item
         Alignment = taRightJustify
@@ -45,7 +48,7 @@ object MainFrm: TMainFrm
       end    
       item
         Caption = 'Type'
-        Width = 70
+        Width = 100
       end    
       item
         Caption = 'Modified'
@@ -63,7 +66,7 @@ object MainFrm: TMainFrm
       item
         Alignment = taRightJustify
         Caption = 'Password'
-        Width = 40
+        Width = 60
       end    
       item
         Alignment = taRightJustify
@@ -71,12 +74,12 @@ object MainFrm: TMainFrm
       end    
       item
         Caption = 'Path'
-        Width = 60
+        Width = 100
       end    
       item
         Alignment = taRightJustify
         Caption = 'Position'
-        Width = 318
+        Width = 60
       end>
     LargeImages = LargeImages
     PopupMenu = PMenu
@@ -95,12 +98,12 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     Height = 32
     Top = 66
-    Width = 878
+    Width = 894
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Bottom = 4
     ClientHeight = 32
-    ClientWidth = 878
+    ClientWidth = 894
     Constraints.MaxHeight = 32
     Constraints.MinHeight = 32
     TabOrder = 1
@@ -135,6 +138,7 @@ object MainFrm: TMainFrm
         FFFF00FFFF00FFFF00FF
       }
       NumGlyphs = 0
+      OnClick = BtnUpClick
     end
     object FolderBox: TArchiveFolderBox
       AnchorSideLeft.Control = BtnUp
@@ -147,7 +151,7 @@ object MainFrm: TMainFrm
       Left = 73
       Height = 22
       Top = 6
-      Width = 799
+      Width = 815
       Anchors = [akTop, akLeft, akRight, akBottom]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Around = 6
@@ -155,6 +159,7 @@ object MainFrm: TMainFrm
       Enabled = False
       ItemHeight = 16
       MaxLength = 0
+      OnSelect = FolderBoxSelect
       ReadOnly = True
       Style = csOwnerDrawVariable
       TabOrder = 0
@@ -166,10 +171,10 @@ object MainFrm: TMainFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Height = 66
-    Width = 878
+    Width = 894
     Anchors = [akTop, akLeft, akRight]
     ClientHeight = 66
-    ClientWidth = 878
+    ClientWidth = 894
     TabOrder = 2
     object BtnNew: TSpeedButton
       Left = 6
@@ -2590,7 +2595,7 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Side = asrBottom
     Height = 20
     Top = 492
-    Width = 878
+    Width = 894
     Panels = <>
   end
   object OpenDialog: TOpenDialog
