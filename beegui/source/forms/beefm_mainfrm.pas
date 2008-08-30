@@ -335,6 +335,8 @@ uses
     ToolBarBevel.Visible := True;
     UpToolBar.BevelOuter := bvNone;
     DownToolBar.BevelOuter := bvNone;
+    DownToolBar.BorderSpacing.Bottom := 2;
+    ListView.BorderSpacing.Top := 4;
     {$ENDIF}
   end;
   
