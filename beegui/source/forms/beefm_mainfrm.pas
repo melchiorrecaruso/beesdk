@@ -329,6 +329,7 @@ uses
     LoadProperty;
     // --- //
     {$IFDEF MSWINDOWS}
+    ToolBarBevel.Visible := True;
     UpToolBar.BevelOuter := bvNone;
     DownToolBar.BevelOuter := bvNone;
     {$ENDIF}
