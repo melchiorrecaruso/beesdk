@@ -328,9 +328,7 @@ uses
     LoadProperty;
     // --- //
     {$IFDEF MSWINDOWS}
-    //UpToolBar.BevelInner := bvRaised;
     UpToolBar.BevelOuter := bvNone;
-    //DownToolBar.BevelInner := bvRaised;
     DownToolBar.BevelOuter := bvNone;
     {$ENDIF}
   end;
