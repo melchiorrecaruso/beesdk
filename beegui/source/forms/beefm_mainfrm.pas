@@ -55,6 +55,7 @@ type
 
   TMainFrm = class(TForm)
     ArcProcess: TArcProcess;
+    ToolBarBevel: TBevel;
     BevelFirst: TBevel;
     BevelSecond: TBevel;
     BevelThird: TBevel;
