@@ -1,16 +1,11 @@
 object MainFrm: TMainFrm
-  Left = 337
-  Height = 547
-  Top = 235
-  Width = 986
-  HorzScrollBar.Page = 985
-  HorzScrollBar.Range = 894
-  VertScrollBar.Page = 522
-  VertScrollBar.Range = 506
-  AutoScroll = False
+  Left = 396
+  Height = 503
+  Top = 145
+  Width = 759
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 523
-  ClientWidth = 986
+  ClientHeight = 484
+  ClientWidth = 759
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -21,31 +16,27 @@ object MainFrm: TMainFrm
   OnShow = FormShow
   LCLVersion = '0.9.25'
   object ListView: TArcListView
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = DownToolBar
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = StatusBar
-    Height = 396
-    Top = 109
-    Width = 986
+    Height = 360
+    Top = 104
+    Width = 759
     FolderBox = FolderBox
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Align = alClient
     Columns = <    
       item
         Caption = 'Name'
-        Width = 150
+        Width = 180
       end    
       item
         Alignment = taRightJustify
         Caption = 'Size'
-        Width = 60
+        Width = 65
       end    
       item
         Alignment = taRightJustify
         Caption = 'Packed'
-        Width = 60
+        Width = 65
       end    
       item
         Alignment = taRightJustify
@@ -57,7 +48,7 @@ object MainFrm: TMainFrm
       end    
       item
         Caption = 'Modified'
-        Width = 70
+        Width = 100
       end    
       item
         Alignment = taRightJustify
@@ -79,12 +70,12 @@ object MainFrm: TMainFrm
       end    
       item
         Caption = 'Path'
-        Width = 100
+        Width = 80
       end    
       item
         Alignment = taRightJustify
         Caption = 'Position'
-        Width = 181
+        Width = 60
       end>
     LargeImages = LargeImages
     PopupMenu = PMenu
@@ -96,15 +87,12 @@ object MainFrm: TMainFrm
     OnDblClick = MMenuActionsViewClick
   end
   object UpToolBar: TPanel
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Owner
-    AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Height = 66
-    Width = 742
-    AutoSize = True
+    Width = 759
+    Align = alTop
     ClientHeight = 66
-    ClientWidth = 742
+    ClientWidth = 759
     TabOrder = 1
     object BtnNew: TSpeedButton
       Left = 6
@@ -2523,35 +2511,32 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
-    Height = 18
-    Top = 505
-    Width = 986
+    Height = 20
+    Top = 464
+    Width = 759
+    Anchors = [akRight]
     Panels = <>
   end
   object DownToolBar: TPanel
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = UpToolBar
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Height = 43
+    Height = 38
     Top = 66
-    Width = 600
-    ClientHeight = 43
-    ClientWidth = 600
+    Width = 759
+    Align = alTop
+    AutoSize = True
+    ClientHeight = 38
+    ClientWidth = 759
     TabOrder = 3
     object BtnUp: TSpeedButton
-      AnchorSideLeft.Control = DownToolBar
-      AnchorSideTop.Control = FolderBox
-      AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
-      Left = 6
-      Height = 27
-      Top = 8
-      Width = 54
-      Anchors = [akTop, akLeft, akBottom]
-      BorderSpacing.Left = 6
-      BorderSpacing.Right = 6
+      Left = 7
+      Height = 24
+      Top = 7
+      Width = 60
+      Align = alLeft
+      BorderSpacing.Around = 6
+      Constraints.MinWidth = 60
       Caption = 'Up'
       Color = clBtnFace
       Flat = True
@@ -2581,17 +2566,17 @@ object MainFrm: TMainFrm
       AnchorSideLeft.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Left = 67
-      Height = 27
-      Top = 8
-      Width = 525
+      Left = 73
+      Height = 24
+      Top = 7
+      Width = 679
       Align = alRight
       Anchors = [akTop, akLeft, akRight, akBottom]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
-      BorderSpacing.Around = 7
+      BorderSpacing.Around = 6
       Color = clInactiveBorder
       Enabled = False
-      ItemHeight = 20
+      ItemHeight = 16
       MaxLength = 0
       ReadOnly = True
       Style = csOwnerDrawVariable
@@ -2898,17 +2883,14 @@ object MainFrm: TMainFrm
         end
         object MMenuViewDetailsCRC: TMenuItem
           Caption = 'CRC'
-          Checked = True
           OnClick = DetailsClick
         end
         object MMenuViewDetailsPath: TMenuItem
           Caption = 'Path'
-          Checked = True
           OnClick = DetailsClick
         end
         object MMenuViewDetailsPosition: TMenuItem
           Caption = 'Position'
-          Checked = True
           OnClick = DetailsClick
         end
       end
