@@ -5,11 +5,11 @@ object MainFrm: TMainFrm
   Width = 916
   HorzScrollBar.Page = 915
   HorzScrollBar.Range = 894
-  VertScrollBar.Page = 527
+  VertScrollBar.Page = 522
   VertScrollBar.Range = 506
   AutoScroll = False
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 528
+  ClientHeight = 523
   ClientWidth = 916
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
@@ -27,8 +27,8 @@ object MainFrm: TMainFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = StatusBar
-    Height = 408
-    Top = 100
+    Height = 400
+    Top = 105
     Width = 916
     FolderBox = FolderBox
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -84,7 +84,7 @@ object MainFrm: TMainFrm
       item
         Alignment = taRightJustify
         Caption = 'Position'
-        Width = 60
+        Width = 111
       end>
     LargeImages = LargeImages
     PopupMenu = PMenu
@@ -2520,8 +2520,8 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
-    Height = 20
-    Top = 508
+    Height = 18
+    Top = 505
     Width = 916
     Panels = <>
   end
@@ -2531,12 +2531,12 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Height = 34
+    Height = 39
     Top = 66
     Width = 916
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
-    ClientHeight = 34
+    ClientHeight = 39
     ClientWidth = 916
     TabOrder = 3
     object BtnUp: TSpeedButton
@@ -2545,7 +2545,7 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 6
-      Height = 21
+      Height = 25
       Top = 7
       Width = 54
       Anchors = [akTop, akLeft, akBottom]
@@ -2573,6 +2573,7 @@ object MainFrm: TMainFrm
         FFFF00FFFF00FFFF00FF
       }
       NumGlyphs = 0
+      OnClick = BtnUpClick
     end
     object FolderBox: TArchiveFolderBox
       AnchorSideLeft.Control = BtnUp
@@ -2580,7 +2581,7 @@ object MainFrm: TMainFrm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 66
-      Height = 21
+      Height = 25
       Top = 7
       Width = 843
       Align = alRight
@@ -2589,7 +2590,7 @@ object MainFrm: TMainFrm
       BorderSpacing.Around = 6
       Color = clInactiveBorder
       Enabled = False
-      ItemHeight = 16
+      ItemHeight = 20
       MaxLength = 0
       ReadOnly = True
       Style = csOwnerDrawVariable
