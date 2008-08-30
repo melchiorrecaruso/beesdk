@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 396
+  Left = 342
   Height = 503
-  Top = 145
+  Top = 210
   Width = 759
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 484
@@ -15,11 +15,17 @@ object MainFrm: TMainFrm
   OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '0.9.25'
+  object ToolBarBevel: TBevel
+    Height = 2
+    Top = 66
+    Width = 759
+    Align = alTop
+  end
   object ListView: TArcListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Height = 360
-    Top = 104
+    Height = 357
+    Top = 107
     Width = 759
     FolderBox = FolderBox
     Align = alClient
@@ -91,13 +97,15 @@ object MainFrm: TMainFrm
     Height = 66
     Width = 759
     Align = alTop
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
     ClientHeight = 66
     ClientWidth = 759
     TabOrder = 1
     object BtnNew: TSpeedButton
-      Left = 6
+      Left = 7
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -311,9 +319,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnOpen: TSpeedButton
-      Left = 71
+      Left = 72
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -527,9 +535,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnAdd: TSpeedButton
-      Left = 143
+      Left = 144
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -743,9 +751,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnExtract: TSpeedButton
-      Left = 208
+      Left = 209
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -959,9 +967,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnView: TSpeedButton
-      Left = 273
+      Left = 274
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -1175,9 +1183,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnDelete: TSpeedButton
-      Left = 338
+      Left = 339
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -1391,9 +1399,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnTest: TSpeedButton
-      Left = 410
+      Left = 411
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -1607,9 +1615,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnCheckOut: TSpeedButton
-      Left = 475
+      Left = 476
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -1823,9 +1831,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnConfig: TSpeedButton
-      Left = 547
+      Left = 548
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -2039,9 +2047,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnHelp: TSpeedButton
-      Left = 612
+      Left = 613
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -2255,9 +2263,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BtnExit: TSpeedButton
-      Left = 677
+      Left = 678
       Height = 55
-      Top = 6
+      Top = 7
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 5
@@ -2471,9 +2479,9 @@ object MainFrm: TMainFrm
       ParentShowHint = False
     end
     object BevelThird: TBevel
-      Left = 540
+      Left = 541
       Height = 55
-      Top = 6
+      Top = 7
       Width = 2
       Align = alLeft
       BorderSpacing.Around = 5
@@ -2483,9 +2491,9 @@ object MainFrm: TMainFrm
       Constraints.MinWidth = 2
     end
     object BevelFirst: TBevel
-      Left = 403
+      Left = 404
       Height = 55
-      Top = 6
+      Top = 7
       Width = 2
       Align = alLeft
       BorderSpacing.Around = 5
@@ -2495,9 +2503,9 @@ object MainFrm: TMainFrm
       Constraints.MinWidth = 2
     end
     object BevelSecond: TBevel
-      Left = 136
+      Left = 137
       Height = 55
-      Top = 6
+      Top = 7
       Width = 2
       Align = alLeft
       BorderSpacing.Around = 5
@@ -2520,19 +2528,21 @@ object MainFrm: TMainFrm
   object DownToolBar: TPanel
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Height = 38
-    Top = 66
+    Height = 39
+    Top = 68
     Width = 759
     Align = alTop
     AutoSize = True
-    ClientHeight = 38
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
+    ClientHeight = 39
     ClientWidth = 759
     TabOrder = 3
     object BtnUp: TSpeedButton
       AnchorSideBottom.Side = asrBottom
-      Left = 7
-      Height = 24
-      Top = 7
+      Left = 8
+      Height = 23
+      Top = 8
       Width = 60
       Align = alLeft
       BorderSpacing.Around = 6
@@ -2566,10 +2576,10 @@ object MainFrm: TMainFrm
       AnchorSideLeft.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Left = 73
-      Height = 24
-      Top = 7
-      Width = 679
+      Left = 74
+      Height = 22
+      Top = 8
+      Width = 677
       Align = alRight
       Anchors = [akTop, akLeft, akRight, akBottom]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
