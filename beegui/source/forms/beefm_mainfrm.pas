@@ -55,7 +55,6 @@ type
 
   TMainFrm = class(TForm)
     ArcProcess: TArcProcess;
-    ToolBarBevel: TBevel;
     BevelFirst: TBevel;
     BevelSecond: TBevel;
     BevelThird: TBevel;
@@ -71,11 +70,10 @@ type
     BtnTest: TSpeedButton;
     BtnUp: TSpeedButton;
     BtnView: TSpeedButton;
+    DownToolBar: TPanel;
     FileProcess: TFileProcess;
     FolderBox: TArchiveFolderBox;
-    DownToolBar: TPanel;
     StatusBar: TStatusBar;
-    UpToolBar: TPanel;
     ListView: TArcListView;
     LargeImages: TIconList;
     SmallImages: TIconList;
@@ -212,6 +210,9 @@ type
     BMenuConfiguration: TMenuItem;
     BMenuHelp: TMenuItem;
     BMenuExit: TMenuItem;
+    ToolBar: TPanel;
+    ToolBarBevel: TBevel;
+    UpToolBar: TPanel;
     // ---
 
     procedure ArcProcessTimer(Sender: TObject);
@@ -329,6 +330,8 @@ uses
     LoadProperty;
     // --- //
     {$IFDEF MSWINDOWS}
+    ToolBar.BevelOuter := bvLowered;
+    ToolBar.BevelInner := bvRaised;
     ToolBarBevel.Visible := True;
     UpToolBar.BevelOuter := bvNone;
     DownToolBar.BevelOuter := bvNone;
