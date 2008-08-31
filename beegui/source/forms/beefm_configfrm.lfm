@@ -6,6 +6,7 @@ object ConfigFrm: TConfigFrm
   HorzScrollBar.Page = 560
   HorzScrollBar.Range = 156
   VertScrollBar.Page = 402
+  ActiveControl = Tree
   AutoScroll = False
   Caption = 'Configuration'
   ClientHeight = 403
@@ -20,13 +21,13 @@ object ConfigFrm: TConfigFrm
     AnchorSideTop.Control = Owner
     AnchorSideBottom.Control = BtnOk
     Left = 6
-    Height = 359
+    Height = 355
     Top = 6
     Width = 150
     Anchors = [akTop, akLeft, akBottom]
     BorderSpacing.Around = 6
     Constraints.MinWidth = 150
-    DefaultItemHeight = 15
+    DefaultItemHeight = 16
     HideSelection = False
     Indent = 20
     ParentShowHint = False
@@ -37,10 +38,9 @@ object ConfigFrm: TConfigFrm
     OnChange = TreeChange
     Options = [tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoRightClickSelect, tvoRowSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
     Items.Data = {
-      F9FFFFFF0100020000000000000000000000FFFFFFFFFFFFFFFF000000000000
-      000000000000000B000000416464204F7074696F6E730000000000000000FFFF
-      FFFFFFFFFFFF000000000000000000000000000F00000045787472616374204F
-      7074696F6E73
+      F9FFFFFF0200020000000000000000000000FFFFFFFFFFFFFFFF000000000000
+      0000000B000000416464204F7074696F6E730000000000000000FFFFFFFFFFFF
+      FFFF0000000000000000000F00000045787472616374204F7074696F6E73
     }
   end
   object AddPage: TGroupBox
@@ -51,13 +51,13 @@ object ConfigFrm: TConfigFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnOk
     Left = 162
-    Height = 359
+    Height = 355
     Top = 6
     Width = 393
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     Caption = 'Add Options'
-    ClientHeight = 341
+    ClientHeight = 339
     ClientWidth = 389
     ParentShowHint = False
     TabOrder = 1
@@ -67,7 +67,7 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = AddPage
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 14
+      Height = 15
       Top = 6
       Width = 371
       Anchors = [akTop, akLeft, akRight]
@@ -86,8 +86,8 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = mOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 14
-      Top = 49
+      Height = 15
+      Top = 55
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Top = 6
@@ -103,20 +103,20 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = mOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 174
-      Top = 92
+      Height = 184
+      Top = 104
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Top = 6
       Caption = 'Options'
-      ClientHeight = 156
+      ClientHeight = 168
       ClientWidth = 367
       ParentShowHint = False
       TabOrder = 0
       object rOption: TCheckBox
         Left = 12
-        Height = 19
+        Height = 21
         Top = 6
         Width = 349
         Align = alTop
@@ -135,8 +135,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = rOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 19
-        Top = 31
+        Height = 21
+        Top = 33
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -152,8 +152,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = kOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 19
-        Top = 81
+        Height = 21
+        Top = 87
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -169,8 +169,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = sOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 19
-        Top = 56
+        Height = 21
+        Top = 60
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -186,8 +186,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = tOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 19
-        Top = 106
+        Height = 21
+        Top = 114
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -207,8 +207,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = lOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 19
-        Top = 131
+        Height = 21
+        Top = 141
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -227,14 +227,13 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = mOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 21
-      Top = 22
+      Height = 26
+      Top = 23
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
-      ItemHeight = 13
       ItemIndex = 1
       Items.Strings = (
         '0 - Store'
@@ -255,14 +254,13 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = dOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 21
-      Top = 65
+      Height = 26
+      Top = 72
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
-      ItemHeight = 13
       ItemIndex = 3
       Items.Strings = (
         'Level  0   (dictionary size  <       2 MB)'
@@ -291,13 +289,13 @@ object ConfigFrm: TConfigFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnOk
     Left = 162
-    Height = 359
+    Height = 355
     Top = 6
     Width = 393
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     Caption = 'Extract Options'
-    ClientHeight = 341
+    ClientHeight = 339
     ClientWidth = 389
     ParentShowHint = False
     TabOrder = 2
@@ -306,7 +304,7 @@ object ConfigFrm: TConfigFrm
       AnchorSideLeft.Control = Owner
       AnchorSideTop.Side = asrBottom
       Left = 12
-      Height = 14
+      Height = 15
       Top = 6
       Width = 371
       Align = alTop
@@ -326,15 +324,15 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = oOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 74
-      Top = 49
+      Height = 76
+      Top = 55
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Top = 6
       BorderSpacing.Bottom = 2
       Caption = 'Options'
-      ClientHeight = 56
+      ClientHeight = 60
       ClientWidth = 367
       ParentShowHint = False
       TabOrder = 0
@@ -345,8 +343,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = xCommand
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 19
-        Top = 31
+        Height = 21
+        Top = 33
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -359,7 +357,7 @@ object ConfigFrm: TConfigFrm
       end
       object xCommand: TCheckBox
         Left = 12
-        Height = 19
+        Height = 21
         Top = 6
         Width = 349
         Align = alTop
@@ -379,14 +377,13 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = oOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 21
-      Top = 22
+      Height = 26
+      Top = 23
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
-      ItemHeight = 13
       ItemIndex = 2
       Items.Strings = (
         'Skip pre-existing files'
@@ -406,8 +403,8 @@ object ConfigFrm: TConfigFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 485
-    Height = 26
-    Top = 371
+    Height = 30
+    Top = 367
     Width = 70
     Anchors = [akRight, akBottom]
     AutoSize = True

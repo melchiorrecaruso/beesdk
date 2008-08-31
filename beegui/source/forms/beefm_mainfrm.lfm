@@ -4,7 +4,7 @@ object MainFrm: TMainFrm
   Top = 228
   Width = 779
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 484
+  ClientHeight = 479
   ClientWidth = 779
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
@@ -18,11 +18,11 @@ object MainFrm: TMainFrm
   object ListView: TArcListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Height = 360
-    Top = 104
-    Width = 779
+    Left = 248
+    Height = 180
+    Top = 176
+    Width = 360
     FolderBox = FolderBox
-    Align = alClient
     Columns = <    
       item
         Caption = 'Name'
@@ -90,19 +90,19 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
-    Height = 20
-    Top = 464
+    Height = 18
+    Top = 461
     Width = 779
     Anchors = [akRight]
     Panels = <>
   end
   object ToolBar: TPanel
-    Height = 104
+    Height = 107
     Width = 779
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 104
+    ClientHeight = 107
     ClientWidth = 779
     TabOrder = 2
     object ToolBarBevel: TBevel
@@ -2537,12 +2537,12 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Height = 36
+      Height = 39
       Top = 68
       Width = 779
       Align = alTop
       AutoSize = True
-      ClientHeight = 36
+      ClientHeight = 39
       ClientWidth = 779
       TabOrder = 1
       object BtnUp: TSpeedButton
@@ -2551,7 +2551,7 @@ object MainFrm: TMainFrm
         AnchorSideBottom.Control = FolderBox
         AnchorSideBottom.Side = asrBottom
         Left = 6
-        Height = 22
+        Height = 25
         Top = 7
         Width = 60
         Anchors = [akTop, akLeft, akBottom]
@@ -2588,7 +2588,7 @@ object MainFrm: TMainFrm
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrBottom
         Left = 72
-        Height = 22
+        Height = 25
         Top = 7
         Width = 700
         Align = alRight
@@ -2597,7 +2597,6 @@ object MainFrm: TMainFrm
         BorderSpacing.Around = 6
         Color = clInactiveBorder
         Enabled = False
-        ItemHeight = 16
         MaxLength = 0
         OnSelect = FolderBoxSelect
         ReadOnly = True
@@ -2605,6 +2604,13 @@ object MainFrm: TMainFrm
         TabOrder = 0
       end
     end
+  end
+  object ArchiveFolderEdit1: TArchiveFolderEdit
+    Left = 248
+    Height = 24
+    Top = 144
+    Width = 232
+    IconList = SmallImages
   end
   object OpenDialog: TOpenDialog
     Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
