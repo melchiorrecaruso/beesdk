@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 321
+  Left = 573
   Height = 503
-  Top = 228
+  Top = 337
   Width = 779
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 479
@@ -18,10 +18,10 @@ object MainFrm: TMainFrm
   object ListView: TArcListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Left = 248
-    Height = 180
-    Top = 176
-    Width = 360
+    Left = 176
+    Height = 96
+    Top = 200
+    Width = 416
     FolderBox = FolderBox
     Columns = <    
       item
@@ -2604,13 +2604,6 @@ object MainFrm: TMainFrm
         TabOrder = 0
       end
     end
-  end
-  object ArchiveFolderEdit1: TArchiveFolderEdit
-    Left = 248
-    Height = 24
-    Top = 144
-    Width = 232
-    IconList = SmallImages
   end
   object OpenDialog: TOpenDialog
     Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
