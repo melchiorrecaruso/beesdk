@@ -1,11 +1,11 @@
 object MainFrm: TMainFrm
-  Left = 537
+  Left = 431
   Height = 503
-  Top = 314
-  Width = 779
+  Top = 257
+  Width = 867
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 479
-  ClientWidth = 779
+  ClientWidth = 867
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -18,10 +18,10 @@ object MainFrm: TMainFrm
   object ListView: TArcListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Left = 176
-    Height = 96
-    Top = 200
-    Width = 416
+    Left = 288
+    Height = 186
+    Top = 216
+    Width = 259
     FolderBox = FolderBox
     Columns = <    
       item
@@ -92,33 +92,33 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Side = asrBottom
     Height = 18
     Top = 461
-    Width = 779
+    Width = 867
     Anchors = [akRight]
     Panels = <>
   end
   object ToolBar: TPanel
     Height = 107
-    Width = 779
+    Width = 867
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
     ClientHeight = 107
-    ClientWidth = 779
+    ClientWidth = 867
     TabOrder = 2
     object ToolBarBevel: TBevel
       Height = 2
       Top = 66
-      Width = 779
+      Width = 867
       Align = alTop
       Visible = False
     end
     object UpToolBar: TPanel
       AnchorSideRight.Side = asrBottom
       Height = 66
-      Width = 779
+      Width = 867
       Align = alTop
       ClientHeight = 66
-      ClientWidth = 779
+      ClientWidth = 867
       TabOrder = 0
       object BtnNew: TSpeedButton
         Left = 6
@@ -2539,11 +2539,11 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Side = asrBottom
       Height = 39
       Top = 68
-      Width = 779
+      Width = 867
       Align = alTop
       AutoSize = True
       ClientHeight = 39
-      ClientWidth = 779
+      ClientWidth = 867
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideLeft.Control = DownToolBar
@@ -2558,48 +2558,25 @@ object MainFrm: TMainFrm
         BorderSpacing.Left = 6
         BorderSpacing.Right = 6
         Constraints.MinWidth = 60
-        Caption = 'Up'
         Color = clBtnFace
         Flat = True
-        Glyph.Data = {
-          E6010000424DE60100000000000036000000280000000C0000000C0000000100
-          180000000000B0010000C40E0000C40E00000000000000000000FF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FF000000000000000000000000000000000000000000FF
-          00FFFF00FFFF00FFFF00FFFF00FF000000000000000000000000000000000000
-          000000FF00FFFF00FFFF00FFFF00FFFF00FF000000000000000000FF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000000000000000FF
-          00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000000000
-          000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0000000000000000000000
-          00000000000000000000000000000000FF00FFFF00FFFF00FFFF00FF00000000
-          0000000000000000000000000000000000FF00FFFF00FFFF00FFFF00FFFF00FF
-          FF00FF000000000000000000000000000000FF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FF000000000000000000FF00FFFF00FFFF00FFFF00FFFF
-          00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FF
-        }
         NumGlyphs = 0
         OnClick = BtnUpClick
       end
       object FolderBox: TArchiveFolderBox
-        AnchorSideLeft.Control = BtnUp
         AnchorSideLeft.Side = asrBottom
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrBottom
-        Left = 72
+        Left = 260
         Height = 25
         Top = 7
-        Width = 700
+        Width = 600
         Align = alRight
-        Anchors = [akTop, akLeft, akRight, akBottom]
-        AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
         BorderSpacing.Around = 6
         Color = clInactiveBorder
+        DropDownCount = 10
         Enabled = False
-        MaxLength = 0
         OnSelect = FolderBoxSelect
-        ReadOnly = True
         Style = csOwnerDrawVariable
         TabOrder = 0
       end
