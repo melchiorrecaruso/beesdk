@@ -48,13 +48,12 @@ uses
   BeeGui_IconList,
   BeeGui_ArchiveFolderBox,
   BeeGui_ArchiveListViewMgr,
-  BeeGui_Process, process;
+  BeeGui_Process;
 
 type
   { TMainFrm }
 
   TMainFrm = class(TForm)
-    ArchiveFolderEdit1: TArchiveFolderEdit;
     ArcProcess: TArcProcess;
     BevelFirst: TBevel;
     BevelSecond: TBevel;

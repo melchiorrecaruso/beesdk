@@ -32,10 +32,12 @@ interface
 
 uses
   Classes,
+  Controls,
   SysUtils,
   StdCtrls,
   Graphics,
   Dialogs,
+  ExtCtrls,
   BeeGui_IconList;
   
 type
@@ -53,9 +55,9 @@ type
   TArchiveFolderEdit = class(TCustomEdit)
   private
     FIconList: TIconList;
-    procedure SetIconList(Value: TIconList);
   protected
-    procedure DoExit; override;
+    procedure Change; override;
+    procedure SetIconList(Value: TIconList);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -117,7 +119,7 @@ implementation
     inherited Destroy;
   end;
 
-  procedure TArchiveFolderEdit.DoExit;
+  procedure TArchiveFolderEdit.Change;
   var
     I: integer;
     B: TBitmap;
@@ -127,23 +129,21 @@ implementation
         I := FIconList.FileIcon('.@folderclose' ,faDirectory);
 
         B := TBitmap.Create;
+        B.Height := 16;
+        B.Width := 16;
+
         FIconList.GetBitmap(I, B);
 
-        Self.Brush.Bitmap := B;
+        if Assigned(Brush.Bitmap) = False then
+        begin
+          Brush.Bitmap := TBitmap.Create;
+        end;
 
+        Brush.Bitmap.Canvas.Draw(Left, Top, B);
 
-        //Brush.Bitmap := TBitmap.Create;
-
-
-        //Brush.Bitmap.Canvas.FillRect(ReadBounds.Left, ReadBounds.Top, ReadBounds.Right, ReadBounds.Bottom);
-        //Brush.Bitmap.Canvas.Draw(ReadBounds.Left + 1, ReadBounds.Top, B);
-
-
-
-
+        B.Free;
     end;
-
-    inherited DoExit;
+    inherited Changed;
   end;
 
   procedure TArchiveFolderEdit.SetIconList(Value: TIconList);
