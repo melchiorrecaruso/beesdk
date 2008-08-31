@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -68,8 +68,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms/beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="63" Y="34"/>
-        <TopLine Value="14"/>
+        <CursorPos X="22" Y="50"/>
+        <TopLine Value="27"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -1449,9 +1449,11 @@
       <Unit194>
         <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="32" Y="486"/>
-        <TopLine Value="21"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="131"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit194>
       <Unit195>
@@ -1636,9 +1638,9 @@
       <Unit220>
         <Filename Value="packages/beegui_archivefolderbox.pas"/>
         <UnitName Value="BeeGui_ArchiveFolderBox"/>
-        <CursorPos X="6" Y="127"/>
-        <TopLine Value="111"/>
-        <EditorIndex Value="2"/>
+        <CursorPos X="13" Y="14"/>
+        <TopLine Value="40"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="36"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -2437,7 +2439,7 @@
         <UsageCount Value="10"/>
       </Unit337>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="packages/beegui_archivefolderbox.pas"/>
         <Caret Line="135" Column="24" TopLine="115"/>
@@ -2554,6 +2556,10 @@
         <Filename Value="forms/beefm_mainfrm.pas"/>
         <Caret Line="74" Column="23" TopLine="54"/>
       </Position29>
+      <Position30>
+        <Filename Value="forms/beefm_mainfrm.pas"/>
+        <Caret Line="50" Column="22" TopLine="27"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
