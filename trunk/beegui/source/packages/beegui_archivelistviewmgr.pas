@@ -532,8 +532,7 @@ uses
             end else
               Image := nil;
           end;
-          FFolderBox.ItemIndex := FFolderBox.Items.AddObject
-            (FFolderBoxSign + FFolder, Image);
+          FFolderBox.ItemIndex := FFolderBox.Items.AddObject(FFolderBoxSign + FFolder, Image);
         end else
           FFolderBox.ItemIndex := J;
       end;

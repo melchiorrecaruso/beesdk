@@ -34,7 +34,9 @@ uses
   Classes,
   SysUtils,
   StdCtrls,
-  Graphics;
+  Graphics,
+  Dialogs,
+  BeeGui_IconList;
   
 type
 
@@ -47,7 +49,20 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
-  
+
+  TArchiveFolderEdit = class(TCustomEdit)
+  private
+    FIconList: TIconList;
+    procedure SetIconList(Value: TIconList);
+  protected
+    procedure DoExit; override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property IconList: TIconList read FIconList write SetIconList default nil;
+  end;
+
  { Register }
 
   procedure Register;
@@ -91,12 +106,57 @@ implementation
     end;
     Canvas.TextOut(ARect.Left + OffSet, ARect.Top, Items[Index]);
   end;
+
+  constructor TArchiveFolderEdit.Create(AOwner: TComponent);
+  begin
+    inherited Create(AOwner);
+  end;
+
+  destructor TArchiveFolderEdit.Destroy;
+  begin
+    inherited Destroy;
+  end;
+
+  procedure TArchiveFolderEdit.DoExit;
+  var
+    I: integer;
+    B: TBitmap;
+  begin
+     if Assigned(FIconList) then
+      begin
+        I := FIconList.FileIcon('.@folderclose' ,faDirectory);
+
+        B := TBitmap.Create;
+        FIconList.GetBitmap(I, B);
+
+        Self.Brush.Bitmap := B;
+
+
+        //Brush.Bitmap := TBitmap.Create;
+
+
+        //Brush.Bitmap.Canvas.FillRect(ReadBounds.Left, ReadBounds.Top, ReadBounds.Right, ReadBounds.Bottom);
+        //Brush.Bitmap.Canvas.Draw(ReadBounds.Left + 1, ReadBounds.Top, B);
+
+
+
+
+    end;
+
+    inherited DoExit;
+  end;
+
+  procedure TArchiveFolderEdit.SetIconList(Value: TIconList);
+  begin
+    FIconList := Value;
+  end;
   
   { Register }
 
   procedure Register;
   begin
     RegisterComponents('BeePackage', [TArchiveFolderBox]);
+    RegisterComponents('BeePackage', [TArchiveFolderEdit]);
   end;
   
 end.

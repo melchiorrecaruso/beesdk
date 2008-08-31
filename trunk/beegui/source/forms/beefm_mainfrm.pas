@@ -54,6 +54,7 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
+    ArchiveFolderEdit1: TArchiveFolderEdit;
     ArcProcess: TArcProcess;
     BevelFirst: TBevel;
     BevelSecond: TBevel;
