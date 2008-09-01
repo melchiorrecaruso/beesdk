@@ -73,9 +73,6 @@ type
     DownToolBar: TPanel;
     FileProcess: TFileProcess;
     FolderBox: TArchiveFolderBox;
-    BtnBack: TSpeedButton;
-    SpeedButton1: TSpeedButton;
-    SpeedButton2: TSpeedButton;
     StatusBar: TStatusBar;
     ListView: TArcListView;
     LargeImages: TIconList;
