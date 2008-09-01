@@ -55,6 +55,7 @@ type
 
   TMainFrm = class(TForm)
     ArcProcess: TArcProcess;
+    DownToolBarBevel: TBevel;
     BevelFirst: TBevel;
     BevelSecond: TBevel;
     BevelThird: TBevel;
@@ -68,11 +69,11 @@ type
     BtnNew: TSpeedButton;
     BtnOpen: TSpeedButton;
     BtnTest: TSpeedButton;
-    BtnUp: TSpeedButton;
     BtnView: TSpeedButton;
     DownToolBar: TPanel;
     FileProcess: TFileProcess;
     FolderBox: TArchiveFolderBox;
+    BtnUp: TSpeedButton;
     StatusBar: TStatusBar;
     ListView: TArcListView;
     LargeImages: TIconList;
