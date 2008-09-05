@@ -85,7 +85,6 @@ implementation
       begin
         TBitmap(Items.Objects[I]).FreeImage;
       end;
-
     inherited Destroy;
   end;
   
