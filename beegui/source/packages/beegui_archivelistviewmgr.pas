@@ -450,9 +450,9 @@ uses
     FFolderBox := Value;
     if Assigned(FFolderBox) then
     begin
-      FFolderBox.Enabled := False;
-      FFolderBox.Color := clInactiveBorder;
-      FFolderBox.Style := csOwnerDrawVariable;
+      //FFolderBox.Enabled := False;
+      //FFolderBox.Color := clInactiveBorder;
+      //FFolderBox.Style := csOwnerDrawVariable;
     end;
   end;
 
@@ -582,9 +582,9 @@ uses
     FFolderBoxSign := '';
     if Assigned(FFolderBox) then
     begin
-      FFolderBox.Color := clInactiveBorder;
-      FFolderBox.Enabled := False;
-      FFolderBox.Clear;
+      //FFolderBox.Color := clInactiveBorder;
+      //FFolderBox.Enabled := False;
+      //FFolderBox.Clear;
     end;
     Color := clInactiveBorder;
     Enabled := False;
@@ -750,8 +750,8 @@ uses
       
       if Assigned(FFolderBox) then
       begin
-        FFolderBox.Color := clWindow;
-        FFolderBox.Enabled := True;
+        //FFolderBox.Color := clWindow;
+        //FFolderBox.Enabled := True;
       end;
       Color := clWindow;
       Enabled := True;
