@@ -54,7 +54,6 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
-    FolderBox: TArchiveFolderBox;
     ArcProcess: TArcProcess;
     DownToolBarBevel: TBevel;
     BevelFirst: TBevel;
@@ -483,7 +482,7 @@ uses
   
   procedure TMainFrm.FolderBoxSelect(Sender: TObject);
   begin
-    ListView.Folder := FolderBox.Text;
+    // ListView.Folder := ArchiveFolderBox1.Text;
   end;
   
   procedure TMainFrm.BtnUpClick(Sender: TObject);
