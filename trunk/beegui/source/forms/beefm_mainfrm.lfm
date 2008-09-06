@@ -2602,7 +2602,6 @@ object MainFrm: TMainFrm
         DropDownCount = 10
         Enabled = False
         OnSelect = FolderBoxSelect
-        Style = csOwnerDrawVariable
       end
     end
   end

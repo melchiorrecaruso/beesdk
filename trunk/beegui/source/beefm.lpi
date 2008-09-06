@@ -1638,7 +1638,7 @@
       <Unit220>
         <Filename Value="packages/beegui_archivefolderbox.pas"/>
         <UnitName Value="BeeGui_ArchiveFolderBox"/>
-        <CursorPos X="7" Y="111"/>
+        <CursorPos X="5" Y="111"/>
         <TopLine Value="85"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="37"/>
