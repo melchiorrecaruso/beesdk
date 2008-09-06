@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 431
+  Left = 389
   Height = 503
-  Top = 257
+  Top = 250
   Width = 881
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 479
@@ -106,7 +106,7 @@ object MainFrm: TMainFrm
     TabOrder = 2
     object ToolBarBevel: TBevel
       Height = 2
-      Top = 104
+      Top = 105
       Width = 881
       Align = alTop
       Visible = False
@@ -2536,18 +2536,18 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Height = 38
+      Height = 39
       Top = 66
       Width = 881
       Align = alTop
       AutoSize = True
-      ClientHeight = 38
+      ClientHeight = 39
       ClientWidth = 881
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideBottom.Side = asrBottom
         Left = 7
-        Height = 24
+        Height = 25
         Top = 7
         Width = 123
         Align = alLeft
@@ -2580,24 +2580,13 @@ object MainFrm: TMainFrm
       end
       object DownToolBarBevel: TBevel
         Left = 136
-        Height = 24
+        Height = 25
         Top = 7
         Width = 2
         Align = alLeft
         BorderSpacing.Around = 6
         Constraints.MaxWidth = 2
         Constraints.MinWidth = 2
-      end
-      object FolderBox: TArchiveFolderBox
-        AnchorSideLeft.Control = DownToolBarBevel
-        Left = 142
-        Height = 24
-        Top = 7
-        Width = 732
-        Align = alRight
-        Anchors = [akTop, akLeft, akRight, akBottom]
-        BorderSpacing.Around = 6
-        TabOrder = 0
       end
     end
   end

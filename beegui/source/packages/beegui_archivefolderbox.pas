@@ -52,19 +52,6 @@ type
     destructor Destroy; override;
   end;
 
-  TArchiveFolderEdit = class(TCustomEdit)
-  private
-    FIconList: TIconList;
-  protected
-    procedure Change; override;
-    procedure SetIconList(Value: TIconList);
-  public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
-  published
-    property IconList: TIconList read FIconList write SetIconList default nil;
-  end;
-
  { Register }
 
   procedure Register;
@@ -80,11 +67,11 @@ implementation
   var
     I: integer;
   begin
-    for I := Items.Count -1 downto 0 do
-      if Assigned(Items.Objects[I]) then
-      begin
-        TBitmap(Items.Objects[I]).FreeImage;
-      end;
+    //for I := Items.Count -1 downto 0 do
+    //  if Assigned(Items.Objects[I]) then
+    //  begin
+    //    TBitmap(Items.Objects[I]).FreeImage;
+    //  end;
     inherited Destroy;
   end;
   
@@ -107,55 +94,12 @@ implementation
     end;
     Canvas.TextOut(ARect.Left + OffSet, ARect.Top, Items[Index]);
   end;
-
-  constructor TArchiveFolderEdit.Create(AOwner: TComponent);
-  begin
-    inherited Create(AOwner);
-  end;
-
-  destructor TArchiveFolderEdit.Destroy;
-  begin
-    inherited Destroy;
-  end;
-
-  procedure TArchiveFolderEdit.Change;
-  var
-    I: integer;
-    B: TBitmap;
-  begin
-     if Assigned(FIconList) then
-      begin
-        I := FIconList.FileIcon('.@folderclose' ,faDirectory);
-
-        B := TBitmap.Create;
-        B.Height := 16;
-        B.Width := 16;
-
-        FIconList.GetBitmap(I, B);
-
-        if Assigned(Brush.Bitmap) = False then
-        begin
-          Brush.Bitmap := TBitmap.Create;
-        end;
-
-        Brush.Bitmap.Canvas.Draw(Left, Top, B);
-
-        B.Free;
-    end;
-    inherited Changed;
-  end;
-
-  procedure TArchiveFolderEdit.SetIconList(Value: TIconList);
-  begin
-    FIconList := Value;
-  end;
   
   { Register }
 
   procedure Register;
   begin
     RegisterComponents('BeePackage', [TArchiveFolderBox]);
-    RegisterComponents('BeePackage', [TArchiveFolderEdit]);
   end;
   
 end.
