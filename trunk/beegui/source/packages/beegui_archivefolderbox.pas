@@ -44,12 +44,75 @@ type
 
   { TArchiveFolderBox }
 
-  TArchiveFolderBox = class(TComboBox)
+  TArchiveFolderBox = class(TCustomComboBox)
   protected
     procedure DrawItem(Index: Integer; ARect: TRect; State: TOwnerDrawState); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+  published
+    property Align;
+    property Anchors;
+    //property ArrowKeysTraverseList;
+    //property AutoComplete;
+    //property AutoCompleteText;
+    //property AutoDropDown;
+    //property AutoSelect;
+    property AutoSize;// Note: windows has a fixed height in some styles
+    //property BidiMode;
+    property BorderSpacing;
+    //property CharCase;
+    //property Color;
+    //property Ctl3D;
+    property Constraints;
+    //property DragCursor;
+    //property DragMode;
+    property DropDownCount;
+    property Enabled;
+    //property Font;
+    //property ItemHeight;
+    //property ItemIndex;
+    //property Items;
+    //property ItemWidth;
+    //property MaxLength;
+    //property OnChange;
+    //property OnChangeBounds;
+    //property OnClick;
+    //property OnCloseUp;
+    //property OnContextPopup;
+    //property OnDblClick;
+    //property OnDragDrop;
+    //property OnDragOver;
+    //property OnDrawItem;
+    //property OnEndDrag;
+    //property OnDropDown;
+    //property OnEditingDone;
+    //property OnEnter;
+    //property OnExit;
+    //property OnGetItems;
+    //property OnKeyDown;
+    //property OnKeyPress;
+    //property OnKeyUp;
+    //property OnMeasureItem;
+    //property OnMouseDown;
+    //property OnMouseMove;
+    //property OnMouseUp;
+    //property OnStartDrag;
+    property OnSelect;
+    //property ParentBidiMode;
+    //property ParentColor;
+    //property ParentCtl3D;
+    //property ParentFont;
+    //property ParentShowHint;
+    //property PopupMenu;
+    property ReadOnly;
+    //property ShowHint;
+    //property Sorted;
+    //property Style;
+    //property TabOrder;
+    //property TabStop;
+    property Text;
+    property Visible;
   end;
 
  { Register }

@@ -43,6 +43,7 @@ uses
   ComCtrls,
   LResources,
   // ---
+  BeeGui_ArchiveFolderBox,
   BeeGui_IconList;
 
 type
@@ -121,7 +122,7 @@ type
     FFolderFiles: TList;
     FFolder: string;
     // ---
-    FFolderBox: TComboBox;
+    FFolderBox: TArchiveFolderBox;
     FFolderBoxSign: string;
     // ---
     FSimpleList: boolean;
@@ -134,7 +135,7 @@ type
     procedure UpdateFolder;
     // ---
     procedure SetFolder(Value: string);
-    procedure SetFolderBox(Value: TComboBox);
+    procedure SetFolderBox(Value: TArchiveFolderBox);
     procedure SetSortDir(Value: boolean);
     procedure SetSortCol(Value: TArcListViewColumn);
     procedure SetSimpleList(Value: boolean);
@@ -160,7 +161,7 @@ type
     property Files: TArcList read FFiles write FFiles default nil;
     property FolderFiles: TList read FFolderFiles write FFolderFiles default nil;
     property Folder: string read FFolder write SetFolder;
-    property FolderBox: TComboBox read FFolderBox write SetFolderBox default nil;
+    property FolderBox: TArchiveFolderBox read FFolderBox write SetFolderBox default nil;
     property SortCol: TArcListViewColumn read FSortCol write SetSortCol default alvcName;
     property SimpleList: boolean read FSimpleList write SetSimpleList default False;
   end;
@@ -445,13 +446,13 @@ uses
     end;
   end;
 
-  procedure TCustomArcListView.SetFolderBox(Value: TComboBox);
+  procedure TCustomArcListView.SetFolderBox(Value: TArchiveFolderBox);
   begin
     FFolderBox := Value;
     if Assigned(FFolderBox) then
     begin
-      //FFolderBox.Enabled := False;
-      //FFolderBox.Color := clInactiveBorder;
+      FFolderBox.Enabled := False;
+      FFolderBox.Color := clInactiveBorder;
       //FFolderBox.Style := csOwnerDrawVariable;
     end;
   end;
@@ -582,9 +583,9 @@ uses
     FFolderBoxSign := '';
     if Assigned(FFolderBox) then
     begin
-      //FFolderBox.Color := clInactiveBorder;
-      //FFolderBox.Enabled := False;
-      //FFolderBox.Clear;
+      FFolderBox.Color := clInactiveBorder;
+      FFolderBox.Enabled := False;
+      FFolderBox.Clear;
     end;
     Color := clInactiveBorder;
     Enabled := False;
@@ -750,8 +751,8 @@ uses
       
       if Assigned(FFolderBox) then
       begin
-        //FFolderBox.Color := clWindow;
-        //FFolderBox.Enabled := True;
+        FFolderBox.Color := clWindow;
+        FFolderBox.Enabled := True;
       end;
       Color := clWindow;
       Enabled := True;
