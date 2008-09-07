@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="4"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -69,7 +69,7 @@
         <ResourceFilename Value="forms/beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="5" Y="486"/>
-        <TopLine Value="465"/>
+        <TopLine Value="484"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -1340,7 +1340,9 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="5" Y="105"/>
         <TopLine Value="73"/>
-        <UsageCount Value="137"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="138"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit182>
       <Unit183>
@@ -1390,7 +1392,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="20" Y="93"/>
         <TopLine Value="63"/>
-        <UsageCount Value="78"/>
+        <UsageCount Value="79"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit187>
       <Unit188>
@@ -1450,7 +1452,7 @@
         <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
         <CursorPos X="9" Y="753"/>
-        <TopLine Value="747"/>
+        <TopLine Value="735"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="74"/>
         <Loaded Value="True"/>
@@ -1549,7 +1551,7 @@
         <UnitName Value="BeeFM_PropertyFrm"/>
         <CursorPos X="14" Y="166"/>
         <TopLine Value="178"/>
-        <UsageCount Value="115"/>
+        <UsageCount Value="116"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit206>
       <Unit207>
@@ -1638,8 +1640,8 @@
       <Unit220>
         <Filename Value="packages/beegui_archivefolderbox.pas"/>
         <UnitName Value="BeeGui_ArchiveFolderBox"/>
-        <CursorPos X="5" Y="111"/>
-        <TopLine Value="85"/>
+        <CursorPos X="41" Y="47"/>
+        <TopLine Value="37"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="37"/>
         <Loaded Value="True"/>
@@ -1775,7 +1777,7 @@
         <IsPartOfProject Value="True"/>
         <CursorPos X="10" Y="4"/>
         <TopLine Value="1"/>
-        <UsageCount Value="146"/>
+        <UsageCount Value="147"/>
         <SyntaxHighlighter Value="None"/>
       </Unit239>
       <Unit240>
@@ -1857,7 +1859,7 @@
         <UnitName Value="BeeFM_ViewFrm"/>
         <CursorPos X="18" Y="89"/>
         <TopLine Value="79"/>
-        <UsageCount Value="86"/>
+        <UsageCount Value="87"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit250>
       <Unit251>
@@ -2018,7 +2020,7 @@
         <UnitName Value="BeeFm_SelectFrm"/>
         <CursorPos X="14" Y="70"/>
         <TopLine Value="43"/>
-        <UsageCount Value="113"/>
+        <UsageCount Value="114"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit272>
       <Unit273>
@@ -2209,7 +2211,7 @@
         <UnitName Value="BeeGui_Consts"/>
         <CursorPos X="3" Y="31"/>
         <TopLine Value="1"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="77"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit302>
       <Unit303>
@@ -2434,130 +2436,68 @@
       <Unit337>
         <Filename Value="../../../../usr/lib/lazarus/lcl/stdctrls.pp"/>
         <UnitName Value="StdCtrls"/>
-        <CursorPos X="1" Y="394"/>
-        <TopLine Value="385"/>
-        <EditorIndex Value="4"/>
+        <CursorPos X="14" Y="273"/>
+        <TopLine Value="349"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit337>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="14" HistoryIndex="13">
       <Position1>
         <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="3" Column="95" TopLine="1"/>
+        <Caret Line="608" Column="48" TopLine="588"/>
       </Position1>
       <Position2>
         <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="125" Column="15" TopLine="105"/>
+        <Caret Line="693" Column="17" TopLine="673"/>
       </Position2>
       <Position3>
         <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="126" Column="15" TopLine="106"/>
+        <Caret Line="752" Column="29" TopLine="732"/>
       </Position3>
       <Position4>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="164" Column="58" TopLine="144"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="47" Column="39" TopLine="25"/>
       </Position4>
       <Position5>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="454" Column="7" TopLine="431"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="50" Column="58" TopLine="25"/>
       </Position5>
       <Position6>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="456" Column="19" TopLine="436"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="47" Column="36" TopLine="30"/>
       </Position6>
       <Position7>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="508" Column="56" TopLine="488"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="47" Column="36" TopLine="30"/>
       </Position7>
       <Position8>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="511" Column="33" TopLine="491"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="50" Column="49" TopLine="30"/>
       </Position8>
       <Position9>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="513" Column="66" TopLine="493"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="49" Column="18" TopLine="36"/>
       </Position9>
       <Position10>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="524" Column="26" TopLine="504"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="50" Column="58" TopLine="36"/>
       </Position10>
       <Position11>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="536" Column="72" TopLine="516"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="165" Column="7" TopLine="132"/>
       </Position11>
       <Position12>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="538" Column="21" TopLine="518"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="49" Column="88" TopLine="30"/>
       </Position12>
       <Position13>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="455" Column="17" TopLine="435"/>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="147" Column="1" TopLine="127"/>
       </Position13>
       <Position14>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="456" Column="19" TopLine="436"/>
+        <Filename Value="forms/beefm_mainfrm.pas"/>
+        <Caret Line="486" Column="39" TopLine="484"/>
       </Position14>
-      <Position15>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="508" Column="56" TopLine="488"/>
-      </Position15>
-      <Position16>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="511" Column="33" TopLine="491"/>
-      </Position16>
-      <Position17>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="513" Column="66" TopLine="493"/>
-      </Position17>
-      <Position18>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="524" Column="26" TopLine="504"/>
-      </Position18>
-      <Position19>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="536" Column="72" TopLine="516"/>
-      </Position19>
-      <Position20>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="538" Column="21" TopLine="518"/>
-      </Position20>
-      <Position21>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="555" Column="29" TopLine="535"/>
-      </Position21>
-      <Position22>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="573" Column="27" TopLine="553"/>
-      </Position22>
-      <Position23>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="583" Column="15" TopLine="563"/>
-      </Position23>
-      <Position24>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="584" Column="27" TopLine="564"/>
-      </Position24>
-      <Position25>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="588" Column="17" TopLine="568"/>
-      </Position25>
-      <Position26>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="606" Column="30" TopLine="586"/>
-      </Position26>
-      <Position27>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="608" Column="48" TopLine="588"/>
-      </Position27>
-      <Position28>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="693" Column="17" TopLine="673"/>
-      </Position28>
-      <Position29>
-        <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
-        <Caret Line="752" Column="29" TopLine="732"/>
-      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

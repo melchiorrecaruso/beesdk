@@ -36,15 +36,15 @@ uses
   SysUtils,
   StdCtrls,
   Graphics,
-  Dialogs,
-  ExtCtrls,
-  BeeGui_IconList;
+  ExtCtrls;
   
 type
 
   { TArchiveFolderBox }
 
   TArchiveFolderBox = class(TCustomComboBox)
+  private
+    FArchiveListView : TArchiveListView;
   protected
     procedure DrawItem(Index: Integer; ARect: TRect; State: TOwnerDrawState); override;
   public
@@ -144,18 +144,21 @@ implementation
     Offset: Integer;
   begin
     inherited DrawItem(Index, ARect, State);
-    Offset := 1;
-    with Canvas do
+    if Assigned(Items.Objects[Index]) and (Items.Objects[Index].ClassType = TBitmap) then
     begin
-      FillRect(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom);
-      Bitmap := TBitmap(Items.Objects[Index]);
-      if Assigned(Bitmap) then
+      Offset := 1;
+      with Canvas do
       begin
-        Canvas.Draw(ARect.Left + OffSet, ARect.Top, Bitmap);
-        Offset := Bitmap.Width + 3;
+        FillRect(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom);
+        Bitmap := TBitmap(Items.Objects[Index]);
+        if Assigned(Bitmap) then
+        begin
+          Canvas.Draw(ARect.Left + OffSet, ARect.Top, Bitmap);
+          Offset := Bitmap.Width + 3;
+        end;
       end;
+      Canvas.TextOut(ARect.Left + OffSet, ARect.Top, Items[Index]);
     end;
-    Canvas.TextOut(ARect.Left + OffSet, ARect.Top, Items[Index]);
   end;
   
   { Register }
