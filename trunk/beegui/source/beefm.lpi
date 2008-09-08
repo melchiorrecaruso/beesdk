@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="4"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -1338,9 +1338,9 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms/beegui_aboutfrm.lrs"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="5" Y="105"/>
+        <CursorPos X="11" Y="74"/>
         <TopLine Value="73"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="138"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -1480,9 +1480,11 @@
       <Unit198>
         <Filename Value="packages/beegui_process.pas"/>
         <UnitName Value="BeeGui_Process"/>
-        <CursorPos X="1" Y="34"/>
-        <TopLine Value="32"/>
+        <CursorPos X="7" Y="63"/>
+        <TopLine Value="72"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="77"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit198>
       <Unit199>
@@ -1640,8 +1642,8 @@
       <Unit220>
         <Filename Value="packages/beegui_archivefolderbox.pas"/>
         <UnitName Value="BeeGui_ArchiveFolderBox"/>
-        <CursorPos X="41" Y="47"/>
-        <TopLine Value="37"/>
+        <CursorPos X="10" Y="46"/>
+        <TopLine Value="27"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="37"/>
         <Loaded Value="True"/>
@@ -2436,12 +2438,14 @@
       <Unit337>
         <Filename Value="../../../../usr/lib/lazarus/lcl/stdctrls.pp"/>
         <UnitName Value="StdCtrls"/>
-        <CursorPos X="14" Y="273"/>
-        <TopLine Value="349"/>
+        <CursorPos X="3" Y="252"/>
+        <TopLine Value="328"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit337>
     </Units>
-    <JumpHistory Count="14" HistoryIndex="13">
+    <JumpHistory Count="15" HistoryIndex="14">
       <Position1>
         <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
         <Caret Line="608" Column="48" TopLine="588"/>
@@ -2498,6 +2502,10 @@
         <Filename Value="forms/beefm_mainfrm.pas"/>
         <Caret Line="486" Column="39" TopLine="484"/>
       </Position14>
+      <Position15>
+        <Filename Value="packages/beegui_archivefolderbox.pas"/>
+        <Caret Line="45" Column="30" TopLine="40"/>
+      </Position15>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
