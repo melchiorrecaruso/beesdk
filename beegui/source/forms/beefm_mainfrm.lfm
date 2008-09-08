@@ -2599,9 +2599,12 @@ object MainFrm: TMainFrm
         Align = alRight
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 6
+        Color = clInactiveBorder
         DropDownCount = 10
         Enabled = False
         OnSelect = FolderBoxSelect
+        Style = csOwnerDrawFixed
+        TabOrder = 0
       end
     end
   end
