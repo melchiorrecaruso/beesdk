@@ -8,7 +8,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeFM"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="4"/>
     </General>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
@@ -49,7 +49,7 @@
         <MinVersion Major="1" Valid="True"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="338">
+    <Units Count="340">
       <Unit0>
         <Filename Value="beefm.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1317,9 +1317,11 @@
       <Unit180>
         <Filename Value="packages/beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="14" Y="148"/>
-        <TopLine Value="137"/>
+        <CursorPos X="41" Y="173"/>
+        <TopLine Value="149"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="51"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit180>
       <Unit181>
@@ -1340,9 +1342,7 @@
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="11" Y="74"/>
         <TopLine Value="73"/>
-        <EditorIndex Value="5"/>
         <UsageCount Value="138"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit182>
       <Unit183>
@@ -1451,8 +1451,8 @@
       <Unit194>
         <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="9" Y="753"/>
-        <TopLine Value="735"/>
+        <CursorPos X="12" Y="753"/>
+        <TopLine Value="723"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="74"/>
         <Loaded Value="True"/>
@@ -1482,9 +1482,7 @@
         <UnitName Value="BeeGui_Process"/>
         <CursorPos X="7" Y="63"/>
         <TopLine Value="72"/>
-        <EditorIndex Value="6"/>
         <UsageCount Value="77"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit198>
       <Unit199>
@@ -1642,8 +1640,8 @@
       <Unit220>
         <Filename Value="packages/beegui_archivefolderbox.pas"/>
         <UnitName Value="BeeGui_ArchiveFolderBox"/>
-        <CursorPos X="10" Y="46"/>
-        <TopLine Value="27"/>
+        <CursorPos X="8" Y="43"/>
+        <TopLine Value="44"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="37"/>
         <Loaded Value="True"/>
@@ -2440,12 +2438,24 @@
         <UnitName Value="StdCtrls"/>
         <CursorPos X="3" Y="252"/>
         <TopLine Value="328"/>
-        <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit337>
+      <Unit338>
+        <Filename Value="../../../../usr/lib/lazarus/lcl/graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <CursorPos X="20" Y="50"/>
+        <TopLine Value="30"/>
+        <UsageCount Value="10"/>
+      </Unit338>
+      <Unit339>
+        <Filename Value="../../../../usr/lib/lazarus/lcl/graphtype.pp"/>
+        <UnitName Value="GraphType"/>
+        <CursorPos X="3" Y="39"/>
+        <TopLine Value="19"/>
+        <UsageCount Value="10"/>
+      </Unit339>
     </Units>
-    <JumpHistory Count="15" HistoryIndex="14">
+    <JumpHistory Count="17" HistoryIndex="16">
       <Position1>
         <Filename Value="packages/beegui_archivelistviewmgr.pas"/>
         <Caret Line="608" Column="48" TopLine="588"/>
@@ -2506,6 +2516,14 @@
         <Filename Value="packages/beegui_archivefolderbox.pas"/>
         <Caret Line="45" Column="30" TopLine="40"/>
       </Position15>
+      <Position16>
+        <Filename Value="packages/beegui_iconlist.pas"/>
+        <Caret Line="172" Column="25" TopLine="137"/>
+      </Position16>
+      <Position17>
+        <Filename Value="packages/beegui_iconlist.pas"/>
+        <Caret Line="173" Column="27" TopLine="149"/>
+      </Position17>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
