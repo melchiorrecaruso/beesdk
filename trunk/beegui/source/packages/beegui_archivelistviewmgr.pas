@@ -452,7 +452,7 @@ uses
     if Assigned(FFolderBox) then
     begin
       FFolderBox.Enabled := False;
-      // FFolderBox.Color := clInactiveBorder;
+      FFolderBox.Color := clInactiveBorder;
     end;
   end;
 
@@ -750,7 +750,7 @@ uses
       
       if Assigned(FFolderBox) then
       begin
-        // FFolderBox.Color := clWindow;
+        FFolderBox.Color := clWindow;
         FFolderBox.Enabled := True;
       end;
       Color := clWindow;

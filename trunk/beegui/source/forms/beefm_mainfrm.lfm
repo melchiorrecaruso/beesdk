@@ -3,9 +3,8 @@ object MainFrm: TMainFrm
   Height = 503
   Top = 250
   Width = 881
-  ActiveControl = FolderBox
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 479
+  ClientHeight = 484
   ClientWidth = 881
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
@@ -19,8 +18,8 @@ object MainFrm: TMainFrm
   object ListView: TArcListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Height = 355
-    Top = 106
+    Height = 359
+    Top = 105
     Width = 881
     FolderBox = FolderBox
     Align = alClient
@@ -91,24 +90,24 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
-    Height = 18
-    Top = 461
+    Height = 20
+    Top = 464
     Width = 881
     Anchors = [akRight]
     Panels = <>
   end
   object ToolBar: TPanel
-    Height = 106
+    Height = 105
     Width = 881
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 106
+    ClientHeight = 105
     ClientWidth = 881
     TabOrder = 2
     object ToolBarBevel: TBevel
       Height = 2
-      Top = 104
+      Top = 103
       Width = 881
       Align = alTop
       Visible = False
@@ -2538,18 +2537,18 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Height = 38
+      Height = 37
       Top = 66
       Width = 881
       Align = alTop
       AutoSize = True
-      ClientHeight = 38
+      ClientHeight = 37
       ClientWidth = 881
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideBottom.Side = asrBottom
         Left = 7
-        Height = 24
+        Height = 23
         Top = 7
         Width = 123
         Align = alLeft
@@ -2582,7 +2581,7 @@ object MainFrm: TMainFrm
       end
       object DownToolBarBevel: TBevel
         Left = 136
-        Height = 24
+        Height = 23
         Top = 7
         Width = 2
         Align = alLeft
@@ -2593,7 +2592,7 @@ object MainFrm: TMainFrm
       object FolderBox: TArchiveFolderBox
         AnchorSideLeft.Control = DownToolBarBevel
         Left = 142
-        Height = 24
+        Height = 22
         Top = 7
         Width = 732
         Align = alRight
@@ -2602,7 +2601,9 @@ object MainFrm: TMainFrm
         Color = clInactiveBorder
         DropDownCount = 10
         Enabled = False
+        ItemHeight = 16
         OnSelect = FolderBoxSelect
+        ReadOnly = True
         Style = csOwnerDrawFixed
         TabOrder = 0
       end
