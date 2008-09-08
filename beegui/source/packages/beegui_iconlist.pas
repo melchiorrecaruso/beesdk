@@ -169,9 +169,9 @@ uses
           Bmp.Width := Picture.Bitmap.Width;
           Bmp.Canvas.FillRect(Bounds(0, 0, Width, Height));
           Bmp.Canvas.Draw(0, 0, Picture.Bitmap);
-          // Bmp.TransparentMode := tmFixed;
-          // Bmp.TransparentColor := clFuchsia;
-          // Bmp.Transparent := True;
+          //Bmp.TransparentMode := tmFixed;
+          //Bmp.TransparentColor := clFuchsia;
+          //Bmp.Transparent := True;
           Result := Add(Bmp, nil);
         finally
           Bmp.Free;
