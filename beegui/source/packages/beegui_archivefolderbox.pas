@@ -66,11 +66,11 @@ implementation
   var
     I: integer;
   begin
-    //for I := Items.Count -1 downto 0 do
-    //  if Assigned(Items.Objects[I]) then
-    //  begin
-    //    TBitmap(Items.Objects[I]).FreeImage;
-    //  end;
+    for I := Items.Count -1 downto 0 do
+      if Assigned(Items.Objects[I]) and (Items.Objects[I].ClassType = TBitmap) then
+      begin
+        TBitmap(Items.Objects[I]).FreeImage;
+      end;
     inherited Destroy;
   end;
   
