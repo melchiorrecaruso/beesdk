@@ -1317,7 +1317,7 @@
       <Unit180>
         <Filename Value="packages/beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="14" Y="174"/>
+        <CursorPos X="13" Y="174"/>
         <TopLine Value="149"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="51"/>
