@@ -627,11 +627,6 @@ uses
     ListView.SimpleList := MMenuViewListMode.Checked;
     
     DownToolBar.Visible := not ListView.SimpleList;
-    //if DownToolBar.Visible then
-    //  UpToolBar.EdgeBorders := [ebLeft, ebTop, ebRight]
-    //else
-    //  UpToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
-    // DownToolBar.EdgeBorders := [ebLeft, ebTop, ebRight, ebBottom];
   end;
 
 

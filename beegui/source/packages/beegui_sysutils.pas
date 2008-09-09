@@ -362,6 +362,7 @@ implementation
   begin
     Result := False;
     if FileExists(NewFileName) then Exit;
+    if not FileExists(FileName)then Exit;
     {$IFDEF MSWINDOWS}
     Result := Windows.CopyFile(PChar(FileName), PChar(NewFileName), True);
     {$ELSE}
