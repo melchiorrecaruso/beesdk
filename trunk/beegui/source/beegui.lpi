@@ -248,9 +248,6 @@
       </Optimizations>
     </CodeGeneration>
     <Linking>
-      <Debugging>
-        <UseLineInfoUnit Value="False"/>
-      </Debugging>
       <LinkSmart Value="True"/>
       <Options>
         <Win32>
