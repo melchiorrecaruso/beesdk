@@ -966,8 +966,7 @@ uses
         ArchiveName := ArcProcess.ArchiveName;
         ArchiveLink := ArcProcess.ArchiveLink;
         // Command line //
-        CommandLine := 'beegui d "-0' + ArchiveLink + '"'
-          + ConfigFrm.DeleteOptions;
+        CommandLine := 'beegui d -r+ -l+ "-0' + ArchiveLink + '"';
         if MMenuOptionsLogReport.Checked then
           CommandLine := CommandLine + ' -1+'
         else

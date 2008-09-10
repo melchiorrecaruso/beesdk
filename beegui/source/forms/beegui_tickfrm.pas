@@ -353,6 +353,7 @@ var
         Caption := rsProcessAborted;
     end else
       Caption := rsProcessPaused;
+
     Application.Title := Caption;
     {$IFDEF MSWINDOWS}
       BtnPriority.Enabled := False;
@@ -449,17 +450,16 @@ var
   begin
     if FInterfaces.Terminated = True then
     begin
-      { TODO : Forse non più necessario }
-      if Timer.Enabled then
-        Timer.Enabled := False
-      else
-        OnStopTimer(Timer);
-
       BtnPriority.Enabled := False;
       BtnPauseRun.Enabled := False;
       BtnCancel.Kind      := bkClose;
       BtnCancel.Caption   := rsBtnCloseCaption;
       BtnCancel.Cancel    := True;
+
+      if (FContents.Count > 0) and (FCmdLine.Link <> '') then
+      begin
+        FContents.SaveToFile(FCmdLine.Link);
+      end;
 
       if Report.Lines.Count > 0 then
       begin
@@ -470,11 +470,6 @@ var
       end else
       begin;
         Close;
-      end;
-
-      if (FContents.Count > 0) and (FCmdLine.Link <> '') then
-      begin
-        FContents.SaveToFile(FCmdLine.Link);
       end;
       FCanClose := True;
     end;

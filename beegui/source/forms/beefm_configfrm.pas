@@ -84,7 +84,6 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
-    function DeleteOptions: string;
     function AddOptions(const Folder: string): string;
     function ExtractOptions(const Folder: string): string;
   end;
@@ -153,11 +152,6 @@ uses
     begin
       Result := Result + ' -cd' + Folder;
     end;
-  end;
-  
-  function TConfigFrm.DeleteOptions: string;
-  begin
-    Result := ' -l+';
   end;
   
   function TConfigFrm.ExtractOptions(const Folder: string): string;

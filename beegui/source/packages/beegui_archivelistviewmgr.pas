@@ -634,7 +634,7 @@ uses
       begin
         Node := TArcItem(FFolderFiles.Items[I]);
         if (Node.FileAttr and faDirectory) = faDirectory then
-          Result := IncludeTrailingBackSpace(Result) + '"' + Node.FilePath + IncludeTrailingBackSlash(Node.FileName) + '*!"'
+          Result := IncludeTrailingBackSpace(Result) + '"' + Node.FilePath + IncludeTrailingBackSlash(Node.FileName) + '*"'
         else
           Result := IncludeTrailingBackSpace(Result) + '"' + Node.FilePath + Node.FileName + '"';
       end;
