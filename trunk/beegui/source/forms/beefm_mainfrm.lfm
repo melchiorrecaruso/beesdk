@@ -2,10 +2,10 @@ object MainFrm: TMainFrm
   Left = 391
   Height = 503
   Top = 250
-  Width = 881
+  Width = 928
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 479
-  ClientWidth = 881
+  ClientHeight = 484
+  ClientWidth = 928
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -18,9 +18,9 @@ object MainFrm: TMainFrm
   object ListView: TArcListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Height = 354
-    Top = 107
-    Width = 881
+    Height = 358
+    Top = 106
+    Width = 928
     FolderBox = FolderBox
     Align = alClient
     Columns = <    
@@ -91,35 +91,35 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
-    Height = 18
-    Top = 461
-    Width = 881
+    Height = 20
+    Top = 464
+    Width = 928
     Anchors = [akRight]
     Panels = <>
   end
   object ToolBar: TPanel
-    Height = 107
-    Width = 881
+    Height = 106
+    Width = 928
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 107
-    ClientWidth = 881
+    ClientHeight = 106
+    ClientWidth = 928
     TabOrder = 2
     object ToolBarBevel: TBevel
       Height = 2
       Top = 66
-      Width = 881
+      Width = 928
       Align = alTop
       Visible = False
     end
     object UpToolBar: TPanel
       AnchorSideRight.Side = asrBottom
       Height = 66
-      Width = 881
+      Width = 928
       Align = alTop
       ClientHeight = 66
-      ClientWidth = 881
+      ClientWidth = 928
       TabOrder = 0
       object BtnNew: TSpeedButton
         Left = 6
@@ -2538,18 +2538,18 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Height = 39
+      Height = 38
       Top = 68
-      Width = 881
+      Width = 928
       Align = alTop
       AutoSize = True
-      ClientHeight = 39
-      ClientWidth = 881
+      ClientHeight = 38
+      ClientWidth = 928
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideBottom.Side = asrBottom
         Left = 7
-        Height = 25
+        Height = 24
         Top = 7
         Width = 123
         Align = alLeft
@@ -2582,7 +2582,7 @@ object MainFrm: TMainFrm
       end
       object DownToolBarBevel: TBevel
         Left = 136
-        Height = 25
+        Height = 24
         Top = 7
         Width = 2
         Align = alLeft
@@ -2593,9 +2593,9 @@ object MainFrm: TMainFrm
       object FolderBox: TArchiveFolderBox
         AnchorSideLeft.Control = DownToolBarBevel
         Left = 142
-        Height = 25
+        Height = 22
         Top = 7
-        Width = 732
+        Width = 779
         Align = alRight
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 6
@@ -2603,7 +2603,6 @@ object MainFrm: TMainFrm
         DropDownCount = 10
         Enabled = False
         ItemHeight = 16
-        MaxLength = -1
         OnSelect = FolderBoxSelect
         ReadOnly = True
         Style = csOwnerDrawFixed
