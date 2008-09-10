@@ -21,13 +21,13 @@ object ConfigFrm: TConfigFrm
     AnchorSideTop.Control = Owner
     AnchorSideBottom.Control = BtnOk
     Left = 6
-    Height = 355
+    Height = 359
     Top = 6
     Width = 150
     Anchors = [akTop, akLeft, akBottom]
     BorderSpacing.Around = 6
     Constraints.MinWidth = 150
-    DefaultItemHeight = 16
+    DefaultItemHeight = 15
     HideSelection = False
     Indent = 20
     ParentShowHint = False
@@ -51,13 +51,13 @@ object ConfigFrm: TConfigFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnOk
     Left = 162
-    Height = 355
+    Height = 359
     Top = 6
     Width = 393
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     Caption = 'Add Options'
-    ClientHeight = 339
+    ClientHeight = 341
     ClientWidth = 389
     ParentShowHint = False
     TabOrder = 1
@@ -67,7 +67,7 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = AddPage
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 15
+      Height = 14
       Top = 6
       Width = 371
       Anchors = [akTop, akLeft, akRight]
@@ -86,8 +86,8 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = mOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 15
-      Top = 55
+      Height = 14
+      Top = 49
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Top = 6
@@ -103,20 +103,20 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = mOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 184
-      Top = 104
+      Height = 174
+      Top = 92
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Top = 6
       Caption = 'Options'
-      ClientHeight = 168
+      ClientHeight = 156
       ClientWidth = 367
       ParentShowHint = False
       TabOrder = 0
       object rOption: TCheckBox
         Left = 12
-        Height = 21
+        Height = 19
         Top = 6
         Width = 349
         Align = alTop
@@ -135,8 +135,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = rOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 21
-        Top = 33
+        Height = 19
+        Top = 31
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -152,8 +152,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = kOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 21
-        Top = 87
+        Height = 19
+        Top = 81
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -169,8 +169,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = sOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 21
-        Top = 60
+        Height = 19
+        Top = 56
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -186,8 +186,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = tOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 21
-        Top = 114
+        Height = 19
+        Top = 106
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -207,8 +207,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = lOption
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 21
-        Top = 141
+        Height = 19
+        Top = 131
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -227,13 +227,13 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = mOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 26
-      Top = 23
+      Height = 21
+      Top = 22
       Width = 371
       Anchors = [akTop, akLeft, akRight]
-      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
+      ItemHeight = 13
       ItemIndex = 1
       Items.Strings = (
         '0 - Store'
@@ -241,7 +241,6 @@ object ConfigFrm: TConfigFrm
         '2 - Good'
         '3 - Maximal'
       )
-      MaxLength = 0
       ParentShowHint = False
       Style = csDropDownList
       TabOrder = 1
@@ -254,13 +253,13 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = dOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 26
-      Top = 72
+      Height = 21
+      Top = 65
       Width = 371
       Anchors = [akTop, akLeft, akRight]
-      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
+      ItemHeight = 13
       ItemIndex = 3
       Items.Strings = (
         'Level  0   (dictionary size  <       2 MB)'
@@ -274,7 +273,6 @@ object ConfigFrm: TConfigFrm
         'Level  8   (dictionary size  <   640 MB)'
         'Level  9   (dictionary size  < 1280 MB)'
       )
-      MaxLength = 0
       ParentShowHint = False
       Style = csDropDownList
       TabOrder = 2
@@ -289,13 +287,13 @@ object ConfigFrm: TConfigFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnOk
     Left = 162
-    Height = 355
+    Height = 359
     Top = 6
     Width = 393
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     Caption = 'Extract Options'
-    ClientHeight = 339
+    ClientHeight = 341
     ClientWidth = 389
     ParentShowHint = False
     TabOrder = 2
@@ -304,7 +302,7 @@ object ConfigFrm: TConfigFrm
       AnchorSideLeft.Control = Owner
       AnchorSideTop.Side = asrBottom
       Left = 12
-      Height = 15
+      Height = 14
       Top = 6
       Width = 371
       Align = alTop
@@ -324,15 +322,15 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = oOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 76
-      Top = 55
+      Height = 74
+      Top = 49
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Top = 6
       BorderSpacing.Bottom = 2
       Caption = 'Options'
-      ClientHeight = 60
+      ClientHeight = 56
       ClientWidth = 367
       ParentShowHint = False
       TabOrder = 0
@@ -343,8 +341,8 @@ object ConfigFrm: TConfigFrm
         AnchorSideRight.Control = xCommand
         AnchorSideRight.Side = asrBottom
         Left = 12
-        Height = 21
-        Top = 33
+        Height = 19
+        Top = 31
         Width = 349
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
@@ -357,7 +355,7 @@ object ConfigFrm: TConfigFrm
       end
       object xCommand: TCheckBox
         Left = 12
-        Height = 21
+        Height = 19
         Top = 6
         Width = 349
         Align = alTop
@@ -377,20 +375,19 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = oOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 26
-      Top = 23
+      Height = 21
+      Top = 22
       Width = 371
       Anchors = [akTop, akLeft, akRight]
-      AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
+      ItemHeight = 13
       ItemIndex = 2
       Items.Strings = (
         'Skip pre-existing files'
         'Overwrite pre-existing files'
         'Query if Overwrite pre-existing files'
       )
-      MaxLength = 0
       ParentShowHint = False
       Style = csDropDownList
       TabOrder = 1
@@ -403,8 +400,8 @@ object ConfigFrm: TConfigFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 485
-    Height = 30
-    Top = 367
+    Height = 26
+    Top = 371
     Width = 70
     Anchors = [akRight, akBottom]
     AutoSize = True
