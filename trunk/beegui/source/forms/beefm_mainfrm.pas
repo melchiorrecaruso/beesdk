@@ -926,52 +926,60 @@ uses
 
   procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
   var
-    CmdLine: string;
+    ArchiveName: string;
+    ArchiveLink: string;
+    CommandLine: string;
   begin
-    (*
-    if Cursor <> crHourGlass then
+    if ArcProcess.Enabled = False then
     begin
-      CmdLine := 'beegui a -2+' + ConfigFrm.AddOptions(ListView.Folder);
+      // Archive name/link //
+      ArchiveName := ArcProcess.ArchiveName;
+      ArchiveLink := ArcProcess.ArchiveLink;
+      // Command line //
+      CommandLine := 'beegui a -2+ "-0' + ArchiveLink + '"'
+        + ConfigFrm.AddOptions(ListView.Folder);
       if MMenuOptionsLogReport.Checked then
-        CmdLine := CmdLine + ' -1+'
+        CommandLine := CommandLine + ' -1+'
       else
-        CmdLine := CmdLine + ' -1-';
-      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '"';
-      ArcProcess.CommandLine := CmdLine;
-      ArcProcess.CurrentDirectory := '';
-      ArcProcess.Execute;
-      // ---
-      Idle.OnTimer := OnArcTimer;
-      Idle.Enabled := True;
+        CommandLine := CommandLine + ' -1-';
+      CommandLine := CommandLine + ' "' + ArchiveName + '"';
+      // Archive Process //
+      ArcProcess.Initialize(ArchiveName, ArchiveLink);
+      ArcProcess.Add(CommandLine, '');
+      ArcProcess.Finalize(OnArcTimer);
+      ArcProcess.Enabled := True;
     end;
-    *)
   end;
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   var
-    CmdLine: string;
+    ArchiveName: string;
+    ArchiveLink: string;
+    CommandLine: string;
   begin
-    (*
     if ListView.SelCount = 0 then Exit;
-    if Cursor <> crHourGlass then
+    if ArcProcess.Enabled = False then
     begin
       if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
-        CmdLine := 'beegui d' + ConfigFrm.DeleteOptions;
+        // Archive name/link //
+        ArchiveName := ArcProcess.ArchiveName;
+        ArchiveLink := ArcProcess.ArchiveLink;
+        // Command line //
+        CommandLine := 'beegui d "-0' + ArchiveLink + '"'
+          + ConfigFrm.DeleteOptions;
         if MMenuOptionsLogReport.Checked then
-          CmdLine := CmdLine + ' -1+'
+          CommandLine := CommandLine + ' -1+'
         else
-          CmdLine := CmdLine + ' -1-';
-        CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
-        ArcProcess.CommandLine := CmdLine;
-        ArcProcess.CurrentDirectory := '';
-        ArcProcess.Execute;
-        // ---
-        Idle.OnTimer := OnArcTimer;
-        Idle.Enabled := True;
+          CommandLine := CommandLine + ' -1-';
+        CommandLine := CommandLine + ' "' + ArchiveName + '" ' + ListView.GetMasks;
+        // Archive Process //
+        ArcProcess.Initialize(ArchiveName, ArchiveLink);
+        ArcProcess.Add(CommandLine, '');
+        ArcProcess.Finalize(OnArcTimer);
+        ArcProcess.Enabled := True;
       end;
     end;
-    *)
   end;
 
   procedure TMainFrm.MMenuActionsExtractClick(Sender: TObject);
