@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
-    <PathDelim Value="\"/>
+    <PathDelim Value="/"/>
     <Version Value="6"/>
     <General>
       <Flags>
         <SaveClosedFiles Value="False"/>
       </Flags>
       <MainUnit Value="0"/>
-      <IconPath Value=".\"/>
+      <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <UseAppBundle Value="False"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
-      <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
       <IgnoreBinaries Value="False"/>
       <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
       <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
@@ -22,10 +22,10 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="2">
+    <Units Count="4">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -40,15 +40,35 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="41" Y="148"/>
-        <TopLine Value="131"/>
+        <CursorPos X="23" Y="299"/>
+        <TopLine Value="297"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="bee_blowfish.pas"/>
+        <UnitName Value="Bee_BlowFish"/>
+        <CursorPos X="3" Y="51"/>
+        <TopLine Value="30"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="bee_files.pas"/>
+        <UnitName Value="Bee_Files"/>
+        <CursorPos X="30" Y="48"/>
+        <TopLine Value="27"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit3>
     </Units>
-    <JumpHistory Count="5" HistoryIndex="4">
+    <JumpHistory Count="9" HistoryIndex="8">
       <Position1>
         <Filename Value="bee_app.pas"/>
         <Caret Line="1383" Column="25" TopLine="1360"/>
@@ -69,14 +89,29 @@
         <Filename Value="bee_app.pas"/>
         <Caret Line="1385" Column="15" TopLine="1359"/>
       </Position5>
+      <Position6>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="37" Column="11" TopLine="1"/>
+      </Position6>
+      <Position7>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="334" Column="23" TopLine="325"/>
+      </Position7>
+      <Position8>
+        <Filename Value="bee_blowfish.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position8>
+      <Position9>
+        <Filename Value="bee_files.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position9>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="8"/>
-    <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="bee.include\"/>
-      <UnitOutputDirectory Value="..\distribution"/>
+      <IncludeFiles Value="bee.include/"/>
+      <UnitOutputDirectory Value="../distribution"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -96,16 +131,13 @@
       </Optimizations>
     </CodeGeneration>
     <Linking>
-      <Debugging>
-        <UseLineInfoUnit Value="False"/>
-      </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
     <Other>
       <Verbosity>
-        <ShowSummary Value="True"/>
-        <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+        <ShowGenInfo Value="False"/>
       </Verbosity>
+      <WriteFPCLogo Value="False"/>
       <CustomOptions Value="
 "/>
       <CompilerPath Value="$(CompPath)"/>
