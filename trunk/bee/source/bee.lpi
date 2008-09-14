@@ -11,7 +11,7 @@
       <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
@@ -25,7 +25,7 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="4">
+    <Units Count="1">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -37,75 +37,8 @@
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit0>
-      <Unit1>
-        <Filename Value="bee_app.pas"/>
-        <UnitName Value="Bee_App"/>
-        <CursorPos X="23" Y="299"/>
-        <TopLine Value="297"/>
-        <EditorIndex Value="1"/>
-        <UsageCount Value="14"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit1>
-      <Unit2>
-        <Filename Value="bee_blowfish.pas"/>
-        <UnitName Value="Bee_BlowFish"/>
-        <CursorPos X="3" Y="51"/>
-        <TopLine Value="30"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="bee_files.pas"/>
-        <UnitName Value="Bee_Files"/>
-        <CursorPos X="30" Y="48"/>
-        <TopLine Value="27"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit3>
     </Units>
-    <JumpHistory Count="9" HistoryIndex="8">
-      <Position1>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="1383" Column="25" TopLine="1360"/>
-      </Position1>
-      <Position2>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="37" Column="12" TopLine="26"/>
-      </Position2>
-      <Position3>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="37" Column="12" TopLine="26"/>
-      </Position3>
-      <Position4>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="1385" Column="16" TopLine="1359"/>
-      </Position4>
-      <Position5>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="1385" Column="15" TopLine="1359"/>
-      </Position5>
-      <Position6>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="37" Column="11" TopLine="1"/>
-      </Position6>
-      <Position7>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="334" Column="23" TopLine="325"/>
-      </Position7>
-      <Position8>
-        <Filename Value="bee_blowfish.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position8>
-      <Position9>
-        <Filename Value="bee_files.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position9>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="8"/>
@@ -138,7 +71,7 @@
         <ShowGenInfo Value="False"/>
       </Verbosity>
       <WriteFPCLogo Value="False"/>
-      <CustomOptions Value="
+      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2
 "/>
       <CompilerPath Value="$(CompPath)"/>
       <ExecuteAfter>
