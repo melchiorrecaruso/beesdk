@@ -1,19 +1,20 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
-    <PathDelim Value="/"/>
+    <PathDelim Value="\"/>
     <Version Value="6"/>
     <General>
       <Flags>
         <SaveClosedFiles Value="False"/>
       </Flags>
       <MainUnit Value="0"/>
-      <IconPath Value="./"/>
+      <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
+      <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
       <IgnoreBinaries Value="False"/>
       <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
       <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
@@ -21,16 +22,16 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="4">
+    <Units Count="2">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
         <CursorPos X="35" Y="37"/>
-        <TopLine Value="16"/>
+        <TopLine Value="81"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="162"/>
         <Loaded Value="True"/>
@@ -39,33 +40,15 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="20" Y="32"/>
-        <TopLine Value="14"/>
+        <CursorPos X="41" Y="148"/>
+        <TopLine Value="131"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit1>
-      <Unit2>
-        <Filename Value="bee_common.pas"/>
-        <UnitName Value="Bee_Common"/>
-        <CursorPos X="8" Y="33"/>
-        <TopLine Value="28"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="bee.include/compiler.inc"/>
-        <CursorPos X="20" Y="25"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit3>
     </Units>
-    <JumpHistory Count="6" HistoryIndex="5">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
         <Filename Value="bee_app.pas"/>
         <Caret Line="1383" Column="25" TopLine="1360"/>
@@ -86,17 +69,14 @@
         <Filename Value="bee_app.pas"/>
         <Caret Line="1385" Column="15" TopLine="1359"/>
       </Position5>
-      <Position6>
-        <Filename Value="bee_common.pas"/>
-        <Caret Line="35" Column="10" TopLine="28"/>
-      </Position6>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="8"/>
+    <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="bee.include/"/>
-      <UnitOutputDirectory Value="../distribution"/>
+      <IncludeFiles Value="bee.include\"/>
+      <UnitOutputDirectory Value="..\distribution"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -109,7 +89,6 @@
     </Parsing>
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
-      <SmallerCode Value="True"/>
       <Optimizations>
         <VariablesInRegisters Value="True"/>
         <UncertainOptimizations Value="True"/>
@@ -117,6 +96,9 @@
       </Optimizations>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
     <Other>
@@ -124,7 +106,7 @@
         <ShowSummary Value="True"/>
         <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
       </Verbosity>
-      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2
+      <CustomOptions Value="
 "/>
       <CompilerPath Value="$(CompPath)"/>
       <ExecuteAfter>
