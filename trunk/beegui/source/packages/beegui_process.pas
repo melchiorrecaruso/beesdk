@@ -126,8 +126,10 @@ uses
     inherited Create(AOwner);
     FArchiveName := '';
     FArchiveLink := '';
+
     FCommandLines := TStringList.Create;
     FCurrentDirectories := TStringList.Create;
+
     FProcess := TProcess.Create(Self);
     FProcess.StartupOptions := [];
     FProcess.Options := [];
@@ -135,11 +137,13 @@ uses
   
   destructor TArcProcess.Destroy;
   begin
-    FProcess.Free;
     FArchiveName := '';
     FArchiveLink := '';
+
     FCommandLines.Free;
     FCurrentDirectories.Free;
+
+    FProcess.Free;
     inherited Destroy;
   end;
   
@@ -158,23 +162,16 @@ uses
       end else
       begin
         Enabled := False;
-        if Assigned(FOnTerminate) and (FProcess.ExitStatus = 0) then;
+        if Assigned(FOnTerminate) and  (FProcess.ExitStatus = 0) then;
         begin
+          ShowMessage('OK1');
           FOnTerminate(Self);
+          ShowMessage('OK2');
         end;
         FOnTerminate := nil;
       end;
     end;
     inherited DoOnTimer;
-  end;
-  
-  procedure TArcProcess.Add(const aCommandLine :string; const aCurrentDirectory: string);
-  begin
-    if Assigned(FOnTerminate) = False then
-    begin
-      FCommandLines.Add(aCommandLine);
-      FCurrentDirectories.Add(aCurrentDirectory);
-    end;
   end;
   
   procedure TArcProcess.Initialize(const aArchiveName: string; const aArchiveLink: string);
@@ -186,6 +183,15 @@ uses
       FCurrentDirectories.Clear;
       FArchiveName := aArchiveName;
       FArchiveLink := aArchiveLink;
+    end;
+  end;
+
+  procedure TArcProcess.Add(const aCommandLine :string; const aCurrentDirectory: string);
+  begin
+    if Assigned(FOnTerminate) = False then
+    begin
+      FCommandLines.Add(aCommandLine);
+      FCurrentDirectories.Add(aCurrentDirectory);
     end;
   end;
 
