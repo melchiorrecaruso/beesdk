@@ -68,7 +68,7 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms/beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="10" Y="1132"/>
+        <CursorPos X="39" Y="1130"/>
         <TopLine Value="1115"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
@@ -1476,8 +1476,8 @@
       <Unit198>
         <Filename Value="packages/beegui_process.pas"/>
         <UnitName Value="BeeGui_Process"/>
-        <CursorPos X="34" Y="166"/>
-        <TopLine Value="153"/>
+        <CursorPos X="6" Y="183"/>
+        <TopLine Value="141"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="79"/>
         <Loaded Value="True"/>
@@ -2564,7 +2564,7 @@
       </Position29>
       <Position30>
         <Filename Value="forms/beefm_mainfrm.pas"/>
-        <Caret Line="1132" Column="47" TopLine="1115"/>
+        <Caret Line="1132" Column="10" TopLine="1115"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
