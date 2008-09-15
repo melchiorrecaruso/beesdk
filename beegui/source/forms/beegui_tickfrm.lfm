@@ -219,15 +219,17 @@ object TickFrm: TTickFrm
       ParentShowHint = True
       object Msg: TLabel
         AnchorSideLeft.Control = GeneralPage
+        AnchorSideRight.Control = GeneralPage
+        AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Tick
         Left = 6
         Height = 18
         Top = 82
-        Width = 13
+        Width = 402
         HelpContext = 0
         Align = alNone
         Alignment = taLeftJustify
-        Anchors = [akLeft, akBottom]
+        Anchors = [akLeft, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Left = 6
         BorderSpacing.Top = 2
