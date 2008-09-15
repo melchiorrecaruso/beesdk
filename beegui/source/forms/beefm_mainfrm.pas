@@ -1114,21 +1114,23 @@ uses
 
   procedure TMainFrm.MMenuActionsTestAllClick(Sender: TObject);
   var
-    CmdLine: string;
+    ArchiveName: string;
+    ArchiveLink: string;
+    CommandLine: string;
   begin
-    (*
-    if Cursor <> crHourGlass then
+    if ArcProcess.Enabled = False then
     begin
-      CmdLine := 'beegui t -1+';
-      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" *!';
-      ArcProcess.CommandLine := CmdLine;
-      ArcProcess.CurrentDirectory := '';
-      ArcProcess.Execute;
-      // ---
-      Idle.OnTimer := nil;
-      Idle.Enabled := False;
+      // Archive name/link //
+      ArchiveName := ArcProcess.ArchiveName;
+      ArchiveLink := ArcProcess.ArchiveLink;
+      // Command line //
+      CommandLine := 'beegui t -1+ -r+ "' + ArchiveName + '" *';
+      // Archive Process //
+      ArcProcess.Initialize(ArchiveName, ArchiveLink);
+      ArcProcess.Add(CommandLine, '');
+      ArcProcess.Finalize(OnFileViewTimer);
+      ArcProcess.Enabled := True;
     end;
-    *)
   end;
 
   procedure TMainFrm.MMenuActionsSelectAllClick(Sender: TObject);

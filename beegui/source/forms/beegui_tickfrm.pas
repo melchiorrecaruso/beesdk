@@ -463,10 +463,13 @@ var
 
       if Report.Lines.Count > 0 then
       begin
+        ActiveControl := BtnCancel;
         GeneralPage.TabVisible := False;
-        ActiveControl   := BtnCancel;
+
         BtnSave.Enabled := True;
         BtnFont.Enabled := True;
+
+        Timer.Enabled := False;
       end else
       begin;
         Close;
