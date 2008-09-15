@@ -162,12 +162,9 @@ uses
       end else
       begin
         Enabled := False;
-        ShowMessage('DoOnTimer');
-        if Assigned(FOnTerminate) and (FProcess.ExitStatus = 0) then;
+        if Assigned(FOnTerminate) and (FProcess.ExitStatus = 0) then
         begin
-          ShowMessage('OK - START');
           FOnTerminate(Self);
-          ShowMessage('OK - END');
         end;
         FOnTerminate := nil;
       end;
@@ -179,7 +176,6 @@ uses
   begin
     if Enabled = False then
     begin
-      ShowMessage('Initialize');
       FOnTerminate := nil;
       FCommandLines.Clear;
       FCurrentDirectories.Clear;
@@ -192,7 +188,6 @@ uses
   begin
     if Assigned(FOnTerminate) = False then
     begin
-      ShowMessage('Add');
       FCommandLines.Add(aCommandLine);
       FCurrentDirectories.Add(aCurrentDirectory);
     end;
@@ -202,7 +197,6 @@ uses
   begin
     if Assigned(FOnTerminate) = False then
     begin
-      ShowMessage('Finalize');
       FOnTerminate := aOnTerminate;
     end;
   end;

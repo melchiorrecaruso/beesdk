@@ -1128,8 +1128,6 @@ uses
       // Archive Process //
       ArcProcess.Initialize(ArchiveName, ArchiveLink);
       ArcProcess.Add(CommandLine, '');
-      // ArcProcess.Finalize(OnFileViewTimer);
-      // ArcProcess.Finalize(OnFileViewTimer);
       ArcProcess.Enabled := True;
     end;
   end;
