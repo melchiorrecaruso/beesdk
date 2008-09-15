@@ -217,7 +217,7 @@ var
   Console: TConsole;
 
 begin
-  MaxKeptOSChunks := 8;
+  // MaxKeptOSChunks := 8;
   Console := TConsole.Create;
   Console.Execute;
   Console.Destroy;
