@@ -515,6 +515,7 @@ uses
   var
     LastFolder: string;
   begin
+    ShowMessage(ArcProcess.ArchiveLink);
     LastFolder := ListView.Folder;
     with ArcProcess do
     begin
@@ -932,7 +933,7 @@ uses
   begin
     if ArcProcess.Enabled = False then
     begin
-      // Archive name/link //
+      // Archive name-link //
       ArchiveName := ArcProcess.ArchiveName;
       ArchiveLink := ArcProcess.ArchiveLink;
       // Command line //
@@ -962,7 +963,7 @@ uses
     begin
       if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
-        // Archive name/link //
+        // Archive name-link //
         ArchiveName := ArcProcess.ArchiveName;
         ArchiveLink := ArcProcess.ArchiveLink;
         // Command line //
