@@ -14,7 +14,7 @@
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -39,7 +39,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="14">
+    <Units Count="15">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -185,6 +185,15 @@
         <UsageCount Value="26"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="version.inc"/>
+        <CursorPos X="19" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit14>
     </Units>
     <JumpHistory Count="1" HistoryIndex="0">
       <Position1>
