@@ -515,7 +515,6 @@ uses
   var
     LastFolder: string;
   begin
-    ShowMessage(ArcProcess.ArchiveLink);
     LastFolder := ListView.Folder;
     with ArcProcess do
     begin

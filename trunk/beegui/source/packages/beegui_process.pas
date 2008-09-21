@@ -162,7 +162,7 @@ uses
       end else
       begin
         Enabled := False;
-        if Assigned(FOnTerminate) and (FProcess.ExitStatus = 0) then
+        if Assigned(FOnTerminate) (*and (FProcess.ExitStatus = 0)*) then
         begin
           FOnTerminate(Self);
         end;
