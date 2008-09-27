@@ -127,7 +127,7 @@
         <ShowGenInfo Value="False"/>
       </Verbosity>
       <WriteFPCLogo Value="False"/>
-      <CustomOptions Value="-OpPENTIUMM -Oa=64 -Cfsse2
+      <CustomOptions Value="-OpPENTIUMM -Oa=32 -Cfsse2
 "/>
       <CompilerPath Value="$(CompPath)"/>
       <ExecuteAfter>
