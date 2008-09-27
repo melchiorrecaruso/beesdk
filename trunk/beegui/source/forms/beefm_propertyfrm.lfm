@@ -14,7 +14,8 @@ object InfoFrm: TInfoFrm
   OnClose = FormClose
   OnCreate = FormCreate
   OnPaint = FormPaint
-  LCLVersion = '0.9.25'
+  ParentFont = False
+  LCLVersion = '0.9.27'
   object Pages: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -25,11 +26,11 @@ object InfoFrm: TInfoFrm
     Height = 430
     Top = 6
     Width = 355
-    ActivePage = APage
+    ActivePage = FPage
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 1
     object APage: TTabSheet
       Caption = 'General'
@@ -9299,6 +9300,7 @@ object InfoFrm: TInfoFrm
           Color = clBtnFace
           Font.Color = clPurple
           ParentColor = False
+          ParentFont = False
           ParentShowHint = False
           Transparent = False
         end
@@ -18572,6 +18574,7 @@ object InfoFrm: TInfoFrm
           Color = clBtnFace
           Font.Color = clPurple
           ParentColor = False
+          ParentFont = False
           ParentShowHint = False
           Transparent = False
         end
