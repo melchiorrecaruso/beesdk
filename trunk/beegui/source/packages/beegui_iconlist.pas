@@ -103,7 +103,9 @@ uses
   begin
     FileExt := ExtractFileExt(FileName);
     while Pos('.', FileExt) = 1 do
+    begin
       System.Delete(FileExt, 1, 1);
+    end;
 
     Result := FExtentions.IndexOf(FileExt);
     if Result = -1 then
@@ -156,7 +158,9 @@ uses
     begin
       FileExt := ExtractFileExt(FileName);
       while Pos('.', FileExt) = 1 do
+      begin
         System.Delete(FileExt, 1, 1);
+      end;
 
       Error := FindFirst(FIconFolder + FileExt + '.bmp', faAnyFile, Rec);
       if (Error = 0) and ((Rec.Attr and faDirectory) = 0) then
@@ -175,10 +179,10 @@ uses
           Picture.Free;
         end;
         FExtentions.Add(FileExt);
-        if Pos('@', FileExt) = 0 then
+        if (Pos('@', FileExt) = 0) then
           FTypes.Add('File .' + FileExt)
         else
-          FTypes.Add('')
+          FTypes.Add('');
       end;
       FindClose(Rec);
     end;
@@ -213,19 +217,20 @@ uses
       try
         if (FI.hIcon <> 0) and GetIconInfo(FI.hIcon, IconInfo) then
         begin
+          Bmp.Transparent := True;
+          Bmp.TransparentMode := tmAuto;
           Bmp.Handle := IconInfo.hbmColor;
-          Bmp.MaskHandle := IconInfo.hbmMask;
+          // Bmp.MaskHandle := IconInfo.hbmMask;
         end;
-        Bmp.TransparentMode := tmAuto;
-        Bmp.Transparent := True;
         Result := Add(Bmp, nil);
       finally
         Bmp.Free;
       end;
       FileExt := ExtractFileExt(FileName);
-        while Pos('.', FileExt) = 1 do
-          System.Delete(FileExt, 1, 1);
-            
+      while Pos('.', FileExt) = 1 do
+      begin
+        System.Delete(FileExt, 1, 1);
+      end;
       FExtentions.Add(FileExt);
       FTypes.Add(FI.szTypeName);
     end;
