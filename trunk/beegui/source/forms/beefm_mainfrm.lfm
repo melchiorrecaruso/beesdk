@@ -2593,7 +2593,6 @@ object MainFrm: TMainFrm
         DropDownCount = 10
         Enabled = False
         ItemHeight = 16
-        MaxLength = -1
         OnSelect = FolderBoxSelect
         ReadOnly = True
         Style = csOwnerDrawFixed
