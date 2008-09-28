@@ -825,7 +825,13 @@ uses
           Item.SubItems.Add(SizeToStr(FileSize));                //  1 Size
           Item.SubItems.Add(SizeToStr(FilePacked));              //  2 Packed
           Item.SubItems.Add(RatioToStr(FileRatio));              //  3 Ratio
-          Item.SubItems.Add(FileType);                           //  4 Type
+
+          if FileType = '' then                                  //  4 Type
+          begin
+            FileType := 'File ' + ExtractFileExt(FileName);
+          end;
+          Item.SubItems.Add(FileType);
+
           try
           Item.SubItems.Add(
             DateTimeToString(FileDateToDateTime(FileTime)));     //  5 Time

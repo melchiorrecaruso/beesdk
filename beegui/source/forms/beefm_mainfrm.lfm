@@ -19,8 +19,8 @@ object MainFrm: TMainFrm
   object ListView: TArcListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Height = 358
-    Top = 106
+    Height = 359
+    Top = 105
     Width = 928
     FolderBox = FolderBox
     Align = alClient
@@ -99,12 +99,12 @@ object MainFrm: TMainFrm
     Panels = <>
   end
   object ToolBar: TPanel
-    Height = 106
+    Height = 105
     Width = 928
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 106
+    ClientHeight = 105
     ClientWidth = 928
     TabOrder = 2
     object ToolBarBevel: TBevel
@@ -2528,18 +2528,18 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Height = 38
+      Height = 37
       Top = 68
       Width = 928
       Align = alTop
       AutoSize = True
-      ClientHeight = 38
+      ClientHeight = 37
       ClientWidth = 928
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideBottom.Side = asrBottom
         Left = 7
-        Height = 24
+        Height = 23
         Top = 7
         Width = 123
         Align = alLeft
@@ -2572,7 +2572,7 @@ object MainFrm: TMainFrm
       end
       object DownToolBarBevel: TBevel
         Left = 136
-        Height = 24
+        Height = 23
         Top = 7
         Width = 2
         Align = alLeft
@@ -2593,6 +2593,7 @@ object MainFrm: TMainFrm
         DropDownCount = 10
         Enabled = False
         ItemHeight = 16
+        MaxLength = -1
         OnSelect = FolderBoxSelect
         ReadOnly = True
         Style = csOwnerDrawFixed
