@@ -299,6 +299,8 @@ var
 implementation
 
 uses
+  DynLibs,
+
   Bee_Common,
 
   BeeFm_ViewFrm,
@@ -312,7 +314,14 @@ uses
   BeeFm_ConfigFrm,
   BeeFm_SelectFrm,
   BeeFm_PropertyFrm;
-  
+
+type
+  TCreateCore  = function CreateCore(aParams: string): boolean; stdcall;
+  TDestroyCore = function DestroyCore(Index: integer): boolean;
+  TExecuteCore = procedure ExecuteCore; stdcall;
+  TSuspendCore = procedure SuspendCore; stdcall;
+  TStopCore    = procedure StopCore; stdcall;
+
   { TMainFrm }
 
   {$I beefm_mainfrm_saveproperty.inc}
@@ -339,6 +348,8 @@ uses
     DownToolBar.BorderSpacing.Bottom := 2;
     ListView.BorderSpacing.Top := 4;
     {$ENDIF}
+
+
   end;
   
   procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -1339,6 +1350,8 @@ uses
 initialization
 
   {$I beefm_mainfrm.lrs}
+
+finalization
   
 end.
 

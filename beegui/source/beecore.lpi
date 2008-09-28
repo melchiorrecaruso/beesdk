@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <PathDelim Value="\"/>
+    <Version Value="6"/>
+    <General>
+      <MainUnit Value="0"/>
+      <IconPath Value="./"/>
+      <TargetFileExt Value=".exe"/>
+      <ActiveEditorIndexAtStart Value="0"/>
+    </General>
+    <VersionInfo>
+      <ProjectVersion Value=""/>
+      <Language Value=""/>
+      <CharSet Value=""/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="beecore.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="beecore"/>
+        <CursorPos X="21" Y="158"/>
+        <TopLine Value="118"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="27"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="..\..\bee\source\bee_interface.pas"/>
+        <UnitName Value="Bee_Interface"/>
+        <CursorPos X="15" Y="147"/>
+        <TopLine Value="166"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="13"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\..\bee\source\bee_modeller.pas"/>
+        <UnitName Value="Bee_Modeller"/>
+        <CursorPos X="12" Y="128"/>
+        <TopLine Value="282"/>
+        <UsageCount Value="9"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit2>
+    </Units>
+    <JumpHistory Count="24" HistoryIndex="23">
+      <Position1>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="10" Column="7" TopLine="1"/>
+      </Position1>
+      <Position2>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="13" Column="25" TopLine="1"/>
+      </Position2>
+      <Position3>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="15" Column="18" TopLine="1"/>
+      </Position3>
+      <Position4>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="18" Column="24" TopLine="1"/>
+      </Position4>
+      <Position5>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="24" Column="25" TopLine="1"/>
+      </Position5>
+      <Position6>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="12" Column="15" TopLine="1"/>
+      </Position6>
+      <Position7>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="29" Column="3" TopLine="1"/>
+      </Position7>
+      <Position8>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="21" Column="21" TopLine="1"/>
+      </Position8>
+      <Position9>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="26" Column="37" TopLine="6"/>
+      </Position9>
+      <Position10>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="28" Column="12" TopLine="7"/>
+      </Position10>
+      <Position11>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="26" Column="39" TopLine="7"/>
+      </Position11>
+      <Position12>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="20" Column="48" TopLine="1"/>
+      </Position12>
+      <Position13>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="10" Column="34" TopLine="1"/>
+      </Position13>
+      <Position14>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="42" Column="41" TopLine="9"/>
+      </Position14>
+      <Position15>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="24" Column="34" TopLine="4"/>
+      </Position15>
+      <Position16>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="44" Column="36" TopLine="27"/>
+      </Position16>
+      <Position17>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="27" Column="5" TopLine="15"/>
+      </Position17>
+      <Position18>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="64" Column="32" TopLine="47"/>
+      </Position18>
+      <Position19>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="110" Column="16" TopLine="88"/>
+      </Position19>
+      <Position20>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="112" Column="8" TopLine="92"/>
+      </Position20>
+      <Position21>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="117" Column="7" TopLine="90"/>
+      </Position21>
+      <Position22>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="128" Column="1" TopLine="102"/>
+      </Position22>
+      <Position23>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="133" Column="1" TopLine="104"/>
+      </Position23>
+      <Position24>
+        <Filename Value="beecore.lpr"/>
+        <Caret Line="120" Column="19" TopLine="94"/>
+      </Position24>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="8"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <IncludeFiles Value="forms\forms.include\;packages\packages.include\"/>
+      <OtherUnitFiles Value="forms\;packages\;..\..\bee\source\"/>
+      <UnitOutputDirectory Value="..\distribution"/>
+    </SearchPaths>
+    <Parsing>
+      <Style Value="1"/>
+      <SyntaxOptions>
+        <SyntaxMode Value="Delphi"/>
+        <CStyleOperator Value="False"/>
+        <AllowLabel Value="False"/>
+        <CPPInline Value="False"/>
+        <UseAnsiStrings Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
+      <Optimizations>
+        <VariablesInRegisters Value="True"/>
+        <UncertainOptimizations Value="True"/>
+        <OptimizationLevel Value="3"/>
+      </Optimizations>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
+      <Options>
+        <ExecutableType Value="Library"/>
+      </Options>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2
+"/>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="2">
+      <Item1>
+        <Name Value="ECodetoolError"/>
+      </Item1>
+      <Item2>
+        <Name Value="EFOpenError"/>
+      </Item2>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
