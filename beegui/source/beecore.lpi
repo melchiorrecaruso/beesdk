@@ -26,24 +26,26 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="5">
+    <Units Count="8">
       <Unit0>
         <Filename Value="beecore.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beecore"/>
-        <CursorPos X="8" Y="99"/>
-        <TopLine Value="132"/>
+        <CursorPos X="10" Y="4"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="7" Y="1"/>
+        <CursorPos X="45" Y="99"/>
         <TopLine Value="1"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="13"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -68,127 +70,149 @@
         <UsageCount Value="10"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="..\..\bee\source\bee_app.pas"/>
+        <UnitName Value="Bee_App"/>
+        <CursorPos X="15" Y="46"/>
+        <TopLine Value="97"/>
+        <UsageCount Value="10"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\..\..\..\Programmi\FPC\2.2.2\source\rtl\inc\cmem.pp"/>
+        <UnitName Value="cmem"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="76"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\..\..\..\Programmi\FPC\2.2.2\source\rtl\win\sharemem.pp"/>
+        <UnitName Value="sharemem"/>
+        <CursorPos X="17" Y="17"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit7>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="21" Column="21" TopLine="1"/>
+        <Caret Line="117" Column="7" TopLine="90"/>
       </Position1>
       <Position2>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="26" Column="37" TopLine="6"/>
+        <Caret Line="128" Column="1" TopLine="102"/>
       </Position2>
       <Position3>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="28" Column="12" TopLine="7"/>
+        <Caret Line="133" Column="1" TopLine="104"/>
       </Position3>
       <Position4>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="26" Column="39" TopLine="7"/>
+        <Caret Line="120" Column="19" TopLine="94"/>
       </Position4>
       <Position5>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="20" Column="48" TopLine="1"/>
+        <Caret Line="122" Column="12" TopLine="102"/>
       </Position5>
       <Position6>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="10" Column="34" TopLine="1"/>
+        <Caret Line="166" Column="28" TopLine="135"/>
       </Position6>
       <Position7>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="42" Column="41" TopLine="9"/>
+        <Caret Line="138" Column="22" TopLine="109"/>
       </Position7>
       <Position8>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="24" Column="34" TopLine="4"/>
+        <Caret Line="166" Column="29" TopLine="130"/>
       </Position8>
       <Position9>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="44" Column="36" TopLine="27"/>
+        <Caret Line="171" Column="2" TopLine="135"/>
       </Position9>
       <Position10>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="27" Column="5" TopLine="15"/>
+        <Caret Line="37" Column="11" TopLine="25"/>
       </Position10>
       <Position11>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="64" Column="32" TopLine="47"/>
+        <Caret Line="28" Column="21" TopLine="8"/>
       </Position11>
       <Position12>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="110" Column="16" TopLine="88"/>
+        <Caret Line="56" Column="12" TopLine="41"/>
       </Position12>
       <Position13>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="112" Column="8" TopLine="92"/>
+        <Caret Line="4" Column="11" TopLine="1"/>
       </Position13>
       <Position14>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="117" Column="7" TopLine="90"/>
+        <Caret Line="65" Column="27" TopLine="40"/>
       </Position14>
       <Position15>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="128" Column="1" TopLine="102"/>
+        <Caret Line="73" Column="13" TopLine="53"/>
       </Position15>
       <Position16>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="133" Column="1" TopLine="104"/>
+        <Caret Line="81" Column="15" TopLine="46"/>
       </Position16>
       <Position17>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="120" Column="19" TopLine="94"/>
+        <Caret Line="97" Column="32" TopLine="77"/>
       </Position17>
       <Position18>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="122" Column="12" TopLine="102"/>
+        <Caret Line="4" Column="11" TopLine="1"/>
       </Position18>
       <Position19>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="166" Column="28" TopLine="135"/>
+        <Caret Line="89" Column="1" TopLine="55"/>
       </Position19>
       <Position20>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="138" Column="22" TopLine="109"/>
+        <Caret Line="211" Column="46" TopLine="182"/>
       </Position20>
       <Position21>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="166" Column="29" TopLine="130"/>
+        <Caret Line="33" Column="14" TopLine="10"/>
       </Position21>
       <Position22>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="171" Column="2" TopLine="135"/>
+        <Caret Line="221" Column="21" TopLine="197"/>
       </Position22>
       <Position23>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="37" Column="11" TopLine="25"/>
+        <Caret Line="221" Column="53" TopLine="197"/>
       </Position23>
       <Position24>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="28" Column="21" TopLine="8"/>
+        <Caret Line="112" Column="9" TopLine="92"/>
       </Position24>
       <Position25>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="56" Column="12" TopLine="41"/>
+        <Caret Line="6" Column="12" TopLine="1"/>
       </Position25>
       <Position26>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="4" Column="11" TopLine="1"/>
+        <Caret Line="5" Column="10" TopLine="1"/>
       </Position26>
       <Position27>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="65" Column="27" TopLine="40"/>
+        <Caret Line="182" Column="30" TopLine="159"/>
       </Position27>
       <Position28>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="73" Column="13" TopLine="53"/>
+        <Caret Line="5" Column="9" TopLine="1"/>
       </Position28>
       <Position29>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="81" Column="15" TopLine="46"/>
+        <Caret Line="3" Column="5" TopLine="1"/>
       </Position29>
       <Position30>
         <Filename Value="beecore.lpr"/>
-        <Caret Line="97" Column="32" TopLine="77"/>
+        <Caret Line="4" Column="9" TopLine="1"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

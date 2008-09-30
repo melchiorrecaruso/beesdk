@@ -699,7 +699,7 @@ var
         end;
         Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
         // Command line //
-        CommandLine := 'a -r prova1.bee *.bmp';
+        CommandLine := 'a -r "prova1.bee" *.ini "*.bmp"';
 
         if CreateCore(CommandLine) then ShowMessage('CreatedCore = True');
         ExecuteCore;
