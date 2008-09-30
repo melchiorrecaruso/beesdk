@@ -69,8 +69,8 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beefm_mainfrm.lrs"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="5" Y="723"/>
-        <TopLine Value="717"/>
+        <CursorPos X="49" Y="702"/>
+        <TopLine Value="666"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>

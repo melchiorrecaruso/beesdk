@@ -1,8 +1,8 @@
 library BeeCore;
 
 uses
+  ShareMem,
   Classes,
-  Windows,
   Bee_Interface,
   Bee_App;
 
@@ -10,8 +10,9 @@ type
 
   TCore = class
   private
-    function Split(aParams: string):TStringList;
+    function Split(aParams: string): TStringList;
   private
+    procedure OnTerminate(Sender:TObject);
     procedure OnFatalError;
     procedure OnOverWrite;
     procedure OnWarning;
@@ -52,12 +53,10 @@ type
     Interfaces.OnKey.Method := OnKey;
 
     Params := Split(aParams);
-
-    for I := 0 to Params.Count -1 do MessageBox(0, PChar(Params.Strings[I]),'',0);
-
     SetLength(AppKey, 0);
 
     App := TBeeApp.Create(Interfaces, Params);
+    App.OnTerminate := OnTerminate;
   end;
 
   function TCore.Split(aParams: string): TStringList;
@@ -66,22 +65,37 @@ type
     P: string;
   begin
     Result := TStringList.Create;
-    for I := 1 to Length(aParams) do
+
+    I := 1;
+    while I <= Length(aParams) do
     begin
-      if aParams[I] = ' ' then
+      if aParams[I] = '"' then
       begin
-        if P <> '' then
+        Inc(I);
+        while I <= Length(aParams) do
         begin
-          Result.Add(P);
-          P := '';
+          if aParams[I] <> '"' then
+            P := P + aParams[I]
+          else
+            Break;
+          Inc(I);
         end;
       end else
-        P := P + aParams[I];
+      begin
+        if aParams[I] = ' ' then
+        begin
+          if P <> '' then
+          begin
+            Result.Add(P);
+            P := '';
+
+          end;
+        end else
+          P := P + aParams[I];
+      end;
+      Inc(I);
     end;
-    if P <> '' then
-    begin
-      Result.Add(P);
-    end
+    if P <> '' then Result.Add(P);
   end;
 
   destructor TCore.Destroy;
@@ -94,9 +108,13 @@ type
     inherited Destroy;
   end;
 
+  procedure TCore.OnTerminate(Sender: TObject);
+  begin
+    Interfaces.OnDisplay.Data.Msg := 'Finished';
+  end;
+
   procedure TCore.OnFatalError;
   begin
-    // MessageBox(0, PChar(Interfaces.OnError.Data.Msg), '', 0);
   end;
 
   procedure TCore.OnOverWrite;
@@ -113,12 +131,11 @@ type
 
   procedure TCore.OnWarning;
   begin
-    // MessageBox(0, PChar(Interfaces.OnWarning.Data.Msg), '', 0);
   end;
 
   procedure TCore.OnDisplay;
   begin
-    // MessageBox(0, PChar(Interfaces.OnDisplay.Data.Msg), '', 0);
+
   end;
 
   procedure TCore.OnRequest;
@@ -127,7 +144,6 @@ type
 
   procedure TCore.OnError;
   begin
-    // MessageBox(0, PChar(Interfaces.OnError.Data.Msg), '', 0);
   end;
 
   procedure TCore.OnList;
@@ -194,12 +210,32 @@ begin
   end;
 end;
 
+function GetMessage: string; stdcall;
+begin
+  if Core <> nil then
+  begin
+    Result := Core.Interfaces.OnDisplay.Data.Msg;
+  end else
+    Result := '';
+end;
+
+function GetPercentage: integer; stdcall;
+begin
+  if Core <> nil then
+  begin
+    Result := Core.Interfaces.OnTick.Data.Percentage;
+  end else
+    Result := 0;
+end;
+
 exports
   CreateCore,
   ExecuteCore,
   DestroyCore,
   StopCore,
-  SuspendCore;
+  SuspendCore,
+  GetMessage,
+  GetPercentage;
 
 begin
 

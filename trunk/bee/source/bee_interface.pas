@@ -185,7 +185,7 @@ implementation
   constructor TApp.Create(aInterfaces: TInterfaces; aParams: TParams);
   begin
     inherited Create(True);
-    FreeOnTerminate := True;
+    FreeOnTerminate := False;
     Priority := tpNormal;
     ExitCode := 0;
     // ---
