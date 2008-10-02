@@ -145,7 +145,7 @@ begin
   inherited Create(aInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0863 archiver utility, freeware version, Aug 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0865 archiver utility, freeware version, Aug 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcName  := '';
@@ -221,7 +221,7 @@ procedure TBeeApp.Execute;
 const
   SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
-  // inherited Execute;
+  inherited Execute;
   Interfaces.OnDisplay.Data.Msg := FSelfName;
   Synchronize(Interfaces.OnDisplay.Method);
   /// process command
