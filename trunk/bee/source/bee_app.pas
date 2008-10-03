@@ -221,7 +221,6 @@ procedure TBeeApp.Execute;
 const
   SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
-  inherited Execute;
   Interfaces.OnDisplay.Data.Msg := FSelfName;
   Synchronize(Interfaces.OnDisplay.Method);
   /// process command
