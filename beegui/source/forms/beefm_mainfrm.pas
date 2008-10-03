@@ -299,8 +299,6 @@ var
 implementation
 
 uses
-  DynLibs,
-
   Bee_Common,
 
   BeeFm_ViewFrm,
@@ -314,44 +312,6 @@ uses
   BeeFm_ConfigFrm,
   BeeFm_SelectFrm,
   BeeFm_PropertyFrm;
-
-type
-  TCreateCore = function(aParams: string): boolean; stdcall;
-  TDestroyCore = procedure; stdcall;
-  TExecuteCore = procedure; stdcall;
-  TSuspendCore = procedure; stdcall;
-  TStopCore = procedure; stdcall;
-
-var
-  LibHandle: TLibHandle;
-  CreateCore: TCreateCore = nil;
-  DestroyCore: TDestroyCore = nil;
-  ExecuteCore: TExecuteCore = nil;
-  SuspendCore: TSuspendCore = nil;
-  StopCore: TStopCore = nil;
-
-  procedure LoadLib;
-  begin
-    LibHandle := SafeLoadLibrary('.\beecore.dll');
-    CreateCore  := GetProcedureAddress(LibHandle, 'CreateCore');
-    DestroyCore := GetProcedureAddress(LibHandle, 'DestroyCore');
-    ExecuteCore := GetProcedureAddress(LibHandle, 'ExecuteCore');
-    SuspendCore := GetProcedureAddress(LibHandle, 'SuspendCore');
-    StopCore    := GetProcedureAddress(LibHandle, 'StopCore');
-
-    if Assigned(CreateCore)  = False then ShowMessage('CreateCore not loaded');
-    if Assigned(DestroyCore) = False then ShowMessage('DestroyCore not loaded');
-    if Assigned(ExecuteCore) = False then ShowMessage('ExecuteCore not loaded');
-    if Assigned(SuspendCore) = False then ShowMessage('SuspendCore not loaded');
-    if Assigned(StopCore)    = False then ShowMessage('StopCore not loaded');
-
-  end;
-
-  procedure UnLoadLib;
-  begin
-    DestroyCore;
-    UnloadLibrary(LibHandle);
-  end;
 
   { TMainFrm }
 
@@ -379,7 +339,6 @@ var
     DownToolBar.BorderSpacing.Bottom := 2;
     ListView.BorderSpacing.Top := 4;
     {$ENDIF}
-    LoadLib;
   end;
   
   procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -410,7 +369,6 @@ var
       SaveProperty;
       ConfigFrm.SaveProperty;
     end;
-    UnLoadLib;
   end;
   
   procedure TMainFrm.FormShow(Sender: TObject);
@@ -699,16 +657,17 @@ var
         end;
         Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
         // Command line //
-        CommandLine := 'a -r "prova1.bee" *.ini "*.bmp"';
-
-        if CreateCore(CommandLine) then ShowMessage('CreatedCore = True');
-        ExecuteCore;
-
+        CommandLine := 'beegui a -2 "-0' + ArchiveLink + '"';
+        if MMenuOptionsLogReport.Checked then
+          CommandLine := CommandLine + ' -1+'
+        else
+          CommandLine := CommandLine + ' -1-';
+        CommandLine := CommandLine + ' "' + ArchiveName + '"';
         // Archive process //
-        // ArcProcess.Initialize(ArchiveName, ArchiveLink);
-        // ArcProcess.Add(CommandLine, '');
-        // ArcProcess.Finalize(OnArcTimer);
-        // ArcProcess.Enabled := True;
+        ArcProcess.Initialize(ArchiveName, ArchiveLink);
+        ArcProcess.Add(CommandLine, '');
+        ArcProcess.Finalize(OnArcTimer);
+        ArcProcess.Enabled := True;
       end;
     end else
       MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
