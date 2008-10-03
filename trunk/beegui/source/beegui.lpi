@@ -14,7 +14,7 @@
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -40,13 +40,13 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="16">
+    <Units Count="14">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
-        <CursorPos X="7" Y="86"/>
-        <TopLine Value="49"/>
+        <CursorPos X="6" Y="57"/>
+        <TopLine Value="40"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="26"/>
         <Loaded Value="True"/>
@@ -148,8 +148,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_CmdLine"/>
         <CursorPos X="23" Y="167"/>
-        <TopLine Value="159"/>
+        <TopLine Value="31"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="26"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
@@ -186,52 +188,12 @@
         <UsageCount Value="26"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit13>
-      <Unit14>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="5" Y="140"/>
-        <TopLine Value="120"/>
-        <EditorIndex Value="1"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="packages\beegui_iconlist.pas"/>
-        <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="11" Y="223"/>
-        <TopLine Value="205"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit15>
     </Units>
-    <JumpHistory Count="6" HistoryIndex="5">
+    <JumpHistory Count="1" HistoryIndex="0">
       <Position1>
         <Filename Value="beegui.lpr"/>
         <Caret Line="61" Column="16" TopLine="51"/>
       </Position1>
-      <Position2>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="828" Column="25" TopLine="527"/>
-      </Position2>
-      <Position3>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="155" Column="5" TopLine="135"/>
-      </Position3>
-      <Position4>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="156" Column="5" TopLine="136"/>
-      </Position4>
-      <Position5>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="141" Column="5" TopLine="121"/>
-      </Position5>
-      <Position6>
-        <Filename Value="packages\beegui_iconlist.pas"/>
-        <Caret Line="225" Column="36" TopLine="199"/>
-      </Position6>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -260,6 +222,9 @@
       </Optimizations>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+      </Debugging>
       <LinkSmart Value="True"/>
       <Options>
         <Win32>
@@ -268,7 +233,8 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2"/>
+      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2
+"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
