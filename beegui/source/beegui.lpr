@@ -54,7 +54,7 @@ var
   AboutFrm: TAboutFrm = nil;
 
 begin
-  MaxKeptOSChunks := 8;
+  // MaxKeptOSChunks := 8;
   Application.Initialize;
   Application.Title:= cApplicationName;
   CmdLine := TCmdLine.Create;
