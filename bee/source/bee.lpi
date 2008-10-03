@@ -11,7 +11,7 @@
       <IconPath Value=".\"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
@@ -31,8 +31,8 @@
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <CursorPos X="10" Y="12"/>
-        <TopLine Value="19"/>
+        <CursorPos X="3" Y="220"/>
+        <TopLine Value="184"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="163"/>
         <Loaded Value="True"/>
@@ -41,8 +41,8 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="57" Y="533"/>
-        <TopLine Value="514"/>
+        <CursorPos X="33" Y="32"/>
+        <TopLine Value="21"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
