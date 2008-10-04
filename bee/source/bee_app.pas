@@ -44,6 +44,7 @@ uses
   Bee_Files,
   Bee_Headers,
   Bee_Interface,
+  Bee_CommandLine,
   Bee_Configuration; // TConfiguration, TTable;
 
 type
@@ -98,31 +99,12 @@ type
     
   private
     FSelfName: string;
-
-    FArcName:  string;      // archive file name
     FArcFile:  TFileReader; // archive file stream
-    FSwapName: string;      // swap file name
     FSwapFile: TFileReader; // swap file stream
+    FSwapName: string;      // swap file name
 
-    FCfgName: string;
-    FCfg: TConfiguration;
-
-    FCommand: char;     // command
-    FaOption: string;
-    FcdOption: string;
-    FeOption: string;   // forced file extension
-    FfOption: boolean;
-    FkOption: boolean;
-    FlOption: boolean;
-    FoOption: char;
-    FrOption: boolean;
-    FsOption: boolean;
-    FtOption: boolean;
-    FuOption: boolean;
-    FxOption: TStringList;
-    FyOption: string;
-
-    FFileMasks: TStringList; // file masks
+    FConfiguration: TConfiguration;
+    FCommandLine: TCommandLine;
   end;
 
 implementation
@@ -145,43 +127,36 @@ begin
   inherited Create(aInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0867 archiver utility, freeware version, Aug 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0875 archiver utility, freeware version, Aug 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
-  FArcName  := '';
   FArcFile  := nil;
   FSwapName := '';
   FSwapFile := nil;
-  
-  FCfgName := SelfPath + 'bee.ini';
-  FCfg := TConfiguration.Create;
 
-  FCommand := ' ';
-  FaOption := '';
-  FcdOption := '';
-  FeOption := ''; // forced file extension
-  FfOption := False;
-  FkOption := False;
-  FlOption := False;
-  FoOption := 'Y';
-  FrOption := False;
-  FsOption := False;
-  FtOption := False;
-  FuOption := False;
-  FxOption := TStringList.Create;
-  FyOption := '';
+  FCommandLine := TCommandLine.Create;
+  FCommandLine.Process(aParams);
 
-  FFileMasks := TStringList.Create;
+  // load method and dictionary level
+  FConfiguration := TConfiguration.Create;
+  FConfiguration.Selector('\main');
+  FConfiguration.CurrentSection.Values['Method'] := IntToStr(FCommandLine.mOption);
+  FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FCommandLine.dOption);
 
-  ProcessOptions; // process options
-  ProcessMasks; // porcess masks
+  // load configuration
+  if not FileExists(FCommandLine.cfgOption) then
+  begin
+    Interfaces.OnWarning.Data.Msg := (Cr + 'Configuration file ' + FCommandLine.cfgOption + ' not found, using default settings' + Cr);
+    Synchronize(Interfaces.OnWarning.Method);
+    SetExitCode(1);
+  end else
+    FConfiguration.LoadFromFile(FCommandLine.cfgOption);
 end;
 
 destructor TBeeApp.Destroy;
 begin
-  FCfg.Free;
-  FxOption.Free;
-  FFileMasks.Free;
+  FConfiguration.Free;
+  FCommandLine.Free;
   inherited Destroy;
 end;
 
@@ -223,20 +198,23 @@ const
 begin
   Interfaces.OnDisplay.Data.Msg := FSelfName;
   Synchronize(Interfaces.OnDisplay.Method);
-  /// process command
-  if ((FCommand in SetOfCommands) and (FArcName > '')) or (FCommand = '?') then
-    case FCommand of
-      'A': EncodeShell;
-      'D': DeleteShell;
-      'E': DecodeShell(toExtract);
-      'L': ListShell;
-      'R': RenameShell;
-      'T': DecodeShell(toTest);
-      'X': DecodeShell(toExtract);
-      '?': DisplayUsage;
-    end
-  else
-    DisplayUsage;
+  // process command
+  with FCommandLine do
+  begin
+    if ((Command in SetOfCommands) and (ArchiveName > '')) or (Command = '?') then
+      case Command of
+        'A': EncodeShell;
+        'D': DeleteShell;
+        'E': DecodeShell(toExtract);
+        'L': ListShell;
+        'R': RenameShell;
+        'T': DecodeShell(toTest);
+        'X': DecodeShell(toExtract);
+        '?': DisplayUsage;
+      end
+    else
+      DisplayUsage;
+  end;
 end;
 
 procedure TBeeApp.SetPriority(aPriority: integer); // Priority is 0..3
@@ -290,175 +268,7 @@ begin
   end;
 end;
 
-// Options processing
-
-procedure TBeeApp.ProcessOption(var S: string; var Option: boolean);
-begin
-  if Length(S) > 1 then
-  begin
-    Delete(S, 1, 2);
-    if (S = '') or (S = '+') then
-      Option := True
-    else
-      if (S = '-') then
-        Option := False;
-  end;
-end;
-
-procedure TBeeApp.ProcessOptions;
-var
-  I: integer;
-  S: string;
-begin
-  // default configuration
-  FCfg.Selector('\main');
-  FCfg.CurrentSection.Values['Method'] := '1';
-  FCfg.CurrentSection.Values['Dictionary'] := '2';
-
-  // catch options, command, archive name and name of files
-  for I := 0 to Params.Count - 1 do
-  begin
-    S := Params.Strings[I];
-    if (FArcName = '') and (Length(S) > 1) and (S[1] = '-') then
-    begin
-      // options...
-      case UpCase(S[2]) of
-        'S': ProcessOption(S, FsOption);
-        'U': ProcessOption(S, FuOption);
-        'F': ProcessOption(S, FfOption);
-        'T': ProcessOption(S, FtOption);
-        'L': ProcessOption(S, FlOption);
-        'K': ProcessOption(S, FkOption);
-        'R': ProcessOption(S, FrOption);
-        'Y': begin
-               Delete(S, 1, 2);
-               if DirectoryExists(ExcludeTrailingBackslash(S)) then
-               begin
-                 FyOption := ExcludeTrailingBackslash(S);
-               end;
-             end;
-        'A': begin
-               Delete(S, 1, 2);
-               if (S = '+') or (Length(S) = 0) then
-                 FaOption := 'bee.sfx'
-               else
-                 if (S = '-') then
-                   FaOption := 'nul'
-                 else
-                   FaOption := S;
-             end;
-        'M': begin
-               Delete(S, 1, 2);
-               if (Length(S)= 1) and (S[1] in ['0'..'3']) then
-               begin
-                 FCfg.Selector('\main');
-                 FCfg.CurrentSection.Values['Method'] := S;
-               end;
-             end;
-        'O': begin
-               Delete(S, 1, 2);
-               if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
-               begin
-                 FoOption := UpCase(S[1]);
-               end;
-             end;
-        'D': begin
-               Delete(S, 1, 2);
-               if (Length(S)= 1) and (S[1] in ['0'..'9']) then
-               begin
-                 FCfg.Selector('\main');
-                 FCfg.CurrentSection.Values['Dictionary'] := S;
-               end;
-             end;
-        'E': begin
-               Delete(S, 1, 2);
-               if ExtractFileExt('.' + S) <> '.' then
-               begin
-                 FeOption := ExtractFileExt('.' + S);
-               end;
-             end;
-        'X': begin
-               Delete(S, 1, 2);
-               if Length(S) > 0 then
-               begin
-                 FxOption.Add(S);
-               end;
-             end;
-        else if Pos('-PRI', UpperCase(S)) = 1 then
-             begin
-               Delete(S, 1, 4);
-               if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
-               begin
-                 SetPriority(StrToInt(S[1]));
-               end;
-             end else
-             begin
-               if Pos('-CD', UpperCase(S)) = 1 then
-               begin
-                 Delete(S, 1, 3);
-                 if Length(S) > 0 then
-                 begin
-                   FcdOption := IncludeTrailingBackslash(FixDirName(S));
-                 end;
-               end else
-               begin
-                 if Pos('-CFG', UpperCase(S)) = 1 then
-                 begin
-                   Delete(S, 1, 4);
-                   FCfgName := S;
-                 end;
-               end;
-             end;
-        end; // end case
-    end else
-    begin
-      // command or filenames...
-      if FCommand = ' ' then
-      begin
-        if Length(S) = 1 then
-          FCommand := UpCase(S[1])
-        else
-          FCommand := '?';
-      end else
-        if FArcName = '' then
-        begin
-          FArcName := S;
-          if ExtractFileExt(FArcName) = '' then
-          begin
-            FArcName := ChangeFileExt(FArcName, '.bee');
-          end;
-        end else
-          FFileMasks.Add(S);
-    end;
-  end; // end for loop
-
-  // process configuration
-  if not FileExists(FCfgName) then
-  begin
-    Interfaces.OnWarning.Data.Msg := (Cr + 'Configuration file ' + FCfgName + ' not found, using default settings' + Cr);
-    Synchronize(Interfaces.OnWarning.Method);
-    SetExitCode(1);
-  end else
-    FCfg.LoadFromFile(FCfgName);
-end;
-
-procedure TBeeApp.ProcessMasks;
-begin
-  if FFileMasks.Count = 0 then
-  begin
-    case FCommand of
-     {'a': nothing to do}
-     {'D': nothing to do}
-      'E': FFileMasks.Add('*');
-      'L': FFileMasks.Add('*');
-     {'R': nothing to do}
-      'T': FFileMasks.Add('*');
-      'X': FFileMasks.Add('*');
-     {'?': nothing to do}
-    end;
-    FrOption := True; // force recursion
-  end;
-end;
+// Extract file processing
 
 procedure TBeeApp.ProcessFilesToExtract;
 var
