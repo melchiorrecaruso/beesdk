@@ -52,7 +52,7 @@ type
     FoOption: char;
     FmOption: integer;
     FdOption: integer;
-    FxOptions: TStringList;
+    FxOption: TStringList;
     FtOption: boolean;
     FlOption: boolean;
     FyOption: string;
@@ -73,7 +73,6 @@ type
     procedure SetoOption(Value: char);
     procedure SetmOption(Value: integer);
     procedure SetdOption(Value: integer);
-    function GetxOption(Index: integer): string;
     procedure SettOption(Value: boolean);
     procedure SetlOption(Value: boolean);
     procedure SetyOption(Value: string);
@@ -82,7 +81,6 @@ type
     procedure SetcfgOption(Value: string);
     procedure SetpriOption(Value: integer);
     procedure SetArchiveName(Value: string);
-    function GetFileMask(Index: integer): string;
   protected
     procedure ProcessOption(var S: string; var Option: boolean);
   public
@@ -101,7 +99,7 @@ type
     property oOption: char read FoOption write SetoOption;
     property mOption: integer read FmOption write SetmOption;
     property dOption: integer read FdOption write SetdOption;
-    property xOptions[Index: integer]: string read GetxOption;
+    property xOption: TStringList read FxOption;
     property tOption: boolean read FtOption write SettOption;
     property lOption: boolean read FlOption write SetlOption;
     property yOption: string read FyOption write SetyOption;
@@ -110,7 +108,7 @@ type
     property cfgOption: string read FcfgOption write SetcfgOption;
     property priOption: integer read FpriOption write SetpriOption;
     property ArchiveName: string read FArchiveName write SetArchiveName;
-    property FileMasks[Index: integer]: string read GetFileMask;
+    property FileMasks: TStringList read FFileMasks;
   end;
 
 implementation
@@ -118,7 +116,7 @@ implementation
   constructor TCommandLine.Create;
   begin
     inherited Create;
-    FxOptions := TStringList.Create;
+    FxOption := TStringList.Create;
     FFileMasks := TStringList.Create;
     Clear;
   end;
@@ -135,7 +133,7 @@ implementation
     FoOption := 'Y';
     FmOption := 1;
     FdOption := 2;
-    FxOptions.Clear;
+    FxOption.Clear;
     FtOption := False;
     FlOption := False;
     FyOption := '';
@@ -149,8 +147,8 @@ implementation
 
   destructor TCommandLine.Destroy;
   begin
-    FxOptions.Clear;
-    FxOptions.Free;
+    FxOption.Clear;
+    FxOption.Free;
     FFileMasks.Clear;
     FFileMasks.Free;
     inherited Destroy;
@@ -238,7 +236,7 @@ implementation
                  Delete(S, 1, 2);
                  if Length(S) > 0 then
                  begin
-                   FxOptions.Add(S);
+                   FxOption.Add(S);
                  end;
                end;
           else if Pos('-PRI', UpperCase(S)) = 1 then
@@ -308,102 +306,92 @@ implementation
 
   procedure TCommandLine.SetCommand(Value: char);
   begin
-
+    FCommand := Value;
   end;
 
   procedure TCommandLine.SetrOption(Value: boolean);
   begin
-
+    FrOption := Value;
   end;
 
   procedure TCommandLine.SetuOption(Value: boolean);
   begin
-
+    FuOption := Value;
   end;
 
   procedure TCommandLine.SetfOption(Value: boolean);
   begin
-
+    FfOption := Value;
   end;
 
   procedure TCommandLine.SeteOption(Value: string);
   begin
-
+    FeOption := Value;
   end;
 
   procedure TCommandLine.SetsOption(Value: boolean);
   begin
-
+    FsOption := Value;
   end;
 
   procedure TCommandLine.SetaOption(Value: string);
   begin
-
+    FaOption := Value;
   end;
 
   procedure TCommandLine.SetoOption(Value: char);
   begin
-
+    FoOption := Value;
   end;
 
   procedure TCommandLine.SetmOption(Value: integer);
   begin
-
+    FmOption := Value;
   end;
 
   procedure TCommandLine.SetdOption(Value: integer);
   begin
-
-  end;
-
-  function TCommandLine.GetxOption(Index: integer): string;
-  begin
-
+    FdOption := Value;
   end;
 
   procedure TCommandLine.SettOption(Value: boolean);
   begin
-
+    FtOption := Value;
   end;
 
   procedure TCommandLine.SetlOption(Value: boolean);
   begin
-
+    FlOption := Value;
   end;
 
   procedure TCommandLine.SetyOption(Value: string);
   begin
-
+    FyOption := Value;
   end;
 
   procedure TCommandLine.SetkOption(Value: boolean);
   begin
-
+    FkOption := Value;
   end;
 
   procedure TCommandLine.SetcdOption(Value: string);
   begin
-
+    FcdOption := Value;
   end;
 
   procedure TCommandLine.SetcfgOption(Value: string);
   begin
-
+    FcfgOption := Value;
   end;
 
   procedure TCommandLine.SetpriOption(Value: integer);
   begin
-
+    FpriOption := Value;
   end;
 
   procedure TCommandLine.SetArchiveName(Value: string);
   begin
-
-  end;
-
-  function TCommandLine.GetFileMask(Index: integer): string;
-  begin
-
+    FArchiveName := Value;
   end;
 
 end.
