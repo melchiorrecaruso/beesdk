@@ -247,10 +247,10 @@ end;
 function TBeeApp.OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 begin
   Result := True;
-  if FileExists(FArcName) then
+  if FileExists(FCommandLine.ArchiveName) then
   begin
     try
-      FArcFile := TFileReader.Create(FArcName, fmOpenRead + fmShareDenyWrite);
+      FArcFile := TFileReader.Create(FCommandLine.ArchiveName, fmOpenRead + fmShareDenyWrite);
       Headers.ReadItems(FArcFile, aAction);
       if (Headers.Count = 0) and (FArcFile.Size <> 0) then
       begin
@@ -274,17 +274,17 @@ procedure TBeeApp.ProcessFilesToExtract;
 var
   I: integer;
 begin
-  if FCommand = 'E' then
+  if FCommandLine.Command = 'E' then
   begin
     for I := 0 to Headers.Count - 1 do
       with THeader(Headers.Items[I]) do
         FileName := ExtractFileName(FileName);
   end else
-    if Length(FcdOption) > 0 then
+    if Length(FCommandLine.cdOption) > 0 then
     begin
       for I := 0 to Headers.Count - 1 do
         with THeader(Headers.Items[I]) do
-          FileName := DeleteFilePath(FcdOption, FileName);
+          FileName := DeleteFilePath(FCommandLine.cdOption, FileName);
     end;
 end;
 
@@ -292,7 +292,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToOverWrite;
 begin
-  if (FuOption = False) and (FfOption = False) then
+  if (FCommandLine.uOption = False) and (FCommandLine.fOption = False) then
     ProcessFilesToOverWriteDefault(Headers)
   else
     ProcessFilesToOverWriteAdvanced(Headers);
@@ -311,7 +311,7 @@ begin
     if (THeader(Headers.Items[I]).Action = toExtract) and
        (FileExists(THeader(Headers.Items[I]).FileName) = True) then
     begin
-      if (FoOption in ['A', 'Q', 'S']) = False then
+      if (FCommandLine.oOption in ['A', 'Q', 'S']) = False then
       begin
         repeat
           Interfaces.OnOverWrite.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).FileName);
@@ -324,10 +324,10 @@ begin
         until (Length(Interfaces.OnOverWrite.Answer) = 1)
           and (UpCase(Interfaces.OnOverWrite.Answer[1]) in ['A', 'N', 'R', 'S', 'Q', 'Y']);
 
-        FoOption := UpCase(Interfaces.OnOverWrite.Answer[1]);
+        FCommandLine.oOption := UpCase(Interfaces.OnOverWrite.Answer[1]);
       end;
 
-      case UpCase(FoOption) of
+      case UpCase(FCommandLine.oOption) of
         'A': Break;
         'N': THeader(Headers.Items[I]).Action := toNone;
         'R': begin
@@ -389,10 +389,10 @@ procedure TBeeApp.ProcessFilesToOverWriteAdvanced(Headers: THeaders);
 var
   I: integer;
 begin
-  if (FuOption xor FfOption) then
+  if (FCommandLine.uOption xor FCommandLine.fOption) then
   begin
 
-    if FuOption then
+    if FCommandLine.uOption then
     begin
       for I := 0 to Headers.Count - 1 do
         if (THeader(Headers.Items[I]).Action = toExtract) then
@@ -468,8 +468,8 @@ var
   i: integer;
   iFileName: string;
 begin
-  Headers.MarkItems(FFileMasks, toCopy, toRename, FrOption);
-  Headers.MarkItems(FxOption, toRename, toCopy, FrOption);
+  Headers.MarkItems(FCommandLine.FileMasks, toCopy, toRename, FCommandLine.rOption);
+  Headers.MarkItems(FCommandLine.xOption, toRename, toCopy, FCommandLine.rOption);
 
   if (Headers.GetNext(0, toRename) > -1) then
   begin
