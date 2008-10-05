@@ -39,7 +39,7 @@ unit Bee_App;
 interface
 
 uses
-  Classes,           // TStringList, ...
+  Classes, // TStringList, ...
   // ---
   Bee_Files,
   Bee_Headers,
