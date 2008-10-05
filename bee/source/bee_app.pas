@@ -58,10 +58,6 @@ type
     procedure Execute; override;
   private
     function OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
-
-    procedure ProcessOption(var S: string; var Option: boolean);
-    procedure ProcessOptions;
-    procedure ProcessMasks;
     // decode solid sequences using a swapfile
     function ProcessFilesToSwap(Headers: THeaders): boolean;
     // find and prepare sequences
@@ -71,7 +67,6 @@ type
     procedure ProcessFilesToExtract(Headers: THeaders);
     procedure ProcessFilesToOverWrite(Headers: THeaders);
     function ProcessFilesToRename(Headers: THeaders): boolean;
-
     procedure ProcessFilesDeleted(Headers: THeaders);
     // overwrite sub-routines
     procedure ProcessFilesToOverWriteDefault(Headers: THeaders);
@@ -127,7 +122,7 @@ begin
   inherited Create(aInterface, aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0875 archiver utility, freeware version, Aug 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0877 archiver utility, freeware version, Aug 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcFile  := nil;
@@ -505,7 +500,7 @@ begin
     end;
     Result := True
   end else
-    Result := ((Length(FaOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) ;
+    Result := ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) ;
 end;
 
 // Sequences processing
@@ -600,7 +595,7 @@ begin
   I := Headers.GetBack(Headers.Count - 1, toSwap);
   if (I > -1) and (Interfaces.Stop = False) then
   begin
-    FSwapName := GenerateFileName(FyOption);
+    FSwapName := GenerateFileName(FCommandLine.yOption);
     FSwapStrm := TFileWriter.Create(FSwapName, fmCreate);
 
     CurrDictionary := Headers.Count;
@@ -723,34 +718,34 @@ end;
 
 procedure TBeeApp.ProcesstOption;
 begin
-  if FtOption then
+  if FCommandLine.tOption then
   begin
     with Interfaces.OnTick.Data do
     begin
       TotalSize := 0;
       ProcessedSize := 0;
     end;
-    FrOption := True; // force recursion
-    FxOption.Clear; // clear xOption
-    FFileMasks.Clear; // clear FileMasks
-    FFileMasks.Add('*');
+    FCommandLine.rOption := True; // force recursion
+    FCommandLine.xOption.Clear; // clear xOption
+    FCommandLine.FileMasks.Clear; // clear FileMasks
+    FCommandLine.FileMasks.Add('*');
     DecodeShell(toTest);
   end;
 end;
 
 procedure TBeeApp.ProcesslOption;
 begin
-  if FlOption then
+  if FCommandLine.lOption then
   begin
     with Interfaces.OnTick.Data do
     begin
       TotalSize := 0;
       ProcessedSize := 0;
     end;
-    FrOption := True; // force recursion
-    FxOption.Clear; // clear xOption
-    FFileMasks.Clear; // clear FileMasks
-    FFileMasks.Add('*');
+    FCommandLine.rOption := True; // force recursion
+    FCommandLine.xOption.Clear; // clear xOption
+    FCommandLine.FileMasks.Clear; // clear FileMasks
+    FCommandLine.FileMasks.Add('*');
     ListShell;
   end;
 end;
@@ -766,7 +761,7 @@ var
   Headers: THeaders;
   Time: double;
 begin
-  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -779,19 +774,19 @@ begin
 
     with Interfaces.OnTick.Data do
       Headers.AddItems(
-        FFileMasks,
-        FcdOption,
-         FfOption,
-         FrOption,
-         FuOption,
-         FxOption,
+        FCommandLine.FileMasks,
+        FCommandLine.cdOption,
+        FCommandLine.fOption,
+        FCommandLine.rOption,
+        FCommandLine.uOption,
+        FCommandLine.xOption,
         TotalSize);
 
     if (Headers.GetCount([toUpdate, toFresh]) > 0) or
-      ((Length(FaOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
+      ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
       Time := Now;
-      TmpFileName := GenerateFileName(FyOption);
+      TmpFileName := GenerateFileName(FCommandLine.yOption);
       TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
 
       // find sequences and...
@@ -800,14 +795,16 @@ begin
       if ProcessFilesToSwap(Headers) then
       begin
         // sort headers (only toUpdate headers)
-        Headers.SortNews(FCfg, FsOption, FkOption, FeOption);
+        with FCommandLine do
+          Headers.SortNews(FConfiguration, sOption, kOption, eOption);
 
         // if exists a modified solid sequence open swap file
         if Length(FSwapName) > 0 then
           FSwapFile := TFileReader.Create(FSwapName, fmOpenRead + fmShareDenyWrite);
 
         // set sfx module
-        if Length(FaOption) > 0 then Headers.SetModule(FaOption);
+        with FCommandLine do
+          if Length(aOption) > 0 then Headers.SetModule(aOption);
 
         // write Headers
         Headers.WriteItems(TmpFile);
@@ -844,10 +841,10 @@ begin
         DeleteFile(FSwapName);
         if Interfaces.Stop = False then
         begin
-          SysUtils.DeleteFile(FArcName);
-          if not RenameFile(TmpFileName, FArcName) then
+          SysUtils.DeleteFile(FCommandLine.ArchiveName);
+          if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
           begin
-            Interfaces.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FArcName);
+            Interfaces.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
             Synchronize(Interfaces.OnError.Method);
             SetExitCode(2);
           end else
@@ -892,7 +889,7 @@ var
   Time: double;
   I: integer;
 begin
-  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -901,8 +898,11 @@ begin
     Interfaces.OnDisplay.Data.Msg := (msgScanning + '...');
     Synchronize(Interfaces.OnDisplay.Method);
 
-    Headers.MarkItems(FFileMasks, toNone, Action, FrOption);
-    Headers.MarkItems(FxOption, Action, toNone, FrOption);
+    with FCommandLine do
+    begin
+      Headers.MarkItems(FileMasks, toNone, Action, rOption);
+      Headers.MarkItems(xOption, Action, toNone, rOption);
+    end;
 
     if (Action = toExtract) then
     begin
@@ -971,7 +971,7 @@ var
   Headers: THeaders;
   Encoder: TEncoder;
 begin
-  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -980,13 +980,16 @@ begin
     Interfaces.OnDisplay.Data.Msg := (msgScanning + '...');
     Synchronize(Interfaces.OnDisplay.Method);
 
-    Headers.MarkItems(FFileMasks, toCopy, toDelete, FrOption);
-    Headers.MarkItems(FxOption, toDelete, toCopy, FrOption);
+    with FCommandLine do
+    begin
+      Headers.MarkItems(FileMasks, toCopy, toDelete, rOption);
+      Headers.MarkItems(xOption, toDelete, toCopy, rOption);
+    end;
 
-    if (Headers.GetNext(0, toDelete) > -1) or ((Length(FaOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
+    if (Headers.GetNext(0, toDelete) > -1) or ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
       Time := Now;
-      TmpFileName := GenerateFileName(FyOption);
+      TmpFileName := GenerateFileName(FCommandLine.yOption);
       TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
 
       // find sequences
@@ -1001,7 +1004,8 @@ begin
           FSwapFile := TFileReader.Create(FSwapName, fmOpenRead + fmShareDenyWrite);
 
         // set sfx module
-        if Length(FaOption) > 0 then Headers.SetModule(FaOption);
+        with FCommandLine do
+          if Length(aOption) > 0 then Headers.SetModule(aOption);
 
         // write Headers
         Headers.WriteItems(TmpFile);
@@ -1039,10 +1043,10 @@ begin
         SysUtils.DeleteFile(FSwapName);
         if Interfaces.Stop = False then
         begin
-          SysUtils.DeleteFile(FArcName);
-          if not RenameFile(TmpFileName, FArcName) then
+          SysUtils.DeleteFile(FCommandLine.ArchiveName);
+          if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
           begin
-            Interfaces.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FArcName);
+            Interfaces.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
             Synchronize(Interfaces.OnError.Method);
             SetExitCode(2);
           end else
@@ -1088,7 +1092,7 @@ var
   Time: double;
   I: integer;
 begin
-  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -1100,14 +1104,15 @@ begin
     if ProcessFilesToRename(Headers) then
     begin
       Time := Now;
-      TmpFileName := GenerateFileName(FyOption);
+      TmpFileName := GenerateFileName(FCommandLine.yOption);
       TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
 
       Interfaces.OnTick.Data.TotalSize :=
         Headers.GetPackedSize([toCopy, toRename]);
 
       // set sfx module
-      if Length(FaOption) > 0 then Headers.SetModule(FaOption);
+      with FCommandLine do
+        if Length(aOption) > 0 then Headers.SetModule(aOption);
 
       Headers.WriteItems(TmpFile);
       Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
@@ -1135,10 +1140,10 @@ begin
 
       if Interfaces.Stop = False then
       begin
-        SysUtils.DeleteFile(FArcName);
-        if not RenameFile(TmpFileName, FArcName) then
+        SysUtils.DeleteFile(FCommandLine.ArchiveName);
+        if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
         begin
-          Interfaces.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FArcName);
+          Interfaces.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
           Synchronize(Interfaces.OnError.Method);
           SetExitCode(2);
         end else
@@ -1171,7 +1176,7 @@ var
   CountFiles: integer;
   Time: double;
 begin
-  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FArcName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Info := THeaders.Create;
@@ -1188,8 +1193,11 @@ begin
     TotalPack  := 0;
     CountFiles := 0;
 
-    Info.MarkItems(FFileMasks, toNone, toList, FrOption);
-    Info.MarkItems(FxOption, toList, toNone, FrOption);
+    with FCommandLine do
+    begin
+      Info.MarkItems(FileMasks, toNone, toList, rOption);
+      Info.MarkItems(xOption, toList, toNone, rOption);
+    end;
 
     if (Info.GetNext(0, toList) > -1) then
     begin
