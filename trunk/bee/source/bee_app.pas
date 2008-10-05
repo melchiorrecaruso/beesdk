@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0867 - 2008.10.03 by Melchiorre Caruso.
+  v0.7.9 build 0877 - 2008.10.053 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -119,7 +119,7 @@ uses
 
 constructor TBeeApp.Create(aInterface: TInterfaces; aParams: TParams);
 begin
-  inherited Create(aInterface, aParams);
+  inherited Create(aInterface);
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName := 'The Bee 0.7.9 build 0877 archiver utility, freeware version, Aug 2008.'
@@ -129,6 +129,7 @@ begin
   FSwapName := '';
   FSwapFile := nil;
 
+  // process command line
   FCommandLine := TCommandLine.Create;
   FCommandLine.Process(aParams);
 
@@ -141,7 +142,8 @@ begin
   // load configuration
   if not FileExists(FCommandLine.cfgOption) then
   begin
-    Interfaces.OnWarning.Data.Msg := (Cr + 'Configuration file ' + FCommandLine.cfgOption + ' not found, using default settings' + Cr);
+    Interfaces.OnWarning.Data.Msg := (Cr + 'Configuration file '
+      + FCommandLine.cfgOption + ' not found, using default settings' + Cr);
     Synchronize(Interfaces.OnWarning.Method);
     SetExitCode(1);
   end else

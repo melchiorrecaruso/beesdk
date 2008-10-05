@@ -168,12 +168,11 @@ type
   TApp = class (TThread)
   protected
     Interfaces: TInterfaces;
-    Params: TStringList;
   protected
     procedure DoTerminate; override;
     procedure SetExitCode(Code: integer);
   public
-    constructor Create(aInterfaces: TInterfaces; aParams: TParams);
+    constructor Create(aInterfaces: TInterfaces);
     procedure Synchronize(aMethod: TThreadMethod);
     destructor Destroy; override;
   end;
@@ -182,14 +181,13 @@ implementation
 
   // TApp class ...
 
-  constructor TApp.Create(aInterfaces: TInterfaces; aParams: TParams);
+  constructor TApp.Create(aInterfaces: TInterfaces);
   begin
     inherited Create(True);
     FreeOnTerminate := False;
     Priority := tpNormal;
     ExitCode := 0;
     // ---
-    Params := aParams;
     Interfaces := aInterfaces;
     Interfaces.Terminated := False;
     Interfaces.Suspend := False;
@@ -200,7 +198,6 @@ implementation
 
   destructor TApp.Destroy;
   begin
-    Params := nil;
     Interfaces := nil;
     inherited Destroy;
   end;
