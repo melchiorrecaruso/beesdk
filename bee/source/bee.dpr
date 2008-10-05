@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.7.9 build 0867 - 2008.10.03 by Melchiorre Caruso.
+    v0.7.9 build 0877 - 2008.10.05 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -45,8 +45,8 @@ uses
   {$IFDEF FPC} {$IFDEF UNIX}
   cThreads,
   {$ENDIF} {$ENDIF}
-  Classes,
   SysUtils,
+  Classes,
   // ---
   Bee_App,
   Bee_Common,
@@ -74,7 +74,7 @@ type
     procedure OnTick;
     procedure OnKey;
   public
-    constructor Create; 
+    constructor Create;
     destructor Destroy; override;
     procedure Execute;
   end;
