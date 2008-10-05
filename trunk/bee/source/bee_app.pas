@@ -142,8 +142,7 @@ begin
   // load configuration
   if not FileExists(FCommandLine.cfgOption) then
   begin
-    Interfaces.OnWarning.Data.Msg := (Cr + 'Configuration file '
-      + FCommandLine.cfgOption + ' not found, using default settings' + Cr);
+    Interfaces.OnWarning.Data.Msg := (Cr + 'Configuration file ' + FCommandLine.cfgOption + ' not found, using default settings' + Cr);
     Synchronize(Interfaces.OnWarning.Method);
     SetExitCode(1);
   end else
