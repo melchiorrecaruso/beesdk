@@ -3,42 +3,20 @@ object TickFrm: TTickFrm
   Height = 210
   Top = 271
   Width = 430
-  HelpContext = 0
   ActiveControl = Notebook
-  Align = alNone
-  AllowDropFiles = False
-  AutoScroll = True
-  AutoSize = False
-  BorderIcons = [biSystemMenu, biMinimize, biMaximize]
-  BorderStyle = bsSizeable
   Caption = '0% Processing...'
-  ChildSizing.LeftRightSpacing = 0
-  ChildSizing.TopBottomSpacing = 0
-  ChildSizing.HorizontalSpacing = 0
-  ChildSizing.VerticalSpacing = 0
-  ChildSizing.ControlsPerLine = 0
   ClientHeight = 210
   ClientWidth = 430
   Constraints.MinHeight = 210
   Constraints.MinWidth = 430
-  DockSite = False
-  DragKind = dkDrag
-  DragMode = dmManual
-  Enabled = True
   Font.Height = -11
   Font.Name = 'Tahoma'
-  Font.Style = []
-  FormStyle = fsNormal
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  ParentBiDiMode = True
   ParentFont = False
-  Position = poDesigned
   ShowInTaskBar = stAlways
-  UseDockManager = False
-  LCLVersion = '0.9.25'
-  WindowState = wsNormal
+  LCLVersion = '0.9.27'
   object BtnCancel: TBitBtn
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
@@ -48,34 +26,18 @@ object TickFrm: TTickFrm
     Height = 32
     Top = 172
     Width = 80
-    HelpContext = 0
-    Align = alNone
     Anchors = [akRight, akBottom]
     AutoSize = True
-    BorderSpacing.Left = 0
-    BorderSpacing.Top = 0
-    BorderSpacing.Right = 0
-    BorderSpacing.Bottom = 0
     BorderSpacing.Around = 6
-    BorderSpacing.CellAlignHorizontal = ccaFill
-    BorderSpacing.CellAlignVertical = ccaFill
     Cancel = True
     Caption = 'Blocca'
     Constraints.MinWidth = 80
     Default = True
-    Enabled = True
     Kind = bkAbort
-    Layout = blGlyphLeft
-    Margin = -1
     ModalResult = 3
     NumGlyphs = 0
     OnClick = BtnCancelClick
-    ParentFont = True
-    ParentShowHint = True
-    Spacing = 3
     TabOrder = 1
-    TabStop = True
-    Visible = True
   end
   object BtnPriority: TBitBtn
     AnchorSideTop.Control = BtnCancel
@@ -86,21 +48,12 @@ object TickFrm: TTickFrm
     Height = 32
     Top = 172
     Width = 80
-    HelpContext = 0
-    Align = alNone
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
-    BorderSpacing.Top = 0
     BorderSpacing.Right = 6
-    BorderSpacing.Bottom = 0
-    BorderSpacing.Around = 0
-    BorderSpacing.CellAlignHorizontal = ccaFill
-    BorderSpacing.CellAlignVertical = ccaFill
-    Cancel = False
     Caption = 'Priority'
     Constraints.MinWidth = 80
-    Default = False
     Enabled = False
     Glyph.Data = {
       46020000424D460200000000000036000000280000000F0000000B0000000100
@@ -123,19 +76,12 @@ object TickFrm: TTickFrm
       FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
       FFFF00FFFF00FF000000
     }
-    Kind = bkCustom
     Layout = blGlyphRight
-    Margin = -1
-    ModalResult = 0
     NumGlyphs = 0
     OnClick = BtnPriorityClick
-    ParentFont = True
-    ParentShowHint = True
     PopupMenu = Popup
     Spacing = 5
     TabOrder = 3
-    TabStop = True
-    Visible = True
   end
   object BtnPauseRun: TBitBtn
     AnchorSideTop.Control = BtnCancel
@@ -146,34 +92,16 @@ object TickFrm: TTickFrm
     Height = 32
     Top = 172
     Width = 75
-    HelpContext = 0
-    Align = alNone
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
-    BorderSpacing.Top = 0
     BorderSpacing.Right = 6
-    BorderSpacing.Bottom = 0
-    BorderSpacing.Around = 0
-    BorderSpacing.CellAlignHorizontal = ccaFill
-    BorderSpacing.CellAlignVertical = ccaFill
-    Cancel = False
     Caption = 'Pause'
     Constraints.MinWidth = 75
-    Default = False
     Enabled = False
-    Kind = bkCustom
-    Layout = blGlyphLeft
-    Margin = -1
-    ModalResult = 0
     NumGlyphs = 0
     OnClick = BtnPauseRunClick
-    ParentFont = True
-    ParentShowHint = True
-    Spacing = 3
     TabOrder = 2
-    TabStop = True
-    Visible = True
   end
   object Notebook: TNotebook
     AnchorSideLeft.Control = Owner
@@ -185,38 +113,14 @@ object TickFrm: TTickFrm
     Height = 160
     Top = 6
     Width = 418
-    HelpContext = 0
-    TabStop = True
-    Align = alNone
     Anchors = [akTop, akLeft, akRight, akBottom]
-    BorderSpacing.Left = 0
-    BorderSpacing.Top = 0
-    BorderSpacing.Right = 0
-    BorderSpacing.Bottom = 0
     BorderSpacing.Around = 6
-    BorderSpacing.CellAlignHorizontal = ccaFill
-    BorderSpacing.CellAlignVertical = ccaFill
-    DragCursor = crDrag
-    DragMode = dmManual
-    Enabled = True
-    Options = []
     PageIndex = 0
-    ParentFont = True
-    ShowTabs = True
     TabOrder = 0
     object GeneralPage: TPage
-      HelpContext = 0
       Caption = 'General'
-      ChildSizing.LeftRightSpacing = 0
-      ChildSizing.TopBottomSpacing = 0
-      ChildSizing.HorizontalSpacing = 0
-      ChildSizing.VerticalSpacing = 0
-      ChildSizing.ControlsPerLine = 0
       ClientWidth = 414
       ClientHeight = 132
-      ImageIndex = -1
-      ParentFont = True
-      ParentShowHint = True
       object Msg: TLabel
         AnchorSideLeft.Control = GeneralPage
         AnchorSideRight.Control = GeneralPage
@@ -226,34 +130,16 @@ object TickFrm: TTickFrm
         Height = 18
         Top = 82
         Width = 402
-        HelpContext = 0
-        Align = alNone
-        Alignment = taLeftJustify
         Anchors = [akLeft, akRight, akBottom]
-        AutoSize = True
         BorderSpacing.Left = 6
         BorderSpacing.Top = 2
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 2
-        BorderSpacing.Around = 0
-        BorderSpacing.CellAlignHorizontal = ccaFill
-        BorderSpacing.CellAlignVertical = ccaFill
         Caption = '...'
         Constraints.MaxHeight = 18
         Constraints.MinHeight = 18
-        DragCursor = crDrag
-        DragMode = dmManual
-        Enabled = True
         Layout = tlBottom
-        ParentBidiMode = True
         ParentColor = False
-        ParentFont = True
-        ParentShowHint = True
-        ShowAccelChar = True
-        Transparent = True
-        Visible = True
-        WordWrap = False
-        OptimalFill = False
       end
       object Tick: TProgressBar
         AnchorSideLeft.Control = GeneralPage
@@ -265,34 +151,12 @@ object TickFrm: TTickFrm
         Height = 20
         Top = 106
         Width = 402
-        HelpContext = 0
-        Align = alNone
         Anchors = [akLeft, akRight, akBottom]
-        BorderSpacing.Left = 0
-        BorderSpacing.Top = 0
-        BorderSpacing.Right = 0
-        BorderSpacing.Bottom = 0
         BorderSpacing.Around = 6
-        BorderSpacing.CellAlignHorizontal = ccaFill
-        BorderSpacing.CellAlignVertical = ccaFill
-        BorderWidth = 0
         Constraints.MaxHeight = 20
         Constraints.MinHeight = 20
-        DragCursor = crDrag
-        DragKind = dkDrag
-        DragMode = dmManual
-        Enabled = True
         Max = 100
-        Min = 0
-        Orientation = pbHorizontal
-        ParentShowHint = True
-        Position = 0
-        Smooth = False
-        Step = 10
         TabOrder = 0
-        TabStop = False
-        Visible = True
-        BarShowText = False
       end
       object TimeLabelPanel: TPanel
         AnchorSideLeft.Control = GeneralPage
@@ -302,42 +166,13 @@ object TickFrm: TTickFrm
         Height = 70
         Top = 6
         Width = 89
-        HelpContext = 0
-        Align = alNone
-        Alignment = taCenter
         Anchors = [akTop, akLeft, akBottom]
         AutoSize = True
-        BorderSpacing.Left = 0
-        BorderSpacing.Top = 0
-        BorderSpacing.Right = 0
-        BorderSpacing.Bottom = 0
         BorderSpacing.Around = 6
-        BorderSpacing.CellAlignHorizontal = ccaFill
-        BorderSpacing.CellAlignVertical = ccaFill
-        BevelInner = bvNone
         BevelOuter = bvNone
-        BevelWidth = 1
-        BorderWidth = 0
-        BorderStyle = bsNone
-        ChildSizing.LeftRightSpacing = 0
-        ChildSizing.TopBottomSpacing = 0
-        ChildSizing.HorizontalSpacing = 0
-        ChildSizing.VerticalSpacing = 0
-        ChildSizing.ControlsPerLine = 0
         ClientHeight = 70
         ClientWidth = 89
-        DockSite = False
-        DragCursor = crDrag
-        DragKind = dkDrag
-        DragMode = dmManual
-        Enabled = True
-        FullRepaint = True
-        ParentColor = True
-        ParentFont = True
-        ParentShowHint = True
         TabOrder = 1
-        TabStop = False
-        Visible = True
         object TimeLabel: TLabel
           AnchorSideLeft.Control = TimeLabelPanel
           AnchorSideTop.Control = TimeLabelPanel
@@ -345,31 +180,13 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 6
           Width = 67
-          HelpContext = 0
-          Align = alNone
-          Alignment = taLeftJustify
-          AutoSize = True
           BorderSpacing.Left = 6
           BorderSpacing.Top = 6
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = 'Time elapsed:'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
           Layout = tlBottom
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
         object RemainingTimeLabel: TLabel
           AnchorSideLeft.Control = TimeLabelPanel
@@ -379,31 +196,13 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 23
           Width = 77
-          HelpContext = 0
-          Align = alNone
-          Alignment = taLeftJustify
-          AutoSize = True
           BorderSpacing.Left = 6
           BorderSpacing.Top = 2
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = 'Remaining time:'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
           Layout = tlBottom
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
       end
       object SizePanel: TPanel
@@ -415,42 +214,13 @@ object TickFrm: TTickFrm
         Height = 70
         Top = 6
         Width = 60
-        HelpContext = 0
-        Align = alNone
-        Alignment = taCenter
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
-        BorderSpacing.Left = 0
-        BorderSpacing.Top = 0
-        BorderSpacing.Right = 0
-        BorderSpacing.Bottom = 0
         BorderSpacing.Around = 6
-        BorderSpacing.CellAlignHorizontal = ccaFill
-        BorderSpacing.CellAlignVertical = ccaFill
-        BevelInner = bvNone
         BevelOuter = bvNone
-        BevelWidth = 1
-        BorderWidth = 0
-        BorderStyle = bsNone
-        ChildSizing.LeftRightSpacing = 0
-        ChildSizing.TopBottomSpacing = 0
-        ChildSizing.HorizontalSpacing = 0
-        ChildSizing.VerticalSpacing = 0
-        ChildSizing.ControlsPerLine = 0
         ClientHeight = 70
         ClientWidth = 60
-        DockSite = False
-        DragCursor = crDrag
-        DragKind = dkDrag
-        DragMode = dmManual
-        Enabled = True
-        FullRepaint = True
-        ParentColor = True
-        ParentFont = True
-        ParentShowHint = True
         TabOrder = 2
-        TabStop = False
-        Visible = True
         object GeneralSize: TLabel
           AnchorSideTop.Control = SizePanel
           AnchorSideRight.Control = SizePanel
@@ -459,33 +229,14 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 6
           Width = 50
-          HelpContext = 0
-          Align = alNone
           Alignment = taRightJustify
           Anchors = [akTop, akRight]
-          AutoSize = True
           BorderSpacing.Left = 10
           BorderSpacing.Top = 6
-          BorderSpacing.Right = 0
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = '---'
           Constraints.MinWidth = 50
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
-          Layout = tlTop
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
         object ProcessedSize: TLabel
           AnchorSideTop.Control = GeneralSize
@@ -496,33 +247,14 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 23
           Width = 50
-          HelpContext = 0
-          Align = alNone
           Alignment = taRightJustify
           Anchors = [akTop, akRight]
-          AutoSize = True
           BorderSpacing.Left = 10
           BorderSpacing.Top = 2
-          BorderSpacing.Right = 0
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = '---'
           Constraints.MinWidth = 50
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
-          Layout = tlTop
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
         object Speed: TLabel
           AnchorSideTop.Control = ProcessedSize
@@ -533,33 +265,14 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 40
           Width = 50
-          HelpContext = 0
-          Align = alNone
           Alignment = taRightJustify
           Anchors = [akTop, akRight]
-          AutoSize = True
           BorderSpacing.Left = 10
           BorderSpacing.Top = 2
-          BorderSpacing.Right = 0
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = '---'
           Constraints.MinWidth = 50
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
-          Layout = tlTop
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
       end
       object UnitPanel: TPanel
@@ -572,42 +285,13 @@ object TickFrm: TTickFrm
         Height = 70
         Top = 6
         Width = 34
-        HelpContext = 0
-        Align = alNone
-        Alignment = taCenter
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
-        BorderSpacing.Left = 0
-        BorderSpacing.Top = 0
-        BorderSpacing.Right = 0
-        BorderSpacing.Bottom = 0
         BorderSpacing.Around = 6
-        BorderSpacing.CellAlignHorizontal = ccaFill
-        BorderSpacing.CellAlignVertical = ccaFill
-        BevelInner = bvNone
         BevelOuter = bvNone
-        BevelWidth = 1
-        BorderWidth = 0
-        BorderStyle = bsNone
-        ChildSizing.LeftRightSpacing = 0
-        ChildSizing.TopBottomSpacing = 0
-        ChildSizing.HorizontalSpacing = 0
-        ChildSizing.VerticalSpacing = 0
-        ChildSizing.ControlsPerLine = 0
         ClientHeight = 70
         ClientWidth = 34
-        DockSite = False
-        DragCursor = crDrag
-        DragKind = dkDrag
-        DragMode = dmManual
-        Enabled = True
-        FullRepaint = True
-        ParentColor = True
-        ParentFont = True
-        ParentShowHint = True
         TabOrder = 3
-        TabStop = False
-        Visible = True
         object SpeedUnit: TLabel
           AnchorSideLeft.Control = UnitPanel
           AnchorSideTop.Control = ProcessedSizeUnit
@@ -618,32 +302,13 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 40
           Width = 22
-          HelpContext = 0
-          Align = alNone
-          Alignment = taLeftJustify
           Anchors = [akTop, akLeft, akRight]
-          AutoSize = True
           BorderSpacing.Left = 6
           BorderSpacing.Top = 2
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = 'KB/s'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
-          Layout = tlTop
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
         object ProcessedSizeUnit: TLabel
           AnchorSideLeft.Control = UnitPanel
@@ -655,31 +320,12 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 23
           Width = 13
-          HelpContext = 0
-          Align = alNone
-          Alignment = taLeftJustify
-          AutoSize = True
           BorderSpacing.Left = 6
           BorderSpacing.Top = 2
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = 'KB'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
-          Layout = tlTop
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
         object GeneralSizeUnit: TLabel
           AnchorSideLeft.Control = UnitPanel
@@ -690,31 +336,12 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 6
           Width = 13
-          HelpContext = 0
-          Align = alNone
-          Alignment = taLeftJustify
-          AutoSize = True
           BorderSpacing.Left = 6
           BorderSpacing.Top = 6
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = 'KB'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
-          Layout = tlTop
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
       end
       object TimePanel: TPanel
@@ -726,42 +353,13 @@ object TickFrm: TTickFrm
         Height = 70
         Top = 6
         Width = 95
-        HelpContext = 0
-        Align = alNone
-        Alignment = taCenter
         Anchors = [akTop, akLeft, akBottom]
         AutoSize = True
-        BorderSpacing.Left = 0
-        BorderSpacing.Top = 0
-        BorderSpacing.Right = 0
-        BorderSpacing.Bottom = 0
         BorderSpacing.Around = 6
-        BorderSpacing.CellAlignHorizontal = ccaFill
-        BorderSpacing.CellAlignVertical = ccaFill
-        BevelInner = bvNone
         BevelOuter = bvNone
-        BevelWidth = 1
-        BorderWidth = 0
-        BorderStyle = bsNone
-        ChildSizing.LeftRightSpacing = 0
-        ChildSizing.TopBottomSpacing = 0
-        ChildSizing.HorizontalSpacing = 0
-        ChildSizing.VerticalSpacing = 0
-        ChildSizing.ControlsPerLine = 0
         ClientHeight = 70
         ClientWidth = 95
-        DockSite = False
-        DragCursor = crDrag
-        DragKind = dkDrag
-        DragMode = dmManual
-        Enabled = True
-        FullRepaint = True
-        ParentColor = True
-        ParentFont = True
-        ParentShowHint = True
         TabOrder = 4
-        TabStop = False
-        Visible = True
         object RemainingTime: TLabel
           AnchorSideTop.Control = Time
           AnchorSideTop.Side = asrBottom
@@ -771,32 +369,15 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 23
           Width = 45
-          HelpContext = 0
-          Align = alNone
           Alignment = taCenter
           Anchors = [akTop, akRight]
-          AutoSize = True
           BorderSpacing.Left = 40
           BorderSpacing.Top = 2
           BorderSpacing.Right = 10
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = '00:00:00'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
           Layout = tlBottom
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
         object Time: TLabel
           AnchorSideTop.Control = TimePanel
@@ -806,32 +387,14 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 6
           Width = 45
-          HelpContext = 0
-          Align = alNone
           Alignment = taCenter
           Anchors = [akTop, akRight]
-          AutoSize = True
           BorderSpacing.Left = 40
           BorderSpacing.Top = 6
           BorderSpacing.Right = 10
-          BorderSpacing.Bottom = 0
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = '00:00:00'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
           Layout = tlBottom
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
       end
       object SizeLabelPanel: TPanel
@@ -843,42 +406,13 @@ object TickFrm: TTickFrm
         Height = 70
         Top = 6
         Width = 87
-        HelpContext = 0
-        Align = alNone
-        Alignment = taCenter
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
-        BorderSpacing.Left = 0
-        BorderSpacing.Top = 0
-        BorderSpacing.Right = 0
-        BorderSpacing.Bottom = 0
         BorderSpacing.Around = 6
-        BorderSpacing.CellAlignHorizontal = ccaFill
-        BorderSpacing.CellAlignVertical = ccaFill
-        BevelInner = bvNone
         BevelOuter = bvNone
-        BevelWidth = 1
-        BorderWidth = 0
-        BorderStyle = bsNone
-        ChildSizing.LeftRightSpacing = 0
-        ChildSizing.TopBottomSpacing = 0
-        ChildSizing.HorizontalSpacing = 0
-        ChildSizing.VerticalSpacing = 0
-        ChildSizing.ControlsPerLine = 0
         ClientHeight = 70
         ClientWidth = 87
-        DockSite = False
-        DragCursor = crDrag
-        DragKind = dkDrag
-        DragMode = dmManual
-        Enabled = True
-        FullRepaint = True
-        ParentColor = True
-        ParentFont = True
-        ParentShowHint = True
         TabOrder = 5
-        TabStop = False
-        Visible = True
         object GeneralSizeLabel: TLabel
           AnchorSideLeft.Control = SizeLabelPanel
           AnchorSideTop.Control = SizeLabelPanel
@@ -886,31 +420,13 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 6
           Width = 50
-          HelpContext = 0
-          Align = alNone
-          Alignment = taLeftJustify
-          AutoSize = True
           BorderSpacing.Left = 6
           BorderSpacing.Top = 6
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = 'Total size:'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
           Layout = tlBottom
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
         object ProcessedSizeLabel: TLabel
           AnchorSideLeft.Control = SizeLabelPanel
@@ -920,31 +436,13 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 23
           Width = 75
-          HelpContext = 0
-          Align = alNone
-          Alignment = taLeftJustify
-          AutoSize = True
           BorderSpacing.Left = 6
           BorderSpacing.Top = 2
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = 'Processed size:'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
           Layout = tlBottom
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
         object SpeedLabel: TLabel
           AnchorSideLeft.Control = SizeLabelPanel
@@ -954,75 +452,29 @@ object TickFrm: TTickFrm
           Height = 15
           Top = 40
           Width = 35
-          HelpContext = 0
-          Align = alNone
-          Alignment = taLeftJustify
-          AutoSize = True
           BorderSpacing.Left = 6
           BorderSpacing.Top = 2
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
-          BorderSpacing.Around = 0
-          BorderSpacing.CellAlignHorizontal = ccaFill
-          BorderSpacing.CellAlignVertical = ccaFill
           Caption = 'Speed:'
-          DragCursor = crDrag
-          DragMode = dmManual
-          Enabled = True
-          Layout = tlTop
-          ParentBidiMode = True
           ParentColor = False
-          ParentFont = True
-          ParentShowHint = True
-          ShowAccelChar = True
-          Transparent = True
-          Visible = True
-          WordWrap = False
-          OptimalFill = False
         end
       end
     end
     object ReportPage: TPage
-      HelpContext = 0
       Caption = 'Report'
-      ChildSizing.LeftRightSpacing = 0
-      ChildSizing.TopBottomSpacing = 0
-      ChildSizing.HorizontalSpacing = 0
-      ChildSizing.VerticalSpacing = 0
-      ChildSizing.ControlsPerLine = 0
       ClientWidth = 414
       ClientHeight = 132
-      ImageIndex = -1
-      ParentFont = True
-      ParentShowHint = True
       object Report: TMemo
         Left = 6
         Height = 120
         Top = 6
         Width = 402
-        HelpContext = 0
         Align = alClient
-        Alignment = taLeftJustify
-        BorderSpacing.Left = 0
-        BorderSpacing.Top = 0
-        BorderSpacing.Right = 0
-        BorderSpacing.Bottom = 0
         BorderSpacing.Around = 6
-        BorderSpacing.CellAlignHorizontal = ccaFill
-        BorderSpacing.CellAlignVertical = ccaFill
-        DragCursor = crDrag
-        DragMode = dmManual
-        Enabled = True
-        MaxLength = -1
-        ParentBidiMode = True
-        ParentFont = True
         ReadOnly = True
         ScrollBars = ssAutoVertical
         TabOrder = 0
-        TabStop = True
-        Visible = True
-        WantReturns = True
-        WantTabs = False
       end
     end
   end
@@ -1035,34 +487,16 @@ object TickFrm: TTickFrm
     Height = 32
     Top = 172
     Width = 75
-    HelpContext = 0
-    Align = alNone
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
-    BorderSpacing.Top = 0
     BorderSpacing.Right = 6
-    BorderSpacing.Bottom = 0
-    BorderSpacing.Around = 0
-    BorderSpacing.CellAlignHorizontal = ccaFill
-    BorderSpacing.CellAlignVertical = ccaFill
-    Cancel = False
     Caption = ' Save'
     Constraints.MinWidth = 75
-    Default = False
     Enabled = False
-    Kind = bkCustom
-    Layout = blGlyphLeft
-    Margin = -1
-    ModalResult = 0
     NumGlyphs = 0
     OnClick = BtnSaveClick
-    ParentFont = True
-    ParentShowHint = True
-    Spacing = 3
     TabOrder = 5
-    TabStop = True
-    Visible = True
   end
   object BtnFont: TBitBtn
     AnchorSideLeft.Control = BtnSave
@@ -1074,34 +508,16 @@ object TickFrm: TTickFrm
     Height = 32
     Top = 172
     Width = 75
-    HelpContext = 0
-    Align = alNone
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
     BorderSpacing.Left = 6
-    BorderSpacing.Top = 0
     BorderSpacing.Right = 6
-    BorderSpacing.Bottom = 0
-    BorderSpacing.Around = 0
-    BorderSpacing.CellAlignHorizontal = ccaFill
-    BorderSpacing.CellAlignVertical = ccaFill
-    Cancel = False
     Caption = 'Font'
     Constraints.MinWidth = 75
-    Default = False
     Enabled = False
-    Kind = bkCustom
-    Layout = blGlyphLeft
-    Margin = -1
-    ModalResult = 0
     NumGlyphs = 0
     OnClick = BtnFontClick
-    ParentFont = True
-    ParentShowHint = True
-    Spacing = 3
     TabOrder = 4
-    TabStop = True
-    Visible = True
   end
   object Timer: TIdleTimer
     Enabled = False
@@ -1111,18 +527,10 @@ object TickFrm: TTickFrm
     left = 392
   end
   object SaveDialog: TSaveDialog
-    Width = 0
-    Height = 0
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
     left = 296
   end
   object FontDialog: TFontDialog
-    Width = 0
-    Height = 0
-    Font.Height = 0
-    Font.Style = []
-    MinFontSize = 0
-    MaxFontSize = 0
     left = 328
   end
   object Popup: TPopupMenu
@@ -1130,30 +538,22 @@ object TickFrm: TTickFrm
     left = 360
     object Popup_Idle: TMenuItem
       Caption = 'Idle'
-      RightJustify = False
       ShortCut = 16432
-      ShowAlwaysCheckable = False
       OnClick = PopupClick
     end
     object Popup_Normal: TMenuItem
       Caption = 'Normal'
-      RightJustify = False
       ShortCut = 16433
-      ShowAlwaysCheckable = False
       OnClick = PopupClick
     end
     object Popup_Higher: TMenuItem
       Caption = 'Higher'
-      RightJustify = False
       ShortCut = 16434
-      ShowAlwaysCheckable = False
       OnClick = PopupClick
     end
     object Popup_TimeCritical: TMenuItem
       Caption = 'Time critical'
-      RightJustify = False
       ShortCut = 16435
-      ShowAlwaysCheckable = False
       OnClick = PopupClick
     end
   end
