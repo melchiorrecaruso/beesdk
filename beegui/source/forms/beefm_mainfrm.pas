@@ -292,7 +292,7 @@ type
     procedure SaveLanguage;
     procedure LoadLanguage;
   end;
-  
+
 var
   MainFrm: TMainFrm;
   
@@ -367,7 +367,7 @@ uses
     if MMenuOptionsSaveOnExit.Checked then
     begin
       SaveProperty;
-      ConfigFrm.SaveProperty;
+      SaveProperty;
     end;
   end;
   
@@ -567,7 +567,7 @@ uses
 
   procedure TMainFrm.UpdateCursor(Value: TCursor);
   begin
-    MainFrm.Cursor := Value;
+    Cursor := Value;
   end;
 
   procedure TMainFrm.UpdateButtons(Value: boolean);
@@ -575,22 +575,22 @@ uses
     I: integer;
   begin
     BtnAdd.Enabled := Value;
-    BtnAdd.Font := MainFrm.Font;
+    BtnAdd.Font := Font;
 
     BtnExtract.Enabled := Value;
-    BtnExtract.Font := MainFrm.Font;
+    BtnExtract.Font := Font;
 
     BtnView.Enabled := Value;
-    BtnView.Font := MainFrm.Font;
+    BtnView.Font := Font;
 
     BtnDelete.Enabled := Value;
-    BtnDelete.Font := MainFrm.Font;
+    BtnDelete.Font := Font;
 
     BtnTest.Enabled := Value;
-    BtnTest.Font := MainFrm.Font;
+    BtnTest.Font := Font;
 
     BtnCheckOut.Enabled := Value;
-    BtnCheckOut.Font := MainFrm.Font;
+    BtnCheckOut.Font := Font;
     // ---
     MMenuFileClose   .Enabled := Value;
     MMenuFileProperty.Enabled := Value;
@@ -604,7 +604,7 @@ uses
       MMenuActions.Items[I].Enabled := Value;
     end;
     BtnUp.Enabled := Value;
-    BtnUp.Font := MainFrm.Font;
+    BtnUp.Font := Font;
   end;
   
   procedure TMainFrm.UpdateStyle;

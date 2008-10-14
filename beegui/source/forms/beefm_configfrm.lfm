@@ -15,7 +15,8 @@ object ConfigFrm: TConfigFrm
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '0.9.25'
+  ParentFont = False
+  LCLVersion = '0.9.27'
   object Tree: TTreeView
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -241,6 +242,7 @@ object ConfigFrm: TConfigFrm
         '2 - Good'
         '3 - Maximal'
       )
+      MaxLength = -1
       ParentShowHint = False
       Style = csDropDownList
       TabOrder = 1
@@ -273,6 +275,7 @@ object ConfigFrm: TConfigFrm
         'Level  8   (dictionary size  <   640 MB)'
         'Level  9   (dictionary size  < 1280 MB)'
       )
+      MaxLength = -1
       ParentShowHint = False
       Style = csDropDownList
       TabOrder = 2
@@ -388,6 +391,7 @@ object ConfigFrm: TConfigFrm
         'Overwrite pre-existing files'
         'Query if Overwrite pre-existing files'
       )
+      MaxLength = -1
       ParentShowHint = False
       Style = csDropDownList
       TabOrder = 1
