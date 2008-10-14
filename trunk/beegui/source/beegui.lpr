@@ -40,53 +40,68 @@ uses
   {$ENDIF}
   Interfaces,
   SysUtils,
-  Dialogs,
   Forms,
   // --- //
   BeeGui_Consts,
+  BeeGui_Package,
+  // --- //
   BeeGui_CmdLine,
   BeeGui_TickFrm,
-  BeeGui_AboutFrm;
+  BeeGui_AboutFrm,
+  BeeGui_RenameFrm,
+  // --- //
+  BeeFM_MainFrm,
+  BeeFM_ViewFrm,
+  BeeFM_ConfigFrm,
+  BeeFM_SelectFrm,
+  BeeFM_PropertyFrm;
 
 var
-  CmdLine:  TCmdLine  = nil;
-  TickFrm:  TTickFrm  = nil;
-  AboutFrm: TAboutFrm = nil;
+  CmdLine: TCmdLine;
 
 begin
-  // MaxKeptOSChunks := 8;
-  Application.Initialize;
-  Application.Title:= cApplicationName;
-  CmdLine := TCmdLine.Create;
-  if CmdLine.Run then
+  MaxKeptOSChunks := 8;
+  if (ParamCount = 1) and (Lowercase(ParamStr(1)) = '-filemanager') then
   begin
-    if CmdLine.Command in [' ', '?'] then
+    Application.Initialize;
+    Application.HelpFile := '';
+    Application.Name := cApplicationName;
+    Application.Title := cApplicationTitle;
+    Application.CreateForm(TMainFrm, MainFrm);
+    Application.CreateForm(TConfigFrm, ConfigFrm);
+    Application.Run;
+  end else
+  begin
+    Application.Initialize;
+    Application.Title:= cApplicationName;
+    CmdLine := TCmdLine.Create;
+    if CmdLine.Run then
     begin
-      Application.CreateForm(TAboutFrm, AboutFrm);
-      Application.Run;
-      AboutFrm.Free;
-      AboutFrm := nil;
-    end else
-    begin
-      Application.CreateForm(TTickFrm, TickFrm);
-      with TickFrm do
+      if CmdLine.Command in [' ', '?'] then
       begin
-        Start(CmdLine);
-        repeat
-          if CmdLine.Log then Break;
-          if RemaingTime > 0 then Break;
-          Application.ProcessMessages;
-        until CanClose;
-        if CmdLine.Log or (CanClose = False) then
+        Application.CreateForm(TAboutFrm, AboutFrm);
+        Application.Run;
+        AboutFrm.Free;
+      end else
+      begin
+        Application.CreateForm(TTickFrm, TickFrm);
+        with TickFrm do
         begin
-          Application.Run;
+          Start(CmdLine);
+          repeat
+            if CmdLine.Log then Break;
+            if RemaingTime > 0 then Break;
+            Application.ProcessMessages;
+          until CanClose;
+          if CmdLine.Log or (CanClose = False) then
+          begin
+            Application.Run;
+          end;
         end;
+        TickFrm.Free;
       end;
-      TickFrm.Free;
-      TickFrm := nil;
     end;
+    CmdLine.Free;
   end;
-  CmdLine.Free;
-  CmdLine := nil;
 end.
 

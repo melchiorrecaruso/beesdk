@@ -156,6 +156,9 @@ type
     procedure Start(ACmdLine: TCmdLine);
     destructor Destroy; override;
   end;
+
+var
+  TickFrm: TTickFrm;
   
 implementation
 

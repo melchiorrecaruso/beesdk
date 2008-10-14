@@ -18,7 +18,7 @@
 
 { Contains:
 
-  TParams class.
+  TCommandLine class.
 
   Modifyed:
 
@@ -34,9 +34,7 @@ interface
 
 uses
   Classes,
-  SysUtils,
-  // ---
-  Bee_Common;
+  SysUtils;
 
 type
 
@@ -113,11 +111,15 @@ type
 
 implementation
 
+uses
+  Bee_Common;
+
   constructor TCommandLine.Create;
   begin
     inherited Create;
     FxOption := TStringList.Create;
     FFileMasks := TStringList.Create;
+    // --- //
     Clear;
   end;
 

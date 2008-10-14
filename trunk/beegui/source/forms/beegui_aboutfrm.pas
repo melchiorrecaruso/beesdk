@@ -70,6 +70,9 @@ type
     { private declarations }
   end;
 
+var
+  AboutFrm: TAboutFrm;
+
 implementation
 
 uses
