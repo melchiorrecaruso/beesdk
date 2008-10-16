@@ -27,8 +27,8 @@ program BeeGui;
 
 {$I compiler.inc}
 
-{$IFDEF MSWINDOWS}
-  {$R beegui.res}
+{$IFDEF WINDOWS}
+  {$R beegui.rc}
 {$ENDIF}
 
 uses
@@ -39,6 +39,7 @@ uses
   Windows,
   {$ENDIF}
   Interfaces,
+  LResources,
   SysUtils,
   Forms,
   // --- //
@@ -60,13 +61,14 @@ var
   CmdLine: TCmdLine;
 
 begin
+  {$I beegui.lrs}
   MaxKeptOSChunks := 8;
   if (ParamCount = 1) and (Lowercase(ParamStr(1)) = '-filemanager') then
   begin
     Application.Initialize;
     Application.HelpFile := '';
     Application.Name := cApplicationName;
-    Application.Title := cApplicationTitle;
+    Application.Title:='BeeGui';
     Application.CreateForm(TMainFrm, MainFrm);
     Application.CreateForm(TConfigFrm, ConfigFrm);
     Application.Run;
