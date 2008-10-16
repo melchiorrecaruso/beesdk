@@ -13,6 +13,7 @@
       <TargetFileExt Value=".exe"/>
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
+      <Icon Value="AAABAAEAICAQAAEABADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQID/AAD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAIAAAAAAAAAAAAAAiIiAAIiIgAAAAAAAAAAACIiIiAiIiIgAAAAAAAAAAAiIiIgIiIiIAAAAAAAAAAAIiIiICIiIiAAAAAAAAAAAAIiIgACIiIAAAAAAAAAAAAAAgABAAIAAQAAAAAAAAAAAAABEREAARERAAAAAAAAAAAAEREREBERERAAAAAAAAAAABERERAREREQAAAAAAAAAAAREREQEREREAAAAAAAAAAAARERAAEREQAAAAAAAAAAAgABAAEAAQAAAAAAAAAAAiIiAAEREQAAAAAAAAAAACIiIiAREREQAAAAAAAAAAAiIiIgEREREAAAAAAAAAAAIiIiIBERERAAAAAAAAAAAAIiIgABEREAAAAAAAAAAAAAAgACAAEAAQAAAAEAAAAAAAACIiIAARERAAEREQAAAAAAIiIiIBERERAREREQAAAAACIiIiAREREQEREREAAAAAAiIiIgEREREBERERAAAAAAAiIiAAEREQABEREAAAAAAAACAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////+/v///v7///x8f//wEB//4AAH/+AAD//gAA//4AAP/+AAB//wAAF//AAAf/4AAP/+AAD//gAA//wAAH/wAAE/4AAH/+AAD//gAA//4AAP/+AAB8fwAAEBPAAAAH4AAAD+AAAA/gAAAPwAAABxAQEBN8fHx//v7+//7+/vw=="/>
       <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
@@ -44,8 +45,8 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
-        <CursorPos X="66" Y="64"/>
-        <TopLine Value="51"/>
+        <CursorPos X="1" Y="32"/>
+        <TopLine Value="12"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="26"/>
         <Loaded Value="True"/>
@@ -124,11 +125,9 @@
         <ResourceBaseClass Value="Form"/>
         <ResourceFilename Value="forms\beegui_tickfrm.lrs"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="20" Y="161"/>
-        <TopLine Value="143"/>
-        <EditorIndex Value="1"/>
+        <CursorPos X="28" Y="158"/>
+        <TopLine Value="141"/>
         <UsageCount Value="26"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
