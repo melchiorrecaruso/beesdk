@@ -82,10 +82,10 @@ type
   protected
     procedure ProcessOption(var S: string; var Option: boolean);
   public
-    constructor Create;
-    destructor Destroy;
-    procedure Process(Params: TStringList);
-    procedure Clear;
+    constructor Create; dynamic;
+    destructor Destroy; dynamic;
+    procedure Process(Params: TStringList); dynamic;
+    procedure Clear; dynamic;
   public
     property Command: char read FCommand write SetCommand;
     property rOption: boolean read FrOption write SetrOption;

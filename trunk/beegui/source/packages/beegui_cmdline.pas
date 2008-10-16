@@ -34,34 +34,15 @@ uses
   Dialogs,
   Classes,
   Controls,
-  SysUtils; 
+  SysUtils,
+  // ---
+  Bee_CommandLine;
 
 type
    
-  { TCommandLine Application class }
+  { TCustomCommandLine Application class }
 
-  TCmdLine = class
-  private
-    FCommand: char;
-    FrOption: boolean;
-    FuOption: boolean;
-    FfOption: boolean;
-    FeOption: string;
-    FsOption: boolean;
-    FaOption: string;
-    FoOption: char;
-    FmOption: integer;
-    FdOption: integer;
-    FxOption: TStringList;
-    FtOption: boolean;
-    FlOption: boolean;
-    FyOption: string;
-    FkOption: boolean;
-    FcdOption: string;
-    FcfgOption: string;
-    FpriOption: integer;
-    FArcName:  string;
-    FFileMasks: TStringList;
+  TCustomCommandLine = class (TCommandLine)
   private
     FRun: boolean;
     F0Option: string;
@@ -69,38 +50,19 @@ type
     F2Option: boolean;
     FParams: TStringList;
   private
-    procedure ProcessOption(var S: string; var Option: boolean);
-    procedure ProcessOptions;
-    procedure ProcessParams;
+    function GetParams: TStringList;
   public
-    constructor Create;
+    constructor Create; override;
     destructor Destroy; override;
+    procedure Process(Params: TStringList); override;
+    procedure Clear; override;
   public
     property Run: boolean read FRun;
     property Link: string read F0Option;
     property Log: boolean read F1Option write F1Option;
-    property Params: TStringList read FParams;
+    property Params: TStringList read GetParams;
   public
-    property Command: char read FCommand write FCommand;
-    property rOption: boolean read FrOption write FrOption;
-    property uOption: boolean read FuOption write FuOption;
-    property fOption: boolean read FfOption write FfOption;
-    property eOption: string read FeOption write FeOption;
-    property sOption: boolean read FsOption write FsOption;
-    property aOption: string read FaOption write FaOption;
-    property oOption: char read FoOption write FoOption;
-    property mOption: integer read FmOption write FmOption;
-    property dOption: integer read FdOption write FdOption;
-    property xOption: TStringList read FxOption;
-    property tOption: boolean read FtOption write FtOption;
-    property lOption: boolean read FlOption write FlOption;
-    property yOption: string read FyOption write FyOption;
-    property kOption: boolean read FkOption write FkOption;
-    property cdOption: string read FcdOption write FcdOption;
-    property cfgOption: string read FcfgOption write FcfgOption;
-    property priOption: integer read FpriOption write FpriOption;
-    property ArcName: string read FArcName write FArcName;
-    property FileMasks: TStringList read FFileMasks;
+
   end;
 
 implementation
@@ -110,52 +72,21 @@ uses
   // ---
   BeeGui_Forms;
 
-  constructor TCmdLine.Create;
+  constructor TCustomCommandLine.Create;
   begin
     inherited Create;
-    // ---
-    FCommand := ' ';
-    FrOption := False;
-    FuOption := False;
-    FfOption := False;
-    FeOption := '';
-    FsOption := False;
-    FaOption := '';
-    FoOption := 'Y';
-    FmOption := 1;
-    FdOption := 2;
-    FxOption := TStringList.Create;
-    FtOption := False;
-    FlOption := False;
-    FyOption := '';
-    FkOption := False;
-    FcdOption := '';
-    FcfgOption := '';
-    FpriOption := 1;
-    FArcName := '';
-    FFileMasks := TStringList.Create;
-    // ---
+    Clear;
+  end;
+
+  procedure TCustomCommandLine.Clear;
+  begin
     FRun := False;
     F0Option := '';
     F1Option := False;
     F2Option := False;
-    FParams := TStringList.Create;
-    // ---
-    ProcessOptions;
-    ProcessParams;
   end;
 
-  procedure TCmdLine.ProcessOption(var S: string; var Option: boolean);
-  begin
-    System.Delete(S, 1, 2);
-    if (S = '') or (S = '+') then
-      Option := True
-    else
-      if (S = '-') then
-        Option := False;
-  end;
-
-  procedure TCmdLine.ProcessOptions;
+  procedure TCustomCommandLine.Process(Params: TStringList);
   var
     S: string;
     i: integer;
@@ -163,149 +94,22 @@ uses
     // catch options, command, archive name and name of files
     for i := 1 to ParamCount do
     begin
-      S := ParamStr(i);
 
-      if (FArcName = '') and (Length(S) > 1) and (S[1] = '-') then
-      begin
-        // options...
-        case UpCase(S[2]) of
-          '0': begin
-                 System.Delete(S, 1, 2);
-                 F0Option := S;
-               end;
-          '1': ProcessOption(S, F1Option);
-          '2': ProcessOption(S, F2Option);
-          'R': ProcessOption(S, FrOption);
-          'U': ProcessOption(S, FuOption);
-          'F': ProcessOption(S, FfOption);
-          'E': begin
-                 System.Delete(S, 1, 2);
-                 if ExtractFileExt('.' + S) <> '.' then
-                 begin
-                   FeOption := ExtractFileExt('.' + S);
-                 end;
-               end;
-          'S': ProcessOption(S, FsOption);
-          'A': begin
-                 System.Delete(S, 1, 2);
-                 if (S = '+') or (Length(S) = 0) then
-                   FaOption := 'beegui.sfx'
-                 else
-                   if (S = '-') then
-                     FaOption := 'nul'
-                   else
-                     FaOption := S;
-               end;
-          'O': begin
-                 System.Delete(S, 1, 2);
-                 if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
-                 begin
-                   FoOption := UpCase(S[1]);
-                 end;
-               end;
-          'M': begin
-                 System.Delete(S, 1, 2);
-                 if (Length(S)= 1) and (S[1] in ['0'..'3']) then
-                 begin
-                   FmOption := StrToInt(S[1]);
-                 end;
-               end;
-          'D': begin
-                 System.Delete(S, 1, 2);
-                 if (Length(S)= 1) and (S[1] in ['0'..'9']) then
-                 begin
-                   FdOption := StrToInt(S[1]);
-                 end;
-               end;
-          'X': begin
-                 System.Delete(S, 1, 2);
-                 if Length(S) > 0 then
-                 begin
-                   FxOption.Add(S);
-                 end;
-               end;
-          'T': begin
-                 ProcessOption(S, FtOption);
-                 if FtOption then
-                 begin
-                   F1Option := True;
-                 end;
-               end;
-          'L': ProcessOption(S, FlOption);
-          'Y': begin
-                 System.Delete(S, 1, 2);
-                 if DirectoryExists(ExcludeTrailingBackslash(S)) then
-                 begin
-                   FyOption := ExcludeTrailingBackslash(S);
-                 end;
-               end;
-          'K': ProcessOption(S, FkOption);
-          else if Pos('-CD', UpCase(S)) = 1 then
-               begin
-                 System.Delete(S, 1, 3);
-                 if Length(S) > 0 then
-                 begin
-                   FcdOption := IncludeTrailingBackslash(FixDirName(S));
-                 end;
-               end else
-               begin
-                 if Pos('-CFG', UpCase(S)) = 1 then
-                 begin
-                   System.Delete(S, 1, 4);
-                   if (Length(S) > 0) and FileExists(S) then
-                   begin
-                     FcfgOption := S;
-                   end;
-                 end else
-                 begin
-                   if Pos('-PRI', UpCase(S)) = 1 then
-                   begin
-                     System.Delete(S, 1, 4);
-                     if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
-                     begin
-                       FpriOption := StrToInt(S[1]);
-                     end;
-                   end
-                 end;
-               end;
-        end; // end case
-      end else
-      begin
-        // command or filenames...
-        if FCommand = ' ' then
-        begin
-          if Length(S) = 1 then
-          begin
-            FCommand := UpCase(S[1]);
-            case FCommand of
-             'T': F1Option := True;
-            end;
-          end else
-            FCommand := '?';
-        end else
-          if FArcName = '' then
-          begin
-            FArcName := S;
-            if ExtractFileExt(FArcName) = '' then
-            begin
-              FArcName := ChangeFileExt(FArcName, '.bee');
-            end;
-          end else
-            FFileMasks.Add(S);
-      end;
     end; // end for loop
   end;
 
-  destructor TCmdLine.Destroy;
+  destructor TCustomCommandLine.Destroy;
   begin
-    FxOption.Free;
-    FFileMasks.Free;
-    // ---
-    FParams.Free;
     inherited Destroy;
   end;
 
-  procedure TCmdLine.ProcessParams;
+  function TCustomCommandLine.GetParams: TStringList;
+  begin
+    Result := FParams;
+  end;
+
+  (*
+  procedure TCustomCommandLine.ProcessParams;
   var
     i: integer;
   begin
@@ -364,6 +168,9 @@ uses
         FParams.Add(FFileMasks.Strings[i]);
     end;
   end;
+  *)
+
+
 
 end.
 
