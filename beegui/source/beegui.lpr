@@ -58,7 +58,7 @@ uses
   BeeFM_PropertyFrm;
 
 var
-  CmdLine: TCmdLine;
+  CommandLine: TCustomCommandLine;
 
 begin
   {$I beegui.lrs}
@@ -76,10 +76,10 @@ begin
   begin
     Application.Initialize;
     Application.Title:= cApplicationName;
-    CmdLine := TCmdLine.Create;
-    if CmdLine.Run then
+    CommandLine := TCustomCommandLine.Create;
+    if CommandLine.Run then
     begin
-      if CmdLine.Command in [' ', '?'] then
+      if CommandLine.Command in [' ', '?'] then
       begin
         Application.CreateForm(TAboutFrm, AboutFrm);
         Application.Run;
@@ -89,13 +89,13 @@ begin
         Application.CreateForm(TTickFrm, TickFrm);
         with TickFrm do
         begin
-          Start(CmdLine);
+          Start(CommandLine);
           repeat
-            if CmdLine.Log then Break;
+            if CommandLine.Log then Break;
             if RemaingTime > 0 then Break;
             Application.ProcessMessages;
           until CanClose;
-          if CmdLine.Log or (CanClose = False) then
+          if CommandLine.Log or (CanClose = False) then
           begin
             Application.Run;
           end;
@@ -103,7 +103,7 @@ begin
         TickFrm.Free;
       end;
     end;
-    CmdLine.Free;
+    CommandLine.Free;
   end;
 end.
 

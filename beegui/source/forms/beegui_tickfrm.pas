@@ -135,7 +135,7 @@ type
     FInterfaces: TInterfaces;
     FContents: TStringList;
     FCanClose: boolean;
-    FCmdLine: TCmdLine;
+    FCmdLine: TCustomCommandLine;
     FPassword: string;
     FApp: TBeeApp;
     FElapsedTime: integer;
@@ -153,7 +153,7 @@ type
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
-    procedure Start(ACmdLine: TCmdLine);
+    procedure Start(ACmdLine: TCustomCommandLine);
     destructor Destroy; override;
   end;
 
@@ -221,7 +221,7 @@ var
     inherited Destroy;
   end;
   
-  procedure TTickFrm.Start(ACmdLine: TCmdLine);
+  procedure TTickFrm.Start(ACmdLine: TCustomCommandLine);
   begin
     FCmdLine := ACmdLine;
     FApp := TBeeApp.Create(FInterfaces, FCmdLine.Params);
