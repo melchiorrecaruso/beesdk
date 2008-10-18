@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2007 Andrew Filinsky
+  Copyright (c) 2003-2008 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-  v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso.
+  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
 }
 
 unit Bee_Modeller;

@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,9 +22,8 @@
 
   Modifyed:
 
-  v0.7.9 build 0877 - 2008.10.05 by Melchiorre Caruso.
+  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
 }
-
 
 unit Bee_CommandLine;
 
@@ -119,7 +118,7 @@ uses
     inherited Create;
     FxOption := TStringList.Create;
     FFileMasks := TStringList.Create;
-    // --- //
+    // ---
     Clear;
   end;
 

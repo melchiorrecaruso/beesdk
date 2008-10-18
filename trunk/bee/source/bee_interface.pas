@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.7.9 build 0844 - 2008.08.20 by Melchiorre Caruso.
+    v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -144,6 +144,7 @@ type
         FileSize: integer;
       end;
     end;
+  public
     Terminated: boolean;
     Suspend: boolean;
     Stop: boolean;

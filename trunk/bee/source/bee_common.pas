@@ -27,7 +27,7 @@
   v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0848 - 2008.08.28 by Melchiorre Caruso.
+  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
 }
 
 unit Bee_Common;

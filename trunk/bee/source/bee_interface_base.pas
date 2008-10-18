@@ -18,11 +18,11 @@
 
 { Contains:
 
-    TThreadEx, abstract class of Thread.
+  TThreadEx, abstract class of Thread.
 
   Modifyed:
 
-    v0.7.9 build 0755 - 2008.05.19 by Melchiorre Caruso;
+  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso;
 }
 
 unit Bee_Interface_Base;

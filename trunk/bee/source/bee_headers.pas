@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2008 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-  v0.7.9 build 0828 - 2008.08.04 by Melchiorre Caruso.
+  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
@@ -37,12 +37,10 @@ unit Bee_Headers;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, // TSearchRec
-  Classes,  // TList
-
+  Classes, // TList
+  // ---
   Bee_Configuration;
 
 const
@@ -53,7 +51,7 @@ const
 
 type
 
-  // Header flag
+  // Header flags
 
   THeaderFlag =
     (foVersion,  foMethod,   foDictionary, foTable,    foTear,     foMoved,
@@ -63,22 +61,14 @@ type
      fo25Unused, fo26Unused, fo27Unused,   fo28Unused, fo29Unused, fo30Unused,
      fo31Unused, fo32Unused);
 
-type
-
-  // Header flags
-
   THeaderFlags = set of THeaderFlag;
 
 type
 
-  // Header action
+  // Header actions
 
   THeaderAction = (toUpdate, toFresh, toCopy,   toSwap,   toExtract, toTest,
                    toSkip,   toQuit,  toDelete, toRename, toList,    toNone);
-
-type
-
-  // Headers actions
 
   THeaderActions = set of THeaderAction;
 
@@ -86,9 +76,7 @@ type
 
   // Header structure, order of fields is significant
 
-  THeader = class
-  public
-    // Start file header
+  THeaderData = record
     FileFlags: THeaderFlags;
     FileVersion: byte;
     FileMethod: byte;
@@ -101,9 +89,12 @@ type
     FilePacked: integer;
     FileStartPos: integer;
     FileName: string;
-    // End file header
+  end;
+
+  THeader = class
   public
     Action: THeaderAction;
+    Data: THeaderData;
     FileLink: string;
   public
     constructor Create(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
@@ -207,18 +198,18 @@ begin
   if (Bool1 and Bool2) then
   begin
     Result := CompareFileName(
-      ExtractFileExt(THeader(L.Items[Index1]).FileName),
-      ExtractFileExt(THeader(L.Items[Index2]).FileName));
+      ExtractFileExt(THeader(L.Items[Index1]).Data.FileName),
+      ExtractFileExt(THeader(L.Items[Index2]).Data.FileName));
 
     if Result = 0 then
       Result := CompareFileName(
-        ExtractFileName(THeader(L.Items[Index1]).FileName),
-        ExtractFileName(THeader(L.Items[Index2]).FileName));
+        ExtractFileName(THeader(L.Items[Index1]).Data.FileName),
+        ExtractFileName(THeader(L.Items[Index2]).Data.FileName));
 
     if Result = 0 then
       Result := CompareFileName(
-        THeader(L.Items[Index1]).FileName,
-        THeader(L.Items[Index2]).FileName);
+        THeader(L.Items[Index1]).Data.FileName,
+        THeader(L.Items[Index2]).Data.FileName);
   end else
     if Bool1 then
       Result := 1
@@ -233,29 +224,27 @@ end;
 
 constructor THeader.Create(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
 begin
-  Action := toUpdate;
+  Data.FileFlags := [foTear, foTable];
+  Data.FileVersion := 1; // Bee 0.3.x
+  Data.FileMethod := 1;
+  Data.FileDictionary := 2;
+  Data.FileTime := Rec.Time;
+  Data.FileCrc := cardinal(-1);
+  Data.FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
 
-  FileFlags := [foTear, foTable];
-  FileVersion := 1; // Bee 0.3.x
-  FileMethod := 1;
-  FileDictionary := 2;
-  FileTime := Rec.Time;
-  FileCrc := cardinal(-1);
-  FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
-  // ---
+  Action := toUpdate;
   FileLink := RecPath + Rec.Name;
 end;
 
 procedure THeader.Fresh(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
 begin
+  Data.FileTime := Rec.Time;
+  Data.FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
+
   if Action = toCopy then
   begin
     Action := toFresh;
   end;
-
-  FileTime := Rec.Time;
-  FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
-  // ---
   FileLink := RecPath + Rec.Name;
 end;
 
@@ -263,37 +252,35 @@ constructor THeader.Read(Stream: TStream; aAction: THeaderAction);
 var
   j: integer;
 const
-  sSecondPart = SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
-                SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos);
+  sSecondPart = SizeOf(Data.FileSize) + SizeOf(Data.FileTime) + SizeOf(Data.FileAttr) +
+                SizeOf(Data.FileCrc) + SizeOf(Data.FilePacked) + SizeOf(Data.FileStartPos);
 begin
   Action := aAction;
 
-  if Stream.Read(FileFlags, SizeOf(FileFlags)) <> SizeOf(FileFlags) then Fail;
+  if Stream.Read(Data.FileFlags, SizeOf(Data.FileFlags)) <> SizeOf(Data.FileFlags) then Fail;
 
-  if foVersion in FileFlags then
-    if Stream.Read(FileVersion, SizeOf(FileVersion)) <> SizeOf(FileVersion) then Fail;
+  if foVersion in Data.FileFlags then
+    if Stream.Read(Data.FileVersion, SizeOf(Data.FileVersion)) <> SizeOf(Data.FileVersion) then Fail;
 
-  if foMethod in FileFlags then
-    if Stream.Read(FileMethod, SizeOf(FileMethod)) <> SizeOf(FileMethod) then Fail;
+  if foMethod in Data.FileFlags then
+    if Stream.Read(Data.FileMethod, SizeOf(Data.FileMethod)) <> SizeOf(Data.FileMethod) then Fail;
 
-  if foDictionary in FileFlags then
-    if Stream.Read(FileDictionary, SizeOf(FileDictionary)) <> SizeOf(FileDictionary) then Fail;
+  if foDictionary in Data.FileFlags then
+    if Stream.Read(Data.FileDictionary, SizeOf(Data.FileDictionary)) <> SizeOf(Data.FileDictionary) then Fail;
 
-  if foTable in FileFlags then
-    if Stream.Read(FileTable, SizeOf(FileTable)) <> SizeOf(FileTable) then Fail;
+  if foTable in Data.FileFlags then
+    if Stream.Read(Data.FileTable, SizeOf(Data.FileTable)) <> SizeOf(Data.FileTable) then Fail;
       
-  if Stream.Read(FileSize, sSecondPart) <> sSecondPart then Fail;
+  if Stream.Read(Data.FileSize, sSecondPart) <> sSecondPart then Fail;
 
-  if Stream.Read(j, SizeOf(j)) = SizeOf(j) then
-    SetLength(FileName, j)
-  else
-    Fail;
+  if Stream.Read(j, SizeOf(j)) = SizeOf(j) then Fail;
   
   if j > 0 then
   begin
-    if Stream.Read(FileName[1], j) = j then
+    SetLength(Data.FileName, j);
+    if Stream.Read(Data.FileName[1], j) = j then
     begin
-      FileName := DoDirSeparators(FileName);
+      Data.FileName := DoDirSeparators(Data.FileName);
       FileLink := '';
     end else
       Fail;
@@ -302,8 +289,8 @@ end;
 
 destructor THeader.Destroy;
 begin
-  FileName := '';
-  FileLink := '';
+  SetLength(Data.FileName, 0);
+  SetLength(FileLink, 0);
   inherited Destroy;
 end;
 
@@ -311,37 +298,37 @@ procedure THeader.Write(Stream: TStream);
 var
   j: integer;
 const
-  sSecondPart = SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
-                SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos);
+  sSecondPart = SizeOf(Data.FileSize) + SizeOf(Data.FileTime) + SizeOf(Data.FileAttr) +
+                SizeOf(Data.FileCrc) + SizeOf(Data.FilePacked) + SizeOf(Data.FileStartPos);
 begin
-  Stream.Write(FileFlags, SizeOf(FileFlags));
+  Stream.Write(Data.FileFlags, SizeOf(Data.FileFlags));
 
-  if foVersion in FileFlags then
-    Stream.Write(FileVersion, SizeOf(FileVersion));
+  if foVersion in Data.FileFlags then
+    Stream.Write(Data.FileVersion, SizeOf(Data.FileVersion));
 
-  if foMethod in FileFlags then
-    Stream.Write(FileMethod, SizeOf(FileMethod));
+  if foMethod in Data.FileFlags then
+    Stream.Write(Data.FileMethod, SizeOf(Data.FileMethod));
 
-  if foDictionary in FileFlags then
-    Stream.Write(FileDictionary, SizeOf(FileDictionary));
+  if foDictionary in Data.FileFlags then
+    Stream.Write(Data.FileDictionary, SizeOf(Data.FileDictionary));
 
-  if foTable in FileFlags then
-    Stream.Write(FileTable, SizeOf(FileTable));
+  if foTable in Data.FileFlags then
+    Stream.Write(Data.FileTable, SizeOf(Data.FileTable));
 
-  Stream.Write(FileSize, sSecondPart);
+  Stream.Write(Data.FileSize, sSecondPart);
 
-  j := Length(FileName);
+  j := Length(Data.FileName);
   Stream.Write(j, SizeOf(j));
 
   if j > 0 then
   begin
-    Stream.Write(FileName[1], j);
+    Stream.Write(Data.FileName[1], j);
   end;
 end;
 
 function THeader.SetTable(Config: TConfiguration): boolean;
 begin
-  Result := Config.GetTable(ExtractFileExt(FileName), FileTable);
+  Result := Config.GetTable(ExtractFileExt(Data.FileName), Data.FileTable);
 end;
 
 /// Sorted header list class
@@ -357,10 +344,10 @@ begin
   while H >= L do
   begin
     M := (L + H) div 2;
-    if CompareFileName(FileName, THeader(Items[M]).FileName) > 0 then
+    if CompareFileName(FileName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
     else
-      if CompareFileName(FileName,THeader(Items[M]).FileName) < 0 then
+      if CompareFileName(FileName,THeader(Items[M]).Data.FileName) < 0 then
         H := M - 1
       else
         H := -2;
@@ -381,14 +368,14 @@ begin
   M := -1;
   H := Count - 1;
 
-  FName := THeader(Item).FileName;
+  FName := THeader(Item).Data.FileName;
   while H >= L do
   begin
     M := (L + H) div 2;
-    if  CompareFileName(FName, THeader(Items[M]).FileName) > 0 then
+    if  CompareFileName(FName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
     else
-      if CompareFileName(FName, THeader(Items[M]).FileName) < 0 then
+      if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
         H := M - 1
       else
         H := -2;
@@ -397,7 +384,7 @@ begin
   if M = -1 then
     Result := 0
   else
-    if CompareFileName(FName, THeader(Items[M]).FileName) < 0 then
+    if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
       Result := M
     else
       Result := M + 1;
@@ -534,7 +521,7 @@ begin
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = MaskAct) and (FileNameMatch(FileName, Masks, rOption)) then
+      if (Action = MaskAct) and (FileNameMatch(Data.FileName, Masks, rOption)) then
       begin
         Action := aAction;
         Inc(Result);
@@ -550,7 +537,7 @@ begin
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = MaskAct) and (FileNameMatch(FileName, Mask, rOption)) then
+      if (Action = MaskAct) and (FileNameMatch(Data.FileName, Mask, rOption)) then
       begin
         Action := aAction;
         Inc(Result);
@@ -596,34 +583,34 @@ begin
 
       if I = First then
       begin
-        P.FileFlags := P.FileFlags + [foVersion, foMethod, foDictionary];
+        P.Data.FileFlags := P.Data.FileFlags + [foVersion, foMethod, foDictionary];
       end;
       
-      P.FileMethod := Method;
-      P.FileDictionary := Dictionary;
+      P.Data.FileMethod := Method;
+      P.Data.FileDictionary := Dictionary;
       PreviousExt := CurrentExt;
 
       if Length(eOption) = 0 then
-        CurrentExt := ExtractFileExt(P.FileName)
+        CurrentExt := ExtractFileExt(P.Data.FileName)
       else
         CurrentExt := eOption;
 
       if kOption then
-        Include(P.FileFlags, foPassword);
+        Include(P.Data.FileFlags, foPassword);
 
-      if (Method = 0) or (not Config.GetTable(CurrentExt, P.FileTable)) then
+      if (Method = 0) or (not Config.GetTable(CurrentExt, P.Data.FileTable)) then
       begin
-        Include(P.FileFlags, foMoved);
-        Exclude(P.FileFlags, foTable);
+        Include(P.Data.FileFlags, foMoved);
+        Exclude(P.Data.FileFlags, foTable);
       end else
         if CompareFileName(CurrentExt, PreviousExt) <> 0 then
         begin
-          Include(P.FileFlags, foTable);
+          Include(P.Data.FileFlags, foTable);
         end else
         begin
-          Exclude(P.FileFlags, foTable);
+          Exclude(P.Data.FileFlags, foTable);
           if sOption then
-            Exclude(P.FileFlags, foTear);
+            Exclude(P.Data.FileFlags, foTear);
         end;
 
       Inc(I);
@@ -722,11 +709,11 @@ begin
     end else
       Break;
 
-  until (P <> nil) and (foLast in P.FileFlags);
+  until (P <> nil) and (foLast in P.Data.FileFlags);
 
   if P <> nil then
   begin
-    Exclude(P.FileFlags, foLast);
+    Exclude(P.Data.FileFlags, foLast);
   end;
 end;
 
@@ -751,11 +738,11 @@ begin
           P := nil;
         end
       else Break;
-    until (P <> nil) and (foLast in P.FileFlags);
+    until (P <> nil) and (foLast in P.Data.FileFlags);
 
     if P <> nil then
     begin
-      Exclude(P.FileFlags, foLast);
+      Exclude(P.Data.FileFlags, foLast);
     end;
   end else
     ReadItemsB4b(Stream, aAction);
@@ -829,7 +816,7 @@ begin
   Result := -1;
   for I := Child to Count - 1 do
   begin
-    if Flag in THeader(Items[I]).FileFlags then
+    if Flag in THeader(Items[I]).Data.FileFlags then
     begin
       Result := I;
       Break;
@@ -844,7 +831,7 @@ begin
   Result := -1;
   for I := Child downto 0 do
   begin
-    if Flag in THeader(Items[I]).FileFlags then
+    if Flag in THeader(Items[I]).Data.FileFlags then
     begin
       Result := I;
       Break;
@@ -860,7 +847,7 @@ begin
   for I := Child to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = aAction) and (CompareFileName(FileName, aFileName) = 0) then
+      if (Action = aAction) and (CompareFileName(Data.FileName, aFileName) = 0) then
       begin
         Result := I;
         Break;
@@ -876,7 +863,7 @@ begin
   for I := Child downto 0 do
     with THeader(Items[I]) do
     begin
-      if (Action in aActions) and (CompareFileName(FileName, aFileName) = 0) then
+      if (Action in aActions) and (CompareFileName(Data.FileName, aFileName) = 0) then
       begin
         Result := I;
         Break;
@@ -892,7 +879,7 @@ begin
   for I := Child to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action in aActions) and (CompareFileName(FileName, aFileName) = 0) then
+      if (Action in aActions) and (CompareFileName(Data.FileName, aFileName) = 0) then
       begin
         Result := I;
         Break;
@@ -908,7 +895,7 @@ begin
   for I := Child downto 0 do
     with THeader(Items[I]) do
     begin
-      if (Action = aAction) and (CompareFileName(FileName, aFileName) = 0) then
+      if (Action = aAction) and (CompareFileName(Data.FileName, aFileName) = 0) then
       begin
         Result := I;
         Break;
@@ -924,7 +911,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action = aAction then
     begin
-      Inc(Result, THeader(Items[I]).FileSize);
+      Inc(Result, THeader(Items[I]).Data.FileSize);
     end;
 end;
 
@@ -936,7 +923,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action = aAction then
     begin
-      Inc(Result, THeader(Items[I]).FilePacked);
+      Inc(Result, THeader(Items[I]).Data.FilePacked);
     end;
 end;
 
@@ -948,7 +935,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action in Actions then
     begin
-      Inc(Result, THeader(Items[I]).FileSize);
+      Inc(Result, THeader(Items[I]).Data.FileSize);
     end;
 end;
 
@@ -960,7 +947,7 @@ begin
   for I := 0 to Count - 1 do
     if THeader(Items[I]).Action in Actions then
     begin
-      Inc(Result, THeader(Items[I]).FilePacked);
+      Inc(Result, THeader(Items[I]).Data.FilePacked);
     end;
 end;
 
@@ -1008,7 +995,7 @@ begin
   for I := Count - 1 downto 0 do
     if THeader(Items[I]).Action <> Action then
     begin
-      Include(THeader(Items[I]).FileFlags, foLast);
+      Include(THeader(Items[I]).Data.FileFlags, foLast);
       Break;
     end;
 end;
@@ -1061,19 +1048,19 @@ begin
               Add(P);
               Size := Size + Rec.Size;
             end else
-            if (Rec.Time > THeader(J).FileTime) then
+            if (Rec.Time > THeader(J).Data.FileTime) then
             begin
               THeader(J).Fresh(cdOption, RecPath, Rec);
-              Size := Size + (Rec.Size - THeader(J).FileSize);
+              Size := Size + (Rec.Size - THeader(J).Data.FileSize);
             end;
           end else
           begin
             if fOption then
             begin
-              if (not (J = nil)) and (Rec.Time > THeader(J).FileTime) then
+              if (not (J = nil)) and (Rec.Time > THeader(J).Data.FileTime) then
               begin
                 THeader(J).Fresh(cdOption, RecPath, Rec);
-                Size := Size + (Rec.Size - THeader(J).FileSize);
+                Size := Size + (Rec.Size - THeader(J).Data.FileSize);
               end;
             end else
             begin
