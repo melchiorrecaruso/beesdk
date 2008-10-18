@@ -273,7 +273,7 @@ begin
       
   if Stream.Read(Data.FileSize, sSecondPart) <> sSecondPart then Fail;
 
-  if Stream.Read(j, SizeOf(j)) = SizeOf(j) then Fail;
+  if Stream.Read(j, SizeOf(j)) <> SizeOf(j) then Fail;
   
   if j > 0 then
   begin

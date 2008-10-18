@@ -25,12 +25,12 @@
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="2">
+    <Units Count="4">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <CursorPos X="26" Y="2"/>
+        <CursorPos X="22" Y="37"/>
         <TopLine Value="1"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="171"/>
@@ -46,6 +46,26 @@
         <UsageCount Value="28"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="bee_app.pas"/>
+        <UnitName Value="Bee_App"/>
+        <CursorPos X="41" Y="125"/>
+        <TopLine Value="119"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="bee_commandline.pas"/>
+        <UnitName Value="Bee_CommandLine"/>
+        <CursorPos X="44" Y="226"/>
+        <TopLine Value="213"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit3>
     </Units>
     <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>

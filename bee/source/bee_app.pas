@@ -122,7 +122,7 @@ begin
   inherited Create(aInterface);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0890 archiver utility, freeware version, Oct 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0891 archiver utility, freeware version, Oct 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcFile  := nil;
@@ -133,13 +133,8 @@ begin
   FCommandLine := TCommandLine.Create;
   FCommandLine.Process(aParams);
 
-  // load method and dictionary level
-  FConfiguration := TConfiguration.Create;
-  FConfiguration.Selector('\main');
-  FConfiguration.CurrentSection.Values['Method'] := IntToStr(FCommandLine.mOption);
-  FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FCommandLine.dOption);
-
   // load configuration
+  FConfiguration := TConfiguration.Create;
   if not FileExists(FCommandLine.cfgOption) then
   begin
     Interfaces.OnWarning.Data.Msg := (Cr + 'Configuration file ' + FCommandLine.cfgOption + ' not found, using default settings' + Cr);
@@ -147,6 +142,11 @@ begin
     SetExitCode(1);
   end else
     FConfiguration.LoadFromFile(FCommandLine.cfgOption);
+
+  // load method and dictionary level
+  FConfiguration.Selector('\main');
+  FConfiguration.CurrentSection.Values['Method'] := IntToStr(FCommandLine.mOption);
+  FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FCommandLine.dOption);
 end;
 
 destructor TBeeApp.Destroy;
