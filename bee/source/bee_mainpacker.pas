@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2008 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0787 - 2008.06.14 by Melchiorre Caruso.
+  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -38,7 +38,7 @@ interface
 
 uses
   Classes,       // TStream
-  
+  // ---
   Bee_Files,     // TFileReader, TFileWriter...
   Bee_Codec,     // TSecondaryEncoder, TSecondaryDecoder...
   Bee_Headers,
@@ -137,17 +137,17 @@ end;
 
 function TEncoder.GetKey(Header: THeader): string;
 begin
-  Interfaces.OnKey.Data.FileName := ExtractFileName(Header.FileName);
-  Interfaces.OnKey.Data.FilePath := ExtractFilePath(Header.FileName);
-  Interfaces.OnKey.Data.FileSize := Header.FileSize;
-  Interfaces.OnKey.Data.FileTime := Header.FileTime;
+  Interfaces.OnKey.Data.FileName := ExtractFileName(Header.Data.FileName);
+  Interfaces.OnKey.Data.FilePath := ExtractFilePath(Header.Data.FileName);
+  Interfaces.OnKey.Data.FileSize := Header.Data.FileSize;
+  Interfaces.OnKey.Data.FileTime := Header.Data.FileTime;
 
   Sync(Interfaces.OnKey.Method);
   Result := Interfaces.OnKey.Answer;
   
   if Length(Result) < MinKeyLength then
   begin
-    Exclude(Header.FileFlags, foPassword);
+    Exclude(Header.Data.FileFlags, foPassword);
   end;
 end;
 
@@ -167,19 +167,19 @@ var
   Symbol: byte;
   I: integer;
 begin
-  if foDictionary in Header.FileFlags then
-    PPM.SetDictionary(Header.FileDictionary);
+  if foDictionary in Header.Data.FileFlags then
+    PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.FileFlags then
-    PPM.SetTable(Header.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.FileFlags then
+  if foTear in Header.Data.FileFlags then
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
-  Header.FileStartPos := Stream.Seek(0, 1); // stream flush
-  Header.FileCrc := cardinal(-1);
+  Header.Data.FileStartPos := Stream.Seek(0, 1); // stream flush
+  Header.Data.FileCrc := cardinal(-1);
 
   try
     SrcFile := TFileReader.Create(Header.FileLink, fmOpenRead + fmShareDenyWrite);
@@ -192,21 +192,21 @@ begin
   
     if Mode = emNorm then
     begin
-      Interfaces.OnDisplay.Data.Msg := msgUpdating + Header.FileName;
+      Interfaces.OnDisplay.Data.Msg := msgUpdating + Header.Data.FileName;
       Sync(Interfaces.OnDisplay.Method);
     end;
 
-    Header.FileSize := SrcFile.Size;
-    Header.FileAttr := FileGetAttr(Header.FileName);
+    Header.Data.FileSize := SrcFile.Size;
+    Header.Data.FileAttr := FileGetAttr(Header.Data.FileName);
 
-    if foPassword in Header.FileFlags then
+    if foPassword in Header.Data.FileFlags then
     begin
       Stream.BlowFish.Start(GetKey(Header));
     end;
 
-    if foMoved in Header.FileFlags then
+    if foMoved in Header.Data.FileFlags then
     begin
-      for I := 1 to Header.FileSize do
+      for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
@@ -217,13 +217,13 @@ begin
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
-        UpdCrc32(Header.FileCrc, Symbol);
+        UpdCrc32(Header.Data.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
       end;
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to Header.FileSize do
+      for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
@@ -234,30 +234,30 @@ begin
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
-        UpdCrc32(Header.FileCrc, Symbol);
+        UpdCrc32(Header.Data.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
       end;
       SecondaryCodec.Flush;
     end;
     SrcFile.Free;
 
-    Header.FilePacked := Stream.Seek(0, 1) - Header.FileStartPos; // last stream flush
+    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos; // last stream flush
     Stream.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
   end else
   begin
-    Interfaces.OnError.Data.Msg := ('Error: can''t open file ' + Header.FileName);
+    Interfaces.OnError.Data.Msg := ('Error: can''t open file ' + Header.Data.FileName);
     Sync(Interfaces.OnError.Method);
   end;
 
-  if (not (foMoved in Header.FileFlags)) and (Header.FilePacked >= Header.FileSize) then
+  if (not (foMoved in Header.Data.FileFlags)) and (Header.Data.FilePacked >= Header.Data.FileSize) then
   begin
-    Include(Header.FileFlags, foTear);
-    Include(Header.FileFlags, foMoved);
-    Stream.Size := Header.FileStartPos;
+    Include(Header.Data.FileFlags, foTear);
+    Include(Header.Data.FileFlags, foMoved);
+    Stream.Size := Header.Data.FileStartPos;
 
-    Dec(Interfaces.OnTick.Data.ProcessedSize, Header.FileSize);
+    Dec(Interfaces.OnTick.Data.ProcessedSize, Header.Data.FileSize);
     Result := EncodeFile(Header, emOpt);
   end else
     Result := True;
@@ -270,13 +270,13 @@ var
   Symbol: byte;
   I: integer;
 begin
-  if foDictionary in Header.FileFlags then
-    PPM.SetDictionary(Header.FileDictionary);
+  if foDictionary in Header.Data.FileFlags then
+    PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.FileFlags then
-    PPM.SetTable(Header.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.FileFlags then
+  if foTear in Header.Data.FileFlags then
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
@@ -289,17 +289,17 @@ begin
 
     if Mode = emNorm then
     begin
-      Interfaces.OnDisplay.Data.Msg := msgEncoding + Header.FileName;
+      Interfaces.OnDisplay.Data.Msg := msgEncoding + Header.Data.FileName;
       Sync(Interfaces.OnDisplay.Method);
     end;
 
-    SrcPosition := Header.FileStartPos;
-    SrcFile.Seek(Header.FileStartPos, 0);
+    SrcPosition := Header.Data.FileStartPos;
+    SrcFile.Seek(Header.Data.FileStartPos, 0);
 
-    Header.FileCrc := cardinal(-1);
-    Header.FileStartPos := Stream.Seek(0, 1); // stream flush
+    Header.Data.FileCrc := cardinal(-1);
+    Header.Data.FileStartPos := Stream.Seek(0, 1); // stream flush
 
-    if foPassword in Header.FileFlags then
+    if foPassword in Header.Data.FileFlags then
     begin
       Stream.BlowFish.Start(GetKey(Header));
       if Header.Action = toSwap then
@@ -308,9 +308,9 @@ begin
       end;
     end;
 
-    if foMoved in Header.FileFlags then
+    if foMoved in Header.Data.FileFlags then
     begin
-      for I := 1 to Header.FileSize do
+      for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
@@ -321,13 +321,13 @@ begin
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
-        UpdCrc32(Header.FileCrc, Symbol);
+        UpdCrc32(Header.Data.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
       end;
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to Header.FileSize do
+      for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
@@ -338,14 +338,14 @@ begin
         end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
-        UpdCrc32(Header.FileCrc, Symbol);
+        UpdCrc32(Header.Data.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
       end;
       SecondaryCodec.Flush;
     end;
     SrcFile.BlowFish.Finish;
 
-    Header.FilePacked := Stream.Seek(0, 1) - Header.FileStartPos; // last stream flush
+    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos; // last stream flush
     Stream.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
@@ -355,14 +355,14 @@ begin
     Sync(Interfaces.OnError.Method);
   end;
 
-  if (not (foMoved in Header.FileFlags)) and (Header.FilePacked >= Header.FileSize) then
+  if (not (foMoved in Header.Data.FileFlags)) and (Header.Data.FilePacked >= Header.Data.FileSize) then
   begin
-    Include(Header.FileFlags, foTear);
-    Include(Header.FileFlags, foMoved);
-    Stream.Size := Header.FileStartPos;
-    Header.FileStartPos := SrcPosition;
+    Include(Header.Data.FileFlags, foTear);
+    Include(Header.Data.FileFlags, foMoved);
+    Stream.Size := Header.Data.FileStartPos;
+    Header.Data.FileStartPos := SrcPosition;
 
-    Dec(Interfaces.OnTick.Data.ProcessedSize, Header.FileSize);
+    Dec(Interfaces.OnTick.Data.ProcessedSize, Header.Data.FileSize);
     Result := EncodeStrm(Header, emOpt, SrcStrm);
   end else
     Result := True;
@@ -374,13 +374,13 @@ var
   Symbol: byte;
   I: integer;
 begin
-  if foDictionary in Header.FileFlags then
-    PPM.SetDictionary(Header.FileDictionary);
+  if foDictionary in Header.Data.FileFlags then
+    PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.FileFlags then
-    PPM.SetTable(Header.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.FileFlags then
+  if foTear in Header.Data.FileFlags then
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
@@ -392,14 +392,14 @@ begin
 
     if Mode = emNorm then
     begin
-      Interfaces.OnDisplay.Data.Msg := msgCopying + Header.FileName;
+      Interfaces.OnDisplay.Data.Msg := msgCopying + Header.Data.FileName;
       Sync(Interfaces.OnDisplay.Method);
     end;
 
-    SrcFile.Seek(Header.FileStartPos, 0);
-    Header.FileStartPos := Stream.Seek(0, 1);
+    SrcFile.Seek(Header.Data.FileStartPos, 0);
+    Header.Data.FileStartPos := Stream.Seek(0, 1);
 
-    for I := 1 to Header.FilePacked do
+    for I := 1 to Header.Data.FilePacked do
     begin
       if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
       begin
@@ -444,10 +444,10 @@ end;
 
 function TDecoder.GetKey(Header: THeader): string;
 begin
-  Interfaces.OnKey.Data.FileName := ExtractFileName(Header.FileName);
-  Interfaces.OnKey.Data.FilePath := ExtractFilePath(Header.FileName);
-  Interfaces.OnKey.Data.FileSize := Header.FileSize;
-  Interfaces.OnKey.Data.FileTime := Header.FileTime;
+  Interfaces.OnKey.Data.FileName := ExtractFileName(Header.Data.FileName);
+  Interfaces.OnKey.Data.FilePath := ExtractFilePath(Header.Data.FileName);
+  Interfaces.OnKey.Data.FileSize := Header.Data.FileSize;
+  Interfaces.OnKey.Data.FileTime := Header.Data.FileTime;
 
   Sync(Interfaces.OnKey.Method);
   Result := Interfaces.OnKey.Answer;
@@ -469,21 +469,21 @@ var
   I, Crc: cardinal;
   Symbol: byte;
 begin
-  if foDictionary in Header.FileFlags then
-    PPM.SetDictionary(Header.FileDictionary);
+  if foDictionary in Header.Data.FileFlags then
+    PPM.SetDictionary(Header.Data.FileDictionary);
     
-  if foTable in Header.FileFlags then
-    PPM.SetTable(Header.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.FileFlags then
+  if foTear in Header.Data.FileFlags then
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping   + Header.FileName;
-    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting    + Header.FileName;
-    pmNorm: Interfaces.OnDisplay.Data.Msg := msgExtracting + Header.FileName;
+    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping   + Header.Data.FileName;
+    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting    + Header.Data.FileName;
+    pmNorm: Interfaces.OnDisplay.Data.Msg := msgExtracting + Header.Data.FileName;
     pmQuit:
     begin
       Result := True;
@@ -492,12 +492,12 @@ begin
   end;
   Sync(Interfaces.OnDisplay.Method);
 
-  Stream.Seek(Header.FileStartPos, 0); // stream flush
+  Stream.Seek(Header.Data.FileStartPos, 0); // stream flush
   Crc := cardinal(-1);
 
   if Mode = pmNorm then
     try
-      DstFile := TFileWriter.Create(Header.FileName, fmCreate)
+      DstFile := TFileWriter.Create(Header.Data.FileName, fmCreate)
     except
       DstFile := nil;
     end
@@ -507,14 +507,14 @@ begin
   if (DstFile <> nil) then
   begin
 
-    if foPassword in Header.FileFlags then
+    if foPassword in Header.Data.FileFlags then
     begin
       Stream.BlowFish.Start(GetKey(Header));
     end;
 
-    if foMoved in Header.FileFlags then
+    if foMoved in Header.Data.FileFlags then
     begin
-      for I := 1 to Header.FileSize do
+      for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
@@ -531,7 +531,7 @@ begin
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to Header.FileSize do
+      for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
@@ -552,23 +552,23 @@ begin
     if Mode = pmNorm then
     begin
       DstFile.Flush;
-      FileSetDate(DstFile.Handle, Header.FileTime);
+      FileSetDate(DstFile.Handle, Header.Data.FileTime);
     end;
     DstFile.Free;
 
     if Mode = pmNorm then
-      FileSetAttr(Header.FileName, Header.FileAttr);
+      FileSetAttr(Header.Data.FileName, Header.Data.FileAttr);
 
     Sync(Interfaces.OnClear.Method);
   end;
 
-  Result := Header.FileCrc = Crc;
+  Result := Header.Data.FileCrc = Crc;
   if Result = False then
   begin
     if Crc = cardinal(-1) then
-      Interfaces.OnError.Data.Msg := ('Error: can''t open file ' + Header.FileName)
+      Interfaces.OnError.Data.Msg := ('Error: can''t open file ' + Header.Data.FileName)
     else
-      Interfaces.OnError.Data.Msg := msgCRCERROR + Header.FileName;
+      Interfaces.OnError.Data.Msg := msgCRCERROR + Header.Data.FileName;
     Sync(Interfaces.OnError.Method);
   end;
 end;
@@ -579,21 +579,21 @@ var
   I, Crc: cardinal;
   Symbol: byte;
 begin
-  if foDictionary in Header.FileFlags then
-    PPM.SetDictionary(Header.FileDictionary);
+  if foDictionary in Header.Data.FileFlags then
+    PPM.SetDictionary(Header.Data.FileDictionary);
     
-  if foTable in Header.FileFlags then
-    PPM.SetTable(Header.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
     
-  if foTear in Header.FileFlags then
+  if foTear in Header.Data.FileFlags then
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping + Header.FileName;
-    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting  + Header.FileName;
-    pmNorm: Interfaces.OnDisplay.Data.Msg := msgDecoding + Header.FileName;
+    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping + Header.Data.FileName;
+    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting  + Header.Data.FileName;
+    pmNorm: Interfaces.OnDisplay.Data.Msg := msgDecoding + Header.Data.FileName;
     pmQuit:
     begin
       Result := True;
@@ -602,13 +602,13 @@ begin
   end;
   Sync(Interfaces.OnDisplay.Method);
 
-  Stream.Seek(Header.FileStartPos, 0);
+  Stream.Seek(Header.Data.FileStartPos, 0);
   Crc := cardinal(-1);
 
   if Mode = pmNorm then
     try
       DstFile := DstStrm;
-      Header.FileStartPos := DstFile.Seek(0, 1);
+      Header.Data.FileStartPos := DstFile.Seek(0, 1);
     except
       DstFile := nil;
     end
@@ -618,7 +618,7 @@ begin
   if (DstFile <> nil) then
   begin
 
-    if foPassword in Header.FileFlags then
+    if foPassword in Header.Data.FileFlags then
     begin
       Stream.BlowFish.Start(GetKey(Header));
       if Header.Action = toSwap then
@@ -627,9 +627,9 @@ begin
       end;
     end;
 
-    if foMoved in Header.FileFlags then
+    if foMoved in Header.Data.FileFlags then
     begin
-      for I := 1 to Header.FileSize do
+      for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
@@ -646,7 +646,7 @@ begin
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to Header.FileSize do
+      for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
@@ -673,13 +673,13 @@ begin
     Sync(Interfaces.OnClear.Method);
   end;
 
-  Result := Header.FileCrc = Crc;
+  Result := Header.Data.FileCrc = Crc;
   if Result = False then
   begin
     if Crc = cardinal(-1) then
       Interfaces.OnError.Data.Msg := ('Error: stream not found')
     else
-      Interfaces.OnError.Data.Msg := msgCRCERROR + Header.FileName;
+      Interfaces.OnError.Data.Msg := msgCRCERROR + Header.Data.FileName;
     Sync(Interfaces.OnError.Method);
   end;
 end;

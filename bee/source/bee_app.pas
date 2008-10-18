@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2007 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0877 - 2008.10.053 by Melchiorre Caruso.
+  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -122,7 +122,7 @@ begin
   inherited Create(aInterface);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0881 archiver utility, freeware version, Aug 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0890 archiver utility, freeware version, Oct 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcFile  := nil;
@@ -273,14 +273,18 @@ begin
   if FCommandLine.Command = 'E' then
   begin
     for I := 0 to Headers.Count - 1 do
-      with THeader(Headers.Items[I]) do
+      with THeader(Headers.Items[I]).Data do
+      begin
         FileName := ExtractFileName(FileName);
+      end;
   end else
     if Length(FCommandLine.cdOption) > 0 then
     begin
       for I := 0 to Headers.Count - 1 do
-        with THeader(Headers.Items[I]) do
+        with THeader(Headers.Items[I]).Data do
+        begin
           FileName := DeleteFilePath(FCommandLine.cdOption, FileName);
+        end;
     end;
 end;
 
@@ -305,15 +309,15 @@ begin
   while I < Headers.Count do
   begin
     if (THeader(Headers.Items[I]).Action = toExtract) and
-       (FileExists(THeader(Headers.Items[I]).FileName) = True) then
+       (FileExists(THeader(Headers.Items[I]).Data.FileName) = True) then
     begin
       if (FCommandLine.oOption in ['A', 'Q', 'S']) = False then
       begin
         repeat
-          Interfaces.OnOverWrite.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).FileName);
-          Interfaces.OnOverWrite.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).FileName);
-          Interfaces.OnOverWrite.Data.FileSize := THeader(Headers.Items[I]).FileSize;
-          Interfaces.OnOverWrite.Data.FileTime := THeader(Headers.Items[I]).FileTime;
+          Interfaces.OnOverWrite.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Data.FileName);
+          Interfaces.OnOverWrite.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Data.FileName);
+          Interfaces.OnOverWrite.Data.FileSize := THeader(Headers.Items[I]).Data.FileSize;
+          Interfaces.OnOverWrite.Data.FileTime := THeader(Headers.Items[I]).Data.FileTime;
 
           Interfaces.OnOverWrite.Answer := 'A';
           Synchronize(Interfaces.OnOverWrite.Method);
@@ -329,11 +333,11 @@ begin
         'R': begin
                while True do
                begin
-                 Interfaces.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).FileName);
-                 Interfaces.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).FileName);
-                 Interfaces.OnRename.Data.FileSize := THeader(Headers.Items[I]).FileSize;
-                 Interfaces.OnRename.Data.FileTime := THeader(Headers.Items[I]).FileTime;
-                 Interfaces.OnRename.Data.FileAttr := THeader(Headers.Items[I]).FileAttr;
+                 Interfaces.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[I]).Data.FileName);
+                 Interfaces.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Data.FileName);
+                 Interfaces.OnRename.Data.FileSize := THeader(Headers.Items[I]).Data.FileSize;
+                 Interfaces.OnRename.Data.FileTime := THeader(Headers.Items[I]).Data.FileTime;
+                 Interfaces.OnRename.Data.FileAttr := THeader(Headers.Items[I]).Data.FileAttr;
 
                  Interfaces.OnRename.Answer := '';
                  Synchronize(Interfaces.OnRename.Method);
@@ -350,7 +354,7 @@ begin
                if Length(NewFileName) = 0 then
                  THeader(Headers.Items[I]).Action := toNone
                else
-                 THeader(Headers.Items[I]).FileName := NewFileName;
+                 THeader(Headers.Items[I]).Data.FileName := NewFileName;
              end;
         'S': for J := I to Headers.Count - 1 do
              begin
@@ -371,7 +375,7 @@ begin
   begin
     if (THeader(Headers.Items[I]).Action = toExtract) then
     begin
-      J := Headers.GetBack(I - 1, toExtract, THeader(Headers.Items[I]).FileName);
+      J := Headers.GetBack(I - 1, toExtract, THeader(Headers.Items[I]).Data.FileName);
 
       if J > -1 then
       begin
@@ -393,7 +397,7 @@ begin
       for I := 0 to Headers.Count - 1 do
         if (THeader(Headers.Items[I]).Action = toExtract) then
         begin
-          if (FileExists(THeader(Headers.Items[I]).FileName) = True) then
+          if (FileExists(THeader(Headers.Items[I]).Data.FileName) = True) then
             THeader(Headers.Items[I]).Action := toNone
           else
             ProcessFileToOverWrite(Headers, I);
@@ -402,12 +406,12 @@ begin
       for I := 0 to Headers.Count - 1 do
         if (THeader(Headers.Items[I]).Action = toExtract) then
         begin
-          if (FileExists(THeader(Headers.Items[I]).FileName) = False) then
+          if (FileExists(THeader(Headers.Items[I]).Data.FileName) = False) then
             THeader(Headers.Items[I]).Action := toNone
           else
           begin
-            if FileAge(THeader(Headers.Items[I]).FileName) >=
-              THeader(Headers.Items[I]).FileTime then
+            if FileAge(THeader(Headers.Items[I]).Data.FileName) >=
+              THeader(Headers.Items[I]).Data.FileTime then
               THeader(Headers.Items[I]).Action := toNone
             else
               ProcessFileToOverWrite(Headers, I);
@@ -418,10 +422,10 @@ begin
 
   begin
     for I := 0 to Headers.Count - 1 do
-      if FileExists(THeader(Headers.Items[I]).FileName) = True then
+      if FileExists(THeader(Headers.Items[I]).Data.FileName) = True then
       begin
-        if FileAge(THeader(Headers.Items[I]).FileName) >=
-          THeader(Headers.Items[I]).FileTime then
+        if FileAge(THeader(Headers.Items[I]).Data.FileName) >=
+          THeader(Headers.Items[I]).Data.FileTime then
           THeader(Headers.Items[I]).Action := toNone
         else
           ProcessFileToOverWrite(Headers, I);
@@ -448,11 +452,11 @@ procedure TBeeApp.ProcessFileToOverWrite(Headers: THeaders; FileIndex: integer);
 var
   J: integer;
 begin
-  J := Headers.GetBack(FileIndex - 1, toExtract, THeader(Headers.Items[FileIndex]).FileName);
+  J := Headers.GetBack(FileIndex - 1, toExtract, THeader(Headers.Items[FileIndex]).Data.FileName);
 
   if J > -1 then
   begin
-    if (THeader(Headers.Items[FileIndex]).FileTime > THeader(Headers.Items[J]).FileTime) then
+    if (THeader(Headers.Items[FileIndex]).Data.FileTime > THeader(Headers.Items[J]).Data.FileTime) then
       THeader(Headers.Items[J]).Action := toNone
     else
       THeader(Headers.Items[FileIndex]).Action := toNone;
@@ -475,11 +479,11 @@ begin
       begin
         while True do
         begin
-          Interfaces.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[i]).FileName);
-          Interfaces.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[i]).FileName);
-          Interfaces.OnRename.Data.FileSize := THeader(Headers.Items[i]).FileSize;
-          Interfaces.OnRename.Data.FileTime := THeader(Headers.Items[i]).FileTime;
-          Interfaces.OnRename.Data.FileAttr := THeader(Headers.Items[i]).FileAttr;
+          Interfaces.OnRename.Data.FileName := ExtractFileName(THeader(Headers.Items[i]).Data.FileName);
+          Interfaces.OnRename.Data.FilePath := ExtractFilePath(THeader(Headers.Items[i]).Data.FileName);
+          Interfaces.OnRename.Data.FileSize := THeader(Headers.Items[i]).Data.FileSize;
+          Interfaces.OnRename.Data.FileTime := THeader(Headers.Items[i]).Data.FileTime;
+          Interfaces.OnRename.Data.FileAttr := THeader(Headers.Items[i]).Data.FileAttr;
 
           SetLength(Interfaces.OnRename.Answer, 0);
           Synchronize(Interfaces.OnRename.Method);
@@ -495,7 +499,7 @@ begin
 
         if Length(iFileName) > 0 then
         begin
-          THeader(Headers.Items[i]).FileName := iFileName;
+          THeader(Headers.Items[i]).Data.FileName := iFileName;
         end;
       end;
     end;
@@ -530,10 +534,10 @@ begin
            toCopy: begin
                     THeader(Headers.Items[J]).Action := toSwap;
                     Inc(Interfaces.OnTick.Data.TotalSize,
-                      THeader(Headers.Items[J]).FileSize * 2); // decoding  and Encoding size
+                      THeader(Headers.Items[J]).Data.FileSize * 2); // decoding  and Encoding size
                    end;
           toFresh: Inc(Interfaces.OnTick.Data.TotalSize,
-                     THeader(Headers.Items[J]).FileSize); // decoding size
+                     THeader(Headers.Items[J]).Data.FileSize); // decoding size
         end;
       end;
       I := BackTear;
@@ -570,10 +574,10 @@ begin
             toCopy:   begin
                         THeader(Headers.Items[J]).Action := toSwap;
                         Inc(Interfaces.OnTick.Data.TotalSize,
-                          THeader(Headers.Items[J]).FileSize * 2);
+                          THeader(Headers.Items[J]).Data.FileSize * 2);
                       end;
             toDelete: Inc(Interfaces.OnTick.Data.TotalSize,
-                        THeader(Headers.Items[J]).FileSize);
+                        THeader(Headers.Items[J]).Data.FileSize);
           end;
       end;
       I := BackTear;
@@ -653,33 +657,33 @@ begin
     begin
       if THeader(Items[I]).Action = toDelete then
       begin
-        if (foVersion in THeader(Items[I]).FileFlags) and (not (foVersion in THeader(Items[I + 1]).FileFlags)) then
+        if (foVersion in THeader(Items[I]).Data.FileFlags) and (not (foVersion in THeader(Items[I + 1]).Data.FileFlags)) then
         begin
-          Include(THeader(Items[I + 1]).FileFlags, foVersion);
-          THeader(Items[I + 1]).FileVersion := THeader(Items[I]).FileVersion;
+          Include(THeader(Items[I + 1]).Data.FileFlags, foVersion);
+          THeader(Items[I + 1]).Data.FileVersion := THeader(Items[I]).Data.FileVersion;
         end;
 
-        if (foMethod in THeader(Items[I]).FileFlags) and (not (foMethod in THeader(Items[I + 1]).FileFlags)) then
+        if (foMethod in THeader(Items[I]).Data.FileFlags) and (not (foMethod in THeader(Items[I + 1]).Data.FileFlags)) then
         begin
-          Include(THeader(Items[I + 1]).FileFlags, foMethod);
-          THeader(Items[I + 1]).FileMethod := THeader(Items[I]).FileMethod;
+          Include(THeader(Items[I + 1]).Data.FileFlags, foMethod);
+          THeader(Items[I + 1]).Data.FileMethod := THeader(Items[I]).Data.FileMethod;
         end;
 
-        if (foDictionary in THeader(Items[I]).FileFlags) and (not (foDictionary in THeader(Items[I + 1]).FileFlags)) then
+        if (foDictionary in THeader(Items[I]).Data.FileFlags) and (not (foDictionary in THeader(Items[I + 1]).Data.FileFlags)) then
         begin
-          Include(THeader(Items[I + 1]).FileFlags, foDictionary);
-          THeader(Items[I + 1]).FileDictionary := THeader(Items[I]).FileDictionary;
+          Include(THeader(Items[I + 1]).Data.FileFlags, foDictionary);
+          THeader(Items[I + 1]).Data.FileDictionary := THeader(Items[I]).Data.FileDictionary;
         end;
 
-        if (foTable in THeader(Items[I]).FileFlags) and (not (foTable in THeader(Items[I + 1]).FileFlags)) then
+        if (foTable in THeader(Items[I]).Data.FileFlags) and (not (foTable in THeader(Items[I + 1]).Data.FileFlags)) then
         begin
-          Include(THeader(Items[I + 1]).FileFlags, foTable);
-          THeader(Items[I + 1]).FileTable := THeader(Items[I]).FileTable;
+          Include(THeader(Items[I + 1]).Data.FileFlags, foTable);
+          THeader(Items[I + 1]).Data.FileTable := THeader(Items[I]).Data.FileTable;
         end;
 
-        if (foTear in THeader(Items[I]).FileFlags) and (not (foTear in THeader(Items[I + 1]).FileFlags)) then
+        if (foTear in THeader(Items[I]).Data.FileFlags) and (not (foTear in THeader(Items[I + 1]).Data.FileFlags)) then
         begin
-          Include(THeader(Items[I + 1]).FileFlags, foTear);
+          Include(THeader(Items[I + 1]).Data.FileFlags, foTear);
         end;
       end;
     end;
@@ -702,7 +706,7 @@ begin
       begin
         THeader(Headers.Items[J]).Action := toSkip;
         Inc(Interfaces.OnTick.Data.TotalSize,
-          THeader(Headers.Items[J]).FileSize);
+          THeader(Headers.Items[J]).Data.FileSize);
       end;
 
     if (iDictionary > -1) and (THeader(Headers.Items[iDictionary]).Action = toNone) then
@@ -1018,7 +1022,7 @@ begin
               toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, FArcFile);
               toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, FSwapFile);
               toDelete: begin
-                          Interfaces.OnDisplay.Data.Msg := (msgDeleting + THeader(Headers.Items[I]).FileName);
+                          Interfaces.OnDisplay.Data.Msg := (msgDeleting + THeader(Headers.Items[I]).Data.FileName);
                           Synchronize(Interfaces.OnDisplay.Method);
                         end;
             end;
@@ -1222,30 +1226,30 @@ begin
         begin
           P := Info.Items[I];
 
-          if foVersion    in P.FileFlags then Version    := P.FileVersion;
-          if foMethod     in P.FileFlags then Method     := P.FileMethod;
-          if foDictionary in P.FileFlags then Dictionary := P.FileDictionary;
+          if foVersion    in P.Data.FileFlags then Version    := P.Data.FileVersion;
+          if foMethod     in P.Data.FileFlags then Method     := P.Data.FileMethod;
+          if foDictionary in P.Data.FileFlags then Dictionary := P.Data.FileDictionary;
 
           with Interfaces.OnList.Data do
           begin
-            FileName := ExtractFileName(P.FileName);
-            FilePath := ExtractFilePath(P.FileName);
-            FileSize := P.FileSize;
-            FilePacked := P.FilePacked;
+            FileName := ExtractFileName(P.Data.FileName);
+            FilePath := ExtractFilePath(P.Data.FileName);
+            FileSize   := P.Data.FileSize;
+            FilePacked := P.Data.FilePacked;
 
             if FileSize > 0 then
               FileRatio := MulDiv(FilePacked, 100, FileSize)
             else
               FileRatio := 100;
 
-            FileAttr := P.FileAttr;
-            FileTime := P.FileTime;
+            FileAttr := P.Data.FileAttr;
+            FileTime := P.Data.FileTime;
             FileComm := '';
-            FileCrc := P.FileCrc;
+            FileCrc  := P.Data.FileCrc;
             FileMethod := MethodToStr(P, Method, Dictionary);
             FileVersion := VersionToStr(Version);
 
-            if foPassword in P.FileFlags then
+            if foPassword in P.Data.FileFlags then
               FilePassword := 'Yes'
             else
               FilePassword := 'No';
@@ -1254,8 +1258,8 @@ begin
           end;
           Synchronize(Interfaces.OnList.Method);
           
-          Inc(TotalSize, P.FileSize);
-          Inc(TotalPack, P.FilePacked);
+          Inc(TotalSize, P.Data.FileSize);
+          Inc(TotalPack, P.Data.FilePacked);
           Inc(CountFiles);
         end;
       end;
@@ -1298,10 +1302,10 @@ function TBeeApp.MethodToStr(P: THeader; Method, Dictionary: integer): string;
 begin
   Result := 'm0a';
 
-  if not (foTear in P.FileFlags) then
+  if not (foTear in P.Data.FileFlags) then
     Result[1] := 's';
 
-  if not (foMoved in P.FileFlags) then
+  if not (foMoved in P.Data.FileFlags) then
   begin
     if Method in [1..3] then
       Result[2] := char(byte('0') + Method)
