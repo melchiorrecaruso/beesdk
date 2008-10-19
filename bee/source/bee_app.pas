@@ -122,7 +122,7 @@ begin
   inherited Create(aInterface);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0892 archiver utility, freeware version, Oct 2008.'
+  FSelfName := 'The Bee 0.7.9 build 0894 archiver utility, freeware version, Oct 2008.'
     + Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcFile  := nil;
@@ -791,11 +791,12 @@ begin
         TotalSize);
 
     if (Headers.GetCount([toUpdate, toFresh]) > 0) or
-      ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
+       ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
       Time := Now;
       TmpFileName := GenerateFileName(FCommandLine.yOption);
-      TmpFile := TFileWriter.Create(TmpFileName, fmCreate);
+      TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
+
 
       // find sequences and...
       ProcessFilesToFresh(Headers);
@@ -808,7 +809,7 @@ begin
 
         // if exists a modified solid sequence open swap file
         if Length(FSwapName) > 0 then
-          FSwapFile := TFileReader.Create(FSwapName, fmOpenRead + fmShareDenyWrite);
+          FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
 
         // set sfx module
         with FCommandLine do
@@ -862,7 +863,7 @@ begin
           end;
         end else
           DeleteFile(TmpFileName);
-        
+
       end else // if ProcessFilesToSwap
       begin
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);

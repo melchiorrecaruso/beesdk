@@ -110,13 +110,14 @@ function SelfName: string;
 function SelfPath: string;
 function GenerateFileName(const Path: string): string;
 
-// string routines
+// string routines ...
 
 function SizeToStr(Size: integer): string;
 function RatioToStr(PackedSize, Size: integer): string;
 function AttrToStr(Attr: integer): string;
 
 // time handling routines ...
+
 function TimeDifference(X: double): string;
 function TimeToStr(T: Integer): string;
 function DateTimeToString(X: TDateTime): string; overload;

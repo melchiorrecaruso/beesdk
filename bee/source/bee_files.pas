@@ -87,6 +87,9 @@ type
     Current, Longest: longint;
   end;
 
+function CreateTFileReader(const FileName: string; Mode: word): TFileReader;
+function CreateTFileWriter(const FileName: string; Mode: word): TFileWriter;
+
 implementation
 
 uses
@@ -155,6 +158,15 @@ begin
   Size := 0;
   Readed := 0;
   Result := inherited Seek(Offset, Origin);
+end;
+
+function CreateTFileReader(const FileName: string; Mode: word): TFileReader;
+begin
+  try
+    Result := TFileReader.Create(FileName, Mode);
+  except
+    Result := nil;
+  end;
 end;
 
 // class TFileWriter...
@@ -230,6 +242,15 @@ begin
   end;
   BlowFish.Free;
   inherited Destroy;
+end;
+
+function CreateTFileWriter(const FileName: string; Mode: word): TFileWriter;
+begin
+  try
+    Result := TFileWriter.Create(FileName, Mode);
+  except
+    Result := nil;
+  end;
 end;
 
 /// class TNulWriter...
