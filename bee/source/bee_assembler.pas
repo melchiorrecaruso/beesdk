@@ -47,68 +47,68 @@ implementation
 
 procedure CopyBytes(const Source, Dest; Count: cardinal);
 asm
-  xchg esi, Source
-  xchg edi, Dest
-  push Count
-  shr  Count, 2
-  rep  movsd
-  pop  Count
-  and  Count, $03
-  rep  movsb
-  mov  esi, Source
-  mov  edi, Dest
+         XCHG    ESI, Source
+         XCHG    EDI, Dest
+         PUSH    Count
+         SHR     Count, 2
+         REP     movsd
+         POP     Count
+         AND     Count, $03
+         REP     movsb
+         MOV     ESI, Source
+         MOV     EDI, Dest
 end;
 
 procedure FillCardinal(const Data; const Count, Value: cardinal);
 asm
-  push edi
-  mov  edi, Data
-  mov  eax, Value
-  mov  ecx, Count
-  rep  stosd
-  pop  edi
+         PUSH    EDI
+         MOV     EDI, Data
+         MOV     EAX, Value
+         MOV     ECX, Count
+         REP     stosd
+         POP     EDI
 end;
 
 procedure AddCardinal(const Data; const Count, Value: cardinal);
 asm
-  @1:
-  add [Data], Value
-  add Data, 4
-  dec Count
-  jne @1
+         @1:
+         ADD     [Data], Value
+         ADD     Data, 4
+         DEC     Count
+         JNE     @1
 end;
 
 procedure ClearCardinal(const Data; const Count: cardinal);
 asm
-  mov  ecx, Count
-  mov  edx, edi
-  mov  edi, Data
-  xor  eax, eax
-  rep  stosd
-  mov  edi, edx
+         MOV     ECX, Count
+         MOV     EDX, EDI
+         MOV     EDI, Data
+         XOR     EAX, EAX
+         REP     stosd
+         MOV     EDI, EDX
 end;
 
 procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal);
 asm
-  xchg esi, Source
-  xchg edi, Dest
-  rep  movsd
-  mov  esi, Source
-  mov  edi, Dest
+         XCHG    ESI, Source
+         XCHG    EDI, Dest
+         REP     movsd
+         MOV     ESI, Source
+         MOV     EDI, Dest
 end;
 
 function MulDiv(A, B, C: cardinal): cardinal;
 asm
-  mul  B
-  div  C
+         MUL     B
+         DIV     C
 end;
 
 function MulDecDiv(A, B, C: cardinal): cardinal;
 asm
-  mul  B
-  sub  eax, 1
-  sbb  edx, 0
-  div  C
+         MUL     B
+         SUB     EAX, 1
+         SBB     EDX, 0
+         DIV     C
 end;
 
 end.

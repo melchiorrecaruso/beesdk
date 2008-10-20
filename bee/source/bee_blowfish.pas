@@ -75,7 +75,7 @@ type
     function Encode(var aData; Count: longint): longint; overload;
     function Decode(var aData; Count: longint): longint; overload;
   public
-    property Started: boolean read FStarted;
+    property Started: boolean Read FStarted;
   end;
 
 implementation
@@ -327,7 +327,7 @@ begin
     }
   Datal := $00000000;
   Datar := $00000000;
-  i := 1;
+  i     := 1;
   while i <= 18 do
   begin
     Encode(@Datal, @Datar);
@@ -388,13 +388,13 @@ begin
     Xr := F(Xl) xor Xr;
 
     Temp := Xl;
-    Xl := Xr;
-    Xr := Temp;
+    Xl   := Xr;
+    Xr   := Temp;
   end;
 
   Temp := Xl;
-  Xl := Xr;
-  Xr := Temp;
+  Xl   := Xr;
+  Xr   := Temp;
 
   Xr := Xr xor P[17];
   Xl := Xl xor P[18];
@@ -417,13 +417,13 @@ begin
     Xr := F(Xl) xor Xr;
 
     Temp := Xl;
-    Xl := Xr;
-    Xr := Temp;
+    Xl   := Xr;
+    Xr   := Temp;
   end;
 
   Temp := Xl;
-  Xl := Xr;
-  Xr := Temp;
+  Xl   := Xr;
+  Xr   := Temp;
 
   Xr := Xr xor P[2];
   Xl := Xl xor P[1];
@@ -436,8 +436,9 @@ procedure TBlowFish.Start(const Key: string);
 begin
   if Length(Key) < MinKeyLength then
   begin
-    FStarted := False
-  end else
+    FStarted := False;
+  end
+  else
   begin
     FStarted := True;
     Initialize(Key);
@@ -452,7 +453,7 @@ end;
 function TBlowFish.Encode(var aData; Count: longint): longint;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
-  I: integer;
+  I:    integer;
 begin
   Result := Count mod 8;
   if Result = 0 then
@@ -471,7 +472,7 @@ end;
 function TBlowFish.Decode(var aData; Count: longint): longint;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
-  I: integer;
+  I:    integer;
 begin
   Result := Count mod 8;
   if Result = 0 then

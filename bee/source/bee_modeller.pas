@@ -91,16 +91,16 @@ type
     FCodec: TSecondaryCodec;            // Secondary encoder or decoder...
 
     Symbol: cardinal;
-    Pos: cardinal;
+    Pos:    cardinal;
     LowestPos: integer;
 
     MaxCounter,                         // Maximal heap size
     SafeCounter,                        // Safe heap size
     Counter: cardinal;                  // Current heap size
 
-    Heap: array of TNode;
-    Cuts: array of PNode;
-    List: array of PNode;
+    Heap:      array of TNode;
+    Cuts:      array of PNode;
+    List:      array of PNode;
     ListCount: cardinal;
 
     Root: PNode;
@@ -139,8 +139,8 @@ end;
 
 procedure TBaseCoder.SetTable(const T: TTableParameters);
 var
-  I: integer;
-  P: ^integer;
+  I:     integer;
+  P:     ^integer;
   aPart: ^TTableCol;
 begin
   P := @Table;
@@ -156,7 +156,7 @@ begin
 
   for I := 0 to 1 do
   begin
-    aPart := @Table.T[I];
+    aPart    := @Table.T[I];
     aPart[0] := aPart[0] + 256;
     // Weight of first-encoutered deterministic symbol
     aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
@@ -197,10 +197,10 @@ begin
   Inc(CurrentFreeNode);
 
   Root.Next := nil;
-  Root.Up := nil;
-  Root.K  := Increment;
-  Root.C  := 0;
-  Root.A  := 1;
+  Root.Up   := nil;
+  Root.K    := Increment;
+  Root.C    := 0;
+  Root.A    := 1;
 
   LowestPos := -integer(MaxCounter);
 end;
@@ -210,7 +210,7 @@ begin
   if Counter > 1 then
   begin
     ListCount := 1;
-    List[0] := Root;
+    List[0]   := Root;
   end
   else
     ListCount := 0;
@@ -226,14 +226,14 @@ end;
 procedure TBaseCoder.CreateChild(Parent: PNode);
 var
   Result, Link: PNode;
-  Address: integer;
+  Address:      integer;
 begin
   Inc(Counter);
   Result := CurrentFreeNode;
   if Result = LastFreeNode then
   begin
     Result := Tear;
-    Link := Result.Tear;
+    Link   := Result.Tear;
     if Result.Next <> nil then
     begin
       Result.Next.Tear := Link;
@@ -250,26 +250,27 @@ begin
     Inc(CurrentFreeNode);
 
   Result.Next := Parent.Up;
-  Parent.Up := Result;
-  Result.Up := nil;
-  Result.K := Increment;
-  Address  := Parent.A;
-  Result.C := Heap[Address and MaxCounter].D;
-  Result.A := Address + 1;
+  Parent.Up   := Result;
+  Result.Up   := nil;
+  Result.K    := Increment;
+  Address     := Parent.A;
+  Result.C    := Heap[Address and MaxCounter].D;
+  Result.A    := Address + 1;
 end;
 
 procedure TBaseCoder.Cut;
 var
-  P: PNode;
-  I, J: PPNode;
+  P:     PNode;
+  I, J:  PPNode;
   Bound: integer;
 begin
-  if Cuts = nil then SetLength(Cuts, MaxCounter + 1);
+  if Cuts = nil then
+    SetLength(Cuts, MaxCounter + 1);
 
   I := @Cuts[0];
   J := I;
   Inc(J);
-  I^ := Root;
+  I^    := Root;
   Bound := SafeCounter * 3 div 4;
 
   repeat
@@ -285,17 +286,18 @@ begin
         else
         begin
           P.Up.Tear := Tear;
-          Tear := P.Up;
-          P.Up := nil;
+          Tear      := P.Up;
+          P.Up      := nil;
         end;
       P := P.Next;
     until P = nil;
     Inc(I);
   until (I = J) or (Bound < 0);
 
-  if I <> J then Cut_Tail(I, J);
+  if I <> J then
+    Cut_Tail(I, J);
 
-  Counter := integer(SafeCounter * 3 div 4) - Bound + 1;
+  Counter   := integer(SafeCounter * 3 div 4) - Bound + 1;
   ListCount := 0;
 end;
 
@@ -306,7 +308,7 @@ begin
   P := Tear;
   repeat
     I^.Up.Tear := P;
-    P := I^.Up;
+    P     := I^.Up;
     I^.Up := nil;
     Inc(I);
   until I = J;
@@ -315,7 +317,7 @@ end;
 
 procedure TBaseCoder.Account;
 var
-  J, K: cardinal;
+  J, K:      cardinal;
   P, Stored: PNode;
 begin
   I := 0;
@@ -327,14 +329,15 @@ begin
     if P.Up <> nil then
     begin
       P := P.Up;
-      if IncreaseIndex = 0 then IncreaseIndex := I;
+      if IncreaseIndex = 0 then
+        IncreaseIndex := I;
       if P.Next <> nil then
       begin
         // Undetermined context ...
-        K := P.K * Part[MaxSymbol + 2] shr 5;
+        K      := P.K * Part[MaxSymbol + 2] shr 5;
         Stored := P;
-        P := P.Next;
-        J := 1;
+        P      := P.Next;
+        J      := 1;
         repeat
           Inc(J);
           Inc(K, P.K);
@@ -393,7 +396,7 @@ begin
     if Result.C <> C then
     begin
       repeat
-        P := Result;
+        P      := Result;
         Result := Result.Next;
         if Result = nil then
         begin
@@ -402,9 +405,9 @@ begin
         end
         else if Result.C = C then
         begin
-          P.Next  := Result.Next;
+          P.Next      := Result.Next;
           Result.Next := Node.Up;
-          Node.Up := Result;
+          Node.Up     := Result;
           Break;
         end;
       until False;
@@ -415,12 +418,13 @@ end;
 procedure TBaseCoder.Step;
 var
   I, J: cardinal;
-  P: PNode;
+  P:    PNode;
 begin
   ClearCardinal(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
 
-  if ListCount > 0 then Account;
+  if ListCount > 0 then
+    Account;
 
   // Update aSymbol...
   AddCardinal(Freq[0], MaxSymbol + 1, R shr BitChain + 1);
@@ -442,7 +446,7 @@ begin
       if P.K > Part[MaxSymbol + 3] then
         repeat
           P.K := P.K shr 1;
-          P := P.Next;
+          P   := P.Next;
         until P = nil;
       Inc(I);
     until I > IncreaseIndex;
@@ -465,18 +469,19 @@ end;
 
 function TBaseCoder.UpdateModel(aSymbol: cardinal): cardinal;
 begin
-  Part := @Table.T[0];
+  Part   := @Table.T[0];
   Symbol := aSymbol shr $4;
   Step;
   Result := Symbol shl 4;
 
-  Part := @Table.T[1];
+  Part   := @Table.T[1];
   Symbol := aSymbol and $F;
   Step;
   Inc(Result, Symbol);
 
   // Reduce tree...
-  if SafeCounter < Counter then Cut;
+  if SafeCounter < Counter then
+    Cut;
 
   // Update NodeList...
   if ListCount > Table.Level then

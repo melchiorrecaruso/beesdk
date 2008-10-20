@@ -40,12 +40,12 @@ type
   private
     FMethod: TThreadMethod;
     FSynchronizeException: TObject;
-    FSyncBaseThreadID: LongWord;
+    FSyncBaseThreadID: longword;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Synchronize(Method: TThreadMethod);
-    property SyncBaseThreadID: LongWord read FSyncBaseThreadID;
+    property SyncBaseThreadID: longword Read FSyncBaseThreadID;
   end;
 
   TThreadEx = class(TThread)
@@ -55,23 +55,23 @@ type
   protected
     procedure DoTerminate; override;
   public
-    constructor Create(CreateSuspended: Boolean);
+    constructor Create(CreateSuspended: boolean);
     destructor Destroy; override;
     procedure Wait;
-    property Synchronizer: TThreadSynchronizer read FSynchronizer;
+    property Synchronizer: TThreadSynchronizer Read FSynchronizer;
   end;
-  
+
 implementation
 
 const
-  CM_EXECPROC = $8FFD;
+  CM_EXECPROC      = $8FFD;
   CM_DESTROYWINDOW = $8FFC;
 
 type
   TSyncInfo = class
-    FSyncBaseThreadID: LongWord;
-    FThreadWindow: HWND;
-    FThreadCount: Integer;
+    FSyncBaseThreadID: longword;
+    FThreadWindow:     HWND;
+    FThreadCount:      integer;
   end;
 
   TSynchronizerManager = class
@@ -80,8 +80,8 @@ type
     FList: TList;
     procedure FreeSyncInfo(AInfo: TSyncInfo);
     procedure DoDestroyWindow(AInfo: TSyncInfo);
-    function InfoBySync(ASyncBaseThreadID: LongWord): TSyncInfo;
-    function FindSyncInfo(ASyncBaseThreadID: LongWord): TSyncInfo;
+    function InfoBySync(ASyncBaseThreadID: longword): TSyncInfo;
+    function FindSyncInfo(ASyncBaseThreadID: longword): TSyncInfo;
   public
     class function Instance: TSynchronizerManager;
     constructor Create();
@@ -94,7 +94,7 @@ type
 var
   SynchronizerManager: TSynchronizerManager;
 
-function ThreadWndProc(Window: HWND; Message, wParam, lParam: Longint): Longint; stdcall;
+function ThreadWndProc(Window: HWND; Message, wParam, lParam: longint): longint; stdcall;
 begin
   case Message of
     CM_EXECPROC:
@@ -109,27 +109,26 @@ begin
         end;
       end;
     CM_DESTROYWINDOW:
-      begin
-        TSynchronizerManager.Instance().DoDestroyWindow(TSyncInfo(lParam));
-        Result := 0;
-      end;
-  else
-    Result := DefWindowProc(Window, Message, wParam, lParam);
+    begin
+      TSynchronizerManager.Instance().DoDestroyWindow(TSyncInfo(lParam));
+      Result := 0;
+    end;
+    else
+      Result := DefWindowProc(Window, Message, wParam, lParam);
   end;
 end;
 
 var
-  ThreadWindowClass: TWndClass = (
-    style: 0;
-    lpfnWndProc: @ThreadWndProc;
-    cbClsExtra: 0;
-    cbWndExtra: 0;
-    hInstance: 0;
-    hIcon: 0;
-    hCursor: 0;
-    hbrBackground: 0;
-    lpszMenuName: nil;
-    lpszClassName: 'TThreadSynchronizerWindow');
+  ThreadWindowClass: TWndClass = (style: 0;
+  lpfnWndProc: @ThreadWndProc;
+  cbClsExtra: 0;
+  cbWndExtra: 0;
+  hInstance: 0;
+  hIcon: 0;
+  hCursor: 0;
+  hbrBackground: 0;
+  lpszMenuName: nil;
+  lpszClassName: 'TThreadSynchronizerWindow');
 
 { TSynchronizerManager }
 
@@ -142,7 +141,7 @@ end;
 
 destructor TSynchronizerManager.Destroy;
 var
-  i: Integer;
+  i: integer;
 begin
   for i := FList.Count - 1 downto 0 do
   begin
@@ -161,13 +160,13 @@ begin
   end;
   Result := SynchronizerManager;
 end;
-    
+
 procedure TSynchronizerManager.AddThread(ASynchronizer: TThreadSynchronizer);
 
   function AllocateWindow: HWND;
   var
     TempClass: TWndClass;
-    ClassRegistered: Boolean;
+    ClassRegistered: boolean;
   begin
     ThreadWindowClass.hInstance := HInstance;
     ClassRegistered := GetClassInfo(HInstance, ThreadWindowClass.lpszClassName,
@@ -212,7 +211,7 @@ begin
   EnterCriticalSection(FThreadLock);
   try
     info := InfoBySync(ASynchronizer.SyncBaseThreadID);
-    PostMessage(info.FThreadWindow, CM_DESTROYWINDOW, 0, Longint(info));
+    PostMessage(info.FThreadWindow, CM_DESTROYWINDOW, 0, longint(info));
   finally
     LeaveCriticalSection(FThreadLock);
   end;
@@ -244,24 +243,24 @@ end;
 
 procedure TSynchronizerManager.Synchronize(ASynchronizer: TThreadSynchronizer);
 begin
-  SendMessage(InfoBySync(ASynchronizer.SyncBaseThreadID).FThreadWindow, CM_EXECPROC, 0, Longint(ASynchronizer));
+  SendMessage(InfoBySync(ASynchronizer.SyncBaseThreadID).FThreadWindow,
+    CM_EXECPROC, 0, longint(ASynchronizer));
 end;
 
-function TSynchronizerManager.FindSyncInfo(
-  ASyncBaseThreadID: LongWord): TSyncInfo;
+function TSynchronizerManager.FindSyncInfo(ASyncBaseThreadID: longword): TSyncInfo;
 var
-  i: Integer;
+  i: integer;
 begin
   for i := 0 to FList.Count - 1 do
-  begin                       
+  begin
     Result := TSyncInfo(FList[i]);
-    if (Result.FSyncBaseThreadID = ASyncBaseThreadID) then Exit;
+    if (Result.FSyncBaseThreadID = ASyncBaseThreadID) then
+      Exit;
   end;
   Result := nil;
 end;
 
-function TSynchronizerManager.InfoBySync(
-  ASyncBaseThreadID: LongWord): TSyncInfo;
+function TSynchronizerManager.InfoBySync(ASyncBaseThreadID: longword): TSyncInfo;
 begin
   Result := FindSyncInfo(ASyncBaseThreadID);
   Assert(Result <> nil, 'Cannot find SyncInfo for the specified thread synchronizer');
@@ -287,12 +286,13 @@ begin
   FSynchronizeException := nil;
   FMethod := Method;
   TSynchronizerManager.Instance().Synchronize(Self);
-  if Assigned(FSynchronizeException) then raise FSynchronizeException;
+  if Assigned(FSynchronizeException) then
+    raise FSynchronizeException;
 end;
 
 { TThreadEx }
 
-constructor TThreadEx.Create(CreateSuspended: Boolean);
+constructor TThreadEx.Create(CreateSuspended: boolean);
 begin
   inherited Create(CreateSuspended);
   FSynchronizer := TThreadSynchronizer.Create();
@@ -306,31 +306,36 @@ end;
 
 procedure TThreadEx.DoTerminate;
 begin
-  if Assigned(OnTerminate) then Synchronizer.Synchronize(HandleTerminate);
+  if Assigned(OnTerminate) then
+    Synchronizer.Synchronize(HandleTerminate);
 end;
 
 procedure TThreadEx.HandleTerminate;
 begin
-  if Assigned(OnTerminate) then OnTerminate(Self);
+  if Assigned(OnTerminate) then
+    OnTerminate(Self);
 end;
 
 procedure TThreadEx.Wait;
 var
   Msg: TMsg;
-  H: THandle;
+  H:   THandle;
 begin
-  DuplicateHandle(GetCurrentProcess(), Handle, GetCurrentProcess(), @H, 0, False, DUPLICATE_SAME_ACCESS);
+  DuplicateHandle(GetCurrentProcess(), Handle, GetCurrentProcess(),
+    @H, 0, False, DUPLICATE_SAME_ACCESS);
   try
     if GetCurrentThreadID = Synchronizer.SyncBaseThreadID then
     begin
-      while MsgWaitForMultipleObjects(1, H, False, INFINITE, QS_SENDMESSAGE) = WAIT_OBJECT_0 + 1 do
+      while MsgWaitForMultipleObjects(1, H, False, INFINITE, QS_SENDMESSAGE) =
+        WAIT_OBJECT_0 + 1 do
       begin
         while PeekMessage(Msg, 0, 0, 0, PM_REMOVE) do
         begin
           DispatchMessage(Msg);
         end;
       end;
-    end else
+    end
+    else
     begin
       WaitForSingleObject(H, INFINITE);
     end;

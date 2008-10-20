@@ -36,9 +36,9 @@ uses
   Classes; // TStream, ...
 
 const
-  TOP = 1 shl 24;
-  NUM = 4;
-  Thres = 255 * cardinal(TOP);
+  TOP     = 1 shl 24;
+  NUM     = 4;
+  Thres   = 255 * cardinal(TOP);
   MaxFreq = TOP - 1;
 
 // TRangeCoder...
@@ -59,12 +59,12 @@ type
     function InpSrcByte: byte;
   private
     Stream: TStream;
-    Range: cardinal;
-    Low: cardinal;
-    Code: cardinal;
-    Carry: cardinal;
-    Cache: cardinal;
-    FFNum: cardinal;
+    Range:  cardinal;
+    Low:    cardinal;
+    Code:   cardinal;
+    Carry:  cardinal;
+    Cache:  cardinal;
+    FFNum:  cardinal;
   end;
 
 implementation
@@ -80,7 +80,7 @@ end;
 procedure TRangeCoder.StartEncode;
 begin
   Range := $FFFFFFFF;
-  Low := 0;
+  Low   := 0;
   FFNum := 0;
   Carry := 0;
 end;
@@ -111,9 +111,9 @@ procedure TRangeCoder.Encode(cumFreq, freq, totFreq: cardinal);
 var
   tmp: cardinal;
 begin
-  tmp := low;
+  tmp   := low;
   range := range div totFreq;
-  low := low + cumFreq * range;
+  low   := low + cumFreq * range;
   Carry := Carry + cardinal(low < tmp);
   range := range * freq;
   while Range < TOP do
@@ -152,7 +152,8 @@ begin
     end;
     Cache := Low shr 24;
     Carry := 0;
-  end else
+  end
+  else
     Inc(FFNum);
   Low := Low shl 8;
 end;
