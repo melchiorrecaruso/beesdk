@@ -105,8 +105,8 @@ begin
     ForceDirectories(ExtractFilePath(FileName));
   end;
   BlowFish := TBlowFish.Create;
-  Readed := 0;
-  Size := 0;
+  Readed   := 0;
+  Size     := 0;
   inherited Create(FileName, Mode);
 end;
 
@@ -119,21 +119,22 @@ end;
 function TFileReader.Read(var Data; Count: longint): longint;
 var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
-  S: longint;
+  S:     longint;
 begin
   if (Count = 1) and (Readed < Size) then
   begin
     byte(Data) := LocalBuffer[Readed];
     Inc(Readed);
     Result := Count;
-  end else
+  end
+  else
   begin
     Result := 0;
     repeat
       if Readed = Size then
       begin
         Readed := 0;
-        Size := inherited Read(LocalBuffer, SizeOf(LocalBuffer));
+        Size   := inherited Read(LocalBuffer, SizeOf(LocalBuffer));
 
         if Size = 0 then
           Exit; // This causes Result < Count
@@ -155,7 +156,7 @@ end;
 
 function TFileReader.Seek(Offset: longint; Origin: word): longint;
 begin
-  Size := 0;
+  Size   := 0;
   Readed := 0;
   Result := inherited Seek(Offset, Origin);
 end;
@@ -178,7 +179,7 @@ begin
     ForceDirectories(ExtractFilePath(FileName));
   end;
   BlowFish := TBlowFish.Create;
-  Size := 0;
+  Size     := 0;
   inherited Create(FileName, Mode);
 end;
 
@@ -196,23 +197,24 @@ begin
   if Count > SizeOf(LocalBuffer) - Size then
     Result := WriteBlock(Data, Count)
   else
-    if Count > 1 then
-    begin
-      CopyBytes(Data, LocalBuffer[Size], Count);
-      Inc(Size, Count);
-      Result := Count;
-    end else
-    begin
-      LocalBuffer[Size] := byte(Data);
-      Inc(Size);
-      Result := Count;
-    end;
+  if Count > 1 then
+  begin
+    CopyBytes(Data, LocalBuffer[Size], Count);
+    Inc(Size, Count);
+    Result := Count;
+  end
+  else
+  begin
+    LocalBuffer[Size] := byte(Data);
+    Inc(Size);
+    Result := Count;
+  end;
 end;
 
 function TFileWriter.WriteBlock(const aData; aCount: longint): longint;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
-  S: longint;
+  S:    longint;
 begin
   Result := 0;
   repeat
@@ -230,7 +232,8 @@ end;
 
 function TFileWriter.Seek(Offset: longint; Origin: word): longint;
 begin
-  if Size > 0 then Flush;
+  if Size > 0 then
+    Flush;
   Result := inherited Seek(Offset, Origin);
 end;
 

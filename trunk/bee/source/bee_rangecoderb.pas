@@ -36,11 +36,11 @@ uses
 
 const
   ValueBits = 26; // 31;
-  FirstQtr = 1 shl (ValueBits - 2);
-  Half = 2 * FirstQtr;
-  ThirdQtr = 3 * FirstQtr;
-  TopValue = Half - 1 + Half;
-  MaxFreq = FirstQtr - 1;
+  FirstQtr  = 1 shl (ValueBits - 2);
+  Half      = 2 * FirstQtr;
+  ThirdQtr  = 3 * FirstQtr;
+  TopValue  = Half - 1 + Half;
+  MaxFreq   = FirstQtr - 1;
 
 // TRangeCoder...
 
@@ -88,11 +88,11 @@ end;
 
 procedure TRangeCoder.StartEncode;
 begin
-  Low  := 0;
-  High := TopValue;
+  Low    := 0;
+  High   := TopValue;
   BitsToFollow := 0;
   Buffer := 0;
-  Bits := 1;
+  Bits   := 1;
 end;
 
 procedure TRangeCoder.FinishEncode;
@@ -124,8 +124,8 @@ var
 begin
   // Recount bounds...
   Range := High - Low + 1;
-  High := Low + MulDiv(Range, CumFreq + Freq, TotFreq) - 1;
-  Low := Low + MulDiv(Range, CumFreq, TotFreq);
+  High  := Low + MulDiv(Range, CumFreq + Freq, TotFreq) - 1;
+  Low   := Low + MulDiv(Range, CumFreq, TotFreq);
   // Emit bites...
   while True do
   begin
@@ -136,12 +136,14 @@ begin
       BitPlusFollow(cardinal(-1));
       Dec(Low, Half);
       Dec(High, Half);
-    end else if (Low >= FirstQtr) and (High < ThirdQtr) then
+    end
+    else if (Low >= FirstQtr) and (High < ThirdQtr) then
     begin
       Inc(BitsToFollow);
       Dec(Low, FirstQtr);
       Dec(High, FirstQtr);
-    end else
+    end
+    else
       break;
     Low  := Low shl 1;
     High := High shl 1 + 1;
@@ -176,10 +178,10 @@ procedure TRangeCoder.StartDecode;
 var
   I: cardinal;
 begin
-  Bits := 0;
+  Bits  := 0;
   Value := 0;
-  Low  := 0;
-  High := TopValue;
+  Low   := 0;
+  High  := TopValue;
   for I := 1 to ValueBits do
     Value := Value shl 1 + InputBit;
 end;
@@ -203,8 +205,8 @@ var
 begin
   // Recount bounds...
   Range := High - Low + 1;
-  High := Low + MulDiv(Range, CumFreq + Freq, TotFreq) - 1;
-  Low := Low + MulDiv(Range, CumFreq, TotFreq);
+  High  := Low + MulDiv(Range, CumFreq + Freq, TotFreq) - 1;
+  Low   := Low + MulDiv(Range, CumFreq, TotFreq);
   // Emit bites...
   while True do
   begin
@@ -215,15 +217,17 @@ begin
       Dec(Value, Half);
       Dec(Low, Half);
       Dec(High, Half);
-    end else if (Low >= FirstQtr) and (High < ThirdQtr) then
+    end
+    else if (Low >= FirstQtr) and (High < ThirdQtr) then
     begin
       Dec(Value, FirstQtr);
       Dec(Low, FirstQtr);
       Dec(High, FirstQtr);
-    end else
+    end
+    else
       break;
-    Low  := Low shl 1;
-    High := High shl 1 + 1;
+    Low   := Low shl 1;
+    High  := High shl 1 + 1;
     Value := Value shl 1 + InputBit;
   end;
 end;
@@ -244,16 +248,16 @@ end;
 
 function MulDiv(A, B, C: cardinal): cardinal; assembler;
 asm
-  MUL B
-  div C
+         MUL     B
+         DIV     C
 end;
 
 function MulDecDiv(A, B, C: cardinal): cardinal; assembler;
 asm
-  MUL B
-  SUB EAX, 1
-  SBB EDX, 0
-  div C
+         MUL     B
+         SUB     EAX, 1
+         SBB     EDX, 0
+         DIV     C
 end;
 
 end.

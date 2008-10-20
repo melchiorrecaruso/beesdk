@@ -36,7 +36,7 @@ uses
   Classes; // TStream, ...
 
 const
-  Top = 1 shl 24;
+  Top     = 1 shl 24;
   MaxFreq = Top - 1; // Top - 1;
 
 // TRangeCoder...
@@ -58,7 +58,7 @@ type
   private
     Stream: TStream;
     Code, Range, FFNum, Cache: cardinal;
-    Low: int64;
+    Low:    int64;
   end;
 
 implementation
@@ -74,7 +74,7 @@ end;
 procedure TRangeCoder.StartEncode;
 begin
   Range := $FFFFFFFF;
-  Low := 0;
+  Low   := 0;
   FFNum := 0;
   Cache := 0;
 end;
@@ -105,7 +105,7 @@ end;
 procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: cardinal);
 begin
   Range := Range div TotFreq;
-  Low := Low + CumFreq * Range;
+  Low   := Low + CumFreq * Range;
   Range := Range * Freq;
   while Range < Top do
   begin
@@ -145,7 +145,8 @@ begin
       Dec(FFNum);
     end;
     Cache := cardinal(Low) shr 24;
-  end else
+  end
+  else
   begin
     Inc(FFNum);
   end;

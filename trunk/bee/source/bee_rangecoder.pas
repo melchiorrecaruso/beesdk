@@ -54,9 +54,9 @@ uses
   Bee_Assembler; // Low-level routines ...
 
 const
-  TOP = 1 shl 24;
-  NUM = 4;
-  Thres = 255 * cardinal(TOP);
+  TOP     = 1 shl 24;
+  NUM     = 4;
+  Thres   = 255 * cardinal(TOP);
   MaxFreq = TOP - 1;
 
 // TRangeCoder...
@@ -68,21 +68,27 @@ type
     procedure StartDecode;
     procedure FinishEncode;
     procedure FinishDecode;
-    procedure Encode(CumFreq, Freq, TotFreq: cardinal); {$IFDEF FPC} inline; {$ENDIF}
-    function GetFreq(TotFreq: cardinal): cardinal;  {$IFDEF FPC} inline; {$ENDIF}
-    procedure Decode(CumFreq, Freq, TotFreq: cardinal); {$IFDEF FPC} inline; {$ENDIF}
+    procedure Encode(CumFreq, Freq, TotFreq: cardinal);
+{$IFDEF FPC} inline; {$ENDIF}
+    function GetFreq(TotFreq: cardinal): cardinal;
+{$IFDEF FPC} inline; {$ENDIF}
+    procedure Decode(CumFreq, Freq, TotFreq: cardinal);
+{$IFDEF FPC} inline; {$ENDIF}
   private
-    procedure ShiftLow; {$IFDEF FPC} inline; {$ENDIF}
-    function InputByte: cardinal; {$IFDEF FPC} inline; {$ENDIF}
-    procedure OutputByte(aValue: cardinal); {$IFDEF FPC} inline; {$ENDIF}
+    procedure ShiftLow;
+{$IFDEF FPC} inline; {$ENDIF}
+    function InputByte: cardinal;
+{$IFDEF FPC} inline; {$ENDIF}
+    procedure OutputByte(aValue: cardinal);
+{$IFDEF FPC} inline; {$ENDIF}
   private
     FStream: TStream;
-    Range: cardinal;
-    Low: cardinal;
-    Code: cardinal;
-    Carry: cardinal;
-    Cache: cardinal;
-    FFNum: cardinal;
+    Range:   cardinal;
+    Low:     cardinal;
+    Code:    cardinal;
+    Carry:   cardinal;
+    Cache:   cardinal;
+    FFNum:   cardinal;
   end;
 
 implementation
@@ -118,7 +124,8 @@ procedure TRangeCoder.FinishEncode;
 var
   I: integer;
 begin
-  for I := 0 to NUM do ShiftLow;
+  for I := 0 to NUM do
+    ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;
@@ -130,8 +137,8 @@ procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: cardinal);
 var
   Tmp: cardinal;
 begin
-  Tmp := Low;
-  Low := Low + MulDiv(Range, CumFreq, TotFreq);
+  Tmp   := Low;
+  Low   := Low + MulDiv(Range, CumFreq, TotFreq);
   Carry := Carry + cardinal(Low < Tmp);
   Range := MulDiv(Range, Freq, TotFreq);
   while Range < TOP do
@@ -143,11 +150,11 @@ end;
 
 procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: cardinal);
 begin
-  Code := Code - MulDiv(Range, CumFreq, TotFreq);
+  Code  := Code - MulDiv(Range, CumFreq, TotFreq);
   Range := MulDiv(Range, Freq, TotFreq);
   while Range < TOP do
   begin
-    Code := Code shl 8 + InputByte;
+    Code  := Code shl 8 + InputByte;
     Range := Range shl 8;
   end;
 end;
@@ -169,7 +176,8 @@ begin
     end;
     Cache := Low shr 24;
     Carry := 0;
-  end else
+  end
+  else
     Inc(FFNum);
   Low := Low shl 8;
 end;

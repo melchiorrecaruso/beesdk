@@ -36,7 +36,7 @@ interface
 uses
   Classes,
   SysUtils;
-  
+
 type
 
   // TInterfaces class
@@ -103,17 +103,17 @@ type
       Method: TThreadMethod;
       Answer: string;
       Data: record
-        FileName: string;
-        FilePath: string;
-        FileSize: integer;
-        FilePacked: integer;
-        FileRatio: integer;
-        FileAttr: integer;
-        FileTime: integer;
-        FileComm: string;
-        FileCrc: cardinal;
-        FileMethod: string;
-        FileVersion: string;
+        FileName:     string;
+        FilePath:     string;
+        FileSize:     integer;
+        FilePacked:   integer;
+        FileRatio:    integer;
+        FileAttr:     integer;
+        FileTime:     integer;
+        FileComm:     string;
+        FileCrc:      cardinal;
+        FileMethod:   string;
+        FileVersion:  string;
         FilePassword: string;
         FilePosition: integer;
       end;
@@ -122,9 +122,9 @@ type
       Method: TThreadMethod;
       Answer: string;
       Data: record
-        TotalSize: integer;
+        TotalSize:     integer;
         ProcessedSize: integer;
-        Percentage: integer;
+        Percentage:    integer;
       end;
     end;
     OnClear: record
@@ -149,24 +149,24 @@ type
     Suspend: boolean;
     Stop: boolean;
   end;
-  
+
 type
 
   // TParams ...
-  
+
   TParams = TStringList;
-  
+
 type
 
   // TSynchronizer ...
 
-  TSynchronizer =  procedure (aMethod: TThreadMethod) of object;
+  TSynchronizer = procedure(aMethod: TThreadMethod) of object;
 
 type
 
   // TApp class ...
 
-  TApp = class (TThread)
+  TApp = class(TThread)
   protected
     Interfaces: TInterfaces;
   protected
@@ -180,43 +180,44 @@ type
 
 implementation
 
-  // TApp class ...
+// TApp class ...
 
-  constructor TApp.Create(aInterfaces: TInterfaces);
-  begin
-    inherited Create(True);
-    FreeOnTerminate := False;
-    Priority := tpNormal;
-    ExitCode := 0;
-    // ---
-    Interfaces := aInterfaces;
-    Interfaces.Terminated := False;
-    Interfaces.Suspend := False;
-    Interfaces.Stop := False;
-    Interfaces.OnTick.Data.TotalSize := 0;
-    Interfaces.OnTick.Data.ProcessedSize := 0;
-  end;
+constructor TApp.Create(aInterfaces: TInterfaces);
+begin
+  inherited Create(True);
+  FreeOnTerminate := False;
+  Priority   := tpNormal;
+  ExitCode   := 0;
+  // ---
+  Interfaces := aInterfaces;
+  Interfaces.Terminated := False;
+  Interfaces.Suspend := False;
+  Interfaces.Stop := False;
+  Interfaces.OnTick.Data.TotalSize := 0;
+  Interfaces.OnTick.Data.ProcessedSize := 0;
+end;
 
-  destructor TApp.Destroy;
-  begin
-    Interfaces := nil;
-    inherited Destroy;
-  end;
+destructor TApp.Destroy;
+begin
+  Interfaces := nil;
+  inherited Destroy;
+end;
 
-  procedure TApp.DoTerminate;
-  begin
-    Interfaces.Terminated := True;
-    inherited DoTerminate;
-  end;
+procedure TApp.DoTerminate;
+begin
+  Interfaces.Terminated := True;
+  inherited DoTerminate;
+end;
 
-  procedure TApp.Synchronize(aMethod: TThreadMethod);
-  begin
-    inherited Synchronize(aMethod);
-  end;
+procedure TApp.Synchronize(aMethod: TThreadMethod);
+begin
+  inherited Synchronize(aMethod);
+end;
 
-  procedure TApp.SetExitCode(Code: integer);
-  begin
-    if ExitCode < Code then ExitCode := Code;
-  end;
+procedure TApp.SetExitCode(Code: integer);
+begin
+  if ExitCode < Code then
+    ExitCode := Code;
+end;
 
 end.

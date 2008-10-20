@@ -42,9 +42,9 @@ program Bee;
 {$I compiler.inc}
 
 uses
-  {$IFDEF FPC} {$IFDEF UNIX}
+ {$IFDEF FPC} {$IFDEF UNIX}
   cThreads,
-  {$ENDIF} {$ENDIF}
+     {$ENDIF}    {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -58,7 +58,7 @@ type
 
   TConsole = class
   private
-    App: TBeeApp;
+    App:    TBeeApp;
     AppKey: string;
     AppInterfaces: TInterfaces;
     AppParams: TParams;
@@ -189,14 +189,8 @@ type
       Writeln(ParamToOem(FilePath + FileName));
       Writeln(ParamToOem(StringOfChar(' ', 15) +
         Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
-        [SizeToStr(FileSize),
-         SizeToStr(FilePacked),
-         FileRatio,
-         FileTimeToString(FileTime),
-         AttrToStr(FileAttr),
-         FileCrc,
-         FileMethod
-        ])));
+        [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+        FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
     end;
   end;
 

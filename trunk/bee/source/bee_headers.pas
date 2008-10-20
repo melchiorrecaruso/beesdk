@@ -54,12 +54,12 @@ type
   // Header flags
 
   THeaderFlag =
-    (foVersion,  foMethod,   foDictionary, foTable,    foTear,     foMoved,
-     foLast,     foPassword, fo09Unused,   fo10Unused, fo11Unused, fo12Unused,
-     fo13Unused, fo14Unused, fo15Unused,   fo16Unused, fo17Unused, fo18Unused,
-     fo19Unused, fo20Unused, fo21Unused,   fo22Unused, fo23Unused, fo24Unused,
-     fo25Unused, fo26Unused, fo27Unused,   fo28Unused, fo29Unused, fo30Unused,
-     fo31Unused, fo32Unused);
+    (foVersion, foMethod, foDictionary, foTable, foTear, foMoved,
+    foLast, foPassword, fo09Unused, fo10Unused, fo11Unused, fo12Unused,
+    fo13Unused, fo14Unused, fo15Unused, fo16Unused, fo17Unused, fo18Unused,
+    fo19Unused, fo20Unused, fo21Unused, fo22Unused, fo23Unused, fo24Unused,
+    fo25Unused, fo26Unused, fo27Unused, fo28Unused, fo29Unused, fo30Unused,
+    fo31Unused, fo32Unused);
 
   THeaderFlags = set of THeaderFlag;
 
@@ -67,8 +67,8 @@ type
 
   // Header actions
 
-  THeaderAction = (toUpdate, toFresh, toCopy,   toSwap,   toExtract, toTest,
-                   toSkip,   toQuit,  toDelete, toRename, toList,    toNone);
+  THeaderAction = (toUpdate, toFresh, toCopy, toSwap, toExtract, toTest,
+    toSkip, toQuit, toDelete, toRename, toList, toNone);
 
   THeaderActions = set of THeaderAction;
 
@@ -77,28 +77,30 @@ type
   // Header structure, order of fields is significant
 
   THeaderData = record
-    FileFlags: THeaderFlags;
-    FileVersion: byte;
-    FileMethod: byte;
+    FileFlags:    THeaderFlags;
+    FileVersion:  byte;
+    FileMethod:   byte;
     FileDictionary: byte;
-    FileTable: TTableParameters;
-    FileSize: integer;
-    FileTime: integer;
-    FileAttr: integer;
-    FileCrc:  cardinal;
-    FilePacked: integer;
+    FileTable:    TTableParameters;
+    FileSize:     integer;
+    FileTime:     integer;
+    FileAttr:     integer;
+    FileCrc:      cardinal;
+    FilePacked:   integer;
     FileStartPos: integer;
-    FileName: string;
+    FileName:     string;
   end;
 
   THeader = class
   public
-    Action: THeaderAction;
-    Data: THeaderData;
+    Action:   THeaderAction;
+    Data:     THeaderData;
     FileLink: string;
   public
-    constructor Create(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
-    procedure Fresh(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
+    constructor Create(const cdOption: string; const RecPath: string;
+      const Rec: TSearchRec);
+    procedure Fresh(const cdOption: string; const RecPath: string;
+      const Rec: TSearchRec);
     constructor Read(Stream: TStream; aAction: THeaderAction);
     function SetTable(Config: TConfiguration): boolean;
     procedure Write(Stream: TStream);
@@ -124,21 +126,19 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Clear; override;
-    procedure AddItems(
-      Masks: TStringList;
-      const cdOption: string;
-             fOption: boolean;
-             rOption: boolean;
-             uOption: boolean;
-             xOption: TStringList;
-        var Size: integer);
+    procedure AddItems(Masks: TStringList; const cdOption: string;
+      fOption: boolean; rOption: boolean; uOption: boolean;
+      xOption: TStringList; var Size: integer);
 
-    function MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction; rOption: boolean): integer; overload;
-    function MarkItems(const Mask: string; MaskAct, aAction: THeaderAction; rOption: boolean): integer; overload;
+    function MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction;
+      rOption: boolean): integer; overload;
+    function MarkItems(const Mask: string; MaskAct, aAction: THeaderAction;
+      rOption: boolean): integer; overload;
     procedure MarkItem(Index: integer; aAction: THeaderAction);
     procedure MarkAll(aAction: THeaderAction);
 
-    procedure SortNews(Config: TConfiguration; sOption: boolean; kOption: boolean; const eOption: string);
+    procedure SortNews(Config: TConfiguration; sOption: boolean;
+      kOption: boolean; const eOption: string);
 
     procedure ReadItemsB4b(Stream: TStream; aAction: THeaderAction);
     procedure ReadItems(Stream: TStream; aAction: THeaderAction);
@@ -148,10 +148,14 @@ type
     function GetNext(Child: integer; aAction: THeaderAction): integer; overload;
     function GetBack(Child: integer; Flag: THeaderFlag): integer; overload;
     function GetNext(Child: integer; Flag: THeaderFlag): integer; overload;
-    function GetBack(Child: integer; aAction: THeaderAction; const aFileName: string): integer; overload;
-    function GetNext(Child: integer; aAction: THeaderAction; const aFileName: string): integer; overload;
-    function GetBack(Child: integer; aActions: THeaderActions; const aFileName: string): integer; overload;
-    function GetNext(Child: integer; aActions: THeaderActions; const aFileName: string): integer; overload;
+    function GetBack(Child: integer; aAction: THeaderAction;
+      const aFileName: string): integer; overload;
+    function GetNext(Child: integer; aAction: THeaderAction;
+      const aFileName: string): integer; overload;
+    function GetBack(Child: integer; aActions: THeaderActions;
+      const aFileName: string): integer; overload;
+    function GetNext(Child: integer; aActions: THeaderActions;
+      const aFileName: string): integer; overload;
 
     function GetSize(aAction: THeaderAction): integer; overload;
     function GetSize(Actions: THeaderActions): integer; overload;
@@ -163,22 +167,16 @@ type
     function SetModule(const FileName: string): boolean;
     function GetModule: integer;
   private
-    Module:  TStream;
+    Module: TStream;
   private
     procedure QuickSort(L, R: integer);
     procedure MarkAsLast(Action: THeaderAction);
-    function  FindFirstMarker(Stream: TStream): integer;
+    function FindFirstMarker(Stream: TStream): integer;
 
     procedure ExpandMask(const Mask: string; Masks: TStringList; rOption: boolean);
-    procedure ScanFileSystem(
-      Mask: string;
-      Sorted: TSortedHeaders;
-      const cdOption: string;
-             fOption: boolean;
-             rOption: boolean;
-             uOption: boolean;
-             xOption: TStringList;
-        var Size: integer);
+    procedure ScanFileSystem(Mask: string; Sorted: TSortedHeaders;
+      const cdOption: string; fOption: boolean; rOption: boolean;
+      uOption: boolean; xOption: TStringList; var Size: integer);
   end;
 
 implementation
@@ -193,8 +191,10 @@ function CompareFn(L: TList; Index1, Index2: integer): integer;
 var
   Bool1, Bool2: boolean;
 begin
-  with THeader(L.Items[Index1]) do Bool1 := (Action = toUpdate);
-  with THeader(L.Items[Index2]) do Bool2 := (Action = toUpdate);
+  with THeader(L.Items[Index1]) do
+    Bool1 := (Action = toUpdate);
+  with THeader(L.Items[Index2]) do
+    Bool2 := (Action = toUpdate);
 
   if (Bool1 and Bool2) then
   begin
@@ -208,36 +208,38 @@ begin
         ExtractFileName(THeader(L.Items[Index2]).Data.FileName));
 
     if Result = 0 then
-      Result := CompareFileName(
-        THeader(L.Items[Index1]).Data.FileName,
+      Result := CompareFileName(THeader(L.Items[Index1]).Data.FileName,
         THeader(L.Items[Index2]).Data.FileName);
-  end else
-    if Bool1 then
-      Result := 1
-    else
-      if Bool2 then
-        Result := -1
-      else
-        Result := Index1 - Index2;
+  end
+  else
+  if Bool1 then
+    Result := 1
+  else
+  if Bool2 then
+    Result := -1
+  else
+    Result := Index1 - Index2;
 end;
 
 // THeader class
 
-constructor THeader.Create(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
+constructor THeader.Create(const cdOption: string; const RecPath: string;
+  const Rec: TSearchRec);
 begin
   Data.FileFlags := [foTear, foTable];
   Data.FileVersion := 1; // Bee 0.3.x
   Data.FileMethod := 1;
   Data.FileDictionary := 2;
   Data.FileTime := Rec.Time;
-  Data.FileCrc := cardinal(-1);
+  Data.FileCrc  := cardinal(-1);
   Data.FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
 
-  Action := toUpdate;
+  Action   := toUpdate;
   FileLink := RecPath + Rec.Name;
 end;
 
-procedure THeader.Fresh(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
+procedure THeader.Fresh(const cdOption: string; const RecPath: string;
+  const Rec: TSearchRec);
 begin
   Data.FileTime := Rec.Time;
   Data.FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
@@ -253,37 +255,49 @@ constructor THeader.Read(Stream: TStream; aAction: THeaderAction);
 var
   j: integer;
 const
-  sSecondPart = SizeOf(Data.FileSize) + SizeOf(Data.FileTime) + SizeOf(Data.FileAttr) +
-                SizeOf(Data.FileCrc) + SizeOf(Data.FilePacked) + SizeOf(Data.FileStartPos);
+  sSecondPart = SizeOf(Data.FileSize) + SizeOf(Data.FileTime) +
+    SizeOf(Data.FileAttr) + SizeOf(Data.FileCrc) + SizeOf(Data.FilePacked) +
+    SizeOf(Data.FileStartPos);
 begin
   Action := aAction;
 
-  if Stream.Read(Data.FileFlags, SizeOf(Data.FileFlags)) <> SizeOf(Data.FileFlags) then Fail;
+  if Stream.Read(Data.FileFlags, SizeOf(Data.FileFlags)) <> SizeOf(Data.FileFlags) then
+    Fail;
 
   if foVersion in Data.FileFlags then
-    if Stream.Read(Data.FileVersion, SizeOf(Data.FileVersion)) <> SizeOf(Data.FileVersion) then Fail;
+    if Stream.Read(Data.FileVersion, SizeOf(Data.FileVersion)) <>
+      SizeOf(Data.FileVersion) then
+      Fail;
 
   if foMethod in Data.FileFlags then
-    if Stream.Read(Data.FileMethod, SizeOf(Data.FileMethod)) <> SizeOf(Data.FileMethod) then Fail;
+    if Stream.Read(Data.FileMethod, SizeOf(Data.FileMethod)) <>
+      SizeOf(Data.FileMethod) then
+      Fail;
 
   if foDictionary in Data.FileFlags then
-    if Stream.Read(Data.FileDictionary, SizeOf(Data.FileDictionary)) <> SizeOf(Data.FileDictionary) then Fail;
+    if Stream.Read(Data.FileDictionary, SizeOf(Data.FileDictionary)) <>
+      SizeOf(Data.FileDictionary) then
+      Fail;
 
   if foTable in Data.FileFlags then
-    if Stream.Read(Data.FileTable, SizeOf(Data.FileTable)) <> SizeOf(Data.FileTable) then Fail;
-      
-  if Stream.Read(Data.FileSize, sSecondPart) <> sSecondPart then Fail;
+    if Stream.Read(Data.FileTable, SizeOf(Data.FileTable)) <> SizeOf(Data.FileTable) then
+      Fail;
 
-  if Stream.Read(j, SizeOf(j)) <> SizeOf(j) then Fail;
-  
+  if Stream.Read(Data.FileSize, sSecondPart) <> sSecondPart then
+    Fail;
+
+  if Stream.Read(j, SizeOf(j)) <> SizeOf(j) then
+    Fail;
+
   if j > 0 then
   begin
     SetLength(Data.FileName, j);
     if Stream.Read(Data.FileName[1], j) = j then
     begin
       Data.FileName := DoDirSeparators(Data.FileName);
-      FileLink := '';
-    end else
+      FileLink      := '';
+    end
+    else
       Fail;
   end;
 end;
@@ -299,8 +313,9 @@ procedure THeader.Write(Stream: TStream);
 var
   j: integer;
 const
-  sSecondPart = SizeOf(Data.FileSize) + SizeOf(Data.FileTime) + SizeOf(Data.FileAttr) +
-                SizeOf(Data.FileCrc) + SizeOf(Data.FilePacked) + SizeOf(Data.FileStartPos);
+  sSecondPart = SizeOf(Data.FileSize) + SizeOf(Data.FileTime) +
+    SizeOf(Data.FileAttr) + SizeOf(Data.FileCrc) + SizeOf(Data.FilePacked) +
+    SizeOf(Data.FileStartPos);
 begin
   Stream.Write(Data.FileFlags, SizeOf(Data.FileFlags));
 
@@ -348,10 +363,10 @@ begin
     if CompareFileName(FileName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
     else
-      if CompareFileName(FileName,THeader(Items[M]).Data.FileName) < 0 then
-        H := M - 1
-      else
-        H := -2;
+    if CompareFileName(FileName, THeader(Items[M]).Data.FileName) < 0 then
+      H := M - 1
+    else
+      H := -2;
   end;
 
   if H <> -2 then
@@ -363,7 +378,7 @@ end;
 function TSortedHeaders.InsertItem(Item: pointer): integer;
 var
   L, M, H: integer;
-  FName: string;
+  FName:   string;
 begin
   L := 0;
   M := -1;
@@ -373,22 +388,22 @@ begin
   while H >= L do
   begin
     M := (L + H) div 2;
-    if  CompareFileName(FName, THeader(Items[M]).Data.FileName) > 0 then
+    if CompareFileName(FName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
     else
-      if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
-        H := M - 1
-      else
-        H := -2;
+    if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
+      H := M - 1
+    else
+      H := -2;
   end;
 
   if M = -1 then
     Result := 0
   else
-    if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
-      Result := M
-    else
-      Result := M + 1;
+  if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
+    Result := M
+  else
+    Result := M + 1;
 
   Insert(Result, Item);
 end;
@@ -422,16 +437,16 @@ end;
 
 procedure THeaders.ExpandMask(const Mask: string; Masks: TStringList; rOption: boolean);
 var
-  I: integer;
+  I:     integer;
   Error: integer;
-  Rec: TSearchRec;
-  Card: boolean;
+  Rec:   TSearchRec;
+  Card:  boolean;
   LastSlash: integer;
   FirstSlash: integer;
   FolderName: string;
   FolderPath: string;
 begin
-  Card := False;
+  Card      := False;
   LastSlash := 0;
   FirstSlash := 0;
   for I := 1 to Length(Mask) do
@@ -446,7 +461,8 @@ begin
       begin
         FirstSlash := I;
       end;
-    end else
+    end
+    else
     begin
       if Mask[I] = PathDelim then
       begin
@@ -455,42 +471,40 @@ begin
       end;
     end;
   end;
-  
+
   if LastSlash > 0 then
   begin
     FolderPath := Copy(Mask, 1, FirstSlash);
     FolderName := Copy(Mask, FirstSlash + 1, LastSlash - (FirstSlash + 1));
-    Error := FindFirst(FolderPath + '*', faAnyFile, Rec);
+    Error      := FindFirst(FolderPath + '*', faAnyFile, Rec);
     while Error = 0 do
     begin
-      if ((Rec.Attr and faDirectory) = faDirectory) and (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
+      if ((Rec.Attr and faDirectory) = faDirectory) and (Rec.Name[1] <> '.') and
+        (Rec.Name[1] <> '..') then
       begin
         if FileNameMatch(Rec.Name, FolderName, rOption) then
         begin
-          ExpandMask(FolderPath + Rec.Name + Copy(Mask, LastSlash, (Length(Mask) + 1) - LastSlash), Masks, rOption);
+          ExpandMask(FolderPath + Rec.Name + Copy(Mask, LastSlash,
+            (Length(Mask) + 1) - LastSlash), Masks, rOption);
         end;
       end;
       Error := FindNext(Rec);
     end;
     FindClose(Rec);
-  end else
+  end
+  else
   begin
     Masks.Add(Mask);
   end;
 end;
 
-procedure THeaders.AddItems(
-  Masks: TStringList;
-  const cdOption: string;
-         fOption: boolean;
-         rOption: boolean;
-         uOption: boolean;
-         xOption: TStringList;
-    var Size: integer);
+procedure THeaders.AddItems(Masks: TStringList; const cdOption: string;
+  fOption: boolean; rOption: boolean; uOption: boolean; xOption: TStringList;
+  var Size: integer);
 var
-  I, J: integer;
+  I, J:      integer;
   CurrMasks: TStringList;
-  Sorted: TSortedHeaders;
+  Sorted:    TSortedHeaders;
 begin
   // Create sorted list item
   Sorted := TSortedHeaders.Create;
@@ -498,7 +512,7 @@ begin
   begin
     Sorted.InsertItem(Items[I]);
   end;
-  
+
   for I := 0 to Masks.Count - 1 do
   begin
     CurrMasks := TStringList.Create;
@@ -509,10 +523,10 @@ begin
         CurrMasks.Strings[J],
         Sorted,
         cdOption,
-         fOption,
-         rOption,
-         uOption,
-         xOption,
+        fOption,
+        rOption,
+        uOption,
+        xOption,
         Size);
     end;
     CurrMasks.Free;
@@ -520,7 +534,8 @@ begin
   Sorted.Free;
 end;
 
-function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction; rOption: boolean): integer;
+function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction;
+  aAction: THeaderAction; rOption: boolean): integer;
 var
   I: integer;
 begin
@@ -536,7 +551,8 @@ begin
     end;
 end;
 
-function THeaders.MarkItems(const Mask: string; MaskAct: THeaderAction; aAction: THeaderAction; rOption: boolean): integer;
+function THeaders.MarkItems(const Mask: string; MaskAct: THeaderAction;
+  aAction: THeaderAction; rOption: boolean): integer;
 var
   I: integer;
 begin
@@ -552,7 +568,7 @@ begin
     end;
 end;
 
-procedure THeaders.MarkItem(Index: Integer; aAction: THeaderAction);
+procedure THeaders.MarkItem(Index: integer; aAction: THeaderAction);
 begin
   THeader(Items[Index]).Action := aAction;
 end;
@@ -567,7 +583,8 @@ begin
   end;
 end;
 
-procedure THeaders.SortNews(Config: TConfiguration; sOption: Boolean; kOption: Boolean; const eOption: string);
+procedure THeaders.SortNews(Config: TConfiguration; sOption: boolean;
+  kOption: boolean; const eOption: string);
 var
   P: THeader;
   I, First, Method, Dictionary: integer;
@@ -576,7 +593,7 @@ begin
   QuickSort(0, Count - 1);
 
   Config.Selector('\main');
-  Method := StrToInt(Config.CurrentSection.Values['Method']);
+  Method     := StrToInt(Config.CurrentSection.Values['Method']);
   Dictionary := StrToInt(Config.CurrentSection.Values['Dictionary']);
   Config.Selector('\m' + Config.CurrentSection.Values['Method']);
 
@@ -592,7 +609,7 @@ begin
       begin
         P.Data.FileFlags := P.Data.FileFlags + [foVersion, foMethod, foDictionary];
       end;
-      
+
       P.Data.FileMethod := Method;
       P.Data.FileDictionary := Dictionary;
       PreviousExt := CurrentExt;
@@ -609,16 +626,18 @@ begin
       begin
         Include(P.Data.FileFlags, foMoved);
         Exclude(P.Data.FileFlags, foTable);
-      end else
-        if CompareFileName(CurrentExt, PreviousExt) <> 0 then
-        begin
-          Include(P.Data.FileFlags, foTable);
-        end else
-        begin
-          Exclude(P.Data.FileFlags, foTable);
-          if sOption then
-            Exclude(P.Data.FileFlags, foTear);
-        end;
+      end
+      else
+      if CompareFileName(CurrentExt, PreviousExt) <> 0 then
+      begin
+        Include(P.Data.FileFlags, foTable);
+      end
+      else
+      begin
+        Exclude(P.Data.FileFlags, foTable);
+        if sOption then
+          Exclude(P.Data.FileFlags, foTear);
+      end;
 
       Inc(I);
     until I = Count;
@@ -629,14 +648,14 @@ function THeaders.SetModule(const FileName: string): boolean;
 var
   Strm: TStream;
 begin
-  Result := False;
+  Result      := False;
   Module.Size := 0;
   if FileExists(FileName) then
   begin
     Strm := TFileReader.Create(FileName, fmOpenRead);
     try
       if Module.CopyFrom(Strm, Strm.Size) = Strm.Size then
-        Result := True
+        Result      := True
       else
         Module.Size := 0;
     finally
@@ -655,7 +674,7 @@ end;
 
 function THeaders.FindFirstMarker(Stream: TStream): integer;
 var
-  Id: integer;
+  Id:      integer;
   StrmPos: integer;
 begin
   // archive type unknow
@@ -683,14 +702,14 @@ end;
 
 procedure THeaders.ReadItemsB4b(Stream: TStream; aAction: THeaderAction);
 var
-  P: THeader;
-  Ptr: ^integer;
+  P:      THeader;
+  Ptr:    ^integer;
   Readed: byte;
   NextByte: integer;
   B4bMarker: array [0..3] of byte;
 begin
-  P := nil;
-  Ptr := @B4bMarker;
+  P    := nil;
+  Ptr  := @B4bMarker;
   Ptr^ := Marker;
 
   NextByte := 0;
@@ -713,7 +732,8 @@ begin
           P := nil;
         end;
       end;
-    end else
+    end
+    else
       Break;
 
   until (P <> nil) and (foLast in P.Data.FileFlags);
@@ -726,11 +746,11 @@ end;
 
 procedure THeaders.ReadItems(Stream: TStream; aAction: THeaderAction);
 var
-  P:  THeader;
-  Id: integer;
+  P:      THeader;
+  Id:     integer;
   OffSet: integer;
 begin
-  P := nil;
+  P      := nil;
   OffSet := FindFirstMarker(Stream);
 
   if OffSet > -1 then
@@ -744,14 +764,16 @@ begin
         except
           P := nil;
         end
-      else Break;
+      else
+        Break;
     until (P <> nil) and (foLast in P.Data.FileFlags);
 
     if P <> nil then
     begin
       Exclude(P.Data.FileFlags, foLast);
     end;
-  end else
+  end
+  else
     ReadItemsB4b(Stream, aAction);
 end;
 
@@ -766,7 +788,8 @@ begin
       Module.Seek(0, 0);
       Stream.CopyFrom(Module, Module.Size);
     end;
-  end else
+  end
+  else
     Stream.Seek(Module.Size, 0);
 
   MarkAsLast(toDelete);
@@ -846,7 +869,8 @@ begin
   end;
 end;
 
-function THeaders.GetNext(Child: integer; aAction: THeaderAction; const aFileName: string): integer;
+function THeaders.GetNext(Child: integer; aAction: THeaderAction;
+  const aFileName: string): integer;
 var
   I: integer;
 begin
@@ -862,7 +886,8 @@ begin
     end;
 end;
 
-function THeaders.GetBack(Child: integer; aActions: THeaderActions; const aFileName: string): integer;
+function THeaders.GetBack(Child: integer; aActions: THeaderActions;
+  const aFileName: string): integer;
 var
   I: integer;
 begin
@@ -878,7 +903,8 @@ begin
     end;
 end;
 
-function THeaders.GetNext(Child: integer; aActions: THeaderActions; const aFileName: string): integer;
+function THeaders.GetNext(Child: integer; aActions: THeaderActions;
+  const aFileName: string): integer;
 var
   I: integer;
 begin
@@ -894,7 +920,8 @@ begin
     end;
 end;
 
-function THeaders.GetBack(Child: integer; aAction: THeaderAction; const aFileName: string): integer;
+function THeaders.GetBack(Child: integer; aAction: THeaderAction;
+  const aFileName: string): integer;
 var
   I: integer;
 begin
@@ -972,8 +999,10 @@ begin
 
     Pivot := (L + R) div 2;
     repeat
-      while CompareFn(Self, I, Pivot) < 0 do Inc(I);
-      while CompareFn(Self, J, Pivot) > 0 do Dec(J);
+      while CompareFn(Self, I, Pivot) < 0 do
+        Inc(I);
+      while CompareFn(Self, J, Pivot) > 0 do
+        Dec(J);
       if I <= J then
       begin
         Exchange(I, J);
@@ -981,15 +1010,16 @@ begin
         if Pivot = I then
           Pivot := J
         else
-          if Pivot = J then
-            Pivot := I;
+        if Pivot = J then
+          Pivot := I;
 
         Inc(I);
         Dec(j);
       end;
     until I > J;
 
-    if L < J then QuickSort(L, J);
+    if L < J then
+      QuickSort(L, J);
 
     L := I;
   until I >= R;
@@ -1007,36 +1037,31 @@ begin
     end;
 end;
 
-procedure THeaders.ScanFileSystem(
-  Mask: string;
-  Sorted: TSortedHeaders;
-  const cdOption: string;
-         fOption: boolean;
-         rOption: boolean;
-         uOption: boolean;
-         xOption: TStringList;
-    var Size: integer);
+procedure THeaders.ScanFileSystem(Mask: string; Sorted: TSortedHeaders;
+  const cdOption: string; fOption: boolean; rOption: boolean;
+  uOption: boolean; xOption: TStringList; var Size: integer);
 var
-  P: THeader;
-  J: pointer;
+  P:     THeader;
+  J:     pointer;
   Error: integer;
-  Rec: TSearchRec;
+  Rec:   TSearchRec;
   RecPath: string;
   RecName: string;
 begin
   if (Length(Mask) > 0) and (Mask[Length(Mask)] = PathDelim) then
   begin
-    Mask := IncludeTrailingBackSlash(Mask) + '*';
-    rOption := True
-  end else
-    if DirectoryExists(Mask) then
-    begin
-      Mask := IncludeTrailingBackSlash(Mask) + '*';
-      rOption := True;
-    end;
+    Mask    := IncludeTrailingBackSlash(Mask) + '*';
+    rOption := True;
+  end
+  else
+  if DirectoryExists(Mask) then
+  begin
+    Mask    := IncludeTrailingBackSlash(Mask) + '*';
+    rOption := True;
+  end;
 
   RecPath := ExtractFilePath(Mask);
-  Error := FindFirst(RecPath + '*', faAnyFile, Rec);
+  Error   := FindFirst(RecPath + '*', faAnyFile, Rec);
   while Error = 0 do
   begin
     RecName := RecPath + Rec.Name;
@@ -1054,13 +1079,15 @@ begin
               Sorted.InsertItem(P);
               Add(P);
               Size := Size + Rec.Size;
-            end else
+            end
+            else
             if (Rec.Time > THeader(J).Data.FileTime) then
             begin
               THeader(J).Fresh(cdOption, RecPath, Rec);
               Size := Size + (Rec.Size - THeader(J).Data.FileSize);
             end;
-          end else
+          end
+          else
           begin
             if fOption then
             begin
@@ -1069,7 +1096,8 @@ begin
                 THeader(J).Fresh(cdOption, RecPath, Rec);
                 Size := Size + (Rec.Size - THeader(J).Data.FileSize);
               end;
-            end else
+            end
+            else
             begin
               if (J = nil) then
               begin
@@ -1081,7 +1109,8 @@ begin
             end;
           end;
         end;
-    end else
+    end
+    else
     begin
       if rOption and (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
@@ -1089,10 +1118,10 @@ begin
           IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask),
           Sorted,
           cdOption,
-           fOption,
-           rOption,
-           uOption,
-           xOption,
+          fOption,
+          rOption,
+          uOption,
+          xOption,
           Size);
       end;
     end;

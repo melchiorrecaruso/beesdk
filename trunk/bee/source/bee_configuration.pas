@@ -46,7 +46,7 @@ type
 
   TTable = packed record
     Level: cardinal;
-    T: array [0..TableCols - 1] of TTableCol;
+    T:     array [0..TableCols - 1] of TTableCol;
   end;
 
   TTableParameters = array [1..SizeOf(TTable) div 4] of byte;
@@ -78,10 +78,10 @@ implementation
 uses
   Bee_Common;
 
-(***************************************************************************)
-(* Class:  TConfiguration | methods                                        *)
-(* Domain: public                                                          *)
-(***************************************************************************)
+ (***************************************************************************)
+ (* Class:  TConfiguration | methods                                        *)
+ (* Domain: public                                                          *)
+ (***************************************************************************)
 
 constructor TConfiguration.Create;
 begin
@@ -93,14 +93,15 @@ destructor TConfiguration.Destroy;
 var
   I: integer;
 begin
-  for I := 0 to Count - 1 do Objects[I].Free;
+  for I := 0 to Count - 1 do
+    Objects[I].Free;
   inherited;
 end;
 
 procedure TConfiguration.LoadFromFile(const FileName: string);
 var
   List: TStringList;
-  I: integer;
+  I:    integer;
   S, aName, aValue: string;
 begin
   List := TStringList.Create;
@@ -113,10 +114,10 @@ begin
     if (S > '') and (S[1] = '\') then
       Selector(S)
     else
-      if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
-        CurrentSection.Add(S)
-      else
-        CurrentSection.Values[aName] := aValue;
+    if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
+      CurrentSection.Add(S)
+    else
+      CurrentSection.Values[aName] := aValue;
   end;
 
   Selector('\main');
@@ -126,7 +127,7 @@ end;
 procedure TConfiguration.SaveToFile(const FileName: string);
 var
   List: TStringList;
-  I: integer;
+  I:    integer;
 begin
   List := TStringList.Create;
 
@@ -170,7 +171,8 @@ begin
   begin
     CurrentSection := TConfigSection.Create;
     Objects[Add(Name + '=yes')] := CurrentSection;
-  end else
+  end
+  else
     CurrentSection := TConfigSection(Objects[Index]);
 end;
 
@@ -187,22 +189,24 @@ begin
   end;
 end;
 
-(***************************************************************************)
-(* Class:  TConfigSection | methods                                        *)
-(* Domain: public                                                          *)
-(***************************************************************************)
+ (***************************************************************************)
+ (* Class:  TConfigSection | methods                                        *)
+ (* Domain: public                                                          *)
+ (***************************************************************************)
 
 function TConfigSection.GetTable(const Ext: string; var T: TTableParameters): boolean;
 var
   S: string;
 begin
-  S := Values[Ext];
+  S      := Values[Ext];
   Result := GetData(Ext, T, SizeOf(T));
   if not Result then
-    Result := (S = '') and (CompareText(Ext, '.Default') <> 0) and GetTable('.Default', T);
+    Result := (S = '') and (CompareText(Ext, '.Default') <> 0) and
+      GetTable('.Default', T);
 
   if not Result then
-    Result := (S > '') and (IndexOfName(S) >= 0) and (IndexOfName(S) < IndexOfName(Ext)) and GetTable(S, T);
+    Result := (S > '') and (IndexOfName(S) >= 0) and
+      (IndexOfName(S) < IndexOfName(Ext)) and GetTable(S, T);
 end;
 
 procedure TConfigSection.PutData(const Name: string; var Data; aCount: integer);

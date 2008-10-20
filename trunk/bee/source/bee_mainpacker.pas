@@ -44,7 +44,7 @@ uses
   Bee_Headers,
   Bee_Modeller,  // TBaseCoder...
   Bee_Interface;
-  
+
 type
 
   // Extracting Modes:
@@ -62,27 +62,30 @@ type
   //   emOpt   Encode files to nul, with no messages
 
   TEncodingMode = (emNorm, emOpt);
-  
+
 type
 
   // Encoder ...
 
   TEncoder = class
   public
-    constructor Create(aStream: TFileWriter; aInterfaces: TInterfaces; aSync: TSynchronizer);
+    constructor Create(aStream: TFileWriter; aInterfaces: TInterfaces;
+      aSync: TSynchronizer);
     destructor Destroy; override;
     function EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
-    function EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
-    function CopyStrm  (Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
+    function EncodeStrm(Header: THeader; Mode: TEncodingMode;
+      SrcStrm: TFileReader): boolean;
+    function CopyStrm(Header: THeader; Mode: TEncodingMode;
+      SrcStrm: TFileReader): boolean;
   private
     function GetKey(Header: THeader): string;
     procedure Tick;
   private
     Stream: TFileWriter;
-    PPM: TBaseCoder;
+    PPM:    TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
     Interfaces: TInterfaces;
-    Sync: TSynchronizer;
+    Sync:   TSynchronizer;
   end;
 
 type
@@ -91,19 +94,21 @@ type
 
   TDecoder = class
   public
-    constructor Create(aStream: TFileReader; aInterfaces: TInterfaces; aSync: TSynchronizer);
+    constructor Create(aStream: TFileReader; aInterfaces: TInterfaces;
+      aSync: TSynchronizer);
     destructor Destroy; override;
     function DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
-    function DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
+    function DecodeStrm(Header: THeader; Mode: TExtractingMode;
+      DstStrm: TFileWriter): boolean;
   private
     function GetKey(Header: THeader): string;
     procedure Tick;
   private
     Stream: TFileReader;
-    PPM: TBaseCoder;
+    PPM:    TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
     Interfaces: TInterfaces;
-    Sync: TSynchronizer;
+    Sync:   TSynchronizer;
   end;
 
 implementation
@@ -118,13 +123,14 @@ uses
 
 /// TEncoder
 
-constructor TEncoder.Create(aStream: TFileWriter; aInterfaces: TInterfaces; aSync: TSynchronizer);
+constructor TEncoder.Create(aStream: TFileWriter; aInterfaces: TInterfaces;
+  aSync: TSynchronizer);
 begin
   Stream := aStream;
   SecondaryCodec := TSecondaryEncoder.Create(Stream);
-  PPM := TBaseCoder.Create(SecondaryCodec);
+  PPM    := TBaseCoder.Create(SecondaryCodec);
   Interfaces := aInterfaces;
-  Sync := aSync;
+  Sync   := aSync;
 end;
 
 destructor TEncoder.Destroy;
@@ -144,7 +150,7 @@ begin
 
   Sync(Interfaces.OnKey.Method);
   Result := Interfaces.OnKey.Answer;
-  
+
   if Length(Result) < MinKeyLength then
   begin
     Exclude(Header.Data.FileFlags, foPassword);
@@ -153,7 +159,8 @@ end;
 
 procedure TEncoder.Tick;
 begin
-  while Interfaces.Suspend do Sleep(250);
+  while Interfaces.Suspend do
+    Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
@@ -179,7 +186,7 @@ begin
     PPM.FreshSolid;
 
   Header.Data.FileStartPos := Stream.Seek(0, 1); // stream flush
-  Header.Data.FileCrc := cardinal(-1);
+  Header.Data.FileCrc      := cardinal(-1);
 
   try
     SrcFile := TFileReader.Create(Header.FileLink, fmOpenRead + fmShareDenyWrite);
@@ -189,7 +196,7 @@ begin
 
   if (SrcFile <> nil) then
   begin
-  
+
     if Mode = emNorm then
     begin
       Interfaces.OnDisplay.Data.Msg := msgUpdating + Header.Data.FileName;
@@ -220,7 +227,8 @@ begin
         UpdCrc32(Header.Data.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
       end;
-    end else
+    end
+    else
     begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
@@ -241,17 +249,20 @@ begin
     end;
     SrcFile.Free;
 
-    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos; // last stream flush
+    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos;
+    // last stream flush
     Stream.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
-  end else
+  end
+  else
   begin
     Interfaces.OnError.Data.Msg := ('Error: can''t open file ' + Header.Data.FileName);
     Sync(Interfaces.OnError.Method);
   end;
 
-  if (not (foMoved in Header.Data.FileFlags)) and (Header.Data.FilePacked >= Header.Data.FileSize) then
+  if (not (foMoved in Header.Data.FileFlags)) and
+    (Header.Data.FilePacked >= Header.Data.FileSize) then
   begin
     Include(Header.Data.FileFlags, foTear);
     Include(Header.Data.FileFlags, foMoved);
@@ -259,11 +270,13 @@ begin
 
     Dec(Interfaces.OnTick.Data.ProcessedSize, Header.Data.FileSize);
     Result := EncodeFile(Header, emOpt);
-  end else
+  end
+  else
     Result := True;
 end;
 
-function TEncoder.EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
+function TEncoder.EncodeStrm(Header: THeader; Mode: TEncodingMode;
+  SrcStrm: TFileReader): boolean;
 var
   SrcFile: TFileReader;
   SrcPosition: integer;
@@ -281,7 +294,7 @@ begin
   else
     PPM.FreshSolid;
 
-  SrcFile := SrcStrm;
+  SrcFile     := SrcStrm;
   SrcPosition := 0;
 
   if (SrcFile <> nil) then
@@ -296,7 +309,7 @@ begin
     SrcPosition := Header.Data.FileStartPos;
     SrcFile.Seek(Header.Data.FileStartPos, 0);
 
-    Header.Data.FileCrc := cardinal(-1);
+    Header.Data.FileCrc      := cardinal(-1);
     Header.Data.FileStartPos := Stream.Seek(0, 1); // stream flush
 
     if foPassword in Header.Data.FileFlags then
@@ -324,7 +337,8 @@ begin
         UpdCrc32(Header.Data.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
       end;
-    end else
+    end
+    else
     begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
@@ -345,17 +359,20 @@ begin
     end;
     SrcFile.BlowFish.Finish;
 
-    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos; // last stream flush
+    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos;
+    // last stream flush
     Stream.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
-  end else
+  end
+  else
   begin
     Interfaces.OnError.Data.Msg := ('Error: stream  not found');
     Sync(Interfaces.OnError.Method);
   end;
 
-  if (not (foMoved in Header.Data.FileFlags)) and (Header.Data.FilePacked >= Header.Data.FileSize) then
+  if (not (foMoved in Header.Data.FileFlags)) and
+    (Header.Data.FilePacked >= Header.Data.FileSize) then
   begin
     Include(Header.Data.FileFlags, foTear);
     Include(Header.Data.FileFlags, foMoved);
@@ -364,11 +381,13 @@ begin
 
     Dec(Interfaces.OnTick.Data.ProcessedSize, Header.Data.FileSize);
     Result := EncodeStrm(Header, emOpt, SrcStrm);
-  end else
+  end
+  else
     Result := True;
 end;
 
-function TEncoder.CopyStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
+function TEncoder.CopyStrm(Header: THeader; Mode: TEncodingMode;
+  SrcStrm: TFileReader): boolean;
 var
   SrcFile: TFileReader;
   Symbol: byte;
@@ -414,7 +433,8 @@ begin
     end;
 
     Sync(Interfaces.OnClear.Method);
-  end else
+  end
+  else
   begin
     Interfaces.OnError.Data.Msg := ('Error: stream  not found');
     Sync(Interfaces.OnError.Method);
@@ -425,13 +445,14 @@ end;
 
 /// TDecoder
 
-constructor TDecoder.Create(aStream: TFileReader; aInterfaces: TInterfaces; aSync: TSynchronizer);
+constructor TDecoder.Create(aStream: TFileReader; aInterfaces: TInterfaces;
+  aSync: TSynchronizer);
 begin
   Stream := aStream;
   SecondaryCodec := TSecondaryDecoder.Create(Stream);
-  PPM := TBaseCoder.Create(SecondaryCodec);
+  PPM    := TBaseCoder.Create(SecondaryCodec);
   Interfaces := aInterfaces;
-  Sync := aSync;
+  Sync   := aSync;
 end;
 
 destructor TDecoder.Destroy;
@@ -455,7 +476,8 @@ end;
 
 procedure TDecoder.Tick;
 begin
-  while Interfaces.Suspend do Sleep(250);
+  while Interfaces.Suspend do
+    Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
@@ -466,12 +488,12 @@ end;
 function TDecoder.DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
 var
   DstFile: TFileWriter;
-  I, Crc: cardinal;
-  Symbol: byte;
+  I, Crc:  cardinal;
+  Symbol:  byte;
 begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
-    
+
   if foTable in Header.Data.FileFlags then
     PPM.SetTable(Header.Data.FileTable);
 
@@ -481,8 +503,8 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping   + Header.Data.FileName;
-    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting    + Header.Data.FileName;
+    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping + Header.Data.FileName;
+    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting + Header.Data.FileName;
     pmNorm: Interfaces.OnDisplay.Data.Msg := msgExtracting + Header.Data.FileName;
     pmQuit:
     begin
@@ -528,7 +550,8 @@ begin
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
       end;
-    end else
+    end
+    else
     begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
@@ -573,18 +596,19 @@ begin
   end;
 end;
 
-function TDecoder.DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
+function TDecoder.DecodeStrm(Header: THeader; Mode: TExtractingMode;
+  DstStrm: TFileWriter): boolean;
 var
   DstFile: TFileWriter;
-  I, Crc: cardinal;
-  Symbol: byte;
+  I, Crc:  cardinal;
+  Symbol:  byte;
 begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
-    
+
   if foTable in Header.Data.FileFlags then
     PPM.SetTable(Header.Data.FileTable);
-    
+
   if foTear in Header.Data.FileFlags then
     PPM.FreshFlexible
   else
@@ -592,7 +616,7 @@ begin
 
   case Mode of
     pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping + Header.Data.FileName;
-    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting  + Header.Data.FileName;
+    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting + Header.Data.FileName;
     pmNorm: Interfaces.OnDisplay.Data.Msg := msgDecoding + Header.Data.FileName;
     pmQuit:
     begin
@@ -643,7 +667,8 @@ begin
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
       end;
-    end else
+    end
+    else
     begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
