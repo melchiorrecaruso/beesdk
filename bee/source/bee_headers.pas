@@ -123,6 +123,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure Clear; override;
     procedure AddItems(
       Masks: TStringList;
       const cdOption: string;
@@ -401,15 +402,21 @@ begin
 end;
 
 destructor THeaders.Destroy;
+begin
+  Clear;
+  Module.Free;
+  inherited Destroy;
+end;
+
+procedure THeaders.Clear;
 var
   I: integer;
 begin
-  Module.Free;
   for I := Count - 1 downto 0 do
   begin
     THeader(Items[I]).Free;
   end;
-  inherited Destroy;
+  inherited Clear;
 end;
 
 
