@@ -27,7 +27,7 @@
   v0.7.8 build 0148 - 2005.06.23 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   
-  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
+  v0.7.9 build 0895 - 2008.10.20 by Melchiorre Caruso.
 }
 
 unit Bee_Files;
