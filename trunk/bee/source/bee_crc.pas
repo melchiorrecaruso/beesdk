@@ -149,8 +149,7 @@ begin
   begin
     repeat
       Readed := Stream.Read(Buffer, SizeOf(Buffer));
-      for I := 0 to Readed - 1 do
-        Result := UpdateCrc32(Result, Buffer[I]);
+      for I := 0 to Readed - 1 do Result := UpdateCrc32(Result, Buffer[I]);
     until Readed = 0;
     Stream.Free;
   end;

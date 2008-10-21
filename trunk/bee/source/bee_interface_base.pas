@@ -99,8 +99,7 @@ function ThreadWndProc(Window: HWND;
   stdcall;
 begin
   case Message of
-    CM_EXECPROC:
-      with TThreadSynchronizer(lParam) do
+    CM_EXECPROC: with TThreadSynchronizer(lParam) do
       begin
         Result := 0;
         try
@@ -115,8 +114,7 @@ begin
       TSynchronizerManager.Instance().DoDestroyWindow(TSyncInfo(lParam));
       Result := 0;
     end;
-    else
-      Result := DefWindowProc(Window, Message, wParam, lParam);
+    else Result := DefWindowProc(Window, Message, wParam, lParam);
   end;
 end;
 
@@ -171,12 +169,13 @@ procedure TSynchronizerManager.AddThread(ASynchronizer: TThreadSynchronizer);
     ClassRegistered: boolean;
   begin
     ThreadWindowClass.hInstance := HInstance;
-    ClassRegistered := GetClassInfo(HInstance, ThreadWindowClass.lpszClassName,
-      TempClass);
+    ClassRegistered := GetClassInfo(HInstance,
+      ThreadWindowClass.lpszClassName, TempClass);
     if not ClassRegistered or (@TempClass.lpfnWndProc <> @ThreadWndProc) then
     begin
       if ClassRegistered then
-        Windows.UnregisterClass(ThreadWindowClass.lpszClassName, HInstance);
+        Windows.UnregisterClass(ThreadWindowClass.lpszClassName,
+          HInstance);
       Windows.RegisterClass(ThreadWindowClass);
     end;
 
@@ -258,8 +257,7 @@ begin
   for i := 0 to FList.Count - 1 do
   begin
     Result := TSyncInfo(FList[i]);
-    if (Result.FSyncBaseThreadID = ASyncBaseThreadID) then
-      Exit;
+    if (Result.FSyncBaseThreadID = ASyncBaseThreadID) then Exit;
   end;
   Result := nil;
 end;
@@ -292,8 +290,7 @@ begin
   FSynchronizeException := nil;
   FMethod := Method;
   TSynchronizerManager.Instance().Synchronize(Self);
-  if Assigned(FSynchronizeException) then
-    raise FSynchronizeException;
+  if Assigned(FSynchronizeException) then raise FSynchronizeException;
 end;
 
 { TThreadEx }
@@ -312,14 +309,12 @@ end;
 
 procedure TThreadEx.DoTerminate;
 begin
-  if Assigned(OnTerminate) then
-    Synchronizer.Synchronize(HandleTerminate);
+  if Assigned(OnTerminate) then Synchronizer.Synchronize(HandleTerminate);
 end;
 
 procedure TThreadEx.HandleTerminate;
 begin
-  if Assigned(OnTerminate) then
-    OnTerminate(Self);
+  if Assigned(OnTerminate) then OnTerminate(Self);
 end;
 
 procedure TThreadEx.Wait;
@@ -327,8 +322,8 @@ var
   Msg: TMsg;
   H:   THandle;
 begin
-  DuplicateHandle(GetCurrentProcess(), Handle, GetCurrentProcess(),
-    @H, 0, False, DUPLICATE_SAME_ACCESS);
+  DuplicateHandle(GetCurrentProcess(), Handle, GetCurrentProcess(), @H, 0,
+    False, DUPLICATE_SAME_ACCESS);
   try
     if GetCurrentThreadID = Synchronizer.SyncBaseThreadID then
     begin
@@ -341,8 +336,7 @@ begin
         end;
       end;
     end
-    else
-    begin
+    else begin
       WaitForSingleObject(H, INFINITE);
     end;
   finally
