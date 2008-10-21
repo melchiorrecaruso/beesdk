@@ -141,7 +141,8 @@ begin
   List.Free;
 end;
 
-function TConfiguration.GetTable(const Ext: string; var T: TTableParameters): boolean;
+function TConfiguration.GetTable(const Ext: string;
+  var T: TTableParameters): boolean;
 var
   OldSection: TConfigSection;
 begin
@@ -152,12 +153,14 @@ begin
   CurrentSection := OldSection;
 end;
 
-procedure TConfiguration.PutData(const Name: string; var Data; aCount: integer);
+procedure TConfiguration.PutData(const Name: string; var Data;
+  aCount: integer);
 begin
   CurrentSection.PutData(Name, Data, aCount);
 end;
 
-function TConfiguration.GetData(const Name: string; var Data; aCount: integer): boolean;
+function TConfiguration.GetData(const Name: string; var Data;
+  aCount: integer): boolean;
 begin
   Result := CurrentSection.GetData(Name, Data, aCount);
 end;
@@ -176,7 +179,8 @@ begin
     CurrentSection := TConfigSection(Objects[Index]);
 end;
 
-function TConfiguration.Split(const S: string; var Name, Value: string): boolean;
+function TConfiguration.Split(const S: string;
+  var Name, Value: string): boolean;
 var
   Index: integer;
 begin
@@ -194,7 +198,8 @@ end;
  (* Domain: public                                                          *)
  (***************************************************************************)
 
-function TConfigSection.GetTable(const Ext: string; var T: TTableParameters): boolean;
+function TConfigSection.GetTable(const Ext: string;
+  var T: TTableParameters): boolean;
 var
   S: string;
 begin
@@ -209,12 +214,14 @@ begin
       (IndexOfName(S) < IndexOfName(Ext)) and GetTable(S, T);
 end;
 
-procedure TConfigSection.PutData(const Name: string; var Data; aCount: integer);
+procedure TConfigSection.PutData(const Name: string; var Data;
+  aCount: integer);
 begin
   Values[Name] := Bee_Common.Hex(Data, aCount);
 end;
 
-function TConfigSection.GetData(const Name: string; var Data; aCount: integer): boolean;
+function TConfigSection.GetData(const Name: string; var Data;
+  aCount: integer): boolean;
 begin
   FillChar(Data, aCount, 0);
   Result := Bee_Common.HexToData(Values[Name], Data, aCount);

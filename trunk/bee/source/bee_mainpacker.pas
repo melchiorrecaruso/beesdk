@@ -189,7 +189,8 @@ begin
   Header.Data.FileCrc      := cardinal(-1);
 
   try
-    SrcFile := TFileReader.Create(Header.FileLink, fmOpenRead + fmShareDenyWrite);
+    SrcFile := TFileReader.Create(Header.FileLink, fmOpenRead +
+      fmShareDenyWrite);
   except
     SrcFile := nil;
   end;
@@ -257,7 +258,8 @@ begin
   end
   else
   begin
-    Interfaces.OnError.Data.Msg := ('Error: can''t open file ' + Header.Data.FileName);
+    Interfaces.OnError.Data.Msg :=
+      ('Error: can''t open file ' + Header.Data.FileName);
     Sync(Interfaces.OnError.Method);
   end;
 
@@ -503,9 +505,11 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping + Header.Data.FileName;
+    pmSkip: Interfaces.OnDisplay.Data.Msg :=
+        msgSkipping + Header.Data.FileName;
     pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting + Header.Data.FileName;
-    pmNorm: Interfaces.OnDisplay.Data.Msg := msgExtracting + Header.Data.FileName;
+    pmNorm: Interfaces.OnDisplay.Data.Msg :=
+        msgExtracting + Header.Data.FileName;
     pmQuit:
     begin
       Result := True;
@@ -589,7 +593,8 @@ begin
   if Result = False then
   begin
     if Crc = cardinal(-1) then
-      Interfaces.OnError.Data.Msg := ('Error: can''t open file ' + Header.Data.FileName)
+      Interfaces.OnError.Data.Msg :=
+        ('Error: can''t open file ' + Header.Data.FileName)
     else
       Interfaces.OnError.Data.Msg := msgCRCERROR + Header.Data.FileName;
     Sync(Interfaces.OnError.Method);
@@ -615,9 +620,11 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping + Header.Data.FileName;
+    pmSkip: Interfaces.OnDisplay.Data.Msg :=
+        msgSkipping + Header.Data.FileName;
     pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting + Header.Data.FileName;
-    pmNorm: Interfaces.OnDisplay.Data.Msg := msgDecoding + Header.Data.FileName;
+    pmNorm: Interfaces.OnDisplay.Data.Msg :=
+        msgDecoding + Header.Data.FileName;
     pmQuit:
     begin
       Result := True;

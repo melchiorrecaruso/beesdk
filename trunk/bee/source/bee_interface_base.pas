@@ -94,7 +94,9 @@ type
 var
   SynchronizerManager: TSynchronizerManager;
 
-function ThreadWndProc(Window: HWND; Message, wParam, lParam: longint): longint; stdcall;
+function ThreadWndProc(Window: HWND;
+  Message, wParam, lParam: longint): longint;
+  stdcall;
 begin
   case Message of
     CM_EXECPROC:
@@ -178,8 +180,8 @@ procedure TSynchronizerManager.AddThread(ASynchronizer: TThreadSynchronizer);
       Windows.RegisterClass(ThreadWindowClass);
     end;
 
-    Result := CreateWindow(ThreadWindowClass.lpszClassName, '', 0,
-      0, 0, 0, 0, 0, 0, HInstance, nil);
+    Result := CreateWindow(ThreadWindowClass.lpszClassName, '',
+      0, 0, 0, 0, 0, 0, 0, HInstance, nil);
   end;
 
 var
@@ -204,7 +206,8 @@ begin
   end;
 end;
 
-procedure TSynchronizerManager.RemoveThread(ASynchronizer: TThreadSynchronizer);
+procedure TSynchronizerManager.RemoveThread(ASynchronizer:
+  TThreadSynchronizer);
 var
   info: TSyncInfo;
 begin
@@ -247,7 +250,8 @@ begin
     CM_EXECPROC, 0, longint(ASynchronizer));
 end;
 
-function TSynchronizerManager.FindSyncInfo(ASyncBaseThreadID: longword): TSyncInfo;
+function TSynchronizerManager.FindSyncInfo(ASyncBaseThreadID:
+  longword): TSyncInfo;
 var
   i: integer;
 begin
@@ -260,10 +264,12 @@ begin
   Result := nil;
 end;
 
-function TSynchronizerManager.InfoBySync(ASyncBaseThreadID: longword): TSyncInfo;
+function TSynchronizerManager.InfoBySync(ASyncBaseThreadID: longword):
+TSyncInfo;
 begin
   Result := FindSyncInfo(ASyncBaseThreadID);
-  Assert(Result <> nil, 'Cannot find SyncInfo for the specified thread synchronizer');
+  Assert(Result <> nil,
+    'Cannot find SyncInfo for the specified thread synchronizer');
 end;
 
 { TThreadSynchronizer }

@@ -41,10 +41,8 @@ program Bee;
 
 {$I compiler.inc}
 
-uses
- {$IFDEF FPC} {$IFDEF UNIX}
-  cThreads,
-     {$ENDIF}    {$ENDIF}
+uses {$IFDEF FPC} {$IFDEF UNIX}
+  cThreads, {$ENDIF} {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -132,7 +130,8 @@ type
   begin
     with AppInterfaces.OnOverWrite.Data do
     begin
-      Writeln('Warning: file "' + ParamToOem(FilePath + FileName) + '" already exists.');
+      Writeln('Warning: file "' + ParamToOem(FilePath + FileName) +
+        '" already exists.');
       Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
     end;
     // not convert oem to param
@@ -155,7 +154,8 @@ type
   begin
     with AppInterfaces.OnRename.Data do
     begin
-      Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
+      Write('Rename file "' + ParamToOem(FilePath + FileName) +
+        '" as (empty to skip):');
     end;
     Readln(AppInterfaces.OnRename.Answer);
     // convert oem to param
@@ -190,14 +190,16 @@ type
       Writeln(ParamToOem(StringOfChar(' ', 15) +
         Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
         [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-        FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+        FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc,
+        FileMethod])));
     end;
   end;
 
   procedure TConsole.OnTick;
   begin
     // not convert oem to param
-    Write(#8#8#8#8#8#8#8 + Format('  (%d%%)', [AppInterfaces.OnTick.Data.Percentage]));
+    Write(#8#8#8#8#8#8#8 + Format('  (%d%%)',
+      [AppInterfaces.OnTick.Data.Percentage]));
   end;
 
   procedure TConsole.OnClear;
