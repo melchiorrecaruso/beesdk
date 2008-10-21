@@ -144,8 +144,10 @@ type
     procedure ReadItems(Stream: TStream; aAction: THeaderAction);
     procedure WriteItems(Stream: TStream);
 
-    function GetBack(Child: integer; aAction: THeaderAction): integer; overload;
-    function GetNext(Child: integer; aAction: THeaderAction): integer; overload;
+    function GetBack(Child: integer; aAction: THeaderAction): integer;
+      overload;
+    function GetNext(Child: integer; aAction: THeaderAction): integer;
+      overload;
     function GetBack(Child: integer; Flag: THeaderFlag): integer; overload;
     function GetNext(Child: integer; Flag: THeaderFlag): integer; overload;
     function GetBack(Child: integer; aAction: THeaderAction;
@@ -173,7 +175,8 @@ type
     procedure MarkAsLast(Action: THeaderAction);
     function FindFirstMarker(Stream: TStream): integer;
 
-    procedure ExpandMask(const Mask: string; Masks: TStringList; rOption: boolean);
+    procedure ExpandMask(const Mask: string; Masks: TStringList;
+      rOption: boolean);
     procedure ScanFileSystem(Mask: string; Sorted: TSortedHeaders;
       const cdOption: string; fOption: boolean; rOption: boolean;
       uOption: boolean; xOption: TStringList; var Size: integer);
@@ -261,7 +264,8 @@ const
 begin
   Action := aAction;
 
-  if Stream.Read(Data.FileFlags, SizeOf(Data.FileFlags)) <> SizeOf(Data.FileFlags) then
+  if Stream.Read(Data.FileFlags, SizeOf(Data.FileFlags)) <>
+    SizeOf(Data.FileFlags) then
     Fail;
 
   if foVersion in Data.FileFlags then
@@ -280,7 +284,8 @@ begin
       Fail;
 
   if foTable in Data.FileFlags then
-    if Stream.Read(Data.FileTable, SizeOf(Data.FileTable)) <> SizeOf(Data.FileTable) then
+    if Stream.Read(Data.FileTable, SizeOf(Data.FileTable)) <>
+      SizeOf(Data.FileTable) then
       Fail;
 
   if Stream.Read(Data.FileSize, sSecondPart) <> sSecondPart then
@@ -435,7 +440,8 @@ begin
 end;
 
 
-procedure THeaders.ExpandMask(const Mask: string; Masks: TStringList; rOption: boolean);
+procedure THeaders.ExpandMask(const Mask: string; Masks: TStringList;
+  rOption: boolean);
 var
   I:     integer;
   Error: integer;
@@ -479,13 +485,14 @@ begin
     Error      := FindFirst(FolderPath + '*', faAnyFile, Rec);
     while Error = 0 do
     begin
-      if ((Rec.Attr and faDirectory) = faDirectory) and (Rec.Name[1] <> '.') and
-        (Rec.Name[1] <> '..') then
+      if ((Rec.Attr and faDirectory) = faDirectory) and
+        (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
       begin
         if FileNameMatch(Rec.Name, FolderName, rOption) then
         begin
-          ExpandMask(FolderPath + Rec.Name + Copy(Mask, LastSlash,
-            (Length(Mask) + 1) - LastSlash), Masks, rOption);
+          ExpandMask(FolderPath + Rec.Name +
+            Copy(Mask, LastSlash, (Length(Mask) + 1) - LastSlash),
+            Masks, rOption);
         end;
       end;
       Error := FindNext(Rec);
@@ -499,8 +506,8 @@ begin
 end;
 
 procedure THeaders.AddItems(Masks: TStringList; const cdOption: string;
-  fOption: boolean; rOption: boolean; uOption: boolean; xOption: TStringList;
-  var Size: integer);
+  fOption: boolean; rOption: boolean; uOption: boolean;
+  xOption: TStringList; var Size: integer);
 var
   I, J:      integer;
   CurrMasks: TStringList;
@@ -543,7 +550,8 @@ begin
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = MaskAct) and (FileNameMatch(Data.FileName, Masks, rOption)) then
+      if (Action = MaskAct) and
+        (FileNameMatch(Data.FileName, Masks, rOption)) then
       begin
         Action := aAction;
         Inc(Result);
@@ -560,7 +568,8 @@ begin
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = MaskAct) and (FileNameMatch(Data.FileName, Mask, rOption)) then
+      if (Action = MaskAct) and
+        (FileNameMatch(Data.FileName, Mask, rOption)) then
       begin
         Action := aAction;
         Inc(Result);
@@ -607,7 +616,8 @@ begin
 
       if I = First then
       begin
-        P.Data.FileFlags := P.Data.FileFlags + [foVersion, foMethod, foDictionary];
+        P.Data.FileFlags :=
+          P.Data.FileFlags + [foVersion, foMethod, foDictionary];
       end;
 
       P.Data.FileMethod := Method;
@@ -622,7 +632,8 @@ begin
       if kOption then
         Include(P.Data.FileFlags, foPassword);
 
-      if (Method = 0) or (not Config.GetTable(CurrentExt, P.Data.FileTable)) then
+      if (Method = 0) or (not Config.GetTable(CurrentExt,
+        P.Data.FileTable)) then
       begin
         Include(P.Data.FileFlags, foMoved);
         Exclude(P.Data.FileFlags, foTable);
@@ -757,7 +768,8 @@ begin
   begin
     Stream.Seek(OffSet, 0);
     repeat
-      if (Stream.Read(Id, SizeOf(integer)) = SizeOf(integer)) and (Id = Marker) then
+      if (Stream.Read(Id, SizeOf(integer)) = SizeOf(integer)) and
+        (Id = Marker) then
         try
           P := THeader.Read(Stream, aAction);
           Add(P);
@@ -878,7 +890,8 @@ begin
   for I := Child to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action = aAction) and (CompareFileName(Data.FileName, aFileName) = 0) then
+      if (Action = aAction) and
+        (CompareFileName(Data.FileName, aFileName) = 0) then
       begin
         Result := I;
         Break;
@@ -895,7 +908,8 @@ begin
   for I := Child downto 0 do
     with THeader(Items[I]) do
     begin
-      if (Action in aActions) and (CompareFileName(Data.FileName, aFileName) = 0) then
+      if (Action in aActions) and
+        (CompareFileName(Data.FileName, aFileName) = 0) then
       begin
         Result := I;
         Break;
@@ -912,7 +926,8 @@ begin
   for I := Child to Count - 1 do
     with THeader(Items[I]) do
     begin
-      if (Action in aActions) and (CompareFileName(Data.FileName, aFileName) = 0) then
+      if (Action in aActions) and
+        (CompareFileName(Data.FileName, aFileName) = 0) then
       begin
         Result := I;
         Break;
@@ -929,7 +944,8 @@ begin
   for I := Child downto 0 do
     with THeader(Items[I]) do
     begin
-      if (Action = aAction) and (CompareFileName(Data.FileName, aFileName) = 0) then
+      if (Action = aAction) and
+        (CompareFileName(Data.FileName, aFileName) = 0) then
       begin
         Result := I;
         Break;
