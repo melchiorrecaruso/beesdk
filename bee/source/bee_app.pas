@@ -941,7 +941,8 @@ begin
         // write Headers
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
-        for I := 0 to Headers.Count - 1 do if Interfaces.Stop = False then
+        for I := 0 to Headers.Count - 1 do
+          if Interfaces.Stop = False then
           begin
             case THeader(Headers.Items[I]).Action of
               toCopy: Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
@@ -1161,7 +1162,8 @@ begin
         // write Headers
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
-        for I := 0 to Headers.Count - 1 do if Interfaces.Stop = False then
+        for I := 0 to Headers.Count - 1 do
+          if Interfaces.Stop = False then
           begin
             case THeader(Headers.Items[I]).Action of
               toCopy: Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
