@@ -245,7 +245,7 @@ begin
   with FCommandLine do
   begin
     if ((Command in SetOfCommands) and (ArchiveName > '')) or
-      (Command = '?') then  case Command of
+      (Command = '?') then case Command of
         'A': EncodeShell;
         'D': DeleteShell;
         'E': DecodeShell(toExtract);
@@ -833,7 +833,7 @@ begin
       end;
 
     if (iDictionary > -1) and (THeader(Headers.Items[iDictionary]).Action =
-      toNone) then  THeader(Headers.Items[iDictionary]).Action := toQuit;
+      toNone) then THeader(Headers.Items[iDictionary]).Action := toQuit;
 
     if (iTable > -1) and (THeader(Headers.Items[iTable]).Action = toNone) then
       THeader(Headers.Items[iTable]).Action := toQuit;
