@@ -266,11 +266,11 @@ begin
 
   if foVersion in Data.FileFlags then
     if Stream.Read(Data.FileVersion, SizeOf(Data.FileVersion)) <>
-      SizeOf(Data.FileVersion) then  Fail;
+      SizeOf(Data.FileVersion) then Fail;
 
   if foMethod in Data.FileFlags then
     if Stream.Read(Data.FileMethod, SizeOf(Data.FileMethod)) <>
-      SizeOf(Data.FileMethod) then  Fail;
+      SizeOf(Data.FileMethod) then Fail;
 
   if foDictionary in Data.FileFlags then
     if Stream.Read(Data.FileDictionary, SizeOf(Data.FileDictionary)) <>
@@ -278,7 +278,7 @@ begin
 
   if foTable in Data.FileFlags then
     if Stream.Read(Data.FileTable, SizeOf(Data.FileTable)) <>
-      SizeOf(Data.FileTable) then  Fail;
+      SizeOf(Data.FileTable) then Fail;
 
   if Stream.Read(Data.FileSize, sSecondPart) <> sSecondPart then Fail;
 

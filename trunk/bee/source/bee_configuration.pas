@@ -208,8 +208,8 @@ begin
       GetTable('.Default', T);
 
   if not Result then Result :=
-      (S > '') and (IndexOfName(S) >= 0) and (IndexOfName(S) <
-      IndexOfName(Ext)) and GetTable(S, T);
+      (S > '') and (IndexOfName(S) >= 0) and
+      (IndexOfName(S) < IndexOfName(Ext)) and GetTable(S, T);
 end;
 
 procedure TConfigSection.PutData(const Name: string; var Data;
