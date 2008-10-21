@@ -262,8 +262,8 @@ begin
   Result := nil;
 end;
 
-function TSynchronizerManager.InfoBySync(ASyncBaseThreadID: longword):
-TSyncInfo;
+function TSynchronizerManager.InfoBySync(ASyncBaseThreadID:
+  longword): TSyncInfo;
 begin
   Result := FindSyncInfo(ASyncBaseThreadID);
   Assert(Result <> nil,
