@@ -37,7 +37,9 @@ unit Bee_Headers;
 interface
 
 uses
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  Windows,
+{$ENDIF}
   SysUtils, // TSearchRec
   Classes, // TList
   // ---
@@ -194,10 +196,8 @@ function CompareFn(L: TList; Index1, Index2: integer): integer;
 var
   Bool1, Bool2: boolean;
 begin
-  with THeader(L.Items[Index1]) do
-    Bool1 := (Action = toUpdate);
-  with THeader(L.Items[Index2]) do
-    Bool2 := (Action = toUpdate);
+  with THeader(L.Items[Index1]) do Bool1 := (Action = toUpdate);
+  with THeader(L.Items[Index2]) do Bool2 := (Action = toUpdate);
 
   if (Bool1 and Bool2) then
   begin
@@ -205,23 +205,20 @@ begin
       ExtractFileExt(THeader(L.Items[Index1]).Data.FileName),
       ExtractFileExt(THeader(L.Items[Index2]).Data.FileName));
 
-    if Result = 0 then
-      Result := CompareFileName(
-        ExtractFileName(THeader(L.Items[Index1]).Data.FileName),
+    if Result = 0 then Result :=
+        CompareFileName(ExtractFileName(THeader(L.Items[Index1]).Data.FileName),
         ExtractFileName(THeader(L.Items[Index2]).Data.FileName));
 
-    if Result = 0 then
-      Result := CompareFileName(THeader(L.Items[Index1]).Data.FileName,
+    if Result = 0 then Result :=
+        CompareFileName(THeader(L.Items[Index1]).Data.FileName,
         THeader(L.Items[Index2]).Data.FileName);
   end
   else
-  if Bool1 then
-    Result := 1
-  else
-  if Bool2 then
-    Result := -1
-  else
-    Result := Index1 - Index2;
+    if Bool1 then Result := 1
+    else
+      if Bool2 then Result := -1
+      else
+        Result := Index1 - Index2;
 end;
 
 // THeader class
@@ -265,34 +262,27 @@ begin
   Action := aAction;
 
   if Stream.Read(Data.FileFlags, SizeOf(Data.FileFlags)) <>
-    SizeOf(Data.FileFlags) then
-    Fail;
+    SizeOf(Data.FileFlags) then Fail;
 
   if foVersion in Data.FileFlags then
     if Stream.Read(Data.FileVersion, SizeOf(Data.FileVersion)) <>
-      SizeOf(Data.FileVersion) then
-      Fail;
+      SizeOf(Data.FileVersion) then  Fail;
 
   if foMethod in Data.FileFlags then
     if Stream.Read(Data.FileMethod, SizeOf(Data.FileMethod)) <>
-      SizeOf(Data.FileMethod) then
-      Fail;
+      SizeOf(Data.FileMethod) then  Fail;
 
   if foDictionary in Data.FileFlags then
     if Stream.Read(Data.FileDictionary, SizeOf(Data.FileDictionary)) <>
-      SizeOf(Data.FileDictionary) then
-      Fail;
+      SizeOf(Data.FileDictionary) then Fail;
 
   if foTable in Data.FileFlags then
     if Stream.Read(Data.FileTable, SizeOf(Data.FileTable)) <>
-      SizeOf(Data.FileTable) then
-      Fail;
+      SizeOf(Data.FileTable) then  Fail;
 
-  if Stream.Read(Data.FileSize, sSecondPart) <> sSecondPart then
-    Fail;
+  if Stream.Read(Data.FileSize, sSecondPart) <> sSecondPart then Fail;
 
-  if Stream.Read(j, SizeOf(j)) <> SizeOf(j) then
-    Fail;
+  if Stream.Read(j, SizeOf(j)) <> SizeOf(j) then Fail;
 
   if j > 0 then
   begin
@@ -368,14 +358,13 @@ begin
     if CompareFileName(FileName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
     else
-    if CompareFileName(FileName, THeader(Items[M]).Data.FileName) < 0 then
-      H := M - 1
-    else
-      H := -2;
+      if CompareFileName(FileName, THeader(Items[M]).Data.FileName) < 0 then
+        H := M - 1
+      else
+        H := -2;
   end;
 
-  if H <> -2 then
-    Result := nil
+  if H <> -2 then Result := nil
   else
     Result := Items[M];
 end;
@@ -396,19 +385,18 @@ begin
     if CompareFileName(FName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
     else
-    if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
-      H := M - 1
-    else
-      H := -2;
+      if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
+        H := M - 1
+      else
+        H := -2;
   end;
 
-  if M = -1 then
-    Result := 0
+  if M = -1 then Result := 0
   else
-  if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
-    Result := M
-  else
-    Result := M + 1;
+    if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
+      Result := M
+    else
+      Result := M + 1;
 
   Insert(Result, Item);
 end;
@@ -468,8 +456,7 @@ begin
         FirstSlash := I;
       end;
     end
-    else
-    begin
+    else begin
       if Mask[I] = PathDelim then
       begin
         LastSlash := I;
@@ -499,8 +486,7 @@ begin
     end;
     FindClose(Rec);
   end
-  else
-  begin
+  else begin
     Masks.Add(Mask);
   end;
 end;
@@ -547,8 +533,7 @@ var
   I: integer;
 begin
   Result := 0;
-  for I := 0 to Count - 1 do
-    with THeader(Items[I]) do
+  for I := 0 to Count - 1 do with THeader(Items[I]) do
     begin
       if (Action = MaskAct) and
         (FileNameMatch(Data.FileName, Masks, rOption)) then
@@ -565,8 +550,7 @@ var
   I: integer;
 begin
   Result := 0;
-  for I := 0 to Count - 1 do
-    with THeader(Items[I]) do
+  for I := 0 to Count - 1 do with THeader(Items[I]) do
     begin
       if (Action = MaskAct) and
         (FileNameMatch(Data.FileName, Mask, rOption)) then
@@ -624,13 +608,11 @@ begin
       P.Data.FileDictionary := Dictionary;
       PreviousExt := CurrentExt;
 
-      if Length(eOption) = 0 then
-        CurrentExt := ExtractFileExt(P.Data.FileName)
+      if Length(eOption) = 0 then CurrentExt := ExtractFileExt(P.Data.FileName)
       else
         CurrentExt := eOption;
 
-      if kOption then
-        Include(P.Data.FileFlags, foPassword);
+      if kOption then Include(P.Data.FileFlags, foPassword);
 
       if (Method = 0) or (not Config.GetTable(CurrentExt,
         P.Data.FileTable)) then
@@ -639,16 +621,14 @@ begin
         Exclude(P.Data.FileFlags, foTable);
       end
       else
-      if CompareFileName(CurrentExt, PreviousExt) <> 0 then
-      begin
-        Include(P.Data.FileFlags, foTable);
-      end
-      else
-      begin
-        Exclude(P.Data.FileFlags, foTable);
-        if sOption then
-          Exclude(P.Data.FileFlags, foTear);
-      end;
+        if CompareFileName(CurrentExt, PreviousExt) <> 0 then
+        begin
+          Include(P.Data.FileFlags, foTable);
+        end
+        else begin
+          Exclude(P.Data.FileFlags, foTable);
+          if sOption then Exclude(P.Data.FileFlags, foTear);
+        end;
 
       Inc(I);
     until I = Count;
@@ -665,8 +645,7 @@ begin
   begin
     Strm := TFileReader.Create(FileName, fmOpenRead);
     try
-      if Module.CopyFrom(Strm, Strm.Size) = Strm.Size then
-        Result      := True
+      if Module.CopyFrom(Strm, Strm.Size) = Strm.Size then Result := True
       else
         Module.Size := 0;
     finally
@@ -677,8 +656,7 @@ end;
 
 function THeaders.GetModule: integer;
 begin
-  if Assigned(Module) then
-    Result := Module.Size
+  if Assigned(Module) then Result := Module.Size
   else
     Result := -1;
 end;
@@ -728,8 +706,7 @@ begin
   repeat
     if Stream.Read(Readed, 1) = 1 then
     begin
-      if Readed = B4bMarker[NextByte] then
-        Inc(NextByte)
+      if Readed = B4bMarker[NextByte] then Inc(NextByte)
       else
         NextByte := 0;
 
@@ -769,8 +746,7 @@ begin
     Stream.Seek(OffSet, 0);
     repeat
       if (Stream.Read(Id, SizeOf(integer)) = SizeOf(integer)) and
-        (Id = Marker) then
-        try
+        (Id = Marker) then try
           P := THeader.Read(Stream, aAction);
           Add(P);
         except
@@ -805,8 +781,7 @@ begin
     Stream.Seek(Module.Size, 0);
 
   MarkAsLast(toDelete);
-  for I := 0 to Count - 1 do
-    if THeader(Items[I]).Action <> toDelete then
+  for I := 0 to Count - 1 do if THeader(Items[I]).Action <> toDelete then
     begin
       Stream.Write(Marker, 4);
       THeader(Items[I]).Write(Stream);
@@ -818,8 +793,7 @@ var
   I: integer;
 begin
   Result := 0;
-  for I := 0 to Count - 1 do
-    if THeader(Items[I]).Action in Actions then
+  for I := 0 to Count - 1 do if THeader(Items[I]).Action in Actions then
     begin
       Inc(Result);
     end;
@@ -830,8 +804,7 @@ var
   I: integer;
 begin
   Result := -1;
-  for I := Child to Count - 1 do
-    if THeader(Items[I]).Action = aAction then
+  for I := Child to Count - 1 do if THeader(Items[I]).Action = aAction then
     begin
       Result := I;
       Break;
@@ -843,8 +816,7 @@ var
   I: integer;
 begin
   Result := -1;
-  for I := Child downto 0 do
-    if THeader(Items[I]).Action = aAction then
+  for I := Child downto 0 do if THeader(Items[I]).Action = aAction then
     begin
       Result := I;
       Break;
@@ -887,8 +859,7 @@ var
   I: integer;
 begin
   Result := -1;
-  for I := Child to Count - 1 do
-    with THeader(Items[I]) do
+  for I := Child to Count - 1 do with THeader(Items[I]) do
     begin
       if (Action = aAction) and
         (CompareFileName(Data.FileName, aFileName) = 0) then
@@ -905,8 +876,7 @@ var
   I: integer;
 begin
   Result := -1;
-  for I := Child downto 0 do
-    with THeader(Items[I]) do
+  for I := Child downto 0 do with THeader(Items[I]) do
     begin
       if (Action in aActions) and
         (CompareFileName(Data.FileName, aFileName) = 0) then
@@ -923,8 +893,7 @@ var
   I: integer;
 begin
   Result := -1;
-  for I := Child to Count - 1 do
-    with THeader(Items[I]) do
+  for I := Child to Count - 1 do with THeader(Items[I]) do
     begin
       if (Action in aActions) and
         (CompareFileName(Data.FileName, aFileName) = 0) then
@@ -941,8 +910,7 @@ var
   I: integer;
 begin
   Result := -1;
-  for I := Child downto 0 do
-    with THeader(Items[I]) do
+  for I := Child downto 0 do with THeader(Items[I]) do
     begin
       if (Action = aAction) and
         (CompareFileName(Data.FileName, aFileName) = 0) then
@@ -958,8 +926,7 @@ var
   I: integer;
 begin
   Result := 0;
-  for I := 0 to Count - 1 do
-    if THeader(Items[I]).Action = aAction then
+  for I := 0 to Count - 1 do if THeader(Items[I]).Action = aAction then
     begin
       Inc(Result, THeader(Items[I]).Data.FileSize);
     end;
@@ -970,8 +937,7 @@ var
   I: integer;
 begin
   Result := 0;
-  for I := 0 to Count - 1 do
-    if THeader(Items[I]).Action = aAction then
+  for I := 0 to Count - 1 do if THeader(Items[I]).Action = aAction then
     begin
       Inc(Result, THeader(Items[I]).Data.FilePacked);
     end;
@@ -982,8 +948,7 @@ var
   I: integer;
 begin
   Result := 0;
-  for I := 0 to Count - 1 do
-    if THeader(Items[I]).Action in Actions then
+  for I := 0 to Count - 1 do if THeader(Items[I]).Action in Actions then
     begin
       Inc(Result, THeader(Items[I]).Data.FileSize);
     end;
@@ -994,8 +959,7 @@ var
   I: integer;
 begin
   Result := 0;
-  for I := 0 to Count - 1 do
-    if THeader(Items[I]).Action in Actions then
+  for I := 0 to Count - 1 do if THeader(Items[I]).Action in Actions then
     begin
       Inc(Result, THeader(Items[I]).Data.FilePacked);
     end;
@@ -1007,35 +971,29 @@ procedure THeaders.QuickSort(L, R: integer);
 var
   I, J, Pivot: integer;
 begin
-  if R < L then
-    Exit;
+  if R < L then Exit;
   repeat
     I := L;
     J := R;
 
     Pivot := (L + R) div 2;
     repeat
-      while CompareFn(Self, I, Pivot) < 0 do
-        Inc(I);
-      while CompareFn(Self, J, Pivot) > 0 do
-        Dec(J);
+      while CompareFn(Self, I, Pivot) < 0 do Inc(I);
+      while CompareFn(Self, J, Pivot) > 0 do Dec(J);
       if I <= J then
       begin
         Exchange(I, J);
 
-        if Pivot = I then
-          Pivot := J
+        if Pivot = I then Pivot := J
         else
-        if Pivot = J then
-          Pivot := I;
+          if Pivot = J then Pivot := I;
 
         Inc(I);
         Dec(j);
       end;
     until I > J;
 
-    if L < J then
-      QuickSort(L, J);
+    if L < J then QuickSort(L, J);
 
     L := I;
   until I >= R;
@@ -1045,8 +1003,7 @@ procedure THeaders.MarkAsLast(Action: THeaderAction);
 var
   I: integer;
 begin
-  for I := Count - 1 downto 0 do
-    if THeader(Items[I]).Action <> Action then
+  for I := Count - 1 downto 0 do if THeader(Items[I]).Action <> Action then
     begin
       Include(THeader(Items[I]).Data.FileFlags, foLast);
       Break;
@@ -1070,11 +1027,11 @@ begin
     rOption := True;
   end
   else
-  if DirectoryExists(Mask) then
-  begin
-    Mask    := IncludeTrailingBackSlash(Mask) + '*';
-    rOption := True;
-  end;
+    if DirectoryExists(Mask) then
+    begin
+      Mask    := IncludeTrailingBackSlash(Mask) + '*';
+      rOption := True;
+    end;
 
   RecPath := ExtractFilePath(Mask);
   Error   := FindFirst(RecPath + '*', faAnyFile, Rec);
@@ -1097,14 +1054,13 @@ begin
               Size := Size + Rec.Size;
             end
             else
-            if (Rec.Time > THeader(J).Data.FileTime) then
-            begin
-              THeader(J).Fresh(cdOption, RecPath, Rec);
-              Size := Size + (Rec.Size - THeader(J).Data.FileSize);
-            end;
+              if (Rec.Time > THeader(J).Data.FileTime) then
+              begin
+                THeader(J).Fresh(cdOption, RecPath, Rec);
+                Size := Size + (Rec.Size - THeader(J).Data.FileSize);
+              end;
           end
-          else
-          begin
+          else begin
             if fOption then
             begin
               if (not (J = nil)) and (Rec.Time > THeader(J).Data.FileTime) then
@@ -1113,8 +1069,7 @@ begin
                 Size := Size + (Rec.Size - THeader(J).Data.FileSize);
               end;
             end
-            else
-            begin
+            else begin
               if (J = nil) then
               begin
                 P := THeader.Create(cdOption, RecPath, Rec);
@@ -1126,8 +1081,7 @@ begin
           end;
         end;
     end
-    else
-    begin
+    else begin
       if rOption and (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
         ScanFileSystem(

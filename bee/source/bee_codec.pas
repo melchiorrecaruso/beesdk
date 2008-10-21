@@ -99,8 +99,7 @@ end;
 function TSecondaryEncoder.UpdateSymbol(Freq0, Freq1, aSymbol:
   cardinal): cardinal;
 begin
-  if aSymbol = 0 then
-    Encode(0, Freq0, Freq0 + Freq1)
+  if aSymbol = 0 then Encode(0, Freq0, Freq0 + Freq1)
   else
     Encode(Freq0, Freq1, Freq0 + Freq1);
   Result := aSymbol;
@@ -152,8 +151,7 @@ begin
     Decode(0, Freq0, Freq0 + Freq1);
     Result := 0;
   end
-  else
-  begin
+  else begin
     Decode(Freq0, Freq1, Freq0 + Freq1);
     Result := 1;
   end;

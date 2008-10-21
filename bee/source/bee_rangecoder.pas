@@ -69,18 +69,30 @@ type
     procedure FinishEncode;
     procedure FinishDecode;
     procedure Encode(CumFreq, Freq, TotFreq: cardinal);
-{$IFDEF FPC} inline; {$ENDIF}
+{$IFDEF FPC}
+      inline;
+{$ENDIF}
     function GetFreq(TotFreq: cardinal): cardinal;
-{$IFDEF FPC} inline; {$ENDIF}
+{$IFDEF FPC}
+      inline;
+{$ENDIF}
     procedure Decode(CumFreq, Freq, TotFreq: cardinal);
-{$IFDEF FPC} inline; {$ENDIF}
+{$IFDEF FPC}
+      inline;
+{$ENDIF}
   private
     procedure ShiftLow;
-{$IFDEF FPC} inline; {$ENDIF}
+{$IFDEF FPC}
+      inline;
+{$ENDIF}
     function InputByte: cardinal;
-{$IFDEF FPC} inline; {$ENDIF}
+{$IFDEF FPC}
+      inline;
+{$ENDIF}
     procedure OutputByte(aValue: cardinal);
-{$IFDEF FPC} inline; {$ENDIF}
+{$IFDEF FPC}
+      inline;
+{$ENDIF}
   private
     FStream: TStream;
     Range:   cardinal;
@@ -124,8 +136,7 @@ procedure TRangeCoder.FinishEncode;
 var
   I: integer;
 begin
-  for I := 0 to NUM do
-    ShiftLow;
+  for I := 0 to NUM do ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;

@@ -159,8 +159,7 @@ end;
 
 procedure TEncoder.Tick;
 begin
-  while Interfaces.Suspend do
-    Sleep(250);
+  while Interfaces.Suspend do Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
@@ -177,11 +176,9 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then
-    PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then
-    PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -218,8 +215,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Stop = False then
-            Tick
+          if Interfaces.Stop = False then Tick
           else
             Break;
         end;
@@ -229,15 +225,13 @@ begin
         Stream.Write(Symbol, 1);
       end;
     end
-    else
-    begin
+    else begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Stop = False then
-            Tick
+          if Interfaces.Stop = False then Tick
           else
             Break;
         end;
@@ -256,8 +250,7 @@ begin
 
     Sync(Interfaces.OnClear.Method);
   end
-  else
-  begin
+  else begin
     Interfaces.OnError.Data.Msg :=
       ('Error: can''t open file ' + Header.Data.FileName);
     Sync(Interfaces.OnError.Method);
@@ -288,11 +281,9 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then
-    PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then
-    PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -329,8 +320,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Stop = False then
-            Tick
+          if Interfaces.Stop = False then Tick
           else
             Break;
         end;
@@ -340,15 +330,13 @@ begin
         Stream.Write(Symbol, 1);
       end;
     end
-    else
-    begin
+    else begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Stop = False then
-            Tick
+          if Interfaces.Stop = False then Tick
           else
             Break;
         end;
@@ -367,8 +355,7 @@ begin
 
     Sync(Interfaces.OnClear.Method);
   end
-  else
-  begin
+  else begin
     Interfaces.OnError.Data.Msg := ('Error: stream  not found');
     Sync(Interfaces.OnError.Method);
   end;
@@ -398,11 +385,9 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then
-    PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then
-    PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -424,8 +409,7 @@ begin
     begin
       if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
       begin
-        if Interfaces.Stop = False then
-          Tick
+        if Interfaces.Stop = False then Tick
         else
           Break;
       end;
@@ -436,8 +420,7 @@ begin
 
     Sync(Interfaces.OnClear.Method);
   end
-  else
-  begin
+  else begin
     Interfaces.OnError.Data.Msg := ('Error: stream  not found');
     Sync(Interfaces.OnError.Method);
   end;
@@ -478,8 +461,7 @@ end;
 
 procedure TDecoder.Tick;
 begin
-  while Interfaces.Suspend do
-    Sleep(250);
+  while Interfaces.Suspend do Sleep(250);
   with Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
@@ -496,11 +478,9 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then
-    PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then
-    PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -521,8 +501,7 @@ begin
   Stream.Seek(Header.Data.FileStartPos, 0); // stream flush
   Crc := cardinal(-1);
 
-  if Mode = pmNorm then
-    try
+  if Mode = pmNorm then try
       DstFile := TFileWriter.Create(Header.Data.FileName, fmCreate)
     except
       DstFile := nil;
@@ -544,8 +523,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Stop = False then
-            Tick
+          if Interfaces.Stop = False then Tick
           else
             Break;
         end;
@@ -555,15 +533,13 @@ begin
         DstFile.Write(Symbol, 1);
       end;
     end
-    else
-    begin
+    else begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Stop = False then
-            Tick
+          if Interfaces.Stop = False then Tick
           else
             Break;
         end;
@@ -592,8 +568,7 @@ begin
   Result := Header.Data.FileCrc = Crc;
   if Result = False then
   begin
-    if Crc = cardinal(-1) then
-      Interfaces.OnError.Data.Msg :=
+    if Crc = cardinal(-1) then Interfaces.OnError.Data.Msg :=
         ('Error: can''t open file ' + Header.Data.FileName)
     else
       Interfaces.OnError.Data.Msg := msgCRCERROR + Header.Data.FileName;
@@ -611,11 +586,9 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then
-    PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then
-    PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -636,8 +609,7 @@ begin
   Stream.Seek(Header.Data.FileStartPos, 0);
   Crc := cardinal(-1);
 
-  if Mode = pmNorm then
-    try
+  if Mode = pmNorm then try
       DstFile := DstStrm;
       Header.Data.FileStartPos := DstFile.Seek(0, 1);
     except
@@ -664,8 +636,7 @@ begin
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Stop = False then
-            Tick
+          if Interfaces.Stop = False then Tick
           else
             Break;
         end;
@@ -675,15 +646,13 @@ begin
         DstFile.Write(Symbol, 1);
       end;
     end
-    else
-    begin
+    else begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
         begin
-          if Interfaces.Stop = False then
-            Tick
+          if Interfaces.Stop = False then Tick
           else
             Break;
         end;
@@ -708,8 +677,8 @@ begin
   Result := Header.Data.FileCrc = Crc;
   if Result = False then
   begin
-    if Crc = cardinal(-1) then
-      Interfaces.OnError.Data.Msg := ('Error: stream not found')
+    if Crc = cardinal(-1) then Interfaces.OnError.Data.Msg :=
+        ('Error: stream not found')
     else
       Interfaces.OnError.Data.Msg := msgCRCERROR + Header.Data.FileName;
     Sync(Interfaces.OnError.Method);

@@ -93,8 +93,7 @@ destructor TConfiguration.Destroy;
 var
   I: integer;
 begin
-  for I := 0 to Count - 1 do
-    Objects[I].Free;
+  for I := 0 to Count - 1 do Objects[I].Free;
   inherited;
 end;
 
@@ -111,13 +110,12 @@ begin
   for I := 0 to List.Count - 1 do
   begin
     S := List[I];
-    if (S > '') and (S[1] = '\') then
-      Selector(S)
+    if (S > '') and (S[1] = '\') then Selector(S)
     else
-    if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
-      CurrentSection.Add(S)
-    else
-      CurrentSection.Values[aName] := aValue;
+      if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
+        CurrentSection.Add(S)
+      else
+        CurrentSection.Values[aName] := aValue;
   end;
 
   Selector('\main');
@@ -205,13 +203,13 @@ var
 begin
   S      := Values[Ext];
   Result := GetData(Ext, T, SizeOf(T));
-  if not Result then
-    Result := (S = '') and (CompareText(Ext, '.Default') <> 0) and
+  if not Result then Result :=
+      (S = '') and (CompareText(Ext, '.Default') <> 0) and
       GetTable('.Default', T);
 
-  if not Result then
-    Result := (S > '') and (IndexOfName(S) >= 0) and
-      (IndexOfName(S) < IndexOfName(Ext)) and GetTable(S, T);
+  if not Result then Result :=
+      (S > '') and (IndexOfName(S) >= 0) and (IndexOfName(S) <
+      IndexOfName(Ext)) and GetTable(S, T);
 end;
 
 procedure TConfigSection.PutData(const Name: string; var Data;

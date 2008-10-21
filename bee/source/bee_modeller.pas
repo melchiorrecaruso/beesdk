@@ -265,8 +265,7 @@ var
   I, J:  PPNode;
   Bound: integer;
 begin
-  if Cuts = nil then
-    SetLength(Cuts, MaxCounter + 1);
+  if Cuts = nil then SetLength(Cuts, MaxCounter + 1);
 
   I := @Cuts[0];
   J := I;
@@ -278,14 +277,12 @@ begin
     P := I^.Up;
     repeat
       Dec(Bound);
-      if P.Up <> nil then
-        if P.A > LowestPos then
+      if P.Up <> nil then if P.A > LowestPos then
         begin
           J^ := P;
           Inc(J);
         end
-        else
-        begin
+        else begin
           P.Up.Tear := Tear;
           Tear      := P.Up;
           P.Up      := nil;
@@ -295,8 +292,7 @@ begin
     Inc(I);
   until (I = J) or (Bound < 0);
 
-  if I <> J then
-    Cut_Tail(I, J);
+  if I <> J then Cut_Tail(I, J);
 
   Counter   := integer(SafeCounter * 3 div 4) - Bound + 1;
   ListCount := 0;
@@ -330,8 +326,7 @@ begin
     if P.Up <> nil then
     begin
       P := P.Up;
-      if IncreaseIndex = 0 then
-        IncreaseIndex := I;
+      if IncreaseIndex = 0 then IncreaseIndex := I;
       if P.Next <> nil then
       begin
         // Undetermined context ...
@@ -359,8 +354,7 @@ begin
           P := P.Next;
         until P = nil;
       end
-      else
-      begin
+      else begin
         // Determined context ...
         K := P.K * Part[1] div Increment + 256;
         K := (R div K) shl 8;
@@ -368,14 +362,15 @@ begin
         R := K;
       end;
     end
-    else if P.A > LowestPos then
-    begin
-      // Determined context, encountered at first time ...
-      CreateChild(P);
-      K := R div Part[0] shl 8;
-      Inc(Freq[P.Up.C], R - K);
-      R := K;
-    end;
+    else
+      if P.A > LowestPos then
+      begin
+        // Determined context, encountered at first time ...
+        CreateChild(P);
+        K := R div Part[0] shl 8;
+        Inc(Freq[P.Up.C], R - K);
+        R := K;
+      end;
     Inc(I);
   until (I = ListCount) or (R <= Part[MaxSymbol + 5]);
   ListCount := I;
@@ -389,10 +384,8 @@ begin
   Node.A := Pos;
   Result := Node.Up;
 
-  if Result = nil then
-    CreateChild(Node)
-  else
-  begin
+  if Result = nil then CreateChild(Node)
+  else begin
     C := Symbol;
     if Result.C <> C then
     begin
@@ -404,13 +397,14 @@ begin
           CreateChild(Node);
           Break;
         end
-        else if Result.C = C then
-        begin
-          P.Next      := Result.Next;
-          Result.Next := Node.Up;
-          Node.Up     := Result;
-          Break;
-        end;
+        else
+          if Result.C = C then
+          begin
+            P.Next      := Result.Next;
+            Result.Next := Node.Up;
+            Node.Up     := Result;
+            Break;
+          end;
       until False;
     end;
   end;
@@ -424,8 +418,7 @@ begin
   ClearCardinal(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
 
-  if ListCount > 0 then
-    Account;
+  if ListCount > 0 then Account;
 
   // Update aSymbol...
   AddCardinal(Freq[0], MaxSymbol + 1, R shr BitChain + 1);
@@ -444,8 +437,7 @@ begin
       else
         Inc(P.K, Part[MaxSymbol + 4]);  // General case...
 
-      if P.K > Part[MaxSymbol + 3] then
-        repeat
+      if P.K > Part[MaxSymbol + 3] then repeat
           P.K := P.K shr 1;
           P   := P.Next;
         until P = nil;
@@ -481,8 +473,7 @@ begin
   Inc(Result, Symbol);
 
   // Reduce tree...
-  if SafeCounter < Counter then
-    Cut;
+  if SafeCounter < Counter then Cut;
 
   // Update NodeList...
   if ListCount > Table.Level then
