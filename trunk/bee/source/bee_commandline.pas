@@ -160,8 +160,11 @@ begin
   if Length(S) > 1 then
   begin
     Delete(S, 1, 2);
-    if (S = '') or (S = '+') then Option := True
-    else if (S = '-') then Option := False;
+    if (S = '') or (S = '+') then
+      Option := True
+    else
+    if (S = '-') then
+      Option := False;
   end;
 end;
 
@@ -189,15 +192,16 @@ begin
         begin
           Delete(S, 1, 2);
           if DirectoryExists(ExcludeTrailingBackslash(S)) then
-          begin
             FyOption := ExcludeTrailingBackslash(S);
-          end;
         end;
         'A':
         begin
           Delete(S, 1, 2);
-          if (S = '+') or (Length(S) = 0) then FaOption := 'bee.sfx'
-          else if (S = '-') then FaOption := 'nul'
+          if (S = '+') or (Length(S) = 0) then
+            FaOption := 'bee.sfx'
+          else
+          if (S = '-') then
+            FaOption := 'nul'
           else
             FaOption := S;
         end;
@@ -205,86 +209,68 @@ begin
         begin
           Delete(S, 1, 2);
           if (Length(S) = 1) and (S[1] in ['0'..'3']) then
-          begin
             FmOption := StrToInt(S);
-          end;
         end;
         'O':
         begin
           Delete(S, 1, 2);
           if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
-          begin
             FoOption := UpCase(S[1]);
-          end;
         end;
         'D':
         begin
           Delete(S, 1, 2);
           if (Length(S) = 1) and (S[1] in ['0'..'9']) then
-          begin
             FdOption := StrToInt(S);
-          end;
         end;
         'E':
         begin
           Delete(S, 1, 2);
           if ExtractFileExt('.' + S) <> '.' then
-          begin
             FeOption := ExtractFileExt('.' + S);
-          end;
         end;
         'X':
         begin
           Delete(S, 1, 2);
           if Length(S) > 0 then
-          begin
             FxOption.Add(S);
-          end;
         end;
       else if Pos('-PRI', UpperCase(S)) = 1 then
         begin
           Delete(S, 1, 4);
           if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
-          begin
             FpriOption := StrToInt(S[1]);
-          end;
         end else
+        if Pos('-CD', UpperCase(S)) = 1 then
         begin
-          if Pos('-CD', UpperCase(S)) = 1 then
-          begin
-            Delete(S, 1, 3);
-            if Length(S) > 0 then
-            begin
-              FcdOption := IncludeTrailingBackslash(FixDirName(S));
-            end;
-          end else
-          begin
-            if Pos('-CFG', UpperCase(S)) = 1 then
-            begin
-              Delete(S, 1, 4);
-              FcfgOption := S;
-            end;
-          end;
+          Delete(S, 1, 3);
+          if Length(S) > 0 then
+            FcdOption := IncludeTrailingBackslash(FixDirName(S));
+        end else
+        if Pos('-CFG', UpperCase(S)) = 1 then
+        begin
+          Delete(S, 1, 4);
+          FcfgOption := S;
         end;
       end; // end case
     end else
+    if FCommand = ' ' then
     begin
-      // command or filenames...
-      if FCommand = ' ' then
+      if Length(S) = 1 then
+        FCommand := UpCase(S[1])
+      else
       begin
-        if Length(S) = 1 then FCommand := UpCase(S[1])
-        else
-          FCommand := '?';
-      end else if FArchiveName = '' then
-      begin
-        FArchiveName := S;
-        if ExtractFileExt(FArchiveName) = '' then
-        begin
-          FArchiveName := ChangeFileExt(FArchiveName, '.bee');
-        end;
-      end else
-        FFileMasks.Add(S);
-    end;
+        FCommand := '?';
+      end;
+    end else
+    if FArchiveName = '' then
+    begin
+      FArchiveName := S;
+      if ExtractFileExt(FArchiveName) = '' then
+        FArchiveName := ChangeFileExt(FArchiveName, '.bee');
+    end else
+      FFileMasks.Add(S)// command or filenames...
+    ;
   end; // end for loop
 
   // process file masks

@@ -123,7 +123,7 @@ begin
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0896 archiver utility, freeware version, Oct 2008.' +
+    'The Bee 0.7.9 build 0900 archiver utility, freeware version, Oct 2008.' +
     Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
 
   FArcFile  := nil;
@@ -242,9 +242,9 @@ begin
   Interfaces.OnDisplay.Data.Msg := FSelfName;
   Synchronize(Interfaces.OnDisplay.Method);
   with FCommandLine do
-  begin
     if ((Command in SetOfCommands) and (ArchiveName > '')) or
-      (Command = '?') then case Command of
+      (Command = '?') then
+      case Command of
         'A': EncodeShell;
         'D': DeleteShell;
         'E': DecodeShell(toExtract);
@@ -255,7 +255,6 @@ begin
         '?': DisplayUsage;
       end else
       DisplayUsage;
-  end;
 end;
 
 procedure TBeeApp.SetPriority(aPriority: integer); // Priority is 0..3
@@ -318,20 +317,14 @@ var
   I: integer;
 begin
   if FCommandLine.Command = 'E' then
-  begin
     for I := 0 to Headers.Count - 1 do
       with THeader(Headers.Items[I]).Data do
-      begin
-        FileName := ExtractFileName(FileName);
-      end;
-  end else if Length(FCommandLine.cdOption) > 0 then
-  begin
+        FileName := ExtractFileName(FileName)
+  else
+  if Length(FCommandLine.cdOption) > 0 then
     for I := 0 to Headers.Count - 1 do
       with THeader(Headers.Items[I]).Data do
-      begin
         FileName := DeleteFilePath(FCommandLine.cdOption, FileName);
-      end;
-  end;
 end;
 
 // -------------------------------------------------------------------------- //
@@ -440,18 +433,14 @@ begin
   end;
 
   for I := 0 to Headers.Count - 1 do
-  begin
     if (THeader(Headers.Items[I]).Action = toExtract) then
     begin
       J := Headers.GetBack(I - 1, toExtract,
         THeader(Headers.Items[I]).Data.FileName);
 
       if J > -1 then
-      begin
         THeader(Headers.Items[J]).Action := toNone;
-      end;
     end;
-  end;
 end;
 
 procedure TBeeApp.ProcessFilesToOverWriteAdvanced(Headers: THeaders);
@@ -465,30 +454,25 @@ begin
     begin
       for I := 0 to Headers.Count - 1 do
         if (THeader(Headers.Items[I]).Action = toExtract) then
-        begin
           if (FileExists(THeader(Headers.Items[I]).Data.FileName) = True) then
             THeader(Headers.Items[I]).Action := toNone
           else
             ProcessFileToOverWrite(Headers, I);
-        end;
     end else
+    begin
       for I := 0 to Headers.Count - 1 do
         if (THeader(Headers.Items[I]).Action = toExtract) then
-        begin
           if (FileExists(THeader(Headers.Items[I]).Data.FileName) = False) then
             THeader(Headers.Items[I]).Action := toNone
           else
-          begin
-            if FileAge(THeader(Headers.Items[I]).Data.FileName) >=
-              THeader(Headers.Items[I]).Data.FileTime then
-              THeader(Headers.Items[I]).Action := toNone
-            else
-              ProcessFileToOverWrite(Headers, I);
-          end;
-        end;
+          if FileAge(THeader(Headers.Items[I]).Data.FileName) >=
+            THeader(Headers.Items[I]).Data.FileTime then
+            THeader(Headers.Items[I]).Action := toNone
+          else
+            ProcessFileToOverWrite(Headers, I);
+    end;
 
   end else
-  begin
     for I := 0 to Headers.Count - 1 do
       if FileExists(THeader(Headers.Items[I]).Data.FileName) = True then
       begin
@@ -496,10 +480,11 @@ begin
           THeader(Headers.Items[I]).Data.FileTime then
           THeader(Headers.Items[I]).Action := toNone
         else
+        begin
           ProcessFileToOverWrite(Headers, I);
+        end;
       end else
         ProcessFileToOverWrite(Headers, I);
-  end;
 end;
 
 function TBeeApp.AlreadyFileExists(Headers: THeaders;
@@ -510,9 +495,7 @@ begin
   begin
     Result := Headers.GetBack(FileIndex - 1, FileActions, FileName);
     if Result = -1 then
-    begin
       Result := Headers.GetNext(FileIndex + 1, FileActions, FileName);
-    end;
   end else
     Result := -1;
 end;
@@ -526,13 +509,11 @@ begin
     THeader(Headers.Items[FileIndex]).Data.FileName);
 
   if J > -1 then
-  begin
     if (THeader(Headers.Items[FileIndex]).Data.FileTime >
       THeader(Headers.Items[J]).Data.FileTime) then
       THeader(Headers.Items[J]).Action := toNone
     else
       THeader(Headers.Items[FileIndex]).Action := toNone;
-  end;
 end;
 
 // -------------------------------------------------------------------------- //
@@ -552,7 +533,6 @@ begin
   if (Headers.GetNext(0, toRename) > -1) then
   begin
     for i := 0 to Headers.Count - 1 do
-    begin
       if (THeader(Headers.Items[i]).Action = toRename) then
       begin
         while True do
@@ -588,11 +568,8 @@ begin
         end;
 
         if Length(iFileName) > 0 then
-        begin
           THeader(Headers.Items[i]).Data.FileName := iFileName;
-        end;
       end;
-    end;
     Result := True;
   end else
     Result := ((Length(FCommandLine.aOption) > 0) and
@@ -614,14 +591,14 @@ begin
     BackTear := Headers.GetBack(I, foTear);
     NextTear := Headers.GetNext(I + 1, foTear);
 
-    if NextTear = -1 then NextTear := Headers.Count;
+    if NextTear = -1 then
+      NextTear := Headers.Count;
 
     // if is solid header
     if ((NextTear - BackTear) > 1) then
     begin
       NextTear := Headers.GetBack(NextTear - 1, toCopy);
       for J := BackTear to NextTear do
-      begin
         case THeader(Headers.Items[J]).Action of
           toCopy:
           begin
@@ -633,7 +610,6 @@ begin
           toFresh: Inc(Interfaces.OnTick.Data.TotalSize,
               THeader(Headers.Items[J]).Data.FileSize); // decoding size
         end;
-      end;
       I := BackTear;
     end;
     I := Headers.GetBack(I - 1, toFresh);
@@ -653,7 +629,8 @@ begin
     BackTear := Headers.GetBack(I, foTear);
     NextTear := Headers.GetNext(I + 1, foTear);
 
-    if NextTear = -1 then NextTear := Headers.Count;
+    if NextTear = -1 then
+      NextTear := Headers.Count;
 
     // if is solid header
     if ((NextTear - BackTear) > 1) then
@@ -661,7 +638,6 @@ begin
       NextTear := Headers.GetBack(NextTear - 1, toCopy);
       // if exists an header toDelete
       if Headers.GetBack(NextTear, toDelete) > (BackTear - 1) then
-      begin
         for J := BackTear to NextTear do
           case THeader(Headers.Items[J]).Action of
             toCopy:
@@ -673,7 +649,6 @@ begin
             toDelete: Inc(Interfaces.OnTick.Data.TotalSize,
                 THeader(Headers.Items[J]).Data.FileSize);
           end;
-      end;
       I := BackTear;
     end;
     I := Headers.GetBack(I - 1, toDelete);
@@ -734,15 +709,19 @@ begin
             if THeader(Headers.Items[J]).Action = toSwap then
               Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, FSwapStrm)
             else
+            begin
               Result := Decoder.DecodeStrm(Headers.Items[J],
                 pmSkip, FSwapStrm);
+            end;
           end else
             Result := False;
 
-          if Result = False then Break;
+          if Result = False then
+            Break;
         end;
 
-        if Result = False then Break;
+        if Result = False then
+          Break;
         I := Headers.GetBack(iTear - 1, toSwap);
       end;
       Decoder.Destroy;
@@ -758,8 +737,8 @@ var
   I: integer;
 begin
   // rescue header informations
-  with Headers do for I := 0 to Count - 2 do
-    begin
+  with Headers do
+    for I := 0 to Count - 2 do
       if THeader(Items[I]).Action = toDelete then
       begin
         if (foVersion in THeader(Items[I]).Data.FileFlags) and
@@ -796,11 +775,8 @@ begin
 
         if (foTear in THeader(Items[I]).Data.FileFlags) and
           (not (foTear in THeader(Items[I + 1]).Data.FileFlags)) then
-        begin
           Include(THeader(Items[I + 1]).Data.FileFlags, foTear);
-        end;
       end;
-    end;
 end;
 
 procedure TBeeApp.ProcessFilesToDecode;
@@ -824,7 +800,8 @@ begin
       end;
 
     if (iDictionary > -1) and (THeader(Headers.Items[iDictionary]).Action =
-      toNone) then THeader(Headers.Items[iDictionary]).Action := toQuit;
+      toNone) then
+      THeader(Headers.Items[iDictionary]).Action := toQuit;
 
     if (iTable > -1) and (THeader(Headers.Items[iTable]).Action = toNone) then
       THeader(Headers.Items[iTable]).Action := toQuit;
@@ -894,7 +871,8 @@ begin
     Interfaces.OnDisplay.Data.Msg := (msgScanning + '...');
     Synchronize(Interfaces.OnDisplay.Method);
     // process FileMasks and xFileMasks
-    with Interfaces.OnTick.Data do Headers.AddItems(
+    with Interfaces.OnTick.Data do
+      Headers.AddItems(
         FCommandLine.FileMasks,
         FCommandLine.cdOption,
         FCommandLine.fOption,
@@ -922,11 +900,13 @@ begin
           Headers.SortNews(FConfiguration, sOption, kOption, eOption);
 
         // if exists a modified solid sequence open swap file
-        if Length(FSwapName) > 0 then FSwapFile :=
+        if Length(FSwapName) > 0 then
+          FSwapFile :=
             CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
 
         // set sfx module
-        with FCommandLine do if Length(aOption) > 0 then
+        with FCommandLine do
+          if Length(aOption) > 0 then
             Headers.SetModule(aOption);
 
         // write Headers
@@ -934,7 +914,6 @@ begin
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
         for I := 0 to Headers.Count - 1 do
           if Interfaces.Stop = False then
-          begin
             case THeader(Headers.Items[I]).Action of
               toCopy: Encoder.CopyStrm(Headers.Items[I],
                   emNorm, FArcFile);
@@ -945,7 +924,6 @@ begin
               toUpdate: Encoder.EncodeFile(
                   Headers.Items[I], emNorm);
             end;
-          end;
         Encoder.Destroy;
         // rewrite Headers
         Headers.WriteItems(TmpFile);
@@ -964,9 +942,12 @@ begin
           SetExitCode(255);
         end;
 
-        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
-        if Assigned(FArcFile) then FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then FreeAndNil(TmpFile);
+        if Assigned(FSwapFile) then
+          FreeAndNil(FSwapFile);
+        if Assigned(FArcFile) then
+          FreeAndNil(FArcFile);
+        if Assigned(TmpFile) then
+          FreeAndNil(TmpFile);
 
         DeleteFile(FSwapName);
         if Interfaces.Stop = False then
@@ -984,11 +965,14 @@ begin
             ProcesslOption; // process lOption
           end;
         end else
+        begin
           DeleteFile(TmpFileName);
+        end;
 
       end else // if ProcessFilesToSwap
       begin
-        if TmpFile = nil then Interfaces.OnError.Data.Msg :=
+        if TmpFile = nil then
+          Interfaces.OnError.Data.Msg :=
             ('Error: can''t open temp file')
         else
           Interfaces.OnError.Data.Msg :=
@@ -996,9 +980,12 @@ begin
         Synchronize(Interfaces.OnError.Method);
         SetExitCode(2);
 
-        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
-        if Assigned(FArcFile) then FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then FreeAndNil(TmpFile);
+        if Assigned(FSwapFile) then
+          FreeAndNil(FSwapFile);
+        if Assigned(FArcFile) then
+          FreeAndNil(FArcFile);
+        if Assigned(TmpFile) then
+          FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(FSwapName);
         SysUtils.DeleteFile(TmpFileName);
@@ -1013,7 +1000,8 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(FArcFile) then FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then
+    FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.DecodeShell(Action: THeaderAction);
@@ -1067,7 +1055,8 @@ begin
             toQuit: Return    :=
                 Decoder.Decodefile(Headers.Items[I], pmQuit);
           end;
-        if Return = False then Break;
+        if Return = False then
+          Break;
       end;
       Decoder.Destroy;
 
@@ -1103,7 +1092,8 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(FArcFile) then FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then
+    FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.DeleteShell;
@@ -1147,11 +1137,13 @@ begin
         ProcessFilesDeleted(Headers);
 
         // if SwapSequences has found a modified sequence open Swap file
-        if Length(FSwapName) > 0 then FSwapFile :=
+        if Length(FSwapName) > 0 then
+          FSwapFile :=
             CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
 
         // set sfx module
-        with FCommandLine do if Length(aOption) > 0 then
+        with FCommandLine do
+          if Length(aOption) > 0 then
             Headers.SetModule(aOption);
 
         // write Headers
@@ -1159,7 +1151,6 @@ begin
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
         for I := 0 to Headers.Count - 1 do
           if Interfaces.Stop = False then
-          begin
             case THeader(Headers.Items[I]).Action of
               toCopy: Encoder.CopyStrm(Headers.Items[I],
                   emNorm, FArcFile);
@@ -1172,7 +1163,6 @@ begin
                 Synchronize(Interfaces.OnDisplay.Method);
               end;
             end;
-          end;
         Encoder.Destroy;
         Headers.WriteItems(TmpFile);
 
@@ -1190,9 +1180,12 @@ begin
           SetExitCode(255);
         end;
 
-        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
-        if Assigned(FArcFile) then FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then FreeAndNil(TmpFile);
+        if Assigned(FSwapFile) then
+          FreeAndNil(FSwapFile);
+        if Assigned(FArcFile) then
+          FreeAndNil(FArcFile);
+        if Assigned(TmpFile) then
+          FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(FSwapName);
         if Interfaces.Stop = False then
@@ -1210,11 +1203,14 @@ begin
             ProcesslOption; // process lOption  
           end;
         end else
+        begin
           SysUtils.DeleteFile(TmpFileName);
+        end;
 
       end else // if ProcessFilesToSwap
       begin
-        if TmpFile = nil then Interfaces.OnError.Data.Msg :=
+        if TmpFile = nil then
+          Interfaces.OnError.Data.Msg :=
             ('Error: can''t open temp file')
         else
           Interfaces.OnError.Data.Msg :=
@@ -1222,9 +1218,12 @@ begin
         Synchronize(Interfaces.OnError.Method);
         SetExitCode(2);
 
-        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
-        if Assigned(FArcFile) then FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then FreeAndNil(TmpFile);
+        if Assigned(FSwapFile) then
+          FreeAndNil(FSwapFile);
+        if Assigned(FArcFile) then
+          FreeAndNil(FArcFile);
+        if Assigned(TmpFile) then
+          FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(FSwapName);
         SysUtils.DeleteFile(TmpFileName);
@@ -1239,7 +1238,8 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(FArcFile) then FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then
+    FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.RenameShell;
@@ -1273,16 +1273,15 @@ begin
           Headers.GetPackedSize([toCopy, toRename]);
 
         // set sfx module
-        with FCommandLine do if Length(aOption) > 0 then
+        with FCommandLine do
+          if Length(aOption) > 0 then
             Headers.SetModule(aOption);
 
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
         for I := 0 to Headers.Count - 1 do
           if Interfaces.Stop = False then
-          begin
             Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
-          end;
         Encoder.Destroy;
         Headers.WriteItems(TmpFile);
 
@@ -1300,8 +1299,10 @@ begin
           SetExitCode(255);
         end;
 
-        if Assigned(FArcFile) then FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then FreeAndNil(TmpFile);
+        if Assigned(FArcFile) then
+          FreeAndNil(FArcFile);
+        if Assigned(TmpFile) then
+          FreeAndNil(TmpFile);
 
         if Interfaces.Stop = False then
         begin
@@ -1318,11 +1319,14 @@ begin
             ProcesslOption; // process lOption
           end;
         end else
+        begin
           SysUtils.DeleteFile(TmpFileName);
+        end;
 
       end else // if (TmpFile <> nil)
       begin
-        if TmpFile = nil then Interfaces.OnError.Data.Msg :=
+        if TmpFile = nil then
+          Interfaces.OnError.Data.Msg :=
             ('Error: can''t open temp file')
         else
           Interfaces.OnError.Data.Msg :=
@@ -1330,8 +1334,10 @@ begin
         Synchronize(Interfaces.OnError.Method);
         SetExitCode(2);
 
-        if Assigned(FArcFile) then FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then FreeAndNil(TmpFile);
+        if Assigned(FArcFile) then
+          FreeAndNil(FArcFile);
+        if Assigned(TmpFile) then
+          FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(TmpFileName);
       end;
@@ -1345,7 +1351,8 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(FArcFile) then FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then
+    FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.ListShell;
@@ -1400,7 +1407,6 @@ begin
       {$ENDIF}
 
       for I := 0 to Info.Count - 1 do
-      begin
         if THeader(Info.Items[I]).Action = toList then
         begin
           P := Info.Items[I];
@@ -1419,7 +1425,8 @@ begin
             FileSize   := P.Data.FileSize;
             FilePacked := P.Data.FilePacked;
 
-            if FileSize > 0 then FileRatio :=
+            if FileSize > 0 then
+              FileRatio :=
                 MulDiv(FilePacked, 100, FileSize)
             else
               FileRatio := 100;
@@ -1444,7 +1451,6 @@ begin
           Inc(TotalPack, P.Data.FilePacked);
           Inc(CountFiles);
         end;
-      end;
       {$IFDEF CONSOLEAPPLICATION}
       Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
       Synchronize(Interfaces.OnDisplay.Method);
@@ -1479,7 +1485,8 @@ begin
   end;
   Info.Free;
 
-  if Assigned(FArcFile) then FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then
+    FreeAndNil(FArcFile);
 end;
 
 // -------------------------------------------------------------------------- //
@@ -1490,16 +1497,17 @@ function TBeeApp.MethodToStr(P: THeader; Method, Dictionary: integer): string;
 begin
   Result := 'm0a';
 
-  if not (foTear in P.Data.FileFlags) then Result[1] := 's';
+  if not (foTear in P.Data.FileFlags) then
+    Result[1] := 's';
 
   if not (foMoved in P.Data.FileFlags) then
-  begin
-    if Method in [1..3] then Result[2] := char(byte('0') + Method)
+    if Method in [1..3] then
+      Result[2] := char(byte('0') + Method)
     else
       Result[2] := '?';
-  end;
 
-  if Dictionary in [0..9] then Result[3] := char(byte('a') + Dictionary)
+  if Dictionary in [0..9] then
+    Result[3] := char(byte('a') + Dictionary)
   else
     Result[3] := '?';
 end;

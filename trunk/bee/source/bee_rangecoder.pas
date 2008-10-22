@@ -127,16 +127,15 @@ var
 begin
   StartEncode;
   for I := 0 to NUM do
-  begin
     Code := Code shl 8 + InputByte;
-  end;
 end;
 
 procedure TRangeCoder.FinishEncode;
 var
   I: integer;
 begin
-  for I := 0 to NUM do ShiftLow;
+  for I := 0 to NUM do
+    ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;
