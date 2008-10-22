@@ -212,13 +212,10 @@ begin
     if Result = 0 then Result :=
         CompareFileName(THeader(L.Items[Index1]).Data.FileName,
         THeader(L.Items[Index2]).Data.FileName);
-  end
+  end else if Bool1 then Result := 1
+  else if Bool2 then Result := -1
   else
-    if Bool1 then Result := 1
-    else
-      if Bool2 then Result := -1
-      else
-        Result := Index1 - Index2;
+    Result := Index1 - Index2;
 end;
 
 // THeader class
@@ -291,8 +288,7 @@ begin
     begin
       Data.FileName := DoDirSeparators(Data.FileName);
       FileLink      := '';
-    end
-    else
+    end else
       Fail;
   end;
 end;
@@ -357,11 +353,10 @@ begin
     M := (L + H) div 2;
     if CompareFileName(FileName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
+    else if CompareFileName(FileName, THeader(Items[M]).Data.FileName) <
+      0 then H := M - 1
     else
-      if CompareFileName(FileName, THeader(Items[M]).Data.FileName) < 0 then
-        H := M - 1
-      else
-        H := -2;
+      H := -2;
   end;
 
   if H <> -2 then Result := nil
@@ -384,19 +379,18 @@ begin
     M := (L + H) div 2;
     if CompareFileName(FName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
+    else if CompareFileName(FName, THeader(Items[M]).Data.FileName) <
+      0 then
+      H := M - 1
     else
-      if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
-        H := M - 1
-      else
-        H := -2;
+      H := -2;
   end;
 
   if M = -1 then Result := 0
+  else if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
+    Result := M
   else
-    if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
-      Result := M
-    else
-      Result := M + 1;
+    Result := M + 1;
 
   Insert(Result, Item);
 end;
@@ -455,8 +449,8 @@ begin
       begin
         FirstSlash := I;
       end;
-    end
-    else begin
+    end else
+    begin
       if Mask[I] = PathDelim then
       begin
         LastSlash := I;
@@ -485,8 +479,8 @@ begin
       Error := FindNext(Rec);
     end;
     FindClose(Rec);
-  end
-  else begin
+  end else
+  begin
     Masks.Add(Mask);
   end;
 end;
@@ -608,7 +602,8 @@ begin
       P.Data.FileDictionary := Dictionary;
       PreviousExt := CurrentExt;
 
-      if Length(eOption) = 0 then CurrentExt := ExtractFileExt(P.Data.FileName)
+      if Length(eOption) = 0 then CurrentExt :=
+          ExtractFileExt(P.Data.FileName)
       else
         CurrentExt := eOption;
 
@@ -619,16 +614,14 @@ begin
       begin
         Include(P.Data.FileFlags, foMoved);
         Exclude(P.Data.FileFlags, foTable);
-      end
-      else
-        if CompareFileName(CurrentExt, PreviousExt) <> 0 then
-        begin
-          Include(P.Data.FileFlags, foTable);
-        end
-        else begin
-          Exclude(P.Data.FileFlags, foTable);
-          if sOption then Exclude(P.Data.FileFlags, foTear);
-        end;
+      end else if CompareFileName(CurrentExt, PreviousExt) <> 0 then
+      begin
+        Include(P.Data.FileFlags, foTable);
+      end else
+      begin
+        Exclude(P.Data.FileFlags, foTable);
+        if sOption then Exclude(P.Data.FileFlags, foTear);
+      end;
 
       Inc(I);
     until I = Count;
@@ -645,7 +638,8 @@ begin
   begin
     Strm := TFileReader.Create(FileName, fmOpenRead);
     try
-      if Module.CopyFrom(Strm, Strm.Size) = Strm.Size then Result := True
+      if Module.CopyFrom(Strm, Strm.Size) = Strm.Size then
+        Result      := True
       else
         Module.Size := 0;
     finally
@@ -720,8 +714,7 @@ begin
           P := nil;
         end;
       end;
-    end
-    else
+    end else
       Break;
 
   until (P <> nil) and (foLast in P.Data.FileFlags);
@@ -751,8 +744,7 @@ begin
           Add(P);
         except
           P := nil;
-        end
-      else
+        end else
         Break;
     until (P <> nil) and (foLast in P.Data.FileFlags);
 
@@ -760,8 +752,7 @@ begin
     begin
       Exclude(P.Data.FileFlags, foLast);
     end;
-  end
-  else
+  end else
     ReadItemsB4b(Stream, aAction);
 end;
 
@@ -776,8 +767,7 @@ begin
       Module.Seek(0, 0);
       Stream.CopyFrom(Module, Module.Size);
     end;
-  end
-  else
+  end else
     Stream.Seek(Module.Size, 0);
 
   MarkAsLast(toDelete);
@@ -985,8 +975,7 @@ begin
         Exchange(I, J);
 
         if Pivot = I then Pivot := J
-        else
-          if Pivot = J then Pivot := I;
+        else if Pivot = J then Pivot := I;
 
         Inc(I);
         Dec(j);
@@ -1025,13 +1014,11 @@ begin
   begin
     Mask    := IncludeTrailingBackSlash(Mask) + '*';
     rOption := True;
-  end
-  else
-    if DirectoryExists(Mask) then
-    begin
-      Mask    := IncludeTrailingBackSlash(Mask) + '*';
-      rOption := True;
-    end;
+  end else if DirectoryExists(Mask) then
+  begin
+    Mask    := IncludeTrailingBackSlash(Mask) + '*';
+    rOption := True;
+  end;
 
   RecPath := ExtractFilePath(Mask);
   Error   := FindFirst(RecPath + '*', faAnyFile, Rec);
@@ -1052,15 +1039,13 @@ begin
               Sorted.InsertItem(P);
               Add(P);
               Size := Size + Rec.Size;
-            end
-            else
-              if (Rec.Time > THeader(J).Data.FileTime) then
-              begin
-                THeader(J).Fresh(cdOption, RecPath, Rec);
-                Size := Size + (Rec.Size - THeader(J).Data.FileSize);
-              end;
-          end
-          else begin
+            end else if (Rec.Time > THeader(J).Data.FileTime) then
+            begin
+              THeader(J).Fresh(cdOption, RecPath, Rec);
+              Size := Size + (Rec.Size - THeader(J).Data.FileSize);
+            end;
+          end else
+          begin
             if fOption then
             begin
               if (not (J = nil)) and (Rec.Time > THeader(J).Data.FileTime) then
@@ -1068,8 +1053,8 @@ begin
                 THeader(J).Fresh(cdOption, RecPath, Rec);
                 Size := Size + (Rec.Size - THeader(J).Data.FileSize);
               end;
-            end
-            else begin
+            end else
+            begin
               if (J = nil) then
               begin
                 P := THeader.Create(cdOption, RecPath, Rec);
@@ -1080,8 +1065,8 @@ begin
             end;
           end;
         end;
-    end
-    else begin
+    end else
+    begin
       if rOption and (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
         ScanFileSystem(

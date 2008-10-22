@@ -45,8 +45,8 @@ uses
  {$IFDEF FPC}
  {$IFDEF UNIX}
   cThreads,
-    {$ENDIF}
-    {$ENDIF}
+                    {$ENDIF}
+                    {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -81,137 +81,137 @@ type
     procedure Execute;
   end;
 
-  /// implementation ///
+/// implementation ///
 
-  // TConsole
+// TConsole
 
-  constructor TConsole.Create;
+constructor TConsole.Create;
   var
     I: integer;
-  begin
-    inherited Create;
-    AppInterfaces := TInterfaces.Create;
-    AppInterfaces.OnFatalError.Method := OnFatalError;
-    AppInterfaces.OnOverWrite.Method := OnOverWrite;
-    AppInterfaces.OnWarning.Method := OnWarning;
-    AppInterfaces.OnDisplay.Method := OnDisplay;
-    AppInterfaces.OnRequest.Method := OnRequest;
-    AppInterfaces.OnRename.Method := OnRename;
-    AppInterfaces.OnClear.Method := OnClear;
-    AppInterfaces.OnError.Method := OnError;
-    AppInterfaces.OnList.Method := OnList;
-    AppInterfaces.OnTick.Method := OnTick;
-    AppInterfaces.OnKey.Method := OnKey;
+begin
+  inherited Create;
+  AppInterfaces := TInterfaces.Create;
+  AppInterfaces.OnFatalError.Method := OnFatalError;
+  AppInterfaces.OnOverWrite.Method := OnOverWrite;
+  AppInterfaces.OnWarning.Method := OnWarning;
+  AppInterfaces.OnDisplay.Method := OnDisplay;
+  AppInterfaces.OnRequest.Method := OnRequest;
+  AppInterfaces.OnRename.Method := OnRename;
+  AppInterfaces.OnClear.Method := OnClear;
+  AppInterfaces.OnError.Method := OnError;
+  AppInterfaces.OnList.Method := OnList;
+  AppInterfaces.OnTick.Method := OnTick;
+  AppInterfaces.OnKey.Method := OnKey;
 
-    SetLength(AppKey, 0);
-    AppParams := TStringList.Create;
-    for I := 1 to ParamCount do
-    begin
-      AppParams.Add(ParamStr(I));
-    end;
-    App := TBeeApp.Create(AppInterfaces, AppParams);
+  SetLength(AppKey, 0);
+  AppParams := TStringList.Create;
+  for I := 1 to ParamCount do
+  begin
+    AppParams.Add(ParamStr(I));
   end;
+  App := TBeeApp.Create(AppInterfaces, AppParams);
+end;
 
-  destructor TConsole.Destroy;
+destructor TConsole.Destroy;
+begin
+  SetLength(AppKey, 0);
+  AppInterfaces.Destroy;
+  AppParams.Destroy;
+  inherited Destroy;
+end;
+
+procedure TConsole.Execute;
+begin
+  App.Execute;
+end;
+
+procedure TConsole.OnFatalError;
+begin
+  Writeln(ParamToOem(AppInterfaces.OnFatalError.Data.Msg));
+end;
+
+procedure TConsole.OnOverWrite;
+begin
+  with AppInterfaces.OnOverWrite.Data do
   begin
-    SetLength(AppKey, 0);
-    AppInterfaces.Destroy;
-    AppParams.Destroy;
-    inherited Destroy;
+    Writeln('Warning: file "' + ParamToOem(FilePath + FileName) +
+      '" already exists.');
+    Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
   end;
+  // not convert oem to param
+  Readln(AppInterfaces.OnOverWrite.Answer);
+end;
 
-  procedure TConsole.Execute;
+procedure TConsole.OnKey;
+begin
+  if Length(AppKey) = 0 then
   begin
-    App.Execute;
-  end;
-
-  procedure TConsole.OnFatalError;
-  begin
-    Writeln(ParamToOem(AppInterfaces.OnFatalError.Data.Msg));
-  end;
-
-  procedure TConsole.OnOverWrite;
-  begin
-    with AppInterfaces.OnOverWrite.Data do
-    begin
-      Writeln('Warning: file "' + ParamToOem(FilePath + FileName) +
-        '" already exists.');
-      Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
-    end;
-    // not convert oem to param
-    Readln(AppInterfaces.OnOverWrite.Answer);
-  end;
-
-  procedure TConsole.OnKey;
-  begin
-    if Length(AppKey) = 0 then
-    begin
-      Write('Insert a key (min length 4 char): ');
-      Readln(AppKey);
-      // convert oem to param
-      AppKey := OemToParam(AppKey);
-    end;
-    AppInterfaces.OnKey.Answer := AppKey;
-  end;
-
-  procedure TConsole.OnRename;
-  begin
-    with AppInterfaces.OnRename.Data do
-    begin
-      Write('Rename file "' + ParamToOem(FilePath + FileName) +
-        '" as (empty to skip):');
-    end;
-    Readln(AppInterfaces.OnRename.Answer);
+    Write('Insert a key (min length 4 char): ');
+    Readln(AppKey);
     // convert oem to param
-    AppInterfaces.OnRename.Answer := OemToParam(AppInterfaces.OnRename.Answer);
+    AppKey := OemToParam(AppKey);
   end;
+  AppInterfaces.OnKey.Answer := AppKey;
+end;
 
-  procedure TConsole.OnWarning;
+procedure TConsole.OnRename;
+begin
+  with AppInterfaces.OnRename.Data do
   begin
-    Writeln(ParamToOem(AppInterfaces.OnWarning.Data.Msg));
+    Write('Rename file "' + ParamToOem(FilePath + FileName) +
+      '" as (empty to skip):');
   end;
+  Readln(AppInterfaces.OnRename.Answer);
+  // convert oem to param
+  AppInterfaces.OnRename.Answer := OemToParam(AppInterfaces.OnRename.Answer);
+end;
 
-  procedure TConsole.OnDisplay;
+procedure TConsole.OnWarning;
+begin
+  Writeln(ParamToOem(AppInterfaces.OnWarning.Data.Msg));
+end;
+
+procedure TConsole.OnDisplay;
+begin
+  Writeln(ParamToOem(AppInterfaces.OnDisplay.Data.Msg));
+end;
+
+procedure Tconsole.OnRequest;
+begin
+  Writeln(ParamToOem(AppInterfaces.OnRequest.Data.Msg));
+end;
+
+procedure TConsole.OnError;
+begin
+  Writeln(ParamToOem(AppInterfaces.OnError.Data.Msg));
+end;
+
+procedure TConsole.OnList;
+begin
+  with AppInterfaces.OnList.Data do
   begin
-    Writeln(ParamToOem(AppInterfaces.OnDisplay.Data.Msg));
+    Writeln(ParamToOem(FilePath + FileName));
+    Writeln(ParamToOem(StringOfChar(' ', 15) +
+      Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
+      [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+      FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc,
+      FileMethod])));
   end;
+end;
 
-  procedure Tconsole.OnRequest;
-  begin
-    Writeln(ParamToOem(AppInterfaces.OnRequest.Data.Msg));
-  end;
+procedure TConsole.OnTick;
+begin
+  // not convert oem to param
+  Write(#8#8#8#8#8#8#8 + Format('  (%d%%)',
+    [AppInterfaces.OnTick.Data.Percentage]));
+end;
 
-  procedure TConsole.OnError;
-  begin
-    Writeln(ParamToOem(AppInterfaces.OnError.Data.Msg));
-  end;
+procedure TConsole.OnClear;
+begin
+  Write(#13, #13: 80);
+end;
 
-  procedure TConsole.OnList;
-  begin
-    with AppInterfaces.OnList.Data do
-    begin
-      Writeln(ParamToOem(FilePath + FileName));
-      Writeln(ParamToOem(StringOfChar(' ', 15) +
-        Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
-        [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-        FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc,
-        FileMethod])));
-    end;
-  end;
-
-  procedure TConsole.OnTick;
-  begin
-    // not convert oem to param
-    Write(#8#8#8#8#8#8#8 + Format('  (%d%%)',
-      [AppInterfaces.OnTick.Data.Percentage]));
-  end;
-
-  procedure TConsole.OnClear;
-  begin
-    Write(#13, #13: 80);
-  end;
-
-  /// main block ///
+/// main block ///
 
 var
   Console: TConsole;

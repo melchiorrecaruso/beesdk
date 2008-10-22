@@ -212,8 +212,7 @@ begin
   begin
     ListCount := 1;
     List[0]   := Root;
-  end
-  else
+  end else
     ListCount := 0;
 end;
 
@@ -246,8 +245,7 @@ begin
       Link := Result.Up;
     end;
     Tear := Link;
-  end
-  else
+  end else
     Inc(CurrentFreeNode);
 
   Result.Next := Parent.Up;
@@ -281,8 +279,8 @@ begin
         begin
           J^ := P;
           Inc(J);
-        end
-        else begin
+        end else
+        begin
           P.Up.Tear := Tear;
           Tear      := P.Up;
           P.Up      := nil;
@@ -353,24 +351,22 @@ begin
           Inc(Freq[P.C], J);
           P := P.Next;
         until P = nil;
-      end
-      else begin
+      end else
+      begin
         // Determined context ...
         K := P.K * Part[1] div Increment + 256;
         K := (R div K) shl 8;
         Inc(Freq[P.C], R - K);
         R := K;
       end;
-    end
-    else
-      if P.A > LowestPos then
-      begin
-        // Determined context, encountered at first time ...
-        CreateChild(P);
-        K := R div Part[0] shl 8;
-        Inc(Freq[P.Up.C], R - K);
-        R := K;
-      end;
+    end else if P.A > LowestPos then
+    begin
+      // Determined context, encountered at first time ...
+      CreateChild(P);
+      K := R div Part[0] shl 8;
+      Inc(Freq[P.Up.C], R - K);
+      R := K;
+    end;
     Inc(I);
   until (I = ListCount) or (R <= Part[MaxSymbol + 5]);
   ListCount := I;
@@ -385,7 +381,8 @@ begin
   Result := Node.Up;
 
   if Result = nil then CreateChild(Node)
-  else begin
+  else
+  begin
     C := Symbol;
     if Result.C <> C then
     begin
@@ -396,15 +393,13 @@ begin
         begin
           CreateChild(Node);
           Break;
-        end
-        else
-          if Result.C = C then
-          begin
-            P.Next      := Result.Next;
-            Result.Next := Node.Up;
-            Node.Up     := Result;
-            Break;
-          end;
+        end else if Result.C = C then
+        begin
+          P.Next      := Result.Next;
+          Result.Next := Node.Up;
+          Node.Up     := Result;
+          Break;
+        end;
       until False;
     end;
   end;

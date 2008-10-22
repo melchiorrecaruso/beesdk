@@ -111,11 +111,10 @@ begin
   begin
     S := List[I];
     if (S > '') and (S[1] = '\') then Selector(S)
+    else if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
+      CurrentSection.Add(S)
     else
-      if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
-        CurrentSection.Add(S)
-      else
-        CurrentSection.Values[aName] := aValue;
+      CurrentSection.Values[aName] := aValue;
   end;
 
   Selector('\main');
@@ -172,8 +171,7 @@ begin
   begin
     CurrentSection := TConfigSection.Create;
     Objects[Add(Name + '=yes')] := CurrentSection;
-  end
-  else
+  end else
     CurrentSection := TConfigSection(Objects[Index]);
 end;
 

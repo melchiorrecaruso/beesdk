@@ -126,8 +126,8 @@ begin
     byte(Data) := LocalBuffer[Readed];
     Inc(Readed);
     Result := Count;
-  end
-  else begin
+  end else
+  begin
     Result := 0;
     repeat
       if Readed = Size then
@@ -189,19 +189,19 @@ end;
 
 function TFileWriter.Write(const Data; Count: longint): longint;
 begin
-  if Count > SizeOf(LocalBuffer) - Size then Result := WriteBlock(Data, Count)
-  else
-    if Count > 1 then
-    begin
-      CopyBytes(Data, LocalBuffer[Size], Count);
-      Inc(Size, Count);
-      Result := Count;
-    end
-    else begin
-      LocalBuffer[Size] := byte(Data);
-      Inc(Size);
-      Result := Count;
-    end;
+  if Count > SizeOf(LocalBuffer) - Size then
+    Result := WriteBlock(Data, Count)
+  else if Count > 1 then
+  begin
+    CopyBytes(Data, LocalBuffer[Size], Count);
+    Inc(Size, Count);
+    Result := Count;
+  end else
+  begin
+    LocalBuffer[Size] := byte(Data);
+    Inc(Size);
+    Result := Count;
+  end;
 end;
 
 function TFileWriter.WriteBlock(const aData; aCount: longint): longint;

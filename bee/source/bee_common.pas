@@ -242,8 +242,7 @@ begin
   if (L > 0) and (not (DirName[L] in ['\', '/'])) then
   begin
     Result := DirName + PathDelim;
-  end
-  else
+  end else
     Result := DirName;
 end;
 
@@ -256,8 +255,7 @@ begin
   if (L > 0) and (DirName[L] in ['\', '/']) then
   begin
     Result := Copy(DirName, 1, L - 1);
-  end
-  else
+  end else
     Result := DirName;
 end;
 
@@ -281,8 +279,7 @@ begin
   if (L > 0) and (DirName[L] in [' ']) then
   begin
     Result := Copy(DirName, 1, L - 1);
-  end
-  else
+  end else
     Result := DirName;
 end;
 
@@ -290,11 +287,14 @@ function MatchPattern(Element, Pattern: PChar): boolean;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
   if 0 = StrComp(Pattern, '*') then Result := True
-  else begin
+  else
+  begin
     if (Element^ = Chr(0)) and (Pattern^ <> Chr(0)) then Result := False
-    else begin
+    else
+    begin
       if Element^ = Chr(0) then Result := True
-      else begin
+      else
+      begin
         case Pattern^ of
           '*': if MatchPattern(Element, @Pattern[1]) then
               Result := True
@@ -303,10 +303,10 @@ begin
 
           '?': Result := MatchPattern(@Element[1], @Pattern[1]);
 
-          else if Element^ = Pattern^ then
-              Result := MatchPattern(@Element[1], @Pattern[1])
-            else
-              Result := False;
+        else if Element^ = Pattern^ then Result :=
+              MatchPattern(@Element[1], @Pattern[1])
+          else
+            Result := False;
         end; // end case
       end;
     end;
@@ -373,11 +373,9 @@ begin
     begin
       Result := MatchPattern(PChar(ExtractFileName(iFileName)),
         PChar(ExtractFileName(iMask)));
-    end
-    else
+    end else
       Result := False;
-  end
-  else
+  end else
     Result := False;
 end;
 
@@ -405,10 +403,9 @@ function FileNameUseWildcards(const FileName: string): boolean;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
   if System.Pos('*', FileName) > 0 then Result := True
+  else if System.Pos('?', FileName) > 0 then Result := True
   else
-    if System.Pos('?', FileName) > 0 then Result := True
-    else
-      Result := False;
+    Result := False;
 end;
 
 function DoDirSeparators(const FileName: string): string;
@@ -497,8 +494,8 @@ begin
   if (Param = '') then
   begin
     Result := '';
-  end
-  else begin
+  end else
+  begin
     {$IFDEF MSWINDOWS}
     SetLength(Result, Length(Param));
     CharToOem(PChar(Param), PChar(Result));
@@ -514,8 +511,8 @@ begin
   if (Param = '') then
   begin
     Result := '';
-  end
-  else begin
+  end else
+  begin
     {$IFDEF MSWINDOWS}
     SetLength(Result, Length(Param));
     OemToChar(PChar(Param), PChar(Result));
@@ -606,7 +603,8 @@ begin
 
   if Dir[Length(Dir)] = PathDelim then
     Result := ForceDirectories(Copy(Dir, 1, Length(Dir) - 1))
-  else begin
+  else
+  begin
     if DirectoryExists(Dir) or (ExtractFilePath(Dir) = Dir) then Exit;
 
     if ForceDirectories(ExtractFilePath(Dir)) then
@@ -752,8 +750,7 @@ begin
     Write(T, S);
     Close(T);
     Result := True;
-  end
-  else
+  end else
     Result := False;
 end;
 
