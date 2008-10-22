@@ -144,9 +144,7 @@ var
   i: integer;
 begin
   for i := FList.Count - 1 downto 0 do
-  begin
     FreeSyncInfo(TSyncInfo(FList[i]));
-  end;
   FList.Free();
   DeleteCriticalSection(FThreadLock);
   inherited Destroy();
@@ -155,9 +153,7 @@ end;
 class function TSynchronizerManager.Instance: TSynchronizerManager;
 begin
   if (SynchronizerManager = nil) then
-  begin
     SynchronizerManager := TSynchronizerManager.Create();
-  end;
   Result := SynchronizerManager;
 end;
 
@@ -196,9 +192,7 @@ begin
       FList.Add(info);
     end;
     if (info.FThreadCount = 0) then
-    begin
       info.FThreadWindow := AllocateWindow();
-    end;
     Inc(info.FThreadCount);
   finally
     LeaveCriticalSection(FThreadLock);
@@ -225,9 +219,7 @@ begin
   try
     Dec(AInfo.FThreadCount);
     if AInfo.FThreadCount = 0 then
-    begin
       FreeSyncInfo(AInfo);
-    end;
   finally
     LeaveCriticalSection(FThreadLock);
   end;
@@ -257,13 +249,14 @@ begin
   for i := 0 to FList.Count - 1 do
   begin
     Result := TSyncInfo(FList[i]);
-    if (Result.FSyncBaseThreadID = ASyncBaseThreadID) then Exit;
+    if (Result.FSyncBaseThreadID = ASyncBaseThreadID) then
+      Exit;
   end;
   Result := nil;
 end;
 
-function TSynchronizerManager.InfoBySync(ASyncBaseThreadID:
-  longword): TSyncInfo;
+function TSynchronizerManager.InfoBySync(ASyncBaseThreadID: longword):
+TSyncInfo;
 begin
   Result := FindSyncInfo(ASyncBaseThreadID);
   Assert(Result <> nil,
@@ -290,7 +283,8 @@ begin
   FSynchronizeException := nil;
   FMethod := Method;
   TSynchronizerManager.Instance().Synchronize(Self);
-  if Assigned(FSynchronizeException) then raise FSynchronizeException;
+  if Assigned(FSynchronizeException) then
+    raise FSynchronizeException;
 end;
 
 { TThreadEx }
@@ -309,12 +303,14 @@ end;
 
 procedure TThreadEx.DoTerminate;
 begin
-  if Assigned(OnTerminate) then Synchronizer.Synchronize(HandleTerminate);
+  if Assigned(OnTerminate) then
+    Synchronizer.Synchronize(HandleTerminate);
 end;
 
 procedure TThreadEx.HandleTerminate;
 begin
-  if Assigned(OnTerminate) then OnTerminate(Self);
+  if Assigned(OnTerminate) then
+    OnTerminate(Self);
 end;
 
 procedure TThreadEx.Wait;
@@ -326,19 +322,12 @@ begin
     False, DUPLICATE_SAME_ACCESS);
   try
     if GetCurrentThreadID = Synchronizer.SyncBaseThreadID then
-    begin
       while MsgWaitForMultipleObjects(1, H, False, INFINITE, QS_SENDMESSAGE) =
         WAIT_OBJECT_0 + 1 do
-      begin
         while PeekMessage(Msg, 0, 0, 0, PM_REMOVE) do
-        begin
-          DispatchMessage(Msg);
-        end;
-      end;
-    end else
-    begin
+          DispatchMessage(Msg)
+    else
       WaitForSingleObject(H, INFINITE);
-    end;
   finally
     CloseHandle(H);
   end;

@@ -152,18 +152,15 @@ begin
   Result := Interfaces.OnKey.Answer;
 
   if Length(Result) < MinKeyLength then
-  begin
     Exclude(Header.Data.FileFlags, foPassword);
-  end;
 end;
 
 procedure TEncoder.Tick;
 begin
-  while Interfaces.Suspend do Sleep(250);
+  while Interfaces.Suspend do
+    Sleep(250);
   with Interfaces.OnTick.Data do
-  begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
-  end;
   Sync(Interfaces.OnTick.Method);
 end;
 
@@ -179,7 +176,8 @@ begin
   if foTable in Header.Data.FileFlags then
     PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then
+    PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -206,20 +204,17 @@ begin
     Header.Data.FileAttr := FileGetAttr(Header.Data.FileName);
 
     if foPassword in Header.Data.FileFlags then
-    begin
       Stream.BlowFish.Start(GetKey(Header));
-    end;
 
     if foMoved in Header.Data.FileFlags then
     begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-        begin
-          if Interfaces.Stop = False then Tick
+          if Interfaces.Stop = False then
+            Tick
           else
             Break;
-        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
@@ -231,11 +226,10 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-        begin
-          if Interfaces.Stop = False then Tick
+          if Interfaces.Stop = False then
+            Tick
           else
             Break;
-        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
@@ -284,7 +278,8 @@ begin
   if foTable in Header.Data.FileFlags then
     PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then
+    PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -310,9 +305,7 @@ begin
     begin
       Stream.BlowFish.Start(GetKey(Header));
       if Header.Action = toSwap then
-      begin
         SrcFile.BlowFish.Start(Interfaces.OnKey.Answer);
-      end;
     end;
 
     if foMoved in Header.Data.FileFlags then
@@ -320,11 +313,10 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-        begin
-          if Interfaces.Stop = False then Tick
+          if Interfaces.Stop = False then
+            Tick
           else
             Break;
-        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
@@ -336,11 +328,10 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-        begin
-          if Interfaces.Stop = False then Tick
+          if Interfaces.Stop = False then
+            Tick
           else
             Break;
-        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
@@ -388,7 +379,8 @@ begin
   if foTable in Header.Data.FileFlags then
     PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then
+    PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -409,11 +401,10 @@ begin
     for I := 1 to Header.Data.FilePacked do
     begin
       if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-      begin
-        if Interfaces.Stop = False then Tick
+        if Interfaces.Stop = False then
+          Tick
         else
           Break;
-      end;
       Inc(Interfaces.OnTick.Data.ProcessedSize);
       SrcFile.Read(Symbol, 1);
       Stream.Write(Symbol, 1);
@@ -462,11 +453,10 @@ end;
 
 procedure TDecoder.Tick;
 begin
-  while Interfaces.Suspend do Sleep(250);
+  while Interfaces.Suspend do
+    Sleep(250);
   with Interfaces.OnTick.Data do
-  begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
-  end;
   Sync(Interfaces.OnTick.Method);
 end;
 
@@ -482,7 +472,8 @@ begin
   if foTable in Header.Data.FileFlags then
     PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then
+    PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -504,7 +495,8 @@ begin
   Stream.Seek(Header.Data.FileStartPos, 0); // stream flush
   Crc := cardinal(-1);
 
-  if Mode = pmNorm then try
+  if Mode = pmNorm then
+    try
       DstFile := TFileWriter.Create(Header.Data.FileName, fmCreate)
     except
       DstFile := nil;
@@ -515,20 +507,17 @@ begin
   begin
 
     if foPassword in Header.Data.FileFlags then
-    begin
       Stream.BlowFish.Start(GetKey(Header));
-    end;
 
     if foMoved in Header.Data.FileFlags then
     begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-        begin
-          if Interfaces.Stop = False then Tick
+          if Interfaces.Stop = False then
+            Tick
           else
             Break;
-        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
@@ -540,11 +529,10 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-        begin
-          if Interfaces.Stop = False then Tick
+          if Interfaces.Stop = False then
+            Tick
           else
             Break;
-        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);
@@ -570,7 +558,8 @@ begin
   Result := Header.Data.FileCrc = Crc;
   if Result = False then
   begin
-    if Crc = cardinal(-1) then Interfaces.OnError.Data.Msg :=
+    if Crc = cardinal(-1) then
+      Interfaces.OnError.Data.Msg :=
         ('Error: can''t open file ' + Header.Data.FileName)
     else
       Interfaces.OnError.Data.Msg := msgCRCERROR + Header.Data.FileName;
@@ -591,7 +580,8 @@ begin
   if foTable in Header.Data.FileFlags then
     PPM.SetTable(Header.Data.FileTable);
 
-  if foTear in Header.Data.FileFlags then PPM.FreshFlexible
+  if foTear in Header.Data.FileFlags then
+    PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
@@ -613,7 +603,8 @@ begin
   Stream.Seek(Header.Data.FileStartPos, 0);
   Crc := cardinal(-1);
 
-  if Mode = pmNorm then try
+  if Mode = pmNorm then
+    try
       DstFile := DstStrm;
       Header.Data.FileStartPos := DstFile.Seek(0, 1);
     except
@@ -628,9 +619,7 @@ begin
     begin
       Stream.BlowFish.Start(GetKey(Header));
       if Header.Action = toSwap then
-      begin
         DstFile.BlowFish.Start(Interfaces.OnKey.Answer);
-      end;
     end;
 
     if foMoved in Header.Data.FileFlags then
@@ -638,11 +627,10 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-        begin
-          if Interfaces.Stop = False then Tick
+          if Interfaces.Stop = False then
+            Tick
           else
             Break;
-        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
@@ -654,11 +642,10 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-        begin
-          if Interfaces.Stop = False then Tick
+          if Interfaces.Stop = False then
+            Tick
           else
             Break;
-        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);
@@ -669,9 +656,8 @@ begin
     Stream.BlowFish.Finish;
 
     if Mode = pmNorm then
-    begin
-      DstFile.Flush; // last stream flush
-    end;
+      DstFile.Flush// last stream flush
+    ;
     DstFile.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
@@ -680,7 +666,8 @@ begin
   Result := Header.Data.FileCrc = Crc;
   if Result = False then
   begin
-    if Crc = cardinal(-1) then Interfaces.OnError.Data.Msg :=
+    if Crc = cardinal(-1) then
+      Interfaces.OnError.Data.Msg :=
         ('Error: stream not found')
     else
       Interfaces.OnError.Data.Msg := msgCRCERROR + Header.Data.FileName;

@@ -85,14 +85,16 @@ var
 begin
   Code  := 0;
   Range := $FFFFFFFF;
-  for I := 0 to 4 do Code := (Code shl 8) or InpSrcByte;
+  for I := 0 to 4 do
+    Code := (Code shl 8) or InpSrcByte;
 end;
 
 procedure TRangeCoder.FinishEncode;
 var
   I: cardinal;
 begin
-  for I := 0 to 4 do ShiftLow;
+  for I := 0 to 4 do
+    ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;
@@ -144,9 +146,7 @@ begin
     end;
     Cache := cardinal(Low) shr 24;
   end else
-  begin
     Inc(FFNum);
-  end;
   Low := cardinal(Low) shl 8;
 end;
 

@@ -45,8 +45,8 @@ uses
  {$IFDEF FPC}
  {$IFDEF UNIX}
   cThreads,
-                    {$ENDIF}
-                    {$ENDIF}
+                               {$ENDIF}
+                               {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -106,9 +106,7 @@ begin
   SetLength(AppKey, 0);
   AppParams := TStringList.Create;
   for I := 1 to ParamCount do
-  begin
     AppParams.Add(ParamStr(I));
-  end;
   App := TBeeApp.Create(AppInterfaces, AppParams);
 end;
 
@@ -157,10 +155,8 @@ end;
 procedure TConsole.OnRename;
 begin
   with AppInterfaces.OnRename.Data do
-  begin
     Write('Rename file "' + ParamToOem(FilePath + FileName) +
       '" as (empty to skip):');
-  end;
   Readln(AppInterfaces.OnRename.Answer);
   // convert oem to param
   AppInterfaces.OnRename.Answer := OemToParam(AppInterfaces.OnRename.Answer);

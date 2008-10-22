@@ -101,9 +101,7 @@ uses
 constructor TFileReader.Create(const FileName: string; Mode: word);
 begin
   if Mode = fmCreate then
-  begin
     ForceDirectories(ExtractFilePath(FileName));
-  end;
   BlowFish := TBlowFish.Create;
   Readed   := 0;
   Size     := 0;
@@ -135,13 +133,16 @@ begin
         Readed := 0;
         Size   := inherited Read(LocalBuffer, SizeOf(LocalBuffer));
 
-        if Size = 0 then Exit; // This causes Result < Count
+        if Size = 0 then
+          Exit; // This causes Result < Count
 
-        if BlowFish.Started then BlowFish.Decode(LocalBuffer, Size);
+        if BlowFish.Started then
+          BlowFish.Decode(LocalBuffer, Size);
       end;
       S := Count - Result;
 
-      if S > Size - Readed then S := Size - Readed;
+      if S > Size - Readed then
+        S := Size - Readed;
 
       CopyBytes(LocalBuffer[Readed], Bytes[Result], S);
       Inc(Result, S);
@@ -171,9 +172,7 @@ end;
 constructor TFileWriter.Create(const FileName: string; Mode: word);
 begin
   if Mode = fmCreate then
-  begin
     ForceDirectories(ExtractFilePath(FileName));
-  end;
   BlowFish := TBlowFish.Create;
   Size     := 0;
   inherited Create(FileName, Mode);
@@ -181,7 +180,8 @@ end;
 
 procedure TFileWriter.Flush;
 begin
-  if BlowFish.Started then Size := BlowFish.Encode(LocalBuffer, Size);
+  if BlowFish.Started then
+    Size := BlowFish.Encode(LocalBuffer, Size);
 
   inherited Write(LocalBuffer, Size);
   Size := 0;
@@ -191,7 +191,8 @@ function TFileWriter.Write(const Data; Count: longint): longint;
 begin
   if Count > SizeOf(LocalBuffer) - Size then
     Result := WriteBlock(Data, Count)
-  else if Count > 1 then
+  else
+  if Count > 1 then
   begin
     CopyBytes(Data, LocalBuffer[Size], Count);
     Inc(Size, Count);
@@ -225,16 +226,15 @@ end;
 
 function TFileWriter.Seek(Offset: longint; Origin: word): longint;
 begin
-  if Size > 0 then Flush;
+  if Size > 0 then
+    Flush;
   Result := inherited Seek(Offset, Origin);
 end;
 
 destructor TFileWriter.Destroy;
 begin
   if Size > 0 then
-  begin
     Flush;
-  end;
   BlowFish.Free;
   inherited Destroy;
 end;
@@ -277,7 +277,8 @@ end;
 
 function TNulWriter.Seek(Offset: longint; Origin: word): longint;
 begin
-  if Current > Longest then Longest := Current;
+  if Current > Longest then
+    Longest := Current;
 
   case Origin of
     soFromCurrent: Inc(Offset, Current);

@@ -216,7 +216,8 @@ end;
 
 procedure TApp.SetExitCode(Code: integer);
 begin
-  if ExitCode < Code then ExitCode := Code;
+  if ExitCode < Code then
+    ExitCode := Code;
 end;
 
 end.

@@ -97,15 +97,24 @@ end;
 
 procedure TRangeCoder.FinishEncode;
 begin
-  if Bits = 0 then Exit;
+  if Bits = 0 then
+    Exit;
   Inc(BitsToFollow);
-  if Low < FirstQtr then BitPlusFollow(0)
+  if Low < FirstQtr then
+    BitPlusFollow(0)
   else
     BitPlusFollow(cardinal(-1));
-  if Bits > $00800000 then Stream.Write(Buffer, 4)
-  else if Bits > $00008000 then Stream.Write(Buffer, 3)
-  else if Bits > $00000080 then Stream.Write(Buffer, 2)
-  else if Bits > $00000001 then Stream.Write(Buffer, 1);
+  if Bits > $00800000 then
+    Stream.Write(Buffer, 4)
+  else
+  if Bits > $00008000 then
+    Stream.Write(Buffer, 3)
+  else
+  if Bits > $00000080 then
+    Stream.Write(Buffer, 2)
+  else
+  if Bits > $00000001 then
+    Stream.Write(Buffer, 1);
   Bits := 0;
 end;
 
@@ -120,13 +129,16 @@ begin
   // Emit bites...
   while True do
   begin
-    if High < Half then BitPlusFollow(0)
-    else if Low >= Half then
+    if High < Half then
+      BitPlusFollow(0)
+    else
+    if Low >= Half then
     begin
       BitPlusFollow(cardinal(-1));
       Dec(Low, Half);
       Dec(High, Half);
-    end else if (Low >= FirstQtr) and (High < ThirdQtr) then
+    end else
+    if (Low >= FirstQtr) and (High < ThirdQtr) then
     begin
       Inc(BitsToFollow);
       Dec(Low, FirstQtr);
@@ -170,7 +182,8 @@ begin
   Value := 0;
   Low   := 0;
   High  := TopValue;
-  for I := 1 to ValueBits do Value := Value shl 1 + InputBit;
+  for I := 1 to ValueBits do
+    Value := Value shl 1 + InputBit;
 end;
 
 procedure TRangeCoder.FinishDecode;
@@ -197,13 +210,16 @@ begin
   // Emit bites...
   while True do
   begin
-    if High < Half then    // nothing
-    else if Low >= Half then
+    if High < Half then
+    // nothing
+    else
+    if Low >= Half then
     begin
       Dec(Value, Half);
       Dec(Low, Half);
       Dec(High, Half);
-    end else if (Low >= FirstQtr) and (High < ThirdQtr) then
+    end else
+    if (Low >= FirstQtr) and (High < ThirdQtr) then
     begin
       Dec(Value, FirstQtr);
       Dec(Low, FirstQtr);

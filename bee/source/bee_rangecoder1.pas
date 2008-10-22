@@ -90,14 +90,16 @@ var
   I: integer;
 begin
   StartEncode;
-  for I := 0 to NUM do code := code shl 8 + InpSrcByte;
+  for I := 0 to NUM do
+    code := code shl 8 + InpSrcByte;
 end;
 
 procedure TRangeCoder.FinishEncode;
 var
   I: integer;
 begin
-  for I := 0 to NUM do ShiftLow;
+  for I := 0 to NUM do
+    ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;

@@ -179,9 +179,7 @@ begin
   Result := Length(Str);
   while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)),
       Substr) <> 0) do
-  begin
     Dec(Result);
-  end;
 end;
 
 function CompareFileName(const S1, S2: string): integer;
@@ -202,11 +200,10 @@ begin
   L := Length(FileName);
   I := Pos(':', FileName);
   while I < L do
-  begin
-    if FileName[I + 1] in ['\', '/'] then Inc(I)
+    if FileName[I + 1] in ['\', '/'] then
+      Inc(I)
     else
       Break;
-  end;
   Result := Copy(FileName, 1, I);
 end;
 
@@ -215,9 +212,7 @@ function DeleteFilePath(const FilePath, FileName: string): string;
 begin
   Result := FileName;
   if FileNamePos(FilePath, Result) = 1 then
-  begin
     Delete(Result, 1, Length(FilePath));
-  end;
 end;
 
 function DeleteFileDrive(const FileName: string): string;
@@ -240,9 +235,8 @@ var
 begin
   L := Length(DirName);
   if (L > 0) and (not (DirName[L] in ['\', '/'])) then
-  begin
-    Result := DirName + PathDelim;
-  end else
+    Result := DirName + PathDelim
+  else
     Result := DirName;
 end;
 
@@ -253,9 +247,8 @@ var
 begin
   L := Length(DirName);
   if (L > 0) and (DirName[L] in ['\', '/']) then
-  begin
-    Result := Copy(DirName, 1, L - 1);
-  end else
+    Result := Copy(DirName, 1, L - 1)
+  else
     Result := DirName;
 end;
 
@@ -265,7 +258,8 @@ var
   L: integer;
 begin
   L := Length(DirName);
-  if (L > 0) and (not (DirName[L] in [' '])) then Result := DirName + ' '
+  if (L > 0) and (not (DirName[L] in [' '])) then
+    Result := DirName + ' '
   else
     Result := DirName;
 end;
@@ -277,40 +271,38 @@ var
 begin
   L := Length(DirName);
   if (L > 0) and (DirName[L] in [' ']) then
-  begin
-    Result := Copy(DirName, 1, L - 1);
-  end else
+    Result := Copy(DirName, 1, L - 1)
+  else
     Result := DirName;
 end;
 
 function MatchPattern(Element, Pattern: PChar): boolean;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
-  if 0 = StrComp(Pattern, '*') then Result := True
+  if 0 = StrComp(Pattern, '*') then
+    Result := True
   else
-  begin
-    if (Element^ = Chr(0)) and (Pattern^ <> Chr(0)) then Result := False
-    else
-    begin
-      if Element^ = Chr(0) then Result := True
+  if (Element^ = Chr(0)) and (Pattern^ <> Chr(0)) then
+    Result := False
+  else
+  if Element^ = Chr(0) then
+    Result := True
+  else
+    case Pattern^ of
+      '*': if MatchPattern(Element, @Pattern[1]) then
+          Result := True
+        else
+          Result := MatchPattern(@Element[1], Pattern);
+
+      '?': Result := MatchPattern(@Element[1], @Pattern[1]);
+
+    else if Element^ = Pattern^ then
+        Result :=
+          MatchPattern(@Element[1], @Pattern[1])
       else
-      begin
-        case Pattern^ of
-          '*': if MatchPattern(Element, @Pattern[1]) then
-              Result := True
-            else
-              Result := MatchPattern(@Element[1], Pattern);
-
-          '?': Result := MatchPattern(@Element[1], @Pattern[1]);
-
-        else if Element^ = Pattern^ then Result :=
-              MatchPattern(@Element[1], @Pattern[1])
-          else
-            Result := False;
-        end; // end case
-      end;
-    end;
-  end;
+        Result := False;
+    end// end case
+  ;
 end;
 
 function CharCount(const S: string; C: char): integer;
@@ -322,9 +314,8 @@ begin
   Result := 0;
   L      := Length(S);
   for I := 1 to L do
-  begin
-    if CompareFileName(S[I], C) = 0 then Inc(Result);
-  end;
+    if CompareFileName(S[I], C) = 0 then
+      Inc(Result);
 end;
 
 function FileNameMatch(const FileName, Mask: string;
@@ -349,9 +340,7 @@ begin
   begin
     iFileDrive := ExtractFileDrive(iFileName);
     if iFileDrive <> '' then
-    begin
       iMask := IncludeTrailingBackSlash(iFileDrive) + iMask;
-    end;
   end;
 
   if Recursive then
@@ -359,10 +348,8 @@ begin
     iMaskPath := ExtractFilePath(iMask);
     for I := 1 to CharCount(iFileName, PathDelim) -
       CharCount(iMask, PathDelim) do
-    begin
       iMaskPath := IncludeTrailingBackSlash(iMaskPath) +
         IncludeTrailingBackSlash('*');
-    end;
     iMask := iMaskPath + ExtractFileName(iMask);
   end;
 
@@ -370,11 +357,12 @@ begin
   begin
     if MatchPattern(PChar(ExtractFilePath(iFileName)),
       PChar(ExtractFilePath(iMask))) then
-    begin
       Result := MatchPattern(PChar(ExtractFileName(iFileName)),
-        PChar(ExtractFileName(iMask)));
-    end else
+        PChar(ExtractFileName(iMask)))
+    else
+    begin
       Result := False;
+    end;
   end else
     Result := False;
 end;
@@ -387,23 +375,22 @@ var
 begin
   Result := False;
   if (Assigned(Masks)) and (Masks.Count > 0) then
-  begin
     for I := 0 to Masks.Count - 1 do
-    begin
       if FileNameMatch(FileName, Masks.Strings[I], Recursive) then
       begin
         Result := True;
         Break;
       end;
-    end;
-  end;
 end;
 
 function FileNameUseWildcards(const FileName: string): boolean;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
-  if System.Pos('*', FileName) > 0 then Result := True
-  else if System.Pos('?', FileName) > 0 then Result := True
+  if System.Pos('*', FileName) > 0 then
+    Result := True
+  else
+  if System.Pos('?', FileName) > 0 then
+    Result := True
   else
     Result := False;
 end;
@@ -416,12 +403,8 @@ begin
   Result := FileName;
   L      := Length(Result);
   for I := 1 to L do
-  begin
     if Result[I] in ['\', '/'] then
-    begin
       Result[I] := PathDelim;
-    end;
-  end;
 end;
 
 function FixFileName(const FileName: string): string;
@@ -492,9 +475,8 @@ function ParamToOem(const Param: string): string;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
   if (Param = '') then
-  begin
-    Result := '';
-  end else
+    Result := ''
+  else
   begin
     {$IFDEF MSWINDOWS}
     SetLength(Result, Length(Param));
@@ -509,9 +491,8 @@ function OemToParam(const Param: string): string;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
   if (Param = '') then
-  begin
-    Result := '';
-  end else
+    Result := ''
+  else
   begin
     {$IFDEF MSWINDOWS}
     SetLength(Result, Length(Param));
@@ -538,16 +519,19 @@ begin
   ZM := T div 60 - ZH * 60;
   ZS := T - (ZH * 3600 + ZM * 60);
 
-  if ZH < 10 then H := '0' + IntToStr(ZH)
+  if ZH < 10 then
+    H := '0' + IntToStr(ZH)
   else
     H := IntToStr(ZH);
 
-  if ZM < 10 then M := '0' + IntToStr(ZM)
+  if ZM < 10 then
+    M := '0' + IntToStr(ZM)
   else
     M := IntToStr(ZM);
 
 
-  if ZS < 10 then S := '0' + IntToStr(ZS)
+  if ZS < 10 then
+    S := '0' + IntToStr(ZS)
   else
     S := IntToStr(ZS);
 
@@ -599,13 +583,15 @@ function ForceDirectories(const Dir: string): boolean;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := True;
-  if Dir = '' then Exit;
+  if Dir = '' then
+    Exit;
 
   if Dir[Length(Dir)] = PathDelim then
     Result := ForceDirectories(Copy(Dir, 1, Length(Dir) - 1))
   else
   begin
-    if DirectoryExists(Dir) or (ExtractFilePath(Dir) = Dir) then Exit;
+    if DirectoryExists(Dir) or (ExtractFilePath(Dir) = Dir) then
+      Exit;
 
     if ForceDirectories(ExtractFilePath(Dir)) then
       Result := CreateDir(Dir)
@@ -636,9 +622,7 @@ begin
   repeat
     Result := '????????.$$$';
     for I := 1 to 8 do
-    begin
       Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
-    end;
     Result := IncludeTrailingBackSlash(Path) + Result;
   until FileAge(Result) = -1;
 end;
@@ -654,7 +638,8 @@ end;
 function RatioToStr(PackedSize, Size: integer): string;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
-  if Size > 0 then Result := Format('%u%%', [MulDiv(PackedSize, 100, Size)])
+  if Size > 0 then
+    Result := Format('%u%%', [MulDiv(PackedSize, 100, Size)])
   else
     Result := Format('%u%%', [100]);
 end;
@@ -663,10 +648,14 @@ function AttrToStr(Attr: integer): string;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := '..RHSA';
-  if Attr and faReadOnly = 0 then Result[3] := '.';
-  if Attr and faHidden = 0 then Result[4] := '.';
-  if Attr and faSysFile = 0 then Result[5] := '.';
-  if Attr and faArchive = 0 then Result[6] := '.';
+  if Attr and faReadOnly = 0 then
+    Result[3] := '.';
+  if Attr and faHidden = 0 then
+    Result[4] := '.';
+  if Attr and faSysFile = 0 then
+    Result[5] := '.';
+  if Attr and faArchive = 0 then
+    Result[6] := '.';
 end;
 
 // hex routines ...
@@ -695,16 +684,16 @@ var
   I: integer;
 begin
   Result := False;
-  if Length(S) < Count * 2 then Exit;
+  if Length(S) < Count * 2 then
+    Exit;
 
   for I := 0 to Count - 1 do
-  begin
     if (S[I * 2 + 1] in ['0'..'9', 'A'..'F']) and
-      (S[I * 2 + 2] in ['0'..'9', 'A'..'F']) then TByteArray(Data)[I] :=
+      (S[I * 2 + 2] in ['0'..'9', 'A'..'F']) then
+      TByteArray(Data)[I] :=
         HexValues[S[I * 2 + 1]] shl 4 + HexValues[S[I * 2 + 2]]
     else
       Exit;
-  end;
   Result := True;
 end;
 
@@ -761,7 +750,8 @@ var
   Rec: TSearchRec;
 begin
   Err := FindFirst(FileName, faAnyFile, Rec);
-  if (Err = 0) and ((Rec.Attr and faDirectory) = 0) then Result := Rec.Size
+  if (Err = 0) and ((Rec.Attr and faDirectory) = 0) then
+    Result := Rec.Size
   else
     Result := -1;
   FindClose(Rec);
