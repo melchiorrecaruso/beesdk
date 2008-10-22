@@ -176,7 +176,8 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
 
   if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
@@ -224,8 +225,8 @@ begin
         UpdCrc32(Header.Data.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
       end;
-    end
-    else begin
+    end else
+    begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
@@ -249,8 +250,8 @@ begin
     Stream.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
-  end
-  else begin
+  end else
+  begin
     Interfaces.OnError.Data.Msg :=
       ('Error: can''t open file ' + Header.Data.FileName);
     Sync(Interfaces.OnError.Method);
@@ -265,8 +266,7 @@ begin
 
     Dec(Interfaces.OnTick.Data.ProcessedSize, Header.Data.FileSize);
     Result := EncodeFile(Header, emOpt);
-  end
-  else
+  end else
     Result := True;
 end;
 
@@ -281,7 +281,8 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
 
   if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
@@ -329,8 +330,8 @@ begin
         UpdCrc32(Header.Data.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
       end;
-    end
-    else begin
+    end else
+    begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
@@ -354,8 +355,8 @@ begin
     Stream.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
-  end
-  else begin
+  end else
+  begin
     Interfaces.OnError.Data.Msg := ('Error: stream  not found');
     Sync(Interfaces.OnError.Method);
   end;
@@ -370,8 +371,7 @@ begin
 
     Dec(Interfaces.OnTick.Data.ProcessedSize, Header.Data.FileSize);
     Result := EncodeStrm(Header, emOpt, SrcStrm);
-  end
-  else
+  end else
     Result := True;
 end;
 
@@ -385,7 +385,8 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
 
   if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
@@ -419,8 +420,8 @@ begin
     end;
 
     Sync(Interfaces.OnClear.Method);
-  end
-  else begin
+  end else
+  begin
     Interfaces.OnError.Data.Msg := ('Error: stream  not found');
     Sync(Interfaces.OnError.Method);
   end;
@@ -478,7 +479,8 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
 
   if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
@@ -487,7 +489,8 @@ begin
   case Mode of
     pmSkip: Interfaces.OnDisplay.Data.Msg :=
         msgSkipping + Header.Data.FileName;
-    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting + Header.Data.FileName;
+    pmTest: Interfaces.OnDisplay.Data.Msg :=
+        msgTesting + Header.Data.FileName;
     pmNorm: Interfaces.OnDisplay.Data.Msg :=
         msgExtracting + Header.Data.FileName;
     pmQuit:
@@ -505,8 +508,7 @@ begin
       DstFile := TFileWriter.Create(Header.Data.FileName, fmCreate)
     except
       DstFile := nil;
-    end
-  else
+    end else
     DstFile := TNulWriter.Create;
 
   if (DstFile <> nil) then
@@ -532,8 +534,8 @@ begin
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
       end;
-    end
-    else begin
+    end else
+    begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
@@ -586,7 +588,8 @@ begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
 
-  if foTable in Header.Data.FileFlags then PPM.SetTable(Header.Data.FileTable);
+  if foTable in Header.Data.FileFlags then
+    PPM.SetTable(Header.Data.FileTable);
 
   if foTear in Header.Data.FileFlags then PPM.FreshFlexible
   else
@@ -595,7 +598,8 @@ begin
   case Mode of
     pmSkip: Interfaces.OnDisplay.Data.Msg :=
         msgSkipping + Header.Data.FileName;
-    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting + Header.Data.FileName;
+    pmTest: Interfaces.OnDisplay.Data.Msg :=
+        msgTesting + Header.Data.FileName;
     pmNorm: Interfaces.OnDisplay.Data.Msg :=
         msgDecoding + Header.Data.FileName;
     pmQuit:
@@ -614,8 +618,7 @@ begin
       Header.Data.FileStartPos := DstFile.Seek(0, 1);
     except
       DstFile := nil;
-    end
-  else
+    end else
     DstFile := TNulWriter.Create;
 
   if (DstFile <> nil) then
@@ -645,8 +648,8 @@ begin
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
       end;
-    end
-    else begin
+    end else
+    begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin

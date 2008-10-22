@@ -103,12 +103,9 @@ begin
   else
     BitPlusFollow(cardinal(-1));
   if Bits > $00800000 then Stream.Write(Buffer, 4)
-  else
-    if Bits > $00008000 then Stream.Write(Buffer, 3)
-    else
-      if Bits > $00000080 then Stream.Write(Buffer, 2)
-      else
-        if Bits > $00000001 then Stream.Write(Buffer, 1);
+  else if Bits > $00008000 then Stream.Write(Buffer, 3)
+  else if Bits > $00000080 then Stream.Write(Buffer, 2)
+  else if Bits > $00000001 then Stream.Write(Buffer, 1);
   Bits := 0;
 end;
 
@@ -124,22 +121,18 @@ begin
   while True do
   begin
     if High < Half then BitPlusFollow(0)
-    else
-      if Low >= Half then
-      begin
-        BitPlusFollow(cardinal(-1));
-        Dec(Low, Half);
-        Dec(High, Half);
-      end
-      else
-        if (Low >= FirstQtr) and (High < ThirdQtr) then
-        begin
-          Inc(BitsToFollow);
-          Dec(Low, FirstQtr);
-          Dec(High, FirstQtr);
-        end
-        else
-          break;
+    else if Low >= Half then
+    begin
+      BitPlusFollow(cardinal(-1));
+      Dec(Low, Half);
+      Dec(High, Half);
+    end else if (Low >= FirstQtr) and (High < ThirdQtr) then
+    begin
+      Inc(BitsToFollow);
+      Dec(Low, FirstQtr);
+      Dec(High, FirstQtr);
+    end else
+      break;
     Low  := Low shl 1;
     High := High shl 1 + 1;
   end;
@@ -205,22 +198,18 @@ begin
   while True do
   begin
     if High < Half then    // nothing
-    else
-      if Low >= Half then
-      begin
-        Dec(Value, Half);
-        Dec(Low, Half);
-        Dec(High, Half);
-      end
-      else
-        if (Low >= FirstQtr) and (High < ThirdQtr) then
-        begin
-          Dec(Value, FirstQtr);
-          Dec(Low, FirstQtr);
-          Dec(High, FirstQtr);
-        end
-        else
-          break;
+    else if Low >= Half then
+    begin
+      Dec(Value, Half);
+      Dec(Low, Half);
+      Dec(High, Half);
+    end else if (Low >= FirstQtr) and (High < ThirdQtr) then
+    begin
+      Dec(Value, FirstQtr);
+      Dec(Low, FirstQtr);
+      Dec(High, FirstQtr);
+    end else
+      break;
     Low   := Low shl 1;
     High  := High shl 1 + 1;
     Value := Value shl 1 + InputBit;

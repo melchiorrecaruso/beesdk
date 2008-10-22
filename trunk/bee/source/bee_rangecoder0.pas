@@ -143,8 +143,8 @@ begin
       Dec(FFNum);
     end;
     Cache := cardinal(Low) shr 24;
-  end
-  else begin
+  end else
+  begin
     Inc(FFNum);
   end;
   Low := cardinal(Low) shl 8;

@@ -143,8 +143,7 @@ begin
       ' not found, using default settings' + Cr);
     Synchronize(Interfaces.OnWarning.Method);
     SetExitCode(1);
-  end
-  else
+  end else
     FConfiguration.LoadFromFile(FCommandLine.cfgOption);
 
   // load method and dictionary level
@@ -254,8 +253,7 @@ begin
         'T': DecodeShell(toTest);
         'X': DecodeShell(toExtract);
         '?': DisplayUsage;
-      end
-    else
+      end else
       DisplayUsage;
   end;
 end;
@@ -280,7 +278,7 @@ begin
     1: Priority := tpNormal;
     2: Priority := tpHigher;
     3: Priority := tpTimeCritical;
-    else Priority := tpNormal;
+  else Priority := tpNormal;
   end;
   {$ENDIF}
 end;
@@ -321,19 +319,19 @@ var
 begin
   if FCommandLine.Command = 'E' then
   begin
-    for I := 0 to Headers.Count - 1 do with THeader(Headers.Items[I]).Data do
+    for I := 0 to Headers.Count - 1 do
+      with THeader(Headers.Items[I]).Data do
       begin
         FileName := ExtractFileName(FileName);
       end;
-  end
-  else
-    if Length(FCommandLine.cdOption) > 0 then
-    begin
-      for I := 0 to Headers.Count - 1 do with THeader(Headers.Items[I]).Data do
-        begin
-          FileName := DeleteFilePath(FCommandLine.cdOption, FileName);
-        end;
-    end;
+  end else if Length(FCommandLine.cdOption) > 0 then
+  begin
+    for I := 0 to Headers.Count - 1 do
+      with THeader(Headers.Items[I]).Data do
+      begin
+        FileName := DeleteFilePath(FCommandLine.cdOption, FileName);
+      end;
+  end;
 end;
 
 // -------------------------------------------------------------------------- //
@@ -417,8 +415,7 @@ begin
               Interfaces.OnWarning.Data.Msg :=
                 ('Warning: file "' + NewFileName + '" already exists.');
               Synchronize(Interfaces.OnDisplay.Method);
-            end
-            else
+            end else
               Break;
           end;
 
@@ -474,14 +471,14 @@ begin
           else
             ProcessFileToOverWrite(Headers, I);
         end;
-    end
-    else
+    end else
       for I := 0 to Headers.Count - 1 do
         if (THeader(Headers.Items[I]).Action = toExtract) then
         begin
           if (FileExists(THeader(Headers.Items[I]).Data.FileName) = False) then
             THeader(Headers.Items[I]).Action := toNone
-          else begin
+          else
+          begin
             if FileAge(THeader(Headers.Items[I]).Data.FileName) >=
               THeader(Headers.Items[I]).Data.FileTime then
               THeader(Headers.Items[I]).Action := toNone
@@ -490,8 +487,8 @@ begin
           end;
         end;
 
-  end
-  else begin
+  end else
+  begin
     for I := 0 to Headers.Count - 1 do
       if FileExists(THeader(Headers.Items[I]).Data.FileName) = True then
       begin
@@ -500,8 +497,7 @@ begin
           THeader(Headers.Items[I]).Action := toNone
         else
           ProcessFileToOverWrite(Headers, I);
-      end
-      else
+      end else
         ProcessFileToOverWrite(Headers, I);
   end;
 end;
@@ -517,8 +513,7 @@ begin
     begin
       Result := Headers.GetNext(FileIndex + 1, FileActions, FileName);
     end;
-  end
-  else
+  end else
     Result := -1;
 end;
 
@@ -588,8 +583,7 @@ begin
               ('Warning: file "' + iFileName +
               '" already existing in archive.');
             Synchronize(Interfaces.OnWarning.Method);
-          end
-          else
+          end else
             Break;
         end;
 
@@ -600,8 +594,7 @@ begin
       end;
     end;
     Result := True;
-  end
-  else
+  end else
     Result := ((Length(FCommandLine.aOption) > 0) and
       (Headers.GetNext(0, toCopy) > -1));
 end;
@@ -743,8 +736,7 @@ begin
             else
               Result := Decoder.DecodeStrm(Headers.Items[J],
                 pmSkip, FSwapStrm);
-          end
-          else
+          end else
             Result := False;
 
           if Result = False then Break;
@@ -756,8 +748,7 @@ begin
       Decoder.Destroy;
       FreeAndNil(FSwapStrm);
 
-    end
-    else
+    end else
       Result := False;
   end;
 end;
@@ -945,10 +936,14 @@ begin
           if Interfaces.Stop = False then
           begin
             case THeader(Headers.Items[I]).Action of
-              toCopy: Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
-              toSwap: Encoder.EncodeStrm(Headers.Items[I], emNorm, FSwapFile);
-              toFresh: Encoder.EncodeFile(Headers.Items[I], emNorm);
-              toUpdate: Encoder.EncodeFile(Headers.Items[I], emNorm);
+              toCopy: Encoder.CopyStrm(Headers.Items[I],
+                  emNorm, FArcFile);
+              toSwap: Encoder.EncodeStrm(Headers.Items[I],
+                  emNorm, FSwapFile);
+              toFresh: Encoder.EncodeFile(
+                  Headers.Items[I], emNorm);
+              toUpdate: Encoder.EncodeFile(
+                  Headers.Items[I], emNorm);
             end;
           end;
         Encoder.Destroy;
@@ -961,8 +956,8 @@ begin
             (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) +
             ' bytes - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
-        end
-        else begin
+        end else
+        begin
           Interfaces.OnError.Data.Msg :=
             (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnError.Method);
@@ -983,17 +978,15 @@ begin
               ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
             Synchronize(Interfaces.OnError.Method);
             SetExitCode(2);
-          end
-          else begin
+          end else
+          begin
             ProcesstOption; // process tOption
             ProcesslOption; // process lOption
           end;
-        end
-        else
+        end else
           DeleteFile(TmpFileName);
 
-      end
-      else // if ProcessFilesToSwap
+      end else // if ProcessFilesToSwap
       begin
         if TmpFile = nil then Interfaces.OnError.Data.Msg :=
             ('Error: can''t open temp file')
@@ -1011,8 +1004,7 @@ begin
         SysUtils.DeleteFile(TmpFileName);
       end;
 
-    end
-    else // if Headers.GetCount
+    end else // if Headers.GetCount
     begin
       Interfaces.OnWarning.Data.Msg := ('Warning: no files to process');
       Synchronize(Interfaces.OnWarning.Method);
@@ -1066,10 +1058,14 @@ begin
       begin
         if Interfaces.Stop = False then
           case THeader(Headers.Items[I]).Action of
-            toExtract: Return := Decoder.DecodeFile(Headers.Items[I], pmNorm);
-            toTest: Return    := Decoder.DecodeFile(Headers.Items[I], pmTest);
-            toSkip: Return    := Decoder.DecodeFile(Headers.Items[I], pmSkip);
-            toQuit: Return    := Decoder.Decodefile(Headers.Items[I], pmQuit);
+            toExtract: Return :=
+                Decoder.DecodeFile(Headers.Items[I], pmNorm);
+            toTest: Return    :=
+                Decoder.DecodeFile(Headers.Items[I], pmTest);
+            toSkip: Return    :=
+                Decoder.DecodeFile(Headers.Items[I], pmSkip);
+            toQuit: Return    :=
+                Decoder.Decodefile(Headers.Items[I], pmQuit);
           end;
         if Return = False then Break;
       end;
@@ -1082,24 +1078,23 @@ begin
           Interfaces.OnDisplay.Data.Msg :=
             (Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
-        end
-        else begin
+        end else
+        begin
           Interfaces.OnError.Data.Msg :=
             (Cr + 'Process aborted, a fatal error occourred - ' +
             TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnError.Method);
           SetExitCode(2);
         end;
-      end
-      else begin
+      end else
+      begin
         Interfaces.OnError.Data.Msg :=
           (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
         Synchronize(Interfaces.OnError.Method);
         SetExitCode(255);
       end;
 
-    end
-    else // if Headers.GetNext
+    end else // if Headers.GetNext
     begin
       Interfaces.OnWarning.Data.Msg := ('Warning: no files to decode');
       Synchronize(Interfaces.OnWarning.Method);
@@ -1166,8 +1161,10 @@ begin
           if Interfaces.Stop = False then
           begin
             case THeader(Headers.Items[I]).Action of
-              toCopy: Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
-              toSwap: Encoder.EncodeStrm(Headers.Items[I], emNorm, FSwapFile);
+              toCopy: Encoder.CopyStrm(Headers.Items[I],
+                  emNorm, FArcFile);
+              toSwap: Encoder.EncodeStrm(Headers.Items[I],
+                  emNorm, FSwapFile);
               toDelete:
               begin
                 Interfaces.OnDisplay.Data.Msg :=
@@ -1185,8 +1182,8 @@ begin
             (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) +
             ' bytes - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
-        end
-        else begin
+        end else
+        begin
           Interfaces.OnError.Data.Msg :=
             (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnError.Method);
@@ -1207,17 +1204,15 @@ begin
               ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
             Synchronize(Interfaces.OnError.Method);
             SetExitCode(2);
-          end
-          else begin
+          end else
+          begin
             ProcesstOption; // process tOption
             ProcesslOption; // process lOption  
           end;
-        end
-        else
+        end else
           SysUtils.DeleteFile(TmpFileName);
 
-      end
-      else // if ProcessFilesToSwap
+      end else // if ProcessFilesToSwap
       begin
         if TmpFile = nil then Interfaces.OnError.Data.Msg :=
             ('Error: can''t open temp file')
@@ -1235,8 +1230,7 @@ begin
         SysUtils.DeleteFile(TmpFileName);
       end;
 
-    end
-    else // if Headers.GetNext
+    end else // if Headers.GetNext
     begin
       Interfaces.OnWarning.Data.Msg := ('Warning: no files to delete');
       Synchronize(Interfaces.OnWarning.Method);
@@ -1284,7 +1278,8 @@ begin
 
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
-        for I := 0 to Headers.Count - 1 do if Interfaces.Stop = False then
+        for I := 0 to Headers.Count - 1 do
+          if Interfaces.Stop = False then
           begin
             Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
           end;
@@ -1297,8 +1292,8 @@ begin
             (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) +
             ' bytes - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
-        end
-        else begin
+        end else
+        begin
           Interfaces.OnError.Data.Msg :=
             (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnError.Method);
@@ -1317,17 +1312,15 @@ begin
               ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
             Synchronize(Interfaces.OnError.Method);
             SetExitCode(2);
-          end
-          else begin
+          end else
+          begin
             ProcesstOption; // process tOption
             ProcesslOption; // process lOption
           end;
-        end
-        else
+        end else
           SysUtils.DeleteFile(TmpFileName);
 
-      end
-      else // if (TmpFile <> nil)
+      end else // if (TmpFile <> nil)
       begin
         if TmpFile = nil then Interfaces.OnError.Data.Msg :=
             ('Error: can''t open temp file')
@@ -1343,8 +1336,7 @@ begin
         SysUtils.DeleteFile(TmpFileName);
       end;
 
-    end
-    else // if ProcessFilesToRename
+    end else // if ProcessFilesToRename
     begin
       Interfaces.OnWarning.Data.Msg := ('Warning: no files to rename');
       Synchronize(Interfaces.OnWarning.Method);
@@ -1413,8 +1405,10 @@ begin
         begin
           P := Info.Items[I];
 
-          if foVersion in P.Data.FileFlags then Version := P.Data.FileVersion;
-          if foMethod in P.Data.FileFlags then Method := P.Data.FileMethod;
+          if foVersion in P.Data.FileFlags then
+            Version := P.Data.FileVersion;
+          if foMethod in P.Data.FileFlags then
+            Method := P.Data.FileMethod;
           if foDictionary in P.Data.FileFlags then
             Dictionary := P.Data.FileDictionary;
 
@@ -1425,7 +1419,8 @@ begin
             FileSize   := P.Data.FileSize;
             FilePacked := P.Data.FilePacked;
 
-            if FileSize > 0 then FileRatio := MulDiv(FilePacked, 100, FileSize)
+            if FileSize > 0 then FileRatio :=
+                MulDiv(FilePacked, 100, FileSize)
             else
               FileRatio := 100;
 
@@ -1436,7 +1431,8 @@ begin
             FileMethod  := MethodToStr(P, Method, Dictionary);
             FileVersion := VersionToStr(Version);
 
-            if foPassword in P.Data.FileFlags then FilePassword := 'Yes'
+            if foPassword in P.Data.FileFlags then
+              FilePassword := 'Yes'
             else
               FilePassword := 'No';
 
@@ -1473,8 +1469,8 @@ begin
       Interfaces.OnDisplay.Data.Msg :=
         (Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
       Synchronize(Interfaces.OnDisplay.Method);
-    end
-    else begin
+    end else
+    begin
       Interfaces.OnWarning.Data.Msg := ('Warning: no files to list');
       Synchronize(Interfaces.OnWarning.Method);
       SetExitCode(1);
@@ -1513,7 +1509,7 @@ begin
   case VersionId of
     0: Result := ' 0' + DecimalSeparator + '2';
     1: Result := ' 0' + DecimalSeparator + '3';
-    else Result := ' 0' + DecimalSeparator + '0';
+  else Result := ' 0' + DecimalSeparator + '0';
   end;
 end;
 

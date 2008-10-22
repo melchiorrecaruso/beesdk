@@ -150,8 +150,7 @@ begin
     end;
     Cache := Low shr 24;
     Carry := 0;
-  end
-  else
+  end else
     Inc(FFNum);
   Low := Low shl 8;
 end;

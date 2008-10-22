@@ -114,7 +114,7 @@ begin
       TSynchronizerManager.Instance().DoDestroyWindow(TSyncInfo(lParam));
       Result := 0;
     end;
-    else Result := DefWindowProc(Window, Message, wParam, lParam);
+  else Result := DefWindowProc(Window, Message, wParam, lParam);
   end;
 end;
 
@@ -335,8 +335,8 @@ begin
           DispatchMessage(Msg);
         end;
       end;
-    end
-    else begin
+    end else
+    begin
       WaitForSingleObject(H, INFINITE);
     end;
   finally

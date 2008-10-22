@@ -150,8 +150,8 @@ begin
   begin
     Decode(0, Freq0, Freq0 + Freq1);
     Result := 0;
-  end
-  else begin
+  end else
+  begin
     Decode(Freq0, Freq1, Freq0 + Freq1);
     Result := 1;
   end;

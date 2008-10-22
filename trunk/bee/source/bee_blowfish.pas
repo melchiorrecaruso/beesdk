@@ -431,8 +431,8 @@ begin
   if Length(Key) < MinKeyLength then
   begin
     FStarted := False;
-  end
-  else begin
+  end else
+  begin
     FStarted := True;
     Initialize(Key);
   end;

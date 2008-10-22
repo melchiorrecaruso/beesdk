@@ -161,8 +161,7 @@ begin
   begin
     Delete(S, 1, 2);
     if (S = '') or (S = '+') then Option := True
-    else
-      if (S = '-') then Option := False;
+    else if (S = '-') then Option := False;
   end;
 end;
 
@@ -198,10 +197,9 @@ begin
         begin
           Delete(S, 1, 2);
           if (S = '+') or (Length(S) = 0) then FaOption := 'bee.sfx'
+          else if (S = '-') then FaOption := 'nul'
           else
-            if (S = '-') then FaOption := 'nul'
-            else
-              FaOption := S;
+            FaOption := S;
         end;
         'M':
         begin
@@ -243,52 +241,49 @@ begin
             FxOption.Add(S);
           end;
         end;
-        else if Pos('-PRI', UpperCase(S)) = 1 then
+      else if Pos('-PRI', UpperCase(S)) = 1 then
+        begin
+          Delete(S, 1, 4);
+          if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
           begin
-            Delete(S, 1, 4);
-            if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
+            FpriOption := StrToInt(S[1]);
+          end;
+        end else
+        begin
+          if Pos('-CD', UpperCase(S)) = 1 then
+          begin
+            Delete(S, 1, 3);
+            if Length(S) > 0 then
             begin
-              FpriOption := StrToInt(S[1]);
+              FcdOption := IncludeTrailingBackslash(FixDirName(S));
             end;
-          end
-          else begin
-            if Pos('-CD', UpperCase(S)) = 1 then
+          end else
+          begin
+            if Pos('-CFG', UpperCase(S)) = 1 then
             begin
-              Delete(S, 1, 3);
-              if Length(S) > 0 then
-              begin
-                FcdOption := IncludeTrailingBackslash(FixDirName(S));
-              end;
-            end
-            else begin
-              if Pos('-CFG', UpperCase(S)) = 1 then
-              begin
-                Delete(S, 1, 4);
-                FcfgOption := S;
-              end;
+              Delete(S, 1, 4);
+              FcfgOption := S;
             end;
           end;
+        end;
       end; // end case
-    end
-    else begin
+    end else
+    begin
       // command or filenames...
       if FCommand = ' ' then
       begin
         if Length(S) = 1 then FCommand := UpCase(S[1])
         else
           FCommand := '?';
-      end
-      else
-        if FArchiveName = '' then
+      end else if FArchiveName = '' then
+      begin
+        FArchiveName := S;
+        if ExtractFileExt(FArchiveName) = '' then
         begin
-          FArchiveName := S;
-          if ExtractFileExt(FArchiveName) = '' then
-          begin
-            FArchiveName := ChangeFileExt(FArchiveName, '.bee');
-          end;
-        end
-        else
-          FFileMasks.Add(S);
+          FArchiveName := ChangeFileExt(FArchiveName, '.bee');
+        end;
+      end else
+        FFileMasks.Add(S);
     end;
   end; // end for loop
 
