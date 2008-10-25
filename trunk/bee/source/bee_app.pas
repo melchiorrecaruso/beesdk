@@ -140,7 +140,7 @@ begin
   begin
     Interfaces.OnWarning.Data.Msg :=
       ('Warning: configuration file "' + FCommandLine.cfgOption +
-      '" not found, using default settings' + Cr);
+      '" not found, data will be stored' + Cr);
     Synchronize(Interfaces.OnWarning.Method);
     SetExitCode(1);
   end else
