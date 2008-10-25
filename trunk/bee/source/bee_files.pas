@@ -47,12 +47,12 @@ type
   public
     constructor Create(const FileName: string; Mode: word);
     destructor Destroy; override;
-    function Read(var Data; Count: longint): longint; override;
-    function Seek(Offset: longint; Origin: word): longint; override;
+    function Read(var Data; Count: Longint): Longint; override;
+    function Seek(Offset: Longint; Origin: Word): Longint; override;
   public
     BlowFish: TBlowFish;
   private
-    Size, Readed: longint;
+    Size, Readed: Int64;
     LocalBuffer:  array [0..$FFFF] of byte;
   end;
 
@@ -62,14 +62,14 @@ type
     constructor Create(const FileName: string; Mode: word);
     destructor Destroy; override;
     procedure Flush;
-    function Write(const Data; Count: longint): longint; override;
-    function Seek(Offset: longint; Origin: word): longint; override;
+    function Write(const Data; Count: Longint): Longint; override;
+    function Seek(Offset: Longint; Origin: Word): Longint; override;
   public
     BlowFish: TBlowFish;
   private
-    function WriteBlock(const aData; aCount: longint): longint;
+    function WriteBlock(const aData; aCount: Longint): Longint;
   private
-    Size: longint;
+    Size: Int64;
     LocalBuffer: array [0..$FFFF] of byte;
   end;
 
@@ -78,17 +78,17 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function Read(var Buffer; Count: longint): longint; override;
-    function Write(const Buffer; Count: longint): longint; override;
-    function Seek(Offset: longint; Origin: word): longint; override;
+    function Read(var Buffer; Count: Longint): Longint; override;
+    function Write(const Buffer; Count: Longint): Longint; override;
+    function Seek(Offset: Longint; Origin: Word): Longint; override;
   protected
-    procedure SetSize(NewSize: longint); override;
+    procedure SetSize(const NewSize: Int64); override;
   private
-    Current, Longest: longint;
+    Current, Longest: Int64;
   end;
 
-function CreateTFileReader(const FileName: string; Mode: word): TFileReader;
-function CreateTFileWriter(const FileName: string; Mode: word): TFileWriter;
+function CreateTFileReader(const FileName: string; Mode: Word): TFileReader;
+function CreateTFileWriter(const FileName: string; Mode: Word): TFileWriter;
 
 implementation
 
@@ -98,7 +98,7 @@ uses
 
 // class TFileReader...
 
-constructor TFileReader.Create(const FileName: string; Mode: word);
+constructor TFileReader.Create(const FileName: string; Mode: Word);
 begin
   if Mode = fmCreate then
     ForceDirectories(ExtractFilePath(FileName));
@@ -114,10 +114,10 @@ begin
   inherited Destroy;
 end;
 
-function TFileReader.Read(var Data; Count: longint): longint;
+function TFileReader.Read(var Data; Count: Longint): Longint;
 var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
-  S:     longint;
+  S: Longint;
 begin
   if (Count = 1) and (Readed < Size) then
   begin
@@ -151,14 +151,14 @@ begin
   end;
 end;
 
-function TFileReader.Seek(Offset: longint; Origin: word): longint;
+function TFileReader.Seek(Offset: Longint; Origin: Word): Longint;
 begin
   Size   := 0;
   Readed := 0;
   Result := inherited Seek(Offset, Origin);
 end;
 
-function CreateTFileReader(const FileName: string; Mode: word): TFileReader;
+function CreateTFileReader(const FileName: string; Mode: Word): TFileReader;
 begin
   try
     Result := TFileReader.Create(FileName, Mode);
@@ -169,7 +169,7 @@ end;
 
 // class TFileWriter...
 
-constructor TFileWriter.Create(const FileName: string; Mode: word);
+constructor TFileWriter.Create(const FileName: string; Mode: Word);
 begin
   if Mode = fmCreate then
     ForceDirectories(ExtractFilePath(FileName));
@@ -187,7 +187,7 @@ begin
   Size := 0;
 end;
 
-function TFileWriter.Write(const Data; Count: longint): longint;
+function TFileWriter.Write(const Data; Count: Longint): Longint;
 begin
   if Count > SizeOf(LocalBuffer) - Size then
     Result := WriteBlock(Data, Count)
@@ -205,7 +205,7 @@ begin
   end;
 end;
 
-function TFileWriter.WriteBlock(const aData; aCount: longint): longint;
+function TFileWriter.WriteBlock(const aData; aCount: Longint): Longint;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
   S:    longint;
@@ -224,7 +224,7 @@ begin
   Inc(Result, aCount - Result);
 end;
 
-function TFileWriter.Seek(Offset: longint; Origin: word): longint;
+function TFileWriter.Seek(Offset: Longint; Origin: Word): Longint;
 begin
   if Size > 0 then
     Flush;
@@ -239,7 +239,7 @@ begin
   inherited Destroy;
 end;
 
-function CreateTFileWriter(const FileName: string; Mode: word): TFileWriter;
+function CreateTFileWriter(const FileName: string; Mode: Word): TFileWriter;
 begin
   try
     Result := TFileWriter.Create(FileName, Mode);
@@ -264,18 +264,18 @@ begin
   // inherited Destroy;
 end;
 
-function TNulWriter.Read(var Buffer; Count: longint): longint;
+function TNulWriter.Read(var Buffer; Count: Longint): Longint;
 begin
   Result := 0;
 end;
 
-function TNulWriter.Write(const Buffer; Count: longint): longint;
+function TNulWriter.Write(const Buffer; Count: Longint): Longint;
 begin
   Inc(Current, Count);
   Result := Count;
 end;
 
-function TNulWriter.Seek(Offset: longint; Origin: word): longint;
+function TNulWriter.Seek(Offset: Longint; Origin: Word): Longint;
 begin
   if Current > Longest then
     Longest := Current;
@@ -289,7 +289,7 @@ begin
   Result  := Offset;
 end;
 
-procedure TNulWriter.SetSize(NewSize: longint);
+procedure TNulWriter.SetSize(const NewSize: Int64);
 begin
   Current := NewSize;
 end;

@@ -115,8 +115,8 @@ function GenerateFileName(const Path: string): string;
 
 // string routines ...
 
-function SizeToStr(Size: integer): string;
-function RatioToStr(PackedSize, Size: integer): string;
+function SizeToStr(const Size: Int64): string;
+function RatioToStr(const PackedSize, Size: Int64): string;
 function AttrToStr(Attr: integer): string;
 
 // time handling routines ...
@@ -141,7 +141,7 @@ function AppendText(var T: Text; const Name: string): boolean;
 function OpenText(var T: Text; const Name: string): boolean;
 function WriteText(const FileName, S: string): boolean;
 
-function SizeOfFile(const FileName: string): integer;
+function SizeOfFile(const FileName: string): Int64;
 
 // system control
 
@@ -629,13 +629,13 @@ end;
 
 // string routines
 
-function SizeToStr(Size: integer): string;
+function SizeToStr(const Size: Int64): string;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := Format('%u', [Size]);
 end;
 
-function RatioToStr(PackedSize, Size: integer): string;
+function RatioToStr(const PackedSize, Size: Int64): string;
 {$IFDEF FPC} inline; {$ENDIF}
 begin
   if Size > 0 then
@@ -743,7 +743,7 @@ begin
     Result := False;
 end;
 
-function SizeOfFile(const FileName: string): integer;
+function SizeOfFile(const FileName: string): Int64;
 {$IFDEF FPC} inline; {$ENDIF}
 var
   Err: integer;
