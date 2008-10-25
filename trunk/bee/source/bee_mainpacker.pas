@@ -201,7 +201,7 @@ begin
     end;
 
     Header.Data.FileSize := SrcFile.Size;
-    Header.Data.FileAttr := FileGetAttr(Header.Data.FileName);
+    Header.Data.FileAttr := FileGetAttr(Header.FileLink);
 
     if foPassword in Header.Data.FileFlags then
       Stream.BlowFish.Start(GetKey(Header));
