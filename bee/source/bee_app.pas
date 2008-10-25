@@ -123,8 +123,8 @@ begin
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0900 archiver utility, freeware version, Oct 2008.' +
-    Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso.';
+    'The Bee 0.7.9 build 0900 archiver utility, freeware version, Oct 2008' +
+    Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
   FSwapName := '';
@@ -139,8 +139,8 @@ begin
   if not FileExists(FCommandLine.cfgOption) then
   begin
     Interfaces.OnWarning.Data.Msg :=
-      (Cr + 'Configuration file ' + FCommandLine.cfgOption +
-      ' not found, using default settings' + Cr);
+      ('Warning: configuration file "' + FCommandLine.cfgOption +
+      '" not found, using default settings' + Cr);
     Synchronize(Interfaces.OnWarning.Method);
     SetExitCode(1);
   end else
@@ -406,7 +406,7 @@ begin
               NewFileName) <> -1) then
             begin
               Interfaces.OnWarning.Data.Msg :=
-                ('Warning: file "' + NewFileName + '" already exists.');
+                ('Warning: file "' + NewFileName + '" already exists');
               Synchronize(Interfaces.OnDisplay.Method);
             end else
               Break;
@@ -561,7 +561,7 @@ begin
           begin
             Interfaces.OnWarning.Data.Msg :=
               ('Warning: file "' + iFileName +
-              '" already existing in archive.');
+              '" already existing in archive');
             Synchronize(Interfaces.OnWarning.Method);
           end else
             Break;
