@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0896 - 2008.10.22 by Melchiorre Caruso.
+  v0.7.9 build 0900 - 2008.10.25 by Melchiorre Caruso.
 }
 
 unit Bee_App;
