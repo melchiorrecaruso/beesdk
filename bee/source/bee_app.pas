@@ -123,7 +123,7 @@ begin
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0900 archiver utility, open source project, Oct 2008' +
+    'The Bee 0.7.9 build 0902 archiver utility, open source project, Oct 2008' +
     Cr + '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
