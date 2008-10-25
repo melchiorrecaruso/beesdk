@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
+  v0.7.9 build 0903 - 2008.10.25 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -159,8 +159,10 @@ procedure TEncoder.Tick;
 begin
   while Interfaces.Suspend do
     Sleep(250);
+
   with Interfaces.OnTick.Data do
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
+
   Sync(Interfaces.OnTick.Method);
 end;
 
@@ -168,7 +170,7 @@ function TEncoder.EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
 var
   SrcFile: TFileReader;
   Symbol: byte;
-  I: integer;
+  I: cardinal;
 begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
@@ -268,9 +270,9 @@ function TEncoder.EncodeStrm(Header: THeader; Mode: TEncodingMode;
   SrcStrm: TFileReader): boolean;
 var
   SrcFile: TFileReader;
-  SrcPosition: integer;
+  SrcPosition: cardinal;
   Symbol: byte;
-  I: integer;
+  I: cardinal;
 begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);
@@ -371,7 +373,7 @@ function TEncoder.CopyStrm(Header: THeader; Mode: TEncodingMode;
 var
   SrcFile: TFileReader;
   Symbol: byte;
-  I: integer;
+  I: cardinal;
 begin
   if foDictionary in Header.Data.FileFlags then
     PPM.SetDictionary(Header.Data.FileDictionary);

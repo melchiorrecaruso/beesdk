@@ -40,8 +40,8 @@ uses
   {$IFDEF MSWINDOWS}
   Windows,
 {$ENDIF}
-  SysUtils, // TSearchRec
   Classes, // TList
+  SysUtils, // TSearchRec
   // ---
   Bee_Configuration;
 
@@ -84,12 +84,12 @@ type
     FileMethod:   byte;
     FileDictionary: byte;
     FileTable:    TTableParameters;
-    FileSize:     integer;
+    FileSize:     cardinal;
     FileTime:     integer;
     FileAttr:     integer;
     FileCrc:      cardinal;
-    FilePacked:   integer;
-    FileStartPos: integer;
+    FilePacked:   cardinal;
+    FileStartPos: cardinal;
     FileName:     string;
   end;
 
@@ -99,10 +99,8 @@ type
     Data:     THeaderData;
     FileLink: string;
   public
-    constructor Create(const cdOption: string; const RecPath: string;
-      const Rec: TSearchRec);
-    procedure Fresh(const cdOption: string; const RecPath: string;
-      const Rec: TSearchRec);
+    constructor Create(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
+    procedure Fresh(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
     constructor Read(Stream: TStream; aAction: THeaderAction);
     function SetTable(Config: TConfiguration): boolean;
     procedure Write(Stream: TStream);
@@ -130,7 +128,7 @@ type
     procedure Clear; override;
     procedure AddItems(Masks: TStringList; const cdOption: string;
       fOption: boolean; rOption: boolean; uOption: boolean;
-      xOption: TStringList; var Size: integer);
+      xOption: TStringList; var Size: cardinal);
 
     function MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction;
       rOption: boolean): integer; overload;
@@ -146,10 +144,8 @@ type
     procedure ReadItems(Stream: TStream; aAction: THeaderAction);
     procedure WriteItems(Stream: TStream);
 
-    function GetBack(Child: integer; aAction: THeaderAction): integer;
-      overload;
-    function GetNext(Child: integer; aAction: THeaderAction): integer;
-      overload;
+    function GetBack(Child: integer; aAction: THeaderAction): integer; overload;
+    function GetNext(Child: integer; aAction: THeaderAction): integer; overload;
     function GetBack(Child: integer; Flag: THeaderFlag): integer; overload;
     function GetNext(Child: integer; Flag: THeaderFlag): integer; overload;
     function GetBack(Child: integer; aAction: THeaderAction;
@@ -161,27 +157,26 @@ type
     function GetNext(Child: integer; aActions: THeaderActions;
       const aFileName: string): integer; overload;
 
-    function GetSize(aAction: THeaderAction): integer; overload;
-    function GetSize(Actions: THeaderActions): integer; overload;
-    function GetPackedSize(aAction: THeaderAction): integer; overload;
-    function GetPackedSize(Actions: THeaderActions): integer; overload;
+    function GetSize(aAction: THeaderAction): cardinal; overload;
+    function GetSize(Actions: THeaderActions): cardinal; overload;
+    function GetPackedSize(aAction: THeaderAction): cardinal; overload;
+    function GetPackedSize(Actions: THeaderActions): cardinal; overload;
 
     function GetCount(Actions: THeaderActions): integer;
 
     function SetModule(const FileName: string): boolean;
-    function GetModule: integer;
+    function GetModule: cardinal;
   private
     Module: TStream;
   private
     procedure QuickSort(L, R: integer);
     procedure MarkAsLast(Action: THeaderAction);
-    function FindFirstMarker(Stream: TStream): integer;
+    function FindFirstMarker(Stream: TStream): cardinal;
 
-    procedure ExpandMask(const Mask: string; Masks: TStringList;
-      rOption: boolean);
+    procedure ExpandMask(const Mask: string; Masks: TStringList; rOption: boolean);
     procedure ScanFileSystem(Mask: string; Sorted: TSortedHeaders;
       const cdOption: string; fOption: boolean; rOption: boolean;
-      uOption: boolean; xOption: TStringList; var Size: integer);
+      uOption: boolean; xOption: TStringList; var Size: cardinal);
   end;
 
 implementation
@@ -488,7 +483,7 @@ end;
 
 procedure THeaders.AddItems(Masks: TStringList; const cdOption: string;
   fOption: boolean; rOption: boolean; uOption: boolean;
-  xOption: TStringList; var Size: integer);
+  xOption: TStringList; var Size: cardinal);
 var
   I, J:      integer;
   CurrMasks: TStringList;
@@ -497,7 +492,9 @@ begin
   // Create sorted list item
   Sorted := TSortedHeaders.Create;
   for I := 0 to Count - 1 do
+  begin
     Sorted.InsertItem(Items[I]);
+  end;
 
   for I := 0 to Masks.Count - 1 do
   begin
@@ -526,8 +523,7 @@ begin
   Result := 0;
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
-      if (Action = MaskAct) and
-        (FileNameMatch(Data.FileName, Masks, rOption)) then
+      if (Action = MaskAct) and (FileNameMatch(Data.FileName, Masks, rOption)) then
       begin
         Action := aAction;
         Inc(Result);
@@ -542,8 +538,7 @@ begin
   Result := 0;
   for I := 0 to Count - 1 do
     with THeader(Items[I]) do
-      if (Action = MaskAct) and
-        (FileNameMatch(Data.FileName, Mask, rOption)) then
+      if (Action = MaskAct) and (FileNameMatch(Data.FileName, Mask, rOption)) then
       begin
         Action := aAction;
         Inc(Result);
@@ -642,21 +637,21 @@ begin
   end;
 end;
 
-function THeaders.GetModule: integer;
+function THeaders.GetModule: cardinal;
 begin
   if Assigned(Module) then
     Result := Module.Size
   else
-    Result := -1;
+    Result := 0;
 end;
 
-function THeaders.FindFirstMarker(Stream: TStream): integer;
+function THeaders.FindFirstMarker(Stream: TStream): cardinal;
 var
-  Id:      integer;
-  StrmPos: integer;
+  Id: integer;
+  StrmPos: cardinal;
 begin
   // archive type unknow
-  Result := -1;
+  Result := cardinal(-1);
 
   StrmPos := Stream.Seek(0, 0);
   while Stream.Read(Id, SizeOf(integer)) = SizeOf(integer) do
@@ -666,7 +661,7 @@ begin
       Result := StrmPos;
       Break;
     end;
-    Inc(StrmPos, SizeOf(integer));
+    Inc(StrmPos, SizeOf(cardinal));
   end;
 
   // save sfx module
@@ -680,10 +675,10 @@ end;
 
 procedure THeaders.ReadItemsB4b(Stream: TStream; aAction: THeaderAction);
 var
-  P:      THeader;
-  Ptr:    ^integer;
+  P: THeader;
+  Ptr: ^cardinal;
   Readed: byte;
-  NextByte: integer;
+  NextByte: cardinal;
   B4bMarker: array [0..3] of byte;
 begin
   P    := nil;
@@ -702,7 +697,7 @@ begin
         NextByte := 0;
       end;
 
-      if NextByte = SizeOf(integer) then
+      if NextByte = SizeOf(cardinal) then
       begin
         NextByte := 0;
         try
@@ -725,7 +720,7 @@ procedure THeaders.ReadItems(Stream: TStream; aAction: THeaderAction);
 var
   P:      THeader;
   Id:     integer;
-  OffSet: integer;
+  OffSet: cardinal;
 begin
   P      := nil;
   OffSet := FindFirstMarker(Stream);
@@ -734,8 +729,7 @@ begin
   begin
     Stream.Seek(OffSet, 0);
     repeat
-      if (Stream.Read(Id, SizeOf(integer)) = SizeOf(integer)) and
-        (Id = Marker) then
+      if (Stream.Read(Id, SizeOf(integer)) = SizeOf(integer)) and (Id = Marker) then
         try
           P := THeader.Read(Stream, aAction);
           Add(P);
@@ -900,7 +894,7 @@ begin
       end;
 end;
 
-function THeaders.GetSize(aAction: THeaderAction): integer;
+function THeaders.GetSize(aAction: THeaderAction): cardinal;
 var
   I: integer;
 begin
@@ -910,7 +904,7 @@ begin
       Inc(Result, THeader(Items[I]).Data.FileSize);
 end;
 
-function THeaders.GetPackedSize(aAction: THeaderAction): integer;
+function THeaders.GetPackedSize(aAction: THeaderAction): cardinal;
 var
   I: integer;
 begin
@@ -920,7 +914,7 @@ begin
       Inc(Result, THeader(Items[I]).Data.FilePacked);
 end;
 
-function THeaders.GetSize(Actions: THeaderActions): integer;
+function THeaders.GetSize(Actions: THeaderActions): cardinal;
 var
   I: integer;
 begin
@@ -930,7 +924,7 @@ begin
       Inc(Result, THeader(Items[I]).Data.FileSize);
 end;
 
-function THeaders.GetPackedSize(Actions: THeaderActions): integer;
+function THeaders.GetPackedSize(Actions: THeaderActions): cardinal;
 var
   I: integer;
 begin
@@ -994,7 +988,7 @@ end;
 
 procedure THeaders.ScanFileSystem(Mask: string; Sorted: TSortedHeaders;
   const cdOption: string; fOption: boolean; rOption: boolean;
-  uOption: boolean; xOption: TStringList; var Size: integer);
+  uOption: boolean; xOption: TStringList; var Size: cardinal);
 var
   P:     THeader;
   J:     pointer;

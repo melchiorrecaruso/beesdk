@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
+    v0.7.9 build 0904 - 2008.10.25 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -57,7 +57,7 @@ type
         FileName: string;
         FilePath: string;
         FileTime: integer;
-        FileSize: integer;
+        FileSize: cardinal;
       end;
     end;
     OnRename: record
@@ -67,7 +67,7 @@ type
         FileName: string;
         FilePath: string;
         FileTime: integer;
-        FileSize: integer;
+        FileSize: cardinal;
         FileAttr: integer;
       end;
     end;
@@ -105,8 +105,8 @@ type
       Data: record
         FileName:     string;
         FilePath:     string;
-        FileSize:     integer;
-        FilePacked:   integer;
+        FileSize:     cardinal;
+        FilePacked:   cardinal;
         FileRatio:    integer;
         FileAttr:     integer;
         FileTime:     integer;
@@ -115,16 +115,16 @@ type
         FileMethod:   string;
         FileVersion:  string;
         FilePassword: string;
-        FilePosition: integer;
+        FilePosition: cardinal;
       end;
     end;
     OnTick: record
       Method: TThreadMethod;
       Answer: string;
       Data: record
-        TotalSize:     integer;
-        ProcessedSize: integer;
-        Percentage:    integer;
+        TotalSize:     cardinal;
+        ProcessedSize: cardinal;
+        Percentage:    cardinal;
       end;
     end;
     OnClear: record
@@ -141,7 +141,7 @@ type
         FileName: string;
         FilePath: string;
         FileTime: integer;
-        FileSize: integer;
+        FileSize: cardinal;
       end;
     end;
   public
