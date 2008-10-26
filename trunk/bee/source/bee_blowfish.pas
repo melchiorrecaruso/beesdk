@@ -28,7 +28,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.12.28 by Melchiorre Caruso;
   
-  v0.7.9 build 0905 - 2008.10.25 by Melchiorre Caruso.
+  v0.7.9 build 0906 - 2008.10.25 by Melchiorre Caruso.
 }
 
 unit Bee_BlowFish;
@@ -72,8 +72,8 @@ type
       or decryption of data.
     }
     procedure Finish;
-    function Encode(var aData; Count: Longint): Longint; overload;
-    function Decode(var aData; Count: Longint): Longint; overload;
+    function Encode(var aData; Count: cardinal): cardinal; overload;
+    function Decode(var aData; Count: cardinal): cardinal; overload;
   public
     property Started: boolean Read FStarted;
   end;
@@ -448,7 +448,7 @@ begin
   FStarted := False;
 end;
 
-function TBlowFish.Encode(var aData; Count: Longint): Longint;
+function TBlowFish.Encode(var aData; Count: cardinal): cardinal;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
   I:    integer;
@@ -467,7 +467,7 @@ begin
   end;
 end;
 
-function TBlowFish.Decode(var aData; Count: Longint): Longint;
+function TBlowFish.Decode(var aData; Count: cardinal): cardinal;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
   I:    integer;

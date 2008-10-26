@@ -24,7 +24,7 @@
 
   v0.7.9 build 0383 - 2007.06.27 by Andrew Filinsky;
 
-  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
+  v0.7.9 build 0906 - 2008.10.25 by Melchiorre Caruso.
 }
 
 unit Bee_Assembler;

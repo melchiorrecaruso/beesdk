@@ -64,7 +64,6 @@ type
     function InputBit: cardinal;
   private
     Stream: TStream;
-
     Buffer, Bits,        // For bytes output/input...
     BitsToFollow,        // For encoding...
     Value,               // For decoding...
@@ -248,16 +247,16 @@ end;
 
 function MulDiv(A, B, C: cardinal): cardinal; assembler;
 asm
-         MUL     B
-         DIV     C
+  MUL     B
+  DIV     C
 end;
 
 function MulDecDiv(A, B, C: cardinal): cardinal; assembler;
 asm
-         MUL     B
-         SUB     EAX, 1
-         SBB     EDX, 0
-         DIV     C
+  MUL     B
+  SUB     EAX, 1
+  SBB     EDX, 0
+  DIV     C
 end;
 
 end.
