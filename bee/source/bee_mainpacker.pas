@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0903 - 2008.10.25 by Melchiorre Caruso.
+  v0.7.9 build 0912 - 2008.10.26 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -38,7 +38,7 @@ interface
 
 uses
   Classes,       // TStream
-  // ---
+
   Bee_Files,     // TFileReader, TFileWriter...
   Bee_Codec,     // TSecondaryEncoder, TSecondaryDecoder...
   Bee_Headers,
@@ -457,8 +457,10 @@ procedure TDecoder.Tick;
 begin
   while Interfaces.Suspend do
     Sleep(250);
+
   with Interfaces.OnTick.Data do
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
+
   Sync(Interfaces.OnTick.Method);
 end;
 
@@ -480,12 +482,9 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: Interfaces.OnDisplay.Data.Msg :=
-        msgSkipping + Header.Data.FileName;
-    pmTest: Interfaces.OnDisplay.Data.Msg :=
-        msgTesting + Header.Data.FileName;
-    pmNorm: Interfaces.OnDisplay.Data.Msg :=
-        msgExtracting + Header.Data.FileName;
+    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping   + Header.Data.FileName;
+    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting    + Header.Data.FileName;
+    pmNorm: Interfaces.OnDisplay.Data.Msg := msgExtracting + Header.Data.FileName;
     pmQuit:
     begin
       Result := True;
@@ -588,17 +587,13 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: Interfaces.OnDisplay.Data.Msg :=
-        msgSkipping + Header.Data.FileName;
-    pmTest: Interfaces.OnDisplay.Data.Msg :=
-        msgTesting + Header.Data.FileName;
-    pmNorm: Interfaces.OnDisplay.Data.Msg :=
-        msgDecoding + Header.Data.FileName;
-    pmQuit:
-    begin
-      Result := True;
-      Exit;
-    end;
+    pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping + Header.Data.FileName;
+    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting + Header.Data.FileName;
+    pmNorm: Interfaces.OnDisplay.Data.Msg := msgDecoding + Header.Data.FileName;
+    pmQuit: begin
+              Result := True;
+              Exit;
+            end;
   end;
   Sync(Interfaces.OnDisplay.Method);
 
@@ -611,7 +606,8 @@ begin
       Header.Data.FileStartPos := DstFile.Seek(0, 1);
     except
       DstFile := nil;
-    end else
+    end
+  else
     DstFile := TNulWriter.Create;
 
   if (DstFile <> nil) then

@@ -57,8 +57,11 @@ type
     function InpSrcByte: byte;
   private
     Stream: TStream;
-    Code, Range, FFNum, Cache: cardinal;
-    Low:    int64;
+    Code: cardinal;
+    Range: cardinal;
+    FFNum: cardinal;
+    Cache: cardinal;
+    Low: cardinal;;
   end;
 
 implementation

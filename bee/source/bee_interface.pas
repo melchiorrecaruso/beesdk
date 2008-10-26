@@ -107,7 +107,7 @@ type
         FilePath:     string;
         FileSize:     cardinal;
         FilePacked:   cardinal;
-        FileRatio:    integer;
+        FileRatio:    cardinal;
         FileAttr:     integer;
         FileTime:     integer;
         FileComm:     string;
@@ -186,8 +186,8 @@ constructor TApp.Create(aInterfaces: TInterfaces);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
-  Priority   := tpNormal;
-  ExitCode   := 0;
+  Priority := tpNormal;
+  ExitCode := 0;
   // ---
   Interfaces := aInterfaces;
   Interfaces.Terminated := False;
