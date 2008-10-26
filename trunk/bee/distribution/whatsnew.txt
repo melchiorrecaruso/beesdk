@@ -1372,4 +1372,4 @@ Description of history of the Bee:
   [*] Bee_App.pas, bug fixed in AlreadyFileExists function and RenameShell procedure;
   [*] Bee_Files.pas, some changements for FPC compatibility.  
 
-  v0.7.9 build 900 maked.
+  v0.7.9 build 912 maked.
