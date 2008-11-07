@@ -22,7 +22,7 @@
 
   Modifyed:
 
-  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
+  v0.7.9 build 0916 - 2008.10.18 by Melchiorre Caruso.
 }
 
 unit Bee_CommandLine;

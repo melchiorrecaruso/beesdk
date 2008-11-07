@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0914 - 2008.11.04 by Melchiorre Caruso.
+  v0.7.9 build 0916 - 2008.11.07 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -1370,8 +1370,7 @@ begin
       Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
       Synchronize(Interfaces.OnDisplay.Method);
 
-      Interfaces.OnDisplay.Data.Msg :=
-        ('Name' + StringOfChar(' ', 18) +
+      Interfaces.OnDisplay.Data.Msg := ('Name' + StringOfChar(' ', 18) +
         'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
       Synchronize(Interfaces.OnDisplay.Method);
 
