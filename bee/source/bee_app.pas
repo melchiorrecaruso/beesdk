@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0912 - 2008.10.26 by Melchiorre Caruso.
+  v0.7.9 build 0914 - 2008.11.04 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -85,8 +85,6 @@ type
     procedure RenameShell;
     procedure DeleteShell;
     procedure ListShell;
-
-    procedure SetPriority(aPriority: integer);
   protected
     // string routines
     function VersionToStr(VersionId: cardinal): string;
@@ -123,7 +121,7 @@ begin
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0912 archiver utility, Oct 2008' + Cr +
+    'The Bee 0.7.9 build 0914 archiver utility, November 2008' + Cr +
     '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -231,7 +229,7 @@ begin
     ('    pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
   Synchronize(Interfaces.OnDisplay.Method);
   Interfaces.OnDisplay.Data.Msg :=
-    (Cr + '  Use BeeOpt to make most optimal parameters.');
+    (Cr + '  Use BeeOpt to make most optimal parameters.' + Cr);
   Synchronize(Interfaces.OnDisplay.Method);
 end;
 
@@ -255,31 +253,6 @@ begin
         '?': DisplayUsage;
       end else
       DisplayUsage;
-end;
-
-procedure TBeeApp.SetPriority(aPriority: integer); // Priority is 0..3
-begin
-  {$IFDEF CONSOLEAPPLICATION}
-    {$IFDEF MSWINDOWS}
-  Bee_Common.SetPriority(aPriority);
-    {$ELSE}
-  case aPriority of
-    0: Priority := tpIdle;
-    1: Priority := tpNormal;
-    2: Priority := tpHigher;
-    3: Priority := tpTimeCritical;
-    else Priority := tpNormal;
-  end;
-    {$ENDIF}
-  {$ELSE}
-  case aPriority of
-    0: Priority := tpIdle;
-    1: Priority := tpNormal;
-    2: Priority := tpHigher;
-    3: Priority := tpTimeCritical;
-  else Priority := tpNormal;
-  end;
-  {$ENDIF}
 end;
 
 function TBeeApp.OpenArchive(Headers: THeaders;

@@ -172,6 +172,7 @@ type
   protected
     procedure DoTerminate; override;
     procedure SetExitCode(Code: integer);
+    procedure SetPriority(APriority: integer); overload;
   public
     constructor Create(aInterfaces: TInterfaces);
     procedure Synchronize(aMethod: TThreadMethod);
@@ -218,6 +219,31 @@ procedure TApp.SetExitCode(Code: integer);
 begin
   if ExitCode < Code then
     ExitCode := Code;
+end;
+
+procedure TApp.SetPriority(APriority: integer);
+begin
+  {$IFDEF CONSOLEAPPLICATION}
+    {$IFDEF MSWINDOWS}
+    Bee_Common.SetPriority(aPriority);
+    {$ELSE}
+    case aPriority of
+      0: Priority := tpIdle;
+      1: Priority := tpNormal;
+      2: Priority := tpHigher;
+      3: Priority := tpTimeCritical;
+      else Priority := tpNormal;
+    end;
+    {$ENDIF}
+  {$ELSE}
+  case aPriority of
+    0: Priority := tpIdle;
+    1: Priority := tpNormal;
+    2: Priority := tpHigher;
+    3: Priority := tpTimeCritical;
+  else Priority := tpNormal;
+  end;
+  {$ENDIF}
 end;
 
 end.
