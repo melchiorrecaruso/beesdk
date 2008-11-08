@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0916 - 2008.11.07 by Melchiorre Caruso.
+  v0.7.9 build 0920 - 2008.11.08 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -87,8 +87,8 @@ type
     procedure ListShell;
   protected
     // string routines
-    function VersionToStr(VersionId: cardinal): string;
-    function MethodToStr(P: THeader; Method, Dictionary: integer): string;
+    function VersionToStr(P: THeader): string;
+    function MethodToStr(P: THeader): string;
 
   private
     FSelfName: string;
@@ -121,7 +121,7 @@ begin
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0914 archiver utility, November 2008' + Cr +
+    'The Bee 0.7.9 build 0920 archiver utility, November 2008' + Cr +
     '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -1328,11 +1328,20 @@ begin
     FreeAndNil(FArcFile);
 end;
 
+function CompareFilePath(Item1, Item2: pointer): integer;
+begin
+  Result := CompareFileName(
+    ExtractFilePath(THeader(Item1).Data.FileName),
+    ExtractFilePath(THeader(Item2).Data.FileName));
+end;
+
 procedure TBeeApp.ListShell;
 var
-  P:    THeader;
-  I:    integer;
-  Info: THeaders;
+  P: THeader;
+  I: integer;
+  Headers: THeaders;
+  HeadersToList: TList;
+  HeadersToListPath: string;
   Version, Method, Dictionary: integer;
   TotalPack, TotalSize: integer;
   CountFiles: integer;
@@ -1342,8 +1351,9 @@ begin
     (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
-  Info := THeaders.Create;
-  if OpenArchive(Info, toNone) then
+  Headers := THeaders.Create;
+  HeadersToList := TList.Create;
+  if OpenArchive(Headers, toNone) then
   begin
     Interfaces.OnDisplay.Data.Msg := (msgScanning + '...');
     Synchronize(Interfaces.OnDisplay.Method);
@@ -1358,14 +1368,13 @@ begin
 
     with FCommandLine do
     begin
-      Info.MarkItems(FileMasks, toNone, toList, rOption);
-      Info.MarkItems(xOption, toList, toNone, rOption);
+      Headers.MarkItems(FileMasks, toNone, toList, rOption);
+      Headers.MarkItems(xOption, toList, toNone, rOption);
     end;
 
-    if (Info.GetNext(0, toList) > -1) then
+    if (Headers.GetNext(0, toList) > -1) then
     begin
       Time := Now;
-
       {$IFDEF CONSOLEAPPLICATION}
       Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
       Synchronize(Interfaces.OnDisplay.Method);
@@ -1378,51 +1387,81 @@ begin
       Synchronize(Interfaces.OnDisplay.Method);
       {$ENDIF}
 
-      for I := 0 to Info.Count - 1 do
-        if THeader(Info.Items[I]).Action = toList then
+      for I := 0 to Headers.Count -1 do
+      begin
+        P := Headers.Items[I];
+
+        if foVersion in P.Data.FileFlags then
+          Version := P.Data.FileVersion;
+
+        if foMethod in P.Data.FileFlags then
+          Method := P.Data.FileMethod;
+
+        if foDictionary in P.Data.FileFlags then
+          Dictionary := P.Data.FileDictionary;
+
+        if P.Action = toList then
         begin
-          P := Info.Items[I];
+          HeadersToList.Add(P);
 
-          if foVersion in P.Data.FileFlags then
-            Version := P.Data.FileVersion;
-          if foMethod in P.Data.FileFlags then
-            Method := P.Data.FileMethod;
-          if foDictionary in P.Data.FileFlags then
-            Dictionary := P.Data.FileDictionary;
-
-          with Interfaces.OnList.Data do
-          begin
-            FileName   := ExtractFileName(P.Data.FileName);
-            FilePath   := ExtractFilePath(P.Data.FileName);
-            FileSize   := P.Data.FileSize;
-            FilePacked := P.Data.FilePacked;
-
-            if FileSize > 0 then
-              FileRatio :=
-                MulDiv(FilePacked, 100, FileSize)
-            else
-              FileRatio := 100;
-
-            FileAttr    := P.Data.FileAttr;
-            FileTime    := P.Data.FileTime;
-            FileComm    := '';
-            FileCrc     := P.Data.FileCrc;
-            FileMethod  := MethodToStr(P, Method, Dictionary);
-            FileVersion := VersionToStr(Version);
-
-            if foPassword in P.Data.FileFlags then
-              FilePassword := 'Yes'
-            else
-              FilePassword := 'No';
-
-            FilePosition := I;
-          end;
-          Synchronize(Interfaces.OnList.Method);
-
-          Inc(TotalSize, P.Data.FileSize);
-          Inc(TotalPack, P.Data.FilePacked);
-          Inc(CountFiles);
+          P.Data.FileVersion := Version;
+          P.Data.FileMethod := Method;
+          P.Data.FileDictionary := Dictionary;
         end;
+      end;
+
+      {$IFDEF CONSOLEAPPLICATION}
+      HeadersToList.Sort(CompareFilePath);
+      HeadersToListPath := '';
+      {$ENDIF}
+
+      for I := 0 to HeadersToList.Count - 1 do
+      begin
+        P := HeadersToList.Items[I];
+
+        with Interfaces.OnList.Data do
+        begin
+          FileName := ExtractFileName(P.Data.FileName);
+          FilePath := ExtractFilePath(P.Data.FileName);
+
+          {$IFDEF CONSOLEAPPLICATION}
+          if CompareFileName(HeadersToListPath, FilePath) <> 0 then
+          begin
+            HeadersToListPath := FilePath;
+
+            Interfaces.OnDisplay.Data.Msg := (Cr + 'DIRECTORY: ' + HeadersToListPath);
+            Synchronize(Interfaces.OnDisplay.Method);
+          end;
+          {$ENDIF}
+
+          FileSize   := P.Data.FileSize;
+          FilePacked := P.Data.FilePacked;
+
+          if FileSize > 0 then
+            FileRatio := MulDiv(FilePacked, 100, FileSize)
+          else
+            FileRatio := 100;
+
+          FileAttr    := P.Data.FileAttr;
+          FileTime    := P.Data.FileTime;
+          FileComm    := '';
+          FileCrc     := P.Data.FileCrc;
+          FileMethod  := MethodToStr(P);
+          FileVersion := VersionToStr(P);
+
+          if foPassword in P.Data.FileFlags then
+            FilePassword := 'Yes'
+          else
+            FilePassword := 'No';
+
+          FilePosition := I;
+        end;
+        Synchronize(Interfaces.OnList.Method);
+
+        Inc(TotalSize, P.Data.FileSize);
+        Inc(TotalPack, P.Data.FilePacked);
+        Inc(CountFiles);
+      end;
       {$IFDEF CONSOLEAPPLICATION}
       Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
       Synchronize(Interfaces.OnDisplay.Method);
@@ -1437,7 +1476,7 @@ begin
 
       {$IFDEF CONSOLEAPPLICATION}
       // self-extractor module size
-      if Info.GetModule > 0 then
+      if Headers.GetModule > 0 then
       begin
         Interfaces.OnDisplay.Data.Msg :=
           (Cr + 'Note: Bee Self-Extractor module founded');
@@ -1455,7 +1494,8 @@ begin
     end;
 
   end;
-  Info.Free;
+  HeadersToList.Free;
+  Headers.Free;
 
   if Assigned(FArcFile) then
     FreeAndNil(FArcFile);
@@ -1465,7 +1505,7 @@ end;
 // String routines                                                            //
 // -------------------------------------------------------------------------- //
 
-function TBeeApp.MethodToStr(P: THeader; Method, Dictionary: integer): string;
+function TBeeApp.MethodToStr(P: THeader): string;
 begin
   Result := 'm0a';
 
@@ -1473,20 +1513,20 @@ begin
     Result[1] := 's';
 
   if not (foMoved in P.Data.FileFlags) then
-    if Method in [1..3] then
-      Result[2] := char(byte('0') + Method)
+    if P.Data.FileMethod in [1..3] then
+      Result[2] := char(byte('0') + P.Data.FileMethod)
     else
       Result[2] := '?';
 
-  if Dictionary in [0..9] then
-    Result[3] := char(byte('a') + Dictionary)
+  if P.Data.FileDictionary in [0..9] then
+    Result[3] := char(byte('a') + P.Data.FileDictionary)
   else
     Result[3] := '?';
 end;
 
-function TBeeApp.VersionToStr(VersionId: cardinal): string;
+function TBeeApp.VersionToStr(P: THeader): string;
 begin
-  case VersionId of
+  case P.Data.FileVersion of
     0: Result := ' 0' + DecimalSeparator + '2';
     1: Result := ' 0' + DecimalSeparator + '3';
   else Result := ' 0' + DecimalSeparator + '0';

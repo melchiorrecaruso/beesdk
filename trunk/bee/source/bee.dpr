@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.7.9 build 0912 - 2008.10.26 by Melchiorre Caruso.
+    v0.7.9 build 0918 - 2008.11.08 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -186,12 +186,21 @@ procedure TConsole.OnList;
 begin
   with AppInterfaces.OnList.Data do
   begin
-    Writeln(ParamToOem(FilePath + FileName));
-    Writeln(ParamToOem(StringOfChar(' ', 15) +
-      Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
-      [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-      FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc,
-      FileMethod])));
+    if Length({FilePath +} FileName) <= 15 then
+    begin
+      Writeln(ParamToOem(
+        Format('%-15s', [{FilePath +} FileName]) +
+        Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
+        [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+        FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+    end else
+    begin
+      Writeln(ParamToOem({FilePath +} FileName));
+      Writeln(ParamToOem(StringOfChar(' ', 15) +
+        Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
+        [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+        FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+    end;
   end;
 end;
 
