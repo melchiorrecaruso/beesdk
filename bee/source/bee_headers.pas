@@ -126,6 +126,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Clear; override;
+
     procedure AddItems(Masks: TStringList; const cdOption: string;
       fOption: boolean; rOption: boolean; uOption: boolean;
       xOption: TStringList; var Size: cardinal);
@@ -136,6 +137,7 @@ type
       rOption: boolean): integer; overload;
     procedure MarkItem(Index: integer; aAction: THeaderAction);
     procedure MarkAll(aAction: THeaderAction);
+
 
     procedure SortNews(Config: TConfiguration; sOption: boolean;
       kOption: boolean; const eOption: string);
@@ -193,6 +195,7 @@ var
 begin
   with THeader(L.Items[Index1]) do
     Bool1 := (Action = toUpdate);
+
   with THeader(L.Items[Index2]) do
     Bool2 := (Action = toUpdate);
 
@@ -205,20 +208,19 @@ begin
     if Result = 0 then
       Result :=
         CompareFileName(ExtractFileName(THeader(L.Items[Index1]).Data.FileName),
-        ExtractFileName(THeader(L.Items[Index2]).Data.FileName));
-
+                        ExtractFileName(THeader(L.Items[Index2]).Data.FileName));
     if Result = 0 then
       Result :=
         CompareFileName(THeader(L.Items[Index1]).Data.FileName,
-        THeader(L.Items[Index2]).Data.FileName);
+                        THeader(L.Items[Index2]).Data.FileName);
   end else
-  if Bool1 then
-    Result := 1
-  else
-  if Bool2 then
-    Result := -1
-  else
-    Result := Index1 - Index2;
+    if Bool1 then
+      Result := 1
+    else
+      if Bool2 then
+        Result := -1
+      else
+        Result := Index1 - Index2;
 end;
 
 // THeader class
