@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0920 - 2008.11.08 by Melchiorre Caruso.
+  v0.7.9 build 0922 - 2008.11.08 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -121,7 +121,7 @@ begin
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0920 archiver utility, November 2008' + Cr +
+    'The Bee 0.7.9 build 0922 archiver utility, November 2008' + Cr +
     '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -1375,6 +1375,7 @@ begin
     if (Headers.GetNext(0, toList) > -1) then
     begin
       Time := Now;
+
       {$IFDEF CONSOLEAPPLICATION}
       Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
       Synchronize(Interfaces.OnDisplay.Method);
@@ -1454,7 +1455,7 @@ begin
           else
             FilePassword := 'No';
 
-          FilePosition := I;
+          FilePosition := Headers.GetNext(0, toList,FilePath + FileName);
         end;
         Synchronize(Interfaces.OnList.Method);
 
