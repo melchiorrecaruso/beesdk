@@ -27,7 +27,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-  v0.7.9 build 0901 - 2008.10.25 by Melchiorre Caruso.
+  v0.7.9 build 0922 - 2008.11.08 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
