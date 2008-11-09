@@ -1330,9 +1330,14 @@ end;
 
 function CompareFn(Item1, Item2: pointer): integer;
 begin
-  Result := CompareText(
-    THeader(Item1).Data.FileName,
-    THeader(Item2).Data.FileName);
+  Result := CompareFileName(
+    ExtractFilePath(THeader(Item1).Data.FileName),
+    ExtractFilePath(THeader(Item2).Data.FileName));
+
+  if Result = 0 then
+    Result := CompareText(
+      ExtractFileName(THeader(Item1).Data.FileName),
+      ExtractFileName(THeader(Item2).Data.FileName));
 end;
 
 procedure TBeeApp.ListShell;
@@ -1374,7 +1379,7 @@ begin
       Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
       Synchronize(Interfaces.OnDisplay.Method);
 
-      Interfaces.OnDisplay.Data.Msg := ('Name' + StringOfChar(' ', 18) +
+      Interfaces.OnDisplay.Data.Msg := ('Directory|File' + StringOfChar(' ', 8) +
         'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
       Synchronize(Interfaces.OnDisplay.Method);
 
@@ -1509,7 +1514,9 @@ begin
     end;
 
   end;
+  {$IFDEF CONSOLEAPPLICATION}
   HeadersToList.Free;
+  {$ENDIF}
   Headers.Free;
 
   if Assigned(FArcFile) then
