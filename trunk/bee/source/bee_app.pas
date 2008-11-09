@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0922 - 2008.11.08 by Melchiorre Caruso.
+  v0.7.9 build 0928 - 2008.11.09 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -121,7 +121,7 @@ begin
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0922 archiver utility, November 2008' + Cr +
+    'The Bee 0.7.9 build 0928 archiver utility, November 2008' + Cr +
     '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -1328,11 +1328,11 @@ begin
     FreeAndNil(FArcFile);
 end;
 
-function CompareFilePath(Item1, Item2: pointer): integer;
+function CompareFn(Item1, Item2: pointer): integer;
 begin
-  Result := CompareFileName(
-    ExtractFilePath(THeader(Item1).Data.FileName),
-    ExtractFilePath(THeader(Item2).Data.FileName));
+  Result := CompareText(
+    THeader(Item1).Data.FileName,
+    THeader(Item2).Data.FileName);
 end;
 
 procedure TBeeApp.ListShell;
@@ -1340,11 +1340,12 @@ var
   P: THeader;
   I: integer;
   Headers: THeaders;
+  {$IFDEF CONSOLEAPPLICATION}
   HeadersToList: TList;
   HeadersToListPath: string;
+  {$ENDIF}
+  TotalPack, TotalSize, TotalFiles: integer;
   Version, Method, Dictionary: integer;
-  TotalPack, TotalSize: integer;
-  CountFiles: integer;
   Time: double;
 begin
   Interfaces.OnDisplay.Data.Msg :=
@@ -1352,19 +1353,13 @@ begin
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
+  {$IFDEF CONSOLEAPPLICATION}
   HeadersToList := TList.Create;
+  {$ENDIF}
   if OpenArchive(Headers, toNone) then
   begin
     Interfaces.OnDisplay.Data.Msg := (msgScanning + '...');
     Synchronize(Interfaces.OnDisplay.Method);
-
-    Version    := -1;
-    Method     := -1;
-    Dictionary := -1;
-
-    TotalSize  := 0;
-    TotalPack  := 0;
-    CountFiles := 0;
 
     with FCommandLine do
     begin
@@ -1375,7 +1370,6 @@ begin
     if (Headers.GetNext(0, toList) > -1) then
     begin
       Time := Now;
-
       {$IFDEF CONSOLEAPPLICATION}
       Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
       Synchronize(Interfaces.OnDisplay.Method);
@@ -1388,7 +1382,11 @@ begin
       Synchronize(Interfaces.OnDisplay.Method);
       {$ENDIF}
 
-      for I := 0 to Headers.Count -1 do
+      Version    := -1;
+      Method     := -1;
+      Dictionary := -1;
+
+      for I := 0 to Headers.Count - 1 do
       begin
         P := Headers.Items[I];
 
@@ -1403,23 +1401,33 @@ begin
 
         if P.Action = toList then
         begin
-          HeadersToList.Add(P);
-
           P.Data.FileVersion := Version;
           P.Data.FileMethod := Method;
           P.Data.FileDictionary := Dictionary;
+          {$IFDEF CONSOLEAPPLICATION}
+          HeadersToList.Add(P);
+          {$ENDIF}
         end;
       end;
 
+      TotalSize  := 0;
+      TotalPack  := 0;
+      TotalFiles := 0;
+
       {$IFDEF CONSOLEAPPLICATION}
-      HeadersToList.Sort(CompareFilePath);
+      HeadersToList.Sort(CompareFn);
       HeadersToListPath := '';
       {$ENDIF}
 
+      {$IFDEF CONSOLEAPPLICATION}
       for I := 0 to HeadersToList.Count - 1 do
       begin
         P := HeadersToList.Items[I];
-
+      {$ELSE}
+      for I := 0 to Headers.Count - 1 do
+      begin
+        P := Headers.Items[I];
+      {$ENDIF}
         with Interfaces.OnList.Data do
         begin
           FileName := ExtractFileName(P.Data.FileName);
@@ -1428,7 +1436,11 @@ begin
           {$IFDEF CONSOLEAPPLICATION}
           if CompareFileName(HeadersToListPath, FilePath) <> 0 then
           begin
-            Interfaces.OnDisplay.Data.Msg := (FilePath);
+            HeadersToListPath := FilePath;
+            if I <> 0 then
+              Interfaces.OnDisplay.Data.Msg := Cr + HeadersToListPath
+            else
+              Interfaces.OnDisplay.Data.Msg := HeadersToListPath;
             Synchronize(Interfaces.OnDisplay.Method);
           end;
           {$ENDIF}
@@ -1453,32 +1465,25 @@ begin
           else
             FilePassword := 'No';
 
-          FilePosition := Headers.GetNext(0, toList,FilePath + FileName);
+          {$IFDEF CONSOLEAPPLICATION}
+          FilePosition := Headers.GetNext(0, toList, P.Data.FileName);
+          {$ELSE}
+          FilePosition := I;
+          {$ENDIF}
         end;
         Synchronize(Interfaces.OnList.Method);
 
-        {$IFDEF CONSOLEAPPLICATION}
-        if CompareFileName(HeadersToListPath,  Interfaces.OnList.Data.FilePath) <> 0 then
-        begin
-          HeadersToListPath := Interfaces.OnList.Data.FilePath;
-
-          Interfaces.OnDisplay.Data.Msg := Cr;
-          Synchronize(Interfaces.OnDisplay.Method);
-        end;
-        {$ENDIF}
-
-
         Inc(TotalSize, P.Data.FileSize);
         Inc(TotalPack, P.Data.FilePacked);
-        Inc(CountFiles);
+        Inc(TotalFiles);
       end;
       {$IFDEF CONSOLEAPPLICATION}
       Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
       Synchronize(Interfaces.OnDisplay.Method);
 
       Interfaces.OnDisplay.Data.Msg :=
-        (Format('%d files', [CountFiles])) +
-        StringOfChar(' ', 15 - Length((Format('%d files', [CountFiles])))) +
+        (Format('%d files', [TotalFiles])) +
+        StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) +
         (Format(' %10s %10s %5s', [SizeToStr(TotalSize),
         SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)]));
       Synchronize(Interfaces.OnDisplay.Method);
