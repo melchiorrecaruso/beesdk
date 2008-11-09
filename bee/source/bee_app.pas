@@ -1428,9 +1428,7 @@ begin
           {$IFDEF CONSOLEAPPLICATION}
           if CompareFileName(HeadersToListPath, FilePath) <> 0 then
           begin
-            HeadersToListPath := FilePath;
-
-            Interfaces.OnDisplay.Data.Msg := (Cr + 'DIRECTORY: ' + HeadersToListPath);
+            Interfaces.OnDisplay.Data.Msg := (FilePath);
             Synchronize(Interfaces.OnDisplay.Method);
           end;
           {$ENDIF}
@@ -1458,6 +1456,17 @@ begin
           FilePosition := Headers.GetNext(0, toList,FilePath + FileName);
         end;
         Synchronize(Interfaces.OnList.Method);
+
+        {$IFDEF CONSOLEAPPLICATION}
+        if CompareFileName(HeadersToListPath,  Interfaces.OnList.Data.FilePath) <> 0 then
+        begin
+          HeadersToListPath := Interfaces.OnList.Data.FilePath;
+
+          Interfaces.OnDisplay.Data.Msg := Cr;
+          Synchronize(Interfaces.OnDisplay.Method);
+        end;
+        {$ENDIF}
+
 
         Inc(TotalSize, P.Data.FileSize);
         Inc(TotalPack, P.Data.FilePacked);
