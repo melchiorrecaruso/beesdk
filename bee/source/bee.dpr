@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.7.9 build 0918 - 2008.11.08 by Melchiorre Caruso.
+    v0.7.9 build 0926 - 2008.11.09 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -42,11 +42,9 @@ program Bee;
 {$I compiler.inc}
 
 uses
- {$IFDEF FPC}
- {$IFDEF UNIX}
+  {$IFDEF FPC} {$IFDEF UNIX}
   cThreads,
-                               {$ENDIF}
-                               {$ENDIF}
+  {$ENDIF} {$ENDIF}
   SysUtils,
   Classes,
   // ---

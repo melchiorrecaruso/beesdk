@@ -165,7 +165,7 @@ const
 function FileNamePos(const Substr, Str: string): integer;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
-  Result := System.Pos(SubStr, Str)
+  Result := System.Pos(SubStr, Str);
   {$ELSE}
   Result := System.Pos(UpperCase(SubStr), UpperCase(Str));
   {$ENDIF}
@@ -182,7 +182,7 @@ end;
 function CompareFileName(const S1, S2: string): integer;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
-  Result := SysUtils.CompareStr(S1, S2)
+  Result := SysUtils.CompareStr(S1, S2);
   {$ELSE}
   Result := SysUtils.CompareText(S1, S2);
   {$ENDIF}
