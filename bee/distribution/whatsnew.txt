@@ -19,7 +19,7 @@ Description of history of the Bee:
    V3e. Ускорение:
      a. Проверка легальности адреса.
      b. Указатель на часть таблицы вместо копии таблицы.
-     c. Проверка необходимости обрезания таблицы выполнена через флаг.
+     c. Проверка необходимости обрезания таблицы выполнена через флаг.[+] Added "-l" option, archive list after an upgrade; 
 
    q3.  Исправлена ошибка, приводящая к неправильной распаковке
         последних символов.
@@ -1323,7 +1323,7 @@ Description of history of the Bee:
 
       Mm.. I tested more.. This is even more complex.
 
-  [/] Algorithm repformance increased up to 0%..15% for some options and data types.
+  [/] Algorithm performance increased up to 0%..15% for some options and data types.
 
   v0.7.9 build 301 maked.
 
@@ -1344,13 +1344,13 @@ Description of history of the Bee:
 
   v0.7.9 build 316 maked.
   
-2008.10.25
+2008.11.20
 
   Update sources by Melchiorre Caruso:
 
   [*] Bee_Modeller.pas, minor code optimization (for FreePascal Compiler);
   [*] Bee_Files.pas, some changes for FPC compatibility;
-  [*] Bee_Interface.pas, added OnFatalError and OnRequest events;
+  [+] Bee_Interface.pas, added OnFatalError and OnRequest events;
   [*] Fixed some wilcard prolems;
   [*] Fixed some command line prolems;
   [*] Renamed "-c" option into "-cd" (bugfix); 
@@ -1362,9 +1362,10 @@ Description of history of the Bee:
   [+] Updated source code, platform independent;  
   [+] Bee_App.pas, added Tick function, if bee runs then result is true;
   [+] Bee_Modeller.pas, some changement to stop an active process;
-  [+] Bee_App.OpenArchive procedure, fixed dangerous bug; 
+  [*] Bee_App.OpenArchive procedure, fixed dangerous bug; 
       if archive is unknow it raises FatalError events and abort process;
   [+] Added "-l" option, archive list after an upgrade; 
+  [+] Function ListShell changed, now it lists files sorted by folder; 
   [*] Copyright information updated to each of units;
   [*] Unsignificant source code rearrangement performed;
   [*] Matrix.txt updated;
@@ -1372,4 +1373,4 @@ Description of history of the Bee:
   [*] Bee_App.pas, bug fixed in AlreadyFileExists function and RenameShell procedure;
   [*] Bee_Files.pas, some changements for FPC compatibility.  
 
-  v0.7.9 build 912 maked.
+  v0.7.9 build 928 maked.
