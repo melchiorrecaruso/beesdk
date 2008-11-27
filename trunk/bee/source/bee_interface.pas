@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.7.9 build 0904 - 2008.10.25 by Melchiorre Caruso.
+    v0.7.9 build 0932 - 2008.10.25 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -35,7 +35,9 @@ interface
 
 uses
   Classes,
-  SysUtils;
+  SysUtils,
+  // ---
+  Bee_Common;
 
 type
 
