@@ -41,6 +41,7 @@ uses
   Interfaces,
   LResources,
   SysUtils,
+  Dialogs,
   Forms,
   // --- //
   BeeGui_Consts,
@@ -63,7 +64,7 @@ var
 begin
   {$I beegui.lrs}
   MaxKeptOSChunks := 8;
-  if (ParamCount = 1) and (Lowercase(ParamStr(1)) = '-filemanager') then
+  if ParamCount = 0 then
   begin
     Application.Initialize;
     Application.HelpFile := '';
@@ -77,8 +78,12 @@ begin
     Application.Initialize;
     Application.Title:= cApplicationName;
     CommandLine := TCustomCommandLine.Create;
+
+    ShowMessage(CommandLine.Command);
+
     if CommandLine.Run then
     begin
+
       if CommandLine.Command in [' ', '?'] then
       begin
         Application.CreateForm(TAboutFrm, AboutFrm);
