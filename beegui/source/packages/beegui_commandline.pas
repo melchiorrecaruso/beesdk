@@ -80,6 +80,7 @@ uses
 
   procedure TCustomCommandLine.Clear;
   begin
+    inherited Clear;
     FRun := False;
     F0Option := '';
     F1Option := False;
