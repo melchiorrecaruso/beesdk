@@ -36,7 +36,7 @@ uses
   Controls,
   SysUtils,
   // ---
-  BeeGui_CmdLine;
+  BeeGui_CommandLine;
   
 function ConfirmAdd(CommandLine: TCustomCommandLine): boolean;
 function ConfirmExtract(CommandLine: TCustomCommandLine): boolean;

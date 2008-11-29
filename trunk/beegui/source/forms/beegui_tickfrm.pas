@@ -49,7 +49,7 @@ uses
   Bee_Common,
   Bee_Interface,
   // ---
-  BeeGui_CmdLine,
+  BeeGui_CommandLine,
   // ---
   BeeGui_RenameFrm,
   BeeGui_PasswordFrm,

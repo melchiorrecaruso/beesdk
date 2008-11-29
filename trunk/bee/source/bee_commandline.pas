@@ -83,8 +83,7 @@ type
   public
     constructor Create; dynamic;
     destructor Destroy; dynamic;
-    procedure Process(Params: TStringList); dynamic;
-    procedure Clear; dynamic;
+    procedure Process(AParams: TStringList); dynamic;
   public
     property Command: char Read FCommand Write SetCommand;
     property rOption: boolean Read FrOption Write SetrOption;
@@ -116,14 +115,6 @@ uses
 constructor TCommandLine.Create;
 begin
   inherited Create;
-  FxOption   := TStringList.Create;
-  FFileMasks := TStringList.Create;
-  // ---
-  Clear;
-end;
-
-procedure TCommandLine.Clear;
-begin
   FCommand := ' ';
   FrOption := False;
   FuOption := False;
@@ -134,24 +125,24 @@ begin
   FoOption := 'Y';
   FmOption := 1;
   FdOption := 2;
-  FxOption.Clear;
-  FtOption     := False;
-  FlOption     := False;
-  FyOption     := '';
-  FkOption     := False;
-  FcdOption    := '';
-  FcfgOption   := SelfPath + 'bee.ini';
-  FpriOption   := 1;
+  FxOption := TStringList.Create;
+  FtOption := False;
+  FlOption := False;
+  FyOption := '';
+  FkOption := False;
+  FcdOption  := '';
+  FcfgOption := SelfPath + 'bee.ini';
+  FpriOption := 1;
   FArchiveName := '';
-  FFileMasks.Clear;
+  FFileMasks := TStringList.Create;
 end;
 
 destructor TCommandLine.Destroy;
 begin
   FxOption.Clear;
-  FxOption.Free;
+  FxOption.Destroy;
   FFileMasks.Clear;
-  FFileMasks.Free;
+  FFileMasks.Destroy;
   inherited Destroy;
 end;
 
@@ -168,15 +159,15 @@ begin
   end;
 end;
 
-procedure TCommandLine.Process(Params: TStringList);
+procedure TCommandLine.Process(AParams: TStringList);
 var
   I: integer;
   S: string;
 begin
   // catch options, command, archive name and name of files
-  for I := 0 to Params.Count - 1 do
+  for I := 0 to AParams.Count - 1 do
   begin
-    S := Params.Strings[I];
+    S := AParams.Strings[I];
     if (FArchiveName = '') and (Length(S) > 1) and (S[1] = '-') then
     begin
       // options...
@@ -269,8 +260,7 @@ begin
       if ExtractFileExt(FArchiveName) = '' then
         FArchiveName := ChangeFileExt(FArchiveName, '.bee');
     end else
-      FFileMasks.Add(S)// command or filenames...
-    ;
+      FFileMasks.Add(S);// command or filenames...
   end; // end for loop
 
   // process file masks

@@ -23,7 +23,7 @@
   Modifyed:
 }
 
-unit BeeGui_CmdLine;
+unit BeeGui_CommandLine;
 
 {$I compiler.inc}
 
@@ -44,20 +44,19 @@ type
 
   TCustomCommandLine = class (TCommandLine)
   private
-    FRun: boolean;
     F0Option: string;
     F1Option: boolean;
     F2Option: boolean;
     FParams: TStringList;
   private
+    function GetRun: boolean;
     function GetParams: TStringList;
   public
-    constructor Create; override;
+    constructor Create;
     destructor Destroy; override;
-    procedure Process(Params: TStringList); override;
-    procedure Clear; override;
+    procedure Process(AParams: TStringList); override;
   public
-    property Run: boolean read FRun;
+    property Run: boolean read GetRun;
     property Link: string read F0Option;
     property Log: boolean read F1Option write F1Option;
     property Params: TStringList read GetParams;
@@ -73,34 +72,56 @@ uses
   BeeGui_Forms;
 
   constructor TCustomCommandLine.Create;
+  var
+    I: integer;
   begin
     inherited Create;
-    Clear;
-  end;
-
-  procedure TCustomCommandLine.Clear;
-  begin
-    inherited Clear;
-    FRun := False;
     F0Option := '';
     F1Option := False;
     F2Option := False;
+    FParams  := TStringList.Create;
+
+    for I := 1 to ParamCount do
+    begin
+      FParams.Add(ParamStr(I));
+    end;
+    Process(FParams);
   end;
 
-  procedure TCustomCommandLine.Process(Params: TStringList);
+  procedure TCustomCommandLine.Process(AParams: TStringList);
   var
     S: string;
-    i: integer;
+    I: integer;
+    K: integer;
   begin
+    K := 0;
     // catch options, command, archive name and name of files
-    for i := 1 to ParamCount do
+    for I := 1 to Params.Count -1 do
     begin
-
+      S := Params.Strings[I];
+      if (K < 2) and (Length(S) > 1) and (S[1] = '-') then
+      begin
+        case UpCase(S[2]) of
+          '0': begin
+                 Delete(S, 1, 2);
+                 if Length(S) > 0 then
+                   F0Option := FixFileName(S);
+               end;
+          '1': ProcessOption(S, F1Option);
+          '2': ProcessOption(S, F2Option);
+        end;
+      end else
+      begin
+        Inc(K);
+      end;
     end; // end for loop
+    inherited Process(Params);
   end;
 
   destructor TCustomCommandLine.Destroy;
   begin
+    FParams.Clear;
+    FParams.Destroy;
     inherited Destroy;
   end;
 
@@ -109,69 +130,66 @@ uses
     Result := FParams;
   end;
 
-  (*
-  procedure TCustomCommandLine.ProcessParams;
+  function TCustomCommandLine.GetRun: boolean;
   var
     i: integer;
   begin
-    FRun := True;
+    Result := True;
+
     FParams.Clear;
     if F2Option then
     begin
-      case FCommand of
-        'A': FRun := ConfirmAdd(Self);
-        'E': FRun := ConfirmExtract(Self);
-        'X': FRun := ConfirmExtract(Self);
+      case Command of
+        'A': Result := ConfirmAdd(Self);
+        'E': Result := ConfirmExtract(Self);
+        'X': Result := ConfirmExtract(Self);
       end;
     end;
 
-    if FRun then
+    if Result then
     begin
-      FParams.Add(FCommand);
+      FParams.Add(Command);
 
-      if FrOption then FParams.Add('-R+') else FParams.Add('-R-');
-      if FuOption then FParams.Add('-U+') else FParams.Add('-U-');
-      if FfOption then FParams.Add('-F+') else FParams.Add('-F-');
+      if rOption then FParams.Add('-R+') else FParams.Add('-R-');
+      if uOption then FParams.Add('-U+') else FParams.Add('-U-');
+      if fOption then FParams.Add('-F+') else FParams.Add('-F-');
 
-      if Length(FeOption) > 0 then
-        FParams.Add('-E' + FeOption);
+      if Length(eOption) > 0 then
+        FParams.Add('-E' + eOption);
 
-      if FsOption then FParams.Add('-S+') else FParams.Add('-S-');
+      if sOption then FParams.Add('-S+') else FParams.Add('-S-');
 
-      if Length(FaOption) > 0 then
-        FParams.Add('-A' + FaOption);
+      if Length(aOption) > 0 then
+        FParams.Add('-A' + aOption);
 
-      FParams.Add('-O'+ FoOption);
-      FParams.Add('-M'+ IntToStr(FmOption));
-      FParams.Add('-D'+ IntToStr(FdOption));
+      FParams.Add('-O'+ oOption);
+      FParams.Add('-M'+ IntToStr(mOption));
+      FParams.Add('-D'+ IntToStr(dOption));
 
-      for i := 0 to FxOption.Count - 1 do
-        FParams.Add('-X' + FxOption.Strings[i]);
+      for i := 0 to xOption.Count - 1 do
+        FParams.Add('-X' + xOption.Strings[i]);
 
-      if FtOption then FParams.Add('-T+') else FParams.Add('-T-');
-      if FlOption then FParams.Add('-L+') else FParams.Add('-L-');
+      if tOption then FParams.Add('-T+') else FParams.Add('-T-');
+      if lOption then FParams.Add('-L+') else FParams.Add('-L-');
 
-      if Length(FyOption) > 0 then
-        FParams.Add('-Y' + FyOption);
+      if Length(yOption) > 0 then
+        FParams.Add('-Y' + yOption);
 
-      if FkOption then FParams.Add('-K+') else FParams.Add('-K-');
+      if kOption then FParams.Add('-K+') else FParams.Add('-K-');
 
-      if Length(FcdOption) > 0 then
-        FParams.Add('-CD' + FcdOption);
+      if Length(cdOption) > 0 then
+        FParams.Add('-CD' + cdOption);
 
-      if Length(FcfgOption) > 0 then
-        FParams.Add('-CFG' +  FcfgOption);
+      if Length(cfgOption) > 0 then
+        FParams.Add('-CFG' +  cfgOption);
 
-      FParams.Add('-PRI' + IntTostr(FpriOption));
-      FParams.Add(FArcName);
+      FParams.Add('-PRI' + IntTostr(priOption));
+      FParams.Add(ArchiveName);
 
-      for i := 0 to FFileMasks.Count - 1 do
-        FParams.Add(FFileMasks.Strings[i]);
+      for i := 0 to FileMasks.Count - 1 do
+        FParams.Add(FileMasks.Strings[i]);
     end;
   end;
-  *)
-
-
 
 end.
 
