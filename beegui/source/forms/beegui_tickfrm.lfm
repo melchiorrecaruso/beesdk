@@ -14,7 +14,6 @@ object TickFrm: TTickFrm
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  ParentFont = False
   ShowInTaskBar = stAlways
   LCLVersion = '0.9.27'
   object BtnCancel: TBitBtn
@@ -155,7 +154,6 @@ object TickFrm: TTickFrm
         BorderSpacing.Around = 6
         Constraints.MaxHeight = 20
         Constraints.MinHeight = 20
-        Max = 100
         TabOrder = 0
       end
       object TimeLabelPanel: TPanel

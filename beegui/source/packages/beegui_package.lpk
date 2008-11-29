@@ -1,34 +1,40 @@
 <?xml version="1.0"?>
 <CONFIG>
   <Package Version="3">
+    <PathDelim Value="\"/>
     <Name Value="beegui_package"/>
     <Author Value="Melchiorre Caruso"/>
     <CompilerOptions>
-      <Version Value="5"/>
+      <Version Value="8"/>
+      <PathDelim Value="\"/>
       <SearchPaths>
-        <IncludeFiles Value="packages.include/"/>
-        <OtherUnitFiles Value="../../../bee/source/"/>
-        <UnitOutputDirectory Value="$(LazarusDir)/lcl/units/$(TargetCPU)-$(TargetOS)"/>
-        <SrcPath Value="../../../bee/source/"/>
+        <IncludeFiles Value="packages.include\"/>
+        <OtherUnitFiles Value="..\..\..\bee\source\"/>
+        <UnitOutputDirectory Value="$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)"/>
+        <SrcPath Value="..\..\..\bee\source\"/>
       </SearchPaths>
       <Parsing>
         <SyntaxOptions>
+          <SyntaxMode Value="Delphi"/>
           <CStyleOperator Value="False"/>
           <AllowLabel Value="False"/>
           <CPPInline Value="False"/>
-          <DelphiCompat Value="True"/>
           <UseAnsiStrings Value="True"/>
         </SyntaxOptions>
       </Parsing>
       <CodeGeneration>
         <SmartLinkUnit Value="True"/>
-        <Generate Value="Faster"/>
         <Optimizations>
           <VariablesInRegisters Value="True"/>
           <UncertainOptimizations Value="True"/>
           <OptimizationLevel Value="3"/>
         </Optimizations>
       </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <UseLineInfoUnit Value="False"/>
+        </Debugging>
+      </Linking>
       <Other>
         <Verbosity>
           <ShoLineNum Value="True"/>
@@ -113,10 +119,11 @@
       </Item2>
     </RequiredPkgs>
     <UsageOptions>
-      <UnitPath Value="$(PkgOutDir)/"/>
+      <UnitPath Value="$(PkgOutDir)\"/>
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>
+      <DestinationDirectory Value="$(TestDir)\publishedpackage\"/>
       <IgnoreBinaries Value="False"/>
     </PublishOptions>
   </Package>

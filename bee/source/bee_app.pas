@@ -97,7 +97,7 @@ type
     FSwapName: string;      // swap file name
 
     FConfiguration: TConfiguration;
-    FCommandLine:   TCommandLine;
+    FCommandLine: TCommandLine;
   end;
 
 implementation
@@ -121,7 +121,7 @@ begin
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0932 archiver utility, November 2008' + Cr +
+    'The Bee 0.7.9 build 0936 archiver utility, November 2008' + Cr +
     '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;

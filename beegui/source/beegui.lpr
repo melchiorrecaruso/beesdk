@@ -47,10 +47,10 @@ uses
   BeeGui_Consts,
   BeeGui_Package,
   // --- //
-  BeeGui_CmdLine,
   BeeGui_TickFrm,
   BeeGui_AboutFrm,
   BeeGui_RenameFrm,
+  BeeGui_CommandLine,
   // --- //
   BeeFM_MainFrm,
   BeeFM_ViewFrm,
@@ -78,12 +78,8 @@ begin
     Application.Initialize;
     Application.Title:= cApplicationName;
     CommandLine := TCustomCommandLine.Create;
-
-    ShowMessage(CommandLine.Command);
-
     if CommandLine.Run then
     begin
-
       if CommandLine.Command in [' ', '?'] then
       begin
         Application.CreateForm(TAboutFrm, AboutFrm);
