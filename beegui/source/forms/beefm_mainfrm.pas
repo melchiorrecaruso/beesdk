@@ -788,8 +788,8 @@ uses
 
   procedure TMainFrm.MMenuFileRenameClick(Sender: TObject);
   var
-    F: TRenameFrm;
     NewName: string;
+    F: TRenameFrm;
   begin
     if ArcProcess.Enabled = False then
     begin
@@ -1030,22 +1030,24 @@ uses
 
   procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
   var
-    CmdLine: string;
+    ArchiveName: string;
+    ArchiveLink: string;
+    CommandLine: string;
   begin
-    (*
     if ListView.SelCount = 0 then Exit;
-    if Cursor <> crHourGlass then
+    if ArcProcess.Enabled = False then
     begin
-      CmdLine := 'beegui t -1+';
-      CmdLine := CmdLine + ' "' + ArcProcess.ArcName + '" ' + ListView.GetMasks;
-      ArcProcess.CommandLine := CmdLine;
-      ArcProcess.CurrentDirectory := '';
-      ArcProcess.Execute;
-      // ---
-      Idle.OnTimer := nil;
-      Idle.Enabled := False;
+      // Archive name-link //
+      ArchiveName := ArcProcess.ArchiveName;
+      ArchiveLink := ArcProcess.ArchiveLink;
+      // Command line //
+      CommandLine := 'beegui t -1+ -r+';
+      CommandLine := CommandLine + ' "' + ArchiveName + '" ' + ListView.GetMasks;
+      // Archive Process //
+      ArcProcess.Initialize(ArchiveName, ArchiveLink);
+      ArcProcess.Add(CommandLine, '');
+      ArcProcess.Enabled := True;
     end;
-    *)
   end;
 
   procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);

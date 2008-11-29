@@ -1,7 +1,7 @@
 @echo @ 
-@echo @ StripReloc Bee ...
+@echo @ Strip Bee ...
 @echo @ 
 
   cd distribution
-  stripreloc /B bee.exe
+  strip bee.exe
   cd ..

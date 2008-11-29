@@ -79,8 +79,8 @@ uses
     F0Option := '';
     F1Option := False;
     F2Option := False;
-    FParams  := TStringList.Create;
 
+    FParams  := TStringList.Create;
     for I := 1 to ParamCount do
     begin
       FParams.Add(ParamStr(I));
@@ -105,7 +105,7 @@ uses
           '0': begin
                  Delete(S, 1, 2);
                  if Length(S) > 0 then
-                   F0Option := FixFileName(S);
+                   F0Option := S;
                end;
           '1': ProcessOption(S, F1Option);
           '2': ProcessOption(S, F2Option);

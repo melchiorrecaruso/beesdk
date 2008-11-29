@@ -453,8 +453,11 @@ var
   begin
     if FInterfaces.Terminated = True then
     begin
+      Timer.Enabled := False;
+
       BtnPriority.Enabled := False;
       BtnPauseRun.Enabled := False;
+
       BtnCancel.Kind      := bkClose;
       BtnCancel.Caption   := rsBtnCloseCaption;
       BtnCancel.Cancel    := True;
@@ -471,8 +474,6 @@ var
 
         BtnSave.Enabled := True;
         BtnFont.Enabled := True;
-
-        Timer.Enabled := False;
       end else
       begin;
         Close;
