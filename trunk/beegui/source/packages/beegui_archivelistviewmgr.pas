@@ -743,7 +743,7 @@ uses
         Result := True;
       finally
         FContents.Free;
-        DeleteFile(FFileLink);
+        // DeleteFile(FFileLink);
       end;
       UpdateFolders;
       UpdateFolder;
