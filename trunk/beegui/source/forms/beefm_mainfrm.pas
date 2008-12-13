@@ -45,10 +45,10 @@ uses
   ExtCtrls,
   LResources,
   // ---
+  BeeGui_Process,
   BeeGui_IconList,
   BeeGui_ArchiveFolderBox,
-  BeeGui_ArchiveListViewMgr,
-  BeeGui_Process;
+  BeeGui_ArchiveListViewMgr;
 
 type
   { TMainFrm }
