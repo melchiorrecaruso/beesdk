@@ -153,8 +153,7 @@ type
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
-    procedure Start(ACommandLine: TCustomCommandLine); overload;
-    procedure Start(const ACommandLine: string); overload;
+    procedure Start(ACommandLine: TCustomCommandLine);
     destructor Destroy; override;
   end;
 
@@ -223,16 +222,6 @@ var
   begin
     FCommandLine := ACommandLine;
     FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
-    FApp.OnTerminate := OnTerminate;
-    FApp.Resume;
-  end;
-  
-  procedure TTickFrm.Start(const ACommandLine: string);
-  begin
-    FCommandLine := TCustomCommandLine.Create;
-
-
-    FApp := TBeeApp.Create(FInterfaces, ACommandLine);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
   end;
