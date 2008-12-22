@@ -75,7 +75,7 @@ type
     FileProcess: TFileProcess;
     BtnUp: TSpeedButton;
     StatusBar: TStatusBar;
-    ListView: TArcListView;
+    ListView: TArchiveListView;
     LargeImages: TIconList;
     SmallImages: TIconList;
     // ---

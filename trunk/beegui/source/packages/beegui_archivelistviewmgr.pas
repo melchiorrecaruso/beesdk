@@ -43,16 +43,14 @@ uses
   ComCtrls,
   LResources,
   // ---
-  Bee_Headers,
-  // ---
   BeeGui_IconList,
   BeeGui_ArchiveFolderBox;
 
 type
 
- { TArcItem }
+ { TArchiveItem }
 
-  TArcItem = class
+  TArchiveItem = class
   public
     FileName: string;
     FilePath: string;
@@ -73,9 +71,9 @@ type
   
 type
 
-  { TArcList }
+  { TArchiveList }
 
-  TArcList = class(TList)
+  TArchiveList = class(TList)
   public
     procedure Clear; override;
     destructor Destroy; override;
@@ -84,9 +82,9 @@ type
   
 type
 
-  { TArcDetails }
+  { TArchiveDetails }
 
-  TArcDetails = class
+  TArchiveDetails = class
   public
     FilesCount: integer;
     FilesSize: integer;
@@ -98,29 +96,29 @@ type
   public
     constructor Create;
     procedure Clear;
-    procedure Update(Item: TArcItem);
+    procedure Update(Item: TArchiveItem);
   end;
 
 type
 
-  { TArcListViewColumn }
+  { TArchiveListViewColumn }
   
-  TArcListViewColumn = (alvcName, alvcPath, alvcType, alvcSize,
+  TArchiveListViewColumn = (alvcName, alvcPath, alvcType, alvcSize,
     alvcPacked, alvcRatio, alvcAttr, alvcTime, alvcComm, alvcCrc,
     alvcMethod, alvcVersion, alvcPassword, alvcPosition);
     
 type
 
-  { TCustomArcListView }
+  { TCustomArchiveListView }
 
-  TCustomArcListView = class(TCustomListView)
+  TCustomArchiveListView = class(TCustomListView)
   private
     FFileName: string;
     FFileLink: string;
-    FDetails: TArcDetails;
+    FDetails: TArchiveDetails;
     // ---
-    FFiles: TArcList;
-    FFolders: TArcList;
+    FFiles: TArchiveList;
+    FFolders: TArchiveList;
     FFolderFiles: TList;
     FFolder: string;
     // ---
@@ -128,7 +126,7 @@ type
     FFolderBoxSign: string;
     // ---
     FSimpleList: boolean;
-    FSortCol: TArcListViewColumn;
+    FSortCol: TArchiveListViewColumn;
     FSortDir: boolean;
   private
     function CompareFn(L: TList; I1, I2: integer): integer;
@@ -139,7 +137,7 @@ type
     procedure SetFolder(Value: string);
     procedure SetFolderBox(Value: TArchiveFolderBox);
     procedure SetSortDir(Value: boolean);
-    procedure SetSortCol(Value: TArcListViewColumn);
+    procedure SetSortCol(Value: TArchiveListViewColumn);
     procedure SetSimpleList(Value: boolean);
     // ---
     procedure Data(Sender: TObject; Item: TListItem);
@@ -159,12 +157,12 @@ type
   protected
     property FileName: string read FFileName;
     property FileLink: string read FFileLink;
-    property Details: TArcDetails read FDetails;
-    property Files: TArcList read FFiles write FFiles default nil;
+    property Details: TArchiveDetails read FDetails;
+    property Files: TArchiveList read FFiles write FFiles default nil;
     property FolderFiles: TList read FFolderFiles write FFolderFiles default nil;
     property Folder: string read FFolder write SetFolder;
     property FolderBox: TArchiveFolderBox read FFolderBox write SetFolderBox default nil;
-    property SortCol: TArcListViewColumn read FSortCol write SetSortCol default alvcName;
+    property SortCol: TArchiveListViewColumn read FSortCol write SetSortCol default alvcName;
     property SimpleList: boolean read FSimpleList write SetSimpleList default False;
   end;
   
@@ -172,7 +170,7 @@ type
 
   { TArcListView }
   
-  TArcListView = class(TCustomArcListView)
+  TArchiveListView = class(TCustomArchiveListView)
   public
     property Details;
     property Folder;
@@ -253,33 +251,33 @@ uses
 
   { TArcList }
 
-  destructor TArcList.Destroy;
+  destructor TArchiveList.Destroy;
   begin
     Clear;
     inherited Destroy;
   end;
 
-  procedure TArcList.Clear;
+  procedure TArchiveList.Clear;
   var
     I: integer;
   begin
     for I := Count - 1 downto 0 do
     begin
-      TArcItem(Items[I]).Free;
+      TArchiveItem(Items[I]).Free;
     end;
     inherited Clear;
   end;
 
-  function TArcList.IndexOf(const FilePath: string; const FileName: string): integer;
+  function TArchiveList.IndexOf(const FilePath: string; const FileName: string): integer;
   var
     I: integer;
   begin
     Result := -1;
     for I := 0 to Count - 1 do
     begin
-      if CompareFileName(TArcItem(Items[I]).FileName, FileName) = 0 then
+      if CompareFileName(TArchiveItem(Items[I]).FileName, FileName) = 0 then
       begin
-        if CompareFileName(TArcItem(Items[I]).FilePath, FilePath) = 0 then
+        if CompareFileName(TArchiveItem(Items[I]).FilePath, FilePath) = 0 then
         begin
           Result := I;
           Break;
@@ -288,14 +286,14 @@ uses
     end;
   end;
 
-  { TArctDetails }
+  { TArchiveDetails }
   
-  constructor TArcDetails.Create;
+  constructor TArchiveDetails.Create;
   begin
     inherited Create;
   end;
 
-  procedure TArcDetails.Clear;
+  procedure TArchiveDetails.Clear;
   begin
     FilesCount       := 0;
     FilesSize        := 0;
@@ -306,7 +304,7 @@ uses
     LastTime         := 0;
   end;
 
-  procedure TArcDetails.Update(Item: TArcItem);
+  procedure TArchiveDetails.Update(Item: TArchiveItem);
   begin
     if (Item.FileAttr and faDirectory) = 0 then
     begin
@@ -333,7 +331,7 @@ uses
 
   { TCustomArcListView }
   
-  constructor TCustomArcListView.Create(AOwner: TComponent);
+  constructor TCustomArchiveListView.Create(AOwner: TComponent);
   var
     i: integer;
     Col: TListColumn;
@@ -342,10 +340,10 @@ uses
     FFileName := '';
     FFileLink := '';
     // --
-    FFiles := TArcList.Create;
+    FFiles := TArchiveList.Create;
     FFolderFiles := TList.Create;
-    FDetails := TArcDetails.Create;
-    FFolders := TArcList.Create;
+    FDetails := TArchiveDetails.Create;
+    FFolders := TArchiveList.Create;
     FFolder := '';
     // --
     FSortDir := True;
@@ -356,7 +354,7 @@ uses
     Enabled := False;
   end;
   
-  destructor TCustomArcListView.Destroy;
+  destructor TCustomArchiveListView.Destroy;
   begin
     FFileName := '';
     FFileLink := '';
@@ -369,12 +367,12 @@ uses
     inherited Destroy;
   end;
 
-  function TCustomArcListView.CompareFn(L: TList; I1, I2: integer): integer;
+  function TCustomArchiveListView.CompareFn(L: TList; I1, I2: integer): integer;
   var
     bool1, bool2: boolean;
   begin
-    with TArcItem(L.Items[I1]) do bool1 := not ((faDirectory and FileAttr) = faDirectory);
-    with TArcItem(L.Items[I2]) do bool2 := not ((faDirectory and FileAttr) = faDirectory);
+    with TArchiveItem(L.Items[I1]) do bool1 := not ((faDirectory and FileAttr) = faDirectory);
+    with TArchiveItem(L.Items[I2]) do bool2 := not ((faDirectory and FileAttr) = faDirectory);
 
     if bool1 xor bool2 then
     begin
@@ -385,18 +383,18 @@ uses
     end else
     begin
       case FSortCol of
-        alvcName    : Result := CompareFileName(TArcItem(L.Items[I1]).FileName,       TArcItem(L.Items[I2]).FileName);
-        alvcPath    : Result := CompareFileName(TArcItem(L.Items[I1]).FilePath,       TArcItem(L.Items[I2]).FilePath);
-        alvcType    : Result := CompareFileName(TArcItem(L.Items[I1]).FileType,       TArcItem(L.Items[I2]).FileType);
-        alvcSize    : Result :=                (TArcItem(L.Items[I1]).FileSize      - TArcItem(L.Items[I2]).FileSize);
-        alvcPacked  : Result :=                (TArcItem(L.Items[I1]).FilePacked    - TArcItem(L.Items[I2]).FilePacked);
-        alvcRatio   : Result :=                (TArcItem(L.Items[I1]).FileRatio     - TArcItem(L.Items[I2]).FileRatio);
-        alvcAttr    : Result :=                (TArcItem(L.Items[I1]).FileAttr      - TArcItem(L.Items[I2]).FileAttr);
-        alvcTime    : Result :=           Round(TArcItem(L.Items[I1]).FileTime      - TArcItem(L.Items[I2]).FileTime);
-        alvcCRC     : Result :=                (TArcItem(L.Items[I1]).FileCRC       - TArcItem(L.Items[I2]).FileCRC);
-        alvcMethod  : Result :=     CompareText(TArcItem(L.Items[I1]).FileMethod,     TArcItem(L.Items[I2]).FileMethod);
-        alvcPassword: Result :=     CompareText(TArcItem(L.Items[I1]).FilePassword,   TArcItem(L.Items[I2]).FilePassword);
-        alvcPosition: Result :=                (TArcItem(L.Items[I1]).FilePosition  - TArcItem(L.Items[I2]).FilePosition);
+        alvcName    : Result := CompareFileName(TArchiveItem(L.Items[I1]).FileName,       TArchiveItem(L.Items[I2]).FileName);
+        alvcPath    : Result := CompareFileName(TArchiveItem(L.Items[I1]).FilePath,       TArchiveItem(L.Items[I2]).FilePath);
+        alvcType    : Result := CompareFileName(TArchiveItem(L.Items[I1]).FileType,       TArchiveItem(L.Items[I2]).FileType);
+        alvcSize    : Result :=                (TArchiveItem(L.Items[I1]).FileSize      - TArchiveItem(L.Items[I2]).FileSize);
+        alvcPacked  : Result :=                (TArchiveItem(L.Items[I1]).FilePacked    - TArchiveItem(L.Items[I2]).FilePacked);
+        alvcRatio   : Result :=                (TArchiveItem(L.Items[I1]).FileRatio     - TArchiveItem(L.Items[I2]).FileRatio);
+        alvcAttr    : Result :=                (TArchiveItem(L.Items[I1]).FileAttr      - TArchiveItem(L.Items[I2]).FileAttr);
+        alvcTime    : Result :=           Round(TArchiveItem(L.Items[I1]).FileTime      - TArchiveItem(L.Items[I2]).FileTime);
+        alvcCRC     : Result :=                (TArchiveItem(L.Items[I1]).FileCRC       - TArchiveItem(L.Items[I2]).FileCRC);
+        alvcMethod  : Result :=     CompareText(TArchiveItem(L.Items[I1]).FileMethod,     TArchiveItem(L.Items[I2]).FileMethod);
+        alvcPassword: Result :=     CompareText(TArchiveItem(L.Items[I1]).FilePassword,   TArchiveItem(L.Items[I2]).FilePassword);
+        alvcPosition: Result :=                (TArchiveItem(L.Items[I1]).FilePosition  - TArchiveItem(L.Items[I2]).FilePosition);
       else
         Result := I2 - I1;
       end;
@@ -412,7 +410,7 @@ uses
     end;
   end;
 
-  procedure TCustomArcListView.QuickSort(List: TList; L, R: integer);
+  procedure TCustomArchiveListView.QuickSort(List: TList; L, R: integer);
   var
     I, J, Pivot: longint;
   begin
@@ -448,7 +446,7 @@ uses
     end;
   end;
 
-  procedure TCustomArcListView.SetFolderBox(Value: TArchiveFolderBox);
+  procedure TCustomArchiveListView.SetFolderBox(Value: TArchiveFolderBox);
   begin
     FFolderBox := Value;
     if Assigned(FFolderBox) then
@@ -458,19 +456,19 @@ uses
     end;
   end;
 
-  procedure TCustomArcListView.SetSimpleList(Value: boolean);
+  procedure TCustomArchiveListView.SetSimpleList(Value: boolean);
   begin
     FSimpleList := Value;
     UpdateFolder;
   end;
   
-  procedure TCustomArcListView.SetSortDir(Value: boolean);
+  procedure TCustomArchiveListView.SetSortDir(Value: boolean);
   begin
     FSortDir := Value;
     UpdateFolder;
   end;
   
-  procedure TCustomArcListView.SetSortCol(Value: TArcListViewColumn);
+  procedure TCustomArchiveListView.SetSortCol(Value: TArchiveListViewColumn);
   begin
     if Value = FSortCol then
       FSortDir := not FSortDir
@@ -481,7 +479,7 @@ uses
     UpdateFolder;
   end;
 
-  procedure TCustomArcListView.UpdateFolder;
+  procedure TCustomArchiveListView.UpdateFolder;
   var
     I, J: integer;
     Item: TListItem;
@@ -495,13 +493,13 @@ uses
     end else
     begin
       for I := 0 to FFolders.Count -1 do
-        if CompareFileName(FFolder, TArcItem(FFolders.Items[I]).FilePath) = 0 then
+        if CompareFileName(FFolder, TArchiveItem(FFolders.Items[I]).FilePath) = 0 then
         begin
           FFolderFiles.Add(FFolders.Items[I]);
         end;
 
       for I := 0 to FFiles.Count - 1 do
-        if CompareFileName(FFolder, TArcItem(FFiles.Items[I]).FilePath) = 0 then
+        if CompareFileName(FFolder, TArchiveItem(FFiles.Items[I]).FilePath) = 0 then
         begin
           FFolderFiles.Add(FFiles.Items[I]);
         end;
@@ -558,7 +556,7 @@ uses
     //end;
   end;
 
-  procedure TCustomArcListView.Initialize;
+  procedure TCustomArchiveListView.Initialize;
   begin
     if UpdateFolders then
       SetFolder(FFolder)
@@ -577,7 +575,7 @@ uses
     end;
   end;
 
-  procedure TCustomArcListView.CloseArchive;
+  procedure TCustomArchiveListView.CloseArchive;
   begin
     FFileName := '';
     FFileLink := '';
@@ -602,7 +600,7 @@ uses
     FFolder:= '';
   end;
 
-  procedure TCustomArcListView.SetFolder(Value: string);
+  procedure TCustomArchiveListView.SetFolder(Value: string);
   begin
     if FileNamePos(FFolderBoxSign, Value) = 1 then
     begin
@@ -612,7 +610,7 @@ uses
     UpdateFolder;
   end;
 
-  function TCustomArcListView.Up: boolean;
+  function TCustomArchiveListView.Up: boolean;
   var
     D: string;
   begin
@@ -624,17 +622,17 @@ uses
       Result := False;
   end;
   
-  function TCustomArcListView.GetMasks: string;
+  function TCustomArchiveListView.GetMasks: string;
   var
     I: integer;
-    Node: TArcItem;
+    Node: TArchiveItem;
   begin
     Result := '';
     for I := 0 to FFolderFiles.Count -1 do
     begin
       if Items[I].Selected then
       begin
-        Node := TArcItem(FFolderFiles.Items[I]);
+        Node := TArchiveItem(FFolderFiles.Items[I]);
         if (Node.FileAttr and faDirectory) = faDirectory then
           Result := IncludeTrailingBackSpace(Result) + '"' + Node.FilePath + IncludeTrailingBackSlash(Node.FileName) + '*"'
         else
@@ -643,7 +641,7 @@ uses
     end;
   end;
   
-  procedure TCustomArcListView.ClearMasks;
+  procedure TCustomArchiveListView.ClearMasks;
   var
     I: integer;
   begin
@@ -653,7 +651,7 @@ uses
     end;
   end;
   
-  procedure TCustomArcListView.InvertMasks;
+  procedure TCustomArchiveListView.InvertMasks;
   var
     I: integer;
   begin
@@ -664,14 +662,14 @@ uses
     end;
   end;
   
-  procedure TCustomArcListView.SetMask(const Mask: string; Value: boolean);
+  procedure TCustomArchiveListView.SetMask(const Mask: string; Value: boolean);
   var
     I: integer;
-    Node: TArcItem;
+    Node: TArchiveItem;
   begin
     for I := 0 to FolderFiles.Count -1 do
     begin
-      Node := TArcItem(FolderFiles[I]);
+      Node := TArchiveItem(FolderFiles[I]);
       if FileNameMatch(Node.FileName, Mask, False) then
       begin
         TListItem(Items[I]).Selected := Value;
@@ -679,14 +677,8 @@ uses
     end;
   end;
   
-  function TCustomArcListView.Open(const AFileName, AFileLink: string): boolean;
-  var
-    FLastFolder: string;
-    FContents: TStringList;
-    I, J, K: integer;
-    Node: TArcItem;
+  function TCustomArchiveListView.Open(const AArchiveName: string): boolean;
   begin
-    CloseArchive;
     if FileExists(AFileName) and FileExists(AFileLink) then
     begin
       FFileName := AFileName;
@@ -699,7 +691,7 @@ uses
         I := 0;
         while I < FContents.Count do
         begin
-          Node := TArcItem.Create;
+          Node := TArchiveItem.Create;
 
           Node.FileName := (FContents.Strings[I +  0]);
           Node.FilePath := (FContents.Strings[I +  1]);
@@ -719,7 +711,7 @@ uses
           Node.FilePassword := (FContents.Strings[I + 11]);
 
           TryStrToInt(FContents.Strings[I + 12], Node.FilePosition);
-          
+
           if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
             J := TIconList(LargeImages).FileIcon(Node.FileName, Node.FileAttr)
           else
@@ -761,20 +753,20 @@ uses
       Result := False;
   end;
   
-  function TCustomArcListView.UpdateFolders: boolean;
+  function TCustomArchiveListView.UpdateFolders: boolean;
   var
     D: string;
     I, J, K: integer;
-    Node: TArcItem;
+    Node: TArchiveItem;
   begin
     for I := 0 to FFiles.Count - 1 do
     begin
-      D := ExcludeTrailingBackslash(TArcItem(FFiles.Items[I]).FilePath);
+      D := ExcludeTrailingBackslash(TArchiveItem(FFiles.Items[I]).FilePath);
       while (Length(D) > 0) do
       begin
         if FFolders.IndexOf(ExtractFilePath(D), ExtractFileName(D)) = -1 then
         begin
-          Node := TArcItem.Create;
+          Node := TArchiveItem.Create;
           Node.FileName := ExtractFileName(D);
           Node.FilePath := ExtractFilePath(D);
           Node.FilePacked := 0;
@@ -815,11 +807,11 @@ uses
     Result := FFolders.IndexOf(ExtractFilePath(D), ExtractFileName(D)) <> -1;
   end;
 
-  procedure TCustomArcListView.Data(Sender: TObject; Item: TListItem);
+  procedure TCustomArchiveListView.Data(Sender: TObject; Item: TListItem);
   begin
     if Assigned(Item) then
     begin
-      with TArcItem(FFolderFiles.Items[Item.Index]) do
+      with TArchiveItem(FFolderFiles.Items[Item.Index]) do
       begin
         Item.Caption := FileName;                                //  0 Name
         if (FileAttr and faDirectory) = 0 then
@@ -869,7 +861,7 @@ uses
 
   procedure Register;
   begin
-    RegisterComponents ('BeePackage', [TArcListView]);
+    RegisterComponents ('BeePackage', [TArchiveListView]);
   end;
 
 initialization
