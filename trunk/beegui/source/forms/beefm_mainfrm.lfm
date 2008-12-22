@@ -15,7 +15,7 @@ object MainFrm: TMainFrm
   OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '0.9.27'
-  object ListView: TArcListView
+  object ListView: TArchiveListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     Height = 361
