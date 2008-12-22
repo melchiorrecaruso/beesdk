@@ -114,7 +114,6 @@ type
   TCustomArchiveListView = class(TCustomListView)
   private
     FFileName: string;
-    FFileLink: string;
     FDetails: TArchiveDetails;
     // ---
     FFiles: TArchiveList;
@@ -146,7 +145,7 @@ type
     destructor Destroy; override;
     procedure Initialize;
     // ---
-    function Open(const AFileName, AFileLink: string): boolean;
+    function Open(const AFileName: string): boolean;
     procedure CloseArchive;
     function Up: boolean;
     // ---
@@ -156,7 +155,6 @@ type
     procedure SetMask(const Mask: string; Value: boolean);
   protected
     property FileName: string read FFileName;
-    property FileLink: string read FFileLink;
     property Details: TArchiveDetails read FDetails;
     property Files: TArchiveList read FFiles write FFiles default nil;
     property FolderFiles: TList read FFolderFiles write FFolderFiles default nil;
@@ -338,7 +336,6 @@ uses
   begin
     inherited Create(AOwner);
     FFileName := '';
-    FFileLink := '';
     // --
     FFiles := TArchiveList.Create;
     FFolderFiles := TList.Create;
@@ -357,7 +354,6 @@ uses
   destructor TCustomArchiveListView.Destroy;
   begin
     FFileName := '';
-    FFileLink := '';
     // ---
     FFiles.Free;
     FFolderFiles.Free;
@@ -578,7 +574,6 @@ uses
   procedure TCustomArchiveListView.CloseArchive;
   begin
     FFileName := '';
-    FFileLink := '';
     FFolderBoxSign := '';
     if Assigned(FFolderBox) then
     begin
@@ -677,80 +672,49 @@ uses
     end;
   end;
   
-  function TCustomArchiveListView.Open(const AArchiveName: string): boolean;
+  function TCustomArchiveListView.Open(const AFileName: string): boolean;
+  var
+    I, J, K: integer;
+    Node: TArchiveItem;
   begin
-    if FileExists(AFileName) and FileExists(AFileLink) then
+    FFileName := AFileName;
+    FFolderBoxSign := ExtractFileName(FFileName) + PathDelim;
+
+    FDetails.Clear;
+    for I := 0 to FFiles.Count -1 do
     begin
-      FFileName := AFileName;
-      FFileLink := AFileLink;
-      FFolderBoxSign := ExtractFileName(FFileName) + PathDelim;
+      Node := TArchiveItem(FFiles.Items[I]);
 
-      FContents := TStringList.Create;
-      FContents.LoadFromFile(FFileLink);
-      try
-        I := 0;
-        while I < FContents.Count do
-        begin
-          Node := TArchiveItem.Create;
+      if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
+        J := TIconList(LargeImages).FileIcon(Node.FileName, Node.FileAttr)
+      else
+        J := -1;
 
-          Node.FileName := (FContents.Strings[I +  0]);
-          Node.FilePath := (FContents.Strings[I +  1]);
+      if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
+        K := TIconList(SmallImages).FileIcon(Node.FileName, Node.FileAttr)
+      else
+        K := -1;
 
-          TryStrToInt(FContents.Strings[I + 2], Node.FileSize);
-          TryStrToInt(FContents.Strings[I + 3], Node.FilePacked);
-          TryStrToInt(FContents.Strings[I + 4], Node.FileRatio);
-          TryStrToInt(FContents.Strings[I + 5], Node.FileAttr);
-          Node.FileAttr := Max(0, Node.FileAttr);
-          TryStrToInt(FContents.Strings[I + 6], Node.FileTime);
+      if J = K then
+        Node.FileIcon := K
+      else
+        Node.FileIcon := -1;
 
-          Node.FileComm :=           (FContents.Strings[I +  7]);
-          Node.FileCrc  := StrToQWord(FContents.Strings[I +  8]);
+      if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
+        Node.FileType := TIconList(SmallImages).FileType(Node.FileName, Node.FileAttr);
 
-          Node.FileMethod   := (FContents.Strings[I +  9]);
-          Node.FileVersion  := (FContents.Strings[I + 10]);
-          Node.FilePassword := (FContents.Strings[I + 11]);
-
-          TryStrToInt(FContents.Strings[I + 12], Node.FilePosition);
-
-          if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
-            J := TIconList(LargeImages).FileIcon(Node.FileName, Node.FileAttr)
-          else
-            J := -1;
-
-          if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-            K := TIconList(SmallImages).FileIcon(Node.FileName, Node.FileAttr)
-          else
-            K := -1;
-
-          if J = K then
-            Node.FileIcon := K
-          else
-            Node.FileIcon := -1;
-
-          if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-            Node.FileType := TIconList(SmallImages).FileType(Node.FileName, Node.FileAttr);
-
-          FDetails.Update(Node);
-          FFiles.Add(Node);
-          Inc(I, 13);
-        end;
-        Result := True;
-      finally
-        FContents.Free;
-        // DeleteFile(FFileLink);
-      end;
-      UpdateFolders;
-      UpdateFolder;
+      FDetails.Update(Node);
+    end;
+    UpdateFolders;
+    UpdateFolder;
       
-      if Assigned(FFolderBox) then
-      begin
-        FFolderBox.Color := clWindow;
-        FFolderBox.Enabled := True;
-      end;
-      Color := clWindow;
-      Enabled := True;
-    end else
-      Result := False;
+    if Assigned(FFolderBox) then
+    begin
+      FFolderBox.Color := clWindow;
+      FFolderBox.Enabled := True;
+    end;
+    Color := clWindow;
+    Enabled := True;
   end;
   
   function TCustomArchiveListView.UpdateFolders: boolean;
