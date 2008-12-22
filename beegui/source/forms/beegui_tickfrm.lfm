@@ -1,7 +1,7 @@
 object TickFrm: TTickFrm
-  Left = 486
+  Left = 389
   Height = 210
-  Top = 410
+  Top = 330
   Width = 430
   ActiveControl = Notebook
   Caption = '0% Processing...'
@@ -53,7 +53,6 @@ object TickFrm: TTickFrm
     BorderSpacing.Right = 6
     Caption = 'Priority'
     Constraints.MinWidth = 80
-    Enabled = False
     Glyph.Data = {
       46020000424D460200000000000036000000280000000F0000000B0000000100
       18000000000010020000C40E0000C40E00000000000000000000FF00FFFF00FF
@@ -97,7 +96,6 @@ object TickFrm: TTickFrm
     BorderSpacing.Right = 6
     Caption = 'Pause'
     Constraints.MinWidth = 75
-    Enabled = False
     NumGlyphs = 0
     OnClick = BtnPauseRunClick
     TabOrder = 2
@@ -461,13 +459,13 @@ object TickFrm: TTickFrm
     end
     object ReportPage: TPage
       Caption = 'Report'
-      ClientWidth = 414
-      ClientHeight = 132
+      ClientWidth = 410
+      ClientHeight = 140
       object Report: TMemo
         Left = 6
-        Height = 120
+        Height = 128
         Top = 6
-        Width = 402
+        Width = 398
         Align = alClient
         BorderSpacing.Around = 6
         ReadOnly = True
@@ -491,7 +489,6 @@ object TickFrm: TTickFrm
     BorderSpacing.Right = 6
     Caption = ' Save'
     Constraints.MinWidth = 75
-    Enabled = False
     NumGlyphs = 0
     OnClick = BtnSaveClick
     TabOrder = 5
@@ -512,7 +509,6 @@ object TickFrm: TTickFrm
     BorderSpacing.Right = 6
     Caption = 'Font'
     Constraints.MinWidth = 75
-    Enabled = False
     NumGlyphs = 0
     OnClick = BtnFontClick
     TabOrder = 4

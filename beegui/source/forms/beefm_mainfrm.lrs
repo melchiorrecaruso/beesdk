@@ -2996,7 +2996,7 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +'uItem'#9'BMenuExit'#7'Caption'#6#4'Exit'#7'OnClick'#7#10'BMenuClick'#0#0#0#9
   +'TIconList'#11'SmallImages'#4'left'#2#16#3'top'#3#24#1#0#0#9'TIconList'#11'L'
   +'argeImages'#6'Height'#2' '#5'Width'#2' '#4'left'#2'0'#3'top'#3#24#1#0#0#11
-  +'TArcProcess'#10'ArcProcess'#7'Enabled'#8#8'Interval'#2'2'#7'OnTimer'#7#15'A'
-  +'rcProcessTimer'#4'left'#2'P'#3'top'#3#24#1#0#0#12'TFileProcess'#11'FileProc'
-  +'ess'#7'Enabled'#8#8'Interval'#3#250#0#4'left'#2'p'#3'top'#3#24#1#0#0#0
+  +'TArcProcess'#10'ArcProcess'#7'Enabled'#8#8'Interval'#2'2'#4'left'#2'P'#3'to'
+  +'p'#3#24#1#0#0#12'TFileProcess'#11'FileProcess'#7'Enabled'#8#8'Interval'#3
+  +#250#0#4'left'#2'p'#3'top'#3#24#1#0#0#0
 ]);

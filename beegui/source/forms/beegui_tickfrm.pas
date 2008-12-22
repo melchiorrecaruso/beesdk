@@ -22,6 +22,7 @@
 
   Modifyed:
 
+  v1.0.5 build 0559 - 2008.12.22 by Melchiorre Caruso.
 }
 
 unit BeeGui_TickFrm;
@@ -49,11 +50,11 @@ uses
   Bee_Common,
   Bee_Interface,
   // ---
-  BeeGui_CommandLine,
-  // ---
   BeeGui_RenameFrm,
   BeeGui_PasswordFrm,
-  BeeGui_OverwriteFrm;
+  BeeGui_OverwriteFrm,
+  // ---
+  BeeGui_CommandLine;
 
 type
 
@@ -132,12 +133,11 @@ type
     procedure OnKey;
   private
     { private declarations }
+    FCommandLine: TCustomCommandLine;
     FInterfaces: TInterfaces;
-    FContents: TStringList;
-    FCanClose: boolean;
-    FCmdLine: TCustomCommandLine;
     FPassword: string;
     FApp: TBeeApp;
+    FCanClose: boolean;
     FElapsedTime: integer;
     FRemainingTime: integer;
   public
@@ -153,7 +153,8 @@ type
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
-    procedure Start(ACmdLine: TCustomCommandLine);
+    procedure Start(ACommandLine: TCustomCommandLine); overload;
+    procedure Start(const ACommandLine: string); overload;
     destructor Destroy; override;
   end;
 
@@ -198,13 +199,14 @@ var
     FInterfaces.OnList.Method := OnList;
     FInterfaces.OnTick.Method := OnStart;
     FInterfaces.OnKey.Method := OnKey;
-    // ---
-    FContents := TStringList.Create;
-    FCanClose := False;
-    FCmdLine := nil;
-    FPassword := '';
-    FElapsedTime := 0;
+
+    FCommandLine := nil;
+    FPassword    := '';
+
+    FCanClose  := False;
+    FElapsedTime   := 0;
     FRemainingTime := 0;
+
     {$IFDEF UNIX}
       Tick.Smooth := True;
     {$ENDIF}
@@ -212,33 +214,45 @@ var
 
   destructor TTickFrm.Destroy;
   begin
-    FInterfaces.Free;
-    FInterfaces := nil;
-    FContents.Free;
-    FContents := nil;
-    FCmdLine := nil;
-    FPassword := '';
+    FreeAndNil(FCommandLine);
+    FreeAndNil(FInterfaces);
     inherited Destroy;
   end;
   
-  procedure TTickFrm.Start(ACmdLine: TCustomCommandLine);
+  procedure TTickFrm.Start(ACommandLine: TCustomCommandLine);
   begin
-    FCmdLine := ACmdLine;
-    FApp := TBeeApp.Create(FInterfaces, FCmdLine.Params);
+    FCommandLine := ACommandLine;
+    FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
   end;
   
+  procedure TTickFrm.Start(const ACommandLine: string);
+  begin
+    FCommandLine := TCustomCommandLine.Create;
+
+
+    FApp := TBeeApp.Create(FInterfaces, ACommandLine);
+    FApp.OnTerminate := OnTerminate;
+    FApp.Resume;
+  end;
+
   procedure TTickFrm.FormCreate(Sender: TObject);
   begin
     LoadLanguage;
     LoadProperty;
-    // ---
+
     ActiveControl := BtnCancel;
     Notebook.ActivePageComponent := GeneralPage;
-    // ---
+
     BtnPauseRun.Caption := rsBtnPauseCaption;
-    BtnCancel.Caption := rsBtnCancelCaption;
+    BtnCancel.Caption   := rsBtnCancelCaption;
+
+    BtnCancel.Enabled   := True;
+    BtnPriority.Enabled := False;
+    BtnPauseRun.Enabled := False;
+    BtnSave.Enabled     := False;
+    BtnFont.Enabled     := False;
   end;
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -283,7 +297,7 @@ var
   
   // ------------------------------------------------------------------------ //
   //                                                                          //
-  // Timer Events                                                             //
+  // Timer Events Routines                                                    //
   //                                                                          //
   // ------------------------------------------------------------------------ //
   
@@ -366,7 +380,7 @@ var
 
   // ------------------------------------------------------------------------ //
   //                                                                          //
-  // Buttons click procedure                                                  //
+  // Buttons Click Routines                                                   //
   //                                                                          //
   // ------------------------------------------------------------------------ //
 
@@ -445,7 +459,7 @@ var
   
   // ------------------------------------------------------------------------ //
   //                                                                          //
-  // BeeApp Events                                                            //
+  // BeeApp Events Routines                                                   //
   //                                                                          //
   // ------------------------------------------------------------------------ //
   
@@ -458,14 +472,9 @@ var
       BtnPriority.Enabled := False;
       BtnPauseRun.Enabled := False;
 
-      BtnCancel.Kind      := bkClose;
-      BtnCancel.Caption   := rsBtnCloseCaption;
-      BtnCancel.Cancel    := True;
-
-      if (FContents.Count > 0) and (FCmdLine.Link <> '') then
-      begin
-        FContents.SaveToFile(FCmdLine.Link);
-      end;
+      BtnCancel.Kind    := bkClose;
+      BtnCancel.Caption := rsBtnCloseCaption;
+      BtnCancel.Cancel  := True;
 
       if Report.Lines.Count > 0 then
       begin
@@ -478,7 +487,6 @@ var
       begin;
         Close;
       end;
-      FCanClose := True;
     end;
   end;
 
@@ -534,7 +542,7 @@ var
   
   procedure TTickFrm.OnFatalError;
   begin
-    FCmdLine.Log := True;
+    FCommandLine.Log := True;
     with FInterfaces.OnFatalError do
     begin
       Report.Append(Data.Msg);
@@ -543,7 +551,7 @@ var
   
   procedure TTickFrm.OnError;
   begin
-    FCmdLine.Log := True;
+    FCommandLine.Log := True;
     with FInterfaces.OnError do
     begin
       Report.Append(Data.Msg);
@@ -552,7 +560,7 @@ var
   
   procedure TTickFrm.OnWarning;
   begin
-    FCmdLine.Log := True;
+    FCommandLine.Log := True;
     with FInterfaces.OnWarning do
     begin
       Report.Append(Data.Msg);
@@ -563,7 +571,7 @@ var
   begin
     with FInterfaces.OnDisplay do
     begin
-      if FCmdLine.Log then
+      if FCommandLine.Log then
       begin
         Report.Append(Data.Msg);
       end;
@@ -589,25 +597,12 @@ var
 
   procedure TTickFrm.OnList;
   begin
-    with FInterfaces.OnList.Data do
+    if FCommandLine.Log then
     begin
-      FContents.Add(FileName);               // 01
-      FContents.Add(FilePath);               // 02
-      FContents.Add(IntToStr(FileSize));     // 03
-      FContents.Add(IntTostr(FilePacked));   // 04
-      FContents.Add(IntTostr(FileRatio));    // 05
-      FContents.Add(IntTostr(FileAttr));     // 06
-      FContents.Add(IntTostr(FileTime));     // 07
-      FContents.Add(FileComm);               // 08
-      FContents.Add(IntTostr(FileCrc));      // 09
-      FContents.Add(FileMethod);             // 10
-      FContents.Add(FileVersion);            // 11
-      FContents.Add(FilePassword);           // 12
-      FContents.Add(IntTostr(FilePosition)); // 13
-      if FCmdLine.Log then
-      begin
-        Report.Append(FilePath + FileName);
-      end;
+       with FInterfaces.OnList.Data do
+       begin
+          Report.Append(FilePath + FileName);
+       end;
     end;
   end;
   

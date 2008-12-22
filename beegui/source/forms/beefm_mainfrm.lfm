@@ -3138,7 +3138,6 @@ object MainFrm: TMainFrm
   object ArcProcess: TArcProcess
     Enabled = False
     Interval = 50
-    OnTimer = ArcProcessTimer
     left = 80
     top = 280
   end

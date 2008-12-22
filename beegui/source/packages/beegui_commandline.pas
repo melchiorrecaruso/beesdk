@@ -18,9 +18,11 @@
 
 { Contains:
 
-    BeeGui CmdLine class.
+    BeeGui command line class.
 
   Modifyed:
+
+  v1.0.5 build 559 - 2008.12.22 by Melchiorre Caruso.
 }
 
 unit BeeGui_CommandLine;
@@ -44,7 +46,6 @@ type
 
   TCustomCommandLine = class (TCommandLine)
   private
-    F0Option: string;
     F1Option: boolean;
     F2Option: boolean;
     FParams: TStringList;
@@ -57,7 +58,6 @@ type
     procedure Process(AParams: TStringList); override;
   public
     property Run: boolean read GetRun;
-    property Link: string read F0Option;
     property Log: boolean read F1Option write F1Option;
     property Params: TStringList read GetParams;
   public
@@ -68,7 +68,6 @@ implementation
 
 uses
   Bee_Common,
-  // ---
   BeeGui_Forms;
 
   constructor TCustomCommandLine.Create;
@@ -76,10 +75,8 @@ uses
     I: integer;
   begin
     inherited Create;
-    F0Option := '';
     F1Option := False;
     F2Option := False;
-
     FParams  := TStringList.Create;
     for I := 1 to ParamCount do
     begin
@@ -91,31 +88,25 @@ uses
   procedure TCustomCommandLine.Process(AParams: TStringList);
   var
     S: string;
-    I: integer;
-    K: integer;
+    I, J: integer;
   begin
-    K := 0;
+    J := 0;
     // catch options, command, archive name and name of files
-    for I := 1 to Params.Count -1 do
+    for I := 1 to AParams.Count -1 do
     begin
-      S := Params.Strings[I];
-      if (K < 2) and (Length(S) > 1) and (S[1] = '-') then
+      S := AParams.Strings[I];
+      if (J < 2) and (Length(S) > 1) and (S[1] = '-') then
       begin
         case UpCase(S[2]) of
-          '0': begin
-                 Delete(S, 1, 2);
-                 if Length(S) > 0 then
-                   F0Option := S;
-               end;
           '1': ProcessOption(S, F1Option);
           '2': ProcessOption(S, F2Option);
         end;
       end else
       begin
-        Inc(K);
+        Inc(J);
       end;
     end; // end for loop
-    inherited Process(Params);
+    inherited Process(AParams);
   end;
 
   destructor TCustomCommandLine.Destroy;
@@ -157,7 +148,10 @@ uses
       if Length(eOption) > 0 then
         FParams.Add('-E' + eOption);
 
-      if sOption then FParams.Add('-S+') else FParams.Add('-S-');
+      if sOption then
+        FParams.Add('-S+')
+      else
+        FParams.Add('-S-');
 
       if Length(aOption) > 0 then
         FParams.Add('-A' + aOption);
