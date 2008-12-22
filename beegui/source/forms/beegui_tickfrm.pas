@@ -54,7 +54,8 @@ uses
   BeeGui_PasswordFrm,
   BeeGui_OverwriteFrm,
   // ---
-  BeeGui_CommandLine;
+  BeeGui_CommandLine,
+  BeeGui_ArchiveListViewMgr;
 
 type
 
@@ -134,6 +135,7 @@ type
   private
     { private declarations }
     FCommandLine: TCustomCommandLine;
+    FArchiveList: TArchiveList;
     FInterfaces: TInterfaces;
     FPassword: string;
     FApp: TBeeApp;
@@ -153,7 +155,7 @@ type
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
-    procedure Start(ACommandLine: TCustomCommandLine);
+    procedure Start(ACommandLine: TCustomCommandLine; const AArchiveList: TArchiveList);
     destructor Destroy; override;
   end;
 
@@ -200,7 +202,8 @@ var
     FInterfaces.OnKey.Method := OnKey;
 
     FCommandLine := nil;
-    FPassword    := '';
+    FArchiveList := nil;
+    FPassword := '';
 
     FCanClose  := False;
     FElapsedTime   := 0;
@@ -213,14 +216,17 @@ var
 
   destructor TTickFrm.Destroy;
   begin
-    FreeAndNil(FCommandLine);
     FreeAndNil(FInterfaces);
+    FCommandLine := nil;
+    FArchiveList := nil;
     inherited Destroy;
   end;
   
-  procedure TTickFrm.Start(ACommandLine: TCustomCommandLine);
+  procedure TTickFrm.Start(ACommandLine: TCustomCommandLine; const AArchiveList: TArchiveList);
   begin
     FCommandLine := ACommandLine;
+    FArchiveList := AArchiveList;
+
     FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
@@ -585,12 +591,36 @@ var
   end;
 
   procedure TTickFrm.OnList;
+  var
+    Node: TArchiveItem;
   begin
+    if Assigned(FArchiveList) then
+    begin
+      Node := TArchiveItem.Create;
+      try
+        Node.FileName     := FInterfaces.OnList.Data.FileName;
+        Node.FilePath     := FInterfaces.OnList.Data.FilePath;
+        Node.FileSize     := FInterfaces.OnList.Data.FileSize;
+        Node.FilePacked   := FInterfaces.OnList.Data.FilePacked;
+        Node.FileRatio    := FInterfaces.OnList.Data.FileRatio;
+        Node.FileAttr     := Max(0, FInterfaces.OnList.Data.FileAttr);
+        Node.FileTime     := FInterfaces.OnList.Data.FileTime;
+        Node.FileComm     := FInterfaces.OnList.Data.FileComm;
+        Node.FileCrc      := FInterfaces.OnList.Data.FileCrc;
+        Node.FileMethod   := FInterfaces.OnList.Data.FileMethod;
+        Node.FileVersion  := FInterfaces.OnList.Data.FileVersion;
+        Node.FilePassword := FInterfaces.OnList.Data.FilePassword;
+        Node.FilePosition := FInterfaces.OnList.Data.FilePosition;
+      finally
+        FArchiveList.Add(Node);
+      end;
+    end;
+
     if FCommandLine.Log then
     begin
        with FInterfaces.OnList.Data do
        begin
-          Report.Append(FilePath + FileName);
+         Report.Append(FilePath + FileName);
        end;
     end;
   end;

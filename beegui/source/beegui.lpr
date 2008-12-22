@@ -90,7 +90,7 @@ begin
         Application.CreateForm(TTickFrm, TickFrm);
         with TickFrm do
         begin
-          Start(CommandLine);
+          Start(CommandLine, nil);
           repeat
             if CommandLine.Log then Break;
             if RemaingTime > 0 then Break;

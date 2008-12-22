@@ -29,7 +29,7 @@
       ListView.Column[ 9].Width := Storage.ReadInteger('ListView', 'Column[09].Width', ListView.Column[ 9].Width);
       ListView.Column[10].Width := Storage.ReadInteger('ListView', 'Column[10].Width', ListView.Column[10].Width);
       ListView.Column[11].Width := Storage.ReadInteger('ListView', 'Column[11].Width', ListView.Column[11].Width);
-      ListView.SortCol := TArcListViewColumn(Storage.ReadInteger('ListView', 'Column', Ord(ListView.SortCol)));
+      ListView.SortCol := TArchiveListViewColumn(Storage.ReadInteger('ListView', 'Column', Ord(ListView.SortCol)));
       // Main Menu View
       MMenuViewAddressBar.Checked        := Storage.ReadBool('MMenu', 'View.AddressBar.Checked'         , MMenuViewAddressBar.Checked);
       MMenuViewstatusBar.Checked         := Storage.ReadBool('MMenu', 'View.StatusBar.Checked'          , MMenuViewStatusBar.Checked);
