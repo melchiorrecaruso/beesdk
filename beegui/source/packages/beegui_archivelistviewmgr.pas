@@ -43,8 +43,10 @@ uses
   ComCtrls,
   LResources,
   // ---
-  BeeGui_ArchiveFolderBox,
-  BeeGui_IconList;
+  Bee_Headers,
+  // ---
+  BeeGui_IconList,
+  BeeGui_ArchiveFolderBox;
 
 type
 
