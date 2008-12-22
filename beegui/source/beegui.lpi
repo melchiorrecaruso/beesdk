@@ -269,7 +269,7 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit21>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <Caret Line="770" Column="45" TopLine="750"/>
@@ -344,52 +344,48 @@
       </Position18>
       <Position19>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="118" Column="19" TopLine="187"/>
+        <Caret Line="157" Column="46" TopLine="130"/>
       </Position19>
       <Position20>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="157" Column="46" TopLine="130"/>
+        <Caret Line="338" Column="21" TopLine="319"/>
       </Position20>
       <Position21>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="338" Column="21" TopLine="319"/>
+        <Caret Line="356" Column="21" TopLine="337"/>
       </Position21>
       <Position22>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="356" Column="21" TopLine="337"/>
+        <Caret Line="576" Column="21" TopLine="557"/>
       </Position22>
       <Position23>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="576" Column="21" TopLine="557"/>
+        <Caret Line="685" Column="45" TopLine="673"/>
       </Position23>
       <Position24>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="685" Column="45" TopLine="673"/>
+        <Caret Line="690" Column="7" TopLine="670"/>
       </Position24>
       <Position25>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="690" Column="7" TopLine="670"/>
+        <Caret Line="683" Column="10" TopLine="679"/>
       </Position25>
       <Position26>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="683" Column="10" TopLine="679"/>
+        <Caret Line="117" Column="21" TopLine="97"/>
       </Position26>
       <Position27>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="117" Column="21" TopLine="97"/>
+        <Caret Line="87" Column="3" TopLine="67"/>
       </Position27>
       <Position28>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="87" Column="3" TopLine="67"/>
+        <Caret Line="708" Column="15" TopLine="674"/>
       </Position28>
       <Position29>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="708" Column="15" TopLine="674"/>
-      </Position29>
-      <Position30>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <Caret Line="133" Column="14" TopLine="113"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
