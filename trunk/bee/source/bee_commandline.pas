@@ -282,7 +282,7 @@ end;
 
 procedure TCommandLine.SetCommand(Value: char);
 begin
-  FCommand := Value;
+  FCommand := UpCase(Value);
 end;
 
 procedure TCommandLine.SetrOption(Value: boolean);

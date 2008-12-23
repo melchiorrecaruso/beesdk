@@ -93,7 +93,7 @@ begin
           Start(CommandLine, nil);
           repeat
             if CommandLine.Log then Break;
-            if RemaingTime > 0 then Break;
+            if CanShow then Break;
             Application.ProcessMessages;
           until CanClose;
           if CommandLine.Log or (CanClose = False) then

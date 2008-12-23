@@ -279,6 +279,9 @@ type
     procedure BMenuClick(Sender: TObject);
     procedure BtnUpClick(Sender: TObject);
   private
+    FArchiveName: string;
+    FArchiveTime: integer;
+  private
     { private declarations }
     procedure UpdateStyle;
     procedure UpdateButtons; overload;
@@ -521,10 +524,10 @@ uses
     LastFolder := ListView.Folder;
     with ArcProcess do
     begin
-      //if ListView.Open(ArchiveName, ArchiveLink) then
-      //  UpdateButtons(True)
-      //else
-      //  UpdateButtons(False);
+      if ListView.Open(ArchiveName) then
+        UpdateButtons(True)
+      else
+        UpdateButtons(False);
     end;
     ListView.Folder := LastFolder;
   end;
@@ -641,7 +644,6 @@ uses
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
   var
-    ArchiveName: string;
     CommandLine: string;
   begin
     if ArcProcess.Enabled = False then
@@ -651,21 +653,21 @@ uses
       begin
         MMenuFileCloseClick(Sender);
         // Archive name //
-        ArchiveName := SaveDialog.FileName;
+        FArchiveName := SaveDialog.FileName;
         case SaveDialog.FilterIndex of
-          1: ArchiveName := ChangeFileExt(ArchiveName, '.bee');
-          2: ArchiveName := ChangeFileExt(ArchiveName, '.exe');
+          1: FArchiveName := ChangeFileExt(FArchiveName, '.bee');
+          2: FArchiveName := ChangeFileExt(FArchiveName, '.exe');
         end;
-        Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
+        Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
         // Command line //
         CommandLine := 'beegui a -2';
         if MMenuOptionsLogReport.Checked then
           CommandLine := CommandLine + ' -1+'
         else
           CommandLine := CommandLine + ' -1-';
-        CommandLine := CommandLine + ' "' + ArchiveName + '"';
+        CommandLine := CommandLine + ' "' + FArchiveName + '"';
         // Command line process //
-        ArcProcess.Start(ArchiveName, CommandLine, '');
+        ArcProcess.Start(FArchiveName, CommandLine, '');
       end;
     end else
       MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
@@ -673,7 +675,6 @@ uses
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   var
-    ArchiveName: string;
     CommandLine: TCustomCommandLine;
   begin
     if ArcProcess.Enabled = False then
@@ -683,32 +684,22 @@ uses
       begin
         MMenuFileCloseClick(Sender);
         // Archive name //
-        ArchiveName := OpenDialog.FileName;
-        Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
+        FArchiveName := OpenDialog.FileName;
+        Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
 
-        TickFrm := TTickFrm.Create(Self);
         CommandLine := TCustomCommandLine.Create(False);
         CommandLine.Command := 'l';
-        CommandLine.Log := True;
+        CommandLine.Log := False;
         CommandLine.rOption := True;
-        CommandLine.ArchiveName := ArchiveName;
+        CommandLine.ArchiveName := FArchiveName;
         CommandLine.FileMasks.Add('*');
-        CommandLine.Run;
-        TickFrm.Start(CommandLine, ListView.Files);
-        TickFrm.ShowModal;
-        ListView.Open(ArchiveName);
 
-        (*
-        // Command line //
-        CommandLine := 'beegui l -r+';
-        if MMenuOptionsLogReport.Checked then
-          CommandLine := CommandLine + ' -1+'
-        else
-          CommandLine := CommandLine + ' -1-';
-        CommandLine := CommandLine + ' "' + ArchiveName + '" *';
-        // Command line process //
-        ArcProcess.Start(ArchiveName, CommandLine, '');
-        *)
+        if CommandLine.Run then
+        begin
+          TickFrm := TTickFrm.Create(Self);
+          TickFrm.OnDestroy := OnArcTimer;
+          TickFrm.Start(CommandLine, ListView.Files);
+        end;
       end;
     end else
       MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
@@ -934,22 +925,11 @@ uses
 
   procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
   var
-    ArchiveName: string;
     CommandLine: string;
   begin
     if ArcProcess.Enabled = False then
     begin
-      // Archive name //
-      ArchiveName := ArcProcess.ArchiveName;
-      // Command line //
-      CommandLine := 'beegui a -2+' + ConfigFrm.AddOptions(ListView.Folder);
-      if MMenuOptionsLogReport.Checked then
-        CommandLine := CommandLine + ' -1+'
-      else
-        CommandLine := CommandLine + ' -1-';
-      CommandLine := CommandLine + ' "' + ArchiveName + '"';
-      // Command line process //
-      ArcProcess.Start(ArchiveName, CommandLine, '');
+
     end;
   end;
 
