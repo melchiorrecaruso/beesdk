@@ -77,14 +77,14 @@ begin
   begin
     Application.Initialize;
     Application.Title:= cApplicationName;
-    CommandLine := TCustomCommandLine.Create;
+    CommandLine := TCustomCommandLine.Create(True);
     if CommandLine.Run then
     begin
       if CommandLine.Command in [' ', '?'] then
       begin
         Application.CreateForm(TAboutFrm, AboutFrm);
         Application.Run;
-        AboutFrm.Free;
+        // AboutFrm.Free;
       end else
       begin
         Application.CreateForm(TTickFrm, TickFrm);
@@ -101,7 +101,7 @@ begin
             Application.Run;
           end;
         end;
-        TickFrm.Free;
+        // TickFrm.Free;
       end;
     end;
     CommandLine.Free;

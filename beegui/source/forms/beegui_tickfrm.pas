@@ -252,6 +252,7 @@ var
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
+    // CloseAction := caFree;
     {$IFDEF DEBUG}
       SaveLanguage;
     {$ENDIF}
@@ -618,10 +619,10 @@ var
 
     if FCommandLine.Log then
     begin
-       with FInterfaces.OnList.Data do
-       begin
-         Report.Append(FilePath + FileName);
-       end;
+      with FInterfaces.OnList.Data do
+      begin
+        Report.Append(FilePath + FileName);
+      end;
     end;
   end;
   

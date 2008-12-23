@@ -299,14 +299,17 @@ implementation
 
 uses
   Bee_Common,
+  BeeGui_CommandLine,
 
   BeeFm_ViewFrm,
+  BeeGui_TickFrm,
   BeeGui_AboutFrm,
 
   BeeGui_Consts,
   BeeGui_Messages,
   BeeGui_SysUtils,
   BeeGui_RenameFrm,
+
 
   BeeFm_ConfigFrm,
   BeeFm_SelectFrm,
@@ -353,6 +356,7 @@ uses
   
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
   begin
+    Action := caFree;
     if Cursor = crHourGlass then
     begin
 
@@ -670,7 +674,7 @@ uses
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   var
     ArchiveName: string;
-    CommandLine: string;
+    CommandLine: TCustomCommandLine;
   begin
     if ArcProcess.Enabled = False then
     begin
@@ -681,6 +685,21 @@ uses
         // Archive name //
         ArchiveName := OpenDialog.FileName;
         Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
+
+
+        TickFrm := TTickFrm.Create(Self);
+        CommandLine := TCustomCommandLine.Create(False);
+        CommandLine.Command := 'l';
+        CommandLine.Log := False;
+        CommandLine.rOption := True;
+        CommandLine.ArchiveName := ArchiveName;
+        CommandLine.FileMasks.Add('*');
+        CommandLine.Run;
+        TickFrm.Start(CommandLine, ListView.Files);
+        TickFrm.ShowModal;
+        ListView.Open(ArchiveName);
+
+        (*
         // Command line //
         CommandLine := 'beegui l -r+';
         if MMenuOptionsLogReport.Checked then
@@ -690,6 +709,7 @@ uses
         CommandLine := CommandLine + ' "' + ArchiveName + '" *';
         // Command line process //
         ArcProcess.Start(ArchiveName, CommandLine, '');
+        *)
       end;
     end else
       MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
