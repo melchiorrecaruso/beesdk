@@ -362,7 +362,7 @@ uses
 
     end else
     begin
-      MMenuFileClose.Click;
+      MMenuFileCloseClick(Sender);
     end;
     {$IFDEF DEBUG}
       SaveLanguage;
@@ -649,7 +649,7 @@ uses
       SaveDialog.FileName := '';
       if SaveDialog.Execute then
       begin
-        MMenuFileClose.Click;
+        MMenuFileCloseClick(Sender);
         // Archive name //
         ArchiveName := SaveDialog.FileName;
         case SaveDialog.FilterIndex of
@@ -681,16 +681,15 @@ uses
       OpenDialog.FileName := '';
       if OpenDialog.Execute then
       begin
-        MMenuFileClose.Click;
+        MMenuFileCloseClick(Sender);
         // Archive name //
         ArchiveName := OpenDialog.FileName;
         Caption := cApplicationName + ' - ' + ExtractFileName(ArchiveName);
 
-
         TickFrm := TTickFrm.Create(Self);
         CommandLine := TCustomCommandLine.Create(False);
         CommandLine.Command := 'l';
-        CommandLine.Log := False;
+        CommandLine.Log := True;
         CommandLine.rOption := True;
         CommandLine.ArchiveName := ArchiveName;
         CommandLine.FileMasks.Add('*');
@@ -830,7 +829,7 @@ uses
       if MessageDlg(rsConfirmDeleteArc, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
         if DeleteFile(ArcProcess.ArchiveName) then
-          MMenuFileClose.Click
+          MMenuFileCloseClick(Sender)
         else
           MessageDlg(rseDeleteArc, mtError, [mbOk], 0);
       end;
@@ -839,7 +838,7 @@ uses
 
   procedure TMainFrm.MMenuFileExitClick(Sender: TObject);
   begin
-    MMenuFileClose.Click;
+    MMenuFileCloseClick(Sender);
     Close;
   end;
   

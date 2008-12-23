@@ -252,7 +252,7 @@ var
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
-    // CloseAction := caFree;
+    CloseAction := caFree;
     {$IFDEF DEBUG}
       SaveLanguage;
     {$ENDIF}
@@ -481,7 +481,7 @@ var
         BtnFont.Enabled := True;
       end else
       begin;
-        Close;
+        // Close;
       end;
     end;
   end;
