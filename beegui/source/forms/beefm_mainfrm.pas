@@ -698,7 +698,9 @@ uses
         begin
           TickFrm := TTickFrm.Create(Self);
           TickFrm.OnDestroy := OnArcTimer;
-          TickFrm.Start(CommandLine, ListView.Files);
+          TickFrm.CommandLine := CommandLine;
+          TickFrm.ArchiveList := ListView.Files;
+          TickFrm.Start;
         end;
       end;
     end else
@@ -935,7 +937,6 @@ uses
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   var
-    ArchiveName: string;
     CommandLine: string;
   begin
     if ListView.SelCount = 0 then Exit;
@@ -944,17 +945,15 @@ uses
     begin
       if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
-        // Archive name //
-        ArchiveName := ArcProcess.ArchiveName;
         // Command line //
         CommandLine := 'beegui d -r+ -l+';
         if MMenuOptionsLogReport.Checked then
           CommandLine := CommandLine + ' -1+'
         else
           CommandLine := CommandLine + ' -1-';
-        CommandLine := CommandLine + ' "' + ArchiveName + '" ' + ListView.GetMasks;
+        CommandLine := CommandLine + ' "' + FArchiveName + '" ' + ListView.GetMasks;
         // Command line process //
-        ArcProcess.Start(ArchiveName, CommandLine, '');
+        ArcProcess.Start(FArchiveName, CommandLine, '');
       end;
     end;
   end;

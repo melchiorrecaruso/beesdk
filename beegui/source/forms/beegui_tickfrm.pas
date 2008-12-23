@@ -144,10 +144,15 @@ type
     FElapsedTime: integer;
     FRemainingTime: integer;
   private
+    { private declarations }
+    procedure SetArchiveList(Value: TArchiveList);
+    procedure SetCommandLine(Value: TCustomCommandLine);
     function GetCanClose: boolean;
     function GetCanShow: boolean;
   public
     { public declarations }
+    property CommandLine: TCustomCommandLine read FCommandLine write SetCommandLine;
+    property ArchiveList: TArchiveList read FArchiveList write SetArchiveList;
     property CanClose: boolean read GetCanClose;
     property CanShow: boolean read GetCanShow;
   public
@@ -159,8 +164,8 @@ type
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
-    procedure Start(ACommandLine: TCustomCommandLine; AArchiveList: TArchiveList);
     destructor Destroy; override;
+    procedure Start;
   end;
 
 var
@@ -269,14 +274,24 @@ var
     end;
   end;
 
-  procedure TTickFrm.Start(ACommandLine: TCustomCommandLine; AArchiveList: TArchiveList);
+  procedure TTickFrm.Start;
   begin
-    FCommandLine := ACommandLine;
-    FArchiveList := AArchiveList;
+    if Assigned (FCommandLine) then
+    begin
+      FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
+      FApp.OnTerminate := OnTerminate;
+      FApp.Resume;
+    end;
+  end;
 
-    FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
-    FApp.OnTerminate := OnTerminate;
-    FApp.Resume;
+  procedure TTickFrm.SetCommandLine(Value: TCustomCommandLine);
+  begin
+    FCommandLine := Value;
+  end;
+
+  procedure TTickFrm.SetArchiveList(Value: TArchiveList);
+  begin
+    FArchiveList := Value;
   end;
 
   function TTickFrm.GetCanClose: boolean;
