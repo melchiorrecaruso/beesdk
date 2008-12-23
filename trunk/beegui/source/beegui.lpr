@@ -88,18 +88,17 @@ begin
       end else
       begin
         Application.CreateForm(TTickFrm, TickFrm);
-        with TickFrm do
+        TickFrm.CommandLine := CommandLine;
+        TickFrm.Start;
+        repeat
+          if CommandLine.Log then Break;
+          if TickFrm.CanShow then Break;
+          Application.ProcessMessages;
+        until TickFrm.CanClose;
+
+        if CommandLine.Log or (TickFrm.CanClose = False) then
         begin
-          Start(CommandLine, nil);
-          repeat
-            if CommandLine.Log then Break;
-            if CanShow then Break;
-            Application.ProcessMessages;
-          until CanClose;
-          if CommandLine.Log or (CanClose = False) then
-          begin
-            Application.Run;
-          end;
+          Application.Run;
         end;
         // TickFrm.Free;
       end;
