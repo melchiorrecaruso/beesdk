@@ -12,7 +12,6 @@ object AboutFrm: TAboutFrm
   ClientWidth = 273
   OnClose = FormClose
   OnCreate = FormCreate
-  ParentFont = False
   LCLVersion = '0.9.27'
   object Logo: TImage
     AnchorSideLeft.Control = Copyright

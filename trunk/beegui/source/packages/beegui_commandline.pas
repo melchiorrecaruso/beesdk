@@ -52,13 +52,16 @@ type
   private
     function GetRun: boolean;
     function GetParams: TStringList;
+    procedure SetF1Option(Value: boolean);
+    procedure SetF2Option(Value: boolean);
   public
-    constructor Create;
+    constructor Create(UseParam: boolean);
     destructor Destroy; override;
     procedure Process(AParams: TStringList); override;
   public
     property Run: boolean read GetRun;
     property Log: boolean read F1Option write F1Option;
+    property Query: boolean read F2Option write F2Option;
     property Params: TStringList read GetParams;
   public
 
@@ -70,7 +73,7 @@ uses
   Bee_Common,
   BeeGui_Forms;
 
-  constructor TCustomCommandLine.Create;
+  constructor TCustomCommandLine.Create(UseParam: boolean);
   var
     I: integer;
   begin
@@ -78,9 +81,12 @@ uses
     F1Option := False;
     F2Option := False;
     FParams  := TStringList.Create;
-    for I := 1 to ParamCount do
+    if UseParam then
     begin
-      FParams.Add(ParamStr(I));
+      for I := 1 to ParamCount do
+      begin
+        FParams.Add(ParamStr(I));
+      end;
     end;
     Process(FParams);
   end;
@@ -183,6 +189,16 @@ uses
       for i := 0 to FileMasks.Count - 1 do
         FParams.Add(FileMasks.Strings[i]);
     end;
+  end;
+
+  procedure TCustomCommandLine.SetF1Option(Value: boolean);
+  begin
+    F1Option := Value;
+  end;
+
+  procedure TCustomCommandLine.SetF2Option(Value: boolean);
+  begin
+    F2Option := Value;
   end;
 
 end.

@@ -153,7 +153,7 @@ type
     procedure InvertMasks;
     function  GetMasks: string;
     procedure SetMask(const Mask: string; Value: boolean);
-  protected
+  public
     property FileName: string read FFileName;
     property Details: TArchiveDetails read FDetails;
     property Files: TArchiveList read FFiles write FFiles default nil;

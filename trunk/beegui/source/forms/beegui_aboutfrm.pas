@@ -98,6 +98,7 @@ uses
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
+    CloseAction := caFree;
     {$IFDEF DEBUG}
       SaveLanguage;
     {$ENDIF}
