@@ -225,8 +225,12 @@ var
 
   destructor TTickFrm.Destroy;
   begin
-    FreeAndNil(FInterfaces);
-    FCommandLine := nil;
+    if Assigned(FInterfaces) then
+      FreeAndNil(FInterfaces);
+
+    if Assigned(FCommandLine) then
+      FreeAndNil(FCommandLine);
+
     FArchiveList := nil;
     inherited Destroy;
   end;

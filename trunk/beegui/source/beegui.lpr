@@ -38,8 +38,8 @@ uses
   {$IFDEF MSWINDOWS}
   Windows,
   {$ENDIF}
-  Interfaces,
   LResources,
+  Interfaces,
   SysUtils,
   Dialogs,
   Forms,
@@ -69,13 +69,15 @@ begin
     Application.Initialize;
     Application.HelpFile := '';
     Application.Name := cApplicationName;
-    Application.Title:='BeeGui';
+    Application.Title:= cApplicationName;
     Application.CreateForm(TMainFrm, MainFrm);
     Application.CreateForm(TConfigFrm, ConfigFrm);
     Application.Run;
   end else
   begin
     Application.Initialize;
+    Application.HelpFile := '';
+    Application.Name := cApplicationName;
     Application.Title:= cApplicationName;
     CommandLine := TCustomCommandLine.Create(True);
     if CommandLine.Run then
@@ -84,26 +86,27 @@ begin
       begin
         Application.CreateForm(TAboutFrm, AboutFrm);
         Application.Run;
-        // AboutFrm.Free;
       end else
       begin
         Application.CreateForm(TTickFrm, TickFrm);
         TickFrm.CommandLine := CommandLine;
+        TickFrm.ArchiveList := nil;
         TickFrm.Start;
         repeat
-          if CommandLine.Log then Break;
-          if TickFrm.CanShow then Break;
           Application.ProcessMessages;
-        until TickFrm.CanClose;
+          if CommandLine.Log  then Break;
+          if TickFrm.CanShow  then Break;
+          if TickFrm.CanClose then Break;
+        until False;
 
-        if CommandLine.Log or (TickFrm.CanClose = False) then
-        begin
-          Application.Run;
-        end;
-        // TickFrm.Free;
+        if TickFrm.CanClose = False then
+          Application.Run
+        else
+          if CommandLine.Log then
+            Application.Run;
       end;
     end;
-    CommandLine.Free;
+    FreeAndNil(CommandLine);
   end;
 end.
 
