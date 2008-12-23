@@ -675,6 +675,7 @@ uses
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   var
+    F: TTickFrm;
     CommandLine: TCustomCommandLine;
   begin
     if ArcProcess.Enabled = False then
@@ -696,11 +697,11 @@ uses
 
         if CommandLine.Run then
         begin
-          TickFrm := TTickFrm.Create(Self);
-          TickFrm.OnDestroy := OnArcTimer;
-          TickFrm.CommandLine := CommandLine;
-          TickFrm.ArchiveList := ListView.Files;
-          TickFrm.Start;
+          F := TTickFrm.Create(Self);
+          F.OnDestroy := OnArcTimer;
+          F.CommandLine := CommandLine;
+          F.ArchiveList := ListView.Files;
+          F.Start;
         end;
       end;
     end else
