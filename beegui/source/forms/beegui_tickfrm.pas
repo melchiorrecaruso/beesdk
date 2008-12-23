@@ -140,12 +140,16 @@ type
     FPassword: string;
     FApp: TBeeApp;
     FCanClose: boolean;
+    FCanShow: boolean;
     FElapsedTime: integer;
     FRemainingTime: integer;
+  private
+    function GetCanClose: boolean;
+    function GetCanShow: boolean;
   public
     { public declarations }
-    property CanClose: boolean read FCanClose;
-    property RemaingTime: integer read FRemainingTime;
+    property CanClose: boolean read GetCanClose;
+    property CanShow: boolean read GetCanShow;
   public
     { public declarations }
     procedure SaveProperty;
@@ -155,7 +159,7 @@ type
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
-    procedure Start(ACommandLine: TCustomCommandLine; const AArchiveList: TArchiveList);
+    procedure Start(ACommandLine: TCustomCommandLine; AArchiveList: TArchiveList);
     destructor Destroy; override;
   end;
 
@@ -221,16 +225,6 @@ var
     FArchiveList := nil;
     inherited Destroy;
   end;
-  
-  procedure TTickFrm.Start(ACommandLine: TCustomCommandLine; const AArchiveList: TArchiveList);
-  begin
-    FCommandLine := ACommandLine;
-    FArchiveList := AArchiveList;
-
-    FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
-    FApp.OnTerminate := OnTerminate;
-    FApp.Resume;
-  end;
 
   procedure TTickFrm.FormCreate(Sender: TObject);
   begin
@@ -273,6 +267,26 @@ var
         end;
       end;
     end;
+  end;
+
+  procedure TTickFrm.Start(ACommandLine: TCustomCommandLine; AArchiveList: TArchiveList);
+  begin
+    FCommandLine := ACommandLine;
+    FArchiveList := AArchiveList;
+
+    FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
+    FApp.OnTerminate := OnTerminate;
+    FApp.Resume;
+  end;
+
+  function TTickFrm.GetCanClose: boolean;
+  begin
+    Result := FCanClose;
+  end;
+
+  function TTickFrm.GetCanShow: boolean;
+  begin
+    Result := FRemainingTime > 0;
   end;
   
   procedure TTickFrm.PopupClick(Sender: TObject);
@@ -481,7 +495,7 @@ var
         BtnFont.Enabled := True;
       end else
       begin;
-        // Close;
+        Close;
       end;
     end;
   end;

@@ -715,6 +715,7 @@ uses
     end;
     Color := clWindow;
     Enabled := True;
+    Result := True;
   end;
   
   function TCustomArchiveListView.UpdateFolders: boolean;

@@ -60,8 +60,8 @@ type
     procedure Process(AParams: TStringList); override;
   public
     property Run: boolean read GetRun;
-    property Log: boolean read F1Option write F1Option;
-    property Query: boolean read F2Option write F2Option;
+    property Log: boolean read F1Option write SetF1Option;
+    property Query: boolean read F2Option write SetF2Option;
     property Params: TStringList read GetParams;
   public
 
