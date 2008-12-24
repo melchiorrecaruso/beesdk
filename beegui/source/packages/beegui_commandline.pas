@@ -55,9 +55,10 @@ type
     procedure SetF1Option(Value: boolean);
     procedure SetF2Option(Value: boolean);
   public
-    constructor Create(UseParam: boolean);
-    destructor Destroy; override;
-    procedure Process(AParams: TStringList); override;
+    procedure Process(AParams: TStringList);
+    constructor Create(UseParams: boolean);
+    destructor Destroy;
+    procedure Clear;
   public
     property Run: boolean read GetRun;
     property Log: boolean read F1Option write SetF1Option;
@@ -67,13 +68,16 @@ type
 
   end;
 
+var
+  CommandLine: TCustomCommandLine;
+
 implementation
 
 uses
   Bee_Common,
   BeeGui_Forms;
 
-  constructor TCustomCommandLine.Create(UseParam: boolean);
+  constructor TCustomCommandLine.Create(UseParams: boolean);
   var
     I: integer;
   begin
@@ -81,14 +85,22 @@ uses
     F1Option := False;
     F2Option := False;
     FParams  := TStringList.Create;
-    if UseParam then
+    if UseParams then
     begin
       for I := 1 to ParamCount do
       begin
         FParams.Add(ParamStr(I));
       end;
+      Process(FParams);
     end;
-    Process(FParams);
+  end;
+
+  procedure TCustomCommandLine.Clear;
+  begin
+    inherited Clear;
+    FParams.Clear;
+    F1Option := False;
+    F2Option := False;
   end;
 
   procedure TCustomCommandLine.Process(AParams: TStringList);

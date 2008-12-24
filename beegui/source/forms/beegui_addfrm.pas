@@ -54,7 +54,7 @@ type
     cdOptionCheck: TCheckBox;
     aOptionCheck: TCheckBox;
     aOption: TComboBox;
-    ArchiveName: TComboBox;
+    ArchiveNameComboBox: TComboBox;
     ArchiveNameLabel: TLabel;
 
     cfgOption: TComboBox;
@@ -112,12 +112,16 @@ type
     BtnOk: TBitBtn;
     procedure cdOptionCheckChange(Sender: TObject);
     procedure cfgOptionBtnClick(Sender: TObject);
+
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FilesSelectionChanged(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
+
     procedure aOptionCheckChange(Sender: TObject);
+
     procedure PagesPageChanged(Sender: TObject);
+
     procedure PopupMenu_AddFolderClick(Sender: TObject);
     procedure PopupMenu_AddFilesClick(Sender: TObject);
     procedure PopupMenu_ViewClick(Sender: TObject);
@@ -125,6 +129,7 @@ type
     procedure PopupMenu_ModifyClick(Sender: TObject);
     procedure PopupMenu_DeleteClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
+
     procedure UpDownClick(Sender: TObject; Button: TUDBtnType);
     procedure yOptionBtnClick(Sender: TObject);
   public
@@ -135,15 +140,20 @@ type
     procedure LoadLanguage;
   private
     { private declarations }
+    FArchivePath: string;
+    function GetArchiveName: string;
+    procedure SetArchiveName(Value: string);
+  public
+    property ArchiveName: string read GetArchiveName write SetArchiveName;
   end;
   
 implementation
 
 uses
   BeeGui_Consts,
+  BeeGui_SysUtils,
   BeeGui_Messages,
-  BeeGui_RenameFrm,
-  BeeGui_SysUtils;
+  BeeGui_RenameFrm;
 
  { TAddFrm class }
  
@@ -156,6 +166,8 @@ uses
   begin
     LoadLanguage;
     LoadProperty;
+
+    SetLength(FArchivePath, 0);
     Pages.ActivePage := PageGeneral;
   end;
   
@@ -186,11 +198,18 @@ uses
   end;
   
   procedure TAddFrm.BtnSaveClick(Sender: TObject);
+  var
+    S: string;
   begin
-    SaveDialog.FileName := ArchiveName.Text;
+    SaveDialog.FileName := ArchiveName;
     if SaveDialog.Execute then
     begin
-      ArchiveName.Text := SaveDialog.FileName;
+      S := SaveDialog.FileName;
+      case SaveDialog.FilterIndex of
+        1: S := ChangeFileExt(S, '.bee');
+        2: S := ChangeFileExt(S, '.exe');
+      end;
+      ArchiveName := S;
     end;
   end;
 
@@ -198,7 +217,7 @@ uses
   begin
     case Button of
       btNext: FilesMgr.Spin := FilesMgr.Spin - 1;
-      btPrev:  FilesMgr.Spin := FilesMgr.Spin + 1;
+      btPrev: FilesMgr.Spin := FilesMgr.Spin + 1;
     end;
   end;
 
@@ -206,7 +225,7 @@ uses
   var
     FolderName: string;
   begin
-    FolderName := '';
+    SetLength(FolderName, 0);
     if SelectDirectory(rsSelectFolder, '', FolderName) then
     begin
       yOption.Text := FolderName;
@@ -226,7 +245,7 @@ uses
   var
     FolderName: string;
   begin
-    FolderName := '';
+    SetLength(FolderName, 0);
     if SelectDirectory(rsSelectFolder, '', FolderName) then
     begin
       FilesMgr.AddFolder(FolderName);
@@ -371,6 +390,17 @@ uses
       AllowdropFiles := True
     else
       AllowDropFiles := False;
+  end;
+
+  procedure TAddFrm.SetArchiveName(Value: string);
+  begin
+    FArchivePath := ExtractFilePath(Value);
+    ArchiveNameComboBox.Text := ExtractFileName(Value);
+  end;
+
+  function TAddFrm.GetArchiveName: string;
+  begin
+    Result := FArchivePath + ArchiveNameComboBox.Text;
   end;
 
 initialization

@@ -33,65 +33,52 @@ program BeeGui;
 
 uses
   {$IFDEF UNIX}
-  cThreads,
+    cThreads,
   {$ENDIF}
   {$IFDEF MSWINDOWS}
-  Windows,
+    Windows,
   {$ENDIF}
-  LResources,
-  Interfaces,
-  SysUtils,
-  Dialogs,
   Forms,
+  Interfaces,
+  LResources,
   // --- //
   BeeGui_Consts,
   BeeGui_Package,
   // --- //
   BeeGui_TickFrm,
   BeeGui_AboutFrm,
-  BeeGui_RenameFrm,
   BeeGui_CommandLine,
   // --- //
   BeeFM_MainFrm,
-  BeeFM_ViewFrm,
-  BeeFM_ConfigFrm,
-  BeeFM_SelectFrm,
-  BeeFM_PropertyFrm;
-
-var
-  CommandLine: TCustomCommandLine;
+  BeeFM_ConfigFrm;
 
 begin
   {$I beegui.lrs}
   MaxKeptOSChunks := 8;
-  if ParamCount = 0 then
+
+  Application.Initialize;
+  Application.HelpFile := '';
+  Application.Name := cApplicationName;
+  Application.Title:= cApplicationName;
+
+  CommandLine := TCustomCommandLine.Create(True);
+  if CommandLine.Command = ' ' then
   begin
-    Application.Initialize;
-    Application.HelpFile := '';
-    Application.Name := cApplicationName;
-    Application.Title:= cApplicationName;
     Application.CreateForm(TMainFrm, MainFrm);
     Application.CreateForm(TConfigFrm, ConfigFrm);
     Application.Run;
   end else
   begin
-    Application.Initialize;
-    Application.HelpFile := '';
-    Application.Name := cApplicationName;
-    Application.Title:= cApplicationName;
-    CommandLine := TCustomCommandLine.Create(True);
     if CommandLine.Run then
     begin
-      if CommandLine.Command in [' ', '?'] then
+      if CommandLine.Command in ['?'] then
       begin
         Application.CreateForm(TAboutFrm, AboutFrm);
         Application.Run;
       end else
       begin
         Application.CreateForm(TTickFrm, TickFrm);
-        TickFrm.CommandLine := CommandLine;
-        TickFrm.ArchiveList := nil;
-        TickFrm.Start;
+        TickFrm.Execute(nil);
         repeat
           Application.ProcessMessages;
           if CommandLine.Log  then Break;
@@ -106,7 +93,7 @@ begin
             Application.Run;
       end;
     end;
-    FreeAndNil(CommandLine);
   end;
+  CommandLine.Free;
 end.
 

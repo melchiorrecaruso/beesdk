@@ -134,9 +134,8 @@ type
     procedure OnKey;
   private
     { private declarations }
-    FCommandLine: TCustomCommandLine;
-    FArchiveList: TArchiveList;
     FInterfaces: TInterfaces;
+    FList: TArchiveList;
     FPassword: string;
     FApp: TBeeApp;
     FCanClose: boolean;
@@ -145,14 +144,10 @@ type
     FRemainingTime: integer;
   private
     { private declarations }
-    procedure SetArchiveList(Value: TArchiveList);
-    procedure SetCommandLine(Value: TCustomCommandLine);
     function GetCanClose: boolean;
     function GetCanShow: boolean;
   public
     { public declarations }
-    property CommandLine: TCustomCommandLine read FCommandLine write SetCommandLine;
-    property ArchiveList: TArchiveList read FArchiveList write SetArchiveList;
     property CanClose: boolean read GetCanClose;
     property CanShow: boolean read GetCanShow;
   public
@@ -164,8 +159,8 @@ type
   public
     { public declarations }
     constructor Create(AOwner: TComponent); override;
+    procedure Execute(AList: TArchiveList);
     destructor Destroy; override;
-    procedure Start;
   end;
 
 var
@@ -210,8 +205,7 @@ var
     FInterfaces.OnTick.Method := OnStart;
     FInterfaces.OnKey.Method := OnKey;
 
-    FCommandLine := nil;
-    FArchiveList := nil;
+    FList := nil;
     FPassword := '';
 
     FCanClose  := False;
@@ -225,13 +219,8 @@ var
 
   destructor TTickFrm.Destroy;
   begin
-    if Assigned(FInterfaces) then
-      FreeAndNil(FInterfaces);
-
-    if Assigned(FCommandLine) then
-      FreeAndNil(FCommandLine);
-
-    FArchiveList := nil;
+    FList := nil;
+    FInterfaces.Free;
     inherited Destroy;
   end;
 
@@ -278,24 +267,12 @@ var
     end;
   end;
 
-  procedure TTickFrm.Start;
+  procedure TTickFrm.Execute(AList: TArchiveList);
   begin
-    if Assigned (FCommandLine) then
-    begin
-      FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
-      FApp.OnTerminate := OnTerminate;
-      FApp.Resume;
-    end;
-  end;
-
-  procedure TTickFrm.SetCommandLine(Value: TCustomCommandLine);
-  begin
-    FCommandLine := Value;
-  end;
-
-  procedure TTickFrm.SetArchiveList(Value: TArchiveList);
-  begin
-    FArchiveList := Value;
+    FList := AList;
+    FApp := TBeeApp.Create(FInterfaces, CommandLine.Params);
+    FApp.OnTerminate := OnTerminate;
+    FApp.Resume;
   end;
 
   function TTickFrm.GetCanClose: boolean;
@@ -571,7 +548,7 @@ var
   
   procedure TTickFrm.OnFatalError;
   begin
-    FCommandLine.Log := True;
+    CommandLine.Log := True;
     with FInterfaces.OnFatalError do
     begin
       Report.Append(Data.Msg);
@@ -580,7 +557,7 @@ var
   
   procedure TTickFrm.OnError;
   begin
-    FCommandLine.Log := True;
+    CommandLine.Log := True;
     with FInterfaces.OnError do
     begin
       Report.Append(Data.Msg);
@@ -589,7 +566,7 @@ var
   
   procedure TTickFrm.OnWarning;
   begin
-    FCommandLine.Log := True;
+    CommandLine.Log := True;
     with FInterfaces.OnWarning do
     begin
       Report.Append(Data.Msg);
@@ -600,7 +577,7 @@ var
   begin
     with FInterfaces.OnDisplay do
     begin
-      if FCommandLine.Log then
+      if CommandLine.Log then
       begin
         Report.Append(Data.Msg);
       end;
@@ -628,7 +605,7 @@ var
   var
     Node: TArchiveItem;
   begin
-    if Assigned(FArchiveList) then
+    if Assigned(FList) then
     begin
       Node := TArchiveItem.Create;
       try
@@ -646,11 +623,11 @@ var
         Node.FilePassword := FInterfaces.OnList.Data.FilePassword;
         Node.FilePosition := FInterfaces.OnList.Data.FilePosition;
       finally
-        FArchiveList.Add(Node);
+        FList.Add(Node);
       end;
     end;
 
-    if FCommandLine.Log then
+    if CommandLine.Log then
     begin
       with FInterfaces.OnList.Data do
       begin

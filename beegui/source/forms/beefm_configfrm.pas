@@ -44,7 +44,9 @@ uses
   StdCtrls,
   ComCtrls,
   ExtCtrls,
-  LResources;
+  LResources,
+
+  BeeGui_CommandLine;
   
 type
   { TConfigFrm }
@@ -84,8 +86,8 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
-    function AddOptions(const Folder: string): string;
-    function ExtractOptions(const Folder: string): string;
+    procedure AddOptions(const Folder: string);
+    procedure ExtractOptions(const Folder: string);
   end;
 
 var
@@ -136,40 +138,39 @@ uses
     Tree.Items[PageIndex].Selected := True;
   end;
   
-  function TConfigFrm.AddOptions(const Folder: string): string;
+  procedure TConfigFrm.AddOptions(const Folder: string);
   begin
-    Result :=
-      ' -m' + IntToStr(mOption.ItemIndex) +
-      ' -d' + IntToStr(dOption.ItemIndex);
-      
-    if rOption.Checked then Result := Result + ' -r+' else Result := Result + ' -r-';
-    if sOption.Checked then Result := Result + ' -s+' else Result := Result + ' -s-';
-    if tOption.Checked then Result := Result + ' -t+' else Result := Result + ' -t-';
-    if kOption.Checked then Result := Result + ' -k+' else Result := Result + ' -k-';
-    if lOption.Checked then Result := Result + ' -l+' else Result := Result + ' -l-';
+    CommandLine.mOption := mOption.ItemIndex;
+    CommandLine.dOption := dOption.ItemIndex;
+
+    CommandLine.rOption := rOption.Checked;
+    CommandLine.sOption := sOption.Checked;
+    CommandLine.tOption := tOption.Checked;
+    CommandLine.kOption := kOption.Checked;
+    CommandLine.lOption := lOption.Checked;
 
     if cdAOption.Checked then
     begin
-      Result := Result + ' -cd' + Folder;
+      CommandLine.cdOption := Folder;
     end;
   end;
   
-  function TConfigFrm.ExtractOptions(const Folder: string): string;
+  procedure TConfigFrm.ExtractOptions(const Folder: string);
   begin
-    if cdEOption.Checked then
-      Result := ' x'
+    if xCommand.Checked then
+      CommandLine.Command := 'X'
     else
-      Result := ' e';
-      
+      CommandLine.Command := 'E';
+
     case oOption.ItemIndex of
-      0:   Result := Result + ' -oS';
-      1:   Result := Result + ' -oA';
-      else Result := Result + ' -oY';
+      0:   CommandLine.oOption := 'S';
+      1:   CommandLine.oOption := 'A';
+      else CommandLine.oOption := 'Y';
     end;
     
     if cdEOption.Checked then
     begin
-      Result := Result + ' -cd' + Folder;
+      CommandLine.cdOption := Folder;
     end;
   end;
     
