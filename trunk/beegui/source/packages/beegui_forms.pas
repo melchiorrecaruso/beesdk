@@ -107,8 +107,8 @@ uses
     
     if Length(CommandLine.cfgOption) > 0 then
       F.cfgOption.Text := CommandLine.cfgOption;
-      
-    F.ArchiveName.Text := ExpandFileName(CommandLine.ArchiveName);
+
+    F.ArchiveName := CommandLine.ArchiveName;
 
     for I := 0 to CommandLine.FileMasks.Count - 1 do
     begin
@@ -166,7 +166,8 @@ uses
         CommandLine.cdOption := '';
 
       CommandLine.cfgOption := F.cfgOption.Text;
-      CommandLine.ArchiveName := F.ArchiveName.Text;
+
+      CommandLine.ArchiveName := F.ArchiveName;
 
       CommandLine.FileMasks.Clear;
       for I := 0 to F.FilesMgr.Count - 1 do

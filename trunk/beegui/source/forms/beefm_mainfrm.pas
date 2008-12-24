@@ -643,69 +643,61 @@ uses
   // ---------------------------------------------------------------------- //
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
-  var
-    CommandLine: string;
   begin
-    if ArcProcess.Enabled = False then
+    SaveDialog.FileName := '';
+    if SaveDialog.Execute then
     begin
-      SaveDialog.FileName := '';
-      if SaveDialog.Execute then
-      begin
-        MMenuFileCloseClick(Sender);
-        // Archive name //
-        FArchiveName := SaveDialog.FileName;
-        case SaveDialog.FilterIndex of
-          1: FArchiveName := ChangeFileExt(FArchiveName, '.bee');
-          2: FArchiveName := ChangeFileExt(FArchiveName, '.exe');
-        end;
-        Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
-        // Command line //
-        CommandLine := 'beegui a -2';
-        if MMenuOptionsLogReport.Checked then
-          CommandLine := CommandLine + ' -1+'
-        else
-          CommandLine := CommandLine + ' -1-';
-        CommandLine := CommandLine + ' "' + FArchiveName + '"';
-        // Command line process //
-        ArcProcess.Start(FArchiveName, CommandLine, '');
+      MMenuFileCloseClick(Sender);
+      // Archive name //
+      FArchiveName := SaveDialog.FileName;
+      case SaveDialog.FilterIndex of
+        1: FArchiveName := ChangeFileExt(FArchiveName, '.bee');
+        2: FArchiveName := ChangeFileExt(FArchiveName, '.exe');
       end;
-    end else
-      MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
+      FArchiveTime := FileAge(FArchiveName);
+      Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
+      // Command line //
+      CommandLine.Clear;
+      CommandLine.Command := 'A';
+      ConfigFrm.AddOptions('');
+      CommandLine.Query := True;
+      CommandLine.Log := MMenuOptionsLogReport.Checked;
+      CommandLine.ArchiveName := FArchiveName;
+      // Command line execute //
+      if CommandLine.Run then
+      begin
+        TickFrm := TTickFrm.Create(Self);
+        TickFrm.OnDestroy := OnArcTimer;
+        TickFrm.Execute(ListView.Files);
+      end;
+    end;
   end;
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
-  var
-    F: TTickFrm;
-    CommandLine: TCustomCommandLine;
   begin
-    if ArcProcess.Enabled = False then
+    OpenDialog.FileName := '';
+    if OpenDialog.Execute then
     begin
-      OpenDialog.FileName := '';
-      if OpenDialog.Execute then
+      MMenuFileCloseClick(Sender);
+      // Archive name //
+      FArchiveName := OpenDialog.FileName;
+      FArchiveTime := FileAge(FArchiveName);
+      Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
+      // Command line //
+      CommandLine.Clear;
+      CommandLine.Command := 'L';
+      CommandLine.rOption := True;
+      CommandLine.Log := MMenuOptionsLogReport.Checked;
+      CommandLine.ArchiveName := FArchiveName;
+      CommandLine.FileMasks.Add('*');
+      // Command line execute //
+      if CommandLine.Run then
       begin
-        MMenuFileCloseClick(Sender);
-        // Archive name //
-        FArchiveName := OpenDialog.FileName;
-        Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
-
-        CommandLine := TCustomCommandLine.Create(False);
-        CommandLine.Command := 'l';
-        CommandLine.Log := False;
-        CommandLine.rOption := True;
-        CommandLine.ArchiveName := FArchiveName;
-        CommandLine.FileMasks.Add('*');
-
-        if CommandLine.Run then
-        begin
-          F := TTickFrm.Create(Self);
-          F.OnDestroy := OnArcTimer;
-          F.CommandLine := CommandLine;
-          F.ArchiveList := ListView.Files;
-          F.Start;
-        end;
+        TickFrm := TTickFrm.Create(Self);
+        TickFrm.OnDestroy := OnArcTimer;
+        TickFrm.Execute(ListView.Files);
       end;
-    end else
-      MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
+    end;
   end;
 
   procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
@@ -927,45 +919,26 @@ uses
   // ---------------------------------------------------------------------- //
 
   procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
-  var
-    CommandLine: string;
   begin
-    if ArcProcess.Enabled = False then
-    begin
-
-    end;
   end;
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
-  var
-    CommandLine: string;
   begin
     if ListView.SelCount = 0 then Exit;
 
-    if ArcProcess.Enabled = False then
+    if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
-      if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
-      begin
-        // Command line //
-        CommandLine := 'beegui d -r+ -l+';
-        if MMenuOptionsLogReport.Checked then
-          CommandLine := CommandLine + ' -1+'
-        else
-          CommandLine := CommandLine + ' -1-';
-        CommandLine := CommandLine + ' "' + FArchiveName + '" ' + ListView.GetMasks;
-        // Command line process //
-        ArcProcess.Start(FArchiveName, CommandLine, '');
-      end;
+
     end;
   end;
 
   procedure TMainFrm.MMenuActionsExtractClick(Sender: TObject);
-  var
-    ArchiveName: string;
-    CommandLine: string;
+  // var
+  //   ArchiveName: string;
+  //  CommandLine: string;
   begin
     if ListView.SelCount = 0 then Exit;
-
+    (*
     if ArcProcess.Enabled = False then
     begin
       // Archive name //
@@ -979,7 +952,7 @@ uses
       CommandLine := CommandLine + ' "' + ArchiveName + '" ' + ListView.GetMasks;
       // Command line process //
       ArcProcess.Start(ArchiveName, CommandLine, '');
-    end;
+    end;  *)
   end;
 
   procedure TMainFrm.MMenuActionsExtractAllClick(Sender: TObject);
@@ -988,7 +961,7 @@ uses
     CommandLine: string;
   begin
     if ListView.SelCount = 0 then Exit;
-
+    (*
     if ArcProcess.Enabled = False then
     begin
       // Archive name //
@@ -1002,7 +975,7 @@ uses
       CommandLine := CommandLine + ' "' + ArchiveName + '" *';
       // Command line process //
       ArcProcess.Start(ArchiveName, CommandLine, '');
-    end;
+    end; *)
   end;
 
   procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
@@ -1011,7 +984,7 @@ uses
     CommandLine: string;
   begin
     if ListView.SelCount = 0 then Exit;
-
+    (*
     if ArcProcess.Enabled = False then
     begin
       // Archive name-link //
@@ -1021,7 +994,7 @@ uses
       CommandLine := CommandLine + ' "' + ArchiveName + '" ' + ListView.GetMasks;
       // Command line process //
       ArcProcess.Start(ArchiveName, CommandLine, '');
-    end;
+    end; *)
   end;
 
   procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);

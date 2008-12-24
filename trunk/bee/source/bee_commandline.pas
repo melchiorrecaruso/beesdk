@@ -22,7 +22,7 @@
 
   Modifyed:
 
-  v0.7.9 build 0916 - 2008.10.18 by Melchiorre Caruso.
+  v0.7.9 build 0970 - 2008.12.24 by Melchiorre Caruso.
 }
 
 unit Bee_CommandLine;
@@ -81,9 +81,10 @@ type
   protected
     procedure ProcessOption(var S: string; var Option: boolean);
   public
-    constructor Create; dynamic;
-    destructor Destroy; dynamic;
-    procedure Process(AParams: TStringList); dynamic;
+    procedure Process(AParams: TStringList);
+    constructor Create;
+    destructor Destroy;
+    procedure Clear;
   public
     property Command: char Read FCommand Write SetCommand;
     property rOption: boolean Read FrOption Write SetrOption;
@@ -115,6 +116,13 @@ uses
 constructor TCommandLine.Create;
 begin
   inherited Create;
+  FxOption := TStringList.Create;
+  FFileMasks := TStringList.Create;
+  Clear;
+end;
+
+procedure TCommandLine.Clear;
+begin
   FCommand := ' ';
   FrOption := False;
   FuOption := False;
@@ -125,7 +133,7 @@ begin
   FoOption := 'Y';
   FmOption := 1;
   FdOption := 2;
-  FxOption := TStringList.Create;
+  FxOption.Clear;
   FtOption := False;
   FlOption := False;
   FyOption := '';
@@ -134,7 +142,7 @@ begin
   FcfgOption := SelfPath + 'bee.ini';
   FpriOption := 1;
   FArchiveName := '';
-  FFileMasks := TStringList.Create;
+  FFileMasks.Clear;
 end;
 
 destructor TCommandLine.Destroy;
