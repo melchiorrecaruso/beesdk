@@ -162,9 +162,6 @@ type
     procedure Execute(AList: TArchiveList);
     destructor Destroy; override;
   end;
-
-var
-  TickFrm: TTickFrm;
   
 implementation
 

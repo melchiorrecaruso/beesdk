@@ -1,7 +1,7 @@
 object ConfigFrm: TConfigFrm
-  Left = 305
+  Left = 320
   Height = 403
-  Top = 156
+  Top = 716
   Width = 561
   HorzScrollBar.Page = 560
   HorzScrollBar.Range = 156
@@ -9,8 +9,6 @@ object ConfigFrm: TConfigFrm
   ActiveControl = Tree
   AutoScroll = False
   Caption = 'Configuration'
-  ClientHeight = 403
-  ClientWidth = 561
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose

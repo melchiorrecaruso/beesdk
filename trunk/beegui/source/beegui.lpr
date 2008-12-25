@@ -52,6 +52,9 @@ uses
   BeeFM_MainFrm,
   BeeFM_ConfigFrm;
 
+var
+  TickFrm: TTickFrm;
+
 begin
   {$I beegui.lrs}
   MaxKeptOSChunks := 8;
@@ -59,7 +62,7 @@ begin
   Application.Initialize;
   Application.HelpFile := '';
   Application.Name := cApplicationName;
-  Application.Title:= cApplicationName;
+  Application.Title := cApplicationName;
 
   CommandLine := TCustomCommandLine.Create(True);
   if CommandLine.Command = ' ' then

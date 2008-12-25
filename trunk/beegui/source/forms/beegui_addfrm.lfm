@@ -25,12 +25,12 @@ object AddFrm: TAddFrm
     Height = 329
     Top = 6
     Width = 388
-    ActivePage = PageGeneral
+    ActivePage = PageFiles
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
     ParentShowHint = False
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -525,7 +525,7 @@ object AddFrm: TAddFrm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        DefaultItemHeight = 18
+        DefaultItemHeight = 16
         Images = FilesImages
         PopupMenu = PopupMenu
         ReadOnly = True

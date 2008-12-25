@@ -645,8 +645,6 @@ uses
   // ---------------------------------------------------------------------- //
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
-  var
-    F: TTickFrm;
   begin
     SaveDialog.FileName := '';
     if SaveDialog.Execute then
@@ -660,7 +658,6 @@ uses
       end;
       FArchiveTime := FileAge(FArchiveName);
       Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
-
       // Command line //
       CommandLine.Clear;
       ConfigFrm.AddOptions('');
@@ -668,24 +665,13 @@ uses
       CommandLine.Confirm := True;
       CommandLine.Log := MMenuOptionsLogReport.Checked;
       CommandLine.ArchiveName := FArchiveName;
-
       // Command line execute //
       if CommandLine.Run then
       begin
-        F := TTickFrm.Create(Self);
-        F.OnDestroy := Finalize;
-        F.Execute(ListView.Files);
-        repeat
-          Application.ProcessMessages;
-          if CommandLine.Log  then Break;
-          if F.CanShow  then Break;
-          if F.CanClose then Break;
-        until False;
-        if F.CanClose = False then
-          F.ShowModal
-        else
-          if CommandLine.Log then
-            F.ShowModal;
+        ArcProcess.ArchiveName := CommandLine.ArchiveName;
+        ArcProcess.CurrentDir  := '';
+        ArcProcess.CommandLine :=
+        ArcProcess.Execute;
       end;
     end;
   end;
@@ -710,9 +696,7 @@ uses
       // Command line execute //
       if CommandLine.Run then
       begin
-        TickFrm := TTickFrm.Create(Self);
-        TickFrm.OnDestroy := Finalize;
-        TickFrm.Execute(ListView.Files);
+
       end;
     end;
   end;
