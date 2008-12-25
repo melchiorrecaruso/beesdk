@@ -51,17 +51,19 @@ type
   TArcProcess = class(TIdleTimer)
   private
     FArchiveName: string;
+    FCommandLine: string;
+    FCurrentDir: string;
     FProcess: TProcess;
-    FCurrentDirectory: string;
   protected
     procedure DoOnTimer; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Start(const aArchiveName, aCommandLine, aCurrentDirectory: string);
+    procedure Execute;
   public
     property ArchiveName: string read FArchiveName write FArchiveName;
-    property CurrentDirectory: string read FCurrentDirectory;
+    property CurrentDir: string read FCurrentDir write FCurrentDir;
+    property CommandLine: string read FCommandLine write FCommandLine;
   end;
 
   { TFileProcess class }
@@ -70,18 +72,18 @@ type
   private
     FFileName: string;
     FFileTime: integer;
+    FCurrentDir: string;
     FProcess: TProcess;
-    FCurrentDirectory: string;
   protected
     procedure DoOnTimer; override;
-    function GetFileExec: string;
+    function GetExec: string;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Start(const aFileName, aCurrentDirectory: string);
+    procedure Execute;
   public
-    property FileName: string read FFileName;
-    property CurrentDirectory: string read FCurrentDirectory;
+    property FileName: string read FFileName write FFileName;
+    property CurrentDir: string read FCurrentDir write FCurrentDir;
   end;
   
   { Register }
@@ -105,30 +107,28 @@ uses
     FProcess.Options := [];
 
     SetLength(FArchiveName, 0);
-    SetLength(FCurrentDirectory, 0);
+    SetLength(FCurrentDir, 0);
+    SetLength(FCommandLine, 0);
   end;
   
   destructor TArcProcess.Destroy;
   begin
-    SetLength(FCurrentDirectory, 0);
     SetLength(FArchiveName, 0);
-    FreeAndNil(FProcess);
+    SetLength(FCurrentDir, 0);
+    SetLength(FCommandLine, 0);
+    FProcess.Destroy;
     inherited Destroy;
   end;
 
-  procedure TArcProcess.Start(const aArchiveName, aCommandLine, aCurrentDirectory: string);
+  procedure TArcProcess.Execute;
   begin
     if FProcess.Running = False then
     begin
-      FArchiveName := aArchiveName;
-      FCurrentDirectory := aCurrentDirectory;
-
-      FProcess.CommandLine := aCommandLine;
-      FProcess.CurrentDirectory := aCurrentDirectory;
+      FProcess.CommandLine := FCommandLine;
+      FProcess.CurrentDirectory := FCurrentDir;
       FProcess.StartupOptions := [];
       FProcess.Options := [];
       FProcess.Execute;
-
       Enabled := True;
     end;
   end;
@@ -152,23 +152,19 @@ uses
     FProcess.Options := [];
 
     SetLength(FFileName, 0);
-    SetLength(FCurrentDirectory, 0);
+    SetLength(FCurrentDir, 0);
   end;
   
-  procedure TFileProcess.Start(const aFileName: string; const aCurrentDirectory: string);
+  procedure TFileProcess.Execute;
   begin
     if FProcess.Running = False then
     begin
-      FFileName := aFileName;
-      FFileTime := FileAge(aFileName);
-      FCurrentDirectory := aCurrentDirectory;
-
-      FProcess.CommandLine := GetFileExec + ' ' + aFileName;
-      FProcess.CurrentDirectory := aCurrentDirectory;
+      FFileTime := FileAge(FFileName);
+      FProcess.CommandLine := GetExec + ' "' + FFileName  + '"';
+      FProcess.CurrentDirectory := FCurrentDir;
       FProcess.StartupOptions := [];
       FProcess.Options := [];
       FProcess.Execute;
-
       Enabled := True;
     end;
   end;
@@ -180,7 +176,7 @@ uses
       Enabled := False;
       if FileAge(FFileName) > FFileTime then
       begin
-        // Aggiornare
+
       end;
     end;
     inherited DoOnTimer;
@@ -188,13 +184,13 @@ uses
   
   destructor TFileProcess.Destroy;
   begin
-    SetLength(FCurrentDirectory, 0);
+    SetLength(FCurrentDir, 0);
     SetLength(FFileName, 0);
     FreeAndNil(FProcess);
     inherited Destroy;
   end;
   
- function TFileProcess.GetFileExec: string;
+ function TFileProcess.GetExec: string;
   var
     {$IFDEF MSWINDOWS}
     P: PChar;
