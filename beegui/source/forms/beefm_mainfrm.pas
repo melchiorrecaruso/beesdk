@@ -261,7 +261,9 @@ type
     // ---
 
 
-    procedure OnArcTimer(Sender: TObject);
+    procedure Finalize(Sender: TObject);
+
+
     procedure OnFileViewTimer(Sender: TObject);
     procedure OnFileUpdateTimer(Sender: TObject);
     
@@ -517,7 +519,7 @@ uses
   
   
 
-  procedure TMainFrm.OnArcTimer(Sender: TObject);
+  procedure TMainFrm.Finalize(Sender: TObject);
   var
     LastFolder: string;
   begin
@@ -643,6 +645,8 @@ uses
   // ---------------------------------------------------------------------- //
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
+  var
+    F: TTickFrm;
   begin
     SaveDialog.FileName := '';
     if SaveDialog.Execute then
@@ -656,19 +660,32 @@ uses
       end;
       FArchiveTime := FileAge(FArchiveName);
       Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
+
       // Command line //
       CommandLine.Clear;
-      CommandLine.Command := 'A';
       ConfigFrm.AddOptions('');
-      CommandLine.Query := True;
+      CommandLine.Command := 'A';
+      CommandLine.Confirm := True;
       CommandLine.Log := MMenuOptionsLogReport.Checked;
       CommandLine.ArchiveName := FArchiveName;
+
       // Command line execute //
       if CommandLine.Run then
       begin
-        TickFrm := TTickFrm.Create(Self);
-        TickFrm.OnDestroy := OnArcTimer;
-        TickFrm.Execute(ListView.Files);
+        F := TTickFrm.Create(Self);
+        F.OnDestroy := Finalize;
+        F.Execute(ListView.Files);
+        repeat
+          Application.ProcessMessages;
+          if CommandLine.Log  then Break;
+          if F.CanShow  then Break;
+          if F.CanClose then Break;
+        until False;
+        if F.CanClose = False then
+          F.ShowModal
+        else
+          if CommandLine.Log then
+            F.ShowModal;
       end;
     end;
   end;
@@ -694,7 +711,7 @@ uses
       if CommandLine.Run then
       begin
         TickFrm := TTickFrm.Create(Self);
-        TickFrm.OnDestroy := OnArcTimer;
+        TickFrm.OnDestroy := Finalize;
         TickFrm.Execute(ListView.Files);
       end;
     end;
@@ -920,6 +937,20 @@ uses
 
   procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
   begin
+    // Command line //
+    CommandLine.Clear;
+    ConfigFrm.AddOptions('');
+    CommandLine.Command := 'A';
+    CommandLine.Confirm := True;
+    CommandLine.Log := MMenuOptionsLogReport.Checked;
+    CommandLine.ArchiveName := FArchiveName;
+    // Command line execute //
+    if CommandLine.Run then
+    begin
+      TickFrm := TTickFrm.Create(Self);
+      TickFrm.OnDestroy := Finalize;
+      TickFrm.Execute(ListView.Files);
+    end;
   end;
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);

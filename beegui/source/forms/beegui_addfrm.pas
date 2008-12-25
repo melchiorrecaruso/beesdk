@@ -110,17 +110,15 @@ type
     BtnFolder: TBitBtn;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
-    procedure cdOptionCheckChange(Sender: TObject);
-    procedure cfgOptionBtnClick(Sender: TObject);
-
     procedure FormCreate(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FilesSelectionChanged(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
 
-    procedure aOptionCheckChange(Sender: TObject);
-
     procedure PagesPageChanged(Sender: TObject);
+    procedure aOptionCheckChange(Sender: TObject);
+    procedure cdOptionCheckChange(Sender: TObject);
+
 
     procedure PopupMenu_AddFolderClick(Sender: TObject);
     procedure PopupMenu_AddFilesClick(Sender: TObject);
@@ -128,10 +126,14 @@ type
     procedure PopupMenu_PlusMinusClick(Sender: TObject);
     procedure PopupMenu_ModifyClick(Sender: TObject);
     procedure PopupMenu_DeleteClick(Sender: TObject);
-    procedure BtnSaveClick(Sender: TObject);
 
-    procedure UpDownClick(Sender: TObject; Button: TUDBtnType);
+
+
+
     procedure yOptionBtnClick(Sender: TObject);
+    procedure cfgOptionBtnClick(Sender: TObject);
+    procedure UpDownClick(Sender: TObject; Button: TUDBtnType);
+    procedure BtnSaveClick(Sender: TObject);
   public
     { public declarations }
     procedure SaveProperty;
