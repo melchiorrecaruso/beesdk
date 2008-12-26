@@ -45,7 +45,7 @@ uses
   ComCtrls,
   ExtCtrls,
   LResources,
-
+  // ---
   BeeGui_CommandLine;
   
 type
@@ -73,8 +73,8 @@ type
     cdEOption: TCheckBox;
     BtnOk: TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure FormCreate(Sender: TObject);
     procedure TreeChange(Sender: TObject; Node: TTreeNode);
+    procedure FormCreate(Sender: TObject);
   private
     { private declarations }
     procedure SetPageIndex(PageIndex: integer);
@@ -86,8 +86,8 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
-    procedure AddOptions(const Folder: string);
-    procedure ExtractOptions(const Folder: string);
+    procedure AddOptions(const AFolder: string; ACommandLine: TCustomCommandLine);
+    procedure ExtractOptions(const AFolder: string; ACommandLine: TCustomCommandLine);
   end;
 
 var
@@ -118,6 +118,7 @@ uses
     {$IFDEF DEBUG}
       SaveLanguage;
     {$ENDIF}
+    // SaveProperty;
   end;
   
   procedure TConfigFrm.TreeChange(Sender: TObject; Node: TTreeNode);
@@ -138,39 +139,39 @@ uses
     Tree.Items[PageIndex].Selected := True;
   end;
   
-  procedure TConfigFrm.AddOptions(const Folder: string);
+  procedure TConfigFrm.AddOptions(const AFolder: string; ACommandLine: tCustomCommandLine);
   begin
-    CommandLine.mOption := mOption.ItemIndex;
-    CommandLine.dOption := dOption.ItemIndex;
+    ACommandLine.mOption := mOption.ItemIndex;
+    ACommandLine.dOption := dOption.ItemIndex;
 
-    CommandLine.rOption := rOption.Checked;
-    CommandLine.sOption := sOption.Checked;
-    CommandLine.tOption := tOption.Checked;
-    CommandLine.kOption := kOption.Checked;
-    CommandLine.lOption := lOption.Checked;
+    ACommandLine.rOption := rOption.Checked;
+    ACommandLine.sOption := sOption.Checked;
+    ACommandLine.tOption := tOption.Checked;
+    ACommandLine.kOption := kOption.Checked;
+    ACommandLine.lOption := lOption.Checked;
 
     if cdAOption.Checked then
     begin
-      CommandLine.cdOption := Folder;
+      ACommandLine.cdOption := AFolder;
     end;
   end;
   
-  procedure TConfigFrm.ExtractOptions(const Folder: string);
+  procedure TConfigFrm.ExtractOptions(const AFolder: string; ACommandLine: tCustomCommandLine);
   begin
     if xCommand.Checked then
-      CommandLine.Command := 'X'
+      ACommandLine.Command := 'X'
     else
-      CommandLine.Command := 'E';
+      ACommandLine.Command := 'E';
 
     case oOption.ItemIndex of
-      0:   CommandLine.oOption := 'S';
-      1:   CommandLine.oOption := 'A';
-      else CommandLine.oOption := 'Y';
+      0:   ACommandLine.oOption := 'S';
+      1:   ACommandLine.oOption := 'A';
+      else ACommandLine.oOption := 'Y';
     end;
     
     if cdEOption.Checked then
     begin
-      CommandLine.cdOption := Folder;
+      ACommandLine.cdOption := AFolder;
     end;
   end;
     

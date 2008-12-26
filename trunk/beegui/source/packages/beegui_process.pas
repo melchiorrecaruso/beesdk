@@ -50,8 +50,8 @@ type
 
   TArcProcess = class(TIdleTimer)
   private
+    // FCommandLine: TCommandLine;
     FArchiveName: string;
-    FCommandLine: string;
     FCurrentDir: string;
     FProcess: TProcess;
   protected
@@ -61,9 +61,9 @@ type
     destructor Destroy; override;
     procedure Execute;
   public
+    // property CommandLine: TCommandLine read FCommandLine write FCommandLine;
     property ArchiveName: string read FArchiveName write FArchiveName;
     property CurrentDir: string read FCurrentDir write FCurrentDir;
-    property CommandLine: string read FCommandLine write FCommandLine;
   end;
 
   { TFileProcess class }
@@ -108,14 +108,14 @@ uses
 
     SetLength(FArchiveName, 0);
     SetLength(FCurrentDir, 0);
-    SetLength(FCommandLine, 0);
+    // SetLength(FCommandLine, 0);
   end;
   
   destructor TArcProcess.Destroy;
   begin
     SetLength(FArchiveName, 0);
     SetLength(FCurrentDir, 0);
-    SetLength(FCommandLine, 0);
+    // SetLength(FCommandLine, 0);
     FProcess.Destroy;
     inherited Destroy;
   end;
@@ -124,7 +124,6 @@ uses
   begin
     if FProcess.Running = False then
     begin
-      FProcess.CommandLine := FCommandLine;
       FProcess.CurrentDirectory := FCurrentDir;
       FProcess.StartupOptions := [];
       FProcess.Options := [];

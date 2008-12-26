@@ -47,6 +47,7 @@ uses
   // ---
   BeeGui_Process,
   BeeGui_IconList,
+  BeeGui_CommandLine,
   BeeGui_ArchiveFolderBox,
   BeeGui_ArchiveListViewMgr;
 
@@ -55,7 +56,6 @@ type
 
   TMainFrm = class(TForm)
     FolderBox: TArchiveFolderBox;
-    ArcProcess: TArcProcess;
     DownToolBarBevel: TBevel;
     BevelFirst: TBevel;
     BevelSecond: TBevel;
@@ -216,6 +216,7 @@ type
     UpToolBar: TPanel;
     // ---
 
+    procedure FormDestroy(Sender: TObject);
     procedure MMenuActionsViewClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
@@ -261,7 +262,7 @@ type
     // ---
 
 
-    procedure Finalize(Sender: TObject);
+
 
 
     procedure OnFileViewTimer(Sender: TObject);
@@ -281,8 +282,11 @@ type
     procedure BMenuClick(Sender: TObject);
     procedure BtnUpClick(Sender: TObject);
   private
+    FTerminated: boolean;
     FArchiveName: string;
-    FArchiveTime: integer;
+    FCommandLine: TCustomCommandLine;
+    procedure Terminate(Sender: TObject);
+    procedure Execute;
   private
     { private declarations }
     procedure UpdateStyle;
@@ -304,7 +308,6 @@ implementation
 
 uses
   Bee_Common,
-  BeeGui_CommandLine,
 
   BeeFm_ViewFrm,
   BeeGui_TickFrm,
@@ -346,8 +349,17 @@ uses
     DownToolBar.BorderSpacing.Bottom := 2;
     ListView.BorderSpacing.Top := 4;
     {$ENDIF}
+    FTerminated := True;
+    FCommandLine := TCustomCommandLine.Create(False);
   end;
-  
+
+  procedure TMainFrm.FormDestroy(Sender: TObject);
+  begin
+    Fterminated := True;
+    FCommandLine.Destroy;
+  end;
+
+
   procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   begin
     if Cursor = crHourGlass then
@@ -519,20 +531,7 @@ uses
   
   
 
-  procedure TMainFrm.Finalize(Sender: TObject);
-  var
-    LastFolder: string;
-  begin
-    LastFolder := ListView.Folder;
-    with ArcProcess do
-    begin
-      if ListView.Open(ArchiveName) then
-        UpdateButtons(True)
-      else
-        UpdateButtons(False);
-    end;
-    ListView.Folder := LastFolder;
-  end;
+
   
   procedure TMainFrm.OnFileViewTimer(Sender: TObject);
   begin
@@ -644,69 +643,99 @@ uses
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
+  procedure TMainFrm.Terminate(Sender: TObject);
+  var
+    LastFolder: string;
+  begin
+    LastFolder := ListView.Folder;
+    if ListView.Open(FArchiveName) then
+      UpdateButtons(True)
+    else
+      UpdateButtons(False);
+    ListView.Folder := LastFolder;
+    FTerminated := True;
+  end;
+
+  procedure TMainFrm.Execute;
+  var
+    TickFrm: TTickFrm;
+  begin
+    FTerminated := False;
+    TickFrm := TTickFrm.Create(Self);
+    TickFrm.OnDestroy := Terminate;
+    TickFrm.Execute(FCommandLine, ListView.Files);
+    repeat
+      Application.ProcessMessages;
+      if FCommandLine.Log  then Break;
+      if TickFrm.CanShow  then Break;
+      if TickFrm.CanClose then Break;
+    until False;
+    if TickFrm.CanClose = False then
+      TickFrm.ShowModal
+    else
+      if FCommandLine.Log then
+        TickFrm.ShowModal;
+  end;
+
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
   begin
-    SaveDialog.FileName := '';
-    if SaveDialog.Execute then
+    if FTerminated then
     begin
-      MMenuFileCloseClick(Sender);
-      // Archive name //
-      FArchiveName := SaveDialog.FileName;
-      case SaveDialog.FilterIndex of
-        1: FArchiveName := ChangeFileExt(FArchiveName, '.bee');
-        2: FArchiveName := ChangeFileExt(FArchiveName, '.exe');
-      end;
-      FArchiveTime := FileAge(FArchiveName);
-      Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
-      // Command line //
-      CommandLine.Clear;
-      ConfigFrm.AddOptions('');
-      CommandLine.Command := 'A';
-      CommandLine.Confirm := True;
-      CommandLine.Log := MMenuOptionsLogReport.Checked;
-      CommandLine.ArchiveName := FArchiveName;
-      // Command line execute //
-      if CommandLine.Run then
+      SaveDialog.FileName := '';
+      if SaveDialog.Execute then
       begin
-        ArcProcess.ArchiveName := CommandLine.ArchiveName;
-        ArcProcess.CurrentDir  := '';
-        ArcProcess.CommandLine :=
-        ArcProcess.Execute;
+        MMenuFileCloseClick(Sender);
+        // Archive name //
+        FArchiveName := SaveDialog.FileName;
+        case SaveDialog.FilterIndex of
+          1: FArchiveName := ChangeFileExt(FArchiveName, '.bee');
+          2: FArchiveName := ChangeFileExt(FArchiveName, '.exe');
+        end;
+        Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
+        // Command line //
+        FCommandLine.Clear;
+        FCommandLine.Command := 'A';
+        FCommandLine.Confirm := True;
+        FCommandLine.Log := MMenuOptionsLogReport.Checked;
+        FCommandLine.ArchiveName := FArchiveName;
+        ConfigFrm.AddOptions('', FCommandLine);
+        // Command line execute //
+        if FCommandLine.Run then Execute;
       end;
     end;
   end;
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   begin
-    OpenDialog.FileName := '';
-    if OpenDialog.Execute then
+    if FTerminated then
     begin
-      MMenuFileCloseClick(Sender);
-      // Archive name //
-      FArchiveName := OpenDialog.FileName;
-      FArchiveTime := FileAge(FArchiveName);
-      Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
-      // Command line //
-      CommandLine.Clear;
-      CommandLine.Command := 'L';
-      CommandLine.rOption := True;
-      CommandLine.Log := MMenuOptionsLogReport.Checked;
-      CommandLine.ArchiveName := FArchiveName;
-      CommandLine.FileMasks.Add('*');
-      // Command line execute //
-      if CommandLine.Run then
+      OpenDialog.FileName := '';
+      if OpenDialog.Execute then
       begin
-
+        MMenuFileCloseClick(Sender);
+        // Archive name //
+        FArchiveName := OpenDialog.FileName;
+        Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
+        // Command line //
+        FCommandLine.Clear;
+        FCommandLine.Command := 'L';
+        FCommandLine.rOption := True;
+        FCommandLine.Log := MMenuOptionsLogReport.Checked;
+        FCommandLine.ArchiveName := FArchiveName;
+        FCommandLine.FileMasks.Add('*');
+        // Command line execute //
+        if FCommandLine.Run then Execute;
       end;
     end;
   end;
 
   procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
   begin
-    UpdateCursor(crDefault);
     UpdateButtons(False);
-    ListView.CloseArchive;
+    UpdateCursor(crDefault);
+
     Caption := cApplicationTitle;
+    ListView.CloseArchive;
   end;
 
   procedure TMainFrm.MMenuFilePropertyClick(Sender: TObject);
@@ -717,7 +746,7 @@ uses
     F := TInfoFrm.Create(Self);
     F.Caption := rsArcProperty;
     begin
-      F.ANameValue.Caption         := ExtractFileName(ArcProcess.ArchiveName);
+      F.ANameValue.Caption         := ExtractFileName(FArchiveName);
       F.AVersionValue.Caption      := FloatToStr(ListView.Details.Version);
       F.AVersionValue.Caption      := FloatToStr(ListView.Details.Version);
       F.AFilesValue.Caption        := IntToStr(ListView.Details.FilesCount);
@@ -735,8 +764,8 @@ uses
       F.AR.Caption                 := IntToStr(Ratio) + '%';
       F.ARatioValue.Caption        := IntToStr(Ratio) + '%';
       F.AFilesCryptedValue.Caption := IntToStr(ListView.Details.FilesCrypted);
-      F.AArcSizeValue.Caption      := SizeToStr(SizeOfFile(ArcProcess.ArchiveName));
-      F.AModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(ArcProcess.ArchiveName)));
+      F.AArcSizeValue.Caption      := SizeToStr(SizeOfFile(FArchiveName));
+      F.AModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(FArchiveName)));
     end;
     F.Pages.ActivePage := F.APage;
     F.FPage.TabVisible := False;
@@ -749,14 +778,14 @@ uses
   var
     NewName: string;
   begin
-    if ArcProcess.Enabled = False then
+    if FTerminated then
     begin
       NewName := '';
       if SelectDirectory(rsMoveArcTo, '', NewName) then
       begin
-        NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArchiveName);
-        if RenameFile(ArcProcess.ArchiveName, NewName) then
-          ArcProcess.ArchiveName := NewName
+        NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(FArchiveName);
+        if RenameFile(FArchiveName, NewName) then
+          FArchiveName := NewName
         else
           MessageDlg(rseMoveArcTo, mtError, [mbOk], 0);
       end;
@@ -767,14 +796,14 @@ uses
   var
     NewName: string;
   begin
-    if ArcProcess.Enabled = False then
+    if FTerminated then
     begin
       NewName := '';
       if SelectDirectory(rsCopyArcTo, '', NewName) then
       begin
-        NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(ArcProcess.ArchiveName);
-        if CopyFile(ArcProcess.ArchiveName, NewName) then
-          ArcProcess.ArchiveName := NewName
+        NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(FArchiveName);
+        if CopyFile(FArchiveName, NewName) then
+          FArchiveName := NewName
         else
           MessageDlg(rseCopyArcTo, mtError, [mbOk], 0);
       end;
@@ -786,21 +815,21 @@ uses
     NewName: string;
     F: TRenameFrm;
   begin
-    if ArcProcess.Enabled = False then
+    if FTerminated then
     begin
       F := TRenameFrm.Create(Self);
       F.Caption := rsRenameArc;
-      F.ToFN.Text := ExtractFileName(ArcProcess.ArchiveName);
-      F.FromFN.Caption := ExtractFileName(ArcProcess.ArchiveName);
+      F.ToFN.Text := ExtractFileName(FArchiveName);
+      F.FromFN.Caption := ExtractFileName(FArchiveName);
       if F.ShowModal = mrOk then
       begin
         if CompareFileName(F.ToFN.Text, F.FromFN.Caption) <> 0 then
         begin
-          NewName := ExtractFilePath(ArcProcess.ArchiveName) + F.ToFN.Text;
-          if RenameFile(ArcProcess.ArchiveName, NewName) then
+          NewName := ExtractFilePath(FArchiveName) + F.ToFN.Text;
+          if RenameFile(FArchiveName, NewName) then
           begin
-            ArcProcess.ArchiveName := NewName;
-            Caption := cApplicationName + ' - ' + ExtractFileName(ArcProcess.ArchiveName);
+            FArchiveName := NewName;
+            Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
           end else
             MessageDlg(rseRenameArc, mtError, [mbOk], 0);
         end;
@@ -811,11 +840,11 @@ uses
 
   procedure TMainFrm.MMenuFileDeleteClick(Sender: TObject);
   begin
-    if ArcProcess.Enabled = False then
+    if FTerminated then
     begin
       if MessageDlg(rsConfirmDeleteArc, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
-        if DeleteFile(ArcProcess.ArchiveName) then
+        if DeleteFile(FArchiveName) then
           MMenuFileCloseClick(Sender)
         else
           MessageDlg(rseDeleteArc, mtError, [mbOk], 0);
@@ -921,29 +950,28 @@ uses
 
   procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
   begin
-    // Command line //
-    CommandLine.Clear;
-    ConfigFrm.AddOptions('');
-    CommandLine.Command := 'A';
-    CommandLine.Confirm := True;
-    CommandLine.Log := MMenuOptionsLogReport.Checked;
-    CommandLine.ArchiveName := FArchiveName;
-    // Command line execute //
-    if CommandLine.Run then
+    if FTerminated then
     begin
-      TickFrm := TTickFrm.Create(Self);
-      TickFrm.OnDestroy := Finalize;
-      TickFrm.Execute(ListView.Files);
+      // Command line //
+      FCommandLine.Clear;
+      FCommandLine.Command := 'A';
+      FCommandLine.Confirm := True;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+      FCommandLine.ArchiveName := FArchiveName;
+      ConfigFrm.AddOptions('', FCommandLine);
+      // Command line execute //
+      if FCommandLine.Run then Execute;
     end;
   end;
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   begin
-    if ListView.SelCount = 0 then Exit;
-
-    if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
+    if FTerminated and (ListView.SelCount <> 0)then
     begin
+      if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
+      begin
 
+      end;
     end;
   end;
 
@@ -1059,6 +1087,8 @@ uses
     end;
   end;
 
+
+
   procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);
   begin
     if Cursor <> crHourGlass then
@@ -1068,18 +1098,18 @@ uses
   end;
 
   procedure TMainFrm.MMenuActionsTestAllClick(Sender: TObject);
-  var
-    ArchiveName: string;
-    CommandLine: string;
   begin
-    if ArcProcess.Enabled = False then
+    if FTerminated then
     begin
-      // Archive name //
-      ArchiveName := ArcProcess.ArchiveName;
       // Command line //
-      CommandLine := 'beegui t -1+ -r+ "' + ArchiveName + '" *';
+      FCommandLine.Clear;
+      FCommandLine.Command := 'T';
+      FCommandLine.rOption := True;
+      FCommandLine.Log := True;
+      FCommandLine.ArchiveName := FArchiveName;
+      FCommandLine.FileMasks.Add('*');
       // Command line process //
-      ArcProcess.Start(ArchiveName, CommandLine, '');
+      if FCommandLine.Run then Execute;
     end;
   end;
 

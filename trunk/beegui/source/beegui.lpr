@@ -54,6 +54,7 @@ uses
 
 var
   TickFrm: TTickFrm;
+  CommandLine: TCustomCommandLine;
 
 begin
   {$I beegui.lrs}
@@ -81,14 +82,14 @@ begin
       end else
       begin
         Application.CreateForm(TTickFrm, TickFrm);
-        TickFrm.Execute(nil);
+        TickFrm.OnDestroy := nil;
+        TickFrm.Execute(CommandLine, nil);
         repeat
           Application.ProcessMessages;
           if CommandLine.Log  then Break;
           if TickFrm.CanShow  then Break;
           if TickFrm.CanClose then Break;
         until False;
-
         if TickFrm.CanClose = False then
           Application.Run
         else
