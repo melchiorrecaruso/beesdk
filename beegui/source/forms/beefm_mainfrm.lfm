@@ -1,10 +1,11 @@
 object MainFrm: TMainFrm
+  Left = 368
   Height = 503
-  Top = 716
-  Width = 957
+  Top = 149
+  Width = 541
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 484
-  ClientWidth = 957
+  ClientWidth = 541
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -12,6 +13,7 @@ object MainFrm: TMainFrm
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   LCLVersion = '0.9.27'
   object ListView: TArchiveListView
@@ -19,7 +21,7 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     Height = 361
     Top = 103
-    Width = 957
+    Width = 541
     FolderBox = FolderBox
     Align = alClient
     Columns = <    
@@ -92,33 +94,33 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Side = asrBottom
     Height = 20
     Top = 464
-    Width = 957
+    Width = 541
     Anchors = [akRight]
     Panels = <>
   end
   object ToolBar: TPanel
     Height = 103
-    Width = 957
+    Width = 541
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
     ClientHeight = 103
-    ClientWidth = 957
+    ClientWidth = 541
     TabOrder = 2
     object ToolBarBevel: TBevel
       Height = 2
       Top = 66
-      Width = 957
+      Width = 541
       Align = alTop
       Visible = False
     end
     object UpToolBar: TPanel
       AnchorSideRight.Side = asrBottom
       Height = 66
-      Width = 957
+      Width = 541
       Align = alTop
       ClientHeight = 66
-      ClientWidth = 957
+      ClientWidth = 541
       TabOrder = 0
       object BtnNew: TSpeedButton
         Left = 6
@@ -1841,7 +1843,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnConfig: TSpeedButton
-        Left = 547
+        Left = 539
         Height = 55
         Top = 6
         Width = 60
@@ -2056,7 +2058,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnHelp: TSpeedButton
-        Left = 612
+        Left = 541
         Height = 55
         Top = 6
         Width = 60
@@ -2271,7 +2273,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnExit: TSpeedButton
-        Left = 677
+        Left = 541
         Height = 55
         Top = 6
         Width = 60
@@ -2486,7 +2488,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BevelThird: TBevel
-        Left = 540
+        Left = 537
         Height = 55
         Top = 6
         Width = 2
@@ -2528,11 +2530,11 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Side = asrBottom
       Height = 35
       Top = 68
-      Width = 957
+      Width = 541
       Align = alTop
       AutoSize = True
       ClientHeight = 35
-      ClientWidth = 957
+      ClientWidth = 541
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideBottom.Side = asrBottom
@@ -2583,7 +2585,7 @@ object MainFrm: TMainFrm
         Left = 142
         Height = 22
         Top = 7
-        Width = 808
+        Width = 392
         Align = alRight
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 6
@@ -3134,16 +3136,10 @@ object MainFrm: TMainFrm
     left = 48
     top = 280
   end
-  object ArcProcess: TArcProcess
-    Enabled = False
-    Interval = 50
-    left = 80
-    top = 280
-  end
   object FileProcess: TFileProcess
     Enabled = False
     Interval = 250
-    left = 112
+    left = 80
     top = 280
   end
 end

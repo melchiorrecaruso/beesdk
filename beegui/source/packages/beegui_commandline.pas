@@ -68,9 +68,6 @@ type
 
   end;
 
-var
-  CommandLine: TCustomCommandLine;
-
 implementation
 
 uses

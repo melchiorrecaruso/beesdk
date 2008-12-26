@@ -134,12 +134,12 @@ type
     procedure OnKey;
   private
     { private declarations }
+    FCommandLine: TCustomCommandLine;
     FInterfaces: TInterfaces;
     FList: TArchiveList;
     FPassword: string;
     FApp: TBeeApp;
     FCanClose: boolean;
-    FCanShow: boolean;
     FElapsedTime: integer;
     FRemainingTime: integer;
   private
@@ -158,8 +158,8 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
+    procedure Execute(ACommandLine: TCustomCommandLine; AList: TArchiveList);
     constructor Create(AOwner: TComponent); override;
-    procedure Execute(AList: TArchiveList);
     destructor Destroy; override;
   end;
   
@@ -204,11 +204,11 @@ var
 
     FList := nil;
     FPassword := '';
+    FCommandLine := nil;
 
     FCanClose  := False;
     FElapsedTime   := 0;
     FRemainingTime := 0;
-
     {$IFDEF UNIX}
       Tick.Smooth := True;
     {$ENDIF}
@@ -217,7 +217,8 @@ var
   destructor TTickFrm.Destroy;
   begin
     FList := nil;
-    FInterfaces.Free;
+    FCommandLine := nil;
+    FInterfaces.Destroy;
     inherited Destroy;
   end;
 
@@ -264,10 +265,11 @@ var
     end;
   end;
 
-  procedure TTickFrm.Execute(AList: TArchiveList);
+  procedure TTickFrm.Execute(ACommandLine: TCustomCommandLine; AList: TArchiveList);
   begin
     FList := AList;
-    FApp := TBeeApp.Create(FInterfaces, CommandLine.Params);
+    FCommandLine := ACommandLine;
+    FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
   end;
@@ -374,11 +376,15 @@ var
     end else
       Caption := rsProcessPaused;
 
-    Application.Title := Caption;
     {$IFDEF MSWINDOWS}
       BtnPriority.Enabled := False;
     {$ENDIF}
     BtnPauseRun.Enabled := True;
+
+    if FList = nil then
+    begin
+      Application.Title := Caption;
+    end;
   end;
 
   // ------------------------------------------------------------------------ //
@@ -545,7 +551,7 @@ var
   
   procedure TTickFrm.OnFatalError;
   begin
-    CommandLine.Log := True;
+    FCommandLine.Log := True;
     with FInterfaces.OnFatalError do
     begin
       Report.Append(Data.Msg);
@@ -554,7 +560,7 @@ var
   
   procedure TTickFrm.OnError;
   begin
-    CommandLine.Log := True;
+    FCommandLine.Log := True;
     with FInterfaces.OnError do
     begin
       Report.Append(Data.Msg);
@@ -563,7 +569,7 @@ var
   
   procedure TTickFrm.OnWarning;
   begin
-    CommandLine.Log := True;
+    FCommandLine.Log := True;
     with FInterfaces.OnWarning do
     begin
       Report.Append(Data.Msg);
@@ -574,7 +580,7 @@ var
   begin
     with FInterfaces.OnDisplay do
     begin
-      if CommandLine.Log then
+      if FCommandLine.Log then
       begin
         Report.Append(Data.Msg);
       end;
@@ -624,7 +630,7 @@ var
       end;
     end;
 
-    if CommandLine.Log then
+    if FCommandLine.Log then
     begin
       with FInterfaces.OnList.Data do
       begin
@@ -644,7 +650,10 @@ var
   begin
     Tick.Position := FInterfaces.OnTick.Data.Percentage;
     Caption := Format(rsProcessStatus, [FInterfaces.OnTick.Data.Percentage]);
-    Application.Title := Caption;
+    if FList = nil then
+    begin
+     Application.Title := Caption;
+    end;
   end;
   
   procedure TTickFrm.OnKey;

@@ -9,6 +9,8 @@ object ConfigFrm: TConfigFrm
   ActiveControl = Tree
   AutoScroll = False
   Caption = 'Configuration'
+  ClientHeight = 403
+  ClientWidth = 561
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
