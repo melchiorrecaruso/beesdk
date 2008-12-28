@@ -25,7 +25,6 @@
       sOption.Checked := Storage.ReadBool('TCheckBox', 'sOption.Checked' ,sOption.Checked);
       kOption.Checked := Storage.ReadBool('TCheckBox', 'kOption.Checked' ,kOption.Checked);
       tOption.Checked := Storage.ReadBool('TCheckBox', 'tOption.Checked' ,tOption.Checked);
-      lOption.Checked := Storage.ReadBool('TCheckBox', 'lOption.Checked' ,lOption.Checked);
       cdAOption.Checked := Storage.ReadBool('TCheckBox', 'cdAOption.Checked' ,cdAOption.Checked);
 
       xCommand.Checked := Storage.ReadBool('TCheckBox', 'xCommand.Checked' ,xCommand.Checked);

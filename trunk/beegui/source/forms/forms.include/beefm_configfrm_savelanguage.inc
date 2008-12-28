@@ -47,7 +47,6 @@
         Storage.WriteString('TCheckBox', 'sOption.Caption',   sOption.Caption);
         Storage.WriteString('TCheckBox', 'kOption.Caption',   kOption.Caption);
         Storage.WriteString('TCheckBox', 'tOption.Caption',   tOption.Caption);
-        Storage.WriteString('TCheckBox', 'lOption.Caption',   lOption.Caption);
         Storage.WriteString('TCheckBox', 'cdAOption.Caption', cdAOption.Caption);
         Storage.WriteString('TCheckBox', 'xCommand.Caption',  xCommand.Caption);
         Storage.WriteString('TCheckBox', 'cdEOption.Caption', cdEOption.Caption);

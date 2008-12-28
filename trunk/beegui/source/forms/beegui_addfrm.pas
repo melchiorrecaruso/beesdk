@@ -76,7 +76,6 @@ type
     ufOption: TComboBox;
     ufOptionLabel: TLabel;
     yOptionLabel: TLabel;
-    lOption: TCheckBox;
     Pages: TPageControl;
     PageGeneral: TTabSheet;
     PageAdvanced: TTabSheet;

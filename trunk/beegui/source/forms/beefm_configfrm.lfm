@@ -1,7 +1,7 @@
 object ConfigFrm: TConfigFrm
-  Left = 320
+  Left = 252
   Height = 403
-  Top = 716
+  Top = 197
   Width = 561
   HorzScrollBar.Page = 560
   HorzScrollBar.Range = 156
@@ -179,32 +179,8 @@ object ConfigFrm: TConfigFrm
         ParentShowHint = False
         TabOrder = 3
       end
-      object lOption: TCheckBox
-        AnchorSideLeft.Control = tOption
-        AnchorSideTop.Control = tOption
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = tOption
-        AnchorSideRight.Side = asrBottom
-        Left = 12
-        Height = 19
-        Top = 106
-        Width = 349
-        Anchors = [akTop, akLeft, akRight]
-        BorderSpacing.Top = 6
-        BorderSpacing.Bottom = 6
-        Caption = 'List archive after process (-l Option)'
-        Checked = True
-        Enabled = False
-        ParentShowHint = False
-        State = cbChecked
-        TabOrder = 4
-        Visible = False
-      end
       object cdAOption: TCheckBox
-        AnchorSideLeft.Control = lOption
-        AnchorSideTop.Control = lOption
         AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = lOption
         AnchorSideRight.Side = asrBottom
         Left = 12
         Height = 19
@@ -217,7 +193,7 @@ object ConfigFrm: TConfigFrm
         Checked = True
         ParentShowHint = False
         State = cbChecked
-        TabOrder = 5
+        TabOrder = 4
       end
     end
     object mOption: TComboBox

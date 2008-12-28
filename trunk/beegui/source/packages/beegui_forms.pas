@@ -92,7 +92,6 @@ uses
         ExpandFileName(CommandLine.xOption.Strings[i])));
 
     F.tOption.Checked := CommandLine.tOption;
-    F.lOption.Checked := CommandLine.lOption;
 
     if Length(CommandLine.yOption) > 0 then
       F.yOption.Text := CommandLine.yOption;
@@ -156,7 +155,6 @@ uses
           CommandLine.xOption.Add(F.FilesMgr.Items[I]);
 
       CommandLine.tOption := F.tOption.Checked;
-      CommandLine.lOption := F.lOption.Checked;
       CommandLine.yOption := F.yOption.Text;
       CommandLine.kOption := F.kOption.Checked;
 

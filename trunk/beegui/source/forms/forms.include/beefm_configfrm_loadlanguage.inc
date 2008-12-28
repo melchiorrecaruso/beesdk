@@ -47,7 +47,6 @@
         sOption.Caption := Storage.ReadString('TCheckBox', 'sOption.Caption',   sOption.Caption);
         kOption.Caption := Storage.ReadString('TCheckBox', 'kOption.Caption',   kOption.Caption);
         tOption.Caption := Storage.ReadString('TCheckBox', 'tOption.Caption',   tOption.Caption);
-        lOption.Caption := Storage.ReadString('TCheckBox', 'lOption.Caption',   lOption.Caption);
         cdAOption.Caption := Storage.ReadString('TCheckBox', 'cdAOption.Caption', cdAOption.Caption);
         xCommand.Caption := Storage.ReadString('TCheckBox', 'xCommand.Caption',  xCommand.Caption);
         cdEOption.Caption := Storage.ReadString('TCheckBox', 'cdEOption.Caption', cdEOption.Caption);

@@ -1,7 +1,7 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TTickFrm','FORMDATA',[
-  'TPF0'#8'TTickFrm'#7'TickFrm'#4'Left'#3#133#1#6'Height'#3#210#0#3'Top'#3'J'#1
+  'TPF0'#8'TTickFrm'#7'TickFrm'#4'Left'#3#228#1#6'Height'#3#210#0#3'Top'#3#233#0
   +#5'Width'#3#174#1#13'ActiveControl'#7#8'Notebook'#7'Caption'#6#16'0% Process'
   +'ing...'#12'ClientHeight'#3#210#0#11'ClientWidth'#3#174#1#21'Constraints.Min'
   +'Height'#3#210#0#20'Constraints.MinWidth'#3#174#1#11'Font.Height'#2#245#9'Fo'

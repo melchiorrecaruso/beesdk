@@ -44,7 +44,6 @@
         sOption.Caption := Storage.ReadString('TCheckBox', 'sOption.Caption', sOption.Caption);
         tOption.Caption := Storage.ReadString('TCheckBox', 'tOption.Caption', tOption.Caption);
         kOption.Caption := Storage.ReadString('TCheckBox', 'kOption.Caption', kOption.Caption);
-        lOption.Caption := Storage.ReadString('TCheckBox', 'lOption.Caption', lOption.Caption);
 
         eOptionLabel.Caption := Storage.ReadString('TLabel', 'eOption.Caption', eOptionLabel.Caption);
 

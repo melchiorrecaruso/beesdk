@@ -67,7 +67,6 @@ type
     sOption: TCheckBox;
     tOption: TCheckBox;
     kOption: TCheckBox;
-    lOption: TCheckBox;
     cdAOption: TCheckBox;
     xCommand: TCheckBox;
     cdEOption: TCheckBox;
@@ -148,7 +147,6 @@ uses
     ACommandLine.sOption := sOption.Checked;
     ACommandLine.tOption := tOption.Checked;
     ACommandLine.kOption := kOption.Checked;
-    ACommandLine.lOption := lOption.Checked;
 
     if cdAOption.Checked then
     begin

@@ -283,9 +283,12 @@ type
     procedure BtnUpClick(Sender: TObject);
   private
     FTerminated: boolean;
+    FArchiveList: TList;
     FArchiveName: string;
+    FArchiveTime: integer;
     FCommandLine: TCustomCommandLine;
     procedure Terminate(Sender: TObject);
+    procedure OpenArchive(Sender: TObject);
     procedure Execute;
   private
     { private declarations }
@@ -349,13 +352,15 @@ uses
     DownToolBar.BorderSpacing.Bottom := 2;
     ListView.BorderSpacing.Top := 4;
     {$ENDIF}
-    FTerminated := True;
+    FTerminated  := True;
+    FArchiveList := TList.Create;
     FCommandLine := TCustomCommandLine.Create(False);
   end;
 
   procedure TMainFrm.FormDestroy(Sender: TObject);
   begin
-    Fterminated := True;
+    FTerminated := True;
+    FArchiveList.Destroy;
     FCommandLine.Destroy;
   end;
 
@@ -643,38 +648,81 @@ uses
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
+  procedure TMainFrm.Execute;
+  var
+    F: TTickFrm;
+  begin
+    FTerminated := False;
+    FArchiveTime := FileAge(FArchiveName);
+
+    F := TTickFrm.Create(nil);
+    F.OnDestroy := OpenArchive;
+    F.Execute(FCommandLine, FArchiveList);
+    repeat
+      Application.ProcessMessages;
+      if FCommandLine.Log then Break;
+      if F.CanShow  then Break;
+      if F.CanClose then Break;
+    until False;
+
+    if F.CanClose = False then
+      F.ShowModal
+    else
+      if FCommandLine.Log then
+        F.ShowModal;
+  end;
+
+  procedure TMainFrm.OpenArchive(Sender: TObject);
+  var
+    F: TTickFrm;
+  begin
+    if FileAge(FArchiveName) > FArchiveTime then
+    begin
+      ShowMessage('Caricamento');
+      // Command line //
+      FCommandLine.Clear;
+      FCommandLine.Command := 'L';
+      FCommandLine.rOption := True;
+      FCommandLine.Log := False;
+      FCommandLine.ArchiveName := FArchiveName;
+      FCommandLine.FileMasks.Add('*');
+      // Command line execute //
+      if FCommandLine.Run then
+      begin
+        F := TTickFrm.Create(nil);
+        F.OnDestroy := Terminate;
+        F.Execute(FCommandLine, FArchiveList);
+        repeat
+          Application.ProcessMessages;
+          if FCommandLine.Log then Break;
+          if F.CanShow  then Break;
+          if F.CanClose then Break;
+        until False;
+
+        if F.CanClose = False then
+          F.ShowModal
+        else
+          if FCommandLine.Log then
+            F.ShowModal;
+      end;
+    end else
+    begin
+      ShowMessage('Non caricare');
+      FTerminated := True;
+    end;
+  end;
+
   procedure TMainFrm.Terminate(Sender: TObject);
   var
     LastFolder: string;
   begin
     LastFolder := ListView.Folder;
-    if ListView.Open(FArchiveName) then
+    if ListView.Open(FArchiveName, FArchiveList) then
       UpdateButtons(True)
     else
       UpdateButtons(False);
     ListView.Folder := LastFolder;
     FTerminated := True;
-  end;
-
-  procedure TMainFrm.Execute;
-  var
-    TickFrm: TTickFrm;
-  begin
-    FTerminated := False;
-    TickFrm := TTickFrm.Create(Self);
-    TickFrm.OnDestroy := Terminate;
-    TickFrm.Execute(FCommandLine, ListView.Files);
-    repeat
-      Application.ProcessMessages;
-      if FCommandLine.Log  then Break;
-      if TickFrm.CanShow  then Break;
-      if TickFrm.CanClose then Break;
-    until False;
-    if TickFrm.CanClose = False then
-      TickFrm.ShowModal
-    else
-      if FCommandLine.Log then
-        TickFrm.ShowModal;
   end;
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
@@ -706,6 +754,8 @@ uses
   end;
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
+  var
+    F: TTickFrm;
   begin
     if FTerminated then
     begin
@@ -715,16 +765,10 @@ uses
         MMenuFileCloseClick(Sender);
         // Archive name //
         FArchiveName := OpenDialog.FileName;
+        FArchiveTime := -1;
         Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
         // Command line //
-        FCommandLine.Clear;
-        FCommandLine.Command := 'L';
-        FCommandLine.rOption := True;
-        FCommandLine.Log := MMenuOptionsLogReport.Checked;
-        FCommandLine.ArchiveName := FArchiveName;
-        FCommandLine.FileMasks.Add('*');
-        // Command line execute //
-        if FCommandLine.Run then Execute;
+        OpenArchive(nil);
       end;
     end;
   end;

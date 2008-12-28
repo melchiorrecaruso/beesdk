@@ -145,7 +145,7 @@ type
     destructor Destroy; override;
     procedure Initialize;
     // ---
-    function Open(const AFileName: string): boolean;
+    function Open(const AArchiveName: string; AArchiveList: TList): boolean;
     procedure CloseArchive;
     function Up: boolean;
     // ---
@@ -672,18 +672,19 @@ uses
     end;
   end;
   
-  function TCustomArchiveListView.Open(const AFileName: string): boolean;
+  function TCustomArchiveListView.Open(const AArchiveName: string; AArchiveList: TList): boolean;
   var
-    I, J, K: integer;
+    J, K: integer;
     Node: TArchiveItem;
   begin
-    FFileName := AFileName;
+    FFileName := AArchiveName;
     FFolderBoxSign := ExtractFileName(FFileName) + PathDelim;
 
+    FFiles.Clear;
     FDetails.Clear;
-    for I := 0 to FFiles.Count -1 do
+    while AArchiveList.Count > 0 do
     begin
-      Node := TArchiveItem(FFiles.Items[I]);
+      Node := TArchiveItem(AArchiveList.Items[0]);
 
       if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
         J := TIconList(LargeImages).FileIcon(Node.FileName, Node.FileAttr)
@@ -703,7 +704,9 @@ uses
       if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
         Node.FileType := TIconList(SmallImages).FileType(Node.FileName, Node.FileAttr);
 
+      FFiles.Add(Node);
       FDetails.Update(Node);
+      AArchiveList.Delete(0);
     end;
     UpdateFolders;
     UpdateFolder;
