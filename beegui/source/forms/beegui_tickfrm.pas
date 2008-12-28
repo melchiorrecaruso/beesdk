@@ -136,12 +136,13 @@ type
     { private declarations }
     FCommandLine: TCustomCommandLine;
     FInterfaces: TInterfaces;
-    FList: TArchiveList;
+    FArchiveList: TList;
     FPassword: string;
     FApp: TBeeApp;
     FCanClose: boolean;
     FElapsedTime: integer;
     FRemainingTime: integer;
+    FOnlyAForm: boolean;
   private
     { private declarations }
     function GetCanClose: boolean;
@@ -150,6 +151,7 @@ type
     { public declarations }
     property CanClose: boolean read GetCanClose;
     property CanShow: boolean read GetCanShow;
+    property OnlyAForm: boolean read FOnlyAForm write FOnlyAForm;
   public
     { public declarations }
     procedure SaveProperty;
@@ -158,7 +160,7 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
-    procedure Execute(ACommandLine: TCustomCommandLine; AList: TArchiveList);
+    procedure Execute(ACommandLine: TCustomCommandLine; AArchiveList: TList);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
@@ -202,13 +204,16 @@ var
     FInterfaces.OnTick.Method := OnStart;
     FInterfaces.OnKey.Method := OnKey;
 
-    FList := nil;
-    FPassword := '';
     FCommandLine := nil;
+    FArchiveList := nil;
+    FPassword := '';
 
-    FCanClose  := False;
-    FElapsedTime   := 0;
+    FOnlyAForm := False;
+    FCanClose := False;
+
+    FElapsedTime := 0;
     FRemainingTime := 0;
+
     {$IFDEF UNIX}
       Tick.Smooth := True;
     {$ENDIF}
@@ -216,8 +221,8 @@ var
 
   destructor TTickFrm.Destroy;
   begin
-    FList := nil;
     FCommandLine := nil;
+    FArchiveList := nil;
     FInterfaces.Destroy;
     inherited Destroy;
   end;
@@ -265,10 +270,10 @@ var
     end;
   end;
 
-  procedure TTickFrm.Execute(ACommandLine: TCustomCommandLine; AList: TArchiveList);
+  procedure TTickFrm.Execute(ACommandLine: TCustomCommandLine; AArchiveList: TList);
   begin
-    FList := AList;
     FCommandLine := ACommandLine;
+    FArchiveList := AArchiveList;
     FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
@@ -381,7 +386,7 @@ var
     {$ENDIF}
     BtnPauseRun.Enabled := True;
 
-    if FList = nil then
+    if FOnlyAForm then
     begin
       Application.Title := Caption;
     end;
@@ -608,7 +613,7 @@ var
   var
     Node: TArchiveItem;
   begin
-    if Assigned(FList) then
+    if Assigned(FArchiveList) then
     begin
       Node := TArchiveItem.Create;
       try
@@ -626,7 +631,7 @@ var
         Node.FilePassword := FInterfaces.OnList.Data.FilePassword;
         Node.FilePosition := FInterfaces.OnList.Data.FilePosition;
       finally
-        FList.Add(Node);
+        FArchiveList.Add(Node);
       end;
     end;
 
@@ -650,9 +655,9 @@ var
   begin
     Tick.Position := FInterfaces.OnTick.Data.Percentage;
     Caption := Format(rsProcessStatus, [FInterfaces.OnTick.Data.Percentage]);
-    if FList = nil then
+    if FOnlyAForm then
     begin
-     Application.Title := Caption;
+      Application.Title := Caption;
     end;
   end;
   

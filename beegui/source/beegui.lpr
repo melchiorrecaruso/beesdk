@@ -83,6 +83,7 @@ begin
       begin
         Application.CreateForm(TTickFrm, TickFrm);
         TickFrm.OnDestroy := nil;
+        TickFrm.OnlyAForm := True;
         TickFrm.Execute(CommandLine, nil);
         repeat
           Application.ProcessMessages;

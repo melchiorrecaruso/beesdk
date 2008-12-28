@@ -25,7 +25,6 @@
       Storage.WriteBool('TCheckBox', 'sOption.Checked' ,sOption.Checked);
       Storage.WriteBool('TCheckBox', 'kOption.Checked' ,kOption.Checked);
       Storage.WriteBool('TCheckBox', 'tOption.Checked' ,tOption.Checked);
-      Storage.WriteBool('TCheckBox', 'lOption.Checked' ,lOption.Checked);
       Storage.WriteBool('TCheckBox', 'cdAOption.Checked' ,cdAOption.Checked);
 
       Storage.WriteBool('TCheckBox', 'xCommand.Checked' ,xCommand.Checked);
