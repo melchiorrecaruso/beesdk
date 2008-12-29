@@ -257,7 +257,6 @@ type
     // ---
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormShow(Sender: TObject);
     // ---
 
@@ -282,14 +281,12 @@ type
     procedure BMenuClick(Sender: TObject);
     procedure BtnUpClick(Sender: TObject);
   private
-    FTerminated: boolean;
-    FArchiveList: TList;
+    FWorking: boolean;
     FArchiveName: string;
-    FArchiveTime: integer;
     FCommandLine: TCustomCommandLine;
-    procedure Terminate(Sender: TObject);
-    procedure OpenArchive(Sender: TObject);
-    procedure Execute;
+    procedure SetArchiveName(const aArchiveName: string);
+    procedure OpenArchive(const aArchiveName: string);
+    procedure Execute(const aArchiveName: string);
   private
     { private declarations }
     procedure UpdateStyle;
@@ -352,48 +349,26 @@ uses
     DownToolBar.BorderSpacing.Bottom := 2;
     ListView.BorderSpacing.Top := 4;
     {$ENDIF}
-    FTerminated  := True;
-    FArchiveList := TList.Create;
+    FWorking := False;
     FCommandLine := TCustomCommandLine.Create(False);
   end;
 
   procedure TMainFrm.FormDestroy(Sender: TObject);
   begin
-    FTerminated := True;
-    FArchiveList.Destroy;
     FCommandLine.Destroy;
-  end;
-
-
-  procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-  begin
-    if Cursor = crHourGlass then
-    begin
-      CanClose := MessageDlg(rsConfirmAbortProcess , mtWarning, [mbYes, mbNo], 0) = mrYes;
-    end else
-    begin
-      CanClose := True;
-    end;
+    FWorking := False;
   end;
   
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
   begin
-    Action := caFree;
-    if Cursor = crHourGlass then
-    begin
-
-    end else
-    begin
-      MMenuFileCloseClick(Sender);
-    end;
-    {$IFDEF DEBUG}
-      SaveLanguage;
-    {$ENDIF}
+    MMenuFileCloseClick(Sender);
     if MMenuOptionsSaveOnExit.Checked then
     begin
       SaveProperty;
-      SaveProperty;
     end;
+    {$IFDEF DEBUG}
+    SaveLanguage;
+    {$ENDIF}
   end;
   
   procedure TMainFrm.FormShow(Sender: TObject);
@@ -484,28 +459,6 @@ uses
     end;
   end;
 
-
-
-
-
-
-
-  // ---
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-  
   procedure TMainFrm.FolderBoxSelect(Sender: TObject);
   begin
     ListView.Folder := FolderBox.Text;
@@ -648,138 +601,134 @@ uses
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
-  procedure TMainFrm.Execute;
+  procedure TMainFrm.Execute(const aArchiveName: string);
   var
-    F: TTickFrm;
+    FTime: integer;
   begin
-    FTerminated := False;
-    FArchiveTime := FileAge(FArchiveName);
+    FWorking := True;
+    FTime := FileAge(aArchiveName);
 
-    F := TTickFrm.Create(nil);
-    F.OnDestroy := OpenArchive;
-    F.Execute(FCommandLine, FArchiveList);
+    TickFrm := TTickFrm.Create(nil);
+    TickFrm.Execute(FCommandLine, nil);
     repeat
       Application.ProcessMessages;
-      if FCommandLine.Log then Break;
-      if F.CanShow  then Break;
-      if F.CanClose then Break;
-    until False;
-
-    if F.CanClose = False then
-      F.ShowModal
+      if TickFrm.CanClose then Break;
+      if TickFrm.CanShow  then Break;
+    until FCommandLine.Log;
+    if FCommandLine.Log then
+      TickFrm.ShowModal
     else
-      if FCommandLine.Log then
-        F.ShowModal;
-  end;
+      if TickFrm.CanClose = False then
+        TickFrm.ShowModal;
+    FreeAndNil(TickFrm);
+    FWorking := False;
 
-  procedure TMainFrm.OpenArchive(Sender: TObject);
-  var
-    F: TTickFrm;
-  begin
-    if FileAge(FArchiveName) > FArchiveTime then
+    if FileAge(aArchiveName) > FTime then
     begin
-      ShowMessage('Caricamento');
-      // Command line //
-      FCommandLine.Clear;
-      FCommandLine.Command := 'L';
-      FCommandLine.rOption := True;
-      FCommandLine.Log := False;
-      FCommandLine.ArchiveName := FArchiveName;
-      FCommandLine.FileMasks.Add('*');
-      // Command line execute //
-      if FCommandLine.Run then
-      begin
-        F := TTickFrm.Create(nil);
-        F.OnDestroy := Terminate;
-        F.Execute(FCommandLine, FArchiveList);
-        repeat
-          Application.ProcessMessages;
-          if FCommandLine.Log then Break;
-          if F.CanShow  then Break;
-          if F.CanClose then Break;
-        until False;
-
-        if F.CanClose = False then
-          F.ShowModal
-        else
-          if FCommandLine.Log then
-            F.ShowModal;
-      end;
-    end else
-    begin
-      ShowMessage('Non caricare');
-      FTerminated := True;
+      OpenArchive(aArchiveName);
     end;
   end;
 
-  procedure TMainFrm.Terminate(Sender: TObject);
+  procedure TMainFrm.OpenArchive(const aArchiveName: string);
   var
-    LastFolder: string;
+    FList: TList;
+    FFolder: string;
   begin
-    LastFolder := ListView.Folder;
-    if ListView.Open(FArchiveName, FArchiveList) then
-      UpdateButtons(True)
-    else
-      UpdateButtons(False);
-    ListView.Folder := LastFolder;
-    FTerminated := True;
+    FWorking := True;
+    FCommandLine.Clear;
+    FCommandLine.Command := 'L';
+    FCommandLine.rOption := True;
+    FCommandLine.Log := False;
+    FCommandLine.ArchiveName := aArchiveName;
+    FCommandLine.FileMasks.Add('*');
+
+    if FCommandLine.Run then
+    begin
+      FList := TList.Create;
+      TickFrm := TTickFrm.Create(nil);
+      TickFrm.Execute(FCommandLine, FList);
+      repeat
+        Application.ProcessMessages;
+        if TickFrm.CanClose then Break;
+        if TickFrm.CanShow  then Break;
+      until FCommandLine.Log;
+      if FCommandLine.Log then
+        TickFrm.ShowModal
+      else
+        if TickFrm.CanClose = False then
+          TickFrm.ShowModal;
+      FreeAndNil(TickFrm);
+
+      if ExitCode < 2 then
+      begin
+        SetArchiveName(aArchiveName);
+        FFolder := ListView.Folder;
+        if ListView.Open(FArchiveName, FList) then
+          UpdateButtons(True)
+        else
+          UpdateButtons(False);
+        ListView.Folder := FFolder;
+      end;
+      FList.Free;
+    end;
+    FWorking := False;
+  end;
+
+  procedure TMainFrm.SetArchiveName(const aArchiveName: string);
+  begin
+    FArchiveName := aArchiveName;
+    Caption := GetApplicationCaption(FArchiveName);
   end;
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
   begin
-    if FTerminated then
+    if FWorking = False then
     begin
       SaveDialog.FileName := '';
       if SaveDialog.Execute then
       begin
         MMenuFileCloseClick(Sender);
-        // Archive name //
-        FArchiveName := SaveDialog.FileName;
-        case SaveDialog.FilterIndex of
-          1: FArchiveName := ChangeFileExt(FArchiveName, '.bee');
-          2: FArchiveName := ChangeFileExt(FArchiveName, '.exe');
+        with SaveDialog do
+        begin
+          case FilterIndex of
+            1: FileName := ChangeFileExt(FileName, '.bee');
+            2: FileName := ChangeFileExt(FileName, '.exe');
+          end;
         end;
-        Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
-        // Command line //
         FCommandLine.Clear;
         FCommandLine.Command := 'A';
         FCommandLine.Confirm := True;
         FCommandLine.Log := MMenuOptionsLogReport.Checked;
-        FCommandLine.ArchiveName := FArchiveName;
+        FCommandLine.ArchiveName := SaveDialog.FileName;
         ConfigFrm.AddOptions('', FCommandLine);
-        // Command line execute //
-        if FCommandLine.Run then Execute;
+        if FCommandLine.Run then
+        begin
+          Execute(SaveDialog.FileName);
+        end;
       end;
     end;
   end;
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
-  var
-    F: TTickFrm;
   begin
-    if FTerminated then
+    if FWorking = False then
     begin
       OpenDialog.FileName := '';
       if OpenDialog.Execute then
       begin
         MMenuFileCloseClick(Sender);
-        // Archive name //
-        FArchiveName := OpenDialog.FileName;
-        FArchiveTime := -1;
-        Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
-        // Command line //
-        OpenArchive(nil);
+        OpenArchive(OpenDialog.FileName);
       end;
     end;
   end;
 
   procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
   begin
-    UpdateButtons(False);
     UpdateCursor(crDefault);
+    UpdateButtons(False);
 
-    Caption := cApplicationTitle;
     ListView.CloseArchive;
+    SetArchiveName('');
   end;
 
   procedure TMainFrm.MMenuFilePropertyClick(Sender: TObject);
@@ -822,14 +771,14 @@ uses
   var
     NewName: string;
   begin
-    if FTerminated then
+    if FWorking = False then
     begin
       NewName := '';
       if SelectDirectory(rsMoveArcTo, '', NewName) then
       begin
         NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(FArchiveName);
         if RenameFile(FArchiveName, NewName) then
-          FArchiveName := NewName
+          SetArchiveName(NewName)
         else
           MessageDlg(rseMoveArcTo, mtError, [mbOk], 0);
       end;
@@ -840,14 +789,14 @@ uses
   var
     NewName: string;
   begin
-    if FTerminated then
+    if FWorking = False then
     begin
       NewName := '';
       if SelectDirectory(rsCopyArcTo, '', NewName) then
       begin
         NewName := IncludeTrailingBackslash(NewName) + ExtractFileName(FArchiveName);
         if CopyFile(FArchiveName, NewName) then
-          FArchiveName := NewName
+          SetArchiveName(NewName)
         else
           MessageDlg(rseCopyArcTo, mtError, [mbOk], 0);
       end;
@@ -859,7 +808,7 @@ uses
     NewName: string;
     F: TRenameFrm;
   begin
-    if FTerminated then
+    if FWorking = False then
     begin
       F := TRenameFrm.Create(Self);
       F.Caption := rsRenameArc;
@@ -871,10 +820,8 @@ uses
         begin
           NewName := ExtractFilePath(FArchiveName) + F.ToFN.Text;
           if RenameFile(FArchiveName, NewName) then
-          begin
-            FArchiveName := NewName;
-            Caption := cApplicationName + ' - ' + ExtractFileName(FArchiveName);
-          end else
+            SetArchiveName(NewName)
+          else
             MessageDlg(rseRenameArc, mtError, [mbOk], 0);
         end;
       end;
@@ -884,7 +831,7 @@ uses
 
   procedure TMainFrm.MMenuFileDeleteClick(Sender: TObject);
   begin
-    if FTerminated then
+    if FWorking = False then
     begin
       if MessageDlg(rsConfirmDeleteArc, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
@@ -994,23 +941,24 @@ uses
 
   procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
   begin
-    if FTerminated then
+    if FWorking = False then
     begin
-      // Command line //
       FCommandLine.Clear;
       FCommandLine.Command := 'A';
       FCommandLine.Confirm := True;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       FCommandLine.ArchiveName := FArchiveName;
       ConfigFrm.AddOptions('', FCommandLine);
-      // Command line execute //
-      if FCommandLine.Run then Execute;
+      if FCommandLine.Run then
+      begin
+        Execute(FArchiveName);
+      end;
     end;
   end;
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   begin
-    if FTerminated and (ListView.SelCount <> 0)then
+    if (FWorking = False) and (ListView.SelCount <> 0)then
     begin
       if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
@@ -1143,17 +1091,18 @@ uses
 
   procedure TMainFrm.MMenuActionsTestAllClick(Sender: TObject);
   begin
-    if FTerminated then
+    if FWorking = False then
     begin
-      // Command line //
       FCommandLine.Clear;
       FCommandLine.Command := 'T';
       FCommandLine.rOption := True;
       FCommandLine.Log := True;
       FCommandLine.ArchiveName := FArchiveName;
       FCommandLine.FileMasks.Add('*');
-      // Command line process //
-      if FCommandLine.Run then Execute;
+      if FCommandLine.Run then
+      begin
+        Execute(FArchiveName);
+      end;
     end;
   end;
 

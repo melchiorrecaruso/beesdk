@@ -26,6 +26,9 @@ unit BeeGui_Consts;
 {$I compiler.inc}
 
 interface
+
+uses
+  SysUtils;
   
 const
   cApplicationName    = 'BeeGui';
@@ -37,8 +40,18 @@ const
   cApplicationHelpFile       = 'help.htm';
   cApplicationDocsFolder     = 'docs';
   cApplicationLanguageFolder = 'language';
-  
+
+  function GetApplicationCaption(const aArchiveName: string): string;
+
 implementation
+
+  function GetApplicationCaption(const aArchiveName: string): string;
+  begin
+    if aArchiveName = '' then
+      Result := cApplicationCaption
+    else
+      Result := cApplicationCaption + ' - ' + ExtractFileName(aArchiveName);
+  end;
 
 end.
 
