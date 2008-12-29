@@ -53,7 +53,6 @@ uses
   BeeFM_ConfigFrm;
 
 var
-  TickFrm: TTickFrm;
   CommandLine: TCustomCommandLine;
 
 begin
@@ -82,9 +81,8 @@ begin
       end else
       begin
         Application.CreateForm(TTickFrm, TickFrm);
-        TickFrm.OnDestroy := nil;
-        TickFrm.OnlyAForm := True;
         TickFrm.Execute(CommandLine, nil);
+        TickFrm.OnlyAForm := True;
         repeat
           Application.ProcessMessages;
           if CommandLine.Log  then Break;
@@ -96,9 +94,10 @@ begin
         else
           if CommandLine.Log then
             Application.Run;
+        FreeAndNil(TickFrm);
       end;
     end;
   end;
-  CommandLine.Free;
+  FreeAndNil(CommandLine);;
 end.
 

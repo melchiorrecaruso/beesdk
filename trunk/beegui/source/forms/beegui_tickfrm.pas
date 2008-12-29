@@ -145,12 +145,12 @@ type
     FOnlyAForm: boolean;
   private
     { private declarations }
-    function GetCanClose: boolean;
     function GetCanShow: boolean;
+    function GetCanClose: boolean;
   public
     { public declarations }
-    property CanClose: boolean read GetCanClose;
     property CanShow: boolean read GetCanShow;
+    property CanClose: boolean read GetCanClose;
     property OnlyAForm: boolean read FOnlyAForm write FOnlyAForm;
   public
     { public declarations }
@@ -164,6 +164,9 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
+
+var
+  TickFrm: TTickFrm;
   
 implementation
 
@@ -247,7 +250,6 @@ var
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
-    CloseAction := caFree;
     {$IFDEF DEBUG}
       SaveLanguage;
     {$ENDIF}
@@ -381,15 +383,15 @@ var
     end else
       Caption := rsProcessPaused;
 
-    {$IFDEF MSWINDOWS}
-      BtnPriority.Enabled := False;
-    {$ENDIF}
-    BtnPauseRun.Enabled := True;
-
     if FOnlyAForm then
     begin
       Application.Title := Caption;
     end;
+
+    {$IFDEF MSWINDOWS}
+      BtnPriority.Enabled := False;
+    {$ENDIF}
+    BtnPauseRun.Enabled := True;
   end;
 
   // ------------------------------------------------------------------------ //
@@ -481,6 +483,7 @@ var
   begin
     if FInterfaces.Terminated = True then
     begin
+      FCanClose := True;
       Timer.Enabled := False;
 
       BtnPriority.Enabled := False;
