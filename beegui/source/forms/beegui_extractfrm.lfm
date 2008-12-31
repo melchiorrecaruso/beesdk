@@ -13,14 +13,14 @@ object ExtractFrm: TExtractFrm
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '0.9.25'
+  LCLVersion = '0.9.27'
   object FolderLabel: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 20
+    Height = 14
     Top = 6
     Width = 548
     Anchors = [akTop, akLeft, akRight]
@@ -39,8 +39,8 @@ object ExtractFrm: TExtractFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Folders
     Left = 6
-    Height = 20
-    Top = 56
+    Height = 14
+    Top = 50
     Width = 82
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
@@ -57,23 +57,23 @@ object ExtractFrm: TExtractFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 6
-    Height = 104
-    Top = 110
-    Width = 251
+    Height = 102
+    Top = 93
+    Width = 254
     AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Options'
-    ClientHeight = 88
-    ClientWidth = 247
+    ClientHeight = 84
+    ClientWidth = 250
     ParentShowHint = False
     TabOrder = 2
     object xCommand: TCheckBox
       AnchorSideLeft.Control = Options
       AnchorSideTop.Control = Options
       Left = 6
-      Height = 21
+      Height = 19
       Top = 6
-      Width = 235
+      Width = 238
       BorderSpacing.Around = 6
       Caption = 'Extract and Recreate the relative pathname'
       Checked = True
@@ -86,9 +86,9 @@ object ExtractFrm: TExtractFrm
       AnchorSideTop.Control = xCommand
       AnchorSideTop.Side = asrBottom
       Left = 6
-      Height = 21
-      Top = 33
-      Width = 228
+      Height = 19
+      Top = 31
+      Width = 231
       BorderSpacing.Around = 6
       Caption = 'Use Current Archive Directory (-cd Option)'
       OnChange = cdOptionCheckChange
@@ -104,8 +104,8 @@ object ExtractFrm: TExtractFrm
       AnchorSideBottom.Side = asrBottom
       Left = 26
       Height = 22
-      Top = 60
-      Width = 208
+      Top = 56
+      Width = 211
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Left = 20
@@ -122,8 +122,8 @@ object ExtractFrm: TExtractFrm
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
     Left = 398
-    Height = 32
-    Top = 386
+    Height = 26
+    Top = 392
     Width = 70
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -144,8 +144,8 @@ object ExtractFrm: TExtractFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 474
-    Height = 32
-    Top = 386
+    Height = 26
+    Top = 392
     Width = 80
     Anchors = [akRight, akBottom]
     AutoSize = True
@@ -167,7 +167,7 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Side = asrBottom
     Left = 6
     Height = 22
-    Top = 28
+    Top = 22
     Width = 548
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
@@ -183,20 +183,19 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Options
     AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 26
-    Top = 78
-    Width = 251
+    Height = 21
+    Top = 66
+    Width = 254
     Anchors = [akTop, akLeft, akRight]
-    AutoCompleteText = [cbactEndOfLineComplete, cbactSearchAscending]
     BorderSpacing.Left = 6
     BorderSpacing.Bottom = 6
+    ItemHeight = 13
     ItemIndex = 2
     Items.Strings = (
       'Skip pre-existing files'
       'Overwrite pre-existing files'
       'Query if Overwrite pre-existing files'
     )
-    MaxLength = 0
     ParentShowHint = False
     Style = csDropDownList
     TabOrder = 1
@@ -210,10 +209,10 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
-    Left = 263
-    Height = 324
-    Top = 56
-    Width = 291
+    Left = 266
+    Height = 336
+    Top = 50
+    Width = 288
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6

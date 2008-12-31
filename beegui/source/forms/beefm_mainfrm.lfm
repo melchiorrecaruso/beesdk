@@ -1,11 +1,11 @@
 object MainFrm: TMainFrm
-  Left = 368
+  Left = 177
   Height = 503
-  Top = 149
-  Width = 541
+  Top = 148
+  Width = 769
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 484
-  ClientWidth = 541
+  ClientWidth = 769
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -19,7 +19,7 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     Height = 361
     Top = 103
-    Width = 541
+    Width = 769
     FolderBox = FolderBox
     Align = alClient
     Columns = <    
@@ -92,33 +92,33 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Side = asrBottom
     Height = 20
     Top = 464
-    Width = 541
+    Width = 769
     Anchors = [akRight]
     Panels = <>
   end
   object ToolBar: TPanel
     Height = 103
-    Width = 541
+    Width = 769
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
     ClientHeight = 103
-    ClientWidth = 541
+    ClientWidth = 769
     TabOrder = 2
     object ToolBarBevel: TBevel
       Height = 2
       Top = 66
-      Width = 541
+      Width = 769
       Align = alTop
       Visible = False
     end
     object UpToolBar: TPanel
       AnchorSideRight.Side = asrBottom
       Height = 66
-      Width = 541
+      Width = 769
       Align = alTop
       ClientHeight = 66
-      ClientWidth = 541
+      ClientWidth = 769
       TabOrder = 0
       object BtnNew: TSpeedButton
         Left = 6
@@ -1841,7 +1841,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnConfig: TSpeedButton
-        Left = 539
+        Left = 547
         Height = 55
         Top = 6
         Width = 60
@@ -2056,7 +2056,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnHelp: TSpeedButton
-        Left = 541
+        Left = 612
         Height = 55
         Top = 6
         Width = 60
@@ -2271,7 +2271,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnExit: TSpeedButton
-        Left = 541
+        Left = 677
         Height = 55
         Top = 6
         Width = 60
@@ -2486,7 +2486,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BevelThird: TBevel
-        Left = 537
+        Left = 540
         Height = 55
         Top = 6
         Width = 2
@@ -2528,11 +2528,11 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Side = asrBottom
       Height = 35
       Top = 68
-      Width = 541
+      Width = 769
       Align = alTop
       AutoSize = True
       ClientHeight = 35
-      ClientWidth = 541
+      ClientWidth = 769
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideBottom.Side = asrBottom
@@ -2566,7 +2566,7 @@ object MainFrm: TMainFrm
           FFFF00FFFF00FFFF00FF
         }
         NumGlyphs = 0
-        OnClick = BtnUpClick
+        OnClick = MMenuViewUpClick
       end
       object DownToolBarBevel: TBevel
         Left = 136
@@ -2583,7 +2583,7 @@ object MainFrm: TMainFrm
         Left = 142
         Height = 22
         Top = 7
-        Width = 392
+        Width = 620
         Align = alRight
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 6
@@ -2748,6 +2748,7 @@ object MainFrm: TMainFrm
         Caption = 'Toolbars'
         object MMenuViewButtons: TMenuItem
           Caption = 'Buttons...'
+          OnClick = MMenuViewButtonsClick
         end
         object MMenuViewAddressBar: TMenuItem
           Caption = 'AddressBar'
@@ -2908,6 +2909,17 @@ object MainFrm: TMainFrm
           Caption = 'Position'
           OnClick = DetailsClick
         end
+      end
+      object MMenuViewN4: TMenuItem
+        Caption = '-'
+      end
+      object MMenuViewUp: TMenuItem
+        Caption = 'Livello Superiore'
+        OnClick = MMenuViewUpClick
+      end
+      object MMenuViewUpdate: TMenuItem
+        Caption = 'Aggiorna'
+        OnClick = MMenuViewUpdateClick
       end
     end
     object MMenuActions: TMenuItem
@@ -3139,5 +3151,42 @@ object MainFrm: TMainFrm
     Interval = 250
     left = 80
     top = 280
+  end
+  object TrayIcon: TTrayIcon
+    PopUpMenu = TRMenu
+    Icon.Data = {
+      FE0200000000010001002020100001000400E802000016000000280000002000
+      0000400000000100040000000000000000000000000000000000000000000000
+      0000000000004080FF0000FFFF00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000002000000020000000000000000000002222200022222000000000000
+      0000002222222022222220000000000000000022222220222222200000000000
+      0000002222222022222220000000000000000002222200022222000000000000
+      0000000002000100020001000000000000000000000111110001111100000000
+      0000000000111111101111111000000000000000001111111011111110000000
+      0000000000111111101111111000000000000000000111110001111100000000
+      0000000002000100010001000000000000000002222200011111000000000000
+      0000002222222011111110000000000000000022222220111111100000000000
+      0000002222222011111110000000000000000002222200011111000000000000
+      0000000002000200010001000000010000000000000222220001111100011111
+      0000000000222222201111111011111110000000002222222011111110111111
+      1000000000222222201111111011111110000000000222220001111100011111
+      0000000000000200000001000000010000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000FFFFFFFFFBFBFFFFFBFBFFFFF1F1FFFFC0407FFF80001FFF80003FFF8000
+      3FFF80003FFF80001FFFC00005FFF00001FFF80003FFF80003FFF80003FFF000
+      01FFC00004FF80001FFF80003FFF80003FFF80003FFF80001F1FC0000404F000
+      0001F8000003F8000003F8000003F0000001C4040404DF1F1F1FFFBFBFBFFFBF
+      BFBF
+    }
+    Visible = True
+    left = 16
+    top = 328
+  end
+  object TRMenu: TPopupMenu
+    left = 48
+    top = 328
   end
 end

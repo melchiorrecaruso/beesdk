@@ -78,6 +78,9 @@ type
   private
     { private declarations }
   end;
+
+var
+  ExtractFrm: TExtractFrm;
   
 implementation
 

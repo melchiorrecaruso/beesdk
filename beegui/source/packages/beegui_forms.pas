@@ -52,74 +52,73 @@ uses
   function ConfirmAdd(CommandLine: TCustomCommandLine): boolean;
   var
     I: integer;
-    F: TAddFrm;
   begin
-    F := TAddFrm.Create(Application);
-    F.rOption.Checked := CommandLine.rOption;
+    AddFrm := TAddFrm.Create(Application);
+    AddFrm.rOption.Checked := CommandLine.rOption;
 
     if (CommandLine.uOption xor CommandLine.fOption) then
     begin
       if CommandLine.uOption then
-        F.ufOption.ItemIndex := 0
+        AddFrm.ufOption.ItemIndex := 0
       else
-        F.ufOption.ItemIndex := 1;
+        AddFrm.ufOption.ItemIndex := 1;
     end else
     begin
-      F.ufOption.ItemIndex := 2;
+      AddFrm.ufOption.ItemIndex := 2;
     end;
 
-    F.eOption.Text := CommandLine.eOption;
-    F.sOption.Checked := CommandLine.sOption;
+    AddFrm.eOption.Text := CommandLine.eOption;
+    AddFrm.sOption.Checked := CommandLine.sOption;
 
-    F.aOptionCheck.Checked := Length(CommandLine.aOption) > 0;
-    if F.aOptionCheck.Checked then
+    AddFrm.aOptionCheck.Checked := Length(CommandLine.aOption) > 0;
+    if AddFrm.aOptionCheck.Checked then
     begin
       if CompareFileName(CommandLine.aOption, 'beegui.sfx') = 0 then
-        F.aOption.ItemIndex := 0
+        AddFrm.aOption.ItemIndex := 0
       else
         if CompareFileName(CommandLine.aOption, 'bee.sfx') = 0 then
-          F.aOption.ItemIndex := 1
+          AddFrm.aOption.ItemIndex := 1
         else
           if CommandLine.aOption = 'nul' then
-            F.aOption.ItemIndex := 2;
+            AddFrm.aOption.ItemIndex := 2;
     end;
 
-    F.mOption.ItemIndex := CommandLine.mOption;
-    F.dOption.ItemIndex := CommandLine.dOption;
+    AddFrm.mOption.ItemIndex := CommandLine.mOption;
+    AddFrm.dOption.ItemIndex := CommandLine.dOption;
 
     for i := 0 to CommandLine.xOption.Count -1  do
-      F.FilesMgr.PlusMinus(F.FilesMgr.AddFile(
+      AddFrm.FilesMgr.PlusMinus(AddFrm.FilesMgr.AddFile(
         ExpandFileName(CommandLine.xOption.Strings[i])));
 
-    F.tOption.Checked := CommandLine.tOption;
+    AddFrm.tOption.Checked := CommandLine.tOption;
 
     if Length(CommandLine.yOption) > 0 then
-      F.yOption.Text := CommandLine.yOption;
+      AddFrm.yOption.Text := CommandLine.yOption;
 
-    F.kOption.Checked := CommandLine.kOption;
+    AddFrm.kOption.Checked := CommandLine.kOption;
 
-    F.cdOptionCheck.Checked := Length(CommandLine.cdOption) > 0;
-    if  F.cdOptionCheck.Checked then
+    AddFrm.cdOptionCheck.Checked := Length(CommandLine.cdOption) > 0;
+    if  AddFrm.cdOptionCheck.Checked then
     begin
-      F.cdOption.Text := CommandLine.cdOption;
+      AddFrm.cdOption.Text := CommandLine.cdOption;
     end;
     
     if Length(CommandLine.cfgOption) > 0 then
-      F.cfgOption.Text := CommandLine.cfgOption;
+      AddFrm.cfgOption.Text := CommandLine.cfgOption;
 
-    F.ArchiveName := CommandLine.ArchiveName;
+    AddFrm.ArchiveName := CommandLine.ArchiveName;
 
     for I := 0 to CommandLine.FileMasks.Count - 1 do
     begin
-      F.FilesMgr.AddFile(ExpandFileName(CommandLine.FileMasks.Strings[I]));
+      AddFrm.FilesMgr.AddFile(ExpandFileName(CommandLine.FileMasks.Strings[I]));
     end;
-    F.FilesMgr.RootValue := GetCurrentDir;
+    AddFrm.FilesMgr.RootValue := GetCurrentDir;
 
-    if F.ShowModal = mrOk then
+    if AddFrm.ShowModal = mrOk then
     begin
-      CommandLine.rOption := F.rOption.Checked;
+      CommandLine.rOption := AddFrm.rOption.Checked;
 
-      case F.ufOption.ItemIndex of
+      case AddFrm.ufOption.ItemIndex of
         0:   begin
                CommandLine.uOption := True;
                CommandLine.fOption := False;
@@ -134,48 +133,48 @@ uses
              end;
       end;
 
-      CommandLine.eOption := F.eOption.Text;
-      CommandLine.sOption := F.sOption.Checked;
+      CommandLine.eOption := AddFrm.eOption.Text;
+      CommandLine.sOption := AddFrm.sOption.Checked;
 
-      if F.aOptionCheck.Checked then
+      if AddFrm.aOptionCheck.Checked then
       begin
-        case F.aOption.ItemIndex of
+        case AddFrm.aOption.ItemIndex of
           0: CommandLine.aOption := 'beegui.sfx';
           1: CommandLine.aOption := 'bee.sfx';
           2: CommandLine.aOption := 'nul';
         end;
       end;
 
-      CommandLine.mOption := F.mOption.ItemIndex;
-      CommandLine.dOption := F.dOption.ItemIndex;
+      CommandLine.mOption := AddFrm.mOption.ItemIndex;
+      CommandLine.dOption := AddFrm.dOption.ItemIndex;
 
       CommandLine.xOption.Clear;
-      for I := 0 to F.FilesMgr.Count - 1 do
-        if F.FilesMgr.Excluded[I] = True then
-          CommandLine.xOption.Add(F.FilesMgr.Items[I]);
+      for I := 0 to AddFrm.FilesMgr.Count - 1 do
+        if AddFrm.FilesMgr.Excluded[I] = True then
+          CommandLine.xOption.Add(AddFrm.FilesMgr.Items[I]);
 
-      CommandLine.tOption := F.tOption.Checked;
-      CommandLine.yOption := F.yOption.Text;
-      CommandLine.kOption := F.kOption.Checked;
+      CommandLine.tOption := AddFrm.tOption.Checked;
+      CommandLine.yOption := AddFrm.yOption.Text;
+      CommandLine.kOption := AddFrm.kOption.Checked;
 
-      if F.cdOptionCheck.Checked then
-        CommandLine.cdOption := F.cdOption.Text
+      if AddFrm.cdOptionCheck.Checked then
+        CommandLine.cdOption := AddFrm.cdOption.Text
       else
         CommandLine.cdOption := '';
 
-      CommandLine.cfgOption := F.cfgOption.Text;
+      CommandLine.cfgOption := AddFrm.cfgOption.Text;
 
-      CommandLine.ArchiveName := F.ArchiveName;
+      CommandLine.ArchiveName := AddFrm.ArchiveName;
 
       CommandLine.FileMasks.Clear;
-      for I := 0 to F.FilesMgr.Count - 1 do
-        if F.FilesMgr.Excluded[I] = False then
-          CommandLine.FileMasks.Add(F.FilesMgr.Items[I]);
+      for I := 0 to AddFrm.FilesMgr.Count - 1 do
+        if AddFrm.FilesMgr.Excluded[I] = False then
+          CommandLine.FileMasks.Add(AddFrm.FilesMgr.Items[I]);
 
-      if (CommandLine.FileMasks.Count > 0) or (F.aOptionCheck.Checked) then
+      if (CommandLine.FileMasks.Count > 0) or (AddFrm.aOptionCheck.Checked) then
       begin
-        if Length(F.FilesMgr.RootValue) > 0 then
-          Result := SetCurrentDir(F.FilesMgr.RootValue)
+        if Length(AddFrm.FilesMgr.RootValue) > 0 then
+          Result := SetCurrentDir(AddFrm.FilesMgr.RootValue)
         else
           Result := True;
       end else
@@ -183,64 +182,62 @@ uses
     end else
       Result := False;
 
-    F.Free;
+    FreeAndNil(AddFrm);
   end;
   
-function ConfirmExtract(CommandLine: TCustomCommandLine): boolean;
-  var
-    F: TExtractFrm;
+  function ConfirmExtract(CommandLine: TCustomCommandLine): boolean;
   begin
-    F := TExtractFrm.Create(Application);
+    ExtractFrm := TExtractFrm.Create(Application);
 
-    F.xCommand.Checked := CommandLine.Command = 'X';
+    ExtractFrm.xCommand.Checked := CommandLine.Command = 'X';
 
     { TODO : Aggiungere nella overwriteBox altri valori }
 
     // if (FuOption xor FfOption) then
     // begin
     //   if FuOption then
-    //     F.ufOption.ItemIndex := 0
+    //     ExtractFrm.ufOption.ItemIndex := 0
     //   else
-    //     F.ufOption.ItemIndex := 1;
+    //     ExtractFrm.ufOption.ItemIndex := 1;
     // end else
     // begin
-    //   F.ufOption.ItemIndex := 2;
+    //   ExtractFrm.ufOption.ItemIndex := 2;
     // end;
 
     case UpCase(CommandLine.oOption) of
-      'S': F.oOption.ItemIndex := 0;
-      'A': F.oOption.ItemIndex := 1;
-      'Q': F.oOption.ItemIndex := 2;
+      'S': ExtractFrm.oOption.ItemIndex := 0;
+      'A': ExtractFrm.oOption.ItemIndex := 1;
+      'Q': ExtractFrm.oOption.ItemIndex := 2;
     end;
 
-    F.cdOptionCheck.Checked := Length(CommandLine.cdOption) > 0;
-    F.cdOption.Text := CommandLine.cdOption;
+    ExtractFrm.cdOptionCheck.Checked := Length(CommandLine.cdOption) > 0;
+    ExtractFrm.cdOption.Text := CommandLine.cdOption;
 
-    if F.ShowModal = mrOk then
+    if ExtractFrm.ShowModal = mrOk then
     begin
-      if F.xCommand.Checked then
+      if ExtractFrm.xCommand.Checked then
         CommandLine.Command := 'X'
       else
         CommandLine.Command := 'E';
 
       { TODO : sistemare con uOption ed fOption }
 
-      case F.oOption.ItemIndex of
+      case ExtractFrm.oOption.ItemIndex of
         0: CommandLine.oOption := 'S';
         1: CommandLine.oOption := 'A';
         2: CommandLine.oOption := 'Q';
       end;
 
-      if F.cdOptionCheck .Enabled then
-        CommandLine.cdOption := F.cdOption.Text
+      if ExtractFrm.cdOptionCheck .Enabled then
+        CommandLine.cdOption := ExtractFrm.cdOption.Text
       else
         CommandLine.cdOption := '';
 
-      Result := SetCurrentDir(F.Folder.Text);
+      Result := SetCurrentDir(ExtractFrm.Folder.Text);
     end else
       Result := False;
 
-    F.Free;
+    FreeAndNil(ExtractFrm);
   end;
 
 end.

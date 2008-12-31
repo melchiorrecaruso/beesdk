@@ -127,6 +127,7 @@ type
     FSimpleList: boolean;
     FSortCol: TArchiveListViewColumn;
     FSortDir: boolean;
+    FAutoLoad: boolean;
   private
     function CompareFn(L: TList; I1, I2: integer): integer;
     procedure QuickSort(List: TList; L, R: integer);
@@ -134,6 +135,7 @@ type
     procedure UpdateFolder;
     // ---
     procedure SetFolder(Value: string);
+    procedure SetAutoLoad(Value: boolean);
     procedure SetFolderBox(Value: TArchiveFolderBox);
     procedure SetSortDir(Value: boolean);
     procedure SetSortCol(Value: TArchiveListViewColumn);
@@ -143,15 +145,16 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure LoadFolderBox;
     procedure Initialize;
     // ---
     function Open(const AArchiveName: string; AArchiveList: TList): boolean;
-    procedure CloseArchive;
+    procedure CloseArchive(Clean: boolean);
     function Up: boolean;
     // ---
     procedure ClearMasks;
     procedure InvertMasks;
-    function  GetMasks: string;
+    procedure GetMasks(FileMasks: TStringList);
     procedure SetMask(const Mask: string; Value: boolean);
   public
     property FileName: string read FFileName;
@@ -162,6 +165,7 @@ type
     property FolderBox: TArchiveFolderBox read FFolderBox write SetFolderBox default nil;
     property SortCol: TArchiveListViewColumn read FSortCol write SetSortCol default alvcName;
     property SimpleList: boolean read FSimpleList write SetSimpleList default False;
+    property AutoLoadFolderBox: boolean read FAutoLoad write SetAutoLoad default False;
   end;
   
 type
@@ -344,6 +348,7 @@ uses
     FFolder := '';
     // --
     FSortDir := True;
+    FAutoLoad := False;
     FSimpleList := False;
     // ---
     Color := clInactiveBorder;
@@ -500,8 +505,10 @@ uses
           FFolderFiles.Add(FFiles.Items[I]);
         end;
 
-      if (FFolderBoxSign <> '') and Assigned(FFolderBox) then
+      if (FFiles.Count > 0) and Assigned(FFolderBox) then
       begin
+        if AutoLoadFolderBox then LoadFolderBox;
+
         J := -1;
         for I := 0 to FFolderBox.Items.Count -1 do
         begin
@@ -516,7 +523,7 @@ uses
         begin
           if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
           begin
-            if FFolderBox.Items.Count = 0 then
+            if Length(FFolder) = 0 then
               I := TIconList(SmallImages).FileIcon('.bee' ,faArchive)
             else
               I := TIconList(SmallImages).FileIcon('.@folderclose' ,faDirectory);
@@ -546,10 +553,6 @@ uses
     begin
       ItemFocused := Items[0];
     end;
-    
-    //if Assigned(FFolderBox) then
-    //begin
-    //end;
   end;
 
   procedure TCustomArchiveListView.Initialize;
@@ -571,28 +574,41 @@ uses
     end;
   end;
 
-  procedure TCustomArchiveListView.CloseArchive;
+  procedure TCustomArchiveListView.CloseArchive(Clean: boolean);
+  var
+    I: integer;
   begin
-    FFileName := '';
-    FFolderBoxSign := '';
+    Enabled := False;
+    Color := clInactiveBorder;
+
     if Assigned(FFolderBox) then
     begin
-      FFolderBox.Color := clInactiveBorder;
       FFolderBox.Enabled := False;
+      FFolderBox.Color := clInactiveBorder;
+
+      for I := 0 to FFolderBox.Items.Count -1 do
+      begin
+        if Assigned(FFolderBox.Items.Objects[I]) then
+          FFolderBox.Items.Objects[I].Free;
+      end;
       FFolderBox.Clear;
     end;
-    Color := clInactiveBorder;
-    Enabled := False;
-    // ---
+
+    FFiles.Clear;
+    FDetails.Clear;
+    FFolders.Clear;
+    FFolderFiles.Clear;
+
+    if Clean then
+    begin
+      FFolderBoxSign := '';
+      FFileName := '';
+      FFolder:= '';
+    end;
+
     BeginUpdate;
     Items.Clear;
     EndUpdate;
-    // ---
-    FFiles.Clear;
-    FFolderFiles.Clear;
-    FDetails.Clear;
-    FFolders.Clear;
-    FFolder:= '';
   end;
 
   procedure TCustomArchiveListView.SetFolder(Value: string);
@@ -617,21 +633,22 @@ uses
       Result := False;
   end;
   
-  function TCustomArchiveListView.GetMasks: string;
+  procedure TCustomArchiveListView.GetMasks(FileMasks: TStringList);
   var
+    S: string;
     I: integer;
     Node: TArchiveItem;
   begin
-    Result := '';
     for I := 0 to FFolderFiles.Count -1 do
     begin
       if Items[I].Selected then
       begin
         Node := TArchiveItem(FFolderFiles.Items[I]);
         if (Node.FileAttr and faDirectory) = faDirectory then
-          Result := IncludeTrailingBackSpace(Result) + '"' + Node.FilePath + IncludeTrailingBackSlash(Node.FileName) + '*"'
+          S := Node.FilePath + IncludeTrailingBackSlash(Node.FileName) + '*'
         else
-          Result := IncludeTrailingBackSpace(Result) + '"' + Node.FilePath + Node.FileName + '"';
+          S := Node.FilePath + Node.FileName;
+        FileMasks.Add(S);
       end;
     end;
   end;
@@ -677,6 +694,10 @@ uses
     J, K: integer;
     Node: TArchiveItem;
   begin
+    if CompareFileName(AArchiveName, FFileName) <> 0 then
+    begin
+      FFolder:= '';
+    end;
     FFileName := AArchiveName;
     FFolderBoxSign := ExtractFileName(FFileName) + PathDelim;
 
@@ -773,6 +794,60 @@ uses
     end;
     D := ExcludeTrailingBackSlash(FFolder);
     Result := FFolders.IndexOf(ExtractFilePath(D), ExtractFileName(D)) <> -1;
+  end;
+
+  procedure TCustomArchiveListView.SetAutoLoad(Value: boolean);
+  begin
+    FAutoLoad := Value;
+    if FAutoLoad then LoadFolderBox;
+  end;
+
+  procedure TCustomArchiveListView.LoadFolderBox;
+  var
+    S: string;
+    Image: TBitmap;
+    I, J, K, G: integer;
+  begin
+    if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
+    begin
+      if Assigned(FFolderBox) then
+      begin
+        for I := 0 to FFolders.Count -1 do
+        begin
+          with TArchiveItem(FFolders.Items[I]) do
+            S := IncludeTrailingBackSlash(FilePath + FileName);
+
+          K := -1;
+          for J := 0 to FFolderBox.Items.Count -1 do
+          begin
+            if CompareFileName(FFolderBoxSign + S, FFolderBox.Items[J]) = 0 then
+            begin
+              K := J;
+              Break;
+            end;
+          end;
+
+          if K = -1 then
+          begin
+            if Length(S) = 0 then
+              G := TIconList(SmallImages).FileIcon('.bee' ,faArchive)
+            else
+              G := TIconList(SmallImages).FileIcon('.@folderclose' ,faDirectory);
+
+            if G > -1 then
+            begin
+              Image := TBitmap.Create;
+              TIconList(SmallImages).GetBitmap(G, Image);
+            end else
+              Image := nil;
+
+            FFolderBox.Items.AddObject(FFolderBoxSign + S, Image);
+          end;
+        end;
+        FFolderBox.Sorted := True;
+      end;
+    end;
+
   end;
 
   procedure TCustomArchiveListView.Data(Sender: TObject; Item: TListItem);

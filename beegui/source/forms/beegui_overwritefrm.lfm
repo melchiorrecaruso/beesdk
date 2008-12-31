@@ -14,7 +14,7 @@ object OverwriteFrm: TOverwriteFrm
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '0.9.25'
+  LCLVersion = '0.9.27'
   object Image: TImage
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
