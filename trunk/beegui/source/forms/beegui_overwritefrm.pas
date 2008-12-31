@@ -86,6 +86,9 @@ type
     { private declarations }
   end;
 
+var
+  OverWriteFrm: TOverWriteFrm;
+
 implementation
 
 uses

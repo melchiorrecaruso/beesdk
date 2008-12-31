@@ -127,6 +127,9 @@ type
     procedure SaveLanguage;
     procedure LoadLanguage;
   end;
+
+var
+  PropertyFrm: TInfoFrm;
   
 implementation
 

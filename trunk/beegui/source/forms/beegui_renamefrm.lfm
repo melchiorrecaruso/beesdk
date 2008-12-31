@@ -1,6 +1,6 @@
 object RenameFrm: TRenameFrm
   Left = 524
-  Height = 102
+  Height = 94
   Top = 375
   Width = 303
   ActiveControl = BtnOk
@@ -8,19 +8,19 @@ object RenameFrm: TRenameFrm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Rename'
-  ClientHeight = 102
+  ClientHeight = 94
   ClientWidth = 303
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  LCLVersion = '0.9.25'
+  LCLVersion = '0.9.27'
   object FromFNLabel: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     Left = 6
-    Height = 20
+    Height = 14
     Top = 6
     Width = 29
     Alignment = taRightJustify
@@ -35,8 +35,8 @@ object RenameFrm: TRenameFrm
     AnchorSideRight.Control = ToFN
     AnchorSideBottom.Side = asrBottom
     Left = 18
-    Height = 20
-    Top = 32
+    Height = 14
+    Top = 26
     Width = 17
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
@@ -51,7 +51,7 @@ object RenameFrm: TRenameFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
     Left = 44
-    Height = 20
+    Height = 14
     Top = 6
     Width = 237
     BorderSpacing.Left = 3
@@ -71,7 +71,7 @@ object RenameFrm: TRenameFrm
     AnchorSideRight.Side = asrBottom
     Left = 41
     Height = 22
-    Top = 32
+    Top = 26
     Width = 256
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
@@ -86,8 +86,8 @@ object RenameFrm: TRenameFrm
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
     Left = 141
-    Height = 32
-    Top = 64
+    Height = 26
+    Top = 58
     Width = 70
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -110,8 +110,8 @@ object RenameFrm: TRenameFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 217
-    Height = 32
-    Top = 64
+    Height = 26
+    Top = 58
     Width = 80
     Anchors = [akTop, akRight]
     AutoSize = True
@@ -134,7 +134,7 @@ object RenameFrm: TRenameFrm
     AnchorSideBottom.Control = FromFN
     AnchorSideBottom.Side = asrBottom
     Left = 287
-    Height = 20
+    Height = 14
     Top = 6
     Width = 10
     Anchors = [akTop, akLeft, akBottom]

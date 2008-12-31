@@ -79,6 +79,9 @@ type
     procedure LoadLanguage;
   end;
 
+var
+  PasswordFrm: TPasswordFrm;
+
 implementation
 
 uses

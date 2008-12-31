@@ -68,6 +68,9 @@ type
     procedure LoadLanguage;
   end;
 
+var
+  RenameFrm: TRenameFrm;
+
 implementation
 
 uses

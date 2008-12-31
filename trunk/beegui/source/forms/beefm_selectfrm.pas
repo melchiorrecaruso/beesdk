@@ -63,6 +63,9 @@ type
     procedure LoadLanguage;
   end;
 
+var
+  SelectFrm: TSelectFrm;
+
 implementation
 
 uses

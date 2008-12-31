@@ -13,7 +13,6 @@ object SelectFrm: TSelectFrm
   Font.Height = -11
   Font.Name = 'Default'
   OnShow = FormShow
-  ParentFont = False
   LCLVersion = '0.9.27'
   object MaskLabel: TLabel
     AnchorSideLeft.Control = Owner

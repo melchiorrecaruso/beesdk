@@ -103,14 +103,14 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = mOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 174
+      Height = 124
       Top = 92
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Top = 6
       Caption = 'Options'
-      ClientHeight = 156
+      ClientHeight = 106
       ClientWidth = 367
       ParentShowHint = False
       TabOrder = 0
@@ -182,10 +182,9 @@ object ConfigFrm: TConfigFrm
       object cdAOption: TCheckBox
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Side = asrBottom
-        Left = 12
         Height = 19
-        Top = 131
-        Width = 349
+        Top = 6
+        Width = 361
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6

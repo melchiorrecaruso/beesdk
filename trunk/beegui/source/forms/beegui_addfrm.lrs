@@ -172,7 +172,7 @@ LazarusResources.Add('TAddFrm','FORMDATA',[
   +'asrBottom'#23'AnchorSideRight.Control'#7#9'BtnFolder'#24'AnchorSideBottom.C'
   +'ontrol'#7#9'RootLabel'#4'Left'#2#6#6'Height'#3#239#0#3'Top'#2#22#5'Width'#3
   +#11#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#19'BorderSpa'
-  +'cing.Right'#2#6#20'BorderSpacing.Bottom'#2#6#17'DefaultItemHeight'#2#16#6'I'
+  +'cing.Right'#2#6#20'BorderSpacing.Bottom'#2#6#17'DefaultItemHeight'#2#18#6'I'
   +'mages'#7#11'FilesImages'#9'PopupMenu'#7#9'PopupMenu'#8'ReadOnly'#9#10'Scrol'
   +'lBars'#7#10'ssAutoBoth'#8'SortType'#7#6'stText'#8'TabOrder'#2#0#18'OnSelect'
   +'ionChanged'#7#21'FilesSelectionChanged'#7'Options'#11#19'tvoAllowMultiselec'

@@ -39,6 +39,7 @@ uses
     Windows,
   {$ENDIF}
   Forms,
+  SysUtils,
   Interfaces,
   LResources,
   // --- //
@@ -85,16 +86,14 @@ begin
         TickFrm.OnlyAForm := True;
         repeat
           Application.ProcessMessages;
-          if CommandLine.Log  then Break;
-          if TickFrm.CanShow  then Break;
           if TickFrm.CanClose then Break;
-        until False;
-        if TickFrm.CanClose = False then
+          if TickFrm.CanShow  then Break;
+        until CommandLine.Log;
+        if CommandLine.Log then
           Application.Run
         else
-          if CommandLine.Log then
+          if TickFrm.CanClose = False then
             Application.Run;
-        FreeAndNil(TickFrm);
       end;
     end;
   end;

@@ -69,6 +69,9 @@ type
     { private declarations }
   end;
 
+var
+  ViewFrm: TViewFrm;
+
 implementation
 
 uses

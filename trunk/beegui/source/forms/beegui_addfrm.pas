@@ -147,6 +147,9 @@ type
   public
     property ArchiveName: string read GetArchiveName write SetArchiveName;
   end;
+
+var
+  AddFrm: TAddFrm;
   
 implementation
 

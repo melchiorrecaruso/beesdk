@@ -14,14 +14,14 @@ object ViewFrm: TViewFrm
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '0.9.25'
+  LCLVersion = '0.9.27'
   object Memo: TMemo
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnOk
-    Height = 286
+    Height = 290
     Width = 411
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 6
@@ -34,8 +34,8 @@ object ViewFrm: TViewFrm
     AnchorSideBottom.Control = BtnOk
     AnchorSideBottom.Side = asrBottom
     Left = 6
-    Height = 30
-    Top = 292
+    Height = 26
+    Top = 296
     Width = 75
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
@@ -54,8 +54,8 @@ object ViewFrm: TViewFrm
     AnchorSideBottom.Control = BtnFont
     AnchorSideBottom.Side = asrBottom
     Left = 87
-    Height = 30
-    Top = 292
+    Height = 26
+    Top = 296
     Width = 75
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
@@ -73,8 +73,8 @@ object ViewFrm: TViewFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 335
-    Height = 30
-    Top = 292
+    Height = 26
+    Top = 296
     Width = 70
     Anchors = [akRight, akBottom]
     AutoSize = True
