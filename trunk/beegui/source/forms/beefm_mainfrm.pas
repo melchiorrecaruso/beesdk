@@ -611,6 +611,7 @@ uses
   var
     FTime: integer;
   begin
+    UpdateCursor(crHourGlass);
     FWorking := True;
     FTime := FileAge(aArchiveName);
 
@@ -630,6 +631,7 @@ uses
         TickFrm.ShowModal;
     FreeAndNil(TickFrm);
     FWorking := False;
+    UpdateCursor(crDefault);
 
     if FileAge(aArchiveName) > FTime then
     begin
@@ -642,7 +644,11 @@ uses
     FList: TList;
     FFolder: string;
   begin
+    Caption := GetApplicationCaption('Opening...');
+
+    UpdateCursor(crHourGlass);
     FWorking := True;
+
     FCommandLine.Clear;
     FCommandLine.Command := 'L';
     FCommandLine.rOption := True;
@@ -669,17 +675,20 @@ uses
 
       if ExitCode < 2 then
       begin
-        SetArchiveName(aArchiveName);
         FFolder := ListView.Folder;
-        if ListView.Open(FArchiveName, FList) then
+        if ListView.Open(aArchiveName, FList) then
           UpdateButtons(True)
         else
           UpdateButtons(False);
         ListView.Folder := FFolder;
-      end;
+        SetArchiveName(aArchiveName);
+      end else
+        SetArchiveName('');
+
       FList.Free;
     end;
     FWorking := False;
+    UpdateCursor(crDefault);
   end;
 
   procedure TMainFrm.SetArchiveName(const aArchiveName: string);
