@@ -87,8 +87,8 @@ type
   TArchiveDetails = class
   public
     FilesCount: integer;
-    FilesSize: integer;
-    FilesPacked: integer;
+    FilesSize: cardinal;
+    FilesPacked: cardinal;
     FilesCrypted: integer;
     DirectoriesCount: integer;
     Version:  float;
@@ -142,6 +142,7 @@ type
     procedure SetSimpleList(Value: boolean);
     // ---
     procedure Data(Sender: TObject; Item: TListItem);
+    procedure AddToFolderBox(const AFolder: string);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -802,52 +803,64 @@ uses
     if FAutoLoad then LoadFolderBox;
   end;
 
-  procedure TCustomArchiveListView.LoadFolderBox;
+  procedure TCustomArchiveListView.AddToFolderBox(const AFolder: string);
   var
-    S: string;
+    J, K, G: integer;
     Image: TBitmap;
-    I, J, K, G: integer;
   begin
     if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-    begin
       if Assigned(FFolderBox) then
       begin
-        for I := 0 to FFolders.Count -1 do
+        K := -1;
+        for J := 0 to FFolderBox.Items.Count -1 do
         begin
-          with TArchiveItem(FFolders.Items[I]) do
-            S := IncludeTrailingBackSlash(FilePath + FileName);
-
-          K := -1;
-          for J := 0 to FFolderBox.Items.Count -1 do
+          if CompareFileName(FFolderBoxSign + AFolder, FFolderBox.Items[J]) = 0 then
           begin
-            if CompareFileName(FFolderBoxSign + S, FFolderBox.Items[J]) = 0 then
-            begin
-              K := J;
-              Break;
-            end;
-          end;
-
-          if K = -1 then
-          begin
-            if Length(S) = 0 then
-              G := TIconList(SmallImages).FileIcon('.bee' ,faArchive)
-            else
-              G := TIconList(SmallImages).FileIcon('.@folderclose' ,faDirectory);
-
-            if G > -1 then
-            begin
-              Image := TBitmap.Create;
-              TIconList(SmallImages).GetBitmap(G, Image);
-            end else
-              Image := nil;
-
-            FFolderBox.Items.AddObject(FFolderBoxSign + S, Image);
+            K := J;
+            Break;
           end;
         end;
-        FFolderBox.Sorted := True;
-      end;
-    end;
 
+        if K = -1 then
+        begin
+          if Length(AFolder) = 0 then
+            G := TIconList(SmallImages).FileIcon('.bee' ,faArchive)
+          else
+            G := TIconList(SmallImages).FileIcon('.@folderclose' ,faDirectory);
+
+          if G > -1 then
+          begin
+            Image := TBitmap.Create;
+            TIconList(SmallImages).GetBitmap(G, Image);
+          end else
+            Image := nil;
+
+          FFolderBox.Items.AddObject(FFolderBoxSign + AFolder, Image);
+        end;
+      end;
+  end;
+
+  procedure TCustomArchiveListView.LoadFolderBox;
+  var
+    I: integer;
+  begin
+    if Assigned(FFolderBox) then
+    begin
+      for I := 0 to FFolderBox.Items.Count -1 do
+      begin
+        if Assigned(FFolderBox.Items.Objects[I]) then
+          FFolderBox.Items.Objects[I].Free;
+      end;
+      FFolderBox.Clear;
+
+      AddToFolderBox('');
+      for I := 0 to FFolders.Count -1 do
+      begin
+        with TArchiveItem(FFolders.Items[I]) do
+          AddToFolderBox(IncludeTrailingBackSlash(FilePath + FileName));
+      end;
+      FFolderBox.Sorted := True;
+    end;
   end;
 
   procedure TCustomArchiveListView.Data(Sender: TObject; Item: TListItem);

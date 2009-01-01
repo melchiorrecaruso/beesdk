@@ -77,7 +77,6 @@ type
     MMenuViewUpdate: TMenuItem;
     MMenuViewUp: TMenuItem;
     MMenuViewN4: TMenuItem;
-    TRMenu: TPopupMenu;
     StatusBar: TStatusBar;
     ListView: TArchiveListView;
     LargeImages: TIconList;
@@ -217,7 +216,6 @@ type
     BMenuExit: TMenuItem;
     ToolBar: TPanel;
     ToolBarBevel: TBevel;
-    TrayIcon: TTrayIcon;
     UpToolBar: TPanel;
     // ---
 
@@ -611,8 +609,8 @@ uses
   var
     FTime: integer;
   begin
-    UpdateCursor(crHourGlass);
     FWorking := True;
+    UpdateCursor(crHourGlass);
     FTime := FileAge(aArchiveName);
 
     // ShowMessage(FCommandLine.Params.Text);
@@ -630,8 +628,8 @@ uses
       if TickFrm.CanClose = False then
         TickFrm.ShowModal;
     FreeAndNil(TickFrm);
-    FWorking := False;
     UpdateCursor(crDefault);
+    FWorking := False;
 
     if FileAge(aArchiveName) > FTime then
     begin
@@ -644,10 +642,10 @@ uses
     FList: TList;
     FFolder: string;
   begin
-    Caption := GetApplicationCaption('Opening...');
-
-    UpdateCursor(crHourGlass);
     FWorking := True;
+    UpdateCursor(crHourGlass);
+
+    Caption := GetApplicationCaption(rsOpening);
 
     FCommandLine.Clear;
     FCommandLine.Command := 'L';
@@ -659,6 +657,7 @@ uses
     if FCommandLine.Run then
     begin
       FList := TList.Create;
+
       TickFrm := TTickFrm.Create(Application);
       TickFrm.Execute(FCommandLine, FList);
       repeat
@@ -687,8 +686,8 @@ uses
 
       FList.Free;
     end;
-    FWorking := False;
     UpdateCursor(crDefault);
+    FWorking := False;
   end;
 
   procedure TMainFrm.SetArchiveName(const aArchiveName: string);
@@ -755,7 +754,7 @@ uses
 
   procedure TMainFrm.MMenuFilePropertyClick(Sender: TObject);
   var
-    Ratio: integer;
+    Ratio: cardinal;
   begin
     PropertyFrm := TInfoFrm.Create(Application);
     PropertyFrm.Caption := rsArcProperty;
@@ -763,13 +762,13 @@ uses
       PropertyFrm.ANameValue.Caption    := ExtractFileName(FArchiveName);
       PropertyFrm.AVersionValue.Caption := FloatToStr(ListView.Details.Version);
       PropertyFrm.AVersionValue.Caption := FloatToStr(ListView.Details.Version);
-      PropertyFrm.AFilesValue.Caption   := IntToStr(ListView.Details.FilesCount);
-      PropertyFrm.ASizeValue.Caption    := SizeToStr(ListView.Details.FilesSize);
-      PropertyFrm.APackedValue.Caption  := SizeToStr(ListView.Details.FilesPacked);
+      PropertyFrm.AFilesValue.Caption   := IntToStr  (ListView.Details.FilesCount);
+      PropertyFrm.ASizeValue.Caption    := SizeToStr (ListView.Details.FilesSize);
+      PropertyFrm.APackedValue.Caption  := SizeToStr (ListView.Details.FilesPacked);
 
       with ListView.Details do
       begin
-        if FilesSize <> 0 then
+        if FilesSize > 0 then
           Ratio := Round(100 * FilesPacked / FilesSize)
         else
           Ratio := 0;
@@ -867,8 +866,11 @@ uses
 
   procedure TMainFrm.MMenuFileExitClick(Sender: TObject);
   begin
-    MMenuFileCloseClick(Sender);
-    Close;
+    if FWorking = False then
+    begin
+      MMenuFileCloseClick(Sender);
+      Close;
+    end;
   end;
   
   // ---------------------------------------------------------------------- //
@@ -962,7 +964,7 @@ uses
 
   procedure TMainFrm.MMenuViewUpClick(Sender: TObject);
   begin
-    ListView.Up;
+    if FWorking = False then ListView.Up;
   end;
 
   procedure TMainFrm.MMenuViewUpdateClick(Sender: TObject);
