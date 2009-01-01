@@ -30,12 +30,14 @@ interface
 
 uses
   Classes,
-  SysUtils,
-  IniFiles;
+  IniFiles,
+  SysUtils;
 
 var
   rsWarning:              string = 'Warning';
   rsConfirmation:         string = 'Confirmation';
+
+  rsOpening:              string = 'Opening ...';
 
   rsArcProperty:          string = 'Archive property';
   rsFileProperty:         string = 'File property';
