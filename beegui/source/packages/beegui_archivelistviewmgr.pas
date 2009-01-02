@@ -628,7 +628,7 @@ uses
   begin
     Result := True;
     D := ExtractFilePath(ExcludeTrailingBackSlash(FFolder));
-    if not (CompareFileName(FFolder, D) = 0) then
+    if CompareFileName(FFolder, D) <> 0 then
       SetFolder(D)
     else
       Result := False;
