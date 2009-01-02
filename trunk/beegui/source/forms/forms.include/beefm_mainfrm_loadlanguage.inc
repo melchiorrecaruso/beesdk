@@ -1,134 +1,69 @@
 
   procedure TMainFrm.LoadLanguage;
   var
+    I: integer;
     Folder: string;
     Storage: TMemIniFile;
   begin
- (*
-SessionProperties :=
+    Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
+    if ForceDirectories(Folder) then
+    begin
+      Storage := TMemIniFile.Create(Folder + ('mainfrm.ini'));
 
-   'BtnAdd.Caption;'
- + 'BtnCheckOut.Caption;'
- + 'BtnConfig.Caption;'
- + 'BtnDelete.Caption;'
- + 'BtnExit.Caption;'
- + 'BtnExtract.Caption;'
- + 'BtnHelp.Caption;'
- + 'BtnNew.Caption;'
- + 'BtnOpen.Caption;'
- + 'BtnTest.Caption;'
- + 'BtnUp.Caption;'
- + 'BtnView.Caption;'
+      // Buttons caption
+      BtnNew.Caption      := Storage.ReadString('TSpeedButton', 'BtnNew.Caption',      BtnNew.Caption);
+      BtnOpen.Caption     := Storage.ReadString('TSpeedButton', 'BtnOpen.Caption',     BtnOpen.Caption);
+      BtnAdd.Caption      := Storage.ReadString('TSpeedButton', 'BtnAdd.Caption',      BtnAdd.Caption);
+      BtnExtract.Caption  := Storage.ReadString('TSpeedButton', 'BtnExtract.Caption',  BtnExtract.Caption);
+      BtnView.Caption     := Storage.ReadString('TSpeedButton', 'BtnView.Caption',     BtnView.Caption);
+      BtnDelete.Caption   := Storage.ReadString('TSpeedButton', 'BtnDelete.Caption',   BtnDelete.Caption);
+      BtnTest.Caption     := Storage.ReadString('TSpeedButton', 'BtnTest.Caption',     BtnTest.Caption);
+      BtnCheckOut.Caption := Storage.ReadString('TSpeedButton', 'BtnCheckOut.Caption', BtnCheckOut.Caption);
+      BtnConfig.Caption   := Storage.ReadString('TSpeedButton', 'BtnConfig.Caption',   BtnConfig.Caption);
+      BtnHelp.Caption     := Storage.ReadString('TSpeedButton', 'BtnHelp.Caption',     BtnHelp.Caption);
+      BtnExit.Caption     := Storage.ReadString('TSpeedButton', 'BtnExit.Caption',     BtnExit.Caption);
+      BtnUp.Caption       := Storage.ReadString('TSpeedButton', 'BtnUp.Caption',       BtnUp.Caption);
 
- + 'MainMenu_File.Caption;'
- + 'MainMenu_File_New.Caption;'
- + 'MainMenu_File_Open.Caption;'
- + 'MainMenu_File_Close.Caption;'
- + 'MainMenu_File_Copy.Caption;'
- + 'MainMenu_File_Delete.Caption;'
- + 'MainMenu_File_Move.Caption;'
- + 'MainMenu_File_Property.Caption;'
- + 'MainMenu_File_Rename.Caption;'
- + 'MainMenu_File_Exit.Caption;'
+      // Main menu caption
+      for I := 0 to MMenu.Items.Count -1 do with MMenu.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'MMenu.Items[' + IntToStr(I) + '].Caption', Caption);
 
- + 'MainMenu_Actions_Add.Caption;'
- + 'MainMenu_Actions_CheckOut.Caption;'
- + 'MainMenu_Actions_Delete.Caption;'
- + 'MainMenu_Actions_DeselectAll.Caption;'
- + 'MainMenu_Actions_DeselectMask.Caption;'
- + 'MainMenu_Actions_Extract.Caption;'
- + 'MainMenu_Actions_ExtractAll.Caption;'
- + 'MainMenu_Actions_Invert.Caption;'
- + 'MainMenu_Actions_Rename.Caption;'
- + 'MainMenu_Actions_SelectAll.Caption;'
- + 'MainMenu_Actions_SelectMask.Caption;'
- + 'MainMenu_Actions_Test.Caption;'
- + 'MainMenu_Actions_TestAll.Caption;'
- + 'MainMenu_Actions_View.Caption;'
+      for I := 0 to MMenuFile.Count -1 do with MMenuFile.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'MMenuFile.Items[' + IntToStr(I) + '].Caption', Caption);
 
+      for I := 0 to MMenuView.Count -1 do with MMenuView.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'MMenuView.Items[' + IntToStr(I) + '].Caption', Caption);
 
- + 'MainMenu_Help.Caption;'
- + 'MainMenu_Help_About.Caption;'
- + 'MainMenu_Help_F1.Caption;'
- + 'MainMenu_Help_Internet.Caption;'
- + 'MainMenu_Help_License.Caption;'
- 
- + 'MainMenu_Options.Caption;'
- + 'MainMenu_Options_Configuration.Caption;'
- + 'MainMenu_Options_DefaultSetting.Caption;'
- + 'MainMenu_Options_LogReport.Caption;'
- + 'MainMenu_Options_Password.Caption;'
- + 'MainMenu_Options_SaveNow.Caption;'
- + 'MainMenu_Options_SaveOnExit.Caption;'
- 
- + 'MainMenu_View.Caption;'
- + 'MainMenu_View_Details.Caption;'
- + 'MainMenu_View_Details_Attributes.Caption;'
- + 'MainMenu_View_Details_CRC.Caption;'
- + 'MainMenu_View_Details_Method.Caption;'
- + 'MainMenu_View_Details_Modified.Caption;'
- + 'MainMenu_View_Details_Name.Caption;'
- + 'MainMenu_View_Details_Packed.Caption;'
- + 'MainMenu_View_Details_Password.Caption;'
- + 'MainMenu_View_Details_Path.Caption;'
- + 'MainMenu_View_Details_Position.Caption;'
- + 'MainMenu_View_Details_Ratio.Caption;'
- + 'MainMenu_View_Details_Size.Caption;'
- + 'MainMenu_View_Details_Type.Caption;'
- 
- + 'MainMenu_View_GridLines.Caption;'
- + 'MainMenu_View_LargeIcons.Caption;'
- + 'MainMenu_View_List.Caption;'
- + 'MainMenu_View_ListMode.Caption;'
- 
- + 'MainMenu_View_OrderBy.Caption;'
- + 'MainMenu_View_OrderBy_Attributes.Caption;'
- + 'MainMenu_View_OrderBy_Crc.Caption;'
- + 'MainMenu_View_OrderBy_Method.Caption;'
- + 'MainMenu_View_OrderBy_Modified.Caption;'
- + 'MainMenu_View_OrderBy_Name.Caption;'
- + 'MainMenu_View_OrderBy_Packed.Caption;'
- + 'MainMenu_View_OrderBy_Password.Caption;'
- + 'MainMenu_View_OrderBy_Path.Caption;'
- + 'MainMenu_View_OrderBy_Position.Caption;'
- + 'MainMenu_View_OrderBy_Ratio.Caption;'
- + 'MainMenu_View_OrderBy_Size.Caption;'
- + 'MainMenu_View_OrderBy_Type.Caption;'
- 
- + 'MainMenu_View_Report.Caption;'
- + 'MainMenu_View_RowSelect.Caption;'
- + 'MainMenu_View_SmallIcons.Caption;'
- + 'MainMenu_View_StatusBar.Caption;'
+      for I := 0 to MMenuViewToolBars.Count -1 do with MMenuViewToolBars.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'MMenuViewToolBars.Items[' + IntToStr(I) + '].Caption', Caption);
 
- + 'MainMenu_View_Toolbars.Caption;'
- + 'MainMenu_View_Toolbars_AddressBar.Caption;'
- + 'MainMenu_View_Toolbars_Buttons.Caption;'
- 
- + 'PopupMenu_Buttons_Add.Caption;'
- + 'PopupMenu_Buttons_CheckOut.Caption;'
- + 'PopupMenu_Buttons_Configuration.Caption;'
- + 'PopupMenu_Buttons_Delete.Caption;'
- + 'PopupMenu_Buttons_Exit.Caption;'
- + 'PopupMenu_Buttons_Extract.Caption;'
- + 'PopupMenu_Buttons_Help.Caption;'
- + 'PopupMenu_Buttons_New.Caption;'
- + 'PopupMenu_Buttons_Open.Caption;'
- + 'PopupMenu_Buttons_Test.Caption;'
- + 'PopupMenu_Buttons_View.Caption;'
- 
- + 'PopupMenu_Delete.Caption;'
- + 'PopupMenu_DeselectAll.Caption;'
- + 'PopupMenu_DeselectMask.Caption;'
- + 'PopupMenu_Extract.Caption;'
- + 'PopupMenu_ExtractAll.Caption;'
- + 'PopupMenu_Invert.Caption;'
- + 'PopupMenu_Open.Caption;'
- + 'PopupMenu_Open_IntViewer.Caption;'
- + 'PopupMenu_Property.Caption;'
- + 'PopupMenu_Rename.Caption;'
- + 'PopupMenu_SelectAll.Caption;'
- + 'PopupMenu_SelectDeselect.Caption;'
- + 'PopupMenu_SelectMask.Caption;'
- + 'PopupMenu_Test.Caption;';
-     *)
+      for I := 0 to MMenuViewOrderBy.Count -1 do with MMenuViewOrderBy.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'MMenuViewOrderBy.Items[' + IntToStr(I) + '].Caption', Caption);
+
+      for I := 0 to MMenuViewDetails.Count -1 do with MMenuViewDetails.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'MMenuViewDetails.Items[' + IntToStr(I) + '].Caption', Caption);
+
+      for I := 0 to MMenuActions.Count -1 do with MMenuActions.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'MMenuActions.Items[' + IntToStr(I) + '].Caption', Caption);
+
+      for I := 0 to MMenuOptions.Count -1 do with MMenuOptions.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'MMenuOptions.Items[' + IntToStr(I) + '].Caption', Caption);
+
+      for I := 0 to MMenuHelp.Count -1 do with MMenuHelp.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'MMenuHelp.Items[' + IntToStr(I) + '].Caption', Caption);
+
+      // Popup menu caption
+      for I := 0 to PMenu.Items.Count -1 do with PMenu.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'PMenu.Items[' + IntToStr(I) + '].Caption', Caption);
+
+      // Buttons menu caption
+      for I := 0 to BMenu.Items.Count -1 do with BMenu.Items[I] do
+        Caption := Storage.ReadString('TMenuItem', 'BMenu.Items[' + IntToStr(I) + '].Caption', Caption);
+
+      // Archive listview
+      for I := 0 to ListView.Columns.Count -1 do with ListView.Columns[I] do
+        Caption := Storage.ReadString('TListView', 'ListView.Columns[' + IntToStr(I) + 'Caption', Caption);
+
+      Storage.Free;
+    end;
   end;

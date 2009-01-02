@@ -32,7 +32,6 @@ interface
 uses
   Forms,
   Menus,
-  ToolWin,
   Classes,
   Dialogs,
   Buttons,
@@ -358,6 +357,7 @@ uses
     // --- //
     UpdateButtons;
     UpdateStyle;
+    Caption := GetApplicationCaption(rsWelcome);
   end;
 
   procedure TMainFrm.FormDestroy(Sender: TObject);
