@@ -126,7 +126,6 @@ uses
     {$IFDEF DEBUG}
       SaveLanguage;
     {$ENDIF}
-    // SaveProperty;
   end;
   
   procedure TConfigFrm.TreeChange(Sender: TObject; Node: TTreeNode);
@@ -194,7 +193,8 @@ uses
       for I := 0 to APopup.Items.Count -1 do
       begin
         J := Buttons.Items.Add(APopup.Items[I].Caption);
-        Buttons.Checked[J] := APopup.Items[I].Checked
+        Buttons.CheckEnabled[J] := APopup.Items[I].Enabled;
+        Buttons.Checked[J] := APopup.Items[I].Checked;
       end;
     end;
   end;

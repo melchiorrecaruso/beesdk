@@ -67,30 +67,25 @@
       Storage.WriteBool('MMenu', 'View.Details.CRC.Checked'        , MMenuViewDetailsCRC.Checked);
       Storage.WriteBool('MMenu', 'View.Details.Path.Checked'       , MMenuViewDetailsPath.Checked);
       Storage.WriteBool('MMenu', 'View.Details.Position.Checked'   , MMenuViewDetailsPosition.Checked);
-      // --- OK
-
-      (*
-
-
+      // Main Menu Option
       Storage.WriteBool('MMenu', 'Options.SaveOnExit.Checked'      , MMenuOptionsSaveOnExit.Checked);
       Storage.WriteBool('MMenu', 'Options.LogReport.Checked'       , MMenuOptionsLogReport.Checked);
+      // Buttons popup menu
+      Storage.WriteBool('BMenu', 'New.Checked'          , BMenuNew.Checked);
+      Storage.WriteBool('BMenu', 'Open.Checked'         , BMenuOpen.Checked);
+      Storage.WriteBool('BMenu', 'Spacer-1'             , BMenuN1.Checked);
+      Storage.WriteBool('BMenu', 'Add.Checked'          , BMenuAdd.Checked);
+      Storage.WriteBool('BMenu', 'Extract.Checked'      , BMenuExtract.Checked);
+      Storage.WriteBool('BMenu', 'View.Checked'         , BMenuView.Checked);
+      Storage.WriteBool('BMenu', 'Delete.Checked'       , BMenuDelete.Checked);
+      Storage.WriteBool('BMenu', 'Spacer-2'             , BMenuN2.Checked);
+      Storage.WriteBool('BMenu', 'Test.Checked'         , BMenuTest.Checked);
+      Storage.WriteBool('BMenu', 'CheckOut.Checked'     , BMenuCheckOut.Checked);
+      Storage.WriteBool('BMenu', 'Spacer-3'             , BMenuN3.Checked);
+      Storage.WriteBool('BMenu', 'Configuration.Checked', BMenuConfiguration.Checked);
+      Storage.WriteBool('BMenu', 'Help.Checked'         , BMenuHelp.Checked);
+      Storage.WriteBool('BMenu', 'Exit.Checked'         , BMenuExit.Checked);
 
-      // ---
-
-      Storage.WriteBool('BtnsMenu', 'New.Checked'          , BMenuNew.Checked);
-      Storage.WriteBool('BtnsMenu', 'Open.Checked'         , BMenuOpen.Checked);
-      Storage.WriteBool('BtnsMenu', 'Add.Checked'          , BMenuAdd.Checked);
-      Storage.WriteBool('BtnsMenu', 'Extract.Checked'      , BMenuExtract.Checked);
-      Storage.WriteBool('BtnsMenu', 'View.Checked'         , BMenuView.Checked);
-      Storage.WriteBool('BtnsMenu', 'View.Checked'         , BMenuView.Checked);
-      Storage.WriteBool('BtnsMenu', 'Test.Checked'         , BMenuTest.Checked);
-      Storage.WriteBool('BtnsMenu', 'CheckOut.Checked'     , BMenuCheckOut.Checked);
-      Storage.WriteBool('BtnsMenu', 'Configuration.Checked', BMenuConfiguration.Checked);
-      Storage.WriteBool('BtnsMenu', 'Help.Checked'         , BMenuHelp.Checked);
-      Storage.WriteBool('BtnsMenu', 'Exit.Checked'         , BMenuExit.Checked);
-
-      // ---
-      *)
       Storage.Free;
     end;
   end;
