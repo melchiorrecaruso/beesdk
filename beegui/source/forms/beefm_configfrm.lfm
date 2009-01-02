@@ -1,7 +1,7 @@
 object ConfigFrm: TConfigFrm
-  Left = 303
+  Left = 245
   Height = 403
-  Top = 176
+  Top = 180
   Width = 561
   HorzScrollBar.Page = 560
   HorzScrollBar.Range = 156

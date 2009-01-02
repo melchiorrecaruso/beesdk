@@ -373,10 +373,11 @@ uses
     MMenuFileCloseClick(Sender);
     if MMenuOptionsSaveOnExit.Checked then
     begin
+      ConfigFrm.SaveProperty;
       SaveProperty;
     end;
     {$IFDEF DEBUG}
-    SaveLanguage;
+      SaveLanguage;
     {$ENDIF}
   end;
   
@@ -395,9 +396,6 @@ uses
   procedure TMainFrm.UpdateButtons;
   var
     Buttons: array [0..13] of TControl;
-    CurrLeft:integer;
-    CurrTop: integer;
-    Check: boolean;
     I: integer;
   begin
     Buttons[ 0] := BtnNew;
@@ -415,26 +413,15 @@ uses
     Buttons[12] := BtnHelp;
     Buttons[13] := BtnExit;
     // ---
-    CurrTop := 6;
-    CurrLeft := 6;
-    for I:= Low(Buttons) to High(Buttons) do
+    for I := Low(Buttons) to High(Buttons) do
     begin
-      Buttons[I].Visible := BMenu.Items[I].Checked;
-      if Buttons[I].Visible then
+      Buttons[I].Align := alRight;
+      Buttons[I].Visible := False;
+      if BMenu.Items[I].Checked then
       begin
-        Buttons[I].Top := CurrTop;
-        Buttons[I].Left := CurrLeft;
-        Inc(CurrLeft, Buttons[I].Width + 4);
+        Buttons[I].Align := alLeft;
+        Buttons[I].Visible := True;
       end;
-    end;
-    Check := False;
-    for I:= Low(Buttons) to High(Buttons) do
-    begin
-      if Buttons[I].Visible then
-      begin
-        Check := True;
-        Break;
-      end;;
     end;
   end;
   
@@ -596,8 +583,9 @@ uses
       DownToolBar.Visible := False
     else
       DownToolBar.Visible := not ListView.SimpleList;
+    MMenuViewAddressBar.Enabled := not ListView.SimpleList;
 
-    StatusBar.Visible   := MMenuViewStatusBar.Checked;
+    StatusBar.Visible := MMenuViewStatusBar.Checked;
   end;
 
 
@@ -1229,6 +1217,7 @@ uses
 
   procedure TMainFrm.MMenuOptionsSaveNowClick(Sender: TObject);
   begin
+    ConfigFrm.SaveProperty;
     SaveProperty;
   end;
 

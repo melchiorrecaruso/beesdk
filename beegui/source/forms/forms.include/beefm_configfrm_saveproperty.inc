@@ -30,6 +30,10 @@
       Storage.WriteBool('TCheckBox', 'xCommand.Checked' ,xCommand.Checked);
       Storage.WriteBool('TCheckBox', 'cdEOption.Checked' ,cdEOption.Checked);
 
+      Storage.WriteBool('TCheckBox', 'HideAddFrmOption.Checked' ,HideAddFrmOption.Checked);
+      Storage.WriteBool('TCheckBox', 'HideMainFrmOption.Checked' ,HideMainFrmOption.Checked);
+      Storage.WriteBool('TCheckBox', 'UpBtnCloseOption.Checked' ,UpBtnCloseOption.Checked);
+
       Storage.Free;
     end;
   end;

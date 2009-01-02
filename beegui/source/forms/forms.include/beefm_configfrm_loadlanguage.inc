@@ -13,12 +13,16 @@
 
         Tree.Items[0].Text := Storage.ReadString('TTreeNode', 'Tree.Items[0]' ,Tree.Items[0].Text);
         Tree.Items[1].Text := Storage.ReadString('TTreeNode', 'Tree.Items[1]' ,Tree.Items[1].Text);
+        Tree.Items[2].Text := Storage.ReadString('TTreeNode', 'Tree.Items[2]' ,Tree.Items[2].Text);
       
         AddPage.Caption := Storage.ReadString('TGroupBox', 'AddPage.Caption' ,AddPage.Caption);
         AddingOptions.Caption := Storage.ReadString('TGroupBox', 'AddingsOption.Caption' ,AddingOptions.Caption);
       
         ExtractPage.Caption := Storage.ReadString('TGroupBox', 'ExtractPage.Caption' ,ExtractPage.Caption);
         ExtractingOptions.Caption := Storage.ReadString('TGroupBox', 'ExtractingOptions.Caption' ,ExtractingOptions.Caption);
+
+        GeneralPage.Caption := Storage.ReadString('TGroupBox', 'GeneralPage.Caption' ,GeneralPage.Caption);
+        Buttons.Caption := Storage.ReadString('TGroupBox', 'Buttons.Caption' ,Buttons.Caption);
 
         mOptionLabel.Caption  := Storage.ReadString('TLabel', 'mOption.Caption' ,mOptionLabel.Caption);
         mOption.Items[0] := Storage.ReadString('TComboBox', 'mOption[0]' ,mOption.Items[0]);
@@ -51,6 +55,10 @@
         xCommand.Caption := Storage.ReadString('TCheckBox', 'xCommand.Caption',  xCommand.Caption);
         cdEOption.Caption := Storage.ReadString('TCheckBox', 'cdEOption.Caption', cdEOption.Caption);
       
+        HideMainFrmOption.Caption := Storage.ReadString('TCheckBox', 'HideMainFrmOption.Caption', HideMainFrmOption.Caption);
+        HideAddFrmOption.Caption := Storage.ReadString('TCheckBox', 'HideAddFrmOption.Caption', HideAddFrmOption.Caption);
+        UpBtnCloseOption.Caption := Storage.ReadString('TCheckBox', 'UpBtnCloseOption.Caption', UpBtnCloseOption.Caption);
+
         BtnOk.Caption := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
       end;
       Storage.Free;

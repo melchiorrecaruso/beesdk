@@ -1,7 +1,7 @@
 object TickFrm: TTickFrm
-  Left = 484
+  Left = 523
   Height = 210
-  Top = 233
+  Top = 127
   Width = 430
   ActiveControl = Notebook
   Caption = '0% Processing...'

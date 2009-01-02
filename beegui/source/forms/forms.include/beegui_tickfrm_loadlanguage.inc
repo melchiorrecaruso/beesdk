@@ -20,7 +20,7 @@
     
         rsBtnPauseCaption   := Storage.ReadString('TBitBtn', 'BtnPause.Caption', rsBtnPauseCaption);
         rsBtnRunCaption     := Storage.ReadString('TBitBtn', 'BtnRun.Caption', rsBtnRunCaption);
-        rsBtnCancelCaption  := Storage.ReadString('TBitBtn', 'BtnCancelCaption.Caption', rsBtnCancelCaption);
+        rsBtnCancelCaption  := Storage.ReadString('TBitBtn', 'BtnCancel.Caption', rsBtnCancelCaption);
         rsBtnCloseCaption   := Storage.ReadString('TBitBtn', 'BtnClose.Caption', rsBtnCloseCaption);
 
         BtnPriority.Caption := Storage.ReadString('TBitBtn', 'BtnPriority.Caption', BtnPriority.Caption);
