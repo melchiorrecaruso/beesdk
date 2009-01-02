@@ -34,6 +34,7 @@ uses
   SysUtils;
 
 var
+  rsWelcome:              string = 'Welcome';
   rsWarning:              string = 'Warning';
   rsConfirmation:         string = 'Confirmation';
 
@@ -85,6 +86,7 @@ implementation
     begin
       Storage := TMemIniFile.Create(Folder + ('messages.ini'));
       begin
+      rsWelcome              := Storage.ReadString('ResourceString', 'rsWelcome', rsWelcome);
       rsWarning              := Storage.ReadString('ResourceString', 'rsWarning', rsWarning);
       rsConfirmation         := Storage.ReadString('ResourceString', 'rsConfirmation', rsConfirmation);
       
@@ -133,6 +135,7 @@ implementation
     begin
       Storage := TMemIniFile.Create(Folder + ('messages.ini'));
       begin
+      Storage.WriteString('ResourceString', 'rsWelcome', rsWelcome);
       Storage.WriteString('ResourceString', 'rsWarning', rsWarning);
       Storage.WriteString('ResourceString', 'rsConfirmation', rsConfirmation);
       
