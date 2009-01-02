@@ -220,6 +220,7 @@ type
     // ---
 
     procedure FormDestroy(Sender: TObject);
+
     procedure MMenuActionsViewClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
@@ -253,7 +254,6 @@ type
     procedure MMenuHelpInternetClick (Sender: TObject);
     procedure MMenuHelpLicenseClick (Sender: TObject);
     procedure MMenuHelpAboutClick (Sender: TObject);
-    procedure MMenuViewButtonsClick(Sender: TObject);
     procedure MMenuViewUpClick(Sender: TObject);
     procedure MMenuViewUpdateClick(Sender: TObject);
     // ---
@@ -355,9 +355,9 @@ uses
     {$ENDIF}
     FWorking := False;
     FCommandLine := TCustomCommandLine.Create(False);
-
-    // UpdateButtons;
-    // UpdateStyle;
+    // --- //
+    UpdateButtons;
+    UpdateStyle;
   end;
 
   procedure TMainFrm.FormDestroy(Sender: TObject);
@@ -365,6 +365,8 @@ uses
     FCommandLine.Destroy;
     FWorking := False;
   end;
+
+
   
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
   begin
@@ -609,32 +611,44 @@ uses
   var
     FTime: integer;
   begin
-    FWorking := True;
-    UpdateCursor(crHourGlass);
-    FTime := FileAge(aArchiveName);
+    if FCommandLine.Confirm then
+      Visible := not ConfigFrm.HideAddFrmOption.Checked;
 
-    // ShowMessage(FCommandLine.Params.Text);
-
-    TickFrm := TTickFrm.Create(Application);
-    TickFrm.Execute(FCommandLine, nil);
-    repeat
-      Application.ProcessMessages;
-      if TickFrm.CanClose then Break;
-      if TickFrm.CanShow  then Break;
-    until FCommandLine.Log;
-    if FCommandLine.Log then
-      TickFrm.ShowModal
-    else
-      if TickFrm.CanClose = False then
-        TickFrm.ShowModal;
-    FreeAndNil(TickFrm);
-    UpdateCursor(crDefault);
-    FWorking := False;
-
-    if FileAge(aArchiveName) > FTime then
+    if FCommandLine.Run then
     begin
-      OpenArchive(aArchiveName);
+      FWorking := True;
+      UpdateCursor(crHourGlass);
+      FTime := FileAge(aArchiveName);
+
+      // ShowMessage(FCommandLine.Params.Text);
+
+      TickFrm := TTickFrm.Create(Application);
+      TickFrm.Execute(FCommandLine, nil);
+      repeat
+        Application.ProcessMessages;
+        if TickFrm.CanClose then Break;
+        if TickFrm.CanShow  then Break;
+      until FCommandLine.Log;
+
+      Visible := not ConfigFrm.HideMainFrmOption.Checked;
+
+      if FCommandLine.Log then
+        TickFrm.ShowModal
+      else
+        if TickFrm.CanClose = False then
+          TickFrm.ShowModal;
+      Visible := True;
+
+      FreeAndNil(TickFrm);
+      UpdateCursor(crDefault);
+      FWorking := False;
+
+      if FileAge(aArchiveName) > FTime then
+      begin
+        OpenArchive(aArchiveName);
+      end;
     end;
+    Visible := True;
   end;
 
   procedure TMainFrm.OpenArchive(const aArchiveName: string);
@@ -717,7 +731,7 @@ uses
         FCommandLine.Log := MMenuOptionsLogReport.Checked;
         FCommandLine.ArchiveName := SaveDialog.FileName;
         ConfigFrm.AddOptions('', FCommandLine);
-        if FCommandLine.Run then
+        // if FCommandLine.Run then
         begin
           Execute(SaveDialog.FileName);
         end;
@@ -879,11 +893,6 @@ uses
   //                                                                        //
   // ---------------------------------------------------------------------- //
 
-  procedure TMainFrm.MMenuViewButtonsClick(Sender: TObject);
-  begin
-    ConfigFrm.ShowModal;
-  end;
-
   procedure TMainFrm.ViewStyleClick(Sender: TObject);
   begin
     TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
@@ -964,7 +973,13 @@ uses
 
   procedure TMainFrm.MMenuViewUpClick(Sender: TObject);
   begin
-    if FWorking = False then ListView.Up;
+    if FWorking = False then
+    begin
+      if (ListView.Up = False) and ConfigFrm.UpBtnCloseOption.Checked then
+      begin
+        MMenuFileExitClick(Self);
+      end;
+    end;
   end;
 
   procedure TMainFrm.MMenuViewUpdateClick(Sender: TObject);
@@ -992,7 +1007,7 @@ uses
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
       FCommandLine.ArchiveName := FArchiveName;
-      if FCommandLine.Run then
+      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1011,7 +1026,7 @@ uses
         FCommandLine.Log := MMenuOptionsLogReport.Checked;
         FCommandLine.ArchiveName := FArchiveName;
         ListView.GetMasks(FCommandLine.FileMasks);
-        if FCommandLine.Run then
+        // if FCommandLine.Run then
         begin
           Execute(FArchiveName);
         end;
@@ -1031,7 +1046,7 @@ uses
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
       FCommandLine.ArchiveName := FArchiveName;
       ListView.GetMasks(FCommandLine.FileMasks);
-      if FCommandLine.Run then
+      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1049,7 +1064,7 @@ uses
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
       FCommandLine.FileMasks.Add('*');
-      if FCommandLine.Run then
+      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1066,7 +1081,7 @@ uses
       FCommandLine.Log := True;
       FCommandLine.ArchiveName := FArchiveName;
       ListView.GetMasks(FCommandLine.FileMasks);
-      if FCommandLine.Run then
+      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1083,7 +1098,7 @@ uses
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       FCommandLine.ArchiveName := FArchiveName;
       ListView.GetMasks(FCommandLine.FileMasks);
-      if FCommandLine.Run then
+      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1137,7 +1152,7 @@ uses
       FCommandLine.Log := True;
       FCommandLine.ArchiveName := FArchiveName;
       FCommandLine.FileMasks.Add('*');
-      if FCommandLine.Run then
+      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1194,7 +1209,17 @@ uses
 
   procedure TMainFrm.MMenuOptionsConfigurationClick(Sender: TObject);
   begin
-    ConfigFrm.ShowModal;
+    ConfigFrm.LoadButtons(BMenu);
+    if Sender = MMenuViewButtons then
+      ConfigFrm.SetPage(2)
+    else
+      ConfigFrm.SetPage(0);
+
+    if ConfigFrm.ShowModal = mrOk then
+      if ConfigFrm.SaveButtons(BMenu) then
+      begin
+        UpdateButtons;
+      end;
   end;
 
   procedure TMainFrm.OptionsClick(Sender: TObject);

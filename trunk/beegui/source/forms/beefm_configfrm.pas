@@ -2,16 +2,16 @@
     Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
+    it under the terms of the GNU GeneralPageGeneralPage Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU GeneralPageGeneralPage Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+    You should have received a copy of the GNU GeneralPageGeneralPage Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
@@ -32,6 +32,7 @@ unit BeeFM_ConfigFrm;
 interface
 
 uses
+  Math,
   Forms,
   Menus,
   Buttons,
@@ -52,6 +53,11 @@ type
   { TConfigFrm }
 
   TConfigFrm = class(TForm)
+    Buttons: TCheckGroup;
+    GeneralPage: TGroupBox;
+    HideMainFrmOption: TCheckBox;
+
+    UpBtnCloseOption: TCheckBox;
     Tree: TTreeView;
     AddPage: TGroupBox;
     ExtractPage: TGroupBox;
@@ -71,12 +77,12 @@ type
     xCommand: TCheckBox;
     cdEOption: TCheckBox;
     BtnOk: TBitBtn;
+    HideAddFrmOption: TCheckBox;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure TreeChange(Sender: TObject; Node: TTreeNode);
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
-    procedure SetPageIndex(PageIndex: integer);
   public
     { public declarations }
     procedure SaveProperty;
@@ -85,6 +91,9 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
+    procedure SetPage(PageIndex: integer);
+    procedure LoadButtons(APopup: TPopupMenu);
+    function SaveButtons(APopup: TPopupMenu): boolean;
     procedure AddOptions(const AFolder: string; ACommandLine: TCustomCommandLine);
     procedure ExtractOptions(const AFolder: string; ACommandLine: TCustomCommandLine);
   end;
@@ -122,18 +131,20 @@ uses
   
   procedure TConfigFrm.TreeChange(Sender: TObject; Node: TTreeNode);
   begin
-    SetPageIndex(Tree.Selected.AbsoluteIndex);
+    SetPage(Tree.Selected.AbsoluteIndex);
   end;
 
-  procedure TConfigFrm.SetPageIndex(PageIndex: integer);
+  procedure TConfigFrm.SetPage(PageIndex: integer);
   var
     I: integer;
   begin
     AddPage.Visible := False;
     ExtractPage.Visible := False;
+    GeneralPage.Visible := False;
     case PageIndex of
       0: AddPage    .Visible := True;
       1: ExtractPage.Visible := True;
+      2: GeneralPage.Visible := True;
     end;
     Tree.Items[PageIndex].Selected := True;
   end;
@@ -171,6 +182,40 @@ uses
     begin
       ACommandLine.cdOption := AFolder;
     end;
+  end;
+
+  procedure TConfigFrm.LoadButtons(APopup: TPopupMenu);
+  var
+    I, J: integer;
+  begin
+    Buttons.Items.Clear;
+    if Assigned(APopup) then
+    begin
+      for I := 0 to APopup.Items.Count -1 do
+      begin
+        J := Buttons.Items.Add(APopup.Items[I].Caption);
+        Buttons.Checked[J] := APopup.Items[I].Checked
+      end;
+    end;
+  end;
+
+  function TConfigFrm.SaveButtons(APopup: TPopupMenu): boolean;
+  var
+    I: integer;
+  begin
+    Result := False;
+    if Assigned(APopup) then
+    begin
+      for I := 0 to Min(APopup.Items.Count, Buttons.Items.Count) -1 do
+      begin
+        if APopup.Items[I].Checked <> Buttons.Checked[I] then
+        begin
+          Result := True;
+        end;
+        APopup.Items[I].Checked := Buttons.Checked[I];
+      end;
+    end;
+    Buttons.Items.Clear;
   end;
     
 initialization

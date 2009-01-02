@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 195
+  Left = 196
   Height = 503
-  Top = 104
+  Top = 165
   Width = 769
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 484
@@ -119,6 +119,7 @@ object MainFrm: TMainFrm
       Align = alTop
       ClientHeight = 66
       ClientWidth = 769
+      PopupMenu = BMenu
       TabOrder = 0
       object BtnNew: TSpeedButton
         Left = 6
@@ -2748,7 +2749,7 @@ object MainFrm: TMainFrm
         Caption = 'Toolbars'
         object MMenuViewButtons: TMenuItem
           Caption = 'Buttons...'
-          OnClick = MMenuViewButtonsClick
+          OnClick = MMenuOptionsConfigurationClick
         end
         object MMenuViewAddressBar: TMenuItem
           Caption = 'AddressBar'
