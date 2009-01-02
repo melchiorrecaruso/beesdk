@@ -85,6 +85,7 @@ object MainFrm: TMainFrm
     ViewStyle = vsReport
     OnColumnClick = ColumnClick
     OnDblClick = MMenuActionsViewClick
+    OnSelectItem = ListViewSelectItem
   end
   object StatusBar: TStatusBar
     AnchorSideTop.Side = asrBottom
@@ -94,7 +95,20 @@ object MainFrm: TMainFrm
     Top = 464
     Width = 769
     Anchors = [akRight]
-    Panels = <>
+    Panels = <    
+      item
+        Width = 150
+      end    
+      item
+        Width = 100
+      end    
+      item
+        Width = 100
+      end    
+      item
+        Width = 50
+      end>
+    SimplePanel = False
   end
   object ToolBar: TPanel
     Height = 103
