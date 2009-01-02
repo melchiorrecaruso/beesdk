@@ -37,6 +37,7 @@ var
   rsWelcome:              string = 'Welcome';
   rsWarning:              string = 'Warning';
   rsConfirmation:         string = 'Confirmation';
+  rsSelectedItems:        string = 'Selected items: ';
 
   rsOpening:              string = 'Opening ...';
 
@@ -89,6 +90,7 @@ implementation
       rsWelcome              := Storage.ReadString('ResourceString', 'rsWelcome', rsWelcome);
       rsWarning              := Storage.ReadString('ResourceString', 'rsWarning', rsWarning);
       rsConfirmation         := Storage.ReadString('ResourceString', 'rsConfirmation', rsConfirmation);
+      rsSelectedItems        := Storage.ReadString('ResourceString', 'rsSelectedItems', rsSelectedItems);
       
       rsFileProperty         := Storage.ReadString('ResourceString', 'rsFileProperty', rsFileProperty);
       rsArcProperty          := Storage.ReadString('ResourceString', 'rsArcProperty', rsArcProperty);
@@ -138,7 +140,8 @@ implementation
       Storage.WriteString('ResourceString', 'rsWelcome', rsWelcome);
       Storage.WriteString('ResourceString', 'rsWarning', rsWarning);
       Storage.WriteString('ResourceString', 'rsConfirmation', rsConfirmation);
-      
+      Storage.WriteString('ResourceString', 'rsSelectedItems', rsSelectedItems);
+
       Storage.WriteString('ResourceString', 'rsFileProperty', rsFileProperty);
       Storage.WriteString('ResourceString', 'rsArcProperty', rsArcProperty);
 

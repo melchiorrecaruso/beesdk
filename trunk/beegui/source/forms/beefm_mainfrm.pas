@@ -219,6 +219,8 @@ type
     // ---
 
     procedure FormDestroy(Sender: TObject);
+    procedure ListViewSelectItem(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
 
     procedure MMenuActionsViewClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
@@ -355,9 +357,9 @@ uses
     FWorking := False;
     FCommandLine := TCustomCommandLine.Create(False);
     // --- //
+    Caption := GetApplicationCaption(rsWelcome);
     UpdateButtons;
     UpdateStyle;
-    Caption := GetApplicationCaption(rsWelcome);
   end;
 
   procedure TMainFrm.FormDestroy(Sender: TObject);
@@ -366,8 +368,17 @@ uses
     FWorking := False;
   end;
 
+  procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
+  var
+    I: integer;
+  begin
 
-  
+
+
+
+
+  end;
+
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
   begin
     MMenuFileCloseClick(Sender);
