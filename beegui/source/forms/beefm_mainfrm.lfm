@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 262
+  Left = 271
   Height = 503
-  Top = 138
+  Top = 158
   Width = 769
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 484
@@ -348,6 +348,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuFileNewClick
         ParentShowHint = False
       end
       object BtnOpen: TSpeedButton
@@ -563,6 +564,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuFileOpenClick
         ParentShowHint = False
       end
       object BtnAdd: TSpeedButton
@@ -778,6 +780,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuActionsAddClick
         ParentShowHint = False
       end
       object BtnExtract: TSpeedButton
@@ -993,6 +996,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuActionsExtractClick
         ParentShowHint = False
       end
       object BtnView: TSpeedButton
@@ -1208,6 +1212,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuActionsViewClick
         ParentShowHint = False
       end
       object BtnDelete: TSpeedButton
@@ -1423,6 +1428,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuActionsDeleteClick
         ParentShowHint = False
       end
       object BtnTest: TSpeedButton
@@ -1638,6 +1644,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuActionsTestClick
         ParentShowHint = False
       end
       object BtnCheckOut: TSpeedButton
@@ -1853,6 +1860,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuActionsCheckOutClick
         ParentShowHint = False
       end
       object BtnConfig: TSpeedButton
@@ -2068,6 +2076,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuOptionsConfigurationClick
         ParentShowHint = False
       end
       object BtnHelp: TSpeedButton
@@ -2283,6 +2292,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuHelpF1Click
         ParentShowHint = False
       end
       object BtnExit: TSpeedButton
@@ -2498,6 +2508,7 @@ object MainFrm: TMainFrm
         Layout = blGlyphTop
         NumGlyphs = 2
         Spacing = 1
+        OnClick = MMenuFileExitClick
         ParentShowHint = False
       end
       object BevelThird: TBevel
