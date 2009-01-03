@@ -62,7 +62,7 @@ uses
   function AnsiPosText(const Substr, S: string): integer; inline;
   function AnsiIncludeTrailingBackSlash(const DirName: string): string;
   
-  function SizeToStr(Size: integer): string;
+  function SizeToStr(Size: int64): string;
   function RatioToStr(Ratio: integer): string;
   function AttrToStr(Attr: integer): string;
   
@@ -293,7 +293,7 @@ implementation
     end;
   end;
   
-  function SizeToStr(Size: integer): string;
+  function SizeToStr(Size: int64): string;
   const
     KB_SIZE = 1024;
     MB_SIZE = KB_SIZE * 1024;

@@ -123,8 +123,7 @@ function AttrToStr(Attr: integer): string;
 function TimeDifference(X: double): string;
 function TimeToStr(T: integer): string;
 function DateTimeToString(X: TDateTime): string; overload;
-function DateTimeToString(X: TDateTime; const Format: string): string;
-  overload;
+function DateTimeToString(X: TDateTime; const Format: string): string; overload;
 function FileTimeToString(X: integer): string; overload;
 function FileTimeToString(X: integer; const Format: string): string; overload;
 

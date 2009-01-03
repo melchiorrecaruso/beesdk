@@ -56,8 +56,8 @@ type
     FilePath: string;
     FileType: string;
     FileIcon: integer;
-    FileSize: integer;
-    FilePacked: integer;
+    FileSize: int64;
+    FilePacked: int64;
     FileRatio: integer;
     FileAttr: integer;
     FileTime: integer;
@@ -131,6 +131,7 @@ type
   private
     function CompareFn(L: TList; I1, I2: integer): integer;
     procedure QuickSort(List: TList; L, R: integer);
+    function CreateFolderItem(const AFolder: string): TArchiveItem;
     function UpdateFolders: boolean;
     procedure UpdateFolder;
     // ---
@@ -155,6 +156,9 @@ type
     // ---
     procedure ClearMasks;
     procedure InvertMasks;
+    function  GetSelTime: string;
+    function  GetSelSize: string;
+    function  GetSelPackedSize: string;
     procedure GetMasks(FileMasks: TStringList);
     procedure SetMask(const Mask: string; Value: boolean);
   public
@@ -506,7 +510,7 @@ uses
           FFolderFiles.Add(FFiles.Items[I]);
         end;
 
-      if (FFiles.Count > 0) and Assigned(FFolderBox) then
+      if (FFolderFiles.Count > 0) and Assigned(FFolderBox) then
       begin
         if AutoLoadFolderBox then LoadFolderBox;
 
@@ -689,6 +693,56 @@ uses
       end;
     end;
   end;
+
+  function TCustomArchiveListView.GetSelSize: string;
+  var
+    I, J: integer;
+  begin
+    J := 0;
+    for I := 0 to FFolderFiles.Count -1 do
+      with TArchiveItem(FolderFiles[I]) do
+      begin
+        if TListItem(Items[I]).Selected then
+          Inc(J, FileSize);
+      end;
+    Result := SizeToStr(J);
+  end;
+
+  function TCustomArchiveListView.GetSelPackedSize: string;
+  var
+    I, J: integer;
+  begin
+    J := 0;
+    for I := 0 to FFolderFiles.Count -1 do
+      with TArchiveItem(FolderFiles[I]) do
+      begin
+        if TListItem(Items[I]).Selected then
+          Inc(J, FilePacked);
+      end;
+    Result := SizeToStr(J);
+  end;
+
+  function TCustomArchiveListView.GetSelTime: string;
+  var
+    I, J: integer;
+  begin
+    if FFolderFiles.Count > 0 then
+    begin
+      J := TArchiveItem(FolderFiles[0]).FileTime;
+      for I := 1 to FFolderFiles.Count -1 do
+        if TListItem(Items[I]).Selected then
+        begin
+          J := Max(J, TArchiveItem(FolderFiles[I]).FileTime);
+        end;
+
+      try
+        Result := DateTimeToString(FileDateToDateTime(J));
+      except
+        Result := '';
+      end
+    end else
+      Result := '';
+  end;
   
   function TCustomArchiveListView.Open(const AArchiveName: string; AArchiveList: TList): boolean;
   var
@@ -742,6 +796,30 @@ uses
     Enabled := True;
     Result := True;
   end;
+
+  function TCustomArchiveListView.CreateFolderItem(const AFolder: string): TArchiveItem;
+  var
+    I: integer;
+  begin
+    Result := TArchiveItem.Create;
+    Result.FileSize   := 0;
+    Result.FilePacked := 0;
+    Result.FileRatio  := 0;
+    Result.FileTime   := 0;
+    for I := 0 to FFiles.Count -1 do
+      with TArchiveItem(FFiles.Items[I]) do
+        if FileNamePos(AFolder, FilePath) = 1 then
+        begin
+          Inc(Result.FileSize, FileSize);
+          Inc(Result.FilePacked, FilePacked);
+          Result.FileTime := Max(Result.FileTime, FileTime);
+        end;
+
+    if Result.FileSize > 0 then
+      Result.FileRatio := Round(100 * (Result.FilePacked / Result.FileSize))
+    else
+      Result.FileRatio := 0;
+  end;
   
   function TCustomArchiveListView.UpdateFolders: boolean;
   var
@@ -756,15 +834,15 @@ uses
       begin
         if FFolders.IndexOf(ExtractFilePath(D), ExtractFileName(D)) = -1 then
         begin
-          Node := TArchiveItem.Create;
+          Node := CreateFolderItem(IncludeTrailingBackSlash(D));
           Node.FileName := ExtractFileName(D);
           Node.FilePath := ExtractFilePath(D);
-          Node.FilePacked := 0;
-          Node.FileSize := 0;
-          Node.FileRatio := 0;
-          Node.FileTime := DateTimeToFileDate(Now);
-          Node.FileAttr := faDirectory;
-          Node.FileCRC := 0;
+          // Node.FilePacked := 0;
+          // Node.FileSize   := 0;
+          // Node.FileRatio  := 0;
+          // Node.FileTime   := 0;
+          Node.FileAttr     := faDirectory;
+          Node.FileCRC      := -1;
           Node.FilePosition := -1;
           
           if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
@@ -875,16 +953,14 @@ uses
           Item.SubItems.Add(SizeToStr(FileSize));                //  1 Size
           Item.SubItems.Add(SizeToStr(FilePacked));              //  2 Packed
           Item.SubItems.Add(RatioToStr(FileRatio));              //  3 Ratio
-
           if FileType = '' then                                  //  4 Type
           begin
             FileType := 'File ' + ExtractFileExt(FileName);
           end;
           Item.SubItems.Add(FileType);
-
           try
-          Item.SubItems.Add(
-            DateTimeToString(FileDateToDateTime(FileTime)));     //  5 Time
+            Item.SubItems.Add(
+              DateTimeToString(FileDateToDateTime(FileTime)));   //  5 Time
           except
             Item.SubItems.Add('');
           end;
@@ -896,11 +972,20 @@ uses
           Item.SubItems.Add(IntToStr(FilePosition));             // 11 Position
         end else
         begin
-          Item.SubItems.Add('');                                 //  1 Size
-          Item.SubItems.Add('');                                 //  2 Packed
-          Item.SubItems.Add('');                                 //  3 Ratio
-          Item.SubItems.Add(FileType);                           //  4 Type
-          Item.SubItems.Add('');                                 //  5 Time
+          Item.SubItems.Add(SizeToStr(FileSize));                //  1 Size
+          Item.SubItems.Add(SizeToStr(FilePacked));              //  2 Packed
+          Item.SubItems.Add(RatioToStr(FileRatio));              //  3 Ratio
+          if FileType = '' then                                  //  4 Type
+          begin
+            FileType := 'Files folder';
+          end;
+          Item.SubItems.Add(FileType);
+          try
+            Item.SubItems.Add(
+              DateTimeToString(FileDateToDateTime(FileTime)));   //  5 Time
+          except
+            Item.SubItems.Add('');
+          end;
           Item.SubItems.Add(AttrToStr(FileAttr));                //  6 Attr
           Item.SubItems.Add('');                                 //  7 Method
           Item.SubItems.Add('');                                 //  8 Password

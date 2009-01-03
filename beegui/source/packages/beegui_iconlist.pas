@@ -110,7 +110,7 @@ uses
     Result := FExtentions.IndexOf(FileExt);
     if Result = -1 then
     begin
-      { TODO -oTIconList -cDebug : Disabilitare per test local icons }
+      { TODO -oTIconList -cDebug : Disabilitare test per local icons }
       // Result := GetSysFileIcon(FileName, FileAttr);
       if Result = -1 then
       begin
@@ -220,7 +220,7 @@ uses
           Bmp.Transparent := True;
           Bmp.TransparentMode := tmAuto;
           Bmp.Handle := IconInfo.hbmColor;
-          // Bmp.MaskHandle := IconInfo.hbmMask;
+          Bmp.MaskHandle := IconInfo.hbmMask;
         end;
         Result := Add(Bmp, nil);
       finally
