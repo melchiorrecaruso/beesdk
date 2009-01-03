@@ -198,8 +198,8 @@
       <Unit15>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="1" Y="169"/>
-        <TopLine Value="143"/>
+        <CursorPos X="1" Y="32"/>
+        <TopLine Value="12"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
