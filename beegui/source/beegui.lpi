@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -41,7 +41,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="17">
+    <Units Count="16">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -199,22 +199,12 @@
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
         <CursorPos X="77" Y="955"/>
-        <TopLine Value="962"/>
+        <TopLine Value="968"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit15>
-      <Unit16>
-        <Filename Value="packages\beegui_iconlist.pas"/>
-        <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="58" Y="113"/>
-        <TopLine Value="96"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit16>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

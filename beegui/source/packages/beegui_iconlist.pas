@@ -218,7 +218,7 @@ uses
         if (FI.hIcon <> 0) and GetIconInfo(FI.hIcon, IconInfo) then
         begin
           Bmp.Transparent := True;
-          Bmp.TransparentMode := tmAuto;
+          Bmp.TransparentMode := tmFixed;
           Bmp.Handle := IconInfo.hbmColor;
           Bmp.MaskHandle := IconInfo.hbmMask;
         end;
