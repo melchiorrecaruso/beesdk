@@ -219,8 +219,7 @@ type
     // ---
 
     procedure FormDestroy(Sender: TObject);
-    procedure ListViewSelectItem(Sender: TObject; Item: TListItem;
-      Selected: Boolean);
+    procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 
     procedure MMenuActionsViewClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
@@ -372,11 +371,10 @@ uses
   var
     I: integer;
   begin
-
-
-
-
-
+     StatusBar.Panels[0].Text := rsSelectedItems + IntToStr(ListView.SelCount);
+     StatusBar.Panels[1].Text := ListView.GetSelSize;
+     StatusBar.Panels[2].Text := ListView.GetSelPackedSize;
+     StatusBar.Panels[3].Text := ListView.GetSelTime;
   end;
 
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
