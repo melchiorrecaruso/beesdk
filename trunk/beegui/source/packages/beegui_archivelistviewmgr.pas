@@ -121,14 +121,17 @@ type
     FFolderFiles: TList;
     FFolder: string;
     // ---
+    FAutoLoad: boolean;
     FFolderBox: TArchiveFolderBox;
     FFolderBoxSign: string;
     // ---
     FSimpleList: boolean;
+    FSortDirection: boolean;
     FSortCol: TArchiveListViewColumn;
-    FSortDir: boolean;
-    FAutoLoad: boolean;
   private
+    function GetSelTime: integer;
+    function GetSelSize: int64;
+    function GetSelPackedSize: int64;
     function CompareFn(L: TList; I1, I2: integer): integer;
     procedure QuickSort(List: TList; L, R: integer);
     function CreateFolderItem(const AFolder: string): TArchiveItem;
@@ -156,9 +159,6 @@ type
     // ---
     procedure ClearMasks;
     procedure InvertMasks;
-    function  GetSelTime: string;
-    function  GetSelSize: string;
-    function  GetSelPackedSize: string;
     procedure GetMasks(FileMasks: TStringList);
     procedure SetMask(const Mask: string; Value: boolean);
   public
@@ -168,9 +168,12 @@ type
     property FolderFiles: TList read FFolderFiles write FFolderFiles default nil;
     property Folder: string read FFolder write SetFolder;
     property FolderBox: TArchiveFolderBox read FFolderBox write SetFolderBox default nil;
+    property AutoLoadFolderBox: boolean read FAutoLoad write SetAutoLoad default False;
     property SortCol: TArchiveListViewColumn read FSortCol write SetSortCol default alvcName;
     property SimpleList: boolean read FSimpleList write SetSimpleList default False;
-    property AutoLoadFolderBox: boolean read FAutoLoad write SetAutoLoad default False;
+    property SelFilePackedSize: int64 read GetSelPackedSize;
+    property SelFileSize: int64 read GetSelSize;
+    property SelFileTime: integer read GetSelTime;
   end;
   
 type
@@ -352,9 +355,9 @@ uses
     FFolders := TArchiveList.Create;
     FFolder := '';
     // --
-    FSortDir := True;
     FAutoLoad := False;
     FSimpleList := False;
+    FSortDirection := True;
     // ---
     Color := clInactiveBorder;
     MultiSelect := True;
@@ -375,14 +378,14 @@ uses
 
   function TCustomArchiveListView.CompareFn(L: TList; I1, I2: integer): integer;
   var
-    bool1, bool2: boolean;
+    Bool1, Bool2: boolean;
   begin
-    with TArchiveItem(L.Items[I1]) do bool1 := not ((faDirectory and FileAttr) = faDirectory);
-    with TArchiveItem(L.Items[I2]) do bool2 := not ((faDirectory and FileAttr) = faDirectory);
+    with TArchiveItem(L.Items[I1]) do Bool1 := not ((faDirectory and FileAttr) = faDirectory);
+    with TArchiveItem(L.Items[I2]) do Bool2 := not ((faDirectory and FileAttr) = faDirectory);
 
-    if bool1 xor bool2 then
+    if Bool1 xor Bool2 then
     begin
-      if bool1 then
+      if Bool1 then
         Result := 1
       else
         Result := -1;
@@ -404,15 +407,15 @@ uses
       else
         Result := I2 - I1;
       end;
-    end;
 
-    if FSortDir then
-    begin
-      if Result > 0 then
-        Result := -1
-      else
-      if Result < 0 then
-        Result := 1;
+      if FSortDirection then
+      begin
+        if Result > 0 then
+          Result := -1
+        else
+          if Result < 0 then
+            Result := 1;
+      end;
     end;
   end;
 
@@ -427,10 +430,8 @@ uses
         J := R;
         Pivot := (L + R) div 2;
         repeat
-          while CompareFn(List, I, Pivot) < 0 do
-            Inc(I);
-          while CompareFn(List, J, Pivot) > 0 do
-            Dec(J);
+          while CompareFn(List, I, Pivot) < 0 do Inc(I);
+          while CompareFn(List, J, Pivot) > 0 do Dec(J);
 
           if I <= J then
           begin
@@ -470,18 +471,46 @@ uses
   
   procedure TCustomArchiveListView.SetSortDir(Value: boolean);
   begin
-    FSortDir := Value;
+    FSortDirection := Value;
     UpdateFolder;
   end;
   
   procedure TCustomArchiveListView.SetSortCol(Value: TArchiveListViewColumn);
+  var
+    I: integer;
   begin
     if Value = FSortCol then
-      FSortDir := not FSortDir
+      FSortDirection := not FSortDirection
     else
-      FSortDir := True;
+      FSortDirection := False;
       
+    for I := 0 to Columns.Count -1 do
+    begin
+      Column[I].ImageIndex := -1;
+    end;
+
     FSortCol := Value;
+    case FSortCol of
+      alvcName    : I := 0;
+      alvcPath    : I := 10;
+      alvcType    : I := 4;
+      alvcSize    : I := 1;
+      alvcPacked  : I := 2;
+      alvcRatio   : I := 3;
+      alvcAttr    : I := 6;
+      alvcTime    : I := 5;
+      alvcCRC     : I := 9;
+      alvcMethod  : I := 7;
+      alvcPassword: I := 8;
+      alvcPosition: I := 11;
+    else I := 0;
+    end;
+
+    if FSortDirection then
+      Column[I].ImageIndex := TIconList(SmallImages).FileIcon('.@sortup', faDirectory)
+    else
+      Column[I].ImageIndex := TIconList(SmallImages).FileIcon('.@sortdown', faDirectory);
+
     UpdateFolder;
   end;
 
@@ -694,54 +723,46 @@ uses
     end;
   end;
 
-  function TCustomArchiveListView.GetSelSize: string;
+  function TCustomArchiveListView.GetSelSize: int64;
   var
-    I, J: integer;
+    I: integer;
   begin
-    J := 0;
+    Result := 0;
     for I := 0 to FFolderFiles.Count -1 do
       with TArchiveItem(FolderFiles[I]) do
       begin
         if TListItem(Items[I]).Selected then
-          Inc(J, FileSize);
+          Inc(Result, FileSize);
       end;
-    Result := SizeToStr(J);
   end;
 
-  function TCustomArchiveListView.GetSelPackedSize: string;
+  function TCustomArchiveListView.GetSelPackedSize: int64;
   var
-    I, J: integer;
+    I: integer;
   begin
-    J := 0;
+    Result := 0;
     for I := 0 to FFolderFiles.Count -1 do
       with TArchiveItem(FolderFiles[I]) do
       begin
         if TListItem(Items[I]).Selected then
-          Inc(J, FilePacked);
+          Inc(Result, FilePacked);
       end;
-    Result := SizeToStr(J);
   end;
 
-  function TCustomArchiveListView.GetSelTime: string;
+  function TCustomArchiveListView.GetSelTime: integer;
   var
-    I, J: integer;
+    I: integer;
   begin
     if FFolderFiles.Count > 0 then
     begin
-      J := TArchiveItem(FolderFiles[0]).FileTime;
+      Result := TArchiveItem(FolderFiles[0]).FileTime;
       for I := 1 to FFolderFiles.Count -1 do
         if TListItem(Items[I]).Selected then
         begin
-          J := Max(J, TArchiveItem(FolderFiles[I]).FileTime);
+          Result := Max(Result, TArchiveItem(FolderFiles[I]).FileTime);
         end;
-
-      try
-        Result := DateTimeToString(FileDateToDateTime(J));
-      except
-        Result := '';
-      end
     end else
-      Result := '';
+      Result := -1;
   end;
   
   function TCustomArchiveListView.Open(const AArchiveName: string; AArchiveList: TList): boolean;
@@ -853,7 +874,7 @@ uses
           if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
             K := TIconList(SmallImages).FileIcon('.@folderclose', faDirectory)
           else
-            K := -1;
+            K := -1;    ShowMessage(IntToStr(J) + ' ' + IntToStr(K));
 
           if J = K then
             Node.FileIcon := K

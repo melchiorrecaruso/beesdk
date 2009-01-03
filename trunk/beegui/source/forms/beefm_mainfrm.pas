@@ -372,9 +372,14 @@ uses
     I: integer;
   begin
      StatusBar.Panels[0].Text := rsSelectedItems + IntToStr(ListView.SelCount);
-     StatusBar.Panels[1].Text := ListView.GetSelSize;
-     StatusBar.Panels[2].Text := ListView.GetSelPackedSize;
-     StatusBar.Panels[3].Text := ListView.GetSelTime;
+     StatusBar.Panels[1].Text := SizeToStr(ListView.SelFileSize);
+     StatusBar.Panels[2].Text := SizeToStr(ListView.SelFilePackedSize);
+     try
+       StatusBar.Panels[3].Text := DateTimeToString(
+         FileDateToDateTime(ListView.SelFileTime));
+     except
+       StatusBar.Panels[3].Text := '';
+     end
   end;
 
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
