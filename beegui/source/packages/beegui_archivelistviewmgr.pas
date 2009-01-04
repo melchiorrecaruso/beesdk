@@ -477,7 +477,7 @@ uses
   
   procedure TCustomArchiveListView.SetSortCol(Value: TArchiveListViewColumn);
   var
-    I: integer;
+    I, J, K: integer;
   begin
     if Value = FSortCol then
       FSortDirection := not FSortDirection
@@ -506,11 +506,28 @@ uses
     else I := 0;
     end;
 
-    if FSortDirection then
-      Column[I].ImageIndex := TIconList(SmallImages).FileIcon('.@sortup', faDirectory)
-    else
-      Column[I].ImageIndex := TIconList(SmallImages).FileIcon('.@sortdown', faDirectory);
+    if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
+    begin
+      if FSortDirection then
+        J := TIconList(SmallImages).FileIcon('.@sortup', faDirectory)
+      else
+        J := TIconList(SmallImages).FileIcon('.@sortdown', faDirectory);
+    end else
+      J := -1;
 
+    if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
+    begin
+      if FSortDirection then
+        K := TIconList(LargeImages).FileIcon('.@sortup', faDirectory)
+      else
+        K := TIconList(LargeImages).FileIcon('.@sortdown', faDirectory);
+    end else
+      K := -1;
+
+    if J = K then
+    begin
+      Columns[I].ImageIndex := J;
+    end;
     UpdateFolder;
   end;
 
@@ -874,7 +891,7 @@ uses
           if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
             K := TIconList(SmallImages).FileIcon('.@folderclose', faDirectory)
           else
-            K := -1;    ShowMessage(IntToStr(J) + ' ' + IntToStr(K));
+            K := -1;
 
           if J = K then
             Node.FileIcon := K

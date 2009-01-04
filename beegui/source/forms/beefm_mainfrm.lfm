@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 271
+  Left = 197
   Height = 503
-  Top = 158
+  Top = 125
   Width = 769
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 484
@@ -13,6 +13,7 @@ object MainFrm: TMainFrm
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   LCLVersion = '0.9.27'
   object ListView: TArchiveListView
     AnchorSideTop.Side = asrBottom
@@ -25,7 +26,6 @@ object MainFrm: TMainFrm
     Columns = <    
       item
         Caption = 'Name'
-        Width = 180
       end    
       item
         Alignment = taRightJustify
