@@ -219,6 +219,7 @@ type
     // ---
 
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 
     procedure MMenuActionsViewClick(Sender: TObject);
@@ -338,6 +339,7 @@ uses
   begin
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
+
     // --- //
     UpdateButtons(False);
     // --- //
@@ -357,14 +359,18 @@ uses
     FCommandLine := TCustomCommandLine.Create(False);
     // --- //
     Caption := GetApplicationCaption(rsWelcome);
-    UpdateButtons;
-    UpdateStyle;
   end;
 
   procedure TMainFrm.FormDestroy(Sender: TObject);
   begin
     FCommandLine.Destroy;
     FWorking := False;
+  end;
+
+  procedure TMainFrm.FormShow(Sender: TObject);
+  begin
+    UpdateButtons;
+    UpdateStyle;
   end;
 
   procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
