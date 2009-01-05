@@ -271,6 +271,7 @@ type
 
 
     procedure OnFileViewTimer(Sender: TObject);
+
     procedure OnFileUpdateTimer(Sender: TObject);
     
     procedure FolderBoxSelect(Sender: TObject);
@@ -292,6 +293,7 @@ type
     procedure SetArchiveName(const aArchiveName: string);
     procedure OpenArchive(const aArchiveName: string);
     procedure Execute(const aArchiveName: string);
+    procedure OpenFile(const aFileName: string);
   private
     { private declarations }
     procedure UpdateStyle;
@@ -628,24 +630,25 @@ uses
       UpdateCursor(crHourGlass);
       FTime := FileAge(aArchiveName);
 
-      // ShowMessage(FCommandLine.Params.Text);
-
       TickFrm := TTickFrm.Create(Application);
       TickFrm.Execute(FCommandLine, nil);
       repeat
-        Application.ProcessMessages;
         if TickFrm.CanClose then Break;
         if TickFrm.CanShow  then Break;
+        Application.ProcessMessages;
       until FCommandLine.Log;
 
-      Visible := not ConfigFrm.HideMainFrmOption.Checked;
-
       if FCommandLine.Log then
+      begin
+        Visible := not ConfigFrm.HideMainFrmOption.Checked;
         TickFrm.ShowModal
-      else
+      end else
         if TickFrm.CanClose = False then
+        begin
+          Visible := not ConfigFrm.HideMainFrmOption.Checked;
           TickFrm.ShowModal;
-      Visible := True;
+        end;
+      if not Visible then Visible := True;
 
       FreeAndNil(TickFrm);
       UpdateCursor(crDefault);
@@ -710,6 +713,11 @@ uses
     end;
     UpdateCursor(crDefault);
     FWorking := False;
+  end;
+
+  procedure TMainFrm.OpenFile(const aFileName: string);
+  begin
+    ShowMessage('ShowFileName');
   end;
 
   procedure TMainFrm.SetArchiveName(const aArchiveName: string);
@@ -1015,7 +1023,6 @@ uses
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
       FCommandLine.ArchiveName := FArchiveName;
-      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1034,7 +1041,6 @@ uses
         FCommandLine.Log := MMenuOptionsLogReport.Checked;
         FCommandLine.ArchiveName := FArchiveName;
         ListView.GetMasks(FCommandLine.FileMasks);
-        // if FCommandLine.Run then
         begin
           Execute(FArchiveName);
         end;
@@ -1054,7 +1060,6 @@ uses
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
       FCommandLine.ArchiveName := FArchiveName;
       ListView.GetMasks(FCommandLine.FileMasks);
-      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1072,7 +1077,6 @@ uses
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
       FCommandLine.FileMasks.Add('*');
-      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1089,7 +1093,6 @@ uses
       FCommandLine.Log := True;
       FCommandLine.ArchiveName := FArchiveName;
       ListView.GetMasks(FCommandLine.FileMasks);
-      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1106,7 +1109,6 @@ uses
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       FCommandLine.ArchiveName := FArchiveName;
       ListView.GetMasks(FCommandLine.FileMasks);
-      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
@@ -1114,33 +1116,29 @@ uses
   end;
   
   procedure TMainFrm.MMenuActionsViewClick(Sender: TObject);
-  var
-    CommandLine: string;
-    FileName : string;
-    FilePath: string;
   begin
     if ListView.Selected <> nil then
     begin
       if Pos('D', ListView.Selected.SubItems[5]) > 0 then
       begin
-        ListView.Folder :=IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
+        ListView.Folder := IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
       end else
-        if FWorking = False then
+        if (FWorking = False) and (ListView.SelCount = 1) then
         begin
-          // FCommandLine.Clear;
-          // FCommandLine.Command := 'X';
-          // FCommandLine.oOption := 'A';
-          // FCommandLine.ArchiveName := FArchiveName;
-          // ListView.GetMasks(FCommandLine.FileMasks);
-
-          // FileName := IncludeTrailingBackSlash(GetApplicationTempDir(Application.Name)) + ListView.GetMasks;
-          // FilePath := GetApplicationTempDir(cApplicationName);
-          // FileProcess.Start(FileName, FilePath);
-         end;
+          FCommandLine.Clear;
+          FCommandLine.Command := 'X';
+          FCommandLine.oOption := 'A';
+          FCommandLine.rOption := False;
+          FCommandLine.Log := MMenuOptionsLogReport.Checked;
+          FCommandLine.ArchiveName := FArchiveName;
+          ListView.GetMasks(FCommandLine.FileMasks);
+          begin
+            Execute(FArchiveName);
+          end;
+          OpenFile(FArchiveName);
+        end;
     end;
   end;
-
-
 
   procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);
   begin
@@ -1160,7 +1158,6 @@ uses
       FCommandLine.Log := True;
       FCommandLine.ArchiveName := FArchiveName;
       FCommandLine.FileMasks.Add('*');
-      // if FCommandLine.Run then
       begin
         Execute(FArchiveName);
       end;
