@@ -762,8 +762,8 @@ uses
       OpenDialog.FileName := '';
       if OpenDialog.Execute then
       begin
-        ListView.AutoLoadFolderBox := True;
         MMenuFileCloseClick(Sender);
+        ListView.AutoLoadFolderBox := True;
         OpenArchive(OpenDialog.FileName);
       end;
     end;
