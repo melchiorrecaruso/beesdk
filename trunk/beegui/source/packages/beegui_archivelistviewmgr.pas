@@ -587,6 +587,7 @@ uses
               Image := nil;
           end;
           FFolderBox.ItemIndex := FFolderBox.Items.AddObject(FFolderBoxSign + FFolder, Image);
+          if Assigned(Image) then Image.Free;
         end else
           FFolderBox.ItemIndex := J;
       end;
@@ -952,6 +953,7 @@ uses
             Image := nil;
 
           FFolderBox.Items.AddObject(FFolderBoxSign + AFolder, Image);
+          if Assigned(Image) then Image.Free;
         end;
       end;
   end;
