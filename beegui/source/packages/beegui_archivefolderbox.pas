@@ -49,6 +49,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure Clear; override;
   end;
 
  { Register }
@@ -63,14 +64,8 @@ implementation
   end;
   
   destructor TArchiveFolderBox.Destroy;
-  var
-    I: integer;
   begin
-    for I := Items.Count -1 downto 0 do
-      if Assigned(Items.Objects[I]) and (Items.Objects[I].ClassType = TBitmap) then
-      begin
-        TBitmap(Items.Objects[I]).FreeImage;
-      end;
+    Clear;
     inherited Destroy;
   end;
   
@@ -95,6 +90,18 @@ implementation
       end;
       Canvas.TextOut(ARect.Left + OffSet, ARect.Top, Items[Index]);
     end;
+  end;
+
+  procedure TArchiveFolderBox.Clear;
+  var
+    I: integer;
+  begin
+    for I := Items.Count -1 downto 0 do
+      if Assigned(Items.Objects[I]) and (Items.Objects[I].ClassType = TBitmap) then
+      begin
+        TBitmap(Items.Objects[I]).FreeImage;
+      end;      
+    inherited Clear;
   end;
   
   { Register }

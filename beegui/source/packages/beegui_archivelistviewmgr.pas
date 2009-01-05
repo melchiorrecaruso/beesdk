@@ -584,10 +584,11 @@ uses
               Image := TBitmap.Create;
               TIconList(SmallImages).GetBitmap(I, Image);
             end else
+            begin
               Image := nil;
+            end;
+            FFolderBox.ItemIndex := FFolderBox.Items.AddObject(FFolderBoxSign + FFolder, Image);
           end;
-          FFolderBox.ItemIndex := FFolderBox.Items.AddObject(FFolderBoxSign + FFolder, Image);
-          if Assigned(Image) then Image.Free;
         end else
           FFolderBox.ItemIndex := J;
       end;
@@ -627,23 +628,15 @@ uses
   end;
 
   procedure TCustomArchiveListView.CloseArchive(Clean: boolean);
-  var
-    I: integer;
   begin
     Enabled := False;
     Color := clInactiveBorder;
 
     if Assigned(FFolderBox) then
     begin
+      FFolderBox.Clear;
       FFolderBox.Enabled := False;
       FFolderBox.Color := clInactiveBorder;
-
-      for I := 0 to FFolderBox.Items.Count -1 do
-      begin
-        if Assigned(FFolderBox.Items.Objects[I]) then
-          FFolderBox.Items.Objects[I].Free;
-      end;
-      FFolderBox.Clear;
     end;
 
     FFiles.Clear;
@@ -941,19 +934,19 @@ uses
         if K = -1 then
         begin
           if Length(AFolder) = 0 then
-            G := TIconList(SmallImages).FileIcon('.bee' ,faArchive)
+            G := TIconList(SmallImages).FileIcon('.bee', faArchive)
           else
-            G := TIconList(SmallImages).FileIcon('.@folderclose' ,faDirectory);
+            G := TIconList(SmallImages).FileIcon('.@folderclose', faDirectory);
 
           if G > -1 then
           begin
             Image := TBitmap.Create;
             TIconList(SmallImages).GetBitmap(G, Image);
           end else
+          begin
             Image := nil;
-
+          end;
           FFolderBox.Items.AddObject(FFolderBoxSign + AFolder, Image);
-          if Assigned(Image) then Image.Free;
         end;
       end;
   end;
@@ -964,11 +957,6 @@ uses
   begin
     if Assigned(FFolderBox) then
     begin
-      for I := 0 to FFolderBox.Items.Count -1 do
-      begin
-        if Assigned(FFolderBox.Items.Objects[I]) then
-          FFolderBox.Items.Objects[I].Free;
-      end;
       FFolderBox.Clear;
 
       AddToFolderBox('');
