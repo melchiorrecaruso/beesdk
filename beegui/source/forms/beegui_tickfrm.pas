@@ -625,7 +625,7 @@ var
         Node.FileSize     := FInterfaces.OnList.Data.FileSize;
         Node.FilePacked   := FInterfaces.OnList.Data.FilePacked;
         Node.FileRatio    := FInterfaces.OnList.Data.FileRatio;
-        Node.FileAttr     := Max(0, FInterfaces.OnList.Data.FileAttr);
+        Node.FileAttr     := FInterfaces.OnList.Data.FileAttr;
         Node.FileTime     := FInterfaces.OnList.Data.FileTime;
         Node.FileComm     := FInterfaces.OnList.Data.FileComm;
         Node.FileCrc      := FInterfaces.OnList.Data.FileCrc;
