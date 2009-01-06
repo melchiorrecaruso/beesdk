@@ -76,7 +76,6 @@ type
     FProcess: TProcess;
   protected
     procedure DoOnTimer; override;
-    function GetExec: string;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -89,6 +88,8 @@ type
   { Register }
 
   procedure Register;
+
+  function GetFileExec(const aFileName: string): string;
 
 implementation
 
@@ -159,7 +160,7 @@ uses
     if FProcess.Running = False then
     begin
       FFileTime := FileAge(FFileName);
-      FProcess.CommandLine := GetExec + ' "' + FFileName  + '"';
+      FProcess.CommandLine := GetFileExec(FFileName) + ' "' + FFileName  + '"';
       FProcess.CurrentDirectory := FCurrentDir;
       FProcess.StartupOptions := [];
       FProcess.Options := [];
@@ -189,7 +190,7 @@ uses
     inherited Destroy;
   end;
   
- function TFileProcess.GetExec: string;
+ function GetFileExec(const aFileName: string): string;
   var
     {$IFDEF MSWINDOWS}
     P: PChar;
@@ -201,7 +202,7 @@ uses
     Result := '';
     {$IFDEF MSWINDOWS}
     FillChar(Buffer, SizeOf(Buffer), #0);
-    Res := FindExecutable(PChar(FFileName), nil, Buffer);
+    Res := FindExecutable(PChar(aFileName), nil, Buffer);
     if Res > 32 then
     begin
       P := Buffer;
