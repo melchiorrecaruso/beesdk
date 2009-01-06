@@ -727,8 +727,6 @@ uses
     FFileExec := GetFileExec(aFileName);
     if FFileExec <> '' then
     begin
-      Visible := False;
-
       FFileTime := FileAge(aFileName);
       FProcess := TProcess.Create(Application);
       FProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
@@ -754,7 +752,6 @@ uses
         end;
       end;
       DeleteFile(aFileName);
-      Visible := True;
     end;
     UpdateCursor(crDefault);
     FWorking := False;
