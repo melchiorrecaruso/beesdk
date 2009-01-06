@@ -145,12 +145,12 @@ type
     FOnlyAForm: boolean;
   private
     { private declarations }
-    function GetCanShow: boolean;
-    function GetCanClose: boolean;
+    function GetFrmCanShow: boolean;
+    function GetFrmCanClose: boolean;
   public
     { public declarations }
-    property CanShow: boolean read GetCanShow;
-    property CanClose: boolean read GetCanClose;
+    property FrmCanShow: boolean read GetFrmCanShow;
+    property FrmCanClose: boolean read GetFrmCanClose;
     property OnlyAForm: boolean read FOnlyAForm write FOnlyAForm;
   public
     { public declarations }
@@ -281,12 +281,12 @@ var
     FApp.Resume;
   end;
 
-  function TTickFrm.GetCanClose: boolean;
+  function TTickFrm.GetFrmCanClose: boolean;
   begin
     Result := FCanClose;
   end;
 
-  function TTickFrm.GetCanShow: boolean;
+  function TTickFrm.GetFrmCanShow: boolean;
   begin
     Result := FRemainingTime > 0;
   end;

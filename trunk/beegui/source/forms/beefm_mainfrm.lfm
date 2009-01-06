@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 300
+  Left = 396
   Height = 503
-  Top = 154
+  Top = 165
   Width = 769
   ActiveControl = ToolBar
   Caption = 'Bee File Manager - Welcome'
@@ -3171,6 +3171,12 @@ object MainFrm: TMainFrm
     Height = 32
     Width = 32
     left = 48
+    top = 280
+  end
+  object IdleTimer: TIdleTimer
+    Enabled = False
+    Interval = 250
+    left = 80
     top = 280
   end
 end

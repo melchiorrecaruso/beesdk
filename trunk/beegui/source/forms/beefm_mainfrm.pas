@@ -73,6 +73,7 @@ type
     BtnView: TSpeedButton;
     DownToolBar: TPanel;
     BtnUp: TSpeedButton;
+    IdleTimer: TIdleTimer;
     MMenuViewUpdate: TMenuItem;
     MMenuViewUp: TMenuItem;
     MMenuViewN4: TMenuItem;
@@ -289,11 +290,14 @@ type
   private
     FWorking: boolean;
     FArchiveName: string;
+
+    FFileProcess: TFileProcess;
+
     FCommandLine: TCustomCommandLine;
     procedure SetArchiveName(const aArchiveName: string);
     procedure OpenArchive(const aArchiveName: string);
     procedure Execute(const aArchiveName: string);
-    procedure OpenFile(const aFileName: string);
+    procedure UpdateFile(Sender: TObject);
   private
     { private declarations }
     procedure UpdateStyle;
@@ -622,7 +626,9 @@ uses
     FArchiveTime: integer;
   begin
     if FCommandLine.Confirm then
+    begin
       Visible := not ConfigFrm.HideAddFrmOption.Checked;
+    end;
 
     if FCommandLine.Run then
     begin
@@ -632,25 +638,26 @@ uses
 
       TickFrm := TTickFrm.Create(Application);
       TickFrm.Execute(FCommandLine, nil);
-      repeat
-        if TickFrm.CanClose then Break;
-        if TickFrm.CanShow  then Break;
-        Application.ProcessMessages;
-      until FCommandLine.Log;
+      // repeat
+      //   if TickFrm.FrmCanClose then Break;
+      //   if TickFrm.FrmCanShow  then Break;
+      //   Application.ProcessMessages;
+      // until FCommandLine.Log;
 
-      if FCommandLine.Log then
-      begin
+      // if FCommandLine.Log then
+      // begin
         Visible := not ConfigFrm.HideMainFrmOption.Checked;
-        TickFrm.ShowModal
-      end else
-        if TickFrm.CanClose = False then
-        begin
-          Visible := not ConfigFrm.HideMainFrmOption.Checked;
-          TickFrm.ShowModal;
-        end;
+        TickFrm.ShowModal;
+      // end else
+      //   if TickFrm.FrmCanClose = False then
+      //   begin
+      //     Visible := not ConfigFrm.HideMainFrmOption.Checked;
+      //     TickFrm.ShowModal;
+      //   end;
+      FreeAndNil(TickFrm);
+
       if not Visible then Visible := True;
 
-      FreeAndNil(TickFrm);
       UpdateCursor(crDefault);
       FWorking := False;
 
@@ -659,7 +666,7 @@ uses
         OpenArchive(aArchiveName);
       end;
     end;
-    Visible := True;
+    if not Visible then Visible := True;
   end;
 
   procedure TMainFrm.OpenArchive(const aArchiveName: string);
@@ -687,13 +694,13 @@ uses
       TickFrm.Execute(FCommandLine, FList);
       repeat
         Application.ProcessMessages;
-        if TickFrm.CanClose then Break;
-        if TickFrm.CanShow  then Break;
+        if TickFrm.FrmCanClose then Break;
+        if TickFrm.FrmCanShow  then Break;
       until FCommandLine.Log;
       if FCommandLine.Log then
         TickFrm.ShowModal
       else
-        if TickFrm.CanClose = False then
+        if TickFrm.FrmCanClose = False then
           TickFrm.ShowModal;
       FreeAndNil(TickFrm);
 
@@ -715,45 +722,26 @@ uses
     FWorking := False;
   end;
 
-  procedure TMainFrm.OpenFile(const aFileName: string);
-  var
-    FProcess: TProcess;
-    FFileTime: integer;
-    FFileExec: string;
+  procedure TMainFrm.UpdateFile(Sender: TObject);
   begin
-    FWorking := True;
-    UpdateCursor(crHourGlass);
-    FFileExec := GetFileExec(aFileName);
-    if FFileExec <> '' then
+    if FFileProcess.IsModified and (FWorking = False) then
     begin
-      FFileTime := FileAge(aFileName);
-      FProcess := TProcess.Create(Application);
-      FProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
-      FProcess.CommandLine := FFileExec + ' "' + aFileName  + '"';
-      FProcess.StartupOptions := [];
-      FProcess.Options := [poWaitOnExit];
-      FProcess.Execute;
-      FProcess.Destroy;
-
-      if FileAge(aFileName) > FFileTime then
+      FCommandLine.Clear;
+      FCommandLine.Command := 'A';
+      FCommandLine.fOption := True;
+      FCommandLine.uOption := False;
+      FCommandLine.rOption := False;
+      FCommandLine.Confirm := False;
+      FCommandLine.cdOption := ListView.Folder;
+      FCommandLine.ArchiveName := FArchiveName;
+      FCommandLine.FileMasks.Add(FFileProcess.FileName);
       begin
-        FCommandLine.Clear;
-        FCommandLine.Command := 'A';
-        FCommandLine.fOption := True;
-        FCommandLine.uOption := False;
-        FCommandLine.rOption := False;
-        FCommandLine.Confirm := False;
-        FCommandLine.cdOption := ListView.Folder;
-        FCommandLine.ArchiveName := FArchiveName;
-        FCommandLine.FileMasks.Add(aFileName);
-        begin
-          Execute(FArchiveName);
-        end;
+        ShowMEssage('inizio');
+        Execute(FArchiveName);
+        ShowMEssage('finito');
       end;
-      DeleteFile(aFileName);
     end;
-    UpdateCursor(crDefault);
-    FWorking := False;
+    DeleteFile(FFileProcess.FileName);
   end;
 
   procedure TMainFrm.SetArchiveName(const aArchiveName: string);
@@ -1151,12 +1139,15 @@ uses
   end;
   
   procedure TMainFrm.MMenuActionsViewClick(Sender: TObject);
+  var
+    FFileName: string;
   begin
     if ListView.Selected <> nil then
     begin
+      FFileName := ListView.Selected.Caption;
       if Pos('D', ListView.Selected.SubItems[5]) > 0 then
       begin
-        ListView.Folder := IncludeTrailingBackSlash(ListView.Folder) + ListView.Selected.Caption;
+        ListView.Folder := IncludeTrailingBackSlash(ListView.Folder) + FFileName;
       end else
         if (FWorking = False) and (ListView.SelCount = 1) then
         begin
@@ -1170,7 +1161,9 @@ uses
           if SetCurrentDir(GetApplicationTempDir(Application.Name)) then
           begin
             Execute(FArchiveName);
-            OpenFile(ListView.Selected.Caption);
+            FFileProcess := TFileProcess.Create(FFileName);
+            FFileProcess.OnTerminate := UpdateFile;
+            FFileProcess.Resume;
           end;
         end;
     end;

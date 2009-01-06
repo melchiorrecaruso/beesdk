@@ -86,13 +86,13 @@ begin
         TickFrm.OnlyAForm := True;
         repeat
           Application.ProcessMessages;
-          if TickFrm.CanClose then Break;
-          if TickFrm.CanShow  then Break;
+          if TickFrm.FrmCanClose then Break;
+          if TickFrm.FrmCanShow  then Break;
         until CommandLine.Log;
         if CommandLine.Log then
           Application.Run
         else
-          if TickFrm.CanClose = False then
+          if TickFrm.FrmCanClose = False then
             Application.Run;
       end;
     end;
