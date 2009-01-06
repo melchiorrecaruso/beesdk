@@ -19,8 +19,8 @@ object MainFrm: TMainFrm
   object ListView: TArchiveListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Height = 360
-    Top = 104
+    Height = 361
+    Top = 103
     Width = 769
     FolderBox = FolderBox
     Align = alClient
@@ -112,12 +112,12 @@ object MainFrm: TMainFrm
     SimplePanel = False
   end
   object ToolBar: TPanel
-    Height = 104
+    Height = 103
     Width = 769
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 104
+    ClientHeight = 103
     ClientWidth = 769
     TabOrder = 2
     object ToolBarBevel: TBevel
@@ -2553,18 +2553,18 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Height = 36
+      Height = 35
       Top = 68
       Width = 769
       Align = alTop
       AutoSize = True
-      ClientHeight = 36
+      ClientHeight = 35
       ClientWidth = 769
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideBottom.Side = asrBottom
         Left = 7
-        Height = 22
+        Height = 21
         Top = 7
         Width = 123
         Align = alLeft
@@ -2597,7 +2597,7 @@ object MainFrm: TMainFrm
       end
       object DownToolBarBevel: TBevel
         Left = 136
-        Height = 22
+        Height = 21
         Top = 7
         Width = 2
         Align = alLeft
@@ -3171,12 +3171,6 @@ object MainFrm: TMainFrm
     Height = 32
     Width = 32
     left = 48
-    top = 280
-  end
-  object FileProcess: TFileProcess
-    Enabled = False
-    Interval = 250
-    left = 80
     top = 280
   end
 end
