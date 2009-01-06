@@ -50,12 +50,14 @@ type
   TFileProcess = class(TThread)
   private
     FFileName: string;
+    FIsModified: boolean;
   public
-    constructor Create;
+    constructor Create(const aFileName: string);
     destructor Destroy; override;
     procedure Execute; override;
   public
-    property FileName: string read FFileName write FFileName;
+    property FileName: string read FFileName;
+    property IsModified: boolean read FIsModified;
   end;
 
   function GetFileExec(const aFileName: string): string;
@@ -69,15 +71,33 @@ uses
 
   { TFileProcess class }
   
-  constructor TFileProcess.Create;
+  constructor TFileProcess.Create(const aFileName: string);
   begin
     inherited Create(True);
-    FFileName := '';
+    FreeOnTerminate := False;
+    FFileName := aFileName;
+    FIsModified := False;
   end;
   
   procedure TFileProcess.Execute;
+  var
+    FFileExec: string;
+    FFileTime: integer;
+    FProcess: TProcess;
   begin
-
+    FFileTime := FileAge(FFileName);
+    FFileExec := GetFileExec(FFileName);
+    if FFileExec <> '' then
+    begin
+      FProcess := TProcess.Create(nil);
+      FProcess.CommandLine := FFileExec + ' "' + FFileName  + '"';
+      FProcess.Options := [poWaitOnExit];
+      FProcess.CurrentDirectory := '';
+      FProcess.StartupOptions := [];
+      FProcess.Execute;
+      FProcess.Destroy;
+    end;
+    FIsModified :=  FileAge(FFileName) > FFileTime;
   end;
 
   destructor TFileProcess.Destroy;
@@ -86,7 +106,7 @@ uses
     inherited Destroy;
   end;
   
- function GetFileExec(const aFileName: string): string;
+  function GetFileExec(const aFileName: string): string;
   var
     {$IFDEF MSWINDOWS}
     P: PChar;
