@@ -35,6 +35,7 @@ uses
   Classes,
   Dialogs,
   Buttons,
+  Process,
   IniFiles,
   SysUtils,
   Graphics,
@@ -619,7 +620,7 @@ uses
 
   procedure TMainFrm.Execute(const aArchiveName: string);
   var
-    FTime: integer;
+    FArchiveTime: integer;
   begin
     if FCommandLine.Confirm then
       Visible := not ConfigFrm.HideAddFrmOption.Checked;
@@ -628,7 +629,7 @@ uses
     begin
       FWorking := True;
       UpdateCursor(crHourGlass);
-      FTime := FileAge(aArchiveName);
+      FArchiveTime := FileAge(aArchiveName);
 
       TickFrm := TTickFrm.Create(Application);
       TickFrm.Execute(FCommandLine, nil);
@@ -654,7 +655,7 @@ uses
       UpdateCursor(crDefault);
       FWorking := False;
 
-      if FileAge(aArchiveName) > FTime then
+      if FileAge(aArchiveName) > FArchiveTime then
       begin
         OpenArchive(aArchiveName);
       end;
@@ -716,8 +717,47 @@ uses
   end;
 
   procedure TMainFrm.OpenFile(const aFileName: string);
+  var
+    FProcess: TProcess;
+    FFileTime: integer;
+    FFileExec: string;
   begin
-    ShowMessage('ShowFileName');
+    FWorking := True;
+    UpdateCursor(crHourGlass);
+    FFileExec := GetFileExec(aFileName);
+    if FFileExec <> '' then
+    begin
+      Visible := False;
+
+      FFileTime := FileAge(aFileName);
+      FProcess := TProcess.Create(Application);
+      FProcess.CurrentDirectory := GetApplicationTempDir(Application.Name);
+      FProcess.CommandLine := FFileExec + ' "' + aFileName  + '"';
+      FProcess.StartupOptions := [];
+      FProcess.Options := [poWaitOnExit];
+      FProcess.Execute;
+      FProcess.Destroy;
+
+      if FileAge(aFileName) > FFileTime then
+      begin
+        FCommandLine.Clear;
+        FCommandLine.Command := 'A';
+        FCommandLine.fOption := True;
+        FCommandLine.uOption := False;
+        FCommandLine.rOption := False;
+        FCommandLine.Confirm := False;
+        FCommandLine.cdOption := ListView.Folder;
+        FCommandLine.ArchiveName := FArchiveName;
+        FCommandLine.FileMasks.Add(aFileName);
+        begin
+          Execute(FArchiveName);
+        end;
+      end;
+      DeleteFile(aFileName);
+      Visible := True;
+    end;
+    UpdateCursor(crDefault);
+    FWorking := False;
   end;
 
   procedure TMainFrm.SetArchiveName(const aArchiveName: string);
@@ -747,7 +787,6 @@ uses
         FCommandLine.Log := MMenuOptionsLogReport.Checked;
         FCommandLine.ArchiveName := SaveDialog.FileName;
         ConfigFrm.AddOptions('', FCommandLine);
-        // if FCommandLine.Run then
         begin
           Execute(SaveDialog.FileName);
         end;
@@ -1126,16 +1165,17 @@ uses
         if (FWorking = False) and (ListView.SelCount = 1) then
         begin
           FCommandLine.Clear;
-          FCommandLine.Command := 'X';
+          FCommandLine.Command := 'E';
           FCommandLine.oOption := 'A';
           FCommandLine.rOption := False;
           FCommandLine.Log := MMenuOptionsLogReport.Checked;
           FCommandLine.ArchiveName := FArchiveName;
           ListView.GetMasks(FCommandLine.FileMasks);
+          if SetCurrentDir(GetApplicationTempDir(Application.Name)) then
           begin
             Execute(FArchiveName);
+            OpenFile(ListView.Selected.Caption);
           end;
-          OpenFile(FArchiveName);
         end;
     end;
   end;
