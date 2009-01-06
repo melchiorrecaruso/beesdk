@@ -54,7 +54,7 @@
     </CompilerOptions>
     <License Value="GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 "/>
-    <Version Major="1" Release="5" Build="165"/>
+    <Version Major="1" Release="5" Build="180"/>
     <Files Count="11">
       <Item1>
         <Filename Value="beegui_addtreeviewmgr.lrs"/>
@@ -103,7 +103,6 @@
       </Item10>
       <Item11>
         <Filename Value="beegui_process.pas"/>
-        <HasRegisterProc Value="True"/>
         <UnitName Value="BeeGui_Process"/>
       </Item11>
     </Files>

@@ -72,7 +72,6 @@ type
     BtnTest: TSpeedButton;
     BtnView: TSpeedButton;
     DownToolBar: TPanel;
-    FileProcess: TFileProcess;
     BtnUp: TSpeedButton;
     MMenuViewUpdate: TMenuItem;
     MMenuViewUp: TMenuItem;

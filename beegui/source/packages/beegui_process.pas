@@ -41,53 +41,22 @@ uses
   Classes,
   SysUtils,
   ExtCtrls,
-  CustomTimer,
   LResources;
   
 type
 
-  { TArcProcess class }
-
-  TArcProcess = class(TIdleTimer)
-  private
-    // FCommandLine: TCommandLine;
-    FArchiveName: string;
-    FCurrentDir: string;
-    FProcess: TProcess;
-  protected
-    procedure DoOnTimer; override;
-  public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
-    procedure Execute;
-  public
-    // property CommandLine: TCommandLine read FCommandLine write FCommandLine;
-    property ArchiveName: string read FArchiveName write FArchiveName;
-    property CurrentDir: string read FCurrentDir write FCurrentDir;
-  end;
-
   { TFileProcess class }
 
-  TFileProcess = class(TIdleTimer)
+  TFileProcess = class(TThread)
   private
     FFileName: string;
-    FFileTime: integer;
-    FCurrentDir: string;
-    FProcess: TProcess;
-  protected
-    procedure DoOnTimer; override;
   public
-    constructor Create(AOwner: TComponent); override;
+    constructor Create;
     destructor Destroy; override;
-    procedure Execute;
+    procedure Execute; override;
   public
     property FileName: string read FFileName write FFileName;
-    property CurrentDir: string read FCurrentDir write FCurrentDir;
   end;
-  
-  { Register }
-
-  procedure Register;
 
   function GetFileExec(const aFileName: string): string;
 
@@ -98,95 +67,22 @@ uses
   BeeGui_Consts,
   BeeGui_SysUtils;
 
-  { TArcProcess class }
-
-  constructor TArcProcess.Create(AOwner: TComponent);
-  begin
-    inherited Create(AOwner);
-    FProcess := TProcess.Create(Self);
-    FProcess.StartupOptions := [];
-    FProcess.Options := [];
-
-    SetLength(FArchiveName, 0);
-    SetLength(FCurrentDir, 0);
-    // SetLength(FCommandLine, 0);
-  end;
-  
-  destructor TArcProcess.Destroy;
-  begin
-    SetLength(FArchiveName, 0);
-    SetLength(FCurrentDir, 0);
-    // SetLength(FCommandLine, 0);
-    FProcess.Destroy;
-    inherited Destroy;
-  end;
-
-  procedure TArcProcess.Execute;
-  begin
-    if FProcess.Running = False then
-    begin
-      FProcess.CurrentDirectory := FCurrentDir;
-      FProcess.StartupOptions := [];
-      FProcess.Options := [];
-      FProcess.Execute;
-      Enabled := True;
-    end;
-  end;
-
-  procedure TArcProcess.DoOnTimer;
-  begin
-    if FProcess.Running = False then
-    begin
-      Enabled := False;
-    end;
-    inherited DoOnTimer;
-  end;
-  
   { TFileProcess class }
   
-  constructor TFileProcess.Create(AOwner: TComponent);
+  constructor TFileProcess.Create;
   begin
-    inherited Create(AOwner);
-    FProcess := TProcess.Create(Self);
-    FProcess.StartupOptions := [];
-    FProcess.Options := [];
-
-    SetLength(FFileName, 0);
-    SetLength(FCurrentDir, 0);
+    inherited Create(True);
+    FFileName := '';
   end;
   
   procedure TFileProcess.Execute;
   begin
-    if FProcess.Running = False then
-    begin
-      FFileTime := FileAge(FFileName);
-      FProcess.CommandLine := GetFileExec(FFileName) + ' "' + FFileName  + '"';
-      FProcess.CurrentDirectory := FCurrentDir;
-      FProcess.StartupOptions := [];
-      FProcess.Options := [];
-      FProcess.Execute;
-      Enabled := True;
-    end;
+
   end;
 
-  procedure TFileProcess.DoOnTimer;
-  begin
-    if FProcess.Running = False then
-    begin
-      Enabled := False;
-      if FileAge(FFileName) > FFileTime then
-      begin
-
-      end;
-    end;
-    inherited DoOnTimer;
-  end;
-  
   destructor TFileProcess.Destroy;
   begin
-    SetLength(FCurrentDir, 0);
-    SetLength(FFileName, 0);
-    FreeAndNil(FProcess);
+    FFileName := '';
     inherited Destroy;
   end;
   
@@ -230,14 +126,6 @@ uses
         OpenDialog.Free;
       end;
     end;
-  end;
-
-  { Register }
-
-  procedure Register;
-  begin
-    RegisterComponents('BeePackage', [TArcProcess]);
-    RegisterComponents('BeePackage', [TFileProcess]);
   end;
 
 initialization
