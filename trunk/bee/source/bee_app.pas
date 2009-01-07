@@ -237,9 +237,6 @@ procedure TBeeApp.Execute;
 const
   SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
-  Interfaces.OnError.Data.Msg := 'START';
-  Synchronize(Interfaces.OnError.Method);
-
   Interfaces.OnDisplay.Data.Msg := FSelfName;
   Synchronize(Interfaces.OnDisplay.Method);
   with FCommandLine do

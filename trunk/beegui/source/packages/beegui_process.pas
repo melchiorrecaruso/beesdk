@@ -47,20 +47,27 @@ type
 
   { TFileProcess class }
 
-  TFileProcess = class(TThread)
+  TFileProcess = class(TTimer)
   private
     FFileName: string;
+    FFileTime: integer;
+    FProcess: TProcess;
     FIsModified: boolean;
+  private
+    procedure DoOnTimer; override;
+    function GetFileExec: string;
   public
-    constructor Create(const aFileName: string);
+    function Execute(const aFileName: string): boolean;
+    constructor Create(Sender: TComponent);
     destructor Destroy; override;
-    procedure Execute; override;
   public
     property FileName: string read FFileName;
     property IsModified: boolean read FIsModified;
   end;
 
-  function GetFileExec(const aFileName: string): string;
+  { Register }
+
+  procedure Register;
 
 implementation
 
@@ -71,33 +78,47 @@ uses
 
   { TFileProcess class }
   
-  constructor TFileProcess.Create(const aFileName: string);
+  constructor TFileProcess.Create(Sender: TComponent);
   begin
-    inherited Create(True);
-    FreeOnTerminate := False;
-    FFileName := aFileName;
+    inherited Create(Sender);
     FIsModified := False;
+    FFileName := '';
   end;
   
-  procedure TFileProcess.Execute;
+  function TFileProcess.Execute(const aFileName: string): boolean;
   var
     FFileExec: string;
-    FFileTime: integer;
-    FProcess: TProcess;
   begin
+    Result := False;
+    FIsModified := False;
+    FFileName := aFileName;
     FFileTime := FileAge(FFileName);
-    FFileExec := GetFileExec(FFileName);
+    FFileExec := GetFileExec;
     if FFileExec <> '' then
     begin
       FProcess := TProcess.Create(nil);
       FProcess.CommandLine := FFileExec + ' "' + FFileName  + '"';
-      FProcess.Options := [poWaitOnExit];
       FProcess.CurrentDirectory := '';
       FProcess.StartupOptions := [];
+      FProcess.Options := [];
       FProcess.Execute;
-      FProcess.Destroy;
+      Result := True;
     end;
-    FIsModified :=  FileAge(FFileName) > FFileTime;
+  end;
+
+  procedure TFileProcess.DoOnTimer;
+  begin
+    if Assigned(FProcess) then
+    begin
+      if (FProcess.Running = False) then
+      begin
+        FIsModified :=  FileAge(FFileName) > FFileTime;
+        FreeAndNil(FProcess);
+        Enabled := False;
+      end;
+    end else
+      Enabled := False;
+    inherited DoOnTimer;
   end;
 
   destructor TFileProcess.Destroy;
@@ -106,7 +127,7 @@ uses
     inherited Destroy;
   end;
   
-  function GetFileExec(const aFileName: string): string;
+  function TFileProcess.GetFileExec: string;
   var
     {$IFDEF MSWINDOWS}
     P: PChar;
@@ -118,7 +139,7 @@ uses
     Result := '';
     {$IFDEF MSWINDOWS}
     FillChar(Buffer, SizeOf(Buffer), #0);
-    Res := FindExecutable(PChar(aFileName), nil, Buffer);
+    Res := FindExecutable(PChar(FFileName), nil, Buffer);
     if Res > 32 then
     begin
       P := Buffer;
@@ -146,6 +167,13 @@ uses
         OpenDialog.Free;
       end;
     end;
+  end;
+
+  { Register }
+
+  procedure Register;
+  begin
+    RegisterComponents('BeePackage', [TFileProcess]);
   end;
 
 initialization

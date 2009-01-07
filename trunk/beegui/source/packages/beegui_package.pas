@@ -20,6 +20,7 @@ begin
     ); 
   RegisterUnit('BeeGui_FolderTreeViewMgr', @BeeGui_FolderTreeViewMgr.Register); 
   RegisterUnit('BeeGui_IconList', @BeeGui_IconList.Register); 
+  RegisterUnit('BeeGui_Process', @BeeGui_Process.Register); 
 end; 
 
 initialization
