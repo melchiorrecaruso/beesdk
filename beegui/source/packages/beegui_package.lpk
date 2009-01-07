@@ -103,6 +103,7 @@
       </Item10>
       <Item11>
         <Filename Value="beegui_process.pas"/>
+        <HasRegisterProc Value="True"/>
         <UnitName Value="BeeGui_Process"/>
       </Item11>
     </Files>

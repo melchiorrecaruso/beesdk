@@ -12,6 +12,7 @@ object MainFrm: TMainFrm
   Font.CharSet = ANSI_CHARSET
   Menu = MMenu
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -3173,9 +3174,12 @@ object MainFrm: TMainFrm
     left = 48
     top = 280
   end
-  object IdleTimer: TIdleTimer
+  object FileProcess: TFileProcess
     Enabled = False
     Interval = 250
+    OnTimer = FileProcessTimer
+    OnStartTimer = FileProcessStartTimer
+    OnStopTimer = FileProcessStopTimer
     left = 80
     top = 280
   end
