@@ -276,6 +276,9 @@ var
   begin
     FCommandLine := ACommandLine;
     FArchiveList := AArchiveList;
+
+    ShowMessage(FCommandLine.Params.Text);
+
     FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;

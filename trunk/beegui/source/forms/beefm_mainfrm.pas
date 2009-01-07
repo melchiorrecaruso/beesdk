@@ -736,9 +736,7 @@ uses
       FCommandLine.ArchiveName := FArchiveName;
       FCommandLine.FileMasks.Add(FFileProcess.FileName);
       begin
-        ShowMEssage('inizio');
         Execute(FArchiveName);
-        ShowMEssage('finito');
       end;
     end;
     DeleteFile(FFileProcess.FileName);
