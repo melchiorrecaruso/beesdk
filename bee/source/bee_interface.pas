@@ -243,7 +243,7 @@ begin
     1: Priority := tpNormal;
     2: Priority := tpHigher;
     3: Priority := tpTimeCritical;
-  else Priority := tpNormal;
+    else Priority := tpNormal;
   end;
   {$ENDIF}
 end;
