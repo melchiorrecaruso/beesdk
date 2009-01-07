@@ -540,9 +540,6 @@ uses
     *)
   end;
 
-
-
-
   procedure TMainFrm.UpdateCursor(Value: TCursor);
   begin
     Cursor := Value;
@@ -625,10 +622,10 @@ uses
   var
     FArchiveTime: integer;
   begin
-    if FCommandLine.Confirm then
-    begin
-      Visible := not ConfigFrm.HideAddFrmOption.Checked;
-    end;
+    //if FCommandLine.Confirm then
+    //begin
+    //  Visible := not ConfigFrm.HideAddFrmOption.Checked;
+    //end;
 
     if FCommandLine.Run then
     begin
@@ -646,7 +643,7 @@ uses
 
       // if FCommandLine.Log then
       // begin
-        Visible := not ConfigFrm.HideMainFrmOption.Checked;
+        // Visible := not ConfigFrm.HideMainFrmOption.Checked;
         TickFrm.ShowModal;
       // end else
       //   if TickFrm.FrmCanClose = False then
@@ -656,7 +653,7 @@ uses
       //   end;
       FreeAndNil(TickFrm);
 
-      if not Visible then Visible := True;
+      //if not Visible then Visible := True;
 
       UpdateCursor(crDefault);
       FWorking := False;
@@ -666,7 +663,7 @@ uses
         OpenArchive(aArchiveName);
       end;
     end;
-    if not Visible then Visible := True;
+    //if not Visible then Visible := True;
   end;
 
   procedure TMainFrm.OpenArchive(const aArchiveName: string);

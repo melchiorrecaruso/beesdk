@@ -237,6 +237,9 @@ procedure TBeeApp.Execute;
 const
   SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
+  Interfaces.OnError.Data.Msg := 'START';
+  Synchronize(Interfaces.OnError.Method);
+
   Interfaces.OnDisplay.Data.Msg := FSelfName;
   Synchronize(Interfaces.OnDisplay.Method);
   with FCommandLine do
@@ -255,8 +258,7 @@ begin
       DisplayUsage;
 end;
 
-function TBeeApp.OpenArchive(Headers: THeaders;
-  aAction: THeaderAction): boolean;
+function TBeeApp.OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
 begin
   Result := True;
   if FileExists(FCommandLine.ArchiveName) then

@@ -54,6 +54,7 @@ uses
   BeeFM_ConfigFrm;
 
 var
+  TickFrm: TTickFrm;
   CommandLine: TCustomCommandLine;
 
 begin
