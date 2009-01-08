@@ -40,6 +40,7 @@ var
   rsSelectedItems:        string = 'Selected items: ';
 
   rsOpening:              string = 'Opening ...';
+  rsFreshFile:            string = 'Do you want to fresh file changed in archive?';
 
   rsArcProperty:          string = 'Archive property';
   rsFileProperty:         string = 'File property';
@@ -94,7 +95,9 @@ implementation
       
       rsFileProperty         := Storage.ReadString('ResourceString', 'rsFileProperty', rsFileProperty);
       rsArcProperty          := Storage.ReadString('ResourceString', 'rsArcProperty', rsArcProperty);
-      
+
+      rsFreshFile            := Storage.ReadString('ResourceString', 'rsFreshFile', rsFreshFile);
+
       rsSelectFolder         := Storage.ReadString('ResourceString', 'rsSelectFolder', rsSelectFolder);
       rsSelectFrmCaption     := Storage.ReadString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
       rsDeSelectFrmCaption   := Storage.ReadString('ResourceString', 'rsDeSelectFrmCaption', rsDeSelectFrmCaption);
@@ -144,6 +147,9 @@ implementation
 
       Storage.WriteString('ResourceString', 'rsFileProperty', rsFileProperty);
       Storage.WriteString('ResourceString', 'rsArcProperty', rsArcProperty);
+
+      Storage.WriteString('ResourceString', 'rsFreshFile', rsFreshFile);
+
 
       Storage.WriteString('ResourceString', 'rsSelectFolder', rsSelectFolder);
       Storage.WriteString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);

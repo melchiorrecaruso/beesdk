@@ -42,27 +42,27 @@ uses
   SysUtils,
   ExtCtrls,
   LResources;
-  
+
 type
 
   { TFileProcess class }
 
-  TFileProcess = class(TTimer)
+  TFileProcess = class(TIdleTimer)
   private
     FFileName: string;
     FFileTime: integer;
     FProcess: TProcess;
-    FIsModified: boolean;
+    FFileIsModified: boolean;
   private
-    procedure DoOnTimer; override;
     function GetFileExec: string;
+    procedure DoOnTimer; override;
+    procedure SetFileName(Value: string);
   public
-    function Execute(const aFileName: string): boolean;
     constructor Create(Sender: TComponent);
     destructor Destroy; override;
   public
-    property FileName: string read FFileName;
-    property IsModified: boolean read FIsModified;
+    property FileName: string read FFileName write SetFileName;
+    property FileIsModified: boolean read FFileIsModified;
   end;
 
   { Register }
@@ -81,18 +81,19 @@ uses
   constructor TFileProcess.Create(Sender: TComponent);
   begin
     inherited Create(Sender);
-    FIsModified := False;
+    FFileIsModified := False;
     FFileName := '';
+    FProcess := nil;
   end;
   
-  function TFileProcess.Execute(const aFileName: string): boolean;
+  procedure TFileProcess.SetFileName(Value: string);
   var
     FFileExec: string;
   begin
-    Result := False;
-    FIsModified := False;
-    FFileName := aFileName;
+    FFileName := Value;
     FFileTime := FileAge(FFileName);
+
+    FFileIsModified := False;
     FFileExec := GetFileExec;
     if FFileExec <> '' then
     begin
@@ -102,7 +103,7 @@ uses
       FProcess.StartupOptions := [];
       FProcess.Options := [];
       FProcess.Execute;
-      Result := True;
+      Enabled := True;
     end;
   end;
 
@@ -112,7 +113,8 @@ uses
     begin
       if (FProcess.Running = False) then
       begin
-        FIsModified :=  FileAge(FFileName) > FFileTime;
+        if FProcess.ExitStatus < 2 then;
+          FFileIsModified :=  FileAge(FFileName) > FFileTime;
         FreeAndNil(FProcess);
         Enabled := False;
       end;
