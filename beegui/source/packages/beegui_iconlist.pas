@@ -63,14 +63,6 @@ type
   published
     property IconFolder: string read FIconFolder write SetIconFolder;
   end;
-
-  //TIconList = class(TImageList)
-  //private
-  //public
-  //  function FileIcon(const FileName: string; FileAttr: integer): integer;
-  //  function FileType(const FileName: string; FileAttr: integer): string;
-  //published
-  //end;
   
   { Register }
   
@@ -80,20 +72,6 @@ implementation
 
 uses
   Bee_Common;
-
-  { TMimeTypesList }
-
-  // function TMimeTypesList.FileIcon(const FileName: string; FileAttr: integer): integer;
-  // begin
-  //   Result := -1;
-  // end;
-
-  // function TMimeTypesList.FileType(const FileName: string; FileAttr: integer): string;
-  // begin
-  //   Result := '';
-  // end;
-
-  { TIconImageList }
   
   constructor TIconList.Create(AOwner: TComponent);
   begin
@@ -160,8 +138,8 @@ uses
   begin
     if DirectoryExists(Value) then
     begin
-      FIconFolder := IncludeTrailingBackSlash(Value);
       ClearAll;
+      FIconFolder := IncludeTrailingBackSlash(Value);
     end;
   end;
 
@@ -185,19 +163,23 @@ uses
       Error := FindFirst(FIconFolder + FileExt + '.bmp', faAnyFile, Rec);
       if (Error = 0) and ((Rec.Attr and faDirectory) = 0) then
       begin
+        Bmp := nil;
         Picture := TPicture.Create;
-        Bmp := TBitmap.Create;
         try
           Picture.LoadFromFile(FIconFolder + Rec.Name);
-          Bmp.Height := Picture.Bitmap.Height;
-          Bmp.Width := Picture.Bitmap.Width;
-          Bmp.Canvas.FillRect(Bounds(0, 0, Width, Height));
-          Bmp.Canvas.Draw(0, 0, Picture.Bitmap);
-          Result := Add(Bmp, nil);
+
+          Bmp := TBitmap.Create;
+          Bmp.Assign(Picture.Graphic);
         finally
-          Bmp.Free;
           Picture.Free;
         end;
+
+        if Assigned(Bmp) then
+        begin
+          Result := Add(Bmp, nil);
+          FreeAndNil(Bmp);
+        end;
+
         FExtentions.Add(FileExt);
         if (Pos('@', FileExt) = 0) then
           FTypes.Add('File .' + FileExt)
@@ -237,15 +219,15 @@ uses
       try
         if (FI.hIcon <> 0) and GetIconInfo(FI.hIcon, IconInfo) then
         begin
+          Bmp.SetHandles(IconInfo.hbmColor, IconInfo.hbmMask);
+          Bmp.TransparentMode := tmAuto;
           Bmp.Transparent := True;
-          Bmp.TransparentMode := tmFixed;
-          Bmp.Handle := IconInfo.hbmColor;
-          Bmp.MaskHandle := IconInfo.hbmMask;
         end;
         Result := Add(Bmp, nil);
       finally
         Bmp.Free;
       end;
+
       FileExt := ExtractFileExt(FileName);
       while Pos('.', FileExt) = 1 do
       begin
