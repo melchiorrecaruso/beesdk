@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 396
+  Left = 395
   Height = 503
-  Top = 165
+  Top = 176
   Width = 769
   ActiveControl = ToolBar
   Caption = 'Bee File Manager - Welcome'
