@@ -1052,7 +1052,7 @@ uses
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   begin
-    if (CheckWorkStatus) and (ListView.SelCount <> 0) then
+    if CheckWorkStatus and (ListView.SelCount <> 0) then
     begin
       if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
@@ -1071,7 +1071,7 @@ uses
 
   procedure TMainFrm.MMenuActionsExtractClick(Sender: TObject);
   begin
-    if (CheckWorkStatus) and (ListView.SelCount <> 0) then
+    if CheckWorkStatus and (ListView.SelCount <> 0) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'X';
@@ -1089,7 +1089,7 @@ uses
 
   procedure TMainFrm.MMenuActionsExtractAllClick(Sender: TObject);
   begin
-    if (CheckWorkStatus) and (ListView.SelCount <> 0) then
+    if CheckWorkStatus then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'X';
@@ -1097,6 +1097,7 @@ uses
       FCommandLine.rOption := True;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
+      FCommandLine.ArchiveName := FArchiveName;
       FCommandLine.FileMasks.Add('*');
       begin
         Execute(FArchiveName);
@@ -1106,7 +1107,7 @@ uses
 
   procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
   begin
-    if (CheckWorkStatus) and (ListView.SelCount <> 0) then
+    if CheckWorkStatus and (ListView.SelCount <> 0) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'T';
@@ -1122,7 +1123,7 @@ uses
 
   procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);
   begin
-    if (CheckWorkStatus) and (ListView.SelCount <> 0) then
+    if (CheckWorkStatus) and (ListView.SelCount > 0) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'R';
@@ -1140,7 +1141,7 @@ uses
   var
     FFileName: string;
   begin
-    if ListView.Selected <> nil then
+    if CheckWorkStatus and (ListView.Selected <> nil) then
     begin
       FFileName := ListView.Selected.Caption;
       if Pos('D', ListView.Selected.SubItems[5]) > 0 then
@@ -1166,10 +1167,28 @@ uses
   end;
 
   procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);
+  var
+    CheckoutDir: string;
   begin
     if CheckWorkStatus then
     begin
+      FCommandLine.Clear;
+      FCommandLine.Command := 'X';
+      FCommandLine.oOption := 'A';
+      FCommandLine.rOption := True;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+      FCommandLine.ArchiveName := FArchiveName;
+      FCommandLine.FileMasks.Add('*');
 
+      CheckoutDir := GetApplicationCheckOutDir(Application.Name);
+
+      ForceDirectories(CheckoutDir);
+      if SetCurrentDir(CheckoutDir) then
+      begin
+        Execute(FArchiveName);
+        ShellExec(CheckoutDir, '');
+      end else
+        MessageDlg(rseSetCheckoutDir, mtError, [mbOk], 0);
     end;
   end;
 

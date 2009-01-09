@@ -72,7 +72,7 @@ var
   rseCopyArcTo:           string = 'Error copying archive.';
   rseRenameArc:           string = 'Error renaming archive.';
   rseRenameFile:          string = 'Error renaming file.';
-  
+  rseSetCheckoutDir:      string = 'Error setting checkout directory.';
   
   
   
@@ -125,6 +125,7 @@ implementation
       rseCopyArcTo           := Storage.ReadString('ResourceString', 'rseCopyArcTo', rseCopyArcTo);
       rseRenameArc           := Storage.ReadString('ResourceString', 'rseRenameArc', rseRenameArc);
       rseRenameFile          := Storage.ReadString('ResourceString', 'rseRenameFile', rseRenameFile);
+      rseSetCheckoutDir      := Storage.ReadString('ResourceString', 'rseSetCheckoutDir', rseSetCheckoutDir);
       end;
       Storage.Free;
     end;
@@ -178,6 +179,7 @@ implementation
       Storage.WriteString('ResourceString', 'rseCopyArcTo', rseCopyArcTo);
       Storage.WriteString('ResourceString', 'rseRenameArc', rseRenameArc);
       Storage.WriteString('ResourceString', 'rseRenameFile', rseRenameFile);
+      Storage.WriteString('ResourceString', 'rseSetCheckoutDir', rseSetCheckoutDir);
       end;
       Storage.Free;
     end;
