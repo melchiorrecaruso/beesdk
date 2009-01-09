@@ -504,22 +504,24 @@ uses
     else I := 0;
     end;
 
-    //if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-    //begin
-    //  if FSortDirection then
-    //    J := TIconList(SmallImages).FileIcon('.@sortup', faDirectory)
-    //  else
-    //    J := TIconList(SmallImages).FileIcon('.@sortdown', faDirectory);
-    //end else
+    { TODO : sistemare }
+
+    if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
+    begin
+      if FSortDirection then
+        J := TIconList(SmallImages).FileIcon('.@sortup', faDirectory)
+      else
+        J := TIconList(SmallImages).FileIcon('.@sortdown', faDirectory);
+    end else
       J := -1;
 
-    //if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
-    //begin
-    //  if FSortDirection then
-    //     K := TIconList(LargeImages).FileIcon('.@sortup', faDirectory)
-    //   else
-    //     K := TIconList(LargeImages).FileIcon('.@sortdown', faDirectory);
-    // end else
+    if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
+    begin
+      if FSortDirection then
+        K := TIconList(LargeImages).FileIcon('.@sortup', faDirectory)
+      else
+        K := TIconList(LargeImages).FileIcon('.@sortdown', faDirectory);
+    end else
       K := -1;
 
     if J = K then
@@ -572,10 +574,18 @@ uses
         begin
           if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
           begin
+
+            { TODO : sistemare }
+
             if Length(FFolder) = 0 then
               I := TIconList(SmallImages).FileIcon('.bee' ,faArchive)
             else
               I := TIconList(SmallImages).FileIcon('.@folderclose' ,faDirectory);
+
+            if Length(FFolder) = 0 then
+              I := TIconList(LargeImages).FileIcon('.bee' ,faArchive)
+            else
+              I := TIconList(LargeImages).FileIcon('.@folderclose' ,faDirectory);
 
             if I > -1 then
             begin
@@ -792,6 +802,8 @@ uses
     begin
       Node := TArchiveItem(AArchiveList.Items[0]);
 
+      { TODO : sistemare }
+
       if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
         J := TIconList(LargeImages).FileIcon(Node.FileName, Node.FileAttr)
       else
@@ -874,7 +886,9 @@ uses
           Node.FileAttr     := faDirectory;
           Node.FileCRC      := -1;
           Node.FilePosition := -1;
-          
+
+          { TODO : sistemare }
+
           if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
             J := TIconList(LargeImages).FileIcon('.@folderclose', faDirectory)
           else
@@ -889,6 +903,8 @@ uses
             Node.FileIcon := K
           else
             Node.FileIcon := -1;
+
+          { TODO : sistemare }
 
           if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
             Node.FileType := TIconList(SmallImages).FileType('.@folderclose', faDirectory)
@@ -931,6 +947,9 @@ uses
 
         if K = -1 then
         begin
+
+          { TODO : sistemare }
+
           if Length(AFolder) = 0 then
             G := TIconList(SmallImages).FileIcon('.bee', faArchive)
           else
