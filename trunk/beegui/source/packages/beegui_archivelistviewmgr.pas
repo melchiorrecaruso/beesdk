@@ -271,7 +271,7 @@ uses
   var
     I: integer;
   begin
-    for I := Count - 1 downto 0 do
+    for I := Count -1 downto 0 do
     begin
       TArchiveItem(Items[I]).Free;
     end;
@@ -284,7 +284,6 @@ uses
   begin
     Result := -1;
     for I := 0 to Count - 1 do
-    begin
       if CompareFileName(TArchiveItem(Items[I]).FileName, FileName) = 0 then
       begin
         if CompareFileName(TArchiveItem(Items[I]).FilePath, FilePath) = 0 then
@@ -293,7 +292,6 @@ uses
           Break;
         end;
       end;
-    end;
   end;
 
   { TArchiveDetails }
@@ -321,21 +319,20 @@ uses
       Inc(FilesCount);
       Inc(FilesSize, Item.FileSize);
       Inc(FilesPacked, Item.FilePacked);
+
       if CompareText(Item.FilePassword, 'Yes') = 0 then
       begin
         Inc(FilesCrypted);
       end;
+
       LastTime := Max(LastTime, Item.FileTime);
       try
         if StrToFloat(Item.FileVersion) > Version then
-        begin
           Version := StrToFloat(Item.FileVersion);
-        end;
       except
         Version := 0;
       end;
-    end
-    else
+    end else
       Inc(DirectoriesCount);
   end;
 
@@ -373,6 +370,7 @@ uses
     FDetails.Free;
     FFolders.Free;
     FFolder := '';
+    // ---
     inherited Destroy;
   end;
 
@@ -506,22 +504,22 @@ uses
     else I := 0;
     end;
 
-    if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-    begin
-      if FSortDirection then
-        J := TIconList(SmallImages).FileIcon('.@sortup', faDirectory)
-      else
-        J := TIconList(SmallImages).FileIcon('.@sortdown', faDirectory);
-    end else
+    //if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
+    //begin
+    //  if FSortDirection then
+    //    J := TIconList(SmallImages).FileIcon('.@sortup', faDirectory)
+    //  else
+    //    J := TIconList(SmallImages).FileIcon('.@sortdown', faDirectory);
+    //end else
       J := -1;
 
-    if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
-    begin
-      if FSortDirection then
-        K := TIconList(LargeImages).FileIcon('.@sortup', faDirectory)
-      else
-        K := TIconList(LargeImages).FileIcon('.@sortdown', faDirectory);
-    end else
+    //if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
+    //begin
+    //  if FSortDirection then
+    //     K := TIconList(LargeImages).FileIcon('.@sortup', faDirectory)
+    //   else
+    //     K := TIconList(LargeImages).FileIcon('.@sortdown', faDirectory);
+    // end else
       K := -1;
 
     if J = K then
@@ -937,6 +935,11 @@ uses
             G := TIconList(SmallImages).FileIcon('.bee', faArchive)
           else
             G := TIconList(SmallImages).FileIcon('.@folderclose', faDirectory);
+
+          if Length(AFolder) = 0 then
+            G := TIconList(LargeImages).FileIcon('.bee', faArchive)
+          else
+            G := TIconList(LargeImages).FileIcon('.@folderclose', faDirectory);
 
           if G > -1 then
           begin

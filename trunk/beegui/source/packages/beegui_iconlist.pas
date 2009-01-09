@@ -63,6 +63,14 @@ type
   published
     property IconFolder: string read FIconFolder write SetIconFolder;
   end;
+
+  //TIconList = class(TImageList)
+  //private
+  //public
+  //  function FileIcon(const FileName: string; FileAttr: integer): integer;
+  //  function FileType(const FileName: string; FileAttr: integer): string;
+  //published
+  //end;
   
   { Register }
   
@@ -72,6 +80,18 @@ implementation
 
 uses
   Bee_Common;
+
+  { TMimeTypesList }
+
+  // function TMimeTypesList.FileIcon(const FileName: string; FileAttr: integer): integer;
+  // begin
+  //   Result := -1;
+  // end;
+
+  // function TMimeTypesList.FileType(const FileName: string; FileAttr: integer): string;
+  // begin
+  //   Result := '';
+  // end;
 
   { TIconImageList }
   
