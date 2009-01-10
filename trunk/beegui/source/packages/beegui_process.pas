@@ -56,12 +56,12 @@ type
   private
     function GetFileExec: string;
     procedure DoOnTimer; override;
-    procedure SetFileName(Value: string);
   public
+    procedure Execute(const AFileExec, AFileName: string);
     constructor Create(Sender: TComponent);
     destructor Destroy; override;
   public
-    property FileName: string read FFileName write SetFileName;
+    property FileName: string read FFileName;
     property FileIsModified: boolean read FFileIsModified;
   end;
 
@@ -81,20 +81,24 @@ uses
   constructor TFileProcess.Create(Sender: TComponent);
   begin
     inherited Create(Sender);
-    FFileIsModified := False;
     FFileName := '';
     FProcess := nil;
+    FFileIsModified := False;
   end;
   
-  procedure TFileProcess.SetFileName(Value: string);
+  procedure TFileProcess.Execute(const AFileExec, AFileName: string);
   var
     FFileExec: string;
   begin
-    FFileName := Value;
+    FFileName := AFileName;
     FFileTime := FileAge(FFileName);
-
     FFileIsModified := False;
-    FFileExec := GetFileExec;
+
+    if AFileExec = '' then
+      FFileExec := GetFileExec
+    else
+      FFileExec := AFileExec;
+
     if FFileExec <> '' then
     begin
       FProcess := TProcess.Create(nil);
