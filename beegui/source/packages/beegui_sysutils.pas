@@ -235,16 +235,16 @@ implementation
   
   procedure DeleteDirectory(const DirName: string);
   begin
-    if not SetCurrentDir(DirName) then Exit;
-    if not SetCurrentDir(ExtractFilePath(DirName)) then Exit;
+    if SetCurrentDir(DirName) = False then Exit;
+    if SetCurrentDir(ExtractFilePath(DirName)) = False then Exit;
     ClearDirectoryScan(DirName);
     RemoveDir(DirName);
   end;
 
   procedure ClearDirectory(const DirName: string);
   begin
-    if not SetCurrentDir(DirName) then Exit;
-    if not SetCurrentDir(ExtractFilePath(DirName)) then Exit;
+    if SetCurrentDir(DirName) = False then Exit;
+    if SetCurrentDir(ExtractFilePath(DirName)) = False then Exit;
 
     ClearDirectoryScan(DirName);
   end;
