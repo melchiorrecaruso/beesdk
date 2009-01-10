@@ -49,11 +49,12 @@ var
   rsSelectFrmCaption:     string = 'Select';
   rsDeselectFrmCaption:   string = 'Deselect';
   
-  rsConfirmDeleteArc:     string = 'Do you want to delete archive?';
-  rsConfirmDeleteFiles:   string = 'Do you want to delete selected files?';
-  rsConfirmAbortProcess:  string = 'Do you want to abort current process?';
-  rsConfirmDefault:       string = 'Do you want return to default setting?';
-  
+  rsConfirmDeleteArc:         string = 'Do you want to delete archive?';
+  rsConfirmDeleteFiles:       string = 'Do you want to delete selected files?';
+  rsConfirmAbortProcess:      string = 'Do you want to abort current process?';
+  rsConfirmDefault:           string = 'Do you want return to default setting?';
+  rsConfirmDeleteCheckoutDir: string = 'Do you want delete "Checkout" directory?';
+
   rsProcessTerminated:    string = 'Process terminated';
   rsProcessAborted:       string = 'Process aborted';
   rsProcessPaused:        string = 'Process paused';
@@ -102,10 +103,11 @@ implementation
       rsSelectFrmCaption     := Storage.ReadString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
       rsDeSelectFrmCaption   := Storage.ReadString('ResourceString', 'rsDeSelectFrmCaption', rsDeSelectFrmCaption);
 
-      rsConfirmDeleteArc     := Storage.ReadString('ResourceString', 'rsConfirmDeleteArc', rsConfirmDeleteArc);
-      rsConfirmDeleteFiles   := Storage.ReadString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);
-      rsConfirmAbortProcess  := Storage.ReadString('ResourceString', 'rsConfirmAbortProcess', rsConfirmAbortProcess);
-      rsConfirmDefault       := Storage.ReadString('ResourceString', 'rsConfirmDefault', rsConfirmDefault);
+      rsConfirmDeleteArc         := Storage.ReadString('ResourceString', 'rsConfirmDeleteArc', rsConfirmDeleteArc);
+      rsConfirmDeleteFiles       := Storage.ReadString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);
+      rsConfirmAbortProcess      := Storage.ReadString('ResourceString', 'rsConfirmAbortProcess', rsConfirmAbortProcess);
+      rsConfirmDefault           := Storage.ReadString('ResourceString', 'rsConfirmDefault', rsConfirmDefault);
+      rsConfirmDeleteCheckoutDir := Storage.ReadString('ResourceString', 'rsConfirmDeleteCheckoutDir', rsConfirmDeleteCheckoutDir);
 
       rsProcessTerminated    := Storage.ReadString('ResourceString', 'rsProcessTerminated', rsProcessTerminated);
       rsProcessAborted       := Storage.ReadString('ResourceString', 'rsProcessAborted', rsProcessAborted);
@@ -151,7 +153,6 @@ implementation
 
       Storage.WriteString('ResourceString', 'rsFreshFile', rsFreshFile);
 
-
       Storage.WriteString('ResourceString', 'rsSelectFolder', rsSelectFolder);
       Storage.WriteString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
       Storage.WriteString('ResourceString', 'rsDeselectFrmCaption', rsDeselectFrmCaption);
@@ -160,6 +161,7 @@ implementation
       Storage.WriteString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);
       Storage.WriteString('ResourceString', 'rsConfirmAbortProcess', rsConfirmAbortProcess);
       Storage.WriteString('ResourceString', 'rsConfirmDefault', rsConfirmDefault);
+      Storage.WriteString('ResourceString', 'rsConfirmDeleteCheckoutDir', rsConfirmDeleteCheckoutDir);
 
       Storage.WriteString('ResourceString', 'rsProcessTerminated', rsProcessTerminated);
       Storage.WriteString('ResourceString', 'rsProcessAborted', rsProcessAborted);

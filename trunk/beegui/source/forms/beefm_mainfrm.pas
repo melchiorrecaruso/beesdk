@@ -788,17 +788,25 @@ uses
   end;
 
   procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
+  var
+    FCheckOutDir: string;
   begin
     if CheckWorkStatus then
     begin
-      UpdateCursor(crDefault);
+      FCheckOutDir := GetApplicationCheckoutDir(Application.Name);
+      if DirectoryExists(FCheckOutDir) then
+      begin
+        if MessageDlg(rsConfirmDeleteCheckoutDir, mtInformation, [mbYes, mbNo], 0) = mrYes then
+        begin
+          DeleteDirectory(FCheckOutDir);
+        end;
+      end;
       UpdateButtons(False);
-
+      UpdateCursor(crDefault);
       if Sender = MMenuViewUpdate then
         ListView.CloseArchive(False)
       else
         ListView.CloseArchive(True);
-
       SetArchiveName('');
     end;
   end;
@@ -1168,7 +1176,7 @@ uses
 
   procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);
   var
-    CheckoutDir: string;
+    FCheckOutDir: string;
   begin
     if CheckWorkStatus then
     begin
@@ -1180,16 +1188,16 @@ uses
       FCommandLine.ArchiveName := FArchiveName;
       FCommandLine.FileMasks.Add('*');
 
-      CheckoutDir := GetApplicationCheckOutDir(Application.Name);
+      FCheckOutDir := GetApplicationCheckOutDir(Application.Name);
 
-      ForceDirectories(CheckoutDir);
-      if SetCurrentDir(CheckoutDir) then
+      ForceDirectories(FCheckOutDir);
+      if SetCurrentDir(FCheckOutDir) then
       begin
         Execute(FArchiveName);
         {$IFDEF MSWINDOWS}
-          with FileProcess do Execute('explorer', CheckoutDir);
+          with FileProcess do Execute('explorer', FCheckOutDir);
         {$ELSE}
-          with FileProcess do Execute('nautilus', CheckoutDir);
+          with FileProcess do Execute('nautilus', FCheckOutDir);
         {$ENDIF}
       end else
         MessageDlg(rseSetCheckoutDir, mtError, [mbOk], 0);
