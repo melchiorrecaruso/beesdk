@@ -82,10 +82,8 @@ function IncludeTrailingBackSlash(const DirName: string): string;
 function ExcludeTrailingBackSlash(const DirName: string): string;
 
 function FileNameUseWildcards(const FileName: string): boolean;
-function FileNameMatch(const FileName, Mask: string;
-  Recursive: boolean): boolean; overload;
-function FileNameMatch(const FileName: string; Masks: TStringList;
-  Recursive: boolean): boolean; overload;
+function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean; overload;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean; overload;
 
 function CompareFileName(const S1, S2: string): integer;
 function ExtractFileDrive(const FileName: string): string;

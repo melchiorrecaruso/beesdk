@@ -794,11 +794,11 @@ uses
     if CheckWorkStatus then
     begin
       FCheckOutDir := GetApplicationCheckoutDir(Application.Name);
-      if DirectoryExists(FCheckOutDir) then
+      if DirectoryIsEmpty(FCheckOutDir) = False then
       begin
         if MessageDlg(rsConfirmDeleteCheckoutDir, mtInformation, [mbYes, mbNo], 0) = mrYes then
         begin
-          DeleteDirectory(FCheckOutDir);
+          DeleteDirectory(IncludeTrailingBackSlash(FCheckoutDir));
         end;
       end;
       UpdateButtons(False);
