@@ -147,6 +147,9 @@ type
     // ---
     procedure Data(Sender: TObject; Item: TListItem);
     procedure AddToFolderBox(const AFolder: string);
+
+    function FileIcon(const FileName: string; FileAttr: integer): integer;
+    function FileType(const FileName: string; FileAttr: integer): string;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -475,7 +478,7 @@ uses
   
   procedure TCustomArchiveListView.SetSortCol(Value: TArchiveListViewColumn);
   var
-    I, J, K: integer;
+    I: integer;
   begin
     if Value = FSortCol then
       FSortDirection := not FSortDirection
@@ -501,33 +504,14 @@ uses
       alvcMethod  : I := 7;
       alvcPassword: I := 8;
       alvcPosition: I := 11;
-    else I := 0;
+      else I := 0;
     end;
 
-    { TODO : sistemare }
+    if FSortDirection then
+      Columns[I].ImageIndex := FileIcon('.@sortup', faDirectory)
+    else
+      Columns[I].ImageIndex := FileIcon('.@sortdown', faDirectory);
 
-    if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-    begin
-      if FSortDirection then
-        J := TIconList(SmallImages).FileIcon('.@sortup', faDirectory)
-      else
-        J := TIconList(SmallImages).FileIcon('.@sortdown', faDirectory);
-    end else
-      J := -1;
-
-    if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
-    begin
-      if FSortDirection then
-        K := TIconList(LargeImages).FileIcon('.@sortup', faDirectory)
-      else
-        K := TIconList(LargeImages).FileIcon('.@sortdown', faDirectory);
-    end else
-      K := -1;
-
-    if J = K then
-    begin
-      Columns[I].ImageIndex := J;
-    end;
     UpdateFolder;
   end;
 
@@ -575,26 +559,18 @@ uses
           if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
           begin
 
-            { TODO : sistemare }
-
             if Length(FFolder) = 0 then
-              I := TIconList(SmallImages).FileIcon('.bee' ,faArchive)
+              I := FileIcon('.bee' ,faArchive)
             else
-              I := TIconList(SmallImages).FileIcon('.@folderclose' ,faDirectory);
-
-            if Length(FFolder) = 0 then
-              I := TIconList(LargeImages).FileIcon('.bee' ,faArchive)
-            else
-              I := TIconList(LargeImages).FileIcon('.@folderclose' ,faDirectory);
+              I := FileIcon('.@folderclose' ,faDirectory);
 
             if I > -1 then
             begin
               Image := TBitmap.Create;
               TIconList(SmallImages).GetBitmap(I, Image);
             end else
-            begin
               Image := nil;
-            end;
+
             FFolderBox.ItemIndex := FFolderBox.Items.AddObject(FFolderBoxSign + FFolder, Image);
           end;
         end else
@@ -786,7 +762,7 @@ uses
   
   function TCustomArchiveListView.Open(const AArchiveName: string; AArchiveList: TList): boolean;
   var
-    J, K: integer;
+    I: integer;
     Node: TArchiveItem;
   begin
     if CompareFileName(AArchiveName, FFileName) <> 0 then
@@ -801,26 +777,8 @@ uses
     while AArchiveList.Count > 0 do
     begin
       Node := TArchiveItem(AArchiveList.Items[0]);
-
-      { TODO : sistemare }
-
-      if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
-        J := TIconList(LargeImages).FileIcon(Node.FileName, Node.FileAttr)
-      else
-        J := -1;
-
-      if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-        K := TIconList(SmallImages).FileIcon(Node.FileName, Node.FileAttr)
-      else
-        K := -1;
-
-      if J = K then
-        Node.FileIcon := K
-      else
-        Node.FileIcon := -1;
-
-      if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-        Node.FileType := TIconList(SmallImages).FileType(Node.FileName, Node.FileAttr);
+      Node.FileIcon := FileIcon(Node.FileName, Node.FileAttr);
+      Node.FileType := FileType(Node.FileName, Node.FileAttr);
 
       FFiles.Add(Node);
       FDetails.Update(Node);
@@ -887,29 +845,8 @@ uses
           Node.FileCRC      := -1;
           Node.FilePosition := -1;
 
-          { TODO : sistemare }
-
-          if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
-            J := TIconList(LargeImages).FileIcon('.@folderclose', faDirectory)
-          else
-            J := -1;
-
-          if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-            K := TIconList(SmallImages).FileIcon('.@folderclose', faDirectory)
-          else
-            K := -1;
-
-          if J = K then
-            Node.FileIcon := K
-          else
-            Node.FileIcon := -1;
-
-          { TODO : sistemare }
-
-          if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
-            Node.FileType := TIconList(SmallImages).FileType('.@folderclose', faDirectory)
-          else
-            Node.FileType := '';
+          Node.FileIcon := FileIcon('.@folderclose', faDirectory);
+          Node.FileType := FileType('.@folderclose', faDirectory);
 
           FDetails.Update(Node);
           FFolders.Add(Node);
@@ -948,17 +885,10 @@ uses
         if K = -1 then
         begin
 
-          { TODO : sistemare }
-
           if Length(AFolder) = 0 then
-            G := TIconList(SmallImages).FileIcon('.bee', faArchive)
+            G := FileIcon('.bee', faArchive)
           else
-            G := TIconList(SmallImages).FileIcon('.@folderclose', faDirectory);
-
-          if Length(AFolder) = 0 then
-            G := TIconList(LargeImages).FileIcon('.bee', faArchive)
-          else
-            G := TIconList(LargeImages).FileIcon('.@folderclose', faDirectory);
+            G := FileIcon('.@folderclose', faDirectory);
 
           if G > -1 then
           begin
@@ -1046,6 +976,34 @@ uses
         Item.ImageIndex := FileIcon;
       end;
    end;
+  end;
+
+  function TCustomArchiveListView.FileIcon(const FileName: string; FileAttr: integer): integer;
+  var
+    I, J: integer;
+  begin
+    if Assigned(LargeImages) and (LargeImages.ClassType = TIconList) then
+      I := TIconList(LargeImages).FileIcon(FileName, FileAttr)
+    else
+      I := -1;
+
+    if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
+      J := TIconList(SmallImages).FileIcon(FileName, FileAttr)
+    else
+      J := -1;
+
+    if I = J then
+      Result := I
+    else
+      Result := -1;
+  end;
+
+  function TCustomArchiveListView.FileType(const FileName: string; FileAttr: integer): string;
+  begin
+    if Assigned(SmallImages) and (SmallImages.ClassType = TIconList) then
+      Result := TIconList(SmallImages).FileType(FileName, FileAttr)
+    else
+      Result := '';
   end;
 
   { Register }

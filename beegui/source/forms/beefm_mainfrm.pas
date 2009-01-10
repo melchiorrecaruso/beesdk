@@ -1160,7 +1160,7 @@ uses
           if SetCurrentDir(GetApplicationTempDir(Application.Name)) then
           begin
             Execute(FArchiveName);
-            FileProcess.FileName := FFileName;
+            with FileProcess do Execute('', FFileName);
           end;
         end;
     end;
@@ -1186,7 +1186,11 @@ uses
       if SetCurrentDir(CheckoutDir) then
       begin
         Execute(FArchiveName);
-        ShellExec(CheckoutDir, '');
+        {$IFDEF MSWINDOWS}
+          with FileProcess do Execute('explorer', CheckoutDir);
+        {$ELSE}
+          with FileProcess do Execute('nautilus', CheckoutDir);
+        {$ENDIF}
       end else
         MessageDlg(rseSetCheckoutDir, mtError, [mbOk], 0);
     end;
