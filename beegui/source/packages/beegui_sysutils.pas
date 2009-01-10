@@ -46,7 +46,8 @@ uses
 
   procedure GetDrivers(var Drives: TStringList);
   function GetDirectories(const PathName: string; var DirList: TStringList): boolean;
-  
+
+  function DirectoryIsEmpty(const DirName: string): boolean;
   procedure DeleteDirectory(const DirName: string);
   procedure ClearDirectory(const DirName: string);
   
@@ -213,30 +214,53 @@ implementation
       repeat
         if (T.Name <> '.') and (T.Name <> '..') and ((T.Attr and faDirectory) = 0) then
         begin
+          if FileIsReadOnly(IncludeTrailingBackslash(DirName) + T.Name) then
+          begin
+            FileSetAttr(IncludeTrailingBackslash(DirName) + T.Name, faArchive);
+          end;
           DeleteFile(IncludeTrailingBackslash(DirName) + T.Name);
         end;
       until FindNext(T) <> 0;
     end;
     FindClose(T);
-    // ---
+
     if FindFirst(IncludeTrailingBackslash(DirName) + '*', faAnyFile, T) = 0 then
     begin
       repeat
         if (T.Name <> '.') and (T.Name <> '..') and ((T.Attr and faDirectory) = faDirectory) then
         begin
-          ClearDirectoryScan(IncludeTrailingBackslash(DirName) + T.Name);
+          ClearDirectoryScan(IncludeTrailingBackslash(DirName) + T.Name + PathDelim);
         end;
       until FindNext(T) <> 0;
     end;
     FindClose(T);
-    // ---
+
     RemoveDir(DirName);
   end;
-  
+
+  function DirectoryIsEmpty(const DirName: string): boolean;
+  var
+    T: TSearchRec;
+  begin
+    Result := True;
+    if FindFirst(IncludeTrailingBackslash(DirName) + '*', faAnyFile, T) = 0 then
+    begin
+      repeat
+        if (T.Name <> '.') and (T.Name <> '..') then
+        begin
+          Result := False;
+          Break;
+        end;
+      until FindNext(T) <> 0;
+    end;
+    FindClose(T);
+  end;
+
   procedure DeleteDirectory(const DirName: string);
   begin
     if SetCurrentDir(DirName) = False then Exit;
     if SetCurrentDir(ExtractFilePath(DirName)) = False then Exit;
+
     ClearDirectoryScan(DirName);
     RemoveDir(DirName);
   end;
