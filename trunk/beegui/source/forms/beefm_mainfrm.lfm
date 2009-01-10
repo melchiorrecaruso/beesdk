@@ -2644,7 +2644,7 @@ object MainFrm: TMainFrm
     end
     object PMenuOpenIntViewer: TMenuItem
       Caption = 'Open with internal viewer'
-      OnClick = PMenuOpenIntViewerClick
+      OnClick = MMenuActionsViewClick
     end
     object PMenuN1: TMenuItem
       Caption = '-'

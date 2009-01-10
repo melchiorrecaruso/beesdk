@@ -264,7 +264,6 @@ type
     procedure MMenuViewUpdateClick(Sender: TObject);
     // ---
     procedure PMenuPopup(Sender: TObject);
-    procedure PMenuOpenIntViewerClick(Sender: TObject);
     procedure PMenuPropertyClick(Sender: TObject);
     // ---
     procedure FormCreate(Sender: TObject);
@@ -1168,7 +1167,15 @@ uses
           if SetCurrentDir(GetApplicationTempDir(Application.Name)) then
           begin
             Execute(FArchiveName);
-            with FileProcess do Execute('', FFileName);
+            if Sender = PMenuOpenIntViewer then
+            begin
+              ViewFrm := TViewFrm.Create(Application);
+              ViewFrm.Memo.Lines.LoadFromFile(FFileName);
+              ViewFrm.ShowModal;
+
+
+            end else
+              with FileProcess do Execute('', FFileName);
           end;
         end;
     end;
@@ -1347,11 +1354,6 @@ uses
   //  Popup menu - Events                                                   //
   //                                                                        //
   // ---------------------------------------------------------------------- //
-
-  procedure TMainFrm.PMenuOpenIntViewerClick(Sender: TObject);
-  begin
-    { TODO : Open with internal viewer (da terminate) }
-  end;
 
   procedure TMainFrm.PMenuPropertyClick(Sender: TObject);
   begin
