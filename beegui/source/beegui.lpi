@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -40,7 +40,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="19">
+    <Units Count="18">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -226,16 +226,8 @@
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit17>
-      <Unit18>
-        <Filename Value="forms\forms.include\beefm_viewfrm_saveproperty.inc"/>
-        <CursorPos X="7" Y="50"/>
-        <TopLine Value="10"/>
-        <EditorIndex Value="5"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit18>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="1357" Column="79" TopLine="1347"/>
@@ -348,10 +340,6 @@
         <Filename Value="forms\beefm_viewfrm.pas"/>
         <Caret Line="85" Column="29" TopLine="70"/>
       </Position28>
-      <Position29>
-        <Filename Value="forms\forms.include\beefm_viewfrm_saveproperty.inc"/>
-        <Caret Line="50" Column="7" TopLine="10"/>
-      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
