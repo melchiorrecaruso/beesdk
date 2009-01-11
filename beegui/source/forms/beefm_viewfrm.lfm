@@ -1,7 +1,7 @@
 object ViewFrm: TViewFrm
-  Left = 380
+  Left = 405
   Height = 328
-  Top = 208
+  Top = 242
   Width = 411
   Caption = 'BeeViewer'
   ClientHeight = 328
@@ -30,7 +30,7 @@ object ViewFrm: TViewFrm
     Constraints.MinWidth = 75
     NumGlyphs = 0
     OnClick = BtnFontClick
-    TabOrder = 0
+    TabOrder = 2
   end
   object BtnSave: TBitBtn
     AnchorSideLeft.Control = BtnFont
@@ -63,7 +63,7 @@ object ViewFrm: TViewFrm
     Width = 411
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 6
-    TabOrder = 2
+    TabOrder = 3
   end
   object BtnClose: TBitBtn
     AnchorSideRight.Control = Owner
@@ -76,11 +76,13 @@ object ViewFrm: TViewFrm
     Width = 80
     Anchors = [akRight, akBottom]
     BorderSpacing.Around = 6
+    Cancel = True
     Caption = '&Chiudi'
     Constraints.MinHeight = 26
     Constraints.MinWidth = 80
+    Default = True
     Kind = bkClose
-    TabOrder = 3
+    TabOrder = 0
   end
   object FontDialog: TFontDialog
     Font.Height = -11
@@ -89,7 +91,7 @@ object ViewFrm: TViewFrm
     top = 24
   end
   object SaveDialog: TSaveDialog
-    Filter = 'Log files (*.log)|*.log|Txt files (*.txt)|*.txt|All files (*.*)|*'
+    Filter = 'Txt files (*.txt)|*.txt|Log files (*.log)|*.log|All files (*.*)|*'
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
     left = 40
     top = 24

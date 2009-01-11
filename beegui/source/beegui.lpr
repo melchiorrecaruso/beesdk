@@ -74,10 +74,12 @@ begin
          Application.CreateForm(TConfigFrm, ConfigFrm);
          Application.Run;
        end;
-  'V': begin
+  'V': if (ParamCount = 2) and FileExists(ParamStr(2)) then
+       begin
          Application.Name := cApplicationViewerName;
          Application.Title := cApplicationViewerName;
          Application.CreateForm(TViewFrm, ViewFrm);
+         ViewFrm.Memo.Lines.LoadFromFile(ParamStr(2));
          Application.Run;
        end;
   else begin
