@@ -73,6 +73,7 @@ object ViewFrm: TViewFrm
     Layout = blGlyphRight
     NumGlyphs = 0
     OnClick = BtnSaveClick
+    Spacing = 5
     TabOrder = 1
   end
   object Memo: TMemo
@@ -126,9 +127,11 @@ object ViewFrm: TViewFrm
     top = 24
     object PMenuSave: TMenuItem
       Caption = 'Save'
+      OnClick = PMenuSaveClick
     end
     object PMenuSaveAs: TMenuItem
       Caption = 'Save as ...'
+      OnClick = PMenuSaveAsClick
     end
   end
 end
