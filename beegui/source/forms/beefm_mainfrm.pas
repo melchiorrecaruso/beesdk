@@ -1168,7 +1168,7 @@ uses
           begin
             Execute(FArchiveName);
             if Sender = PMenuOpenIntViewer then
-              with FileProcess do Execute(ParamsStr(0) + ' V', FFileName)
+              with FileProcess do Execute(ParamStr(0) + ' V', FFileName)
             else
               with FileProcess do Execute('', FFileName);
           end;
@@ -1427,29 +1427,8 @@ uses
 initialization
 
   {$I beefm_mainfrm.lrs}
-
-finalization
   
 end.
 
-
-s}
-
-finalization
-  
-end.
-
-
- end;
-    end;
-  end;
-  
-initialization
-
-  {$I beefm_mainfrm.lrs}
-
-finalization
-  
-end.
 
 

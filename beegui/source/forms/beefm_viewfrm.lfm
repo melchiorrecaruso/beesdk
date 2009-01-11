@@ -3,7 +3,7 @@ object ViewFrm: TViewFrm
   Height = 328
   Top = 208
   Width = 411
-  Caption = 'View'
+  Caption = 'BeeViewer'
   ClientHeight = 328
   ClientWidth = 411
   Constraints.MinHeight = 90
@@ -16,16 +16,17 @@ object ViewFrm: TViewFrm
   LCLVersion = '0.9.27'
   object BtnFont: TBitBtn
     AnchorSideLeft.Control = Owner
+    AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 6
     Height = 26
     Top = 296
     Width = 75
-    Anchors = [akTop, akLeft, akBottom]
+    Anchors = [akLeft, akBottom]
     AutoSize = True
-    BorderSpacing.Left = 6
-    BorderSpacing.Right = 6
+    BorderSpacing.Around = 6
     Caption = '&Font'
+    Constraints.MinHeight = 26
     Constraints.MinWidth = 75
     NumGlyphs = 0
     OnClick = BtnFontClick
@@ -34,6 +35,7 @@ object ViewFrm: TViewFrm
   object BtnSave: TBitBtn
     AnchorSideLeft.Control = BtnFont
     AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = BtnFont
     AnchorSideBottom.Control = BtnFont
     AnchorSideBottom.Side = asrBottom
     Left = 87
@@ -45,21 +47,51 @@ object ViewFrm: TViewFrm
     BorderSpacing.Left = 6
     BorderSpacing.Right = 6
     Caption = 'Save'
+    Constraints.MinHeight = 26
     Constraints.MinWidth = 75
     NumGlyphs = 0
     OnClick = BtnSaveClick
     TabOrder = 1
   end
+  object Memo: TMemo
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = BtnFont
+    Height = 290
+    Width = 411
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Bottom = 6
+    TabOrder = 2
+  end
+  object BtnClose: TBitBtn
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 325
+    Height = 26
+    Top = 296
+    Width = 80
+    Anchors = [akRight, akBottom]
+    BorderSpacing.Around = 6
+    Caption = '&Chiudi'
+    Constraints.MinHeight = 26
+    Constraints.MinWidth = 80
+    Kind = bkClose
+    TabOrder = 3
+  end
   object FontDialog: TFontDialog
     Font.Height = -11
     Font.Name = 'Default'
     left = 8
-    top = 8
+    top = 24
   end
   object SaveDialog: TSaveDialog
     Filter = 'Log files (*.log)|*.log|Txt files (*.txt)|*.txt|All files (*.*)|*'
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
     left = 40
-    top = 8
+    top = 24
   end
 end

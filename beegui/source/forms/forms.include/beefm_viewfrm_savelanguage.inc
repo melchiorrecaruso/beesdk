@@ -13,8 +13,10 @@
 
         Storage.WriteString('TBitBtn', 'BtnFont.Caption',  BtnFont.Caption);
         Storage.WriteString('TBitBtn', 'BtnSave.Caption',  BtnSave.Caption);
-        // Storage.WriteString('TBitBtn', 'BtnClose.Caption', BtnClose.Caption);
+        Storage.WriteString('TBitBtn', 'BtnClose.Caption', BtnClose.Caption);
       end;
       Storage.Free;
     end;
   end;
+
+
