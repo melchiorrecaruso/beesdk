@@ -11,9 +11,9 @@
       begin
         Storage.WriteString('TForm', 'Caption', Caption);
 
-        Storage.WriteString('TBitBtn', 'BtnFont.Caption', BtnFont.Caption);
-        Storage.WriteString('TBitBtn', 'BtnSave.Caption', BtnSave.Caption);
-        Storage.WriteString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
+        Storage.WriteString('TBitBtn', 'BtnFont.Caption',  BtnFont.Caption);
+        Storage.WriteString('TBitBtn', 'BtnSave.Caption',  BtnSave.Caption);
+        // Storage.WriteString('TBitBtn', 'BtnClose.Caption', BtnClose.Caption);
       end;
       Storage.Free;
     end;

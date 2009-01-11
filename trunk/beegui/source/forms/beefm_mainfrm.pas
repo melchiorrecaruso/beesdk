@@ -1168,13 +1168,8 @@ uses
           begin
             Execute(FArchiveName);
             if Sender = PMenuOpenIntViewer then
-            begin
-              ViewFrm := TViewFrm.Create(Application);
-              ViewFrm.Memo.Lines.LoadFromFile(FFileName);
-              ViewFrm.ShowModal;
-
-
-            end else
+              with FileProcess do Execute('beeviewer', FFileName)
+            else
               with FileProcess do Execute('', FFileName);
           end;
         end;

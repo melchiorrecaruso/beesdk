@@ -11,9 +11,9 @@
       begin
         Caption := Storage.ReadString('TForm', 'Caption', Caption);
 
-        BtnFont.Caption := Storage.ReadString('TBitBtn', 'BtnFont.Caption', BtnFont.Caption);
-        BtnSave.Caption := Storage.ReadString('TBitBtn', 'BtnSave.Caption', BtnSave.Caption);
-        BtnOk.Caption   := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
+        BtnFont.Caption  := Storage.ReadString('TBitBtn', 'BtnFont.Caption',  BtnFont.Caption);
+        BtnSave.Caption  := Storage.ReadString('TBitBtn', 'BtnSave.Caption',  BtnSave.Caption);
+        // BtnClose.Caption := Storage.ReadString('TBitBtn', 'BtnClose.Caption', BtnClose.Caption);
       end;
       Storage.Free;
     end;
