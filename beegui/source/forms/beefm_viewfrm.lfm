@@ -20,7 +20,6 @@ object ViewFrm: TViewFrm
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = BtnOk
     Height = 290
     Width = 411
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -30,8 +29,6 @@ object ViewFrm: TViewFrm
   end
   object BtnFont: TBitBtn
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = BtnOk
-    AnchorSideBottom.Control = BtnOk
     AnchorSideBottom.Side = asrBottom
     Left = 6
     Height = 26
@@ -50,7 +47,6 @@ object ViewFrm: TViewFrm
   object BtnSave: TBitBtn
     AnchorSideLeft.Control = BtnFont
     AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = BtnOk
     AnchorSideBottom.Control = BtnFont
     AnchorSideBottom.Side = asrBottom
     Left = 87
@@ -67,32 +63,9 @@ object ViewFrm: TViewFrm
     OnClick = BtnSaveClick
     TabOrder = 2
   end
-  object BtnOk: TBitBtn
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
-    Left = 335
-    Height = 26
-    Top = 296
-    Width = 70
-    Anchors = [akRight, akBottom]
-    AutoSize = True
-    BorderSpacing.Top = 6
-    BorderSpacing.Right = 6
-    BorderSpacing.Bottom = 6
-    Cancel = True
-    Caption = '&OK'
-    Constraints.MinWidth = 70
-    Default = True
-    Kind = bkOK
-    ModalResult = 1
-    NumGlyphs = 0
-    TabOrder = 3
-  end
   object FontDialog: TFontDialog
     Font.Height = -11
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Default'
     left = 8
     top = 8
   end

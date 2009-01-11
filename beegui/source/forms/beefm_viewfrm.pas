@@ -49,16 +49,17 @@ type
   { TViewFrm }
 
   TViewFrm = class(TForm)
+    ApplicationProperties1: TApplicationProperties;
     FontDialog: TFontDialog;
     SaveDialog: TSaveDialog;
     Memo: TMemo;
     BtnFont: TBitBtn;
     BtnSave: TBitBtn;
-    BtnOk: TBitBtn;
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure FormCreate(Sender: TObject);
+    procedure BtnCloseClick(Sender: TObject);
     procedure BtnFontClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   public
     { public declarations }
     procedure SaveProperty;
@@ -88,16 +89,16 @@ uses
 
   procedure TViewFrm.FormCreate(Sender: TObject);
   begin
-    LoadLanguage;
-    LoadProperty;
+    //LoadLanguage;
+    //LoadProperty;
   end;
   
   procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
     {$IFDEF DEBUG}
-      SaveLanguage;
+      //SaveLanguage;
     {$ENDIF}
-    SaveProperty;
+    //SaveProperty;
   end;
 
   procedure TViewFrm.BtnFontClick(Sender: TObject);
@@ -107,6 +108,11 @@ uses
     begin
       Memo.Font := FontDialog.Font;
     end;
+  end;
+
+  procedure TViewFrm.BtnCloseClick(Sender: TObject);
+  begin
+    Close;
   end;
   
   procedure TViewFrm.BtnSaveClick(Sender: TObject);
