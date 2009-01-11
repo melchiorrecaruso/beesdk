@@ -209,8 +209,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFm_ViewFrm"/>
-        <CursorPos X="29" Y="85"/>
-        <TopLine Value="70"/>
+        <CursorPos X="24" Y="25"/>
+        <TopLine Value="113"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -338,7 +338,7 @@
       </Position27>
       <Position28>
         <Filename Value="forms\beefm_viewfrm.pas"/>
-        <Caret Line="85" Column="29" TopLine="70"/>
+        <Caret Line="85" Column="27" TopLine="79"/>
       </Position28>
     </JumpHistory>
   </ProjectOptions>

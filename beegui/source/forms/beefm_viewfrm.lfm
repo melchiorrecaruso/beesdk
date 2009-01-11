@@ -63,7 +63,9 @@ object ViewFrm: TViewFrm
     Width = 411
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 6
+    ScrollBars = ssAutoBoth
     TabOrder = 3
+    WordWrap = False
   end
   object BtnClose: TBitBtn
     AnchorSideRight.Control = Owner
