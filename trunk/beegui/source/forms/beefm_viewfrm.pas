@@ -49,7 +49,9 @@ type
   { TViewFrm }
 
   TViewFrm = class(TForm)
+    BtnClose: TBitBtn;
     FontDialog: TFontDialog;
+    Memo: TMemo;
     SaveDialog: TSaveDialog;
     BtnFont: TBitBtn;
     BtnSave: TBitBtn;
@@ -60,10 +62,10 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   public
     { public declarations }
-    // procedure SaveProperty;
-    // procedure LoadProperty;
-    // procedure SaveLanguage;
-    // procedure LoadLanguage;
+    procedure SaveProperty;
+    procedure LoadProperty;
+    procedure SaveLanguage;
+    procedure LoadLanguage;
   private
     { private declarations }
   end;
@@ -80,32 +82,32 @@ uses
 
   { TViewFrm class }
   
-  {*$I beefm_viewfrm_saveproperty.inc}
-  {*$I beefm_viewfrm_loadproperty.inc}
-  {*$I beefm_viewfrm_savelanguage.inc}
-  {*$I beefm_viewfrm_loadlanguage.inc}
+  {$I beefm_viewfrm_saveproperty.inc}
+  {$I beefm_viewfrm_loadproperty.inc}
+  {$I beefm_viewfrm_savelanguage.inc}
+  {$I beefm_viewfrm_loadlanguage.inc}
 
   procedure TViewFrm.FormCreate(Sender: TObject);
   begin
-    // LoadLanguage;
-    // LoadProperty;
+    LoadLanguage;
+    LoadProperty;
   end;
   
   procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
     {$IFDEF DEBUG}
-      // SaveLanguage;
+      SaveLanguage;
     {$ENDIF}
-    //SaveProperty;
+    SaveProperty;
   end;
 
   procedure TViewFrm.BtnFontClick(Sender: TObject);
   begin
-    //FontDialog.Font := Memo.Font;
-    //if FontDialog.Execute then
-    //begin
-    //  Memo.Font := FontDialog.Font;
-    //end;
+    FontDialog.Font := Memo.Font;
+    if FontDialog.Execute then
+    begin
+      Memo.Font := FontDialog.Font;
+    end;
   end;
 
   procedure TViewFrm.BtnCloseClick(Sender: TObject);
@@ -125,7 +127,7 @@ uses
         1: FileName := ChangeFileExt(FileName, '.log');
         2: FileName := ChangeFileExt(FileName, '.txt');
       end;
-      // Memo.Lines.SaveToFile(FileName);
+      Memo.Lines.SaveToFile(FileName);
     end;
   end;
   
