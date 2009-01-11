@@ -48,7 +48,8 @@ var
   rsSelectFolder:         string = 'Select folder';
   rsSelectFrmCaption:     string = 'Select';
   rsDeselectFrmCaption:   string = 'Deselect';
-  
+
+  rsExitWithoutSave:          string = 'Do you exit without save changes?';
   rsConfirmDeleteArc:         string = 'Do you want to delete archive?';
   rsConfirmDeleteFiles:       string = 'Do you want to delete selected files?';
   rsConfirmAbortProcess:      string = 'Do you want to abort current process?';
@@ -103,6 +104,7 @@ implementation
       rsSelectFrmCaption     := Storage.ReadString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
       rsDeSelectFrmCaption   := Storage.ReadString('ResourceString', 'rsDeSelectFrmCaption', rsDeSelectFrmCaption);
 
+      rsExitWithoutSave          := Storage.ReadString('ResourceString', 'rsExitWithoutSave', rsExitWithoutSave);
       rsConfirmDeleteArc         := Storage.ReadString('ResourceString', 'rsConfirmDeleteArc', rsConfirmDeleteArc);
       rsConfirmDeleteFiles       := Storage.ReadString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);
       rsConfirmAbortProcess      := Storage.ReadString('ResourceString', 'rsConfirmAbortProcess', rsConfirmAbortProcess);
@@ -157,6 +159,7 @@ implementation
       Storage.WriteString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
       Storage.WriteString('ResourceString', 'rsDeselectFrmCaption', rsDeselectFrmCaption);
 
+      Storage.WriteString('ResourceString', 'rsExitWithoutSave', rsExitWithoutSave);
       Storage.WriteString('ResourceString', 'rsConfirmDeleteArc', rsConfirmDeleteArc);
       Storage.WriteString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);
       Storage.WriteString('ResourceString', 'rsConfirmAbortProcess', rsConfirmAbortProcess);

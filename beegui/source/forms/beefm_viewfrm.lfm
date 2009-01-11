@@ -12,6 +12,7 @@ object ViewFrm: TViewFrm
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   LCLVersion = '0.9.27'
   object BtnFont: TBitBtn
