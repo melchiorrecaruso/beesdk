@@ -18,14 +18,14 @@
 
 {   Contains:
 
-      BeeFm View form.
+      BeeFm Viewer form.
 
     Modifyed:
     
-      v1.0.5 build 0450 - 2008.07.10 by Melchiorre Caruso.
+      v1.0.5 build 0525 - 2009.01.11 by Melchiorre Caruso.
 }
 
-unit beefm_viewfrm;
+unit BeeFm_ViewFrm;
 
 {$I compiler.inc}
 
@@ -49,13 +49,12 @@ type
   { TViewFrm }
 
   TViewFrm = class(TForm)
-    BtnClose: TBitBtn;
     FontDialog: TFontDialog;
-    Memo: TMemo;
     SaveDialog: TSaveDialog;
+    Memo: TMemo;
     BtnFont: TBitBtn;
     BtnSave: TBitBtn;
-    procedure BtnCloseClick(Sender: TObject);
+    BtnClose: TBitBtn;
     procedure BtnFontClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -66,8 +65,9 @@ type
     procedure LoadProperty;
     procedure SaveLanguage;
     procedure LoadLanguage;
-  private
+  public
     { private declarations }
+    procedure LoadFile(const aFileName: string);
   end;
 
 var
@@ -91,6 +91,8 @@ uses
   begin
     LoadLanguage;
     LoadProperty;
+
+    Memo.Font := FontDialog.Font;
   end;
   
   procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -109,11 +111,6 @@ uses
       Memo.Font := FontDialog.Font;
     end;
   end;
-
-  procedure TViewFrm.BtnCloseClick(Sender: TObject);
-  begin
-    Close;
-  end;
   
   procedure TViewFrm.BtnSaveClick(Sender: TObject);
   var
@@ -124,10 +121,24 @@ uses
     begin
       FileName := SaveDialog.FileName;
       case SaveDialog.FilterIndex of
-        1: FileName := ChangeFileExt(FileName, '.log');
-        2: FileName := ChangeFileExt(FileName, '.txt');
+        1: FileName := ChangeFileExt(FileName, '.txt');
+        2: FileName := ChangeFileExt(FileName, '.log');
       end;
-      Memo.Lines.SaveToFile(FileName);
+      LoadFile(FileName);
+    end;
+  end;
+
+  procedure TViewFrm.LoadFile(const aFileName: string);
+  begin
+    Memo.Clear;
+    Memo.Enabled := True;
+    Memo.Color := clWindow;
+    try
+      Memo.Lines.LoadFromFile(aFileName);
+    except
+      Memo.Clear;
+      Memo.Enabled := False;
+      Memo.Color := clInactiveBorder;
     end;
   end;
   
@@ -136,5 +147,6 @@ initialization
   {$I beefm_viewfrm.lrs}
 
 end.
+
 
 
