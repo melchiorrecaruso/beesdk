@@ -1385,39 +1385,40 @@ uses
   
   procedure TMainFrm.PMenuPopup(Sender: TObject);
   var
-    Selection: integer;
+    I: integer;
   begin
-    with ListView do
-    begin
-      if SelCount = 1 then
-      begin
-        if Pos('D',Selected.SubItems[5]) > 0 then
-          Selection := 2
-        else
-          Selection := 1;
-      end else
-        Selection := 3;
-    end;
+    for I := 0 to PMenu.Items.Count -1  do PMenu.Items[I].Visible := True;
 
-    case Selection of
-      1: begin
-           PMenuOpen         .Visible := True;
-           PMenuOpenIntViewer.Visible := True;
-           PMenuN1           .Visible := True;
-           PMenuN4           .Visible := True;
-           PMenuProperty     .Visible := True;
-         end;
-      2: begin
-           PMenuOpen         .Visible := True;
-           PMenuOpenIntViewer.Visible := False;
-           PMenuN1           .Visible := True;
-           PMenuN4           .Visible := False;
-           PMenuProperty     .Visible := False;
-         end;
-      3: begin
+    case ListView.SelCount of
+      0: begin
+           // nil in selected
            PMenuOpen         .Visible := False;
            PMenuOpenIntViewer.Visible := False;
            PMenuN1           .Visible := False;
+
+           PMenuExtract      .Visible := False;
+           PMenuTest         .Visible := False;
+           PMenuN2           .Visible := False;
+           PMenuDelete       .Visible := False;
+           PMenuRename       .Visible := False;
+
+           PMenuN4           .Visible := False;
+           PMenuProperty     .Visible := False;
+         end;
+      1: if Pos('D', ListView.Selected.SubItems[5]) > 0 then
+         begin
+           // A directory is selected
+           PMenuOpenIntViewer.Visible := False;
+
+           PMenuN4           .Visible := False;
+           PMenuProperty     .Visible := False;
+         end;
+    else begin
+           // A directory is selected
+           PMenuOpen         .Visible := False;
+           PMenuOpenIntViewer.Visible := False;
+           PMenuN1           .Visible := False;
+
            PMenuN4           .Visible := False;
            PMenuProperty     .Visible := False;
          end;
@@ -1429,6 +1430,54 @@ initialization
   {$I beefm_mainfrm.lrs}
   
 end.
+
+
+
+   end;
+  end;
+  
+initialization
+
+  {$I beefm_mainfrm.lrs}
+  
+end.
+
+
+
+lse;
+             PMenuOpenIntViewer.Visible := False;
+             PMenuN1           .Visible := False;
+             PMenuN4           .Visible := False;
+             PMenuProperty     .Visible := False;
+           end;
+      end;
+    end;
+  end;
+  
+initialization
+
+  {$I beefm_mainfrm.lrs}
+  
+end.
+
+
+
+MenuOpen         .Visible := False;
+             PMenuOpenIntViewer.Visible := False;
+             PMenuN1           .Visible := False;
+             PMenuN4           .Visible := False;
+             PMenuProperty     .Visible := False;
+           end;
+      end;
+    end;
+  end;
+  
+initialization
+
+  {$I beefm_mainfrm.lrs}
+  
+end.
+
 
 
 

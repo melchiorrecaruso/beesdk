@@ -60,6 +60,7 @@ type
     BtnClose: TBitBtn;
     procedure BtnFontClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure PMenuSaveAsClick(Sender: TObject);
     procedure PMenuSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -132,8 +133,8 @@ uses
   begin
     try
       Memo.Lines.SaveToFile(FFileName);
-    except
-
+    finally
+      Memo.Modified := False;
     end;
     Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
   end;
@@ -161,6 +162,15 @@ uses
     Inc(Y, 26);
     {$ENDIF}
     PMenu.PopUp(X, Y);
+  end;
+
+  procedure TViewFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+  begin
+    CanClose := Memo.Modified = False;
+    if CanClose = False then
+    begin
+      CanClose := MessageDlg(rsExitWithoutSave, mtWarning, [mbYes, mbNo], 0) = mrYes;
+    end;
   end;
 
   procedure TViewFrm.LoadFile(const aFileName: string);
