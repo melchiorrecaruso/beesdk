@@ -22,7 +22,7 @@
 
     Modifyed:
     
-      v1.0.5 build 0525 - 2009.01.11 by Melchiorre Caruso.
+      v1.0.5 build 0531 - 2009.01.11 by Melchiorre Caruso.
 }
 
 unit BeeFm_ViewFrm;
@@ -50,19 +50,20 @@ type
 
   TViewFrm = class(TForm)
     FontDialog: TFontDialog;
+    SaveDialog: TSaveDialog;
     PMenuSave: TMenuItem;
     PMenuSaveAs: TMenuItem;
     PMenu: TPopupMenu;
-    SaveDialog: TSaveDialog;
     Memo: TMemo;
     BtnFont: TBitBtn;
     BtnSave: TBitBtn;
     BtnClose: TBitBtn;
     procedure BtnFontClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
+    procedure PMenuSaveAsClick(Sender: TObject);
+    procedure PMenuSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure PMenuSaveClick(Sender: TObject);
   private
     FFileName: string;
   public
@@ -113,9 +114,28 @@ uses
     SaveProperty;
   end;
 
+  procedure TViewFrm.PMenuSaveAsClick(Sender: TObject);
+  begin
+    SaveDialog.FileName := FFileName;
+    if SaveDialog.Execute then
+    begin
+      FFileName := SaveDialog.FileName;
+      case SaveDialog.FilterIndex of
+        1: FFileName := ChangeFileExt(FFileName, '.txt');
+        2: FFileName := ChangeFileExt(FFileName, '.log');
+      end;
+      PMenuSaveClick(Sender);
+    end;
+  end;
+
   procedure TViewFrm.PMenuSaveClick(Sender: TObject);
   begin
+    try
+      Memo.Lines.SaveToFile(FFileName);
+    except
 
+    end;
+    Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
   end;
 
   procedure TViewFrm.BtnFontClick(Sender: TObject);
@@ -149,9 +169,10 @@ uses
     try
       Memo.Clear;
       Memo.Lines.LoadFromFile(FFileName);
-    finally
-      Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
+    except
+
     end;
+    Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
   end;
 
 initialization
@@ -162,7 +183,15 @@ end.
 
 
 
-eName := aFileName;
+
+
+
+
+
+
+
+
+me;
     try
       Memo.Clear;
       Memo.Lines.LoadFromFile(FFileName);
@@ -200,6 +229,8 @@ initialization
   {$I beefm_viewfrm.lrs}
 
 end.
+
+
 
 
 
