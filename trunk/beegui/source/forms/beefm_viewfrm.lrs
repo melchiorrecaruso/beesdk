@@ -23,16 +23,16 @@ LazarusResources.Add('TViewFrm','FORMDATA',[
   +'orSideTop.Control'#7#5'Owner'#23'AnchorSideRight.Control'#7#5'Owner'#20'Anc'
   +'horSideRight.Side'#7#9'asrBottom'#24'AnchorSideBottom.Control'#7#7'BtnFont'
   +#6'Height'#3'"'#1#5'Width'#3#155#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRigh'
-  +'t'#8'akBottom'#0#20'BorderSpacing.Bottom'#2#6#8'TabOrder'#2#3#0#0#7'TBitBtn'
-  +#8'BtnClose'#23'AnchorSideRight.Control'#7#5'Owner'#20'AnchorSideRight.Side'
-  +#7#9'asrBottom'#24'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.'
-  +'Side'#7#9'asrBottom'#4'Left'#3'E'#1#6'Height'#2#26#3'Top'#3'('#1#5'Width'#2
-  +'P'#7'Anchors'#11#7'akRight'#8'akBottom'#0#20'BorderSpacing.Around'#2#6#6'Ca'
-  +'ncel'#9#7'Caption'#6#7'&Chiudi'#21'Constraints.MinHeight'#2#26#20'Constrain'
-  +'ts.MinWidth'#2'P'#7'Default'#9#4'Kind'#7#7'bkClose'#8'TabOrder'#2#0#0#0#11
-  +'TFontDialog'#10'FontDialog'#11'Font.Height'#2#245#9'Font.Name'#6#7'Default'
-  +#4'left'#2#8#3'top'#2#24#0#0#11'TSaveDialog'#10'SaveDialog'#6'Filter'#6'ATxt'
-  +' files (*.txt)|*.txt|Log files (*.log)|*.log|All files (*.*)|*'#7'Options'
-  +#11#15'ofPathMustExist'#14'ofEnableSizing'#12'ofViewDetail'#0#4'left'#2'('#3
-  +'top'#2#24#0#0#0
+  +'t'#8'akBottom'#0#20'BorderSpacing.Bottom'#2#6#10'ScrollBars'#7#10'ssAutoBot'
+  +'h'#8'TabOrder'#2#3#8'WordWrap'#8#0#0#7'TBitBtn'#8'BtnClose'#23'AnchorSideRi'
+  +'ght.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSi'
+  +'deBottom.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Lef'
+  +'t'#3'E'#1#6'Height'#2#26#3'Top'#3'('#1#5'Width'#2'P'#7'Anchors'#11#7'akRigh'
+  +'t'#8'akBottom'#0#20'BorderSpacing.Around'#2#6#6'Cancel'#9#7'Caption'#6#7'&C'
+  +'hiudi'#21'Constraints.MinHeight'#2#26#20'Constraints.MinWidth'#2'P'#7'Defau'
+  +'lt'#9#4'Kind'#7#7'bkClose'#8'TabOrder'#2#0#0#0#11'TFontDialog'#10'FontDialo'
+  +'g'#11'Font.Height'#2#245#9'Font.Name'#6#7'Default'#4'left'#2#8#3'top'#2#24#0
+  +#0#11'TSaveDialog'#10'SaveDialog'#6'Filter'#6'ATxt files (*.txt)|*.txt|Log f'
+  +'iles (*.log)|*.log|All files (*.*)|*'#7'Options'#11#15'ofPathMustExist'#14
+  +'ofEnableSizing'#12'ofViewDetail'#0#4'left'#2'('#3'top'#2#24#0#0#0
 ]);

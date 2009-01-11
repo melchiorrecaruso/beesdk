@@ -91,8 +91,9 @@ uses
   begin
     LoadLanguage;
     LoadProperty;
-
-    Memo.Font := FontDialog.Font;
+    begin
+      Memo.Font := FontDialog.Font;
+    end;
   end;
   
   procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
