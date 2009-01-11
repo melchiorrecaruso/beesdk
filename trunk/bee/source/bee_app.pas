@@ -251,7 +251,8 @@ begin
         'T': DecodeShell(toTest);
         'X': DecodeShell(toExtract);
         '?': DisplayUsage;
-      end else
+      end
+    else
       DisplayUsage;
 end;
 
@@ -260,8 +261,7 @@ begin
   Result := True;
   if FileExists(FCommandLine.ArchiveName) then
   begin
-    FArcFile := CreateTFileReader(FCommandLine.ArchiveName,
-      fmOpenRead + fmShareDenyWrite);
+    FArcFile := CreateTFileReader(FCommandLine.ArchiveName, fmOpenRead + fmShareDenyWrite);
     try
       Headers.ReadItems(FArcFile, aAction);
       if (Headers.Count = 0) and (FArcFile.Size <> 0) then
@@ -1555,3 +1555,4 @@ begin
 end;
 
 end.
+
