@@ -34,7 +34,11 @@ const
   cApplicationName    = 'BeeGui';
   cApplicationTitle   = 'Bee File Manager';
   cApplicationCaption = 'Bee File Manager';
-  
+
+  cApplicationViewerName    = 'BeeViewer';
+  cApplicationViewerTitle   = 'Bee File Viewer';
+  cApplicationViewerCaption = 'Bee File Viewer';
+
   cApplicationHomePage       = 'http://www.beegui.org';
 
   cApplicationHelpFile       = 'help.htm';

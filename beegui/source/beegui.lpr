@@ -51,6 +51,7 @@ uses
   BeeGui_CommandLine,
   // --- //
   BeeFM_MainFrm,
+  BeeFm_ViewFrm,
   BeeFM_ConfigFrm;
 
 var
@@ -63,41 +64,52 @@ begin
 
   Application.Initialize;
   Application.HelpFile := '';
-  Application.Name := cApplicationName;
-  Application.Title := cApplicationName;
 
   CommandLine := TCustomCommandLine.Create(True);
-  if CommandLine.Command = ' ' then
-  begin
-    Application.CreateForm(TMainFrm, MainFrm);
-    Application.CreateForm(TConfigFrm, ConfigFrm);
-    Application.Run;
-  end else
-  begin
-    if CommandLine.Run then
-    begin
-      if CommandLine.Command in ['?'] then
-      begin
-        Application.CreateForm(TAboutFrm, AboutFrm);
-        Application.Run;
-      end else
-      begin
-        Application.CreateForm(TTickFrm, TickFrm);
-        TickFrm.Execute(CommandLine, nil);
-        TickFrm.OnlyAForm := True;
-        repeat
-          Application.ProcessMessages;
-          if TickFrm.FrmCanClose then Break;
-          if TickFrm.FrmCanShow  then Break;
-        until CommandLine.Log;
-        if CommandLine.Log then
-          Application.Run
-        else
-          if TickFrm.FrmCanClose = False then
-            Application.Run;
-      end;
-    end;
+  case CommandLine.Command of
+  ' ': begin
+         Application.Name := cApplicationName;
+         Application.Title := cApplicationName;
+         Application.CreateForm(TMainFrm, MainFrm);
+         Application.CreateForm(TConfigFrm, ConfigFrm);
+         Application.Run;
+       end;
+  'V': begin
+         Application.Name := cApplicationViewerName;
+         Application.Title := cApplicationViewerName;
+         Application.CreateForm(TViewFrm, ViewFrm);
+         Application.Run;
+       end;
+  else begin
+         Application.Name := cApplicationName;
+         Application.Title := cApplicationName;
+         if CommandLine.Run then
+         begin
+           if CommandLine.Command in ['?'] then
+           begin
+             Application.CreateForm(TAboutFrm, AboutFrm);
+             Application.Run;
+           end else
+           begin
+             Application.CreateForm(TTickFrm, TickFrm);
+             TickFrm.Execute(CommandLine, nil);
+             TickFrm.OnlyAForm := True;
+             repeat
+                 Application.ProcessMessages;
+                 if TickFrm.FrmCanClose then Break;
+                 if TickFrm.FrmCanShow  then Break;
+             until CommandLine.Log;
+             if CommandLine.Log then
+               Application.Run
+             else
+               if TickFrm.FrmCanClose = False then
+                 Application.Run;
+           end;
+         end;
+       end;
   end;
   FreeAndNil(CommandLine);;
 end.
+
+
 
