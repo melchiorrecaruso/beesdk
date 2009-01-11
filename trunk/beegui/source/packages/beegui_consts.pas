@@ -45,17 +45,23 @@ const
   cApplicationDocsFolder     = 'docs';
   cApplicationLanguageFolder = 'language';
 
-  function GetApplicationCaption(const aArchiveName: string): string;
+  function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
 
 implementation
 
-  function GetApplicationCaption(const aArchiveName: string): string;
+  function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
   begin
-    if aArchiveName = '' then
-      Result := cApplicationCaption
+    if aFileName = '' then
+      Result := aApplicationCaption
     else
-      Result := cApplicationCaption + ' - ' + ExtractFileName(aArchiveName);
+      Result := aApplicationCaption + ' - ' + ExtractFileName(aFileName);
   end;
 
+
+
 end.
+
+
+
+
 

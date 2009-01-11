@@ -42,7 +42,7 @@ uses
   StdCtrls,
   Controls,
   SysUtils,
-  LResources;
+  LResources, Menus;
 
 type
 
@@ -50,6 +50,9 @@ type
 
   TViewFrm = class(TForm)
     FontDialog: TFontDialog;
+    PMenuSave: TMenuItem;
+    PMenuSaveAs: TMenuItem;
+    PMenu: TPopupMenu;
     SaveDialog: TSaveDialog;
     Memo: TMemo;
     BtnFont: TBitBtn;
@@ -59,6 +62,9 @@ type
     procedure BtnSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure PMenuSaveClick(Sender: TObject);
+  private
+    FFileName: string;
   public
     { public declarations }
     procedure SaveProperty;
@@ -94,14 +100,22 @@ uses
     begin
       Memo.Font := FontDialog.Font;
     end;
+    FFileName := '';
   end;
   
   procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
+    Memo.Clear;
+    FFileName := '';
     {$IFDEF DEBUG}
       SaveLanguage;
     {$ENDIF}
     SaveProperty;
+  end;
+
+  procedure TViewFrm.PMenuSaveClick(Sender: TObject);
+  begin
+
   end;
 
   procedure TViewFrm.BtnFontClick(Sender: TObject);
@@ -115,39 +129,80 @@ uses
   
   procedure TViewFrm.BtnSaveClick(Sender: TObject);
   var
-    FileName: string;
+    X, Y: integer;
   begin
-    SaveDialog.FileName := '';
-    if SaveDialog.Execute then
-    begin
-      FileName := SaveDialog.FileName;
-      case SaveDialog.FilterIndex of
-        1: FileName := ChangeFileExt(FileName, '.txt');
-        2: FileName := ChangeFileExt(FileName, '.log');
-      end;
-      LoadFile(FileName);
-    end;
+    X := Left + BtnSave.Left;
+    Y := Top  + BtnSave.Top + BtnSave.Height;
+    {$IFDEF MSWINDOWS}
+    Inc(X, 3);
+    Inc(Y, 23);
+    {$ELSE}
+    Inc(X, 6);
+    Inc(Y, 26);
+    {$ENDIF}
+    PMenu.PopUp(X, Y);
   end;
 
   procedure TViewFrm.LoadFile(const aFileName: string);
   begin
-    Memo.Clear;
-    Memo.Enabled := True;
-    Memo.Color := clWindow;
+    FFileName := aFileName;
     try
-      Memo.Lines.LoadFromFile(aFileName);
-    except
       Memo.Clear;
-      Memo.Enabled := False;
-      Memo.Color := clInactiveBorder;
+      Memo.Lines.LoadFromFile(FFileName);
+    finally
+      Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
     end;
   end;
-  
+
 initialization
 
   {$I beefm_viewfrm.lrs}
 
 end.
+
+
+
+eName := aFileName;
+    try
+      Memo.Clear;
+      Memo.Lines.LoadFromFile(FFileName);
+    finally
+      Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
+    end;
+  end;
+
+initialization
+
+  {$I beefm_viewfrm.lrs}
+
+end.
+
+
+
+up_Higher      .Checked := FApp.Priority = tpHigher;
+    Popup_TimeCritical.Checked := FApp.Priority = tpTimeCritical;
+
+    X := Left + BtnPriority.Left;
+    Y := Top  + BtnPriority.Top + BtnPriority.Height;
+
+    {$IFDEF MSWINDOWS}
+    Inc(X, 3);
+    Inc(Y, 23);
+    {$ELSE}
+    Inc(X, 6);
+    Inc(Y, 26);
+    {$ENDIF}
+    Popup.PopUp(X, Y);
+  end;
+  *)
+initialization
+
+  {$I beefm_viewfrm.lrs}
+
+end.
+
+
+
 
 
 
