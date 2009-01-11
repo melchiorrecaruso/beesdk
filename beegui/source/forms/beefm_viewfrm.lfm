@@ -1,9 +1,8 @@
 object ViewFrm: TViewFrm
-  Left = 436
+  Left = 380
   Height = 328
-  Top = 237
+  Top = 208
   Width = 411
-  ActiveControl = Memo
   Caption = 'View'
   ClientHeight = 328
   ClientWidth = 411
@@ -15,18 +14,6 @@ object ViewFrm: TViewFrm
   OnClose = FormClose
   OnCreate = FormCreate
   LCLVersion = '0.9.27'
-  object Memo: TMemo
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Owner
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    Height = 290
-    Width = 411
-    Anchors = [akTop, akLeft, akRight, akBottom]
-    BorderSpacing.Bottom = 6
-    ScrollBars = ssBoth
-    TabOrder = 0
-  end
   object BtnFont: TBitBtn
     AnchorSideLeft.Control = Owner
     AnchorSideBottom.Side = asrBottom
@@ -42,7 +29,7 @@ object ViewFrm: TViewFrm
     Constraints.MinWidth = 75
     NumGlyphs = 0
     OnClick = BtnFontClick
-    TabOrder = 1
+    TabOrder = 0
   end
   object BtnSave: TBitBtn
     AnchorSideLeft.Control = BtnFont
@@ -61,7 +48,7 @@ object ViewFrm: TViewFrm
     Constraints.MinWidth = 75
     NumGlyphs = 0
     OnClick = BtnSaveClick
-    TabOrder = 2
+    TabOrder = 1
   end
   object FontDialog: TFontDialog
     Font.Height = -11

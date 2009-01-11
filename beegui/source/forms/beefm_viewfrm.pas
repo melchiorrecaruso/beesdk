@@ -25,7 +25,7 @@
       v1.0.5 build 0450 - 2008.07.10 by Melchiorre Caruso.
 }
 
-unit BeeFM_ViewFrm;
+unit beefm_viewfrm;
 
 {$I compiler.inc}
 
@@ -49,10 +49,8 @@ type
   { TViewFrm }
 
   TViewFrm = class(TForm)
-    ApplicationProperties1: TApplicationProperties;
     FontDialog: TFontDialog;
     SaveDialog: TSaveDialog;
-    Memo: TMemo;
     BtnFont: TBitBtn;
     BtnSave: TBitBtn;
     procedure BtnCloseClick(Sender: TObject);
@@ -62,10 +60,10 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   public
     { public declarations }
-    procedure SaveProperty;
-    procedure LoadProperty;
-    procedure SaveLanguage;
-    procedure LoadLanguage;
+    // procedure SaveProperty;
+    // procedure LoadProperty;
+    // procedure SaveLanguage;
+    // procedure LoadLanguage;
   private
     { private declarations }
   end;
@@ -82,32 +80,32 @@ uses
 
   { TViewFrm class }
   
-  {$I beefm_viewfrm_saveproperty.inc}
-  {$I beefm_viewfrm_loadproperty.inc}
-  {$I beefm_viewfrm_savelanguage.inc}
-  {$I beefm_viewfrm_loadlanguage.inc}
+  {*$I beefm_viewfrm_saveproperty.inc}
+  {*$I beefm_viewfrm_loadproperty.inc}
+  {*$I beefm_viewfrm_savelanguage.inc}
+  {*$I beefm_viewfrm_loadlanguage.inc}
 
   procedure TViewFrm.FormCreate(Sender: TObject);
   begin
-    //LoadLanguage;
-    //LoadProperty;
+    // LoadLanguage;
+    // LoadProperty;
   end;
   
   procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
     {$IFDEF DEBUG}
-      //SaveLanguage;
+      // SaveLanguage;
     {$ENDIF}
     //SaveProperty;
   end;
 
   procedure TViewFrm.BtnFontClick(Sender: TObject);
   begin
-    FontDialog.Font := Memo.Font;
-    if FontDialog.Execute then
-    begin
-      Memo.Font := FontDialog.Font;
-    end;
+    //FontDialog.Font := Memo.Font;
+    //if FontDialog.Execute then
+    //begin
+    //  Memo.Font := FontDialog.Font;
+    //end;
   end;
 
   procedure TViewFrm.BtnCloseClick(Sender: TObject);
@@ -127,7 +125,7 @@ uses
         1: FileName := ChangeFileExt(FileName, '.log');
         2: FileName := ChangeFileExt(FileName, '.txt');
       end;
-      Memo.Lines.SaveToFile(FileName);
+      // Memo.Lines.SaveToFile(FileName);
     end;
   end;
   
@@ -136,3 +134,5 @@ initialization
   {$I beefm_viewfrm.lrs}
 
 end.
+
+
