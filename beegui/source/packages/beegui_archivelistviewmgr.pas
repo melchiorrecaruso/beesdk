@@ -665,7 +665,7 @@ uses
   procedure TCustomArchiveListView.GetMasks(FileMasks: TStringList);
   var
     S: string;
-    I: integer;
+    I, J: integer;
     Node: TArchiveItem;
   begin
     for I := 0 to FFolderFiles.Count -1 do
@@ -674,10 +674,16 @@ uses
       begin
         Node := TArchiveItem(FFolderFiles.Items[I]);
         if (Node.FileAttr and faDirectory) = faDirectory then
-          S := Node.FilePath + IncludeTrailingBackSlash(Node.FileName) + '*'
-        else
-          S := Node.FilePath + Node.FileName;
-        FileMasks.Add(S);
+        begin
+          S := IncludeTrailingBackSlash(Node.FilePath + Node.FileName);
+          for J := 0 to FFiles.Count -1 do
+            with TArchiveItem(FFiles.Items[J]) do
+            begin
+              if FileNamePos(S, FilePath) = 1 then
+                FileMasks.Add(FilePath + FileName);
+            end;
+        end else
+          FileMasks.Add(Node.FilePath + Node.FileName);
       end;
     end;
   end;
@@ -1018,3 +1024,4 @@ initialization
   {$i beegui_archivelistviewmgr.lrs }
 
 end.
+
