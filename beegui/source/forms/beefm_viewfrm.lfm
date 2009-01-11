@@ -98,4 +98,15 @@ object ViewFrm: TViewFrm
     left = 40
     top = 24
   end
+  object PMenu: TPopupMenu
+    AutoPopup = False
+    left = 72
+    top = 24
+    object PMenuSave: TMenuItem
+      Caption = 'Save'
+    end
+    object PMenuSaveAs: TMenuItem
+      Caption = 'Save as ...'
+    end
+  end
 end

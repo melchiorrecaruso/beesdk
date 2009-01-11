@@ -34,5 +34,8 @@ LazarusResources.Add('TViewFrm','FORMDATA',[
   +'g'#11'Font.Height'#2#245#9'Font.Name'#6#7'Default'#4'left'#2#8#3'top'#2#24#0
   +#0#11'TSaveDialog'#10'SaveDialog'#6'Filter'#6'ATxt files (*.txt)|*.txt|Log f'
   +'iles (*.log)|*.log|All files (*.*)|*'#7'Options'#11#15'ofPathMustExist'#14
-  +'ofEnableSizing'#12'ofViewDetail'#0#4'left'#2'('#3'top'#2#24#0#0#0
+  +'ofEnableSizing'#12'ofViewDetail'#0#4'left'#2'('#3'top'#2#24#0#0#10'TPopupMe'
+  +'nu'#5'PMenu'#9'AutoPopup'#8#4'left'#2'H'#3'top'#2#24#0#9'TMenuItem'#9'PMenu'
+  +'Save'#7'Caption'#6#4'Save'#0#0#9'TMenuItem'#11'PMenuSaveAs'#7'Caption'#6#11
+  +'Save as ...'#0#0#0#0
 ]);

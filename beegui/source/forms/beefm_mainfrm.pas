@@ -360,7 +360,7 @@ uses
     FWorkStatus := 0;
     FCommandLine := TCustomCommandLine.Create(False);
     // --- //
-    Caption := GetApplicationCaption(rsWelcome);
+    Caption := GetApplicationCaption(cApplicationCaption ,rsWelcome);
   end;
 
   procedure TMainFrm.FormDestroy(Sender: TObject);
@@ -653,7 +653,7 @@ uses
     FFolder: string;
   begin
     IncWorkStatus;
-    Caption := GetApplicationCaption(rsOpening);
+    Caption := GetApplicationCaption(cApplicationCaption, rsOpening);
 
     FCommandLine.Clear;
     FCommandLine.Command := 'L';
@@ -741,7 +741,7 @@ uses
   procedure TMainFrm.SetArchiveName(const aArchiveName: string);
   begin
     FArchiveName := aArchiveName;
-    Caption := GetApplicationCaption(FArchiveName);
+    Caption := GetApplicationCaption(cApplicationCaption, FArchiveName);
   end;
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);

@@ -28,15 +28,15 @@ program BeeGui;
 {$I compiler.inc}
 
 {$IFDEF WINDOWS}
-  {$R beegui.rc}
+{$R beegui.rc}
 {$ENDIF}
 
 uses
   {$IFDEF UNIX}
-    cThreads,
+  cThreads,
   {$ENDIF}
   {$IFDEF MSWINDOWS}
-    Windows,
+  Windows,
   {$ENDIF}
   Forms,
   SysUtils,
@@ -79,7 +79,9 @@ begin
          Application.Name := cApplicationViewerName;
          Application.Title := cApplicationViewerName;
          Application.CreateForm(TViewFrm, ViewFrm);
-         ViewFrm.Memo.Lines.LoadFromFile(ParamStr(2));
+         begin
+           ViewFrm.LoadFile(ParamStr(2));
+         end;
          Application.Run;
        end;
   else begin
@@ -112,6 +114,9 @@ begin
   end;
   FreeAndNil(CommandLine);;
 end.
+
+
+
 
 
 
