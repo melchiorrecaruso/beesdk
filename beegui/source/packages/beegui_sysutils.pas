@@ -39,6 +39,8 @@ uses
   SysUtils;
   
   { directories routines }
+
+  function GetOSFileManager: string;
   
   {$IFDEF MSWINDOWS}
   function DiskInDrive (Drive: char): boolean;
@@ -87,6 +89,25 @@ uses
 implementation
 
   const DoublePathDelim = PathDelim + PathDelim;
+
+  function GetOSFileManager: string;
+  begin
+    {$IFDEF MSWINDOWS}
+      Result := 'explorer';
+    {$ELSE}
+      Result := 'nautilus';
+      if FileExists(Result) then Break;
+
+      Result := 'konqueror';
+      if FileExists(Result) then Break;
+
+      Result := 'thunar';
+      if FileExists(Result) then
+        Break
+      else
+        Result := '';
+    {$ENDIF}
+  end;
 
   { directories routines }
 

@@ -1181,7 +1181,6 @@ uses
   procedure TMainFrm.MMenuActionsCheckOutClick(Sender: TObject);
   var
     FCheckOutDir: string;
-    FExplorerExe: string;
   begin
     if CheckWorkStatus then
     begin
@@ -1199,14 +1198,10 @@ uses
       if SetCurrentDir(FCheckOutDir) then
       begin
         Execute(FArchiveName);
-        {$IFDEF MSWINDOWS}                FileExists
-          FExplorerExe := 'explorer';
-        {$ELSE}
-          FExplorerExe := 'nautilus';
-          FExplorerExe := 'konqueror';
-          FExplorerExe := 'thunar';
-        {$ENDIF}
-        with FileProcess do Execute(FExplorerExe, FCheckOutDir);
+        with FileProcess do
+        begin
+          Execute(GetOSFileManager, FCheckOutDir);
+        end;
       end else
         MessageDlg(rseSetCheckoutDir, mtError, [mbOk], 0);
     end;
