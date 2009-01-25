@@ -93,7 +93,7 @@ implementation
   function GetOSFileManager: string;
   begin
     {$IFDEF MSWINDOWS}
-      Result := 'explorer';
+      Result := '';
     {$ELSE}
       Result := 'nautilus';
       if FileExists(Result) then Break;

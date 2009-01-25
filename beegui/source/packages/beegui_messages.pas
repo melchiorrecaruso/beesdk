@@ -75,8 +75,8 @@ var
   rseRenameArc:           string = 'Error renaming archive.';
   rseRenameFile:          string = 'Error renaming file.';
   rseSetCheckoutDir:      string = 'Error setting checkout directory.';
-  
-  
+
+  rseCannotFoundFM:       string = 'Can''t found system file manager.';
   
 implementation
 
@@ -130,6 +130,8 @@ implementation
       rseRenameArc           := Storage.ReadString('ResourceString', 'rseRenameArc', rseRenameArc);
       rseRenameFile          := Storage.ReadString('ResourceString', 'rseRenameFile', rseRenameFile);
       rseSetCheckoutDir      := Storage.ReadString('ResourceString', 'rseSetCheckoutDir', rseSetCheckoutDir);
+
+      rseCannotFoundFM       := Storage.ReadString('ResourceString', 'rseCannotFoundFM', rseCannotFoundFM);
       end;
       Storage.Free;
     end;
@@ -185,6 +187,8 @@ implementation
       Storage.WriteString('ResourceString', 'rseRenameArc', rseRenameArc);
       Storage.WriteString('ResourceString', 'rseRenameFile', rseRenameFile);
       Storage.WriteString('ResourceString', 'rseSetCheckoutDir', rseSetCheckoutDir);
+
+      Storage.WriteString('ResourceString', 'rseCannotFoundFM', rseCannotFoundFM);
       end;
       Storage.Free;
     end;
