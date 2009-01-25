@@ -20,8 +20,8 @@ object MainFrm: TMainFrm
   object ListView: TArchiveListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Height = 361
-    Top = 103
+    Height = 375
+    Top = 89
     Width = 801
     FolderBox = FolderBox
     Align = alClient
@@ -113,37 +113,38 @@ object MainFrm: TMainFrm
     SimplePanel = False
   end
   object ToolBar: TPanel
-    Height = 103
+    Height = 89
     Width = 801
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 103
+    ClientHeight = 89
     ClientWidth = 801
     TabOrder = 2
     object ToolBarBevel: TBevel
       Height = 2
-      Top = 66
+      Top = 60
       Width = 801
       Align = alTop
       Visible = False
     end
     object UpToolBar: TPanel
       AnchorSideRight.Side = asrBottom
-      Height = 66
+      Height = 60
       Width = 801
       Align = alTop
-      ClientHeight = 66
+      AutoSize = True
+      ClientHeight = 60
       ClientWidth = 801
       PopupMenu = BMenu
       TabOrder = 0
       object BtnNew: TSpeedButton
-        Left = 6
+        Left = 3
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -354,12 +355,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnOpen: TSpeedButton
-        Left = 71
+        Left = 65
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -570,12 +571,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnAdd: TSpeedButton
-        Left = 143
+        Left = 131
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -786,12 +787,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnExtract: TSpeedButton
-        Left = 208
+        Left = 193
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -1002,12 +1003,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnView: TSpeedButton
-        Left = 273
+        Left = 255
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -1218,12 +1219,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnDelete: TSpeedButton
-        Left = 338
+        Left = 317
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -1434,12 +1435,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnTest: TSpeedButton
-        Left = 410
+        Left = 383
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -1650,12 +1651,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnCheckOut: TSpeedButton
-        Left = 475
+        Left = 445
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -1866,12 +1867,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnConfig: TSpeedButton
-        Left = 547
+        Left = 511
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -2082,12 +2083,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnHelp: TSpeedButton
-        Left = 612
+        Left = 573
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -2298,12 +2299,12 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnExit: TSpeedButton
-        Left = 677
+        Left = 635
         Height = 55
-        Top = 6
+        Top = 3
         Width = 60
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 60
         Constraints.MinHeight = 55
@@ -2514,36 +2515,36 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BevelThird: TBevel
-        Left = 540
+        Left = 507
         Height = 55
-        Top = 6
+        Top = 3
         Width = 2
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 2
         Constraints.MinHeight = 55
         Constraints.MinWidth = 2
       end
       object BevelFirst: TBevel
-        Left = 136
+        Left = 127
         Height = 55
-        Top = 6
+        Top = 3
         Width = 2
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 2
         Constraints.MinHeight = 55
         Constraints.MinWidth = 2
       end
       object BevelSecond: TBevel
-        Left = 403
+        Left = 379
         Height = 55
-        Top = 6
+        Top = 3
         Width = 2
         Align = alLeft
-        BorderSpacing.Around = 5
+        BorderSpacing.Around = 2
         Constraints.MaxHeight = 55
         Constraints.MaxWidth = 2
         Constraints.MinHeight = 55
@@ -2554,22 +2555,22 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Height = 35
-      Top = 68
+      Height = 27
+      Top = 62
       Width = 801
       Align = alTop
       AutoSize = True
-      ClientHeight = 35
+      ClientHeight = 27
       ClientWidth = 801
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideBottom.Side = asrBottom
-        Left = 7
+        Left = 3
         Height = 21
-        Top = 7
+        Top = 3
         Width = 123
         Align = alLeft
-        BorderSpacing.Around = 6
+        BorderSpacing.Around = 2
         Constraints.MaxWidth = 123
         Constraints.MinWidth = 123
         Caption = 'Livello superiore'
@@ -2597,24 +2598,24 @@ object MainFrm: TMainFrm
         OnClick = MMenuViewUpClick
       end
       object DownToolBarBevel: TBevel
-        Left = 136
+        Left = 128
         Height = 21
-        Top = 7
+        Top = 3
         Width = 2
         Align = alLeft
-        BorderSpacing.Around = 6
+        BorderSpacing.Around = 2
         Constraints.MaxWidth = 2
         Constraints.MinWidth = 2
       end
       object FolderBox: TArchiveFolderBox
         AnchorSideLeft.Control = DownToolBarBevel
-        Left = 142
+        Left = 130
         Height = 22
-        Top = 7
-        Width = 652
+        Top = 3
+        Width = 668
         Align = alRight
         Anchors = [akTop, akLeft, akRight, akBottom]
-        BorderSpacing.Around = 6
+        BorderSpacing.Around = 2
         Color = clInactiveBorder
         DropDownCount = 10
         Enabled = False

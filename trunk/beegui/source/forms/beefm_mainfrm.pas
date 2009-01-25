@@ -504,7 +504,7 @@ uses
     BtnTest.Enabled := Value;
     BtnTest.Font := Font;
 
-    BtnCheckOut.Enabled := Value;
+    BtnCheckOut.Enabled := Value and (GetOSFileManager <> '');
     BtnCheckOut.Font := Font;
     // ---
     MMenuFileClose   .Enabled := Value;
@@ -518,6 +518,8 @@ uses
     begin
       MMenuActions.Items[I].Enabled := Value;
     end;
+    MMenuActionsCheckOut.Enabled := BtnCheckOut.Enabled;
+
     BtnUp.Enabled := Value;
     BtnUp.Font := Font;
 
@@ -1197,11 +1199,15 @@ uses
       ForceDirectories(FCheckOutDir);
       if SetCurrentDir(FCheckOutDir) then
       begin
-        Execute(FArchiveName);
-        with FileProcess do
+        if GetOSFileManager <> '' then
         begin
-          Execute(GetOSFileManager, FCheckOutDir);
-        end;
+          Execute(FArchiveName);
+          with FileProcess do
+          begin
+            Execute(GetOSFileManager, FCheckOutDir);
+          end;
+        end else
+          MessageDlg(rseCannotFoundFM, mtError, [mbOk], 0);
       end else
         MessageDlg(rseSetCheckoutDir, mtError, [mbOk], 0);
     end;
