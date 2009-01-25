@@ -1,12 +1,12 @@
 object MainFrm: TMainFrm
-  Left = 360
+  Left = 414
   Height = 503
-  Top = 207
-  Width = 769
+  Top = 206
+  Width = 801
   ActiveControl = ToolBar
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 484
-  ClientWidth = 769
+  ClientWidth = 801
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -22,7 +22,7 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     Height = 361
     Top = 103
-    Width = 769
+    Width = 801
     FolderBox = FolderBox
     Align = alClient
     Columns = <    
@@ -95,7 +95,7 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Side = asrBottom
     Height = 20
     Top = 464
-    Width = 769
+    Width = 801
     Anchors = [akRight]
     Panels = <    
       item
@@ -114,27 +114,27 @@ object MainFrm: TMainFrm
   end
   object ToolBar: TPanel
     Height = 103
-    Width = 769
+    Width = 801
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
     ClientHeight = 103
-    ClientWidth = 769
+    ClientWidth = 801
     TabOrder = 2
     object ToolBarBevel: TBevel
       Height = 2
       Top = 66
-      Width = 769
+      Width = 801
       Align = alTop
       Visible = False
     end
     object UpToolBar: TPanel
       AnchorSideRight.Side = asrBottom
       Height = 66
-      Width = 769
+      Width = 801
       Align = alTop
       ClientHeight = 66
-      ClientWidth = 769
+      ClientWidth = 801
       PopupMenu = BMenu
       TabOrder = 0
       object BtnNew: TSpeedButton
@@ -2556,11 +2556,11 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Side = asrBottom
       Height = 35
       Top = 68
-      Width = 769
+      Width = 801
       Align = alTop
       AutoSize = True
       ClientHeight = 35
-      ClientWidth = 769
+      ClientWidth = 801
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideBottom.Side = asrBottom
@@ -2611,7 +2611,7 @@ object MainFrm: TMainFrm
         Left = 142
         Height = 22
         Top = 7
-        Width = 620
+        Width = 652
         Align = alRight
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 6
