@@ -41,6 +41,7 @@ const
 
   cApplicationHomePage       = 'http://www.beegui.org';
 
+  cApplicationLicenseFile    = 'license.htm';
   cApplicationHelpFile       = 'help.htm';
   cApplicationDocsFolder     = 'docs';
   cApplicationLanguageFolder = 'language';

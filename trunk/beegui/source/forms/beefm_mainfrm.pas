@@ -226,6 +226,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
+    procedure MMenuActionsDeselectMaskClick(Sender: TObject);
 
     procedure MMenuActionsViewClick(Sender: TObject);
     procedure MMenuFileNewClick(Sender: TObject);
@@ -246,7 +247,6 @@ type
     procedure MMenuActionsRenameClick (Sender: TObject);
     procedure MMenuActionsSelectAllClick (Sender: TObject);
     procedure MMenuActionsSelectMaskClick (Sender: TObject);
-    procedure MainMenu_Actions_DeselectMasksClick (Sender: TObject);
     procedure MMenuActionsDeselectAllClick(Sender: TObject);
     procedure MMenuActionsInvertClick (Sender: TObject);
     procedure MMenuActionsTestAllClick (Sender: TObject);
@@ -389,6 +389,8 @@ uses
        StatusBar.Panels[3].Text := '';
      end
   end;
+
+
 
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
   begin
@@ -746,6 +748,16 @@ uses
     Caption := GetApplicationCaption(cApplicationCaption, FArchiveName);
   end;
 
+
+  { TODO : da qui in poi tutto controllato }
+
+
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Main Menu - File                                                      //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
+
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
   begin
     if CheckWorkStatus then
@@ -763,7 +775,6 @@ uses
         end;
         FCommandLine.Clear;
         FCommandLine.Command := 'A';
-        FCommandLine.rOption := False;
         FCommandLine.Confirm := True;
         FCommandLine.Log := MMenuOptionsLogReport.Checked;
         FCommandLine.ArchiveName := SaveDialog.FileName;
@@ -783,7 +794,6 @@ uses
       if OpenDialog.Execute then
       begin
         MMenuFileCloseClick(Sender);
-        ListView.AutoLoadFolderBox := True;
         OpenArchive(OpenDialog.FileName);
       end;
     end;
@@ -795,13 +805,11 @@ uses
   begin
     if CheckWorkStatus then
     begin
-      FCheckOutDir := GetApplicationCheckoutDir(Application.Name);
+      FCheckOutDir := GetApplicationCheckoutDir(cApplicationName);
       if DirectoryIsEmpty(FCheckOutDir) = False then
       begin
         if MessageDlg(rsConfirmDeleteCheckoutDir, mtInformation, [mbYes, mbNo], 0) = mrYes then
-        begin
           DeleteDirectory(IncludeTrailingBackSlash(FCheckoutDir));
-        end;
       end;
       UpdateButtons(False);
       UpdateCursor(crDefault);
@@ -818,8 +826,9 @@ uses
     Ratio: cardinal;
   begin
     PropertyFrm := TInfoFrm.Create(Application);
-    PropertyFrm.Caption := rsArcProperty;
-    begin
+    try
+      PropertyFrm.Caption := rsArcProperty;
+
       PropertyFrm.ANameValue.Caption    := ExtractFileName(FArchiveName);
       PropertyFrm.AVersionValue.Caption := FloatToStr(ListView.Details.Version);
       PropertyFrm.AVersionValue.Caption := FloatToStr(ListView.Details.Version);
@@ -840,12 +849,15 @@ uses
       PropertyFrm.AFilesCryptedValue.Caption := IntToStr(ListView.Details.FilesCrypted);
       PropertyFrm.AArcSizeValue.Caption      := SizeToStr(SizeOfFile(FArchiveName));
       PropertyFrm.AModifiedValue.Caption     := DateTimeToStr(FileDateToDateTime(FileAge(FArchiveName)));
+
+      PropertyFrm.Pages.ActivePage := PropertyFrm.APage;
+      PropertyFrm.FPage.TabVisible := False;
+      PropertyFrm.APage.TabVisible := True;
+
+      PropertyFrm.ShowModal;
+    finally
+      FreeAndNil(PropertyFrm);
     end;
-    PropertyFrm.Pages.ActivePage := PropertyFrm.APage;
-    PropertyFrm.FPage.TabVisible := False;
-    PropertyFrm.APage.TabVisible := True;
-    PropertyFrm.ShowModal;
-    FreeAndNil(PropertyFrm);
   end;
 
   procedure TMainFrm.MMenuFileMoveClick(Sender: TObject);
@@ -891,23 +903,24 @@ uses
     if CheckWorkStatus then
     begin
       RenameFrm := TRenameFrm.Create(Application);
-      RenameFrm.Caption := rsRenameArc;
-      RenameFrm.ToFN.Text := ExtractFileName(FArchiveName);
-      RenameFrm.FromFN.Caption := ExtractFileName(FArchiveName);
-      if RenameFrm.ShowModal = mrOk then
-      begin
-        if CompareFileName(RenameFrm.ToFN.Text, RenameFrm.FromFN.Caption) <> 0 then
+      try
+        RenameFrm.Caption := rsRenameArc;
+        RenameFrm.ToFN.Text := ExtractFileName(FArchiveName);
+        RenameFrm.FromFN.Caption := ExtractFileName(FArchiveName);
+        if RenameFrm.ShowModal = mrOk then
         begin
-          NewName := ExtractFilePath(FArchiveName) + RenameFrm.ToFN.Text;
-          if RenameFile(FArchiveName, NewName) then
+          if CompareFileName(RenameFrm.ToFN.Text, RenameFrm.FromFN.Caption) <> 0 then
           begin
-            MMenuFileCloseClick(Sender);
-            OpenArchive(NewName);
-          end else
-            MessageDlg(rseRenameArc, mtError, [mbOk], 0);
+            NewName := ExtractFilePath(FArchiveName) + RenameFrm.ToFN.Text;
+            if RenameFile(FArchiveName, NewName) then
+              SetArchiveName(NewName)
+            else
+              MessageDlg(rseRenameArc, mtError, [mbOk], 0);
+          end;
         end;
+      finally
+        FreeAndNil(RenameFrm);
       end;
-      FreeAndNil(RenameFrm);
     end;
   end;
 
@@ -929,8 +942,7 @@ uses
   begin
     if CheckWorkStatus then
     begin
-      MMenuFileCloseClick(Sender);
-      Close;
+      MMenuFileCloseClick(Sender); { --> } Close;
     end;
   end;
   
@@ -950,8 +962,8 @@ uses
   begin
     MMenuViewLargeIcons.Checked := Sender = MMenuViewLargeIcons;
     MMenuViewSmallIcons.Checked := Sender = MMenuViewSmallIcons;
-    MMenuViewReport.Checked := Sender = MMenuViewReport;
-    MMenuViewList.Checked := Sender = MMenuViewList;
+    MMenuViewReport    .Checked := Sender = MMenuViewReport;
+    MMenuViewList      .Checked := Sender = MMenuViewList;
     UpdateStyle;
   end;
   
@@ -1002,21 +1014,25 @@ uses
       ListView.SortCol := alvcPosition;
   end;
   
-   procedure TMainFrm.DetailsClick(Sender: TObject);
-   var
-     I: integer;
-   begin
-     if Sender <> nil then
-     begin
-       TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
-     end;
-     for I := 0 to MMenuViewDetails.Count -1 do
-     begin
-       ListView.Columns[I].Visible := MMenuViewDetails.Items[I].Checked;
-       if ListView.Columns[I].Width = 0 then
-         ListView.Columns[I].Width := 50;
-     end;
-   end;
+  procedure TMainFrm.DetailsClick(Sender: TObject);
+  var
+    I: integer;
+  begin
+    if Sender <> nil then
+    begin
+      TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
+    end;
+
+    for I := 0 to MMenuViewDetails.Count -1 do
+      with ListView.Columns[I] do
+      begin
+        Visible := MMenuViewDetails.Items[I].Checked;
+        if Visible and (Width < 5) then
+        begin
+          Width := 50;
+        end;
+      end;
+  end;
 
   procedure TMainFrm.MMenuViewUpClick(Sender: TObject);
   begin
@@ -1024,7 +1040,7 @@ uses
     begin
       if (ListView.Up = False) and ConfigFrm.UpBtnCloseOption.Checked then
       begin
-        MMenuFileExitClick(Self);
+        MMenuFileExitClick(Sender);
       end;
     end;
   end;
@@ -1050,7 +1066,6 @@ uses
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'A';
-      FCommandLine.rOption := False;
       FCommandLine.Confirm := True;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
@@ -1063,13 +1078,12 @@ uses
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   begin
-    if CheckWorkStatus and (ListView.SelCount <> 0) then
+    if CheckWorkStatus and (ListView.SelCount > 0) then
     begin
       if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
         FCommandLine.Clear;
         FCommandLine.Command := 'D';
-        FCommandLine.rOption := False;
         FCommandLine.Log := MMenuOptionsLogReport.Checked;
         FCommandLine.ArchiveName := FArchiveName;
         ListView.GetMasks(FCommandLine.FileMasks);
@@ -1082,11 +1096,10 @@ uses
 
   procedure TMainFrm.MMenuActionsExtractClick(Sender: TObject);
   begin
-    if CheckWorkStatus and (ListView.SelCount <> 0) then
+    if CheckWorkStatus and (ListView.SelCount > 0) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'X';
-      FCommandLine.rOption := False;
       FCommandLine.Confirm := True;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
@@ -1104,12 +1117,13 @@ uses
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'X';
-      FCommandLine.rOption := True;
       FCommandLine.Confirm := True;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
       FCommandLine.ArchiveName := FArchiveName;
+
       FCommandLine.FileMasks.Add('*');
+      FCommandLine.rOption := True;
       begin
         Execute(FArchiveName);
       end;
@@ -1118,11 +1132,10 @@ uses
 
   procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
   begin
-    if CheckWorkStatus and (ListView.SelCount <> 0) then
+    if CheckWorkStatus and (ListView.SelCount > 0) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'T';
-      FCommandLine.rOption := False;
       FCommandLine.Log := True;
       FCommandLine.ArchiveName := FArchiveName;
       ListView.GetMasks(FCommandLine.FileMasks);
@@ -1134,11 +1147,10 @@ uses
 
   procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);
   begin
-    if (CheckWorkStatus) and (ListView.SelCount > 0) then
+    if CheckWorkStatus and (ListView.SelCount > 0) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'R';
-      FCommandLine.rOption := False;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       FCommandLine.ArchiveName := FArchiveName;
       ListView.GetMasks(FCommandLine.FileMasks);
@@ -1152,31 +1164,29 @@ uses
   var
     FFileName: string;
   begin
-    if CheckWorkStatus and (ListView.Selected <> nil) then
+    if CheckWorkStatus and (ListView.SelCount = 1) then
     begin
       FFileName := ListView.Selected.Caption;
       if Pos('D', ListView.Selected.SubItems[5]) > 0 then
       begin
         ListView.Folder := IncludeTrailingBackSlash(ListView.Folder) + FFileName;
       end else
-        if (CheckWorkStatus) and (ListView.SelCount = 1) then
+      begin
+        FCommandLine.Clear;
+        FCommandLine.Command := 'E';
+        FCommandLine.oOption := 'A';
+        FCommandLine.Log := MMenuOptionsLogReport.Checked;
+        FCommandLine.ArchiveName := FArchiveName;
+        ListView.GetMasks(FCommandLine.FileMasks);
+        if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
         begin
-          FCommandLine.Clear;
-          FCommandLine.Command := 'E';
-          FCommandLine.rOption := False;
-          FCommandLine.oOption := 'A';
-          FCommandLine.Log := MMenuOptionsLogReport.Checked;
-          FCommandLine.ArchiveName := FArchiveName;
-          ListView.GetMasks(FCommandLine.FileMasks);
-          if SetCurrentDir(GetApplicationTempDir(Application.Name)) then
-          begin
-            Execute(FArchiveName);
-            if Sender = PMenuOpenIntViewer then
-              with FileProcess do Execute(ParamStr(0) + ' V', FFileName)
-            else
-              with FileProcess do Execute('', FFileName);
-          end;
+          Execute(FArchiveName);
+          if Sender = PMenuOpenIntViewer then
+            with FileProcess do Execute(ParamStr(0) + ' V', FFileName)
+          else
+            with FileProcess do Execute('', FFileName);
         end;
+      end;
     end;
   end;
 
@@ -1189,23 +1199,21 @@ uses
       FCommandLine.Clear;
       FCommandLine.Command := 'X';
       FCommandLine.oOption := 'A';
-      FCommandLine.rOption := True;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
       FCommandLine.ArchiveName := FArchiveName;
+
       FCommandLine.FileMasks.Add('*');
+      FCommandLine.rOption := True;
 
-      FCheckOutDir := GetApplicationCheckOutDir(Application.Name);
-
+      FCheckOutDir := GetApplicationCheckoutDir(cApplicationName);
       ForceDirectories(FCheckOutDir);
       if SetCurrentDir(FCheckOutDir) then
       begin
+        ClearDirectory(IncludeTrailingBackSlash(FCheckoutDir));
         if GetOSFileManager <> '' then
         begin
           Execute(FArchiveName);
-          with FileProcess do
-          begin
-            Execute(GetOSFileManager, FCheckOutDir);
-          end;
+          with FileProcess do Execute(GetOSFileManager, FCheckOutDir);
         end else
           MessageDlg(rseCannotFoundFM, mtError, [mbOk], 0);
       end else
@@ -1219,10 +1227,11 @@ uses
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'T';
-      FCommandLine.rOption := True;
       FCommandLine.Log := True;
       FCommandLine.ArchiveName := FArchiveName;
+
       FCommandLine.FileMasks.Add('*');
+      FCommandLine.rOption := True;
       begin
         Execute(FArchiveName);
       end;
@@ -1250,25 +1259,31 @@ uses
   procedure TMainFrm.MMenuActionsSelectMaskClick(Sender: TObject);
   begin
     SelectFrm := TSelectFrm.Create(Application);
-    SelectFrm.Caption := rsSelectFrmCaption;
-    if SelectFrm.ShowModal = mrOk then
-    begin
-      ListView.SetMask(SelectFrm.Mask.Text, True);
-      ListView.SetFocus;
+    try
+      SelectFrm.Caption := rsSelectFrmCaption;
+      if SelectFrm.ShowModal = mrOk then
+      begin
+        ListView.SetMask(SelectFrm.Mask.Text, True);
+        ListView.SetFocus;
+      end;
+    finally
+      FreeAndNil(SelectFrm);
     end;
-    FreeAndNil(SelectFrm);
   end;
 
-  procedure TMainFrm.MainMenu_Actions_DeselectMasksClick(Sender: TObject);
+  procedure TMainFrm.MMenuActionsDeselectMaskClick(Sender: TObject);
   begin
     SelectFrm := TSelectFrm.Create(Application);
-    SelectFrm.Caption := rsDeselectFrmCaption;
-    if SelectFrm.ShowModal = mrOk then
-    begin
-      ListView.SetMask(SelectFrm.Mask.Text, False);
-      ListView.SetFocus;
+    try
+      SelectFrm.Caption := rsDeselectFrmCaption;
+      if SelectFrm.ShowModal = mrOk then
+      begin
+        ListView.SetMask(SelectFrm.Mask.Text, False);
+        ListView.SetFocus;
+      end;
+    finally
+      FreeAndNil(SelectFrm);
     end;
-    FreeAndNil(SelectFrm);
   end;
 
   // ---------------------------------------------------------------------- //
@@ -1305,7 +1320,7 @@ uses
 
   procedure TMainFrm.MMenuOptionsDefaultClick(Sender: TObject);
   begin
-    if Cursor <> crHourGlass then
+    if CheckWorkStatus then
     begin
       if MessageDlg(rsConfirmDefault, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
@@ -1313,7 +1328,7 @@ uses
         if ShellExec(ParamStr(0), '') then
         begin
           MMenuOptionsSaveOnExit.Checked := False;
-          MMenuFileExit.Click;
+          MMenuFileExitClick(Sender);
         end;
       end;
     end else
@@ -1329,26 +1344,42 @@ uses
   procedure TMainFrm.MMenuHelpAboutClick(Sender: TObject);
   begin
     AboutFrm := TAboutFrm.Create(Application);
-    AboutFrm.ShowModal;
-    FreeAndNil(AboutFrm);
+    try
+      AboutFrm.ShowModal;
+    finally
+      FreeAndNil(AboutFrm);
+    end;
   end;
 
   procedure TMainFrm.MMenuHelpF1Click(Sender: TObject);
+  var
+    FHelpFile: string;
   begin
-    ShellExec(ExtractFilePath(ParamStr(0)) +
-      IncludeTrailingBackSlash(cApplicationDocsFolder) + cApplicationHelpFile, '');
+    FHelpFile := ExtractFilePath(ParamStr(0)) +
+      IncludeTrailingBackSlash(cApplicationDocsFolder) + cApplicationHelpFile;
+
+    if GetOSWebBrowser <> '' then
+    begin
+      ShellExec(FHelpFile, GetOSWebBrowser);
+    end;
   end;
 
   procedure TMainFrm.MMenuHelpInternetClick(Sender: TObject);
   begin
-    ShellExec(cApplicationHomePage, '');
+    if GetOSWebBrowser <> '' then
+    begin
+      ShellExec(cApplicationHomePage, GetOSWebBrowser);
+    end;
   end;
 
   procedure TMainFrm.MMenuHelpLicenseClick(Sender: TObject);
   begin
     AboutFrm := TAboutFrm.Create(Application);
-    AboutFrm.BtnLicense.Click;
-    FreeAndNil(AboutFrm);
+    try
+      AboutFrm.BtnLicense.Click;
+    finally
+      FreeAndNil(AboutFrm);
+    end;
   end;
   
   // ---------------------------------------------------------------------- //
@@ -1359,15 +1390,15 @@ uses
 
   procedure TMainFrm.PMenuPropertyClick(Sender: TObject);
   begin
-    if ListView.Selected <> nil then
-    begin
-      with ListView do
+    with ListView do
+      if SelCount = 1 then
       begin
         if Pos('D', Selected.SubItems[5]) = 0 then
         begin
           PropertyFrm := TInfoFrm.Create(Application);
-          PropertyFrm.Caption := rsFileProperty;
-          begin
+          try
+            PropertyFrm.Caption := rsFileProperty;
+
             PropertyFrm.FNameValue.Caption      := Selected.Caption;
             PropertyFrm.FVersionValue.Caption   := FloatToStr(Details.Version);
 
@@ -1379,26 +1410,31 @@ uses
             PropertyFrm.FPasswordValue.Caption  := Selected.SubItems[7];
             PropertyFrm.FMethodValue.Caption    := Selected.SubItems[6];
             PropertyFrm.FModifiedValue.Caption  := Selected.SubItems[4];
+
+            PropertyFrm.Pages.ActivePage := PropertyFrm.FPage;
+            PropertyFrm.APage.TabVisible := False;
+            PropertyFrm.FPage.TabVisible := True;
+
+            PropertyFrm.ShowModal;
+          finally
+            FreeAndNil(PropertyFrm);
           end;
-          PropertyFrm.Pages.ActivePage := PropertyFrm.FPage;
-          PropertyFrm.APage.TabVisible := False;
-          PropertyFrm.FPage.TabVisible := True;
-          PropertyFrm.ShowModal;
-          FreeAndNil(PropertyFrm);
         end;
       end;
-    end;
   end;
   
   procedure TMainFrm.PMenuPopup(Sender: TObject);
   var
     I: integer;
   begin
-    for I := 0 to PMenu.Items.Count -1  do PMenu.Items[I].Visible := True;
+    for I := 0 to PMenu.Items.Count -1  do
+    begin
+      PMenu.Items[I].Visible := True;
+    end;
 
     case ListView.SelCount of
       0: begin
-           // nil in selected
+           // Nil in selected
            PMenuOpen         .Visible := False;
            PMenuOpenIntViewer.Visible := False;
            PMenuN1           .Visible := False;
@@ -1419,9 +1455,12 @@ uses
 
            PMenuN4           .Visible := False;
            PMenuProperty     .Visible := False;
-         end;
+         end else
+         begin
+           // A file is selected
+         end
     else begin
-           // A directory is selected
+           // Some files and directories are selected
            PMenuOpen         .Visible := False;
            PMenuOpenIntViewer.Visible := False;
            PMenuN1           .Visible := False;

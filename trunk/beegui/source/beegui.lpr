@@ -69,7 +69,7 @@ begin
   case CommandLine.Command of
   ' ': begin
          Application.Name := cApplicationName;
-         Application.Title := cApplicationName;
+         Application.Title:='BeeGui';
          Application.CreateForm(TMainFrm, MainFrm);
          Application.CreateForm(TConfigFrm, ConfigFrm);
          Application.Run;

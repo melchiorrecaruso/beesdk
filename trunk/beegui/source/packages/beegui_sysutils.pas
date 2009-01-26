@@ -41,6 +41,7 @@ uses
   { directories routines }
 
   function GetOSFileManager: string;
+  function GetOSWebBrowser: string;
   
   {$IFDEF MSWINDOWS}
   function DiskInDrive (Drive: char): boolean;
@@ -93,7 +94,7 @@ implementation
   function GetOSFileManager: string;
   begin
     {$IFDEF MSWINDOWS}
-      Result := '';
+      Result := 'explorer';
     {$ELSE}
       Result := 'nautilus';
       if FileExists(Result) then Break;
@@ -102,6 +103,25 @@ implementation
       if FileExists(Result) then Break;
 
       Result := 'thunar';
+      if FileExists(Result) then
+        Break
+      else
+        Result := '';
+    {$ENDIF}
+  end;
+
+  function GetOSWebBrowser: string;
+  begin
+    {$IFDEF MSWINDOWS}
+      Result := 'iexplorer';
+    {$ELSE}
+      Result := 'firefox';
+      if FileExists(Result) then Break;
+
+      Result := 'epiphany';
+      if FileExists(Result) then Break;
+
+      Result := 'iceweasel';
       if FileExists(Result) then
         Break
       else
