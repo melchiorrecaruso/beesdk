@@ -91,14 +91,13 @@ uses
   begin
     LoadLanguage;
     LoadProperty;
-    // ---
+
     Version.Caption := cApplicationName + ' ' + {$I version.inc};
     Copyright.Caption := '(C) 2003-2008 Andrew Filinsky and  Melchiorre Caruso';
   end;
 
   procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
-    CloseAction := caFree;
     {$IFDEF DEBUG}
       SaveLanguage;
     {$ENDIF}
@@ -106,8 +105,16 @@ uses
   end;
   
   procedure TAboutFrm.BtnLicenseClick(Sender: TObject);
+  var
+    FLicenseFile: string;
   begin
-    ShellExec(ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('docs') + 'license.htm', '');
+    FLicenseFile := ExtractFilePath(ParamStr(0)) +
+      IncludeTrailingBackSlash(cApplicationDocsFolder) + cApplicationLicenseFile;
+
+    if GetOSWebBrowser <> '' then
+    begin
+      ShellExec(FLicenseFile, GetOSWebBrowser);
+    end;
   end;
   
   procedure TAboutFrm.BtnOkClick(Sender: TObject);

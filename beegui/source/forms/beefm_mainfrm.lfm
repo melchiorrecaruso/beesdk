@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 414
+  Left = 319
   Height = 503
-  Top = 206
+  Top = 194
   Width = 801
   ActiveControl = ToolBar
   Caption = 'Bee File Manager - Welcome'
@@ -2695,7 +2695,6 @@ object MainFrm: TMainFrm
       end
       object PMenuDeselectMask: TMenuItem
         Caption = 'Deselect File Group...'
-        OnClick = MainMenu_Actions_DeselectMasksClick
       end
       object PMenuInvert: TMenuItem
         Caption = 'Invert Selection'
@@ -2983,7 +2982,7 @@ object MainFrm: TMainFrm
         OnClick = MMenuActionsRenameClick
       end
       object MMenuActionsView: TMenuItem
-        Caption = 'View File...'
+        Caption = 'View...'
         ShortCut = 8278
         OnClick = MMenuActionsViewClick
       end
@@ -3005,7 +3004,7 @@ object MainFrm: TMainFrm
       end
       object MMenuActionsDeselectMask: TMenuItem
         Caption = 'Deselect File Group...'
-        OnClick = MainMenu_Actions_DeselectMasksClick
+        OnClick = MMenuActionsDeselectMaskClick
       end
       object MMenuActionsInvert: TMenuItem
         Caption = 'Invert Selection'
