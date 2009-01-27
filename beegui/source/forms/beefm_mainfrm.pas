@@ -225,6 +225,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure MMenuActionsDeselectMaskClick(Sender: TObject);
 
@@ -375,22 +376,10 @@ uses
     UpdateStyle;
   end;
 
-  procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
-  var
-    I: integer;
+  procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
   begin
-     StatusBar.Panels[0].Text := rsSelectedItems + IntToStr(ListView.SelCount);
-     StatusBar.Panels[1].Text := SizeToStr(ListView.SelFileSize);
-     StatusBar.Panels[2].Text := SizeToStr(ListView.SelFilePackedSize);
-     try
-       StatusBar.Panels[3].Text := DateTimeToString(
-         FileDateToDateTime(ListView.SelFileTime));
-     except
-       StatusBar.Panels[3].Text := '';
-     end
+    CanClose := CheckWorkStatus;
   end;
-
-
 
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
   begin
@@ -404,54 +393,10 @@ uses
       SaveLanguage;
     {$ENDIF}
   end;
-  
-  // ---------------------------------------------------------------------- //
-  //                                                                        //
-  //  Buttons popup menu - Events                                           //
-  //                                                                        //
-  // ---------------------------------------------------------------------- //
-  
-  procedure TMainFrm.BMenuClick(Sender: TObject);
-  begin
-    TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
-    UpdateButtons;
-  end;
 
-  procedure TMainFrm.UpdateButtons;
-  var
-    Buttons: array [0..13] of TControl;
-    I: integer;
-  begin
-    Buttons[ 0] := BtnNew;
-    Buttons[ 1] := BtnOpen;
-    Buttons[ 2] := BevelFirst;
-    Buttons[ 3] := BtnAdd;
-    Buttons[ 4] := BtnExtract;
-    Buttons[ 5] := BtnView;
-    Buttons[ 6] := BtnDelete;
-    Buttons[ 7] := BevelSecond;
-    Buttons[ 8] := BtnTest;
-    Buttons[ 9] := BtnCheckOut;
-    Buttons[10] := BevelThird;
-    Buttons[11] := BtnConfig;
-    Buttons[12] := BtnHelp;
-    Buttons[13] := BtnExit;
-    // ---
-    for I := Low(Buttons) to High(Buttons) do
-    begin
-      Buttons[I].Align := alRight;
-      Buttons[I].Visible := False;
-      if BMenu.Items[I].Checked then
-      begin
-        Buttons[I].Align := alLeft;
-        Buttons[I].Visible := True;
-      end;
-    end;
-  end;
-  
   // ---------------------------------------------------------------------- //
   //                                                                        //
-  //  ListView                                                              //
+  //  ListView routines                                                     //
   //                                                                        //
   // ---------------------------------------------------------------------- //
   
@@ -473,6 +418,27 @@ uses
     end;
   end;
 
+  procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
+  var
+    I: integer;
+  begin
+     StatusBar.Panels[0].Text := rsSelectedItems + IntToStr(ListView.SelCount);
+     StatusBar.Panels[1].Text := SizeToStr(ListView.SelFileSize);
+     StatusBar.Panels[2].Text := SizeToStr(ListView.SelFilePackedSize);
+     try
+       StatusBar.Panels[3].Text := DateTimeToString(
+         FileDateToDateTime(ListView.SelFileTime));
+     except
+       StatusBar.Panels[3].Text := '';
+     end
+  end;
+
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Folder ox routines                                                    //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
+
   procedure TMainFrm.FolderBoxSelect(Sender: TObject);
   begin
     if CheckWorkStatus then
@@ -481,6 +447,12 @@ uses
     end else
       ListView.Folder := ListView.Folder;
   end;
+
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Style routines                                                        //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
 
   procedure TMainFrm.UpdateCursor(Value: TCursor);
   begin
@@ -537,7 +509,39 @@ uses
     else
       ListView.Color := clWindow;
   end;
-  
+
+  procedure TMainFrm.UpdateButtons;
+  var
+    Buttons: array [0..13] of TControl;
+    I: integer;
+  begin
+    Buttons[ 0] := BtnNew;
+    Buttons[ 1] := BtnOpen;
+    Buttons[ 2] := BevelFirst;
+    Buttons[ 3] := BtnAdd;
+    Buttons[ 4] := BtnExtract;
+    Buttons[ 5] := BtnView;
+    Buttons[ 6] := BtnDelete;
+    Buttons[ 7] := BevelSecond;
+    Buttons[ 8] := BtnTest;
+    Buttons[ 9] := BtnCheckOut;
+    Buttons[10] := BevelThird;
+    Buttons[11] := BtnConfig;
+    Buttons[12] := BtnHelp;
+    Buttons[13] := BtnExit;
+    // ---
+    for I := Low(Buttons) to High(Buttons) do
+    begin
+      Buttons[I].Align := alRight;
+      Buttons[I].Visible := False;
+      if BMenu.Items[I].Checked then
+      begin
+        Buttons[I].Align := alLeft;
+        Buttons[I].Visible := True;
+      end;
+    end;
+  end;
+
   procedure TMainFrm.UpdateStyle;
   begin
     DetailsClick(nil);
@@ -553,7 +557,7 @@ uses
         else
           if MMenuViewReport.Checked then
             ListView.ViewStyle := vsReport;
-      
+
     ListView.RowSelect  := MMenuViewRowSelect.Checked;
     ListView.GridLines  := MMenuViewGridLines.Checked;
     ListView.SimpleList := MMenuViewListMode.Checked;
@@ -567,18 +571,26 @@ uses
     StatusBar.Visible := MMenuViewStatusBar.Checked;
   end;
 
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Command line execure routines                                         //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
 
-  // ---------------------------------------------------------------------- //
-  //                                                                        //
-  //  Main Menu - File                                                      //
-  //                                                                        //
-  // ---------------------------------------------------------------------- //
+  procedure TMainFrm.SetArchiveName(const aArchiveName: string);
+  begin
+    Caption := GetApplicationCaption(cApplicationCaption, aArchiveName);
+    FArchiveName := aArchiveName;
+  end;
 
   procedure TMainFrm.IncWorkStatus;
   begin
+    if FWorkStatus = 0 then
+    begin
+      UpdateButtons(False);
+      UpdateCursor(crHourGlass);
+    end;
     Inc(FWorkStatus);
-    UpdateButtons(False);
-    UpdateCursor(crHourGlass);
   end;
 
   procedure TMainFrm.DecWorkStatus;
@@ -598,6 +610,94 @@ uses
     begin
       MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
     end;
+  end;
+
+  // File process timer //
+
+  procedure TMainFrm.FileProcessStartTimer(Sender: TObject);
+  begin
+    IncWorkStatus;
+  end;
+
+  procedure TMainFrm.FileProcessTimer(Sender: TObject);
+  begin
+    // monitoring
+  end;
+
+  procedure TMainFrm.FileProcessStopTimer(Sender: TObject);
+  begin
+    if FileProcess.FileIsModified then
+    begin
+      if MessageDlg(rsFreshFile, mtInformation, [mbYes, mbNo], 0) = mrYes then
+      begin
+        FCommandLine.Clear;
+        FCommandLine.Command := 'A';
+        FCommandLine.fOption := True;
+        FCommandLine.uOption := False;
+        FCommandLine.Confirm := False;
+        FCommandLine.cdOption := ListView.Folder;
+        FCommandLine.ArchiveName := FArchiveName;
+        FCommandLine.FileMasks.Add(FileProcess.FileName);
+        begin
+          Execute(FArchiveName);
+        end;
+      end;
+    end;
+    DeleteFile(FileProcess.FileName);
+    DecWorkStatus;
+  end;
+
+  // Open archive and execute commands
+
+  procedure TMainFrm.OpenArchive(const aArchiveName: string);
+  var
+    FList: TList;
+    FFolder: string;
+  begin
+    IncWorkStatus;
+    Caption := GetApplicationCaption(cApplicationCaption, rsOpening);
+
+    FCommandLine.Clear;
+    FCommandLine.Command := 'L';
+    FCommandLine.Log := False;
+    FCommandLine.ArchiveName := aArchiveName;
+
+    FCommandLine.FileMasks.Add('*');
+    FCommandLine.rOption := True;
+
+    if FCommandLine.Run then
+    begin
+      FList := TList.Create;
+
+      TickFrm := TTickFrm.Create(Application);
+      TickFrm.Execute(FCommandLine, FList);
+      repeat
+        Application.ProcessMessages;
+        if TickFrm.FrmCanClose then Break;
+        if TickFrm.FrmCanShow  then Break;
+      until FCommandLine.Log;
+      if FCommandLine.Log then
+        TickFrm.ShowModal
+      else
+        if TickFrm.FrmCanClose = False then
+          TickFrm.ShowModal;
+      FreeAndNil(TickFrm);
+
+      if ExitCode < 2 then
+      begin
+        FFolder := ListView.Folder;
+        if ListView.Open(aArchiveName, FList) then
+          UpdateButtons(True)
+        else
+          UpdateButtons(False);
+        ListView.Folder := FFolder;
+        SetArchiveName(aArchiveName);
+      end else
+        SetArchiveName('');
+
+      FList.Free;
+    end;
+    DecWorkStatus;
   end;
 
   procedure TMainFrm.Execute(const aArchiveName: string);
@@ -650,107 +750,6 @@ uses
       Visible := True;
     end;
   end;
-
-  procedure TMainFrm.OpenArchive(const aArchiveName: string);
-  var
-    FList: TList;
-    FFolder: string;
-  begin
-    IncWorkStatus;
-    Caption := GetApplicationCaption(cApplicationCaption, rsOpening);
-
-    FCommandLine.Clear;
-    FCommandLine.Command := 'L';
-    FCommandLine.rOption := True;
-    FCommandLine.Log := False;
-    FCommandLine.ArchiveName := aArchiveName;
-    FCommandLine.FileMasks.Add('*');
-
-    if FCommandLine.Run then
-    begin
-      FList := TList.Create;
-
-      TickFrm := TTickFrm.Create(Application);
-      TickFrm.Execute(FCommandLine, FList);
-      repeat
-        Application.ProcessMessages;
-        if TickFrm.FrmCanClose then Break;
-        if TickFrm.FrmCanShow  then Break;
-      until FCommandLine.Log;
-      if FCommandLine.Log then
-        TickFrm.ShowModal
-      else
-        if TickFrm.FrmCanClose = False then
-          TickFrm.ShowModal;
-      FreeAndNil(TickFrm);
-
-      if ExitCode < 2 then
-      begin
-        FFolder := ListView.Folder;
-        if ListView.Open(aArchiveName, FList) then
-          UpdateButtons(True)
-        else
-          UpdateButtons(False);
-        ListView.Folder := FFolder;
-        SetArchiveName(aArchiveName);
-      end else
-        SetArchiveName('');
-
-      FList.Free;
-    end;
-    DecWorkStatus;
-  end;
-
-  procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
-  begin
-    CanClose := CheckWorkStatus;
-  end;
-
-  // File Process timer
-
-  procedure TMainFrm.FileProcessStartTimer(Sender: TObject);
-  begin
-    IncWorkStatus;
-  end;
-
-  procedure TMainFrm.FileProcessStopTimer(Sender: TObject);
-  begin
-    if FileProcess.FileIsModified then
-    begin
-      if MessageDlg(rsFreshFile, mtInformation, [mbYes, mbNo], 0) = mrYes then
-      begin
-        FCommandLine.Clear;
-        FCommandLine.Command := 'A';
-        FCommandLine.rOption := False;
-        FCommandLine.fOption := True;
-        FCommandLine.uOption := False;
-        FCommandLine.Confirm := False;
-        FCommandLine.cdOption := ListView.Folder;
-        FCommandLine.ArchiveName := FArchiveName;
-        FCommandLine.FileMasks.Add(FileProcess.FileName);
-        begin
-          Execute(FArchiveName);
-        end;
-      end;
-    end;
-    DeleteFile(FileProcess.FileName);
-    DecWorkStatus;
-  end;
-
-  procedure TMainFrm.FileProcessTimer(Sender: TObject);
-  begin
-    // monitoring
-  end;
-
-  procedure TMainFrm.SetArchiveName(const aArchiveName: string);
-  begin
-    FArchiveName := aArchiveName;
-    Caption := GetApplicationCaption(cApplicationCaption, FArchiveName);
-  end;
-
-
-  { TODO : da qui in poi tutto controllato }
-
 
   // ---------------------------------------------------------------------- //
   //                                                                        //
@@ -1470,7 +1469,19 @@ uses
          end;
     end;
   end;
-  
+
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Buttons popup menu - Events                                           //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
+
+  procedure TMainFrm.BMenuClick(Sender: TObject);
+  begin
+    TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
+    UpdateButtons;
+  end;
+
 initialization
 
   {$I beefm_mainfrm.lrs}
