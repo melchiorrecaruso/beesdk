@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -45,8 +45,8 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
-        <CursorPos X="1" Y="116"/>
-        <TopLine Value="75"/>
+        <CursorPos X="3" Y="69"/>
+        <TopLine Value="60"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="195"/>
         <Loaded Value="True"/>
@@ -194,7 +194,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="5" Y="229"/>
-        <TopLine Value="219"/>
+        <TopLine Value="207"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
@@ -399,7 +399,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <StripSymbols Value="True"/>
+        <UseLineInfoUnit Value="False"/>
       </Debugging>
       <LinkSmart Value="True"/>
       <Options>
