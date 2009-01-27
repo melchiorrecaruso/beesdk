@@ -122,10 +122,13 @@ object MainFrm: TMainFrm
     ClientWidth = 801
     TabOrder = 2
     object ToolBarBevel: TBevel
+      Left = 2
       Height = 2
       Top = 60
-      Width = 801
+      Width = 797
       Align = alTop
+      BorderSpacing.Left = 2
+      BorderSpacing.Right = 2
       Visible = False
     end
     object UpToolBar: TPanel
@@ -1652,15 +1655,15 @@ object MainFrm: TMainFrm
       end
       object BtnCheckOut: TSpeedButton
         Left = 445
-        Height = 55
+        Height = 50
         Top = 3
-        Width = 60
+        Width = 55
         Align = alLeft
         BorderSpacing.Around = 2
-        Constraints.MaxHeight = 55
-        Constraints.MaxWidth = 60
-        Constraints.MinHeight = 55
-        Constraints.MinWidth = 60
+        Constraints.MaxHeight = 50
+        Constraints.MaxWidth = 55
+        Constraints.MinHeight = 50
+        Constraints.MinWidth = 55
         Caption = 'CheckOut'
         Color = clBtnFace
         Flat = True
@@ -1867,7 +1870,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnConfig: TSpeedButton
-        Left = 511
+        Left = 506
         Height = 55
         Top = 3
         Width = 60
@@ -2083,7 +2086,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnHelp: TSpeedButton
-        Left = 573
+        Left = 568
         Height = 55
         Top = 3
         Width = 60
@@ -2299,7 +2302,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BtnExit: TSpeedButton
-        Left = 635
+        Left = 630
         Height = 55
         Top = 3
         Width = 60
@@ -2515,7 +2518,7 @@ object MainFrm: TMainFrm
         ParentShowHint = False
       end
       object BevelThird: TBevel
-        Left = 507
+        Left = 502
         Height = 55
         Top = 3
         Width = 2
@@ -2564,15 +2567,16 @@ object MainFrm: TMainFrm
       ClientWidth = 801
       TabOrder = 1
       object BtnUp: TSpeedButton
+        AnchorSideRight.Control = DownToolBarBevel
         AnchorSideBottom.Side = asrBottom
         Left = 3
         Height = 21
         Top = 3
-        Width = 123
+        Width = 122
         Align = alLeft
         BorderSpacing.Around = 2
-        Constraints.MaxWidth = 123
-        Constraints.MinWidth = 123
+        Constraints.MaxWidth = 122
+        Constraints.MinWidth = 122
         Caption = 'Livello superiore'
         Color = clBtnFace
         Flat = True
@@ -2598,21 +2602,23 @@ object MainFrm: TMainFrm
         OnClick = MMenuViewUpClick
       end
       object DownToolBarBevel: TBevel
-        Left = 128
+        AnchorSideLeft.Control = BtnUp
+        AnchorSideLeft.Side = asrBottom
+        Left = 127
         Height = 21
         Top = 3
         Width = 2
-        Align = alLeft
         BorderSpacing.Around = 2
         Constraints.MaxWidth = 2
         Constraints.MinWidth = 2
       end
       object FolderBox: TArchiveFolderBox
         AnchorSideLeft.Control = DownToolBarBevel
-        Left = 130
+        AnchorSideLeft.Side = asrBottom
+        Left = 131
         Height = 22
         Top = 3
-        Width = 668
+        Width = 667
         Align = alRight
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 2
