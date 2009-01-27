@@ -97,14 +97,14 @@ implementation
       Result := 'explorer';
     {$ELSE}
       Result := 'nautilus';
-      if FileExists(Result) then Break;
+      if FileExists(Result) then Exit;
 
       Result := 'konqueror';
-      if FileExists(Result) then Break;
+      if FileExists(Result) then Exit;
 
       Result := 'thunar';
       if FileExists(Result) then
-        Break
+        Exit
       else
         Result := '';
     {$ENDIF}
@@ -116,14 +116,14 @@ implementation
       Result := 'iexplorer';
     {$ELSE}
       Result := 'firefox';
-      if FileExists(Result) then Break;
+      if FileExists(Result) then Exit;
 
       Result := 'epiphany';
-      if FileExists(Result) then Break;
+      if FileExists(Result) then Exit;
 
       Result := 'iceweasel';
       if FileExists(Result) then
-        Break
+        Exit
       else
         Result := '';
     {$ENDIF}
