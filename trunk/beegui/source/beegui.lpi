@@ -40,7 +40,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="21">
+    <Units Count="20">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -48,7 +48,7 @@
         <CursorPos X="1" Y="116"/>
         <TopLine Value="75"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit0>
@@ -61,7 +61,7 @@
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="55" Y="79"/>
         <TopLine Value="76"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -73,7 +73,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="8" Y="183"/>
         <TopLine Value="156"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -85,7 +85,7 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="32" Y="95"/>
         <TopLine Value="71"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -97,7 +97,7 @@
         <UnitName Value="BeeGui_OverWriteFrm"/>
         <CursorPos X="30" Y="90"/>
         <TopLine Value="76"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
@@ -109,7 +109,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="33" Y="87"/>
         <TopLine Value="81"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
@@ -122,7 +122,7 @@
         <CursorPos X="1" Y="419"/>
         <TopLine Value="153"/>
         <EditorIndex Value="5"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit6>
@@ -136,7 +136,7 @@
         <CursorPos X="26" Y="102"/>
         <TopLine Value="82"/>
         <EditorIndex Value="3"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit7>
@@ -146,25 +146,25 @@
         <UnitName Value="BeeGui_CmdLine"/>
         <CursorPos X="16" Y="78"/>
         <TopLine Value="67"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
         <Filename Value="forms\beegui_aboutfrm..inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="forms\beegui_aboutfrm_saveproperty.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
         <Filename Value="forms\beegui_aboutfrm_loadproperty.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
@@ -173,7 +173,7 @@
         <UnitName Value="BeeGui_Messages"/>
         <CursorPos X="81" Y="191"/>
         <TopLine Value="16"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
@@ -183,7 +183,7 @@
         <CursorPos X="1" Y="223"/>
         <TopLine Value="182"/>
         <EditorIndex Value="2"/>
-        <UsageCount Value="191"/>
+        <UsageCount Value="195"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit13>
@@ -193,43 +193,33 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="20" Y="1141"/>
-        <TopLine Value="1133"/>
+        <CursorPos X="5" Y="229"/>
+        <TopLine Value="219"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="52" Y="692"/>
-        <TopLine Value="665"/>
-        <EditorIndex Value="10"/>
-        <UsageCount Value="14"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit15>
-      <Unit16>
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
         <EditorIndex Value="8"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit16>
-      <Unit17>
+      </Unit15>
+      <Unit16>
         <Filename Value="packages\beegui_process.pas"/>
         <UnitName Value="BeeGui_Process"/>
         <CursorPos X="5" Y="93"/>
         <TopLine Value="89"/>
         <EditorIndex Value="7"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit17>
-      <Unit18>
+      </Unit16>
+      <Unit17>
         <Filename Value="forms\beefm_configfrm.pas"/>
         <ComponentName Value="ConfigFrm"/>
         <HasResources Value="True"/>
@@ -238,32 +228,32 @@
         <CursorPos X="14" Y="96"/>
         <TopLine Value="72"/>
         <EditorIndex Value="9"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit18>
-      <Unit19>
+      </Unit17>
+      <Unit18>
         <Filename Value="packages\beegui_sysutils.pas"/>
         <UnitName Value="BeeGui_SysUtils"/>
         <CursorPos X="36" Y="44"/>
         <TopLine Value="23"/>
         <EditorIndex Value="6"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit19>
-      <Unit20>
+      </Unit18>
+      <Unit19>
         <Filename Value="packages\beegui_consts.pas"/>
         <UnitName Value="BeeGui_Consts"/>
         <CursorPos X="31" Y="25"/>
         <TopLine Value="19"/>
         <EditorIndex Value="4"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit20>
+      </Unit19>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="1202" Column="42" TopLine="1187"/>
@@ -377,13 +367,9 @@
         <Caret Line="1141" Column="20" TopLine="1133"/>
       </Position28>
       <Position29>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="674" Column="26" TopLine="665"/>
-      </Position29>
-      <Position30>
         <Filename Value="beegui.lpr"/>
         <Caret Line="72" Column="38" TopLine="69"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
