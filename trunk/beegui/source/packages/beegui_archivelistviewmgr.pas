@@ -668,22 +668,29 @@ uses
     I, J: integer;
     Node: TArchiveItem;
   begin
-    for I := 0 to FFolderFiles.Count -1 do
+    for I := 0 to Items.Count -1 do
     begin
       if Items[I].Selected then
       begin
+
         Node := TArchiveItem(FFolderFiles.Items[I]);
+
         if (Node.FileAttr and faDirectory) = faDirectory then
         begin
+
           S := IncludeTrailingBackSlash(Node.FilePath + Node.FileName);
           for J := 0 to FFiles.Count -1 do
             with TArchiveItem(FFiles.Items[J]) do
             begin
               if FileNamePos(S, FilePath) = 1 then
-                FileMasks.Add(FilePath + FileName);
+                ShowMessage(FilePath + FileName);
+                // FileMasks.Add(FilePath + FileName);
             end;
+
         end else
-          FileMasks.Add(Node.FilePath + Node.FileName);
+          // FileMasks.Add(Node.FilePath + Node.FileName);
+          ShowMessage(Node.FilePath + Node.FileName);
+
       end;
     end;
   end;
