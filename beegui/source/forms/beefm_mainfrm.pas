@@ -74,6 +74,7 @@ type
     BtnView: TSpeedButton;
     DownToolBar: TPanel;
     BtnUp: TSpeedButton;
+    FolderBoxLabel: TLabel;
     MMenuViewUpdate: TMenuItem;
     MMenuViewUp: TMenuItem;
     MMenuViewN4: TMenuItem;
@@ -362,6 +363,8 @@ uses
     FCommandLine := TCustomCommandLine.Create(False);
     // --- //
     Caption := GetApplicationCaption(cApplicationCaption ,rsWelcome);
+
+    ListView.AutoLoadFolderBox := True;
   end;
 
   procedure TMainFrm.FormDestroy(Sender: TObject);
@@ -445,7 +448,7 @@ uses
     begin
       ListView.Folder := FolderBox.Text;
     end else
-      ListView.Folder := ListView.Folder;
+      FolderBox.Text := ListView.Folder;
   end;
 
   // ---------------------------------------------------------------------- //
@@ -1365,6 +1368,8 @@ uses
 
   procedure TMainFrm.MMenuHelpInternetClick(Sender: TObject);
   begin
+    ShowMessage(GetOSWebBrowser);
+
     if GetOSWebBrowser <> '' then
     begin
       ShellExec(cApplicationHomePage, GetOSWebBrowser);
