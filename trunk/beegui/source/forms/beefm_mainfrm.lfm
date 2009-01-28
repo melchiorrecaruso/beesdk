@@ -1,11 +1,11 @@
 object MainFrm: TMainFrm
-  Left = 319
+  Left = 311
   Height = 503
-  Top = 194
+  Top = 220
   Width = 801
   ActiveControl = ToolBar
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 484
+  ClientHeight = 479
   ClientWidth = 801
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
@@ -20,56 +20,68 @@ object MainFrm: TMainFrm
   object ListView: TArchiveListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Height = 375
-    Top = 89
+    Left = 0
+    Height = 369
+    Top = 92
     Width = 801
     FolderBox = FolderBox
     Align = alClient
     Columns = <    
       item
+        AutoSize = False
         Caption = 'Name'
       end    
       item
         Alignment = taRightJustify
+        AutoSize = False
         Caption = 'Size'
         Width = 65
       end    
       item
         Alignment = taRightJustify
+        AutoSize = False
         Caption = 'Packed'
         Width = 65
       end    
       item
         Alignment = taRightJustify
+        AutoSize = False
         Caption = 'Ratio'
       end    
       item
+        AutoSize = False
         Caption = 'Type'
         Width = 100
       end    
       item
+        AutoSize = False
         Caption = 'Modified'
         Width = 100
       end    
       item
         Alignment = taRightJustify
+        AutoSize = False
         Caption = 'Attribute'
         Width = 55
       end    
       item
         Alignment = taRightJustify
+        AutoSize = False
         Caption = 'Method'
       end    
       item
         Alignment = taRightJustify
+        AutoSize = False
         Caption = 'Password'
         Width = 60
       end    
       item
         Alignment = taRightJustify
+        AutoSize = False
         Caption = 'Crc'
       end    
       item
+        AutoSize = False
         Caption = 'Path'
         Width = 80
       end    
@@ -77,7 +89,7 @@ object MainFrm: TMainFrm
         Alignment = taRightJustify
         AutoSize = True
         Caption = 'Position'
-        Width = 47
+        Width = 76
       end>
     LargeImages = LargeImages
     PopupMenu = PMenu
@@ -93,8 +105,9 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
-    Height = 20
-    Top = 464
+    Left = 0
+    Height = 18
+    Top = 461
     Width = 801
     Anchors = [akRight]
     Panels = <    
@@ -113,12 +126,14 @@ object MainFrm: TMainFrm
     SimplePanel = False
   end
   object ToolBar: TPanel
-    Height = 89
+    Left = 0
+    Height = 92
+    Top = 0
     Width = 801
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 89
+    ClientHeight = 92
     ClientWidth = 801
     TabOrder = 2
     object ToolBarBevel: TBevel
@@ -133,7 +148,9 @@ object MainFrm: TMainFrm
     end
     object UpToolBar: TPanel
       AnchorSideRight.Side = asrBottom
+      Left = 0
       Height = 60
+      Top = 0
       Width = 801
       Align = alTop
       AutoSize = True
@@ -2558,19 +2575,20 @@ object MainFrm: TMainFrm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Height = 27
+      Left = 0
+      Height = 30
       Top = 62
       Width = 801
       Align = alTop
       AutoSize = True
-      ClientHeight = 27
+      ClientHeight = 30
       ClientWidth = 801
       TabOrder = 1
       object BtnUp: TSpeedButton
         AnchorSideRight.Control = DownToolBarBevel
         AnchorSideBottom.Side = asrBottom
         Left = 3
-        Height = 21
+        Height = 24
         Top = 3
         Width = 122
         Align = alLeft
@@ -2602,33 +2620,46 @@ object MainFrm: TMainFrm
         OnClick = MMenuViewUpClick
       end
       object DownToolBarBevel: TBevel
-        AnchorSideLeft.Control = BtnUp
         AnchorSideLeft.Side = asrBottom
         Left = 127
-        Height = 21
+        Height = 24
         Top = 3
         Width = 2
+        Align = alLeft
         BorderSpacing.Around = 2
         Constraints.MaxWidth = 2
         Constraints.MinWidth = 2
       end
-      object FolderBox: TArchiveFolderBox
-        AnchorSideLeft.Control = DownToolBarBevel
-        AnchorSideLeft.Side = asrBottom
-        Left = 131
-        Height = 22
+      object FolderBoxLabel: TLabel
+        Left = 133
+        Height = 24
         Top = 3
-        Width = 667
+        Width = 45
+        Align = alLeft
+        BorderSpacing.Left = 2
+        BorderSpacing.Right = 2
+        BorderSpacing.Around = 2
+        Caption = 'Location:'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object FolderBox: TArchiveFolderBox
+        AnchorSideLeft.Control = FolderBoxLabel
+        AnchorSideLeft.Side = asrBottom
+        Left = 182
+        Height = 24
+        Top = 3
+        Width = 616
         Align = alRight
         Anchors = [akTop, akLeft, akRight, akBottom]
+        AutoComplete = False
         BorderSpacing.Around = 2
         Color = clInactiveBorder
         DropDownCount = 10
         Enabled = False
-        ItemHeight = 16
+        ItemHeight = 0
+        ItemWidth = 0
         OnSelect = FolderBoxSelect
-        ReadOnly = True
-        Style = csOwnerDrawFixed
         TabOrder = 0
       end
     end
@@ -2718,6 +2749,8 @@ object MainFrm: TMainFrm
   object FontDialog: TFontDialog
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
+    MinFontSize = 0
+    MaxFontSize = 0
     left = 80
     top = 216
   end
@@ -3171,11 +3204,13 @@ object MainFrm: TMainFrm
     end
   end
   object SmallImages: TIconList
+    Masked = False
     left = 16
     top = 280
   end
   object LargeImages: TIconList
     Height = 32
+    Masked = False
     Width = 32
     left = 48
     top = 280

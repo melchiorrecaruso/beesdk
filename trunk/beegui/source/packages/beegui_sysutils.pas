@@ -96,13 +96,13 @@ implementation
     {$IFDEF MSWINDOWS}
       Result := 'explorer';
     {$ELSE}
-      Result := 'nautilus';
+      Result := '/usr/bin/nautilus';
       if FileExists(Result) then Exit;
 
-      Result := 'konqueror';
+      Result := '/usr/bin/konqueror';
       if FileExists(Result) then Exit;
 
-      Result := 'thunar';
+      Result := '/usr/bin/thunar';
       if FileExists(Result) then
         Exit
       else
@@ -115,13 +115,13 @@ implementation
     {$IFDEF MSWINDOWS}
       Result := 'iexplorer';
     {$ELSE}
-      Result := 'firefox';
+      Result := '/usr/bin/firefox';
       if FileExists(Result) then Exit;
 
-      Result := 'epiphany';
+      Result := '/usr/bin/epiphany';
       if FileExists(Result) then Exit;
 
-      Result := 'iceweasel';
+      Result := '/usr/bin/iceweasel';
       if FileExists(Result) then
         Exit
       else
