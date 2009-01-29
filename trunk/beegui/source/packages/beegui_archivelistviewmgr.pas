@@ -590,6 +590,11 @@ uses
     begin
       ItemFocused := Items[0];
     end;
+
+    if Enabled then
+    begin
+      SetFocus;
+    end;
   end;
 
   procedure TCustomArchiveListView.Initialize;
