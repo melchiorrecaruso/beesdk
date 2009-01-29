@@ -55,9 +55,7 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
-    FileProcess: TFileProcess;
     FolderBox: TArchiveFolderBox;
-    DownToolBarBevel: TBevel;
     BevelFirst: TBevel;
     BevelSecond: TBevel;
     BevelThird: TBevel;
@@ -71,9 +69,10 @@ type
     BtnNew: TSpeedButton;
     BtnOpen: TSpeedButton;
     BtnTest: TSpeedButton;
-    BtnView: TSpeedButton;
-    DownToolBar: TPanel;
     BtnUp: TSpeedButton;
+    BtnView: TSpeedButton;
+    DownToolBarBevel: TBevel;
+    FileProcess: TFileProcess;
     FolderBoxLabel: TLabel;
     MMenuViewUpdate: TMenuItem;
     MMenuViewUp: TMenuItem;
@@ -215,9 +214,9 @@ type
     BMenuConfiguration: TMenuItem;
     BMenuHelp: TMenuItem;
     BMenuExit: TMenuItem;
-    ToolBar: TPanel;
-    ToolBarBevel: TBevel;
-    UpToolBar: TPanel;
+    DToolBar: TToolBar;
+    AddressToolBar: TToolBar;
+    ToolBar: TToolBar;
     // ---
 
     procedure FileProcessStartTimer(Sender: TObject);
@@ -343,22 +342,15 @@ uses
   begin
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
-
     // --- //
     UpdateButtons(False);
     // --- //
     LoadLanguage;
     LoadProperty;
     // --- //
-    {$IFDEF MSWINDOWS}
-    ToolBar.BevelOuter := bvLowered;
-    ToolBar.BevelInner := bvRaised;
-    ToolBarBevel.Visible := True;
-    UpToolBar.BevelOuter := bvNone;
-    DownToolBar.BevelOuter := bvNone;
-    DownToolBar.BorderSpacing.Bottom := 2;
-    ListView.BorderSpacing.Top := 4;
-    {$ENDIF}
+    ToolBar.ButtonHeight := BtnNew.Height + 4;
+    AddressToolBar.ButtonHeight := FolderBox.Height + 4;
+    // --- //
     FWorkStatus := 0;
     FCommandLine := TCustomCommandLine.Create(False);
     // --- //
@@ -566,9 +558,12 @@ uses
     ListView.SimpleList := MMenuViewListMode.Checked;
 
     if MMenuViewAddressBar.Checked = False then
-      DownToolBar.Visible := False
+      AddressToolBar.Visible := False
     else
-      DownToolBar.Visible := not ListView.SimpleList;
+      AddressToolBar.Visible := not ListView.SimpleList;
+
+
+
     MMenuViewAddressBar.Enabled := not ListView.SimpleList;
 
     StatusBar.Visible := MMenuViewStatusBar.Checked;
@@ -621,6 +616,8 @@ uses
   begin
     IncWorkStatus;
   end;
+
+
 
   procedure TMainFrm.FileProcessTimer(Sender: TObject);
   begin
