@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -188,7 +188,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="19" Y="441"/>
-        <TopLine Value="422"/>
+        <TopLine Value="344"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
@@ -378,7 +378,8 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2"/>
+      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2
+"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
