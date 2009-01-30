@@ -4,7 +4,7 @@ object MainFrm: TMainFrm
   Top = 233
   Width = 907
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 520
+  ClientHeight = 525
   ClientWidth = 907
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
@@ -20,7 +20,7 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     Left = 0
-    Height = 374
+    Height = 377
     Top = 128
     Width = 907
     FolderBox = FolderBox
@@ -106,8 +106,8 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 18
-    Top = 502
+    Height = 20
+    Top = 505
     Width = 907
     Anchors = [akRight]
     Panels = <    
@@ -2658,13 +2658,12 @@ object MainFrm: TMainFrm
       AnchorSideLeft.Control = FolderBoxLabel
       AnchorSideLeft.Side = asrBottom
       Left = 189
-      Height = 36
+      Height = 22
       Top = 2
       Width = 716
       Align = alRight
       Anchors = [akLeft]
       AutoComplete = False
-      AutoDropDown = True
       BorderSpacing.Around = 2
       Color = clInactiveBorder
       DropDownCount = 10
@@ -2672,6 +2671,7 @@ object MainFrm: TMainFrm
       ItemHeight = 16
       ItemWidth = 0
       OnSelect = FolderBoxSelect
+      ReadOnly = True
       Style = csOwnerDrawFixed
       TabOrder = 0
     end
