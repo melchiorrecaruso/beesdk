@@ -154,7 +154,6 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure LoadFolderBox;
-    procedure Initialize;
     // ---
     function Open(const AArchiveName: string; AArchiveList: TList): boolean;
     procedure CloseArchive(Clean: boolean);
@@ -542,7 +541,7 @@ uses
 
       if (FFolderFiles.Count > 0) and Assigned(FFolderBox) then
       begin
-        if AutoLoadFolderBox then LoadFolderBox;
+        if FAutoLoad then LoadFolderBox;
 
         J := -1;
         for I := 0 to FFolderBox.Items.Count -1 do
@@ -586,33 +585,10 @@ uses
     end;
     EndUpdate;
       
-    if (Items.Count > 0) then
+    if Enabled and (Items.Count > 0) then
     begin
       ItemFocused := Items[0];
-    end;
-
-    if Enabled then
-    begin
       SetFocus;
-    end;
-  end;
-
-  procedure TCustomArchiveListView.Initialize;
-  begin
-    if UpdateFolders then
-      SetFolder(FFolder)
-    else
-      SetFolder('');
-
-    if Enabled then
-    begin
-      SetFocus;
-      OnClick(Self);
-    end;
-
-    if Assigned(FFolderBox) then
-    begin
-      // nothing to do!
     end;
   end;
 
@@ -918,7 +894,7 @@ uses
   var
     I: integer;
   begin
-    if Assigned(FFolderBox) then
+    if Assigned(FFolderBox) and (FFileName <> '') then
     begin
       FFolderBox.Clear;
 
