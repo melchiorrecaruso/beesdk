@@ -2635,6 +2635,7 @@ object MainFrm: TMainFrm
         00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
       }
       NumGlyphs = 2
+      Spacing = 10
       OnClick = MMenuViewUpClick
     end
     object DownToolBarBevel: TBevel
