@@ -128,6 +128,8 @@ type
     FSimpleList: boolean;
     FSortDirection: boolean;
     FSortCol: TArchiveListViewColumn;
+  protected
+    procedure DoCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
   private
     function GetSelTime: integer;
     function GetSelSize: int64;
@@ -376,6 +378,53 @@ uses
     inherited Destroy;
   end;
 
+
+  procedure TCustomArchiveListView.DoCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
+  var
+    Bool1, Bool2: boolean;
+  begin
+    (*
+    with TArchiveItem(L.Items[I1]) do Bool1 := not ((faDirectory and FileAttr) = faDirectory);
+    with TArchiveItem(L.Items[I2]) do Bool2 := not ((faDirectory and FileAttr) = faDirectory);
+
+    if Bool1 xor Bool2 then
+    begin
+      if Bool1 then
+        Result := 1
+      else
+        Result := -1;
+    end else
+    begin
+      case FSortCol of
+        alvcName    : Result := CompareFileName(TArchiveItem(L.Items[I1]).FileName,       TArchiveItem(L.Items[I2]).FileName);
+        alvcPath    : Result := CompareFileName(TArchiveItem(L.Items[I1]).FilePath,       TArchiveItem(L.Items[I2]).FilePath);
+        alvcType    : Result := CompareFileName(TArchiveItem(L.Items[I1]).FileType,       TArchiveItem(L.Items[I2]).FileType);
+        alvcSize    : Result :=                (TArchiveItem(L.Items[I1]).FileSize      - TArchiveItem(L.Items[I2]).FileSize);
+        alvcPacked  : Result :=                (TArchiveItem(L.Items[I1]).FilePacked    - TArchiveItem(L.Items[I2]).FilePacked);
+        alvcRatio   : Result :=                (TArchiveItem(L.Items[I1]).FileRatio     - TArchiveItem(L.Items[I2]).FileRatio);
+        alvcAttr    : Result :=                (TArchiveItem(L.Items[I1]).FileAttr      - TArchiveItem(L.Items[I2]).FileAttr);
+        alvcTime    : Result :=           Round(TArchiveItem(L.Items[I1]).FileTime      - TArchiveItem(L.Items[I2]).FileTime);
+        alvcCRC     : Result :=                (TArchiveItem(L.Items[I1]).FileCRC       - TArchiveItem(L.Items[I2]).FileCRC);
+        alvcMethod  : Result :=     CompareText(TArchiveItem(L.Items[I1]).FileMethod,     TArchiveItem(L.Items[I2]).FileMethod);
+        alvcPassword: Result :=     CompareText(TArchiveItem(L.Items[I1]).FilePassword,   TArchiveItem(L.Items[I2]).FilePassword);
+        alvcPosition: Result :=                (TArchiveItem(L.Items[I1]).FilePosition  - TArchiveItem(L.Items[I2]).FilePosition);
+      else
+        Result := I2 - I1;
+      end;
+
+      if FSortDirection then
+      begin
+        if Result > 0 then
+          Result := -1
+        else
+          if Result < 0 then
+            Result := 1;
+      end;
+    end;
+    *)
+  end;
+
+
   function TCustomArchiveListView.CompareFn(L: TList; I1, I2: integer): integer;
   var
     Bool1, Bool2: boolean;
@@ -584,10 +633,14 @@ uses
       Data(Self, Items.Add);
     end;
     EndUpdate;
-      
+
     if Enabled and (Items.Count > 0) then
     begin
+      // DoSelectItem(Items[0], False);
       ItemFocused := Items[0];
+    end;
+    if CanFocus then
+    begin
       SetFocus;
     end;
   end;
