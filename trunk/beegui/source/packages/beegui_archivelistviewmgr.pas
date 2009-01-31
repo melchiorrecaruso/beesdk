@@ -507,9 +507,9 @@ uses
     end;
 
     if FSortDirection then
-      Columns[I].ImageIndex := FileIcon('.@sortup', faDirectory)
+      Columns[I].ImageIndex := FileIcon('.@sortdown', faDirectory)
     else
-      Columns[I].ImageIndex := FileIcon('.@sortdown', faDirectory);
+      Columns[I].ImageIndex := FileIcon('.@sortup', faDirectory);
 
     UpdateFolder;
   end;
