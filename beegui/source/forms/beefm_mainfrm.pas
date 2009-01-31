@@ -343,20 +343,20 @@ uses
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
     // --- //
+    ToolBar.ButtonHeight := BtnNew.Height + 4;
+    AddressToolBar.ButtonHeight := FolderBox.Height + 4;
+    // --- //
     UpdateButtons(False);
     // --- //
     LoadLanguage;
     LoadProperty;
     // --- //
-    ToolBar.ButtonHeight := BtnNew.Height + 4;
-    AddressToolBar.ButtonHeight := FolderBox.Height + 4;
-    // --- //
-    FWorkStatus := 0;
     FCommandLine := TCustomCommandLine.Create(False);
+    FWorkStatus := 0;
+    // --- //
+    ListView.AutoLoadFolderBox := True;
     // --- //
     Caption := GetApplicationCaption(cApplicationCaption ,rsWelcome);
-
-    ListView.AutoLoadFolderBox := True;
   end;
 
   procedure TMainFrm.FormDestroy(Sender: TObject);
@@ -616,8 +616,6 @@ uses
   begin
     IncWorkStatus;
   end;
-
-
 
   procedure TMainFrm.FileProcessTimer(Sender: TObject);
   begin
@@ -1026,10 +1024,14 @@ uses
       with ListView.Columns[I] do
       begin
         Visible := MMenuViewDetails.Items[I].Checked;
-        if Visible and (Width < 5) then
+        if Visible then
         begin
-          Width := 50;
-        end;
+          if Width < 10 then
+          begin
+            Width := 50;
+          end;
+        end else
+          Width := 0;
       end;
   end;
 
