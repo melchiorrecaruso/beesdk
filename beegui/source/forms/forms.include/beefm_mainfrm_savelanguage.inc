@@ -62,7 +62,7 @@
 
       // Archive listview
       for I := 0 to ListView.Columns.Count -1 do with ListView.Columns[I] do
-        Storage.WriteString('TListView', 'ListView.Columns[' + IntToStr(I) + 'Caption', Caption);
+        Storage.WriteString('TListView', 'ListView.Columns[' + IntToStr(I) + '].Caption', Caption);
 
       Storage.Free;
     end;

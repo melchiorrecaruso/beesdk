@@ -1,6 +1,7 @@
 
   procedure TMainFrm.LoadProperty;
   var
+    I: integer;
     Folder: string;
     Storage: TMemIniFile;
   begin
@@ -17,19 +18,11 @@
       end;
       WindowState := TWindowState(Storage.ReadInteger('TForm', 'WindowState', Ord(WindowState)));
       // ListView
-      ListView.Column[ 0].Width := Storage.ReadInteger('ListView', 'Column[00].Width', ListView.Column[ 0].Width);
-      ListView.Column[ 1].Width := Storage.ReadInteger('ListView', 'Column[01].Width', ListView.Column[ 1].Width);
-      ListView.Column[ 2].Width := Storage.ReadInteger('ListView', 'Column[02].Width', ListView.Column[ 2].Width);
-      ListView.Column[ 3].Width := Storage.ReadInteger('ListView', 'Column[03].Width', ListView.Column[ 3].Width);
-      ListView.Column[ 4].Width := Storage.ReadInteger('ListView', 'Column[04].Width', ListView.Column[ 4].Width);
-      ListView.Column[ 5].Width := Storage.ReadInteger('ListView', 'Column[05].Width', ListView.Column[ 5].Width);
-      ListView.Column[ 6].Width := Storage.ReadInteger('ListView', 'Column[06].Width', ListView.Column[ 6].Width);
-      ListView.Column[ 7].Width := Storage.ReadInteger('ListView', 'Column[07].Width', ListView.Column[ 7].Width);
-      ListView.Column[ 8].Width := Storage.ReadInteger('ListView', 'Column[08].Width', ListView.Column[ 8].Width);
-      ListView.Column[ 9].Width := Storage.ReadInteger('ListView', 'Column[09].Width', ListView.Column[ 9].Width);
-      ListView.Column[10].Width := Storage.ReadInteger('ListView', 'Column[10].Width', ListView.Column[10].Width);
-      ListView.Column[11].Width := Storage.ReadInteger('ListView', 'Column[11].Width', ListView.Column[11].Width);
-      ListView.SortCol := TArchiveListViewColumn(Storage.ReadInteger('ListView', 'Column', Ord(ListView.SortCol)));
+      for I := 0 to ListView.Columns.Count -1 do
+      begin
+        ListView.Column[I].Width := Storage.ReadInteger('ListView', 'Column['+ IntToStr(I) +'].Width', ListView.Column[I].Width);
+      end;
+      ListView.SortColumn := Storage.ReadInteger('ListView', 'SortColumn', Ord(ListView.SortColumn));
       // Main Menu View
       MMenuViewAddressBar.Checked        := Storage.ReadBool('MMenu', 'View.AddressBar.Checked'         , MMenuViewAddressBar.Checked);
       MMenuViewstatusBar.Checked         := Storage.ReadBool('MMenu', 'View.StatusBar.Checked'          , MMenuViewStatusBar.Checked);

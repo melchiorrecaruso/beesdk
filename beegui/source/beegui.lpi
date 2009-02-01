@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -40,13 +40,13 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="17">
+    <Units Count="16">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
-        <CursorPos X="18" Y="55"/>
-        <TopLine Value="47"/>
+        <CursorPos X="1" Y="116"/>
+        <TopLine Value="75"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -73,9 +73,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="23" Y="181"/>
         <TopLine Value="156"/>
-        <EditorIndex Value="4"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -189,122 +187,45 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="41" Y="227"/>
-        <TopLine Value="204"/>
+        <CursorPos X="64" Y="418"/>
+        <TopLine Value="944"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
-        <Filename Value="version.inc"/>
-        <CursorPos X="19" Y="1"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="12"/>
+        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
+        <UnitName Value="BeeGui_ArchiveListViewMgr"/>
+        <CursorPos X="40" Y="533"/>
+        <TopLine Value="524"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit15>
-      <Unit16>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="39" Y="387"/>
-        <TopLine Value="371"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit16>
     </Units>
-    <JumpHistory Count="22" HistoryIndex="21">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="336" Column="27" TopLine="330"/>
+        <Caret Line="433" Column="42" TopLine="416"/>
       </Position1>
       <Position2>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="357" Column="40" TopLine="334"/>
+        <Caret Line="433" Column="46" TopLine="416"/>
       </Position2>
       <Position3>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1029" Column="1" TopLine="1011"/>
+        <Filename Value="beegui.lpr"/>
+        <Caret Line="116" Column="1" TopLine="75"/>
       </Position3>
       <Position4>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="425" Column="33" TopLine="410"/>
+        <Caret Line="427" Column="14" TopLine="416"/>
       </Position4>
       <Position5>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="81" Column="24" TopLine="57"/>
+        <Filename Value="beegui.lpr"/>
+        <Caret Line="116" Column="1" TopLine="75"/>
       </Position5>
-      <Position6>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="593" Column="26" TopLine="566"/>
-      </Position6>
-      <Position7>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="81" Column="24" TopLine="57"/>
-      </Position7>
-      <Position8>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="429" Column="33" TopLine="413"/>
-      </Position8>
-      <Position9>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="978" Column="20" TopLine="967"/>
-      </Position9>
-      <Position10>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="192" Column="17" TopLine="168"/>
-      </Position10>
-      <Position11>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="174" Column="71" TopLine="150"/>
-      </Position11>
-      <Position12>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="185" Column="40" TopLine="169"/>
-      </Position12>
-      <Position13>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="114" Column="38" TopLine="105"/>
-      </Position13>
-      <Position14>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="114" Column="43" TopLine="102"/>
-      </Position14>
-      <Position15>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="185" Column="40" TopLine="156"/>
-      </Position15>
-      <Position16>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="114" Column="41" TopLine="105"/>
-      </Position16>
-      <Position17>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="114" Column="40" TopLine="105"/>
-      </Position17>
-      <Position18>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="393" Column="54" TopLine="381"/>
-      </Position18>
-      <Position19>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="132" Column="67" TopLine="109"/>
-      </Position19>
-      <Position20>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <Caret Line="382" Column="88" TopLine="359"/>
-      </Position20>
-      <Position21>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="228" Column="46" TopLine="227"/>
-      </Position21>
-      <Position22>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="373" Column="7" TopLine="366"/>
-      </Position22>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -344,7 +265,8 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2"/>
+      <CustomOptions Value="-OpPENTIUM4 -Oa=32 -Cfsse2
+"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
