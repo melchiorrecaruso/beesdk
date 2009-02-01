@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 376
+  Left = 280
   Height = 544
-  Top = 233
+  Top = 148
   Width = 907
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 525
@@ -30,55 +30,59 @@ object MainFrm: TMainFrm
       item
         AutoSize = False
         Caption = 'Name'
+        Width = 80
       end    
       item
         Alignment = taRightJustify
         AutoSize = False
         Caption = 'Size'
-        Width = 65
+        Width = 80
       end    
       item
         Alignment = taRightJustify
         AutoSize = False
         Caption = 'Packed'
-        Width = 65
+        Width = 80
       end    
       item
         Alignment = taRightJustify
         AutoSize = False
         Caption = 'Ratio'
+        Width = 40
       end    
       item
         AutoSize = False
         Caption = 'Type'
-        Width = 100
+        Width = 80
       end    
       item
         AutoSize = False
         Caption = 'Modified'
-        Width = 100
+        Width = 80
       end    
       item
         Alignment = taRightJustify
         AutoSize = False
-        Caption = 'Attribute'
-        Width = 55
-      end    
-      item
-        Alignment = taRightJustify
-        AutoSize = False
-        Caption = 'Method'
-      end    
-      item
-        Alignment = taRightJustify
-        AutoSize = False
-        Caption = 'Password'
+        Caption = 'Attributes'
         Width = 60
       end    
       item
         Alignment = taRightJustify
         AutoSize = False
-        Caption = 'Crc'
+        Caption = 'Method'
+        Width = 60
+      end    
+      item
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = 'Password'
+        Width = 70
+      end    
+      item
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = 'CRC'
+        Width = 80
       end    
       item
         AutoSize = False
@@ -87,19 +91,20 @@ object MainFrm: TMainFrm
       end    
       item
         Alignment = taRightJustify
-        AutoSize = True
+        AutoSize = False
         Caption = 'Position'
-        Width = 182
+        Width = 80
       end>
     LargeImages = LargeImages
     PopupMenu = PMenu
     ScrollBars = ssAutoVertical
     SmallImages = SmallImages
+    SortColumn = 0
     TabOrder = 0
     ViewStyle = vsReport
     OnColumnClick = ColumnClick
+    OnCompare = ListViewCompare
     OnDblClick = MMenuActionsViewClick
-    OnSelectItem = ListViewSelectItem
   end
   object StatusBar: TStatusBar
     AnchorSideTop.Side = asrBottom
@@ -2851,6 +2856,7 @@ object MainFrm: TMainFrm
       end
       object MMenuViewStatusBar: TMenuItem
         Caption = 'StatusBar'
+        Checked = True
         OnClick = ViewStyleClick
       end
       object MMenuViewN1: TMenuItem

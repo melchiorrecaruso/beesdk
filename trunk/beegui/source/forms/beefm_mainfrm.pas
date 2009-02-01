@@ -225,6 +225,8 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
+      Data: Integer; var Compare: Integer);
 
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure MMenuActionsDeselectMaskClick(Sender: TObject);
@@ -292,7 +294,7 @@ type
     procedure SetArchiveName(const aArchiveName: string);
     procedure OpenArchive(const aArchiveName: string);
     procedure Execute(const aArchiveName: string);
-    function  CheckWorkStatus: boolean;
+    function  CheckWorkStatus(HideMsg: boolean): boolean;
     procedure IncWorkStatus;
     procedure DecWorkStatus;
   private
@@ -315,6 +317,7 @@ var
 implementation
 
 uses
+  Math,
   Bee_Common,
 
   BeeFm_ViewFrm,
@@ -354,8 +357,6 @@ uses
     FCommandLine := TCustomCommandLine.Create(False);
     FWorkStatus := 0;
     // --- //
-    ListView.AutoLoadFolderBox := True;
-    // --- //
     Caption := GetApplicationCaption(cApplicationCaption ,rsWelcome);
   end;
 
@@ -371,9 +372,14 @@ uses
     UpdateStyle;
   end;
 
+  procedure TMainFrm.ListViewCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
+  begin
+    Compare := ListView.CompareFn(Item1, Item2);
+  end;
+
   procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
   begin
-    CanClose := CheckWorkStatus;
+    CanClose := CheckWorkStatus(False);
   end;
 
   procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -417,15 +423,18 @@ uses
   var
     I: integer;
   begin
-     StatusBar.Panels[0].Text := rsSelectedItems + IntToStr(ListView.SelCount);
-     StatusBar.Panels[1].Text := SizeToStr(ListView.SelFileSize);
-     StatusBar.Panels[2].Text := SizeToStr(ListView.SelFilePackedSize);
-     try
-       StatusBar.Panels[3].Text := DateTimeToString(
-         FileDateToDateTime(ListView.SelFileTime));
-     except
-       StatusBar.Panels[3].Text := '';
-     end
+    if Assigned(Item) and CheckWorkStatus(True) then
+    begin
+      StatusBar.BeginUpdate;
+      StatusBar.Panels[0].Text := rsSelectedItems + IntToStr(ListView.SelCount);
+      StatusBar.Panels[1].Text := SizeToStr(ListView.SelFileSize);
+      StatusBar.Panels[2].Text := SizeToStr(ListView.SelFilePackedSize);
+      if ListView.SelCount > 0 then
+        StatusBar.Panels[3].Text := FileTimeToString(ListView.SelFileTime)
+      else
+        StatusBar.Panels[3].Text := '';
+      StatusBar.EndUpdate;
+    end;
   end;
 
   // ---------------------------------------------------------------------- //
@@ -436,7 +445,7 @@ uses
 
   procedure TMainFrm.FolderBoxSelect(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       ListView.Folder := FolderBox.Text;
     end else
@@ -601,10 +610,10 @@ uses
     end;
   end;
 
-  function TMainFrm.CheckWorkStatus: boolean;
+  function TMainFrm.CheckWorkStatus(HideMsg: boolean): boolean;
   begin
     Result := FWorkStatus = 0;
-    if Result = False then
+    if (Result = False) and (HideMsg = False) then
     begin
       MessageDlg(rsProcessExists, mtInformation, [mbOk], 0);
     end;
@@ -757,7 +766,7 @@ uses
 
   procedure TMainFrm.MMenuFileNewClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       SaveDialog.FileName := '';
       if SaveDialog.Execute then
@@ -785,7 +794,7 @@ uses
 
   procedure TMainFrm.MMenuFileOpenClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       OpenDialog.FileName := '';
       if OpenDialog.Execute then
@@ -800,7 +809,7 @@ uses
   var
     FCheckOutDir: string;
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       FCheckOutDir := GetApplicationCheckoutDir(cApplicationName);
       if DirectoryIsEmpty(FCheckOutDir) = False then
@@ -861,7 +870,7 @@ uses
   var
     NewName: string;
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       NewName := '';
       if SelectDirectory(rsMoveArcTo, '', NewName) then
@@ -879,7 +888,7 @@ uses
   var
     NewName: string;
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       NewName := '';
       if SelectDirectory(rsCopyArcTo, '', NewName) then
@@ -897,7 +906,7 @@ uses
   var
     NewName: string;
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       RenameFrm := TRenameFrm.Create(Application);
       try
@@ -923,7 +932,7 @@ uses
 
   procedure TMainFrm.MMenuFileDeleteClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       if MessageDlg(rsConfirmDeleteArc, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
@@ -937,7 +946,7 @@ uses
 
   procedure TMainFrm.MMenuFileExitClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       MMenuFileCloseClick(Sender); { --> } Close;
     end;
@@ -968,47 +977,13 @@ uses
   var
     I: integer;
   begin
-    for I := 0 to MMenuViewOrderBy.Count - 1 do
+    for I := 0 to MMenuViewOrderBy.Count -1 do
     begin
       MMenuViewOrderBy.Items[I].Checked := False;
     end;
     TMenuItem(Sender).Checked := True;
-    
-    if Sender = MMenuViewOrderByName then
-      ListView.SortCol := alvcName
-    else
-    if Sender = MMenuViewOrderBySize then
-      ListView.SortCol := alvcSize
-    else
-    if Sender = MMenuViewOrderByPacked then
-      ListView.SortCol := alvcPacked
-    else
-    if Sender = MMenuViewOrderByRatio then
-      ListView.SortCol := alvcRatio
-    else
-    if Sender = MMenuViewOrderByType then
-      ListView.SortCol := alvcType
-    else
-    if Sender = MMenuViewOrderByModified then
-      ListView.SortCol := alvcTime
-    else
-    if Sender = MMenuViewOrderByAttributes then
-      ListView.SortCol := alvcAttr
-    else
-    if Sender = MMenuViewOrderByMethod then
-      ListView.SortCol := alvcMethod
-    else
-    if Sender = MMenuViewOrderByPassword then
-      ListView.SortCol := alvcPassword
-    else
-    if Sender = MMenuViewOrderByCrc then
-      ListView.SortCol := alvcCRC
-    else
-    if Sender = MMenuViewOrderByPath then
-      ListView.SortCol := alvcPath
-    else
-    if Sender = MMenuViewOrderByPosition then
-      ListView.SortCol := alvcPosition;
+
+    ListView.OrderBy(TMenuItem(Sender).MenuIndex);
   end;
   
   procedure TMainFrm.DetailsClick(Sender: TObject);
@@ -1020,16 +995,14 @@ uses
       TMenuItem(Sender).Checked := not TMenuItem(Sender).Checked;
     end;
 
-    for I := 0 to MMenuViewDetails.Count -1 do
+    for I := 0 to Min(MMenuViewDetails.Count, ListView.Columns.Count) -1 do
       with ListView.Columns[I] do
       begin
         Visible := MMenuViewDetails.Items[I].Checked;
         if Visible then
         begin
           if Width < 10 then
-          begin
-            Width := 50;
-          end;
+            Width := 80;
         end else
           Width := 0;
       end;
@@ -1037,7 +1010,7 @@ uses
 
   procedure TMainFrm.MMenuViewUpClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       if (ListView.Up = False) and ConfigFrm.UpBtnCloseOption.Checked then
       begin
@@ -1048,7 +1021,7 @@ uses
 
   procedure TMainFrm.MMenuViewUpdateClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       MMenuFileCloseClick(Sender);
       OpenArchive(ListView.FileName);
@@ -1063,7 +1036,7 @@ uses
 
   procedure TMainFrm.MMenuActionsAddClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'A';
@@ -1079,7 +1052,7 @@ uses
 
   procedure TMainFrm.MMenuActionsDeleteClick(Sender: TObject);
   begin
-    if CheckWorkStatus and (ListView.SelCount > 0) then
+    if CheckWorkStatus(False) and (ListView.SelCount > 0) then
     begin
       if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin
@@ -1097,7 +1070,7 @@ uses
 
   procedure TMainFrm.MMenuActionsExtractClick(Sender: TObject);
   begin
-    if CheckWorkStatus and (ListView.SelCount > 0) then
+    if CheckWorkStatus(False) and (ListView.SelCount > 0) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'X';
@@ -1114,7 +1087,7 @@ uses
 
   procedure TMainFrm.MMenuActionsExtractAllClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'X';
@@ -1133,7 +1106,7 @@ uses
 
   procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
   begin
-    if CheckWorkStatus and (ListView.SelCount > 0) then
+    if CheckWorkStatus(False) and (ListView.SelCount > 0) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'T';
@@ -1148,7 +1121,7 @@ uses
 
   procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);
   begin
-    if CheckWorkStatus and (ListView.SelCount > 0) then
+    if CheckWorkStatus(False) and (ListView.SelCount > 0) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'R';
@@ -1165,7 +1138,7 @@ uses
   var
     FFileName: string;
   begin
-    if CheckWorkStatus and (ListView.SelCount = 1) then
+    if CheckWorkStatus(False) and (ListView.SelCount = 1) then
     begin
       FFileName := ListView.Selected.Caption;
       if Pos('D', ListView.Selected.SubItems[5]) > 0 then
@@ -1195,7 +1168,7 @@ uses
   var
     FCheckOutDir: string;
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'X';
@@ -1224,7 +1197,7 @@ uses
 
   procedure TMainFrm.MMenuActionsTestAllClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'T';
@@ -1241,20 +1214,42 @@ uses
 
   procedure TMainFrm.MMenuActionsSelectAllClick(Sender: TObject);
   begin
-    ListView.SetMask('*', True);
-    ListView.SetFocus;
+    if CheckWorkStatus(False) then
+    begin
+      IncWorkStatus;
+      ListView.SetMask('*', True);
+      DecWorkStatus;
+
+      if ListView.CanFocus then ListView.SetFocus;
+      ListViewSelectItem(Sender, nil, False);
+    end;
+
   end;
   
   procedure TMainFrm.MMenuActionsDeselectAllClick(Sender: TObject);
   begin
-    ListView.SetMask('*', False);
-    ListView.SetFocus;
+    if CheckWorkStatus(False) then
+    begin
+      IncWorkStatus;
+      ListView.SetMask('*', False);
+      DecWorkStatus;
+
+      if ListView.CanFocus then ListView.SetFocus;
+      ListViewSelectItem(Sender, nil, False);
+    end;
   end;
   
   procedure TMainFrm.MMenuActionsInvertClick(Sender: TObject);
   begin
-    ListView.InvertMasks;
-    ListView.SetFocus;
+    if CheckWorkStatus(False) then
+    begin
+      IncWorkStatus;
+      ListView.InvertMasks;
+      DecWorkStatus;
+
+      if ListView.CanFocus then ListView.SetFocus;
+      ListViewSelectItem(Sender, nil, False);
+    end;
   end;
 
   procedure TMainFrm.MMenuActionsSelectMaskClick(Sender: TObject);
@@ -1263,10 +1258,15 @@ uses
     try
       SelectFrm.Caption := rsSelectFrmCaption;
       if SelectFrm.ShowModal = mrOk then
-      begin
-        ListView.SetMask(SelectFrm.Mask.Text, True);
-        ListView.SetFocus;
-      end;
+        if CheckWorkStatus(False) then
+        begin
+          IncWorkStatus;
+          ListView.SetMask(SelectFrm.Mask.Text, True);
+          DecWorkStatus;
+
+          if ListView.CanFocus then ListView.SetFocus;
+          ListViewSelectItem(Sender, nil, False);
+        end;
     finally
       FreeAndNil(SelectFrm);
     end;
@@ -1278,10 +1278,15 @@ uses
     try
       SelectFrm.Caption := rsDeselectFrmCaption;
       if SelectFrm.ShowModal = mrOk then
-      begin
-        ListView.SetMask(SelectFrm.Mask.Text, False);
-        ListView.SetFocus;
-      end;
+        if CheckWorkStatus(False) then
+        begin
+          IncWorkStatus;
+          ListView.SetMask(SelectFrm.Mask.Text, False);
+          DecWorkStatus;
+
+          if ListView.CanFocus then ListView.SetFocus;
+          ListViewSelectItem(Sender, nil, False);
+        end;
     finally
       FreeAndNil(SelectFrm);
     end;
@@ -1321,7 +1326,7 @@ uses
 
   procedure TMainFrm.MMenuOptionsDefaultClick(Sender: TObject);
   begin
-    if CheckWorkStatus then
+    if CheckWorkStatus(False) then
     begin
       if MessageDlg(rsConfirmDefault, mtInformation, [mbYes, mbNo], 0) = mrYes then
       begin

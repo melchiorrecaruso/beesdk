@@ -1,6 +1,7 @@
 
   procedure TMainFrm.SaveProperty;
   var
+    I: integer;
     Folder: string;
     Storage: TMemIniFile;
   begin
@@ -19,19 +20,11 @@
       // ListView
       if ListView.ViewStyle = vsReport then
       begin
-        if ListView.Column[ 0].Visible then Storage.WriteInteger('ListView', 'Column[00].Width', ListView.Column[ 0].Width);
-        if ListView.Column[ 1].Visible then Storage.WriteInteger('ListView', 'Column[01].Width', ListView.Column[ 1].Width);
-        if ListView.Column[ 2].Visible then Storage.WriteInteger('ListView', 'Column[02].Width', ListView.Column[ 2].Width);
-        if ListView.Column[ 3].Visible then Storage.WriteInteger('ListView', 'Column[03].Width', ListView.Column[ 3].Width);
-        if ListView.Column[ 4].Visible then Storage.WriteInteger('ListView', 'Column[04].Width', ListView.Column[ 4].Width);
-        if ListView.Column[ 5].Visible then Storage.WriteInteger('ListView', 'Column[05].Width', ListView.Column[ 5].Width);
-        if ListView.Column[ 6].Visible then Storage.WriteInteger('ListView', 'Column[06].Width', ListView.Column[ 6].Width);
-        if ListView.Column[ 7].Visible then Storage.WriteInteger('ListView', 'Column[07].Width', ListView.Column[ 7].Width);
-        if ListView.Column[ 8].Visible then Storage.WriteInteger('ListView', 'Column[08].Width', ListView.Column[ 8].Width);
-        if ListView.Column[ 9].Visible then Storage.WriteInteger('ListView', 'Column[09].Width', ListView.Column[ 9].Width);
-        if ListView.Column[10].Visible then Storage.WriteInteger('ListView', 'Column[10].Width', ListView.Column[10].Width);
-        if ListView.Column[11].Visible then Storage.WriteInteger('ListView', 'Column[11].Width', ListView.Column[11].Width);
-        Storage.WriteInteger('ListView', 'Column', Ord(ListView.SortCol));
+        for I := 0 to ListView.Columns.Count -1 do
+        begin
+          Storage.WriteInteger('ListView', 'Column['+ IntToStr(I) +'].Width', ListView.Column[I].Width);
+        end;
+        Storage.WriteInteger('ListView', 'SortColumn', ListView.SortColumn);
       end;
       // Main Menu View
       Storage.WriteBool('MMenu', 'View.AddressBar.Checked'         , MMenuViewAddressBar.Checked);
