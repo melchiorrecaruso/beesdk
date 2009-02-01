@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -187,8 +187,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="64" Y="418"/>
-        <TopLine Value="944"/>
+        <CursorPos X="26" Y="517"/>
+        <TopLine Value="484"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="30"/>
         <Loaded Value="True"/>
@@ -197,8 +197,8 @@
       <Unit15>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="40" Y="533"/>
-        <TopLine Value="524"/>
+        <CursorPos X="88" Y="82"/>
+        <TopLine Value="78"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
@@ -214,7 +214,7 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit16>
     </Units>
-    <JumpHistory Count="5" HistoryIndex="4">
+    <JumpHistory Count="8" HistoryIndex="7">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="433" Column="42" TopLine="416"/>
@@ -235,6 +235,18 @@
         <Filename Value="beegui.lpr"/>
         <Caret Line="116" Column="1" TopLine="75"/>
       </Position5>
+      <Position6>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="752" Column="15" TopLine="722"/>
+      </Position6>
+      <Position7>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="608" Column="15" TopLine="588"/>
+      </Position7>
+      <Position8>
+        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
+        <Caret Line="48" Column="91" TopLine="44"/>
+      </Position8>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

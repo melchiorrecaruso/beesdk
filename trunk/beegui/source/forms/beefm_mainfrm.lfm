@@ -140,7 +140,7 @@ object MainFrm: TMainFrm
     Caption = 'ToolBar'
     EdgeBorders = [ebTop, ebBottom]
     Flat = False
-    TabOrder = 2
+    TabOrder = 1
     object BtnOpen: TSpeedButton
       AnchorSideLeft.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
@@ -2593,7 +2593,7 @@ object MainFrm: TMainFrm
     Caption = 'AddressToolBar'
     EdgeBorders = [ebBottom]
     Flat = False
-    TabOrder = 3
+    TabOrder = 2
     object BtnUp: TSpeedButton
       AnchorSideBottom.Side = asrBottom
       Left = 3
