@@ -517,10 +517,6 @@ uses
       DoSelectItem(Items[0], False);
       ItemFocused := Items[0];
     end;
-    if CanFocus then
-    begin
-      SetFocus;
-    end;
   end;
 
   procedure TCustomArchiveListView.CloseArchive(Clean: boolean);
