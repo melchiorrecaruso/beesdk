@@ -23,6 +23,7 @@ object MainFrm: TMainFrm
     Height = 377
     Top = 128
     Width = 907
+    AutoLoad = True
     OnChangeFolder = ListViewChangeFolder
     FolderBox = FolderBox
     Align = alClient
@@ -146,7 +147,7 @@ object MainFrm: TMainFrm
     object BtnOpen: TSpeedButton
       AnchorSideLeft.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Left = 3
+      Left = 65
       Height = 55
       Top = 4
       Width = 60
@@ -364,7 +365,7 @@ object MainFrm: TMainFrm
     object BtnNew: TSpeedButton
       AnchorSideLeft.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Left = 65
+      Left = 3
       Height = 55
       Top = 4
       Width = 60
