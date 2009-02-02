@@ -104,7 +104,7 @@ object MainFrm: TMainFrm
     TabOrder = 0
     ViewStyle = vsReport
     OnClick = ListViewClick
-    OnColumnClick = ColumnClick
+    OnColumnClick = ListViewColumnClick
     OnCompare = ListViewCompare
     OnDblClick = MMenuActionsViewClick
   end
@@ -2645,7 +2645,7 @@ object MainFrm: TMainFrm
       Spacing = 10
       OnClick = MMenuViewUpClick
     end
-    object DownToolBarBevel: TBevel
+    object BevelFour: TBevel
       AnchorSideLeft.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 127
