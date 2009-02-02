@@ -40,7 +40,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="16">
+    <Units Count="17">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -187,8 +187,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="5" Y="772"/>
-        <TopLine Value="770"/>
+        <CursorPos X="27" Y="431"/>
+        <TopLine Value="410"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
@@ -197,13 +197,22 @@
       <Unit15>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="42" Y="424"/>
-        <TopLine Value="327"/>
-        <EditorIndex Value="2"/>
+        <CursorPos X="31" Y="523"/>
+        <TopLine Value="497"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit15>
+      <Unit16>
+        <Filename Value="version.inc"/>
+        <CursorPos X="19" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit16>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
