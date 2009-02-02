@@ -475,23 +475,14 @@ uses
   var
     I: integer;
   begin
-    BtnAdd.Enabled := Value;
-    BtnAdd.Font := Font;
-
-    BtnExtract.Enabled := Value;
-    BtnExtract.Font := Font;
-
-    BtnView.Enabled := Value;
-    BtnView.Font := Font;
-
-    BtnDelete.Enabled := Value;
-    BtnDelete.Font := Font;
-
-    BtnTest.Enabled := Value;
-    BtnTest.Font := Font;
-
+    BtnAdd     .Enabled := Value;
+    BtnExtract .Enabled := Value;
+    BtnView    .Enabled := Value;
+    BtnDelete  .Enabled := Value;
+    BtnTest    .Enabled := Value;
     BtnCheckOut.Enabled := Value and (GetOSFileManager <> '');
-    BtnCheckOut.Font := Font;
+    // ---
+    BtnUp      .Enabled := Value;
     // ---
     MMenuFileClose   .Enabled := Value;
     MMenuFileProperty.Enabled := Value;
@@ -500,21 +491,21 @@ uses
     MMenuFileRename  .Enabled := Value;
     MMenuFileDelete  .Enabled := Value;
     // ---
+    MMenuViewUp      .Enabled := Value;
+    MMenuViewUpdate  .Enabled := Value;
+    // ---
     for I := 0 to MMenuActions.Count -1 do
     begin
       MMenuActions.Items[I].Enabled := Value;
     end;
-    MMenuActionsCheckOut.Enabled := BtnCheckOut.Enabled;
-    // ---
-    BtnUp.Enabled := Value;
-    BtnUp.Font := Font;
+    MMenuActionsCheckOut.Enabled := Value and (GetOSFileManager <> '');
     // ---
     FolderBox.Enabled := Value;
     if Value = False then
-      FOlderBox.Color := clInactiveBorder
+      FolderBox.Color := clInactiveBorder
     else
-      FOlderBox.Color := clWindow;
-
+      FolderBox.Color := clWindow;
+    // ---
     ListView.Enabled := Value;
     if Value = False then
     begin
@@ -548,7 +539,7 @@ uses
     Buttons[11] := BtnConfig;
     Buttons[12] := BtnHelp;
     Buttons[13] := BtnExit;
-    // ---
+
     for I := Low(Buttons) to High(Buttons) do
     begin
       Buttons[I].Align := alRight;
