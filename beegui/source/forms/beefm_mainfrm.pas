@@ -225,10 +225,12 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ListViewChangeFolder(Sender: TObject);
+    procedure ListViewClick(Sender: TObject);
+
     procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
       Data: Integer; var Compare: Integer);
 
-    procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure MMenuActionsDeselectMaskClick(Sender: TObject);
 
     procedure MMenuActionsViewClick(Sender: TObject);
@@ -372,11 +374,6 @@ uses
     UpdateStyle;
   end;
 
-  procedure TMainFrm.ListViewCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
-  begin
-    Compare := ListView.CompareFn(Item1, Item2);
-  end;
-
   procedure TMainFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
   begin
     CanClose := CheckWorkStatus(False);
@@ -419,11 +416,14 @@ uses
     end;
   end;
 
-  procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
-  var
-    I: integer;
+  procedure TMainFrm.ListViewCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
   begin
-    if Assigned(Item) and CheckWorkStatus(True) then
+    Compare := ListView.CompareFn(Item1, Item2);
+  end;
+
+  procedure TMainFrm.ListViewChangeFolder(Sender: TObject);
+  begin
+    if ListView.Enabled then
     begin
       StatusBar.BeginUpdate;
       StatusBar.Panels[0].Text := rsSelectedItems + IntToStr(ListView.SelCount);
@@ -434,7 +434,20 @@ uses
       else
         StatusBar.Panels[3].Text := '';
       StatusBar.EndUpdate;
+    end else
+    begin
+      StatusBar.BeginUpdate;
+      StatusBar.Panels[0].Text := '';
+      StatusBar.Panels[1].Text := '';
+      StatusBar.Panels[2].Text := '';
+      StatusBar.Panels[3].Text := '';
+      StatusBar.EndUpdate;
     end;
+  end;
+
+  procedure TMainFrm.ListViewClick(Sender: TObject);
+  begin
+    ListViewChangeFolder(Sender);
   end;
 
   // ---------------------------------------------------------------------- //
@@ -509,12 +522,15 @@ uses
 
     ListView.Enabled := Value;
     if Value = False then
+    begin
       ListView.Color := clInactiveBorder
-    else
+    end else
     begin
       ListView.Color := clWindow;
       if ListView.CanFocus then
+      begin
         ListView.SetFocus;
+      end;
     end;
   end;
 
@@ -1218,42 +1234,32 @@ uses
 
   procedure TMainFrm.MMenuActionsSelectAllClick(Sender: TObject);
   begin
-    if CheckWorkStatus(False) then
+    ListView.SetMask('*', True);
+    if ListView.CanFocus then
     begin
-      IncWorkStatus;
-      ListView.SetMask('*', True);
-      DecWorkStatus;
-
-      if ListView.CanFocus then ListView.SetFocus;
-      ListViewSelectItem(Sender, nil, False);
+      ListView.SetFocus;
     end;
-
+    ListViewChangeFolder(Sender);
   end;
   
   procedure TMainFrm.MMenuActionsDeselectAllClick(Sender: TObject);
   begin
-    if CheckWorkStatus(False) then
+    ListView.SetMask('*', False);
+    if ListView.CanFocus then
     begin
-      IncWorkStatus;
-      ListView.SetMask('*', False);
-      DecWorkStatus;
-
-      if ListView.CanFocus then ListView.SetFocus;
-      ListViewSelectItem(Sender, nil, False);
+      ListView.SetFocus;
     end;
+    ListViewChangeFolder(Sender);
   end;
   
   procedure TMainFrm.MMenuActionsInvertClick(Sender: TObject);
   begin
-    if CheckWorkStatus(False) then
+    ListView.InvertMasks;
+    if ListView.CanFocus then
     begin
-      IncWorkStatus;
-      ListView.InvertMasks;
-      DecWorkStatus;
-
-      if ListView.CanFocus then ListView.SetFocus;
-      ListViewSelectItem(Sender, nil, False);
+      ListView.SetFocus;
     end;
+    ListViewChangeFolder(Sender);
   end;
 
   procedure TMainFrm.MMenuActionsSelectMaskClick(Sender: TObject);
@@ -1262,15 +1268,14 @@ uses
     try
       SelectFrm.Caption := rsSelectFrmCaption;
       if SelectFrm.ShowModal = mrOk then
-        if CheckWorkStatus(False) then
+      begin
+        ListView.SetMask(SelectFrm.Mask.Text, True);
+        if ListView.CanFocus then
         begin
-          IncWorkStatus;
-          ListView.SetMask(SelectFrm.Mask.Text, True);
-          DecWorkStatus;
-
-          if ListView.CanFocus then ListView.SetFocus;
-          ListViewSelectItem(Sender, nil, False);
+          ListView.SetFocus;
         end;
+        ListViewChangeFolder(Sender);
+      end;
     finally
       FreeAndNil(SelectFrm);
     end;
@@ -1282,15 +1287,14 @@ uses
     try
       SelectFrm.Caption := rsDeselectFrmCaption;
       if SelectFrm.ShowModal = mrOk then
-        if CheckWorkStatus(False) then
+      begin
+        ListView.SetMask(SelectFrm.Mask.Text, False);
+        if ListView.CanFocus then
         begin
-          IncWorkStatus;
-          ListView.SetMask(SelectFrm.Mask.Text, False);
-          DecWorkStatus;
-
-          if ListView.CanFocus then ListView.SetFocus;
-          ListViewSelectItem(Sender, nil, False);
+          ListView.SetFocus;
         end;
+        ListViewChangeFolder(Sender);
+      end;
     finally
       FreeAndNil(SelectFrm);
     end;
