@@ -55,32 +55,33 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
+    ToolBar: TToolBar;
+    AddressToolBar: TToolBar;
     FolderBox: TArchiveFolderBox;
-    BevelFirst: TBevel;
-    BevelSecond: TBevel;
-    BevelThird: TBevel;
-    BtnAdd: TSpeedButton;
-    BtnCheckOut: TSpeedButton;
-    BtnConfig: TSpeedButton;
-    BtnDelete: TSpeedButton;
-    BtnExit: TSpeedButton;
-    BtnExtract: TSpeedButton;
-    BtnHelp: TSpeedButton;
-    BtnNew: TSpeedButton;
-    BtnOpen: TSpeedButton;
-    BtnTest: TSpeedButton;
-    BtnUp: TSpeedButton;
-    BtnView: TSpeedButton;
-    DownToolBarBevel: TBevel;
-    FileProcess: TFileProcess;
     FolderBoxLabel: TLabel;
-    MMenuViewUpdate: TMenuItem;
-    MMenuViewUp: TMenuItem;
-    MMenuViewN4: TMenuItem;
-    StatusBar: TStatusBar;
     ListView: TArchiveListView;
     LargeImages: TIconList;
     SmallImages: TIconList;
+    StatusBar: TStatusBar;
+    // ---
+    FileProcess: TFileProcess;
+    // ---
+    BevelFirst: TBevel;
+    BevelSecond: TBevel;
+    BevelThird: TBevel;
+    BevelFour: TBevel;
+    BtnNew: TSpeedButton;
+    BtnOpen: TSpeedButton;
+    BtnAdd: TSpeedButton;
+    BtnExtract: TSpeedButton;
+    BtnView: TSpeedButton;
+    BtnDelete: TSpeedButton;
+    BtnTest: TSpeedButton;
+    BtnCheckOut: TSpeedButton;
+    BtnConfig: TSpeedButton;
+    BtnHelp: TSpeedButton;
+    BtnExit: TSpeedButton;
+    BtnUp: TSpeedButton;
     // ---
     OpenDialog: TOpenDialog;
     SaveDialog: TSaveDialog;
@@ -129,6 +130,9 @@ type
     MMenuViewOrderByAttributes: TMenuItem;
     MMenuViewOrderByMethod: TMenuItem;
     MMenuViewOrderByPassword: TMenuItem;
+    MMenuViewN4: TMenuItem;
+    MMenuViewUp: TMenuItem;
+    MMenuViewUpdate: TMenuItem;
     // ---
     MMenuViewDetails: TMenuItem;
     MMenuViewDetailsName: TMenuItem;
@@ -214,26 +218,25 @@ type
     BMenuConfiguration: TMenuItem;
     BMenuHelp: TMenuItem;
     BMenuExit: TMenuItem;
-    DToolBar: TToolBar;
-    AddressToolBar: TToolBar;
-    ToolBar: TToolBar;
     // ---
-
     procedure FileProcessStartTimer(Sender: TObject);
     procedure FileProcessStopTimer(Sender: TObject);
     procedure FileProcessTimer(Sender: TObject);
+    // ---
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    // ---
+    procedure FolderBoxSelect(Sender: TObject);
+    // ---
     procedure ListViewChangeFolder(Sender: TObject);
     procedure ListViewClick(Sender: TObject);
-
+    procedure ListViewColumnClick(Sender: TObject; Column: TListColumn);
     procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
       Data: Integer; var Compare: Integer);
-
-    procedure MMenuActionsDeselectMaskClick(Sender: TObject);
-
-    procedure MMenuActionsViewClick(Sender: TObject);
+    // ---
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
     procedure MMenuFileCloseClick(Sender: TObject);
@@ -244,13 +247,24 @@ type
     procedure MMenuFileDeleteClick(Sender: TObject);
     procedure MMenuFileExitClick(Sender: TObject);
     // ----
+    procedure OptionsClick(Sender: TObject);
+    procedure OrderByClick(Sender: TObject);
+    procedure DetailsClick(Sender: TObject);
+    procedure ViewStyleClick(Sender: TObject);
+    procedure ListViewStyleClick(Sender: TObject);
+    // ---
+    procedure MMenuViewUpClick(Sender: TObject);
+    procedure MMenuViewUpdateClick(Sender: TObject);
+    // ----
     procedure MMenuActionsAddClick(Sender: TObject);
     procedure MMenuActionsDeleteClick (Sender: TObject);
     procedure MMenuActionsExtractClick (Sender: TObject);
     procedure MMenuActionsExtractAllClick (Sender: TObject);
     procedure MMenuActionsTestClick (Sender: TObject);
     procedure MMenuActionsRenameClick (Sender: TObject);
+    procedure MMenuActionsViewClick(Sender: TObject);
     procedure MMenuActionsSelectAllClick (Sender: TObject);
+    procedure MMenuActionsDeselectMaskClick(Sender: TObject);
     procedure MMenuActionsSelectMaskClick (Sender: TObject);
     procedure MMenuActionsDeselectAllClick(Sender: TObject);
     procedure MMenuActionsInvertClick (Sender: TObject);
@@ -265,29 +279,10 @@ type
     procedure MMenuHelpInternetClick (Sender: TObject);
     procedure MMenuHelpLicenseClick (Sender: TObject);
     procedure MMenuHelpAboutClick (Sender: TObject);
-    procedure MMenuViewUpClick(Sender: TObject);
-    procedure MMenuViewUpdateClick(Sender: TObject);
     // ---
     procedure PMenuPopup(Sender: TObject);
     procedure PMenuPropertyClick(Sender: TObject);
     // ---
-    procedure FormCreate(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    // ---
-
-
-    
-    procedure FolderBoxSelect(Sender: TObject);
-
-
-    // ---
-    procedure ColumnClick(Sender: TObject; Column: TListColumn);
-    procedure ListViewStyleClick(Sender: TObject);
-    procedure ViewStyleClick(Sender: TObject);
-    procedure OrderByClick(Sender: TObject);
-    procedure DetailsClick(Sender: TObject);
-    procedure OptionsClick(Sender: TObject);
-
     procedure BMenuClick(Sender: TObject);
   private
     FWorkStatus: integer;
@@ -348,16 +343,16 @@ uses
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
     // --- //
-    ToolBar.ButtonHeight := BtnNew.Height + 4;
     AddressToolBar.ButtonHeight := FolderBox.Height + 4;
+    ToolBar.ButtonHeight := BtnNew.Height + 4;
     // --- //
     UpdateButtons(False);
     // --- //
     LoadLanguage;
     LoadProperty;
     // --- //
-    FCommandLine := TCustomCommandLine.Create(False);
     FWorkStatus := 0;
+    FCommandLine := TCustomCommandLine.Create(False);
     // --- //
     Caption := GetApplicationCaption(cApplicationCaption ,rsWelcome);
   end;
@@ -398,21 +393,21 @@ uses
   //                                                                        //
   // ---------------------------------------------------------------------- //
   
-  procedure TMainFrm.ColumnClick(Sender: TObject; Column: TListColumn);
+  procedure TMainFrm.ListViewColumnClick(Sender: TObject; Column: TListColumn);
   begin
     case Column.Index of
-      0: OrderByClick(MMenuViewOrderByName);
-      1: OrderByClick(MMenuViewOrderBySize);
-      2: OrderByClick(MMenuViewOrderByPacked);
-      3: OrderByClick(MMenuViewOrderByRatio);
-      4: OrderByClick(MMenuViewOrderByType);
-      5: OrderByClick(MMenuViewOrderByModified);
-      6: OrderByClick(MMenuViewOrderByAttributes);
-      7: OrderByClick(MMenuViewOrderByMethod);
-      8: OrderByClick(MMenuViewOrderByPassword);
-      9: OrderByClick(MMenuViewOrderByCrc);
-     10: OrderByClick(MMenuViewOrderByPath);
-     11: OrderByClick(MMenuViewOrderByPosition);
+       0: OrderByClick(MMenuViewOrderByName);
+       1: OrderByClick(MMenuViewOrderBySize);
+       2: OrderByClick(MMenuViewOrderByPacked);
+       3: OrderByClick(MMenuViewOrderByRatio);
+       4: OrderByClick(MMenuViewOrderByType);
+       5: OrderByClick(MMenuViewOrderByModified);
+       6: OrderByClick(MMenuViewOrderByAttributes);
+       7: OrderByClick(MMenuViewOrderByMethod);
+       8: OrderByClick(MMenuViewOrderByPassword);
+       9: OrderByClick(MMenuViewOrderByCrc);
+      10: OrderByClick(MMenuViewOrderByPath);
+      11: OrderByClick(MMenuViewOrderByPosition);
     end;
   end;
 
@@ -510,10 +505,10 @@ uses
       MMenuActions.Items[I].Enabled := Value;
     end;
     MMenuActionsCheckOut.Enabled := BtnCheckOut.Enabled;
-
+    // ---
     BtnUp.Enabled := Value;
     BtnUp.Font := Font;
-
+    // ---
     FolderBox.Enabled := Value;
     if Value = False then
       FOlderBox.Color := clInactiveBorder
@@ -590,9 +585,6 @@ uses
       AddressToolBar.Visible := False
     else
       AddressToolBar.Visible := not ListView.SimpleList;
-
-
-
     MMenuViewAddressBar.Enabled := not ListView.SimpleList;
 
     StatusBar.Visible := MMenuViewStatusBar.Checked;
@@ -1003,7 +995,7 @@ uses
     end;
     TMenuItem(Sender).Checked := True;
 
-    ListView.OrderBy(TMenuItem(Sender).MenuIndex);
+    ListView.SortBy(TMenuItem(Sender).MenuIndex);
   end;
   
   procedure TMainFrm.DetailsClick(Sender: TObject);

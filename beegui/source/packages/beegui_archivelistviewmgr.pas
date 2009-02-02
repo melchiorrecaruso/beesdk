@@ -115,7 +115,6 @@ type
     FFolderBoxSign: string;
     // ---
     FAutoLoad: boolean;
-
     FSimpleList: boolean;
     FSortDirection: boolean;
     // ---
@@ -129,7 +128,6 @@ type
     procedure SetFolderBox(Value: TArchiveFolderBox);
     procedure SetAutoLoad(Value: boolean);
     procedure SetSimpleList(Value: boolean);
-
     procedure SetData(AItem: TListItem; AData: Pointer);
 
     procedure UpdateFolderBox(const AFolder: string);
@@ -145,7 +143,7 @@ type
     // ---
     function Open(const AArchiveName: string; AArchiveList: TList): boolean;
     procedure CloseArchive(Clean: boolean);
-    procedure OrderBy(ColumnIndex: integer);
+    procedure SortBy(ColumnIndex: integer);
     function Up: boolean;
     // ---
     procedure ClearMasks;
@@ -154,7 +152,6 @@ type
     procedure SetMask(const Mask: string; Value: boolean);
 
     function CompareFn(Item1, Item2: TListItem): integer;
-
   public
     property FileName: string read FFileName;
     property Folder: string read FFolder write SetFolder;
@@ -187,60 +184,59 @@ type
     property Anchors;
     property BorderSpacing;
     property BorderWidth;
-//    property Checkboxes;
-//    property Color default clWindow;
+    // property Checkboxes;
+    // property Color default clWindow;
     property Columns;
     property ColumnClick;
     property Constraints;
     property DragCursor;
     property DragMode;
-//    property Enabled;
+    // property Enabled;
     property Font;
-//    property HideSelection;
-//    property Items;
+    // property HideSelection;
+    // property Items;
     property LargeImages;
-//    property MultiSelect;
+    // property MultiSelect;
     property PopupMenu;
-//    property ReadOnly;
+    // property ReadOnly;
     property RowSelect;
     property ScrollBars;
-//    property ShowColumnHeaders;
+    // property ShowColumnHeaders;
     property SmallImages;
     property SortColumn;
-//    property SortType;
-//    property StateImages;
+    // property SortType;
+    // property StateImages;
     property TabStop;
     property TabOrder;
     property ToolTips;
     property Visible;
     property ViewStyle;
-//    property OnAdvancedCustomDraw;
-//    property OnAdvancedCustomDrawItem;
-//    property OnAdvancedCustomDrawSubItem;
-//    property OnChange;
-      property OnClick;
-      property OnColumnClick;
-      property OnCompare;
-//    property OnCustomDraw;
-//    property OnCustomDrawItem;
-//    property OnCustomDrawSubItem;
-      property OnDblClick;
-//    property OnDeletion;
-//    property OnDragDrop;
-//    property OnDragOver;
-//    property OnEndDrag;
-//    property OnKeyDown;
-//    property OnKeyPress;
-//    property OnKeyUp;
-//    property OnMouseDown;
-//    property OnMouseMove;
-//    property OnMouseUp;
-//    property OnResize;
-      property OnSelectItem;
-//    property OnStartDrag;
+    // property OnAdvancedCustomDraw;
+    // property OnAdvancedCustomDrawItem;
+    // property OnAdvancedCustomDrawSubItem;
+    // property OnChange;
+    property OnClick;
+    property OnColumnClick;
+    property OnCompare;
+    // property OnCustomDraw;
+    // property OnCustomDrawItem;
+    // property OnCustomDrawSubItem;
+    property OnDblClick;
+    // property OnDeletion;
+    // property OnDragDrop;
+    // property OnDragOver;
+    // property OnEndDrag;
+    // property OnKeyDown;
+    // property OnKeyPress;
+    // property OnKeyUp;
+    // property OnMouseDown;
+    // property OnMouseMove;
+    // property OnMouseUp;
+    // property OnResize;
+    // property OnSelectItem;
+    // property OnStartDrag;
   end;
-  
-  
+
   { Register }
 
   procedure Register;
@@ -338,11 +334,11 @@ uses
   begin
     inherited Create(AOwner);
     // ----
+    FFolder := '';
     FFileName := '';
     FFiles := TArchiveList.Create;
-    FDetails := TArchiveDetails.Create;
     FFolders := TArchiveList.Create;
-    FFolder := '';
+    FDetails := TArchiveDetails.Create;
     // ---
     FAutoLoad := False;
     FSimpleList := False;
@@ -359,9 +355,9 @@ uses
   
   destructor TCustomArchiveListView.Destroy;
   begin
+    FFolder := '';
     FFileName := '';
     FFiles.Free;
-    FFolder := '';
     FFolders.Free;
     FDetails.Free;
     // ---
@@ -409,30 +405,29 @@ uses
     end;
   end;
 
-  procedure TCustomArchiveListView.OrderBy(ColumnIndex: integer);
+  procedure TCustomArchiveListView.SortBy(ColumnIndex: integer);
   var
     I: integer;
   begin
     SortType := stNone;
-
     if (ColumnIndex > -1) and (ColumnIndex < Columns.Count) then
     begin
       if SortColumn = ColumnIndex then
         FSortDirection := not FSortDirection
       else
         FSortDirection := False;
-
       SortColumn := ColumnIndex;
     end;
 
     for I := 0 to Columns.Count -1 do
+    begin
       Columns[I].ImageIndex := -1;
+    end;
 
     if FSortDirection then
       Columns[SortColumn].ImageIndex := GetFileIcon('.@sortdown', faDirectory)
     else
       Columns[SortColumn].ImageIndex := GetFileIcon('.@sortup', faDirectory);
-
     SortType := stData;
   end;
 
@@ -517,7 +512,7 @@ uses
       end;
     end;
     Items.EndUpdate;
-    OrderBy(-1);
+    SortBy(-1);
 
     if Enabled and (Items.Count > 0) then
     begin
