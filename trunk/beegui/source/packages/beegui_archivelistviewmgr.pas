@@ -554,6 +554,10 @@ uses
 
     if Clean then
     begin
+      if Assigned(FOnChangeFolder) then
+      begin
+        FOnChangeFolder(Self);
+      end;
       FFolderBoxSign := '';
       FFileName := '';
       FFolder:= '';
@@ -704,7 +708,6 @@ uses
       AArchiveList.Delete(0);
     end;
     UpdateFolders;
-    UpdateFolder;
       
     if Assigned(FFolderBox) then
     begin
