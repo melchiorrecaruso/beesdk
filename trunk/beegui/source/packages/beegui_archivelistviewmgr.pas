@@ -118,6 +118,8 @@ type
 
     FSimpleList: boolean;
     FSortDirection: boolean;
+    // ---
+    FOnChangeFolder: TNotifyEvent;
   private
     function GetSelTime: integer;
     function GetSelSize: int64;
@@ -165,6 +167,8 @@ type
   published
     property SimpleList: boolean read FSimpleList write SetSimpleList default False;
     property AutoLoad: boolean read FAutoLoad write SetAutoLoad default False;
+  published
+    property OnChangeFolder: TNotifyEvent read FOnChangeFolder write FOnChangeFolder;
   end;
   
 type
@@ -339,14 +343,17 @@ uses
     FDetails := TArchiveDetails.Create;
     FFolders := TArchiveList.Create;
     FFolder := '';
-    // --
+    // ---
     FAutoLoad := False;
     FSimpleList := False;
     FSortDirection := False;
     // ---
+    FOnChangeFolder := nil;
+    // ---
     Color := clInactiveBorder;
     MultiSelect := True;
     SortType := stNone;
+    ReadOnly := True;
     Enabled := False;
   end;
   
@@ -514,7 +521,10 @@ uses
 
     if Enabled and (Items.Count > 0) then
     begin
-      DoSelectItem(Items[0], False);
+      if Assigned(FOnChangeFolder) then
+      begin
+        FOnChangeFolder(Self);
+      end;
       ItemFocused := Items[0];
     end;
   end;
