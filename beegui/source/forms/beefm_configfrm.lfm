@@ -1,7 +1,7 @@
 object ConfigFrm: TConfigFrm
-  Left = 245
+  Left = 355
   Height = 403
-  Top = 180
+  Top = 189
   Width = 561
   HorzScrollBar.Page = 560
   HorzScrollBar.Range = 156
@@ -11,8 +11,6 @@ object ConfigFrm: TConfigFrm
   Caption = 'Configuration'
   ClientHeight = 403
   ClientWidth = 561
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
   LCLVersion = '0.9.27'
@@ -30,7 +28,6 @@ object ConfigFrm: TConfigFrm
     DefaultItemHeight = 15
     HideSelection = False
     Indent = 20
-    ParentShowHint = False
     RightClickSelect = True
     RowSelect = True
     ScrollBars = ssAutoBoth
@@ -61,7 +58,6 @@ object ConfigFrm: TConfigFrm
     Caption = 'Add Options'
     ClientHeight = 341
     ClientWidth = 389
-    ParentShowHint = False
     TabOrder = 1
     object mOptionLabel: TLabel
       AnchorSideLeft.Control = AddPage
@@ -78,8 +74,9 @@ object ConfigFrm: TConfigFrm
       BorderSpacing.Right = 6
       BorderSpacing.Bottom = 2
       Caption = 'Compression method:'
+      Color = clBtnFace
       Layout = tlCenter
-      ParentColor = False
+      Transparent = False
     end
     object dOptionLabel: TLabel
       AnchorSideLeft.Control = mOptionLabel
@@ -95,8 +92,9 @@ object ConfigFrm: TConfigFrm
       BorderSpacing.Top = 6
       BorderSpacing.Bottom = 2
       Caption = 'Dictionary size:'
+      Color = clBtnFace
       Layout = tlCenter
-      ParentColor = False
+      Transparent = False
     end
     object AddingOptions: TGroupBox
       AnchorSideLeft.Control = mOptionLabel
@@ -114,7 +112,6 @@ object ConfigFrm: TConfigFrm
       Caption = 'Options'
       ClientHeight = 121
       ClientWidth = 367
-      ParentShowHint = False
       TabOrder = 0
       object rOption: TCheckBox
         Left = 12
@@ -126,7 +123,6 @@ object ConfigFrm: TConfigFrm
         BorderSpacing.Around = 6
         Caption = 'Recurse subdirectories (-r Option)'
         Checked = True
-        ParentShowHint = False
         State = cbChecked
         TabOrder = 0
       end
@@ -144,7 +140,6 @@ object ConfigFrm: TConfigFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6
         Caption = 'Create a solid archive (-s Option)'
-        ParentShowHint = False
         TabOrder = 1
       end
       object tOption: TCheckBox
@@ -161,7 +156,6 @@ object ConfigFrm: TConfigFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6
         Caption = 'Test files after adding (-t Option)'
-        ParentShowHint = False
         TabOrder = 2
       end
       object kOption: TCheckBox
@@ -178,7 +172,6 @@ object ConfigFrm: TConfigFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 6
         Caption = 'Crypt files with password (-k Option)'
-        ParentShowHint = False
         TabOrder = 3
       end
       object cdAOption: TCheckBox
@@ -196,7 +189,6 @@ object ConfigFrm: TConfigFrm
         BorderSpacing.Bottom = 6
         Caption = 'Use current archive directory (-cd Option)'
         Checked = True
-        ParentShowHint = False
         State = cbChecked
         TabOrder = 4
       end
@@ -212,6 +204,7 @@ object ConfigFrm: TConfigFrm
       Top = 22
       Width = 371
       Anchors = [akTop, akLeft, akRight]
+      AutoComplete = False
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
       ItemHeight = 13
@@ -222,7 +215,7 @@ object ConfigFrm: TConfigFrm
         '2 - Good'
         '3 - Maximal'
       )
-      ParentShowHint = False
+      ItemWidth = 0
       Style = csDropDownList
       TabOrder = 1
       Text = '1 - Low'
@@ -238,6 +231,7 @@ object ConfigFrm: TConfigFrm
       Top = 65
       Width = 371
       Anchors = [akTop, akLeft, akRight]
+      AutoComplete = False
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
       ItemHeight = 13
@@ -254,7 +248,7 @@ object ConfigFrm: TConfigFrm
         'Level  8   (dictionary size  <   640 MB)'
         'Level  9   (dictionary size  < 1280 MB)'
       )
-      ParentShowHint = False
+      ItemWidth = 0
       Style = csDropDownList
       TabOrder = 2
       Text = 'Level  3   (dictionary size  <     20 MB)'
@@ -276,7 +270,6 @@ object ConfigFrm: TConfigFrm
     Caption = 'Extract Options'
     ClientHeight = 341
     ClientWidth = 389
-    ParentShowHint = False
     TabOrder = 2
     Visible = False
     object oOptionLabel: TLabel
@@ -292,9 +285,9 @@ object ConfigFrm: TConfigFrm
       BorderSpacing.Right = 6
       BorderSpacing.Bottom = 2
       Caption = 'Overwrite mode:'
+      Color = clBtnFace
       Layout = tlBottom
-      ParentColor = False
-      ParentShowHint = False
+      Transparent = False
     end
     object ExtractingOptions: TGroupBox
       AnchorSideLeft.Control = oOption
@@ -313,7 +306,6 @@ object ConfigFrm: TConfigFrm
       Caption = 'Options'
       ClientHeight = 52
       ClientWidth = 367
-      ParentShowHint = False
       TabOrder = 0
       object cdEOption: TCheckBox
         AnchorSideLeft.Control = xCommand
@@ -330,7 +322,6 @@ object ConfigFrm: TConfigFrm
         BorderSpacing.Bottom = 6
         Caption = 'Use current archive directory (-cd Option)'
         Checked = True
-        ParentShowHint = False
         State = cbChecked
         TabOrder = 0
       end
@@ -344,7 +335,6 @@ object ConfigFrm: TConfigFrm
         BorderSpacing.Around = 6
         Caption = 'Extract and recreate the relative pathname '
         Checked = True
-        ParentShowHint = False
         State = cbChecked
         TabOrder = 1
       end
@@ -360,6 +350,7 @@ object ConfigFrm: TConfigFrm
       Top = 22
       Width = 371
       Anchors = [akTop, akLeft, akRight]
+      AutoComplete = False
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
       ItemHeight = 13
@@ -369,7 +360,7 @@ object ConfigFrm: TConfigFrm
         'Overwrite pre-existing files'
         'Query if Overwrite pre-existing files'
       )
-      ParentShowHint = False
+      ItemWidth = 0
       Style = csDropDownList
       TabOrder = 1
       Text = 'Query if Overwrite pre-existing files'
@@ -422,7 +413,6 @@ object ConfigFrm: TConfigFrm
       BorderSpacing.Left = 6
       BorderSpacing.Around = 6
       Caption = 'Hide main form on adding'
-      ParentShowHint = False
       TabOrder = 0
     end
     object HideMainFrmOption: TCheckBox
@@ -434,7 +424,6 @@ object ConfigFrm: TConfigFrm
       BorderSpacing.Left = 6
       BorderSpacing.Around = 6
       Caption = 'Hide main form on processing'
-      ParentShowHint = False
       TabOrder = 1
     end
     object UpBtnCloseOption: TCheckBox
@@ -446,7 +435,6 @@ object ConfigFrm: TConfigFrm
       BorderSpacing.Left = 6
       BorderSpacing.Around = 6
       Caption = 'Enable "Up" to close application'
-      ParentShowHint = False
       TabOrder = 2
     end
     object Buttons: TCheckGroup

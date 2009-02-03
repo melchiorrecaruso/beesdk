@@ -9,8 +9,6 @@ object ExtractFrm: TExtractFrm
   ClientWidth = 560
   Constraints.MinHeight = 424
   Constraints.MinWidth = 560
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
   LCLVersion = '0.9.27'
@@ -29,9 +27,9 @@ object ExtractFrm: TExtractFrm
     BorderSpacing.Right = 6
     BorderSpacing.Bottom = 2
     Caption = 'Extraction path:'
+    Color = clBtnFace
     Layout = tlBottom
-    ParentColor = False
-    ParentShowHint = False
+    Transparent = False
   end
   object oOptionLabel: TLabel
     AnchorSideLeft.Control = Owner
@@ -40,16 +38,16 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Folders
     Left = 6
     Height = 14
-    Top = 50
+    Top = 51
     Width = 82
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
     BorderSpacing.Right = 6
     BorderSpacing.Bottom = 2
     Caption = 'Overwrite mode:'
+    Color = clBtnFace
     Layout = tlBottom
-    ParentColor = False
-    ParentShowHint = False
+    Transparent = False
   end
   object Options: TGroupBox
     AnchorSideLeft.Control = Owner
@@ -57,27 +55,25 @@ object ExtractFrm: TExtractFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 6
-    Height = 102
-    Top = 93
-    Width = 254
+    Height = 99
+    Top = 94
+    Width = 248
     AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Options'
-    ClientHeight = 84
-    ClientWidth = 250
-    ParentShowHint = False
+    ClientHeight = 81
+    ClientWidth = 244
     TabOrder = 2
     object xCommand: TCheckBox
       AnchorSideLeft.Control = Options
       AnchorSideTop.Control = Options
       Left = 6
-      Height = 19
+      Height = 17
       Top = 6
-      Width = 238
+      Width = 232
       BorderSpacing.Around = 6
       Caption = 'Extract and Recreate the relative pathname'
       Checked = True
-      ParentShowHint = False
       State = cbChecked
       TabOrder = 0
     end
@@ -86,13 +82,12 @@ object ExtractFrm: TExtractFrm
       AnchorSideTop.Control = xCommand
       AnchorSideTop.Side = asrBottom
       Left = 6
-      Height = 19
-      Top = 31
-      Width = 231
+      Height = 17
+      Top = 29
+      Width = 225
       BorderSpacing.Around = 6
       Caption = 'Use Current Archive Directory (-cd Option)'
       OnChange = cdOptionCheckChange
-      ParentShowHint = False
       TabOrder = 1
     end
     object cdOption: TEdit
@@ -103,9 +98,9 @@ object ExtractFrm: TExtractFrm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 26
-      Height = 22
-      Top = 56
-      Width = 211
+      Height = 23
+      Top = 52
+      Width = 205
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Left = 20
@@ -134,7 +129,6 @@ object ExtractFrm: TExtractFrm
     Kind = bkOK
     ModalResult = 1
     NumGlyphs = 0
-    ParentShowHint = False
     TabOrder = 5
   end
   object BtnCancel: TBitBtn
@@ -156,7 +150,6 @@ object ExtractFrm: TExtractFrm
     Kind = bkCancel
     ModalResult = 2
     NumGlyphs = 0
-    ParentShowHint = False
     TabOrder = 4
   end
   object Folder: TEdit
@@ -166,7 +159,7 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 22
+    Height = 23
     Top = 22
     Width = 548
     Anchors = [akTop, akLeft, akRight]
@@ -184,9 +177,10 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Side = asrBottom
     Left = 6
     Height = 21
-    Top = 66
-    Width = 254
+    Top = 67
+    Width = 248
     Anchors = [akTop, akLeft, akRight]
+    AutoComplete = False
     BorderSpacing.Left = 6
     BorderSpacing.Bottom = 6
     ItemHeight = 13
@@ -196,7 +190,7 @@ object ExtractFrm: TExtractFrm
       'Overwrite pre-existing files'
       'Query if Overwrite pre-existing files'
     )
-    ParentShowHint = False
+    ItemWidth = 0
     Style = csDropDownList
     TabOrder = 1
     Text = 'Query if Overwrite pre-existing files'
@@ -209,10 +203,10 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
-    Left = 266
-    Height = 336
-    Top = 50
-    Width = 288
+    Left = 260
+    Height = 335
+    Top = 51
+    Width = 294
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
@@ -236,6 +230,7 @@ object ExtractFrm: TExtractFrm
     top = 216
   end
   object Icons: TIconList
+    Masked = False
     left = 40
     top = 216
   end

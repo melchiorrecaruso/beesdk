@@ -197,6 +197,9 @@ type
     // property Items;
     property LargeImages;
     // property MultiSelect;
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
     property PopupMenu;
     // property ReadOnly;
     property RowSelect;

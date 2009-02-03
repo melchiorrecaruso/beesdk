@@ -8,9 +8,6 @@ object ViewFrm: TViewFrm
   ClientWidth = 411
   Constraints.MinHeight = 90
   Constraints.MinWidth = 248
-  Font.CharSet = ANSI_CHARSET
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -83,7 +80,9 @@ object ViewFrm: TViewFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnFont
+    Left = 0
     Height = 290
+    Top = 0
     Width = 411
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 6
@@ -113,6 +112,8 @@ object ViewFrm: TViewFrm
   object FontDialog: TFontDialog
     Font.Height = -11
     Font.Name = 'Default'
+    MinFontSize = 0
+    MaxFontSize = 0
     left = 8
     top = 24
   end
