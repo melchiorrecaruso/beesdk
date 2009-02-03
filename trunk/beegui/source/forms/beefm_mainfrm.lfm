@@ -360,7 +360,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuFileOpenClick
-      ParentShowHint = False
     end
     object BtnNew: TSpeedButton
       AnchorSideLeft.Side = asrBottom
@@ -578,7 +577,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuFileNewClick
-      ParentShowHint = False
     end
     object BevelFirst: TBevel
       AnchorSideLeft.Side = asrBottom
@@ -810,7 +808,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuActionsAddClick
-      ParentShowHint = False
     end
     object BtnExtract: TSpeedButton
       AnchorSideLeft.Side = asrBottom
@@ -1028,7 +1025,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuActionsExtractClick
-      ParentShowHint = False
     end
     object BtnView: TSpeedButton
       AnchorSideLeft.Side = asrBottom
@@ -1246,7 +1242,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuActionsViewClick
-      ParentShowHint = False
     end
     object BtnDelete: TSpeedButton
       AnchorSideLeft.Side = asrBottom
@@ -1464,7 +1459,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuActionsDeleteClick
-      ParentShowHint = False
     end
     object BevelSecond: TBevel
       AnchorSideLeft.Side = asrBottom
@@ -1696,7 +1690,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuActionsTestClick
-      ParentShowHint = False
     end
     object BtnCheckOut: TSpeedButton
       AnchorSideLeft.Side = asrBottom
@@ -1914,7 +1907,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuActionsCheckOutClick
-      ParentShowHint = False
     end
     object BevelThird: TBevel
       AnchorSideLeft.Side = asrBottom
@@ -2146,7 +2138,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuOptionsConfigurationClick
-      ParentShowHint = False
     end
     object BtnHelp: TSpeedButton
       AnchorSideLeft.Side = asrBottom
@@ -2364,7 +2355,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuHelpF1Click
-      ParentShowHint = False
     end
     object BtnExit: TSpeedButton
       AnchorSideLeft.Side = asrBottom
@@ -2582,7 +2572,6 @@ object MainFrm: TMainFrm
       NumGlyphs = 2
       Spacing = 1
       OnClick = MMenuFileExitClick
-      ParentShowHint = False
     end
   end
   object AddressToolBar: TToolBar
@@ -2673,8 +2662,9 @@ object MainFrm: TMainFrm
       BorderSpacing.Left = 10
       BorderSpacing.Right = 5
       Caption = 'Location:'
+      Color = clBtnFace
       Layout = tlCenter
-      ParentColor = False
+      Transparent = False
     end
     object FolderBox: TArchiveFolderBox
       AnchorSideLeft.Control = FolderBoxLabel

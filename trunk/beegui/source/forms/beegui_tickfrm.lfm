@@ -133,10 +133,11 @@ object TickFrm: TTickFrm
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 2
         Caption = '...'
+        Color = clBtnFace
         Constraints.MaxHeight = 18
         Constraints.MinHeight = 18
         Layout = tlBottom
-        ParentColor = False
+        Transparent = False
       end
       object Tick: TProgressBar
         AnchorSideLeft.Control = GeneralPage
@@ -181,8 +182,9 @@ object TickFrm: TTickFrm
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
           Caption = 'Time elapsed:'
+          Color = clBtnFace
           Layout = tlBottom
-          ParentColor = False
+          Transparent = False
         end
         object RemainingTimeLabel: TLabel
           AnchorSideLeft.Control = TimeLabelPanel
@@ -197,8 +199,9 @@ object TickFrm: TTickFrm
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
           Caption = 'Remaining time:'
+          Color = clBtnFace
           Layout = tlBottom
-          ParentColor = False
+          Transparent = False
         end
       end
       object SizePanel: TPanel
@@ -231,8 +234,9 @@ object TickFrm: TTickFrm
           BorderSpacing.Top = 6
           BorderSpacing.Bottom = 2
           Caption = '---'
+          Color = clBtnFace
           Constraints.MinWidth = 50
-          ParentColor = False
+          Transparent = False
         end
         object ProcessedSize: TLabel
           AnchorSideTop.Control = GeneralSize
@@ -249,8 +253,9 @@ object TickFrm: TTickFrm
           BorderSpacing.Top = 2
           BorderSpacing.Bottom = 2
           Caption = '---'
+          Color = clBtnFace
           Constraints.MinWidth = 50
-          ParentColor = False
+          Transparent = False
         end
         object Speed: TLabel
           AnchorSideTop.Control = ProcessedSize
@@ -267,8 +272,9 @@ object TickFrm: TTickFrm
           BorderSpacing.Top = 2
           BorderSpacing.Bottom = 2
           Caption = '---'
+          Color = clBtnFace
           Constraints.MinWidth = 50
-          ParentColor = False
+          Transparent = False
         end
       end
       object UnitPanel: TPanel
@@ -304,7 +310,8 @@ object TickFrm: TTickFrm
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
           Caption = 'KB/s'
-          ParentColor = False
+          Color = clBtnFace
+          Transparent = False
         end
         object ProcessedSizeUnit: TLabel
           AnchorSideLeft.Control = UnitPanel
@@ -321,7 +328,8 @@ object TickFrm: TTickFrm
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
           Caption = 'KB'
-          ParentColor = False
+          Color = clBtnFace
+          Transparent = False
         end
         object GeneralSizeUnit: TLabel
           AnchorSideLeft.Control = UnitPanel
@@ -337,7 +345,8 @@ object TickFrm: TTickFrm
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
           Caption = 'KB'
-          ParentColor = False
+          Color = clBtnFace
+          Transparent = False
         end
       end
       object TimePanel: TPanel
@@ -372,8 +381,9 @@ object TickFrm: TTickFrm
           BorderSpacing.Right = 10
           BorderSpacing.Bottom = 2
           Caption = '00:00:00'
+          Color = clBtnFace
           Layout = tlBottom
-          ParentColor = False
+          Transparent = False
         end
         object Time: TLabel
           AnchorSideTop.Control = TimePanel
@@ -389,8 +399,9 @@ object TickFrm: TTickFrm
           BorderSpacing.Top = 6
           BorderSpacing.Right = 10
           Caption = '00:00:00'
+          Color = clBtnFace
           Layout = tlBottom
-          ParentColor = False
+          Transparent = False
         end
       end
       object SizeLabelPanel: TPanel
@@ -421,8 +432,9 @@ object TickFrm: TTickFrm
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
           Caption = 'Total size:'
+          Color = clBtnFace
           Layout = tlBottom
-          ParentColor = False
+          Transparent = False
         end
         object ProcessedSizeLabel: TLabel
           AnchorSideLeft.Control = SizeLabelPanel
@@ -437,8 +449,9 @@ object TickFrm: TTickFrm
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
           Caption = 'Processed size:'
+          Color = clBtnFace
           Layout = tlBottom
-          ParentColor = False
+          Transparent = False
         end
         object SpeedLabel: TLabel
           AnchorSideLeft.Control = SizeLabelPanel
@@ -453,19 +466,20 @@ object TickFrm: TTickFrm
           BorderSpacing.Right = 6
           BorderSpacing.Bottom = 2
           Caption = 'Speed:'
-          ParentColor = False
+          Color = clBtnFace
+          Transparent = False
         end
       end
     end
     object ReportPage: TPage
       Caption = 'Report'
-      ClientWidth = 414
-      ClientHeight = 138
+      ClientWidth = 410
+      ClientHeight = 140
       object Report: TMemo
         Left = 6
-        Height = 126
+        Height = 128
         Top = 6
-        Width = 402
+        Width = 398
         Align = alClient
         BorderSpacing.Around = 6
         ReadOnly = True
@@ -525,6 +539,8 @@ object TickFrm: TTickFrm
     left = 296
   end
   object FontDialog: TFontDialog
+    MinFontSize = 0
+    MaxFontSize = 0
     left = 328
   end
   object Popup: TPopupMenu

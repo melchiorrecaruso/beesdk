@@ -10,8 +10,6 @@ object OverwriteFrm: TOverwriteFrm
   Caption = 'Confirm File Overwirte'
   ClientHeight = 202
   ClientWidth = 478
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
   LCLVersion = '0.9.27'
@@ -167,9 +165,9 @@ object OverwriteFrm: TOverwriteFrm
     BorderSpacing.Top = 10
     BorderSpacing.Right = 6
     Caption = 'The folder already contains %s'
+    Color = clBtnFace
     Constraints.MinWidth = 410
-    ParentColor = False
-    ParentShowHint = False
+    Transparent = False
   end
   object WouldYou: TLabel
     AnchorSideLeft.Control = Image
@@ -182,8 +180,8 @@ object OverwriteFrm: TOverwriteFrm
     Width = 197
     BorderSpacing.Around = 5
     Caption = 'Would you like to replace the existing file'
-    ParentColor = False
-    ParentShowHint = False
+    Color = clBtnFace
+    Transparent = False
   end
   object WithFile: TLabel
     AnchorSideLeft.Control = Image
@@ -196,8 +194,8 @@ object OverwriteFrm: TOverwriteFrm
     Width = 67
     BorderSpacing.Around = 10
     Caption = 'with this one?'
-    ParentColor = False
-    ParentShowHint = False
+    Color = clBtnFace
+    Transparent = False
   end
   object OldSize: TLabel
     AnchorSideLeft.Control = OldIcon
@@ -209,8 +207,8 @@ object OverwriteFrm: TOverwriteFrm
     Width = 42
     BorderSpacing.Left = 6
     Caption = 'size: %s'
-    ParentColor = False
-    ParentShowHint = False
+    Color = clBtnFace
+    Transparent = False
   end
   object NewSize: TLabel
     AnchorSideLeft.Control = NewIcon
@@ -222,8 +220,8 @@ object OverwriteFrm: TOverwriteFrm
     Width = 42
     BorderSpacing.Left = 6
     Caption = 'size: %s'
-    ParentColor = False
-    ParentShowHint = False
+    Color = clBtnFace
+    Transparent = False
   end
   object OldTime: TLabel
     AnchorSideLeft.Control = OldIcon
@@ -237,8 +235,8 @@ object OverwriteFrm: TOverwriteFrm
     BorderSpacing.Left = 6
     BorderSpacing.Top = 3
     Caption = 'modified: %s'
-    ParentColor = False
-    ParentShowHint = False
+    Color = clBtnFace
+    Transparent = False
   end
   object NewTime: TLabel
     AnchorSideLeft.Control = NewIcon
@@ -252,8 +250,8 @@ object OverwriteFrm: TOverwriteFrm
     BorderSpacing.Left = 6
     BorderSpacing.Top = 3
     Caption = 'modified: %s'
-    ParentColor = False
-    ParentShowHint = False
+    Color = clBtnFace
+    Transparent = False
   end
   object Bevel: TBevel
     AnchorSideLeft.Control = BtnAbort
@@ -291,7 +289,6 @@ object OverwriteFrm: TOverwriteFrm
     Kind = bkYes
     ModalResult = 6
     NumGlyphs = 0
-    ParentShowHint = False
     TabOrder = 0
   end
   object BtnNo: TBitBtn
@@ -315,7 +312,6 @@ object OverwriteFrm: TOverwriteFrm
     Kind = bkNo
     ModalResult = 7
     NumGlyphs = 0
-    ParentShowHint = False
     TabOrder = 1
   end
   object BtnNoAll: TBitBtn
@@ -337,7 +333,6 @@ object OverwriteFrm: TOverwriteFrm
     Kind = bkNoToAll
     ModalResult = 9
     NumGlyphs = 0
-    ParentShowHint = False
     TabOrder = 3
   end
   object BtnYesAll: TBitBtn
@@ -361,7 +356,6 @@ object OverwriteFrm: TOverwriteFrm
     Kind = bkYesToAll
     ModalResult = 10
     NumGlyphs = 0
-    ParentShowHint = False
     TabOrder = 2
   end
   object BtnAbort: TBitBtn
@@ -379,11 +373,11 @@ object OverwriteFrm: TOverwriteFrm
     Kind = bkAbort
     ModalResult = 3
     NumGlyphs = 0
-    ParentShowHint = False
     TabOrder = 4
   end
   object Images: TIconList
     Height = 32
+    Masked = False
     Width = 32
     left = 16
     top = 48

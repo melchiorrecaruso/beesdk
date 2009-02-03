@@ -9,8 +9,6 @@ object AddFrm: TAddFrm
   ClientWidth = 400
   Constraints.MinHeight = 316
   Constraints.MinWidth = 400
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
   OnDropFiles = FormDropFiles
@@ -25,12 +23,11 @@ object AddFrm: TAddFrm
     Height = 272
     Top = 6
     Width = 388
-    ActivePage = PageGeneral
+    ActivePage = PageAdvanced
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
-    ParentShowHint = False
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -38,7 +35,6 @@ object AddFrm: TAddFrm
       Caption = 'General'
       ClientHeight = 246
       ClientWidth = 380
-      ParentShowHint = False
       object ArchiveNameLabel: TLabel
         AnchorSideLeft.Control = PageGeneral
         AnchorSideTop.Control = PageGeneral
@@ -50,8 +46,9 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Archive name:'
+        Color = clBtnFace
         Layout = tlCenter
-        ParentColor = False
+        Transparent = False
       end
       object ufOptionLabel: TLabel
         AnchorSideLeft.Control = PageGeneral
@@ -65,8 +62,9 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Update mode:'
+        Color = clBtnFace
         Layout = tlCenter
-        ParentColor = False
+        Transparent = False
       end
       object mOptionLabel: TLabel
         AnchorSideLeft.Control = PageGeneral
@@ -80,8 +78,9 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Compression method:'
+        Color = clBtnFace
         Layout = tlCenter
-        ParentColor = False
+        Transparent = False
       end
       object dOptionLabel: TLabel
         AnchorSideLeft.Control = PageGeneral
@@ -95,8 +94,9 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Dictionary size:'
+        Color = clBtnFace
         Layout = tlCenter
-        ParentColor = False
+        Transparent = False
       end
       object eOptionLabel: TLabel
         AnchorSideLeft.Control = PageGeneral
@@ -111,8 +111,9 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Force file extention (-e Option)'
+        Color = clBtnFace
         Layout = tlCenter
-        ParentColor = False
+        Transparent = False
       end
       object Options: TGroupBox
         AnchorSideTop.Control = ArchiveNameComboBox
@@ -133,8 +134,6 @@ object AddFrm: TAddFrm
         ClientHeight = 105
         ClientWidth = 166
         Constraints.MinWidth = 170
-        ParentBidiMode = False
-        ParentShowHint = False
         TabOrder = 6
         object rOption: TCheckBox
           AnchorSideLeft.Control = Options
@@ -146,7 +145,6 @@ object AddFrm: TAddFrm
           BorderSpacing.Around = 6
           Caption = 'Recurse subdirectories'
           Checked = True
-          ParentShowHint = False
           State = cbChecked
           TabOrder = 0
         end
@@ -160,7 +158,6 @@ object AddFrm: TAddFrm
           Width = 124
           BorderSpacing.Around = 6
           Caption = 'Create a solid archive'
-          ParentShowHint = False
           TabOrder = 1
         end
         object tOption: TCheckBox
@@ -173,7 +170,6 @@ object AddFrm: TAddFrm
           Width = 125
           BorderSpacing.Around = 6
           Caption = 'Test files after adding'
-          ParentShowHint = False
           TabOrder = 2
         end
         object kOption: TCheckBox
@@ -186,7 +182,6 @@ object AddFrm: TAddFrm
           Width = 141
           BorderSpacing.Around = 6
           Caption = 'Crypt files with password'
-          ParentShowHint = False
           TabOrder = 3
         end
       end
@@ -205,7 +200,6 @@ object AddFrm: TAddFrm
         BorderSpacing.Right = 6
         ItemHeight = 13
         ItemWidth = 0
-        ParentShowHint = False
         TabOrder = 0
       end
       object BtnSave: TBitBtn
@@ -248,7 +242,6 @@ object AddFrm: TAddFrm
           'Update and freshen files'
         )
         ItemWidth = 0
-        ParentShowHint = False
         Style = csDropDownList
         TabOrder = 2
         Text = 'Update and freshen files'
@@ -275,7 +268,6 @@ object AddFrm: TAddFrm
           '3 - Maximal'
         )
         ItemWidth = 0
-        ParentShowHint = False
         Style = csDropDownList
         TabOrder = 3
         Text = '1 - Low'
@@ -308,7 +300,6 @@ object AddFrm: TAddFrm
           'Level  9   (1280 MB)'
         )
         ItemWidth = 0
-        ParentShowHint = False
         Style = csDropDownList
         TabOrder = 4
         Text = 'Level  2   (10 MB)'
@@ -336,7 +327,6 @@ object AddFrm: TAddFrm
       ClientHeight = 246
       ClientWidth = 380
       ImageIndex = 2
-      ParentShowHint = False
       object FilesLabel: TLabel
         AnchorSideLeft.Control = PageFiles
         AnchorSideTop.Control = PageFiles
@@ -348,9 +338,9 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Files and/or Directories to Add and/or to Exclude'
+        Color = clBtnFace
         Layout = tlCenter
-        ParentColor = False
-        ParentShowHint = False
+        Transparent = False
       end
       object RootLabel: TLabel
         AnchorSideLeft.Control = PageFiles
@@ -363,9 +353,9 @@ object AddFrm: TAddFrm
         BorderSpacing.Left = 6
         BorderSpacing.Bottom = 2
         Caption = 'Current root directory'
+        Color = clBtnFace
         Layout = tlCenter
-        ParentColor = False
-        ParentShowHint = False
+        Transparent = False
       end
       object Root: TEdit
         AnchorSideLeft.Control = PageFiles
@@ -382,7 +372,6 @@ object AddFrm: TAddFrm
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
         Color = clInactiveBorder
-        ParentShowHint = False
         ReadOnly = True
         TabStop = False
         TabOrder = 1
@@ -564,8 +553,9 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Use selected parameters .ini file (-cfg Option)'
+        Color = clBtnFace
         Layout = tlCenter
-        ParentColor = False
+        Transparent = False
       end
       object yOptionLabel: TLabel
         AnchorSideLeft.Control = PageAdvanced
@@ -579,8 +569,9 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Set work directory'
+        Color = clBtnFace
         Layout = tlCenter
-        ParentColor = False
+        Transparent = False
       end
       object aOptionCheck: TCheckBox
         AnchorSideLeft.Control = PageAdvanced
@@ -593,10 +584,7 @@ object AddFrm: TAddFrm
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
         Caption = 'Add self-extractor module (-a Option)'
-        Color = clInactiveBorder
         OnChange = aOptionCheckChange
-        ParentColor = False
-        ParentShowHint = False
         TabOrder = 0
       end
       object aOption: TComboBox
@@ -623,7 +611,6 @@ object AddFrm: TAddFrm
           'Clear Self Extractor Module'
         )
         ItemWidth = 0
-        ParentShowHint = False
         Style = csDropDownList
         TabOrder = 1
         Text = 'GUI Self Extractor Module'
@@ -643,7 +630,6 @@ object AddFrm: TAddFrm
         BorderSpacing.Right = 6
         ItemHeight = 13
         ItemWidth = 0
-        ParentShowHint = False
         TabOrder = 3
       end
       object yOptionBtn: TBitBtn
@@ -699,7 +685,6 @@ object AddFrm: TAddFrm
         BorderSpacing.Right = 6
         ItemHeight = 13
         ItemWidth = 0
-        ParentShowHint = False
         TabOrder = 5
       end
       object cfgOptionBtn: TBitBtn
@@ -735,7 +720,6 @@ object AddFrm: TAddFrm
         BorderSpacing.Bottom = 2
         Caption = 'Use Current Archive Directory (-cd Option)'
         OnChange = cdOptionCheckChange
-        ParentShowHint = False
         TabOrder = 7
       end
     end
@@ -783,7 +767,7 @@ object AddFrm: TAddFrm
   end
   object PopupMenu: TPopupMenu
     left = 8
-    top = 336
+    top = 280
     object PopupMenu_AddFolder: TMenuItem
       Caption = 'Add folder ...'
       ShortCut = 16452
@@ -828,7 +812,7 @@ object AddFrm: TAddFrm
   object FilesImages: TImageList
     Masked = False
     left = 40
-    top = 336
+    top = 280
     Bitmap = {
       4C69020000001000000010000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -902,24 +886,24 @@ object AddFrm: TAddFrm
     FilterIndex = 0
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     left = 104
-    top = 336
+    top = 280
   end
   object SaveDialog: TSaveDialog
     Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
     left = 72
-    top = 336
+    top = 280
   end
   object SelectFilesDialog: TOpenDialog
     Filter = 'All files (*.*)|*'
     Options = [ofAllowMultiSelect, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
     left = 136
-    top = 336
+    top = 280
   end
   object FilesMgr: TAddTreeViewMgr
     Tree = Files
     Root = Root
     left = 168
-    top = 336
+    top = 280
   end
 end

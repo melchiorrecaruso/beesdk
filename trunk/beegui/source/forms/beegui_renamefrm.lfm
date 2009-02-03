@@ -1,6 +1,6 @@
 object RenameFrm: TRenameFrm
   Left = 479
-  Height = 94
+  Height = 95
   Top = 190
   Width = 303
   ActiveControl = BtnOk
@@ -8,10 +8,8 @@ object RenameFrm: TRenameFrm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Rename'
-  ClientHeight = 94
+  ClientHeight = 95
   ClientWidth = 303
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
@@ -26,9 +24,9 @@ object RenameFrm: TRenameFrm
     Alignment = taRightJustify
     BorderSpacing.Around = 6
     Caption = 'From:'
+    Color = clBtnFace
     Layout = tlBottom
-    ParentColor = False
-    ParentShowHint = False
+    Transparent = False
   end
   object ToFNLabel: TLabel
     AnchorSideTop.Control = ToFN
@@ -42,9 +40,9 @@ object RenameFrm: TRenameFrm
     Anchors = [akTop, akRight]
     BorderSpacing.Right = 6
     Caption = 'To:'
+    Color = clBtnFace
     Layout = tlCenter
-    ParentColor = False
-    ParentShowHint = False
+    Transparent = False
   end
   object FromFN: TLabel
     AnchorSideLeft.Control = FromFNLabel
@@ -57,10 +55,10 @@ object RenameFrm: TRenameFrm
     BorderSpacing.Left = 3
     BorderSpacing.Around = 6
     Caption = '...'
+    Color = clBtnFace
     Constraints.MinWidth = 237
     Layout = tlBottom
-    ParentColor = False
-    ParentShowHint = False
+    Transparent = False
   end
   object ToFN: TEdit
     AnchorSideLeft.Control = FromFNLabel
@@ -70,14 +68,13 @@ object RenameFrm: TRenameFrm
     AnchorSideRight.Control = Spacer
     AnchorSideRight.Side = asrBottom
     Left = 41
-    Height = 22
+    Height = 23
     Top = 26
     Width = 256
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
-    ParentShowHint = False
     TabOrder = 0
   end
   object BtnOk: TBitBtn
@@ -87,7 +84,7 @@ object RenameFrm: TRenameFrm
     AnchorSideBottom.Side = asrBottom
     Left = 141
     Height = 26
-    Top = 58
+    Top = 59
     Width = 70
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -100,7 +97,6 @@ object RenameFrm: TRenameFrm
     Kind = bkOK
     ModalResult = 1
     NumGlyphs = 0
-    ParentShowHint = False
     TabOrder = 2
   end
   object BtnCancel: TBitBtn
@@ -111,7 +107,7 @@ object RenameFrm: TRenameFrm
     AnchorSideBottom.Side = asrBottom
     Left = 217
     Height = 26
-    Top = 58
+    Top = 59
     Width = 80
     Anchors = [akTop, akRight]
     AutoSize = True
@@ -124,7 +120,6 @@ object RenameFrm: TRenameFrm
     Kind = bkCancel
     ModalResult = 2
     NumGlyphs = 0
-    ParentShowHint = False
     TabOrder = 1
   end
   object Spacer: TPanel
