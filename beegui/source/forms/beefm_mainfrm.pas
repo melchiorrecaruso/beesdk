@@ -342,9 +342,14 @@ uses
   begin
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
-    // --- //
+    {$IFDEF UNIX}
+    AddressToolBar.ButtonHeight := 32;
+    FolderBox.Style  := csDropDown;
+    {$ENDIF}
+    {$IFDEF MSWINDOWS}
     AddressToolBar.ButtonHeight := FolderBox.Height + 4;
-    // --- //
+    FolderBox.Style := csOwnerDrawFixed;
+    {$ENDIF}
     UpdateButtons(False);
     // --- //
     LoadLanguage;
