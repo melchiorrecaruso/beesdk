@@ -1,13 +1,13 @@
 object ExtractFrm: TExtractFrm
   Left = 332
-  Height = 424
+  Height = 413
   Top = 271
   Width = 560
   ActiveControl = BtnOk
   Caption = 'Extraction Path and Options'
-  ClientHeight = 424
+  ClientHeight = 413
   ClientWidth = 560
-  Constraints.MinHeight = 424
+  Constraints.MinHeight = 413
   Constraints.MinWidth = 560
   OnClose = FormClose
   OnCreate = FormCreate
@@ -29,6 +29,7 @@ object ExtractFrm: TExtractFrm
     Caption = 'Extraction path:'
     Color = clBtnFace
     Layout = tlBottom
+    ParentColor = False
     Transparent = False
   end
   object oOptionLabel: TLabel
@@ -47,6 +48,7 @@ object ExtractFrm: TExtractFrm
     Caption = 'Overwrite mode:'
     Color = clBtnFace
     Layout = tlBottom
+    ParentColor = False
     Transparent = False
   end
   object Options: TGroupBox
@@ -57,12 +59,12 @@ object ExtractFrm: TExtractFrm
     Left = 6
     Height = 99
     Top = 94
-    Width = 248
+    Width = 242
     AutoSize = True
     BorderSpacing.Around = 6
     Caption = 'Options'
     ClientHeight = 81
-    ClientWidth = 244
+    ClientWidth = 238
     TabOrder = 2
     object xCommand: TCheckBox
       AnchorSideLeft.Control = Options
@@ -70,7 +72,7 @@ object ExtractFrm: TExtractFrm
       Left = 6
       Height = 17
       Top = 6
-      Width = 232
+      Width = 226
       BorderSpacing.Around = 6
       Caption = 'Extract and Recreate the relative pathname'
       Checked = True
@@ -84,7 +86,7 @@ object ExtractFrm: TExtractFrm
       Left = 6
       Height = 17
       Top = 29
-      Width = 225
+      Width = 218
       BorderSpacing.Around = 6
       Caption = 'Use Current Archive Directory (-cd Option)'
       OnChange = cdOptionCheckChange
@@ -100,7 +102,7 @@ object ExtractFrm: TExtractFrm
       Left = 26
       Height = 23
       Top = 52
-      Width = 205
+      Width = 198
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Left = 20
@@ -118,7 +120,7 @@ object ExtractFrm: TExtractFrm
     AnchorSideBottom.Side = asrBottom
     Left = 398
     Height = 26
-    Top = 392
+    Top = 381
     Width = 70
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -139,7 +141,7 @@ object ExtractFrm: TExtractFrm
     AnchorSideBottom.Side = asrBottom
     Left = 474
     Height = 26
-    Top = 392
+    Top = 381
     Width = 80
     Anchors = [akRight, akBottom]
     AutoSize = True
@@ -178,7 +180,7 @@ object ExtractFrm: TExtractFrm
     Left = 6
     Height = 21
     Top = 67
-    Width = 248
+    Width = 242
     Anchors = [akTop, akLeft, akRight]
     AutoComplete = False
     BorderSpacing.Left = 6
@@ -203,10 +205,10 @@ object ExtractFrm: TExtractFrm
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
-    Left = 260
-    Height = 335
+    Left = 254
+    Height = 324
     Top = 51
-    Width = 294
+    Width = 300
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
@@ -214,8 +216,8 @@ object ExtractFrm: TExtractFrm
     BorderSpacing.Bottom = 6
     DefaultItemHeight = 16
     Images = Icons
+    Indent = 16
     ReadOnly = True
-    ScrollBars = ssAutoBoth
     TabOrder = 3
     OnClick = FoldersClick
     OnDblClick = FoldersDblClick
