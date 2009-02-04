@@ -344,7 +344,6 @@ uses
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
     // --- //
     AddressToolBar.ButtonHeight := FolderBox.Height + 4;
-    ToolBar.ButtonHeight := BtnNew.Height + 4;
     // --- //
     UpdateButtons(False);
     // --- //

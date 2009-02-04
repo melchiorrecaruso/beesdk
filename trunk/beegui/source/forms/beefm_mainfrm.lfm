@@ -20,8 +20,8 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     Left = 0
-    Height = 377
-    Top = 128
+    Height = 411
+    Top = 94
     Width = 907
     AutoLoad = True
     OnChangeFolder = ListViewChangeFolder
@@ -98,6 +98,7 @@ object MainFrm: TMainFrm
         Width = 80
       end>
     LargeImages = LargeImages
+    ParentColor = False
     PopupMenu = PMenu
     ScrollBars = ssAutoVertical
     SmallImages = SmallImages
@@ -135,11 +136,12 @@ object MainFrm: TMainFrm
   end
   object ToolBar: TToolBar
     Left = 0
-    Height = 84
+    Height = 64
     Top = 0
     Width = 907
     AutoSize = True
-    ButtonHeight = 80
+    ButtonHeight = 60
+    ButtonWidth = 0
     Caption = 'ToolBar'
     EdgeBorders = [ebTop, ebBottom]
     Flat = False
@@ -2576,25 +2578,30 @@ object MainFrm: TMainFrm
   end
   object AddressToolBar: TToolBar
     Left = 0
-    Height = 42
-    Top = 84
+    Height = 28
+    Top = 64
     Width = 907
     AutoSize = True
-    ButtonHeight = 40
+    ButtonHeight = 26
     ButtonWidth = 0
     Caption = 'AddressToolBar'
     EdgeBorders = [ebBottom]
     Flat = False
+    Indent = 0
     TabOrder = 2
     object BtnUp: TSpeedButton
+      AnchorSideLeft.Control = AddressToolBar
+      AnchorSideTop.Control = FolderBox
+      AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 3
-      Height = 36
+      Height = 22
       Top = 2
       Width = 122
-      Align = alLeft
-      Anchors = []
-      BorderSpacing.Around = 2
+      Align = alCustom
+      Anchors = [akTop, akLeft, akBottom]
+      BorderSpacing.Left = 3
+      BorderSpacing.Right = 2
       Constraints.MaxWidth = 122
       Constraints.MinWidth = 122
       Caption = 'Livello superiore'
@@ -2636,47 +2643,60 @@ object MainFrm: TMainFrm
       OnClick = MMenuViewUpClick
     end
     object BevelFour: TBevel
+      AnchorSideLeft.Control = BtnUp
       AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = FolderBox
+      AnchorSideRight.Control = FolderBoxLabel
+      AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 127
-      Height = 36
+      Height = 22
       Top = 2
       Width = 2
-      Align = alLeft
-      Anchors = []
-      BorderSpacing.Around = 2
+      Align = alCustom
+      Anchors = [akTop, akLeft, akBottom]
+      BorderSpacing.Left = 2
+      BorderSpacing.Right = 2
       Constraints.MaxWidth = 2
       Constraints.MinWidth = 2
     end
     object FolderBoxLabel: TLabel
+      AnchorSideLeft.Control = BevelFour
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = FolderBox
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 139
-      Height = 40
-      Top = 0
+      Height = 22
+      Top = 2
       Width = 45
-      Align = alLeft
-      Anchors = [akTop]
+      Align = alCustom
+      Anchors = [akTop, akLeft, akBottom]
       BorderSpacing.Left = 10
       BorderSpacing.Right = 5
       Caption = 'Location:'
       Color = clBtnFace
       Layout = tlCenter
+      ParentColor = False
       Transparent = False
     end
     object FolderBox: TArchiveFolderBox
       AnchorSideLeft.Control = FolderBoxLabel
       AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = AddressToolBar
+      AnchorSideRight.Control = AddressToolBar
+      AnchorSideRight.Side = asrBottom
       Left = 189
       Height = 22
       Top = 2
       Width = 716
-      Align = alRight
-      Anchors = [akLeft]
+      Align = alCustom
+      Anchors = [akTop, akLeft, akRight]
       AutoComplete = False
-      BorderSpacing.Around = 2
+      BorderSpacing.Left = 5
+      BorderSpacing.Top = 2
+      BorderSpacing.Right = 2
+      BorderSpacing.Bottom = 2
       Color = clInactiveBorder
       DropDownCount = 10
       Enabled = False
