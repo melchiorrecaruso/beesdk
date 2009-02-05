@@ -23,11 +23,11 @@ object AddFrm: TAddFrm
     Height = 272
     Top = 6
     Width = 388
-    ActivePage = PageAdvanced
+    ActivePage = PageFiles
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
-    TabIndex = 2
+    TabIndex = 1
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -48,6 +48,7 @@ object AddFrm: TAddFrm
         Caption = 'Archive name:'
         Color = clBtnFace
         Layout = tlCenter
+        ParentColor = False
         Transparent = False
       end
       object ufOptionLabel: TLabel
@@ -64,6 +65,7 @@ object AddFrm: TAddFrm
         Caption = 'Update mode:'
         Color = clBtnFace
         Layout = tlCenter
+        ParentColor = False
         Transparent = False
       end
       object mOptionLabel: TLabel
@@ -80,6 +82,7 @@ object AddFrm: TAddFrm
         Caption = 'Compression method:'
         Color = clBtnFace
         Layout = tlCenter
+        ParentColor = False
         Transparent = False
       end
       object dOptionLabel: TLabel
@@ -96,6 +99,7 @@ object AddFrm: TAddFrm
         Caption = 'Dictionary size:'
         Color = clBtnFace
         Layout = tlCenter
+        ParentColor = False
         Transparent = False
       end
       object eOptionLabel: TLabel
@@ -113,6 +117,7 @@ object AddFrm: TAddFrm
         Caption = 'Force file extention (-e Option)'
         Color = clBtnFace
         Layout = tlCenter
+        ParentColor = False
         Transparent = False
       end
       object Options: TGroupBox
@@ -141,7 +146,7 @@ object AddFrm: TAddFrm
           Left = 6
           Height = 17
           Top = 6
-          Width = 129
+          Width = 128
           BorderSpacing.Around = 6
           Caption = 'Recurse subdirectories'
           Checked = True
@@ -155,7 +160,7 @@ object AddFrm: TAddFrm
           Left = 6
           Height = 17
           Top = 29
-          Width = 124
+          Width = 122
           BorderSpacing.Around = 6
           Caption = 'Create a solid archive'
           TabOrder = 1
@@ -167,7 +172,7 @@ object AddFrm: TAddFrm
           Left = 6
           Height = 17
           Top = 52
-          Width = 125
+          Width = 121
           BorderSpacing.Around = 6
           Caption = 'Test files after adding'
           TabOrder = 2
@@ -179,7 +184,7 @@ object AddFrm: TAddFrm
           Left = 6
           Height = 17
           Top = 75
-          Width = 141
+          Width = 135
           BorderSpacing.Around = 6
           Caption = 'Crypt files with password'
           TabOrder = 3
@@ -340,6 +345,7 @@ object AddFrm: TAddFrm
         Caption = 'Files and/or Directories to Add and/or to Exclude'
         Color = clBtnFace
         Layout = tlCenter
+        ParentColor = False
         Transparent = False
       end
       object RootLabel: TLabel
@@ -355,6 +361,7 @@ object AddFrm: TAddFrm
         Caption = 'Current root directory'
         Color = clBtnFace
         Layout = tlCenter
+        ParentColor = False
         Transparent = False
       end
       object Root: TEdit
@@ -555,6 +562,7 @@ object AddFrm: TAddFrm
         Caption = 'Use selected parameters .ini file (-cfg Option)'
         Color = clBtnFace
         Layout = tlCenter
+        ParentColor = False
         Transparent = False
       end
       object yOptionLabel: TLabel
@@ -571,6 +579,7 @@ object AddFrm: TAddFrm
         Caption = 'Set work directory'
         Color = clBtnFace
         Layout = tlCenter
+        ParentColor = False
         Transparent = False
       end
       object aOptionCheck: TCheckBox
@@ -579,7 +588,7 @@ object AddFrm: TAddFrm
         Left = 6
         Height = 17
         Top = 6
-        Width = 201
+        Width = 191
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
@@ -714,7 +723,7 @@ object AddFrm: TAddFrm
         Left = 6
         Height = 17
         Top = 52
-        Width = 225
+        Width = 218
         BorderSpacing.Left = 6
         BorderSpacing.Top = 6
         BorderSpacing.Bottom = 2
