@@ -2,10 +2,10 @@ object MainFrm: TMainFrm
   Left = 265
   Height = 544
   Top = 211
-  Width = 935
+  Width = 721
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 525
-  ClientWidth = 935
+  ClientWidth = 721
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -22,7 +22,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 405
     Top = 100
-    Width = 935
+    Width = 721
     AutoLoad = True
     OnChangeFolder = ListViewChangeFolder
     FolderBox = FolderBox
@@ -32,7 +32,7 @@ object MainFrm: TMainFrm
       item
         AutoSize = False
         Caption = 'Name'
-        Width = 80
+        Width = 126
       end    
       item
         Alignment = taRightJustify
@@ -117,7 +117,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 20
     Top = 505
-    Width = 935
+    Width = 721
     Anchors = [akRight]
     Panels = <    
       item
@@ -138,7 +138,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 64
     Top = 0
-    Width = 935
+    Width = 721
     AutoSize = True
     ButtonHeight = 60
     ButtonWidth = 0
@@ -2580,7 +2580,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 34
     Top = 64
-    Width = 935
+    Width = 721
     AutoSize = True
     ButtonHeight = 32
     ButtonWidth = 0
@@ -2689,7 +2689,7 @@ object MainFrm: TMainFrm
       Left = 189
       Height = 22
       Top = 2
-      Width = 744
+      Width = 530
       Align = alCustom
       Anchors = [akTop, akLeft, akRight]
       AutoComplete = False
