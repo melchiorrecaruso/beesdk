@@ -64,6 +64,10 @@
       for I := 0 to ListView.Columns.Count -1 do with ListView.Columns[I] do
         Storage.WriteString('TListView', 'ListView.Columns[' + IntToStr(I) + '].Caption', Caption);
 
+      // FolderBoxLabel
+
+      Storage.WriteString('TLabel', 'FolderBoxLabel.Caption', FolderBoxLabel.Caption);
+
       Storage.Free;
     end;
   end;

@@ -40,7 +40,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="18">
+    <Units Count="19">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -198,26 +198,35 @@
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="3" Y="33"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit15>
       <Unit16>
         <Filename Value="forms\forms.include\beefm_mainfrm_loadlanguage.inc"/>
-        <CursorPos X="5" Y="8"/>
-        <TopLine Value="1"/>
+        <CursorPos X="24" Y="67"/>
+        <TopLine Value="26"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit16>
       <Unit17>
         <Filename Value="forms\forms.include\beefm_mainfrm_savelanguage.inc"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
+        <CursorPos X="24" Y="67"/>
+        <TopLine Value="26"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="version.inc"/>
+        <CursorPos X="19" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit18>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>

@@ -62,7 +62,11 @@
 
       // Archive listview
       for I := 0 to ListView.Columns.Count -1 do with ListView.Columns[I] do
-        Caption := Storage.ReadString('TListView', 'ListView.Columns[' + IntToStr(I) + 'Caption', Caption);
+        Caption := Storage.ReadString('TListView', 'ListView.Columns[' + IntToStr(I) + '].Caption', Caption);
+
+      // FolderBoxLabel
+
+      FolderBoxLabel.Caption := Storage.ReadString('TLabel', 'FolderBoxLabel.Caption', FolderBoxLabel.Caption);
 
       Storage.Free;
     end;
