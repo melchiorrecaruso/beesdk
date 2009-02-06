@@ -436,6 +436,7 @@ object AboutFrm: TAboutFrm
     Caption = 'Web site: http://www.beegui.org'
     Color = clBtnFace
     Layout = tlCenter
+    ParentColor = False
     Transparent = False
   end
   object MoreInfo: TLabel
@@ -455,6 +456,7 @@ object AboutFrm: TAboutFrm
     Caption = 'The GUI for Bee Archiver Utility'
     Color = clBtnFace
     Layout = tlCenter
+    ParentColor = False
     Transparent = False
   end
   object Copyright: TLabel
@@ -475,6 +477,7 @@ object AboutFrm: TAboutFrm
     Caption = '(C) 2003-2008 Andrew Filinsky and  Melchiorre Caruso'
     Color = clBtnFace
     Layout = tlCenter
+    ParentColor = False
     Transparent = False
   end
   object Version: TLabel
@@ -492,6 +495,7 @@ object AboutFrm: TAboutFrm
     BorderSpacing.Bottom = 2
     Caption = 'BeeGui 0.0.0 [build 000]'
     Color = clBtnFace
+    ParentColor = False
     Transparent = False
   end
   object Bevel: TBevel

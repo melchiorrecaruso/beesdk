@@ -230,8 +230,8 @@ uses
 
   procedure TInfoFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
   begin
-    {$IFDEF DEBUG}
-      SaveLanguage;
+    {$IFDEF SAVELANGUAGE}
+    SaveLanguage;
     {$ENDIF}
     SaveProperty;
   end;

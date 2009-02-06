@@ -167,6 +167,7 @@ object OverwriteFrm: TOverwriteFrm
     Caption = 'The folder already contains %s'
     Color = clBtnFace
     Constraints.MinWidth = 410
+    ParentColor = False
     Transparent = False
   end
   object WouldYou: TLabel
@@ -181,6 +182,7 @@ object OverwriteFrm: TOverwriteFrm
     BorderSpacing.Around = 5
     Caption = 'Would you like to replace the existing file'
     Color = clBtnFace
+    ParentColor = False
     Transparent = False
   end
   object WithFile: TLabel
@@ -195,6 +197,7 @@ object OverwriteFrm: TOverwriteFrm
     BorderSpacing.Around = 10
     Caption = 'with this one?'
     Color = clBtnFace
+    ParentColor = False
     Transparent = False
   end
   object OldSize: TLabel
@@ -208,6 +211,7 @@ object OverwriteFrm: TOverwriteFrm
     BorderSpacing.Left = 6
     Caption = 'size: %s'
     Color = clBtnFace
+    ParentColor = False
     Transparent = False
   end
   object NewSize: TLabel
@@ -221,6 +225,7 @@ object OverwriteFrm: TOverwriteFrm
     BorderSpacing.Left = 6
     Caption = 'size: %s'
     Color = clBtnFace
+    ParentColor = False
     Transparent = False
   end
   object OldTime: TLabel
@@ -236,6 +241,7 @@ object OverwriteFrm: TOverwriteFrm
     BorderSpacing.Top = 3
     Caption = 'modified: %s'
     Color = clBtnFace
+    ParentColor = False
     Transparent = False
   end
   object NewTime: TLabel
@@ -251,6 +257,7 @@ object OverwriteFrm: TOverwriteFrm
     BorderSpacing.Top = 3
     Caption = 'modified: %s'
     Color = clBtnFace
+    ParentColor = False
     Transparent = False
   end
   object Bevel: TBevel
