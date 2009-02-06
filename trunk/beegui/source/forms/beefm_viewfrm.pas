@@ -109,8 +109,8 @@ uses
   begin
     Memo.Clear;
     FFileName := '';
-    {$IFDEF DEBUG}
-      SaveLanguage;
+    {$IFDEF SAVELANGUAGE}
+    SaveLanguage;
     {$ENDIF}
     SaveProperty;
   end;

@@ -47,11 +47,16 @@ uses
   LResources;
 
 type
+
+  { TSelectFrm }
+
   TSelectFrm = class (TForm)
     MaskLabel: TLabel;
     Mask: TEdit;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private    
     { Private declarations }
@@ -80,9 +85,26 @@ uses
   {$I beegui_selectfrm_savelanguage.inc}
   {$I beegui_selectfrm_loadlanguage.inc}
 
-  procedure TSelectFrm.FormShow  (Sender: TObject);
+  procedure TSelectFrm.FormCreate(Sender: TObject);
   begin
-    Mask.SetFocus;
+    LoadLanguage;
+    LoadProperty;
+  end;
+
+  procedure TSelectFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+  begin
+    {$IFDEF SAVELANGUAGE}
+    SaveLanguage;
+    {$ENDIF}
+    SaveProperty;
+  end;
+
+  procedure TSelectFrm.FormShow(Sender: TObject);
+  begin
+    if Mask.CanFocus then
+    begin
+      Mask.SetFocus;
+    end;
   end;
 
 initialization

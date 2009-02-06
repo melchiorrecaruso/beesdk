@@ -76,6 +76,7 @@ object ConfigFrm: TConfigFrm
       Caption = 'Compression method:'
       Color = clBtnFace
       Layout = tlCenter
+      ParentColor = False
       Transparent = False
     end
     object dOptionLabel: TLabel
@@ -94,6 +95,7 @@ object ConfigFrm: TConfigFrm
       Caption = 'Dictionary size:'
       Color = clBtnFace
       Layout = tlCenter
+      ParentColor = False
       Transparent = False
     end
     object AddingOptions: TGroupBox
@@ -287,6 +289,7 @@ object ConfigFrm: TConfigFrm
       Caption = 'Overwrite mode:'
       Color = clBtnFace
       Layout = tlBottom
+      ParentColor = False
       Transparent = False
     end
     object ExtractingOptions: TGroupBox

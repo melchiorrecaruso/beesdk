@@ -26,6 +26,7 @@ object RenameFrm: TRenameFrm
     Caption = 'From:'
     Color = clBtnFace
     Layout = tlBottom
+    ParentColor = False
     Transparent = False
   end
   object ToFNLabel: TLabel
@@ -42,6 +43,7 @@ object RenameFrm: TRenameFrm
     Caption = 'To:'
     Color = clBtnFace
     Layout = tlCenter
+    ParentColor = False
     Transparent = False
   end
   object FromFN: TLabel
@@ -58,6 +60,7 @@ object RenameFrm: TRenameFrm
     Color = clBtnFace
     Constraints.MinWidth = 237
     Layout = tlBottom
+    ParentColor = False
     Transparent = False
   end
   object ToFN: TEdit

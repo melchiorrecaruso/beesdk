@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -40,13 +40,13 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="16">
+    <Units Count="15">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
         <CursorPos X="1" Y="35"/>
-        <TopLine Value="23"/>
+        <TopLine Value="50"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -59,8 +59,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_PasswordFrm"/>
-        <CursorPos X="55" Y="79"/>
-        <TopLine Value="76"/>
+        <CursorPos X="5" Y="108"/>
+        <TopLine Value="88"/>
         <UsageCount Value="200"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit1>
@@ -71,8 +71,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_AddFrm"/>
-        <CursorPos X="14" Y="286"/>
-        <TopLine Value="278"/>
+        <CursorPos X="5" Y="181"/>
+        <TopLine Value="147"/>
         <UsageCount Value="200"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
@@ -83,8 +83,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_ExtractFrm"/>
-        <CursorPos X="32" Y="95"/>
-        <TopLine Value="71"/>
+        <CursorPos X="5" Y="114"/>
+        <TopLine Value="83"/>
         <UsageCount Value="200"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit3>
@@ -95,8 +95,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_OverWriteFrm"/>
-        <CursorPos X="30" Y="90"/>
-        <TopLine Value="76"/>
+        <CursorPos X="5" Y="116"/>
+        <TopLine Value="97"/>
         <UsageCount Value="200"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit4>
@@ -107,7 +107,7 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_RenameFrm"/>
-        <CursorPos X="33" Y="87"/>
+        <CursorPos X="5" Y="98"/>
         <TopLine Value="65"/>
         <UsageCount Value="200"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -119,8 +119,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="1" Y="419"/>
-        <TopLine Value="153"/>
+        <CursorPos X="5" Y="254"/>
+        <TopLine Value="225"/>
         <UsageCount Value="200"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit6>
@@ -131,7 +131,7 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="58" Y="81"/>
+        <CursorPos X="5" Y="102"/>
         <TopLine Value="81"/>
         <UsageCount Value="200"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -187,22 +187,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="20" Y="474"/>
-        <TopLine Value="423"/>
+        <CursorPos X="5" Y="390"/>
+        <TopLine Value="358"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="35"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit14>
-      <Unit15>
-        <Filename Value="version.inc"/>
-        <CursorPos X="19" Y="1"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit15>
     </Units>
     <JumpHistory Count="28" HistoryIndex="27">
       <Position1>

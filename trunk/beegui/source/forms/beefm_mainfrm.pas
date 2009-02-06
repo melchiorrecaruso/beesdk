@@ -386,8 +386,8 @@ uses
       ConfigFrm.SaveProperty;
       SaveProperty;
     end;
-    {$IFDEF DEBUG}
-      SaveLanguage;
+    {$IFDEF SAVELANGUAGE}
+    SaveLanguage;
     {$ENDIF}
   end;
 

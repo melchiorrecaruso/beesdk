@@ -137,6 +137,7 @@ object TickFrm: TTickFrm
         Constraints.MaxHeight = 18
         Constraints.MinHeight = 18
         Layout = tlBottom
+        ParentColor = False
         Transparent = False
       end
       object Tick: TProgressBar
@@ -184,6 +185,7 @@ object TickFrm: TTickFrm
           Caption = 'Time elapsed:'
           Color = clBtnFace
           Layout = tlBottom
+          ParentColor = False
           Transparent = False
         end
         object RemainingTimeLabel: TLabel
@@ -201,6 +203,7 @@ object TickFrm: TTickFrm
           Caption = 'Remaining time:'
           Color = clBtnFace
           Layout = tlBottom
+          ParentColor = False
           Transparent = False
         end
       end
@@ -236,6 +239,7 @@ object TickFrm: TTickFrm
           Caption = '---'
           Color = clBtnFace
           Constraints.MinWidth = 50
+          ParentColor = False
           Transparent = False
         end
         object ProcessedSize: TLabel
@@ -255,6 +259,7 @@ object TickFrm: TTickFrm
           Caption = '---'
           Color = clBtnFace
           Constraints.MinWidth = 50
+          ParentColor = False
           Transparent = False
         end
         object Speed: TLabel
@@ -274,6 +279,7 @@ object TickFrm: TTickFrm
           Caption = '---'
           Color = clBtnFace
           Constraints.MinWidth = 50
+          ParentColor = False
           Transparent = False
         end
       end
@@ -311,6 +317,7 @@ object TickFrm: TTickFrm
           BorderSpacing.Bottom = 2
           Caption = 'KB/s'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object ProcessedSizeUnit: TLabel
@@ -329,6 +336,7 @@ object TickFrm: TTickFrm
           BorderSpacing.Bottom = 2
           Caption = 'KB'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object GeneralSizeUnit: TLabel
@@ -346,6 +354,7 @@ object TickFrm: TTickFrm
           BorderSpacing.Bottom = 2
           Caption = 'KB'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
       end
@@ -383,6 +392,7 @@ object TickFrm: TTickFrm
           Caption = '00:00:00'
           Color = clBtnFace
           Layout = tlBottom
+          ParentColor = False
           Transparent = False
         end
         object Time: TLabel
@@ -401,6 +411,7 @@ object TickFrm: TTickFrm
           Caption = '00:00:00'
           Color = clBtnFace
           Layout = tlBottom
+          ParentColor = False
           Transparent = False
         end
       end
@@ -434,6 +445,7 @@ object TickFrm: TTickFrm
           Caption = 'Total size:'
           Color = clBtnFace
           Layout = tlBottom
+          ParentColor = False
           Transparent = False
         end
         object ProcessedSizeLabel: TLabel
@@ -451,6 +463,7 @@ object TickFrm: TTickFrm
           Caption = 'Processed size:'
           Color = clBtnFace
           Layout = tlBottom
+          ParentColor = False
           Transparent = False
         end
         object SpeedLabel: TLabel
@@ -467,6 +480,7 @@ object TickFrm: TTickFrm
           BorderSpacing.Bottom = 2
           Caption = 'Speed:'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
       end
