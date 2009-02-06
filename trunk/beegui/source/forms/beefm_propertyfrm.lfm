@@ -1,7 +1,7 @@
 object InfoFrm: TInfoFrm
-  Left = 699
+  Left = 360
   Height = 446
-  Top = 248
+  Top = 190
   Width = 358
   ActiveControl = Pages
   Caption = 'Properties'
@@ -23,10 +23,10 @@ object InfoFrm: TInfoFrm
     Height = 402
     Top = 6
     Width = 346
-    ActivePage = FPage
+    ActivePage = APage
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 1
     object APage: TTabSheet
       Caption = 'General'
@@ -9077,230 +9077,341 @@ object InfoFrm: TInfoFrm
           }
         end
         object AName: TLabel
+          AnchorSideLeft.Control = APanel
+          AnchorSideTop.Control = APanel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 22
-          Width = 105
-          AutoSize = False
+          Width = 66
+          BorderSpacing.Left = 85
+          BorderSpacing.Top = 22
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
           Caption = 'Archive name'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object AVersion: TLabel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = AName
+          AnchorSideTop.Side = asrBottom
           Left = 85
-          Height = 13
+          Height = 14
           Top = 38
-          Width = 105
-          AutoSize = False
+          Width = 36
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
           Caption = 'Version'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object Bevel01: TBevel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = AVersion
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = AVersionValue
+          AnchorSideRight.Side = asrBottom
           Left = 85
           Height = 2
           Top = 60
           Width = 237
           Anchors = [akTop, akLeft, akRight]
+          BorderSpacing.Top = 8
+          BorderSpacing.Bottom = 8
         end
         object AFiles: TLabel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = Bevel01
+          AnchorSideTop.Side = asrBottom
           Left = 85
-          Height = 13
+          Height = 14
           Top = 70
-          Width = 105
-          AutoSize = False
+          Width = 22
+          BorderSpacing.Top = 8
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
           Caption = 'Files'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object ASize: TLabel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = AFiles
+          AnchorSideTop.Side = asrBottom
           Left = 85
-          Height = 13
+          Height = 14
           Top = 86
-          Width = 105
-          AutoSize = False
+          Width = 43
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
           Caption = 'Files size'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object APacked: TLabel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = ASize
+          AnchorSideTop.Side = asrBottom
           Left = 85
-          Height = 13
+          Height = 14
           Top = 102
-          Width = 105
-          AutoSize = False
-          Caption = 'Files size packed'
+          Width = 81
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
+          Caption = 'Packed files size '
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object ARatio: TLabel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = APacked
+          AnchorSideTop.Side = asrBottom
           Left = 85
-          Height = 13
+          Height = 14
           Top = 118
-          Width = 105
-          AutoSize = False
+          Width = 26
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
           Caption = 'Ratio'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object Bevel02: TBevel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = ARatio
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ANameValue
+          AnchorSideRight.Side = asrBottom
           Left = 85
           Height = 2
           Top = 140
           Width = 237
           Anchors = [akTop, akLeft, akRight]
+          BorderSpacing.Top = 8
         end
         object ACrypted: TLabel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = Bevel02
+          AnchorSideTop.Side = asrBottom
           Left = 85
-          Height = 13
+          Height = 14
           Top = 150
-          Width = 105
-          AutoSize = False
+          Width = 74
+          BorderSpacing.Top = 8
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
           Caption = 'Files encrypted'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object AArcSize: TLabel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = ACrypted
+          AnchorSideTop.Side = asrBottom
           Left = 85
-          Height = 13
+          Height = 14
           Top = 166
-          Width = 105
-          AutoSize = False
+          Width = 58
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
           Caption = 'Archive size'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object AModified: TLabel
+          AnchorSideLeft.Control = AName
+          AnchorSideTop.Control = AArcSize
+          AnchorSideTop.Side = asrBottom
           Left = 85
-          Height = 13
+          Height = 14
           Top = 182
-          Width = 105
-          AutoSize = False
+          Width = 41
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 2
           Caption = 'Modified'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object AModifiedValue: TLabel
-          Left = 206
-          Height = 13
+          AnchorSideTop.Control = AArcSizeValue
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ANameValue
+          AnchorSideRight.Side = asrBottom
+          Left = 286
+          Height = 14
           Top = 182
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 2
+          BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object AArcSizeValue: TLabel
-          Left = 206
-          Height = 13
+          AnchorSideTop.Control = AFilesCryptedValue
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ANameValue
+          AnchorSideRight.Side = asrBottom
+          Left = 286
+          Height = 14
           Top = 166
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 2
+          BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object AFilesCryptedValue: TLabel
-          Left = 206
-          Height = 13
+          AnchorSideTop.Control = Bevel02
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ANameValue
+          AnchorSideRight.Side = asrBottom
+          Left = 286
+          Height = 14
           Top = 150
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 8
+          BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object ARatioValue: TLabel
-          Left = 206
-          Height = 13
+          AnchorSideTop.Control = APackedValue
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ANameValue
+          AnchorSideRight.Side = asrBottom
+          Left = 286
+          Height = 14
           Top = 118
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 2
+          BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object APackedValue: TLabel
-          Left = 206
-          Height = 13
+          AnchorSideTop.Control = ASize
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ANameValue
+          AnchorSideRight.Side = asrBottom
+          Left = 286
+          Height = 14
           Top = 102
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 2
+          BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object ASizeValue: TLabel
-          Left = 206
-          Height = 13
+          AnchorSideTop.Control = AFilesValue
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ANameValue
+          AnchorSideRight.Side = asrBottom
+          Left = 286
+          Height = 14
           Top = 86
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 2
+          BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object AFilesValue: TLabel
-          Left = 206
-          Height = 13
+          AnchorSideTop.Control = Bevel01
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ANameValue
+          AnchorSideRight.Side = asrBottom
+          Left = 286
+          Height = 14
           Top = 70
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 8
+          BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object AVersionValue: TLabel
-          Left = 206
-          Height = 13
+          AnchorSideTop.Control = ANameValue
+          AnchorSideRight.Control = ANameValue
+          AnchorSideRight.Side = asrBottom
+          Left = 286
+          Height = 14
           Top = 38
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 16
+          BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object ANameValue: TLabel
-          Left = 206
-          Height = 13
+          AnchorSideTop.Control = APanel
+          AnchorSideRight.Control = APanel
+          AnchorSideRight.Side = asrBottom
+          Left = 286
+          Height = 14
           Top = 22
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 22
+          BorderSpacing.Right = 16
+          BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
@@ -18369,10 +18480,9 @@ object InfoFrm: TInfoFrm
         end
         object FName: TLabel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 22
-          Width = 105
-          AutoSize = False
+          Width = 46
           Caption = 'File name'
           Color = clBtnFace
           ParentColor = False
@@ -18380,10 +18490,9 @@ object InfoFrm: TInfoFrm
         end
         object FVersion: TLabel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 38
-          Width = 105
-          AutoSize = False
+          Width = 36
           Caption = 'Version'
           Color = clBtnFace
           ParentColor = False
@@ -18398,10 +18507,9 @@ object InfoFrm: TInfoFrm
         end
         object FSize: TLabel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 70
-          Width = 105
-          AutoSize = False
+          Width = 43
           Caption = 'Files size'
           Color = clBtnFace
           ParentColor = False
@@ -18409,21 +18517,19 @@ object InfoFrm: TInfoFrm
         end
         object FPacked: TLabel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 86
-          Width = 105
-          AutoSize = False
-          Caption = 'Files size packed'
+          Width = 78
+          Caption = 'Packed files size'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FRatio: TLabel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 102
-          Width = 105
-          AutoSize = False
+          Width = 26
           Caption = 'Ratio'
           Color = clBtnFace
           ParentColor = False
@@ -18431,10 +18537,9 @@ object InfoFrm: TInfoFrm
         end
         object FAttribute: TLabel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 118
-          Width = 105
-          AutoSize = False
+          Width = 44
           Caption = 'Attribute'
           Color = clBtnFace
           ParentColor = False
@@ -18449,10 +18554,9 @@ object InfoFrm: TInfoFrm
         end
         object FPassword: TLabel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 150
-          Width = 105
-          AutoSize = False
+          Width = 47
           Caption = 'Password'
           Color = clBtnFace
           ParentColor = False
@@ -18460,10 +18564,9 @@ object InfoFrm: TInfoFrm
         end
         object FMethod: TLabel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 166
-          Width = 105
-          AutoSize = False
+          Width = 37
           Caption = 'Method'
           Color = clBtnFace
           ParentColor = False
@@ -18471,127 +18574,117 @@ object InfoFrm: TInfoFrm
         end
         object FModified: TLabel
           Left = 85
-          Height = 13
+          Height = 14
           Top = 182
-          Width = 105
-          AutoSize = False
+          Width = 41
           Caption = 'Modified'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FModifiedValue: TLabel
-          Left = 206
-          Height = 13
+          Left = 286
+          Height = 14
           Top = 182
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FMethodValue: TLabel
-          Left = 206
-          Height = 13
+          Left = 286
+          Height = 14
           Top = 166
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FPasswordValue: TLabel
-          Left = 206
-          Height = 13
+          Left = 286
+          Height = 14
           Top = 150
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FAttributeValue: TLabel
-          Left = 206
-          Height = 13
+          Left = 286
+          Height = 14
           Top = 118
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FRatioValue: TLabel
-          Left = 206
-          Height = 13
+          Left = 286
+          Height = 14
           Top = 102
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FPackedValue: TLabel
-          Left = 206
-          Height = 13
+          Left = 286
+          Height = 14
           Top = 86
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FSizeValue: TLabel
-          Left = 206
-          Height = 13
+          Left = 286
+          Height = 14
           Top = 70
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FVersionValue: TLabel
-          Left = 206
-          Height = 13
+          Left = 286
+          Height = 14
           Top = 38
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
           Transparent = False
         end
         object FNameValue: TLabel
-          Left = 206
-          Height = 13
+          Left = 286
+          Height = 14
           Top = 22
-          Width = 116
+          Width = 36
           Alignment = taRightJustify
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
+          Anchors = [akTop, akRight]
           Caption = 'ERROR'
           Color = clBtnFace
           ParentColor = False
