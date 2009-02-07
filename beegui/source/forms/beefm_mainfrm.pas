@@ -720,7 +720,7 @@ uses
   begin
     if FCommandLine.Confirm then
     begin
-      Visible := not ConfigFrm.HideAddFrmOption.Checked;
+      Visible := not ConfigFrm.HideWithAddFrmOrExtractFrmOption.Checked;
     end;
 
     if FCommandLine.Run then
@@ -738,12 +738,12 @@ uses
 
       if FCommandLine.Log then
       begin
-        Visible := not ConfigFrm.HideMainFrmOption.Checked;
+        Visible := not ConfigFrm.HideWithTickFrmOption.Checked;
         TickFrm.ShowModal;
       end else
         if TickFrm.FrmCanClose = False then
         begin
-          Visible := not ConfigFrm.HideMainFrmOption.Checked;
+          Visible := not ConfigFrm.HideWithTickFrmOption.Checked;
           TickFrm.ShowModal;
         end;
       FreeAndNil(TickFrm);

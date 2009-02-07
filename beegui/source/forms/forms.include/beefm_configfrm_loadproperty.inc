@@ -30,8 +30,12 @@
       xCommand.Checked := Storage.ReadBool('TCheckBox', 'xCommand.Checked' ,xCommand.Checked);
       cdEOption.Checked := Storage.ReadBool('TCheckBox', 'cdEOption.Checked' ,cdEOption.Checked);
     
-      HideAddFrmOption.Checked := Storage.ReadBool('TCheckBox', 'HideAddFrmOption.Checked' ,HideAddFrmOption.Checked);
-      HideMainFrmOption.Checked := Storage.ReadBool('TCheckBox', 'HideMainFrmOption.Checked' ,HideMainFrmOption.Checked);
+      HideWithAddFrmOrExtractFrmOption.Checked := Storage.ReadBool('TCheckBox',
+        'HideWithAddFrmOrExtractFrmOption.Checked' ,HideWithAddFrmOrExtractFrmOption.Checked);
+
+      HideWithTickFrmOption.Checked := Storage.ReadBool('TCheckBox',
+        'HideWithTickFrmOption.Checked' ,HideWithTickFrmOption.Checked);
+
       UpBtnCloseOption.Checked := Storage.ReadBool('TCheckBox', 'UpBtnCloseOption.Checked' ,UpBtnCloseOption.Checked);
 
       Storage.Free;

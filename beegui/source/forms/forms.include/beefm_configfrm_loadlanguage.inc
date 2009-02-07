@@ -55,8 +55,12 @@
         xCommand.Caption := Storage.ReadString('TCheckBox', 'xCommand.Caption',  xCommand.Caption);
         cdEOption.Caption := Storage.ReadString('TCheckBox', 'cdEOption.Caption', cdEOption.Caption);
       
-        HideMainFrmOption.Caption := Storage.ReadString('TCheckBox', 'HideMainFrmOption.Caption', HideMainFrmOption.Caption);
-        HideAddFrmOption .Caption := Storage.ReadString('TCheckBox', 'HideAddFrmOption.Caption', HideAddFrmOption.Caption);
+        HideWithTickFrmOption.Caption := Storage.ReadString('TCheckBox',
+          'HideWithTickFrmOption.Caption', HideWithTickFrmOption.Caption);
+
+        HideWithAddFrmOrExtractFrmOption .Caption := Storage.ReadString('TCheckBox',
+          'HideWithAddFrmOrExtractFrmOption.Caption', HideWithAddFrmOrExtractFrmOption.Caption);
+
         UpBtnCloseOption .Caption := Storage.ReadString('TCheckBox', 'UpBtnCloseOption.Caption', UpBtnCloseOption.Caption);
 
         BtnOk.Caption := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
