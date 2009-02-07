@@ -55,7 +55,7 @@ type
   TConfigFrm = class(TForm)
     Buttons: TCheckGroup;
     GeneralPage: TGroupBox;
-    HideMainFrmOption: TCheckBox;
+    HideWithTickFrmOption: TCheckBox;
 
     UpBtnCloseOption: TCheckBox;
     Tree: TTreeView;
@@ -77,7 +77,7 @@ type
     xCommand: TCheckBox;
     cdEOption: TCheckBox;
     BtnOk: TBitBtn;
-    HideAddFrmOption: TCheckBox;
+    HideWithAddFrmOrExtractFrmOption: TCheckBox;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure TreeChange(Sender: TObject; Node: TTreeNode);
     procedure FormCreate(Sender: TObject);

@@ -407,7 +407,7 @@ object ConfigFrm: TConfigFrm
     ClientWidth = 389
     TabOrder = 4
     Visible = False
-    object HideAddFrmOption: TCheckBox
+    object HideWithAddFrmOrExtractFrmOption: TCheckBox
       Left = 12
       Height = 17
       Top = 6
@@ -418,7 +418,7 @@ object ConfigFrm: TConfigFrm
       Caption = 'Hide main form on adding'
       TabOrder = 0
     end
-    object HideMainFrmOption: TCheckBox
+    object HideWithTickFrmOption: TCheckBox
       Left = 12
       Height = 17
       Top = 29
