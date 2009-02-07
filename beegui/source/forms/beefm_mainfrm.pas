@@ -1077,19 +1077,23 @@ uses
 
   procedure TMainFrm.MMenuActionsExtractClick(Sender: TObject);
   begin
-    if CheckWorkStatus(False) and (ListView.SelCount > 0) then
+    if (ListView.SelCount = 0) then
     begin
-      FCommandLine.Clear;
-      FCommandLine.Command := 'X';
-      FCommandLine.Confirm := True;
-      FCommandLine.Log := MMenuOptionsLogReport.Checked;
-      ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
-      FCommandLine.ArchiveName := FArchiveName;
-      ListView.GetMasks(FCommandLine.FileMasks);
+      MMenuActionsExtractAllClick(Sender);
+    end else
+      if CheckWorkStatus(False) then
       begin
-        Execute(FArchiveName);
+        FCommandLine.Clear;
+        FCommandLine.Command := 'X';
+        FCommandLine.Confirm := True;
+        FCommandLine.Log := MMenuOptionsLogReport.Checked;
+        ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
+        FCommandLine.ArchiveName := FArchiveName;
+        ListView.GetMasks(FCommandLine.FileMasks);
+        begin
+          Execute(FArchiveName);
+        end;
       end;
-    end;
   end;
 
   procedure TMainFrm.MMenuActionsExtractAllClick(Sender: TObject);
@@ -1113,17 +1117,21 @@ uses
 
   procedure TMainFrm.MMenuActionsTestClick(Sender: TObject);
   begin
-    if CheckWorkStatus(False) and (ListView.SelCount > 0) then
+    if (ListView.SelCount = 0) then
     begin
-      FCommandLine.Clear;
-      FCommandLine.Command := 'T';
-      FCommandLine.Log := True;
-      FCommandLine.ArchiveName := FArchiveName;
-      ListView.GetMasks(FCommandLine.FileMasks);
+      MMenuActionsTestAllClick(Sender);
+    end else
+      if CheckWorkStatus(False) then
       begin
-        Execute(FArchiveName);
+        FCommandLine.Clear;
+        FCommandLine.Command := 'T';
+        FCommandLine.Log := True;
+        FCommandLine.ArchiveName := FArchiveName;
+        ListView.GetMasks(FCommandLine.FileMasks);
+        begin
+          Execute(FArchiveName);
+        end;
       end;
-    end;
   end;
 
   procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);
