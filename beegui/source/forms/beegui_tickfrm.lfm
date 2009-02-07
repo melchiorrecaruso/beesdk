@@ -480,13 +480,13 @@ object TickFrm: TTickFrm
     end
     object ReportPage: TPage
       Caption = 'Report'
-      ClientWidth = 410
-      ClientHeight = 140
+      ClientWidth = 401
+      ClientHeight = 135
       object Report: TMemo
         Left = 6
-        Height = 128
+        Height = 123
         Top = 6
-        Width = 398
+        Width = 389
         Align = alClient
         BorderSpacing.Around = 6
         ReadOnly = True

@@ -57,7 +57,7 @@ type
   public
     procedure Process(AParams: TStringList);
     constructor Create(UseParams: boolean);
-    destructor Destroy;
+    destructor Destroy; override;
     procedure Clear;
   public
     property Run: boolean read GetRun;
@@ -71,7 +71,6 @@ type
 implementation
 
 uses
-  Bee_Common,
   BeeGui_Forms;
 
   constructor TCustomCommandLine.Create(UseParams: boolean);

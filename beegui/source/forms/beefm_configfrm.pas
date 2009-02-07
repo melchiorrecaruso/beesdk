@@ -134,8 +134,6 @@ uses
   end;
 
   procedure TConfigFrm.SetPage(PageIndex: integer);
-  var
-    I: integer;
   begin
     AddPage.Visible := False;
     ExtractPage.Visible := False;

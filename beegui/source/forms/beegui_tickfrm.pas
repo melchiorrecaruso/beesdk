@@ -140,8 +140,8 @@ type
     FPassword: string;
     FApp: TBeeApp;
     FCanClose: boolean;
-    FElapsedTime: integer;
-    FRemainingTime: integer;
+    FElapsedTime: cardinal;
+    FRemainingTime: cardinal;
     FOnlyAForm: boolean;
   private
     { private declarations }
@@ -171,9 +171,6 @@ var
 implementation
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
   BeeGui_Consts,
   BeeGui_Messages,
   BeeGui_SysUtils;
@@ -340,8 +337,8 @@ var
 
   procedure TTickFrm.OnTimer(Sender: TObject);
   var
-    iSpeed: integer;
-    iRemainSize: integer;
+    iSpeed: cardinal;
+    iRemainSize: cardinal;
   begin
     with FInterfaces.OnTick.Data do
     begin

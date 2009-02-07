@@ -35,7 +35,6 @@ uses
   Classes,
   Dialogs,
   Buttons,
-  Process,
   IniFiles,
   SysUtils,
   Graphics,
