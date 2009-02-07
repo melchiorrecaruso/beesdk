@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -176,9 +176,11 @@
         <Filename Value="packages\beegui_forms.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Forms"/>
-        <CursorPos X="1" Y="223"/>
-        <TopLine Value="182"/>
+        <CursorPos X="1" Y="194"/>
+        <TopLine Value="179"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
@@ -251,7 +253,12 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit19>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="1" HistoryIndex="0">
+      <Position1>
+        <Filename Value="packages\beegui_forms.pas"/>
+        <Caret Line="223" Column="1" TopLine="197"/>
+      </Position1>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="8"/>
