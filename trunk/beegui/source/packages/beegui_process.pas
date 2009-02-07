@@ -58,7 +58,7 @@ type
     procedure DoOnTimer; override;
   public
     procedure Execute(const AFileExec, AFileName: string);
-    constructor Create(Sender: TComponent);
+    constructor Create(Sender: TComponent); override;
     destructor Destroy; override;
   public
     property FileName: string read FFileName;
@@ -72,9 +72,7 @@ type
 implementation
 
 uses
-  Bee_Common,
-  BeeGui_Consts,
-  BeeGui_SysUtils;
+  Bee_Common;
 
   { TFileProcess class }
   

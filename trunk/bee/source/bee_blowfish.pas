@@ -28,7 +28,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.12.28 by Melchiorre Caruso;
   
-  v0.7.9 build 0906 - 2008.10.25 by Melchiorre Caruso.
+  v0.7.9 build 0940 - 2009.02.07 by Melchiorre Caruso.
 }
 
 unit Bee_BlowFish;
@@ -451,7 +451,7 @@ end;
 function TBlowFish.Encode(var aData; Count: cardinal): cardinal;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
-  I:    integer;
+  I: cardinal;
 begin
   Result := Count mod 8;
   if Result = 0 then
@@ -470,7 +470,7 @@ end;
 function TBlowFish.Decode(var aData; Count: cardinal): cardinal;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
-  I:    integer;
+  I: cardinal;
 begin
   Result := Count mod 8;
   if Result = 0 then

@@ -29,7 +29,6 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Math,
   Windows,
   Registry,
   {$ENDIF}
@@ -421,9 +420,11 @@ implementation
   {  }
   
   function CopyFile(const FileName, NewFileName: string): boolean;
+  {$IFNDEF MSWINDOWS}
   var
     Src: TFileStream;
     Dst: TFileStream;
+  {$ENDIF}
   begin
     Result := False;
     if FileExists(NewFileName) then Exit;

@@ -83,7 +83,7 @@ type
   public
     procedure Process(AParams: TStringList);
     constructor Create;
-    destructor Destroy;
+    destructor Destroy; override;
     procedure Clear;
   public
     property Command: char Read FCommand Write SetCommand;

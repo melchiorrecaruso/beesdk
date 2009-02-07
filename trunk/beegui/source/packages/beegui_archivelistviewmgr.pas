@@ -30,9 +30,6 @@ unit BeeGui_ArchiveListViewMgr;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
   Math,
   Classes,
   Dialogs,
@@ -332,8 +329,6 @@ uses
   { TCustomArcListView }
   
   constructor TCustomArchiveListView.Create(AOwner: TComponent);
-  var
-    I: integer;
   begin
     inherited Create(AOwner);
     // ----
@@ -453,7 +448,6 @@ uses
   procedure TCustomArchiveListView.UpdateFolder;
   var
     I, J: integer;
-    Item: TListItem;
     Image: TBitmap;
   begin
     Items.BeginUpdate;
@@ -683,7 +677,6 @@ uses
 
   function TCustomArchiveListView.Open(const AArchiveName: string; AArchiveList: TList): boolean;
   var
-    I: integer;
     Node: TArchiveItem;
   begin
     if CompareFileName(AArchiveName, FFileName) <> 0 then
@@ -755,7 +748,7 @@ uses
           end;
 
           Node.FileAttr     := faDirectory;
-          Node.FileCRC      := -1;
+          Node.FileCRC      := cardinal(-1);
           Node.FilePosition := -1;
 
           Node.FileIcon := GetFileIcon('.@folderclose', faDirectory);

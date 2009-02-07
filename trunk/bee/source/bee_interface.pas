@@ -35,9 +35,7 @@ interface
 
 uses
   Classes,
-  SysUtils,
-  // ---
-  Bee_Common;
+  SysUtils;
 
 type
 
@@ -182,6 +180,13 @@ type
   end;
 
 implementation
+
+{$IFDEF CONSOLEAPPLICATION}
+{$IFDEF MSWINDOWS}
+uses
+  Bee_Common;
+{$ENDIF}
+{$ENDIF}
 
 // TApp class ...
 

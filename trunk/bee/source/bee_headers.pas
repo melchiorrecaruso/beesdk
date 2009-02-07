@@ -37,9 +37,6 @@ unit Bee_Headers;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows,
-{$ENDIF}
   Classes, // TList
   SysUtils, // TSearchRec
   // ---

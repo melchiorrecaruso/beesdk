@@ -103,10 +103,6 @@ type
 implementation
 
 uses
-  {$IFDEF MSWINDOWS}
-  Math,
-  Windows,
-  {$ENDIF}
   SysUtils, // faReadOnly, ...
 
   Bee_Common, // Various helper routines
@@ -121,8 +117,8 @@ begin
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0938 archiver utility, November 2008' + Cr +
-    '(C) 1999-2008 Andrew Filinsky and Melchiorre Caruso';
+    'The Bee 0.7.9 build 0940 archiver utility, February 2009' + Cr +
+    '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
   FSwapName := '';

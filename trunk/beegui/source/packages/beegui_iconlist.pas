@@ -194,7 +194,7 @@ uses
   {$IFDEF MSWINDOWS}
   var
     I: cardinal;
-    Bmp, BmpMask: TBitmap;
+    Bmp: TBitmap;
     IconInfo: TIconInfo;
     FI : TSHFileInfo;
     FileExt: string;
@@ -216,21 +216,15 @@ uses
     if SHGetFileInfo(PChar(FileName), FileAttr, FI, SizeOf(FI), I) <> 0 then
     begin
       Bmp := TBitmap.Create;
-      BmpMask := TBitmap.Create;
       try
         if (FI.hIcon <> 0) and GetIconInfo(FI.hIcon, IconInfo) then
         begin
-          Bmp.SetHandles(IconInfo.hbmColor, -1);
+          Bmp.SetHandles(IconInfo.hbmColor, IconInfo.hbmMask);
           Bmp.Transparent := True;
-
-          BmpMask.SetHandles(IconInfo.hbmMask, -1);
-          BmpMask.Transparent := True;
         end;
-
-        Result := Add(Bmp, BmpMask);
+        Result := Add(Bmp, nil);
       finally
         Bmp.Free;
-        BmpMask.Free;
       end;
 
       FileExt := ExtractFileExt(FileName);
