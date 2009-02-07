@@ -12,8 +12,11 @@
         if WindowState = wsNormal then
         begin
           Top  := Storage.ReadInteger('TForm', 'Top', Top);
-           Left := Storage.ReadInteger('TForm', 'Left', Left);
+          Left := Storage.ReadInteger('TForm', 'Left', Left);
+          Height := Storage.ReadInteger('TForm', 'Height', Height);
+          Width := Storage.ReadInteger('TForm', 'Width', Width);
         end;
+        WindowState := TWindowState(Storage.ReadInteger('TForm', 'WindowState', Ord(WindowState)));
 
         Report.Font.CharSet := TFontCharSet(Storage.ReadInteger('TFont', 'Report.Font.Charset',    (Report.Font.CharSet)));
         Report.Font.Color   := TColor      (Storage.ReadInteger('TFont', 'Report.Font.Color'  ,    (Report.Font.Color)));
