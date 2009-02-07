@@ -343,7 +343,7 @@ uses
     SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
     {$IFDEF UNIX}
-    AddressToolBar.ButtonHeight := 32;
+    AddressToolBar.ButtonHeight := 30;
     FolderBox.Style  := csDropDown;
     {$ENDIF}
     {$IFDEF MSWINDOWS}
