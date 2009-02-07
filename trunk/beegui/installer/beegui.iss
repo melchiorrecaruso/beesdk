@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=BeeGui
-AppVerName=BeeGui 1.0.3
+AppVerName=BeeGui 1.0.5 BETA
 AppPublisher=Melchiorre Caruso, Correggio (Italy)
 AppPublisherURL=http://www.beegui.org
 AppSupportURL=http://www.beegui.org
@@ -13,7 +13,7 @@ DefaultGroupName=BeeGui
 AllowNoIcons=yes
 LicenseFile=..\license.txt
 OutputDir=distribution
-OutputBaseFilename=BeeGui
+OutputBaseFilename=BeeGui105
 Compression=lzma
 SolidCompression=yes
 
@@ -39,10 +39,10 @@ Name: "{userdesktop}\BeeGui"; Filename: "{app}\BeeGui.exe"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BeeGui"; Filename: "{app}\BeeGui.exe"; Tasks: quicklaunchicon
 
 [Run]
-Filename: "{app}\BeeGui.exe"; Parameters: "register:file"; Description: "Associate BeeGui with .bee files"; Flags: nowait postinstall skipifsilent
+;Filename: "{app}\BeeGui.exe"; Parameters: "register:file"; Description: "Associate BeeGui with .bee files"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]
-Filename: "{app}\BeeGui.exe"; Parameters: "unregister:file";
+;Filename: "{app}\BeeGui.exe"; Parameters: "unregister:file";
 
 [UninstallDelete]
 Type: files; Name: "{app}\BeeGui.url"
