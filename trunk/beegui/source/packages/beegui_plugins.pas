@@ -41,7 +41,7 @@ uses
   BeeGui_SysUtils;
 
 const
-  _7zPluginVer = '7zip Plugin ver 0.1.40';
+  SevenZipPluginVer = '7zip Plugin ver 0.1.40';
   
 type
   TProcessOutput = procedure(FOutput: TStringList) of object;

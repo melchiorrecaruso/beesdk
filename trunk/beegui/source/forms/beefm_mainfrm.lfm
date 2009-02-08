@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 265
+  Left = 246
   Height = 544
-  Top = 211
+  Top = 238
   Width = 721
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 525

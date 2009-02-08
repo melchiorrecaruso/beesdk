@@ -1,11 +1,11 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TTickFrm','FORMDATA',[
-  'TPF0'#8'TTickFrm'#7'TickFrm'#4'Left'#3#209#1#6'Height'#3#205#0#3'Top'#3#229#0
-  +#5'Width'#3#165#1#13'ActiveControl'#7#8'Notebook'#7'Caption'#6#16'0% Process'
-  +'ing...'#12'ClientHeight'#3#205#0#11'ClientWidth'#3#165#1#11'Font.Height'#2
-  +#245#9'Font.Name'#6#6'Tahoma'#7'OnClose'#7#9'FormClose'#12'OnCloseQuery'#7#14
-  +'FormCloseQuery'#8'OnCreate'#7#10'FormCreate'#13'ShowInTaskBar'#7#8'stAlways'
+  'TPF0'#8'TTickFrm'#7'TickFrm'#4'Left'#3'V'#1#6'Height'#3#205#0#3'Top'#3'/'#1#5
+  +'Width'#3#165#1#13'ActiveControl'#7#8'Notebook'#7'Caption'#6#16'0% Processin'
+  +'g...'#12'ClientHeight'#3#205#0#11'ClientWidth'#3#165#1#11'Font.Height'#2#245
+  +#9'Font.Name'#6#6'Tahoma'#7'OnClose'#7#9'FormClose'#12'OnCloseQuery'#7#14'Fo'
+  +'rmCloseQuery'#8'OnCreate'#7#10'FormCreate'#13'ShowInTaskBar'#7#8'stAlways'
   +#10'LCLVersion'#6#6'0.9.27'#0#7'TBitBtn'#9'BtnCancel'#23'AnchorSideRight.Con'
   +'trol'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSideBotto'
   +'m.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#3'O'

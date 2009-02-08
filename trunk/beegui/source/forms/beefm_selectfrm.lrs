@@ -1,7 +1,7 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TSelectFrm','FORMDATA',[
-  'TPF0'#10'TSelectFrm'#9'SelectFrm'#4'Left'#3#9#2#6'Height'#2'U'#3'Top'#3'P'#1
+  'TPF0'#10'TSelectFrm'#9'SelectFrm'#4'Left'#3'#'#1#6'Height'#2'U'#3'Top'#3'J'#1
   +#5'Width'#3#15#1#13'ActiveControl'#7#4'Mask'#8'AutoSize'#9#11'BorderIcons'#11
   +#12'biSystemMenu'#10'biMinimize'#0#11'BorderStyle'#7#8'bsSingle'#7'Caption'#6
   +#13'(Un)Select...'#12'ClientHeight'#2'U'#11'ClientWidth'#3#15#1#7'OnClose'#7

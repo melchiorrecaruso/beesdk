@@ -1,7 +1,7 @@
 object OverwriteFrm: TOverwriteFrm
-  Left = 302
+  Left = 263
   Height = 202
-  Top = 179
+  Top = 378
   Width = 478
   ActiveControl = BtnYes
   AutoSize = True
