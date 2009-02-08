@@ -39,7 +39,7 @@ var
   rsConfirmation:         string = 'Confirmation';
   rsSelectedItems:        string = 'Selected items: ';
 
-  rsOpening:              string = 'Opening ...';
+  rsOpening:              string = 'Opening...';
   rsFreshFile:            string = 'Do you want to fresh file changed in archive?';
 
   rsArcProperty:          string = 'Archive property';
@@ -91,6 +91,7 @@ implementation
       Storage := TMemIniFile.Create(Folder + ('messages.ini'));
       begin
       rsWelcome              := Storage.ReadString('ResourceString', 'rsWelcome', rsWelcome);
+      rsOpening              := Storage.ReadString('ResourceString', 'rsOpening', rsOpening);
       rsWarning              := Storage.ReadString('ResourceString', 'rsWarning', rsWarning);
       rsConfirmation         := Storage.ReadString('ResourceString', 'rsConfirmation', rsConfirmation);
       rsSelectedItems        := Storage.ReadString('ResourceString', 'rsSelectedItems', rsSelectedItems);
@@ -148,6 +149,7 @@ implementation
       Storage := TMemIniFile.Create(Folder + ('messages.ini'));
       begin
       Storage.WriteString('ResourceString', 'rsWelcome', rsWelcome);
+      Storage.WriteString('ResourceString', 'rsOpening', rsOpening);
       Storage.WriteString('ResourceString', 'rsWarning', rsWarning);
       Storage.WriteString('ResourceString', 'rsConfirmation', rsConfirmation);
       Storage.WriteString('ResourceString', 'rsSelectedItems', rsSelectedItems);
