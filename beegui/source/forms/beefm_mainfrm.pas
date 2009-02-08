@@ -287,9 +287,9 @@ type
     FWorkStatus: integer;
     FArchiveName: string;
     FCommandLine: TCustomCommandLine;
-    procedure SetArchiveName(const aArchiveName: string);
-    procedure OpenArchive(const aArchiveName: string);
     procedure Execute(const aArchiveName: string);
+    procedure OpenArchive(const aArchiveName: string);
+    procedure SetArchiveName(const aArchiveName: string);
     function  CheckWorkStatus(HideMsg: boolean): boolean;
     procedure IncWorkStatus;
     procedure DecWorkStatus;
@@ -299,6 +299,8 @@ type
     procedure UpdateButtons; overload;
     procedure UpdateButtons(Value: boolean); overload;
     procedure UpdateCursor(Value: TCursor);
+  public
+    procedure ShowAndOpenArchive(const aArchiveName: string);
   public
     { public declarations }
     procedure SaveProperty;
@@ -511,16 +513,9 @@ uses
     // ---
     ListView.Enabled := Value;
     if Value = False then
-    begin
       ListView.Color := clInactiveBorder
-    end else
-    begin
+    else
       ListView.Color := clWindow;
-      if ListView.CanFocus then
-      begin
-        ListView.SetFocus;
-      end;
-    end;
   end;
 
   procedure TMainFrm.UpdateButtons;
@@ -661,6 +656,16 @@ uses
   end;
 
   // Open archive and execute commands
+
+
+  procedure TMainFrm.ShowAndOpenArchive(const aArchiveName: string);
+  begin
+    if Visible = False then
+    begin
+      Visible := True;
+    end;
+    OpenArchive(aArchiveName);
+  end;
 
   procedure TMainFrm.OpenArchive(const aArchiveName: string);
   var

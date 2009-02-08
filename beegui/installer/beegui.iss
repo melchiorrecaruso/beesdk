@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=BeeGui
-AppVerName=BeeGui 1.0.5 BETA
+AppVerName=BeeGui 1.0.5 Beta
 AppPublisher=Melchiorre Caruso, Correggio (Italy)
 AppPublisherURL=http://www.beegui.org
 AppSupportURL=http://www.beegui.org
@@ -16,6 +16,7 @@ OutputDir=distribution
 OutputBaseFilename=BeeGui105
 Compression=lzma
 SolidCompression=yes
+ChangesAssociations=yes
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -29,7 +30,7 @@ Source: "..\distribution\largeicons\*"; DestDir: "{app}\largeicons"; Flags: igno
 Source: "..\distribution\smallicons\*"; DestDir: "{app}\smallicons"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [INI]
-Filename: "{app}\BeeGui.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.compression.ru/fa"
+Filename: "{app}\BeeGui.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.beegui.org"
 
 [Icons]
 Name: "{group}\BeeGui"; Filename: "{app}\BeeGui.exe"
@@ -37,6 +38,12 @@ Name: "{group}\{cm:ProgramOnTheWeb,BeeGui}"; Filename: "{app}\BeeGui.url"
 Name: "{group}\{cm:UninstallProgram,BeeGui}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\BeeGui"; Filename: "{app}\BeeGui.exe"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BeeGui"; Filename: "{app}\BeeGui.exe"; Tasks: quicklaunchicon
+
+[Registry]
+Root: HKCR; Subkey: ".bee"; ValueType: string; ValueName: ""; ValueData: "BeeGui"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "BeeGui"; ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BeeGui\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0"
+Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1"""
 
 [Run]
 ;Filename: "{app}\BeeGui.exe"; Parameters: "register:file"; Description: "Associate BeeGui with .bee files"; Flags: nowait postinstall skipifsilent

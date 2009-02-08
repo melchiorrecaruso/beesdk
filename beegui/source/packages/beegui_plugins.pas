@@ -71,11 +71,14 @@ type
 
 implementation
 
+uses
+  BeeGui_Consts;
+
 /// directories routines
 
   function GetApplicationPluginsDir: string;
   begin
-    Result := ExtractFilePath(ParamStr(0)) + ('plugins');
+    Result := ExtractFilePath(ParamStr(0)) + cApplicationPluginsFolder;
   end;
   
 /// 7zPlungin function
@@ -86,11 +89,11 @@ implementation
     {$IFDEF UNIX}
       // Result := '7z';
       Result := AnsiIncludeTrailingBackSlash(GetApplicationPluginsDir) +
-        '7za' + PathDelim + 'linux'     + PathDelim + 'bin' + PathDelim + '7za'
+        '7za' + PathDelim + 'linux' + PathDelim + 'bin' + PathDelim + '7za'
     {$ENDIF}
     {$IFDEF MSWINDOWS}
       Result := AnsiIncludeTrailingBackSlash(GetApplicationPluginsDir) +
-        '7za' + PathDelim + 'mswindows' + PathDelim         + '7za.exe'
+        '7za' + PathDelim + 'mswindows' + PathDelim + '7za.exe'
     {$ENDIF}
   end;
   
