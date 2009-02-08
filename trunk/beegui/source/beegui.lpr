@@ -75,6 +75,17 @@ begin
          Application.CreateForm(TConfigFrm, ConfigFrm);
          Application.Run;
        end;
+  'O': begin
+         Application.Name := cApplicationName;
+         Application.Title:= cApplicationName;
+         Application.CreateForm(TMainFrm, MainFrm);
+         Application.CreateForm(TConfigFrm, ConfigFrm);
+         if FileExists(CommandLine.ArchiveName) then
+         begin
+           MainFrm.ShowAndOpenArchive(CommandLine.ArchiveName);
+         end;
+         Application.Run;
+       end;
   'V': if (ParamCount = 2) and FileExists(ParamStr(2)) then
        begin
          Application.Name := cApplicationViewerName;

@@ -45,6 +45,7 @@ const
   cApplicationHelpFile       = 'help.htm';
   cApplicationDocsFolder     = 'docs';
   cApplicationLanguageFolder = 'language';
+  cApplicationPluginsFolder  = 'plugins';
 
   function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
 
