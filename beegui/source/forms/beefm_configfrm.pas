@@ -135,7 +135,7 @@ uses
 
   procedure TConfigFrm.SetPage(PageIndex: integer);
   begin
-    AddPage.Visible := False;
+    AddPage    .Visible := False;
     ExtractPage.Visible := False;
     GeneralPage.Visible := False;
     case PageIndex of
@@ -157,9 +157,9 @@ uses
     ACommandLine.kOption := kOption.Checked;
 
     if cdAOption.Checked then
-    begin
-      ACommandLine.cdOption := AFolder;
-    end;
+      ACommandLine.cdOption := AFolder
+    else
+      ACommandLine.cdOption := '';
   end;
   
   procedure TConfigFrm.ExtractOptions(const AFolder: string; ACommandLine: tCustomCommandLine);
@@ -170,15 +170,15 @@ uses
       ACommandLine.Command := 'E';
 
     case oOption.ItemIndex of
-      0:   ACommandLine.oOption := 'S';
-      1:   ACommandLine.oOption := 'A';
-      else ACommandLine.oOption := 'Y';
+      0: ACommandLine.oOption := 'S';
+      1: ACommandLine.oOption := 'A';
+      2: ACommandLine.oOption := 'Q';
     end;
     
     if cdEOption.Checked then
-    begin
-      ACommandLine.cdOption := AFolder;
-    end;
+      ACommandLine.cdOption := AFolder
+    else
+      ACommandLine.cdOption := '';
   end;
 
   procedure TConfigFrm.LoadButtons(APopup: TPopupMenu);

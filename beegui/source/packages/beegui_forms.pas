@@ -191,7 +191,7 @@ uses
 
     ExtractFrm.xCommand.Checked := CommandLine.Command = 'X';
 
-    { TODO : Aggiungere nella overwriteBox altri valori }
+    { TODO : }
 
     // if (FuOption xor FfOption) then
     // begin
@@ -220,7 +220,7 @@ uses
       else
         CommandLine.Command := 'E';
 
-      { TODO : sistemare con uOption ed fOption }
+      { TODO : }
 
       case ExtractFrm.oOption.ItemIndex of
         0: CommandLine.oOption := 'S';

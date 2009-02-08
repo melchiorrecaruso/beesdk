@@ -186,7 +186,7 @@ object ExtractFrm: TExtractFrm
     BorderSpacing.Left = 6
     BorderSpacing.Bottom = 6
     ItemHeight = 13
-    ItemIndex = 2
+    ItemIndex = 1
     Items.Strings = (
       'Skip pre-existing files'
       'Overwrite pre-existing files'
@@ -195,7 +195,7 @@ object ExtractFrm: TExtractFrm
     ItemWidth = 0
     Style = csDropDownList
     TabOrder = 1
-    Text = 'Query if Overwrite pre-existing files'
+    Text = 'Overwrite pre-existing files'
   end
   object Folders: TTreeView
     AnchorSideLeft.Control = Options

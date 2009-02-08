@@ -724,6 +724,8 @@ uses
 
     if FCommandLine.Run then
     begin
+      ShowMessage(FCommandLine.Params.Text); Exit;
+
       IncWorkStatus;
       FArchiveTime := FileAge(aArchiveName);
 
