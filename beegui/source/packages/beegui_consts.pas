@@ -59,8 +59,6 @@ implementation
       Result := aApplicationCaption + ' - ' + ExtractFileName(aFileName);
   end;
 
-
-
 end.
 
 

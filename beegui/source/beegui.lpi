@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="4"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -169,9 +169,7 @@
         <UnitName Value="BeeGui_Messages"/>
         <CursorPos X="7" Y="152"/>
         <TopLine Value="136"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
@@ -191,7 +189,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="63" Y="676"/>
-        <TopLine Value="666"/>
+        <TopLine Value="690"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="41"/>
         <Loaded Value="True"/>
@@ -201,7 +199,7 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -255,22 +253,22 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
-        <Filename Value="packages\beegui_plugins.pas"/>
-        <UnitName Value="BeeGui_Plugins"/>
-        <CursorPos X="41" Y="88"/>
-        <TopLine Value="58"/>
+        <Filename Value="packages\beegui_consts.pas"/>
+        <UnitName Value="BeeGui_Consts"/>
+        <CursorPos X="1" Y="61"/>
+        <TopLine Value="20"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
-        <Filename Value="packages\beegui_consts.pas"/>
-        <UnitName Value="BeeGui_Consts"/>
-        <CursorPos X="28" Y="48"/>
-        <TopLine Value="16"/>
-        <EditorIndex Value="4"/>
-        <UsageCount Value="11"/>
+        <Filename Value="packages\beegui_sysutils.pas"/>
+        <UnitName Value="BeeGui_SysUtils"/>
+        <CursorPos X="44" Y="223"/>
+        <TopLine Value="26"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit21>
@@ -389,8 +387,8 @@
         <Caret Line="676" Column="63" TopLine="666"/>
       </Position28>
       <Position29>
-        <Filename Value="packages\beegui_messages.pas"/>
-        <Caret Line="2" Column="45" TopLine="1"/>
+        <Filename Value="packages\beegui_sysutils.pas"/>
+        <Caret Line="223" Column="44" TopLine="208"/>
       </Position29>
     </JumpHistory>
   </ProjectOptions>
