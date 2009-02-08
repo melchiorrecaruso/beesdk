@@ -26,6 +26,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Source: "..\distribution\BeeGui.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\distribution\*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\distribution\docs\*"; DestDir: "{app}\docs"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\distribution\language\*"; DestDir: "{app}\language"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\distribution\largeicons\*"; DestDir: "{app}\largeicons"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\distribution\smallicons\*"; DestDir: "{app}\smallicons"; Flags: ignoreversion recursesubdirs createallsubdirs
 
