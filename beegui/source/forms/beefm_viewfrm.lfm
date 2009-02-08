@@ -1,5 +1,5 @@
 object ViewFrm: TViewFrm
-  Left = 405
+  Left = 273
   Height = 328
   Top = 242
   Width = 411

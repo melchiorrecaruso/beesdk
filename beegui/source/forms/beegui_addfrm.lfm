@@ -1,7 +1,7 @@
 object AddFrm: TAddFrm
-  Left = 351
+  Left = 290
   Height = 316
-  Top = 171
+  Top = 318
   Width = 400
   ActiveControl = Pages
   Caption = 'Archive Name and Options'

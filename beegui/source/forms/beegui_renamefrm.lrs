@@ -1,8 +1,8 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TRenameFrm','FORMDATA',[
-  'TPF0'#10'TRenameFrm'#9'RenameFrm'#4'Left'#3#223#1#6'Height'#2'_'#3'Top'#3#190
-  +#0#5'Width'#3'/'#1#13'ActiveControl'#7#5'BtnOk'#8'AutoSize'#9#11'BorderIcons'
+  'TPF0'#10'TRenameFrm'#9'RenameFrm'#4'Left'#3'\'#1#6'Height'#2'_'#3'Top'#3#155
+  +#1#5'Width'#3'/'#1#13'ActiveControl'#7#5'BtnOk'#8'AutoSize'#9#11'BorderIcons'
   +#11#12'biSystemMenu'#10'biMinimize'#0#11'BorderStyle'#7#8'bsSingle'#7'Captio'
   +'n'#6#6'Rename'#12'ClientHeight'#2'_'#11'ClientWidth'#3'/'#1#7'OnClose'#7#9
   +'FormClose'#8'OnCreate'#7#10'FormCreate'#6'OnShow'#7#8'FormShow'#10'LCLVersi'

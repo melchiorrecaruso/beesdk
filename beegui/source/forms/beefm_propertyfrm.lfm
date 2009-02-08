@@ -1,7 +1,7 @@
 object InfoFrm: TInfoFrm
-  Left = 360
+  Left = 265
   Height = 446
-  Top = 190
+  Top = 248
   Width = 358
   ActiveControl = Pages
   Caption = 'Properties'
@@ -9089,6 +9089,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Archive name'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object AVersion: TLabel
@@ -9104,6 +9105,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Version'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object Bevel01: TBevel
@@ -9133,6 +9135,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Files'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object ASize: TLabel
@@ -9148,6 +9151,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Files size'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object APacked: TLabel
@@ -9163,6 +9167,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Packed files size '
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object ARatio: TLabel
@@ -9178,6 +9183,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Ratio'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object Bevel02: TBevel
@@ -9206,6 +9212,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Files encrypted'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object AArcSize: TLabel
@@ -9221,6 +9228,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Archive size'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object AModified: TLabel
@@ -9236,6 +9244,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Modified'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object AModifiedValue: TLabel
@@ -9254,6 +9263,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object AArcSizeValue: TLabel
@@ -9272,6 +9282,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object AFilesCryptedValue: TLabel
@@ -9290,6 +9301,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object ARatioValue: TLabel
@@ -9308,6 +9320,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object APackedValue: TLabel
@@ -9326,6 +9339,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object ASizeValue: TLabel
@@ -9344,6 +9358,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object AFilesValue: TLabel
@@ -9362,6 +9377,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object AVersionValue: TLabel
@@ -9379,6 +9395,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object ANameValue: TLabel
@@ -9397,6 +9414,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object AR: TLabel
@@ -9406,6 +9424,7 @@ object InfoFrm: TInfoFrm
           Width = 24
           Caption = '41%'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
       end
@@ -18472,6 +18491,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'File name'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FVersion: TLabel
@@ -18487,6 +18507,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Version'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object Bevel03: TBevel
@@ -18516,6 +18537,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Files size'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FPacked: TLabel
@@ -18531,6 +18553,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Packed files size'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FRatio: TLabel
@@ -18546,6 +18569,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Ratio'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FAttribute: TLabel
@@ -18561,6 +18585,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Attribute'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object Bevel04: TBevel
@@ -18591,6 +18616,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Password'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FMethod: TLabel
@@ -18606,6 +18632,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Method'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FModified: TLabel
@@ -18621,6 +18648,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'Modified'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FModifiedValue: TLabel
@@ -18639,6 +18667,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FMethodValue: TLabel
@@ -18657,6 +18686,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FPasswordValue: TLabel
@@ -18675,6 +18705,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FAttributeValue: TLabel
@@ -18693,6 +18724,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FRatioValue: TLabel
@@ -18711,6 +18743,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FPackedValue: TLabel
@@ -18729,6 +18762,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FSizeValue: TLabel
@@ -18747,6 +18781,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FVersionValue: TLabel
@@ -18765,6 +18800,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FNameValue: TLabel
@@ -18783,6 +18819,7 @@ object InfoFrm: TInfoFrm
           BorderSpacing.Bottom = 2
           Caption = 'ERROR'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
         object FR: TLabel
@@ -18792,6 +18829,7 @@ object InfoFrm: TInfoFrm
           Width = 24
           Caption = '41%'
           Color = clBtnFace
+          ParentColor = False
           Transparent = False
         end
       end
