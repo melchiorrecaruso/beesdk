@@ -63,12 +63,12 @@ type
     cdOptionCheck: TCheckBox;
     BtnCancel: TBitBtn;
     BtnOk: TBitBtn;
-    procedure cdOptionCheckChange(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FoldersClick(Sender: TObject);
     procedure FoldersDblClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FoldersExpanding(Sender: TObject; Node: TTreeNode; var AllowExpansion: Boolean);
+    procedure cdOptionCheckChange(Sender: TObject);
   public
     { public declarations }
     procedure SaveProperty;
@@ -100,11 +100,15 @@ uses
   procedure TExtractFrm.FormCreate(Sender: TObject);
   begin
     Icons.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
-
+    // --- //
     LoadLanguage;
     LoadProperty;
-    
+    // --- //
     FoldersMgr.Initialize;
+    if Folder.Text = '' then
+    begin
+      Folder.Text := GetUserDir;
+    end;
     FoldersMgr.FolderName := Folder.Text;
   end;
 

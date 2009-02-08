@@ -39,6 +39,7 @@ uses
   Windows,
   {$ENDIF}
   Forms,
+  Dialogs,
   SysUtils,
   Interfaces,
   LResources,
