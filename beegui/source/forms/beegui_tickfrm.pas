@@ -215,7 +215,7 @@ var
     FRemainingTime := 0;
 
     {$IFDEF UNIX}
-      Tick.Smooth := True;
+    Tick.Smooth := True;
     {$ENDIF}
   end;
 
