@@ -44,12 +44,20 @@ const
   cApplicationLicenseFile    = 'license.htm';
   cApplicationHelpFile       = 'help.htm';
   cApplicationDocsFolder     = 'docs';
-  cApplicationLanguageFolder = 'language';
+
   cApplicationPluginsFolder  = 'plugins';
 
   function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
 
+  function GetApplicationLanguageDir: string;
+
 implementation
+
+uses
+  GetText;
+
+const
+  cApplicationLanguageFolder = 'languages';
 
   function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
   begin
@@ -57,6 +65,24 @@ implementation
       Result := aApplicationCaption
     else
       Result := aApplicationCaption + ' - ' + ExtractFileName(aFileName);
+  end;
+
+  function GetApplicationLanguageID: string;
+  var
+    S: string;
+  begin
+    GetLanguageIDs(S, Result);
+    Result := LowerCase(Result);
+  end;
+
+  function GetApplicationLanguageDir: string;
+  begin
+    Result := ExtractFilePath(ParamStr(0)) + cApplicationLanguageFolder;
+
+    if GetApplicationLanguageID <> '' then
+    begin
+      Result := IncludeTrailingBackSlash(Result) + GetApplicationLanguageID;
+    end;
   end;
 
 end.

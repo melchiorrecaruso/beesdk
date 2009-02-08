@@ -4,7 +4,7 @@
     F: string;
     Storage: TMemIniFile;
   begin
-    F := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
+    F := IncludeTrailingBackSlash(GetApplicationLanguageDir);
     if ForceDirectories(F) then
     begin
       Storage := TMemIniFile.Create(F + ('extractfrm.ini'));

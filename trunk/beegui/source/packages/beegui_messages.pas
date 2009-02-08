@@ -80,12 +80,15 @@ var
   
 implementation
 
+uses
+  BeeGui_Consts;
+
   procedure LoadMessages;
   var
     Folder: string;
     Storage: TMemIniFile;
   begin
-    Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
+    Folder := IncludeTrailingBackSlash(GetApplicationLanguageDir);
     if ForceDirectories(Folder) then
     begin
       Storage := TMemIniFile.Create(Folder + ('messages.ini'));
@@ -143,7 +146,7 @@ implementation
     Folder: string;
     Storage: TMemIniFile;
   begin
-    Folder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('language');
+    Folder := IncludeTrailingBackSlash(GetApplicationLanguageDir);
     if ForceDirectories(Folder) then
     begin
       Storage := TMemIniFile.Create(Folder + ('messages.ini'));
@@ -201,8 +204,9 @@ initialization
   LoadMessages;
 
 finalization
-
+  {$IFDEF SAVELANGUAGE}
   SaveMessages;
+  {$ENDIF}
   
 end.
 
