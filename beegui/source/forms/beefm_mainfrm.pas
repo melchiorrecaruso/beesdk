@@ -515,7 +515,12 @@ uses
     if Value = False then
       ListView.Color := clInactiveBorder
     else
-      ListView.Color := clWindow;
+      try
+        if ListView.CanFocus then
+          ListView.SetFocus;
+      finally
+        ListView.Color := clWindow;
+      end;
   end;
 
   procedure TMainFrm.UpdateButtons;

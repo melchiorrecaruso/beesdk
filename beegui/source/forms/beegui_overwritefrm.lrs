@@ -1,5 +1,3 @@
-{ Questo è un file risorse generato automaticamente da Lazarus }
-
 LazarusResources.Add('TOverwriteFrm','FORMDATA',[
   'TPF0'#13'TOverwriteFrm'#12'OverwriteFrm'#4'Left'#3#7#1#6'Height'#3#202#0#3'T'
   +'op'#3'z'#1#5'Width'#3#222#1#13'ActiveControl'#7#6'BtnYes'#8'AutoSize'#9#11
