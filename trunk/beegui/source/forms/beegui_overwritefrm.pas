@@ -105,9 +105,10 @@ uses
 
   procedure TOverwriteFrm.FormCreate(Sender: TObject);
   begin
+    Images.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
+    // --- //
     LoadLanguage;
     LoadProperty;
-    Images.IconFolder := ExtractFilePath(ParamStr(0)) + IncludeTrailingBackSlash('largeicons') ;
   end;
 
   procedure TOverwriteFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -120,7 +121,7 @@ uses
   
   procedure TOverwriteFrm.SetFileName(const FileName: string);
   begin
-    TheFolder.Caption := Format(TheFolder.Caption, [' "' + FileName + '".']);
+    TheFolder.Caption := Format(TheFolder.Caption, [FileName]);
     Images.GetBitmap(Images.FileIcon(FileName, 0), OldIcon.Picture.Bitmap);
     Images.GetBitmap(Images.FileIcon(FileName, 0), NewIcon.Picture.Bitmap);
   end;
