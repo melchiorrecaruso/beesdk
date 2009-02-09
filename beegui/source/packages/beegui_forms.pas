@@ -205,9 +205,10 @@ uses
     // end;
 
     case UpCase(CommandLine.oOption) of
-      'S': ExtractFrm.oOption.ItemIndex := 0;
+      'Y': ExtractFrm.oOption.ItemIndex := 0;
       'A': ExtractFrm.oOption.ItemIndex := 1;
-      'Q': ExtractFrm.oOption.ItemIndex := 2;
+      'S': ExtractFrm.oOption.ItemIndex := 2;
+      else ExtractFrm.oOption.ItemIndex := 0;
     end;
 
     ExtractFrm.cdOptionCheck.Checked := Length(CommandLine.cdOption) > 0;
@@ -223,9 +224,10 @@ uses
       { TODO : }
 
       case ExtractFrm.oOption.ItemIndex of
-        0: CommandLine.oOption := 'S';
-        1: CommandLine.oOption := 'A';
-        2: CommandLine.oOption := 'Q';
+        0:   CommandLine.oOption := 'Y';
+        1:   CommandLine.oOption := 'A';
+        2:   CommandLine.oOption := 'S';
+        else CommandLine.oOption := 'Y';
       end;
 
       if ExtractFrm.cdOptionCheck .Enabled then

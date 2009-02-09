@@ -357,16 +357,16 @@ object ConfigFrm: TConfigFrm
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
       ItemHeight = 13
-      ItemIndex = 1
+      ItemIndex = 0
       Items.Strings = (
-        'Skip pre-existing files'
-        'Overwrite pre-existing files'
         'Query if Overwrite pre-existing files'
+        'Overwrite pre-existing files'
+        'Skip pre-existing files'
       )
       ItemWidth = 0
       Style = csDropDownList
       TabOrder = 1
-      Text = 'Overwrite pre-existing files'
+      Text = 'Query if Overwrite pre-existing files'
     end
   end
   object BtnOk: TBitBtn
