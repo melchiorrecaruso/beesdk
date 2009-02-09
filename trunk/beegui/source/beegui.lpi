@@ -83,9 +83,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_ExtractFrm"/>
-        <CursorPos X="32" Y="110"/>
-        <TopLine Value="86"/>
+        <CursorPos X="65" Y="92"/>
+        <TopLine Value="88"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -176,9 +178,11 @@
         <Filename Value="packages\beegui_forms.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Forms"/>
-        <CursorPos X="13" Y="194"/>
-        <TopLine Value="191"/>
+        <CursorPos X="59" Y="212"/>
+        <TopLine Value="185"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
@@ -188,8 +192,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="14" Y="392"/>
-        <TopLine Value="359"/>
+        <CursorPos X="1" Y="732"/>
+        <TopLine Value="704"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="42"/>
         <Loaded Value="True"/>
@@ -199,7 +203,7 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -211,9 +215,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_ConfigFrm"/>
-        <CursorPos X="35" Y="181"/>
+        <CursorPos X="38" Y="175"/>
         <TopLine Value="152"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="25"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -257,7 +263,7 @@
         <UnitName Value="BeeGui_Consts"/>
         <CursorPos X="17" Y="84"/>
         <TopLine Value="28"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -411,7 +417,8 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-Cfsse2"/>
+      <CustomOptions Value="-Cfsse2
+"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>

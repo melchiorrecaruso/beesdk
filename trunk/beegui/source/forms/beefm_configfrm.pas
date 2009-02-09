@@ -170,9 +170,9 @@ uses
       ACommandLine.Command := 'E';
 
     case oOption.ItemIndex of
-      0: ACommandLine.oOption := 'S';
+      0: ACommandLine.oOption := 'Y';
       1: ACommandLine.oOption := 'A';
-      2: ACommandLine.oOption := 'Q';
+      2: ACommandLine.oOption := 'S';
     end;
     
     if cdEOption.Checked then
