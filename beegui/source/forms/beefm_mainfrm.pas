@@ -755,6 +755,7 @@ uses
           Visible := not ConfigFrm.HideWithTickFrmOption.Checked;
           TickFrm.ShowModal;
         end;
+
       FreeAndNil(TickFrm);
       if Visible = False then
       begin
@@ -1179,10 +1180,13 @@ uses
         if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
         begin
           Execute(FArchiveName);
-          if Sender = PMenuOpenIntViewer then
-            with FileProcess do Execute(ParamStr(0) + ' V', FFileName)
-          else
-            with FileProcess do Execute('', FFileName);
+          if (ExitCode < 2) then
+          begin
+            if Sender = PMenuOpenIntViewer then
+              with FileProcess do Execute(ParamStr(0) + ' V', FFileName)
+            else
+              with FileProcess do Execute('', FFileName);
+          end;
         end;
       end;
     end;
@@ -1211,7 +1215,10 @@ uses
         if GetOSFileManager <> '' then
         begin
           Execute(FArchiveName);
-          with FileProcess do Execute(GetOSFileManager, FCheckOutDir);
+          if (ExitCode < 2) then
+          begin
+            with FileProcess do Execute(GetOSFileManager, FCheckOutDir);
+          end;
         end else
           MessageDlg(rseCannotFoundFM, mtError, [mbOk], 0);
       end else
@@ -1319,10 +1326,12 @@ uses
       ConfigFrm.SetPage(0);
 
     if ConfigFrm.ShowModal = mrOk then
+    begin
       if ConfigFrm.SaveButtons(BMenu) then
       begin
         UpdateButtons;
       end;
+    end;
   end;
 
   procedure TMainFrm.OptionsClick(Sender: TObject);

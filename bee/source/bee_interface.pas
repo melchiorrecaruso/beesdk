@@ -193,7 +193,7 @@ uses
 constructor TApp.Create(aInterfaces: TInterfaces);
 begin
   inherited Create(True);
-  FreeOnTerminate := False;
+  FreeOnTerminate := True;
   Priority := tpNormal;
   ExitCode := 0;
   // ---
