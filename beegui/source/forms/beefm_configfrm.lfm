@@ -28,12 +28,13 @@ object ConfigFrm: TConfigFrm
     DefaultItemHeight = 15
     HideSelection = False
     Indent = 20
+    ReadOnly = True
     RightClickSelect = True
     RowSelect = True
     ScrollBars = ssAutoBoth
     TabOrder = 0
     OnChange = TreeChange
-    Options = [tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoRightClickSelect, tvoRowSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
+    Options = [tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoReadOnly, tvoRightClickSelect, tvoRowSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
     Items.Data = {
       F9FFFFFF020003000000FFFFFFFF00000000FFFFFFFFFFFFFFFF000000000000
       0000000B000000416464204F7074696F6E73FFFFFFFFFFFFFFFFFFFFFFFFFFFF
