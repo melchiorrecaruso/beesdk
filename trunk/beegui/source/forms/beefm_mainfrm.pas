@@ -222,6 +222,7 @@ type
     procedure FileProcessStopTimer(Sender: TObject);
     procedure FileProcessTimer(Sender: TObject);
     // ---
+    procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
@@ -662,7 +663,6 @@ uses
 
   // Open archive and execute commands
 
-
   procedure TMainFrm.ShowAndOpenArchive(const aArchiveName: string);
   begin
     if Visible = False then
@@ -1042,6 +1042,32 @@ uses
     begin
       MMenuFileCloseClick(Sender);
       OpenArchive(ListView.FileName);
+    end;
+  end;
+
+  // ---------------------------------------------------------------------- //
+  //                                                                        //
+  //  Main Frm - DropFiles                                                  //
+  //                                                                        //
+  // ---------------------------------------------------------------------- //
+
+  procedure TMainFrm.FormDropFiles(Sender: TObject; const FileNames: array of string);
+  var
+    I: integer;
+  begin
+    if CheckWorkStatus(False) then
+    begin
+      FCommandLine.Clear;
+      FCommandLine.Command := 'A';
+      FCommandLine.Confirm := True;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+      ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
+      FCommandLine.ArchiveName := FArchiveName;
+      for I := Low(FileNames) to High(FileNames) do
+      begin
+        FCommandLine.FileMasks.Add(FileNames[I]);
+      end;
+      Execute(FArchiveName);
     end;
   end;
 
