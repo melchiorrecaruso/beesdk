@@ -207,6 +207,7 @@ var
     FCommandLine := nil;
     FArchiveList := nil;
     FPassword := '';
+    FApp := nil;
 
     FOnlyAForm := False;
     FCanClose := False;
