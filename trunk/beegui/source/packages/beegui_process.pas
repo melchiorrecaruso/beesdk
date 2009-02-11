@@ -115,8 +115,10 @@ uses
     begin
       if (FProcess.Running = False) then
       begin
-        if FProcess.ExitStatus < 2 then;
+        if FProcess.ExitStatus < 2 then
+        begin
           FFileIsModified :=  FileAge(FFileName) > FFileTime;
+        end;
         FreeAndNil(FProcess);
         Enabled := False;
       end;
