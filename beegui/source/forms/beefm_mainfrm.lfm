@@ -1,8 +1,9 @@
 object MainFrm: TMainFrm
-  Left = 246
+  Left = 278
   Height = 544
-  Top = 238
+  Top = 231
   Width = 721
+  AllowDropFiles = True
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 525
   ClientWidth = 721
@@ -14,6 +15,7 @@ object MainFrm: TMainFrm
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnDropFiles = FormDropFiles
   OnShow = FormShow
   LCLVersion = '0.9.27'
   object ListView: TArchiveListView

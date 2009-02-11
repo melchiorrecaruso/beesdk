@@ -71,8 +71,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_AddFrm"/>
-        <CursorPos X="48" Y="172"/>
-        <TopLine Value="147"/>
+        <CursorPos X="1" Y="379"/>
+        <TopLine Value="361"/>
         <UsageCount Value="200"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
@@ -188,10 +188,10 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="16" Y="1241"/>
-        <TopLine Value="1217"/>
+        <CursorPos X="32" Y="1055"/>
+        <TopLine Value="1051"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="44"/>
+        <UsageCount Value="45"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit14>
@@ -213,7 +213,7 @@
         <UnitName Value="BeeFM_ConfigFrm"/>
         <CursorPos X="38" Y="175"/>
         <TopLine Value="152"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="28"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -225,7 +225,7 @@
         <UnitName Value="BeeFM_PropertyFrm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="28"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
@@ -237,7 +237,7 @@
         <UnitName Value="BeeFm_SelectFrm"/>
         <CursorPos X="31" Y="85"/>
         <TopLine Value="67"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="28"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
@@ -249,127 +249,131 @@
         <UnitName Value="BeeFm_ViewFrm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="28"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit19>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="757" Column="13" TopLine="737"/>
+        <Caret Line="1189" Column="15" TopLine="1162"/>
       </Position1>
       <Position2>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1189" Column="15" TopLine="1162"/>
+        <Caret Line="1056" Column="5" TopLine="1054"/>
       </Position2>
       <Position3>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1056" Column="5" TopLine="1054"/>
+        <Caret Line="1072" Column="5" TopLine="1070"/>
       </Position3>
       <Position4>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1072" Column="5" TopLine="1070"/>
+        <Caret Line="1111" Column="5" TopLine="1109"/>
       </Position4>
       <Position5>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1111" Column="5" TopLine="1109"/>
+        <Caret Line="1130" Column="5" TopLine="1128"/>
       </Position5>
       <Position6>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1130" Column="5" TopLine="1128"/>
+        <Caret Line="1218" Column="28" TopLine="1195"/>
       </Position6>
       <Position7>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1218" Column="28" TopLine="1195"/>
+        <Caret Line="3" Column="95" TopLine="1"/>
       </Position7>
       <Position8>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="3" Column="95" TopLine="1"/>
+        <Caret Line="290" Column="22" TopLine="266"/>
       </Position8>
       <Position9>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="290" Column="22" TopLine="266"/>
+        <Caret Line="645" Column="34" TopLine="631"/>
       </Position9>
       <Position10>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="645" Column="34" TopLine="631"/>
+        <Caret Line="655" Column="18" TopLine="631"/>
       </Position10>
       <Position11>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="655" Column="18" TopLine="631"/>
+        <Caret Line="663" Column="30" TopLine="631"/>
       </Position11>
       <Position12>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="663" Column="30" TopLine="631"/>
+        <Caret Line="696" Column="22" TopLine="672"/>
       </Position12>
       <Position13>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="696" Column="22" TopLine="672"/>
+        <Caret Line="726" Column="29" TopLine="705"/>
       </Position13>
       <Position14>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="726" Column="29" TopLine="705"/>
+        <Caret Line="741" Column="22" TopLine="714"/>
       </Position14>
       <Position15>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="741" Column="22" TopLine="714"/>
+        <Caret Line="789" Column="28" TopLine="771"/>
       </Position15>
       <Position16>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="789" Column="28" TopLine="771"/>
+        <Caret Line="806" Column="18" TopLine="774"/>
       </Position16>
       <Position17>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="806" Column="18" TopLine="774"/>
+        <Caret Line="817" Column="28" TopLine="783"/>
       </Position17>
       <Position18>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="817" Column="28" TopLine="783"/>
+        <Caret Line="1065" Column="16" TopLine="1041"/>
       </Position18>
       <Position19>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1065" Column="16" TopLine="1041"/>
+        <Caret Line="1082" Column="18" TopLine="1044"/>
       </Position19>
       <Position20>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1082" Column="18" TopLine="1044"/>
+        <Caret Line="1104" Column="18" TopLine="1083"/>
       </Position20>
       <Position21>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1104" Column="18" TopLine="1083"/>
+        <Caret Line="1123" Column="16" TopLine="1086"/>
       </Position21>
       <Position22>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1123" Column="16" TopLine="1086"/>
+        <Caret Line="1142" Column="18" TopLine="1121"/>
       </Position22>
       <Position23>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1142" Column="18" TopLine="1121"/>
+        <Caret Line="1157" Column="16" TopLine="1124"/>
       </Position23>
       <Position24>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1157" Column="16" TopLine="1124"/>
+        <Caret Line="1182" Column="43" TopLine="1161"/>
       </Position24>
       <Position25>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1182" Column="43" TopLine="1161"/>
+        <Caret Line="1186" Column="42" TopLine="1161"/>
       </Position25>
       <Position26>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1186" Column="42" TopLine="1161"/>
+        <Caret Line="1188" Column="42" TopLine="1161"/>
       </Position26>
       <Position27>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1188" Column="42" TopLine="1161"/>
+        <Caret Line="1217" Column="18" TopLine="1193"/>
       </Position27>
       <Position28>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1217" Column="18" TopLine="1193"/>
+        <Caret Line="1220" Column="40" TopLine="1193"/>
       </Position28>
       <Position29>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1220" Column="40" TopLine="1193"/>
+        <Caret Line="229" Column="80" TopLine="228"/>
       </Position29>
+      <Position30>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="793" Column="11" TopLine="770"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
