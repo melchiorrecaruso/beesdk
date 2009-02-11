@@ -409,9 +409,11 @@
       </Options>
     </Linking>
     <Other>
+      <WriteFPCLogo Value="False"/>
       <CustomOptions Value="-Cfsse2
 "/>
       <CompilerPath Value="$(CompPath)"/>
+      <CreateMakefileOnBuild Value="True"/>
     </Other>
   </CompilerOptions>
 </CONFIG>
