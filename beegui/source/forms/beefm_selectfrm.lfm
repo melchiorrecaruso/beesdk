@@ -1,7 +1,7 @@
 object SelectFrm: TSelectFrm
-  Left = 291
+  Left = 386
   Height = 85
-  Top = 330
+  Top = 323
   Width = 271
   ActiveControl = Mask
   AutoSize = True

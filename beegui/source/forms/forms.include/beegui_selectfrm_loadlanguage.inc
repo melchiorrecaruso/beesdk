@@ -8,12 +8,10 @@
     begin
       Storage := TMemIniFile.Create(Folder + ('selectfrm.ini'));
       begin
-        Caption            := Storage.ReadString('TForm', 'Caption', Caption);
-
-        // ---
+        MaskLabel.Caption := Storage.ReadString('TLabel',  'MaskLabel.Caption', MaskLabel.Caption);
 
         BtnCancel.Caption := Storage.ReadString('TBitBtn', 'BtnCancel.Caption', BtnCancel.Caption);
-        BtnOk.Caption      := Storage.ReadString('TBitBtn', 'BtnOk.Caption', BtnOk.Caption);
+        BtnOk.Caption     := Storage.ReadString('TBitBtn', 'BtnOk.Caption',     BtnOk.Caption);
       end;
       Storage.Free;
     end;
