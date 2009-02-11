@@ -156,6 +156,10 @@ uses
       ConfirmPassword.Color := clBtnFace;
     end;
     ConfirmPassword.Enabled := Value;
+    if ConfirmPassword.CanFocus then
+      ConfirmPassword.SetFocus;
+    if Password.CanFocus then
+      Password.SetFocus;
   end;
 
   procedure TPasswordFrm.SetPassword;
