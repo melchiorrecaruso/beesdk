@@ -31,7 +31,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
         <CursorPos X="35" Y="37"/>
-        <TopLine Value="23"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -50,7 +50,7 @@
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
         <CursorPos X="33" Y="32"/>
-        <TopLine Value="9"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -58,7 +58,7 @@
       </Unit2>
       <Unit3>
         <Filename Value="bee.include\compiler.inc"/>
-        <CursorPos X="16" Y="33"/>
+        <CursorPos X="21" Y="26"/>
         <TopLine Value="1"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
@@ -92,7 +92,6 @@
     <Linking>
       <Debugging>
         <UseLineInfoUnit Value="False"/>
-        <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
@@ -101,7 +100,7 @@
         <ShowGenInfo Value="False"/>
       </Verbosity>
       <WriteFPCLogo Value="False"/>
-      <CustomOptions Value="-Cfsse2
+      <CustomOptions Value="-Oa=64 -OoREGVAR -OoUNCERTAIN -OoSTACKFRAME -OoPEEPHOLE -OoASMCSE -OoLOOPUNROLL
 "/>
       <CompilerPath Value="$(CompPath)"/>
       <ExecuteAfter>
