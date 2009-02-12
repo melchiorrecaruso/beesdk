@@ -116,8 +116,7 @@ procedure TRangeCoder.FinishEncode;
 var
   I: cardinal;
 begin
-  for I := 0 to NUM do
-    ShiftLow;
+  for I := 0 to NUM do ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;
