@@ -25,13 +25,13 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="6">
+    <Units Count="4">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <CursorPos X="22" Y="37"/>
-        <TopLine Value="125"/>
+        <CursorPos X="35" Y="37"/>
+        <TopLine Value="23"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -49,8 +49,8 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="30" Y="120"/>
-        <TopLine Value="105"/>
+        <CursorPos X="33" Y="32"/>
+        <TopLine Value="9"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -64,49 +64,8 @@
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit3>
-      <Unit4>
-        <Filename Value="bee_rangecoder.pas"/>
-        <UnitName Value="Bee_RangeCoder"/>
-        <CursorPos X="78" Y="147"/>
-        <TopLine Value="118"/>
-        <EditorIndex Value="4"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="bee_modeller.pas"/>
-        <UnitName Value="Bee_Modeller"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="330"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit5>
     </Units>
-    <JumpHistory Count="5" HistoryIndex="4">
-      <Position1>
-        <Filename Value="bee_rangecoder.pas"/>
-        <Caret Line="180" Column="3" TopLine="142"/>
-      </Position1>
-      <Position2>
-        <Filename Value="bee_rangecoder.pas"/>
-        <Caret Line="14" Column="85" TopLine="8"/>
-      </Position2>
-      <Position3>
-        <Filename Value="bee_rangecoder.pas"/>
-        <Caret Line="76" Column="23" TopLine="52"/>
-      </Position3>
-      <Position4>
-        <Filename Value="bee_rangecoder.pas"/>
-        <Caret Line="112" Column="35" TopLine="88"/>
-      </Position4>
-      <Position5>
-        <Filename Value="bee_rangecoder.pas"/>
-        <Caret Line="65" Column="23" TopLine="54"/>
-      </Position5>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="8"/>
