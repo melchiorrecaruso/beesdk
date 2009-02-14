@@ -735,6 +735,7 @@ uses
     if FCommandLine.Run then
     begin
       IncWorkStatus;
+
       FArchiveTime := FileAge(aArchiveName);
 
       TickFrm := TTickFrm.Create(Application);
@@ -761,12 +762,13 @@ uses
       begin
         Visible := True;
       end;
+      DecWorkStatus;
 
       if FileAge(aArchiveName) > FArchiveTime then
       begin
+        MMenuFileCloseClick(MMenuViewUpdate);
         OpenArchive(aArchiveName);
       end;
-      DecWorkStatus;
     end;
 
     if Visible = False then
