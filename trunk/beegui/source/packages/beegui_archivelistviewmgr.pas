@@ -331,9 +331,10 @@ uses
   constructor TCustomArchiveListView.Create(AOwner: TComponent);
   begin
     inherited Create(AOwner);
-    // ----
+    // ---
     FFolder := '';
     FFileName := '';
+    // ---
     FFiles := TArchiveList.Create;
     FFolders := TArchiveList.Create;
     FDetails := TArchiveDetails.Create;
@@ -341,8 +342,6 @@ uses
     FAutoLoad := False;
     FSimpleList := False;
     FSortDirection := False;
-    // ---
-    FOnChangeFolder := nil;
     // ---
     Color := clInactiveBorder;
     MultiSelect := True;
@@ -353,43 +352,44 @@ uses
   
   destructor TCustomArchiveListView.Destroy;
   begin
-    FFolder := '';
-    FFileName := '';
     FFiles.Free;
     FFolders.Free;
     FDetails.Free;
-    // ---
     inherited Destroy;
   end;
 
   function TCustomArchiveListView.CompareFn(Item1, Item2: TListItem): integer;
   var
-    Bool1, Bool2: boolean;
+    AI1, AI2: TArchiveItem;
+    AIB1, AIB2: boolean;
   begin
-    with TArchiveItem(Item1.Data) do Bool1 := not ((faDirectory and FileAttr) = faDirectory);
-    with TArchiveItem(Item2.Data) do Bool2 := not ((faDirectory and FileAttr) = faDirectory);
+    AI1 := TArchiveItem(Item1.Data);
+    AI2 := TArchiveItem(Item2.Data);
 
-    if Bool1 xor Bool2 then
+    AIB1 := not ((AI1.FileAttr and faDirectory) = faDirectory);
+    AIB2 := not ((AI2.FileAttr and faDirectory) = faDirectory);
+
+    if AIB1 xor AIB2 then
     begin
-      if Bool1 then
+      if AIB1 then
         Result := 1
       else
         Result := -1;
     end else
     begin
       case SortColumn of
-         0: Result := CompareFileName(TArchiveItem(Item1.Data).FileName,       TArchiveItem(Item2.Data).FileName);
-         1: Result :=                (TArchiveItem(Item1.Data).FileSize      - TArchiveItem(Item2.Data).FileSize);
-         2: Result :=                (TArchiveItem(Item1.Data).FilePacked    - TArchiveItem(Item2.Data).FilePacked);
-         3: Result :=                (TArchiveItem(Item1.Data).FileRatio     - TArchiveItem(Item2.Data).FileRatio);
-         4: Result := CompareFileName(TArchiveItem(Item1.Data).FileType,       TArchiveItem(Item2.Data).FileType);
-         5: Result :=           Round(TArchiveItem(Item1.Data).FileTime      - TArchiveItem(Item2.Data).FileTime);
-         6: Result :=                (TArchiveItem(Item1.Data).FileAttr      - TArchiveItem(Item2.Data).FileAttr);
-         7: Result :=     CompareText(TArchiveItem(Item1.Data).FileMethod,     TArchiveItem(Item2.Data).FileMethod);
-         8: Result :=     CompareText(TArchiveItem(Item1.Data).FilePassword,   TArchiveItem(Item2.Data).FilePassword);
-         9: Result :=                (TArchiveItem(Item1.Data).FileCRC       - TArchiveItem(Item2.Data).FileCRC);
-        10: Result := CompareFileName(TArchiveItem(Item1.Data).FilePath,       TArchiveItem(Item2.Data).FilePath);
-        11: Result :=                (TArchiveItem(Item1.Data).FilePosition  - TArchiveItem(Item2.Data).FilePosition);
+         0: Result := CompareFileName(AI1.FileName,       AI2.FileName);
+         1: Result :=                (AI1.FileSize      - AI2.FileSize);
+         2: Result :=                (AI1.FilePacked    - AI2.FilePacked);
+         3: Result :=                (AI1.FileRatio     - AI2.FileRatio);
+         4: Result := CompareFileName(AI1.FileType,       AI2.FileType);
+         5: Result :=           Round(AI1.FileTime      - AI2.FileTime);
+         6: Result :=                (AI1.FileAttr      - AI2.FileAttr);
+         7: Result :=     CompareText(AI1.FileMethod,     AI2.FileMethod);
+         8: Result :=     CompareText(AI1.FilePassword,   AI2.FilePassword);
+         9: Result :=                (AI1.FileCRC       - AI2.FileCRC);
+        10: Result := CompareFileName(AI1.FilePath,       AI2.FilePath);
+        11: Result :=                (AI1.FilePosition  - AI2.FilePosition);
       end;
 
       if FSortDirection then
@@ -426,6 +426,7 @@ uses
       Columns[SortColumn].ImageIndex := GetFileIcon('.@sortdown', faDirectory)
     else
       Columns[SortColumn].ImageIndex := GetFileIcon('.@sortup', faDirectory);
+
     SortType := stData;
   end;
 
@@ -842,58 +843,55 @@ uses
 
   procedure TCustomArchiveListView.SetData(AItem: TListItem; AData: Pointer);
   begin
-    if Assigned(AItem) then
+    AItem.Data := AData;
+    with TArchiveItem(AItem.Data) do
     begin
-      AItem.Data := AData;
-      with TArchiveItem(AItem.Data) do
+      AItem.Caption := FileName;                               //  0 Name
+      if (FileAttr and faDirectory) = 0 then
       begin
-        AItem.Caption := FileName;                               //  0 Name
-        if (FileAttr and faDirectory) = 0 then
+        AItem.SubItems.Add(SizeToStr(FileSize));               //  1 Size
+        AItem.SubItems.Add(SizeToStr(FilePacked));             //  2 Packed
+        AItem.SubItems.Add(RatioToStr(FileRatio));             //  3 Ratio
+        if FileType = '' then                                  //  4 Type
         begin
-          AItem.SubItems.Add(SizeToStr(FileSize));               //  1 Size
-          AItem.SubItems.Add(SizeToStr(FilePacked));             //  2 Packed
-          AItem.SubItems.Add(RatioToStr(FileRatio));             //  3 Ratio
-          if FileType = '' then                                  //  4 Type
-          begin
-            FileType := 'File ' + ExtractFileExt(FileName);
-          end;
-          AItem.SubItems.Add(FileType);
-          try
-            AItem.SubItems.Add(FileTimeToString(FileTime));      //  5 Time
-          except
-            AItem.SubItems.Add('');
-          end;
-          AItem.SubItems.Add(AttrToStr(FileAttr));               //  6 Attr
-          AItem.SubItems.Add(FileMethod);                        //  7 Method
-          AItem.SubItems.Add(FilePassword);                      //  8 Password
-          AItem.SubItems.Add(Hex(FileCRC, SizeOf(FileCRC)));     //  9 CRC
-          AItem.SubItems.Add(FilePath);                          // 10 Path
-          AItem.SubItems.Add(IntToStr(FilePosition));            // 11 Position
-        end else
-        begin
-          AItem.SubItems.Add(SizeToStr(FileSize));               //  1 Size
-          AItem.SubItems.Add(SizeToStr(FilePacked));             //  2 Packed
-          AItem.SubItems.Add(RatioToStr(FileRatio));             //  3 Ratio
-          if FileType = '' then                                  //  4 Type
-          begin
-            FileType := 'Files folder';
-          end;
-          AItem.SubItems.Add(FileType);
-          try
-            AItem.SubItems.Add(FileTimeToString(FileTime));      //  5 Time
-          except
-            AItem.SubItems.Add('');
-          end;
-          AItem.SubItems.Add(AttrToStr(FileAttr));               //  6 Attr
-          AItem.SubItems.Add('');                                //  7 Method
-          AItem.SubItems.Add('');                                //  8 Password
-          AItem.SubItems.Add('');                                //  9 CRC
-          AItem.SubItems.Add(FilePath);                          // 10 Path
-          AItem.SubItems.Add('');                                // 11 Position
+          FileType := 'File ' + ExtractFileExt(FileName);
         end;
-        AItem.ImageIndex := FileIcon;
+        AItem.SubItems.Add(FileType);
+        try
+          AItem.SubItems.Add(FileTimeToString(FileTime));      //  5 Time
+        except
+          AItem.SubItems.Add('');
+        end;
+        AItem.SubItems.Add(AttrToStr(FileAttr));               //  6 Attr
+        AItem.SubItems.Add(FileMethod);                        //  7 Method
+        AItem.SubItems.Add(FilePassword);                      //  8 Password
+        AItem.SubItems.Add(Hex(FileCRC, SizeOf(FileCRC)));     //  9 CRC
+        AItem.SubItems.Add(FilePath);                          // 10 Path
+        AItem.SubItems.Add(IntToStr(FilePosition));            // 11 Position
+      end else
+      begin
+        AItem.SubItems.Add(SizeToStr(FileSize));               //  1 Size
+        AItem.SubItems.Add(SizeToStr(FilePacked));             //  2 Packed
+        AItem.SubItems.Add(RatioToStr(FileRatio));             //  3 Ratio
+        if FileType = '' then                                  //  4 Type
+        begin
+          FileType := 'Files folder';
+        end;
+        AItem.SubItems.Add(FileType);
+        try
+          AItem.SubItems.Add(FileTimeToString(FileTime));      //  5 Time
+        except
+          AItem.SubItems.Add('');
+        end;
+        AItem.SubItems.Add(AttrToStr(FileAttr));               //  6 Attr
+        AItem.SubItems.Add('');                                //  7 Method
+        AItem.SubItems.Add('');                                //  8 Password
+        AItem.SubItems.Add('');                                //  9 CRC
+        AItem.SubItems.Add(FilePath);                          // 10 Path
+        AItem.SubItems.Add('');                                // 11 Position
       end;
-   end;
+      AItem.ImageIndex := FileIcon;
+    end;
   end;
 
   function TCustomArchiveListView.GetFileIcon(const AFileName: string; AFileAttr: integer): integer;
