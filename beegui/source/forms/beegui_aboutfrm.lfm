@@ -1,7 +1,7 @@
 object AboutFrm: TAboutFrm
-  Left = 286
+  Left = 378
   Height = 184
-  Top = 320
+  Top = 318
   Width = 273
   ActiveControl = BtnOk
   AutoSize = True
