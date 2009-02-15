@@ -40,7 +40,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="21">
+    <Units Count="20">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -119,9 +119,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="24" Y="216"/>
-        <TopLine Value="180"/>
+        <CursorPos X="35" Y="289"/>
+        <TopLine Value="272"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
@@ -199,7 +201,7 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -252,18 +254,8 @@
         <UsageCount Value="34"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit19>
-      <Unit20>
-        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
-        <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="50" Y="370"/>
-        <TopLine Value="357"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit20>
     </Units>
-    <JumpHistory Count="22" HistoryIndex="21">
+    <JumpHistory Count="23" HistoryIndex="22">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="1043" Column="35" TopLine="1039"/>
@@ -352,6 +344,10 @@
         <Filename Value="beegui.lpr"/>
         <Caret Line="128" Column="1" TopLine="81"/>
       </Position22>
+      <Position23>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="292" Column="34" TopLine="261"/>
+      </Position23>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

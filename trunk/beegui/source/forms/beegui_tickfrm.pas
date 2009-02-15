@@ -206,13 +206,13 @@ var
 
     FCommandLine := nil;
     FArchiveList := nil;
-    FPassword := '';
-    FApp := nil;
+    FPassword    := '';
+    FApp         := nil;
 
     FOnlyAForm := False;
-    FCanClose := False;
+    FCanClose  := False;
 
-    FElapsedTime := 0;
+    FElapsedTime   := 0;
     FRemainingTime := 0;
 
     {$IFDEF UNIX}
@@ -286,7 +286,7 @@ var
 
   function TTickFrm.GetFrmCanShow: boolean;
   begin
-    Result := FRemainingTime > 0;
+    Result := (FRemainingTime > 0);
   end;
   
   procedure TTickFrm.PopupClick(Sender: TObject);
