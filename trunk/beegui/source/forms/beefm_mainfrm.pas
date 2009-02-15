@@ -725,7 +725,7 @@ uses
 
   procedure TMainFrm.Execute(const aArchiveName: string);
   var
-    FArchiveTime: integer;
+    FArchiveAge: integer;
   begin
     if FCommandLine.Confirm then
     begin
@@ -734,9 +734,8 @@ uses
 
     if FCommandLine.Run then
     begin
-      FArchiveTime := FileAge(aArchiveName);
-
       IncWorkStatus;
+      FArchiveAge := FileAge(aArchiveName);
       TickFrm := TTickFrm.Create(Application);
       TickFrm.Execute(FCommandLine, nil);
       repeat
@@ -763,7 +762,7 @@ uses
       end;
       DecWorkStatus;
 
-      if FileAge(aArchiveName) > FArchiveTime then
+      if FileAge(aArchiveName) > FArchiveAge then
       begin
         MMenuFileCloseClick(MMenuViewUpdate);
         OpenArchive(aArchiveName);

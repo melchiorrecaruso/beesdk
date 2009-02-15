@@ -558,16 +558,24 @@ uses
 
   procedure TCustomArchiveListView.SetFolder(Value: string);
   begin
-    Value := ExcludeTrailingBackSlash(Value);
     if FileNamePos(FFolderBoxSign, Value) = 1 then
     begin
       System.Delete(Value, 1, Length(FFolderBoxSign));
     end;
+    Value := ExcludeTrailingBackSlash(Value);
 
-    if FFolders.IndexOf(ExtractFilePath(Value), ExtractFileName(Value)) <> -1 then
-      FFolder := IncludeTrailingBackSlash(Value)
-    else
-      FFolder := '';
+    if Length(Value) > 0 then
+    begin
+      while FFolders.IndexOf(ExtractFilePath(Value), ExtractFileName(Value)) = -1 do
+      begin
+        Value := ExcludeTrailingBackSlash(ExtractFilePath(Value));
+        if Length(Value) = 0 then
+        begin
+          Break;
+        end;
+      end;
+    end;
+    FFolder := IncludeTrailingBackSlash(Value);
     UpdateFolder;
   end;
 
