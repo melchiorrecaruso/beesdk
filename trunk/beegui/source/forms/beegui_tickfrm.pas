@@ -160,9 +160,9 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
-    procedure Execute(ACommandLine: TCustomCommandLine; AArchiveList: TList);
+    procedure   Execute(ACommandLine: TCustomCommandLine; AArchiveList: TList);
     constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
+    destructor  Destroy; override;
   end;
 
 var
@@ -274,6 +274,7 @@ var
   begin
     FCommandLine := ACommandLine;
     FArchiveList := AArchiveList;
+
     FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
@@ -331,7 +332,7 @@ var
         end;
     end;
     {$IFDEF MSWINDOWS}
-      BtnPriority.Enabled := True;
+    BtnPriority.Enabled := True;
     {$ENDIF}
     BtnPauseRun.Enabled := True;
   end;
@@ -387,7 +388,7 @@ var
     end;
 
     {$IFDEF MSWINDOWS}
-      BtnPriority.Enabled := False;
+    BtnPriority.Enabled := False;
     {$ENDIF}
     BtnPauseRun.Enabled := True;
   end;
