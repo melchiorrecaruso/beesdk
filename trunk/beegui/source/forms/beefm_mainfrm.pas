@@ -734,10 +734,9 @@ uses
 
     if FCommandLine.Run then
     begin
-      IncWorkStatus;
-
       FArchiveTime := FileAge(aArchiveName);
 
+      IncWorkStatus;
       TickFrm := TTickFrm.Create(Application);
       TickFrm.Execute(FCommandLine, nil);
       repeat

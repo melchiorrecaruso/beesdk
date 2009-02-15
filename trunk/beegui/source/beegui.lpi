@@ -190,8 +190,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="36" Y="770"/>
-        <TopLine Value="739"/>
+        <CursorPos X="7" Y="764"/>
+        <TopLine Value="733"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="47"/>
         <Loaded Value="True"/>
