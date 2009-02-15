@@ -486,16 +486,18 @@ object AboutFrm: TAboutFrm
     AnchorSideTop.Control = Logo
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Left = 78
+    Left = 69
     Height = 14
     Top = 76
-    Width = 117
+    Width = 134
     Alignment = taCenter
     BorderSpacing.Top = 6
     BorderSpacing.Bottom = 2
     Caption = 'BeeGui 0.0.0 [build 000]'
     Color = clBtnFace
+    Font.Style = [fsBold]
     ParentColor = False
+    ParentFont = False
     Transparent = False
   end
   object Bevel: TBevel
