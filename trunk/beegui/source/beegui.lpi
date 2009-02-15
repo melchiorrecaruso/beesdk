@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -40,7 +40,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="22">
+    <Units Count="20">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -119,8 +119,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="35" Y="289"/>
-        <TopLine Value="272"/>
+        <CursorPos X="28" Y="189"/>
+        <TopLine Value="162"/>
         <UsageCount Value="200"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit6>
@@ -199,7 +199,7 @@
         <Filename Value="version.inc"/>
         <CursorPos X="19" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -249,29 +249,11 @@
         <UnitName Value="BeeFm_ViewFrm"/>
         <CursorPos X="27" Y="96"/>
         <TopLine Value="49"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="35"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit19>
-      <Unit20>
-        <Filename Value="forms\forms.include\beefm_viewfrm_savelanguage.inc"/>
-        <CursorPos X="69" Y="5"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="4"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit20>
-      <Unit21>
-        <Filename Value="forms\forms.include\beefm_viewfrm_loadlanguage.inc"/>
-        <CursorPos X="16" Y="4"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit21>
     </Units>
-    <JumpHistory Count="25" HistoryIndex="24">
+    <JumpHistory Count="23" HistoryIndex="22">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="1043" Column="35" TopLine="1039"/>
@@ -361,17 +343,9 @@
         <Caret Line="128" Column="1" TopLine="81"/>
       </Position22>
       <Position23>
-        <Filename Value="forms\beefm_viewfrm.pas"/>
-        <Caret Line="95" Column="27" TopLine="55"/>
-      </Position23>
-      <Position24>
-        <Filename Value="forms\beefm_viewfrm.pas"/>
-        <Caret Line="96" Column="27" TopLine="67"/>
-      </Position24>
-      <Position25>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="341" Column="27" TopLine="318"/>
-      </Position25>
+      </Position23>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
