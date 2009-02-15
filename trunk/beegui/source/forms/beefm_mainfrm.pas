@@ -346,7 +346,7 @@ uses
     LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
     {$IFDEF UNIX}
     AddressToolBar.ButtonHeight := 30;
-    FolderBox.Style  := csDropDown;
+    FolderBox.Style := csDropDown;
     {$ENDIF}
     {$IFDEF MSWINDOWS}
     AddressToolBar.ButtonHeight := FolderBox.Height + 4;
@@ -357,7 +357,7 @@ uses
     LoadLanguage;
     LoadProperty;
     // --- //
-    FWorkStatus := 0;
+    FWorkStatus  := 0;
     FCommandLine := TCustomCommandLine.Create(False);
     // --- //
     Caption := GetApplicationCaption(cApplicationCaption ,rsWelcome);

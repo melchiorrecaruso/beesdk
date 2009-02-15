@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -131,9 +131,11 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_AboutFrm"/>
-        <CursorPos X="5" Y="102"/>
+        <CursorPos X="45" Y="94"/>
         <TopLine Value="81"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
@@ -188,8 +190,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="27" Y="341"/>
-        <TopLine Value="318"/>
+        <CursorPos X="18" Y="360"/>
+        <TopLine Value="285"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="52"/>
         <Loaded Value="True"/>
@@ -197,7 +199,7 @@
       </Unit14>
       <Unit15>
         <Filename Value="version.inc"/>
-        <CursorPos X="19" Y="1"/>
+        <CursorPos X="21" Y="1"/>
         <TopLine Value="1"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="14"/>
