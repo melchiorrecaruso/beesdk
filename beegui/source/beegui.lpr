@@ -95,9 +95,6 @@ begin
          end;
          Application.Run;
        end;
-  'S': begin
-         AddEnvironmentVariable('PATH', ExtractFilePath(ParamStr(0)));
-       end;
   else begin
          Application.Name := cApplicationName;
          Application.Title := cApplicationName;
