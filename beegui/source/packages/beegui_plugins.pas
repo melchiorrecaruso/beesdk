@@ -1,5 +1,5 @@
 {
-    Copyright (c) 2006 Andrew Filinsky and Melchiorre Caruso
+    Copyright (c) 2008 Andrew Filinsky and Melchiorre Caruso
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 {   Contains:
 
-    T7zApp class.
+      T7zApp class.
 
     Modifyed:
 
-    v1.0.3 build 0026 - 2006/12/13 by Melchiorre Caruso.
+      v1.0.5 build 0026 - 2009.02.16 by Melchiorre Caruso.
 }
 
 unit BeeGui_Plugins;
@@ -32,164 +32,135 @@ unit BeeGui_Plugins;
 interface
 
 uses
+  Dialogs,
   Classes,
   Process,
   SysUtils,
   // --
   Bee_Interface,
+  Bee_CommandLine,
   // --
   BeeGui_SysUtils;
 
 const
-  SevenZipPluginVer = '7zip Plugin ver 0.1.40';
+  SevenZipPluginVer = '7Zip Plugin ver 0.1.40';
   
 type
   TProcessOutput = procedure(FOutput: TStringList) of object;
   
 type
-  T7zApp = class (TApp)
+  TSevenZipApp = class (TApp)
   private
+    FCommandLine: TCommandLine;
     FMemOutputProc: TProcessOutput;
   private
     procedure ProcessListOutput(FOutput: TStringList);
     procedure ProcessTestOutput(FOutput: TStringList);
-    function  TranslateCommandLine: string;
+
+    function  CheckCommandLine: string;
     procedure CheckOverwrite;
   public
-    constructor Create (aAppInterface: TAppInterface; aAppParams: TStringList);
+    constructor Create(aInterface: TInterfaces; aParams: TParams);
     destructor Destroy; override;
     procedure Execute; override;
   end;
 
-  { directories routines }
-  
-  function GetApplicationPluginsDir: string;
-
   { plugins routines }
 
-  function _7zPlugin: string;
+  function SevenZipPlugin: string;
 
 implementation
 
 uses
   BeeGui_Consts;
 
-/// directories routines
-
-  function GetApplicationPluginsDir: string;
-  begin
-    Result := ExtractFilePath(ParamStr(0)) + cApplicationPluginsFolder;
-  end;
+  /// SevenZipPlungin function
   
-/// 7zPlungin function
-  
-  function _7zPlugin: string;
+  function SevenZipPlugin: string;
   begin
-    Result := '';
     {$IFDEF UNIX}
-      // Result := '7z';
-      Result := AnsiIncludeTrailingBackSlash(GetApplicationPluginsDir) +
-        '7za' + PathDelim + 'linux' + PathDelim + 'bin' + PathDelim + '7za'
-    {$ENDIF}
-    {$IFDEF MSWINDOWS}
-      Result := AnsiIncludeTrailingBackSlash(GetApplicationPluginsDir) +
-        '7za' + PathDelim + 'mswindows' + PathDelim + '7za.exe'
+    Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7za';
+    {$ELSE}
+      {$IFDEF MSWINDOWS}
+      Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7za.exe'
+      {$ELSE}
+      Result := '';
+      {$ENDIF}
     {$ENDIF}
   end;
   
-/// T7zApp class ...
+  /// TSevenZipApp class ...
 
-  constructor T7zApp.Create (aAppInterface: TAppInterface; aAppParams: TStringList);
+  constructor TSevenZipApp.Create(aInterface: TInterfaces; aParams: TParams);
   begin
-    inherited Create(aAppInterface, aAppParams);
+    inherited Create(aInterface);
+    FCommandLine := TCommandLine.Create;
+    FCommandLine.Process(aParams);
   end;
 
-  destructor T7zApp.Destroy;
+  destructor TSevenZipApp.Destroy;
   begin
+    FCommandLine.Destroy;
     inherited Destroy;
   end;
 
-  function T7zApp.TranslateCommandLine: string;
+  function TSevenZipApp.CheckCommandLine: string;
   var
-    i: integer;
-    Command: string;
-    Options: string;
-    ArcName: string;
-    FileNames: string;
+    I: integer;
   begin
-    Result := '';
-    Command := '';
-    Options := ' -y ';
-    ArcName := '';
-    FileNames := '';
     FMemOutputProc := nil;
-    // --
-    for i := 0 to AppParams.Count -1 do
-    begin
-      if i = 0 then
-      begin
-        if Length(AppParams.Strings[i]) <> 1 then Exit;
-        // --
-        case System.UpCase(AppParams.Strings[i][1]) of
-         'L': begin
-                Command := _7zPlugin + ' l -slt ';
-                FMemOutputProc := ProcessListOutput;
-              end;
-         'T': begin
-                Command := _7zPlugin + ' t ';
-                FMemOutputProc := ProcessTestOutput;
-              end;
-         'E': begin
-                Command := _7zPlugin + ' e ';
-                FMemOutputProc := ProcessTestOutput;
-              end;
-         'X': begin
-                Command := _7zPlugin + ' x ';
-                FMemOutputProc := ProcessTestOutput;
-              end;
-         else begin
-                AppInterface.cMsg := _7zPluginVer + ' - error : command line unsupported';
-                Synchronize(AppInterface.OnError);
-              end;
-        end;
-      end else
-        if (Length(AppParams.Strings[i]) > 1) and (AppParams.Strings[i][1] = '-') then
-        begin
-          case System.UpCase(AppParams.Strings[i][1]) of
-           'R': Options := Options + ' -r ';
-          end;
-        end else
-          if ArcName = '' then
-          begin
-            ArcName := ' "' + AppParams.Strings[i] + '" ';
-          end else
-          begin
-            if AppParams.Strings[i] = ('*' + PathDelim + '*') then
-              FileNames := FileNames + ' * '
-            else
-              FileNames := FileNames + ' "' + AppParams.Strings[i] + '" ';
-          end;
+    case FCommandLine.Command of
+    'L': begin
+           FMemOutputProc := ProcessListOutput;
+           Result := SevenZipPlugin + ' l -slt ';
+         end;
+    'T': begin
+           FMemOutputProc := ProcessTestOutput;
+           Result := SevenZipPlugin + ' t ';
+         end;
+    'E': begin
+           FMemOutputProc := ProcessTestOutput;
+           Result := SevenZipPlugin + ' e ';
+         end;
+    'X': begin
+           FMemOutputProc := ProcessTestOutput;
+           Result := SevenZipPlugin + ' x ';
+         end;
+    else begin
+           Interfaces.OnError.Data.Msg := SevenZipPluginVer + ' - error : command line unsupported';
+           Synchronize(Interfaces.OnError.Method);
+           Result := '';
+         end;
     end;
-    Result := Command + Options + ArcName + FileNames;
+
+    if FCommandLine.rOption then Result := Result + ' -r ';
+
+    FCommandLine.ArchiveName := '"' + FCommandLine.ArchiveName + '"';
+
+    for I := 0 to FCommandLine.FileMasks.Count -1 do
+    begin
+      FCommandLine.FileMasks[I] := '"' + FCommandLine.FileMasks[I] + '"';
+    end;
+    ShowMessage(Result);
   end;
 
-  procedure T7zApp.Execute;
+  procedure TSevenZipApp.Execute;
   var
     Count: integer;
     BytesReaded: integer;
     // --
     FProcess: TProcess;
-    FCommandLine: String;
+    FCommandLine: string;
     FMemOutput: TMemoryStream;
     FMemOutputStrings: TStringList;
   begin
-    FCommandLine := TranslateCommandLine;
+    FCommandLine := CheckCommandLine;
     if (Assigned(FMemOutputProc)) then
     begin
       BytesReaded := 0;
       // --
-      AppInterface.cMsg := '7z plugin running...';
-      Synchronize(AppInterface.OnDisplay);
+      Interfaces.OnDisplay.Data.Msg := '7z plugin running...';
+      Synchronize(Interfaces.OnDisplay.Method);
       // --
       FMemOutput:= TMemoryStream.Create;
       // --
@@ -228,12 +199,12 @@ uses
       FMemOutput.Free;
       FProcess.Free;
       // --
-      AppInterface.cMsg := '';
-      Synchronize(AppInterface.OnDisplay);
+      Interfaces.OnDisplay.Data.Msg := '';
+      Synchronize(Interfaces.OnDisplay.Method);
     end;
   end;
   
-  procedure T7zApp.ProcessListOutput(FOutput: TStringList);
+  procedure TSevenZipApp.ProcessListOutput(FOutput: TStringList);
   var
     i: integer;
     ItemStr: string;
@@ -376,13 +347,13 @@ uses
     end;
   end;
   
-  procedure T7zApp.ProcessTestOutput(FOutput: TStringList);
+  procedure TSevenZipApp.ProcessTestOutput(FOutput: TStringList);
   begin
     AppInterface.cMsg := FOutput.Text;
     Synchronize(AppInterface.OnDisplay);
   end;
   
-  procedure T7zApp.CheckOverwrite;
+  procedure TSevenZipApp.CheckOverwrite;
   begin
   
   end;

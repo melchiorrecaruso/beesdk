@@ -45,11 +45,12 @@ const
   cApplicationHelpFile       = 'help.htm';
   cApplicationDocsFolder     = 'docs';
 
-  cApplicationPluginsFolder  = 'plugins';
+  cApplicationPluginsFolder  = 'plug-ins';
 
   function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
 
   function GetApplicationLanguageDir: string;
+  function GetApplicationPluginsDir: string;
 
 implementation
 
@@ -83,6 +84,11 @@ const
     begin
       Result := IncludeTrailingBackSlash(Result) + GetApplicationLanguageID;
     end;
+  end;
+
+  function GetApplicationPluginsDir: string;
+  begin
+    Result := ExtractFilePath(ParamStr(0)) + cApplicationPluginsFolder;
   end;
 
 end.
