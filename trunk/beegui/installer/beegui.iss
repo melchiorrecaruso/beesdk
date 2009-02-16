@@ -46,6 +46,8 @@ Root: HKCR; Subkey: "BeeGui"; ValueType: string; ValueName: ""; ValueData: "Bee 
 Root: HKCR; Subkey: "BeeGui\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0"
 Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1"""
 
+Root: HKU;  SubKey: ".DEFAULT\Environment"; ValueType: string; ValueName: "PATH"; ValueData: "";
+
 [Run]
 ;Filename: "{app}\BeeGui.exe"; Parameters: "register:file"; Description: "Associate BeeGui with .bee files"; Flags: nowait postinstall skipifsilent
 

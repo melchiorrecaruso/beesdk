@@ -49,6 +49,9 @@ uses
   procedure GetDrivers(var Drives: TStringList);
   function GetDirectories(const PathName: string; var DirList: TStringList): boolean;
 
+  procedure AddEnvironmentVariable(const aVariable: string; aValue: string);
+  procedure DelEnvironmentVariable(const aVariable: string; aValue: string);
+
   function DirectoryIsEmpty(const DirName: string): boolean;
   procedure DeleteDirectory(const DirName: string);
   procedure ClearDirectory(const DirName: string);
@@ -88,7 +91,11 @@ uses
   
 implementation
 
-  const DoublePathDelim = PathDelim + PathDelim;
+uses
+  Bee_Common;
+
+const
+  DoublePathDelim = PathDelim + PathDelim;
 
   function GetOSFileManager: string;
   begin
@@ -188,7 +195,52 @@ implementation
       {$ENDIF}
     end;
   end;
-  
+
+
+  procedure AddEnvironmentVariable(const aVariable: string; aValue: string);
+  var
+    I: integer;
+    cValue: string;
+  begin
+    I := Length(aValue);
+    if I > 0 then
+    begin
+      if aValue[I] <> ';' then
+      begin
+        aValue := aValue + ';';
+      end;
+
+      cValue := GetEnvironmentVariable(aVariable);
+      if FileNamePos(aValue, cValue) = 0 then
+      begin
+        cValue := aValue + cValue;
+      end;
+      ShowMessage(cValue);
+    end;
+  end;
+
+  procedure DelEnvironmentVariable(const aVariable: string; aValue: string);
+  var
+    I: integer;
+    cValue: string;
+  begin
+    I := Length(aValue);
+    if I > 0 then
+    begin
+      if aValue[I] <> ';' then
+      begin
+        aValue := aValue + ';';
+      end;
+
+      cValue := GetEnvironmentVariable(aVariable);
+      if FileNamePos(aValue, cValue) = 0 then
+      begin
+        cValue := aValue + cValue;
+      end;
+      ShowMessage(cValue);
+    end;
+  end;
+
   function GetDirectories(const PathName: string; var DirList: TStringList): boolean;
   var
     Info: TSearchRec;
