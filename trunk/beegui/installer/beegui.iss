@@ -19,14 +19,15 @@ SolidCompression=yes
 ChangesAssociations=yes
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon";     Description: "{cm:CreateDesktopIcon}";     GroupDescription: "{cm:AdditionalIcons}";      Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}";
+Name: "associatebee";    Description: """.bee"" files";             GroupDescription: "Associate file extension:"; Flags: unchecked
 
 [Files]
-Source: "..\distribution\BeeGui.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\distribution\*"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\distribution\docs\*"; DestDir: "{app}\docs"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\distribution\languages\*"; DestDir: "{app}\languages"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\distribution\BeeGui.exe";   DestDir: "{app}";            Flags: ignoreversion;
+Source: "..\distribution\*";            DestDir: "{app}";            Flags: ignoreversion
+Source: "..\distribution\docs\*";       DestDir: "{app}\docs";       Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\distribution\languages\*";  DestDir: "{app}\languages";  Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\distribution\largeicons\*"; DestDir: "{app}\largeicons"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\distribution\smallicons\*"; DestDir: "{app}\smallicons"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -34,27 +35,61 @@ Source: "..\distribution\smallicons\*"; DestDir: "{app}\smallicons"; Flags: igno
 Filename: "{app}\BeeGui.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.beegui.org"
 
 [Icons]
-Name: "{group}\BeeGui"; Filename: "{app}\BeeGui.exe"
-Name: "{group}\{cm:ProgramOnTheWeb,BeeGui}"; Filename: "{app}\BeeGui.url"
-Name: "{group}\{cm:UninstallProgram,BeeGui}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\BeeGui"; Filename: "{app}\BeeGui.exe"; Tasks: desktopicon
+Name: "{group}\BeeGui";                                                Filename: "{app}\BeeGui.exe"
+Name: "{group}\{cm:ProgramOnTheWeb,BeeGui}";                           Filename: "{app}\BeeGui.url"
+Name: "{group}\{cm:UninstallProgram,BeeGui}";                          Filename: "{uninstallexe}"
+Name: "{userdesktop}\BeeGui";                                          Filename: "{app}\BeeGui.exe"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BeeGui"; Filename: "{app}\BeeGui.exe"; Tasks: quicklaunchicon
 
 [Registry]
-Root: HKCR; Subkey: ".bee"; ValueType: string; ValueName: ""; ValueData: "BeeGui"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "BeeGui"; ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BeeGui\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0"
-Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1"""
-
-Root: HKU;  SubKey: ".DEFAULT\Environment"; ValueType: string; ValueName: "PATH"; ValueData: "";
-
-[Run]
-;Filename: "{app}\BeeGui.exe"; Parameters: "register:file"; Description: "Associate BeeGui with .bee files"; Flags: nowait postinstall skipifsilent
-
-[UninstallRun]
-;Filename: "{app}\BeeGui.exe"; Parameters: "unregister:file";
+Root: HKCR; Subkey: ".bee";                      ValueType: string; ValueName: ""; ValueData: "BeeGui";       Flags: uninsdeletevalue; Tasks: associatebee
+Root: HKCR; Subkey: "BeeGui";                    ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey;   Tasks: associatebee
+Root: HKCR; Subkey: "BeeGui\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0";                    Tasks: associatebee
+Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1""";     Tasks: associatebee
 
 [UninstallDelete]
 Type: files; Name: "{app}\BeeGui.url"
 
+[Code]
+function NeedRestart(): Boolean;
+var
+  ValueData: string;
+begin
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'PATH', ValueData) then
+  begin
+    If (Length(ValueData) > 0) and (ValueData[Length(ValueData)] <> ';') then
+    begin
+      ValueData := ValueData + ';'
+    end;
+  end else
+    ValueData := '';
+  
+  if Pos(ExpandConstant('{app}') + ';', ValueData) = 0 then
+  begin
+    ValueData := ValueData + ExpandConstant('{app}');
+    Result := RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'PATH', ValueData);
+  end else
+    Result := False;
+end;
+
+function UninstallNeedRestart(): Boolean;
+var
+  ValueData: string;
+begin
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'PATH', ValueData) then
+  begin
+    If (Length(ValueData) > 0) and (ValueData[Length(ValueData)] <> ';') then
+    begin
+      ValueData := ValueData + ';'
+    end;
+  end else
+    ValueData := '';
+    
+  if Pos(ExpandConstant('{app}') + ';', ValueData) > 0 then
+  begin
+    Delete(ValueData, Pos(ExpandConstant('{app}') + ';', ValueData), Length(ExpandConstant('{app}') + ';'));
+    Result := RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'PATH', ValueData);
+  end else
+    Result := False;
+end;
 
