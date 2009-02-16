@@ -4,10 +4,11 @@
 [Setup]
 AppName=BeeGui
 AppVerName=BeeGui 1.0.5 Beta
-AppPublisher=Melchiorre Caruso, Correggio (Italy)
+AppPublisher=BeeGui Team
 AppPublisherURL=http://www.beegui.org
 AppSupportURL=http://www.beegui.org
 AppUpdatesURL=http://www.beegui.org
+
 DefaultDirName={pf}\BeeGui
 DefaultGroupName=BeeGui
 AllowNoIcons=yes
@@ -17,6 +18,13 @@ OutputBaseFilename=BeeGui105
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
+
+VersionInfoVersion=1.0.5.640
+VersionInfoDescription=BeeGui archiver installer
+VersionInfoCopyright=GNU General Public License
+VersionInfoCompany=BeeGui Team
+VersionInfoProductName=BeeGui, the GUI for Bee archiver utility
+VersionInfoProductVersion=1.0.5.640
 
 [Tasks]
 Name: "desktopicon";     Description: "{cm:CreateDesktopIcon}";     GroupDescription: "{cm:AdditionalIcons}";      Flags: unchecked
@@ -57,7 +65,7 @@ var
 begin
   if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'PATH', ValueData) then
   begin
-    If (Length(ValueData) > 0) and (ValueData[Length(ValueData)] <> ';') then
+    if (Length(ValueData) > 0) and (ValueData[Length(ValueData)] <> ';') then
     begin
       ValueData := ValueData + ';'
     end;
@@ -78,7 +86,7 @@ var
 begin
   if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'PATH', ValueData) then
   begin
-    If (Length(ValueData) > 0) and (ValueData[Length(ValueData)] <> ';') then
+    if (Length(ValueData) > 0) and (ValueData[Length(ValueData)] <> ';') then
     begin
       ValueData := ValueData + ';'
     end;
