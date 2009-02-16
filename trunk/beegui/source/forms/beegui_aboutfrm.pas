@@ -91,7 +91,7 @@ uses
     LoadLanguage;
     LoadProperty;
 
-    Version.Caption := cApplicationName + ' 1.0.5 [build 0641]';
+    Version.Caption := cApplicationName + ' 1.0.5 [build 0645]';
     Copyright.Caption := '(C) 2003-2009 Andrew Filinsky and  Melchiorre Caruso';
   end;
 
