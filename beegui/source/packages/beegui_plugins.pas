@@ -18,11 +18,11 @@
 
 {   Contains:
 
-      T7zApp class.
+      TSevenZipApp class.
 
     Modifyed:
 
-      v1.0.5 build 0026 - 2009.02.16 by Melchiorre Caruso.
+      v1.0.5 build 0642 - 2009.02.16 by Melchiorre Caruso.
 }
 
 unit BeeGui_Plugins;
@@ -73,6 +73,19 @@ implementation
 
 uses
   BeeGui_Consts;
+
+const
+  SevenZipPathMark     = 'Path = ';
+  SevenZipSizeMark     = 'Size = ';
+  SevenZipPackedMark   = 'Packed Size = ';
+  SevenZipTimeMark     = 'Modified = ';
+  SevenZipAttrMark     = 'Attributes = ';
+  SevenZipPasswordMark = 'Encrypted = ';
+  SevenZipCommentMark  = 'Comment = ';
+  SevenZipMethodMark   = 'Method = ';
+  SevenZipErrorMark    = 'Error: ';
+
+
 
   /// SevenZipPlungin function
   
@@ -155,7 +168,7 @@ uses
     FMemOutputStrings: TStringList;
   begin
     FCommandLine := CheckCommandLine;
-    if (Assigned(FMemOutputProc)) then
+    if Assigned(FMemOutputProc) then
     begin
       BytesReaded := 0;
       // --
@@ -206,69 +219,69 @@ uses
   
   procedure TSevenZipApp.ProcessListOutput(FOutput: TStringList);
   var
-    i: integer;
+    I: integer;
     ItemStr: string;
     ItemStrSwap: string;
-    Item: TAppListItem;
   begin
-    Synchronize(AppInterface.OnList);
-    AppInterface.cList.Clear;
-    // --
-    i := 0;
-    while i < FOutput.Count do
+    I := 0;
+    while I < FOutput.Count do
     begin
-      AppInterface.cPercentage := (100 * i) div FOutput.Count;
-      Synchronize(AppInterface.OnTick);
-    
-      ItemStr := FOutput.Strings[i];
-      if AnsiPosText('Error: ', ItemStr) = 1 then
-      begin
-        AppInterface.cPercentage := 0;
-        Synchronize(AppInterface.OnError);
-      end else
-      if AnsiPosText('Listing archive: ', ItemStr) = 1 then
-      begin
-        AppInterface.cMsg :=ItemStr;
-        Synchronize(AppInterface.OnDisplay);
-      end else
-      if AnsiPosText('Path = ', ItemStr) = 1 then
-      begin
-        Delete(ItemStr, 1, Length('Path = '));
-        Item := TAppListItem.Create;
-        Item.FileName := ExtractFileName(ItemStr);
-        Item.FilePath := ExtractFilePath(ItemStr);
-        Item.FileVersion := 'unknow';
-        Item.FileAttr := 0;
+      ItemStr := FOutput.Strings[I];
 
-        Inc(i);
-        while i < FOutput.Count do
+      if AnsiPosText('Error:', ItemStr) = 1 then
+      begin
+        Interfaces.OnError.Data.Msg := 'Error: reading archive list.';
+        Synchronize(Interfaces.OnError.Method);
+      end else
+
+      if AnsiPosText('Listing archive:', ItemStr) = 1 then
+      begin
+        Interfaces.OnDisplay.Data.Msg := 'Listing archive...';
+        Synchronize(Interfaces.OnDisplay.Method);
+      end else
+
+      if AnsiPosText(SevenZipPathMark, ItemStr) = 1 then
+      begin
+        Delete(ItemStr, 1, Length(SevenZipPathMark));
+
+        Interfaces.OnList.Data.FileName := ExtractFileName(ItemStr);
+        Interfaces.OnList.Data.FilePath := ExtractFilePath(ItemStr);
+
+        Inc(I);
+        while I < FOutput.Count do
         begin
-          ItemStr := FOutput.Strings[i];
-          if AnsiPosText('Size = ', ItemStr) = 1 then
+          ItemStr := FOutput.Strings[I];
+
+          // File Size
+          if AnsiPosText(SevenZipSizeMark, ItemStr) = 1 then
           begin
-            Delete(ItemStr, 1, Length('Size = '));
+            Delete(ItemStr, 1, Length(SevenZipSizeMark));
             try
-              Item.FileSize := StrToInt(ItemStr);
+              Interfaces.OnList.Data.FileSize := StrToInt(ItemStr);
             except
-              Item.FileSize := -1;
-              AppInterface.cMsg := 'Error: reading file size';
-              Synchronize(AppInterface.OnError);
+              Interfaces.OnList.Data.FileSize := -1;
+              Interfaces.OnError.Data.Msg := 'Error: reading file size';
+              Synchronize(Interfaces.OnError.Method);
             end;
           end else
-          if AnsiPosText('Packed Size = ', ItemStr) = 1 then
+
+          // File Packed Size
+          if AnsiPosText(SevenZipPackedMark, ItemStr) = 1 then
           begin
-            Delete(ItemStr, 1, Length('Packed Size = '));
+            Delete(ItemStr, 1, Length(SevenZipPackedMark));
             try
-              Item.FilePacked := StrToInt(ItemStr);
+              Interfaces.OnList.Data.FilePacked := StrToInt(ItemStr);
             except
-              Item.FilePacked := -1;
-              AppInterface.cMsg := 'Error: reading file packed-size';
-              Synchronize(AppInterface.OnError);
+              Interfaces.OnList.Data.FilePacked := -1;
+              Interfaces.OnError.Data.Msg := 'Error: reading file packed-size';
+              Synchronize(Interfaces.OnError.Method);
             end;
           end else
-          if AnsiPosText('Modified = ', ItemStr) = 1 then
+
+          // File Time
+          if AnsiPosText(SevenZipTimeMark, ItemStr) = 1 then
           begin
-            Delete(ItemStr, 1, Length('Modified = '));
+            Delete(ItemStr, 1, Length(SevenZipTimeMark));
             SetLength(ItemStr, 16);
             ItemStrSwap  := ItemStr;
             ItemStr [ 1] := ItemStrSwap [ 9];
@@ -283,74 +296,87 @@ uses
             ItemStr [10] := ItemStrSwap [ 4];
             ItemStr [14] := '.';
             try
-              Item.FileTime := DateTimeToFileDate(StrToDateTime(ItemStr));
+              Interfaces.OnList.Data.FileTime := DateTimeToFileDate(StrToDateTime(ItemStr));
             except
-              Item.FileTime := -1;
-              AppInterface.cMsg := 'Error: reading file date-time';
-              Synchronize(AppInterface.OnError);
+              Interfaces.OnList.Data.FileTime := -1;
+              Interfaces.OnError.Data.Msg := 'Error: reading file date-time';
+              Synchronize(Interfaces.OnError.Method);
             end;
           end else
-          if AnsiPosText('Attributes = ', ItemStr) = 1 then
+
+          // File Attributes
+          if AnsiPosText(SevenZipAttrMark, ItemStr) = 1 then
           begin
-            Delete(ItemStr, 1, Length('Attributes = '));
-            if Pos('D', ItemStr) > 0 then Item.FileAttr := Item.FileAttr or faDirectory;
-            if Pos('R', ItemStr) > 0 then Item.FileAttr := Item.FileAttr or faReadOnly;
-            if Pos('H', ItemStr) > 0 then Item.FileAttr := Item.FileAttr or faHidden;
-            if Pos('S', ItemStr) > 0 then Item.FileAttr := Item.FileAttr or faSysFile;
-            if Pos('A', ItemStr) > 0 then Item.FileAttr := Item.FileAttr or faArchive;
+            Delete(ItemStr, 1, Length(SevenZipAttrMark));
+            Interfaces.OnList.Data.FileAttr := 0;
+            with Interfaces.OnList.Data do
+            begin
+              if Pos('D', ItemStr) > 0 then FileAttr := FileAttr or faDirectory;
+              if Pos('R', ItemStr) > 0 then FileAttr := FileAttr or faReadOnly;
+              if Pos('H', ItemStr) > 0 then FileAttr := FileAttr or faHidden;
+              if Pos('S', ItemStr) > 0 then FileAttr := FileAttr or faSysFile;
+              if Pos('A', ItemStr) > 0 then FileAttr := FileAttr or faArchive;
+            end;
           end else
-          if AnsiPosText('Encrypted = ', ItemStr) = 1 then
+
+          // File Password
+          if AnsiPosText(SevenZipPasswordMark, ItemStr) = 1 then
           begin
-            Delete(ItemStr, 1, Length('Encrypted = '));
+            Delete(ItemStr, 1, Length(SevenZipPasswordMark));
             if ItemStr = '0' then
-              Item.FilePassword := 'No'
+              Interfaces.OnList.Data.FilePassword := 'No'
             else
               if ItemStr = '1' then
-                Item.FilePassword := 'Yes'
+                Interfaces.OnList.Data.FilePassword := 'Yes'
               else
-                Item.FilePassword := '?';
+                Interfaces.OnList.Data.FilePassword := '?';
           end else
-          if AnsiPosText('Comment = ', ItemStr) = 1 then
+
+          // File Comment
+          if AnsiPosText(SevenZipCommentMark, ItemStr) = 1 then
           begin
-            Delete (ItemStr, 1, Length('Comment = '));
-            Item.FileComm := ItemStr;
+            Delete(ItemStr, 1, Length(SevenZipCommentMark));
+            Interfaces.OnList.Data.FileComm := ItemStr;
           end else
-          if AnsiPosText('Method = ', ItemStr) = 1 then
+
+          // File Method
+          if AnsiPosText(SevenZipMethodMark, ItemStr) = 1 then
           begin
-            Delete (ItemStr, 1, Length('Method = '));
-            Item.FileMethod := ItemStr;
+            Delete (ItemStr, 1, Length(SevenZipMethodMark));
+            Interfaces.OnList.Data.FileMethod := ItemStr;
           end else
-          if AnsiPosText('Error: ', ItemStr) = 1 then
+
+          // On Error
+          if AnsiPosText(SevenZipErrorMark, ItemStr) = 1 then
           begin
-            AppInterface.cMsg := ItemStr;
-            Synchronize(AppInterface.OnError);
-            // ---
+            Interfaces.OnError.Data.Msg := ItemStr;
+            Synchronize(Interfaces.OnError.Method);
             Break;
           end else
-          if AnsiPosText('Path = ', ItemStr) = 1 then
+
+          // Next File Record
+          if AnsiPosText(SevenZipPathMark, ItemStr) = 1 then
           begin
-            Dec(i);
+            Dec(I);
             Break;
           end;
-          Inc(i);
+          Inc(I);
         end;
 
-        if ((Item.FileAttr and faDirectory) = 0) then
+        //
+        if (Interfaces.OnList.Data.FileAttr and faDirectory) = 0 then
         begin
-          AppInterface.cList.Add(Item);
-        end else
-        begin
-          Item.Free;
+          Synchronize(Interfaces.OnList.Method);
         end;
       end;
-      Inc(i);
+      Inc(I);
     end;
   end;
   
   procedure TSevenZipApp.ProcessTestOutput(FOutput: TStringList);
   begin
-    AppInterface.cMsg := FOutput.Text;
-    Synchronize(AppInterface.OnDisplay);
+    Interfaces.OnDisplay.Data.Msg := FOutput.Text;
+    Synchronize(Interfaces.OnDisplay.Method);
   end;
   
   procedure TSevenZipApp.CheckOverwrite;
