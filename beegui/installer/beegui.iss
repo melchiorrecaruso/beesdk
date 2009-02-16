@@ -21,7 +21,7 @@ ChangesAssociations=yes
 [Tasks]
 Name: "desktopicon";     Description: "{cm:CreateDesktopIcon}";     GroupDescription: "{cm:AdditionalIcons}";      Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}";
-Name: "associatebee";    Description: """.bee"" files";             GroupDescription: "Associate file extension:"; Flags: unchecked
+Name: "associatebee";    Description: """.bee"" files";             GroupDescription: "Associate file extension:";
 
 [Files]
 Source: "..\distribution\BeeGui.exe";   DestDir: "{app}";            Flags: ignoreversion;
