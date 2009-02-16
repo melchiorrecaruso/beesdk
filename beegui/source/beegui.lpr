@@ -46,6 +46,7 @@ uses
   // --- //
   BeeGui_Consts,
   BeeGui_Package,
+  BeeGui_SysUtils,
   // --- //
   BeeGui_TickFrm,
   BeeGui_AboutFrm,
@@ -61,8 +62,6 @@ var
 
 begin
   {$I beegui.lrs}
-  MaxKeptOSChunks := 8;
-
   Application.Initialize;
   Application.HelpFile := '';
 
@@ -95,6 +94,9 @@ begin
            ViewFrm.LoadFile(ParamStr(2));
          end;
          Application.Run;
+       end;
+  'S': begin
+         AddEnvironmentVariable('PATH', ExtractFilePath(ParamStr(0)));
        end;
   else begin
          Application.Name := cApplicationName;
