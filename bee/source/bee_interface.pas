@@ -225,7 +225,9 @@ end;
 procedure TApp.SetExitCode(Code: integer);
 begin
   if ExitCode < Code then
+  begin
     ExitCode := Code;
+  end;
 end;
 
 procedure TApp.SetPriority(APriority: integer);
