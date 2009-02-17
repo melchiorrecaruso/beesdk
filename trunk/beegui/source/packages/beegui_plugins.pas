@@ -36,10 +36,11 @@ uses
   Classes,
   Process,
   SysUtils,
-  // --
+  // ---
+  Bee_Common,
   Bee_Interface,
   Bee_CommandLine,
-  // --
+  // ---
   BeeGui_SysUtils;
 
 const
@@ -77,7 +78,6 @@ type
 implementation
 
 uses
-  Bee_Common,
   BeeGui_Consts;
 
 const
@@ -191,67 +191,56 @@ const
   procedure TSevenZipApp.Execute;
   var
     Count: integer;
-    BytesReaded: integer;
-    // ---
+    Readed: integer;
     FProcess: TProcess;
     FCommandLine: string;
     FMemOutput: TMemoryStream;
     FMemOutputStrings: TStringList;
   begin
-    Interfaces.OnDisplay.Data.Msg := SevenZipPluginVer + ' running...';
+    Interfaces.OnDisplay.Data.Msg := SevenZipPluginVer + ' running...' + Cr;
     Synchronize(Interfaces.OnDisplay.Method);
 
     FCommandLine := CheckCommandLine;
     if Assigned(FMemOutputProc) then
     begin
+      Readed := 0;
       FMemOutput:= TMemoryStream.Create;
       FProcess := TProcess.Create(nil);
-      FProcess.StartupOptions := [];
-      FProcess.Options := [poNewConsole]; //poUsePipes, poNoConsole
-
       FProcess.CommandLine := FCommandLine;
-
-      Interfaces.OnError.Data.Msg := FProcess.CommandLine;
-      Synchronize(Interfaces.OnError.Method);
-
+      FProcess.Options := [poUsePipes, poNoConsole];
       FProcess.Execute;
-
-      BytesReaded := 0;
       while FProcess.Running do
       begin
-      //  FMemOutput.SetSize(BytesReaded + 2048);
-      //  Count := FProcess.Output.Read((FMemOutput.Memory + BytesReaded)^, 2048);
-      //  if Count > 0 then
-      //    Inc(BytesReaded, Count)
-      //  else
-
-        if Interfaces.Terminated then
+        FMemOutput.SetSize(Readed + 2048);
+        Count := FProcess.Output.Read((FMemOutput.Memory + Readed)^, 2048);
+        if Count > 0 then
         begin
-          FProcess.Terminate(255);
+          Inc(Readed, Count);
         end else
-          Sleep(100);
+        begin
+          if Interfaces.Terminated then
+            FProcess.Terminate(255)
+          else
+            Sleep(100);
+        end;
       end;
 
-      //repeat
-      //  FMemOutput.SetSize(BytesReaded + 2048);
-      //  Count := FProcess.Output.Read((FMemOutput.Memory + BytesReaded)^, 2048);
-      //  if Count > 0 then
-      //  begin
-      //    Inc(BytesReaded, Count);
-      //  end;
-      //until Count <= 0;
-      //FMemOutput.SetSize(BytesReaded);
-      // --
-      //FMemOutputStrings := TStringList.Create;
-      //FMemOutputStrings.LoadFromStream(FMemOutput);
-      //FMemOutputProc(FMemOutputStrings);
-      // --
-      //FMemOutputStrings.Free;
-      FMemOutput.Free;
+      repeat
+        FMemOutput.SetSize(Readed + 2048);
+        Count := FProcess.Output.Read((FMemOutput.Memory + Readed)^, 2048);
+        if Count > 0 then
+        begin
+          Inc(Readed, Count);
+        end;
+      until Count <= 0;
+      FMemOutput.SetSize(Readed);
+      FMemOutputStrings := TStringList.Create;
+      FMemOutputStrings.LoadFromStream(FMemOutput);
+      FMemOutputProc(FMemOutputStrings);
+      // ---
       FProcess.Free;
-      // --
-      Interfaces.OnError.Data.Msg := FMemOutputStrings.Text;
-      Synchronize(Interfaces.OnError.Method);
+      FMemOutput.Free;
+      FMemOutputStrings.Free;
     end;
   end;
   
@@ -268,7 +257,7 @@ const
       // Error
       if AnsiPosText(SevenZipErrorMArk, ItemStr) = 1 then
       begin
-        Delete(ItemStr, 1, Length(SevenZipErrorMArk));
+        Delete(ItemStr, 1, Length(SevenZipErrorMark));
         Interfaces.OnError.Data.Msg := ItemStr;
         Synchronize(Interfaces.OnError.Method);
         SetExitCode(255);
@@ -276,7 +265,7 @@ const
       // List archive
       if AnsiPosText(SevenZipListMark, ItemStr) = 1 then
       begin
-        Interfaces.OnDisplay.Data.Msg := 'Listing archive...';
+        Interfaces.OnDisplay.Data.Msg := 'Open archive...';
         Synchronize(Interfaces.OnDisplay.Method);
       end else
       // File Path - New
@@ -295,7 +284,10 @@ const
           begin
             Delete(ItemStr, 1, Length(SevenZipSizeMark));
             try
-              Interfaces.OnList.Data.FileSize := StrToInt(ItemStr);
+              if Length(ItemStr) > 0 then
+                Interfaces.OnList.Data.FileSize := StrToInt(ItemStr)
+              else
+                Interfaces.OnList.Data.FileSize := 0;
             except
               Interfaces.OnList.Data.FileSize := -1;
               Interfaces.OnError.Data.Msg := 'Error: reading file size';
@@ -307,7 +299,10 @@ const
           begin
             Delete(ItemStr, 1, Length(SevenZipPackedMark));
             try
-              Interfaces.OnList.Data.FilePacked := StrToInt(ItemStr);
+              if Length(ItemStr) > 0 then
+                Interfaces.OnList.Data.FilePacked := StrToInt(ItemStr)
+              else
+                Interfaces.OnList.Data.FilePacked := 0;
             except
               Interfaces.OnList.Data.FilePacked := -1;
               Interfaces.OnError.Data.Msg := 'Error: reading file packed-size';
@@ -393,8 +388,7 @@ const
           end;
           Inc(I);
         end;
-
-        //
+        // ---
         if (Interfaces.OnList.Data.FileAttr and faDirectory) = 0 then
         begin
           Synchronize(Interfaces.OnList.Method);
