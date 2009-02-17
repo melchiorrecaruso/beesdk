@@ -244,10 +244,10 @@ const
       // --
       //FMemOutputStrings := TStringList.Create;
       //FMemOutputStrings.LoadFromStream(FMemOutput);
-      // FMemOutputProc(FMemOutputStrings);
+      //FMemOutputProc(FMemOutputStrings);
       // --
       //FMemOutputStrings.Free;
-      //FMemOutput.Free;
+      FMemOutput.Free;
       FProcess.Free;
       // --
       Interfaces.OnError.Data.Msg := FMemOutputStrings.Text;

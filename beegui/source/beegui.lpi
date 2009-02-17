@@ -248,8 +248,8 @@
       <Unit19>
         <Filename Value="packages\beegui_plugins.pas"/>
         <UnitName Value="BeeGui_Plugins"/>
-        <CursorPos X="7" Y="251"/>
-        <TopLine Value="213"/>
+        <CursorPos X="9" Y="247"/>
+        <TopLine Value="215"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
