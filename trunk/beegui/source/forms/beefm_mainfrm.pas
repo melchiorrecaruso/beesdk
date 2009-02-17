@@ -682,7 +682,7 @@ uses
 
     FCommandLine.Clear;
     FCommandLine.Command := 'L';
-    FCommandLine.Log := False;
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;;
     FCommandLine.ArchiveName := aArchiveName;
 
     FCommandLine.FileMasks.Add('*');

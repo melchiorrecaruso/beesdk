@@ -43,8 +43,12 @@ uses
   BeeGui_SysUtils;
 
 const
-  SevenZipPluginVer = '7Zip Plugin ver 0.1.40';
-  
+  SevenZipPluginVer     = '7Zip Plugin ver 0.1.40';
+
+  SevenZipPluginSupport = '|7z|zip|gz|gzip|tgz|bz2|bzip2|tbz2|tbz|tar|lzma' +
+                          '|rar|cab|arj|z|taz|cpio|rpm|deb|lzh|lha|chm|chw' +
+                          '|hxs|iso|msi|doc|xls|ppt|wim|swm|dmg|xar|hfs|';
+
 type
   TProcessOutput = procedure(FOutput: TStringList) of object;
   
@@ -91,11 +95,6 @@ const
   SevenZipCommentMark  = 'Comment = ';
   SevenZipErrorMark    = 'Error: ';
 
-
-
-
-
-
   /// SevenZipPlungin function
   
   function SevenZipPlugin: string;
@@ -117,46 +116,19 @@ const
 
   function SevenZipPlugin(const aArchiveName: string): boolean; overload;
   var
-    FExt: string;
+    FExtention: string;
   begin
-    FExt := ExtractFileExt(aArchiveName);
-
-    if CompareFileName(FExt, '.zip'  ) then Result := True else
-    if CompareFileName(FExt, '.gz'   ) then Result := True else
-    if CompareFileName(FExt, '.gzip' ) then Result := True else
-    if CompareFileName(FExt, '.tgz'  ) then Result := True else
-    if CompareFileName(FExt, '.bz2'  ) then Result := True else
-    if CompareFileName(FExt, '.bzip2') then Result := True else
-    if CompareFileName(FExt, '.tbz2' ) then Result := True else
-    if CompareFileName(FExt, '.tbz'  ) then Result := True else
-    if CompareFileName(FExt, '.tar'  ) then Result := True else
-    if CompareFileName(FExt, '.lzma' ) then Result := True else
-    if CompareFileName(FExt, '.rar'  ) then Result := True else
-    if CompareFileName(FExt, '.cab'  ) then Result := True else
-    if CompareFileName(FExt, '.arj'  ) then Result := True else
-    if CompareFileName(FExt, '.z'    ) then Result := True else
-    if CompareFileName(FExt, '.taz'  ) then Result := True else
-    if CompareFileName(FExt, '.cpio' ) then Result := True else
-    if CompareFileName(FExt, '.rpm'  ) then Result := True else
-
-
-
-
- 'deb',
- 'lzh',
- 'lha',
-
- chm chw hxs
- iso
- iso
- msi doc xls ppt
- wim swm
- dmg
- xar
- hfs
- exe
-
-
+    Result := False;
+    FExtention := ExtractFileExt(aArchiveName);
+    if Length(FExtention) > 0 then
+    begin
+      FExtention := LowerCase(FExtention) + '|';
+      FExtention[1] := '|';
+      if Pos(FExtention, SevenZipPluginSupport) > 0 then
+      begin
+        Result := True;
+      end;
+    end;
   end;
   
   /// TSevenZipApp class ...
@@ -222,58 +194,60 @@ const
     BytesReaded: integer;
     // ---
     FProcess: TProcess;
+    FCommandLine: string;
     FMemOutput: TMemoryStream;
     FMemOutputStrings: TStringList;
   begin
+    Interfaces.OnDisplay.Data.Msg := SevenZipPluginVer + ' running...';
+    Synchronize(Interfaces.OnDisplay.Method);
+
+    FCommandLine := CheckCommandLine;
     if Assigned(FMemOutputProc) then
     begin
-      Interfaces.OnError.Data.Msg := '7Zip plugin running...';
-      Synchronize(Interfaces.OnError.Method);
-
       FMemOutput:= TMemoryStream.Create;
       FProcess := TProcess.Create(nil);
-      FProcess.Options := [poUsePipes, poNoConsole];
-      FProcess.CommandLine := CheckCommandLine;
+      FProcess.StartupOptions := [];
+      FProcess.Options := [poNewConsole]; //poUsePipes, poNoConsole
 
+      FProcess.CommandLine := FCommandLine;
 
       Interfaces.OnError.Data.Msg := FProcess.CommandLine;
       Synchronize(Interfaces.OnError.Method);
-
-
-
 
       FProcess.Execute;
 
       BytesReaded := 0;
       while FProcess.Running do
       begin
-        FMemOutput.SetSize(BytesReaded + 2048);
-        Count := FProcess.Output.Read((FMemOutput.Memory + BytesReaded)^, 2048);
-        if Count > 0 then
+      //  FMemOutput.SetSize(BytesReaded + 2048);
+      //  Count := FProcess.Output.Read((FMemOutput.Memory + BytesReaded)^, 2048);
+      //  if Count > 0 then
+      //    Inc(BytesReaded, Count)
+      //  else
+
+        if Interfaces.Terminated then
         begin
-          Inc(BytesReaded, Count);
+          FProcess.Terminate(255);
         end else
-        begin
           Sleep(100);
-        end;
       end;
 
-      repeat
-        FMemOutput.SetSize(BytesReaded + 2048);
-        Count := FProcess.Output.Read((FMemOutput.Memory + BytesReaded)^, 2048);
-        if Count > 0 then
-        begin
-          Inc(BytesReaded, Count);
-        end;
-      until Count <= 0;
-      FMemOutput.SetSize(BytesReaded);
+      //repeat
+      //  FMemOutput.SetSize(BytesReaded + 2048);
+      //  Count := FProcess.Output.Read((FMemOutput.Memory + BytesReaded)^, 2048);
+      //  if Count > 0 then
+      //  begin
+      //    Inc(BytesReaded, Count);
+      //  end;
+      //until Count <= 0;
+      //FMemOutput.SetSize(BytesReaded);
       // --
-      FMemOutputStrings := TStringList.Create;
-      FMemOutputStrings.LoadFromStream(FMemOutput);
-      FMemOutputProc(FMemOutputStrings);
+      //FMemOutputStrings := TStringList.Create;
+      //FMemOutputStrings.LoadFromStream(FMemOutput);
+      // FMemOutputProc(FMemOutputStrings);
       // --
-      FMemOutputStrings.Free;
-      FMemOutput.Free;
+      //FMemOutputStrings.Free;
+      //FMemOutput.Free;
       FProcess.Free;
       // --
       Interfaces.OnError.Data.Msg := FMemOutputStrings.Text;
