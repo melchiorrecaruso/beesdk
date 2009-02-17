@@ -99,11 +99,11 @@ uses
 
   procedure TExtractFrm.FormCreate(Sender: TObject);
   begin
-    Icons.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
-    // --- //
+    Icons.IconFolder := GetApplicationSmallIconsDir;
+
     LoadLanguage;
     LoadProperty;
-    // --- //
+
     FoldersMgr.Initialize;
     if Folder.Text = '' then
     begin

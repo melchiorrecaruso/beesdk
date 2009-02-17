@@ -49,6 +49,7 @@ uses
   Bee_App,
   Bee_Common,
   Bee_Interface,
+  BeeGui_Plugins,
   // ---
   BeeGui_RenameFrm,
   BeeGui_PasswordFrm,
@@ -138,7 +139,7 @@ type
     FInterfaces: TInterfaces;
     FArchiveList: TList;
     FPassword: string;
-    FApp: TBeeApp;
+    FApp: TApp;
     FCanClose: boolean;
     FElapsedTime: cardinal;
     FRemainingTime: cardinal;
@@ -172,7 +173,6 @@ implementation
 
 uses
   BeeGui_Consts,
-  BeeGui_Plugins,
   BeeGui_Messages,
   BeeGui_SysUtils;
   
@@ -276,7 +276,8 @@ var
     FCommandLine := ACommandLine;
     FArchiveList := AArchiveList;
 
-    FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
+    // FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
+    FApp := TSevenZipApp.Create(FInterfaces, FCommandLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
   end;
