@@ -677,7 +677,6 @@ uses
     FList: TList;
     FFolder: string;
   begin
-    IncWorkStatus;
     Caption := GetApplicationCaption(cApplicationCaption, rsOpening);
 
     FCommandLine.Clear;
@@ -690,8 +689,8 @@ uses
 
     if FCommandLine.Run then
     begin
+      IncWorkStatus;
       FList := TList.Create;
-
       TickFrm := TTickFrm.Create(Application);
       TickFrm.Execute(FCommandLine, FList);
       repeat
@@ -705,6 +704,7 @@ uses
         if TickFrm.FrmCanClose = False then
           TickFrm.ShowModal;
       FreeAndNil(TickFrm);
+      DecWorkStatus;
 
       if ExitCode < 2 then
       begin
@@ -716,11 +716,11 @@ uses
         ListView.Folder := FFolder;
         SetArchiveName(aArchiveName);
       end else
-        SetArchiveName('');
+        MMenuFileCloseClick(nil);
 
       FList.Free;
     end;
-    DecWorkStatus;
+
   end;
 
   procedure TMainFrm.Execute(const aArchiveName: string);

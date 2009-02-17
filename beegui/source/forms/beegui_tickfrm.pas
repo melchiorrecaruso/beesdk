@@ -276,18 +276,15 @@ var
     FCommandLine := ACommandLine;
     FArchiveList := AArchiveList;
 
-    FApp := nil;
-    if SevenZipPlugin(ACommandLine.ArchiveName) then
-    begin
-      FApp := TSevenZipApp.Create(FInterfaces, FCommandLine.Params);
-    end;
-    // FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
+    {$IFDEF UseSevenZipPlugin}
+    if SevenZipPlugin(ACommandLine.ArchiveName) and (SevenZipPlugin <> '') then
+      FApp := TSevenZipApp.Create(FInterfaces, FCommandLine.Params)
+    else
+    {$ENDIF}
+      FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
 
-    if Assigned(FApp) then
-    begin
-      FApp.OnTerminate := OnTerminate;
-      FApp.Resume;
-    end;
+    FApp.OnTerminate := OnTerminate;
+    FApp.Resume;
   end;
 
   function TTickFrm.GetFrmCanClose: boolean;
@@ -396,7 +393,6 @@ var
     begin
       Application.Title := Caption;
     end;
-
     {$IFDEF MSWINDOWS}
     BtnPriority.Enabled := False;
     {$ENDIF}
