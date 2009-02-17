@@ -31,13 +31,16 @@ uses
   SysUtils;
   
 const
-  cApplicationName    = 'BeeGui';
-  cApplicationTitle   = 'Bee File Manager';
-  cApplicationCaption = 'Bee File Manager';
+  cApplicationVersion   = '1.0.5 [build 0648]';
+  cApplicationCopyright = '(C) 2003-2009 Andrew Filinsky and Melchiorre Caruso';
 
-  cApplicationViewerName    = 'BeeViewer';
-  cApplicationViewerTitle   = 'Bee File Viewer';
-  cApplicationViewerCaption = 'Bee File Viewer';
+  cApplicationName           = 'BeeGui';
+  cApplicationTitle          = 'Bee File Manager';
+  cApplicationCaption        = 'Bee File Manager';
+
+  cApplicationViewerName     = 'BeeViewer';
+  cApplicationViewerTitle    = 'Bee File Viewer';
+  cApplicationViewerCaption  = 'Bee File Viewer';
 
   cApplicationHomePage       = 'http://www.beegui.org';
 
@@ -45,20 +48,22 @@ const
   cApplicationHelpFile       = 'help.htm';
   cApplicationDocsFolder     = 'docs';
 
-  cApplicationPluginsFolder  = 'plug-ins';
+  cApplicationPluginsFolder    = 'plug-ins';
+  cApplicationLanguagesFolder  = 'languages';
+  cApplicationSmallIconsFolder = 'smallicons';
+  cApplicationLargeIconsFolder = 'largeicons';
+
+  function GetApplicationPluginsDir: string;
+  function GetApplicationLanguageDir: string;
+  function GetApplicationSmallIconsDir: string;
+  function GetApplicationLargeIconsDir: string;
 
   function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
-
-  function GetApplicationLanguageDir: string;
-  function GetApplicationPluginsDir: string;
 
 implementation
 
 uses
   GetText;
-
-const
-  cApplicationLanguageFolder = 'languages';
 
   function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
   begin
@@ -78,8 +83,7 @@ const
 
   function GetApplicationLanguageDir: string;
   begin
-    Result := ExtractFilePath(ParamStr(0)) + cApplicationLanguageFolder;
-
+    Result := ExtractFilePath(ParamStr(0)) + cApplicationLanguagesFolder;
     if GetApplicationLanguageID <> '' then
     begin
       Result := IncludeTrailingBackSlash(Result) + GetApplicationLanguageID;
@@ -89,6 +93,16 @@ const
   function GetApplicationPluginsDir: string;
   begin
     Result := ExtractFilePath(ParamStr(0)) + cApplicationPluginsFolder;
+  end;
+
+  function GetApplicationSmallIconsDir: string;
+  begin
+    Result := ExtractFilePath(ParamStr(0)) + cApplicationSmallIconsFolder;
+  end;
+
+  function GetApplicationLargeIconsDir: string;
+  begin
+    Result := ExtractFilePath(ParamStr(0)) + cApplicationLargeIconsFolder;
   end;
 
 end.

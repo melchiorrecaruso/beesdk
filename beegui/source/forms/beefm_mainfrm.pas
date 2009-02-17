@@ -342,8 +342,8 @@ uses
 
   procedure TMainFrm.FormCreate(Sender: TObject);
   begin
-    SmallImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'smallicons';
-    LargeImages.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
+    SmallImages.IconFolder := GetApplicationSmallIconsDir;
+    LargeImages.IconFolder := GetApplicationLargeIconsDir;
     {$IFDEF UNIX}
     AddressToolBar.ButtonHeight := 30;
     FolderBox.Style := csDropDown;
