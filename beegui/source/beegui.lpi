@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="6"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -46,7 +46,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
         <CursorPos X="1" Y="127"/>
-        <TopLine Value="79"/>
+        <TopLine Value="80"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -119,8 +119,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="5" Y="278"/>
-        <TopLine Value="248"/>
+        <CursorPos X="17" Y="51"/>
+        <TopLine Value="31"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -248,8 +248,8 @@
       <Unit19>
         <Filename Value="packages\beegui_plugins.pas"/>
         <UnitName Value="BeeGui_Plugins"/>
-        <CursorPos X="42" Y="72"/>
-        <TopLine Value="73"/>
+        <CursorPos X="20" Y="28"/>
+        <TopLine Value="13"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
@@ -268,8 +268,8 @@
       <Unit21>
         <Filename Value="packages\beegui_process.pas"/>
         <UnitName Value="BeeGui_Process"/>
-        <CursorPos X="26" Y="92"/>
-        <TopLine Value="82"/>
+        <CursorPos X="20" Y="29"/>
+        <TopLine Value="9"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
@@ -277,7 +277,7 @@
       </Unit21>
       <Unit22>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="19" Y="31"/>
+        <CursorPos X="24" Y="33"/>
         <TopLine Value="1"/>
         <EditorIndex Value="6"/>
         <UsageCount Value="10"/>
