@@ -172,6 +172,7 @@ implementation
 
 uses
   BeeGui_Consts,
+  BeeGui_PlugIns,
   BeeGui_Messages,
   BeeGui_SysUtils;
   
@@ -275,7 +276,11 @@ var
     FCommandLine := ACommandLine;
     FArchiveList := AArchiveList;
 
-    FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
+    if (SevenZipPlugin <> '') and SevenZipPlugin(ACommandLine.ArchiveName) then
+      FApp := TSevenZipApp.Create(FInterfaces, FCommandLine.Params)
+    else
+      FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
+
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
   end;

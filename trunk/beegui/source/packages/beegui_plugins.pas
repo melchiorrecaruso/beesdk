@@ -272,8 +272,19 @@ const
       if AnsiPosText(SevenZipPathMark, ItemStr) = 1 then
       begin
         Delete(ItemStr, 1, Length(SevenZipPathMark));
-        Interfaces.OnList.Data.FileName := ExtractFileName(ItemStr);
-        Interfaces.OnList.Data.FilePath := ExtractFilePath(ItemStr);
+        Interfaces.OnList.Data.FileName     := ExtractFileName(ItemStr);
+        Interfaces.OnList.Data.FilePath     := ExtractFilePath(ItemStr);
+        Interfaces.OnList.Data.FileSize     :=  0;
+        Interfaces.OnList.Data.FilePacked   :=  0;
+        Interfaces.OnList.Data.FileRatio    :=  0;
+        Interfaces.OnList.Data.FileAttr     :=  0;
+        Interfaces.OnList.Data.FileTime     :=  0;
+        Interfaces.OnList.Data.FileComm     := '';
+        Interfaces.OnList.Data.FileCrc      :=  0;
+        Interfaces.OnList.Data.FileMethod   := '';
+        Interfaces.OnList.Data.FileVersion  := '';
+        Interfaces.OnList.Data.FilePassword := '';
+        Interfaces.OnList.Data.FilePosition := -1;
 
         Inc(I);
         while I < FOutput.Count do
@@ -288,6 +299,13 @@ const
                 Interfaces.OnList.Data.FileSize := StrToInt(ItemStr)
               else
                 Interfaces.OnList.Data.FileSize := 0;
+
+              if Interfaces.OnList.Data.FileSize > 0 then
+                if Interfaces.OnList.Data.FilePacked > 0 then
+                begin
+                  with Interfaces.OnList.Data do
+                    FileRatio := Round(100 * (FilePacked / FileSize));
+                end;
             except
               Interfaces.OnList.Data.FileSize := -1;
               Interfaces.OnError.Data.Msg := 'Error: reading file size';
@@ -303,6 +321,13 @@ const
                 Interfaces.OnList.Data.FilePacked := StrToInt(ItemStr)
               else
                 Interfaces.OnList.Data.FilePacked := 0;
+
+              if Interfaces.OnList.Data.FileSize > 0 then
+                if Interfaces.OnList.Data.FilePacked > 0 then
+                begin
+                  with Interfaces.OnList.Data do
+                    FileRatio := Round(100 * (FilePacked / FileSize));
+                end;
             except
               Interfaces.OnList.Data.FilePacked := -1;
               Interfaces.OnError.Data.Msg := 'Error: reading file packed-size';
