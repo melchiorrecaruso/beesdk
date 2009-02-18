@@ -249,7 +249,7 @@
         <Filename Value="packages\beegui_plugins.pas"/>
         <UnitName Value="BeeGui_Plugins"/>
         <CursorPos X="21" Y="330"/>
-        <TopLine Value="279"/>
+        <TopLine Value="283"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
@@ -427,14 +427,18 @@
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
       <Optimizations>
-        <OptimizationLevel Value="0"/>
+        <VariablesInRegisters Value="True"/>
+        <UncertainOptimizations Value="True"/>
+        <OptimizationLevel Value="3"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>
       <Debugging>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
+      <LinkSmart Value="True"/>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>
