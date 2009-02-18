@@ -49,7 +49,6 @@ uses
   Bee_App,
   Bee_Common,
   Bee_Interface,
-  BeeGui_Plugins,
   // ---
   BeeGui_RenameFrm,
   BeeGui_PasswordFrm,
@@ -276,13 +275,7 @@ var
     FCommandLine := ACommandLine;
     FArchiveList := AArchiveList;
 
-    {$IFDEF UseSevenZipPlugin}
-    if SevenZipPlugin(ACommandLine.ArchiveName) and (SevenZipPlugin <> '') then
-      FApp := TSevenZipApp.Create(FInterfaces, FCommandLine.Params)
-    else
-    {$ENDIF}
-      FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
-
+    FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
     FApp.OnTerminate := OnTerminate;
     FApp.Resume;
   end;
