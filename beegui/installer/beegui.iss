@@ -30,6 +30,7 @@ VersionInfoProductVersion=1.0.5.640
 Name: "desktopicon";     Description: "{cm:CreateDesktopIcon}";     GroupDescription: "{cm:AdditionalIcons}";      Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}";
 Name: "associatebee";    Description: """.bee"" files";             GroupDescription: "Associate file extension:";
+Name: "associatezip";    Description: """.zip"" files";             GroupDescription: "Associate file extension:";
 
 [Files]
 Source: "..\distribution\BeeGui.exe";   DestDir: "{app}";            Flags: ignoreversion;
@@ -38,7 +39,7 @@ Source: "..\distribution\docs\*";       DestDir: "{app}\docs";       Flags: igno
 Source: "..\distribution\languages\*";  DestDir: "{app}\languages";  Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\distribution\largeicons\*"; DestDir: "{app}\largeicons"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\distribution\smallicons\*"; DestDir: "{app}\smallicons"; Flags: ignoreversion recursesubdirs createallsubdirs
-;Source: "..\distribution\plug-ins\*";   DestDir: "{app}\plug-ins";   Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\distribution\plug-ins\*";   DestDir: "{app}\plug-ins";   Flags: ignoreversion recursesubdirs createallsubdirs
 
 [INI]
 Filename: "{app}\BeeGui.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.beegui.org"
@@ -55,6 +56,12 @@ Root: HKCR; Subkey: ".bee";                      ValueType: string; ValueName: "
 Root: HKCR; Subkey: "BeeGui";                    ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey;   Tasks: associatebee
 Root: HKCR; Subkey: "BeeGui\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0";                    Tasks: associatebee
 Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1""";     Tasks: associatebee
+
+Root: HKCR; Subkey: ".zip";                      ValueType: string; ValueName: ""; ValueData: "BeeGui";       Flags: uninsdeletevalue; Tasks: associatezip
+Root: HKCR; Subkey: "BeeGui";                    ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey;   Tasks: associatezip
+Root: HKCR; Subkey: "BeeGui\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0";                    Tasks: associatezip
+Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1""";     Tasks: associatezip
+
 
 [UninstallDelete]
 Type: files; Name: "{app}\BeeGui.url"
