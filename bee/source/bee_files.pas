@@ -27,7 +27,7 @@
   v0.7.8 build 0148 - 2005.06.23 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   
-  v0.7.9 build 0912 - 2008.10.26 by Melchiorre Caruso.
+  v0.7.9 build 0955 - 2009.02.25 by Melchiorre Caruso.
 }
 
 unit Bee_Files;
@@ -55,7 +55,7 @@ type
   private
     BufferSize: cardinal;
     BufferReaded: cardinal;
-    Buffer: array [0..$FFFF] of byte;
+    Buffer: array [0..$1FFFF] of byte;
   end;
 
 type
@@ -71,7 +71,7 @@ type
     BlowFish: TBlowFish;
   private
     BufferSize: cardinal;
-    Buffer: array [0..$FFFF] of byte;
+    Buffer: array [0..$1FFFF] of byte;
   end;
 
 type
@@ -119,12 +119,12 @@ end;
 
 function TFileReader.Read(var Data; Count: Longint): Longint;
 var
-  Bytes: array [0..$FFFFFFF] of byte absolute Data;
+  Bytes: array [0..$FFFFFFF] of Byte absolute Data;
   S: Longint;
 begin
   if (Count = 1) and (BufferReaded < BufferSize) then
   begin
-    byte(Data) := Buffer[BufferReaded];
+    Byte(Data) := Buffer[BufferReaded];
     Inc(BufferReaded);
     Result := Count;
   end else
@@ -200,7 +200,7 @@ end;
 
 function TFileWriter.Write(const Data; Count: Longint): Longint;
 var
-  Bytes: array [0..$FFFFFFF] of byte absolute Data;
+  Bytes: array [0..$FFFFFFF] of Byte absolute Data;
   S: Longint;
 begin
   if Count > (SizeOf(Buffer) - BufferSize) then
@@ -225,7 +225,7 @@ begin
       Result := Count;
     end else
     begin
-      Buffer[BufferSize] := byte(Data);
+      Buffer[BufferSize] := Byte(Data);
       Inc(BufferSize);
       Result := Count;
     end;

@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.7.9 build 0945 - 2009.02.12 by Melchiorre Caruso.
+    v0.7.9 build 0955 - 2009.02.25 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -106,7 +106,9 @@ begin
   SetLength(AppKey, 0);
   AppParams := TStringList.Create;
   for I := 1 to ParamCount do
+  begin
     AppParams.Add(ParamStr(I));
+  end;
   App := TBeeApp.Create(AppInterfaces, AppParams);
 end;
 
@@ -132,8 +134,7 @@ procedure TConsole.OnOverWrite;
 begin
   with AppInterfaces.OnOverWrite.Data do
   begin
-    Writeln('Warning: file "' + ParamToOem(FilePath + FileName) +
-      '" already exists.');
+    Writeln('Warning: file "' + ParamToOem(FilePath + FileName) + '" already exists.');
     Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
   end;
   // not convert oem to param
@@ -155,8 +156,9 @@ end;
 procedure TConsole.OnRename;
 begin
   with AppInterfaces.OnRename.Data do
-    Write('Rename file "' + ParamToOem(FilePath + FileName) +
-      '" as (empty to skip):');
+  begin
+    Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
+  end;
   Readln(AppInterfaces.OnRename.Answer);
   // convert oem to param
   AppInterfaces.OnRename.Answer := OemToParam(AppInterfaces.OnRename.Answer);
@@ -207,8 +209,7 @@ end;
 procedure TConsole.OnTick;
 begin
   // not convert oem to param
-  Write(#8#8#8#8#8#8#8 + Format('  (%d%%)',
-    [AppInterfaces.OnTick.Data.Percentage]));
+  Write(#8#8#8#8#8#8#8 + Format('  (%d%%)', [AppInterfaces.OnTick.Data.Percentage]));
 end;
 
 procedure TConsole.OnClear;
