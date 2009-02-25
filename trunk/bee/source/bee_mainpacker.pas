@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0912 - 2008.10.26 by Melchiorre Caruso.
+  v0.7.9 build 0955 - 2009.02.25 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -69,23 +69,20 @@ type
 
   TEncoder = class
   public
-    constructor Create(aStream: TFileWriter; aInterfaces: TInterfaces;
-      aSync: TSynchronizer);
+    constructor Create(aStream: TFileWriter; aInterfaces: TInterfaces; aSync: TSynchronizer);
     destructor Destroy; override;
     function EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
-    function EncodeStrm(Header: THeader; Mode: TEncodingMode;
-      SrcStrm: TFileReader): boolean;
-    function CopyStrm(Header: THeader; Mode: TEncodingMode;
-      SrcStrm: TFileReader): boolean;
+    function EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
+    function CopyStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
   private
     function GetKey(Header: THeader): string;
     procedure Tick;
   private
     Stream: TFileWriter;
-    PPM:    TBaseCoder;
+    PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
     Interfaces: TInterfaces;
-    Sync:   TSynchronizer;
+    Sync: TSynchronizer;
   end;
 
 type
@@ -94,21 +91,19 @@ type
 
   TDecoder = class
   public
-    constructor Create(aStream: TFileReader; aInterfaces: TInterfaces;
-      aSync: TSynchronizer);
+    constructor Create(aStream: TFileReader; aInterfaces: TInterfaces; aSync: TSynchronizer);
     destructor Destroy; override;
     function DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
-    function DecodeStrm(Header: THeader; Mode: TExtractingMode;
-      DstStrm: TFileWriter): boolean;
+    function DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
   private
     function GetKey(Header: THeader): string;
     procedure Tick;
   private
     Stream: TFileReader;
-    PPM:    TBaseCoder;
+    PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
     Interfaces: TInterfaces;
-    Sync:   TSynchronizer;
+    Sync: TSynchronizer;
   end;
 
 implementation
@@ -128,9 +123,9 @@ constructor TEncoder.Create(aStream: TFileWriter; aInterfaces: TInterfaces;
 begin
   Stream := aStream;
   SecondaryCodec := TSecondaryEncoder.Create(Stream);
-  PPM    := TBaseCoder.Create(SecondaryCodec);
+  PPM := TBaseCoder.Create(SecondaryCodec);
   Interfaces := aInterfaces;
-  Sync   := aSync;
+  Sync := aSync;
 end;
 
 destructor TEncoder.Destroy;
@@ -152,17 +147,18 @@ begin
   Result := Interfaces.OnKey.Answer;
 
   if Length(Result) < MinKeyLength then
+  begin
     Exclude(Header.Data.FileFlags, foPassword);
+  end;
 end;
 
 procedure TEncoder.Tick;
 begin
-  while Interfaces.Suspend do
-    Sleep(250);
-
+  while Interfaces.Suspend do Sleep(250);
   with Interfaces.OnTick.Data do
+  begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
-
+  end;
   Sync(Interfaces.OnTick.Method);
 end;
 
@@ -186,12 +182,7 @@ begin
   Header.Data.FileStartPos := Stream.Seek(0, 1); // stream flush
   Header.Data.FileCrc      := cardinal(-1);
 
-  try
-    SrcFile := TFileReader.Create(Header.FileLink, fmOpenRead +
-      fmShareDenyWrite);
-  except
-    SrcFile := nil;
-  end;
+  SrcFile := CreateTFileReader(Header.FileLink, fmOpenRead + fmShareDenyWrite);
 
   if (SrcFile <> nil) then
   begin
@@ -241,20 +232,18 @@ begin
     end;
     SrcFile.Free;
 
-    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos;
-    // last stream flush
+    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos; // last stream flush
     Stream.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
   end else
   begin
-    Interfaces.OnError.Data.Msg :=
-      ('Error: can''t open file ' + Header.Data.FileName);
+    Interfaces.OnError.Data.Msg := ('Error: can''t open file ' + Header.Data.FileName);
     Sync(Interfaces.OnError.Method);
   end;
 
   if (not (foMoved in Header.Data.FileFlags)) and
-    (Header.Data.FilePacked >= Header.Data.FileSize) then
+     (Header.Data.FilePacked >= Header.Data.FileSize) then
   begin
     Include(Header.Data.FileFlags, foTear);
     Include(Header.Data.FileFlags, foMoved);
@@ -266,8 +255,7 @@ begin
     Result := True;
 end;
 
-function TEncoder.EncodeStrm(Header: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader): boolean;
+function TEncoder.EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
 var
   SrcFile: TFileReader;
   SrcPosition: cardinal;
@@ -343,8 +331,7 @@ begin
     end;
     SrcFile.BlowFish.Finish;
 
-    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos;
-    // last stream flush
+    Header.Data.FilePacked := Stream.Seek(0, 1) - Header.Data.FileStartPos; // last stream flush
     Stream.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
@@ -368,8 +355,7 @@ begin
     Result := True;
 end;
 
-function TEncoder.CopyStrm(Header: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader): boolean;
+function TEncoder.CopyStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
 var
   SrcFile: TFileReader;
   Symbol: byte;
@@ -424,14 +410,13 @@ end;
 
 /// TDecoder
 
-constructor TDecoder.Create(aStream: TFileReader; aInterfaces: TInterfaces;
-  aSync: TSynchronizer);
+constructor TDecoder.Create(aStream: TFileReader; aInterfaces: TInterfaces; aSync: TSynchronizer);
 begin
   Stream := aStream;
   SecondaryCodec := TSecondaryDecoder.Create(Stream);
-  PPM    := TBaseCoder.Create(SecondaryCodec);
+  PPM := TBaseCoder.Create(SecondaryCodec);
   Interfaces := aInterfaces;
-  Sync   := aSync;
+  Sync := aSync;
 end;
 
 destructor TDecoder.Destroy;
@@ -455,12 +440,11 @@ end;
 
 procedure TDecoder.Tick;
 begin
-  while Interfaces.Suspend do
-    Sleep(250);
-
+  while Interfaces.Suspend do Sleep(250);
   with Interfaces.OnTick.Data do
+  begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
-
+  end;
   Sync(Interfaces.OnTick.Method);
 end;
 
@@ -497,11 +481,8 @@ begin
   Crc := cardinal(-1);
 
   if Mode = pmNorm then
-    try
-      DstFile := TFileWriter.Create(Header.Data.FileName, fmCreate)
-    except
-      DstFile := nil;
-    end else
+    DstFile := CreateTFileWriter(Header.Data.FileName, fmCreate)
+  else
     DstFile := TNulWriter.Create;
 
   if (DstFile <> nil) then
@@ -560,16 +541,14 @@ begin
   if Result = False then
   begin
     if Crc = cardinal(-1) then
-      Interfaces.OnError.Data.Msg :=
-        ('Error: can''t open file ' + Header.Data.FileName)
+      Interfaces.OnError.Data.Msg := ('Error: can''t open file ' + Header.Data.FileName)
     else
       Interfaces.OnError.Data.Msg := msgCRCERROR + Header.Data.FileName;
     Sync(Interfaces.OnError.Method);
   end;
 end;
 
-function TDecoder.DecodeStrm(Header: THeader; Mode: TExtractingMode;
-  DstStrm: TFileWriter): boolean;
+function TDecoder.DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
 var
   DstFile: TFileWriter;
   I, Crc:  cardinal;
@@ -588,12 +567,13 @@ begin
 
   case Mode of
     pmSkip: Interfaces.OnDisplay.Data.Msg := msgSkipping + Header.Data.FileName;
-    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting + Header.Data.FileName;
+    pmTest: Interfaces.OnDisplay.Data.Msg := msgTesting  + Header.Data.FileName;
     pmNorm: Interfaces.OnDisplay.Data.Msg := msgDecoding + Header.Data.FileName;
-    pmQuit: begin
-              Result := True;
-              Exit;
-            end;
+    pmQuit:
+    begin
+      Result := True;
+      Exit;
+    end;
   end;
   Sync(Interfaces.OnDisplay.Method);
 
@@ -601,13 +581,10 @@ begin
   Crc := cardinal(-1);
 
   if Mode = pmNorm then
-    try
-      DstFile := DstStrm;
-      Header.Data.FileStartPos := DstFile.Seek(0, 1);
-    except
-      DstFile := nil;
-    end
-  else
+  begin
+    DstFile := DstStrm;
+    Header.Data.FileStartPos := DstFile.Seek(0, 1);
+  end else
     DstFile := TNulWriter.Create;
 
   if (DstFile <> nil) then
@@ -653,9 +630,10 @@ begin
     end;
     Stream.BlowFish.Finish;
 
-    if Mode = pmNorm then
-      DstFile.Flush// last stream flush
-    ;
+    if Mode = pmNorm then // last stream flush
+    begin
+      DstFile.Flush;
+    end;
     DstFile.BlowFish.Finish; // finish after last stream flush
 
     Sync(Interfaces.OnClear.Method);
@@ -665,8 +643,7 @@ begin
   if Result = False then
   begin
     if Crc = cardinal(-1) then
-      Interfaces.OnError.Data.Msg :=
-        ('Error: stream not found')
+      Interfaces.OnError.Data.Msg := ('Error: stream not found')
     else
       Interfaces.OnError.Data.Msg := msgCRCERROR + Header.Data.FileName;
     Sync(Interfaces.OnError.Method);

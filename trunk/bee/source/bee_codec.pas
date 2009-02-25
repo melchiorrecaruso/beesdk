@@ -54,10 +54,8 @@ type
   TSecondaryCodec = class(TRangeCoder)
     procedure Start; virtual; abstract;
     procedure Flush; virtual; abstract;
-    function UpdateSymbol(Freq0, Freq1, aSymbol: cardinal): cardinal;
-      overload; virtual; abstract;
-    function UpdateSymbol(const Freq: TFreq; aSymbol: cardinal): cardinal;
-      overload; virtual; abstract;
+    function UpdateSymbol(Freq0, Freq1, aSymbol: cardinal): cardinal; overload; virtual; abstract;
+    function UpdateSymbol(const Freq: TFreq; aSymbol: cardinal): cardinal; overload; virtual; abstract;
   end;
 
 // Range Encoder...
@@ -67,8 +65,7 @@ type
     procedure Start; override;
     procedure Flush; override;
     function UpdateSymbol(Freq0, Freq1, aSymbol: cardinal): cardinal; override;
-    function UpdateSymbol(const Freq: TFreq; aSymbol: cardinal): cardinal;
-      override;
+    function UpdateSymbol(const Freq: TFreq; aSymbol: cardinal): cardinal; override;
   end;
 
 // Range Decoder...
@@ -78,8 +75,7 @@ type
     procedure Start; override;
     procedure Flush; override;
     function UpdateSymbol(Freq0, Freq1, aSymbol: cardinal): cardinal; override;
-    function UpdateSymbol(const Freq: TFreq; aSymbol: cardinal): cardinal;
-      override;
+    function UpdateSymbol(const Freq: TFreq; aSymbol: cardinal): cardinal; override;
   end;
 
 implementation
@@ -96,8 +92,7 @@ begin
   FinishEncode;
 end;
 
-function TSecondaryEncoder.UpdateSymbol(Freq0, Freq1, aSymbol:
-  cardinal): cardinal;
+function TSecondaryEncoder.UpdateSymbol(Freq0, Freq1, aSymbol: cardinal): cardinal;
 begin
   if aSymbol = 0 then
     Encode(0, Freq0, Freq0 + Freq1)
@@ -106,8 +101,7 @@ begin
   Result := aSymbol;
 end;
 
-function TSecondaryEncoder.UpdateSymbol(const Freq: TFreq;
-  aSymbol: cardinal): cardinal;
+function TSecondaryEncoder.UpdateSymbol(const Freq: TFreq; aSymbol: cardinal): cardinal;
 var
   CumFreq, TotFreq, I: cardinal;
 begin
@@ -144,8 +138,7 @@ begin
   FinishDecode;
 end;
 
-function TSecondaryDecoder.UpdateSymbol(Freq0, Freq1, aSymbol:
-  cardinal): cardinal;
+function TSecondaryDecoder.UpdateSymbol(Freq0, Freq1, aSymbol: cardinal): cardinal;
 begin
   if GetFreq(Freq0 + Freq1) < Freq0 then
   begin
@@ -158,8 +151,7 @@ begin
   end;
 end;
 
-function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq;
-  aSymbol: cardinal): cardinal;
+function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq; aSymbol: cardinal): cardinal;
 var
   CumFreq, TotFreq, SumFreq: cardinal;
 begin
