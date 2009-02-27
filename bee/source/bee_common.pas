@@ -171,9 +171,10 @@ end;
 function FileNameLastPos(const Substr, Str: string): integer;
 begin
   Result := Length(Str);
-  while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)),
-      Substr) <> 0) do
+  while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)), Substr) <> 0) do
+  begin
     Dec(Result);
+  end;
 end;
 
 function CompareFileName(const S1, S2: string): integer;

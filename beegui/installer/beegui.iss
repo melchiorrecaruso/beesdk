@@ -39,7 +39,7 @@ Source: "..\distribution\docs\*";       DestDir: "{app}\docs";       Flags: igno
 Source: "..\distribution\languages\*";  DestDir: "{app}\languages";  Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\distribution\largeicons\*"; DestDir: "{app}\largeicons"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\distribution\smallicons\*"; DestDir: "{app}\smallicons"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\distribution\plug-ins\*";   DestDir: "{app}\plug-ins";   Flags: ignoreversion recursesubdirs createallsubdirs
+;Source: "..\distribution\plug-ins\*";   DestDir: "{app}\plug-ins";   Flags: ignoreversion recursesubdirs createallsubdirs
 
 [INI]
 Filename: "{app}\BeeGui.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.beegui.org"

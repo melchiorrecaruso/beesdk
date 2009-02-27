@@ -26,7 +26,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-  v0.7.9 build 0906 - 2008.10.25 by Melchiorre Caruso.
+  v0.7.9 build 0960 - 2009.02.27 by Melchiorre Caruso.
 }
 
 unit Bee_Modeller;
@@ -49,8 +49,7 @@ const
   Increment = 8;                        // Increment of symbol frequency
 
 type
-  PNode  = ^TNode;
-  // Pointer to modeller's node information...
+  PNode  = ^TNode;                      // Pointer to modeller's node information...
   PPNode = ^PNode;                      // Array of nodes...
 
   // Modeller's node information...
@@ -119,7 +118,7 @@ type
 
 implementation
 
-// TBaseCoder...
+/// TBaseCoder...
 
 constructor TBaseCoder.Create(aCodec: TSecondaryCodec);
 begin
@@ -158,15 +157,11 @@ begin
   for I := 0 to 1 do
   begin
     aPart    := @Table.T[I];
-    aPart[0] := aPart[0] + 256;
-    // Weight of first-encoutered deterministic symbol
-    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
-    // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
+    aPart[0] := aPart[0] + 256; // Weight of first-encoutered deterministic symbol
+    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32; // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
     aPart[MaxSymbol + 3] := Increment * aPart[MaxSymbol + 3] shl 2;
-    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8;
-    // Zero-valued parameter allowed...
-    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));
-    // Lowest value of interval 
+    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8; // Zero-valued parameter allowed...
+    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5])); // Lowest value of interval 
   end;
 end;
 
@@ -263,8 +258,7 @@ var
   I, J:  PPNode;
   Bound: integer;
 begin
-  if Cuts = nil then
-    SetLength(Cuts, MaxCounter + 1);
+  if Cuts = nil then SetLength(Cuts, MaxCounter + 1);
 
   I := @Cuts[0];
   J := I;
@@ -292,9 +286,8 @@ begin
     Inc(I);
   until (I = J) or (Bound < 0);
 
-  if I <> J then
-    Cut_Tail(I, J);
-
+  if I <> J then Cut_Tail(I, J);
+  
   Counter   := integer(SafeCounter * 3 div 4) - Bound + 1;
   ListCount := 0;
 end;
@@ -327,8 +320,8 @@ begin
     if P.Up <> nil then
     begin
       P := P.Up;
-      if IncreaseIndex = 0 then
-        IncreaseIndex := I;
+      if IncreaseIndex = 0 then IncreaseIndex := I;
+
       if P.Next <> nil then
       begin
         // Undetermined context ...
@@ -343,16 +336,20 @@ begin
         until P = nil;
         Inc(Q, Part[J]);
         // Account:
-        K := R div (K + Q);
         P := Stored;
+        K := R div (K + Q);
         J := K * P.K * Part[MaxSymbol + 2] shr 5;
+        
         Dec(R, J);
         Inc(Freq[P.C], J);
+                
         P := P.Next;
         repeat
           J := K * P.K;
+
           Dec(R, J);
           Inc(Freq[P.C], J);
+
           P := P.Next;
         until P = nil;
       end else
@@ -418,8 +415,7 @@ begin
   ClearCardinal(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
 
-  if ListCount > 0 then
-    Account;
+  if ListCount > 0 then Account;
 
   // Update aSymbol...
   AddCardinal(Freq[0], MaxSymbol + 1, R shr BitChain + 1);
@@ -475,8 +471,7 @@ begin
   Inc(Result, Symbol);
 
   // Reduce tree...
-  if SafeCounter < Counter then
-    Cut;
+  if SafeCounter < Counter then Cut;
 
   // Update NodeList...
   if ListCount > Table.Level then
