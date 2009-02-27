@@ -22,6 +22,8 @@
   Routines for Crc32 calculating (c) 1998 Dmitry Auzhin;
   Table is calculated by Sasha Leshinsky.
 
+  (C) 1998 Dmitry Auzhin;
+  (C) 1999-2005 Andrew Filinsky.
   Modifyed:
 
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky.

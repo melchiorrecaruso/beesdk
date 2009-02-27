@@ -28,7 +28,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.12.28 by Melchiorre Caruso;
   
-  v0.7.9 build 0940 - 2009.02.07 by Melchiorre Caruso.
+  v0.7.9 build 0960 - 2009.02.27 by Melchiorre Caruso.
 }
 
 unit Bee_BlowFish;
@@ -193,7 +193,6 @@ const
     $55533a3a, $20838d87, $fe6ba9b7, $d096954b, $55a867bc, $a1159a58,
     $cca92963, $99e1db33, $a62a4a56, $3f3125f9, $5ef47e1c, $9029317c,
     $fdf8e802, $04272f70, $80bb155c, $05282ce3, $95c11548, $e4c66d22,
-
     $48c1133f, $c70f86dc, $07f9c9ee, $41041f0f, $404779a4, $5d886e17,
     $325f51eb, $d59bc0d1, $f2bcc18f, $41113564, $257b7834, $602a9c60,
     $dff8e8a3, $1f636c1b, $0e12b4c2, $02e1329e, $af664fd1, $cad18115,
@@ -287,27 +286,20 @@ var
   i, j, k: integer;
   Data, Datal, Datar: cardinal;
 begin
-    { Initialize first the P-array
-    }
-  for i := 1 to 18 do
-    P[i] := PArray[i];
-    {                                and then the four S-boxes, in order,
-      with a fixed random string. This string consists of the hexadecimal
-      digits of Pi.
-    }
-  for j := 0 to 255 do
-    S[1, j] := SBox1[j];
-  for j := 0 to 255 do
-    S[2, j] := SBox2[j];
-  for j := 0 to 255 do
-    S[3, j] := SBox3[j];
-  for j := 0 to 255 do
-    S[4, j] := SBox4[j];
-    { XOR P1 with the first 32 bits of the key, XOR P2 with the second 32
-      bits of the key, and so on for all bits of the key (up to P18). Cycle
-      throught the key bits repeatedly until the entire P-array has been
-      XORed.
-    }
+  { Initialize first the P-array }
+  for i := 1 to 18 do  P[i] := PArray[i];
+  { and then the four S-boxes, in order, with a fixed random string.
+    This string consists of the hexadecimal digits of Pi.
+  }
+  for j := 0 to 255 do S[1, j] := SBox1[j];
+  for j := 0 to 255 do S[2, j] := SBox2[j];
+  for j := 0 to 255 do S[3, j] := SBox3[j];
+  for j := 0 to 255 do S[4, j] := SBox4[j];
+  { XOR P1 with the first 32 bits of the key, XOR P2 with the second 32
+    bits of the key, and so on for all bits of the key (up to P18). Cycle
+    throught the key bits repeatedly until the entire P-array has been
+    XORed.
+  }
   j := 1;
   for i := 1 to 18 do
   begin
@@ -316,8 +308,7 @@ begin
     begin
       Data := ((Data shl 8) or Ord(Key[j]));
       Inc(j);
-      if j > Length(Key) then
-        j := 1;
+      if j > Length(Key) then j := 1;
     end;
     P[i] := P[i] xor Data;
   end;
@@ -364,14 +355,14 @@ begin
   PInput := @Input;
   Result := ((S[1, PInput^[0]] + S[2, PInput^[1]] {MOD HighestNumber}) xor
     S[3, PInput^[2]]) + S[4, PInput^[3]] { MOD HighestNumber};
-    { In the original article in Dr. Dobb's Journal this function included
-      a MOD 2^32 (which  wouldn't fit in a 32 bits integer anyway), in the
-      source there was a MOD (2^32 - 1) while in the C source available on
-      Dr. Dobb's  official FTP site on  ftp.mv.com there wasn't any MOD to
-      be found. After  he was asked about this phenomenon,  Bruce Schneier
-      stated that it was not needed anyway. In this source it is left out-
-      commented for completeness.
-    }
+  { In the original article in Dr. Dobb's Journal this function included
+    a MOD 2^32 (which  wouldn't fit in a 32 bits integer anyway), in the
+    source there was a MOD (2^32 - 1) while in the C source available on
+    Dr. Dobb's  official FTP site on  ftp.mv.com there wasn't any MOD to
+    be found. After  he was asked about this phenomenon,  Bruce Schneier
+    stated that it was not needed anyway. In this source it is left out-
+    commented for completeness.
+  }
 end;
 
 procedure TBlowFish.Encode(pXl, pXr: Pcardinal);
