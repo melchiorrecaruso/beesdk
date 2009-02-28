@@ -11,7 +11,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
@@ -25,13 +25,13 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="4">
+    <Units Count="6">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <CursorPos X="35" Y="37"/>
-        <TopLine Value="1"/>
+        <CursorPos X="1" Y="229"/>
+        <TopLine Value="182"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -43,39 +43,141 @@
         <UnitName Value="Unit1"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="62"/>
+        <UsageCount Value="67"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
-        <CursorPos X="9" Y="341"/>
-        <TopLine Value="341"/>
+        <CursorPos X="6" Y="288"/>
+        <TopLine Value="288"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
-        <Filename Value="bee_app.pas"/>
-        <UnitName Value="Bee_App"/>
-        <CursorPos X="33" Y="32"/>
-        <TopLine Value="10"/>
+        <Filename Value="bee.include\compiler.inc"/>
+        <CursorPos X="3" Y="33"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="2"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="bee_interface.pas"/>
+        <UnitName Value="Bee_Interface"/>
+        <CursorPos X="34" Y="222"/>
+        <TopLine Value="145"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit3>
+      </Unit4>
+      <Unit5>
+        <Filename Value="bee_app.pas"/>
+        <UnitName Value="Bee_App"/>
+        <CursorPos X="23" Y="58"/>
+        <TopLine Value="58"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit5>
     </Units>
-    <JumpHistory Count="2" HistoryIndex="1">
+    <JumpHistory Count="23" HistoryIndex="22">
       <Position1>
         <Filename Value="bee.dpr"/>
         <Caret Line="37" Column="35" TopLine="1"/>
       </Position1>
       <Position2>
-        <Filename Value="bee_modeller.pas"/>
-        <Caret Line="267" Column="50" TopLine="259"/>
+        <Filename Value="bee.dpr"/>
+        <Caret Line="229" Column="1" TopLine="182"/>
       </Position2>
+      <Position3>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="42" Column="15" TopLine="25"/>
+      </Position3>
+      <Position4>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="489" Column="15" TopLine="443"/>
+      </Position4>
+      <Position5>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="466" Column="15" TopLine="442"/>
+      </Position5>
+      <Position6>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="41" Column="1" TopLine="24"/>
+      </Position6>
+      <Position7>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="122" Column="16" TopLine="97"/>
+      </Position7>
+      <Position8>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="34" Column="10" TopLine="21"/>
+      </Position8>
+      <Position9>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="122" Column="8" TopLine="107"/>
+      </Position9>
+      <Position10>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="467" Column="15" TopLine="443"/>
+      </Position10>
+      <Position11>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="122" Column="10" TopLine="95"/>
+      </Position11>
+      <Position12>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="467" Column="15" TopLine="443"/>
+      </Position12>
+      <Position13>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="458" Column="33" TopLine="443"/>
+      </Position13>
+      <Position14>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="34" Column="19" TopLine="14"/>
+      </Position14>
+      <Position15>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="544" Column="5" TopLine="500"/>
+      </Position15>
+      <Position16>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="248" Column="9" TopLine="224"/>
+      </Position16>
+      <Position17>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="256" Column="23" TopLine="253"/>
+      </Position17>
+      <Position18>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="169" Column="19" TopLine="142"/>
+      </Position18>
+      <Position19>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="179" Column="24" TopLine="149"/>
+      </Position19>
+      <Position20>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="195" Column="6" TopLine="171"/>
+      </Position20>
+      <Position21>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="197" Column="6" TopLine="173"/>
+      </Position21>
+      <Position22>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="217" Column="6" TopLine="193"/>
+      </Position22>
+      <Position23>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position23>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -103,7 +205,6 @@
     <Linking>
       <Debugging>
         <UseLineInfoUnit Value="False"/>
-        <GenGProfCode Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
@@ -111,6 +212,7 @@
       <Verbosity>
         <ShowGenInfo Value="False"/>
       </Verbosity>
+      <WriteFPCLogo Value="False"/>
       <CustomOptions Value="
 "/>
       <CompilerPath Value="$(CompPath)"/>

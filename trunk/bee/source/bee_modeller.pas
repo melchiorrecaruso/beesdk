@@ -66,7 +66,7 @@ type
 
   // PPM modeller...
 
-  TBaseCoder = class(TObject)
+  TBaseCoder = class
   public
     constructor Create(aCodec: TSecondaryCodec);
     destructor Destroy; override;
@@ -98,9 +98,9 @@ type
     SafeCounter,                        // Safe heap size
     Counter: cardinal;                  // Current heap size
 
-    Heap:      array of TNode;
-    Cuts:      array of PNode;
-    List:      array of PNode;
+    Heap: array of TNode;
+    Cuts: array of PNode;
+    List: array of PNode;
     ListCount: cardinal;
 
     Root: PNode;
@@ -118,23 +118,36 @@ type
 
 implementation
 
+{$IFDEF PROFILING}
+uses
+   uLkProfiler;
+{$ENDIF}
+
 /// TBaseCoder...
 
 constructor TBaseCoder.Create(aCodec: TSecondaryCodec);
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Create'); {$ENDIF}
+
   inherited Create;
   FCodec := aCodec;
   SetLength(Freq, MaxSymbol + 1);
   SetLength(List, 16);
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 destructor TBaseCoder.Destroy;
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Destroy'); {$ENDIF}
+
   Freq := nil;
   Heap := nil;
   Cuts := nil;
   List := nil;
   inherited Destroy;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.SetTable(const T: TTableParameters);
@@ -143,6 +156,8 @@ var
   P:     ^integer;
   aPart: ^TTableCol;
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.SetTable'); {$ENDIF}
+
   P := @Table;
   I := 1;
   repeat
@@ -163,10 +178,14 @@ begin
     aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8; // Zero-valued parameter allowed...
     aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5])); // Lowest value of interval 
   end;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.SetDictionary(aDictionaryLevel: cardinal);
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.SetDictionary'); {$ENDIF}
+
   if (aDictionaryLevel = 0) or (FDictionaryLevel <> aDictionaryLevel) then
   begin
     FDictionaryLevel := aDictionaryLevel;
@@ -177,16 +196,20 @@ begin
     SetLength(Heap, MaxCounter + 1);
   end;
   FreshFlexible;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.FreshFlexible;
 begin
-  Tear := nil;
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.FreshFlexible'); {$ENDIF}
+
+  Tear            := nil;
   CurrentFreeNode := @Heap[0];
-  LastFreeNode := @Heap[MaxCounter];
-  Counter := 0;
+  LastFreeNode    := @Heap[MaxCounter];
+  Counter   := 0;
   ListCount := 0;
-  Pos := 0;
+  Pos       := 0;
 
   Inc(Counter);
   Root := CurrentFreeNode;
@@ -199,30 +222,41 @@ begin
   Root.A    := 1;
 
   LowestPos := -integer(MaxCounter);
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.FreshSolid;
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.FreshSolid'); {$ENDIF}
+
   if Counter > 1 then
   begin
     ListCount := 1;
     List[0]   := Root;
   end else
     ListCount := 0;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.Add(aSymbol: cardinal);
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Add'); {$ENDIF}
+
   Inc(Pos);
   Inc(LowestPos);
   Heap[Pos and MaxCounter].D := aSymbol;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.CreateChild(Parent: PNode);
 var
   Result, Link: PNode;
-  Address:      integer;
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.CreateChild'); {$ENDIF}
+
   Inc(Counter);
   Result := CurrentFreeNode;
   if Result = LastFreeNode then
@@ -246,10 +280,12 @@ begin
   Result.Next := Parent.Up;
   Parent.Up   := Result;
   Result.Up   := nil;
+
+  Result.A    := Parent.A + 1;
+  Result.C    := Heap[Parent.A and MaxCounter].D;
   Result.K    := Increment;
-  Address     := Parent.A;
-  Result.C    := Heap[Address and MaxCounter].D;
-  Result.A    := Address + 1;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.Cut;
@@ -258,11 +294,14 @@ var
   I, J:  PPNode;
   Bound: integer;
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Cut'); {$ENDIF}
+
   if Cuts = nil then SetLength(Cuts, MaxCounter + 1);
 
   I := @Cuts[0];
   J := I;
   Inc(J);
+
   I^    := Root;
   Bound := SafeCounter * 3 div 4;
 
@@ -290,20 +329,26 @@ begin
   
   Counter   := integer(SafeCounter * 3 div 4) - Bound + 1;
   ListCount := 0;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.Cut_Tail(I, J: PPNode);
 var
   P: PNode;
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Cut_Tail'); {$ENDIF}
+
   P := Tear;
   repeat
     I^.Up.Tear := P;
-    P     := I^.Up;
+    P := I^.Up;
     I^.Up := nil;
     Inc(I);
   until I = J;
   Tear := P;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.Account;
@@ -311,6 +356,8 @@ var
   J, K:      cardinal;
   P, Stored: PNode;
 begin
+  {$IFDEF PROFILING} ProfileStart('TBaseCoder.Account'); {$ENDIF}
+
   I := 0;
   J := I;
   Q := J;
@@ -372,6 +419,8 @@ begin
     Inc(I);
   until (I = ListCount) or (R <= Part[MaxSymbol + 5]);
   ListCount := I;
+
+  {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 function TBaseCoder.Tail(Node: PNode): PNode;
@@ -379,6 +428,8 @@ var
   P: PNode;
   C: byte;
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Tail'); {$ENDIF}
+
   Node.A := Pos;
   Result := Node.Up;
 
@@ -405,6 +456,8 @@ begin
         end;
       until False;
   end;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.Step;
@@ -412,6 +465,8 @@ var
   I, J: cardinal;
   P:    PNode;
 begin
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Step'); {$ENDIF}
+
   ClearCardinal(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
 
@@ -456,10 +511,14 @@ begin
     until I = ListCount;
     ListCount := J;
   end;
+
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 function TBaseCoder.UpdateModel(aSymbol: cardinal): cardinal;
 begin
+  /// {$IFDEF PROFILING} ProfileStart('TBaseCoder.UpdateModel'); {$ENDIF}
+
   Part   := @Table.T[0];
   Symbol := aSymbol shr $4;
   Step;
@@ -480,6 +539,8 @@ begin
     Inc(ListCount);
 
   List[ListCount - 1] := Root;
+
+  /// {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 end.
