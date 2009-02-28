@@ -118,35 +118,26 @@ type
 
 implementation
 
-{$IFDEF PROFILING}
-uses
-   uLkProfiler;
-{$ENDIF}
-
 /// TBaseCoder...
 
 constructor TBaseCoder.Create(aCodec: TSecondaryCodec);
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Create'); {$ENDIF}
-
   inherited Create;
   FCodec := aCodec;
   SetLength(Freq, MaxSymbol + 1);
   SetLength(List, 16);
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 destructor TBaseCoder.Destroy;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Destroy'); {$ENDIF}
-
   Freq := nil;
   Heap := nil;
   Cuts := nil;
   List := nil;
   inherited Destroy;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
@@ -157,7 +148,6 @@ var
   aPart: ^TTableCol;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.SetTable'); {$ENDIF}
-
   P := @Table;
   I := 1;
   repeat
@@ -178,14 +168,12 @@ begin
     aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8; // Zero-valued parameter allowed...
     aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5])); // Lowest value of interval 
   end;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.SetDictionary(aDictionaryLevel: cardinal);
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.SetDictionary'); {$ENDIF}
-
   if (aDictionaryLevel = 0) or (FDictionaryLevel <> aDictionaryLevel) then
   begin
     FDictionaryLevel := aDictionaryLevel;
@@ -196,14 +184,12 @@ begin
     SetLength(Heap, MaxCounter + 1);
   end;
   FreshFlexible;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.FreshFlexible;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.FreshFlexible'); {$ENDIF}
-
   Tear            := nil;
   CurrentFreeNode := @Heap[0];
   LastFreeNode    := @Heap[MaxCounter];
@@ -222,32 +208,27 @@ begin
   Root.A    := 1;
 
   LowestPos := -integer(MaxCounter);
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.FreshSolid;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.FreshSolid'); {$ENDIF}
-
   if Counter > 1 then
   begin
     ListCount := 1;
     List[0]   := Root;
   end else
     ListCount := 0;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 procedure TBaseCoder.Add(aSymbol: cardinal);
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Add'); {$ENDIF}
-
   Inc(Pos);
   Inc(LowestPos);
   Heap[Pos and MaxCounter].D := aSymbol;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
@@ -256,7 +237,6 @@ var
   Result, Link: PNode;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.CreateChild'); {$ENDIF}
-
   Inc(Counter);
   Result := CurrentFreeNode;
   if Result = LastFreeNode then
@@ -284,7 +264,6 @@ begin
   Result.A    := Parent.A + 1;
   Result.C    := Heap[Parent.A and MaxCounter].D;
   Result.K    := Increment;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
@@ -295,7 +274,6 @@ var
   Bound: integer;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Cut'); {$ENDIF}
-
   if Cuts = nil then SetLength(Cuts, MaxCounter + 1);
 
   I := @Cuts[0];
@@ -329,7 +307,6 @@ begin
   
   Counter   := integer(SafeCounter * 3 div 4) - Bound + 1;
   ListCount := 0;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
@@ -338,7 +315,6 @@ var
   P: PNode;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Cut_Tail'); {$ENDIF}
-
   P := Tear;
   repeat
     I^.Up.Tear := P;
@@ -347,7 +323,6 @@ begin
     Inc(I);
   until I = J;
   Tear := P;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
@@ -356,7 +331,7 @@ var
   J, K:      cardinal;
   P, Stored: PNode;
 begin
-  {$IFDEF PROFILING} ProfileStart('TBaseCoder.Account'); {$ENDIF}
+  // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Account'); {$ENDIF}
 
   I := 0;
   J := I;
@@ -419,8 +394,7 @@ begin
     Inc(I);
   until (I = ListCount) or (R <= Part[MaxSymbol + 5]);
   ListCount := I;
-
-  {$IFDEF PROFILING} ProfileStop; {$ENDIF}
+  // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 function TBaseCoder.Tail(Node: PNode): PNode;
@@ -429,7 +403,6 @@ var
   C: byte;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Tail'); {$ENDIF}
-
   Node.A := Pos;
   Result := Node.Up;
 
@@ -456,7 +429,6 @@ begin
         end;
       until False;
   end;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
@@ -466,7 +438,6 @@ var
   P:    PNode;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Step'); {$ENDIF}
-
   ClearCardinal(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
 
@@ -511,14 +482,12 @@ begin
     until I = ListCount;
     ListCount := J;
   end;
-
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
 function TBaseCoder.UpdateModel(aSymbol: cardinal): cardinal;
 begin
   /// {$IFDEF PROFILING} ProfileStart('TBaseCoder.UpdateModel'); {$ENDIF}
-
   Part   := @Table.T[0];
   Symbol := aSymbol shr $4;
   Step;
@@ -539,7 +508,6 @@ begin
     Inc(ListCount);
 
   List[ListCount - 1] := Root;
-
   /// {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
