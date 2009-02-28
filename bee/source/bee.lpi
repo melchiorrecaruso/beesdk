@@ -50,7 +50,7 @@
         <Filename Value="bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
         <CursorPos X="9" Y="341"/>
-        <TopLine Value="438"/>
+        <TopLine Value="341"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -103,6 +103,7 @@
     <Linking>
       <Debugging>
         <UseLineInfoUnit Value="False"/>
+        <GenGProfCode Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
@@ -110,7 +111,6 @@
       <Verbosity>
         <ShowGenInfo Value="False"/>
       </Verbosity>
-      <WriteFPCLogo Value="False"/>
       <CustomOptions Value="
 "/>
       <CompilerPath Value="$(CompPath)"/>
