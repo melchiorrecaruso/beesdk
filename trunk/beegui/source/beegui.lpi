@@ -249,7 +249,7 @@
         <Filename Value="packages\beegui_plugins.pas"/>
         <UnitName Value="BeeGui_Plugins"/>
         <CursorPos X="21" Y="330"/>
-        <TopLine Value="283"/>
+        <TopLine Value="286"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
@@ -423,7 +423,6 @@
         <CStyleOperator Value="False"/>
         <AllowLabel Value="False"/>
         <CPPInline Value="False"/>
-        <UseAnsiStrings Value="True"/>
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
