@@ -31,7 +31,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
         <CursorPos X="1" Y="229"/>
-        <TopLine Value="182"/>
+        <TopLine Value="185"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -50,7 +50,7 @@
         <Filename Value="bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
         <CursorPos X="31" Y="510"/>
-        <TopLine Value="463"/>
+        <TopLine Value="466"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -168,6 +168,7 @@
       <SmartLinkUnit Value="True"/>
       <Optimizations>
         <VariablesInRegisters Value="True"/>
+        <UncertainOptimizations Value="True"/>
         <OptimizationLevel Value="3"/>
       </Optimizations>
     </CodeGeneration>
