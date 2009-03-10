@@ -53,7 +53,7 @@ type
 
   TBeeApp = class(TApp)
   public
-    constructor Create(aInterface: TInterfaces; aParams: TParams);
+    constructor Create(aInterface: PInterfaces; aParams: TParams);
     destructor Destroy; override;
     procedure Execute; override;
   private
@@ -111,13 +111,13 @@ uses
 
 // TBeeApp ...
 
-constructor TBeeApp.Create(aInterface: TInterfaces; aParams: TParams);
+constructor TBeeApp.Create(aInterface: PInterfaces; aParams: TParams);
 begin
   inherited Create(aInterface);
   Randomize; // randomize, uses for unique filename generation...
 
   FSelfName :=
-    'The Bee 0.7.9 build 0967 archiver utility, February 2009' + Cr +
+    'The Bee 0.7.9 build 0974 archiver utility, February 2009' + Cr +
     '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -132,9 +132,7 @@ begin
   FConfiguration := TConfiguration.Create;
   if not FileExists(FCommandLine.cfgOption) then
   begin
-    Interfaces.OnWarning.Data.Msg :=
-      ('Warning: configuration file "' + FCommandLine.cfgOption +
-      '" not found, data will be stored' + Cr);
+    Interfaces.OnWarning.Data.Msg := ('Warning: configuration file "' + FCommandLine.cfgOption + '" not found, data will be stored' + Cr);
     Synchronize(Interfaces.OnWarning.Method);
     SetExitCode(1);
   end else
@@ -142,10 +140,8 @@ begin
 
   // load method and dictionary level
   FConfiguration.Selector('\main');
-  FConfiguration.CurrentSection.Values['Method']     :=
-    IntToStr(FCommandLine.mOption);
-  FConfiguration.CurrentSection.Values['Dictionary'] :=
-    IntToStr(FCommandLine.dOption);
+  FConfiguration.CurrentSection.Values['Method']     := IntToStr(FCommandLine.mOption);
+  FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FCommandLine.dOption);
 
   // set thread priority
   SetPriority(FCommandLine.priOption);
@@ -160,73 +156,34 @@ end;
 
 procedure TBeeApp.DisplayUsage;
 begin
-  Interfaces.OnDisplay.Data.Msg :=
-    (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := (Cr + '  Commands:' + Cr);
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    a   Add files to archive');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    d   Delete files from archive');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    e   Extract files from archive');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg :=
-    ('    x   eXtract files from archive with path name');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    l   List archive');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    t   Test archive files');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    r   Rename files in archive');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := (Cr + '  Options:' + Cr);
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    r       Recurse subdirectories');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    u       Update files');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    f       Freshen files');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    e       force file Extention');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    s       create Solid archive');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    a       add self-extrActor module');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg :=
-    ('    o<mode> set overwrite file Mode (Q-Quit, A-All, S-Skip all)');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg :=
-    ('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg :=
-    ('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)'
-    + Cr);
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    x       eXclude filenames');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    t       Test archive after process');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    l       List archive after process');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg := ('    y       set temporany directory');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg :=
-    ('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg :=
-    ('    cd<dir> set current archive directory' + Cr);
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg :=
-    ('    cfg<filename> use specified configuration file');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg :=
-    ('    pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
-  Synchronize(Interfaces.OnDisplay.Method);
-  Interfaces.OnDisplay.Data.Msg :=
-    (Cr + '  Use BeeOpt to make most optimal parameters.' + Cr);
-  Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := (Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');     Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := (Cr + '  Commands:' + Cr);                                                                Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    a   Add files to archive');                                                         Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    d   Delete files from archive');                                                    Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    e   Extract files from archive');                                                   Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    x   eXtract files from archive with path name');                                    Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    l   List archive');                                                                 Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    t   Test archive files');                                                           Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    r   Rename files in archive');                                                      Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := (Cr + '  Options:' + Cr);                                                                 Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    r       Recurse subdirectories');                                                   Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    u       Update files');                                                             Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    f       Freshen files');                                                            Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    e       force file Extention');                                                     Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    s       create Solid archive');                                                     Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    a       add self-extrActor module');                                                Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    o<mode> set overwrite file Mode (Q-Quit, A-All, S-Skip all)');                      Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    m<0..3> set compression Method (0-store...1-default...3-maximal)');                 Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr); Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    x       eXclude filenames');                                                        Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    t       Test archive after process');                                               Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    l       List archive after process');                                               Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    y       set temporany directory');                                                  Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');                  Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    cd<dir> set current archive directory' + Cr);                                       Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    cfg<filename> use specified configuration file');                                   Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := ('    pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');        Synchronize(Interfaces.OnDisplay.Method);
+  Interfaces.OnDisplay.Data.Msg := (Cr + '  Use BeeOpt to make most optimal parameters.' + Cr);                              Synchronize(Interfaces.OnDisplay.Method);
 end;
 
 procedure TBeeApp.Execute;
@@ -315,31 +272,27 @@ begin
   I := 0;
   while I < Headers.Count do
   begin
-    if (THeader(Headers.Items[I]).Action = toExtract) and
-      (FileExists(THeader(Headers.Items[I]).Data.FileName) = True) then
+    if (THeader(Headers.Items[I]).Action = toExtract) and (FileExists(THeader(Headers.Items[I]).Data.FileName) = True) then
     begin
       if (FCommandLine.oOption in ['A', 'Q', 'S']) = False then
       begin
         repeat
-          Interfaces.OnOverWrite.Data.FileName :=
-            ExtractFileName(THeader(Headers.Items[I]).Data.FileName);
 
-          Interfaces.OnOverWrite.Data.FilePath :=
-            ExtractFilePath(THeader(Headers.Items[I]).Data.FileName);
+          with Interfaces.OnFileOverWrite.Data do
+          begin
+            FileName := ExtractFileName(THeader(Headers.Items[I]).Data.FileName);
+            FilePath := ExtractFilePath(THeader(Headers.Items[I]).Data.FileName);
+            FileSize := THeader(Headers.Items[I]).Data.FileSize;
+            FileTime := THeader(Headers.Items[I]).Data.FileTime;
+            FileAttr := THeader(Headers.Items[I]).Data.FileAttr;
+          end;
 
-          Interfaces.OnOverWrite.Data.FileSize :=
-            THeader(Headers.Items[I]).Data.FileSize;
+          Interfaces.OnFileOverWrite.Answer := 'A';
+          Synchronize(Interfaces.OnFileOverWrite.Method);
 
-          Interfaces.OnOverWrite.Data.FileTime :=
-            THeader(Headers.Items[I]).Data.FileTime;
+        until (Length(Interfaces.OnFileOverWrite.Answer) = 1) and (UpCase(Interfaces.OnFileOverWrite.Answer[1]) in ['A', 'N', 'R', 'S', 'Q', 'Y']);
 
-          Interfaces.OnOverWrite.Answer := 'A';
-          Synchronize(Interfaces.OnOverWrite.Method);
-        until (Length(Interfaces.OnOverWrite.Answer) = 1) and
-          (UpCase(Interfaces.OnOverWrite.Answer[1]) in
-            ['A', 'N', 'R', 'S', 'Q', 'Y']);
-
-        FCommandLine.oOption := UpCase(Interfaces.OnOverWrite.Answer[1]);
+        FCommandLine.oOption := UpCase(Interfaces.OnFileOverWrite.Answer[1]);
       end;
 
       case UpCase(FCommandLine.oOption) of
@@ -349,32 +302,24 @@ begin
         begin
           while True do
           begin
-            Interfaces.OnRename.Data.FileName :=
-              ExtractFileName(THeader(Headers.Items[I]).Data.FileName);
 
-            Interfaces.OnRename.Data.FilePath :=
-              ExtractFilePath(THeader(Headers.Items[I]).Data.FileName);
-
-            Interfaces.OnRename.Data.FileSize :=
-              THeader(Headers.Items[I]).Data.FileSize;
-
-            Interfaces.OnRename.Data.FileTime :=
-              THeader(Headers.Items[I]).Data.FileTime;
-
-            Interfaces.OnRename.Data.FileAttr :=
-              THeader(Headers.Items[I]).Data.FileAttr;
-
-            Interfaces.OnRename.Answer := '';
-            Synchronize(Interfaces.OnRename.Method);
-
-            NewFileName := FixFileName(Interfaces.OnRename.Answer);
-
-            if (FileExists(NewFileName) = True) or
-              (AlreadyFileExists(Headers, I, [toExtract],
-              NewFileName) <> -1) then
+            with Interfaces.OnFileRename.Data do
             begin
-              Interfaces.OnWarning.Data.Msg :=
-                ('Warning: file "' + NewFileName + '" already exists');
+              FileName := ExtractFileName(THeader(Headers.Items[I]).Data.FileName);
+              FilePath := ExtractFilePath(THeader(Headers.Items[I]).Data.FileName);
+              FileSize := THeader(Headers.Items[I]).Data.FileSize;
+              FileTime := THeader(Headers.Items[I]).Data.FileTime;
+              FileAttr := THeader(Headers.Items[I]).Data.FileAttr;
+            end;
+
+            Interfaces.OnFileRename.Answer := '';
+            Synchronize(Interfaces.OnFileRename.Method);
+
+            NewFileName := FixFileName(Interfaces.OnFileRename.Answer);
+
+            if (FileExists(NewFileName) = True) or (AlreadyFileExists(Headers, I, [toExtract], NewFileName) <> -1) then
+            begin
+              Interfaces.OnWarning.Data.Msg := ('Warning: file "' + NewFileName + '" already exists');
               Synchronize(Interfaces.OnDisplay.Method);
             end else
               Break;
@@ -505,31 +450,23 @@ begin
       begin
         while True do
         begin
-          Interfaces.OnRename.Data.FileName :=
-            ExtractFileName(THeader(Headers.Items[i]).Data.FileName);
 
-          Interfaces.OnRename.Data.FilePath :=
-            ExtractFilePath(THeader(Headers.Items[i]).Data.FileName);
-
-          Interfaces.OnRename.Data.FileSize :=
-            THeader(Headers.Items[i]).Data.FileSize;
-
-          Interfaces.OnRename.Data.FileTime :=
-            THeader(Headers.Items[i]).Data.FileTime;
-
-          Interfaces.OnRename.Data.FileAttr :=
-            THeader(Headers.Items[i]).Data.FileAttr;
-
-          SetLength(Interfaces.OnRename.Answer, 0);
-          Synchronize(Interfaces.OnRename.Method);
-
-          iFileName := FixFileName(Interfaces.OnRename.Answer);
-          if (AlreadyFileExists(Headers, I, [toCopy, toRename],
-            iFileName) <> -1) then
+          with Interfaces.OnFileRename.Data do
           begin
-            Interfaces.OnWarning.Data.Msg :=
-              ('Warning: file "' + iFileName +
-              '" already existing in archive');
+            FileName := ExtractFileName(THeader(Headers.Items[i]).Data.FileName);
+            FilePath := ExtractFilePath(THeader(Headers.Items[i]).Data.FileName);
+            FileSize := THeader(Headers.Items[i]).Data.FileSize;
+            FileTime := THeader(Headers.Items[i]).Data.FileTime;
+            FileAttr := THeader(Headers.Items[i]).Data.FileAttr;
+          end;
+
+          SetLength(Interfaces.OnFileRename.Answer, 0);
+          Synchronize(Interfaces.OnFileRename.Method);
+
+          iFileName := FixFileName(Interfaces.OnFileRename.Answer);
+          if (AlreadyFileExists(Headers, I, [toCopy, toRename], iFileName) <> -1) then
+          begin
+            Interfaces.OnWarning.Data.Msg := ('Warning: file "' + iFileName + '" already existing in archive');
             Synchronize(Interfaces.OnWarning.Method);
           end else
             Break;
@@ -568,22 +505,17 @@ begin
       NextTear := Headers.GetBack(NextTear - 1, toCopy);
       for J := BackTear to NextTear do
         case THeader(Headers.Items[J]).Action of
-          toCopy:
-          begin
-            THeader(Headers.Items[J]).Action := toSwap;
-            Inc(Interfaces.OnTick.Data.TotalSize,
-              THeader(Headers.Items[J]).Data.FileSize * 2);
-            // decoding  and Encoding size
-          end;
-          toFresh: Inc(Interfaces.OnTick.Data.TotalSize,
-              THeader(Headers.Items[J]).Data.FileSize); // decoding size
+          toCopy:  begin
+                     THeader(Headers.Items[J]).Action := toSwap;
+                     Inc(Interfaces.OnTick.Data.TotalSize, THeader(Headers.Items[J]).Data.FileSize * 2); // decoding  and Encoding size
+                   end;
+          toFresh: Inc(Interfaces.OnTick.Data.TotalSize, THeader(Headers.Items[J]).Data.FileSize); // decoding size
         end;
       I := BackTear;
     end;
     I := Headers.GetBack(I - 1, toFresh);
   end;
-  Inc(Interfaces.OnTick.Data.TotalSize,
-    Headers.GetPackedSize(toCopy));
+  Inc(Interfaces.OnTick.Data.TotalSize, Headers.GetPackedSize(toCopy));
 end;
 
 procedure TBeeApp.ProcessFilesToDelete;
@@ -608,21 +540,17 @@ begin
       if Headers.GetBack(NextTear, toDelete) > (BackTear - 1) then
         for J := BackTear to NextTear do
           case THeader(Headers.Items[J]).Action of
-            toCopy:
-            begin
-              THeader(Headers.Items[J]).Action := toSwap;
-              Inc(Interfaces.OnTick.Data.TotalSize,
-                THeader(Headers.Items[J]).Data.FileSize * 2);
-            end;
-            toDelete: Inc(Interfaces.OnTick.Data.TotalSize,
-                THeader(Headers.Items[J]).Data.FileSize);
+            toCopy:   begin
+                        THeader(Headers.Items[J]).Action := toSwap;
+                        Inc(Interfaces.OnTick.Data.TotalSize, THeader(Headers.Items[J]).Data.FileSize * 2);
+                      end;
+            toDelete: Inc(Interfaces.OnTick.Data.TotalSize, THeader(Headers.Items[J]).Data.FileSize);
           end;
       I := BackTear;
     end;
     I := Headers.GetBack(I - 1, toDelete);
   end;
-  Inc(Interfaces.OnTick.Data.TotalSize,
-    Headers.GetPackedSize(toCopy));
+  Inc(Interfaces.OnTick.Data.TotalSize, Headers.GetPackedSize(toCopy));
 end;
 
 function TBeeApp.ProcessFilesToSwap(Headers: THeaders): boolean;
@@ -648,7 +576,7 @@ begin
 
       Decoder := TDecoder.Create(FArcFile, Interfaces, Synchronize);
       // get GeneralSize
-      while (I > -1) and (Interfaces.Stop = False) do
+      while (I > -1) and (Interfaces.Status.Stop = False) do
       begin
         iDictionary := Headers.GetBack(I, foDictionary);
         // find dictionary info
@@ -672,14 +600,13 @@ begin
 
         for J := iTear to I do
         begin
-          if Interfaces.Stop = False then
+          if Interfaces.Status.Stop = False then
           begin
             if THeader(Headers.Items[J]).Action = toSwap then
               Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, FSwapStrm)
             else
             begin
-              Result := Decoder.DecodeStrm(Headers.Items[J],
-                pmSkip, FSwapStrm);
+              Result := Decoder.DecodeStrm(Headers.Items[J], pmSkip, FSwapStrm);
             end;
           end else
             Result := False;
@@ -763,12 +690,10 @@ begin
       if THeader(Headers.Items[J]).Action in [toNone, toQuit] then
       begin
         THeader(Headers.Items[J]).Action := toSkip;
-        Inc(Interfaces.OnTick.Data.TotalSize,
-          THeader(Headers.Items[J]).Data.FileSize);
+        Inc(Interfaces.OnTick.Data.TotalSize, THeader(Headers.Items[J]).Data.FileSize);
       end;
 
-    if (iDictionary > -1) and (THeader(Headers.Items[iDictionary]).Action =
-      toNone) then
+    if (iDictionary > -1) and (THeader(Headers.Items[iDictionary]).Action = toNone) then
       THeader(Headers.Items[iDictionary]).Action := toQuit;
 
     if (iTable > -1) and (THeader(Headers.Items[iTable]).Action = toNone) then
@@ -790,6 +715,8 @@ begin
     begin
       TotalSize     := 0;
       ProcessedSize := 0;
+      Percentage    := 0;
+      Speed         := 0;
     end;
     FCommandLine.rOption := True; // force recursion
     FCommandLine.xOption.Clear;   // clear xOption
@@ -807,6 +734,8 @@ begin
     begin
       TotalSize     := 0;
       ProcessedSize := 0;
+      Percentage    := 0;
+      Speed         := 0;
     end;
     FCommandLine.rOption := True; // force recursion
     FCommandLine.xOption.Clear;   // clear xOption
@@ -829,8 +758,7 @@ var
   Headers: THeaders;
   Time: double;
 begin
-  Interfaces.OnDisplay.Data.Msg :=
-    (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -849,11 +777,9 @@ begin
         FCommandLine.xOption,
         TotalSize);
 
-    if (Headers.GetCount([toUpdate, toFresh]) > 0) or
-      ((Length(FCommandLine.aOption) > 0) and
-      (Headers.GetNext(0, toCopy) > -1)) then
+    if (Headers.GetCount([toUpdate, toFresh]) > 0) or ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
-      Time    := Now;
+      Time := Now;
       TmpFileName := GenerateFileName(FCommandLine.yOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
 
@@ -881,50 +807,39 @@ begin
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
         for I := 0 to Headers.Count - 1 do
-          if Interfaces.Stop = False then
+          if Interfaces.Status.Stop = False then
             case THeader(Headers.Items[I]).Action of
-              toCopy: Encoder.CopyStrm(Headers.Items[I],
-                  emNorm, FArcFile);
-              toSwap: Encoder.EncodeStrm(Headers.Items[I],
-                  emNorm, FSwapFile);
-              toFresh: Encoder.EncodeFile(
-                  Headers.Items[I], emNorm);
-              toUpdate: Encoder.EncodeFile(
-                  Headers.Items[I], emNorm);
+              toCopy:   Encoder.CopyStrm  (Headers.Items[I], emNorm, FArcFile);
+              toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, FSwapFile);
+              toFresh:  Encoder.EncodeFile(Headers.Items[I], emNorm);
+              toUpdate: Encoder.EncodeFile(Headers.Items[I], emNorm);
             end;
         Encoder.Destroy;
         // rewrite Headers
         Headers.WriteItems(TmpFile);
 
-        if Interfaces.Stop = False then
+        if Interfaces.Status.Stop = False then
         begin
-          Interfaces.OnDisplay.Data.Msg :=
-            (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) +
-            ' bytes - ' + TimeDifference(Time) + ' seconds');
+          Interfaces.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
         end else
         begin
-          Interfaces.OnError.Data.Msg :=
-            (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
+          Interfaces.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnError.Method);
           SetExitCode(255);
         end;
 
-        if Assigned(FSwapFile) then
-          FreeAndNil(FSwapFile);
-        if Assigned(FArcFile) then
-          FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then
-          FreeAndNil(TmpFile);
+        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
+        if Assigned(TmpFile)   then FreeAndNil(TmpFile);
 
         DeleteFile(FSwapName);
-        if Interfaces.Stop = False then
+        if Interfaces.Status.Stop = False then
         begin
           SysUtils.DeleteFile(FCommandLine.ArchiveName);
           if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
           begin
-            Interfaces.OnError.Data.Msg :=
-              ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
+            Interfaces.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
             Synchronize(Interfaces.OnError.Method);
             SetExitCode(2);
           end else
@@ -940,20 +855,15 @@ begin
       end else // if ProcessFilesToSwap
       begin
         if TmpFile = nil then
-          Interfaces.OnError.Data.Msg :=
-            ('Error: can''t open temp file')
+          Interfaces.OnError.Data.Msg := ('Error: can''t open temp file')
         else
-          Interfaces.OnError.Data.Msg :=
-            ('Error: can''t decode solid sequences');
+          Interfaces.OnError.Data.Msg := ('Error: can''t decode solid sequences');
         Synchronize(Interfaces.OnError.Method);
         SetExitCode(2);
 
-        if Assigned(FSwapFile) then
-          FreeAndNil(FSwapFile);
-        if Assigned(FArcFile) then
-          FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then
-          FreeAndNil(TmpFile);
+        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
+        if Assigned(TmpFile)   then FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(FSwapName);
         SysUtils.DeleteFile(TmpFileName);
@@ -968,8 +878,7 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(FArcFile) then
-    FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.DecodeShell(Action: THeaderAction);
@@ -980,8 +889,7 @@ var
   Time: double;
   I: integer;
 begin
-  Interfaces.OnDisplay.Data.Msg :=
-    (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -1012,41 +920,32 @@ begin
       Decoder := TDecoder.Create(FArcFile, Interfaces, Synchronize);
       for I := 0 to Headers.Count - 1 do
       begin
-        if Interfaces.Stop = False then
+        if Interfaces.Status.Stop = False then
           case THeader(Headers.Items[I]).Action of
-            toExtract: Return :=
-                Decoder.DecodeFile(Headers.Items[I], pmNorm);
-            toTest: Return    :=
-                Decoder.DecodeFile(Headers.Items[I], pmTest);
-            toSkip: Return    :=
-                Decoder.DecodeFile(Headers.Items[I], pmSkip);
-            toQuit: Return    :=
-                Decoder.Decodefile(Headers.Items[I], pmQuit);
+            toExtract: Return := Decoder.DecodeFile(Headers.Items[I], pmNorm);
+            toTest:    Return := Decoder.DecodeFile(Headers.Items[I], pmTest);
+            toSkip:    Return := Decoder.DecodeFile(Headers.Items[I], pmSkip);
+            toQuit:    Return := Decoder.Decodefile(Headers.Items[I], pmQuit);
           end;
-        if Return = False then
-          Break;
+        if Return = False then Break;
       end;
       Decoder.Destroy;
 
-      if Interfaces.Stop = False then
+      if Interfaces.Status.Stop = False then
       begin
         if Return = True then
         begin
-          Interfaces.OnDisplay.Data.Msg :=
-            (Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
+          Interfaces.OnDisplay.Data.Msg := (Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
         end else
         begin
-          Interfaces.OnError.Data.Msg :=
-            (Cr + 'Process aborted, a fatal error occourred - ' +
-            TimeDifference(Time) + ' seconds');
+          Interfaces.OnError.Data.Msg := (Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnError.Method);
           SetExitCode(2);
         end;
       end else
       begin
-        Interfaces.OnError.Data.Msg :=
-          (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
+        Interfaces.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
         Synchronize(Interfaces.OnError.Method);
         SetExitCode(255);
       end;
@@ -1060,8 +959,7 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(FArcFile) then
-    FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.DeleteShell;
@@ -1073,8 +971,7 @@ var
   Headers: THeaders;
   Encoder: TEncoder;
 begin
-  Interfaces.OnDisplay.Data.Msg :=
-    (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -1118,51 +1015,40 @@ begin
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
         for I := 0 to Headers.Count - 1 do
-          if Interfaces.Stop = False then
+          if Interfaces.Status.Stop = False then
             case THeader(Headers.Items[I]).Action of
-              toCopy: Encoder.CopyStrm(Headers.Items[I],
-                  emNorm, FArcFile);
-              toSwap: Encoder.EncodeStrm(Headers.Items[I],
-                  emNorm, FSwapFile);
-              toDelete:
-              begin
-                Interfaces.OnDisplay.Data.Msg :=
-                  (msgDeleting + THeader(Headers.Items[I]).Data.FileName);
-                Synchronize(Interfaces.OnDisplay.Method);
-              end;
+              toCopy:   Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
+              toSwap:   Encoder.EncodeStrm(Headers.Items[I], emNorm, FSwapFile);
+              toDelete: begin
+                          Interfaces.OnDisplay.Data.Msg := (msgDeleting + THeader(Headers.Items[I]).Data.FileName);
+                          Synchronize(Interfaces.OnDisplay.Method);
+                        end;
             end;
         Encoder.Destroy;
         Headers.WriteItems(TmpFile);
 
-        if Interfaces.Stop = False then
+        if Interfaces.Status.Stop = False then
         begin
-          Interfaces.OnDisplay.Data.Msg :=
-            (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) +
-            ' bytes - ' + TimeDifference(Time) + ' seconds');
+          Interfaces.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
         end else
         begin
-          Interfaces.OnError.Data.Msg :=
-            (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
+          Interfaces.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnError.Method);
           SetExitCode(255);
         end;
 
-        if Assigned(FSwapFile) then
-          FreeAndNil(FSwapFile);
-        if Assigned(FArcFile) then
-          FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then
-          FreeAndNil(TmpFile);
+        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
+        if Assigned(TmpFile)   then FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(FSwapName);
-        if Interfaces.Stop = False then
+        if Interfaces.Status.Stop = False then
         begin
           SysUtils.DeleteFile(FCommandLine.ArchiveName);
           if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
           begin
-            Interfaces.OnError.Data.Msg :=
-              ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
+            Interfaces.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
             Synchronize(Interfaces.OnError.Method);
             SetExitCode(2);
           end else
@@ -1178,20 +1064,15 @@ begin
       end else // if ProcessFilesToSwap
       begin
         if TmpFile = nil then
-          Interfaces.OnError.Data.Msg :=
-            ('Error: can''t open temp file')
+          Interfaces.OnError.Data.Msg := ('Error: can''t open temp file')
         else
-          Interfaces.OnError.Data.Msg :=
-            ('Error: can''t decode solid sequences');
+          Interfaces.OnError.Data.Msg := ('Error: can''t decode solid sequences');
         Synchronize(Interfaces.OnError.Method);
         SetExitCode(2);
 
-        if Assigned(FSwapFile) then
-          FreeAndNil(FSwapFile);
-        if Assigned(FArcFile) then
-          FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then
-          FreeAndNil(TmpFile);
+        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
+        if Assigned(TmpFile)   then FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(FSwapName);
         SysUtils.DeleteFile(TmpFileName);
@@ -1206,8 +1087,7 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(FArcFile) then
-    FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.RenameShell;
@@ -1219,8 +1099,7 @@ var
   Time: double;
   I:    integer;
 begin
-  Interfaces.OnDisplay.Data.Msg :=
-    (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -1231,14 +1110,13 @@ begin
 
     if ProcessFilesToRename(Headers) then
     begin
-      Time    := Now;
+      Time := Now;
       TmpFileName := GenerateFileName(FCommandLine.yOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
 
       if (TmpFile <> nil) then
       begin
-        Interfaces.OnTick.Data.TotalSize :=
-          Headers.GetPackedSize([toCopy, toRename]);
+        Interfaces.OnTick.Data.TotalSize := Headers.GetPackedSize([toCopy, toRename]);
 
         // set sfx module
         with FCommandLine do
@@ -1248,37 +1126,35 @@ begin
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Interfaces, Synchronize);
         for I := 0 to Headers.Count - 1 do
-          if Interfaces.Stop = False then
+        begin
+          if Interfaces.Status.Stop = False then
+          begin
             Encoder.CopyStrm(Headers.Items[I], emNorm, FArcFile);
+          end;
+        end;
         Encoder.Destroy;
         Headers.WriteItems(TmpFile);
 
-        if Interfaces.Stop = False then
+        if Interfaces.Status.Stop = False then
         begin
-          Interfaces.OnDisplay.Data.Msg :=
-            (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) +
-            ' bytes - ' + TimeDifference(Time) + ' seconds');
+          Interfaces.OnDisplay.Data.Msg := (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnDisplay.Method);
         end else
         begin
-          Interfaces.OnError.Data.Msg :=
-            (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
+          Interfaces.OnError.Data.Msg := (Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds');
           Synchronize(Interfaces.OnError.Method);
           SetExitCode(255);
         end;
 
-        if Assigned(FArcFile) then
-          FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then
-          FreeAndNil(TmpFile);
+        if Assigned(FArcFile) then FreeAndNil(FArcFile);
+        if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
-        if Interfaces.Stop = False then
+        if Interfaces.Status.Stop = False then
         begin
           SysUtils.DeleteFile(FCommandLine.ArchiveName);
           if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
           begin
-            Interfaces.OnError.Data.Msg :=
-              ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
+            Interfaces.OnError.Data.Msg := ('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName);
             Synchronize(Interfaces.OnError.Method);
             SetExitCode(2);
           end else
@@ -1294,18 +1170,14 @@ begin
       end else // if (TmpFile <> nil)
       begin
         if TmpFile = nil then
-          Interfaces.OnError.Data.Msg :=
-            ('Error: can''t open temp file')
+          Interfaces.OnError.Data.Msg := ('Error: can''t open temp file')
         else
-          Interfaces.OnError.Data.Msg :=
-            ('Error: can''t decode solid sequences');
+          Interfaces.OnError.Data.Msg := ('Error: can''t decode solid sequences');
         Synchronize(Interfaces.OnError.Method);
         SetExitCode(2);
 
-        if Assigned(FArcFile) then
-          FreeAndNil(FArcFile);
-        if Assigned(TmpFile) then
-          FreeAndNil(TmpFile);
+        if Assigned(FArcFile) then FreeAndNil(FArcFile);
+        if Assigned(TmpFile)  then FreeAndNil(TmpFile);
 
         SysUtils.DeleteFile(TmpFileName);
       end;
@@ -1319,8 +1191,7 @@ begin
   end;
   Headers.Free;
 
-  if Assigned(FArcFile) then
-    FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 function CompareFn(Item1, Item2: pointer): integer;
@@ -1348,8 +1219,7 @@ var
   Version, Method, Dictionary: integer;
   Time: double;
 begin
-  Interfaces.OnDisplay.Data.Msg :=
-    (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  Interfaces.OnDisplay.Data.Msg := (Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
   Synchronize(Interfaces.OnDisplay.Method);
 
   Headers := THeaders.Create;
@@ -1428,7 +1298,7 @@ begin
       begin
         P := Headers.Items[I];
       {$ENDIF}
-        with Interfaces.OnList.Data do
+        with Interfaces.OnFileList.Data do
         begin
           FileName := ExtractFileName(P.Data.FileName);
           FilePath := ExtractFilePath(P.Data.FileName);
@@ -1437,10 +1307,10 @@ begin
           if CompareFileName(HeadersToListPath, FilePath) <> 0 then
           begin
             HeadersToListPath := FilePath;
-            if I <> 0 then
-              Interfaces.OnDisplay.Data.Msg := Cr + HeadersToListPath
+            if I = 0 then
+              Interfaces.OnDisplay.Data.Msg := HeadersToListPath
             else
-              Interfaces.OnDisplay.Data.Msg := HeadersToListPath;
+              Interfaces.OnDisplay.Data.Msg := Cr + HeadersToListPath;
             Synchronize(Interfaces.OnDisplay.Method);
           end;
           {$ENDIF}
@@ -1471,7 +1341,7 @@ begin
           FilePosition := I;
           {$ENDIF}
         end;
-        Synchronize(Interfaces.OnList.Method);
+        Synchronize(Interfaces.OnFileList.Method);
 
         Inc(TotalSize, P.Data.FileSize);
         Inc(TotalPack, P.Data.FilePacked);
@@ -1481,8 +1351,7 @@ begin
       Interfaces.OnDisplay.Data.Msg := StringOfChar('-', 79);
       Synchronize(Interfaces.OnDisplay.Method);
 
-      Interfaces.OnDisplay.Data.Msg :=
-        (Format('%d files', [TotalFiles])) +
+      Interfaces.OnDisplay.Data.Msg := (Format('%d files', [TotalFiles])) +
         StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) +
         (Format(' %10s %10s %5s', [SizeToStr(TotalSize),
         SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)]));
@@ -1493,13 +1362,11 @@ begin
       // self-extractor module size
       if Headers.GetModule > 0 then
       begin
-        Interfaces.OnDisplay.Data.Msg :=
-          (Cr + 'Note: Bee Self-Extractor module founded');
+        Interfaces.OnDisplay.Data.Msg := (Cr + 'Note: Bee Self-Extractor module founded');
         Synchronize(Interfaces.OnDisplay.Method);
       end;
       {$ENDIF}
-      Interfaces.OnDisplay.Data.Msg :=
-        (Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
+      Interfaces.OnDisplay.Data.Msg := (Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
       Synchronize(Interfaces.OnDisplay.Method);
     end else
     begin
@@ -1514,8 +1381,7 @@ begin
   {$ENDIF}
   Headers.Free;
 
-  if Assigned(FArcFile) then
-    FreeAndNil(FArcFile);
+  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 // -------------------------------------------------------------------------- //

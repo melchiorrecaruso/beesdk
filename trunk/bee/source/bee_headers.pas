@@ -126,7 +126,7 @@ type
 
     procedure AddItems(Masks: TStringList; const cdOption: string;
       fOption: boolean; rOption: boolean; uOption: boolean;
-      xOption: TStringList; var Size: cardinal);
+      xOption: TStringList; var Size: int64);
 
     function MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction;
       rOption: boolean): integer; overload;
@@ -175,7 +175,7 @@ type
     procedure ExpandMask(const Mask: string; Masks: TStringList; rOption: boolean);
     procedure ScanFileSystem(Mask: string; Sorted: TSortedHeaders;
       const cdOption: string; fOption: boolean; rOption: boolean;
-      uOption: boolean; xOption: TStringList; var Size: cardinal);
+      uOption: boolean; xOption: TStringList; var Size: int64);
   end;
 
 implementation
@@ -482,7 +482,7 @@ end;
 
 procedure THeaders.AddItems(Masks: TStringList; const cdOption: string;
   fOption: boolean; rOption: boolean; uOption: boolean;
-  xOption: TStringList; var Size: cardinal);
+  xOption: TStringList; var Size: int64);
 var
   I, J:      integer;
   CurrMasks: TStringList;
@@ -987,7 +987,7 @@ end;
 
 procedure THeaders.ScanFileSystem(Mask: string; Sorted: TSortedHeaders;
   const cdOption: string; fOption: boolean; rOption: boolean;
-  uOption: boolean; xOption: TStringList; var Size: cardinal);
+  uOption: boolean; xOption: TStringList; var Size: int64);
 var
   P:     THeader;
   J:     pointer;
