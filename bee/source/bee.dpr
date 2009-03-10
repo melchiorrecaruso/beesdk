@@ -45,6 +45,7 @@ uses
   {$IFDEF FPC}
   {$IFDEF UNIX}
   cThreads,
+  cMem,
   {$ENDIF}
   {$ENDIF}
   SysUtils,
@@ -55,26 +56,25 @@ uses
   Bee_Interface;
 
 type
-
   // TConsole class
 
   TConsole = class
   private
-    App:    TBeeApp;
+    App: TApp;
     AppKey: string;
-    AppInterfaces: TInterfaces;
     AppParams: TParams;
-    procedure OnFatalError;
-    procedure OnOverWrite;
-    procedure OnWarning;
-    procedure OnDisplay;
-    procedure OnRequest;
-    procedure OnRename;
-    procedure OnError;
-    procedure OnClear;
-    procedure OnList;
-    procedure OnTick;
-    procedure OnKey;
+    AppInterfaces: TInterfacesRec;
+    procedure FatalError;
+    procedure Error;
+    procedure Warning;
+    procedure Display;
+    procedure FileOverWrite;
+    procedure FileRename;
+    procedure FileList;
+    procedure FileKey;
+    procedure Request;
+    procedure Clear;
+    procedure Tick;
   public
     constructor Create;
     destructor Destroy; override;
@@ -90,32 +90,33 @@ constructor TConsole.Create;
     I: integer;
 begin
   inherited Create;
-  AppInterfaces := TInterfaces.Create;
-  AppInterfaces.OnFatalError.Method := OnFatalError;
-  AppInterfaces.OnOverWrite.Method := OnOverWrite;
-  AppInterfaces.OnWarning.Method := OnWarning;
-  AppInterfaces.OnDisplay.Method := OnDisplay;
-  AppInterfaces.OnRequest.Method := OnRequest;
-  AppInterfaces.OnRename.Method := OnRename;
-  AppInterfaces.OnClear.Method := OnClear;
-  AppInterfaces.OnError.Method := OnError;
-  AppInterfaces.OnList.Method := OnList;
-  AppInterfaces.OnTick.Method := OnTick;
-  AppInterfaces.OnKey.Method := OnKey;
+  with AppInterfaces do
+  begin
+    OnFatalError   .Method := FatalError;
+    OnError        .Method := Error;
+    OnWarning      .Method := Warning;
+    OnDisplay      .Method := Display;
+    OnFileOverWrite.Method := FileOverWrite;
+    OnFileRename   .Method := FileRename;
+    OnFileList     .Method := FileList;
+    OnFileKey      .Method := FileKey;
+    OnRequest      .Method := Request;
+    OnClear        .Method := Clear;
+    OnTick         .Method := Tick;
+  end;
 
-  SetLength(AppKey, 0);
+  AppKey := '';
   AppParams := TStringList.Create;
   for I := 1 to ParamCount do
   begin
     AppParams.Add(ParamStr(I));
   end;
-  App := TBeeApp.Create(AppInterfaces, AppParams);
+  App := TBeeApp.Create(@AppInterfaces, AppParams);
 end;
 
 destructor TConsole.Destroy;
 begin
-  SetLength(AppKey, 0);
-  AppInterfaces.Destroy;
+  AppKey := '';
   AppParams.Destroy;
   inherited Destroy;
 end;
@@ -125,23 +126,23 @@ begin
   App.Execute;
 end;
 
-procedure TConsole.OnFatalError;
+procedure TConsole.FatalError;
 begin
   Writeln(ParamToOem(AppInterfaces.OnFatalError.Data.Msg));
 end;
 
-procedure TConsole.OnOverWrite;
+procedure TConsole.FileOverWrite;
 begin
-  with AppInterfaces.OnOverWrite.Data do
+  with AppInterfaces.OnFileOverWrite.Data do
   begin
     Writeln('Warning: file "' + ParamToOem(FilePath + FileName) + '" already exists.');
     Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
   end;
   // not convert oem to param
-  Readln(AppInterfaces.OnOverWrite.Answer);
+  Readln(AppInterfaces.OnFileOverWrite.Answer);
 end;
 
-procedure TConsole.OnKey;
+procedure TConsole.FileKey;
 begin
   if Length(AppKey) = 0 then
   begin
@@ -150,43 +151,43 @@ begin
     // convert oem to param
     AppKey := OemToParam(AppKey);
   end;
-  AppInterfaces.OnKey.Answer := AppKey;
+  AppInterfaces.OnFileKey.Answer := AppKey;
 end;
 
-procedure TConsole.OnRename;
+procedure TConsole.FileRename;
 begin
-  with AppInterfaces.OnRename.Data do
+  with AppInterfaces.OnFileRename.Data do
   begin
     Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
   end;
-  Readln(AppInterfaces.OnRename.Answer);
+  Readln(AppInterfaces.OnFileRename.Answer);
   // convert oem to param
-  AppInterfaces.OnRename.Answer := OemToParam(AppInterfaces.OnRename.Answer);
+  AppInterfaces.OnFileRename.Answer := OemToParam(AppInterfaces.OnFileRename.Answer);
 end;
 
-procedure TConsole.OnWarning;
+procedure TConsole.Warning;
 begin
   Writeln(ParamToOem(AppInterfaces.OnWarning.Data.Msg));
 end;
 
-procedure TConsole.OnDisplay;
+procedure TConsole.Display;
 begin
   Writeln(ParamToOem(AppInterfaces.OnDisplay.Data.Msg));
 end;
 
-procedure Tconsole.OnRequest;
+procedure Tconsole.Request;
 begin
   Writeln(ParamToOem(AppInterfaces.OnRequest.Data.Msg));
 end;
 
-procedure TConsole.OnError;
+procedure TConsole.Error;
 begin
   Writeln(ParamToOem(AppInterfaces.OnError.Data.Msg));
 end;
 
-procedure TConsole.OnList;
+procedure TConsole.FileList;
 begin
-  with AppInterfaces.OnList.Data do
+  with AppInterfaces.OnFileList.Data do
   begin
     if Length({FilePath +} FileName) <= 15 then
     begin
@@ -206,13 +207,17 @@ begin
   end;
 end;
 
-procedure TConsole.OnTick;
+procedure TConsole.Tick;
 begin
   // not convert oem to param
-  Write(#8#8#8#8#8#8#8 + Format('  (%d%%)', [AppInterfaces.OnTick.Data.Percentage]));
+  with AppInterfaces.OnTick.Data do
+  begin
+    Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
+      Format('%5d KB/s %3d%%', [Speed, Percentage]));
+  end;
 end;
 
-procedure TConsole.OnClear;
+procedure TConsole.Clear;
 begin
   Write(#13, #13: 80);
 end;

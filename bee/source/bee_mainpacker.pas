@@ -38,6 +38,7 @@ interface
 
 uses
   Classes,       // TStream
+  DateUtils,
 
   Bee_Files,     // TFileReader, TFileWriter...
   Bee_Codec,     // TSecondaryEncoder, TSecondaryDecoder...
@@ -69,7 +70,7 @@ type
 
   TEncoder = class
   public
-    constructor Create(aStream: TFileWriter; aInterfaces: TInterfaces; aSync: TSynchronizer);
+    constructor Create(aStream: TFileWriter; aInterfaces: PInterfaces; aSync: TSynchronizer);
     destructor Destroy; override;
     function EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
     function EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
@@ -78,10 +79,11 @@ type
     function GetKey(Header: THeader): string;
     procedure Tick;
   private
+    X: extended;
     Stream: TFileWriter;
     PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
-    Interfaces: TInterfaces;
+    Interfaces: PInterfaces;
     Sync: TSynchronizer;
   end;
 
@@ -91,7 +93,7 @@ type
 
   TDecoder = class
   public
-    constructor Create(aStream: TFileReader; aInterfaces: TInterfaces; aSync: TSynchronizer);
+    constructor Create(aStream: TFileReader; aInterfaces: PInterfaces; aSync: TSynchronizer);
     destructor Destroy; override;
     function DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
     function DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
@@ -99,10 +101,11 @@ type
     function GetKey(Header: THeader): string;
     procedure Tick;
   private
+    X: extended;
     Stream: TFileReader;
     PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
-    Interfaces: TInterfaces;
+    Interfaces: PInterfaces;
     Sync: TSynchronizer;
   end;
 
@@ -118,14 +121,14 @@ uses
 
 /// TEncoder
 
-constructor TEncoder.Create(aStream: TFileWriter; aInterfaces: TInterfaces;
-  aSync: TSynchronizer);
+constructor TEncoder.Create(aStream: TFileWriter; aInterfaces: PInterfaces; aSync: TSynchronizer);
 begin
   Stream := aStream;
   SecondaryCodec := TSecondaryEncoder.Create(Stream);
   PPM := TBaseCoder.Create(SecondaryCodec);
   Interfaces := aInterfaces;
   Sync := aSync;
+  X := Now;
 end;
 
 destructor TEncoder.Destroy;
@@ -138,13 +141,16 @@ end;
 
 function TEncoder.GetKey(Header: THeader): string;
 begin
-  Interfaces.OnKey.Data.FileName := ExtractFileName(Header.Data.FileName);
-  Interfaces.OnKey.Data.FilePath := ExtractFilePath(Header.Data.FileName);
-  Interfaces.OnKey.Data.FileSize := Header.Data.FileSize;
-  Interfaces.OnKey.Data.FileTime := Header.Data.FileTime;
-
-  Sync(Interfaces.OnKey.Method);
-  Result := Interfaces.OnKey.Answer;
+  with Interfaces.OnFileKey.Data do
+  begin
+    FileName := ExtractFileName(Header.Data.FileName);
+    FilePath := ExtractFilePath(Header.Data.FileName);
+    FileSize := Header.Data.FileSize;
+    FileTime := Header.Data.FileTime;
+    FileAttr := Header.Data.FileAttr;
+  end;
+  Sync(Interfaces.OnFileKey.Method);
+  Result:= Interfaces.OnFileKey.Answer;
 
   if Length(Result) < MinKeyLength then
   begin
@@ -154,10 +160,15 @@ end;
 
 procedure TEncoder.Tick;
 begin
-  while Interfaces.Suspend do Sleep(250);
-  with Interfaces.OnTick.Data do
+  while Interfaces.Status.Suspended do Sleep(250);
+  with  Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
+    try
+      Speed := ProcessedSize div MilliSecondsBetween(Now, X);
+    except
+      Speed := 0;
+    end;
   end;
   Sync(Interfaces.OnTick.Method);
 end;
@@ -204,11 +215,14 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-          if Interfaces.Stop = False then
+        begin
+          if Interfaces.Status.Stop = False then
             Tick
           else
             Break;
+        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
+
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
@@ -219,11 +233,14 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-          if Interfaces.Stop = False then
+        begin
+          if Interfaces.Status.Stop = False then
             Tick
           else
             Break;
+        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
+
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
@@ -242,8 +259,7 @@ begin
     Sync(Interfaces.OnError.Method);
   end;
 
-  if (not (foMoved in Header.Data.FileFlags)) and
-     (Header.Data.FilePacked >= Header.Data.FileSize) then
+  if (not (foMoved in Header.Data.FileFlags)) and (Header.Data.FilePacked >= Header.Data.FileSize) then
   begin
     Include(Header.Data.FileFlags, foTear);
     Include(Header.Data.FileFlags, foMoved);
@@ -295,7 +311,9 @@ begin
     begin
       Stream.BlowFish.Start(GetKey(Header));
       if Header.Action = toSwap then
-        SrcFile.BlowFish.Start(Interfaces.OnKey.Answer);
+      begin
+        SrcFile.BlowFish.Start(Interfaces.OnFileKey.Answer);
+      end;
     end;
 
     if foMoved in Header.Data.FileFlags then
@@ -303,11 +321,14 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-          if Interfaces.Stop = False then
+        begin
+          if Interfaces.Status.Stop = False then
             Tick
           else
             Break;
+        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
+
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
@@ -318,11 +339,14 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-          if Interfaces.Stop = False then
+        begin
+          if Interfaces.Status.Stop = False then
             Tick
           else
             Break;
+        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
+
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
@@ -389,11 +413,14 @@ begin
     for I := 1 to Header.Data.FilePacked do
     begin
       if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-        if Interfaces.Stop = False then
+      begin
+        if Interfaces.Status.Stop = False then
           Tick
         else
           Break;
+      end;
       Inc(Interfaces.OnTick.Data.ProcessedSize);
+
       SrcFile.Read(Symbol, 1);
       Stream.Write(Symbol, 1);
     end;
@@ -410,13 +437,14 @@ end;
 
 /// TDecoder
 
-constructor TDecoder.Create(aStream: TFileReader; aInterfaces: TInterfaces; aSync: TSynchronizer);
+constructor TDecoder.Create(aStream: TFileReader; aInterfaces: PInterfaces; aSync: TSynchronizer);
 begin
   Stream := aStream;
   SecondaryCodec := TSecondaryDecoder.Create(Stream);
   PPM := TBaseCoder.Create(SecondaryCodec);
   Interfaces := aInterfaces;
   Sync := aSync;
+  X := Now;
 end;
 
 destructor TDecoder.Destroy;
@@ -429,21 +457,25 @@ end;
 
 function TDecoder.GetKey(Header: THeader): string;
 begin
-  Interfaces.OnKey.Data.FileName := ExtractFileName(Header.Data.FileName);
-  Interfaces.OnKey.Data.FilePath := ExtractFilePath(Header.Data.FileName);
-  Interfaces.OnKey.Data.FileSize := Header.Data.FileSize;
-  Interfaces.OnKey.Data.FileTime := Header.Data.FileTime;
-
-  Sync(Interfaces.OnKey.Method);
-  Result := Interfaces.OnKey.Answer;
+  with Interfaces.OnFileKey.Data do
+  begin
+    FileName := ExtractFileName(Header.Data.FileName);
+    FilePath := ExtractFilePath(Header.Data.FileName);
+    FileSize := Header.Data.FileSize;
+    FileTime := Header.Data.FileTime;
+    FileAttr := Header.Data.FileAttr;
+  end;
+  Sync(Interfaces.OnFileKey.Method);
+  Result := Interfaces.OnFileKey.Answer;
 end;
 
 procedure TDecoder.Tick;
 begin
-  while Interfaces.Suspend do Sleep(250);
-  with Interfaces.OnTick.Data do
+  while Interfaces.Status.Suspended do Sleep(250);
+  with  Interfaces.OnTick.Data do
   begin
     Percentage := MulDiv(ProcessedSize, 100, TotalSize);
+    Speed := ProcessedSize div MilliSecondsBetween(Now, X);
   end;
   Sync(Interfaces.OnTick.Method);
 end;
@@ -496,11 +528,14 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-          if Interfaces.Stop = False then
+        begin
+          if Interfaces.Status.Stop = False then
             Tick
           else
             Break;
+        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
+
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
@@ -511,11 +546,14 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-          if Interfaces.Stop = False then
+        begin
+          if Interfaces.Status.Stop = False then
             Tick
           else
             Break;
+        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
+
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
@@ -594,7 +632,7 @@ begin
     begin
       Stream.BlowFish.Start(GetKey(Header));
       if Header.Action = toSwap then
-        DstFile.BlowFish.Start(Interfaces.OnKey.Answer);
+        DstFile.BlowFish.Start(Interfaces.OnFileKey.Answer);
     end;
 
     if foMoved in Header.Data.FileFlags then
@@ -602,11 +640,14 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-          if Interfaces.Stop = False then
+        begin
+          if Interfaces.Status.Stop = False then
             Tick
           else
             Break;
+        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
+
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
@@ -617,11 +658,14 @@ begin
       for I := 1 to Header.Data.FileSize do
       begin
         if Interfaces.OnTick.Data.ProcessedSize and $FFFF = 0 then
-          if Interfaces.Stop = False then
+        begin
+          if Interfaces.Status.Stop = False then
             Tick
           else
             Break;
+        end;
         Inc(Interfaces.OnTick.Data.ProcessedSize);
+
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
