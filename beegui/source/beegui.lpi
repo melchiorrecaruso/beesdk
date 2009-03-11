@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="7"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -250,8 +250,8 @@
       <Unit19>
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <CursorPos X="61" Y="79"/>
-        <TopLine Value="43"/>
+        <CursorPos X="16" Y="215"/>
+        <TopLine Value="192"/>
         <EditorIndex Value="7"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>

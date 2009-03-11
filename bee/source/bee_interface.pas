@@ -212,7 +212,7 @@ begin
   if I > 0 then
     Result := (FTotalSize - FProcessedSize) div I
   else
-    Result := -1;
+    Result := 0;
 end;
 
 procedure TApp.SetExitCode(aExitCode: integer);
