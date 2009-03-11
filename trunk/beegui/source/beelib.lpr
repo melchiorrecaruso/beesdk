@@ -276,6 +276,14 @@ begin
   end;
 end;
 
+function GetCoreExitCode(ID: pointer): integer;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).FApp.ExitCode
+  else
+    Result := 0;
+end;
+
 function GetCoreStatus(ID: pointer): TCoreStatus;
 begin
   if Assigned(TCore(ID)) then
@@ -292,7 +300,7 @@ begin
     Result := '';
 end;
 
-function GetCoreElepsedTime(ID: pointer): cardinal;
+function GetCoreElapsedTime(ID: pointer): cardinal;
 begin
   if Assigned(TCore(ID)) then
     Result := TCore(ID).FApp.ElapsedTime
@@ -437,13 +445,14 @@ exports
   CoreResume,
   CoreTerminate,
 
+  GetCoreExitCode,
   GetCoreStatus,
   GetCoreMessage,
   GetCorePercentes,
   GetCoreSpeed,
   GetCoreTotalSize,
   GetCoreProcessedSize,
-  GetCoreElepsedTime,
+  GetCoreElapsedTime,
   GetCoreRemainingTime,
 
   GetCorePriority,
