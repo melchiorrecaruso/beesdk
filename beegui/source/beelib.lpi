@@ -4,15 +4,19 @@
     <PathDelim Value="\"/>
     <Version Value="7"/>
     <General>
+      <Flags>
+        <SaveClosedFiles Value="False"/>
+        <MainUnitHasUsesSectionForAllUnits Value="False"/>
+        <Runnable Value="False"/>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
-      <UseXPManifest Value="True"/>
+      <UseAppBundle Value="False"/>
       <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
-      <Language Value=""/>
-      <CharSet Value=""/>
     </VersionInfo>
     <PublishOptions>
       <Version Value="2"/>
@@ -26,7 +30,7 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="5">
+    <Units Count="3">
       <Unit0>
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -58,20 +62,6 @@
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
-      <Unit3>
-        <Filename Value="..\..\bee\source\bee_mainpacker.pas"/>
-        <UnitName Value="Bee_MainPacker"/>
-        <CursorPos X="30" Y="36"/>
-        <TopLine Value="36"/>
-        <UsageCount Value="13"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="..\..\..\..\fpc\rtl\objpas\classes\classesh.inc"/>
-        <CursorPos X="15" Y="1435"/>
-        <TopLine Value="1413"/>
-        <UsageCount Value="10"/>
-      </Unit4>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
@@ -200,7 +190,7 @@
     <Version Value="8"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="forms\forms.include\;packages\packages.include\"/>
+      <IncludeFiles Value="forms\forms.include\;packages\packages.include\;$(ProjOutDir)\"/>
       <OtherUnitFiles Value="forms\;packages\;..\..\bee\source\"/>
       <UnitOutputDirectory Value="..\distribution"/>
     </SearchPaths>
