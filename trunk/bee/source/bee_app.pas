@@ -53,7 +53,7 @@ type
 
   TBeeApp = class(TApp)
   public
-    constructor Create(aParams: TParams);
+    constructor Create(aParams: TStringList);
     destructor Destroy; override;
     procedure Execute; override;
   private
@@ -111,12 +111,12 @@ uses
 
 // TBeeApp ...
 
-constructor TBeeApp.Create(aParams: TParams);
+constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0980 archiver utility, February 2009' + Cr +
+  FSelfName := 'The Bee 0.7.9 build 0982 archiver utility, February 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;

@@ -11,7 +11,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="4"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
@@ -30,8 +30,8 @@
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <CursorPos X="57" Y="212"/>
-        <TopLine Value="185"/>
+        <CursorPos X="25" Y="65"/>
+        <TopLine Value="46"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -49,8 +49,8 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="21" Y="190"/>
-        <TopLine Value="183"/>
+        <CursorPos X="41" Y="119"/>
+        <TopLine Value="112"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
@@ -206,7 +206,7 @@
       </Position29>
       <Position30>
         <Filename Value="bee.dpr"/>
-        <Caret Line="212" Column="46" TopLine="185"/>
+        <Caret Line="212" Column="57" TopLine="185"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

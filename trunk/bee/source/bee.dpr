@@ -62,7 +62,7 @@ type
   private
     FApp: TApp;
     FKey: string;
-    FParams: TParams;
+    FParams: TStringList;
   private
     procedure ProcessFatalError(const aMessage: string);
     procedure ProcessError     (const aMessage: string);
