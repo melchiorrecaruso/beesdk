@@ -266,8 +266,8 @@
       <Unit21>
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="23" Y="1476"/>
-        <TopLine Value="1432"/>
+        <CursorPos X="23" Y="1264"/>
+        <TopLine Value="1220"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -277,7 +277,7 @@
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="5" Y="258"/>
-        <TopLine Value="178"/>
+        <TopLine Value="214"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
