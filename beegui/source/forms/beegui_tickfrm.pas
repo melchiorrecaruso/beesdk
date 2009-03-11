@@ -66,6 +66,7 @@ type
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
     GeneralSizeUnit: TLabel;
+    IdleTimer: TIdleTimer;
     ProcessedSizeLabel: TLabel;
     SizeLabelPanel: TPanel;
     SpeedLabel: TLabel;
@@ -105,6 +106,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+
     // ---
     procedure PopupClick(Sender: TObject);
     // ---
@@ -117,24 +119,11 @@ type
     procedure OnStartTimer(Sender: TObject);
     procedure OnStopTimer(Sender: TObject);
     procedure OnTimer(Sender: TObject);
-  private
-    // ---
-    procedure OnTerminate(Sender: TObject);
-    procedure OnFatalError;
-    procedure OnOverWrite;
-    procedure OnWarning;
-    procedure OnDisplay;
-    procedure OnRequest;
-    procedure OnRename;
-    procedure OnError;
-    procedure OnClear;
-    procedure OnStart;
-    procedure OnList;
-    procedure OnTick;
-    procedure OnKey;
+    procedure OnIdleTimer(Sender: TObject);
   private
     { private declarations }
     FCommandLine: TCustomCommandLine;
+    FList: TList;
     FPassword: string;
     FCoreID: pointer;
     FCanClose: boolean;
@@ -156,7 +145,7 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
-    procedure Execute(aCommandLine: TCustomCommandLine);
+    procedure Execute(aCommandLine: TCustomCommandLine; aList: TList);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
@@ -191,6 +180,7 @@ var
     FCommandLine := nil;
     FPassword    := '';
     FCoreID      := nil;
+    FList        := nil;
     FOnlyAForm := False;
     FCanClose  := False;
     {$IFDEF UNIX}
@@ -203,6 +193,7 @@ var
     FCommandLine := nil;
     FPassword    := '';
     FCoreID      := nil;
+    FList        := nil;
     inherited Destroy;
   end;
 
@@ -244,10 +235,13 @@ var
     end;
   end;
 
-  procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine);
+  procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
   begin
+    FList := aList;
     FCommandLine := aCommandLine;
     FCoreID := CoreExecute(CoreCreate(FCommandLine.Params.Text));
+    // ---
+    IdleTimer.Enabled := True;
   end;
 
   function TTickFrm.GetFrmCanClose: boolean;
@@ -281,7 +275,16 @@ var
   // Timer Events Routines                                                    //
   //                                                                          //
   // ------------------------------------------------------------------------ //
-  
+
+  procedure TTickFrm.OnIdleTimer(Sender: TObject);
+  begin
+    if GetCoreStatus(FCoreID) <> csTerminated then
+    begin
+      //Timer.Enabled := True;
+      //IdleTimer.Enabled := False;
+    end;
+  end;
+
   procedure TTickFrm.OnStartTimer(Sender: TObject);
   var
     FTotalSize: int64;
@@ -301,6 +304,7 @@ var
         GeneralSize.Caption := IntToStr(FTotalSize shr 20);
         GeneralSizeUnit.Caption := 'MB';
       end;
+
     {$IFDEF MSWINDOWS}
     BtnPriority.Enabled := True;
     {$ENDIF}
@@ -340,6 +344,9 @@ var
         Caption := rsProcessTerminated
       else
         Caption := rsProcessAborted;
+
+      CoreDestroy(FCoreID);
+      FCoreID := nil;
     end else
       Caption := rsProcessPaused;
 
@@ -435,7 +442,9 @@ var
   // BeeApp Events Routines                                                   //
   //                                                                          //
   // ------------------------------------------------------------------------ //
-  
+
+  (*
+
   procedure TTickFrm.OnTerminate(Sender: TObject);
   begin
     if FInterfaces.Terminated = True then
@@ -640,7 +649,9 @@ var
       FInterfaces.OnKey.Answer := FPassword;
     end;
   end;
-  
+
+  *)
+
 initialization
 
   {$I beegui_tickfrm.lrs}

@@ -54,7 +54,7 @@ uses
   // --- //
   BeeFM_MainFrm,
   BeeFm_ViewFrm,
-  BeeFM_ConfigFrm, Unit1;
+  BeeFM_ConfigFrm;
 
 var
   TickFrm: TTickFrm;
