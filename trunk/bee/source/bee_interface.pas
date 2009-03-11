@@ -65,7 +65,7 @@ type
     FilePosition: cardinal;
   end;
 
-  // TEvents procedure...
+  // TEvents procedure ...
 
   TOnCustomEvent    = procedure of object;
   TOnMessageEvent   = procedure(const aMessage: string) of object;
@@ -73,6 +73,11 @@ type
   TOnOverWriteEvent = procedure(const aFileInfo: TFileInfoRec; var Result: char) of object;
   TOnRenameEvent    = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
   TOnKeyEvent       = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
+
+  // TCoreStatus ...
+
+  TCoreStatus = (csUnknow, csReady, csExecuting, csSuspended, csWaitingOverwrite,
+    csWaitingRename, csWaitingKey, csWaitingRequest, csTerminated);
 
   // TApp class ...
 
@@ -98,8 +103,10 @@ type
     FSuspended: boolean;
     FExitCode: byte;
   protected
-    function GetSpeed: integer;
-    function GetPercentes: integer;
+    function GetSpeed: cardinal;
+    function GetPercentes: cardinal;
+    function GetElapsedTime: cardinal;
+    function GetRemainingTime: cardinal;
     procedure SetExitCode(aExitCode: integer);
     procedure SetPriority(aPriority: integer); overload;
   public
@@ -138,8 +145,10 @@ type
   public
     property TotalSize: int64 read FTotalSize;
     property ProcessedSize: int64 read FProcessedSize;
-    property Percentes: integer read GetPercentes;
-    property Speed: integer read GetSpeed;
+    property Percentes: cardinal read GetPercentes;
+    property Speed: cardinal read GetSpeed;
+    property ElapsedTime: cardinal read GetElapsedTime;
+    property RemainingTime: cardinal read GetRemainingTime;
 
     property Terminated: boolean read FTerminated write FTerminated;
     property Suspended: boolean read FSuspended write FSuspended;
@@ -180,14 +189,30 @@ begin
   FxTime := Now;
 end;
 
-function TApp.GetSpeed: integer;
+function TApp.GetSpeed: cardinal;
 begin
-  Result := ProcessedSize div MilliSecondsBetween(Now, FxTime);
+  Result := MulDiv(FProcessedSize shr 10, 1000, MilliSecondsBetween(Now, FxTime));
 end;
 
-function TApp.GetPercentes: integer;
+function TApp.GetPercentes: cardinal;
 begin
   Result := MulDiv(FProcessedSize, 100, FTotalSize);
+end;
+
+function TApp.GetElapsedTime: cardinal;
+begin
+  Result := SecondsBetween(Now, FxTime);
+end;
+
+function TApp.GetRemainingTime: cardinal;
+var
+  I: cardinal;
+begin
+  I := MulDiv(FProcessedSize, 1000, MilliSecondsBetween(Now, FxTime));
+  if I > 0 then
+    Result := (FTotalSize - FProcessedSize) div I
+  else
+    Result := -1;
 end;
 
 procedure TApp.SetExitCode(aExitCode: integer);

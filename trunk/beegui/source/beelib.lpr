@@ -35,10 +35,6 @@ uses
   Bee_Interface;
 
 type
-  TCoreStatus = (csReady, csExecuting, csWaitingOverwrite,
-    csWaitingRename, csWaitingKey, csWaitingRequest, csTerminated);
-
-type
   TCore = class(TThread)
   private
     FApp: TApp;
@@ -230,16 +226,17 @@ type
 //                                                                            //
 // -------------------------------------------------------------------------- //
 
-function  CoreCreate(const ACommandLine: string): pointer;
+function CoreCreate(const aCommandLine: string): pointer;
 begin
-  Result := TCore.Create(ACommandLine);
+  Result := TCore.Create(aCommandLine);
 end;
 
-procedure CoreExecute(ID: pointer);
+function CoreExecute(ID: pointer): pointer;
 begin
+  Result := ID;
   if Assigned(TCore(ID)) then
   begin
-    TCore(ID).Execute;
+    TCore(ID).Resume;
   end;
 end;
 
@@ -272,62 +269,98 @@ begin
   if Assigned(TCore(ID)) then
   begin
     TCore(ID).Terminate;
+    if TCore(ID).Suspended then
+    begin
+      TCore(ID).Resume;
+    end;
   end;
 end;
 
-function  GetCoreStatus(ID: pointer): TCoreStatus;
+function GetCoreStatus(ID: pointer): TCoreStatus;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).Status
+  else
+    Result := csTerminated;
+end;
+
+function GetCoreMessage(ID: pointer): string;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).FMessage
+  else
+    Result := '';
+end;
+
+function GetCoreElepsedTime(ID: pointer): cardinal;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).FApp.ElapsedTime
+  else
+    Result := 0;
+end;
+
+function GetCoreremainingTime(ID: pointer): cardinal;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).FApp.RemainingTime
+  else
+    Result := 0;
+end;
+
+function GetCorePercentes(ID: pointer): cardinal;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).FApp.Percentes
+  else
+    Result := 0;
+end;
+
+function GetCoreSpeed(ID: pointer): cardinal;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).FApp.Speed
+  else
+    Result := 0;
+end;
+
+function GetCoreTotalSize(ID: pointer): int64;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).FApp.TotalSize
+  else
+    Result := 0;
+end;
+
+function GetCoreProcessedSize(ID: pointer): int64;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).FApp.ProcessedSize
+  else
+    Result := 0;
+end;
+
+procedure SetCorePriority(ID: pointer; aPriority: TThreadPriority);
 begin
   if Assigned(TCore(ID)) then
   begin
-    Result := TCore(ID).Status;
+    TCore(ID).Priority := aPriority;
   end;
 end;
 
-function  GetCoreMessage(ID: pointer): string;
+function GetCorePriority(ID: pointer): TThreadPriority;
 begin
   if Assigned(TCore(ID)) then
-  begin
-    Result := TCore(ID).FMessage;
-  end;
+    Result := TCore(ID).Priority
+  else
+    Result := tpNormal;
 end;
 
-function  GetCorePercentes(ID: pointer): integer;
+function GetOverwriteFileInfo(ID: pointer): TFileInfoRec;
 begin
   if Assigned(TCore(ID)) then
   begin
-    Result := TCore(ID).FApp.Percentes;
-  end;
-end;
-
-function  GetCoreSpeed(ID: pointer): integer;
-begin
-  if Assigned(TCore(ID)) then
-  begin
-    Result := TCore(ID).FApp.Speed;
-  end;
-end;
-
-function  GetCoreTotalSize(ID: pointer): int64;
-begin
-  if Assigned(TCore(ID)) then
-  begin
-    Result := TCore(ID).FApp.TotalSize;
-  end;
-end;
-
-function  GetCoreProcessedSize(ID: pointer): int64;
-begin
-  if Assigned(TCore(ID)) then
-  begin
-    Result := TCore(ID).FApp.ProcessedSize;
-  end;
-end;
-
-function  GetOverwriteFileInfo(ID: pointer): TFileInfoRec;
-begin
-  if Assigned(TCore(ID)) then
-  begin
-    Result := TFileInfoRec(TCore(ID).Data^);
+    Result := TFileInfoRec(TCore(ID).Data^)
   end;
 end;
 
@@ -335,16 +368,16 @@ procedure SetOverwriteFileInfoRes(ID: pointer; Result: char);
 begin
   if Assigned(TCore(ID)) then
   begin
-    Char(TCore(ID).DataRes^) := Result;
-    TCore(ID).Status := csExecuting;
+    char(TCore(ID).DataRes^) := Result;
   end;
+  TCore(ID).Status := csExecuting;
 end;
 
-function  GetRenameFileInfo(ID: pointer): TFileInfoRec;
+function GetRenameFileInfo(ID: pointer): TFileInfoRec;
 begin
   if Assigned(TCore(ID)) then
   begin
-    Result := TFileInfoRec(TCore(ID).Data^);
+    Result := TFileInfoRec(TCore(ID).Data^)
   end;
 end;
 
@@ -353,11 +386,11 @@ begin
   if Assigned(TCore(ID)) then
   begin
     string(TCore(ID).DataRes^) := Result;
-    TCore(ID).Status := csExecuting;
   end;
+  TCore(ID).Status := csExecuting;
 end;
 
-function  GetPasswordFileInfo(ID: pointer): TFileInfoRec;
+function GetPasswordFileInfo(ID: pointer): TFileInfoRec;
 begin
   if Assigned(TCore(ID)) then
   begin
@@ -370,11 +403,11 @@ begin
   if Assigned(TCore(ID)) then
   begin
     string(TCore(ID).DataRes^) := Result;
-    TCore(ID).Status := csExecuting;
   end;
+  TCore(ID).Status := csExecuting;
 end;
 
-function  GetRequestMessage(ID: pointer): string;
+function GetRequestMessage(ID: pointer): string;
 begin
   if Assigned(TCore(ID)) then
   begin
@@ -386,8 +419,8 @@ procedure SetRequestMessage(ID: pointer);
 begin
   if Assigned(TCore(ID)) then
   begin
-    TCore(ID).Status := csExecuting;
   end;
+  TCore(ID).Status := csExecuting;
 end;
 
 // -------------------------------------------------------------------------- //
@@ -410,6 +443,11 @@ exports
   GetCoreSpeed,
   GetCoreTotalSize,
   GetCoreProcessedSize,
+  GetCoreElepsedTime,
+  GetCoreRemainingTime,
+
+  GetCorePriority,
+  SetCorePriority,
 
   GetOverwriteFileInfo,
   SetOverwriteFileInfoRes,
