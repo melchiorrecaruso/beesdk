@@ -37,216 +37,290 @@ uses
   Classes;
 
 type
-  // TMessageRec packed record
+  // TFileInfoRec record ...
 
-  TMessageRec = record
-    Method: TThreadMethod;
-    Data: record
-      Msg: string;
-    end;
-    Answer: string;
+  TFileInfoRec = record
+    FileName: string;
+    FilePath: string;
+    FileSize: cardinal;
+    FileTime: integer;
+    FileAttr: integer;
   end;
 
-  // TFileQueryRec packed record
+  // TFileFullInfoRec record ...
 
-  TFileQueryRec = record
-    Method: TThreadMethod;
-    Data: record
-      FileName: string;
-      FilePath: string;
-      FileTime: integer;
-      FileSize: cardinal;
-      FileAttr: integer;
-    end;
-    Answer: string;
+  TFileFullInfoRec = record
+    FileName: string;
+    FilePath: string;
+    FileSize: cardinal;
+    FileTime: integer;
+    FileAttr: integer;
+    FilePacked: cardinal;
+    FileRatio: cardinal;
+    FileComm: string;
+    FileCrc: cardinal;
+    FileMethod: string;
+    FileVersion: string;
+    FilePassword: string;
+    FilePosition: cardinal;
   end;
 
-  // TFileListRec packed record
+  // TEvents procedure...
 
-  TFileListRec = record
-    Method: TThreadMethod;
-    Data: record
-      FileName: string;
-      FilePath: string;
-      FileSize: cardinal;
-      FilePacked: cardinal;
-      FileRatio: cardinal;
-      FileAttr: integer;
-      FileTime: integer;
-      FileComm: string;
-      FileCrc: cardinal;
-      FileMethod: string;
-      FileVersion: string;
-      FilePassword: string;
-      FilePosition: cardinal;
-    end;
-    Answer: string;
-  end;
-
-  // TTickRec packed record
-
-  TTickRec = record
-    Method: TThreadMethod;
-    Data:  record
-      TotalSize: int64;
-      ProcessedSize: int64;
-      Percentage: integer;
-      Speed: integer;
-    end;
-    Answer: string;
-  end;
-
-  TClearRec = record
-    Method: TThreadMethod;
-  end;
-
-  // TStatusRec packed record
-
-  TStatusRec = record
-    Terminated: boolean;
-    Suspended: boolean;
-    Stop: boolean;
-  end;
-
-  // TInterfacesRec packed record
-
-  TInterfacesRec = record
-    OnFatalError: TMessageRec;
-    OnError: TMessageRec;
-    OnWarning: TMessageRec;
-    OnDisplay: TMessageRec;
-    OnRequest: TMessageRec;
-    OnFileOverWrite: TFileQueryRec;
-    OnFileRename: TFileQueryRec;
-    OnFileList: TFileListRec;
-    OnFileKey: TFileQueryRec;
-    OnTick: TTickRec;
-    OnClear: TClearRec;
-    Status: TStatusRec;
-  end;
-
-  PInterfaces = ^TInterfacesRec;
+  TOnCustomEvent    = procedure of object;
+  TOnMessageEvent   = procedure(const aMessage: string) of object;
+  TOnListEvent      = procedure(const aFileInfo: TFileFullInfoRec) of object;
+  TOnOverWriteEvent = procedure(const aFileInfo: TFileInfoRec; var Result: char) of object;
+  TOnRenameEvent    = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
+  TOnKeyEvent       = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
 
   // TParams ...
 
   TParams = TStringList;
 
-  // TSynchronizer ...
-
-  TSynchronizer = procedure(aMethod: TThreadMethod) of object;
-
   // TApp class ...
 
-  TApp = class(TThread)
+  TApp = class
+  private
+    FOnFatalError: TOnMessageEvent;
+    FOnError:      TOnMessageEvent;
+    FOnWarning:    TOnMessageEvent;
+    FOnMessage:    TOnMessageEvent;
+    FOnOverWrite:  TOnOverWriteEvent;
+    FOnRename:     TOnRenameEvent;
+    FOnList:       TOnListEvent;
+    FOnKey:        TOnKeyEvent;
+    FOnRequest:    TOnMessageEvent;
+    FOnTick:       TOnCustomEvent;
+    FOnClear:      TOnCustomEvent;
   protected
-    Interfaces: PInterfaces;
+    FParams: TParams;
+    FxTime: TDateTime;
+    FTotalSize: int64;
+    FProcessedSize: int64;
+    FTerminated: boolean;
+    FSuspended: boolean;
+    FExitCode: byte;
   protected
-    procedure DoTerminate; override;
-    procedure SetExitCode(Code: integer);
-    procedure SetPriority(APriority: integer); overload;
+    function GetSpeed: integer;
+    function GetPercentes: integer;
+    procedure SetExitCode(aExitCode: integer);
+    procedure SetPriority(aPriority: integer); overload;
   public
-    constructor Create(aInterfaces: PInterfaces);
-    procedure Synchronize(aMethod: TThreadMethod);
+    constructor Create(aParams: TParams);
     destructor Destroy; override;
-    procedure Execute; override;
+    procedure Execute; virtual;
+
+    procedure ProcessFatalError(const aMessage: string; aExitCode: byte);
+    procedure ProcessError     (const aMessage: string; aExitCode: byte);
+    procedure ProcessWarning   (const aMessage: string; aExitCode: byte);
+    procedure ProcessMessage   (const aMessage: string);
+    function  ProcessOverwrite (const aFileInfo: TFileInfoRec; const Value: char): char;
+    function  ProcessRename    (const aFileInfo: TFileInfoRec; const Value: string): string;
+    procedure ProcessList      (const aFileInfo: TFileFullInfoRec);
+    function  ProcessKey       (const aFileInfo: TFileInfoRec; const Value: string): string;
+    procedure ProcessRequest   (const aMessage: string);
+    procedure ProcessTick;
+    procedure ProcessClear;
+
+    procedure IncProcessedSize(Value: cardinal); overload;
+    procedure IncProcessedSize; overload;
+    procedure DecProcessedSize(Value: cardinal); overload;
+    procedure DecProcessedSize; overload;
+  public
+    property OnFatalError: TOnMessageEvent   read FOnFatalError write FOnFatalError;
+    property OnError:      TOnMessageEvent   read FOnError      write FOnError;
+    property OnWarning:    TOnMessageEvent   read FOnWarning    write FOnWarning;
+    property OnMessage:    TOnMessageEvent   read FOnMessage    write FOnMessage;
+    property OnOverWrite:  TOnOverWriteEvent read FOnOverWrite  write FOnOverWrite;
+    property OnRename:     TOnRenameEvent    read FOnRename     write FOnRename;
+    property OnList:       TOnListEvent      read FOnList       write FOnList;
+    property OnKey:        TOnKeyEvent       read FOnKey        write FOnKey;
+    property OnRequest:    TOnMessageEvent   read FOnRequest    write FOnRequest;
+    property OnTick:       TOnCustomEvent    read FOnTick       write FOnTick;
+    property OnClear:      TOnCustomEvent    read FOnClear      write FOnClear;
+  public
+    property TotalSize: int64 read FTotalSize;
+    property ProcessedSize: int64 read FProcessedSize;
+    property Percentes: integer read GetPercentes;
+    property Speed: integer read GetSpeed;
+
+    property Terminated: boolean read FTerminated write FTerminated;
+    property Suspended: boolean read FSuspended write FSuspended;
+    property ExitCode: byte read FExitCode;
   end;
 
 implementation
 
-{$IFDEF CONSOLEAPPLICATION}
-{$IFDEF MSWINDOWS}
 uses
-  Bee_Common;
-{$ENDIF}
-{$ENDIF}
+  SysUtils,
+  DateUtils,
+  {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
+  Bee_Common,
+  {$ENDIF} {$ENDIF}
+  Bee_Assembler;
 
 // TApp class ...
 
-constructor TApp.Create(aInterfaces: PInterfaces);
+constructor TApp.Create;
 begin
-  inherited Create(True);
-  FreeOnTerminate := True;
-  Priority := tpNormal;
-  // Store interfaces
-  Interfaces := aInterfaces;
-  // Initialize interfaces status
-  with Interfaces.Status do
-  begin
-    Terminated := False;
-    Suspended  := False;
-    Stop       := False;
-  end;
-  // Initialize interfaces ontick data
-  with Interfaces.OnTick.Data do
-  begin
-    TotalSize     := 0;
-    ProcessedSize := 0;
-    Percentage    := 0;
-    Speed         := 0;
-  end;
-  // Initialize application exitcode
-  ExitCode := 0;
+  inherited Create;
+  FParams := aParams;
+  FExitCode := 0;
+  FTotalSize := 0;
+  FProcessedSize := 0;
+  FSuspended := False;
+  FTerminated := False;
 end;
 
 destructor TApp.Destroy;
 begin
-  Interfaces := nil;
+  FParams := nil;
   inherited Destroy;
 end;
 
 procedure TApp.Execute;
 begin
-  inherited Execute;
+  FxTime := Now;
 end;
 
-procedure TApp.DoTerminate;
+function TApp.GetSpeed: integer;
 begin
-  with Interfaces.Status do
+  Result := ProcessedSize div MilliSecondsBetween(Now, FxTime);
+end;
+
+function TApp.GetPercentes: integer;
+begin
+  Result := MulDiv(FProcessedSize, 100, FTotalSize);
+end;
+
+procedure TApp.SetExitCode(aExitCode: integer);
+begin
+  if FExitCode < aExitCode then
   begin
-    Terminated := True;
-  end;
-  inherited DoTerminate;
-end;
-
-procedure TApp.Synchronize(aMethod: TThreadMethod);
-begin
-  //if Assigned(aMethod) then
-  //begin
-    inherited Synchronize(aMethod);
-  //end;
-end;
-
-procedure TApp.SetExitCode(Code: integer);
-begin
-  if ExitCode < Code then
-  begin
-    ExitCode := Code;
+    FExitCode := aExitCode;
   end;
 end;
 
-procedure TApp.SetPriority(APriority: integer);
+procedure TApp.SetPriority(aPriority: integer);
 begin
-  {$IFDEF CONSOLEAPPLICATION}
-  {$IFDEF MSWINDOWS}
+  {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
   Bee_Common.SetPriority(aPriority);
-  {$ELSE}
-  case aPriority of
-    0: Priority := tpIdle;
-    1: Priority := tpNormal;
-    2: Priority := tpHigher;
-    3: Priority := tpTimeCritical;
-    else Priority := tpNormal;
+  {$ENDIF} {$ENDIF}
+end;
+
+procedure TApp.IncProcessedSize(Value: cardinal);
+begin
+  Inc(FProcessedSize, Value);
+end;
+
+procedure TApp.IncProcessedSize;
+begin
+  Inc(FProcessedSize);
+end;
+
+procedure TApp.DecProcessedSize(Value: cardinal);
+begin
+  Dec(FProcessedSize, Value);
+end;
+
+procedure TApp.DecProcessedSize;
+begin
+  Dec(FProcessedSize);
+end;
+
+procedure TApp.ProcessFatalError(const aMessage: string; aExitCode: byte);
+begin
+  SetExitCode(aExitCode);
+  if Assigned(FOnFatalError) then
+  begin
+    FOnFatalError(aMessage);
   end;
-  {$ENDIF}
-  {$ELSE}
-  case aPriority of
-    0: Priority := tpIdle;
-    1: Priority := tpNormal;
-    2: Priority := tpHigher;
-    3: Priority := tpTimeCritical;
-    else Priority := tpNormal;
+end;
+
+procedure TApp.ProcessError(const aMessage: string; aExitCode: byte);
+begin
+  SetExitCode(aExitCode);
+  if Assigned(FOnError) then
+  begin
+    FOnError(aMessage);
   end;
-  {$ENDIF}
+end;
+
+procedure TApp.ProcessWarning(const aMessage: string; aExitCode: byte);
+begin
+  SetExitCode(aExitCode);
+  if Assigned(FOnWarning) then
+  begin
+    FOnWarning(aMessage);
+  end;
+end;
+
+procedure TApp.ProcessMessage(const aMessage: string);
+begin
+  if Assigned(FOnMessage) then
+  begin
+    FOnMessage(aMessage);
+  end;
+end;
+
+function TApp.ProcessOverwrite(const aFileInfo: TFileInfoRec; const Value: char): char;
+begin
+  Result := Value;
+  if Assigned(FOnOverWrite) then
+  begin
+    FOnOverWrite(aFileInfo, Result);
+  end;
+end;
+
+function TApp.ProcessRename(const aFileInfo: TFileInfoRec; const Value: string): string;
+begin
+  Result := Value;
+  if Assigned(FOnRename) then
+  begin
+    FOnRename(aFileInfo, Result);
+  end;
+end;
+
+procedure TApp.ProcessList(const aFileInfo: TFileFullInfoRec);
+begin
+  if Assigned(FOnList) then
+  begin
+    FOnList(aFileInfo);
+  end;
+end;
+
+function TApp.ProcessKey(const aFileInfo: TFileInfoRec; const Value: string): string;
+begin
+  Result := Value;
+  if Assigned(FOnKey) then
+  begin
+    FOnKey(aFileInfo, Result);
+  end;
+end;
+
+procedure TApp.ProcessRequest(const aMessage: string);
+begin
+  if Assigned(FOnRequest) then
+  begin
+    FOnRequest(aMessage);
+  end;
+end;
+
+procedure TApp.ProcessTick;
+begin
+  if Assigned(FOnTick) then
+  begin
+    FOnTick;
+  end;
+end;
+
+procedure TApp.ProcessClear;
+begin
+  if Assigned(FOnClear) then
+  begin
+    FOnClear;
+  end;
 end;
 
 end.

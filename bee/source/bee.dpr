@@ -60,21 +60,21 @@ type
 
   TConsole = class
   private
-    App: TApp;
-    AppKey: string;
-    AppParams: TParams;
-    AppInterfaces: TInterfacesRec;
-    procedure FatalError;
-    procedure Error;
-    procedure Warning;
-    procedure Display;
-    procedure FileOverWrite;
-    procedure FileRename;
-    procedure FileList;
-    procedure FileKey;
-    procedure Request;
-    procedure Clear;
-    procedure Tick;
+    FApp: TApp;
+    FKey: string;
+    FParams: TParams;
+  private
+    procedure ProcessFatalError(const aMessage: string);
+    procedure ProcessError     (const aMessage: string);
+    procedure ProcessWarning   (const aMessage: string);
+    procedure ProcessMessage   (const aMessage: string);
+    procedure ProcessOverwrite (const aFileInfo: TFileInfoRec; var Result: char);
+    procedure ProcessRename    (const aFileInfo: TFileInfoRec; var Result: string);
+    procedure ProcessList      (const aFileInfo: TFileFullInfoRec);
+    procedure ProcessKey       (const aFileInfo: TFileInfoRec; var Result: string);
+    procedure ProcessRequest   (const aMessage: string);
+    procedure ProcessTick;
+    procedure ProcessClear;
   public
     constructor Create;
     destructor Destroy; override;
@@ -90,104 +90,85 @@ constructor TConsole.Create;
     I: integer;
 begin
   inherited Create;
-  with AppInterfaces do
-  begin
-    OnFatalError   .Method := FatalError;
-    OnError        .Method := Error;
-    OnWarning      .Method := Warning;
-    OnDisplay      .Method := Display;
-    OnFileOverWrite.Method := FileOverWrite;
-    OnFileRename   .Method := FileRename;
-    OnFileList     .Method := FileList;
-    OnFileKey      .Method := FileKey;
-    OnRequest      .Method := Request;
-    OnClear        .Method := Clear;
-    OnTick         .Method := Tick;
-  end;
-
-  AppKey := '';
-  AppParams := TStringList.Create;
+  FKey := '';
+  FParams := TStringList.Create;
   for I := 1 to ParamCount do
   begin
-    AppParams.Add(ParamStr(I));
+    FParams.Add(ParamStr(I));
   end;
-  App := TBeeApp.Create(@AppInterfaces, AppParams);
+  FApp := TBeeApp.Create(FParams);
+  FApp.OnFatalError := ProcessFatalError;
+  FApp.OnError      := ProcessError;
+  FApp.OnWarning    := ProcessWarning;
+  FApp.OnMessage    := ProcessMessage;
+  FApp.OnOverwrite  := ProcessOverwrite;
+  FApp.OnRename     := ProcessRename;
+  FApp.OnList       := ProcessList;
+  FApp.OnKey        := ProcessKey;
+  FApp.OnRequest    := ProcessRequest;
+  FApp.OnTick       := ProcessTick;
+  FApp.OnClear      := ProcessClear;
 end;
 
 destructor TConsole.Destroy;
 begin
-  AppKey := '';
-  AppParams.Destroy;
+  FKey := '';
+  FApp.Destroy;
+  FParams.Destroy;
   inherited Destroy;
 end;
 
 procedure TConsole.Execute;
 begin
-  App.Execute;
+  FApp.Execute;
+  ExitCode := FApp.ExitCode;
 end;
 
-procedure TConsole.FatalError;
+procedure TConsole.ProcessFatalError(const aMessage: string);
 begin
-  Writeln(ParamToOem(AppInterfaces.OnFatalError.Data.Msg));
+  Writeln(ParamToOem(aMessage));
 end;
 
-procedure TConsole.FileOverWrite;
+procedure TConsole.ProcessError(const aMessage: string);
 begin
-  with AppInterfaces.OnFileOverWrite.Data do
+  Writeln(ParamToOem(aMessage));
+end;
+
+procedure TConsole.ProcessWarning(const aMessage: string);
+begin
+  Writeln(ParamToOem(aMessage));
+end;
+
+procedure TConsole.ProcessMessage(const aMessage: string);
+begin
+  Writeln(ParamToOem(aMessage));
+end;
+
+procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
+begin
+  with aFileInfo do
   begin
     Writeln('Warning: file "' + ParamToOem(FilePath + FileName) + '" already exists.');
     Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
   end;
   // not convert oem to param
-  Readln(AppInterfaces.OnFileOverWrite.Answer);
+  Readln(Result);
 end;
 
-procedure TConsole.FileKey;
+procedure TConsole.ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
 begin
-  if Length(AppKey) = 0 then
-  begin
-    Write('Insert a key (min length 4 char): ');
-    Readln(AppKey);
-    // convert oem to param
-    AppKey := OemToParam(AppKey);
-  end;
-  AppInterfaces.OnFileKey.Answer := AppKey;
-end;
-
-procedure TConsole.FileRename;
-begin
-  with AppInterfaces.OnFileRename.Data do
+  with aFileInfo do
   begin
     Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
   end;
-  Readln(AppInterfaces.OnFileRename.Answer);
+  Readln(Result);
   // convert oem to param
-  AppInterfaces.OnFileRename.Answer := OemToParam(AppInterfaces.OnFileRename.Answer);
+  Result := OemToParam(Result);
 end;
 
-procedure TConsole.Warning;
+procedure TConsole.ProcessList(const aFileInfo: TFileFullInfoRec);
 begin
-  Writeln(ParamToOem(AppInterfaces.OnWarning.Data.Msg));
-end;
-
-procedure TConsole.Display;
-begin
-  Writeln(ParamToOem(AppInterfaces.OnDisplay.Data.Msg));
-end;
-
-procedure Tconsole.Request;
-begin
-  Writeln(ParamToOem(AppInterfaces.OnRequest.Data.Msg));
-end;
-
-procedure TConsole.Error;
-begin
-  Writeln(ParamToOem(AppInterfaces.OnError.Data.Msg));
-end;
-
-procedure TConsole.FileList;
-begin
-  with AppInterfaces.OnFileList.Data do
+  with aFileInfo do
   begin
     if Length({FilePath +} FileName) <= 15 then
     begin
@@ -207,17 +188,31 @@ begin
   end;
 end;
 
-procedure TConsole.Tick;
+procedure TConsole.ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
 begin
-  // not convert oem to param
-  with AppInterfaces.OnTick.Data do
+  if Length(FKey) = 0 then
   begin
-    Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
-      Format('%5d KB/s %3d%%', [Speed, Percentage]));
+    Write('Insert a key (min length 4 char): ');
+    Readln(FKey);
+    // convert oem to param
+    FKey := OemToParam(FKey);
   end;
+  Result := FKey;
 end;
 
-procedure TConsole.Clear;
+procedure Tconsole.ProcessRequest(const aMessage: string);
+begin
+  Writeln(ParamToOem(aMessage));
+end;
+
+procedure TConsole.ProcessTick;
+begin
+  // not convert oem to param
+  Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
+      Format('%5d KB/s %3d%%', [FApp.Speed, FApp.Percentes]));
+end;
+
+procedure TConsole.ProcessClear;
 begin
   Write(#13, #13: 80);
 end;
