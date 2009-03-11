@@ -308,7 +308,7 @@ begin
     Result := 0;
 end;
 
-function GetCoreremainingTime(ID: pointer): cardinal;
+function GetCoreRemainingTime(ID: pointer): cardinal;
 begin
   if Assigned(TCore(ID)) then
     Result := TCore(ID).FApp.RemainingTime
