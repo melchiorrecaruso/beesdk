@@ -135,13 +135,9 @@ type
   private
     { private declarations }
     FCommandLine: TCustomCommandLine;
-    FInterfaces: TInterfaces;
-    FArchiveList: TList;
     FPassword: string;
-    FApp: TApp;
+    FCoreID: pointer;
     FCanClose: boolean;
-    FElapsedTime: cardinal;
-    FRemainingTime: cardinal;
     FOnlyAForm: boolean;
   private
     { private declarations }
@@ -160,9 +156,9 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
-    procedure   Execute(ACommandLine: TCustomCommandLine; AArchiveList: TList);
+    procedure Execute(aCommandLine: TCustomCommandLine);
     constructor Create(AOwner: TComponent); override;
-    destructor  Destroy; override;
+    destructor Destroy; override;
   end;
 
 var
@@ -172,7 +168,7 @@ implementation
 
 uses
   BeeGui_Consts,
-  // BeeGui_PlugIns,
+  BeeGui_LibLink,
   BeeGui_Messages,
   BeeGui_SysUtils;
   
@@ -188,34 +184,15 @@ var
   {$I beegui_tickfrm_loadproperty.inc}
   {$I beegui_tickfrm_savelanguage.inc}
   {$I beegui_tickfrm_loadlanguage.inc}
-  
+
   constructor TTickFrm.Create(AOwner: TComponent);
   begin
     inherited Create(AOwner);
-    FInterfaces := TInterfaces.Create;
-    FInterfaces.OnFatalError.Method := OnFatalError;
-    FInterfaces.OnOverWrite.Method := OnOverWrite;
-    FInterfaces.OnWarning.Method := OnWarning;
-    FInterfaces.OnDisplay.Method := OnDisplay;
-    FInterfaces.OnRequest.Method := OnRequest;
-    FInterfaces.OnRename.Method := OnRename;
-    FInterfaces.OnClear.Method := OnClear;
-    FInterfaces.OnError.Method := OnError;
-    FInterfaces.OnList.Method := OnList;
-    FInterfaces.OnTick.Method := OnStart;
-    FInterfaces.OnKey.Method := OnKey;
-
     FCommandLine := nil;
-    FArchiveList := nil;
     FPassword    := '';
-    FApp         := nil;
-
+    FCoreID      := nil;
     FOnlyAForm := False;
     FCanClose  := False;
-
-    FElapsedTime   := 0;
-    FRemainingTime := 0;
-
     {$IFDEF UNIX}
     Tick.Smooth := True;
     {$ENDIF}
@@ -224,8 +201,8 @@ var
   destructor TTickFrm.Destroy;
   begin
     FCommandLine := nil;
-    FArchiveList := nil;
-    FInterfaces.Destroy;
+    FPassword    := '';
+    FCoreID      := nil;
     inherited Destroy;
   end;
 
@@ -257,32 +234,20 @@ var
 
   procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
   begin
-    CanClose := FInterfaces.Terminated;
+    CanClose := GetCoreStatus(FCoreID) = csTerminated;
     if CanClose = False then
     begin
       if MessageDlg(rsConfirmation, rsConfirmAbortProcess, mtConfirmation, [mbYes, mbNo], '') = mrYes then
       begin
-        FInterfaces.Stop := True;
-        if FInterfaces.Suspend then
-        begin
-          BtnPauseRun.Click;
-        end;
+        CoreTerminate(FCoreID);
       end;
     end;
   end;
 
-  procedure TTickFrm.Execute(ACommandLine: TCustomCommandLine; AArchiveList: TList);
+  procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine);
   begin
-    FCommandLine := ACommandLine;
-    FArchiveList := AArchiveList;
-
-    //if (SevenZipPlugin <> '') and SevenZipPlugin(ACommandLine.ArchiveName) then
-    //  FApp := TSevenZipApp.Create(FInterfaces, FCommandLine.Params)
-    //else
-      FApp := TBeeApp.Create(FInterfaces, FCommandLine.Params);
-
-    FApp.OnTerminate := OnTerminate;
-    FApp.Resume;
+    FCommandLine := aCommandLine;
+    FCoreID := CoreExecute(CoreCreate(FCommandLine.Params.Text));
   end;
 
   function TTickFrm.GetFrmCanClose: boolean;
@@ -292,7 +257,7 @@ var
 
   function TTickFrm.GetFrmCanShow: boolean;
   begin
-    Result := (FRemainingTime > 0);
+    Result := GetCoreRemainingTime(FCoreID)  > 0;
   end;
   
   procedure TTickFrm.PopupClick(Sender: TObject);
@@ -302,12 +267,12 @@ var
     Popup_Higher      .Checked := Sender = Popup_Higher;
     Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
 
-    if FInterfaces.Terminated = False then
+    if GetCoreStatus(FCoreID) <> csTerminated then
     begin
-      if Popup_Idle        .Checked then FApp.Priority := tpIdle;
-      if Popup_Normal      .Checked then FApp.Priority := tpNormal;
-      if Popup_Higher      .Checked then FApp.Priority := tpHigher;
-      if Popup_TimeCritical.Checked then FApp.Priority := tpTimeCritical;
+      if Popup_Idle        .Checked then SetCorePriority(FCoreID, tpIdle);
+      if Popup_Normal      .Checked then SetCorePriority(FCoreID, tpNormal);
+      if Popup_Higher      .Checked then SetCorePriority(FCoreID, tpHigher);
+      if Popup_TimeCritical.Checked then SetCorePriority(FCoreID, tpTimeCritical);
     end;
   end;
   
@@ -318,24 +283,24 @@ var
   // ------------------------------------------------------------------------ //
   
   procedure TTickFrm.OnStartTimer(Sender: TObject);
+  var
+    FTotalSize: int64;
   begin
-    with FInterfaces.OnTick.Data do
+    FTotalSize := GetCoreTotalSize(FCoreID);
+    if FTotalSize < (1024) then
     begin
-      if TotalSize < (1024) then
+      GeneralSize.Caption := IntToStr(FTotalSize);
+      GeneralSizeUnit.Caption := 'B';
+    end else
+      if FTotalSize < (1024*1024) then
       begin
-        Self.GeneralSize.Caption := IntToStr(TotalSize);
-        Self.GeneralSizeUnit.Caption := 'B';
+        GeneralSize.Caption := IntToStr(FTotalSize shr 10);
+        GeneralSizeUnit.Caption := 'KB';
       end else
-        if TotalSize < (1024*1024) then
-        begin
-          Self.GeneralSize.Caption := IntToStr(TotalSize shr 10);
-          Self.GeneralSizeUnit.Caption := 'KB';
-        end else
-        begin
-          Self.GeneralSize.Caption := IntToStr(TotalSize shr 20);
-          Self.GeneralSizeUnit.Caption := 'MB';
-        end;
-    end;
+      begin
+        GeneralSize.Caption := IntToStr(FTotalSize shr 20);
+        GeneralSizeUnit.Caption := 'MB';
+      end;
     {$IFDEF MSWINDOWS}
     BtnPriority.Enabled := True;
     {$ENDIF}
@@ -344,43 +309,34 @@ var
 
   procedure TTickFrm.OnTimer(Sender: TObject);
   var
-    iSpeed: cardinal;
-    iRemainSize: cardinal;
+    FProcessedSize: int64;
   begin
-    with FInterfaces.OnTick.Data do
+    FProcessedSize := GetCoreProcessedSize(FCoreID);
+    if FProcessedSize < (1024) then
     begin
-      if ProcessedSize < (1024) then
+      ProcessedSize.Caption := IntToStr(FProcessedSize);
+      ProcessedSizeUnit.Caption := 'B';
+    end else
+      if FProcessedSize < (1024*1024) then
       begin
-        Self.ProcessedSize.Caption := IntToStr(ProcessedSize);
-        Self.ProcessedSizeUnit.Caption := 'B';
+        ProcessedSize.Caption := IntToStr(FProcessedSize shr 10);
+        ProcessedSizeUnit.Caption := 'KB';
       end else
-        if ProcessedSize < (1024*1024) then
-        begin
-          Self.ProcessedSize.Caption := IntToStr(ProcessedSize shr 10);
-          Self.ProcessedSizeUnit.Caption := 'KB';
-        end else
-        begin
-          Self.ProcessedSize.Caption := IntToStr(ProcessedSize shr 20);
-          Self.ProcessedSizeUnit.Caption := 'MB';
-        end;
-      Inc(FElapsedTime);
-      iSpeed := ProcessedSize div FElapsedTime;
-      iRemainSize := TotalSize - ProcessedSize;
-      FRemainingTime := iRemainSize div iSpeed;
-    end;
-    Time.Caption := TimeToStr(FElapsedTime);
-    Speed.Caption := IntToStr(iSpeed shr 10);
-    if iSpeed > 0 then
-      RemainingTime.Caption := TimeToStr(FRemainingTime)
-    else
-      RemainingTime.Caption := '--:--:--';
+      begin
+        ProcessedSize.Caption := IntToStr(FProcessedSize shr 20);
+        ProcessedSizeUnit.Caption := 'MB';
+      end;
+
+    RemainingTime.Caption := TimeToStr(GetCoreRemainingTime(FCoreID));
+    Time.Caption := TimeToStr(GetCoreElapsedTime(FCoreID));
+    Speed.Caption := IntToStr(GetCoreSpeed(FCoreID));
   end;
   
   procedure TTickFrm.OnStopTimer(Sender: TObject);
   begin
-    if FInterfaces.Terminated = True then
+    if GetCoreStatus(FCoreID) = csTerminated then
     begin
-      if ExitCode < 2 then
+      if GetCoreExitCode(FCoreID) < 2 then
         Caption := rsProcessTerminated
       else
         Caption := rsProcessAborted;
@@ -405,16 +361,17 @@ var
 
   procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
   begin
-    if FInterfaces.Terminated = False then
+    if GetCoreStatus(FCoreID) <> csTerminated then
     begin
       Timer.Enabled := not Timer.Enabled;
-      with FInterfaces do
+      if Timer.Enabled then
       begin
-        Suspend := not Suspend;
-        if Suspend then
-          BtnPauseRun.Caption := rsBtnRunCaption
-        else
-          BtnPauseRun.Caption := rsBtnPauseCaption;
+        CoreResume(FCoreID);
+        BtnPauseRun.Caption := rsBtnPauseCaption;
+      end else
+      begin
+        CoreSuspend(FCoreID);
+        BtnPauseRun.Caption := rsBtnRunCaption;
       end;
     end;
   end;
@@ -423,20 +380,17 @@ var
   var
     X, Y: integer;
   begin
-    Popup_Idle        .Checked := FApp.Priority = tpIdle;
-    Popup_Normal      .Checked := FApp.Priority = tpNormal;
-    Popup_Higher      .Checked := FApp.Priority = tpHigher;
-    Popup_TimeCritical.Checked := FApp.Priority = tpTimeCritical;
+    Popup_Idle        .Checked := GetCorePriority(FCoreID) = tpIdle;
+    Popup_Normal      .Checked := GetCorePriority(FCoreID) = tpNormal;
+    Popup_Higher      .Checked := GetCorePriority(FCoreID) = tpHigher;
+    Popup_TimeCritical.Checked := GetCorePriority(FCoreID) = tpTimeCritical;
 
     X := Left + BtnPriority.Left;
     Y := Top  + BtnPriority.Top + BtnPriority.Height;
-
     {$IFDEF MSWINDOWS}
-    Inc(X, 3);
-    Inc(Y, 23);
+    Inc(X, 3); Inc(Y, 23);
     {$ELSE}
-    Inc(X, 6);
-    Inc(Y, 26);
+    Inc(X, 6); Inc(Y, 26);
     {$ENDIF}
     Popup.PopUp(X, Y);
   end;
