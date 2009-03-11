@@ -74,10 +74,6 @@ type
   TOnRenameEvent    = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
   TOnKeyEvent       = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
 
-  // TParams ...
-
-  TParams = TStringList;
-
   // TApp class ...
 
   TApp = class
@@ -94,7 +90,7 @@ type
     FOnTick:       TOnCustomEvent;
     FOnClear:      TOnCustomEvent;
   protected
-    FParams: TParams;
+    FParams: TStringList;
     FxTime: TDateTime;
     FTotalSize: int64;
     FProcessedSize: int64;
@@ -107,7 +103,7 @@ type
     procedure SetExitCode(aExitCode: integer);
     procedure SetPriority(aPriority: integer); overload;
   public
-    constructor Create(aParams: TParams);
+    constructor Create(aParams: TStringList);
     destructor Destroy; override;
     procedure Execute; virtual;
 
