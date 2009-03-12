@@ -66,7 +66,6 @@ type
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
     GeneralSizeUnit: TLabel;
-    IdleTimer: TIdleTimer;
     ProcessedSizeLabel: TLabel;
     SizeLabelPanel: TPanel;
     SpeedLabel: TLabel;
@@ -120,6 +119,7 @@ type
     procedure OnStopTimer(Sender: TObject);
     procedure OnTimer(Sender: TObject);
     procedure OnIdleTimer(Sender: TObject);
+    procedure OnTerminate(Sender: TObject);
   private
     { private declarations }
     FCommandLine: TCustomCommandLine;
@@ -240,8 +240,6 @@ var
     FList := aList;
     FCommandLine := aCommandLine;
     FCoreID := CoreExecute(CoreCreate(FCommandLine.Params.Text));
-    // ---
-    IdleTimer.Enabled := True;
   end;
 
   function TTickFrm.GetFrmCanClose: boolean;
@@ -278,11 +276,23 @@ var
 
   procedure TTickFrm.OnIdleTimer(Sender: TObject);
   begin
-    if GetCoreStatus(FCoreID) <> csTerminated then
+    if FCoreID <> nil then
     begin
-      //Timer.Enabled := True;
-      //IdleTimer.Enabled := False;
+      if GetCoreStatus(FCoreID) <> csTerminated then
+      begin
+        OnStartTimer(Sender);
+        OnTimer(Sender);
+
+
+      end else
+      begin
+        OnStopTimer(Sender);
+        CoreDestroy(FCoreID);
+        FCoreID := nil;
+        OnTerminate(Sender);
+      end;
     end;
+    Timer.Enabled := FCoreID <> nil;
   end;
 
   procedure TTickFrm.OnStartTimer(Sender: TObject);
@@ -331,9 +341,12 @@ var
         ProcessedSizeUnit.Caption := 'MB';
       end;
 
-    RemainingTime.Caption := TimeToStr(GetCoreRemainingTime(FCoreID));
     Time.Caption := TimeToStr(GetCoreElapsedTime(FCoreID));
+    RemainingTime.Caption := TimeToStr(GetCoreRemainingTime(FCoreID));
     Speed.Caption := IntToStr(GetCoreSpeed(FCoreID));
+
+    Tick.Position := GetCorePercentes(FCoreID);
+    Msg.Caption := GetCoreMessage(FCoreID);
   end;
   
   procedure TTickFrm.OnStopTimer(Sender: TObject);
@@ -373,11 +386,11 @@ var
       Timer.Enabled := not Timer.Enabled;
       if Timer.Enabled then
       begin
-        CoreResume(FCoreID);
+        CoreSuspended(FCoreID, False);
         BtnPauseRun.Caption := rsBtnPauseCaption;
       end else
       begin
-        CoreSuspend(FCoreID);
+        CoreSuspended(FCoreID, True);
         BtnPauseRun.Caption := rsBtnRunCaption;
       end;
     end;
@@ -443,11 +456,9 @@ var
   //                                                                          //
   // ------------------------------------------------------------------------ //
 
-  (*
-
   procedure TTickFrm.OnTerminate(Sender: TObject);
   begin
-    if FInterfaces.Terminated = True then
+    if FCoreID = nil then
     begin
       FCanClose := True;
       Timer.Enabled := False;
@@ -472,6 +483,8 @@ var
       end;
     end;
   end;
+
+  (*
 
   procedure TTickFrm.OnOverwrite;
   var

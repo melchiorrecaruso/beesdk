@@ -74,11 +74,6 @@ type
   TOnRenameEvent    = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
   TOnKeyEvent       = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
 
-  // TCoreStatus ...
-
-  TCoreStatus = (csUnknow, csReady, csExecuting, csSuspended, csWaitingOverwrite,
-    csWaitingRename, csWaitingKey, csWaitingRequest, csTerminated);
-
   // TApp class ...
 
   TApp = class
@@ -154,6 +149,11 @@ type
     property Suspended: boolean read FSuspended write FSuspended;
     property ExitCode: byte read FExitCode;
   end;
+
+  // TCoreStatus ...
+
+  TCoreStatus = (csUnknow, csReady, csExecuting, csSuspended, csWaitingOverwrite,
+    csWaitingRename, csWaitingKey, csWaitingRequest, csTerminated);
 
 implementation
 

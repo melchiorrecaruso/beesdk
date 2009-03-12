@@ -107,8 +107,8 @@ begin
            end else
            begin
              Application.CreateForm(TTickFrm, TickFrm);
-             TickFrm.Execute(CommandLine, nil);
              TickFrm.OnlyAForm := True;
+             TickFrm.Execute(CommandLine, nil);
              repeat
                  Application.ProcessMessages;
                  if TickFrm.FrmCanClose then Break;
