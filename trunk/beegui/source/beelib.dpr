@@ -147,8 +147,8 @@ type
 
   procedure TCore.ProcessMessage(const aMessage: string);
   begin
-    FMessages.Add(aMessage);
     FMessage := aMessage;
+    FMessages.Add(FMessage);
   end;
 
   procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
@@ -282,6 +282,14 @@ function GetCoreMessage(ID: pointer): string;
 begin
   if Assigned(TCore(ID)) then
     Result := TCore(ID).FMessage
+  else
+    Result := '';
+end;
+
+function GetCoreMessages(ID: pointer): string;
+begin
+  if Assigned(TCore(ID)) then
+    Result := TCore(ID).FMessages.Text
   else
     Result := '';
 end;
@@ -433,6 +441,7 @@ exports
   GetCoreExitCode,
   GetCoreStatus,
   GetCoreMessage,
+  GetCoreMessages,
   GetCorePercentes,
   GetCoreSpeed,
   GetCoreTotalSize,

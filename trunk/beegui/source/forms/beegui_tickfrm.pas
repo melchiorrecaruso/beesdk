@@ -358,6 +358,8 @@ var
       else
         Caption := rsProcessAborted;
 
+      Report.Lines.Text := GetCoreMessages(FCoreID);
+
       CoreDestroy(FCoreID);
       FCoreID := nil;
     end else
@@ -474,6 +476,9 @@ var
       begin
         ActiveControl := BtnCancel;
         GeneralPage.TabVisible := False;
+
+
+
 
         BtnSave.Enabled := True;
         BtnFont.Enabled := True;
