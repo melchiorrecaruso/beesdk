@@ -116,10 +116,9 @@ type
     procedure BtnPauseRunClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
     // ---
-    procedure OnStartTimer(Sender: TObject);
-    procedure OnStopTimer(Sender: TObject);
     procedure OnTimer(Sender: TObject);
-    procedure OnIdleTimer(Sender: TObject);
+    procedure OnExecuting;
+    procedure OnTerminate;
   private
     { private declarations }
     FCommandLine: TCustomCommandLine;
@@ -127,6 +126,7 @@ type
     FPassword: string;
     FCoreID: pointer;
     FCanClose: boolean;
+    FSuspended: boolean;
   private
     { private declarations }
     function GetFrmCanShow: boolean;
@@ -180,6 +180,7 @@ var
     FCoreID      := nil;
     FList        := nil;
     FCanClose  := False;
+    FSuspended := False;
     {$IFDEF UNIX}
     Tick.Smooth := True;
     {$ENDIF}
@@ -300,30 +301,26 @@ var
   //                                                                          //
   // ------------------------------------------------------------------------ //
 
-  procedure TTickFrm.OnIdleTimer(Sender: TObject);
+  procedure TTickFrm.OnTimer(Sender: TObject);
   var
     FCoreStatus: TCoreStatus;
   begin
     if FCoreID <> nil then
     begin
       FCoreStatus := GetCoreStatus(FCoreID);
-
       case FCoreStatus of
-        csTerminated: begin
-                        OnStopTimer(Sender);
-                      end;
-      else begin
-             // OnStartTimer(Sender);
-             OnTimer(Sender);
-           end;
+      csTerminated: OnTerminate;
+      else OnExecuting;
       end;
     end;
     Timer.Enabled := FCoreID <> nil;
   end;
 
-  procedure TTickFrm.OnStartTimer(Sender: TObject);
+  procedure TTickFrm.OnExecuting;
   var
     FTotalSize: int64;
+    FProcessedSize: int64;
+    FPercentes: integer;
   begin
     FTotalSize := GetCoreTotalSize(FCoreID);
     if FTotalSize < (1024) then
@@ -340,14 +337,7 @@ var
         GeneralSize.Caption := IntToStr(FTotalSize shr 20);
         GeneralSizeUnit.Caption := 'MB';
       end;
-  end;
 
-  procedure TTickFrm.OnTimer(Sender: TObject);
-  var
-    FProcessedSize: int64;
-    FPercentes: integer;
-  begin
-    FPercentes := GetCorePercentes(FCoreID);
     FProcessedSize := GetCoreProcessedSize(FCoreID);
     if FProcessedSize < (1024) then
     begin
@@ -364,17 +354,21 @@ var
         ProcessedSizeUnit.Caption := 'MB';
       end;
 
-    Caption := Format(rsProcessStatus, [FPercentes]);
-
-    Time.Caption := TimeToStr(GetCoreElapsedTime(FCoreID));
-    RemainingTime.Caption := TimeToStr(GetCoreRemainingTime(FCoreID));
-    Speed.Caption := IntToStr(GetCoreSpeed(FCoreID) shr 10);
-
-    Msg.Caption := GetCoreMessage(FCoreID);
+    FPercentes := GetCorePercentes(FCoreID);
+    if not FSuspended then
+      Caption := Format(rsProcessStatus, [FPercentes])
+    else
+      Caption := rsProcessPaused;
     Tick.Position := FPercentes;
+
+    RemainingTime.Caption := TimeToStr(GetCoreRemainingTime(FCoreID));
+    Time.Caption          := TimeToStr(GetCoreElapsedTime  (FCoreID));
+
+    Speed.Caption := IntToStr(GetCoreSpeed(FCoreID) shr 10);
+    Msg.Caption := GetCoreMessage(FCoreID);
   end;
   
-  procedure TTickFrm.OnStopTimer(Sender: TObject);
+  procedure TTickFrm.OnTerminate;
   begin
     case GetCoreExitCode(FCoreID) of
       0: Caption := rsProcessTerminated;
@@ -403,14 +397,15 @@ var
   begin
     if GetCoreStatus(FCoreID) <> csTerminated then
     begin
-      if BtnPauseRun.Caption = rsBtnRunCaption then
-      begin
-        BtnPauseRun.Caption := rsBtnPauseCaption;
-        CoreSuspended(FCoreID, False);
-      end else
+      FSuspended := not FSuspended;
+      if FSuspended then
       begin
         BtnPauseRun.Caption := rsBtnRunCaption;
         CoreSuspended(FCoreID, True);
+      end else
+      begin
+        BtnPauseRun.Caption := rsBtnPauseCaption;
+        CoreSuspended(FCoreID, False);
       end;
     end;
   end;
