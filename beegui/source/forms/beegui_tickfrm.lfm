@@ -535,12 +535,9 @@ object TickFrm: TTickFrm
     TabOrder = 4
   end
   object Timer: TIdleTimer
-    Enabled = False
     Interval = 250
-    OnTimer = OnTimer
-    OnStartTimer = OnStartTimer
-    OnStopTimer = OnStopTimer
-    left = 200
+    OnTimer = OnIdleTimer
+    left = 264
     top = 8
   end
   object SaveDialog: TSaveDialog
@@ -578,12 +575,5 @@ object TickFrm: TTickFrm
       ShortCut = 16435
       OnClick = PopupClick
     end
-  end
-  object IdleTimer: TIdleTimer
-    Enabled = False
-    Interval = 250
-    OnTimer = OnIdleTimer
-    left = 168
-    top = 8
   end
 end

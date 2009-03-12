@@ -61,8 +61,7 @@ type
     constructor Create(const aCommandLine: string);
     destructor Destroy; override;
     procedure Execute; override;
-    procedure Suspend;
-    procedure Resume;
+    procedure Suspended(Value: boolean);
     procedure Terminate;
   public
     property Status: TCoreStatus read FStatus write FStatus;
@@ -79,6 +78,7 @@ type
   constructor TCore.Create(const aCommandLine: string);
   begin
     inherited Create(True);
+
     FKey := '';
     FMessage := '';
     FStatus := csReady;
@@ -120,14 +120,9 @@ type
     FStatus := csTerminated;
   end;
 
-  procedure TCore.Suspend;
+  procedure TCore.Suspended(Value: boolean);
   begin
-    FApp.Suspended := True;
-  end;
-
-  procedure TCore.Resume;
-  begin
-    FApp.Suspended := False;
+    FApp.Suspended := Value;
   end;
 
   procedure TCore.Terminate;
@@ -236,31 +231,25 @@ begin
   Result := ID;
   if Assigned(TCore(ID)) then
   begin
-    TCore(ID).Resume;
+        TCore(ID).Resume;
   end;
 end;
 
-procedure CoreDestroy(ID: pointer);
+function CoreDestroy(ID: pointer): pointer;
 begin
   if Assigned(TCore(ID)) then
   begin
     TCore(ID).Destroy;
-  end;
+    Result := nil;
+  end else
+    Result := ID;
 end;
 
-procedure CoreSuspend(ID: pointer);
+procedure CoreSuspended(ID: pointer; Value: boolean);
 begin
   if Assigned(TCore(ID)) then
   begin
-    TCore(ID).Suspend;
-  end;
-end;
-
-procedure CoreResume(ID: pointer);
-begin
-  if Assigned(TCore(ID)) then
-  begin
-    TCore(ID).Resume;
+    TCore(ID).FApp.Suspended := Value;
   end;
 end;
 
@@ -269,10 +258,7 @@ begin
   if Assigned(TCore(ID)) then
   begin
     TCore(ID).Terminate;
-    if TCore(ID).Suspended then
-    begin
-      TCore(ID).Resume;
-    end;
+    TCore(ID).Suspended(False);
   end;
 end;
 
@@ -441,8 +427,7 @@ exports
   CoreCreate,
   CoreExecute,
   CoreDestroy,
-  CoreSuspend,
-  CoreResume,
+  CoreSuspended,
   CoreTerminate,
 
   GetCoreExitCode,
