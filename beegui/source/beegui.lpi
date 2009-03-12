@@ -119,8 +119,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="5" Y="487"/>
-        <TopLine Value="456"/>
+        <CursorPos X="53" Y="361"/>
+        <TopLine Value="339"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -257,8 +257,8 @@
         <Filename Value="packages\beegui_liblink.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
-        <CursorPos X="97" Y="40"/>
-        <TopLine Value="24"/>
+        <CursorPos X="28" Y="46"/>
+        <TopLine Value="17"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
