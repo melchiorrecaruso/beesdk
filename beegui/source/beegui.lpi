@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="5"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -40,7 +40,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="22">
+    <Units Count="23">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -119,7 +119,7 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="57" Y="374"/>
+        <CursorPos X="35" Y="370"/>
         <TopLine Value="353"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="200"/>
@@ -247,8 +247,8 @@
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="16" Y="215"/>
-        <TopLine Value="192"/>
-        <EditorIndex Value="4"/>
+        <TopLine Value="216"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -274,12 +274,26 @@
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit21>
+      <Unit22>
+        <Filename Value="..\..\bee\source\bee_common.pas"/>
+        <UnitName Value="Bee_Common"/>
+        <CursorPos X="1" Y="512"/>
+        <TopLine Value="470"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit22>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
+    <JumpHistory Count="2" HistoryIndex="1">
       <Position1>
         <Filename Value="beegui.lpr"/>
         <Caret Line="57" Column="18" TopLine="42"/>
       </Position1>
+      <Position2>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="370" Column="35" TopLine="353"/>
+      </Position2>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

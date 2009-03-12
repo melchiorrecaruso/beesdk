@@ -91,8 +91,8 @@ type
     FOnClear:      TOnCustomEvent;
   protected
     FParams: TStringList;
-    FxSuspendedTime: TDateTime;
-    FxTime: TDateTime;
+    FSuspendedTime: double;
+    FStartTime: double;
     FTotalSize: int64;
     FProcessedSize: int64;
     FTerminated: boolean;
@@ -188,15 +188,22 @@ end;
 
 procedure TApp.Execute;
 begin
-  FxTime := Now;
+  FStartTime := Now;
 end;
 
 function TApp.GetSpeed: cardinal;
+var
+  I: int64;
 begin
   if not FSuspended then
-    Result := MulDiv(FProcessedSize, 1000, MilliSecondsBetween(Now, FxTime))
+    I := MilliSecondsBetween(Now, FStartTime)
   else
-    Result := MulDiv(FProcessedSize, 1000, MilliSecondsBetween(0,   FxTime - FxSuspendedTime));
+    I := MilliSecondsBetween(FSuspendedTime - FStartTime, 0);
+
+  if I <> 0 then
+    Result := MulDiv(FProcessedSize, 1000, I)
+  else
+    Result := 0;
 end;
 
 function TApp.GetPercentes: cardinal;
@@ -206,12 +213,21 @@ end;
 
 function TApp.GetElapsedTime: cardinal;
 begin
-  Result := SecondsBetween(Now, FxTime);
+  if not FSuspended then
+    Result := SecondsBetween(Now, FStartTime)
+  else
+    Result := SecondsBetween(FSuspendedTime - FStartTime, 0);
 end;
 
 function TApp.GetRemainingTime: cardinal;
+var
+  I: cardinal;
 begin
-  Result := (FTotalSize - FProcessedSize) div GetSpeed;
+  I := GetSpeed;
+  if I <> 0 then
+    Result := (FTotalSize - FProcessedSize) div I
+  else
+    Result := 0;
 end;
 
 procedure TApp.SetSuspended(Value: boolean);
@@ -219,9 +235,9 @@ begin
   if FSuspended <> Value then
   begin
     if Value then
-      FxSuspendedTime := Now
+      FSuspendedTime := Now
     else
-      FxTime := FxTime + (Now - FxSuspendedTime);
+      FStartTime := FStartTime + (Now - FSuspendedTime);
 
     FSuspended := Value;
   end;

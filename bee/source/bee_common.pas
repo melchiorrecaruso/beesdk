@@ -504,13 +504,12 @@ begin
   else
     M := IntToStr(ZM);
 
-
   if ZS < 10 then
     S := '0' + IntToStr(ZS)
   else
     S := IntToStr(ZS);
 
-  Result := H + ':' + M + ':' + S;
+  Result := H + ':' + M + ':' + S
 end;
 
 function DateTimeToString(X: TDateTime): string;
