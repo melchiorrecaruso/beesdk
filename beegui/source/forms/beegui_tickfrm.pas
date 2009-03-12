@@ -105,7 +105,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
-
+    // ---
+    procedure NotebookPageChanged(Sender: TObject);
     // ---
     procedure PopupClick(Sender: TObject);
     // ---
@@ -119,7 +120,6 @@ type
     procedure OnStopTimer(Sender: TObject);
     procedure OnTimer(Sender: TObject);
     procedure OnIdleTimer(Sender: TObject);
-    procedure OnTerminate(Sender: TObject);
   private
     { private declarations }
     FCommandLine: TCustomCommandLine;
@@ -127,7 +127,6 @@ type
     FPassword: string;
     FCoreID: pointer;
     FCanClose: boolean;
-    FOnlyAForm: boolean;
   private
     { private declarations }
     function GetFrmCanShow: boolean;
@@ -136,7 +135,6 @@ type
     { public declarations }
     property FrmCanShow: boolean read GetFrmCanShow;
     property FrmCanClose: boolean read GetFrmCanClose;
-    property OnlyAForm: boolean read FOnlyAForm write FOnlyAForm;
   public
     { public declarations }
     procedure SaveProperty;
@@ -181,7 +179,6 @@ var
     FPassword    := '';
     FCoreID      := nil;
     FList        := nil;
-    FOnlyAForm := False;
     FCanClose  := False;
     {$IFDEF UNIX}
     Tick.Smooth := True;
@@ -202,17 +199,7 @@ var
     LoadLanguage;
     LoadProperty;
 
-    ActiveControl := BtnCancel;
-    Notebook.ActivePageComponent := GeneralPage;
-
-    BtnPauseRun.Caption := rsBtnPauseCaption;
-    BtnCancel.Caption   := rsBtnCancelCaption;
-
-    BtnCancel.Enabled   := True;
-    BtnPriority.Enabled := False;
-    BtnPauseRun.Enabled := False;
-    BtnSave.Enabled     := False;
-    BtnFont.Enabled     := False;
+    NotebookPageChanged(Sender);
   end;
   
   procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -240,6 +227,10 @@ var
     FList := aList;
     FCommandLine := aCommandLine;
     FCoreID := CoreExecute(CoreCreate(FCommandLine.Params.Text));
+   {$IFDEF MSWINDOWS}
+    BtnPriority.Enabled := True;
+    {$ENDIF}
+    BtnPauseRun.Enabled := True;
   end;
 
   function TTickFrm.GetFrmCanClose: boolean;
@@ -267,6 +258,41 @@ var
       if Popup_TimeCritical.Checked then SetCorePriority(FCoreID, tpTimeCritical);
     end;
   end;
+
+  procedure TTickFrm.NotebookPageChanged(Sender: TObject);
+  var
+    I: integer;
+  begin
+    for I := 0 to Notebook.PageCount -1 do
+    begin
+      Notebook.Page[I].TabVisible := False;
+    end;;
+    Notebook.Page[Notebook.PageIndex].TabVisible := True;
+
+    if Notebook.PageIndex = 0 then
+    begin
+      BtnSave.Enabled   := False;
+      BtnFont.Enabled   := False;
+      BtnCancel.Kind    := bkCancel;
+      BtnCancel.Caption := rsBtnCancelCaption;
+
+      BtnPriority.Enabled := True;
+      BtnPauseRun.Enabled := True;
+      BtnPauseRun.Caption := rsBtnPauseCaption;
+    end else
+    begin
+      BtnSave.Enabled   := True;
+      BtnFont.Enabled   := True;
+      BtnCancel.Kind    := bkClose;
+      BtnCancel.Caption := rsBtnCloseCaption;
+
+      BtnPriority.Enabled := False;
+      BtnPauseRun.Enabled := False;
+      BtnPauseRun.Caption := rsBtnPauseCaption;
+    end;
+    BtnCancel.Cancel := True;
+    ActiveControl := BtnCancel;
+  end;
   
   // ------------------------------------------------------------------------ //
   //                                                                          //
@@ -275,21 +301,21 @@ var
   // ------------------------------------------------------------------------ //
 
   procedure TTickFrm.OnIdleTimer(Sender: TObject);
+  var
+    FCoreStatus: TCoreStatus;
   begin
     if FCoreID <> nil then
     begin
-      if GetCoreStatus(FCoreID) <> csTerminated then
-      begin
-        OnStartTimer(Sender);
-        OnTimer(Sender);
+      FCoreStatus := GetCoreStatus(FCoreID);
 
-
-      end else
-      begin
-        OnStopTimer(Sender);
-        CoreDestroy(FCoreID);
-        FCoreID := nil;
-        OnTerminate(Sender);
+      case FCoreStatus of
+        csTerminated: begin
+                        OnStopTimer(Sender);
+                      end;
+      else begin
+             // OnStartTimer(Sender);
+             OnTimer(Sender);
+           end;
       end;
     end;
     Timer.Enabled := FCoreID <> nil;
@@ -314,17 +340,14 @@ var
         GeneralSize.Caption := IntToStr(FTotalSize shr 20);
         GeneralSizeUnit.Caption := 'MB';
       end;
-
-    {$IFDEF MSWINDOWS}
-    BtnPriority.Enabled := True;
-    {$ENDIF}
-    BtnPauseRun.Enabled := True;
   end;
 
   procedure TTickFrm.OnTimer(Sender: TObject);
   var
     FProcessedSize: int64;
+    FPercentes: integer;
   begin
+    FPercentes := GetCorePercentes(FCoreID);
     FProcessedSize := GetCoreProcessedSize(FCoreID);
     if FProcessedSize < (1024) then
     begin
@@ -341,38 +364,33 @@ var
         ProcessedSizeUnit.Caption := 'MB';
       end;
 
+    Caption := Format(rsProcessStatus, [FPercentes]);
+
     Time.Caption := TimeToStr(GetCoreElapsedTime(FCoreID));
     RemainingTime.Caption := TimeToStr(GetCoreRemainingTime(FCoreID));
-    Speed.Caption := IntToStr(GetCoreSpeed(FCoreID));
+    Speed.Caption := IntToStr(GetCoreSpeed(FCoreID) shr 10);
 
-    Tick.Position := GetCorePercentes(FCoreID);
     Msg.Caption := GetCoreMessage(FCoreID);
+    Tick.Position := FPercentes;
   end;
   
   procedure TTickFrm.OnStopTimer(Sender: TObject);
   begin
-    if GetCoreStatus(FCoreID) = csTerminated then
-    begin
-      if GetCoreExitCode(FCoreID) < 2 then
-        Caption := rsProcessTerminated
-      else
-        Caption := rsProcessAborted;
-
-      Report.Lines.Text := GetCoreMessages(FCoreID);
-
-      CoreDestroy(FCoreID);
-      FCoreID := nil;
-    end else
-      Caption := rsProcessPaused;
-
-    if FOnlyAForm then
-    begin
-      Application.Title := Caption;
+    case GetCoreExitCode(FCoreID) of
+      0: Caption := rsProcessTerminated;
+      1: Caption := rsProcessTerminated;
+      2: Caption := rsProcessAborted;
+    else Caption := rsProcessAborted;
     end;
-    {$IFDEF MSWINDOWS}
-    BtnPriority.Enabled := False;
-    {$ENDIF}
-    BtnPauseRun.Enabled := True;
+
+    Report.Lines.Text := GetCoreMessages(FCoreID);
+    if Report.Lines.Count > 0 then
+      Notebook.ActivePageComponent := ReportPage
+    else
+      Close;
+
+    FCoreID := CoreDestroy(FCoreID);
+    FCanClose := FCoreID = nil;
   end;
 
   // ------------------------------------------------------------------------ //
@@ -385,15 +403,14 @@ var
   begin
     if GetCoreStatus(FCoreID) <> csTerminated then
     begin
-      Timer.Enabled := not Timer.Enabled;
-      if Timer.Enabled then
+      if BtnPauseRun.Caption = rsBtnRunCaption then
       begin
-        CoreSuspended(FCoreID, False);
         BtnPauseRun.Caption := rsBtnPauseCaption;
+        CoreSuspended(FCoreID, False);
       end else
       begin
-        CoreSuspended(FCoreID, True);
         BtnPauseRun.Caption := rsBtnRunCaption;
+        CoreSuspended(FCoreID, True);
       end;
     end;
   end;
@@ -457,37 +474,6 @@ var
   // BeeApp Events Routines                                                   //
   //                                                                          //
   // ------------------------------------------------------------------------ //
-
-  procedure TTickFrm.OnTerminate(Sender: TObject);
-  begin
-    if FCoreID = nil then
-    begin
-      FCanClose := True;
-      Timer.Enabled := False;
-
-      BtnPriority.Enabled := False;
-      BtnPauseRun.Enabled := False;
-
-      BtnCancel.Kind    := bkClose;
-      BtnCancel.Caption := rsBtnCloseCaption;
-      BtnCancel.Cancel  := True;
-
-      if Report.Lines.Count > 0 then
-      begin
-        ActiveControl := BtnCancel;
-        GeneralPage.TabVisible := False;
-
-
-
-
-        BtnSave.Enabled := True;
-        BtnFont.Enabled := True;
-      end else
-      begin;
-        Close;
-      end;
-    end;
-  end;
 
   (*
 

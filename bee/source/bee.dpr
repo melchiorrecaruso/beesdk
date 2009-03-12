@@ -209,7 +209,7 @@ procedure TConsole.ProcessTick;
 begin
   // not convert oem to param
   Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
-      Format('%5d KB/s %3d%%', [FApp.Speed, FApp.Percentes]));
+      Format('%5d KB/s %3d%%', [FApp.Speed shr 10, FApp.Percentes]));
 end;
 
 procedure TConsole.ProcessClear;

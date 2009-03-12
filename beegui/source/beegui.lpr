@@ -107,7 +107,6 @@ begin
            end else
            begin
              Application.CreateForm(TTickFrm, TickFrm);
-             TickFrm.OnlyAForm := True;
              TickFrm.Execute(CommandLine, nil);
              repeat
                  Application.ProcessMessages;
