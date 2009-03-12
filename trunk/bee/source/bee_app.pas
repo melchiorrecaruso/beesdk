@@ -701,7 +701,6 @@ var
   TmpFileName: string;
   TmpFile: TFileWriter;
   Headers: THeaders;
-  Time: double;
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
@@ -715,7 +714,6 @@ begin
 
     if (Headers.GetCount([toUpdate, toFresh]) > 0) or ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
-      Time := Now;
       TmpFileName := GenerateFileName(FCommandLine.yOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
 
@@ -755,9 +753,9 @@ begin
         Headers.WriteItems(TmpFile);
 
         if not Terminated then
-          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds')
+          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds', 255);
+          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
@@ -808,7 +806,6 @@ var
   Decoder: TDecoder;
   Headers: THeaders;
   Return: boolean;
-  Time: double;
   I: integer;
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
@@ -833,7 +830,6 @@ begin
     FTotalSize := Headers.GetSize(Action);
     if (Headers.GetNext(0, Action) > -1) then // action = toTest or toExtract
     begin
-      Time := Now;
       ProcessFilesToDecode(Headers, Action);
 
       Return  := True;
@@ -854,11 +850,11 @@ begin
       if not FTerminated then
       begin
         if Return = True then
-          ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds')
+          ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(Time) + ' seconds', 2);
+          ProcessError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(FStartTime) + ' seconds', 2);
       end else
-        ProcessError(Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds', 255);
+        ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
     end else // if Headers.GetNext
       ProcessWarning('Warning: no files to decode', 1);
@@ -873,7 +869,6 @@ var
   TmpFileName: string;
   TmpFile: TFileWriter;
   I:    integer;
-  Time: double;
   Headers: THeaders;
   Encoder: TEncoder;
 begin
@@ -894,7 +889,6 @@ begin
       ((Length(FCommandLine.aOption) > 0) and
       (Headers.GetNext(0, toCopy) > -1)) then
     begin
-      Time := Now;
       TmpFileName := GenerateFileName(FCommandLine.yOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
 
@@ -929,9 +923,9 @@ begin
         Headers.WriteItems(TmpFile);
 
         if not FTerminated then
-          ProcessMessage (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds')
+          ProcessMessage (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds', 255);
+          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
@@ -980,7 +974,6 @@ var
   TmpFileName: string;
   Headers: THeaders;
   Encoder: TEncoder;
-  Time: double;
   I:    integer;
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
@@ -992,7 +985,6 @@ begin
 
     if ProcessFilesToRename(Headers) then
     begin
-      Time := Now;
       TmpFileName := GenerateFileName(FCommandLine.yOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
 
@@ -1018,9 +1010,9 @@ begin
         Headers.WriteItems(TmpFile);
 
         if not FTerminated then
-          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(Time) + ' seconds')
+          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted - ' + TimeDifference(Time) + ' seconds', 255);
+          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
         if Assigned(FArcFile) then FreeAndNil(FArcFile);
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
@@ -1083,7 +1075,6 @@ var
   {$ENDIF}
   TotalPack, TotalSize, TotalFiles: integer;
   Version, Method, Dictionary: integer;
-  Time: double;
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
@@ -1103,7 +1094,6 @@ begin
 
     if (Headers.GetNext(0, toList) > -1) then
     begin
-      Time := Now;
       {$IFDEF CONSOLEAPPLICATION}
       ProcessMessage(StringOfChar('-', 79));
       ProcessMessage('Directory|File' + StringOfChar(' ', 8)
@@ -1215,7 +1205,7 @@ begin
       if Headers.GetModule > 0 then
         ProcessMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
-      ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(Time) + ' seconds');
+      ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds');
     end else
       ProcessWarning('Warning: no files to list', 1);
 
