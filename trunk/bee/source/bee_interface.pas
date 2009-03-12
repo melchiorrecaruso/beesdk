@@ -91,6 +91,7 @@ type
     FOnClear:      TOnCustomEvent;
   protected
     FParams: TStringList;
+    FxSuspendedTime: TDateTime;
     FxTime: TDateTime;
     FTotalSize: int64;
     FProcessedSize: int64;
@@ -102,6 +103,7 @@ type
     function GetPercentes: cardinal;
     function GetElapsedTime: cardinal;
     function GetRemainingTime: cardinal;
+    procedure SetSuspended(Value: boolean);
     procedure SetExitCode(aExitCode: integer);
     procedure SetPriority(aPriority: integer); overload;
   public
@@ -146,13 +148,13 @@ type
     property RemainingTime: cardinal read GetRemainingTime;
 
     property Terminated: boolean read FTerminated write FTerminated;
-    property Suspended: boolean read FSuspended write FSuspended;
+    property Suspended: boolean read FSuspended write SetSuspended;
     property ExitCode: byte read FExitCode;
   end;
 
   // TCoreStatus ...
 
-  TCoreStatus = (csUnknow, csReady, csExecuting, csSuspended, csWaitingOverwrite,
+  TCoreStatus = (csReady, csExecuting, csWaitingOverwrite,
     csWaitingRename, csWaitingKey, csWaitingRequest, csTerminated);
 
 implementation
@@ -191,7 +193,10 @@ end;
 
 function TApp.GetSpeed: cardinal;
 begin
-  Result := MulDiv(FProcessedSize shr 10, 1000, MilliSecondsBetween(Now, FxTime));
+  if not FSuspended then
+    Result := MulDiv(FProcessedSize, 1000, MilliSecondsBetween(Now, FxTime))
+  else
+    Result := MulDiv(FProcessedSize, 1000, MilliSecondsBetween(0,   FxTime - FxSuspendedTime));
 end;
 
 function TApp.GetPercentes: cardinal;
@@ -205,14 +210,21 @@ begin
 end;
 
 function TApp.GetRemainingTime: cardinal;
-var
-  I: cardinal;
 begin
-  I := MulDiv(FProcessedSize, 1000, MilliSecondsBetween(Now, FxTime));
-  if I > 0 then
-    Result := (FTotalSize - FProcessedSize) div I
-  else
-    Result := 0;
+  Result := (FTotalSize - FProcessedSize) div GetSpeed;
+end;
+
+procedure TApp.SetSuspended(Value: boolean);
+begin
+  if FSuspended <> Value then
+  begin
+    if Value then
+      FxSuspendedTime := Now
+    else
+      FxTime := FxTime + (Now - FxSuspendedTime);
+
+    FSuspended := Value;
+  end;
 end;
 
 procedure TApp.SetExitCode(aExitCode: integer);

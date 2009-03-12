@@ -110,6 +110,7 @@ object TickFrm: TTickFrm
     Width = 409
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
+    OnPageChanged = NotebookPageChanged
     PageIndex = 0
     TabOrder = 0
     object GeneralPage: TPage
@@ -537,7 +538,7 @@ object TickFrm: TTickFrm
   object Timer: TIdleTimer
     Interval = 250
     OnTimer = OnIdleTimer
-    left = 264
+    left = 256
     top = 8
   end
   object SaveDialog: TSaveDialog

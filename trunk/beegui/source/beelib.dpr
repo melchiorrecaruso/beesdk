@@ -61,8 +61,6 @@ type
     constructor Create(const aCommandLine: string);
     destructor Destroy; override;
     procedure Execute; override;
-    procedure Suspended(Value: boolean);
-    procedure Terminate;
   public
     property Status: TCoreStatus read FStatus write FStatus;
     property DataRes: pointer read FDataRes;
@@ -106,28 +104,19 @@ type
   begin
     FKey := '';
     FMessage := '';
-    FParams.Destroy;
     FMessages.Destroy;
+    FParams.Destroy;
     inherited Destroy;
   end;
 
   procedure TCore.Execute;
   begin
+    inherited Execute;
     FStatus := csExecuting;
     begin
       FApp.Execute;
     end;
     FStatus := csTerminated;
-  end;
-
-  procedure TCore.Suspended(Value: boolean);
-  begin
-    FApp.Suspended := Value;
-  end;
-
-  procedure TCore.Terminate;
-  begin
-    FApp.Terminated:= True;
   end;
 
   procedure TCore.ProcessFatalError(const aMessage: string);
@@ -231,18 +220,17 @@ begin
   Result := ID;
   if Assigned(TCore(ID)) then
   begin
-        TCore(ID).Resume;
+    TCore(ID).Resume;
   end;
 end;
 
 function CoreDestroy(ID: pointer): pointer;
 begin
+  Result := nil;
   if Assigned(TCore(ID)) then
   begin
     TCore(ID).Destroy;
-    Result := nil;
-  end else
-    Result := ID;
+  end;
 end;
 
 procedure CoreSuspended(ID: pointer; Value: boolean);
@@ -257,8 +245,8 @@ procedure CoreTerminate(ID: pointer);
 begin
   if Assigned(TCore(ID)) then
   begin
-    TCore(ID).Terminate;
-    TCore(ID).Suspended(False);
+    TCore(ID).FApp.Terminated := True;
+    TCore(ID).FApp.Suspended := False;
   end;
 end;
 
@@ -362,7 +350,7 @@ function GetOverwriteFileInfo(ID: pointer): TFileInfoRec;
 begin
   if Assigned(TCore(ID)) then
   begin
-    Result := TFileInfoRec(TCore(ID).Data^)
+    Result := TFileInfoRec(TCore(ID).Data^);
   end;
 end;
 
@@ -379,7 +367,7 @@ function GetRenameFileInfo(ID: pointer): TFileInfoRec;
 begin
   if Assigned(TCore(ID)) then
   begin
-    Result := TFileInfoRec(TCore(ID).Data^)
+    Result := TFileInfoRec(TCore(ID).Data^);
   end;
 end;
 
@@ -421,6 +409,7 @@ procedure SetRequestMessage(ID: pointer);
 begin
   if Assigned(TCore(ID)) then
   begin
+
   end;
   TCore(ID).Status := csExecuting;
 end;
