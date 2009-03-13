@@ -127,6 +127,7 @@ type
     FCoreID: pointer;
     FCanClose: boolean;
     FSuspended: boolean;
+    FProgressOnTitle: boolean;
   private
     { private declarations }
     function GetFrmCanShow: boolean;
@@ -135,6 +136,7 @@ type
     { public declarations }
     property FrmCanShow: boolean read GetFrmCanShow;
     property FrmCanClose: boolean read GetFrmCanClose;
+    property ProgressOnTitle: boolean read FProgressOnTitle write FProgressOnTitle;
   public
     { public declarations }
     procedure SaveProperty;
@@ -145,7 +147,7 @@ type
     { public declarations }
     procedure Execute(aCommandLine: TCustomCommandLine; aList: TList);
     constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
+    destructor  Destroy; override;
   end;
 
 var
@@ -184,6 +186,7 @@ var
     {$IFDEF UNIX}
     Tick.Smooth := True;
     {$ENDIF}
+    FProgressOnTitle := False;
   end;
 
   destructor TTickFrm.Destroy;
@@ -361,6 +364,11 @@ var
       Caption := rsProcessPaused;
     Tick.Position := FPercentes;
 
+    if FProgressOnTitle then
+    begin
+      Application.Title := Caption;
+    end;
+
     RemainingTime.Caption := TimeToStr(GetCoreRemainingTime(FCoreID));
     Time.Caption          := TimeToStr(GetCoreElapsedTime  (FCoreID));
 
@@ -375,6 +383,11 @@ var
       1: Caption := rsProcessTerminated;
       2: Caption := rsProcessAborted;
     else Caption := rsProcessAborted;
+    end;
+
+    if FProgressOnTitle then
+    begin
+      Application.Title := Caption;
     end;
 
     Report.Lines.Text := GetCoreMessages(FCoreID);

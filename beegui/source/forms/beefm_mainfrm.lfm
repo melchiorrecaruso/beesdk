@@ -32,70 +32,58 @@ object MainFrm: TMainFrm
     BorderSpacing.Top = 2
     Columns = <    
       item
-        AutoSize = False
         Caption = 'Name'
         Width = 126
       end    
       item
         Alignment = taRightJustify
-        AutoSize = False
         Caption = 'Size'
         Width = 80
       end    
       item
         Alignment = taRightJustify
-        AutoSize = False
         Caption = 'Packed'
         Width = 80
       end    
       item
         Alignment = taRightJustify
-        AutoSize = False
         Caption = 'Ratio'
         Width = 40
       end    
       item
-        AutoSize = False
         Caption = 'Type'
         Width = 80
       end    
       item
-        AutoSize = False
         Caption = 'Modified'
         Width = 80
       end    
       item
         Alignment = taRightJustify
-        AutoSize = False
         Caption = 'Attributes'
         Width = 60
       end    
       item
         Alignment = taRightJustify
-        AutoSize = False
         Caption = 'Method'
         Width = 60
       end    
       item
         Alignment = taRightJustify
-        AutoSize = False
         Caption = 'Password'
         Width = 70
       end    
       item
         Alignment = taRightJustify
-        AutoSize = False
         Caption = 'CRC'
         Width = 80
       end    
       item
-        AutoSize = False
         Caption = 'Path'
         Width = 80
       end    
       item
         Alignment = taRightJustify
-        AutoSize = False
         Caption = 'Position'
         Width = 117
       end>
@@ -104,7 +92,6 @@ object MainFrm: TMainFrm
     PopupMenu = PMenu
     ScrollBars = ssAutoVertical
     SmallImages = SmallImages
-    SortColumn = 0
     TabOrder = 0
     ViewStyle = vsReport
     OnClick = ListViewClick
@@ -2714,13 +2701,13 @@ object MainFrm: TMainFrm
     Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
     FilterIndex = 0
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
-    left = 16
-    top = 216
+    left = 24
+    top = 136
   end
   object PMenu: TPopupMenu
     OnPopup = PMenuPopup
-    left = 48
-    top = 248
+    left = 96
+    top = 192
     object PMenuOpen: TMenuItem
       Caption = 'Open...'
       Default = True
@@ -2797,12 +2784,12 @@ object MainFrm: TMainFrm
     Font.Name = 'MS Sans Serif'
     MinFontSize = 0
     MaxFontSize = 0
-    left = 80
-    top = 216
+    left = 160
+    top = 136
   end
   object MMenu: TMainMenu
-    left = 16
-    top = 248
+    left = 24
+    top = 192
     object MMenuFile: TMenuItem
       Caption = 'File'
       object MMenuFileNew: TMenuItem
@@ -3173,12 +3160,12 @@ object MainFrm: TMainFrm
   object SaveDialog: TSaveDialog
     Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
     Options = [ofHideReadOnly, ofPathMustExist, ofEnableSizing]
-    left = 48
-    top = 216
+    left = 96
+    top = 136
   end
   object BMenu: TPopupMenu
-    left = 80
-    top = 248
+    left = 160
+    top = 192
     object BMenuNew: TMenuItem
       Caption = 'New'
       Checked = True
@@ -3251,16 +3238,14 @@ object MainFrm: TMainFrm
     end
   end
   object SmallImages: TIconList
-    Masked = False
-    left = 16
-    top = 280
+    left = 24
+    top = 256
   end
   object LargeImages: TIconList
     Height = 32
-    Masked = False
     Width = 32
-    left = 48
-    top = 280
+    left = 96
+    top = 256
   end
   object FileProcess: TFileProcess
     Enabled = False
@@ -3268,7 +3253,7 @@ object MainFrm: TMainFrm
     OnTimer = FileProcessTimer
     OnStartTimer = FileProcessStartTimer
     OnStopTimer = FileProcessStopTimer
-    left = 80
-    top = 280
+    left = 160
+    top = 256
   end
 end
