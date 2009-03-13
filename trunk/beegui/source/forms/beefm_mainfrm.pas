@@ -311,7 +311,7 @@ type
   end;
 
 var
-  MainFrm: TMainFrm;
+  MainFrm: TMainFrm = nil;
   
 implementation
 

@@ -108,6 +108,7 @@ begin
            begin
              Application.CreateForm(TTickFrm, TickFrm);
              TickFrm.Execute(CommandLine, nil);
+             TickFrm.ProgressOnTitle := True;
              repeat
                  Application.ProcessMessages;
                  if TickFrm.FrmCanClose then Break;
