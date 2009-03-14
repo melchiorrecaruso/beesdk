@@ -11,7 +11,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="4"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
@@ -60,7 +60,7 @@
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="9" Y="227"/>
-        <TopLine Value="234"/>
+        <TopLine Value="227"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>

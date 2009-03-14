@@ -289,7 +289,7 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit22>
     </Units>
-    <JumpHistory Count="14" HistoryIndex="13">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
         <Filename Value="beegui.lpr"/>
         <Caret Line="57" Column="18" TopLine="42"/>
@@ -342,10 +342,6 @@
         <Filename Value="forms\beegui_tickfrm.pas"/>
         <Caret Line="364" Column="42" TopLine="147"/>
       </Position13>
-      <Position14>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="189" Column="31" TopLine="196"/>
-      </Position14>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
