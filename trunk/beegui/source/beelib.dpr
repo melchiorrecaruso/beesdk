@@ -28,8 +28,8 @@ library BeeLib;
 {$I compiler.inc}
 
 uses
-  Classes,
   SysUtils,
+  Classes,
   // ---
   Bee_App,
   Bee_Interface;
@@ -246,7 +246,6 @@ begin
   if Assigned(TCore(ID)) then
   begin
     TCore(ID).FApp.Terminated := True;
-    TCore(ID).FApp.Suspended := False;
   end;
 end;
 
