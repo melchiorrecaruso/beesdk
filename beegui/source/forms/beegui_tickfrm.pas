@@ -215,14 +215,19 @@ var
   end;
 
   procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+  var
+    I: boolean;
   begin
     CanClose := GetCoreStatus(FCoreID) = csTerminated;
     if CanClose = False then
     begin
+      I := FSuspended;
+      if not I then BtnPauseRun.Click;
       if MessageDlg(rsConfirmation, rsConfirmAbortProcess, mtConfirmation, [mbYes, mbNo], '') = mrYes then
       begin
         CoreTerminate(FCoreID);
       end;
+      if not I then BtnPauseRun.Click;
     end;
   end;
 
@@ -390,7 +395,12 @@ var
       Application.Title := Caption;
     end;
 
-    Report.Lines.Text := GetCoreMessages(FCoreID);
+    Report.Lines.Clear;
+    if FCommandLine.Log or (GetCoreExitCode(FCoreID) > 0) then
+    begin
+      Report.Lines.Text := GetCoreMessages(FCoreID);
+    end;
+
     if Report.Lines.Count > 0 then
       Notebook.ActivePageComponent := ReportPage
     else
