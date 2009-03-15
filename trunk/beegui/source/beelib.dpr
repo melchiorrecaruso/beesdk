@@ -45,6 +45,7 @@ type
     FMessage: string;
     FDataRes: pointer;
     FData: pointer;
+    FContents: array of TFileFullInfoRec;
   private
     procedure ProcessFatalError(const aMessage: string);
     procedure ProcessError     (const aMessage: string);
@@ -85,6 +86,7 @@ type
     FParams.Text := aCommandLine;
     FDataRes := nil;
     FData := nil;
+    FContents := nil;
 
     FApp := TBeeApp.Create(FParams);
     FApp.OnFatalError := ProcessFatalError;
@@ -106,6 +108,7 @@ type
     FMessage := '';
     FMessages.Destroy;
     FParams.Destroy;
+    FContents := nil;
     inherited Destroy;
   end;
 
@@ -167,8 +170,12 @@ type
   end;
 
   procedure TCore.ProcessList(const aFileInfo: TFileFullInfoRec);
+  var
+    I: cardinal;
   begin
-
+    I := Length(FContents);
+    SetLength(FContents, I + 1);
+    FContents[I] := aFileInfo;
   end;
 
   procedure TCore.ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
@@ -413,6 +420,22 @@ begin
   TCore(ID).Status := csExecuting;
 end;
 
+function GetCoreItemsCount(ID: pointer): cardinal;
+begin
+  if Assigned(TCore(ID)) then
+    Result := Length(TCore(ID).FContents)
+  else
+    Result := 0;
+end;
+
+function GetCoreItems(ID: pointer; Index: cardinal): TFileFullInfoRec;
+begin
+  if Assigned(TCore(ID)) then
+  begin
+    Result := TCore(ID).FContents[Index];
+  end;
+end;
+
 // -------------------------------------------------------------------------- //
 //                                                                            //
 //  Library core routines exported                                            //
@@ -450,7 +473,10 @@ exports
   SetPasswordFileInfoRes,
 
   GetRequestMessage,
-  SetRequestMessage;
+  SetRequestMessage,
+
+  GetCoreItemsCount,
+  GetCoreItems;
 
 begin
 

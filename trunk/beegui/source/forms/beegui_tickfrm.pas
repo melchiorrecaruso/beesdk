@@ -382,8 +382,13 @@ var
   end;
   
   procedure TTickFrm.OnTerminate;
+  var
+    I: cardinal;
+    Rec: TFileFullInfoRec;
   begin
-    case GetCoreExitCode(FCoreID) of
+    Timer.Enabled := False;
+    ExitCode := GetCoreExitCode(FCoreID);
+    case ExitCode of
       0: Caption := rsProcessTerminated;
       1: Caption := rsProcessTerminated;
       2: Caption := rsProcessAborted;
@@ -395,8 +400,18 @@ var
       Application.Title := Caption;
     end;
 
+    ExitCode := 2;
+    ShowMessage(IntToStr(GetCoreItemsCount(FCoreID)));
+    for I := 0 to GetCoreItemsCount(FCoreID) -1 do
+    begin
+      // Rec := GetCoreItems(FCoreID, I);
+
+
+
+    end;
+
     Report.Lines.Clear;
-    if FCommandLine.Log or (GetCoreExitCode(FCoreID) > 0) then
+    if FCommandLine.Log or (ExitCode > 0) then
     begin
       Report.Lines.Text := GetCoreMessages(FCoreID);
     end;
