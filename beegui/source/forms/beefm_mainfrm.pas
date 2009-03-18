@@ -317,6 +317,7 @@ implementation
 
 uses
   Math,
+  Bee_Types,
   Bee_Common,
 
   BeeFm_ViewFrm,
@@ -674,7 +675,7 @@ uses
 
   procedure TMainFrm.OpenArchive(const aArchiveName: string);
   var
-    FArray: array of ;
+    FList: TList;
     FFolder: string;
   begin
     Caption := GetApplicationCaption(cApplicationCaption, rsOpening);

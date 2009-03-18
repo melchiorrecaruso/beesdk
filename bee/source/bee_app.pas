@@ -42,9 +42,9 @@ uses
   Classes, // TStringList, ...
   // ---
   Bee_Files,
+  Bee_Types,
   Bee_Headers,
   Bee_Interface,
-  Bee_Interface_Base,
   Bee_CommandLine,
   Bee_Configuration; // TConfiguration, TTable;
 

@@ -35,7 +35,7 @@ interface
 
 uses
   Classes,
-  Bee_Interface_Base;
+  Bee_Types;
 
 type
 

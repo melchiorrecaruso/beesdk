@@ -32,6 +32,7 @@ uses
   Classes,
   // ---
   Bee_App,
+  Bee_Types,
   Bee_Interface;
 
 type
