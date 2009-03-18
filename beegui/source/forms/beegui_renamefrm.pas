@@ -49,12 +49,12 @@ type
 
   TRenameFrm = class(TForm)
     FromFNLabel: TLabel;
-    FromFN: TLabel;
-    Spacer: TPanel;
+    FromFN:    TLabel;
+    Spacer:    TPanel;
     ToFNLabel: TLabel;
-    ToFN: TEdit;
+    ToFN:      TEdit;
     BtnCancel: TBitBtn;
-    BtnOk: TBitBtn;
+    BtnOk:     TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -76,35 +76,35 @@ implementation
 uses
   Bee_Common,
   BeeGui_Consts,
-  BeeGui_Messages,  
+  BeeGui_Messages,
   BeeGui_SysUtils;
 
-  { TRenameFrm class }
-  
+{ TRenameFrm class }
+
   {$I beegui_renamefrm_saveproperty.inc}
   {$I beegui_renamefrm_loadproperty.inc}
   {$I beegui_renamefrm_savelanguage.inc}
   {$I beegui_renamefrm_loadlanguage.inc}
 
-  procedure TRenameFrm.FormCreate(Sender: TObject);
-  begin
-    LoadLanguage;
-    LoadProperty;
-  end;
+procedure TRenameFrm.FormCreate(Sender: TObject);
+begin
+  LoadLanguage;
+  LoadProperty;
+end;
 
-  procedure TRenameFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
+procedure TRenameFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-    SaveProperty;
-  end;
+  SaveProperty;
+end;
 
-  procedure TRenameFrm.FormShow(Sender: TObject);
-  begin
-    ToFN.SetFocus;
-  end;
-  
+procedure TRenameFrm.FormShow(Sender: TObject);
+begin
+  ToFN.SetFocus;
+end;
+
 initialization
 
   {$I beegui_renamefrm.lrs}

@@ -29,85 +29,80 @@ interface
 
 uses
   SysUtils;
-  
+
 const
   cApplicationVersion   = '1.0.5 [build 0674]';
   cApplicationCopyright = '(C) 2003-2009 Andrew Filinsky and Melchiorre Caruso';
 
-  cApplicationName           = 'BeeGui';
-  cApplicationTitle          = 'Bee File Manager';
-  cApplicationCaption        = 'Bee File Manager';
+  cApplicationName    = 'BeeGui';
+  cApplicationTitle   = 'Bee File Manager';
+  cApplicationCaption = 'Bee File Manager';
 
-  cApplicationViewerName     = 'BeeViewer';
-  cApplicationViewerTitle    = 'Bee File Viewer';
-  cApplicationViewerCaption  = 'Bee File Viewer';
+  cApplicationViewerName    = 'BeeViewer';
+  cApplicationViewerTitle   = 'Bee File Viewer';
+  cApplicationViewerCaption = 'Bee File Viewer';
 
-  cApplicationHomePage       = 'http://www.beegui.org';
+  cApplicationHomePage = 'http://www.beegui.org';
 
-  cApplicationLicenseFile    = 'license.htm';
-  cApplicationHelpFile       = 'help.htm';
-  cApplicationDocsFolder     = 'docs';
+  cApplicationLicenseFile = 'license.htm';
+  cApplicationHelpFile    = 'help.htm';
+  cApplicationDocsFolder  = 'docs';
 
   cApplicationPluginsFolder    = 'plug-ins';
   cApplicationLanguagesFolder  = 'languages';
   cApplicationSmallIconsFolder = 'smallicons';
   cApplicationLargeIconsFolder = 'largeicons';
 
-  function GetApplicationPluginsDir: string;
-  function GetApplicationLanguageDir: string;
-  function GetApplicationSmallIconsDir: string;
-  function GetApplicationLargeIconsDir: string;
+function GetApplicationPluginsDir: string;
+function GetApplicationLanguageDir: string;
+function GetApplicationSmallIconsDir: string;
+function GetApplicationLargeIconsDir: string;
 
-  function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
+function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
 
 implementation
 
 uses
   GetText;
 
-  function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
-  begin
-    if aFileName = '' then
-      Result := aApplicationCaption
-    else
-      Result := aApplicationCaption + ' - ' + ExtractFileName(aFileName);
-  end;
+function GetApplicationCaption(const aApplicationCaption, aFileName: string): string;
+begin
+  if aFileName = '' then
+    Result := aApplicationCaption
+  else
+    Result := aApplicationCaption + ' - ' + ExtractFileName(aFileName);
+end;
 
-  function GetApplicationLanguageID: string;
-  var
-    S: string;
-  begin
-    GetLanguageIDs(S, Result);
-    Result := LowerCase(Result);
-  end;
+function GetApplicationLanguageID: string;
+var
+  S: string;
+begin
+  GetLanguageIDs(S, Result);
+  Result := LowerCase(Result);
+end;
 
-  function GetApplicationLanguageDir: string;
+function GetApplicationLanguageDir: string;
+begin
+  Result := ExtractFilePath(ParamStr(0)) + cApplicationLanguagesFolder;
+  if GetApplicationLanguageID <> '' then
   begin
-    Result := ExtractFilePath(ParamStr(0)) + cApplicationLanguagesFolder;
-    if GetApplicationLanguageID <> '' then
-    begin
-      Result := IncludeTrailingBackSlash(Result) + GetApplicationLanguageID;
-    end;
+    Result := IncludeTrailingBackSlash(Result) + GetApplicationLanguageID;
   end;
+end;
 
-  function GetApplicationPluginsDir: string;
-  begin
-    Result := ExtractFilePath(ParamStr(0)) + cApplicationPluginsFolder;
-  end;
+function GetApplicationPluginsDir: string;
+begin
+  Result := ExtractFilePath(ParamStr(0)) + cApplicationPluginsFolder;
+end;
 
-  function GetApplicationSmallIconsDir: string;
-  begin
-    Result := ExtractFilePath(ParamStr(0)) + cApplicationSmallIconsFolder;
-  end;
+function GetApplicationSmallIconsDir: string;
+begin
+  Result := ExtractFilePath(ParamStr(0)) + cApplicationSmallIconsFolder;
+end;
 
-  function GetApplicationLargeIconsDir: string;
-  begin
-    Result := ExtractFilePath(ParamStr(0)) + cApplicationLargeIconsFolder;
-  end;
+function GetApplicationLargeIconsDir: string;
+begin
+  Result := ExtractFilePath(ParamStr(0)) + cApplicationLargeIconsFolder;
+end;
 
 end.
-
-
-
-
-

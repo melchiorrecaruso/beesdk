@@ -61,35 +61,35 @@ type
     OpenDialog: TOpenDialog;
     SelectFilesDialog: TOpenDialog;
     SaveDialog: TSaveDialog;
-    UpDown: TUpDown;
-    yOption: TComboBox;
+    UpDown:    TUpDown;
+    yOption:   TComboBox;
     yOptionBtn: TBitBtn;
     cfgOptionBtn: TBitBtn;
-    cdOption: TEdit;
-    dOption: TComboBox;
+    cdOption:  TEdit;
+    dOption:   TComboBox;
     dOptionLabel: TLabel;
-    eOption: TEdit;
+    eOption:   TEdit;
     cfgOptionLabel: TLabel;
     eOptionLabel: TLabel;
-    mOption: TComboBox;
+    mOption:   TComboBox;
     mOptionLabel: TLabel;
-    ufOption: TComboBox;
+    ufOption:  TComboBox;
     ufOptionLabel: TLabel;
     yOptionLabel: TLabel;
-    Pages: TPageControl;
+    Pages:     TPageControl;
     PageGeneral: TTabSheet;
     PageAdvanced: TTabSheet;
-    Options: TGroupBox;
-    rOption: TCheckBox;
-    sOption: TCheckBox;
-    tOption: TCheckBox;
-    kOption: TCheckBox;
+    Options:   TGroupBox;
+    rOption:   TCheckBox;
+    sOption:   TCheckBox;
+    tOption:   TCheckBox;
+    kOption:   TCheckBox;
     PageFiles: TTabSheet;
     FilesLabel: TLabel;
-    Files: TTreeView;
+    Files:     TTreeView;
     FilesImages: TImageList;
     RootLabel: TLabel;
-    Root: TEdit;
+    Root:      TEdit;
     // ---
     PopupMenu: TPopupMenu;
     PopupMenu_AddFolder: TMenuItem;
@@ -100,15 +100,15 @@ type
     PopupMenu_PlusMinus: TMenuItem;
     PopupMenu_Modify: TMenuItem;
     PopupMenu_Delete: TMenuItem;
-    BtnSave: TBitBtn;
-    BtnFiles: TBitBtn;
-    BtnView: TBitBtn;
+    BtnSave:   TBitBtn;
+    BtnFiles:  TBitBtn;
+    BtnView:   TBitBtn;
     BtnModify: TBitBtn;
     BtnDelete: TBitBtn;
     BtnPlusMinus: TBitBtn;
     BtnFolder: TBitBtn;
     BtnCancel: TBitBtn;
-    BtnOk: TBitBtn;
+    BtnOk:     TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FilesSelectionChanged(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -145,12 +145,12 @@ type
     function GetArchiveName: string;
     procedure SetArchiveName(Value: string);
   public
-    property ArchiveName: string read GetArchiveName write SetArchiveName;
+    property ArchiveName: string Read GetArchiveName Write SetArchiveName;
   end;
 
 var
   AddFrm: TAddFrm;
-  
+
 implementation
 
 uses
@@ -159,253 +159,254 @@ uses
   BeeGui_Messages,
   BeeGui_RenameFrm;
 
- { TAddFrm class }
- 
+{ TAddFrm class }
+
  {$I beegui_addfrm_saveproperty.inc}
  {$I beegui_addfrm_loadproperty.inc}
  {$I beegui_addfrm_savelanguage.inc}
  {$I beegui_addfrm_loadlanguage.inc}
- 
-  procedure TAddFrm.FormCreate(Sender: TObject);
-  begin
-    LoadLanguage;
-    LoadProperty;
 
-    SetLength(FArchivePath, 0);
-    Pages.ActivePage := PageGeneral;
-  end;
-  
-  procedure TAddFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
+procedure TAddFrm.FormCreate(Sender: TObject);
+begin
+  LoadLanguage;
+  LoadProperty;
+
+  SetLength(FArchivePath, 0);
+  Pages.ActivePage := PageGeneral;
+end;
+
+procedure TAddFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-    SaveProperty;
-  end;
+  SaveProperty;
+end;
 
-  procedure TAddFrm.aOptionCheckChange(Sender: TObject);
+procedure TAddFrm.aOptionCheckChange(Sender: TObject);
+begin
+  aOption.Enabled := aOptionCheck.Checked;
+  if aOption.Enabled then
+    aOption.Color := clWindow
+  else
+    aOption.Color := clInactiveCaptionText;
+end;
+
+procedure TAddFrm.cdOptionCheckChange(Sender: TObject);
+begin
+  cdOption.Enabled := cdOptionCheck.Checked;
+  if cdOption.Enabled then
+    cdOption.Color := clWindow
+  else
+    cdOption.Color := clInactiveCaptionText;
+end;
+
+procedure TAddFrm.BtnSaveClick(Sender: TObject);
+var
+  S: string;
+begin
+  SaveDialog.FileName := ArchiveName;
+  if SaveDialog.Execute then
   begin
-    aOption.Enabled := aOptionCheck.Checked;
-    if aOption.Enabled then
-      aOption.Color := clWindow
-    else
-      aOption.Color := clInactiveCaptionText;
+    S := SaveDialog.FileName;
+    case SaveDialog.FilterIndex of
+      1: S := ChangeFileExt(S, '.bee');
+      2: S := ChangeFileExt(S, '.exe');
+    end;
+    ArchiveName := S;
   end;
-  
-  procedure TAddFrm.cdOptionCheckChange(Sender: TObject);
-  begin
-    cdOption.Enabled := cdOptionCheck.Checked;
-    if cdOption.Enabled then
-      cdOption.Color := clWindow
-    else
-      cdOption.Color := clInactiveCaptionText;
+end;
+
+procedure TAddFrm.UpDownClick(Sender: TObject; Button: TUDBtnType);
+begin
+  case Button of
+    btNext: FilesMgr.Spin := FilesMgr.Spin - 1;
+    btPrev: FilesMgr.Spin := FilesMgr.Spin + 1;
   end;
-  
-  procedure TAddFrm.BtnSaveClick(Sender: TObject);
-  var
-    S: string;
+end;
+
+procedure TAddFrm.yOptionBtnClick(Sender: TObject);
+var
+  FolderName: string;
+begin
+  SetLength(FolderName, 0);
+  if SelectDirectory(rsSelectFolder, '', FolderName) then
   begin
-    SaveDialog.FileName := ArchiveName;
-    if SaveDialog.Execute then
+    yOption.Text := FolderName;
+  end;
+end;
+
+procedure TAddFrm.cfgOptionBtnClick(Sender: TObject);
+begin
+  OpenDialog.FileName := cfgOption.Text;
+  if OpenDialog.Execute then
+  begin
+    cfgOption.Text := OpenDialog.FileName;
+  end;
+end;
+
+procedure TAddFrm.PopupMenu_AddFolderClick(Sender: TObject);
+var
+  FolderName: string;
+begin
+  SetLength(FolderName, 0);
+  if SelectDirectory(rsSelectFolder, '', FolderName) then
+  begin
+    FilesMgr.AddFolder(FolderName);
+    if (FilesMgr.Count = 1) and (FilesMgr.Spin = 0) then
     begin
-      S := SaveDialog.FileName;
-      case SaveDialog.FilterIndex of
-        1: S := ChangeFileExt(S, '.bee');
-        2: S := ChangeFileExt(S, '.exe');
-      end;
-      ArchiveName := S;
+      FilesMgr.Spin := 1;
     end;
   end;
+  Files.Selected := nil;
+end;
 
-  procedure TAddFrm.UpDownClick(Sender: TObject; Button: TUDBtnType);
+procedure TAddFrm.PopupMenu_AddFilesClick(Sender: TObject);
+var
+  I: integer;
+begin
+  if SelectFilesDialog.Execute then
   begin
-    case Button of
-      btNext: FilesMgr.Spin := FilesMgr.Spin - 1;
-      btPrev: FilesMgr.Spin := FilesMgr.Spin + 1;
-    end;
-  end;
-
-  procedure TAddFrm.yOptionBtnClick(Sender: TObject);
-  var
-    FolderName: string;
-  begin
-    SetLength(FolderName, 0);
-    if SelectDirectory(rsSelectFolder, '', FolderName) then
+    for I := 0 to SelectFilesDialog.Files.Count - 1 do
     begin
-      yOption.Text := FolderName;
-    end;
-  end;
-  
-  procedure TAddFrm.cfgOptionBtnClick(Sender: TObject);
-  begin
-    OpenDialog.FileName := cfgOption.Text;
-    if OpenDialog.Execute then
-    begin
-      cfgOption.Text := OpenDialog.FileName;
-    end;
-  end;
-
-  procedure TAddFrm.PopupMenu_AddFolderClick(Sender: TObject);
-  var
-    FolderName: string;
-  begin
-    SetLength(FolderName, 0);
-    if SelectDirectory(rsSelectFolder, '', FolderName) then
-    begin
-      FilesMgr.AddFolder(FolderName);
-      if (FilesMgr.Count = 1) and (FilesMgr.Spin = 0) then
-      begin
-        FilesMgr.Spin := 1;
-      end;
+      FilesMgr.AddFile(SelectFilesDialog.Files[I]);
     end;
     Files.Selected := nil;
   end;
-  
-  procedure TAddFrm.PopupMenu_AddFilesClick(Sender: TObject);
-  var
-    I: integer;
-  begin
-    if SelectFilesDialog.Execute then
-    begin
-      for I := 0 to SelectFilesDialog.Files.Count - 1 do
-      begin
-        FilesMgr.AddFile(SelectFilesDialog.Files[I]);
-      end;
-      Files.Selected := nil;
-    end;
-  end;
+end;
 
-  procedure TAddFrm.PopupMenu_ViewClick(Sender: TObject);
-  var
-    I: integer;
+procedure TAddFrm.PopupMenu_ViewClick(Sender: TObject);
+var
+  I: integer;
+begin
+  for I := 0 to FilesMgr.Count - 1 do
   begin
-    for I := 0 to FilesMgr.Count - 1 do
+    if FilesMgr.MultiSelected[I] then
     begin
-      if FilesMgr.MultiSelected[I] then
-      begin
-        ShellExec(ExcludeTrailingBackSlash(ExtractFilePath(FilesMgr.Items[I])), '');
-      end;
+      ShellExec(ExcludeTrailingBackSlash(ExtractFilePath(FilesMgr.Items[I])), '');
     end;
   end;
-  
-  procedure TAddFrm.PopupMenu_PlusMinusClick(Sender: TObject);
-  var
-    I: integer;
-  begin
-    for I := Files.Items.Count - 1 downto 0 do
-    begin
-      if Files.Items[I].Selected then
-      begin
-        FilesMgr.PlusMinus(I);
-      end;
-    end;
-  end;
+end;
 
-  procedure TAddFrm.PopupMenu_ModifyClick(Sender: TObject);
-  var
-    I: integer;
-    F: TRenameFrm;
-    NewMask: string;
+procedure TAddFrm.PopupMenu_PlusMinusClick(Sender: TObject);
+var
+  I: integer;
+begin
+  for I := Files.Items.Count - 1 downto 0 do
   begin
-    for I := 0 to FilesMgr.Count - 1 do
-      if FilesMgr.MultiSelected[I] then
+    if Files.Items[I].Selected then
+    begin
+      FilesMgr.PlusMinus(I);
+    end;
+  end;
+end;
+
+procedure TAddFrm.PopupMenu_ModifyClick(Sender: TObject);
+var
+  I: integer;
+  F: TRenameFrm;
+  NewMask: string;
+begin
+  for I := 0 to FilesMgr.Count - 1 do
+    if FilesMgr.MultiSelected[I] then
+    begin
+      F := TRenameFrm.Create(Self);
+      F.ToFN.Text := ExtractFileName(FilesMgr.Items[I]);
+      F.FromFN.Caption := ExtractFileName(FilesMgr.Items[I]);
+
+      if F.ShowModal = mrOk then
       begin
-        F := TRenameFrm.Create(Self);
-        F.ToFN.Text := ExtractFileName(FilesMgr.Items[I]);
-        F.FromFN.Caption := ExtractFileName(FilesMgr.Items[I]);
-        
-        if F.ShowModal = mrOk then
+        NewMask := ExcludeTrailingBackSlash(F.ToFN.Text);
+        while Pos(PathDelim, NewMask) = 1 do
         begin
-          NewMask := ExcludeTrailingBackSlash(F.ToFN.Text);
-          while Pos(PathDelim, NewMask) = 1 do
-          begin
-            Delete(NewMask, 1, 1);
-          end;
-
-          if Length(NewMask) > 0 then
-          begin
-            FilesMgr.ChangeMask(I, NewMask);
-            FilesMgr.Update;
-          end;
+          Delete(NewMask, 1, 1);
         end;
-        F.Free;
+
+        if Length(NewMask) > 0 then
+        begin
+          FilesMgr.ChangeMask(I, NewMask);
+          FilesMgr.Update;
+        end;
       end;
-  end;
+      F.Free;
+    end;
+end;
 
-  procedure TAddFrm.PopupMenu_DeleteClick(Sender: TObject);
-  var
-    I: integer;
+procedure TAddFrm.PopupMenu_DeleteClick(Sender: TObject);
+var
+  I: integer;
+begin
+  for I := FilesMgr.Count - 1 downto 0 do
   begin
-    for I := FilesMgr.Count - 1 downto 0 do
+    if FilesMgr.MultiSelected[I] then
     begin
-      if FilesMgr.MultiSelected[I] then
-      begin
-        FilesMgr.DeleteFile(I);
-      end;
+      FilesMgr.DeleteFile(I);
     end;
   end;
+end;
 
-  procedure TAddFrm.FilesSelectionChanged (Sender: TObject);
+procedure TAddFrm.FilesSelectionChanged(Sender: TObject);
+begin
+  if Files.Selected = nil then
   begin
-    if Files.Selected = nil then
-    begin
-      PopupMenu_AddFolder.Enabled := True;
-      PopupMenu_AddFiles .Enabled := True;
-      // --
-      PopupMenu_View     .Enabled := False;
-      PopupMenu_PlusMinus.Enabled := False;
-      PopupMenu_Modify   .Enabled := False;
-      // --
-      PopupMenu_Delete   .Enabled := False;
-    end else
-    begin
-      PopupMenu_AddFolder.Enabled := True;
-      PopupMenu_AddFiles .Enabled := True;
-      // --
-      PopupMenu_View     .Enabled := True;
-      PopupMenu_PlusMinus.Enabled := True;
-      PopupMenu_Modify   .Enabled := True;
-      // --
-      PopupMenu_Delete   .Enabled := True;
-    end;
-
-    BtnView     .Enabled := PopupMenu_View     .Enabled;
-    BtnPlusMinus.Enabled := PopupMenu_PlusMinus.Enabled;
-    BtnModify   .Enabled := PopupMenu_Modify   .Enabled;
-    BtnDelete   .Enabled := PopupMenu_Delete   .Enabled;
+    PopupMenu_AddFolder.Enabled := True;
+    PopupMenu_AddFiles.Enabled  := True;
+    // --
+    PopupMenu_View.Enabled      := False;
+    PopupMenu_PlusMinus.Enabled := False;
+    PopupMenu_Modify.Enabled    := False;
+    // --
+    PopupMenu_Delete.Enabled    := False;
+  end
+  else
+  begin
+    PopupMenu_AddFolder.Enabled := True;
+    PopupMenu_AddFiles.Enabled  := True;
+    // --
+    PopupMenu_View.Enabled      := True;
+    PopupMenu_PlusMinus.Enabled := True;
+    PopupMenu_Modify.Enabled    := True;
+    // --
+    PopupMenu_Delete.Enabled    := True;
   end;
 
-  procedure TAddFrm.FormDropFiles(Sender: TObject; const FileNames: array of string);
-  var
-    I: integer;
-  begin
-    for I := Low(FileNames) to High(FileNames) do
-    begin
-      if DirectoryExists(FileNames[I]) then
-        FilesMgr.AddFolder(FileNames[I])
-      else
-        FilesMgr.AddFile(FileNames[I]);
-    end;
-  end;
+  BtnView.Enabled      := PopupMenu_View.Enabled;
+  BtnPlusMinus.Enabled := PopupMenu_PlusMinus.Enabled;
+  BtnModify.Enabled    := PopupMenu_Modify.Enabled;
+  BtnDelete.Enabled    := PopupMenu_Delete.Enabled;
+end;
 
-  procedure TAddFrm.PagesPageChanged(Sender: TObject);
+procedure TAddFrm.FormDropFiles(Sender: TObject; const FileNames: array of string);
+var
+  I: integer;
+begin
+  for I := Low(FileNames) to High(FileNames) do
   begin
-    if Pages.ActivePage = PageFiles then
-      AllowdropFiles := True
+    if DirectoryExists(FileNames[I]) then
+      FilesMgr.AddFolder(FileNames[I])
     else
-      AllowDropFiles := False;
+      FilesMgr.AddFile(FileNames[I]);
   end;
+end;
 
-  procedure TAddFrm.SetArchiveName(Value: string);
-  begin
-    FArchivePath := ExtractFilePath(Value);
-    ArchiveNameComboBox.Text := ExtractFileName(Value);
-  end;
+procedure TAddFrm.PagesPageChanged(Sender: TObject);
+begin
+  if Pages.ActivePage = PageFiles then
+    AllowdropFiles := True
+  else
+    AllowDropFiles := False;
+end;
 
-  function TAddFrm.GetArchiveName: string;
-  begin
-    Result := FArchivePath + ArchiveNameComboBox.Text;
-  end;
+procedure TAddFrm.SetArchiveName(Value: string);
+begin
+  FArchivePath := ExtractFilePath(Value);
+  ArchiveNameComboBox.Text := ExtractFileName(Value);
+end;
+
+function TAddFrm.GetArchiveName: string;
+begin
+  Result := FArchivePath + ArchiveNameComboBox.Text;
+end;
 
 initialization
 

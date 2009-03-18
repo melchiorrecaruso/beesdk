@@ -38,25 +38,25 @@ uses
 type
   TCore = class(TThread)
   private
-    FApp: TApp;
-    FKey: string;
-    FStatus: TCoreStatus;
-    FParams: TStringList;
+    FApp:      TApp;
+    FKey:      string;
+    FStatus:   TCoreStatus;
+    FParams:   TStringList;
     FMessages: TStringList;
-    FMessage: string;
-    FDataRes: pointer;
-    FData: pointer;
+    FMessage:  string;
+    FDataRes:  pointer;
+    FData:     pointer;
     FContents: array of TFileFullInfoRec;
   private
     procedure ProcessFatalError(const aMessage: string);
-    procedure ProcessError     (const aMessage: string);
-    procedure ProcessWarning   (const aMessage: string);
-    procedure ProcessMessage   (const aMessage: string);
-    procedure ProcessOverwrite (const aFileInfo: TFileInfoRec; var Result: char);
-    procedure ProcessRename    (const aFileInfo: TFileInfoRec; var Result: string);
-    procedure ProcessList      (const aFileInfo: TFileFullInfoRec);
-    procedure ProcessKey       (const aFileInfo: TFileInfoRec; var Result: string);
-    procedure ProcessRequest   (const aMessage: string);
+    procedure ProcessError(const aMessage: string);
+    procedure ProcessWarning(const aMessage: string);
+    procedure ProcessMessage(const aMessage: string);
+    procedure ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
+    procedure ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
+    procedure ProcessList(const aFileInfo: TFileFullInfoRec);
+    procedure ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
+    procedure ProcessRequest(const aMessage: string);
     procedure ProcessTick;
     procedure ProcessClear;
   public
@@ -64,48 +64,48 @@ type
     destructor Destroy; override;
     procedure Execute; override;
   public
-    property Status: TCoreStatus read FStatus write FStatus;
-    property DataRes: pointer read FDataRes;
-    property Data: pointer read FData;
+    property Status: TCoreStatus Read FStatus Write FStatus;
+    property DataRes: pointer Read FDataRes;
+    property Data: pointer Read FData;
   end;
 
-// -------------------------------------------------------------------------- //
-//                                                                            //
-//  Library TCore class implementation                                        //
-//                                                                            //
-// -------------------------------------------------------------------------- //
+  // -------------------------------------------------------------------------- //
+  //                                                                            //
+  //  Library TCore class implementation                                        //
+  //                                                                            //
+  // -------------------------------------------------------------------------- //
 
   constructor TCore.Create(const aCommandLine: string);
   begin
     inherited Create(True);
 
-    FKey := '';
-    FMessage := '';
-    FStatus := csReady;
+    FKey      := '';
+    FMessage  := '';
+    FStatus   := csReady;
     FMessages := TStringList.Create;
-    FParams := TStringList.Create;
+    FParams   := TStringList.Create;
     FParams.Text := aCommandLine;
-    FDataRes := nil;
-    FData := nil;
+    FDataRes  := nil;
+    FData     := nil;
     FContents := nil;
 
     FApp := TBeeApp.Create(FParams);
     FApp.OnFatalError := ProcessFatalError;
-    FApp.OnError      := ProcessError;
-    FApp.OnWarning    := ProcessWarning;
-    FApp.OnMessage    := ProcessMessage;
-    FApp.OnOverwrite  := ProcessOverwrite;
-    FApp.OnRename     := ProcessRename;
-    FApp.OnList       := ProcessList;
-    FApp.OnKey        := ProcessKey;
-    FApp.OnRequest    := ProcessRequest;
-    FApp.OnTick       := ProcessTick;
-    FApp.OnClear      := ProcessClear;
+    FApp.OnError := ProcessError;
+    FApp.OnWarning := ProcessWarning;
+    FApp.OnMessage := ProcessMessage;
+    FApp.OnOverwrite := ProcessOverwrite;
+    FApp.OnRename := ProcessRename;
+    FApp.OnList := ProcessList;
+    FApp.OnKey := ProcessKey;
+    FApp.OnRequest := ProcessRequest;
+    FApp.OnTick := ProcessTick;
+    FApp.OnClear := ProcessClear;
   end;
 
   destructor TCore.Destroy;
   begin
-    FKey := '';
+    FKey     := '';
     FMessage := '';
     FMessages.Destroy;
     FParams.Destroy;
@@ -146,28 +146,28 @@ type
 
   procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
   begin
-    FData := @aFileInfo;
+    FData    := @aFileInfo;
     FDataRes := @Result;
-    FStatus := csWaitingOverwrite;
+    FStatus  := csWaitingOverwrite;
     while FStatus = csWaitingOverwrite do
     begin
       Sleep(250);
     end;
     FDataRes := nil;
-    FData := nil;
+    FData    := nil;
   end;
 
   procedure TCore.ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
   begin
-    FData := @aFileInfo;
+    FData    := @aFileInfo;
     FDataRes := @Result;
-    FStatus := csWaitingRename;
+    FStatus  := csWaitingRename;
     while FStatus = csWaitingRename do
     begin
       Sleep(250);
     end;
     FDataRes := nil;
-    FData := nil;
+    FData    := nil;
   end;
 
   procedure TCore.ProcessList(const aFileInfo: TFileFullInfoRec);
@@ -181,21 +181,21 @@ type
 
   procedure TCore.ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
   begin
-    FData := @aFileInfo;
+    FData    := @aFileInfo;
     FDataRes := @Result;
-    FStatus := csWaitingKey;
+    FStatus  := csWaitingKey;
     while FStatus = csWaitingKey do
     begin
       Sleep(250);
     end;
     FDataRes := nil;
-    FData := nil;
+    FData    := nil;
   end;
 
   procedure TCore.ProcessRequest(const aMessage: string);
   begin
     FMessage := aMessage;
-    FStatus := csWaitingRequest;
+    FStatus  := csWaitingRequest;
     while FStatus = csWaitingRequest do
     begin
       Sleep(250);
@@ -212,236 +212,236 @@ type
 
   end;
 
-// -------------------------------------------------------------------------- //
-//                                                                            //
-//  Library core routines                                                     //
-//                                                                            //
-// -------------------------------------------------------------------------- //
+  // -------------------------------------------------------------------------- //
+  //                                                                            //
+  //  Library core routines                                                     //
+  //                                                                            //
+  // -------------------------------------------------------------------------- //
 
-function CoreCreate(const aCommandLine: string): pointer;
-begin
-  Result := TCore.Create(aCommandLine);
-end;
-
-function CoreExecute(ID: pointer): pointer;
-begin
-  Result := ID;
-  if Assigned(TCore(ID)) then
+  function CoreCreate(const aCommandLine: string): pointer;
   begin
-    TCore(ID).Resume;
+    Result := TCore.Create(aCommandLine);
   end;
-end;
 
-function CoreDestroy(ID: pointer): pointer;
-begin
-  Result := nil;
-  if Assigned(TCore(ID)) then
+  function CoreExecute(ID: pointer): pointer;
   begin
-    TCore(ID).Destroy;
+    Result := ID;
+    if Assigned(TCore(ID)) then
+    begin
+      TCore(ID).Resume;
+    end;
   end;
-end;
 
-procedure CoreSuspended(ID: pointer; Value: boolean);
-begin
-  if Assigned(TCore(ID)) then
+  function CoreDestroy(ID: pointer): pointer;
   begin
-    TCore(ID).FApp.Suspended := Value;
+    Result := nil;
+    if Assigned(TCore(ID)) then
+    begin
+      TCore(ID).Destroy;
+    end;
   end;
-end;
 
-procedure CoreTerminate(ID: pointer);
-begin
-  if Assigned(TCore(ID)) then
+  procedure CoreSuspended(ID: pointer; Value: boolean);
   begin
-    TCore(ID).FApp.Terminated := True;
+    if Assigned(TCore(ID)) then
+    begin
+      TCore(ID).FApp.Suspended := Value;
+    end;
   end;
-end;
 
-function GetCoreExitCode(ID: pointer): integer;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).FApp.ExitCode
-  else
-    Result := 0;
-end;
-
-function GetCoreStatus(ID: pointer): TCoreStatus;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).Status
-  else
-    Result := csTerminated;
-end;
-
-function GetCoreMessage(ID: pointer): string;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).FMessage
-  else
-    Result := '';
-end;
-
-function GetCoreMessages(ID: pointer): string;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).FMessages.Text
-  else
-    Result := '';
-end;
-
-function GetCoreElapsedTime(ID: pointer): cardinal;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).FApp.ElapsedTime
-  else
-    Result := 0;
-end;
-
-function GetCoreRemainingTime(ID: pointer): cardinal;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).FApp.RemainingTime
-  else
-    Result := 0;
-end;
-
-function GetCorePercentes(ID: pointer): cardinal;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).FApp.Percentes
-  else
-    Result := 0;
-end;
-
-function GetCoreSpeed(ID: pointer): cardinal;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).FApp.Speed
-  else
-    Result := 0;
-end;
-
-function GetCoreTotalSize(ID: pointer): int64;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).FApp.TotalSize
-  else
-    Result := 0;
-end;
-
-function GetCoreProcessedSize(ID: pointer): int64;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).FApp.ProcessedSize
-  else
-    Result := 0;
-end;
-
-procedure SetCorePriority(ID: pointer; aPriority: TThreadPriority);
-begin
-  if Assigned(TCore(ID)) then
+  procedure CoreTerminate(ID: pointer);
   begin
-    TCore(ID).Priority := aPriority;
+    if Assigned(TCore(ID)) then
+    begin
+      TCore(ID).FApp.Terminated := True;
+    end;
   end;
-end;
 
-function GetCorePriority(ID: pointer): TThreadPriority;
-begin
-  if Assigned(TCore(ID)) then
-    Result := TCore(ID).Priority
-  else
-    Result := tpNormal;
-end;
-
-function GetOverwriteFileInfo(ID: pointer): TFileInfoRec;
-begin
-  if Assigned(TCore(ID)) then
+  function GetCoreExitCode(ID: pointer): integer;
   begin
-    Result := TFileInfoRec(TCore(ID).Data^);
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).FApp.ExitCode
+    else
+      Result := 0;
   end;
-end;
 
-procedure SetOverwriteFileInfoRes(ID: pointer; Result: char);
-begin
-  if Assigned(TCore(ID)) then
+  function GetCoreStatus(ID: pointer): TCoreStatus;
   begin
-    char(TCore(ID).DataRes^) := Result;
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).Status
+    else
+      Result := csTerminated;
   end;
-  TCore(ID).Status := csExecuting;
-end;
 
-function GetRenameFileInfo(ID: pointer): TFileInfoRec;
-begin
-  if Assigned(TCore(ID)) then
+  function GetCoreMessage(ID: pointer): string;
   begin
-    Result := TFileInfoRec(TCore(ID).Data^);
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).FMessage
+    else
+      Result := '';
   end;
-end;
 
-procedure SetRenameFileInfoRes(ID: pointer; Result: string);
-begin
-  if Assigned(TCore(ID)) then
+  function GetCoreMessages(ID: pointer): string;
   begin
-    string(TCore(ID).DataRes^) := Result;
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).FMessages.Text
+    else
+      Result := '';
   end;
-  TCore(ID).Status := csExecuting;
-end;
 
-function GetPasswordFileInfo(ID: pointer): TFileInfoRec;
-begin
-  if Assigned(TCore(ID)) then
+  function GetCoreElapsedTime(ID: pointer): cardinal;
   begin
-    Result := TFileInfoRec(TCore(ID).Data^);
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).FApp.ElapsedTime
+    else
+      Result := 0;
   end;
-end;
 
-procedure SetPasswordFileInfoRes(ID: pointer; Result: string);
-begin
-  if Assigned(TCore(ID)) then
+  function GetCoreRemainingTime(ID: pointer): cardinal;
   begin
-    string(TCore(ID).DataRes^) := Result;
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).FApp.RemainingTime
+    else
+      Result := 0;
   end;
-  TCore(ID).Status := csExecuting;
-end;
 
-function GetRequestMessage(ID: pointer): string;
-begin
-  if Assigned(TCore(ID)) then
+  function GetCorePercentes(ID: pointer): cardinal;
   begin
-    Result := TCore(ID).FMessage;
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).FApp.Percentes
+    else
+      Result := 0;
   end;
-end;
 
-procedure SetRequestMessage(ID: pointer);
-begin
-  if Assigned(TCore(ID)) then
+  function GetCoreSpeed(ID: pointer): cardinal;
   begin
-
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).FApp.Speed
+    else
+      Result := 0;
   end;
-  TCore(ID).Status := csExecuting;
-end;
 
-function GetCoreItemsCount(ID: pointer): cardinal;
-begin
-  if Assigned(TCore(ID)) then
-    Result := Length(TCore(ID).FContents)
-  else
-    Result := 0;
-end;
-
-function GetCoreItems(ID: pointer; Index: cardinal): TFileFullInfoRec;
-begin
-  if Assigned(TCore(ID)) then
+  function GetCoreTotalSize(ID: pointer): int64;
   begin
-    Result := TCore(ID).FContents[Index];
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).FApp.TotalSize
+    else
+      Result := 0;
   end;
-end;
 
-// -------------------------------------------------------------------------- //
-//                                                                            //
-//  Library core routines exported                                            //
-//                                                                            //
-// -------------------------------------------------------------------------- //
+  function GetCoreProcessedSize(ID: pointer): int64;
+  begin
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).FApp.ProcessedSize
+    else
+      Result := 0;
+  end;
+
+  procedure SetCorePriority(ID: pointer; aPriority: TThreadPriority);
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+      TCore(ID).Priority := aPriority;
+    end;
+  end;
+
+  function GetCorePriority(ID: pointer): TThreadPriority;
+  begin
+    if Assigned(TCore(ID)) then
+      Result := TCore(ID).Priority
+    else
+      Result := tpNormal;
+  end;
+
+  function GetOverwriteFileInfo(ID: pointer): TFileInfoRec;
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+      Result := TFileInfoRec(TCore(ID).Data^);
+    end;
+  end;
+
+  procedure SetOverwriteFileInfoRes(ID: pointer; Result: char);
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+      char(TCore(ID).DataRes^) := Result;
+    end;
+    TCore(ID).Status := csExecuting;
+  end;
+
+  function GetRenameFileInfo(ID: pointer): TFileInfoRec;
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+      Result := TFileInfoRec(TCore(ID).Data^);
+    end;
+  end;
+
+  procedure SetRenameFileInfoRes(ID: pointer; Result: string);
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+      string(TCore(ID).DataRes^) := Result;
+    end;
+    TCore(ID).Status := csExecuting;
+  end;
+
+  function GetPasswordFileInfo(ID: pointer): TFileInfoRec;
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+      Result := TFileInfoRec(TCore(ID).Data^);
+    end;
+  end;
+
+  procedure SetPasswordFileInfoRes(ID: pointer; Result: string);
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+      string(TCore(ID).DataRes^) := Result;
+    end;
+    TCore(ID).Status := csExecuting;
+  end;
+
+  function GetRequestMessage(ID: pointer): string;
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+      Result := TCore(ID).FMessage;
+    end;
+  end;
+
+  procedure SetRequestMessage(ID: pointer);
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+
+    end;
+    TCore(ID).Status := csExecuting;
+  end;
+
+  function GetCoreItemsCount(ID: pointer): cardinal;
+  begin
+    if Assigned(TCore(ID)) then
+      Result := Length(TCore(ID).FContents)
+    else
+      Result := 0;
+  end;
+
+  function GetCoreItems(ID: pointer; Index: cardinal): TFileFullInfoRec;
+  begin
+    if Assigned(TCore(ID)) then
+    begin
+      Result := TCore(ID).FContents[Index];
+    end;
+  end;
+
+  // -------------------------------------------------------------------------- //
+  //                                                                            //
+  //  Library core routines exported                                            //
+  //                                                                            //
+  // -------------------------------------------------------------------------- //
 
 exports
   CoreCreate,
@@ -482,4 +482,3 @@ exports
 begin
 
 end.
-

@@ -116,7 +116,7 @@ uses
 constructor TCommandLine.Create;
 begin
   inherited Create;
-  FxOption := TStringList.Create;
+  FxOption   := TStringList.Create;
   FFileMasks := TStringList.Create;
   Clear;
 end;
@@ -134,13 +134,13 @@ begin
   FmOption := 1;
   FdOption := 2;
   FxOption.Clear;
-  FtOption := False;
-  FlOption := False;
-  FyOption := '';
-  FkOption := False;
-  FcdOption  := '';
-  FcfgOption := SelfPath + 'bee.ini';
-  FpriOption := 1;
+  FtOption     := False;
+  FlOption     := False;
+  FyOption     := '';
+  FkOption     := False;
+  FcdOption    := '';
+  FcfgOption   := SelfPath + 'bee.ini';
+  FpriOption   := 1;
   FArchiveName := '';
   FFileMasks.Clear;
 end;
@@ -234,25 +234,29 @@ begin
           if Length(S) > 0 then
             FxOption.Add(S);
         end;
-      else if Pos('-PRI', UpperCase(S)) = 1 then
-        begin
-          Delete(S, 1, 4);
-          if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
-            FpriOption := StrToInt(S[1]);
-        end else
-        if Pos('-CD', UpperCase(S)) = 1 then
-        begin
-          Delete(S, 1, 3);
-          if Length(S) > 0 then
-            FcdOption := IncludeTrailingBackslash(FixDirName(S));
-        end else
-        if Pos('-CFG', UpperCase(S)) = 1 then
-        begin
-          Delete(S, 1, 4);
-          FcfgOption := S;
-        end;
+        else
+          if Pos('-PRI', UpperCase(S)) = 1 then
+          begin
+            Delete(S, 1, 4);
+            if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
+              FpriOption := StrToInt(S[1]);
+          end
+          else
+          if Pos('-CD', UpperCase(S)) = 1 then
+          begin
+            Delete(S, 1, 3);
+            if Length(S) > 0 then
+              FcdOption := IncludeTrailingBackslash(FixDirName(S));
+          end
+          else
+          if Pos('-CFG', UpperCase(S)) = 1 then
+          begin
+            Delete(S, 1, 4);
+            FcfgOption := S;
+          end;
       end; // end case
-    end else
+    end
+    else
     if FCommand = ' ' then
     begin
       if Length(S) = 1 then
@@ -261,13 +265,15 @@ begin
       begin
         FCommand := '?';
       end;
-    end else
+    end
+    else
     if FArchiveName = '' then
     begin
       FArchiveName := S;
       if ExtractFileExt(FArchiveName) = '' then
         FArchiveName := ChangeFileExt(FArchiveName, '.bee');
-    end else
+    end
+    else
       FFileMasks.Add(S);// command or filenames...
   end; // end for loop
 

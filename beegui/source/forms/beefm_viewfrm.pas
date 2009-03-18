@@ -53,10 +53,10 @@ type
     SaveDialog: TSaveDialog;
     PMenuSave: TMenuItem;
     PMenuSaveAs: TMenuItem;
-    PMenu: TPopupMenu;
-    Memo: TMemo;
-    BtnFont: TBitBtn;
-    BtnSave: TBitBtn;
+    PMenu:    TPopupMenu;
+    Memo:     TMemo;
+    BtnFont:  TBitBtn;
+    BtnSave:  TBitBtn;
     BtnClose: TBitBtn;
     procedure BtnFontClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
@@ -88,102 +88,102 @@ uses
   BeeGui_Messages,
   BeeGui_SysUtils;
 
-  { TViewFrm class }
-  
+{ TViewFrm class }
+
   {$I beefm_viewfrm_saveproperty.inc}
   {$I beefm_viewfrm_loadproperty.inc}
   {$I beefm_viewfrm_savelanguage.inc}
   {$I beefm_viewfrm_loadlanguage.inc}
 
-  procedure TViewFrm.FormCreate(Sender: TObject);
+procedure TViewFrm.FormCreate(Sender: TObject);
+begin
+  LoadLanguage;
+  LoadProperty;
   begin
-    LoadLanguage;
-    LoadProperty;
-    begin
-      Memo.Font := FontDialog.Font;
-    end;
-    FFileName := '';
+    Memo.Font := FontDialog.Font;
   end;
-  
-  procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
-    Memo.Clear;
-    FFileName := '';
+  FFileName := '';
+end;
+
+procedure TViewFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  Memo.Clear;
+  FFileName := '';
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-    SaveProperty;
-  end;
+  SaveProperty;
+end;
 
-  procedure TViewFrm.PMenuSaveAsClick(Sender: TObject);
+procedure TViewFrm.PMenuSaveAsClick(Sender: TObject);
+begin
+  SaveDialog.FileName := FFileName;
+  if SaveDialog.Execute then
   begin
-    SaveDialog.FileName := FFileName;
-    if SaveDialog.Execute then
-    begin
-      FFileName := SaveDialog.FileName;
-      case SaveDialog.FilterIndex of
-        1: FFileName := ChangeFileExt(FFileName, '.txt');
-        2: FFileName := ChangeFileExt(FFileName, '.log');
-      end;
-      PMenuSaveClick(Sender);
+    FFileName := SaveDialog.FileName;
+    case SaveDialog.FilterIndex of
+      1: FFileName := ChangeFileExt(FFileName, '.txt');
+      2: FFileName := ChangeFileExt(FFileName, '.log');
     end;
+    PMenuSaveClick(Sender);
   end;
+end;
 
-  procedure TViewFrm.PMenuSaveClick(Sender: TObject);
-  begin
-    try
-      Memo.Lines.SaveToFile(FFileName);
-    finally
-      Memo.Modified := False;
-    end;
-    Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
+procedure TViewFrm.PMenuSaveClick(Sender: TObject);
+begin
+  try
+    Memo.Lines.SaveToFile(FFileName);
+  finally
+    Memo.Modified := False;
   end;
+  Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
+end;
 
-  procedure TViewFrm.BtnFontClick(Sender: TObject);
+procedure TViewFrm.BtnFontClick(Sender: TObject);
+begin
+  FontDialog.Font := Memo.Font;
+  if FontDialog.Execute then
   begin
-    FontDialog.Font := Memo.Font;
-    if FontDialog.Execute then
-    begin
-      Memo.Font := FontDialog.Font;
-    end;
+    Memo.Font := FontDialog.Font;
   end;
-  
-  procedure TViewFrm.BtnSaveClick(Sender: TObject);
-  var
-    X, Y: integer;
-  begin
-    X := Left + BtnSave.Left;
-    Y := Top  + BtnSave.Top + BtnSave.Height;
+end;
+
+procedure TViewFrm.BtnSaveClick(Sender: TObject);
+var
+  X, Y: integer;
+begin
+  X := Left + BtnSave.Left;
+  Y := Top + BtnSave.Top + BtnSave.Height;
     {$IFDEF MSWINDOWS}
-    Inc(X, 3);
-    Inc(Y, 23);
+  Inc(X, 3);
+  Inc(Y, 23);
     {$ELSE}
-    Inc(X, 6);
-    Inc(Y, 26);
+  Inc(X, 6);
+  Inc(Y, 26);
     {$ENDIF}
-    PMenu.PopUp(X, Y);
-  end;
+  PMenu.PopUp(X, Y);
+end;
 
-  procedure TViewFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+procedure TViewFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+begin
+  CanClose := Memo.Modified = False;
+  if CanClose = False then
   begin
-    CanClose := Memo.Modified = False;
-    if CanClose = False then
-    begin
-      CanClose := MessageDlg(rsExitWithoutSave, mtWarning, [mbYes, mbNo], 0) = mrYes;
-    end;
+    CanClose := MessageDlg(rsExitWithoutSave, mtWarning, [mbYes, mbNo], 0) = mrYes;
   end;
+end;
 
-  procedure TViewFrm.LoadFile(const aFileName: string);
-  begin
-    FFileName := aFileName;
-    try
-      Memo.Clear;
-      Memo.Lines.LoadFromFile(FFileName);
-    except
+procedure TViewFrm.LoadFile(const aFileName: string);
+begin
+  FFileName := aFileName;
+  try
+    Memo.Clear;
+    Memo.Lines.LoadFromFile(FFileName);
+  except
 
-    end;
-    Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
   end;
+  Caption := GetApplicationCaption(cApplicationViewerCaption, FFileName);
+end;
 
 initialization
 

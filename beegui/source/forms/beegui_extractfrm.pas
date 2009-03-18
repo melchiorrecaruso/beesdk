@@ -51,23 +51,24 @@ type
 
   TExtractFrm = class(TForm)
     FolderLabel: TLabel;
-    Folders: TTreeView;
-    Folder: TEdit;
+    Folders:   TTreeView;
+    Folder:    TEdit;
     FoldersMgr: TFolderTreeViewMgr;
-    Icons: TIconList;
-    Options: TGroupBox;
-    cdOption: TEdit;
-    xCommand: TCheckBox;
+    Icons:     TIconList;
+    Options:   TGroupBox;
+    cdOption:  TEdit;
+    xCommand:  TCheckBox;
     oOptionLabel: TLabel;
-    oOption: TComboBox;
+    oOption:   TComboBox;
     cdOptionCheck: TCheckBox;
     BtnCancel: TBitBtn;
-    BtnOk: TBitBtn;
+    BtnOk:     TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FoldersClick(Sender: TObject);
     procedure FoldersDblClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure FoldersExpanding(Sender: TObject; Node: TTreeNode; var AllowExpansion: Boolean);
+    procedure FoldersExpanding(Sender: TObject; Node: TTreeNode;
+      var AllowExpansion: boolean);
     procedure cdOptionCheckChange(Sender: TObject);
   public
     { public declarations }
@@ -81,7 +82,7 @@ type
 
 var
   ExtractFrm: TExtractFrm;
-  
+
 implementation
 
 uses
@@ -90,61 +91,61 @@ uses
   BeeGui_Messages,
   BeeGui_SysUtils;
 
-  { TExtractFrm class}
-  
+{ TExtractFrm class}
+
   {$I beegui_extractfrm_saveproperty.inc}
   {$I beegui_extractfrm_loadproperty.inc}
   {$I beegui_extractfrm_savelanguage.inc}
   {$I beegui_extractfrm_loadlanguage.inc}
 
-  procedure TExtractFrm.FormCreate(Sender: TObject);
+procedure TExtractFrm.FormCreate(Sender: TObject);
+begin
+  Icons.IconFolder := GetApplicationSmallIconsDir;
+
+  LoadLanguage;
+  LoadProperty;
+
+  FoldersMgr.Initialize;
+  if Folder.Text = '' then
   begin
-    Icons.IconFolder := GetApplicationSmallIconsDir;
-
-    LoadLanguage;
-    LoadProperty;
-
-    FoldersMgr.Initialize;
-    if Folder.Text = '' then
-    begin
-      Folder.Text := GetUserDir;
-    end;
-    FoldersMgr.FolderName := Folder.Text;
+    Folder.Text := GetUserDir;
   end;
+  FoldersMgr.FolderName := Folder.Text;
+end;
 
-  procedure TExtractFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
+procedure TExtractFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-    SaveProperty;
-  end;
+  SaveProperty;
+end;
 
-  procedure TExtractFrm.cdOptionCheckChange(Sender: TObject);
-  begin
-    cdOption.Enabled := cdOptionCheck.Checked;
-    if cdOption.Enabled then
-      cdOption.Color := clWindow
-    else
-      cdOption.Color := clInactiveCaptionText;
-  end;
+procedure TExtractFrm.cdOptionCheckChange(Sender: TObject);
+begin
+  cdOption.Enabled := cdOptionCheck.Checked;
+  if cdOption.Enabled then
+    cdOption.Color := clWindow
+  else
+    cdOption.Color := clInactiveCaptionText;
+end;
 
-  procedure TExtractFrm.FoldersClick(Sender: TObject);
-  begin
-    FoldersMgr.Click;
-  end;
+procedure TExtractFrm.FoldersClick(Sender: TObject);
+begin
+  FoldersMgr.Click;
+end;
 
-  procedure TExtractFrm.FoldersDblClick(Sender: TObject);
-  begin
-    FoldersMgr.DblClick;
-  end;
+procedure TExtractFrm.FoldersDblClick(Sender: TObject);
+begin
+  FoldersMgr.DblClick;
+end;
 
-  procedure TExtractFrm.FoldersExpanding(Sender: TObject; Node: TTreeNode;
-    var AllowExpansion: Boolean);
-  begin
-    AllowExpansion := True;
-    FoldersMgr.Expand(Node);
-  end;
+procedure TExtractFrm.FoldersExpanding(Sender: TObject; Node: TTreeNode;
+  var AllowExpansion: boolean);
+begin
+  AllowExpansion := True;
+  FoldersMgr.Expand(Node);
+end;
 
 initialization
 

@@ -47,68 +47,68 @@ implementation
 
 procedure CopyBytes(const Source, Dest; Count: cardinal);
 asm
-  XCHG    ESI, Source
-  XCHG    EDI, Dest
-  PUSH    Count
-  SHR     Count, 2
-  REP     movsd
-  POP     Count
-  AND     Count, $03
-  REP     movsb
-  MOV     ESI, Source
-  MOV     EDI, Dest
+         XCHG    ESI, Source
+         XCHG    EDI, Dest
+         PUSH    Count
+         SHR     Count, 2
+         REP     movsd
+         POP     Count
+         AND     Count, $03
+         REP     movsb
+         MOV     ESI, Source
+         MOV     EDI, Dest
 end;
 
 procedure FillCardinal(const Data; const Count, Value: cardinal);
 asm
-  PUSH    EDI
-  MOV     EDI, Data
-  MOV     EAX, Value
-  MOV     ECX, Count
-  REP     stosd
-  POP     EDI
+         PUSH    EDI
+         MOV     EDI, Data
+         MOV     EAX, Value
+         MOV     ECX, Count
+         REP     stosd
+         POP     EDI
 end;
 
 procedure AddCardinal(const Data; const Count, Value: cardinal);
 asm
-  @1:
-  ADD     [Data], Value
-  ADD     Data, 4
-  DEC     Count
-  JNE     @1
+         @1:
+         ADD     [Data], Value
+         ADD     Data, 4
+         DEC     Count
+         JNE     @1
 end;
 
 procedure ClearCardinal(const Data; const Count: cardinal);
 asm
-  MOV     ECX, Count
-  MOV     EDX, EDI
-  MOV     EDI, Data
-  XOR     EAX, EAX
-  REP     stosd
-  MOV     EDI, EDX
+         MOV     ECX, Count
+         MOV     EDX, EDI
+         MOV     EDI, Data
+         XOR     EAX, EAX
+         REP     stosd
+         MOV     EDI, EDX
 end;
 
 procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal);
 asm
-  XCHG    ESI, Source
-  XCHG    EDI, Dest
-  REP     movsd
-  MOV     ESI, Source
-  MOV     EDI, Dest
+         XCHG    ESI, Source
+         XCHG    EDI, Dest
+         REP     movsd
+         MOV     ESI, Source
+         MOV     EDI, Dest
 end;
 
 function MulDiv(A, B, C: cardinal): cardinal;
 asm
-  MUL     B
-  DIV     C
+         MUL     B
+         DIV     C
 end;
 
 function MulDecDiv(A, B, C: cardinal): cardinal;
 asm
-  MUL     B
-  SUB     EAX, 1
-  SBB     EDX, 0
-  DIV     C
+         MUL     B
+         SUB     EAX, 1
+         SBB     EDX, 0
+         DIV     C
 end;
 
 end.

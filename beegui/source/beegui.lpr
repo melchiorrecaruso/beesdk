@@ -31,13 +31,9 @@ program BeeGui;
 {$R beegui.rc}
 {$ENDIF}
 
-uses
-  {$IFDEF UNIX}
-  cThreads,
-  {$ENDIF}
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
+uses {$IFDEF UNIX}
+  cThreads, {$ENDIF} {$IFDEF MSWINDOWS}
+  Windows, {$ENDIF}
   Forms,
   Dialogs,
   SysUtils,
@@ -57,7 +53,7 @@ uses
   BeeFM_ConfigFrm;
 
 var
-  TickFrm: TTickFrm;
+  TickFrm:     TTickFrm;
   CommandLine: TCustomCommandLine;
 
 begin
@@ -67,61 +63,68 @@ begin
 
   CommandLine := TCustomCommandLine.Create(True);
   case CommandLine.Command of
-  ' ': begin
-         Application.Name := cApplicationName;
-         Application.Title:= cApplicationName;
-         Application.CreateForm(TMainFrm, MainFrm);
-         Application.CreateForm(TConfigFrm, ConfigFrm);
-         Application.Run;
-       end;
-  'O': begin
-         Application.Name := cApplicationName;
-         Application.Title:= cApplicationName;
-         Application.CreateForm(TMainFrm, MainFrm);
-         Application.CreateForm(TConfigFrm, ConfigFrm);
-         if FileExists(CommandLine.ArchiveName) then
-         begin
-           MainFrm.ShowAndOpenArchive(CommandLine.ArchiveName);
-         end;
-         Application.Run;
-       end;
-  'V': if (ParamCount = 2) and FileExists(ParamStr(2)) then
-       begin
-         Application.Name := cApplicationViewerName;
-         Application.Title := cApplicationViewerName;
-         Application.CreateForm(TViewFrm, ViewFrm);
-         begin
-           ViewFrm.LoadFile(ParamStr(2));
-         end;
-         Application.Run;
-       end;
-  else begin
-         Application.Name := cApplicationName;
-         Application.Title := cApplicationName;
-         if CommandLine.Run then
-         begin
-           if CommandLine.Command in ['?'] then
-           begin
-             Application.CreateForm(TAboutFrm, AboutFrm);
-             Application.Run;
-           end else
-           begin
-             Application.CreateForm(TTickFrm, TickFrm);
-             TickFrm.Execute(CommandLine, nil);
-             TickFrm.ProgressOnTitle := True;
-             repeat
-                 Application.ProcessMessages;
-                 if TickFrm.FrmCanClose then Break;
-                 if TickFrm.FrmCanShow  then Break;
-             until CommandLine.Log;
-             if CommandLine.Log then
-               Application.Run
-             else
-               if TickFrm.FrmCanClose = False then
-                 Application.Run;
-           end;
-         end;
-       end;
+    ' ':
+    begin
+      Application.Name  := cApplicationName;
+      Application.Title := cApplicationName;
+      Application.CreateForm(TMainFrm, MainFrm);
+      Application.CreateForm(TConfigFrm, ConfigFrm);
+      Application.Run;
+    end;
+    'O':
+    begin
+      Application.Name  := cApplicationName;
+      Application.Title := cApplicationName;
+      Application.CreateForm(TMainFrm, MainFrm);
+      Application.CreateForm(TConfigFrm, ConfigFrm);
+      if FileExists(CommandLine.ArchiveName) then
+      begin
+        MainFrm.ShowAndOpenArchive(CommandLine.ArchiveName);
+      end;
+      Application.Run;
+    end;
+    'V': if (ParamCount = 2) and FileExists(ParamStr(2)) then
+      begin
+        Application.Name  := cApplicationViewerName;
+        Application.Title := cApplicationViewerName;
+        Application.CreateForm(TViewFrm, ViewFrm);
+        begin
+          ViewFrm.LoadFile(ParamStr(2));
+        end;
+        Application.Run;
+      end;
+    else
+    begin
+      Application.Name  := cApplicationName;
+      Application.Title := cApplicationName;
+      if CommandLine.Run then
+      begin
+        if CommandLine.Command in ['?'] then
+        begin
+          Application.CreateForm(TAboutFrm, AboutFrm);
+          Application.Run;
+        end
+        else
+        begin
+          Application.CreateForm(TTickFrm, TickFrm);
+          TickFrm.Execute(CommandLine, nil);
+          TickFrm.ProgressOnTitle := True;
+          repeat
+            Application.ProcessMessages;
+            if TickFrm.FrmCanClose then
+              Break;
+            if TickFrm.FrmCanShow then
+              Break;
+          until CommandLine.Log;
+          if CommandLine.Log then
+            Application.Run
+          else
+          if TickFrm.FrmCanClose = False then
+            Application.Run;
+        end;
+      end;
+    end;
   end;
-  FreeAndNil(CommandLine);;
+  FreeAndNil(CommandLine);
+  ;
 end.

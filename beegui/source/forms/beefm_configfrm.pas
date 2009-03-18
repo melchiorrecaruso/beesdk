@@ -48,35 +48,35 @@ uses
   LResources,
   // ---
   BeeGui_CommandLine;
-  
+
 type
   { TConfigFrm }
 
   TConfigFrm = class(TForm)
-    Buttons: TCheckGroup;
+    Buttons:     TCheckGroup;
     GeneralPage: TGroupBox;
     HideWithTickFrmOption: TCheckBox;
 
     UpBtnCloseOption: TCheckBox;
-    Tree: TTreeView;
-    AddPage: TGroupBox;
+    Tree:      TTreeView;
+    AddPage:   TGroupBox;
     ExtractPage: TGroupBox;
     AddingOptions: TGroupBox;
     ExtractingOptions: TGroupBox;
     mOptionLabel: TLabel;
     dOptionLabel: TLabel;
     oOptionLabel: TLabel;
-    dOption: TComboBox;
-    mOption: TComboBox;
-    oOption: TComboBox;
-    rOption: TCheckBox;
-    sOption: TCheckBox;
-    tOption: TCheckBox;
-    kOption: TCheckBox;
+    dOption:   TComboBox;
+    mOption:   TComboBox;
+    oOption:   TComboBox;
+    rOption:   TCheckBox;
+    sOption:   TCheckBox;
+    tOption:   TCheckBox;
+    kOption:   TCheckBox;
     cdAOption: TCheckBox;
-    xCommand: TCheckBox;
+    xCommand:  TCheckBox;
     cdEOption: TCheckBox;
-    BtnOk: TBitBtn;
+    BtnOk:     TBitBtn;
     HideWithAddFrmOrExtractFrmOption: TCheckBox;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure TreeChange(Sender: TObject; Node: TTreeNode);
@@ -108,116 +108,118 @@ uses
   BeeGui_Messages,
   BeeGui_SysUtils;
 
-  { TConfigFrm }
+{ TConfigFrm }
 
   {$I beefm_configfrm_saveproperty.inc}
   {$I beefm_configfrm_loadproperty.inc}
   {$I beefm_configfrm_savelanguage.inc}
   {$I beefm_configfrm_loadlanguage.inc}
 
-  procedure TConfigFrm.FormCreate(Sender: TObject);
-  begin
-    LoadLanguage;
-    LoadProperty;
-  end;
+procedure TConfigFrm.FormCreate(Sender: TObject);
+begin
+  LoadLanguage;
+  LoadProperty;
+end;
 
-  procedure TConfigFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
+procedure TConfigFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-  end;
-  
-  procedure TConfigFrm.TreeChange(Sender: TObject; Node: TTreeNode);
-  begin
-    SetPage(Tree.Selected.AbsoluteIndex);
-  end;
+end;
 
-  procedure TConfigFrm.SetPage(PageIndex: integer);
-  begin
-    AddPage    .Visible := False;
-    ExtractPage.Visible := False;
-    GeneralPage.Visible := False;
-    case PageIndex of
-      0: AddPage    .Visible := True;
-      1: ExtractPage.Visible := True;
-      2: GeneralPage.Visible := True;
-    end;
-    Tree.Items[PageIndex].Selected := True;
+procedure TConfigFrm.TreeChange(Sender: TObject; Node: TTreeNode);
+begin
+  SetPage(Tree.Selected.AbsoluteIndex);
+end;
+
+procedure TConfigFrm.SetPage(PageIndex: integer);
+begin
+  AddPage.Visible     := False;
+  ExtractPage.Visible := False;
+  GeneralPage.Visible := False;
+  case PageIndex of
+    0: AddPage.Visible     := True;
+    1: ExtractPage.Visible := True;
+    2: GeneralPage.Visible := True;
   end;
-  
-  procedure TConfigFrm.AddOptions(const AFolder: string; ACommandLine: tCustomCommandLine);
-  begin
-    ACommandLine.mOption := mOption.ItemIndex;
-    ACommandLine.dOption := dOption.ItemIndex;
+  Tree.Items[PageIndex].Selected := True;
+end;
 
-    ACommandLine.rOption := rOption.Checked;
-    ACommandLine.sOption := sOption.Checked;
-    ACommandLine.tOption := tOption.Checked;
-    ACommandLine.kOption := kOption.Checked;
+procedure TConfigFrm.AddOptions(const AFolder: string;
+  ACommandLine: tCustomCommandLine);
+begin
+  ACommandLine.mOption := mOption.ItemIndex;
+  ACommandLine.dOption := dOption.ItemIndex;
 
-    if cdAOption.Checked then
-      ACommandLine.cdOption := AFolder
-    else
-      ACommandLine.cdOption := '';
-  end;
-  
-  procedure TConfigFrm.ExtractOptions(const AFolder: string; ACommandLine: tCustomCommandLine);
-  begin
-    if xCommand.Checked then
-      ACommandLine.Command := 'X'
-    else
-      ACommandLine.Command := 'E';
+  ACommandLine.rOption := rOption.Checked;
+  ACommandLine.sOption := sOption.Checked;
+  ACommandLine.tOption := tOption.Checked;
+  ACommandLine.kOption := kOption.Checked;
 
-    case oOption.ItemIndex of
-      0: ACommandLine.oOption := 'Y';
-      1: ACommandLine.oOption := 'A';
-      2: ACommandLine.oOption := 'S';
-    end;
-    
-    if cdEOption.Checked then
-      ACommandLine.cdOption := AFolder
-    else
-      ACommandLine.cdOption := '';
+  if cdAOption.Checked then
+    ACommandLine.cdOption := AFolder
+  else
+    ACommandLine.cdOption := '';
+end;
+
+procedure TConfigFrm.ExtractOptions(const AFolder: string;
+  ACommandLine: tCustomCommandLine);
+begin
+  if xCommand.Checked then
+    ACommandLine.Command := 'X'
+  else
+    ACommandLine.Command := 'E';
+
+  case oOption.ItemIndex of
+    0: ACommandLine.oOption := 'Y';
+    1: ACommandLine.oOption := 'A';
+    2: ACommandLine.oOption := 'S';
   end;
 
-  procedure TConfigFrm.LoadButtons(APopup: TPopupMenu);
-  var
-    I, J: integer;
+  if cdEOption.Checked then
+    ACommandLine.cdOption := AFolder
+  else
+    ACommandLine.cdOption := '';
+end;
+
+procedure TConfigFrm.LoadButtons(APopup: TPopupMenu);
+var
+  I, J: integer;
+begin
+  Buttons.Items.Clear;
+  if Assigned(APopup) then
   begin
-    Buttons.Items.Clear;
-    if Assigned(APopup) then
+    for I := 0 to APopup.Items.Count - 1 do
     begin
-      for I := 0 to APopup.Items.Count -1 do
-      begin
-        J := Buttons.Items.Add(APopup.Items[I].Caption);
-        Buttons.CheckEnabled[J] := APopup.Items[I].Enabled;
-        Buttons.Checked[J] := APopup.Items[I].Checked;
-      end;
+      J := Buttons.Items.Add(APopup.Items[I].Caption);
+      Buttons.CheckEnabled[J] := APopup.Items[I].Enabled;
+      Buttons.Checked[J] := APopup.Items[I].Checked;
     end;
   end;
+end;
 
-  function TConfigFrm.SaveButtons(APopup: TPopupMenu): boolean;
-  var
-    I: integer;
+function TConfigFrm.SaveButtons(APopup: TPopupMenu): boolean;
+var
+  I: integer;
+begin
+  Result := False;
+  if Assigned(APopup) then
   begin
-    Result := False;
-    if Assigned(APopup) then
+    for I := 0 to Min(APopup.Items.Count, Buttons.Items.Count) - 1 do
     begin
-      for I := 0 to Min(APopup.Items.Count, Buttons.Items.Count) -1 do
+      if APopup.Items[I].Checked <> Buttons.Checked[I] then
       begin
-        if APopup.Items[I].Checked <> Buttons.Checked[I] then
-        begin
-          Result := True;
-        end;
-        APopup.Items[I].Checked := Buttons.Checked[I];
+        Result := True;
       end;
+      APopup.Items[I].Checked := Buttons.Checked[I];
     end;
-    Buttons.Items.Clear;
   end;
-    
+  Buttons.Items.Clear;
+end;
+
 initialization
 
   {$I beefm_configfrm.lrs}
-  
+
 end.

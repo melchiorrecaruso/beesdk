@@ -47,13 +47,13 @@ type
   { TAboutFrm }
 
   TAboutFrm = class(TForm)
-    Logo: TImage;
-    Version: TLabel;
-    MoreInfo: TLabel;
+    Logo:      TImage;
+    Version:   TLabel;
+    MoreInfo:  TLabel;
     Copyright: TLabel;
-    Link: TLabel;
-    Bevel: TBevel;
-    BtnOk: TBitBtn;
+    Link:      TLabel;
+    Bevel:     TBevel;
+    BtnOk:     TBitBtn;
     BtnLicense: TBitBtn;
     procedure BtnOkClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -79,50 +79,50 @@ uses
   BeeGui_Messages,
   BeeGui_SysUtils;
 
-  { TAboutFrm class }
-  
+{ TAboutFrm class }
+
   {$I beegui_aboutfrm_saveproperty.inc}
   {$I beegui_aboutfrm_loadproperty.inc}
   {$I beegui_aboutfrm_savelanguage.inc}
   {$I beegui_aboutfrm_loadlanguage.inc}
 
-  procedure TAboutFrm.FormCreate(Sender: TObject);
-  begin
-    LoadLanguage;
-    LoadProperty;
+procedure TAboutFrm.FormCreate(Sender: TObject);
+begin
+  LoadLanguage;
+  LoadProperty;
 
-    Version.Caption := cApplicationVersion;
-    Copyright.Caption := cApplicationCopyright;
-  end;
+  Version.Caption   := cApplicationVersion;
+  Copyright.Caption := cApplicationCopyright;
+end;
 
-  procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
+procedure TAboutFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-    SaveProperty;
-  end;
-  
-  procedure TAboutFrm.BtnLicenseClick(Sender: TObject);
-  var
-    FLicenseFile: string;
-  begin
-    FLicenseFile := ExtractFilePath(ParamStr(0)) +
-      IncludeTrailingBackSlash(cApplicationDocsFolder) + cApplicationLicenseFile;
+  SaveProperty;
+end;
 
-    if GetOSWebBrowser <> '' then
-    begin
-      ShellExec(FLicenseFile, GetOSWebBrowser);
-    end;
-  end;
-  
-  procedure TAboutFrm.BtnOkClick(Sender: TObject);
+procedure TAboutFrm.BtnLicenseClick(Sender: TObject);
+var
+  FLicenseFile: string;
+begin
+  FLicenseFile := ExtractFilePath(ParamStr(0)) +
+    IncludeTrailingBackSlash(cApplicationDocsFolder) + cApplicationLicenseFile;
+
+  if GetOSWebBrowser <> '' then
   begin
-    Close;
+    ShellExec(FLicenseFile, GetOSWebBrowser);
   end;
+end;
+
+procedure TAboutFrm.BtnOkClick(Sender: TObject);
+begin
+  Close;
+end;
 
 initialization
 
   {$I beegui_aboutfrm.lrs}
-  
+
 end.

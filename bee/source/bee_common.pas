@@ -82,8 +82,10 @@ function IncludeTrailingBackSlash(const DirName: string): string;
 function ExcludeTrailingBackSlash(const DirName: string): string;
 
 function FileNameUseWildcards(const FileName: string): boolean;
-function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean; overload;
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean; overload;
+function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean;
+  overload;
+function FileNameMatch(const FileName: string; Masks: TStringList;
+  Recursive: boolean): boolean; overload;
 
 function CompareFileName(const S1, S2: string): integer;
 function ExtractFileDrive(const FileName: string): string;
@@ -112,8 +114,8 @@ function GenerateFileName(const Path: string): string;
 
 // string routines ...
 
-function SizeToStr(const Size: Int64): string;
-function RatioToStr(const PackedSize, Size: Int64): string;
+function SizeToStr(const Size: int64): string;
+function RatioToStr(const PackedSize, Size: int64): string;
 function AttrToStr(Attr: integer): string;
 
 // time handling routines ...
@@ -137,7 +139,7 @@ function AppendText(var T: Text; const Name: string): boolean;
 function OpenText(var T: Text; const Name: string): boolean;
 function WriteText(const FileName, S: string): boolean;
 
-function SizeOfFile(const FileName: string): Int64;
+function SizeOfFile(const FileName: string): int64;
 
 // system control
 
@@ -171,7 +173,8 @@ end;
 function FileNameLastPos(const Substr, Str: string): integer;
 begin
   Result := Length(Str);
-  while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)), Substr) <> 0) do
+  while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)),
+      Substr) <> 0) do
   begin
     Dec(Result);
   end;
@@ -282,11 +285,12 @@ begin
 
       '?': Result := MatchPattern(@Element[1], @Pattern[1]);
 
-    else if Element^ = Pattern^ then
-        Result :=
-          MatchPattern(@Element[1], @Pattern[1])
       else
-        Result := False;
+        if Element^ = Pattern^ then
+          Result :=
+            MatchPattern(@Element[1], @Pattern[1])
+        else
+          Result := False;
     end// end case
   ;
 end;
@@ -303,8 +307,7 @@ begin
       Inc(Result);
 end;
 
-function FileNameMatch(const FileName, Mask: string;
-  Recursive: boolean): boolean;
+function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean;
 var
   iFileDrive: string;
   iFileName: string;
@@ -314,7 +317,7 @@ var
 begin
   {$IFDEF FILENAMECASESENSITIVE}
   iFileName := FileName;
-  iMask := Mask;
+  iMask     := Mask;
   {$ELSE}
   iFileName := UpperCase(FileName);
   iMask     := UpperCase(Mask);
@@ -330,8 +333,7 @@ begin
   if Recursive then
   begin
     iMaskPath := ExtractFilePath(iMask);
-    for I := 1 to CharCount(iFileName, PathDelim) -
-      CharCount(iMask, PathDelim) do
+    for I := 1 to CharCount(iFileName, PathDelim) - CharCount(iMask, PathDelim) do
       iMaskPath := IncludeTrailingBackSlash(iMaskPath) +
         IncludeTrailingBackSlash('*');
     iMask := iMaskPath + ExtractFileName(iMask);
@@ -347,7 +349,8 @@ begin
     begin
       Result := False;
     end;
-  end else
+  end
+  else
     Result := False;
 end;
 
@@ -509,7 +512,7 @@ begin
   else
     S := IntToStr(ZS);
 
-  Result := H + ':' + M + ':' + S
+  Result := H + ':' + M + ':' + S;
 end;
 
 function DateTimeToString(X: TDateTime): string;
@@ -594,12 +597,12 @@ end;
 
 // string routines
 
-function SizeToStr(const Size: Int64): string;
+function SizeToStr(const Size: int64): string;
 begin
   Result := Format('%u', [Size]);
 end;
 
-function RatioToStr(const PackedSize, Size: Int64): string;
+function RatioToStr(const PackedSize, Size: int64): string;
 begin
   if Size > 0 then
     Result := Format('%u%%', [MulDiv(PackedSize, 100, Size)])
@@ -695,11 +698,12 @@ begin
     Write(T, S);
     Close(T);
     Result := True;
-  end else
+  end
+  else
     Result := False;
 end;
 
-function SizeOfFile(const FileName: string): Int64;
+function SizeOfFile(const FileName: string): int64;
 var
   Err: integer;
   Rec: TSearchRec;
@@ -724,6 +728,7 @@ begin
   Result := SetPriorityClass(GetCurrentProcess,
     PriorityValue[Max(0, Min(Priority, 3))]);
 end;
+
 {$ENDIF}
 
 end.

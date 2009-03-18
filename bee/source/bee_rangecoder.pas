@@ -90,100 +90,102 @@ implementation
 
 /// TRangeCoder...
 
-  constructor TRangeCoder.Create(aStream: TStream);
-  begin
-    inherited Create;
-    FStream := aStream;
-  end;
+constructor TRangeCoder.Create(aStream: TStream);
+begin
+  inherited Create;
+  FStream := aStream;
+end;
 
-  procedure TRangeCoder.StartEncode;
+procedure TRangeCoder.StartEncode;
+begin
+  Range := $FFFFFFFF;
+  Low   := 0;
+  FFNum := 0;
+  Carry := 0;
+end;
+
+procedure TRangeCoder.StartDecode;
+var
+  I: cardinal;
+begin
+  StartEncode;
+  for I := 0 to NUM do
+    Code := Code shl 8 + InputByte;
+end;
+
+procedure TRangeCoder.FinishEncode;
+var
+  I: cardinal;
+begin
+  for I := 0 to NUM do
+    ShiftLow;
+end;
+
+procedure TRangeCoder.FinishDecode;
+begin
+  /// nothing to do...
+end;
+
+procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: cardinal);
+var
+  Tmp: cardinal;
+begin
+  Tmp   := Low;
+  Low   := Low + MulDiv(Range, CumFreq, TotFreq);
+  Carry := Carry + cardinal(Low < Tmp);
+  Range := MulDiv(Range, Freq, TotFreq);
+  while Range < TOP do
   begin
-    Range := $FFFFFFFF;
-    Low   := 0;
-    FFNum := 0;
+    Range := Range shl 8;
+    ShiftLow;
+  end;
+end;
+
+procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: cardinal);
+begin
+  Code  := Code - MulDiv(Range, CumFreq, TotFreq);
+  Range := MulDiv(Range, Freq, TotFreq);
+  while Range < TOP do
+  begin
+    Code  := Code shl 8 + InputByte;
+    Range := Range shl 8;
+  end;
+end;
+
+function TRangeCoder.GetFreq(TotFreq: cardinal): cardinal;
+begin
+  Result := MulDecDiv(Code + 1, TotFreq, Range);
+end;
+
+procedure TRangeCoder.ShiftLow;
+begin
+  if (Low < Thres) or (Carry <> 0) then
+  begin
+    OutputByte(Cache + Carry);
+    while FFNum <> 0 do
+    begin
+      OutputByte(Carry - 1);
+      Dec(FFNum);
+    end;
+    Cache := Low shr 24;
     Carry := 0;
-  end;
+  end
+  else
+    Inc(FFNum);
+  Low := Low shl 8;
+end;
 
-  procedure TRangeCoder.StartDecode;
-  var
-    I: cardinal;
-  begin
-    StartEncode;
-    for I := 0 to NUM do
-      Code := Code shl 8 + InputByte;
-  end;
+function TRangeCoder.InputByte: cardinal;
+var
+  Value: byte;
+begin
+  FStream.Read(Value, 1);
+  Result := Value;
+end;
 
-  procedure TRangeCoder.FinishEncode;
-  var
-    I: cardinal;
-  begin
-    for I := 0 to NUM do ShiftLow;
-  end;
-
-  procedure TRangeCoder.FinishDecode;
-  begin
-    /// nothing to do...
-  end;
-
-  procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: cardinal);
-  var
-    Tmp: cardinal;
-  begin
-    Tmp   := Low;
-    Low   := Low + MulDiv(Range, CumFreq, TotFreq);
-    Carry := Carry + cardinal(Low < Tmp);
-    Range := MulDiv(Range, Freq, TotFreq);
-    while Range < TOP do
-    begin
-      Range := Range shl 8;
-      ShiftLow;
-    end;
-  end;
-
-  procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: cardinal);
-  begin
-    Code  := Code - MulDiv(Range, CumFreq, TotFreq);
-    Range := MulDiv(Range, Freq, TotFreq);
-    while Range < TOP do
-    begin
-      Code  := Code shl 8 + InputByte;
-      Range := Range shl 8;
-    end;
-  end;
-
-  function TRangeCoder.GetFreq(TotFreq: cardinal): cardinal;
-  begin
-    Result := MulDecDiv(Code + 1, TotFreq, Range);
-  end;
-
-  procedure TRangeCoder.ShiftLow;
-  begin
-    if (Low < Thres) or (Carry <> 0) then
-    begin
-      OutputByte(Cache + Carry);
-      while FFNum <> 0 do
-      begin
-        OutputByte(Carry - 1);
-        Dec(FFNum);
-      end;
-      Cache := Low shr 24;
-      Carry := 0;
-    end else
-      Inc(FFNum);
-    Low := Low shl 8;
-  end;
-
-  function TRangeCoder.InputByte: cardinal;
-  var
-    Value: byte;
-  begin
-    FStream.Read(Value, 1);
-    Result := Value;
-  end;
-
-  procedure TRangeCoder.OutputByte(aValue: cardinal);
-  begin
-    FStream.Write(aValue, 1);
-  end;
+procedure TRangeCoder.OutputByte(aValue: cardinal);
+begin
+  FStream.Write(aValue, 1);
+end;
 
 end.

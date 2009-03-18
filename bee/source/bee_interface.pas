@@ -44,25 +44,25 @@ type
   TApp = class
   private
     FOnFatalError: TOnMessageEvent;
-    FOnError:      TOnMessageEvent;
-    FOnWarning:    TOnMessageEvent;
-    FOnMessage:    TOnMessageEvent;
-    FOnOverWrite:  TOnOverWriteEvent;
-    FOnRename:     TOnRenameEvent;
-    FOnList:       TOnListEvent;
-    FOnKey:        TOnKeyEvent;
-    FOnRequest:    TOnMessageEvent;
-    FOnTick:       TOnCustomEvent;
-    FOnClear:      TOnCustomEvent;
+    FOnError:   TOnMessageEvent;
+    FOnWarning: TOnMessageEvent;
+    FOnMessage: TOnMessageEvent;
+    FOnOverWrite: TOnOverWriteEvent;
+    FOnRename:  TOnRenameEvent;
+    FOnList:    TOnListEvent;
+    FOnKey:     TOnKeyEvent;
+    FOnRequest: TOnMessageEvent;
+    FOnTick:    TOnCustomEvent;
+    FOnClear:   TOnCustomEvent;
   protected
-    FParams: TStringList;
+    FParams:     TStringList;
     FSuspendedTime: double;
-    FStartTime: double;
-    FTotalSize: int64;
+    FStartTime:  double;
+    FTotalSize:  int64;
     FProcessedSize: int64;
     FTerminated: boolean;
-    FSuspended: boolean;
-    FExitCode: byte;
+    FSuspended:  boolean;
+    FExitCode:   byte;
   protected
     function GetSpeed: cardinal;
     function GetPercentes: cardinal;
@@ -77,14 +77,15 @@ type
     procedure Execute; virtual;
 
     procedure ProcessFatalError(const aMessage: string; aExitCode: byte);
-    procedure ProcessError     (const aMessage: string; aExitCode: byte);
-    procedure ProcessWarning   (const aMessage: string; aExitCode: byte);
-    procedure ProcessMessage   (const aMessage: string);
-    function  ProcessOverwrite (const aFileInfo: TFileInfoRec; const Value: char): char;
-    function  ProcessRename    (const aFileInfo: TFileInfoRec; const Value: string): string;
-    procedure ProcessList      (const aFileInfo: TFileFullInfoRec);
-    function  ProcessKey       (const aFileInfo: TFileInfoRec; const Value: string): string;
-    procedure ProcessRequest   (const aMessage: string);
+    procedure ProcessError(const aMessage: string; aExitCode: byte);
+    procedure ProcessWarning(const aMessage: string; aExitCode: byte);
+    procedure ProcessMessage(const aMessage: string);
+    function ProcessOverwrite(const aFileInfo: TFileInfoRec; const Value: char): char;
+    function ProcessRename(const aFileInfo: TFileInfoRec;
+      const Value: string): string;
+    procedure ProcessList(const aFileInfo: TFileFullInfoRec);
+    function ProcessKey(const aFileInfo: TFileInfoRec; const Value: string): string;
+    procedure ProcessRequest(const aMessage: string);
     procedure ProcessTick;
     procedure ProcessClear;
 
@@ -93,28 +94,28 @@ type
     procedure DecProcessedSize(Value: cardinal); overload;
     procedure DecProcessedSize; overload;
   public
-    property OnFatalError: TOnMessageEvent   read FOnFatalError write FOnFatalError;
-    property OnError:      TOnMessageEvent   read FOnError      write FOnError;
-    property OnWarning:    TOnMessageEvent   read FOnWarning    write FOnWarning;
-    property OnMessage:    TOnMessageEvent   read FOnMessage    write FOnMessage;
-    property OnOverWrite:  TOnOverWriteEvent read FOnOverWrite  write FOnOverWrite;
-    property OnRename:     TOnRenameEvent    read FOnRename     write FOnRename;
-    property OnList:       TOnListEvent      read FOnList       write FOnList;
-    property OnKey:        TOnKeyEvent       read FOnKey        write FOnKey;
-    property OnRequest:    TOnMessageEvent   read FOnRequest    write FOnRequest;
-    property OnTick:       TOnCustomEvent    read FOnTick       write FOnTick;
-    property OnClear:      TOnCustomEvent    read FOnClear      write FOnClear;
+    property OnFatalError: TOnMessageEvent Read FOnFatalError Write FOnFatalError;
+    property OnError: TOnMessageEvent Read FOnError Write FOnError;
+    property OnWarning: TOnMessageEvent Read FOnWarning Write FOnWarning;
+    property OnMessage: TOnMessageEvent Read FOnMessage Write FOnMessage;
+    property OnOverWrite: TOnOverWriteEvent Read FOnOverWrite Write FOnOverWrite;
+    property OnRename: TOnRenameEvent Read FOnRename Write FOnRename;
+    property OnList: TOnListEvent Read FOnList Write FOnList;
+    property OnKey: TOnKeyEvent Read FOnKey Write FOnKey;
+    property OnRequest: TOnMessageEvent Read FOnRequest Write FOnRequest;
+    property OnTick: TOnCustomEvent Read FOnTick Write FOnTick;
+    property OnClear: TOnCustomEvent Read FOnClear Write FOnClear;
   public
-    property TotalSize: int64 read FTotalSize;
-    property ProcessedSize: int64 read FProcessedSize;
-    property Percentes: cardinal read GetPercentes;
-    property Speed: cardinal read GetSpeed;
-    property ElapsedTime: cardinal read GetElapsedTime;
-    property RemainingTime: cardinal read GetRemainingTime;
+    property TotalSize: int64 Read FTotalSize;
+    property ProcessedSize: int64 Read FProcessedSize;
+    property Percentes: cardinal Read GetPercentes;
+    property Speed: cardinal Read GetSpeed;
+    property ElapsedTime: cardinal Read GetElapsedTime;
+    property RemainingTime: cardinal Read GetRemainingTime;
 
-    property Terminated: boolean read FTerminated write FTerminated;
-    property Suspended: boolean read FSuspended write SetSuspended;
-    property ExitCode: byte read FExitCode;
+    property Terminated: boolean Read FTerminated Write FTerminated;
+    property Suspended: boolean Read FSuspended Write SetSuspended;
+    property ExitCode: byte Read FExitCode;
   end;
 
 implementation
@@ -132,11 +133,11 @@ uses
 constructor TApp.Create;
 begin
   inherited Create;
-  FParams := aParams;
-  FExitCode := 0;
-  FTotalSize := 0;
+  FParams     := aParams;
+  FExitCode   := 0;
+  FTotalSize  := 0;
   FProcessedSize := 0;
-  FSuspended := False;
+  FSuspended  := False;
   FTerminated := False;
 end;
 
@@ -197,7 +198,7 @@ begin
     if Value then
       FSuspendedTime := Now
     else
-      FStartTime := FStartTime + (Now - FSuspendedTime);
+      FStartTime     := FStartTime + (Now - FSuspendedTime);
 
     FSuspended := Value;
   end;

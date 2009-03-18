@@ -1,4 +1,4 @@
-Unit Bee_RangeCoder1;
+unit Bee_RangeCoder1;
 
   { Unit contains classes:
     -- TRangeCoder, range coder (based on Eugeny Shelwien's shindler_var1 (based on Shindler's rangecoder), MaxFreq = 2^24 (?));
@@ -9,136 +9,152 @@ Unit Bee_RangeCoder1;
   }
   {$R-,Q-,S-}
 
-Interface
+interface
 
 /// Uses units...
 
-  Uses
-    Classes;  /// TStream, ...
+uses
+  Classes;  /// TStream, ...
 
 // Constants...
 
-  Const
-    TOP     = 1 shl 24;
-    NUM     = 4;
-    Thres   = 255 * Cardinal (TOP);
-    MaxFreq = TOP - 1; 
+const
+  TOP     = 1 shl 24;
+  NUM     = 4;
+  Thres   = 255 * cardinal(TOP);
+  MaxFreq = TOP - 1;
 
 // Types...
 
-  Type
-    /// TRangeCoder...
+type
+  /// TRangeCoder...
 
-    TRangeCoder = Class
-      Constructor Create (aStream: TStream);
+  TRangeCoder = class
+    constructor Create(aStream: TStream);
 
-      Procedure   StartEncode;
-      Procedure   StartDecode;
-      Procedure   FinishEncode;
-      Procedure   FinishDecode;
-      Procedure   Encode (CumFreq, Freq, TotFreq: Cardinal);
-      Function    GetFreq (TotFreq: Cardinal): Cardinal;
-      Procedure   Decode (CumFreq, Freq, TotFreq: Cardinal);
+    procedure StartEncode;
+    procedure StartDecode;
+    procedure FinishEncode;
+    procedure FinishDecode;
+    procedure Encode(CumFreq, Freq, TotFreq: cardinal);
+    function GetFreq(TotFreq: cardinal): cardinal;
+    procedure Decode(CumFreq, Freq, TotFreq: cardinal);
 
-    Private
-      Procedure   ShiftLow;
-      Procedure   OutTgtByte (Value: Byte);
-      Function    InpSrcByte: Byte;
+  private
+    procedure ShiftLow;
+    procedure OutTgtByte(Value: byte);
+    function InpSrcByte: byte;
 
-    Private
-      Stream: TStream;
+  private
+    Stream: TStream;
 
-      Range:  Cardinal;
-      Low:    Cardinal;  
-      Code:   Cardinal;
-      Carry:  Cardinal;
-      Cache:  Cardinal;
-      FFNum:  Cardinal;
-    End;
+    Range: cardinal;
+    Low:   cardinal;
+    Code:  cardinal;
+    Carry: cardinal;
+    Cache: cardinal;
+    FFNum: cardinal;
+  end;
 
-Implementation
+implementation
 
 /// TRangeCoder...
 
-  Constructor TRangeCoder.Create (aStream: TStream);
-  Begin
-    Inherited Create;
-    Stream := aStream;
-  End;
+constructor TRangeCoder.Create(aStream: TStream);
+begin
+  inherited Create;
+  Stream := aStream;
+end;
 
-  Procedure TRangeCoder.StartEncode;
-  Begin
-    Range := $FFFFFFFF;
-    Low   := 0;
-    FFNum := 0;
-    Carry := 0;    
-  End;
+procedure TRangeCoder.StartEncode;
+begin
+  Range := $FFFFFFFF;
+  Low   := 0;
+  FFNum := 0;
+  Carry := 0;
+end;
 
-  Procedure TRangeCoder.StartDecode;
-    Var
-      I: Integer;
-  Begin
-    StartEncode; 
-    For I := 0 to NUM do code := code shl 8 + InpSrcByte; 
-  End;
+procedure TRangeCoder.StartDecode;
+var
+  I: integer;
+begin
+  StartEncode;
+  for I := 0 to NUM do
+    code := code shl 8 + InpSrcByte;
+end;
 
-  Procedure TRangeCoder.FinishEncode;
-    Var
-      I: Integer;
-  Begin
-    For I := 0 to NUM do ShiftLow; 
-  End;
+procedure TRangeCoder.FinishEncode;
+var
+  I: integer;
+begin
+  for I := 0 to NUM do
+    ShiftLow;
+end;
 
-  Procedure TRangeCoder.FinishDecode;
-  Begin
-    /// Nothing to do...
-  End;
+procedure TRangeCoder.FinishDecode;
+begin
+  /// Nothing to do...
+end;
 
-  Procedure TRangeCoder.Encode (cumFreq, freq, totFreq: Cardinal);
-    Var
-      tmp: Cardinal;
-  Begin
-    tmp   := low;
-    range := range div totFreq;
-    low   := low + cumFreq * range;
-    Carry := Carry + Cardinal (low < tmp);
-    range := range * freq;
-    While Range < TOP do begin Range := Range shl 8; ShiftLow; end;
-  End;
+procedure TRangeCoder.Encode(cumFreq, freq, totFreq: cardinal);
+var
+  tmp: cardinal;
+begin
+  tmp   := low;
+  range := range div totFreq;
+  low   := low + cumFreq * range;
+  Carry := Carry + cardinal(low < tmp);
+  range := range * freq;
+  while Range < TOP do
+  begin
+    Range := Range shl 8;
+    ShiftLow;
+  end;
+end;
 
-  Function  TRangeCoder.GetFreq (totFreq: Cardinal): Cardinal;
-  Begin
-    range  := range div totFreq;
-    Result := code div range;
-  End;
+function TRangeCoder.GetFreq(totFreq: cardinal): cardinal;
+begin
+  range  := range div totFreq;
+  Result := code div range;
+end;
 
-  Procedure TRangeCoder.Decode (CumFreq, Freq, TotFreq: Cardinal);
-  Begin
-    Code  := Code - CumFreq * Range;
-    Range := Range * Freq;
-    While Range < TOP do begin Code := Code shl 8 + InpSrcByte; Range := Range shl 8; end;
-  End;
+procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: cardinal);
+begin
+  Code  := Code - CumFreq * Range;
+  Range := Range * Freq;
+  while Range < TOP do
+  begin
+    Code  := Code shl 8 + InpSrcByte;
+    Range := Range shl 8;
+  end;
+end;
 
-  Procedure TRangeCoder.ShiftLow;
-  Begin
-    If ((Low < Thres) or (Carry <> 0)) then begin
-      OutTgtByte (Cache + Carry);
-      While FFNum <> 0 do begin OutTgtByte (Carry - 1); Dec (FFNum); end;
-      Cache := Low shr 24;
-      Carry := 0;
-    End else
-      Inc (FFNum);
-    Low := Low shl 8;
-  End;
+procedure TRangeCoder.ShiftLow;
+begin
+  if ((Low < Thres) or (Carry <> 0)) then
+  begin
+    OutTgtByte(Cache + Carry);
+    while FFNum <> 0 do
+    begin
+      OutTgtByte(Carry - 1);
+      Dec(FFNum);
+    end;
+    Cache := Low shr 24;
+    Carry := 0;
+  end
+  else
+    Inc(FFNum);
+  Low := Low shl 8;
+end;
 
-  Procedure  TRangeCoder.OutTgtByte (Value: Byte);
-  Begin
-    Stream.Write (Value, 1);
-  End;
+procedure TRangeCoder.OutTgtByte(Value: byte);
+begin
+  Stream.Write(Value, 1);
+end;
 
-  Function  TRangeCoder.InpSrcByte: Byte;
-  Begin
-    Stream.Read (Result, 1);
-  End;
+function TRangeCoder.InpSrcByte: byte;
+begin
+  Stream.Read(Result, 1);
+end;
 
-End.
+end.

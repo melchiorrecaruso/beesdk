@@ -43,33 +43,33 @@ uses
   Controls,
   LResources;
 
-type 
+type
 
   { TPasswordFrm }
 
   TPasswordFrm = class(TForm)
     PasswordImage: TImage;
     PasswordLabel: TLabel;
-    Password: TEdit;
+    Password:  TEdit;
     ConfirmPasswordLabel: TLabel;
     ConfirmPassword: TEdit;
     MaskPassword: TCheckBox;
-    Bevel: TBevel;
-    BtnClear: TBitBtn;
-    BtnOk: TBitBtn;
+    Bevel:     TBevel;
+    BtnClear:  TBitBtn;
+    BtnOk:     TBitBtn;
     BtnCancel: TBitBtn;
     procedure FormCreate(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormShow(Sender: TObject);
-    procedure MaskPasswordClick (Sender: TObject);
-    procedure PasswordChange (Sender: TObject);
-    procedure BtnClearClick (Sender: TObject);
+    procedure MaskPasswordClick(Sender: TObject);
+    procedure PasswordChange(Sender: TObject);
+    procedure BtnClearClick(Sender: TObject);
   private
     { Private declarations }
     procedure SetConfirmPassword(Value: boolean);
   public
-    { Public declarations }    
+    { Public declarations }
     procedure SetPassword(const Value: string);
   public
     { Public declarations }
@@ -85,95 +85,97 @@ var
 implementation
 
 uses
-  BeeGui_Consts, 
+  BeeGui_Consts,
   BeeGui_Messages,
   BeeGui_SysUtils;
-  
-  { TPasswordFrm }
-  
+
+{ TPasswordFrm }
+
   {$I beegui_passwordfrm_saveproperty.inc}
   {$I beegui_passwordfrm_loadproperty.inc}
   {$I beegui_passwordfrm_savelanguage.inc}
   {$I beegui_passwordfrm_loadlanguage.inc}
 
-  procedure TPasswordFrm.FormCreate(Sender: TObject);
-  begin
-    LoadLanguage;
-    LoadProperty;
-  end;
+procedure TPasswordFrm.FormCreate(Sender: TObject);
+begin
+  LoadLanguage;
+  LoadProperty;
+end;
 
-  procedure TPasswordFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
+procedure TPasswordFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-    SaveProperty;
-  end;
-  
-  procedure TPasswordFrm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-  begin
-    if ModalResult = mrOk then
-    begin
-      if not MaskPassword.Checked then
-        CanClose := True
-      else
-        if CompareStr(Password.Text, ConfirmPassword.Text) = 0 then
-          CanClose := True
-        else
-        begin
-          MessageDlg(rsWarning, rseConfirmPassword, mtWarning, [mbOk], 0);
-          CanClose := False;
-        end;
-    end else
-      CanClose := True;
-  end;
-  
-  procedure TPasswordFrm.FormShow(Sender: TObject);
-  begin
-    SetConfirmPassword(MaskPassword.Checked);
-  end;
+  SaveProperty;
+end;
 
-  procedure TPasswordFrm.MaskPasswordClick (Sender: TObject);
+procedure TPasswordFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+begin
+  if ModalResult = mrOk then
   begin
-    SetConfirmPassword(MaskPassword.Checked);
-  end;
-
-  procedure TPasswordFrm.PasswordChange (Sender: TObject);
-  begin
-    ConfirmPassword.Text := '';
-  end;
-
-  procedure TPasswordFrm.SetConfirmPassword;
-  begin
-    if Value then
+    if not MaskPassword.Checked then
+      CanClose := True
+    else
+    if CompareStr(Password.Text, ConfirmPassword.Text) = 0 then
+      CanClose := True
+    else
     begin
-      Password.PasswordChar := '*';
-      ConfirmPassword.Color := clWindow;
-    end else
-    begin
-      Password.PasswordChar := #0;
-      ConfirmPassword.Text  := '';
-      ConfirmPassword.Color := clBtnFace;
+      MessageDlg(rsWarning, rseConfirmPassword, mtWarning, [mbOK], 0);
+      CanClose := False;
     end;
-    ConfirmPassword.Enabled := Value;
-    if ConfirmPassword.CanFocus then
-      ConfirmPassword.SetFocus;
-    if Password.CanFocus then
-      Password.SetFocus;
-  end;
+  end
+  else
+    CanClose := True;
+end;
 
-  procedure TPasswordFrm.SetPassword;
-  begin
-    Password.Text := Value;
-    ConfirmPassword.Text := Value;
-  end;
+procedure TPasswordFrm.FormShow(Sender: TObject);
+begin
+  SetConfirmPassword(MaskPassword.Checked);
+end;
 
-  procedure TPasswordFrm.BtnClearClick (Sender: TObject);
+procedure TPasswordFrm.MaskPasswordClick(Sender: TObject);
+begin
+  SetConfirmPassword(MaskPassword.Checked);
+end;
+
+procedure TPasswordFrm.PasswordChange(Sender: TObject);
+begin
+  ConfirmPassword.Text := '';
+end;
+
+procedure TPasswordFrm.SetConfirmPassword;
+begin
+  if Value then
   begin
-    Password.Clear;
-    ConfirmPassword.Clear;
+    Password.PasswordChar := '*';
+    ConfirmPassword.Color := clWindow;
+  end
+  else
+  begin
+    Password.PasswordChar := #0;
+    ConfirmPassword.Text  := '';
+    ConfirmPassword.Color := clBtnFace;
   end;
-  
+  ConfirmPassword.Enabled := Value;
+  if ConfirmPassword.CanFocus then
+    ConfirmPassword.SetFocus;
+  if Password.CanFocus then
+    Password.SetFocus;
+end;
+
+procedure TPasswordFrm.SetPassword;
+begin
+  Password.Text := Value;
+  ConfirmPassword.Text := Value;
+end;
+
+procedure TPasswordFrm.BtnClearClick(Sender: TObject);
+begin
+  Password.Clear;
+  ConfirmPassword.Clear;
+end;
+
 initialization
 
   {$I beegui_passwordfrm.lrs}
