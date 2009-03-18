@@ -34,45 +34,10 @@ unit Bee_Interface;
 interface
 
 uses
-  Classes;
+  Classes,
+  Bee_Interface_Base;
 
 type
-  // TFileInfoRec record ...
-
-  TFileInfoRec = record
-    FileName: string;
-    FilePath: string;
-    FileSize: cardinal;
-    FileTime: integer;
-    FileAttr: integer;
-  end;
-
-  // TFileFullInfoRec record ...
-
-  TFileFullInfoRec = record
-    FileName: string;
-    FilePath: string;
-    FileSize: cardinal;
-    FileTime: integer;
-    FileAttr: integer;
-    FilePacked: cardinal;
-    FileRatio: cardinal;
-    FileComm: string;
-    FileCrc: cardinal;
-    FileMethod: string;
-    FileVersion: string;
-    FilePassword: string;
-    FilePosition: cardinal;
-  end;
-
-  // TEvents procedure ...
-
-  TOnCustomEvent    = procedure of object;
-  TOnMessageEvent   = procedure(const aMessage: string) of object;
-  TOnListEvent      = procedure(const aFileInfo: TFileFullInfoRec) of object;
-  TOnOverWriteEvent = procedure(const aFileInfo: TFileInfoRec; var Result: char) of object;
-  TOnRenameEvent    = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
-  TOnKeyEvent       = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
 
   // TApp class ...
 
@@ -151,11 +116,6 @@ type
     property Suspended: boolean read FSuspended write SetSuspended;
     property ExitCode: byte read FExitCode;
   end;
-
-  // TCoreStatus ...
-
-  TCoreStatus = (csReady, csExecuting, csWaitingOverwrite,
-    csWaitingRename, csWaitingKey, csWaitingRequest, csTerminated);
 
 implementation
 
