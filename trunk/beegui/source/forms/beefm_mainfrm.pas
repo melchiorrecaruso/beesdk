@@ -674,7 +674,7 @@ uses
 
   procedure TMainFrm.OpenArchive(const aArchiveName: string);
   var
-    FList: TList;
+    FArray: array of ;
     FFolder: string;
   begin
     Caption := GetApplicationCaption(cApplicationCaption, rsOpening);
