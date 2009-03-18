@@ -122,7 +122,7 @@ type
   private
     { private declarations }
     FCommandLine: TCustomCommandLine;
-    FList: TList;
+    FList: array of TFileFullInfoRec;
     FPassword: string;
     FCoreID: pointer;
     FCanClose: boolean;
@@ -145,7 +145,7 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
-    procedure Execute(aCommandLine: TCustomCommandLine; aList: TList);
+    procedure Execute(aCommandLine: TCustomCommandLine; aList: array of TFileFullInfoRec);
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
   end;
@@ -231,7 +231,7 @@ var
     end;
   end;
 
-  procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
+  procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: array of TFileFullInfoRec);
   begin
     FList := aList;
     FCommandLine := aCommandLine;
@@ -400,14 +400,16 @@ var
       Application.Title := Caption;
     end;
 
-    ExitCode := 2;
     ShowMessage(IntToStr(GetCoreItemsCount(FCoreID)));
     for I := 0 to GetCoreItemsCount(FCoreID) -1 do
     begin
-      // Rec := GetCoreItems(FCoreID, I);
+      Rec := GetCoreItems(FCoreID, I);
+      if Assigned(FList) then
+      begin
 
 
 
+      end;
     end;
 
     Report.Lines.Clear;
