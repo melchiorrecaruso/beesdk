@@ -53,7 +53,8 @@ uses
   // ---
   Bee_App,
   Bee_Common,
-  Bee_Interface;
+  Bee_Interface,
+  Bee_Interface_Base;
 
 type
   // TConsole class
