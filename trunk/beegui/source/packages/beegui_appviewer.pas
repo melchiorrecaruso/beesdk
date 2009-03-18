@@ -51,101 +51,103 @@ type
     destructor Destroy; override;
     procedure Execute; override;
   public
-    property FileName : string read GetFileName;
-    property FileTime: integer read FFileTime;
+    property FileName: string Read GetFileName;
+    property FileTime: integer Read FFileTime;
   end;
 
 implementation
 
-  { TAppViewer }
-  
-  constructor TAppViewer.Create(const AFileName: string);
-  begin
-    FFileTime := FileAge(AFileName);
-    FFileName := '"' + AFileName + '"';
-    FFileExec := GetFileExec;
-    FreeOnTerminate := True;
-    inherited Create(True);
-  end;
-  
-  destructor TAppViewer.Destroy;
-  begin
-    inherited Destroy;
-  end;
+{ TAppViewer }
 
-  function TAppViewer.GetFileExec: string;
-  var
+constructor TAppViewer.Create(const AFileName: string);
+begin
+  FFileTime := FileAge(AFileName);
+  FFileName := '"' + AFileName + '"';
+  FFileExec := GetFileExec;
+  FreeOnTerminate := True;
+  inherited Create(True);
+end;
+
+destructor TAppViewer.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function TAppViewer.GetFileExec: string;
+var
     {$IFDEF WIN32}
-    P: PChar;
-    Res: HINST;
-    Buffer: array[0..MAX_PATH] of char;
+  P:      PChar;
+  Res:    HINST;
+  Buffer: array[0..MAX_PATH] of char;
     {$ENDIF}
-    OpenDialog: TOpenDialog;
-  begin
-    Result := '';
+  OpenDialog: TOpenDialog;
+begin
+  Result := '';
     {$IFDEF WIN32}
-    P := nil;
-    FillChar(Buffer, SizeOf(Buffer), #0);
-    Res := FindExecutable(PChar(FFileName), P, Buffer);
-    if Res > 32 then
+  P      := nil;
+  FillChar(Buffer, SizeOf(Buffer), #0);
+  Res := FindExecutable(PChar(FFileName), P, Buffer);
+  if Res > 32 then
+  begin
+    P := Buffer;
+    while PWord(P)^ <> 0 do
     begin
-      P := Buffer;
-      while PWord(P)^ <> 0 do
+      if P^ = #0 then
+        P^ := #32;
+      Inc(P);
+    end;
+    Result := Buffer;
+  end;
+    {$ENDIF}
+  if Result = '' then
+  begin
+    OpenDialog := TOpenDialog.Create(nil);
+    try
+      OpenDialog.Title   := 'Open file with';
+      OpenDialog.Options := [ofPathMustExist, ofFileMustExist];
+      if OpenDialog.Execute then
       begin
-        if P^ = #0 then P^ := #32;
-        Inc(P);
-      end;
-      Result := Buffer;
-    end;
-    {$ENDIF}
-    if Result = '' then
-    begin
-      OpenDialog := TOpenDialog.Create(nil);
-      try
-        OpenDialog.Title := 'Open file with';
-        OpenDialog.Options := [ofPathMustExist, ofFileMustExist];
-        if OpenDialog.Execute then
-        begin
-          Result := OpenDialog.FileName;
-          if DirectoryExists(Result) then Result := '';
-        end else
+        Result := OpenDialog.FileName;
+        if DirectoryExists(Result) then
           Result := '';
-      finally
-        OpenDialog.Free;
-      end;
+      end
+      else
+        Result := '';
+    finally
+      OpenDialog.Free;
     end;
   end;
+end;
 
-  function TAppViewer.GetFileName: string;
-  var
-    I: integer;
+function TAppViewer.GetFileName: string;
+var
+  I: integer;
+begin
+  Result := FFileName;
+  I      := Pos('"', Result);
+  while I > 0 do
   begin
-    Result := FFileName;
+    Delete(Result, I, 1);
     I := Pos('"', Result);
-    while I > 0 do
-    begin
-      Delete(Result, I, 1);
-      I := Pos('"', Result);
-    end;
   end;
+end;
 
-  procedure TAppViewer.Execute;
-  var
-    Process: TProcess;
+procedure TAppViewer.Execute;
+var
+  Process: TProcess;
+begin
+  if (FFileExec <> '') then
   begin
-    if (FFileExec <> '') then
-    begin
-      Process := TProcess.Create(nil);
-      try
-        Process.Options := Process.Options + [poWaitOnExit];
-        Process.Active := False;
-        Process.CommandLine := FFileExec + ' ' + FFileName;
-        Process.Execute;
-      finally
-        Process.Free;
-      end;
+    Process := TProcess.Create(nil);
+    try
+      Process.Options     := Process.Options + [poWaitOnExit];
+      Process.Active      := False;
+      Process.CommandLine := FFileExec + ' ' + FFileName;
+      Process.Execute;
+    finally
+      Process.Free;
     end;
   end;
-  
-end.
+end;
 
+end.

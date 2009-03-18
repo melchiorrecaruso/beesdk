@@ -96,8 +96,10 @@ type
     Data:     THeaderData;
     FileLink: string;
   public
-    constructor Create(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
-    procedure Fresh(const cdOption: string; const RecPath: string; const Rec: TSearchRec);
+    constructor Create(const cdOption: string; const RecPath: string;
+      const Rec: TSearchRec);
+    procedure Fresh(const cdOption: string; const RecPath: string;
+      const Rec: TSearchRec);
     constructor Read(Stream: TStream; aAction: THeaderAction);
     function SetTable(Config: TConfiguration): boolean;
     procedure Write(Stream: TStream);
@@ -205,19 +207,20 @@ begin
     if Result = 0 then
       Result :=
         CompareFileName(ExtractFileName(THeader(L.Items[Index1]).Data.FileName),
-                        ExtractFileName(THeader(L.Items[Index2]).Data.FileName));
+        ExtractFileName(THeader(L.Items[Index2]).Data.FileName));
     if Result = 0 then
       Result :=
         CompareFileName(THeader(L.Items[Index1]).Data.FileName,
-                        THeader(L.Items[Index2]).Data.FileName);
-  end else
-    if Bool1 then
-      Result := 1
-    else
-      if Bool2 then
-        Result := -1
-      else
-        Result := Index1 - Index2;
+        THeader(L.Items[Index2]).Data.FileName);
+  end
+  else
+  if Bool1 then
+    Result := 1
+  else
+  if Bool2 then
+    Result := -1
+  else
+    Result := Index1 - Index2;
 end;
 
 // THeader class
@@ -295,7 +298,8 @@ begin
     begin
       Data.FileName := DoDirSeparators(Data.FileName);
       FileLink      := '';
-    end else
+    end
+    else
       Fail;
   end;
 end;
@@ -359,8 +363,7 @@ begin
     if CompareFileName(FileName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
     else
-    if CompareFileName(FileName, THeader(Items[M]).Data.FileName) <
-      0 then
+    if CompareFileName(FileName, THeader(Items[M]).Data.FileName) < 0 then
       H := M - 1
     else
       H := -2;
@@ -388,8 +391,7 @@ begin
     if CompareFileName(FName, THeader(Items[M]).Data.FileName) > 0 then
       L := M + 1
     else
-    if CompareFileName(FName, THeader(Items[M]).Data.FileName) <
-      0 then
+    if CompareFileName(FName, THeader(Items[M]).Data.FileName) < 0 then
       H := M - 1
     else
       H := -2;
@@ -431,8 +433,7 @@ begin
 end;
 
 
-procedure THeaders.ExpandMask(const Mask: string; Masks: TStringList;
-  rOption: boolean);
+procedure THeaders.ExpandMask(const Mask: string; Masks: TStringList; rOption: boolean);
 var
   I:     integer;
   Error: integer;
@@ -453,7 +454,8 @@ begin
         Card := True;
       if Mask[I] = PathDelim then
         FirstSlash := I;
-    end else
+    end
+    else
     if Mask[I] = PathDelim then
     begin
       LastSlash := I;
@@ -470,19 +472,20 @@ begin
       if ((Rec.Attr and faDirectory) = faDirectory) and
         (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
         if FileNameMatch(Rec.Name, FolderName, rOption) then
-          ExpandMask(FolderPath + Rec.Name +
-            Copy(Mask, LastSlash, (Length(Mask) + 1) - LastSlash),
+          ExpandMask(FolderPath + Rec.Name + Copy(Mask,
+            LastSlash, (Length(Mask) + 1) - LastSlash),
             Masks, rOption);
       Error := FindNext(Rec);
     end;
     FindClose(Rec);
-  end else
+  end
+  else
     Masks.Add(Mask);
 end;
 
 procedure THeaders.AddItems(Masks: TStringList; const cdOption: string;
-  fOption: boolean; rOption: boolean; uOption: boolean;
-  xOption: TStringList; var Size: int64);
+  fOption: boolean; rOption: boolean; uOption: boolean; xOption: TStringList;
+  var Size: int64);
 var
   I, J:      integer;
   CurrMasks: TStringList;
@@ -596,12 +599,12 @@ begin
       if kOption then
         Include(P.Data.FileFlags, foPassword);
 
-      if (Method = 0) or (not Config.GetTable(CurrentExt,
-        P.Data.FileTable)) then
+      if (Method = 0) or (not Config.GetTable(CurrentExt, P.Data.FileTable)) then
       begin
         Include(P.Data.FileFlags, foMoved);
         Exclude(P.Data.FileFlags, foTable);
-      end else
+      end
+      else
       if CompareFileName(CurrentExt, PreviousExt) <> 0 then
         Include(P.Data.FileFlags, foTable)
       else
@@ -646,7 +649,7 @@ end;
 
 function THeaders.FindFirstMarker(Stream: TStream): cardinal;
 var
-  Id: integer;
+  Id:      integer;
   StrmPos: cardinal;
 begin
   // archive type unknow
@@ -674,8 +677,8 @@ end;
 
 procedure THeaders.ReadItemsB4b(Stream: TStream; aAction: THeaderAction);
 var
-  P: THeader;
-  Ptr: ^cardinal;
+  P:      THeader;
+  Ptr:    ^cardinal;
   Readed: byte;
   NextByte: cardinal;
   B4bMarker: array [0..3] of byte;
@@ -706,7 +709,8 @@ begin
           P := nil;
         end;
       end;
-    end else
+    end
+    else
       Break;
 
   until (P <> nil) and (foLast in P.Data.FileFlags);
@@ -734,13 +738,15 @@ begin
           Add(P);
         except
           P := nil;
-        end else
+        end
+      else
         Break;
     until (P <> nil) and (foLast in P.Data.FileFlags);
 
     if P <> nil then
       Exclude(P.Data.FileFlags, foLast);
-  end else
+  end
+  else
     ReadItemsB4b(Stream, aAction);
 end;
 
@@ -755,7 +761,8 @@ begin
       Module.Seek(0, 0);
       Stream.CopyFrom(Module, Module.Size);
     end;
-  end else
+  end
+  else
     Stream.Seek(Module.Size, 0);
 
   MarkAsLast(toDelete);
@@ -1000,7 +1007,8 @@ begin
   begin
     Mask    := IncludeTrailingBackSlash(Mask) + '*';
     rOption := True;
-  end else
+  end
+  else
   if DirectoryExists(Mask) then
   begin
     Mask    := IncludeTrailingBackSlash(Mask) + '*';
@@ -1026,13 +1034,15 @@ begin
               Sorted.InsertItem(P);
               Add(P);
               Size := Size + Rec.Size;
-            end else
+            end
+            else
             if (Rec.Time > THeader(J).Data.FileTime) then
             begin
               THeader(J).Fresh(cdOption, RecPath, Rec);
               Size := Size + (Rec.Size - THeader(J).Data.FileSize);
             end;
-          end else
+          end
+          else
           if fOption then
           begin
             if (not (J = nil)) and (Rec.Time > THeader(J).Data.FileTime) then
@@ -1040,7 +1050,8 @@ begin
               THeader(J).Fresh(cdOption, RecPath, Rec);
               Size := Size + (Rec.Size - THeader(J).Data.FileSize);
             end;
-          end else
+          end
+          else
           if (J = nil) then
           begin
             P := THeader.Create(cdOption, RecPath, Rec);
@@ -1049,7 +1060,8 @@ begin
             Size := Size + Rec.Size;
           end;
         end;
-    end else
+    end
+    else
     if rOption and (Rec.Name <> '.') and (Rec.Name <> '..') then
       ScanFileSystem(
         IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask),

@@ -48,17 +48,17 @@ type
   // TFileFullInfoRec record ...
 
   TFileFullInfoRec = record
-    FileName: string;
-    FilePath: string;
-    FileSize: cardinal;
-    FileTime: integer;
-    FileAttr: integer;
-    FilePacked: cardinal;
-    FileRatio: cardinal;
-    FileComm: string;
-    FileCrc: cardinal;
-    FileMethod: string;
-    FileVersion: string;
+    FileName:     string;
+    FilePath:     string;
+    FileSize:     cardinal;
+    FileTime:     integer;
+    FileAttr:     integer;
+    FilePacked:   cardinal;
+    FileRatio:    cardinal;
+    FileComm:     string;
+    FileCrc:      cardinal;
+    FileMethod:   string;
+    FileVersion:  string;
     FilePassword: string;
     FilePosition: cardinal;
   end;
@@ -68,9 +68,12 @@ type
   TOnCustomEvent    = procedure of object;
   TOnMessageEvent   = procedure(const aMessage: string) of object;
   TOnListEvent      = procedure(const aFileInfo: TFileFullInfoRec) of object;
-  TOnOverWriteEvent = procedure(const aFileInfo: TFileInfoRec; var Result: char) of object;
-  TOnRenameEvent    = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
-  TOnKeyEvent       = procedure(const aFileInfo: TFileInfoRec; var Result: string) of object;
+  TOnOverWriteEvent = procedure(const aFileInfo: TFileInfoRec;
+    var Result: char) of object;
+  TOnRenameEvent = procedure(const aFileInfo: TFileInfoRec;
+    var Result: string) of object;
+  TOnKeyEvent = procedure(const aFileInfo: TFileInfoRec;
+    var Result: string) of object;
 
   // TCoreStatus ...
 

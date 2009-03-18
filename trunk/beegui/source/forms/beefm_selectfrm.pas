@@ -42,7 +42,7 @@ uses
   IniFiles,
   StdCtrls,
   Controls,
-  Sysutils,
+  SysUtils,
   ComCtrls,
   LResources;
 
@@ -50,15 +50,15 @@ type
 
   { TSelectFrm }
 
-  TSelectFrm = class (TForm)
+  TSelectFrm = class(TForm)
     MaskLabel: TLabel;
-    Mask: TEdit;
+    Mask:      TEdit;
     BtnCancel: TBitBtn;
-    BtnOk: TBitBtn;
+    BtnOk:     TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-  private    
+  private
     { Private declarations }
   public
     { Public declarations }
@@ -77,35 +77,35 @@ uses
   BeeGui_Consts,
   BeeGui_Messages,
   BeeGui_SysUtils;
-  
-  { TSelectFrm }
+
+{ TSelectFrm }
 
   {$I beegui_selectfrm_saveproperty.inc}
   {$I beegui_selectfrm_loadproperty.inc}
   {$I beegui_selectfrm_savelanguage.inc}
   {$I beegui_selectfrm_loadlanguage.inc}
 
-  procedure TSelectFrm.FormCreate(Sender: TObject);
-  begin
-    LoadLanguage;
-    LoadProperty;
-  end;
+procedure TSelectFrm.FormCreate(Sender: TObject);
+begin
+  LoadLanguage;
+  LoadProperty;
+end;
 
-  procedure TSelectFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
+procedure TSelectFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-    SaveProperty;
-  end;
+  SaveProperty;
+end;
 
-  procedure TSelectFrm.FormShow(Sender: TObject);
+procedure TSelectFrm.FormShow(Sender: TObject);
+begin
+  if Mask.CanFocus then
   begin
-    if Mask.CanFocus then
-    begin
-      Mask.SetFocus;
-    end;
+    Mask.SetFocus;
   end;
+end;
 
 initialization
 

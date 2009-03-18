@@ -50,35 +50,35 @@ type
   { TInfoFrm }
 
   TInfoFrm = class(TForm)
-    Pages: TPageControl;
-    APanel: TPanel;
-    FPanel: TPanel;
-    APage: TTabSheet;
-    FPage: TTabSheet;
+    Pages:   TPageControl;
+    APanel:  TPanel;
+    FPanel:  TPanel;
+    APage:   TTabSheet;
+    FPage:   TTabSheet;
     AArcSizeValue: TLabel;
     AArcSize: TLabel;
-    AED: TImage;
-    AFD: TImage;
-    AE: TImage;
+    AED:     TImage;
+    AFD:     TImage;
+    AE:      TImage;
     AFilesValue: TLabel;
     AFilesCryptedValue: TLabel;
     ACrypted: TLabel;
-    AFiles: TLabel;
-    AF: TImage;
-    AL: TImage;
+    AFiles:  TLabel;
+    AF:      TImage;
+    AL:      TImage;
     AModifiedValue: TLabel;
     AModified: TLabel;
     ANameValue: TLabel;
-    AName: TLabel;
+    AName:   TLabel;
     APackedValue: TLabel;
     APacked: TLabel;
-    AR: TLabel;
+    AR:      TLabel;
     ARatioValue: TLabel;
-    ARatio: TLabel;
+    ARatio:  TLabel;
     ASizeValue: TLabel;
-    ASize: TLabel;
-    AEU: TImage;
-    AFU: TImage;
+    ASize:   TLabel;
+    AEU:     TImage;
+    AFU:     TImage;
     AVersionValue: TLabel;
     AVersion: TLabel;
     Bevel01: TBevel;
@@ -89,35 +89,35 @@ type
     FAttribute: TLabel;
     FModifiedValue: TLabel;
     FModified: TLabel;
-    FED: TImage;
-    FFD: TImage;
-    FE: TImage;
-    FF: TImage;
-    FL: TImage;
+    FED:     TImage;
+    FFD:     TImage;
+    FE:      TImage;
+    FF:      TImage;
+    FL:      TImage;
     FMethodValue: TLabel;
     FMethod: TLabel;
     FNameValue: TLabel;
-    FName: TLabel;
+    FName:   TLabel;
     FPackedValue: TLabel;
     FPacked: TLabel;
     FPasswordValue: TLabel;
     FPassword: TLabel;
-    FR: TLabel;
+    FR:      TLabel;
     FRatioValue: TLabel;
-    FRatio: TLabel;
+    FRatio:  TLabel;
     FSizeValue: TLabel;
-    FSize: TLabel;
-    FEU: TImage;
-    FFU: TImage;
+    FSize:   TLabel;
+    FEU:     TImage;
+    FFU:     TImage;
     FVersionValue: TLabel;
     FVersion: TLabel;
-    BtnOk: TBitBtn;
+    BtnOk:   TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormPaint(Sender: TObject);
   private
     { private declarations }
-    procedure PaintProgressBar(EU, FU, E, L, F, FD, ED: TImage; R:TLabel);
+    procedure PaintProgressBar(EU, FU, E, L, F, FD, ED: TImage; R: TLabel);
   public
     { public declarations }
   public
@@ -130,7 +130,7 @@ type
 
 var
   PropertyFrm: TInfoFrm;
-  
+
 implementation
 
 uses
@@ -138,106 +138,124 @@ uses
   BeeGui_Messages,
   BeeFM_ConfigFrm;
 
-  procedure TInfoFrm.PaintProgressBar(EU, FU, E, L, F, FD, ED: TImage; R:TLabel);
-  var
-    S: string;
-    Percentage: integer;
+procedure TInfoFrm.PaintProgressBar(EU, FU, E, L, F, FD, ED: TImage; R: TLabel);
+var
+  S: string;
+  Percentage: integer;
+begin
+  S := R.Caption;
+  while Pos('%', S) > 0 do
   begin
-    S := R.Caption;
-    while Pos('%', S) > 0 do
+    Delete(S, Pos('%', S), 1);
+  end;
+  TryStrToInt(S, PErcentage);
+
+  EU.Transparent := True;
+  EU.Visible := False;
+  FU.Transparent := True;
+  FU.Visible := False;
+  FU.Left    := EU.Left;
+  E.Transparent := True;
+  E.Visible  := False;
+  E.Left     := EU.Left;
+  L.Transparent := True;
+  L.Visible  := False;
+  L.Left     := EU.Left;
+  F.Transparent := True;
+  F.Visible  := False;
+  F.Left     := EU.Left;
+  FD.Transparent := True;
+  FD.Visible := False;
+  FD.Left    := EU.Left;
+  ED.Transparent := True;
+  ED.Visible := False;
+  ED.Left    := EU.Left;
+
+  FU.Top := EU.Top;
+  FD.Top := ED.Top + ED.Height - FD.Height;
+
+  R.Caption := IntToStr(Percentage) + '%';
+  if Percentage > 100 then
+    Percentage := 100;
+  case Percentage of
+    0..6:
     begin
-      Delete(S, Pos('%', S), 1);
+      E.Top    := EU.Top + EU.Height;
+      E.Height := ED.Top - E.Top;
+
+      EU.Visible := True;
+      E.Visible  := True;
+      ED.Visible := True;
+
+      R.Top := ED.Top - 3;
     end;
-    TryStrToInt(S, PErcentage);
-  
-    EU.Transparent := True;  EU.Visible := False;
-    FU.Transparent := True;  FU.Visible := False;  FU.Left := EU.Left;
-    E .Transparent := True;  E .Visible := False;  E .Left := EU.Left;
-    L .Transparent := True;  L .Visible := False;  L .Left := EU.Left;
-    F .Transparent := True;  F .Visible := False;  F .Left := EU.Left;
-    FD.Transparent := True;  FD.Visible := False;  FD.Left := EU.Left;
-    ED.Transparent := True;  ED.Visible := False;  ED.Left := EU.Left;
+    7..99:
+    begin
+      case Percentage of
+        97..99: Percentage := 96;
+      end;
+      F.Height := 1 + (FD.Top - EU.Top - EU.Height - L.Height - 1) *
+        (Percentage - 7) div (96 - 7);
 
-    FU.Top := EU.Top;
-    FD.Top := ED.Top + ED.Height - FD.Height;
+      F.Top    := FD.Top - F.Height;
+      L.Top    := F.Top - L.Height;
+      E.Top    := EU.Top + EU.Height;
+      E.Height := L.Top - E.Top;
 
-    R.Caption := IntToStr(Percentage) + '%';
-    if Percentage > 100 then Percentage := 100;
-    case Percentage of
-    0..6 : begin
-             E.Top    := EU.Top + EU.Height;
-             E.Height := ED.Top - E.Top;
+      EU.Visible := True;
+      E.Visible  := True;
+      L.Visible  := True;
+      F.Visible  := True;
+      FD.Visible := True;
 
-             EU.Visible := True;
-             E .Visible := True;
-             ED.Visible := True;
+      R.Top := L.Top;
+    end;
+    100:
+    begin
+      F.Top    := FU.Top + FU.Height;
+      F.Height := FD.Top - F.Top;
 
-             R.Top := ED.Top - 3;
-           end;
-    7..99: begin
-             case Percentage of
-             97..99: Percentage := 96;
-             end;
-             F.Height := 1 + (FD.Top - EU.Top - EU.Height - L.Height-1) * (Percentage - 7) div (96 - 7);
+      FU.Visible := True;
+      F.Visible  := True;
+      FD.Visible := True;
 
-             F.Top    := FD.Top - F .Height;
-             L.Top    := F .Top - L .Height;
-             E.Top    := EU.Top + EU.Height;
-             E.Height := L .Top - E .Top;
-
-             EU.Visible := True;
-             E .Visible := True;
-             L .Visible := True;
-             F .Visible := True;
-             FD.Visible := True;
-
-             R.Top := L.Top;
-           end;
-      100: begin
-             F.Top  := FU.Top + FU.Height;
-             F.Height := FD.Top - F .Top;
-
-             FU.Visible := True;
-             F .Visible := True;
-             FD.Visible := True;
-             
-             R.Top := FU.Top;
-           end;
+      R.Top := FU.Top;
     end;
   end;
+end;
 
-  { TInfoFrm class }
-  
+{ TInfoFrm class }
+
   {$I beefm_propertyfrm_saveproperty.inc}
   {$I beefm_propertyfrm_loadproperty.inc}
   {$I beefm_propertyfrm_savelanguage.inc}
   {$I beefm_propertyfrm_loadlanguage.inc}
-  
-  procedure TInfoFrm.FormPaint(Sender: TObject);
-  begin
-    if APage.TabVisible then
-      PaintProgressBar(AEU, AFU, AE, AL, AF, AFD, AED, AR);
 
-    if FPage.TabVisible then
-      PaintProgressBar(FEU, FFU, FE, FL, FF, FFD, FED, FR);
-  end;
+procedure TInfoFrm.FormPaint(Sender: TObject);
+begin
+  if APage.TabVisible then
+    PaintProgressBar(AEU, AFU, AE, AL, AF, AFD, AED, AR);
 
-  procedure TInfoFrm.FormCreate(Sender: TObject);
-  begin
-    LoadLanguage;
-    LoadProperty;
-  end;
+  if FPage.TabVisible then
+    PaintProgressBar(FEU, FFU, FE, FL, FF, FFD, FED, FR);
+end;
 
-  procedure TInfoFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
+procedure TInfoFrm.FormCreate(Sender: TObject);
+begin
+  LoadLanguage;
+  LoadProperty;
+end;
+
+procedure TInfoFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-    SaveProperty;
-  end;
-  
+  SaveProperty;
+end;
+
 initialization
 
   {$I beefm_propertyfrm.lrs}
-  
+
 end.

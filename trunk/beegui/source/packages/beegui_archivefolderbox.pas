@@ -37,7 +37,7 @@ uses
   StdCtrls,
   Graphics,
   ExtCtrls;
-  
+
 type
 
   { TArchiveFolderBox }
@@ -45,71 +45,71 @@ type
   TArchiveFolderBox = class(TComboBox)
   private
   protected
-    procedure DrawItem(Index: Integer; ARect: TRect; State: TOwnerDrawState); override;
+    procedure DrawItem(Index: integer; ARect: TRect; State: TOwnerDrawState); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Clear; override;
   end;
 
- { Register }
+{ Register }
 
-  procedure Register;
+procedure Register;
 
 implementation
 
-  constructor TArchiveFolderBox.Create(AOwner: Tcomponent);
+constructor TArchiveFolderBox.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+end;
+
+destructor TArchiveFolderBox.Destroy;
+begin
+  Clear;
+  inherited Destroy;
+end;
+
+procedure TArchiveFolderBox.DrawItem(Index: integer; ARect: TRect;
+  State: TOwnerDrawState);
+var
+  Bitmap: TBitmap;
+  Offset: integer;
+begin
+  inherited DrawItem(Index, ARect, State);
+  if Assigned(Items.Objects[Index]) and (Items.Objects[Index].ClassType = TBitmap) then
   begin
-    inherited Create(AOwner);
-  end;
-  
-  destructor TArchiveFolderBox.Destroy;
-  begin
-    Clear;
-    inherited Destroy;
-  end;
-  
-  procedure TArchiveFolderBox.DrawItem(Index: Integer; ARect: TRect; State: TOwnerDrawState);
-  var
-    Bitmap: TBitmap;
-    Offset: Integer;
-  begin
-    inherited DrawItem(Index, ARect, State);
-    if Assigned(Items.Objects[Index]) and (Items.Objects[Index].ClassType = TBitmap) then
+    Offset := 1;
+    with Canvas do
     begin
-      Offset := 1;
-      with Canvas do
+      FillRect(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom);
+      Bitmap := TBitmap(Items.Objects[Index]);
+      if Assigned(Bitmap) then
       begin
-        FillRect(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom);
-        Bitmap := TBitmap(Items.Objects[Index]);
-        if Assigned(Bitmap) then
-        begin
-          Canvas.Draw(ARect.Left + OffSet, ARect.Top, Bitmap);
-          Offset := Bitmap.Width + 3;
-        end;
+        Canvas.Draw(ARect.Left + OffSet, ARect.Top, Bitmap);
+        Offset := Bitmap.Width + 3;
       end;
-      Canvas.TextOut(ARect.Left + OffSet, ARect.Top, Items[Index]);
     end;
+    Canvas.TextOut(ARect.Left + OffSet, ARect.Top, Items[Index]);
   end;
+end;
 
-  procedure TArchiveFolderBox.Clear;
-  var
-    I: integer;
-  begin
-    for I := Items.Count -1 downto 0 do
-      if Assigned(Items.Objects[I]) and (Items.Objects[I].ClassType = TBitmap) then
-      begin
-        TBitmap(Items.Objects[I]).FreeImage;
-      end;      
-    inherited Clear;
-  end;
-  
-  { Register }
+procedure TArchiveFolderBox.Clear;
+var
+  I: integer;
+begin
+  for I := Items.Count - 1 downto 0 do
+    if Assigned(Items.Objects[I]) and (Items.Objects[I].ClassType = TBitmap) then
+    begin
+      TBitmap(Items.Objects[I]).FreeImage;
+    end;
+  inherited Clear;
+end;
 
-  procedure Register;
-  begin
-    RegisterComponents('BeePackage', [TArchiveFolderBox]);
-  end;
-  
+{ Register }
+
+procedure Register;
+begin
+  RegisterComponents('BeePackage', [TArchiveFolderBox]);
+end;
+
 end.
-

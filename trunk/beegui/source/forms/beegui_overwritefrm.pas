@@ -50,23 +50,23 @@ type
   { TOverwriteFrm }
 
   TOverwriteFrm = class(TForm)
-    Bevel: TBevel;
-    Images: TIconList;
-    Image: TImage;
+    Bevel:     TBevel;
+    Images:    TIconList;
+    Image:     TImage;
     TheFolder: TLabel;
-    WouldYou: TLabel;
-    OldIcon: TImage;
-    OldSize: TLabel;
-    OldTime: TLabel;
-    WithFile: TLabel;
-    NewIcon: TImage;
-    NewSize: TLabel;
-    NewTime: TLabel;
-    BtnAbort: TBitBtn;
-    BtnNoAll: TBitBtn;
+    WouldYou:  TLabel;
+    OldIcon:   TImage;
+    OldSize:   TLabel;
+    OldTime:   TLabel;
+    WithFile:  TLabel;
+    NewIcon:   TImage;
+    NewSize:   TLabel;
+    NewTime:   TLabel;
+    BtnAbort:  TBitBtn;
+    BtnNoAll:  TBitBtn;
     BtnYesAll: TBitBtn;
-    BtnYes: TBitBtn;
-    BtnNo: TBitBtn;
+    BtnYes:    TBitBtn;
+    BtnNo:     TBitBtn;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
   public
@@ -96,56 +96,58 @@ uses
   BeeGui_Messages,
   BeeGui_SysUtils;
 
-  { TOverwriteFrm class }
-  
+{ TOverwriteFrm class }
+
   {$I beegui_overwritefrm_saveproperty.inc}
   {$I beegui_overwritefrm_loadproperty.inc}
   {$I beegui_overwritefrm_savelanguage.inc}
   {$I beegui_overwritefrm_loadlanguage.inc}
 
-  procedure TOverwriteFrm.FormCreate(Sender: TObject);
-  begin
-    Images.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
-    // --- //
-    LoadLanguage;
-    LoadProperty;
-  end;
+procedure TOverwriteFrm.FormCreate(Sender: TObject);
+begin
+  Images.IconFolder := ExtractFilePath(ParamStr(0)) + 'largeicons';
+  // --- //
+  LoadLanguage;
+  LoadProperty;
+end;
 
-  procedure TOverwriteFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-  begin
+procedure TOverwriteFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
     {$IFDEF SAVELANGUAGE}
-    SaveLanguage;
+  SaveLanguage;
     {$ENDIF}
-    SaveProperty;
-  end;
-  
-  procedure TOverwriteFrm.SetFileName(const FileName: string);
-  begin
-    TheFolder.Caption := Format(TheFolder.Caption, [FileName]);
-    Images.GetBitmap(Images.FileIcon(FileName, 0), OldIcon.Picture.Bitmap);
-    Images.GetBitmap(Images.FileIcon(FileName, 0), NewIcon.Picture.Bitmap);
-  end;
-  
-  procedure TOverwriteFrm.SetOldFileTime(FileTime: integer);
-  begin
-    OldTime.Caption := Format(OldTime.Caption, [DateTimeToStr(FileDateToDateTime(FileTime))]);
-  end;
-  
-  procedure TOverwriteFrm.SetOldFileSize(FileSize: integer);
-  begin
-    OldSize.Caption := Format(OldSize.Caption, [SizeToStr(FileSize)]);
-  end;
-  
-  procedure TOverwriteFrm.SetNewFileTime(FileTime: integer);
-  begin
-    NewTime.Caption := Format(NewTime.Caption, [DateTimeToStr(FileDateToDateTime(FileTime))]);
-  end;
+  SaveProperty;
+end;
 
-  procedure TOverwriteFrm.SetNewFileSize(FileSize: integer);
-  begin
-    NewSize.Caption := Format(NewSize.Caption, [SizeToStr(FileSize)]);
-  end;
-    
+procedure TOverwriteFrm.SetFileName(const FileName: string);
+begin
+  TheFolder.Caption := Format(TheFolder.Caption, [FileName]);
+  Images.GetBitmap(Images.FileIcon(FileName, 0), OldIcon.Picture.Bitmap);
+  Images.GetBitmap(Images.FileIcon(FileName, 0), NewIcon.Picture.Bitmap);
+end;
+
+procedure TOverwriteFrm.SetOldFileTime(FileTime: integer);
+begin
+  OldTime.Caption := Format(OldTime.Caption,
+    [DateTimeToStr(FileDateToDateTime(FileTime))]);
+end;
+
+procedure TOverwriteFrm.SetOldFileSize(FileSize: integer);
+begin
+  OldSize.Caption := Format(OldSize.Caption, [SizeToStr(FileSize)]);
+end;
+
+procedure TOverwriteFrm.SetNewFileTime(FileTime: integer);
+begin
+  NewTime.Caption := Format(NewTime.Caption,
+    [DateTimeToStr(FileDateToDateTime(FileTime))]);
+end;
+
+procedure TOverwriteFrm.SetNewFileSize(FileSize: integer);
+begin
+  NewSize.Caption := Format(NewSize.Caption, [SizeToStr(FileSize)]);
+end;
+
 initialization
 
   {$I beegui_overwritefrm.lrs}

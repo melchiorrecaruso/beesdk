@@ -41,13 +41,9 @@ program Bee;
 
 {$I compiler.inc}
 
-uses
-  {$IFDEF FPC}
-  {$IFDEF UNIX}
+uses {$IFDEF FPC} {$IFDEF UNIX}
   cThreads,
-  cMem,
-  {$ENDIF}
-  {$ENDIF}
+  cMem, {$ENDIF} {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -61,19 +57,19 @@ type
 
   TConsole = class
   private
-    FApp: TApp;
-    FKey: string;
+    FApp:    TApp;
+    FKey:    string;
     FParams: TStringList;
   private
     procedure ProcessFatalError(const aMessage: string);
-    procedure ProcessError     (const aMessage: string);
-    procedure ProcessWarning   (const aMessage: string);
-    procedure ProcessMessage   (const aMessage: string);
-    procedure ProcessOverwrite (const aFileInfo: TFileInfoRec; var Result: char);
-    procedure ProcessRename    (const aFileInfo: TFileInfoRec; var Result: string);
-    procedure ProcessList      (const aFileInfo: TFileFullInfoRec);
-    procedure ProcessKey       (const aFileInfo: TFileInfoRec; var Result: string);
-    procedure ProcessRequest   (const aMessage: string);
+    procedure ProcessError(const aMessage: string);
+    procedure ProcessWarning(const aMessage: string);
+    procedure ProcessMessage(const aMessage: string);
+    procedure ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
+    procedure ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
+    procedure ProcessList(const aFileInfo: TFileFullInfoRec);
+    procedure ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
+    procedure ProcessRequest(const aMessage: string);
     procedure ProcessTick;
     procedure ProcessClear;
   public
@@ -82,143 +78,143 @@ type
     procedure Execute;
   end;
 
-/// implementation ///
+  /// implementation ///
 
-// TConsole
+  // TConsole
 
-constructor TConsole.Create;
+  constructor TConsole.Create;
   var
     I: integer;
-begin
-  inherited Create;
-  FKey := '';
-  FParams := TStringList.Create;
-  for I := 1 to ParamCount do
   begin
-    FParams.Add(ParamStr(I));
-  end;
-  FApp := TBeeApp.Create(FParams);
-  FApp.OnFatalError := ProcessFatalError;
-  FApp.OnError      := ProcessError;
-  FApp.OnWarning    := ProcessWarning;
-  FApp.OnMessage    := ProcessMessage;
-  FApp.OnOverwrite  := ProcessOverwrite;
-  FApp.OnRename     := ProcessRename;
-  FApp.OnList       := ProcessList;
-  FApp.OnKey        := ProcessKey;
-  FApp.OnRequest    := ProcessRequest;
-  FApp.OnTick       := ProcessTick;
-  FApp.OnClear      := ProcessClear;
-end;
-
-destructor TConsole.Destroy;
-begin
-  FKey := '';
-  FApp.Destroy;
-  FParams.Destroy;
-  inherited Destroy;
-end;
-
-procedure TConsole.Execute;
-begin
-  FApp.Execute;
-  ExitCode := FApp.ExitCode;
-end;
-
-procedure TConsole.ProcessFatalError(const aMessage: string);
-begin
-  Writeln(ParamToOem(aMessage));
-end;
-
-procedure TConsole.ProcessError(const aMessage: string);
-begin
-  Writeln(ParamToOem(aMessage));
-end;
-
-procedure TConsole.ProcessWarning(const aMessage: string);
-begin
-  Writeln(ParamToOem(aMessage));
-end;
-
-procedure TConsole.ProcessMessage(const aMessage: string);
-begin
-  Writeln(ParamToOem(aMessage));
-end;
-
-procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
-begin
-  with aFileInfo do
-  begin
-    Writeln('Warning: file "' + ParamToOem(FilePath + FileName) + '" already exists.');
-    Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
-  end;
-  // not convert oem to param
-  Readln(Result);
-end;
-
-procedure TConsole.ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
-begin
-  with aFileInfo do
-  begin
-    Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
-  end;
-  Readln(Result);
-  // convert oem to param
-  Result := OemToParam(Result);
-end;
-
-procedure TConsole.ProcessList(const aFileInfo: TFileFullInfoRec);
-begin
-  with aFileInfo do
-  begin
-    if Length({FilePath +} FileName) <= 15 then
+    inherited Create;
+    FKey    := '';
+    FParams := TStringList.Create;
+    for I := 1 to ParamCount do
     begin
-      Writeln(ParamToOem(
-        Format('%-15s', [{FilePath +} FileName]) +
-        Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
-        [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-        FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
-    end else
+      FParams.Add(ParamStr(I));
+    end;
+    FApp := TBeeApp.Create(FParams);
+    FApp.OnFatalError := ProcessFatalError;
+    FApp.OnError := ProcessError;
+    FApp.OnWarning := ProcessWarning;
+    FApp.OnMessage := ProcessMessage;
+    FApp.OnOverwrite := ProcessOverwrite;
+    FApp.OnRename := ProcessRename;
+    FApp.OnList := ProcessList;
+    FApp.OnKey := ProcessKey;
+    FApp.OnRequest := ProcessRequest;
+    FApp.OnTick := ProcessTick;
+    FApp.OnClear := ProcessClear;
+  end;
+
+  destructor TConsole.Destroy;
+  begin
+    FKey := '';
+    FApp.Destroy;
+    FParams.Destroy;
+    inherited Destroy;
+  end;
+
+  procedure TConsole.Execute;
+  begin
+    FApp.Execute;
+    ExitCode := FApp.ExitCode;
+  end;
+
+  procedure TConsole.ProcessFatalError(const aMessage: string);
+  begin
+    Writeln(ParamToOem(aMessage));
+  end;
+
+  procedure TConsole.ProcessError(const aMessage: string);
+  begin
+    Writeln(ParamToOem(aMessage));
+  end;
+
+  procedure TConsole.ProcessWarning(const aMessage: string);
+  begin
+    Writeln(ParamToOem(aMessage));
+  end;
+
+  procedure TConsole.ProcessMessage(const aMessage: string);
+  begin
+    Writeln(ParamToOem(aMessage));
+  end;
+
+  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
+  begin
+    with aFileInfo do
     begin
-      Writeln(ParamToOem({FilePath +} FileName));
-      Writeln(ParamToOem(StringOfChar(' ', 15) +
-        Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
-        [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-        FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+      Writeln('Warning: file "' + ParamToOem(FilePath + FileName) + '" already exists.');
+      Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
+    end;
+    // not convert oem to param
+    Readln(Result);
+  end;
+
+  procedure TConsole.ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
+  begin
+    with aFileInfo do
+    begin
+      Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
+    end;
+    Readln(Result);
+    // convert oem to param
+    Result := OemToParam(Result);
+  end;
+
+  procedure TConsole.ProcessList(const aFileInfo: TFileFullInfoRec);
+  begin
+    with aFileInfo do
+    begin
+      if Length({FilePath +} FileName) <= 15 then
+      begin
+        Writeln(ParamToOem(Format('%-15s', [{FilePath +} FileName]) +
+          Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
+          [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+          FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+      end
+      else
+      begin
+        Writeln(ParamToOem({FilePath +} FileName));
+        Writeln(ParamToOem(StringOfChar(' ', 15) +
+          Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
+          [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+          FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+      end;
     end;
   end;
-end;
 
-procedure TConsole.ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
-begin
-  if Length(FKey) = 0 then
+  procedure TConsole.ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
   begin
-    Write('Insert a key (min length 4 char): ');
-    Readln(FKey);
-    // convert oem to param
-    FKey := OemToParam(FKey);
+    if Length(FKey) = 0 then
+    begin
+      Write('Insert a key (min length 4 char): ');
+      Readln(FKey);
+      // convert oem to param
+      FKey := OemToParam(FKey);
+    end;
+    Result := FKey;
   end;
-  Result := FKey;
-end;
 
-procedure Tconsole.ProcessRequest(const aMessage: string);
-begin
-  Writeln(ParamToOem(aMessage));
-end;
+  procedure Tconsole.ProcessRequest(const aMessage: string);
+  begin
+    Writeln(ParamToOem(aMessage));
+  end;
 
-procedure TConsole.ProcessTick;
-begin
-  // not convert oem to param
-  Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
+  procedure TConsole.ProcessTick;
+  begin
+    // not convert oem to param
+    Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
       Format('%5d KB/s %3d%%', [FApp.Speed shr 10, FApp.Percentes]));
-end;
+  end;
 
-procedure TConsole.ProcessClear;
-begin
-  Write(#13, #13: 80);
-end;
+  procedure TConsole.ProcessClear;
+  begin
+    Write(#13, #13: 80);
+  end;
 
-/// main block ///
+  /// main block ///
 
 var
   Console: TConsole;

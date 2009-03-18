@@ -45,59 +45,114 @@ uses
 type
 
   { TIconImageList }
-  
+
   TIconList = class(TImageList)
   private
     FIconFolder: string;
     FExtentions: TStringList;
-    FTypes: TStringList;
+    FTypes:      TStringList;
     procedure SetIconFolder(Value: string);
     function GetSysFileIcon(const FileName: string; FileAttr: integer): integer;
     function GetFileIcon(const FileName: string; FileAttr: integer): integer;
   public
     function FileIcon(const FileName: string; FileAttr: integer): integer;
-    function FileType(const  FileName: string; FileAttr: integer): string;
+    function FileType(const FileName: string; FileAttr: integer): string;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure ClearAll;
   published
-    property IconFolder: string read FIconFolder write SetIconFolder;
+    property IconFolder: string Read FIconFolder Write SetIconFolder;
   end;
-  
-  { Register }
-  
-  procedure Register;
+
+{ Register }
+
+procedure Register;
 
 implementation
 
 uses
   Bee_Common;
-  
-  constructor TIconList.Create(AOwner: TComponent);
+
+constructor TIconList.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FExtentions := TStringList.Create;
+  FTypes      := TStringList.Create;
+  FIconFolder := '';
+end;
+
+destructor TIconList.Destroy;
+begin
+  FTypes.Free;
+  FExtentions.Free;
+  inherited Destroy;
+end;
+
+procedure TIconList.ClearAll;
+begin
+  FExtentions.Clear;
+  FTypes.Clear;
+  Clear;
+end;
+
+function TIconList.FileIcon(const FileName: string; FileAttr: integer): integer;
+var
+  FileExt: string;
+begin
+  FileExt := ExtractFileExt(FileName);
+  while Pos('.', FileExt) = 1 do
   begin
-    inherited Create(AOwner);
-    FExtentions := TStringList.Create;
-    FTypes := TStringList.Create;
-    FIconFolder := '';
+    System.Delete(FileExt, 1, 1);
   end;
 
-  destructor TIconList.Destroy;
+  Result := FExtentions.IndexOf(FileExt);
+  if Result = -1 then
   begin
-    FTypes.Free;
-    FExtentions.Free;
-    inherited Destroy;
+    { TODO -oTIconList -cDebug : Disabilitare test per local icons }
+    // Result := GetSysFileIcon(FileName, FileAttr);
+    if Result = -1 then
+    begin
+      Result := GetFileIcon(FileName, FileAttr);
+      if Result = -1 then
+      begin
+        Result := FExtentions.IndexOf('@unknow');
+        if Result = -1 then
+          Result := GetFileIcon('.@unknow', FileAttr);
+      end;
+    end;
   end;
-  
-  procedure TIconList.ClearAll;
+end;
+
+function TIconList.FileType(const FileName: string; FileAttr: integer): string;
+var
+  I: integer;
+begin
+  I := FileIcon(FileName, FileAttr);
+  if I > -1 then
+    Result := FTypes.Strings[I]
+  else
+    Result := '';
+end;
+
+procedure TIconList.SetIconFolder(Value: string);
+begin
+  if DirectoryExists(Value) then
   begin
-    FExtentions.Clear;
-    FTypes.Clear;
-    Clear;
+    ClearAll;
+    FIconFolder := IncludeTrailingBackSlash(Value);
   end;
-  
-  function TIconList.FileIcon(const FileName: string; FileAttr: integer): integer;
-  var
-    FileExt: string;
+end;
+
+function TIconList.GetFileIcon(const FileName: string; FileAttr: integer): integer;
+var
+  Bmp:     TBitmap;
+  Picture: TPicture;
+  Error:   integer;
+  FileExt: string;
+  Rec:     TSearchRec;
+begin
+  Result := -1;
+  if FIconFolder <> '' then
   begin
     FileExt := ExtractFileExt(FileName);
     while Pos('.', FileExt) = 1 do
@@ -105,149 +160,96 @@ uses
       System.Delete(FileExt, 1, 1);
     end;
 
-    Result := FExtentions.IndexOf(FileExt);
-    if Result = -1 then
+    Error := FindFirst(FIconFolder + FileExt + '.bmp', faAnyFile, Rec);
+    if (Error = 0) and ((Rec.Attr and faDirectory) = 0) then
     begin
-      { TODO -oTIconList -cDebug : Disabilitare test per local icons }
-      // Result := GetSysFileIcon(FileName, FileAttr);
-      if Result = -1 then
-      begin
-        Result := GetFileIcon(FileName, FileAttr);
-        if Result = -1 then
-        begin
-          Result := FExtentions.IndexOf('@unknow');
-          if Result = -1 then
-            Result := GetFileIcon('.@unknow', FileAttr);
-        end;
-      end;
-    end;
-  end;
-  
-  function TIconList.FileType(const FileName: string; FileAttr: integer): string;
-  var
-    I: integer;
-  begin
-    I := FileIcon(FileName, FileAttr);
-    if I > -1 then
-      Result := FTypes.Strings[I]
-    else
-      Result := '';
-  end;
-  
-  procedure TIconList.SetIconFolder(Value: string);
-  begin
-    if DirectoryExists(Value) then
-    begin
-      ClearAll;
-      FIconFolder := IncludeTrailingBackSlash(Value);
-    end;
-  end;
-
-  function TIconList.GetFileIcon(const FileName: string; FileAttr: integer): integer;
-  var
-    Bmp: TBitmap;
-    Picture: TPicture;
-    Error: integer;
-    FileExt: string;
-    Rec: TSearchRec;
-  begin
-    Result := -1;
-    if FIconFolder <> '' then
-    begin
-      FileExt := ExtractFileExt(FileName);
-      while Pos('.', FileExt) = 1 do
-      begin
-        System.Delete(FileExt, 1, 1);
-      end;
-
-      Error := FindFirst(FIconFolder + FileExt + '.bmp', faAnyFile, Rec);
-      if (Error = 0) and ((Rec.Attr and faDirectory) = 0) then
-      begin
-        Bmp := nil;
-        Picture := TPicture.Create;
-        try
-          Picture.LoadFromFile(FIconFolder + Rec.Name);
-
-          Bmp := TBitmap.Create;
-          Bmp.Assign(Picture.Graphic);
-        finally
-          Picture.Free;
-        end;
-
-        if Assigned(Bmp) then
-        begin
-          Result := Add(Bmp, nil);
-          FreeAndNil(Bmp);
-        end;
-
-        FExtentions.Add(FileExt);
-        if (Pos('@', FileExt) = 0) then
-          FTypes.Add('File .' + FileExt)
-        else
-          FTypes.Add('');
-      end;
-      FindClose(Rec);
-    end;
-  end;
-
-  function TIconList.GetSysFileIcon(const FileName: string; FileAttr: integer): integer;
-  {$IFDEF MSWINDOWS}
-  var
-    I: cardinal;
-    Bmp: TBitmap;
-    IconInfo: TIconInfo;
-    FI : TSHFileInfo;
-    FileExt: string;
-  {$ENDIF}
-  begin
-    Result := -1;
-    {$IFDEF MSWINDOWS}
-    case Height of
-      16: I := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_TYPENAME or SHGFI_USEFILEATTRIBUTES;
-      32: I := SHGFI_ICON or SHGFI_LARGEICON or SHGFI_TYPENAME or SHGFI_USEFILEATTRIBUTES;
-    else  I := 0;
-    end;
-    
-    if CompareFileName('.@folderopen', FileName) = 0 then
-    begin
-      I := I or SHGFI_OPENICON;
-    end;
-    
-    if SHGetFileInfo(PChar(FileName), FileAttr, FI, SizeOf(FI), I) <> 0 then
-    begin
-      Bmp := TBitmap.Create;
+      Bmp     := nil;
+      Picture := TPicture.Create;
       try
-        if (FI.hIcon <> 0) and GetIconInfo(FI.hIcon, IconInfo) then
-        begin
-          Bmp.SetHandles(IconInfo.hbmColor, IconInfo.hbmMask);
-          Bmp.Transparent := True;
-        end;
-        Result := Add(Bmp, nil);
+        Picture.LoadFromFile(FIconFolder + Rec.Name);
+
+        Bmp := TBitmap.Create;
+        Bmp.Assign(Picture.Graphic);
       finally
-        Bmp.Free;
+        Picture.Free;
       end;
 
-      FileExt := ExtractFileExt(FileName);
-      while Pos('.', FileExt) = 1 do
+      if Assigned(Bmp) then
       begin
-        System.Delete(FileExt, 1, 1);
+        Result := Add(Bmp, nil);
+        FreeAndNil(Bmp);
       end;
+
       FExtentions.Add(FileExt);
-      FTypes.Add(FI.szTypeName);
+      if (Pos('@', FileExt) = 0) then
+        FTypes.Add('File .' + FileExt)
+      else
+        FTypes.Add('');
     end;
-    {$ENDIF}
+    FindClose(Rec);
+  end;
+end;
+
+function TIconList.GetSysFileIcon(const FileName: string; FileAttr: integer): integer;
+  {$IFDEF MSWINDOWS}
+var
+  I:   cardinal;
+  Bmp: TBitmap;
+  IconInfo: TIconInfo;
+  FI:  TSHFileInfo;
+  FileExt: string;
+  {$ENDIF}
+begin
+  Result := -1;
+    {$IFDEF MSWINDOWS}
+  case Height of
+    16: I := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_TYPENAME or
+        SHGFI_USEFILEATTRIBUTES;
+    32: I := SHGFI_ICON or SHGFI_LARGEICON or SHGFI_TYPENAME or
+        SHGFI_USEFILEATTRIBUTES;
+    else
+      I := 0;
   end;
 
-  { Register }
-
-  procedure Register;
+  if CompareFileName('.@folderopen', FileName) = 0 then
   begin
-    RegisterComponents('BeePackage', [TIconList]);
+    I := I or SHGFI_OPENICON;
   end;
-  
+
+  if SHGetFileInfo(PChar(FileName), FileAttr, FI, SizeOf(FI), I) <> 0 then
+  begin
+    Bmp := TBitmap.Create;
+    try
+      if (FI.hIcon <> 0) and GetIconInfo(FI.hIcon, IconInfo) then
+      begin
+        Bmp.SetHandles(IconInfo.hbmColor, IconInfo.hbmMask);
+        Bmp.Transparent := True;
+      end;
+      Result := Add(Bmp, nil);
+    finally
+      Bmp.Free;
+    end;
+
+    FileExt := ExtractFileExt(FileName);
+    while Pos('.', FileExt) = 1 do
+    begin
+      System.Delete(FileExt, 1, 1);
+    end;
+    FExtentions.Add(FileExt);
+    FTypes.Add(FI.szTypeName);
+  end;
+    {$ENDIF}
+end;
+
+{ Register }
+
+procedure Register;
+begin
+  RegisterComponents('BeePackage', [TIconList]);
+end;
+
 initialization
 
   {$I beegui_iconlist.lrs}
 
 end.
-

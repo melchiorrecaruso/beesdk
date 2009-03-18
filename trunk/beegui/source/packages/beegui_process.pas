@@ -51,7 +51,7 @@ type
   private
     FFileName: string;
     FFileTime: integer;
-    FProcess: TProcess;
+    FProcess:  TProcess;
     FFileIsModified: boolean;
   private
     function GetFileExec: string;
@@ -61,130 +61,133 @@ type
     constructor Create(Sender: TComponent); override;
     destructor Destroy; override;
   public
-    property FileName: string read FFileName;
-    property FileIsModified: boolean read FFileIsModified;
+    property FileName: string Read FFileName;
+    property FileIsModified: boolean Read FFileIsModified;
   end;
 
-  { Register }
+{ Register }
 
-  procedure Register;
+procedure Register;
 
 implementation
 
 uses
   Bee_Common;
 
-  { TFileProcess class }
-  
-  constructor TFileProcess.Create(Sender: TComponent);
+{ TFileProcess class }
+
+constructor TFileProcess.Create(Sender: TComponent);
+begin
+  inherited Create(Sender);
+  FFileName := '';
+  FProcess  := nil;
+  FFileIsModified := False;
+end;
+
+procedure TFileProcess.Execute(const AFileExec, AFileName: string);
+var
+  FFileExec: string;
+begin
+  FFileName := AFileName;
+  FFileTime := FileAge(FFileName);
+  FFileIsModified := False;
+
+  if AFileExec = '' then
+    FFileExec := GetFileExec
+  else
+    FFileExec := AFileExec;
+
+  if FFileExec <> '' then
   begin
-    inherited Create(Sender);
-    FFileName := '';
-    FProcess := nil;
-    FFileIsModified := False;
+    FProcess := TProcess.Create(nil);
+    FProcess.CommandLine := FFileExec + ' "' + FFileName + '"';
+    FProcess.CurrentDirectory := '';
+    FProcess.StartupOptions := [];
+    FProcess.Options := [];
+    FProcess.Execute;
+    Enabled := True;
   end;
-  
-  procedure TFileProcess.Execute(const AFileExec, AFileName: string);
-  var
-    FFileExec: string;
+end;
+
+procedure TFileProcess.DoOnTimer;
+begin
+  if Assigned(FProcess) then
   begin
-    FFileName := AFileName;
-    FFileTime := FileAge(FFileName);
-    FFileIsModified := False;
-
-    if AFileExec = '' then
-      FFileExec := GetFileExec
-    else
-      FFileExec := AFileExec;
-
-    if FFileExec <> '' then
+    if (FProcess.Running = False) then
     begin
-      FProcess := TProcess.Create(nil);
-      FProcess.CommandLine := FFileExec + ' "' + FFileName  + '"';
-      FProcess.CurrentDirectory := '';
-      FProcess.StartupOptions := [];
-      FProcess.Options := [];
-      FProcess.Execute;
-      Enabled := True;
-    end;
-  end;
-
-  procedure TFileProcess.DoOnTimer;
-  begin
-    if Assigned(FProcess) then
-    begin
-      if (FProcess.Running = False) then
+      if FProcess.ExitStatus < 2 then
       begin
-        if FProcess.ExitStatus < 2 then
-        begin
-          FFileIsModified :=  FileAge(FFileName) > FFileTime;
-        end;
-        FreeAndNil(FProcess);
-        Enabled := False;
+        FFileIsModified := FileAge(FFileName) > FFileTime;
       end;
-    end else
+      FreeAndNil(FProcess);
       Enabled := False;
-    inherited DoOnTimer;
-  end;
+    end;
+  end
+  else
+    Enabled := False;
+  inherited DoOnTimer;
+end;
 
-  destructor TFileProcess.Destroy;
-  begin
-    FFileName := '';
-    inherited Destroy;
-  end;
-  
-  function TFileProcess.GetFileExec: string;
-  var
+destructor TFileProcess.Destroy;
+begin
+  FFileName := '';
+  inherited Destroy;
+end;
+
+function TFileProcess.GetFileExec: string;
+var
     {$IFDEF MSWINDOWS}
-    P: PChar;
-    Res: integer;
-    Buffer: array[0..MAX_PATH] of char;
+  P:      PChar;
+  Res:    integer;
+  Buffer: array[0..MAX_PATH] of char;
     {$ENDIF}
-    OpenDialog: TOpenDialog;
-  begin
-    Result := '';
+  OpenDialog: TOpenDialog;
+begin
+  Result := '';
     {$IFDEF MSWINDOWS}
-    FillChar(Buffer, SizeOf(Buffer), #0);
-    Res := FindExecutable(PChar(FFileName), nil, Buffer);
-    if Res > 32 then
+  FillChar(Buffer, SizeOf(Buffer), #0);
+  Res := FindExecutable(PChar(FFileName), nil, Buffer);
+  if Res > 32 then
+  begin
+    P := Buffer;
+    while PWord(P)^ <> 0 do
     begin
-      P := Buffer;
-      while PWord(P)^ <> 0 do
+      if P^ = #0 then
+        P^ := #32;
+      Inc(P);
+    end;
+    Result := Buffer;
+  end;
+    {$ENDIF}
+  if FileExists(Result) = False then
+  begin
+    OpenDialog := TOpenDialog.Create(nil);
+    try
+      OpenDialog.Title   := 'Open file with';
+      OpenDialog.Options := [ofPathMustExist, ofFileMustExist];
+      if OpenDialog.Execute then
       begin
-        if P^ = #0 then P^ := #32;
-        Inc(P);
-      end;
-      Result := Buffer;
-    end;
-    {$ENDIF}
-    if FileExists(Result) = False then
-    begin
-      OpenDialog := TOpenDialog.Create(nil);
-      try
-        OpenDialog.Title := 'Open file with';
-        OpenDialog.Options := [ofPathMustExist, ofFileMustExist];
-        if OpenDialog.Execute then
-        begin
-          Result := OpenDialog.FileName;
-          if DirectoryExists(Result) then Result := '';
-        end else
+        Result := OpenDialog.FileName;
+        if DirectoryExists(Result) then
           Result := '';
-      finally
-        OpenDialog.Free;
-      end;
+      end
+      else
+        Result := '';
+    finally
+      OpenDialog.Free;
     end;
   end;
+end;
 
-  { Register }
+{ Register }
 
-  procedure Register;
-  begin
-    RegisterComponents('BeePackage', [TFileProcess]);
-  end;
+procedure Register;
+begin
+  RegisterComponents('BeePackage', [TFileProcess]);
+end;
 
 initialization
 
   {$I beegui_process.lrs }
 
 end.
-

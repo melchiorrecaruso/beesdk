@@ -98,9 +98,9 @@ type
     SafeCounter,                        // Safe heap size
     Counter: cardinal;                  // Current heap size
 
-    Heap: array of TNode;
-    Cuts: array of PNode;
-    List: array of PNode;
+    Heap:      array of TNode;
+    Cuts:      array of PNode;
+    List:      array of PNode;
     ListCount: cardinal;
 
     Root: PNode;
@@ -163,10 +163,13 @@ begin
   begin
     aPart    := @Table.T[I];
     aPart[0] := aPart[0] + 256; // Weight of first-encoutered deterministic symbol
-    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32; // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
+    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
+    // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
     aPart[MaxSymbol + 3] := Increment * aPart[MaxSymbol + 3] shl 2;
-    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8; // Zero-valued parameter allowed...
-    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5])); // Lowest value of interval 
+    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8;
+    // Zero-valued parameter allowed...
+    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));
+    // Lowest value of interval 
   end;
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
@@ -190,12 +193,12 @@ end;
 procedure TBaseCoder.FreshFlexible;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.FreshFlexible'); {$ENDIF}
-  Tear            := nil;
+  Tear := nil;
   CurrentFreeNode := @Heap[0];
-  LastFreeNode    := @Heap[MaxCounter];
-  Counter   := 0;
+  LastFreeNode := @Heap[MaxCounter];
+  Counter := 0;
   ListCount := 0;
-  Pos       := 0;
+  Pos := 0;
 
   Inc(Counter);
   Root := CurrentFreeNode;
@@ -218,7 +221,8 @@ begin
   begin
     ListCount := 1;
     List[0]   := Root;
-  end else
+  end
+  else
     ListCount := 0;
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
@@ -254,16 +258,17 @@ begin
       Link := Result.Up;
     end;
     Tear := Link;
-  end else
+  end
+  else
     Inc(CurrentFreeNode);
 
   Result.Next := Parent.Up;
   Parent.Up   := Result;
   Result.Up   := nil;
 
-  Result.A    := Parent.A + 1;
-  Result.C    := Heap[Parent.A and MaxCounter].D;
-  Result.K    := Increment;
+  Result.A := Parent.A + 1;
+  Result.C := Heap[Parent.A and MaxCounter].D;
+  Result.K := Increment;
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
 end;
 
@@ -274,7 +279,8 @@ var
   Bound: integer;
 begin
   // {$IFDEF PROFILING} ProfileStart('TBaseCoder.Cut'); {$ENDIF}
-  if Cuts = nil then SetLength(Cuts, MaxCounter + 1);
+  if Cuts = nil then
+    SetLength(Cuts, MaxCounter + 1);
 
   I := @Cuts[0];
   J := I;
@@ -292,7 +298,8 @@ begin
         begin
           J^ := P;
           Inc(J);
-        end else
+        end
+        else
         begin
           P.Up.Tear := Tear;
           Tear      := P.Up;
@@ -303,8 +310,9 @@ begin
     Inc(I);
   until (I = J) or (Bound < 0);
 
-  if I <> J then Cut_Tail(I, J);
-  
+  if I <> J then
+    Cut_Tail(I, J);
+
   Counter   := integer(SafeCounter * 3 div 4) - Bound + 1;
   ListCount := 0;
   // {$IFDEF PROFILING} ProfileStop; {$ENDIF}
@@ -318,7 +326,7 @@ begin
   P := Tear;
   repeat
     I^.Up.Tear := P;
-    P := I^.Up;
+    P     := I^.Up;
     I^.Up := nil;
     Inc(I);
   until I = J;
@@ -342,7 +350,8 @@ begin
     if P.Up <> nil then
     begin
       P := P.Up;
-      if IncreaseIndex = 0 then IncreaseIndex := I;
+      if IncreaseIndex = 0 then
+        IncreaseIndex := I;
 
       if P.Next <> nil then
       begin
@@ -361,10 +370,10 @@ begin
         P := Stored;
         K := R div (K + Q);
         J := K * P.K * Part[MaxSymbol + 2] shr 5;
-        
+
         Dec(R, J);
         Inc(Freq[P.C], J);
-                
+
         P := P.Next;
         repeat
           J := K * P.K;
@@ -374,7 +383,8 @@ begin
 
           P := P.Next;
         until P = nil;
-      end else
+      end
+      else
       begin
         // Determined context ...
         K := P.K * Part[1] div Increment + 256;
@@ -382,7 +392,8 @@ begin
         Inc(Freq[P.C], R - K);
         R := K;
       end;
-    end else
+    end
+    else
     if P.A > LowestPos then
     begin
       // Determined context, encountered at first time ...
@@ -419,7 +430,8 @@ begin
         begin
           CreateChild(Node);
           Break;
-        end else
+        end
+        else
         if Result.C = C then
         begin
           P.Next      := Result.Next;
@@ -441,7 +453,8 @@ begin
   ClearCardinal(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
 
-  if ListCount > 0 then Account;
+  if ListCount > 0 then
+    Account;
 
   // Update aSymbol...
   AddCardinal(Freq[0], MaxSymbol + 1, R shr BitChain + 1);
@@ -499,7 +512,8 @@ begin
   Inc(Result, Symbol);
 
   // Reduce tree...
-  if SafeCounter < Counter then Cut;
+  if SafeCounter < Counter then
+    Cut;
 
   // Update NodeList...
   if ListCount > Table.Level then
