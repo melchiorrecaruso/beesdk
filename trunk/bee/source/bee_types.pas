@@ -25,7 +25,7 @@
   v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso;
 }
 
-unit Bee_Interface_Base;
+unit Bee_Types;
 
 {$I compiler.inc}
 

@@ -52,9 +52,9 @@ uses
   Classes,
   // ---
   Bee_App,
+  Bee_Types,
   Bee_Common,
-  Bee_Interface,
-  Bee_Interface_Base;
+  Bee_Interface;
 
 type
   // TConsole class

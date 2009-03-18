@@ -46,9 +46,8 @@ uses
   ExtCtrls,
   LResources,
   // ---
-  Bee_App,
+  Bee_Types,
   Bee_Common,
-  Bee_Interface,
   // ---
   BeeGui_RenameFrm,
   BeeGui_PasswordFrm,
@@ -122,7 +121,7 @@ type
   private
     { private declarations }
     FCommandLine: TCustomCommandLine;
-    FList: array of TFileFullInfoRec;
+    FList: TList;
     FPassword: string;
     FCoreID: pointer;
     FCanClose: boolean;
@@ -145,7 +144,7 @@ type
     procedure LoadLanguage;
   public
     { public declarations }
-    procedure Execute(aCommandLine: TCustomCommandLine; aList: array of TFileFullInfoRec);
+    procedure Execute(aCommandLine: TCustomCommandLine; aList: TList);
     constructor Create(AOwner: TComponent); override;
     destructor  Destroy; override;
   end;
@@ -231,9 +230,9 @@ var
     end;
   end;
 
-  procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: array of TFileFullInfoRec);
+  procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
   begin
-    FList := aList;
+    // FList := aList;
     FCommandLine := aCommandLine;
     FCoreID := CoreExecute(CoreCreate(FCommandLine.Params.Text));
    {$IFDEF MSWINDOWS}

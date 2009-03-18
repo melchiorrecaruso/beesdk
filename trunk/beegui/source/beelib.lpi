@@ -13,7 +13,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -35,8 +35,8 @@
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
-        <CursorPos X="29" Y="176"/>
-        <TopLine Value="37"/>
+        <CursorPos X="7" Y="35"/>
+        <TopLine Value="18"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="35"/>
         <Loaded Value="True"/>
@@ -181,8 +181,8 @@
         <Caret Line="48" Column="11" TopLine="31"/>
       </Position29>
       <Position30>
-        <Filename Value="..\..\bee\source\bee_interface.pas"/>
-        <Caret Line="158" Column="68" TopLine="239"/>
+        <Filename Value="beelib.dpr"/>
+        <Caret Line="176" Column="29" TopLine="129"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
