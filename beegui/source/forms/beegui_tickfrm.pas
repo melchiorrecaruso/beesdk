@@ -118,15 +118,16 @@ type
     procedure OnTimer(Sender: TObject);
     procedure OnExecuting;
     procedure OnTerminate;
+    procedure OnList;
   private
     { private declarations }
-    FCommandLine: TCustomCommandLine;
     FList:      TList;
     FPassword:  string;
     FCoreID:    pointer;
     FCanClose:  boolean;
     FSuspended: boolean;
     FProgressOnTitle: boolean;
+    FCommandLine: TCustomCommandLine;
   private
     { private declarations }
     function GetFrmCanShow: boolean;
@@ -221,24 +222,22 @@ begin
   if CanClose = False then
   begin
     I := FSuspended;
-    if not I then
-      BtnPauseRun.Click;
-    if MessageDlg(rsConfirmation, rsConfirmAbortProcess, mtConfirmation,
-      [mbYes, mbNo], '') = mrYes then
+    if I = False then BtnPauseRun.Click;
+    if MessageDlg(rsConfirmation, rsConfirmAbortProcess, mtConfirmation, [mbYes, mbNo], '') = mrYes then
     begin
       CoreTerminate(FCoreID);
-    end;
-    if not I then
       BtnPauseRun.Click;
+    end else
+      if I = False then BtnPauseRun.Click;
   end;
 end;
 
 procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
 begin
-  // FList := aList;
+  FList := aList;
   FCommandLine := aCommandLine;
-  FCoreID      := CoreExecute(CoreCreate(FCommandLine.Params.Text));
-   {$IFDEF MSWINDOWS}
+  FCoreID := CoreExecute(CoreCreate(FCommandLine.Params.Text));
+    {$IFDEF MSWINDOWS}
   BtnPriority.Enabled := True;
     {$ENDIF}
   BtnPauseRun.Enabled := True;
@@ -278,7 +277,6 @@ begin
   begin
     Notebook.Page[I].TabVisible := False;
   end;
-  ;
   Notebook.Page[Notebook.PageIndex].TabVisible := True;
 
   if Notebook.PageIndex = 0 then
@@ -391,9 +389,6 @@ begin
 end;
 
 procedure TTickFrm.OnTerminate;
-var
-  I:   cardinal;
-  Rec: TFileFullInfoRec;
 begin
   Timer.Enabled := False;
   ExitCode      := CoreGetExitCode(FCoreID);
@@ -410,15 +405,7 @@ begin
     Application.Title := Caption;
   end;
 
-  ShowMessage(IntToStr(CoreGetItemsCount(FCoreID)));
-  for I := 0 to CoreGetItemsCount(FCoreID) - 1 do
-  begin
-    Rec := CoreGetItems(FCoreID, I);
-    if Assigned(FList) then
-    begin
-
-    end;
-  end;
+  OnList;
 
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
@@ -434,6 +421,39 @@ begin
   FCoreID   := CoreDestroy(FCoreID);
   FCanClose := FCoreID = nil;
 end;
+
+procedure TTickFrm.OnList;
+var
+  I: integer;
+  Node: TArchiveItem;
+  Rec: TFileFullInfoRec;
+begin
+  if Assigned(FList) then
+  begin
+    for I := 0 to CoreGetItemsCount(FCoreID) -1 do
+    begin
+      Rec  := CoreGetItems(FCoreID, I);
+      Node := TArchiveItem.Create;
+      try
+        Node.FileName     := Rec.FileName;
+        Node.FilePath     := Rec.FilePath;
+        Node.FileSize     := Rec.FileSize;
+        Node.FilePacked   := Rec.FilePacked;
+        Node.FileRatio    := Rec.FileRatio;
+        Node.FileAttr     := Rec.FileAttr;
+        Node.FileTime     := Rec.FileTime;
+        Node.FileComm     := Rec.FileComm;
+        Node.FileCrc      := Rec.FileCrc;
+        Node.FileMethod   := Rec.FileMethod;
+        Node.FileVersion  := Rec.FileVersion;
+        Node.FilePassword := Rec.FilePassword;
+        Node.FilePosition := Rec.FilePosition;
+      finally
+        FList.Add(Node);
+      end;
+    end;
+  end;
+ end;
 
  // ------------------------------------------------------------------------ //
  //                                                                          //
@@ -627,40 +647,7 @@ end;
     // nothing to do!
   end;
 
-  procedure TTickFrm.OnList;
-  var
-    Node: TArchiveItem;
-  begin
-    if Assigned(FArchiveList) then
-    begin
-      Node := TArchiveItem.Create;
-      try
-        Node.FileName     := FInterfaces.OnList.Data.FileName;
-        Node.FilePath     := FInterfaces.OnList.Data.FilePath;
-        Node.FileSize     := FInterfaces.OnList.Data.FileSize;
-        Node.FilePacked   := FInterfaces.OnList.Data.FilePacked;
-        Node.FileRatio    := FInterfaces.OnList.Data.FileRatio;
-        Node.FileAttr     := FInterfaces.OnList.Data.FileAttr;
-        Node.FileTime     := FInterfaces.OnList.Data.FileTime;
-        Node.FileComm     := FInterfaces.OnList.Data.FileComm;
-        Node.FileCrc      := FInterfaces.OnList.Data.FileCrc;
-        Node.FileMethod   := FInterfaces.OnList.Data.FileMethod;
-        Node.FileVersion  := FInterfaces.OnList.Data.FileVersion;
-        Node.FilePassword := FInterfaces.OnList.Data.FilePassword;
-        Node.FilePosition := FInterfaces.OnList.Data.FilePosition;
-      finally
-        FArchiveList.Add(Node);
-      end;
-    end;
 
-    if FCommandLine.Log then
-    begin
-      with FInterfaces.OnList.Data do
-      begin
-        Report.Append(FilePath + FileName);
-      end;
-    end;
-  end;
   
   procedure TTickFrm.OnStart;
   begin

@@ -682,7 +682,7 @@ begin
   FCommandLine.Clear;
   FCommandLine.Command := 'L';
   FCommandLine.Log     := MMenuOptionsLogReport.Checked;
-  ;
+
   FCommandLine.ArchiveName := aArchiveName;
 
   FCommandLine.FileMasks.Add('*');
@@ -838,8 +838,7 @@ begin
     FCheckOutDir := GetApplicationCheckoutDir(cApplicationName);
     if DirectoryIsEmpty(FCheckOutDir) = False then
     begin
-      if MessageDlg(rsConfirmDeleteCheckoutDir, mtInformation,
-        [mbYes, mbNo], 0) = mrYes then
+      if MessageDlg(rsConfirmDeleteCheckoutDir, mtInformation, [mbYes, mbNo], 0) = mrYes then
         DeleteDirectory(IncludeTrailingBackSlash(FCheckoutDir));
     end;
     UpdateButtons(False);

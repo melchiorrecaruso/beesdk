@@ -261,7 +261,7 @@ procedure TArchiveList.Clear;
 var
   I: integer;
 begin
-  for I := Count - 1 downto 0 do
+  for I := 0 to Count -1 do
   begin
     TArchiveItem(Items[I]).Free;
   end;
@@ -353,9 +353,9 @@ end;
 
 destructor TCustomArchiveListView.Destroy;
 begin
-  FFiles.Free;
-  FFolders.Free;
-  FDetails.Free;
+  FFiles.Destroy;
+  FFolders.Destroy;
+  FDetails.Destroy;
   inherited Destroy;
 end;
 
