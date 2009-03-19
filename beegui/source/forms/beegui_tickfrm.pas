@@ -217,7 +217,7 @@ procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   I: boolean;
 begin
-  CanClose := GetCoreStatus(FCoreID) = csTerminated;
+  CanClose := CoreGetStatus(FCoreID) = csTerminated;
   if CanClose = False then
   begin
     I := FSuspended;
@@ -251,7 +251,7 @@ end;
 
 function TTickFrm.GetFrmCanShow: boolean;
 begin
-  Result := GetCoreRemainingTime(FCoreID) > 0;
+  Result := CoreGetRemainingTime(FCoreID) > 0;
 end;
 
 procedure TTickFrm.PopupClick(Sender: TObject);
@@ -261,16 +261,12 @@ begin
   Popup_Higher.Checked := Sender = Popup_Higher;
   Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
 
-  if GetCoreStatus(FCoreID) <> csTerminated then
+  if CoreGetStatus(FCoreID) <> csTerminated then
   begin
-    if Popup_Idle.Checked then
-      SetCorePriority(FCoreID, tpIdle);
-    if Popup_Normal.Checked then
-      SetCorePriority(FCoreID, tpNormal);
-    if Popup_Higher.Checked then
-      SetCorePriority(FCoreID, tpHigher);
-    if Popup_TimeCritical.Checked then
-      SetCorePriority(FCoreID, tpTimeCritical);
+    if Popup_Idle.Checked         then CoreSetPriority(FCoreID, tpIdle);
+    if Popup_Normal.Checked       then CoreSetPriority(FCoreID, tpNormal);
+    if Popup_Higher.Checked       then CoreSetPriority(FCoreID, tpHigher);
+    if Popup_TimeCritical.Checked then CoreSetPriority(FCoreID, tpTimeCritical);
   end;
 end;
 
@@ -323,7 +319,7 @@ var
 begin
   if FCoreID <> nil then
   begin
-    FCoreStatus := GetCoreStatus(FCoreID);
+    FCoreStatus := CoreGetStatus(FCoreID);
     case FCoreStatus of
       csTerminated: OnTerminate;
       else
@@ -339,7 +335,7 @@ var
   FProcessedSize: int64;
   FPercentes:     integer;
 begin
-  FTotalSize := GetCoreTotalSize(FCoreID);
+  FTotalSize := CoreGetTotalSize(FCoreID);
   if FTotalSize < (1024) then
   begin
     GeneralSize.Caption     := IntToStr(FTotalSize);
@@ -357,7 +353,7 @@ begin
     GeneralSizeUnit.Caption := 'MB';
   end;
 
-  FProcessedSize := GetCoreProcessedSize(FCoreID);
+  FProcessedSize := CoreGetProcessedSize(FCoreID);
   if FProcessedSize < (1024) then
   begin
     ProcessedSize.Caption     := IntToStr(FProcessedSize);
@@ -375,7 +371,7 @@ begin
     ProcessedSizeUnit.Caption := 'MB';
   end;
 
-  FPercentes := GetCorePercentes(FCoreID);
+  FPercentes := CoreGetPercentes(FCoreID);
   if not FSuspended then
     Caption := Format(rsProcessStatus, [FPercentes])
   else
@@ -387,11 +383,11 @@ begin
     Application.Title := Caption;
   end;
 
-  RemainingTime.Caption := TimeToStr(GetCoreRemainingTime(FCoreID));
-  Time.Caption := TimeToStr(GetCoreElapsedTime(FCoreID));
+  RemainingTime.Caption := TimeToStr(CoreGetRemainingTime(FCoreID));
+  Time.Caption := TimeToStr(CoreGetElapsedTime(FCoreID));
 
-  Speed.Caption := IntToStr(GetCoreSpeed(FCoreID) shr 10);
-  Msg.Caption   := GetCoreMessage(FCoreID);
+  Speed.Caption := IntToStr(CoreGetSpeed(FCoreID) shr 10);
+  Msg.Caption   := CoreGetMessage(FCoreID);
 end;
 
 procedure TTickFrm.OnTerminate;
@@ -400,7 +396,7 @@ var
   Rec: TFileFullInfoRec;
 begin
   Timer.Enabled := False;
-  ExitCode      := GetCoreExitCode(FCoreID);
+  ExitCode      := CoreGetExitCode(FCoreID);
   case ExitCode of
     0: Caption := rsProcessTerminated;
     1: Caption := rsProcessTerminated;
@@ -414,10 +410,10 @@ begin
     Application.Title := Caption;
   end;
 
-  ShowMessage(IntToStr(GetCoreItemsCount(FCoreID)));
-  for I := 0 to GetCoreItemsCount(FCoreID) - 1 do
+  ShowMessage(IntToStr(CoreGetItemsCount(FCoreID)));
+  for I := 0 to CoreGetItemsCount(FCoreID) - 1 do
   begin
-    Rec := GetCoreItems(FCoreID, I);
+    Rec := CoreGetItems(FCoreID, I);
     if Assigned(FList) then
     begin
 
@@ -427,7 +423,7 @@ begin
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
-    Report.Lines.Text := GetCoreMessages(FCoreID);
+    Report.Lines.Text := CoreGetMessages(FCoreID);
   end;
 
   if Report.Lines.Count > 0 then
@@ -447,7 +443,7 @@ end;
 
 procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
 begin
-  if GetCoreStatus(FCoreID) <> csTerminated then
+  if CoreGetStatus(FCoreID) <> csTerminated then
   begin
     FSuspended := not FSuspended;
     if FSuspended then
@@ -467,10 +463,10 @@ procedure TTickFrm.BtnPriorityClick(Sender: TObject);
 var
   X, Y: integer;
 begin
-  Popup_Idle.Checked   := GetCorePriority(FCoreID) = tpIdle;
-  Popup_Normal.Checked := GetCorePriority(FCoreID) = tpNormal;
-  Popup_Higher.Checked := GetCorePriority(FCoreID) = tpHigher;
-  Popup_TimeCritical.Checked := GetCorePriority(FCoreID) = tpTimeCritical;
+  Popup_Idle.Checked         := CoreGetPriority(FCoreID) = tpIdle;
+  Popup_Normal.Checked       := CoreGetPriority(FCoreID) = tpNormal;
+  Popup_Higher.Checked       := CoreGetPriority(FCoreID) = tpHigher;
+  Popup_TimeCritical.Checked := CoreGetPriority(FCoreID) = tpTimeCritical;
 
   X := Left + BtnPriority.Left;
   Y := Top + BtnPriority.Top + BtnPriority.Height;
