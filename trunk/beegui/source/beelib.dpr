@@ -187,6 +187,10 @@ type
     GetMem(P, SizeOf(TFileFullInfoRec));
     P^ := aFileInfo;
     FContents.Add(P);
+    with aFileInfo do
+    begin
+      FMessages.Add(FilePath + FileName);
+    end;
   end;
 
   procedure TCore.ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
