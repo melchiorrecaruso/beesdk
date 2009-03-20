@@ -240,7 +240,7 @@ type
   function CoreExecute(ID: pointer): pointer;
   begin
     Result := ID;
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       TCore(ID).Resume;
     end;
@@ -251,7 +251,7 @@ type
     I: integer;
   begin
     Result := nil;
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       TCore(ID).Free;
     end;
@@ -259,7 +259,7 @@ type
 
   procedure CoreSuspended(ID: pointer; Value: boolean);
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       TCore(ID).FApp.Suspended := Value;
     end;
@@ -267,7 +267,7 @@ type
 
   procedure CoreTerminate(ID: pointer);
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       TCore(ID).FApp.Terminated := True;
     end;
@@ -275,7 +275,7 @@ type
 
   function CoreGetExitCode(ID: pointer): integer;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FApp.ExitCode
     else
       Result := 0;
@@ -283,7 +283,7 @@ type
 
   function CoreGetStatus(ID: pointer): integer;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).Status
     else
       Result := csTerminated;
@@ -291,7 +291,7 @@ type
 
   function CoreGetMessage(ID: pointer): string;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FMessage
     else
       Result := '';
@@ -299,7 +299,7 @@ type
 
   function CoreGetMessages(ID: pointer): string;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FMessages.Text
     else
       Result := '';
@@ -307,7 +307,7 @@ type
 
   function CoreGetElapsedTime(ID: pointer): cardinal;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FApp.ElapsedTime
     else
       Result := 0;
@@ -315,7 +315,7 @@ type
 
   function CoreGetRemainingTime(ID: pointer): cardinal;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FApp.RemainingTime
     else
       Result := 0;
@@ -323,7 +323,7 @@ type
 
   function CoreGetPercentes(ID: pointer): cardinal;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FApp.Percentes
     else
       Result := 0;
@@ -331,7 +331,7 @@ type
 
   function CoreGetSpeed(ID: pointer): cardinal;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FApp.Speed
     else
       Result := 0;
@@ -339,7 +339,7 @@ type
 
   function CoreGetTotalSize(ID: pointer): int64;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FApp.TotalSize
     else
       Result := 0;
@@ -347,7 +347,7 @@ type
 
   function CoreGetProcessedSize(ID: pointer): int64;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FApp.ProcessedSize
     else
       Result := 0;
@@ -355,7 +355,7 @@ type
 
   procedure CoreSetPriority(ID: pointer; aPriority: TThreadPriority);
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       TCore(ID).Priority := aPriority;
     end;
@@ -363,7 +363,7 @@ type
 
   function CoreGetPriority(ID: pointer): TThreadPriority;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).Priority
     else
       Result := tpNormal;
@@ -371,7 +371,7 @@ type
 
   function CoreGetOverwriteFileInfo(ID: pointer): TFileInfoRec;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       Result := TFileInfoRec(TCore(ID).Data^);
     end;
@@ -379,17 +379,16 @@ type
 
   procedure CoreSetOverwriteFileInfoRes(ID: pointer; Result: char);
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       Char(TCore(ID).DataRes^) := Result;
       TCore(ID).Status := csExecuting;
     end;
-
   end;
 
   function CoreGetRenameFileInfo(ID: pointer): TFileInfoRec;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       Result := TFileInfoRec(TCore(ID).Data^);
     end;
@@ -397,7 +396,7 @@ type
 
   procedure CoreSetRenameFileInfoRes(ID: pointer; Result: string);
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       String(TCore(ID).DataRes^) := Result;
       TCore(ID).Status := csExecuting;
@@ -406,7 +405,7 @@ type
 
   function CoreGetPasswordFileInfo(ID: pointer): TFileInfoRec;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       Result := TFileInfoRec(TCore(ID).Data^);
     end;
@@ -414,7 +413,7 @@ type
 
   procedure CoreSetPasswordFileInfoRes(ID: pointer; Result: string);
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       String(TCore(ID).DataRes^) := Result;
       TCore(ID).Status := csExecuting;
@@ -424,7 +423,7 @@ type
 
   function CoreGetRequestMessage(ID: pointer): string;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       Result := TCore(ID).FMessage;
     end;
@@ -432,7 +431,7 @@ type
 
   procedure CoreSetRequestMessage(ID: pointer);
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       TCore(ID).Status := csExecuting;
     end;
@@ -440,7 +439,7 @@ type
 
   function CoreGetItemsCount(ID: pointer): cardinal;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
       Result := TCore(ID).FContents.Count
     else
       Result := 0;
@@ -448,7 +447,7 @@ type
 
   function CoreGetItems(ID: pointer; Index: cardinal): TFileFullInfoRec;
   begin
-    if Assigned(TCore(ID)) then
+    if ID <> nil then
     begin
       with TCore(ID).FContents do
       begin
