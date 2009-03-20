@@ -104,6 +104,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure FormDestroy(Sender: TObject);
     // ---
     procedure NotebookPageChanged(Sender: TObject);
     // ---
@@ -146,8 +147,6 @@ type
   public
     { public declarations }
     procedure Execute(aCommandLine: TCustomCommandLine; aList: TList);
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
   end;
 
 var
@@ -174,43 +173,37 @@ var
   {$I beegui_tickfrm_savelanguage.inc}
   {$I beegui_tickfrm_loadlanguage.inc}
 
-constructor TTickFrm.Create(AOwner: TComponent);
+procedure TTickFrm.FormCreate(Sender: TObject);
 begin
-  inherited Create(AOwner);
   FCommandLine := nil;
   FPassword  := '';
   FCoreID    := nil;
   FList      := nil;
   FCanClose  := False;
   FSuspended := False;
-    {$IFDEF UNIX}
+
+  LoadLanguage;
+  LoadProperty;
+  {$IFDEF UNIX}
   Tick.Smooth := True;
-    {$ENDIF}
+  {$ENDIF}
   FProgressOnTitle := False;
+  NotebookPageChanged(Sender);
 end;
 
-destructor TTickFrm.Destroy;
+procedure TTickFrm.FormDestroy(Sender: TObject);
 begin
   FCommandLine := nil;
   FPassword := '';
   FCoreID := nil;
   FList := nil;
-  inherited Destroy;
-end;
-
-procedure TTickFrm.FormCreate(Sender: TObject);
-begin
-  LoadLanguage;
-  LoadProperty;
-
-  NotebookPageChanged(Sender);
 end;
 
 procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-    {$IFDEF SAVELANGUAGE}
+  {$IFDEF SAVELANGUAGE}
   SaveLanguage;
-    {$ENDIF}
+  {$ENDIF}
   SaveProperty;
 end;
 
@@ -237,10 +230,13 @@ begin
   FList := aList;
   FCommandLine := aCommandLine;
   FCoreID := CoreExecute(CoreCreate(FCommandLine.Params.Text));
+
     {$IFDEF MSWINDOWS}
   BtnPriority.Enabled := True;
     {$ENDIF}
   BtnPauseRun.Enabled := True;
+
+  Timer.Enabled := True;
 end;
 
 function TTickFrm.GetFrmCanClose: boolean;
@@ -273,9 +269,9 @@ procedure TTickFrm.NotebookPageChanged(Sender: TObject);
 var
   I: integer;
 begin
-  for I := 0 to Notebook.PageCount - 1 do
+  for I := 0 to Notebook.PageCount -1 do
   begin
-    Notebook.Page[I].TabVisible := False;
+    Notebook.Page[I].TabVisible := True;
   end;
   Notebook.Page[Notebook.PageIndex].TabVisible := True;
 
@@ -320,11 +316,9 @@ begin
     FCoreStatus := CoreGetStatus(FCoreID);
     case FCoreStatus of
       csTerminated: OnTerminate;
-      else
-        OnExecuting;
+    else OnExecuting;
     end;
   end;
-  Timer.Enabled := FCoreID <> nil;
 end;
 
 procedure TTickFrm.OnExecuting;
@@ -391,13 +385,13 @@ end;
 procedure TTickFrm.OnTerminate;
 begin
   Timer.Enabled := False;
+
   ExitCode      := CoreGetExitCode(FCoreID);
   case ExitCode of
     0: Caption := rsProcessTerminated;
     1: Caption := rsProcessTerminated;
     2: Caption := rsProcessAborted;
-    else
-      Caption := rsProcessAborted;
+  else Caption := rsProcessAborted;
   end;
 
   if FProgressOnTitle then

@@ -385,9 +385,9 @@ begin
     ConfigFrm.SaveProperty;
     SaveProperty;
   end;
-    {$IFDEF SAVELANGUAGE}
+  {$IFDEF SAVELANGUAGE}
   SaveLanguage;
-    {$ENDIF}
+  {$ENDIF}
 end;
 
  // ---------------------------------------------------------------------- //
@@ -704,8 +704,8 @@ begin
     if FCommandLine.Log then
       TickFrm.ShowModal
     else
-    if TickFrm.FrmCanClose = False then
-      TickFrm.ShowModal;
+      if TickFrm.FrmCanClose = False then
+        TickFrm.ShowModal;
     FreeAndNil(TickFrm);
     DecWorkStatus;
 
@@ -754,15 +754,14 @@ begin
     begin
       Visible := not ConfigFrm.HideWithTickFrmOption.Checked;
       TickFrm.ShowModal;
-    end
-    else
-    if TickFrm.FrmCanClose = False then
-    begin
-      Visible := not ConfigFrm.HideWithTickFrmOption.Checked;
-      TickFrm.ShowModal;
-    end;
-
+    end else
+      if TickFrm.FrmCanClose = False then
+      begin
+        Visible := not ConfigFrm.HideWithTickFrmOption.Checked;
+        TickFrm.ShowModal;
+      end;
     FreeAndNil(TickFrm);
+
     if Visible = False then
     begin
       Visible := True;
