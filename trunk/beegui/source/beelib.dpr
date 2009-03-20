@@ -78,6 +78,7 @@ type
   constructor TCore.Create(const aCommandLine: string);
   begin
     inherited Create(True);
+    FreeOnTerminate := False;
 
     FKey      := '';
     FMessage  := '';
@@ -242,7 +243,8 @@ type
     Result := ID;
     if Assigned(TCore(ID)) then
     begin
-      TCore(ID).Resume;
+      // TCore(ID).Resume;
+      TCore(ID).Execute;
     end;
   end;
 
