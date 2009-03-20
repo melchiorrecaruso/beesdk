@@ -109,8 +109,8 @@ type
   begin
     FKey     := '';
     FMessage := '';
-    FMessages.Destroy;
-    FParams.Destroy;
+    FMessages.Free;
+    FParams.Free;
     with FContents do
     begin
       for I := 0 to Count -1 do
@@ -119,7 +119,7 @@ type
       end;
       Clear;
     end;
-    FContents.Destroy;
+    FContents.Free;
     inherited Destroy;
   end;
 
@@ -381,9 +381,10 @@ type
   begin
     if Assigned(TCore(ID)) then
     begin
-      char(TCore(ID).DataRes^) := Result;
+      Char(TCore(ID).DataRes^) := Result;
+      TCore(ID).Status := csExecuting;
     end;
-    TCore(ID).Status := csExecuting;
+
   end;
 
   function CoreGetRenameFileInfo(ID: pointer): TFileInfoRec;
@@ -398,9 +399,9 @@ type
   begin
     if Assigned(TCore(ID)) then
     begin
-      string(TCore(ID).DataRes^) := Result;
+      String(TCore(ID).DataRes^) := Result;
+      TCore(ID).Status := csExecuting;
     end;
-    TCore(ID).Status := csExecuting;
   end;
 
   function CoreGetPasswordFileInfo(ID: pointer): TFileInfoRec;
@@ -415,9 +416,10 @@ type
   begin
     if Assigned(TCore(ID)) then
     begin
-      string(TCore(ID).DataRes^) := Result;
+      String(TCore(ID).DataRes^) := Result;
+      TCore(ID).Status := csExecuting;
     end;
-    TCore(ID).Status := csExecuting;
+
   end;
 
   function CoreGetRequestMessage(ID: pointer): string;
@@ -432,9 +434,8 @@ type
   begin
     if Assigned(TCore(ID)) then
     begin
-
+      TCore(ID).Status := csExecuting;
     end;
-    TCore(ID).Status := csExecuting;
   end;
 
   function CoreGetItemsCount(ID: pointer): cardinal;
