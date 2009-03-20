@@ -75,10 +75,17 @@ type
   TOnKeyEvent = procedure(const aFileInfo: TFileInfoRec;
     var Result: string) of object;
 
+
+const
   // TCoreStatus ...
 
-  TCoreStatus = (csReady, csExecuting, csWaitingOverwrite,
-    csWaitingRename, csWaitingKey, csWaitingRequest, csTerminated);
+  csReady            = 0;
+  csExecuting        = 1;
+  csWaitingOverwrite = 2;
+  csWaitingRename    = 3;
+  csWaitingKey       = 4;
+  csWaitingRequest   = 5;
+  csTerminated       = 6;
 
 implementation
 
