@@ -243,8 +243,7 @@ type
     Result := ID;
     if Assigned(TCore(ID)) then
     begin
-      // TCore(ID).Resume;
-      TCore(ID).Execute;
+      TCore(ID).Resume;
     end;
   end;
 
@@ -255,7 +254,7 @@ type
     Result := nil;
     if Assigned(TCore(ID)) then
     begin
-      TCore(ID).Destroy;
+      TCore(ID).Free;
     end;
   end;
 
