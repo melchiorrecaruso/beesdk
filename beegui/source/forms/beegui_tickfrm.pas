@@ -231,9 +231,9 @@ begin
   FCommandLine := aCommandLine;
   FCoreID := CoreExecute(CoreCreate(FCommandLine.Params.Text));
 
-    {$IFDEF MSWINDOWS}
+  {$IFDEF MSWINDOWS}
   BtnPriority.Enabled := True;
-    {$ENDIF}
+  {$ENDIF}
   BtnPauseRun.Enabled := True;
 
   Timer.Enabled := True;
@@ -271,7 +271,7 @@ var
 begin
   for I := 0 to Notebook.PageCount -1 do
   begin
-    Notebook.Page[I].TabVisible := True;
+    Notebook.Page[I].TabVisible := False;
   end;
   Notebook.Page[Notebook.PageIndex].TabVisible := True;
 
@@ -311,13 +311,10 @@ procedure TTickFrm.OnTimer(Sender: TObject);
 var
   FCoreStatus: TCoreStatus;
 begin
-  if FCoreID <> nil then
-  begin
-    FCoreStatus := CoreGetStatus(FCoreID);
-    case FCoreStatus of
-      csTerminated: OnTerminate;
-    else OnExecuting;
-    end;
+  FCoreStatus := CoreGetStatus(FCoreID);
+  case FCoreStatus of
+    csTerminated: OnTerminate;
+    csExecuting:  OnExecuting;
   end;
 end;
 
@@ -386,7 +383,7 @@ procedure TTickFrm.OnTerminate;
 begin
   Timer.Enabled := False;
 
-  ExitCode      := CoreGetExitCode(FCoreID);
+  ExitCode := CoreGetExitCode(FCoreID);
   case ExitCode of
     0: Caption := rsProcessTerminated;
     1: Caption := rsProcessTerminated;
@@ -399,21 +396,21 @@ begin
     Application.Title := Caption;
   end;
 
-  OnList;
-
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
     Report.Lines.Text := CoreGetMessages(FCoreID);
   end;
+  OnList;
+
+  CoreDestroy(FCoreID);
+  FCoreID   := nil;
+  FCanClose := True;
 
   if Report.Lines.Count > 0 then
     Notebook.ActivePageComponent := ReportPage
   else
     Close;
-
-  FCoreID   := CoreDestroy(FCoreID);
-  FCanClose := FCoreID = nil;
 end;
 
 procedure TTickFrm.OnList;
