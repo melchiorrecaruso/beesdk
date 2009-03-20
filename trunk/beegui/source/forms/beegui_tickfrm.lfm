@@ -12,6 +12,7 @@ object TickFrm: TTickFrm
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   ShowInTaskBar = stAlways
   LCLVersion = '0.9.27'
   object BtnCancel: TBitBtn
@@ -536,6 +537,7 @@ object TickFrm: TTickFrm
     TabOrder = 4
   end
   object Timer: TIdleTimer
+    Enabled = False
     Interval = 250
     OnTimer = OnTimer
     left = 256
