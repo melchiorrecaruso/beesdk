@@ -315,6 +315,8 @@ begin
   case FCoreStatus of
     csTerminated: OnTerminate;
     csExecuting:  OnExecuting;
+  else
+    Report.Lines.Add(IntToStr(FCoreStatus));
   end;
 end;
 

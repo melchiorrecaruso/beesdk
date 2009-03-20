@@ -126,7 +126,6 @@ type
 
   procedure TCore.Execute;
   begin
-    inherited Execute;
     FStatus := csExecuting;
     begin
       FApp.Execute;
@@ -241,7 +240,7 @@ type
   function CoreExecute(ID: pointer): pointer;
   begin
     Result := ID;
-    if Assigned(TCore(ID)) then
+    // if Assigned(TCore(ID)) then
     begin
       TCore(ID).Resume;
     end;
