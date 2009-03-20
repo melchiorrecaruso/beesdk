@@ -271,7 +271,7 @@ var
 begin
   for I := 0 to Notebook.PageCount -1 do
   begin
-    Notebook.Page[I].TabVisible := False;
+    Notebook.Page[I].TabVisible := True;
   end;
   Notebook.Page[Notebook.PageIndex].TabVisible := True;
 
@@ -309,7 +309,7 @@ end;
 
 procedure TTickFrm.OnTimer(Sender: TObject);
 var
-  FCoreStatus: TCoreStatus;
+  FCoreStatus: integer;
 begin
   FCoreStatus := CoreGetStatus(FCoreID);
   case FCoreStatus of

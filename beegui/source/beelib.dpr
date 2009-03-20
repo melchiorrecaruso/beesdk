@@ -40,7 +40,7 @@ type
   private
     FApp:      TApp;
     FKey:      string;
-    FStatus:   TCoreStatus;
+    FStatus:   integer;
     FParams:   TStringList;
     FMessages: TStringList;
     FMessage:  string;
@@ -64,7 +64,7 @@ type
     destructor Destroy; override;
     procedure Execute; override;
   public
-    property Status: TCoreStatus Read FStatus Write FStatus;
+    property Status: integer Read FStatus Write FStatus;
     property DataRes: pointer Read FDataRes;
     property Data: pointer Read FData;
   end;
@@ -281,7 +281,7 @@ type
       Result := 0;
   end;
 
-  function CoreGetStatus(ID: pointer): TCoreStatus;
+  function CoreGetStatus(ID: pointer): integer;
   begin
     if Assigned(TCore(ID)) then
       Result := TCore(ID).Status
