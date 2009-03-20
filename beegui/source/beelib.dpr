@@ -240,7 +240,7 @@ type
   function CoreExecute(ID: pointer): pointer;
   begin
     Result := ID;
-    // if Assigned(TCore(ID)) then
+    if Assigned(TCore(ID)) then
     begin
       TCore(ID).Resume;
     end;
