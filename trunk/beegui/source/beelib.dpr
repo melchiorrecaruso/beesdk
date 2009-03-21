@@ -28,9 +28,14 @@ library BeeLib;
 {$I compiler.inc}
 
 uses
-  SysUtils,
   Classes,
-  // ---
+  SysUtils,
+  {$IFDEF UNIX}
+  cThreads,
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF}
   Bee_App,
   Bee_Types,
   Bee_Interface;

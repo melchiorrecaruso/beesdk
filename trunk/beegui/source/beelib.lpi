@@ -35,8 +35,8 @@
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
-        <CursorPos X="28" Y="246"/>
-        <TopLine Value="226"/>
+        <CursorPos X="11" Y="31"/>
+        <TopLine Value="23"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="37"/>
         <Loaded Value="True"/>
@@ -45,7 +45,7 @@
       <Unit1>
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="67" Y="1208"/>
+        <CursorPos X="8" Y="1187"/>
         <TopLine Value="1161"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="15"/>
@@ -56,7 +56,7 @@
         <Filename Value="..\..\bee\source\bee_types.pas"/>
         <UnitName Value="Bee_Types"/>
         <CursorPos X="26" Y="84"/>
-        <TopLine Value="45"/>
+        <TopLine Value="39"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
