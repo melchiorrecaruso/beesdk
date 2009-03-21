@@ -230,6 +230,7 @@ begin
   FList := aList;
   FCommandLine := aCommandLine;
   FCoreID := CoreExecute(CoreCreate(PChar(FCommandLine.Params.Text)));
+  Timer.Enabled := True;
   {$IFDEF MSWINDOWS}
   BtnPriority.Enabled := True;
   {$ENDIF}
@@ -414,8 +415,10 @@ procedure TTickFrm.OnList;
 var
   I: integer;
   Node: TArchiveItem;
-  Rec: TFileFullInfoRec;
+  Rec: PFileInfoB;
 begin
+  ShowMessage('OnList');
+
   if Assigned(FList) then
   begin
     for I := 0 to CoreGetItemsCount(FCoreID) -1 do
@@ -423,18 +426,18 @@ begin
       Rec  := CoreGetItems(FCoreID, I);
       Node := TArchiveItem.Create;
       try
-        Node.FileName     := Rec.FileName;
-        Node.FilePath     := Rec.FilePath;
+        Node.FileName     := string(Rec.FileName);
+        Node.FilePath     := string(Rec.FilePath);
         Node.FileSize     := Rec.FileSize;
         Node.FilePacked   := Rec.FilePacked;
         Node.FileRatio    := Rec.FileRatio;
         Node.FileAttr     := Rec.FileAttr;
         Node.FileTime     := Rec.FileTime;
-        Node.FileComm     := Rec.FileComm;
+        Node.FileComm     := string(Rec.FileComm);
         Node.FileCrc      := Rec.FileCrc;
-        Node.FileMethod   := Rec.FileMethod;
-        Node.FileVersion  := Rec.FileVersion;
-        Node.FilePassword := Rec.FilePassword;
+        Node.FileMethod   := string(Rec.FileMethod);
+        Node.FileVersion  := string(Rec.FileVersion);
+        Node.FilePassword := string(Rec.FilePassword);
         Node.FilePosition := Rec.FilePosition;
       finally
         FList.Add(Node);

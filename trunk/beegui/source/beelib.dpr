@@ -44,24 +44,24 @@ uses
 type
   TCore = class(TThread)
   private
-    FApp:      TApp;
-    FKey:      string;
-    FStatus:   integer;
-    FParams:   TStringList;
-    FMessages: TStringList;
-    FMessage:  string;
-    FDataRes:  pointer;
-    FData:     pointer;
-    FContents: TList;
+    FApp:       TApp;
+    FKey:       string;
+    FStatus:    integer;
+    FParams:    TStringList;
+    FMessages:  TStringList;
+    FMessage:   string;
+    FFileInfo:  TFileInfoA;
+    FResult:    string;
+    FContents:  TList;
   private
     procedure ProcessFatalError(const aMessage: string);
     procedure ProcessError(const aMessage: string);
     procedure ProcessWarning(const aMessage: string);
     procedure ProcessMessage(const aMessage: string);
-    procedure ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
-    procedure ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
-    procedure ProcessList(const aFileInfo: TFileFullInfoRec);
-    procedure ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
+    procedure ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
+    procedure ProcessRename(const aFileInfo: TFileInfoA; var Result: string);
+    procedure ProcessList(const aFileInfo: TFileInfoB);
+    procedure ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
     procedure ProcessRequest(const aMessage: string);
     procedure ProcessTick;
     procedure ProcessClear;
@@ -69,10 +69,6 @@ type
     constructor Create(const aCommandLine: string);
     destructor Destroy; override;
     procedure Execute; override;
-  public
-    property Status: integer Read FStatus Write FStatus;
-    property DataRes: pointer Read FDataRes;
-    property Data: pointer Read FData;
   end;
 
   // -------------------------------------------------------------------------- //
@@ -91,31 +87,28 @@ type
     FStatus   := csReady;
     FMessages := TStringList.Create;
     FParams   := TStringList.Create;
-    FParams.Text := aCommandLine;
-    FDataRes  := nil;
-    FData     := nil;
     FContents := TList.Create;
+
+    FParams.Text := aCommandLine;
 
     FApp := TBeeApp.Create(FParams);
     FApp.OnFatalError := ProcessFatalError;
-    FApp.OnError := ProcessError;
-    FApp.OnWarning := ProcessWarning;
-    FApp.OnMessage := ProcessMessage;
-    FApp.OnOverwrite := ProcessOverwrite;
-    FApp.OnRename := ProcessRename;
-    FApp.OnList := ProcessList;
-    FApp.OnKey := ProcessKey;
-    FApp.OnRequest := ProcessRequest;
-    FApp.OnTick := ProcessTick;
-    FApp.OnClear := ProcessClear;
+    FApp.OnError      := ProcessError;
+    FApp.OnWarning    := ProcessWarning;
+    FApp.OnMessage    := ProcessMessage;
+    FApp.OnOverwrite  := ProcessOverwrite;
+    FApp.OnRename     := ProcessRename;
+    FApp.OnList       := ProcessList;
+    FApp.OnKey        := ProcessKey;
+    FApp.OnRequest    := ProcessRequest;
+    FApp.OnTick       := ProcessTick;
+    FApp.OnClear      := ProcessClear;
   end;
 
   destructor TCore.Destroy;
   var
     I: integer;
   begin
-    FKey     := '';
-    FMessage := '';
     FMessages.Free;
     FParams.Free;
     with FContents do
@@ -161,77 +154,49 @@ type
     FMessages.Add(FMessage);
   end;
 
-  procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
+  procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
   begin
-    FData    := @aFileInfo;
-    FDataRes := @Result;
-    FStatus  := csWaitingOverwrite;
+    FResult   := Result;
+    FFileInfo := aFileInfo;
+    FStatus   := csWaitingOverwrite;
     while FStatus = csWaitingOverwrite do
     begin
       Sleep(250);
     end;
-    FDataRes := nil;
-    FData    := nil;
+    Result := FResult[1];
   end;
 
-  procedure TCore.ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
+  procedure TCore.ProcessRename(const aFileInfo: TFileInfoA; var Result: string);
   begin
-    FData    := @aFileInfo;
-    FDataRes := @Result;
-    FStatus  := csWaitingRename;
+    FResult   := Result;
+    FFileInfo := aFileInfo;
+    FStatus   := csWaitingRename;
     while FStatus = csWaitingRename do
     begin
       Sleep(250);
     end;
-    FDataRes := nil;
-    FData    := nil;
+    Result := FResult;
   end;
 
-  procedure TCore.ProcessList(const aFileInfo: TFileFullInfoRec);
+  procedure TCore.ProcessList(const aFileInfo: TFileInfoB);
   var
-   P: ^TFileFullInfoRec;
+   P: ^TFileInfoB;
   begin
-    GetMem(P, SizeOf(TFileFullInfoRec));
+    GetMem(P, SizeOf(TFileInfoB));
     P^ := aFileInfo;
     FContents.Add(P);
-
-    with aFileInfo do
-    begin
-      FMessage := FilePath + FileName;
-      FMessages.Add(FMessage);
-    end;
-    (*
-    with aFileInfo do
-    begin
-      if Length({FilePath +} FileName) <= 15 then
-      begin
-        FMessages.Add(Format('%-15s', [{FilePath +} FileName]) +
-          Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
-          [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-          FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod]));
-      end else
-      begin
-        FMessages.Add({FilePath +} FileName);
-        FMessages.Add(StringOfChar(' ', 15) +
-          Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
-          [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-          FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod]));
-      end;
-    end;
-    *)
   end;
 
-  procedure TCore.ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
+  procedure TCore.ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
   begin
-    FData    := @aFileInfo;
-    FDataRes := @Result;
-    FStatus  := csWaitingKey;
+    FResult   := Result;
+    FFileInfo := aFileInfo;
+    FStatus   := csWaitingKey;
     while FStatus = csWaitingKey do
     begin
       Sleep(250);
     end;
-    FDataRes := nil;
-    FData    := nil;
+    Result := FResult;
   end;
 
   procedure TCore.ProcessRequest(const aMessage: string);
@@ -260,179 +225,147 @@ type
   //                                                                            //
   // -------------------------------------------------------------------------- //
 
-  function CoreCreate(ACommandLine: PChar): integer;
+  function CoreCreate(const ACommandLine: PChar): integer;
   begin
     Result := integer(TCore.Create(PChar(ACommandLine)));
   end;
 
-  function CoreExecute(ID: integer): integer;
-  var
-    P: pointer;
+  function CoreExecute(ID: integer): boolean;
   begin
-    P := pointer(ID);
-    if P <> nil then
+    Result := pointer(ID) <> nil;
+    if Result then
     begin
-      TCore(P).Resume;
-    end;
-    Result := ID;
-  end;
-
-  function CoreDestroy(ID: integer): integer;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-    begin
-      TCore(P).Destroy;
-    end;
-    Result := integer(nil);
-  end;
-
-  procedure CoreSuspended(ID: integer; Value: boolean);
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-    begin
-      TCore(P).FApp.Suspended := Value;
+      TCore(pointer(ID)).Resume;
     end;
   end;
 
-  procedure CoreTerminate(ID: integer);
-  var
-    P: pointer;
+  function CoreDestroy(ID: integer): boolean;
   begin
-    P := pointer(ID);
-    if P <> nil then
+    Result := pointer(ID) <> nil;
+    if Result then
     begin
-      TCore(P).FApp.Terminated := True;
-      if TCore(P).Status = csReady then
+      TCore(pointer(ID)).Destroy;
+    end;
+  end;
+
+  function CoreSuspended(ID: integer; Value: boolean): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      TCore(pointer(ID)).FApp.Suspended := Value;
+    end;
+  end;
+
+  function CoreTerminate(ID: integer): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      TCore(pointer(ID)).FApp.Terminated := True;
+      if TCore(pointer(ID)).FStatus = csReady then
       begin
-        TCore(P).Status := csTerminated;
+        TCore(pointer(ID)).FStatus := csTerminated;
       end;
     end;
   end;
 
-  function CoreGetExitCode(ID: integer): integer;
-  var
-    P: pointer;
+  function CoreGetExitCode(ID: integer; var AExitCode: integer): boolean;
   begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := TCore(P).FApp.ExitCode
-    else
-      Result := 0;
-  end;
-
-  function CoreGetStatus(ID: integer): integer;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := TCore(P).Status
-    else
-      Result := csTerminated;
-  end;
-
-  function CoreGetMessage(ID: integer): PChar;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := PChar(TCore(P).FMessage)
-    else
-      Result := '';
-  end;
-
-  function CoreGetMessages(ID: integer): PChar;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := PChar(TCore(P).FMessages.Text)
-    else
-      Result := '';
-  end;
-
-  function CoreGetElapsedTime(ID: integer): cardinal;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := TCore(P).FApp.ElapsedTime
-    else
-      Result := 0;
-  end;
-
-  function CoreGetRemainingTime(ID: integer): cardinal;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := TCore(P).FApp.RemainingTime
-    else
-      Result := 0;
-  end;
-
-  function CoreGetPercentes(ID: integer): cardinal;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := TCore(P).FApp.Percentes
-    else
-      Result := 0;
-  end;
-
-  function CoreGetSpeed(ID: integer): cardinal;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := TCore(P).FApp.Speed
-    else
-      Result := 0;
-  end;
-
-  function CoreGetTotalSize(ID: integer): int64;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := TCore(P).FApp.TotalSize
-    else
-      Result := 0;
-  end;
-
-  function CoreGetProcessedSize(ID: integer): int64;
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
-      Result := TCore(P).FApp.ProcessedSize
-    else
-      Result := 0;
-  end;
-
-  procedure CoreSetPriority(ID: integer; aPriority: TThreadPriority);
-  var
-    P: pointer;
-  begin
-    P := pointer(ID);
-    if P <> nil then
+    Result := pointer(ID) <> nil;
+    if Result then
     begin
-      TCore(P).Priority := aPriority;
+      AExitCode := TCore(pointer(ID)).FApp.ExitCode;
+    end;
+  end;
+
+  function CoreGetStatus(ID: integer; var AStatus: integer): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      AStatus := TCore(pointer(ID)).FStatus;
+    end;
+  end;
+
+  function CoreGetMessage(ID: integer; var AMessage: PChar): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      strcopy(aMessage, PChar(TCore(pointer(ID)).FMessage));
+    end;
+  end;
+
+  function CoreGetMessages(ID: integer; var AMessages: PChar): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      strcopy(AMessages, PChar(TCore(pointer(ID)).FMessages.Text));
+    end;
+  end;
+
+  function CoreGetElapsedTime(ID: integer; var AElapsedTime: integer): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      AElapsedTime := TCore(pointer(ID)).FApp.ElapsedTime;
+    end;
+  end;
+
+  function CoreGetRemainingTime(ID: integer; var ARemainingTime: integer): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      ARemainingTime := TCore(pointer(ID)).FApp.RemainingTime;
+    end;;
+  end;
+
+  function CoreGetPercentes(ID: integer; var APercentes: integer): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      APercentes := TCore(pointer(ID)).FApp.Percentes;
+    end;
+  end;
+
+  function CoreGetSpeed(ID: integer; var ASpeed: integer): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      ASpeed := TCore(pointer(ID)).FApp.Speed;
+    end;
+  end;
+
+  function CoreGetTotalSize(ID: integer; var ATotalSize: int64): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      ATotalSize := TCore(pointer(ID)).FApp.TotalSize;
+    end;
+  end;
+
+  function CoreGetProcessedSize(ID: integer; var AProcessedSize: int64): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      AProcessedSize := TCore(pointer(ID)).FApp.ProcessedSize;
+    end;
+  end;
+
+  function CoreSetPriority(ID: integer; aPriority: TThreadPriority): boolean;
+  begin
+    Result := pointer(ID) <> nil;
+    if Result then
+    begin
+      TCore(pointer(ID)).Priority := aPriority;
     end;
   end;
 
@@ -447,14 +380,14 @@ type
       Result := tpNormal;
   end;
 
-  function CoreGetOverwriteFileInfo(ID: integer): TFileInfoRec;
+  function CoreGetOverwriteFileInfo(ID: integer): PFileInfoA;
   var
     P: pointer;
   begin
     P := pointer(ID);
     if P <> nil then
     begin
-      Result := TFileInfoRec(TCore(P).Data^);
+      // Result := PFileInfoRec(TCore(P).Data^);
     end;
   end;
 
@@ -465,19 +398,19 @@ type
     P := pointer(ID);
     if P <> nil then
     begin
-      char(TCore(P).DataRes^) := Result;
-      TCore(P).Status := csExecuting;
+      TCore(P).FResult := Result;
+      TCore(P).FStatus := csExecuting;
     end;
   end;
 
-  function CoreGetRenameFileInfo(ID: integer): TFileInfoRec;
+  function CoreGetRenameFileInfo(ID: integer): PFileInfoA;
   var
     P: pointer;
   begin
     P := pointer(ID);
     if P <> nil then
     begin
-      Result := TFileInfoRec(TCore(P).Data^);
+      // Result := PFileInfoRec(TCore(P).Data^);
     end;
   end;
 
@@ -488,19 +421,19 @@ type
     P := pointer(ID);
     if P <> nil then
     begin
-      string(TCore(P).DataRes^) := string(Result);
-      TCore(P).Status := csExecuting;
+      TCore(P).FResult := Result;
+      TCore(P).FStatus := csExecuting;
     end;
   end;
 
-  function CoreGetPasswordFileInfo(ID: integer): TFileInfoRec;
+  function CoreGetPasswordFileInfo(ID: integer): PFileInfoA;
   var
     P: pointer;
   begin
     P := pointer(ID);
     if P <> nil then
     begin
-      Result := TFileInfoRec(TCore(P).Data^);
+      // Result := PFileInfoRec(TCore(P).Data^);
     end;
   end;
 
@@ -511,8 +444,8 @@ type
     P := pointer(ID);
     if P <> nil then
     begin
-      string(TCore(P).DataRes^) := string(Result);
-      TCore(P).Status := csExecuting;
+      TCore(P).FResult := Result;
+      TCore(P).FStatus := csExecuting;
     end;
   end;
 
@@ -534,7 +467,7 @@ type
     P := pointer(ID);
     if P <> nil then
     begin
-      TCore(P).Status := csExecuting;
+      TCore(P).FStatus := csExecuting;
     end;
   end;
 
@@ -549,7 +482,7 @@ type
       Result := 0;
   end;
 
-  function CoreGetItems(ID: integer; Index: cardinal): TFileFullInfoRec;
+  function CoreGetItems(ID: integer; Index: cardinal): PFileInfoB;
   var
     P: pointer;
   begin
@@ -558,7 +491,7 @@ type
     begin
       with TCore(P).FContents do
       begin
-        Result := TFileFullInfoRec(Items[Index]^);
+        Result := PFileInfoB(Items[Index]^);
       end;
     end;
   end;

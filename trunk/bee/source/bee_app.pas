@@ -104,6 +104,7 @@ type
 implementation
 
 uses
+  Strings,
   SysUtils, // faReadOnly, ...
 
   Bee_Common, // Various helper routines
@@ -262,7 +263,7 @@ procedure TBeeApp.ProcessFilesToOverWriteDefault(Headers: THeaders);
 var
   S: string;
   I, J: integer;
-  FileInfo: TFileInfoRec;
+  FileInfo: TFileInfoA;
 begin
   I := 0;
   while I < Headers.Count do
@@ -409,7 +410,7 @@ function TBeeApp.ProcessFilesToRename(Headers: THeaders): boolean;
 var
   S: string;
   I: integer;
-  FileInfo: TFileInfoRec;
+  FileInfo: TFileInfoA;
 begin
   Headers.MarkItems(FCommandLine.FileMasks, toCopy, toRename, FCommandLine.rOption);
   Headers.MarkItems(FCommandLine.xOption, toRename, toCopy, FCommandLine.rOption);
@@ -1069,7 +1070,7 @@ var
   P: THeader;
   I: integer;
   Headers: THeaders;
-  FileInfo: TFileFullInfoRec;
+  FileInfo: TFileInfoB;
   {$IFDEF CONSOLEAPPLICATION}
   HeadersToList: TList;
   HeadersToListPath: string;
@@ -1156,8 +1157,8 @@ begin
 
         with FileInfo do
         begin
-          FileName := ExtractFileName(P.Data.FileName);
-          FilePath := ExtractFilePath(P.Data.FileName);
+          FileName := PChar(ExtractFileName(P.Data.FileName));
+          FilePath := PChar(ExtractFilePath(P.Data.FileName));
 
           {$IFDEF CONSOLEAPPLICATION}
           if CompareFileName(HeadersToListPath, FilePath) <> 0 then
@@ -1182,8 +1183,8 @@ begin
           FileTime    := P.Data.FileTime;
           FileComm    := '';
           FileCrc     := P.Data.FileCrc;
-          FileMethod  := MethodToStr(P);
-          FileVersion := VersionToStr(P);
+          FileMethod  := PChar(MethodToStr(P));
+          FileVersion := PChar(VersionToStr(P));
 
           if foPassword in P.Data.FileFlags then
             FilePassword := 'Yes'
