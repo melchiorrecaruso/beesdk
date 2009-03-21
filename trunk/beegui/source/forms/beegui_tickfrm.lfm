@@ -492,8 +492,9 @@ object TickFrm: TTickFrm
         Align = alClient
         BorderSpacing.Around = 6
         ReadOnly = True
-        ScrollBars = ssAutoVertical
+        ScrollBars = ssAutoBoth
         TabOrder = 0
+        WordWrap = False
       end
     end
   end

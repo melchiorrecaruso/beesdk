@@ -38,6 +38,7 @@ uses
   {$ENDIF}
   Bee_App,
   Bee_Types,
+  Bee_Common,
   Bee_Interface;
 
 type
@@ -193,10 +194,31 @@ type
     GetMem(P, SizeOf(TFileFullInfoRec));
     P^ := aFileInfo;
     FContents.Add(P);
+
     with aFileInfo do
     begin
-      FMessages.Add(FilePath + FileName);
+      FMessage := FilePath + FileName;
+      FMessages.Add(FMessage);
     end;
+    (*
+    with aFileInfo do
+    begin
+      if Length({FilePath +} FileName) <= 15 then
+      begin
+        FMessages.Add(Format('%-15s', [{FilePath +} FileName]) +
+          Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
+          [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+          FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod]));
+      end else
+      begin
+        FMessages.Add({FilePath +} FileName);
+        FMessages.Add(StringOfChar(' ', 15) +
+          Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
+          [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+          FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod]));
+      end;
+    end;
+    *)
   end;
 
   procedure TCore.ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
