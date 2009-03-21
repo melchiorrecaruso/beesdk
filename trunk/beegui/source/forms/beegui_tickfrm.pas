@@ -229,7 +229,7 @@ procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
 begin
   FList := aList;
   FCommandLine := aCommandLine;
-  FCoreID := CoreExecute(CoreCreate(FCommandLine.Params.Text));
+  FCoreID := CoreExecute(CoreCreate(PChar(FCommandLine.Params.Text)));
 
   {$IFDEF MSWINDOWS}
   BtnPriority.Enabled := True;
@@ -401,7 +401,7 @@ begin
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
-    // Report.Lines.Text := CoreGetMessages(FCoreID);
+    Report.Lines.Text := string(CoreGetMessages(FCoreID));
   end;
   OnList;
 
