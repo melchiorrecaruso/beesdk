@@ -137,7 +137,7 @@ end;
 
 function TEncoder.GetKey(Header: THeader): string;
 var
-  FileInfo: TFileInfoRec;
+  FileInfo: TFileInfoA;
 begin
   with FileInfo do
   begin
@@ -443,7 +443,7 @@ end;
 
 function TDecoder.GetKey(Header: THeader): string;
 var
-  FileInfo: TFileInfoRec;
+  FileInfo: TFileInfoA;
 begin
   with FileInfo do
   begin

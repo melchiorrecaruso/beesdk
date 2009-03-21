@@ -80,11 +80,10 @@ type
     procedure ProcessError(const aMessage: string; aExitCode: byte);
     procedure ProcessWarning(const aMessage: string; aExitCode: byte);
     procedure ProcessMessage(const aMessage: string);
-    function ProcessOverwrite(const aFileInfo: TFileInfoRec; const Value: char): char;
-    function ProcessRename(const aFileInfo: TFileInfoRec;
-      const Value: string): string;
-    procedure ProcessList(const aFileInfo: TFileFullInfoRec);
-    function ProcessKey(const aFileInfo: TFileInfoRec; const Value: string): string;
+    function  ProcessOverwrite(const aFileInfo: TFileInfoA; const Value: char): char;
+    function  ProcessRename(const aFileInfo: TFileInfoA; const Value: string): string;
+    procedure ProcessList(const aFileInfo: TFileInfoB);
+    function  ProcessKey(const aFileInfo: TFileInfoA; const Value: string): string;
     procedure ProcessRequest(const aMessage: string);
     procedure ProcessTick;
     procedure ProcessClear;
@@ -123,9 +122,11 @@ implementation
 uses
   SysUtils,
   DateUtils,
-  {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
+  {$IFDEF CONSOLEAPPLICATION}
+  {$IFDEF MSWINDOWS}
   Bee_Common,
-  {$ENDIF} {$ENDIF}
+  {$ENDIF}
+  {$ENDIF}
   Bee_Assembler;
 
 // TApp class ...
@@ -274,7 +275,7 @@ begin
   end;
 end;
 
-function TApp.ProcessOverwrite(const aFileInfo: TFileInfoRec; const Value: char): char;
+function TApp.ProcessOverwrite(const aFileInfo: TFileInfoA; const Value: char): char;
 begin
   Result := Value;
   if Assigned(FOnOverWrite) then
@@ -283,7 +284,7 @@ begin
   end;
 end;
 
-function TApp.ProcessRename(const aFileInfo: TFileInfoRec; const Value: string): string;
+function TApp.ProcessRename(const aFileInfo: TFileInfoA; const Value: string): string;
 begin
   Result := Value;
   if Assigned(FOnRename) then
@@ -292,7 +293,7 @@ begin
   end;
 end;
 
-procedure TApp.ProcessList(const aFileInfo: TFileFullInfoRec);
+procedure TApp.ProcessList(const aFileInfo: TFileInfoB);
 begin
   if Assigned(FOnList) then
   begin
@@ -300,7 +301,7 @@ begin
   end;
 end;
 
-function TApp.ProcessKey(const aFileInfo: TFileInfoRec; const Value: string): string;
+function TApp.ProcessKey(const aFileInfo: TFileInfoA; const Value: string): string;
 begin
   Result := Value;
   if Assigned(FOnKey) then

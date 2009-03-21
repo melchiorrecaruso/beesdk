@@ -41,9 +41,13 @@ program Bee;
 
 {$I compiler.inc}
 
-uses {$IFDEF FPC} {$IFDEF UNIX}
+uses
+  {$IFDEF FPC}
+  {$IFDEF UNIX}
   cThreads,
-  cMem, {$ENDIF} {$ENDIF}
+  cMem,
+  {$ENDIF}
+  {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -95,16 +99,16 @@ type
     end;
     FApp := TBeeApp.Create(FParams);
     FApp.OnFatalError := ProcessFatalError;
-    FApp.OnError := ProcessError;
-    FApp.OnWarning := ProcessWarning;
-    FApp.OnMessage := ProcessMessage;
-    FApp.OnOverwrite := ProcessOverwrite;
-    FApp.OnRename := ProcessRename;
-    FApp.OnList := ProcessList;
-    FApp.OnKey := ProcessKey;
-    FApp.OnRequest := ProcessRequest;
-    FApp.OnTick := ProcessTick;
-    FApp.OnClear := ProcessClear;
+    FApp.OnError      := ProcessError;
+    FApp.OnWarning    := ProcessWarning;
+    FApp.OnMessage    := ProcessMessage;
+    FApp.OnOverwrite  := ProcessOverwrite;
+    FApp.OnRename     := ProcessRename;
+    FApp.OnList       := ProcessList;
+    FApp.OnKey        := ProcessKey;
+    FApp.OnRequest    := ProcessRequest;
+    FApp.OnTick       := ProcessTick;
+    FApp.OnClear      := ProcessClear;
   end;
 
   destructor TConsole.Destroy;
@@ -145,7 +149,7 @@ type
   begin
     with aFileInfo do
     begin
-      Writeln('Warning: file "' + ParamToOem(FilePath + FileName) + '" already exists.');
+      Writeln('Warning: file "', ParamToOem(FilePath + FileName), '" already exists.');
       Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
     end;
     // not convert oem to param
@@ -156,7 +160,7 @@ type
   begin
     with aFileInfo do
     begin
-      Write('Rename file "' + ParamToOem(FilePath + FileName) + '" as (empty to skip):');
+      Write('Rename file "', ParamToOem(FilePath + FileName), '" as (empty to skip):');
     end;
     Readln(Result);
     // convert oem to param
