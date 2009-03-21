@@ -29,7 +29,6 @@ library BeeLib;
 
 uses
   Classes,
-  Dialogs,
   SysUtils,
   {$IFDEF UNIX}
   cThreads,
@@ -127,6 +126,7 @@ type
       Clear;
     end;
     FContents.Free;
+    FApp.Free;
     inherited Destroy;
   end;
 

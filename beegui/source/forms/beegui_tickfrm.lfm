@@ -537,6 +537,7 @@ object TickFrm: TTickFrm
     TabOrder = 4
   end
   object Timer: TIdleTimer
+    Enabled = False
     Interval = 250
     OnTimer = OnTimer
     left = 256
