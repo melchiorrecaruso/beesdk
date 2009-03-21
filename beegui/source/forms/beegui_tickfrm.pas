@@ -124,7 +124,7 @@ type
     { private declarations }
     FList:      TList;
     FPassword:  string;
-    FCoreID:    pointer;
+    FCoreID:    integer;
     FCanClose:  boolean;
     FSuspended: boolean;
     FProgressOnTitle: boolean;
@@ -177,7 +177,7 @@ procedure TTickFrm.FormCreate(Sender: TObject);
 begin
   FCommandLine := nil;
   FPassword  := '';
-  FCoreID    := nil;
+  FCoreID    := 0;
   FList      := nil;
   FCanClose  := False;
   FSuspended := False;
@@ -195,7 +195,7 @@ procedure TTickFrm.FormDestroy(Sender: TObject);
 begin
   FCommandLine := nil;
   FPassword := '';
-  FCoreID := nil;
+  FCoreID := 0;
   FList := nil;
 end;
 
@@ -406,7 +406,7 @@ begin
   OnList;
 
   CoreDestroy(FCoreID);
-  FCoreID   := nil;
+  FCoreID   := 0;
   FCanClose := True;
 
   if Report.Lines.Count > 0 then
