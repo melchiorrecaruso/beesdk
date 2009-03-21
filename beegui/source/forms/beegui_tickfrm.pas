@@ -378,7 +378,7 @@ begin
   Time.Caption := TimeToStr(CoreGetElapsedTime(FCoreID));
 
   Speed.Caption := IntToStr(CoreGetSpeed(FCoreID) shr 10);
-  Msg.Caption   := CoreGetMessage(FCoreID);
+  // Msg.Caption   := CoreGetMessage(FCoreID);
 end;
 
 procedure TTickFrm.OnTerminate;
@@ -401,7 +401,7 @@ begin
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
-    Report.Lines.Text := CoreGetMessages(FCoreID);
+    // Report.Lines.Text := CoreGetMessages(FCoreID);
   end;
   OnList;
 
