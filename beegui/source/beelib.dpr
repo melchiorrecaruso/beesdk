@@ -238,9 +238,9 @@ type
   //                                                                            //
   // -------------------------------------------------------------------------- //
 
-  function CoreCreate(const aCommandLine: string): integer;
+  function CoreCreate(ACommandLine: PChar): integer;
   begin
-    Result := integer(TCore.Create(aCommandLine));
+    Result := integer(TCore.Create(PChar(ACommandLine)));
   end;
 
   function CoreExecute(ID: integer): integer;
@@ -315,24 +315,24 @@ type
       Result := csTerminated;
   end;
 
-  function CoreGetMessage(ID: integer): string;
+  function CoreGetMessage(ID: integer): PChar;
   var
     P: pointer;
   begin
     P := pointer(ID);
     if P <> nil then
-      Result := TCore(P).FMessage
+      Result := PChar(TCore(P).FMessage)
     else
       Result := '';
   end;
 
-  function CoreGetMessages(ID: integer): string;
+  function CoreGetMessages(ID: integer): PChar;
   var
     P: pointer;
   begin
     P := pointer(ID);
     if P <> nil then
-      Result := TCore(P).FMessages.Text
+      Result := PChar(TCore(P).FMessages.Text)
     else
       Result := '';
   end;
@@ -459,14 +459,14 @@ type
     end;
   end;
 
-  procedure CoreSetRenameFileInfoRes(ID: integer; Result: string);
+  procedure CoreSetRenameFileInfoRes(ID: integer; Result: Pchar);
   var
     P: pointer;
   begin
     P := pointer(ID);
     if P <> nil then
     begin
-      string(TCore(P).DataRes^) := Result;
+      string(TCore(P).DataRes^) := string(Result);
       TCore(P).Status := csExecuting;
     end;
   end;
@@ -482,26 +482,26 @@ type
     end;
   end;
 
-  procedure CoreSetPasswordFileInfoRes(ID: integer; Result: string);
+  procedure CoreSetPasswordFileInfoRes(ID: integer; Result: PChar);
   var
     P: pointer;
   begin
     P := pointer(ID);
     if P <> nil then
     begin
-      string(TCore(P).DataRes^) := Result;
+      string(TCore(P).DataRes^) := string(Result);
       TCore(P).Status := csExecuting;
     end;
   end;
 
-  function CoreGetRequestMessage(ID: integer): string;
+  function CoreGetRequestMessage(ID: integer): PChar;
   var
     P: pointer;
   begin
     P := pointer(ID);
     if P <> nil then
     begin
-      Result := TCore(P).FMessage;
+      Result := PChar(TCore(P).FMessage);
     end;
   end;
 
