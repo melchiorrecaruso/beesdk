@@ -230,13 +230,10 @@ begin
   FList := aList;
   FCommandLine := aCommandLine;
   FCoreID := CoreExecute(CoreCreate(PChar(FCommandLine.Params.Text)));
-
   {$IFDEF MSWINDOWS}
   BtnPriority.Enabled := True;
   {$ENDIF}
   BtnPauseRun.Enabled := True;
-
-  Timer.Enabled := True;
 end;
 
 function TTickFrm.GetFrmCanClose: boolean;
@@ -271,7 +268,7 @@ var
 begin
   for I := 0 to Notebook.PageCount -1 do
   begin
-    Notebook.Page[I].TabVisible := True;
+    Notebook.Page[I].TabVisible := False;
   end;
   Notebook.Page[Notebook.PageIndex].TabVisible := True;
 
@@ -378,13 +375,12 @@ begin
   Time.Caption := TimeToStr(CoreGetElapsedTime(FCoreID));
 
   Speed.Caption := IntToStr(CoreGetSpeed(FCoreID) shr 10);
-  // Msg.Caption   := CoreGetMessage(FCoreID);
+  Msg.Caption   := string(CoreGetMessage(FCoreID));
 end;
 
 procedure TTickFrm.OnTerminate;
 begin
   Timer.Enabled := False;
-
   ExitCode := CoreGetExitCode(FCoreID);
   case ExitCode of
     0: Caption := rsProcessTerminated;
@@ -403,11 +399,10 @@ begin
   begin
     Report.Lines.Text := string(CoreGetMessages(FCoreID));
   end;
-  OnList;
 
-  CoreDestroy(FCoreID);
-  FCoreID   := 0;
-  FCanClose := True;
+  OnList;
+  FCoreID   := CoreDestroy(FCoreID);
+  FCanClose := FCoreID = 0;
 
   if Report.Lines.Count > 0 then
     Notebook.ActivePageComponent := ReportPage

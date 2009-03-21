@@ -1140,14 +1140,20 @@ begin
       {$ENDIF}
 
       {$IFDEF CONSOLEAPPLICATION}
-      for I := 0 to HeadersToList.Count - 1 do
+      FTotalSize := HeadersToList.Count;
+      for I := 0 to HeadersToList.Count -1 do
       begin
+        FProcessedSize  := I + 1;
         P := HeadersToList.Items[I];
       {$ELSE}
-      for I := 0 to Headers.Count - 1 do
+      FTotalSize := Headers.Count;
+      for I := 0 to Headers.Count -1 do
       begin
+        FProcessedSize  := I + 1;
         P := Headers.Items[I];
       {$ENDIF}
+        if FTerminated then Break;
+
         with FileInfo do
         begin
           FileName := ExtractFileName(P.Data.FileName);
