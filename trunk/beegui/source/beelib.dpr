@@ -132,7 +132,6 @@ type
 
   procedure TCore.Execute;
   begin
-    inherited Execute;
     FStatus := csExecuting;
     begin
       FApp.Execute;
@@ -242,8 +241,6 @@ type
   function CoreCreate(const aCommandLine: string): integer;
   begin
     Result := integer(TCore.Create(aCommandLine));
-
-    // ShowMessage(IntToStr(Result);
   end;
 
   function CoreExecute(ID: integer): integer;
@@ -256,8 +253,6 @@ type
       TCore(P).Resume;
     end;
     Result := ID;
-
-    // ShowMessage(IntToStr(Result);
   end;
 
   function CoreDestroy(ID: integer): integer;
@@ -269,7 +264,7 @@ type
     begin
       TCore(P).Destroy;
     end;
-    Result := integer(nil);
+    Result := 0;
   end;
 
   procedure CoreSuspended(ID: integer; Value: boolean);
