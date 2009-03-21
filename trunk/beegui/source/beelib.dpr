@@ -246,7 +246,7 @@ type
   function CoreExecute(ID: pointer): pointer;
   begin
     Result := ID;
-    if ID <> nil then
+    if Result <> nil then
     begin
       TCore(ID).Resume;
     end;
@@ -256,11 +256,11 @@ type
   var
     I: integer;
   begin
-    Result := nil;
     if ID <> nil then
     begin
-      TCore(ID).Free;
+      TCore(ID).Destroy;
     end;
+    Result := nil;
   end;
 
   procedure CoreSuspended(ID: pointer; Value: boolean);
@@ -276,6 +276,10 @@ type
     if ID <> nil then
     begin
       TCore(ID).FApp.Terminated := True;
+      if TCore(ID).Status = csReady then
+      begin
+        TCore(ID).Status := csTerminated;
+      end;
     end;
   end;
 
