@@ -126,6 +126,7 @@ type
 
   procedure TCore.Execute;
   begin
+    inherited Execute;
     FStatus := csExecuting;
     begin
       FApp.Execute;
