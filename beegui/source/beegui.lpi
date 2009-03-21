@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="5"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -119,8 +119,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="24" Y="409"/>
-        <TopLine Value="368"/>
+        <CursorPos X="50" Y="390"/>
+        <TopLine Value="308"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -250,7 +250,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
         <CursorPos X="75" Y="69"/>
-        <TopLine Value="19"/>
+        <TopLine Value="22"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="40"/>
         <Loaded Value="True"/>
@@ -268,7 +268,7 @@
       </Unit20>
       <Unit21>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="4" Y="31"/>
+        <CursorPos X="2" Y="33"/>
         <TopLine Value="1"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="10"/>
