@@ -25,10 +25,10 @@
       v1.0.5 build 0392 - 2008.06.14 by Melchiorre Caruso.
 }
 
-{$R-}
-{$Q-}
-{$S-}
-{$I-}
+{*$R-}
+{*$Q-}
+{*$S-}
+{*$I-}
 
 {$INLINE ON}
 {*$DEFINE SAVELANGUAGE}
