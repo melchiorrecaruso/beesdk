@@ -210,8 +210,12 @@ end;
 procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   I: boolean;
+  FValue: integer;
 begin
-  CanClose := CoreGetStatus(FCoreID) = csTerminated;
+  FValue := csTerminated;
+  CoreGetStatus(FCoreID, FValue);
+  CanClose := FValue = csTerminated;
+
   if CanClose = False then
   begin
     I := FSuspended;
@@ -229,12 +233,15 @@ procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
 begin
   FList := aList;
   FCommandLine := aCommandLine;
-  FCoreID := CoreExecute(CoreCreate(PChar(FCommandLine.Params.Text)));
-  Timer.Enabled := True;
-  {$IFDEF MSWINDOWS}
-  BtnPriority.Enabled := True;
-  {$ENDIF}
-  BtnPauseRun.Enabled := True;
+  FCoreID := CoreCreate(PChar(FCommandLine.Params.Text));
+  if CoreExecute(FCoreID) then
+  begin
+    Timer.Enabled := True;
+    {$IFDEF MSWINDOWS}
+    BtnPriority.Enabled := True;
+    {$ENDIF}
+    BtnPauseRun.Enabled := True;
+  end;
 end;
 
 function TTickFrm.GetFrmCanClose: boolean;
@@ -243,8 +250,10 @@ begin
 end;
 
 function TTickFrm.GetFrmCanShow: boolean;
+var
+  FValue: integer;
 begin
-  Result := CoreGetRemainingTime(FCoreID) > 0;
+  Result := CoreGetRemainingTime(FCoreID, FValue) and (FValue > 0);
 end;
 
 procedure TTickFrm.PopupClick(Sender: TObject);
