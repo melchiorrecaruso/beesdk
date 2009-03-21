@@ -31,9 +31,7 @@ program BeeGui;
 {$R beegui.rc}
 {$ENDIF}
 
-uses {$IFDEF UNIX}
-  cThreads, {$ENDIF} {$IFDEF MSWINDOWS}
-  Windows, {$ENDIF}
+uses
   Forms,
   Dialogs,
   SysUtils,
