@@ -264,7 +264,7 @@ type
     begin
       TCore(P).Destroy;
     end;
-    Result := 0;
+    Result := integer(nil);
   end;
 
   procedure CoreSuspended(ID: integer; Value: boolean);
