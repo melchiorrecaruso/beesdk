@@ -77,7 +77,7 @@ type
   //                                                                            //
   // -------------------------------------------------------------------------- //
 
-  constructor TCore.Create(const aCommandLine: string);
+  constructor TCore.Create(const ACommandLine: string);
   begin
     inherited Create(True);
     FreeOnTerminate := False;
@@ -185,6 +185,9 @@ type
     GetMem(P, SizeOf(TFileInfoB));
     P^ := aFileInfo;
     FContents.Add(P);
+
+    // MessageBox(0, PChar(aFileInfo.FileName), '', 0);
+
   end;
 
   procedure TCore.ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
@@ -225,253 +228,284 @@ type
   //                                                                            //
   // -------------------------------------------------------------------------- //
 
-  function CoreCreate(const ACommandLine: PChar): integer;
-  begin
-    Result := integer(TCore.Create(PChar(ACommandLine)));
-  end;
+var
+  Core: TCore = nil;
 
-  function CoreExecute(ID: integer): boolean;
+  function CoreCreate(const ACommandLine: PChar): boolean;
   begin
-    Result := pointer(ID) <> nil;
+    Result := not Assigned(Core);
     if Result then
     begin
-      TCore(pointer(ID)).Resume;
+      Core := TCore.Create(string(ACommandLine));
     end;
   end;
 
-  function CoreDestroy(ID: integer): boolean;
+  function CoreExecute: boolean;
   begin
-    Result := pointer(ID) <> nil;
+    Result := Assigned(Core) and (Core.FStatus = csReady);
     if Result then
     begin
-      TCore(pointer(ID)).Destroy;
+      Core.Resume;
     end;
   end;
 
-  function CoreSuspended(ID: integer; AValue: boolean): boolean;
+  procedure CoreDestroy;
   begin
-    Result := pointer(ID) <> nil;
-    if Result then
+    if Assigned(Core) then
     begin
-      TCore(pointer(ID)).FApp.Suspended := AValue;
+      FreeAndNil(Core);
     end;
   end;
 
-  function CoreTerminate(ID: integer): boolean;
+  procedure CoreSuspended(AValue: boolean);
   begin
-    Result := pointer(ID) <> nil;
-    if Result then
+    if Assigned(Core) then
     begin
-      TCore(pointer(ID)).FApp.Terminated := True;
-      if TCore(pointer(ID)).FStatus = csReady then
+      Core.FApp.Suspended := AValue;
+    end;
+  end;
+
+  procedure CoreTerminate;
+  begin
+    if Assigned(Core) then
+    begin
+      Core.FApp.Terminated := True;
+      if Core.FStatus = csReady then
       begin
-        TCore(pointer(ID)).FStatus := csTerminated;
+        Core.FStatus := csTerminated;
       end;
     end;
   end;
 
-  function CoreGetExitCode(ID: integer; var AValue: integer): boolean;
+  function CoreGetExitCode: integer;
   begin
-    Result := pointer(ID) <> nil;
-    if Result then
+    if Assigned(Core) then
+      Result := Core.FApp.ExitCode
+    else
+      Result := 0;
+  end;
+
+  function CoreGetStatus: integer;
+  begin
+    if Assigned(Core) then
+      Result := Core.FStatus
+    else
+      Result := csTerminated;
+  end;
+
+  function CoreGetMessage: PChar;
+  begin
+    if Assigned(Core) then
     begin
-      AValue := TCore(pointer(ID)).FApp.ExitCode;
+      Result := StrAlloc(Length(Core.FMessage) + 1);
+      strpcopy(Result, Core.FMessage);
+    end else
+      Result := nil;
+  end;
+
+  function CoreGetMessages: PChar;
+  begin
+    if Assigned(Core) then
+    begin
+      Result := StrAlloc(Length(Core.FMessages.Text) + 1);
+      strpcopy(Result, Core.FMessages.Text);
+    end else
+      Result := nil;
+  end;
+
+  function CoreGetElapsedTime: integer;
+  begin
+    if Assigned(Core) then
+      Result := Core.FApp.ElapsedTime
+    else
+      Result := 0;
+  end;
+
+  function CoreGetRemainingTime: integer;
+  begin
+    if Assigned(Core) then
+      Result := Core.FApp.RemainingTime
+    else
+      Result := 0;
+  end;
+
+  function CoreGetPercentes: integer;
+  begin
+    if Assigned(Core) then
+      Result := Core.FApp.Percentes
+    else
+      Result := 0;
+  end;
+
+  function CoreGetSpeed: integer;
+  begin
+    if Assigned(Core) then
+      Result := Core.FApp.Speed
+    else
+      Result := 0;
+  end;
+
+  function CoreGetTotalSize: int64;
+  begin
+    if Assigned(Core) then
+      Result := Core.FApp.TotalSize
+    else
+      Result := 0;
+  end;
+
+  function CoreGetProcessedSize: int64;
+  begin
+    if Assigned(Core) then
+      Result := Core.FApp.ProcessedSize
+    else
+      Result := 0;
+  end;
+
+  function CoreSetPriority(const AValue: TThreadPriority): boolean;
+  begin
+    Result := Assigned(Core);
+    if Assigned(Core) then
+    begin
+      Core.Priority := AValue;
     end;
   end;
 
-  function CoreGetStatus(ID: integer; var AValue: integer): boolean;
+  function CoreGetPriority(var AValue: TThreadPriority): boolean;
   begin
-    Result := pointer(ID) <> nil;
+    Result := Assigned(Core);
     if Result then
     begin
-      AValue := TCore(pointer(ID)).FStatus;
+      AValue := Core.Priority
     end;
   end;
 
-  function CoreGetMessage(ID: integer; var AValue: PChar): boolean;
+  function CoreGetFileInfo: PFileInfoA;
   begin
-    Result := pointer(ID) <> nil;
-    if Result then
+    if Assigned(Core) then
     begin
-      strcopy(AValue, PChar(TCore(pointer(ID)).FMessage));
+      Result.FileName := stralloc(Length(Core.FFileInfo.FileName) + 1);
+      Result.FilePath := stralloc(Length(Core.FFileInfo.FilePath) + 1);
+
+      strpcopy(Result.FileName, Core.FFileInfo.FileName);
+      strpcopy(Result.FilePath, Core.FFileInfo.FilePath);
+
+      Result.FileSize := Core.FFileInfo.FileSize;
+      Result.FileTime := Core.FFileInfo.FileTime;
+      Result.FileAttr := Core.FFileInfo.FileAttr;
     end;
   end;
 
-  function CoreGetMessages(ID: integer; var AValue: PChar): boolean;
+  function CoreSetOverwriteFileInfo(const AValue: char): boolean;
   begin
-    Result := pointer(ID) <> nil;
+    Result := Assigned(Core);
     if Result then
     begin
-      strcopy(AValue, PChar(TCore(pointer(ID)).FMessages.Text));
+      Core.FResult := AValue;
+      Core.FStatus := csExecuting;
     end;
   end;
 
-  function CoreGetElapsedTime(ID: integer; var AValue: integer): boolean;
+  function CoreSetRenameFileInfo(const AValue: PChar): boolean;
   begin
-    Result := pointer(ID) <> nil;
+    Result := Assigned(Core);
     if Result then
     begin
-      AValue := TCore(pointer(ID)).FApp.ElapsedTime;
+      Core.FResult := string(AValue);
+      Core.FStatus := csExecuting;
     end;
   end;
 
-  function CoreGetRemainingTime(ID: integer; var AValue: integer): boolean;
+  function CoreSetPasswordFileInfo(const AValue: PChar): boolean;
   begin
-    Result := pointer(ID) <> nil;
+    Result := Assigned(Core);
     if Result then
     begin
-      AValue := TCore(pointer(ID)).FApp.RemainingTime;
+      Core.FResult := string(AValue);
+      Core.FStatus := csExecuting;
     end;
   end;
 
-  function CoreGetPercentes(ID: integer; var AValue: integer): boolean;
+  function CoreGetRequestMessage: PChar;
   begin
-    Result := pointer(ID) <> nil;
+    if Assigned(Core) then
+    begin
+      Result := StrAlloc(Length(Core.FMessage) + 1);
+      strpcopy(Result, Core.FMessage);
+    end else
+      Result := nil;
+  end;
+
+  function CoreSetRequestMessage(const AValue: PChar): boolean;
+  begin
+    Result := Assigned(Core);
     if Result then
     begin
-      AValue := TCore(pointer(ID)).FApp.Percentes;
+      Core.FStatus := csExecuting;
     end;
   end;
 
-  function CoreGetSpeed(ID: integer; var AValue: integer): boolean;
+  function CoreGetItemsCount: integer;
   begin
-    Result := pointer(ID) <> nil;
-    if Result then
+    if Assigned(Core) then
+      Result := Core.FContents.Count
+    else
+      Result := 0;
+  end;
+
+  function CoreGetItems(const AIndex: integer): PFileInfoB;
+  begin
+    if Assigned(Core) then
+    with TFileInfoB(Core.FContents.Items[AIndex]^) do
     begin
-      AValue := TCore(pointer(ID)).FApp.Speed;
+      Result.FileName := stralloc(Length(FileName) + 1);
+      strpcopy(Result.FileName, FileName);
+
+      Result.FilePath := stralloc(Length(FilePath) + 1);
+      strpcopy(Result.FilePath, FilePath);
+
+      Result.FileSize   := FileSize;
+      Result.FileTime   := FileTime;
+      Result.FileAttr   := FileAttr;
+      Result.FilePacked := FilePacked;
+      Result.FileRatio  := FileRatio;
+
+      Result.FileComm := stralloc(Length(FileComm) + 1);
+      strpcopy(Result.FileComm, FileComm);
+
+      Result.FileCrc  := FileCrc;
+
+      Result.FileMethod   := stralloc(Length(FileMethod) + 1);
+      strpcopy(Result.FileMethod, FileMethod);
+
+      Result.FileVersion  := stralloc(Length(FileVersion) + 1);
+      strpcopy(Result.FileVersion, FileVersion);
+
+      Result.FilePassword := stralloc(Length(FilePassword) + 1);
+      strpcopy(Result.FilePassword, FilePassword);
+
+      Result.FilePosition := FilePosition;
     end;
   end;
 
-  function CoreGetTotalSize(ID: integer; var AValue: int64): boolean;
+  procedure FreePChar(P: PChar);
   begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      AValue := TCore(pointer(ID)).FApp.TotalSize;
-    end;
+    strdispose(P); P := nil;
   end;
 
-  function CoreGetProcessedSize(ID: integer; var AValue: int64): boolean;
+  procedure FreePFileInfoA(P: PFileInfoA);
   begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      AValue := TCore(pointer(ID)).FApp.ProcessedSize;
-    end;
+    strdispose(P.FileName); P.FileName := nil;
+    strdispose(P.FilePath); P.FilePath := nil;
   end;
 
-  function CoreSetPriority(ID: integer; const AValue: TThreadPriority): boolean;
+  procedure FreePFileInfoB(P: PFileInfoB);
   begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      TCore(pointer(ID)).Priority := AValue;
-    end;
-  end;
-
-  function CoreGetPriority(ID: integer; var AValue: TThreadPriority): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      AValue := TCore(pointer(ID)).Priority
-    end;
-  end;
-
-  function CoreGetOverwriteFileInfo(ID: integer; var AValue: PFileInfoA): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      // ---
-    end;
-  end;
-
-  function CoreSetOverwriteFileInfo(ID: integer; const AValue: char): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      TCore(pointer(ID)).FResult := AValue;
-      TCore(pointer(ID)).FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreGetRenameFileInfo(ID: integer; var AValue: PFileInfoA): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      // ---
-    end;
-  end;
-
-  function CoreSetRenameFileInfo(ID: integer; const AValue: PChar): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      strcopy(PChar(TCore(pointer(ID)).FResult), AValue);
-      TCore(pointer(ID)).FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreGetPasswordFileInfo(ID: integer; var AValue: PFileInfoA): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      // ---
-    end;
-  end;
-
-  function CoreSetPasswordFileInfo(ID: integer; const AValue: PChar): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      strcopy(PChar(TCore(pointer(ID)).FResult), AValue);
-      TCore(pointer(ID)).FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreGetRequestMessage(ID: integer; var AValue: PChar): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      strpcopy(AValue, PChar(TCore(pointer(ID)).FMessage));
-    end;
-  end;
-
-  function CoreSetRequestMessage(ID: integer; const AValue: PChar): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      TCore(pointer(ID)).FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreGetItemsCount(ID: integer; var AValue: integer): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      AValue := TCore(pointer(ID)).FContents.Count;
-    end;
-  end;
-
-  function CoreGetItems(ID: integer; const AIndex: integer; var AValue: PFileInfoB): boolean;
-  begin
-    Result := pointer(ID) <> nil;
-    if Result then
-    begin
-      with TCore(pointer(ID)).FContents do
-      begin
-
-      end;
-    end;
+    strdispose(P.FileName);     P.FileName     := nil;
+    strdispose(P.FilePath);     P.FilePath     := nil;
+    strdispose(P.FileComm);     P.FileComm     := nil;
+    strdispose(P.FileMethod);   P.FileMethod   := nil;
+    strdispose(P.FileVersion);  P.FileVersion  := nil;
+    strdispose(P.FilePassword); P.FilePassword := nil;
   end;
 
   // -------------------------------------------------------------------------- //
@@ -500,11 +534,8 @@ exports
   CoreGetElapsedTime,
   CoreGetRemainingTime,
 
-  CoreGetOverwriteFileInfo,
   CoreSetOverwriteFileInfo,
-  CoreGetRenameFileInfo,
   CoreSetRenameFileInfo,
-  CoreGetPasswordFileInfo,
   CoreSetPasswordFileInfo,
   CoreGetRequestMessage,
   CoreSetRequestMessage,
