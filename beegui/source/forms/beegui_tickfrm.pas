@@ -124,7 +124,6 @@ type
     { private declarations }
     FList:      TList;
     FPassword:  string;
-    FCoreID:    integer;
     FCanClose:  boolean;
     FSuspended: boolean;
     FProgressOnTitle: boolean;
@@ -177,7 +176,6 @@ procedure TTickFrm.FormCreate(Sender: TObject);
 begin
   FCommandLine := nil;
   FPassword  := '';
-  FCoreID    := 0;
   FList      := nil;
   FCanClose  := False;
   FSuspended := False;
@@ -195,7 +193,6 @@ procedure TTickFrm.FormDestroy(Sender: TObject);
 begin
   FCommandLine := nil;
   FPassword := '';
-  FCoreID := 0;
   FList := nil;
 end;
 
@@ -210,11 +207,8 @@ end;
 procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   I: boolean;
-  FValue: integer;
 begin
-  FValue := csTerminated;
-  CoreGetStatus(FCoreID, FValue);
-  CanClose := FValue = csTerminated;
+  CanClose := (CoreGetStatus = csTerminated) or (CoreGetStatus = csUnknow);
 
   if CanClose = False then
   begin
@@ -222,7 +216,7 @@ begin
     if I = False then BtnPauseRun.Click;
     if MessageDlg(rsConfirmation, rsConfirmAbortProcess, mtConfirmation, [mbYes, mbNo], '') = mrYes then
     begin
-      CoreTerminate(FCoreID);
+      CoreTerminate;
       BtnPauseRun.Click;
     end else
       if I = False then BtnPauseRun.Click;
@@ -233,8 +227,8 @@ procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
 begin
   FList := aList;
   FCommandLine := aCommandLine;
-  FCoreID := CoreCreate(PChar(FCommandLine.Params.Text));
-  if CoreExecute(FCoreID) then
+  CoreCreate(PChar(FCommandLine.Params.Text));
+  if CoreExecute then
   begin
     BtnPauseRun.Enabled := True;
     {$IFDEF MSWINDOWS}
@@ -250,29 +244,23 @@ begin
 end;
 
 function TTickFrm.GetFrmCanShow: boolean;
-var
-  FValue: integer;
 begin
-  Result := CoreGetRemainingTime(FCoreID, FValue) and (FValue > 0);
+  Result := CoreGetRemainingTime > 0;
 end;
 
 procedure TTickFrm.PopupClick(Sender: TObject);
-var
-  FValue: integer;
 begin
   Popup_Idle.Checked   := Sender = Popup_Idle;
   Popup_Normal.Checked := Sender = Popup_Normal;
   Popup_Higher.Checked := Sender = Popup_Higher;
   Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
 
-  FValue := csTerminated;
-  CoreGetStatus(FCoreID, FValue);
-  if FValue <> csTerminated then
+  if CoreGetStatus <> csTerminated then
   begin
-    if Popup_Idle.Checked         then CoreSetPriority(FCoreID, tpIdle);
-    if Popup_Normal.Checked       then CoreSetPriority(FCoreID, tpNormal);
-    if Popup_Higher.Checked       then CoreSetPriority(FCoreID, tpHigher);
-    if Popup_TimeCritical.Checked then CoreSetPriority(FCoreID, tpTimeCritical);
+    if Popup_Idle.Checked         then CoreSetPriority(tpIdle);
+    if Popup_Normal.Checked       then CoreSetPriority(tpNormal);
+    if Popup_Higher.Checked       then CoreSetPriority(tpHigher);
+    if Popup_TimeCritical.Checked then CoreSetPriority(tpTimeCritical);
   end;
 end;
 
@@ -319,12 +307,8 @@ end;
  // ------------------------------------------------------------------------ //
 
 procedure TTickFrm.OnTimer(Sender: TObject);
-var
-  FValue: integer;
 begin
-  FValue := csTerminated;
-  CoreGetStatus(FCoreID, FValue);
-  case FValue of
+  case CoreGetStatus of
     csTerminated: OnTerminate;
     // csExecuting:  OnExecuting;
   end;
@@ -332,79 +316,70 @@ end;
 
 procedure TTickFrm.OnExecuting;
 var
-  FPChar: PChar;
-  FInt64:   int64;
-  FInteger: integer;
+  I: int64;
+  P: PChar = nil;
 begin
-  if CoreGetTotalSize(FCoreID, FInt64) then
+  I := CoreGetTotalSize;
+  if I < (1024) then
   begin
-    if FInt64 < (1024) then
+    GeneralSize.Caption     := IntToStr(I);
+    GeneralSizeUnit.Caption := 'B';
+  end else
+    if I < (1024 * 1024) then
     begin
-      GeneralSize.Caption     := IntToStr(FInt64);
-      GeneralSizeUnit.Caption := 'B';
+      GeneralSize.Caption     := IntToStr(I shr 10);
+      GeneralSizeUnit.Caption := 'KB';
     end else
-      if FInt64 < (1024 * 1024) then
-      begin
-        GeneralSize.Caption     := IntToStr(FInt64 shr 10);
-        GeneralSizeUnit.Caption := 'KB';
-      end else
-      begin
-        GeneralSize.Caption     := IntToStr(FInt64 shr 20);
-        GeneralSizeUnit.Caption := 'MB';
-      end;
-  end;
-
-  if CoreGetProcessedSize(FCoreID, FInt64) then
-  begin
-    if FInt64 < (1024) then
     begin
-      ProcessedSize.Caption     := IntToStr(FInt64);
-      ProcessedSizeUnit.Caption := 'B';
-    end else
-      if FInt64 < (1024 * 1024) then
-      begin
-        ProcessedSize.Caption     := IntToStr(FInt64 shr 10);
-        ProcessedSizeUnit.Caption := 'KB';
-      end else
-      begin
-        ProcessedSize.Caption     := IntToStr(FInt64 shr 20);
-        ProcessedSizeUnit.Caption := 'MB';
-      end;
-  end;
-
-  if CoreGetPercentes(FCoreID, FInteger) then
-  begin
-    Tick.Position := FInteger;
-    if FSuspended = False then
-      Caption := Format(rsProcessStatus, [FInteger])
-    else
-      Caption := rsProcessPaused;
-
-    if FProgressOnTitle then
-    begin
-      Application.Title := Caption;
+      GeneralSize.Caption     := IntToStr(I shr 20);
+      GeneralSizeUnit.Caption := 'MB';
     end;
+
+  I := CoreGetProcessedSize;
+  if I < (1024) then
+  begin
+    ProcessedSize.Caption     := IntToStr(I);
+    ProcessedSizeUnit.Caption := 'B';
+  end else
+    if I < (1024 * 1024) then
+    begin
+      ProcessedSize.Caption     := IntToStr(I shr 10);
+      ProcessedSizeUnit.Caption := 'KB';
+    end else
+    begin
+      ProcessedSize.Caption     := IntToStr(I shr 20);
+      ProcessedSizeUnit.Caption := 'MB';
+    end;
+
+  Tick.Position := CoreGetPercentes;
+  if FSuspended = False then
+    Caption := Format(rsProcessStatus, [Tick.Position])
+  else
+    Caption := rsProcessPaused;
+
+  if FProgressOnTitle then
+  begin
+    Application.Title := Caption;
   end;
 
-  if CoreGetRemainingTime(FCoreID, FInteger) then
-    RemainingTime.Caption := TimeToStr(FInteger);
+  Time.Caption          := TimeToStr(CoreGetElapsedTime);
+  RemainingTime.Caption := TimeToStr(CoreGetRemainingTime);
+  Speed.Caption         := IntToStr (CoreGetSpeed shr 10);
 
-  if CoreGetElapsedTime(FCoreID, FInteger) then
-    Time.Caption := TimeToStr(FInteger);
-
-  if CoreGetSpeed(FCoreID, FInteger) then
-    Speed.Caption := IntToStr(FInteger shr 10);
-
-  if CoreGetMessage(FCoreID, FPChar) then
-    Msg.Caption := string(FPChar);
+  P := CoreGetMessage;
+  if Assigned(P) then
+  begin
+    Msg.Caption := string(P);
+  end;
+  FreePChar(P);
 end;
 
 procedure TTickFrm.OnTerminate;
 var
-  FPChar: PChar;
+  P: PChar = nil;
 begin
   Timer.Enabled := False;
-  CoreGetExitCode(FCoreID, ExitCode);
+  ExitCode := CoreGetExitCode;
   case ExitCode of
     0: Caption := rsProcessTerminated;
     1: Caption := rsProcessTerminated;
@@ -420,18 +395,18 @@ begin
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
-    if CoreGetMessages(FCoreID, FPChar) then
+    P := CoreGetMessages;
+    if Assigned(P) then
     begin
-       Report.Lines.Text := string(FPChar);
+      Report.Lines.Text := string(P);
     end;
+    FreePChar(P);
   end;
-
   // OnList;
 
-  if CoreDestroy(FCoreID) then
+  if CoreDestroy then
   begin
     FCanClose := True;
-    FCoreID := 0;
   end;
 
   if Report.Lines.Count > 0 then
@@ -442,35 +417,39 @@ end;
 
 procedure TTickFrm.OnList;
 var
-  R: PFileInfoB;
-  I, Count: integer;
+  I: integer;
+  Count: integer;
+  P: PPCharFileInfoB;
   Node: TArchiveItem;
 begin
-  if Assigned(FList) and CoreGetItemsCount(FCoreID, Count) then
+  if Assigned(FList) then
   begin
+    Count := CoreGetItemsCount;
     for I := 0 to Count -1 do
     begin
-      if CoreGetItems(FCoreID, I, R) then
+      P := CoreGetItems(I);
+      if Assigned(P) then
       begin
         Node := TArchiveItem.Create;
         try
-          Node.FileName     := string(R.FileName);
-          Node.FilePath     := string(R.FilePath);
-          Node.FileSize     := R.FileSize;
-          Node.FilePacked   := R.FilePacked;
-          Node.FileRatio    := R.FileRatio;
-          Node.FileAttr     := R.FileAttr;
-          Node.FileTime     := R.FileTime;
-          Node.FileComm     := string(R.FileComm);
-          Node.FileCrc      := R.FileCrc;
-          Node.FileMethod   := string(R.FileMethod);
-          Node.FileVersion  := string(R.FileVersion);
-          Node.FilePassword := string(R.FilePassword);
-          Node.FilePosition := R.FilePosition;
+          Node.FileName     := string(P.FileName);
+          Node.FilePath     := string(P.FilePath);
+          Node.FileSize     := P.FileSize;
+          Node.FilePacked   := P.FilePacked;
+          Node.FileRatio    := P.FileRatio;
+          Node.FileAttr     := P.FileAttr;
+          Node.FileTime     := P.FileTime;
+          Node.FileComm     := string(P.FileComm);
+          Node.FileCrc      := P.FileCrc;
+          Node.FileMethod   := string(P.FileMethod);
+          Node.FileVersion  := string(P.FileVersion);
+          Node.FilePassword := string(P.FilePassword);
+          Node.FilePosition := P.FilePosition;
         finally
           FList.Add(Node);
         end;
       end;
+      FreePPCharFileInfoB(P);
     end;
   end;
  end;
@@ -482,23 +461,18 @@ begin
  // ------------------------------------------------------------------------ //
 
 procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
-var
-  FValue: integer;
 begin
-  if CoreGetStatus(FCoreID, FValue) then
+  if (CoreGetStatus <> csTerminated) then
   begin
-    if (FValue <> csTerminated) then
+    FSuspended := not FSuspended;
+    if FSuspended then
     begin
-      FSuspended := not FSuspended;
-      if FSuspended then
-      begin
-        BtnPauseRun.Caption := rsBtnRunCaption;
-        CoreSuspended(FCoreID, True);
-      end else
-      begin
-        BtnPauseRun.Caption := rsBtnPauseCaption;
-        CoreSuspended(FCoreID, False);
-      end;
+      BtnPauseRun.Caption := rsBtnRunCaption;
+      CoreSuspended(True);
+    end else
+    begin
+      BtnPauseRun.Caption := rsBtnPauseCaption;
+      CoreSuspended(False);
     end;
   end;
 end;
@@ -508,7 +482,7 @@ var
   X, Y: integer;
   FValue: TThreadPriority;
 begin
-  if CoreGetPriority(FCoreID, FValue) then
+  if CoreGetPriority(FValue) then
   begin
     Popup_Idle.Checked         := FValue = tpIdle;
     Popup_Normal.Checked       := FValue = tpNormal;

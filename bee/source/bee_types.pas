@@ -47,13 +47,15 @@ type
 
   // PFileInfoRec record ...
 
-  PFileInfoA = record
+  PCharFileInfoA = record
     FileName: PChar;
     FilePath: PChar;
     FileSize: cardinal;
     FileTime: integer;
     FileAttr: integer;
   end;
+
+  PPCharFileInfoA = ^PCharFileInfoA;
 
   // TFileFullInfoRec record ...
 
@@ -75,7 +77,7 @@ type
 
   // PFileFullInfoRec record ...
 
-  PFileInfoB = record
+  PCharFileInfoB = record
     FileName:     PChar;
     FilePath:     PChar;
     FileSize:     cardinal;
@@ -91,6 +93,8 @@ type
     FilePosition: cardinal;
   end;
 
+  PPCharFileInfoB = ^PCharFileInfoB;
+
   // TEvents procedure ...
 
   TOnCustomEvent    = procedure of object;
@@ -101,15 +105,24 @@ type
   TOnKeyEvent       = procedure(const aFileInfo: TFileInfoA; var Result: string) of object;
 
 const
-  // TCoreStatus ...
+  // CoreStatus ...
 
-  csReady            = 0;
-  csExecuting        = 1;
-  csWaitingOverwrite = 2;
-  csWaitingRename    = 3;
-  csWaitingKey       = 4;
-  csWaitingRequest   = 5;
-  csTerminated       = 6;
+  csUnknow           = -1;
+  csReady            =  0;
+  csExecuting        =  1;
+  csWaitingOverwrite =  2;
+  csWaitingRename    =  3;
+  csWaitingKey       =  4;
+  csWaitingRequest   =  5;
+  csTerminated       =  6;
+
+const
+  // CoreExitCode
+
+  esUnknow    = -1;
+  esSuccesful =  0;
+  esWarning   =  1;
+  esError     =  2;
 
 implementation
 
