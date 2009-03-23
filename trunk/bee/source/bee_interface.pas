@@ -131,7 +131,7 @@ uses
 
 // TApp class ...
 
-constructor TApp.Create;
+constructor TApp.Create(aParams: TStringList);
 begin
   inherited Create;
   FParams     := aParams;
