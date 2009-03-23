@@ -310,7 +310,7 @@ procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   case CoreGetStatus of
     csTerminated: OnTerminate;
-    // csExecuting:  OnExecuting;
+    csExecuting:  OnExecuting;
   end;
 end;
 
@@ -402,7 +402,7 @@ begin
     end;
     FreePChar(P);
   end;
-  // OnList;
+  OnList;
 
   if CoreDestroy then
   begin
