@@ -249,25 +249,28 @@ var
     end;
   end;
 
-  procedure CoreDestroy;
+  function CoreDestroy: boolean;
   begin
+    Result := Assigned(Core);
     if Assigned(Core) then
     begin
       FreeAndNil(Core);
     end;
   end;
 
-  procedure CoreSuspended(AValue: boolean);
+  function CoreSuspended(AValue: boolean): boolean;
   begin
-    if Assigned(Core) then
+    Result := Assigned(Core);
+    if Result then
     begin
       Core.FApp.Suspended := AValue;
     end;
   end;
 
-  procedure CoreTerminate;
+  function CoreTerminate: boolean;
   begin
-    if Assigned(Core) then
+    Result := Assigned(Core);
+    if Result then
     begin
       Core.FApp.Terminated := True;
       if Core.FStatus = csReady then
@@ -282,7 +285,7 @@ var
     if Assigned(Core) then
       Result := Core.FApp.ExitCode
     else
-      Result := 0;
+      Result := esUnknow;
   end;
 
   function CoreGetStatus: integer;
@@ -290,7 +293,7 @@ var
     if Assigned(Core) then
       Result := Core.FStatus
     else
-      Result := csTerminated;
+      Result := csUnknow;
   end;
 
   function CoreGetMessage: PChar;
@@ -318,7 +321,7 @@ var
     if Assigned(Core) then
       Result := Core.FApp.ElapsedTime
     else
-      Result := 0;
+      Result := -1;
   end;
 
   function CoreGetRemainingTime: integer;
@@ -326,7 +329,7 @@ var
     if Assigned(Core) then
       Result := Core.FApp.RemainingTime
     else
-      Result := 0;
+      Result := -1;
   end;
 
   function CoreGetPercentes: integer;
@@ -334,7 +337,7 @@ var
     if Assigned(Core) then
       Result := Core.FApp.Percentes
     else
-      Result := 0;
+      Result := -1;
   end;
 
   function CoreGetSpeed: integer;
@@ -342,7 +345,7 @@ var
     if Assigned(Core) then
       Result := Core.FApp.Speed
     else
-      Result := 0;
+      Result := -1;
   end;
 
   function CoreGetTotalSize: int64;
@@ -350,7 +353,7 @@ var
     if Assigned(Core) then
       Result := Core.FApp.TotalSize
     else
-      Result := 0;
+      Result := -1;
   end;
 
   function CoreGetProcessedSize: int64;
@@ -358,7 +361,7 @@ var
     if Assigned(Core) then
       Result := Core.FApp.ProcessedSize
     else
-      Result := 0;
+      Result := -1;
   end;
 
   function CoreSetPriority(const AValue: TThreadPriority): boolean;
@@ -379,20 +382,23 @@ var
     end;
   end;
 
-  function CoreGetFileInfo: PFileInfoA;
+  function CoreGetFileInfo: PPCharFileInfoA;
   begin
     if Assigned(Core) then
     begin
-      Result.FileName := stralloc(Length(Core.FFileInfo.FileName) + 1);
-      Result.FilePath := stralloc(Length(Core.FFileInfo.FilePath) + 1);
+      GetMem(Result, SizeOf(PCharFileInfoA));
 
+      Result.FileName := stralloc(Length(Core.FFileInfo.FileName) + 1);
       strpcopy(Result.FileName, Core.FFileInfo.FileName);
+
+      Result.FilePath := stralloc(Length(Core.FFileInfo.FilePath) + 1);
       strpcopy(Result.FilePath, Core.FFileInfo.FilePath);
 
       Result.FileSize := Core.FFileInfo.FileSize;
       Result.FileTime := Core.FFileInfo.FileTime;
       Result.FileAttr := Core.FFileInfo.FileAttr;
-    end;
+    end else
+      Result := nil;
   end;
 
   function CoreSetOverwriteFileInfo(const AValue: char): boolean;
@@ -452,11 +458,13 @@ var
       Result := 0;
   end;
 
-  function CoreGetItems(const AIndex: integer): PFileInfoB;
+  function CoreGetItems(const AIndex: integer): PPCharFileInfoB;
   begin
     if Assigned(Core) then
     with TFileInfoB(Core.FContents.Items[AIndex]^) do
     begin
+      GetMem(Result, SizeOf(PCharFileInfoB));
+
       Result.FileName := stralloc(Length(FileName) + 1);
       strpcopy(Result.FileName, FileName);
 
@@ -484,7 +492,8 @@ var
       strpcopy(Result.FilePassword, FilePassword);
 
       Result.FilePosition := FilePosition;
-    end;
+    end else
+      Result := nil;
   end;
 
   procedure FreePChar(P: PChar);
@@ -492,20 +501,24 @@ var
     strdispose(P); P := nil;
   end;
 
-  procedure FreePFileInfoA(P: PFileInfoA);
+  procedure FreePPCharFileInfoA(P: PPCharFileInfoA);
   begin
     strdispose(P.FileName); P.FileName := nil;
     strdispose(P.FilePath); P.FilePath := nil;
+
+    FreeMem(P); P := nil;
   end;
 
-  procedure FreePFileInfoB(P: PFileInfoB);
+  procedure FreePPCharFileInfoB(P: PPCharFileInfoB);
   begin
-    strdispose(P.FileName);     P.FileName     := nil;
-    strdispose(P.FilePath);     P.FilePath     := nil;
-    strdispose(P.FileComm);     P.FileComm     := nil;
+    strdispose(P.FileName);     P.FileName := nil;
+    strdispose(P.FilePath);     P.FilePath := nil;
+    strdispose(P.FileComm);     P.FileComm := nil;
     strdispose(P.FileMethod);   P.FileMethod   := nil;
     strdispose(P.FileVersion);  P.FileVersion  := nil;
     strdispose(P.FilePassword); P.FilePassword := nil;
+
+    FreeMem(P); P := nil;
   end;
 
   // -------------------------------------------------------------------------- //
@@ -520,9 +533,7 @@ exports
   CoreDestroy,
   CoreSuspended,
   CoreTerminate,
-
-  CoreGetPriority,
-  CoreSetPriority,
+  // ---
   CoreGetExitCode,
   CoreGetStatus,
   CoreGetMessage,
@@ -533,15 +544,24 @@ exports
   CoreGetProcessedSize,
   CoreGetElapsedTime,
   CoreGetRemainingTime,
-
-  CoreSetOverwriteFileInfo,
+  // ---
+  CoreGetPriority,
+  CoreSetPriority,
+  // ---
+  CoreGetFileInfo,
   CoreSetRenameFileInfo,
   CoreSetPasswordFileInfo,
+  CoreSetOverwriteFileInfo,
+  // ---
   CoreGetRequestMessage,
   CoreSetRequestMessage,
-
+  // ---
   CoreGetItemsCount,
-  CoreGetItems;
+  CoreGetItems,
+  // ---
+  FreePChar,
+  FreePPCharFileInfoA,
+  FreePPCharFileInfoB;
 
 begin
 
