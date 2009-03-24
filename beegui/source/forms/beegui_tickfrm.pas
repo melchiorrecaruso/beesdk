@@ -121,9 +121,6 @@ type
     procedure OnTerminate;
     procedure OnList;
 
-    procedure OnMessage(aMessage: PChar);
-    procedure OnTick(aPercentes: integer);
-
   private
     { private declarations }
     FList:      TList;
@@ -227,6 +224,16 @@ begin
   end;
 end;
 
+procedure OnMessage(aMessage: PChar);
+begin
+  TickFrm.Report.Lines.Add('OnPMessage');
+end;
+
+procedure OnTick(aPercentes: integer);
+begin
+  TickFrm.Tick.Position := aPercentes;
+end;
+
 procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
 begin
   FList := aList;
@@ -246,15 +253,7 @@ begin
   end;
 end;
 
-procedure TTickFrm.OnMessage(aMessage: PChar);
-begin
-  Report.Lines.Add('OnPMessage');
-end;
 
-procedure TTickFrm.OnTick(aPercentes: integer);
-begin
-  Tick.Position := aPercentes;
-end;
 
 function TTickFrm.GetFrmCanClose: boolean;
 begin

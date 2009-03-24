@@ -97,8 +97,8 @@ type
 
   // TEvents procedure ...
 
-  POnMessageEvent   = procedure(aMessage: PChar) of object;
-  POnTickEvent      = procedure(aPercentage: integer) of object;
+  POnMessageEvent   = procedure(aMessage: PChar);
+  POnTickEvent      = procedure(aPercentage: integer);
 
   TOnCustomEvent    = procedure of object;
   TOnMessageEvent   = procedure(const aMessage: string) of object;
