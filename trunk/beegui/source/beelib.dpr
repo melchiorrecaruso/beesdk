@@ -103,6 +103,9 @@ type
     FApp.OnRequest    := ProcessRequest;
     FApp.OnTick       := ProcessTick;
     FApp.OnClear      := ProcessClear;
+
+    FApp.POnMessage   := nil;
+    FApp.POnTick      := nil;
   end;
 
   destructor TCore.Destroy;
@@ -152,6 +155,11 @@ type
   begin
     FMessage := aMessage;
     FMessages.Add(FMessage);
+
+    if Assigned(FApp.POnMessage) then
+    begin
+      FApp.POnMessage(nil);
+    end;
   end;
 
   procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
@@ -185,9 +193,6 @@ type
     GetMem(P, SizeOf(TFileInfoB));
     P^ := aFileInfo;
     FContents.Add(P);
-
-    // MessageBox(0, PChar(aFileInfo.FileName), '', 0);
-
   end;
 
   procedure TCore.ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
@@ -214,7 +219,10 @@ type
 
   procedure TCore.ProcessTick;
   begin
-
+    if Assigned(FApp.POnMessage) then
+    begin
+      FApp.POnTick(FApp.Percentes);
+    end;
   end;
 
   procedure TCore.ProcessClear;
@@ -273,9 +281,9 @@ var
     if Result then
     begin
       Core.FApp.Terminated := True;
-      if Core.FStatus = csReady then
+      if Core.FStatus <> csTerminated then
       begin
-        Core.FStatus := csTerminated;
+        Core.FStatus := csExecuting;
       end;
     end;
   end;
@@ -521,6 +529,16 @@ var
     FreeMem(P); P := nil;
   end;
 
+  procedure SetPOnMessage(P: POnMessageEvent);
+  begin
+    Core.FApp.POnMessage := P;
+  end;
+
+  procedure SetPOnTick(P: POnTickEvent);
+  begin
+    Core.FApp.POnTick := P;
+  end;
+
   // -------------------------------------------------------------------------- //
   //                                                                            //
   //  Library core routines exported                                            //
@@ -561,7 +579,10 @@ exports
   // ---
   FreePChar,
   FreePPCharFileInfoA,
-  FreePPCharFileInfoB;
+  FreePPCharFileInfoB,
+
+  SetPOnMessage,
+  SetPOnTick;
 
 begin
 

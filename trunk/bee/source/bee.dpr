@@ -42,12 +42,6 @@ program Bee;
 {$I compiler.inc}
 
 uses
-  {$IFDEF FPC}
-  {$IFDEF UNIX}
-  cThreads,
-  cMem,
-  {$ENDIF}
-  {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -69,10 +63,10 @@ type
     procedure ProcessError(const aMessage: string);
     procedure ProcessWarning(const aMessage: string);
     procedure ProcessMessage(const aMessage: string);
-    procedure ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
-    procedure ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
-    procedure ProcessList(const aFileInfo: TFileFullInfoRec);
-    procedure ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
+    procedure ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
+    procedure ProcessRename(const aFileInfo: TFileInfoA; var Result: string);
+    procedure ProcessList(const aFileInfo: TFileInfoB);
+    procedure ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
     procedure ProcessRequest(const aMessage: string);
     procedure ProcessTick;
     procedure ProcessClear;
@@ -145,7 +139,7 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfoRec; var Result: char);
+  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
   begin
     with aFileInfo do
     begin
@@ -156,7 +150,7 @@ type
     Readln(Result);
   end;
 
-  procedure TConsole.ProcessRename(const aFileInfo: TFileInfoRec; var Result: string);
+  procedure TConsole.ProcessRename(const aFileInfo: TFileInfoA; var Result: string);
   begin
     with aFileInfo do
     begin
@@ -167,7 +161,7 @@ type
     Result := OemToParam(Result);
   end;
 
-  procedure TConsole.ProcessList(const aFileInfo: TFileFullInfoRec);
+  procedure TConsole.ProcessList(const aFileInfo: TFileInfoB);
   begin
     with aFileInfo do
     begin
@@ -189,7 +183,7 @@ type
     end;
   end;
 
-  procedure TConsole.ProcessKey(const aFileInfo: TFileInfoRec; var Result: string);
+  procedure TConsole.ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
   begin
     if Length(FKey) = 0 then
     begin
