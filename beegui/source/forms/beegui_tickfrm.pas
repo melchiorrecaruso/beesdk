@@ -120,6 +120,10 @@ type
     procedure OnExecuting;
     procedure OnTerminate;
     procedure OnList;
+
+    procedure OnMessage(aMessage: PChar);
+    procedure OnTick(aPercentes: integer);
+
   private
     { private declarations }
     FList:      TList;
@@ -228,6 +232,10 @@ begin
   FList := aList;
   FCommandLine := aCommandLine;
   CoreCreate(PChar(FCommandLine.Params.Text));
+
+  SetPOnMessage(OnMessage);
+  SetPOnTick(OnTick);
+
   if CoreExecute then
   begin
     BtnPauseRun.Enabled := True;
@@ -236,6 +244,16 @@ begin
     {$ENDIF}
     Timer.Enabled := True;
   end;
+end;
+
+procedure TTickFrm.OnMessage(aMessage: PChar);
+begin
+  Report.Lines.Add('OnPMessage');
+end;
+
+procedure TTickFrm.OnTick(aPercentes: integer);
+begin
+  Tick.Position := aPercentes;
 end;
 
 function TTickFrm.GetFrmCanClose: boolean;
@@ -310,7 +328,7 @@ procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   case CoreGetStatus of
     csTerminated: OnTerminate;
-    csExecuting:  OnExecuting;
+    // csExecuting:  OnExecuting;
   end;
 end;
 
@@ -351,11 +369,11 @@ begin
       ProcessedSizeUnit.Caption := 'MB';
     end;
 
-  Tick.Position := CoreGetPercentes;
-  if FSuspended = False then
-    Caption := Format(rsProcessStatus, [Tick.Position])
-  else
-    Caption := rsProcessPaused;
+  // Tick.Position := CoreGetPercentes;
+  // if FSuspended = False then
+  //   Caption := Format(rsProcessStatus, [Tick.Position])
+  // else
+  //  Caption := rsProcessPaused;
 
   if FProgressOnTitle then
   begin
@@ -392,13 +410,13 @@ begin
     Application.Title := Caption;
   end;
 
-  Report.Lines.Clear;
+  // Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
     P := CoreGetMessages;
     if Assigned(P) then
     begin
-      Report.Lines.Text := string(P);
+      // Report.Lines.Text := string(P);
     end;
     FreePChar(P);
   end;

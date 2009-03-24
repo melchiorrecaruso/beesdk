@@ -97,6 +97,9 @@ type
 
   // TEvents procedure ...
 
+  POnMessageEvent   = procedure(aMessage: PChar) of object;
+  POnTickEvent      = procedure(aPercentage: integer) of object;
+
   TOnCustomEvent    = procedure of object;
   TOnMessageEvent   = procedure(const aMessage: string) of object;
   TOnListEvent      = procedure(const aFileInfo: TFileInfoB) of object;
