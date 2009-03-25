@@ -117,10 +117,10 @@ type
     procedure BtnCancelClick(Sender: TObject);
     // ---
     procedure OnTimer(Sender: TObject);
-    procedure OnExecuting;
     procedure OnTerminate;
+    procedure OnExecute;
+    procedure OnRename;
     procedure OnList;
-
   private
     { private declarations }
     FList:      TList;
@@ -224,24 +224,11 @@ begin
   end;
 end;
 
-procedure OnMessage(aMessage: PChar);
-begin
-  TickFrm.Report.Lines.Add('OnPMessage');
-end;
-
-procedure OnTick(aPercentes: integer);
-begin
-  TickFrm.Tick.Position := aPercentes;
-end;
-
 procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
 begin
   FList := aList;
   FCommandLine := aCommandLine;
   CoreCreate(PChar(FCommandLine.Params.Text));
-
-  SetPOnMessage(OnMessage);
-  SetPOnTick(OnTick);
 
   if CoreExecute then
   begin
@@ -252,8 +239,6 @@ begin
     Timer.Enabled := True;
   end;
 end;
-
-
 
 function TTickFrm.GetFrmCanClose: boolean;
 begin
@@ -326,12 +311,13 @@ end;
 procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   case CoreGetStatus of
-    csTerminated: OnTerminate;
-    // csExecuting:  OnExecuting;
+    csTerminated:    OnTerminate;
+    csExecuting:     OnExecute;
+    csWaitingRename: OnRename;
   end;
 end;
 
-procedure TTickFrm.OnExecuting;
+procedure TTickFrm.OnExecute;
 var
   I: int64;
   P: PChar = nil;
@@ -368,11 +354,11 @@ begin
       ProcessedSizeUnit.Caption := 'MB';
     end;
 
-  // Tick.Position := CoreGetPercentes;
-  // if FSuspended = False then
-  //   Caption := Format(rsProcessStatus, [Tick.Position])
-  // else
-  //  Caption := rsProcessPaused;
+  Tick.Position := CoreGetPercentes;
+  if FSuspended = False then
+    Caption := Format(rsProcessStatus, [Tick.Position])
+  else
+    Caption := rsProcessPaused;
 
   if FProgressOnTitle then
   begin
@@ -409,13 +395,13 @@ begin
     Application.Title := Caption;
   end;
 
-  // Report.Lines.Clear;
+  Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
     P := CoreGetMessages;
     if Assigned(P) then
     begin
-      // Report.Lines.Text := string(P);
+      Report.Lines.Text := string(P);
     end;
     FreePChar(P);
   end;
@@ -432,6 +418,31 @@ begin
     Close;
 end;
 
+procedure TTickFrm.OnRename;
+var
+  F: TRenameFrm;
+  P: PPCharFileInfoA;
+begin
+  Timer.Enabled := False;
+  F := TRenameFrm.Create(Application);
+  F.Caption := rsRenameFile;
+  P := CoreGetFileInfo;
+  with P^ do
+  begin
+    F.ToFN.Text      := string(FilePath) + string(FileName);
+    F.FromFN.Caption := string(FilePath) + string(FileName);
+
+    if F.ShowModal = mrOk then
+      CoreSetRenameFileInfo(PChar(F.ToFN.Text ))
+    else
+      CoreSetRenameFileInfo(nil);
+
+    F.Free;
+  end;
+  FreePPCharFileInfoA(P);
+  Timer.Enabled := True;
+end;
+
 procedure TTickFrm.OnList;
 var
   I: integer;
@@ -439,6 +450,8 @@ var
   P: PPCharFileInfoB;
   Node: TArchiveItem;
 begin
+  ShowMessage('List');
+
   if Assigned(FList) then
   begin
     Count := CoreGetItemsCount;
@@ -584,28 +597,6 @@ end;
           mrYes     : Answer := 'Y';
           else        Answer := 'N';
         end;
-      end;
-      F.Free;
-    end;
-  end;
-  
-  procedure TTickFrm.OnRename;
-  var
-    F: TRenameFrm;
-  begin
-    if FInterfaces.Terminated = False then
-    begin;
-      F := TRenameFrm.Create(Application);
-      F.Caption := rsRenameFile;
-      with FInterfaces.OnRename do
-      begin
-        F.ToFN.Text      := Data.FilePath + Data.FileName;
-        F.FromFN.Caption := Data.FilePath + Data.FileName;
-
-        if F.ShowModal = mrOk then
-          Answer := F.ToFN.Text
-        else
-          Answer := '';
       end;
       F.Free;
     end;

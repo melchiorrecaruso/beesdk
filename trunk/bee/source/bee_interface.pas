@@ -55,11 +55,6 @@ type
     FOnRequest: TOnMessageEvent;
     FOnTick:    TOnCustomEvent;
     FOnClear:   TOnCustomEvent;
-
-
-    FPOnMessage: POnMessageEvent;
-    FPOnTick:    POnTickEvent;
-
   protected
     FParams:     TStringList;
     FSuspendedTime: double;
@@ -111,10 +106,6 @@ type
     property OnRequest: TOnMessageEvent Read FOnRequest Write FOnRequest;
     property OnTick: TOnCustomEvent Read FOnTick Write FOnTick;
     property OnClear: TOnCustomEvent Read FOnClear Write FOnClear;
-
-    property POnMessage: POnMessageEvent Read FPOnMessage Write FPOnMessage;
-    property POnTick: POnTickEvent Read FPOnTick Write FPOnTick;
-
   public
     property TotalSize: int64 Read FTotalSize;
     property ProcessedSize: int64 Read FProcessedSize;
