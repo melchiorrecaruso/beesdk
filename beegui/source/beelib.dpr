@@ -103,9 +103,6 @@ type
     FApp.OnRequest    := ProcessRequest;
     FApp.OnTick       := ProcessTick;
     FApp.OnClear      := ProcessClear;
-
-    FApp.POnMessage   := nil;
-    FApp.POnTick      := nil;
   end;
 
   destructor TCore.Destroy;
@@ -155,11 +152,6 @@ type
   begin
     FMessage := aMessage;
     FMessages.Add(FMessage);
-
-    if Assigned(FApp.POnMessage) then
-    begin
-      FApp.POnMessage(nil);
-    end;
   end;
 
   procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
@@ -219,10 +211,7 @@ type
 
   procedure TCore.ProcessTick;
   begin
-    if Assigned(FApp.POnMessage) then
-    begin
-      FApp.POnTick(FApp.Percentes);
-    end;
+
   end;
 
   procedure TCore.ProcessClear;
@@ -469,6 +458,7 @@ var
   function CoreGetItems(const AIndex: integer): PPCharFileInfoB;
   begin
     if Assigned(Core) then
+
     with TFileInfoB(Core.FContents.Items[AIndex]^) do
     begin
       GetMem(Result, SizeOf(PCharFileInfoB));
@@ -506,37 +496,38 @@ var
 
   procedure FreePChar(P: PChar);
   begin
-    strdispose(P); P := nil;
+    strdispose(P);
+    P := nil;
   end;
 
   procedure FreePPCharFileInfoA(P: PPCharFileInfoA);
   begin
-    strdispose(P.FileName); P.FileName := nil;
-    strdispose(P.FilePath); P.FilePath := nil;
+    strdispose(P.FileName);
+    P.FileName := nil;
+    strdispose(P.FilePath);
+    P.FilePath := nil;
 
-    FreeMem(P); P := nil;
+    FreeMem(P);
+    P := nil;
   end;
 
   procedure FreePPCharFileInfoB(P: PPCharFileInfoB);
   begin
-    strdispose(P.FileName);     P.FileName := nil;
-    strdispose(P.FilePath);     P.FilePath := nil;
-    strdispose(P.FileComm);     P.FileComm := nil;
-    strdispose(P.FileMethod);   P.FileMethod   := nil;
-    strdispose(P.FileVersion);  P.FileVersion  := nil;
-    strdispose(P.FilePassword); P.FilePassword := nil;
+    strdispose(P.FileName);
+    P.FileName := nil;
+    strdispose(P.FilePath);
+    P.FilePath := nil;
+    strdispose(P.FileComm);
+    P.FileComm := nil;
+    strdispose(P.FileMethod);
+    P.FileMethod   := nil;
+    strdispose(P.FileVersion);
+    P.FileVersion  := nil;
+    strdispose(P.FilePassword);
+    P.FilePassword := nil;
 
-    FreeMem(P); P := nil;
-  end;
-
-  procedure SetPOnMessage(P: POnMessageEvent);
-  begin
-    Core.FApp.POnMessage := P;
-  end;
-
-  procedure SetPOnTick(P: POnTickEvent);
-  begin
-    Core.FApp.POnTick := P;
+    FreeMem(P);
+    P := nil;
   end;
 
   // -------------------------------------------------------------------------- //
@@ -579,10 +570,7 @@ exports
   // ---
   FreePChar,
   FreePPCharFileInfoA,
-  FreePPCharFileInfoB,
-
-  SetPOnMessage,
-  SetPOnTick;
+  FreePPCharFileInfoB;
 
 begin
 
