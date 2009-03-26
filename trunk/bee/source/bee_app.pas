@@ -1152,8 +1152,8 @@ begin
 
         with FileInfo do
         begin
-          FileName := PChar(ExtractFileName(P.Data.FileName));
-          FilePath := PChar(ExtractFilePath(P.Data.FileName));
+          FileName := ExtractFileName(P.Data.FileName);
+          FilePath := ExtractFilePath(P.Data.FileName);
 
           {$IFDEF CONSOLEAPPLICATION}
           if CompareFileName(HeadersToListPath, FilePath) <> 0 then
