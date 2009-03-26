@@ -229,7 +229,6 @@ begin
   FList := aList;
   FCommandLine := aCommandLine;
   CoreCreate(PChar(FCommandLine.Params.Text));
-
   if CoreExecute then
   begin
     BtnPauseRun.Enabled := True;
@@ -312,7 +311,7 @@ procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   case CoreGetStatus of
     csTerminated:    OnTerminate;
-    csExecuting:     OnExecute;
+    // csExecuting:     OnExecute;
     csWaitingRename: OnRename;
   end;
 end;
@@ -446,16 +445,12 @@ end;
 procedure TTickFrm.OnList;
 var
   I: integer;
-  Count: integer;
   P: PPCharFileInfoB;
   Node: TArchiveItem;
 begin
-  ShowMessage('List');
-
   if Assigned(FList) then
   begin
-    Count := CoreGetItemsCount;
-    for I := 0 to Count -1 do
+    for I := 0 to CoreGetItemsCount -1 do
     begin
       P := CoreGetItems(I);
       if Assigned(P) then
