@@ -124,6 +124,23 @@ const
   esWarning   =  1;
   esError     =  2;
 
+function StringToPChar(const Value: string): PChar;
+function PCharToString(Value: PChar): string;
+
 implementation
+
+uses
+  Strings;
+
+function StringToPChar(const Value: string): PChar;
+begin
+  Result := stralloc(Length(Value) + 1);
+  Result := strpcopy(Result, Value);
+end;
+
+function PCharToString(Value: PChar): string;
+begin
+  Result := strpas(Value);
+end;
 
 end.

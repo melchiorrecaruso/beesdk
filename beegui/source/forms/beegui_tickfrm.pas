@@ -176,10 +176,10 @@ var
 procedure TTickFrm.FormCreate(Sender: TObject);
 begin
   FCommandLine := nil;
-  FPassword  := '';
-  FList      := nil;
-  FCanClose  := False;
-  FSuspended := False;
+  FPassword    := '';
+  FList        := nil;
+  FCanClose    := False;
+  FSuspended   := False;
 
   LoadLanguage;
   LoadProperty;
@@ -193,8 +193,8 @@ end;
 procedure TTickFrm.FormDestroy(Sender: TObject);
 begin
   FCommandLine := nil;
-  FPassword := '';
-  FList := nil;
+  FPassword    := '';
+  FList        := nil;
 end;
 
 procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -225,10 +225,14 @@ begin
 end;
 
 procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
+var
+  P: PChar = nil;
 begin
   FList := aList;
   FCommandLine := aCommandLine;
-  CoreCreate(PChar(FCommandLine.Params.Text));
+
+  P := StringToPChar(FCommandLine.Params.Text);
+  CoreCreate(P);
   if CoreExecute then
   begin
     BtnPauseRun.Enabled := True;
@@ -237,6 +241,7 @@ begin
     {$ENDIF}
     Timer.Enabled := True;
   end;
+  strdispose(P);
 end;
 
 function TTickFrm.GetFrmCanClose: boolean;
@@ -311,7 +316,7 @@ procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   case CoreGetStatus of
     csTerminated:    OnTerminate;
-    // csExecuting:     OnExecute;
+    csExecuting:     OnExecute;
     csWaitingRename: OnRename;
   end;
 end;
@@ -371,7 +376,7 @@ begin
   P := CoreGetMessage;
   if Assigned(P) then
   begin
-    Msg.Caption := string(P);
+    Msg.Caption := PCharToString(P);
   end;
   FreePChar(P);
 end;
@@ -381,6 +386,9 @@ var
   P: PChar = nil;
 begin
   Timer.Enabled := False;
+
+  ShowMessage('OnTerminate');
+
   ExitCode := CoreGetExitCode;
   case ExitCode of
     0: Caption := rsProcessTerminated;
@@ -400,7 +408,7 @@ begin
     P := CoreGetMessages;
     if Assigned(P) then
     begin
-      Report.Lines.Text := string(P);
+      Report.Lines.Text := PCharToString(P);
     end;
     FreePChar(P);
   end;
@@ -428,8 +436,8 @@ begin
   P := CoreGetFileInfo;
   with P^ do
   begin
-    F.ToFN.Text      := string(FilePath) + string(FileName);
-    F.FromFN.Caption := string(FilePath) + string(FileName);
+    F.ToFN.Text      := PCharToString(FilePath) + PCharToString(FileName);
+    F.FromFN.Caption := PCharToString(FilePath) + PCharToString(FileName);
 
     if F.ShowModal = mrOk then
       CoreSetRenameFileInfo(PChar(F.ToFN.Text ))
@@ -457,18 +465,18 @@ begin
       begin
         Node := TArchiveItem.Create;
         try
-          Node.FileName     := string(P.FileName);
-          Node.FilePath     := string(P.FilePath);
+          Node.FileName     := PCharToString(P.FileName);
+          Node.FilePath     := PCharToString(P.FilePath);
           Node.FileSize     := P.FileSize;
           Node.FilePacked   := P.FilePacked;
           Node.FileRatio    := P.FileRatio;
           Node.FileAttr     := P.FileAttr;
           Node.FileTime     := P.FileTime;
-          Node.FileComm     := string(P.FileComm);
+          Node.FileComm     := PCharToString(P.FileComm);
           Node.FileCrc      := P.FileCrc;
-          Node.FileMethod   := string(P.FileMethod);
-          Node.FileVersion  := string(P.FileVersion);
-          Node.FilePassword := string(P.FilePassword);
+          Node.FileMethod   := PCharToString(P.FileMethod);
+          Node.FileVersion  := PCharToString(P.FileVersion);
+          Node.FilePassword := PCharToString(P.FilePassword);
           Node.FilePosition := P.FilePosition;
         finally
           FList.Add(Node);

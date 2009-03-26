@@ -109,16 +109,16 @@ type
   var
     I: integer;
   begin
-    FMessages.Destroy;
-    FParams.Destroy;
+    FMessages.Free;
+    FParams.Free;
     with FContents do
     begin
       for I := 0 to Count -1 do
         FreeMem(Items[I]);
       Clear;
     end;
-    FContents.Destroy;
-    FApp.Destroy;
+    FContents.Free;
+    FApp.Free;
     inherited Destroy;
   end;
 
@@ -231,7 +231,7 @@ var
     Result := not Assigned(Core);
     if Result then
     begin
-      Core := TCore.Create(string(aCommandLine));
+      Core := TCore.Create(PCharToString(aCommandLine));
     end;
   end;
 
@@ -294,20 +294,16 @@ var
   function CoreGetMessage: PChar;
   begin
     if Assigned(Core) then
-    begin
-      Result := StrAlloc(Length(Core.FMessage) + 1);
-      strpcopy(Result, Core.FMessage);
-    end else
+      Result := StringToPChar(Core.FMessage)
+    else
       Result := nil;
   end;
 
   function CoreGetMessages: PChar;
   begin
     if Assigned(Core) then
-    begin
-      Result := StrAlloc(Length(Core.FMessages.Text) + 1);
-      strpcopy(Result, Core.FMessages.Text);
-    end else
+      Result := StringToPChar(Core.FMessages.Text)
+    else
       Result := nil;
   end;
 
@@ -381,14 +377,10 @@ var
   begin
     if Assigned(Core) then
     begin
-      GetMem(Result, SizeOf(PCharFileInfoA));
+      Result := GetMem(SizeOf(PCharFileInfoA));
 
-      Result.FileName := stralloc(Length(Core.FFileInfo.FileName) + 1);
-      strpcopy(Result.FileName, Core.FFileInfo.FileName);
-
-      Result.FilePath := stralloc(Length(Core.FFileInfo.FilePath) + 1);
-      strpcopy(Result.FilePath, Core.FFileInfo.FilePath);
-
+      Result.FileName := StringToPChar(Core.FFileInfo.FileName);
+      Result.FilePath := StringToPChar(Core.FFileInfo.FilePath);
       Result.FileSize := Core.FFileInfo.FileSize;
       Result.FileTime := Core.FFileInfo.FileTime;
       Result.FileAttr := Core.FFileInfo.FileAttr;
@@ -411,7 +403,7 @@ var
     Result := Assigned(Core);
     if Result then
     begin
-      Core.FResult := string(AValue);
+      Core.FResult := PCharToString(AValue);
       Core.FStatus := csExecuting;
     end;
   end;
@@ -421,7 +413,7 @@ var
     Result := Assigned(Core);
     if Result then
     begin
-      Core.FResult := string(AValue);
+      Core.FResult := PCharToString(AValue);
       Core.FStatus := csExecuting;
     end;
   end;
@@ -429,10 +421,8 @@ var
   function CoreGetRequestMessage: PChar;
   begin
     if Assigned(Core) then
-    begin
-      Result := StrAlloc(Length(Core.FMessage) + 1);
-      strpcopy(Result, Core.FMessage);
-    end else
+      Result := StringToPChar(Core.FMessage)
+    else
       Result := nil;
   end;
 
@@ -456,38 +446,30 @@ var
   function CoreGetItems(const AIndex: integer): PPCharFileInfoB;
   begin
     if Assigned(Core) then
-
-    with TFileInfoB(Core.FContents.Items[AIndex]^) do
     begin
-      GetMem(Result, SizeOf(PCharFileInfoB));
+      with TFileInfoB(Core.FContents.Items[AIndex]^) do
+      begin
+        Result := GetMem(SizeOf(PCharFileInfoB));
 
-      Result.FileName := stralloc(Length(FileName) + 2);
-      strpcopy(Result.FileName, FileName);
+        Result.FileName     := StringToPChar(FileName);
+        Result.FilePath     := StringToPChar(FilePath);
 
-      Result.FilePath := stralloc(Length(FilePath) + 2);
-      strpcopy(Result.FilePath, FilePath);
+        Result.FileSize     := FileSize;
+        Result.FileTime     := FileTime;
+        Result.FileAttr     := FileAttr;
+        Result.FilePacked   := FilePacked;
+        Result.FileRatio    := FileRatio;
 
-      Result.FileSize   := FileSize;
-      Result.FileTime   := FileTime;
-      Result.FileAttr   := FileAttr;
-      Result.FilePacked := FilePacked;
-      Result.FileRatio  := FileRatio;
+        Result.FileComm     := StringToPChar(FileComm);
 
-      Result.FileComm := stralloc(Length(FileComm) + 2);
-      strpcopy(Result.FileComm, FileComm);
+        Result.FileCrc      := FileCrc;
 
-      Result.FileCrc  := FileCrc;
+        Result.FileMethod   := StringToPChar(FileMethod);
+        Result.FileVersion  := StringToPChar(FileVersion);
+        Result.FilePassword := StringToPChar(FilePassword);
 
-      Result.FileMethod   := stralloc(Length(FileMethod) + 2);
-      strpcopy(Result.FileMethod, FileMethod);
-
-      Result.FileVersion  := stralloc(Length(FileVersion) + 2);
-      strpcopy(Result.FileVersion, FileVersion);
-
-      Result.FilePassword := stralloc(Length(FilePassword) + 2);
-      strpcopy(Result.FilePassword, FilePassword);
-
-      Result.FilePosition := FilePosition;
+        Result.FilePosition := FilePosition;
+      end
     end else
       Result := nil;
   end;
@@ -495,37 +477,26 @@ var
   procedure FreePChar(P: PChar);
   begin
     strdispose(P);
-    P := nil;
   end;
 
   procedure FreePPCharFileInfoA(P: PPCharFileInfoA);
   begin
-    strdispose(P.FileName);
-    P.FileName := nil;
-    strdispose(P.FilePath);
-    P.FilePath := nil;
+    strdispose(P.FileName); P.FileName := nil;
+    strdispose(P.FilePath); P.FilePath := nil;
 
-    FreeMem(P);
-    P := nil;
+    FreeMem(P); P := nil;
   end;
 
   procedure FreePPCharFileInfoB(P: PPCharFileInfoB);
   begin
-    strdispose(P.FileName);
-    P.FileName := nil;
-    strdispose(P.FilePath);
-    P.FilePath := nil;
-    strdispose(P.FileComm);
-    P.FileComm := nil;
-    strdispose(P.FileMethod);
-    P.FileMethod   := nil;
-    strdispose(P.FileVersion);
-    P.FileVersion  := nil;
-    strdispose(P.FilePassword);
-    P.FilePassword := nil;
+    strdispose(P.FileName);     P.FileName     := nil;
+    strdispose(P.FilePath);     P.FilePath     := nil;
+    strdispose(P.FileComm);     P.FileComm     := nil;
+    strdispose(P.FileMethod);   P.FileMethod   := nil;
+    strdispose(P.FileVersion);  P.FileVersion  := nil;
+    strdispose(P.FilePassword); P.FilePassword := nil;
 
-    FreeMem(P);
-    P := nil;
+    FreeMem(P); P := nil;
   end;
 
   // -------------------------------------------------------------------------- //
