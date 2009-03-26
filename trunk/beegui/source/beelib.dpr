@@ -77,7 +77,7 @@ type
   //                                                                            //
   // -------------------------------------------------------------------------- //
 
-  constructor TCore.Create(const ACommandLine: string);
+  constructor TCore.Create(const aCommandLine: string);
   begin
     inherited Create(True);
     FreeOnTerminate := False;
@@ -85,9 +85,9 @@ type
     FKey      := '';
     FMessage  := '';
     FStatus   := csReady;
+    FContents := TList.Create;
     FMessages := TStringList.Create;
     FParams   := TStringList.Create;
-    FContents := TList.Create;
 
     FParams.Text := aCommandLine;
 
@@ -109,18 +109,16 @@ type
   var
     I: integer;
   begin
-    FMessages.Free;
-    FParams.Free;
+    FMessages.Destroy;
+    FParams.Destroy;
     with FContents do
     begin
       for I := 0 to Count -1 do
-      begin
         FreeMem(Items[I]);
-      end;
       Clear;
     end;
-    FContents.Free;
-    FApp.Free;
+    FContents.Destroy;
+    FApp.Destroy;
     inherited Destroy;
   end;
 
@@ -228,12 +226,12 @@ type
 var
   Core: TCore = nil;
 
-  function CoreCreate(const ACommandLine: PChar): boolean;
+  function CoreCreate(const aCommandLine: PChar): boolean;
   begin
     Result := not Assigned(Core);
     if Result then
     begin
-      Core := TCore.Create(string(ACommandLine));
+      Core := TCore.Create(string(aCommandLine));
     end;
   end;
 
@@ -463,10 +461,10 @@ var
     begin
       GetMem(Result, SizeOf(PCharFileInfoB));
 
-      Result.FileName := stralloc(Length(FileName) + 1);
+      Result.FileName := stralloc(Length(FileName) + 2);
       strpcopy(Result.FileName, FileName);
 
-      Result.FilePath := stralloc(Length(FilePath) + 1);
+      Result.FilePath := stralloc(Length(FilePath) + 2);
       strpcopy(Result.FilePath, FilePath);
 
       Result.FileSize   := FileSize;
@@ -475,18 +473,18 @@ var
       Result.FilePacked := FilePacked;
       Result.FileRatio  := FileRatio;
 
-      Result.FileComm := stralloc(Length(FileComm) + 1);
+      Result.FileComm := stralloc(Length(FileComm) + 2);
       strpcopy(Result.FileComm, FileComm);
 
       Result.FileCrc  := FileCrc;
 
-      Result.FileMethod   := stralloc(Length(FileMethod) + 1);
+      Result.FileMethod   := stralloc(Length(FileMethod) + 2);
       strpcopy(Result.FileMethod, FileMethod);
 
-      Result.FileVersion  := stralloc(Length(FileVersion) + 1);
+      Result.FileVersion  := stralloc(Length(FileVersion) + 2);
       strpcopy(Result.FileVersion, FileVersion);
 
-      Result.FilePassword := stralloc(Length(FilePassword) + 1);
+      Result.FilePassword := stralloc(Length(FilePassword) + 2);
       strpcopy(Result.FilePassword, FilePassword);
 
       Result.FilePosition := FilePosition;

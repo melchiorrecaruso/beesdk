@@ -1098,8 +1098,7 @@ begin
     begin
       {$IFDEF CONSOLEAPPLICATION}
       ProcessMessage(StringOfChar('-', 79));
-      ProcessMessage('Directory|File' + StringOfChar(' ', 8)
-        + 'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
+      ProcessMessage('Directory|File' + StringOfChar(' ', 8) + 'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
       ProcessMessage(StringOfChar('-', 79));
       {$ENDIF}
 
@@ -1141,16 +1140,12 @@ begin
       {$ENDIF}
 
       {$IFDEF CONSOLEAPPLICATION}
-      FTotalSize := HeadersToList.Count;
       for I := 0 to HeadersToList.Count -1 do
       begin
-        FProcessedSize  := I + 1;
         P := HeadersToList.Items[I];
       {$ELSE}
-      FTotalSize := Headers.Count;
       for I := 0 to Headers.Count -1 do
       begin
-        FProcessedSize  := I + 1;
         P := Headers.Items[I];
       {$ENDIF}
         if FTerminated then Break;
