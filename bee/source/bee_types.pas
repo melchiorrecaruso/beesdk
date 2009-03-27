@@ -134,13 +134,13 @@ uses
 
 function StringToPChar(const Value: string): PChar;
 begin
-  Result := stralloc(Length(Value) + 1);
-  Result := strpcopy(Result, Value);
+  Result := StrAlloc(Length(Value) + 1);
+  Result := StrPCopy(Result, Value);
 end;
 
 function PCharToString(Value: PChar): string;
 begin
-  Result := strpas(Value);
+  Result := StrPas(Value);
 end;
 
 end.

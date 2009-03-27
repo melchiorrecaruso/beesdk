@@ -449,7 +449,8 @@ var
     begin
       with TFileInfoB(Core.FContents.Items[AIndex]^) do
       begin
-        Result := GetMem(SizeOf(PCharFileInfoB));
+        GetMem(Result, SizeOf(PCharFileInfoB));
+        // FillChar(Result, SizeOf(PCharFileInfoB), 0);
 
         Result.FileName     := StringToPChar(FileName);
         Result.FilePath     := StringToPChar(FilePath);
@@ -476,27 +477,39 @@ var
 
   procedure FreePChar(P: PChar);
   begin
-    strdispose(P);
+    if Assigned(P) then
+    begin
+      strdispose(P);
+    end;
   end;
 
   procedure FreePPCharFileInfoA(P: PPCharFileInfoA);
   begin
-    strdispose(P.FileName); P.FileName := nil;
-    strdispose(P.FilePath); P.FilePath := nil;
+    if Assigned(P) then
+    begin
+      strdispose(P.FileName);
+      strdispose(P.FilePath);
 
-    FreeMem(P); P := nil;
+      FreeMem(P);
+      P := nil;
+    end;
   end;
 
   procedure FreePPCharFileInfoB(P: PPCharFileInfoB);
   begin
-    strdispose(P.FileName);     P.FileName     := nil;
-    strdispose(P.FilePath);     P.FilePath     := nil;
-    strdispose(P.FileComm);     P.FileComm     := nil;
-    strdispose(P.FileMethod);   P.FileMethod   := nil;
-    strdispose(P.FileVersion);  P.FileVersion  := nil;
-    strdispose(P.FilePassword); P.FilePassword := nil;
+    if Assigned(P) then
+    begin
+      strdispose(P.FileName);
+      strdispose(P.FilePath);
 
-    FreeMem(P); P := nil;
+      strdispose(P.FileComm);
+      strdispose(P.FileMethod);
+      strdispose(P.FileVersion);
+      strdispose(P.FilePassword);
+
+      FreeMem(P);
+      P := nil;
+    end;
   end;
 
   // -------------------------------------------------------------------------- //
