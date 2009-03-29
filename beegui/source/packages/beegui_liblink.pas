@@ -46,7 +46,7 @@ const
   function CoreGetItems(const AIndex: integer): PFileInfoExtra; external cApplicationLib;
   function CoreGetItem: PFileInfo;                              external cApplicationLib;
 
-  procedure FreePChar (P: PChar); external cApplicationLib;
+  procedure FreePChar(P: PChar); external cApplicationLib;
 
 implementation
 

@@ -127,7 +127,7 @@ type
   function TCoreItems.GetItem(Index: integer): PFileInfoExtra;
   begin
     if (Index > -1) and (Index < FCount) then
-      Result := @FItems[Index -1]
+      Result := @FItems[Index]
     else
       Result := nil;
   end;

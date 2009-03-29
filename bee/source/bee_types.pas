@@ -106,11 +106,15 @@ function PCharToString(Value: PChar): string;
 var
   I: integer;
 begin
-  I := StrLen(Value);
-  SetLength(Result, I);
-  if I > 0 then
+  Result := '';
+  if Value <> nil then
   begin
-    Move(Value[0], Result[1], I);
+    I := StrLen(Value);
+    if I > 0 then
+    begin
+      SetLength(Result, I);
+      Move(Value[0], Result[1], I);
+    end;
   end;
 end;
 

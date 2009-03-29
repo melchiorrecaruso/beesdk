@@ -539,7 +539,7 @@ object TickFrm: TTickFrm
   end
   object Timer: TIdleTimer
     Enabled = False
-    Interval = 250
+    Interval = 200
     OnTimer = OnTimer
     left = 256
     top = 8
