@@ -73,10 +73,8 @@ type
     constructor Create(aStream: TFileWriter; aApp: TApp);
     destructor Destroy; override;
     function EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
-    function EncodeStrm(Header: THeader; Mode: TEncodingMode;
-      SrcStrm: TFileReader): boolean;
-    function CopyStrm(Header: THeader; Mode: TEncodingMode;
-      SrcStrm: TFileReader): boolean;
+    function EncodeStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
+    function CopyStrm(Header: THeader; Mode: TEncodingMode; SrcStrm: TFileReader): boolean;
   private
     function GetKey(Header: THeader): string;
     procedure Tick;
@@ -96,8 +94,7 @@ type
     constructor Create(aStream: TFileReader; aApp: TApp);
     destructor Destroy; override;
     function DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
-    function DecodeStrm(Header: THeader; Mode: TExtractingMode;
-      DstStrm: TFileWriter): boolean;
+    function DecodeStrm(Header: THeader; Mode: TExtractingMode; DstStrm: TFileWriter): boolean;
   private
     function GetKey(Header: THeader): string;
     procedure Tick;
@@ -137,17 +134,20 @@ end;
 
 function TEncoder.GetKey(Header: THeader): string;
 var
-  FileInfo: TFileInfoA;
+  FileInfo: TFileInfo;
 begin
   with FileInfo do
   begin
-    FileName := ExtractFileName(Header.Data.FileName);
-    FilePath := ExtractFilePath(Header.Data.FileName);
+    FileName := StringToPChar(ExtractFileName(Header.Data.FileName));
+    FilePath := StringToPChar(ExtractFilePath(Header.Data.FileName));
+
     FileSize := Header.Data.FileSize;
     FileTime := Header.Data.FileTime;
     FileAttr := Header.Data.FileAttr;
   end;
   Result := App.ProcessKey(FileInfo, '');
+  StrDispose(FileInfo.FileName);
+  StrDispose(FileInfo.FileName);
 
   if Length(Result) < MinKeyLength then
   begin
@@ -443,17 +443,20 @@ end;
 
 function TDecoder.GetKey(Header: THeader): string;
 var
-  FileInfo: TFileInfoA;
+  FileInfo: TFileInfo;
 begin
   with FileInfo do
   begin
-    FileName := ExtractFileName(Header.Data.FileName);
-    FilePath := ExtractFilePath(Header.Data.FileName);
+    FileName := StringToPChar(ExtractFileName(Header.Data.FileName));
+    FilePath := StringToPChar(ExtractFilePath(Header.Data.FileName));
+
     FileSize := Header.Data.FileSize;
     FileTime := Header.Data.FileTime;
     FileAttr := Header.Data.FileAttr;
   end;
   Result := App.ProcessKey(FileInfo, '');
+  StrDispose(FileInfo.FileName);
+  StrDispose(FileInfo.FilePath);
 end;
 
 procedure TDecoder.Tick;
