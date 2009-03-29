@@ -12,6 +12,8 @@ uses
 const
   cApplicationLib = '.\beelib.dll';
 
+  function LibVersion: integer; external cApplicationLib;
+
   function CoreCreate(const aCommandLine: PChar): boolean; external cApplicationLib;
   function CoreExecute:   boolean;                         external cApplicationLib;
   function CoreDestroy:   boolean;                         external cApplicationLib;
