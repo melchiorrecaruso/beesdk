@@ -47,6 +47,7 @@ type
 
   // PFileInfoRec record ...
 
+  PPCharFileInfoA = ^PCharFileInfoA;
   PCharFileInfoA = record
     FileName: PChar;
     FilePath: PChar;
@@ -54,8 +55,6 @@ type
     FileTime: integer;
     FileAttr: integer;
   end;
-
-  PPCharFileInfoA = ^PCharFileInfoA;
 
   // TFileFullInfoRec record ...
 
@@ -77,6 +76,7 @@ type
 
   // PFileFullInfoRec record ...
 
+  PPCharFileInfoB = ^PCharFileInfoB;
   PCharFileInfoB = record
     FileName:     PChar;
     FilePath:     PChar;
@@ -92,8 +92,6 @@ type
     FilePassword: PChar;
     FilePosition: cardinal;
   end;
-
-  PPCharFileInfoB = ^PCharFileInfoB;
 
   // TEvents procedure ...
 
@@ -139,8 +137,16 @@ begin
 end;
 
 function PCharToString(Value: PChar): string;
+var
+  I: integer;
 begin
-  Result := StrPas(Value);
+  I := StrLen(Value);
+  if I > 0 then
+  begin
+    SetLength(Result, I);
+    Move (Value[0], Result[1], I);
+  end else
+    Result := '';
 end;
 
 end.
