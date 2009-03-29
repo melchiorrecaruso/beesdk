@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,12 +30,8 @@ library BeeLib;
 uses
   Classes,
   SysUtils,
-  {$IFDEF UNIX}
-  cThreads,
-  {$ENDIF}
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
+  {$IFDEF UNIX} cThreads, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   Bee_App,
   Bee_Types,
   Bee_Common,
@@ -43,7 +39,7 @@ uses
 
 // -------------------------------------------------------------------------- //
 //                                                                            //
-//  Library routines implementation                                           //
+//  Library routines ...                                                      //
 //                                                                            //
 // -------------------------------------------------------------------------- //
 
@@ -56,16 +52,18 @@ uses
   begin
     if P <> nil then
     begin
-      strdispose(P);
+      StrDispose(P);
     end;
   end;
+
+  // not exported routines ...
 
   procedure FreePFileInfo(P: PFileInfo);
   begin
     if P <> nil then
     begin
-      strdispose(P^.FileName);
-      strdispose(P^.FilePath);
+      StrDispose(P^.FileName);
+      StrDispose(P^.FilePath);
     end;
   end;
 
@@ -73,12 +71,12 @@ uses
   begin
     if P <> nil then
     begin
-      strdispose(P^.FileName);
-      strdispose(P^.FilePath);
-      strdispose(P^.FileComm);
-      strdispose(P^.FileMethod);
-      strdispose(P^.FileVersion);
-      strdispose(P^.FilePassword);
+      StrDispose(P^.FileName);
+      StrDispose(P^.FilePath);
+      StrDispose(P^.FileComm);
+      StrDispose(P^.FileMethod);
+      StrDispose(P^.FileVersion);
+      StrDispose(P^.FilePassword);
     end;
   end;
 
@@ -92,8 +90,8 @@ type
 
   TCoreItems = class
   private
-    FItems: array of TFileInfoExtra;
     FCount: integer;
+    FItems: array of TFileInfoExtra;
   private
     function GetItem(Index: integer): PFileInfoExtra;
   public
@@ -162,7 +160,7 @@ type
 
 // -------------------------------------------------------------------------- //
 //                                                                            //
-//  Library TCore class ...                                                   //
+//  TCore class ...                                                           //
 //                                                                            //
 // -------------------------------------------------------------------------- //
 
@@ -171,14 +169,14 @@ type
   TCore = class(TThread)
   private
     FApp:      TApp;
-    FKey:      string;
-    FStatus:   integer;
     FParams:   TStringList;
     FMessages: TStringList;
     FMessage:  string;
+    FPassword: string;
+    FStatus:   integer;
     FResult:   string;
-    FItem:     TFileInfo;
     FItems:    TCoreItems;
+    FItem:     TFileInfo;
   private
     procedure ProcessFatalError(const aMessage: string);
     procedure ProcessError     (const aMessage: string);
@@ -204,16 +202,16 @@ type
     inherited Create(True);
     FreeOnTerminate := False;
 
-    FKey      := '';
-    FMessage  := '';
-    FStatus   := csReady;
-
     FItems    := TCoreItems.Create;
-
     FMessages := TStringList.Create;
     FParams   := TStringList.Create;
-
-    FParams.Text := aCommandLine;
+    with FParams do
+    begin
+      Text := aCommandLine;
+    end;
+    FStatus   := csReady;
+    FMessage  := ' Ready ...';
+    FPassword := '';
 
     FApp := TBeeApp.Create(FParams);
     FApp.OnFatalError := ProcessFatalError;
@@ -230,15 +228,11 @@ type
   end;
 
   destructor TCore.Destroy;
-  var
-    I: integer;
   begin
-    FMessages.Free;
-    FParams.Free;
-
-    FItems.Free;
-
-    FApp.Free;
+    FApp.Destroy;
+    FParams.Destroy;
+    FMessages.Destroy;
+    FItems.Destroy;
     inherited Destroy;
   end;
 
@@ -275,20 +269,24 @@ type
   procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfo; var Result: char);
   begin
     FResult := Result;
-    FItem := aFileInfo;
-    FStatus   := csWaitingOverwrite;
+    FItem   := aFileInfo;
+    FStatus := csWaitingOverwrite;
     while FStatus = csWaitingOverwrite do
     begin
       Sleep(250);
     end;
-    Result := FResult[1];
+
+    if Length(FResult) = 1 then
+    begin
+      Result := FResult[1];
+    end;
   end;
 
   procedure TCore.ProcessRename(const aFileInfo: TFileInfo; var Result: string);
   begin
     FResult := Result;
-    FItem := aFileInfo;
-    FStatus   := csWaitingRename;
+    FItem   := aFileInfo;
+    FStatus := csWaitingRename;
     while FStatus = csWaitingRename do
     begin
       Sleep(250);
@@ -296,16 +294,11 @@ type
     Result := FResult;
   end;
 
-  procedure TCore.ProcessList(const aFileInfo: TFileInfoExtra);
-  begin
-    FItems.Add(aFileInfo);
-  end;
-
   procedure TCore.ProcessKey(const aFileInfo: TFileInfo; var Result: string);
   begin
     FResult := Result;
-    FItem := aFileInfo;
-    FStatus   := csWaitingKey;
+    FItem   := aFileInfo;
+    FStatus := csWaitingKey;
     while FStatus = csWaitingKey do
     begin
       Sleep(250);
@@ -323,6 +316,11 @@ type
     end;
   end;
 
+  procedure TCore.ProcessList(const aFileInfo: TFileInfoExtra);
+  begin
+    FItems.Add(aFileInfo);
+  end;
+
   procedure TCore.ProcessTick;
   begin
 
@@ -333,54 +331,54 @@ type
 
   end;
 
-  // ------------------------------------------------------------------------ //
-  //                                                                          //
-  //  Library core routines                                                   //
-  //                                                                          //
-  // ------------------------------------------------------------------------ //
+// -------------------------------------------------------------------------- //
+//                                                                            //
+//  Library core routines                                                     //
+//                                                                            //
+// -------------------------------------------------------------------------- //
 
 var
   Core: TCore = nil;
 
   function CoreCreate(const aCommandLine: PChar): boolean;
   begin
-    Result := not Assigned(Core);
+    Result := (Core = nil);
     if Result then
     begin
       Core := TCore.Create(PCharToString(aCommandLine));
     end;
   end;
 
-  function CoreExecute: boolean;
-  begin
-    Result := Assigned(Core) and (Core.FStatus = csReady);
-    if Result then
-    begin
-      Core.Resume;
-    end;
-  end;
-
   function CoreDestroy: boolean;
   begin
-    Result := Assigned(Core);
+    Result := (Core <> nil);
     if Result then
     begin
       FreeAndNil(Core);
     end;
   end;
 
-  function CoreSuspended(AValue: boolean): boolean;
+  function CoreExecute: boolean;
   begin
-    Result := Assigned(Core);
+    Result := (Core <> nil) and (Core.FStatus = csReady);
     if Result then
     begin
-      Core.FApp.Suspended := AValue;
+      Core.Resume;
+    end;
+  end;
+
+  function CoreSuspended(aValue: boolean): boolean;
+  begin
+    Result := (Core <> nil);
+    if Result then
+    begin
+      Core.FApp.Suspended := aValue;
     end;
   end;
 
   function CoreTerminate: boolean;
   begin
-    Result := Assigned(Core);
+    Result := (Core <> nil);
     if Result then
     begin
       Core.FApp.Terminated := True;
@@ -391,25 +389,47 @@ var
     end;
   end;
 
-  function CoreGetExitCode: integer;
+  // ---
+
+  function CoreGetPriority(var aValue: TThreadPriority): boolean;
   begin
-    if Assigned(Core) then
-      Result := Core.FApp.ExitCode
-    else
-      Result := esUnknow;
+    Result := (Core <> nil);
+    if Result then
+    begin
+      aValue := Core.Priority
+    end;
   end;
 
-  function CoreGetStatus: integer;
+  function CoreSetPriority(const aValue: TThreadPriority): boolean;
   begin
-    if Assigned(Core) then
-      Result := Core.FStatus
+    Result := (Core <> nil);
+    if Result then
+    begin
+      Core.Priority := aValue;
+    end;
+  end;
+
+  // ---
+
+  function CoreGetSpeed: integer;
+  begin
+    if (Core <> nil) then
+      Result := Core.FApp.Speed
     else
-      Result := csUnknow;
+      Result := -1;
+  end;
+
+  function CoreGetRequest: PChar;
+  begin
+    if (Core <> nil) then
+      Result := StringToPChar(Core.FMessage)
+    else
+      Result := nil;
   end;
 
   function CoreGetMessage: PChar;
   begin
-    if Assigned(Core) then
+    if (Core <> nil) then
       Result := StringToPChar(Core.FMessage)
     else
       Result := nil;
@@ -417,206 +437,189 @@ var
 
   function CoreGetMessages: PChar;
   begin
-    if Assigned(Core) then
+    if (Core <> nil) then
       Result := StringToPChar(Core.FMessages.Text)
     else
       Result := nil;
   end;
 
-  function CoreGetElapsedTime: integer;
-  begin
-    if Assigned(Core) then
-      Result := Core.FApp.ElapsedTime
-    else
-      Result := -1;
-  end;
-
-  function CoreGetRemainingTime: integer;
-  begin
-    if Assigned(Core) then
-      Result := Core.FApp.RemainingTime
-    else
-      Result := -1;
-  end;
-
   function CoreGetPercentes: integer;
   begin
-    if Assigned(Core) then
+    if (Core <> nil) then
       Result := Core.FApp.Percentes
     else
       Result := -1;
   end;
 
-  function CoreGetSpeed: integer;
+  function CoreGetTotalTime: integer;
   begin
-    if Assigned(Core) then
-      Result := Core.FApp.Speed
+    if (Core <> nil) then
+      Result := Core.FApp.ElapsedTime
     else
       Result := -1;
   end;
 
   function CoreGetTotalSize: int64;
   begin
-    if Assigned(Core) then
+    if (Core <> nil) then
       Result := Core.FApp.TotalSize
     else
       Result := -1;
   end;
 
-  function CoreGetProcessedSize: int64;
+  function CoreGetTime: integer;
   begin
-    if Assigned(Core) then
+    if (Core <> nil) then
+      Result := Core.FApp.RemainingTime
+    else
+      Result := -1;
+  end;
+
+  function CoreGetSize: int64;
+  begin
+    if (Core <> nil) then
       Result := Core.FApp.ProcessedSize
     else
       Result := -1;
   end;
 
-  function CoreSetPriority(const AValue: TThreadPriority): boolean;
+  function CoreGetCode: integer;
   begin
-    Result := Assigned(Core);
-    if Result then
-    begin
-      Core.Priority := AValue;
-    end;
-  end;
-
-  function CoreGetPriority(var AValue: TThreadPriority): boolean;
-  begin
-    Result := Assigned(Core);
-    if Result then
-    begin
-      AValue := Core.Priority
-    end;
-  end;
-
-  function CoreSetOverwrite(const AValue: char): boolean;
-  begin
-    Result := Assigned(Core);
-    if Result then
-    begin
-      Core.FResult := AValue;
-      Core.FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreSetRename(const AValue: PChar): boolean;
-  begin
-    Result := Assigned(Core);
-    if Result then
-    begin
-      Core.FResult := PCharToString(AValue);
-      Core.FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreSetPassword(const AValue: PChar): boolean;
-  begin
-    Result := Assigned(Core);
-    if Result then
-    begin
-      Core.FResult := PCharToString(AValue);
-      Core.FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreGetRequest: PChar;
-  begin
-    if Assigned(Core) then
-      Result := StringToPChar(Core.FMessage)
+    if (Core <> nil) then
+      Result := Core.FApp.ExitCode
     else
-      Result := nil;
+      Result := esUnknow;
   end;
 
-  function CoreSetRequest(const AValue: PChar): boolean;
+  function CoreGetStatus: integer;
   begin
-    Result := Assigned(Core);
+    if (Core <> nil) then
+      Result := Core.FStatus
+    else
+      Result := csUnknow;
+  end;
+
+  // ---
+
+  function CoreSetRequest(const aValue: PChar): boolean;
+  begin
+    Result := (Core <> nil);
     if Result then
     begin
+      Core.FResult := PCharToString(aValue);
       Core.FStatus := csExecuting;
     end;
   end;
+
+  function CoreSetRename(const aValue: PChar): boolean;
+  begin
+    Result := (Core <> nil);
+    if Result then
+    begin
+      Core.FResult := PCharToString(aValue);
+      Core.FStatus := csExecuting;
+    end;
+  end;
+
+  function CoreSetPassword(const aValue: PChar): boolean;
+  begin
+    Result := (Core <> nil);
+    if Result then
+    begin
+      Core.FResult := PCharToString(aValue);
+      Core.FStatus := csExecuting;
+    end;
+  end;
+
+  function CoreSetOverwrite(const aValue: char): boolean;
+  begin
+    Result := (Core <> nil);
+    if Result then
+    begin
+      Core.FResult := aValue;
+      Core.FStatus := csExecuting;
+    end;
+  end;
+
+  // ---
 
   function CoreGetItemsCount: integer;
   begin
-    if Assigned(Core) then
+    if (Core <> nil) then
       Result := Core.FItems.Count
     else
       Result := 0;
   end;
 
-  function CoreGetItems(const AIndex: integer): PFileInfoExtra;
+  function CoreGetItems(const aIndex: integer): PFileInfoExtra;
   begin
-    if Assigned(Core) then
-      Result := Core.FItems.Items[AIndex]
+    if (Core <> nil) then
+      Result := Core.FItems.Items[aIndex]
     else
       Result := nil;
   end;
 
   function CoreGetItem: PFileInfo;
   begin
-    if Assigned(Core) then
+    if (Core <> nil) then
       Result := @Core.FItem
     else
       Result := nil;
   end;
 
-  // -------------------------------------------------------------------------- //
-  //                                                                            //
-  //  Library core routines exported                                            //
-  //                                                                            //
-  // -------------------------------------------------------------------------- //
+// -------------------------------------------------------------------------- //
+//                                                                            //
+//  Library core routines exported                                            //
+//                                                                            //
+// -------------------------------------------------------------------------- //
 
 exports
   LibVersion;
 
 exports
+  FreePChar;
+
+exports
   CoreCreate,
-  CoreExecute,
   CoreDestroy,
+  CoreExecute,
   CoreSuspended,
   CoreTerminate;
 
 exports
+  CoreGetPriority,
+  CoreSetPriority;
+
+exports
+  CoreGetSpeed,
   CoreGetRequest,
   CoreGetMessage,
   CoreGetMessages,
-
-  CoreGetSpeed,
   CoreGetPercentes,
-  CoreGetElapsedTime,
-  CoreGetRemainingTime,
+  CoreGetTotalTime,
   CoreGetTotalSize,
-  CoreGetProcessedSize,
+  CoreGetTime,
+  CoreGetSize,
+  CoreGetCode,
+  CoreGetStatus;
 
-
-
-  CoreGetExitCode,
-  CoreGetStatus,
-
-
-
-
-
-
-
-
-  // ---
-  CoreGetPriority,
-  CoreSetPriority,
-  // ---
+exports
+  CoreSetRequest,
   CoreSetRename,
   CoreSetPassword,
-  CoreSetOverwrite,
-  // ---
+  CoreSetOverwrite;
 
-  CoreSetRequest,
-  // ---
+exports
   CoreGetItemsCount,
   CoreGetItems,
-  CoreGetItem,
-  // ---
-  FreePChar;
+  CoreGetItem;
+
+// -------------------------------------------------------------------------- //
+//                                                                            //
+//  Library main block                                                        //
+//                                                                            //
+// -------------------------------------------------------------------------- //
 
 begin
-
+  // initilization code
 end.

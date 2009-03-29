@@ -251,7 +251,7 @@ end;
 
 function TTickFrm.GetFrmCanShow: boolean;
 begin
-  Result := CoreGetRemainingTime > 0;
+  Result := CoreGetTime > 0;
 end;
 
 procedure TTickFrm.PopupClick(Sender: TObject);
@@ -342,7 +342,7 @@ begin
       GeneralSizeUnit.Caption := 'MB';
     end;
 
-  I := CoreGetProcessedSize;
+  I := CoreGetSize;
   if I < (1024) then
   begin
     ProcessedSize.Caption     := IntToStr(I);
@@ -369,8 +369,8 @@ begin
     Application.Title := Caption;
   end;
 
-  Time.Caption          := TimeToStr(CoreGetElapsedTime);
-  RemainingTime.Caption := TimeToStr(CoreGetRemainingTime);
+  Time.Caption          := TimeToStr(CoreGetTotalTime);
+  RemainingTime.Caption := TimeToStr(CoreGetTime);
   Speed.Caption         := IntToStr (CoreGetSpeed shr 10);
 
   P := CoreGetMessage;
@@ -389,7 +389,7 @@ begin
 
   ShowMessage('OnTerminated');
 
-  ExitCode := CoreGetExitCode;
+  ExitCode := CoreGetCode;
   case ExitCode of
     0: Caption := rsProcessTerminated;
     1: Caption := rsProcessTerminated;
