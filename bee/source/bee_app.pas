@@ -263,7 +263,7 @@ procedure TBeeApp.ProcessFilesToOverWriteDefault(Headers: THeaders);
 var
   S: string;
   I, J: integer;
-  FileInfo: TFileInfoA;
+  FileInfo: TFileInfo;
 begin
   I := 0;
   while I < Headers.Count do
@@ -273,22 +273,27 @@ begin
       begin
         if not(FCommandLine.oOption in ['A', 'Q', 'S']) then
         begin
-          FileInfo.FileName := ExtractFileName(THeader(Headers.Items[I]).Data.FileName);
-          FileInfo.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Data.FileName);
+          FileInfo.FileName := StringToPChar(ExtractFileName(THeader(Headers.Items[I]).Data.FileName));
+          FileInfo.FilePath := StringToPChar(ExtractFilePath(THeader(Headers.Items[I]).Data.FileName));
+
           FileInfo.FileSize := THeader(Headers.Items[I]).Data.FileSize;
           FileInfo.FileTime := THeader(Headers.Items[I]).Data.FileTime;
           FileInfo.FileAttr := THeader(Headers.Items[I]).Data.FileAttr;
           repeat
             FCommandLine.oOption := UpCase(ProcessOverwrite(FileInfo, 'A'));
           until FCommandLine.oOption in ['A', 'N', 'R', 'S', 'Q', 'Y'];
+
+          StrDispose(FileInfo.FileName);
+          StrDispose(FileInfo.FilePath);
         end;
 
         case FCommandLine.oOption of
         'A': Break;
         'N': THeader(Headers.Items[I]).Action := toNone;
         'R': begin
-               FileInfo.FileName := ExtractFileName(THeader(Headers.Items[I]).Data.FileName);
-               FileInfo.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Data.FileName);
+               FileInfo.FileName := StringToPChar(ExtractFileName(THeader(Headers.Items[I]).Data.FileName));
+               FileInfo.FilePath := StringToPChar(ExtractFilePath(THeader(Headers.Items[I]).Data.FileName));
+
                FileInfo.FileSize := THeader(Headers.Items[I]).Data.FileSize;
                FileInfo.FileTime := THeader(Headers.Items[I]).Data.FileTime;
                FileInfo.FileAttr := THeader(Headers.Items[I]).Data.FileAttr;
@@ -410,7 +415,7 @@ function TBeeApp.ProcessFilesToRename(Headers: THeaders): boolean;
 var
   S: string;
   I: integer;
-  FileInfo: TFileInfoA;
+  FileInfo: TFileInfo;
 begin
   Headers.MarkItems(FCommandLine.FileMasks, toCopy, toRename, FCommandLine.rOption);
   Headers.MarkItems(FCommandLine.xOption, toRename, toCopy, FCommandLine.rOption);
@@ -420,8 +425,9 @@ begin
     for I := 0 to Headers.Count - 1 do
       if THeader(Headers.Items[i]).Action = toRename then
       begin
-        FileInfo.FileName := ExtractFileName(THeader(Headers.Items[I]).Data.FileName);
-        FileInfo.FilePath := ExtractFilePath(THeader(Headers.Items[I]).Data.FileName);
+        FileInfo.FileName := StringToPChar(ExtractFileName(THeader(Headers.Items[I]).Data.FileName));
+        FileInfo.FilePath := StringToPChar(ExtractFilePath(THeader(Headers.Items[I]).Data.FileName));
+
         FileInfo.FileSize := THeader(Headers.Items[I]).Data.FileSize;
         FileInfo.FileTime := THeader(Headers.Items[I]).Data.FileTime;
         FileInfo.FileAttr := THeader(Headers.Items[I]).Data.FileAttr;
@@ -433,6 +439,9 @@ begin
           else
             Break;
         end;
+        StrDispose(FileInfo.FileName);
+        StrDispose(FileInfo.FilePath);
+
         if Length(S) > 0 then THeader(Headers.Items[I]).Data.FileName := S;
       end;
     Result := True;
@@ -1070,7 +1079,7 @@ var
   P: THeader;
   I: integer;
   Headers: THeaders;
-  FileInfo: TFileInfoB;
+  FileInfo: TFileInfoExtra;
   {$IFDEF CONSOLEAPPLICATION}
   HeadersToList: TList;
   HeadersToListPath: string;
@@ -1148,12 +1157,11 @@ begin
       begin
         P := Headers.Items[I];
       {$ENDIF}
-        if FTerminated then Break;
 
         with FileInfo do
         begin
-          FileName := ExtractFileName(P.Data.FileName);
-          FilePath := ExtractFilePath(P.Data.FileName);
+          FileName := StringToPChar(ExtractFileName(P.Data.FileName));
+          FilePath := StringToPChar(ExtractFilePath(P.Data.FileName));
 
           {$IFDEF CONSOLEAPPLICATION}
           if CompareFileName(HeadersToListPath, FilePath) <> 0 then
@@ -1176,15 +1184,15 @@ begin
 
           FileAttr    := P.Data.FileAttr;
           FileTime    := P.Data.FileTime;
-          FileComm    := '';
+          FileComm    := StringToPChar('');
           FileCrc     := P.Data.FileCrc;
-          FileMethod  := PChar(MethodToStr(P));
-          FileVersion := PChar(VersionToStr(P));
+          FileMethod  := StringToPChar(MethodToStr(P));
+          FileVersion := StringToPChar(VersionToStr(P));
 
           if foPassword in P.Data.FileFlags then
-            FilePassword := 'Yes'
+            FilePassword := StringToPchar('Yes')
           else
-            FilePassword := 'No';
+            FilePassword := StringToPchar('No');
 
           {$IFDEF CONSOLEAPPLICATION}
           FilePosition := Headers.GetNext(0, toList, P.Data.FileName);
@@ -1193,6 +1201,13 @@ begin
           {$ENDIF}
         end;
         ProcessList(FileInfo);
+
+        StrDispose(FileInfo.FileName);
+        StrDispose(FileInfo.FilePath);
+        StrDispose(FileInfo.FileComm);
+        StrDispose(FileInfo.FileMethod);
+        StrDispose(FileInfo.FileVersion);
+        StrDispose(FileInfo.FilePassword);
 
         Inc(TotalSize, P.Data.FileSize);
         Inc(TotalPack, P.Data.FilePacked);

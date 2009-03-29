@@ -387,9 +387,7 @@ var
 begin
   Timer.Enabled := False;
 
-
   ShowMessage('OnTerminated');
-
 
   ExitCode := CoreGetExitCode;
   case ExitCode of
@@ -430,32 +428,33 @@ end;
 procedure TTickFrm.OnRename;
 var
   F: TRenameFrm;
-  P: PPCharFileInfoA;
+  P: PFileInfo;
 begin
   Timer.Enabled := False;
   F := TRenameFrm.Create(Application);
   F.Caption := rsRenameFile;
-  P := CoreGetFileInfo;
+
+  P := CoreGetItem;
   with P^ do
   begin
     F.ToFN.Text      := PCharToString(FilePath) + PCharToString(FileName);
     F.FromFN.Caption := PCharToString(FilePath) + PCharToString(FileName);
 
     if F.ShowModal = mrOk then
-      CoreSetRenameFileInfo(PChar(F.ToFN.Text ))
+      CoreSetRename(PChar(F.ToFN.Text ))
     else
-      CoreSetRenameFileInfo(nil);
+      CoreSetRename(nil);
 
     F.Free;
   end;
-  FreePPCharFileInfoA(P);
+
   Timer.Enabled := True;
 end;
 
 procedure TTickFrm.OnList;
 var
   I: integer;
-  P: PPCharFileInfoB;
+  P: PFileInfoExtra;
   Node: TArchiveItem;
 begin
   if Assigned(FList) then
@@ -465,21 +464,24 @@ begin
       P := CoreGetItems(I);
       if Assigned(P) then
       begin
+
+        ShowMessage('First');
+
         Node := TArchiveItem.Create;
         try
-          Node.FileName     := PCharToString(P.FileName);
-          Node.FilePath     := PCharToString(P.FilePath);
-          Node.FileSize     := P.FileSize;
-          Node.FilePacked   := P.FilePacked;
-          Node.FileRatio    := P.FileRatio;
-          Node.FileAttr     := P.FileAttr;
-          Node.FileTime     := P.FileTime;
-          Node.FileComm     := PCharToString(P.FileComm);
+          Node.FileName     := PCharToString(P^.FileName);
+          Node.FilePath     := PCharToString(P^.FilePath);
+          Node.FileSize     := P^.FileSize;
+          Node.FilePacked   := P^.FilePacked;
+          Node.FileRatio    := P^.FileRatio;
+          Node.FileAttr     := P^.FileAttr;
+          Node.FileTime     := P^.FileTime;
+          Node.FileComm     := PCharToString(P^.FileComm);
           Node.FileCrc      := P.FileCrc;
-          Node.FileMethod   := PCharToString(P.FileMethod);
-          Node.FileVersion  := PCharToString(P.FileVersion);
-          Node.FilePassword := PCharToString(P.FilePassword);
-          Node.FilePosition := P.FilePosition;
+          Node.FileMethod   := PCharToString(P^.FileMethod);
+          Node.FileVersion  := PCharToString(P^.FileVersion);
+          Node.FilePassword := PCharToString(P^.FilePassword);
+          Node.FilePosition := P^.FilePosition;
         finally
           FList.Add(Node);
         end;

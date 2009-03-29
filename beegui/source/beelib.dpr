@@ -41,51 +41,11 @@ uses
   Bee_Common,
   Bee_Interface;
 
-type
-  TCore = class(TThread)
-  private
-    FApp:       TApp;
-    FKey:       string;
-    FStatus:    integer;
-    FParams:    TStringList;
-    FMessages:  TStringList;
-    FMessage:   string;
-    FFileInfo:  TFileInfoA;
-    FResult:    string;
-  private
-    procedure ProcessFatalError(const aMessage: string);
-    procedure ProcessError(const aMessage: string);
-    procedure ProcessWarning(const aMessage: string);
-    procedure ProcessMessage(const aMessage: string);
-    procedure ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
-    procedure ProcessRename(const aFileInfo: TFileInfoA; var Result: string);
-    procedure ProcessList(const aFileInfo: TFileInfoB);
-    procedure ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
-    procedure ProcessRequest(const aMessage: string);
-    procedure ProcessTick;
-    procedure ProcessClear;
-  public
-    constructor Create(const aCommandLine: string);
-    destructor Destroy; override;
-    procedure Execute; override;
-  end;
-
-  TCoreList = class(TList)
-  private
-  public
-    procedure Clear; overload;
-    procedure Add(const aFileInfo: TFileInfoB); overload;
-  end;
-
-var
-  Core:     TCore     = nil;
-  CoreList: TCoreList = nil;
-
-  // ------------------------------------------------------------------------ //
-  //                                                                          //
-  //  Library routines implementation                                         //
-  //                                                                          //
-  // ------------------------------------------------------------------------ //
+// -------------------------------------------------------------------------- //
+//                                                                            //
+//  Library routines implementation                                           //
+//                                                                            //
+// -------------------------------------------------------------------------- //
 
   procedure FreePChar(P: PChar);
   begin
@@ -95,86 +55,144 @@ var
     end;
   end;
 
-  procedure FreePPCharFileInfoA(P: PPCharFileInfoA);
+  procedure FreePFileInfo(P: PFileInfo);
   begin
     if P <> nil then
     begin
-      strdispose(P.FileName);
-      strdispose(P.FilePath);
-
-      FreeMem(P);
-      P := nil;
+      strdispose(P^.FileName);
+      strdispose(P^.FilePath);
     end;
   end;
 
-  procedure FreePPCharFileInfoB(P: PPCharFileInfoB);
+  procedure FreePFileInfoExtra(P: PFileInfoExtra);
   begin
     if P <> nil then
     begin
-      strdispose(P.FileName);
-      strdispose(P.FilePath);
-
-      strdispose(P.FileComm);
-      strdispose(P.FileMethod);
-      strdispose(P.FileVersion);
-      strdispose(P.FilePassword);
-
-      FreeMem(P);
-      P := nil;
+      strdispose(P^.FileName);
+      strdispose(P^.FilePath);
+      strdispose(P^.FileComm);
+      strdispose(P^.FileMethod);
+      strdispose(P^.FileVersion);
+      strdispose(P^.FilePassword);
     end;
   end;
 
-  // ------------------------------------------------------------------------ //
-  //                                                                          //
-  //  Library TCoreList class implementation                                  //
-  //                                                                          //
-  // ------------------------------------------------------------------------ //
+// -------------------------------------------------------------------------- //
+//                                                                            //
+//  TCoreItems class ...                                                      //
+//                                                                            //
+// -------------------------------------------------------------------------- //
 
-  procedure TCoreList.Clear;
-  var
-    I: integer;
+type
+
+  TCoreItems = class
+  private
+    FItems: array of TFileInfoExtra;
+    FCount: integer;
+  private
+    function GetItem(Index: integer): PFileInfoExtra;
+  public
+    constructor Create;
+    destructor Destroy;
+    procedure Clear;
+    function Add(P: TFileInfoExtra): integer;
+  public
+    property Count: integer read FCount;
+    property Items[Index: integer]: PFileInfoExtra read GetItem;
+  end;
+
+  constructor TCoreItems.Create;
   begin
-    for I := 0 to Count -1 do
-    begin
-      FreePPCharFileInfoB(Items[I]);
-    end;
-    inherited Clear;
+    inherited Create;
+    FItems := nil;
+    FCount := 0;
   end;
 
-  procedure TCoreList.Add(const aFileInfo: TFileInfoB);
-  var
-    P: PPCharFileInfoB;
+  destructor TCoreItems.Destroy;
   begin
-    GetMem(P, SizeOf(PCharFileInfoB));
-    with aFileInfo do
-    begin
-      P.FileName     := StringToPChar(FileName);
-      P.FilePath     := StringToPChar(FilePath);
-
-      P.FileSize     := FileSize;
-      P.FileTime     := FileTime;
-      P.FileAttr     := FileAttr;
-      P.FilePacked   := FilePacked;
-      P.FileRatio    := FileRatio;
-
-      P.FileComm     := StringToPChar(FileComm);
-
-      P.FileCrc      := FileCrc;
-
-      P.FileMethod   := StringToPChar(FileMethod);
-      P.FileVersion  := StringToPChar(FileVersion);
-      P.FilePassword := StringToPChar(FilePassword);
-
-      P.FilePosition := FilePosition;
-    end;
-    Add(P);
+    Clear;
+    inherited Destroy;
   end;
 
-  // ------------------------------------------------------------------------ //
-  //                                                                          //
-  //  Library TCore class implementation                                      //
-  //                                                                          //
-  // ------------------------------------------------------------------------ //
+  procedure TCoreItems.Clear;
+  begin
+    while FCount > 0 do
+    begin
+      FreePFileInfoExtra(@FItems[FCount -1]);
+      Dec(Count);
+    end;
+    FItems := nil;
+  end;
+
+  function TCoreItems.GetItem(Index: integer): PFileInfoExtra;
+  begin
+    if (Index > -1) and (Index < FCount) then
+      Result := @FItems[Index -1]
+    else
+      Result := nil;
+  end;
+
+  function TCoreItems.Add(P: TFileInfoExtra): integer;
+  begin
+    Inc(FCount);
+    SetLength(FItems, FCount);
+    with FItems[FCount -1] do
+    begin
+      FileName     := StrNew(P.FileName);
+      FilePath     := StrNew(P.FilePath);
+      FileSize     := P.FileSize;
+      FileTime     := P.FileTime;
+      FileAttr     := P.FileAttr;
+      FilePacked   := P.FilePacked;
+      FileRatio    := P.FileRatio;
+      FileComm     := StrNew(P.FileComm);
+      FileCrc      := P.FileCrc;
+      FileMethod   := StrNew(P.FileMethod);
+      FileVersion  := StrNew(P.FileVersion);
+      FilePassword := StrNew(P.FilePassword);
+      FilePosition := P.FileCrc;
+    end;
+    Result := FCount -1;
+  end;
+
+// -------------------------------------------------------------------------- //
+//                                                                            //
+//  Library TCore class ...                                                   //
+//                                                                            //
+// -------------------------------------------------------------------------- //
+
+type
+
+  TCore = class(TThread)
+  private
+    FApp:      TApp;
+    FKey:      string;
+    FStatus:   integer;
+    FParams:   TStringList;
+    FMessages: TStringList;
+    FMessage:  string;
+    FResult:   string;
+    FItem:     TFileInfo;
+    FItems:    TCoreItems;
+  private
+    procedure ProcessFatalError(const aMessage: string);
+    procedure ProcessError     (const aMessage: string);
+    procedure ProcessWarning   (const aMessage: string);
+    procedure ProcessMessage   (const aMessage: string);
+    procedure ProcessRequest   (const aMessage: string);
+
+    procedure ProcessList     (const aFileInfo: TFileInfoExtra);
+    procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: char);
+    procedure ProcessRename   (const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessKey      (const aFileInfo: TFileInfo; var Result: string);
+
+    procedure ProcessTick;
+    procedure ProcessClear;
+  public
+    constructor Create(const aCommandLine: string);
+    destructor  Destroy; override;
+    procedure   Execute; override;
+  end;
 
   constructor TCore.Create(const aCommandLine: string);
   begin
@@ -184,6 +202,8 @@ var
     FKey      := '';
     FMessage  := '';
     FStatus   := csReady;
+
+    FItems    := TCoreItems.Create;
 
     FMessages := TStringList.Create;
     FParams   := TStringList.Create;
@@ -210,6 +230,9 @@ var
   begin
     FMessages.Free;
     FParams.Free;
+
+    FItems.Free;
+
     FApp.Free;
     inherited Destroy;
   end;
@@ -244,10 +267,10 @@ var
     FMessages.Add(FMessage);
   end;
 
-  procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
+  procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfo; var Result: char);
   begin
-    FResult   := Result;
-    FFileInfo := aFileInfo;
+    FResult := Result;
+    FItem := aFileInfo;
     FStatus   := csWaitingOverwrite;
     while FStatus = csWaitingOverwrite do
     begin
@@ -256,10 +279,10 @@ var
     Result := FResult[1];
   end;
 
-  procedure TCore.ProcessRename(const aFileInfo: TFileInfoA; var Result: string);
+  procedure TCore.ProcessRename(const aFileInfo: TFileInfo; var Result: string);
   begin
-    FResult   := Result;
-    FFileInfo := aFileInfo;
+    FResult := Result;
+    FItem := aFileInfo;
     FStatus   := csWaitingRename;
     while FStatus = csWaitingRename do
     begin
@@ -268,18 +291,15 @@ var
     Result := FResult;
   end;
 
-  procedure TCore.ProcessList(const aFileInfo: TFileInfoB);
+  procedure TCore.ProcessList(const aFileInfo: TFileInfoExtra);
   begin
-    if Assigned(CoreList) then
-    begin
-      CoreList.Add(aFileInfo);
-    end;
+    FItems.Add(aFileInfo);
   end;
 
-  procedure TCore.ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
+  procedure TCore.ProcessKey(const aFileInfo: TFileInfo; var Result: string);
   begin
-    FResult   := Result;
-    FFileInfo := aFileInfo;
+    FResult := Result;
+    FItem := aFileInfo;
     FStatus   := csWaitingKey;
     while FStatus = csWaitingKey do
     begin
@@ -314,13 +334,15 @@ var
   //                                                                          //
   // ------------------------------------------------------------------------ //
 
+var
+  Core: TCore = nil;
+
   function CoreCreate(const aCommandLine: PChar): boolean;
   begin
     Result := not Assigned(Core);
     if Result then
     begin
-      CoreList := TCoreList.Create;
-      Core     := TCore.Create(PCharToString(aCommandLine));
+      Core := TCore.Create(PCharToString(aCommandLine));
     end;
   end;
 
@@ -337,10 +359,9 @@ var
   begin
     Result := Assigned(Core);
     if Result then
+    begin
       FreeAndNil(Core);
-
-    if Assigned(CoreList) then
-      FreeAndNil(CoreList);
+    end;
   end;
 
   function CoreSuspended(AValue: boolean): boolean;
@@ -463,22 +484,7 @@ var
     end;
   end;
 
-  function CoreGetFileInfo: PPCharFileInfoA;
-  begin
-    if Assigned(Core) then
-    begin
-      Result := GetMem(SizeOf(PCharFileInfoA));
-
-      Result.FileName := StringToPChar(Core.FFileInfo.FileName);
-      Result.FilePath := StringToPChar(Core.FFileInfo.FilePath);
-      Result.FileSize := Core.FFileInfo.FileSize;
-      Result.FileTime := Core.FFileInfo.FileTime;
-      Result.FileAttr := Core.FFileInfo.FileAttr;
-    end else
-      Result := nil;
-  end;
-
-  function CoreSetOverwriteFileInfo(const AValue: char): boolean;
+  function CoreSetOverwrite(const AValue: char): boolean;
   begin
     Result := Assigned(Core);
     if Result then
@@ -488,7 +494,7 @@ var
     end;
   end;
 
-  function CoreSetRenameFileInfo(const AValue: PChar): boolean;
+  function CoreSetRename(const AValue: PChar): boolean;
   begin
     Result := Assigned(Core);
     if Result then
@@ -498,7 +504,7 @@ var
     end;
   end;
 
-  function CoreSetPasswordFileInfo(const AValue: PChar): boolean;
+  function CoreSetPassword(const AValue: PChar): boolean;
   begin
     Result := Assigned(Core);
     if Result then
@@ -508,7 +514,7 @@ var
     end;
   end;
 
-  function CoreGetRequestMessage: PChar;
+  function CoreGetRequest: PChar;
   begin
     if Assigned(Core) then
       Result := StringToPChar(Core.FMessage)
@@ -516,7 +522,7 @@ var
       Result := nil;
   end;
 
-  function CoreSetRequestMessage(const AValue: PChar): boolean;
+  function CoreSetRequest(const AValue: PChar): boolean;
   begin
     Result := Assigned(Core);
     if Result then
@@ -527,18 +533,25 @@ var
 
   function CoreGetItemsCount: integer;
   begin
-    if Assigned(CoreList) then
-      Result := CoreList.Count
+    if Assigned(Core) then
+      Result := Core.FItems.Count
     else
       Result := 0;
   end;
 
-  function CoreGetItems(const AIndex: integer): PPCharFileInfoB;
+  function CoreGetItems(const AIndex: integer): PFileInfoExtra;
   begin
-    if Assigned(CoreList) then
-    begin
-      Result := CoreList.Items[AIndex];
-    end else
+    if Assigned(Core) then
+      Result := Core.FItems.Items[AIndex]
+    else
+      Result := nil;
+  end;
+
+  function CoreGetItem: PFileInfo;
+  begin
+    if Assigned(Core) then
+      Result := @Core.FItem
+    else
       Result := nil;
   end;
 
@@ -569,19 +582,18 @@ exports
   CoreGetPriority,
   CoreSetPriority,
   // ---
-  CoreGetFileInfo,
-  CoreSetRenameFileInfo,
-  CoreSetPasswordFileInfo,
-  CoreSetOverwriteFileInfo,
+  CoreSetRename,
+  CoreSetPassword,
+  CoreSetOverwrite,
   // ---
-  CoreGetRequestMessage,
-  CoreSetRequestMessage,
+  CoreGetRequest,
+  CoreSetRequest,
   // ---
   CoreGetItemsCount,
   CoreGetItems,
+  CoreGetItem,
   // ---
-  FreePChar,
-  FreePPCharFileInfoA;
+  FreePChar;
 
 begin
 

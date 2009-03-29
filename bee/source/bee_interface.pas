@@ -47,7 +47,6 @@ type
     FOnError:   TOnMessageEvent;
     FOnWarning: TOnMessageEvent;
     FOnMessage: TOnMessageEvent;
-
     FOnOverWrite: TOnOverWriteEvent;
     FOnRename:  TOnRenameEvent;
     FOnList:    TOnListEvent;
@@ -78,14 +77,16 @@ type
     procedure Execute; virtual;
 
     procedure ProcessFatalError(const aMessage: string; aExitCode: byte);
-    procedure ProcessError(const aMessage: string; aExitCode: byte);
-    procedure ProcessWarning(const aMessage: string; aExitCode: byte);
-    procedure ProcessMessage(const aMessage: string);
-    function  ProcessOverwrite(const aFileInfo: TFileInfoA; const Value: char): char;
-    function  ProcessRename(const aFileInfo: TFileInfoA; const Value: string): string;
-    procedure ProcessList(const aFileInfo: TFileInfoB);
-    function  ProcessKey(const aFileInfo: TFileInfoA; const Value: string): string;
-    procedure ProcessRequest(const aMessage: string);
+    procedure ProcessError     (const aMessage: string; aExitCode: byte);
+    procedure ProcessWarning   (const aMessage: string; aExitCode: byte);
+    procedure ProcessMessage   (const aMessage: string);
+    procedure ProcessRequest   (const aMessage: string);
+
+    procedure ProcessList     (const aFileInfo: TFileInfoExtra);
+    function  ProcessOverwrite(const aFileInfo: TFileInfo; const Value: char): char;
+    function  ProcessRename   (const aFileInfo: TFileInfo; const Value: string): string;
+    function  ProcessKey      (const aFileInfo: TFileInfo; const Value: string): string;
+
     procedure ProcessTick;
     procedure ProcessClear;
 
@@ -277,7 +278,7 @@ begin
   end;
 end;
 
-function TApp.ProcessOverwrite(const aFileInfo: TFileInfoA; const Value: char): char;
+function TApp.ProcessOverwrite(const aFileInfo: TFileInfo; const Value: char): char;
 begin
   Result := Value;
   if Assigned(FOnOverWrite) then
@@ -286,7 +287,7 @@ begin
   end;
 end;
 
-function TApp.ProcessRename(const aFileInfo: TFileInfoA; const Value: string): string;
+function TApp.ProcessRename(const aFileInfo: TFileInfo; const Value: string): string;
 begin
   Result := Value;
   if Assigned(FOnRename) then
@@ -295,7 +296,7 @@ begin
   end;
 end;
 
-procedure TApp.ProcessList(const aFileInfo: TFileInfoB);
+procedure TApp.ProcessList(const aFileInfo: TFileInfoExtra);
 begin
   if Assigned(FOnList) then
   begin
@@ -303,7 +304,7 @@ begin
   end;
 end;
 
-function TApp.ProcessKey(const aFileInfo: TFileInfoA; const Value: string): string;
+function TApp.ProcessKey(const aFileInfo: TFileInfo; const Value: string): string;
 begin
   Result := Value;
   if Assigned(FOnKey) then

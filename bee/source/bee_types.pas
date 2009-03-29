@@ -18,8 +18,6 @@
 
 { Contains:
 
-
-
   Modifyed:
 
   v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso;
@@ -31,54 +29,19 @@ unit Bee_Types;
 
 interface
 
-uses
-  Classes,
-  SysUtils;
-
 type
-  // TFileInfoRec record ...
-
-  TFileInfoA = record
-    FileName: string;
-    FilePath: string;
-    FileSize: cardinal;
-    FileTime: integer;
-    FileAttr: integer;
-  end;
-
-  // PFileInfoRec record ...
-
-  PPCharFileInfoA = ^PCharFileInfoA;
-  PCharFileInfoA = record
+  // TFileInfo record ...
+  TFileInfo = record
     FileName: PChar;
     FilePath: PChar;
     FileSize: cardinal;
     FileTime: integer;
     FileAttr: integer;
   end;
+  PFileInfo = ^TFileInfo;
 
-  // TFileFullInfoRec record ...
-
-  TFileInfoB = record
-    FileName:     string;
-    FilePath:     string;
-    FileSize:     cardinal;
-    FileTime:     integer;
-    FileAttr:     integer;
-    FilePacked:   cardinal;
-    FileRatio:    cardinal;
-    FileComm:     string;
-    FileCrc:      cardinal;
-    FileMethod:   string;
-    FileVersion:  string;
-    FilePassword: string;
-    FilePosition: cardinal;
-  end;
-
-  // PFileFullInfoRec record ...
-
-  PPCharFileInfoB = ^PCharFileInfoB;
-  PCharFileInfoB = record
+  // TFileInfoExtra record ...
+  TFileInfoExtra = record
     FileName:     PChar;
     FilePath:     PChar;
     FileSize:     cardinal;
@@ -93,15 +56,16 @@ type
     FilePassword: PChar;
     FilePosition: cardinal;
   end;
+  PFileInfoExtra = ^TFileInfoExtra;
 
   // TEvents procedure ...
 
   TOnCustomEvent    = procedure of object;
   TOnMessageEvent   = procedure(const aMessage: string) of object;
-  TOnListEvent      = procedure(const aFileInfo: TFileInfoB) of object;
-  TOnOverWriteEvent = procedure(const aFileInfo: TFileInfoA; var Result: char) of object;
-  TOnRenameEvent    = procedure(const aFileInfo: TFileInfoA; var Result: string) of object;
-  TOnKeyEvent       = procedure(const aFileInfo: TFileInfoA; var Result: string) of object;
+  TOnListEvent      = procedure(const aFileInfo: TFileInfoExtra) of object;
+  TOnOverWriteEvent = procedure(const aFileInfo: TFileInfo; var Result: char) of object;
+  TOnRenameEvent    = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
+  TOnKeyEvent       = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
 
 const
   // CoreStatus ...
@@ -128,6 +92,10 @@ function PCharToString(Value: PChar): string;
 
 implementation
 
+uses
+  Classes,
+  SysUtils;
+
 function StringToPChar(const Value: string): PChar;
 begin
   Result := StrAlloc(Length(Value) + 1);
@@ -139,12 +107,11 @@ var
   I: integer;
 begin
   I := StrLen(Value);
+  SetLength(Result, I);
   if I > 0 then
   begin
-    SetLength(Result, I);
-    Move (Value[0], Result[1], I);
-  end else
-    Result := '';
+    Move(Value[0], Result[1], I);
+  end;
 end;
 
 end.
