@@ -32,7 +32,8 @@ unit Bee_Types;
 interface
 
 uses
-  Classes;
+  Classes,
+  SysUtils;
 
 type
   // TFileInfoRec record ...
@@ -126,9 +127,6 @@ function StringToPChar(const Value: string): PChar;
 function PCharToString(Value: PChar): string;
 
 implementation
-
-uses
-  Strings;
 
 function StringToPChar(const Value: string): PChar;
 begin
