@@ -47,6 +47,11 @@ uses
 //                                                                            //
 // -------------------------------------------------------------------------- //
 
+  function LibVersion: integer;
+  begin
+    Result := 100;
+  end;
+
   procedure FreePChar(P: PChar);
   begin
     if P <> nil then
@@ -562,22 +567,39 @@ var
   // -------------------------------------------------------------------------- //
 
 exports
+  LibVersion;
+
+exports
   CoreCreate,
   CoreExecute,
   CoreDestroy,
   CoreSuspended,
-  CoreTerminate,
-  // ---
-  CoreGetExitCode,
-  CoreGetStatus,
+  CoreTerminate;
+
+exports
+  CoreGetRequest,
   CoreGetMessage,
   CoreGetMessages,
-  CoreGetPercentes,
+
   CoreGetSpeed,
-  CoreGetTotalSize,
-  CoreGetProcessedSize,
+  CoreGetPercentes,
   CoreGetElapsedTime,
   CoreGetRemainingTime,
+  CoreGetTotalSize,
+  CoreGetProcessedSize,
+
+
+
+  CoreGetExitCode,
+  CoreGetStatus,
+
+
+
+
+
+
+
+
   // ---
   CoreGetPriority,
   CoreSetPriority,
@@ -586,7 +608,7 @@ exports
   CoreSetPassword,
   CoreSetOverwrite,
   // ---
-  CoreGetRequest,
+
   CoreSetRequest,
   // ---
   CoreGetItemsCount,
