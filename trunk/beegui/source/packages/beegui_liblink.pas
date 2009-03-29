@@ -6,6 +6,7 @@ interface
 
 uses
   Classes,
+  // ---
   Bee_Types;
 
 const
@@ -46,11 +47,8 @@ const
   function CoreGetItemsCount: integer;                              external cApplicationLib;
   function CoreGetItems(const AIndex: integer): PPCharFileInfoB;    external cApplicationLib;
 
-
   procedure FreePChar(P: PChar);                      external cApplicationLib;
   procedure FreePPCharFileInfoA(P: PPCharFileInfoA);  external cApplicationLib;
-  procedure FreePPCharFileInfoB(P: PPCharFileInfoB);  external cApplicationLib;
-
 
 implementation
 

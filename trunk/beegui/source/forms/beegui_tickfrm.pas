@@ -386,6 +386,11 @@ var
   P: PChar = nil;
 begin
   Timer.Enabled := False;
+
+
+  ShowMessage('OnTerminated');
+
+
   ExitCode := CoreGetExitCode;
   case ExitCode of
     0: Caption := rsProcessTerminated;
@@ -458,12 +463,8 @@ begin
     for I := 0 to CoreGetItemsCount -1 do
     begin
       P := CoreGetItems(I);
-
       if Assigned(P) then
       begin
-
-        ShowMessage(PCharToString(P.FileName));
-
         Node := TArchiveItem.Create;
         try
           Node.FileName     := PCharToString(P.FileName);
@@ -482,10 +483,7 @@ begin
         finally
           FList.Add(Node);
         end;
-        // FreePPCharFileInfoB(P);
       end;
-
-
     end;
   end;
  end;

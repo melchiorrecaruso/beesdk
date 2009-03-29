@@ -52,7 +52,6 @@ type
     FMessage:   string;
     FFileInfo:  TFileInfoA;
     FResult:    string;
-    FContents:  TList;
   private
     procedure ProcessFatalError(const aMessage: string);
     procedure ProcessError(const aMessage: string);
@@ -71,11 +70,111 @@ type
     procedure Execute; override;
   end;
 
-  // -------------------------------------------------------------------------- //
-  //                                                                            //
-  //  Library TCore class implementation                                        //
-  //                                                                            //
-  // -------------------------------------------------------------------------- //
+  TCoreList = class(TList)
+  private
+  public
+    procedure Clear; overload;
+    procedure Add(const aFileInfo: TFileInfoB); overload;
+  end;
+
+var
+  Core:     TCore     = nil;
+  CoreList: TCoreList = nil;
+
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  Library routines implementation                                         //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
+
+  procedure FreePChar(P: PChar);
+  begin
+    if P <> nil then
+    begin
+      strdispose(P);
+    end;
+  end;
+
+  procedure FreePPCharFileInfoA(P: PPCharFileInfoA);
+  begin
+    if P <> nil then
+    begin
+      strdispose(P.FileName);
+      strdispose(P.FilePath);
+
+      FreeMem(P);
+      P := nil;
+    end;
+  end;
+
+  procedure FreePPCharFileInfoB(P: PPCharFileInfoB);
+  begin
+    if P <> nil then
+    begin
+      strdispose(P.FileName);
+      strdispose(P.FilePath);
+
+      strdispose(P.FileComm);
+      strdispose(P.FileMethod);
+      strdispose(P.FileVersion);
+      strdispose(P.FilePassword);
+
+      FreeMem(P);
+      P := nil;
+    end;
+  end;
+
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  Library TCoreList class implementation                                  //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
+
+  procedure TCoreList.Clear;
+  var
+    I: integer;
+  begin
+    for I := 0 to Count -1 do
+    begin
+      FreePPCharFileInfoB(Items[I]);
+    end;
+    inherited Clear;
+  end;
+
+  procedure TCoreList.Add(const aFileInfo: TFileInfoB);
+  var
+    P: PPCharFileInfoB;
+  begin
+    GetMem(P, SizeOf(PCharFileInfoB));
+    with aFileInfo do
+    begin
+      P.FileName     := StringToPChar(FileName);
+      P.FilePath     := StringToPChar(FilePath);
+
+      P.FileSize     := FileSize;
+      P.FileTime     := FileTime;
+      P.FileAttr     := FileAttr;
+      P.FilePacked   := FilePacked;
+      P.FileRatio    := FileRatio;
+
+      P.FileComm     := StringToPChar(FileComm);
+
+      P.FileCrc      := FileCrc;
+
+      P.FileMethod   := StringToPChar(FileMethod);
+      P.FileVersion  := StringToPChar(FileVersion);
+      P.FilePassword := StringToPChar(FilePassword);
+
+      P.FilePosition := FilePosition;
+    end;
+    Add(P);
+  end;
+
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  Library TCore class implementation                                      //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
 
   constructor TCore.Create(const aCommandLine: string);
   begin
@@ -85,7 +184,7 @@ type
     FKey      := '';
     FMessage  := '';
     FStatus   := csReady;
-    FContents := TList.Create;
+
     FMessages := TStringList.Create;
     FParams   := TStringList.Create;
 
@@ -111,13 +210,6 @@ type
   begin
     FMessages.Free;
     FParams.Free;
-    with FContents do
-    begin
-      for I := 0 to Count -1 do
-        FreeMem(Items[I]);
-      Clear;
-    end;
-    FContents.Free;
     FApp.Free;
     inherited Destroy;
   end;
@@ -177,12 +269,11 @@ type
   end;
 
   procedure TCore.ProcessList(const aFileInfo: TFileInfoB);
-  var
-   P: ^TFileInfoB;
   begin
-    GetMem(P, SizeOf(TFileInfoB));
-    P^ := aFileInfo;
-    FContents.Add(P);
+    if Assigned(CoreList) then
+    begin
+      CoreList.Add(aFileInfo);
+    end;
   end;
 
   procedure TCore.ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
@@ -217,21 +308,19 @@ type
 
   end;
 
-  // -------------------------------------------------------------------------- //
-  //                                                                            //
-  //  Library core routines                                                     //
-  //                                                                            //
-  // -------------------------------------------------------------------------- //
-
-var
-  Core: TCore = nil;
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  Library core routines                                                   //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
 
   function CoreCreate(const aCommandLine: PChar): boolean;
   begin
     Result := not Assigned(Core);
     if Result then
     begin
-      Core := TCore.Create(PCharToString(aCommandLine));
+      CoreList := TCoreList.Create;
+      Core     := TCore.Create(PCharToString(aCommandLine));
     end;
   end;
 
@@ -247,10 +336,11 @@ var
   function CoreDestroy: boolean;
   begin
     Result := Assigned(Core);
-    if Assigned(Core) then
-    begin
+    if Result then
       FreeAndNil(Core);
-    end;
+
+    if Assigned(CoreList) then
+      FreeAndNil(CoreList);
   end;
 
   function CoreSuspended(AValue: boolean): boolean;
@@ -358,7 +448,7 @@ var
   function CoreSetPriority(const AValue: TThreadPriority): boolean;
   begin
     Result := Assigned(Core);
-    if Assigned(Core) then
+    if Result then
     begin
       Core.Priority := AValue;
     end;
@@ -437,79 +527,19 @@ var
 
   function CoreGetItemsCount: integer;
   begin
-    if Assigned(Core) then
-      Result := Core.FContents.Count
+    if Assigned(CoreList) then
+      Result := CoreList.Count
     else
       Result := 0;
   end;
 
   function CoreGetItems(const AIndex: integer): PPCharFileInfoB;
   begin
-    if Assigned(Core) then
+    if Assigned(CoreList) then
     begin
-      with TFileInfoB(Core.FContents.Items[AIndex]^) do
-      begin
-        GetMem(Result, SizeOf(PCharFileInfoB));
-        // FillChar(Result, SizeOf(PCharFileInfoB), 0);
-
-        Result.FileName     := StringToPChar(FileName);
-        Result.FilePath     := StringToPChar(FilePath);
-
-        Result.FileSize     := FileSize;
-        Result.FileTime     := FileTime;
-        Result.FileAttr     := FileAttr;
-        Result.FilePacked   := FilePacked;
-        Result.FileRatio    := FileRatio;
-
-        Result.FileComm     := StringToPChar(FileComm);
-
-        Result.FileCrc      := FileCrc;
-
-        Result.FileMethod   := StringToPChar(FileMethod);
-        Result.FileVersion  := StringToPChar(FileVersion);
-        Result.FilePassword := StringToPChar(FilePassword);
-
-        Result.FilePosition := FilePosition;
-      end
+      Result := CoreList.Items[AIndex];
     end else
       Result := nil;
-  end;
-
-  procedure FreePChar(P: PChar);
-  begin
-    if Assigned(P) then
-    begin
-      strdispose(P);
-    end;
-  end;
-
-  procedure FreePPCharFileInfoA(P: PPCharFileInfoA);
-  begin
-    if Assigned(P) then
-    begin
-      strdispose(P.FileName);
-      strdispose(P.FilePath);
-
-      FreeMem(P);
-      P := nil;
-    end;
-  end;
-
-  procedure FreePPCharFileInfoB(P: PPCharFileInfoB);
-  begin
-    if Assigned(P) then
-    begin
-      strdispose(P.FileName);
-      strdispose(P.FilePath);
-
-      strdispose(P.FileComm);
-      strdispose(P.FileMethod);
-      strdispose(P.FileVersion);
-      strdispose(P.FilePassword);
-
-      FreeMem(P);
-      P := nil;
-    end;
   end;
 
   // -------------------------------------------------------------------------- //
@@ -551,8 +581,7 @@ exports
   CoreGetItems,
   // ---
   FreePChar,
-  FreePPCharFileInfoA,
-  FreePPCharFileInfoB;
+  FreePPCharFileInfoA;
 
 begin
 
