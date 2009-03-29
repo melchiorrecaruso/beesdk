@@ -316,7 +316,7 @@ procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   case CoreGetStatus of
     csTerminated:    OnTerminate;
-    // csExecuting:     OnExecute;
+    csExecuting:     OnExecute;
     csWaitingRename: OnRename;
   end;
 end;
@@ -462,26 +462,23 @@ begin
     for I := 0 to CoreGetItemsCount -1 do
     begin
       P := CoreGetItems(I);
-      if Assigned(P) then
+      if P <> nil then
       begin
-
-        ShowMessage('First');
-
         Node := TArchiveItem.Create;
         try
-          Node.FileName     := PCharToString(P^.FileName);
-          Node.FilePath     := PCharToString(P^.FilePath);
-          Node.FileSize     := P^.FileSize;
-          Node.FilePacked   := P^.FilePacked;
-          Node.FileRatio    := P^.FileRatio;
-          Node.FileAttr     := P^.FileAttr;
-          Node.FileTime     := P^.FileTime;
-          Node.FileComm     := PCharToString(P^.FileComm);
+          Node.FileName     := PCharToString(P.FileName);
+          Node.FilePath     := PCharToString(P.FilePath);
+          Node.FileSize     := P.FileSize;
+          Node.FilePacked   := P.FilePacked;
+          Node.FileRatio    := P.FileRatio;
+          Node.FileAttr     := P.FileAttr;
+          Node.FileTime     := P.FileTime;
+          Node.FileComm     := PCharToString(P.FileComm);
           Node.FileCrc      := P.FileCrc;
-          Node.FileMethod   := PCharToString(P^.FileMethod);
-          Node.FileVersion  := PCharToString(P^.FileVersion);
-          Node.FilePassword := PCharToString(P^.FilePassword);
-          Node.FilePosition := P^.FilePosition;
+          Node.FileMethod   := PCharToString(P.FileMethod);
+          Node.FileVersion  := PCharToString(P.FileVersion);
+          Node.FilePassword := PCharToString(P.FilePassword);
+          Node.FilePosition := P.FilePosition;
         finally
           FList.Add(Node);
         end;
