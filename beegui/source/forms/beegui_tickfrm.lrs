@@ -194,18 +194,17 @@ LazarusResources.Add('TTickFrm','FORMDATA',[
   +'srBottom'#4'Left'#2'W'#6'Height'#2#26#3'Top'#3#183#0#5'Width'#2'K'#7'Anchor'
   +'s'#11#5'akTop'#6'akLeft'#8'akBottom'#0#8'AutoSize'#9#18'BorderSpacing.Left'
   ,#2#6#19'BorderSpacing.Right'#2#6#7'Caption'#6#4'Font'#20'Constraints.MinWidt'
-  +'h'#2'K'#9'NumGlyphs'#2#0#7'OnClick'#7#12'BtnFontClick'#8'TabOrder'#2#4#0#0#7
-  +'TButton'#7'Button1'#4'Left'#3#14#1#6'Height'#2#25#3'Top'#2#29#5'Width'#2'K'
-  +#7'Caption'#6#7'Button1'#8'TabOrder'#2#6#0#0#10'TIdleTimer'#5'Timer'#7'Enabl'
-  +'ed'#8#8'Interval'#3#200#0#7'OnTimer'#7#7'OnTimer'#4'left'#3#0#1#3'top'#2#8#0
-  +#0#11'TSaveDialog'#10'SaveDialog'#7'Options'#11#15'ofPathMustExist'#14'ofEna'
-  +'bleSizing'#12'ofViewDetail'#0#4'left'#3' '#1#3'top'#2#8#0#0#11'TFontDialog'
-  +#10'FontDialog'#11'MinFontSize'#2#0#11'MaxFontSize'#2#0#4'left'#3'@'#1#3'top'
-  +#2#8#0#0#10'TPopupMenu'#5'Popup'#9'AutoPopup'#8#4'left'#3'`'#1#3'top'#2#8#0#9
-  +'TMenuItem'#10'Popup_Idle'#7'Caption'#6#4'Idle'#8'ShortCut'#3'0@'#7'OnClick'
-  +#7#10'PopupClick'#0#0#9'TMenuItem'#12'Popup_Normal'#7'Caption'#6#6'Normal'#8
-  +'ShortCut'#3'1@'#7'OnClick'#7#10'PopupClick'#0#0#9'TMenuItem'#12'Popup_Highe'
-  +'r'#7'Caption'#6#6'Higher'#8'ShortCut'#3'2@'#7'OnClick'#7#10'PopupClick'#0#0
-  +#9'TMenuItem'#18'Popup_TimeCritical'#7'Caption'#6#13'Time critical'#8'ShortC'
-  +'ut'#3'3@'#7'OnClick'#7#10'PopupClick'#0#0#0#0
+  +'h'#2'K'#9'NumGlyphs'#2#0#7'OnClick'#7#12'BtnFontClick'#8'TabOrder'#2#4#0#0
+  +#10'TIdleTimer'#5'Timer'#7'Enabled'#8#8'Interval'#3#200#0#7'OnTimer'#7#7'OnT'
+  +'imer'#4'left'#3#0#1#3'top'#2#8#0#0#11'TSaveDialog'#10'SaveDialog'#7'Options'
+  +#11#15'ofPathMustExist'#14'ofEnableSizing'#12'ofViewDetail'#0#4'left'#3' '#1
+  +#3'top'#2#8#0#0#11'TFontDialog'#10'FontDialog'#11'MinFontSize'#2#0#11'MaxFon'
+  +'tSize'#2#0#4'left'#3'@'#1#3'top'#2#8#0#0#10'TPopupMenu'#5'Popup'#9'AutoPopu'
+  +'p'#8#4'left'#3'`'#1#3'top'#2#8#0#9'TMenuItem'#10'Popup_Idle'#7'Caption'#6#4
+  +'Idle'#8'ShortCut'#3'0@'#7'OnClick'#7#10'PopupClick'#0#0#9'TMenuItem'#12'Pop'
+  +'up_Normal'#7'Caption'#6#6'Normal'#8'ShortCut'#3'1@'#7'OnClick'#7#10'PopupCl'
+  +'ick'#0#0#9'TMenuItem'#12'Popup_Higher'#7'Caption'#6#6'Higher'#8'ShortCut'#3
+  +'2@'#7'OnClick'#7#10'PopupClick'#0#0#9'TMenuItem'#18'Popup_TimeCritical'#7'C'
+  +'aption'#6#13'Time critical'#8'ShortCut'#3'3@'#7'OnClick'#7#10'PopupClick'#0
+  +#0#0#0
 ]);

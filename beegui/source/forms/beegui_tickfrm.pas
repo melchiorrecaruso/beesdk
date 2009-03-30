@@ -61,7 +61,6 @@ type
   { TTickFrm }
 
   TTickFrm = class(TForm)
-    Button1: TButton;
     FontDialog: TFontDialog;
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
