@@ -61,6 +61,7 @@ type
   { TTickFrm }
 
   TTickFrm = class(TForm)
+    Button1: TButton;
     FontDialog: TFontDialog;
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
@@ -432,16 +433,16 @@ begin
   F := TRenameFrm.Create(Application);
   F.Caption := rsRenameFile;
 
-  P := CoreGetItem;
+  P := CoreGetRequestItem;
   with P^ do
   begin
     F.ToFN.Text      := PCharToString(FilePath) + PCharToString(FileName);
     F.FromFN.Caption := PCharToString(FilePath) + PCharToString(FileName);
 
     if F.ShowModal = mrOk then
-      CoreSetRename(PChar(F.ToFN.Text ))
+      CoreSetRequest(PChar(F.ToFN.Text ))
     else
-      CoreSetRename(nil);
+      CoreSetRequest(nil);
 
     F.Free;
   end;
