@@ -96,7 +96,7 @@ type
     function GetItem(Index: integer): PFileInfoExtra;
   public
     constructor Create;
-    destructor Destroy;
+    destructor Destroy; override;
     procedure Clear;
     function Add(P: TFileInfoExtra): integer;
   public
