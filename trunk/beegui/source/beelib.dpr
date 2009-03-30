@@ -122,7 +122,7 @@ type
     while FCount > 0 do
     begin
       FreePFileInfoExtra(@FItems[FCount -1]);
-      Dec(Count);
+      Dec(FCount);
     end;
     FItems := nil;
   end;
