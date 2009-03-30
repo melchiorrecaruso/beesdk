@@ -104,7 +104,6 @@ type
 implementation
 
 uses
-  Strings,
   SysUtils, // faReadOnly, ...
 
   Bee_Common, // Various helper routines
