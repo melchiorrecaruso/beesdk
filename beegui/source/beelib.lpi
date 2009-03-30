@@ -13,7 +13,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -36,7 +36,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
         <CursorPos X="25" Y="494"/>
-        <TopLine Value="475"/>
+        <TopLine Value="502"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="63"/>
         <Loaded Value="True"/>
@@ -86,8 +86,8 @@
       <Unit5>
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="78" Y="1226"/>
-        <TopLine Value="1202"/>
+        <CursorPos X="5" Y="106"/>
+        <TopLine Value="80"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
