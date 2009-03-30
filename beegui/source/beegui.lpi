@@ -121,8 +121,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="22" Y="392"/>
-        <TopLine Value="368"/>
+        <CursorPos X="1" Y="389"/>
+        <TopLine Value="389"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>

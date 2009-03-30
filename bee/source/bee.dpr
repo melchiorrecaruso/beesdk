@@ -63,10 +63,10 @@ type
     procedure ProcessError(const aMessage: string);
     procedure ProcessWarning(const aMessage: string);
     procedure ProcessMessage(const aMessage: string);
-    procedure ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
-    procedure ProcessRename(const aFileInfo: TFileInfoA; var Result: string);
-    procedure ProcessList(const aFileInfo: TFileInfoB);
-    procedure ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
+    procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: char);
+    procedure ProcessRename(const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessList(const aFileInfo: TFileInfoExtra);
+    procedure ProcessKey(const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessRequest(const aMessage: string);
     procedure ProcessTick;
     procedure ProcessClear;
@@ -139,29 +139,29 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfoA; var Result: char);
+  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfo; var Result: char);
   begin
     with aFileInfo do
     begin
-      Writeln('Warning: file "', ParamToOem(FilePath + FileName), '" already exists.');
+      Writeln('Warning: file "', ParamToOem(PCharToString(FilePath) + PCharToString(FileName)), '" already exists.');
       Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
     end;
     // not convert oem to param
     Readln(Result);
   end;
 
-  procedure TConsole.ProcessRename(const aFileInfo: TFileInfoA; var Result: string);
+  procedure TConsole.ProcessRename(const aFileInfo: TFileInfo; var Result: string);
   begin
     with aFileInfo do
     begin
-      Write('Rename file "', ParamToOem(FilePath + FileName), '" as (empty to skip):');
+      Write('Rename file "', ParamToOem(PCharToString(FilePath) + PCharToString(FileName)), '" as (empty to skip):');
     end;
     Readln(Result);
     // convert oem to param
     Result := OemToParam(Result);
   end;
 
-  procedure TConsole.ProcessList(const aFileInfo: TFileInfoB);
+  procedure TConsole.ProcessList(const aFileInfo: TFileInfoExtra);
   begin
     with aFileInfo do
     begin
@@ -183,7 +183,7 @@ type
     end;
   end;
 
-  procedure TConsole.ProcessKey(const aFileInfo: TFileInfoA; var Result: string);
+  procedure TConsole.ProcessKey(const aFileInfo: TFileInfo; var Result: string);
   begin
     if Length(FKey) = 0 then
     begin

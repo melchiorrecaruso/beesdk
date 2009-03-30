@@ -13,7 +13,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -36,7 +36,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
         <CursorPos X="1" Y="46"/>
-        <TopLine Value="33"/>
+        <TopLine Value="518"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="60"/>
         <Loaded Value="True"/>
@@ -67,7 +67,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
         <CursorPos X="9" Y="19"/>
-        <TopLine Value="3"/>
+        <TopLine Value="9"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="29"/>
         <Loaded Value="True"/>
@@ -94,7 +94,7 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit5>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="beelib.dpr"/>
         <Caret Line="353" Column="9" TopLine="329"/>
@@ -211,10 +211,6 @@
         <Filename Value="beelib.dpr"/>
         <Caret Line="392" Column="19" TopLine="386"/>
       </Position29>
-      <Position30>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="556" Column="32" TopLine="578"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
