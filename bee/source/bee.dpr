@@ -143,7 +143,10 @@ type
   begin
     with aFileInfo do
     begin
-      Writeln('Warning: file "', ParamToOem(PCharToString(FilePath) + PCharToString(FileName)), '" already exists.');
+      Writeln('Warning: file "',
+        ParamToOem(PCharToString(FilePath)),
+        ParamToOem(PCharToString(FileName)), '" already exists.');
+
       Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
     end;
     // not convert oem to param
@@ -154,7 +157,9 @@ type
   begin
     with aFileInfo do
     begin
-      Write('Rename file "', ParamToOem(PCharToString(FilePath) + PCharToString(FileName)), '" as (empty to skip):');
+      Write('Rename file "',
+        ParamToOem(PCharToString(FilePath)),
+        ParamToOem(PCharToString(FileName)), '" as (empty to skip):');
     end;
     Readln(Result);
     // convert oem to param

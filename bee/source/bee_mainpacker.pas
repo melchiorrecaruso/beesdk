@@ -161,7 +161,7 @@ begin
   begin
     Sleep(250);
   end;
-  App.ProcessTick;
+  App.ProcessProgress;
 end;
 
 function TEncoder.EncodeFile(Header: THeader; Mode: TEncodingMode): boolean;
@@ -204,14 +204,14 @@ begin
     begin
       for I := 1 to Header.Data.FileSize do
       begin
-        if App.ProcessedSize and $FFFF = 0 then
+        if App.Size and $FFFF = 0 then
         begin
           if not App.Terminated then
             Tick
           else
             Break;
         end;
-        App.IncProcessedSize;
+        App.IncSize;
 
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
@@ -223,14 +223,14 @@ begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
-        if App.ProcessedSize and $FFFF = 0 then
+        if App.Size and $FFFF = 0 then
         begin
           if not App.Terminated then
             Tick
           else
             Break;
         end;
-        App.IncProcessedSize;
+        App.IncSize;
 
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
@@ -256,7 +256,7 @@ begin
     Include(Header.Data.FileFlags, foMoved);
     Stream.Size := Header.Data.FileStartPos;
 
-    App.DecProcessedSize(Header.Data.FileSize);
+    App.DecSize(Header.Data.FileSize);
     Result := EncodeFile(Header, emOpt);
   end
   else
@@ -312,14 +312,14 @@ begin
     begin
       for I := 1 to Header.Data.FileSize do
       begin
-        if App.ProcessedSize and $FFFF = 0 then
+        if App.Size and $FFFF = 0 then
         begin
           if not App.Terminated then
             Tick
           else
             Break;
         end;
-        App.IncProcessedSize;
+        App.IncSize;
 
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
@@ -331,14 +331,14 @@ begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
-        if App.ProcessedSize and $FFFF = 0 then
+        if App.Size and $FFFF = 0 then
         begin
           if not App.Terminated then
             Tick
           else
             Break;
         end;
-        App.IncProcessedSize;
+        App.IncSize;
 
         SrcFile.Read(Symbol, 1);
         UpdCrc32(Header.Data.FileCrc, Symbol);
@@ -365,7 +365,7 @@ begin
     Stream.Size := Header.Data.FileStartPos;
     Header.Data.FileStartPos := SrcPosition;
 
-    App.DecProcessedSize(Header.Data.FileSize);
+    App.DecSize(Header.Data.FileSize);
     Result := EncodeStrm(Header, emOpt, SrcStrm);
   end
   else
@@ -403,14 +403,14 @@ begin
 
     for I := 1 to Header.Data.FilePacked do
     begin
-      if App.ProcessedSize and $FFFF = 0 then
+      if App.Size and $FFFF = 0 then
       begin
         if not App.Terminated then
           Tick
         else
           Break;
       end;
-      App.IncProcessedSize;
+      App.IncSize;
 
       SrcFile.Read(Symbol, 1);
       Stream.Write(Symbol, 1);
@@ -465,7 +465,7 @@ begin
   begin
     Sleep(250);
   end;
-  App.ProcessTick;
+  App.ProcessProgress;
 end;
 
 function TDecoder.DecodeFile(Header: THeader; Mode: TExtractingMode): boolean;
@@ -515,14 +515,14 @@ begin
     begin
       for I := 1 to Header.Data.FileSize do
       begin
-        if App.ProcessedSize and $FFFF = 0 then
+        if App.Size and $FFFF = 0 then
         begin
           if not App.Terminated then
             Tick
           else
             Break;
         end;
-        App.IncProcessedSize;
+        App.IncSize;
 
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
@@ -534,14 +534,14 @@ begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
-        if App.ProcessedSize and $FFFF = 0 then
+        if App.Size and $FFFF = 0 then
         begin
           if not App.Terminated then
             Tick
           else
             Break;
         end;
-        App.IncProcessedSize;
+        App.IncSize;
 
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);
@@ -631,14 +631,14 @@ begin
     begin
       for I := 1 to Header.Data.FileSize do
       begin
-        if App.ProcessedSize and $FFFF = 0 then
+        if App.Size and $FFFF = 0 then
         begin
           if not App.Terminated then
             Tick
           else
             Break;
         end;
-        App.IncProcessedSize;
+        App.IncSize;
 
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
@@ -650,14 +650,14 @@ begin
       SecondaryCodec.Start;
       for I := 1 to Header.Data.FileSize do
       begin
-        if App.ProcessedSize and $FFFF = 0 then
+        if App.Size and $FFFF = 0 then
         begin
           if not App.Terminated then
             Tick
           else
             Break;
         end;
-        App.IncProcessedSize;
+        App.IncSize;
 
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);

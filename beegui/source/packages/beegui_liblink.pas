@@ -36,7 +36,6 @@ const
   // ---
 
   function CoreGetSpeed: integer;     external cApplicationLib;
-  function CoreGetRequest: PChar;     external cApplicationLib;
   function CoreGetMessage: PChar;     external cApplicationLib;
   function CoreGetMessages: PChar;    external cApplicationLib;
   function CoreGetPercentes: integer; external cApplicationLib;
@@ -49,16 +48,14 @@ const
 
   // ---
 
-  function CoreSetRequest  (const aValue: PChar): boolean; external cApplicationLib;
-  function CoreSetRename   (const aValue: PChar): boolean; external cApplicationLib;
-  function CoreSetPassword (const aValue: PChar): boolean; external cApplicationLib;
-  function CoreSetOverwrite(const aValue: char): boolean;  external cApplicationLib;
+  function CoreGetRequest: PChar;                        external cApplicationLib;
+  function CoreGetRequestItem: PFileInfo;                external cApplicationLib;
+  function CoreSetRequest(const aValue: PChar): boolean; external cApplicationLib;
 
   // ---
 
   function CoreGetItemsCount: integer;                          external cApplicationLib;
   function CoreGetItems(const aIndex: integer): PFileInfoExtra; external cApplicationLib;
-  function CoreGetItem: PFileInfo;                              external cApplicationLib;
 
 implementation
 

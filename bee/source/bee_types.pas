@@ -60,12 +60,10 @@ type
 
   // TEvents procedure ...
 
-  TOnCustomEvent    = procedure of object;
-  TOnMessageEvent   = procedure(const aMessage: string) of object;
-  TOnListEvent      = procedure(const aFileInfo: TFileInfoExtra) of object;
-  TOnOverWriteEvent = procedure(const aFileInfo: TFileInfo; var Result: char) of object;
-  TOnRenameEvent    = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
-  TOnKeyEvent       = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
+  TCustomEvent   = procedure of object;
+  TMessageEvent  = procedure(const aMessage: string) of object;
+  TRequestEvent  = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
+  TListEvent     = procedure(const aFileInfo: TFileInfoExtra) of object;
 
 const
   // CoreStatus ...

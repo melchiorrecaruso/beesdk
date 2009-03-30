@@ -185,12 +185,9 @@ type
     procedure ProcessRequest   (const aMessage: string);
 
     procedure ProcessList     (const aFileInfo: TFileInfoExtra);
-    procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: char);
     procedure ProcessRename   (const aFileInfo: TFileInfo; var Result: string);
-    procedure ProcessKey      (const aFileInfo: TFileInfo; var Result: string);
-
-    procedure ProcessTick;
-    procedure ProcessClear;
+    procedure ProcessPassword (const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessOverWrite(const aFileInfo: TFileInfo; var Result: string);
   public
     constructor Create(const aCommandLine: string);
     destructor  Destroy; override;
@@ -221,10 +218,10 @@ type
     FApp.OnOverwrite  := ProcessOverwrite;
     FApp.OnRename     := ProcessRename;
     FApp.OnList       := ProcessList;
-    FApp.OnKey        := ProcessKey;
+    FApp.OnPassword   := ProcessPassword;
     FApp.OnRequest    := ProcessRequest;
-    FApp.OnTick       := ProcessTick;
-    FApp.OnClear      := ProcessClear;
+    FApp.OnProgress   := nil;
+    FApp.OnClear      := nil;
   end;
 
   destructor TCore.Destroy;
@@ -266,7 +263,7 @@ type
     FMessages.Add(FMessage);
   end;
 
-  procedure TCore.ProcessOverwrite(const aFileInfo: TFileInfo; var Result: char);
+  procedure TCore.ProcessOverWrite(const aFileInfo: TFileInfo; var Result: string);
   begin
     FResult := Result;
     FItem   := aFileInfo;
@@ -294,7 +291,7 @@ type
     Result := FResult;
   end;
 
-  procedure TCore.ProcessKey(const aFileInfo: TFileInfo; var Result: string);
+  procedure TCore.ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
   begin
     FResult := Result;
     FItem   := aFileInfo;
@@ -319,16 +316,6 @@ type
   procedure TCore.ProcessList(const aFileInfo: TFileInfoExtra);
   begin
     FItems.Add(aFileInfo);
-  end;
-
-  procedure TCore.ProcessTick;
-  begin
-
-  end;
-
-  procedure TCore.ProcessClear;
-  begin
-
   end;
 
 // -------------------------------------------------------------------------- //
@@ -419,14 +406,6 @@ var
       Result := -1;
   end;
 
-  function CoreGetRequest: PChar;
-  begin
-    if (Core <> nil) then
-      Result := StringToPChar(Core.FMessage)
-    else
-      Result := nil;
-  end;
-
   function CoreGetMessage: PChar;
   begin
     if (Core <> nil) then
@@ -454,7 +433,7 @@ var
   function CoreGetTotalTime: integer;
   begin
     if (Core <> nil) then
-      Result := Core.FApp.ElapsedTime
+      Result := Core.FApp.TotalTime
     else
       Result := -1;
   end;
@@ -470,7 +449,7 @@ var
   function CoreGetTime: integer;
   begin
     if (Core <> nil) then
-      Result := Core.FApp.RemainingTime
+      Result := Core.FApp.Time
     else
       Result := -1;
   end;
@@ -478,7 +457,7 @@ var
   function CoreGetSize: int64;
   begin
     if (Core <> nil) then
-      Result := Core.FApp.ProcessedSize
+      Result := Core.FApp.Size
     else
       Result := -1;
   end;
@@ -486,7 +465,7 @@ var
   function CoreGetCode: integer;
   begin
     if (Core <> nil) then
-      Result := Core.FApp.ExitCode
+      Result := Core.FApp.Code
     else
       Result := esUnknow;
   end;
@@ -501,42 +480,28 @@ var
 
   // ---
 
+  function CoreGetRequestItem: PFileInfo;
+  begin
+    if (Core <> nil) then
+      Result := @Core.FItem
+    else
+      Result := nil;
+  end;
+
+  function CoreGetRequest: PChar;
+  begin
+    if (Core <> nil) then
+      Result := StringToPChar(Core.FMessage)
+    else
+      Result := nil;
+  end;
+
   function CoreSetRequest(const aValue: PChar): boolean;
   begin
     Result := (Core <> nil);
     if Result then
     begin
       Core.FResult := PCharToString(aValue);
-      Core.FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreSetRename(const aValue: PChar): boolean;
-  begin
-    Result := (Core <> nil);
-    if Result then
-    begin
-      Core.FResult := PCharToString(aValue);
-      Core.FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreSetPassword(const aValue: PChar): boolean;
-  begin
-    Result := (Core <> nil);
-    if Result then
-    begin
-      Core.FResult := PCharToString(aValue);
-      Core.FStatus := csExecuting;
-    end;
-  end;
-
-  function CoreSetOverwrite(const aValue: char): boolean;
-  begin
-    Result := (Core <> nil);
-    if Result then
-    begin
-      Core.FResult := aValue;
       Core.FStatus := csExecuting;
     end;
   end;
@@ -555,14 +520,6 @@ var
   begin
     if (Core <> nil) then
       Result := Core.FItems.Items[aIndex]
-    else
-      Result := nil;
-  end;
-
-  function CoreGetItem: PFileInfo;
-  begin
-    if (Core <> nil) then
-      Result := @Core.FItem
     else
       Result := nil;
   end;
@@ -592,7 +549,6 @@ exports
 
 exports
   CoreGetSpeed,
-  CoreGetRequest,
   CoreGetMessage,
   CoreGetMessages,
   CoreGetPercentes,
@@ -604,15 +560,13 @@ exports
   CoreGetStatus;
 
 exports
-  CoreSetRequest,
-  CoreSetRename,
-  CoreSetPassword,
-  CoreSetOverwrite;
+  CoreGetRequestItem,
+  CoreGetRequest,
+  CoreSetRequest;
 
 exports
   CoreGetItemsCount,
-  CoreGetItems,
-  CoreGetItem;
+  CoreGetItems;
 
 // -------------------------------------------------------------------------- //
 //                                                                            //

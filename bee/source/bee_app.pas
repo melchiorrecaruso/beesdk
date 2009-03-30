@@ -675,8 +675,8 @@ procedure TBeeApp.ProcesstOption;
 begin
   if FCommandLine.tOption then
   begin
-    FTotalSize     := 0;
-    FProcessedSize := 0;
+    FTotalSize := 0;
+    FSize      := 0;
 
     FCommandLine.rOption := True;
     FCommandLine.xOption.Clear;
@@ -690,8 +690,8 @@ procedure TBeeApp.ProcesslOption;
 begin
   if FCommandLine.lOption then
   begin
-    FTotalSize     := 0;
-    FProcessedSize := 0;
+    FTotalSize := 0;
+    FSize      := 0;
 
     FCommandLine.rOption := True;
     FCommandLine.xOption.Clear;
@@ -764,9 +764,9 @@ begin
         Headers.WriteItems(TmpFile);
 
         if not Terminated then
-          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
+          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FTotalTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
+          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FTotalTime) + ' seconds', 255);
 
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
@@ -861,11 +861,11 @@ begin
       if not FTerminated then
       begin
         if Return = True then
-          ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds')
+          ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FTotalTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(FStartTime) + ' seconds', 2);
+          ProcessError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(FTotalTime) + ' seconds', 2);
       end else
-        ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
+        ProcessError(Cr + 'Process aborted - ' + TimeDifference(FTotalTime) + ' seconds', 255);
 
     end else // if Headers.GetNext
       ProcessWarning('Warning: no files to decode', 1);
@@ -934,9 +934,9 @@ begin
         Headers.WriteItems(TmpFile);
 
         if not FTerminated then
-          ProcessMessage (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
+          ProcessMessage (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FTotalTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
+          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FTotalTime) + ' seconds', 255);
 
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
@@ -1021,9 +1021,9 @@ begin
         Headers.WriteItems(TmpFile);
 
         if not FTerminated then
-          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
+          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FTotalTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
+          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FTotalTime) + ' seconds', 255);
 
         if Assigned(FArcFile) then FreeAndNil(FArcFile);
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
@@ -1223,7 +1223,7 @@ begin
       if Headers.GetModule > 0 then
         ProcessMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
-      ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds');
+      ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FTotalTime) + ' seconds');
     end else
       ProcessWarning('Warning: no files to list', 1);
 
