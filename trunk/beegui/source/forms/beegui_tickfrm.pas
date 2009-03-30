@@ -387,8 +387,6 @@ var
 begin
   Timer.Enabled := False;
 
-  ShowMessage('OnTerminated');
-
   ExitCode := CoreGetCode;
   case ExitCode of
     0: Caption := rsProcessTerminated;
