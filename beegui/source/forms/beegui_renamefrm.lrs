@@ -1,7 +1,7 @@
 { Questo è un file risorse generato automaticamente da Lazarus }
 
 LazarusResources.Add('TRenameFrm','FORMDATA',[
-  'TPF0'#10'TRenameFrm'#9'RenameFrm'#4'Left'#3'\'#1#6'Height'#2'_'#3'Top'#3#155
+  'TPF0'#10'TRenameFrm'#9'RenameFrm'#4'Left'#3#139#1#6'Height'#2'_'#3'Top'#3#20
   +#1#5'Width'#3'/'#1#13'ActiveControl'#7#5'BtnOk'#8'AutoSize'#9#11'BorderIcons'
   +#11#12'biSystemMenu'#10'biMinimize'#0#11'BorderStyle'#7#8'bsSingle'#7'Captio'
   +'n'#6#6'Rename'#12'ClientHeight'#2'_'#11'ClientWidth'#3'/'#1#7'OnClose'#7#9
@@ -47,5 +47,8 @@ LazarusResources.Add('TRenameFrm','FORMDATA',[
   +#7#9'asrBottom'#4'Left'#3#31#1#6'Height'#2#14#3'Top'#2#6#5'Width'#2#10#7'Anc'
   +'hors'#11#5'akTop'#6'akLeft'#8'akBottom'#0#19'BorderSpacing.Right'#2#6#10'Be'
   +'velOuter'#7#6'bvNone'#20'Constraints.MaxWidth'#2#10#20'Constraints.MinWidth'
-  +#2#10#8'TabOrder'#2#3#0#0#0
+  +#2#10#8'TabOrder'#2#3#0#0#7'TBitBtn'#7'BitBtn1'#22'AnchorSideLeft.Control'#7
+  +#11'FromFNLabel'#21'AnchorSideTop.Control'#7#9'BtnCancel'#4'Left'#2#6#6'Heig'
+  +'ht'#2#26#3'Top'#2';'#5'Width'#2'T'#19'BorderSpacing.Right'#2#1#7'Caption'#6
+  +#6'Blocca'#4'Kind'#7#7'bkAbort'#11'ModalResult'#2#3#8'TabOrder'#2#4#0#0#0
 ]);

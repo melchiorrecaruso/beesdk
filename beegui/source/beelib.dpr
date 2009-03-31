@@ -124,6 +124,7 @@ type
       FreePFileInfoExtra(@FItems[FCount -1]);
       Dec(FCount);
     end;
+    FCount := 0;
     FItems := nil;
   end;
 

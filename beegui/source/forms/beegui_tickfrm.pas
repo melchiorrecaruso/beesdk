@@ -425,27 +425,34 @@ end;
 
 procedure TTickFrm.OnRename;
 var
+  FI: PFileInfo;
   F: TRenameFrm;
-  P: PFileInfo;
+  P: PChar;
 begin
   Timer.Enabled := False;
   F := TRenameFrm.Create(Application);
   F.Caption := rsRenameFile;
-
-  P := CoreGetRequestItem;
-  with P^ do
+  FI := CoreGetRequestItem;
+  with FI^ do
   begin
     F.ToFN.Text      := PCharToString(FilePath) + PCharToString(FileName);
     F.FromFN.Caption := PCharToString(FilePath) + PCharToString(FileName);
 
+
+
     if F.ShowModal = mrOk then
-      CoreSetRequest(PChar(F.ToFN.Text ))
-    else
+    begin
+      P := StringToPChar(F.ToFN.Text);
+      CoreSetRequest(P);
+      StrDispose(P);
+    end else
       CoreSetRequest(nil);
+
+
 
     F.Free;
   end;
-
+  FI := nil;
   Timer.Enabled := True;
 end;
 

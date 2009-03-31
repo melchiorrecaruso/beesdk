@@ -48,7 +48,7 @@ uses
   BeeGui_IconList,
   BeeGui_CommandLine,
   BeeGui_ArchiveFolderBox,
-  BeeGui_ArchiveListViewMgr;
+  BeeGui_ArchiveListViewMgr, eventlog;
 
 type
   { TMainFrm }
