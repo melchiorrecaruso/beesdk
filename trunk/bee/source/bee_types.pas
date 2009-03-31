@@ -95,9 +95,17 @@ uses
   SysUtils;
 
 function StringToPChar(const Value: string): PChar;
+var
+  I: integer;
 begin
-  Result := StrAlloc(Length(Value) + 1);
-  Result := StrPCopy(Result, Value);
+  I := Length(Value);
+  if I > 0 then
+  begin
+    Result := StrAlloc(I + 1);
+    Move(Value[1], Result[0], I);
+    Result[I + 1] := #0;
+  end else
+    Result := nil;
 end;
 
 function PCharToString(Value: PChar): string;

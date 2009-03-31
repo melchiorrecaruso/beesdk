@@ -1,7 +1,7 @@
 object RenameFrm: TRenameFrm
-  Left = 348
+  Left = 395
   Height = 95
-  Top = 411
+  Top = 276
   Width = 303
   ActiveControl = BtnOk
   AutoSize = True
@@ -141,5 +141,18 @@ object RenameFrm: TRenameFrm
     Constraints.MaxWidth = 10
     Constraints.MinWidth = 10
     TabOrder = 3
+  end
+  object BitBtn1: TBitBtn
+    AnchorSideLeft.Control = FromFNLabel
+    AnchorSideTop.Control = BtnCancel
+    Left = 6
+    Height = 26
+    Top = 59
+    Width = 84
+    BorderSpacing.Right = 1
+    Caption = 'Blocca'
+    Kind = bkAbort
+    ModalResult = 3
+    TabOrder = 4
   end
 end
