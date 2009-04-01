@@ -13,7 +13,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="5"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -35,8 +35,8 @@
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
-        <CursorPos X="17" Y="127"/>
-        <TopLine Value="103"/>
+        <CursorPos X="28" Y="391"/>
+        <TopLine Value="373"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="63"/>
         <Loaded Value="True"/>
@@ -45,8 +45,8 @@
       <Unit1>
         <Filename Value="..\..\bee\source\bee_types.pas"/>
         <UnitName Value="Bee_Types"/>
-        <CursorPos X="34" Y="107"/>
-        <TopLine Value="72"/>
+        <CursorPos X="35" Y="92"/>
+        <TopLine Value="54"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
@@ -66,7 +66,7 @@
         <Filename Value="packages\beegui_liblink.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
-        <CursorPos X="90" Y="59"/>
+        <CursorPos X="67" Y="34"/>
         <TopLine Value="16"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="32"/>

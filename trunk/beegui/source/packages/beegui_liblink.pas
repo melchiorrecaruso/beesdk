@@ -22,16 +22,16 @@ const
 
   // ---
 
-  function CoreCreate(const aCommandLine: PChar): boolean; external cApplicationLib;
-  function CoreDestroy: boolean;                           external cApplicationLib;
-  function CoreExecute: boolean;                           external cApplicationLib;
-  function CoreSuspended(aValue: boolean): boolean;        external cApplicationLib;
-  function CoreTerminate: boolean;                         external cApplicationLib;
+  function CoreCreate(aCommandLine: PChar): boolean; external cApplicationLib;
+  function CoreDestroy: boolean;                     external cApplicationLib;
+  function CoreExecute: boolean;                     external cApplicationLib;
+  function CoreSuspended(aValue: boolean): boolean;  external cApplicationLib;
+  function CoreTerminate: boolean;                   external cApplicationLib;
 
   // ---
 
-  function CoreGetPriority(var   aValue: TThreadPriority): boolean; external cApplicationLib;
-  function CoreSetPriority(const aValue: TThreadPriority): boolean; external cApplicationLib;
+  function CoreGetPriority(var aValue: TThreadPriority): boolean; external cApplicationLib;
+  function CoreSetPriority(aValue: TThreadPriority): boolean;     external cApplicationLib;
 
   // ---
 
@@ -48,14 +48,14 @@ const
 
   // ---
 
-  function CoreGetRequest: PChar;                        external cApplicationLib;
-  function CoreGetRequestItem: PFileInfo;                external cApplicationLib;
-  function CoreSetRequest(const aValue: PChar): boolean; external cApplicationLib;
+  function CoreGetRequest: PChar;                  external cApplicationLib;
+  function CoreGetRequestItem: PFileInfo;          external cApplicationLib;
+  function CoreSetRequest(aValue: PChar): boolean; external cApplicationLib;
 
   // ---
 
-  function CoreGetItemsCount: integer;                          external cApplicationLib;
-  function CoreGetItems(const aIndex: integer): PFileInfoExtra; external cApplicationLib;
+  function CoreGetItemsCount: integer;                    external cApplicationLib;
+  function CoreGetItems(aIndex: integer): PFileInfoExtra; external cApplicationLib;
 
 implementation
 
