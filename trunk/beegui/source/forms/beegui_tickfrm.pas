@@ -314,10 +314,16 @@ end;
 
 procedure TTickFrm.OnTimer(Sender: TObject);
 begin
-  case CoreGetStatus of
-    csTerminated:    OnTerminate;
-    csExecuting:     OnExecute;
-    csWaitingRename: OnRename;
+  try
+    Timer.Enabled := False;
+    case CoreGetStatus of
+      csTerminated:    OnTerminate;
+      csExecuting:     OnExecute;
+      csWaitingRename: OnRename;
+    end;
+    Timer.Enabled := CoreGetStatus <> csUnknow;
+  except
+    ShowMessage('raise OnTimer');
   end;
 end;
 
@@ -326,65 +332,71 @@ var
   I: int64;
   P: PChar = nil;
 begin
-  I := CoreGetTotalSize;
-  if I < (1024) then
-  begin
-    GeneralSize.Caption     := IntToStr(I);
-    GeneralSizeUnit.Caption := 'B';
-  end else
-    if I < (1024 * 1024) then
+  try
+    I := CoreGetTotalSize;
+    if I < (1024) then
     begin
-      GeneralSize.Caption     := IntToStr(I shr 10);
-      GeneralSizeUnit.Caption := 'KB';
+      GeneralSize.Caption     := IntToStr(I);
+      GeneralSizeUnit.Caption := 'B';
     end else
+      if I < (1024 * 1024) then
+      begin
+        GeneralSize.Caption     := IntToStr(I shr 10);
+        GeneralSizeUnit.Caption := 'KB';
+      end else
+      begin
+        GeneralSize.Caption     := IntToStr(I shr 20);
+        GeneralSizeUnit.Caption := 'MB';
+      end;
+
+    I := CoreGetSize;
+    if I < (1024) then
     begin
-      GeneralSize.Caption     := IntToStr(I shr 20);
-      GeneralSizeUnit.Caption := 'MB';
+      ProcessedSize.Caption     := IntToStr(I);
+      ProcessedSizeUnit.Caption := 'B';
+    end else
+      if I < (1024 * 1024) then
+      begin
+        ProcessedSize.Caption     := IntToStr(I shr 10);
+        ProcessedSizeUnit.Caption := 'KB';
+      end else
+      begin
+        ProcessedSize.Caption     := IntToStr(I shr 20);
+        ProcessedSizeUnit.Caption := 'MB';
+      end;
+
+    Tick.Position := CoreGetPercentes;
+    if FSuspended = False then
+      Caption := Format(rsProcessStatus, [Tick.Position])
+    else
+      Caption := rsProcessPaused;
+
+    if FProgressOnTitle then
+    begin
+      Application.Title := Caption;
     end;
 
-  I := CoreGetSize;
-  if I < (1024) then
-  begin
-    ProcessedSize.Caption     := IntToStr(I);
-    ProcessedSizeUnit.Caption := 'B';
-  end else
-    if I < (1024 * 1024) then
+    Time.Caption          := TimeToStr(CoreGetTotalTime);
+    RemainingTime.Caption := TimeToStr(CoreGetTime);
+    Speed.Caption         := IntToStr (CoreGetSpeed shr 10);
+
+    P := CoreGetMessage;
+    if Assigned(P) then
     begin
-      ProcessedSize.Caption     := IntToStr(I shr 10);
-      ProcessedSizeUnit.Caption := 'KB';
-    end else
-    begin
-      ProcessedSize.Caption     := IntToStr(I shr 20);
-      ProcessedSizeUnit.Caption := 'MB';
+      Msg.Caption := PCharToString(P);
     end;
-
-  Tick.Position := CoreGetPercentes;
-  if FSuspended = False then
-    Caption := Format(rsProcessStatus, [Tick.Position])
-  else
-    Caption := rsProcessPaused;
-
-  if FProgressOnTitle then
-  begin
-    Application.Title := Caption;
+    FreePChar(P);
+  except
+    ShowMessage('raise OnExecute');
   end;
-
-  Time.Caption          := TimeToStr(CoreGetTotalTime);
-  RemainingTime.Caption := TimeToStr(CoreGetTime);
-  Speed.Caption         := IntToStr (CoreGetSpeed shr 10);
-
-  P := CoreGetMessage;
-  if Assigned(P) then
-  begin
-    Msg.Caption := PCharToString(P);
-  end;
-  FreePChar(P);
 end;
 
 procedure TTickFrm.OnTerminate;
 var
   P: PChar = nil;
 begin
+  try
+
   Timer.Enabled := False;
 
   ExitCode := CoreGetCode;
@@ -421,15 +433,20 @@ begin
     Notebook.ActivePageComponent := ReportPage
   else
     Close;
+
+  except
+    ShowMessage('raise OnTerminate');
+  end;
 end;
 
 procedure TTickFrm.OnRename;
 var
   FI: PFileInfo;
   F: TRenameFrm;
-  P: PChar;
+  P: PChar = nil;
 begin
-  Timer.Enabled := False;
+  try
+
   F := TRenameFrm.Create(Application);
   F.Caption := rsRenameFile;
 
@@ -442,13 +459,7 @@ begin
     if F.ShowModal = mrOk then
     begin
       P := StringToPChar(F.ToFN.Text);
-
-      // ShowMessage(IntToStr(Integer(P)));
-
       CoreSetRequest(P);
-
-      // ShowMessage(IntToStr(Integer(P)));
-
       StrDispose(P);
     end else
       CoreSetRequest(nil);
@@ -456,7 +467,10 @@ begin
     F.Free;
   end;
   FI := nil;
-  Timer.Enabled := True;
+
+  except
+    ShowMessage('raise OnRename');
+  end;
 end;
 
 procedure TTickFrm.OnList;
@@ -465,6 +479,9 @@ var
   P: PFileInfoExtra;
   Node: TArchiveItem;
 begin
+  try
+
+
   if Assigned(FList) then
   begin
     for I := 0 to CoreGetItemsCount -1 do
@@ -492,6 +509,10 @@ begin
         end;
       end;
     end;
+  end;
+
+  except
+    ShowMessage('raise onLinst');
   end;
  end;
 
