@@ -78,12 +78,25 @@ const
   csTerminated       =  6;
 
 const
-  // CoreExitCode
+  // CoreCode
 
-  esUnknow    = -1;
-  esSuccesful =  0;
-  esWarning   =  1;
-  esError     =  2;
+  ccUnknow    = -1;
+  ccSuccesful =  0;
+  ccWarning   =  1;
+  ccError     =  2;
+
+const
+  // CorePriority
+
+  cpUnknow       = -1;
+  cpIdle         =  0;
+  cpLowest       =  1;
+  cpLower        =  2;
+  cpNormal       =  3;
+  cpHigher       =  4;
+  cpHighest      =  5;
+  cpTimeCritical =  6;
+
 
 function StringToPChar(const Value: string): PChar;
 function PCharToString(Value: PChar): string;

@@ -379,21 +379,39 @@ var
 
   // ---
 
-  function CoreGetPriority(var aValue: TThreadPriority): boolean;
+  function CoreGetPriority: integer;
   begin
-    Result := (Core <> nil);
-    if Result then
+    if (Core <> nil) then
     begin
-      aValue := Core.Priority
-    end;
+      case Core.Priority of
+        tpIdle:         Result :=  cpIdle;
+        tpLowest:       Result :=  cpLowest;
+        tpLower:        Result :=  cpLower;
+        tpNormal:       Result :=  cpNormal;
+        tpHigher:       Result :=  cpHigher;
+        tpHighest:      Result :=  cpHighest;
+        tpTimeCritical: Result :=  cpTimeCritical;
+        else            Result :=  cpUnknow;
+      end
+    end else
+      Result := -1;
   end;
 
-  function CoreSetPriority(aValue: TThreadPriority): boolean;
+  function CoreSetPriority(aValue: integer): boolean;
   begin
     Result := (Core <> nil);
     if Result then
     begin
-      Core.Priority := aValue;
+      case aValue of
+        cpIdle:         Core.Priority := tpIdle;
+        cpLowest:       Core.Priority := tpLowest;
+        cpLower:        Core.Priority := tpLower;
+        cpNormal:       Core.Priority := tpNormal;
+        cpHigher:       Core.Priority := tpHigher;
+        cpHighest:      Core.Priority := tpHighest;
+        cpTimeCritical: Core.Priority := tpTimeCritical;
+        else            Core.Priority := tpNormal;
+      end
     end;
   end;
 
@@ -468,7 +486,7 @@ var
     if (Core <> nil) then
       Result := Core.FApp.Code
     else
-      Result := esUnknow;
+      Result := ccUnknow;
   end;
 
   function CoreGetStatus: integer;
