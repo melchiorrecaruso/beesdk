@@ -95,31 +95,23 @@ uses
   SysUtils;
 
 function StringToPChar(const Value: string): PChar;
-var
-  I: integer;
 begin
-  I := Length(Value);
-  if I > 0 then
-  begin
-    Result := StrAlloc(I + 1);
-    Move(Value[1], Result[0], I);
-    Result[I + 1] := #0;
-  end else
-    Result := nil;
+  Result := StrAlloc(Length(Value) + 1);
+  Result := StrPCopy(Result, Value);
 end;
 
 function PCharToString(Value: PChar): string;
 var
   I: integer;
 begin
-  Result := '';
+  SetLength(Result, 0);
   if Value <> nil then
   begin
     I := StrLen(Value);
     if I > 0 then
     begin
       SetLength(Result, I);
-      Move(Value[0], Result[1], I);
+      Move(Value^, Result[1], I);
     end;
   end;
 end;
