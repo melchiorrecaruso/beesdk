@@ -328,7 +328,7 @@ type
 var
   Core: TCore = nil;
 
-  function CoreCreate(const aCommandLine: PChar): boolean;
+  function CoreCreate(aCommandLine: PChar): boolean;
   begin
     Result := (Core = nil);
     if Result then
@@ -388,7 +388,7 @@ var
     end;
   end;
 
-  function CoreSetPriority(const aValue: TThreadPriority): boolean;
+  function CoreSetPriority(aValue: TThreadPriority): boolean;
   begin
     Result := (Core <> nil);
     if Result then
@@ -497,7 +497,7 @@ var
       Result := nil;
   end;
 
-  function CoreSetRequest(const aValue: PChar): boolean;
+  function CoreSetRequest(aValue: PChar): boolean;
   begin
     Result := (Core <> nil);
     if Result then
@@ -517,7 +517,7 @@ var
       Result := 0;
   end;
 
-  function CoreGetItems(const aIndex: integer): PFileInfoExtra;
+  function CoreGetItems(aIndex: integer): PFileInfoExtra;
   begin
     if (Core <> nil) then
       Result := Core.FItems.Items[aIndex]

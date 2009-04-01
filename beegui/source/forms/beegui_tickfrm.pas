@@ -442,7 +442,13 @@ begin
     if F.ShowModal = mrOk then
     begin
       P := StringToPChar(F.ToFN.Text);
+
+      ShowMessage(IntToStr(Integer(P)));
+
       CoreSetRequest(P);
+
+      ShowMessage(IntToStr(Integer(P)));
+
       StrDispose(P);
     end else
       CoreSetRequest(nil);
