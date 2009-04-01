@@ -432,13 +432,12 @@ begin
   Timer.Enabled := False;
   F := TRenameFrm.Create(Application);
   F.Caption := rsRenameFile;
+
   FI := CoreGetRequestItem;
   with FI^ do
   begin
     F.ToFN.Text      := PCharToString(FilePath) + PCharToString(FileName);
     F.FromFN.Caption := PCharToString(FilePath) + PCharToString(FileName);
-
-
 
     if F.ShowModal = mrOk then
     begin
@@ -447,8 +446,6 @@ begin
       StrDispose(P);
     end else
       CoreSetRequest(nil);
-
-
 
     F.Free;
   end;

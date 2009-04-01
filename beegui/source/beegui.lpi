@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="6"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -127,7 +127,7 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="37" Y="445"/>
+        <CursorPos X="1" Y="441"/>
         <TopLine Value="424"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
@@ -199,7 +199,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="55" Y="205"/>
-        <TopLine Value="1153"/>
+        <TopLine Value="205"/>
         <EditorIndex Value="8"/>
         <UsageCount Value="103"/>
         <Loaded Value="True"/>
@@ -277,8 +277,8 @@
       <Unit21>
         <Filename Value="..\..\bee\source\bee_types.pas"/>
         <UnitName Value="Bee_Types"/>
-        <CursorPos X="25" Y="106"/>
-        <TopLine Value="80"/>
+        <CursorPos X="44" Y="93"/>
+        <TopLine Value="72"/>
         <EditorIndex Value="6"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
