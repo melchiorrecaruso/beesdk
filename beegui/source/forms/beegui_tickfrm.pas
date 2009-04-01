@@ -256,17 +256,17 @@ end;
 
 procedure TTickFrm.PopupClick(Sender: TObject);
 begin
-  Popup_Idle.Checked   := Sender = Popup_Idle;
-  Popup_Normal.Checked := Sender = Popup_Normal;
-  Popup_Higher.Checked := Sender = Popup_Higher;
+  Popup_Idle.Checked         := Sender = Popup_Idle;
+  Popup_Normal.Checked       := Sender = Popup_Normal;
+  Popup_Higher.Checked       := Sender = Popup_Higher;
   Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
 
   if CoreGetStatus <> csTerminated then
   begin
-    if Popup_Idle.Checked         then CoreSetPriority(tpIdle);
-    if Popup_Normal.Checked       then CoreSetPriority(tpNormal);
-    if Popup_Higher.Checked       then CoreSetPriority(tpHigher);
-    if Popup_TimeCritical.Checked then CoreSetPriority(tpTimeCritical);
+    if Popup_Idle.Checked         then CoreSetPriority(cpIdle);
+    if Popup_Normal.Checked       then CoreSetPriority(cpNormal);
+    if Popup_Higher.Checked       then CoreSetPriority(cpHigher);
+    if Popup_TimeCritical.Checked then CoreSetPriority(cpTimeCritical);
   end;
 end;
 
@@ -443,11 +443,11 @@ begin
     begin
       P := StringToPChar(F.ToFN.Text);
 
-      ShowMessage(IntToStr(Integer(P)));
+      // ShowMessage(IntToStr(Integer(P)));
 
       CoreSetRequest(P);
 
-      ShowMessage(IntToStr(Integer(P)));
+      // ShowMessage(IntToStr(Integer(P)));
 
       StrDispose(P);
     end else
@@ -521,14 +521,15 @@ end;
 procedure TTickFrm.BtnPriorityClick(Sender: TObject);
 var
   X, Y: integer;
-  FValue: TThreadPriority;
+  FValue: integer;
 begin
-  if CoreGetPriority(FValue) then
+  FValue := CoreGetPriority;
+  if FValue <> -1 then
   begin
-    Popup_Idle.Checked         := FValue = tpIdle;
-    Popup_Normal.Checked       := FValue = tpNormal;
-    Popup_Higher.Checked       := FValue = tpHigher;
-    Popup_TimeCritical.Checked := FValue = tpTimeCritical;
+    Popup_Idle.Checked         := FValue = cpIdle;
+    Popup_Normal.Checked       := FValue = cpNormal;
+    Popup_Higher.Checked       := FValue = cpHigher;
+    Popup_TimeCritical.Checked := FValue = cpTimeCritical;
 
     X := Left + BtnPriority.Left;
     Y := Top  + BtnPriority.Top + BtnPriority.Height;

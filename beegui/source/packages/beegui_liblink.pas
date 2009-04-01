@@ -30,8 +30,8 @@ const
 
   // ---
 
-  function CoreGetPriority(var aValue: TThreadPriority): boolean; external cApplicationLib;
-  function CoreSetPriority(aValue: TThreadPriority): boolean;     external cApplicationLib;
+  function CoreGetPriority: integer;                  external cApplicationLib;
+  function CoreSetPriority(aValue: integer): boolean; external cApplicationLib;
 
   // ---
 
