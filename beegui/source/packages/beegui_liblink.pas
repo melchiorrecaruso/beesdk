@@ -18,9 +18,9 @@ const
 
   // ---
 
-  procedure FreePChar(P: PChar);                   external cApplicationLib;
-  procedure FreePFileInfo(P: PFileInfo);           external cApplicationLib;
-  procedure FreePFileInfoExtra(P: PFileInfoExtra); external cApplicationLib;
+  procedure FreePChar(P: PChar);                     external cApplicationLib;
+  procedure FreePFileInfo(P: PFileInfo);             external cApplicationLib;
+  procedure FreePFileInfoExtra(P: PFileInfoExtra);   external cApplicationLib;
 
   // ---
 

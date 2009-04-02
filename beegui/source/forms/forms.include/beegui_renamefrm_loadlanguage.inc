@@ -13,7 +13,8 @@
 
         FromFNLabel.Caption := Storage.ReadString('TLabel','FromFNLabel', FromFNLabel.Caption);
         ToFNLabel.Caption   := Storage.ReadString('TLabel','ToFNLabel', ToFNLabel.Caption);
-    
+
+        BtnAbort.Caption  := Storage.ReadString('TBitBtn','BtnAbort', BtnAbort.Caption);
         BtnCancel.Caption := Storage.ReadString('TBitBtn','BtnCancel', BtnCancel.Caption);
         BtnOk.Caption     := Storage.ReadString('TBitBtn','BtnOk', BtnOk.Caption);
       end;

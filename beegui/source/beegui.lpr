@@ -124,5 +124,4 @@ begin
     end;
   end;
   FreeAndNil(CommandLine);
-  ;
 end.

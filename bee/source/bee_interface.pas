@@ -176,7 +176,10 @@ end;
 
 function TApp.GetPercentes: integer;
 begin
-  Result := MulDiv(FSize, 100, FTotalSize);
+  if FtotalSize <> 0 then
+    Result := MulDiv(FSize, 100, FTotalSize)
+  else
+    Result := 0;
 end;
 
 function TApp.GetTotalTime: integer;

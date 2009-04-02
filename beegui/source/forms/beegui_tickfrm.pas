@@ -226,7 +226,7 @@ end;
 
 procedure TTickFrm.Execute(aCommandLine: TCustomCommandLine; aList: TList);
 var
-  P: PChar = nil;
+  P: PChar;
 begin
   FList := aList;
   FCommandLine := aCommandLine;
@@ -241,7 +241,7 @@ begin
     {$ENDIF}
     Timer.Enabled := True;
   end;
-  strdispose(P);
+  StrDispose(P);
 end;
 
 function TTickFrm.GetFrmCanClose: boolean;
@@ -276,7 +276,7 @@ var
 begin
   for I := 0 to Notebook.PageCount -1 do
   begin
-    Notebook.Page[I].TabVisible := True;
+    Notebook.Page[I].TabVisible := False;
   end;
   Notebook.Page[Notebook.PageIndex].TabVisible := True;
 
