@@ -314,17 +314,17 @@ end;
 
 procedure TTickFrm.OnTimer(Sender: TObject);
 begin
+  Timer.Enabled := False;
   try
-    Timer.Enabled := False;
     case CoreGetStatus of
       csTerminated:    OnTerminate;
       csExecuting:     OnExecute;
       csWaitingRename: OnRename;
     end;
-    Timer.Enabled := CoreGetStatus <> csUnknow;
   except
-    ShowMessage('raise OnTimer');
+    ShowMessage('Raise OnTimer');
   end;
+  Timer.Enabled := CoreGetStatus <> csUnknow;
 end;
 
 procedure TTickFrm.OnExecute;
@@ -387,7 +387,7 @@ begin
     end;
     FreePChar(P);
   except
-    ShowMessage('raise OnExecute');
+    ShowMessage('Raise OnExecute');
   end;
 end;
 
@@ -396,8 +396,6 @@ var
   P: PChar = nil;
 begin
   try
-
-  Timer.Enabled := False;
 
   ExitCode := CoreGetCode;
   case ExitCode of
@@ -435,7 +433,7 @@ begin
     Close;
 
   except
-    ShowMessage('raise OnTerminate');
+    ShowMessage('Raise OnTerminate');
   end;
 end;
 
@@ -464,12 +462,12 @@ begin
     end else
       CoreSetRequest(nil);
 
-    F.Free;
+    FreeAndNil(F);
   end;
   FI := nil;
 
   except
-    ShowMessage('raise OnRename');
+    ShowMessage('Raise OnRename');
   end;
 end;
 

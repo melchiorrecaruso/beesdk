@@ -62,8 +62,8 @@ uses
   begin
     if P <> nil then
     begin
-      StrDispose(P^.FileName);
-      StrDispose(P^.FilePath);
+      if P^.FileName <> nil then StrDispose(P^.FileName);
+      if P^.FilePath <> nil then StrDispose(P^.FilePath);
     end;
   end;
 
@@ -71,12 +71,12 @@ uses
   begin
     if P <> nil then
     begin
-      StrDispose(P^.FileName);
-      StrDispose(P^.FilePath);
-      StrDispose(P^.FileComm);
-      StrDispose(P^.FileMethod);
-      StrDispose(P^.FileVersion);
-      StrDispose(P^.FilePassword);
+      if P^.FileName     <> nil then StrDispose(P^.FileName);
+      if P^.FilePath     <> nil then StrDispose(P^.FilePath);
+      if P^.FileComm     <> nil then StrDispose(P^.FileComm);
+      if P^.FileMethod   <> nil then StrDispose(P^.FileMethod);
+      if P^.FileVersion  <> nil then StrDispose(P^.FileVersion);
+      if P^.FilePassword <> nil then StrDispose(P^.FilePassword);
     end;
   end;
 
