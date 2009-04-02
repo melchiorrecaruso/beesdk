@@ -63,12 +63,12 @@ type
     procedure ProcessError(const aMessage: string);
     procedure ProcessWarning(const aMessage: string);
     procedure ProcessMessage(const aMessage: string);
-    procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: char);
+    procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessRename(const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessList(const aFileInfo: TFileInfoExtra);
-    procedure ProcessKey(const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessRequest(const aMessage: string);
-    procedure ProcessTick;
+    procedure ProcessProgress;
     procedure ProcessClear;
   public
     constructor Create;
@@ -99,9 +99,9 @@ type
     FApp.OnOverwrite  := ProcessOverwrite;
     FApp.OnRename     := ProcessRename;
     FApp.OnList       := ProcessList;
-    FApp.OnKey        := ProcessKey;
+    FApp.OnPassword   := ProcessPassword;
     FApp.OnRequest    := ProcessRequest;
-    FApp.OnTick       := ProcessTick;
+    FApp.OnProgress   := ProcessProgress;
     FApp.OnClear      := ProcessClear;
   end;
 
@@ -116,7 +116,7 @@ type
   procedure TConsole.Execute;
   begin
     FApp.Execute;
-    ExitCode := FApp.ExitCode;
+    ExitCode := FApp.Code;
   end;
 
   procedure TConsole.ProcessFatalError(const aMessage: string);
@@ -139,7 +139,7 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfo; var Result: char);
+  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
   begin
     with aFileInfo do
     begin
@@ -188,7 +188,7 @@ type
     end;
   end;
 
-  procedure TConsole.ProcessKey(const aFileInfo: TFileInfo; var Result: string);
+  procedure TConsole.ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
   begin
     if Length(FKey) = 0 then
     begin
@@ -205,7 +205,7 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TConsole.ProcessTick;
+  procedure TConsole.ProcessProgress;
   begin
     // not convert oem to param
     Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +

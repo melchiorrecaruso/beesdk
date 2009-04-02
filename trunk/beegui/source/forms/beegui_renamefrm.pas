@@ -48,7 +48,7 @@ type
   { TRenameFrm }
 
   TRenameFrm = class(TForm)
-    BitBtn1: TBitBtn;
+    BtnAbort: TBitBtn;
     FromFNLabel: TLabel;
     FromFN:    TLabel;
     Spacer:    TPanel;

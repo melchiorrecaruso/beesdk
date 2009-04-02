@@ -422,6 +422,7 @@ begin
   if (Headers.GetNext(0, toRename) > -1) then
   begin
     for I := 0 to Headers.Count - 1 do
+    begin
       if THeader(Headers.Items[i]).Action = toRename then
       begin
         FileInfo.FileName := StringToPChar(ExtractFileName(THeader(Headers.Items[I]).Data.FileName));
@@ -443,7 +444,9 @@ begin
 
         if Length(S) > 0 then THeader(Headers.Items[I]).Data.FileName := S;
       end;
-    Result := True;
+      if Terminated then Break;
+    end;
+    Result := not Terminated;
   end else
     Result := ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1));
 end;
@@ -1003,9 +1006,10 @@ begin
         FTotalSize := Headers.GetPackedSize([toCopy, toRename]);
 
         // set sfx module
-        with FCommandLine do
-          if Length(aOption) > 0 then
-            Headers.SetModule(aOption);
+        if Length(FCommandLine.aOption) > 0 then
+        begin
+          Headers.SetModule(FCommandLine.aOption);
+        end;
 
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Self);

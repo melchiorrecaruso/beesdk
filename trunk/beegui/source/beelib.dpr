@@ -555,7 +555,9 @@ exports
   LibVersion;
 
 exports
-  FreePChar;
+  FreePChar,
+  FreePFileInfo,
+  FreePFileInfoExtra;
 
 exports
   CoreCreate,
