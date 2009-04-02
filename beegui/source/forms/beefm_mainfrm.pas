@@ -1545,6 +1545,7 @@ begin
       PMenuProperty.Visible := False;
     end;
   end;
+  ListViewChangeFolder(Sender);
 end;
 
  // ---------------------------------------------------------------------- //
