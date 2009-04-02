@@ -36,7 +36,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
         <CursorPos X="52" Y="70"/>
-        <TopLine Value="124"/>
+        <TopLine Value="70"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
@@ -56,7 +56,7 @@
         <Filename Value="..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="21" Y="180"/>
-        <TopLine Value="163"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
@@ -87,7 +87,7 @@
         <Filename Value="..\..\bee\source\bee_app.pas"/>
         <UnitName Value="Bee_App"/>
         <CursorPos X="5" Y="106"/>
-        <TopLine Value="170"/>
+        <TopLine Value="106"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
