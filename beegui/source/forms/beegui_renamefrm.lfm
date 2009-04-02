@@ -142,7 +142,7 @@ object RenameFrm: TRenameFrm
     Constraints.MinWidth = 10
     TabOrder = 3
   end
-  object BitBtn1: TBitBtn
+  object BtnAbort: TBitBtn
     AnchorSideLeft.Control = FromFNLabel
     AnchorSideTop.Control = BtnCancel
     Left = 6
