@@ -13,7 +13,8 @@
 	  
         Storage.WriteString('TLabel','FromFNLabel', FromFNLabel.Caption);
         Storage.WriteString('TLabel','ToFNLabel', ToFNLabel.Caption);
-	  
+
+        Storage.WriteString('TBitBtn','BtnAbort', BtnAbort.Caption);
         Storage.WriteString('TBitBtn','BtnCancel', BtnCancel.Caption);
         Storage.WriteString('TBitBtn','BtnOk', BtnOk.Caption);
       end;

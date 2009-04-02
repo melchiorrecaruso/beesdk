@@ -95,15 +95,18 @@ end;
 
 procedure TRenameFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-    {$IFDEF SAVELANGUAGE}
+  {$IFDEF SAVELANGUAGE}
   SaveLanguage;
-    {$ENDIF}
+  {$ENDIF}
   SaveProperty;
 end;
 
 procedure TRenameFrm.FormShow(Sender: TObject);
 begin
-  ToFN.SetFocus;
+  if ToFN.CanFocus then
+  begin
+    ToFN.SetFocus;
+  end;
 end;
 
 initialization
