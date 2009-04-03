@@ -149,14 +149,10 @@ type
     function GetNext(Child: integer; aAction: THeaderAction): integer; overload;
     function GetBack(Child: integer; Flag: THeaderFlag): integer; overload;
     function GetNext(Child: integer; Flag: THeaderFlag): integer; overload;
-    function GetBack(Child: integer; aAction: THeaderAction;
-      const aFileName: string): integer; overload;
-    function GetNext(Child: integer; aAction: THeaderAction;
-      const aFileName: string): integer; overload;
-    function GetBack(Child: integer; aActions: THeaderActions;
-      const aFileName: string): integer; overload;
-    function GetNext(Child: integer; aActions: THeaderActions;
-      const aFileName: string): integer; overload;
+    function GetBack(Child: integer; aAction: THeaderAction;   const aFileName: string): integer; overload;
+    function GetNext(Child: integer; aAction: THeaderAction;   const aFileName: string): integer; overload;
+    function GetBack(Child: integer; aActions: THeaderActions; const aFileName: string): integer; overload;
+    function GetNext(Child: integer; aActions: THeaderActions; const aFileName: string): integer; overload;
 
     function GetSize(aAction: THeaderAction): cardinal; overload;
     function GetSize(Actions: THeaderActions): cardinal; overload;
