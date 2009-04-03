@@ -117,7 +117,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0984 archiver utility, February 2009' + Cr +
+  FSelfName := 'The Bee 0.7.9 build 0986 archiver utility, February 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;

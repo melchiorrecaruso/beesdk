@@ -73,7 +73,7 @@ const
   csExecuting        =  1;
   csWaitingOverwrite =  2;
   csWaitingRename    =  3;
-  csWaitingKey       =  4;
+  csWaitingPassword  =  4;
   csWaitingRequest   =  5;
   csTerminated       =  6;
 
