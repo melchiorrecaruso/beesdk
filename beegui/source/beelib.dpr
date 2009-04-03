@@ -516,8 +516,6 @@ var
   end;
 
   function CoreSetRequest(aValue: PChar): boolean;
-  var
-    I: boolean;
   begin
     Result := (Core <> nil);
     if Result then

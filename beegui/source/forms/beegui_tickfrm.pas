@@ -118,6 +118,8 @@ type
     // ---
     procedure OnTimer(Sender: TObject);
     procedure OnTerminate;
+    procedure OnOverWrite;
+    procedure OnPassword;
     procedure OnExecute;
     procedure OnRename;
     procedure OnList;
@@ -316,9 +318,11 @@ procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   Timer.Enabled := False;
   case CoreGetStatus of
-    csTerminated:    OnTerminate;
-    csExecuting:     OnExecute;
+    csTerminated: OnTerminate;
+    csExecuting: OnExecute;
     csWaitingRename: OnRename;
+    csWaitingPassword: OnPassword;
+    csWaitingOverWrite: OnOverwrite;
   end;
   Timer.Enabled := CoreGetStatus <> csUnknow;
 end;
@@ -450,6 +454,61 @@ begin
     FI := nil;
   finally
     FreeAndNil(F);
+  end;
+end;
+
+procedure TTickFrm.OnOverwrite;
+var
+  F: TOverWriteFrm;
+  FI: PFileInfo;
+  P: PChar;
+begin
+  F := TOverWriteFrm.Create(Application);
+  try
+    FI := CoreGetRequestItem;
+
+    F.SetFileName(PCharToString(FI^.FileName));
+    F.SetNewFileTime(FI^.FileTime);
+    F.SetNewFileSize(FI^.FileSize);
+    F.SetOldFileTime(FileAge(FI^.FileName));
+    F.SetOldFileSize(SizeOfFile(FI^.FileName));
+
+    case F.ShowModal of
+      mrAbort   : P := StringToPChar('Q');
+      mrNoToAll : P := StringToPChar('S');
+      mrYesToAll: P := StringToPChar('A');
+      mrNo      : P := StringToPChar('N');
+      mrYes     : P := StringToPChar('Y');
+      else        P := StringToPChar('N');
+    end;
+    CoreSetRequest(P);
+    StrDispose(P);
+
+    FI := nil;
+  finally
+    FreeAndNil(F);
+  end;
+ end;
+
+procedure TTickFrm.OnPassword;
+var
+  F: TPasswordFrm;
+  FI: PFileInfo;
+  P: PChar;
+begin
+  try
+    if FPassword = '' then
+    begin
+      F := TPasswordFrm.Create(Application);
+      F.SetPassword(FPassword);
+      if F.ShowModal = mrOK then
+      begin
+        FPassword := F.Password.Text;
+      end;
+      FreeAndNil(F);
+    end;
+  finally
+    StringToPChar(FPassword);
   end;
 end;
 
