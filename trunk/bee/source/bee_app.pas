@@ -416,11 +416,12 @@ var
   I: integer;
   FileInfo: TFileInfo;
 begin
-  Headers.MarkItems(FCommandLine.FileMasks, toCopy, toRename, FCommandLine.rOption);
-  Headers.MarkItems(FCommandLine.xOption, toRename, toCopy, FCommandLine.rOption);
+  Headers.MarkItems(FCommandLine.FileMasks, toCopy,   toRename, FCommandLine.rOption);
+  Headers.MarkItems(FCommandLine.xOption,   toRename, toCopy,   FCommandLine.rOption);
 
   if (Headers.GetNext(0, toRename) > -1) then
   begin
+    Result := False;
     for I := 0 to Headers.Count - 1 do
     begin
       if THeader(Headers.Items[i]).Action = toRename then
@@ -442,11 +443,18 @@ begin
         StrDispose(FileInfo.FileName);
         StrDispose(FileInfo.FilePath);
 
-        if Length(S) > 0 then THeader(Headers.Items[I]).Data.FileName := S;
+        with THeader(Headers.Items[I]) do
+        begin
+          if (Length(S) > 0) and (CompareFileName(S, Data.FileName) <> 0) then
+          begin
+            Data.FileName := S;
+            Result := True;
+          end;
+        end;
       end;
       if Terminated then Break;
     end;
-    Result := not Terminated;
+    if Result then Result := not Terminated;
   end else
     Result := ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1));
 end;

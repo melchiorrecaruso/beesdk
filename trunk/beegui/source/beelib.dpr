@@ -296,8 +296,8 @@ type
   begin
     FResult := Result;
     FItem   := aFileInfo;
-    FStatus := csWaitingKey;
-    while FStatus = csWaitingKey do
+    FStatus := csWaitingPassword;
+    while FStatus = csWaitingPassword do
     begin
       Sleep(250);
     end;
