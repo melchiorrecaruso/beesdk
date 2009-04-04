@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.7.9 build 0970 - 2009.03.10 by Melchiorre Caruso.
+    v0.7.9 build 0990 - 2009.04.03 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -38,44 +38,42 @@ uses
   Bee_Types;
 
 type
-
   // TApp class ...
 
   TApp = class
   private
-    FOnFatalError:  TMessageEvent;
-    FOnError:       TMessageEvent;
-    FOnWarning:     TMessageEvent;
-    FOnMessage:     TMessageEvent;
-    FOnOverWrite:   TRequestEvent;
-    FOnPassword:    TRequestEvent;
-    FOnRename:      TRequestEvent;
-    FOnRequest:     TMessageEvent;
-    FOnProgress:    TCustomEvent;
-    FOnClear:       TCustomEvent;
-    FOnList:        TListEvent;
+    FOnFatalError: TMessageEvent;
+    FOnError: TMessageEvent;
+    FOnWarning: TMessageEvent;
+    FOnMessage: TMessageEvent;
+    FOnOverWrite: TRequestEvent;
+    FOnPassword: TRequestEvent;
+    FOnRename: TRequestEvent;
+    FOnRequest: TMessageEvent;
+    FOnProgress: TCustomEvent;
+    FOnClear: TCustomEvent;
+    FOnList: TListEvent;
   protected
-    FParams:        TStringList;
+    FParams: TStringList;
     FSuspendedTime: double;
-    FTotalTime:     double;
-    FTotalSize:     int64;
-    FSize:          int64;
-    FSuspended:     boolean;
-    FTerminated:    boolean;
-    FCode:          byte;
+    FStartTime: double;
+    FTotalSize: int64;
+    FSize: int64;
+    FSuspended: boolean;
+    FTerminated: boolean;
+    FCode: byte;
   protected
     function GetSpeed: integer;
     function GetPercentes: integer;
     function GetTotalTime: integer;
     function GetTime: integer;
-
     procedure SetCode(aCode: integer);
     procedure SetSuspended(aValue: boolean);
-    procedure SetPriority(aPriority: integer); overload;
+    procedure SetPriority(aPriority: integer);
   public
     constructor Create(aParams: TStringList);
-    destructor  Destroy; override;
-    procedure   Execute; virtual;
+    destructor Destroy; override;
+    procedure Execute; virtual;
   public
     procedure ProcessFatalError(const aMessage: string; aCode: byte);
     procedure ProcessError     (const aMessage: string; aCode: byte);
@@ -84,9 +82,9 @@ type
     procedure ProcessRequest   (const aMessage: string);
 
     procedure ProcessList      (const aFileInfo: TFileInfoExtra);
-    function  ProcessOverwrite (const aFileInfo: TFileInfo; const Value: char): char;
-    function  ProcessRename    (const aFileInfo: TFileInfo; const Value: string): string;
-    function  ProcessKey       (const aFileInfo: TFileInfo; const Value: string): string;
+    function  ProcessOverwrite (const aFileInfo: TFileInfo; const aValue: string): string;
+    function  ProcessRename    (const aFileInfo: TFileInfo; const aValue: string): string;
+    function  ProcessPassword  (const aFileInfo: TFileInfo; const aValue: string): string;
 
     procedure ProcessProgress;
     procedure ProcessClear;
@@ -100,16 +98,13 @@ type
     property OnError:      TMessageEvent read FOnError      write FOnError;
     property OnWarning:    TMessageEvent read FOnWarning    write FOnWarning;
     property OnMessage:    TMessageEvent read FOnMessage    write FOnMessage;
-
-    property OnOverWrite: TRequestEvent  read FOnOverWrite  write FOnOverWrite;
-    property OnRename:    TRequestEvent  read FOnRename     write FOnRename;
-
-    property OnPassword:  TRequestEvent  read FOnPassword   write FOnPassword;
-    property OnRequest:   TMessageEvent  read FOnRequest    write FOnRequest;
-
-    property OnProgress:  TCustomEvent   read FOnProgress   write FOnProgress;
-    property OnClear:     TCustomEvent   read FOnClear      write FOnClear;
-    property OnList:      TListEvent     read FOnList       write FOnList;
+    property OnOverWrite:  TRequestEvent read FOnOverWrite  write FOnOverWrite;
+    property OnRename:     TRequestEvent read FOnRename     write FOnRename;
+    property OnPassword:   TRequestEvent read FOnPassword   write FOnPassword;
+    property OnRequest:    TMessageEvent read FOnRequest    write FOnRequest;
+    property OnProgress:   TCustomEvent  read FOnProgress   write FOnProgress;
+    property OnClear:      TCustomEvent  read FOnClear      write FOnClear;
+    property OnList:       TListEvent    read FOnList       write FOnList;
   public
     property TotalTime:  integer read GetTotalTime;
     property TotalSize:  int64   read FTotalSize;
@@ -127,11 +122,9 @@ implementation
 uses
   SysUtils,
   DateUtils,
-  {$IFDEF CONSOLEAPPLICATION}
-  {$IFDEF MSWINDOWS}
+  {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
   Bee_Common,
-  {$ENDIF}
-  {$ENDIF}
+  {$ENDIF} {$ENDIF}
   Bee_Assembler;
 
 // TApp class ...
@@ -139,13 +132,14 @@ uses
 constructor TApp.Create(aParams: TStringList);
 begin
   inherited Create;
-  FCode       := 0;
-  FSize       := 0;
-  FTotalSize  := 0;
-  FTotalTime  := 0;
-  FSuspended  := False;
-  FTerminated := False;
-  FParams     := aParams;
+  FParams        := aParams;
+  FSuspendedTime := 0;
+  FStartTime     := 0;
+  FTotalSize     := 0;
+  FSize          := 0;
+  FSuspended     := False;
+  FTerminated    := False;
+  FCode          := 0;
 end;
 
 destructor TApp.Destroy;
@@ -156,7 +150,7 @@ end;
 
 procedure TApp.Execute;
 begin
-  FTotalTime := Now;
+  FStartTime := Now;
 end;
 
 function TApp.GetSpeed: integer;
@@ -164,9 +158,9 @@ var
   I: int64;
 begin
   if not FSuspended then
-    I := MilliSecondsBetween(Now, FTotalTime)
+    I := MilliSecondsBetween(Now, FStartTime)
   else
-    I := MilliSecondsBetween(FSuspendedTime - FTotalTime, 0);
+    I := MilliSecondsBetween(FSuspendedTime - FStartTime, 0);
 
   if I <> 0 then
     Result := MulDiv(FSize, 1000, I)
@@ -185,14 +179,14 @@ end;
 function TApp.GetTotalTime: integer;
 begin
   if not FSuspended then
-    Result := SecondsBetween(Now, FTotalTime)
+    Result := SecondsBetween(Now, FStartTime)
   else
-    Result := SecondsBetween(FSuspendedTime - FTotalTime, 0);
+    Result := SecondsBetween(FSuspendedTime - FStartTime, 0);
 end;
 
 function TApp.GetTime: integer;
 var
-  I: cardinal;
+  I: integer;
 begin
   I := GetSpeed;
   if I <> 0 then
@@ -208,7 +202,7 @@ begin
     if aValue then
       FSuspendedTime := Now
     else
-      FTotalTime := FTotalTime + (Now - FSuspendedTime);
+      FStartTime := FStartTime + (Now - FSuspendedTime);
 
     FSuspended := aValue;
   end;
@@ -284,42 +278,27 @@ begin
   end;
 end;
 
-function TApp.ProcessOverWrite(const aFileInfo: TFileInfo; const Value: char): char;
-var
-  S: string;
+function TApp.ProcessOverWrite(const aFileInfo: TFileInfo; const aValue: string): string;
 begin
-  S := Value;
+  Result := aValue;
   if Assigned(FOnOverWrite) then
   begin
-    FOnOverWrite(aFileInfo, S);
+    FOnOverWrite(aFileInfo, Result);
   end;
-
-  if Length(S) = 1 then
-    Result := S[1]
-  else
-    Result := Value;
 end;
 
-function TApp.ProcessRename(const aFileInfo: TFileInfo; const Value: string): string;
+function TApp.ProcessRename(const aFileInfo: TFileInfo; const aValue: string): string;
 begin
-  Result := Value;
+  Result := aValue;
   if Assigned(FOnRename) then
   begin
     FOnRename(aFileInfo, Result);
   end;
 end;
 
-procedure TApp.ProcessList(const aFileInfo: TFileInfoExtra);
+function TApp.ProcessPassword(const aFileInfo: TFileInfo; const aValue: string): string;
 begin
-  if Assigned(FOnList) then
-  begin
-    FOnList(aFileInfo);
-  end;
-end;
-
-function TApp.ProcessKey(const aFileInfo: TFileInfo; const Value: string): string;
-begin
-  Result := Value;
+  Result := aValue;
   if Assigned(FOnPassword) then
   begin
     FOnPassword(aFileInfo, Result);
@@ -331,6 +310,14 @@ begin
   if Assigned(FOnRequest) then
   begin
     FOnRequest(aMessage);
+  end;
+end;
+
+procedure TApp.ProcessList(const aFileInfo: TFileInfoExtra);
+begin
+  if Assigned(FOnList) then
+  begin
+    FOnList(aFileInfo);
   end;
 end;
 

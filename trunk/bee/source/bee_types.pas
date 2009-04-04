@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2005-2008 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2005-2009 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
   Modifyed:
 
-  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso;
+    v0.7.9 build 0990 - 2009.04.03 by Melchiorre Caruso;
 }
 
 unit Bee_Types;
@@ -30,7 +30,10 @@ unit Bee_Types;
 interface
 
 type
-  // TFileInfo record ...
+  // PFileInfo record ...
+
+  PFileInfo = ^TFileInfo;
+
   TFileInfo = record
     FileName: PChar;
     FilePath: PChar;
@@ -38,9 +41,12 @@ type
     FileTime: integer;
     FileAttr: integer;
   end;
-  PFileInfo = ^TFileInfo;
 
-  // TFileInfoExtra record ...
+type
+  // PFileInfoExtra record ...
+
+  PFileInfoExtra = ^TFileInfoExtra;
+
   TFileInfoExtra = record
     FileName:     PChar;
     FilePath:     PChar;
@@ -56,14 +62,14 @@ type
     FilePassword: PChar;
     FilePosition: cardinal;
   end;
-  PFileInfoExtra = ^TFileInfoExtra;
 
+type
   // TEvents procedure ...
 
-  TCustomEvent   = procedure of object;
-  TMessageEvent  = procedure(const aMessage: string) of object;
-  TRequestEvent  = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
-  TListEvent     = procedure(const aFileInfo: TFileInfoExtra) of object;
+  TCustomEvent  = procedure of object;
+  TMessageEvent = procedure(const aMessage: string) of object;
+  TRequestEvent = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
+  TListEvent    = procedure(const aFileInfo: TFileInfoExtra) of object;
 
 const
   // CoreStatus ...
@@ -97,9 +103,8 @@ const
   cpHighest      =  5;
   cpTimeCritical =  6;
 
-
-function StringToPChar(const Value: string): PChar;
-function PCharToString(Value: PChar): string;
+function StringToPChar(const aValue: string): PChar;
+function PCharToString(aValue: PChar): string;
 
 implementation
 
@@ -107,24 +112,24 @@ uses
   Classes,
   SysUtils;
 
-function StringToPChar(const Value: string): PChar;
+function StringToPChar(const aValue: string): PChar;
 begin
-  Result := StrAlloc(Length(Value) + 1);
-  Result := StrPCopy(Result, Value);
+  Result := StrAlloc(Length(aValue) + 1);
+  Result := StrPCopy(Result, aValue);
 end;
 
-function PCharToString(Value: PChar): string;
+function PCharToString(aValue: PChar): string;
 var
   I: integer;
 begin
   SetLength(Result, 0);
-  if Value <> nil then
+  if aValue <> nil then
   begin
-    I := StrLen(Value);
-    if I > 0 then
+    I := StrLen(aValue);
+    if I <> 0 then
     begin
       SetLength(Result, I);
-      Move(Value^, Result[1], I);
+      Move(aValue^, Result[1], I);
     end;
   end;
 end;
