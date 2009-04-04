@@ -82,10 +82,10 @@ function IncludeTrailingBackSlash(const DirName: string): string;
 function ExcludeTrailingBackSlash(const DirName: string): string;
 
 function FileNameUseWildcards(const FileName: string): boolean;
-function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean;
-  overload;
-function FileNameMatch(const FileName: string; Masks: TStringList;
-  Recursive: boolean): boolean; overload;
+function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean; overload;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean; overload;
+
+procedure ExpandMask(const Mask: string; Masks: TStringList; Recursive: boolean);
 
 function CompareFileName(const S1, S2: string): integer;
 function ExtractFileDrive(const FileName: string): string;
@@ -378,6 +378,52 @@ begin
     Result := True
   else
     Result := False;
+end;
+
+procedure ExpandMask(const Mask: string; Masks: TStringList; Recursive: boolean);
+var
+  I: integer;
+  Error: integer;
+  Rec: TSearchRec;
+  Card: boolean;
+  LastSlash: integer;
+  FirstSlash: integer;
+  FolderName: string;
+  FolderPath: string;
+begin
+  Card := False;
+  LastSlash := 0;
+  FirstSlash := 0;
+  for I := 1 to Length(Mask) do
+    if Card = False then
+    begin
+      if Mask[I] in ['*', '?'] then Card := True;
+      if Mask[I] = PathDelim   then FirstSlash := I;
+    end else
+      if Mask[I] = PathDelim then
+      begin
+        LastSlash := I;
+        Break;
+      end;
+
+  if LastSlash > 0 then
+  begin
+    FolderPath := Copy(Mask, 1, FirstSlash);
+    FolderName := Copy(Mask, FirstSlash + 1, LastSlash - (FirstSlash + 1));
+    Error      := FindFirst(FolderPath + '*', faAnyFile, Rec);
+    while Error = 0 do
+    begin
+      if ((Rec.Attr and faDirectory) = faDirectory) and
+        (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
+        if FileNameMatch(Rec.Name, FolderName, Recursive) then
+          ExpandMask(FolderPath + Rec.Name + Copy(Mask,
+            LastSlash, (Length(Mask) + 1) - LastSlash),
+            Masks, Recursive);
+      Error := FindNext(Rec);
+    end;
+    FindClose(Rec);
+  end else
+    Masks.Add(Mask);
 end;
 
 function DoDirSeparators(const FileName: string): string;
