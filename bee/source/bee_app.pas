@@ -133,8 +133,7 @@ begin
   // load configuration
   FConfiguration := TConfiguration.Create;
   if not FileExists(FCommandLine.cfgOption) then
-    ProcessWarning('Warning: configuration file "' + FCommandLine.cfgOption +
-                   '" not found, data will be stored' + Cr, 1)
+    ProcessWarning('Warning: configuration file "' + FCommandLine.cfgOption + '" not found, data will be stored' + Cr, 1)
   else
     FConfiguration.LoadFromFile(FCommandLine.cfgOption);
 
@@ -221,7 +220,7 @@ begin
       Headers.ReadItems(FArcFile, aAction);
       if (Headers.GetCount = 0) and (FArcFile.Size <> 0) then
       begin
-        Result := False;  ProcessFatalError('Error: can''t open archive', 2);
+        Result := False;  ProcessFatalError('Error: archive unsupported', 2);
       end;
     except
       Result := False;  ProcessFatalError('Error: can''t open archive', 2);

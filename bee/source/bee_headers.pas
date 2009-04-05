@@ -153,6 +153,7 @@ type
 implementation
 
 uses
+  Math,
   Bee_Files,
   Bee_Common;
 
@@ -211,7 +212,7 @@ function THeaders.CreatePHeader(Stream: TStream; aAction: THeaderAction): PHeade
 var
   J: integer;
 begin
-  Result := GetMem(SizeOf(THeader));
+  GetMem(Result, SizeOf(THeader));
   try
     with Result^ do
     begin
@@ -235,6 +236,7 @@ begin
           FileName := DoDirSeparators(FileName);
         end;
       end;
+
       FileLink := '';
       FileAction := aAction;
     end;
@@ -319,9 +321,9 @@ begin
       FSecondary.Insert(M + 1, P);
 
   I := 0;
-  L := GetNext(0, toUpdate);
+  L := Max(0, GetNext(0, toUpdate));
   M := -1;
-  H := GetBack(FPRimary.Count -1, toUpdate);
+  H := GetBack(FPrimary.Count -1, toUpdate);
   while H >= L do
   begin
     M := (L + H) div 2;
@@ -646,7 +648,7 @@ begin
         if P <> nil then
         begin
           AddItem(P);
-        end
+        end;
 
       end else Break;
 
