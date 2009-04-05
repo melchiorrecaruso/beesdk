@@ -27,7 +27,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-    v0.7.9 build 0990 - 2009.04.03 by Melchiorre Caruso.
+    v0.7.9 build 0994 - 2009.04.04 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
@@ -74,6 +74,7 @@ type
   PHeader = ^ THeader;
 
   THeader = record
+    // Start header data
     FileFlags: THeaderFlags;
     FileVersion: byte;
     FileMethod: byte;
@@ -86,7 +87,7 @@ type
     FilePacked: cardinal;
     FileStartPos: cardinal;
     FileName: string;
-    // ---
+    // End header data
     FileLink: string;
     FileAction: THeaderAction;
   end;
@@ -100,7 +101,7 @@ type
     destructor Destroy; override;
     procedure Clear;
   public
-    procedure AddItems  (aCommandLine: TCommandLine; aConfiguration: TConfiguration; var Size: int64);
+    function  AddItems  (aCommandLine: TCommandLine; aConfiguration: TConfiguration): int64;
     procedure ReadItems (aStream: TStream; aAction: THeaderAction);
     procedure WriteItems(aStream: TStream);
 
@@ -135,18 +136,18 @@ type
     FPrimary:   TList;
     FSecondary: TList;
   private
-    function Compare(P1, P2: PHeader): integer;
-    function SearchItem(const aFileName: string): PHeader;
     procedure AddItem(P: PHeader);
+    function Compare(P1, P2: PHeader): integer;
     function CreatePHeader(const RecPath: string; const Rec: TSearchRec): PHeader; overload;
     function CreatePHeader(Stream: TStream; aAction: THeaderAction): PHeader; overload;
+    function FindFirstMarker(aStream: TStream): int64;
     procedure FreePHeader(P: PHeader);
-    function  FindFirstMarker(aStream: TStream): int64;
-    procedure ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
-    procedure WriteItem (aStream: TStream; P: PHeader);
     procedure MarkAsLast(aAction: THeaderAction);
+    procedure ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
+    function SearchItem(const aFileName: string): PHeader;
     procedure ScanFileSystem(aCommandLine: TCommandLine; Mask: string; var Size: int64);
     procedure SortNews(aCommandLine: TCommandLine; aConfiguration: TConfiguration);
+    procedure WriteItem (aStream: TStream; P: PHeader);
   end;
 
 implementation
@@ -425,11 +426,12 @@ begin
       end;
 end;
 
-procedure THeaders.AddItems(aCommandLine: TCommandLine; aConfiguration: TConfiguration; var Size: int64);
+function THeaders.AddItems(aCommandLine: TCommandLine; aConfiguration: TConfiguration): int64;
 var
   I, J: integer;
   S: TStringList;
 begin
+  Result := 0;
   with aCommandLine do
   begin
     for I := 0 to FileMasks.Count -1 do
@@ -438,7 +440,7 @@ begin
       ExpandMask(FileMasks.Strings[I], S, rOption);
       for J := 0 to S.Count -1 do
       begin
-        ScanFileSystem(aCommandLine, S.Strings[J], Size);
+        ScanFileSystem(aCommandLine, S.Strings[J], Result);
       end;
       S.Free;
     end;
