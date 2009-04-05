@@ -72,10 +72,13 @@ type
     // overwrite sub-routines
     procedure ProcessFilesToOverWriteDefault(Headers: THeaders);
     procedure ProcessFilesToOverWriteAdvanced(Headers: THeaders);
-    procedure ProcessFileToOverWrite(Headers: THeaders; FileIndex: integer);
+    procedure ProcessFilesToOverwriteWithUpdateAndFreshOption(Headers: THeaders);
+    procedure ProcessFilesToOverwriteWithUpdateOption(Headers: THeaders);
+    procedure ProcessFilesToOverwriteWithFreshOption(Headers: THeaders);
 
-    function AlreadyFileExists(Headers: THeaders; FileIndex: integer;
-      FileActions: THeaderActions; const FileName: string): integer;
+    // already file exists in archive
+    function AlreadyFileExists(Headers: THeaders; aIndex: integer;
+      aActions: THeaderActions; const aFileName: string): integer;
 
     procedure ProcesstOption;
     procedure ProcesslOption;
@@ -235,18 +238,21 @@ var
   I: integer;
 begin
   if FCommandLine.Command = 'E' then
+  begin
     for I := 0 to Headers.GetCount -1 do
       with Headers.GetItem(I)^ do
       begin
         FileName := ExtractFileName(FileName)
       end
-  else
+  end else
+  begin
     if Length(FCommandLine.cdOption) > 0 then
       for I := 0 to Headers.GetCount -1 do
         with Headers.GetItem(I)^ do
         begin
           FileName := DeleteFilePath(FCommandLine.cdOption, FileName);
         end;
+  end;
 end;
 
 // -------------------------------------------------------------------------- //
@@ -254,19 +260,37 @@ end;
 // -------------------------------------------------------------------------- //
 
 procedure TBeeApp.ProcessFilesToOverWrite;
+var
+  I, J: integer;
+  P: PHeader;
 begin
-  if (FCommandLine.uOption = False) and (FCommandLine.fOption = False) then
+  if (not FCommandLine.uOption) and (not FCommandLine.fOption) then
     ProcessFilesToOverWriteDefault(Headers)
   else
     ProcessFilesToOverWriteAdvanced(Headers);
+
+  // Start clear duplicated items //
+  for I := 1 to Headers.GetCount -1 do
+  begin
+    P := Headers.GetItem(I);
+    if P^.FileAction = toExtract then
+    begin
+      J := Headers.GetBack(I - 1, toExtract, P^.FileName);
+      if J > -1 then
+      begin
+        Headers.GetItem(J).FileAction := toNone;
+      end;
+    end;
+  end;
+  // End clear //
 end;
 
 procedure TBeeApp.ProcessFilesToOverWriteDefault(Headers: THeaders);
 var
-  P: PHeader;
-  S: string;
   I, J: integer;
   FI: TFileInfo;
+  P: PHeader;
+  S: string;
 begin
   I := 0;
   while I < Headers.GetCount do
@@ -276,7 +300,7 @@ begin
     if (P^.FileAction = toExtract) and FileExists(P^.FileName) then
     begin
 
-      if (FCommandLine.oOption in ['A', 'Q', 'S']) = False then
+      if not (FCommandLine.oOption in ['A', 'Q', 'S']) then
       begin
         FI.FileName := StringToPChar(ExtractFileName(P^.FileName));
         FI.FilePath := StringToPChar(ExtractFilePath(P^.FileName));
@@ -315,7 +339,7 @@ begin
                  S := FixFileName(ProcessRename(FI, ''));
                  if Length(S) > 0 then
                  begin
-                   if FileExists(S) or (AlreadyFileExists(Headers, I, [toExtract], S) <> -1) then
+                   if FileExists(S) or (AlreadyFileExists(Headers, I, [toExtract], S) > -1) then
                      ProcessWarning('Warning: file "' + S + '" already exists', 0)
                    else
                      Break;
@@ -346,100 +370,93 @@ begin
     end;
     Inc(I);
   end;
-
-  //for I := 0 to Headers.GetCount -1 do
-  //  if Headers.GetItem(I).FileAction = toExtract then
-  //  begin
-  //    J := Headers.GetBack(I - 1, toExtract, Headers.GetItem(I).FileName);
-  //    if J > -1 then
-  //    begin
-  //      Headers.GetItem(J).FileAction := toNone;
-  //    end;
-  //  end;
 end;
 
 procedure TBeeApp.ProcessFilesToOverWriteAdvanced(Headers: THeaders);
+begin
+  if FCommandLine.uOption xor FCommandLine.fOption then
+  begin
+    if FCommandLine.uOption then
+      ProcessFilesToOverwriteWithUpdateOption(Headers)
+    else
+      ProcessFilesToOverwriteWithFreshOption(Headers);
+  end else
+    ProcessFilesToOverwriteWithUpdateAndFreshOption(Headers);
+end;
+
+procedure TBeeApp.ProcessFilesToOverwriteWithUpdateOption(Headers: THeaders);
 var
   I: integer;
   P: PHeader;
 begin
-  if (FCommandLine.uOption xor FCommandLine.fOption) then
+  for I := 0 to Headers.GetCount -1 do
   begin
-    if FCommandLine.uOption then
+    P := Headers.GetItem(I);
+    if P^.FileAction = toExtract then
     begin
-      for I := 0 to Headers.GetCount -1 do
+      if FileExists(P^.FileName) then
       begin
-        P := Headers.GetItem(I);
-
-        if P^.FileAction = toExtract then
-        begin
-          if FileExists(P^.FileName) then
-            P^.FileAction := toNone
-          else
-            ProcessFileToOverWrite(Headers, I);
-        end;
-
-      end;
-    end else
-    begin
-      for I := 0 to Headers.GetCount -1 do
-      begin
-        P := Headers.GetItem(I);
-
-        if P^.FileAction = toExtract then
-        begin
-          if FileExists(P^.FileName) then
-            P^.FileAction := toNone
-          else
-            if FileAge(P^.FileName) >= P^.FileTime then
-              P^.FileAction := toNone
-            else
-              ProcessFileToOverWrite(Headers, I);
-        end;
-
+        P^.FileAction := toNone;
       end;
     end;
-  end else
-    for I := 0 to Headers.GetCount -1 do
-    begin
-      P := Headers.GetItem(I);
+  end;
+end;
 
+procedure TBeeApp.ProcessFilesToOverwriteWithFreshOption(Headers: THeaders);
+var
+  I: integer;
+  P: PHeader;
+begin
+  for I := 0 to Headers.GetCount -1 do
+  begin
+    P := Headers.GetItem(I);
+    if P^.FileAction = toExtract then
+    begin
       if FileExists(P^.FileName) then
       begin
         if FileAge(P^.FileName) >= P^.FileTime then
+        begin
           P^.FileAction := toNone
-        else
-          ProcessFileToOverWrite(Headers, I);
+        end;
       end else
-        ProcessFileToOverWrite(Headers, I);
+        P^.FileAction := toNone
     end;
+  end;
 end;
 
-function TBeeApp.AlreadyFileExists(Headers: THeaders; FileIndex: integer;
-  FileActions: THeaderActions; const FileName: string): integer;
+procedure TBeeApp.ProcessFilesToOverwriteWithUpdateAndFreshOption(Headers: THeaders);
+var
+  I: integer;
+  P: PHeader;
 begin
-  if Length(FileName) > 0 then
+  for I := 0 to Headers.GetCount -1 do
   begin
-    Result := Headers.GetBack(FileIndex - 1, FileActions, FileName);
+    P := Headers.GetItem(I);
+    if P^.FileAction = toExtract then
+    begin
+      if FileExists(P^.FileName) then
+      begin
+        if FileAge(P^.FileName) >= P^.FileTime then
+        begin
+          P^.FileAction := toNone
+        end;
+      end;
+    end;
+  end;
+end;
+
+function TBeeApp.AlreadyFileExists(Headers: THeaders; aIndex: integer;
+  aActions: THeaderActions; const aFileName: string): integer;
+begin
+  if Length(aFileName) > 0 then
+  begin
+    Result := Headers.GetBack(aIndex - 1, aActions, aFileName);
     if Result = -1 then
     begin
-      Result := Headers.GetNext(FileIndex + 1, FileActions, FileName);
+      Result := Headers.GetNext(aIndex + 1, aActions, aFileName);
     end;
   end else
     Result := -1;
-end;
-
-procedure TBeeApp.ProcessFileToOverWrite(Headers: THeaders; FileIndex: integer);
-var
-  J: integer;
-begin
-  J := Headers.GetBack(FileIndex - 1, toExtract, Headers.GetItem(FileIndex)^.FileName);
-
-  if J > -1 then
-    if Headers.GetItem(FileIndex)^.FileTime > Headers.GetItem(J)^.FileTime then
-      Headers.GetItem(J).FileAction := toNone
-    else
-      Headers.GetItem(FileIndex).FileAction := toNone;
 end;
 
 // -------------------------------------------------------------------------- //
@@ -451,12 +468,12 @@ var
   S: string;
   I: integer;
   P: PHeader;
-  FileInfo: TFileInfo;
+  FI: TFileInfo;
 begin
   Headers.MarkItems(FCommandLine.FileMasks, toCopy,   toRename, FCommandLine.rOption);
   Headers.MarkItems(FCommandLine.xOption,   toRename, toCopy,   FCommandLine.rOption);
 
-  if (Headers.GetNext(0, toRename) > -1) then
+  if Headers.GetNext(0, toRename) > -1 then
   begin
     Result := False;
     for I := 0 to Headers.GetCount -1 do
@@ -465,22 +482,26 @@ begin
 
       if P^.FileAction = toRename then
       begin
-        FileInfo.FileName := StringToPChar(ExtractFileName(P^.FileName));
-        FileInfo.FilePath := StringToPChar(ExtractFilePath(P^.FileName));
+        FI.FileName := StringToPChar(ExtractFileName(P^.FileName));
+        FI.FilePath := StringToPChar(ExtractFilePath(P^.FileName));
 
-        FileInfo.FileSize := P^.FileSize;
-        FileInfo.FileTime := P^.FileTime;
-        FileInfo.FileAttr := P^.FileAttr;
+        FI.FileSize := P^.FileSize;
+        FI.FileTime := P^.FileTime;
+        FI.FileAttr := P^.FileAttr;
         while True do
         begin
-          S := FixFileName(ProcessRename(FileInfo, ''));
-          if AlreadyFileExists(Headers, I, [toCopy, toRename], S) <> -1 then
-            ProcessWarning('Warning: file "' + S + '" already existing in archive', 0)
-          else
+          S := FixFileName(ProcessRename(FI, ''));
+          if Length(S) > 0 then
+          begin
+            if AlreadyFileExists(Headers, I, [toCopy, toRename], S) > -1 then
+              ProcessWarning('Warning: file "' + S + '" already existing in archive', 0)
+            else
+              Break;
+          end else
             Break;
         end;
-        StrDispose(FileInfo.FileName);
-        StrDispose(FileInfo.FilePath);
+        StrDispose(FI.FileName);
+        StrDispose(FI.FilePath);
 
         if (Length(S) > 0) and (CompareFileName(S, P^.FileName) <> 0) then
         begin
@@ -502,6 +523,7 @@ end;
 procedure TBeeApp.ProcessFilesToFresh;
 var
   I, J, BackTear, NextTear: integer;
+  P: PHeader;
 begin
   I := Headers.GetBack(Headers.GetCount -1, toFresh);
   // find sequences and mark as toSwap files that not toFresh
@@ -516,13 +538,16 @@ begin
     begin
       NextTear := Headers.GetBack(NextTear - 1, toCopy);
       for J := BackTear to NextTear do
-        case Headers.GetItem(J).FileAction of
+      begin
+        P := Headers.GetItem(J);
+        case P^.FileAction of
           toCopy:  begin
-                     THeader(Headers.Items[J]).Action := toSwap;
-                     Inc(FTotalSize, THeader(Headers.Items[J]).Data.FileSize * 2);
+                     P^.FileAction := toSwap;
+                     Inc(FTotalSize, P^.FileSize * 2);
                    end;
-          toFresh: Inc(FTotalSize, THeader(Headers.Items[J]).Data.FileSize);
+          toFresh: Inc(FTotalSize, P^.FileSize);
         end;
+      end;
       I := BackTear;
     end;
     I := Headers.GetBack(I - 1, toFresh);
@@ -533,15 +558,16 @@ end;
 procedure TBeeApp.ProcessFilesToDelete;
 var
   I, J, BackTear, NextTear: integer;
+  P: PHeader;
 begin
-  I := Headers.GetBack(Headers.Count - 1, toDelete);
+  I := Headers.GetBack(Headers.GetCount -1, toDelete);
   // find sequences and ...
   while I > -1 do
   begin
     BackTear := Headers.GetBack(I, foTear);
     NextTear := Headers.GetNext(I + 1, foTear);
 
-    if NextTear = -1 then NextTear := Headers.Count;
+    if NextTear = -1 then NextTear := Headers.GetCount;
     // if is solid header
     if ((NextTear - BackTear) > 1) then
     begin
@@ -549,13 +575,16 @@ begin
       // if exists an header toDelete
       if Headers.GetBack(NextTear, toDelete) > (BackTear - 1) then
         for J := BackTear to NextTear do
-          case THeader(Headers.Items[J]).Action of
+        begin
+          P := Headers.GetItem(J);
+          case P^.FileAction of
             toCopy:   begin
-                        THeader(Headers.Items[J]).Action := toSwap;
-                        Inc(FTotalSize, THeader(Headers.Items[J]).Data.FileSize * 2);
+                        P^.FileAction := toSwap;
+                        Inc(FTotalSize, P^.FileSize * 2);
                       end;
-            toDelete: Inc(FTotalSize, THeader(Headers.Items[J]).Data.FileSize);
+            toDelete: Inc(FTotalSize, P^.FileSize);
           end;
+        end;
       I := BackTear;
     end;
     I := Headers.GetBack(I - 1, toDelete);
@@ -565,6 +594,7 @@ end;
 
 function TBeeApp.ProcessFilesToSwap(Headers: THeaders): boolean;
 var
+  P: PHeader;
   I, J: integer;
   Decoder: TDecoder;
   FSwapStrm: TFileWriter;
@@ -573,7 +603,7 @@ var
 begin
   Result := True;
 
-  I := Headers.GetBack(Headers.Count - 1, toSwap);
+  I := Headers.GetBack(Headers.GetCount -1, toSwap);
   if (I > -1) then
   begin
     FSwapName := GenerateFileName(FCommandLine.yOption);
@@ -581,52 +611,48 @@ begin
 
     if (FSwapStrm <> nil) then
     begin
-      CurrDictionary := Headers.Count;
-      CurrTable      := Headers.Count;
+      CurrDictionary := Headers.GetCount;
+      CurrTable      := CurrDictionary;
 
       Decoder := TDecoder.Create(FArcFile, Self);
-      // get GeneralSize
+      // get totalsize
       while (I > -1) and (not FTerminated) do
       begin
         iDictionary := Headers.GetBack(I, foDictionary);
         // find dictionary info
         iTable := Headers.GetBack(I, foTable); // find table info
-        iTear := Headers.GetBack(I, foTear);   // find tear info
+        iTear  := Headers.GetBack(I, foTear);  // find tear info
 
-        if (iDictionary > -1) and (iDictionary <> CurrDictionary) and
-          (iDictionary <> iTear) then
+        if (iDictionary > -1) and (iDictionary <> CurrDictionary) and (iDictionary <> iTear) then
         begin
           CurrDictionary := iDictionary;
-          Decoder.DecodeStrm(THeader(Headers.Items[iDictionary]),
-            pmQuit, FSwapStrm);
+          P := Headers.GetItem(CurrDictionary);
+          Decoder.DecodeStrm(P, pmQuit, FSwapStrm, foPassword in P^.FileFlags);
         end;
 
         if (iTable > -1) and (iTable <> CurrTable) and (iTable <> iTear) then
         begin
           CurrTable := iTable;
-          Decoder.DecodeStrm(THeader(Headers.Items[iTable]),
-            pmQuit, FSwapStrm);
+          P := Headers.GetItem(CurrTable);
+          Decoder.DecodeStrm(P, pmQuit, FSwapStrm, foPassword in P^.FileFlags);
         end;
 
         for J := iTear to I do
         begin
+          P := Headers.GetItem(J);
           if not FTerminated then
           begin
-            if THeader(Headers.Items[J]).Action = toSwap then
-              Result := Decoder.DecodeStrm(Headers.Items[J], pmNorm, FSwapStrm)
+            if P^.FileAction = toSwap then
+              Result := Decoder.DecodeStrm(P, pmNorm, FSwapStrm, foPassword in P^.FileFlags)
             else
-            begin
-              Result := Decoder.DecodeStrm(Headers.Items[J], pmSkip, FSwapStrm);
-            end;
+              Result := Decoder.DecodeStrm(P, pmSkip, FSwapStrm, foPassword in P^.FileFlags);
           end else
             Result := False;
 
-          if Result = False then
-            Break;
+          if Result = False then Break;
         end;
+        if Result = False then Break;
 
-        if Result = False then
-          Break;
         I := Headers.GetBack(iTear - 1, toSwap);
       end;
       Decoder.Destroy;
