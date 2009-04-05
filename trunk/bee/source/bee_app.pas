@@ -117,7 +117,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0992 archiver utility, February 2009' + Cr +
+  FSelfName := 'The Bee 0.7.9 build 0994 archiver utility, February 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -267,7 +267,7 @@ var
   P: PHeader;
   S: string;
   I, J: integer;
-  FileInfo: TFileInfo;
+  FI: TFileInfo;
 begin
   I := 0;
   while I < Headers.GetCount do
@@ -276,39 +276,51 @@ begin
 
     if (P^.FileAction = toExtract) and FileExists(P^.FileName) then
     begin
+
       if (FCommandLine.oOption in ['A', 'Q', 'S']) = False then
       begin
-        FileInfo.FileName := StringToPChar(ExtractFileName(P^.FileName));
-        FileInfo.FilePath := StringToPChar(ExtractFilePath(P^.FileName));
+        FI.FileName := StringToPChar(ExtractFileName(P^.FileName));
+        FI.FilePath := StringToPChar(ExtractFilePath(P^.FileName));
 
-        FileInfo.FileSize := P^.FileSize;
-        FileInfo.FileTime := P^.FileTime;
-        FileInfo.FileAttr := P^.FileAttr;
-        repeat
-          S := ProcessOverwrite(FileInfo, 'A');
-          if Length(S) = 1 then FCommandLine.oOption := UpCase(S[1]);
-        until FCommandLine.oOption in ['A', 'N', 'R', 'S', 'Q', 'Y'];
-
-        StrDispose(FileInfo.FileName);
-        StrDispose(FileInfo.FilePath);
+        FI.FileSize := P^.FileSize;
+        FI.FileTime := P^.FileTime;
+        FI.FileAttr := P^.FileAttr;
+        while True do
+        begin
+          S := ProcessOverwrite(FI, 'A');
+          if Length(S) = 1 then
+          begin
+            FCommandLine.oOption := UpCase(S[1]);
+            if FCommandLine.oOption in ['A', 'N', 'R', 'S', 'Q', 'Y'] then
+            begin
+              Break;
+            end;
+          end;
+        end;
+        StrDispose(FI.FileName);
+        StrDispose(FI.FilePath);
       end;
 
       case FCommandLine.oOption of
         'A': Break;
         'N': P^.FileAction := toNone;
         'R': begin
-               FileInfo.FileName := StringToPChar(ExtractFileName(P^.FileName));
-               FileInfo.FilePath := StringToPChar(ExtractFilePath(P^.FileName));
+               FI.FileName := StringToPChar(ExtractFileName(P^.FileName));
+               FI.FilePath := StringToPChar(ExtractFilePath(P^.FileName));
 
-               FileInfo.FileSize := P^.FileSize;
-               FileInfo.FileTime := P^.FileTime;
-               FileInfo.FileAttr := P^.FileAttr;
+               FI.FileSize := P^.FileSize;
+               FI.FileTime := P^.FileTime;
+               FI.FileAttr := P^.FileAttr;
                while True do
                begin
-                 S := FixFileName(ProcessRename(FileInfo, ''));
-                 if FileExists(S) or (AlreadyFileExists(Headers, I, [toExtract], S) <> -1) then
-                   ProcessWarning('Warning: file "' + S + '" already exists', 0)
-                 else
+                 S := FixFileName(ProcessRename(FI, ''));
+                 if Length(S) > 0 then
+                 begin
+                   if FileExists(S) or (AlreadyFileExists(Headers, I, [toExtract], S) <> -1) then
+                     ProcessWarning('Warning: file "' + S + '" already exists', 0)
+                   else
+                     Break;
+                 end else
                    Break;
                end;
 
@@ -317,30 +329,34 @@ begin
                else
                  P^.FileName := S;
              end;
-        'S': for J := I to Headers.GetCount -1 do
-             begin
-              Headers.GetItem(J)^.FileAction := toNone;
-              I := J;
+        'S': begin
+               for J := I to Headers.GetCount -1 do
+               begin
+                Headers.GetItem(J)^.FileAction := toNone;
+               end;
+               I := Headers.GetCount -1;
              end;
-        'Q': for J := 0 to Headers.GetCount -1 do
-             begin
-               Headers.GetItem(J).FileAction := toNone;
-               I := J;
+        'Q': begin
+               for J := 0 to Headers.GetCount -1 do
+               begin
+                 Headers.GetItem(J).FileAction := toNone;
+               end;
+               I := Headers.GetCount -1;
              end;
       end;
     end;
     Inc(I);
   end;
 
-  for I := 0 to Headers.GetCount -1 do
-    if Headers.GetItem(I).FileAction = toExtract then
-    begin
-      J := Headers.GetBack(I - 1, toExtract, Headers.GetItem(I).FileName);
-      if J > -1 then
-      begin
-        Headers.GetItem(J).FileAction := toNone;
-      end;
-    end;
+  //for I := 0 to Headers.GetCount -1 do
+  //  if Headers.GetItem(I).FileAction = toExtract then
+  //  begin
+  //    J := Headers.GetBack(I - 1, toExtract, Headers.GetItem(I).FileName);
+  //    if J > -1 then
+  //    begin
+  //      Headers.GetItem(J).FileAction := toNone;
+  //    end;
+  //  end;
 end;
 
 procedure TBeeApp.ProcessFilesToOverWriteAdvanced(Headers: THeaders);
@@ -400,15 +416,16 @@ begin
     end;
 end;
 
-function TBeeApp.AlreadyFileExists(Headers: THeaders;
-  FileIndex: integer; FileActions: THeaderActions;
-  const FileName: string): integer;
+function TBeeApp.AlreadyFileExists(Headers: THeaders; FileIndex: integer;
+  FileActions: THeaderActions; const FileName: string): integer;
 begin
   if Length(FileName) > 0 then
   begin
     Result := Headers.GetBack(FileIndex - 1, FileActions, FileName);
-
-    if Result = -1 then Result := Headers.GetNext(FileIndex + 1, FileActions, FileName);
+    if Result = -1 then
+    begin
+      Result := Headers.GetNext(FileIndex + 1, FileActions, FileName);
+    end;
   end else
     Result := -1;
 end;
