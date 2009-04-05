@@ -49,8 +49,8 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <CursorPos X="31" Y="349"/>
-        <TopLine Value="255"/>
+        <CursorPos X="33" Y="32"/>
+        <TopLine Value="16"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="36"/>
         <Loaded Value="True"/>
@@ -107,7 +107,7 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="bee_mainpacker.pas"/>
         <Caret Line="79" Column="78" TopLine="61"/>
@@ -224,10 +224,6 @@
         <Filename Value="bee_app.pas"/>
         <Caret Line="403" Column="83" TopLine="164"/>
       </Position29>
-      <Position30>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="276" Column="27" TopLine="333"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

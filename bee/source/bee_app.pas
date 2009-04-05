@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0962 - 2009.02.27 by Melchiorre Caruso.
+  v0.7.9 build 0992 - 2009.04.04 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -39,7 +39,7 @@ unit Bee_App;
 interface
 
 uses
-  Classes, // TStringList, ...
+  Classes,           // TStringList, ...
   // ---
   Bee_Files,
   Bee_Types,
@@ -58,16 +58,16 @@ type
     destructor Destroy; override;
     procedure Execute; override;
   private
-    function OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
+    function  OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
     // decode solid sequences using a swapfile
-    function ProcessFilesToSwap(Headers: THeaders): boolean;
+    function  ProcessFilesToSwap(Headers: THeaders): boolean;
     // find and prepare sequences
     procedure ProcessFilesToFresh(Headers: THeaders);
     procedure ProcessFilesToDelete(Headers: THeaders);
     procedure ProcessFilesToDecode(Headers: THeaders; aAction: THeaderAction);
     procedure ProcessFilesToExtract(Headers: THeaders);
     procedure ProcessFilesToOverWrite(Headers: THeaders);
-    function ProcessFilesToRename(Headers: THeaders): boolean;
+    function  ProcessFilesToRename(Headers: THeaders): boolean;
     procedure ProcessFilesDeleted(Headers: THeaders);
     // overwrite sub-routines
     procedure ProcessFilesToOverWriteDefault(Headers: THeaders);
@@ -90,7 +90,6 @@ type
     // string routines
     function VersionToStr(P: THeader): string;
     function MethodToStr(P: THeader): string;
-
   private
     FSelfName: string;
     FArcFile:  TFileReader; // archive file stream
@@ -104,9 +103,9 @@ type
 implementation
 
 uses
-  SysUtils, // faReadOnly, ...
-
-  Bee_Common, // Various helper routines
+  SysUtils,       // faReadOnly, ...
+  // ---
+  Bee_Common,     // Various helper routines
   Bee_Assembler,
   Bee_MainPacker; // TEncoder...
 
