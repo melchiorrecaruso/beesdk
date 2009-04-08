@@ -71,9 +71,7 @@ type
 type
   // Header structure, order of fields is significant
 
-  PHeader = ^ THeader;
-
-  THeader = record
+  THeader = class
     // Start header data
     FileFlags: THeaderFlags;
     FileVersion: byte;
@@ -127,7 +125,7 @@ type
     function GetCount(Actions: THeaderActions): integer; overload;
     function GetCount: integer; overload;
 
-    function GetItem(aIndex: integer): PHeader;
+    function GetItem(aIndex: integer): THeader;
 
     function SetModule(const aFileName: string): boolean;
     function GetModule: integer;
@@ -136,18 +134,22 @@ type
     FPrimary:   TList;
     FSecondary: TList;
   private
-    procedure AddItem(P: PHeader);
-    function Compare(P1, P2: PHeader): integer;
-    function CreatePHeader(const RecPath: string; const Rec: TSearchRec): PHeader; overload;
-    function CreatePHeader(Stream: TStream; aAction: THeaderAction): PHeader; overload;
+    procedure AddItem(P: THeader);
+
+
+
+
+    function Compare(P1, P2: THeader): integer;
+    function CreatePHeader(const RecPath: string; const Rec: TSearchRec): THeader; overload;
+    function CreatePHeader(Stream: TStream; aAction: THeaderAction): THeader; overload;
     function FindFirstMarker(aStream: TStream): int64;
-    procedure FreePHeader(P: PHeader);
+    procedure FreePHeader(P: THeader);
     procedure MarkAsLast(aAction: THeaderAction);
     procedure ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
-    function SearchItem(const aFileName: string): PHeader;
+    function SearchItem(const aFileName: string): THeader;
     procedure ScanFileSystem(aCommandLine: TCommandLine; Mask: string; var Size: int64);
     procedure SortNews(aCommandLine: TCommandLine; aConfiguration: TConfiguration);
-    procedure WriteItem (aStream: TStream; P: PHeader);
+    procedure WriteItem (aStream: TStream; P: THeader);
   end;
 
 implementation
@@ -162,16 +164,17 @@ uses
 constructor THeaders.Create;
 begin
   inherited Create;
-  FPrimary   := TList.Create;
-  FSecondary := TList.Create;
   FModule    := TMemoryStream.Create;
+  FSecondary := TList.Create;
+  FPrimary   := TList.Create;
 end;
 
 destructor THeaders.Destroy;
 begin
-  FModule.Free;
-  FSecondary.Free;
+  Clear;
   FPrimary.Free;
+  FSecondary.Free;
+  FModule.Free;
   inherited Destroy;
 end;
 
@@ -179,44 +182,51 @@ procedure THeaders.Clear;
 var
   I: integer;
 begin
+  FModule.Size := 0;
   for I := 0 to FPrimary.Count -1 do
   begin
-    FreePHeader(FPrimary.Items[I]);
+    FreePHeader(THeader(FPrimary.Items[I]));
   end;
   FPrimary.Clear;
   FSecondary.Clear;
 end;
 
-function THeaders.CreatePHeader(const RecPath: string; const Rec: TSearchRec): PHeader;
+function THeaders.CreatePHeader(const RecPath: string; const Rec: TSearchRec): THeader;
 begin
-  Result := GetMem(SizeOf(THeader));
-  // ---
-  Result^.FileFlags := [foTear, foTable];
-  Result^.FileVersion := 1; // Bee 0.3.x
-  Result^.FileMethod := 1;
-  Result^.FileDictionary := 2;
-  // Result^.FileTable
-  Result^.FileSize := 0;
-  Result^.FileTime := Rec.Time;
-  // Result^.FileAttr
-  Result^.FileCrc := cardinal(-1);
-  // Result^.FilePacked
-  // Result^.FileStartPos
-  Result^.FileName := DeleteFileDrive(RecPath) + Rec.Name;
-  // ---
-  Result^.FileLink := RecPath + Rec.Name;
-  Result^.FileAction := toUpdate;
+  Result := THeader.Create;
+  try
+    // ---
+    Result.FileFlags := [foTear, foTable];
+    Result.FileVersion := 1; // Bee 0.3.x
+    Result.FileMethod := 1;
+    Result.FileDictionary := 2;
+    // Result.FileTable
+     Result.FileSize := 0;
+    Result.FileTime := Rec.Time;
+    // Result.FileAttr
+    Result.FileCrc := cardinal(-1);
+    // Result.FilePacked
+    // Result.FileStartPos
+    Result.FileName := DeleteFileDrive(RecPath) + Rec.Name;
+    // ---
+    Result.FileLink := RecPath + Rec.Name;
+    Result.FileAction := toUpdate;
+  except
+    FreePHeader(Result);
+    Result := nil;
+  end;
 end;
 
-function THeaders.CreatePHeader(Stream: TStream; aAction: THeaderAction): PHeader;
+function THeaders.CreatePHeader(Stream: TStream; aAction: THeaderAction): THeader;
 var
   J: integer;
+  S: string;
 begin
-  GetMem(Result, SizeOf(THeader));
+  Result := THeader.Create;
   try
-    with Result^ do
+    with Result do
     begin
-      Stream.Read(FileFlags, SizeOf(THeaderFlags));
+      Stream.Read(FileFlags, SizeOf(FileFlags));
 
       if foVersion    in FileFlags then Stream.Read(FileVersion,    SizeOf(FileVersion));
       if foMethod     in FileFlags then Stream.Read(FileMethod,     SizeOf(FileMethod));
@@ -230,53 +240,52 @@ begin
       Stream.Read(J, SizeOf(J));
       if J > 0 then
       begin
-        SetLength(FileName, J);
-        if Stream.Read(FileName[1], J) = J then
-        begin
-          FileName := DoDirSeparators(FileName);
-        end;
+        SetLength(S, J);
+        Stream.Read(S[1], J);
+        S := DoDirSeparators(S);
       end;
 
-      FileLink := '';
+      FileLink   := '';
       FileAction := aAction;
     end;
   except
     FreePHeader(Result);
+    Result := nil;
   end;
 end;
 
-procedure THeaders.FreePHeader(P: PHeader);
+procedure THeaders.FreePHeader(P: THeader);
 begin
-  if P <> nil then
+  if Assigned(P) then
   begin
-    SetLength(P^.FileName, 0);
-    SetLength(P^.FileLink, 0);
+    SetLength(P.FileName, 0);
+    SetLength(P.FileLink, 0);
   end;
   FreeMem(P);
 end;
 
-function THeaders.Compare(P1, P2: PHeader): integer;
+function THeaders.Compare(P1, P2: THeader): integer;
 var
   B1, B2: boolean;
 begin
-  with P1^ do B1 := (FileAction = toUpdate);
-  with P2^ do B2 := (FileAction = toUpdate);
+  with P1 do B1 := (FileAction = toUpdate);
+  with P2 do B2 := (FileAction = toUpdate);
 
   if (B1 and B2) then
   begin
     Result := CompareFileName(
-      ExtractFileExt(P1^.FileName),
-      ExtractFileExt(P2^.FileName));
+      ExtractFileExt(P1.FileName),
+      ExtractFileExt(P2.FileName));
 
     if Result = 0 then
       Result := CompareFileName(
-        ExtractFileName(P1^.FileName),
-        ExtractFileName(P2^.FileName));
+        ExtractFileName(P1.FileName),
+        ExtractFileName(P2.FileName));
 
     if Result = 0 then
       Result := CompareFileName(
-        P1^.FileName,
-        P2^.FileName);
+        P1.FileName,
+        P2.FileName);
 
   end else
     if B1 then
@@ -288,19 +297,18 @@ begin
         Result := 0;
 end;
 
-procedure THeaders.AddItem(P: PHeader);
+procedure THeaders.AddItem(P: THeader);
 var
   L, M, H, I: integer;
 begin
-  I := 0;
+  // Add item to secondary list
   L := 0;
-  M := -1;
   H := FSecondary.Count -1;
   while H >= L do
   begin
     M := (L + H) div 2;
 
-    I := CompareFileName(P^.FileName,
+    I := CompareFileName(P.FileName,
       THeader(FSecondary.Items[M]^).FileName);
 
     if I > 0 then
@@ -312,49 +320,65 @@ begin
         H := -2;
   end;
 
-  if M = -1 then
-    FSecondary.Insert(0, P)
+  if H = -1 then
+    FSecondary.Add(P)
   else
-    if I < 0 then
-      FSecondary.Insert(M, P)
-    else
-      FSecondary.Insert(M + 1, P);
-
-  I := 0;
-  L := Max(0, GetNext(0, toUpdate));
-  M := -1;
-  H := GetBack(FPrimary.Count -1, toUpdate);
-  while H >= L do
-  begin
-    M := (L + H) div 2;
-
-    I := Compare(P, FPrimary.Items[M]);
-
-    if I > 0 then
-      L := M + 1
-    else
-      if I < 0 then
-        H := M - 1
+    if H <> -2 then
+    begin
+      if I > 0 then
+        FSecondary.Insert(M + 1, P)
       else
-        H := -2;
-  end;
+        FSecondary.Insert(M, P);
+    end;
 
-  if M = -1 then
-    FPrimary.Insert(L, P)
-  else
-    if I < 0 then
-      FPrimary.Insert(M, P)
+
+  // Add item to primary list
+  if P.FileAction = toUpdate then
+  begin
+    L := Max(0, GetNext(0, toUpdate));
+    H := GetBack(FPrimary.Count -1, toUpdate);
+    while H >= L do
+    begin
+      M := (L + H) div 2;
+
+      I := Compare(P, FPrimary.Items[M]);
+
+      if I > 0 then
+        L := M + 1
+      else
+        if I < 0 then
+          H := M - 1
+        else
+          H := -2;
+    end;
+
+    if H = -1 then
+      FPrimary.Add(P)
     else
-      FPrimary.Insert(M + 1, P);
+      if H <> -2 then
+      begin
+        if I > 0 then
+          FPrimary.Insert(M + 1, P)
+        else
+          FPrimary.Insert(M, P);
+      end;
+
+  end else
+  begin
+    I := GetNext(0, toUpdate);
+    if I > -1 then
+      FPrimary.Insert(I, P)
+    else
+      FPrimary.Add(P);
+  end;
 end;
 
-function THeaders.SearchItem(const aFileName: string): PHeader;
+
+function THeaders.SearchItem(const aFileName: string): THeader;
 var
   L, M, H, I: integer;
 begin
-  I := 0;
   L := 0;
-  M := -1;
   H := FSecondary.Count -1;
   while H >= L do
   begin
@@ -372,18 +396,18 @@ begin
         H := -2;
   end;
 
-  if H <> -2 then
-    Result := nil
+  if H = -2 then
+    Result := FSecondary.Items[M]
   else
-    Result := FSecondary.Items[M];
+    Result := nil
 end;
 
-procedure THeaders.WriteItem(aStream: TStream; P: PHeader);
+procedure THeaders.WriteItem(aStream: TStream; P: THeader);
 var
   J: integer;
 begin
   aStream.Write(Marker, SizeOf(Marker));
-  with P^ do
+  with P do
   begin
     aStream.Write(FileFlags, SizeOf(FileFlags));
 
@@ -508,7 +532,7 @@ end;
 
 procedure THeaders.SortNews(aCommandLine: TCommandLine; aConfiguration: TConfiguration);
 var
-  P: PHeader;
+  P: THeader;
   I, First, Method, Dictionary: integer;
   CurrentExt, PreviousExt: string;
 begin
@@ -526,35 +550,35 @@ begin
       P := FPrimary.Items[I];
       if I = First then
       begin
-        Include(P^.FileFlags, foVersion);
-        Include(P^.FileFlags, foMethod);
-        Include(P^.FileFlags, foDictionary);
+        Include(P.FileFlags, foVersion);
+        Include(P.FileFlags, foMethod);
+        Include(P.FileFlags, foDictionary);
       end;
-      P^.FileMethod     := Method;
-      P^.FileDictionary := Dictionary;
+      P.FileMethod     := Method;
+      P.FileDictionary := Dictionary;
 
       PreviousExt := CurrentExt;
       if Length(aCommandLine.eOption) = 0 then
-        CurrentExt := ExtractFileExt(P^.FileName)
+        CurrentExt := ExtractFileExt(P.FileName)
       else
         CurrentExt := aCommandLine.eOption;
 
-      if aCommandLine.kOption then Include(P^.FileFlags, foPassword);
+      if aCommandLine.kOption then Include(P.FileFlags, foPassword);
 
-      if (Method = 0) or (not aConfiguration.GetTable(CurrentExt, P^.FileTable)) then
+      if (Method = 0) or (not aConfiguration.GetTable(CurrentExt, P.FileTable)) then
       begin
-        Include(P^.FileFlags, foMoved);
-        Include(P^.FileFlags, foTable);
+        Include(P.FileFlags, foMoved);
+        Include(P.FileFlags, foTable);
       end else
         if CompareFileName(CurrentExt, PreviousExt) = 0 then
         begin
-          Exclude(P^.FileFlags, foTable);
+          Exclude(P.FileFlags, foTable);
           if aCommandLine.sOption then
           begin
-            Exclude(P^.FileFlags, foTear);
+            Exclude(P.FileFlags, foTear);
           end;
         end else
-          Include(P^.FileFlags, foTable);
+          Include(P.FileFlags, foTable);
 
       Inc(I);
     until I = FPrimary.Count;
@@ -589,7 +613,7 @@ end;
 
 procedure THeaders.ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
 var
-  P: PHeader;
+  P: THeader;
   Ptr: ^integer;
   Symbol: byte;
   SymbolIndex: integer;
@@ -621,17 +645,17 @@ begin
 
     end else Break;
 
-  until (P <> nil) and (foLast in P^.FileFlags);
+  until (P <> nil) and (foLast in P.FileFlags);
 
   if P <> nil then
   begin
-    Exclude(P^.FileFlags, foLast);
+    Exclude(P.FileFlags, foLast);
   end;
 end;
 
 procedure THeaders.ReadItems(aStream: TStream; aAction: THeaderAction);
 var
-  P: PHeader;
+  P: THeader;
   Id: integer;
   OffSet: int64;
 begin
@@ -656,7 +680,7 @@ begin
 
     if P <> nil then
     begin
-      Exclude(P^.FileFlags, foLast);
+      Exclude(P.FileFlags, foLast);
     end;
 
   end else
@@ -845,7 +869,7 @@ begin
   Result := FPrimary.Count;
 end;
 
-function THeaders.GetItem(aIndex: integer): PHeader;
+function THeaders.GetItem(aIndex: integer): THeader;
 begin
   Result := FPRimary.Items[aIndex];
 end;
@@ -880,7 +904,7 @@ end;
 
 procedure THeaders.ScanFileSystem(aCommandLine: TCommandLine; Mask: string; var Size: int64);
 var
-  P: PHeader;
+  P: THeader;
   Error: integer;
   Rec: TSearchRec;
   RecPath: string;
@@ -914,22 +938,22 @@ begin
               AddItem(P);
               Size := Size + Rec.Size;
             end else
-              if (Rec.Time > P^.FileTime) then
+              if (Rec.Time > P.FileTime) then
               begin
-                P^.FileAction := toFresh;
-                P^.FileLink   := RecName;
-                P^.FileTime   := Rec.Time;
-                Size := Size + (Rec.Size - P^.FileSize);
+                P.FileAction := toFresh;
+                P.FileLink   := RecName;
+                P.FileTime   := Rec.Time;
+                Size := Size + (Rec.Size - P.FileSize);
               end;
           end else
             if aCommandLine.fOption then
             begin
-              if (P <> nil) and (Rec.Time > P^.FileTime) then
+              if (P <> nil) and (Rec.Time > P.FileTime) then
               begin
-                P^.FileAction := toFresh;
-                P^.FileLink   := RecName;
-                P^.FileTime   := Rec.Time;
-                Size := Size + (Rec.Size - P^.FileSize);
+                P.FileAction := toFresh;
+                P.FileLink   := RecName;
+                P.FileTime   := Rec.Time;
+                Size := Size + (Rec.Size - P.FileSize);
               end;
             end else
               if (P = nil) then
