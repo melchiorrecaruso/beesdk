@@ -1158,13 +1158,13 @@ end;
 function CompareFn(P1, P2: pointer): integer;
 begin
   Result := CompareFileName(
-    ExtractFilePath(THeader(P1^).FileName),
-    ExtractFilePath(THeader(P2^).FileName));
+    ExtractFilePath(THeader(P1).FileName),
+    ExtractFilePath(THeader(P2).FileName));
 
   if Result = 0 then
     Result := CompareText(
-      ExtractFileName(THeader(P1^).FileName),
-      ExtractFileName(THeader(P2^).FileName));
+      ExtractFileName(THeader(P1).FileName),
+      ExtractFileName(THeader(P2).FileName));
 end;
 
 procedure TBeeApp.ListShell;
@@ -1193,7 +1193,7 @@ begin
     with FCommandLine do
     begin
       Headers.MarkItems(FileMasks, toNone, toList, rOption);
-      Headers.MarkItems(xOption, toList, toNone, rOption);
+      Headers.MarkItems(xOption,   toList, toNone, rOption);
     end;
 
     if (Headers.GetNext(0, toList) > -1) then

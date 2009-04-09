@@ -35,6 +35,7 @@ interface
 
 uses
   Classes,
+  // ---
   Bee_Types;
 
 type
