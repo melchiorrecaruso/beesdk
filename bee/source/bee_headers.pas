@@ -309,7 +309,7 @@ begin
     M := (L + H) div 2;
 
     I := CompareFileName(P.FileName,
-      THeader(FSecondary.Items[M]^).FileName);
+      THeader(FSecondary.Items[M]).FileName);
 
     if I > 0 then
       L := M + 1
@@ -385,7 +385,7 @@ begin
     M := (L + H) div 2;
 
     I := CompareFileName(aFileName,
-      THeader(FSecondary.Items[M]^).FileName);
+      THeader(FSecondary.Items[M]).FileName);
 
     if I > 0 then
       L := M + 1
@@ -445,7 +445,7 @@ begin
 
   MarkAsLast(toDelete);
   for I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction <> toDelete) then
       begin
         WriteItem(aStream, FPrimary.Items[I]);
@@ -479,8 +479,8 @@ var
   I: integer;
 begin
   Result := 0;
-  for I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+  for  I := 0 to FPrimary.Count -1 do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction = MaskAct) and (FileNameMatch(FileName, Masks, rOption)) then
       begin
         FileAction := aAction;
@@ -493,8 +493,8 @@ var
   I: integer;
 begin
   Result := 0;
-  for I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+  for  I := 0 to FPrimary.Count -1 do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction = MaskAct) and (FileNameMatch(FileName, Mask, rOption)) then
       begin
         FileAction := aAction;
@@ -504,7 +504,7 @@ end;
 
 procedure THeaders.MarkItem(aIndex: integer; aAction: THeaderAction);
 begin
-  THeader(FPrimary.Items[aIndex]^).FileAction := aAction;
+  THeader(FPrimary.Items[aIndex]).FileAction := aAction;
 end;
 
 procedure THeaders.MarkAll(aAction: THeaderAction);
@@ -513,7 +513,7 @@ var
 begin
   for I := 0 to FPrimary.Count -1 do
   begin
-    THeader(FPrimary.Items[I]^).FileAction := aAction;
+    THeader(FPrimary.Items[I]).FileAction := aAction;
   end;
 end;
 
@@ -522,7 +522,7 @@ var
   I: integer;
 begin
   for I := FPrimary.Count -1 downto 0 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction <> aAction) then
       begin
         Include(FileFlags, foLast);
@@ -693,7 +693,7 @@ var
 begin
   Result := -1;
   for I := aChild to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction = aAction) then
       begin
         Result := I;
@@ -707,7 +707,7 @@ var
 begin
   Result := -1;
   for I := aChild downto 0 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction = aAction) then
       begin
         Result := I;
@@ -721,7 +721,7 @@ var
 begin
   Result := -1;
   for I := aChild to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (aFlag in FileFlags) then
       begin
         Result := I;
@@ -735,7 +735,7 @@ var
 begin
   Result := -1;
   for I := aChild downto 0 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (aFlag in FileFlags) then
       begin
         Result := I;
@@ -749,7 +749,7 @@ var
 begin
   Result := -1;
   for I := aChild to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction = aAction) and (CompareFileName(FileName, aFileName) = 0) then
       begin
         Result := I;
@@ -763,7 +763,7 @@ var
 begin
   Result := -1;
   for I := aChild downto 0 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction in aActions) and (CompareFileName(FileName, aFileName) = 0) then
       begin
         Result := I;
@@ -777,7 +777,7 @@ var
 begin
   Result := -1;
   for I := aChild to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction in aActions) and (CompareFileName(FileName, aFileName) = 0) then
       begin
         Result := I;
@@ -791,7 +791,7 @@ var
 begin
   Result := -1;
   for I := aChild downto 0 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction = aAction) and (CompareFileName(FileName, aFileName) = 0) then
       begin
         Result := I;
@@ -805,7 +805,7 @@ var
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction = aAction) then
       begin
         Inc(Result, FileSize);
@@ -818,7 +818,7 @@ var
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if FileAction = aAction then
       begin
         Inc(Result, FilePacked);
@@ -831,7 +831,7 @@ var
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction in aActions) then
       begin
         Inc(Result, FileSize);
@@ -844,7 +844,7 @@ var
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction in aActions) then
       begin
         Inc(Result, FilePacked);
@@ -857,7 +857,7 @@ var
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]^) do
+    with THeader(FPrimary.Items[I]) do
       if (FileAction in Actions) then
       begin
         Inc(Result);

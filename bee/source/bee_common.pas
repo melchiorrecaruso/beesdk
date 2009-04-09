@@ -354,14 +354,13 @@ begin
     Result := False;
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList;
-  Recursive: boolean): boolean;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean;
 var
   I: integer;
 begin
   Result := False;
-  if (Assigned(Masks)) and (Masks.Count > 0) then
-    for I := 0 to Masks.Count - 1 do
+  if Assigned(Masks) and (Masks.Count > 0) then
+    for I := 0 to Masks.Count -1 do
       if FileNameMatch(FileName, Masks.Strings[I], Recursive) then
       begin
         Result := True;
