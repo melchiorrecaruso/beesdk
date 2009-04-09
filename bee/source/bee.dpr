@@ -176,8 +176,7 @@ type
           Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
           [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
           FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
-      end
-      else
+      end else
       begin
         Writeln(ParamToOem({FilePath +} FileName));
         Writeln(ParamToOem(StringOfChar(' ', 15) +

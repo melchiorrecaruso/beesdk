@@ -220,7 +220,6 @@ end;
 function THeaders.CreatePHeader(Stream: TStream; aAction: THeaderAction): THeader;
 var
   J: integer;
-  S: string;
 begin
   Result := THeader.Create;
   try
@@ -240,10 +239,11 @@ begin
       Stream.Read(J, SizeOf(J));
       if J > 0 then
       begin
-        SetLength(S, J);
-        Stream.Read(S[1], J);
-        S := DoDirSeparators(S);
-      end;
+        SetLength(FileName, J);
+        Stream.Read(FileName[1], J);
+        FileName := DoDirSeparators(FileName);
+      end else
+        SetLength(FileName, 0);
 
       FileLink   := '';
       FileAction := aAction;
