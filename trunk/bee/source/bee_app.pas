@@ -469,8 +469,8 @@ var
   P: THeader;
   FI: TFileInfo;
 begin
-  Headers.MarkItems(FCommandLine.FileMasks, toCopy,   toRename, FCommandLine.rOption);
-  Headers.MarkItems(FCommandLine.xOption,   toRename, toCopy,   FCommandLine.rOption);
+  Headers.MarkItems(FCommandLine.FileMasks, toCopy,   toRename);
+  Headers.MarkItems(FCommandLine.xOption,   toRename, toCopy);
 
   if Headers.GetNext(0, toRename) > -1 then
   begin
@@ -795,12 +795,12 @@ var
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
-  Headers := THeaders.Create;
+  Headers := THeaders.Create(FCommandLine);
   if OpenArchive(Headers, toCopy) then
   begin
     ProcessMessage(msgScanning + '...');
     // process FileMasks and xFileMasks
-    FTotalSize:= Headers.AddItems(FCommandLine, FConfiguration);
+    FTotalSize:= Headers.AddItems(FConfiguration);
 
     if (Headers.GetCount([toUpdate, toFresh]) > 0) or ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
@@ -901,16 +901,13 @@ var
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
-  Headers := THeaders.Create;
+  Headers := THeaders.Create(FCommandLine);
   if OpenArchive(Headers, toNone) then
   begin
     ProcessMessage(msgScanning + '...');
 
-    with FCommandLine do
-    begin
-      Headers.MarkItems(FileMasks, toNone, Action, rOption);
-      Headers.MarkItems(xOption, Action, toNone, rOption);
-    end;
+    Headers.MarkItems(FCommandLine.FileMasks, toNone, Action);
+    Headers.MarkItems(FCommandLine.xOption, Action, toNone);
 
     if (Action = toExtract) then
     begin
@@ -970,16 +967,13 @@ var
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
-  Headers := THeaders.Create;
+  Headers := THeaders.Create(FCommandLine);
   if OpenArchive(Headers, toCopy) then
   begin
     ProcessMessage(msgScanning + '...');
 
-    with FCommandLine do
-    begin
-      Headers.MarkItems(FileMasks, toCopy, toDelete, rOption);
-      Headers.MarkItems(xOption, toDelete, toCopy, rOption);
-    end;
+    Headers.MarkItems(FCommandLine.FileMasks, toCopy, toDelete);
+    Headers.MarkItems(FCommandLine.xOption, toDelete, toCopy);
 
     if (Headers.GetNext(0, toDelete) > -1) or
       ((Length(FCommandLine.aOption) > 0) and
@@ -1080,7 +1074,7 @@ var
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
-  Headers := THeaders.Create;
+  Headers := THeaders.Create(FCommandLine);
   if OpenArchive(Headers, toCopy) then
   begin
     ProcessMessage(msgScanning + '...');
@@ -1182,7 +1176,7 @@ var
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
-  Headers := THeaders.Create;
+  Headers := THeaders.Create(FCommandLine);
   {$IFDEF CONSOLEAPPLICATION}
   HeadersToList := TList.Create;
   {$ENDIF}
@@ -1190,11 +1184,8 @@ begin
   begin
     ProcessMessage(msgScanning + '...');
 
-    with FCommandLine do
-    begin
-      Headers.MarkItems(FileMasks, toNone, toList, rOption);
-      Headers.MarkItems(xOption,   toList, toNone, rOption);
-    end;
+    Headers.MarkItems(FCommandLine.FileMasks, toNone, toList);
+    Headers.MarkItems(FCommandLine.xOption,   toList, toNone);
 
     if (Headers.GetNext(0, toList) > -1) then
     begin

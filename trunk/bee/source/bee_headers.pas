@@ -95,16 +95,16 @@ type
 
   THeaders = class
   public
-    constructor Create;
+    constructor Create(aCommandLine: TCommandLine);
     destructor Destroy; override;
     procedure Clear;
   public
-    function  AddItems  (aCommandLine: TCommandLine; aConfiguration: TConfiguration): int64;
+    function  AddItems  (aConfiguration: TConfiguration): int64;
     procedure ReadItems (aStream: TStream; aAction: THeaderAction);
     procedure WriteItems(aStream: TStream);
 
-    function  MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction; rOption: boolean): integer; overload;
-    function  MarkItems(const Mask: string; MaskAct, aAction: THeaderAction; rOption: boolean): integer; overload;
+    function  MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction): integer; overload;
+    function  MarkItems(Mask: string; MaskAct, aAction: THeaderAction): integer; overload;
     procedure MarkItem(aIndex: integer; aAction: THeaderAction);
     procedure MarkAll(aAction: THeaderAction);
 
@@ -133,12 +133,9 @@ type
     FModule:  TStream;
     FPrimary:   TList;
     FSecondary: TList;
+    FCommandLine: TCommandLine;
   private
     procedure AddItem(P: THeader);
-
-
-
-
     function Compare(P1, P2: THeader): integer;
     function CreatePHeader(const RecPath: string; const Rec: TSearchRec): THeader; overload;
     function CreatePHeader(Stream: TStream; aAction: THeaderAction): THeader; overload;
@@ -146,9 +143,9 @@ type
     procedure FreePHeader(P: THeader);
     procedure MarkAsLast(aAction: THeaderAction);
     procedure ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
-    function SearchItem(const aFileName: string): THeader;
-    procedure ScanFileSystem(aCommandLine: TCommandLine; Mask: string; var Size: int64);
-    procedure SortNews(aCommandLine: TCommandLine; aConfiguration: TConfiguration);
+    function SearchItem(FileName: string): THeader;
+    procedure ScanFileSystem(Mask: string; var Size: int64);
+    procedure SortNews(aConfiguration: TConfiguration);
     procedure WriteItem (aStream: TStream; P: THeader);
   end;
 
@@ -164,9 +161,10 @@ uses
 constructor THeaders.Create;
 begin
   inherited Create;
-  FModule    := TMemoryStream.Create;
-  FSecondary := TList.Create;
-  FPrimary   := TList.Create;
+  FCommandLine := aCommandLine;
+  FModule      := TMemoryStream.Create;
+  FSecondary   := TList.Create;
+  FPrimary     := TList.Create;
 end;
 
 destructor THeaders.Destroy;
@@ -175,6 +173,7 @@ begin
   FPrimary.Free;
   FSecondary.Free;
   FModule.Free;
+  FCommandLine := nil;
   inherited Destroy;
 end;
 
@@ -207,7 +206,10 @@ begin
     Result.FileCrc := cardinal(-1);
     // Result.FilePacked
     // Result.FileStartPos
-    Result.FileName := DeleteFileDrive(RecPath) + Rec.Name;
+    with FCommandLine do
+    begin
+      Result.FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
+    end;
     // ---
     Result.FileLink := RecPath + Rec.Name;
     Result.FileAction := toUpdate;
@@ -308,8 +310,7 @@ begin
   begin
     M := (L + H) div 2;
 
-    I := CompareFileName(P.FileName,
-      THeader(FSecondary.Items[M]).FileName);
+    I := CompareFileName(P.FileName, THeader(FSecondary.Items[M]).FileName);
 
     if I > 0 then
       L := M + 1
@@ -374,18 +375,19 @@ begin
 end;
 
 
-function THeaders.SearchItem(const aFileName: string): THeader;
+function THeaders.SearchItem(FileName: string): THeader;
 var
   L, M, H, I: integer;
+  S: string;
 begin
   L := 0;
   H := FSecondary.Count -1;
+  FileName := FCommandLine.cdOption + FileName;
   while H >= L do
   begin
     M := (L + H) div 2;
 
-    I := CompareFileName(aFileName,
-      THeader(FSecondary.Items[M]).FileName);
+    I := CompareFileName(FileName, THeader(FSecondary.Items[M]).FileName);
 
     if I > 0 then
       L := M + 1
@@ -452,13 +454,13 @@ begin
       end;
 end;
 
-function THeaders.AddItems(aCommandLine: TCommandLine; aConfiguration: TConfiguration): int64;
+function THeaders.AddItems(aConfiguration: TConfiguration): int64;
 var
   I, J: integer;
   S: TStringList;
 begin
   Result := 0;
-  with aCommandLine do
+  with FCommandLine do
   begin
     for I := 0 to FileMasks.Count -1 do
     begin
@@ -466,36 +468,35 @@ begin
       ExpandMask(FileMasks.Strings[I], S, rOption);
       for J := 0 to S.Count -1 do
       begin
-        ScanFileSystem(aCommandLine, S.Strings[J], Result);
+        ScanFileSystem(S.Strings[J], Result);
       end;
       S.Free;
     end;
   end;
-  SortNews(aCommandLine, aConfiguration);
+  SortNews(aConfiguration);
 end;
 
-function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction; rOption: boolean): integer;
+function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction): integer;
+var
+  I, J: integer;
+begin
+  Result := 0;
+  for  I := 0 to Masks.Count -1 do
+  begin
+    Inc(Result, MarkItems(Masks.Strings[I], MaskAct, aAction));
+  end;
+end;
+
+function THeaders.MarkItems(Mask: string; MaskAct: THeaderAction; aAction: THeaderAction): integer;
 var
   I: integer;
 begin
-  Result := 0;
-  for  I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]) do
-      if (FileAction = MaskAct) and (FileNameMatch(FileName, Masks, rOption)) then
-      begin
-        FileAction := aAction;
-        Inc(Result);
-      end;
-end;
+  Mask := FCommandLine.cdOption + Mask;
 
-function THeaders.MarkItems(const Mask: string; MaskAct: THeaderAction; aAction: THeaderAction; rOption: boolean): integer;
-var
-  I: integer;
-begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
     with THeader(FPrimary.Items[I]) do
-      if (FileAction = MaskAct) and (FileNameMatch(FileName, Mask, rOption)) then
+      if (FileAction = MaskAct) and (FileNameMatch(FileName, Mask, FCommandLine.rOption)) then
       begin
         FileAction := aAction;
         Inc(Result);
@@ -530,7 +531,7 @@ begin
       end;
 end;
 
-procedure THeaders.SortNews(aCommandLine: TCommandLine; aConfiguration: TConfiguration);
+procedure THeaders.SortNews(aConfiguration: TConfiguration);
 var
   P: THeader;
   I, First, Method, Dictionary: integer;
@@ -558,12 +559,12 @@ begin
       P.FileDictionary := Dictionary;
 
       PreviousExt := CurrentExt;
-      if Length(aCommandLine.eOption) = 0 then
+      if Length(FCommandLine.eOption) = 0 then
         CurrentExt := ExtractFileExt(P.FileName)
       else
-        CurrentExt := aCommandLine.eOption;
+        CurrentExt := FCommandLine.eOption;
 
-      if aCommandLine.kOption then Include(P.FileFlags, foPassword);
+      if FCommandLine.kOption then Include(P.FileFlags, foPassword);
 
       if (Method = 0) or (not aConfiguration.GetTable(CurrentExt, P.FileTable)) then
       begin
@@ -573,7 +574,7 @@ begin
         if CompareFileName(CurrentExt, PreviousExt) = 0 then
         begin
           Exclude(P.FileFlags, foTable);
-          if aCommandLine.sOption then
+          if FCommandLine.sOption then
           begin
             Exclude(P.FileFlags, foTear);
           end;
@@ -902,7 +903,7 @@ begin
     Result := 0;
 end;
 
-procedure THeaders.ScanFileSystem(aCommandLine: TCommandLine; Mask: string; var Size: int64);
+procedure THeaders.ScanFileSystem(Mask: string; var Size: int64);
 var
   P: THeader;
   Error: integer;
@@ -911,7 +912,7 @@ var
   RecName: string;
   Recursive: boolean;
 begin
-  Recursive := aCommandLine.rOption;
+  Recursive := FCommandLine.rOption;
   Mask      := ExcludeTrailingBackSlash(Mask);
   if DirectoryExists(Mask) then
   begin
@@ -927,10 +928,10 @@ begin
     if (Rec.Attr and faDirectory) = 0 then
     begin
       if (FileNameMatch(RecName, Mask, Recursive)) then
-        if (FileNameMatch(RecName, aCommandLine.xOption, Recursive) = False) then
+        if (FileNameMatch(RecName, FCommandLine.xOption, Recursive) = False) then
         begin
-          P := SearchItem(aCommandLine.cdOption + DeleteFileDrive(RecName));
-          if (aCommandLine.fOption xor aCommandLine.uOption) = False then
+          P := SearchItem(DeleteFileDrive(RecName));
+          if (FCommandLine.fOption xor FCommandLine.uOption) = False then
           begin
             if (P = nil) then
             begin
@@ -946,7 +947,7 @@ begin
                 Size := Size + (Rec.Size - P.FileSize);
               end;
           end else
-            if aCommandLine.fOption then
+            if FCommandLine.fOption then
             begin
               if (P <> nil) and (Rec.Time > P.FileTime) then
               begin
@@ -966,7 +967,7 @@ begin
     end else
       if Recursive and (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
-        ScanFileSystem(aCommandLine, IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), Size);
+        ScanFileSystem(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), Size);
       end;
 
     Error := FindNext(Rec);
