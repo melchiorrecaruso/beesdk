@@ -422,7 +422,7 @@ begin
   Crc := cardinal(-1);
 
   if Mode = pmNorm then
-    DstFile := CreateTFileWriter(P.FileName, fmCreate)
+    DstFile := CreateTFileWriter(P.FileLink, fmCreate)
   else
     DstFile := TNulWriter.Create;
 
@@ -468,16 +468,16 @@ begin
       FileSetDate(DstFile.Handle, P.FileTime);
     end;
     DstFile.Free;
-    if Mode = pmNorm then FileSetAttr(P.FileName, P.FileAttr);
+    if Mode = pmNorm then FileSetAttr(P.FileLink, P.FileAttr);
   end;
 
   Result := P.FileCrc = Crc;
   if Result = False then
   begin
     if Crc = cardinal(-1) then
-      App.ProcessError('Error: can''t open file ' + P.FileName, 1)
+      App.ProcessError('Error: can''t open file ' + P.FileLink, 1)
     else
-      App.ProcessError(msgCRCERROR + P.FileName, 1);
+      App.ProcessError(msgCRCERROR + P.FileLink, 1);
   end;
 end;
 

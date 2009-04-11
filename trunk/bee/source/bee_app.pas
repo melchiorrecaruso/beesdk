@@ -237,21 +237,17 @@ var
   I: integer;
 begin
   if FCommandLine.Command = 'E' then
-  begin
     for I := 0 to Headers.GetCount -1 do
       with Headers.GetItem(I) do
       begin
-        FileName := ExtractFileName(FileName)
+        FileLink := ExtractFileName(FileName);
       end
-  end else
-  begin
-    if Length(FCommandLine.cdOption) > 0 then
-      for I := 0 to Headers.GetCount -1 do
-        with Headers.GetItem(I) do
-        begin
-          FileName := DeleteFilePath(FCommandLine.cdOption, FileName);
-        end;
-  end;
+  else
+    for I := 0 to Headers.GetCount -1 do
+      with Headers.GetItem(I) do
+      begin
+        FileLink := DeleteFilePath(FCommandLine.cdOption, FileName);
+      end;
 end;
 
 // -------------------------------------------------------------------------- //
