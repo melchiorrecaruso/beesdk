@@ -423,6 +423,7 @@ begin
       else      S := P.FileName;
     end;
   end;
+
   J := Length(S);
   aStream.Write(J, SizeOf(J));
   if J <> 0 then
