@@ -176,13 +176,13 @@ begin
   P.FileStartPos := Stream.Seek(0, 1); // stream flush
   P.FileCrc      := cardinal(-1);
 
-  SrcFile := CreateTFileReader(P.FileLink, fmOpenRead + fmShareDenyWrite);
+  SrcFile := CreateTFileReader(P.FileName, fmOpenRead + fmShareDenyWrite);
   if (SrcFile <> nil) then
   begin
     if Mode = emNorm then App.ProcessMessage(msgUpdating + P.FileName);
 
     P.FileSize := SrcFile.Size;
-    P.FileAttr := FileGetAttr(P.FileLink);
+    P.FileAttr := FileGetAttr(P.FileName);
 
     if foPassword in P.FileFlags then Stream.BlowFish.Start(GetPassword(P));
 
@@ -422,7 +422,7 @@ begin
   Crc := cardinal(-1);
 
   if Mode = pmNorm then
-    DstFile := CreateTFileWriter(P.FileLink, fmCreate)
+    DstFile := CreateTFileWriter(P.FileName, fmCreate)
   else
     DstFile := TNulWriter.Create;
 
@@ -468,16 +468,16 @@ begin
       FileSetDate(DstFile.Handle, P.FileTime);
     end;
     DstFile.Free;
-    if Mode = pmNorm then FileSetAttr(P.FileLink, P.FileAttr);
+    if Mode = pmNorm then FileSetAttr(P.FileName, P.FileAttr);
   end;
 
   Result := P.FileCrc = Crc;
   if Result = False then
   begin
     if Crc = cardinal(-1) then
-      App.ProcessError('Error: can''t open file ' + P.FileLink, 1)
+      App.ProcessError('Error: can''t open file ' + P.FileName, 1)
     else
-      App.ProcessError(msgCRCERROR + P.FileLink, 1);
+      App.ProcessError(msgCRCERROR + P.FileName, 1);
   end;
 end;
 

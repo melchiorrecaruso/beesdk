@@ -240,13 +240,13 @@ begin
     for I := 0 to Headers.GetCount -1 do
       with Headers.GetItem(I) do
       begin
-        FileLink := ExtractFileName(FileName);
+        FileName := ExtractFileName(FileName);
       end
   else
     for I := 0 to Headers.GetCount -1 do
       with Headers.GetItem(I) do
       begin
-        FileLink := DeleteFilePath(FCommandLine.cdOption, FileName);
+        FileName := DeleteFilePath(FCommandLine.cdOption, FileName);
       end;
 end;
 
@@ -270,7 +270,7 @@ begin
     P := Headers.GetItem(I);
     if P.FileAction = toExtract then
     begin
-      J := Headers.GetBack(I - 1, toExtract, P.FileLink);
+      J := Headers.GetBack(I - 1, toExtract, P.FileName);
       if J > -1 then
       begin
         Headers.GetItem(J).FileAction := toNone;
@@ -292,13 +292,13 @@ begin
   begin
     P := Headers.GetItem(I);
 
-    if (P.FileAction = toExtract) and FileExists(P.FileLink) then
+    if (P.FileAction = toExtract) and FileExists(P.FileName) then
     begin
 
       if not (FCommandLine.oOption in ['A', 'Q', 'S']) then
       begin
-        FI.FileName := StringToPChar(ExtractFileName(P.FileLink));
-        FI.FilePath := StringToPChar(ExtractFilePath(P.FileLink));
+        FI.FileName := StringToPChar(ExtractFileName(P.FileName));
+        FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
 
         FI.FileSize := P.FileSize;
         FI.FileTime := P.FileTime;
@@ -323,8 +323,8 @@ begin
         'A': Break;
         'N': P.FileAction := toNone;
         'R': begin
-               FI.FileName := StringToPChar(ExtractFileName(P.FileLink));
-               FI.FilePath := StringToPChar(ExtractFilePath(P.FileLink));
+               FI.FileName := StringToPChar(ExtractFileName(P.FileName));
+               FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
 
                FI.FileSize := P.FileSize;
                FI.FileTime := P.FileTime;
@@ -345,7 +345,7 @@ begin
                if Length(S) = 0 then
                  P.FileAction := toNone
                else
-                 P.FileLink := S;
+                 P.FileName := S;
              end;
         'S': begin
                for J := I to Headers.GetCount -1 do
