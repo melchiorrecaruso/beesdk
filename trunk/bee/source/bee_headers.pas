@@ -27,7 +27,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-    v0.7.9 build 0994 - 2009.04.04 by Melchiorre Caruso.
+    v0.7.9 build 0994 - 2009.04.14 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
@@ -86,7 +86,6 @@ type
     FileStartPos: cardinal;
     FileName: string;
     // End header data
-    FileLink: string;
     FileAction: THeaderAction;
   end;
 
@@ -194,7 +193,6 @@ function THeaders.CreatePHeader(const RecPath: string; const Rec: TSearchRec): T
 begin
   Result := THeader.Create;
   try
-    // ---
     Result.FileFlags := [foTear, foTable];
     Result.FileVersion := 1; // Bee 0.3.x
     Result.FileMethod := 1;
@@ -206,12 +204,8 @@ begin
     Result.FileCrc := cardinal(-1);
     // Result.FilePacked
     // Result.FileStartPos
-    with FCommandLine do
-    begin
-      Result.FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
-    end;
+    Result.FileName := RecPath + Rec.Name;
     // ---
-    Result.FileLink := RecPath + Rec.Name;
     Result.FileAction := toUpdate;
   except
     FreePHeader(Result);
@@ -247,7 +241,6 @@ begin
       end else
         SetLength(FileName, 0);
 
-      FileLink   := '';
       FileAction := aAction;
     end;
   except
@@ -261,7 +254,6 @@ begin
   if Assigned(P) then
   begin
     SetLength(P.FileName, 0);
-    SetLength(P.FileLink, 0);
   end;
   FreeMem(P);
 end;
@@ -407,12 +399,12 @@ end;
 procedure THeaders.WriteItem(aStream: TStream; P: THeader);
 var
   J: integer;
+  S: string;
 begin
   aStream.Write(Marker, SizeOf(Marker));
+  aStream.Write(P.FileFlags, SizeOf(P.FileFlags));
   with P do
   begin
-    aStream.Write(FileFlags, SizeOf(FileFlags));
-
     if foVersion    in FileFlags then aStream.Write(FileVersion,    SizeOf(FileVersion));
     if foMethod     in FileFlags then aStream.Write(FileMethod,     SizeOf(FileMethod));
     if foDictionary in FileFlags then aStream.Write(FileDictionary, SizeOf(FileDictionary));
@@ -421,13 +413,21 @@ begin
     aStream.Write(FileSize,
       SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
       SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
+  end;
 
-    J := Length(FileName);
-    aStream.Write(J, SizeOf(J));
-    if J <> 0 then
-    begin
-      aStream.Write(FileName[1], J);
+  with FCommandLine do
+  begin
+    case P.FileAction of
+      toUpdate: S := cdOption + DeleteFileDrive(P.FileName);
+      toFresh:  S := cdOption + DeleteFileDrive(P.FileName);
+      else      S := P.FileName;
     end;
+  end;
+  J := Length(S);
+  aStream.Write(J, SizeOf(J));
+  if J <> 0 then
+  begin
+    aStream.Write(S[1], J);
   end;
 end;
 
@@ -942,7 +942,7 @@ begin
               if (Rec.Time > P.FileTime) then
               begin
                 P.FileAction := toFresh;
-                P.FileLink   := RecName;
+                P.FileName   := RecName;
                 P.FileTime   := Rec.Time;
                 Size := Size + (Rec.Size - P.FileSize);
               end;
@@ -952,7 +952,7 @@ begin
               if (P <> nil) and (Rec.Time > P.FileTime) then
               begin
                 P.FileAction := toFresh;
-                P.FileLink   := RecName;
+                P.FileName   := RecName;
                 P.FileTime   := Rec.Time;
                 Size := Size + (Rec.Size - P.FileSize);
               end;
