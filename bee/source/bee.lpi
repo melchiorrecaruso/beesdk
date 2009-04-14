@@ -60,7 +60,7 @@
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
         <CursorPos X="56" Y="496"/>
-        <TopLine Value="395"/>
+        <TopLine Value="449"/>
         <EditorIndex Value="6"/>
         <UsageCount Value="41"/>
         <Loaded Value="True"/>
@@ -100,7 +100,7 @@
         <Filename Value="bee_types.pas"/>
         <UnitName Value="Bee_Types"/>
         <CursorPos X="18" Y="132"/>
-        <TopLine Value="104"/>
+        <TopLine Value="90"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
@@ -109,7 +109,7 @@
       <Unit8>
         <Filename Value="bee.include\compiler.inc"/>
         <CursorPos X="12" Y="33"/>
-        <TopLine Value="6"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
