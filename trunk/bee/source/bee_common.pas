@@ -207,7 +207,9 @@ function DeleteFilePath(const FilePath, FileName: string): string;
 begin
   Result := FileName;
   if FileNamePos(FilePath, Result) = 1 then
+  begin
     Delete(Result, 1, Length(FilePath));
+  end;
 end;
 
 function DeleteFileDrive(const FileName: string): string;
