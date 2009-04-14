@@ -72,6 +72,7 @@ type
   // Header structure, order of fields is significant
 
   THeader = class
+    FileAction: THeaderAction;
     // Start header data
     FileFlags: THeaderFlags;
     FileVersion: byte;
@@ -86,7 +87,6 @@ type
     FileStartPos: cardinal;
     FileName: string;
     // End header data
-    FileAction: THeaderAction;
   end;
 
 type
