@@ -176,7 +176,7 @@ begin
   P.FileStartPos := Stream.Seek(0, 1); // stream flush
   P.FileCrc      := cardinal(-1);
 
-  SrcFile := CreateTFileReader(P.FileName, fmOpenRead + fmShareDenyWrite);
+  SrcFile := CreateTFileReader(P.FileLink, fmOpenRead + fmShareDenyWrite);
   if (SrcFile <> nil) then
   begin
     if Mode = emNorm then App.ProcessMessage(msgUpdating + P.FileName);
