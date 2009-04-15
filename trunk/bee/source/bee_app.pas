@@ -119,7 +119,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 1006 archiver utility, February 2009' + Cr +
+  FSelfName := 'The Bee 0.7.9 build 1008 archiver utility, April 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -1233,7 +1233,7 @@ begin
       begin
         P := HeadersToList.Items[I];
       {$ELSE}
-      for I := 0 to Headers.Count -1 do
+      for I := 0 to Headers.GetCount -1 do
       begin
         P := Headers.GetItem(I);
       {$ENDIF}

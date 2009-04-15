@@ -182,7 +182,7 @@ begin
     if Mode = emNorm then App.ProcessMessage(msgUpdating + P.FileName);
 
     P.FileSize := SrcFile.Size;
-    P.FileAttr := FileGetAttr(P.FileName);
+    P.FileAttr := FileGetAttr(P.FileLink);
 
     if foPassword in P.FileFlags then Stream.BlowFish.Start(GetPassword(P));
 

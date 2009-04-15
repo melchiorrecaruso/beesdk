@@ -203,7 +203,7 @@ begin
     // Result.FileTable
     Result.FileSize := 0;
     Result.FileTime := Rec.Time;
-    Result.FileAttr := 0;
+    Result.FileAttr := Rec.Attr;
     Result.FileCrc  := cardinal(-1);
     Result.FilePacked   := 0;
     Result.FileStartPos := 0;
