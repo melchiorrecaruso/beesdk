@@ -659,15 +659,12 @@ end;
 
 function AttrToStr(Attr: integer): string;
 begin
-  Result := '..RHSA';
-  if Attr and faReadOnly = 0 then
-    Result[3] := '.';
-  if Attr and faHidden = 0 then
-    Result[4] := '.';
-  if Attr and faSysFile = 0 then
-    Result[5] := '.';
-  if Attr and faArchive = 0 then
-    Result[6] := '.';
+  Result := '.DRHSA';
+  if Attr and faDirectory = 0 then Result[2] := '.';
+  if Attr and faReadOnly  = 0 then Result[3] := '.';
+  if Attr and faHidden    = 0 then Result[4] := '.';
+  if Attr and faSysFile   = 0 then Result[5] := '.';
+  if Attr and faArchive   = 0 then Result[6] := '.';
 end;
 
 // hex routines ...
