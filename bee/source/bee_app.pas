@@ -119,7 +119,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 0996 archiver utility, February 2009' + Cr +
+  FSelfName := 'The Bee 0.7.9 build 1006 archiver utility, February 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -1303,6 +1303,7 @@ begin
       if Headers.GetModule > 0 then
         ProcessMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
+
       ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds');
     end else
       ProcessWarning('Warning: no files to list', 1);

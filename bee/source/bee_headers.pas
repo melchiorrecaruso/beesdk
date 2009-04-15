@@ -72,7 +72,6 @@ type
   // Header structure, order of fields is significant
 
   THeader = class
-    FileAction: THeaderAction;
     // Start header data
     FileFlags: THeaderFlags;
     FileVersion: byte;
@@ -87,6 +86,8 @@ type
     FileStartPos: cardinal;
     FileName: string;
     // End header data
+    FileAction: THeaderAction;
+    FileLink: string;
   end;
 
 type
@@ -129,6 +130,7 @@ type
     function SetModule(const aFileName: string): boolean;
     function GetModule: integer;
   private
+    FNews: integer;
     FModule:  TStream;
     FPrimary:   TList;
     FSecondary: TList;
@@ -139,7 +141,6 @@ type
     function CreatePHeader(const RecPath: string; const Rec: TSearchRec): THeader; overload;
     function CreatePHeader(Stream: TStream; aAction: THeaderAction): THeader; overload;
     function FindFirstMarker(aStream: TStream): int64;
-    procedure FreePHeader(P: THeader);
     procedure MarkAsLast(aAction: THeaderAction);
     procedure ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
     function SearchItem(FileName: string): THeader;
@@ -164,6 +165,7 @@ begin
   FModule      := TMemoryStream.Create;
   FSecondary   := TList.Create;
   FPrimary     := TList.Create;
+  FNews        := 0;
 end;
 
 destructor THeaders.Destroy;
@@ -180,10 +182,11 @@ procedure THeaders.Clear;
 var
   I: integer;
 begin
+  FNews := 0;
   FModule.Size := 0;
   for I := 0 to FPrimary.Count -1 do
   begin
-    FreePHeader(THeader(FPrimary.Items[I]));
+    THeader(FPrimary.Items[I]).Free;
   end;
   FPrimary.Clear;
   FSecondary.Clear;
@@ -193,23 +196,26 @@ function THeaders.CreatePHeader(const RecPath: string; const Rec: TSearchRec): T
 begin
   Result := THeader.Create;
   try
-    Result.FileFlags := [foTear, foTable];
+    Result.FileFlags   := [foTear, foTable];
     Result.FileVersion := 1; // Bee 0.3.x
-    Result.FileMethod := 1;
+    Result.FileMethod  := 1;
     Result.FileDictionary := 2;
     // Result.FileTable
-     Result.FileSize := 0;
+    Result.FileSize := 0;
     Result.FileTime := Rec.Time;
-    // Result.FileAttr
-    Result.FileCrc := cardinal(-1);
-    // Result.FilePacked
-    // Result.FileStartPos
-    Result.FileName := RecPath + Rec.Name;
+    Result.FileAttr := 0;
+    Result.FileCrc  := cardinal(-1);
+    Result.FilePacked   := 0;
+    Result.FileStartPos := 0;
+    with FCommandLine do
+    begin
+      Result.FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
+    end;
     // ---
+    Result.FileLink   := RecPath + Rec.Name;
     Result.FileAction := toUpdate;
   except
-    FreePHeader(Result);
-    Result := nil;
+    FreeAndNil(Result);
   end;
 end;
 
@@ -241,54 +247,29 @@ begin
       end else
         SetLength(FileName, 0);
 
+      FileLink   := '';
       FileAction := aAction;
     end;
   except
-    FreePHeader(Result);
-    Result := nil;
+    FreeAndNil(Result);
   end;
-end;
-
-procedure THeaders.FreePHeader(P: THeader);
-begin
-  if Assigned(P) then
-  begin
-    SetLength(P.FileName, 0);
-  end;
-  FreeMem(P);
 end;
 
 function THeaders.Compare(P1, P2: THeader): integer;
-var
-  B1, B2: boolean;
 begin
-  with P1 do B1 := (FileAction = toUpdate);
-  with P2 do B2 := (FileAction = toUpdate);
+  Result := CompareFileName(
+    ExtractFileExt(P1.FileName),
+    ExtractFileExt(P2.FileName));
 
-  if (B1 and B2) then
-  begin
+  if Result = 0 then
     Result := CompareFileName(
-      ExtractFileExt(P1.FileName),
-      ExtractFileExt(P2.FileName));
+      ExtractFileName(P1.FileName),
+      ExtractFileName(P2.FileName));
 
-    if Result = 0 then
-      Result := CompareFileName(
-        ExtractFileName(P1.FileName),
-        ExtractFileName(P2.FileName));
-
-    if Result = 0 then
-      Result := CompareFileName(
-        P1.FileName,
-        P2.FileName);
-
-  end else
-    if B1 then
-      Result := 1
-    else
-      if B2 then
-        Result := -1
-      else
-        Result := 0;
+  if Result = 0 then
+    Result := CompareFileName(
+      P1.FileName,
+      P2.FileName);
 end;
 
 procedure THeaders.AddItem(P: THeader);
@@ -296,7 +277,8 @@ var
   L, M, H, I: integer;
 begin
   // Add item to secondary list
-  L := 0;
+  L :=  0;
+  M := -2;
   H := FSecondary.Count -1;
   while H >= L do
   begin
@@ -313,7 +295,7 @@ begin
         H := -2;
   end;
 
-  if H = -1 then
+  if M = -2 then
     FSecondary.Add(P)
   else
     if H <> -2 then
@@ -322,14 +304,21 @@ begin
         FSecondary.Insert(M + 1, P)
       else
         FSecondary.Insert(M, P);
-    end;
-
+    end else
+      FSecondary.Insert(M + 1, P);
 
   // Add item to primary list
   if P.FileAction = toUpdate then
   begin
-    L := Max(0, GetNext(0, toUpdate));
-    H := GetBack(FPrimary.Count -1, toUpdate);
+
+    L := FPrimary.Count - FNews;
+    M := -2;
+
+    if FNews <> 0 then
+      H := FPrimary.Count -1
+    else
+      H := -1;
+
     while H >= L do
     begin
       M := (L + H) div 2;
@@ -345,7 +334,7 @@ begin
           H := -2;
     end;
 
-    if H = -1 then
+    if M = -2 then
       FPrimary.Add(P)
     else
       if H <> -2 then
@@ -354,15 +343,13 @@ begin
           FPrimary.Insert(M + 1, P)
         else
           FPrimary.Insert(M, P);
-      end;
+      end else
+        FPrimary.Insert(M + 1, P);
 
+    Inc(FNews);
   end else
   begin
-    I := GetNext(0, toUpdate);
-    if I > -1 then
-      FPrimary.Insert(I, P)
-    else
-      FPrimary.Add(P);
+    FPrimary.Insert(FPrimary.Count - FNews, P)
   end;
 end;
 
@@ -372,7 +359,7 @@ var
   L, M, H, I: integer;
   S: string;
 begin
-  L := 0;
+  L :=  0;
   H := FSecondary.Count -1;
   FileName := FCommandLine.cdOption + FileName;
   while H >= L do
@@ -399,7 +386,6 @@ end;
 procedure THeaders.WriteItem(aStream: TStream; P: THeader);
 var
   J: integer;
-  S: string;
 begin
   aStream.Write(Marker, SizeOf(Marker));
   aStream.Write(P.FileFlags, SizeOf(P.FileFlags));
@@ -413,22 +399,13 @@ begin
     aStream.Write(FileSize,
       SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
       SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
-  end;
 
-  with FCommandLine do
-  begin
-    case P.FileAction of
-      toUpdate: S := cdOption + DeleteFileDrive(P.FileName);
-      toFresh:  S := cdOption + DeleteFileDrive(P.FileName);
-      else      S := P.FileName;
+    J := Length(FileName);
+    aStream.Write(J, SizeOf(FileName));
+    if J <> 0 then
+    begin
+      aStream.Write(FileName[1], J);
     end;
-  end;
-
-  J := Length(S);
-  aStream.Write(J, SizeOf(J));
-  if J <> 0 then
-  begin
-    aStream.Write(S[1], J);
   end;
 end;
 
@@ -543,7 +520,11 @@ begin
   Dictionary := StrToInt(aConfiguration.CurrentSection.Values['Dictionary']);
   aConfiguration.Selector('\m' + aConfiguration.CurrentSection.Values['Method']);
 
-  First := GetNext(0, toUpdate);
+  if FNews <> 0 then
+    First := FPrimary.Count - FNews
+  else
+    First := -1;
+
   if First <> -1 then
   begin
     CurrentExt := '.';
@@ -928,10 +909,12 @@ begin
     RecName := RecPath + Rec.Name;
     if (Rec.Attr and faDirectory) = 0 then
     begin
+
       if (FileNameMatch(RecName, Mask, Recursive)) then
         if (FileNameMatch(RecName, FCommandLine.xOption, Recursive) = False) then
         begin
           P := SearchItem(DeleteFileDrive(RecName));
+
           if (FCommandLine.fOption xor FCommandLine.uOption) = False then
           begin
             if (P = nil) then
@@ -942,8 +925,11 @@ begin
             end else
               if (Rec.Time > P.FileTime) then
               begin
-                P.FileAction := toFresh;
-                P.FileName   := RecName;
+                if P.FileAction = toCopy then
+                begin
+                  P.FileAction := toFresh;
+                end;
+                P.FileLink   := RecName;
                 P.FileTime   := Rec.Time;
                 Size := Size + (Rec.Size - P.FileSize);
               end;
@@ -952,8 +938,11 @@ begin
             begin
               if (P <> nil) and (Rec.Time > P.FileTime) then
               begin
-                P.FileAction := toFresh;
-                P.FileName   := RecName;
+                if P.FileAction = toCopy then
+                begin
+                  P.FileAction := toFresh;
+                end;
+                P.FileLink   := RecName;
                 P.FileTime   := Rec.Time;
                 Size := Size + (Rec.Size - P.FileSize);
               end;
@@ -965,6 +954,7 @@ begin
                 Size := Size + Rec.Size;
               end;
         end;
+
     end else
       if Recursive and (Rec.Name <> '.') and (Rec.Name <> '..') then
       begin
