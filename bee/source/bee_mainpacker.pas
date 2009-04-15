@@ -73,10 +73,10 @@ type
     constructor Create(aStream: TFileWriter; aApp: TApp);
     destructor Destroy; override;
     function EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
-    function EncodeStrm(P: THeader; Mode: TEncodingMode;
-      SrcStrm: TFileReader; SrcSize: integer; SrcEncoded: boolean): boolean;
-    function CopyStrm  (P: THeader; Mode: TEncodingMode;
-      SrcStrm: TFileReader; SrcSize: integer; SrcEncoded: boolean): boolean;
+    function EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+      SrcSize: int64; SrcEncoded: boolean): boolean;
+    function CopyStrm  (P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+      SrcSize: int64; SrcEncoded: boolean): boolean;
   private
     function GetPassword(P: THeader): string;
     procedure Progress;
@@ -188,13 +188,16 @@ begin
 
     if foMoved in P.FileFlags then
     begin
-      for I := 1 to P.FileSize do
+      I := 0;
+      while I < P.FileSize do
       begin
         if (App.Size and $FFFF) = 0 then
         begin
           if App.Terminated = False then Progress else Break;
         end;
         App.IncSize;
+        Inc(I);
+
         SrcFile.Read(Symbol, 1);
         UpdCrc32(P.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
@@ -202,16 +205,16 @@ begin
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to P.FileSize do
+      while SrcFile.Read(Symbol, 1) > 0 do
       begin
+        UpdCrc32(P.FileCrc, Symbol);
+        PPM.UpdateModel(Symbol);
+
         if (App.Size and $FFFF) = 0 then
         begin
           if App.Terminated = False then Progress else Break;
         end;
         App.IncSize;
-        SrcFile.Read(Symbol, 1);
-        UpdCrc32(P.FileCrc, Symbol);
-        PPM.UpdateModel(Symbol);
       end;
       SecondaryCodec.Flush;
     end;
@@ -236,9 +239,9 @@ begin
 end;
 
 function TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader; SrcSize: integer; SrcEncoded: boolean): boolean;
+  SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
 var
-  SrcPosition, I: cardinal;
+  SrcPosition: int64; I: integer;
   Symbol: byte;
   Password: string;
 begin
@@ -268,14 +271,15 @@ begin
     begin
       for I := 1 to SrcSize do
       begin
+        SrcStrm.Read(Symbol, 1);
+        UpdCrc32(P.FileCrc, Symbol);
+        Stream.Write(Symbol, 1);
+
         if App.Size and $FFFF = 0 then
         begin
           if App.Terminated = False then Progress else Break;
         end;
         App.IncSize;
-        SrcStrm.Read(Symbol, 1);
-        UpdCrc32(P.FileCrc, Symbol);
-        Stream.Write(Symbol, 1);
       end;
     end else
     begin
@@ -315,7 +319,7 @@ begin
 end;
 
 function TEncoder.CopyStrm  (P: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader; SrcSize: integer; SrcEncoded: boolean): boolean;
+  SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
   I: cardinal;

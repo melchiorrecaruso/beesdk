@@ -257,7 +257,6 @@ begin
           SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
           SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
 
-
       Stream.Read(I, SizeOf(I));
       if I > 0 then
       begin
@@ -267,7 +266,7 @@ begin
       end else
         SetLength(FileName, 0);
 
-      FileLink   := '';
+      SetLength(FileLink, 0);
       FileAction := aAction;
     end;
   except
@@ -405,7 +404,7 @@ end;
 
 procedure THeaders.WriteItem(aStream: TStream; P: THeader);
 var
-  J: integer;
+  I: integer;
 begin
   aStream.Write(Marker, SizeOf(Marker));
   aStream.Write(P.FileFlags, SizeOf(P.FileFlags));
@@ -416,15 +415,26 @@ begin
     if foDictionary in FileFlags then aStream.Write(FileDictionary, SizeOf(FileDictionary));
     if foTable      in FileFlags then aStream.Write(FileTable,      SizeOf(FileTable));
 
-    aStream.Write(FileSize,
-      SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
-      SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
+    if FileVersion < ver04 then
+    begin                                             //  [ver03] | [ver04]
+      I := FileSize;     aStream.Write(I, SizeOf(I)); //  4 bytes | 8 bytes
 
-    J := Length(FileName);
-    aStream.Write(J, SizeOf(FileName));
-    if J <> 0 then
+      aStream.Write(FileTime, SizeOf(FileTime));      //  4 bytes | 4 bytes
+      aStream.Write(FileAttr, SizeOf(FileAttr));      //  4 bytes | 4 bytes
+      aStream.Write(FileCrc,  SizeOf(FileCrc));       //  4 bytes | 4 bytes
+
+      I := FilePacked;   aStream.Write(I, SizeOf(I)); //  4 bytes | 8 bytes
+      I := FileStartPos; aStream.Write(I, SizeOf(I)); //  4 bytes | 8 bytes
+    end else
+      aStream.Write(FileSize,
+        SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
+        SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
+
+    I := Length(FileName);
+    aStream.Write(I, SizeOf(FileName));
+    if I > 0 then
     begin
-      aStream.Write(FileName[1], J);
+      aStream.Write(FileName[1], I);
     end;
   end;
 end;
