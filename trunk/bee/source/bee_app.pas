@@ -622,14 +622,14 @@ begin
         begin
           CurrDictionary := iDictionary;
           P := Headers.GetItem(CurrDictionary);
-          Decoder.DecodeStrm(P, pmQuit, FSwapStrm, foPassword in P.FileFlags);
+          Decoder.DecodeStrm(P, pmQuit, FSwapStrm, P.FileSize, foPassword in P.FileFlags);
         end;
 
         if (iTable > -1) and (iTable <> CurrTable) and (iTable <> iTear) then
         begin
           CurrTable := iTable;
           P := Headers.GetItem(CurrTable);
-          Decoder.DecodeStrm(P, pmQuit, FSwapStrm, foPassword in P.FileFlags);
+          Decoder.DecodeStrm(P, pmQuit, FSwapStrm, P.FileSize, foPassword in P.FileFlags);
         end;
 
         for J := iTear to I do
@@ -638,9 +638,9 @@ begin
           if not FTerminated then
           begin
             if P.FileAction = toSwap then
-              Result := Decoder.DecodeStrm(P, pmNorm, FSwapStrm, foPassword in P.FileFlags)
+              Result := Decoder.DecodeStrm(P, pmNorm, FSwapStrm, P.FileSize, foPassword in P.FileFlags)
             else
-              Result := Decoder.DecodeStrm(P, pmSkip, FSwapStrm, foPassword in P.FileFlags);
+              Result := Decoder.DecodeStrm(P, pmSkip, FSwapStrm, P.FileSize, foPassword in P.FileFlags);
           end else
             Result := False;
 

@@ -73,10 +73,10 @@ type
     constructor Create(aStream: TFileWriter; aApp: TApp);
     destructor Destroy; override;
     function EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
-    function EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-      SrcSize: int64; SrcEncoded: boolean): boolean;
-    function CopyStrm  (P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-      SrcSize: int64; SrcEncoded: boolean): boolean;
+    function EncodeStrm(P: THeader; Mode: TEncodingMode;
+      SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
+    function CopyStrm  (P: THeader; Mode: TEncodingMode;
+      SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
   private
     function GetPassword(P: THeader): string;
     procedure Progress;
@@ -96,7 +96,8 @@ type
     constructor Create(aStream: TFileReader; aApp: TApp);
     destructor Destroy; override;
     function DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
-    function DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter; DstEncoded: boolean): boolean;
+    function DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
+      DstSize: int64; DstEncoded: boolean): boolean;
   private
     function GetPassword(P: THeader): string;
     procedure Progress;
@@ -167,7 +168,6 @@ function TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
 var
   SrcFile: TFileReader;
   Symbol: byte;
-  I: int64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -188,29 +188,26 @@ begin
 
     if foMoved in P.FileFlags then
     begin
-      I := 0;
-      while I < P.FileSize do
+      while SrcFile.Read(Symbol, 1) = 1 do
       begin
-        if (App.Size and $FFFF) = 0 then
+        UpdCrc32(P.FileCrc, Symbol);
+        Stream.Write(Symbol, 1);
+
+        if App.Size and $FFFF = 0 then
         begin
           if App.Terminated = False then Progress else Break;
         end;
         App.IncSize;
-        Inc(I);
-
-        SrcFile.Read(Symbol, 1);
-        UpdCrc32(P.FileCrc, Symbol);
-        Stream.Write(Symbol, 1);
       end;
     end else
     begin
       SecondaryCodec.Start;
-      while SrcFile.Read(Symbol, 1) > 0 do
+      while SrcFile.Read(Symbol, 1) = 1 do
       begin
         UpdCrc32(P.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
 
-        if (App.Size and $FFFF) = 0 then
+        if App.Size and $FFFF = 0 then
         begin
           if App.Terminated = False then Progress else Break;
         end;
@@ -222,7 +219,7 @@ begin
     SrcFile.Free;
 
     P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
-    Stream.BlowFish.Finish;  // finish after stream flush
+    Stream.BlowFish.Finish;                // finish after stream flush
   end else
     App.ProcessError('Error: can''t open file ' + P.FileLink, 1);
 
@@ -241,9 +238,10 @@ end;
 function TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
   SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
 var
-  SrcPosition: int64; I: integer;
   Symbol: byte;
   Password: string;
+  SrcPosition: int64 = 0;
+  I: int64 = 0;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -269,7 +267,7 @@ begin
 
     if foMoved in P.FileFlags then
     begin
-      for I := 1 to SrcSize do
+      while I < SrcSize do
       begin
         SrcStrm.Read(Symbol, 1);
         UpdCrc32(P.FileCrc, Symbol);
@@ -280,20 +278,23 @@ begin
           if App.Terminated = False then Progress else Break;
         end;
         App.IncSize;
+        Inc(I);
       end;
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to SrcSize do
+      while I < SrcSize do
       begin
+        SrcStrm.Read(Symbol, 1);
+        UpdCrc32(P.FileCrc, Symbol);
+        PPM.UpdateModel(Symbol);
+
         if App.Size and $FFFF = 0 then
         begin
           if App.Terminated = False then Progress else Break;
         end;
         App.IncSize;
-        SrcStrm.Read(Symbol, 1);
-        UpdCrc32(P.FileCrc, Symbol);
-        PPM.UpdateModel(Symbol);
+        Inc(I);
       end;
       SecondaryCodec.Flush;
     end;
@@ -322,7 +323,7 @@ function TEncoder.CopyStrm  (P: THeader; Mode: TEncodingMode;
   SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
-  I: cardinal;
+  I: int64 = 0;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -337,15 +338,17 @@ begin
 
     if SrcEncoded then SrcStrm.BlowFish.Start(GetPassword(P));
 
-    for I := 1 to SrcSize do
+    while I < SrcSize do
     begin
+      SrcStrm.Read(Symbol, 1);
+      Stream.Write(Symbol, 1);
+
       if App.Size and $FFFF = 0 then
       begin
         if App.Terminated = False then Progress else Break;
       end;
       App.IncSize;
-      SrcStrm.Read(Symbol, 1);
-      Stream.Write(Symbol, 1);
+      Inc(I);
     end;
     App.ProcessClear;
     SrcStrm.BlowFish.Finish;
@@ -404,8 +407,9 @@ end;
 function TDecoder.DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
 var
   DstFile: TFileWriter;
-  I, Crc:  cardinal;
   Symbol:  byte;
+  Crc: cardinal;
+  I: int64 = 0;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -436,30 +440,34 @@ begin
 
     if foMoved in P.FileFlags then
     begin
-      for I := 1 to P.FileSize do
+      while I < P.FileSize do
       begin
+        Stream.Read(Symbol, 1);
+        UpdCrc32(Crc, Symbol);
+        DstFile.Write(Symbol, 1);
+
         if App.Size and $FFFF = 0 then
         begin
           if App.Terminated = False then Progress else Break;
         end;
         App.IncSize;
-        Stream.Read(Symbol, 1);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
+        Inc(I);
       end;
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to P.FileSize do
+      while I < P.FileSize do
       begin
+        Symbol := PPM.UpdateModel(0);
+        UpdCrc32(Crc, Symbol);
+        DstFile.Write(Symbol, 1);
+
         if App.Size and $FFFF = 0 then
         begin
           if App.Terminated = False then Progress else Break;
         end;
         App.IncSize;
-        Symbol := PPM.UpdateModel(0);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
+        Inc(I);
       end;
       SecondaryCodec.Flush;
     end;
@@ -485,12 +493,14 @@ begin
   end;
 end;
 
-function TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter; DstEncoded: boolean): boolean;
+function TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
+  DstStrm: TFileWriter; DstSize: int64; DstEncoded: boolean): boolean;
 var
   DstFile: TFileWriter;
-  I, Crc:  cardinal;
-  Symbol:  byte;
   Password: string;
+  Symbol:  byte;
+  Crc: cardinal;
+  I: int64 = 0;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -528,30 +538,34 @@ begin
 
     if foMoved in P.FileFlags then
     begin
-      for I := 1 to P.FileSize do
+      while I < DstSize do
       begin
+        Stream.Read(Symbol, 1);
+        UpdCrc32(Crc, Symbol);
+        DstFile.Write(Symbol, 1);
+
         if App.Size and $FFFF = 0 then
         begin
           if App.Terminated = False then Progress else Break;
         end;
         App.IncSize;
-        Stream.Read(Symbol, 1);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
+        Inc(I);
       end;
     end else
     begin
       SecondaryCodec.Start;
-      for I := 1 to P.FileSize do
+      while I < DstSize do
       begin
+        Symbol := PPM.UpdateModel(0);
+        UpdCrc32(Crc, Symbol);
+        DstFile.Write(Symbol, 1);
+
         if App.Size and $FFFF = 0 then
         begin
           if not App.Terminated then Progress else Break;
         end;
         App.IncSize;
-        Symbol := PPM.UpdateModel(0);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
+        Inc(I);
       end;
       SecondaryCodec.Flush;
     end;
