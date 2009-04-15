@@ -50,17 +50,17 @@ type
   TFileInfoExtra = record
     FileName:     PChar;
     FilePath:     PChar;
-    FileSize:     cardinal;
+    FileSize:     int64;
     FileTime:     integer;
     FileAttr:     integer;
-    FilePacked:   cardinal;
-    FileRatio:    cardinal;
+    FilePacked:   int64;
+    FileRatio:    integer;
     FileComm:     PChar;
     FileCrc:      cardinal;
     FileMethod:   PChar;
     FileVersion:  PChar;
     FilePassword: PChar;
-    FilePosition: cardinal;
+    FilePosition: integer;
   end;
 
 type

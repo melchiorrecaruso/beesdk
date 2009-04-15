@@ -27,7 +27,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-    v0.7.9 build 0994 - 2009.04.14 by Melchiorre Caruso.
+    v0.8.0 build 1012 - 2009.04.15 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
@@ -46,6 +46,12 @@ const
   // Id marker
 
   Marker: integer = 442852674;
+
+  // Version number
+
+  ver02 = 0; // Bee 0.2.xx
+  ver03 = 1; // Bee 0.3.xx
+  ver04 = 2; // Bee 0.8.xx
 
 type
   // Header flags
@@ -72,22 +78,24 @@ type
   // Header structure, order of fields is significant
 
   THeader = class
-    // Start header data
+    // - Start header data - //
     FileFlags: THeaderFlags;
     FileVersion: byte;
     FileMethod: byte;
     FileDictionary: byte;
     FileTable: TTableParameters;
-    FileSize: cardinal;
+    // - Costant header part
+    FileSize: int64;
     FileTime: integer;
     FileAttr: integer;
     FileCrc: cardinal;
-    FilePacked: cardinal;
-    FileStartPos: cardinal;
+    FilePacked: int64;
+    FileStartPos: int64;
+    // -
     FileName: string;
-    // End header data
-    FileAction: THeaderAction;
+    // - End header data - //
     FileLink: string;
+    FileAction: THeaderAction;
   end;
 
 type
@@ -197,7 +205,7 @@ begin
   Result := THeader.Create;
   try
     Result.FileFlags   := [foTear, foTable];
-    Result.FileVersion := 1; // Bee 0.3.x
+    Result.FileVersion := ver04;
     Result.FileMethod  := 1;
     Result.FileDictionary := 2;
     // Result.FileTable
@@ -221,7 +229,7 @@ end;
 
 function THeaders.CreatePHeader(Stream: TStream; aAction: THeaderAction): THeader;
 var
-  J: integer;
+  I: integer;
 begin
   Result := THeader.Create;
   try
@@ -234,15 +242,27 @@ begin
       if foDictionary in FileFlags then Stream.Read(FileDictionary, SizeOf(FileDictionary));
       if foTable      in FileFlags then Stream.Read(FileTable,      SizeOf(FileTable));
 
-      Stream.Read(FileSize,
-        SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
-        SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
+      if FileVersion < ver04 then
+      begin                                           //  [ver03] | [ver04]
+        Stream.Read(I, SizeOf(I)); FileSize := I;     //  4 bytes | 8 bytes
 
-      Stream.Read(J, SizeOf(J));
-      if J > 0 then
+        Stream.Read(FileTime, SizeOf(FileTime));      //  4 bytes | 4 bytes
+        Stream.Read(FileAttr, SizeOf(FileAttr));      //  4 bytes | 4 bytes
+        Stream.Read(FileCrc,  SizeOf(FileCrc));       //  4 bytes | 4 bytes
+
+        Stream.Read(I, SizeOf(I)); FilePacked   := I; //  4 bytes | 8 bytes
+        Stream.Read(I, SizeOf(I)); FileStartPos := I; //  4 bytes | 8 bytes
+      end else
+        Stream.Read(FileSize,
+          SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
+          SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
+
+
+      Stream.Read(I, SizeOf(I));
+      if I > 0 then
       begin
-        SetLength(FileName, J);
-        Stream.Read(FileName[1], J);
+        SetLength(FileName, I);
+        Stream.Read(FileName[1], I);
         FileName := DoDirSeparators(FileName);
       end else
         SetLength(FileName, 0);

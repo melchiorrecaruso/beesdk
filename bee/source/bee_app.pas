@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.7.9 build 0992 - 2009.04.04 by Melchiorre Caruso.
+  v0.8.0 build 1012 - 2009.04.15 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -119,7 +119,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.7.9 build 1008 archiver utility, April 2009' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1012 archiver utility, April 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -1349,7 +1349,8 @@ begin
   case P.FileVersion of
     0: Result := ' 0' + DecimalSeparator + '2';
     1: Result := ' 0' + DecimalSeparator + '3';
-  else Result := ' 0' + DecimalSeparator + '0';
+    2: Result := ' 0' + DecimalSeparator + '4';
+  else Result := ' ?' + DecimalSeparator + '?';
   end;
 end;
 

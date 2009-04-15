@@ -167,7 +167,7 @@ function TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
 var
   SrcFile: TFileReader;
   Symbol: byte;
-  I: cardinal;
+  I: int64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -221,7 +221,7 @@ begin
     P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
     Stream.BlowFish.Finish;  // finish after stream flush
   end else
-    App.ProcessError('Error: can''t open file ' + P.FileName, 1);
+    App.ProcessError('Error: can''t open file ' + P.FileLink, 1);
 
   if (not(foMoved in P.FileFlags)) and (P.FilePacked >= P.FileSize) then
   begin
