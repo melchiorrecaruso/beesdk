@@ -53,8 +53,8 @@ type
   public
     BlowFish: TBlowFish;
   private
-    BufferSize: cardinal;
-    BufferReaded: cardinal;
+    BufferSize: longint;
+    BufferReaded: longint;
     Buffer: array [0..$1FFFF] of byte;
   end;
 
@@ -70,7 +70,7 @@ type
   public
     BlowFish: TBlowFish;
   private
-    BufferSize: cardinal;
+    BufferSize: longint;
     Buffer:     array [0..$1FFFF] of byte;
   end;
 
@@ -157,14 +157,14 @@ end;
 
 function TFileReader.Seek(Offset: longint; Origin: word): longint;
 begin
-  BufferSize := 0;
+  BufferSize   := 0;
   BufferReaded := 0;
   Result := inherited Seek(Offset, Origin);
 end;
 
 function TFileReader.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
-  BufferSize := 0;
+  BufferSize   := 0;
   BufferReaded := 0;
   Result := inherited Seek(Offset, Origin);
 end;
