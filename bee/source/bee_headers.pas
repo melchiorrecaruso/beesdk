@@ -197,7 +197,7 @@ begin
     Result.FileFlags   := [foTear, foTable];
     with FCommandLine do
     begin
-      Result.FileVersion := Max(Min(ver02, vOption), ver04);
+      Result.FileVersion := Min(Max(ver02, vOption), ver04);
     end;
     Result.FileMethod  := 1;
     Result.FileDictionary := 2;

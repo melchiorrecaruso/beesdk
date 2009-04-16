@@ -108,6 +108,7 @@ implementation
 uses
   SysUtils,       // faReadOnly, ...
   // ---
+  Bee_Consts,
   Bee_Common,     // Various helper routines
   Bee_Assembler,
   Bee_MainPacker; // TEncoder...
@@ -1346,10 +1347,10 @@ end;
 function TBeeApp.VersionToStr(P: THeader): string;
 begin
   case P.FileVersion of
-    0: Result := ' 0' + DecimalSeparator + '2';
-    1: Result := ' 0' + DecimalSeparator + '3';
-    2: Result := ' 0' + DecimalSeparator + '4';
-  else Result := ' ?' + DecimalSeparator + '?';
+    ver02: Result := ' 0' + DecimalSeparator + '2';
+    ver03: Result := ' 0' + DecimalSeparator + '3';
+    ver04: Result := ' 0' + DecimalSeparator + '4';
+    else   Result := ' ?' + DecimalSeparator + '?';
   end;
 end;
 
