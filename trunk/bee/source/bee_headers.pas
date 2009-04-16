@@ -205,7 +205,10 @@ begin
   Result := THeader.Create;
   try
     Result.FileFlags   := [foTear, foTable];
-    Result.FileVersion := ver04;
+    with FCommandLine do
+    begin
+      Result.FileVersion := Max(Min(ver02, vOption), ver04);
+    end;
     Result.FileMethod  := 1;
     Result.FileDictionary := 2;
     // Result.FileTable
