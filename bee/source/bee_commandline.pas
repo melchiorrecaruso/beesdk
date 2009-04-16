@@ -54,6 +54,7 @@ type
     FlOption:     boolean;
     FyOption:     string;
     FkOption:     boolean;
+    FvOption:     byte;
     FcdOption:    string;
     FsoOption:    boolean;
     FcfgOption:   string;
@@ -75,6 +76,7 @@ type
     procedure SetlOption(Value: boolean);
     procedure SetyOption(Value: string);
     procedure SetkOption(Value: boolean);
+    procedure SetvOption(Value: byte);
     procedure SetcdOption(Value: string);
     procedure SetcfgOption(Value: string);
     procedure SetpriOption(Value: integer);
@@ -102,6 +104,7 @@ type
     property lOption: boolean Read FlOption Write SetlOption;
     property yOption: string Read FyOption Write SetyOption;
     property kOption: boolean Read FkOption Write SetkOption;
+    property vOption: byte Read FvOption Write SetvOption;
     property cdOption: string Read FcdOption Write SetcdOption;
     property soOption: boolean Read FsoOption;
     property cfgOption: string Read FcfgOption Write SetcfgOption;
@@ -140,6 +143,7 @@ begin
   FlOption     := False;
   FyOption     := '';
   FkOption     := False;
+  FvOption     := 0;
   FcdOption    := '';
   FsoOption    := False;
   FcfgOption   := SelfPath + 'bee.ini';
@@ -362,6 +366,11 @@ end;
 procedure TCommandLine.SetkOption(Value: boolean);
 begin
   FkOption := Value;
+end;
+
+procedure TCommandLine.SetvOption(Value: byte);
+begin
+  FvOption := Value;
 end;
 
 procedure TCommandLine.SetcdOption(Value: string);
