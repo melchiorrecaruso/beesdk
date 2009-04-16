@@ -154,7 +154,7 @@ type
       FileMethod   := StrNew(P.FileMethod);
       FileVersion  := StrNew(P.FileVersion);
       FilePassword := StrNew(P.FilePassword);
-      FilePosition := P.FileCrc;
+      FilePosition := P.FilePosition;
     end;
     Result := FCount -1;
   end;
