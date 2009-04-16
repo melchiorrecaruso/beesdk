@@ -55,6 +55,7 @@ type
     FyOption:     string;
     FkOption:     boolean;
     FcdOption:    string;
+    FssOption:    boolean;
     FcfgOption:   string;
     FpriOption:   integer;
     FArchiveName: string;
@@ -102,6 +103,7 @@ type
     property yOption: string Read FyOption Write SetyOption;
     property kOption: boolean Read FkOption Write SetkOption;
     property cdOption: string Read FcdOption Write SetcdOption;
+    property ssOption: boolean Read FssOption;
     property cfgOption: string Read FcfgOption Write SetcfgOption;
     property priOption: integer Read FpriOption Write SetpriOption;
     property ArchiveName: string Read FArchiveName Write SetArchiveName;
@@ -139,6 +141,7 @@ begin
   FyOption     := '';
   FkOption     := False;
   FcdOption    := '';
+  FssOption    := False;
   FcfgOption   := SelfPath + 'bee.ini';
   FpriOption   := 1;
   FArchiveName := '';
@@ -176,10 +179,11 @@ begin
   for I := 0 to AParams.Count - 1 do
   begin
     S := AParams.Strings[I];
-    if (FArchiveName = '') and (Length(S) > 1) and (S[1] = '-') then
+    if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
     begin
       // options...
       case UpCase(S[2]) of
+        '-': FssOption := True;
         'S': ProcessOption(S, FsOption);
         'U': ProcessOption(S, FuOption);
         'F': ProcessOption(S, FfOption);
@@ -255,26 +259,22 @@ begin
             FcfgOption := S;
           end;
       end; // end case
-    end
-    else
-    if FCommand = ' ' then
-    begin
-      if Length(S) = 1 then
-        FCommand := UpCase(S[1])
-      else
+    end else
+      if FCommand = ' ' then
       begin
-        FCommand := '?';
-      end;
-    end
-    else
-    if FArchiveName = '' then
-    begin
-      FArchiveName := S;
-      if ExtractFileExt(FArchiveName) = '' then
-        FArchiveName := ChangeFileExt(FArchiveName, '.bee');
-    end
-    else
-      FFileMasks.Add(S);// command or filenames...
+        if Length(S) = 1 then
+          FCommand := UpCase(S[1])
+        else
+          FCommand := '?';
+      end else
+        if FArchiveName = '' then
+        begin
+          FssOption := True;
+          FArchiveName := S;
+          if ExtractFileExt(FArchiveName) = '' then
+            FArchiveName := ChangeFileExt(FArchiveName, '.bee');
+        end else
+          FFileMasks.Add(S);// command or filenames...
   end; // end for loop
 
   // process file masks
