@@ -25,12 +25,12 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="8">
+    <Units Count="10">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <CursorPos X="16" Y="51"/>
+        <CursorPos X="28" Y="51"/>
         <TopLine Value="4"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
@@ -61,7 +61,7 @@
         <UnitName Value="Bee_MainPacker"/>
         <CursorPos X="41" Y="216"/>
         <TopLine Value="210"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="49"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -69,8 +69,8 @@
       <Unit4>
         <Filename Value="bee_headers.pas"/>
         <UnitName Value="Bee_Headers"/>
-        <CursorPos X="8" Y="52"/>
-        <TopLine Value="31"/>
+        <CursorPos X="61" Y="200"/>
+        <TopLine Value="186"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="40"/>
         <Loaded Value="True"/>
@@ -80,7 +80,7 @@
         <Filename Value="bee_common.pas"/>
         <UnitName Value="Bee_Common"/>
         <CursorPos X="38" Y="655"/>
-        <TopLine Value="631"/>
+        <TopLine Value="608"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="38"/>
         <Loaded Value="True"/>
@@ -91,7 +91,7 @@
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="48" Y="175"/>
         <TopLine Value="151"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="8"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -99,15 +99,36 @@
       <Unit7>
         <Filename Value="bee_commandline.pas"/>
         <UnitName Value="Bee_CommandLine"/>
-        <CursorPos X="43" Y="247"/>
-        <TopLine Value="231"/>
+        <CursorPos X="13" Y="250"/>
+        <TopLine Value="350"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="bee_types.pas"/>
+        <UnitName Value="Bee_Types"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="24"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="bee_consts.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Bee_Consts"/>
+        <CursorPos X="3" Y="22"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="5"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit9>
     </Units>
-    <JumpHistory Count="16" HistoryIndex="15">
+    <JumpHistory Count="18" HistoryIndex="17">
       <Position1>
         <Filename Value="bee_headers.pas"/>
         <Caret Line="468" Column="40" TopLine="446"/>
@@ -172,6 +193,14 @@
         <Filename Value="bee_commandline.pas"/>
         <Caret Line="249" Column="58" TopLine="234"/>
       </Position16>
+      <Position17>
+        <Filename Value="bee_headers.pas"/>
+        <Caret Line="43" Column="39" TopLine="16"/>
+      </Position17>
+      <Position18>
+        <Filename Value="bee_commandline.pas"/>
+        <Caret Line="382" Column="35" TopLine="358"/>
+      </Position18>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

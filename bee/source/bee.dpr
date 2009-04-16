@@ -48,7 +48,7 @@ uses
   Bee_App,
   Bee_Types,
   Bee_Common,
-  Bee_Interface;
+  Bee_Interface, bee_consts;
 
 type
   // TConsole class
