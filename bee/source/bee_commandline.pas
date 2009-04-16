@@ -55,7 +55,7 @@ type
     FyOption:     string;
     FkOption:     boolean;
     FcdOption:    string;
-    FssOption:    boolean;
+    FsoOption:    boolean;
     FcfgOption:   string;
     FpriOption:   integer;
     FArchiveName: string;
@@ -103,7 +103,7 @@ type
     property yOption: string Read FyOption Write SetyOption;
     property kOption: boolean Read FkOption Write SetkOption;
     property cdOption: string Read FcdOption Write SetcdOption;
-    property ssOption: boolean Read FssOption;
+    property soOption: boolean Read FsoOption;
     property cfgOption: string Read FcfgOption Write SetcfgOption;
     property priOption: integer Read FpriOption Write SetpriOption;
     property ArchiveName: string Read FArchiveName Write SetArchiveName;
@@ -141,7 +141,7 @@ begin
   FyOption     := '';
   FkOption     := False;
   FcdOption    := '';
-  FssOption    := False;
+  FsoOption    := False;
   FcfgOption   := SelfPath + 'bee.ini';
   FpriOption   := 1;
   FArchiveName := '';
@@ -179,11 +179,11 @@ begin
   for I := 0 to AParams.Count - 1 do
   begin
     S := AParams.Strings[I];
-    if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
+    if (not FsoOption) and (Length(S) > 1) and (S[1] = '-') then
     begin
       // options...
       case UpCase(S[2]) of
-        '-': FssOption := True;
+        '-': FsoOption := True;
         'S': ProcessOption(S, FsOption);
         'U': ProcessOption(S, FuOption);
         'F': ProcessOption(S, FfOption);
@@ -269,7 +269,7 @@ begin
       end else
         if FArchiveName = '' then
         begin
-          FssOption := True;
+          FsoOption := True;
           FArchiveName := S;
           if ExtractFileExt(FArchiveName) = '' then
             FArchiveName := ChangeFileExt(FArchiveName, '.bee');
