@@ -245,6 +245,7 @@ begin
         else
           if Pos('-VER', UpperCase(S)) = 1 then
           begin
+            Delete(S, 1, 4);
             if (Length(S) = 1) and (S[1] in ['0'.. '2']) then
               FvOption := StrToInt(S[1]);
           end
