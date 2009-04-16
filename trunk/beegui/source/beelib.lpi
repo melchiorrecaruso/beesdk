@@ -13,7 +13,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="6"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -30,199 +30,95 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="7">
+    <Units Count="2">
       <Unit0>
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
-        <CursorPos X="9" Y="28"/>
-        <TopLine Value="18"/>
+        <CursorPos X="37" Y="157"/>
+        <TopLine Value="133"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
-        <Filename Value="..\..\bee\source\bee_types.pas"/>
-        <UnitName Value="Bee_Types"/>
-        <CursorPos X="27" Y="56"/>
-        <TopLine Value="40"/>
-        <EditorIndex Value="6"/>
-        <UsageCount Value="24"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit1>
-      <Unit2>
-        <Filename Value="..\..\bee\source\bee_interface.pas"/>
-        <UnitName Value="Bee_Interface"/>
-        <CursorPos X="21" Y="180"/>
-        <TopLine Value="133"/>
-        <EditorIndex Value="3"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit2>
-      <Unit3>
         <Filename Value="packages\beegui_liblink.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
         <CursorPos X="54" Y="21"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="..\..\bee\source\bee_mainpacker.pas"/>
-        <UnitName Value="Bee_MainPacker"/>
-        <CursorPos X="22" Y="468"/>
-        <TopLine Value="444"/>
-        <EditorIndex Value="4"/>
-        <UsageCount Value="17"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="..\..\bee\source\bee_app.pas"/>
-        <UnitName Value="Bee_App"/>
-        <CursorPos X="32" Y="1236"/>
-        <TopLine Value="1236"/>
-        <EditorIndex Value="5"/>
-        <UsageCount Value="17"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="1"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit6>
+      </Unit1>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="16" HistoryIndex="15">
       <Position1>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="494" Column="25" TopLine="475"/>
+        <Caret Line="394" Column="38" TopLine="363"/>
       </Position1>
       <Position2>
-        <Filename Value="..\..\bee\source\bee_types.pas"/>
-        <Caret Line="107" Column="9" TopLine="80"/>
+        <Filename Value="beelib.dpr"/>
+        <Caret Line="405" Column="12" TopLine="378"/>
       </Position2>
       <Position3>
-        <Filename Value="..\..\bee\source\bee_types.pas"/>
-        <Caret Line="105" Column="19" TopLine="79"/>
+        <Filename Value="beelib.dpr"/>
+        <Caret Line="409" Column="1" TopLine="385"/>
       </Position3>
       <Position4>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="382" Column="45" TopLine="373"/>
+        <Caret Line="406" Column="40" TopLine="386"/>
       </Position4>
       <Position5>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="387" Column="45" TopLine="373"/>
+        <Caret Line="407" Column="25" TopLine="381"/>
       </Position5>
       <Position6>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="385" Column="35" TopLine="361"/>
+        <Caret Line="395" Column="28" TopLine="375"/>
       </Position6>
       <Position7>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="386" Column="36" TopLine="371"/>
+        <Caret Line="281" Column="54" TopLine="270"/>
       </Position7>
       <Position8>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="394" Column="10" TopLine="370"/>
+        <Caret Line="172" Column="21" TopLine="161"/>
       </Position8>
       <Position9>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="385" Column="45" TopLine="372"/>
+        <Caret Line="213" Column="1" TopLine="190"/>
       </Position9>
       <Position10>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="394" Column="38" TopLine="363"/>
+        <Caret Line="74" Column="43" TopLine="53"/>
       </Position10>
       <Position11>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="405" Column="12" TopLine="378"/>
+        <Caret Line="525" Column="32" TopLine="501"/>
       </Position11>
       <Position12>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="409" Column="1" TopLine="385"/>
+        <Caret Line="600" Column="1" TopLine="532"/>
       </Position12>
       <Position13>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="406" Column="40" TopLine="386"/>
+        <Caret Line="70" Column="52" TopLine="70"/>
       </Position13>
       <Position14>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="407" Column="25" TopLine="381"/>
+        <Caret Line="317" Column="12" TopLine="283"/>
       </Position14>
       <Position15>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="395" Column="28" TopLine="375"/>
+        <Caret Line="304" Column="23" TopLine="257"/>
       </Position15>
       <Position16>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="281" Column="54" TopLine="270"/>
-      </Position16>
-      <Position17>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="172" Column="21" TopLine="161"/>
-      </Position17>
-      <Position18>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="213" Column="1" TopLine="190"/>
-      </Position18>
-      <Position19>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="74" Column="43" TopLine="53"/>
-      </Position19>
-      <Position20>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="525" Column="32" TopLine="501"/>
-      </Position20>
-      <Position21>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="600" Column="1" TopLine="532"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\..\bee\source\bee_interface.pas"/>
-        <Caret Line="5" Column="120" TopLine="1"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\..\bee\source\bee_interface.pas"/>
-        <Caret Line="174" Column="41" TopLine="148"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\..\bee\source\bee_interface.pas"/>
-        <Caret Line="13" Column="81" TopLine="10"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\..\bee\source\bee_interface.pas"/>
-        <Caret Line="172" Column="21" TopLine="148"/>
-      </Position25>
-      <Position26>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="70" Column="52" TopLine="70"/>
-      </Position26>
-      <Position27>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="317" Column="12" TopLine="283"/>
-      </Position27>
-      <Position28>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="304" Column="23" TopLine="257"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\..\bee\source\bee_app.pas"/>
-        <Caret Line="120" Column="41" TopLine="120"/>
-      </Position29>
-      <Position30>
-        <Filename Value="beelib.dpr"/>
         <Caret Line="28" Column="9" TopLine="18"/>
-      </Position30>
+      </Position16>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

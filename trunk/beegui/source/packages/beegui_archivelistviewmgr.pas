@@ -55,7 +55,7 @@ type
     FileIcon:     integer;
     FileSize:     int64;
     FilePacked:   int64;
-    FileRatio:    integer;
+    FileRatio:    byte;
     FileAttr:     integer;
     FileTime:     integer;
     FileComm:     string;
@@ -376,22 +376,30 @@ begin
       Result := 1
     else
       Result := -1;
-  end
-  else
+  end else
   begin
     case SortColumn of
-      0: Result  := CompareFileName(AI1.FileName, AI2.FileName);
-      1: Result  := (AI1.FileSize - AI2.FileSize);
-      2: Result  := (AI1.FilePacked - AI2.FilePacked);
-      3: Result  := (AI1.FileRatio - AI2.FileRatio);
-      4: Result  := CompareFileName(AI1.FileType, AI2.FileType);
-      5: Result  := Round(AI1.FileTime - AI2.FileTime);
-      6: Result  := (AI1.FileAttr - AI2.FileAttr);
-      7: Result  := CompareText(AI1.FileMethod, AI2.FileMethod);
-      8: Result  := CompareText(AI1.FilePassword, AI2.FilePassword);
-      9: Result  := (AI1.FileCRC - AI2.FileCRC);
-      10: Result := CompareFileName(AI1.FilePath, AI2.FilePath);
-      11: Result := (AI1.FilePosition - AI2.FilePosition);
+      0: Result  := CompareFileName(AI1.FileName,     AI2.FileName);
+      1: Result  :=                (AI1.FileSize    - AI2.FileSize);
+      2: Result  :=                (AI1.FilePacked  - AI2.FilePacked);
+      3: Result  :=                (AI1.FileRatio   - AI2.FileRatio);
+      4: Result  := CompareFileName(AI1.FileType,     AI2.FileType);
+      5: Result  := Round          (AI1.FileTime    - AI2.FileTime);
+      6: Result  :=                (AI1.FileAttr    - AI2.FileAttr);
+      7: Result  := CompareText    (AI1.FileMethod,   AI2.FileMethod);
+      8: Result  := CompareText    (AI1.FilePassword, AI2.FilePassword);
+      9:
+      begin
+        if AI1.FileCRC > AI2.FileCRC then
+          Result := -1
+        else
+          if AI1.FileCRC < AI2.FileCRC then
+            Result := 1
+          else
+            Result  := 0;
+      end;
+      10: Result := CompareFileName(AI1.FilePath,      AI2.FilePath);
+      11: Result :=                (AI1.FilePosition - AI2.FilePosition);
     end;
 
     if FSortDirection then

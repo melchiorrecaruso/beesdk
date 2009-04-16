@@ -652,7 +652,7 @@ end;
 function RatioToStr(const PackedSize, Size: int64): string;
 begin
   if Size > 0 then
-    Result := Format('%u%%', [MulDiv(PackedSize, 100, Size)])
+    Result := Format('%u%%', [Round((PackedSize / Size) * 100)])
   else
     Result := Format('%u%%', [100]);
 end;

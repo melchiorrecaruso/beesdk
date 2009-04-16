@@ -164,7 +164,7 @@ begin
     I := MilliSecondsBetween(FSuspendedTime - FStartTime, 0);
 
   if I <> 0 then
-    Result := MulDiv(FSize, 1000, I)
+    Result := Round((FSize / I) * 1000)
   else
     Result := 0;
 end;
@@ -172,7 +172,7 @@ end;
 function TApp.GetPercentes: integer;
 begin
   if FtotalSize <> 0 then
-    Result := MulDiv(FSize, 100, FTotalSize)
+    Result := Round((FSize / FTotalSize) * 100)
   else
     Result := 0;
 end;

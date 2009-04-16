@@ -119,7 +119,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.8.0 build 1016 archiver utility, April 2009' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1018 archiver utility, April 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -1227,58 +1227,57 @@ begin
       HeadersToListPath := '';
       {$ENDIF}
 
+
+      I := 0;
       {$IFDEF CONSOLEAPPLICATION}
-      for I := 0 to HeadersToList.Count -1 do
+      while I < HeadersToList.Count do
       begin
         P := HeadersToList.Items[I];
       {$ELSE}
-      for I := 0 to Headers.GetCount -1 do
+      while I < Headers.GetCount do
       begin
         P := Headers.GetItem(I);
       {$ENDIF}
 
-        with FI do
+        FI.FileName := StringToPChar(ExtractFileName(P.FileName));
+        FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
+
+        {$IFDEF CONSOLEAPPLICATION}
+        if CompareFileName(HeadersToListPath, FI.FilePath) <> 0 then
         begin
-          FileName := StringToPChar(ExtractFileName(P.FileName));
-          FilePath := StringToPChar(ExtractFilePath(P.FileName));
-
-          {$IFDEF CONSOLEAPPLICATION}
-          if CompareFileName(HeadersToListPath, FilePath) <> 0 then
-          begin
-            HeadersToListPath := FilePath;
-            if I = 0 then
-              ProcessMessage(HeadersToListPath)
-            else
-              ProcessMessage(Cr + HeadersToListPath);
-          end;
-          {$ENDIF}
-
-          FileSize   := P.FileSize;
-          FilePacked := P.FilePacked;
-
-          if FileSize > 0 then
-            FileRatio := MulDiv(FilePacked, 100, FileSize)
+          HeadersToListPath := FI.FilePath;
+          if I = 0 then
+            ProcessMessage(HeadersToListPath)
           else
-            FileRatio := 100;
-
-          FileAttr    := P.FileAttr;
-          FileTime    := P.FileTime;
-          FileComm    := StringToPChar('');
-          FileCrc     := P.FileCrc;
-          FileMethod  := StringToPChar(MethodToStr(P));
-          FileVersion := StringToPChar(VersionToStr(P));
-
-          if foPassword in P.FileFlags then
-            FilePassword := StringToPchar('Yes')
-          else
-            FilePassword := StringToPchar('No');
-
-          {$IFDEF CONSOLEAPPLICATION}
-          FilePosition := Headers.GetNext(0, toList, P.FileName);
-          {$ELSE}
-          FilePosition := I;
-          {$ENDIF}
+            ProcessMessage(Cr + HeadersToListPath);
         end;
+        {$ENDIF}
+
+        FI.FileSize   := P.FileSize;
+        FI.FilePacked := P.FilePacked;
+
+        if FI.FileSize > 0 then
+          FI.FileRatio := Round((FI.FilePacked / FI.FileSize) * 100)
+        else
+          FI.FileRatio := 100;
+
+        FI.FileAttr    := P.FileAttr;
+        FI.FileTime    := P.FileTime;
+        FI.FileComm    := StringToPChar('');
+        FI.FileCrc     := P.FileCrc;
+        FI.FileMethod  := StringToPChar(MethodToStr(P));
+        FI.FileVersion := StringToPChar(VersionToStr(P));
+
+        if foPassword in P.FileFlags then
+          FI.FilePassword := StringToPchar('Yes')
+        else
+          FI.FilePassword := StringToPchar('No');
+
+        {$IFDEF CONSOLEAPPLICATION}
+        FI.FilePosition := Headers.GetNext(0, toList, P.FileName);
+        {$ELSE}
+        FI.FilePosition := I;
+        {$ENDIF}
         ProcessList(FI);
 
         StrDispose(FI.FileName);
@@ -1291,6 +1290,7 @@ begin
         Inc(TotalSize, P.FileSize);
         Inc(TotalPack, P.FilePacked);
         Inc(TotalFiles);
+        Inc(I);
       end;
       {$IFDEF CONSOLEAPPLICATION}
       ProcessMessage(StringOfChar('-', 79));
