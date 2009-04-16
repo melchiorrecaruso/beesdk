@@ -243,6 +243,12 @@ begin
             FxOption.Add(S);
         end;
         else
+          if Pos('-VER', UpperCase(S)) = 1 then
+          begin
+            if (Length(S) = 1) and (S[1] in ['0'.. '2']) then
+              FvOption := StrToInt(S[1]);
+          end
+          else
           if Pos('-PRI', UpperCase(S)) = 1 then
           begin
             Delete(S, 1, 4);
