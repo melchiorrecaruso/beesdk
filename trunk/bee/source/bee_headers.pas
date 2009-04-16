@@ -147,14 +147,14 @@ type
     procedure AddItem(P: THeader);
     function Compare(P1, P2: THeader): integer;
     function CreatePHeader(const RecPath: string; const Rec: TSearchRec): THeader; overload;
-    function CreatePHeader(Stream: TStream; aAction: THeaderAction): THeader; overload;
+    function CreatePHeader(Stream: TStream; aAction: THeaderAction; var aVersion: byte): THeader; overload;
     function FindFirstMarker(aStream: TStream): int64;
     procedure MarkAsLast(aAction: THeaderAction);
     procedure ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
     function SearchItem(FileName: string): THeader;
     procedure ScanFileSystem(Mask: string; var Size: int64);
     procedure SortNews(aConfiguration: TConfiguration);
-    procedure WriteItem (aStream: TStream; P: THeader);
+    procedure WriteItem (aStream: TStream; P: THeader; var aVersion: byte);
   end;
 
 implementation
@@ -227,7 +227,7 @@ begin
   end;
 end;
 
-function THeaders.CreatePHeader(Stream: TStream; aAction: THeaderAction): THeader;
+function THeaders.CreatePHeader(Stream: TStream; aAction: THeaderAction; var aVersion: byte): THeader;
 var
   I: integer;
 begin
@@ -237,12 +237,17 @@ begin
     begin
       Stream.Read(FileFlags, SizeOf(FileFlags));
 
-      if foVersion    in FileFlags then Stream.Read(FileVersion,    SizeOf(FileVersion));
+      if foVersion in FileFlags then
+      begin
+        Stream.Read(FileVersion, SizeOf(FileVersion));
+        aVersion := FileVersion;
+      end;
+
       if foMethod     in FileFlags then Stream.Read(FileMethod,     SizeOf(FileMethod));
       if foDictionary in FileFlags then Stream.Read(FileDictionary, SizeOf(FileDictionary));
       if foTable      in FileFlags then Stream.Read(FileTable,      SizeOf(FileTable));
 
-      if FileVersion < ver04 then
+      if aVersion < ver04 then
       begin                                           //  [ver03] | [ver04]
         Stream.Read(I, SizeOf(I)); FileSize := I;     //  4 bytes | 8 bytes
 
@@ -402,7 +407,7 @@ begin
     Result := nil
 end;
 
-procedure THeaders.WriteItem(aStream: TStream; P: THeader);
+procedure THeaders.WriteItem(aStream: TStream; P: THeader; var aVersion: byte);
 var
   I: integer;
 begin
@@ -410,12 +415,17 @@ begin
   aStream.Write(P.FileFlags, SizeOf(P.FileFlags));
   with P do
   begin
-    if foVersion    in FileFlags then aStream.Write(FileVersion,    SizeOf(FileVersion));
+    if foVersion in FileFlags then
+    begin
+      aStream.Write(FileVersion, SizeOf(FileVersion));
+      aVersion := FileVersion;
+    end;
+
     if foMethod     in FileFlags then aStream.Write(FileMethod,     SizeOf(FileMethod));
     if foDictionary in FileFlags then aStream.Write(FileDictionary, SizeOf(FileDictionary));
     if foTable      in FileFlags then aStream.Write(FileTable,      SizeOf(FileTable));
 
-    if FileVersion < ver04 then
+    if aVersion < ver04 then
     begin                                             //  [ver03] | [ver04]
       I := FileSize;     aStream.Write(I, SizeOf(I)); //  4 bytes | 8 bytes
 
@@ -442,6 +452,7 @@ end;
 procedure THeaders.WriteItems(aStream: TStream);
 var
   I: integer;
+  Version: byte = ver02;
 begin
   if aStream.Seek(0, 1) = 0 then
   begin
@@ -458,7 +469,7 @@ begin
     with THeader(FPrimary.Items[I]) do
       if (FileAction <> toDelete) then
       begin
-        WriteItem(aStream, FPrimary.Items[I]);
+        WriteItem(aStream, THeader(FPrimary.Items[I]), Version);
       end;
 end;
 
@@ -631,6 +642,7 @@ var
   Symbol: byte;
   SymbolIndex: integer;
   B4bMarker: array [0..3] of byte;
+  Version: byte = ver02;
 begin
   P    := nil;
   Ptr  := @B4bMarker;
@@ -648,7 +660,7 @@ begin
 
       if SymbolIndex = SizeOf(Marker) then
       begin
-        P := CreatePHeader(aStream, aAction);
+        P := CreatePHeader(aStream, aAction, Version);
         if P <> nil then
         begin
           AddItem(P);
@@ -671,6 +683,7 @@ var
   P: THeader;
   Id: integer;
   OffSet: int64;
+  Version: byte = ver02;
 begin
   P      := nil;
   OffSet := FindFirstMarker(aStream);
@@ -681,12 +694,11 @@ begin
     repeat
       if (aStream.Read(Id, SizeOf(Id)) = SizeOf(Id)) and (Id = Marker) then
       begin
-        P := CreatePHeader(aStream, aAction);
+        P := CreatePHeader(aStream, aAction, Version);
         if P <> nil then
         begin
           AddItem(P);
         end;
-
       end else Break;
 
     until (P <> nil) and (foLast in P.FileFlags);
