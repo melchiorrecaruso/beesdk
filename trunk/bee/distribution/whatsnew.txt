@@ -1344,33 +1344,31 @@ Description of history of the Bee:
 
   v0.7.9 build 316 maked.
   
-2008.11.20
+2009.04.16
 
   Update sources by Melchiorre Caruso:
-
-  [*] Bee_Modeller.pas, minor code optimization (for FreePascal Compiler);
-  [*] Bee_Files.pas, some changes for FPC compatibility;
-  [+] Bee_Interface.pas, added OnFatalError and OnRequest events;
-  [*] Fixed some wilcard prolems;
-  [*] Fixed some command line prolems;
-  [*] Renamed "-c" option into "-cd" (bugfix); 
-  [+] Added wilcard "?" and FileName-Matching functions;
-  [*] Bee_Assembler.AddCardinal function, fixed source code incompatibility with FPC;
-  [*] Bee_Headers.SearchNews renamed to ScanFileSystem;
-  [*] compiler.inc added filenamecasesensitive directive;
+  
+  [*] Bee_Modeller.pas, minor code optimization (for FreePascal Compiler);  
+  [*] Bee_Assembler.AddCardinal function, fixed source code (for FPC compatibility);
+  [*] Bee_Files.pas, some changes for FPC compatibility;  
+  [*] Updated source code, platform independent;
+  [+] Compiler.inc added filenamecasesensitive directive;
+  [+] Added wilcard "?" and FileName-Matching functions and fixed some wilcard prolems;
+  [*] Fixed some command line prolems and renamed "-c" option into "-cd" (bugfix); 
   [*] Bee_Common.pas, renamed some functions;
-  [+] Updated source code, platform independent;  
-  [+] Bee_App.pas, added Tick function, if bee runs then result is true;
-  [+] Bee_Modeller.pas, some changement to stop an active process;
+  [+] Bee_MainPaker.pas, more changement to stop an active process;
   [*] Bee_App.OpenArchive procedure, fixed dangerous bug; 
-      if archive is unknow it raises FatalError events and abort process;
+      If archive is unknow it raises FatalError events and abort process;
   [+] Added "-l" option, archive list after an upgrade; 
-  [+] Function ListShell changed, now it lists files sorted by folder; 
+  [+] Added "stop option parsing" option ("--" option); 
+  [+] Function ListShell changed, now it lists files sorted by folder;
   [*] Copyright information updated to each of units;
   [*] Unsignificant source code rearrangement performed;
   [*] Matrix.txt updated;
   [*] Usage.txt updated;
   [*] Bee_App.pas, bug fixed in AlreadyFileExists function and RenameShell procedure;
-  [*] Bee_Files.pas, some changements for FPC compatibility.  
+  [*] Bee_Files.pas, some changements for FPC compatibility;
+  [*] Bee_Interface.pas, significant source code rearrangement performed; 
+  [*] Bee_Headers, added support for 64bits filesize, significant source code rearrangement performed.
 
-  v0.7.9 build 930 maked.
+  v0.8.0 build 1016 maked.
