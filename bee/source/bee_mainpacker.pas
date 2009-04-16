@@ -73,10 +73,10 @@ type
     constructor Create(aStream: TFileWriter; aApp: TApp);
     destructor Destroy; override;
     function EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
-    function EncodeStrm(P: THeader; Mode: TEncodingMode;
-      SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
-    function CopyStrm  (P: THeader; Mode: TEncodingMode;
-      SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
+    function EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+      const SrcSize: int64; SrcEncoded: boolean): boolean;
+    function CopyStrm  (P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+      const SrcSize: int64; SrcEncoded: boolean): boolean;
   private
     function GetPassword(P: THeader): string;
     procedure Progress;
@@ -97,7 +97,7 @@ type
     destructor Destroy; override;
     function DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
     function DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
-      DstSize: int64; DstEncoded: boolean): boolean;
+      const DstSize: int64; DstEncoded: boolean): boolean;
   private
     function GetPassword(P: THeader): string;
     procedure Progress;
@@ -154,8 +154,7 @@ begin
   StrDispose(FI.FileName);
   StrDispose(FI.FileName);
 
-  if Length(Result) < MinKeyLength then
-    Exclude(P.FileFlags, foPassword);
+  if Length(Result) < MinKeyLength then Exclude(P.FileFlags, foPassword);
 end;
 
 procedure TEncoder.Progress;
@@ -227,16 +226,17 @@ begin
   begin
     Include(P.FileFlags, foTear);
     Include(P.FileFlags, foMoved);
-    Stream.Size := P.FileStartPos;
 
+    Stream.Size := P.FileStartPos;
     App.DecSize(P.FileSize);
+
     Result := EncodeFile(P, emOpt);
   end else
     Result := True;
 end;
 
-function TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
+function TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+  const SrcSize: int64; SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
   Password: string;
@@ -247,7 +247,6 @@ begin
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
   if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
 
-  SrcPosition := 0;
   if (SrcStrm <> nil) then
   begin
     if Mode = emNorm then App.ProcessMessage(msgEncoding + P.FileName);
@@ -310,17 +309,18 @@ begin
   begin
     Include(P.FileFlags, foTear);
     Include(P.FileFlags, foMoved);
+
     Stream.Size := P.FileStartPos;
     P.FileStartPos := SrcPosition;
-
     App.DecSize(P.FileSize);
+
     Result := EncodeStrm(P, emOpt, SrcStrm, SrcSize, SrcEncoded);
   end else
     Result := True;
 end;
 
-function TEncoder.CopyStrm  (P: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader; SrcSize: int64; SrcEncoded: boolean): boolean;
+function TEncoder.CopyStrm  (P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+  const SrcSize: int64; SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
   I: int64 = 0;
@@ -493,8 +493,8 @@ begin
   end;
 end;
 
-function TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
-  DstStrm: TFileWriter; DstSize: int64; DstEncoded: boolean): boolean;
+function TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
+  const DstSize: int64; DstEncoded: boolean): boolean;
 var
   DstFile: TFileWriter;
   Password: string;
