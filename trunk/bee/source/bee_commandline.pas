@@ -36,7 +36,6 @@ uses
   SysUtils;
 
 type
-
   TCommandLine = class
   private
     FCommand:     char;
@@ -116,12 +115,14 @@ type
 implementation
 
 uses
+  Math,
+  Bee_Consts,
   Bee_Common;
 
 constructor TCommandLine.Create;
 begin
   inherited Create;
-  FxOption   := TStringList.Create;
+  FxOption := TStringList.Create;
   FFileMasks := TStringList.Create;
   Clear;
 end;
@@ -143,7 +144,7 @@ begin
   FlOption     := False;
   FyOption     := '';
   FkOption     := False;
-  FvOption     := 0;
+  FvOption     := ver04;
   FcdOption    := '';
   FsoOption    := False;
   FcfgOption   := SelfPath + 'bee.ini';
@@ -246,8 +247,9 @@ begin
           if Pos('-VER', UpperCase(S)) = 1 then
           begin
             Delete(S, 1, 4);
-            if (Length(S) = 1) and (S[1] in ['0'.. '2']) then
-              FvOption := StrToInt(S[1]);
+            if S = '02' then FvOption := ver02 else
+              if S = '03' then FvOption := ver03 else
+                if S = '04' then FvOption := ver04;
           end
           else
           if Pos('-PRI', UpperCase(S)) = 1 then
@@ -377,7 +379,7 @@ end;
 
 procedure TCommandLine.SetvOption(Value: byte);
 begin
-  FvOption := Value;
+  FvOption := Max(Min(ver02, Value), ver04);
 end;
 
 procedure TCommandLine.SetcdOption(Value: string);

@@ -42,17 +42,6 @@ uses
   Bee_CommandLine,   // TCommandLine
   Bee_Configuration; // TConfiguration
 
-const
-  // Id marker
-
-  Marker: integer = 442852674;
-
-  // Version number
-
-  ver02 = 0; // Bee 0.2.xx
-  ver03 = 1; // Bee 0.3.xx
-  ver04 = 2; // Bee 0.8.xx
-
 type
   // Header flags
 
@@ -162,6 +151,7 @@ implementation
 uses
   Math,
   Bee_Files,
+  Bee_Consts,
   Bee_Common;
 
 // THeaders class
