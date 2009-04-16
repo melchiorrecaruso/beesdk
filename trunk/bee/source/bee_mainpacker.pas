@@ -240,13 +240,14 @@ function TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileRead
 var
   Symbol: byte;
   Password: string;
-  SrcPosition: int64 = 0;
-  I: int64 = 0;
+  SrcPosition: int64;
+  I: int64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
   if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
 
+  SrcPosition := 0;
   if (SrcStrm <> nil) then
   begin
     if Mode = emNorm then App.ProcessMessage(msgEncoding + P.FileName);
@@ -264,6 +265,7 @@ begin
       if SrcEncoded then SrcStrm.BlowFish.Start(Password);
     end;
 
+    I := 0;
     if foMoved in P.FileFlags then
     begin
       while I < SrcSize do
@@ -323,7 +325,7 @@ function TEncoder.CopyStrm  (P: THeader; Mode: TEncodingMode; SrcStrm: TFileRead
   const SrcSize: int64; SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
-  I: int64 = 0;
+  I: int64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -338,6 +340,7 @@ begin
 
     if SrcEncoded then SrcStrm.BlowFish.Start(GetPassword(P));
 
+    I := 0;
     while I < SrcSize do
     begin
       SrcStrm.Read(Symbol, 1);
@@ -409,7 +412,7 @@ var
   DstFile: TFileWriter;
   Symbol:  byte;
   Crc: cardinal;
-  I: int64 = 0;
+  I: int64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -438,6 +441,7 @@ begin
   begin
     if foPassword in P.FileFlags then Stream.BlowFish.Start(GetPassword(P));
 
+    I := 0;
     if foMoved in P.FileFlags then
     begin
       while I < P.FileSize do
@@ -500,7 +504,7 @@ var
   Password: string;
   Symbol:  byte;
   Crc: cardinal;
-  I: int64 = 0;
+  I: int64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -536,6 +540,7 @@ begin
       if DstEncoded then DstFile.BlowFish.Start(Password);
     end;
 
+    I := 0;
     if foMoved in P.FileFlags then
     begin
       while I < DstSize do

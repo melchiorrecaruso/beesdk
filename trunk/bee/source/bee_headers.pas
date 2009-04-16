@@ -454,7 +454,7 @@ end;
 procedure THeaders.WriteItems(aStream: TStream);
 var
   I: integer;
-  Version: byte = ver02;
+  Version: byte;
 begin
   if aStream.Seek(0, 1) = 0 then
   begin
@@ -466,6 +466,7 @@ begin
   end else
     aStream.Seek(FModule.Size, 0);
 
+  Version := ver02;
   MarkAsLast(toDelete);
   for I := 0 to FPrimary.Count -1 do
     if THeader(FPrimary.Items[I]).FileAction <> toDelete then
@@ -643,13 +644,14 @@ var
   Symbol: byte;
   SymbolIndex: integer;
   B4bMarker: array [0..3] of byte;
-  Version: byte = ver02;
+  Version: byte;
 begin
-  P    := nil;
-  Ptr  := @B4bMarker;
-  Ptr^ := Marker;
+  P       := nil;
+  Ptr     := @B4bMarker;
+  Ptr^    := Marker;
+  Version := ver02;
 
-  SymbolIndex  := 0;
+  SymbolIndex := 0;
   aStream.Seek(0, 0);
   repeat
     if aStream.Read(Symbol, 1) = 1 then
@@ -684,10 +686,11 @@ var
   P: THeader;
   Id: integer;
   OffSet: int64;
-  Version: byte = ver02;
+  Version: byte;
 begin
-  P      := nil;
-  OffSet := FindFirstMarker(aStream);
+  P       := nil;
+  Version := ver02;
+  OffSet  := FindFirstMarker(aStream);
 
   if OffSet > -1 then
   begin
