@@ -301,7 +301,7 @@ begin
     SrcStrm.BlowFish.Finish;
 
     P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
-    Stream.BlowFish.Finish; // finish after stream flush
+    Stream.BlowFish.Finish;                // finish after stream flush
   end else
     App.ProcessError('Error: stream  not found', 1);
 

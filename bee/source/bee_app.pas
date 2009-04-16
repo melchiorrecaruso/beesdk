@@ -610,13 +610,12 @@ begin
       CurrTable      := CurrDictionary;
 
       Decoder := TDecoder.Create(FArcFile, Self);
-      // get totalsize
+
       while (I > -1) and (not FTerminated) do
       begin
-        iDictionary := Headers.GetBack(I, foDictionary);
-        // find dictionary info
-        iTable := Headers.GetBack(I, foTable); // find table info
-        iTear  := Headers.GetBack(I, foTear);  // find tear info
+        iDictionary := Headers.GetBack(I, foDictionary); // find dictionary info
+        iTable := Headers.GetBack(I, foTable);           // find table info
+        iTear  := Headers.GetBack(I, foTear);            // find tear info
 
         if (iDictionary > -1) and (iDictionary <> CurrDictionary) and (iDictionary <> iTear) then
         begin
