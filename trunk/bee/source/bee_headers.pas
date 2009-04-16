@@ -154,7 +154,7 @@ type
     function SearchItem(FileName: string): THeader;
     procedure ScanFileSystem(Mask: string; var Size: int64);
     procedure SortNews(aConfiguration: TConfiguration);
-    procedure WriteItem (aStream: TStream; P: THeader; var aVersion: byte);
+    procedure WriteItem(aStream: TStream; P: THeader; var aVersion: byte);
   end;
 
 implementation
@@ -246,6 +246,8 @@ begin
       if foMethod     in FileFlags then Stream.Read(FileMethod,     SizeOf(FileMethod));
       if foDictionary in FileFlags then Stream.Read(FileDictionary, SizeOf(FileDictionary));
       if foTable      in FileFlags then Stream.Read(FileTable,      SizeOf(FileTable));
+
+      if foVersion    in FileFlags then aVersion := FileVersion;
 
       if aVersion < ver04 then
       begin                                           //  [ver03] | [ver04]
@@ -466,11 +468,10 @@ begin
 
   MarkAsLast(toDelete);
   for I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]) do
-      if (FileAction <> toDelete) then
-      begin
-        WriteItem(aStream, THeader(FPrimary.Items[I]), Version);
-      end;
+    if THeader(FPrimary.Items[I]).FileAction <> toDelete then
+    begin
+      WriteItem(aStream, THeader(FPrimary.Items[I]), Version);
+    end;
 end;
 
 function THeaders.AddItems(aConfiguration: TConfiguration): int64;
