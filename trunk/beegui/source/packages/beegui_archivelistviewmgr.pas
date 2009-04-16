@@ -320,7 +320,7 @@ begin
       if StrToFloat(Item.FileVersion) > Version then
         Version := StrToFloat(Item.FileVersion);
     except
-      Version := 0;
+      Version := -1;
     end;
   end
   else

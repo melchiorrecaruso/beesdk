@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -44,7 +44,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="22">
+    <Units Count="23">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -113,7 +113,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="28" Y="88"/>
         <TopLine Value="69"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -198,7 +198,7 @@
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="34" Y="1543"/>
         <TopLine Value="1508"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="109"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -257,7 +257,7 @@
         <UnitName Value="BeeGui_LibLink"/>
         <CursorPos X="16" Y="20"/>
         <TopLine Value="16"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="53"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -277,11 +277,21 @@
         <UnitName Value="Bee_Types"/>
         <CursorPos X="20" Y="76"/>
         <TopLine Value="48"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit21>
+      <Unit22>
+        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
+        <UnitName Value="BeeGui_ArchiveListViewMgr"/>
+        <CursorPos X="20" Y="323"/>
+        <TopLine Value="293"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <SyntaxHighlighter Value="Delphi"/>
+      </Unit22>
     </Units>
     <JumpHistory Count="28" HistoryIndex="27">
       <Position1>

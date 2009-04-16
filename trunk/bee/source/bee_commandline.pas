@@ -379,7 +379,7 @@ end;
 
 procedure TCommandLine.SetvOption(Value: byte);
 begin
-  FvOption := Max(Min(ver02, Value), ver04);
+  FvOption := Min(Max(ver02, Value), ver04);
 end;
 
 procedure TCommandLine.SetcdOption(Value: string);
