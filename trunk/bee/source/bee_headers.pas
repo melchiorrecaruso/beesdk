@@ -73,17 +73,15 @@ type
     FileMethod: byte;
     FileDictionary: byte;
     FileTable: TTableParameters;
-    // - Costant header part
-    FileSize: int64;
-    FileTime: integer;
-    FileAttr: integer;
+    FileSize: qword;
+    FileTime: longint;
+    FileAttr: longint;
     FileCrc: cardinal;
-    FilePacked: int64;
-    FileStartPos: int64;
-    // -
+    FilePacked: qword;
     FileName: string;
     // - End header data - //
     FileLink: string;
+    FileStartPos: qword;
     FileAction: THeaderAction;
   end;
 
@@ -128,15 +126,15 @@ type
     function GetModule: integer;
   private
     FNews: integer;
-    FModule:  TStream;
-    FPrimary:   TList;
+    FModule: TStream;
+    FPrimary: TList;
     FSecondary: TList;
     FCommandLine: TCommandLine;
   private
     procedure AddItem(P: THeader);
     function Compare(P1, P2: THeader): integer;
     function CreatePHeader(const RecPath: string; const Rec: TSearchRec): THeader; overload;
-    function CreatePHeader(Stream: TStream; aAction: THeaderAction; var aVersion: byte): THeader; overload;
+    function CreatePHeader(aStream: TStream; aAction: THeaderAction; var aVersion: byte): THeader; overload;
     function FindFirstMarker(aStream: TStream): int64;
     procedure MarkAsLast(aAction: THeaderAction);
     procedure ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
@@ -194,33 +192,28 @@ function THeaders.CreatePHeader(const RecPath: string; const Rec: TSearchRec): T
 begin
   Result := THeader.Create;
   try
-    Result.FileFlags   := [foTear, foTable];
-    with FCommandLine do
-    begin
-      Result.FileVersion := Min(Max(ver02, vOption), ver04);
-    end;
-    Result.FileMethod  := 1;
+    // ---
+    Result.FileFlags := [foTear, foTable];
+    Result.FileVersion := Min(Max(ver02, FCommandLine.vOption), ver04);
+    Result.FileMethod := 1;
     Result.FileDictionary := 2;
     // Result.FileTable
-    Result.FileSize := 0;
+    Result.FileSize := Rec.Size;
     Result.FileTime := Rec.Time;
     Result.FileAttr := Rec.Attr;
-    Result.FileCrc  := cardinal(-1);
-    Result.FilePacked   := 0;
-    Result.FileStartPos := 0;
-    with FCommandLine do
-    begin
-      Result.FileName := cdOption + DeleteFileDrive(RecPath) + Rec.Name;
-    end;
+    Result.FileCrc := cardinal(-1);
+    Result.FilePacked := 0;
+    Result.FileName := FCommandLine.cdOption + DeleteFileDrive(RecPath) + Rec.Name;
     // ---
-    Result.FileLink   := RecPath + Rec.Name;
+    Result.FileLink := RecPath + Rec.Name;
+    Result.FileStartPos := 0;
     Result.FileAction := toUpdate;
   except
     FreeAndNil(Result);
   end;
 end;
 
-function THeaders.CreatePHeader(Stream: TStream; aAction: THeaderAction; var aVersion: byte): THeader;
+function THeaders.CreatePHeader(aStream: TStream; aAction: THeaderAction; var aVersion: byte): THeader;
 var
   I: integer;
 begin
@@ -228,40 +221,43 @@ begin
   try
     with Result do
     begin
-      Stream.Read(FileFlags, SizeOf(FileFlags));
+      aStream.Read(FileFlags, SizeOf(FileFlags));
 
       if foVersion in FileFlags then
       begin
-        Stream.Read(FileVersion, SizeOf(FileVersion));
+        aStream.Read(FileVersion, SizeOf(FileVersion));
         aVersion := FileVersion;
       end;
 
-      if foMethod     in FileFlags then Stream.Read(FileMethod,     SizeOf(FileMethod));
-      if foDictionary in FileFlags then Stream.Read(FileDictionary, SizeOf(FileDictionary));
-      if foTable      in FileFlags then Stream.Read(FileTable,      SizeOf(FileTable));
+      if foMethod     in FileFlags then aStream.Read(FileMethod,     SizeOf(FileMethod));
+      if foDictionary in FileFlags then aStream.Read(FileDictionary, SizeOf(FileDictionary));
+      if foTable      in FileFlags then aStream.Read(FileTable,      SizeOf(FileTable));
 
       if foVersion    in FileFlags then aVersion := FileVersion;
 
       if aVersion < ver04 then
-      begin                                           //  [ver03] | [ver04]
-        Stream.Read(I, SizeOf(I)); FileSize := I;     //  4 bytes | 8 bytes
+      begin                                            //  [ver03] | [ver04]
+        aStream.Read(I, SizeOf(I)); FileSize := I;     //  4 bytes | 8 bytes
 
-        Stream.Read(FileTime, SizeOf(FileTime));      //  4 bytes | 4 bytes
-        Stream.Read(FileAttr, SizeOf(FileAttr));      //  4 bytes | 4 bytes
-        Stream.Read(FileCrc,  SizeOf(FileCrc));       //  4 bytes | 4 bytes
+        aStream.Read(FileTime, SizeOf(FileTime));      //  4 bytes | 4 bytes
+        aStream.Read(FileAttr, SizeOf(FileAttr));      //  4 bytes | 4 bytes
+        aStream.Read(FileCrc,  SizeOf(FileCrc));       //  4 bytes | 4 bytes
 
-        Stream.Read(I, SizeOf(I)); FilePacked   := I; //  4 bytes | 8 bytes
-        Stream.Read(I, SizeOf(I)); FileStartPos := I; //  4 bytes | 8 bytes
+        aStream.Read(I, SizeOf(I)); FilePacked   := I; //  4 bytes | 8 bytes
+        aStream.Read(I, SizeOf(I)); FileStartPos := I; //  4 bytes |    ---
       end else
-        Stream.Read(FileSize,
-          SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
-          SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
+        aStream.Read(FileSize,
+          SizeOf(FileSize) +
+          SizeOf(FileTime) +
+          SizeOf(FileAttr) +
+          SizeOf(FileCrc)  +
+          SizeOf(FilePacked));
 
-      Stream.Read(I, SizeOf(I));
+      aStream.Read(I, SizeOf(I));
       if I > 0 then
       begin
         SetLength(FileName, I);
-        Stream.Read(FileName[1], I);
+        aStream.Read(FileName[1], I);
         FileName := DoDirSeparators(FileName);
       end else
         SetLength(FileName, 0);
@@ -429,11 +425,14 @@ begin
       aStream.Write(FileCrc,  SizeOf(FileCrc));       //  4 bytes | 4 bytes
 
       I := FilePacked;   aStream.Write(I, SizeOf(I)); //  4 bytes | 8 bytes
-      I := FileStartPos; aStream.Write(I, SizeOf(I)); //  4 bytes | 8 bytes
+      I := FileStartPos; aStream.Write(I, SizeOf(I)); //  4 bytes |    ---
     end else
       aStream.Write(FileSize,
-        SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
-        SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
+        SizeOf(FileSize) +
+        SizeOf(FileTime) +
+        SizeOf(FileAttr) +
+        SizeOf(FileCrc)  +
+        SizeOf(FilePacked));
 
     I := Length(FileName);
     aStream.Write(I, SizeOf(FileName));
@@ -677,14 +676,15 @@ end;
 procedure THeaders.ReadItems(aStream: TStream; aAction: THeaderAction);
 var
   P: THeader;
+  I: integer;
   Id: integer;
   OffSet: int64;
   Version: byte;
 begin
-  P       := nil;
+  P := nil;
   Version := ver02;
-  OffSet  := FindFirstMarker(aStream);
 
+  OffSet  := FindFirstMarker(aStream);
   if OffSet > -1 then
   begin
     aStream.Seek(OffSet, 0);
@@ -696,17 +696,23 @@ begin
         begin
           AddItem(P);
         end;
-      end else Break;
-
+      end else
+        Break;
     until (P <> nil) and (foLast in P.FileFlags);
 
     if P <> nil then
-    begin
       Exclude(P.FileFlags, foLast);
-    end;
-
   end else
     ReadItemsB4b(aStream, aAction);
+
+  OffSet := aStream.Seek(0, 1);
+  for I := 0 to FPrimary.Count -1 do
+    with THeader(FPrimary.Items[I]) do
+    begin
+      Writeln(FileStartPos, ' - ',OffSet, ' = ', OffSet - FileStartPos);
+      // FileStartPos := OffSet;
+      Inc(OffSet, FilePacked);
+    end;
 end;
 
 function THeaders.GetNext(aChild: integer; aAction: THeaderAction): integer;

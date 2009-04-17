@@ -104,8 +104,8 @@ const
 var
   Stream: TFileStream;
   Buffer: array [0..BufferSize - 1] of byte;
-  Readed: integer;
-  I:      integer;
+  Readed: longint;
+  I:      longint;
 begin
   Result := cardinal(-1);
 
@@ -130,7 +130,7 @@ end;
 
 function Crc32Str(const aString: string): cardinal;
 var
-  I: integer;
+  I: longint;
 begin
   Result := cardinal(-1);
   for I := 1 to Length(aString) do
