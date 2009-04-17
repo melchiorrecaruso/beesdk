@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -125,8 +125,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="48" Y="542"/>
-        <TopLine Value="518"/>
+        <CursorPos X="14" Y="50"/>
+        <TopLine Value="22"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -293,7 +293,7 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit22>
     </Units>
-    <JumpHistory Count="28" HistoryIndex="27">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="66" Column="24" TopLine="53"/>
@@ -406,6 +406,14 @@
         <Filename Value="beegui.lpr"/>
         <Caret Line="126" Column="27" TopLine="79"/>
       </Position28>
+      <Position29>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="542" Column="48" TopLine="518"/>
+      </Position29>
+      <Position30>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="49" Column="13" TopLine="25"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

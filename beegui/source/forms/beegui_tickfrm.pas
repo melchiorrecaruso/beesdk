@@ -47,6 +47,7 @@ uses
   LResources,
   // ---
   Bee_Types,
+  Bee_Consts,
   Bee_Common,
   // ---
   BeeGui_RenameFrm,

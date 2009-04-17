@@ -34,6 +34,7 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   Bee_App,
   Bee_Types,
+  Bee_Consts,
   Bee_Common,
   Bee_Interface;
 

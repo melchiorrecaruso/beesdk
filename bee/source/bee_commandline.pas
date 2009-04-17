@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 { Contains:
 
-  TCommandLine class.
+    TCommandLine class.
 
   Modifyed:
 
-  v0.7.9 build 0970 - 2008.12.24 by Melchiorre Caruso.
+    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_CommandLine;

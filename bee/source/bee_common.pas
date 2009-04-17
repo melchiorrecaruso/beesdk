@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2008 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2009 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
 
 { Contains:
 
-  Various helper routines.
+    Various helper routines.
 
   Modifyed:
 
-  v0.7.8 build 0150 - 2005.06.27 by Melchiorre Caruso;
-  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-  v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
-  v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
+    v0.7.8 build 0150 - 2005.06.27 by Melchiorre Caruso;
+    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+    v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
+    v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0890 - 2008.10.18 by Melchiorre Caruso.
+    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
