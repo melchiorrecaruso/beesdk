@@ -73,15 +73,15 @@ type
     FileMethod: byte;
     FileDictionary: byte;
     FileTable: TTableParameters;
-    FileSize: uint64;
+    FileSize: int64;
     FileTime: longint;
     FileAttr: longint;
     FileCrc: longword;
-    FilePacked: uint64;
+    FilePacked: int64;
     FileName: string;
     // - End header data - //
     FileLink: string;
-    FileStartPos: uint64;
+    FileStartPos: int64;
     FileAction: THeaderAction;
   end;
 
