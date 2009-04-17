@@ -27,7 +27,7 @@
   v0.7.8 build 0148 - 2005.06.23 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   
-  v0.7.9 build 0955 - 2009.02.25 by Melchiorre Caruso.
+  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_Files;
@@ -71,7 +71,7 @@ type
     BlowFish: TBlowFish;
   private
     BufferSize: longint;
-    Buffer:     array [0..$1FFFF] of byte;
+    Buffer: array [0..$1FFFF] of byte;
   end;
 
 type
@@ -120,15 +120,14 @@ end;
 function TFileReader.Read(var Data; Count: longint): longint;
 var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
-  S:     longint;
+  S: longint;
 begin
   if (Count = 1) and (BufferReaded < BufferSize) then
   begin
     byte(Data) := Buffer[BufferReaded];
     Inc(BufferReaded);
     Result := Count;
-  end
-  else
+  end else
   begin
     Result := 0;
     repeat
@@ -137,16 +136,14 @@ begin
         BufferReaded := 0;
         BufferSize   := inherited Read(Buffer, SizeOf(Buffer));
 
-        if BufferSize = 0 then
-          Exit; // This causes Result < Count
+        if BufferSize = 0 then Exit; // This causes Result < Count
 
         if BlowFish.Started then
           BlowFish.Decode(Buffer, BufferSize);
       end;
       S := Count - Result;
 
-      if S > BufferSize - BufferReaded then
-        S := BufferSize - BufferReaded;
+      if S > BufferSize - BufferReaded then S := BufferSize - BufferReaded;
 
       CopyBytes(Buffer[BufferReaded], Bytes[Result], S);
       Inc(Result, S);
@@ -157,16 +154,24 @@ end;
 
 function TFileReader.Seek(Offset: longint; Origin: word): longint;
 begin
+  if (Origin = soFromCurrent) and (OffSet = 0) then
+    Result := inherited Seek(Offset - (BufferSize - BufferReaded), Origin)
+  else
+    Result := inherited Seek(Offset, Origin);
+
   BufferSize   := 0;
   BufferReaded := 0;
-  Result := inherited Seek(Offset, Origin);
 end;
 
 function TFileReader.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
+  if (Origin = soCurrent) and (OffSet = 0) then
+    Result := inherited Seek(Offset - (BufferSize - BufferReaded), Origin)
+  else
+    Result := inherited Seek(Offset, Origin);
+
   BufferSize   := 0;
   BufferReaded := 0;
-  Result := inherited Seek(Offset, Origin);
 end;
 
 function CreateTFileReader(const FileName: string; Mode: word): TFileReader;
@@ -194,8 +199,9 @@ end;
 procedure TFileWriter.Flush;
 begin
   if BlowFish.Started then
+  begin
     BufferSize := BlowFish.Encode(Buffer, BufferSize);
-
+  end;
   inherited Write(Buffer, BufferSize);
   BufferSize := 0;
 end;
@@ -203,7 +209,7 @@ end;
 function TFileWriter.Write(const Data; Count: longint): longint;
 var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
-  S:     longint;
+  S: longint;
 begin
   if Count > (SizeOf(Buffer) - BufferSize) then
   begin
@@ -219,20 +225,18 @@ begin
     CopyBytes(Bytes[Result], Buffer[BufferSize], Count - Result);
     Inc(BufferSize, Count - Result);
     Inc(Result, Count - Result);
-  end
-  else
-  if Count > 1 then
-  begin
-    CopyBytes(Data, Buffer[BufferSize], Count);
-    Inc(BufferSize, Count);
-    Result := Count;
-  end
-  else
-  begin
-    Buffer[BufferSize] := byte(Data);
-    Inc(BufferSize);
-    Result := Count;
-  end;
+  end else
+    if Count > 1 then
+    begin
+      CopyBytes(Data, Buffer[BufferSize], Count);
+      Inc(BufferSize, Count);
+      Result := Count;
+    end else
+    begin
+      Buffer[BufferSize] := byte(Data);
+      Inc(BufferSize);
+      Result := Count;
+    end;
 end;
 
 function TFileWriter.Seek(Offset: longint; Origin: word): longint;

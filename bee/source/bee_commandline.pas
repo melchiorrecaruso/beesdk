@@ -46,8 +46,8 @@ type
     FsOption:     boolean;
     FaOption:     string;
     FoOption:     char;
-    FmOption:     integer;
-    FdOption:     integer;
+    FmOption:     longint;
+    FdOption:     longint;
     FxOption:     TStringList;
     FtOption:     boolean;
     FlOption:     boolean;
@@ -57,7 +57,7 @@ type
     FcdOption:    string;
     FsoOption:    boolean;
     FcfgOption:   string;
-    FpriOption:   integer;
+    FpriOption:   longint;
     FArchiveName: string;
     FFileMasks:   TStringList;
   private
@@ -69,8 +69,8 @@ type
     procedure SetsOption(Value: boolean);
     procedure SetaOption(Value: string);
     procedure SetoOption(Value: char);
-    procedure SetmOption(Value: integer);
-    procedure SetdOption(Value: integer);
+    procedure SetmOption(Value: longint);
+    procedure SetdOption(Value: longint);
     procedure SettOption(Value: boolean);
     procedure SetlOption(Value: boolean);
     procedure SetyOption(Value: string);
@@ -78,14 +78,14 @@ type
     procedure SetvOption(Value: byte);
     procedure SetcdOption(Value: string);
     procedure SetcfgOption(Value: string);
-    procedure SetpriOption(Value: integer);
+    procedure SetpriOption(Value: longint);
     procedure SetArchiveName(Value: string);
   protected
     procedure ProcessOption(var S: string; var Option: boolean);
   public
-    procedure Process(AParams: TStringList);
     constructor Create;
     destructor Destroy; override;
+    procedure Process(AParams: TStringList);
     procedure Clear;
   public
     property Command: char Read FCommand Write SetCommand;
@@ -96,8 +96,8 @@ type
     property sOption: boolean Read FsOption Write SetsOption;
     property aOption: string Read FaOption Write SetaOption;
     property oOption: char Read FoOption Write SetoOption;
-    property mOption: integer Read FmOption Write SetmOption;
-    property dOption: integer Read FdOption Write SetdOption;
+    property mOption: longint Read FmOption Write SetmOption;
+    property dOption: longint Read FdOption Write SetdOption;
     property xOption: TStringList Read FxOption;
     property tOption: boolean Read FtOption Write SettOption;
     property lOption: boolean Read FlOption Write SetlOption;
@@ -107,7 +107,7 @@ type
     property cdOption: string Read FcdOption Write SetcdOption;
     property soOption: boolean Read FsoOption;
     property cfgOption: string Read FcfgOption Write SetcfgOption;
-    property priOption: integer Read FpriOption Write SetpriOption;
+    property priOption: longint Read FpriOption Write SetpriOption;
     property ArchiveName: string Read FArchiveName Write SetArchiveName;
     property FileMasks: TStringList Read FFileMasks;
   end;
@@ -140,15 +140,15 @@ begin
   FmOption := 1;
   FdOption := 2;
   FxOption.Clear;
-  FtOption     := False;
-  FlOption     := False;
-  FyOption     := '';
-  FkOption     := False;
-  FvOption     := ver03;
-  FcdOption    := '';
-  FsoOption    := False;
-  FcfgOption   := SelfPath + 'bee.ini';
-  FpriOption   := 1;
+  FtOption := False;
+  FlOption := False;
+  FyOption := '';
+  FkOption := False;
+  FvOption := ver03;
+  FcdOption := '';
+  FsoOption := False;
+  FcfgOption := SelfPath + 'bee.ini';
+  FpriOption := 1;
   FArchiveName := '';
   FFileMasks.Clear;
 end;
@@ -177,7 +177,7 @@ end;
 
 procedure TCommandLine.Process(AParams: TStringList);
 var
-  I: integer;
+  I: longint;
   S: string;
 begin
   // catch options, command, archive name and name of files
@@ -347,12 +347,12 @@ begin
   FoOption := Value;
 end;
 
-procedure TCommandLine.SetmOption(Value: integer);
+procedure TCommandLine.SetmOption(Value: longint);
 begin
   FmOption := Value;
 end;
 
-procedure TCommandLine.SetdOption(Value: integer);
+procedure TCommandLine.SetdOption(Value: longint);
 begin
   FdOption := Value;
 end;
@@ -392,7 +392,7 @@ begin
   FcfgOption := Value;
 end;
 
-procedure TCommandLine.SetpriOption(Value: integer);
+procedure TCommandLine.SetpriOption(Value: longint);
 begin
   FpriOption := Value;
 end;

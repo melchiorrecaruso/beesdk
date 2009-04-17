@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2008 Andrew Filinsky
+  Copyright (c) 2003-2009 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,8 +23,9 @@
   Modifyed:
 
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-  
-  v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky.
+  v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky;
+
+  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_Configuration;
@@ -42,11 +43,11 @@ const
   TableCols = 2;
 
 type
-  TTableCol = array [0..TableSize] of cardinal;
+  TTableCol = array [0..TableSize] of longword;
 
   TTable = packed record
-    Level: cardinal;
-    T:     array [0..TableCols - 1] of TTableCol;
+    Level: longword;
+    T: array [0..TableCols - 1] of TTableCol;
   end;
 
   TTableParameters = array [1..SizeOf(TTable) div 4] of byte;
@@ -54,8 +55,8 @@ type
   TConfigSection = class(TStringList)
   public
     function GetTable(const Ext: string; var T: TTableParameters): boolean;
-    procedure PutData(const Name: string; var Data; aCount: integer);
-    function GetData(const Name: string; var Data; aCount: integer): boolean;
+    procedure PutData(const Name: string; var Data; aCount: longint);
+    function GetData(const Name: string; var Data; aCount: longint): boolean;
   end;
 
   TConfiguration = class(TStringList)
@@ -65,8 +66,8 @@ type
     procedure LoadFromFile(const FileName: string); override;
     procedure SaveToFile(const FileName: string); override;
     function GetTable(const Ext: string; var T: TTableParameters): boolean;
-    procedure PutData(const Name: string; var Data; aCount: integer);
-    function GetData(const Name: string; var Data; aCount: integer): boolean;
+    procedure PutData(const Name: string; var Data; aCount: longint);
+    function GetData(const Name: string; var Data; aCount: longint): boolean;
     procedure Selector(const Name: string);
     function Split(const S: string; var Name, Value: string): boolean;
   public
@@ -91,18 +92,17 @@ end;
 
 destructor TConfiguration.Destroy;
 var
-  I: integer;
+  I: longint;
 begin
-  for I := 0 to Count - 1 do
-    Objects[I].Free;
-  inherited;
+  for I := 0 to Count -1 do Objects[I].Free;
+  inherited Destroy;
 end;
 
 procedure TConfiguration.LoadFromFile(const FileName: string);
 var
-  List: TStringList;
-  I:    integer;
   S, aName, aValue: string;
+  List: TStringList;
+  I: longint;
 begin
   List := TStringList.Create;
   List.LoadFromFile(FileName);
@@ -114,10 +114,10 @@ begin
     if (S > '') and (S[1] = '\') then
       Selector(S)
     else
-    if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
-      CurrentSection.Add(S)
-    else
-      CurrentSection.Values[aName] := aValue;
+      if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
+        CurrentSection.Add(S)
+      else
+        CurrentSection.Values[aName] := aValue;
   end;
 
   Selector('\main');
@@ -127,7 +127,7 @@ end;
 procedure TConfiguration.SaveToFile(const FileName: string);
 var
   List: TStringList;
-  I:    integer;
+  I: longint;
 begin
   List := TStringList.Create;
 
@@ -152,33 +152,32 @@ begin
   CurrentSection := OldSection;
 end;
 
-procedure TConfiguration.PutData(const Name: string; var Data; aCount: integer);
+procedure TConfiguration.PutData(const Name: string; var Data; aCount: longint);
 begin
   CurrentSection.PutData(Name, Data, aCount);
 end;
 
-function TConfiguration.GetData(const Name: string; var Data; aCount: integer): boolean;
+function TConfiguration.GetData(const Name: string; var Data; aCount: longint): boolean;
 begin
   Result := CurrentSection.GetData(Name, Data, aCount);
 end;
 
 procedure TConfiguration.Selector(const Name: string);
 var
-  Index: integer;
+  Index: longint;
 begin
   Index := IndexOfName(Name);
   if Index < 0 then
   begin
     CurrentSection := TConfigSection.Create;
     Objects[Add(Name + '=yes')] := CurrentSection;
-  end
-  else
+  end else
     CurrentSection := TConfigSection(Objects[Index]);
 end;
 
 function TConfiguration.Split(const S: string; var Name, Value: string): boolean;
 var
-  Index: integer;
+  Index: longint;
 begin
   Index  := System.Pos('=', S);
   Result := Index > 0;
@@ -200,19 +199,16 @@ var
 begin
   S      := Values[Ext];
   Result := GetData(Ext, T, SizeOf(T));
-  if not Result then
-    Result := (S = '') and (CompareText(Ext, '.Default') <> 0) and GetTable('.Default', T);
-  if not Result then
-    Result := (S > '') and (IndexOfName(S) >= 0) and (IndexOfName(S) < IndexOfName(Ext)) and
-      GetTable(S, T);
+  if not Result then Result := (S = '') and (CompareText(Ext, '.Default') <> 0) and GetTable('.Default', T);
+  if not Result then Result := (S > '') and (IndexOfName(S) >= 0) and (IndexOfName(S) < IndexOfName(Ext)) and GetTable(S, T);
 end;
 
-procedure TConfigSection.PutData(const Name: string; var Data; aCount: integer);
+procedure TConfigSection.PutData(const Name: string; var Data; aCount: longint);
 begin
   Values[Name] := Bee_Common.Hex(Data, aCount);
 end;
 
-function TConfigSection.GetData(const Name: string; var Data; aCount: integer): boolean;
+function TConfigSection.GetData(const Name: string; var Data; aCount: longint): boolean;
 begin
   FillChar(Data, aCount, 0);
   Result := Bee_Common.HexToData(Values[Name], Data, aCount);

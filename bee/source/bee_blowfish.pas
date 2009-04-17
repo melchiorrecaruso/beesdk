@@ -28,7 +28,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.12.28 by Melchiorre Caruso;
   
-  v0.7.9 build 0960 - 2009.02.27 by Melchiorre Caruso.
+  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_BlowFish;
@@ -50,11 +50,11 @@ type
   TBlowFish = class
   private
     FStarted: boolean;
-    P: array [1..18] of cardinal;
-    S: array [1.. 4, 0..255] of cardinal;
+    P: array [1..18] of longword;
+    S: array [1.. 4, 0..255] of longword;
   private
     procedure Initialize(const Key: string);
-    function F(Input: cardinal): cardinal;
+    function F(Input: longword): longword;
     { These two should speak for themselves, Xl and Xr are the first and
       the second 32 bits of data you want to encrypt or decrypt, P and S
       are the P-array and the S-boxes which you currently are using.
@@ -63,8 +63,8 @@ type
       gorithm  is applied to it  and  that you have to perform a loop in
       order to encrypt or decrypt more data than 8 bytes.
     }
-    procedure Encode(pXl, pXr: Pcardinal); overload;
-    procedure Decode(pXl, pXr: Pcardinal); overload;
+    procedure Encode(pXl, pXr: Plongword); overload;
+    procedure Decode(pXl, pXr: Plongword); overload;
   public
     constructor Create;
     procedure Start(const Key: string);
@@ -72,8 +72,8 @@ type
       or decryption of data.
     }
     procedure Finish;
-    function Encode(var aData; Count: cardinal): cardinal; overload;
-    function Decode(var aData; Count: cardinal): cardinal; overload;
+    function Encode(var aData; Count: longword): longword; overload;
+    function Decode(var aData; Count: longword): longword; overload;
   public
     property Started: boolean Read FStarted;
   end;
@@ -89,7 +89,7 @@ implementation
 *)
 
 const
-  SBox1: array [0..255] of cardinal = (
+  SBox1: array [0..255] of longword = (
     $d1310ba6, $98dfb5ac, $2ffd72db, $d01adfb7, $b8e1afed, $6a267e96,
     $ba7c9045, $f12c7f99, $24a19947, $b3916cf7, $0801f2e2, $858efc16,
     $636920d8, $71574e69, $a458fea3, $f4933d7e, $0d95748f, $728eb658,
@@ -134,7 +134,7 @@ const
     $f296ec6b, $2a0dd915, $b6636521, $e7b9f9b6, $ff34052e, $c5855664,
     $53b02d5d, $a99f8fa1, $08ba4799, $6e85076a);
 
-  SBox2: array [0..255] of cardinal = (
+  SBox2: array [0..255] of longword = (
     $4b7a70e9, $b5b32944, $db75092e, $c4192623, $ad6ea6b0, $49a7df7d,
     $9cee60b8, $8fedb266, $ecaa8c71, $699a17ff, $5664526c, $c2b19ee1,
     $193602a5, $75094c29, $a0591340, $e4183a3e, $3f54989a, $5b429d65,
@@ -179,7 +179,7 @@ const
     $675fda79, $e3674340, $c5c43465, $713e38d8, $3d28f89e, $f16dff20,
     $153e21e7, $8fb03d4a, $e6e39f2b, $db83adf7);
 
-  SBox3: array [0..255] of cardinal = (
+  SBox3: array [0..255] of longword = (
     $e93d5a68, $948140f7, $f64c261c, $94692934, $411520f7, $7602d4f7,
     $bcf46b2e, $d4a20068, $d4082471, $3320f46a, $43b7d4b7, $500061af,
     $1e39f62e, $97244546, $14214f74, $bf8b8840, $4d95fc1d, $96b591af,
@@ -224,7 +224,7 @@ const
     $a28514d9, $6c51133c, $6fd5c7e7, $56e14ec4, $362abfce, $ddc6c837,
     $d79a3234, $92638212, $670efa8e, $406000e0);
 
-  SBox4: array [0..255] of cardinal = (
+  SBox4: array [0..255] of longword = (
     $3a39ce37, $d3faf5cf, $abc27737, $5ac52d1b, $5cb0679e, $4fa33742,
     $d3822740, $99bc9bbe, $d5118e9d, $bf0f7315, $d62d1c7e, $c700c47b,
     $b78c1b6b, $21a19045, $b26eb1be, $6a366eb4, $5748ab2f, $bc946e79,
@@ -269,7 +269,7 @@ const
     $01c36ae4, $d6ebe1f9, $90d4f869, $a65cdea0, $3f09252d, $c208e69f,
     $b74e6132, $ce77e25b, $578fdfe3, $3ac372e6);
 
-  PArray: array [1..18] of cardinal = (
+  PArray: array [1..18] of longword = (
     $243f6a88, $85a308d3, $13198a2e, $03707344, $a4093822, $299f31d0,
     $082efa98, $ec4e6c89, $452821e6, $38d01377, $be5466cf, $34e90c6c,
     $c0ac29b7, $c97c50dd, $3f84d5b5, $b5470917, $9216d5d9, $8979fb1b);
@@ -283,23 +283,18 @@ end;
 
 procedure TBlowFish.Initialize(const Key: string);
 var
-  i, j, k: integer;
-  Data, Datal, Datar: cardinal;
+  i, j, k: longint;
+  Data, Datal, Datar: longword;
 begin
   { Initialize first the P-array }
-  for i := 1 to 18 do
-    P[i] := PArray[i];
+  for i := 1 to 18 do P[i] := PArray[i];
   { and then the four S-boxes, in order, with a fixed random string.
     This string consists of the hexadecimal digits of Pi.
   }
-  for j := 0 to 255 do
-    S[1, j] := SBox1[j];
-  for j := 0 to 255 do
-    S[2, j] := SBox2[j];
-  for j := 0 to 255 do
-    S[3, j] := SBox3[j];
-  for j := 0 to 255 do
-    S[4, j] := SBox4[j];
+  for j := 0 to 255 do S[1, j] := SBox1[j];
+  for j := 0 to 255 do S[2, j] := SBox2[j];
+  for j := 0 to 255 do S[3, j] := SBox3[j];
+  for j := 0 to 255 do S[4, j] := SBox4[j];
   { XOR P1 with the first 32 bits of the key, XOR P2 with the second 32
     bits of the key, and so on for all bits of the key (up to P18). Cycle
     throught the key bits repeatedly until the entire P-array has been
@@ -354,7 +349,7 @@ begin
     }
 end;
 
-function TBlowFish.F(Input: cardinal): cardinal;
+function TBlowFish.F(Input: longword): longword;
 var
   PInput: ^LArray;
 begin
@@ -362,7 +357,7 @@ begin
   Result := ((S[1, PInput^[0]] + S[2, PInput^[1]] {MOD HighestNumber}) xor
     S[3, PInput^[2]]) + S[4, PInput^[3]] { MOD HighestNumber};
   { In the original article in Dr. Dobb's Journal this function included
-    a MOD 2^32 (which  wouldn't fit in a 32 bits integer anyway), in the
+    a MOD 2^32 (which  wouldn't fit in a 32 bits longint anyway), in the
     source there was a MOD (2^32 - 1) while in the C source available on
     Dr. Dobb's  official FTP site on  ftp.mv.com there wasn't any MOD to
     be found. After  he was asked about this phenomenon,  Bruce Schneier
@@ -371,10 +366,10 @@ begin
   }
 end;
 
-procedure TBlowFish.Encode(pXl, pXr: Pcardinal);
+procedure TBlowFish.Encode(pXl, pXr: Plongword);
 var
-  i: integer;
-  Temp, Xl, Xr: cardinal;
+  i: longint;
+  Temp, Xl, Xr: longword;
 begin
   Xl := pXl^;
   Xr := pXr^;
@@ -400,10 +395,10 @@ begin
   pXr^ := Xr;
 end;
 
-procedure TBlowFish.Decode(pXl, pXr: Pcardinal);
+procedure TBlowFish.Decode(pXl, pXr: Plongword);
 var
-  i: integer;
-  Temp, Xl, Xr: cardinal;
+  i: longint;
+  Temp, Xl, Xr: longword;
 begin
   Xl := pXl^;
   Xr := pXr^;
@@ -445,10 +440,10 @@ begin
   FStarted := False;
 end;
 
-function TBlowFish.Encode(var aData; Count: cardinal): cardinal;
+function TBlowFish.Encode(var aData; Count: longword): longword;
 var
-  Data: array [0..MaxInt - 1] of byte absolute aData;
-  I:    cardinal;
+  Data: array [0..MaxInt -1] of byte absolute aData;
+  I: longword;
 begin
   Result := Count mod 8;
   if Result = 0 then
@@ -464,10 +459,10 @@ begin
   end;
 end;
 
-function TBlowFish.Decode(var aData; Count: cardinal): cardinal;
+function TBlowFish.Decode(var aData; Count: longword): longword;
 var
-  Data: array [0..MaxInt - 1] of byte absolute aData;
-  I:    cardinal;
+  Data: array [0..MaxInt -1] of byte absolute aData;
+  I: longword;
 begin
   Result := Count mod 8;
   if Result = 0 then

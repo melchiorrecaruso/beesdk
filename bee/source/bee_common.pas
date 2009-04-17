@@ -72,8 +72,8 @@ const
 
 // filename handling routines ...
 
-function FileNamePos(const Substr, Str: string): integer;
-function FileNameLastPos(const Substr, Str: string): integer;
+function FileNamePos(const Substr, Str: string): longint;
+function FileNameLastPos(const Substr, Str: string): longint;
 
 function IncludeTrailingBackSpace(const DirName: string): string;
 function ExcludeTrailingBackSpace(const DirName: string): string;
@@ -87,7 +87,7 @@ function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: bo
 
 procedure ExpandMask(const Mask: string; Masks: TStringList; Recursive: boolean);
 
-function CompareFileName(const S1, S2: string): integer;
+function CompareFileName(const S1, S2: string): longint;
 function ExtractFileDrive(const FileName: string): string;
 
 function DeleteFilePath(const FilePath, FileName: string): string;
@@ -116,21 +116,21 @@ function GenerateFileName(const Path: string): string;
 
 function SizeToStr(const Size: int64): string;
 function RatioToStr(const PackedSize, Size: int64): string;
-function AttrToStr(Attr: integer): string;
+function AttrToStr(Attr: longint): string;
 
 // time handling routines ...
 
 function TimeDifference(X: double): string;
-function TimeToStr(T: integer): string;
+function TimeToStr(T: longint): string;
 function DateTimeToString(X: TDateTime): string; overload;
 function DateTimeToString(X: TDateTime; const Format: string): string; overload;
-function FileTimeToString(X: integer): string; overload;
-function FileTimeToString(X: integer; const Format: string): string; overload;
+function FileTimeToString(X: longint): string; overload;
+function FileTimeToString(X: longint; const Format: string): string; overload;
 
 // hex routines ...
 
-function Hex(const Data; Count: integer): string;
-function HexToData(const S: string; var Data; Count: integer): boolean;
+function Hex(const Data; Count: longint): string;
+function HexToData(const S: string; var Data; Count: longint): boolean;
 
 // low level functions ...
 
@@ -144,7 +144,7 @@ function SizeOfFile(const FileName: string): int64;
 // system control
 
 {$IFDEF MSWINDOWS}
-function SetPriority(Priority: integer): boolean; // Priority is 0..3
+function SetPriority(Priority: longint): boolean; // Priority is 0..3
 {$ENDIF}
 
 implementation
@@ -161,7 +161,7 @@ const
 
 // string handling routines ...
 
-function FileNamePos(const Substr, Str: string): integer;
+function FileNamePos(const Substr, Str: string): longint;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
   Result := System.Pos(SubStr, Str);
@@ -170,7 +170,7 @@ begin
   {$ENDIF}
 end;
 
-function FileNameLastPos(const Substr, Str: string): integer;
+function FileNameLastPos(const Substr, Str: string): longint;
 begin
   Result := Length(Str);
   while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)),
@@ -180,7 +180,7 @@ begin
   end;
 end;
 
-function CompareFileName(const S1, S2: string): integer;
+function CompareFileName(const S1, S2: string): longint;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
   Result := SysUtils.CompareStr(S1, S2);
@@ -191,7 +191,7 @@ end;
 
 function ExtractFileDrive(const FileName: string): string;
 var
-  I, L: integer;
+  I, L: longint;
 begin
   L := Length(FileName);
   I := Pos(':', FileName);
@@ -226,7 +226,7 @@ end;
 
 function IncludeTrailingBackSlash(const DirName: string): string;
 var
-  L: integer;
+  L: longint;
 begin
   L := Length(DirName);
   if (L > 0) and (not (DirName[L] in ['\', '/'])) then
@@ -237,7 +237,7 @@ end;
 
 function ExcludeTrailingBackSlash(const DirName: string): string;
 var
-  L: integer;
+  L: longint;
 begin
   L := Length(DirName);
   if (L > 0) and (DirName[L] in ['\', '/']) then
@@ -248,7 +248,7 @@ end;
 
 function IncludeTrailingBackSpace(const DirName: string): string;
 var
-  L: integer;
+  L: longint;
 begin
   L := Length(DirName);
   if (L > 0) and (not (DirName[L] in [' '])) then
@@ -259,7 +259,7 @@ end;
 
 function ExcludeTrailingBackSpace(const DirName: string): string;
 var
-  L: integer;
+  L: longint;
 begin
   L := Length(DirName);
   if (L > 0) and (DirName[L] in [' ']) then
@@ -297,10 +297,10 @@ begin
   ;
 end;
 
-function CharCount(const S: string; C: char): integer;
+function CharCount(const S: string; C: char): longint;
 var
-  I: integer;
-  L: integer;
+  I: longint;
+  L: longint;
 begin
   Result := 0;
   L      := Length(S);
@@ -315,7 +315,7 @@ var
   iFileName: string;
   iMaskPath: string;
   iMask: string;
-  I: integer;
+  I: longint;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
   iFileName := FileName;
@@ -358,7 +358,7 @@ end;
 
 function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean;
 var
-  I: integer;
+  I: longint;
 begin
   Result := False;
   if Assigned(Masks) and (Masks.Count > 0) then
@@ -383,12 +383,12 @@ end;
 
 procedure ExpandMask(const Mask: string; Masks: TStringList; Recursive: boolean);
 var
-  I: integer;
-  Error: integer;
+  I: longint;
+  Error: longint;
   Rec: TSearchRec;
   Card: boolean;
-  LastSlash: integer;
-  FirstSlash: integer;
+  LastSlash: longint;
+  FirstSlash: longint;
   FolderName: string;
   FolderPath: string;
 begin
@@ -440,7 +440,7 @@ end;
 
 function FixFileName(const FileName: string): string;
 var
-  I: integer;
+  I: longint;
 begin
   Result := DoDirSeparators(FileName);
   Result := DeleteFileDrive(Result);
@@ -471,7 +471,7 @@ end;
 
 function FixDirName(const DirName: string): string;
 var
-  I: integer;
+  I: longint;
 begin
   Result := DoDirSeparators(DirName);
   Result := DeleteFileDrive(Result);
@@ -535,10 +535,10 @@ begin
   Result := Format('%0.2f', [(Now - X) * (24 * 60 * 60)]);
 end;
 
-function TimeToStr(T: integer): string;
+function TimeToStr(T: longint): string;
 var
   H, M, S:    string;
-  ZH, ZM, ZS: integer;
+  ZH, ZM, ZS: longint;
 begin
   ZH := T div 3600;
   ZM := T div 60 - ZH * 60;
@@ -572,7 +572,7 @@ begin
   SysUtils.DateTimeToString(Result, Format, X);
 end;
 
-function FileTimeToString(X: integer): string;
+function FileTimeToString(X: longint): string;
 begin
   try
     Result := DateTimeToString(FileDateToDateTime(X));
@@ -581,7 +581,7 @@ begin
   end;
 end;
 
-function FileTimeToString(X: integer; const Format: string): string;
+function FileTimeToString(X: longint; const Format: string): string;
 begin
   try
     Result := DateTimeToString(FileDateToDateTime(X), Format);
@@ -592,7 +592,7 @@ end;
 
 function DirectoryExists(const DirName: string): boolean;
 var
-  Code: integer;
+  Code: longint;
 begin
   Code   := FileGetAttr(DirName);
   Result := (Code <> -1) and (faDirectory and Code <> 0);
@@ -632,7 +632,7 @@ end;
 
 function GenerateFileName(const Path: string): string;
 var
-  I: integer;
+  I: longint;
 begin
   repeat
     Result := '????????.$$$';
@@ -657,7 +657,7 @@ begin
     Result := Format('%u%%', [100]);
 end;
 
-function AttrToStr(Attr: integer): string;
+function AttrToStr(Attr: longint): string;
 begin
   Result := '.DRHSA';
   if Attr and faDirectory = 0 then Result[2] := '.';
@@ -669,10 +669,10 @@ end;
 
 // hex routines ...
 
-function Hex(const Data; Count: integer): string;
+function Hex(const Data; Count: longint): string;
 var
-  I, J: integer;
-  K:    cardinal;
+  I, J: longint;
+  K: longword;
 begin
   SetLength(Result, Count shl 1);
   J := 1;
@@ -686,9 +686,9 @@ begin
   end;
 end;
 
-function HexToData(const S: string; var Data; Count: integer): boolean;
+function HexToData(const S: string; var Data; Count: longint): boolean;
 var
-  I: integer;
+  I: longint;
 begin
   Result := False;
   if Length(S) < Count * 2 then
@@ -749,7 +749,7 @@ end;
 
 function SizeOfFile(const FileName: string): int64;
 var
-  Err: integer;
+  Err: longint;
   Rec: TSearchRec;
 begin
   Err := FindFirst(FileName, faAnyFile, Rec);
@@ -763,9 +763,9 @@ end;
 // system control
 
 {$IFDEF MSWINDOWS}
-function SetPriority(Priority: integer): boolean; // Priority is 0..3
+function SetPriority(Priority: longint): boolean; // Priority is 0..3
 const
-  PriorityValue: array [0..3] of integer =
+  PriorityValue: array [0..3] of longint =
     (IDLE_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS,
     REALTIME_PRIORITY_CLASS);
 begin

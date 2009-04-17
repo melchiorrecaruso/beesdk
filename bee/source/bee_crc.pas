@@ -24,9 +24,12 @@
 
   (C) 1998 Dmitry Auzhin;
   (C) 1999-2005 Andrew Filinsky.
+
   Modifyed:
 
-  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky.
+  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+
+  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_Crc;
@@ -41,15 +44,15 @@ uses
 
 // Crc32 calculating routines ...
 
-procedure UpdCrc32(var aCrc32: cardinal; aData: byte);
-function UpdateCrc32(const aCrc32: cardinal; aData: byte): cardinal;
-function Crc32File(const aFileName: string): cardinal;
-function Crc32Str(const aString: string): cardinal;
+procedure UpdCrc32(var aCrc32: longword; aData: byte);
+function UpdateCrc32(const aCrc32: longword; aData: byte): longword;
+function Crc32File(const aFileName: string): longword;
+function Crc32Str(const aString: string): longword;
 
 implementation
 
 const
-  Crc32Tab: array [0..255] of cardinal = (
+  Crc32Tab: array [0..255] of longword = (
     $00000000, $77073096, $EE0E612C, $990951BA, $076DC419, $706AF48F, $E963A535, $9E6495A3,
     $0EDB8832, $79DCB8A4, $E0D5E91E, $97D2D988, $09B64C2B, $7EB17CBD, $E7B82D07, $90BF1D91,
     $1DB71064, $6AB020F2, $F3B97148, $84BE41DE, $1ADAD47D, $6DDDE4EB, $F4D4B551, $83D385C7,
@@ -85,29 +88,29 @@ const
 
 // Crc32 calculating routines ...
 
-procedure UpdCrc32(var aCrc32: cardinal; aData: byte);
+procedure UpdCrc32(var aCrc32: longword; aData: byte);
 var
-  Temp: cardinal;
+  Temp: longword;
 begin
   Temp   := aCrc32;
   aCrc32 := Crc32Tab[byte(Temp xor aData)] xor (Temp shr 8);
 end;
 
-function UpdateCrc32(const aCrc32: cardinal; aData: byte): cardinal;
+function UpdateCrc32(const aCrc32: longword; aData: byte): longword;
 begin
   Result := Crc32Tab[byte(aCrc32 xor aData)] xor (aCrc32 shr 8);
 end;
 
-function Crc32File(const aFileName: string): cardinal;
+function Crc32File(const aFileName: string): longword;
 const
   BufferSize = 65536;
 var
   Stream: TFileStream;
   Buffer: array [0..BufferSize - 1] of byte;
   Readed: longint;
-  I:      longint;
+  I: longint;
 begin
-  Result := cardinal(-1);
+  Result := longword(-1);
 
   try
     Stream := TFileStream.Create(aFileName, fmOpenRead or fmShareDenyWrite);
@@ -120,7 +123,9 @@ begin
     repeat
       Readed := Stream.Read(Buffer, SizeOf(Buffer));
       for I := 0 to Readed - 1 do
+      begin
         Result := UpdateCrc32(Result, Buffer[I]);
+      end;
     until Readed = 0;
     Stream.Free;
   end;
@@ -128,13 +133,15 @@ begin
   Result := not Result;
 end;
 
-function Crc32Str(const aString: string): cardinal;
+function Crc32Str(const aString: string): longword;
 var
   I: longint;
 begin
-  Result := cardinal(-1);
+  Result := longword(-1);
   for I := 1 to Length(aString) do
+  begin
     Result := UpdateCrc32(Result, Ord(aString[I]));
+  end;
   Result := not Result;
 end;
 

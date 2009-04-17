@@ -24,7 +24,7 @@
 
   v0.7.9 build 0383 - 2007.06.27 by Andrew Filinsky;
 
-  v0.7.9 build 0906 - 2008.10.25 by Melchiorre Caruso.
+  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_Assembler;
@@ -33,82 +33,82 @@ unit Bee_Assembler;
 
 interface
 
-procedure CopyBytes(const Source, Dest; Count: cardinal);
+procedure CopyBytes(const Source, Dest; Count: longword);
 
-procedure FillCardinal(const Data; const Count, Value: cardinal);
-procedure AddCardinal(const Data; const Count, Value: cardinal);
-procedure ClearCardinal(const Data; const Count: cardinal);
-procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal);
+procedure FillCardinal(const Data; const Count, Value: longword);
+procedure AddCardinal(const Data; const Count, Value: longword);
+procedure ClearCardinal(const Data; const Count: longword);
+procedure MoveCardinalUnchecked(const Source, Dest; Count: longword);
 
-function MulDiv(A, B, C: cardinal): cardinal;
-function MulDecDiv(A, B, C: cardinal): cardinal;
+function MulDiv(A, B, C: longword): longword;
+function MulDecDiv(A, B, C: longword): longword;
 
 implementation
 
-procedure CopyBytes(const Source, Dest; Count: cardinal);
+procedure CopyBytes(const Source, Dest; Count: longword);
 asm
-         XCHG    ESI, Source
-         XCHG    EDI, Dest
-         PUSH    Count
-         SHR     Count, 2
-         REP     movsd
-         POP     Count
-         AND     Count, $03
-         REP     movsb
-         MOV     ESI, Source
-         MOV     EDI, Dest
+  XCHG    ESI, Source
+  XCHG    EDI, Dest
+  PUSH    Count
+  SHR     Count, 2
+  REP     movsd
+  POP     Count
+  AND     Count, $03
+  REP     movsb
+  MOV     ESI, Source
+  MOV     EDI, Dest
 end;
 
-procedure FillCardinal(const Data; const Count, Value: cardinal);
+procedure FillCardinal(const Data; const Count, Value: longword);
 asm
-         PUSH    EDI
-         MOV     EDI, Data
-         MOV     EAX, Value
-         MOV     ECX, Count
-         REP     stosd
-         POP     EDI
+  PUSH    EDI
+  MOV     EDI, Data
+  MOV     EAX, Value
+  MOV     ECX, Count
+  REP     stosd
+  POP     EDI
 end;
 
-procedure AddCardinal(const Data; const Count, Value: cardinal);
+procedure AddCardinal(const Data; const Count, Value: longword);
 asm
-         @1:
-         ADD     [Data], Value
-         ADD     Data, 4
-         DEC     Count
-         JNE     @1
+  @1:
+  ADD     [Data], Value
+  ADD     Data, 4
+  DEC     Count
+  JNE     @1
 end;
 
-procedure ClearCardinal(const Data; const Count: cardinal);
+procedure ClearCardinal(const Data; const Count: longword);
 asm
-         MOV     ECX, Count
-         MOV     EDX, EDI
-         MOV     EDI, Data
-         XOR     EAX, EAX
-         REP     stosd
-         MOV     EDI, EDX
+  MOV     ECX, Count
+  MOV     EDX, EDI
+  MOV     EDI, Data
+  XOR     EAX, EAX
+  REP     stosd
+  MOV     EDI, EDX
 end;
 
-procedure MoveCardinalUnchecked(const Source, Dest; Count: cardinal);
+procedure MoveCardinalUnchecked(const Source, Dest; Count: longword);
 asm
-         XCHG    ESI, Source
-         XCHG    EDI, Dest
-         REP     movsd
-         MOV     ESI, Source
-         MOV     EDI, Dest
+  XCHG    ESI, Source
+  XCHG    EDI, Dest
+  REP     movsd
+  MOV     ESI, Source
+  MOV     EDI, Dest
 end;
 
-function MulDiv(A, B, C: cardinal): cardinal;
+function MulDiv(A, B, C: longword): longword;
 asm
-         MUL     B
-         DIV     C
+  MUL     B
+  DIV     C
 end;
 
-function MulDecDiv(A, B, C: cardinal): cardinal;
+function MulDecDiv(A, B, C: longword): longword;
 asm
-         MUL     B
-         SUB     EAX, 1
-         SBB     EDX, 0
-         DIV     C
+  MUL     B
+  SUB     EAX, 1
+  SBB     EDX, 0
+  DIV     C
 end;
 
 end.
