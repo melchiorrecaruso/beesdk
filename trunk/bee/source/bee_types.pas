@@ -39,7 +39,7 @@ type
   TFileInfo = record
     FileName: PChar;
     FilePath: PChar;
-    FileSize: uint64;
+    FileSize: int64;
     FileTime: longint;
     FileAttr: longint;
   end;
@@ -52,10 +52,10 @@ type
   TFileInfoExtra = record
     FileName:     PChar;
     FilePath:     PChar;
-    FileSize:     uint64;
+    FileSize:     int64;
     FileTime:     longint;
     FileAttr:     longint;
-    FilePacked:   uint64;
+    FilePacked:   int64;
     FileRatio:    longint;
     FileComm:     PChar;
     FileCrc:      longword;

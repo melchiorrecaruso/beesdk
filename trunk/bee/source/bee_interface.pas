@@ -58,8 +58,8 @@ type
     FParams: TStringList;
     FSuspendedTime: double;
     FStartTime: double;
-    FTotalSize: uint64;
-    FSize: uint64;
+    FTotalSize: int64;
+    FSize: int64;
     FSuspended: boolean;
     FTerminated: boolean;
     FCode: byte;
@@ -108,9 +108,9 @@ type
     property OnList:       TListEvent    read FOnList       write FOnList;
   public
     property TotalTime:  longint read GetTotalTime;
-    property TotalSize:  uint64  read FTotalSize;
+    property TotalSize:  int64  read FTotalSize;
     property Time:       longint read GetTime;
-    property Size:       uint64  read FSize;
+    property Size:       int64  read FSize;
     property Percentes:  longint read GetPercentes;
     property Speed:      longint read GetSpeed;
     property Terminated: boolean read FTerminated write FTerminated;
@@ -191,7 +191,7 @@ var
 begin
   I := GetSpeed;
   if I > 0 then
-    Result := Round((FTotalSize - FSize) / I)
+    Result := (FTotalSize - FSize) div I
   else
     Result := 0;
 end;
