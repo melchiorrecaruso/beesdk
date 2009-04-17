@@ -191,7 +191,7 @@ var
 begin
   I := GetSpeed;
   if I > 0 then
-    Result := (FTotalSize - FSize) div I
+    Result := Round((FTotalSize - FSize) / I)
   else
     Result := 0;
 end;

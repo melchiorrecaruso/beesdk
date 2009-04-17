@@ -166,7 +166,7 @@ end;
 function TFileReader.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
   if (Origin = soCurrent) and (OffSet = 0) then
-    Result := inherited Seek(Offset - (BufferSize - BufferReaded), Origin)
+    Result := inherited Seek(Offset + BufferSize - BufferReaded, Origin)
   else
     Result := inherited Seek(Offset, Origin);
 
