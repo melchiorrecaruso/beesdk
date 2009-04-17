@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.7.9 build 0990 - 2009.04.03 by Melchiorre Caruso.
+    v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -58,8 +58,8 @@ type
     FParams: TStringList;
     FSuspendedTime: double;
     FStartTime: double;
-    FTotalSize: qword;
-    FSize: qword;
+    FTotalSize: uint64;
+    FSize: uint64;
     FSuspended: boolean;
     FTerminated: boolean;
     FCode: byte;
@@ -67,7 +67,7 @@ type
     function GetSpeed: longint;
     function GetPercentes: longint;
     function GetTotalTime: longint;
-    function GetTime: integer;
+    function GetTime: longint;
     procedure SetCode(aCode: byte);
     procedure SetSuspended(aValue: boolean);
     procedure SetPriority(aPriority: byte);
@@ -90,10 +90,10 @@ type
     procedure ProcessProgress;
     procedure ProcessClear;
   public
-    procedure IncSize(aValue: integer); overload;
-    procedure IncSize;                  overload;
-    procedure DecSize(aValue: integer); overload;
-    procedure DecSize;                  overload;
+    procedure IncSize(const aValue: int64); overload;
+    procedure IncSize;                      overload;
+    procedure DecSize(const aValue: int64); overload;
+    procedure DecSize;                      overload;
   public
     property OnFatalError: TMessageEvent read FOnFatalError write FOnFatalError;
     property OnError:      TMessageEvent read FOnError      write FOnError;
@@ -107,12 +107,12 @@ type
     property OnClear:      TCustomEvent  read FOnClear      write FOnClear;
     property OnList:       TListEvent    read FOnList       write FOnList;
   public
-    property TotalTime:  integer read GetTotalTime;
-    property TotalSize:  int64   read FTotalSize;
-    property Time:       integer read GetTime;
-    property Size:       int64   read FSize;
-    property Percentes:  integer read GetPercentes;
-    property Speed:      integer read GetSpeed;
+    property TotalTime:  longint read GetTotalTime;
+    property TotalSize:  uint64  read FTotalSize;
+    property Time:       longint read GetTime;
+    property Size:       uint64  read FSize;
+    property Percentes:  longint read GetPercentes;
+    property Speed:      longint read GetSpeed;
     property Terminated: boolean read FTerminated write FTerminated;
     property Suspended:  boolean read FSuspended  write SetSuspended;
     property Code:       byte    read FCode;
@@ -133,14 +133,14 @@ uses
 constructor TApp.Create(aParams: TStringList);
 begin
   inherited Create;
-  FParams        := aParams;
+  FParams := aParams;
   FSuspendedTime := 0;
-  FStartTime     := 0;
-  FTotalSize     := 0;
-  FSize          := 0;
-  FSuspended     := False;
-  FTerminated    := False;
-  FCode          := 0;
+  FStartTime := 0;
+  FTotalSize := 0;
+  FSize := 0;
+  FSuspended := False;
+  FTerminated := False;
+  FCode := 0;
 end;
 
 destructor TApp.Destroy;
@@ -154,7 +154,7 @@ begin
   FStartTime := Now;
 end;
 
-function TApp.GetSpeed: integer;
+function TApp.GetSpeed: longint;
 var
   I: int64;
 begin
@@ -163,13 +163,13 @@ begin
   else
     I := MilliSecondsBetween(FSuspendedTime - FStartTime, 0);
 
-  if I <> 0 then
+  if I > 0 then
     Result := Round((FSize / I) * 1000)
   else
     Result := 0;
 end;
 
-function TApp.GetPercentes: integer;
+function TApp.GetPercentes: longint;
 begin
   if FtotalSize <> 0 then
     Result := Round((FSize / FTotalSize) * 100)
@@ -177,7 +177,7 @@ begin
     Result := 0;
 end;
 
-function TApp.GetTotalTime: integer;
+function TApp.GetTotalTime: longint;
 begin
   if not FSuspended then
     Result := SecondsBetween(Now, FStartTime)
@@ -185,12 +185,12 @@ begin
     Result := SecondsBetween(FSuspendedTime - FStartTime, 0);
 end;
 
-function TApp.GetTime: integer;
+function TApp.GetTime: longint;
 var
-  I: integer;
+  I: longint;
 begin
   I := GetSpeed;
-  if I <> 0 then
+  if I > 0 then
     Result := (FTotalSize - FSize) div I
   else
     Result := 0;
@@ -209,7 +209,7 @@ begin
   end;
 end;
 
-procedure TApp.SetCode(aCode: integer);
+procedure TApp.SetCode(aCode: byte);
 begin
   if FCode < aCode then
   begin
@@ -217,14 +217,14 @@ begin
   end;
 end;
 
-procedure TApp.SetPriority(aPriority: integer);
+procedure TApp.SetPriority(aPriority: byte);
 begin
   {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
   Bee_Common.SetPriority(aPriority);
   {$ENDIF} {$ENDIF}
 end;
 
-procedure TApp.IncSize(aValue: integer);
+procedure TApp.IncSize(const aValue: int64);
 begin
   Inc(FSize, aValue);
 end;
@@ -234,7 +234,7 @@ begin
   Inc(FSize);
 end;
 
-procedure TApp.DecSize(aValue: integer);
+procedure TApp.DecSize(const aValue: int64);
 begin
   Dec(FSize, aValue);
 end;

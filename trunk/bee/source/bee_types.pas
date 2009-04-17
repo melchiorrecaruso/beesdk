@@ -20,7 +20,7 @@
 
   Modifyed:
 
-    v0.7.9 build 0990 - 2009.04.03 by Melchiorre Caruso;
+    v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso;
 }
 
 unit Bee_Types;
@@ -37,7 +37,7 @@ type
   TFileInfo = record
     FileName: PChar;
     FilePath: PChar;
-    FileSize: qword;
+    FileSize: uint64;
     FileTime: longint;
     FileAttr: longint;
   end;
@@ -50,13 +50,13 @@ type
   TFileInfoExtra = record
     FileName:     PChar;
     FilePath:     PChar;
-    FileSize:     qword;
+    FileSize:     uint64;
     FileTime:     longint;
     FileAttr:     longint;
-    FilePacked:   qword;
+    FilePacked:   uint64;
     FileRatio:    longint;
     FileComm:     PChar;
-    FileCrc:      cardinal;
+    FileCrc:      longword;
     FileMethod:   PChar;
     FileVersion:  PChar;
     FilePassword: PChar;
@@ -120,7 +120,7 @@ end;
 
 function PCharToString(aValue: PChar): string;
 var
-  I: integer;
+  I: uint64;
 begin
   SetLength(Result, 0);
   if aValue <> nil then

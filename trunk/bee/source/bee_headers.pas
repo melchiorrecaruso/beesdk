@@ -73,15 +73,15 @@ type
     FileMethod: byte;
     FileDictionary: byte;
     FileTable: TTableParameters;
-    FileSize: qword;
+    FileSize: uint64;
     FileTime: longint;
     FileAttr: longint;
-    FileCrc: cardinal;
-    FilePacked: qword;
+    FileCrc: longword;
+    FilePacked: uint64;
     FileName: string;
     // - End header data - //
     FileLink: string;
-    FileStartPos: qword;
+    FileStartPos: uint64;
     FileAction: THeaderAction;
   end;
 
@@ -98,41 +98,41 @@ type
     procedure ReadItems (aStream: TStream; aAction: THeaderAction);
     procedure WriteItems(aStream: TStream);
 
-    function  MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction): integer; overload;
-    function  MarkItems(Mask: string; MaskAct, aAction: THeaderAction): integer; overload;
-    procedure MarkItem(aIndex: integer; aAction: THeaderAction);
+    function  MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction): longint; overload;
+    function  MarkItems(Mask: string; MaskAct, aAction: THeaderAction): longint; overload;
+    procedure MarkItem(aIndex: longint; aAction: THeaderAction);
     procedure MarkAll(aAction: THeaderAction);
 
-    function GetBack(aChild: integer; aAction:  THeaderAction): integer; overload;
-    function GetNext(aChild: integer; aAction:  THeaderAction): integer; overload;
-    function GetBack(aChild: integer;   aFlag:  THeaderFlag):   integer; overload;
-    function GetNext(aChild: integer;   aFlag:  THeaderFlag):   integer; overload;
-    function GetBack(aChild: integer; aAction:  THeaderAction;  const aFileName: string): integer; overload;
-    function GetNext(aChild: integer; aAction:  THeaderAction;  const aFileName: string): integer; overload;
-    function GetBack(aChild: integer; aActions: THeaderActions; const aFileName: string): integer; overload;
-    function GetNext(aChild: integer; aActions: THeaderActions; const aFileName: string): integer; overload;
+    function GetBack(aChild: longint; aAction:  THeaderAction): longint; overload;
+    function GetNext(aChild: longint; aAction:  THeaderAction): longint; overload;
+    function GetBack(aChild: longint;   aFlag:  THeaderFlag):   longint; overload;
+    function GetNext(aChild: longint;   aFlag:  THeaderFlag):   longint; overload;
+    function GetBack(aChild: longint; aAction:  THeaderAction;  const aFileName: string): longint; overload;
+    function GetNext(aChild: longint; aAction:  THeaderAction;  const aFileName: string): longint; overload;
+    function GetBack(aChild: longint; aActions: THeaderActions; const aFileName: string): longint; overload;
+    function GetNext(aChild: longint; aActions: THeaderActions; const aFileName: string): longint; overload;
 
     function GetSize (aAction: THeaderAction): int64; overload;
     function GetSize (aActions: THeaderActions): int64; overload;
     function GetPackedSize(aAction: THeaderAction): int64; overload;
     function GetPackedSize(aActions: THeaderActions): int64; overload;
 
-    function GetCount(Actions: THeaderActions): integer; overload;
-    function GetCount: integer; overload;
+    function GetCount(Actions: THeaderActions): longint; overload;
+    function GetCount: longint; overload;
 
-    function GetItem(aIndex: integer): THeader;
+    function GetItem(aIndex: longint): THeader;
 
     function SetModule(const aFileName: string): boolean;
-    function GetModule: integer;
+    function GetModule: longint;
   private
-    FNews: integer;
+    FNews: longint;
     FModule: TStream;
     FPrimary: TList;
     FSecondary: TList;
     FCommandLine: TCommandLine;
   private
     procedure AddItem(P: THeader);
-    function Compare(P1, P2: THeader): integer;
+    function Compare(P1, P2: THeader): longint;
     function CreatePHeader(const RecPath: string; const Rec: TSearchRec): THeader; overload;
     function CreatePHeader(aStream: TStream; aAction: THeaderAction; var aVersion: byte): THeader; overload;
     function FindFirstMarker(aStream: TStream): int64;
@@ -176,7 +176,7 @@ end;
 
 procedure THeaders.Clear;
 var
-  I: integer;
+  I: longint;
 begin
   FNews := 0;
   FModule.Size := 0;
@@ -192,7 +192,7 @@ function THeaders.CreatePHeader(const RecPath: string; const Rec: TSearchRec): T
 begin
   Result := THeader.Create;
   try
-    // ---
+    // - Start header data - //
     Result.FileFlags := [foTear, foTable];
     Result.FileVersion := Min(Max(ver02, FCommandLine.vOption), ver04);
     Result.FileMethod := 1;
@@ -201,10 +201,10 @@ begin
     Result.FileSize := Rec.Size;
     Result.FileTime := Rec.Time;
     Result.FileAttr := Rec.Attr;
-    Result.FileCrc := cardinal(-1);
+    Result.FileCrc := longword(-1);
     Result.FilePacked := 0;
     Result.FileName := FCommandLine.cdOption + DeleteFileDrive(RecPath) + Rec.Name;
-    // ---
+    // - End header data - //
     Result.FileLink := RecPath + Rec.Name;
     Result.FileStartPos := 0;
     Result.FileAction := toUpdate;
@@ -215,7 +215,7 @@ end;
 
 function THeaders.CreatePHeader(aStream: TStream; aAction: THeaderAction; var aVersion: byte): THeader;
 var
-  I: integer;
+  I: longint;
 begin
   Result := THeader.Create;
   try
@@ -270,7 +270,7 @@ begin
   end;
 end;
 
-function THeaders.Compare(P1, P2: THeader): integer;
+function THeaders.Compare(P1, P2: THeader): longint;
 begin
   Result := CompareFileName(
     ExtractFileExt(P1.FileName),
@@ -289,7 +289,7 @@ end;
 
 procedure THeaders.AddItem(P: THeader);
 var
-  L, M, H, I: integer;
+  L, M, H, I: longint;
 begin
   // Add item to secondary list
   L :=  0;
@@ -368,10 +368,9 @@ begin
   end;
 end;
 
-
 function THeaders.SearchItem(FileName: string): THeader;
 var
-  L, M, H, I: integer;
+  L, M, H, I: longint;
   S: string;
 begin
   L :=  0;
@@ -400,7 +399,7 @@ end;
 
 procedure THeaders.WriteItem(aStream: TStream; P: THeader; var aVersion: byte);
 var
-  I: integer;
+  I: longint;
 begin
   aStream.Write(Marker, SizeOf(Marker));
   aStream.Write(P.FileFlags, SizeOf(P.FileFlags));
@@ -445,7 +444,7 @@ end;
 
 procedure THeaders.WriteItems(aStream: TStream);
 var
-  I: integer;
+  I: longint;
   Version: byte;
 begin
   if aStream.Seek(0, 1) = 0 then
@@ -469,7 +468,7 @@ end;
 
 function THeaders.AddItems(aConfiguration: TConfiguration): int64;
 var
-  I, J: integer;
+  I, J: longint;
   S: TStringList;
 begin
   Result := 0;
@@ -489,9 +488,9 @@ begin
   SortNews(aConfiguration);
 end;
 
-function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction): integer;
+function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction): longint;
 var
-  I, J: integer;
+  I, J: longint;
 begin
   Result := 0;
   for  I := 0 to Masks.Count -1 do
@@ -500,9 +499,9 @@ begin
   end;
 end;
 
-function THeaders.MarkItems(Mask: string; MaskAct: THeaderAction; aAction: THeaderAction): integer;
+function THeaders.MarkItems(Mask: string; MaskAct: THeaderAction; aAction: THeaderAction): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Mask := FCommandLine.cdOption + Mask;
 
@@ -516,14 +515,14 @@ begin
       end;
 end;
 
-procedure THeaders.MarkItem(aIndex: integer; aAction: THeaderAction);
+procedure THeaders.MarkItem(aIndex: longint; aAction: THeaderAction);
 begin
   THeader(FPrimary.Items[aIndex]).FileAction := aAction;
 end;
 
 procedure THeaders.MarkAll(aAction: THeaderAction);
 var
-  I: integer;
+  I: longint;
 begin
   for I := 0 to FPrimary.Count -1 do
   begin
@@ -533,7 +532,7 @@ end;
 
 procedure THeaders.MarkAsLast(aAction: THeaderAction);
 var
-  I: integer;
+  I: longint;
 begin
   for I := FPrimary.Count -1 downto 0 do
     with THeader(FPrimary.Items[I]) do
@@ -547,7 +546,7 @@ end;
 procedure THeaders.SortNews(aConfiguration: TConfiguration);
 var
   P: THeader;
-  I, First, Method, Dictionary: integer;
+  I, First, Method, Dictionary: longint;
   CurrentExt, PreviousExt: string;
 begin
   aConfiguration.Selector('\main');
@@ -605,7 +604,7 @@ end;
 
 function THeaders.FindFirstMarker(aStream: TStream): int64;
 var
-  Id: integer;
+  Id: longint;
   StrmPos: int64;
 begin
   Result := -1;
@@ -632,9 +631,9 @@ end;
 procedure THeaders.ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
 var
   P: THeader;
-  Ptr: ^integer;
+  Ptr: ^longint;
   Symbol: byte;
-  SymbolIndex: integer;
+  SymbolIndex: longint;
   B4bMarker: array [0..3] of byte;
   Version: byte;
 begin
@@ -676,8 +675,8 @@ end;
 procedure THeaders.ReadItems(aStream: TStream; aAction: THeaderAction);
 var
   P: THeader;
-  I: integer;
-  Id: integer;
+  I: longint;
+  Id: longint;
   OffSet: int64;
   Version: byte;
 begin
@@ -709,15 +708,14 @@ begin
   for I := 0 to FPrimary.Count -1 do
     with THeader(FPrimary.Items[I]) do
     begin
-      Writeln(FileStartPos, ' - ',OffSet, ' = ', OffSet - FileStartPos);
-      // FileStartPos := OffSet;
+      FileStartPos := OffSet;
       Inc(OffSet, FilePacked);
     end;
 end;
 
-function THeaders.GetNext(aChild: integer; aAction: THeaderAction): integer;
+function THeaders.GetNext(aChild: longint; aAction: THeaderAction): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Result := -1;
   for I := aChild to FPrimary.Count -1 do
@@ -729,9 +727,9 @@ begin
       end;
 end;
 
-function THeaders.GetBack(aChild: integer; aAction: THeaderAction): integer;
+function THeaders.GetBack(aChild: longint; aAction: THeaderAction): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Result := -1;
   for I := aChild downto 0 do
@@ -743,9 +741,9 @@ begin
       end;
 end;
 
-function THeaders.GetNext(aChild: integer; aFlag: THeaderFlag): integer;
+function THeaders.GetNext(aChild: longint; aFlag: THeaderFlag): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Result := -1;
   for I := aChild to FPrimary.Count -1 do
@@ -757,9 +755,9 @@ begin
       end;
 end;
 
-function THeaders.GetBack(aChild: integer; aFlag: THeaderFlag): integer;
+function THeaders.GetBack(aChild: longint; aFlag: THeaderFlag): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Result := -1;
   for I := aChild downto 0 do
@@ -771,9 +769,9 @@ begin
       end;
 end;
 
-function THeaders.GetNext(aChild: integer; aAction: THeaderAction; const aFileName: string): integer;
+function THeaders.GetNext(aChild: longint; aAction: THeaderAction; const aFileName: string): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Result := -1;
   for I := aChild to FPrimary.Count -1 do
@@ -785,9 +783,9 @@ begin
       end;
 end;
 
-function THeaders.GetBack(aChild: integer; aActions: THeaderActions; const aFileName: string): integer;
+function THeaders.GetBack(aChild: longint; aActions: THeaderActions; const aFileName: string): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Result := -1;
   for I := aChild downto 0 do
@@ -799,9 +797,9 @@ begin
       end;
 end;
 
-function THeaders.GetNext(aChild: integer; aActions: THeaderActions; const aFileName: string): integer;
+function THeaders.GetNext(aChild: longint; aActions: THeaderActions; const aFileName: string): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Result := -1;
   for I := aChild to FPrimary.Count -1 do
@@ -813,9 +811,9 @@ begin
       end;
 end;
 
-function THeaders.GetBack(aChild: integer; aAction: THeaderAction; const aFileName: string): integer;
+function THeaders.GetBack(aChild: longint; aAction: THeaderAction; const aFileName: string): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Result := -1;
   for I := aChild downto 0 do
@@ -829,7 +827,7 @@ end;
 
 function THeaders.GetSize(aAction: THeaderAction): int64;
 var
-  I: integer;
+  I: longint;
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
@@ -842,7 +840,7 @@ end;
 
 function THeaders.GetPackedSize(aAction: THeaderAction): int64;
 var
-  I: integer;
+  I: longint;
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
@@ -855,7 +853,7 @@ end;
 
 function THeaders.GetSize(aActions: THeaderActions): int64;
 var
-  I: integer;
+  I: longint;
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
@@ -868,7 +866,7 @@ end;
 
 function THeaders.GetPackedSize(aActions: THeaderActions): int64;
 var
-  I: integer;
+  I: longint;
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
@@ -879,9 +877,9 @@ begin
       end;
 end;
 
-function THeaders.GetCount(Actions: THeaderActions): integer;
+function THeaders.GetCount(Actions: THeaderActions): longint;
 var
-  I: integer;
+  I: longint;
 begin
   Result := 0;
   for  I := 0 to FPrimary.Count -1 do
@@ -892,12 +890,12 @@ begin
       end;
 end;
 
-function THeaders.GetCount: integer;
+function THeaders.GetCount: longint;
 begin
   Result := FPrimary.Count;
 end;
 
-function THeaders.GetItem(aIndex: integer): THeader;
+function THeaders.GetItem(aIndex: longint): THeader;
 begin
   Result := FPRimary.Items[aIndex];
 end;
@@ -922,7 +920,7 @@ begin
   end;
 end;
 
-function THeaders.GetModule: integer;
+function THeaders.GetModule: longint;
 begin
   if Assigned(FModule) then
     Result := FModule.Size
@@ -933,7 +931,7 @@ end;
 procedure THeaders.ScanFileSystem(Mask: string; var Size: int64);
 var
   P: THeader;
-  Error: integer;
+  Error: longint;
   Rec: TSearchRec;
   RecPath: string;
   RecName: string;

@@ -29,7 +29,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.8.0 build 1012 - 2009.04.15 by Melchiorre Caruso.
+  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -77,8 +77,8 @@ type
     procedure ProcessFilesToOverwriteWithFreshOption(Headers: THeaders);
 
     // already file exists in archive
-    function AlreadyFileExists(Headers: THeaders; aIndex: integer;
-      aActions: THeaderActions; const aFileName: string): integer;
+    function AlreadyFileExists(Headers: THeaders; aIndex: longint;
+      aActions: THeaderActions; const aFileName: string): longint;
 
     procedure ProcesstOption;
     procedure ProcesslOption;
@@ -235,7 +235,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToExtract;
 var
-  I: integer;
+  I: longint;
 begin
   if FCommandLine.Command = 'E' then
     for I := 0 to Headers.GetCount -1 do
@@ -257,7 +257,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToOverWrite;
 var
-  I, J: integer;
+  I, J: longint;
   P: THeader;
 begin
   if (not FCommandLine.uOption) and (not FCommandLine.fOption) then
@@ -283,7 +283,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToOverWriteDefault(Headers: THeaders);
 var
-  I, J: integer;
+  I, J: longint;
   FI: TFileInfo;
   P: THeader;
   S: string;
@@ -382,7 +382,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToOverwriteWithUpdateOption(Headers: THeaders);
 var
-  I: integer;
+  I: longint;
   P: THeader;
 begin
   for I := 0 to Headers.GetCount -1 do
@@ -400,7 +400,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToOverwriteWithFreshOption(Headers: THeaders);
 var
-  I: integer;
+  I: longint;
   P: THeader;
 begin
   for I := 0 to Headers.GetCount -1 do
@@ -422,7 +422,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToOverwriteWithUpdateAndFreshOption(Headers: THeaders);
 var
-  I: integer;
+  I: longint;
   P: THeader;
 begin
   for I := 0 to Headers.GetCount -1 do
@@ -441,8 +441,8 @@ begin
   end;
 end;
 
-function TBeeApp.AlreadyFileExists(Headers: THeaders; aIndex: integer;
-  aActions: THeaderActions; const aFileName: string): integer;
+function TBeeApp.AlreadyFileExists(Headers: THeaders; aIndex: longint;
+  aActions: THeaderActions; const aFileName: string): longint;
 begin
   if Length(aFileName) > 0 then
   begin
@@ -462,7 +462,7 @@ end;
 function TBeeApp.ProcessFilesToRename(Headers: THeaders): boolean;
 var
   S: string;
-  I: integer;
+  I: longint;
   P: THeader;
   FI: TFileInfo;
 begin
@@ -518,7 +518,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToFresh;
 var
-  I, J, BackTear, NextTear: integer;
+  I, J, BackTear, NextTear: longint;
   P: THeader;
 begin
   I := Headers.GetBack(Headers.GetCount -1, toFresh);
@@ -553,7 +553,7 @@ end;
 
 procedure TBeeApp.ProcessFilesToDelete;
 var
-  I, J, BackTear, NextTear: integer;
+  I, J, BackTear, NextTear: longint;
   P: THeader;
 begin
   I := Headers.GetBack(Headers.GetCount -1, toDelete);
@@ -591,11 +591,11 @@ end;
 function TBeeApp.ProcessFilesToSwap(Headers: THeaders): boolean;
 var
   P: THeader;
-  I, J: integer;
+  I, J: longint;
   Decoder: TDecoder;
   FSwapStrm: TFileWriter;
-  iDictionary, iTable, iTear: integer;
-  CurrDictionary, CurrTable: integer;
+  iDictionary, iTable, iTear: longint;
+  CurrDictionary, CurrTable: longint;
 begin
   Result := True;
 
@@ -660,7 +660,7 @@ end;
 
 procedure TBeeApp.ProcessFilesDeleted(Headers: THeaders);
 var
-  I: integer;
+  I: longint;
   Back, Next: THeader;
 begin
   // rescue header informations
@@ -706,8 +706,8 @@ end;
 procedure TBeeApp.ProcessFilesToDecode;
 var
   P: THeader;
-  I, J: integer;
-  iDictionary, iTable, iTear: integer;
+  I, J: longint;
+  iDictionary, iTable, iTear: longint;
 begin
   I := Headers.GetBack(Headers.GetCount -1, aAction); // last header
   while I > -1 do
@@ -782,7 +782,7 @@ end;
 
 procedure TBeeApp.EncodeShell;
 var
-  I: integer;
+  I: longint;
   P: THeader;
   Encoder: TEncoder;
   TmpFileName: string;
@@ -893,7 +893,7 @@ var
   Headers: THeaders;
   Return: boolean;
   P: THeader;
-  I: integer;
+  I: longint;
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
@@ -956,7 +956,7 @@ procedure TBeeApp.DeleteShell;
 var
   TmpFileName: string;
   TmpFile: TFileWriter;
-  I: integer;
+  I: longint;
   P: THeader;
   Headers: THeaders;
   Encoder: TEncoder;
@@ -1066,7 +1066,7 @@ var
   Headers: THeaders;
   Encoder: TEncoder;
   P: THeader;
-  I: integer;
+  I: longint;
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
@@ -1145,7 +1145,7 @@ begin
   if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
-function CompareFn(P1, P2: pointer): integer;
+function CompareFn(P1, P2: pointer): longint;
 begin
   Result := CompareFileName(
     ExtractFilePath(THeader(P1).FileName),
@@ -1160,15 +1160,15 @@ end;
 procedure TBeeApp.ListShell;
 var
   P: THeader;
-  I: integer;
+  I: longint;
   Headers: THeaders;
   FI: TFileInfoExtra;
   {$IFDEF CONSOLEAPPLICATION}
   HeadersToList: TList;
   HeadersToListPath: string;
   {$ENDIF}
-  TotalPack, TotalSize, TotalFiles: integer;
-  Version, Method, Dictionary: integer;
+  TotalPack, TotalSize, TotalFiles: longint;
+  Version, Method, Dictionary: longint;
 begin
   ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 

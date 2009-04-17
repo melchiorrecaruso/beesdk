@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.7.9 build 0980 - 2009.03.11 by Melchiorre Caruso.
+  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -257,7 +257,7 @@ begin
     emNorm: App.ProcessMessage(msgEncoding + P.FileName);
   end;
 
-  P.FileStartPos := Stream.Seek(0, 1);
+  P.FileStartPos := Stream.Seek(0, soCurrent);
   P.FileCrc      := cardinal(-1);
 
   if (SrcStrm <> nil) then

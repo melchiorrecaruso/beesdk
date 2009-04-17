@@ -82,7 +82,7 @@ type
 
   constructor TConsole.Create;
   var
-    I: integer;
+    I: longint;
   begin
     inherited Create;
     FKey    := '';

@@ -42,7 +42,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-  v0.7.9 build 0960 - 2009.02.27 by Melchiorre Caruso.
+  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_RangeCoder;
@@ -58,32 +58,33 @@ uses
 const
   TOP     = 1 shl 24;
   NUM     = 4;
-  Thres   = 255 * cardinal(TOP);
+  Thres   = 255 * longword(TOP);
   MaxFreq = TOP - 1;
 
 type
   /// TRangeCoder...
+
   TRangeCoder = class
     constructor Create(aStream: TStream);
     procedure StartEncode;
     procedure StartDecode;
     procedure FinishEncode;
     procedure FinishDecode;
-    procedure Encode(CumFreq, Freq, TotFreq: cardinal);
-    function GetFreq(TotFreq: cardinal): cardinal;
-    procedure Decode(CumFreq, Freq, TotFreq: cardinal);
+    procedure Encode(CumFreq, Freq, TotFreq: longword);
+    function GetFreq(TotFreq: longword): longword;
+    procedure Decode(CumFreq, Freq, TotFreq: longword);
   private
     procedure ShiftLow;
-    function InputByte: cardinal;
-    procedure OutputByte(aValue: cardinal);
+    function InputByte: longword;
+    procedure OutputByte(aValue: longword);
   private
     FStream: TStream;
-    Range:   cardinal;
-    Low:     cardinal;
-    Code:    cardinal;
-    Carry:   cardinal;
-    Cache:   cardinal;
-    FFNum:   cardinal;
+    Range:   longword;
+    Low:     longword;
+    Code:    longword;
+    Carry:   longword;
+    Cache:   longword;
+    FFNum:   longword;
   end;
 
 implementation
@@ -106,7 +107,7 @@ end;
 
 procedure TRangeCoder.StartDecode;
 var
-  I: cardinal;
+  I: longword;
 begin
   StartEncode;
   for I := 0 to NUM do
@@ -115,10 +116,9 @@ end;
 
 procedure TRangeCoder.FinishEncode;
 var
-  I: cardinal;
+  I: longword;
 begin
-  for I := 0 to NUM do
-    ShiftLow;
+  for I := 0 to NUM do ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;
@@ -126,13 +126,13 @@ begin
   /// nothing to do...
 end;
 
-procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: cardinal);
+procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: longword);
 var
-  Tmp: cardinal;
+  Tmp: longword;
 begin
   Tmp   := Low;
   Low   := Low + MulDiv(Range, CumFreq, TotFreq);
-  Carry := Carry + cardinal(Low < Tmp);
+  Carry := Carry + longword(Low < Tmp);
   Range := MulDiv(Range, Freq, TotFreq);
   while Range < TOP do
   begin
@@ -141,7 +141,7 @@ begin
   end;
 end;
 
-procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: cardinal);
+procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: longword);
 begin
   Code  := Code - MulDiv(Range, CumFreq, TotFreq);
   Range := MulDiv(Range, Freq, TotFreq);
@@ -152,7 +152,7 @@ begin
   end;
 end;
 
-function TRangeCoder.GetFreq(TotFreq: cardinal): cardinal;
+function TRangeCoder.GetFreq(TotFreq: longword): longword;
 begin
   Result := MulDecDiv(Code + 1, TotFreq, Range);
 end;
@@ -175,7 +175,7 @@ begin
   Low := Low shl 8;
 end;
 
-function TRangeCoder.InputByte: cardinal;
+function TRangeCoder.InputByte: longword;
 var
   Value: byte;
 begin
@@ -183,7 +183,7 @@ begin
   Result := Value;
 end;
 
-procedure TRangeCoder.OutputByte(aValue: cardinal);
+procedure TRangeCoder.OutputByte(aValue: longword);
 begin
   FStream.Write(aValue, 1);
 end;

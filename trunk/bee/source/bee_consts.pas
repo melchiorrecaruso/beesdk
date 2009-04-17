@@ -31,7 +31,7 @@ interface
 const
   // Id marker
 
-  Marker: integer = 442852674;
+  Marker: longint = 442852674;
 
   // Version number
 
