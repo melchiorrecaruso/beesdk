@@ -74,9 +74,9 @@ type
     destructor Destroy; override;
     function EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
     function EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-      const SrcSize: int64; SrcEncoded: boolean): boolean;
+      const SrcSize: uint64; SrcEncoded: boolean): boolean;
     function CopyStrm  (P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-      const SrcSize: int64; SrcEncoded: boolean): boolean;
+      const SrcSize: uint64; SrcEncoded: boolean): boolean;
   private
     function GetPassword(P: THeader): string;
     procedure Progress;
@@ -97,7 +97,7 @@ type
     destructor Destroy; override;
     function DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
     function DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
-      const DstSize: int64; DstEncoded: boolean): boolean;
+      const DstSize: uint64; DstEncoded: boolean): boolean;
   private
     function GetPassword(P: THeader): string;
     procedure Progress;
@@ -242,12 +242,12 @@ begin
 end;
 
 function TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-  const SrcSize: int64; SrcEncoded: boolean): boolean;
+  const SrcSize: uint64; SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
   Password: string;
-  SrcPosition: int64;
-  I: int64;
+  SrcPosition: uint64;
+  I: uint64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -331,10 +331,10 @@ begin
 end;
 
 function TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-  const SrcSize: int64; SrcEncoded: boolean): boolean;
+  const SrcSize: uint64; SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
-  I: int64;
+  I: uint64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -422,7 +422,7 @@ var
   DstFile: TFileWriter;
   Symbol:  byte;
   Crc: cardinal;
-  I: int64;
+  I: uint64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -508,13 +508,13 @@ begin
 end;
 
 function TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
-  const DstSize: int64; DstEncoded: boolean): boolean;
+  const DstSize: uint64; DstEncoded: boolean): boolean;
 var
   DstFile: TFileWriter;
   Password: string;
   Symbol:  byte;
   Crc: cardinal;
-  I: int64;
+  I: uint64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
