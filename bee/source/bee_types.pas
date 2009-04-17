@@ -37,9 +37,9 @@ type
   TFileInfo = record
     FileName: PChar;
     FilePath: PChar;
-    FileSize: cardinal;
-    FileTime: integer;
-    FileAttr: integer;
+    FileSize: qword;
+    FileTime: longint;
+    FileAttr: longint;
   end;
 
 type
@@ -50,17 +50,17 @@ type
   TFileInfoExtra = record
     FileName:     PChar;
     FilePath:     PChar;
-    FileSize:     int64;
-    FileTime:     integer;
-    FileAttr:     integer;
-    FilePacked:   int64;
-    FileRatio:    integer;
+    FileSize:     qword;
+    FileTime:     longint;
+    FileAttr:     longint;
+    FilePacked:   qword;
+    FileRatio:    longint;
     FileComm:     PChar;
     FileCrc:      cardinal;
     FileMethod:   PChar;
     FileVersion:  PChar;
     FilePassword: PChar;
-    FilePosition: integer;
+    FilePosition: longint;
   end;
 
 type

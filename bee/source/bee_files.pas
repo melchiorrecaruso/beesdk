@@ -238,22 +238,27 @@ end;
 function TFileWriter.Seek(Offset: longint; Origin: word): longint;
 begin
   if BufferSize > 0 then
+  begin
     Flush;
+  end;
   Result := inherited Seek(Offset, Origin);
 end;
 
 function TFileWriter.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
   if BufferSize > 0 then
+  begin
     Flush;
+  end;
   Result := inherited Seek(Offset, Origin);
 end;
 
 destructor TFileWriter.Destroy;
 begin
   if BufferSize > 0 then
+  begin
     Flush;
-
+  end;
   BlowFish.Free;
   inherited Destroy;
 end;

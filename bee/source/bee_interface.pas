@@ -58,19 +58,19 @@ type
     FParams: TStringList;
     FSuspendedTime: double;
     FStartTime: double;
-    FTotalSize: int64;
-    FSize: int64;
+    FTotalSize: qword;
+    FSize: qword;
     FSuspended: boolean;
     FTerminated: boolean;
     FCode: byte;
   protected
-    function GetSpeed: integer;
-    function GetPercentes: integer;
-    function GetTotalTime: integer;
+    function GetSpeed: longint;
+    function GetPercentes: longint;
+    function GetTotalTime: longint;
     function GetTime: integer;
-    procedure SetCode(aCode: integer);
+    procedure SetCode(aCode: byte);
     procedure SetSuspended(aValue: boolean);
-    procedure SetPriority(aPriority: integer);
+    procedure SetPriority(aPriority: byte);
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;

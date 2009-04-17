@@ -144,7 +144,7 @@ begin
   FlOption     := False;
   FyOption     := '';
   FkOption     := False;
-  FvOption     := ver04;
+  FvOption     := ver03;
   FcdOption    := '';
   FsoOption    := False;
   FcfgOption   := SelfPath + 'bee.ini';
