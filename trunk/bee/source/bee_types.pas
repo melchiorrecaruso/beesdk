@@ -18,9 +18,11 @@
 
 { Contains:
 
+    Types definitions
+
   Modifyed:
 
-    v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso;
+    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso;
 }
 
 unit Bee_Types;
@@ -71,38 +73,6 @@ type
   TRequestEvent = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
   TListEvent    = procedure(const aFileInfo: TFileInfoExtra) of object;
 
-const
-  // CoreStatus ...
-
-  csUnknow           = -1;
-  csReady            =  0;
-  csExecuting        =  1;
-  csWaitingOverwrite =  2;
-  csWaitingRename    =  3;
-  csWaitingPassword  =  4;
-  csWaitingRequest   =  5;
-  csTerminated       =  6;
-
-const
-  // CoreCode
-
-  ccUnknow    = -1;
-  ccSuccesful =  0;
-  ccWarning   =  1;
-  ccError     =  2;
-
-const
-  // CorePriority
-
-  cpUnknow       = -1;
-  cpIdle         =  0;
-  cpLowest       =  1;
-  cpLower        =  2;
-  cpNormal       =  3;
-  cpHigher       =  4;
-  cpHighest      =  5;
-  cpTimeCritical =  6;
-
 function StringToPChar(const aValue: string): PChar;
 function PCharToString(aValue: PChar): string;
 
@@ -120,13 +90,13 @@ end;
 
 function PCharToString(aValue: PChar): string;
 var
-  I: uint64;
+  I: longint;
 begin
   SetLength(Result, 0);
   if aValue <> nil then
   begin
     I := StrLen(aValue);
-    if I <> 0 then
+    if I > 0 then
     begin
       SetLength(Result, I);
       Move(aValue^, Result[1], I);

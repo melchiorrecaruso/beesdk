@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,18 +18,18 @@
 
 { Contains:
 
-  Bee archiver shell.
+    Bee archiver shell.
 
   Modifyed:
 
-  v0.7.8 build 0150 - 2005.06.27 by Melchiorre Caruso;
-  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-  v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
-  v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
-  v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
-  v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
+    v0.7.8 build 0150 - 2005.06.27 by Melchiorre Caruso;
+    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+    v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
+    v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
+    v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
+    v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
+    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -120,7 +120,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.8.0 build 1022 archiver utility, April 2009' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1024 archiver utility, April 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
