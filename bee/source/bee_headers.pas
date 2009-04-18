@@ -704,13 +704,13 @@ begin
   end else
     ReadItemsB4b(aStream, aAction);
 
-  OffSet := aStream.Seek(0, 1);
-  for I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]) do
-    begin
-      FileStartPos := OffSet;
-      Inc(OffSet, FilePacked);
-    end;
+  //OffSet := aStream.Seek(0, 1);
+  //for I := 0 to FPrimary.Count -1 do
+  //  with THeader(FPrimary.Items[I]) do
+  //  begin
+  //    FileStartPos := OffSet;
+  //    Inc(OffSet, FilePacked);
+  //  end;
 end;
 
 function THeaders.GetNext(aChild: longint; aAction: THeaderAction): longint;

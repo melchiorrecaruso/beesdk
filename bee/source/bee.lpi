@@ -11,7 +11,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="5"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
@@ -69,7 +69,7 @@
       <Unit4>
         <Filename Value="bee_headers.pas"/>
         <UnitName Value="Bee_Headers"/>
-        <CursorPos X="9" Y="713"/>
+        <CursorPos X="5" Y="713"/>
         <TopLine Value="675"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="45"/>
