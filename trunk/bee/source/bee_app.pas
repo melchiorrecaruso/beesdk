@@ -827,7 +827,7 @@ begin
           begin
             P := Headers.GetItem(I);
             case P.FileAction of
-              toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FilePacked, False);
+              toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
               toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
               toFresh:  Encoder.EncodeFile(P, emNorm);
               toUpdate: Encoder.EncodeFile(P, emNorm);
@@ -1004,7 +1004,7 @@ begin
           begin
             P := Headers.GetItem(I);
             case P.FileAction of
-              toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FilePacked, False);
+              toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
               toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
               toDelete: ProcessMessage(msgDeleting + P.FileName);
             end;
@@ -1097,7 +1097,7 @@ begin
           if not FTerminated then
           begin
             P := Headers.GetItem(I);
-            Encoder.CopyStrm(P, emNorm, FArcFile, P.FilePacked, False);
+            Encoder.CopyStrm(P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
           end;
         end;
         Encoder.Destroy;

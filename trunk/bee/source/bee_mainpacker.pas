@@ -76,7 +76,7 @@ type
     function EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
       const SrcSize: int64; SrcEncoded: boolean): boolean;
     function CopyStrm  (P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-      const SrcSize: int64; SrcEncoded: boolean): boolean;
+      const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean): boolean;
   private
     function GetPassword(P: THeader): string;
     procedure Progress;
@@ -257,7 +257,7 @@ begin
     emNorm: App.ProcessMessage(msgEncoding + P.FileName);
   end;
 
-  P.FileStartPos := Stream.Seek(0, soCurrent);
+  P.FileStartPos := Stream.Seek(0, 1);
   P.FileCrc      := cardinal(-1);
 
   if (SrcStrm <> nil) then
@@ -331,7 +331,7 @@ begin
 end;
 
 function TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-  const SrcSize: int64; SrcEncoded: boolean): boolean;
+  const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
   I: int64;
@@ -349,6 +349,8 @@ begin
   if (SrcStrm <> nil) then
   begin
     if SrcEncoded then SrcStrm.BlowFish.Start(GetPassword(P));
+
+    SrcStrm.Seek(SrcStartPos, 0);
 
     I := 0;
     while I < SrcSize do
