@@ -157,15 +157,11 @@ begin
   for I := 0 to 1 do
   begin
     aPart    := @Table.T[I];
-    aPart[0] := aPart[0] + 256;
-    // Weight of first-encoutered deterministic symbol
-    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
-    // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
+    aPart[0] := aPart[0] + 256; // Weight of first-encoutered deterministic symbol
+    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32; // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
     aPart[MaxSymbol + 3] := Increment * aPart[MaxSymbol + 3] shl 2;
-    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8;
-    // Zero-valued parameter allowed...
-    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));
-    // Lowest value of interval
+    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8; // Zero-valued parameter allowed...
+    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5])); // Lowest value of interval
   end;
 end;
 
