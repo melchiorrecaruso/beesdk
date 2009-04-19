@@ -59,8 +59,8 @@
       <Unit3>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <CursorPos X="3" Y="145"/>
-        <TopLine Value="95"/>
+        <CursorPos X="6" Y="399"/>
+        <TopLine Value="391"/>
         <EditorIndex Value="7"/>
         <UsageCount Value="56"/>
         <Loaded Value="True"/>
@@ -90,7 +90,7 @@
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="6" Y="159"/>
-        <TopLine Value="97"/>
+        <TopLine Value="112"/>
         <EditorIndex Value="6"/>
         <UsageCount Value="40"/>
         <Loaded Value="True"/>
@@ -121,7 +121,7 @@
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
         <CursorPos X="29" Y="88"/>
-        <TopLine Value="1"/>
+        <TopLine Value="41"/>
         <EditorIndex Value="9"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
