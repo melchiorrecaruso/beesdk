@@ -170,7 +170,7 @@ end;
 
 function TApp.GetPercentes: longint;
 begin
-  if FtotalSize <> 0 then
+  if FTotalSize > 0 then
     Result := Round((FSize / FTotalSize) * 100)
   else
     Result := 0;

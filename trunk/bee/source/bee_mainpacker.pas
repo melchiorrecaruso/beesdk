@@ -140,19 +140,17 @@ function TEncoder.GetPassword(P: THeader): string;
 var
   FI: TFileInfo;
 begin
-  with FI do
-  begin
-    FileName := StringToPChar(ExtractFileName(P.FileName));
-    FilePath := StringToPChar(ExtractFilePath(P.FileName));
+  FI.FileName := StringToPChar(ExtractFileName(P.FileName));
+  FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
 
-    FileSize := P.FileSize;
-    FileTime := P.FileTime;
-    FileAttr := P.FileAttr;
-  end;
+  FI.FileSize := P.FileSize;
+  FI.FileTime := P.FileTime;
+  FI.FileAttr := P.FileAttr;
+
   Result := App.ProcessPassword(FI, '');
 
-  StrDispose(FI.FileName);
-  StrDispose(FI.FileName);
+  FreeAndNilPChar(FI.FileName);
+  FreeAndNilPChar(FI.FileName);
 
   if Length(Result) < MinKeyLength then Exclude(P.FileFlags, foPassword);
 end;

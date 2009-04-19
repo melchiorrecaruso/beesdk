@@ -85,7 +85,7 @@ type
     I: longint;
   begin
     inherited Create;
-    FKey    := '';
+    SetLength(FKey, 0);
     FParams := TStringList.Create;
     for I := 1 to ParamCount do
     begin
@@ -107,9 +107,9 @@ type
 
   destructor TConsole.Destroy;
   begin
-    FKey := '';
     FApp.Destroy;
     FParams.Destroy;
+    SetLength(FKey, 0);
     inherited Destroy;
   end;
 
