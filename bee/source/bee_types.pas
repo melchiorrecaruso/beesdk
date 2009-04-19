@@ -75,11 +75,11 @@ type
 
 function StringToPChar(const aValue: string): PChar;
 function PCharToString(aValue: PChar): string;
+procedure FreeAndNilPChar(var aValue: PChar);
 
 implementation
 
 uses
-  Classes,
   SysUtils;
 
 function StringToPChar(const aValue: string): PChar;
@@ -102,6 +102,12 @@ begin
       Move(aValue^, Result[1], I);
     end;
   end;
+end;
+
+procedure FreeAndNilPChar(var aValue: PChar);
+begin
+  StrDispose(aValue);
+  aValue := nil;
 end;
 
 end.
