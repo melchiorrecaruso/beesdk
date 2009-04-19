@@ -222,7 +222,7 @@ begin
     P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
     Stream.BlowFish.Finish;                // finish after stream flush
 
-    if (not(foMoved in P.FileFlags)) and (P.FilePacked >= P.FileSize) then
+    if (not(foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
     begin
       Include(P.FileFlags, foTear);
       Include(P.FileFlags, foMoved);
@@ -311,7 +311,7 @@ begin
     P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
     Stream.BlowFish.Finish;                // finish after stream flush
 
-    if (not(foMoved in P.FileFlags)) and (P.FilePacked >= P.FileSize) then
+    if (not(foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
     begin
       Include(P.FileFlags, foTear);
       Include(P.FileFlags, foMoved);

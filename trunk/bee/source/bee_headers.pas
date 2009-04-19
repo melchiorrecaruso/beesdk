@@ -247,11 +247,8 @@ begin
         aStream.Read(I, SizeOf(I)); FileStartPos := I; //  4 bytes |    ---
       end else
         aStream.Read(FileSize,
-          SizeOf(FileSize) +
-          SizeOf(FileTime) +
-          SizeOf(FileAttr) +
-          SizeOf(FileCrc)  +
-          SizeOf(FilePacked));
+          SizeOf(FileSize) + SizeOf(FileTime) + SizeOf(FileAttr) +
+          SizeOf(FileCrc)  + SizeOf(FilePacked));
 
       aStream.Read(I, SizeOf(I));
       if I > 0 then
@@ -427,11 +424,8 @@ begin
       I := FileStartPos; aStream.Write(I, SizeOf(I)); //  4 bytes |    ---
     end else
       aStream.Write(FileSize,
-        SizeOf(FileSize) +
-        SizeOf(FileTime) +
-        SizeOf(FileAttr) +
-        SizeOf(FileCrc)  +
-        SizeOf(FilePacked));
+        SizeOf(FileSize) + SizeOf(FileTime) + SizeOf(FileAttr) +
+        SizeOf(FileCrc)  + SizeOf(FilePacked));
 
     I := Length(FileName);
     aStream.Write(I, SizeOf(FileName));
@@ -704,13 +698,13 @@ begin
   end else
     ReadItemsB4b(aStream, aAction);
 
-  //OffSet := aStream.Seek(0, 1);
-  //for I := 0 to FPrimary.Count -1 do
-  //  with THeader(FPrimary.Items[I]) do
-  //  begin
-  //    FileStartPos := OffSet;
-  //    Inc(OffSet, FilePacked);
-  //  end;
+  // OffSet := aStream.Seek(0, 1);
+  // for I := 0 to FPrimary.Count -1 do
+  //   with THeader(FPrimary.Items[I]) do
+  //   begin
+  //     FileStartPos := OffSet;
+  //     Inc(OffSet, FilePacked);
+  //   end;
 end;
 
 function THeaders.GetNext(aChild: longint; aAction: THeaderAction): longint;
