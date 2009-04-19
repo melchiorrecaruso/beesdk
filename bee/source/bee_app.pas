@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso.
+    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -110,7 +110,6 @@ uses
   // ---
   Bee_Consts,
   Bee_Common,     // Various helper routines
-  Bee_Assembler,
   Bee_MainPacker; // TEncoder...
 
 // TBeeApp ...

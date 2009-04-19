@@ -26,7 +26,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
+  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_Modeller;
@@ -416,14 +416,14 @@ var
   I, J: longword;
   P: PNode;
 begin
-  ClearCardinal(Freq[0], MaxSymbol + 1);
+  ClearLongword(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
 
   if ListCount > 0 then
     Account;
 
   // Update aSymbol...
-  AddCardinal(Freq[0], MaxSymbol + 1, R shr BitChain + 1);
+  AddLongword(Freq[0], MaxSymbol + 1, R shr BitChain + 1);
 
   Symbol := FCodec.UpdateSymbol(Freq, Symbol);
   Add(Symbol);
@@ -481,7 +481,7 @@ begin
 
   // Update NodeList...
   if ListCount > Table.Level then
-    MoveCardinalUnchecked(List[1], List[0], ListCount - 1)
+    MoveLongwordUnchecked(List[1], List[0], ListCount -1)
   else
     Inc(ListCount);
 

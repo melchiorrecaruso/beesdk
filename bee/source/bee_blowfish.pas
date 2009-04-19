@@ -28,7 +28,7 @@
   v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   v0.7.9 build 0360 - 2006.12.28 by Melchiorre Caruso;
   
-  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
+  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_BlowFish;

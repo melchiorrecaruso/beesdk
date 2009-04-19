@@ -27,7 +27,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso.
+    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
@@ -368,7 +368,6 @@ end;
 function THeaders.SearchItem(FileName: string): THeader;
 var
   L, M, H, I: longint;
-  S: string;
 begin
   L :=  0;
   H := FSecondary.Count -1;
@@ -484,7 +483,7 @@ end;
 
 function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction): longint;
 var
-  I, J: longint;
+  I: longint;
 begin
   Result := 0;
   for  I := 0 to Masks.Count -1 do
@@ -669,7 +668,7 @@ end;
 procedure THeaders.ReadItems(aStream: TStream; aAction: THeaderAction);
 var
   P: THeader;
-  I: longint;
+  // I: longint;
   Id: longint;
   OffSet: int64;
   Version: byte;

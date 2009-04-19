@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso.
+    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -121,12 +121,11 @@ type
 implementation
 
 uses
-  SysUtils,
-  DateUtils,
   {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
   Bee_Common,
   {$ENDIF} {$ENDIF}
-  Bee_Assembler;
+  SysUtils,
+  DateUtils;
 
 // TApp class ...
 

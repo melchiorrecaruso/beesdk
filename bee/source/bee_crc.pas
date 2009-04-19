@@ -29,7 +29,7 @@
 
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
 
-    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso.
+    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_Crc;

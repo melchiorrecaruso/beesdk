@@ -27,7 +27,7 @@
     v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso.
+    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -149,12 +149,7 @@ function SetPriority(Priority: longint): boolean; // Priority is 0..3
 
 implementation
 
-uses
-  Bee_Assembler;
-
 const
-  DoublePathDelim = PathDelim + PathDelim;
-
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
   HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0,
     0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
