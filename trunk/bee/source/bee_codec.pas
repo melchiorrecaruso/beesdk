@@ -27,7 +27,7 @@
   v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   
-  v0.7.9 build 0960 - 2009.02.27 by Melchiorre Caruso.
+  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_Codec;

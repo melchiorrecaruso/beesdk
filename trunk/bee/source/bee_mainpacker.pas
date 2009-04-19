@@ -27,7 +27,7 @@
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1024 - 2009.04.17 by Melchiorre Caruso.
+    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -115,8 +115,8 @@ uses
   // ---
   Bee_Crc,       // UpdCrc32...
   Bee_Common,    // ForceDirecotires, ...
-  Bee_BlowFish,  // TBlowFish...
-  Bee_Assembler;
+  Bee_BlowFish;  // TBlowFish...
+
 
 /// TEncoder
 
@@ -177,7 +177,7 @@ begin
   end;
 
   P.FileStartPos := Stream.Seek(0, 1);
-  P.FileCrc      := cardinal(-1);
+  P.FileCrc      := longword(-1);
 
   SrcFile := CreateTFileReader(P.FileLink, fmOpenRead + fmShareDenyWrite);
   if (SrcFile <> nil) then
@@ -258,7 +258,7 @@ begin
   end;
 
   P.FileStartPos := Stream.Seek(0, 1);
-  P.FileCrc      := cardinal(-1);
+  P.FileCrc      := longword(-1);
 
   if (SrcStrm <> nil) then
   begin
@@ -317,6 +317,7 @@ begin
       Include(P.FileFlags, foMoved);
 
       Stream.Size := P.FileStartPos;
+      SrcStrm.Seek(SrcPosition, 0);
       App.DecSize(P.FileSize);
 
       Result := EncodeStrm(P, emOpt, SrcStrm, SrcSize, SrcEncoded);
@@ -423,7 +424,7 @@ function TDecoder.DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
 var
   DstFile: TFileWriter;
   Symbol:  byte;
-  Crc: cardinal;
+  Crc: longword;
   I: int64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
@@ -442,7 +443,7 @@ begin
   end;
 
   Stream.Seek(P.FileStartPos, 0);
-  Crc := cardinal(-1);
+  Crc := longword(-1);
 
   if Mode = pmNorm then
     DstFile := CreateTFileWriter(P.FileName, fmCreate)
@@ -502,7 +503,7 @@ begin
   Result := P.FileCrc = Crc;
   if Result = False then
   begin
-    if Crc = cardinal(-1) then
+    if Crc = longword(-1) then
       App.ProcessError('Error: can''t open file ' + P.FileName, 1)
     else
       App.ProcessError(msgCRCERROR + P.FileName, 1);
@@ -515,7 +516,7 @@ var
   DstFile: TFileWriter;
   Password: string;
   Symbol:  byte;
-  Crc: cardinal;
+  Crc: longword;
   I: int64;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
@@ -534,7 +535,7 @@ begin
   end;
 
   Stream.Seek(P.FileStartPos, 0);
-  Crc := cardinal(-1);
+  Crc := longword(-1);
 
   if Mode = pmNorm then
     DstFile := DstStrm
@@ -594,7 +595,7 @@ begin
   Result := P.FileCrc = Crc;
   if Result = False then
   begin
-    if Crc = cardinal(-1) then
+    if Crc = longword(-1) then
       App.ProcessError('Error: stream not found', 1)
     else
       App.ProcessError(msgCRCERROR + P.FileName,  1);

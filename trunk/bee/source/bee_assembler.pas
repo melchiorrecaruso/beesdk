@@ -24,7 +24,7 @@
 
   v0.7.9 build 0383 - 2007.06.27 by Andrew Filinsky;
 
-  v0.8.0 build 1022 - 2009.04.17 by Melchiorre Caruso.
+  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
 }
 
 unit Bee_Assembler;
@@ -35,10 +35,10 @@ interface
 
 procedure CopyBytes(const Source, Dest; Count: longword);
 
-procedure FillCardinal(const Data; const Count, Value: longword);
-procedure AddCardinal(const Data; const Count, Value: longword);
-procedure ClearCardinal(const Data; const Count: longword);
-procedure MoveCardinalUnchecked(const Source, Dest; Count: longword);
+procedure FillLongword(const Data; const Count, Value: longword);
+procedure AddLongword(const Data; const Count, Value: longword);
+procedure ClearLongword(const Data; const Count: longword);
+procedure MoveLongwordUnchecked(const Source, Dest; Count: longword);
 
 function MulDiv(A, B, C: longword): longword;
 function MulDecDiv(A, B, C: longword): longword;
@@ -59,7 +59,7 @@ asm
   MOV     EDI, Dest
 end;
 
-procedure FillCardinal(const Data; const Count, Value: longword);
+procedure FillLongword(const Data; const Count, Value: longword);
 asm
   PUSH    EDI
   MOV     EDI, Data
@@ -69,7 +69,7 @@ asm
   POP     EDI
 end;
 
-procedure AddCardinal(const Data; const Count, Value: longword);
+procedure AddLongword(const Data; const Count, Value: longword);
 asm
   @1:
   ADD     [Data], Value
@@ -78,7 +78,7 @@ asm
   JNE     @1
 end;
 
-procedure ClearCardinal(const Data; const Count: longword);
+procedure ClearLongword(const Data; const Count: longword);
 asm
   MOV     ECX, Count
   MOV     EDX, EDI
@@ -88,7 +88,7 @@ asm
   MOV     EDI, EDX
 end;
 
-procedure MoveCardinalUnchecked(const Source, Dest; Count: longword);
+procedure MoveLongwordUnchecked(const Source, Dest; Count: longword);
 asm
   XCHG    ESI, Source
   XCHG    EDI, Dest
