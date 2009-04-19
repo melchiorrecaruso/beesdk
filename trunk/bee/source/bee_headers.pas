@@ -78,10 +78,10 @@ type
     FileAttr: longint;
     FileCrc: longword;
     FilePacked: int64;
+    FileStartPos: int64;
     FileName: string;
     // - End header data - //
     FileLink: string;
-    FileStartPos: int64;
     FileAction: THeaderAction;
   end;
 
@@ -247,8 +247,8 @@ begin
         aStream.Read(I, SizeOf(I)); FileStartPos := I; //  4 bytes |    ---
       end else
         aStream.Read(FileSize,
-          SizeOf(FileSize) + SizeOf(FileTime) + SizeOf(FileAttr) +
-          SizeOf(FileCrc)  + SizeOf(FilePacked));
+          SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
+          SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
 
       aStream.Read(I, SizeOf(I));
       if I > 0 then
@@ -423,8 +423,8 @@ begin
       I := FileStartPos; aStream.Write(I, SizeOf(I)); //  4 bytes |    ---
     end else
       aStream.Write(FileSize,
-        SizeOf(FileSize) + SizeOf(FileTime) + SizeOf(FileAttr) +
-        SizeOf(FileCrc)  + SizeOf(FilePacked));
+        SizeOf(FileSize) + SizeOf(FileTime)   + SizeOf(FileAttr) +
+        SizeOf(FileCrc)  + SizeOf(FilePacked) + SizeOf(FileStartPos));
 
     I := Length(FileName);
     aStream.Write(I, SizeOf(FileName));
