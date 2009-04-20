@@ -36,7 +36,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
         <CursorPos X="36" Y="33"/>
-        <TopLine Value="450"/>
+        <TopLine Value="33"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
@@ -176,14 +176,18 @@
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
       <Optimizations>
-        <OptimizationLevel Value="0"/>
+        <VariablesInRegisters Value="True"/>
+        <UncertainOptimizations Value="True"/>
+        <OptimizationLevel Value="3"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="True"/>
+        <UseLineInfoUnit Value="False"/>
       </Debugging>
+      <LinkSmart Value="True"/>
       <Options>
         <ExecutableType Value="Library"/>
       </Options>
