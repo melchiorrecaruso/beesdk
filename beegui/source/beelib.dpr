@@ -44,12 +44,12 @@ uses
 //                                                                            //
 // -------------------------------------------------------------------------- //
 
-  function LibVersion: integer;
+  function CoreLibVersion: integer;
   begin
     Result := 100;
   end;
 
-  procedure FreePChar(P: PChar);
+  procedure CoreFreePChar(P: PChar);
   begin
     if P <> nil then
     begin
@@ -57,9 +57,7 @@ uses
     end;
   end;
 
-  // not exported routines ...
-
-  procedure FreePFileInfo(P: PFileInfo);
+  procedure CoreFreePFileInfo(P: PFileInfo);
   begin
     if P <> nil then
     begin
@@ -68,7 +66,7 @@ uses
     end;
   end;
 
-  procedure FreePFileInfoExtra(P: PFileInfoExtra);
+  procedure CoreFreePFileInfoExtra(P: PFileInfoExtra);
   begin
     if P <> nil then
     begin
@@ -122,7 +120,7 @@ type
   begin
     while FCount > 0 do
     begin
-      FreePFileInfoExtra(@FItems[FCount -1]);
+      CoreFreePFileInfoExtra(@FItems[FCount -1]);
       Dec(FCount);
     end;
     FCount := 0;
@@ -551,12 +549,12 @@ var
 // -------------------------------------------------------------------------- //
 
 exports
-  LibVersion;
+  CoreLibVersion;
 
 exports
-  FreePChar,
-  FreePFileInfo,
-  FreePFileInfoExtra;
+  CoreFreePChar,
+  CoreFreePFileInfo,
+  CoreFreePFileInfoExtra;
 
 exports
   CoreCreate,

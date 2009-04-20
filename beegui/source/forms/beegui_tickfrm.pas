@@ -384,7 +384,7 @@ begin
   if P <> nil then
   begin
     Msg.Caption := PCharToString(P);
-    FreePChar(P);
+    CoreFreePChar(P);
   end;
 end;
 
@@ -412,7 +412,7 @@ begin
     if P <> nil then
     begin
       Report.Lines.Text := PCharToString(P);
-      FreePChar(P);
+      CoreFreePChar(P);
     end;
   end;
   OnList;
