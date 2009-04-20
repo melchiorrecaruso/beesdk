@@ -244,118 +244,140 @@ begin
 end;
 
 procedure TApp.ProcessFatalError(const aMessage: string; aCode: byte);
+var
+  X: double;
 begin
   SetCode(aCode);
   if Assigned(FOnFatalError) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnFatalError(aMessage);
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 procedure TApp.ProcessError(const aMessage: string; aCode: byte);
+var
+  X: double;
 begin
   SetCode(aCode);
   if Assigned(FOnError) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnError(aMessage);
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 procedure TApp.ProcessWarning(const aMessage: string; aCode: byte);
+var
+  X: double;
 begin
   SetCode(aCode);
   if Assigned(FOnWarning) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnWarning(aMessage);
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 procedure TApp.ProcessMessage(const aMessage: string);
+var
+  X: double;
 begin
   if Assigned(FOnMessage) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnMessage(aMessage);
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 function TApp.ProcessOverWrite(const aFileInfo: TFileInfo; const aValue: string): string;
+var
+  X: double;
 begin
   Result := aValue;
   if Assigned(FOnOverWrite) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnOverWrite(aFileInfo, Result);
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 function TApp.ProcessRename(const aFileInfo: TFileInfo; const aValue: string): string;
+var
+  X: double;
 begin
   Result := aValue;
   if Assigned(FOnRename) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnRename(aFileInfo, Result);
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 function TApp.ProcessPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+var
+  X: double;
 begin
   Result := aValue;
   if Assigned(FOnPassword) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnPassword(aFileInfo, Result);
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 procedure TApp.ProcessRequest(const aMessage: string);
+var
+  X: double;
 begin
   if Assigned(FOnRequest) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnRequest(aMessage);
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 procedure TApp.ProcessList(const aFileInfo: TFileInfoExtra);
+var
+  X: double;
 begin
   if Assigned(FOnList) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnList(aFileInfo);
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 procedure TApp.ProcessProgress;
+var
+  X: double;
 begin
   if Assigned(FOnProgress) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnProgress;
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
 procedure TApp.ProcessClear;
+var
+  X: double;
 begin
   if Assigned(FOnClear) then
   begin
-    // FSuspendedTime := Now;
+    X := Now;
     FOnClear;
-    // FStartTime := FStartTime + (Now - FSuspendedTime);
+    FStartTime := FStartTime + (Now - X);
   end;
 end;
 
