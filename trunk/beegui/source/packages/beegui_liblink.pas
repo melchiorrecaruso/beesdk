@@ -10,17 +10,22 @@ uses
   Bee_Types;
 
 const
+  {$IFDEF MSWINDOWS}
   cApplicationLib = '.\beelib.dll';
+  {$ENDIF}
+  {$IFDEF UNIX}
+  cApplicationLib = '.\beelib.so';
+  {$ENDIF}
 
   // ---
 
-  function LibVersion: integer;  external cApplicationLib;
+  function CoreLibVersion: integer;  external cApplicationLib;
 
   // ---
 
-  procedure FreePChar(P: PChar);                     external cApplicationLib;
-  procedure FreePFileInfo(P: PFileInfo);             external cApplicationLib;
-  procedure FreePFileInfoExtra(P: PFileInfoExtra);   external cApplicationLib;
+  procedure CoreFreePChar(P: PChar);                   external cApplicationLib;
+  procedure CoreFreePFileInfo(P: PFileInfo);           external cApplicationLib;
+  procedure CoreFreePFileInfoExtra(P: PFileInfoExtra); external cApplicationLib;
 
   // ---
 
