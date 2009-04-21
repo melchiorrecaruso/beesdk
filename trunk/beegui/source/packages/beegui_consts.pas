@@ -31,12 +31,12 @@ uses
   SysUtils;
 
 const
-  cApplicationVersion   = '1.0.5 [build 0716]';
+  cApplicationVersion   = '1.0.5 [build 0718]';
   cApplicationCopyright = '(C) 2003-2009 Andrew Filinsky and Melchiorre Caruso';
 
   cApplicationName    = 'BeeGui';
-  cApplicationTitle   = 'Bee File Manager';
-  cApplicationCaption = 'Bee File Manager';
+  cApplicationTitle   = 'Bee Archive Manager';
+  cApplicationCaption = 'Bee Archive Manager';
 
   cApplicationViewerName    = 'BeeViewer';
   cApplicationViewerTitle   = 'Bee File Viewer';
