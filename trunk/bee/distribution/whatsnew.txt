@@ -1344,18 +1344,18 @@ Description of history of the Bee:
 
   v0.7.9 build 316 maked.
   
-2009.04.16
+2009.04.21
 
   Update sources by Melchiorre Caruso:
-  
+
+  [*] Bee_Common.pas and Bee_Assembler, renamed some functions;  
   [*] Bee_Modeller.pas, minor code optimization (for FreePascal Compiler);  
-  [*] Bee_Assembler.AddCardinal function, fixed source code (for FPC compatibility);
+  [*] Bee_Assembler.AddLongWord function, fixed source code (for FPC compatibility);
   [*] Bee_Files.pas, some changes for FPC compatibility;  
   [*] Updated source code, platform independent;
   [+] Compiler.inc added filenamecasesensitive directive;
   [+] Added wilcard "?" and FileName-Matching functions and fixed some wilcard prolems;
-  [*] Fixed some command line prolems and renamed "-c" option into "-cd" (bugfix); 
-  [*] Bee_Common.pas, renamed some functions;
+  [*] Fixed some command line prolems and renamed "-c" option into "-cd" (bugfix);   
   [+] Bee_MainPaker.pas, more changement to stop an active process;
   [*] Bee_App.OpenArchive procedure, fixed dangerous bug; 
       If archive is unknow it raises FatalError events and abort process;
@@ -1371,4 +1371,4 @@ Description of history of the Bee:
   [*] Bee_Interface.pas, significant source code rearrangement performed; 
   [*] Bee_Headers, added support for 64bits filesize, significant source code rearrangement performed.
 
-  v0.8.0 build 1016 maked.
+  v0.8.0 build 1030 maked.
