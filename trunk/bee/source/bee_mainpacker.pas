@@ -149,8 +149,8 @@ begin
 
   Result := App.ProcessPassword(FI, '');
 
-  FreeAndNilPChar(FI.FileName);
-  FreeAndNilPChar(FI.FileName);
+  FreePChar(FI.FileName);
+  FreePChar(FI.FileName);
 
   if Length(Result) < MinKeyLength then Exclude(P.FileFlags, foPassword);
 end;
@@ -406,8 +406,8 @@ begin
 
   Result := App.ProcessPassword(FI, '');
 
-  FreeAndNilPChar(FI.FileName);
-  FreeAndNilPChar(FI.FileName);
+  FreePChar(FI.FileName);
+  FreePChar(FI.FileName);
 end;
 
 procedure TDecoder.Progress;

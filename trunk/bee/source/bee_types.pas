@@ -75,7 +75,7 @@ type
 
 function StringToPChar(const aValue: string): PChar;
 function PCharToString(aValue: PChar): string;
-procedure FreeAndNilPChar(var aValue: PChar);
+procedure FreePChar(var aValue: PChar);
 
 implementation
 
@@ -104,7 +104,7 @@ begin
   end;
 end;
 
-procedure FreeAndNilPChar(var aValue: PChar);
+procedure FreePChar(var aValue: PChar);
 begin
   StrDispose(aValue);
   aValue := nil;
