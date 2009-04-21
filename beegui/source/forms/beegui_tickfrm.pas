@@ -430,43 +430,42 @@ end;
 
 procedure TTickFrm.OnRename;
 var
-  F: TRenameFrm;
   FI: PFileInfo;
+  F: TRenameFrm;
   P: PChar;
 begin
-  F := TRenameFrm.Create(Application);
-  F.Caption := rsRenameFile;
-  try
-    FI := CoreGetRequestItem;
+  P  := nil;
+  FI := CoreGetRequestItem;
+  if FI <> nil then
+  begin
+    F := TRenameFrm.Create(Application);
 
+    F.Caption        := rsRenameFile;
     F.ToFN.Text      := PCharToString(FI^.FilePath) + PCharToString(FI^.FileName);
     F.FromFN.Caption := PCharToString(FI^.FilePath) + PCharToString(FI^.FileName);
 
     case F.ShowModal of
-      mrOk:
-      begin
-        P := StringToPChar(F.ToFN.Text);
-        CoreSetRequest(P);
-        StrDispose(P);
-      end;
+      mrOk: P := StringToPChar(F.ToFN.Text);
       mrAbort: CoreTerminate;
-      else CoreSetRequest(nil);
     end;
-    FI := nil;
-  finally
     FreeAndNil(F);
   end;
+  CoreSetRequest(P);
+  FreePChar(P);
+  FI := nil;
 end;
 
 procedure TTickFrm.OnOverwrite;
 var
-  F: TOverWriteFrm;
   FI: PFileInfo;
+  F: TOverWriteFrm;
   P: PChar;
 begin
-  F := TOverWriteFrm.Create(Application);
-  try
-    FI := CoreGetRequestItem;
+  P  := nil;
+  FI := CoreGetRequestItem;
+  if FI <> nil then
+  begin
+    F := TOverWriteFrm.Create(Application);
 
     F.SetFileName(PCharToString(FI^.FileName));
     F.SetNewFileTime(FI^.FileTime);
@@ -482,35 +481,32 @@ begin
       mrYes     : P := StringToPChar('Y');
       else        P := StringToPChar('N');
     end;
-    CoreSetRequest(P);
-    StrDispose(P);
-
-    FI := nil;
-  finally
     FreeAndNil(F);
   end;
+  CoreSetRequest(P);
+  FreePChar(P);
+  FI := nil;
  end;
 
 procedure TTickFrm.OnPassword;
 var
-  F: TPasswordFrm;
   FI: PFileInfo;
+  F: TPasswordFrm;
   P: PChar;
 begin
-  try
-    if FPassword = '' then
+  if FPassword = '' then
+  begin
+    F := TPasswordFrm.Create(Application);
+    F.SetPassword(FPassword);
+    if F.ShowModal = mrOK then
     begin
-      F := TPasswordFrm.Create(Application);
-      F.SetPassword(FPassword);
-      if F.ShowModal = mrOK then
-      begin
-        FPassword := F.Password.Text;
-      end;
-      FreeAndNil(F);
+      FPassword := F.Password.Text;
     end;
-  finally
-    StringToPChar(FPassword);
+    FreeAndNil(F);
   end;
+  P := StringToPChar(FPassword);
+  CoreSetRequest(P);
+  FreePChar(P);
 end;
 
 procedure TTickFrm.OnList;

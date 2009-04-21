@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -49,8 +49,8 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
-        <CursorPos X="1" Y="127"/>
-        <TopLine Value="80"/>
+        <CursorPos X="18" Y="51"/>
+        <TopLine Value="36"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -125,8 +125,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <CursorPos X="11" Y="415"/>
-        <TopLine Value="391"/>
+        <CursorPos X="5" Y="130"/>
+        <TopLine Value="482"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -255,8 +255,8 @@
         <Filename Value="packages\beegui_liblink.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
-        <CursorPos X="16" Y="20"/>
-        <TopLine Value="16"/>
+        <CursorPos X="36" Y="59"/>
+        <TopLine Value="23"/>
         <EditorIndex Value="6"/>
         <UsageCount Value="53"/>
         <Loaded Value="True"/>
@@ -275,8 +275,8 @@
       <Unit21>
         <Filename Value="..\..\bee\source\bee_types.pas"/>
         <UnitName Value="Bee_Types"/>
-        <CursorPos X="21" Y="78"/>
-        <TopLine Value="66"/>
+        <CursorPos X="3" Y="37"/>
+        <TopLine Value="13"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -295,124 +295,124 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="beegui.lpr"/>
-        <Caret Line="51" Column="18" TopLine="27"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="423" Column="40" TopLine="417"/>
       </Position1>
       <Position2>
-        <Filename Value="packages\beegui_consts.pas"/>
-        <Caret Line="34" Column="45" TopLine="22"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="1548" Column="11" TopLine="1514"/>
       </Position2>
       <Position3>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="318" Column="1" TopLine="305"/>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="425" Column="3" TopLine="423"/>
       </Position3>
       <Position4>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="318" Column="1" TopLine="305"/>
+        <Caret Line="482" Column="1" TopLine="439"/>
       </Position4>
       <Position5>
-        <Filename Value="beegui.lpr"/>
-        <Caret Line="51" Column="18" TopLine="27"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="120" Column="1" TopLine="102"/>
       </Position5>
       <Position6>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="326" Column="48" TopLine="305"/>
+        <Caret Line="321" Column="34" TopLine="303"/>
       </Position6>
       <Position7>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="705" Column="28" TopLine="677"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="121" Column="1" TopLine="108"/>
       </Position7>
       <Position8>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1548" Column="3" TopLine="1454"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="506" Column="19" TopLine="481"/>
       </Position8>
       <Position9>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="450" Column="14" TopLine="427"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="492" Column="30" TopLine="468"/>
       </Position9>
       <Position10>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="423" Column="40" TopLine="417"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="513" Column="14" TopLine="172"/>
       </Position10>
       <Position11>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="1548" Column="11" TopLine="1514"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="324" Column="17" TopLine="300"/>
       </Position11>
       <Position12>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="425" Column="3" TopLine="423"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="323" Column="15" TopLine="300"/>
       </Position12>
       <Position13>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="482" Column="1" TopLine="439"/>
+        <Caret Line="542" Column="13" TopLine="513"/>
       </Position13>
       <Position14>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="120" Column="1" TopLine="102"/>
+        <Caret Line="519" Column="15" TopLine="495"/>
       </Position14>
       <Position15>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="321" Column="34" TopLine="303"/>
+        <Caret Line="542" Column="84" TopLine="512"/>
       </Position15>
       <Position16>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="121" Column="1" TopLine="108"/>
+        <Filename Value="beegui.lpr"/>
+        <Caret Line="126" Column="27" TopLine="79"/>
       </Position16>
       <Position17>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="506" Column="19" TopLine="481"/>
+        <Caret Line="542" Column="48" TopLine="518"/>
       </Position17>
       <Position18>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="492" Column="30" TopLine="468"/>
+        <Caret Line="49" Column="13" TopLine="25"/>
       </Position18>
       <Position19>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="513" Column="14" TopLine="172"/>
+        <Caret Line="50" Column="14" TopLine="22"/>
       </Position19>
       <Position20>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="324" Column="17" TopLine="300"/>
+        <Caret Line="387" Column="9" TopLine="363"/>
       </Position20>
       <Position21>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="323" Column="15" TopLine="300"/>
+        <Filename Value="beegui.lpr"/>
+        <Caret Line="127" Column="1" TopLine="80"/>
       </Position21>
       <Position22>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="542" Column="13" TopLine="513"/>
+        <Caret Line="415" Column="11" TopLine="391"/>
       </Position22>
       <Position23>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="519" Column="15" TopLine="495"/>
+        <Caret Line="331" Column="1" TopLine="307"/>
       </Position23>
       <Position24>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="542" Column="84" TopLine="512"/>
+        <Caret Line="14" Column="84" TopLine="11"/>
       </Position24>
       <Position25>
-        <Filename Value="beegui.lpr"/>
-        <Caret Line="126" Column="27" TopLine="79"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="566" Column="20" TopLine="542"/>
       </Position25>
       <Position26>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="542" Column="48" TopLine="518"/>
+        <Caret Line="570" Column="20" TopLine="551"/>
       </Position26>
       <Position27>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="49" Column="13" TopLine="25"/>
+        <Caret Line="489" Column="10" TopLine="461"/>
       </Position27>
       <Position28>
         <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="50" Column="14" TopLine="22"/>
+        <Caret Line="468" Column="23" TopLine="461"/>
       </Position28>
       <Position29>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="387" Column="9" TopLine="363"/>
+        <Filename Value="packages\beegui_liblink.pas"/>
+        <Caret Line="59" Column="36" TopLine="23"/>
       </Position29>
       <Position30>
-        <Filename Value="beegui.lpr"/>
-        <Caret Line="127" Column="1" TopLine="80"/>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="497" Column="13" TopLine="479"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
