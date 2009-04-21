@@ -44,7 +44,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="22">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -113,7 +113,7 @@
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="28" Y="88"/>
         <TopLine Value="69"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -198,7 +198,7 @@
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="34" Y="1543"/>
         <TopLine Value="1508"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="109"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -257,7 +257,7 @@
         <UnitName Value="BeeGui_LibLink"/>
         <CursorPos X="36" Y="59"/>
         <TopLine Value="23"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="53"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -273,16 +273,6 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
-        <Filename Value="..\..\bee\source\bee_types.pas"/>
-        <UnitName Value="Bee_Types"/>
-        <CursorPos X="3" Y="37"/>
-        <TopLine Value="13"/>
-        <EditorIndex Value="4"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit21>
-      <Unit22>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
         <CursorPos X="20" Y="323"/>
@@ -291,7 +281,7 @@
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit22>
+      </Unit21>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
