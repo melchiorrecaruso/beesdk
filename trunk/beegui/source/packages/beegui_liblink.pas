@@ -11,10 +11,10 @@ uses
 
 const
   {$IFDEF MSWINDOWS}
-  cApplicationLib = '.\beelib.dll';
+  cApplicationLib = 'beelib.dll';
   {$ENDIF}
   {$IFDEF UNIX}
-  cApplicationLib = '.\beelib.so';
+  cApplicationLib = 'beelib.so';
   {$ENDIF}
 
   // ---
