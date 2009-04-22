@@ -14,6 +14,9 @@ const
   cApplicationLib = 'beelib.dll';
   {$ENDIF}
   {$IFDEF UNIX}
+
+  {$Linklib beelib}
+
   cApplicationLib = 'beelib.so';
   {$ENDIF}
 

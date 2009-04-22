@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="5"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -50,7 +50,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
         <CursorPos X="18" Y="51"/>
-        <TopLine Value="1"/>
+        <TopLine Value="4"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -126,7 +126,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="40" Y="130"/>
-        <TopLine Value="164"/>
+        <TopLine Value="130"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -255,7 +255,7 @@
         <Filename Value="packages\beegui_liblink.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
-        <CursorPos X="36" Y="59"/>
+        <CursorPos X="6" Y="12"/>
         <TopLine Value="1"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="53"/>
@@ -276,7 +276,7 @@
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
         <CursorPos X="20" Y="323"/>
-        <TopLine Value="18"/>
+        <TopLine Value="276"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
