@@ -31,7 +31,7 @@ uses
   SysUtils;
 
 const
-  cApplicationVersion   = '1.0.5 [build 0718]';
+  cApplicationVersion   = '1.0.5 [build 0720]';
   cApplicationCopyright = '(C) 2003-2009 Andrew Filinsky and Melchiorre Caruso';
 
   cApplicationName    = 'BeeGui';
