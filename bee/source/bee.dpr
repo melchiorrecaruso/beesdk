@@ -55,8 +55,8 @@ type
 
   TConsole = class
   private
-    FApp:    TApp;
-    FKey:    string;
+    FApp: TApp;
+    FKey: string;
     FParams: TStringList;
   private
     procedure ProcessFatalError(const aMessage: string);
