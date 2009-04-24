@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=BeeGui
-AppVerName=BeeGui 1.0.5 Beta
+AppVerName=BeeGui 1.0.5 BETA
 AppPublisher=BeeGui Team
 AppPublisherURL=http://www.beegui.org
 AppSupportURL=http://www.beegui.org
@@ -19,18 +19,18 @@ Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
 
-VersionInfoVersion=1.0.5.640
+VersionInfoVersion=1.0.5
 VersionInfoDescription=BeeGui archiver installer
 VersionInfoCopyright=GNU General Public License
 VersionInfoCompany=BeeGui Team
 VersionInfoProductName=BeeGui, the GUI for Bee archiver utility
-VersionInfoProductVersion=1.0.5.640
+VersionInfoProductVersion=1.0.5
 
 [Tasks]
-Name: "desktopicon";     Description: "{cm:CreateDesktopIcon}";     GroupDescription: "{cm:AdditionalIcons}";      Flags: unchecked
+Name: "desktopicon";     Description: "{cm:CreateDesktopIcon}";     GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}";
 Name: "associatebee";    Description: """.bee"" files";             GroupDescription: "Associate file extension:";
-Name: "associatezip";    Description: """.zip"" files";             GroupDescription: "Associate file extension:";
+;Name: "associatezip";    Description: """.zip"" files";             GroupDescription: "Associate file extension:";
 
 [Files]
 Source: "..\distribution\BeeGui.exe";   DestDir: "{app}";            Flags: ignoreversion;
@@ -55,12 +55,12 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BeeGui"; Filename:
 Root: HKCR; Subkey: ".bee";                      ValueType: string; ValueName: ""; ValueData: "BeeGui";       Flags: uninsdeletevalue; Tasks: associatebee
 Root: HKCR; Subkey: "BeeGui";                    ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey;   Tasks: associatebee
 Root: HKCR; Subkey: "BeeGui\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0";                    Tasks: associatebee
-Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1""";     Tasks: associatebee
+Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""L"" ""%1""";     Tasks: associatebee
 
-Root: HKCR; Subkey: ".zip";                      ValueType: string; ValueName: ""; ValueData: "BeeGui";       Flags: uninsdeletevalue; Tasks: associatezip
-Root: HKCR; Subkey: "BeeGui";                    ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey;   Tasks: associatezip
-Root: HKCR; Subkey: "BeeGui\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0";                    Tasks: associatezip
-Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1""";     Tasks: associatezip
+;Root: HKCR; Subkey: ".zip";                      ValueType: string; ValueName: ""; ValueData: "BeeGui";       Flags: uninsdeletevalue; Tasks: associatezip
+;Root: HKCR; Subkey: "BeeGui";                    ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey;   Tasks: associatezip
+;Root: HKCR; Subkey: "BeeGui\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0";                    Tasks: associatezip
+;Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1""";     Tasks: associatezip
 
 
 [UninstallDelete]
