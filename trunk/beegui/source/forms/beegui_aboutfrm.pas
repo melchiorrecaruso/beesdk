@@ -55,6 +55,7 @@ type
     Bevel:     TBevel;
     BtnOk:     TBitBtn;
     BtnLicense: TBitBtn;
+    LibVersion: TLabel;
     procedure BtnOkClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -76,6 +77,7 @@ implementation
 
 uses
   BeeGui_Consts,
+  BeeGui_LibLink,
   BeeGui_Messages,
   BeeGui_SysUtils;
 
@@ -91,7 +93,12 @@ begin
   LoadLanguage;
   LoadProperty;
 
-  Version.Caption   := cApplicationVersion;
+  Version.Caption := cApplicationVersion;
+  LibVersion.Caption := ' BeeLib ' +
+    IntTostr (CoreLibVersion div 100) + '.' +
+    IntTostr((CoreLibVersion mod 100) div 10) + '.' +
+    IntTostr((CoreLibVersion mod 100) mod 10);
+
   Copyright.Caption := cApplicationCopyright;
 end;
 
