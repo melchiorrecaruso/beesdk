@@ -13,7 +13,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="4"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -35,8 +35,8 @@
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
-        <CursorPos X="31" Y="522"/>
-        <TopLine Value="501"/>
+        <CursorPos X="3" Y="598"/>
+        <TopLine Value="552"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
@@ -47,7 +47,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
         <CursorPos X="25" Y="8"/>
-        <TopLine Value="1"/>
+        <TopLine Value="2"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
