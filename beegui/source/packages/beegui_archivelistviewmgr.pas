@@ -293,13 +293,13 @@ end;
 
 procedure TArchiveDetails.Clear;
 begin
-  FilesCount   := 0;
-  FilesSize    := 0;
-  FilesPacked  := 0;
+  FilesCount := 0;
+  FilesSize := 0;
+  FilesPacked := 0;
   FilesCrypted := 0;
   DirectoriesCount := 0;
-  Version      := 0;
-  LastTime     := 0;
+  Version := 0;
+  LastTime := 0;
 end;
 
 procedure TArchiveDetails.Update(Item: TArchiveItem);
