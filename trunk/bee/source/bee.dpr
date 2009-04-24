@@ -188,15 +188,21 @@ type
   end;
 
   procedure TConsole.ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
+  var
+    S: string;
   begin
     if Length(FKey) = 0 then
     begin
       Write('Insert a key (min length 4 char): ');
-      Readln(FKey);
+      Readln(Result);
       // convert oem to param
-      FKey := OemToParam(FKey);
-    end;
-    Result := FKey;
+      Result := OemToParam(Result);
+      // store password
+      Write('Do you want to use password for this session [Yes, No]: ');
+      Readln(S);
+      if (Length(S)= 1) and (Upcase(S) = 'Y') then FKey := Result;
+    end else
+      Result := FKey;
   end;
 
   procedure Tconsole.ProcessRequest(const aMessage: string);
