@@ -35,7 +35,7 @@
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
-        <CursorPos X="24" Y="21"/>
+        <CursorPos X="4" Y="25"/>
         <TopLine Value="1"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="64"/>
@@ -46,7 +46,7 @@
         <Filename Value="packages\beegui_liblink.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
-        <CursorPos X="3" Y="18"/>
+        <CursorPos X="11" Y="25"/>
         <TopLine Value="1"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="33"/>
@@ -56,7 +56,7 @@
       <Unit2>
         <Filename Value="..\..\bee\source\bee_library.pas"/>
         <UnitName Value="Bee_Library"/>
-        <CursorPos X="9" Y="35"/>
+        <CursorPos X="20" Y="45"/>
         <TopLine Value="1"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>

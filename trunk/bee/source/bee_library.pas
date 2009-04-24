@@ -18,9 +18,11 @@
 
 { Contains:
 
-    Bee library code.
+    Bee archiver library interface.
 
   Modifyed:
+
+    v0.8.0 build 1032 - 2009.04.25 by Melchiorre Caruso.
 }
 
 unit Bee_Library;

@@ -21,6 +21,8 @@
     Bee library exports.
 
   Modifyed:
+
+    v1.0.0 build 0100 - 2009.04.25 by Melchiorre Caruso.
 }
 
 library BeeLib;
