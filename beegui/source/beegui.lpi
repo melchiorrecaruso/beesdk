@@ -44,7 +44,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="21">
+    <Units Count="22">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -196,7 +196,7 @@
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="34" Y="1543"/>
         <TopLine Value="1508"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="117"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -268,6 +268,14 @@
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit20>
+      <Unit21>
+        <Filename Value="packages\packages.include\compiler.inc"/>
+        <CursorPos X="2" Y="34"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit21>
     </Units>
     <JumpHistory Count="8" HistoryIndex="7">
       <Position1>
