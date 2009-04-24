@@ -32,6 +32,9 @@ program BeeGui;
 {$ENDIF}
 
 uses
+  {$IFDEF UNIX}
+  cThreads,
+  {$ENDIF}
   Forms,
   Dialogs,
   SysUtils,
