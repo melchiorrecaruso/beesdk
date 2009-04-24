@@ -21,6 +21,8 @@
       BeeGui Main form.
 
     Modifyed:
+
+      v1.0.5 build 0559 - 2008.12.22 by Melchiorre Caruso.
 }
 
 unit BeeFM_MainFrm;
@@ -461,8 +463,7 @@ begin
   if CheckWorkStatus(False) then
   begin
     ListView.Folder := FolderBox.Text;
-  end
-  else
+  end else
     FolderBox.Text := ListView.Folder;
 end;
 
@@ -1217,16 +1218,16 @@ begin
       ListView.GetMasks(FCommandLine.FileMasks);
       if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
       begin
+        IncWorkStatus;
         Execute(FArchiveName);
         if (ExitCode < 2) then
         begin
           if Sender = PMenuOpenIntViewer then
-            with FileProcess do
-              Execute(ParamStr(0) + ' V', FFileName)
+            with FileProcess do Execute(ParamStr(0) + ' V', FFileName)
           else
-            with FileProcess do
-              Execute('', FFileName);
+            with FileProcess do Execute('', FFileName);
         end;
+        DecWorkStatus;
       end;
     end;
   end;

@@ -18,9 +18,11 @@
 
 {   Contains:
 
-    TArcLisView class.
+      TArcLisView class.
 
     Modifyed:
+
+      v1.0.5 build 0559 - 2008.12.22 by Melchiorre Caruso.
 }
 
 unit BeeGui_ArchiveListViewMgr;
@@ -876,8 +878,8 @@ begin
         FileType := 'File ' + ExtractFileExt(FileName);
       end;
       AItem.SubItems.Add(FileType);
-      try
-        AItem.SubItems.Add(FileTimeToString(FileTime));      //  5 Time
+      try                                                    //  5 Time
+        AItem.SubItems.Add(FileTimeToString(FileTime, 'dd/mm/yyyy hh:mm'));
       except
         AItem.SubItems.Add('');
       end;
@@ -898,8 +900,8 @@ begin
         FileType := 'Files folder';
       end;
       AItem.SubItems.Add(FileType);
-      try
-        AItem.SubItems.Add(FileTimeToString(FileTime));      //  5 Time
+      try                                                    //  5 Time
+        AItem.SubItems.Add(FileTimeToString(FileTime, 'dd/mm/yyyy hh:mm'));
       except
         AItem.SubItems.Add('');
       end;

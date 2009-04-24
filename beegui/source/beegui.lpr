@@ -21,6 +21,8 @@
     BeeGui application.
 
   Modifyed:
+
+    v1.0.5 build 0559 - 2008.12.22 by Melchiorre Caruso.
 }
 
 program BeeGui;
@@ -72,7 +74,7 @@ begin
       Application.CreateForm(TConfigFrm, ConfigFrm);
       Application.Run;
     end;
-    'O':
+    'L':
     begin
       Application.Name  := cApplicationName;
       Application.Title := cApplicationName;
