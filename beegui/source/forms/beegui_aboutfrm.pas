@@ -77,7 +77,11 @@ implementation
 
 uses
   BeeGui_Consts,
+  {$IFDEF USEDLL}
   BeeGui_LibLink,
+  {$ELSE}
+  Bee_Library,
+  {$ENDIF}
   BeeGui_Messages,
   BeeGui_SysUtils;
 
@@ -94,11 +98,14 @@ begin
   LoadProperty;
 
   Version.Caption := cApplicationVersion;
+  {$IFDEF USEDLL}
   LibVersion.Caption := ' BeeLib ' +
     IntTostr (CoreLibVersion div 100) + '.' +
     IntTostr((CoreLibVersion mod 100) div 10) + '.' +
     IntTostr((CoreLibVersion mod 100) mod 10);
-
+  {$ELSE}
+  LibVersion.Caption := '';
+  {$ENDIF}
   Copyright.Caption := cApplicationCopyright;
 end;
 
