@@ -595,5 +595,5 @@ exports
 // -------------------------------------------------------------------------- //
 
 begin
-  // initilization code
+  writeln('lib loaded');
 end.
