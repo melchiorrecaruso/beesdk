@@ -316,9 +316,12 @@ end;
  // ------------------------------------------------------------------------ //
 
 procedure TTickFrm.OnTimer(Sender: TObject);
+var
+  Status: integer;
 begin
   Timer.Enabled := False;
-  case CoreGetStatus of
+  Status := CoreGetStatus;
+  case Status of
     csTerminated: OnTerminate;
     csExecuting: OnExecute;
     csWaitingRename: OnRename;
@@ -511,13 +514,14 @@ end;
 
 procedure TTickFrm.OnList;
 var
-  I: integer;
+  I, Count: integer;
   P: PFileInfoExtra;
   Node: TArchiveItem;
 begin
   if Assigned(FList) then
   begin
-    for I := 0 to CoreGetItemsCount -1 do
+    Count := CoreGetItemsCount;
+    for I := 0 to Count -1 do
     begin
       P := CoreGetItems(I);
       if P <> nil then
