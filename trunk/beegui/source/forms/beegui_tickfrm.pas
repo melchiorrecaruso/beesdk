@@ -159,7 +159,11 @@ implementation
 
 uses
   BeeGui_Consts,
+  {$IFDEF USEDLL}
   BeeGui_LibLink,
+  {$ELSE}
+  Bee_Library,
+  {$ENDIF}
   BeeGui_Messages,
   BeeGui_SysUtils;
 
