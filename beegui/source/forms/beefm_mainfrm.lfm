@@ -98,6 +98,8 @@ object MainFrm: TMainFrm
     OnColumnClick = ListViewColumnClick
     OnCompare = ListViewCompare
     OnDblClick = MMenuActionsViewClick
+    OnKeyPress = ListViewKeyPress
+    OnSelectItem = ListViewSelectItem
   end
   object StatusBar: TStatusBar
     AnchorSideTop.Side = asrBottom

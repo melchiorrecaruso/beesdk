@@ -238,6 +238,9 @@ type
     procedure ListViewColumnClick(Sender: TObject; Column: TListColumn);
     procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
       Data: integer; var Compare: integer);
+    procedure ListViewKeyPress(Sender: TObject; var Key: char);
+    procedure ListViewSelectItem(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
     // ---
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
@@ -401,16 +404,16 @@ end;
 procedure TMainFrm.ListViewColumnClick(Sender: TObject; Column: TListColumn);
 begin
   case Column.Index of
-    0: OrderByClick(MMenuViewOrderByName);
-    1: OrderByClick(MMenuViewOrderBySize);
-    2: OrderByClick(MMenuViewOrderByPacked);
-    3: OrderByClick(MMenuViewOrderByRatio);
-    4: OrderByClick(MMenuViewOrderByType);
-    5: OrderByClick(MMenuViewOrderByModified);
-    6: OrderByClick(MMenuViewOrderByAttributes);
-    7: OrderByClick(MMenuViewOrderByMethod);
-    8: OrderByClick(MMenuViewOrderByPassword);
-    9: OrderByClick(MMenuViewOrderByCrc);
+     0: OrderByClick(MMenuViewOrderByName);
+     1: OrderByClick(MMenuViewOrderBySize);
+     2: OrderByClick(MMenuViewOrderByPacked);
+     3: OrderByClick(MMenuViewOrderByRatio);
+     4: OrderByClick(MMenuViewOrderByType);
+     5: OrderByClick(MMenuViewOrderByModified);
+     6: OrderByClick(MMenuViewOrderByAttributes);
+     7: OrderByClick(MMenuViewOrderByMethod);
+     8: OrderByClick(MMenuViewOrderByPassword);
+     9: OrderByClick(MMenuViewOrderByCrc);
     10: OrderByClick(MMenuViewOrderByPath);
     11: OrderByClick(MMenuViewOrderByPosition);
   end;
@@ -448,6 +451,17 @@ begin
 end;
 
 procedure TMainFrm.ListViewClick(Sender: TObject);
+begin
+
+end;
+
+procedure TMainFrm.ListViewKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key = #13 then MMenuActionsViewClick(Sender);
+end;
+
+procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem;
+  Selected: Boolean);
 begin
   ListViewChangeFolder(Sender);
 end;
@@ -1289,32 +1303,38 @@ end;
 
 procedure TMainFrm.MMenuActionsSelectAllClick(Sender: TObject);
 begin
+  IncWorkStatus;
   ListView.SetMask('*', True);
   if ListView.CanFocus then
   begin
     ListView.SetFocus;
   end;
   ListViewChangeFolder(Sender);
+  DecWorkStatus;
 end;
 
 procedure TMainFrm.MMenuActionsDeselectAllClick(Sender: TObject);
 begin
+  IncWorkStatus;
   ListView.SetMask('*', False);
   if ListView.CanFocus then
   begin
     ListView.SetFocus;
   end;
   ListViewChangeFolder(Sender);
+  DecWorkStatus;
 end;
 
 procedure TMainFrm.MMenuActionsInvertClick(Sender: TObject);
 begin
+  IncWorkStatus;
   ListView.InvertMasks;
   if ListView.CanFocus then
   begin
     ListView.SetFocus;
   end;
   ListViewChangeFolder(Sender);
+  DecWorkStatus;
 end;
 
 procedure TMainFrm.MMenuActionsSelectMaskClick(Sender: TObject);
@@ -1324,12 +1344,14 @@ begin
     SelectFrm.Caption := rsSelectFrmCaption;
     if SelectFrm.ShowModal = mrOk then
     begin
+      IncWorkStatus;
       ListView.SetMask(SelectFrm.Mask.Text, True);
       if ListView.CanFocus then
       begin
         ListView.SetFocus;
       end;
       ListViewChangeFolder(Sender);
+      DecWorkStatus;
     end;
   finally
     FreeAndNil(SelectFrm);
@@ -1343,12 +1365,14 @@ begin
     SelectFrm.Caption := rsDeselectFrmCaption;
     if SelectFrm.ShowModal = mrOk then
     begin
+      IncWorkStatus;
       ListView.SetMask(SelectFrm.Mask.Text, False);
       if ListView.CanFocus then
       begin
         ListView.SetFocus;
       end;
       ListViewChangeFolder(Sender);
+      DecWorkStatus;
     end;
   finally
     FreeAndNil(SelectFrm);
