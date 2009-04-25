@@ -138,6 +138,7 @@ object MainFrm: TMainFrm
     Caption = 'ToolBar'
     EdgeBorders = [ebTop, ebBottom]
     Flat = False
+    PopupMenu = BMenu
     TabOrder = 1
     object BtnOpen: TSpeedButton
       AnchorSideLeft.Side = asrBottom
