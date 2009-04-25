@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v1.0.5 build 0559 - 2008.04.25 by Melchiorre Caruso.
+    v1.0.5 build 0840 - 2009.04.25 by Melchiorre Caruso.
 }
 
 program BeeGui;
