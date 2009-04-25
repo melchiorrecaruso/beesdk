@@ -98,7 +98,9 @@ object MainFrm: TMainFrm
     OnColumnClick = ListViewColumnClick
     OnCompare = ListViewCompare
     OnDblClick = MMenuActionsViewClick
+    OnKeyDown = ListViewKeyDown
     OnKeyPress = ListViewKeyPress
+    OnKeyUp = ListViewKeyUp
     OnSelectItem = ListViewSelectItem
   end
   object StatusBar: TStatusBar

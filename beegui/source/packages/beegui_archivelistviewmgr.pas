@@ -228,9 +228,9 @@ type
     // property OnDragDrop;
     // property OnDragOver;
     // property OnEndDrag;
-    // property OnKeyDown;
+    property OnKeyDown;
     property OnKeyPress;
-    // property OnKeyUp;
+    property OnKeyUp;
     // property OnMouseDown;
     // property OnMouseMove;
     // property OnMouseUp;

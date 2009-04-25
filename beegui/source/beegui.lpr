@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v1.0.5 build 0559 - 2008.12.22 by Melchiorre Caruso.
+    v1.0.5 build 0559 - 2008.04.25 by Melchiorre Caruso.
 }
 
 program BeeGui;
