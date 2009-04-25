@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v1.0.5 build 0840 - 2009.04.245by Melchiorre Caruso.
+    v1.0.5 build 0840 - 2009.04.25 by Melchiorre Caruso.
 }
 
 unit BeeFM_MainFrm;
