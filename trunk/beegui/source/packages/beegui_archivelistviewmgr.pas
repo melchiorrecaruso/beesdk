@@ -229,13 +229,13 @@ type
     // property OnDragOver;
     // property OnEndDrag;
     // property OnKeyDown;
-    // property OnKeyPress;
+    property OnKeyPress;
     // property OnKeyUp;
     // property OnMouseDown;
     // property OnMouseMove;
     // property OnMouseUp;
     // property OnResize;
-    // property OnSelectItem;
+    property OnSelectItem;
     // property OnStartDrag;
   end;
 
@@ -661,7 +661,7 @@ var
   I:    integer;
   Node: TArchiveItem;
 begin
-  for I := 0 to Items.Count - 1 do
+  for I := 0 to Items.Count -1 do
   begin
     Node := TArchiveItem(Items[I].Data);
     if FileNameMatch(Node.FileName, Mask, False) then
