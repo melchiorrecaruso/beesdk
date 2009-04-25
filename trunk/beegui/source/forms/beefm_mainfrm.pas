@@ -238,7 +238,10 @@ type
     procedure ListViewColumnClick(Sender: TObject; Column: TListColumn);
     procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
       Data: integer; var Compare: integer);
+    procedure ListViewKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
+      );
     procedure ListViewKeyPress(Sender: TObject; var Key: char);
+    procedure ListViewKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem;
       Selected: Boolean);
     // ---
@@ -438,8 +441,7 @@ begin
     else
       StatusBar.Panels[3].Text := '';
     StatusBar.EndUpdate;
-  end
-  else
+  end else
   begin
     StatusBar.BeginUpdate;
     StatusBar.Panels[0].Text := '';
@@ -452,7 +454,13 @@ end;
 
 procedure TMainFrm.ListViewClick(Sender: TObject);
 begin
+  ListViewChangeFolder(Sender);
+end;
 
+procedure TMainFrm.ListViewKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  ListViewChangeFolder(Sender);
 end;
 
 procedure TMainFrm.ListViewKeyPress(Sender: TObject; var Key: char);
@@ -460,10 +468,16 @@ begin
   if Key = #13 then MMenuActionsViewClick(Sender);
 end;
 
+procedure TMainFrm.ListViewKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  ListViewChangeFolder(Sender);
+end;
+
 procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem;
   Selected: Boolean);
 begin
-  ListViewChangeFolder(Sender);
+  // nothing to do
 end;
 
  // ---------------------------------------------------------------------- //
@@ -1221,8 +1235,7 @@ begin
     if Pos('D', ListView.Selected.SubItems[5]) > 0 then
     begin
       ListView.Folder := IncludeTrailingBackSlash(ListView.Folder) + FFileName;
-    end
-    else
+    end else
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'E';
@@ -1303,38 +1316,32 @@ end;
 
 procedure TMainFrm.MMenuActionsSelectAllClick(Sender: TObject);
 begin
-  IncWorkStatus;
   ListView.SetMask('*', True);
   if ListView.CanFocus then
   begin
     ListView.SetFocus;
   end;
   ListViewChangeFolder(Sender);
-  DecWorkStatus;
 end;
 
 procedure TMainFrm.MMenuActionsDeselectAllClick(Sender: TObject);
 begin
-  IncWorkStatus;
   ListView.SetMask('*', False);
   if ListView.CanFocus then
   begin
     ListView.SetFocus;
   end;
   ListViewChangeFolder(Sender);
-  DecWorkStatus;
 end;
 
 procedure TMainFrm.MMenuActionsInvertClick(Sender: TObject);
 begin
-  IncWorkStatus;
   ListView.InvertMasks;
   if ListView.CanFocus then
   begin
     ListView.SetFocus;
   end;
   ListViewChangeFolder(Sender);
-  DecWorkStatus;
 end;
 
 procedure TMainFrm.MMenuActionsSelectMaskClick(Sender: TObject);
@@ -1344,14 +1351,12 @@ begin
     SelectFrm.Caption := rsSelectFrmCaption;
     if SelectFrm.ShowModal = mrOk then
     begin
-      IncWorkStatus;
       ListView.SetMask(SelectFrm.Mask.Text, True);
       if ListView.CanFocus then
       begin
         ListView.SetFocus;
       end;
       ListViewChangeFolder(Sender);
-      DecWorkStatus;
     end;
   finally
     FreeAndNil(SelectFrm);
@@ -1365,14 +1370,12 @@ begin
     SelectFrm.Caption := rsDeselectFrmCaption;
     if SelectFrm.ShowModal = mrOk then
     begin
-      IncWorkStatus;
       ListView.SetMask(SelectFrm.Mask.Text, False);
       if ListView.CanFocus then
       begin
         ListView.SetFocus;
       end;
       ListViewChangeFolder(Sender);
-      DecWorkStatus;
     end;
   finally
     FreeAndNil(SelectFrm);
