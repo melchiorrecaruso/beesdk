@@ -124,7 +124,7 @@ type
     Configuration: TConfiguration;
 
     Bodyes: TList;
-    BodyesSize: int64;
+    BodyesSize: longint;
 
     Nowhere: TNulWriter;
     Encoder: TBaseCoder;
@@ -470,7 +470,7 @@ implementation
 
       // Write(Format('DictionaryLevel %d (~%d Mb)', [DictionaryLevel, (1 shl (17 + Min(Max(0, DictionaryLevel), 9))) * 20 shr 20]));
 
-      App.Nowhere.Position := 0;
+      App.Nowhere.Seek(0, 0);
       App.SecondaryCodec.Start;
 
       for I := 0 to App.Bodyes.Count -1 do
@@ -478,8 +478,8 @@ implementation
         App.Encoder.FreshFlexible;
 
         Start := 0;
-        Pi := TBody (App.Bodyes [I]).Data;
-        while Start < TBody (App.Bodyes [I]).Size do
+        Pi := TBody(App.Bodyes [I]).Data;
+        while Start < TBody (App.Bodyes[I]).Size do
         begin
           Finish := Min(Start + 1024, TBody(App.Bodyes[I]).Size);
           while Start < Finish do
@@ -500,7 +500,7 @@ implementation
         Population1.Add(Person);
         Exit;
       end else
-        Person.Cost := App.Nowhere.Position;
+        Person.Cost := App.Nowhere.Seek(0, 1);
     end;
 
     begin
@@ -573,8 +573,8 @@ implementation
 
     Configuration := TConfiguration.Create;
     Configuration.Selector ('\main');
-    Configuration.CurrentSection.Values ['Method']     := '1';
-    Configuration.CurrentSection.Values ['Dictionary'] := '2';
+    Configuration.CurrentSection.Values ['Method']     := '3';
+    Configuration.CurrentSection.Values ['Dictionary'] := '5';
 
     for I := 1 to ParamCount do
     begin
@@ -710,26 +710,32 @@ implementation
     T: TSearchRec;
     Err: longint;
   begin
-    Err := FindFirst(IncludeTrailingBackSlash(Path) + '*', faAnyFile, T);
+    Err := FindFirst(Path + '*.dat', faAnyFile, T);
     while Err = 0 do
     begin
       if (T.Attr and faDirectory) = 0 then
       begin
-        if CompareFileName(ExtractFileExt(T.Name), '.dat') = 0 then
-        begin
-          World := TPopulations.Create(Path + T.Name);
-          ExtractLevels(World, '.' + ChangeFileExt(ExtractFileName(T.Name), ''));
-          World.Free;
-        end;
-      end else
-        if (T.Name <> '.') and (T.Name <> '..') then
-        begin
-          CollectWorlds(IncludeTrailingBackSlash(Path) + T.Name + PathDelim);
-        end;
-
+        World := TPopulations.Create(Path + T.Name);
+        ExtractLevels(World, '.' + ChangeFileExt(ExtractFileName(T.Name), ''));
+        World.Free;
+      end;
       Err := FindNext(T);
     end;
-    FindClose(T);;
+    FindClose(T);
+
+    Err := FindFirst(Path + '*', faAnyFile, T);
+    while Err = 0 do
+    begin
+      if (T.Attr and faDirectory) = faDirectory then
+      begin
+        if (T.Name <> '.') and (T.Name <> '..') then
+        begin
+          CollectWorlds(Path + T.Name + PathDelim);
+        end;
+      end;
+      Err := FindNext(T);
+    end;
+    FindClose(T);
   end;
 
   procedure TOptApp.CollectConfigurations(CfgName: string);
@@ -767,29 +773,37 @@ implementation
     I: longint;
     Err: longint;
   begin
-    Err := FindFirst (IncludeTrailingBackSlash(Path) + '*', faAnyFile, T);
+    Err := FindFirst(Path + Name, faAnyFile, T);
     while Err = 0 do
     begin
       if (T.Attr and faDirectory) = 0 then
       begin
-        if CompareFileName(T.Name, Name) = 0 then
-        begin
-          TmpWorld := TPopulations.Create(Path + T.Name);
-          World.CurrentAge := Max(0, Min(World.CurrentAge, TmpWorld.CurrentAge - 2000));
-          TmpWorld.MarkToRecalculate;
-          for I := 0 to TmpWorld.Count - 1 do
-            if TPopulation (TmpWorld.List [I]).Count > 0 then
-            begin
-              TPopulation(World.List[I]).Add(TPopulation(TmpWorld.List[I]).First);
-              TPopulation(TmpWorld.List[I]).Delete (0);
-            end;
-          TmpWorld.Free;
-        end;
-      end else
+        TmpWorld := TPopulations.Create(Path + T.Name);
+        World.CurrentAge := Max(0, Min(World.CurrentAge, TmpWorld.CurrentAge - 2000));
+        TmpWorld.MarkToRecalculate;
+        for I := 0 to TmpWorld.Count - 1 do
+          if TPopulation (TmpWorld.List [I]).Count > 0 then
+          begin
+            TPopulation(World.List[I]).Add(TPopulation(TmpWorld.List[I]).First);
+            TPopulation(TmpWorld.List[I]).Delete (0);
+          end;
+        TmpWorld.Free;
+      end;
+      Err := FindNext(T);
+    end;
+    FindClose (T);
+
+    Err := FindFirst(Path + '*', faAnyFile, T);
+    while Err = 0 do
+    begin
+      if (T.Attr and faDirectory) = faDirectory then
       begin
         if (T.Name <> '.') and (T.Name <> '..') then
+        begin
           MergeDataRecursively(Path + T.Name + PathDelim, Name, World);
+        end;
       end;
+      Err := FindNext(T);
     end;
     FindClose (T);
   end;
@@ -869,7 +883,7 @@ implementation
     Write(Format('%1.3f%% improvements, ', [World.Improvements / (World.CurrentAge + 1) * 100]));
 
     if TPopulation(World.List[World.CurrentPopulation]).Count > 0 then
-      Write(Format('%d packed size.', [TPerson(TPopulation(World.List[World.CurrentPopulation]).First).Cost]))
+      Write(Format('%10d packed size.', [TPerson(TPopulation(World.List[World.CurrentPopulation]).First).Cost]))
     else
       Write('??? packed size.');
   end;

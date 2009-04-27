@@ -76,6 +76,8 @@ type
 
 type
   TNulWriter = class(TFileWriter)
+  private
+    FSize: int64;
   public
     constructor Create;
     destructor Destroy; override;
@@ -282,10 +284,12 @@ constructor TNulWriter.Create;
 begin
   // inherited Create;
   BlowFish := TBlowFish.Create;
+  FSize := 0;
 end;
 
 destructor TNulWriter.Destroy;
 begin
+  FSize := 0;
   BlowFish.Free;
   // inherited Destroy;
 end;
@@ -297,27 +301,34 @@ end;
 
 function TNulWriter.Write(const Buffer; Count: longint): longint;
 begin
-  Result := 0;
+  Inc(FSize, Count);
+  Result := Count;
 end;
 
 function TNulWriter.Seek(Offset: longint; Origin: word): longint;
 begin
-  Result := 0;
+  if (Origin = soFromCurrent) and (OffSet = 0) then
+    Result := FSize
+  else
+    Result := 0;
 end;
 
 function TNulWriter.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
-  Result := 0;
+  if (Origin = soCurrent) and (OffSet = 0) then
+    Result := FSize
+  else
+    Result := 0;
 end;
 
 procedure TNulWriter.SetSize(NewSize: longint);
 begin
-  // nothing to do
+  FSize := NewSize;
 end;
 
 procedure TNulWriter.SetSize(const NewSize: int64);
 begin
-  // nothing to do
+  FSize := NewSize;
 end;
 
 end.
