@@ -879,13 +879,13 @@ implementation
     //       #8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8);
 
     Write(Format('%3d level, ', [World.CurrentPopulation + 1]));
-    Write(Format('%2d variants, ', [World.CurrentAge]));
+    Write(Format('%5d variants, ', [World.CurrentAge]));
     Write(Format('%1.3f%% improvements, ', [World.Improvements / (World.CurrentAge + 1) * 100]));
 
     if TPopulation(World.List[World.CurrentPopulation]).Count > 0 then
       Write(Format('%10d packed size.', [TPerson(TPopulation(World.List[World.CurrentPopulation]).First).Cost]))
     else
-      Write('??? packed size.');
+      Write('?????????? packed size.');
   end;
 
   procedure TOptApp.ReduceSection(Section: TConfigSection);
