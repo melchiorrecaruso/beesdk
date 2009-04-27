@@ -1356,7 +1356,7 @@ Description of history of the Bee:
   [+] Compiler.inc added filenamecasesensitive directive;
   [+] Added wilcard "?" and FileName-Matching functions and fixed some wilcard prolems;
   [*] Fixed some command line prolems and renamed "-c" option into "-cd" (bugfix);   
-  [+] Bee_MainPaker.pas, more changement to stop an active process;
+  [+] Bee_MainPaker.pas, more changement to stop an active process (Ctrl+C);
   [*] Bee_App.OpenArchive procedure, fixed dangerous bug; 
       If archive is unknow it raises FatalError events and abort process;
   [+] Added "-l" option, archive list after an upgrade; 
