@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.8.0 build 1032 - 2009.04.25 by Melchiorre Caruso.
+    v0.8.0 build 1034 - 2009.04.27 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -42,6 +42,9 @@ program Bee;
 {$I compiler.inc}
 
 uses
+  {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF} {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -227,7 +230,22 @@ type
 var
   Console: TConsole;
 
+  /// control+c event ///
+
+  function CtrlCRoutine(CtrlType: longword): longbool;
+  begin
+    case CtrlType of
+      CTRL_C_EVENT:        Console.FApp.Terminated := True;
+      CTRL_BREAK_EVENT:    Console.FApp.Terminated := True;
+      CTRL_CLOSE_EVENT:    Console.FApp.Terminated := True;
+      CTRL_LOGOFF_EVENT:   Console.FApp.Terminated := True;
+      CTRL_SHUTDOWN_EVENT: Console.FApp.Terminated := True;
+    end;
+    Result := True;
+  end;
+
 begin
+  SetConsoleCtrlHandler(@CtrlCRoutine, True);
   Console := TConsole.Create;
   Console.Execute;
   Console.Destroy;
