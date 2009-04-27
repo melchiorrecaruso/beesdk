@@ -250,9 +250,11 @@ var
   {$IFDEF UNIX}
   procedure CtrlHandler(sig: cint);
   begin
-    if sig = SIGINT then
-    begin
-      Console.FApp.Terminated := True;
+    case sig of
+      SIGINT:  Console.FApp.Terminated := True;
+      SIGQUIT: Console.FApp.Terminated := True;
+      SIGKILL: Console.FApp.Terminated := True;
+      SIGSTOP: Console.FApp.Terminated := True;
     end;
   end;
   {$ENDIF}
