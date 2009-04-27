@@ -27,7 +27,7 @@
     v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1036 - 2009.04.27 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -66,6 +66,9 @@ const
   msgAdding     = 'Adding     ';
   msgCRCERROR   = 'CRC-ERROR  ';
   msgFailed     = 'Failed     ';
+
+const
+  DefaultCfgName = 'bee.ini';
 
 // filename handling routines ...
 
@@ -653,12 +656,14 @@ end;
 
 function AttrToStr(Attr: longint): string;
 begin
-  Result := '.DRHSA';
-  if Attr and faDirectory = 0 then Result[2] := '.';
-  if Attr and faReadOnly  = 0 then Result[3] := '.';
-  if Attr and faHidden    = 0 then Result[4] := '.';
-  if Attr and faSysFile   = 0 then Result[5] := '.';
+  Result := 'RHSVDAL';
+  if Attr and faReadOnly  = 0 then Result[1] := '.';
+  if Attr and faHidden    = 0 then Result[2] := '.';
+  if Attr and faSysFile   = 0 then Result[3] := '.';
+  if Attr and faVolumeId  = 0 then Result[4] := '.';
+  if Attr and faDirectory = 0 then Result[5] := '.';
   if Attr and faArchive   = 0 then Result[6] := '.';
+  if Attr and faSymLink   = 0 then Result[7] := '.';
 end;
 
 // hex routines ...
@@ -759,9 +764,8 @@ end;
 {$IFDEF MSWINDOWS}
 function SetPriority(Priority: longint): boolean; // Priority is 0..3
 const
-  PriorityValue: array [0..3] of longint =
-    (IDLE_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS,
-    REALTIME_PRIORITY_CLASS);
+  PriorityValue: array [0..3] of longint = (IDLE_PRIORITY_CLASS,
+    NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS);
 begin
   Result := SetPriorityClass(GetCurrentProcess,
     PriorityValue[Max(0, Min(Priority, 3))]);
