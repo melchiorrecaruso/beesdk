@@ -42,9 +42,10 @@ program Bee;
 {$I compiler.inc}
 
 uses
-  {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF} {$ENDIF}
+  {$IFDEF CONSOLEAPPLICATION}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF UNIX} BaseUnix, {$ENDIF}
+  {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -232,7 +233,8 @@ var
 
   /// control+c event ///
 
-  function CtrlCRoutine(CtrlType: longword): longbool;
+  {$IFDEF MSWINDOWS}
+  function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
       CTRL_C_EVENT:        Console.FApp.Terminated := True;
@@ -243,9 +245,20 @@ var
     end;
     Result := True;
   end;
+  {$ENDIF}
+
+  {$IFDEF UNIX}
+  procedure CtrlHandler(sig: cint);
+  begin
+    if sig = SIGINT then
+    begin
+      Console.FApp.Terminated := True;
+    end;
+  end;
+  {$ENDIF}
 
 begin
-  SetConsoleCtrlHandler(@CtrlCRoutine, True);
+  SetCtrlCHandler(@CtrlHandler);
   Console := TConsole.Create;
   Console.Execute;
   Console.Destroy;
