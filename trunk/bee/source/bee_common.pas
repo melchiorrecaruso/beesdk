@@ -37,12 +37,9 @@ unit Bee_Common;
 interface
 
 uses
-  {$IFNDEF FPC}
-  Math,
-  {$ENDIF}
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
+  {$IFNDEF FPC} Math, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF UNIX} BaseUnix, {$ENDIF}
   Classes,
   SysUtils;
 
@@ -146,6 +143,8 @@ function SizeOfFile(const FileName: string): int64;
 {$IFDEF MSWINDOWS}
 function SetPriority(Priority: longint): boolean; // Priority is 0..3
 {$ENDIF}
+
+procedure SetCtrlCHandler(CtrlHandler: pointer);
 
 implementation
 
@@ -767,7 +766,25 @@ begin
   Result := SetPriorityClass(GetCurrentProcess,
     PriorityValue[Max(0, Min(Priority, 3))]);
 end;
-
 {$ENDIF}
+
+procedure SetCtrlCHandler(CtrlHandler: pointer);
+{$IFDEF UNIX}
+var
+  oa, na: SigActionRec;
+{$ENDIF}
+begin
+{$IFDEF UNIX}
+  na.sa_handler := SigActionHandler(CtrlHandler);
+  FillChar(na.sa_mask, sizeof(na.sa_mask), #0);
+  na.sa_flags := SA_ONESHOT;
+  na.sa_restorer := nil;
+  fpSigAction(SIGINT, @na, @oa);
+{$ENDIF}
+
+{$IFDEF MSWINDOWS}
+  Windows.SetConsoleCtrlHandler(CtrlHandler, True);
+{$ENDIF}
+end;
 
 end.
