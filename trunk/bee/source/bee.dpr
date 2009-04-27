@@ -257,9 +257,9 @@ var
   end;
   {$ENDIF}
 
-begin
-  SetCtrlCHandler(@CtrlHandler);
-  Console := TConsole.Create;
-  Console.Execute;
-  Console.Destroy;
-end.
+  begin
+    SetCtrlCHandler(@CtrlHandler);
+    Console := TConsole.Create;
+    Console.Execute;
+    Console.Destroy;
+  end.

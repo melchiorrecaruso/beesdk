@@ -30,7 +30,7 @@
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <CursorPos X="49" Y="234"/>
+        <CursorPos X="53" Y="230"/>
         <TopLine Value="217"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
@@ -79,7 +79,7 @@
         <Filename Value="bee_common.pas"/>
         <UnitName Value="Bee_Common"/>
         <CursorPos X="49" Y="147"/>
-        <TopLine Value="742"/>
+        <TopLine Value="147"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
