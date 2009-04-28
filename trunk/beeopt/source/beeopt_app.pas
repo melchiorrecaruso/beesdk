@@ -126,7 +126,7 @@ type
     Bodyes: TList;
     BodyesSize: longint;
 
-    Nowhere: TNulWriter;
+    Nowhere: TMemoryStream;
     Encoder: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
 
@@ -430,14 +430,12 @@ implementation
     if Population1.Count = 0 then
     begin
       Person := TPerson.Create;
-      // Writeln;
-      // Write('Generate random creature ---> ');
+      Write('| generate');
     end else
       if TPerson(Population1.First).Cost = 0 then
       begin
         Person := Population1.Extract (Population1.First);
-        // Writeln;
-        // Write('Recalculate creature estimation ---> ');
+        Write('| recalculate');
       end else
       begin
         repeat
@@ -455,8 +453,7 @@ implementation
             FreeAndNil(Person);
           end;
         until Person <> nil;
-        // Writeln;
-        // Write('Creatures optimization ---> ');
+        Write('| optimize');
       end;
 
     begin
@@ -514,7 +511,9 @@ implementation
       if (Population1.Count > FullSize) and (TPerson(Population1.First).Cost > 0) then
       begin
         while Population1.Count > HalfSize do
+        begin
           TPerson(Population1.Extract(Population1.Last)).Free;
+        end;
       end;
     end;
 
@@ -640,7 +639,7 @@ implementation
     end;
     FindClose(T);;
 
-    Nowhere := TNulWriter.Create;
+    Nowhere := TMemoryStream.Create;
     SecondaryCodec := TSecondaryEncoder.Create(Nowhere);
     Encoder := TBaseCoder.Create(SecondaryCodec);
   end;
@@ -822,7 +821,9 @@ implementation
       World := TPopulations.Create(SrcName + '.dat');
       World.MarkToRecalculate;
       World.Save(SrcName + '.dat');
-      Writeln('Parameters will be re-estimated at next run...');
+
+      Writeln;
+      Write('Parameters will be re-estimated at next run...');
       Exit;
     end;
 
@@ -834,29 +835,35 @@ implementation
       MergeDataRecursively('.\', SrcName + '.dat', World);
       World.CurrentAge := (World.CurrentAge div 2000) * 2000 + 1;
       World.Save (SrcName + '.dat');
-      Writeln('All "' + SrcName + '.dat" merged. Run again to continue...');
+
+      Writeln;
+      Write('All "' + SrcName + '.dat" merged. Run again to continue...');
       Exit;
     end;
 
     if NeedToRun = False then
     begin
-      Writeln('Configuration file was maked.');
+      Writeln;
+      Write('Configuration file was maked.');
       Exit;
     end;
 
     if SrcName = '' then
     begin
-      Writeln('Folder is not selected.');
+      Writeln;
+      Write('Folder is not selected.');
       Exit;
     end;
 
     if Bodyes.Count = 0 then
     begin
-      Writeln('No Files for Optimization.');
+      Writeln;
+      Write('No Files for Optimization.');
       Exit;
     end;
 
-    Writeln('Optimization...');
+    Writeln;
+    Write('Optimization...');
 
     World.Free;
     World := TPopulations.Create(SrcName + '.dat');
@@ -873,19 +880,14 @@ implementation
   procedure  TOptApp.DrawLevelProgress;
   begin
     Writeln;
-    // Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
-    //       #8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
-    //       #8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
-    //       #8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8);
-
-    Write(Format('%3d level, ', [World.CurrentPopulation + 1]));
+    Write(Format('%2d level, ', [World.CurrentPopulation + 1]));
     Write(Format('%5d variants, ', [World.CurrentAge]));
-    Write(Format('%1.3f%% improvements, ', [World.Improvements / (World.CurrentAge + 1) * 100]));
+    Write(Format('%6.3f%% improvements, ', [World.Improvements / (World.CurrentAge + 1) * 100]));
 
     if TPopulation(World.List[World.CurrentPopulation]).Count > 0 then
-      Write(Format('%10d packed size.', [TPerson(TPopulation(World.List[World.CurrentPopulation]).First).Cost]))
+      Write(Format('%10d packed ', [TPerson(TPopulation(World.List[World.CurrentPopulation]).First).Cost]))
     else
-      Write('?????????? packed size.');
+      Write('---------- packed ');
   end;
 
   procedure TOptApp.ReduceSection(Section: TConfigSection);
