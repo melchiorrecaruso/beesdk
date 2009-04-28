@@ -36,9 +36,9 @@ uses
   SysUtils,
   // ---
   Bee_Files,
-  Bee_Codec,         // TSecondaryEncoder, TSecondaryDecoder...
+  Bee_Codec, // TSecondaryEncoder, TSecondaryDecoder...
   Bee_Common,
-  Bee_Modeller,      // TBaseCoder...
+  Bee_Modeller, // TBaseCoder...
   Bee_Configuration;
 
 const
@@ -133,8 +133,8 @@ type
     Priority: longword;
 
     NeedToRecalculate: boolean;
-    NeedToCollectConfig: boolean; /// Is it need to collect configurations to Bee.ini?
-    NeedToReduceIni: boolean;     /// Is it need to reduce Bee.ini?
+    NeedToCollectConfig: boolean; // Is it need to collect configurations to Bee.ini?
+    NeedToReduceIni: boolean;     // Is it need to reduce Bee.ini?
     NeedToMerge: boolean;
     NeedToClose: boolean;
     NeedToRun: boolean;
@@ -347,8 +347,8 @@ implementation
     inherited Create;
     Stream := nil;
 
-    if FileExists(FileName + '.Err') then
-      Stream := CreateTFileReader(FileName + '.Err', fmOpenRead)
+    if FileExists(FileName + '.err') then
+      Stream := CreateTFileReader(FileName + '.err', fmOpenRead)
     else
       if FileExists(FileName) then
         Stream := CreateTFileReader(FileName, fmOpenRead);
@@ -380,7 +380,7 @@ implementation
     Stream: TFileWriter;
     I: longint;
   begin
-    RenameFile(FileName, FileName + '.Err');
+    RenameFile(FileName, FileName + '.err');
     DeleteFile(FileName);
 
     Stream := CreateTFileWriter(FileName, fmCreate);
@@ -395,7 +395,7 @@ implementation
       end;
       Stream.Free;
     end;
-    DeleteFile(FileName + '.Err');
+    DeleteFile(FileName + '.err');
   end;
 
   procedure TPopulations.Live;
@@ -430,12 +430,12 @@ implementation
     if Population1.Count = 0 then
     begin
       Person := TPerson.Create;
-      Write('|GEN| ');
+      Write('|gen| ');
     end else
       if TPerson(Population1.First).Cost = 0 then
       begin
         Person := Population1.Extract (Population1.First);
-        Write('|REC| ');
+        Write('|rec| ');
       end else
       begin
         repeat
@@ -453,7 +453,7 @@ implementation
             FreeAndNil(Person);
           end;
         until Person <> nil;
-        Write('|OPT| ');
+        Write('|opt| ');
       end;
 
     begin
@@ -465,7 +465,7 @@ implementation
       App.Encoder.SetDictionary(DictionaryLevel);
 
 
-      Write(Format('Dict. %d Mb', [DictionaryLevel, (1 shl (17 + Min(Max(0, DictionaryLevel), 9))) * 20 shr 20]));
+      Write(Format('-d%d', [DictionaryLevel]));
 
       App.Nowhere.Seek(0, 0);
       App.SecondaryCodec.Start;
@@ -664,14 +664,14 @@ implementation
   begin
     Writeln('Usage: BeeOpt <Ext> [<Options>]');
     Writeln;
-    Writeln('<Ext>: is the name of folder, which contains a set of');
+    Writeln('<Ext>: Is the name of folder, which contains a set of');
     Writeln('       typical files with <ext> extension. This files will');
     Writeln('       be used for parameters optimization.');
     Writeln;
     Writeln('<Options> is:');
     Writeln;
     Writeln('  -d<1..5>  Set dictionary size (d1 < 8m, d2 (default) <16m, d3 < 32m, ...)');
-    Writeln('  -c<Name>  Collect configuration files from current folder and its');
+    Writeln('  -c<name>  Collect configuration files from current folder and its');
     Writeln('            subfolders, then place they into configuration file into');
     Writeln('            current folder, without duplicates.');
     Writeln;
@@ -681,7 +681,8 @@ implementation
     Writeln('  -merge  Collect all <ext>.dat files in subfolders to one <ext>.dat,');
     Writeln('          and prepare it to recalculate.');
     Writeln;
-    Writeln('  -cfg<Name>  Use specified configuration file. By default will');
+    Writeln('  -pri<0..3>  Set process priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+    Writeln('  -cfg<name>  Use specified configuration file. By default will');
     Writeln('              use "<ext>.dat" parameters file and "bee.ini"');
     Writeln('              configuration file.');
     Writeln;
@@ -736,24 +737,24 @@ implementation
   begin
     Levels := TList.Create;
 
-    WriteText('Collect.txt', Cr + Ext + ':' + Cr);
+    WriteText('collect.txt', Cr + Ext + ':' + Cr);
     for I := 0 to World.Count -1 do
     begin
       if TPopulation(World.List[I]).Count = 0 then Continue;
-      WriteText('Collect.txt', Format('%d:', [TPerson(TPopulation(World.List[I]).First).Genome[1]]) + #9 + Format('%d', [TPerson(TPopulation(World.List[I]).First).Cost]));
+      WriteText('collect.txt', Format('%d:', [TPerson(TPopulation(World.List[I]).First).Genome[1]]) + #9 + Format('%d', [TPerson(TPopulation(World.List[I]).First).Cost]));
 
       if TPerson(TPopulation (World.List [I]).First).Genome [1] < 3 then
       begin
-        WriteText('Collect.txt', Cr);
+        WriteText('collect.txt', Cr);
         Continue;
       end else
         if (Levels.Count > 0) and (TPerson(TPopulation(World.List[I]).First).Cost > TPerson(Levels.Last).Cost) then
         begin
-          WriteText('Collect.txt', Cr);
+          WriteText('collect.txt', Cr);
           Continue;
         end else
         begin
-          WriteText('Collect.txt', ' +' + Cr);
+          WriteText('collect.txt', ' +' + Cr);
           Levels.Add(TPopulation(World.List[I]).First);
         end;
     end;
@@ -942,14 +943,15 @@ implementation
         World.Save(SrcName + '.dat');
       end;
     until NeedToClose;
+    Writeln;
   end;
 
   procedure  TOptApp.DrawLevelProgress;
   begin
     Writeln;
-    Write(Format('%2d level, ', [World.CurrentPopulation + 1]));
-    Write(Format('%5d variants, ', [World.CurrentAge]));
-    Write(Format('%6.3f%% improv., ', [World.Improvements / (World.CurrentAge + 1) * 100]));
+    Write(Format('%3d level ', [World.CurrentPopulation + 1]));
+    Write(Format('%5d variants ', [World.CurrentAge]));
+    Write(Format('%6.3f%% improvements ', [World.Improvements / (World.CurrentAge + 1) * 100]));
 
     if TPopulation(World.List[World.CurrentPopulation]).Count > 0 then
       Write(Format('%10d packed ', [TPerson(TPopulation(World.List[World.CurrentPopulation]).First).Cost]))
