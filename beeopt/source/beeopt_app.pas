@@ -110,7 +110,7 @@ type
     constructor Create;
     procedure Evolution;
     destructor Destroy; override;
-
+    procedure Display;
     procedure ExtractLevels(World: TPopulations; const Ext: string);
     procedure CollectWorlds(const Path: string);
     procedure CollectConfigurations(CfgName: string);
@@ -660,6 +660,75 @@ implementation
     inherited Destroy;
   end;
 
+  procedure TOptApp.Display;
+  begin
+    Writeln('Usage: BeeOpt <Ext> [<Options>]');
+    Writeln;
+    Writeln('<Ext>: is the name of folder, which contains a set of');
+    Writeln('       typical files with <ext> extension. This files will');
+    Writeln('       be used for parameters optimization.');
+    Writeln;
+    Writeln('<Options> is:');
+    Writeln;
+    Writeln('  -d<1..5>  Set dictionary size (d1 < 8m, d2 (default) <16m, d3 < 32m, ...)');
+    Writeln('  -c<Name>  Collect configuration files from current folder and its');
+    Writeln('            subfolders, then place they into configuration file into');
+    Writeln('            current folder, without duplicates.');
+    Writeln;
+    Writeln('  -recalculate  Recalculate parameters for start new optimization');
+    Writeln('                session at next running of BeeOpt.');
+    Writeln;
+    Writeln('  -merge  Collect all <ext>.dat files in subfolders to one <ext>.dat,');
+    Writeln('          and prepare it to recalculate.');
+    Writeln;
+    Writeln('  -cfg<Name>  Use specified configuration file. By default will');
+    Writeln('              use "<ext>.dat" parameters file and "bee.ini"');
+    Writeln('              configuration file.');
+    Writeln;
+    Writeln('How to use BeeOpt:');
+    Writeln;
+    Writeln('  For optimization of parameters the <ext> subfolder must');
+    Writeln('  be created, in which the set of typical files must be');
+    Writeln('  placed. Total size of files must be at least 1 mbyte.');
+    Writeln;
+    Writeln('  Then you can start BeeOpt, using <ext> as parameter.');
+    Writeln('  The result of optimization will be placed in BeeOpt.ini');
+    Writeln('  file.');
+    Writeln;
+    Writeln('  At last, you can construct configuration file for Bee');
+    Writeln('  0.8.x, by starting BeeOpt with an option -c. Send');
+    Writeln('  constructed configuration files to e-mail:');
+    Writeln;
+    Writeln('              filinsky@mail.ru,');
+    Writeln;
+    Writeln('  then Yours configuration files will be used for reception');
+    Writeln('  of the better compression ratio by the Bee 0.8.x.');
+    Writeln;
+    Writeln('Examples:');
+    Writeln;
+    Writeln('  Create parameters for *.doc files. "doc" subfolder');
+    Writeln('  with set of *.doc files inside must be previously');
+    Writeln('  created:');
+    Writeln;
+    Writeln('  # BeeOpt doc');
+    Writeln;
+    Writeln('  Create parameters for *.xls files, dictionary will use');
+    Writeln('  32m of memory. "xls" folder with set of *.xls files');
+    Writeln('  inside must be previously created:');
+    Writeln;
+    Writeln('  # BeeOpt xls -d3');
+    Writeln;
+    Writeln('  Create parameters for *.* files. "default" folder with');
+    Writeln('  set of different files inside must be previously');
+    Writeln('  created:');
+    Writeln;
+    Writeln('  # BeeOpt default');
+    Writeln;
+    Writeln('  Construct configuration file for Bee 0.8.x:');
+    Writeln;
+    Writeln('  # BeeOpt -c');
+  end;
+
   procedure TOptApp.ExtractLevels(World: TPopulations; const Ext: string);
   var
     Levels: TList;
@@ -809,6 +878,11 @@ implementation
 
   procedure TOptApp.Evolution;
   begin
+    Writeln('This is BeeOpt 0.8.0 utility (C) 2002-2009 Andrew Filinsky.');
+    Writeln('This program calculates parameters for Bee 0.8.0 archiver utility,');
+    Writeln('then better compression ratio will be available by using them.');
+    Writeln;
+
     SetPriority (Priority);
     if NeedToCollectConfig then
     begin
@@ -821,8 +895,6 @@ implementation
       World := TPopulations.Create(SrcName + '.dat');
       World.MarkToRecalculate;
       World.Save(SrcName + '.dat');
-
-      Writeln;
       Write('Parameters will be re-estimated at next run...');
       Exit;
     end;
@@ -835,35 +907,30 @@ implementation
       MergeDataRecursively('.\', SrcName + '.dat', World);
       World.CurrentAge := (World.CurrentAge div 2000) * 2000 + 1;
       World.Save (SrcName + '.dat');
-
-      Writeln;
       Write('All "' + SrcName + '.dat" merged. Run again to continue...');
       Exit;
     end;
 
     if NeedToRun = False then
     begin
-      Writeln;
       Write('Configuration file was maked.');
       Exit;
     end;
 
     if SrcName = '' then
     begin
-      Writeln;
-      Write('Folder is not selected.');
+      Display;
       Exit;
     end;
 
     if Bodyes.Count = 0 then
     begin
-      Writeln;
       Write('No Files for Optimization.');
       Exit;
     end;
 
+    Write('Optimization of ".' + SrcName + '" file extension:');
     Writeln;
-    Write('Optimization...');
 
     World.Free;
     World := TPopulations.Create(SrcName + '.dat');
