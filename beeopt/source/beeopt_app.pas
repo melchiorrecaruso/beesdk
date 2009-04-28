@@ -426,7 +426,6 @@ implementation
 
     Population1 := List[CurrentPopulation];
 
-
     if Population1.Count = 0 then
     begin
       Person := TPerson.Create;
@@ -463,7 +462,6 @@ implementation
 
       DictionaryLevel := CurrentAge div 2000 + 1;
       App.Encoder.SetDictionary(DictionaryLevel);
-
 
       Write(Format('-d%d', [DictionaryLevel]));
 
