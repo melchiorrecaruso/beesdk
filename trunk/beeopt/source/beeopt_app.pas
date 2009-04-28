@@ -430,12 +430,12 @@ implementation
     if Population1.Count = 0 then
     begin
       Person := TPerson.Create;
-      Write('| generate');
+      Write('|GEN| ');
     end else
       if TPerson(Population1.First).Cost = 0 then
       begin
         Person := Population1.Extract (Population1.First);
-        Write('| recalculate');
+        Write('|REC| ');
       end else
       begin
         repeat
@@ -453,7 +453,7 @@ implementation
             FreeAndNil(Person);
           end;
         until Person <> nil;
-        Write('| optimize');
+        Write('|OPT| ');
       end;
 
     begin
@@ -465,7 +465,7 @@ implementation
       App.Encoder.SetDictionary(DictionaryLevel);
 
 
-      // Write(Format('DictionaryLevel %d (~%d Mb)', [DictionaryLevel, (1 shl (17 + Min(Max(0, DictionaryLevel), 9))) * 20 shr 20]));
+      Write(Format('Dict. %d Mb', [DictionaryLevel, (1 shl (17 + Min(Max(0, DictionaryLevel), 9))) * 20 shr 20]));
 
       App.Nowhere.Seek(0, 0);
       App.SecondaryCodec.Start;
@@ -949,7 +949,7 @@ implementation
     Writeln;
     Write(Format('%2d level, ', [World.CurrentPopulation + 1]));
     Write(Format('%5d variants, ', [World.CurrentAge]));
-    Write(Format('%6.3f%% improvements, ', [World.Improvements / (World.CurrentAge + 1) * 100]));
+    Write(Format('%6.3f%% improv., ', [World.Improvements / (World.CurrentAge + 1) * 100]));
 
     if TPopulation(World.List[World.CurrentPopulation]).Count > 0 then
       Write(Format('%10d packed ', [TPerson(TPopulation(World.List[World.CurrentPopulation]).First).Cost]))
