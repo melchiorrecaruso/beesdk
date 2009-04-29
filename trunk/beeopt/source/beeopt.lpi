@@ -47,8 +47,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeOpt_App"/>
-        <CursorPos X="36" Y="967"/>
-        <TopLine Value="943"/>
+        <CursorPos X="14" Y="598"/>
+        <TopLine Value="946"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
