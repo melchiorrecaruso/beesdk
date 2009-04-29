@@ -126,7 +126,7 @@ type
     Bodyes: TList;
     BodyesSize: longint;
 
-    Nowhere: TMemoryStream;
+    Nowhere: TNulWriter;
     Encoder: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
 
@@ -637,7 +637,7 @@ implementation
     end;
     FindClose(T);;
 
-    Nowhere := TMemoryStream.Create;
+    Nowhere := TNulWriter.Create;
     SecondaryCodec := TSecondaryEncoder.Create(Nowhere);
     Encoder := TBaseCoder.Create(SecondaryCodec);
   end;
