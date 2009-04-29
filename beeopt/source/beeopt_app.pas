@@ -32,6 +32,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  Math,
   Classes,
   SysUtils,
   // ---
