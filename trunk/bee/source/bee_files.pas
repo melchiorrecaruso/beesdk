@@ -37,6 +37,7 @@ unit Bee_Files;
 interface
 
 uses
+  Math,
   Classes,
   SysUtils,
   // ---
@@ -78,6 +79,7 @@ type
   TNulWriter = class(TFileWriter)
   private
     FSize: int64;
+    FPosition: int64;
   public
     constructor Create;
     destructor Destroy; override;
@@ -284,12 +286,12 @@ constructor TNulWriter.Create;
 begin
   // inherited Create;
   BlowFish := TBlowFish.Create;
+  FPosition:= 0;
   FSize := 0;
 end;
 
 destructor TNulWriter.Destroy;
 begin
-  FSize := 0;
   BlowFish.Free;
   // inherited Destroy;
 end;
@@ -301,34 +303,44 @@ end;
 
 function TNulWriter.Write(const Buffer; Count: longint): longint;
 begin
-  Inc(FSize, Count);
+  Inc(FPosition, Count);
+  if FPosition > FSize then
+  begin
+    FSize := FPosition;
+  end;
   Result := Count;
 end;
 
 function TNulWriter.Seek(Offset: longint; Origin: word): longint;
 begin
-  if (Origin = soFromCurrent) and (OffSet = 0) then
-    Result := FSize
-  else
-    Result := 0;
+  case Origin of
+    soFromBeginning: FPosition := OffSet;
+    soFromCurrent:   FPosition := Min(FSize, FPosition + Offset);
+    soFromEnd:       FPosition := Max(0,     FPosition - Offset);
+  end;
+  Result := FPosition;
 end;
 
 function TNulWriter.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
-  if (Origin = soCurrent) and (OffSet = 0) then
-    Result := FSize
-  else
-    Result := 0;
+  case Origin of
+    soBeginning: FPosition := OffSet;
+    soCurrent:   FPosition := Min(FSize, FPosition + Offset);
+    soEnd:       FPosition := Max(0,     FPosition - Offset);
+  end;
+  Result := FPosition;
 end;
 
 procedure TNulWriter.SetSize(NewSize: longint);
 begin
-  FSize := NewSize;
+  FSize     := NewSize;
+  FPosition := FSize;
 end;
 
 procedure TNulWriter.SetSize(const NewSize: int64);
 begin
-  FSize := NewSize;
+  FSize     := NewSize;
+  FPosition := FSize;
 end;
 
 end.
