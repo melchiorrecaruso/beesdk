@@ -1154,21 +1154,20 @@ begin
   if (ListView.SelCount = 0) then
   begin
     MMenuActionsExtractAllClick(Sender);
-  end
-  else
-  if CheckWorkStatus(False) then
-  begin
-    FCommandLine.Clear;
-    FCommandLine.Command := 'X';
-    FCommandLine.Confirm := True;
-    FCommandLine.Log     := MMenuOptionsLogReport.Checked;
-    ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
-    FCommandLine.ArchiveName := FArchiveName;
-    ListView.GetMasks(FCommandLine.FileMasks);
+  end else
+    if CheckWorkStatus(False) then
     begin
-      Execute(FArchiveName);
+      FCommandLine.Clear;
+      FCommandLine.Command := 'X';
+      FCommandLine.Confirm := True;
+      FCommandLine.Log     := MMenuOptionsLogReport.Checked;
+      ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
+      FCommandLine.ArchiveName := FArchiveName;
+      ListView.GetMasks(FCommandLine.FileMasks);
+      begin
+        Execute(FArchiveName);
+      end;
     end;
-  end;
 end;
 
 procedure TMainFrm.MMenuActionsExtractAllClick(Sender: TObject);
