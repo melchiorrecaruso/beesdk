@@ -611,27 +611,36 @@ end;
 
 procedure TCustomArchiveListView.GetMasks(FileMasks: TStringList);
 var
-  S:    string;
+  // S: string;
   I, J: integer;
   Node: TArchiveItem;
 begin
-  for I := 0 to Items.Count - 1 do
+  for I := 0 to Items.Count -1 do
   begin
     if Items[I].Selected then
     begin
       Node := TArchiveItem(Items[I].Data);
       if (Node.FileAttr and faDirectory) = faDirectory then
       begin
-        S := IncludeTrailingBackSlash(Node.FilePath + Node.FileName);
-        for J := 0 to FFiles.Count - 1 do
-          with TArchiveItem(FFiles.Items[J]) do
-          begin
-            if FileNamePos(S, FilePath) = 1 then
-              FileMasks.Add(FilePath + FileName);
-          end;
-      end
-      else
-        FileMasks.Add(Node.FilePath + Node.FileName);
+        // Absolute Path-Name
+        // S := IncludeTrailingBackSlash(Node.FilePath + Node.FileName);
+        // for J := 0 to FFiles.Count -1 do
+        //   with TArchiveItem(FFiles.Items[J]) do
+        //     if FileNamePos(S, FilePath) = 1 then
+        //     begin
+        //       FileMasks.Add(FilePath + FileName);
+        //     end;
+
+        // Relative Path-Name
+        FileMasks.Add(IncludeTrailingBackSlash(Node.FileName) + '*');
+      end else
+      begin
+        // Absolute Path-Name
+        // FileMasks.Add(Node.FilePath + Node.FileName);
+
+        // Relative Path-Name
+        FileMasks.Add(Node.FileName);
+      end;
     end;
   end;
 end;

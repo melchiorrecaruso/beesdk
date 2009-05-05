@@ -81,6 +81,6 @@ LazarusResources.Add('TExtractFrm','FORMDATA',[
   +'Selection'#21'tvoKeepCollapsedNodes'#11'tvoReadOnly'#14'tvoShowButtons'#12
   +'tvoShowLines'#11'tvoShowRoot'#11'tvoToolTips'#0#0#0#18'TFolderTreeViewMgr'
   +#10'FoldersMgr'#10'FolderEdit'#7#6'Folder'#10'FolderTree'#7#7'Folders'#11'Fo'
-  +'lderIcons'#7#5'Icons'#4'left'#2#8#3'top'#3#216#0#0#0#9'TIconList'#5'Icons'#6
-  +'Masked'#8#4'left'#2'('#3'top'#3#216#0#0#0#0
+  +'lderIcons'#7#5'Icons'#4'left'#2#8#3'top'#3#216#0#0#0#9'TIconList'#5'Icons'#4
+  +'left'#2'('#3'top'#3#216#0#0#0#0
 ]);

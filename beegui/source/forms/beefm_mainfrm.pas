@@ -674,12 +674,14 @@ begin
     if MessageDlg(rsFreshFile, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
       FCommandLine.Clear;
-      FCommandLine.Command     := 'A';
-      FCommandLine.fOption     := True;
-      FCommandLine.uOption     := False;
-      FCommandLine.Confirm     := False;
-      FCommandLine.cdOption    := ListView.Folder;
+      FCommandLine.Command := 'A';
+      FCommandLine.fOption := True;
+      FCommandLine.uOption := False;
+      FCommandLine.Confirm := False;
+
       FCommandLine.ArchiveName := FArchiveName;
+
+      FCommandLine.cdOption := ListView.Folder;
       FCommandLine.FileMasks.Add(FileProcess.FileName);
       begin
         Execute(FArchiveName);
@@ -710,12 +712,12 @@ begin
 
   FCommandLine.Clear;
   FCommandLine.Command := 'L';
-  FCommandLine.Log     := MMenuOptionsLogReport.Checked;
+  FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
   FCommandLine.ArchiveName := aArchiveName;
 
-  FCommandLine.FileMasks.Add('*');
   FCommandLine.rOption := True;
+  FCommandLine.FileMasks.Add('*');
 
   if FCommandLine.Run then
   begin
@@ -834,8 +836,10 @@ begin
       FCommandLine.Clear;
       FCommandLine.Command := 'A';
       FCommandLine.Confirm := True;
-      FCommandLine.Log     := MMenuOptionsLogReport.Checked;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
       FCommandLine.ArchiveName := SaveDialog.FileName;
+
       ConfigFrm.AddOptions('', FCommandLine);
       begin
         Execute(SaveDialog.FileName);
@@ -1098,9 +1102,11 @@ begin
     FCommandLine.Clear;
     FCommandLine.Command := 'A';
     FCommandLine.Confirm := True;
-    FCommandLine.Log     := MMenuOptionsLogReport.Checked;
-    ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
     FCommandLine.ArchiveName := FArchiveName;
+
+    ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
     for I := Low(FileNames) to High(FileNames) do
     begin
       FCommandLine.FileMasks.Add(FileNames[I]);
@@ -1122,9 +1128,11 @@ begin
     FCommandLine.Clear;
     FCommandLine.Command := 'A';
     FCommandLine.Confirm := True;
-    FCommandLine.Log     := MMenuOptionsLogReport.Checked;
-    ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
     FCommandLine.ArchiveName := FArchiveName;
+
+    ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
     begin
       Execute(FArchiveName);
     end;
@@ -1139,8 +1147,11 @@ begin
     begin
       FCommandLine.Clear;
       FCommandLine.Command := 'D';
-      FCommandLine.Log     := MMenuOptionsLogReport.Checked;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
       FCommandLine.ArchiveName := FArchiveName;
+
+      FCommandLine.cdOption := ListView.Folder;
       ListView.GetMasks(FCommandLine.FileMasks);
       begin
         Execute(FArchiveName);
@@ -1160,9 +1171,11 @@ begin
       FCommandLine.Clear;
       FCommandLine.Command := 'X';
       FCommandLine.Confirm := True;
-      FCommandLine.Log     := MMenuOptionsLogReport.Checked;
-      ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
       FCommandLine.ArchiveName := FArchiveName;
+
+      ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
       ListView.GetMasks(FCommandLine.FileMasks);
       begin
         Execute(FArchiveName);
@@ -1177,10 +1190,11 @@ begin
     FCommandLine.Clear;
     FCommandLine.Command := 'X';
     FCommandLine.Confirm := True;
-    FCommandLine.Log     := MMenuOptionsLogReport.Checked;
-    ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
     FCommandLine.ArchiveName := FArchiveName;
 
+    ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
     FCommandLine.FileMasks.Add('*');
     FCommandLine.rOption := True;
     begin
@@ -1200,8 +1214,11 @@ begin
   begin
     FCommandLine.Clear;
     FCommandLine.Command := 'T';
-    FCommandLine.Log     := True;
+    FCommandLine.Log := True;
+
     FCommandLine.ArchiveName := FArchiveName;
+
+    FCommandLine.cdOption := ListView.Folder;
     ListView.GetMasks(FCommandLine.FileMasks);
     begin
       Execute(FArchiveName);
@@ -1215,7 +1232,10 @@ begin
   begin
     FCommandLine.Clear;
     FCommandLine.Command := 'R';
-    FCommandLine.Log     := MMenuOptionsLogReport.Checked;
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
+    FCommandLine.cdOption := ListView.Folder;
+
     FCommandLine.ArchiveName := FArchiveName;
     ListView.GetMasks(FCommandLine.FileMasks);
     begin
@@ -1239,8 +1259,11 @@ begin
       FCommandLine.Clear;
       FCommandLine.Command := 'E';
       FCommandLine.oOption := 'A';
-      FCommandLine.Log     := MMenuOptionsLogReport.Checked;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
       FCommandLine.ArchiveName := FArchiveName;
+
+      FCommandLine.cdOption := ListView.Folder;
       ListView.GetMasks(FCommandLine.FileMasks);
       if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
       begin
@@ -1268,11 +1291,12 @@ begin
     FCommandLine.Clear;
     FCommandLine.Command := 'X';
     FCommandLine.oOption := 'A';
-    FCommandLine.Log     := MMenuOptionsLogReport.Checked;
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
     FCommandLine.ArchiveName := FArchiveName;
 
-    FCommandLine.FileMasks.Add('*');
     FCommandLine.rOption := True;
+    FCommandLine.FileMasks.Add('*');
 
     FCheckOutDir := GetApplicationCheckoutDir(cApplicationName);
     ForceDirectories(FCheckOutDir);
@@ -1302,11 +1326,12 @@ begin
   begin
     FCommandLine.Clear;
     FCommandLine.Command := 'T';
-    FCommandLine.Log     := True;
+    FCommandLine.Log := True;
+
     FCommandLine.ArchiveName := FArchiveName;
 
-    FCommandLine.FileMasks.Add('*');
     FCommandLine.rOption := True;
+    FCommandLine.FileMasks.Add('*');
     begin
       Execute(FArchiveName);
     end;

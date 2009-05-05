@@ -232,7 +232,6 @@ object ExtractFrm: TExtractFrm
     top = 216
   end
   object Icons: TIconList
-    Masked = False
     left = 40
     top = 216
   end
