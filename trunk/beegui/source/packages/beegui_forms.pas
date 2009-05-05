@@ -238,14 +238,13 @@ begin
         CommandLine.oOption := 'Y';
     end;
 
-    if ExtractFrm.cdOptionCheck.Enabled then
+    if ExtractFrm.cdOptionCheck.Checked then
       CommandLine.cdOption := ExtractFrm.cdOption.Text
     else
       CommandLine.cdOption := '';
 
     Result := SetCurrentDir(ExtractFrm.Folder.Text);
-  end
-  else
+  end else
     Result := False;
 
   FreeAndNil(ExtractFrm);

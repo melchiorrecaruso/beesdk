@@ -102,9 +102,6 @@ begin
       Application.Title := cApplicationName;
       if CommandLine.Run then
       begin
-
-        ShowMessage(CommandLine.Params.Text);
-
         if CommandLine.Command in ['?'] then
         begin
           Application.CreateForm(TAboutFrm, AboutFrm);
