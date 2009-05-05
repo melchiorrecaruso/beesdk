@@ -50,7 +50,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
         <CursorPos X="1" Y="132"/>
-        <TopLine Value="58"/>
+        <TopLine Value="85"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -261,7 +261,7 @@
       <Unit20>
         <Filename Value="packages\beegui_consts.pas"/>
         <UnitName Value="BeeGui_Consts"/>
-        <CursorPos X="53" Y="92"/>
+        <CursorPos X="5" Y="91"/>
         <TopLine Value="63"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="26"/>
