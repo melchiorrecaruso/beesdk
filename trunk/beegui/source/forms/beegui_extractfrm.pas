@@ -123,7 +123,9 @@ end;
 
 procedure TExtractFrm.cdOptionCheckChange(Sender: TObject);
 begin
-  cdOption.Enabled := cdOptionCheck.Checked;
+     cdOption.Enabled := False;
+  // cdOption.Enabled := cdOptionCheck.Checked;
+
   if cdOption.Enabled then
     cdOption.Color := clWindow
   else
