@@ -349,14 +349,14 @@ procedure TMainFrm.FormCreate(Sender: TObject);
 begin
   SmallImages.IconFolder := GetApplicationSmallIconsDir;
   LargeImages.IconFolder := GetApplicationLargeIconsDir;
-    {$IFDEF UNIX}
+  {$IFDEF UNIX}
   AddressToolBar.ButtonHeight := 30;
   FolderBox.Style := csDropDown;
-    {$ENDIF}
-    {$IFDEF MSWINDOWS}
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
   AddressToolBar.ButtonHeight := FolderBox.Height + 4;
   FolderBox.Style := csOwnerDrawFixed;
-    {$ENDIF}
+  {$ENDIF}
   UpdateButtons(False);
   // --- //
   LoadLanguage;

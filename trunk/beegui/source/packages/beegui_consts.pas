@@ -88,7 +88,8 @@ begin
   Result := ExtractFilePath(ParamStr(0)) + cApplicationLanguagesFolder;
   if GetApplicationLanguageID <> '' then
   begin
-    Result := IncludeTrailingBackSlash(Result) + GetApplicationLanguageID;
+    // Result := IncludeTrailingBackSlash(Result) + GetApplicationLanguageID;
+    Result := IncludeTrailingBackSlash(Result) + 'en';
   end;
 end;
 
