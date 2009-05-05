@@ -206,8 +206,7 @@
         <ShowGenInfo Value="False"/>
       </Verbosity>
       <WriteFPCLogo Value="False"/>
-      <CustomOptions Value="
-"/>
+      <CustomOptions Value=""/>
       <CompilerPath Value="$(CompPath)"/>
       <ExecuteAfter>
         <CompileReasons Compile="False" Build="False" Run="False"/>
