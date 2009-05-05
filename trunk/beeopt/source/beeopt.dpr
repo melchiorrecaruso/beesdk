@@ -56,10 +56,10 @@ uses
   procedure CtrlHandler(sig: cint);
   begin
     case sig of
-      SIGINT:  Console.FApp.NeedToClose := True;
-      SIGQUIT: Console.FApp.NeedToClose := True;
-      SIGKILL: Console.FApp.NeedToClose := True;
-      SIGSTOP: Console.FApp.NeedToClose := True;
+      SIGINT:  App.NeedToClose := True;
+      SIGQUIT: App.NeedToClose := True;
+      SIGKILL: App.NeedToClose := True;
+      SIGSTOP: App.NeedToClose := True;
     end;
   end;
   {$ENDIF}

@@ -556,7 +556,9 @@ implementation
     S: string;
   begin
     inherited Create;
+    {$IFDEF MSWINDOWS}
     SetFileApisToOEM;
+    {$ENDIF}
     Randomize;
 
     SrcName := '';
@@ -883,7 +885,10 @@ implementation
     Writeln('then better compression ratio will be available by using them.');
     Writeln;
 
-    SetPriority (Priority);
+    {$IFDEF MSWINDOWS}
+    SetPriority(Priority);
+    {$ENDIF}
+
     if NeedToCollectConfig then
     begin
       CollectConfigurations(ConfigurationName);

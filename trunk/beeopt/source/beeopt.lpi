@@ -12,7 +12,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -26,7 +26,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
     <Units Count="13">
@@ -34,8 +34,8 @@
         <Filename Value="beeopt.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beeopt"/>
-        <CursorPos X="1" Y="72"/>
-        <TopLine Value="26"/>
+        <CursorPos X="20" Y="62"/>
+        <TopLine Value="24"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="32"/>
         <Loaded Value="True"/>
@@ -47,8 +47,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeOpt_App"/>
-        <CursorPos X="40" Y="650"/>
-        <TopLine Value="650"/>
+        <CursorPos X="13" Y="890"/>
+        <TopLine Value="864"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
@@ -57,17 +57,19 @@
       <Unit2>
         <Filename Value="..\..\bee\source\bee_common.pas"/>
         <UnitName Value="Bee_Common"/>
-        <CursorPos X="26" Y="150"/>
-        <TopLine Value="111"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="15"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="11"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\bee\source\bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
         <CursorPos X="20" Y="314"/>
-        <TopLine Value="299"/>
-        <EditorIndex Value="2"/>
+        <TopLine Value="294"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -140,123 +142,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="605" Column="22" TopLine="570"/>
+        <Caret Line="703" Column="40" TopLine="673"/>
       </Position1>
       <Position2>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="648" Column="18" TopLine="624"/>
+        <Caret Line="726" Column="39" TopLine="702"/>
       </Position2>
       <Position3>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="672" Column="47" TopLine="648"/>
+        <Caret Line="762" Column="20" TopLine="738"/>
       </Position3>
       <Position4>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="673" Column="72" TopLine="648"/>
+        <Caret Line="763" Column="20" TopLine="738"/>
       </Position4>
       <Position5>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="683" Column="55" TopLine="648"/>
+        <Caret Line="764" Column="20" TopLine="738"/>
       </Position5>
       <Position6>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="685" Column="41" TopLine="648"/>
+        <Caret Line="765" Column="20" TopLine="738"/>
       </Position6>
       <Position7>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="697" Column="56" TopLine="673"/>
+        <Caret Line="766" Column="20" TopLine="738"/>
       </Position7>
       <Position8>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="699" Column="41" TopLine="673"/>
+        <Caret Line="767" Column="20" TopLine="738"/>
       </Position8>
       <Position9>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="703" Column="40" TopLine="673"/>
+        <Caret Line="768" Column="20" TopLine="738"/>
       </Position9>
       <Position10>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="726" Column="39" TopLine="702"/>
+        <Caret Line="769" Column="20" TopLine="738"/>
       </Position10>
       <Position11>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="762" Column="20" TopLine="738"/>
+        <Caret Line="770" Column="20" TopLine="738"/>
       </Position11>
       <Position12>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="763" Column="20" TopLine="738"/>
+        <Caret Line="808" Column="41" TopLine="784"/>
       </Position12>
       <Position13>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="764" Column="20" TopLine="738"/>
+        <Caret Line="822" Column="20" TopLine="784"/>
       </Position13>
       <Position14>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="765" Column="20" TopLine="738"/>
+        <Caret Line="829" Column="65" TopLine="784"/>
       </Position14>
       <Position15>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="766" Column="20" TopLine="738"/>
+        <Caret Line="830" Column="65" TopLine="784"/>
       </Position15>
       <Position16>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="767" Column="20" TopLine="738"/>
+        <Caret Line="831" Column="65" TopLine="807"/>
       </Position16>
       <Position17>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="768" Column="20" TopLine="738"/>
+        <Caret Line="833" Column="18" TopLine="807"/>
       </Position17>
       <Position18>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="769" Column="20" TopLine="738"/>
+        <Caret Line="888" Column="42" TopLine="864"/>
       </Position18>
       <Position19>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="770" Column="20" TopLine="738"/>
+        <Caret Line="915" Column="27" TopLine="891"/>
       </Position19>
       <Position20>
-        <Filename Value="beeopt_app.pas"/>
-        <Caret Line="808" Column="41" TopLine="784"/>
+        <Filename Value="..\..\bee\source\bee_files.pas"/>
+        <Caret Line="317" Column="18" TopLine="296"/>
       </Position20>
       <Position21>
-        <Filename Value="beeopt_app.pas"/>
-        <Caret Line="822" Column="20" TopLine="784"/>
+        <Filename Value="..\..\bee\source\bee_files.pas"/>
+        <Caret Line="321" Column="42" TopLine="298"/>
       </Position21>
       <Position22>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="829" Column="65" TopLine="784"/>
+        <Caret Line="129" Column="24" TopLine="118"/>
       </Position22>
       <Position23>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="830" Column="65" TopLine="784"/>
+        <Caret Line="650" Column="40" TopLine="650"/>
       </Position23>
       <Position24>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="831" Column="65" TopLine="807"/>
+        <Caret Line="34" Column="41" TopLine="19"/>
       </Position24>
       <Position25>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="833" Column="18" TopLine="807"/>
+        <Caret Line="561" Column="13" TopLine="534"/>
       </Position25>
       <Position26>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="888" Column="42" TopLine="864"/>
+        <Caret Line="41" Column="10" TopLine="16"/>
       </Position26>
       <Position27>
         <Filename Value="beeopt_app.pas"/>
-        <Caret Line="915" Column="27" TopLine="891"/>
+        <Caret Line="34" Column="40" TopLine="10"/>
       </Position27>
       <Position28>
-        <Filename Value="..\..\bee\source\bee_files.pas"/>
-        <Caret Line="317" Column="18" TopLine="296"/>
+        <Filename Value="beeopt.dpr"/>
+        <Caret Line="72" Column="1" TopLine="21"/>
       </Position28>
       <Position29>
-        <Filename Value="..\..\bee\source\bee_files.pas"/>
-        <Caret Line="321" Column="42" TopLine="298"/>
+        <Filename Value="beeopt.dpr"/>
+        <Caret Line="59" Column="23" TopLine="24"/>
       </Position29>
       <Position30>
-        <Filename Value="beeopt_app.pas"/>
-        <Caret Line="129" Column="24" TopLine="118"/>
+        <Filename Value="beeopt.dpr"/>
+        <Caret Line="62" Column="19" TopLine="24"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
