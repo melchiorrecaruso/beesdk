@@ -184,8 +184,8 @@
         <Filename Value="packages\beegui_forms.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Forms"/>
-        <CursorPos X="20" Y="224"/>
-        <TopLine Value="214"/>
+        <CursorPos X="3" Y="227"/>
+        <TopLine Value="216"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>

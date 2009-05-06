@@ -120,21 +120,19 @@ begin
     CommandLine.rOption := AddFrm.rOption.Checked;
 
     case AddFrm.ufOption.ItemIndex of
-      0:
-      begin
-        CommandLine.uOption := True;
-        CommandLine.fOption := False;
-      end;
-      1:
-      begin
-        CommandLine.uOption := False;
-        CommandLine.fOption := True;
-      end;
+      0: begin
+           CommandLine.uOption := True;
+           CommandLine.fOption := False;
+         end;
+      1: begin
+           CommandLine.uOption := False;
+           CommandLine.fOption := True;
+         end;
       else
-      begin
-        CommandLine.uOption := True;
-        CommandLine.fOption := True;
-      end;
+         begin
+           CommandLine.uOption := True;
+           CommandLine.fOption := True;
+         end;
     end;
 
     CommandLine.eOption := AddFrm.eOption.Text;
@@ -181,11 +179,9 @@ begin
         Result := SetCurrentDir(AddFrm.FilesMgr.RootValue)
       else
         Result := True;
-    end
-    else
+    end else
       Result := False;
-  end
-  else
+  end else
     Result := False;
 
   FreeAndNil(AddFrm);
