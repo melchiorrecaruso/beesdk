@@ -1208,22 +1208,21 @@ begin
   if (ListView.SelCount = 0) then
   begin
     MMenuActionsTestAllClick(Sender);
-  end
-  else
-  if CheckWorkStatus(False) then
-  begin
-    FCommandLine.Clear;
-    FCommandLine.Command := 'T';
-    FCommandLine.Log := True;
-
-    FCommandLine.ArchiveName := FArchiveName;
-
-    FCommandLine.cdOption := ListView.Folder;
-    ListView.GetMasks(FCommandLine.FileMasks);
+  end else
+    if CheckWorkStatus(False) then
     begin
-      Execute(FArchiveName);
+      FCommandLine.Clear;
+      FCommandLine.Command := 'T';
+      FCommandLine.Log := True;
+
+      FCommandLine.ArchiveName := FArchiveName;
+
+      FCommandLine.cdOption := ListView.Folder;
+      ListView.GetMasks(FCommandLine.FileMasks);
+      begin
+        Execute(FArchiveName);
+      end;
     end;
-  end;
 end;
 
 procedure TMainFrm.MMenuActionsRenameClick(Sender: TObject);

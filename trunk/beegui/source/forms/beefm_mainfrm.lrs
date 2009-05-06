@@ -1,5 +1,3 @@
-{ Questo è un file risorse generato automaticamente da Lazarus }
-
 LazarusResources.Add('TMainFrm','FORMDATA',[
   'TPF0'#8'TMainFrm'#7'MainFrm'#4'Left'#3#245#0#6'Height'#3' '#2#3'Top'#3#196#0
   +#5'Width'#3#209#2#14'AllowDropFiles'#9#7'Caption'#6#26'Bee File Manager - We'
