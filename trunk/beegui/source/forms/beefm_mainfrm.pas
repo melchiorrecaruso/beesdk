@@ -1234,9 +1234,9 @@ begin
     FCommandLine.Command := 'R';
     FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
-    FCommandLine.cdOption := ListView.Folder;
-
     FCommandLine.ArchiveName := FArchiveName;
+
+    FCommandLine.cdOption := ListView.Folder;
     ListView.GetMasks(FCommandLine.FileMasks);
     begin
       Execute(FArchiveName);
@@ -1265,6 +1265,7 @@ begin
 
       FCommandLine.cdOption := ListView.Folder;
       ListView.GetMasks(FCommandLine.FileMasks);
+
       if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
       begin
         IncWorkStatus;
@@ -1311,11 +1312,9 @@ begin
           with FileProcess do
             Execute(GetOSFileManager, FCheckOutDir);
         end;
-      end
-      else
+      end else
         MessageDlg(rseCannotFoundFM, mtError, [mbOK], 0);
-    end
-    else
+    end else
       MessageDlg(rseSetCheckoutDir, mtError, [mbOK], 0);
   end;
 end;

@@ -192,6 +192,8 @@ begin
 end;
 
 function ConfirmExtract(CommandLine: TCustomCommandLine): boolean;
+var
+  I: integer;
 begin
   ExtractFrm := TExtractFrm.Create(Application);
 
@@ -239,9 +241,17 @@ begin
     end;
 
     if ExtractFrm.cdOptionCheck.Checked then
-      CommandLine.cdOption := ExtractFrm.cdOption.Text
-    else
+    begin
+      CommandLine.cdOption := ExtractFrm.cdOption.Text;
+    end else
+    begin
       CommandLine.cdOption := '';
+      with CommandLine.FileMasks do
+        for I := 0 to Count -1 do
+        begin
+          Strings[I] := IncludeTrailingBackSlash(ExtractFrm.cdOption.Text) + Strings[I];
+        end;
+    end;
 
     Result := SetCurrentDir(ExtractFrm.Folder.Text);
   end else

@@ -115,9 +115,9 @@ end;
 
 procedure TExtractFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-    {$IFDEF SAVELANGUAGE}
+  {$IFDEF SAVELANGUAGE}
   SaveLanguage;
-    {$ENDIF}
+  {$ENDIF}
   SaveProperty;
 end;
 
