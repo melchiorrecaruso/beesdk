@@ -184,7 +184,7 @@
         <Filename Value="packages\beegui_forms.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Forms"/>
-        <CursorPos X="50" Y="235"/>
+        <CursorPos X="36" Y="250"/>
         <TopLine Value="216"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="200"/>
@@ -201,7 +201,7 @@
         <CursorPos X="7" Y="1269"/>
         <TopLine Value="1243"/>
         <EditorIndex Value="2"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="135"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit14>
@@ -215,7 +215,7 @@
         <CursorPos X="18" Y="183"/>
         <TopLine Value="159"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="117"/>
+        <UsageCount Value="118"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit15>
@@ -228,7 +228,7 @@
         <UnitName Value="BeeFM_PropertyFrm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="37"/>
-        <UsageCount Value="117"/>
+        <UsageCount Value="118"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -240,7 +240,7 @@
         <UnitName Value="BeeFm_SelectFrm"/>
         <CursorPos X="31" Y="85"/>
         <TopLine Value="67"/>
-        <UsageCount Value="117"/>
+        <UsageCount Value="118"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
@@ -252,7 +252,7 @@
         <UnitName Value="BeeFm_ViewFrm"/>
         <CursorPos X="27" Y="96"/>
         <TopLine Value="49"/>
-        <UsageCount Value="117"/>
+        <UsageCount Value="118"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
@@ -261,7 +261,7 @@
         <UnitName Value="BeeGui_LibLink"/>
         <CursorPos X="6" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="78"/>
+        <UsageCount Value="79"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
