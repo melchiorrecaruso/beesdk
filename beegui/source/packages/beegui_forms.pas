@@ -220,8 +220,12 @@ begin
       ExtractFrm.oOption.ItemIndex := 0;
   end;
 
-  ExtractFrm.cdOptionCheck.Checked := Length(CommandLine.cdOption) > 0;
-  ExtractFrm.cdOption.Text := CommandLine.cdOption;
+  with ExtractFrm do
+  begin
+    cdOption.Text := CommandLine.cdOption;
+    cdOptionCheck.Enabled := cdOption.Text <> '';
+    cdOptionCheck.Checked := cdOption.Text <> '';
+  end;
 
   if ExtractFrm.ShowModal = mrOk then
   begin
@@ -237,7 +241,7 @@ begin
       1: CommandLine.oOption := 'A';
       2: CommandLine.oOption := 'S';
       else
-        CommandLine.oOption := 'Y';
+         CommandLine.oOption := 'Y';
     end;
 
     if ExtractFrm.cdOptionCheck.Checked then

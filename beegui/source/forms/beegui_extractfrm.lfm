@@ -89,6 +89,7 @@ object ExtractFrm: TExtractFrm
       Width = 218
       BorderSpacing.Around = 6
       Caption = 'Use Current Archive Directory (-cd Option)'
+      Enabled = False
       OnChange = cdOptionCheckChange
       TabOrder = 1
     end
