@@ -1195,8 +1195,10 @@ begin
     FCommandLine.ArchiveName := FArchiveName;
 
     ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
+
     FCommandLine.FileMasks.Add('*');
-    FCommandLine.rOption := True;
+    FCommandLine.rOption  := True;
+    FcommandLine.cdOption := '';
     begin
       Execute(FArchiveName);
     end;
@@ -1295,8 +1297,9 @@ begin
 
     FCommandLine.ArchiveName := FArchiveName;
 
-    FCommandLine.rOption := True;
     FCommandLine.FileMasks.Add('*');
+    FCommandLine.rOption  := True;
+    FCommandLine.cdOption := '';
 
     FCheckOutDir := GetApplicationCheckoutDir(cApplicationName);
     ForceDirectories(FCheckOutDir);
@@ -1328,8 +1331,9 @@ begin
 
     FCommandLine.ArchiveName := FArchiveName;
 
-    FCommandLine.rOption := True;
     FCommandLine.FileMasks.Add('*');
+    FCommandLine.rOption  := True;
+    FCommandLine.cdOption := '';
     begin
       Execute(FArchiveName);
     end;
