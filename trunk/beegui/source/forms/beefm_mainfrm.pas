@@ -433,7 +433,7 @@ begin
   if ListView.Enabled then
   begin
     StatusBar.BeginUpdate;
-    StatusBar.Panels[0].Text := rsSelectedItems + IntToStr(ListView.SelCount);
+    StatusBar.Panels[0].Text := Format(rsSelectedItems,  [IntToStr(ListView.SelCount)]);
     StatusBar.Panels[1].Text := SizeToStr(ListView.SelFileSize);
     StatusBar.Panels[2].Text := SizeToStr(ListView.SelFilePackedSize);
     if ListView.SelCount > 0 then
@@ -910,8 +910,7 @@ begin
     PropertyFrm.ARatioValue.Caption := IntToStr(Ratio) + '%';
     PropertyFrm.AFilesCryptedValue.Caption := IntToStr(ListView.Details.FilesCrypted);
     PropertyFrm.AArcSizeValue.Caption := SizeToStr(SizeOfFile(FArchiveName));
-    PropertyFrm.AModifiedValue.Caption :=
-      DateTimeToStr(FileDateToDateTime(FileAge(FArchiveName)));
+    PropertyFrm.AModifiedValue.Caption := DateTimeToStr(FileDateToDateTime(FileAge(FArchiveName)));
 
     PropertyFrm.Pages.ActivePage := PropertyFrm.APage;
     PropertyFrm.FPage.TabVisible := False;
@@ -967,6 +966,8 @@ begin
   begin
     RenameFrm := TRenameFrm.Create(Application);
     try
+      RenameFrm.BtnAbort.Visible := False;
+
       RenameFrm.Caption   := rsRenameArc;
       RenameFrm.ToFN.Text := ExtractFileName(FArchiveName);
       RenameFrm.FromFN.Caption := ExtractFileName(FArchiveName);

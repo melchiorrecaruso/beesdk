@@ -237,9 +237,7 @@ var
 begin
   FList := aList;
   FCommandLine := aCommandLine;
-
-  ShowMessage(FCommandLine.Params.Text);
-
+  // ShowMessage(FCommandLine.Params.Text);
   P := StringToPChar(FCommandLine.Params.Text);
   CoreCreate(P);
   if CoreExecute then
