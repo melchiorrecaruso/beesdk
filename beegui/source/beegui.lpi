@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="7"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -268,7 +268,7 @@
       </Unit19>
       <Unit20>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <CursorPos X="6" Y="41"/>
+        <CursorPos X="4" Y="37"/>
         <TopLine Value="1"/>
         <EditorIndex Value="7"/>
         <UsageCount Value="10"/>
