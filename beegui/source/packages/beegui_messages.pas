@@ -93,85 +93,50 @@ begin
   begin
     Storage := TMemIniFile.Create(Folder + ('messages.ini'));
     begin
-      rsWelcome      :=
-        Storage.ReadString('ResourceString', 'rsWelcome', rsWelcome);
-      rsOpening      :=
-        Storage.ReadString('ResourceString', 'rsOpening', rsOpening);
-      rsWarning      :=
-        Storage.ReadString('ResourceString', 'rsWarning', rsWarning);
-      rsConfirmation :=
-        Storage.ReadString('ResourceString', 'rsConfirmation', rsConfirmation);
-      rsSelectedItems :=
-        Storage.ReadString('ResourceString', 'rsSelectedItems', rsSelectedItems);
+      rsWelcome       := Storage.ReadString('ResourceString', 'rsWelcome', rsWelcome);
+      rsOpening       := Storage.ReadString('ResourceString', 'rsOpening', rsOpening);
+      rsWarning       := Storage.ReadString('ResourceString', 'rsWarning', rsWarning);
+      rsConfirmation  := Storage.ReadString('ResourceString', 'rsConfirmation', rsConfirmation);
 
-      rsFileProperty :=
-        Storage.ReadString('ResourceString', 'rsFileProperty', rsFileProperty);
-      rsArcProperty  :=
-        Storage.ReadString('ResourceString', 'rsArcProperty', rsArcProperty);
+      rsSelectedItems := Storage.ReadString('ResourceString', 'rsSelectedItems', rsSelectedItems);
 
-      rsFreshFile :=
-        Storage.ReadString('ResourceString', 'rsFreshFile', rsFreshFile);
+      rsFileProperty  := Storage.ReadString('ResourceString', 'rsFileProperty', rsFileProperty);
+      rsArcProperty   := Storage.ReadString('ResourceString', 'rsArcProperty', rsArcProperty);
 
-      rsSelectFolder     :=
-        Storage.ReadString('ResourceString', 'rsSelectFolder', rsSelectFolder);
-      rsSelectFrmCaption :=
-        Storage.ReadString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
-      rsDeSelectFrmCaption :=
-        Storage.ReadString('ResourceString', 'rsDeSelectFrmCaption', rsDeSelectFrmCaption);
+      rsFreshFile     := Storage.ReadString('ResourceString', 'rsFreshFile', rsFreshFile);
 
-      rsExitWithoutSave     :=
-        Storage.ReadString('ResourceString', 'rsExitWithoutSave', rsExitWithoutSave);
-      rsConfirmDeleteArc    :=
-        Storage.ReadString('ResourceString', 'rsConfirmDeleteArc', rsConfirmDeleteArc);
-      rsConfirmDeleteFiles  :=
-        Storage.ReadString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);
-      rsConfirmAbortProcess :=
-        Storage.ReadString('ResourceString', 'rsConfirmAbortProcess', rsConfirmAbortProcess);
-      rsConfirmDefault      :=
-        Storage.ReadString('ResourceString', 'rsConfirmDefault', rsConfirmDefault);
-      rsConfirmDeleteCheckoutDir :=
-        Storage.ReadString('ResourceString', 'rsConfirmDeleteCheckoutDir',
-        rsConfirmDeleteCheckoutDir);
+      rsSelectFolder     := Storage.ReadString('ResourceString', 'rsSelectFolder', rsSelectFolder);
+      rsSelectFrmCaption := Storage.ReadString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
+      rsDeSelectFrmCaption := Storage.ReadString('ResourceString', 'rsDeSelectFrmCaption', rsDeSelectFrmCaption);
 
-      rsProcessTerminated :=
-        Storage.ReadString('ResourceString', 'rsProcessTerminated', rsProcessTerminated);
-      rsProcessAborted    :=
-        Storage.ReadString('ResourceString', 'rsProcessAborted', rsProcessAborted);
-      rsProcessPaused     :=
-        Storage.ReadString('ResourceString', 'rsProcessPaused', rsProcessPaused);
-      rsProcessStatus     :=
-        Storage.ReadString('ResourceString', 'rsProcessStatus', rsProcessStatus);
-      rsProcessExists     :=
-        Storage.ReadString('ResourceString', 'rsProcessExists', rsProcessExists);
+      rsExitWithoutSave     := Storage.ReadString('ResourceString', 'rsExitWithoutSave', rsExitWithoutSave);
+      rsConfirmDeleteArc    := Storage.ReadString('ResourceString', 'rsConfirmDeleteArc', rsConfirmDeleteArc);
+      rsConfirmDeleteFiles  := Storage.ReadString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);
+      rsConfirmAbortProcess := Storage.ReadString('ResourceString', 'rsConfirmAbortProcess', rsConfirmAbortProcess);
+      rsConfirmDefault      := Storage.ReadString('ResourceString', 'rsConfirmDefault', rsConfirmDefault);
+      rsConfirmDeleteCheckoutDir := Storage.ReadString('ResourceString', 'rsConfirmDeleteCheckoutDir', rsConfirmDeleteCheckoutDir);
 
-      rsMoveArcTo  :=
-        Storage.ReadString('ResourceString', 'rsMoveArcTo', rsMoveArcTo);
-      rsCopyArcTo  :=
-        Storage.ReadString('ResourceString', 'rsCopyArcTo', rsCopyArcTo);
-      rsRenameArc  :=
-        Storage.ReadString('ResourceString', 'rsRenameArc', rsRenameArc);
-      rsRenameFile :=
-        Storage.ReadString('ResourceString', 'rsRenameFile', rsRenameFile);
+      rsProcessTerminated := Storage.ReadString('ResourceString', 'rsProcessTerminated', rsProcessTerminated);
+      rsProcessAborted    := Storage.ReadString('ResourceString', 'rsProcessAborted', rsProcessAborted);
+      rsProcessPaused     := Storage.ReadString('ResourceString', 'rsProcessPaused', rsProcessPaused);
+      rsProcessStatus     := Storage.ReadString('ResourceString', 'rsProcessStatus', rsProcessStatus);
+      rsProcessExists     := Storage.ReadString('ResourceString', 'rsProcessExists', rsProcessExists);
 
-      rseConfirmPassword :=
-        Storage.ReadString('ResourceString', 'rseConfirmPassword', rseConfirmPassword);
-      rseReadArcProperty :=
-        Storage.ReadString('ResourceString', 'rseReadArcProperty', rseReadArcProperty);
-      rseDeleteArc      :=
-        Storage.ReadString('ResourceString', 'rseDeleteArc', rseDeleteArc);
-      rseMoveArcTo      :=
-        Storage.ReadString('ResourceString', 'rseMoveArcTo', rseMoveArcTo);
-      rseCopyArcTo      :=
-        Storage.ReadString('ResourceString', 'rseCopyArcTo', rseCopyArcTo);
-      rseRenameArc      :=
-        Storage.ReadString('ResourceString', 'rseRenameArc', rseRenameArc);
-      rseRenameFile     :=
-        Storage.ReadString('ResourceString', 'rseRenameFile', rseRenameFile);
-      rseSetCheckoutDir :=
-        Storage.ReadString('ResourceString', 'rseSetCheckoutDir', rseSetCheckoutDir);
+      rsMoveArcTo  := Storage.ReadString('ResourceString', 'rsMoveArcTo', rsMoveArcTo);
+      rsCopyArcTo  := Storage.ReadString('ResourceString', 'rsCopyArcTo', rsCopyArcTo);
+      rsRenameArc  := Storage.ReadString('ResourceString', 'rsRenameArc', rsRenameArc);
+      rsRenameFile := Storage.ReadString('ResourceString', 'rsRenameFile', rsRenameFile);
 
-      rseCannotFoundFM :=
-        Storage.ReadString('ResourceString', 'rseCannotFoundFM', rseCannotFoundFM);
+      rseConfirmPassword := Storage.ReadString('ResourceString', 'rseConfirmPassword', rseConfirmPassword);
+      rseReadArcProperty := Storage.ReadString('ResourceString', 'rseReadArcProperty', rseReadArcProperty);
+      rseDeleteArc       := Storage.ReadString('ResourceString', 'rseDeleteArc', rseDeleteArc);
+      rseMoveArcTo       := Storage.ReadString('ResourceString', 'rseMoveArcTo', rseMoveArcTo);
+      rseCopyArcTo       := Storage.ReadString('ResourceString', 'rseCopyArcTo', rseCopyArcTo);
+      rseRenameArc       := Storage.ReadString('ResourceString', 'rseRenameArc', rseRenameArc);
+      rseRenameFile      := Storage.ReadString('ResourceString', 'rseRenameFile', rseRenameFile);
+      rseSetCheckoutDir  := Storage.ReadString('ResourceString', 'rseSetCheckoutDir', rseSetCheckoutDir);
+
+      rseCannotFoundFM   := Storage.ReadString('ResourceString', 'rseCannotFoundFM', rseCannotFoundFM);
     end;
     Storage.Free;
   end;
@@ -200,18 +165,14 @@ begin
 
       Storage.WriteString('ResourceString', 'rsSelectFolder', rsSelectFolder);
       Storage.WriteString('ResourceString', 'rsSelectFrmCaption', rsSelectFrmCaption);
-      Storage.WriteString('ResourceString', 'rsDeselectFrmCaption',
-        rsDeselectFrmCaption);
+      Storage.WriteString('ResourceString', 'rsDeselectFrmCaption', rsDeselectFrmCaption);
 
       Storage.WriteString('ResourceString', 'rsExitWithoutSave', rsExitWithoutSave);
       Storage.WriteString('ResourceString', 'rsConfirmDeleteArc', rsConfirmDeleteArc);
-      Storage.WriteString('ResourceString', 'rsConfirmDeleteFiles',
-        rsConfirmDeleteFiles);
-      Storage.WriteString('ResourceString', 'rsConfirmAbortProcess',
-        rsConfirmAbortProcess);
+      Storage.WriteString('ResourceString', 'rsConfirmDeleteFiles', rsConfirmDeleteFiles);
+      Storage.WriteString('ResourceString', 'rsConfirmAbortProcess', rsConfirmAbortProcess);
       Storage.WriteString('ResourceString', 'rsConfirmDefault', rsConfirmDefault);
-      Storage.WriteString('ResourceString', 'rsConfirmDeleteCheckoutDir',
-        rsConfirmDeleteCheckoutDir);
+      Storage.WriteString('ResourceString', 'rsConfirmDeleteCheckoutDir', rsConfirmDeleteCheckoutDir);
 
       Storage.WriteString('ResourceString', 'rsProcessTerminated', rsProcessTerminated);
       Storage.WriteString('ResourceString', 'rsProcessAborted', rsProcessAborted);
@@ -240,7 +201,6 @@ begin
 end;
 
 initialization
-
   LoadMessages;
 
 finalization
