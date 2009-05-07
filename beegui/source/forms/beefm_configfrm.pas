@@ -123,14 +123,17 @@ end;
 
 procedure TConfigFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-    {$IFDEF SAVELANGUAGE}
+  {$IFDEF SAVELANGUAGE}
   SaveLanguage;
-    {$ENDIF}
+  {$ENDIF}
 end;
 
 procedure TConfigFrm.TreeChange(Sender: TObject; Node: TTreeNode);
 begin
-  SetPage(Tree.Selected.AbsoluteIndex);
+  if Assigned(Tree.Selected) then
+  begin
+    SetPage(Tree.Selected.AbsoluteIndex);
+  end;
 end;
 
 procedure TConfigFrm.SetPage(PageIndex: integer);
