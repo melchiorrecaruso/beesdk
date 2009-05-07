@@ -38,7 +38,7 @@
   {*$DEFINE FILENAMECASESENSITIVE}
 {$ELSE}
   {$IFDEF UNIX}
-    {$DEFINE USEDLL}
+    {*$DEFINE USEDLL}
     {$DEFINE FILENAMECASESENSITIVE}
   {$ELSE}
     todo: define filenamecasesensitive
