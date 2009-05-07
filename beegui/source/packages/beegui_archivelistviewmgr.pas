@@ -152,19 +152,19 @@ type
 
     function CompareFn(Item1, Item2: TListItem): integer;
   public
-    property FileName: string Read FFileName;
-    property Folder: string Read FFolder Write SetFolder;
-    property FolderBox: TArchiveFolderBox Read FFolderBox Write SetFolderBox default nil;
-    property Details: TArchiveDetails Read FDetails;
+    property FileName: string read FFileName;
+    property Folder: string read FFolder write SetFolder;
+    property FolderBox: TArchiveFolderBox read FFolderBox write SetFolderBox default nil;
+    property Details: TArchiveDetails read FDetails;
 
-    property SelFilePackedSize: int64 Read GetSelPackedSize;
-    property SelFileSize: int64 Read GetSelSize;
-    property SelFileTime: integer Read GetSelTime;
+    property SelFilePackedSize: int64 read GetSelPackedSize;
+    property SelFileSize: int64 read GetSelSize;
+    property SelFileTime: integer read GetSelTime;
   published
-    property SimpleList: boolean Read FSimpleList Write SetSimpleList default False;
-    property AutoLoad: boolean Read FAutoLoad Write SetAutoLoad default False;
+    property SimpleList: boolean read FSimpleList write SetSimpleList default False;
+    property AutoLoad: boolean read FAutoLoad write SetAutoLoad default False;
   published
-    property OnChangeFolder: TNotifyEvent Read FOnChangeFolder Write FOnChangeFolder;
+    property OnChangeFolder: TNotifyEvent read FOnChangeFolder write FOnChangeFolder;
   end;
 
 type
