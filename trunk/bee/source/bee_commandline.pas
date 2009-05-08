@@ -344,7 +344,7 @@ end;
 
 procedure TCommandLine.SetoOption(Value: char);
 begin
-  FoOption := Value;
+  FoOption := UpCase(Value);
 end;
 
 procedure TCommandLine.SetmOption(Value: longint);
