@@ -1492,8 +1492,6 @@ end;
 
 procedure TMainFrm.MMenuHelpInternetClick(Sender: TObject);
 begin
-  ShowMessage(GetOSWebBrowser);
-
   if GetOSWebBrowser <> '' then
   begin
     ShellExec(cApplicationHomePage, GetOSWebBrowser);
