@@ -1255,7 +1255,7 @@ begin
     FFileName := ListView.Selected.Caption;
     if Pos('D', ListView.Selected.SubItems[5]) > 0 then
     begin
-      ListView.Folder := IncludeTrailingBackSlash(ListView.Folder) + FFileName;
+      ListView.Folder := ListView.Selected.SubItems[9] + FFileName;
     end else
     begin
       FCommandLine.Clear;
@@ -1270,6 +1270,8 @@ begin
 
       if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
       begin
+        FFileName := IncludeTrailingBackSlash(GetCurrentDir) + FFileName;
+
         IncWorkStatus;
         Execute(FArchiveName);
         if (ExitCode < 2) then
@@ -1312,8 +1314,7 @@ begin
         Execute(FArchiveName);
         if (ExitCode < 2) then
         begin
-          with FileProcess do
-            Execute(GetOSFileManager, FCheckOutDir);
+          with FileProcess do Execute(GetOSFileManager, FCheckOutDir);
         end;
       end else
         MessageDlg(rseCannotFoundFM, mtError, [mbOK], 0);
