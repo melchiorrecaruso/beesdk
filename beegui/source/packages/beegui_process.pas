@@ -105,8 +105,8 @@ begin
     FProcess.StartupOptions := [];
     FProcess.Options := [];
     FProcess.Execute;
-    Enabled := True;
   end;
+  Enabled := True;
 end;
 
 procedure TFileProcess.DoOnTimer;
@@ -122,8 +122,7 @@ begin
       FreeAndNil(FProcess);
       Enabled := False;
     end;
-  end
-  else
+  end else
     Enabled := False;
   inherited DoOnTimer;
 end;
