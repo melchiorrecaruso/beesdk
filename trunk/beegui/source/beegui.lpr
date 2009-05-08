@@ -65,67 +65,66 @@ begin
   Application.HelpFile := '';
 
   CommandLine := TCustomCommandLine.Create(True);
-  case CommandLine.Command of
-    ' ':
+  if (ParamCount = 1) and FileExists(ParamStr(1)) then
+  begin
+    CommandLine.Clear;
+
+    Application.Name  := cApplicationName;
+    Application.Title := cApplicationName;
+    Application.CreateForm(TMainFrm, MainFrm);
+    Application.CreateForm(TConfigFrm, ConfigFrm);
+
+    MainFrm.ShowAndOpenArchive(ParamStr(1));
+    Application.Run;
+  end else
+  if CommandLine.Command = ' ' then
+  begin
+    Application.Name  := cApplicationName;
+    Application.Title := cApplicationName;
+    Application.CreateForm(TMainFrm, MainFrm);
+    Application.CreateForm(TConfigFrm, ConfigFrm);
+    Application.Run;
+  end else
+  if CommandLine.Command = '?' then
+  begin
+    Application.CreateForm(TAboutFrm, AboutFrm);
+    Application.Run;
+  end else
+  if CommandLine.Command = 'V' then
+  begin
+    if (ParamCount = 2) and FileExists(ParamStr(2)) then
     begin
-      Application.Name  := cApplicationName;
-      Application.Title := cApplicationName;
-      Application.CreateForm(TMainFrm, MainFrm);
-      Application.CreateForm(TConfigFrm, ConfigFrm);
+      Application.Name  := cApplicationViewerName;
+      Application.Title := cApplicationViewerName;
+      Application.CreateForm(TViewFrm, ViewFrm);
+      begin
+        ViewFrm.LoadFile(ParamStr(2));
+      end;
       Application.Run;
     end;
-    '?':
+  end else
+  begin
+    Application.Name  := cApplicationName;
+    Application.Title := cApplicationName;
+    if CommandLine.Run then
     begin
-      if (ParamCount = 2) and FileExists(ParamStr(2)) then
-      begin
-        Application.Name  := cApplicationName;
-        Application.Title := cApplicationName;
-        Application.CreateForm(TMainFrm, MainFrm);
-        Application.CreateForm(TConfigFrm, ConfigFrm);
-        if FileExists(CommandLine.ArchiveName) then
-        begin
-          MainFrm.ShowAndOpenArchive(CommandLine.ArchiveName);
-        end;
+      Application.CreateForm(TTickFrm, TickFrm);
+      TickFrm.Execute(CommandLine, nil);
+      TickFrm.ProgressOnTitle := True;
+      repeat
+        Application.ProcessMessages;
+        if TickFrm.FrmCanClose then
+          Break;
+        if TickFrm.FrmCanShow then
+          Break;
+      until CommandLine.Log;
+      if CommandLine.Log then
+        Application.Run
+      else
+      if TickFrm.FrmCanClose = False then
         Application.Run;
-      end else
-      begin
-        Application.CreateForm(TAboutFrm, AboutFrm);
-        Application.Run;
-      end;
-    end;
-    'V': if (ParamCount = 2) and FileExists(ParamStr(2)) then
-      begin
-        Application.Name  := cApplicationViewerName;
-        Application.Title := cApplicationViewerName;
-        Application.CreateForm(TViewFrm, ViewFrm);
-        begin
-          ViewFrm.LoadFile(ParamStr(2));
-        end;
-        Application.Run;
-      end;
-    else
-    begin
-      Application.Name  := cApplicationName;
-      Application.Title := cApplicationName;
-      if CommandLine.Run then
-      begin
-        Application.CreateForm(TTickFrm, TickFrm);
-        TickFrm.Execute(CommandLine, nil);
-        TickFrm.ProgressOnTitle := True;
-        repeat
-          Application.ProcessMessages;
-          if TickFrm.FrmCanClose then
-            Break;
-          if TickFrm.FrmCanShow then
-            Break;
-        until CommandLine.Log;
-        if CommandLine.Log then
-          Application.Run
-        else
-        if TickFrm.FrmCanClose = False then
-          Application.Run;
-      end;
     end;
   end;
+
   FreeAndNil(CommandLine);
 end.

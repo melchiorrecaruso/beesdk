@@ -55,12 +55,12 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BeeGui"; Filename:
 Root: HKCR; Subkey: ".bee";                      ValueType: string; ValueName: ""; ValueData: "BeeGui";       Flags: uninsdeletevalue; Tasks: associatebee
 Root: HKCR; Subkey: "BeeGui";                    ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey;   Tasks: associatebee
 Root: HKCR; Subkey: "BeeGui\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0";                    Tasks: associatebee
-Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""L"" ""%1""";     Tasks: associatebee
+Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""%1""";           Tasks: associatebee
 
 ;Root: HKCR; Subkey: ".zip";                      ValueType: string; ValueName: ""; ValueData: "BeeGui";       Flags: uninsdeletevalue; Tasks: associatezip
 ;Root: HKCR; Subkey: "BeeGui";                    ValueType: string; ValueName: ""; ValueData: "Bee Archiver"; Flags: uninsdeletekey;   Tasks: associatezip
 ;Root: HKCR; Subkey: "BeeGui\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\BeeGui.exe,0";                    Tasks: associatezip
-;Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""O"" ""%1""";     Tasks: associatezip
+;Root: HKCR; Subkey: "BeeGui\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BeeGui.exe"" ""%1""";           Tasks: associatezip
 
 
 [UninstallDelete]
