@@ -74,17 +74,24 @@ begin
       Application.CreateForm(TConfigFrm, ConfigFrm);
       Application.Run;
     end;
-    'L':
+    '?':
     begin
-      Application.Name  := cApplicationName;
-      Application.Title := cApplicationName;
-      Application.CreateForm(TMainFrm, MainFrm);
-      Application.CreateForm(TConfigFrm, ConfigFrm);
-      if FileExists(CommandLine.ArchiveName) then
+      if (ParamCount = 2) and FileExists(ParamStr(2)) then
       begin
-        MainFrm.ShowAndOpenArchive(CommandLine.ArchiveName);
+        Application.Name  := cApplicationName;
+        Application.Title := cApplicationName;
+        Application.CreateForm(TMainFrm, MainFrm);
+        Application.CreateForm(TConfigFrm, ConfigFrm);
+        if FileExists(CommandLine.ArchiveName) then
+        begin
+          MainFrm.ShowAndOpenArchive(CommandLine.ArchiveName);
+        end;
+        Application.Run;
+      end else
+      begin
+        Application.CreateForm(TAboutFrm, AboutFrm);
+        Application.Run;
       end;
-      Application.Run;
     end;
     'V': if (ParamCount = 2) and FileExists(ParamStr(2)) then
       begin
@@ -102,29 +109,21 @@ begin
       Application.Title := cApplicationName;
       if CommandLine.Run then
       begin
-        if CommandLine.Command in ['?'] then
-        begin
-          Application.CreateForm(TAboutFrm, AboutFrm);
-          Application.Run;
-        end
+        Application.CreateForm(TTickFrm, TickFrm);
+        TickFrm.Execute(CommandLine, nil);
+        TickFrm.ProgressOnTitle := True;
+        repeat
+          Application.ProcessMessages;
+          if TickFrm.FrmCanClose then
+            Break;
+          if TickFrm.FrmCanShow then
+            Break;
+        until CommandLine.Log;
+        if CommandLine.Log then
+          Application.Run
         else
-        begin
-          Application.CreateForm(TTickFrm, TickFrm);
-          TickFrm.Execute(CommandLine, nil);
-          TickFrm.ProgressOnTitle := True;
-          repeat
-            Application.ProcessMessages;
-            if TickFrm.FrmCanClose then
-              Break;
-            if TickFrm.FrmCanShow then
-              Break;
-          until CommandLine.Log;
-          if CommandLine.Log then
-            Application.Run
-          else
-          if TickFrm.FrmCanClose = False then
-            Application.Run;
-        end;
+        if TickFrm.FrmCanClose = False then
+          Application.Run;
       end;
     end;
   end;
