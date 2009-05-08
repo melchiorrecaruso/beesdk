@@ -1313,9 +1313,10 @@ begin
       begin
         Execute(FArchiveName);
         if (ExitCode < 2) then
-        begin
-          with FileProcess do Execute(GetOSFileManager, FCheckOutDir);
-        end;
+          with FileProcess do Execute(GetOSFileManager, FCheckOutDir)
+        else
+          ClearDirectory(IncludeTrailingBackSlash(FCheckoutDir));
+
       end else
         MessageDlg(rseCannotFoundFM, mtError, [mbOK], 0);
     end else
