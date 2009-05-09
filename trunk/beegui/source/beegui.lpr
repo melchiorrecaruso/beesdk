@@ -67,14 +67,13 @@ begin
   CommandLine := TCustomCommandLine.Create(True);
   if (ParamCount = 1) and FileExists(ParamStr(1)) then
   begin
-    CommandLine.Clear;
-
     Application.Name  := cApplicationName;
     Application.Title := cApplicationName;
     Application.CreateForm(TMainFrm, MainFrm);
     Application.CreateForm(TConfigFrm, ConfigFrm);
-
-    MainFrm.ShowAndOpenArchive(ParamStr(1));
+    begin
+      MainFrm.ShowAndOpenArchive(ParamStr(1));
+    end;
     Application.Run;
   end else
   if CommandLine.Command = ' ' then
@@ -83,6 +82,18 @@ begin
     Application.Title := cApplicationName;
     Application.CreateForm(TMainFrm, MainFrm);
     Application.CreateForm(TConfigFrm, ConfigFrm);
+    Application.Run;
+  end else
+  if CommandLine.Command = 'L' then
+  begin
+    Application.Name  := cApplicationName;
+    Application.Title := cApplicationName;
+    Application.CreateForm(TMainFrm, MainFrm);
+    Application.CreateForm(TConfigFrm, ConfigFrm);
+    if FileExists(CommandLine.ArchiveName) then
+    begin
+      MainFrm.ShowAndOpenArchive(ParamStr(1));
+    end;
     Application.Run;
   end else
   if CommandLine.Command = '?' then
@@ -113,16 +124,14 @@ begin
       TickFrm.ProgressOnTitle := True;
       repeat
         Application.ProcessMessages;
-        if TickFrm.FrmCanClose then
-          Break;
-        if TickFrm.FrmCanShow then
-          Break;
+        if TickFrm.FrmCanClose then Break;
+        if TickFrm.FrmCanShow then Break;
       until CommandLine.Log;
       if CommandLine.Log then
         Application.Run
       else
-      if TickFrm.FrmCanClose = False then
-        Application.Run;
+        if TickFrm.FrmCanClose = False then
+          Application.Run;
     end;
   end;
 
