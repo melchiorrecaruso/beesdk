@@ -268,7 +268,7 @@
         <Filename Value="packages\beegui_sysutils.pas"/>
         <UnitName Value="BeeGui_SysUtils"/>
         <CursorPos X="11" Y="32"/>
-        <TopLine Value="48"/>
+        <TopLine Value="32"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
