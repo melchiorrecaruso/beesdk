@@ -30,7 +30,6 @@ interface
 uses
   {$IFDEF MSWINDOWS}
   Windows,
-  Dialogs,
   {$ENDIF}
   Classes,
   Process,
