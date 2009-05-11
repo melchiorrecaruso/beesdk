@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 245
+  Left = 321
   Height = 544
-  Top = 196
+  Top = 195
   Width = 721
   AllowDropFiles = True
   Caption = 'Bee File Manager - Welcome'
@@ -98,9 +98,11 @@ object MainFrm: TMainFrm
     OnColumnClick = ListViewColumnClick
     OnCompare = ListViewCompare
     OnDblClick = MMenuActionsViewClick
+    OnEndDrag = ListViewEndDrag
     OnKeyDown = ListViewKeyDown
     OnKeyPress = ListViewKeyPress
     OnKeyUp = ListViewKeyUp
+    OnMouseDown = ListViewMouseDown
     OnSelectItem = ListViewSelectItem
   end
   object StatusBar: TStatusBar
