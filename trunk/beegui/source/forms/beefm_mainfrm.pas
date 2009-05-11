@@ -295,6 +295,7 @@ type
     // ---
     procedure BMenuClick(Sender: TObject);
   private
+    FDragCancel: boolean;
     FWorkStatus:  integer;
     FArchiveName: string;
     FCommandLine: TCustomCommandLine;
@@ -468,6 +469,10 @@ end;
 procedure TMainFrm.ListViewKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then MMenuActionsViewClick(Sender);
+  if Key = #46 then
+  begin
+    FDragCancel := True;
+  end;
 end;
 
 procedure TMainFrm.ListViewKeyUp(Sender: TObject; var Key: Word;
@@ -1122,6 +1127,7 @@ procedure TMainFrm.ListViewMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if Button = mbLeft then
   begin
+    FDragCancel := False;
     ListView.BeginDrag(False, MaxInt);
   end;
 end;
@@ -1130,8 +1136,11 @@ procedure TMainFrm.ListViewEndDrag(Sender, Target: TObject; X, Y: Integer);
 var
   Folder: string;
 begin
-  DragToWin(Folder);
-  ShowMEssage(Folder);
+  if FDragCancel = False then
+  begin
+    DragToWin(Folder);
+    ShowMessage(Folder);
+  end;
 end;
 
  // ---------------------------------------------------------------------- //
