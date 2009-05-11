@@ -30,9 +30,8 @@ interface
 uses
   {$IFDEF MSWINDOWS}
   Windows,
-  Registry,
-  {$ENDIF}
   Dialogs,
+  {$ENDIF}
   Classes,
   Process,
   SysUtils;
@@ -79,13 +78,9 @@ uses
   
   function CopyFile(const FileName, NewFileName: string): boolean;
   function CopyFiles(SrcDir, DstDir: string): boolean;
-  
-  { register file type routines }
-  
-  procedure RegisterFileType (const prefix: string; const exepfad: string);
-  procedure UnRegisterFileType (const prefix: string; const exepfad: string);
-  function  CheckRegisterFileType (const prefix: string; const exepfad: string): boolean;
-  
+
+  function DragToWin(var DragDest: string): integer;
+
 implementation
 
 uses
@@ -94,43 +89,43 @@ uses
 const
   DoublePathDelim = PathDelim + PathDelim;
 
-  function GetOSFileManager: string;
-  begin
-    {$IFDEF MSWINDOWS}
-      Result := 'explorer';
-    {$ELSE}
-      Result := '/usr/bin/nautilus';
-      if FileExists(Result) then Exit;
+function GetOSFileManager: string;
+begin
+  {$IFDEF MSWINDOWS}
+  Result := 'explorer';
+  {$ELSE}
+  Result := '/usr/bin/nautilus';
+  if FileExists(Result) then Exit;
 
-      Result := '/usr/bin/konqueror';
-      if FileExists(Result) then Exit;
+  Result := '/usr/bin/konqueror';
+  if FileExists(Result) then Exit;
 
-      Result := '/usr/bin/thunar';
-      if FileExists(Result) then
-        Exit
-      else
-        Result := '';
-    {$ENDIF}
-  end;
+  Result := '/usr/bin/thunar';
+  if FileExists(Result) then
+    Exit
+  else
+    Result := '';
+  {$ENDIF}
+end;
 
-  function GetOSWebBrowser: string;
-  begin
-    {$IFDEF MSWINDOWS}
-      Result := 'iexplorer';
-    {$ELSE}
-      Result := '/usr/bin/firefox';
-      if FileExists(Result) then Exit;
+function GetOSWebBrowser: string;
+begin
+  {$IFDEF MSWINDOWS}
+  Result := 'iexplorer';
+  {$ELSE}
+  Result := '/usr/bin/firefox';
+  if FileExists(Result) then Exit;
 
-      Result := '/usr/bin/epiphany';
-      if FileExists(Result) then Exit;
+  Result := '/usr/bin/epiphany';
+  if FileExists(Result) then Exit;
 
-      Result := '/usr/bin/iceweasel';
-      if FileExists(Result) then
-        Exit
-      else
-        Result := '';
-    {$ENDIF}
-  end;
+  Result := '/usr/bin/iceweasel';
+  if FileExists(Result) then
+    Exit
+  else
+    Result := '';
+  {$ENDIF}
+end;
 
   { directories routines }
 
@@ -497,112 +492,166 @@ const
         Result := -1;
       FindClose(F);
     end;
-    
-    { register file type routines }
-    
-    procedure RegisterFileType (const prefix: string; const exepfad: string);
-    {$IFDEF MSWINDOWS}
-    var
-      reg: TRegistry;
-    {$ENDIF}
-    begin
-      {$IFDEF MSWINDOWS}
-      reg := TRegistry.Create;
-      try
-        reg.RootKey := HKEY_CLASSES_ROOT;
-        reg.OpenKey ('.' + prefix, True);
-        try
-          reg.Writestring ('', prefix + 'file');
-        finally
-          reg.CloseKey;
+
+function GetWindowsVer: string;
+{$IFDEF MSWINDOWS}
+var
+  osVerInfo: TOSVersionInfo;
+{$ENDIF}
+begin
+  Result := 'unknow';
+  {$IFDEF MSWINDOWS}
+  osVerInfo.dwOSVersionInfoSize := SizeOf(TOSVersionInfo);
+  if GetVersionEx(osVerInfo) then
+  begin
+    if osVerInfo.dwPlatformId = 1 then
+      case osVerInfo.dwMajorVersion of
+        4:
+        begin
+          if osVerInfo.dwMinorVersion =  0 then Result := '9x';
+          if osVerInfo.dwMinorVersion = 10 then Result := '9x';
+          if osVerInfo.dwMinorVersion = 90 then Result := '9x';
         end;
-        reg.CreateKey (prefix + 'file');
-        reg.OpenKey (prefix + 'file\DefaultIcon', True);
-        try
-          reg.Writestring('', exepfad + ',1');
-        finally
-          reg.CloseKey;
-        end;
-        reg.OpenKey (prefix + 'file\shell\open\command', True);
-        try
-          reg.Writestring ('', exepfad+' "l" "%1" "*\*"');
-        finally
-          reg.CloseKey;
-        end;
-        reg.CreateKey (prefix + 'file\shell\BeeGui');
-        reg.OpenKey (prefix + 'file\shell\BeeGui\Extract all...\command', True);
-        try
-          reg.Writestring('', exepfad+' "x" "%1" "*\*"');
-        finally
-          reg.CloseKey;
-        end;
-      finally
-        reg.Free;
       end;
-      {$ENDIF}
+
+    if osVerInfo.dwPlatformId = 2 then
+      case osVerInfo.dwMajorVersion of
+        4:
+        begin
+          if osVerInfo.dwMinorVersion =  0 then Result := 'nt4';
+        end;
+        5:
+        begin
+          if osVerInfo.dwMinorVersion =  0 then Result := 'nt5';
+          if osVerInfo.dwMinorVersion =  1 then Result := 'nt5';
+        end;
+        else Result := 'nt6+';
+      end;
+
+  end;
+  {$ENDIF}
+end;
+
+function DragToWin(var DragDest: string):integer;
+{$IFDEF MSWINDOWS}
+var
+   J: integer;
+   lpPoint: TPoint;
+   S, T: array [0..256] of char;
+   St: string;
+   Haddress, HTest: HWND;
+{$ENDIF}
+begin
+  Result := -1;
+  DragDest:='<unsupported>';
+  {$IFDEF MSWINDOWS}
+  GetCursorPos(lpPoint);
+  // get main window handle from cursor point
+  Haddress := WindowFromPoint(lpPoint);
+  GetClassName(Haddress, S, SizeOf(S));
+  // workaround for identifying desktop
+  J := GetWindowTextLength(Haddress) + 1;
+
+  SetLength(St, J - 1);
+  GetWindowText(Haddress, @St[1], J);
+
+  St:= S + St;
+  if (S <> 'CabinetWClass') and (S <> 'ExploreWClass') then
+  begin
+    repeat
+      Haddress := GetParent(Haddress);
+      GetClassName(Haddress, S, SizeOf(S));
+    until (S = 'CabinetWClass') or (S = 'ExploreWClass') or (Haddress = 0);
+  end;
+  St := S + St;
+
+  // get address from an explorer's window control (system specific)
+  if Haddress <> 0 then
+  begin
+    // works with both browse and explore window type
+    if GetWindowsVer = '9x' then
+    begin
+      Haddress := FindWindowEx(Haddress, 0, 'Worker', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'ReBarWindow32', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'ComboBoxEx32', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'ComboBox', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'Edit', nil);
     end;
-    
-    function CheckRegisterFileType (const prefix: string; const exepfad: string): boolean;
-    {$IFDEF MSWINDOWS}
-    var
-      reg: TRegistry;
-    {$ENDIF}
+    // (not sure it is ok for NT4)
+    if (GetWindowsVer = 'nt4') or (GetWindowsVer = 'nt5') then
     begin
-      {$IFDEF MSWINDOWS}
-      reg := TRegistry.Create;
-      try
-        reg.RootKey := HKEY_CLASSES_ROOT;
-        reg.OpenKey (prefix + 'file\shell\open\command', True);
-        try
-          Result := (AnsiPosText (exepfad, reg.ReadString ('')) = 1);
-        finally
-          reg.CloseKey;
-        end;
-      finally
-        reg.Free;
-      end;
-      {$ENDIF}
+      // test if using "Explore" window type
+      HTest := FindWindowEx(Haddress, 0, 'ExploreWClass', nil);
+      if HTest <> 0 then Haddress := HTest;
+      Haddress := FindWindowEx(Haddress, 0, 'WorkerW', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'ReBarWindow32', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'ComboBoxEx32', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'ComboBox', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'Edit', nil);
+    end;
+    if GetWindowsVer='nt6+' then
+    begin
+      Haddress := FindWindowEx(Haddress, 0, 'WorkerW', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'ReBarWindow32', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'Address Band Root', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'msctls_progress32', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'ComboBoxEx32', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'ComboBox', nil);
+      Haddress := FindWindowEx(Haddress, 0, 'Edit', nil);
     end;
 
-    procedure UnRegisterFileType (const prefix: string; const exepfad: string);
-    {$IFDEF MSWINDOWS}
-    var
-      reg: TRegistry;
-    {$ENDIF}
-    {$IFDEF MSWINDOWS}
-      procedure DeleteRegKey (reg: TRegistry; const key: string);
-      begin
-        if reg.OpenKey (key, False) then
-        begin
-          if reg.ValueExists ('') then
-             reg.DeleteValue ('');
-          reg.CloseKey;
-          reg.DeleteKey(key);
-        end;
-      end;
-    {$ENDIF}
+    // address bar is hidden, exporer's window cannot be queried for output path
+    if Haddress = 0 then
     begin
-      {$IFDEF MSWINDOWS}
-      if CheckRegisterFileType (prefix, exepfad) then
+      T := '<unsupported>'
+    end else
+    begin
+      SendMessage(Haddress, WM_GETTEXT, SizeOf(T), integer(@T));
+      // special folders with conventional name instead of path (documets etc)
+      if not (DirectoryExists(T)) then
       begin
-        reg := TRegistry.Create;
-        try
-          reg.RootKey := HKEY_CLASSES_ROOT;
-          DeleteRegKey(reg, prefix + 'file\shell\BeeGui\Extract all...\command');
-          DeleteRegKey(reg, prefix + 'file\shell\BeeGui\Extract all...');
-          DeleteRegKey(reg, prefix + 'file\shell\BeeGui');
-          DeleteRegKey(reg, prefix + 'file\shell\open\command');
-          DeleteRegKey(reg, prefix + 'file\shell\open');
-          DeleteRegKey(reg, prefix + 'file\shell');
-          DeleteRegKey(reg, prefix + 'file\DefaultIcon');
-          DeleteRegKey(reg, prefix + 'file');
-          DeleteRegKey(reg, '.' + prefix);
-        finally
-          reg.Free;
-        end;
-      end;
-     {$ENDIF}
+        if GetWindowsVer = '9x' then
+          T := ExtractFilePath(SysUtils.GetEnvironmentVariable('WINDIR') ) + T + PathDelim
+        else
+          T := GetUserDir + T + PathDelim;
+          // string is not a path, or the path don't exists (i.e. Control panel etc)
+          if not (DirectoryExists(T)) then
+          begin
+            T := '<unsupported>';
+          end;
+       end;
     end;
+
+
+  end else
+  begin
+    // recognize if it is desktop window, or unsupported application's window
+    // application cannot be queried for output path
+    T := '<unsupported>';
+    if (GetWindowsVer = '9x') and (St = 'SysListView32') then
+    begin
+      T := SysUtils.GetEnvironmentVariable('WINDIR') + 'Desktop' + PathDelim;
+    end;
+    if (GetWindowsVer = 'nt4') or (GetWindowsVer = 'nt5') then
+    begin
+      if (St = 'ProgmanSysListView32FolderView') or //XP
+         (St = 'ProgmanSysListView32') or //Win2k
+         (St = 'ProgmanInternet Explorer_Server') then //activedesktop
+            T := GetUserDir + 'Desktop' + PathDelim;
+    end;
+    if GetWindowsVer = 'nt6+' then
+    begin
+      if St = 'ProgmanSysListView32FolderView' then
+      begin
+        T := GetUserDir + 'Desktop' + PathDelim;
+      end;
+    end;
+  end;
+  DragDest := T;
+  Result :=0;
+  {$ENDIF}
+end;
+
 
 end.
 

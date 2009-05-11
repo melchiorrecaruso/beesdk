@@ -32,6 +32,9 @@ unit BeeFM_MainFrm;
 interface
 
 uses
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF}
   Forms,
   Menus,
   Classes,
@@ -50,7 +53,7 @@ uses
   BeeGui_IconList,
   BeeGui_CommandLine,
   BeeGui_ArchiveFolderBox,
-  BeeGui_ArchiveListViewMgr, eventlog;
+  BeeGui_ArchiveListViewMgr;
 
 type
   { TMainFrm }
@@ -236,14 +239,13 @@ type
     procedure ListViewChangeFolder(Sender: TObject);
     procedure ListViewClick(Sender: TObject);
     procedure ListViewColumnClick(Sender: TObject; Column: TListColumn);
-    procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
-      Data: integer; var Compare: integer);
-    procedure ListViewKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
-      );
+    procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem; Data: integer; var Compare: integer);
+    procedure ListViewEndDrag(Sender, Target: TObject; X, Y: Integer);
+    procedure ListViewKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ListViewKeyPress(Sender: TObject; var Key: char);
     procedure ListViewKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure ListViewSelectItem(Sender: TObject; Item: TListItem;
-      Selected: Boolean);
+    procedure ListViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     // ---
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
@@ -688,7 +690,7 @@ begin
       end;
     end;
   end;
-  DeleteFile(FileProcess.FileName);
+  SysUtils.DeleteFile(FileProcess.FileName);
   DecWorkStatus;
 end;
 
@@ -994,7 +996,7 @@ begin
   begin
     if MessageDlg(rsConfirmDeleteArc, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
-      if DeleteFile(FArchiveName) then
+      if SysUtils.DeleteFile(FArchiveName) then
         MMenuFileCloseClick(Sender)
       else
         MessageDlg(rseDeleteArc, mtError, [mbOK], 0);
@@ -1062,8 +1064,7 @@ begin
       begin
         if Width < 10 then
           Width := 80;
-      end
-      else
+      end else
         Width := 0;
     end;
 end;
@@ -1090,7 +1091,7 @@ end;
 
  // ---------------------------------------------------------------------- //
  //                                                                        //
- //  Main Frm - DropFiles                                                  //
+ //  Main Frm - Drag&Drop Files                                            //
  //                                                                        //
  // ---------------------------------------------------------------------- //
 
@@ -1114,6 +1115,23 @@ begin
     end;
     Execute(FArchiveName);
   end;
+end;
+
+procedure TMainFrm.ListViewMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbLeft then
+  begin
+    ListView.BeginDrag(False, MaxInt);
+  end;
+end;
+
+procedure TMainFrm.ListViewEndDrag(Sender, Target: TObject; X, Y: Integer);
+var
+  Folder: string;
+begin
+  DragToWin(Folder);
+  ShowMEssage(Folder);
 end;
 
  // ---------------------------------------------------------------------- //
@@ -1616,7 +1634,6 @@ begin
 end;
 
 initialization
-
   {$I beefm_mainfrm.lrs}
 
 end.
