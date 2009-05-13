@@ -59,6 +59,7 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
+    DragTimer: TIdleTimer;
     ToolBar:    TToolBar;
     AddressToolBar: TToolBar;
     FolderBox:  TArchiveFolderBox;
@@ -223,6 +224,7 @@ type
     BMenuHelp:  TMenuItem;
     BMenuExit:  TMenuItem;
     // ---
+    procedure DragTimerTimer(Sender: TObject);
     procedure FileProcessStartTimer(Sender: TObject);
     procedure FileProcessStopTimer(Sender: TObject);
     procedure FileProcessTimer(Sender: TObject);
@@ -295,6 +297,7 @@ type
     // ---
     procedure BMenuClick(Sender: TObject);
   private
+    FDragPos: integer;
     FDragCancel: boolean;
     FWorkStatus:  integer;
     FArchiveName: string;
@@ -469,7 +472,7 @@ end;
 procedure TMainFrm.ListViewKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then MMenuActionsViewClick(Sender);
-  if Key = #46 then
+  if Key = #27 then
   begin
     FDragCancel := True;
   end;
@@ -623,7 +626,7 @@ end;
 
  // ---------------------------------------------------------------------- //
  //                                                                        //
- //  Command line execure routines                                         //
+ //  Command line execute routines                                         //
  //                                                                        //
  // ---------------------------------------------------------------------- //
 
@@ -668,6 +671,8 @@ procedure TMainFrm.FileProcessStartTimer(Sender: TObject);
 begin
   IncWorkStatus;
 end;
+
+
 
 procedure TMainFrm.FileProcessTimer(Sender: TObject);
 begin
@@ -1128,6 +1133,7 @@ begin
   if Button = mbLeft then
   begin
     FDragCancel := False;
+    DragTimer.Enabled := True;
     ListView.BeginDrag(False, MaxInt);
   end;
 end;
@@ -1136,11 +1142,17 @@ procedure TMainFrm.ListViewEndDrag(Sender, Target: TObject; X, Y: Integer);
 var
   Folder: string;
 begin
-  if FDragCancel = False then
+  if not FDragCancel then
   begin
+    DragTimer.Enabled := False;
     DragToWin(Folder);
     ShowMessage(Folder);
   end;
+end;
+
+procedure TMainFrm.DragTimerTimer(Sender: TObject);
+begin
+  FDragCancel := (GetKeyState(27) <> 1) or (GetKeyState(27) <> 0);
 end;
 
  // ---------------------------------------------------------------------- //
