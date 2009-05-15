@@ -59,7 +59,6 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
-    DragTimer: TIdleTimer;
     ToolBar:    TToolBar;
     AddressToolBar: TToolBar;
     FolderBox:  TArchiveFolderBox;
@@ -224,7 +223,6 @@ type
     BMenuHelp:  TMenuItem;
     BMenuExit:  TMenuItem;
     // ---
-    procedure DragTimerTimer(Sender: TObject);
     procedure FileProcessStartTimer(Sender: TObject);
     procedure FileProcessStopTimer(Sender: TObject);
     procedure FileProcessTimer(Sender: TObject);
@@ -247,6 +245,8 @@ type
     procedure ListViewKeyPress(Sender: TObject; var Key: char);
     procedure ListViewKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ListViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure ListViewMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     // ---
     procedure MMenuFileNewClick(Sender: TObject);
@@ -297,7 +297,7 @@ type
     // ---
     procedure BMenuClick(Sender: TObject);
   private
-    FDragPos: integer;
+    FDragPos: TPoint;
     FDragCancel: boolean;
     FWorkStatus:  integer;
     FArchiveName: string;
@@ -1132,9 +1132,23 @@ procedure TMainFrm.ListViewMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if Button = mbLeft then
   begin
-    FDragCancel := False;
-    DragTimer.Enabled := True;
-    ListView.BeginDrag(False, MaxInt);
+    FDragPos.x := X;
+    FDragPos.y := Y;
+  end;
+end;
+
+procedure TMainFrm.ListViewMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+begin
+  if (ListView.SelCount > 0) and (csLButtonDown in ListView.ControlState) then
+  begin
+    if (Abs(X - FDragPos.x) >= 5) or (Abs(Y - FDragPos.y) >= 5) then
+    begin
+      if not ListView.Dragging then
+      begin
+        FDragCancel := False;
+        ListView.BeginDrag(False, MaxInt);
+      end;
+    end;
   end;
 end;
 
@@ -1142,17 +1156,12 @@ procedure TMainFrm.ListViewEndDrag(Sender, Target: TObject; X, Y: Integer);
 var
   Folder: string;
 begin
-  if not FDragCancel then
+  if FDragCancel = False then
   begin
-    DragTimer.Enabled := False;
     DragToWin(Folder);
-    ShowMessage(Folder);
-  end;
-end;
-
-procedure TMainFrm.DragTimerTimer(Sender: TObject);
-begin
-  FDragCancel := (GetKeyState(27) <> 1) or (GetKeyState(27) <> 0);
+    StatusBar.Panels[3].Text := (Folder);
+  end else
+    StatusBar.Panels[3].Text := ('Drag cancelled');
 end;
 
  // ---------------------------------------------------------------------- //

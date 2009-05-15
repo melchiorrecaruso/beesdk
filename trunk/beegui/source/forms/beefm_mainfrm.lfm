@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 321
+  Left = 316
   Height = 544
-  Top = 195
+  Top = 159
   Width = 721
   AllowDropFiles = True
   Caption = 'Bee File Manager - Welcome'
@@ -104,6 +104,7 @@ object MainFrm: TMainFrm
     OnKeyPress = ListViewKeyPress
     OnKeyUp = ListViewKeyUp
     OnMouseDown = ListViewMouseDown
+    OnMouseMove = ListViewMouseMove
     OnSelectItem = ListViewSelectItem
   end
   object StatusBar: TStatusBar
@@ -3262,13 +3263,6 @@ object MainFrm: TMainFrm
     OnStartTimer = FileProcessStartTimer
     OnStopTimer = FileProcessStopTimer
     left = 160
-    top = 256
-  end
-  object DragTimer: TIdleTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = DragTimerTimer
-    left = 224
     top = 256
   end
 end
