@@ -259,7 +259,7 @@
       <Unit20>
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="5" Y="42"/>
-        <TopLine Value="1"/>
+        <TopLine Value="10"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
@@ -285,7 +285,7 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit22>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="476" Column="6" TopLine="456"/>
@@ -400,12 +400,8 @@
       </Position28>
       <Position29>
         <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="477" Column="34" TopLine="563"/>
-      </Position29>
-      <Position30>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
         <Caret Line="1141" Column="10" TopLine="1129"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
