@@ -695,7 +695,7 @@ begin
       FCommandLine.cdOption := ListView.Folder;
       FCommandLine.FileMasks.Add(FileProcess.FileName);
       begin
-        Execute(FArchiveName);
+        Execute(FCommandLine.ArchiveName);
       end;
     end;
   end;
@@ -1106,7 +1106,7 @@ end;
 
 procedure TMainFrm.FormDropFiles(Sender: TObject; const FileNames: array of string);
 var
-  I: integer;
+  I: longint;
 begin
   if CheckWorkStatus(False) then
   begin
@@ -1115,14 +1115,23 @@ begin
     FCommandLine.Confirm := True;
     FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
-    FCommandLine.ArchiveName := FArchiveName;
+    I := 1;
+    if FArchiveName = '' then
+    begin
+      FCommandLine.ArchiveName := ChangeFileExt(FileNames[0], '.bee');
+      while FileAge(FCommandLine.ArchiveName) <> -1 do
+      begin
+        FCommandLine.ArchiveName := ChangeFileExt(FileNames[0] + IntToStr(I), '.bee');
+      end;
+    end else
+      FCommandLine.ArchiveName := FArchiveName;
 
     ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
     for I := Low(FileNames) to High(FileNames) do
     begin
       FCommandLine.FileMasks.Add(FileNames[I]);
     end;
-    Execute(FArchiveName);
+    Execute(FCommandLine.ArchiveName);
   end;
 end;
 
@@ -1161,7 +1170,7 @@ var
 begin
   if (Button = mbLeft) and FDragStart then
   begin
-    if DragToWin(Folder) <> -1 then
+    if DragToWindow(Folder) <> -1 then
     begin
       if CheckWorkStatus(False) then
       begin
@@ -1178,7 +1187,7 @@ begin
 
         if SetCurrentDir(Folder) then
         begin
-          Execute(FArchiveName);
+          Execute(FCommandLine.ArchiveName);
         end;
       end;
     end;
@@ -1205,7 +1214,7 @@ begin
 
     ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
     begin
-      Execute(FArchiveName);
+      Execute(FCommandLine.ArchiveName);
     end;
   end;
 end;
@@ -1225,7 +1234,7 @@ begin
       FCommandLine.cdOption := ListView.Folder;
       ListView.GetMasks(FCommandLine.FileMasks);
       begin
-        Execute(FArchiveName);
+        Execute(FCommandLine.ArchiveName);
       end;
     end;
   end;
@@ -1249,7 +1258,7 @@ begin
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
       ListView.GetMasks(FCommandLine.FileMasks);
       begin
-        Execute(FArchiveName);
+        Execute(FCommandLine.ArchiveName);
       end;
     end;
 end;
@@ -1271,7 +1280,7 @@ begin
     FCommandLine.rOption  := True;
     FcommandLine.cdOption := '';
     begin
-      Execute(FArchiveName);
+      Execute(FCommandLine.ArchiveName);
     end;
   end;
 end;
@@ -1293,7 +1302,7 @@ begin
       FCommandLine.cdOption := ListView.Folder;
       ListView.GetMasks(FCommandLine.FileMasks);
       begin
-        Execute(FArchiveName);
+        Execute(FCommandLine.ArchiveName);
       end;
     end;
 end;
@@ -1311,7 +1320,7 @@ begin
     FCommandLine.cdOption := ListView.Folder;
     ListView.GetMasks(FCommandLine.FileMasks);
     begin
-      Execute(FArchiveName);
+      Execute(FCommandLine.ArchiveName);
     end;
   end;
 end;
@@ -1343,7 +1352,7 @@ begin
         FFileName := IncludeTrailingBackSlash(GetCurrentDir) + FFileName;
 
         IncWorkStatus;
-        Execute(FArchiveName);
+        Execute(FCommandLine.ArchiveName);
         if (ExitCode < 2) then
         begin
           if Sender = PMenuOpenIntViewer then
@@ -1381,7 +1390,7 @@ begin
       ClearDirectory(IncludeTrailingBackSlash(FCheckoutDir));
       if GetOSFileManager <> '' then
       begin
-        Execute(FArchiveName);
+        Execute(FCommandLine.ArchiveName);
         if (ExitCode < 2) then
           with FileProcess do Execute(GetOSFileManager, FCheckOutDir)
         else
@@ -1408,7 +1417,7 @@ begin
     FCommandLine.rOption  := True;
     FCommandLine.cdOption := '';
     begin
-      Execute(FArchiveName);
+      Execute(FCommandLine.ArchiveName);
     end;
   end;
 end;

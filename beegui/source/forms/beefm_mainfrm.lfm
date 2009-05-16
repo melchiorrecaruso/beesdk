@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 316
+  Left = 251
   Height = 544
-  Top = 159
+  Top = 158
   Width = 721
   AllowDropFiles = True
   Caption = 'Bee File Manager - Welcome'
@@ -87,6 +87,7 @@ object MainFrm: TMainFrm
         Caption = 'Position'
         Width = 117
       end>
+    DragCursor = crDefault
     LargeImages = LargeImages
     ParentColor = False
     PopupMenu = PMenu
@@ -116,6 +117,7 @@ object MainFrm: TMainFrm
     Top = 505
     Width = 721
     Anchors = [akRight]
+    DragCursor = crDefault
     Panels = <    
       item
         Width = 150
@@ -140,6 +142,7 @@ object MainFrm: TMainFrm
     ButtonHeight = 60
     ButtonWidth = 0
     Caption = 'ToolBar'
+    DragCursor = crDefault
     EdgeBorders = [ebTop, ebBottom]
     Flat = False
     PopupMenu = BMenu
@@ -2583,6 +2586,7 @@ object MainFrm: TMainFrm
     ButtonHeight = 32
     ButtonWidth = 0
     Caption = 'AddressToolBar'
+    DragCursor = crDefault
     EdgeBorders = [ebBottom]
     Flat = False
     Indent = 0
