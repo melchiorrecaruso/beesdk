@@ -237,16 +237,15 @@ type
     procedure FolderBoxSelect(Sender: TObject);
     // ---
     procedure ListViewChangeFolder(Sender: TObject);
-    procedure ListViewClick(Sender: TObject);
     procedure ListViewColumnClick(Sender: TObject; Column: TListColumn);
     procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem; Data: integer; var Compare: integer);
-    procedure ListViewEndDrag(Sender, Target: TObject; X, Y: Integer);
     procedure ListViewKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ListViewKeyPress(Sender: TObject; var Key: char);
     procedure ListViewKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ListViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-    procedure ListViewMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
+    procedure ListViewMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure ListViewMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     // ---
     procedure MMenuFileNewClick(Sender: TObject);
@@ -298,7 +297,7 @@ type
     procedure BMenuClick(Sender: TObject);
   private
     FDragPos: TPoint;
-    FDragCancel: boolean;
+    FDragStart: boolean;
     FWorkStatus:  integer;
     FArchiveName: string;
     FCommandLine: TCustomCommandLine;
@@ -458,11 +457,6 @@ begin
   end;
 end;
 
-procedure TMainFrm.ListViewClick(Sender: TObject);
-begin
-  ListViewChangeFolder(Sender);
-end;
-
 procedure TMainFrm.ListViewKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -472,10 +466,7 @@ end;
 procedure TMainFrm.ListViewKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then MMenuActionsViewClick(Sender);
-  if Key = #27 then
-  begin
-    FDragCancel := True;
-  end;
+  if Key = #27 then MMenuActionsDeselectAllClick(Sender);
 end;
 
 procedure TMainFrm.ListViewKeyUp(Sender: TObject; var Key: Word;
@@ -1132,36 +1123,59 @@ procedure TMainFrm.ListViewMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if Button = mbLeft then
   begin
-    FDragPos.x := X;
-    FDragPos.y := Y;
+    FDragPos.X := X;
+    FDragPos.Y := Y;
   end;
+  FDragStart := False;
+  ListViewChangeFolder(Sender);
 end;
 
 procedure TMainFrm.ListViewMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
 begin
-  if (ListView.SelCount > 0) and (csLButtonDown in ListView.ControlState) then
+  with ListView do
   begin
-    if (Abs(X - FDragPos.x) >= 5) or (Abs(Y - FDragPos.y) >= 5) then
-    begin
-      if not ListView.Dragging then
+    if not FDragStart then
+      if (SelCount > 0) and (csLButtonDown in ControlState) then
       begin
-        FDragCancel := False;
-        ListView.BeginDrag(False, MaxInt);
+        if (Abs(X - FDragPos.X) >= 5) or (Abs(Y - FDragPos.Y) >= 5) then
+        begin
+          BeginDrag(False, MaxInt);
+          FDragStart := True;
+        end;
       end;
-    end;
   end;
 end;
 
-procedure TMainFrm.ListViewEndDrag(Sender, Target: TObject; X, Y: Integer);
+procedure TMainFrm.ListViewMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
 var
   Folder: string;
 begin
-  if FDragCancel = False then
+  if (Button = mbLeft) and FDragStart then
   begin
-    DragToWin(Folder);
-    StatusBar.Panels[3].Text := (Folder);
-  end else
-    StatusBar.Panels[3].Text := ('Drag cancelled');
+    if DragToWin(Folder) <> -1 then
+    begin
+      if CheckWorkStatus(False) then
+      begin
+        FCommandLine.Clear;
+        FCommandLine.Command := 'X';
+        FCommandLine.Confirm := False;
+        FCommandLine.cdOption := Listview.Folder;
+        FCommandLine.Log := MMenuOptionsLogReport.Checked;
+
+        FCommandLine.ArchiveName := FArchiveName;
+
+        ListView.GetMasks(FCommandLine.FileMasks);
+        FcommandLine.rOption := True;
+
+        if SetCurrentDir(Folder) then
+        begin
+          Execute(FArchiveName);
+        end;
+      end;
+    end;
+  end;
+  FDragStart := False;
 end;
 
  // ---------------------------------------------------------------------- //

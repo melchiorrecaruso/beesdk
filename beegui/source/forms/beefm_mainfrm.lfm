@@ -95,16 +95,15 @@ object MainFrm: TMainFrm
     TabOrder = 0
     ToolTips = False
     ViewStyle = vsReport
-    OnClick = ListViewClick
     OnColumnClick = ListViewColumnClick
     OnCompare = ListViewCompare
     OnDblClick = MMenuActionsViewClick
-    OnEndDrag = ListViewEndDrag
     OnKeyDown = ListViewKeyDown
     OnKeyPress = ListViewKeyPress
     OnKeyUp = ListViewKeyUp
     OnMouseDown = ListViewMouseDown
     OnMouseMove = ListViewMouseMove
+    OnMouseUp = ListViewMouseUp
     OnSelectItem = ListViewSelectItem
   end
   object StatusBar: TStatusBar
