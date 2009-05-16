@@ -78,7 +78,7 @@ uses
   function CopyFile(const FileName, NewFileName: string): boolean;
   function CopyFiles(SrcDir, DstDir: string): boolean;
 
-  function DragToWin(var DragDest: string): integer;
+  function DragToWindow(var DragDest: string): integer;
 
 implementation
 
@@ -531,7 +531,7 @@ begin
   {$ENDIF}
 end;
 
-function DragToWin(var DragDest: string):integer;
+function DragToWindow(var DragDest: string):integer;
 {$IFDEF MSWINDOWS}
 var
    J: integer;
