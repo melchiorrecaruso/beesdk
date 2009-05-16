@@ -621,7 +621,6 @@ begin
        end;
     end;
 
-
   end else
   begin
     // recognize if it is desktop window, or unsupported application's window
