@@ -134,6 +134,5 @@ begin
           Application.Run;
     end;
   end;
-
   FreeAndNil(CommandLine);
 end.

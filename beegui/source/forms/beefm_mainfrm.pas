@@ -1152,10 +1152,6 @@ begin
         end;
       end;
   end;
-
-  if FDragStart then
-  begin
-  end;
 end;
 
 procedure TMainFrm.ListViewMouseUp(Sender: TObject; Button: TMouseButton;
@@ -1182,10 +1178,7 @@ begin
 
         if SetCurrentDir(Folder) then
         begin
-          FCommandLine.Run;
-          ShowMessage(FCommandLine.Params.Text);
-
-          // Execute(FArchiveName);
+          Execute(FArchiveName);
         end;
       end;
     end;
