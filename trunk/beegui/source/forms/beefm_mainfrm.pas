@@ -239,6 +239,8 @@ type
     procedure ListViewChangeFolder(Sender: TObject);
     procedure ListViewColumnClick(Sender: TObject; Column: TListColumn);
     procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem; Data: integer; var Compare: integer);
+    procedure ListViewDragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
     procedure ListViewKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ListViewKeyPress(Sender: TObject; var Key: char);
     procedure ListViewKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -431,6 +433,12 @@ procedure TMainFrm.ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
   Data: integer; var Compare: integer);
 begin
   Compare := ListView.CompareFn(Item1, Item2);
+end;
+
+procedure TMainFrm.ListViewDragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; var Accept: Boolean);
+begin
+  Accept := True;
 end;
 
 procedure TMainFrm.ListViewChangeFolder(Sender: TObject);
@@ -1137,12 +1145,16 @@ begin
     if not FDragStart then
       if (SelCount > 0) and (csLButtonDown in ControlState) then
       begin
-        if (Abs(X - FDragPos.X) >= 5) or (Abs(Y - FDragPos.Y) >= 5) then
+        if (Abs(X - FDragPos.X) >= 10) or (Abs(Y - FDragPos.Y) >= 10) then
         begin
           BeginDrag(False, MaxInt);
           FDragStart := True;
         end;
       end;
+  end;
+
+  if FDragStart then
+  begin
   end;
 end;
 
@@ -1170,7 +1182,10 @@ begin
 
         if SetCurrentDir(Folder) then
         begin
-          Execute(FArchiveName);
+          FCommandLine.Run;
+          ShowMessage(FCommandLine.Params.Text);
+
+          // Execute(FArchiveName);
         end;
       end;
     end;
