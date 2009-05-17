@@ -110,7 +110,8 @@ function OemToParam(const Param: string): string;
 
 function SelfName: string;
 function SelfPath: string;
-function GenerateFileName(const Path: string): string;
+function GenerateFileName(const FilePath: string): string;
+function GenerateAlternativeFileName(const FileName: string): string;
 
 // string routines ...
 
@@ -627,7 +628,7 @@ begin
   Result := ExtractFilePath(ParamStr(0));
 end;
 
-function GenerateFileName(const Path: string): string;
+function GenerateFileName(const FilePath: string): string;
 var
   I: longint;
 begin
@@ -635,8 +636,21 @@ begin
     Result := '????????.$$$';
     for I := 1 to 8 do
       Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
-    Result := IncludeTrailingBackSlash(Path) + Result;
+    Result := IncludeTrailingBackSlash(FilePath) + Result;
   until FileAge(Result) = -1;
+end;
+
+function GenerateAlternativeFileName(const FileName: string): string;
+var
+  I: longint;
+begin
+  I := 0;
+  Result := FileName;
+  while FileAge(Result) <> -1 do
+  begin
+    Inc(I);
+    Result := ChangeFileExt(FileName, IntToStr(I) + ExtractFileExt(FileName));
+  end;
 end;
 
 // string routines
