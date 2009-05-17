@@ -689,6 +689,7 @@ begin
       FCommandLine.fOption := True;
       FCommandLine.uOption := False;
       FCommandLine.Confirm := False;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
       FCommandLine.ArchiveName := FArchiveName;
 
@@ -780,6 +781,8 @@ begin
 
   if FCommandLine.Run then
   begin
+    ShowMessage(FCommandLine.Params.Text);
+
     IncWorkStatus;
     FArchiveAge := FileAge(aArchiveName);
     TickFrm     := TTickFrm.Create(Application);
