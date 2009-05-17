@@ -3925,11 +3925,11 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +'Caption'#6#10'- Spacer -'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TM'
   +'enuItem'#18'BMenuConfiguration'#7'Caption'#6#13'Configuration'#7'Checked'#9
   +#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuHelp'#7'Caption'#6#4'He'
-  +'lp'#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuExit'#7'Caption'#6#4
-  +'Exit'#7'OnClick'#7#10'BMenuClick'#0#0#0#9'TIconList'#11'SmallImages'#4'left'
-  +#2#24#3'top'#3#0#1#0#0#9'TIconList'#11'LargeImages'#6'Height'#2' '#5'Width'#2
-  +' '#4'left'#2'`'#3'top'#3#0#1#0#0#12'TFileProcess'#11'FileProcess'#7'Enabled'
-  +#8#8'Interval'#3#250#0#7'OnTimer'#7#16'FileProcessTimer'#12'OnStartTimer'#7
-  +#21'FileProcessStartTimer'#11'OnStopTimer'#7#20'FileProcessStopTimer'#4'left'
-  +#3#160#0#3'top'#3#0#1#0#0#0
+  +'lp'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuExit'#7
+  +'Caption'#6#4'Exit'#7'OnClick'#7#10'BMenuClick'#0#0#0#9'TIconList'#11'SmallI'
+  +'mages'#4'left'#2#24#3'top'#3#0#1#0#0#9'TIconList'#11'LargeImages'#6'Height'
+  +#2' '#5'Width'#2' '#4'left'#2'`'#3'top'#3#0#1#0#0#12'TFileProcess'#11'FilePr'
+  +'ocess'#7'Enabled'#8#8'Interval'#3#250#0#7'OnTimer'#7#16'FileProcessTimer'#12
+  +'OnStartTimer'#7#21'FileProcessStartTimer'#11'OnStopTimer'#7#20'FileProcessS'
+  +'topTimer'#4'left'#3#160#0#3'top'#3#0#1#0#0#0
 ]);

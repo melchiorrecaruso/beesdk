@@ -3947,6 +3947,7 @@ object MainFrm: TMainFrm
     end
     object BMenuHelp: TMenuItem
       Caption = 'Help'
+      Checked = True
       OnClick = BMenuClick
     end
     object BMenuExit: TMenuItem
