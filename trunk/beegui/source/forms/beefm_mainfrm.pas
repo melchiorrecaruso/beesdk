@@ -1115,15 +1115,11 @@ begin
     FCommandLine.Confirm := True;
     FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
-    I := 1;
+
     if FArchiveName = '' then
-    begin
-      FCommandLine.ArchiveName := ChangeFileExt(FileNames[0], '.bee');
-      while FileAge(FCommandLine.ArchiveName) <> -1 do
-      begin
-        FCommandLine.ArchiveName := ChangeFileExt(FileNames[0] + IntToStr(I), '.bee');
-      end;
-    end else
+      FCommandLine.ArchiveName :=
+        GenerateAlternativeFileName(ChangeFileExt(FileNames[0], '.bee'))
+    else
       FCommandLine.ArchiveName := FArchiveName;
 
     ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
