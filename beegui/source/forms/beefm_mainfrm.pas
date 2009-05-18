@@ -239,8 +239,6 @@ type
     procedure ListViewChangeFolder(Sender: TObject);
     procedure ListViewColumnClick(Sender: TObject; Column: TListColumn);
     procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem; Data: integer; var Compare: integer);
-    procedure ListViewDragOver(Sender, Source: TObject; X, Y: Integer;
-      State: TDragState; var Accept: Boolean);
     procedure ListViewKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ListViewKeyPress(Sender: TObject; var Key: char);
     procedure ListViewKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -433,12 +431,6 @@ procedure TMainFrm.ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
   Data: integer; var Compare: integer);
 begin
   Compare := ListView.CompareFn(Item1, Item2);
-end;
-
-procedure TMainFrm.ListViewDragOver(Sender, Source: TObject; X, Y: Integer;
-  State: TDragState; var Accept: Boolean);
-begin
-  Accept := True;
 end;
 
 procedure TMainFrm.ListViewChangeFolder(Sender: TObject);
@@ -694,7 +686,9 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      FCommandLine.FileMasks.Add(FileProcess.FileName);
+      ListView.GetMasks(FCommandLine.FileMasks);
+
+      if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -781,7 +775,7 @@ begin
 
   if FCommandLine.Run then
   begin
-    ShowMessage(FCommandLine.Params.Text);
+    // ShowMessage(FCommandLine.Params.Text);
 
     IncWorkStatus;
     FArchiveAge := FileAge(aArchiveName);

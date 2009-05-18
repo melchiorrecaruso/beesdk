@@ -99,7 +99,6 @@ object MainFrm: TMainFrm
     OnColumnClick = ListViewColumnClick
     OnCompare = ListViewCompare
     OnDblClick = MMenuActionsViewClick
-    OnDragOver = ListViewDragOver
     OnKeyDown = ListViewKeyDown
     OnKeyPress = ListViewKeyPress
     OnKeyUp = ListViewKeyUp
