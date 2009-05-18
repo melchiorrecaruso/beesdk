@@ -392,7 +392,7 @@ end;
 
 procedure TMainFrm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  MMenuFileCloseClick(Sender);
+  MMenuFileCloseClick(MMenuViewUpdate);
   if MMenuOptionsSaveOnExit.Checked then
   begin
     ConfigFrm.SaveProperty;
@@ -670,7 +670,6 @@ end;
 
 procedure TMainFrm.FileProcessStopTimer(Sender: TObject);
 begin
-  DecWorkStatus;
   if FileProcess.FileIsModified then
   begin
     if MessageDlg(rsFreshFile, mtInformation, [mbYes, mbNo], 0) = mrYes then
@@ -693,6 +692,7 @@ begin
       end;
     end;
   end;
+  DecWorkStatus;
   SysUtils.DeleteFile(FileProcess.FileName);
 end;
 
@@ -754,7 +754,7 @@ begin
       ListView.Folder := FFolder;
       SetArchiveName(aArchiveName);
     end else
-      MMenuFileCloseClick(nil);
+      MMenuFileCloseClick(MMenuViewUpdate);
 
     FList.Free;
   end;
@@ -772,8 +772,6 @@ begin
 
   if FCommandLine.Run then
   begin
-    // ShowMessage(FCommandLine.Params.Text);
-
     IncWorkStatus;
     FArchiveAge := FileAge(aArchiveName);
     TickFrm     := TTickFrm.Create(Application);
@@ -870,7 +868,7 @@ procedure TMainFrm.MMenuFileCloseClick(Sender: TObject);
 var
   FCheckOutDir: string;
 begin
-  if CheckWorkStatus(False) then
+  if (Sender = MMenuViewUpdate) or CheckWorkStatus(False) then
   begin
     FCheckOutDir := GetApplicationCheckoutDir(cApplicationName);
     if DirectoryIsEmpty(FCheckOutDir) = False then
