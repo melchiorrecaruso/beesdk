@@ -639,7 +639,7 @@ end;
 
 procedure TMainFrm.DecWorkStatus;
 begin
-  Dec(FWorkStatus);
+  if FWorkStatus > 0 then Dec(FWorkStatus);
   if FWorkStatus = 0 then
   begin
     UpdateButtons(True);
@@ -663,8 +663,6 @@ begin
   IncWorkStatus;
 end;
 
-
-
 procedure TMainFrm.FileProcessTimer(Sender: TObject);
 begin
   // monitoring
@@ -672,6 +670,7 @@ end;
 
 procedure TMainFrm.FileProcessStopTimer(Sender: TObject);
 begin
+  DecWorkStatus;
   if FileProcess.FileIsModified then
   begin
     if MessageDlg(rsFreshFile, mtInformation, [mbYes, mbNo], 0) = mrYes then
@@ -695,7 +694,6 @@ begin
     end;
   end;
   SysUtils.DeleteFile(FileProcess.FileName);
-  DecWorkStatus;
 end;
 
 // Open archive and execute commands
@@ -755,8 +753,7 @@ begin
         UpdateButtons(False);
       ListView.Folder := FFolder;
       SetArchiveName(aArchiveName);
-    end
-    else
+    end else
       MMenuFileCloseClick(nil);
 
     FList.Free;
