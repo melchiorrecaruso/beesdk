@@ -684,7 +684,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks);
+      ListView.GetMasks(FCommandLine.FileMasks, True);
 
       if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
       begin
@@ -1170,8 +1170,7 @@ begin
 
         FCommandLine.ArchiveName := FArchiveName;
 
-        ListView.GetMasks(FCommandLine.FileMasks);
-        FcommandLine.rOption := True;
+        ListView.GetMasks(FCommandLine.FileMasks, False);
 
         if SetCurrentDir(Folder) then
         begin
@@ -1220,7 +1219,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks);
+      ListView.GetMasks(FCommandLine.FileMasks, False);
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -1244,7 +1243,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
-      ListView.GetMasks(FCommandLine.FileMasks);
+      ListView.GetMasks(FCommandLine.FileMasks, False);
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -1288,7 +1287,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks);
+      ListView.GetMasks(FCommandLine.FileMasks, False);
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -1306,7 +1305,7 @@ begin
     FCommandLine.ArchiveName := FArchiveName;
 
     FCommandLine.cdOption := ListView.Folder;
-    ListView.GetMasks(FCommandLine.FileMasks);
+    ListView.GetMasks(FCommandLine.FileMasks, False);
     begin
       Execute(FCommandLine.ArchiveName);
     end;
@@ -1333,7 +1332,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks);
+      ListView.GetMasks(FCommandLine.FileMasks, True);
 
       if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
       begin
