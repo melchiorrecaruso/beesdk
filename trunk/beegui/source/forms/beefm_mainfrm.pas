@@ -772,9 +772,6 @@ begin
 
   if FCommandLine.Run then
   begin
-    ShowMessage(FCommandLine.Params.Text);
-
-
     IncWorkStatus;
     FArchiveAge := FileAge(aArchiveName);
     TickFrm     := TTickFrm.Create(Application);
