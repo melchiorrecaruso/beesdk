@@ -486,7 +486,7 @@ var
   I: longint;
 begin
   Result := 0;
-  for  I := 0 to Masks.Count -1 do
+  for I := 0 to Masks.Count -1 do
   begin
     Inc(Result, MarkItems(Masks.Strings[I], MaskAct, aAction));
   end;
@@ -497,11 +497,10 @@ var
   P: THeader;
   I: longint;
 begin
-  Mask := FCommandLine.cdOption + Mask;
-
   Result := 0;
   if FileNameUseWildcards(Mask) then
   begin
+    Mask := FCommandLine.cdOption + Mask;
     for  I := 0 to FPrimary.Count -1 do
     begin
       P :=  THeader(FPrimary.Items[I]);
