@@ -772,6 +772,9 @@ begin
 
   if FCommandLine.Run then
   begin
+    ShowMessage(FCommandLine.Params.Text);
+
+
     IncWorkStatus;
     FArchiveAge := FileAge(aArchiveName);
     TickFrm     := TTickFrm.Create(Application);
@@ -1170,7 +1173,7 @@ begin
 
         FCommandLine.ArchiveName := FArchiveName;
 
-        ListView.GetMasks(FCommandLine.FileMasks, False);
+        ListView.GetMasks(FCommandLine.FileMasks, True);
 
         if SetCurrentDir(Folder) then
         begin
@@ -1219,7 +1222,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks, False);
+      ListView.GetMasks(FCommandLine.FileMasks, True);
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -1243,7 +1246,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
-      ListView.GetMasks(FCommandLine.FileMasks, False);
+      ListView.GetMasks(FCommandLine.FileMasks, True);
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -1287,7 +1290,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks, False);
+      ListView.GetMasks(FCommandLine.FileMasks, True);
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -1305,7 +1308,7 @@ begin
     FCommandLine.ArchiveName := FArchiveName;
 
     FCommandLine.cdOption := ListView.Folder;
-    ListView.GetMasks(FCommandLine.FileMasks, False);
+    ListView.GetMasks(FCommandLine.FileMasks, True);
     begin
       Execute(FCommandLine.ArchiveName);
     end;

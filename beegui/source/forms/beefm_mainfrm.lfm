@@ -3397,7 +3397,6 @@ object MainFrm: TMainFrm
       Width = 530
       Align = alCustom
       Anchors = [akTop, akLeft, akRight]
-      AutoComplete = False
       BorderSpacing.Left = 5
       BorderSpacing.Top = 2
       BorderSpacing.Right = 2
@@ -3406,7 +3405,6 @@ object MainFrm: TMainFrm
       DropDownCount = 10
       Enabled = False
       ItemHeight = 16
-      ItemWidth = 0
       OnSelect = FolderBoxSelect
       ReadOnly = True
       Style = csOwnerDrawFixed
