@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -190,8 +190,8 @@
         <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <CursorPos X="8" Y="774"/>
-        <TopLine Value="754"/>
+        <CursorPos X="21" Y="772"/>
+        <TopLine Value="760"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="171"/>
         <Loaded Value="True"/>
@@ -278,8 +278,8 @@
       <Unit22>
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
-        <CursorPos X="9" Y="637"/>
-        <TopLine Value="618"/>
+        <CursorPos X="40" Y="651"/>
+        <TopLine Value="612"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -456,7 +456,6 @@
     </Linking>
     <Other>
       <WriteFPCLogo Value="False"/>
-      <CustomOptions Value=""/>
       <CompilerPath Value="$(CompPath)"/>
       <CreateMakefileOnBuild Value="True"/>
     </Other>
