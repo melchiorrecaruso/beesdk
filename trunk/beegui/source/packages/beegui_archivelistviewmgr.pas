@@ -611,7 +611,7 @@ end;
 
 procedure TCustomArchiveListView.GetMasks(FileMasks: TStringList; Relative: boolean);
 var
-  S, T: string;
+  S: string;
   I, J: integer;
   Node: TArchiveItem;
 begin
@@ -629,14 +629,10 @@ begin
           S := IncludeTrailingBackSlash(Node.FilePath + Node.FileName);
           for J := 0 to FFiles.Count -1 do
             with TArchiveItem(FFiles.Items[J]) do
-            begin
               if FileNamePos(S, FilePath) = 1 then
               begin
-                T := FilePath + FileName;
-                System.Delete(T, 1, Length(S));
-                FileMasks.Add(T);
+                FileMasks.Add(DeleteFilePath(Node.FilePath, FilePath + FileName));
               end;
-            end;
         end else
         begin
           // Absolute Path-Name
