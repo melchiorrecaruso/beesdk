@@ -494,18 +494,32 @@ end;
 
 function THeaders.MarkItems(Mask: string; MaskAct: THeaderAction; aAction: THeaderAction): longint;
 var
+  P: THeader;
   I: longint;
 begin
   Mask := FCommandLine.cdOption + Mask;
 
   Result := 0;
-  for  I := 0 to FPrimary.Count -1 do
-    with THeader(FPrimary.Items[I]) do
-      if (FileAction = MaskAct) and (FileNameMatch(FileName, Mask, FCommandLine.rOption)) then
+  if FileNameUseWildcards(Mask) then
+  begin
+    for  I := 0 to FPrimary.Count -1 do
+    begin
+      P :=  THeader(FPrimary.Items[I]);
+      if (P.FileAction = MaskAct) and (FileNameMatch(P.FileName, Mask, FCommandLine.rOption)) then
       begin
-        FileAction := aAction;
+        P.FileAction := aAction;
         Inc(Result);
       end;
+    end;
+  end else
+  begin
+    P := SearchItem(Mask);
+    if (P <> nil) and (P.FileAction = MaskAct) then
+    begin
+      P.FileAction := aAction;
+      Inc(Result);
+    end;
+  end;
 end;
 
 procedure THeaders.MarkItem(aIndex: longint; aAction: THeaderAction);

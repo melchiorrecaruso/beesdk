@@ -20,7 +20,7 @@
 
   Modifyed:
 
-    v1.0.5 build 0840 - 2009.04.24 by Melchiorre Caruso.
+    v1.0.5 build 0900 - 2009.05.23 by Melchiorre Caruso.
 }
 
 unit BeeGui_Consts;
@@ -33,7 +33,7 @@ uses
   SysUtils;
 
 const
-  cApplicationVersion   = 'BeeGui 1.0.5 [build 0898]';
+  cApplicationVersion   = 'BeeGui 1.0.5 [build 0902]';
   cApplicationCopyright = '(C) 2003-2009 Andrew Filinsky and Melchiorre Caruso';
 
   cApplicationName    = 'BeeGui';
