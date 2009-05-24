@@ -1,4 +1,6 @@
-program BeeSfx;{ Contains:
+program BeeSfx;
+
+{ Contains:
 
   The SFX module for generic platform.
 
@@ -13,11 +15,16 @@ program BeeSfx;{ Contains:
   Modifyed:
 
   v0.1.0 build 0062 - 2007/01/27 by Melchiorre Caruso.
-}{$R-,Q-,S-}{$R BeeSfx.ico.res}
+}
+
+{$R-,Q-,S-}
+
+{$R BeeSfx.ico.res}
 
 uses
   Classes,
   SysUtils,
+  // ---
   Bee_App,
   Bee_Common,
   Bee_Interface;
@@ -28,7 +35,6 @@ type
     App: TBeeApp;
     AppKey: string;
     AppParams: TStringList;
-    AppInterface: TAppInterface;
 
     procedure OnOverWrite;
     procedure OnWarning;
@@ -52,7 +58,7 @@ type
     AppParams := TStringList.Create;
     AppParams.Add('x');
     AppParams.Add(ParamStr(0));
-    AppParams.Add(IncludeDelimiter('*') + '*.*');
+    AppParams.Add(IncludeTrailingBackSlash('*') + '*.*');
 
     AppInterface := TAppInterface.Create;
     AppInterface.OnOverWrite := OnOverWrite;
