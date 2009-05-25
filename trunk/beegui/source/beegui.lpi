@@ -269,7 +269,7 @@
         <Filename Value="packages\beegui_consts.pas"/>
         <UnitName Value="BeeGui_Consts"/>
         <CursorPos X="40" Y="36"/>
-        <TopLine Value="1"/>
+        <TopLine Value="4"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -279,7 +279,7 @@
         <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
         <UnitName Value="BeeGui_ArchiveListViewMgr"/>
         <CursorPos X="40" Y="651"/>
-        <TopLine Value="612"/>
+        <TopLine Value="619"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -308,7 +308,7 @@
       <Unit25>
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="5" Y="37"/>
-        <TopLine Value="1"/>
+        <TopLine Value="5"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
