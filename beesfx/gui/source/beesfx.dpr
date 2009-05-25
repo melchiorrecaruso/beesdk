@@ -1,4 +1,6 @@
-program BeeSfx;{ Contains:
+program BeeSfx;
+
+{ Contains:
 
   The SFX module for Windows platform.
 
@@ -13,7 +15,9 @@ program BeeSfx;{ Contains:
   Modifyed:
 
   v0.1.0 build 0060 - 2006/01/05 by Melchiorre Caruso.
-}{$R-,Q-,S-}
+}
+
+{$R-,Q-,S-}
 
 uses
   Classes,

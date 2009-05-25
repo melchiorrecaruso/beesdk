@@ -26,25 +26,28 @@ uses
   SysUtils,
   // ---
   Bee_App,
+  Bee_Types,
   Bee_Common,
   Bee_Interface;
 
 type
   TSfx = class
   private
-    App: TBeeApp;
-    AppKey: string;
-    AppParams: TStringList;
-
-    procedure OnOverWrite;
-    procedure OnWarning;
-    procedure OnDisplay;
-    procedure OnRename;
-    procedure OnError;
-    procedure OnClear;
-    procedure OnTick;
-    procedure OnList;
-    procedure OnKey;
+    FApp: TBeeApp;
+    FKey: string;
+    FParams: TStringList;
+  private
+    procedure ProcessFatalError(const aMessage: string);
+    procedure ProcessError(const aMessage: string);
+    procedure ProcessWarning(const aMessage: string);
+    procedure ProcessMessage(const aMessage: string);
+    procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessRename(const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessList(const aFileInfo: TFileInfoExtra);
+    procedure ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessRequest(const aMessage: string);
+    procedure ProcessProgress;
+    procedure ProcessClear;
   public
     constructor Create;
     destructor Destroy; override;
@@ -52,33 +55,35 @@ type
   end;
 
   constructor TSfx.Create;
+  var
+    I: longint;
   begin
-    AppKey := '';
-
-    AppParams := TStringList.Create;
-    AppParams.Add('x');
-    AppParams.Add(ParamStr(0));
-    AppParams.Add(IncludeTrailingBackSlash('*') + '*.*');
-
-    AppInterface := TAppInterface.Create;
-    AppInterface.OnOverWrite := OnOverWrite;
-    AppInterface.OnWarning := OnWarning;
-    AppInterface.OnDisplay := OnDisplay;
-    AppInterface.OnRename := OnRename;
-    AppInterface.OnError := OnError;
-    AppInterface.OnClear := OnClear;
-    AppInterface.OnList := OnList;
-    AppInterface.OnTick := OnTick;
-    AppInterface.OnKey := OnKey;
-
-    App := TBeeApp.Create(AppInterface, AppParams);
+    inherited Create;
+    SetLength(FKey, 0);
+    FParams := TStringList.Create;
+    for I := 1 to ParamCount do
+    begin
+      FParams.Add(ParamStr(I));
+    end;
+    FApp := TBeeApp.Create(FParams);
+    FApp.OnFatalError := ProcessFatalError;
+    FApp.OnError      := ProcessError;
+    FApp.OnWarning    := ProcessWarning;
+    FApp.OnMessage    := ProcessMessage;
+    FApp.OnOverwrite  := ProcessOverwrite;
+    FApp.OnRename     := ProcessRename;
+    FApp.OnList       := ProcessList;
+    FApp.OnPassword   := ProcessPassword;
+    FApp.OnRequest    := ProcessRequest;
+    FApp.OnProgress   := ProcessProgress;
+    FApp.OnClear      := ProcessClear;
   end;
 
   destructor TSfx.Destroy;
   begin
-    AppKey := '';
-    AppParams.Free;
-    AppInterface.Free;
+    SetLength(FKey, 0);
+    FParams.Free;
+    FApp.Free;
   end;
 
   procedure TSfx.Execute;
