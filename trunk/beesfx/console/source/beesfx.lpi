@@ -31,8 +31,8 @@
         <Filename Value="beesfx.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeSfx"/>
-        <CursorPos X="18" Y="63"/>
-        <TopLine Value="1"/>
+        <CursorPos X="15" Y="86"/>
+        <TopLine Value="56"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
@@ -66,7 +66,7 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit3>
     </Units>
-    <JumpHistory Count="5" HistoryIndex="4">
+    <JumpHistory Count="7" HistoryIndex="6">
       <Position1>
         <Filename Value="..\..\..\bee\source\bee_app.pas"/>
         <Caret Line="18" Column="35" TopLine="1"/>
@@ -87,6 +87,14 @@
         <Filename Value="beesfx.dpr"/>
         <Caret Line="61" Column="43" TopLine="37"/>
       </Position5>
+      <Position6>
+        <Filename Value="beesfx.dpr"/>
+        <Caret Line="39" Column="22" TopLine="23"/>
+      </Position6>
+      <Position7>
+        <Filename Value="beesfx.dpr"/>
+        <Caret Line="29" Column="13" TopLine="23"/>
+      </Position7>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
