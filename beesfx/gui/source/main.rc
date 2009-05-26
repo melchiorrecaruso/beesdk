@@ -3,7 +3,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 100 DIALOGEX 6, 30, 212, 80
 STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_LEFT
-CAPTION "Bee - Self Extractor 0.1.0"
+CAPTION "Bee - Self Extractor 0.1.2"
 FONT 8, "Tahoma"
 BEGIN
   LTEXT "To extract all files in archive to the specified"      , 101, 6,  5, 150,  8
@@ -12,7 +12,7 @@ BEGIN
   LTEXT "Extraction folder:"                                    , 103, 6, 35, 120,  8
   EDITTEXT                                                        104, 6, 45, 140, 12
 
-  LTEXT "(C) 2005-2007 Andrew Filinsky and Melchiorre Caruso."  , 105, 6, 65, 200,  8
+  LTEXT "(C) 2005-2009 Andrew Filinsky and Melchiorre Caruso."  , 105, 6, 65, 200,  8
 
   PUSHBUTTON "Extract",  IDOK   , 157,   4,  48,  14
   PUSHBUTTON "Close", IDCLOSE   , 157,  22,  48,  14

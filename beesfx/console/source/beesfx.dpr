@@ -1,4 +1,20 @@
-program BeeSfx;
+{
+  Copyright (c) 2005-2009 Andrew Filinsky and Melchiorre Caruso
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 { Contains:
 
@@ -10,16 +26,21 @@ program BeeSfx;
   2. Uses integer arithmetic only.
   3. Uses half-byte alphabet.
 
-  (C) 1999-2009 Melchiorre Caruso.
+  (C) 2005-2009 Melchiorre Caruso.
 
   Modifyed:
 
-  v0.1.0 build 0062 - 2007/01/27 by Melchiorre Caruso.
+  v0.1.0 build 0062 - 2007.01.27 by Melchiorre Caruso;
+
+  v0.1.2 build 0070 - 2009.05.26 by Melchiorre Caruso.
 }
+
+
+program BeeSfx;
 
 {$I compiler.inc}
 
-{$R BeeSfx.ico.res}
+{$R beesfx.ico.res}
 
 uses
   {$IFDEF CONSOLEAPPLICATION}
@@ -221,8 +242,8 @@ var
 
   begin
     SetCtrlCHandler(@CtrlHandler);
-    Writeln('The Bee self-extractor 0.1.0 build 0062 archiver utility, Jan 2007.' +
-      Cr + '(C) 2005-2007 Andrew Filinsky and Melchiorre Caruso.');
+    Writeln('The Bee self-extractor 0.1.2 build 0070 archiver utility, May 2009.' +
+      Cr + '(C) 2005-2009 Andrew Filinsky and Melchiorre Caruso.');
 
     repeat
       Write(Cr + 'Do you continue with files extraction? [Y, N] ');
