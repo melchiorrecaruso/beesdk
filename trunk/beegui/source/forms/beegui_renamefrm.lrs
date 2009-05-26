@@ -1,5 +1,3 @@
-{ Questo è un file risorse generato automaticamente da Lazarus }
-
 LazarusResources.Add('TRenameFrm','FORMDATA',[
   'TPF0'#10'TRenameFrm'#9'RenameFrm'#4'Left'#3#139#1#6'Height'#2'_'#3'Top'#3#20
   +#1#5'Width'#3'/'#1#13'ActiveControl'#7#5'BtnOk'#8'AutoSize'#9#11'BorderIcons'

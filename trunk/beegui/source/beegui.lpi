@@ -308,7 +308,7 @@
       <Unit25>
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="5" Y="37"/>
-        <TopLine Value="5"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>

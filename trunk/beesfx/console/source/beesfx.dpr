@@ -10,18 +10,22 @@ program BeeSfx;
   2. Uses integer arithmetic only.
   3. Uses half-byte alphabet.
 
-  (C) 1999-2006 Melchiorre Caruso.
+  (C) 1999-2009 Melchiorre Caruso.
 
   Modifyed:
 
   v0.1.0 build 0062 - 2007/01/27 by Melchiorre Caruso.
 }
 
-{$R-,Q-,S-}
+{$I compiler.inc}
 
 {$R BeeSfx.ico.res}
 
 uses
+  {$IFDEF CONSOLEAPPLICATION}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF UNIX} BaseUnix, {$ENDIF}
+  {$ENDIF}
   Classes,
   SysUtils,
   // ---
@@ -31,7 +35,7 @@ uses
   Bee_Interface;
 
 type
-  TSfx = class
+  TConsole = class
   private
     FApp: TBeeApp;
     FKey: string;
@@ -54,7 +58,7 @@ type
     procedure Execute;
   end;
 
-  constructor TSfx.Create;
+  constructor TConsole.Create;
   var
     I: longint;
   begin
@@ -79,106 +83,165 @@ type
     FApp.OnClear      := ProcessClear;
   end;
 
-  destructor TSfx.Destroy;
+  destructor TConsole.Destroy;
   begin
+    FApp.Destroy;
+    FParams.Destroy;
     SetLength(FKey, 0);
-    FParams.Free;
-    FApp.Free;
+    inherited Destroy;
   end;
 
-  procedure TSfx.Execute;
+  procedure TConsole.Execute;
   begin
-    App.Execute;
+    FApp.Execute;
+    ExitCode := FApp.Code;
   end;
 
-  procedure TSfx.OnOverWrite;
+  procedure TConsole.ProcessFatalError(const aMessage: string);
   begin
-    Writeln;
-    Writeln('"' + AppInterface.CFileName + '" already exists.');
-    Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
-    Readln(AppInterface.cMsg);
-    Writeln;
+    Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TSfx.OnRename;
+  procedure TConsole.ProcessError(const aMessage: string);
   begin
-    Writeln;
-    Writeln('Rename' + '"' + AppInterface.cFileName + '" as (empty to skip):');
-    Readln(AppInterface.cMsg);
-    Writeln;
+    Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TSfx.OnWarning;
+  procedure TConsole.ProcessWarning(const aMessage: string);
   begin
-    // Writeln (AppInterface.cMsg); - hide cfg warning !
+    Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TSfx.OnDisplay;
+  procedure TConsole.ProcessMessage(const aMessage: string);
   begin
-    Writeln(AppInterface.cMsg);
+    Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TSfx.OnError;
+  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
   begin
-    Writeln(AppInterface.cMsg);
-  end;
-
-  procedure TSfx.OnList;
-  begin
-    AppInterface.cList := nil;
-  end;
-
-  procedure TSfx.OnTick;
-  begin
-    Write(Format(#8#8#8#8#8#8#8 + '  (%d', [AppInterface.cPercentage]) + '%)');
-  end;
-
-  procedure TSfx.OnClear;
-  begin
-    DelLine;
-  end;
-
-  procedure TSfx.OnKey;
-  begin
-    if Length(AppKey) = 0 then
+    with aFileInfo do
     begin
-      Writeln;
-      Write('Insert a key (min length 4 char): ');
-      Readln(AppKey);
-      Writeln;
+      Writeln('Warning: file "',
+        ParamToOem(PCharToString(FilePath)),
+        ParamToOem(PCharToString(FileName)), '" already exists.');
+
+      Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
     end;
-    AppInterface.cMsg := AppKey;
+    // not convert oem to param
+    Readln(Result);
+  end;
+
+  procedure TConsole.ProcessRename(const aFileInfo: TFileInfo; var Result: string);
+  begin
+    with aFileInfo do
+    begin
+      Write('Rename file "',
+        ParamToOem(PCharToString(FilePath)),
+        ParamToOem(PCharToString(FileName)), '" as (empty to skip):');
+    end;
+    Readln(Result);
+    // convert oem to param
+    Result := OemToParam(Result);
+  end;
+
+  procedure TConsole.ProcessList(const aFileInfo: TFileInfoExtra);
+  begin
+    // nothing to do
+  end;
+
+  procedure TConsole.ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
+  var
+    S: string;
+  begin
+    if Length(FKey) = 0 then
+    begin
+      Write('Insert a key (min length 4 char): ');
+      Readln(Result);
+      // convert oem to param
+      Result := OemToParam(Result);
+      // store password
+      Write('Do you want to use password for this session? [Yes, No]: ');
+      Readln(S);
+      if (Length(S)= 1) and (Upcase(S) = 'Y') then FKey := Result;
+    end else
+      Result := FKey;
+  end;
+
+  procedure TConsole.ProcessRequest(const aMessage: string);
+  begin
+    Writeln(ParamToOem(aMessage));
+  end;
+
+  procedure TConsole.ProcessProgress;
+  begin
+    // not convert oem to param
+    Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
+      Format('%5d KB/s %3d%%', [FApp.Speed shr 10, FApp.Percentes]));
+  end;
+
+  procedure TConsole.ProcessClear;
+  begin
+    Write(#13, #13: 80);
   end;
 
   /// Main block
 
 var
   ExtractionPath: string = '';
-  Sfx: TSfx = nil;
+  Console: TConsole = nil;
   C: char;
 
-begin
-  Writeln('The Bee self-extractor 0.1.0 build 0062 archiver utility, Jan 2007.' +
-    Cr + '(C) 2005-2007 Andrew Filinsky and Melchiorre Caruso.');
+  /// control+c event ///
 
-  repeat
-    Write(Cr + 'Do you continue with files extraction? [Y, N] ');
-    Readln(C);
-  until C in ['Y', 'y', 'N', 'n'];
-
-  if C in ['Y', 'y'] then
+  {$IFDEF MSWINDOWS}
+  function CtrlHandler(CtrlType: longword): longbool;
   begin
-    Write(Cr + 'Set extraction path (empty for current path): ');
-    Readln(ExtractionPath);
-
-    Bee_Common.ForceDirectories(ExtractionPath);
-    if SetCurrentDir(ExtractionPath) then
-    begin
-      Write(Cr + 'Start extractor module ...' + Cr);
-      Sfx := TSfx.Create;
-      Sfx.Execute;
-      Sfx.Free;
-    end else
-      Write(Cr + 'Error: can''t set extraction path');
+    case CtrlType of
+      CTRL_C_EVENT:        Console.FApp.Terminated := True;
+      CTRL_BREAK_EVENT:    Console.FApp.Terminated := True;
+      CTRL_CLOSE_EVENT:    Console.FApp.Terminated := True;
+      CTRL_LOGOFF_EVENT:   Console.FApp.Terminated := True;
+      CTRL_SHUTDOWN_EVENT: Console.FApp.Terminated := True;
+    end;
+    Result := True;
   end;
-end.
+  {$ENDIF}
+
+  {$IFDEF UNIX}
+  procedure CtrlHandler(sig: cint);
+  begin
+    case sig of
+      SIGINT:  Console.FApp.Terminated := True;
+      SIGQUIT: Console.FApp.Terminated := True;
+      SIGKILL: Console.FApp.Terminated := True;
+      SIGSTOP: Console.FApp.Terminated := True;
+    end;
+  end;
+  {$ENDIF}
+
+  begin
+    SetCtrlCHandler(@CtrlHandler);
+    Writeln('The Bee self-extractor 0.1.0 build 0062 archiver utility, Jan 2007.' +
+      Cr + '(C) 2005-2007 Andrew Filinsky and Melchiorre Caruso.');
+
+    repeat
+      Write(Cr + 'Do you continue with files extraction? [Y, N] ');
+      Readln(C);
+    until C in ['Y', 'y', 'N', 'n'];
+
+    if C in ['Y', 'y'] then
+    begin
+      Write(Cr + 'Set extraction path (empty for current path): ');
+      Readln(ExtractionPath);
+
+      Bee_Common.ForceDirectories(ExtractionPath);
+      if SetCurrentDir(ExtractionPath) then
+      begin
+        Write(Cr + 'Start extractor module ...' + Cr);
+        Console := TConsole.Create;
+        Console.Execute;
+        Console.Free;
+      end else
+        Write(Cr + 'Error: can''t set extraction path');
+    end;
+  end.
