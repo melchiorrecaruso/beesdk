@@ -1,4 +1,20 @@
-program BeeSfx;
+{
+  Copyright (c) 2005-2009 Andrew Filinsky and Melchiorre Caruso
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 { Contains:
 
@@ -14,17 +30,25 @@ program BeeSfx;
 
   Modifyed:
 
-  v0.1.0 build 0060 - 2006/01/05 by Melchiorre Caruso.
+  v0.1.0 build 0060 - 2006.01.05 by Melchiorre Caruso;
+
+  v0.1.2 build 0070 - 2009.05.26 by Melchiorre Caruso.
 }
 
-{$R-,Q-,S-}
+
+program BeeSfx;
+
+{$I compiler.inc}
 
 uses
   Classes,
   Windows,
   SysUtils,
   Messages,
+
+
   Bee_App,
+  Bee_Types,
   Bee_Common,
   Bee_BlowFish,
   Bee_Interface;
@@ -52,120 +76,135 @@ var
 
 type
 
-  TSFX = class
+  TConsole = class
   private
-    App: TBeeApp;
-    AppParams: TStringList;
-    AppInterface: TAppInterface;
-    procedure OnTerminate(Sender: TObject);
-    procedure OnOverWrite;
-    procedure OnWarning;
-    procedure OnDisplay;
-    procedure OnRename;
-    procedure OnError;
-    procedure OnClear;
-    procedure OnTick;
-    procedure OnList;
-    procedure OnKey;
+    FKey: string;
+    FApp: TBeeApp;
+    FParams: TStringList;
+    procedure ProcessFatalError(const aMessage: string);
+    procedure ProcessError(const aMessage: string);
+    procedure ProcessWarning(const aMessage: string);
+    procedure ProcessMessage(const aMessage: string);
+    procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessRename(const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessList(const aFileInfo: TFileInfoExtra);
+    procedure ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
+    procedure ProcessRequest(const aMessage: string);
+    procedure ProcessProgress;
+    procedure ProcessClear;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Run;
+    procedure Execute;
   end;
 
-  constructor TSfx.Create;
+  constructor TConsole.Create;
   begin
-    AppParams := TStringList.Create;
-    AppParams.Add('x');
-    AppParams.Add('-oA');
-    AppParams.Add(ParamStr(0));
-    AppParams.Add('*\*.*');
+    FParams := TStringList.Create;
+    FParams.Add('x');
+    FParams.Add('-oA');
+    FParams.Add('-R+');
+    FParams.Add(ParamStr(0));
+    FParams.Add('*');
 
-    AppInterface := TAppInterface.Create;
-    AppInterface.OnOverWrite := OnOverWrite;
-    AppInterface.OnWarning := OnWarning;
-    AppInterface.OnDisplay := OnDisplay;
-    AppInterface.OnRename := OnRename;
-    AppInterface.OnError := OnError;
-    AppInterface.OnClear := OnClear;
-    AppInterface.OnList := OnList;
-    AppInterface.OnTick := OnTick;
-    AppInterface.OnKey := OnKey;
-
-    App := TBeeApp.Create(AppInterface, AppParams);
-    App.OnTerminate := OnTerminate;
+    FApp := TBeeApp.Create(FParams);
+    FApp.OnFatalError := ProcessFatalError;
+    FApp.OnError      := ProcessError;
+    FApp.OnWarning    := ProcessWarning;
+    FApp.OnMessage    := ProcessMessage;
+    FApp.OnOverwrite  := ProcessOverwrite;
+    FApp.OnRename     := ProcessRename;
+    FApp.OnList       := ProcessList;
+    FApp.OnPassword   := ProcessPassword;
+    FApp.OnRequest    := ProcessRequest;
+    FApp.OnProgress   := ProcessProgress;
+    FApp.OnClear      := ProcessClear;
   end;
 
-  destructor TSFX.Destroy;
+  destructor TConsole.Destroy;
   begin
-    AppParams.Free;
-    AppInterface.Free;
+    FApp.Destroy;
+    FParams.Destroy;
+    SetLength(FKey, 0);
+    inherited Destroy;
   end;
 
-  procedure TSFX.Run;
+  procedure TConsole.Execute;
   begin
-    App.Resume;
+    FApp.Execute;
+    ExitCode := FApp.Code;
   end;
 
-  procedure TSFX.OnRename;
-  begin (* nothing to do *)
-  end;
-
-  procedure TSFX.OnList;
-  begin (* nothing to do *)
-  end;
-
-  procedure TSFX.OnClear;
-  begin (* nothing to do *)
-  end;
-
-  procedure TSFX.OnOverWrite;
-  begin (* nothing to do *)
-  end;
-
-  procedure TSFX.OnWarning;
-  begin (* nothing to do *)
-  end;
-
-  procedure TSFX.OnError;
+  procedure TConsole.ProcessFatalError(const aMessage: string);
   begin
-    MessageBox(0, PChar(AppInterface.cMsg), PChar('Bee message'), MB_OK);
+    MessageBox(0, PChar(aMessage), PChar('Bee message'), MB_OK);
   end;
 
-  procedure TSFX.OnKey;
+  procedure TConsole.ProcessError(const aMessage: string);
+  begin
+    MessageBox(0, PChar(aMessage), PChar('Bee message'), MB_OK);
+  end;
+
+  procedure TConsole.ProcessWarning(const aMessage: string);
+  begin
+    (* nothing to do *)
+  end;
+
+  procedure TConsole.ProcessMessage(const aMessage: string);
+  begin
+    MSG := aMessage;
+    SendMessage(PROGRESS_HW, WM_SETTEXT, 0, 0);
+  end;
+
+  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
+  begin
+    (* nothing to do *)
+  end;
+
+  procedure TConsole.ProcessRename(const aFileInfo: TFileInfo; var Result: string);
+  begin
+    (* nothing to do *)
+  end;
+
+  procedure TConsole.ProcessList(const aFileInfo: TFileInfoExtra);
+  begin
+    (* nothing to do *)
+  end;
+
+  procedure TConsole.ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
   begin
     if Length(Key) < MinKeyLength then
     begin
       RETURN := False;
       DialogBox(hInstance, MAKEINTRESOURCE(200), PROGRESS_HW, PASSWORD_FUNC);
       while RETURN = False do
-      begin (* wait password... *)
+      begin
+        (* wait password... *)
       end;
     end;
-    AppInterface.cMsg := KEY;
+    Result := KEY;
   end;
 
-  procedure TSFX.OnDisplay;
+  procedure TConsole.ProcessRequest(const aMessage: string);
   begin
-    MSG := AppInterface.cMsg;
-    SendMessage(PROGRESS_HW, WM_SETTEXT, 0, 0);
+    MessageBox(0, PChar(aMessage), PChar('Bee message'), MB_OK);
   end;
 
-  procedure TSFX.OnTick;
+  procedure TConsole.ProcessProgress;
   begin
-    PERCENTAGE := AppInterface.cPercentage;
+    PERCENTAGE := FApp.Percentes;
     SendMessage(PROGRESS_HW, WM_SETTEXT, 1, 1);
   end;
 
-  procedure TSFX.OnTerminate;
+  procedure TConsole.ProcessClear;
   begin
-    SendMessage(PROGRESS_HW, WM_CLOSE, 0, 0);
+    (* nothing to do *)
   end;
 
   /// main function
 
 var
-  Sfx: TSfx = nil;
+  Console: TConsole = nil;
 
   function PROGRESS_STEP(HW: hwnd; umsg: dword; wparam: wparam;
     lparam: lparam): bool; stdcall;
@@ -231,7 +270,7 @@ var
       WM_COMMAND: if hiword(wparam) = BN_CLICKED then
           case loword(wparam) of
             IDCLOSE: SendMessage(HW, WM_CLOSE, 0, 0);
-            idOk: if Sfx = nil then
+            idOk: if Console = nil then
               begin
                 SendMessage(HW, WM_CLOSE, 0, 0);
                 SetLength(PATH, MAX_PATH);
@@ -239,11 +278,10 @@ var
                   GetDlgItemText(HW, 104, PChar(PATH), MAX_PATH));
                 Bee_Common.ForceDirectories(PATH);
                 SetCurrentDir(PATH);
-                Sfx := TSfx.Create;
-                Sfx.Run;
+                Console := TConsole.Create;
+                Console.Execute;
 
-                DialogBox(hInstance, MAKEINTRESOURCE(300),
-                  0, PROGRESS_FUNC);
+                DialogBox(hInstance, MAKEINTRESOURCE(300), 0, PROGRESS_FUNC);
               end;
           end;
       else
@@ -260,4 +298,6 @@ begin
   PASSWORD_FUNC := @PASSWORD_STEP;
 
   DialogBox(hInstance, MAKEINTRESOURCE(100), 0, MAIN_FUNC);
+
+  // SendMessage(PROGRESS_HW, WM_CLOSE, 0, 0);
 end.
