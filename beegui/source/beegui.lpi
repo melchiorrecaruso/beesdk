@@ -268,7 +268,7 @@
       <Unit21>
         <Filename Value="packages\beegui_consts.pas"/>
         <UnitName Value="BeeGui_Consts"/>
-        <CursorPos X="40" Y="36"/>
+        <CursorPos X="52" Y="36"/>
         <TopLine Value="4"/>
         <EditorIndex Value="5"/>
         <UsageCount Value="10"/>
