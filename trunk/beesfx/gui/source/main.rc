@@ -24,8 +24,8 @@ EXSTYLE WS_EX_LEFT
 CAPTION "Password ..."
 FONT 8, "Tahoma"
 BEGIN
-  LTEXT "Insert passord:"                                          , 201, 6, 11, 150,  8
-  EDITTEXT                                                         , 202, 6, 25, 116, 12
+  LTEXT "Insert passord:" , 201, 6, 11, 150,  8
+  EDITTEXT                  202, 6, 25, 116, 12
 
   PUSHBUTTON "Ok"    , IDOK     , 130,  7,  48,  14
   PUSHBUTTON "Cancel", IDCLOSE  , 130, 24,  48,  14
