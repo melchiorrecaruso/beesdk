@@ -1,22 +1,22 @@
 @echo off
 
   call clear.bat
-  del  temp\BeeSfx.exe
-  del  ..\..\Bee\distribution\BeeSfx.bin
+  del  temp\beesfx.exe
+  del  ..\..\bee\distribution\beeSfx.bin
   
 @echo @ 
 @echo @ Compile BeeSfx.exe ...
 @echo @ 
   
   cd source
-  bds -b -ns BeeSfx.dpr -K4194304
+  bds -b -ns beesfx.dpr -K4194304
   cd .. 
 
-  stripreloc /B temp\BeeSfx.exe
+  stripreloc /B temp\beesfx.exe
 
-  move temp\BeeSfx.exe ..\..\Bee\distribution\BeeSfx.bin  
+  move temp\beesfx.exe ..\..\bee\distribution\beeSfx.bin  
 
-  upx -9 ..\..\Bee\distribution\BeeSfx.bin   
+  upx -9 ..\..\bee\distribution\beesfx.bin   
 
   call clear.bat
   
