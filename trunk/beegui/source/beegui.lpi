@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -181,7 +181,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Forms"/>
         <CursorPos X="69" Y="239"/>
-        <TopLine Value="61"/>
+        <TopLine Value="135"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>

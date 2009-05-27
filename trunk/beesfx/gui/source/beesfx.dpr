@@ -76,7 +76,7 @@ var
 
 type
 
-  TConsole = class
+  TConsole = class(TThread)
   private
     FKey: string;
     FApp: TBeeApp;
@@ -92,10 +92,12 @@ type
     procedure ProcessRequest(const aMessage: string);
     procedure ProcessProgress;
     procedure ProcessClear;
+  private
+    procedure DoTerminate;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Execute;
+    procedure Execute; overload;
   end;
 
   constructor TConsole.Create;
@@ -133,6 +135,11 @@ type
   begin
     FApp.Execute;
     ExitCode := FApp.Code;
+  end;
+
+  procedure TConsole.DoTerminate;
+  begin
+    SendMessage(PROGRESS_HW, WM_CLOSE, 0, 0);
   end;
 
   procedure TConsole.ProcessFatalError(const aMessage: string);
@@ -216,11 +223,9 @@ var
       WM_SETTEXT:
       begin
         if wparam = 0 then
-          SetDlgItemText(HW, 301,
-            PChar('Extracting: ' + ExtractFileName(Msg)))
+          SetDlgItemText(HW, 301, PChar('Extracting: ' + ExtractFileName(Msg)))
         else
-          SetDlgItemText(HW, 302,
-            PChar('Total progress: ' + IntToStr(PERCENTAGE) + '%'));
+          SetDlgItemText(HW, 302, PChar('Total progress: ' + IntToStr(PERCENTAGE) + '%'));
       end;
 
       WM_COMMAND: if hiword(wparam) = BN_CLICKED then
@@ -278,6 +283,7 @@ var
                   GetDlgItemText(HW, 104, PChar(PATH), MAX_PATH));
                 Bee_Common.ForceDirectories(PATH);
                 SetCurrentDir(PATH);
+
                 Console := TConsole.Create;
                 Console.Execute;
 
@@ -298,6 +304,4 @@ begin
   PASSWORD_FUNC := @PASSWORD_STEP;
 
   DialogBox(hInstance, MAKEINTRESOURCE(100), 0, MAIN_FUNC);
-
-  // SendMessage(PROGRESS_HW, WM_CLOSE, 0, 0);
 end.
