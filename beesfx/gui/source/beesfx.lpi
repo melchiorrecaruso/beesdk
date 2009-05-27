@@ -26,13 +26,13 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="beesfx.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeSfx"/>
-        <CursorPos X="59" Y="269"/>
-        <TopLine Value="222"/>
+        <CursorPos X="78" Y="290"/>
+        <TopLine Value="260"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
@@ -50,7 +50,7 @@
         <UnitName Value="Bee_App"/>
         <CursorPos X="2" Y="37"/>
         <TopLine Value="10"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -59,8 +59,8 @@
         <Filename Value="..\..\..\bee\source\bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="20" Y="32"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
+        <TopLine Value="19"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -69,13 +69,21 @@
         <Filename Value="main.rc"/>
         <CursorPos X="38" Y="7"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="None"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="..\..\..\..\..\..\Programmi\FPC\2.2.4\source\rtl\objpas\classes\classesh.inc"/>
+        <CursorPos X="26" Y="1376"/>
+        <TopLine Value="1345"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit5>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="beesfx.dpr"/>
         <Caret Line="217" Column="49" TopLine="195"/>
@@ -192,6 +200,10 @@
         <Filename Value="beesfx.dpr"/>
         <Caret Line="284" Column="60" TopLine="256"/>
       </Position29>
+      <Position30>
+        <Filename Value="beesfx.dpr"/>
+        <Caret Line="79" Column="23" TopLine="74"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
