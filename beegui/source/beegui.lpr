@@ -68,7 +68,7 @@ begin
   if (ParamCount = 1) and FileExists(ParamStr(1)) then
   begin
     Application.Name  := cApplicationName;
-    Application.Title := cApplicationName;
+    Application.Title:='BeeGui';
     Application.CreateForm(TMainFrm, MainFrm);
     Application.CreateForm(TConfigFrm, ConfigFrm);
     begin
