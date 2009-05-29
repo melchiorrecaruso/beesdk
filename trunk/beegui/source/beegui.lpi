@@ -353,7 +353,7 @@
     <SearchPaths>
       <IncludeFiles Value="forms\forms.include\;packages\packages.include\"/>
       <OtherUnitFiles Value="forms\;packages\;..\..\bee\source\"/>
-      <UnitOutputDirectory Value="..\distribution"/>
+      <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
