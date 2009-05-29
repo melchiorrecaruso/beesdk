@@ -74,9 +74,8 @@ Description of history of the BeeGui:
   Version 1.0.4 build 322  maked.
 
 
-2009.05.24
+2009.05.29
+  
+  [*] Source code ported to Lazarus\Freepascal
 
-
-  Version 1.0.6 build 920  maked.
-
-
+  Version 1.0.6 build 928  maked.

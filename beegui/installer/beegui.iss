@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=BeeGui
-AppVerName=BeeGui 1.0.5 BETA
+AppVerName=BeeGui 1.0.6 BETA
 AppPublisher=BeeGui Team
 AppPublisherURL=http://www.beegui.org
 AppSupportURL=http://www.beegui.org
@@ -14,17 +14,17 @@ DefaultGroupName=BeeGui
 AllowNoIcons=yes
 LicenseFile=..\license.txt
 OutputDir=distribution
-OutputBaseFilename=BeeGui105
+OutputBaseFilename=BeeGui106
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
 
-VersionInfoVersion=1.0.5
+VersionInfoVersion=1.0.6
 VersionInfoDescription=BeeGui archiver installer
 VersionInfoCopyright=GNU General Public License
 VersionInfoCompany=BeeGui Team
 VersionInfoProductName=BeeGui, the GUI for Bee archiver utility
-VersionInfoProductVersion=1.0.5
+VersionInfoProductVersion=1.0.6
 
 [Tasks]
 Name: "desktopicon";     Description: "{cm:CreateDesktopIcon}";     GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

@@ -32,7 +32,7 @@
 
   v0.1.0 build 0062 - 2007.01.27 by Melchiorre Caruso;
 
-  v0.1.2 build 0070 - 2009.05.26 by Melchiorre Caruso.
+  v0.1.0 build 0070 - 2009.05.26 by Melchiorre Caruso.
 }
 
 
@@ -242,7 +242,7 @@ var
 
   begin
     SetCtrlCHandler(@CtrlHandler);
-    Writeln('The Bee self-extractor 0.1.2 build 0070 archiver utility, May 2009.' +
+    Writeln('The Bee self-extractor 0.1.0 build 0070 archiver utility, May 2009.' +
       Cr + '(C) 2005-2009 Andrew Filinsky and Melchiorre Caruso.');
 
     repeat
