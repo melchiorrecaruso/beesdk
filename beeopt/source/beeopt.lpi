@@ -68,7 +68,7 @@
         <Filename Value="..\..\bee\source\bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
         <CursorPos X="20" Y="314"/>
-        <TopLine Value="294"/>
+        <TopLine Value="282"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
@@ -268,7 +268,7 @@
     <SearchPaths>
       <IncludeFiles Value="beeopt.include\"/>
       <OtherUnitFiles Value="..\..\bee\source\"/>
-      <UnitOutputDirectory Value="..\distribution"/>
+      <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>

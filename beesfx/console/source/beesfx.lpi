@@ -183,7 +183,7 @@
     <SearchPaths>
       <IncludeFiles Value="beesfx.include\"/>
       <OtherUnitFiles Value="..\..\..\bee\source\"/>
-      <UnitOutputDirectory Value="..\distribution"/>
+      <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -198,6 +198,7 @@
       <SmartLinkUnit Value="True"/>
       <SmallerCode Value="True"/>
       <Optimizations>
+        <VariablesInRegisters Value="True"/>
         <UncertainOptimizations Value="True"/>
         <OptimizationLevel Value="3"/>
       </Optimizations>
