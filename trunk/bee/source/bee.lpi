@@ -233,7 +233,7 @@
     <Version Value="8"/>
     <SearchPaths>
       <IncludeFiles Value="bee.include/"/>
-      <UnitOutputDirectory Value="../distribution"/>
+      <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>

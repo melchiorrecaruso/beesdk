@@ -212,7 +212,7 @@
     <SearchPaths>
       <IncludeFiles Value="beesfx.include\"/>
       <OtherUnitFiles Value="..\..\..\bee\source\"/>
-      <UnitOutputDirectory Value="..\distribution"/>
+      <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -220,7 +220,6 @@
         <CStyleOperator Value="False"/>
         <AllowLabel Value="False"/>
         <CPPInline Value="False"/>
-        <UseAnsiStrings Value="True"/>
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
