@@ -52,7 +52,7 @@ cd ..
 @echo @ 
 
 strip.exe    bee\temp\bee.exe
-move         bee\temp\bee.exe  beegui\distribution\bee.exe
+move         bee\temp\bee.exe  bee\distribution\bee.exe
 
 @echo @ 
 @echo @ Deleting temporary files...
@@ -84,7 +84,7 @@ cd ..
 @echo @ 
 
 strip.exe    beeopt\temp\beeopt.exe
-move         beeopt\temp\beeopt.exe  beegui\distribution\beeopt.exe
+move         beeopt\temp\beeopt.exe  beeopt\distribution\beeopt.exe
 
 @echo @ 
 @echo @ Deleting temporary files...
@@ -128,10 +128,12 @@ cd ..
 
 strip.exe    beesfx\console\temp\beesfx.exe
 upx       -9 beesfx\console\temp\beesfx.exe
+copy         beesfx\console\temp\beesfx.exe  bee\distribution\bee.sfx
 move         beesfx\console\temp\beesfx.exe  beegui\distribution\bee.sfx
 
 strip.exe    beesfx\gui\temp\beesfx.exe
 upx       -9 beesfx\gui\temp\beesfx.exe
+copy         beesfx\gui\temp\beesfx.exe  bee\distribution\beegui.sfx
 move         beesfx\gui\temp\beesfx.exe  beegui\distribution\beegui.sfx
 
 @echo @ 
