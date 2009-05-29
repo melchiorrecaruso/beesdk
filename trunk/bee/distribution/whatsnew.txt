@@ -1344,7 +1344,7 @@ Description of history of the Bee:
 
   v0.7.9 build 316 maked.
   
-2009.04.21
+2009.05.29
 
   Update sources by Melchiorre Caruso:
 

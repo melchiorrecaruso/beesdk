@@ -34,3 +34,8 @@ Description of history of the BeeSfx:
 
   Version 0.1.0 build 0062 maked.
 
+2009.05.29
+
+  [*] Source code ported to Lazarus\Freepascal
+
+  Version 0.1.0 build 0070 maked.

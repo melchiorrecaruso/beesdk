@@ -3,7 +3,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 100 DIALOGEX 6, 30, 212, 80
 STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_LEFT
-CAPTION "Bee - Self Extractor 0.1.2"
+CAPTION "Bee - Self Extractor 0.1.0"
 FONT 8, "Tahoma"
 BEGIN
   LTEXT "To extract all files in archive to the specified"      , 101, 6,  5, 150,  8

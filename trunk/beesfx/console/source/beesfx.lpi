@@ -12,7 +12,7 @@
       </Flags>
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <PublishOptions>
       <Version Value="2"/>
@@ -31,8 +31,8 @@
         <Filename Value="beesfx.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeSfx"/>
-        <CursorPos X="9" Y="43"/>
-        <TopLine Value="18"/>
+        <CursorPos X="42" Y="245"/>
+        <TopLine Value="221"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
@@ -50,9 +50,7 @@
         <UnitName Value="Bee_App"/>
         <CursorPos X="2" Y="37"/>
         <TopLine Value="10"/>
-        <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -60,121 +58,113 @@
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
         <Filename Value="beesfx.include\compiler.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit4>
     </Units>
-    <JumpHistory Count="25" HistoryIndex="24">
+    <JumpHistory Count="24" HistoryIndex="23">
       <Position1>
-        <Filename Value="..\..\..\bee\source\bee_app.pas"/>
-        <Caret Line="18" Column="35" TopLine="1"/>
+        <Filename Value="beesfx.dpr"/>
+        <Caret Line="22" Column="1" TopLine="1"/>
       </Position1>
       <Position2>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="22" Column="1" TopLine="1"/>
+        <Caret Line="29" Column="10" TopLine="13"/>
       </Position2>
       <Position3>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="29" Column="10" TopLine="13"/>
+        <Caret Line="37" Column="28" TopLine="13"/>
       </Position3>
       <Position4>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="37" Column="28" TopLine="13"/>
+        <Caret Line="61" Column="43" TopLine="37"/>
       </Position4>
       <Position5>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="61" Column="43" TopLine="37"/>
+        <Caret Line="39" Column="22" TopLine="23"/>
       </Position5>
       <Position6>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="39" Column="22" TopLine="23"/>
+        <Caret Line="29" Column="13" TopLine="23"/>
       </Position6>
       <Position7>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="29" Column="13" TopLine="23"/>
+        <Caret Line="93" Column="27" TopLine="61"/>
       </Position7>
       <Position8>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="93" Column="27" TopLine="61"/>
+        <Caret Line="100" Column="32" TopLine="81"/>
       </Position8>
       <Position9>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="100" Column="32" TopLine="81"/>
+        <Caret Line="96" Column="17" TopLine="72"/>
       </Position9>
       <Position10>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="96" Column="17" TopLine="72"/>
+        <Caret Line="111" Column="17" TopLine="84"/>
       </Position10>
       <Position11>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="111" Column="17" TopLine="84"/>
+        <Caret Line="217" Column="49" TopLine="195"/>
       </Position11>
       <Position12>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="217" Column="49" TopLine="195"/>
+        <Caret Line="181" Column="7" TopLine="161"/>
       </Position12>
       <Position13>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="181" Column="7" TopLine="161"/>
+        <Caret Line="13" Column="16" TopLine="1"/>
       </Position13>
       <Position14>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="13" Column="16" TopLine="1"/>
+        <Caret Line="38" Column="11" TopLine="10"/>
       </Position14>
       <Position15>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="38" Column="11" TopLine="10"/>
+        <Caret Line="61" Column="23" TopLine="37"/>
       </Position15>
       <Position16>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="61" Column="23" TopLine="37"/>
+        <Caret Line="86" Column="22" TopLine="62"/>
       </Position16>
       <Position17>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="86" Column="22" TopLine="62"/>
+        <Caret Line="94" Column="21" TopLine="70"/>
       </Position17>
       <Position18>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="94" Column="21" TopLine="70"/>
+        <Caret Line="115" Column="21" TopLine="76"/>
       </Position18>
       <Position19>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="115" Column="21" TopLine="76"/>
+        <Caret Line="134" Column="21" TopLine="96"/>
       </Position19>
       <Position20>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="134" Column="21" TopLine="96"/>
+        <Caret Line="152" Column="21" TopLine="123"/>
       </Position20>
       <Position21>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="152" Column="21" TopLine="123"/>
+        <Caret Line="182" Column="21" TopLine="146"/>
       </Position21>
       <Position22>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="182" Column="21" TopLine="146"/>
+        <Caret Line="189" Column="21" TopLine="167"/>
       </Position22>
       <Position23>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="189" Column="21" TopLine="167"/>
+        <Caret Line="223" Column="1" TopLine="199"/>
       </Position23>
       <Position24>
         <Filename Value="beesfx.dpr"/>
-        <Caret Line="223" Column="1" TopLine="199"/>
-      </Position24>
-      <Position25>
-        <Filename Value="beesfx.dpr"/>
         <Caret Line="243" Column="16" TopLine="200"/>
-      </Position25>
+      </Position24>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

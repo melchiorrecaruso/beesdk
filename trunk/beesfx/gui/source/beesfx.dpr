@@ -32,7 +32,7 @@
 
   v0.1.0 build 0060 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.1.2 build 0070 - 2009.05.26 by Melchiorre Caruso.
+  v0.1.0 build 0070 - 2009.05.29 by Melchiorre Caruso.
 }
 
 
