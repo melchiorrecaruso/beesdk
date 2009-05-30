@@ -13,7 +13,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -30,7 +30,7 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="3">
+    <Units Count="4">
       <Unit0>
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -47,8 +47,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_LibLink"/>
         <CursorPos X="11" Y="25"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
+        <TopLine Value="25"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -56,15 +56,23 @@
       <Unit2>
         <Filename Value="..\..\bee\source\bee_library.pas"/>
         <UnitName Value="Bee_Library"/>
-        <CursorPos X="20" Y="45"/>
-        <TopLine Value="1"/>
+        <CursorPos X="16" Y="342"/>
+        <TopLine Value="319"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
+      <Unit3>
+        <Filename Value="packages\packages.include\compiler.inc"/>
+        <CursorPos X="1" Y="36"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit3>
     </Units>
-    <JumpHistory Count="25" HistoryIndex="24">
+    <JumpHistory Count="27" HistoryIndex="26">
       <Position1>
         <Filename Value="beelib.dpr"/>
         <Caret Line="394" Column="38" TopLine="363"/>
@@ -165,6 +173,14 @@
         <Filename Value="beelib.dpr"/>
         <Caret Line="31" Column="10" TopLine="15"/>
       </Position25>
+      <Position26>
+        <Filename Value="..\..\bee\source\bee_library.pas"/>
+        <Caret Line="30" Column="10" TopLine="23"/>
+      </Position26>
+      <Position27>
+        <Filename Value="..\..\bee\source\bee_library.pas"/>
+        <Caret Line="345" Column="3" TopLine="321"/>
+      </Position27>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
