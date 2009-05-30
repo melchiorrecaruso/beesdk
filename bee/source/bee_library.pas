@@ -339,7 +339,7 @@ end;
 
 function CoreLibVersion: integer;
 begin
-  Result := 100;
+  Result := 102;
 end;
 
 procedure CoreFreePChar(P: PChar);

@@ -686,7 +686,7 @@ begin
       FCommandLine.cdOption := ListView.Folder;
       ListView.GetMasks(FCommandLine.FileMasks, True);
 
-      if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
+      if SetCurrentDir(ExtractFileDir(FileProcess.FileName)) then
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -694,6 +694,9 @@ begin
   end;
   DecWorkStatus;
   SysUtils.DeleteFile(FileProcess.FileName);
+
+  SetCurrentDir(GetApplicationTempDir(cApplicationName));
+  SysUtils.RemoveDir(ExtractFileDir(FileProcess.FileName));
 end;
 
 // Open archive and execute commands
@@ -1334,7 +1337,7 @@ begin
       FCommandLine.cdOption := ListView.Folder;
       ListView.GetMasks(FCommandLine.FileMasks, True);
 
-      if SetCurrentDir(GetApplicationTempDir(cApplicationName)) then
+      if SetCurrentDir(GetApplicationRandomTempDir(cApplicationName)) then
       begin
         FFileName := IncludeTrailingBackSlash(GetCurrentDir) + FFileName;
 

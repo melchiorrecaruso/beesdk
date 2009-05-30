@@ -54,6 +54,8 @@ uses
   function GetApplicationCheckOutDir(const aApplicationName: string): string;
   function GetApplicationConfigDir(const aApplicationName: string): string;
   function GetApplicationTempDir(const aApplicationName: string): string;
+  function GetApplicationRandomTempDir(const aApplicationName: string): string;
+
   // ---
   function ExtractFirstFolder(const FullPath: string): string;
 
@@ -73,7 +75,7 @@ uses
   
   { files routines }
   
-  function  SizeOfFile(const FileName: string): integer;
+  function SizeOfFile(const FileName: string): integer;
   
   function CopyFile(const FileName, NewFileName: string): boolean;
   function CopyFiles(SrcDir, DstDir: string): boolean;
@@ -242,7 +244,23 @@ end;
     if DirectoryExists(Result) = False then
       ForceDirectories(Result);
   end;
-  
+
+  function GetApplicationRandomTempDir(const aApplicationName: string): string;
+  var
+    I: longint;
+  begin
+    repeat
+      Result := '????????';
+      for I := 1 to 8 do
+      begin
+        Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
+      end;
+      Result := GetApplicationTempDir(aApplicationName) + PathDelim + Result;
+    until DirectoryExists(Result) = False;
+
+    ForceDirectories(Result);
+  end;
+
   procedure ClearDirectoryScan(const DirName: String);
   var
     T: TSearchRec;
