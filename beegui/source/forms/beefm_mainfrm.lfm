@@ -5,7 +5,7 @@ object MainFrm: TMainFrm
   Width = 721
   AllowDropFiles = True
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 525
+  ClientHeight = 520
   ClientWidth = 721
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
@@ -22,7 +22,7 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     Left = 0
-    Height = 405
+    Height = 402
     Top = 100
     Width = 721
     AutoLoad = True
@@ -112,8 +112,8 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 20
-    Top = 505
+    Height = 18
+    Top = 502
     Width = 721
     Anchors = [akRight]
     DragCursor = crDefault
@@ -3300,7 +3300,7 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 3
-      Height = 22
+      Height = 25
       Top = 2
       Width = 122
       Align = alCustom
@@ -3355,7 +3355,7 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 127
-      Height = 22
+      Height = 25
       Top = 2
       Width = 2
       Align = alCustom
@@ -3372,7 +3372,7 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 139
-      Height = 22
+      Height = 25
       Top = 2
       Width = 45
       Align = alCustom
@@ -3392,7 +3392,7 @@ object MainFrm: TMainFrm
       AnchorSideRight.Control = AddressToolBar
       AnchorSideRight.Side = asrBottom
       Left = 189
-      Height = 22
+      Height = 25
       Top = 2
       Width = 530
       Align = alCustom
