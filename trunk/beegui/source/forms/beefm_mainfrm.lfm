@@ -1563,7 +1563,6 @@ object MainFrm: TMainFrm
       Layout = blGlyphTop
       NumGlyphs = 2
       Spacing = 1
-      Visible = False
       OnClick = MMenuActionsViewClick
     end
     object BtnDelete: TSpeedButton
