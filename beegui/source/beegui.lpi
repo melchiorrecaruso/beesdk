@@ -278,7 +278,7 @@
       <Unit22>
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="5" Y="37"/>
-        <TopLine Value="5"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -296,7 +296,7 @@
       <Unit24>
         <Filename Value="packages\beegui_iconlist.pas"/>
         <UnitName Value="BeeGui_IconList"/>
-        <CursorPos X="5" Y="112"/>
+        <CursorPos X="8" Y="112"/>
         <TopLine Value="101"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
