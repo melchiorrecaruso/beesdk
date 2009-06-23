@@ -56,9 +56,9 @@
       </Unit0>
       <Unit1>
         <Filename Value="forms\beegui_passwordfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="PasswordFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_PasswordFrm"/>
         <CursorPos X="32" Y="160"/>
@@ -68,9 +68,9 @@
       </Unit1>
       <Unit2>
         <Filename Value="forms\beegui_addfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="AddFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_AddFrm"/>
         <CursorPos X="3" Y="182"/>
@@ -80,9 +80,9 @@
       </Unit2>
       <Unit3>
         <Filename Value="forms\beegui_extractfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="ExtractFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="32" Y="121"/>
@@ -92,9 +92,9 @@
       </Unit3>
       <Unit4>
         <Filename Value="forms\beegui_overwritefrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="OverwriteFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_OverWriteFrm"/>
         <CursorPos X="35" Y="103"/>
@@ -104,9 +104,9 @@
       </Unit4>
       <Unit5>
         <Filename Value="forms\beegui_renamefrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="RenameFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_RenameFrm"/>
         <CursorPos X="28" Y="88"/>
@@ -116,9 +116,9 @@
       </Unit5>
       <Unit6>
         <Filename Value="forms\beegui_tickfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="TickFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="44" Y="240"/>
@@ -128,9 +128,9 @@
       </Unit6>
       <Unit7>
         <Filename Value="forms\beegui_aboutfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="AboutFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="17" Y="101"/>
@@ -185,9 +185,9 @@
       </Unit13>
       <Unit14>
         <Filename Value="forms\beefm_mainfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="MainFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
         <CursorPos X="46" Y="1350"/>
@@ -199,9 +199,9 @@
       </Unit14>
       <Unit15>
         <Filename Value="forms\beefm_configfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="ConfigFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_ConfigFrm"/>
         <CursorPos X="3" Y="172"/>
@@ -211,9 +211,9 @@
       </Unit15>
       <Unit16>
         <Filename Value="forms\beefm_propertyfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="InfoFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_PropertyFrm"/>
         <CursorPos X="1" Y="1"/>
@@ -223,9 +223,9 @@
       </Unit16>
       <Unit17>
         <Filename Value="forms\beefm_selectfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="SelectFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFm_SelectFrm"/>
         <CursorPos X="31" Y="85"/>
@@ -235,9 +235,9 @@
       </Unit17>
       <Unit18>
         <Filename Value="forms\beefm_viewfrm.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="ViewFrm"/>
         <HasResources Value="True"/>
-        <IsPartOfProject Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFm_ViewFrm"/>
         <CursorPos X="27" Y="96"/>
@@ -256,8 +256,8 @@
       </Unit19>
       <Unit20>
         <Filename Value="forms\beegui_dragdropfrm.pas"/>
-        <ComponentName Value="DragDropFrm"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="DragDropFrm"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_DragDropFrm"/>
         <CursorPos X="3" Y="64"/>
