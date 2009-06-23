@@ -1,5 +1,5 @@
 object MainFrm: TMainFrm
-  Left = 251
+  Left = 304
   Height = 544
   Top = 158
   Width = 721
@@ -22,8 +22,8 @@ object MainFrm: TMainFrm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     Left = 0
-    Height = 405
-    Top = 100
+    Height = 411
+    Top = 94
     Width = 721
     AutoLoad = True
     OnChangeFolder = ListViewChangeFolder
@@ -3282,11 +3282,11 @@ object MainFrm: TMainFrm
   end
   object AddressToolBar: TToolBar
     Left = 0
-    Height = 34
+    Height = 28
     Top = 64
     Width = 721
     AutoSize = True
-    ButtonHeight = 32
+    ButtonHeight = 24
     ButtonWidth = 0
     Caption = 'AddressToolBar'
     DragCursor = crDefault
