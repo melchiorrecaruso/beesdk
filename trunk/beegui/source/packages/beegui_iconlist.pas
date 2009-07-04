@@ -195,6 +195,7 @@ function TIconList.GetSysFileIcon(const FileName: string; FileAttr: integer): in
 var
   I:   cardinal;
   Bmp: TBitmap;
+  BmpMask: TBitmap;
   IconInfo: TIconInfo;
   FI:  TSHFileInfo;
   FileExt: string;
@@ -203,10 +204,8 @@ begin
   Result := -1;
     {$IFDEF MSWINDOWS}
   case Height of
-    16: I := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_TYPENAME or
-        SHGFI_USEFILEATTRIBUTES;
-    32: I := SHGFI_ICON or SHGFI_LARGEICON or SHGFI_TYPENAME or
-        SHGFI_USEFILEATTRIBUTES;
+    16: I := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_TYPENAME or SHGFI_USEFILEATTRIBUTES;
+    32: I := SHGFI_ICON or SHGFI_LARGEICON or SHGFI_TYPENAME or SHGFI_USEFILEATTRIBUTES;
     else
       I := 0;
   end;
@@ -219,14 +218,16 @@ begin
   if SHGetFileInfo(PChar(FileName), FileAttr, FI, SizeOf(FI), I) <> 0 then
   begin
     Bmp := TBitmap.Create;
+    BmpMask := TBitmap.Create;
     try
       if (FI.hIcon <> 0) and GetIconInfo(FI.hIcon, IconInfo) then
       begin
-        Bmp.SetHandles(IconInfo.hbmColor, IconInfo.hbmMask);
-        Bmp.Transparent := True;
+        Bmp.Handle := IconInfo.hbmColor;
+        BmpMask.Handle := IconInfo.hbmMask;
       end;
-      Result := Add(Bmp, nil);
+      Result := Add(Bmp, BmpMask);
     finally
+      BmpMask.Free;
       Bmp.Free;
     end;
 
