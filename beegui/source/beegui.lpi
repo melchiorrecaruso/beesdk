@@ -44,7 +44,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="27">
+    <Units Count="25">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -270,7 +270,7 @@
         <UnitName Value="BeeGui_Consts"/>
         <CursorPos X="52" Y="36"/>
         <TopLine Value="4"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -279,7 +279,7 @@
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="5" Y="37"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit22>
@@ -288,7 +288,7 @@
         <UnitName Value="BeeGui_SysUtils"/>
         <CursorPos X="5" Y="252"/>
         <TopLine Value="245"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -298,27 +298,11 @@
         <UnitName Value="BeeGui_IconList"/>
         <CursorPos X="8" Y="112"/>
         <TopLine Value="92"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit24>
-      <Unit25>
-        <Filename Value="forms\forms.include\beefm_mainfrm_loadlanguage.inc"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit25>
-      <Unit26>
-        <Filename Value="forms\forms.include\beefm_mainfrm_savelanguage.inc"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="1"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit26>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
