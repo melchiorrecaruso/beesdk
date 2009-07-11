@@ -454,7 +454,11 @@ end;
 
 procedure TCustomArchiveListView.SetSimpleList(Value: boolean);
 begin
-  FSimpleList := Value;
+  if Value <> FSimpleList then
+  begin
+    FSimpleList := Value;
+    FFolder := '';
+  end;
   UpdateFolder;
 end;
 
