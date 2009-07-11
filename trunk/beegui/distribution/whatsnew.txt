@@ -78,4 +78,4 @@ Description of history of the BeeGui:
   
   [*] Source code ported to Lazarus\Freepascal
 
-  Version 1.0.6 build 928  maked.
+  Version 1.0.6 build 950  maked.
