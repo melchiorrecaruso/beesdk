@@ -1334,7 +1334,7 @@ begin
 
       FCommandLine.ArchiveName := FArchiveName;
 
-      FCommandLine.cdOption := ListView.Folder;
+      FCommandLine.cdOption := ListView.Selected.SubItems[9];
       ListView.GetMasks(FCommandLine.FileMasks, True);
 
       if SetCurrentDir(GetApplicationRandomTempDir(cApplicationName)) then
