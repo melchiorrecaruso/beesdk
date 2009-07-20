@@ -355,11 +355,12 @@ begin
   SmallImages.IconFolder := GetApplicationSmallIconsDir;
   LargeImages.IconFolder := GetApplicationLargeIconsDir;
   {$IFDEF UNIX}
-  AddressToolBar.ButtonHeight := 30;
+  AddressToolBar.Height := 30;
   FolderBox.Style := csDropDown;
   {$ENDIF}
   {$IFDEF MSWINDOWS}
-  AddressToolBar.ButtonHeight := FolderBox.Height + 4;
+  ToolBar.Height := BtnNew.Height + 8;
+  AddressToolBar.Height := FolderBox.Height + 6;
   FolderBox.Style := csOwnerDrawFixed;
   {$ENDIF}
   UpdateButtons(False);

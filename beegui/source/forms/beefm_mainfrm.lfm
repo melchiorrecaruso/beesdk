@@ -1,12 +1,12 @@
 object MainFrm: TMainFrm
-  Left = 304
-  Height = 544
-  Top = 158
-  Width = 721
+  Left = 271
+  Height = 634
+  Top = 161
+  Width = 880
   AllowDropFiles = True
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 525
-  ClientWidth = 721
+  ClientHeight = 615
+  ClientWidth = 880
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -21,14 +21,16 @@ object MainFrm: TMainFrm
   object ListView: TArchiveListView
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = StatusBar
     Left = 0
-    Height = 411
-    Top = 94
-    Width = 721
+    Height = 465
+    Top = 130
+    Width = 880
     AutoLoad = True
     OnChangeFolder = ListViewChangeFolder
     FolderBox = FolderBox
-    Align = alClient
+    Align = alTop
+    Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Top = 2
     Columns = <    
       item
@@ -113,8 +115,8 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Side = asrBottom
     Left = 0
     Height = 20
-    Top = 505
-    Width = 721
+    Top = 595
+    Width = 880
     Anchors = [akRight]
     DragCursor = crDefault
     Panels = <    
@@ -134,10 +136,9 @@ object MainFrm: TMainFrm
   end
   object ToolBar: TToolBar
     Left = 0
-    Height = 64
+    Height = 80
     Top = 0
-    Width = 721
-    AutoSize = True
+    Width = 880
     ButtonHeight = 60
     ButtonWidth = 0
     Caption = 'ToolBar'
@@ -3282,10 +3283,9 @@ object MainFrm: TMainFrm
   end
   object AddressToolBar: TToolBar
     Left = 0
-    Height = 28
-    Top = 64
-    Width = 721
-    AutoSize = True
+    Height = 48
+    Top = 80
+    Width = 880
     ButtonHeight = 24
     ButtonWidth = 0
     Caption = 'AddressToolBar'
@@ -3394,7 +3394,7 @@ object MainFrm: TMainFrm
       Left = 189
       Height = 22
       Top = 2
-      Width = 530
+      Width = 689
       Align = alCustom
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 5
