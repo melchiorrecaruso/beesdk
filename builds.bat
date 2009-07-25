@@ -6,9 +6,9 @@
 
 cd beegui\source
 
-fpc -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -WG -vewnhi -Fiforms\forms.include\ -Fipackages\packages.include\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu..\..\..\..\lazarus\lcl\units\i386-win32\ -Fu..\..\..\..\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\..\lazarus\packager\units\i386-win32\ -Fu. -FU..\temp\ -FE..\temp\ -obeegui.exe -dLCL -dLCLwin32 beegui.lpr
+fpc -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -WG -vewnhi -Fiforms\forms.include\ -Fipackages\packages.include\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu..\..\..\lazarus\lcl\units\i386-win32\ -Fu..\..\..\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\lazarus\packager\units\i386-win32\ -Fu. -FU..\temp\ -FE..\temp\ -obeegui.exe -dLCL -dLCLwin32 beegui.lpr
 
-fpc -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -vewnhi -l -Fiforms\forms.include\ -Fipackages\packages.include\ -Fi..\temp\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeelib.dll beelib.dpr
+fpc -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX  -l -vewnhi -Fiforms\forms.include\ -Fipackages\packages.include\ -Fi..\temp\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeelib.dll beelib.dpr
 
 cd ..
 cd ..
