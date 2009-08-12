@@ -36,6 +36,9 @@ uses
   SysUtils,
   // ---
   Bee_App,
+  // BeeGui_Plugins,
+  // BeeGui_ZipApp,
+  // ---
   Bee_Types,
   Bee_Consts,
   Bee_Common,
