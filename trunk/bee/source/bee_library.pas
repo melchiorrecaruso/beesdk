@@ -34,15 +34,15 @@ interface
 uses
   Classes,
   SysUtils,
-  // ---
+  {$IFDEF PLUGINS}
+  BeeLib_Plugins,
+  {$ENDIF}
   Bee_App,
-  // BeeGui_Plugins,
-  // BeeGui_ZipApp,
-  // ---
   Bee_Types,
   Bee_Consts,
   Bee_Common,
-  Bee_Interface;
+  Bee_Interface,
+  Bee_CommandLine;
 
 //  Library routines ...
 
@@ -211,6 +211,8 @@ end;
 // -------------------------------------------------------------------------- //
 
 constructor TCore.Create(const aCommandLine: string);
+var
+  FCommandLine: TCommandLine;
 begin
   inherited Create(True);
   FreeOnTerminate := False;
@@ -226,7 +228,14 @@ begin
   FMessage  := ' Ready ...';
   FPassword := '';
 
-  FApp := TBeeApp.Create(FParams);
+  FCommandLine := TCommandLine.Create;
+  FCommandLine.Process(FParams);
+  if SevenZipPlugin(FCommandLine.ArchiveName) then
+    FApp := TSevenZipApp.Create(FParams)
+  else
+    FApp := TBeeApp.Create(FParams);
+  FreeAndNil(FCommandLine);
+
   FApp.OnFatalError := ProcessFatalError;
   FApp.OnError      := ProcessError;
   FApp.OnWarning    := ProcessWarning;
