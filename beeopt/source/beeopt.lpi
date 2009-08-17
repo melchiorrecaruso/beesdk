@@ -35,7 +35,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="beeopt"/>
         <CursorPos X="20" Y="62"/>
-        <TopLine Value="24"/>
+        <TopLine Value="30"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="32"/>
         <Loaded Value="True"/>
@@ -58,7 +58,7 @@
         <Filename Value="..\..\bee\source\bee_common.pas"/>
         <UnitName Value="Bee_Common"/>
         <CursorPos X="1" Y="1"/>
-        <TopLine Value="15"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>

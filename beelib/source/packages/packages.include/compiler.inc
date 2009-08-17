@@ -18,11 +18,11 @@
 
 {   Contains:
 
-      BeeGui project compiler directives
+      BeeLib project compiler directives
 
     Modifyed:
 
-      v1.0.5 build 0392 - 2008.06.14 by Melchiorre Caruso.
+      v1.0.0 build 0106 - 2009.08.13 by Melchiorre Caruso.
 }
 
 {$R-}
@@ -32,14 +32,11 @@
 
 {$INLINE ON}
 {$DEFINE PLUGINS}
-{*$DEFINE SAVELANGUAGE}
 
 {$IFDEF MSWINDOWS}
-  {*$DEFINE USEDLL}
   {*$DEFINE FILENAMECASESENSITIVE}
 {$ELSE}
   {$IFDEF UNIX}
-    {*$DEFINE USEDLL}
     {$DEFINE FILENAMECASESENSITIVE}
   {$ELSE}
     todo: define filenamecasesensitive
