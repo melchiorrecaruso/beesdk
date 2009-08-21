@@ -82,7 +82,7 @@ type
     procedure ProcessMessage   (const aMessage: string);
     procedure ProcessRequest   (const aMessage: string);
 
-    procedure ProcessList      (const aFileInfo: TFileInfoExtra);
+    procedure ProcessList      (const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     function  ProcessOverwrite (const aFileInfo: TFileInfo; const aValue: string): string;
     function  ProcessRename    (const aFileInfo: TFileInfo; const aValue: string): string;
     function  ProcessPassword  (const aFileInfo: TFileInfo; const aValue: string): string;
@@ -345,14 +345,14 @@ begin
   end;
 end;
 
-procedure TApp.ProcessList(const aFileInfo: TFileInfoExtra);
+procedure TApp.ProcessList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
 var
   X: double;
 begin
   if Assigned(FOnList) then
   begin
     X := Now;
-    FOnList(aFileInfo);
+    FOnList(aFileInfo, aVerbose);
     FStartTime := FStartTime + (Now - X);
   end;
 end;

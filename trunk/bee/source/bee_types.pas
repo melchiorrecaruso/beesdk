@@ -71,7 +71,7 @@ type
   TCustomEvent  = procedure of object;
   TMessageEvent = procedure(const aMessage: string) of object;
   TRequestEvent = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
-  TListEvent    = procedure(const aFileInfo: TFileInfoExtra) of object;
+  TListEvent    = procedure(const aFileInfo: TFileInfoExtra; aVerbose: boolean) of object;
 
 function StringToPChar(const aValue: string): PChar;
 function PCharToString(aValue: PChar): string;

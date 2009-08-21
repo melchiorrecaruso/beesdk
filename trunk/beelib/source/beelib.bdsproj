@@ -123,7 +123,7 @@
 			<Directories Name="UnitOutputDir">..\temp</Directories>
 			<Directories Name="PackageDLLOutputDir"></Directories>
 			<Directories Name="PackageDCPOutputDir"></Directories>
-			<Directories Name="SearchPath">..\..\bee\source;packages\packages.include</Directories>
+			<Directories Name="SearchPath">..\..\bee\source;..\..\beegui\source;packages\;packages\packages.include;..\..\beegui\source\packages</Directories>
 			<Directories Name="Packages"></Directories>
 			<Directories Name="Conditionals"></Directories>
 			<Directories Name="DebugSourceDirs"></Directories>

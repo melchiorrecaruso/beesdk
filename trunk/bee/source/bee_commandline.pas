@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1042 - 2009.08.20 by Melchiorre Caruso.
 }
 
 unit Bee_CommandLine;
@@ -53,11 +53,12 @@ type
     FlOption:     boolean;
     FyOption:     string;
     FkOption:     boolean;
-    FvOption:     byte;
+    FvOption:     boolean;
     FcdOption:    string;
     FsoOption:    boolean;
     FcfgOption:   string;
     FpriOption:   longint;
+    FverOption:   byte;
     FArchiveName: string;
     FFileMasks:   TStringList;
   private
@@ -75,10 +76,11 @@ type
     procedure SetlOption(Value: boolean);
     procedure SetyOption(Value: string);
     procedure SetkOption(Value: boolean);
-    procedure SetvOption(Value: byte);
+    procedure SetvOption(Value: boolean);
     procedure SetcdOption(Value: string);
     procedure SetcfgOption(Value: string);
     procedure SetpriOption(Value: longint);
+    procedure SetverOption(Value: byte);
     procedure SetArchiveName(Value: string);
   protected
     procedure ProcessOption(var S: string; var Option: boolean);
@@ -103,11 +105,12 @@ type
     property lOption: boolean Read FlOption Write SetlOption;
     property yOption: string Read FyOption Write SetyOption;
     property kOption: boolean Read FkOption Write SetkOption;
-    property vOption: byte Read FvOption Write SetvOption;
+    property vOption: boolean Read FvOption Write SetvOption;
     property cdOption: string Read FcdOption Write SetcdOption;
     property soOption: boolean Read FsoOption;
     property cfgOption: string Read FcfgOption Write SetcfgOption;
     property priOption: longint Read FpriOption Write SetpriOption;
+    property verOption: byte Read FverOption Write SetverOption;
     property ArchiveName: string Read FArchiveName Write SetArchiveName;
     property FileMasks: TStringList Read FFileMasks;
   end;
@@ -144,11 +147,12 @@ begin
   FlOption := False;
   FyOption := '';
   FkOption := False;
-  FvOption := ver03;
+  FvOption := False;
   FcdOption := '';
   FsoOption := False;
   FcfgOption := SelfPath + 'bee.ini';
   FpriOption := 1;
+  FverOption := ver03;
   FArchiveName := '';
   FFileMasks.Clear;
 end;
@@ -189,13 +193,14 @@ begin
       // options...
       case UpCase(S[2]) of
         '-': FsoOption := True;
+        'R': ProcessOption(S, FrOption);
         'S': ProcessOption(S, FsOption);
         'U': ProcessOption(S, FuOption);
         'F': ProcessOption(S, FfOption);
         'T': ProcessOption(S, FtOption);
         'L': ProcessOption(S, FlOption);
         'K': ProcessOption(S, FkOption);
-        'R': ProcessOption(S, FrOption);
+        'V': ProcessOption(S, FvOption);
         'Y':
         begin
           Delete(S, 1, 2);
@@ -247,9 +252,9 @@ begin
           if Pos('-VER', UpperCase(S)) = 1 then
           begin
             Delete(S, 1, 4);
-            if S = '02' then FvOption := ver02 else
-              if S = '03' then FvOption := ver03 else
-                if S = '04' then FvOption := ver04;
+            if S = '02' then FverOption := ver02 else
+              if S = '03' then FverOption := ver03 else
+                if S = '04' then FverOption := ver04;
           end
           else
           if Pos('-PRI', UpperCase(S)) = 1 then
@@ -377,9 +382,9 @@ begin
   FkOption := Value;
 end;
 
-procedure TCommandLine.SetvOption(Value: byte);
+procedure TCommandLine.SetvOption(Value: boolean);
 begin
-  FvOption := Min(Max(ver02, Value), ver04);
+  FvOption := Value;
 end;
 
 procedure TCommandLine.SetcdOption(Value: string);
@@ -395,6 +400,11 @@ end;
 procedure TCommandLine.SetpriOption(Value: longint);
 begin
   FpriOption := Value;
+end;
+
+procedure TCommandLine.SetverOption(Value: byte);
+begin
+  FverOption := Min(Max(ver02, Value), ver04);
 end;
 
 procedure TCommandLine.SetArchiveName(Value: string);

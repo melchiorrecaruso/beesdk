@@ -78,7 +78,7 @@ implementation
 uses
   BeeGui_Consts,
   {$IFDEF USEDLL}
-  BeeGui_LibLink,
+  BeeLib_Link,
   {$ELSE}
   Bee_Library,
   {$ENDIF}

@@ -69,7 +69,7 @@ type
     procedure ProcessMessage(const aMessage: string);
     procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessRename(const aFileInfo: TFileInfo; var Result: string);
-    procedure ProcessList(const aFileInfo: TFileInfoExtra);
+    procedure ProcessList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessRequest(const aMessage: string);
     procedure ProcessProgress;
@@ -96,17 +96,17 @@ type
       FParams.Add(ParamStr(I));
     end;
     FApp := TBeeApp.Create(FParams);
-    FApp.OnFatalError := ProcessFatalError;
-    FApp.OnError      := ProcessError;
-    FApp.OnWarning    := ProcessWarning;
-    FApp.OnMessage    := ProcessMessage;
-    FApp.OnOverwrite  := ProcessOverwrite;
-    FApp.OnRename     := ProcessRename;
-    FApp.OnList       := ProcessList;
-    FApp.OnPassword   := ProcessPassword;
-    FApp.OnRequest    := ProcessRequest;
-    FApp.OnProgress   := ProcessProgress;
-    FApp.OnClear      := ProcessClear;
+    FApp.OnFatalError  := ProcessFatalError;
+    FApp.OnError       := ProcessError;
+    FApp.OnWarning     := ProcessWarning;
+    FApp.OnMessage     := ProcessMessage;
+    FApp.OnOverwrite   := ProcessOverwrite;
+    FApp.OnRename      := ProcessRename;
+    FApp.OnList        := ProcessList;
+    FApp.OnPassword    := ProcessPassword;
+    FApp.OnRequest     := ProcessRequest;
+    FApp.OnProgress    := ProcessProgress;
+    FApp.OnClear       := ProcessClear;
   end;
 
   destructor TConsole.Destroy;
@@ -170,23 +170,44 @@ type
     Result := OemToParam(Result);
   end;
 
-  procedure TConsole.ProcessList(const aFileInfo: TFileInfoExtra);
+  procedure TConsole.ProcessList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
   begin
     with aFileInfo do
     begin
-      if Length({FilePath +} FileName) <= 15 then
+      if aVerbose then
       begin
-        Writeln(ParamToOem(Format('%-15s', [{FilePath +} FileName]) +
-          Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
-          [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-          FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+        if Length({FilePath +} FileName) <= 15 then
+        begin
+          Writeln(ParamToOem(Format('%-15s', [{FilePath +} FileName]) +
+            Format(' %10s %10s %4u%% %14s %6s %8.8x %3s',
+            [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+            FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])))
+        end else
+        begin
+          Writeln(ParamToOem({FilePath +} FileName));
+          Writeln(ParamToOem(StringOfChar(' ', 15) +
+            Format(' %10s %10s %4u%% %14s %6s %8.8x %3s',
+            [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
+            FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+
+        end;
       end else
       begin
-        Writeln(ParamToOem({FilePath +} FileName));
-        Writeln(ParamToOem(StringOfChar(' ', 15) +
-          Format(' %10s %10s %4u%% %14s %6s %8.8x %4s',
-          [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-          FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+        if Length({FilePath +} FileName) <= 39 then
+        begin
+          Writeln(ParamToOem(Format('%-39s', [{FilePath +} FileName]) +
+            Format(' %10s %4u%% %14s %6s',
+            [SizeToStr(FileSize), FileRatio,
+            FileTimeToString(FileTime), AttrToStr(FileAttr)])))
+        end else
+        begin
+          Writeln(ParamToOem({FilePath +} FileName));
+          Writeln(ParamToOem(StringOfChar(' ', 39) +
+            Format(' %10s %4u%% %14s %6s',
+            [SizeToStr(FileSize), FileRatio,
+            FileTimeToString(FileTime), AttrToStr(FileAttr)])));
+
+        end;
       end;
     end;
   end;
@@ -204,7 +225,7 @@ type
       // store password
       Write('Do you want to use password for this session? [Yes, No]: ');
       Readln(S);
-      if (Length(S)= 1) and (Upcase(S) = 'Y') then FKey := Result;
+      if (Length(S)= 1) and (UpCase(S[1]) = 'Y') then FKey := Result;
     end else
       Result := FKey;
   end;
