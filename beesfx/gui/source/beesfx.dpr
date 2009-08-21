@@ -87,7 +87,7 @@ type
     procedure ProcessMessage(const aMessage: string);
     procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessRename(const aFileInfo: TFileInfo; var Result: string);
-    procedure ProcessList(const aFileInfo: TFileInfoExtra);
+    procedure ProcessList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessRequest(const aMessage: string);
     procedure ProcessProgress;
@@ -173,7 +173,7 @@ type
     (* nothing to do *)
   end;
 
-  procedure TConsole.ProcessList(const aFileInfo: TFileInfoExtra);
+  procedure TConsole.ProcessList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
   begin
     (* nothing to do *)
   end;

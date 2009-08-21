@@ -194,7 +194,7 @@ begin
   try
     // - Start header data - //
     Result.FileFlags := [foTear, foTable];
-    Result.FileVersion := Min(Max(ver02, FCommandLine.vOption), ver04);
+    Result.FileVersion := Min(Max(ver02, FCommandLine.verOption), ver04);
     Result.FileMethod := 1;
     Result.FileDictionary := 2;
     // Result.FileTable

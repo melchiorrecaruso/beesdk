@@ -25,7 +25,7 @@
     v1.0.5 build 1032 - 2009.04.25 by Melchiorre Caruso.
 }
 
-unit BeeGui_LibLink;
+unit BeeLib_Link;
 
 {$I compiler.inc}
 

@@ -34,9 +34,9 @@ interface
 uses
   Classes,
   SysUtils,
-  {$IFDEF PLUGINS}
+  {$IFDEF FPC} {$IFDEF PLUGINS}
   BeeLib_Plugins,
-  {$ENDIF}
+  {$ENDIF} {$ENDIF}
   Bee_App,
   Bee_Types,
   Bee_Consts,
@@ -130,7 +130,7 @@ type
     procedure ProcessMessage   (const aMessage: string);
     procedure ProcessRequest   (const aMessage: string);
 
-    procedure ProcessList     (const aFileInfo: TFileInfoExtra);
+    procedure ProcessList     (const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure ProcessRename   (const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessPassword (const aFileInfo: TFileInfo; var Result: string);
     procedure ProcessOverWrite(const aFileInfo: TFileInfo; var Result: string);
@@ -230,9 +230,11 @@ begin
 
   FCommandLine := TCommandLine.Create;
   FCommandLine.Process(FParams);
+  {$IFDEF FPC}
   if SevenZipPlugin(FCommandLine.ArchiveName) then
     FApp := TSevenZipApp.Create(FParams)
   else
+  {$ENDIF}
     FApp := TBeeApp.Create(FParams);
   FreeAndNil(FCommandLine);
 
@@ -338,7 +340,7 @@ begin
   end;
 end;
 
-procedure TCore.ProcessList(const aFileInfo: TFileInfoExtra);
+procedure TCore.ProcessList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
 begin
   FItems.Add(aFileInfo);
 end;

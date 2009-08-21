@@ -12,6 +12,7 @@ move         beegui\temp\beegui.exe  beegui\distribution\beegui.exe
 @echo @ Create BeeLib distribution...
 @echo @ 
 
+copy         beelib\temp\beelib.dll  beegui\distribution\beelib.dll
 move         beelib\temp\beelib.dll  beelib\distribution\beelib.dll
 
 

@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v1.0.5 build 0642 - 2009.02.16 by Melchiorre Caruso.
+    v0.1.40 build 0642 - 2009.02.16 by Melchiorre Caruso.
 }
 
 unit BeeLib_Plugins;
@@ -32,7 +32,6 @@ unit BeeLib_Plugins;
 interface
 
 uses
-  Dialogs,
   Classes,
   Process,
   SysUtils,
@@ -92,9 +91,9 @@ const
   SevenZipMethodMark   = 'Method = ';
   SevenZipBlockMark    = 'Block = ';
 
-  SevenZipListMark    = 'Listing archive: ';
-  SevenZipCommentMark = 'Comment = ';
-  SevenZipErrorMark   = 'Error: ';
+  SevenZipListMark     = 'Listing archive: ';
+  SevenZipCommentMark  = 'Comment = ';
+  SevenZipErrorMark    = 'Error: ';
 
 /// SevenZipPlungin function
 
@@ -104,14 +103,15 @@ begin
   Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7za';
   {$ELSE}
   {$IFDEF MSWINDOWS}
-  // Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7z.exe';
-
-  Result := 'C:\Windows\7z.exe';
-
+  Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7z.exe';
   {$ELSE}
   Result := '';
   {$ENDIF}
   {$ENDIF}
+  if FileExists(Result) then
+  begin
+    Result := ExtractFileName(Result);
+  end;
 end;
 
 function SevenZipPlugin(const aArchiveName: string): boolean; overload;
@@ -150,6 +150,7 @@ function TSevenZipApp.CheckCommandLine: string;
 var
   I: integer;
 begin
+  ProcessMessage(SevenZipPluginVer);
   case FCommandLine.Command of
     'L':
     begin
@@ -202,8 +203,6 @@ var
   FMemOutputStrings: TStringList;
 begin
   inherited Execute;
-  ProcessMessage(SevenZipPluginVer + Cr);
-
   FCommandLine := CheckCommandLine;
   if Assigned(FMemOutputProc) then
   begin
@@ -430,7 +429,7 @@ begin
       // ---
       if (FI.FileAttr and faDirectory) = 0 then
       begin
-        ProcessList(FI);
+        ProcessList(FI, FCommandLine.vOption);
       end;
     end;
     Inc(I);

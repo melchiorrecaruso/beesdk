@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1032 - 2009.04.25 by Melchiorre Caruso.
+    v0.8.0 build 1046 - 2009.08.20 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -119,7 +119,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.8.0 build 1040 archiver utility, May 2009' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1046 archiver utility, Aug 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -179,9 +179,10 @@ begin
   ProcessMessage('    l       List archive after process');
   ProcessMessage('    y       set temporany directory');
   ProcessMessage('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
+  ProcessMessage('    v       show technical information for l (List) command)');
   ProcessMessage('    cd<dir> set current archive directory' + Cr);
   ProcessMessage('    cfg<filename> use specified configuration file');
-  ProcessMessage('    pri<priority> set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  ProcessMessage('    pri<0..3>     set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
   ProcessMessage(Cr + '  Use BeeOpt to make most optimal parameters.' + Cr);
 end;
 
@@ -1151,9 +1152,11 @@ begin
     ExtractFilePath(THeader(P2).FileName));
 
   if Result = 0 then
+  begin
     Result := CompareText(
       ExtractFileName(THeader(P1).FileName),
       ExtractFileName(THeader(P2).FileName));
+  end;
 end;
 
 procedure TBeeApp.ListShell;
@@ -1185,8 +1188,11 @@ begin
     if (Headers.GetNext(0, toList) > -1) then
     begin
       {$IFDEF CONSOLEAPPLICATION}
-      ProcessMessage(StringOfChar('-', 79));
-      ProcessMessage('Directory|File' + StringOfChar(' ', 8) + 'Size     Packed Ratio     Date  Time   Attr      CRC Meth');
+      ProcessMessage(StringOfChar(' ', 79));
+      if FCommandLine.vOption then
+        ProcessMessage('Directory|File' + StringOfChar(' ',  8) + 'Size     Packed Ratio     Date  Time    Attr CRC     Meth')
+      else
+        ProcessMessage('Directory|File' + StringOfChar(' ', 32) + 'Size Ratio     Date  Time    Attr');
       ProcessMessage(StringOfChar('-', 79));
       {$ENDIF}
 
@@ -1226,7 +1232,6 @@ begin
       HeadersToList.Sort(CompareFn);
       HeadersToListPath := '';
       {$ENDIF}
-
 
       I := 0;
       {$IFDEF CONSOLEAPPLICATION}
@@ -1278,7 +1283,7 @@ begin
         {$ELSE}
         FI.FilePosition := I;
         {$ENDIF}
-        ProcessList(FI);
+        ProcessList(FI, FCommandLine.vOption);
 
         StrDispose(FI.FileName);
         StrDispose(FI.FilePath);
@@ -1294,7 +1299,10 @@ begin
       end;
       {$IFDEF CONSOLEAPPLICATION}
       ProcessMessage(StringOfChar('-', 79));
-      ProcessMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %10s %5s', [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)])));
+      if FCommandLine.vOption then
+        ProcessMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %10s %5s', [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)])))
+      else
+        ProcessMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 39 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %5s', [SizeToStr(TotalSize), RatioToStr(TotalPack, TotalSize)])));
       {$ENDIF}
 
       {$IFDEF CONSOLEAPPLICATION}

@@ -31,8 +31,8 @@
         <Filename Value="beesfx.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeSfx"/>
-        <CursorPos X="42" Y="245"/>
-        <TopLine Value="221"/>
+        <CursorPos X="84" Y="168"/>
+        <TopLine Value="152"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
@@ -68,7 +68,7 @@
         <UsageCount Value="10"/>
       </Unit4>
     </Units>
-    <JumpHistory Count="24" HistoryIndex="23">
+    <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
         <Filename Value="beesfx.dpr"/>
         <Caret Line="22" Column="1" TopLine="1"/>
@@ -165,6 +165,14 @@
         <Filename Value="beesfx.dpr"/>
         <Caret Line="243" Column="16" TopLine="200"/>
       </Position24>
+      <Position25>
+        <Filename Value="beesfx.dpr"/>
+        <Caret Line="245" Column="42" TopLine="221"/>
+      </Position25>
+      <Position26>
+        <Filename Value="beesfx.dpr"/>
+        <Caret Line="71" Column="77" TopLine="51"/>
+      </Position26>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
