@@ -12,7 +12,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -47,8 +47,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeOpt_App"/>
-        <CursorPos X="13" Y="890"/>
-        <TopLine Value="864"/>
+        <CursorPos X="3" Y="47"/>
+        <TopLine Value="34"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
