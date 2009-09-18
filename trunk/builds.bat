@@ -6,7 +6,7 @@
 
 cd beegui\source
 
-fpc -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -WG -vew -Fiforms\forms.include\ -Fipackages\packages.include\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu..\..\..\..\lazarus\lcl\units\i386-win32\ -Fu..\..\..\..\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\..\lazarus\packager\units\i386-win32\ -Fu. -FU..\temp\ -FE..\temp\ -obeegui.exe -dLCL -dLCLwin32 beegui.lpr
+ppc386 -Fuforms\ -Fiforms\forms.include\ -Fupackages\ -Fipackages\packages.include\ -Fu..\..\bee\source\ -Fu..\..\beelib\source\packages\ -Fu..\..\..\..\lazarus\lcl\units\i386-win32\ -Fu..\..\..\..\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\..\lazarus\packager\units\i386-win32\ -FE..\temp\ -dLCL -dLCLwin32 -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -WG -vew beegui.lpr
 
 cd ..
 cd ..
@@ -18,7 +18,7 @@ cd ..
 
 cd beelib\source
 
-fpc -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX  -l -vew -Fiforms\forms.include\ -Fipackages\packages.include\ -Fi..\temp\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeelib.dll beelib.dpr
+ppc386 -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -l -vew -Fu..\..\beegui\source\packages\ -Fiforms\forms.include\ -Fipackages\packages.include\ -Fi..\temp\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeelib.dll beelib.dpr
 
 cd ..
 cd ..
@@ -30,7 +30,15 @@ cd ..
 
 cd bee\source
 
-fpc -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -OpPENTIUMM -Pi386 -XX -vew -Fibee.include\ -Fu. -FU..\temp\ -FE..\temp\ -obee.exe bee.dpr
+ppc386 -FW..\temp\bee-1.wpo -OWall                             -Fibee.include\ -MDelphi -CX -XX -Xs- -vew -al bee.dpr
+
+move    ..\temp\bee.s ..\temp\bee.s1
+
+ppc386 -FW..\temp\bee-2.wpo -OWall -Fw..\temp\bee-1.wpo -Owall -Fibee.include\ -MDelphi -CX -XX -Xs- -vew -al bee.dpr
+
+move    ..\temp\bee.s ..\temp\bee.s2
+
+ppc386 -FW..\temp\bee-2.wpo -OWall                             -Fibee.include\ -MDelphi -CX -XX -Xs- -vew -al bee.dpr
 
 cd ..
 cd ..
@@ -42,7 +50,7 @@ cd ..
 
 cd beeopt\source
 
-fpc -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -vew -l -Fibeeopt.include\ -Fu..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeeopt.exe beeopt.dpr
+ppc386 -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -vew -l -Fibeeopt.include\ -Fu..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeeopt.exe beeopt.dpr
 
 cd ..
 cd ..
@@ -54,7 +62,7 @@ cd ..
 
 cd beesfx\console\source
 
-fpc -MDelphi -Sh -CX -Os3 -OoUNCERTAIN -OoREGVAR -XX -vew -l -Fibeesfx.include\ -Fu..\..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeesfx.exe beesfx.dpr
+ppc386 -MDelphi -Sh -CX -Os3 -OoUNCERTAIN -OoREGVAR -XX -vew -l -Fibeesfx.include\ -Fu..\..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeesfx.exe beesfx.dpr
 
 cd ..
 cd ..
@@ -64,7 +72,7 @@ cd beesfx\gui\source
 
 gorc /r main.rc
 
-fpc -MDelphi -CX -Os3 -OoUNCERTAIN -OoREGVAR -XX -WG -vew -l -Fibeesfx.include\ -Fu..\..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeesfx.exe beesfx.dpr
+ppc386 -MDelphi -CX -Os3 -OoUNCERTAIN -OoREGVAR -XX -WG -vew -l -Fibeesfx.include\ -Fu..\..\..\bee\source\ -Fu. -FU..\temp\ -FE..\temp\ -obeesfx.exe beesfx.dpr
 
 cd ..
 cd ..

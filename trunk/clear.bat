@@ -46,6 +46,10 @@ del bee\temp\*.a         /S >nul
 del bee\temp\*.compiled  /S >nul 
 del bee\temp\*.lsr       /S >nul 
 del bee\temp\*.res       /S >nul
+del bee\temp\*.wpo       /S >nul
+del bee\temp\*.s         /S >nul
+del bee\temp\*.s1        /S >nul
+del bee\temp\*.s2        /S >nul
 
 
 @echo @ 
