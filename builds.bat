@@ -30,15 +30,15 @@ cd ..
 
 cd bee\source
 
-ppc386 -FW..\temp\bee-1.wpo -OWall                             -Fibee.include\ -MDelphi -CX -XX -Xs- -vew -al bee.dpr
+ppc386 -FW..\temp\1.wpo -OWdevirtcalls                                 -Fibee.include\ -FE..\temp\ -FU..\temp\ -MDelphi -CX -XX -Xs- -vew -al bee.dpr
 
-move    ..\temp\bee.s ..\temp\bee.s1
+move   ..\temp\bee.s ..\temp\bee.s1
 
-ppc386 -FW..\temp\bee-2.wpo -OWall -Fw..\temp\bee-1.wpo -Owall -Fibee.include\ -MDelphi -CX -XX -Xs- -vew -al bee.dpr
+ppc386 -FW..\temp\2.wpo -OWdevirtcalls -Fw..\temp\1.wpo -OWdevirtcalls -Fibee.include\ -FE..\temp\ -FU..\temp\ -MDelphi -CX -XX -Xs- -vew -al bee.dpr
 
-move    ..\temp\bee.s ..\temp\bee.s2
+move   ..\temp\bee.s ..\temp\bee.s2
 
-ppc386 -FW..\temp\bee-2.wpo -OWall                             -Fibee.include\ -MDelphi -CX -XX -Xs- -vew -al bee.dpr
+ppc386 -FW..\temp\2.wpo -OWdevirtcalls                                 -Fibee.include\ -FE..\temp\ -FU..\temp\ -MDelphi -CX -XX -Xs- -vew -al bee.dpr
 
 cd ..
 cd ..
