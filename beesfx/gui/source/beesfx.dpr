@@ -32,7 +32,7 @@
 
   v0.1.0 build 0060 - 2006.01.05 by Melchiorre Caruso;
 
-  v0.1.0 build 0070 - 2009.05.29 by Melchiorre Caruso.
+  v0.1.0 build 0080 - 2009.09.18 by Melchiorre Caruso.
 }
 
 
@@ -66,11 +66,11 @@ var
 
   RETURN: boolean;
 
-  MAIN_HW: integer = -1;
+  // MAIN_HW:     integer = -1;
   PROGRESS_HW: integer = -1;
-  PASSWORD_HW: integer = -1;
+  // PASSWORD_HW: integer = -1;
 
-  MAIN_FUNC: pointer = nil;
+  MAIN_FUNC:     pointer = nil;
   PROGRESS_FUNC: pointer = nil;
   PASSWORD_FUNC: pointer = nil;
 
@@ -92,12 +92,12 @@ type
     procedure ProcessRequest(const aMessage: string);
     procedure ProcessProgress;
     procedure ProcessClear;
-  private
-    procedure DoTerminate;
+  protected
+    procedure DoTerminate; override;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Execute; overload;
+    procedure Execute; override;
   end;
 
   constructor TConsole.Create;
@@ -133,6 +133,7 @@ type
 
   procedure TConsole.Execute;
   begin
+    inherited Execute;
     FApp.Execute;
     ExitCode := FApp.Code;
   end;
@@ -140,6 +141,7 @@ type
   procedure TConsole.DoTerminate;
   begin
     SendMessage(PROGRESS_HW, WM_CLOSE, 0, 0);
+    inherited DoTerminate;
   end;
 
   procedure TConsole.ProcessFatalError(const aMessage: string);
@@ -240,7 +242,7 @@ var
   function PASSWORD_STEP(HW: hwnd; umsg: dword; wparam: wparam;
     lparam: lparam): bool; stdcall;
   begin
-    PASSWORD_HW := HW;
+    // PASSWORD_HW := HW;
     Result := True;
     case umsg of
       WM_CLOSE:
@@ -268,7 +270,7 @@ var
   function MAIN_STEP(HW: hwnd; umsg: dword; wparam: wparam;
     lparam: lparam): bool; stdcall;
   begin
-    MAIN_HW := HW;
+    // MAIN_HW := HW;
     Result  := True;
     case umsg of
       WM_CLOSE: EndDialog(HW, 0);
@@ -294,7 +296,6 @@ var
         Result := False;
     end;
   end;
-
 
   /// main block
 
