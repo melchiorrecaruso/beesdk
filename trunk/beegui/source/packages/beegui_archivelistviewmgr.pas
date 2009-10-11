@@ -147,7 +147,7 @@ type
     // ---
     procedure ClearMasks;
     procedure InvertMasks;
-    procedure GetMasks(FileMasks: TStringList; Relative: boolean);
+    procedure GetMasks(FileMasks: TStringList);
     procedure SetMask(const Mask: string; Value: boolean);
 
     function CompareFn(Item1, Item2: TListItem): integer;
@@ -613,7 +613,7 @@ begin
     Result := False;
 end;
 
-procedure TCustomArchiveListView.GetMasks(FileMasks: TStringList; Relative: boolean);
+procedure TCustomArchiveListView.GetMasks(FileMasks: TStringList);
 var
   S: string;
   I, J: integer;
@@ -624,20 +624,11 @@ begin
     if Items[I].Selected then
     begin
       Node := TArchiveItem(Items[I].Data);
+
       if (Node.FileAttr and faDirectory) = faDirectory then
       begin
-        { TODO : Sistemare bug }
-        if Relative then
-        begin
-          // Relative Path-Name
-          S := IncludeTrailingBackSlash(Node.FilePath + Node.FileName);
-          for J := 0 to FFiles.Count -1 do
-            with TArchiveItem(FFiles.Items[J]) do
-              if FileNamePos(S, FilePath) = 1 then
-              begin
-                FileMasks.Add(DeleteFilePath(Node.FilePath, FilePath + FileName));
-              end;
-        end else
+
+        if FSimpleList then
         begin
           // Absolute Path-Name
           S := IncludeTrailingBackSlash(Node.FilePath + Node.FileName);
@@ -647,17 +638,28 @@ begin
               begin
                 FileMasks.Add(FilePath + FileName);
               end;
+        end else
+        begin
+          // Relative Path-Name
+          S := IncludeTrailingBackSlash(Node.FilePath + Node.FileName);
+          for J := 0 to FFiles.Count -1 do
+            with TArchiveItem(FFiles.Items[J]) do
+              if FileNamePos(S, FilePath) = 1 then
+              begin
+                FileMasks.Add(DeleteFilePath(Node.FilePath, FilePath + FileName));
+              end;
         end;
 
       end else
       begin
-        if Relative then
-          // Relative Path-Name
-          FileMasks.Add(Node.FileName)
-        else
+        if FSimpleList then
           // Absolute Path-Name
-          FileMasks.Add(Node.FilePath + Node.FileName);
+          FileMasks.Add(Node.FilePath + Node.FileName)
+        else
+          // Relative Path-Name
+          FileMasks.Add(Node.FileName);
       end;
+
     end;
   end;
 end;

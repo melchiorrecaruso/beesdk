@@ -685,7 +685,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks, True);
+      ListView.GetMasks(FCommandLine.FileMasks);
 
       if SetCurrentDir(ExtractFileDir(FileProcess.FileName)) then
       begin
@@ -1174,7 +1174,7 @@ begin
 
         FCommandLine.ArchiveName := FArchiveName;
 
-        ListView.GetMasks(FCommandLine.FileMasks, True);
+        ListView.GetMasks(FCommandLine.FileMasks);
 
         if SetCurrentDir(Folder) then
         begin
@@ -1223,7 +1223,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks, True);
+      ListView.GetMasks(FCommandLine.FileMasks);
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -1247,7 +1247,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
-      ListView.GetMasks(FCommandLine.FileMasks, True);
+      ListView.GetMasks(FCommandLine.FileMasks);
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -1291,7 +1291,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks, True);
+      ListView.GetMasks(FCommandLine.FileMasks);
       begin
         Execute(FCommandLine.ArchiveName);
       end;
@@ -1309,7 +1309,7 @@ begin
     FCommandLine.ArchiveName := FArchiveName;
 
     FCommandLine.cdOption := ListView.Folder;
-    ListView.GetMasks(FCommandLine.FileMasks, True);
+    ListView.GetMasks(FCommandLine.FileMasks);
     begin
       Execute(FCommandLine.ArchiveName);
     end;
@@ -1336,7 +1336,7 @@ begin
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Selected.SubItems[9];
-      ListView.GetMasks(FCommandLine.FileMasks, True);
+      ListView.GetMasks(FCommandLine.FileMasks);
 
       if SetCurrentDir(GetApplicationRandomTempDir(cApplicationName)) then
       begin
