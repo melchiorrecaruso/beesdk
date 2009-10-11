@@ -626,7 +626,7 @@ begin
       Node := TArchiveItem(Items[I].Data);
       if (Node.FileAttr and faDirectory) = faDirectory then
       begin
-
+        { TODO : Sistemare bug }
         if Relative then
         begin
           // Relative Path-Name

@@ -15,7 +15,7 @@
       <Title Value="BeeGui"/>
       <UseAppBundle Value="False"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="8"/>
+      <ActiveEditorIndexAtStart Value="6"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -51,7 +51,7 @@
         <UnitName Value="beegui"/>
         <CursorPos X="26" Y="128"/>
         <TopLine Value="91"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="8"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -89,9 +89,7 @@
         <UnitName Value="BeeGui_ExtractFrm"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="5"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -127,9 +125,7 @@
         <UnitName Value="BeeGui_TickFrm"/>
         <CursorPos X="10" Y="163"/>
         <TopLine Value="151"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
@@ -140,10 +136,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_AboutFrm"/>
         <CursorPos X="10" Y="78"/>
-        <TopLine Value="55"/>
-        <EditorIndex Value="4"/>
+        <TopLine Value="31"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
@@ -186,9 +180,11 @@
         <Filename Value="packages\beegui_forms.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Forms"/>
-        <CursorPos X="69" Y="239"/>
-        <TopLine Value="192"/>
+        <CursorPos X="1" Y="198"/>
+        <TopLine Value="174"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
@@ -277,7 +273,7 @@
         <Filename Value="packages\packages.include\compiler.inc"/>
         <CursorPos X="5" Y="38"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit21>
@@ -286,7 +282,7 @@
         <UnitName Value="BeeLib_Plugins"/>
         <CursorPos X="45" Y="432"/>
         <TopLine Value="402"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -296,7 +292,7 @@
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="14" Y="118"/>
         <TopLine Value="102"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -312,27 +308,27 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit24>
       <Unit25>
-        <Filename Value="..\..\beelib\source\packages\beelib_link.pas"/>
-        <UnitName Value="BeeLib_Link"/>
-        <CursorPos X="13" Y="28"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="3"/>
+        <Filename Value="..\..\bee\source\bee_library.pas"/>
+        <UnitName Value="Bee_Library"/>
+        <CursorPos X="31" Y="344"/>
+        <TopLine Value="305"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit25>
       <Unit26>
-        <Filename Value="..\..\bee\source\bee_library.pas"/>
-        <UnitName Value="Bee_Library"/>
-        <CursorPos X="31" Y="344"/>
-        <TopLine Value="305"/>
-        <EditorIndex Value="8"/>
+        <Filename Value="packages\beegui_archivelistviewmgr.pas"/>
+        <UnitName Value="BeeGui_ArchiveListViewMgr"/>
+        <CursorPos X="33" Y="629"/>
+        <TopLine Value="613"/>
+        <EditorIndex Value="6"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit26>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="..\..\beelib\source\packages\beelib_plugins.pas"/>
         <Caret Line="222" Column="21" TopLine="207"/>
@@ -418,41 +414,37 @@
         <Caret Line="254" Column="7" TopLine="240"/>
       </Position21>
       <Position22>
-        <Filename Value="forms\beegui_tickfrm.pas"/>
-        <Caret Line="286" Column="41" TopLine="254"/>
+        <Filename Value="..\..\beelib\source\packages\beelib_plugins.pas"/>
+        <Caret Line="254" Column="45" TopLine="238"/>
       </Position22>
       <Position23>
-        <Filename Value="forms\beegui_extractfrm.pas"/>
-        <Caret Line="121" Column="32" TopLine="102"/>
+        <Filename Value="..\..\beelib\source\packages\beelib_plugins.pas"/>
+        <Caret Line="432" Column="25" TopLine="45"/>
       </Position23>
       <Position24>
-        <Filename Value="..\..\beelib\source\packages\beelib_link.pas"/>
+        <Filename Value="..\..\bee\source\bee_library.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
       </Position24>
       <Position25>
-        <Filename Value="forms\beegui_aboutfrm.pas"/>
-        <Caret Line="101" Column="17" TopLine="74"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\..\beelib\source\packages\beelib_plugins.pas"/>
-        <Caret Line="254" Column="45" TopLine="238"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\..\beelib\source\packages\beelib_plugins.pas"/>
-        <Caret Line="432" Column="25" TopLine="45"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\..\bee\source\bee_library.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position28>
-      <Position29>
         <Filename Value="..\..\bee\source\bee_library.pas"/>
         <Caret Line="133" Column="82" TopLine="123"/>
-      </Position29>
-      <Position30>
+      </Position25>
+      <Position26>
         <Filename Value="..\..\bee\source\bee_library.pas"/>
         <Caret Line="345" Column="33" TopLine="327"/>
-      </Position30>
+      </Position26>
+      <Position27>
+        <Filename Value="packages\beegui_forms.pas"/>
+        <Caret Line="239" Column="69" TopLine="192"/>
+      </Position27>
+      <Position28>
+        <Filename Value="packages\beegui_forms.pas"/>
+        <Caret Line="198" Column="1" TopLine="174"/>
+      </Position28>
+      <Position29>
+        <Filename Value="packages\beegui_forms.pas"/>
+        <Caret Line="233" Column="1" TopLine="209"/>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
