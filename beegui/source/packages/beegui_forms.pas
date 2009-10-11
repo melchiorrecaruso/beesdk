@@ -230,8 +230,6 @@ begin
     else
       CommandLine.Command := 'E';
 
-    { TODO : }
-
     case ExtractFrm.oOption.ItemIndex of
       0: CommandLine.oOption := 'Y';
       1: CommandLine.oOption := 'A';
