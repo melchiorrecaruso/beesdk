@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso;
+    v0.8.0 build 1083 - 2009.11.16 by Melchiorre Caruso;
 }
 
 unit Bee_Types;
@@ -65,14 +65,6 @@ type
     FilePosition: longint;
   end;
 
-type
-  // TEvents procedure ...
-
-  TCustomEvent  = procedure of object;
-  TMessageEvent = procedure(const aMessage: string) of object;
-  TRequestEvent = procedure(const aFileInfo: TFileInfo; var Result: string) of object;
-  TListEvent    = procedure(const aFileInfo: TFileInfoExtra; aVerbose: boolean) of object;
-
 function StringToPChar(const aValue: string): PChar;
 function PCharToString(aValue: PChar): string;
 procedure FreePChar(var aValue: PChar);
@@ -82,13 +74,13 @@ implementation
 uses
   SysUtils;
 
-function StringToPChar(const aValue: string): PChar;
+function StringToPChar(const aValue: string): PChar; inline;
 begin
   Result := StrAlloc(Length(aValue) + 1);
   Result := StrPCopy(Result, aValue);
 end;
 
-function PCharToString(aValue: PChar): string;
+function PCharToString(aValue: PChar): string; inline;
 var
   I: longint;
 begin
@@ -104,7 +96,7 @@ begin
   end;
 end;
 
-procedure FreePChar(var aValue: PChar);
+procedure FreePChar(var aValue: PChar); inline;
 begin
   StrDispose(aValue);
   aValue := nil;

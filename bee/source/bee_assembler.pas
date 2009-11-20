@@ -45,7 +45,7 @@ function MulDecDiv(A, B, C: longword): longword;
 
 implementation
 
-procedure CopyBytes(const Source, Dest; Count: longword);
+procedure CopyBytes(const Source, Dest; Count: longword); inline;
 asm
   XCHG    ESI, Source
   XCHG    EDI, Dest
@@ -59,7 +59,7 @@ asm
   MOV     EDI, Dest
 end;
 
-procedure FillLongword(const Data; const Count, Value: longword);
+procedure FillLongword(const Data; const Count, Value: longword); inline;
 asm
   PUSH    EDI
   MOV     EDI, Data
@@ -69,7 +69,7 @@ asm
   POP     EDI
 end;
 
-procedure AddLongword(const Data; const Count, Value: longword);
+procedure AddLongword(const Data; const Count, Value: longword); inline;
 asm
   @1:
   ADD     [Data], Value
@@ -78,7 +78,7 @@ asm
   JNE     @1
 end;
 
-procedure ClearLongword(const Data; const Count: longword);
+procedure ClearLongword(const Data; const Count: longword); inline;
 asm
   MOV     ECX, Count
   MOV     EDX, EDI
@@ -88,7 +88,7 @@ asm
   MOV     EDI, EDX
 end;
 
-procedure MoveLongwordUnchecked(const Source, Dest; Count: longword);
+procedure MoveLongwordUnchecked(const Source, Dest; Count: longword); inline;
 asm
   XCHG    ESI, Source
   XCHG    EDI, Dest
@@ -97,13 +97,13 @@ asm
   MOV     EDI, Dest
 end;
 
-function MulDiv(A, B, C: longword): longword;
+function MulDiv(A, B, C: longword): longword; inline;
 asm
   MUL     B
   DIV     C
 end;
 
-function MulDecDiv(A, B, C: longword): longword;
+function MulDecDiv(A, B, C: longword): longword; inline;
 asm
   MUL     B
   SUB     EAX, 1

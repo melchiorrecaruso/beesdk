@@ -77,8 +77,7 @@ function SevenZipPlugin(const aArchiveName: string): boolean; overload;
 implementation
 
 uses
-  Bee_Consts,
-  BeeGui_Consts;
+  Bee_Consts;
 
 const
   SevenZipPathMark     = 'Path = ';
@@ -100,10 +99,10 @@ const
 function SevenZipPlugin: string;
 begin
   {$IFDEF UNIX}
-  Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7za';
+  // Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7za';
   {$ELSE}
   {$IFDEF MSWINDOWS}
-  Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7z.exe';
+  // Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7z.exe';
   {$ELSE}
   Result := '';
   {$ENDIF}

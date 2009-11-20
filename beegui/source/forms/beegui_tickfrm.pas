@@ -258,7 +258,7 @@ end;
 
 function TTickFrm.GetFrmCanShow: boolean;
 begin
-  Result := CoreGetTime > 0;
+  Result := CoreGetTime(False) > 0;
 end;
 
 procedure TTickFrm.PopupClick(Sender: TObject);
@@ -270,10 +270,10 @@ begin
 
   if CoreGetStatus <> csTerminated then
   begin
-    if Popup_Idle.Checked         then CoreSetPriority(cpIdle);
-    if Popup_Normal.Checked       then CoreSetPriority(cpNormal);
-    if Popup_Higher.Checked       then CoreSetPriority(cpHigher);
-    if Popup_TimeCritical.Checked then CoreSetPriority(cpTimeCritical);
+    if Popup_Idle.Checked         then CorePriority(cpIdle);
+    if Popup_Normal.Checked       then CorePriority(cpNormal);
+    if Popup_Higher.Checked       then CorePriority(cpHigher);
+    if Popup_TimeCritical.Checked then CorePriority(cpTimeCritical);
   end;
 end;
 
@@ -340,7 +340,7 @@ var
   I: int64;
   P: PChar;
 begin
-  I := CoreGetTotalSize;
+  I := CoreGetSize(True);
   if I < (1024) then
   begin
     GeneralSize.Caption     := IntToStr(I);
@@ -356,7 +356,7 @@ begin
       GeneralSizeUnit.Caption := 'MB';
     end;
 
-  I := CoreGetSize;
+  I := CoreGetSize(False);
   if I < (1024) then
   begin
     ProcessedSize.Caption     := IntToStr(I);
@@ -383,11 +383,11 @@ begin
     Application.Title := Caption;
   end;
 
-  Time.Caption          := TimeToStr(CoreGetTotalTime);
-  RemainingTime.Caption := TimeToStr(CoreGetTime);
+  Time.Caption          := TimeToStr(CoreGetTime(True));
+  RemainingTime.Caption := TimeToStr(CoreGetTime(False));
   Speed.Caption         := IntToStr (CoreGetSpeed shr 10);
 
-  P := CoreGetMessage;
+  P := CoreGetMessage(False);
   if P <> nil then
   begin
     Msg.Caption := PCharToString(P);
@@ -415,7 +415,7 @@ begin
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
-    P := CoreGetMessages;
+    P := CoreGetMessage(True);
     if P <> nil then
     begin
       Report.Lines.Text := PCharToString(P);
@@ -442,7 +442,7 @@ var
   P: PChar;
 begin
   P  := nil;
-  FI := CoreGetRequestItem;
+  FI := CoreGetItem;
   if FI <> nil then
   begin
     F := TRenameFrm.Create(Application);
@@ -457,9 +457,13 @@ begin
     end;
     FreeAndNil(F);
   end;
-  CoreSetRequest(P);
-  FreePChar(P);
-  FI := nil;
+
+  if P <> nil then
+  begin
+    CoreRequest(P);
+    FreePChar(P);
+    FI := nil;
+  end;
 end;
 
 procedure TTickFrm.OnOverwrite;
@@ -469,7 +473,7 @@ var
   P: PChar;
 begin
   P  := nil;
-  FI := CoreGetRequestItem;
+  FI := CoreGetItem;
   if FI <> nil then
   begin
     F := TOverWriteFrm.Create(Application);
@@ -490,10 +494,14 @@ begin
     end;
     FreeAndNil(F);
   end;
-  CoreSetRequest(P);
-  FreePChar(P);
-  FI := nil;
- end;
+
+  if P <> nil then
+  begin
+    CoreRequest(P);
+    FreePChar(P);
+    FI := nil;
+  end;
+end;
 
 procedure TTickFrm.OnPassword;
 var
@@ -512,43 +520,42 @@ begin
     FreeAndNil(F);
   end;
   P := StringToPChar(FPassword);
-  CoreSetRequest(P);
+  CoreRequest(P);
   FreePChar(P);
 end;
 
 procedure TTickFrm.OnList;
 var
-  I, Count: integer;
+  I: integer;
   P: PFileInfoExtra;
   Node: TArchiveItem;
 begin
   if Assigned(FList) then
   begin
-    Count := CoreGetItemsCount;
-    for I := 0 to Count -1 do
+    I := 0;
+    P := CoreGetItems(I);
+    while P <> nil do
     begin
-      P := CoreGetItems(I);
-      if P <> nil then
-      begin
-        Node := TArchiveItem.Create;
-        try
-          Node.FileName     := PCharToString(P.FileName);
-          Node.FilePath     := PCharToString(P.FilePath);
-          Node.FileSize     := P.FileSize;
-          Node.FilePacked   := P.FilePacked;
-          Node.FileRatio    := P.FileRatio;
-          Node.FileAttr     := P.FileAttr;
-          Node.FileTime     := P.FileTime;
-          Node.FileComm     := PCharToString(P.FileComm);
-          Node.FileCrc      := P.FileCrc;
-          Node.FileMethod   := PCharToString(P.FileMethod);
-          Node.FileVersion  := PCharToString(P.FileVersion);
-          Node.FilePassword := PCharToString(P.FilePassword);
-          Node.FilePosition := P.FilePosition;
-        finally
-          FList.Add(Node);
-        end;
+      Node := TArchiveItem.Create;
+      try
+        Node.FileName     := PCharToString(P.FileName);
+        Node.FilePath     := PCharToString(P.FilePath);
+        Node.FileSize     := P.FileSize;
+        Node.FilePacked   := P.FilePacked;
+        Node.FileRatio    := P.FileRatio;
+        Node.FileAttr     := P.FileAttr;
+        Node.FileTime     := P.FileTime;
+        Node.FileComm     := PCharToString(P.FileComm);
+        Node.FileCrc      := P.FileCrc;
+        Node.FileMethod   := PCharToString(P.FileMethod);
+        Node.FileVersion  := PCharToString(P.FileVersion);
+        Node.FilePassword := PCharToString(P.FilePassword);
+        Node.FilePosition := P.FilePosition;
+      finally
+        FList.Add(Node);
       end;
+      Inc(I);
+      P := CoreGetItems(I);
     end;
   end;
  end;
@@ -567,11 +574,11 @@ begin
     if FSuspended then
     begin
       BtnPauseRun.Caption := rsBtnRunCaption;
-      CoreSuspended(True);
+      CoreSuspend(True);
     end else
     begin
       BtnPauseRun.Caption := rsBtnPauseCaption;
-      CoreSuspended(False);
+      CoreSuspend(False);
     end;
   end;
 end;
@@ -581,7 +588,7 @@ var
   X, Y: integer;
   FValue: integer;
 begin
-  FValue := CoreGetPriority;
+  FValue := CorePriority(cpUnknow);
   if FValue <> -1 then
   begin
     Popup_Idle.Checked         := FValue = cpIdle;

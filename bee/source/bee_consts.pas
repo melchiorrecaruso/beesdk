@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1083 - 2009.11.16 by Melchiorre Caruso.
 }
 
 unit Bee_Consts;
@@ -53,7 +53,9 @@ const
   csWaitingRename    =  3;
   csWaitingPassword  =  4;
   csWaitingRequest   =  5;
-  csTerminated       =  6;
+  csWaitingList      =  6;
+  csTerminated       =  7;
+  csSuspended        =  8;
 
 const
   // CoreCode

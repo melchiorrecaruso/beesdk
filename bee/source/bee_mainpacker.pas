@@ -147,7 +147,7 @@ begin
   FI.FileTime := P.FileTime;
   FI.FileAttr := P.FileAttr;
 
-  Result := App.ProcessPassword(FI, '');
+  Result := App.DoPassword(FI, '');
 
   FreePChar(FI.FileName);
   FreePChar(FI.FileName);
@@ -158,7 +158,7 @@ end;
 procedure TEncoder.Progress;
 begin
   while App.Suspended do Sleep(250);
-  App.ProcessProgress;
+  App.DoProgress;
 end;
 
 function TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
@@ -171,7 +171,7 @@ begin
   if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.ProcessMessage(msgUpdating + P.FileName);
+    emNorm: App.DoMessage(msgUpdating + P.FileName);
   end;
 
   P.FileStartPos := Stream.Seek(0, 1);
@@ -214,7 +214,7 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
-    App.ProcessClear;
+    App.DoClearLine;
     SrcFile.Free;
 
     P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
@@ -234,7 +234,7 @@ begin
 
   end else
   begin
-    App.ProcessError('Error: can''t open file ' + P.FileLink, 1);
+    App.DoError('Error: can''t open file ' + P.FileLink, 1);
     Result := False;
   end;
 end;
@@ -252,7 +252,7 @@ begin
   if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.ProcessMessage(msgEncoding + P.FileName);
+    emNorm: App.DoMessage(msgEncoding + P.FileName);
   end;
 
   P.FileStartPos := Stream.Seek(0, 1);
@@ -303,7 +303,7 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
-    App.ProcessClear;
+    App.DoClearLine;
     SrcStrm.BlowFish.Finish;
 
     P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
@@ -324,7 +324,7 @@ begin
 
   end else
   begin
-    App.ProcessError('Error: stream  not found', 1);
+    App.DoError('Error: stream  not found', 1);
     Result := False;
   end;
 end;
@@ -340,7 +340,7 @@ begin
   if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.ProcessMessage(msgCopying + P.FileName);
+    emNorm: App.DoMessage(msgCopying + P.FileName);
   end;
 
   P.FileStartPos := Stream.Seek(0, 1);
@@ -364,13 +364,13 @@ begin
       App.IncSize;
       Inc(I);
     end;
-    App.ProcessClear;
+    App.DoClearLine;
     SrcStrm.BlowFish.Finish;
 
     Result := True;
   end else
   begin
-    App.ProcessError('Error: stream  not found', 1);
+    App.DoError('Error: stream  not found', 1);
     Result := False;
   end;
 end;
@@ -404,7 +404,7 @@ begin
   FI.FileTime := P.FileTime;
   FI.FileAttr := P.FileAttr;
 
-  Result := App.ProcessPassword(FI, '');
+  Result := App.DoPassword(FI, '');
 
   FreePChar(FI.FileName);
   FreePChar(FI.FileName);
@@ -413,7 +413,7 @@ end;
 procedure TDecoder.Progress;
 begin
   while App.Suspended do Sleep(250);
-  App.ProcessProgress;
+  App.DoProgress;
 end;
 
 function TDecoder.DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
@@ -428,9 +428,9 @@ begin
   if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.ProcessMessage(msgSkipping   + P.FileName);
-    pmTest: App.ProcessMessage(msgTesting    + P.FileName);
-    pmNorm: App.ProcessMessage(msgExtracting + P.FileName);
+    pmSkip: App.DoMessage(msgSkipping   + P.FileName);
+    pmTest: App.DoMessage(msgTesting    + P.FileName);
+    pmNorm: App.DoMessage(msgExtracting + P.FileName);
     pmQuit:
     begin
       Result := True;
@@ -484,7 +484,7 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
-    App.ProcessClear;
+    App.DoClearLine;
     Stream.BlowFish.Finish;
 
     if Mode = pmNorm then
@@ -500,9 +500,9 @@ begin
   if Result = False then
   begin
     if Crc = longword(-1) then
-      App.ProcessError('Error: can''t open file ' + P.FileName, 1)
+      App.DoError('Error: can''t open file ' + P.FileName, 1)
     else
-      App.ProcessError(msgCRCERROR + P.FileName, 1);
+      App.DoError(msgCRCERROR + P.FileName, 1);
   end;
 end;
 
@@ -520,9 +520,9 @@ begin
   if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.ProcessMessage(msgSkipping + P.FileName);
-    pmTest: App.ProcessMessage(msgTesting  + P.FileName);
-    pmNorm: App.ProcessMessage(msgDecoding + P.FileName);
+    pmSkip: App.DoMessage(msgSkipping + P.FileName);
+    pmTest: App.DoMessage(msgTesting  + P.FileName);
+    pmNorm: App.DoMessage(msgDecoding + P.FileName);
     pmQuit:
     begin
       Result := True;
@@ -581,7 +581,7 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
-    App.ProcessClear;
+    App.DoClearLine;
     Stream.BlowFish.Finish;
 
     if Mode = pmNorm then DstFile.Flush;  // stream flush
@@ -592,9 +592,9 @@ begin
   if Result = False then
   begin
     if Crc = longword(-1) then
-      App.ProcessError('Error: stream not found', 1)
+      App.DoError('Error: stream not found', 1)
     else
-      App.ProcessError(msgCRCERROR + P.FileName,  1);
+      App.DoError(msgCRCERROR + P.FileName,  1);
   end;
 end;
 

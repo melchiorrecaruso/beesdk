@@ -6,7 +6,7 @@ LazarusResources.Add('TTickFrm','FORMDATA',[
   +'ing...'#12'ClientHeight'#3#215#0#11'ClientWidth'#3#165#1#11'Font.Height'#2
   +#245#9'Font.Name'#6#6'Tahoma'#7'OnClose'#7#9'FormClose'#12'OnCloseQuery'#7#14
   +'FormCloseQuery'#8'OnCreate'#7#10'FormCreate'#9'OnDestroy'#7#11'FormDestroy'
-  +#13'ShowInTaskBar'#7#8'stAlways'#10'LCLVersion'#6#6'0.9.27'#0#7'TBitBtn'#9'B'
+  +#13'ShowInTaskBar'#7#8'stAlways'#10'LCLVersion'#6#6'0.9.29'#0#7'TBitBtn'#9'B'
   +'tnCancel'#23'AnchorSideRight.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7
   +#9'asrBottom'#24'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.Si'
   +'de'#7#9'asrBottom'#4'Left'#3'O'#1#6'Height'#2#26#3'Top'#3#183#0#5'Width'#2

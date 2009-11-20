@@ -49,7 +49,6 @@ uses
   Bee_Configuration; // TConfiguration, TTable;
 
 type
-
   // TBeeApp class
 
   TBeeApp = class(TApp)
@@ -119,7 +118,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.8.0 build 1055 archiver utility, Aug 2009' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1076 archiver utility, Nov 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -133,7 +132,7 @@ begin
   // load configuration
   FConfiguration := TConfiguration.Create;
   if not FileExists(FCommandLine.cfgOption) then
-    ProcessWarning('Warning: configuration file "' + FCommandLine.cfgOption + '" not found, data will be stored' + Cr, 1)
+    DoWarning('Warning: configuration file "' + FCommandLine.cfgOption + '" not found, data will be stored' + Cr, 1)
   else
     FConfiguration.LoadFromFile(FCommandLine.cfgOption);
 
@@ -155,35 +154,35 @@ end;
 
 procedure TBeeApp.DisplayUsage;
 begin
-  ProcessMessage(Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
-  ProcessMessage(Cr + '  Commands:' + Cr);
-  ProcessMessage('    a   Add files to archive');
-  ProcessMessage('    d   Delete files from archive');
-  ProcessMessage('    e   Extract files from archive');
-  ProcessMessage('    x   eXtract files from archive with path name');
-  ProcessMessage('    l   List archive');
-  ProcessMessage('    t   Test archive files');
-  ProcessMessage('    r   Rename files in archive');
-  ProcessMessage(Cr + '  Options:' + Cr);
-  ProcessMessage('    r       Recurse subdirectories');
-  ProcessMessage('    u       Update files');
-  ProcessMessage('    f       Freshen files');
-  ProcessMessage('    e       force file Extention');
-  ProcessMessage('    s       create Solid archive');
-  ProcessMessage('    a       add self-extrActor module');
-  ProcessMessage('    o<mode> set overwrite file Mode (Q-Quit, A-All, S-Skip all)');
-  ProcessMessage('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
-  ProcessMessage('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr);
-  ProcessMessage('    x       eXclude filenames');
-  ProcessMessage('    t       Test archive after process');
-  ProcessMessage('    l       List archive after process');
-  ProcessMessage('    y       set temporany directory');
-  ProcessMessage('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
-  ProcessMessage('    v       show technical information for l (List) command)');
-  ProcessMessage('    cd<dir> set current archive directory' + Cr);
-  ProcessMessage('    cfg<filename> use specified configuration file');
-  ProcessMessage('    pri<0..3>     set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
-  ProcessMessage(Cr + '  Use BeeOpt to make most optimal parameters.' + Cr);
+  DoMessage(Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
+  DoMessage(Cr + '  Commands:' + Cr);
+  DoMessage('    a   Add files to archive');
+  DoMessage('    d   Delete files from archive');
+  DoMessage('    e   Extract files from archive');
+  DoMessage('    x   eXtract files from archive with path name');
+  DoMessage('    l   List archive');
+  DoMessage('    t   Test archive files');
+  DoMessage('    r   Rename files in archive');
+  DoMessage(Cr + '  Options:' + Cr);
+  DoMessage('    r       Recurse subdirectories');
+  DoMessage('    u       Update files');
+  DoMessage('    f       Freshen files');
+  DoMessage('    e       force file Extention');
+  DoMessage('    s       create Solid archive');
+  DoMessage('    a       add self-extrActor module');
+  DoMessage('    o<mode> set overwrite file Mode (Q-Quit, A-All, S-Skip all)');
+  DoMessage('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
+  DoMessage('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr);
+  DoMessage('    x       eXclude filenames');
+  DoMessage('    t       Test archive after process');
+  DoMessage('    l       List archive after process');
+  DoMessage('    y       set temporany directory');
+  DoMessage('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
+  DoMessage('    v       show technical information for l (List) command)');
+  DoMessage('    cd<dir> set current archive directory' + Cr);
+  DoMessage('    cfg<filename> use specified configuration file');
+  DoMessage('    pri<0..3>     set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  DoMessage(Cr + '  Use BeeOpt to make most optimal parameters.' + Cr);
 end;
 
 procedure TBeeApp.Execute;
@@ -191,7 +190,7 @@ const
   SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
   inherited Execute;
-  ProcessMessage(FSelfName);
+  DoMessage(FSelfName);
   with FCommandLine do
   begin
     if ((Command in SetOfCommands) and (ArchiveName > '')) or (Command = '?') then
@@ -221,10 +220,10 @@ begin
       Headers.ReadItems(FArcFile, aAction);
       if (Headers.GetCount = 0) and (FArcFile.Size <> 0) then
       begin
-        Result := False;  ProcessFatalError('Error: archive unsupported', 2);
+        Result := False;  DoFatalError('Error: archive unsupported', 2);
       end;
     except
-      Result := False;  ProcessFatalError('Error: can''t open archive', 2);
+      Result := False;  DoFatalError('Error: can''t open archive', 2);
     end;
   end;
 end;
@@ -306,7 +305,7 @@ begin
         FI.FileAttr := P.FileAttr;
         while True do
         begin
-          S := ProcessOverwrite(FI, 'A');
+          S := DoOverwrite(FI, 'A');
           if Length(S) = 1 then
           begin
             FCommandLine.oOption := UpCase(S[1]);
@@ -332,11 +331,11 @@ begin
                FI.FileAttr := P.FileAttr;
                while True do
                begin
-                 S := FixFileName(ProcessRename(FI, ''));
+                 S := FixFileName(DoRename(FI, ''));
                  if Length(S) > 0 then
                  begin
                    if FileExists(S) or (AlreadyFileExists(Headers, I, [toExtract], S) > -1) then
-                     ProcessWarning('Warning: file "' + S + '" already exists', 0)
+                     DoWarning('Warning: file "' + S + '" already exists', 0)
                    else
                      Break;
                  end else
@@ -486,11 +485,11 @@ begin
         FI.FileAttr := P.FileAttr;
         while True do
         begin
-          S := FixFileName(ProcessRename(FI, ''));
+          S := FixFileName(DoRename(FI, ''));
           if Length(S) > 0 then
           begin
             if AlreadyFileExists(Headers, I, [toCopy, toRename], S) > -1 then
-              ProcessWarning('Warning: file "' + S + '" already existing in archive', 0)
+              DoWarning('Warning: file "' + S + '" already existing in archive', 0)
             else
               Break;
           end else
@@ -789,12 +788,12 @@ var
   TmpFile: TFileWriter;
   Headers: THeaders;
 begin
-  ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
   Headers := THeaders.Create(FCommandLine);
   if OpenArchive(Headers, toCopy) then
   begin
-    ProcessMessage(msgScanning + '...');
+    DoMessage(msgScanning + '...');
     // process FileMasks and xFileMasks
     FTotalSize:= Headers.AddItems(FConfiguration);
 
@@ -839,9 +838,9 @@ begin
         Headers.WriteItems(TmpFile);
 
         if not Terminated then
-          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
+          DoMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
+          DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
@@ -852,7 +851,7 @@ begin
         begin
           SysUtils.DeleteFile(FCommandLine.ArchiveName);
           if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
-            ProcessError('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName, 2)
+            DoError('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName, 2)
           else
           begin
             ProcesstOption; // process tOption
@@ -866,9 +865,9 @@ begin
       end else // if ProcessFilesToSwap
       begin
         if TmpFile = nil then
-          ProcessError('Error: can''t open temp file',2)
+          DoError('Error: can''t open temp file',2)
         else
-          ProcessError('Error: can''t decode solid sequences', 2);
+          DoError('Error: can''t decode solid sequences', 2);
 
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
@@ -879,7 +878,7 @@ begin
       end;
 
     end else // if Headers.GetCount
-      ProcessWarning('Warning: no files to process', 1);
+      DoWarning('Warning: no files to process', 1);
 
   end;
   Headers.Free;
@@ -895,12 +894,12 @@ var
   P: THeader;
   I: longint;
 begin
-  ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
   Headers := THeaders.Create(FCommandLine);
   if OpenArchive(Headers, toNone) then
   begin
-    ProcessMessage(msgScanning + '...');
+    DoMessage(msgScanning + '...');
 
     Headers.MarkItems(FCommandLine.FileMasks, toNone, Action);
     Headers.MarkItems(FCommandLine.xOption, Action, toNone);
@@ -938,14 +937,14 @@ begin
       if not FTerminated then
       begin
         if Return = True then
-          ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds')
+          DoMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(FStartTime) + ' seconds', 2);
+          DoError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(FStartTime) + ' seconds', 2);
       end else
-        ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
+        DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
     end else // if Headers.GetNext
-      ProcessWarning('Warning: no files to decode', 1);
+      DoWarning('Warning: no files to decode', 1);
   end;
   Headers.Free;
 
@@ -961,12 +960,12 @@ var
   Headers: THeaders;
   Encoder: TEncoder;
 begin
-  ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
   Headers := THeaders.Create(FCommandLine);
   if OpenArchive(Headers, toCopy) then
   begin
-    ProcessMessage(msgScanning + '...');
+    DoMessage(msgScanning + '...');
 
     Headers.MarkItems(FCommandLine.FileMasks, toCopy, toDelete);
     Headers.MarkItems(FCommandLine.xOption, toDelete, toCopy);
@@ -1006,7 +1005,7 @@ begin
             case P.FileAction of
               toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
               toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
-              toDelete: ProcessMessage(msgDeleting + P.FileName);
+              toDelete: DoMessage(msgDeleting + P.FileName);
             end;
           end;
         end;
@@ -1014,9 +1013,9 @@ begin
         Headers.WriteItems(TmpFile);
 
         if not FTerminated then
-          ProcessMessage (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
+          DoMessage (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
+          DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
@@ -1027,7 +1026,7 @@ begin
         begin
           SysUtils.DeleteFile(FCommandLine.ArchiveName);
           if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
-            ProcessError('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName, 2)
+            DoError('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName, 2)
           else
           begin
             ProcesstOption; // process tOption
@@ -1039,9 +1038,9 @@ begin
       end else // if ProcessFilesToSwap
       begin
         if TmpFile = nil then
-          ProcessError('Error: can''t open temp file', 2)
+          DoError('Error: can''t open temp file', 2)
         else
-          ProcessError('Error: can''t decode solid sequences', 2);
+          DoError('Error: can''t decode solid sequences', 2);
 
         if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
         if Assigned(FArcFile)  then FreeAndNil(FArcFile);
@@ -1052,7 +1051,7 @@ begin
       end;
 
     end else // if Headers.GetNext
-      ProcessWarning('Warning: no files to delete', 1);
+      DoWarning('Warning: no files to delete', 1);
   end;
   Headers.Free;
 
@@ -1068,12 +1067,12 @@ var
   P: THeader;
   I: longint;
 begin
-  ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
   Headers := THeaders.Create(FCommandLine);
   if OpenArchive(Headers, toCopy) then
   begin
-    ProcessMessage(msgScanning + '...');
+    DoMessage(msgScanning + '...');
 
     if ProcessFilesToRename(Headers) then
     begin
@@ -1104,9 +1103,9 @@ begin
         Headers.WriteItems(TmpFile);
 
         if not FTerminated then
-          ProcessMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
+          DoMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
         else
-          ProcessError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
+          DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
         if Assigned(FArcFile) then FreeAndNil(FArcFile);
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
@@ -1115,7 +1114,7 @@ begin
         begin
           SysUtils.DeleteFile(FCommandLine.ArchiveName);
           if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
-            ProcessError('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName, 2)
+            DoError('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName, 2)
           else
           begin
             ProcesstOption; // process tOption
@@ -1127,9 +1126,9 @@ begin
       end else // if (TmpFile <> nil)
       begin
         if TmpFile = nil then
-          ProcessError('Error: can''t open temp file', 2)
+          DoError('Error: can''t open temp file', 2)
         else
-          ProcessError('Error: can''t decode solid sequences', 2);
+          DoError('Error: can''t decode solid sequences', 2);
 
         if Assigned(FArcFile) then FreeAndNil(FArcFile);
         if Assigned(TmpFile)  then FreeAndNil(TmpFile);
@@ -1138,7 +1137,7 @@ begin
       end;
 
     end else // if ProcessFilesToRename
-      ProcessWarning('Warning: no files to rename', 1);
+      DoWarning('Warning: no files to rename', 1);
   end;
   Headers.Free;
 
@@ -1172,7 +1171,7 @@ var
   TotalPack, TotalSize, TotalFiles: longint;
   Version, Method, Dictionary: longint;
 begin
-  ProcessMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
   Headers := THeaders.Create(FCommandLine);
   {$IFDEF CONSOLEAPPLICATION}
@@ -1180,7 +1179,7 @@ begin
   {$ENDIF}
   if OpenArchive(Headers, toNone) then
   begin
-    ProcessMessage(msgScanning + '...');
+    DoMessage(msgScanning + '...');
 
     Headers.MarkItems(FCommandLine.FileMasks, toNone, toList);
     Headers.MarkItems(FCommandLine.xOption,   toList, toNone);
@@ -1188,12 +1187,12 @@ begin
     if (Headers.GetNext(0, toList) > -1) then
     begin
       {$IFDEF CONSOLEAPPLICATION}
-      ProcessMessage(StringOfChar(' ', 79));
+      DoMessage(StringOfChar(' ', 79));
       if FCommandLine.vOption then
-        ProcessMessage('Directory|File' + StringOfChar(' ',  8) + 'Size     Packed Ratio     Date  Time    Attr CRC     Meth')
+        DoMessage('Directory|File' + StringOfChar(' ',  8) + 'Size     Packed Ratio     Date  Time    Attr CRC     Meth')
       else
-        ProcessMessage('Directory|File' + StringOfChar(' ', 32) + 'Size Ratio     Date  Time    Attr');
-      ProcessMessage(StringOfChar('-', 79));
+        DoMessage('Directory|File' + StringOfChar(' ', 32) + 'Size Ratio     Date  Time    Attr');
+      DoMessage(StringOfChar('-', 79));
       {$ENDIF}
 
       Version    := -1;
@@ -1252,9 +1251,9 @@ begin
         begin
           HeadersToListPath := FI.FilePath;
           if I = 0 then
-            ProcessMessage(HeadersToListPath)
+            DoMessage(HeadersToListPath)
           else
-            ProcessMessage(Cr + HeadersToListPath);
+            DoMessage(Cr + HeadersToListPath);
         end;
         {$ENDIF}
 
@@ -1283,7 +1282,7 @@ begin
         {$ELSE}
         FI.FilePosition := I;
         {$ENDIF}
-        ProcessList(FI, FCommandLine.vOption);
+        DoList(FI, FCommandLine.vOption);
 
         StrDispose(FI.FileName);
         StrDispose(FI.FilePath);
@@ -1298,22 +1297,22 @@ begin
         Inc(I);
       end;
       {$IFDEF CONSOLEAPPLICATION}
-      ProcessMessage(StringOfChar('-', 79));
+      DoMessage(StringOfChar('-', 79));
       if FCommandLine.vOption then
-        ProcessMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %10s %5s', [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)])))
+        DoMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %10s %5s', [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)])))
       else
-        ProcessMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 39 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %5s', [SizeToStr(TotalSize), RatioToStr(TotalPack, TotalSize)])));
+        DoMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 39 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %5s', [SizeToStr(TotalSize), RatioToStr(TotalPack, TotalSize)])));
       {$ENDIF}
 
       {$IFDEF CONSOLEAPPLICATION}
       // self-extractor module size
       if Headers.GetModule > 0 then
-        ProcessMessage(Cr + 'Note: Bee Self-Extractor module founded');
+        DoMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
 
-      ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds');
+      DoMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds');
     end else
-      ProcessWarning('Warning: no files to list', 1);
+      DoWarning('Warning: no files to list', 1);
 
   end;
   {$IFDEF CONSOLEAPPLICATION}
