@@ -88,7 +88,7 @@ const
 
 // Crc32 calculating routines ...
 
-procedure UpdCrc32(var aCrc32: longword; aData: byte); inline;
+procedure UpdCrc32(var aCrc32: longword; aData: byte);
 var
   Temp: longword;
 begin
@@ -96,7 +96,7 @@ begin
   aCrc32 := Crc32Tab[byte(Temp xor aData)] xor (Temp shr 8);
 end;
 
-function UpdateCrc32(const aCrc32: longword; aData: byte): longword; inline;
+function UpdateCrc32(const aCrc32: longword; aData: byte): longword; 
 begin
   Result := Crc32Tab[byte(aCrc32 xor aData)] xor (aCrc32 shr 8);
 end;
