@@ -30,13 +30,13 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="12">
+    <Units Count="11">
       <Unit0>
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
         <CursorPos X="14" Y="78"/>
-        <TopLine Value="42"/>
+        <TopLine Value="46"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="72"/>
         <Loaded Value="True"/>
@@ -92,44 +92,34 @@
         <SyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
-        <Filename Value="bee_io.pas"/>
-        <UnitName Value="Bee_IO"/>
-        <CursorPos X="2" Y="71"/>
-        <TopLine Value="29"/>
-        <EditorIndex Value="7"/>
+        <Filename Value="beelib_plugins.pas"/>
+        <UnitName Value="BeeLib_Plugins"/>
+        <CursorPos X="37" Y="57"/>
+        <TopLine Value="23"/>
+        <EditorIndex Value="8"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
-        <Filename Value="beelib_plugins.pas"/>
-        <UnitName Value="BeeLib_Plugins"/>
-        <CursorPos X="37" Y="57"/>
-        <TopLine Value="23"/>
+        <Filename Value="..\..\beegui\source\packages\beegui_consts.pas"/>
+        <UnitName Value="BeeGui_Consts"/>
+        <CursorPos X="39" Y="63"/>
+        <TopLine Value="62"/>
         <EditorIndex Value="9"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
-        <Filename Value="..\..\beegui\source\packages\beegui_consts.pas"/>
-        <UnitName Value="BeeGui_Consts"/>
-        <CursorPos X="39" Y="63"/>
-        <TopLine Value="62"/>
-        <EditorIndex Value="10"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
-      </Unit8>
-      <Unit9>
         <Filename Value="beelib.include\compiler.inc"/>
         <CursorPos X="18" Y="34"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="7"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
-      </Unit9>
-      <Unit10>
+      </Unit8>
+      <Unit9>
         <Filename Value="bee_types.pas"/>
         <UnitName Value="Bee_Types"/>
         <CursorPos X="3" Y="39"/>
@@ -138,8 +128,8 @@
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit10>
-      <Unit11>
+      </Unit9>
+      <Unit10>
         <Filename Value="beelib_link.pas"/>
         <UnitName Value="BeeLib_Link"/>
         <CursorPos X="1" Y="1"/>
@@ -148,7 +138,7 @@
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
-      </Unit11>
+      </Unit10>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
