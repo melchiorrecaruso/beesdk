@@ -13,24 +13,13 @@ cd ..
 
 
 @echo @ 
-@echo @ Compile BeeLib...
-@echo @
-
-cd beelib\source
-
-fpc -FE..\temp\ -Fiforms\forms.include\ -Fipackages\packages.include\ -Fi..\temp\ -Fu..\..\beegui\source\packages\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -vew -obeelib.dll beelib.dpr
-
-cd ..
-cd ..
-
-
-@echo @ 
-@echo @ Compile Bee...
+@echo @ Compile Bee\BeeLib...
 @echo @
 
 cd bee\source
 
-fpc -FE..\temp\ -Fibee.include\ -FU..\temp\ -MDelphi -CX -XX -O3 -OoUNCERTAIN -OoREGVAR -vew bee.dpr
+fpc -FE..\temp\ -Fibee.include\    -FU..\temp\ -MDelphi -CX -XX -O3 -OoUNCERTAIN -OoREGVAR -vew -obee.exe    bee.dpr
+fpc -FE..\temp\ -Fibeelib.include\ -FU..\temp\ -MDelphi -CX -XX -O3 -OoUNCERTAIN -OoREGVAR -vew -obeelib.dll beelib.dpr
 
 cd ..
 cd ..
@@ -42,7 +31,7 @@ cd ..
 
 cd beeopt\source
 
-fpc -FE..\temp\ -Fibeeopt.include\ -Fu..\..\bee\source\ -FU..\temp\ -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -vew -obeeopt.exe beeopt.dpr
+fpc -FE..\temp\ -Fibeeopt.include\ -Fu..\..\bee\source\ -FU..\temp\ -MDelphi -CX -XX -O3 -OoUNCERTAIN -OoREGVAR -vew -obeeopt.exe beeopt.dpr
 
 cd ..
 cd ..

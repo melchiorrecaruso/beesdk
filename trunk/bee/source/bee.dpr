@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.8.0 build 1034 - 2009.04.27 by Melchiorre Caruso.
+    v0.8.0 build 1071 - 2009.11.15 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -51,99 +51,70 @@ uses
   // ---
   Bee_App,
   Bee_Types,
-  Bee_Common,
-  Bee_Interface, bee_consts;
+  Bee_Common;
 
 type
-  // TConsole class
+  // TCustomBeeApp class
 
-  TConsole = class
+  TCustomBeeApp = class(TBeeApp)
   private
-    FApp: TApp;
-    FKey: string;
-    FParams: TStringList;
-  private
-    procedure ProcessFatalError(const aMessage: string);
-    procedure ProcessError(const aMessage: string);
-    procedure ProcessWarning(const aMessage: string);
-    procedure ProcessMessage(const aMessage: string);
-    procedure ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
-    procedure ProcessRename(const aFileInfo: TFileInfo; var Result: string);
-    procedure ProcessList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
-    procedure ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
-    procedure ProcessRequest(const aMessage: string);
-    procedure ProcessProgress;
-    procedure ProcessClear;
+    FPassword: string;
   public
-    constructor Create;
+    constructor Create(aParams: TStringList);
     destructor Destroy; override;
-    procedure Execute;
+  public
+    procedure OnFatalError(const aMessage: string); override;
+    procedure OnError(const aMessage: string); override;
+    procedure OnWarning(const aMessage: string); override;
+    procedure OnRequest(const aMessage: string); override;
+    procedure OnMessage(const aMessage: string); override;
+    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); override;
+    procedure OnProgress; override;
+    procedure OnClearLine; override;
   end;
 
-  /// implementation ///
+  // ------------------------------------------------------------------------ //
+  // Implementation                                                           //
+  // ------------------------------------------------------------------------ //
 
-  // TConsole
+  // TCustomBeeApp class
 
-  constructor TConsole.Create;
-  var
-    I: longint;
+  constructor TCustomBeeApp.Create(aParams: TStringList);
   begin
-    inherited Create;
-    SetLength(FKey, 0);
-    FParams := TStringList.Create;
-    for I := 1 to ParamCount do
-    begin
-      FParams.Add(ParamStr(I));
-    end;
-    FApp := TBeeApp.Create(FParams);
-    FApp.OnFatalError  := ProcessFatalError;
-    FApp.OnError       := ProcessError;
-    FApp.OnWarning     := ProcessWarning;
-    FApp.OnMessage     := ProcessMessage;
-    FApp.OnOverwrite   := ProcessOverwrite;
-    FApp.OnRename      := ProcessRename;
-    FApp.OnList        := ProcessList;
-    FApp.OnPassword    := ProcessPassword;
-    FApp.OnRequest     := ProcessRequest;
-    FApp.OnProgress    := ProcessProgress;
-    FApp.OnClear       := ProcessClear;
+    inherited Create(aParams);
+    SetLength(FPassword, 0);
   end;
 
-  destructor TConsole.Destroy;
+  destructor TCustomBeeApp.Destroy;
   begin
-    FApp.Destroy;
-    FParams.Destroy;
-    SetLength(FKey, 0);
+    SetLength(FPassword, 0);
     inherited Destroy;
   end;
 
-  procedure TConsole.Execute;
-  begin
-    FApp.Execute;
-    ExitCode := FApp.Code;
-  end;
-
-  procedure TConsole.ProcessFatalError(const aMessage: string);
+  procedure TCustomBeeApp.OnFatalError(const aMessage: string);
   begin
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TConsole.ProcessError(const aMessage: string);
+  procedure TCustomBeeApp.OnError(const aMessage: string);
   begin
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TConsole.ProcessWarning(const aMessage: string);
+  procedure TCustomBeeApp.OnWarning(const aMessage: string);
   begin
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TConsole.ProcessMessage(const aMessage: string);
+  procedure TCustomBeeApp.OnMessage(const aMessage: string);
   begin
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TConsole.ProcessOverwrite(const aFileInfo: TFileInfo; var Result: string);
+  function TCustomBeeApp.OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
   begin
     with aFileInfo do
     begin
@@ -157,7 +128,7 @@ type
     Readln(Result);
   end;
 
-  procedure TConsole.ProcessRename(const aFileInfo: TFileInfo; var Result: string);
+  function TCustomBeeApp.OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
   begin
     with aFileInfo do
     begin
@@ -170,7 +141,7 @@ type
     Result := OemToParam(Result);
   end;
 
-  procedure TConsole.ProcessList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
+  procedure TCustomBeeApp.OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
   begin
     with aFileInfo do
     begin
@@ -189,7 +160,6 @@ type
             Format(' %10s %10s %4u%% %14s %6s %8.8x %3s',
             [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
             FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
-
         end;
       end else
       begin
@@ -206,17 +176,16 @@ type
             Format(' %10s %4u%% %14s %6s',
             [SizeToStr(FileSize), FileRatio,
             FileTimeToString(FileTime), AttrToStr(FileAttr)])));
-
         end;
       end;
     end;
   end;
 
-  procedure TConsole.ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
+  function TCustomBeeApp.OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
   var
     S: string;
   begin
-    if Length(FKey) = 0 then
+    if Length(FPassword) = 0 then
     begin
       Write('Insert a key (min length 4 char): ');
       Readln(Result);
@@ -225,44 +194,48 @@ type
       // store password
       Write('Do you want to use password for this session? [Yes, No]: ');
       Readln(S);
-      if (Length(S)= 1) and (UpCase(S[1]) = 'Y') then FKey := Result;
+      if (Length(S)= 1) and (UpCase(S[1]) = 'Y') then FPassword := Result;
     end else
-      Result := FKey;
+      Result := FPassword;
   end;
 
-  procedure Tconsole.ProcessRequest(const aMessage: string);
+  procedure TCustomBeeApp.OnRequest(const aMessage: string);
   begin
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TConsole.ProcessProgress;
+  procedure TCustomBeeApp.OnProgress;
   begin
     // not convert oem to param
     Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
-      Format('%5d KB/s %3d%%', [FApp.Speed shr 10, FApp.Percentes]));
+      Format('%5d KB/s %3d%%', [Speed shr 10, Percentes]));
   end;
 
-  procedure TConsole.ProcessClear;
+  procedure TCustomBeeApp.OnClearLine;
   begin
     Write(#13, #13: 80);
   end;
 
-  /// main block ///
+  // ------------------------------------------------------------------------ //
+  // main block                                                               //
+  // ------------------------------------------------------------------------ //
 
 var
-  Console: TConsole;
+  I: longint;
+  Params: TStringList;
+  App: TCustomBeeApp;
 
-  /// control+c event ///
+  // control+c event
 
   {$IFDEF MSWINDOWS}
   function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
-      CTRL_C_EVENT:        Console.FApp.Terminated := True;
-      CTRL_BREAK_EVENT:    Console.FApp.Terminated := True;
-      CTRL_CLOSE_EVENT:    Console.FApp.Terminated := True;
-      CTRL_LOGOFF_EVENT:   Console.FApp.Terminated := True;
-      CTRL_SHUTDOWN_EVENT: Console.FApp.Terminated := True;
+      CTRL_C_EVENT:        App.Terminated := True;
+      CTRL_BREAK_EVENT:    App.Terminated := True;
+      CTRL_CLOSE_EVENT:    App.Terminated := True;
+      CTRL_LOGOFF_EVENT:   App.Terminated := True;
+      CTRL_SHUTDOWN_EVENT: App.Terminated := True;
     end;
     Result := True;
   end;
@@ -272,17 +245,25 @@ var
   procedure CtrlHandler(sig: cint);
   begin
     case sig of
-      SIGINT:  Console.FApp.Terminated := True;
-      SIGQUIT: Console.FApp.Terminated := True;
-      SIGKILL: Console.FApp.Terminated := True;
-      SIGSTOP: Console.FApp.Terminated := True;
+      SIGINT:  App.Terminated := True;
+      SIGQUIT: App.Terminated := True;
+      SIGKILL: App.Terminated := True;
+      SIGSTOP: App.Terminated := True;
     end;
   end;
   {$ENDIF}
 
   begin
     SetCtrlCHandler(@CtrlHandler);
-    Console := TConsole.Create;
-    Console.Execute;
-    Console.Destroy;
+
+    Params := TStringList.Create;
+    for I := 1 to ParamCount do
+      Params.Add(ParamStr(I));
+    App := TCustomBeeApp.Create(Params);
+    App.Execute;
+
+    ExitCode := App.Code;
+
+    App.Destroy;
+    Params.Destroy;
   end.

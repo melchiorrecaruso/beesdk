@@ -14,7 +14,7 @@ object TickFrm: TTickFrm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   ShowInTaskBar = stAlways
-  LCLVersion = '0.9.27'
+  LCLVersion = '0.9.29'
   object BtnCancel: TBitBtn
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom

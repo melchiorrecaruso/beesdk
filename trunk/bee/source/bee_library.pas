@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1032 - 2009.04.25 by Melchiorre Caruso.
+    v0.8.0 build 1065 - 2009.11.11 by Melchiorre Caruso.
 }
 
 unit Bee_Library;
@@ -45,566 +45,504 @@ uses
   Bee_CommandLine;
 
 //  Library routines ...
-
 function  CoreLibVersion: integer;
+// ---
 procedure CoreFreePChar(P: PChar);
 procedure CoreFreePFileInfo(P: PFileInfo);
 procedure CoreFreePFileInfoExtra(P: PFileInfoExtra);
 
 //  Library core routines ...
-
 function CoreCreate(aCommandLine: PChar): boolean;
 function CoreDestroy: boolean;
 function CoreExecute: boolean;
-function CoreSuspended(aValue: boolean): boolean;
 function CoreTerminate: boolean;
-
+function CorePriority(aValue: integer): integer;
+function CoreSuspend(aValue: boolean): boolean;
 // ---
-
-function CoreGetPriority: integer;
-function CoreSetPriority(aValue: integer): boolean;
-
-// ---
+function CoreRequest(aValue: PChar): PChar;
+function CoreGetMessage(all: boolean): PChar;
+function CoreGetTime(all: boolean): integer;
+function CoreGetSize(all: boolean): int64;
 
 function CoreGetSpeed: integer;
-function CoreGetMessage: PChar;
-function CoreGetMessages: PChar;
 function CoreGetPercentes: integer;
-function CoreGetTotalTime: integer;
-function CoreGetTotalSize: int64;
-function CoreGetTime: integer;
-function CoreGetSize: int64;
-function CoreGetCode: integer;
 function CoreGetStatus: integer;
-
+function CoreGetCode: integer;
 // ---
-
-function CoreGetRequestItem: PFileInfo;
-function CoreGetRequest: PChar;
-function CoreSetRequest(aValue: PChar): boolean;
-
-// ---
-
-function CoreGetItemsCount: integer;
+function CoreGetItem: PFileInfo;
 function CoreGetItems(aIndex: integer): PFileInfoExtra;
 
 implementation
 
 type
-  // TCoreItems class ...
+  // TCoreApp class ...
 
-  TCoreItems = class
+  TCoreApp = class(TBeeApp)
   private
-    FCount: integer;
-    FItems: array of TFileInfoExtra;
-  private
-    function GetItem(Index: integer): PFileInfoExtra;
+    FItems: TList;
+    FItem: TFileInfo;
+    FMessages: TStringList;
+    FMessage: string;
+    FPassword: string;
+    FStatus: integer;
+  protected
+    procedure ClearItems;
+    procedure AddItem(aFileInfo: TFileInfoExtra);
   public
-    constructor Create;
+    constructor Create(aParams: TStringList);
     destructor Destroy; override;
-    procedure Clear;
-    function Add(P: TFileInfoExtra): integer;
   public
-    property Count: integer read FCount;
-    property Items[Index: integer]: PFileInfoExtra read GetItem;
+    procedure OnFatalError(const aMessage: string); override;
+    procedure OnError(const aMessage: string); override;
+    procedure OnWarning(const aMessage: string); override;
+    procedure OnRequest(const aMessage: string); override;
+    procedure OnMessage(const aMessage: string); override;
+    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); override;
+    procedure OnProgress; override;
+    procedure OnClearLine; override;
   end;
 
-type
   // TCore class ...
 
   TCore = class(TThread)
   private
-    FApp:      TApp;
-    FParams:   TStringList;
-    FMessages: TStringList;
-    FMessage:  string;
-    FPassword: string;
-    FStatus:   integer;
-    FResult:   string;
-    FItems:    TCoreItems;
-    FItem:     TFileInfo;
-  private
-    procedure ProcessFatalError(const aMessage: string);
-    procedure ProcessError     (const aMessage: string);
-    procedure ProcessWarning   (const aMessage: string);
-    procedure ProcessMessage   (const aMessage: string);
-    procedure ProcessRequest   (const aMessage: string);
-
-    procedure ProcessList     (const aFileInfo: TFileInfoExtra; aVerbose: boolean);
-    procedure ProcessRename   (const aFileInfo: TFileInfo; var Result: string);
-    procedure ProcessPassword (const aFileInfo: TFileInfo; var Result: string);
-    procedure ProcessOverWrite(const aFileInfo: TFileInfo; var Result: string);
+    FApp: TCoreApp;
+    FParams: TStringList;
   public
     constructor Create(const aCommandLine: string);
-    destructor  Destroy; override;
-    procedure   Execute; override;
+    destructor Destroy; override;
+    procedure Execute; override;
   end;
 
 var
   Core: TCore = nil;
 
-// -------------------------------------------------------------------------- //
-//                                                                            //
-//  TCoreItems class ...                                                      //
-//                                                                            //
-// -------------------------------------------------------------------------- //
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  TCoreApp class ...                                                      //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
 
-constructor TCoreItems.Create;
-begin
-  inherited Create;
-  FItems := nil;
-  FCount := 0;
-end;
-
-destructor TCoreItems.Destroy;
-begin
-  Clear;
-  inherited Destroy;
-end;
-
-procedure TCoreItems.Clear;
-begin
-  while FCount > 0 do
+  constructor TCoreApp.Create(aParams: TStringList);
   begin
-    CoreFreePFileInfoExtra(@FItems[FCount -1]);
-    Dec(FCount);
-  end;
-  FCount := 0;
-  FItems := nil;
-end;
+    inherited Create(aParams);
+    FMessages := TStringList.Create;
+    FItems := TList.Create;
 
-function TCoreItems.GetItem(Index: integer): PFileInfoExtra;
-begin
-  if (Index > -1) and (Index < FCount) then
-    Result := @FItems[Index]
-  else
-    Result := nil;
-end;
-
-function TCoreItems.Add(P: TFileInfoExtra): integer;
-begin
-  Inc(FCount);
-  SetLength(FItems, FCount);
-  with FItems[FCount -1] do
-  begin
-    FileName     := StrNew(P.FileName);
-    FilePath     := StrNew(P.FilePath);
-    FileSize     := P.FileSize;
-    FileTime     := P.FileTime;
-    FileAttr     := P.FileAttr;
-    FilePacked   := P.FilePacked;
-    FileRatio    := P.FileRatio;
-    FileComm     := StrNew(P.FileComm);
-    FileCrc      := P.FileCrc;
-    FileMethod   := StrNew(P.FileMethod);
-    FileVersion  := StrNew(P.FileVersion);
-    FilePassword := StrNew(P.FilePassword);
-    FilePosition := P.FilePosition;
-  end;
-  Result := FCount -1;
-end;
-
-// -------------------------------------------------------------------------- //
-//                                                                            //
-//  TCore class ...                                                           //
-//                                                                            //
-// -------------------------------------------------------------------------- //
-
-constructor TCore.Create(const aCommandLine: string);
-var
-  FCommandLine: TCommandLine;
-begin
-  inherited Create(True);
-  FreeOnTerminate := False;
-
-  FItems    := TCoreItems.Create;
-  FMessages := TStringList.Create;
-  FParams   := TStringList.Create;
-  with FParams do
-  begin
-    Text := aCommandLine;
-  end;
-  FStatus   := csReady;
-  FMessage  := ' Ready ...';
-  FPassword := '';
-
-  FCommandLine := TCommandLine.Create;
-  FCommandLine.Process(FParams);
-  {$IFDEF FPC}
-  if SevenZipPlugin(FCommandLine.ArchiveName) then
-    FApp := TSevenZipApp.Create(FParams)
-  else
-  {$ENDIF}
-    FApp := TBeeApp.Create(FParams);
-  FreeAndNil(FCommandLine);
-
-  FApp.OnFatalError := ProcessFatalError;
-  FApp.OnError      := ProcessError;
-  FApp.OnWarning    := ProcessWarning;
-  FApp.OnMessage    := ProcessMessage;
-  FApp.OnOverwrite  := ProcessOverwrite;
-  FApp.OnRename     := ProcessRename;
-  FApp.OnList       := ProcessList;
-  FApp.OnPassword   := ProcessPassword;
-  FApp.OnRequest    := ProcessRequest;
-  FApp.OnProgress   := nil;
-  FApp.OnClear      := nil;
-end;
-
-destructor TCore.Destroy;
-begin
-  FApp.Destroy;
-  FParams.Destroy;
-  FMessages.Destroy;
-  FItems.Destroy;
-  inherited Destroy;
-end;
-
-procedure TCore.Execute;
-begin
-  FStatus := csExecuting;
-  begin
-    FApp.Execute;
-  end;
-  FStatus := csTerminated;
-end;
-
-procedure TCore.ProcessFatalError(const aMessage: string);
-begin
-  FMessages.Add(aMessage);
-end;
-
-procedure TCore.ProcessError(const aMessage: string);
-begin
-  FMessages.Add(aMessage);
-end;
-
-procedure TCore.ProcessWarning(const aMessage: string);
-begin
-  FMessages.Add(aMessage);
-end;
-
-procedure TCore.ProcessMessage(const aMessage: string);
-begin
-  FMessage := aMessage;
-  FMessages.Add(FMessage);
-end;
-
-procedure TCore.ProcessOverWrite(const aFileInfo: TFileInfo; var Result: string);
-begin
-  FResult := Result;
-  FItem   := aFileInfo;
-  FStatus := csWaitingOverwrite;
-  while FStatus = csWaitingOverwrite do
-  begin
-    Sleep(250);
+    SetLength(FPassword, 0);
+    SetLength(FMessage, 0);
+    FStatus := csReady;
   end;
 
-  if Length(FResult) = 1 then
+  destructor TCoreApp.Destroy;
   begin
-    Result := FResult[1];
+    SetLength(FPassword, 0);
+    SetLength(FMessage, 0);
+
+    ClearItems;
+    FItems.Destroy;
+    FMessages.Destroy;
+    inherited Destroy;
   end;
-end;
 
-procedure TCore.ProcessRename(const aFileInfo: TFileInfo; var Result: string);
-begin
-  FResult := Result;
-  FItem   := aFileInfo;
-  FStatus := csWaitingRename;
-  while FStatus = csWaitingRename do
+  procedure TCoreApp.ClearItems;
+  var
+    I: integer;
   begin
-    Sleep(250);
-  end;
-  Result := FResult;
-end;
-
-procedure TCore.ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
-begin
-  FResult := Result;
-  FItem   := aFileInfo;
-  FStatus := csWaitingPassword;
-  while FStatus = csWaitingPassword do
-  begin
-    Sleep(250);
-  end;
-  Result := FResult;
-end;
-
-procedure TCore.ProcessRequest(const aMessage: string);
-begin
-  FMessage := aMessage;
-  FStatus  := csWaitingRequest;
-  while FStatus = csWaitingRequest do
-  begin
-    Sleep(250);
-  end;
-end;
-
-procedure TCore.ProcessList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
-begin
-  FItems.Add(aFileInfo);
-end;
-
-// -------------------------------------------------------------------------- //
-//                                                                            //
-//  Library routines ...                                                      //
-//                                                                            //
-// -------------------------------------------------------------------------- //
-
-function CoreLibVersion: integer;
-begin
-  Result := 102;
-end;
-
-procedure CoreFreePChar(P: PChar);
-begin
-  if P <> nil then
-  begin
-    StrDispose(P);
-  end;
-end;
-
-procedure CoreFreePFileInfo(P: PFileInfo);
-begin
-  if P <> nil then
-  begin
-    if P^.FileName <> nil then StrDispose(P^.FileName);
-    if P^.FilePath <> nil then StrDispose(P^.FilePath);
-  end;
-end;
-
-procedure CoreFreePFileInfoExtra(P: PFileInfoExtra);
-begin
-  if P <> nil then
-  begin
-    if P^.FileName     <> nil then StrDispose(P^.FileName);
-    if P^.FilePath     <> nil then StrDispose(P^.FilePath);
-    if P^.FileComm     <> nil then StrDispose(P^.FileComm);
-    if P^.FileMethod   <> nil then StrDispose(P^.FileMethod);
-    if P^.FileVersion  <> nil then StrDispose(P^.FileVersion);
-    if P^.FilePassword <> nil then StrDispose(P^.FilePassword);
-  end;
-end;
-
-// -------------------------------------------------------------------------- //
-//                                                                            //
-//  Library core routines ...                                                 //
-//                                                                            //
-// -------------------------------------------------------------------------- //
-
-function CoreCreate(aCommandLine: PChar): boolean;
-begin
-  Result := (Core = nil);
-  if Result then
-  begin
-    Core := TCore.Create(PCharToString(aCommandLine));
-  end;
-end;
-
-function CoreDestroy: boolean;
-begin
-  Result := (Core <> nil);
-  if Result then
-  begin
-    FreeAndNil(Core);
-  end;
-end;
-
-function CoreExecute: boolean;
-begin
-  Result := (Core <> nil) and (Core.FStatus = csReady);
-  if Result then
-  begin
-    Core.Resume;
-  end;
-end;
-
-function CoreSuspended(aValue: boolean): boolean;
-begin
-  Result := (Core <> nil);
-  if Result then
-  begin
-    Core.FApp.Suspended := aValue;
-  end;
-end;
-
-function CoreTerminate: boolean;
-begin
-  Result := (Core <> nil);
-  if Result then
-  begin
-    Core.FApp.Terminated := True;
-    if Core.FStatus <> csTerminated then
+    for I := 0 to FItems.Count -1 do
     begin
-      Core.FStatus := csExecuting;
+      CoreFreePFileInfoExtra(FItems[I]);
     end;
   end;
-end;
 
-// ---
-
-function CoreGetPriority: integer;
-begin
-  if (Core <> nil) then
+  procedure TCoreApp.AddItem(aFileInfo: TFileInfoExtra);
+  var
+    P: PFileInfoExtra;
   begin
-    case Core.Priority of
-      tpIdle:         Result :=  cpIdle;
-      tpLowest:       Result :=  cpLowest;
-      tpLower:        Result :=  cpLower;
-      tpNormal:       Result :=  cpNormal;
-      tpHigher:       Result :=  cpHigher;
-      tpHighest:      Result :=  cpHighest;
-      tpTimeCritical: Result :=  cpTimeCritical;
-      else            Result :=  cpUnknow;
-    end
-  end else
-    Result := -1;
-end;
+    P := GetMem(SizeOf(TFileInfoExtra));
+    if P <> nil then
+    begin
+      FItems.Add(P);
 
-function CoreSetPriority(aValue: integer): boolean;
-begin
-  Result := (Core <> nil);
-  if Result then
-  begin
-    case aValue of
-      cpIdle:         Core.Priority := tpIdle;
-      cpLowest:       Core.Priority := tpLowest;
-      cpLower:        Core.Priority := tpLower;
-      cpNormal:       Core.Priority := tpNormal;
-      cpHigher:       Core.Priority := tpHigher;
-      cpHighest:      Core.Priority := tpHighest;
-      cpTimeCritical: Core.Priority := tpTimeCritical;
-      else            Core.Priority := tpNormal;
-    end
+      P^.FileName     := StrNew(aFileInfo.FileName);
+      P^.FilePath     := StrNew(aFileInfo.FilePath);
+      P^.FileSize     :=        aFileInfo.FileSize;
+      P^.FileTime     :=        aFileInfo.FileTime;
+      P^.FileAttr     :=        aFileInfo.FileAttr;
+      P^.FilePacked   :=        aFileInfo.FilePacked;
+      P^.FileRatio    :=        aFileInfo.FileRatio;
+      P^.FileComm     := StrNew(aFileInfo.FileComm);
+      P^.FileCrc      :=        aFileInfo.FileCrc;
+      P^.FileMethod   := StrNew(aFileInfo.FileMethod);
+      P^.FileVersion  := StrNew(aFileInfo.FileVersion);
+      P^.FilePassword := StrNew(aFileInfo.FilePassword);
+      P^.FilePosition :=        aFileInfo.FilePosition;
+    end;
   end;
-end;
 
-// ---
-
-function CoreGetSpeed: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.Speed
-  else
-    Result := -1;
-end;
-
-function CoreGetMessage: PChar;
-begin
-  if (Core <> nil) then
-    Result := StringToPChar(Core.FMessage)
-  else
-    Result := nil;
-end;
-
-function CoreGetMessages: PChar;
-begin
-  if (Core <> nil) then
-    Result := StringToPChar(Core.FMessages.Text)
-  else
-    Result := nil;
-end;
-
-function CoreGetPercentes: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.Percentes
-  else
-    Result := -1;
-end;
-
-function CoreGetTotalTime: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.TotalTime
-  else
-    Result := -1;
-end;
-
-function CoreGetTotalSize: int64;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.TotalSize
-  else
-    Result := -1;
-end;
-
-function CoreGetTime: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.Time
-  else
-    Result := -1;
-end;
-
-function CoreGetSize: int64;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.Size
-  else
-    Result := -1;
-end;
-
-function CoreGetCode: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.Code
-  else
-    Result := ccUnknow;
-end;
-
-function CoreGetStatus: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FStatus
-  else
-    Result := csUnknow;
-end;
-
-// ---
-
-function CoreGetRequestItem: PFileInfo;
-begin
-  if (Core <> nil) then
-    Result := @Core.FItem
-  else
-    Result := nil;
-end;
-
-function CoreGetRequest: PChar;
-begin
-  if (Core <> nil) then
-    Result := StringToPChar(Core.FMessage)
-  else
-    Result := nil;
-end;
-
-function CoreSetRequest(aValue: PChar): boolean;
-begin
-  Result := (Core <> nil);
-  if Result then
+  procedure TCoreApp.OnFatalError(const aMessage: string);
   begin
-    Core.FResult := PCharToString(aValue);
-    Core.FStatus := csExecuting;
+    FMessages.Add(aMessage);
   end;
-end;
 
-// ---
+  procedure TCoreApp.OnError(const aMessage: string);
+  begin
+    FMessages.Add(aMessage);
+  end;
 
-function CoreGetItemsCount: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FItems.Count
-  else
-    Result := 0;
-end;
+  procedure TCoreApp.OnWarning(const aMessage: string);
+  begin
+    FMessages.Add(aMessage);
+  end;
 
-function CoreGetItems(aIndex: integer): PFileInfoExtra;
-begin
-  if (Core <> nil) then
-    Result := Core.FItems.Items[aIndex]
-  else
-    Result := nil;
-end;
+  procedure TCoreApp.OnMessage(const aMessage: string);
+  begin
+    FMessages.Add(aMessage);
+    FMessage := aMessage;
+  end;
+
+  function TCoreApp.OnOverWrite(const aFileInfo: TFileInfo; const aValue: string): string;
+  begin
+    FMessage := aValue;
+    FItem    := aFileInfo;
+    FStatus  := csWaitingOverwrite;
+    while FStatus = csWaitingOverwrite do Sleep(250);
+
+    if Length(FMessage) = 1 then
+      Result := FMessage[1];
+  end;
+
+  function TCoreApp.OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
+  begin
+    FMessage := aValue;
+    FItem    := aFileInfo;
+    FStatus  := csWaitingRename;
+    while FStatus = csWaitingRename do Sleep(250);
+
+    Result := FMessage;
+  end;
+
+  function TCoreApp.OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+  begin
+    FMessage := aValue;
+    FItem    := aFileInfo;
+    FStatus  := csWaitingPassword;
+    while FStatus = csWaitingPassword do Sleep(250);
+
+    Result := FMessage;
+  end;
+
+  procedure TCoreApp.OnRequest(const aMessage: string);
+  begin
+    FMessage := aMessage;
+    FStatus  := csWaitingRequest;
+    while FStatus = csWaitingRequest do Sleep(250);
+  end;
+
+  procedure TCoreApp.OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
+  begin
+    AddItem(aFileInfo);
+  end;
+
+  procedure TCoreApp.OnProgress;
+  begin
+    // nothing to do
+  end;
+
+  procedure TCoreApp.OnClearLine;
+  begin
+    // nothing to do
+  end;
+
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  TCore class ...                                                         //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
+
+  constructor TCore.Create(const aCommandLine: string);
+  var
+    FCommandLine: TCommandLine;
+  begin
+    inherited Create(True);
+    FreeOnTerminate := False;
+
+    FParams := TStringList.Create;
+    with FParams do
+    begin
+      Text := aCommandLine;
+    end;
+    FCommandLine := TCommandLine.Create;
+    FCommandLine.Process(FParams);
+    {$IFDEF FPC} {$IFDEF PLUGINS}
+    if SevenZipPlugin(FCommandLine.ArchiveName) then
+      FApp := TSevenZipApp.Create(FParams)
+    else
+    {$ENDIF} {$ENDIF}
+      FApp := TCoreApp.Create(FParams);
+    FreeAndNil(FCommandLine);
+  end;
+
+  destructor TCore.Destroy;
+  begin
+    FApp.Destroy;
+    FParams.Destroy;
+    inherited Destroy;
+  end;
+
+  procedure TCore.Execute;
+  begin
+    FApp.FStatus := csExecuting;
+    begin
+      FApp.Execute;
+    end;
+    FApp.FStatus := csTerminated;
+  end;
+
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  Library routines ...                                                    //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
+
+  function CoreLibVersion: integer;
+  begin
+    Result := 103;
+  end;
+
+  procedure CoreFreePChar(P: PChar);
+  begin
+    if P <> nil then
+    begin
+      StrDispose(P);
+      // P := nil;
+    end;
+  end;
+
+  procedure CoreFreePFileInfo(P: PFileInfo);
+  begin
+    if P <> nil then
+    begin
+      if P^.FileName <> nil then StrDispose(P^.FileName);
+      if P^.FilePath <> nil then StrDispose(P^.FilePath);
+      // FreeMem(P);
+      // P := nil;
+    end;
+  end;
+
+  procedure CoreFreePFileInfoExtra(P: PFileInfoExtra);
+  begin
+    if P <> nil then
+    begin
+      if P^.FileName <> nil then StrDispose(P^.FileName);
+      if P^.FilePath <> nil then StrDispose(P^.FilePath);
+      if P^.FileComm <> nil then StrDispose(P^.FileComm);
+      if P^.FileMethod <> nil then StrDispose(P^.FileMethod);
+      if P^.FileVersion  <> nil then StrDispose(P^.FileVersion);
+      if P^.FilePassword <> nil then StrDispose(P^.FilePassword);
+      // FreeMem(P);
+      // P := nil;
+    end;
+  end;
+
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  Library core routines ...                                               //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
+
+  function CoreCreate(aCommandLine: PChar): boolean;
+  begin
+    Result := (Core = nil);
+    if Result then
+    begin
+      Core := TCore.Create(PCharToString(aCommandLine));
+    end;
+  end;
+
+  function CoreDestroy: boolean;
+  begin
+    Result := (Core <> nil);
+    if Result then
+    begin
+      FreeAndNil(Core);
+    end;
+  end;
+
+  function CoreExecute: boolean;
+  begin
+    Result := (Core <> nil) and (Core.FApp.FStatus = csReady);
+    if Result then
+    begin
+      Core.Resume;
+    end;
+  end;
+
+  function CoreSuspend(aValue: boolean): boolean;
+  begin
+    Result := (Core <> nil);
+    if Result then
+    begin
+      Core.FApp.Suspended := aValue;
+    end;
+  end;
+
+  function CoreTerminate: boolean;
+  begin
+    Result := (Core <> nil);
+    if Result then
+    begin
+      Core.FApp.Terminated := True;
+      if Core.FApp.FStatus <> csTerminated then
+      begin
+        Core.FApp.FStatus := csExecuting;
+      end;
+    end;
+  end;
+
+  // ---
+
+  function CorePriority(aValue: integer): integer;
+  begin
+    if Core <> nil then
+    begin
+      case aValue of
+        cpIdle:         Core.Priority := tpIdle;
+        cpLowest:       Core.Priority := tpLowest;
+        cpLower:        Core.Priority := tpLower;
+        cpNormal:       Core.Priority := tpNormal;
+        cpHigher:       Core.Priority := tpHigher;
+        cpHighest:      Core.Priority := tpHighest;
+        cpTimeCritical: Core.Priority := tpTimeCritical;
+      end;
+
+      case Core.Priority of
+        tpIdle:         Result :=  cpIdle;
+        tpLowest:       Result :=  cpLowest;
+        tpLower:        Result :=  cpLower;
+        tpNormal:       Result :=  cpNormal;
+        tpHigher:       Result :=  cpHigher;
+        tpHighest:      Result :=  cpHighest;
+        tpTimeCritical: Result :=  cpTimeCritical;
+        else            Result :=  cpUnknow;
+      end
+    end else
+      Result :=  cpUnknow;
+  end;
+
+  // ---
+
+  function CoreGetSpeed: integer;
+  begin
+    if (Core <> nil) then
+      Result := Core.FApp.Speed
+    else
+      Result := -1;
+  end;
+
+  function CoreGetMessage(All: boolean): PChar;
+  begin
+    if (Core <> nil) then
+    begin
+      if All = False then
+        Result := StringToPChar(Core.FApp.FMessage)
+      else
+        Result := StringToPChar(Core.FApp.FMessages.Text)
+    end else
+      Result := nil;
+  end;
+
+  function CoreGetPercentes: integer;
+  begin
+    if (Core <> nil) then
+      Result := Core.FApp.Percentes
+    else
+      Result := -1;
+  end;
+
+  function CoreGetTime(All: boolean): integer;
+  begin
+    if (Core <> nil) then
+    begin
+      if All = False then
+        Result := Core.FApp.Time
+      else
+        Result := Core.FApp.TotalTime;
+    end else
+      Result := -1;
+  end;
+
+  function CoreGetSize(All: boolean): int64;
+  begin
+    if (Core <> nil) then
+    begin
+      if All = False then
+        Result := Core.FApp.Size
+      else
+        Result := Core.FApp.TotalSize
+    end else
+      Result := -1;
+  end;
+
+  function CoreGetCode: integer;
+  begin
+    if (Core <> nil) then
+      Result := Core.FApp.Code
+    else
+      Result := ccUnknow;
+  end;
+
+  function CoreGetStatus: integer;
+  begin
+    if (Core <> nil) then
+      Result := Core.FApp.FStatus
+    else
+      Result := csUnknow;
+  end;
+
+  // ---
+
+  function CoreRequest(aValue: PChar): PChar;
+  begin
+    if (Core <> nil) then
+    begin
+      if aValue <> nil then
+      begin
+        Core.FApp.FMessage := PCharToString(aValue);
+        Core.FApp.FStatus  := csExecuting;
+      end else
+        Result := StringToPChar(Core.FApp.FMessage);
+    end else
+      Result := nil;
+  end;
+
+  // ---
+
+  function CoreGetItem: PFileInfo;
+  begin
+    if (Core <> nil) and (Core.FApp.FItems.Count > 0) then
+    begin
+      with Core.FApp do
+      begin
+        Result := FItems[FItems.Count -1];
+      end;
+    end else
+      Result := nil;
+  end;
+
+  function CoreGetItems(aIndex: integer): PFileInfoExtra;
+  begin
+    if (Core <> nil) then
+    begin
+      if aIndex in [0.. Core.FApp.FItems.Count -1] then
+        Result := Core.FApp.FItems[aIndex]
+      else
+        Result := nil;
+    end else
+      Result := nil;
+  end;
 
 end.

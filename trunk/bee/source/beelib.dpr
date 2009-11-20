@@ -56,32 +56,26 @@ exports
   CoreCreate,
   CoreDestroy,
   CoreExecute,
-  CoreSuspended,
+  CoreSuspend,
   CoreTerminate;
 
 exports
-  CoreGetPriority,
-  CoreSetPriority;
+  CorePriority;
 
 exports
   CoreGetSpeed,
-  CoreGetMessage,
-  CoreGetMessages,
   CoreGetPercentes,
-  CoreGetTotalTime,
-  CoreGetTotalSize,
+  CoreGetMessage,
   CoreGetTime,
   CoreGetSize,
   CoreGetCode,
   CoreGetStatus;
 
 exports
-  CoreGetRequestItem,
-  CoreGetRequest,
-  CoreSetRequest;
+  CoreRequest;
 
 exports
-  CoreGetItemsCount,
+  CoreGetItem,
   CoreGetItems;
 
 // -------------------------------------------------------------------------- //
