@@ -216,7 +216,7 @@ procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   I: boolean;
 begin
-  CanClose := (CoreGetStatus = csTerminated) or (CoreGetStatus = csUnknow);
+  CanClose := (CoreStatus = csTerminated) or (CoreStatus = csUnknow);
 
   if CanClose = False then
   begin
@@ -237,7 +237,7 @@ var
 begin
   FList := aList;
   FCommandLine := aCommandLine;
-  // ShowMessage(FCommandLine.Params.Text);
+
   P := StringToPChar(FCommandLine.Params.Text);
   CoreCreate(P);
   if CoreExecute then
@@ -258,7 +258,7 @@ end;
 
 function TTickFrm.GetFrmCanShow: boolean;
 begin
-  Result := CoreGetTime(False) > 0;
+  Result := CoreTime(-1) > 0;
 end;
 
 procedure TTickFrm.PopupClick(Sender: TObject);
@@ -268,7 +268,7 @@ begin
   Popup_Higher.Checked       := Sender = Popup_Higher;
   Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
 
-  if CoreGetStatus <> csTerminated then
+  if CoreStatus <> csTerminated then
   begin
     if Popup_Idle.Checked         then CorePriority(cpIdle);
     if Popup_Normal.Checked       then CorePriority(cpNormal);
@@ -324,15 +324,15 @@ var
   Status: integer;
 begin
   Timer.Enabled := False;
-  Status := CoreGetStatus;
+  Status := CoreStatus;
   case Status of
-    csTerminated: OnTerminate;
-    csExecuting: OnExecute;
-    csWaitingRename: OnRename;
-    csWaitingPassword: OnPassword;
+    csTerminated:       OnTerminate;
+    csExecuting:        OnExecute;
+    csWaitingRename:    OnRename;
+    csWaitingPassword:  OnPassword;
     csWaitingOverWrite: OnOverwrite;
   end;
-  Timer.Enabled := CoreGetStatus <> csUnknow;
+  Timer.Enabled := (CoreStatus <> csUnknow);
 end;
 
 procedure TTickFrm.OnExecute;
@@ -340,7 +340,7 @@ var
   I: int64;
   P: PChar;
 begin
-  I := CoreGetSize(True);
+  I := CoreSize(+1);
   if I < (1024) then
   begin
     GeneralSize.Caption     := IntToStr(I);
@@ -356,7 +356,7 @@ begin
       GeneralSizeUnit.Caption := 'MB';
     end;
 
-  I := CoreGetSize(False);
+  I := CoreSize(-1);
   if I < (1024) then
   begin
     ProcessedSize.Caption     := IntToStr(I);
@@ -372,7 +372,7 @@ begin
       ProcessedSizeUnit.Caption := 'MB';
     end;
 
-  Tick.Position := CoreGetPercentes;
+  Tick.Position := CorePercentes;
   if FSuspended = False then
     Caption := Format(rsProcessStatus, [Tick.Position])
   else
@@ -383,11 +383,11 @@ begin
     Application.Title := Caption;
   end;
 
-  Time.Caption          := TimeToStr(CoreGetTime(True));
-  RemainingTime.Caption := TimeToStr(CoreGetTime(False));
-  Speed.Caption         := IntToStr (CoreGetSpeed shr 10);
+  Time.Caption          := TimeToStr(CoreTime(+1));
+  RemainingTime.Caption := TimeToStr(CoreTime(-1));
+  Speed.Caption         := IntToStr (CoreSpeed shr 10);
 
-  P := CoreGetMessage(False);
+  P := CoreMessages(-1);
   if P <> nil then
   begin
     Msg.Caption := PCharToString(P);
@@ -398,8 +398,9 @@ end;
 procedure TTickFrm.OnTerminate;
 var
   P: PChar;
+  I: integer;
 begin
-  ExitCode := CoreGetCode;
+  ExitCode := CoreCode;
   case ExitCode of
     0: Caption := rsProcessTerminated;
     1: Caption := rsProcessTerminated;
@@ -415,11 +416,15 @@ begin
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
-    P := CoreGetMessage(True);
-    if P <> nil then
+    I := 0;
+    P := CoreMessages(I);
+    while P <> nil do
     begin
-      Report.Lines.Text := PCharToString(P);
+      Report.Lines.Add(PCharToString(P));
       CoreFreePChar(P);
+
+      Inc(I);
+      P := CoreMessages(I);
     end;
   end;
   OnList;
@@ -442,7 +447,7 @@ var
   P: PChar;
 begin
   P  := nil;
-  FI := CoreGetItem;
+  FI := CoreItems(-1);
   if FI <> nil then
   begin
     F := TRenameFrm.Create(Application);
@@ -462,8 +467,8 @@ begin
   begin
     CoreRequest(P);
     FreePChar(P);
-    FI := nil;
   end;
+  FI := nil;
 end;
 
 procedure TTickFrm.OnOverwrite;
@@ -473,7 +478,7 @@ var
   P: PChar;
 begin
   P  := nil;
-  FI := CoreGetItem;
+  FI := CoreItems(-1);
   if FI <> nil then
   begin
     F := TOverWriteFrm.Create(Application);
@@ -499,8 +504,8 @@ begin
   begin
     CoreRequest(P);
     FreePChar(P);
-    FI := nil;
   end;
+  FI := nil;
 end;
 
 procedure TTickFrm.OnPassword;
@@ -533,7 +538,7 @@ begin
   if Assigned(FList) then
   begin
     I := 0;
-    P := CoreGetItems(I);
+    P := CoreItems(I);
     while P <> nil do
     begin
       Node := TArchiveItem.Create;
@@ -555,7 +560,7 @@ begin
         FList.Add(Node);
       end;
       Inc(I);
-      P := CoreGetItems(I);
+      P := CoreItems(I);
     end;
   end;
  end;
@@ -568,7 +573,7 @@ begin
 
 procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
 begin
-  if (CoreGetStatus <> csTerminated) then
+  if (CoreStatus <> csTerminated) then
   begin
     FSuspended := not FSuspended;
     if FSuspended then
