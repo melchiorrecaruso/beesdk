@@ -45,38 +45,32 @@ uses
 // -------------------------------------------------------------------------- //
 
 exports
-  CoreLibVersion;
-
-exports
-  CoreFreePChar,
-  CoreFreePFileInfo,
-  CoreFreePFileInfoExtra;
+  LibVersion;
 
 exports
   CoreCreate,
   CoreDestroy,
   CoreExecute,
   CoreSuspend,
+  CorePriority,
   CoreTerminate;
 
 exports
-  CorePriority;
+  CorePercentes,
+  CoreSpeed,
+  CoreSize,
+  CoreTime,
+
+  CoreRequest,
+  CoreMessages,
+  CoreStatus,
+  CoreCode;
 
 exports
-  CoreGetSpeed,
-  CoreGetPercentes,
-  CoreGetMessage,
-  CoreGetTime,
-  CoreGetSize,
-  CoreGetCode,
-  CoreGetStatus;
+  CoreItems;
 
 exports
-  CoreRequest;
-
-exports
-  CoreGetItem,
-  CoreGetItems;
+  CoreFreePChar;
 
 // -------------------------------------------------------------------------- //
 //                                                                            //

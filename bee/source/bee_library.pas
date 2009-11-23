@@ -45,11 +45,11 @@ uses
   Bee_CommandLine;
 
 //  Library routines ...
-function  CoreLibVersion: integer;
+function  LibVersion: integer;
 // ---
 procedure CoreFreePChar(P: PChar);
-procedure CoreFreePFileInfo(P: PFileInfo);
-procedure CoreFreePFileInfoExtra(P: PFileInfoExtra);
+procedure CoreFreePFileInfo(P: Pointer);
+procedure CoreFreePFileInfoExtra(P: Pointer);
 
 //  Library core routines ...
 function CoreCreate(aCommandLine: PChar): boolean;
@@ -60,17 +60,16 @@ function CorePriority(aValue: integer): integer;
 function CoreSuspend(aValue: boolean): boolean;
 // ---
 function CoreRequest(aValue: PChar): PChar;
-function CoreGetMessage(all: boolean): PChar;
-function CoreGetTime(all: boolean): integer;
-function CoreGetSize(all: boolean): int64;
+function CoreMessages(aIndex: integer): PChar;
+function CoreTime(aValue: integer): integer;
+function CoreSize(aValue: integer): int64;
 
-function CoreGetSpeed: integer;
-function CoreGetPercentes: integer;
-function CoreGetStatus: integer;
-function CoreGetCode: integer;
+function CoreSpeed: integer;
+function CorePercentes: integer;
+function CoreStatus: integer;
+function CoreCode: integer;
 // ---
-function CoreGetItem: PFileInfo;
-function CoreGetItems(aIndex: integer): PFileInfoExtra;
+function CoreItems(aIndex: integer): Pointer;
 
 implementation
 
@@ -308,7 +307,7 @@ var
   //                                                                          //
   // ------------------------------------------------------------------------ //
 
-  function CoreLibVersion: integer;
+  function LibVersion: integer;
   begin
     Result := 103;
   end;
@@ -318,34 +317,31 @@ var
     if P <> nil then
     begin
       StrDispose(P);
-      // P := nil;
     end;
   end;
 
-  procedure CoreFreePFileInfo(P: PFileInfo);
+  procedure CoreFreePFileInfo(P: Pointer);
   begin
     if P <> nil then
-    begin
-      if P^.FileName <> nil then StrDispose(P^.FileName);
-      if P^.FilePath <> nil then StrDispose(P^.FilePath);
-      // FreeMem(P);
-      // P := nil;
-    end;
+      with TFileInfo(P^) do
+      begin
+        if FileName <> nil then StrDispose(FileName);
+        if FilePath <> nil then StrDispose(FilePath);
+      end;
   end;
 
-  procedure CoreFreePFileInfoExtra(P: PFileInfoExtra);
+  procedure CoreFreePFileInfoExtra(P: Pointer);
   begin
     if P <> nil then
-    begin
-      if P^.FileName <> nil then StrDispose(P^.FileName);
-      if P^.FilePath <> nil then StrDispose(P^.FilePath);
-      if P^.FileComm <> nil then StrDispose(P^.FileComm);
-      if P^.FileMethod <> nil then StrDispose(P^.FileMethod);
-      if P^.FileVersion  <> nil then StrDispose(P^.FileVersion);
-      if P^.FilePassword <> nil then StrDispose(P^.FilePassword);
-      // FreeMem(P);
-      // P := nil;
-    end;
+      with TFileInfoExtra(P^) do
+      begin
+        if FileName     <> nil then StrDispose(FileName);
+        if FilePath     <> nil then StrDispose(FilePath);
+        if FileComm     <> nil then StrDispose(FileComm);
+        if FileMethod   <> nil then StrDispose(FileMethod);
+        if FileVersion  <> nil then StrDispose(FileVersion);
+        if FilePassword <> nil then StrDispose(FilePassword);
+      end;
   end;
 
   // ------------------------------------------------------------------------ //
@@ -435,7 +431,7 @@ var
 
   // ---
 
-  function CoreGetSpeed: integer;
+  function CoreSpeed: integer;
   begin
     if (Core <> nil) then
       Result := Core.FApp.Speed
@@ -443,19 +439,23 @@ var
       Result := -1;
   end;
 
-  function CoreGetMessage(All: boolean): PChar;
+  function CoreMessages(aIndex: integer): PChar;
   begin
     if (Core <> nil) then
     begin
-      if All = False then
+      if aIndex < 0 then
         Result := StringToPChar(Core.FApp.FMessage)
       else
-        Result := StringToPChar(Core.FApp.FMessages.Text)
-    end else
-      Result := nil;
+      begin
+        if aIndex < Core.FApp.FMessages.Count then
+          Result := StringToPChar(Core.FApp.FMessages[aIndex])
+        else
+          Result := nil;
+      end;
+    end;
   end;
 
-  function CoreGetPercentes: integer;
+  function CorePercentes: integer;
   begin
     if (Core <> nil) then
       Result := Core.FApp.Percentes
@@ -463,31 +463,33 @@ var
       Result := -1;
   end;
 
-  function CoreGetTime(All: boolean): integer;
+  function CoreTime(aValue: integer): integer;
   begin
     if (Core <> nil) then
     begin
-      if All = False then
-        Result := Core.FApp.Time
-      else
-        Result := Core.FApp.TotalTime;
+      case aValue of
+       -1: Result := Core.FApp.Time;
+       +1: Result := Core.FApp.TotalTime;
+      else Result := -1;
+      end;
     end else
       Result := -1;
   end;
 
-  function CoreGetSize(All: boolean): int64;
+  function CoreSize(aValue: integer): int64;
   begin
     if (Core <> nil) then
     begin
-      if All = False then
-        Result := Core.FApp.Size
-      else
-        Result := Core.FApp.TotalSize
+      case aValue of
+       -1: Result := Core.FApp.Size;
+       +1: Result := Core.FApp.TotalSize;
+      else Result := -1;
+      end;
     end else
       Result := -1;
   end;
 
-  function CoreGetCode: integer;
+  function CoreCode: integer;
   begin
     if (Core <> nil) then
       Result := Core.FApp.Code
@@ -495,7 +497,7 @@ var
       Result := ccUnknow;
   end;
 
-  function CoreGetStatus: integer;
+  function CoreStatus: integer;
   begin
     if (Core <> nil) then
       Result := Core.FApp.FStatus
@@ -521,26 +523,19 @@ var
 
   // ---
 
-  function CoreGetItem: PFileInfo;
-  begin
-    if (Core <> nil) and (Core.FApp.FItems.Count > 0) then
-    begin
-      with Core.FApp do
-      begin
-        Result := FItems[FItems.Count -1];
-      end;
-    end else
-      Result := nil;
-  end;
-
-  function CoreGetItems(aIndex: integer): PFileInfoExtra;
+  function CoreItems(aIndex: integer): Pointer;
   begin
     if (Core <> nil) then
     begin
-      if aIndex in [0.. Core.FApp.FItems.Count -1] then
-        Result := Core.FApp.FItems[aIndex]
+      if aIndex < 0 then
+        Result := @Core.FApp.FItem
       else
-        Result := nil;
+      begin
+        if aIndex < Core.FApp.FItems.Count then
+          Result := Core.FApp.FItems[aIndex]
+        else
+          Result := nil;
+      end;
     end else
       Result := nil;
   end;

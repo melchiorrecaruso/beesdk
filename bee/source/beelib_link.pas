@@ -43,34 +43,29 @@ const
   cApplicationLib = 'beelib.so';
   {$ENDIF}
 
-function CoreLibVersion: integer; external cApplicationLib;
+function LibVersion: integer; external cApplicationLib;
 // ---
-procedure CoreFreePChar(P: PChar);                   external cApplicationLib;
-procedure CoreFreePFileInfo(P: PFileInfo);           external cApplicationLib;
-procedure CoreFreePFileInfoExtra(P: PFileInfoExtra); external cApplicationLib;
+function CreateCore(aCommandLine: PChar): boolean; external cApplicationLib;
+function CoreDestroy: boolean;                     external cApplicationLib;
+function CoreExecute: boolean;                     external cApplicationLib;
+function CoreSuspend(aValue: boolean): boolean;    external cApplicationLib;
+function CoreTerminate: boolean;                   external cApplicationLib;
+function CorePriority(aValue: integer): integer;   external cApplicationLib;
 // ---
-function CreateCore(aCommandLine: PChar): boolean;  external cApplicationLib;
-function CoreDestroy: boolean;                      external cApplicationLib;
-function CoreExecute: boolean;                      external cApplicationLib;
-function CoreSuspend(aValue: boolean): boolean;     external cApplicationLib;
-function CoreTerminate: boolean;                    external cApplicationLib;
-function CorePriority(aValue: integer): integer;    external cApplicationLib;
-// ---
-function CoreRequest(aValue: PChar): PChar;   external cApplicationLib;
-function CoreGetMessage(all: boolean): PChar; external cApplicationLib;
-function CoreGetTime(all: boolean): integer;  external cApplicationLib;
-function CoreGetSize(all: boolean): int64;    external cApplicationLib;
+function CoreRequest(aValue: PChar): PChar;    external cApplicationLib;
+function CoreGetMessages(all: boolean): PChar; external cApplicationLib;
+function CoreGetTime(all: boolean): integer;   external cApplicationLib;
+function CoreGetSize(all: boolean): int64;     external cApplicationLib;
 
-
-function CoreGetSpeed: integer;               external cApplicationLib;
+function CoreGetSpeed: integer;     external cApplicationLib;
 function CoreGetPercentes: integer; external cApplicationLib;
-
 
 function CoreGetCode: integer;      external cApplicationLib;
 function CoreGetStatus: integer;    external cApplicationLib;
 // ---
-function CoreGetItem: PFileInfo;                        external cApplicationLib;
-function CoreGetItems(aIndex: integer): PFileInfoExtra; external cApplicationLib;
+function CoreGetItems(aIndex: integer): Pointer; external cApplicationLib;
+// ---
+procedure CoreFreePChar(P: PChar); external cApplicationLib;
 
 implementation
 
