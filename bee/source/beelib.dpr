@@ -45,7 +45,7 @@ uses
 // -------------------------------------------------------------------------- //
 
 exports
-  LibVersion;
+  CoreLibVersion;
 
 exports
   CoreCreate,
