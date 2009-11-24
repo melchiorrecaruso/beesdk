@@ -30,11 +30,19 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
+<<<<<<< .mine
+    <Units Count="6">
+=======
     <Units Count="11">
+>>>>>>> .r1037
       <Unit0>
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
+<<<<<<< .mine
+        <CursorPos X="2" Y="30"/>
+        <TopLine Value="1"/>
+=======
 <<<<<<< .mine
         <CursorPos X="24" Y="71"/>
         <TopLine Value="33"/>
@@ -42,6 +50,7 @@
         <CursorPos X="14" Y="78"/>
         <TopLine Value="46"/>
 >>>>>>> .r1034
+>>>>>>> .r1037
         <EditorIndex Value="0"/>
         <UsageCount Value="72"/>
         <Loaded Value="True"/>
@@ -59,14 +68,29 @@
       <Unit2>
         <Filename Value="bee_library.pas"/>
         <UnitName Value="Bee_Library"/>
+<<<<<<< .mine
+        <CursorPos X="32" Y="229"/>
+        <TopLine Value="197"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="11"/>
+=======
         <CursorPos X="47" Y="315"/>
         <TopLine Value="1"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="13"/>
+>>>>>>> .r1037
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
+<<<<<<< .mine
+        <Filename Value="bee_app.pas"/>
+        <UnitName Value="Bee_App"/>
+        <CursorPos X="26" Y="126"/>
+        <TopLine Value="117"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="10"/>
+=======
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
         <CursorPos X="1" Y="56"/>
@@ -83,8 +107,19 @@
         <TopLine Value="35"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="12"/>
+>>>>>>> .r1037
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
+<<<<<<< .mine
+      </Unit3>
+      <Unit4>
+        <Filename Value="bee_commandline.pas"/>
+        <UnitName Value="Bee_CommandLine"/>
+        <CursorPos X="3" Y="39"/>
+        <TopLine Value="39"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+=======
       </Unit4>
       <Unit5>
         <Filename Value="bee_interface.pas"/>
@@ -93,8 +128,16 @@
         <TopLine Value="238"/>
         <EditorIndex Value="6"/>
         <UsageCount Value="12"/>
+>>>>>>> .r1037
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
+<<<<<<< .mine
+      </Unit4>
+      <Unit5>
+        <Filename Value="bee_consts.pas"/>
+        <UnitName Value="Bee_Consts"/>
+        <CursorPos X="1" Y="1"/>
+=======
       </Unit5>
       <Unit6>
         <Filename Value="beelib_plugins.pas"/>
@@ -119,8 +162,9 @@
       <Unit8>
         <Filename Value="beelib.include\compiler.inc"/>
         <CursorPos X="18" Y="34"/>
+>>>>>>> .r1037
         <TopLine Value="1"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="4"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit8>
@@ -133,6 +177,9 @@
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
+<<<<<<< .mine
+      </Unit5>
+=======
       </Unit9>
       <Unit10>
         <Filename Value="beelib_link.pas"/>
@@ -144,40 +191,83 @@
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
       </Unit10>
+>>>>>>> .r1037
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="8" HistoryIndex="7">
       <Position1>
+<<<<<<< .mine
+        <Filename Value="bee_library.pas"/>
+        <Caret Line="36" Column="12" TopLine="31"/>
+=======
         <Filename Value="bee_library.pas"/>
         <Caret Line="246" Column="32" TopLine="231"/>
+>>>>>>> .r1037
       </Position1>
       <Position2>
+<<<<<<< .mine
+        <Filename Value="bee_library.pas"/>
+        <Caret Line="230" Column="23" TopLine="210"/>
+=======
         <Filename Value="bee_library.pas"/>
         <Caret Line="129" Column="47" TopLine="103"/>
+>>>>>>> .r1037
       </Position2>
       <Position3>
+<<<<<<< .mine
+        <Filename Value="bee_library.pas"/>
+        <Caret Line="235" Column="11" TopLine="222"/>
+=======
         <Filename Value="bee_library.pas"/>
         <Caret Line="684" Column="1" TopLine="646"/>
+>>>>>>> .r1037
       </Position3>
       <Position4>
+<<<<<<< .mine
+        <Filename Value="bee_library.pas"/>
+        <Caret Line="214" Column="3" TopLine="198"/>
+=======
         <Filename Value="bee_library.pas"/>
         <Caret Line="691" Column="17" TopLine="652"/>
+>>>>>>> .r1037
       </Position4>
       <Position5>
+<<<<<<< .mine
+        <Filename Value="bee_library.pas"/>
+        <Caret Line="45" Column="18" TopLine="31"/>
+=======
         <Filename Value="bee_library.pas"/>
         <Caret Line="99" Column="38" TopLine="79"/>
+>>>>>>> .r1037
       </Position5>
       <Position6>
+<<<<<<< .mine
+        <Filename Value="bee_library.pas"/>
+        <Caret Line="236" Column="3" TopLine="1"/>
+=======
         <Filename Value="bee_library.pas"/>
         <Caret Line="654" Column="13" TopLine="625"/>
+>>>>>>> .r1037
       </Position6>
       <Position7>
+<<<<<<< .mine
+        <Filename Value="bee_library.pas"/>
+        <Caret Line="231" Column="26" TopLine="225"/>
+=======
         <Filename Value="bee_library.pas"/>
         <Caret Line="667" Column="13" TopLine="638"/>
+>>>>>>> .r1037
       </Position7>
       <Position8>
+<<<<<<< .mine
+        <Filename Value="beelib.dpr"/>
+        <Caret Line="33" Column="23" TopLine="1"/>
+=======
         <Filename Value="bee_library.pas"/>
         <Caret Line="694" Column="13" TopLine="665"/>
+>>>>>>> .r1037
       </Position8>
+<<<<<<< .mine
+=======
       <Position9>
         <Filename Value="beelib.dpr"/>
         <Caret Line="63" Column="30" TopLine="45"/>
@@ -266,13 +356,19 @@
         <Filename Value="bee_library.pas"/>
         <Caret Line="48" Column="11" TopLine="39"/>
       </Position30>
+>>>>>>> .r1037
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="8"/>
     <PathDelim Value="\"/>
     <SearchPaths>
+<<<<<<< .mine
       <IncludeFiles Value="beelib.include\"/>
+      <OtherUnitFiles Value="packages\;..\..\bee\source\;..\..\beegui\source\packages\"/>
+=======
+      <IncludeFiles Value="beelib.include\"/>
+>>>>>>> .r1037
       <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
     <Parsing>
