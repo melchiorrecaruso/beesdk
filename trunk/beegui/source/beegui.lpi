@@ -295,7 +295,7 @@
         <Filename Value="packages\beegui_consts.pas"/>
         <UnitName Value="BeeGui_Consts"/>
         <CursorPos X="52" Y="36"/>
-        <TopLine Value="21"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="1"/>
         <UsageCount Value="19"/>
         <Loaded Value="True"/>
