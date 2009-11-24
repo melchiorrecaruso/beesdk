@@ -45,7 +45,7 @@ uses
   Bee_CommandLine;
 
 //  Library routines ...
-function  LibVersion: integer;
+function  CoreLibVersion: integer;
 // ---
 procedure CoreFreePChar(P: PChar);
 procedure CoreFreePFileInfo(P: Pointer);
@@ -307,7 +307,7 @@ var
   //                                                                          //
   // ------------------------------------------------------------------------ //
 
-  function LibVersion: integer;
+  function CoreLibVersion: integer;
   begin
     Result := 103;
   end;

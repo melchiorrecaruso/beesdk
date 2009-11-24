@@ -12,7 +12,7 @@ object AboutFrm: TAboutFrm
   ClientWidth = 273
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '0.9.27'
+  LCLVersion = '0.9.29'
   object Logo: TImage
     AnchorSideLeft.Control = Copyright
     AnchorSideTop.Control = Owner

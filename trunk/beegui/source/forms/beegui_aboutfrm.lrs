@@ -5,7 +5,7 @@ LazarusResources.Add('TAboutFrm','FORMDATA',[
   +#5'Width'#3#17#1#13'ActiveControl'#7#5'BtnOk'#8'AutoSize'#9#11'BorderIcons'
   +#11#12'biSystemMenu'#10'biMinimize'#0#11'BorderStyle'#7#8'bsSingle'#7'Captio'
   +'n'#6#11'About to...'#12'ClientHeight'#3#184#0#11'ClientWidth'#3#17#1#7'OnCl'
-  +'ose'#7#9'FormClose'#8'OnCreate'#7#10'FormCreate'#10'LCLVersion'#6#6'0.9.27'
+  +'ose'#7#9'FormClose'#8'OnCreate'#7#10'FormCreate'#10'LCLVersion'#6#6'0.9.29'
   +#0#6'TImage'#4'Logo'#22'AnchorSideLeft.Control'#7#9'Copyright'#21'AnchorSide'
   +'Top.Control'#7#5'Owner'#23'AnchorSideRight.Control'#7#9'Copyright'#20'Ancho'
   +'rSideRight.Side'#7#9'asrBottom'#4'Left'#2#6#6'Height'#2'@'#3'Top'#2#6#5'Wid'
