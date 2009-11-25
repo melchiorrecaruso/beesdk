@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1075 - 2009.11.15 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2009.11.25 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -35,6 +35,7 @@ interface
 
 uses
   Classes,
+  // ---
   Bee_Types;
 
 type
@@ -69,6 +70,7 @@ type
     FCode: byte;
   protected
     function GetSpeed: longint;
+    function GetBit4Byte: byte;
     function GetPercentes: longint;
     function GetTotalTime: longint;
     function GetTime: longint;
@@ -85,9 +87,9 @@ type
     procedure DoWarning(const aMessage: string; aCode: byte);
     procedure DoRequest(const aMessage: string);
     procedure DoMessage(const aMessage: string);
-    function  DoOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
-    function  DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
-    function  DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+    function DoOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
+    function DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
+    function DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure DoProgress;
     procedure DoClearLine;
@@ -102,6 +104,7 @@ type
     property Time: longint read GetTime;
     property Size: int64 read FSize;
     property Percentes: longint read GetPercentes;
+    property Bit4Byte: byte read GetBit4Byte;
     property Speed: longint read GetSpeed;
     property Terminated: boolean read FTerminated write FTerminated;
     property Suspended: boolean read FSuspended  write SetSuspended;
@@ -158,6 +161,12 @@ uses
       Result := 0;
   end;
 
+  function TApp.GetBit4Byte: byte;
+  begin
+    Result := 0;
+    { TODO :  }
+  end;
+
   function TApp.GetPercentes: longint;
   begin
     if FTotalSize > 0 then
@@ -208,9 +217,13 @@ uses
 
   procedure TApp.SetPriority(aPriority: byte);
   begin
-    {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
+    {$IFDEF CONSOLEAPPLICATION}
+    {$IFDEF MSWINDOWS}
     Bee_Common.SetPriority(aPriority);
-    {$ENDIF} {$ENDIF}
+    {$ENDIF}
+    {$ELSE}
+    { TODO :  }
+    {$ENDIF}
   end;
 
   procedure TApp.IncSize(const aValue: int64);

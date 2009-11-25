@@ -1,6 +1,6 @@
 {
   Copyright (c) 2003 Evgeny Shelwien;
-  Copyright (c) 2003-2008 Andrew Filinsky
+  Copyright (c) 2003-2009 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
     It uses MulDiv opcode extension.
 
   (C) 2003 Evgeny Shelwien;
-  (C) 2003-2007 Andrew Filinsky.
+  (C) 2003-2009 Andrew Filinsky.
   Created:
 
   v0.1.0 build 0001 - 2003.02.01 by Evgeny Shelwien.
@@ -42,7 +42,7 @@
   v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+  v0.8.0 build 1100 - 2009.11.25 by Melchiorre Caruso.
 }
 
 unit Bee_RangeCoder;
@@ -79,23 +79,23 @@ type
     procedure OutputByte(aValue: longword);
   private
     FStream: TStream;
-    Range:   longword;
-    Low:     longword;
-    Code:    longword;
-    Carry:   longword;
-    Cache:   longword;
-    FFNum:   longword;
+    Range: longword;
+    Low: longword;
+    Code: longword;
+    Carry: longword;
+    Cache: longword;
+    FFNum: longword;
   end;
 
 implementation
 
-/// TRangeCoder...
+  /// TRangeCoder...
 
-constructor TRangeCoder.Create(aStream: TStream);
-begin
-  inherited Create;
-  FStream := aStream;
-end;
+  constructor TRangeCoder.Create(aStream: TStream);
+  begin
+    inherited Create;
+    FStream := aStream;
+  end;
 
 procedure TRangeCoder.StartEncode;
 begin
