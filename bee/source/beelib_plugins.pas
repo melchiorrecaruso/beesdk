@@ -55,7 +55,7 @@ type
 type
   TSevenZipApp = class(TApp)
   private
-    FCommandLine: TCommandLine;
+    FCommandLine:   TCommandLine;
     FMemOutputProc: TProcessOutput;
   private
     procedure ProcessListOutput(FOutput: TStringList);
@@ -90,9 +90,9 @@ const
   SevenZipMethodMark   = 'Method = ';
   SevenZipBlockMark    = 'Block = ';
 
-  SevenZipListMark     = 'Listing archive: ';
-  SevenZipCommentMark  = 'Comment = ';
-  SevenZipErrorMark    = 'Error: ';
+  SevenZipListMark    = 'Listing archive: ';
+  SevenZipCommentMark = 'Comment = ';
+  SevenZipErrorMark   = 'Error: ';
 
 /// SevenZipPlungin function
 
@@ -188,14 +188,15 @@ begin
     begin
       Result := Result + ' "' + FCommandLine.FileMasks[I] + '"';
     end;
-  end else
+  end
+  else
     Result := '';
 end;
 
 procedure TSevenZipApp.Execute;
 var
-  Count:       integer;
-  BytesRead:     int64;
+  Count:      integer;
+  BytesRead:  int64;
   FProcess:   TProcess;
   FCommandLine: string;
   FMemOutput: TMemoryStream;
@@ -208,7 +209,7 @@ begin
     FMemOutput := TMemoryStream.Create;
     FProcess   := TProcess.Create(nil);
     FProcess.CommandLine := FCommandLine;
-    FProcess.Options     := [poNoConsole, poUsePipes];
+    FProcess.Options := [poNoConsole, poUsePipes];
 
     BytesRead := 0;
     FProcess.Execute;
@@ -250,7 +251,8 @@ begin
   end;
 
   if FCode = ccSuccesful then
-    ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds')
+    ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) +
+      ' seconds')
   else
     ProcessMessage(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds');
 
@@ -259,7 +261,7 @@ end;
 
 procedure TSevenZipApp.ProcessListOutput(FOutput: TStringList);
 var
-  I: integer;
+  I:  integer;
   ItemStr: string;
   ItemStrSwap: string;
   FI: TFileInfoExtra;
@@ -278,7 +280,7 @@ begin
     // List archive
     if FileNamePos(SevenZipListMark, ItemStr) = 1 then
     begin
-      ProcessMessage(msgOpening  + FCommandLine.ArchiveName);
+      ProcessMessage(msgOpening + FCommandLine.ArchiveName);
       ProcessMessage(msgScanning + '...');
     end
     else
@@ -377,13 +379,19 @@ begin
         begin
           Delete(ItemStr, 1, Length(SevenZipAttrMark));
 
-          if Pos('D', ItemStr) > 0 then FI.FileAttr := FI.FileAttr or faDirectory;
-          if Pos('R', ItemStr) > 0 then FI.FileAttr := FI.FileAttr or faReadOnly;
-          if Pos('H', ItemStr) > 0 then FI.FileAttr := FI.FileAttr or faHidden;
-          if Pos('S', ItemStr) > 0 then FI.FileAttr := FI.FileAttr or faSysFile;
-          if Pos('A', ItemStr) > 0 then FI.FileAttr := FI.FileAttr or faArchive;
+          if Pos('D', ItemStr) > 0 then
+            FI.FileAttr := FI.FileAttr or faDirectory;
+          if Pos('R', ItemStr) > 0 then
+            FI.FileAttr := FI.FileAttr or faReadOnly;
+          if Pos('H', ItemStr) > 0 then
+            FI.FileAttr := FI.FileAttr or faHidden;
+          if Pos('S', ItemStr) > 0 then
+            FI.FileAttr := FI.FileAttr or faSysFile;
+          if Pos('A', ItemStr) > 0 then
+            FI.FileAttr := FI.FileAttr or faArchive;
 
-        end else
+        end
+        else
         // File Password
         if FileNamePos(SevenZipPasswordMark, ItemStr) = 1 then
         begin
@@ -416,7 +424,8 @@ begin
         begin
           ProcessFatalError(ItemStr, 255);
           Break;
-        end else
+        end
+        else
         // Next -->
         if FileNamePos(SevenZipPathMark, ItemStr) = 1 then
         begin

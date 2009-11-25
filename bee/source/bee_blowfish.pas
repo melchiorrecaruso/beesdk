@@ -287,14 +287,19 @@ var
   Data, Datal, Datar: longword;
 begin
   { Initialize first the P-array }
-  for i := 1 to 18 do P[i] := PArray[i];
+  for i := 1 to 18 do
+    P[i] := PArray[i];
   { and then the four S-boxes, in order, with a fixed random string.
     This string consists of the hexadecimal digits of Pi.
   }
-  for j := 0 to 255 do S[1, j] := SBox1[j];
-  for j := 0 to 255 do S[2, j] := SBox2[j];
-  for j := 0 to 255 do S[3, j] := SBox3[j];
-  for j := 0 to 255 do S[4, j] := SBox4[j];
+  for j := 0 to 255 do
+    S[1, j] := SBox1[j];
+  for j := 0 to 255 do
+    S[2, j] := SBox2[j];
+  for j := 0 to 255 do
+    S[3, j] := SBox3[j];
+  for j := 0 to 255 do
+    S[4, j] := SBox4[j];
   { XOR P1 with the first 32 bits of the key, XOR P2 with the second 32
     bits of the key, and so on for all bits of the key (up to P18). Cycle
     throught the key bits repeatedly until the entire P-array has been
@@ -442,8 +447,8 @@ end;
 
 function TBlowFish.Encode(var aData; Count: longword): longword;
 var
-  Data: array [0..MaxInt -1] of byte absolute aData;
-  I: longword;
+  Data: array [0..MaxInt - 1] of byte absolute aData;
+  I:    longword;
 begin
   Result := Count mod 8;
   if Result = 0 then
@@ -461,8 +466,8 @@ end;
 
 function TBlowFish.Decode(var aData; Count: longword): longword;
 var
-  Data: array [0..MaxInt -1] of byte absolute aData;
-  I: longword;
+  Data: array [0..MaxInt - 1] of byte absolute aData;
+  I:    longword;
 begin
   Result := Count mod 8;
   if Result = 0 then

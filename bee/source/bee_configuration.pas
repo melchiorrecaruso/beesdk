@@ -47,7 +47,7 @@ type
 
   TTable = packed record
     Level: longword;
-    T: array [0..TableCols - 1] of TTableCol;
+    T:     array [0..TableCols - 1] of TTableCol;
   end;
 
   TTableParameters = array [1..SizeOf(TTable) div 4] of byte;
@@ -94,7 +94,8 @@ destructor TConfiguration.Destroy;
 var
   I: longint;
 begin
-  for I := 0 to Count -1 do Objects[I].Free;
+  for I := 0 to Count - 1 do
+    Objects[I].Free;
   inherited Destroy;
 end;
 
@@ -102,7 +103,7 @@ procedure TConfiguration.LoadFromFile(const FileName: string);
 var
   S, aName, aValue: string;
   List: TStringList;
-  I: longint;
+  I:    longint;
 begin
   List := TStringList.Create;
   List.LoadFromFile(FileName);
@@ -114,10 +115,10 @@ begin
     if (S > '') and (S[1] = '\') then
       Selector(S)
     else
-      if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
-        CurrentSection.Add(S)
-      else
-        CurrentSection.Values[aName] := aValue;
+    if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
+      CurrentSection.Add(S)
+    else
+      CurrentSection.Values[aName] := aValue;
   end;
 
   Selector('\main');
@@ -127,7 +128,7 @@ end;
 procedure TConfiguration.SaveToFile(const FileName: string);
 var
   List: TStringList;
-  I: longint;
+  I:    longint;
 begin
   List := TStringList.Create;
 
@@ -171,7 +172,8 @@ begin
   begin
     CurrentSection := TConfigSection.Create;
     Objects[Add(Name + '=yes')] := CurrentSection;
-  end else
+  end
+  else
     CurrentSection := TConfigSection(Objects[Index]);
 end;
 
@@ -199,8 +201,11 @@ var
 begin
   S      := Values[Ext];
   Result := GetData(Ext, T, SizeOf(T));
-  if not Result then Result := (S = '') and (CompareText(Ext, '.Default') <> 0) and GetTable('.Default', T);
-  if not Result then Result := (S > '') and (IndexOfName(S) >= 0) and (IndexOfName(S) < IndexOfName(Ext)) and GetTable(S, T);
+  if not Result then
+    Result := (S = '') and (CompareText(Ext, '.Default') <> 0) and GetTable('.Default', T);
+  if not Result then
+    Result := (S > '') and (IndexOfName(S) >= 0) and (IndexOfName(S) < IndexOfName(Ext)) and
+      GetTable(S, T);
 end;
 
 procedure TConfigSection.PutData(const Name: string; var Data; aCount: longint);

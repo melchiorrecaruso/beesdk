@@ -82,8 +82,10 @@ function IncludeTrailingBackSlash(const DirName: string): string;
 function ExcludeTrailingBackSlash(const DirName: string): string;
 
 function FileNameUseWildcards(const FileName: string): boolean;
-function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean; overload;
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean; overload;
+function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean;
+  overload;
+function FileNameMatch(const FileName: string; Masks: TStringList;
+  Recursive: boolean): boolean; overload;
 
 procedure ExpandMask(const Mask: string; Masks: TStringList; Recursive: boolean);
 
@@ -354,13 +356,14 @@ begin
     Result := False;
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean;
+function FileNameMatch(const FileName: string; Masks: TStringList;
+  Recursive: boolean): boolean;
 var
   I: longint;
 begin
   Result := False;
   if Assigned(Masks) and (Masks.Count > 0) then
-    for I := 0 to Masks.Count -1 do
+    for I := 0 to Masks.Count - 1 do
       if FileNameMatch(FileName, Masks.Strings[I], Recursive) then
       begin
         Result := True;
@@ -381,29 +384,32 @@ end;
 
 procedure ExpandMask(const Mask: string; Masks: TStringList; Recursive: boolean);
 var
-  I: longint;
+  I:     longint;
   Error: longint;
-  Rec: TSearchRec;
-  Card: boolean;
+  Rec:   TSearchRec;
+  Card:  boolean;
   LastSlash: longint;
   FirstSlash: longint;
   FolderName: string;
   FolderPath: string;
 begin
-  Card := False;
+  Card      := False;
   LastSlash := 0;
   FirstSlash := 0;
   for I := 1 to Length(Mask) do
     if Card = False then
     begin
-      if Mask[I] in ['*', '?'] then Card := True;
-      if Mask[I] = PathDelim   then FirstSlash := I;
-    end else
+      if Mask[I] in ['*', '?'] then
+        Card := True;
       if Mask[I] = PathDelim then
-      begin
-        LastSlash := I;
-        Break;
-      end;
+        FirstSlash := I;
+    end
+    else
+    if Mask[I] = PathDelim then
+    begin
+      LastSlash := I;
+      Break;
+    end;
 
   if LastSlash > 0 then
   begin
@@ -415,13 +421,14 @@ begin
       if ((Rec.Attr and faDirectory) = faDirectory) and
         (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
         if FileNameMatch(Rec.Name, FolderName, Recursive) then
-          ExpandMask(FolderPath + Rec.Name + Copy(Mask,
-            LastSlash, (Length(Mask) + 1) - LastSlash),
+          ExpandMask(FolderPath + Rec.Name + Copy(Mask, LastSlash,
+            (Length(Mask) + 1) - LastSlash),
             Masks, Recursive);
       Error := FindNext(Rec);
     end;
     FindClose(Rec);
-  end else
+  end
+  else
     Masks.Add(Mask);
 end;
 
@@ -644,7 +651,7 @@ function GenerateAlternativeFileName(const FileName: string): string;
 var
   I: longint;
 begin
-  I := 0;
+  I      := 0;
   Result := FileName;
   while FileAge(Result) <> -1 do
   begin
@@ -671,13 +678,20 @@ end;
 function AttrToStr(Attr: longint): string;
 begin
   Result := 'RHSVDAL';
-  if Attr and faReadOnly  = 0 then Result[1] := '.';
-  if Attr and faHidden    = 0 then Result[2] := '.';
-  if Attr and faSysFile   = 0 then Result[3] := '.';
-  if Attr and faVolumeId  = 0 then Result[4] := '.';
-  if Attr and faDirectory = 0 then Result[5] := '.';
-  if Attr and faArchive   = 0 then Result[6] := '.';
-  if Attr and faSymLink   = 0 then Result[7] := '.';
+  if Attr and faReadOnly = 0 then
+    Result[1] := '.';
+  if Attr and faHidden = 0 then
+    Result[2] := '.';
+  if Attr and faSysFile = 0 then
+    Result[3] := '.';
+  if Attr and faVolumeId = 0 then
+    Result[4] := '.';
+  if Attr and faDirectory = 0 then
+    Result[5] := '.';
+  if Attr and faArchive = 0 then
+    Result[6] := '.';
+  if Attr and faSymLink = 0 then
+    Result[7] := '.';
 end;
 
 // hex routines ...
@@ -685,7 +699,7 @@ end;
 function Hex(const Data; Count: longint): string;
 var
   I, J: longint;
-  K: longword;
+  K:    longword;
 begin
   SetLength(Result, Count shl 1);
   J := 1;
@@ -784,6 +798,7 @@ begin
   Result := SetPriorityClass(GetCurrentProcess,
     PriorityValue[Max(0, Min(Priority, 3))]);
 end;
+
 {$ENDIF}
 
 procedure SetCtrlCHandler(CtrlHandler: pointer);
@@ -795,7 +810,7 @@ begin
 {$IFDEF UNIX}
   na.sa_handler := SigActionHandler(CtrlHandler);
   FillChar(na.sa_mask, sizeof(na.sa_mask), #0);
-  na.sa_flags := SA_ONESHOT;
+  na.sa_flags    := SA_ONESHOT;
   na.sa_restorer := nil;
   fpSigAction(SIGINT, @na, @oa);
 {$ENDIF}
