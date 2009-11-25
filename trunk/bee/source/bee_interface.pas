@@ -48,10 +48,14 @@ type
     procedure OnWarning(const aMessage: string); virtual; abstract;
     procedure OnRequest(const aMessage: string); virtual; abstract;
     procedure OnMessage(const aMessage: string); virtual; abstract;
-    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
+    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
+      virtual; abstract;
+    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
+      virtual; abstract;
+    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+      virtual; abstract;
+    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
+      virtual; abstract;
     procedure OnProgress; virtual; abstract;
     procedure OnClearLine; virtual; abstract;
   end;
@@ -60,14 +64,14 @@ type
 
   TApp = class(TAppIO)
   protected
-    FParams: TStringList;
+    FParams:    TStringList;
     FSuspendedTime: double;
     FStartTime: double;
     FTotalSize: int64;
-    FSize: int64;
+    FSize:      int64;
     FSuspended: boolean;
     FTerminated: boolean;
-    FCode: byte;
+    FCode:      byte;
   protected
     function GetSpeed: longint;
     function GetBit4Byte: byte;
@@ -99,16 +103,16 @@ type
     procedure DecSize(const aValue: int64); overload;
     procedure DecSize; overload;
   public
-    property TotalTime: longint read GetTotalTime;
-    property TotalSize: int64 read FTotalSize;
-    property Time: longint read GetTime;
-    property Size: int64 read FSize;
-    property Percentes: longint read GetPercentes;
-    property Bit4Byte: byte read GetBit4Byte;
-    property Speed: longint read GetSpeed;
-    property Terminated: boolean read FTerminated write FTerminated;
-    property Suspended: boolean read FSuspended  write SetSuspended;
-    property Code: byte read FCode;
+    property TotalTime: longint Read GetTotalTime;
+    property TotalSize: int64 Read FTotalSize;
+    property Time: longint Read GetTime;
+    property Size: int64 Read FSize;
+    property Percentes: longint Read GetPercentes;
+    property Bit4Byte: byte Read GetBit4Byte;
+    property Speed: longint Read GetSpeed;
+    property Terminated: boolean Read FTerminated Write FTerminated;
+    property Suspended: boolean Read FSuspended Write SetSuspended;
+    property Code: byte Read FCode;
   end;
 
 implementation
@@ -120,232 +124,232 @@ uses
   DateUtils,
   SysUtils;
 
-  // TApp class ...
+// TApp class ...
 
-  constructor TApp.Create(aParams: TStringList);
-  begin
-    inherited Create;
-    FParams := aParams;
-    FSuspendedTime := 0;
-    FStartTime := 0;
-    FTotalSize := 0;
-    FSize := 0;
-    FSuspended := False;
-    FTerminated := False;
-    FCode := 0;
-  end;
+constructor TApp.Create(aParams: TStringList);
+begin
+  inherited Create;
+  FParams    := aParams;
+  FSuspendedTime := 0;
+  FStartTime := 0;
+  FTotalSize := 0;
+  FSize      := 0;
+  FSuspended := False;
+  FTerminated := False;
+  FCode      := 0;
+end;
 
-  destructor TApp.Destroy;
-  begin
-    FParams := nil;
-    inherited Destroy;
-  end;
+destructor TApp.Destroy;
+begin
+  FParams := nil;
+  inherited Destroy;
+end;
 
-  procedure TApp.Execute;
-  begin
-    FStartTime := Now;
-  end;
+procedure TApp.Execute;
+begin
+  FStartTime := Now;
+end;
 
-  function TApp.GetSpeed: longint;
-  var
-    I: int64;
-  begin
-    if not FSuspended then
-      I := MilliSecondsBetween(Now, FStartTime)
-    else
-      I := MilliSecondsBetween(FSuspendedTime - FStartTime, 0);
+function TApp.GetSpeed: longint;
+var
+  I: int64;
+begin
+  if not FSuspended then
+    I := MilliSecondsBetween(Now, FStartTime)
+  else
+    I := MilliSecondsBetween(FSuspendedTime - FStartTime, 0);
 
-    if I > 0 then
-      Result := Round((FSize / I) * 1000)
-    else
-      Result := 0;
-  end;
-
-  function TApp.GetBit4Byte: byte;
-  begin
+  if I > 0 then
+    Result := Round((FSize / I) * 1000)
+  else
     Result := 0;
-    { TODO :  }
-  end;
+end;
 
-  function TApp.GetPercentes: longint;
+function TApp.GetBit4Byte: byte;
+begin
+  Result := 0;
+  { TODO :  }
+end;
+
+function TApp.GetPercentes: longint;
+begin
+  if FTotalSize > 0 then
+    Result := Round((FSize / FTotalSize) * 100)
+  else
+    Result := 0;
+end;
+
+function TApp.GetTotalTime: longint;
+begin
+  if not FSuspended then
+    Result := SecondsBetween(Now, FStartTime)
+  else
+    Result := SecondsBetween(FSuspendedTime - FStartTime, 0);
+end;
+
+function TApp.GetTime: longint;
+var
+  I: longint;
+begin
+  I := GetSpeed;
+  if I > 0 then
+    Result := (FTotalSize - FSize) div I
+  else
+    Result := 0;
+end;
+
+procedure TApp.SetSuspended(aValue: boolean);
+begin
+  if FSuspended <> aValue then
   begin
-    if FTotalSize > 0 then
-      Result := Round((FSize / FTotalSize) * 100)
+    if aValue then
+      FSuspendedTime := Now
     else
-      Result := 0;
+      FStartTime     := FStartTime + (Now - FSuspendedTime);
+
+    FSuspended := aValue;
   end;
+end;
 
-  function TApp.GetTotalTime: longint;
+procedure TApp.SetCode(aCode: byte);
+begin
+  if FCode < aCode then
   begin
-    if not FSuspended then
-      Result := SecondsBetween(Now, FStartTime)
-    else
-      Result := SecondsBetween(FSuspendedTime - FStartTime, 0);
+    FCode := aCode;
   end;
+end;
 
-  function TApp.GetTime: longint;
-  var
-    I: longint;
-  begin
-    I := GetSpeed;
-    if I > 0 then
-      Result := (FTotalSize - FSize) div I
-    else
-      Result := 0;
-  end;
-
-  procedure TApp.SetSuspended(aValue: boolean);
-  begin
-    if FSuspended <> aValue then
-    begin
-      if aValue then
-        FSuspendedTime := Now
-      else
-        FStartTime := FStartTime + (Now - FSuspendedTime);
-
-      FSuspended := aValue;
-    end;
-  end;
-
-  procedure TApp.SetCode(aCode: byte);
-  begin
-    if FCode < aCode then
-    begin
-      FCode := aCode;
-    end;
-  end;
-
-  procedure TApp.SetPriority(aPriority: byte);
-  begin
+procedure TApp.SetPriority(aPriority: byte);
+begin
     {$IFDEF CONSOLEAPPLICATION}
     {$IFDEF MSWINDOWS}
-    Bee_Common.SetPriority(aPriority);
+  Bee_Common.SetPriority(aPriority);
     {$ENDIF}
     {$ELSE}
-    { TODO :  }
+  { TODO :  }
     {$ENDIF}
-  end;
+end;
 
-  procedure TApp.IncSize(const aValue: int64);
-  begin
-    Inc(FSize, aValue);
-  end;
+procedure TApp.IncSize(const aValue: int64);
+begin
+  Inc(FSize, aValue);
+end;
 
-  procedure TApp.IncSize;
-  begin
-    Inc(FSize);
-  end;
+procedure TApp.IncSize;
+begin
+  Inc(FSize);
+end;
 
-  procedure TApp.DecSize(const aValue: int64);
-  begin
-    Dec(FSize, aValue);
-  end;
+procedure TApp.DecSize(const aValue: int64);
+begin
+  Dec(FSize, aValue);
+end;
 
-  procedure TApp.DecSize;
-  begin
-    Dec(FSize);
-  end;
+procedure TApp.DecSize;
+begin
+  Dec(FSize);
+end;
 
-  procedure TApp.DoFatalError(const aMessage: string; aCode: byte);
-  var
-    X: double;
-  begin
-    SetCode(aCode);
-    X := Now;
-    OnFatalError(aMessage);
-    FStartTime := FStartTime + (Now - X);
-  end;
+procedure TApp.DoFatalError(const aMessage: string; aCode: byte);
+var
+  X: double;
+begin
+  SetCode(aCode);
+  X := Now;
+  OnFatalError(aMessage);
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  procedure TApp.DoError(const aMessage: string; aCode: byte);
-  var
-    X: double;
-  begin
-    SetCode(aCode);
-    X := Now;
-    OnError(aMessage);
-    FStartTime := FStartTime + (Now - X);
-  end;
+procedure TApp.DoError(const aMessage: string; aCode: byte);
+var
+  X: double;
+begin
+  SetCode(aCode);
+  X := Now;
+  OnError(aMessage);
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  procedure TApp.DoWarning(const aMessage: string; aCode: byte);
-  var
-    X: double;
-  begin
-    SetCode(aCode);
-    X := Now;
-    OnWarning(aMessage);
-    FStartTime := FStartTime + (Now - X);
-  end;
+procedure TApp.DoWarning(const aMessage: string; aCode: byte);
+var
+  X: double;
+begin
+  SetCode(aCode);
+  X := Now;
+  OnWarning(aMessage);
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  procedure TApp.DoMessage(const aMessage: string);
-  var
-    X: double;
-  begin
-    X := Now;
-    OnMessage(aMessage);
-    FStartTime := FStartTime + (Now - X);
-  end;
+procedure TApp.DoMessage(const aMessage: string);
+var
+  X: double;
+begin
+  X := Now;
+  OnMessage(aMessage);
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  function TApp.DoOverWrite(const aFileInfo: TFileInfo; const aValue: string): string;
-  var
-    X: double;
-  begin
-    X := Now;
-    Result := OnOverWrite(aFileInfo, aValue);
-    FStartTime := FStartTime + (Now - X);
-  end;
+function TApp.DoOverWrite(const aFileInfo: TFileInfo; const aValue: string): string;
+var
+  X: double;
+begin
+  X      := Now;
+  Result := OnOverWrite(aFileInfo, aValue);
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  function TApp.DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
-  var
-    X: double;
-  begin
-    X := Now;
-    Result := OnRename(aFileInfo, aValue);
-    FStartTime := FStartTime + (Now - X);
-  end;
+function TApp.DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
+var
+  X: double;
+begin
+  X      := Now;
+  Result := OnRename(aFileInfo, aValue);
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  function TApp.DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
-  var
-    X: double;
-  begin
-    X := Now;
-    Result := OnPassword(aFileInfo, aValue);
-    FStartTime := FStartTime + (Now - X);
-  end;
+function TApp.DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+var
+  X: double;
+begin
+  X      := Now;
+  Result := OnPassword(aFileInfo, aValue);
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  procedure TApp.DORequest(const aMessage: string);
-  var
-    X: double;
-  begin
-    X := Now;
-    OnRequest(aMessage);
-    FStartTime := FStartTime + (Now - X);
-  end;
+procedure TApp.DORequest(const aMessage: string);
+var
+  X: double;
+begin
+  X := Now;
+  OnRequest(aMessage);
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  procedure TApp.DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
-  var
-    X: double;
-  begin
-    X := Now;
-    OnList(aFileInfo, aVerbose);
-    FStartTime := FStartTime + (Now - X);
-  end;
+procedure TApp.DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
+var
+  X: double;
+begin
+  X := Now;
+  OnList(aFileInfo, aVerbose);
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  procedure TApp.DoProgress;
-  var
-    X: double;
-  begin
-    X := Now;
-    OnProgress;
-    FStartTime := FStartTime + (Now - X);
-  end;
+procedure TApp.DoProgress;
+var
+  X: double;
+begin
+  X := Now;
+  OnProgress;
+  FStartTime := FStartTime + (Now - X);
+end;
 
-  procedure TApp.DoClearLine;
-  var
-    X: double;
-  begin
-    X := Now;
-    OnClearLine;
-    FStartTime := FStartTime + (Now - X);
-  end;
+procedure TApp.DoClearLine;
+var
+  X: double;
+begin
+  X := Now;
+  OnClearLine;
+  FStartTime := FStartTime + (Now - X);
+end;
 
 end.

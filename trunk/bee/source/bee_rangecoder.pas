@@ -79,23 +79,23 @@ type
     procedure OutputByte(aValue: longword);
   private
     FStream: TStream;
-    Range: longword;
-    Low: longword;
-    Code: longword;
-    Carry: longword;
-    Cache: longword;
-    FFNum: longword;
+    Range:   longword;
+    Low:     longword;
+    Code:    longword;
+    Carry:   longword;
+    Cache:   longword;
+    FFNum:   longword;
   end;
 
 implementation
 
-  /// TRangeCoder...
+/// TRangeCoder...
 
-  constructor TRangeCoder.Create(aStream: TStream);
-  begin
-    inherited Create;
-    FStream := aStream;
-  end;
+constructor TRangeCoder.Create(aStream: TStream);
+begin
+  inherited Create;
+  FStream := aStream;
+end;
 
 procedure TRangeCoder.StartEncode;
 begin
@@ -118,7 +118,8 @@ procedure TRangeCoder.FinishEncode;
 var
   I: longword;
 begin
-  for I := 0 to NUM do ShiftLow;
+  for I := 0 to NUM do
+    ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;
@@ -169,7 +170,8 @@ begin
     end;
     Cache := Low shr 24;
     Carry := 0;
-  end else
+  end
+  else
     Inc(FFNum);
 
   Low := Low shl 8;

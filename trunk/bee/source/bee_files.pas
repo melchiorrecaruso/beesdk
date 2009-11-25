@@ -72,13 +72,13 @@ type
     BlowFish: TBlowFish;
   private
     BufferSize: longint;
-    Buffer: array [0..$1FFFF] of byte;
+    Buffer:     array [0..$1FFFF] of byte;
   end;
 
 type
   TNulWriter = class(TFileWriter)
   private
-    FSize: int64;
+    FSize:     int64;
     FPosition: int64;
   public
     constructor Create;
@@ -124,14 +124,15 @@ end;
 function TFileReader.Read(var Data; Count: longint): longint;
 var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
-  S: longint;
+  S:     longint;
 begin
   if (Count = 1) and (BufferReaded < BufferSize) then
   begin
     byte(Data) := Buffer[BufferReaded];
     Inc(BufferReaded);
     Result := Count;
-  end else
+  end
+  else
   begin
     Result := 0;
     repeat
@@ -140,14 +141,16 @@ begin
         BufferReaded := 0;
         BufferSize   := inherited Read(Buffer, SizeOf(Buffer));
 
-        if BufferSize = 0 then Exit; // This causes Result < Count
+        if BufferSize = 0 then
+          Exit; // This causes Result < Count
 
         if BlowFish.Started then
           BlowFish.Decode(Buffer, BufferSize);
       end;
       S := Count - Result;
 
-      if S > BufferSize - BufferReaded then S := BufferSize - BufferReaded;
+      if S > BufferSize - BufferReaded then
+        S := BufferSize - BufferReaded;
 
       CopyBytes(Buffer[BufferReaded], Bytes[Result], S);
       Inc(Result, S);
@@ -213,7 +216,7 @@ end;
 function TFileWriter.Write(const Data; Count: longint): longint;
 var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
-  S: longint;
+  S:     longint;
 begin
   if Count > (SizeOf(Buffer) - BufferSize) then
   begin
@@ -229,18 +232,20 @@ begin
     CopyBytes(Bytes[Result], Buffer[BufferSize], Count - Result);
     Inc(BufferSize, Count - Result);
     Inc(Result, Count - Result);
-  end else
-    if Count > 1 then
-    begin
-      CopyBytes(Data, Buffer[BufferSize], Count);
-      Inc(BufferSize, Count);
-      Result := Count;
-    end else
-    begin
-      Buffer[BufferSize] := byte(Data);
-      Inc(BufferSize);
-      Result := Count;
-    end;
+  end
+  else
+  if Count > 1 then
+  begin
+    CopyBytes(Data, Buffer[BufferSize], Count);
+    Inc(BufferSize, Count);
+    Result := Count;
+  end
+  else
+  begin
+    Buffer[BufferSize] := byte(Data);
+    Inc(BufferSize);
+    Result := Count;
+  end;
 end;
 
 function TFileWriter.Seek(Offset: longint; Origin: word): longint;
@@ -285,9 +290,9 @@ end;
 constructor TNulWriter.Create;
 begin
   // inherited Create;
-  BlowFish := TBlowFish.Create;
-  FPosition:= 0;
-  FSize := 0;
+  BlowFish  := TBlowFish.Create;
+  FPosition := 0;
+  FSize     := 0;
 end;
 
 destructor TNulWriter.Destroy;
@@ -315,8 +320,8 @@ function TNulWriter.Seek(Offset: longint; Origin: word): longint;
 begin
   case Origin of
     soFromBeginning: FPosition := OffSet;
-    soFromCurrent:   FPosition := Min(FSize, FPosition + Offset);
-    soFromEnd:       FPosition := Max(0,     FPosition - Offset);
+    soFromCurrent: FPosition := Min(FSize, FPosition + Offset);
+    soFromEnd: FPosition := Max(0, FPosition - Offset);
   end;
   Result := FPosition;
 end;
@@ -325,8 +330,8 @@ function TNulWriter.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
   case Origin of
     soBeginning: FPosition := OffSet;
-    soCurrent:   FPosition := Min(FSize, FPosition + Offset);
-    soEnd:       FPosition := Max(0,     FPosition - Offset);
+    soCurrent: FPosition := Min(FSize, FPosition + Offset);
+    soEnd: FPosition := Max(0, FPosition - Offset);
   end;
   Result := FPosition;
 end;

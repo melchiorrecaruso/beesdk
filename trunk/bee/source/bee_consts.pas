@@ -46,38 +46,37 @@ const
 const
   // CoreStatus ...
 
-  csUnknow           = -1;
-  csReady            =  0;
-  csExecuting        =  1;
-  csWaitingOverwrite =  2;
-  csWaitingRename    =  3;
-  csWaitingPassword  =  4;
-  csWaitingRequest   =  5;
-  csWaitingList      =  6;
-  csTerminated       =  7;
-  csSuspended        =  8;
+  csUnknow     = -1;
+  csReady      = 0;
+  csExecuting  = 1;
+  csWaitingOverwrite = 2;
+  csWaitingRename = 3;
+  csWaitingPassword = 4;
+  csWaitingRequest = 5;
+  csWaitingList = 6;
+  csTerminated = 7;
+  csSuspended  = 8;
 
 const
   // CoreCode
 
   ccUnknow    = -1;
-  ccSuccesful =  0;
-  ccWarning   =  1;
-  ccError     =  2;
+  ccSuccesful = 0;
+  ccWarning   = 1;
+  ccError     = 2;
 
 const
   // CorePriority
 
-  cpUnknow       = -1;
-  cpIdle         =  0;
-  cpLowest       =  1;
-  cpLower        =  2;
-  cpNormal       =  3;
-  cpHigher       =  4;
-  cpHighest      =  5;
-  cpTimeCritical =  6;
+  cpUnknow  = -1;
+  cpIdle    = 0;
+  cpLowest  = 1;
+  cpLower   = 2;
+  cpNormal  = 3;
+  cpHigher  = 4;
+  cpHighest = 5;
+  cpTimeCritical = 6;
 
 implementation
 
 end.
-

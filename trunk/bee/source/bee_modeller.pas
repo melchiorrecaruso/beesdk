@@ -98,9 +98,9 @@ type
     SafeCounter,                        // Safe heap size
     Counter: longword;                  // Current heap size
 
-    Heap: array of TNode;
-    Cuts: array of PNode;
-    List: array of PNode;
+    Heap:      array of TNode;
+    Cuts:      array of PNode;
+    List:      array of PNode;
     ListCount: longword;
 
     Root: PNode;
@@ -139,8 +139,8 @@ end;
 
 procedure TBaseCoder.SetTable(const T: TTableParameters);
 var
-  I: longint;
-  P: ^longint;
+  I:     longint;
+  P:     ^longint;
   aPart: ^TTableCol;
 begin
   P := @Table;
@@ -158,10 +158,13 @@ begin
   begin
     aPart    := @Table.T[I];
     aPart[0] := aPart[0] + 256; // Weight of first-encoutered deterministic symbol
-    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32; // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
+    aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
+    // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
     aPart[MaxSymbol + 3] := Increment * aPart[MaxSymbol + 3] shl 2;
-    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8; // Zero-valued parameter allowed...
-    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5])); // Lowest value of interval
+    aPart[MaxSymbol + 4] := aPart[MaxSymbol + 4] div 8;
+    // Zero-valued parameter allowed...
+    aPart[MaxSymbol + 5] := Round(IntPower(1.082, aPart[MaxSymbol + 5]));
+    // Lowest value of interval
   end;
 end;
 
@@ -259,7 +262,8 @@ var
   I, J:  PPNode;
   Bound: longint;
 begin
-  if Cuts = nil then SetLength(Cuts, MaxCounter + 1);
+  if Cuts = nil then
+    SetLength(Cuts, MaxCounter + 1);
 
   I := @Cuts[0];
   J := I;
@@ -277,7 +281,8 @@ begin
         begin
           J^ := P;
           Inc(J);
-        end else
+        end
+        else
         begin
           P.Up.Tear := Tear;
           Tear      := P.Up;
@@ -288,7 +293,8 @@ begin
     Inc(I);
   until (I = J) or (Bound < 0);
 
-  if I <> J then Cut_Tail(I, J);
+  if I <> J then
+    Cut_Tail(I, J);
 
   Counter   := longint(SafeCounter * 3 div 4) - Bound + 1;
   ListCount := 0;
@@ -310,7 +316,7 @@ end;
 
 procedure TBaseCoder.Account;
 var
-  J, K: longword;
+  J, K:      longword;
   P, Stored: PNode;
 begin
   I := 0;
@@ -355,7 +361,8 @@ begin
 
           P := P.Next;
         until P = nil;
-      end else
+      end
+      else
       begin
         // Determined context ...
         K := P.K * Part[1] div Increment + 256;
@@ -363,7 +370,8 @@ begin
         Inc(Freq[P.C], R - K);
         R := K;
       end;
-    end else
+    end
+    else
     if P.A > LowestPos then
     begin
       // Determined context, encountered at first time ...
@@ -414,7 +422,7 @@ end;
 procedure TBaseCoder.Step;
 var
   I, J: longword;
-  P: PNode;
+  P:    PNode;
 begin
   ClearLongword(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
@@ -481,7 +489,7 @@ begin
 
   // Update NodeList...
   if ListCount > Table.Level then
-    MoveLongwordUnchecked(List[1], List[0], ListCount -1)
+    MoveLongwordUnchecked(List[1], List[0], ListCount - 1)
   else
     Inc(ListCount);
 

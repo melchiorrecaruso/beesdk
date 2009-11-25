@@ -42,10 +42,8 @@ program Bee;
 {$I compiler.inc}
 
 uses
-  {$IFDEF CONSOLEAPPLICATION}
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  {$IFDEF UNIX} BaseUnix, {$ENDIF}
-  {$ENDIF}
+ {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS} Windows,
+ {$ENDIF} {$IFDEF UNIX} BaseUnix, {$ENDIF} {$ENDIF}
   SysUtils,
   Classes,
   // ---
@@ -68,9 +66,12 @@ type
     procedure OnWarning(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
     procedure OnMessage(const aMessage: string); override;
-    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string; override;
-    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
-    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
+      override;
+    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
+      override;
+    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+      override;
     procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); override;
     procedure OnProgress; override;
     procedure OnClearLine; override;
@@ -114,7 +115,8 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  function TCustomBeeApp.OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
+  function TCustomBeeApp.OnOverwrite(const aFileInfo: TFileInfo;
+  const aValue: string): string;
   begin
     with aFileInfo do
     begin
@@ -128,7 +130,8 @@ type
     Readln(Result);
   end;
 
-  function TCustomBeeApp.OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
+  function TCustomBeeApp.OnRename(const aFileInfo: TFileInfo;
+  const aValue: string): string;
   begin
     with aFileInfo do
     begin
@@ -152,8 +155,9 @@ type
           Writeln(ParamToOem(Format('%-15s', [{FilePath +} FileName]) +
             Format(' %10s %10s %4u%% %14s %6s %8.8x %3s',
             [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-            FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])))
-        end else
+            FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+        end
+        else
         begin
           Writeln(ParamToOem({FilePath +} FileName));
           Writeln(ParamToOem(StringOfChar(' ', 15) +
@@ -161,27 +165,28 @@ type
             [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
             FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
         end;
-      end else
+      end
+      else
       begin
         if Length({FilePath +} FileName) <= 39 then
         begin
           Writeln(ParamToOem(Format('%-39s', [{FilePath +} FileName]) +
-            Format(' %10s %4u%% %14s %6s',
-            [SizeToStr(FileSize), FileRatio,
-            FileTimeToString(FileTime), AttrToStr(FileAttr)])))
-        end else
+            Format(' %10s %4u%% %14s %6s', [SizeToStr(FileSize),
+            FileRatio, FileTimeToString(FileTime), AttrToStr(FileAttr)])));
+        end
+        else
         begin
           Writeln(ParamToOem({FilePath +} FileName));
           Writeln(ParamToOem(StringOfChar(' ', 39) +
-            Format(' %10s %4u%% %14s %6s',
-            [SizeToStr(FileSize), FileRatio,
-            FileTimeToString(FileTime), AttrToStr(FileAttr)])));
+            Format(' %10s %4u%% %14s %6s', [SizeToStr(FileSize),
+            FileRatio, FileTimeToString(FileTime), AttrToStr(FileAttr)])));
         end;
       end;
     end;
   end;
 
-  function TCustomBeeApp.OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+  function TCustomBeeApp.OnPassword(const aFileInfo: TFileInfo;
+  const aValue: string): string;
   var
     S: string;
   begin
@@ -194,8 +199,10 @@ type
       // store password
       Write('Do you want to use password for this session? [Yes, No]: ');
       Readln(S);
-      if (Length(S)= 1) and (UpCase(S[1]) = 'Y') then FPassword := Result;
-    end else
+      if (Length(S) = 1) and (UpCase(S[1]) = 'Y') then
+        FPassword := Result;
+    end
+    else
       Result := FPassword;
   end;
 
@@ -221,9 +228,9 @@ type
   // ------------------------------------------------------------------------ //
 
 var
-  I: longint;
+  I:      longint;
   Params: TStringList;
-  App: TCustomBeeApp;
+  App:    TCustomBeeApp;
 
   // control+c event
 
@@ -231,39 +238,41 @@ var
   function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
-      CTRL_C_EVENT:        App.Terminated := True;
-      CTRL_BREAK_EVENT:    App.Terminated := True;
-      CTRL_CLOSE_EVENT:    App.Terminated := True;
-      CTRL_LOGOFF_EVENT:   App.Terminated := True;
+      CTRL_C_EVENT: App.Terminated      := True;
+      CTRL_BREAK_EVENT: App.Terminated  := True;
+      CTRL_CLOSE_EVENT: App.Terminated  := True;
+      CTRL_LOGOFF_EVENT: App.Terminated := True;
       CTRL_SHUTDOWN_EVENT: App.Terminated := True;
     end;
     Result := True;
   end;
+
   {$ENDIF}
 
   {$IFDEF UNIX}
   procedure CtrlHandler(sig: cint);
   begin
     case sig of
-      SIGINT:  App.Terminated := True;
+      SIGINT: App.Terminated  := True;
       SIGQUIT: App.Terminated := True;
       SIGKILL: App.Terminated := True;
       SIGSTOP: App.Terminated := True;
     end;
   end;
+
   {$ENDIF}
 
-  begin
-    SetCtrlCHandler(@CtrlHandler);
+begin
+  SetCtrlCHandler(@CtrlHandler);
 
-    Params := TStringList.Create;
-    for I := 1 to ParamCount do
-      Params.Add(ParamStr(I));
-    App := TCustomBeeApp.Create(Params);
-    App.Execute;
+  Params := TStringList.Create;
+  for I := 1 to ParamCount do
+    Params.Add(ParamStr(I));
+  App := TCustomBeeApp.Create(Params);
+  App.Execute;
 
-    ExitCode := App.Code;
+  ExitCode := App.Code;
 
-    App.Destroy;
-    Params.Destroy;
-  end.
+  App.Destroy;
+  Params.Destroy;
+end.

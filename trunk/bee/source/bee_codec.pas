@@ -54,8 +54,10 @@ type
   TSecondaryCodec = class(TRangeCoder)
     procedure Start; virtual; abstract;
     procedure Flush; virtual; abstract;
-    function UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword; overload; virtual; abstract;
-    function UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword; overload; virtual; abstract;
+    function UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword;
+      overload; virtual; abstract;
+    function UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
+      overload; virtual; abstract;
   end;
 
 // Range Encoder...

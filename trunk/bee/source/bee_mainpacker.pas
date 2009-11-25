@@ -75,14 +75,14 @@ type
     function EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
     function EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
       const SrcSize: int64; SrcEncoded: boolean): boolean;
-    function CopyStrm  (P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+    function CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
       const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean): boolean;
   private
     function GetPassword(P: THeader): string;
     procedure Progress;
   private
-    App: TApp;
-    PPM: TBaseCoder;
+    App:    TApp;
+    PPM:    TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
     Stream: TFileWriter;
   end;
@@ -102,8 +102,8 @@ type
     function GetPassword(P: THeader): string;
     procedure Progress;
   private
-    App: TApp;
-    PPM: TBaseCoder;
+    App:    TApp;
+    PPM:    TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
     Stream: TFileReader;
   end;
@@ -122,10 +122,10 @@ uses
 
 constructor TEncoder.Create(aStream: TFileWriter; aApp: TApp);
 begin
-  App := aApp;
+  App    := aApp;
   Stream := aStream;
   SecondaryCodec := TSecondaryEncoder.Create(Stream);
-  PPM := TBaseCoder.Create(SecondaryCodec);
+  PPM    := TBaseCoder.Create(SecondaryCodec);
 end;
 
 destructor TEncoder.Destroy;
@@ -133,7 +133,7 @@ begin
   PPM.Free;
   SecondaryCodec.Free;
   Stream := nil;
-  App := nil;
+  App    := nil;
 end;
 
 function TEncoder.GetPassword(P: THeader): string;
@@ -152,23 +152,30 @@ begin
   FreePChar(FI.FileName);
   FreePChar(FI.FileName);
 
-  if Length(Result) < MinKeyLength then Exclude(P.FileFlags, foPassword);
+  if Length(Result) < MinKeyLength then
+    Exclude(P.FileFlags, foPassword);
 end;
 
 procedure TEncoder.Progress;
 begin
-  while App.Suspended do Sleep(250);
+  while App.Suspended do
+    Sleep(250);
   App.DoProgress;
 end;
 
 function TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
 var
   SrcFile: TFileReader;
-  Symbol: byte;
+  Symbol:  byte;
 begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
+  if foDictionary in P.FileFlags then
+    PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then
+    PPM.SetTable(P.FileTable);
+  if foTear in P.FileFlags then
+    PPM.FreshFlexible
+  else
+    PPM.FreshSolid;
 
   case Mode of
     emNorm: App.DoMessage(msgUpdating + P.FileName);
@@ -180,7 +187,8 @@ begin
   SrcFile := CreateTFileReader(P.FileLink, fmOpenRead + fmShareDenyWrite);
   if (SrcFile <> nil) then
   begin
-    if foPassword in P.FileFlags then Stream.BlowFish.Start(GetPassword(P));
+    if foPassword in P.FileFlags then
+      Stream.BlowFish.Start(GetPassword(P));
 
     P.FileSize := SrcFile.Size;
     P.FileAttr := FileGetAttr(P.FileLink);
@@ -194,11 +202,15 @@ begin
 
         if App.Size and $FFFF = 0 then
         begin
-          if App.Terminated = False then Progress else Break;
+          if App.Terminated = False then
+            Progress
+          else
+            Break;
         end;
         App.IncSize;
       end;
-    end else
+    end
+    else
     begin
       SecondaryCodec.Start;
       while SrcFile.Read(Symbol, 1) = 1 do
@@ -208,7 +220,10 @@ begin
 
         if App.Size and $FFFF = 0 then
         begin
-          if App.Terminated = False then Progress else Break;
+          if App.Terminated = False then
+            Progress
+          else
+            Break;
         end;
         App.IncSize;
       end;
@@ -220,7 +235,7 @@ begin
     P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
     Stream.BlowFish.Finish;                // finish after stream flush
 
-    if (not(foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
+    if (not (foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
     begin
       Include(P.FileFlags, foTear);
       Include(P.FileFlags, foMoved);
@@ -229,27 +244,34 @@ begin
       App.DecSize(P.FileSize);
 
       Result := EncodeFile(P, emOpt);
-    end else
+    end
+    else
       Result := True;
 
-  end else
+  end
+  else
   begin
     App.DoError('Error: can''t open file ' + P.FileLink, 1);
     Result := False;
   end;
 end;
 
-function TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-  const SrcSize: int64; SrcEncoded: boolean): boolean;
+function TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
+  SrcStrm: TFileReader; const SrcSize: int64; SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
   Password: string;
   SrcPosition: int64;
   I: int64;
 begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
+  if foDictionary in P.FileFlags then
+    PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then
+    PPM.SetTable(P.FileTable);
+  if foTear in P.FileFlags then
+    PPM.FreshFlexible
+  else
+    PPM.FreshSolid;
 
   case Mode of
     emNorm: App.DoMessage(msgEncoding + P.FileName);
@@ -264,7 +286,8 @@ begin
     begin
       Password := GetPassword(P);
       Stream.BlowFish.Start(Password);
-      if SrcEncoded then SrcStrm.BlowFish.Start(Password);
+      if SrcEncoded then
+        SrcStrm.BlowFish.Start(Password);
     end;
 
     SrcPosition := SrcStrm.Seek(0, 1);
@@ -280,12 +303,16 @@ begin
 
         if App.Size and $FFFF = 0 then
         begin
-          if App.Terminated = False then Progress else Break;
+          if App.Terminated = False then
+            Progress
+          else
+            Break;
         end;
         App.IncSize;
         Inc(I);
       end;
-    end else
+    end
+    else
     begin
       SecondaryCodec.Start;
       while I < SrcSize do
@@ -296,7 +323,10 @@ begin
 
         if App.Size and $FFFF = 0 then
         begin
-          if App.Terminated = False then Progress else Break;
+          if App.Terminated = False then
+            Progress
+          else
+            Break;
         end;
         App.IncSize;
         Inc(I);
@@ -309,7 +339,7 @@ begin
     P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
     Stream.BlowFish.Finish;                // finish after stream flush
 
-    if (not(foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
+    if (not (foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
     begin
       Include(P.FileFlags, foTear);
       Include(P.FileFlags, foMoved);
@@ -319,25 +349,33 @@ begin
       App.DecSize(P.FileSize);
 
       Result := EncodeStrm(P, emOpt, SrcStrm, SrcSize, SrcEncoded);
-    end else
+    end
+    else
       Result := True;
 
-  end else
+  end
+  else
   begin
     App.DoError('Error: stream  not found', 1);
     Result := False;
   end;
 end;
 
-function TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-  const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean): boolean;
+function TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode;
+  SrcStrm: TFileReader; const SrcStartPos: int64; const SrcSize: int64;
+  SrcEncoded: boolean): boolean;
 var
   Symbol: byte;
-  I: int64;
+  I:      int64;
 begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
+  if foDictionary in P.FileFlags then
+    PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then
+    PPM.SetTable(P.FileTable);
+  if foTear in P.FileFlags then
+    PPM.FreshFlexible
+  else
+    PPM.FreshSolid;
 
   case Mode of
     emNorm: App.DoMessage(msgCopying + P.FileName);
@@ -347,7 +385,8 @@ begin
 
   if (SrcStrm <> nil) then
   begin
-    if SrcEncoded then SrcStrm.BlowFish.Start(GetPassword(P));
+    if SrcEncoded then
+      SrcStrm.BlowFish.Start(GetPassword(P));
 
     SrcStrm.Seek(SrcStartPos, 0);
 
@@ -359,7 +398,10 @@ begin
 
       if App.Size and $FFFF = 0 then
       begin
-        if App.Terminated = False then Progress else Break;
+        if App.Terminated = False then
+          Progress
+        else
+          Break;
       end;
       App.IncSize;
       Inc(I);
@@ -368,7 +410,8 @@ begin
     SrcStrm.BlowFish.Finish;
 
     Result := True;
-  end else
+  end
+  else
   begin
     App.DoError('Error: stream  not found', 1);
     Result := False;
@@ -379,10 +422,10 @@ end;
 
 constructor TDecoder.Create(aStream: TFileReader; aApp: TApp);
 begin
-  App := aApp;
+  App    := aApp;
   Stream := aStream;
   SecondaryCodec := TSecondaryDecoder.Create(Stream);
-  PPM := TBaseCoder.Create(SecondaryCodec);
+  PPM    := TBaseCoder.Create(SecondaryCodec);
 end;
 
 destructor TDecoder.Destroy;
@@ -390,7 +433,7 @@ begin
   PPM.Free;
   SecondaryCodec.Free;
   Stream := nil;
-  App := nil;
+  App    := nil;
 end;
 
 function TDecoder.GetPassword(P: THeader): string;
@@ -412,24 +455,30 @@ end;
 
 procedure TDecoder.Progress;
 begin
-  while App.Suspended do Sleep(250);
+  while App.Suspended do
+    Sleep(250);
   App.DoProgress;
 end;
 
 function TDecoder.DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
 var
   DstFile: TFileWriter;
-  Symbol:  byte;
+  Symbol: byte;
   Crc: longword;
   I: int64;
 begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
+  if foDictionary in P.FileFlags then
+    PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then
+    PPM.SetTable(P.FileTable);
+  if foTear in P.FileFlags then
+    PPM.FreshFlexible
+  else
+    PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.DoMessage(msgSkipping   + P.FileName);
-    pmTest: App.DoMessage(msgTesting    + P.FileName);
+    pmSkip: App.DoMessage(msgSkipping + P.FileName);
+    pmTest: App.DoMessage(msgTesting + P.FileName);
     pmNorm: App.DoMessage(msgExtracting + P.FileName);
     pmQuit:
     begin
@@ -448,7 +497,8 @@ begin
 
   if (DstFile <> nil) then
   begin
-    if foPassword in P.FileFlags then Stream.BlowFish.Start(GetPassword(P));
+    if foPassword in P.FileFlags then
+      Stream.BlowFish.Start(GetPassword(P));
 
     I := 0;
     if foMoved in P.FileFlags then
@@ -461,12 +511,16 @@ begin
 
         if App.Size and $FFFF = 0 then
         begin
-          if App.Terminated = False then Progress else Break;
+          if App.Terminated = False then
+            Progress
+          else
+            Break;
         end;
         App.IncSize;
         Inc(I);
       end;
-    end else
+    end
+    else
     begin
       SecondaryCodec.Start;
       while I < P.FileSize do
@@ -477,7 +531,10 @@ begin
 
         if App.Size and $FFFF = 0 then
         begin
-          if App.Terminated = False then Progress else Break;
+          if App.Terminated = False then
+            Progress
+          else
+            Break;
         end;
         App.IncSize;
         Inc(I);
@@ -493,7 +550,8 @@ begin
       FileSetDate(DstFile.Handle, P.FileTime);
     end;
     DstFile.Free;
-    if Mode = pmNorm then FileSetAttr(P.FileName, P.FileAttr);
+    if Mode = pmNorm then
+      FileSetAttr(P.FileName, P.FileAttr);
   end;
 
   Result := P.FileCrc = Crc;
@@ -506,22 +564,27 @@ begin
   end;
 end;
 
-function TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
-  const DstSize: int64; DstEncoded: boolean): boolean;
+function TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
+  DstStrm: TFileWriter; const DstSize: int64; DstEncoded: boolean): boolean;
 var
   DstFile: TFileWriter;
   Password: string;
-  Symbol:  byte;
+  Symbol: byte;
   Crc: longword;
   I: int64;
 begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable      in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear       in P.FileFlags then PPM.FreshFlexible else PPM.FreshSolid;
+  if foDictionary in P.FileFlags then
+    PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then
+    PPM.SetTable(P.FileTable);
+  if foTear in P.FileFlags then
+    PPM.FreshFlexible
+  else
+    PPM.FreshSolid;
 
   case Mode of
     pmSkip: App.DoMessage(msgSkipping + P.FileName);
-    pmTest: App.DoMessage(msgTesting  + P.FileName);
+    pmTest: App.DoMessage(msgTesting + P.FileName);
     pmNorm: App.DoMessage(msgDecoding + P.FileName);
     pmQuit:
     begin
@@ -544,7 +607,8 @@ begin
     begin
       Password := GetPassword(P);
       Stream.BlowFish.Start(Password);
-      if DstEncoded then DstFile.BlowFish.Start(Password);
+      if DstEncoded then
+        DstFile.BlowFish.Start(Password);
     end;
 
     I := 0;
@@ -558,12 +622,16 @@ begin
 
         if App.Size and $FFFF = 0 then
         begin
-          if App.Terminated = False then Progress else Break;
+          if App.Terminated = False then
+            Progress
+          else
+            Break;
         end;
         App.IncSize;
         Inc(I);
       end;
-    end else
+    end
+    else
     begin
       SecondaryCodec.Start;
       while I < DstSize do
@@ -574,7 +642,10 @@ begin
 
         if App.Size and $FFFF = 0 then
         begin
-          if not App.Terminated then Progress else Break;
+          if not App.Terminated then
+            Progress
+          else
+            Break;
         end;
         App.IncSize;
         Inc(I);
@@ -584,7 +655,8 @@ begin
     App.DoClearLine;
     Stream.BlowFish.Finish;
 
-    if Mode = pmNorm then DstFile.Flush;  // stream flush
+    if Mode = pmNorm then
+      DstFile.Flush;  // stream flush
     DstFile.BlowFish.Finish; // finish after stream flush
   end;
 
@@ -594,7 +666,7 @@ begin
     if Crc = longword(-1) then
       App.DoError('Error: stream not found', 1)
     else
-      App.DoError(msgCRCERROR + P.FileName,  1);
+      App.DoError(msgCRCERROR + P.FileName, 1);
   end;
 end;
 
