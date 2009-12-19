@@ -13,7 +13,7 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="2"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -54,8 +54,8 @@
       <Unit2>
         <Filename Value="bee_library.pas"/>
         <UnitName Value="Bee_Library"/>
-        <CursorPos X="16" Y="310"/>
-        <TopLine Value="303"/>
+        <CursorPos X="84" Y="101"/>
+        <TopLine Value="74"/>
         <EditorIndex Value="2"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>

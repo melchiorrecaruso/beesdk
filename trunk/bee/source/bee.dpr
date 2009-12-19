@@ -61,17 +61,14 @@ type
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
   public
-    procedure OnFatalError(const aMessage: string); override;
-    procedure OnError(const aMessage: string); override;
-    procedure OnWarning(const aMessage: string); override;
+    procedure OnFatalError(const aMessage: string; aCode: byte); override;
+    procedure OnError(const aMessage: string; aCode: byte); override;
+    procedure OnWarning(const aMessage: string; aCode: byte); override;
     procedure OnRequest(const aMessage: string); override;
     procedure OnMessage(const aMessage: string); override;
-    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
-      override;
-    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
-      override;
-    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
-      override;
+    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; override;
+    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
     procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); override;
     procedure OnProgress; override;
     procedure OnClearLine; override;
@@ -95,17 +92,17 @@ type
     inherited Destroy;
   end;
 
-  procedure TCustomBeeApp.OnFatalError(const aMessage: string);
+  procedure TCustomBeeApp.OnFatalError(const aMessage: string; aCode: byte);
   begin
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TCustomBeeApp.OnError(const aMessage: string);
+  procedure TCustomBeeApp.OnError(const aMessage: string; aCode: byte);
   begin
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TCustomBeeApp.OnWarning(const aMessage: string);
+  procedure TCustomBeeApp.OnWarning(const aMessage: string; aCode: byte);
   begin
     Writeln(ParamToOem(aMessage));
   end;
@@ -115,19 +112,24 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  function TCustomBeeApp.OnOverwrite(const aFileInfo: TFileInfo;
-  const aValue: string): string;
+  function TCustomBeeApp.OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
+  var
+    B: byte;
   begin
-    with aFileInfo do
-    begin
+    repeat
       Writeln('Warning: file "',
-        ParamToOem(PCharToString(FilePath)),
-        ParamToOem(PCharToString(FileName)), '" already exists.');
-
-      Write('Overwrite it?  [Yes/No/Rename/All/Skip/Quit]: ');
-    end;
-    // not convert oem to param
-    Readln(Result);
+        ParamToOem(PCharToString(aFileInfo.FilePath)),
+        ParamToOem(PCharToString(aFileInfo.FileName)), '" already exists.');
+      
+      // not convert oem to param
+      Readln(B);
+    until B in [0..3];
+    //case  B of
+    //  0: Result := uoAdd;
+    //  1: Result := uoUpdate;
+    //  2: Result := uoReplace;
+    //  3:
+    //end;
   end;
 
   function TCustomBeeApp.OnRename(const aFileInfo: TFileInfo;

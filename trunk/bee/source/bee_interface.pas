@@ -36,51 +36,60 @@ interface
 uses
   Classes,
   // ---
-  Bee_Types;
+ {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
+  Bee_Common,
+  {$ENDIF} {$ENDIF}
+  Bee_Types,
+  Bee_Consts;
 
 type
   // TAppIO class ...
 
   TAppIO = class
+  protected
+    FTerminated: boolean;
+    FCode: byte;
+  private
+    procedure SetTerminated(aValue: boolean);
+    procedure SetCode(aCode: byte);
   public
-    procedure OnFatalError(const aMessage: string); virtual; abstract;
-    procedure OnError(const aMessage: string); virtual; abstract;
-    procedure OnWarning(const aMessage: string); virtual; abstract;
+    constructor Create;
+    destructor Destroy; override;
+  public
+    procedure OnFatalError(const aMessage: string; aCode: byte); virtual;
+    procedure OnError(const aMessage: string; aCode: byte); virtual;
+    procedure OnWarning(const aMessage: string; aCode: byte); virtual;
     procedure OnRequest(const aMessage: string); virtual; abstract;
     procedure OnMessage(const aMessage: string); virtual; abstract;
-    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
-      virtual; abstract;
-    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
-      virtual; abstract;
-    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
-      virtual; abstract;
-    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
-      virtual; abstract;
+    function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
+    function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
     procedure OnProgress; virtual; abstract;
     procedure OnClearLine; virtual; abstract;
+  published
+    property Terminated: boolean read FTerminated write SetTerminated;
+    property Code: byte read FCode;
   end;
 
   // TApp class ...
 
   TApp = class(TAppIO)
   protected
-    FParams:    TStringList;
+    FSuspended: boolean;
+    FParams: TStringList;
     FSuspendedTime: double;
     FStartTime: double;
     FTotalSize: int64;
-    FSize:      int64;
-    FSuspended: boolean;
-    FTerminated: boolean;
-    FCode:      byte;
+    FSize: int64;
   protected
     function GetSpeed: longint;
     function GetBit4Byte: byte;
     function GetPercentes: longint;
     function GetTotalTime: longint;
     function GetTime: longint;
-    procedure SetSuspended(aValue: boolean);
+    procedure SetSuspended(aValue: boolean); overload;
     procedure SetPriority(aPriority: byte);
-    procedure SetCode(aCode: byte);
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
@@ -91,9 +100,9 @@ type
     procedure DoWarning(const aMessage: string; aCode: byte);
     procedure DoRequest(const aMessage: string);
     procedure DoMessage(const aMessage: string);
-    function DoOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
-    function DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
-    function DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+    function  DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
+    function  DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
+    function  DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure DoProgress;
     procedure DoClearLine;
@@ -110,33 +119,75 @@ type
     property Percentes: longint Read GetPercentes;
     property Bit4Byte: byte Read GetBit4Byte;
     property Speed: longint Read GetSpeed;
-    property Terminated: boolean Read FTerminated Write FTerminated;
-    property Suspended: boolean Read FSuspended Write SetSuspended;
-    property Code: byte Read FCode;
+    property Suspended: boolean read FSuspended write SetSuspended;
   end;
 
 implementation
 
 uses
-  {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
-  Bee_Common,
-  {$ENDIF} {$ENDIF}
   DateUtils,
   SysUtils;
+
+// TAppIO class ...
+
+constructor TAppIO.Create;
+begin
+  inherited Create;
+  FTerminated := False;
+  FCode := 0;
+end;
+
+destructor TAppIO.Destroy;
+begin
+  inherited Destroy;
+end;
+
+procedure TAppIO.OnFatalError(const aMessage: string; aCode: byte);
+begin
+  SetCode(aCode);
+end;
+
+procedure TAppIO.OnError(const aMessage: string; aCode: byte);
+begin
+  SetCode(aCode);
+end;
+
+procedure TAppIO.OnWarning(const aMessage: string; aCode: byte);
+begin
+  SetCode(aCode);
+end;
+
+procedure TAppIO.SetTerminated(aValue: boolean);
+begin
+  if not FTerminated then
+  begin
+    FTerminated := aValue;
+  end;
+end;
+
+procedure TAppIO.SetCode(aCode: byte);
+begin
+  if FCode < aCode then
+  begin
+    FCode := aCode;
+    if FCode >= ccError then
+    begin
+      SetTerminated(True);
+    end;
+  end;
+end;
 
 // TApp class ...
 
 constructor TApp.Create(aParams: TStringList);
 begin
   inherited Create;
-  FParams    := aParams;
+  FSuspended := False;
+  FParams := aParams;
   FSuspendedTime := 0;
   FStartTime := 0;
   FTotalSize := 0;
-  FSize      := 0;
-  FSuspended := False;
-  FTerminated := False;
-  FCode      := 0;
+  FSize := 0;
 end;
 
 destructor TApp.Destroy;
@@ -205,17 +256,9 @@ begin
     if aValue then
       FSuspendedTime := Now
     else
-      FStartTime     := FStartTime + (Now - FSuspendedTime);
+      FStartTime := FStartTime + (Now - FSuspendedTime);
 
     FSuspended := aValue;
-  end;
-end;
-
-procedure TApp.SetCode(aCode: byte);
-begin
-  if FCode < aCode then
-  begin
-    FCode := aCode;
   end;
 end;
 
@@ -254,9 +297,8 @@ procedure TApp.DoFatalError(const aMessage: string; aCode: byte);
 var
   X: double;
 begin
-  SetCode(aCode);
   X := Now;
-  OnFatalError(aMessage);
+  OnFatalError(aMessage, aCode);
   FStartTime := FStartTime + (Now - X);
 end;
 
@@ -264,9 +306,8 @@ procedure TApp.DoError(const aMessage: string; aCode: byte);
 var
   X: double;
 begin
-  SetCode(aCode);
   X := Now;
-  OnError(aMessage);
+  OnError(aMessage, aCode);
   FStartTime := FStartTime + (Now - X);
 end;
 
@@ -274,9 +315,8 @@ procedure TApp.DoWarning(const aMessage: string; aCode: byte);
 var
   X: double;
 begin
-  SetCode(aCode);
   X := Now;
-  OnWarning(aMessage);
+  OnWarning(aMessage, aCode);
   FStartTime := FStartTime + (Now - X);
 end;
 
@@ -289,11 +329,11 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-function TApp.DoOverWrite(const aFileInfo: TFileInfo; const aValue: string): string;
+function TApp.DoOverWrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
 var
   X: double;
 begin
-  X      := Now;
+  X := Now;
   Result := OnOverWrite(aFileInfo, aValue);
   FStartTime := FStartTime + (Now - X);
 end;
@@ -302,8 +342,8 @@ function TApp.DoRename(const aFileInfo: TFileInfo; const aValue: string): string
 var
   X: double;
 begin
-  X      := Now;
-  Result := OnRename(aFileInfo, aValue);
+  X := Now;
+  OnRename(aFileInfo, aValue);
   FStartTime := FStartTime + (Now - X);
 end;
 
@@ -311,8 +351,8 @@ function TApp.DoPassword(const aFileInfo: TFileInfo; const aValue: string): stri
 var
   X: double;
 begin
-  X      := Now;
-  Result := OnPassword(aFileInfo, aValue);
+  X := Now;
+  OnPassword(aFileInfo, aValue);
   FStartTime := FStartTime + (Now - X);
 end;
 

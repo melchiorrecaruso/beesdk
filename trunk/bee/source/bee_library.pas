@@ -96,12 +96,9 @@ type
     procedure OnWarning(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
     procedure OnMessage(const aMessage: string); override;
-    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string;
-      override;
-    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
-      override;
-    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
-      override;
+    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
     procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); override;
     procedure OnProgress; override;
     procedure OnClearLine; override;

@@ -37,16 +37,9 @@ const
   Marker: longint = 442852674;
 
 const
-  // Version number
-
-  ver02 = 0; // Bee 0.2.xx
-  ver03 = 1; // Bee 0.3.xx
-  ver04 = 2; // Bee 0.8.xx
-
-const
   // CoreStatus ...
 
-  csUnknow     = -1;
+  csUnknow     =-1;
   csReady      = 0;
   csExecuting  = 1;
   csWaitingOverwrite = 2;
@@ -60,15 +53,21 @@ const
 const
   // CoreCode
 
-  ccUnknow    = -1;
-  ccSuccesful = 0;
-  ccWarning   = 1;
-  ccError     = 2;
+  ccUnknow    =-1;
+  ccSuccesful = 0;   // 0 No error
+  ccWarning   = 1;   // 1 Warning (Non fatal error(s)). For example, one or more
+                     //   files were locked by some other application, so they
+                     //   were not compressed
+
+  ccError     = 2;   // 2 Fatal error
+  ccCmdError  = 7;   // 7 Command line error
+  ccMemError  = 8;   // 8 Not enough memory for operation
+  ccUserAbort = 255; // 255 User stopped the process
 
 const
   // CorePriority
 
-  cpUnknow  = -1;
+  cpUnknow  =-1;
   cpIdle    = 0;
   cpLowest  = 1;
   cpLower   = 2;

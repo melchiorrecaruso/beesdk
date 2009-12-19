@@ -41,45 +41,45 @@ uses
   Classes,
   SysUtils,
   // ---
+  Bee_Common,
   Bee_BlowFish;
 
 type
   TFileReader = class(TFileStream)
+  private
+    BufferSize: longint;
+    BufferReaded: longint;
+    Buffer: array [0..$1FFFF] of byte;
   public
+    BlowFish: TBlowFish;
     constructor Create(const FileName: string; Mode: word);
     destructor Destroy; override;
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
-  public
-    BlowFish: TBlowFish;
-  private
-    BufferSize: longint;
-    BufferReaded: longint;
-    Buffer: array [0..$1FFFF] of byte;
   end;
 
-type
   TFileWriter = class(TFileStream)
+  private
+    BufferSize: longint;
+    Buffer:     array [0..$1FFFF] of byte;
   public
+    BlowFish: TBlowFish;
     constructor Create(const FileName: string; Mode: word);
     destructor Destroy; override;
     procedure Flush;
     function Write(const Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
-  public
-    BlowFish: TBlowFish;
-  private
-    BufferSize: longint;
-    Buffer:     array [0..$1FFFF] of byte;
   end;
 
-type
   TNulWriter = class(TFileWriter)
   private
     FSize:     int64;
     FPosition: int64;
+  protected
+    procedure SetSize(NewSize: longint); override;
+    procedure SetSize(const NewSize: int64); override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -87,9 +87,32 @@ type
     function Write(const Buffer; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
-  protected
-    procedure SetSize(NewSize: longint); override;
-    procedure SetSize(const NewSize: int64); override;
+  end;
+
+  PCustomSearchRec = ^TCustomSearchRec;
+
+  TCustomSearchRec = record
+    FileName: string;
+    FileSize: int64;
+    FileTime: longint;
+    FileAttr: longint;
+    FileLink: string;
+  end;
+
+  TFileScanner = class
+  private
+    FList: TList;
+    function GetCount: integer;
+    function GetItem(Index: longint): TCustomSearchRec;
+    procedure RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
+    function CreateItem(const RecPath: string; const Rec: TSearchRec): PCustomSearchRec;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
+    procedure Clear;
+    property Count: integer read GetCount;
+    property Items[Index: longint]: TCustomSearchRec read GetItem;
   end;
 
 function CreateTFileReader(const FileName: string; Mode: word): TFileReader;
@@ -98,7 +121,6 @@ function CreateTFileWriter(const FileName: string; Mode: word): TFileWriter;
 implementation
 
 uses
-  Bee_Common,
   Bee_Assembler; // Low-level routines ...
 
 // class TFileReader...
@@ -347,5 +369,107 @@ begin
   FSize     := NewSize;
   FPosition := FSize;
 end;
+
+/// class TFileScanner...
+
+constructor TFileScanner.Create;
+begin
+  inherited Create;
+  FList := TList.Create;
+end;
+
+destructor TFileScanner.Destroy;
+begin
+  Clear;
+  FList.Destroy;
+  inherited Destroy;
+end;
+
+procedure TFileScanner.Clear;
+var
+  I: longint;
+begin
+  for I := 0 to FList.Count - 1 do
+  begin
+    FreeAndNil(TCustomSearchRec(FList.Items[I]^));
+  end;
+  FList.Clear;
+end;
+
+function TFileScanner.CreateItem(const RecPath: string; const Rec: TSearchRec): PCustomSearchRec;
+begin
+  GetMem(Result, SizeOf(TCustomSearchRec));
+  with TCustomSearchRec(Result^) do
+  begin
+    FileName := DeleteFileDrive(RecPath) + Rec.Name;
+    FileSize := Rec.Size;
+    FileTime := Rec.Time;
+    FileAttr := Rec.Attr;
+    FileLink := RecPath + Rec.Name;
+  end;
+end;
+
+procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
+var
+  Error: longint;
+  Rec: TSearchRec;
+  RecName: string;
+  RecPath: string;
+begin
+  // directory and recursive mode...
+  Mask := ExcludeTrailingBackSlash(Mask);
+  if DirectoryExists(Mask) then
+  begin
+    Recursive := rmFull;
+    Mask := IncludeTrailingBackSlash(Mask) + '*';
+  end;
+  RecPath := ExtractFilePath(Mask);
+
+  // search filemask...
+  Error := FindFirst(RecPath + '*', faAnyFile, Rec);
+  while Error = 0 do
+  begin
+    RecName := RecPath + Rec.Name;
+
+    if FileNameMatch(RecName, Mask, Recursive) then
+      if not FileNameMatch(RecName, ExcludeMasks, Recursive) then
+      begin
+        if (Rec.Attr and faDirectory) = 0 then
+          FList.Add(CreateItem(RecPath, Rec))
+        else
+          { TODO : Verify Recursive <> rmNone }
+          if (Recursive <> rmNone) and (Rec.Name <> '.') and (Rec.Name <> '..') then
+            RecursiveScan(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), ExcludeMasks, Recursive);
+      end;
+    Error := FindNext(Rec);
+  end; // end while error...
+  FindClose(Rec);
+end;
+
+procedure TFileScanner.Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
+var
+  I: longint;
+  Masks: TStringList;
+begin
+  Masks := TStringList.Create;
+  ExpandFileMask(Mask, Masks, Recursive);
+  for I := 0 to Masks.Count - 1 do
+  begin
+    RecursiveScan(Masks[I], ExcludeMasks, Recursive);
+  end;
+  Masks.Free;
+end;
+
+function TFileScanner.GetCount: longint;
+begin
+  Result := FList.Count;
+end;
+
+function TFileScanner.GetItem(Index:longint): TCustomSearchRec;
+begin
+  Result := TCustomSearchRec(FList.Items[Index]^);
+end;
+
+
 
 end.

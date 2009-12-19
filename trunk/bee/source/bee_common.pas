@@ -40,8 +40,8 @@ uses
   {$IFNDEF FPC} Math, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
-  Classes,
-  SysUtils;
+  SysUtils,
+  Classes;
 
 const
   Cr = #13#10;
@@ -69,6 +69,41 @@ const
 
 const
   DefaultCfgName = 'bee.ini';
+  DefaultSfxName = 'bee.sfx';
+
+type
+  // Recursive Mode:
+  //  rmNone      No resurse filename
+  //  rmWildcard  Recurse olny filename with wildcard
+  //  rmFull      Recurse all filename
+
+  TRecursiveMode = (rmNone, rmWildCard, rmFull);
+
+  // Update Mode:
+  //  umAdd           Add only new files
+  //  umUpdate        Update only existing files
+  //  umReplace       Replace only existing files
+  //  umAddUpdate     Add and update existing files
+  //  umAddReplace    Add and replace existing files
+  //  umAddAutoRename
+  //  umAddQuery      Add and query if file already exists
+
+  TUpdateMode = (umAdd, umUpdate, umReplace, umAddUpdate,
+    umAddReplace, umAddAutoRename, umAddQuery);
+
+  // Update Mode:
+  //  qmUpdate
+  //  qmAddUpdate
+  //  qmReplace
+  //  qmAddReplace
+  //  qmSkip
+  //  qmAddSkip
+  //  qmRename
+  //  qmAddAutoRename
+  //  qmQuit
+
+  TOverwriteMode = (omAdd, omUpdate, omReplace, omRename,
+    omAddUpdate, omAddReplace, omAddAutoRename, omSkip, omQuit);
 
 // filename handling routines ...
 
@@ -82,12 +117,10 @@ function IncludeTrailingBackSlash(const DirName: string): string;
 function ExcludeTrailingBackSlash(const DirName: string): string;
 
 function FileNameUseWildcards(const FileName: string): boolean;
-function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean;
-  overload;
-function FileNameMatch(const FileName: string; Masks: TStringList;
-  Recursive: boolean): boolean; overload;
+function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; overload;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
 
-procedure ExpandMask(const Mask: string; Masks: TStringList; Recursive: boolean);
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 
 function CompareFileName(const S1, S2: string): longint;
 function ExtractFileDrive(const FileName: string): string;
@@ -113,9 +146,13 @@ function OemToParam(const Param: string): string;
 function SelfName: string;
 function SelfPath: string;
 function GenerateFileName(const FilePath: string): string;
-function GenerateAlternativeFileName(const FileName: string): string;
+function GenerateAlternativeFileName(const FileName: string; Check :boolean): string;
 
 // string routines ...
+
+function  StringToPChar(const aValue: string): PChar;
+function  PCharToString(aValue: PChar): string;
+procedure FreePChar(var aValue: PChar);
 
 function SizeToStr(const Size: int64): string;
 function RatioToStr(const PackedSize, Size: int64): string;
@@ -173,8 +210,7 @@ end;
 function FileNameLastPos(const Substr, Str: string): longint;
 begin
   Result := Length(Str);
-  while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)),
-      Substr) <> 0) do
+  while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)), Substr) <> 0) do
   begin
     Dec(Result);
   end;
@@ -309,7 +345,18 @@ begin
       Inc(Result);
 end;
 
-function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean;
+function FileNameUseWildcards(const FileName: string): boolean;
+begin
+  if System.Pos('*', FileName) > 0 then
+    Result := True
+    else
+      if System.Pos('?', FileName) > 0 then
+        Result := True
+      else
+        Result := False;
+end;
+
+function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; 
 var
   iFileDrive: string;
   iFileName: string;
@@ -329,60 +376,58 @@ begin
   begin
     iFileDrive := ExtractFileDrive(iFileName);
     if iFileDrive <> '' then
+    begin
       iMask := IncludeTrailingBackSlash(iFileDrive) + iMask;
+    end;
   end;
 
-  if Recursive then
+  if Recursive = rmWildCard then
+  begin
+    if FileNameUseWildCards(ExtractFileName(Mask)) then
+      Recursive := rmFull
+    else
+      Recursive := rmNone;
+  end;
+
+  if Recursive = rmFull then
   begin
     iMaskPath := ExtractFilePath(iMask);
     for I := 1 to CharCount(iFileName, PathDelim) - CharCount(iMask, PathDelim) do
-      iMaskPath := IncludeTrailingBackSlash(iMaskPath) +
-        IncludeTrailingBackSlash('*');
+    begin
+      iMaskPath := IncludeTrailingBackSlash(iMaskPath) + IncludeTrailingBackSlash('*');
+    end;
     iMask := iMaskPath + ExtractFileName(iMask);
   end;
 
   if CharCount(iFileName, PathDelim) = CharCount(iMask, PathDelim) then
   begin
-    if MatchPattern(PChar(ExtractFilePath(iFileName)),
-      PChar(ExtractFilePath(iMask))) then
-      Result := MatchPattern(PChar(ExtractFileName(iFileName)),
-        PChar(ExtractFileName(iMask)))
-    else
+    if MatchPattern(PChar(ExtractFilePath(iFileName)), PChar(ExtractFilePath(iMask))) then
+    begin
+      Result := MatchPattern(PChar(ExtractFileName(iFileName)), PChar(ExtractFileName(iMask)))
+    end else
     begin
       Result := False;
     end;
-  end
-  else
+  end else
     Result := False;
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList;
-  Recursive: boolean): boolean;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; 
 var
   I: longint;
 begin
   Result := False;
-  if Assigned(Masks) and (Masks.Count > 0) then
-    for I := 0 to Masks.Count - 1 do
-      if FileNameMatch(FileName, Masks.Strings[I], Recursive) then
-      begin
-        Result := True;
-        Break;
-      end;
+  for I := 0 to Masks.Count - 1 do
+  begin
+    if FileNameMatch(FileName, Masks[I], Recursive) then
+    begin
+      Result := True;
+      Break;
+    end;
+  end;
 end;
 
-function FileNameUseWildcards(const FileName: string): boolean;
-begin
-  if System.Pos('*', FileName) > 0 then
-    Result := True
-  else
-  if System.Pos('?', FileName) > 0 then
-    Result := True
-  else
-    Result := False;
-end;
-
-procedure ExpandMask(const Mask: string; Masks: TStringList; Recursive: boolean);
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 var
   I:     longint;
   Error: longint;
@@ -393,18 +438,25 @@ var
   FolderName: string;
   FolderPath: string;
 begin
-  Card      := False;
-  LastSlash := 0;
+  {$IFDEF FILENAMECASESENSITIVE}
+  Masks.CaseSensitive := True;
+  {$ELSE}
+  Masks.CaseSensitive := False;
+  {$ENDIF}
+
   FirstSlash := 0;
+  LastSlash := 0;
+  Card := False;  
+
   for I := 1 to Length(Mask) do
     if Card = False then
     begin
       if Mask[I] in ['*', '?'] then
-        Card := True;
-      if Mask[I] = PathDelim then
-        FirstSlash := I;
-    end
-    else
+        Card := True
+      else
+        if Mask[I] = PathDelim then
+          FirstSlash := I;
+    end else
     if Mask[I] = PathDelim then
     begin
       LastSlash := I;
@@ -419,17 +471,16 @@ begin
     while Error = 0 do
     begin
       if ((Rec.Attr and faDirectory) = faDirectory) and
-        (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
+          (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
         if FileNameMatch(Rec.Name, FolderName, Recursive) then
-          ExpandMask(FolderPath + Rec.Name + Copy(Mask, LastSlash,
-            (Length(Mask) + 1) - LastSlash),
-            Masks, Recursive);
+          ExpandFileMask(FolderPath + Rec.Name + Copy(Mask, LastSlash,
+            (Length(Mask) + 1) - LastSlash), Masks, Recursive);
+
       Error := FindNext(Rec);
     end;
     FindClose(Rec);
-  end
-  else
-    Masks.Add(Mask);
+  end else
+    if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
 
 function DoDirSeparators(const FileName: string): string;
@@ -647,20 +698,51 @@ begin
   until FileAge(Result) = -1;
 end;
 
-function GenerateAlternativeFileName(const FileName: string): string;
+function GenerateAlternativeFileName(const FileName: string; Check :boolean): string;
 var
   I: longint;
 begin
   I      := 0;
-  Result := FileName;
-  while FileAge(Result) <> -1 do
+  Result := ChangeFileExt(FileName, '.' + IntToStr(I) + ExtractFileExt(FileName));
+  if Check then
   begin
-    Inc(I);
-    Result := ChangeFileExt(FileName, IntToStr(I) + ExtractFileExt(FileName));
+    while FileAge(Result) <> -1 do
+    begin
+      Inc(I);
+      Result := ChangeFileExt(FileName, '.' +  IntToStr(I) + ExtractFileExt(FileName));
+    end;
   end;
 end;
 
 // string routines
+
+function StringToPChar(const aValue: string): PChar; inline;
+begin
+  Result := StrAlloc(Length(aValue) + 1);
+  Result := StrPCopy(Result, aValue);
+end;
+
+function PCharToString(aValue: PChar): string; inline;
+var
+  I: longint;
+begin
+  SetLength(Result, 0);
+  if aValue <> nil then
+  begin
+    I := StrLen(aValue);
+    if I > 0 then
+    begin
+      SetLength(Result, I);
+      Move(aValue^, Result[1], I);
+    end;
+  end;
+end;
+
+procedure FreePChar(var aValue: PChar); inline;
+begin
+  StrDispose(aValue);
+  aValue := nil;
+end;
 
 function SizeToStr(const Size: int64): string;
 begin

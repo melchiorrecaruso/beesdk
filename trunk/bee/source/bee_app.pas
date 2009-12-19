@@ -43,6 +43,7 @@ uses
   // ---
   Bee_Files,
   Bee_Types,
+  Bee_Common,        // Various helper routines
   Bee_Headers,
   Bee_Interface,
   Bee_CommandLine,
@@ -61,23 +62,22 @@ type
     // decode solid sequences using a swapfile
     function  ProcessFilesToSwap(Headers: THeaders): boolean;
     // find and prepare sequences
+    function  ProcessFilesToAdd(Headers: THeaders): int64;
     procedure ProcessFilesToFresh(Headers: THeaders);
     procedure ProcessFilesToDelete(Headers: THeaders);
     procedure ProcessFilesToDecode(Headers: THeaders; aAction: THeaderAction);
     procedure ProcessFilesToExtract(Headers: THeaders);
-    procedure ProcessFilesToOverWrite(Headers: THeaders);
     function  ProcessFilesToRename(Headers: THeaders): boolean;
     procedure ProcessFilesDeleted(Headers: THeaders);
     // overwrite sub-routines
-    procedure ProcessFilesToOverWriteDefault(Headers: THeaders);
-    procedure ProcessFilesToOverWriteAdvanced(Headers: THeaders);
-    procedure ProcessFilesToOverwriteWithUpdateAndFreshOption(Headers: THeaders);
-    procedure ProcessFilesToOverwriteWithUpdateOption(Headers: THeaders);
-    procedure ProcessFilesToOverwriteWithFreshOption(Headers: THeaders);
-
+    function  ProcessFileToOverWrite4Add(Headers: THeaders; Item: THeader; New: TCustomSearchRec): TUpdateMode;
+    function  ProcessFileToOverWrite4Extract(Headers: THeaders; Item: THeader): TUpdateMode;
     // already file exists in archive
     function AlreadyFileExists(Headers: THeaders; aIndex: longint;
-      aActions: THeaderActions; const aFileName: string): longint;
+      aActions: THeaderActions; const aFileName: string): longint; overload;
+
+    function AlreadyFileExists(Headers: THeaders; const
+      aFileName: string): longint; overload;
 
     procedure ProcesstOption;
     procedure ProcesslOption;
@@ -108,7 +108,6 @@ uses
   SysUtils,       // faReadOnly, ...
   // ---
   Bee_Consts,
-  Bee_Common,     // Various helper routines
   Bee_MainPacker; // TEncoder...
 
 // TBeeApp ...
@@ -118,7 +117,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.8.0 build 1076 archiver utility, Nov 2009' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1105 archiver utility, Dec 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -127,7 +126,7 @@ begin
 
   // process command line
   FCommandLine := TCommandLine.Create;
-  FCommandLine.Process(aParams);
+  FCommandLine.CommandLine := aParams.Text;
 
   // load configuration
   FConfiguration := TConfiguration.Create;
@@ -138,11 +137,11 @@ begin
 
   // load method and dictionary level
   FConfiguration.Selector('\main');
-  FConfiguration.CurrentSection.Values['Method']     := IntToStr(FCommandLine.mOption);
-  FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FCommandLine.dOption);
+  FConfiguration.CurrentSection.Values['Method']     := IntToStr(Ord(FCommandLine.mOption));
+  FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(FCommandLine.dOption));
 
   // set thread priority
-  SetPriority(FCommandLine.priOption);
+  SetPriority(Ord(FCommandLine.priOption));
 end;
 
 destructor TBeeApp.Destroy;
@@ -186,27 +185,23 @@ begin
 end;
 
 procedure TBeeApp.Execute;
-const
-  SetOfCommands = ['A', 'D', 'E', 'L', 'R', 'T', 'X'];
 begin
   inherited Execute;
   DoMessage(FSelfName);
   with FCommandLine do
-  begin
-    if ((Command in SetOfCommands) and (ArchiveName > '')) or (Command = '?') then
+    if (Command <> ccNone) and (ArchiveName > '') then
       case Command of
-        'A': EncodeShell;
-        'D': DeleteShell;
-        'E': DecodeShell(toExtract);
-        'L': ListShell;
-        'R': RenameShell;
-        'T': DecodeShell(toTest);
-        'X': DecodeShell(toExtract);
-        '?': DisplayUsage;
+        ccAdd: EncodeShell;
+        ccDelete: DeleteShell;
+        ccExtract: DecodeShell(toExtract);
+        ccList: ListShell;
+        ccRename: RenameShell;
+        ccTest: DecodeShell(toTest);
+        ccxExtract: DecodeShell(toExtract);
+        ccHelp: DisplayUsage;
       end
     else
       DisplayUsage;
-  end;
   FTerminated := True;
 end;
 
@@ -220,222 +215,10 @@ begin
       Headers.ReadItems(FArcFile, aAction);
       if (Headers.GetCount = 0) and (FArcFile.Size <> 0) then
       begin
-        Result := False;  DoFatalError('Error: archive unsupported', 2);
+        Result := False;  DoFatalError('Error: archive unsupported', ccError);
       end;
     except
-      Result := False;  DoFatalError('Error: can''t open archive', 2);
-    end;
-  end;
-end;
-
-// -------------------------------------------------------------------------- //
-// Extract file processing                                                    //
-// -------------------------------------------------------------------------- //
-
-procedure TBeeApp.ProcessFilesToExtract;
-var
-  I: longint;
-begin
-  if FCommandLine.Command = 'E' then
-    for I := 0 to Headers.GetCount -1 do
-      with Headers.GetItem(I) do
-      begin
-        FileName := ExtractFileName(FileName);
-      end
-  else
-    for I := 0 to Headers.GetCount -1 do
-      with Headers.GetItem(I) do
-      begin
-        FileName := DeleteFilePath(FCommandLine.cdOption, FileName);
-      end;
-end;
-
-// -------------------------------------------------------------------------- //
-// Ovewwrite file processing                                                  //
-// -------------------------------------------------------------------------- //
-
-procedure TBeeApp.ProcessFilesToOverWrite;
-var
-  I, J: longint;
-  P: THeader;
-begin
-  if (not FCommandLine.uOption) and (not FCommandLine.fOption) then
-    ProcessFilesToOverWriteDefault(Headers)
-  else
-    ProcessFilesToOverWriteAdvanced(Headers);
-
-  // Start clear duplicated items //
-  for I := 1 to Headers.GetCount -1 do
-  begin
-    P := Headers.GetItem(I);
-    if P.FileAction = toExtract then
-    begin
-      J := Headers.GetBack(I - 1, toExtract, P.FileName);
-      if J > -1 then
-      begin
-        Headers.GetItem(J).FileAction := toNone;
-      end;
-    end;
-  end;
-  // End clear //
-end;
-
-procedure TBeeApp.ProcessFilesToOverWriteDefault(Headers: THeaders);
-var
-  I, J: longint;
-  FI: TFileInfo;
-  P: THeader;
-  S: string;
-begin
-  I := 0;
-  while I < Headers.GetCount do
-  begin
-    P := Headers.GetItem(I);
-
-    if (P.FileAction = toExtract) and FileExists(P.FileName) then
-    begin
-
-      if not (FCommandLine.oOption in ['A', 'Q', 'S']) then
-      begin
-        FI.FileName := StringToPChar(ExtractFileName(P.FileName));
-        FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
-
-        FI.FileSize := P.FileSize;
-        FI.FileTime := P.FileTime;
-        FI.FileAttr := P.FileAttr;
-        while True do
-        begin
-          S := DoOverwrite(FI, 'A');
-          if Length(S) = 1 then
-          begin
-            FCommandLine.oOption := UpCase(S[1]);
-            if FCommandLine.oOption in ['A', 'N', 'R', 'S', 'Q', 'Y'] then
-            begin
-              Break;
-            end;
-          end;
-        end;
-        StrDispose(FI.FileName);
-        StrDispose(FI.FilePath);
-      end;
-
-      case FCommandLine.oOption of
-        'A': Break;
-        'N': P.FileAction := toNone;
-        'R': begin
-               FI.FileName := StringToPChar(ExtractFileName(P.FileName));
-               FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
-
-               FI.FileSize := P.FileSize;
-               FI.FileTime := P.FileTime;
-               FI.FileAttr := P.FileAttr;
-               while True do
-               begin
-                 S := FixFileName(DoRename(FI, ''));
-                 if Length(S) > 0 then
-                 begin
-                   if FileExists(S) or (AlreadyFileExists(Headers, I, [toExtract], S) > -1) then
-                     DoWarning('Warning: file "' + S + '" already exists', 0)
-                   else
-                     Break;
-                 end else
-                   Break;
-               end;
-
-               if Length(S) = 0 then
-                 P.FileAction := toNone
-               else
-                 P.FileName := S;
-             end;
-        'S': begin
-               for J := I to Headers.GetCount -1 do
-               begin
-                Headers.GetItem(J).FileAction := toNone;
-               end;
-               I := Headers.GetCount -1;
-             end;
-        'Q': begin
-               for J := 0 to Headers.GetCount -1 do
-               begin
-                 Headers.GetItem(J).FileAction := toNone;
-               end;
-               I := Headers.GetCount -1;
-             end;
-      end;
-    end;
-    Inc(I);
-  end;
-end;
-
-procedure TBeeApp.ProcessFilesToOverWriteAdvanced(Headers: THeaders);
-begin
-  if FCommandLine.uOption xor FCommandLine.fOption then
-  begin
-    if FCommandLine.uOption then
-      ProcessFilesToOverwriteWithUpdateOption(Headers)
-    else
-      ProcessFilesToOverwriteWithFreshOption(Headers);
-  end else
-    ProcessFilesToOverwriteWithUpdateAndFreshOption(Headers);
-end;
-
-procedure TBeeApp.ProcessFilesToOverwriteWithUpdateOption(Headers: THeaders);
-var
-  I: longint;
-  P: THeader;
-begin
-  for I := 0 to Headers.GetCount -1 do
-  begin
-    P := Headers.GetItem(I);
-    if P.FileAction = toExtract then
-    begin
-      if FileExists(P.FileName) then
-      begin
-        P.FileAction := toNone;
-      end;
-    end;
-  end;
-end;
-
-procedure TBeeApp.ProcessFilesToOverwriteWithFreshOption(Headers: THeaders);
-var
-  I: longint;
-  P: THeader;
-begin
-  for I := 0 to Headers.GetCount -1 do
-  begin
-    P := Headers.GetItem(I);
-    if P.FileAction = toExtract then
-    begin
-      if FileExists(P.FileName) then
-      begin
-        if FileAge(P.FileName) >= P.FileTime then
-        begin
-          P.FileAction := toNone
-        end;
-      end else
-        P.FileAction := toNone
-    end;
-  end;
-end;
-
-procedure TBeeApp.ProcessFilesToOverwriteWithUpdateAndFreshOption(Headers: THeaders);
-var
-  I: longint;
-  P: THeader;
-begin
-  for I := 0 to Headers.GetCount -1 do
-  begin
-    P := Headers.GetItem(I);
-    if P.FileAction = toExtract then
-    begin
-      if FileExists(P.FileName) then
-      begin
-        if FileAge(P.FileName) >= P.FileTime then
-        begin
-          P.FileAction := toNone
-        end;
-      end;
+      Result := False;  DoFatalError('Error: can''t open archive', ccError);
     end;
   end;
 end;
@@ -454,6 +237,205 @@ begin
     Result := -1;
 end;
 
+function TBeeApp.AlreadyFileExists(Headers: THeaders; const aFileName: string): longint;
+var
+  I:longint;
+begin
+  Result := -1;
+  if Length(aFileName) > 0 then
+    for I := 0 to Headers.GetCount - 1 do
+      if CompareFileName(aFileName, Headers.GetItem(I).FileName) = 0 then
+      begin
+        Result := I;
+        Break;
+      end;
+end;
+
+// -------------------------------------------------------------------------- //
+// Add file processing                                                        //
+// -------------------------------------------------------------------------- //
+
+function TBeeApp.ProcessFileToOverWrite4Add(Headers: THeaders; Item: THeader; New: TCustomSearchRec): TUpdateMode;
+var
+  FI: TFileInfo;
+  S: string;
+begin
+  FI.FileName := StringToPChar(ExtractFileName(Item.FileName));
+  FI.FilePath := StringToPChar(ExtractFilePath(Item.FileName));
+
+  FI.FileSize := Item.FileSize;
+  FI.FileTime := Item.FileTime;
+  FI.FileAttr := Item.FileAttr;
+
+  case DoOverwrite(FI, omAddReplace) of
+    omAdd:     Result := umAdd;
+    omUpdate:  Result := umUpdate;
+    omReplace: Result := umReplace;
+
+    omRename:
+    begin
+      while True do
+      begin
+        S := FixFileName(DoRename(FI, ''));
+        if Length(S) > 0 then
+        begin
+          if AlreadyFileExists(Headers, S) > -1 then
+            DoWarning('Warning: file "' + S + '" already existing in archive', 0)
+          else
+            Break;
+        end else
+          Break;
+      end;
+      New.FileName := S;
+
+      Result := umAdd;
+    end;
+
+    omAddUpdate:
+    begin
+      FCommandLine.uOption := umAddUpdate;
+      Result := umAddUpdate;
+    end;
+
+    omAddReplace:
+    begin
+      FCommandLine.uOption := umAddReplace;
+      Result := umAddReplace;
+    end;
+
+    omAddAutoRename:
+    begin
+      FCommandLine.uOption := umAddAutoRename;
+      Result := umAddAutoRename;
+    end;
+
+    omSkip:
+    begin
+      Result := umAddQuery;
+    end;
+
+    omQuit:
+    begin
+      DoFatalError('Process aborted' , ccUserAbort);
+      Result :=  umAddQuery;
+    end;
+  end;
+
+  StrDispose(FI.FileName);
+  StrDispose(FI.FilePath);
+end;
+
+function TBeeApp.ProcessFilesToAdd(Headers: THeaders): int64;
+var
+  I: longint;
+  P: THeader;
+  U: TUpdateMode;
+  Scanner: TFileScanner;
+begin
+  Result  := 0;
+  Scanner := TFileScanner.Create;
+  with FCommandLine do
+    for I := 0 to FileMasks.Count - 1 do
+    begin
+      Scanner.Scan(FileMasks[I], xOptions, rOption);
+    end;
+
+  P := Headers.SearchItem(Scanner.Items[I].FileName);
+
+  if (P = nil) or (U <> umAddQuery) then
+    U := FCommandLine.uOption
+  else
+    U := ProcessFileToOverwrite4Add(Headers, P, Scanner.Items[I]);
+
+  for I := 0 to Scanner.Count - 1 do
+  begin
+    if Terminated = False then
+    begin
+      case U of
+      //umAddQuery:      Nothing to do
+        umAdd:           Result := Result + Headers.AddItem       (Scanner.Items[I], P);
+        umUpdate:        Result := Result + Headers.UpdateItem    (Scanner.Items[I], P);
+        umReplace:       Result := Result + Headers.ReplaceItem   (Scanner.Items[I], P);
+        umAddUpdate:     Result := Result + Headers.AddUpdateItem (Scanner.Items[I], P);
+        umAddReplace:    Result := Result + Headers.AddReplaceItem(Scanner.Items[I], P);
+        umAddAutoRename:
+        with Scanner.Items[I] do
+        begin
+          repeat
+            FileName := GenerateAlternativeFileName(FileName, False);
+          until Headers.SearchItem(FileName) = nil;
+          Result := Result + Headers.AddItem(Scanner.Items[I], P);
+        end;
+      end;
+    end;
+  end;
+  Scanner.Destroy;
+end;
+
+// -------------------------------------------------------------------------- //
+// Extract file processing                                                    //
+// -------------------------------------------------------------------------- //
+
+function TBeeApp.ProcessFileToOverWrite4Extract(Headers: THeaders; Item: THeader): TUpdateMode;
+begin
+
+
+end;
+
+procedure TBeeApp.ProcessFilesToExtract;
+var
+  I: longint;
+  P: THeader;
+  U: TUpdateMode;
+begin
+  for I := 0 to Headers.GetCount - 1 do
+  begin
+    P := Headers.GetItem(I);
+    if P.FileAction = toExtract then
+    begin
+      if FCommandLine.Command <> ccExtract then
+        P.FileName := DeleteFilePath(FCommandLine.cdOption, P.FileName)
+      else
+        P.FileName := ExtractFileName(P.FileName);
+
+      if not FileExists(P.FileName) then
+        U := FCommandLine.uOption
+      else
+        U := ProcessFileToOverwrite4Extract(Headers, P);
+
+      case U of
+      //umReplace:    nothing to do
+      //umAddReplace: nothing to do
+      //umAddQuery:   nothing to do
+        umAdd:
+        if FileExists(P.FileName) then
+        begin
+          P.FileAction := toNone;
+        end;
+        umUpdate:
+        if (not FileExists(P.FileName)) or (P.FileTime <= FileAge(P.FileName)) then
+        begin
+          P.FileAction := toNone;
+        end;
+        umAddUpdate:
+        if FileExists(P.FileName) and (P.FileTime <= FileAge(P.FileName))then
+        begin
+          P.FileAction := toNone;
+        end;
+        umAddAutoRename:
+        while FileExists(P.FileName) do
+        begin
+          P.FileName := GenerateAlternativeFileName(P.FileName, False);
+          if AlreadyFileExists(Headers, -1, [toExtract], P.FileName) = -1 then
+          begin
+            Break;
+          end;
+        end;
+      end;
+    end;
+  end;
+end;
+
 // -------------------------------------------------------------------------- //
 // Rename file processing                                                     //
 // -------------------------------------------------------------------------- //
@@ -466,7 +448,7 @@ var
   FI: TFileInfo;
 begin
   Headers.MarkItems(FCommandLine.FileMasks, toCopy,   toRename);
-  Headers.MarkItems(FCommandLine.xOption,   toRename, toCopy);
+  Headers.MarkItems(FCommandLine.xOptions,   toRename, toCopy);
 
   if Headers.GetNext(0, toRename) > -1 then
   begin
@@ -508,14 +490,14 @@ begin
     end;
     if Result then Result := not Terminated;
   end else
-    Result := ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1));
+    Result := ((Length(FCommandLine.sfxOption) > 0) and (Headers.GetNext(0, toCopy) > -1));
 end;
 
 // -------------------------------------------------------------------------- //
 // Sequences processing                                                       //
 // -------------------------------------------------------------------------- //
 
-procedure TBeeApp.ProcessFilesToFresh;
+procedure TBeeApp.ProcessFilesToFresh(Headers: THeaders);
 var
   I, J, BackTear, NextTear: longint;
   P: THeader;
@@ -550,7 +532,7 @@ begin
   Inc(FTotalSize, Headers.GetPackedSize(toCopy));
 end;
 
-procedure TBeeApp.ProcessFilesToDelete;
+procedure TBeeApp.ProcessFilesToDelete(Headers: THeaders);
 var
   I, J, BackTear, NextTear: longint;
   P: THeader;
@@ -601,7 +583,7 @@ begin
   I := Headers.GetBack(Headers.GetCount -1, toSwap);
   if (I > -1) then
   begin
-    FSwapName := GenerateFileName(FCommandLine.yOption);
+    FSwapName := GenerateFileName(FCommandLine.wdOption);
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
 
     if (FSwapStrm <> nil) then
@@ -752,8 +734,8 @@ begin
     FTotalSize := 0;
     FSize      := 0;
 
-    FCommandLine.rOption := True;
-    FCommandLine.xOption.Clear;
+    FCommandLine.rOption := rmFull;
+    FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
     FCommandLine.FileMasks.Add('*');
     DecodeShell(toTest);
@@ -767,8 +749,8 @@ begin
     FTotalSize := 0;
     FSize      := 0;
 
-    FCommandLine.rOption := True;
-    FCommandLine.xOption.Clear;
+    FCommandLine.rOption := rmFull;
+    FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
     FCommandLine.FileMasks.Add('*');
     ListShell;
@@ -795,11 +777,11 @@ begin
   begin
     DoMessage(msgScanning + '...');
     // process FileMasks and xFileMasks
-    FTotalSize:= Headers.AddItems(FConfiguration);
+    ProcessFilesToAdd(Headers);
 
-    if (Headers.GetCount([toUpdate, toFresh]) > 0) or ((Length(FCommandLine.aOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
+    if (Headers.GetCount([toUpdate, toFresh]) > 0) or ((Length(FCommandLine.sfxOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin
-      TmpFileName := GenerateFileName(FCommandLine.yOption);
+      TmpFileName := GenerateFileName(FCommandLine.wdOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
 
       // find sequences and...
@@ -814,8 +796,8 @@ begin
 
         // set sfx module
         with FCommandLine do
-          if Length(aOption) > 0 then
-            Headers.SetModule(aOption);
+          if Length(sfxOption) > 0 then
+            Headers.SetModule(sfxOption);
 
         // write Headers
         Headers.WriteItems(TmpFile);
@@ -902,12 +884,12 @@ begin
     DoMessage(msgScanning + '...');
 
     Headers.MarkItems(FCommandLine.FileMasks, toNone, Action);
-    Headers.MarkItems(FCommandLine.xOption, Action, toNone);
+    Headers.MarkItems(FCommandLine.xOptions, Action, toNone);
 
     if (Action = toExtract) then
     begin
       ProcessFilesToExtract(Headers);
-      ProcessFilesToOverWrite(Headers);
+      // ProcessFilesToOverWrite4Extract(Headers);
     end;
 
     FTotalSize := Headers.GetSize(Action);
@@ -968,13 +950,13 @@ begin
     DoMessage(msgScanning + '...');
 
     Headers.MarkItems(FCommandLine.FileMasks, toCopy, toDelete);
-    Headers.MarkItems(FCommandLine.xOption, toDelete, toCopy);
+    Headers.MarkItems(FCommandLine.xOptions, toDelete, toCopy);
 
     if (Headers.GetNext(0, toDelete) > -1) or
-      ((Length(FCommandLine.aOption) > 0) and
+      ((Length(FCommandLine.sfxOption) > 0) and
       (Headers.GetNext(0, toCopy) > -1)) then
     begin
-      TmpFileName := GenerateFileName(FCommandLine.yOption);
+      TmpFileName := GenerateFileName(FCommandLine.wdOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
 
       // find sequences
@@ -991,8 +973,8 @@ begin
 
         // set sfx module
         with FCommandLine do
-          if Length(aOption) > 0 then
-            Headers.SetModule(aOption);
+          if Length(sfxOption) > 0 then
+            Headers.SetModule(sfxOption);
 
         // write Headers
         Headers.WriteItems(TmpFile);
@@ -1076,7 +1058,7 @@ begin
 
     if ProcessFilesToRename(Headers) then
     begin
-      TmpFileName := GenerateFileName(FCommandLine.yOption);
+      TmpFileName := GenerateFileName(FCommandLine.wdOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
 
       if (TmpFile <> nil) then
@@ -1084,9 +1066,9 @@ begin
         FTotalSize := Headers.GetPackedSize([toCopy, toRename]);
 
         // set sfx module
-        if Length(FCommandLine.aOption) > 0 then
+        if Length(FCommandLine.sfxOption) > 0 then
         begin
-          Headers.SetModule(FCommandLine.aOption);
+          Headers.SetModule(FCommandLine.sfxOption);
         end;
 
         Headers.WriteItems(TmpFile);
@@ -1182,13 +1164,13 @@ begin
     DoMessage(msgScanning + '...');
 
     Headers.MarkItems(FCommandLine.FileMasks, toNone, toList);
-    Headers.MarkItems(FCommandLine.xOption,   toList, toNone);
+    Headers.MarkItems(FCommandLine.xOptions,   toList, toNone);
 
     if (Headers.GetNext(0, toList) > -1) then
     begin
       {$IFDEF CONSOLEAPPLICATION}
       DoMessage(StringOfChar(' ', 79));
-      if FCommandLine.vOption then
+      if FCommandLine.stlOption then
         DoMessage('Directory|File' + StringOfChar(' ',  8) + 'Size     Packed Ratio     Date  Time    Attr CRC     Meth')
       else
         DoMessage('Directory|File' + StringOfChar(' ', 32) + 'Size Ratio     Date  Time    Attr');
@@ -1282,7 +1264,7 @@ begin
         {$ELSE}
         FI.FilePosition := I;
         {$ENDIF}
-        DoList(FI, FCommandLine.vOption);
+        DoList(FI, FCommandLine.stlOption);
 
         StrDispose(FI.FileName);
         StrDispose(FI.FilePath);
@@ -1298,7 +1280,7 @@ begin
       end;
       {$IFDEF CONSOLEAPPLICATION}
       DoMessage(StringOfChar('-', 79));
-      if FCommandLine.vOption then
+      if FCommandLine.stlOption then
         DoMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %10s %5s', [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)])))
       else
         DoMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 39 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %5s', [SizeToStr(TotalSize), RatioToStr(TotalPack, TotalSize)])));
@@ -1353,10 +1335,10 @@ end;
 function TBeeApp.VersionToStr(P: THeader): string;
 begin
   case P.FileVersion of
-    ver02: Result := ' 0' + DecimalSeparator + '2';
-    ver03: Result := ' 0' + DecimalSeparator + '3';
-    ver04: Result := ' 0' + DecimalSeparator + '4';
-    else   Result := ' ?' + DecimalSeparator + '?';
+    Ord(hv02): Result := ' 0' + DecimalSeparator + '2';
+    Ord(hv03): Result := ' 0' + DecimalSeparator + '3';
+    Ord(hv04): Result := ' 0' + DecimalSeparator + '4';
+    else       Result := ' ?' + DecimalSeparator + '?';
   end;
 end;
 
