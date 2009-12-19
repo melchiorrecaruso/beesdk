@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1042 - 2009.08.20 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2009.12.07 by Melchiorre Caruso.
 }
 
 unit Bee_CommandLine;
@@ -33,135 +33,187 @@ interface
 
 uses
   Classes,
-  SysUtils;
+  SysUtils,
+  Bee_Common;
 
 type
+  // Command:
+  //   ccNone     Nul command
+  //   ccHelp     Show help informations
+  //   ccAdd      Add files
+  //   ccExtract  Extract file
+  //   ceXextract Extract file with full path
+  //   ccDelete   Delete files
+  //   ccRename   Rename files
+  //   ccTest     Test files
+  //   ccList     List files
+  //   ccOpen     Open archive
+
+  TCommand = (ccAdd, ccExtract, ccXextract, ccDelete,
+    ccRename, ccTest, ccList, ccHelp, ccOpen, ccNone);
+
+  // Compression Method Option:
+  //   moStore
+  //   moFast
+  //   moNormal
+  //   moMaximum
+
+  TmOption = (moStore, moFast, moNormal, moMaximum);
+
+  // Compression Dictionary Option:
+  //   do2MB
+  //   do5MB
+  //   ..
+  //   do1280MB
+
+  TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
+    do80MB, do160MB, do320MB, do640MB ,do1280MB);
+
+  // Process Priority Option
+  //   prioIdle
+  //   prioNormal
+  //   prioHigh
+  //   prioRealTime
+
+  // Header Version:
+  //   hv02
+  //   hv03
+  //   hv04
+
+  THeaderVersion = (hv02, hv03, hv04);  
+
+  TpriOption = (prioIdle, prioNormal, prioHigh, prioRealTime);
+
+  // TCommandLine ...
+
   TCommandLine = class
   private
-    FCommand:     char;
-    FrOption:     boolean;
-    FuOption:     boolean;
-    FfOption:     boolean;
-    FeOption:     string;
-    FsOption:     boolean;
-    FaOption:     string;
-    FoOption:     char;
-    FmOption:     longint;
-    FdOption:     longint;
-    FxOption:     TStringList;
-    FtOption:     boolean;
-    FlOption:     boolean;
-    FyOption:     string;
-    FkOption:     boolean;
-    FvOption:     boolean;
-    FcdOption:    string;
-    FsoOption:    boolean;
-    FcfgOption:   string;
-    FpriOption:   longint;
-    FverOption:   byte;
+    // command
+    FCommand: TCommand;
+    // options
+    FssOption: boolean;
+    FrOption: TRecursiveMode;
+    FuOption: TUpdateMode;
+    FxOptions: TStringList;
+    FmOption: TmOption;
+    FdOption: TdOption;
+    FsOption: boolean;
+    FfOption: string;
+    FsfxOption: string;
+    FpOption: boolean;
+    FhvOption: THeaderVersion;
+    FtOption: boolean;
+    FlOption: boolean;
+    FstlOption: boolean;
+    FwdOption: string;
+    FcdOption: string;
+    FcfgOption: string;
+    FpriOption: TpriOption;
+    // archive name
     FArchiveName: string;
-    FFileMasks:   TStringList;
+    // file masks
+    FFileMasks: TStringList;
   private
-    procedure SetCommand(Value: char);
-    procedure SetrOption(Value: boolean);
-    procedure SetuOption(Value: boolean);
-    procedure SetfOption(Value: boolean);
-    procedure SeteOption(Value: string);
-    procedure SetsOption(Value: boolean);
-    procedure SetaOption(Value: string);
-    procedure SetoOption(Value: char);
-    procedure SetmOption(Value: longint);
-    procedure SetdOption(Value: longint);
-    procedure SettOption(Value: boolean);
-    procedure SetlOption(Value: boolean);
-    procedure SetyOption(Value: string);
-    procedure SetkOption(Value: boolean);
-    procedure SetvOption(Value: boolean);
-    procedure SetcdOption(Value: string);
-    procedure SetcfgOption(Value: string);
-    procedure SetpriOption(Value: longint);
-    procedure SetverOption(Value: byte);
-    procedure SetArchiveName(Value: string);
-  protected
+    procedure Initialize;
+    function GetCommandLine: string;
+    procedure SetCommandLine(const aValue: string);
+  private
+    procedure SetfOption(const aValue: string);
+    procedure SetsfxOption(const aValue: string);
+    procedure SetwdOption(const aValue: string);
+    procedure SetcdOption(const aValue: string);
+    procedure SetcfgOption(const aValue: string);
+    procedure SetArchiveName(const aValue: string);
+  private
+    procedure ProcessrOption(var S: string);
+    procedure ProcessuOption(var S: string);
+    procedure ProcessxOption(var S: string);
+    procedure ProcessmOption(var S: string);
+    procedure ProcessdOption(var S: string);
+    procedure ProcessfOption(var S: string);
+    procedure ProcesssfxOption(var S: string);
+    procedure ProcesshvOption(var S: string);
+    procedure ProcessstlOption(var S: string);
+    procedure ProcesswdOption(var S: string);
+    procedure ProcesscdOption(var S: string);
+    procedure ProcesscfgOption(var S: string);
+    procedure ProcesspriOption(var S: string);
+    procedure ProcessCommand(var S: string);
+    procedure ProcessArchiveName(var S: string);
     procedure ProcessOption(var S: string; var Option: boolean);
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Process(AParams: TStringList);
-    procedure Clear;
   public
-    property Command: char Read FCommand Write SetCommand;
-    property rOption: boolean Read FrOption Write SetrOption;
-    property uOption: boolean Read FuOption Write SetuOption;
-    property fOption: boolean Read FfOption Write SetfOption;
-    property eOption: string Read FeOption Write SeteOption;
-    property sOption: boolean Read FsOption Write SetsOption;
-    property aOption: string Read FaOption Write SetaOption;
-    property oOption: char Read FoOption Write SetoOption;
-    property mOption: longint Read FmOption Write SetmOption;
-    property dOption: longint Read FdOption Write SetdOption;
-    property xOption: TStringList Read FxOption;
-    property tOption: boolean Read FtOption Write SettOption;
-    property lOption: boolean Read FlOption Write SetlOption;
-    property yOption: string Read FyOption Write SetyOption;
-    property kOption: boolean Read FkOption Write SetkOption;
-    property vOption: boolean Read FvOption Write SetvOption;
-    property cdOption: string Read FcdOption Write SetcdOption;
-    property soOption: boolean Read FsoOption;
-    property cfgOption: string Read FcfgOption Write SetcfgOption;
-    property priOption: longint Read FpriOption Write SetpriOption;
-    property verOption: byte Read FverOption Write SetverOption;
-    property ArchiveName: string Read FArchiveName Write SetArchiveName;
-    property FileMasks: TStringList Read FFileMasks;
+    property CommandLine: string read GetCommandLine write SetCommandLine;
+    property Command: TCommand read FCommand;
+    property ssOption: boolean read FssOption write FssOption;
+    property rOption: TRecursiveMode read FrOption write FrOption;
+    property uOption: TUpdateMode read FuOption write FuOption;
+    property xOptions: TStringList read FxOptions;
+    property mOption: TmOption read FmOption write FmOption;
+    property dOption: TdOption read FdOption write FdOption;
+    property sOption: boolean read FsOption write FsOption;
+    property fOption: string read FfOption write SetfOption;
+    property sfxOption: string read FsfxOption write SetsfxOption;
+    property pOption: boolean read FpOption write FpOption;
+    property hvOption: THeaderVersion read FhvOption write FhvOption;
+    property tOption: boolean read FtOption write FtOption;
+    property lOption: boolean read FlOption write FlOption;
+    property stlOption: boolean read FstlOption write FstlOption;
+    property wdOption: string read FwdOption write SetwdOption;
+    property cdOption: string read FcdOption write SetcdOption;
+    property cfgOption: string read FcfgOption write SetcfgOption;
+    property priOption: TpriOption read FpriOption write FpriOption;
+    property ArchiveName: string read FArchiveName write SetArchiveName;
+    property FileMasks: TStringList read FFileMasks;
   end;
 
 implementation
 
 uses
-  Math,
-  Bee_Consts,
-  Bee_Common;
+  Math;
 
 constructor TCommandLine.Create;
 begin
   inherited Create;
-  FxOption   := TStringList.Create;
+  FxOptions := TStringList.Create;
   FFileMasks := TStringList.Create;
-  Clear;
+  Initialize;
 end;
 
-procedure TCommandLine.Clear;
+procedure TCommandLine.Initialize;
 begin
-  FCommand := ' ';
-  FrOption := False;
-  FuOption := False;
-  FfOption := False;
-  FeOption := '';
+  // default command
+  FCommand := ccNone;
+  // default options
+  FssOption := False;
+  FrOption := rmNone;
+  FuOption := umAddUpdate;
+  FxOptions.Clear;
+  FmOption := moFast;
+  FdOption := do5MB;
   FsOption := False;
-  FaOption := '';
-  FoOption := 'Y';
-  FmOption := 1;
-  FdOption := 2;
-  FxOption.Clear;
-  FtOption     := False;
-  FlOption     := False;
-  FyOption     := '';
-  FkOption     := False;
-  FvOption     := False;
-  FcdOption    := '';
-  FsoOption    := False;
-  FcfgOption   := SelfPath + 'bee.ini';
-  FpriOption   := 1;
-  FverOption   := ver03;
+  FfOption := '';
+  FsfxOption := '';
+  FpOption := False;
+  FhvOption := hv04;
+  FtOption := False;
+  FlOption := False;
+  FstlOption := False;
+  FwdOption := '';
+  FcdOption := '';
+  FcfgOption := SelfPath + DefaultCfgName;
+  FpriOption := prioNormal;
+  // archive name
   FArchiveName := '';
+  // file masks
   FFileMasks.Clear;
 end;
 
 destructor TCommandLine.Destroy;
 begin
-  FxOption.Clear;
-  FxOption.Destroy;
-  FFileMasks.Clear;
+  FxOptions.Destroy;
   FFileMasks.Destroy;
   inherited Destroy;
 end;
@@ -174,250 +226,379 @@ begin
     if (S = '') or (S = '+') then
       Option := True
     else
-    if (S = '-') then
-      Option := False;
+      if (S = '-') then
+        Option := False;
   end;
 end;
 
-procedure TCommandLine.Process(AParams: TStringList);
+procedure TCommandLine.ProcessrOption(var S: string);
+begin
+  if Pos('-RW', UpperCase(S)) = 1 then
+  begin
+    Delete(S, 1, 3);
+    if (S = '') or (S = '+') then
+      FrOption := rmWildCard
+    else
+      if (S = '-') then
+        FrOption := rmNone;
+  end else
+    if Pos('-R', UpperCase(S)) = 1 then
+    begin
+      Delete(S, 1, 2);
+      if (S = '') or (S = '+') then
+        FrOption := rmFull
+      else
+        if (S = '-') then
+          FrOption := rmNone;
+    end;
+end;
+
+procedure TCommandLine.ProcessuOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  if (Length(S) = 1) and (S[1] in ['0'..'5']) then
+  begin
+    FuOption := TUpdateMode(S[1]);
+  end;
+end;
+
+procedure TCommandLine.ProcessxOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  if Length(S) > 0 then
+  begin
+    FxOptions.Add(S);
+  end;
+end;
+
+procedure TCommandLine.ProcessmOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  if (Length(S) = 1) and (S[1] in ['0'..'3']) then
+  begin
+    FmOption := TmOption(S[1]);
+  end;
+end;
+
+procedure TCommandLine.ProcessdOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  if (Length(S) = 1) and (S[1] in ['0'..'9']) then
+  begin
+    FdOption := TdOption(S[1]);
+  end;
+end;
+
+procedure TCommandLine.ProcessfOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  SetfOption(S);
+end;
+
+procedure TCommandLine.ProcesssfxOption(var S: string);
+begin
+  Delete(S, 1, 4);
+  if (S = '+') or (Length(S) = 0) then
+    FsfxOption := DefaultSfxName
+  else
+    if (S = '-') then
+      FsfxOption := 'nul'
+    else
+      FsfxOption := S;
+end;
+
+procedure TCommandLine.ProcesshvOption(var S: string);
+begin
+  Delete(S, 1, 3);
+  if S = '02' then
+    FhvOption := hv02
+  else
+    if S = '03' then
+      FhvOption := hv03
+    else
+      if S = '04' then
+        FhvOption := hv04;
+end;
+
+procedure TCommandLine.ProcessstlOption(var S: string);
+begin
+  Delete(S, 1, 4);
+  if (S = '') or (S = '+') then
+    stlOption := True
+  else
+    if (S = '-') then
+      stlOption := False;
+end;
+
+procedure TCommandLine.ProcesswdOption(var S: string);
+begin
+  Delete(S, 1, 3);
+  if DirectoryExists(ExcludeTrailingBackslash(S)) then
+  begin
+    FwdOption := ExcludeTrailingBackslash(S);
+  end;
+end;
+
+procedure TCommandLine.ProcesscdOption(var S: string);
+begin
+  Delete(S, 1, 3);
+  if Length(S) > 0 then
+  begin
+    FcdOption := IncludeTrailingBackslash(FixDirName(S));
+  end;
+end;
+
+procedure TCommandLine.ProcesscfgOption(var S: string);
+begin
+  Delete(S, 1, 4);
+  if FileExists(S) then
+  begin
+    FcfgOption := S;
+  end;
+end;
+
+procedure TCommandLine.ProcesspriOption(var S: string);
+begin
+  Delete(S, 1, 4);
+  if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
+  begin
+    FpriOption := TpriOption(S[1]);
+  end;
+end;
+
+procedure TCommandLine.ProcessCommand(var S: string);
+begin
+  if Length(S) = 1 then
+  begin
+    case Upcase(S[1]) of
+      '?': FCommand := ccHelp;
+      'A': FCommand := ccAdd;
+      'D': FCommand := ccDelete;
+      'E': FCommand := ccExtract;
+      'X': FCommand := ccxExtract;
+      'L': FCommand := ccList;
+      'T': FCommand := ccTest;
+      'R': FCommand := ccRename;
+      'O': FCommand := ccOpen;
+      else FCommand := ccHelp;
+    end;
+  end;
+end;
+
+procedure TCommandLine.ProcessArchiveName(var S: string);
+begin
+  FssOption := True;
+  FArchiveName := S;
+  if ExtractFileExt(FArchiveName) = '' then
+  begin
+    FArchiveName := ChangeFileExt(FArchiveName, '.bee');
+  end;
+end;
+
+procedure TCommandLine.SetCommandLine(const aValue: string);
 var
+  Params: TStringList;
   I: longint;
   S: string;
 begin
+  Params := TStringList.Create;
+  Params.Text := aValue;
+  
+  Initialize;
   // catch options, command, archive name and name of files
-  for I := 0 to AParams.Count - 1 do
+  for I := 0 to Params.Count -1 do
   begin
-    S := AParams.Strings[I];
-    if (not FsoOption) and (Length(S) > 1) and (S[1] = '-') then
+    S := Params[I];
+    if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
     begin
       // options...
       case UpCase(S[2]) of
-        '-': FsoOption := True;
-        'R': ProcessOption(S, FrOption);
-        'S': ProcessOption(S, FsOption);
-        'U': ProcessOption(S, FuOption);
-        'F': ProcessOption(S, FfOption);
-        'T': ProcessOption(S, FtOption);
-        'L': ProcessOption(S, FlOption);
-        'K': ProcessOption(S, FkOption);
-        'V': ProcessOption(S, FvOption);
-        'Y':
-        begin
-          Delete(S, 1, 2);
-          if DirectoryExists(ExcludeTrailingBackslash(S)) then
-            FyOption := ExcludeTrailingBackslash(S);
-        end;
-        'A':
-        begin
-          Delete(S, 1, 2);
-          if (S = '+') or (Length(S) = 0) then
-            FaOption := 'bee.sfx'
-          else
-          if (S = '-') then
-            FaOption := 'nul'
-          else
-            FaOption := S;
-        end;
-        'M':
-        begin
-          Delete(S, 1, 2);
-          if (Length(S) = 1) and (S[1] in ['0'..'3']) then
-            FmOption := StrToInt(S);
-        end;
-        'O':
-        begin
-          Delete(S, 1, 2);
-          if (Length(S) = 1) and (UpCase(S[1]) in ['A', 'S', 'Q']) then
-            FoOption := UpCase(S[1]);
-        end;
-        'D':
-        begin
-          Delete(S, 1, 2);
-          if (Length(S) = 1) and (S[1] in ['0'..'9']) then
-            FdOption := StrToInt(S);
-        end;
-        'E':
-        begin
-          Delete(S, 1, 2);
-          if ExtractFileExt('.' + S) <> '.' then
-            FeOption := ExtractFileExt('.' + S);
-        end;
-        'X':
-        begin
-          Delete(S, 1, 2);
-          if Length(S) > 0 then
-            FxOption.Add(S);
-        end;
+        '-': ProcessOption (S, FssOption);
+        'R': ProcessrOption(S);
+        'U': ProcessuOption(S);
+        'X': ProcessxOption(S);
+        'M': ProcessmOption(S);
+        'D': ProcessdOption(S);
+        'S': ProcessOption (S, FsOption);
+        'F': ProcessfOption(S);
+        'P': ProcessOption (S, FpOption);
+        'T': ProcessOption (S, FtOption);
+        'L': ProcessOption (S, FlOption);
         else
-          if Pos('-VER', UpperCase(S)) = 1 then
-          begin
-            Delete(S, 1, 4);
-            if S = '02' then
-              FverOption := ver02
-            else
-            if S = '03' then
-              FverOption := ver03
-            else
-            if S = '04' then
-              FverOption := ver04;
-          end
+          if Pos('-SFX', UpperCase(S)) = 1 then
+            ProcesssfxOption(S)
           else
-          if Pos('-PRI', UpperCase(S)) = 1 then
-          begin
-            Delete(S, 1, 4);
-            if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
-              FpriOption := StrToInt(S[1]);
-          end
+          if Pos('-HV', UpperCase(S)) = 1 then
+            ProcesshvOption(S)
+          else
+          if Pos('-STL', UpperCase(S)) = 1 then
+            ProcessstlOption(S)
+          else
+          if Pos('-WD', UpperCase(S)) = 1 then
+            ProcesswdOption(S)
           else
           if Pos('-CD', UpperCase(S)) = 1 then
-          begin
-            Delete(S, 1, 3);
-            if Length(S) > 0 then
-              FcdOption := IncludeTrailingBackslash(FixDirName(S));
-          end
+            ProcesscdOption(S)
           else
           if Pos('-CFG', UpperCase(S)) = 1 then
-          begin
-            Delete(S, 1, 4);
-            FcfgOption := S;
-          end;
+            ProcesscfgOption(S)
+          else
+          if Pos('-PRI', UpperCase(S)) = 1 then
+            ProcesspriOption(S);
       end; // end case
-    end
-    else
-    if FCommand = ' ' then
-    begin
-      if Length(S) = 1 then
-        FCommand := UpCase(S[1])
-      else
-        FCommand := '?';
-    end
-    else
-    if FArchiveName = '' then
-    begin
-      FsoOption    := True;
-      FArchiveName := S;
-      if ExtractFileExt(FArchiveName) = '' then
-        FArchiveName := ChangeFileExt(FArchiveName, '.bee');
-    end
-    else
-      FFileMasks.Add(S);// command or filenames...
-  end; // end for loop
+    end else
 
-  // process file masks
+    if FCommand = ccNone then
+      ProcessCommand(S)
+    else
+      if FArchiveName = '' then
+        ProcessArchiveName(S)
+      else
+        FFileMasks.Add(S); // command or filenames ...
+
+  end; // end for loop
+  Params.Free;
+
+  // check file masks
   if FFileMasks.Count = 0 then
   begin
     case FCommand of
-      {'a': nothing to do}
-      {'D': nothing to do}
-      'E': FFileMasks.Add('*');
-      'L': FFileMasks.Add('*');
-      {'R': nothing to do}
-      'T': FFileMasks.Add('*');
-      'X': FFileMasks.Add('*');
-      {'?': nothing to do}
+     {ccAdd: nothing to do}
+     {ccDelete:  nothing to do}
+      ccExtract: FFileMasks.Add('*');
+      ccList: FFileMasks.Add('*');
+     {ccRename: nothing to do}
+      ccTest: FFileMasks.Add('*');
+      ccxExtract: FFileMasks.Add('*');
+     {ccHelp:  nothing to do}
     end;
-    FrOption := True;
+    FrOption := rmFull;
   end;
 end;
 
-procedure TCommandLine.SetCommand(Value: char);
+function TCommandLine.GetCommandLine: string;
+var
+  I: longint;
 begin
-  FCommand := UpCase(Value);
+  case FCommand of
+    ccHelp:     Result := '?';
+    ccAdd:      Result := 'A';
+    ccDelete:   Result := 'D';
+    ccExtract:  Result := 'E';
+    ccxExtract: Result := 'X';
+    ccList:     Result := 'L';
+    ccTest:     Result := 'T';
+    ccRename:   Result := 'R';
+    ccOpen :    Result := 'O';
+    else       Result := ' ';
+  end;
+
+  case FrOption of
+    rmFull:     Result := Result + ' -r+';
+    rmWildCard: Result := Result + ' -rw+';
+    else        Result := Result + ' -r-'
+  end;
+
+  case FuOption of
+    umAdd:        Result := Result + ' -u0';
+    umUpdate:     Result := Result + ' -u1';
+    umReplace:    Result := Result + ' -u2';
+    umAddUpdate:  Result := Result + ' -u3';
+    umAddReplace: Result := Result + ' -u4';
+    umAddQuery:   Result := Result + ' -u5';
+  end;
+
+  for I := 0 to FxOptions.Count - 1 do
+    Result := Result + ' -x' + FxOptions[I];
+
+  Result := Result + ' -m' + IntToStr(Ord(FmOption));
+  Result := Result + ' -d' + IntToStr(Ord(FdOption));
+
+  if FsOption then
+    Result := Result + ' -s+'
+  else
+    Result := Result + ' -s-';
+
+  if Length(FfOption)   > 0 then Result := Result + ' -f'   + FfOption;      
+  if Length(FsfxOption) > 0 then Result := Result + ' -sfx' + FsfxOption;
+
+  if FpOption then
+    Result := Result + ' -p+'
+  else
+    Result := Result + ' -p-';
+
+  case FhvOption of
+    hv02: Result := Result + ' -hv02';
+    hv03: Result := Result + ' -hv03';
+    hv04: Result := Result + ' -hv04';
+  end;
+
+  if FtOption then Result := Result + ' -t+' else Result := Result + ' -t-';
+  if FlOption then Result := Result + ' -l+' else Result := Result + ' -l-';
+
+  if FstlOption then
+    Result := Result + ' -stl+'
+  else
+    Result := Result + ' -stl-';
+
+  if Length(FwdOption)  > 0 then Result := Result + ' -wd'  + FwdOption;
+  if Length(FcdOption)  > 0 then Result := Result + ' -cd'  + FcdOption;
+  if Length(FcfgOption) > 0 then Result := Result + ' -cfg' + FcfgOption;
+
+
+  Result := Result + ' -pri' + IntToStr(Ord(FpriOption));
+
+  if FssOption then
+    Result := Result + ' --+'
+  else
+    Result := Result + ' ---';
+
+  Result := Result + ' ' + FArchiveName;
+
+  for I := 0 to FFileMasks.Count - 1 do
+    Result := Result + ' ' + FFileMasks[I];
 end;
 
-procedure TCommandLine.SetrOption(Value: boolean);
+procedure TCommandLine.SetfOption(const aValue: string);
 begin
-  FrOption := Value;
+  if ExtractFileExt('.' + aValue) <> '.' then
+  begin
+    FfOption := ExtractFileExt('.' + aValue);
+  end;
 end;
 
-procedure TCommandLine.SetuOption(Value: boolean);
+procedure TCommandLine.SetsfxOption(const aValue: string);
 begin
-  FuOption := Value;
+  if FileExists(aValue) then
+    FsfxOption := aValue
+  else
+    FsfxOption := 'nul';
 end;
 
-procedure TCommandLine.SetfOption(Value: boolean);
+procedure TCommandLine.SetwdOption(const aValue: string);
 begin
-  FfOption := Value;
+  if Bee_Common.DirectoryExists(aValue) then
+  begin
+    FwdOption := aValue;
+  end;
 end;
 
-procedure TCommandLine.SeteOption(Value: string);
+procedure TCommandLine.SetcdOption(const aValue: string);
 begin
-  FeOption := Value;
+  FcdOption := IncludeTrailingBackslash(FixDirName(aValue));
 end;
 
-procedure TCommandLine.SetsOption(Value: boolean);
+procedure TCommandLine.SetcfgOption(const aValue: string);
 begin
-  FsOption := Value;
+  if FileExists(aValue) then
+  begin
+    FcfgOption := aValue;
+  end;
 end;
 
-procedure TCommandLine.SetaOption(Value: string);
+procedure TCommandLine.SetArchiveName(const aValue: string);
 begin
-  FaOption := Value;
-end;
-
-procedure TCommandLine.SetoOption(Value: char);
-begin
-  FoOption := UpCase(Value);
-end;
-
-procedure TCommandLine.SetmOption(Value: longint);
-begin
-  FmOption := Value;
-end;
-
-procedure TCommandLine.SetdOption(Value: longint);
-begin
-  FdOption := Value;
-end;
-
-procedure TCommandLine.SettOption(Value: boolean);
-begin
-  FtOption := Value;
-end;
-
-procedure TCommandLine.SetlOption(Value: boolean);
-begin
-  FlOption := Value;
-end;
-
-procedure TCommandLine.SetyOption(Value: string);
-begin
-  FyOption := Value;
-end;
-
-procedure TCommandLine.SetkOption(Value: boolean);
-begin
-  FkOption := Value;
-end;
-
-procedure TCommandLine.SetvOption(Value: boolean);
-begin
-  FvOption := Value;
-end;
-
-procedure TCommandLine.SetcdOption(Value: string);
-begin
-  FcdOption := IncludeTrailingBackslash(FixDirName(Value));
-end;
-
-procedure TCommandLine.SetcfgOption(Value: string);
-begin
-  FcfgOption := Value;
-end;
-
-procedure TCommandLine.SetpriOption(Value: longint);
-begin
-  FpriOption := Value;
-end;
-
-procedure TCommandLine.SetverOption(Value: byte);
-begin
-  FverOption := Min(Max(ver02, Value), ver04);
-end;
-
-procedure TCommandLine.SetArchiveName(Value: string);
-begin
-  FArchiveName := Value;
+  FArchiveName := aValue;
 end;
 
 end.

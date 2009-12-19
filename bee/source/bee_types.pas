@@ -44,7 +44,6 @@ type
     FileAttr: longint;
   end;
 
-type
   // PFileInfoExtra record ...
 
   PFileInfoExtra = ^TFileInfoExtra;
