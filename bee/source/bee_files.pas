@@ -391,7 +391,7 @@ var
 begin
   for I := 0 to FList.Count - 1 do
   begin
-    FreeAndNil(TCustomSearchRec(FList.Items[I]^));
+    FreeMem(FList.Items[I]);
   end;
   FList.Clear;
 end;
