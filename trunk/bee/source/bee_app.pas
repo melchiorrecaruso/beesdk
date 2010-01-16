@@ -117,7 +117,7 @@ begin
   inherited Create(aParams);
   Randomize; // randomize, uses for unique filename generation...
 
-  FSelfName := 'The Bee 0.8.0 build 1105 archiver utility, Dec 2009' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1106 archiver utility, Dec 2009' + Cr +
                '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
@@ -340,17 +340,16 @@ begin
       Scanner.Scan(FileMasks[I], xOptions, rOption);
     end;
 
-  P := Headers.SearchItem(Scanner.Items[I].FileName);
-
-  if (P = nil) or (U <> umAddQuery) then
-    U := FCommandLine.uOption
-  else
-    U := ProcessFileToOverwrite4Add(Headers, P, Scanner.Items[I]);
-
-  for I := 0 to Scanner.Count - 1 do
+  for I := 0 to Scanner.Count -1 do
   begin
+    P := Headers.SearchItem(Scanner.Items[I].FileName);
+
+    if (P = nil) or (U <> umAddQuery) then
+      U := FCommandLine.uOption
+    else
+      U := ProcessFileToOverwrite4Add(Headers, P, Scanner.Items[I]);
+
     if Terminated = False then
-    begin
       case U of
       //umAddQuery:      Nothing to do
         umAdd:           Result := Result + Headers.AddItem       (Scanner.Items[I], P);
@@ -367,8 +366,8 @@ begin
           Result := Result + Headers.AddItem(Scanner.Items[I], P);
         end;
       end;
-    end;
   end;
+  Headers.SortNews(FConfiguration);
   Scanner.Destroy;
 end;
 
@@ -776,6 +775,7 @@ begin
   if OpenArchive(Headers, toCopy) then
   begin
     DoMessage(msgScanning + '...');
+
     // process FileMasks and xFileMasks
     ProcessFilesToAdd(Headers);
 
