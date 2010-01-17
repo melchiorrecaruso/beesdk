@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1083 - 2009.11.16 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.01.17 by Melchiorre Caruso.
 }
 
 unit Bee_Consts;
@@ -32,49 +32,74 @@ unit Bee_Consts;
 interface
 
 const
-  // Id marker
+  Cr = #13#10;
 
-  Marker: longint = 442852674;
+  { Id marker }
 
-const
-  // CoreStatus ...
+  Marker:longint = $1A656542;
 
-  csUnknow     =-1;
-  csReady      = 0;
-  csExecuting  = 1;
-  csWaitingOverwrite = 2;
-  csWaitingRename = 3;
-  csWaitingPassword = 4;
-  csWaitingRequest = 5;
-  csWaitingList = 6;
-  csTerminated = 7;
-  csSuspended  = 8;
+  { Default file names }
 
-const
-  // CoreCode
+  DefaultCfgName = 'bee.ini';
+  DefaultSfxName = 'bee.sfx';
 
-  ccUnknow    =-1;
-  ccSuccesful = 0;   // 0 No error
-  ccWarning   = 1;   // 1 Warning (Non fatal error(s)). For example, one or more
-                     //   files were locked by some other application, so they
-                     //   were not compressed
+  { Display message strings }
 
-  ccError     = 2;   // 2 Fatal error
-  ccCmdError  = 7;   // 7 Command line error
-  ccMemError  = 8;   // 8 Not enough memory for operation
-  ccUserAbort = 255; // 255 User stopped the process
+  msgUpdating    = 'Updating   ';
+  msgFreshing    = 'Freshing   ';
+  msgReplacing   = 'Replacing  ';
+  msgExtracting  = 'Extracting ';
+  msgTesting     = 'Testing    ';
+  msgSkipping    = 'Skipping   ';
+  msgEncoding    = 'Encoding   ';
+  msgDecoding    = 'Decoding   ';
+  msgCopying     = 'Copying    ';
+  msgMoving      = 'Moving     ';
+  msgDeleting    = 'Deleting   ';
+  msgScanning    = 'Scanning   ';
+  msgOpening     = 'Opening    ';
+  msgListing     = 'Listing    ';
+  msgRenaming    = 'Renaming   ';
+  msgRename      = 'Rename     ';
+  msgAdding      = 'Adding     ';
+  msgCRCERROR    = 'CRC-ERROR  ';
+  msgFailed      = 'Failed     ';
 
-const
-  // CorePriority
+  { CoreStatus }
 
-  cpUnknow  =-1;
-  cpIdle    = 0;
-  cpLowest  = 1;
-  cpLower   = 2;
-  cpNormal  = 3;
-  cpHigher  = 4;
-  cpHighest = 5;
-  cpTimeCritical = 6;
+  csUnknow           = $FFFFFFFF;
+  csReady            = $00000000;
+  csExecuting        = $00000001;
+  csWaitingOverwrite = $00000002;
+  csWaitingRename    = $00000003;
+  csWaitingPassword  = $00000004;
+  csWaitingRequest   = $00000005;
+  csWaitingList      = $00000006;
+  csTerminated       = $00000007;
+  csSuspended        = $00000008;
+
+  { CoreCode }
+
+  ccUnknow           = $FFFFFFFF;
+  ccSuccesful        = $00000000; { 0 No error                                               }
+  ccWarning          = $00000001; { 1 Warning (Non fatal error(s)). For example, one or more }
+                                  {   files were locked by some other application, so they   }
+                                  {   were not compressed                                    }
+  ccError            = $00000002; { 2 Fatal error                                            }
+  ccCmdError         = $00000007; { 7 Command line error                                     }
+  ccMemError         = $00000008; { 8 Not enough memory for operation                        }
+  ccUserAbort        = $000000FF; { 255 User stopped the process                             }
+
+  { CorePriority }
+
+  cpUnknow           = $FFFFFFFF;
+  cpIdle             = $00000000;
+  cpLowest           = $00000001;
+  cpLower            = $00000002;
+  cpNormal           = $00000003;
+  cpHigher           = $00000004;
+  cpHighest          = $00000005;
+  cpTimeCritical     = $00000006;
 
 implementation
 

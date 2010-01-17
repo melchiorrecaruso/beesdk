@@ -27,7 +27,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.01.16 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
@@ -47,11 +47,11 @@ type
   // Header flags
 
   THeaderFlag =
-   (foVersion, foMethod, foDictionary, foTable, foTear, foMoved,
-    foLast, foPassword, fo09Unused, fo10Unused, fo11Unused, fo12Unused,
-    fo13Unused, fo14Unused, fo15Unused, fo16Unused, fo17Unused, fo18Unused,
-    fo19Unused, fo20Unused, fo21Unused, fo22Unused, fo23Unused, fo24Unused,
-    fo25Unused, fo26Unused, fo27Unused, fo28Unused, fo29Unused, fo30Unused,
+   (foVersion,  foMethod,   foDictionary, foTable,    foTear,     foMoved,
+    foLast,     foPassword, fo09Unused,   fo10Unused, fo11Unused, fo12Unused,
+    fo13Unused, fo14Unused, fo15Unused,   fo16Unused, fo17Unused, fo18Unused,
+    fo19Unused, fo20Unused, fo21Unused,   fo22Unused, fo23Unused, fo24Unused,
+    fo25Unused, fo26Unused, fo27Unused,   fo28Unused, fo29Unused, fo30Unused,
     fo31Unused, fo32Unused);
 
   THeaderFlags = set of THeaderFlag;

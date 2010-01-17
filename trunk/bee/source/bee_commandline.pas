@@ -34,6 +34,8 @@ interface
 uses
   Classes,
   SysUtils,
+  Bee_Types,
+  Bee_Consts,
   Bee_Common;
 
 type

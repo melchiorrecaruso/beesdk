@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2005-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2005-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1083 - 2009.11.16 by Melchiorre Caruso;
+    v0.8.0 build 1110 - 2010.01.17 by Melchiorre Caruso.
 }
 
 unit Bee_Types;
@@ -32,11 +32,44 @@ unit Bee_Types;
 interface
 
 type
-  // PFileInfo record ...
+  { Recursive Mode:
+  {  rmNone      No resurse filename                      }
+  {  rmWildcard  Recurse olny filename with wildcard      }
+  {  rmFull      Recurse all filename                     }
+
+  TRecursiveMode = (rmNone, rmWildCard, rmFull);
+
+  { Update Mode:
+  {  umAdd           Add only new files                   }
+  {  umUpdate        Update only existing files           }
+  {  umReplace       Replace only existing files          }
+  {  umAddUpdate     Add and update existing files        }
+  {  umAddReplace    Add and replace existing files       }
+  {  umAddAutoRename                                      }
+  {  umAddQuery      Add and query if file already exists }
+
+  TUpdateMode = (umAdd, umUpdate, umReplace, umAddUpdate,
+    umAddReplace, umAddAutoRename, umAddQuery);
+
+  { Overwrite Mode:                                       }
+  {  omUpdate                                             }
+  {  omAddUpdate                                          }
+  {  omReplace                                            }
+  {  omAddReplace                                         }
+  {  omSkip                                               }
+  {  omAddSkip                                            }
+  {  omRename                                             }
+  {  omAddAutoRename                                      }
+  {  omQuit                                               }
+
+  TOverwriteMode = (omAdd, omUpdate, omReplace, omRename,
+    omAddUpdate, omAddReplace, omAddAutoRename, omSkip, omQuit);
+
+  { PFileInfo packed record }
 
   PFileInfo = ^TFileInfo;
 
-  TFileInfo = record
+  TFileInfo = packed record
     FileName: PChar;
     FilePath: PChar;
     FileSize: int64;
@@ -44,11 +77,11 @@ type
     FileAttr: longint;
   end;
 
-  // PFileInfoExtra record ...
+  { PFileInfoExtra packed record }
 
   PFileInfoExtra = ^TFileInfoExtra;
 
-  TFileInfoExtra = record
+  TFileInfoExtra = packed record
     FileName:     PChar;
     FilePath:     PChar;
     FileSize:     int64;
@@ -64,8 +97,8 @@ type
     FilePosition: longint;
   end;
 
-function StringToPChar(const aValue: string): PChar;
-function PCharToString(aValue: PChar): string;
+function  StringToPChar(const aValue: string): PChar;
+function  PCharToString(aValue: PChar): string;
 procedure FreePChar(var aValue: PChar);
 
 implementation
@@ -79,20 +112,21 @@ begin
   Result := StrPCopy(Result, aValue);
 end;
 
+{ TODO : DA CONTROLLARE E OTTIMIZZARE }
 function PCharToString(aValue: PChar): string; inline;
 var
-  I: longint;
+  i: longint;
 begin
-  SetLength(Result, 0);
   if aValue <> nil then
   begin
-    I := StrLen(aValue);
-    if I > 0 then
+    i := StrLen(aValue);
+    if i > 0 then
     begin
-      SetLength(Result, I);
-      Move(aValue^, Result[1], I);
+      SetLength(Result, i);
+      Move(aValue^, Result[1], i);
     end;
-  end;
+  end else
+    SetLength(Result, 0);
 end;
 
 procedure FreePChar(var aValue: PChar); inline;
