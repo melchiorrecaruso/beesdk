@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2009 Andrew Filinsky
+  Copyright (c) 2003-2010 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
 
 { Contains:
 
-  Bee configuration support.
+    Bee configuration support.
 
   Modifyed:
 
-  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-  v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky;
+    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+    v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky;
 
-  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.01.17 by Melchiorre Caruso.
 }
 
 unit Bee_Configuration;
@@ -35,8 +35,8 @@ unit Bee_Configuration;
 interface
 
 uses
-  SysUtils, // Trim
-  Classes;  // TStringList
+  Classes,
+  SysUtils;
 
 const
   TableSize = 20;
@@ -79,14 +79,12 @@ implementation
 uses
   Bee_Common;
 
- (***************************************************************************)
- (* Class:  TConfiguration | methods                                        *)
- (* Domain: public                                                          *)
- (***************************************************************************)
+{ Class:  TConfiguration | methods }
+{ Domain: public                   }
 
 constructor TConfiguration.Create;
 begin
-  inherited;
+  inherited Create;
   Selector('\main');
 end;
 
@@ -95,7 +93,9 @@ var
   I: longint;
 begin
   for I := 0 to Count - 1 do
+  begin
     Objects[I].Free;
+  end;
   inherited Destroy;
 end;
 
@@ -108,19 +108,17 @@ begin
   List := TStringList.Create;
   List.LoadFromFile(FileName);
   Selector('\main');
-
   for I := 0 to List.Count - 1 do
   begin
     S := List[I];
     if (S > '') and (S[1] = '\') then
       Selector(S)
     else
-    if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
-      CurrentSection.Add(S)
-    else
-      CurrentSection.Values[aName] := aValue;
+      if (S = '') or (S[1] = ';') or not Split(S, aName, aValue) then
+        CurrentSection.Add(S)
+      else
+        CurrentSection.Values[aName] := aValue;
   end;
-
   Selector('\main');
   List.Free;
 end;
@@ -131,13 +129,11 @@ var
   I:    longint;
 begin
   List := TStringList.Create;
-
   for I := 0 to Count - 1 do
   begin
     List.Add(Names[I]);
     List.AddStrings(TConfigSection(Objects[I]));
   end;
-
   List.SaveToFile(FileName);
   List.Free;
 end;
@@ -172,8 +168,7 @@ begin
   begin
     CurrentSection := TConfigSection.Create;
     Objects[Add(Name + '=yes')] := CurrentSection;
-  end
-  else
+  end else
     CurrentSection := TConfigSection(Objects[Index]);
 end;
 
@@ -190,10 +185,9 @@ begin
   end;
 end;
 
- (***************************************************************************)
- (* Class:  TConfigSection | methods                                        *)
- (* Domain: public                                                          *)
- (***************************************************************************)
+
+{ Class:  TConfigSection | methods }
+{ Domain: public                   }
 
 function TConfigSection.GetTable(const Ext: string; var T: TTableParameters): boolean;
 var
@@ -201,11 +195,8 @@ var
 begin
   S      := Values[Ext];
   Result := GetData(Ext, T, SizeOf(T));
-  if not Result then
-    Result := (S = '') and (CompareText(Ext, '.Default') <> 0) and GetTable('.Default', T);
-  if not Result then
-    Result := (S > '') and (IndexOfName(S) >= 0) and (IndexOfName(S) < IndexOfName(Ext)) and
-      GetTable(S, T);
+  if not Result then Result := (S = '') and (CompareText(Ext, '.Default') <> 0) and GetTable('.Default', T);
+  if not Result then Result := (S > '') and (IndexOfName(S) >= 0) and (IndexOfName(S) < IndexOfName(Ext)) and GetTable(S, T);
 end;
 
 procedure TConfigSection.PutData(const Name: string; var Data; aCount: longint);

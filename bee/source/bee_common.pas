@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,103 +27,39 @@
     v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1036 - 2009.04.27 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.01.17 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
 
-{$i compiler.inc}
+{$I compiler.inc}
 
 interface
 
 uses
-  {$IFNDEF FPC} Math, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
-  SysUtils,
+  {$IFNDEF FPC} Math, {$ENDIF}
+  Bee_Consts,
+  Bee_Types,
   Classes;
 
-const
-  Cr = #13#10;
-
-const
-  msgUpdating   = 'Updating   ';
-  msgFreshing   = 'Freshing   ';
-  msgReplacing  = 'Replacing  ';
-  msgExtracting = 'Extracting ';
-  msgTesting    = 'Testing    ';
-  msgSkipping   = 'Skipping   ';
-  msgEncoding   = 'Encoding   ';
-  msgDecoding   = 'Decoding   ';
-  msgCopying    = 'Copying    ';
-  msgMoving     = 'Moving     ';
-  msgDeleting   = 'Deleting   ';
-  msgScanning   = 'Scanning   ';
-  msgOpening    = 'Opening    ';
-  msgListing    = 'Listing    ';
-  msgRenaming   = 'Renaming   ';
-  msgRename     = 'Rename     ';
-  msgAdding     = 'Adding     ';
-  msgCRCERROR   = 'CRC-ERROR  ';
-  msgFailed     = 'Failed     ';
-
-const
-  DefaultCfgName = 'bee.ini';
-  DefaultSfxName = 'bee.sfx';
-
-type
-  // Recursive Mode:
-  //  rmNone      No resurse filename
-  //  rmWildcard  Recurse olny filename with wildcard
-  //  rmFull      Recurse all filename
-
-  TRecursiveMode = (rmNone, rmWildCard, rmFull);
-
-  // Update Mode:
-  //  umAdd           Add only new files
-  //  umUpdate        Update only existing files
-  //  umReplace       Replace only existing files
-  //  umAddUpdate     Add and update existing files
-  //  umAddReplace    Add and replace existing files
-  //  umAddAutoRename
-  //  umAddQuery      Add and query if file already exists
-
-  TUpdateMode = (umAdd, umUpdate, umReplace, umAddUpdate,
-    umAddReplace, umAddAutoRename, umAddQuery);
-
-  // Update Mode:
-  //  qmUpdate
-  //  qmAddUpdate
-  //  qmReplace
-  //  qmAddReplace
-  //  qmSkip
-  //  qmAddSkip
-  //  qmRename
-  //  qmAddAutoRename
-  //  qmQuit
-
-  TOverwriteMode = (omAdd, omUpdate, omReplace, omRename,
-    omAddUpdate, omAddReplace, omAddAutoRename, omSkip, omQuit);
-
-// filename handling routines ...
+{ filename handling routines }
 
 function FileNamePos(const Substr, Str: string): longint;
 function FileNameLastPos(const Substr, Str: string): longint;
-
-function IncludeTrailingBackSpace(const DirName: string): string;
-function ExcludeTrailingBackSpace(const DirName: string): string;
-
-function IncludeTrailingBackSlash(const DirName: string): string;
-function ExcludeTrailingBackSlash(const DirName: string): string;
-
 function FileNameUseWildcards(const FileName: string): boolean;
 function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; overload;
 function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
 
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
+function IncludeTrailingBackSpace(const DirName: string): string;
+function ExcludeTrailingBackSpace(const DirName: string): string;
+function IncludeTrailingBackSlash(const DirName: string): string;
+function ExcludeTrailingBackSlash(const DirName: string): string;
 
 function CompareFileName(const S1, S2: string): longint;
 function ExtractFileDrive(const FileName: string): string;
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 
 function DeleteFilePath(const FilePath, FileName: string): string;
 function DeleteFileDrive(const FileName: string): string;
@@ -131,24 +67,24 @@ function DoDirSeparators(const FileName: string): string;
 function FixFileName(const FileName: string): string;
 function FixDirName(const DirName: string): string;
 
-// directory handling routines ...
+{ directory handling routines }
 
 function DirectoryExists(const DirName: string): boolean;
 function ForceDirectories(const Dir: string): boolean;
 
-// oem-ansi charset functions
+{ oem-ansi charset functions }
 
 function ParamToOem(const Param: string): string;
 function OemToParam(const Param: string): string;
 
-// filename handling routines ...
+{ filename handling routines }
 
 function SelfName: string;
 function SelfPath: string;
 function GenerateFileName(const FilePath: string): string;
-function GenerateAlternativeFileName(const FileName: string; Check :boolean): string;
+function GenerateAlternativeFileName(const FileName: string; Check: boolean): string;
 
-// string routines ...
+{ string routines }
 
 function  StringToPChar(const aValue: string): PChar;
 function  PCharToString(aValue: PChar): string;
@@ -158,7 +94,7 @@ function SizeToStr(const Size: int64): string;
 function RatioToStr(const PackedSize, Size: int64): string;
 function AttrToStr(Attr: longint): string;
 
-// time handling routines ...
+{ time handling routines }
 
 function TimeDifference(X: double): string;
 function TimeToStr(T: longint): string;
@@ -167,12 +103,12 @@ function DateTimeToString(X: TDateTime; const Format: string): string; overload;
 function FileTimeToString(X: longint): string; overload;
 function FileTimeToString(X: longint; const Format: string): string; overload;
 
-// hex routines ...
+{ hex routines }
 
 function Hex(const Data; Count: longint): string;
 function HexToData(const S: string; var Data; Count: longint): boolean;
 
-// low level functions ...
+{ low level functions }
 
 function CreateText(var T: Text; const Name: string): boolean;
 function AppendText(var T: Text; const Name: string): boolean;
@@ -181,22 +117,24 @@ function WriteText(const FileName, S: string): boolean;
 
 function SizeOfFile(const FileName: string): int64;
 
-// system control
+{ system control }
 
 {$IFDEF MSWINDOWS}
-function SetPriority(Priority: longint): boolean; // Priority is 0..3
+function SetPriority(Priority: longint): boolean; { Priority is 0..3 }
 {$ENDIF}
 
 procedure SetCtrlCHandler(CtrlHandler: pointer);
 
 implementation
 
+uses
+  SysUtils;
+
 const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
-  HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0,
-    0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
+  HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
 
-// string handling routines ...
+{ string handling routines }
 
 function FileNamePos(const Substr, Str: string): longint;
 begin
