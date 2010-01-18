@@ -84,10 +84,10 @@ function SelfPath: string;
 function GenerateFileName(const FilePath: string): string;
 function GenerateAlternativeFileName(const FileName: string; Check: boolean): string;
 
-{ string routines }
+{ string, pchar routines }
 
-function  StringToPChar(const aValue: string): PChar;
-function  PCharToString(aValue: PChar): string;
+function StringToPChar(const aValue: string): PChar;
+function PCharToString(aValue: PChar): string;
 procedure FreePChar(var aValue: PChar);
 
 function SizeToStr(const Size: int64): string;
@@ -134,7 +134,7 @@ const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
   HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
 
-{ string handling routines }
+{ filename handling routines }
 
 function FileNamePos(const Substr, Str: string): longint;
 begin
@@ -145,12 +145,24 @@ begin
   {$ENDIF}
 end;
 
-function FileNameLastPos(const Substr, Str: string): longint;
+function ReverseString(const Str: string): string; { TODO : DA VERIFICARE }
+var
+  I, Len: longint;
 begin
-  Result := Length(Str);
-  while (Result > 0) and (CompareFileName(Copy(Str, Result, Length(Substr)), Substr) <> 0) do
+  Len := Length(Str);
+  SetLength(Result, Len);
+  for I := 1 to Len do
   begin
-    Dec(Result);
+    Result[I] := Str[(Len + 1) - I];
+  end;
+end;
+
+function FileNameLastPos(const Substr, Str: string): longint; { TODO : DA VERIFICARE }
+begin
+  Result := FileNamePos(ReverseString(SubStr), ReverseString(Str));
+  if (Result <> 0) then
+  begin
+    Result := Length(Str) - Length(SubStr) - Result + 2;
   end;
 end;
 
@@ -165,15 +177,17 @@ end;
 
 function ExtractFileDrive(const FileName: string): string;
 var
-  I, L: longint;
+  I, Len: longint;
 begin
-  L := Length(FileName);
+  Len := Length(FileName);
   I := Pos(':', FileName);
-  while I < L do
+  while I < Len do
+  begin
     if FileName[I + 1] in ['\', '/'] then
       Inc(I)
     else
       Break;
+  end;
   Result := Copy(FileName, 1, I);
 end;
 
@@ -200,10 +214,10 @@ end;
 
 function IncludeTrailingBackSlash(const DirName: string): string;
 var
-  L: longint;
+  Len: longint;
 begin
-  L := Length(DirName);
-  if (L > 0) and (not (DirName[L] in ['\', '/'])) then
+  Len := Length(DirName);
+  if (Len > 0) and (not (DirName[Len] in ['\', '/'])) then
     Result := DirName + PathDelim
   else
     Result := DirName;
@@ -211,21 +225,21 @@ end;
 
 function ExcludeTrailingBackSlash(const DirName: string): string;
 var
-  L: longint;
+  Len: longint;
 begin
-  L := Length(DirName);
-  if (L > 0) and (DirName[L] in ['\', '/']) then
-    Result := Copy(DirName, 1, L - 1)
+  Len := Length(DirName);
+  if (Len > 0) and (DirName[Len] in ['\', '/']) then
+    Result := Copy(DirName, 1, Len - 1)
   else
     Result := DirName;
 end;
 
 function IncludeTrailingBackSpace(const DirName: string): string;
 var
-  L: longint;
+  Len: longint;
 begin
-  L := Length(DirName);
-  if (L > 0) and (not (DirName[L] in [' '])) then
+  Len := Length(DirName);
+  if (Len > 0) and (not (DirName[Len] in [' '])) then
     Result := DirName + ' '
   else
     Result := DirName;
@@ -652,7 +666,7 @@ begin
   end;
 end;
 
-// string routines
+// string and pchar routines
 
 function StringToPChar(const aValue: string): PChar; inline;
 begin
@@ -660,20 +674,21 @@ begin
   Result := StrPCopy(Result, aValue);
 end;
 
+{ TODO : DA CONTROLLARE E OTTIMIZZARE }
 function PCharToString(aValue: PChar): string; inline;
 var
-  I: longint;
+  i: longint;
 begin
-  SetLength(Result, 0);
   if aValue <> nil then
   begin
-    I := StrLen(aValue);
-    if I > 0 then
+    i := StrLen(aValue);
+    if i > 0 then
     begin
-      SetLength(Result, I);
-      Move(aValue^, Result[1], I);
+      SetLength(Result, i);
+      Move(aValue^, Result[1], i);
     end;
-  end;
+  end else
+    SetLength(Result, 0);
 end;
 
 procedure FreePChar(var aValue: PChar); inline;
