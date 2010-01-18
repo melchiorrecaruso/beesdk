@@ -97,42 +97,6 @@ type
     FilePosition: longint;
   end;
 
-function  StringToPChar(const aValue: string): PChar;
-function  PCharToString(aValue: PChar): string;
-procedure FreePChar(var aValue: PChar);
-
 implementation
-
-uses
-  SysUtils;
-
-function StringToPChar(const aValue: string): PChar; inline;
-begin
-  Result := StrAlloc(Length(aValue) + 1);
-  Result := StrPCopy(Result, aValue);
-end;
-
-{ TODO : DA CONTROLLARE E OTTIMIZZARE }
-function PCharToString(aValue: PChar): string; inline;
-var
-  i: longint;
-begin
-  if aValue <> nil then
-  begin
-    i := StrLen(aValue);
-    if i > 0 then
-    begin
-      SetLength(Result, i);
-      Move(aValue^, Result[1], i);
-    end;
-  end else
-    SetLength(Result, 0);
-end;
-
-procedure FreePChar(var aValue: PChar); inline;
-begin
-  StrDispose(aValue);
-  aValue := nil;
-end;
 
 end.
