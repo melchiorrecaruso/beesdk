@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1100 - 2009.11.25 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -35,15 +35,12 @@ interface
 
 uses
   Classes,
-  // ---
- {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS}
-  Bee_Common,
-  {$ENDIF} {$ENDIF}
   Bee_Types,
-  Bee_Consts;
+  Bee_Consts,
+  Bee_Common;
 
 type
-  // TAppIO class ...
+  { TAppIO class }
 
   TAppIO = class
   protected
@@ -55,7 +52,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-  public
+
     procedure OnFatalError(const aMessage: string; aCode: byte); virtual;
     procedure OnError(const aMessage: string; aCode: byte); virtual;
     procedure OnWarning(const aMessage: string; aCode: byte); virtual;
@@ -72,7 +69,7 @@ type
     property Code: byte read FCode;
   end;
 
-  // TApp class ...
+  { TApp class }
 
   TApp = class(TAppIO)
   protected
@@ -82,7 +79,6 @@ type
     FStartTime: double;
     FTotalSize: int64;
     FSize: int64;
-  protected
     function GetSpeed: longint;
     function GetBit4Byte: byte;
     function GetPercentes: longint;
@@ -94,7 +90,7 @@ type
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
     procedure Execute; virtual;
-  public
+
     procedure DoFatalError(const aMessage: string; aCode: byte);
     procedure DoError(const aMessage: string; aCode: byte);
     procedure DoWarning(const aMessage: string; aCode: byte);
@@ -106,12 +102,12 @@ type
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure DoProgress;
     procedure DoClearLine;
-  public
+
     procedure IncSize(const aValue: int64); overload;
     procedure IncSize; overload;
     procedure DecSize(const aValue: int64); overload;
     procedure DecSize; overload;
-  public
+
     property TotalTime: longint Read GetTotalTime;
     property TotalSize: int64 Read FTotalSize;
     property Time: longint Read GetTime;
@@ -128,7 +124,7 @@ uses
   DateUtils,
   SysUtils;
 
-// TAppIO class ...
+{ TAppIO class }
 
 constructor TAppIO.Create;
 begin
@@ -177,7 +173,7 @@ begin
   end;
 end;
 
-// TApp class ...
+{ TApp class }
 
 constructor TApp.Create(aParams: TStringList);
 begin
@@ -219,7 +215,7 @@ end;
 function TApp.GetBit4Byte: byte;
 begin
   Result := 0;
-  { TODO :  }
+  { TODO :  DA IMPLEMENTARE}
 end;
 
 function TApp.GetPercentes: longint;
@@ -264,31 +260,31 @@ end;
 
 procedure TApp.SetPriority(aPriority: byte);
 begin
-    {$IFDEF CONSOLEAPPLICATION}
-    {$IFDEF MSWINDOWS}
+  {$IFDEF CONSOLEAPPLICATION}
+  {$IFDEF MSWINDOWS}
   Bee_Common.SetPriority(aPriority);
-    {$ENDIF}
-    {$ELSE}
-  { TODO :  }
-    {$ENDIF}
+  {$ENDIF}
+  {$ELSE}
+  { TODO :  DA IMPLEMENTARE}
+  {$ENDIF}
 end;
 
-procedure TApp.IncSize(const aValue: int64);
+procedure TApp.IncSize(const aValue: int64); inline;
 begin
   Inc(FSize, aValue);
 end;
 
-procedure TApp.IncSize;
+procedure TApp.IncSize; inline;
 begin
   Inc(FSize);
 end;
 
-procedure TApp.DecSize(const aValue: int64);
+procedure TApp.DecSize(const aValue: int64); inline;
 begin
   Dec(FSize, aValue);
 end;
 
-procedure TApp.DecSize;
+procedure TApp.DecSize; inline;
 begin
   Dec(FSize);
 end;

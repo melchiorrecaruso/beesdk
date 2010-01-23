@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v1.0.5 build 1032 - 2009.04.25 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit BeeLib_Link;
@@ -41,18 +41,17 @@ const
   {$ENDIF}
   {$IFDEF UNIX}
   cApplicationLib = 'beelib.so';
-
   {$ENDIF}
 
 function CoreLibVersion: integer; external cApplicationLib;
-// ---
+
 function CoreCreate(aCommandLine: PChar): boolean; external cApplicationLib;
 function CoreDestroy: boolean; external cApplicationLib;
 function CoreExecute: boolean; external cApplicationLib;
 function CoreSuspend(aValue: boolean): boolean; external cApplicationLib;
 function CoreTerminate: boolean; external cApplicationLib;
 function CorePriority(aValue: integer): integer; external cApplicationLib;
-// ---
+
 function CoreRequest(aValue: PChar): PChar; external cApplicationLib;
 function CoreMessages(aIndex: integer): PChar; external cApplicationLib;
 function CoreTime(aValue: integer): integer; external cApplicationLib;
@@ -63,9 +62,9 @@ function CorePercentes: integer; external cApplicationLib;
 
 function CoreCode: integer; external cApplicationLib;
 function CoreStatus: integer; external cApplicationLib;
-// ---
+
 function CoreItems(aIndex: integer): Pointer; external cApplicationLib;
-// ---
+
 procedure CoreFreePChar(P: PChar); external cApplicationLib;
 
 implementation

@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2008-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2008-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.1.40 build 0642 - 2009.02.16 by Melchiorre Caruso.
+    v0.1.40 build 0642 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit BeeLib_Plugins;
@@ -32,10 +32,9 @@ unit BeeLib_Plugins;
 interface
 
 uses
-  Classes,
   Process,
+  Classes,
   SysUtils,
-  // ---
   Bee_Types,
   Bee_Common,
   Bee_Interface,
@@ -50,17 +49,18 @@ const
     '|hxs|iso|msi|doc|xls|ppt|wim|swm|dmg|xar|hfs|';
 
 type
+  { TProcessOutput }
+
   TProcessOutput = procedure(FOutput: TStringList) of object;
 
-type
+  { TSevenZipApp }
+
   TSevenZipApp = class(TApp)
   private
-    FCommandLine:   TCommandLine;
+    FCommandLine: TCommandLine;
     FMemOutputProc: TProcessOutput;
-  private
     procedure ProcessListOutput(FOutput: TStringList);
     procedure ProcessTestOutput(FOutput: TStringList);
-
     function CheckCommandLine: string;
     procedure CheckOverwrite;
   public
@@ -90,11 +90,11 @@ const
   SevenZipMethodMark   = 'Method = ';
   SevenZipBlockMark    = 'Block = ';
 
-  SevenZipListMark    = 'Listing archive: ';
-  SevenZipCommentMark = 'Comment = ';
-  SevenZipErrorMark   = 'Error: ';
+  SevenZipListMark     = 'Listing archive: ';
+  SevenZipCommentMark  = 'Comment = ';
+  SevenZipErrorMark    = 'Error: ';
 
-/// SevenZipPlungin function
+{ SevenZipPlungin function }
 
 function SevenZipPlugin: string;
 begin

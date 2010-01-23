@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.8.0 build 1071 - 2009.11.15 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -42,17 +42,22 @@ program Bee;
 {$I compiler.inc}
 
 uses
- {$IFDEF CONSOLEAPPLICATION} {$IFDEF MSWINDOWS} Windows,
- {$ENDIF} {$IFDEF UNIX} BaseUnix, {$ENDIF} {$ENDIF}
-  SysUtils,
+  {$IFDEF CONSOLEAPPLICATION}
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF}
+  {$IFDEF UNIX}
+  BaseUnix,
+  {$ENDIF}
+  {$ENDIF}
   Classes,
-  // ---
+  SysUtils,
   Bee_App,
   Bee_Types,
   Bee_Common;
 
 type
-  // TCustomBeeApp class
+  { TCustomBeeApp class }
 
   TCustomBeeApp = class(TBeeApp)
   private
@@ -60,7 +65,6 @@ type
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
-  public
     procedure OnFatalError(const aMessage: string; aCode: byte); override;
     procedure OnError(const aMessage: string; aCode: byte); override;
     procedure OnWarning(const aMessage: string; aCode: byte); override;
@@ -74,11 +78,11 @@ type
     procedure OnClearLine; override;
   end;
 
-  // ------------------------------------------------------------------------ //
-  // Implementation                                                           //
-  // ------------------------------------------------------------------------ //
+  { ------------------------------------------------------------------------ }
+  { Implementation                                                           }
+  { ------------------------------------------------------------------------ }
 
-  // TCustomBeeApp class
+  { TCustomBeeApp class }
 
   constructor TCustomBeeApp.Create(aParams: TStringList);
   begin
@@ -225,16 +229,16 @@ type
     Write(#13, #13: 80);
   end;
 
-  // ------------------------------------------------------------------------ //
-  // main block                                                               //
-  // ------------------------------------------------------------------------ //
+  { ------------------------------------------------------------------------ }
+  { main block                                                               }
+  { ------------------------------------------------------------------------ }
 
 var
   I:      longint;
   Params: TStringList;
   App:    TCustomBeeApp;
 
-  // control+c event
+  { control+c event }
 
   {$IFDEF MSWINDOWS}
   function CtrlHandler(CtrlType: longword): longbool;
@@ -248,7 +252,6 @@ var
     end;
     Result := True;
   end;
-
   {$ENDIF}
 
   {$IFDEF UNIX}
@@ -261,7 +264,6 @@ var
       SIGSTOP: App.Terminated := True;
     end;
   end;
-
   {$ENDIF}
 
 begin

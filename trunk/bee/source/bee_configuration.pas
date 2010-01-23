@@ -47,7 +47,7 @@ type
 
   TTable = packed record
     Level: longword;
-    T:     array [0..TableCols - 1] of TTableCol;
+    T: array [0..TableCols - 1] of TTableCol;
   end;
 
   TTableParameters = array [1..SizeOf(TTable) div 4] of byte;
@@ -61,6 +61,7 @@ type
 
   TConfiguration = class(TStringList)
   public
+    CurrentSection: TConfigSection;
     constructor Create;
     destructor Destroy; override;
     procedure LoadFromFile(const FileName: string); override;
@@ -70,8 +71,6 @@ type
     function GetData(const Name: string; var Data; aCount: longint): boolean;
     procedure Selector(const Name: string);
     function Split(const S: string; var Name, Value: string): boolean;
-  public
-    CurrentSection: TConfigSection;
   end;
 
 implementation
@@ -184,7 +183,6 @@ begin
     Value := Trim(Copy(S, Index + 1, MaxInt));
   end;
 end;
-
 
 { Class:  TConfigSection | methods }
 { Domain: public                   }

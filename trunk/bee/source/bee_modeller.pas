@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2008 Andrew Filinsky
+  Copyright (c) 2003-2010 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
 
 { Contains:
 
-  TBaseCoder class, PPM modeller;
+    TBaseCoder class, PPM modeller;
 
   Modifyed:
 
-  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-  v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
-  v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
+    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+    v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
+    v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_Modeller;
@@ -36,67 +36,47 @@ unit Bee_Modeller;
 interface
 
 uses
-  Math,                                 // Max (), Min (), ...
-  Classes,                              // TStream
-
-  Bee_Codec,                            // TSecondaryFCodec, ...
-  Bee_Assembler,                        // Low-level routines ...
-  Bee_Configuration;                    // TTable, TTableCol, ...
+  Math,                                 { Max (), Min (), ...                      }
+  Classes,                              { TStream                                  }
+  Bee_Codec,                            { TSecondaryFCodec, ...                    }
+  Bee_Assembler,                        { Low-level routines ...                   }
+  Bee_Configuration;                    { TTable, TTableCol, ...                   }
 
 const
-  BitChain  = 4;                        // Size of data portion, bit
-  MaxSymbol = 1 shl BitChain - 1;       // Size of source alphabet, symbols
-  Increment = 8;                        // Increment of symbol frequency
+  BitChain  = 4;                        { Size of data portion, bit                }
+  MaxSymbol = 1 shl BitChain - 1;       { Size of source alphabet, symbols         }
+  Increment = 8;                        { Increment of symbol frequency            }
 
 type
-  PNode  = ^TNode;                      // Pointer to modeller's node information...
-  PPNode = ^PNode;                      // Array of nodes...
+  PNode  = ^TNode;                      { Pointer to modeller's node information   }
+  PPNode = ^PNode;                      { Array of nodes...                        }
 
-  // Modeller's node information...
+  { Modeller's node information }
 
-  TNode = record
-    Next, Up: PNode;                    // Next node of this or high level
-    K: word;                            // Frequency of this symbol
-    C: byte;                            // This symbol itself
-    D: byte;                            // Used for incoming data storage
+  TNode = packed record
+    Next, Up: PNode;                    { Next node of this or high level          }
+    K: word;                            { Frequency of this symbol                 }
+    C: byte;                            { This symbol itself                       }
+    D: byte;                            { Used for incoming data storage           }
     case longword of
-      1: (A: longint);                  // Source address
-      2: (Tear: PNode);                 // Next free node
+      1: (A: longint);                  { Source address                           }
+      2: (Tear: PNode);                 { Next free node                           }
   end;
 
-  // PPM modeller...
+  { PPM modeller }
 
   TBaseCoder = class
-  public
-    constructor Create(aCodec: TSecondaryCodec);
-    destructor Destroy; override;
-
-    procedure SetTable(const T: TTableParameters);
-    procedure SetDictionary(aDictionaryLevel: longword);
-    procedure FreshFlexible;
-    procedure FreshSolid;
-    function UpdateModel(aSymbol: longword): longword;
-
-  private
-    procedure Add(aSymbol: longword);
-    procedure CreateChild(Parent: PNode);
-    procedure Cut;
-    procedure Cut_Tail(I, J: PPNode);
-    function Tail(Node: PNode): PNode;
-    procedure Account;
-    procedure Step;
-
   private
     FDictionaryLevel: longword;
-    FCodec: TSecondaryCodec;            // Secondary encoder or decoder...
+    FCodec: TSecondaryCodec;            { Secondary encoder or decoder             }
 
     Symbol: longword;
     Pos:    longword;
     LowestPos: longint;
 
-    MaxCounter,                         // Maximal heap size
-    SafeCounter,                        // Safe heap size
-    Counter: longword;                  // Current heap size
+    MaxCounter,                         { Maximal heap size                        }
+    SafeCounter,                        { Safe heap size                           }
+    Counter: longword;                  { Current heap size                        }
 
     Heap:      array of TNode;
     Cuts:      array of PNode;
@@ -111,14 +91,31 @@ type
     IncreaseIndex: longword;
     I, R, Q: longword;
 
-    Freq:  TFreq;                       // Symbol frequencyes...
-    Part:  ^TTableCol;                  // Part of parameters Table...
-    Table: TTable;                      // Parameters Table...
+    Freq:  TFreq;                       { Symbol frequencyes                       }
+    Part:  ^TTableCol;                  { Part of parameters Table                 }
+    Table: TTable;                      { Parameters Table                         }
+
+    procedure Add(aSymbol: longword);
+    procedure CreateChild(Parent: PNode);
+    procedure Cut;
+    procedure Cut_Tail(I, J: PPNode);
+    function Tail(Node: PNode): PNode;
+    procedure Account;
+    procedure Step;
+  public
+    constructor Create(aCodec: TSecondaryCodec);
+    destructor Destroy; override;
+
+    procedure SetTable(const T: TTableParameters);
+    procedure SetDictionary(aDictionaryLevel: longword);
+    procedure FreshFlexible;
+    procedure FreshSolid;
+    function UpdateModel(aSymbol: longword): longword;
   end;
 
 implementation
 
-/// TBaseCoder...
+{ TBaseCoder }
 
 constructor TBaseCoder.Create(aCodec: TSecondaryCodec);
 begin
@@ -210,8 +207,7 @@ begin
   begin
     ListCount := 1;
     List[0]   := Root;
-  end
-  else
+  end else
     ListCount := 0;
 end;
 
@@ -243,8 +239,7 @@ begin
       Link := Result.Up;
     end;
     Tear := Link;
-  end
-  else
+  end else
     Inc(CurrentFreeNode);
 
   Result.Next := Parent.Up;
@@ -281,8 +276,7 @@ begin
         begin
           J^ := P;
           Inc(J);
-        end
-        else
+        end else
         begin
           P.Up.Tear := Tear;
           Tear      := P.Up;
@@ -361,8 +355,7 @@ begin
 
           P := P.Next;
         until P = nil;
-      end
-      else
+      end else
       begin
         // Determined context ...
         K := P.K * Part[1] div Increment + 256;
@@ -370,8 +363,7 @@ begin
         Inc(Freq[P.C], R - K);
         R := K;
       end;
-    end
-    else
+    end else
     if P.A > LowestPos then
     begin
       // Determined context, encountered at first time ...
@@ -406,15 +398,14 @@ begin
         begin
           CreateChild(Node);
           Break;
-        end
-        else
-        if Result.C = C then
-        begin
-          P.Next      := Result.Next;
-          Result.Next := Node.Up;
-          Node.Up     := Result;
-          Break;
-        end;
+        end else
+          if Result.C = C then
+          begin
+            P.Next      := Result.Next;
+            Result.Next := Node.Up;
+            Node.Up     := Result;
+            Break;
+          end;
       until False;
   end;
 end;
@@ -427,8 +418,7 @@ begin
   ClearLongword(Freq[0], MaxSymbol + 1);
   R := MaxFreq - MaxSymbol - 1;
 
-  if ListCount > 0 then
-    Account;
+  if ListCount > 0 then Account;
 
   // Update aSymbol...
   AddLongword(Freq[0], MaxSymbol + 1, R shr BitChain + 1);

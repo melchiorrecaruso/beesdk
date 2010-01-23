@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -37,39 +37,40 @@ unit Bee_MainPacker;
 interface
 
 uses
-  Classes,       // TStream...
-  DateUtils,
-  Bee_Files,     // TFileReader, TFileWriter...
+  Classes,
   Bee_Types,
-  Bee_Codec,     // TSecondaryEncoder, TSecondaryDecoder...
+  Bee_Files,
+  Bee_Codec,
   Bee_Consts,
   Bee_Headers,
-  Bee_Modeller,  // TBaseCoder...
-  Bee_Interface; // TApp...
+  Bee_Modeller,
+  Bee_Interface;
 
 type
-
-  // Extracting Modes:
-  //   pmNorm  Extract files
-  //   pmSkip  Extract files, but skip current
-  //   pmTest  Test files (Extract to nul)
-  //   pmQuit  Cancel extracting
+  { Extracting Modes:                                   }
+  {   pmNorm  Extract files                             }
+  {   pmSkip  Extract files, but skip current           }
+  {   pmTest  Test files (Extract to nul)               }
+  {   pmQuit  Cancel extracting                         }
 
   TExtractingMode = (pmNorm, pmSkip, pmTest, pmQuit);
 
-type
-
-  // Encoding Modes:
-  //   emNorm  Encode files
-  //   emOpt   Encode files to nul, with no messages
+  { Encoding Modes:                                     }
+  {   emNorm  Encode files                              }
+  {   emOpt   Encode files to nul, with no messages     }
 
   TEncodingMode = (emNorm, emOpt);
 
-type
-
-  // Encoder ...
+  { Encoder class }
 
   TEncoder = class
+  private
+    App: TApp;
+    PPM: TBaseCoder;
+    SecondaryCodec: TSecondaryCodec;
+    Stream: TFileWriter;
+    procedure Progress;
+    function GetPassword(P: THeader): string;
   public
     constructor Create(aStream: TFileWriter; aApp: TApp);
     destructor Destroy; override;
@@ -78,48 +79,35 @@ type
       const SrcSize: int64; SrcEncoded: boolean): boolean;
     function CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
       const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean): boolean;
-  private
-    function GetPassword(P: THeader): string;
-    procedure Progress;
-  private
-    App:    TApp;
-    PPM:    TBaseCoder;
-    SecondaryCodec: TSecondaryCodec;
-    Stream: TFileWriter;
   end;
 
-type
-
-  // Decoder ...
+  { Decoder class }
 
   TDecoder = class
+  private
+    App: TApp;
+    PPM: TBaseCoder;
+    SecondaryCodec: TSecondaryCodec;
+    Stream: TFileReader;
+    procedure Progress;
+    function GetPassword(P: THeader): string;
   public
     constructor Create(aStream: TFileReader; aApp: TApp);
     destructor Destroy; override;
     function DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
     function DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
       const DstSize: int64; DstEncoded: boolean): boolean;
-  private
-    function GetPassword(P: THeader): string;
-    procedure Progress;
-  private
-    App:    TApp;
-    PPM:    TBaseCoder;
-    SecondaryCodec: TSecondaryCodec;
-    Stream: TFileReader;
   end;
 
 implementation
 
 uses
-  SysUtils,      // FileSetAttr...
-  // ---
-  Bee_Crc,       // UpdCrc32...
-  Bee_Common,    // ForceDirecotires, ...
-  Bee_BlowFish;  // TBlowFish...
+  SysUtils,
+  Bee_Crc,
+  Bee_Common,
+  Bee_BlowFish;
 
-
-/// TEncoder
+{ TEncoder class }
 
 constructor TEncoder.Create(aStream: TFileWriter; aApp: TApp);
 begin
@@ -419,7 +407,7 @@ begin
   end;
 end;
 
-/// TDecoder
+{ TDecoder class }
 
 constructor TDecoder.Create(aStream: TFileReader; aApp: TApp);
 begin

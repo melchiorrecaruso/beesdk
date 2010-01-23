@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1065 - 2009.11.11 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_Library;
@@ -44,21 +44,21 @@ uses
   Bee_Interface,
   Bee_CommandLine;
 
-//  Library routines ...
+{ Library routines }
 function CoreLibVersion: integer;
-// ---
+
 procedure CoreFreePChar(P: PChar);
 procedure CoreFreePFileInfo(P: Pointer);
 procedure CoreFreePFileInfoExtra(P: Pointer);
 
-//  Library core routines ...
+{ Library core routines }
 function CoreCreate(aCommandLine: PChar): boolean;
 function CoreDestroy: boolean;
 function CoreExecute: boolean;
 function CoreTerminate: boolean;
 function CorePriority(aValue: integer): integer;
 function CoreSuspend(aValue: boolean): boolean;
-// ---
+
 function CoreRequest(aValue: PChar): PChar;
 function CoreMessages(aIndex: integer): PChar;
 function CoreTime(aValue: integer): integer;
@@ -68,13 +68,13 @@ function CoreSpeed: integer;
 function CorePercentes: integer;
 function CoreStatus: integer;
 function CoreCode: integer;
-// ---
+
 function CoreItems(aIndex: integer): Pointer;
 
 implementation
 
 type
-  // TCoreApp class ...
+  { TCoreApp class }
 
   TCoreApp = class(TBeeApp)
   private
@@ -90,7 +90,7 @@ type
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
-  public
+
     procedure OnFatalError(const aMessage: string); override;
     procedure OnError(const aMessage: string); override;
     procedure OnWarning(const aMessage: string); override;
@@ -104,7 +104,7 @@ type
     procedure OnClearLine; override;
   end;
 
-  // TCore class ...
+  { TCore class }
 
   TCore = class(TThread)
   private
@@ -119,11 +119,7 @@ type
 var
   Core: TCore = nil;
 
- // ------------------------------------------------------------------------ //
- //                                                                          //
- //  TCoreApp class ...                                                      //
- //                                                                          //
- // ------------------------------------------------------------------------ //
+{ TCoreApp class }
 
 constructor TCoreApp.Create(aParams: TStringList);
 begin
@@ -261,11 +257,7 @@ begin
   // nothing to do
 end;
 
- // ------------------------------------------------------------------------ //
- //                                                                          //
- //  TCore class ...                                                         //
- //                                                                          //
- // ------------------------------------------------------------------------ //
+{ TCore class }
 
 constructor TCore.Create(const aCommandLine: string);
 var
@@ -306,11 +298,7 @@ begin
   FApp.FStatus := csTerminated;
 end;
 
- // ------------------------------------------------------------------------ //
- //                                                                          //
- //  Library routines ...                                                    //
- //                                                                          //
- // ------------------------------------------------------------------------ //
+{ Library routines }
 
 function CoreLibVersion: integer;
 begin
@@ -357,11 +345,7 @@ begin
     end;
 end;
 
- // ------------------------------------------------------------------------ //
- //                                                                          //
- //  Library core routines ...                                               //
- //                                                                          //
- // ------------------------------------------------------------------------ //
+{ Library core routines }
 
 function CoreCreate(aCommandLine: PChar): boolean;
 begin
@@ -412,8 +396,6 @@ begin
   end;
 end;
 
-// ---
-
 function CorePriority(aValue: integer): integer;
 begin
   if Core <> nil then
@@ -443,8 +425,6 @@ begin
   else
     Result := cpUnknow;
 end;
-
-// ---
 
 function CoreSpeed: integer;
 begin
@@ -524,8 +504,6 @@ begin
     Result := csUnknow;
 end;
 
-// ---
-
 function CoreRequest(aValue: PChar): PChar;
 begin
   if (Core <> nil) then
@@ -541,8 +519,6 @@ begin
   else
     Result := nil;
 end;
-
-// ---
 
 function CoreItems(aIndex: integer): Pointer;
 begin

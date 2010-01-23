@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2008 Andrew Filinsky
+  Copyright (c) 2003-2010 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,18 +18,18 @@
 
 { Contains:
 
-  Assembly routines.
+    Assembly routines.
 
   Modifyed:
 
-  v0.7.9 build 0383 - 2007.06.27 by Andrew Filinsky;
+    v0.7.9 build 0383 - 2007.06.27 by Andrew Filinsky;
 
-  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_Assembler;
 
-{$i compiler.inc}
+{$I compiler.inc}
 
 interface
 
@@ -47,68 +47,68 @@ implementation
 
 procedure CopyBytes(const Source, Dest; Count: longword);
 asm
-         XCHG    ESI, Source
-         XCHG    EDI, Dest
-         PUSH    Count
-         SHR     Count, 2
-         REP     movsd
-         POP     Count
-         AND     Count, $03
-         REP     movsb
-         MOV     ESI, Source
-         MOV     EDI, Dest
+  XCHG    ESI, Source
+  XCHG    EDI, Dest
+  PUSH    Count
+  SHR     Count, 2
+  REP     movsd
+  POP     Count
+  AND     Count, $03
+  REP     movsb
+  MOV     ESI, Source
+  MOV     EDI, Dest
 end;
 
 procedure FillLongword(const Data; const Count, Value: longword);
 asm
-         PUSH    EDI
-         MOV     EDI, Data
-         MOV     EAX, Value
-         MOV     ECX, Count
-         REP     stosd
-         POP     EDI
+  PUSH    EDI
+  MOV     EDI, Data
+  MOV     EAX, Value
+  MOV     ECX, Count
+  REP     stosd
+  POP     EDI
 end;
 
 procedure AddLongword(const Data; const Count, Value: longword);
 asm
-         @1:
-         ADD     [Data], Value
-         ADD     Data, 4
-         DEC     Count
-         JNE     @1
+  @1:
+  ADD     [Data], Value
+  ADD     Data, 4
+  DEC     Count
+  JNE     @1
 end;
 
 procedure ClearLongword(const Data; const Count: longword);
 asm
-         MOV     ECX, Count
-         MOV     EDX, EDI
-         MOV     EDI, Data
-         XOR     EAX, EAX
-         REP     stosd
-         MOV     EDI, EDX
+  MOV     ECX, Count
+  MOV     EDX, EDI
+  MOV     EDI, Data
+  XOR     EAX, EAX
+  REP     stosd
+  MOV     EDI, EDX
 end;
 
 procedure MoveLongwordUnchecked(const Source, Dest; Count: longword);
 asm
-         XCHG    ESI, Source
-         XCHG    EDI, Dest
-         REP     movsd
-         MOV     ESI, Source
-         MOV     EDI, Dest
+  XCHG    ESI, Source
+  XCHG    EDI, Dest
+  REP     movsd
+  MOV     ESI, Source
+  MOV     EDI, Dest
 end;
 
 function MulDiv(A, B, C: longword): longword;
 asm
-         MUL     B
-         DIV     C
+  MUL     B
+  DIV     C
 end;
 
 function MulDecDiv(A, B, C: longword): longword;
 asm
-         MUL     B
-         SUB     EAX, 1
-         SBB     EDX, 0
-         DIV     C
+  MUL     B
+  SUB     EAX, 1
+  SBB     EDX, 0
+  DIV     C
 end;
 
 end.
