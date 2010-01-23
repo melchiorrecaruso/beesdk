@@ -97,7 +97,7 @@ type
 
   { TCustomSearchRec }
 
-  TCustomSearchRec = packed record
+  TCustomSearchRec = record
     FileName: string;
     FileSize: int64;
     FileTime: longint;
@@ -382,7 +382,7 @@ begin
   FPosition := FSize;
 end;
 
-{ class TFileScanner }
+{ TFileScanner class }
 
 constructor TFileScanner.Create;
 begin

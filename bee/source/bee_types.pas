@@ -65,11 +65,11 @@ type
   TOverwriteMode = (omAdd, omUpdate, omReplace, omRename,
     omAddUpdate, omAddReplace, omAddAutoRename, omSkip, omQuit);
 
-  { PFileInfo packed record }
+  { PFileInfo record }
 
   PFileInfo = ^TFileInfo;
 
-  TFileInfo = packed record
+  TFileInfo = record
     FileName: PChar;
     FilePath: PChar;
     FileSize: int64;
@@ -77,11 +77,11 @@ type
     FileAttr: longint;
   end;
 
-  { PFileInfoExtra packed record }
+  { PFileInfoExtra record }
 
   PFileInfoExtra = ^TFileInfoExtra;
 
-  TFileInfoExtra = packed record
+  TFileInfoExtra = record
     FileName:     PChar;
     FilePath:     PChar;
     FileSize:     int64;

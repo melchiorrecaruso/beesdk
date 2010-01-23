@@ -111,10 +111,10 @@ uses
 
 constructor TEncoder.Create(aStream: TFileWriter; aApp: TApp);
 begin
-  App    := aApp;
+  App := aApp;
   Stream := aStream;
   SecondaryCodec := TSecondaryEncoder.Create(Stream);
-  PPM    := TBaseCoder.Create(SecondaryCodec);
+  PPM := TBaseCoder.Create(SecondaryCodec);
 end;
 
 destructor TEncoder.Destroy;
@@ -122,7 +122,7 @@ begin
   PPM.Free;
   SecondaryCodec.Free;
   Stream := nil;
-  App    := nil;
+  App := nil;
 end;
 
 function TEncoder.GetPassword(P: THeader): string;
@@ -147,8 +147,7 @@ end;
 
 procedure TEncoder.Progress;
 begin
-  while App.Suspended do
-    Sleep(250);
+  while App.Suspended do Sleep(250);
   App.DoProgress;
 end;
 
@@ -411,10 +410,10 @@ end;
 
 constructor TDecoder.Create(aStream: TFileReader; aApp: TApp);
 begin
-  App    := aApp;
+  App := aApp;
   Stream := aStream;
   SecondaryCodec := TSecondaryDecoder.Create(Stream);
-  PPM    := TBaseCoder.Create(SecondaryCodec);
+  PPM := TBaseCoder.Create(SecondaryCodec);
 end;
 
 destructor TDecoder.Destroy;
@@ -422,7 +421,7 @@ begin
   PPM.Free;
   SecondaryCodec.Free;
   Stream := nil;
-  App    := nil;
+  App := nil;
 end;
 
 function TDecoder.GetPassword(P: THeader): string;
