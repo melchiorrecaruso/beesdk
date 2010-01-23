@@ -27,7 +27,7 @@
     v0.7.8 build 0148 - 2005.06.23 by Andrew Filinsky;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   
-    v0.8.0 build 1110 - 2010.01.16 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_Files;
@@ -45,6 +45,8 @@ uses
   Bee_BlowFish;
 
 type
+  { TFileReader }
+
   TFileReader = class(TFileStream)
   private
     BufferSize: longint;
@@ -59,6 +61,8 @@ type
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
   end;
 
+  { TFileWriter }
+
   TFileWriter = class(TFileStream)
   private
     BufferSize: longint;
@@ -72,6 +76,8 @@ type
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
   end;
+
+  { TNulWriter }
 
   TNulWriter = class(TFileWriter)
   private
@@ -89,15 +95,21 @@ type
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
   end;
 
-  PCustomSearchRec = ^TCustomSearchRec;
+  { TCustomSearchRec }
 
-  TCustomSearchRec = record
+  TCustomSearchRec = packed record
     FileName: string;
     FileSize: int64;
     FileTime: longint;
     FileAttr: longint;
     FileLink: string;
   end;
+
+  { PCustomSearchRec }
+
+  PCustomSearchRec = ^TCustomSearchRec;
+
+  { TFileScanner }
 
   TFileScanner = class
   private
@@ -121,9 +133,9 @@ function CreateTFileWriter(const FileName: string; Mode: word): TFileWriter;
 implementation
 
 uses
-  Bee_Assembler; // Low-level routines ...
+  Bee_Assembler;
 
-// class TFileReader...
+{ class TFileReader }
 
 constructor TFileReader.Create(const FileName: string; Mode: word);
 begin
@@ -212,7 +224,7 @@ begin
   end;
 end;
 
-// class TFileWriter...
+{ class TFileWriter }
 
 constructor TFileWriter.Create(const FileName: string; Mode: word);
 begin
@@ -307,11 +319,11 @@ begin
   end;
 end;
 
-/// class TNulWriter...
+{ class TNulWriter }
 
 constructor TNulWriter.Create;
 begin
-  // inherited Create;
+  { inherited Create; }
   BlowFish  := TBlowFish.Create;
   FPosition := 0;
   FSize     := 0;
@@ -320,7 +332,7 @@ end;
 destructor TNulWriter.Destroy;
 begin
   BlowFish.Free;
-  // inherited Destroy;
+  { inherited Destroy; }
 end;
 
 function TNulWriter.Read(var Buffer; Count: longint): longint;
@@ -370,7 +382,7 @@ begin
   FPosition := FSize;
 end;
 
-/// class TFileScanner...
+{ class TFileScanner }
 
 constructor TFileScanner.Create;
 begin
@@ -469,7 +481,5 @@ function TFileScanner.GetItem(Index:longint): TCustomSearchRec;
 begin
   Result := TCustomSearchRec(FList.Items[Index]^);
 end;
-
-
 
 end.

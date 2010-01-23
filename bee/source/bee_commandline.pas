@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1100 - 2009.12.07 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_CommandLine;
@@ -39,60 +39,59 @@ uses
   Bee_Common;
 
 type
-  // Command:
-  //   ccNone     Nul command
-  //   ccHelp     Show help informations
-  //   ccAdd      Add files
-  //   ccExtract  Extract file
-  //   ceXextract Extract file with full path
-  //   ccDelete   Delete files
-  //   ccRename   Rename files
-  //   ccTest     Test files
-  //   ccList     List files
-  //   ccOpen     Open archive
+  { Command:                                        }
+  {   ccNone     Nul command                        }
+  {   ccHelp     Show help informations             }
+  {   ccAdd      Add files                          }
+  {   ccExtract  Extract file                       }
+  {   ceXextract Extract file with full path        }
+  {   ccDelete   Delete files                       }
+  {   ccRename   Rename files                       }
+  {   ccTest     Test files                         }
+  {   ccList     List files                         }
+  {   ccOpen     Open archive                       }
 
   TCommand = (ccAdd, ccExtract, ccXextract, ccDelete,
     ccRename, ccTest, ccList, ccHelp, ccOpen, ccNone);
 
-  // Compression Method Option:
-  //   moStore
-  //   moFast
-  //   moNormal
-  //   moMaximum
+  { Compression Method Option:                      }
+  {   moStore                                       }
+  {   moFast                                        }
+  {   moNormal                                      }
+  {   moMaximum                                     }
 
   TmOption = (moStore, moFast, moNormal, moMaximum);
 
-  // Compression Dictionary Option:
-  //   do2MB
-  //   do5MB
-  //   ..
-  //   do1280MB
+  { Compression Dictionary Option:                  }
+  {   do2MB                                         }
+  {   do5MB                                         }
+  {   ..                                            }
+  {   do1280MB                                      }
 
   TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
     do80MB, do160MB, do320MB, do640MB ,do1280MB);
 
-  // Process Priority Option
-  //   prioIdle
-  //   prioNormal
-  //   prioHigh
-  //   prioRealTime
+  { Process Priority Option:                        }
+  {   prioIdle                                      }
+  {   prioNormal                                    }
+  {   prioHigh                                      }
+  {   prioRealTime                                  }
 
-  // Header Version:
-  //   hv02
-  //   hv03
-  //   hv04
+  TpriOption = (prioIdle, prioNormal, prioHigh,
+    prioRealTime);
 
-  THeaderVersion = (hv02, hv03, hv04);  
+  { Header Version Option:                          }
+  {   hv02                                          }
+  {   hv03                                          }
+  {   hv04                                          }
 
-  TpriOption = (prioIdle, prioNormal, prioHigh, prioRealTime);
+  ThvOption = (hv02, hv03, hv04);
 
-  // TCommandLine ...
+  { TCommandLine }
 
   TCommandLine = class
   private
-    // command
     FCommand: TCommand;
-    // options
     FssOption: boolean;
     FrOption: TRecursiveMode;
     FuOption: TUpdateMode;
@@ -103,7 +102,7 @@ type
     FfOption: string;
     FsfxOption: string;
     FpOption: boolean;
-    FhvOption: THeaderVersion;
+    FhvOption: ThvOption;
     FtOption: boolean;
     FlOption: boolean;
     FstlOption: boolean;
@@ -111,22 +110,17 @@ type
     FcdOption: string;
     FcfgOption: string;
     FpriOption: TpriOption;
-    // archive name
     FArchiveName: string;
-    // file masks
     FFileMasks: TStringList;
-  private
     procedure Initialize;
     function GetCommandLine: string;
     procedure SetCommandLine(const aValue: string);
-  private
     procedure SetfOption(const aValue: string);
     procedure SetsfxOption(const aValue: string);
     procedure SetwdOption(const aValue: string);
     procedure SetcdOption(const aValue: string);
     procedure SetcfgOption(const aValue: string);
     procedure SetArchiveName(const aValue: string);
-  private
     procedure ProcessrOption(var S: string);
     procedure ProcessuOption(var S: string);
     procedure ProcessxOption(var S: string);
@@ -146,7 +140,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-  public
+
     property CommandLine: string read GetCommandLine write SetCommandLine;
     property Command: TCommand read FCommand;
     property ssOption: boolean read FssOption write FssOption;
@@ -159,7 +153,7 @@ type
     property fOption: string read FfOption write SetfOption;
     property sfxOption: string read FsfxOption write SetsfxOption;
     property pOption: boolean read FpOption write FpOption;
-    property hvOption: THeaderVersion read FhvOption write FhvOption;
+    property hvOption: ThvOption read FhvOption write FhvOption;
     property tOption: boolean read FtOption write FtOption;
     property lOption: boolean read FlOption write FlOption;
     property stlOption: boolean read FstlOption write FstlOption;
@@ -173,8 +167,7 @@ type
 
 implementation
 
-uses
-  Math;
+{$IFNDEF FPC} uses Math; {$ENDIF}
 
 constructor TCommandLine.Create;
 begin
@@ -186,9 +179,7 @@ end;
 
 procedure TCommandLine.Initialize;
 begin
-  // default command
   FCommand := ccNone;
-  // default options
   FssOption := False;
   FrOption := rmNone;
   FuOption := umAddUpdate;
@@ -207,9 +198,7 @@ begin
   FcdOption := '';
   FcfgOption := SelfPath + DefaultCfgName;
   FpriOption := prioNormal;
-  // archive name
   FArchiveName := '';
-  // file masks
   FFileMasks.Clear;
 end;
 
@@ -222,14 +211,13 @@ end;
 
 procedure TCommandLine.ProcessOption(var S: string; var Option: boolean);
 begin
-  if Length(S) > 1 then
+  if Length(S) <> 1 then
   begin
     Delete(S, 1, 2);
     if (S = '') or (S = '+') then
       Option := True
     else
-      if (S = '-') then
-        Option := False;
+      if (S = '-') then Option := False;
   end;
 end;
 
@@ -241,8 +229,7 @@ begin
     if (S = '') or (S = '+') then
       FrOption := rmWildCard
     else
-      if (S = '-') then
-        FrOption := rmNone;
+      if (S = '-') then FrOption := rmNone;
   end else
     if Pos('-R', UpperCase(S)) = 1 then
     begin
@@ -250,8 +237,7 @@ begin
       if (S = '') or (S = '+') then
         FrOption := rmFull
       else
-        if (S = '-') then
-          FrOption := rmNone;
+        if (S = '-') then FrOption := rmNone;
     end;
 end;
 
@@ -267,7 +253,7 @@ end;
 procedure TCommandLine.ProcessxOption(var S: string);
 begin
   Delete(S, 1, 2);
-  if Length(S) > 0 then
+  if Length(S) <> 0 then
   begin
     FxOptions.Add(S);
   end;
@@ -344,7 +330,7 @@ end;
 procedure TCommandLine.ProcesscdOption(var S: string);
 begin
   Delete(S, 1, 3);
-  if Length(S) > 0 then
+  if Length(S) <> 0 then
   begin
     FcdOption := IncludeTrailingBackslash(FixDirName(S));
   end;
@@ -371,7 +357,6 @@ end;
 procedure TCommandLine.ProcessCommand(var S: string);
 begin
   if Length(S) = 1 then
-  begin
     case Upcase(S[1]) of
       '?': FCommand := ccHelp;
       'A': FCommand := ccAdd;
@@ -384,7 +369,6 @@ begin
       'O': FCommand := ccOpen;
       else FCommand := ccHelp;
     end;
-  end;
 end;
 
 procedure TCommandLine.ProcessArchiveName(var S: string);
@@ -399,19 +383,19 @@ end;
 
 procedure TCommandLine.SetCommandLine(const aValue: string);
 var
-  Params: TStringList;
   I: longint;
   S: string;
+  Params: TStringList;
 begin
   Params := TStringList.Create;
   Params.Text := aValue;
   
   Initialize;
   // catch options, command, archive name and name of files
-  for I := 0 to Params.Count -1 do
+  for I := 0 to Params.Count - 1 do
   begin
     S := Params[I];
-    if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
+    if (not FssOption) and (Length(S) <> 1) and (S[1] = '-') then
     begin
       // options...
       case UpCase(S[2]) of
@@ -491,8 +475,8 @@ begin
     ccList:     Result := 'L';
     ccTest:     Result := 'T';
     ccRename:   Result := 'R';
-    ccOpen :    Result := 'O';
-    else       Result := ' ';
+    ccOpen:     Result := 'O';
+    else        Result := ' ';
   end;
 
   case FrOption of

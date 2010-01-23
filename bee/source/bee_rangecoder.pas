@@ -1,6 +1,6 @@
 {
   Copyright (c) 2003 Evgeny Shelwien;
-  Copyright (c) 2003-2009 Andrew Filinsky
+  Copyright (c) 2003-2010 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,22 +27,23 @@
     It uses MulDiv opcode extension.
 
   (C) 2003 Evgeny Shelwien;
-  (C) 2003-2009 Andrew Filinsky.
+  (C) 2003-2010 Andrew Filinsky.
+
   Created:
 
-  v0.1.0 build 0001 - 2003.02.01 by Evgeny Shelwien.
+    v0.1.0 build 0001 - 2003.02.01 by Evgeny Shelwien.
 
   Translated:
 
-  v0.1.1 build 0002 - 2003.03.01 by Andrew Filinsky.
+    v0.1.1 build 0002 - 2003.03.01 by Andrew Filinsky.
 
   Modifyed:
 
-  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-  v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
-  v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
+    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+    v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
+    v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-  v0.8.0 build 1100 - 2009.11.25 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_RangeCoder;
@@ -52,8 +53,8 @@ unit Bee_RangeCoder;
 interface
 
 uses
-  Classes,       /// TStream, ...
-  Bee_Assembler; /// Low-level routines ...
+  Classes,
+  Bee_Assembler;
 
 const
   TOP     = 1 shl 24;
@@ -62,21 +63,9 @@ const
   MaxFreq = TOP - 1;
 
 type
-  /// TRangeCoder...
+  { TRangeCoder }
 
   TRangeCoder = class
-    constructor Create(aStream: TStream);
-    procedure StartEncode;
-    procedure StartDecode;
-    procedure FinishEncode;
-    procedure FinishDecode;
-    procedure Encode(CumFreq, Freq, TotFreq: longword);
-    function GetFreq(TotFreq: longword): longword;
-    procedure Decode(CumFreq, Freq, TotFreq: longword);
-  private
-    procedure ShiftLow;
-    function InputByte: longword;
-    procedure OutputByte(aValue: longword);
   private
     FStream: TStream;
     Range:   longword;
@@ -85,11 +74,23 @@ type
     Carry:   longword;
     Cache:   longword;
     FFNum:   longword;
+    procedure ShiftLow;
+    function InputByte: longword;
+    procedure OutputByte(aValue: longword);
+  public
+    constructor Create(aStream: TStream);
+    procedure StartEncode;
+    procedure StartDecode;
+    procedure FinishEncode;
+    procedure FinishDecode;
+    procedure Encode(CumFreq, Freq, TotFreq: longword);
+    function GetFreq(TotFreq: longword): longword;
+    procedure Decode(CumFreq, Freq, TotFreq: longword);
   end;
 
 implementation
 
-/// TRangeCoder...
+{ TRangeCoder }
 
 constructor TRangeCoder.Create(aStream: TStream);
 begin
@@ -118,13 +119,12 @@ procedure TRangeCoder.FinishEncode;
 var
   I: longword;
 begin
-  for I := 0 to NUM do
-    ShiftLow;
+  for I := 0 to NUM do ShiftLow;
 end;
 
 procedure TRangeCoder.FinishDecode;
 begin
-  /// nothing to do...
+  { nothing to do }
 end;
 
 procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: longword);

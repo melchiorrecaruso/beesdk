@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2008 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,17 +18,17 @@
 
 { Contains:
 
-  TBlowFish class,
+    TBlowFish class,
   
-  kind of encrypter-decrypter.
-  Output is multiple of 64bits.
+    kind of encrypter-decrypter.
+    Output is multiple of 64bits.
 
   Modifyed:
 
-  v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
-  v0.7.9 build 0360 - 2006.12.28 by Melchiorre Caruso;
+    v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
+    v0.7.9 build 0360 - 2006.12.28 by Melchiorre Caruso;
   
-  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_BlowFish;
@@ -37,22 +37,19 @@ unit Bee_BlowFish;
 
 interface
 
-uses
-  Classes;
-
 const
-  MinKeyLength = 4; // min key-lengh
+  MinKeyLength = 4; { min key-lengh }
 
 type
   LArray = array [0..3] of byte;
 
-type
+  { TBlowFish class }
+
   TBlowFish = class
   private
     FStarted: boolean;
     P: array [1..18] of longword;
     S: array [1.. 4, 0..255] of longword;
-  private
     procedure Initialize(const Key: string);
     function F(Input: longword): longword;
     { These two should speak for themselves, Xl and Xr are the first and
@@ -61,34 +58,27 @@ type
 
       Note that the data is not copied or stored before the Blowfish al-
       gorithm  is applied to it  and  that you have to perform a loop in
-      order to encrypt or decrypt more data than 8 bytes.
-    }
+      order to encrypt or decrypt more data than 8 bytes. }
     procedure Encode(pXl, pXr: Plongword); overload;
     procedure Decode(pXl, pXr: Plongword); overload;
   public
     constructor Create;
     procedure Start(const Key: string);
     { Initialization of a key is needed before performing any encryption
-      or decryption of data.
-    }
+      or decryption of data. }
     procedure Finish;
     function Encode(var aData; Count: longword): longword; overload;
     function Decode(var aData; Count: longword): longword; overload;
-  public
     property Started: boolean Read FStarted;
   end;
 
 implementation
 
-(*
-  =============================================================
-  The hexdigits of pi, arranged asfours_boxes& one p_array,
-  as perthe Blowfishdefault. These have passedmuster w/ Eric
-  Young'ssetof testvectors. Enjoy.  -Mike Schaudies
-  =============================================================
-*)
-
 const
+  { The hexdigits of pi, arranged asfours_boxes& one p_array,
+    as perthe Blowfishdefault. These have passedmuster w/ Eric
+    Young'ssetof testvectors. Enjoy. - Mike Schaudies }
+
   SBox1: array [0..255] of longword = (
     $d1310ba6, $98dfb5ac, $2ffd72db, $d01adfb7, $b8e1afed, $6a267e96,
     $ba7c9045, $f12c7f99, $24a19947, $b3916cf7, $0801f2e2, $858efc16,
@@ -274,7 +264,7 @@ const
     $082efa98, $ec4e6c89, $452821e6, $38d01377, $be5466cf, $34e90c6c,
     $c0ac29b7, $c97c50dd, $3f84d5b5, $b5470917, $9216d5d9, $8979fb1b);
 
-// TBlowFish
+{ TBlowFish class }
 
 constructor TBlowFish.Create;
 begin
@@ -290,8 +280,7 @@ begin
   for i := 1 to 18 do
     P[i] := PArray[i];
   { and then the four S-boxes, in order, with a fixed random string.
-    This string consists of the hexadecimal digits of Pi.
-  }
+    This string consists of the hexadecimal digits of Pi. }
   for j := 0 to 255 do
     S[1, j] := SBox1[j];
   for j := 0 to 255 do
@@ -303,8 +292,7 @@ begin
   { XOR P1 with the first 32 bits of the key, XOR P2 with the second 32
     bits of the key, and so on for all bits of the key (up to P18). Cycle
     throught the key bits repeatedly until the entire P-array has been
-    XORed.
-  }
+    XORed. }
   j := 1;
   for i := 1 to 18 do
   begin
@@ -320,8 +308,7 @@ begin
   end;
     { Encrypt the all-zero string using the Blowfish algorithm using the
       subkeys described in steps #1 and #2 and replace the elements of the
-      P-array with the output of this process.
-    }
+      P-array with the output of this process. }
   Datal := $00000000;
   Datar := $00000000;
   i     := 1;
@@ -334,8 +321,7 @@ begin
     Inc(i);
   end;
     { Continue the process, replacing the elements of the four S-boxes in
-      order, with the output of the continuously changing Blowfish algorithm.
-    }
+      order, with the output of the continuously changing Blowfish algorithm. }
   for j := 1 to 4 do
   begin
     i := 0;
@@ -350,8 +336,7 @@ begin
   end;
     { In total, 521 iterations are required to generate all required subkeys.
       Applications can store the subkeys rather than re-executing this deri-
-      vation on process.
-    }
+      vation on process. }
 end;
 
 function TBlowFish.F(Input: longword): longword;
@@ -367,8 +352,7 @@ begin
     Dr. Dobb's  official FTP site on  ftp.mv.com there wasn't any MOD to
     be found. After  he was asked about this phenomenon,  Bruce Schneier
     stated that it was not needed anyway. In this source it is left out-
-    commented for completeness.
-  }
+    commented for completeness. }
 end;
 
 procedure TBlowFish.Encode(pXl, pXr: Plongword);

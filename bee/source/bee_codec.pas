@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2008 Andrew Filinsky
+  Copyright (c) 1999-2010 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,16 +18,17 @@
 
 { Contains:
 
-  TSecondaryCodec class,   abstract secondary codec, similar to RangeCoder or Arithmetic Coder;
-  TSecondaryEncoder class, implementation of secondary encoder;
-  TSecondaryDecoder class, implementation of secondary decoder;
+    TSecondaryCodec class,   abstract secondary codec,
+      similar to RangeCoder or Arithmetic Coder;
+    TSecondaryEncoder class, implementation of secondary encoder;
+    TSecondaryDecoder class, implementation of secondary decoder;
 
   Modifyed:
 
-  v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-  v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
+    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
+    v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   
-  v0.8.0 build 1030 - 2009.04.19 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_Codec;
@@ -37,43 +38,41 @@ unit Bee_Codec;
 interface
 
 uses
-  Classes,        // TStream
-  Bee_RangeCoder; // TRangeCoder, ...
+  Classes,
+  Bee_RangeCoder;
 
 const
   MaxFreq = Bee_RangeCoder.MaxFreq;
 
-// Array of Frequencyes...
-
 type
+  { Array of Frequencyes }
+
   TFreq = array of longword;
 
-// Abstract secondary codec, like a RangeCoder or Arithmetic Coder...
+  { Abstract secondary codec, like a RangeCoder or Arithmetic Coder }
 
-type
   TSecondaryCodec = class(TRangeCoder)
+  public
     procedure Start; virtual; abstract;
     procedure Flush; virtual; abstract;
-    function UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword;
-      overload; virtual; abstract;
-    function UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
-      overload; virtual; abstract;
+    function UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword; overload; virtual; abstract;
+    function UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword; overload; virtual; abstract;
   end;
 
-// Range Encoder...
+  { Range Encoder }
 
-type
   TSecondaryEncoder = class(TSecondaryCodec)
+  public
     procedure Start; override;
     procedure Flush; override;
     function UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword; override;
     function UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword; override;
   end;
 
-// Range Decoder...
+  { Range Decoder }
 
-type
   TSecondaryDecoder = class(TSecondaryCodec)
+  public
     procedure Start; override;
     procedure Flush; override;
     function UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword; override;
@@ -82,7 +81,7 @@ type
 
 implementation
 
-// TSecondaryEncoder...
+{ TSecondaryEncoder }
 
 procedure TSecondaryEncoder.Start;
 begin
@@ -128,7 +127,7 @@ begin
   Result := aSymbol;
 end;
 
-// TSecondaryDecoder...
+{ TSecondaryDecoder }
 
 procedure TSecondaryDecoder.Start;
 begin

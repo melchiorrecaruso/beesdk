@@ -27,7 +27,7 @@
     v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1110 - 2010.01.17 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -40,7 +40,6 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFNDEF FPC} Math, {$ENDIF}
-  Bee_Consts,
   Bee_Types,
   Classes;
 
@@ -58,7 +57,6 @@ function IncludeTrailingBackSlash(const DirName: string): string;
 function ExcludeTrailingBackSlash(const DirName: string): string;
 
 function CompareFileName(const S1, S2: string): longint;
-function ExtractFileDrive(const FileName: string): string;
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 
 function DeleteFilePath(const FilePath, FileName: string): string;
@@ -67,22 +65,20 @@ function DoDirSeparators(const FileName: string): string;
 function FixFileName(const FileName: string): string;
 function FixDirName(const DirName: string): string;
 
+function SelfName: string;
+function SelfPath: string;
+function GenerateFileName(const FilePath: string): string;
+function GenerateAlternativeFileName(const FileName: string; Check: boolean): string;
+
 { directory handling routines }
 
 function DirectoryExists(const DirName: string): boolean;
-function ForceDirectories(const Dir: string): boolean;
+function ForceDirectories(const DirName: string): boolean;
 
 { oem-ansi charset functions }
 
 function ParamToOem(const Param: string): string;
 function OemToParam(const Param: string): string;
-
-{ filename handling routines }
-
-function SelfName: string;
-function SelfPath: string;
-function GenerateFileName(const FilePath: string): string;
-function GenerateAlternativeFileName(const FileName: string; Check: boolean): string;
 
 { string, pchar routines }
 
@@ -90,9 +86,11 @@ function StringToPChar(const aValue: string): PChar;
 function PCharToString(aValue: PChar): string;
 procedure FreePChar(var aValue: PChar);
 
-function SizeToStr(const Size: int64): string;
 function RatioToStr(const PackedSize, Size: int64): string;
+function SizeToStr(const Size: int64): string;
 function AttrToStr(Attr: longint): string;
+
+function ReverseString(const Str: string): string; inline;
 
 { time handling routines }
 
@@ -136,7 +134,7 @@ const
 
 { filename handling routines }
 
-function FileNamePos(const Substr, Str: string): longint;
+function FileNamePos(const Substr, Str: string): longint; inline;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
   Result := System.Pos(SubStr, Str);
@@ -145,19 +143,7 @@ begin
   {$ENDIF}
 end;
 
-function ReverseString(const Str: string): string; { TODO : DA VERIFICARE }
-var
-  I, Len: longint;
-begin
-  Len := Length(Str);
-  SetLength(Result, Len);
-  for I := 1 to Len do
-  begin
-    Result[I] := Str[(Len + 1) - I];
-  end;
-end;
-
-function FileNameLastPos(const Substr, Str: string): longint; { TODO : DA VERIFICARE }
+function FileNameLastPos(const Substr, Str: string): longint; inline;
 begin
   Result := FileNamePos(ReverseString(SubStr), ReverseString(Str));
   if (Result <> 0) then
@@ -166,149 +152,57 @@ begin
   end;
 end;
 
-function CompareFileName(const S1, S2: string): longint;
+function FileNameUseWildcards(const FileName: string): boolean; inline;
 begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Result := SysUtils.CompareStr(S1, S2);
-  {$ELSE}
-  Result := SysUtils.CompareText(S1, S2);
-  {$ENDIF}
-end;
-
-function ExtractFileDrive(const FileName: string): string;
-var
-  I, Len: longint;
-begin
-  Len := Length(FileName);
-  I := Pos(':', FileName);
-  while I < Len do
-  begin
-    if FileName[I + 1] in ['\', '/'] then
-      Inc(I)
+  if System.Pos('*', FileName) > 0 then
+    Result := True
+  else
+    if System.Pos('?', FileName) > 0 then
+      Result := True
     else
-      Break;
-  end;
-  Result := Copy(FileName, 1, I);
+      Result := False;
 end;
 
-function DeleteFilePath(const FilePath, FileName: string): string;
-begin
-  Result := FileName;
-  if FileNamePos(FilePath, Result) = 1 then
-  begin
-    Delete(Result, 1, Length(FilePath));
-  end;
-end;
-
-function DeleteFileDrive(const FileName: string): string;
-var
-  Drive: string;
-begin
-  Result := FileName;
-  if Length(Result) > 0 then
-  begin
-    Drive := ExtractFileDrive(Result);
-    System.Delete(Result, 1, Length(Drive));
-  end;
-end;
-
-function IncludeTrailingBackSlash(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (not (DirName[Len] in ['\', '/'])) then
-    Result := DirName + PathDelim
-  else
-    Result := DirName;
-end;
-
-function ExcludeTrailingBackSlash(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (DirName[Len] in ['\', '/']) then
-    Result := Copy(DirName, 1, Len - 1)
-  else
-    Result := DirName;
-end;
-
-function IncludeTrailingBackSpace(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (not (DirName[Len] in [' '])) then
-    Result := DirName + ' '
-  else
-    Result := DirName;
-end;
-
-function ExcludeTrailingBackSpace(const DirName: string): string;
-var
-  L: longint;
-begin
-  L := Length(DirName);
-  if (L > 0) and (DirName[L] in [' ']) then
-    Result := Copy(DirName, 1, L - 1)
-  else
-    Result := DirName;
-end;
-
-function MatchPattern(Element, Pattern: PChar): boolean;
+function MatchPattern(Element, Pattern: PChar): boolean; inline;
 begin
   if 0 = StrComp(Pattern, '*') then
     Result := True
   else
-  if (Element^ = Chr(0)) and (Pattern^ <> Chr(0)) then
-    Result := False
-  else
-  if Element^ = Chr(0) then
-    Result := True
-  else
-    case Pattern^ of
-      '*': if MatchPattern(Element, @Pattern[1]) then
-          Result := True
-        else
-          Result := MatchPattern(@Element[1], Pattern);
-
-      '?': Result := MatchPattern(@Element[1], @Pattern[1]);
-
-      else
-        if Element^ = Pattern^ then
-          Result :=
-            MatchPattern(@Element[1], @Pattern[1])
-        else
-          Result := False;
-    end// end case
-  ;
-end;
-
-function CharCount(const S: string; C: char): longint;
-var
-  I: longint;
-  L: longint;
-begin
-  Result := 0;
-  L      := Length(S);
-  for I := 1 to L do
-    if CompareFileName(S[I], C) = 0 then
-      Inc(Result);
-end;
-
-function FileNameUseWildcards(const FileName: string): boolean;
-begin
-  if System.Pos('*', FileName) > 0 then
-    Result := True
+    if (Element^ = Chr(0)) and (Pattern^ <> Chr(0)) then
+      Result := False
     else
-      if System.Pos('?', FileName) > 0 then
+      if Element^ = Chr(0) then
         Result := True
       else
-        Result := False;
+        case Pattern^ of
+          '*': if MatchPattern(Element, @Pattern[1]) then
+                 Result := True
+               else
+                 Result := MatchPattern(@Element[1], Pattern);
+
+          '?': Result := MatchPattern(@Element[1], @Pattern[1]);
+
+        else
+          if Element^ = Pattern^ then
+            Result := MatchPattern(@Element[1], @Pattern[1])
+          else
+            Result := False;
+        end;
 end;
 
-function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; 
+function CharCount(const S: string; C: char): longint; inline;
+var
+  I: longint;
+begin
+  Result := 0;
+  for I := 1 to Length(S) do
+  begin
+    if CompareFileName(S[I], C) = 0 then
+      Inc(Result);
+  end;
+end;
+
+function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; inline;
 var
   iFileDrive: string;
   iFileName: string;
@@ -364,7 +258,7 @@ begin
     Result := False;
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; 
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; inline;
 var
   I: longint;
 begin
@@ -379,7 +273,60 @@ begin
   end;
 end;
 
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
+function IncludeTrailingBackSpace(const DirName: string): string; inline;
+var
+  Len: longint;
+begin
+  Len := Length(DirName);
+  if (Len > 0) and (not (DirName[Len] in [' '])) then
+    Result := DirName + ' '
+  else
+    Result := DirName;
+end;
+
+function ExcludeTrailingBackSpace(const DirName: string): string; inline;
+var
+  Len: longint;
+begin
+  Len := Length(DirName);
+  if (Len > 0) and (DirName[Len] in [' ']) then
+    Result := Copy(DirName, 1, Len - 1)
+  else
+    Result := DirName;
+end;
+
+function IncludeTrailingBackSlash(const DirName: string): string; inline;
+var
+  Len: longint;
+begin
+  Len := Length(DirName);
+  if (Len > 0) and (not (DirName[Len] in ['\', '/'])) then
+    Result := DirName + PathDelim
+  else
+    Result := DirName;
+end;
+
+function ExcludeTrailingBackSlash(const DirName: string): string; inline;
+var
+  Len: longint;
+begin
+  Len := Length(DirName);
+  if (Len > 0) and (DirName[Len] in ['\', '/']) then
+    Result := Copy(DirName, 1, Len - 1)
+  else
+    Result := DirName;
+end;
+
+function CompareFileName(const S1, S2: string): longint; inline;
+begin
+  {$IFDEF FILENAMECASESENSITIVE}
+  Result := SysUtils.CompareStr(S1, S2);
+  {$ELSE}
+  Result := SysUtils.CompareText(S1, S2);
+  {$ENDIF}
+end;
+
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode); inline;
 var
   I:     longint;
   Error: longint;
@@ -398,7 +345,7 @@ begin
 
   FirstSlash := 0;
   LastSlash := 0;
-  Card := False;  
+  Card := False;
 
   for I := 1 to Length(Mask) do
     if Card = False then
@@ -435,18 +382,41 @@ begin
     if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
 
-function DoDirSeparators(const FileName: string): string;
-var
-  I, L: longint;
+function DeleteFilePath(const FilePath, FileName: string): string; inline;
 begin
   Result := FileName;
-  L      := Length(Result);
-  for I := 1 to L do
-    if Result[I] in ['\', '/'] then
-      Result[I] := PathDelim;
+  if FileNamePos(FilePath, Result) = 1 then
+  begin
+    Delete(Result, 1, Length(FilePath));
+  end;
 end;
 
-function FixFileName(const FileName: string): string;
+function DeleteFileDrive(const FileName: string): string; inline;
+var
+  Drive: string;
+begin
+  Result := FileName;
+  if Length(Result) > 0 then
+  begin
+    Drive := ExtractFileDrive(Result);
+    System.Delete(Result, 1, Length(Drive));
+  end;
+end;
+
+function DoDirSeparators(const FileName: string): string; inline;
+var
+  I, Len: longint;
+begin
+  Result := FileName;
+  Len := Length(Result);
+  for I := 1 to Len do
+  begin
+    if Result[I] in ['\', '/'] then
+      Result[I] := PathDelim;
+  end;
+end;
+
+function FixFileName(const FileName: string): string; inline;
 var
   I: longint;
 begin
@@ -477,7 +447,7 @@ begin
   Result := ExcludeTrailingBackSlash(Result);
 end;
 
-function FixDirName(const DirName: string): string;
+function FixDirName(const DirName: string): string; inline;
 var
   I: longint;
 begin
@@ -506,13 +476,77 @@ begin
   end;
 end;
 
-// oem-ansi charset functions
-
-function ParamToOem(const Param: string): string;
+function SelfName: string; inline;
 begin
-  if (Param = '') then
-    Result := ''
-  else
+  Result := ExtractFileName(ParamStr(0));
+end;
+
+function SelfPath: string; inline;
+begin
+  Result := ExtractFilePath(ParamStr(0));
+end;
+
+function GenerateFileName(const FilePath: string): string; inline;
+var
+  I: longint;
+begin
+  repeat
+    Result := '????????.$$$';
+    for I := 1 to 8 do
+    begin
+      Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
+    end;
+    Result := IncludeTrailingBackSlash(FilePath) + Result;
+  until FileAge(Result) = -1;
+end;
+
+function GenerateAlternativeFileName(const FileName: string; Check: boolean): string; inline;
+var
+  I: longint;
+begin
+  I := 0;
+  repeat
+    Inc(I);
+    Result := ChangeFileExt(FileName, '.' +  IntToStr(I) + ExtractFileExt(FileName));
+  until (Check = False) or (FileAge(Result) = -1);
+end;
+
+{ directory handling routines }
+
+function DirectoryExists(const DirName: string): boolean; inline;
+var
+  Code: longint;
+begin
+  Code := FileGetAttr(DirName);
+  Result := (Code <> -1) and (faDirectory and Code <> 0);
+end;
+
+function ForceDirectories(const DirName: string): boolean; inline;
+var
+  S: string;
+begin
+  if Length(DirName) <> 0 then
+  begin
+    S := ExcludeTrailingBackSlash(DirName);
+
+    if (DirectoryExists(S) = False) and (ExtractFilePath(S) <> S) then
+    begin
+      if ForceDirectories(ExtractFilePath(S)) then
+        Result := CreateDir(S)
+      else
+        Result := False;
+    end else
+      Result := True;
+
+  end else
+    Result := True;
+end;
+
+{ oem-ansi charset functions }
+
+function ParamToOem(const Param: string): string; inline;
+begin
+  if Length(Param) <> 0 then
   begin
     {$IFDEF MSWINDOWS}
     SetLength(Result, Length(Param));
@@ -520,14 +554,13 @@ begin
     {$ELSE}
     Result := Param;
     {$ENDIF}
-  end;
+  end else
+    Result := '';
 end;
 
-function OemToParam(const Param: string): string;
+function OemToParam(const Param: string): string; inline;
 begin
-  if (Param = '') then
-    Result := ''
-  else
+  if Length(Param) <> 0 then
   begin
     {$IFDEF MSWINDOWS}
     SetLength(Result, Length(Param));
@@ -535,15 +568,83 @@ begin
     {$ELSE}
     Result := Param;
     {$ENDIF}
+  end else
+    Result := '';
+end;
+
+{ string and pchar routines }
+
+function StringToPChar(const aValue: string): PChar; inline;
+begin
+  Result := StrAlloc(Length(aValue) + 1);
+  Result := StrPCopy(Result, aValue);
+end;
+
+function PCharToString(aValue: PChar): string; inline;
+var
+  I: longint;
+begin
+  if aValue <> nil then
+  begin
+    I := StrLen(aValue);
+    if I <> 0 then
+    begin
+      SetLength(Result, I);
+      Move(aValue^, Result[1], I);
+    end;
+  end else
+    SetLength(Result, 0);
+end;
+
+procedure FreePChar(var aValue: PChar); inline;
+begin
+  StrDispose(aValue);
+  aValue := nil;
+end;
+
+function RatioToStr(const PackedSize, Size: int64): string; inline;
+begin
+  if Size > 0 then
+    Result := Format('%u%%', [Round((PackedSize / Size) * 100)])
+  else
+    Result := Format('%u%%', [100]);
+end;
+
+function SizeToStr(const Size: int64): string; inline;
+begin
+  Result := Format('%u', [Size]);
+end;
+
+function AttrToStr(Attr: longint): string; inline;
+begin
+  Result := 'RHSVDAL';
+  if Attr and faReadOnly  = 0 then Result[1] := '.';
+  if Attr and faHidden    = 0 then Result[2] := '.';
+  if Attr and faSysFile   = 0 then Result[3] := '.';
+  if Attr and faVolumeId  = 0 then Result[4] := '.';
+  if Attr and faDirectory = 0 then Result[5] := '.';
+  if Attr and faArchive   = 0 then Result[6] := '.';
+  if Attr and faSymLink   = 0 then Result[7] := '.';
+end;
+
+function ReverseString(const Str: string): string; inline;
+var
+  I, Len: longint;
+begin
+  Len := Length(Str);
+  SetLength(Result, Len);
+  for I := 1 to Len do
+  begin
+    Result[I] := Str[(Len + 1) - I];
   end;
 end;
 
-function TimeDifference(X: double): string;
+function TimeDifference(X: double): string; inline;
 begin
   Result := Format('%0.2f', [(Now - X) * (24 * 60 * 60)]);
 end;
 
-function TimeToStr(T: longint): string;
+function TimeToStr(T: longint): string; inline;
 var
   H, M, S:    string;
   ZH, ZM, ZS: longint;
@@ -570,12 +671,12 @@ begin
   Result := H + ':' + M + ':' + S;
 end;
 
-function DateTimeToString(X: TDateTime): string;
+function DateTimeToString(X: TDateTime): string; inline;
 begin
   SysUtils.DateTimeToString(Result, 'dd/mm/yy hh:mm', X);
 end;
 
-function DateTimeToString(X: TDateTime; const Format: string): string;
+function DateTimeToString(X: TDateTime; const Format: string): string; inline;
 begin
   SysUtils.DateTimeToString(Result, Format, X);
 end;
@@ -598,138 +699,7 @@ begin
   end;
 end;
 
-function DirectoryExists(const DirName: string): boolean;
-var
-  Code: longint;
-begin
-  Code   := FileGetAttr(DirName);
-  Result := (Code <> -1) and (faDirectory and Code <> 0);
-end;
-
-function ForceDirectories(const Dir: string): boolean;
-begin
-  Result := True;
-  if Dir = '' then
-    Exit;
-
-  if Dir[Length(Dir)] = PathDelim then
-    Result := ForceDirectories(Copy(Dir, 1, Length(Dir) - 1))
-  else
-  begin
-    if DirectoryExists(Dir) or (ExtractFilePath(Dir) = Dir) then
-      Exit;
-
-    if ForceDirectories(ExtractFilePath(Dir)) then
-      Result := CreateDir(Dir)
-    else
-      Result := False;
-  end;
-end;
-
-// filename handling routines ...
-
-function SelfName: string;
-begin
-  Result := ExtractFileName(ParamStr(0));
-end;
-
-function SelfPath: string;
-begin
-  Result := ExtractFilePath(ParamStr(0));
-end;
-
-function GenerateFileName(const FilePath: string): string;
-var
-  I: longint;
-begin
-  repeat
-    Result := '????????.$$$';
-    for I := 1 to 8 do
-      Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
-    Result := IncludeTrailingBackSlash(FilePath) + Result;
-  until FileAge(Result) = -1;
-end;
-
-function GenerateAlternativeFileName(const FileName: string; Check :boolean): string;
-var
-  I: longint;
-begin
-  I      := 0;
-  Result := ChangeFileExt(FileName, '.' + IntToStr(I) + ExtractFileExt(FileName));
-  if Check then
-  begin
-    while FileAge(Result) <> -1 do
-    begin
-      Inc(I);
-      Result := ChangeFileExt(FileName, '.' +  IntToStr(I) + ExtractFileExt(FileName));
-    end;
-  end;
-end;
-
-// string and pchar routines
-
-function StringToPChar(const aValue: string): PChar; inline;
-begin
-  Result := StrAlloc(Length(aValue) + 1);
-  Result := StrPCopy(Result, aValue);
-end;
-
-{ TODO : DA CONTROLLARE E OTTIMIZZARE }
-function PCharToString(aValue: PChar): string; inline;
-var
-  i: longint;
-begin
-  if aValue <> nil then
-  begin
-    i := StrLen(aValue);
-    if i > 0 then
-    begin
-      SetLength(Result, i);
-      Move(aValue^, Result[1], i);
-    end;
-  end else
-    SetLength(Result, 0);
-end;
-
-procedure FreePChar(var aValue: PChar); inline;
-begin
-  StrDispose(aValue);
-  aValue := nil;
-end;
-
-function SizeToStr(const Size: int64): string;
-begin
-  Result := Format('%u', [Size]);
-end;
-
-function RatioToStr(const PackedSize, Size: int64): string;
-begin
-  if Size > 0 then
-    Result := Format('%u%%', [Round((PackedSize / Size) * 100)])
-  else
-    Result := Format('%u%%', [100]);
-end;
-
-function AttrToStr(Attr: longint): string;
-begin
-  Result := 'RHSVDAL';
-  if Attr and faReadOnly = 0 then
-    Result[1] := '.';
-  if Attr and faHidden = 0 then
-    Result[2] := '.';
-  if Attr and faSysFile = 0 then
-    Result[3] := '.';
-  if Attr and faVolumeId = 0 then
-    Result[4] := '.';
-  if Attr and faDirectory = 0 then
-    Result[5] := '.';
-  if Attr and faArchive = 0 then
-    Result[6] := '.';
-  if Attr and faSymLink = 0 then
-    Result[7] := '.';
-end;
-
-// hex routines ...
+{ hex routines }
 
 function Hex(const Data; Count: longint): string;
 var
@@ -753,20 +723,20 @@ var
   I: longint;
 begin
   Result := False;
-  if Length(S) < Count * 2 then
-    Exit;
+  if Length(S) < Count * 2 then Exit;
 
   for I := 0 to Count - 1 do
-    if (S[I * 2 + 1] in ['0'..'9', 'A'..'F']) and
-      (S[I * 2 + 2] in ['0'..'9', 'A'..'F']) then
-      TByteArray(Data)[I] :=
-        HexValues[S[I * 2 + 1]] shl 4 + HexValues[S[I * 2 + 2]]
-    else
+  begin
+    if (S[I * 2 + 1] in ['0'..'9', 'A'..'F']) and (S[I * 2 + 2] in ['0'..'9', 'A'..'F']) then
+    begin
+      TByteArray(Data)[I] := HexValues[S[I * 2 + 1]] shl 4 + HexValues[S[I * 2 + 2]]
+    end else
       Exit;
+  end;
   Result := True;
 end;
 
-// low level functions...
+{ low level functions }
 
 function CreateText(var T: Text; const Name: string): boolean;
 begin
@@ -804,8 +774,7 @@ begin
     Write(T, S);
     Close(T);
     Result := True;
-  end
-  else
+  end else
     Result := False;
 end;
 
@@ -822,10 +791,10 @@ begin
   FindClose(Rec);
 end;
 
-// system control
+{ system control }
 
 {$IFDEF MSWINDOWS}
-function SetPriority(Priority: longint): boolean; // Priority is 0..3
+function SetPriority(Priority: longint): boolean;
 const
   PriorityValue: array [0..3] of longint = (IDLE_PRIORITY_CLASS,
     NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS);
@@ -833,7 +802,6 @@ begin
   Result := SetPriorityClass(GetCurrentProcess,
     PriorityValue[Max(0, Min(Priority, 3))]);
 end;
-
 {$ENDIF}
 
 procedure SetCtrlCHandler(CtrlHandler: pointer);

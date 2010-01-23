@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-    v0.8.0 build 1110 - 2010.01.16 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.01.23 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
@@ -37,14 +37,14 @@ unit Bee_Headers;
 interface
 
 uses
-  Classes,           // TList
-  SysUtils,          // TSearchRec
-  Bee_Files,         // TCustomSearchRec
-  Bee_CommandLine,   // TCommandLine
-  Bee_Configuration; // TConfiguration
+  Classes,
+  SysUtils,
+  Bee_Files,
+  Bee_CommandLine,
+  Bee_Configuration;
 
 type
-  // Header flags
+  { Header flags }
 
   THeaderFlag =
    (foVersion,  foMethod,   foDictionary, foTable,    foTear,     foMoved,
