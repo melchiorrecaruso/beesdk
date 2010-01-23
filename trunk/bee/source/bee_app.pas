@@ -777,7 +777,7 @@ begin
     DoMessage(msgScanning + '...');
 
     // process FileMasks and xFileMasks
-    ProcessFilesToAdd(Headers);
+    FTotalSize := ProcessFilesToAdd(Headers);
 
     if (Headers.GetCount([toUpdate, toFresh]) > 0) or ((Length(FCommandLine.sfxOption) > 0) and (Headers.GetNext(0, toCopy) > -1)) then
     begin

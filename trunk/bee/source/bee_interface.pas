@@ -206,7 +206,7 @@ begin
   else
     I := MilliSecondsBetween(FSuspendedTime - FStartTime, 0);
 
-  if I > 0 then
+  if I <> 0 then
     Result := Round((FSize / I) * 1000)
   else
     Result := 0;
@@ -220,7 +220,7 @@ end;
 
 function TApp.GetPercentes: longint;
 begin
-  if FTotalSize > 0 then
+  if FTotalSize <> 0 then
     Result := Round((FSize / FTotalSize) * 100)
   else
     Result := 0;
@@ -239,7 +239,7 @@ var
   I: longint;
 begin
   I := GetSpeed;
-  if I > 0 then
+  if I <> 0 then
     Result := (FTotalSize - FSize) div I
   else
     Result := 0;
