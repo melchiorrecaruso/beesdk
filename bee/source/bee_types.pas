@@ -32,14 +32,29 @@ unit Bee_Types;
 interface
 
 type
-  { Recursive Mode:
+  { Commands:                                             }
+  {   ccNone     Nul command                              }
+  {   ccHelp     Show help informations                   }
+  {   ccAdd      Add files                                }
+  {   ccExtract  Extract file                             }
+  {   ceXextract Extract file with full path              }
+  {   ccDelete   Delete files                             }
+  {   ccRename   Rename files                             }
+  {   ccTest     Test files                               }
+  {   ccList     List files                               }
+  {   ccOpen     Open archive                             }
+
+  TCommand = (ccAdd, ccExtract, ccXextract, ccDelete,
+    ccRename, ccTest, ccList, ccHelp, ccOpen, ccNone);
+
+  { Recursive Mode Option:                                }
   {  rmNone      No resurse filename                      }
   {  rmWildcard  Recurse olny filename with wildcard      }
   {  rmFull      Recurse all filename                     }
 
   TRecursiveMode = (rmNone, rmWildCard, rmFull);
 
-  { Update Mode:
+  { Update Mode Option:                                   }
   {  umAdd           Add only new files                   }
   {  umUpdate        Update only existing files           }
   {  umReplace       Replace only existing files          }
@@ -51,7 +66,24 @@ type
   TUpdateMode = (umAdd, umUpdate, umReplace, umAddUpdate,
     umAddReplace, umAddAutoRename, umAddQuery);
 
-  { Overwrite Mode:                                       }
+  { Compression Method Option:                            }
+  {   moStore                                             }
+  {   moFast                                              }
+  {   moNormal                                            }
+  {   moMaximum                                           }
+
+  TmOption = (moStore, moFast, moNormal, moMaximum);
+
+  { Compression Dictionary Level Option:                  }
+  {   do2MB                                               }
+  {   do5MB                                               }
+  {   ..                                                  }
+  {   do1280MB                                            }
+
+  TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
+    do80MB, do160MB, do320MB, do640MB ,do1280MB);
+
+  { Overwrite Mode Option:                                }
   {  omUpdate                                             }
   {  omAddUpdate                                          }
   {  omReplace                                            }
@@ -64,6 +96,22 @@ type
 
   TOverwriteMode = (omAdd, omUpdate, omReplace, omRename,
     omAddUpdate, omAddReplace, omAddAutoRename, omSkip, omQuit);
+
+  { Process Priority Option:                              }
+  {   prioIdle                                            }
+  {   prioNormal                                          }
+  {   prioHigh                                            }
+  {   prioRealTime                                        }
+
+  TpriOption = (prioIdle, prioNormal, prioHigh,
+    prioRealTime);
+
+  { Header Version Option:                                }
+  {   hv02                                                }
+  {   hv03                                                }
+  {   hv04                                                }
+
+  ThvOption = (hv02, hv03, hv04);
 
   { PFileInfo record }
 

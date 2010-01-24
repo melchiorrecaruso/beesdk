@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1046 - 2009.08.20 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.01.24 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -39,108 +39,103 @@ unit Bee_App;
 interface
 
 uses
-  Classes,           // TStringList, ...
-  // ---
+  Classes,
   Bee_Files,
   Bee_Types,
-  Bee_Common,        // Various helper routines
+  Bee_Common,
   Bee_Headers,
   Bee_Interface,
   Bee_CommandLine,
-  Bee_Configuration; // TConfiguration, TTable;
+  Bee_Configuration;
 
 type
-  // TBeeApp class
+  { TBeeApp class }
 
   TBeeApp = class(TApp)
+  private
+    FSelfName: string;
+    FHeaders: THeaders;
+    FArcFile: TFileReader;
+    FSwapFile: TFileReader;
+    FSwapName: string;
+    FCommandLine: TCommandLine;
+    FConfiguration: TConfiguration;
+    { open archive routine }
+    function OpenArchive(const aAction: THeaderAction): boolean;
+    { decode solid sequences using a swapfile }
+    function ProcessFilesToSwap: boolean;
+    { find and prepare sequences }
+    function  ProcessFilesToAdd: int64;
+    procedure ProcessFilesToFresh;
+    procedure ProcessFilesToDelete;
+    procedure ProcessFilesToDecode(const aAction: THeaderAction);
+    procedure ProcessFilesToExtract;
+    function  ProcessFilesToRename: boolean;
+    procedure ProcessFilesDeleted;
+    { process options }
+    procedure ProcesstOption;
+    procedure ProcesslOption;
+    { overwrite sub-routines }
+    function ProcessFileToOverWrite4Add(const aItem: THeader; var New: TCustomSearchRec): TUpdateMode;
+    function ProcessFileToOverWrite4Extract(const aItem: THeader): TUpdateMode;
+    { already file exists in archive routines}
+    function AlreadyFileExists(const aIndex: longint; const aActions: THeaderActions; const aFileName: string): longint; overload;
+    function AlreadyFileExists(const aFileName: string): longint; overload;
+    { sheels routines}
+    procedure EncodeShell;
+    procedure DecodeShell(const aAction: THeaderAction);
+    procedure RenameShell;
+    procedure DeleteShell;
+    procedure ListShell;
+    procedure HelpShell;
+  protected
+    function VersionToStr(const aItem: THeader): string;
+    function MethodToStr(const aItem: THeader): string;
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
     procedure Execute; override;
-  private
-    function  OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
-    // decode solid sequences using a swapfile
-    function  ProcessFilesToSwap(Headers: THeaders): boolean;
-    // find and prepare sequences
-    function  ProcessFilesToAdd(Headers: THeaders): int64;
-    procedure ProcessFilesToFresh(Headers: THeaders);
-    procedure ProcessFilesToDelete(Headers: THeaders);
-    procedure ProcessFilesToDecode(Headers: THeaders; aAction: THeaderAction);
-    procedure ProcessFilesToExtract(Headers: THeaders);
-    function  ProcessFilesToRename(Headers: THeaders): boolean;
-    procedure ProcessFilesDeleted(Headers: THeaders);
-    // overwrite sub-routines
-    function  ProcessFileToOverWrite4Add(Headers: THeaders; Item: THeader; New: TCustomSearchRec): TUpdateMode;
-    function  ProcessFileToOverWrite4Extract(Headers: THeaders; Item: THeader): TUpdateMode;
-    // already file exists in archive
-    function AlreadyFileExists(Headers: THeaders; aIndex: longint;
-      aActions: THeaderActions; const aFileName: string): longint; overload;
-
-    function AlreadyFileExists(Headers: THeaders; const
-      aFileName: string): longint; overload;
-
-    procedure ProcesstOption;
-    procedure ProcesslOption;
-
-    procedure DisplayUsage;
-    procedure EncodeShell;
-    procedure DecodeShell(Action: THeaderAction);
-    procedure RenameShell;
-    procedure DeleteShell;
-    procedure ListShell;
-  protected
-    // string routines
-    function VersionToStr(P: THeader): string;
-    function MethodToStr(P: THeader): string;
-  private
-    FSelfName: string;
-    FArcFile:  TFileReader; // archive file stream
-    FSwapFile: TFileReader; // swap file stream
-    FSwapName: string;      // swap file name
-
-    FConfiguration: TConfiguration;
-    FCommandLine: TCommandLine;
   end;
 
 implementation
 
 uses
-  SysUtils,       // faReadOnly, ...
-  // ---
+  SysUtils,
   Bee_Consts,
-  Bee_MainPacker; // TEncoder...
+  Bee_MainPacker;
 
-// TBeeApp ...
+{ TBeeApp class }
 
 constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
-  Randomize; // randomize, uses for unique filename generation...
-
-  FSelfName := 'The Bee 0.8.0 build 1106 archiver utility, Dec 2009' + Cr +
-               '(C) 1999-2009 Andrew Filinsky and Melchiorre Caruso';
+  Randomize; { randomize, uses for unique filename generation }
+  FSelfName := 'The Bee 0.8.0 build 1110 archiver utility, Feb 2010' + Cr +
+               '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FArcFile  := nil;
-  FSwapName := '';
   FSwapFile := nil;
+  FSwapName := '';
+  FHeaders  := nil;
 
-  // process command line
+  { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aParams.Text;
 
-  // load configuration
+  { load configuration }
   FConfiguration := TConfiguration.Create;
   if not FileExists(FCommandLine.cfgOption) then
-    DoWarning('Warning: configuration file "' + FCommandLine.cfgOption + '" not found, data will be stored' + Cr, 1)
+    DoWarning('Warning: configuration file "'
+      + FCommandLine.cfgOption + '" not found, data will be stored' + Cr, 1)
   else
     FConfiguration.LoadFromFile(FCommandLine.cfgOption);
 
-  // load method and dictionary level
+  { load method and dictionary level }
   FConfiguration.Selector('\main');
   FConfiguration.CurrentSection.Values['Method']     := IntToStr(Ord(FCommandLine.mOption));
   FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(FCommandLine.dOption));
 
-  // set thread priority
+  { set thread priority }
   SetPriority(Ord(FCommandLine.priOption));
 end;
 
@@ -151,7 +146,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TBeeApp.DisplayUsage;
+procedure TBeeApp.HelpShell;
 begin
   DoMessage(Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
   DoMessage(Cr + '  Commands:' + Cr);
@@ -189,143 +184,122 @@ begin
   inherited Execute;
   DoMessage(FSelfName);
   with FCommandLine do
-    if (Command <> ccNone) and (ArchiveName > '') then
-      case Command of
-        ccAdd: EncodeShell;
-        ccDelete: DeleteShell;
-        ccExtract: DecodeShell(toExtract);
-        ccList: ListShell;
-        ccRename: RenameShell;
-        ccTest: DecodeShell(toTest);
+    if (Command <> ccNone) and (Length(ArchiveName) <> 0) then
+    begin
+      case FCommandLine.Command of
+        ccAdd:      EncodeShell;
+        ccDelete:   DeleteShell;
+        ccExtract:  DecodeShell(toExtract);
         ccxExtract: DecodeShell(toExtract);
-        ccHelp: DisplayUsage;
-      end
-    else
-      DisplayUsage;
+        ccList:     ListShell;
+        ccTest:     DecodeShell(toTest);
+        ccRename:   RenameShell;
+        ccHelp:     HelpShell;
+      end;
+    end else
+      HelpShell;
   FTerminated := True;
 end;
 
-function TBeeApp.OpenArchive(Headers: THeaders; aAction: THeaderAction): boolean;
+function TBeeApp.OpenArchive(const aAction: THeaderAction): boolean;
 begin
   Result := True;
   if FileExists(FCommandLine.ArchiveName) then
   begin
     FArcFile := CreateTFileReader(FCommandLine.ArchiveName, fmOpenRead + fmShareDenyWrite);
-    try
-      Headers.ReadItems(FArcFile, aAction);
-      if (Headers.GetCount = 0) and (FArcFile.Size <> 0) then
+    if FArcFile <> nil then
+    begin
+      FHeaders.ReadItems(FArcFile, aAction);
+      if (FHeaders.GetCount = 0) and (FArcFile.Size <> 0) then
       begin
-        Result := False;  DoFatalError('Error: archive unsupported', ccError);
+        Result := False;
+        DoFatalError('Error: archive unsupported', ccError);
       end;
-    except
-      Result := False;  DoFatalError('Error: can''t open archive', ccError);
+    end else
+    begin
+      Result := False;
+      DoFatalError('Error: can''t open archive', ccError);
     end;
   end;
 end;
 
-function TBeeApp.AlreadyFileExists(Headers: THeaders; aIndex: longint;
-  aActions: THeaderActions; const aFileName: string): longint;
+function TBeeApp.AlreadyFileExists(const aIndex: longint; const aActions: THeaderActions; const aFileName: string): longint;
 begin
-  if Length(aFileName) > 0 then
+  Result := FHeaders.GetBack(aIndex - 1, aActions, aFileName);
+  if Result = -1 then
   begin
-    Result := Headers.GetBack(aIndex - 1, aActions, aFileName);
-    if Result = -1 then
-    begin
-      Result := Headers.GetNext(aIndex + 1, aActions, aFileName);
-    end;
-  end else
-    Result := -1;
+    Result := FHeaders.GetNext(aIndex + 1, aActions, aFileName);
+  end;
 end;
 
-function TBeeApp.AlreadyFileExists(Headers: THeaders; const aFileName: string): longint;
+function TBeeApp.AlreadyFileExists(const aFileName: string): longint;
 var
-  I:longint;
+  I: longint;
 begin
   Result := -1;
-  if Length(aFileName) > 0 then
-    for I := 0 to Headers.GetCount - 1 do
-      if CompareFileName(aFileName, Headers.GetItem(I).FileName) = 0 then
-      begin
-        Result := I;
-        Break;
-      end;
+  for I := 0 to FHeaders.GetCount - 1 do
+    if CompareFileName(aFileName, FHeaders.GetItem(I).FileName) = 0 then
+    begin
+      Result := I;
+      Break;
+    end;
 end;
 
-// -------------------------------------------------------------------------- //
-// Add file processing                                                        //
-// -------------------------------------------------------------------------- //
+{ Process File To OverWrite 4 Add }
 
-function TBeeApp.ProcessFileToOverWrite4Add(Headers: THeaders; Item: THeader; New: TCustomSearchRec): TUpdateMode;
+function TBeeApp.ProcessFileToOverWrite4Add(const aItem: THeader; var New: TCustomSearchRec): TUpdateMode;
 var
   FI: TFileInfo;
   S: string;
 begin
-  FI.FileName := StringToPChar(ExtractFileName(Item.FileName));
-  FI.FilePath := StringToPChar(ExtractFilePath(Item.FileName));
+  FI.FileName := StringToPChar(ExtractFileName(aItem.FileName));
+  FI.FilePath := StringToPChar(ExtractFilePath(aItem.FileName));
 
-  FI.FileSize := Item.FileSize;
-  FI.FileTime := Item.FileTime;
-  FI.FileAttr := Item.FileAttr;
+  FI.FileSize := aItem.FileSize;
+  FI.FileTime := aItem.FileTime;
+  FI.FileAttr := aItem.FileAttr;
 
   case DoOverwrite(FI, omAddReplace) of
-    omAdd:     Result := umAdd;
-    omUpdate:  Result := umUpdate;
-    omReplace: Result := umReplace;
-
+    omAdd:      Result := umAdd;
+    omUpdate:   Result := umUpdate;
+    omReplace:  Result := umReplace;
     omRename:
     begin
-      while True do
-      begin
+      repeat
         S := FixFileName(DoRename(FI, ''));
-        if Length(S) > 0 then
+        if Length(S) <> 0 then
         begin
-          if AlreadyFileExists(Headers, S) > -1 then
-            DoWarning('Warning: file "' + S + '" already existing in archive', 0)
+          if AlreadyFileExists(S) <> -1 then
+            DoWarning('Warning: file "' + S + '" already existing in archive' + Cr, 1)
           else
             Break;
         end else
           Break;
+      until False;
+      if Length(S) <> 0 then
+      begin
+        New.FileName := S;
+        Result := umAdd;
       end;
-      New.FileName := S;
-
-      Result := umAdd;
     end;
+    omAddUpdate:     Result := umAddUpdate;
+    omAddReplace:    Result := umAddReplace;
+    omAddAutoRename: Result := umAddAutoRename;
+    omSkip:          Result := umAddQuery;
+    omQuit:          Result := umAddQuery;
+  end;
 
-    omAddUpdate:
-    begin
-      FCommandLine.uOption := umAddUpdate;
-      Result := umAddUpdate;
-    end;
-
-    omAddReplace:
-    begin
-      FCommandLine.uOption := umAddReplace;
-      Result := umAddReplace;
-    end;
-
-    omAddAutoRename:
-    begin
-      FCommandLine.uOption := umAddAutoRename;
-      Result := umAddAutoRename;
-    end;
-
-    omSkip:
-    begin
-      Result := umAddQuery;
-    end;
-
-    omQuit:
-    begin
-      DoFatalError('Process aborted' , ccUserAbort);
-      Result :=  umAddQuery;
-    end;
+  case Result of
+    umAddUpdate:     FCommandLine.uOption := umAddUpdate;
+    umAddReplace:    FCommandLine.uOption := umAddReplace;
+    umAddAutoRename: FCommandLine.uOption := umAddAutoRename;
   end;
 
   StrDispose(FI.FileName);
   StrDispose(FI.FilePath);
 end;
 
-function TBeeApp.ProcessFilesToAdd(Headers: THeaders): int64;
+function TBeeApp.ProcessFilesToAdd: int64;
 var
   I: longint;
   P: THeader;
@@ -732,7 +706,6 @@ begin
   begin
     FTotalSize := 0;
     FSize      := 0;
-
     FCommandLine.rOption := rmFull;
     FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
