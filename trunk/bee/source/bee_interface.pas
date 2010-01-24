@@ -43,12 +43,12 @@ type
   { TAppIO class }
 
   TAppIO = class
-  protected
-    FTerminated: boolean;
-    FCode: byte;
   private
     procedure SetTerminated(aValue: boolean);
     procedure SetCode(aCode: byte);
+  protected
+    FTerminated: boolean;
+    FCode: byte;
   public
     constructor Create;
     destructor Destroy; override;

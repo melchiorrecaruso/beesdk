@@ -39,54 +39,6 @@ uses
   Bee_Common;
 
 type
-  { Command:                                        }
-  {   ccNone     Nul command                        }
-  {   ccHelp     Show help informations             }
-  {   ccAdd      Add files                          }
-  {   ccExtract  Extract file                       }
-  {   ceXextract Extract file with full path        }
-  {   ccDelete   Delete files                       }
-  {   ccRename   Rename files                       }
-  {   ccTest     Test files                         }
-  {   ccList     List files                         }
-  {   ccOpen     Open archive                       }
-
-  TCommand = (ccAdd, ccExtract, ccXextract, ccDelete,
-    ccRename, ccTest, ccList, ccHelp, ccOpen, ccNone);
-
-  { Compression Method Option:                      }
-  {   moStore                                       }
-  {   moFast                                        }
-  {   moNormal                                      }
-  {   moMaximum                                     }
-
-  TmOption = (moStore, moFast, moNormal, moMaximum);
-
-  { Compression Dictionary Option:                  }
-  {   do2MB                                         }
-  {   do5MB                                         }
-  {   ..                                            }
-  {   do1280MB                                      }
-
-  TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
-    do80MB, do160MB, do320MB, do640MB ,do1280MB);
-
-  { Process Priority Option:                        }
-  {   prioIdle                                      }
-  {   prioNormal                                    }
-  {   prioHigh                                      }
-  {   prioRealTime                                  }
-
-  TpriOption = (prioIdle, prioNormal, prioHigh,
-    prioRealTime);
-
-  { Header Version Option:                          }
-  {   hv02                                          }
-  {   hv03                                          }
-  {   hv04                                          }
-
-  ThvOption = (hv02, hv03, hv04);
-
   { TCommandLine }
 
   TCommandLine = class

@@ -150,8 +150,9 @@ implementation
 
 uses
   Math,
-  Bee_Common,
-  Bee_Consts;
+  Bee_Types,
+  Bee_Consts,
+  Bee_Common;
 
 // THeaders class
 
