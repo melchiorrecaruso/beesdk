@@ -76,8 +76,8 @@ type
     procedure ProcesstOption;
     procedure ProcesslOption;
     { overwrite sub-routines }
-    function ProcessFileToOverWrite4Add(const aItem: THeader; var New: TCustomSearchRec): TUpdateMode;
-    function ProcessFileToOverWrite4Extract(const aItem: THeader): TUpdateMode;
+    function ProcessFileToOverWrite4Add(aItem: THeader; New: TCustomSearchRec): TOverwriteMode;
+    function ProcessFileToOverWrite4Extract(aItem: THeader): TOverwriteMode;
     { already file exists in archive routines}
     function AlreadyFileExists(const aIndex: longint; const aActions: THeaderActions; const aFileName: string): longint; overload;
     function AlreadyFileExists(const aFileName: string): longint; overload;
@@ -247,7 +247,7 @@ end;
 
 { Process File To OverWrite 4 Add }
 
-function TBeeApp.ProcessFileToOverWrite4Add(const aItem: THeader; var New: TCustomSearchRec): TUpdateMode;
+function TBeeApp.ProcessFileToOverWrite4Add(aItem: THeader; New: TCustomSearchRec): TOverwriteMode;
 var
   FI: TFileInfo;
   S: string;
@@ -303,7 +303,6 @@ function TBeeApp.ProcessFilesToAdd: int64;
 var
   I: longint;
   P: THeader;
-  U: TUpdateMode;
   Scanner: TFileScanner;
 begin
   Result  := 0;
@@ -314,34 +313,37 @@ begin
       Scanner.Scan(FileMasks[I], xOptions, rOption);
     end;
 
-  for I := 0 to Scanner.Count -1 do
+  for I := 0 to Scanner.Count - 1 do
   begin
-    P := Headers.SearchItem(Scanner.Items[I].FileName);
-
-    if (P = nil) or (U <> umAddQuery) then
-      U := FCommandLine.uOption
-    else
-      U := ProcessFileToOverwrite4Add(Headers, P, Scanner.Items[I]);
-
     if Terminated = False then
-      case U of
-      //umAddQuery:      Nothing to do
-        umAdd:           Result := Result + Headers.AddItem       (Scanner.Items[I], P);
-        umUpdate:        Result := Result + Headers.UpdateItem    (Scanner.Items[I], P);
-        umReplace:       Result := Result + Headers.ReplaceItem   (Scanner.Items[I], P);
-        umAddUpdate:     Result := Result + Headers.AddUpdateItem (Scanner.Items[I], P);
-        umAddReplace:    Result := Result + Headers.AddReplaceItem(Scanner.Items[I], P);
+    begin
+
+
+
+
+
+
+      P := FHeaders.SearchItem(Scanner.Items[I].FileName);
+      case ProcessFileToOverwrite4Add(P, Scanner.Items[I]) of
+        umAdd:           Result := Result + FHeaders.AddItem       (Scanner.Items[I], P);
+        umUpdate:        Result := Result + FHeaders.UpdateItem    (Scanner.Items[I], P);
+        umReplace:       Result := Result + FHeaders.ReplaceItem   (Scanner.Items[I], P);
+        umAddUpdate:     Result := Result + FHeaders.AddUpdateItem (Scanner.Items[I], P);
+        umAddReplace:    Result := Result + FHeaders.AddReplaceItem(Scanner.Items[I], P);
         umAddAutoRename:
         with Scanner.Items[I] do
         begin
           repeat
             FileName := GenerateAlternativeFileName(FileName, False);
-          until Headers.SearchItem(FileName) = nil;
-          Result := Result + Headers.AddItem(Scanner.Items[I], P);
+          until FHeaders.SearchItem(FileName) = nil;
+          Result := Result + FHeaders.AddItem(Scanner.Items[I], P);
         end;
       end;
+
+
+    end;
   end;
-  Headers.SortNews(FConfiguration);
+  FHeaders.SortNews(FConfiguration);
   Scanner.Destroy;
 end;
 
@@ -349,7 +351,7 @@ end;
 // Extract file processing                                                    //
 // -------------------------------------------------------------------------- //
 
-function TBeeApp.ProcessFileToOverWrite4Extract(Headers: THeaders; Item: THeader): TUpdateMode;
+function TBeeApp.ProcessFileToOverWrite4Extract(aItem: THeader): TUpdateMode;
 begin
 
 
@@ -361,9 +363,9 @@ var
   P: THeader;
   U: TUpdateMode;
 begin
-  for I := 0 to Headers.GetCount - 1 do
+  for I := 0 to FHeaders.GetCount - 1 do
   begin
-    P := Headers.GetItem(I);
+    P := FHeaders.GetItem(I);
     if P.FileAction = toExtract then
     begin
       if FCommandLine.Command <> ccExtract then
@@ -374,7 +376,7 @@ begin
       if not FileExists(P.FileName) then
         U := FCommandLine.uOption
       else
-        U := ProcessFileToOverwrite4Extract(Headers, P);
+        U := ProcessFileToOverwrite4Extract(FHeaders, P);
 
       case U of
       //umReplace:    nothing to do
