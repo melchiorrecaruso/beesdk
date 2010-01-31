@@ -258,7 +258,7 @@ begin
   FI.FileSize := aItem.FileSize;
   FI.FileTime := aItem.FileTime;
   FI.FileAttr := aItem.FileAttr;
-
+  (*
   case DoOverwrite(FI, omAddReplace) of
     omAdd:      Result := umAdd;
     omUpdate:   Result := umUpdate;
@@ -294,7 +294,7 @@ begin
     umAddReplace:    FCommandLine.uOption := umAddReplace;
     umAddAutoRename: FCommandLine.uOption := umAddAutoRename;
   end;
-
+  *)
   StrDispose(FI.FileName);
   StrDispose(FI.FilePath);
 end;
@@ -317,12 +317,7 @@ begin
   begin
     if Terminated = False then
     begin
-
-
-
-
-
-
+      (*
       P := FHeaders.SearchItem(Scanner.Items[I].FileName);
       case ProcessFileToOverwrite4Add(P, Scanner.Items[I]) of
         umAdd:           Result := Result + FHeaders.AddItem       (Scanner.Items[I], P);
@@ -339,7 +334,7 @@ begin
           Result := Result + FHeaders.AddItem(Scanner.Items[I], P);
         end;
       end;
-
+      *)
 
     end;
   end;
@@ -351,7 +346,7 @@ end;
 // Extract file processing                                                    //
 // -------------------------------------------------------------------------- //
 
-function TBeeApp.ProcessFileToOverWrite4Extract(aItem: THeader): TUpdateMode;
+function TBeeApp.ProcessFileToOverWrite4Extract(aItem: THeader): TOverwriteMode;
 begin
 
 
@@ -372,12 +367,12 @@ begin
         P.FileName := DeleteFilePath(FCommandLine.cdOption, P.FileName)
       else
         P.FileName := ExtractFileName(P.FileName);
-
+      (*
       if not FileExists(P.FileName) then
         U := FCommandLine.uOption
       else
         U := ProcessFileToOverwrite4Extract(FHeaders, P);
-
+      *)
       case U of
       //umReplace:    nothing to do
       //umAddReplace: nothing to do
@@ -401,7 +396,7 @@ begin
         while FileExists(P.FileName) do
         begin
           P.FileName := GenerateAlternativeFileName(P.FileName, False);
-          if AlreadyFileExists(Headers, -1, [toExtract], P.FileName) = -1 then
+          if AlreadyFileExists(-1, [toExtract], P.FileName) = -1 then
           begin
             Break;
           end;
@@ -415,15 +410,15 @@ end;
 // Rename file processing                                                     //
 // -------------------------------------------------------------------------- //
 
-function TBeeApp.ProcessFilesToRename(Headers: THeaders): boolean;
+function TBeeApp.ProcessFilesToRename: boolean;
 var
   S: string;
   I: longint;
   P: THeader;
   FI: TFileInfo;
 begin
-  Headers.MarkItems(FCommandLine.FileMasks, toCopy,   toRename);
-  Headers.MarkItems(FCommandLine.xOptions,   toRename, toCopy);
+  FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename);
+  FHeaders.MarkItems(FCommandLine.xOptions,   toRename, toCopy);
 
   if Headers.GetNext(0, toRename) > -1 then
   begin
