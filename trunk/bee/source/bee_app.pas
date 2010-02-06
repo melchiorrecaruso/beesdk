@@ -420,12 +420,12 @@ begin
   FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename);
   FHeaders.MarkItems(FCommandLine.xOptions,   toRename, toCopy);
 
-  if Headers.GetNext(0, toRename) > -1 then
+  if FHeaders.GetNext(0, toRename) > -1 then
   begin
     Result := False;
-    for I := 0 to Headers.GetCount -1 do
+    for I := 0 to FHeaders.GetCount -1 do
     begin
-      P := Headers.GetItem(I);
+      P := FHeaders.GetItem(I);
 
       if P.FileAction = toRename then
       begin
@@ -440,7 +440,7 @@ begin
           S := FixFileName(DoRename(FI, ''));
           if Length(S) > 0 then
           begin
-            if AlreadyFileExists(Headers, I, [toCopy, toRename], S) > -1 then
+            if AlreadyFileExists(FHeaders, I, [toCopy, toRename], S) > -1 then
               DoWarning('Warning: file "' + S + '" already existing in archive', 0)
             else
               Break;
