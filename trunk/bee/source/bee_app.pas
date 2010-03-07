@@ -76,8 +76,8 @@ type
     procedure ProcesstOption;
     procedure ProcesslOption;
     { overwrite sub-routines }
-    function ProcessFileToOverWrite4Add(aItem: THeader; New: TCustomSearchRec): TOverwriteMode;
-    function ProcessFileToOverWrite4Extract(aItem: THeader): TOverwriteMode;
+    function ProcessFileToOverWrite4Add(var New: TCustomSearchRec; aItem: THeader): TUpdateMode;
+    function ProcessFileToOverWrite4Extract(aItem: THeader): TUpdateMode;
     { already file exists in archive routines}
     function AlreadyFileExists(const aIndex: longint; const aActions: THeaderActions; const aFileName: string): longint; overload;
     function AlreadyFileExists(const aFileName: string): longint; overload;
@@ -247,62 +247,79 @@ end;
 
 { Process File To OverWrite 4 Add }
 
-function TBeeApp.ProcessFileToOverWrite4Add(aItem: THeader; New: TCustomSearchRec): TOverwriteMode;
+function TBeeApp.ProcessFileToOverWrite4Add(var New: TCustomSearchRec; aItem: THeader): TUpdateMode;
 var
   FI: TFileInfo;
   S: string;
 begin
-  FI.FileName := StringToPChar(ExtractFileName(aItem.FileName));
-  FI.FilePath := StringToPChar(ExtractFilePath(aItem.FileName));
+  Result := FCommandLine.uOption;
+  if (aItem <> nil) and (Result = umAddQuery) then
+  begin
+    FI.FileName := StringToPChar(ExtractFileName(aItem.FileName));
+    FI.FilePath := StringToPChar(ExtractFilePath(aItem.FileName));
 
-  FI.FileSize := aItem.FileSize;
-  FI.FileTime := aItem.FileTime;
-  FI.FileAttr := aItem.FileAttr;
-  (*
-  case DoOverwrite(FI, omAddReplace) of
-    omAdd:      Result := umAdd;
-    omUpdate:   Result := umUpdate;
-    omReplace:  Result := umReplace;
-    omRename:
-    begin
-      repeat
-        S := FixFileName(DoRename(FI, ''));
-        if Length(S) <> 0 then
-        begin
-          if AlreadyFileExists(S) <> -1 then
-            DoWarning('Warning: file "' + S + '" already existing in archive' + Cr, 1)
-          else
-            Break;
-        end else
-          Break;
-      until False;
-      if Length(S) <> 0 then
-      begin
-        New.FileName := S;
-        Result := umAdd;
-      end;
+    FI.FileSize := aItem.FileSize;
+    FI.FileTime := aItem.FileTime;
+    FI.FileAttr := aItem.FileAttr;
+
+    case DoOverwrite(FI, omAddReplace) of
+      omAdd: begin
+               Result := umAdd;
+               FCommandLine.uOption := Result;
+             end;
+      omUpdate: begin
+                  Result := umUpdate;
+                  FCommandLine.uOption :=  Result;
+                end;
+      omReplace: begin
+                   Result := umReplace;
+                   FCommandLine.uOption :=  Result;
+                 end;
+      omAddUpdate: begin
+                     Result := umAddUpdate;
+                     FCommandLine.uOption :=  Result;
+                   end;
+      omAddReplace: begin
+                      Result := umAddReplace;
+                      FCommandLine.uOption :=  Result;
+                    end;
+      omAddAutoRename: begin
+                         Result := umAddAutoRename;
+                         FCommandLine.uOption :=  Result;
+                       end;
+      omUpdateOne: Result := umUpdate;
+      omReplaceOne: Result := umReplace;
+      omRenameOne: begin
+                     repeat
+                       S := FixFileName(DoRename(FI, ''));
+                       if Length(S) <> 0 then
+                       begin
+                         if AlreadyFileExists(S) <> -1 then
+                           DoWarning('Warning: file "' + S + '" already existing in archive' + Cr, 1)
+                         else
+                           Break;
+                       end else
+                         Break;
+                     until False;
+                    if Length(S) <> 0 then
+                    begin
+                      New.FileName := S;
+                      Result := umAdd;
+                    end;
+                  end;
+      // omSkip: Result := umAddquery;
+      omQuit: Terminated := True;
     end;
-    omAddUpdate:     Result := umAddUpdate;
-    omAddReplace:    Result := umAddReplace;
-    omAddAutoRename: Result := umAddAutoRename;
-    omSkip:          Result := umAddQuery;
-    omQuit:          Result := umAddQuery;
+    StrDispose(FI.FileName);
+    StrDispose(FI.FilePath);
   end;
-
-  case Result of
-    umAddUpdate:     FCommandLine.uOption := umAddUpdate;
-    umAddReplace:    FCommandLine.uOption := umAddReplace;
-    umAddAutoRename: FCommandLine.uOption := umAddAutoRename;
-  end;
-  *)
-  StrDispose(FI.FileName);
-  StrDispose(FI.FilePath);
 end;
 
 function TBeeApp.ProcessFilesToAdd: int64;
 var
   I: longint;
   P: THeader;
+  T: TCustomSearchRec;
   Scanner: TFileScanner;
 begin
   Result  := 0;
@@ -317,25 +334,25 @@ begin
   begin
     if Terminated = False then
     begin
-      (*
-      P := FHeaders.SearchItem(Scanner.Items[I].FileName);
-      case ProcessFileToOverwrite4Add(P, Scanner.Items[I]) of
-        umAdd:           Result := Result + FHeaders.AddItem       (Scanner.Items[I], P);
-        umUpdate:        Result := Result + FHeaders.UpdateItem    (Scanner.Items[I], P);
-        umReplace:       Result := Result + FHeaders.ReplaceItem   (Scanner.Items[I], P);
-        umAddUpdate:     Result := Result + FHeaders.AddUpdateItem (Scanner.Items[I], P);
-        umAddReplace:    Result := Result + FHeaders.AddReplaceItem(Scanner.Items[I], P);
+      T := Scanner.Items[I];
+      P := FHeaders.SearchItem(T.FileName);
+      case ProcessFileToOverWrite4Add(T, P) of
+        umAdd:        Result := Result + FHeaders.AddItem       (T, P);
+        umUpdate:     Result := Result + FHeaders.UpdateItem    (T, P);
+        umReplace:    Result := Result + FHeaders.ReplaceItem   (T, P);
+        umAddUpdate:  Result := Result + FHeaders.AddUpdateItem (T, P);
+        umAddReplace: Result := Result + FHeaders.AddReplaceItem(T, P);
         umAddAutoRename:
-        with Scanner.Items[I] do
         begin
-          repeat
-            FileName := GenerateAlternativeFileName(FileName, False);
-          until FHeaders.SearchItem(FileName) = nil;
-          Result := Result + FHeaders.AddItem(Scanner.Items[I], P);
+          while P <> nil do
+          begin
+            T.FileName := GenerateAlternativeFileName(T.FileName, False);
+            P := FHeaders.SearchItem(T.FileName);
+          end;
+          Result := Result + FHeaders.AddItem(T, P);
         end;
+        // umAddQuery: nothing to do, skip file
       end;
-      *)
-
     end;
   end;
   FHeaders.SortNews(FConfiguration);
@@ -346,8 +363,42 @@ end;
 // Extract file processing                                                    //
 // -------------------------------------------------------------------------- //
 
-function TBeeApp.ProcessFileToOverWrite4Extract(aItem: THeader): TOverwriteMode;
+function TBeeApp.ProcessFileToOverWrite4Extract(aItem: THeader): TUpdateMode;
 begin
+  (*
+       if not FileExists(P.FileName) then
+         U := FCommandLine.uOption
+       else
+         U := ProcessFileToOverwrite4Extract(FHeaders, P);
+
+       case U of
+       //umReplace:    nothing to do
+       //umAddReplace: nothing to do
+       //umAddQuery:   nothing to do
+         umAdd:
+         if FileExists(P.FileName) then
+         begin
+           P.FileAction := toNone;
+         end;
+         umUpdate:
+         if (not FileExists(P.FileName)) or (P.FileTime <= FileAge(P.FileName)) then
+         begin
+           P.FileAction := toNone;
+         end;
+         umAddUpdate:
+         if FileExists(P.FileName) and (P.FileTime <= FileAge(P.FileName))then
+         begin
+           P.FileAction := toNone;
+         end;
+         umAddAutoRename:
+         while FileExists(P.FileName) do
+         begin
+           P.FileName := GenerateAlternativeFileName(P.FileName, False);
+           if AlreadyFileExists(-1, [toExtract], P.FileName) = -1 then
+           begin
+             Break;
+           end;
+         end;   *)
 
 
 end;
@@ -360,46 +411,24 @@ var
 begin
   for I := 0 to FHeaders.GetCount - 1 do
   begin
-    P := FHeaders.GetItem(I);
-    if P.FileAction = toExtract then
+    if Terminated = False then
     begin
-      if FCommandLine.Command <> ccExtract then
-        P.FileName := DeleteFilePath(FCommandLine.cdOption, P.FileName)
-      else
-        P.FileName := ExtractFileName(P.FileName);
-      (*
-      if not FileExists(P.FileName) then
-        U := FCommandLine.uOption
-      else
-        U := ProcessFileToOverwrite4Extract(FHeaders, P);
-      *)
-      case U of
-      //umReplace:    nothing to do
-      //umAddReplace: nothing to do
-      //umAddQuery:   nothing to do
-        umAdd:
-        if FileExists(P.FileName) then
-        begin
-          P.FileAction := toNone;
-        end;
-        umUpdate:
-        if (not FileExists(P.FileName)) or (P.FileTime <= FileAge(P.FileName)) then
-        begin
-          P.FileAction := toNone;
-        end;
-        umAddUpdate:
-        if FileExists(P.FileName) and (P.FileTime <= FileAge(P.FileName))then
-        begin
-          P.FileAction := toNone;
-        end;
-        umAddAutoRename:
-        while FileExists(P.FileName) do
-        begin
-          P.FileName := GenerateAlternativeFileName(P.FileName, False);
-          if AlreadyFileExists(-1, [toExtract], P.FileName) = -1 then
-          begin
-            Break;
-          end;
+      P := FHeaders.GetItem(I);
+      if P.FileAction = toExtract then
+      begin
+        if FCommandLine.Command = ccXextract then
+          P.FileName := DeleteFilePath(FCommandLine.cdOption, P.FileName)
+        else
+          P.FileName := ExtractFileName(P.FileName);
+
+        case ProcessFileToOverWrite4Extract(P) of
+          umAdd:
+          umUpdate:
+          umReplace:
+          umAddUpdate:
+          umAddReplace:
+          umAddAutoRename:
+          umAddQuery:
         end;
       end;
     end;

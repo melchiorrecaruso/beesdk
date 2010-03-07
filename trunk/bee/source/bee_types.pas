@@ -94,8 +94,9 @@ type
   {  omAddAutoRename                                      }
   {  omQuit                                               }
 
-  TOverwriteMode = (omAdd, omUpdate, omReplace, omRename,
-    omAddUpdate, omAddReplace, omAddAutoRename, omSkip, omQuit);
+  TOverwriteMode = (omAdd, omUpdate, omReplace, omAddUpdate,
+    omAddReplace, omAddAutoRename, omUpdateOne, omReplaceOne,
+    omRenameOne, omSkip, omQuit);
 
   { Process Priority Option:                              }
   {   prioIdle                                            }
