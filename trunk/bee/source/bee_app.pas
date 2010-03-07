@@ -364,9 +364,72 @@ end;
 // -------------------------------------------------------------------------- //
 
 function TBeeApp.ProcessFileToOverWrite4Extract(aItem: THeader): TUpdateMode;
+var
+  FI: TFileInfo;
+  S: string;
 begin
-  (*
-       if not FileExists(P.FileName) then
+  Result := FCommandLine.uOption;
+  if FileExists(aItem.FileName) and (Result = umAddQuery) then
+  begin
+    FI.FileName := StringToPChar(ExtractFileName(aItem.FileName));
+    FI.FilePath := StringToPChar(ExtractFilePath(aItem.FileName));
+
+    FI.FileSize := aItem.FileSize;
+    FI.FileTime := aItem.FileTime;
+    FI.FileAttr := aItem.FileAttr;
+
+    case DoOverwrite(FI, omAddReplace) of
+      omAdd: begin
+               Result := umAdd;
+               FCommandLine.uOption := Result;
+             end;
+      omUpdate: begin
+                  Result := umUpdate;
+                  FCommandLine.uOption := Result;
+                end;
+      omReplace: begin
+                   Result := umReplace;
+                   FCommandLine.uOption := Result;
+                 end;
+      omAddUpdate: begin
+                     Result := umAddUpdate;
+                     FCommandLine.uOption := Result;
+                   end;
+      omAddReplace: begin
+                      Result := umAddReplace;
+                      FCommandLine.uOption := Result;
+                    end;
+      omAddAutoRename: begin
+                         Result := umAddAutoRename;
+                         FCommandLine.uOption := Result;
+                       end;
+      omUpdateOne: Result := umUpdate;
+      omReplaceOne: Result := umReplace;
+      omRenameOne: begin
+                     Result := umAdd;
+                     repeat
+                       S := FixFileName(DoRename(FI, ''));
+                       if Length(S) <> 0 then
+                       begin
+                                              if AlreadyFileExists(S) <> -1 then
+                                                DoWarning('Warning: file "' + S + '" already existing in archive' + Cr, 1)
+                                              else
+                                                Break;
+                                            end else
+                                              Break;
+                                          until False;
+                                         if Length(S) <> 0 then
+                                         begin
+                                           New.FileName := S;
+                                           Result := umAdd;
+                                         end;
+                   end;
+      omSkip: aItem.FileAction := toNone;
+      omQuit: Terminated := True;
+    end;
+
+
+  (*   if not FileExists(P.FileName) then
          U := FCommandLine.uOption
        else
          U := ProcessFileToOverwrite4Extract(FHeaders, P);
@@ -378,7 +441,7 @@ begin
          umAdd:
          if FileExists(P.FileName) then
          begin
-           P.FileAction := toNone;
+           ;
          end;
          umUpdate:
          if (not FileExists(P.FileName)) or (P.FileTime <= FileAge(P.FileName)) then
@@ -400,7 +463,9 @@ begin
            end;
          end;   *)
 
-
+    StrDispose(FI.FileName);
+    StrDispose(FI.FilePath);
+  end;
 end;
 
 procedure TBeeApp.ProcessFilesToExtract;
