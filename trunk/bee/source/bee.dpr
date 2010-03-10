@@ -65,14 +65,12 @@ type
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
-    procedure OnFatalError(const aMessage: string; aCode: byte); override;
     procedure OnError(const aMessage: string; aCode: byte); override;
-    procedure OnWarning(const aMessage: string; aCode: byte); override;
     procedure OnRequest(const aMessage: string); override;
     procedure OnMessage(const aMessage: string); override;
-    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; override;
-    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
-    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; override;
+    function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
+    function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
     procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); override;
     procedure OnProgress; override;
     procedure OnClearLine; override;
@@ -96,17 +94,7 @@ type
     inherited Destroy;
   end;
 
-  procedure TCustomBeeApp.OnFatalError(const aMessage: string; aCode: byte);
-  begin
-    Writeln(ParamToOem(aMessage));
-  end;
-
   procedure TCustomBeeApp.OnError(const aMessage: string; aCode: byte);
-  begin
-    Writeln(ParamToOem(aMessage));
-  end;
-
-  procedure TCustomBeeApp.OnWarning(const aMessage: string; aCode: byte);
   begin
     Writeln(ParamToOem(aMessage));
   end;
