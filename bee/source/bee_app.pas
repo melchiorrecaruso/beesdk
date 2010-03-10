@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1100 - 2010.01.24 by Melchiorre Caruso.
+    v0.8.0 build 1112 - 2010.03.10 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -61,7 +61,7 @@ type
     FCommandLine: TCommandLine;
     FConfiguration: TConfiguration;
     { open archive routine }
-    function OpenArchive(const aAction: THeaderAction): boolean;
+    procedure OpenArchive(const aAction: THeaderAction);
     { decode solid sequences using a swapfile }
     function ProcessFilesToSwap: boolean;
     { find and prepare sequences }
@@ -125,8 +125,8 @@ begin
   { load configuration }
   FConfiguration := TConfiguration.Create;
   if not FileExists(FCommandLine.cfgOption) then
-    DoWarning('Warning: configuration file "'
-      + FCommandLine.cfgOption + '" not found, data will be stored' + Cr, 1)
+    DoError('Warning: configuration file "'
+      + FCommandLine.cfgOption + '" not found, data will be stored' + Cr, ccWarning)
   else
     FConfiguration.LoadFromFile(FCommandLine.cfgOption);
 
@@ -201,9 +201,8 @@ begin
   FTerminated := True;
 end;
 
-function TBeeApp.OpenArchive(const aAction: THeaderAction): boolean;
+procedure TBeeApp.OpenArchive(const aAction: THeaderAction);
 begin
-  Result := True;
   if FileExists(FCommandLine.ArchiveName) then
   begin
     FArcFile := CreateTFileReader(FCommandLine.ArchiveName, fmOpenRead + fmShareDenyWrite);
@@ -211,15 +210,9 @@ begin
     begin
       FHeaders.ReadItems(FArcFile, aAction);
       if (FHeaders.GetCount = 0) and (FArcFile.Size <> 0) then
-      begin
-        Result := False;
-        DoFatalError('Error: archive unsupported', ccError);
-      end;
+        DoError('Error: archive unsupported', ccError);
     end else
-    begin
-      Result := False;
-      DoFatalError('Error: can''t open archive', ccError);
-    end;
+      DoError('Error: can''t open archive', ccError);
   end;
 end;
 
@@ -245,7 +238,7 @@ begin
     end;
 end;
 
-{ Process File To OverWrite 4 Add }
+{ Process File To OverWrite 4 Add } { DA RIVEDERE }
 
 function TBeeApp.ProcessFileToOverWrite4Add(var New: TCustomSearchRec; aItem: THeader): TUpdateMode;
 var
@@ -295,7 +288,7 @@ begin
                        if Length(S) <> 0 then
                        begin
                          if AlreadyFileExists(S) <> -1 then
-                           DoWarning('Warning: file "' + S + '" already existing in archive' + Cr, 1)
+                           DoError('Warning: file "' + S + '" already existing in archive' + Cr, ccWarning)
                          else
                            Break;
                        end else
@@ -359,9 +352,7 @@ begin
   Scanner.Destroy;
 end;
 
-// -------------------------------------------------------------------------- //
-// Extract file processing                                                    //
-// -------------------------------------------------------------------------- //
+{ Process File To OverWrite 4 Extract } { DA RIVEDERE }
 
 function TBeeApp.ProcessFileToOverWrite4Extract(aItem: THeader): TUpdateMode;
 var
@@ -411,7 +402,7 @@ begin
                        if Length(S) <> 0 then
                        begin
                          if FileExists(S) then
-                           DoWarning('Warning: file "' + S + '" already existing ' + Cr, 1)
+                           DoError('Warning: file "' + S + '" already existing ' + Cr, ccWarning)
                          else
                            Break;
                        end else
@@ -516,7 +507,7 @@ begin
           if Length(S) > 0 then
           begin
             if AlreadyFileExists(I, [toCopy, toRename], S) > -1 then
-              DoWarning('Warning: file "' + S + '" already existing in archive', 0)
+              DoError('Warning: file "' + S + '" already existing in archive', ccWarning)
             else
               Break;
           end else
@@ -817,7 +808,9 @@ begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
   Headers := THeaders.Create(FCommandLine);
-  if OpenArchive(toCopy) then
+
+  OpenArchive(toCopy);
+  if not FTerminated then
   begin
     DoMessage(msgScanning + '...');
 
@@ -905,7 +898,7 @@ begin
       end;
 
     end else // if Headers.GetCount
-      DoWarning('Warning: no files to process', 1);
+      DoError('Warning: no files to process', ccWarning);
 
   end;
   Headers.Free;
@@ -924,7 +917,9 @@ begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
   Headers := THeaders.Create(FCommandLine);
-  if OpenArchive(toNone) then
+
+  OpenArchive(toNone);
+  if not FTerminated then
   begin
     DoMessage(msgScanning + '...');
 
@@ -971,7 +966,7 @@ begin
         DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
     end else // if Headers.GetNext
-      DoWarning('Warning: no files to decode', 1);
+      DoError('Warning: no files to decode', ccWarning);
   end;
   FHeaders.Free;
 
@@ -990,7 +985,9 @@ begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
   FHeaders := THeaders.Create(FCommandLine);
-  if OpenArchive(toCopy) then
+
+  OpenArchive(toCopy);
+  if not FTerminated then
   begin
     DoMessage(msgScanning + '...');
 
@@ -1077,7 +1074,7 @@ begin
       end;
 
     end else // if Headers.GetNext
-      DoWarning('Warning: no files to delete', 1);
+      DoError('Warning: no files to delete', ccWarning);
   end;
   FHeaders.Free;
 
@@ -1096,7 +1093,9 @@ begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
   Headers := THeaders.Create(FCommandLine);
-  if OpenArchive(toCopy) then
+
+  OpenArchive(toCopy);
+  if not FTerminated then
   begin
     DoMessage(msgScanning + '...');
 
@@ -1163,7 +1162,7 @@ begin
       end;
 
     end else // if ProcessFilesToRename
-      DoWarning('Warning: no files to rename', 1);
+      DoError('Warning: no files to rename', ccWarning);
   end;
   FHeaders.Free;
 
@@ -1203,7 +1202,9 @@ begin
   {$IFDEF CONSOLEAPPLICATION}
   HeadersToList := TList.Create;
   {$ENDIF}
-  if OpenArchive(toNone) then
+
+  OpenArchive(toNone);
+  if FTerminated then
   begin
     DoMessage(msgScanning + '...');
 
@@ -1338,7 +1339,7 @@ begin
 
       DoMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds');
     end else
-      DoWarning('Warning: no files to list', 1);
+      DoError('Warning: no files to list', ccWarning);
 
   end;
   {$IFDEF CONSOLEAPPLICATION}
@@ -1348,6 +1349,8 @@ begin
 
   if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
+
+
 
 // -------------------------------------------------------------------------- //
 // String routines                                                            //

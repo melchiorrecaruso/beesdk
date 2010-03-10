@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
+    v0.8.0 build 1112 - 2010.03.10 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -45,17 +45,14 @@ type
   TAppIO = class
   private
     procedure SetTerminated(aValue: boolean);
-    procedure SetCode(aCode: byte);
+    function SetCode(aCode: byte): byte;
   protected
     FTerminated: boolean;
     FCode: byte;
   public
     constructor Create;
     destructor Destroy; override;
-
-    procedure OnFatalError(const aMessage: string; aCode: byte); virtual;
     procedure OnError(const aMessage: string; aCode: byte); virtual;
-    procedure OnWarning(const aMessage: string; aCode: byte); virtual;
     procedure OnRequest(const aMessage: string); virtual; abstract;
     procedure OnMessage(const aMessage: string); virtual; abstract;
     function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
@@ -91,9 +88,7 @@ type
     destructor Destroy; override;
     procedure Execute; virtual;
 
-    procedure DoFatalError(const aMessage: string; aCode: byte);
     procedure DoError(const aMessage: string; aCode: byte);
-    procedure DoWarning(const aMessage: string; aCode: byte);
     procedure DoRequest(const aMessage: string);
     procedure DoMessage(const aMessage: string);
     function  DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
@@ -130,7 +125,7 @@ constructor TAppIO.Create;
 begin
   inherited Create;
   FTerminated := False;
-  FCode := 0;
+  FCode := ccSuccesful;
 end;
 
 destructor TAppIO.Destroy;
@@ -138,17 +133,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TAppIO.OnFatalError(const aMessage: string; aCode: byte);
-begin
-  SetCode(aCode);
-end;
-
 procedure TAppIO.OnError(const aMessage: string; aCode: byte);
-begin
-  SetCode(aCode);
-end;
-
-procedure TAppIO.OnWarning(const aMessage: string; aCode: byte);
 begin
   SetCode(aCode);
 end;
@@ -161,16 +146,15 @@ begin
   end;
 end;
 
-procedure TAppIO.SetCode(aCode: byte);
+function TAppIO.SetCode(aCode: byte): byte;
 begin
   if FCode < aCode then
   begin
     FCode := aCode;
     if FCode >= ccError then
-    begin
       SetTerminated(True);
-    end;
   end;
+  Result := FCode;
 end;
 
 { TApp class }
@@ -214,8 +198,7 @@ end;
 
 function TApp.GetBit4Byte: byte;
 begin
-  Result := 0;
-  { TODO :  DA IMPLEMENTARE}
+  Result := 0; { TODO :  DA IMPLEMENTARE}
 end;
 
 function TApp.GetPercentes: longint;
@@ -261,11 +244,11 @@ end;
 procedure TApp.SetPriority(aPriority: byte);
 begin
   {$IFDEF CONSOLEAPPLICATION}
-  {$IFDEF MSWINDOWS}
-  Bee_Common.SetPriority(aPriority);
-  {$ENDIF}
+    {$IFDEF MSWINDOWS}
+    Bee_Common.SetPriority(aPriority);
+    {$ENDIF}
   {$ELSE}
-  { TODO :  DA IMPLEMENTARE}
+    { TODO :  DA IMPLEMENTARE}
   {$ENDIF}
 end;
 
@@ -289,30 +272,12 @@ begin
   Dec(FSize);
 end;
 
-procedure TApp.DoFatalError(const aMessage: string; aCode: byte);
-var
-  X: double;
-begin
-  X := Now;
-  OnFatalError(aMessage, aCode);
-  FStartTime := FStartTime + (Now - X);
-end;
-
 procedure TApp.DoError(const aMessage: string; aCode: byte);
 var
   X: double;
 begin
   X := Now;
   OnError(aMessage, aCode);
-  FStartTime := FStartTime + (Now - X);
-end;
-
-procedure TApp.DoWarning(const aMessage: string; aCode: byte);
-var
-  X: double;
-begin
-  X := Now;
-  OnWarning(aMessage, aCode);
   FStartTime := FStartTime + (Now - X);
 end;
 
