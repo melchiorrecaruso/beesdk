@@ -70,7 +70,7 @@ type
     procedure ProcessFilesToDelete;
     procedure ProcessFilesToDecode(const aAction: THeaderAction);
     procedure ProcessFilesToExtract;
-    function  ProcessFilesToRename: boolean;
+    function  ProcessFilesToRename: longint;
     procedure ProcessFilesDeleted;
     { process options }
     procedure ProcesstOption;
@@ -476,23 +476,20 @@ end;
 // Rename file processing                                                     //
 // -------------------------------------------------------------------------- //
 
-function TBeeApp.ProcessFilesToRename: boolean;
+function TBeeApp.ProcessFilesToRename: longint;
 var
   S: string;
   I: longint;
   P: THeader;
   FI: TFileInfo;
 begin
-  FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename);
-  FHeaders.MarkItems(FCommandLine.xOptions,   toRename, toCopy);
+  Result := FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename) -
+            FHeaders.MarkItems(FCommandLine.xOptions,  toRename, toCopy);
 
-  if FHeaders.GetNext(0, toRename) > -1 then
-  begin
-    Result := False;
-    for I := 0 to FHeaders.GetCount -1 do
+  if Result <> 0 then
+    for I := 0 to FHeaders.GetCount - 1 do
     begin
       P := FHeaders.GetItem(I);
-
       if P.FileAction = toRename then
       begin
         FI.FileName := StringToPChar(ExtractFileName(P.FileName));
@@ -501,32 +498,27 @@ begin
         FI.FileSize := P.FileSize;
         FI.FileTime := P.FileTime;
         FI.FileAttr := P.FileAttr;
-        while True do
-        begin
+        repeat
           S := FixFileName(DoRename(FI, ''));
-          if Length(S) > 0 then
+          if Length(S) <> 0 then
           begin
-            if AlreadyFileExists(I, [toCopy, toRename], S) > -1 then
+            if AlreadyFileExists(I, [toCopy, toRename], S) <> -1 then
               DoError('Warning: file "' + S + '" already existing in archive', ccWarning)
             else
               Break;
           end else
             Break;
-        end;
+        until False;
         StrDispose(FI.FileName);
         StrDispose(FI.FilePath);
 
-        if (Length(S) > 0) and (CompareFileName(S, P.FileName) <> 0) then
-        begin
-          P.FileName := S;
-          Result := True;
-        end;
+        if (Length(S) <> 0) and (CompareFileName(S, P.FileName) <> 0) then
+          P.FileName := S
+        else
+          Dec(Result);
       end;
       if Terminated then Break;
     end;
-    if Result then Result := not Terminated;
-  end else
-    Result := ((Length(FCommandLine.sfxOption) > 0) and (FHeaders.GetNext(0, toCopy) > -1));
 end;
 
 // -------------------------------------------------------------------------- //
@@ -1091,15 +1083,13 @@ var
   I: longint;
 begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
-
   Headers := THeaders.Create(FCommandLine);
 
   OpenArchive(toCopy);
   if not FTerminated then
   begin
     DoMessage(msgScanning + '...');
-
-    if ProcessFilesToRename then
+    if ProcessFilesToRename <> 0 then
     begin
       TmpFileName := GenerateFileName(FCommandLine.wdOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
@@ -1107,12 +1097,8 @@ begin
       if (TmpFile <> nil) then
       begin
         FTotalSize := Headers.GetPackedSize([toCopy, toRename]);
-
-        // set sfx module
-        if Length(FCommandLine.sfxOption) > 0 then
-        begin
+        if Length(FCommandLine.sfxOption) <> 0 then
           Headers.SetModule(FCommandLine.sfxOption);
-        end;
 
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Self);
@@ -1147,7 +1133,6 @@ begin
           end;
         end else
           SysUtils.DeleteFile(TmpFileName);
-
       end else // if (TmpFile <> nil)
       begin
         if TmpFile = nil then
