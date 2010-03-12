@@ -52,6 +52,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure Kill;
     procedure OnError(const aMessage: string; aCode: byte); virtual;
     procedure OnRequest(const aMessage: string); virtual; abstract;
     procedure OnMessage(const aMessage: string); virtual; abstract;
@@ -62,7 +63,7 @@ type
     procedure OnProgress; virtual; abstract;
     procedure OnClearLine; virtual; abstract;
   published
-    property Terminated: boolean read FTerminated write SetTerminated;
+    property Terminated: boolean read FTerminated;
     property Code: byte read FCode;
   end;
 
@@ -136,6 +137,11 @@ end;
 procedure TAppIO.OnError(const aMessage: string; aCode: byte);
 begin
   SetCode(aCode);
+end;
+
+procedure TAppIO.Kill;
+begin
+  SetCode(ccUserAbort);
 end;
 
 procedure TAppIO.SetTerminated(aValue: boolean);
