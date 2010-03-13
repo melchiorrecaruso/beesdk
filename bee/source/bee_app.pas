@@ -71,7 +71,7 @@ type
     function  ProcessFilesToAdd: int64;
     function  ProcessFilesToDelete: int64;
     function  ProcessFilesToExtract: int64;
-    function  ProcessFileToTest: int64;
+    function  ProcessFilesToTest: int64;
     function  ProcessFilesToRename: int64;
 
     procedure ProcessFilesToDecode(const aAction: THeaderAction);
@@ -464,15 +464,16 @@ begin
   end;
 end;
 
-procedure TBeeApp.ProcessFilesToExtract;
+function TBeeApp.ProcessFilesToExtract: int64;
 var
   I: longint;
   P: THeader;
   U: TUpdateMode;
 begin
-  for I := 0 to FHeaders.GetCount - 1 do
+  Result := 0;
+  for I  := 0 to FHeaders.GetCount - 1 do
   begin
-    if Terminated = False then
+    if Code < ccError then
     begin
       P := FHeaders.GetItem(I);
       if P.FileAction = toExtract then
@@ -485,19 +486,27 @@ begin
         case ProcessFileToOverWrite4Extract(P) of
           umAdd: begin
                    if FileExists (P.FileName) then
-                     P.FileAction := toNone;
+                     P.FileAction := toNone
+                   else
+                     Inc(Result, P.FileSize);
                  end;
           umUpdate: begin
                       if (not FileExists(P.FileName)) or (not (P.FileTime > FileAge(P.FileName))) then
-                        P.FileAction := toNone;
+                        P.FileAction := toNone
+                      else
+                        Inc(Result, P.FileSize);
                     end;
           umReplace: begin
                        if (not FileExists(P.FileName)) then
-                         P.FileAction := toNone;
+                         P.FileAction := toNone
+                       else
+                         Inc(Result, P.FileSize);
                      end;
           umAddUpdate: begin
                          if (FileExists(P.FileName)) and (not (P.FileTime > FileAge(P.FileName))) then
-                           P.FileAction := toNone;
+                           P.FileAction := toNone
+                         else
+                           Inc(Result, P.FileSize);
                        end;
           // umAddReplace: extract file
           umAddAutoRename: begin
@@ -505,6 +514,7 @@ begin
                              begin
                                P.FileName := GenerateAlternativeFileName(P.FileName, False);
                              end;
+                             Inc(Result, P.FileSize);
                            end;
           umAddQuery: P.FileAction := toNone;
         end;
@@ -513,19 +523,84 @@ begin
   end;
 end;
 
+function  TBeeApp.ProcessFilesToTest: int64;
+var
+  I: longint;
+  P: THeader;
+begin
+  Result := 0;
+  for I  := 0 to FHeaders.GetCount - 1 do
+  begin
+    if Code < ccError then
+    begin
+      P := FHeaders.GetItem(I);
+      if P.FileAction = toExtract then
+      begin
+        if FCommandLine.Command = ccXextract then
+          P.FileName := DeleteFilePath(FCommandLine.cdOption, P.FileName)
+        else
+          P.FileName := ExtractFileName(P.FileName);
+
+        case ProcessFileToOverWrite4Extract(P) of
+          umAdd: begin
+                   if FileExists (P.FileName) then
+                     P.FileAction := toNone
+                   else
+                     Inc(Result, P.FileSize);
+                 end;
+          umUpdate: begin
+                      if (not FileExists(P.FileName)) or (not (P.FileTime > FileAge(P.FileName))) then
+                        P.FileAction := toNone
+                      else
+                        Inc(Result, P.FileSize);
+                    end;
+          umReplace: begin
+                       if (not FileExists(P.FileName)) then
+                         P.FileAction := toNone
+                       else
+                         Inc(Result, P.FileSize);
+                     end;
+          umAddUpdate: begin
+                         if (FileExists(P.FileName)) and (not (P.FileTime > FileAge(P.FileName))) then
+                           P.FileAction := toNone
+                         else
+                           Inc(Result, P.FileSize);
+                       end;
+          // umAddReplace: extract file
+          umAddAutoRename: begin
+                             while FileExists(P.FileName) do
+                             begin
+                               P.FileName := GenerateAlternativeFileName(P.FileName, False);
+                             end;
+                             Inc(Result, P.FileSize);
+                           end;
+          umAddQuery: P.FileAction := toNone;
+        end;
+      end;
+    end;
+  end;
+
+
+end;
+
 // -------------------------------------------------------------------------- //
 // Rename file processing                                                     //
 // -------------------------------------------------------------------------- //
 
-function TBeeApp.ProcessFilesToRename: longint;
+function TBeeApp.ProcessFilesToRename: int64;
 var
   S: string;
   I: longint;
   P: THeader;
   FI: TFileInfo;
 begin
-  if Result <> 0 then
-    for I := 0 to FHeaders.GetCount - 1 do
+  FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename);
+  FHeaders.MarkItems(FCommandLine.xOptions,  toRename, toCopy);
+
+  Result := 0;
+  for I := 0 to FHeaders.GetCount - 1 do
+  begin
+    if Code < ccError then
     begin
       P := FHeaders.GetItem(I);
       if P.FileAction = toRename then
@@ -551,12 +626,13 @@ begin
         StrDispose(FI.FilePath);
 
         if (Length(S) <> 0) and (CompareFileName(S, P.FileName) <> 0) then
-          P.FileName := S
-        else
-          Dec(Result);
+        begin
+          Inc(Result, P.FilePacked);
+          P.FileName := S;
+        end;
       end;
-      if Terminated then Break;
     end;
+  end;
 end;
 
 // -------------------------------------------------------------------------- //
@@ -598,7 +674,7 @@ begin
   Inc(FTotalSize, FHeaders.GetPackedSize(toCopy));
 end;
 
-procedure TBeeApp.ProcessFilesToDelete;
+function TBeeApp.ProcessFilesToDelete: int64;
 var
   I, J, BackTear, NextTear: longint;
   P: THeader;
@@ -900,12 +976,13 @@ begin
   begin
     DoMessage(msgScanning + '...');
 
-    FTotalSize := FHeaders.MarkItems(FCommandLine.FileMasks, toNone, aAction) -
-                  FHeaders.MarkItems(FCommandLine.xOptions, aAction, toNone);
+    FHeaders.MarkItems(FCommandLine.FileMasks, toNone, aAction);
+    FHeaders.MarkItems(FCommandLine.xOptions, aAction, toNone);
 
-    if (aAction = toExtract) then
-    begin
-      ProcessFilesToExtract;
+    case aAction of
+      toExtract: FTotalSize := ProcessFilesToExtract;
+      toTest:    FTotalSize := ProcessFilesToTest;
+      else       FTotalSize := 0;
     end;
 
     if (FTotalSize <> 0) then
@@ -1015,87 +1092,46 @@ end;
 
 procedure TBeeApp.RenameShell;
 var
-  TmpFile: TFileWriter;
-  TmpFileName: string;
-  Headers: THeaders;
   Encoder: TEncoder;
   P: THeader;
   I: longint;
 begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
-  Headers := THeaders.Create(FCommandLine);
+  FHeaders := THeaders.Create(FCommandLine);
 
   OpenArchive(toCopy);
-  if not FTerminated then
+  if Code < ccError then
   begin
     DoMessage(msgScanning + '...');
 
-    TFotalSize := FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename) -
-                  FHeaders.MarkItems(FCommandLine.xOptions,  toRename, toCopy);
-
-    ProcessFileToRename;
-
+    FTotalSize := ProcessFilesToRename;
     if FTotalSize <> 0 then
     begin
-      TmpFileName := GenerateFileName(FCommandLine.wdOption);
-      TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
+      FTempName := GenerateFileName(FCommandLine.wdOption);
+      FTempFile := CreateTFileWriter(FTempName, fmCreate);
 
-      if (TmpFile <> nil) then
+      if (FTempFile <> nil) then
       begin
-        FTotalSize := Headers.GetPackedSize([toCopy, toRename]);
-
-        Headers.WriteItems(TmpFile);
-        Encoder := TEncoder.Create(TmpFile, Self);
-        for I := 0 to Headers.GetCount -1 do
+        FHeaders.WriteItems(FTempFile);
+        Encoder := TEncoder.Create(FTempFile, Self);
+        for I := 0 to FHeaders.GetCount -1 do
         begin
-          if not FTerminated then
+          if Code < ccError then
           begin
-            P := Headers.GetItem(I);
+            P := FHeaders.GetItem(I);
             Encoder.CopyStrm(P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
           end;
         end;
         Encoder.Destroy;
-        Headers.WriteItems(TmpFile);
+        FHeaders.WriteItems(FTempFile);
 
-        if not FTerminated then
-          DoMessage(Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
-        else
-          DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
-
-        if Assigned(FArcFile) then FreeAndNil(FArcFile);
-        if Assigned(TmpFile)  then FreeAndNil(TmpFile);
-
-        if not FTerminated then
-        begin
-          SysUtils.DeleteFile(FCommandLine.ArchiveName);
-          if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
-            DoError('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName, 2)
-          else
-          begin
-            ProcesstOption; // process tOption
-            ProcesslOption; // process lOption
-          end;
-        end else
-          SysUtils.DeleteFile(TmpFileName);
-      end else // if (TmpFile <> nil)
-      begin
-        if TmpFile = nil then
-          DoError('Error: can''t open temp file', 2)
-        else
-          DoError('Error: can''t decode solid sequences', 2);
-
-        if Assigned(FArcFile) then FreeAndNil(FArcFile);
-        if Assigned(TmpFile)  then FreeAndNil(TmpFile);
-
-        SysUtils.DeleteFile(TmpFileName);
-      end;
-
-    end else // if ProcessFilesToRename
+      end else // if FTempFile <> nil
+        DoError('Error: can''t open temp file', ccError);
+    end else
       DoError('Warning: no files to rename', ccWarning);
   end;
+  CloseArchive(FTotalSize <> 0);
   FHeaders.Free;
-
-  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 function CompareFn(P1, P2: pointer): longint;
