@@ -64,7 +64,7 @@ type
     FConfiguration: TConfiguration;
     { open/close archive routine }
     procedure OpenArchive(const aAction: THeaderAction);
-    procedure CloseArchive;
+    procedure CloseArchive(IsModified: boolean);
     { decode solid sequences using a swapfile }
     procedure ProcessFilesToSwap;
     { find and prepare sequences }
@@ -876,7 +876,7 @@ begin
     end else // if FtotalSize <> 0
       DoError('Warning: no files to process', ccWarning);
   end;
-  CloseArchive;
+  CloseArchive(True);
   Headers.Free;
 end;
 
@@ -884,7 +884,6 @@ procedure TBeeApp.DecodeShell(const aAction: THeaderAction);
 var
   Decoder: TDecoder;
   Headers: THeaders;
-  Return: boolean;
   P: THeader;
   I: longint;
 begin
@@ -896,53 +895,46 @@ begin
   begin
     DoMessage(msgScanning + '...');
 
-    FTotalSize := FHeaders.MarkItems(FCommandLine.FileMasks, toNone, aAction);
-    FHeaders.MarkItems(FCommandLine.xOptions, aAction, toNone);
+    FTotalSize := FHeaders.MarkItems(FCommandLine.FileMasks, toNone, aAction) -
+                  FHeaders.MarkItems(FCommandLine.xOptions, aAction, toNone);
 
     if (aAction = toExtract) then
     begin
       ProcessFilesToExtract;
     end;
 
-    Headers.GetSize(aAction);
-    if (FHeaders.GetNext(0, aAction) > -1) then // action = toTest or toExtract
+    if (FTotalSize > 0) then
     begin
       ProcessFilesToDecode(aAction);
-
-      Return  := True;
       Decoder := TDecoder.Create(FArcFile, Self);
       for I := 0 to FHeaders.GetCount -1 do
       begin
-
-        if not FTerminated then
+        if Code < ccError then
         begin
           P := Headers.GetItem(I);
           case P.FileAction of
-            toExtract: Return := Decoder.DecodeFile(P, pmNorm);
-            toTest:    Return := Decoder.DecodeFile(P, pmTest);
-            toSkip:    Return := Decoder.DecodeFile(P, pmSkip);
-            toQuit:    Return := Decoder.Decodefile(P, pmQuit);
+            toExtract: Decoder.DecodeFile(P, pmNorm);
+            toTest:    Decoder.DecodeFile(P, pmTest);
+            toSkip:    Decoder.DecodeFile(P, pmSkip);
+            toQuit:    Decoder.Decodefile(P, pmQuit);
           end;
         end;
-        if Return = False then Break;
       end;
       Decoder.Destroy;
 
-      if not FTerminated then
-      begin
-        if Return = True then
-          DoMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds')
+      if Code < ccError then
+        DoMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds')
+      else
+        if Code = ccUserabort then
+          DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255)
         else
           DoError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(FStartTime) + ' seconds', 2);
-      end else
-        DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
 
-    end else // if Headers.GetNext
+    end else // if FTotalSize <> 0
       DoError('Warning: no files to decode', ccWarning);
   end;
+  CloseArchive(False);
   FHeaders.Free;
-
-  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.DeleteShell;
