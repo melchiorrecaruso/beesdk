@@ -334,7 +334,7 @@ begin
                     end;
                   end;
       // omSkip: Result := umAddquery;
-      omQuit: Terminated := True;
+      omQuit: Code := ccUserAbort;
     end;
     StrDispose(FI.FileName);
     StrDispose(FI.FilePath);
@@ -448,7 +448,7 @@ begin
                      end;
                    end;
       omSkip: aItem.FileAction := toNone;
-      omQuit: Terminated := True;
+      omQuit: Code := ccUserAbort;
     end;
 
     StrDispose(FI.FileName);
@@ -651,8 +651,7 @@ begin
       CurrTable      := CurrDictionary;
 
       Decoder := TDecoder.Create(FArcFile, Self);
-
-      while (I > -1) and (not FTerminated) do
+      while (I > -1) and (Code < ccError) do
       begin
         iDictionary := FHeaders.GetBack(I, foDictionary); // find dictionary info
         iTable := FHeaders.GetBack(I, foTable);           // find table info
@@ -674,27 +673,20 @@ begin
 
         for J := iTear to I do
         begin
-          P := FHeaders.GetItem(J);
-          if not FTerminated then
+          if Code < ccError then
           begin
+            P := FHeaders.GetItem(J);
             if P.FileAction = toSwap then
-              Result := not Decoder.DecodeStrm(P, pmNorm, FSwapStrm, P.FileSize, foPassword in P.FileFlags)
+              Decoder.DecodeStrm(P, pmNorm, FSwapStrm, P.FileSize, foPassword in P.FileFlags)
             else
-              Result := Decoder.DecodeStrm(P, pmSkip, FSwapStrm, P.FileSize, foPassword in P.FileFlags);
-          end else
-            DoError('' ,ccError);
-
-          if Result = False then Break;
+              Decoder.DecodeStrm(P, pmSkip, FSwapStrm, P.FileSize, foPassword in P.FileFlags);
+          end;
         end;
-        if Result = False then Break;
-
         I := FHeaders.GetBack(iTear - 1, toSwap);
       end;
       Decoder.Destroy;
       FreeAndNil(FSwapStrm);
-
-    end else
-      Result := False;
+    end;
   end;
 end;
 
@@ -830,7 +822,7 @@ begin
   Headers := THeaders.Create(FCommandLine);
 
   OpenArchive(toCopy);
-  if not FTerminated then
+  if Code < ccError then
   begin
     DoMessage(msgScanning + '...');
 
@@ -840,43 +832,47 @@ begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
 
-      // find sequences and...
-      ProcessFilesToFresh;
-      ProcessFilesToSwap;
-
-      // decode solid header modified in a swap file
       if (FTempFile <> nil) then
       begin
-        // if exists a modified solid sequence open swap file
-        if Length(FSwapName) <> 0 then
-          FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
+        ProcessFilesToFresh; // find sequences
+        ProcessFilesToSwap;  // decode solid sequences
 
-        // write Headers
-        Headers.WriteItems(FTempFile);
-        Encoder := TEncoder.Create(FTempFile, Self);
-        for I := 0 to Headers.GetCount -1 do
+        if Code < ccError then
         begin
-          if not FTerminated then
+          // if exists a modified solid sequence open swap file
+          if Length(FSwapName) <> 0 then
           begin
-            P := Headers.GetItem(I);
-            case P.FileAction of
-              toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
-              toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
-              toFresh:  Encoder.EncodeFile(P, emNorm);
-              toUpdate: Encoder.EncodeFile(P, emNorm);
-            end;
+            FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
           end;
-        end;
-        Encoder.Destroy;
-        // rewrite Headers
-        Headers.WriteItems(FTempFile);
+
+          if FSwapFile <> nil then
+          begin
+            // write Headers
+            Headers.WriteItems(FTempFile);
+            Encoder := TEncoder.Create(FTempFile, Self);
+            for I := 0 to Headers.GetCount -1 do
+            begin
+              if not FTerminated then
+              begin
+                P := Headers.GetItem(I);
+                case P.FileAction of
+                  toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
+                  toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
+                  toFresh:  Encoder.EncodeFile(P, emNorm);
+                  toUpdate: Encoder.EncodeFile(P, emNorm);
+                end;
+              end;
+            end;
+            Encoder.Destroy;
+            // rewrite Headers
+            Headers.WriteItems(FTempFile);
+          end else
+            DoError('Error: can''t open a swap file', ccError);
+        end else
+          DoError('Error: can''t decode solid sequence', ccError);
       end else
-      begin
-        if TmpFile = nil then
-          DoError('Error: can''t open temp file',2)
-        else
-          DoError('Error: can''t decode solid sequences', 2);
-      end;
+        DoError('Error: can''t open temp file', ccError);
+
     end else // if FtotalSize <> 0
       DoError('Warning: no files to process', ccWarning);
   end;
@@ -893,24 +889,22 @@ var
   I: longint;
 begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
-
   Headers := THeaders.Create(FCommandLine);
 
   OpenArchive(toNone);
-  if not FTerminated then
+  if Code < ccError then
   begin
     DoMessage(msgScanning + '...');
 
-    FHeaders.MarkItems(FCommandLine.FileMasks, toNone, aAction);
+    FTotalSize := FHeaders.MarkItems(FCommandLine.FileMasks, toNone, aAction);
     FHeaders.MarkItems(FCommandLine.xOptions, aAction, toNone);
 
     if (aAction = toExtract) then
     begin
       ProcessFilesToExtract;
-      // ProcessFilesToOverWrite4Extract(Headers);
     end;
 
-    FTotalSize := Headers.GetSize(aAction);
+    Headers.GetSize(aAction);
     if (FHeaders.GetNext(0, aAction) > -1) then // action = toTest or toExtract
     begin
       ProcessFilesToDecode(aAction);
