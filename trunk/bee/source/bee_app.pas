@@ -69,11 +69,13 @@ type
     procedure ProcessFilesToSwap;
     { find and prepare sequences }
     function  ProcessFilesToAdd: int64;
-    procedure ProcessFilesToFresh;
-    procedure ProcessFilesToDelete;
+    function  ProcessFilesToDelete: int64;
+    function  ProcessFilesToExtract: int64;
+    function  ProcessFileToTest: int64;
+    function  ProcessFilesToRename: int64;
+
     procedure ProcessFilesToDecode(const aAction: THeaderAction);
-    procedure ProcessFilesToExtract;
-    function  ProcessFilesToRename: longint;
+    procedure ProcessFilesToFresh;
     procedure ProcessFilesDeleted;
     { process options }
     procedure ProcesstOption;
@@ -221,31 +223,37 @@ begin
   end;
 end;
 
-procedure TBeeApp.CloseArchive;
+procedure TBeeApp.CloseArchive(IsModified: boolean);
 begin
-  if FCode < ccError then
-    DoMessage(Cr + 'Archive size ' + SizeToStr(FTempFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
-  else
-    DoMessage(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds');
-
-  if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
-  if Assigned(FTempFile) then FreeAndNil(FTempFile);
-  if Assigned(FArcFile)  then FreeAndNil(FArcFile);
-
-  if FCode < ccError then
+  if IsModified then
   begin
-    SysUtils.DeleteFile(FSwapName);
-    SysUtils.DeleteFile(FCommandLine.ArchiveName);
-    if RenameFile(FTempName, FCommandLine.ArchiveName) then
+    if FCode < ccError then
+      DoMessage(Cr + 'Archive size ' + SizeToStr(FTempFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
+    else
+      DoMessage(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds');
+
+    if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+    if Assigned(FTempFile) then FreeAndNil(FTempFile);
+    if Assigned(FArcFile)  then FreeAndNil(FArcFile);
+
+    if FCode < ccError then
     begin
-      ProcesstOption; // process tOption
-      ProcesslOption; // process lOption
+      SysUtils.DeleteFile(FSwapName);
+      SysUtils.DeleteFile(FCommandLine.ArchiveName);
+      if RenameFile(FTempName, FCommandLine.ArchiveName) then
+      begin
+        ProcesstOption; // process tOption
+        ProcesslOption; // process lOption
+      end else
+        DoError('Error: can''t rename "' + FTempName + '" to "' + FCommandLine.ArchiveName + '"', ccError);
     end else
-      DoError('Error: can''t rename "' + FTempName + '" to "' + FCommandLine.ArchiveName + '"', ccError);
+    begin
+      SysUtils.DeleteFile(FSwapName);
+      SysUtils.DeleteFile(FTempName);
+    end;
   end else
   begin
-    SysUtils.DeleteFile(FSwapName);
-    SysUtils.DeleteFile(FTempName);
+    if Assigned(FArcFile)  then FreeAndNil(FArcFile);
   end;
 end;
 
@@ -516,9 +524,6 @@ var
   P: THeader;
   FI: TFileInfo;
 begin
-  Result := FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename) -
-            FHeaders.MarkItems(FCommandLine.xOptions,  toRename, toCopy);
-
   if Result <> 0 then
     for I := 0 to FHeaders.GetCount - 1 do
     begin
@@ -876,7 +881,7 @@ begin
     end else // if FtotalSize <> 0
       DoError('Warning: no files to process', ccWarning);
   end;
-  CloseArchive(True);
+  CloseArchive(FtotalSize <> 0);
   Headers.Free;
 end;
 
@@ -903,11 +908,11 @@ begin
       ProcessFilesToExtract;
     end;
 
-    if (FTotalSize > 0) then
+    if (FTotalSize <> 0) then
     begin
       ProcessFilesToDecode(aAction);
       Decoder := TDecoder.Create(FArcFile, Self);
-      for I := 0 to FHeaders.GetCount -1 do
+      for I := 0 to FHeaders.GetCount - 1 do
       begin
         if Code < ccError then
         begin
@@ -947,102 +952,65 @@ var
   Encoder: TEncoder;
 begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
-
   FHeaders := THeaders.Create(FCommandLine);
 
   OpenArchive(toCopy);
-  if not FTerminated then
+  if Code < ccError then
   begin
     DoMessage(msgScanning + '...');
 
-    Headers.MarkItems(FCommandLine.FileMasks, toCopy, toDelete);
-    Headers.MarkItems(FCommandLine.xOptions, toDelete, toCopy);
+    FTotalSize:= FHeaders.MarkItems(FCommandLine.FileMasks, toCopy, toDelete) -
+                 FHeaders.MarkItems(FCommandLine.xOptions, toDelete, toCopy);
 
-    if (Headers.GetNext(0, toDelete) > -1) or
-      ((Length(FCommandLine.sfxOption) > 0) and
-      (Headers.GetNext(0, toCopy) > -1)) then
+    if FTotalSize <> 0 then
     begin
       TmpFileName := GenerateFileName(FCommandLine.wdOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
 
-      // find sequences
-      ProcessFilesToDelete;
-      if (TmpFile <> nil) and ProcessFilesToSwap then
+      if (TmpFile <> nil) then
       begin
-        // rescue headers information
-        ProcessFilesDeleted;
+        ProcessFilesToDelete;  // find sequences
+        ProcessFilesToSwap;    // decode solid sequences
 
-        // if SwapSequences has found a modified sequence open Swap file
-        if Length(FSwapName) > 0 then
-          FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
-
-        // set sfx module
-        with FCommandLine do
-          if Length(sfxOption) > 0 then
-            FHeaders.SetModule(sfxOption);
-
-        // write Headers
-        FHeaders.WriteItems(TmpFile);
-        Encoder := TEncoder.Create(TmpFile, Self);
-        for I := 0 to FHeaders.GetCount -1 do
+        if Code < ccError then
         begin
-          if not FTerminated then
+          // if SwapSequences has found a modified sequence open Swap file
+          if Length(FSwapName) > 0 then
           begin
-            P := Headers.GetItem(I);
-            case P.FileAction of
-              toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
-              toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
-              toDelete: DoMessage(msgDeleting + P.FileName);
+            FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
+          end;
+
+          if FSwapFile <> nil then
+          begin
+            // write Headers
+            FHeaders.WriteItems(TmpFile);
+            Encoder := TEncoder.Create(TmpFile, Self);
+            for I := 0 to FHeaders.GetCount -1 do
+            begin
+              if Code < ccError then
+              begin
+                P := Headers.GetItem(I);
+                case P.FileAction of
+                  toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
+                  toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
+                  toDelete: DoMessage(msgDeleting + P.FileName);
+                end;
+              end;
             end;
-          end;
-        end;
-        Encoder.Destroy;
-        FHeaders.WriteItems(TmpFile);
-
-        if not FTerminated then
-          DoMessage (Cr + 'Archive size ' + SizeToStr(TmpFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
-        else
-          DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255);
-
-        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
-        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
-        if Assigned(TmpFile)   then FreeAndNil(TmpFile);
-
-        SysUtils.DeleteFile(FSwapName);
-        if not FTerminated then
-        begin
-          SysUtils.DeleteFile(FCommandLine.ArchiveName);
-          if not RenameFile(TmpFileName, FCommandLine.ArchiveName) then
-            DoError('Error: can''t rename TempFile to ' + FCommandLine.ArchiveName, 2)
-          else
-          begin
-            ProcesstOption; // process tOption
-            ProcesslOption; // process lOption  
-          end;
+            Encoder.Destroy;
+            FHeaders.WriteItems(TmpFile);
+          end else
+            DoError('Error: can''t open swap file', ccError);
         end else
-          SysUtils.DeleteFile(TmpFileName);
+          DoError('Error: can''t decode solid sequences', ccError);
+      end else
+        DoError('Error: can''t open temp file', ccError);
 
-      end else // if ProcessFilesToSwap
-      begin
-        if TmpFile = nil then
-          DoError('Error: can''t open temp file', 2)
-        else
-          DoError('Error: can''t decode solid sequences', 2);
-
-        if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
-        if Assigned(FArcFile)  then FreeAndNil(FArcFile);
-        if Assigned(TmpFile)   then FreeAndNil(TmpFile);
-
-        SysUtils.DeleteFile(FSwapName);
-        SysUtils.DeleteFile(TmpFileName);
-      end;
-
-    end else // if Headers.GetNext
+    end else // if FTotalSize <> 0
       DoError('Warning: no files to delete', ccWarning);
   end;
+  CloseArchive(FTotalSize <> 0);
   FHeaders.Free;
-
-  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 procedure TBeeApp.RenameShell;
@@ -1061,7 +1029,13 @@ begin
   if not FTerminated then
   begin
     DoMessage(msgScanning + '...');
-    if ProcessFilesToRename <> 0 then
+
+    TFotalSize := FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename) -
+                  FHeaders.MarkItems(FCommandLine.xOptions,  toRename, toCopy);
+
+    ProcessFileToRename;
+
+    if FTotalSize <> 0 then
     begin
       TmpFileName := GenerateFileName(FCommandLine.wdOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
@@ -1069,8 +1043,6 @@ begin
       if (TmpFile <> nil) then
       begin
         FTotalSize := Headers.GetPackedSize([toCopy, toRename]);
-        if Length(FCommandLine.sfxOption) <> 0 then
-          Headers.SetModule(FCommandLine.sfxOption);
 
         Headers.WriteItems(TmpFile);
         Encoder := TEncoder.Create(TmpFile, Self);
@@ -1299,12 +1271,11 @@ begin
       DoError('Warning: no files to list', ccWarning);
 
   end;
+  CloseArchive(False);
   {$IFDEF CONSOLEAPPLICATION}
   HeadersToList.Free;
   {$ENDIF}
   Headers.Free;
-
-  if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
 
