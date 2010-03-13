@@ -43,16 +43,15 @@ type
   { TAppIO class }
 
   TAppIO = class
-  private
-    procedure SetTerminated(aValue: boolean);
-    function SetCode(aCode: byte): byte;
   protected
-    FTerminated: boolean;
     FCode: byte;
+    FTerminated: boolean;
+    procedure SetTerminated(aValue: boolean);
+    procedure SetCode(aCode: byte);
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Kill;
+    procedure Terminate;
     procedure OnError(const aMessage: string; aCode: byte); virtual;
     procedure OnRequest(const aMessage: string); virtual; abstract;
     procedure OnMessage(const aMessage: string); virtual; abstract;
@@ -64,7 +63,7 @@ type
     procedure OnClearLine; virtual; abstract;
   published
     property Terminated: boolean read FTerminated;
-    property Code: byte read FCode;
+    property Code: byte read FCode write SetCode;
   end;
 
   { TApp class }
@@ -139,7 +138,7 @@ begin
   SetCode(aCode);
 end;
 
-procedure TAppIO.Kill;
+procedure TAppIO.Terminate;
 begin
   SetCode(ccUserAbort);
 end;
@@ -152,7 +151,7 @@ begin
   end;
 end;
 
-function TAppIO.SetCode(aCode: byte): byte;
+procedure TAppIO.SetCode(aCode: byte);
 begin
   if FCode < aCode then
   begin
@@ -160,7 +159,6 @@ begin
     if FCode >= ccError then
       SetTerminated(True);
   end;
-  Result := FCode;
 end;
 
 { TApp class }

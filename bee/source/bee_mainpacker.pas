@@ -74,11 +74,11 @@ type
   public
     constructor Create(aStream: TFileWriter; aApp: TApp);
     destructor Destroy; override;
-    function EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
-    function EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-      const SrcSize: int64; SrcEncoded: boolean): boolean;
-    function CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-      const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean): boolean;
+    procedure EncodeFile(P: THeader; Mode: TEncodingMode);
+    procedure EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+      const SrcSize: int64; SrcEncoded: boolean);
+    procedure CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+      const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean);
   end;
 
   { Decoder class }
@@ -94,9 +94,9 @@ type
   public
     constructor Create(aStream: TFileReader; aApp: TApp);
     destructor Destroy; override;
-    function DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
-    function DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
-      const DstSize: int64; DstEncoded: boolean): boolean;
+    procedure DecodeFile(P: THeader; Mode: TExtractingMode);
+    procedure DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
+      const DstSize: int64; DstEncoded: boolean);
   end;
 
 implementation
@@ -151,7 +151,7 @@ begin
   App.DoProgress;
 end;
 
-function TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode): boolean;
+procedure TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode);
 var
   SrcFile: TFileReader;
   Symbol:  byte;
@@ -231,21 +231,15 @@ begin
       Stream.Size := P.FileStartPos;
       App.DecSize(P.FileSize);
 
-      Result := EncodeFile(P, emOpt);
-    end
-    else
-      Result := True;
+      EncodeFile(P, emOpt);
+    end;
 
-  end
-  else
-  begin
-    App.DoError('Error: can''t open file ' + P.FileLink, 1);
-    Result := False;
-  end;
+  end else
+    App.DoError('Error: can''t open file "' + P.FileLink + '"', ccError);
 end;
 
-function TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader; const SrcSize: int64; SrcEncoded: boolean): boolean;
+procedure TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
+  SrcStrm: TFileReader; const SrcSize: int64; SrcEncoded: boolean);
 var
   Symbol: byte;
   Password: string;
@@ -336,22 +330,15 @@ begin
       SrcStrm.Seek(SrcPosition, 0);
       App.DecSize(P.FileSize);
 
-      Result := EncodeStrm(P, emOpt, SrcStrm, SrcSize, SrcEncoded);
-    end
-    else
-      Result := True;
+      EncodeStrm(P, emOpt, SrcStrm, SrcSize, SrcEncoded);
+    end;
 
-  end
-  else
-  begin
-    App.DoError('Error: stream  not found', 1);
-    Result := False;
-  end;
+  end else
+    App.DoError('Error: stream  not found', ccError);
 end;
 
-function TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader; const SrcStartPos: int64; const SrcSize: int64;
-  SrcEncoded: boolean): boolean;
+procedure TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
+  const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean);
 var
   Symbol: byte;
   I:      int64;
@@ -397,13 +384,8 @@ begin
     App.DoClearLine;
     SrcStrm.BlowFish.Finish;
 
-    Result := True;
-  end
-  else
-  begin
-    App.DoError('Error: stream  not found', 1);
-    Result := False;
-  end;
+  end else
+    App.DoError('Error: stream  not found', ccError);
 end;
 
 { TDecoder class }
@@ -448,7 +430,7 @@ begin
   App.DoProgress;
 end;
 
-function TDecoder.DecodeFile(P: THeader; Mode: TExtractingMode): boolean;
+procedure TDecoder.DecodeFile(P: THeader; Mode: TExtractingMode);
 var
   DstFile: TFileWriter;
   Symbol: byte;
@@ -468,11 +450,7 @@ begin
     pmSkip: App.DoMessage(msgSkipping + P.FileName);
     pmTest: App.DoMessage(msgTesting + P.FileName);
     pmNorm: App.DoMessage(msgExtracting + P.FileName);
-    pmQuit:
-    begin
-      Result := True;
-      Exit;
-    end;
+    pmQuit: Exit;
   end;
 
   Stream.Seek(P.FileStartPos, 0);
@@ -542,18 +520,15 @@ begin
       FileSetAttr(P.FileName, P.FileAttr);
   end;
 
-  Result := P.FileCrc = Crc;
-  if Result = False then
-  begin
-    if Crc = longword(-1) then
-      App.DoError('Error: can''t open file ' + P.FileName, 1)
-    else
-      App.DoError(msgCRCERROR + P.FileName, 1);
-  end;
+  if Crc = longword(-1) then
+    App.DoError('Error: can''t open file ' + P.FileName, ccError)
+  else
+    if Crc <> P.FileCrc then
+      App.DoError(msgCRCERROR + P.FileName, ccError);
 end;
 
-function TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
-  DstStrm: TFileWriter; const DstSize: int64; DstEncoded: boolean): boolean;
+procedure TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
+  DstStrm: TFileWriter; const DstSize: int64; DstEncoded: boolean);
 var
   DstFile: TFileWriter;
   Password: string;
@@ -574,11 +549,7 @@ begin
     pmSkip: App.DoMessage(msgSkipping + P.FileName);
     pmTest: App.DoMessage(msgTesting + P.FileName);
     pmNorm: App.DoMessage(msgDecoding + P.FileName);
-    pmQuit:
-    begin
-      Result := True;
-      Exit;
-    end;
+    pmQuit: Exit;
   end;
 
   Stream.Seek(P.FileStartPos, 0);
@@ -648,14 +619,11 @@ begin
     DstFile.BlowFish.Finish; // finish after stream flush
   end;
 
-  Result := P.FileCrc = Crc;
-  if Result = False then
-  begin
-    if Crc = longword(-1) then
-      App.DoError('Error: stream not found', 1)
-    else
+  if Crc = longword(-1) then
+    App.DoError('Error: stream not found', 1)
+  else
+    if Crc <> P.FileCrc then
       App.DoError(msgCRCERROR + P.FileName, 1);
-  end;
 end;
 
 end.
