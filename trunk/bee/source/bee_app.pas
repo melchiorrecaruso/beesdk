@@ -534,53 +534,12 @@ begin
     if Code < ccError then
     begin
       P := FHeaders.GetItem(I);
-      if P.FileAction = toExtract then
+      if P.FileAction = toTest then
       begin
-        if FCommandLine.Command = ccXextract then
-          P.FileName := DeleteFilePath(FCommandLine.cdOption, P.FileName)
-        else
-          P.FileName := ExtractFileName(P.FileName);
-
-        case ProcessFileToOverWrite4Extract(P) of
-          umAdd: begin
-                   if FileExists (P.FileName) then
-                     P.FileAction := toNone
-                   else
-                     Inc(Result, P.FileSize);
-                 end;
-          umUpdate: begin
-                      if (not FileExists(P.FileName)) or (not (P.FileTime > FileAge(P.FileName))) then
-                        P.FileAction := toNone
-                      else
-                        Inc(Result, P.FileSize);
-                    end;
-          umReplace: begin
-                       if (not FileExists(P.FileName)) then
-                         P.FileAction := toNone
-                       else
-                         Inc(Result, P.FileSize);
-                     end;
-          umAddUpdate: begin
-                         if (FileExists(P.FileName)) and (not (P.FileTime > FileAge(P.FileName))) then
-                           P.FileAction := toNone
-                         else
-                           Inc(Result, P.FileSize);
-                       end;
-          // umAddReplace: extract file
-          umAddAutoRename: begin
-                             while FileExists(P.FileName) do
-                             begin
-                               P.FileName := GenerateAlternativeFileName(P.FileName, False);
-                             end;
-                             Inc(Result, P.FileSize);
-                           end;
-          umAddQuery: P.FileAction := toNone;
-        end;
+        Inc(Result, P.FileSize);
       end;
     end;
   end;
-
-
 end;
 
 // -------------------------------------------------------------------------- //
