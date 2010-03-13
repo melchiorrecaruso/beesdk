@@ -232,11 +232,11 @@ var
   function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
-      CTRL_C_EVENT: App.Terminated      := True;
-      CTRL_BREAK_EVENT: App.Terminated  := True;
-      CTRL_CLOSE_EVENT: App.Terminated  := True;
-      CTRL_LOGOFF_EVENT: App.Terminated := True;
-      CTRL_SHUTDOWN_EVENT: App.Terminated := True;
+      CTRL_C_EVENT:        App.Terminate;
+      CTRL_BREAK_EVENT:    App.Terminate;
+      CTRL_CLOSE_EVENT:    App.Terminate;
+      CTRL_LOGOFF_EVENT:   App.Terminate;
+      CTRL_SHUTDOWN_EVENT: App.Terminate;
     end;
     Result := True;
   end;
