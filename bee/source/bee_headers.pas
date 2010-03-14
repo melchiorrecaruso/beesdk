@@ -105,8 +105,11 @@ type
   public
     constructor Create(aCommandLine: TCommandLine);
     destructor Destroy; override;
-
     function SearchItem(FileName: string): THeader;
+    function AlreadyFileExists(const aIndex: longint; const aActions:
+      THeaderActions; const aFileName: string): longint; overload;
+    function AlreadyFileExists(const aFileName: string): longint; overload;
+
     function AddItem(const Rec: TCustomSearchRec; Item: THeader): int64; overload;
     function UpdateItem(const Rec: TCustomSearchRec; Item: THeader): int64;
     function ReplaceItem(const Rec: TCustomSearchRec; Item: THeader): int64;
@@ -395,6 +398,28 @@ begin
     Result := FSecondary.Items[M]
   else
     Result := nil;
+end;
+
+function THeaders.AlreadyFileExists(const aIndex: longint; const aActions: THeaderActions; const aFileName: string): longint;
+begin
+  Result := GetBack(aIndex - 1, aActions, aFileName);
+  if Result = -1 then
+  begin
+    Result := GetNext(aIndex + 1, aActions, aFileName);
+  end;
+end;
+
+function THeaders.AlreadyFileExists(const aFileName: string): longint;
+var
+  I: longint;
+begin
+  Result := -1;
+  for I := 0 to FPrimary.Count - 1 do
+    if CompareFileName(aFileName, THeader(FPrimary.Items[I]).FileName) = 0 then
+    begin
+      Result := I;
+      Break;
+    end;
 end;
 
 procedure THeaders.WriteItem(aStream: TStream; P: THeader; var aVersion: byte);
