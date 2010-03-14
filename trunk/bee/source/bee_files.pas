@@ -416,8 +416,8 @@ begin
     FileName := DeleteFileDrive(RecPath) + Rec.Name;
     FileSize := Rec.Size;
     FileTime := Rec.Time;
-    FileAttr := Rec.Attr;
-    FileLink := RecPath + Rec.Name;
+    FileAttr := Rec.Attr;            Writeln('1');
+    FileLink := RecPath + Rec.Name;  Writeln('2');
   end;
 end;
 
