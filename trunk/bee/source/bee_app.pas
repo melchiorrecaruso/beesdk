@@ -82,16 +82,13 @@ type
     { overwrite sub-routines }
     function ProcessFileToOverWrite4Add(var New: TCustomSearchRec; aItem: THeader): TUpdateMode;
     function ProcessFileToOverWrite4Extract(aItem: THeader): TUpdateMode;
-    { already file exists in archive routines}
-    function AlreadyFileExists(const aIndex: longint; const aActions: THeaderActions; const aFileName: string): longint; overload;
-    function AlreadyFileExists(const aFileName: string): longint; overload;
     { sheels routines}
+    procedure HelpShell;
     procedure EncodeShell;
     procedure DecodeShell(const aAction: THeaderAction);
     procedure RenameShell;
     procedure DeleteShell;
     procedure ListShell;
-    procedure HelpShell;
   protected
     function VersionToStr(const aItem: THeader): string;
     function MethodToStr(const aItem: THeader): string;
@@ -128,7 +125,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1116 archiver utility, Feb 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1120.0 archiver utility, Feb 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -237,30 +234,6 @@ begin
     if Assigned(FArcFile) then FreeAndNil(FArcFile);
 end;
 
-{ AlreadyFileExists routines }
-
-function TBeeApp.AlreadyFileExists(const aIndex: longint; const aActions: THeaderActions; const aFileName: string): longint;
-begin
-  Result := FHeaders.GetBack(aIndex - 1, aActions, aFileName);
-  if Result = -1 then
-  begin
-    Result := FHeaders.GetNext(aIndex + 1, aActions, aFileName);
-  end;
-end;
-
-function TBeeApp.AlreadyFileExists(const aFileName: string): longint;
-var
-  I: longint;
-begin
-  Result := -1;
-  for I := 0 to FHeaders.GetCount - 1 do
-    if CompareFileName(aFileName, FHeaders.GetItem(I).FileName) = 0 then
-    begin
-      Result := I;
-      Break;
-    end;
-end;
-
 { Process File To OverWrite routines }
 
 function TBeeApp.ProcessFileToOverWrite4Add(var New: TCustomSearchRec; aItem: THeader): TUpdateMode;
@@ -310,7 +283,7 @@ begin
                        S := FixFileName(DoRename(FI, ''));
                        if Length(S) <> 0 then
                        begin
-                         if AlreadyFileExists(S) <> -1 then
+                         if FHeaders.AlreadyFileExists(S) <> -1 then
                            DoError('Warning: file "' + S + '" already existing in archive' + Cr, ccWarning)
                          else
                            Break;
@@ -771,7 +744,7 @@ begin
           S := FixFileName(DoRename(FI, ''));
           if Length(S) <> 0 then
           begin
-            if AlreadyFileExists(I, [toCopy, toRename], S) <> -1 then
+            if FHeaders.AlreadyFileExists(I, [toCopy, toRename], S) <> -1 then
               DoError('Warning: file "' + S + '" already existing in archive', ccWarning)
             else
               Break;
@@ -823,6 +796,39 @@ begin
 end;
 
 { Shell procedures }
+
+procedure TBeeApp.HelpShell;
+begin
+  DoMessage(Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
+  DoMessage(Cr + '  Commands:' + Cr);
+  DoMessage('    a   Add files to archive');
+  DoMessage('    d   Delete files from archive');
+  DoMessage('    e   Extract files from archive');
+  DoMessage('    x   eXtract files from archive with path name');
+  DoMessage('    l   List archive');
+  DoMessage('    t   Test archive files');
+  DoMessage('    r   Rename files in archive');
+  DoMessage(Cr + '  Options:' + Cr);
+  DoMessage('    r       Recurse subdirectories');
+  DoMessage('    u       Update files');
+  DoMessage('    f       Freshen files');
+  DoMessage('    e       force file Extention');
+  DoMessage('    s       create Solid archive');
+  DoMessage('    a       add self-extrActor module');
+  DoMessage('    o<mode> set overwrite file Mode (Q-Quit, A-All, S-Skip all)');
+  DoMessage('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
+  DoMessage('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr);
+  DoMessage('    x       eXclude filenames');
+  DoMessage('    t       Test archive after process');
+  DoMessage('    l       List archive after process');
+  DoMessage('    y       set temporany directory');
+  DoMessage('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
+  DoMessage('    v       show technical information for l (List) command)');
+  DoMessage('    cd<dir> set current archive directory' + Cr);
+  DoMessage('    cfg<filename> use specified configuration file');
+  DoMessage('    pri<0..3>     set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  DoMessage(Cr + '  Use BeeOpt to make most optimal parameters.' + Cr);
+end;
 
 procedure TBeeApp.EncodeShell;
 var
@@ -1223,39 +1229,6 @@ begin
   HeadersToList.Free;
   {$ENDIF}
   Headers.Free;
-end;
-
-procedure TBeeApp.HelpShell;
-begin
-  DoMessage(Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
-  DoMessage(Cr + '  Commands:' + Cr);
-  DoMessage('    a   Add files to archive');
-  DoMessage('    d   Delete files from archive');
-  DoMessage('    e   Extract files from archive');
-  DoMessage('    x   eXtract files from archive with path name');
-  DoMessage('    l   List archive');
-  DoMessage('    t   Test archive files');
-  DoMessage('    r   Rename files in archive');
-  DoMessage(Cr + '  Options:' + Cr);
-  DoMessage('    r       Recurse subdirectories');
-  DoMessage('    u       Update files');
-  DoMessage('    f       Freshen files');
-  DoMessage('    e       force file Extention');
-  DoMessage('    s       create Solid archive');
-  DoMessage('    a       add self-extrActor module');
-  DoMessage('    o<mode> set overwrite file Mode (Q-Quit, A-All, S-Skip all)');
-  DoMessage('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
-  DoMessage('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr);
-  DoMessage('    x       eXclude filenames');
-  DoMessage('    t       Test archive after process');
-  DoMessage('    l       List archive after process');
-  DoMessage('    y       set temporany directory');
-  DoMessage('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
-  DoMessage('    v       show technical information for l (List) command)');
-  DoMessage('    cd<dir> set current archive directory' + Cr);
-  DoMessage('    cfg<filename> use specified configuration file');
-  DoMessage('    pri<0..3>     set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
-  DoMessage(Cr + '  Use BeeOpt to make most optimal parameters.' + Cr);
 end;
 
 { Protected string routines }

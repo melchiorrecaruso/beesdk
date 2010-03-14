@@ -55,9 +55,9 @@ type
     procedure OnError(const aMessage: string; aCode: byte); virtual;
     procedure OnRequest(const aMessage: string); virtual; abstract;
     procedure OnMessage(const aMessage: string); virtual; abstract;
-    function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
-    function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
+    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
     procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
     procedure OnProgress; virtual; abstract;
     procedure OnClearLine; virtual; abstract;
@@ -116,8 +116,8 @@ type
 implementation
 
 uses
-  DateUtils,
-  SysUtils;
+  SysUtils,
+  DateUtils;
 
 { TAppIO class }
 
