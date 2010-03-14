@@ -97,17 +97,14 @@ type
 
   { TCustomSearchRec }
 
-  TCustomSearchRec = record
+  TCustomSearchRec = class
+  public
     FileName: string;
     FileSize: int64;
     FileTime: longint;
     FileAttr: longint;
     FileLink: string;
   end;
-
-  { PCustomSearchRec }
-
-  PCustomSearchRec = ^TCustomSearchRec;
 
   { TFileScanner }
 
@@ -117,7 +114,7 @@ type
     function GetCount: integer;
     function GetItem(Index: longint): TCustomSearchRec;
     procedure RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
-    function CreateItem(const RecPath: string; const Rec: TSearchRec): PCustomSearchRec;
+    function CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
   public
     constructor Create;
     destructor Destroy; override;
@@ -408,17 +405,14 @@ begin
   FList.Clear;
 end;
 
-function TFileScanner.CreateItem(const RecPath: string; const Rec: TSearchRec): PCustomSearchRec;
+function TFileScanner.CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
 begin
-  GetMem(Result, SizeOf(TCustomSearchRec));
-  with TCustomSearchRec(Result^) do
-  begin
-    FileName := DeleteFileDrive(RecPath) + Rec.Name;
-    FileSize := Rec.Size;
-    FileTime := Rec.Time;
-    FileAttr := Rec.Attr;            Writeln('1');
-    FileLink := RecPath + Rec.Name;  Writeln('2');
-  end;
+  Result := TCustomSearchRec.Create;
+  Result.FileName := DeleteFileDrive(RecPath) + Rec.Name;
+  Result.FileSize := Rec.Size;
+  Result.FileTime := Rec.Time;
+  Result.FileAttr := Rec.Attr;
+  Result.FileLink := RecPath + Rec.Name;
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
@@ -479,7 +473,7 @@ end;
 
 function TFileScanner.GetItem(Index:longint): TCustomSearchRec;
 begin
-  Result := TCustomSearchRec(FList.Items[Index]^);
+  Result := TCustomSearchRec(FList.Items[Index]);
 end;
 
 end.

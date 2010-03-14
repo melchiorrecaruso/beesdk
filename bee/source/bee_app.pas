@@ -394,7 +394,13 @@ begin
     if Code < ccError then
     begin
       T := Scanner.Items[I];
+
+      Writeln(T.FileName);
+
+
       P := FHeaders.SearchItem(T.FileName);
+
+
       case ProcessFileToOverWrite4Add(T, P) of
         umAdd:        Inc(FTotalSize, FHeaders.AddItem       (T, P));
         umUpdate:     Inc(FTotalSize, FHeaders.UpdateItem    (T, P));
