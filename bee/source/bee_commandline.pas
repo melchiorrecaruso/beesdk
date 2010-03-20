@@ -261,12 +261,17 @@ end;
 
 procedure TCommandLine.ProcessstlOption(var S: string);
 begin
+  Writeln('Set Option');
+  Writeln('Set Option');
+  Writeln('Set Option');
+
+
   Delete(S, 1, 4);
   if (S = '') or (S = '+') then
-    stlOption := True
+    FstlOption := True
   else
     if (S = '-') then
-      stlOption := False;
+      FstlOption := False;
 end;
 
 procedure TCommandLine.ProcesswdOption(var S: string);
@@ -349,6 +354,27 @@ begin
     if (not FssOption) and (Length(S) <> 1) and (S[1] = '-') then
     begin
       // options...
+      if Pos('-SFX', UpperCase(S)) = 1 then
+        ProcesssfxOption(S)
+      else
+      if Pos('-HV', UpperCase(S)) = 1 then
+        ProcesshvOption(S)
+      else
+      if Pos('-STL', UpperCase(S)) = 1 then
+        ProcessstlOption(S)
+      else
+      if Pos('-WD', UpperCase(S)) = 1 then
+        ProcesswdOption(S)
+      else
+      if Pos('-CD', UpperCase(S)) = 1 then
+        ProcesscdOption(S)
+      else
+      if Pos('-CFG', UpperCase(S)) = 1 then
+        ProcesscfgOption(S)
+      else
+      if Pos('-PRI', UpperCase(S)) = 1 then
+        ProcesspriOption(S)
+      else
       case UpCase(S[2]) of
         '-': ProcessOption (S, FssOption);
         'R': ProcessrOption(S);
@@ -361,27 +387,6 @@ begin
         'P': ProcessOption (S, FpOption);
         'T': ProcessOption (S, FtOption);
         'L': ProcessOption (S, FlOption);
-        else
-          if Pos('-SFX', UpperCase(S)) = 1 then
-            ProcesssfxOption(S)
-          else
-          if Pos('-HV', UpperCase(S)) = 1 then
-            ProcesshvOption(S)
-          else
-          if Pos('-STL', UpperCase(S)) = 1 then
-            ProcessstlOption(S)
-          else
-          if Pos('-WD', UpperCase(S)) = 1 then
-            ProcesswdOption(S)
-          else
-          if Pos('-CD', UpperCase(S)) = 1 then
-            ProcesscdOption(S)
-          else
-          if Pos('-CFG', UpperCase(S)) = 1 then
-            ProcesscfgOption(S)
-          else
-          if Pos('-PRI', UpperCase(S)) = 1 then
-            ProcesspriOption(S);
       end; // end case
     end else
 
