@@ -474,8 +474,7 @@ begin
   Inc(Result, Symbol);
 
   // Reduce tree...
-  if SafeCounter < Counter then
-    Cut;
+  if SafeCounter < Counter then Cut;
 
   // Update NodeList...
   if ListCount > Table.Level then

@@ -354,26 +354,26 @@ begin
     if (not FssOption) and (Length(S) <> 1) and (S[1] = '-') then
     begin
       // options...
-      if Pos('-SFX', UpperCase(S)) = 1 then
-        ProcesssfxOption(S)
-      else
-      if Pos('-HV', UpperCase(S)) = 1 then
-        ProcesshvOption(S)
-      else
       if Pos('-STL', UpperCase(S)) = 1 then
         ProcessstlOption(S)
       else
-      if Pos('-WD', UpperCase(S)) = 1 then
-        ProcesswdOption(S)
+      if Pos('-SFX', UpperCase(S)) = 1 then
+        ProcesssfxOption(S)
       else
-      if Pos('-CD', UpperCase(S)) = 1 then
-        ProcesscdOption(S)
+      if Pos('-PRI', UpperCase(S)) = 1 then
+        ProcesspriOption(S)
       else
       if Pos('-CFG', UpperCase(S)) = 1 then
         ProcesscfgOption(S)
       else
-      if Pos('-PRI', UpperCase(S)) = 1 then
-        ProcesspriOption(S)
+      if Pos('-WD', UpperCase(S)) = 1 then
+        ProcesswdOption(S)
+      else
+      if Pos('-HV', UpperCase(S)) = 1 then
+        ProcesshvOption(S)
+      else
+      if Pos('-CD', UpperCase(S)) = 1 then
+        ProcesscdOption(S)
       else
       case UpCase(S[2]) of
         '-': ProcessOption (S, FssOption);
