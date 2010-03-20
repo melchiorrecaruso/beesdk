@@ -92,7 +92,6 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-
     property CommandLine: string read GetCommandLine write SetCommandLine;
     property Command: TCommand read FCommand;
     property ssOption: boolean read FssOption write FssOption;
@@ -137,7 +136,7 @@ begin
   FuOption := umAddUpdate;
   FxOptions.Clear;
   FmOption := moFast;
-  FdOption := do5MB;
+  FdOption := do10MB;
   FsOption := False;
   FfOption := '';
   FsfxOption := '';
@@ -198,7 +197,7 @@ begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'5']) then
   begin
-    FuOption := TUpdateMode(S[1]);
+    FuOption := TUpdateMode(StrToInt(S[1]));
   end;
 end;
 
@@ -216,7 +215,7 @@ begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'3']) then
   begin
-    FmOption := TmOption(S[1]);
+    FmOption := TmOption(StrToInt(S[1]));
   end;
 end;
 
@@ -225,7 +224,7 @@ begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'9']) then
   begin
-    FdOption := TdOption(S[1]);
+    FdOption := TdOption(StrToInt(S[1]));
   end;
 end;
 
@@ -302,7 +301,7 @@ begin
   Delete(S, 1, 4);
   if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
   begin
-    FpriOption := TpriOption(S[1]);
+    FpriOption := TpriOption(StrToInt(S[1]));
   end;
 end;
 
