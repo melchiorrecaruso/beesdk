@@ -156,10 +156,8 @@ var
   SrcFile: TFileReader;
   Symbol:  byte;
 begin
-  if foDictionary in P.FileFlags then
-    PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then
-    PPM.SetTable(P.FileTable);
+  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
   if foTear in P.FileFlags then
     PPM.FreshFlexible
   else
@@ -204,8 +202,6 @@ begin
       while SrcFile.Read(Symbol, 1) = 1 do
       begin
         UpdCrc32(P.FileCrc, Symbol);
-        PPM.UpdateModel(Symbol);
-
         if App.Size and $FFFF = 0 then
         begin
           if App.Terminated = False then
@@ -620,10 +616,10 @@ begin
   end;
 
   if Crc = longword(-1) then
-    App.DoError('Error: stream not found', 1)
+    App.DoError('Error: stream not found', ccError)
   else
     if Crc <> P.FileCrc then
-      App.DoError(msgCRCERROR + P.FileName, 1);
+      App.DoError(msgCRCERROR + P.FileName, ccError);
 end;
 
 end.

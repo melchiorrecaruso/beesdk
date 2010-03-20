@@ -77,7 +77,6 @@ type
     FTotalSize: int64;
     FSize: int64;
     function GetSpeed: longint;
-    function GetBit4Byte: byte;
     function GetPercentes: longint;
     function GetTotalTime: longint;
     function GetTime: longint;
@@ -87,7 +86,6 @@ type
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
     procedure Execute; virtual;
-
     procedure DoError(const aMessage: string; aCode: byte);
     procedure DoRequest(const aMessage: string);
     procedure DoMessage(const aMessage: string);
@@ -97,18 +95,15 @@ type
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure DoProgress;
     procedure DoClearLine;
-
     procedure IncSize(const aValue: int64); overload;
     procedure IncSize; overload;
     procedure DecSize(const aValue: int64); overload;
     procedure DecSize; overload;
-
     property TotalTime: longint Read GetTotalTime;
     property TotalSize: int64 Read FTotalSize;
     property Time: longint Read GetTime;
     property Size: int64 Read FSize;
     property Percentes: longint Read GetPercentes;
-    property Bit4Byte: byte Read GetBit4Byte;
     property Speed: longint Read GetSpeed;
     property Suspended: boolean read FSuspended write SetSuspended;
   end;
@@ -198,11 +193,6 @@ begin
     Result := Round((FSize / I) * 1000)
   else
     Result := 0;
-end;
-
-function TApp.GetBit4Byte: byte;
-begin
-  Result := 0; { TODO :  DA IMPLEMENTARE}
 end;
 
 function TApp.GetPercentes: longint;
