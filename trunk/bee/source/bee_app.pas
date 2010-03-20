@@ -74,6 +74,7 @@ type
     procedure  ProcessFilesToTest;
     procedure  ProcessFilesToRename;
     procedure ProcessFilesToDecode(const aAction: THeaderAction);
+    procedure ProcessFilesToList;
     procedure ProcessFilesToFresh;
     procedure ProcessFilesDeleted;
     { process options }
@@ -389,6 +390,7 @@ var
   T: TCustomSearchRec;
   Scanner: TFileScanner;
 begin
+  DoMessage(msgScanning + '...');
   Scanner := TFileScanner.Create;
   with FCommandLine do
     for I := 0 to FileMasks.Count - 1 do
@@ -526,6 +528,7 @@ var
   I, J, BackTear, NextTear: longint;
   P: THeader;
 begin
+  DoMessage(msgScanning + '...');
   FHeaders.MarkItems(FCommandLine.FileMasks, toCopy, toDelete);
   FHeaders.MarkItems(FCommandLine.xOptions, toDelete, toCopy);
 
@@ -651,6 +654,7 @@ var
   P: THeader;
   U: TUpdateMode;
 begin
+  DoMessage(msgScanning + '...');
   FHeaders.MarkItems(FCommandLine.FileMasks, toNone, toExtract);
   FHeaders.MarkItems(FCommandLine.xOptions, toExtract, toNone);
 
@@ -709,6 +713,7 @@ var
   I: longint;
   P: THeader;
 begin
+  DoMessage(msgScanning + '...');
   FHeaders.MarkItems(FCommandLine.FileMasks, toNone, toTest);
   FHeaders.MarkItems(FCommandLine.xOptions, toTest, toNone);
 
@@ -732,6 +737,7 @@ var
   P: THeader;
   FI: TFileInfo;
 begin
+  DoMessage(msgScanning + '...');
   FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename);
   FHeaders.MarkItems(FCommandLine.xOptions,  toRename, toCopy);
 
@@ -767,6 +773,28 @@ begin
           Inc(FTotalSize, P.FilePacked);
           P.FileName := S;
         end;
+      end;
+    end;
+  end;
+end;
+
+procedure TBeeApp.ProcessFilesToList;
+var
+  I: longint;
+  P: THeader;
+begin
+  DoMessage(msgScanning + '...');
+  FHeaders.MarkItems(FCommandLine.FileMasks, toNone, toList);
+  FHeaders.MarkItems(FCommandLine.xOptions,   toList, toNone);
+
+  for I := 0 to FHeaders.GetCount - 1 do
+  begin
+    if Code < ccError then
+    begin
+      P := FHeaders.GetItem(I);
+      if P.FileAction = toList then
+      begin
+        Inc(FTotalSize, P.FileSize);
       end;
     end;
   end;
@@ -847,8 +875,6 @@ begin
   OpenArchive(toCopy);
   if Code < ccError then
   begin
-    DoMessage(msgScanning + '...');
-
     ProcessFilesToAdd;
     if FTotalSize <> 0 then
     begin
@@ -912,8 +938,6 @@ begin
   OpenArchive(toNone);
   if Code < ccError then
   begin
-    DoMessage(msgScanning + '...');
-
     case aAction of
       toExtract: ProcessFilesToExtract;
       toTest:    ProcessFilesToTest;
@@ -960,14 +984,9 @@ var
   P: THeader;
   Encoder: TEncoder;
 begin
-  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
-  FHeaders := THeaders.Create(FCommandLine);
-
   OpenArchive(toCopy);
   if Code < ccError then
   begin
-    DoMessage(msgScanning + '...');
-
     ProcessFilesToDelete;
     if FTotalSize <> 0 then
     begin
@@ -1016,7 +1035,6 @@ begin
       DoError('Warning: no files to delete', ccWarning);
   end;
   CloseArchive(FTotalSize <> 0);
-  FHeaders.Free;
 end;
 
 procedure TBeeApp.RenameShell;
@@ -1025,14 +1043,9 @@ var
   P: THeader;
   I: longint;
 begin
-  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
-  FHeaders := THeaders.Create(FCommandLine);
-
   OpenArchive(toCopy);
   if Code < ccError then
   begin
-    DoMessage(msgScanning + '...');
-
     ProcessFilesToRename;
     if FTotalSize <> 0 then
     begin
@@ -1060,37 +1073,29 @@ begin
       DoError('Warning: no files to rename', ccWarning);
   end;
   CloseArchive(FTotalSize <> 0);
-  FHeaders.Free;
 end;
 
 procedure TBeeApp.ListShell;
 var
-  P: THeader;
   I: longint;
+  P: THeader;
   FI: TFileInfoExtra;
   {$IFDEF CONSOLEAPPLICATION}
-  HeadersToList: TList;
-  HeadersToListPath: string;
+  FHeadersToListPath: string;
+  FHeadersToList: TList;
   {$ENDIF}
   TotalPack, TotalSize, TotalFiles: longint;
   Version, Method, Dictionary: longint;
 begin
-  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
-
-  FHeaders := THeaders.Create(FCommandLine);
   {$IFDEF CONSOLEAPPLICATION}
-  HeadersToList := TList.Create;
+  FHeadersToList := TList.Create;
   {$ENDIF}
 
   OpenArchive(toNone);
-  if FTerminated then
+  if Code < ccError then
   begin
-    DoMessage(msgScanning + '...');
-
-    FHeaders.MarkItems(FCommandLine.FileMasks, toNone, toList);
-    FHeaders.MarkItems(FCommandLine.xOptions,   toList, toNone);
-
-    if (FHeaders.GetNext(0, toList) > -1) then
+    ProcessFilesToList;
+    if FTotalSize <> 0 then
     begin
       {$IFDEF CONSOLEAPPLICATION}
       DoMessage(StringOfChar(' ', 79));
@@ -1124,7 +1129,7 @@ begin
           P.FileMethod := Method;
           P.FileDictionary := Dictionary;
           {$IFDEF CONSOLEAPPLICATION}
-          HeadersToList.Add(P);
+          FHeadersToList.Add(P);
           {$ENDIF}
         end;
       end;
@@ -1134,32 +1139,32 @@ begin
       TotalFiles := 0;
 
       {$IFDEF CONSOLEAPPLICATION}
-      HeadersToList.Sort(CompareFn);
-      HeadersToListPath := '';
+      FHeadersToList.Sort(CompareFn);
+      FHeadersToListPath := '';
       {$ENDIF}
 
       I := 0;
       {$IFDEF CONSOLEAPPLICATION}
-      while I < HeadersToList.Count do
+      while I < FHeadersToList.Count do
       begin
-        P := HeadersToList.Items[I];
+        P := FHeadersToList.Items[I];
       {$ELSE}
-      while I < Headers.GetCount do
+      while I < FHeaders.GetCount do
       begin
-        P := Headers.GetItem(I);
+        P := FHeaders.GetItem(I);
       {$ENDIF}
 
         FI.FileName := StringToPChar(ExtractFileName(P.FileName));
         FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
 
         {$IFDEF CONSOLEAPPLICATION}
-        if CompareFileName(HeadersToListPath, FI.FilePath) <> 0 then
+        if CompareFileName(FHeadersToListPath, FI.FilePath) <> 0 then
         begin
-          HeadersToListPath := FI.FilePath;
+          FHeadersToListPath := FI.FilePath;
           if I = 0 then
-            DoMessage(HeadersToListPath)
+            DoMessage(FHeadersToListPath)
           else
-            DoMessage(Cr + HeadersToListPath);
+            DoMessage(Cr + FHeadersToListPath);
         end;
         {$ENDIF}
 
@@ -1223,9 +1228,8 @@ begin
   end;
   CloseArchive(False);
   {$IFDEF CONSOLEAPPLICATION}
-  HeadersToList.Free;
+  FHeadersToList.Free;
   {$ENDIF}
-  FHeaders.Free;
 end;
 
 { Protected string routines }
