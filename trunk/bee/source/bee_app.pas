@@ -125,7 +125,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1120.0 archiver utility, Feb 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1120.1 archiver utility, Feb 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -189,6 +189,9 @@ end;
 
 procedure TBeeApp.OpenArchive(const aAction: THeaderAction);
 begin
+  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  FHeaders := THeaders.Create(FCommandLine);
+
   if FileExists(FCommandLine.ArchiveName) then
   begin
     FArcFile := CreateTFileReader(FCommandLine.ArchiveName, fmOpenRead + fmShareDenyWrite);
@@ -231,7 +234,11 @@ begin
       SysUtils.DeleteFile(FTempName);
     end;
   end else
-    if Assigned(FArcFile) then FreeAndNil(FArcFile);
+  begin
+    if Assigned(FArcFile) then
+      FreeAndNil(FArcFile);
+  end;
+  FHeaders.Free;
 end;
 
 { Process File To OverWrite routines }
@@ -395,12 +402,7 @@ begin
     begin
       T := Scanner.Items[I];
 
-      Writeln(T.FileName);
-
-
       P := FHeaders.SearchItem(T.FileName);
-
-
       case ProcessFileToOverWrite4Add(T, P) of
         umAdd:        Inc(FTotalSize, FHeaders.AddItem       (T, P));
         umUpdate:     Inc(FTotalSize, FHeaders.UpdateItem    (T, P));
@@ -841,11 +843,7 @@ var
   I: longint;
   P: THeader;
   Encoder: TEncoder;
-  Headers: THeaders;
 begin
-  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
-  Headers := THeaders.Create(FCommandLine);
-
   OpenArchive(toCopy);
   if Code < ccError then
   begin
@@ -857,7 +855,7 @@ begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
 
-      if (FTempFile <> nil) then
+      if FTempFile <> nil then
       begin
         ProcessFilesToFresh; // find sequences
         ProcessFilesToSwap;  // decode solid sequences
@@ -868,18 +866,21 @@ begin
           if Length(FSwapName) <> 0 then
           begin
             FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
+            if FSwapFile = nil then
+            begin
+              DoError('Error: can''t open a swap file', ccError);
+            end;
           end;
 
-          if FSwapFile <> nil then
+          if Code < ccError then
           begin
-            // write Headers
-            Headers.WriteItems(FTempFile);
+            FHeaders.WriteItems(FTempFile);
             Encoder := TEncoder.Create(FTempFile, Self);
-            for I := 0 to Headers.GetCount -1 do
+            for I := 0 to FHeaders.GetCount - 1 do
             begin
-              if not FTerminated then
+              if Code < ccError then
               begin
-                P := Headers.GetItem(I);
+                P := FHeaders.GetItem(I);
                 case P.FileAction of
                   toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
                   toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
@@ -889,10 +890,8 @@ begin
               end;
             end;
             Encoder.Destroy;
-            // rewrite Headers
-            Headers.WriteItems(FTempFile);
-          end else
-            DoError('Error: can''t open a swap file', ccError);
+            FHeaders.WriteItems(FTempFile);
+          end;
         end else
           DoError('Error: can''t decode solid sequence', ccError);
       end else
@@ -902,19 +901,14 @@ begin
       DoError('Warning: no files to process', ccWarning);
   end;
   CloseArchive(FtotalSize <> 0);
-  Headers.Free;
 end;
 
 procedure TBeeApp.DecodeShell(const aAction: THeaderAction);
 var
-  Decoder: TDecoder;
-  Headers: THeaders;
-  P: THeader;
   I: longint;
+  P: THeader;
+  Decoder: TDecoder;
 begin
-  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
-  Headers := THeaders.Create(FCommandLine);
-
   OpenArchive(toNone);
   if Code < ccError then
   begin
@@ -925,7 +919,7 @@ begin
       toTest:    ProcessFilesToTest;
     end;
 
-    if (FTotalSize <> 0) then
+    if FTotalSize <> 0 then
     begin
       ProcessFilesToDecode(aAction);
       Decoder := TDecoder.Create(FArcFile, Self);
@@ -933,7 +927,7 @@ begin
       begin
         if Code < ccError then
         begin
-          P := Headers.GetItem(I);
+          P := FHeaders.GetItem(I);
           case P.FileAction of
             toExtract: Decoder.DecodeFile(P, pmNorm);
             toTest:    Decoder.DecodeFile(P, pmTest);
@@ -948,15 +942,14 @@ begin
         DoMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds')
       else
         if Code = ccUserabort then
-          DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', 255)
+          DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', ccUserAbort)
         else
-          DoError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(FStartTime) + ' seconds', 2);
+          DoError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(FStartTime) + ' seconds', ccError);
 
     end else // if FTotalSize <> 0
       DoError('Warning: no files to decode', ccWarning);
   end;
   CloseArchive(False);
-  FHeaders.Free;
 end;
 
 procedure TBeeApp.DeleteShell;
@@ -965,7 +958,6 @@ var
   TmpFile: TFileWriter;
   I: longint;
   P: THeader;
-  Headers: THeaders;
   Encoder: TEncoder;
 begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
@@ -1003,7 +995,7 @@ begin
             begin
               if Code < ccError then
               begin
-                P := Headers.GetItem(I);
+                P := FHeaders.GetItem(I);
                 case P.FileAction of
                   toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
                   toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
@@ -1075,7 +1067,6 @@ procedure TBeeApp.ListShell;
 var
   P: THeader;
   I: longint;
-  Headers: THeaders;
   FI: TFileInfoExtra;
   {$IFDEF CONSOLEAPPLICATION}
   HeadersToList: TList;
@@ -1086,7 +1077,7 @@ var
 begin
   DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
 
-  Headers := THeaders.Create(FCommandLine);
+  FHeaders := THeaders.Create(FCommandLine);
   {$IFDEF CONSOLEAPPLICATION}
   HeadersToList := TList.Create;
   {$ENDIF}
@@ -1096,10 +1087,10 @@ begin
   begin
     DoMessage(msgScanning + '...');
 
-    Headers.MarkItems(FCommandLine.FileMasks, toNone, toList);
-    Headers.MarkItems(FCommandLine.xOptions,   toList, toNone);
+    FHeaders.MarkItems(FCommandLine.FileMasks, toNone, toList);
+    FHeaders.MarkItems(FCommandLine.xOptions,   toList, toNone);
 
-    if (Headers.GetNext(0, toList) > -1) then
+    if (FHeaders.GetNext(0, toList) > -1) then
     begin
       {$IFDEF CONSOLEAPPLICATION}
       DoMessage(StringOfChar(' ', 79));
@@ -1114,9 +1105,9 @@ begin
       Method     := -1;
       Dictionary := -1;
 
-      for I := 0 to Headers.GetCount -1 do
+      for I := 0 to FHeaders.GetCount -1 do
       begin
-        P := Headers.GetItem(I);
+        P := FHeaders.GetItem(I);
 
         if foVersion in P.FileFlags then
           Version := P.FileVersion;
@@ -1193,7 +1184,7 @@ begin
           FI.FilePassword := StringToPchar('No');
 
         {$IFDEF CONSOLEAPPLICATION}
-        FI.FilePosition := Headers.GetNext(0, toList, P.FileName);
+        FI.FilePosition := FHeaders.GetNext(0, toList, P.FileName);
         {$ELSE}
         FI.FilePosition := I;
         {$ENDIF}
@@ -1221,7 +1212,7 @@ begin
 
       {$IFDEF CONSOLEAPPLICATION}
       // self-extractor module size
-      if Headers.GetModule > 0 then
+      if FHeaders.GetModule > 0 then
         DoMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
 
@@ -1234,7 +1225,7 @@ begin
   {$IFDEF CONSOLEAPPLICATION}
   HeadersToList.Free;
   {$ENDIF}
-  Headers.Free;
+  FHeaders.Free;
 end;
 
 { Protected string routines }

@@ -377,12 +377,7 @@ var
   L, M, H, I: longint;
 begin
   L := 0;
-
-  Writeln('1');
-
   H := FSecondary.Count - 1;
-
-  Writeln('2');
 
   FileName := FCL.cdOption + FileName;
   while H >= L do
