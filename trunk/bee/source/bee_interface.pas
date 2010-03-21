@@ -45,7 +45,7 @@ type
   TApp = class
   private
     FCode: byte;
-
+    FTerminated: boolean;
   protected
     FParams: TStringList;
     FStartTime: double;
@@ -53,8 +53,6 @@ type
     FTotalSize: int64;
     FSize: int64;
     FSuspended: boolean;
-    FTerminated: boolean;
-
     function GetSpeed: longint;
     function GetPercentes: longint;
     function GetTotalTime: longint;
@@ -75,23 +73,22 @@ type
     procedure DecSize(const aValue: int64); overload;
 
     procedure DoError(const aMessage: string; aCode: byte);
-    procedure DoRequest(const aMessage: string);
-    procedure DoMessage(const aMessage: string);
-    function  DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
-    function  DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
-    function  DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
-    procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
-    procedure DoProgress;
-    procedure DoClearLine;
-
     procedure OnError(const aMessage: string; aCode: byte); virtual;
+    procedure DoRequest(const aMessage: string);
     procedure OnRequest(const aMessage: string); virtual; abstract;
+    procedure DoMessage(const aMessage: string);
     procedure OnMessage(const aMessage: string); virtual; abstract;
-    function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
-    function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    function DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
+    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
+    function DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
+    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    function DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
+    procedure DoProgress;
     procedure OnProgress; virtual; abstract;
+    procedure DoClearLine;
     procedure OnClearLine; virtual; abstract;
 
     property Time: longint Read GetTime;
@@ -162,24 +159,6 @@ begin
   Dec(FSize);
 end;
 
-procedure TApp.SetTerminated(aValue: boolean);
-begin
-  if not FTerminated then
-  begin
-    FTerminated := aValue;
-  end;
-end;
-
-procedure TApp.SetCode(aCode: byte);
-begin
-  if FCode < aCode then
-  begin
-    FCode := aCode;
-    if FCode >= ccError then
-      SetTerminated(True);
-  end;
-end;
-
 function TApp.GetSpeed: longint;
 var
   I: int64;
@@ -222,6 +201,24 @@ begin
     Result := 0;
 end;
 
+procedure TApp.SetTerminated(aValue: boolean);
+begin
+  if not FTerminated then
+  begin
+    FTerminated := aValue;
+  end;
+end;
+
+procedure TApp.SetCode(aCode: byte);
+begin
+  if FCode < aCode then
+  begin
+    FCode := aCode;
+    if FCode >= ccError then
+      SetTerminated(True);
+  end;
+end;
+
 procedure TApp.SetSuspended(aValue: boolean);
 begin
   if FSuspended <> aValue then
@@ -253,6 +250,11 @@ begin
   X := Now;
   OnError(aMessage, aCode);
   FStartTime := FStartTime + (Now - X);
+end;
+
+procedure TApp.OnError(const aMessage: string; aCode: byte);
+begin
+  SetCode(aCode);
 end;
 
 procedure TApp.DoMessage(const aMessage: string);
@@ -325,11 +327,6 @@ begin
   X := Now;
   OnClearLine;
   FStartTime := FStartTime + (Now - X);
-end;
-
-procedure TApp.OnError(const aMessage: string; aCode: byte);
-begin
-  SetCode(aCode);
 end;
 
 end.

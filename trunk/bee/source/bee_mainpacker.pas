@@ -147,18 +147,8 @@ end;
 
 function TEncoder.Progress: boolean;
 begin
-  Result := App.Code < ccError;
-  if Result then
-  begin
-    if App.Size and $FFFF = 0 then
-    begin
-      while App.Suspended do
-      begin
-        Sleep(250);
-      end;
-      App.DoProgress;
-    end;
-  end;
+  while App.Suspended do Sleep(250);
+  App.DoProgress;
 end;
 
 procedure TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode);
@@ -191,26 +181,28 @@ begin
 
     if foMoved in P.FileFlags then
     begin
-      while SrcFile.Read(Symbol, 1) = 1 do
+      while (App.Code < ccError) and (SrcFile.Read(Symbol, 1) = 1) do
       begin
         UpdCrc32(P.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
-        if Progress then
-          App.IncSize
-        else
-          Break;
+        if App.Size and $FFFF = 0 then
+        begin
+          Progress;
+        end;
+        App.IncSize;
       end;
     end else
     begin
       SecondaryCodec.Start;
-      while SrcFile.Read(Symbol, 1) = 1 do
+      while (App.Code < ccError) and (SrcFile.Read(Symbol, 1) = 1) do
       begin
         UpdCrc32(P.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
-        if Progress then
-          App.IncSize
-        else
-          Break;
+        //if App.Size and $FFFF = 0 then
+        //begin
+        // Progress;
+        //end;
+        App.IncSize;
       end;
       SecondaryCodec.Flush;
     end;
