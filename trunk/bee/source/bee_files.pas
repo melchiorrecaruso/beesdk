@@ -27,7 +27,7 @@
     v0.7.8 build 0148 - 2005.06.23 by Andrew Filinsky;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   
-    v0.8.0 build 1110 - 2010.01.23 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.03.21 by Melchiorre Caruso.
 }
 
 unit Bee_Files;
@@ -132,7 +132,7 @@ implementation
 uses
   Bee_Assembler;
 
-{ class TFileReader }
+{ TFileReader class }
 
 constructor TFileReader.Create(const FileName: string; Mode: word);
 begin
@@ -221,7 +221,7 @@ begin
   end;
 end;
 
-{ class TFileWriter }
+{ TFileWriter class }
 
 constructor TFileWriter.Create(const FileName: string; Mode: word);
 begin
@@ -316,7 +316,7 @@ begin
   end;
 end;
 
-{ class TNulWriter }
+{ TNulWriter class }
 
 constructor TNulWriter.Create;
 begin

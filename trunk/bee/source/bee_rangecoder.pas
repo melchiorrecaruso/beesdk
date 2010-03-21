@@ -43,7 +43,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.03.21 by Melchiorre Caruso.
 }
 
 unit Bee_RangeCoder;
@@ -148,7 +148,7 @@ begin
   Range := MulDiv(Range, Freq, TotFreq);
   while Range < TOP do
   begin
-    Code  := Code shl 8 + InputByte;
+    Code  := Code  shl 8 + InputByte;
     Range := Range shl 8;
   end;
 end;
@@ -170,8 +170,7 @@ begin
     end;
     Cache := Low shr 24;
     Carry := 0;
-  end
-  else
+  end else
     Inc(FFNum);
 
   Low := Low shl 8;

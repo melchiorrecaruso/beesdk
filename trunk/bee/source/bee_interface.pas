@@ -40,52 +40,40 @@ uses
   Bee_Common;
 
 type
-  { TAppIO class }
-
-  TAppIO = class
-  protected
-    FCode: byte;
-    FTerminated: boolean;
-    procedure SetTerminated(aValue: boolean);
-    procedure SetCode(aCode: byte);
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Terminate;
-    procedure OnError(const aMessage: string; aCode: byte); virtual;
-    procedure OnRequest(const aMessage: string); virtual; abstract;
-    procedure OnMessage(const aMessage: string); virtual; abstract;
-    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
-    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
-    procedure OnProgress; virtual; abstract;
-    procedure OnClearLine; virtual; abstract;
-  published
-    property Terminated: boolean read FTerminated;
-    property Code: byte read FCode write SetCode;
-  end;
-
   { TApp class }
 
-  TApp = class(TAppIO)
+  TApp = class
+  private
+    FCode: byte;
+
   protected
-    FSuspended: boolean;
     FParams: TStringList;
-    FSuspendedTime: double;
     FStartTime: double;
+    FSuspendedTime: double;
     FTotalSize: int64;
     FSize: int64;
+    FSuspended: boolean;
+    FTerminated: boolean;
+
     function GetSpeed: longint;
     function GetPercentes: longint;
     function GetTotalTime: longint;
     function GetTime: longint;
-    procedure SetSuspended(aValue: boolean); overload;
     procedure SetPriority(aPriority: byte);
+    procedure SetSuspended(aValue: boolean); overload;
+    procedure SetTerminated(aValue: boolean);
+    procedure SetCode(aCode: byte);
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
     procedure Execute; virtual;
+    procedure Terminate;
+
+    procedure IncSize; overload;
+    procedure DecSize; overload;
+    procedure IncSize(const aValue: int64); overload;
+    procedure DecSize(const aValue: int64); overload;
+
     procedure DoError(const aMessage: string; aCode: byte);
     procedure DoRequest(const aMessage: string);
     procedure DoMessage(const aMessage: string);
@@ -95,17 +83,26 @@ type
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure DoProgress;
     procedure DoClearLine;
-    procedure IncSize(const aValue: int64); overload;
-    procedure IncSize; overload;
-    procedure DecSize(const aValue: int64); overload;
-    procedure DecSize; overload;
-    property TotalTime: longint Read GetTotalTime;
-    property TotalSize: int64 Read FTotalSize;
+
+    procedure OnError(const aMessage: string; aCode: byte); virtual;
+    procedure OnRequest(const aMessage: string); virtual; abstract;
+    procedure OnMessage(const aMessage: string); virtual; abstract;
+    function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
+    function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
+    procedure OnProgress; virtual; abstract;
+    procedure OnClearLine; virtual; abstract;
+
     property Time: longint Read GetTime;
+    property TotalTime: longint Read GetTotalTime;
     property Size: int64 Read FSize;
+    property TotalSize: int64 Read FTotalSize;
     property Percentes: longint Read GetPercentes;
     property Speed: longint Read GetSpeed;
     property Suspended: boolean read FSuspended write SetSuspended;
+    property Terminated: boolean read FTerminated;
+    property Code: byte read FCode write SetCode;
   end;
 
 implementation
@@ -114,55 +111,15 @@ uses
   SysUtils,
   DateUtils;
 
-{ TAppIO class }
-
-constructor TAppIO.Create;
-begin
-  inherited Create;
-  FTerminated := False;
-  FCode := ccSuccesful;
-end;
-
-destructor TAppIO.Destroy;
-begin
-  inherited Destroy;
-end;
-
-procedure TAppIO.OnError(const aMessage: string; aCode: byte);
-begin
-  SetCode(aCode);
-end;
-
-procedure TAppIO.Terminate;
-begin
-  SetCode(ccUserAbort);
-end;
-
-procedure TAppIO.SetTerminated(aValue: boolean);
-begin
-  if not FTerminated then
-  begin
-    FTerminated := aValue;
-  end;
-end;
-
-procedure TAppIO.SetCode(aCode: byte);
-begin
-  if FCode < aCode then
-  begin
-    FCode := aCode;
-    if FCode >= ccError then
-      SetTerminated(True);
-  end;
-end;
-
 { TApp class }
 
 constructor TApp.Create(aParams: TStringList);
 begin
   inherited Create;
-  FSuspended := False;
   FParams := aParams;
+  FCode := ccSuccesful;
+  FTerminated := False;
+  FSuspended := False;
   FSuspendedTime := 0;
   FStartTime := 0;
   FTotalSize := 0;
@@ -178,6 +135,49 @@ end;
 procedure TApp.Execute;
 begin
   FStartTime := Now;
+end;
+
+procedure TApp.Terminate;
+begin
+  SetCode(ccUserAbort);
+end;
+
+procedure TApp.IncSize(const aValue: int64); inline;
+begin
+  Inc(FSize, aValue);
+end;
+
+procedure TApp.IncSize; inline;
+begin
+  Inc(FSize);
+end;
+
+procedure TApp.DecSize(const aValue: int64); inline;
+begin
+  Dec(FSize, aValue);
+end;
+
+procedure TApp.DecSize; inline;
+begin
+  Dec(FSize);
+end;
+
+procedure TApp.SetTerminated(aValue: boolean);
+begin
+  if not FTerminated then
+  begin
+    FTerminated := aValue;
+  end;
+end;
+
+procedure TApp.SetCode(aCode: byte);
+begin
+  if FCode < aCode then
+  begin
+    FCode := aCode;
+    if FCode >= ccError then
+      SetTerminated(True);
+  end;
 end;
 
 function TApp.GetSpeed: longint;
@@ -244,26 +244,6 @@ begin
   {$ELSE}
     { TODO :  DA IMPLEMENTARE}
   {$ENDIF}
-end;
-
-procedure TApp.IncSize(const aValue: int64); inline;
-begin
-  Inc(FSize, aValue);
-end;
-
-procedure TApp.IncSize; inline;
-begin
-  Inc(FSize);
-end;
-
-procedure TApp.DecSize(const aValue: int64); inline;
-begin
-  Dec(FSize, aValue);
-end;
-
-procedure TApp.DecSize; inline;
-begin
-  Dec(FSize);
 end;
 
 procedure TApp.DoError(const aMessage: string; aCode: byte);
@@ -345,6 +325,11 @@ begin
   X := Now;
   OnClearLine;
   FStartTime := FStartTime + (Now - X);
+end;
+
+procedure TApp.OnError(const aMessage: string; aCode: byte);
+begin
+  SetCode(aCode);
 end;
 
 end.
