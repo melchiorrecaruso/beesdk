@@ -185,7 +185,6 @@ begin
       begin
         UpdCrc32(P.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
-
         if App.Size and $FFFF = 0 then
         begin
           if App.Terminated = False then
@@ -195,14 +194,15 @@ begin
         end;
         App.IncSize;
       end;
-    end
-    else
+    end else
     begin
       SecondaryCodec.Start;
       while SrcFile.Read(Symbol, 1) = 1 do
       begin
         UpdCrc32(P.FileCrc, Symbol);
-        if App.Size and $FFFF = 0 then
+        PPM.UpdateModel(Symbol);
+
+        if (App.Size and $FFFF) = 0 then
         begin
           if App.Terminated = False then
             Progress
@@ -242,10 +242,8 @@ var
   SrcPosition: int64;
   I: int64;
 begin
-  if foDictionary in P.FileFlags then
-    PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then
-    PPM.SetTable(P.FileTable);
+  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
   if foTear in P.FileFlags then
     PPM.FreshFlexible
   else
@@ -289,8 +287,7 @@ begin
         App.IncSize;
         Inc(I);
       end;
-    end
-    else
+    end else
     begin
       SecondaryCodec.Start;
       while I < SrcSize do
@@ -433,18 +430,16 @@ var
   Crc: longword;
   I: int64;
 begin
-  if foDictionary in P.FileFlags then
-    PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then
-    PPM.SetTable(P.FileTable);
+  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
   if foTear in P.FileFlags then
     PPM.FreshFlexible
   else
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.DoMessage(msgSkipping + P.FileName);
-    pmTest: App.DoMessage(msgTesting + P.FileName);
+    pmSkip: App.DoMessage(msgSkipping   + P.FileName);
+    pmTest: App.DoMessage(msgTesting    + P.FileName);
     pmNorm: App.DoMessage(msgExtracting + P.FileName);
     pmQuit: Exit;
   end;
