@@ -27,7 +27,7 @@
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.03.21 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -69,7 +69,7 @@ type
     PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
     Stream: TFileWriter;
-    procedure Progress;
+    function Progress: boolean;
     function GetPassword(P: THeader): string;
   public
     constructor Create(aStream: TFileWriter; aApp: TApp);
@@ -145,10 +145,20 @@ begin
     Exclude(P.FileFlags, foPassword);
 end;
 
-procedure TEncoder.Progress;
+function TEncoder.Progress: boolean;
 begin
-  while App.Suspended do Sleep(250);
-  App.DoProgress;
+  Result := App.Code < ccError;
+  if Result then
+  begin
+    if App.Size and $FFFF = 0 then
+    begin
+      while App.Suspended do
+      begin
+        Sleep(250);
+      end;
+      App.DoProgress;
+    end;
+  end;
 end;
 
 procedure TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode);
@@ -167,7 +177,7 @@ begin
     emNorm: App.DoMessage(msgUpdating + P.FileName);
   end;
 
-  P.FileStartPos := Stream.Seek(0, 1);
+  P.FileStartPos := Stream.Seek(0, soFromCurrent);
   P.FileCrc      := longword(-1);
 
   SrcFile := CreateTFileReader(P.FileLink, fmOpenRead + fmShareDenyWrite);
@@ -185,14 +195,10 @@ begin
       begin
         UpdCrc32(P.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
-        if App.Size and $FFFF = 0 then
-        begin
-          if App.Terminated = False then
-            Progress
-          else
-            Break;
-        end;
-        App.IncSize;
+        if Progress then
+          App.IncSize
+        else
+          Break;
       end;
     end else
     begin
@@ -201,25 +207,20 @@ begin
       begin
         UpdCrc32(P.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
-
-        if (App.Size and $FFFF) = 0 then
-        begin
-          if App.Terminated = False then
-            Progress
-          else
-            Break;
-        end;
-        App.IncSize;
+        if Progress then
+          App.IncSize
+        else
+          Break;
       end;
       SecondaryCodec.Flush;
     end;
     App.DoClearLine;
     SrcFile.Free;
 
-    P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
-    Stream.BlowFish.Finish;                // finish after stream flush
+    P.FilePacked := Stream.Seek(0, soFromCurrent) - P.FileStartPos;
+    Stream.BlowFish.Finish;
 
-    if (not (foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
+    if (not (foMoved in P.FileFlags)) and (P.FilePacked >= P.FileSize) then
     begin
       Include(P.FileFlags, foTear);
       Include(P.FileFlags, foMoved);
@@ -253,7 +254,7 @@ begin
     emNorm: App.DoMessage(msgEncoding + P.FileName);
   end;
 
-  P.FileStartPos := Stream.Seek(0, 1);
+  P.FileStartPos := Stream.Seek(0, soFromCurrent);
   P.FileCrc      := longword(-1);
 
   if (SrcStrm <> nil) then
@@ -266,7 +267,7 @@ begin
         SrcStrm.BlowFish.Start(Password);
     end;
 
-    SrcPosition := SrcStrm.Seek(0, 1);
+    SrcPosition := SrcStrm.Seek(0, soFromCurrent);
 
     I := 0;
     if foMoved in P.FileFlags then
@@ -311,8 +312,8 @@ begin
     App.DoClearLine;
     SrcStrm.BlowFish.Finish;
 
-    P.FilePacked := Stream.Seek(0, 1) - P.FileStartPos; // stream flush
-    Stream.BlowFish.Finish;                // finish after stream flush
+    P.FilePacked := Stream.Seek(0, soFromCurrent) - P.FileStartPos; // stream flush
+    Stream.BlowFish.Finish;                                         // finish after stream flush
 
     if (not (foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
     begin
@@ -320,7 +321,7 @@ begin
       Include(P.FileFlags, foMoved);
 
       Stream.Size := P.FileStartPos;
-      SrcStrm.Seek(SrcPosition, 0);
+      SrcStrm.Seek(SrcPosition, soFromBeginning);
       App.DecSize(P.FileSize);
 
       EncodeStrm(P, emOpt, SrcStrm, SrcSize, SrcEncoded);
@@ -349,14 +350,14 @@ begin
     emNorm: App.DoMessage(msgCopying + P.FileName);
   end;
 
-  P.FileStartPos := Stream.Seek(0, 1);
+  P.FileStartPos := Stream.Seek(0, soFromCurrent);
 
   if (SrcStrm <> nil) then
   begin
     if SrcEncoded then
       SrcStrm.BlowFish.Start(GetPassword(P));
 
-    SrcStrm.Seek(SrcStartPos, 0);
+    SrcStrm.Seek(SrcStartPos, soFromBeginning);
 
     I := 0;
     while I < SrcSize do
@@ -444,7 +445,7 @@ begin
     pmQuit: Exit;
   end;
 
-  Stream.Seek(P.FileStartPos, 0);
+  Stream.Seek(P.FileStartPos, soFromBeginning);
   Crc := longword(-1);
 
   if Mode = pmNorm then
@@ -543,7 +544,7 @@ begin
     pmQuit: Exit;
   end;
 
-  Stream.Seek(P.FileStartPos, 0);
+  Stream.Seek(P.FileStartPos, soFromBeginning);
   Crc := longword(-1);
 
   if Mode = pmNorm then

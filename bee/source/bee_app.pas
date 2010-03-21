@@ -169,6 +169,7 @@ begin
   inherited Execute;
   DoMessage(FSelfName);
   with FCommandLine do
+  begin
     if (Command <> ccNone) and (Length(ArchiveName) <> 0) then
     begin
       case FCommandLine.Command of
@@ -183,7 +184,8 @@ begin
       end;
     end else
       HelpShell;
-  FTerminated := True;
+  end;
+  SetTerminated(True);
 end;
 
 { Open / Close archive routines }
@@ -210,7 +212,7 @@ procedure TBeeApp.CloseArchive(IsModified: boolean);
 begin
   if IsModified then
   begin
-    if FCode < ccError then
+    if Code < ccError then
       DoMessage(Cr + 'Archive size ' + SizeToStr(FTempFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
     else
       DoMessage(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds');
@@ -219,7 +221,7 @@ begin
     if Assigned(FTempFile) then FreeAndNil(FTempFile);
     if Assigned(FArcFile)  then FreeAndNil(FArcFile);
 
-    if FCode < ccError then
+    if Code < ccError then
     begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FCommandLine.ArchiveName);
