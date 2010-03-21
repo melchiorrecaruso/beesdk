@@ -75,8 +75,8 @@ type
     Cache:   longword;
     FFNum:   longword;
     procedure ShiftLow;
-    function InputByte: longword;
-    procedure OutputByte(aValue: longword);
+    function InputByte: byte;
+    procedure OutputByte(aValue: byte);
   public
     constructor Create(aStream: TStream);
     procedure StartEncode;
@@ -177,15 +177,12 @@ begin
   Low := Low shl 8;
 end;
 
-function TRangeCoder.InputByte: longword;
-var
-  Value: byte;
+function TRangeCoder.InputByte: byte;
 begin
-  FStream.Read(Value, 1);
-  Result := Value;
+  FStream.Read(Result, 1);
 end;
 
-procedure TRangeCoder.OutputByte(aValue: longword);
+procedure TRangeCoder.OutputByte(aValue: byte);
 begin
   FStream.Write(aValue, 1);
 end;
