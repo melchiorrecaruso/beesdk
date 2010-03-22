@@ -69,7 +69,7 @@ type
     PPM: TBaseCoder;
     SecondaryCodec: TSecondaryCodec;
     Stream: TFileWriter;
-    function Progress: boolean;
+    procedure Progress;
     function GetPassword(P: THeader): string;
   public
     constructor Create(aStream: TFileWriter; aApp: TApp);
@@ -145,7 +145,7 @@ begin
     Exclude(P.FileFlags, foPassword);
 end;
 
-function TEncoder.Progress: boolean;
+procedure TEncoder.Progress; inline;
 begin
   while App.Suspended do Sleep(250);
   App.DoProgress;
@@ -154,7 +154,7 @@ end;
 procedure TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode);
 var
   SrcFile: TFileReader;
-  Symbol:  byte;
+  Symbol: byte;
 begin
   if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
   if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
@@ -198,10 +198,10 @@ begin
       begin
         UpdCrc32(P.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
-        //if App.Size and $FFFF = 0 then
-        //begin
-        // Progress;
-        //end;
+        if App.Size and $FFFF = 0 then
+        begin
+          Progress;
+        end;
         App.IncSize;
       end;
       SecondaryCodec.Flush;
@@ -256,7 +256,9 @@ begin
       Password := GetPassword(P);
       Stream.BlowFish.Start(Password);
       if SrcEncoded then
+      begin
         SrcStrm.BlowFish.Start(Password);
+      end;
     end;
 
     SrcPosition := SrcStrm.Seek(0, soFromCurrent);
@@ -264,18 +266,14 @@ begin
     I := 0;
     if foMoved in P.FileFlags then
     begin
-      while I < SrcSize do
+      while (App.Code < ccError) and (I < SrcSize) do
       begin
         SrcStrm.Read(Symbol, 1);
         UpdCrc32(P.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
-
         if App.Size and $FFFF = 0 then
         begin
-          if App.Terminated = False then
-            Progress
-          else
-            Break;
+          Progress;
         end;
         App.IncSize;
         Inc(I);
@@ -288,13 +286,9 @@ begin
         SrcStrm.Read(Symbol, 1);
         UpdCrc32(P.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
-
         if App.Size and $FFFF = 0 then
         begin
-          if App.Terminated = False then
-            Progress
-          else
-            Break;
+          Progress;
         end;
         App.IncSize;
         Inc(I);
