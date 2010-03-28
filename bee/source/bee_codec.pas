@@ -83,17 +83,17 @@ implementation
 
 { TSecondaryEncoder }
 
-procedure TSecondaryEncoder.Start;
+procedure TSecondaryEncoder.Start; {$IFDEF FPC} inline; {$ENDIF}
 begin
   StartEncode;
 end;
 
-procedure TSecondaryEncoder.Flush;
+procedure TSecondaryEncoder.Flush; {$IFDEF FPC} inline; {$ENDIF}
 begin
   FinishEncode;
 end;
 
-function TSecondaryEncoder.UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword;
+function TSecondaryEncoder.UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
 begin
   if aSymbol = 0 then
     Encode(0, Freq0, Freq0 + Freq1)
@@ -102,7 +102,7 @@ begin
   Result := aSymbol;
 end;
 
-function TSecondaryEncoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
+function TSecondaryEncoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
 var
   CumFreq, TotFreq, I: longword;
 begin
@@ -129,31 +129,30 @@ end;
 
 { TSecondaryDecoder }
 
-procedure TSecondaryDecoder.Start;
+procedure TSecondaryDecoder.Start; {$IFDEF FPC} inline; {$ENDIF}
 begin
   StartDecode;
 end;
 
-procedure TSecondaryDecoder.Flush;
+procedure TSecondaryDecoder.Flush; {$IFDEF FPC} inline; {$ENDIF}
 begin
   FinishDecode;
 end;
 
-function TSecondaryDecoder.UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword;
+function TSecondaryDecoder.UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
 begin
   if GetFreq(Freq0 + Freq1) < Freq0 then
   begin
     Decode(0, Freq0, Freq0 + Freq1);
     Result := 0;
-  end
-  else
+  end else
   begin
     Decode(Freq0, Freq1, Freq0 + Freq1);
     Result := 1;
   end;
 end;
 
-function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
+function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
 var
   CumFreq, TotFreq, SumFreq: longword;
 begin

@@ -90,7 +90,7 @@ function RatioToStr(const PackedSize, Size: int64): string;
 function SizeToStr(const Size: int64): string;
 function AttrToStr(Attr: longint): string;
 
-function ReverseString(const Str: string): string; inline;
+function ReverseString(const Str: string): string; 
 
 { time handling routines }
 
@@ -134,7 +134,7 @@ const
 
 { filename handling routines }
 
-function FileNamePos(const Substr, Str: string): longint; inline;
+function FileNamePos(const Substr, Str: string): longint; {$IFDEF FPC} inline; {$ENDIF}
 begin
   {$IFDEF FILENAMECASESENSITIVE}
   Result := System.Pos(SubStr, Str);
@@ -143,7 +143,7 @@ begin
   {$ENDIF}
 end;
 
-function FileNameLastPos(const Substr, Str: string): longint; inline;
+function FileNameLastPos(const Substr, Str: string): longint; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := FileNamePos(ReverseString(SubStr), ReverseString(Str));
   if (Result <> 0) then
@@ -152,7 +152,7 @@ begin
   end;
 end;
 
-function FileNameUseWildcards(const FileName: string): boolean; inline;
+function FileNameUseWildcards(const FileName: string): boolean; {$IFDEF FPC} inline; {$ENDIF}
 begin
   if System.Pos('*', FileName) > 0 then
     Result := True
@@ -163,7 +163,7 @@ begin
       Result := False;
 end;
 
-function MatchPattern(Element, Pattern: PChar): boolean; inline;
+function MatchPattern(Element, Pattern: PChar): boolean; {$IFDEF FPC} inline; {$ENDIF}
 begin
   if 0 = StrComp(Pattern, '*') then
     Result := True
@@ -190,7 +190,7 @@ begin
         end;
 end;
 
-function CharCount(const S: string; C: char): longint; inline;
+function CharCount(const S: string; C: char): longint; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longint;
 begin
@@ -202,7 +202,7 @@ begin
   end;
 end;
 
-function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; inline;
+function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; {$IFDEF FPC} inline; {$ENDIF}
 var
   iFileDrive: string;
   iFileName: string;
@@ -258,7 +258,7 @@ begin
     Result := False;
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; inline;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longint;
 begin
@@ -273,7 +273,7 @@ begin
   end;
 end;
 
-function IncludeTrailingBackSpace(const DirName: string): string; inline;
+function IncludeTrailingBackSpace(const DirName: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   Len: longint;
 begin
@@ -284,7 +284,7 @@ begin
     Result := DirName;
 end;
 
-function ExcludeTrailingBackSpace(const DirName: string): string; inline;
+function ExcludeTrailingBackSpace(const DirName: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   Len: longint;
 begin
@@ -295,7 +295,7 @@ begin
     Result := DirName;
 end;
 
-function IncludeTrailingBackSlash(const DirName: string): string; inline;
+function IncludeTrailingBackSlash(const DirName: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   Len: longint;
 begin
@@ -306,7 +306,7 @@ begin
     Result := DirName;
 end;
 
-function ExcludeTrailingBackSlash(const DirName: string): string; inline;
+function ExcludeTrailingBackSlash(const DirName: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   Len: longint;
 begin
@@ -317,7 +317,7 @@ begin
     Result := DirName;
 end;
 
-function CompareFileName(const S1, S2: string): longint; inline;
+function CompareFileName(const S1, S2: string): longint; {$IFDEF FPC} inline; {$ENDIF}
 begin
   {$IFDEF FILENAMECASESENSITIVE}
   Result := SysUtils.CompareStr(S1, S2);
@@ -326,7 +326,7 @@ begin
   {$ENDIF}
 end;
 
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode); inline;
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode); {$IFDEF FPC} inline; {$ENDIF}
 var
   I:     longint;
   Error: longint;
@@ -382,7 +382,7 @@ begin
     if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
 
-function DeleteFilePath(const FilePath, FileName: string): string; inline;
+function DeleteFilePath(const FilePath, FileName: string): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := FileName;
   if FileNamePos(FilePath, Result) = 1 then
@@ -391,7 +391,7 @@ begin
   end;
 end;
 
-function DeleteFileDrive(const FileName: string): string; inline;
+function DeleteFileDrive(const FileName: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   Drive: string;
 begin
@@ -403,7 +403,7 @@ begin
   end;
 end;
 
-function DoDirSeparators(const FileName: string): string; inline;
+function DoDirSeparators(const FileName: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   I, Len: longint;
 begin
@@ -416,7 +416,7 @@ begin
   end;
 end;
 
-function FixFileName(const FileName: string): string; inline;
+function FixFileName(const FileName: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longint;
 begin
@@ -447,7 +447,7 @@ begin
   Result := ExcludeTrailingBackSlash(Result);
 end;
 
-function FixDirName(const DirName: string): string; inline;
+function FixDirName(const DirName: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longint;
 begin
@@ -476,17 +476,17 @@ begin
   end;
 end;
 
-function SelfName: string; inline;
+function SelfName: string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := ExtractFileName(ParamStr(0));
 end;
 
-function SelfPath: string; inline;
+function SelfPath: string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := ExtractFilePath(ParamStr(0));
 end;
 
-function GenerateFileName(const FilePath: string): string; inline;
+function GenerateFileName(const FilePath: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longint;
 begin
@@ -500,7 +500,7 @@ begin
   until FileAge(Result) = -1;
 end;
 
-function GenerateAlternativeFileName(const FileName: string; Check: boolean): string; inline;
+function GenerateAlternativeFileName(const FileName: string; Check: boolean): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longint;
 begin
@@ -513,7 +513,7 @@ end;
 
 { directory handling routines }
 
-function DirectoryExists(const DirName: string): boolean; inline;
+function DirectoryExists(const DirName: string): boolean; {$IFDEF FPC} inline; {$ENDIF}
 var
   Code: longint;
 begin
@@ -521,7 +521,7 @@ begin
   Result := (Code <> -1) and (faDirectory and Code <> 0);
 end;
 
-function ForceDirectories(const DirName: string): boolean; inline;
+function ForceDirectories(const DirName: string): boolean; {$IFDEF FPC} inline; {$ENDIF}
 var
   S: string;
 begin
@@ -544,7 +544,7 @@ end;
 
 { oem-ansi charset functions }
 
-function ParamToOem(const Param: string): string; inline;
+function ParamToOem(const Param: string): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   if Length(Param) <> 0 then
   begin
@@ -558,7 +558,7 @@ begin
     Result := '';
 end;
 
-function OemToParam(const Param: string): string; inline;
+function OemToParam(const Param: string): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   if Length(Param) <> 0 then
   begin
@@ -574,13 +574,13 @@ end;
 
 { string and pchar routines }
 
-function StringToPChar(const aValue: string): PChar; inline;
+function StringToPChar(const aValue: string): PChar; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := StrAlloc(Length(aValue) + 1);
   Result := StrPCopy(Result, aValue);
 end;
 
-function PCharToString(aValue: PChar): string; inline;
+function PCharToString(aValue: PChar): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longint;
 begin
@@ -596,13 +596,13 @@ begin
     SetLength(Result, 0);
 end;
 
-procedure FreePChar(var aValue: PChar); inline;
+procedure FreePChar(var aValue: PChar); {$IFDEF FPC} inline; {$ENDIF}
 begin
   StrDispose(aValue);
   aValue := nil;
 end;
 
-function RatioToStr(const PackedSize, Size: int64): string; inline;
+function RatioToStr(const PackedSize, Size: int64): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   if Size > 0 then
     Result := Format('%u%%', [Round((PackedSize / Size) * 100)])
@@ -610,12 +610,12 @@ begin
     Result := Format('%u%%', [100]);
 end;
 
-function SizeToStr(const Size: int64): string; inline;
+function SizeToStr(const Size: int64): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := Format('%u', [Size]);
 end;
 
-function AttrToStr(Attr: longint): string; inline;
+function AttrToStr(Attr: longint): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := 'RHSVDAL';
   if Attr and faReadOnly  = 0 then Result[1] := '.';
@@ -627,7 +627,7 @@ begin
   if Attr and faSymLink   = 0 then Result[7] := '.';
 end;
 
-function ReverseString(const Str: string): string; inline;
+function ReverseString(const Str: string): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   I, Len: longint;
 begin
@@ -639,12 +639,12 @@ begin
   end;
 end;
 
-function TimeDifference(X: double): string; inline;
+function TimeDifference(X: double): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := Format('%0.2f', [(Now - X) * (24 * 60 * 60)]);
 end;
 
-function TimeToStr(T: longint): string; inline;
+function TimeToStr(T: longint): string; {$IFDEF FPC} inline; {$ENDIF}
 var
   H, M, S:    string;
   ZH, ZM, ZS: longint;
@@ -671,12 +671,12 @@ begin
   Result := H + ':' + M + ':' + S;
 end;
 
-function DateTimeToString(X: TDateTime): string; inline;
+function DateTimeToString(X: TDateTime): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   SysUtils.DateTimeToString(Result, 'dd/mm/yy hh:mm', X);
 end;
 
-function DateTimeToString(X: TDateTime; const Format: string): string; inline;
+function DateTimeToString(X: TDateTime; const Format: string): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   SysUtils.DateTimeToString(Result, Format, X);
 end;

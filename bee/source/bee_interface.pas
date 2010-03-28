@@ -139,22 +139,22 @@ begin
   SetCode(ccUserAbort);
 end;
 
-procedure TApp.IncSize(const aValue: int64); inline;
+procedure TApp.IncSize(const aValue: int64); {$IFDEF FPC} inline; {$ENDIF}
 begin
   Inc(FSize, aValue);
 end;
 
-procedure TApp.IncSize; inline;
+procedure TApp.IncSize; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Inc(FSize);
 end;
 
-procedure TApp.DecSize(const aValue: int64); inline;
+procedure TApp.DecSize(const aValue: int64); {$IFDEF FPC} inline; {$ENDIF}
 begin
   Dec(FSize, aValue);
 end;
 
-procedure TApp.DecSize; inline;
+procedure TApp.DecSize; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Dec(FSize);
 end;

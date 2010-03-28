@@ -410,7 +410,7 @@ begin
   end;
 end;
 
-procedure TBaseCoder.Step;
+procedure TBaseCoder.Step; {$IFDEF FPC} inline; {$ENDIF}
 var
   I, J: longword;
   P:    PNode;
@@ -461,7 +461,7 @@ begin
   end;
 end;
 
-function TBaseCoder.UpdateModel(aSymbol: longword): longword;
+function TBaseCoder.UpdateModel(aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Part   := @Table.T[0];
   Symbol := aSymbol shr $4;

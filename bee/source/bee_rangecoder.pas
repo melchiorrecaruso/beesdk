@@ -98,7 +98,7 @@ begin
   FStream := aStream;
 end;
 
-procedure TRangeCoder.StartEncode;
+procedure TRangeCoder.StartEncode; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Range := $FFFFFFFF;
   Low   := 0;
@@ -106,7 +106,7 @@ begin
   Carry := 0;
 end;
 
-procedure TRangeCoder.StartDecode;
+procedure TRangeCoder.StartDecode; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longword;
 begin
@@ -115,19 +115,19 @@ begin
     Code := Code shl 8 + InputByte;
 end;
 
-procedure TRangeCoder.FinishEncode;
+procedure TRangeCoder.FinishEncode; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longword;
 begin
   for I := 0 to NUM do ShiftLow;
 end;
 
-procedure TRangeCoder.FinishDecode;
+procedure TRangeCoder.FinishDecode; {$IFDEF FPC} inline; {$ENDIF}
 begin
   { nothing to do }
 end;
 
-procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: longword);
+procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: longword); {$IFDEF FPC} inline; {$ENDIF}
 var
   Tmp: longword;
 begin
@@ -142,7 +142,7 @@ begin
   end;
 end;
 
-procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: longword);
+procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: longword); {$IFDEF FPC} inline; {$ENDIF}
 begin
   Code  := Code - MulDiv(Range, CumFreq, TotFreq);
   Range := MulDiv(Range, Freq, TotFreq);
@@ -153,12 +153,12 @@ begin
   end;
 end;
 
-function TRangeCoder.GetFreq(TotFreq: longword): longword;
+function TRangeCoder.GetFreq(TotFreq: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := MulDecDiv(Code + 1, TotFreq, Range);
 end;
 
-procedure TRangeCoder.ShiftLow;
+procedure TRangeCoder.ShiftLow; {$IFDEF FPC} inline; {$ENDIF}
 begin
   if (Low < Thres) or (Carry <> 0) then
   begin
@@ -176,12 +176,12 @@ begin
   Low := Low shl 8;
 end;
 
-function TRangeCoder.InputByte: byte;
+function TRangeCoder.InputByte: byte; {$IFDEF FPC} inline; {$ENDIF}
 begin
   FStream.Read(Result, 1);
 end;
 
-procedure TRangeCoder.OutputByte(aValue: byte);
+procedure TRangeCoder.OutputByte(aValue: byte); {$IFDEF FPC} inline; {$ENDIF}
 begin
   FStream.Write(aValue, 1);
 end;
