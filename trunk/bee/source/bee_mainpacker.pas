@@ -224,7 +224,7 @@ begin
 end;
 
 procedure TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader; const SrcSize: int64; SrcEncoded: boolean);
+  SrcStrm: TFileReader; const SrcSize: int64; SrcEncoded: boolean); {$IFDEF FPC} inline; {$ENDIF}
 var
   Symbol: byte;
   Password: string;
@@ -306,7 +306,7 @@ begin
 end;
 
 procedure TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-  const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean);
+  const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean); {$IFDEF FPC} inline; {$ENDIF}
 var
   Symbol: byte;
   I:      int64;
@@ -381,14 +381,17 @@ begin
   FreePChar(FI.FileName);
 end;
 
-procedure TDecoder.Progress;
+procedure TDecoder.Progress; {$IFDEF FPC} inline; {$ENDIF}
 begin
-  while App.Suspended do
-    Sleep(250);
-  App.DoProgress;
+  if App.Size and $FFFF = 0 then
+  begin
+    while App.Suspended do Sleep(250);
+    App.DoProgress;
+  end;
+  App.IncSize;
 end;
 
-procedure TDecoder.DecodeFile(P: THeader; Mode: TExtractingMode);
+procedure TDecoder.DecodeFile(P: THeader; Mode: TExtractingMode); {$IFDEF FPC} inline; {$ENDIF}
 var
   DstFile: TFileWriter;
   Symbol: byte;
@@ -425,40 +428,23 @@ begin
     I := 0;
     if foMoved in P.FileFlags then
     begin
-      while I < P.FileSize do
+      while (App.Code < ccError) and (I < P.FileSize) do
       begin
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
-
-        if App.Size and $FFFF = 0 then
-        begin
-          if App.Terminated = False then
-            Progress
-          else
-            Break;
-        end;
-        App.IncSize;
+        Progress;
         Inc(I);
       end;
-    end
-    else
+    end else
     begin
       SecondaryCodec.Start;
-      while I < P.FileSize do
+      while (App.Code < ccError) and (I < P.FileSize) do
       begin
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
-
-        if App.Size and $FFFF = 0 then
-        begin
-          if App.Terminated = False then
-            Progress
-          else
-            Break;
-        end;
-        App.IncSize;
+        Progress;
         Inc(I);
       end;
       SecondaryCodec.Flush;
@@ -484,7 +470,7 @@ begin
 end;
 
 procedure TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
-  DstStrm: TFileWriter; const DstSize: int64; DstEncoded: boolean);
+  DstStrm: TFileWriter; const DstSize: int64; DstEncoded: boolean); {$IFDEF FPC} inline; {$ENDIF}
 var
   DstFile: TFileWriter;
   Password: string;
@@ -492,10 +478,8 @@ var
   Crc: longword;
   I: int64;
 begin
-  if foDictionary in P.FileFlags then
-    PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then
-    PPM.SetTable(P.FileTable);
+  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
   if foTear in P.FileFlags then
     PPM.FreshFlexible
   else
@@ -529,40 +513,24 @@ begin
     I := 0;
     if foMoved in P.FileFlags then
     begin
-      while I < DstSize do
+      while (App.Code < ccError) and (I < DstSize) do
       begin
         Stream.Read(Symbol, 1);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
-
-        if App.Size and $FFFF = 0 then
-        begin
-          if App.Terminated = False then
-            Progress
-          else
-            Break;
-        end;
-        App.IncSize;
+        Progress;
         Inc(I);
       end;
     end
     else
     begin
       SecondaryCodec.Start;
-      while I < DstSize do
+      while (App.Code < ccError) and (I < DstSize) do
       begin
         Symbol := PPM.UpdateModel(0);
         UpdCrc32(Crc, Symbol);
         DstFile.Write(Symbol, 1);
-
-        if App.Size and $FFFF = 0 then
-        begin
-          if not App.Terminated then
-            Progress
-          else
-            Break;
-        end;
-        App.IncSize;
+        Progress;
         Inc(I);
       end;
       SecondaryCodec.Flush;

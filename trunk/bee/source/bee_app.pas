@@ -182,6 +182,12 @@ begin
         ccRename:   RenameShell;
         ccHelp:     HelpShell;
       end;
+
+      if FCommandLine.Command in [ccAdd, ccDelete, ccRename] then
+      begin
+        ProcesstOption; // process tOption
+        ProcesslOption; // process lOption
+      end;
     end else
       HelpShell;
   end;
@@ -225,11 +231,7 @@ begin
     begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FCommandLine.ArchiveName);
-      if RenameFile(FTempName, FCommandLine.ArchiveName) then
-      begin
-        ProcesstOption; // process tOption
-        ProcesslOption; // process lOption
-      end else
+      if not RenameFile(FTempName, FCommandLine.ArchiveName) then
         DoError('Error: can''t rename "' + FTempName + '" to "' + FCommandLine.ArchiveName + '"', ccError);
     end else
     begin
@@ -238,8 +240,7 @@ begin
     end;
   end else
   begin
-    if Assigned(FArcFile) then
-      FreeAndNil(FArcFile);
+    if Assigned(FArcFile) then FreeAndNil(FArcFile);
   end;
   FHeaders.Free;
 end;
@@ -928,7 +929,7 @@ begin
     end else // if FtotalSize <> 0
       DoError('Warning: no files to process', ccWarning);
   end;
-  CloseArchive(FtotalSize <> 0);
+  CloseArchive(FTotalSize <> 0);
 end;
 
 procedure TBeeApp.DecodeShell(const aAction: THeaderAction);
