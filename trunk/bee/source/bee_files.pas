@@ -89,8 +89,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function Read(var Buffer; Count: longint): longint; override;
-    function Write(const Buffer; Count: longint): longint; override;
+    function Read(var Data; Count: longint): longint; override;
+    function Write(const Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
   end;
@@ -161,9 +161,8 @@ begin
   begin
     byte(Data) := Buffer[BufferReaded];
     Inc(BufferReaded);
-    Result := Count;
-  end
-  else
+    Result := 1;
+  end else
   begin
     Result := 0;
     repeat
@@ -172,8 +171,7 @@ begin
         BufferReaded := 0;
         BufferSize   := inherited Read(Buffer, SizeOf(Buffer));
 
-        if BufferSize = 0 then
-          Exit; // This causes Result < Count
+        if BufferSize = 0 then Exit; // This causes Result < Count
 
         if BlowFish.Started then
           BlowFish.Decode(Buffer, BufferSize);
@@ -184,6 +182,7 @@ begin
         S := BufferSize - BufferReaded;
 
       CopyBytes(Buffer[BufferReaded], Bytes[Result], S);
+
       Inc(Result, S);
       Inc(BufferReaded, S);
     until Result = Count;
@@ -249,6 +248,36 @@ var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
   S:     longint;
 begin
+
+  if (Count = 1) and (SizeOf(Buffer) > BufferSize) then
+  begin
+    Buffer[BufferSize] := byte(Data);
+    Inc(BufferSize);
+    Result := 1;
+  end else
+    if Count > (SizeOf(Buffer) - BufferSize) then
+    begin
+      Result := 0;
+      repeat
+        S := SizeOf(Buffer) - BufferSize;
+        CopyBytes(Bytes[Result], Buffer[BufferSize], S);
+        Inc(Result, S);
+        Inc(BufferSize, S);
+        Flush;
+      until ((Count - Result) <= SizeOf(Buffer));
+
+      CopyBytes(Bytes[Result], Buffer[BufferSize], Count - Result);
+      Inc(BufferSize, Count - Result);
+      Inc(Result, Count - Result);
+    end else
+    begin
+      CopyBytes(Data, Buffer[BufferSize], Count);
+      Inc(BufferSize, Count);
+      Result := Count;
+    end;
+
+  (*
+
   if Count > (SizeOf(Buffer) - BufferSize) then
   begin
     Result := 0;
@@ -263,20 +292,19 @@ begin
     CopyBytes(Bytes[Result], Buffer[BufferSize], Count - Result);
     Inc(BufferSize, Count - Result);
     Inc(Result, Count - Result);
-  end
-  else
-  if Count > 1 then
-  begin
-    CopyBytes(Data, Buffer[BufferSize], Count);
-    Inc(BufferSize, Count);
-    Result := Count;
-  end
-  else
-  begin
-    Buffer[BufferSize] := byte(Data);
-    Inc(BufferSize);
-    Result := Count;
-  end;
+  end else
+    if Count > 1 then
+    begin
+      CopyBytes(Data, Buffer[BufferSize], Count);
+      Inc(BufferSize, Count);
+      Result := Count;
+    end else
+    begin
+      Buffer[BufferSize] := byte(Data);
+      Inc(BufferSize);
+      Result := Count;
+    end;
+  *)
 end;
 
 function TFileWriter.Seek(Offset: longint; Origin: word): longint;
@@ -332,12 +360,12 @@ begin
   { inherited Destroy; }
 end;
 
-function TNulWriter.Read(var Buffer; Count: longint): longint;
+function TNulWriter.Read(var Data; Count: longint): longint;
 begin
   Result := 0;
 end;
 
-function TNulWriter.Write(const Buffer; Count: longint): longint;
+function TNulWriter.Write(const Data; Count: longint): longint;
 begin
   Inc(FPosition, Count);
   if FPosition > FSize then

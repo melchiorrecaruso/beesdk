@@ -88,7 +88,7 @@ const
 
 { Crc32 calculating routines }
 
-procedure UpdCrc32(var aCrc32: longword; aData: byte); inline;
+procedure UpdCrc32(var aCrc32: longword; aData: byte); {$IFDEF FPC} inline; {$ENDIF}
 var
   Temp: longword;
 begin
@@ -96,12 +96,12 @@ begin
   aCrc32 := Crc32Tab[byte(Temp xor aData)] xor (Temp shr 8);
 end;
 
-function UpdateCrc32(const aCrc32: longword; aData: byte): longword; inline;
+function UpdateCrc32(const aCrc32: longword; aData: byte): longword; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := Crc32Tab[byte(aCrc32 xor aData)] xor (aCrc32 shr 8);
 end;
 
-function Crc32File(const aFileName: string): longword; inline;
+function Crc32File(const aFileName: string): longword; {$IFDEF FPC} inline; {$ENDIF}
 var
   Stream: TFileStream;
   Buffer: array [0..$00010000 - 1] of byte;
@@ -130,7 +130,7 @@ begin
   Result := not Result;
 end;
 
-function Crc32Str(const aString: string): longword; inline;
+function Crc32Str(const aString: string): longword; {$IFDEF FPC} inline; {$ENDIF}
 var
   I: longint;
 begin

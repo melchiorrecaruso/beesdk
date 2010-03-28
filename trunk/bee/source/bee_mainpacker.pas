@@ -145,13 +145,17 @@ begin
     Exclude(P.FileFlags, foPassword);
 end;
 
-procedure TEncoder.Progress; inline;
+procedure TEncoder.Progress; {$IFDEF FPC} inline; {$ENDIF}
 begin
-  while App.Suspended do Sleep(250);
-  App.DoProgress;
+  if App.Size and $FFFF = 0 then
+  begin
+    while App.Suspended do Sleep(250);
+    App.DoProgress;
+  end;
+  App.IncSize;
 end;
 
-procedure TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode);
+procedure TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode); {$IFDEF FPC} inline; {$ENDIF}
 var
   SrcFile: TFileReader;
   Symbol: byte;
@@ -185,11 +189,7 @@ begin
       begin
         UpdCrc32(P.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
-        if App.Size and $FFFF = 0 then
-        begin
-          Progress;
-        end;
-        App.IncSize;
+        Progress;
       end;
     end else
     begin
@@ -198,11 +198,7 @@ begin
       begin
         UpdCrc32(P.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
-        if App.Size and $FFFF = 0 then
-        begin
-          Progress;
-        end;
-        App.IncSize;
+        Progress;
       end;
       SecondaryCodec.Flush;
     end;
@@ -271,11 +267,7 @@ begin
         SrcStrm.Read(Symbol, 1);
         UpdCrc32(P.FileCrc, Symbol);
         Stream.Write(Symbol, 1);
-        if App.Size and $FFFF = 0 then
-        begin
-          Progress;
-        end;
-        App.IncSize;
+        Progress;
         Inc(I);
       end;
     end else
@@ -286,11 +278,7 @@ begin
         SrcStrm.Read(Symbol, 1);
         UpdCrc32(P.FileCrc, Symbol);
         PPM.UpdateModel(Symbol);
-        if App.Size and $FFFF = 0 then
-        begin
-          Progress;
-        end;
-        App.IncSize;
+        Progress;
         Inc(I);
       end;
       SecondaryCodec.Flush;
@@ -323,10 +311,8 @@ var
   Symbol: byte;
   I:      int64;
 begin
-  if foDictionary in P.FileFlags then
-    PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then
-    PPM.SetTable(P.FileTable);
+  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
+  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
   if foTear in P.FileFlags then
     PPM.FreshFlexible
   else
@@ -346,26 +332,18 @@ begin
     SrcStrm.Seek(SrcStartPos, soFromBeginning);
 
     I := 0;
-    while I < SrcSize do
+    while (App.Code < ccError) and (I < SrcSize) do
     begin
       SrcStrm.Read(Symbol, 1);
       Stream.Write(Symbol, 1);
-
-      if App.Size and $FFFF = 0 then
-      begin
-        if App.Terminated = False then
-          Progress
-        else
-          Break;
-      end;
-      App.IncSize;
+      Progress;
       Inc(I);
     end;
     App.DoClearLine;
     SrcStrm.BlowFish.Finish;
 
   end else
-    App.DoError('Error: stream  not found', ccError);
+    App.DoError('Error: stream not found', ccError);
 end;
 
 { TDecoder class }
