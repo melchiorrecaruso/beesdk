@@ -30,7 +30,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="16">
+    <Units Count="14">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -60,7 +60,6 @@
         <TopLine Value="101"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <IsVisibleTab Value="True"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -83,7 +82,7 @@
         <UnitName Value="Bee_Headers"/>
         <CursorPos X="37" Y="200"/>
         <TopLine Value="156"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <UsageCount Value="69"/>
         <Loaded Value="True"/>
@@ -114,7 +113,7 @@
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
         <CursorPos X="40" Y="64"/>
-        <TopLine Value="1"/>
+        <TopLine Value="146"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <UsageCount Value="43"/>
@@ -126,8 +125,9 @@
         <UnitName Value="Bee_Library"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="4"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
+        <IsVisibleTab Value="True"/>
         <UsageCount Value="43"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -137,7 +137,7 @@
         <UnitName Value="Bee_MainPacker"/>
         <CursorPos X="68" Y="184"/>
         <TopLine Value="166"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <UsageCount Value="43"/>
         <Loaded Value="True"/>
@@ -149,7 +149,7 @@
         <UnitName Value="Bee_Types"/>
         <CursorPos X="19" Y="83"/>
         <TopLine Value="58"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <UsageCount Value="43"/>
         <Loaded Value="True"/>
@@ -160,7 +160,7 @@
         <UnitName Value="BeeLib_Link"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="16"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <UsageCount Value="43"/>
         <Loaded Value="True"/>
@@ -171,7 +171,7 @@
         <UnitName Value="BeeLib_Plugins"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="10"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <UsageCount Value="43"/>
         <Loaded Value="True"/>
@@ -189,28 +189,8 @@
         <SyntaxHighlighter Value="Delphi"/>
         <FoldState Value=" T4jQ0BP PkRlc0P"/>
       </Unit13>
-      <Unit14>
-        <Filename Value="C:\Programmi\FPC\2.4.0\source\fpcsrc\packages\fcl-base\src\blowfish.pp"/>
-        <UnitName Value="BlowFish"/>
-        <CursorPos X="3" Y="33"/>
-        <TopLine Value="625"/>
-        <EditorIndex Value="7"/>
-        <WindowIndex Value="0"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="C:\Programmi\FPC\2.4.0\source\fpcsrc\packages\fcl-base\src\bufstream.pp"/>
-        <UnitName Value="bufstream"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="52"/>
-        <EditorIndex Value="6"/>
-        <WindowIndex Value="0"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit15>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="bee_interface.pas"/>
         <Caret Line="139" Column="15" TopLine="114"/>
@@ -324,13 +304,9 @@
         <Caret Line="40" Column="9" TopLine="22"/>
       </Position28>
       <Position29>
-        <Filename Value="C:\Programmi\FPC\2.4.0\source\fpcsrc\packages\fcl-base\src\blowfish.pp"/>
-        <Caret Line="488" Column="46" TopLine="470"/>
-      </Position29>
-      <Position30>
         <Filename Value="bee_files.pas"/>
         <Caret Line="41" Column="8" TopLine="22"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
