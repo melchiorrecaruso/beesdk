@@ -180,10 +180,9 @@
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
         <CursorPos X="1" Y="315"/>
-        <TopLine Value="127"/>
+        <TopLine Value="104"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <IsVisibleTab Value="True"/>
         <UsageCount Value="31"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
@@ -229,6 +228,7 @@
         <TopLine Value="120"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
+        <IsVisibleTab Value="True"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <SyntaxHighlighter Value="Delphi"/>
