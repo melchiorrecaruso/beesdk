@@ -102,6 +102,7 @@ type
     property Code: byte read FCode write SetCode;
   end;
 
+
 implementation
 
 uses
@@ -243,7 +244,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TApp.DoError(const aMessage: string; aCode: byte);
+procedure TApp.DoError(const aMessage: string; aCode: byte); {$IFDEF FPC} inline; {$ENDIF}
 var
   X: double;
 begin
@@ -252,7 +253,7 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.OnError(const aMessage: string; aCode: byte);
+procedure TApp.OnError(const aMessage: string; aCode: byte); {$IFDEF FPC} inline; {$ENDIF}
 begin
   SetCode(aCode);
 end;
@@ -293,7 +294,7 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.DORequest(const aMessage: string);
+procedure TApp.DoRequest(const aMessage: string);
 var
   X: double;
 begin
@@ -311,7 +312,7 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.DoProgress;
+procedure TApp.DoProgress; {$IFDEF FPC} inline; {$ENDIF}
 var
   X: double;
 begin
