@@ -42,6 +42,7 @@ program Bee;
 {$I compiler.inc}
 
 uses
+  CMem,
   {$IFDEF CONSOLEAPPLICATION}
   {$IFDEF MSWINDOWS}
   Windows,
