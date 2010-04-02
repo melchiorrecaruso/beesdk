@@ -142,7 +142,9 @@ begin
   FreePChar(FI.FileName);
 
   if Length(Result) < MinKeyLength then
+  begin
     Exclude(P.FileFlags, foPassword);
+  end;
 end;
 
 procedure TEncoder.Progress; {$IFDEF FPC} inline; {$ENDIF}
@@ -220,7 +222,7 @@ begin
     end;
 
   end else
-    App.DoError('Error: can''t open file "' + P.FileLink + '"', ccError);
+    App.DoMessage(Format(cmeFileOpen, [P.FileLink]), ccError);
 end;
 
 procedure TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
@@ -302,7 +304,7 @@ begin
     end;
 
   end else
-    App.DoError('Error: stream  not found', ccError);
+    App.DoMessage(cmeStrmOpen, ccError);
 end;
 
 procedure TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
@@ -343,7 +345,7 @@ begin
     SrcStrm.BlowFish.Finish;
 
   end else
-    App.DoError('Error: stream not found', ccError);
+    App.DoMessage(cmeStrmOpen, ccError);
 end;
 
 { TDecoder class }
@@ -463,10 +465,10 @@ begin
   end;
 
   if Crc = longword(-1) then
-    App.DoError('Error: can''t open file ' + P.FileName, ccError)
+    App.DoMessage(Format(cmeFileOpen, [P.FileName]), ccError)
   else
     if Crc <> P.FileCrc then
-      App.DoError(msgCRCERROR + P.FileName, ccError);
+      App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
 end;
 
 procedure TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
@@ -487,7 +489,7 @@ begin
 
   case Mode of
     pmSkip: App.DoMessage(msgSkipping + P.FileName);
-    pmTest: App.DoMessage(msgTesting + P.FileName);
+    pmTest: App.DoMessage(msgTesting  + P.FileName);
     pmNorm: App.DoMessage(msgDecoding + P.FileName);
     pmQuit: Exit;
   end;
@@ -521,8 +523,7 @@ begin
         Progress;
         Inc(I);
       end;
-    end
-    else
+    end else
     begin
       SecondaryCodec.Start;
       while (App.Code < ccError) and (I < DstSize) do
@@ -544,10 +545,10 @@ begin
   end;
 
   if Crc = longword(-1) then
-    App.DoError('Error: stream not found', ccError)
+    App.DoMessage(Format(cmeFileOpen, [P.FileName]), ccError)
   else
     if Crc <> P.FileCrc then
-      App.DoError(msgCRCERROR + P.FileName, ccError);
+      App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
 end;
 
 end.

@@ -72,12 +72,12 @@ type
     procedure IncSize(const aValue: int64); overload;
     procedure DecSize(const aValue: int64); overload;
 
-    procedure DoError(const aMessage: string; aCode: byte);
-    procedure OnError(const aMessage: string; aCode: byte); virtual;
+    procedure DoMessage(const aMessage: string; aCode: byte); overload;
+    procedure OnMessage(const aMessage: string; aCode: byte); virtual; overload;
     procedure DoRequest(const aMessage: string);
     procedure OnRequest(const aMessage: string); virtual; abstract;
-    procedure DoMessage(const aMessage: string);
-    procedure OnMessage(const aMessage: string); virtual; abstract;
+    procedure DoMessage(const aMessage: string); overload;
+    procedure OnMessage(const aMessage: string); virtual; abstract; overload;
     function DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
     function OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
     function DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
@@ -244,16 +244,16 @@ begin
   {$ENDIF}
 end;
 
-procedure TApp.DoError(const aMessage: string; aCode: byte); {$IFDEF FPC} inline; {$ENDIF}
+procedure TApp.DoMessage(const aMessage: string; aCode: byte); {$IFDEF FPC} inline; {$ENDIF}
 var
   X: double;
 begin
   X := Now;
-  OnError(aMessage, aCode);
+  OnMessage(aMessage, aCode);
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.OnError(const aMessage: string; aCode: byte); {$IFDEF FPC} inline; {$ENDIF}
+procedure TApp.OnMessage(const aMessage: string; aCode: byte); {$IFDEF FPC} inline; {$ENDIF}
 begin
   SetCode(aCode);
 end;
