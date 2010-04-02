@@ -55,6 +55,7 @@ uses
   SysUtils,
   Bee_App,
   Bee_Types,
+  Bee_Consts,
   Bee_Common;
 
 type
@@ -66,7 +67,7 @@ type
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
-    procedure OnError(const aMessage: string; aCode: byte); override;
+    procedure OnMessage(const aMessage: string; aCode: byte); override;
     procedure OnRequest(const aMessage: string); override;
     procedure OnMessage(const aMessage: string); override;
     function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; override;
@@ -95,7 +96,7 @@ type
     inherited Destroy;
   end;
 
-  procedure TCustomBeeApp.OnError(const aMessage: string; aCode: byte);
+  procedure TCustomBeeApp.OnMessage(const aMessage: string; aCode: byte);
   begin
     Writeln(ParamToOem(aMessage));
   end;
@@ -233,11 +234,11 @@ var
   function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
-      CTRL_C_EVENT:        App.Terminate;
-      CTRL_BREAK_EVENT:    App.Terminate;
-      CTRL_CLOSE_EVENT:    App.Terminate;
-      CTRL_LOGOFF_EVENT:   App.Terminate;
-      CTRL_SHUTDOWN_EVENT: App.Terminate;
+      CTRL_C_EVENT:        App.Code := ccUserAbort;
+      CTRL_BREAK_EVENT:    App.Code := ccUserAbort;
+      CTRL_CLOSE_EVENT:    App.Code := ccUserAbort;
+      CTRL_LOGOFF_EVENT:   App.Code := ccUserAbort;
+      CTRL_SHUTDOWN_EVENT: App.Code := ccUserAbort;
     end;
     Result := True;
   end;

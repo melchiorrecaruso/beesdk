@@ -142,11 +142,10 @@ begin
 
   { load configuration }
   FConfiguration := TConfiguration.Create;
-  if not FileExists(FCommandLine.cfgOption) then
-    DoError('Warning: configuration file "' + FCommandLine.cfgOption +
-      '" not found, data will be stored' + Cr, ccWarning)
+  if FileExists(FCommandLine.cfgOption) then
+    FConfiguration.LoadFromFile(FCommandLine.cfgOption)
   else
-    FConfiguration.LoadFromFile(FCommandLine.cfgOption);
+    DoMessage(Format(cmwConfigFile, [FCommandLine.cfgOption]), ccWarning);
 
   { load method and dictionary level }
   FConfiguration.Selector('\main');
@@ -198,9 +197,8 @@ end;
 
 procedure TBeeApp.OpenArchive(const aAction: THeaderAction);
 begin
-  DoMessage(Cr + msgOpening + 'archive ' + FCommandLine.ArchiveName);
+  DoMessage(Format(msgOpening, [FCommandLine.ArchiveName]));
   FHeaders := THeaders.Create(FCommandLine);
-
   if FileExists(FCommandLine.ArchiveName) then
   begin
     FArcFile := CreateTFileReader(FCommandLine.ArchiveName, fmOpenRead + fmShareDenyWrite);
@@ -208,9 +206,9 @@ begin
     begin
       FHeaders.ReadItems(FArcFile, aAction);
       if (FHeaders.GetCount = 0) and (FArcFile.Size <> 0) then
-        DoError('Error: archive unsupported', ccError);
+        DoMessage(cmeArcType, ccError);
     end else
-      DoError('Error: can''t open archive', ccError);
+      DoMessage(Format(cmeArcOpen, [FCommandLine.ArchiveName]), ccError);
   end;
 end;
 
@@ -218,11 +216,6 @@ procedure TBeeApp.CloseArchive(IsModified: boolean);
 begin
   if IsModified then
   begin
-    if Code < ccError then
-      DoMessage(Cr + 'Archive size ' + SizeToStr(FTempFile.Size) + ' bytes - ' + TimeDifference(FStartTime) + ' seconds')
-    else
-      DoMessage(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds');
-
     if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
     if Assigned(FTempFile) then FreeAndNil(FTempFile);
     if Assigned(FArcFile)  then FreeAndNil(FArcFile);
@@ -232,15 +225,26 @@ begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FCommandLine.ArchiveName);
       if not RenameFile(FTempName, FCommandLine.ArchiveName) then
-        DoError('Error: can''t rename "' + FTempName + '" to "' + FCommandLine.ArchiveName + '"', ccError);
+        DoMessage(Format(cmeRename, [FTempName, FCommandLine.ArchiveName]), ccError);
     end else
     begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FTempName);
     end;
+
+    case Code of
+      ccSuccesful: DoMessage(Cr + Format(cmSuccesful, [SizeToStr(FTempFile.Size), TimeDifference(FStartTime)]));
+      ccWarning:   DoMessage(Cr + Format(cmWarning,   [SizeToStr(FTempFile.Size), TimeDifference(FStartTime)]));
+      ccError:     DoMessage(Cr + Format(cmError,     [TimeDifference(FStartTime)]));
+      ccCmdError:  DoMessage(Cr + Format(cmCmdError,  [TimeDifference(FStartTime)]));
+      ccMemError:  DoMessage(Cr + Format(cmMemError,  [TimeDifference(FStartTime)]));
+      ccUserAbort: DoMessage(Cr + Format(cmUserAbort, [TimeDifference(FStartTime)]));
+    end;
+
   end else
   begin
-    if Assigned(FArcFile) then FreeAndNil(FArcFile);
+    if Assigned(FArcFile) then
+      FreeAndNil(FArcFile);
   end;
   FHeaders.Free;
 end;
@@ -295,7 +299,7 @@ begin
                        if Length(S) <> 0 then
                        begin
                          if FHeaders.AlreadyFileExists(S) <> -1 then
-                           DoError('Warning: file "' + S + '" already existing in archive' + Cr, ccWarning)
+                           DoMessage(Format(cmwFileExists, [S]))
                          else
                            Break;
                        end else
@@ -363,7 +367,7 @@ begin
                        if Length(S) <> 0 then
                        begin
                          if FileExists(S) then
-                           DoError('Warning: file "' + S + '" already existing ' + Cr, ccWarning)
+                           DoMessage(Format(cmwFileExists, [S]))
                          else
                            Break;
                        end else
@@ -480,7 +484,6 @@ begin
   begin
     FSwapName := GenerateFileName(FCommandLine.wdOption);
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
-
     if (FSwapStrm <> nil) then
     begin
       CurrDictionary := FHeaders.GetCount;
@@ -522,7 +525,8 @@ begin
       end;
       Decoder.Destroy;
       FreeAndNil(FSwapStrm);
-    end;
+    end else
+      DoMessage(cmeSwapOpen, ccError);
   end;
 end;
 
@@ -716,7 +720,7 @@ var
   I: longint;
   P: THeader;
 begin
-  DoMessage(msgScanning + '...');
+  DoMessage(msgScanning);
   FHeaders.MarkItems(FCommandLine.FileMasks, toNone, toTest);
   FHeaders.MarkItems(FCommandLine.xOptions, toTest, toNone);
 
@@ -762,7 +766,7 @@ begin
           if Length(S) <> 0 then
           begin
             if FHeaders.AlreadyFileExists(I, [toCopy, toRename], S) <> -1 then
-              DoError('Warning: file "' + S + '" already existing in archive', ccWarning)
+              DoMessage(Format(cmwFileExists, [S]))
             else
               Break;
           end else
@@ -883,22 +887,17 @@ begin
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
-
       if FTempFile <> nil then
       begin
         ProcessFilesToFresh; // find sequences
         ProcessFilesToSwap;  // decode solid sequences
-
         if Code < ccError then
         begin
-          // if exists a modified solid sequence open swap file
-          if Length(FSwapName) <> 0 then
-          begin
+          if Length(FSwapName) <> 0 then // if exists a modified
+          begin                          // solid sequence open swap file
             FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
             if FSwapFile = nil then
-            begin
-              DoError('Error: can''t open a swap file', ccError);
-            end;
+              DoMessage(cmeSwapOpen, ccError);
           end;
 
           if Code < ccError then
@@ -921,13 +920,10 @@ begin
             Encoder.Destroy;
             FHeaders.WriteItems(FTempFile);
           end;
-        end else
-          DoError('Error: can''t decode solid sequence', ccError);
+        end;
       end else
-        DoError('Error: can''t open temp file', ccError);
-
-    end else // if FtotalSize <> 0
-      DoError('Warning: no files to process', ccWarning);
+        DoMessage(cmeTempOpen, ccError);
+    end;
   end;
   CloseArchive(FTotalSize <> 0);
 end;
@@ -964,17 +960,7 @@ begin
         end;
       end;
       Decoder.Destroy;
-
-      if Code < ccError then
-        DoMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds')
-      else
-        if Code = ccUserabort then
-          DoError(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds', ccUserAbort)
-        else
-          DoError(Cr + 'Process aborted, a fatal error occourred - ' + TimeDifference(FStartTime) + ' seconds', ccError);
-
-    end else // if FTotalSize <> 0
-      DoError('Warning: no files to decode', ccWarning);
+    end;
   end;
   CloseArchive(False);
 end;
@@ -995,22 +981,21 @@ begin
     begin
       TmpFileName := GenerateFileName(FCommandLine.wdOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
-
       if (TmpFile <> nil) then
       begin
         ProcessFilesToSwap;    // decode solid sequences
-
         if Code < ccError then
         begin
-          // if SwapSequences has found a modified sequence open Swap file
-          if Length(FSwapName) > 0 then
-          begin
+
+          if Length(FSwapName) > 0 then  // if SwapSequences has found a
+          begin                          // modified sequence open Swap file
             FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
+            if FSwapFile = nil then
+              DoMessage(cmeSwapOpen, ccError);
           end;
 
           if FSwapFile <> nil then
           begin
-            // write Headers
             FHeaders.WriteItems(TmpFile);
             Encoder := TEncoder.Create(TmpFile, Self);
             for I := 0 to FHeaders.GetCount -1 do
@@ -1027,15 +1012,11 @@ begin
             end;
             Encoder.Destroy;
             FHeaders.WriteItems(TmpFile);
-          end else
-            DoError('Error: can''t open swap file', ccError);
-        end else
-          DoError('Error: can''t decode solid sequences', ccError);
+          end;
+        end;
       end else
-        DoError('Error: can''t open temp file', ccError);
-
-    end else // if FTotalSize <> 0
-      DoError('Warning: no files to delete', ccWarning);
+        DoMessage(cmeTempOpen, ccError);
+    end;
   end;
   CloseArchive(FTotalSize <> 0);
 end;
@@ -1069,11 +1050,9 @@ begin
         end;
         Encoder.Destroy;
         FHeaders.WriteItems(FTempFile);
-
-      end else // if FTempFile <> nil
-        DoError('Error: can''t open temp file', ccError);
-    end else
-      DoError('Warning: no files to rename', ccWarning);
+      end else
+        DoMessage(cmeTempOpen, ccError);
+    end;
   end;
   CloseArchive(FTotalSize <> 0);
 end;
@@ -1223,10 +1202,7 @@ begin
       if FHeaders.GetModule > 0 then
         DoMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
-
-      DoMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) + ' seconds');
-    end else
-      DoError('Warning: no files to list', ccWarning);
+    end;
 
   end;
   CloseArchive(False);
