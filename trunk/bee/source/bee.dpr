@@ -68,8 +68,8 @@ type
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
     procedure OnMessage(const aMessage: string; aCode: byte); override;
-    procedure OnRequest(const aMessage: string); override;
     procedure OnMessage(const aMessage: string); override;
+    procedure OnRequest(const aMessage: string); override;
     function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; override;
     function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
     function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
@@ -234,11 +234,11 @@ var
   function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
-      CTRL_C_EVENT:        App.Code := ccUserAbort;
-      CTRL_BREAK_EVENT:    App.Code := ccUserAbort;
-      CTRL_CLOSE_EVENT:    App.Code := ccUserAbort;
-      CTRL_LOGOFF_EVENT:   App.Code := ccUserAbort;
-      CTRL_SHUTDOWN_EVENT: App.Code := ccUserAbort;
+      CTRL_C_EVENT:        App.DoMessage(cmUserAbort, ccUserAbort);
+      CTRL_BREAK_EVENT:    App.DoMessage(cmUserAbort, ccUserAbort);
+      CTRL_CLOSE_EVENT:    App.DoMessage(cmUserAbort, ccUserAbort);
+      CTRL_LOGOFF_EVENT:   App.DoMessage(cmUserAbort, ccUserAbort);
+      CTRL_SHUTDOWN_EVENT: App.DoMessage(cmUserAbort, ccUserAbort);
     end;
     Result := True;
   end;
