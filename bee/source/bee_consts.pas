@@ -95,6 +95,7 @@ const
   cmSuccesful        = 'Archive size %s bytes, time elapsed %s seconds.';
   cmWarning          = 'Warning occurred - archive size %s bytes, time elapsed %s seconds.';
   cmError            = 'Process aborted - time elapsed %s seconds.';
+  cmUserAbort        = 'Process aborted, user stopped the process - time elapsed %s seconds.';
 
   cmCmdError         = 'Error: command line error';
   cmMemError         = 'Error: not enough memory for operation';
@@ -105,7 +106,6 @@ const
   cmSwapOpenError    = 'Error: can''t open swap file';
   cmStrmReadError    = 'Error: can''t read data from stream';
   cmRenameFileError  = 'Error: can''t rename file "%s" to "%s"';
-  cmUserAbort        = 'Error: user stopped the process';
 
   cmConfigWarning    = 'Warning: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning= 'Warning: file "%s" already exists';

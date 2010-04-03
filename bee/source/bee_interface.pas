@@ -72,10 +72,10 @@ type
     procedure IncSize(const aValue: int64); overload;
     procedure DecSize(const aValue: int64); overload;
 
-    procedure DoMessage(const aMessage: string; aCode: byte); overload;
-    procedure OnMessage(const aMessage: string; aCode: byte); virtual; overload;
     procedure DoMessage(const aMessage: string); overload;
+    procedure DoMessage(const aMessage: string; aCode: byte); overload;
     procedure OnMessage(const aMessage: string); virtual; abstract; overload;
+
     procedure DoRequest(const aMessage: string);
     procedure OnRequest(const aMessage: string); virtual; abstract;
     function DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
@@ -248,14 +248,10 @@ procedure TApp.DoMessage(const aMessage: string; aCode: byte); {$IFDEF FPC} inli
 var
   X: double;
 begin
-  X := Now;
-  OnMessage(aMessage, aCode);
-  FStartTime := FStartTime + (Now - X);
-end;
-
-procedure TApp.OnMessage(const aMessage: string; aCode: byte); {$IFDEF FPC} inline; {$ENDIF}
-begin
   SetCode(aCode);
+  X := Now;
+  OnMessage(aMessage);
+  FStartTime := FStartTime + (Now - X);
 end;
 
 procedure TApp.DoMessage(const aMessage: string);
