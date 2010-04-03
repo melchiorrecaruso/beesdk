@@ -145,7 +145,7 @@ begin
   if FileExists(FCommandLine.cfgOption) then
     FConfiguration.LoadFromFile(FCommandLine.cfgOption)
   else
-    DoMessage(Format(cmwConfigFile, [FCommandLine.cfgOption]), ccWarning);
+    DoMessage(Format(cmConfigWarning, [FCommandLine.cfgOption]), ccWarning);
 
   { load method and dictionary level }
   FConfiguration.Selector('\main');
@@ -206,9 +206,9 @@ begin
     begin
       FHeaders.ReadItems(FArcFile, aAction);
       if (FHeaders.GetCount = 0) and (FArcFile.Size <> 0) then
-        DoMessage(cmeArcType, ccError);
+        DoMessage(cmArcTypeError, ccError);
     end else
-      DoMessage(Format(cmeArcOpen, [FCommandLine.ArchiveName]), ccError);
+      DoMessage(Format(cmArcOpenError, [FCommandLine.ArchiveName]), ccError);
   end;
 end;
 
@@ -225,7 +225,7 @@ begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FCommandLine.ArchiveName);
       if not RenameFile(FTempName, FCommandLine.ArchiveName) then
-        DoMessage(Format(cmeRename, [FTempName, FCommandLine.ArchiveName]), ccError);
+        DoMessage(Format(cmRenameFileError, [FTempName, FCommandLine.ArchiveName]), ccError);
     end else
     begin
       SysUtils.DeleteFile(FSwapName);
@@ -299,7 +299,7 @@ begin
                        if Length(S) <> 0 then
                        begin
                          if FHeaders.AlreadyFileExists(S) <> -1 then
-                           DoMessage(Format(cmwFileExists, [S]))
+                           DoMessage(Format(cmFileExistsWarning, [S]))
                          else
                            Break;
                        end else
@@ -367,7 +367,7 @@ begin
                        if Length(S) <> 0 then
                        begin
                          if FileExists(S) then
-                           DoMessage(Format(cmwFileExists, [S]))
+                           DoMessage(Format(cmFileExistsWarning, [S]))
                          else
                            Break;
                        end else
@@ -526,7 +526,7 @@ begin
       Decoder.Destroy;
       FreeAndNil(FSwapStrm);
     end else
-      DoMessage(cmeSwapOpen, ccError);
+      DoMessage(cmSwapOpenError, ccError);
   end;
 end;
 
@@ -766,7 +766,7 @@ begin
           if Length(S) <> 0 then
           begin
             if FHeaders.AlreadyFileExists(I, [toCopy, toRename], S) <> -1 then
-              DoMessage(Format(cmwFileExists, [S]))
+              DoMessage(Format(cmFileExistsWarning, [S]))
             else
               Break;
           end else
@@ -897,7 +897,7 @@ begin
           begin                          // solid sequence open swap file
             FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
             if FSwapFile = nil then
-              DoMessage(cmeSwapOpen, ccError);
+              DoMessage(cmSwapOpenError, ccError);
           end;
 
           if Code < ccError then
@@ -922,7 +922,7 @@ begin
           end;
         end;
       end else
-        DoMessage(cmeTempOpen, ccError);
+        DoMessage(cmTempOpenError, ccError);
     end;
   end;
   CloseArchive(FTotalSize <> 0);
@@ -991,7 +991,7 @@ begin
           begin                          // modified sequence open Swap file
             FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
             if FSwapFile = nil then
-              DoMessage(cmeSwapOpen, ccError);
+              DoMessage(cmSwapOpenError, ccError);
           end;
 
           if FSwapFile <> nil then
@@ -1015,7 +1015,7 @@ begin
           end;
         end;
       end else
-        DoMessage(cmeTempOpen, ccError);
+        DoMessage(cmTempOpenError, ccError);
     end;
   end;
   CloseArchive(FTotalSize <> 0);
@@ -1051,7 +1051,7 @@ begin
         Encoder.Destroy;
         FHeaders.WriteItems(FTempFile);
       end else
-        DoMessage(cmeTempOpen, ccError);
+        DoMessage(cmTempOpenError, ccError);
     end;
   end;
   CloseArchive(FTotalSize <> 0);

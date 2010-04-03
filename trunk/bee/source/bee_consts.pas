@@ -80,7 +80,6 @@ const
 
   { CoreCode }
 
-  ccUnknow           = $FFFFFFFF;
   ccSuccesful        = $00000000; { 0 No error                                               }
   ccWarning          = $00000001; { 1 Warning (Non fatal error(s)). For example, one or more }
                                   {   files were locked by some other application, so they   }
@@ -90,27 +89,26 @@ const
   ccMemError         = $00000008; { 8 Not enough memory for operation                        }
   ccUserAbort        = $000000FF; { 255 User stopped the process                             }
 
+
   { CoreMessage }
 
-  cmUnknow           = 'Process aborted, unknow error - time elapsed %s seconds.';
   cmSuccesful        = 'Archive size %s bytes, time elapsed %s seconds.';
   cmWarning          = 'Warning occurred - archive size %s bytes, time elapsed %s seconds.';
   cmError            = 'Process aborted - time elapsed %s seconds.';
-  cmCmdError         = 'Process aborted, command line error - time elapsed %s seconds.';
-  cmMemError         = 'Process aborted, not enough memory for operation - time elapsed %s seconds.';
-  cmUserAbort        = 'Process aborted, user stopped the process - time elapsed %s seconds.';
 
-  cmwConfigFile      = 'Warning: configuration file "%s" not found, data will be stored';
-  cmwFileExists      = 'Warning: file "%s" already exists';
+  cmCmdError         = 'Error: command line error';
+  cmMemError         = 'Error: not enough memory for operation';
+  cmArcTypeError     = 'Error: archive type unsupported';
+  cmArcOpenError     = 'Error: can''t open archive "%s"';
+  cmFileOpenError    = 'Error: can''t open file "%s"';
+  cmTempOpenError    = 'Error: can''t open temp file';
+  cmSwapOpenError    = 'Error: can''t open swap file';
+  cmStrmReadError    = 'Error: can''t read data from stream';
+  cmRenameFileError  = 'Error: can''t rename file "%s" to "%s"';
+  cmUserAbort        = 'Error: user stopped the process';
 
-  cmeArcType         = 'Error: archive type unsupported';
-  cmeArcOpen         = 'Error: can''t open archive "%s"';
-  cmeSwapOpen        = 'Error: can''t open swap file';
-  cmeFileOpen        = 'Error: can''t open file "%s"';
-  cmeStrmOpen        = 'Error: cant'' open stream';
-  cmeTempOpen        = 'Error: can''t open temp file';
-  cmeRename          = 'Error: can''t rename file "%s" to "%s"';
-  cmeSwap            = 'Error: can''t decode solid sequence';
+  cmConfigWarning    = 'Warning: configuration file "%s" not found, data will be stored';
+  cmFileExistsWarning= 'Warning: file "%s" already exists';
 
   { CorePriority }
 
