@@ -397,7 +397,7 @@ var
   T: TCustomSearchRec;
   Scanner: TFileScanner;
 begin
-  DoMessage(msgScanning + '...');
+  DoMessage(Format(msgScanning, ['...']));
   Scanner := TFileScanner.Create;
   with FCommandLine do
     for I := 0 to FileMasks.Count - 1 do
