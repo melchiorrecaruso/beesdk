@@ -74,10 +74,10 @@ type
 
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
     procedure OnMessage(const aMessage: string; aCode: byte); virtual; overload;
-    procedure DoRequest(const aMessage: string);
-    procedure OnRequest(const aMessage: string); virtual; abstract;
     procedure DoMessage(const aMessage: string); overload;
     procedure OnMessage(const aMessage: string); virtual; abstract; overload;
+    procedure DoRequest(const aMessage: string);
+    procedure OnRequest(const aMessage: string); virtual; abstract;
     function DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
     function OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
     function DoRename(const aFileInfo: TFileInfo; const aValue: string): string;

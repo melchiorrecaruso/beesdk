@@ -234,11 +234,8 @@ begin
 
     case Code of
       ccSuccesful: DoMessage(Cr + Format(cmSuccesful, [SizeToStr(FTempFile.Size), TimeDifference(FStartTime)]));
-      ccWarning:   DoMessage(Cr + Format(cmWarning,   [SizeToStr(FTempFile.Size), TimeDifference(FStartTime)]));
-      ccError:     DoMessage(Cr + Format(cmError,     [TimeDifference(FStartTime)]));
-      ccCmdError:  DoMessage(Cr + Format(cmCmdError,  [TimeDifference(FStartTime)]));
-      ccMemError:  DoMessage(Cr + Format(cmMemError,  [TimeDifference(FStartTime)]));
-      ccUserAbort: DoMessage(Cr + Format(cmUserAbort, [TimeDifference(FStartTime)]));
+      ccWarning:   DoMessage(Cr + Format(cmWarning, [SizeToStr(FTempFile.Size), TimeDifference(FStartTime)]));
+      else         DoMessage(Cr + Format(cmError, [TimeDifference(FStartTime)]));
     end;
 
   end else
