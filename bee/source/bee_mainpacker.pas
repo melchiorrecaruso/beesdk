@@ -222,7 +222,7 @@ begin
     end;
 
   end else
-    App.DoMessage(Format(cmeFileOpen, [P.FileLink]), ccError);
+    App.DoMessage(Format(cmFileOpenError, [P.FileLink]), ccError);
 end;
 
 procedure TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
@@ -304,7 +304,7 @@ begin
     end;
 
   end else
-    App.DoMessage(cmeStrmOpen, ccError);
+    App.DoMessage(cmStrmReadError, ccError);
 end;
 
 procedure TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
@@ -345,7 +345,7 @@ begin
     SrcStrm.BlowFish.Finish;
 
   end else
-    App.DoMessage(cmeStrmOpen, ccError);
+    App.DoMessage(cmStrmReadError, ccError);
 end;
 
 { TDecoder class }
@@ -465,7 +465,7 @@ begin
   end;
 
   if Crc = longword(-1) then
-    App.DoMessage(Format(cmeFileOpen, [P.FileName]), ccError)
+    App.DoMessage(Format(cmFileOpenError, [P.FileName]), ccError)
   else
     if Crc <> P.FileCrc then
       App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
@@ -545,7 +545,7 @@ begin
   end;
 
   if Crc = longword(-1) then
-    App.DoMessage(Format(cmeFileOpen, [P.FileName]), ccError)
+    App.DoMessage(Format(cmFileOpenError, [P.FileName]), ccError)
   else
     if Crc <> P.FileCrc then
       App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
