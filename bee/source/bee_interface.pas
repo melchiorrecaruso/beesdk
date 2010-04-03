@@ -74,21 +74,21 @@ type
 
     procedure DoMessage(const aMessage: string); overload;
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
-    procedure OnMessage(const aMessage: string); virtual; abstract; overload;
-
     procedure DoRequest(const aMessage: string);
-    procedure OnRequest(const aMessage: string); virtual; abstract;
-    function DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
-    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
-    function DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
-    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    function DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
-    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    function  DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
+    function  DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
+    function  DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
-    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
     procedure DoProgress;
-    procedure OnProgress; virtual; abstract;
     procedure DoClearLine;
+
+    procedure OnMessage(const aMessage: string); virtual; abstract; overload;
+    procedure OnRequest(const aMessage: string); virtual; abstract;
+    function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
+    function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
+    procedure OnProgress; virtual; abstract;
     procedure OnClearLine; virtual; abstract;
 
     property Time: longint Read GetTime;
@@ -236,94 +236,85 @@ end;
 procedure TApp.SetPriority(aPriority: byte);
 begin
   {$IFDEF CONSOLEAPPLICATION}
-    {$IFDEF MSWINDOWS}
-    Bee_Common.SetPriority(aPriority);
-    {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  Bee_Common.SetPriority(aPriority);
+  {$ENDIF}
   {$ELSE}
     { TODO :  DA IMPLEMENTARE}
   {$ENDIF}
 end;
 
 procedure TApp.DoMessage(const aMessage: string; aCode: byte); {$IFDEF FPC} inline; {$ENDIF}
-var
-  X: double;
+{$IFNDEF CONSOLEAPPLICATION} var X: double; {$ENDIF}
 begin
   SetCode(aCode);
-  X := Now;
+  {$IFNDEF CONSOLEAPPLICATION} X := Now; {$ENDIF}
   OnMessage(aMessage);
-  FStartTime := FStartTime + (Now - X);
+  {$IFNDEF CONSOLEAPPLICATION} FStartTime := FStartTime + (Now - X); {$ENDIF}
 end;
 
 procedure TApp.DoMessage(const aMessage: string);
-var
-  X: double;
+{$IFNDEF CONSOLEAPPLICATION} var X: double; {$ENDIF}
 begin
-  X := Now;
+  {$IFNDEF CONSOLEAPPLICATION} X := Now; {$ENDIF}
   OnMessage(aMessage);
-  FStartTime := FStartTime + (Now - X);
+  {$IFNDEF CONSOLEAPPLICATION} FStartTime := FStartTime + (Now - X); {$ENDIF}
 end;
 
 function TApp.DoOverWrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
-var
-  X: double;
+{$IFNDEF CONSOLEAPPLICATION} var X: double; {$ENDIF}
 begin
-  X := Now;
+  {$IFNDEF CONSOLEAPPLICATION} X := Now; {$ENDIF}
   Result := OnOverWrite(aFileInfo, aValue);
-  FStartTime := FStartTime + (Now - X);
+  {$IFNDEF CONSOLEAPPLICATION} FStartTime := FStartTime + (Now - X); {$ENDIF}
 end;
 
 function TApp.DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
-var
-  X: double;
+{$IFNDEF CONSOLEAPPLICATION} var X: double; {$ENDIF}
 begin
-  X := Now;
+  {$IFNDEF CONSOLEAPPLICATION} X := Now; {$ENDIF}
   OnRename(aFileInfo, aValue);
-  FStartTime := FStartTime + (Now - X);
+  {$IFNDEF CONSOLEAPPLICATION} FStartTime := FStartTime + (Now - X); {$ENDIF}
 end;
 
 function TApp.DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
-var
-  X: double;
+{$IFNDEF CONSOLEAPPLICATION} var X: double; {$ENDIF}
 begin
-  X := Now;
+  {$IFNDEF CONSOLEAPPLICATION} X := Now; {$ENDIF}
   OnPassword(aFileInfo, aValue);
-  FStartTime := FStartTime + (Now - X);
+  {$IFNDEF CONSOLEAPPLICATION} FStartTime := FStartTime + (Now - X); {$ENDIF}
 end;
 
 procedure TApp.DoRequest(const aMessage: string);
-var
-  X: double;
+{$IFNDEF CONSOLEAPPLICATION} var X: double; {$ENDIF}
 begin
-  X := Now;
+  {$IFNDEF CONSOLEAPPLICATION} X := Now; {$ENDIF}
   OnRequest(aMessage);
-  FStartTime := FStartTime + (Now - X);
+  {$IFNDEF CONSOLEAPPLICATION} FStartTime := FStartTime + (Now - X); {$ENDIF}
 end;
 
 procedure TApp.DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
-var
-  X: double;
+{$IFNDEF CONSOLEAPPLICATION} var X: double; {$ENDIF}
 begin
-  X := Now;
+  {$IFNDEF CONSOLEAPPLICATION} X := Now; {$ENDIF}
   OnList(aFileInfo, aVerbose);
-  FStartTime := FStartTime + (Now - X);
+  {$IFNDEF CONSOLEAPPLICATION} FStartTime := FStartTime + (Now - X); {$ENDIF}
 end;
 
 procedure TApp.DoProgress; {$IFDEF FPC} inline; {$ENDIF}
-var
-  X: double;
+{$IFNDEF CONSOLEAPPLICATION} var X: double; {$ENDIF}
 begin
-  X := Now;
+  {$IFNDEF CONSOLEAPPLICATION} X := Now; {$ENDIF}
   OnProgress;
-  FStartTime := FStartTime + (Now - X);
+  {$IFNDEF CONSOLEAPPLICATION} FStartTime := FStartTime + (Now - X); {$ENDIF}
 end;
 
 procedure TApp.DoClearLine;
-var
-  X: double;
+{$IFNDEF CONSOLEAPPLICATION} var X: double; {$ENDIF}
 begin
-  X := Now;
+  {$IFNDEF CONSOLEAPPLICATION} X := Now; {$ENDIF}
   OnClearLine;
-  FStartTime := FStartTime + (Now - X);
+  {$IFNDEF CONSOLEAPPLICATION} FStartTime := FStartTime + (Now - X); {$ENDIF}
 end;
 
 end.

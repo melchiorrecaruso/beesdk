@@ -197,7 +197,7 @@ end;
 
 procedure TBeeApp.OpenArchive(const aAction: THeaderAction);
 begin
-  DoMessage(Format(msgOpening, [FCommandLine.ArchiveName]));
+  DoMessage(Format(Cr + msgOpening, [FCommandLine.ArchiveName]));
   FHeaders := THeaders.Create(FCommandLine);
   if FileExists(FCommandLine.ArchiveName) then
   begin
@@ -232,12 +232,13 @@ begin
       SysUtils.DeleteFile(FTempName);
     end;
 
-    case Code of
-      ccSuccesful: DoMessage(Cr + Format(cmSuccesful, [SizeToStr(FTempFile.Size), TimeDifference(FStartTime)]));
-      ccWarning:   DoMessage(Cr + Format(cmWarning, [SizeToStr(FTempFile.Size), TimeDifference(FStartTime)]));
-      ccUserAbort: DoMessage(Cr + Format(cmUserAbort, [TimeDifference(FStartTime)]));
-      else         DoMessage(Cr + Format(cmError, [TimeDifference(FStartTime)]));
-    end;
+    with FCommandLine do
+      case Code of
+        ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [SizeToStr(SizeOfFile(ArchiveName)), TimeDifference(FStartTime)]));
+        ccWarning:   DoMessage(Format(Cr + cmWarning,   [SizeToStr(SizeOfFile(ArchiveName)), TimeDifference(FStartTime)]));
+        ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [TimeDifference(FStartTime)]));
+        else         DoMessage(Format(Cr + cmError,     [TimeDifference(FStartTime)]));
+      end;
 
   end else
   begin
