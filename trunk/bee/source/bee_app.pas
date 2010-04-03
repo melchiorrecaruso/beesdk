@@ -235,6 +235,7 @@ begin
     case Code of
       ccSuccesful: DoMessage(Cr + Format(cmSuccesful, [SizeToStr(FTempFile.Size), TimeDifference(FStartTime)]));
       ccWarning:   DoMessage(Cr + Format(cmWarning, [SizeToStr(FTempFile.Size), TimeDifference(FStartTime)]));
+      ccUserAbort: DoMessage(Cr + Format(cmUserAbort, [TimeDifference(FStartTime)]));
       else         DoMessage(Cr + Format(cmError, [TimeDifference(FStartTime)]));
     end;
 

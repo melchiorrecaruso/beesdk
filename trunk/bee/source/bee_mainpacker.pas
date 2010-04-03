@@ -37,7 +37,6 @@ unit Bee_MainPacker;
 interface
 
 uses
-  Classes,
   Bee_Types,
   Bee_Files,
   Bee_Codec,
@@ -103,6 +102,7 @@ implementation
 
 uses
   SysUtils,
+  Classes,
   Bee_Crc,
   Bee_Common,
   Bee_BlowFish;
@@ -170,7 +170,7 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.DoMessage(msgUpdating + P.FileName);
+    emNorm: App.DoMessage(Format(msgUpdating, [P.FileName]));
   end;
 
   P.FileStartPos := Stream.Seek(0, soFromCurrent);
@@ -241,7 +241,7 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.DoMessage(msgEncoding + P.FileName);
+    emNorm: App.DoMessage(Format(msgEncoding, [P.FileName]));
   end;
 
   P.FileStartPos := Stream.Seek(0, soFromCurrent);
@@ -321,7 +321,7 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.DoMessage(msgCopying + P.FileName);
+    emNorm: App.DoMessage(Format(msgCopying, [P.FileName]));
   end;
 
   P.FileStartPos := Stream.Seek(0, soFromCurrent);
@@ -408,9 +408,9 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.DoMessage(msgSkipping   + P.FileName);
-    pmTest: App.DoMessage(msgTesting    + P.FileName);
-    pmNorm: App.DoMessage(msgExtracting + P.FileName);
+    pmSkip: App.DoMessage(Format(msgSkipping,   [P.FileName]));
+    pmTest: App.DoMessage(Format(msgTesting,    [P.FileName]));
+    pmNorm: App.DoMessage(Format(msgExtracting, [P.FileName]));
     pmQuit: Exit;
   end;
 
@@ -488,9 +488,9 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.DoMessage(msgSkipping + P.FileName);
-    pmTest: App.DoMessage(msgTesting  + P.FileName);
-    pmNorm: App.DoMessage(msgDecoding + P.FileName);
+    pmSkip: App.DoMessage(Format(msgSkipping, [P.FileName]));
+    pmTest: App.DoMessage(Format(msgTesting,  [P.FileName]));
+    pmNorm: App.DoMessage(Format(msgDecoding, [P.FileName]));
     pmQuit: Exit;
   end;
 
