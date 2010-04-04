@@ -68,7 +68,8 @@ function FixDirName(const DirName: string): string;
 function SelfName: string;
 function SelfPath: string;
 function GenerateFileName(const FilePath: string): string;
-function GenerateAlternativeFileName(const FileName: string; Check: boolean): string;
+function GenerateAlternativeFileName(const FileName: string;
+  StartIndex: longint; Check: boolean): string;
 
 { directory handling routines }
 
@@ -500,15 +501,15 @@ begin
   until FileAge(Result) = -1;
 end;
 
-function GenerateAlternativeFileName(const FileName: string; Check: boolean): string; {$IFDEF FPC} inline; {$ENDIF}
-var
-  I: longint;
+function GenerateAlternativeFileName(const FileName: string;
+  StartIndex: longint; Check: boolean): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
-  I := 0;
   repeat
-    Inc(I);
-    Result := ChangeFileExt(FileName, '.' +  IntToStr(I) + ExtractFileExt(FileName));
-  until (Check = False) or (FileAge(Result) = -1);
+    Result := ChangeFileExt(FileName, '.' +
+      IntToStr(StartIndex) + ExtractFileExt(FileName));
+
+    Inc(StartIndex);
+  until (not Check) or (FileAge(Result) = -1) ;
 end;
 
 { directory handling routines }

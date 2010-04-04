@@ -566,11 +566,18 @@ begin
 end;
 
 function Theaders.AddAutoRenameItem(const Rec: TCustomSearchRec): int64;
+var
+  StartIndex: longint;
 begin
   Result := AddItem(Rec);
-  while Result = 0 do
+  if Result = 0 then
   begin
-    Rec.FileName := GenerateAlternativeFileName(Rec.FileName, False);
+    StartIndex := 1;
+    while SearchItem(GenerateAlternativeFileName(Rec.FileName, StartIndex, False)) <> nil do
+    begin
+      Inc(StartIndex);
+    end;
+    Rec.FileName := GenerateAlternativeFileName(Rec.FileName, StartIndex, False);
     Result := AddItem(Rec);
   end;
 end;
