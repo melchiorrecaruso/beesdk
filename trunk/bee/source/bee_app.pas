@@ -429,11 +429,7 @@ begin
     end;
   end;
   Scanner.Destroy;
-
-  if FTotalSize > 0 then
-    FHeaders.SortNews(FConfiguration)
-  else
-    DoMessage(cmNoFilesWarning, ccWarning);
+  FHeaders.SortNews(FConfiguration);
 end;
 
 procedure TBeeApp.ProcessFilesToFresh;
@@ -721,7 +717,7 @@ var
   I: longint;
   P: THeader;
 begin
-  DoMessage(msgScanning);
+  DoMessage(Format(msgScanning, ['...']));
   FHeaders.MarkItems(FCommandLine.FileMasks, toNone, toTest);
   FHeaders.MarkItems(FCommandLine.xOptions, toTest, toNone);
 
@@ -924,7 +920,8 @@ begin
         end;
       end else
         DoMessage(cmTempOpenError, ccError);
-    end;
+    end else
+      DoMessage(cmNoFilesWarning, ccWarning);
   end;
   CloseArchive(FTotalSize <> 0);
 end;
@@ -961,7 +958,8 @@ begin
         end;
       end;
       Decoder.Destroy;
-    end;
+    end else
+      DoMessage(cmNoFilesWarning, ccWarning);
   end;
   CloseArchive(False);
 end;
@@ -1017,7 +1015,8 @@ begin
         end;
       end else
         DoMessage(cmTempOpenError, ccError);
-    end;
+    end else
+      DoMessage(cmNoFilesWarning, ccWarning);
   end;
   CloseArchive(FTotalSize <> 0);
 end;
@@ -1053,7 +1052,8 @@ begin
         FHeaders.WriteItems(FTempFile);
       end else
         DoMessage(cmTempOpenError, ccError);
-    end;
+    end else
+      DoMessage(cmNoFilesWarning, ccWarning);
   end;
   CloseArchive(FTotalSize <> 0);
 end;
@@ -1203,8 +1203,8 @@ begin
       if FHeaders.GetModule > 0 then
         DoMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
-    end;
-
+    end else
+      DoMessage(cmNoFilesWarning, ccWarning);
   end;
   CloseArchive(False);
   {$IFDEF CONSOLEAPPLICATION}
