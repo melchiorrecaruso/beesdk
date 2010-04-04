@@ -92,10 +92,10 @@ const
 
   { CoreMessage }
 
-  cmSuccesful        = 'Everything went ok, archive size %s bytes - time elapsed %s seconds.';
-  cmWarning          = 'Warning occurred, archive size %s bytes - time elapsed %s seconds.';
+  cmSuccesful        = 'Everything went ok - time elapsed %s seconds.';
+  cmWarning          = 'Warning occurred - time elapsed %s seconds.';
   cmError            = 'Process aborted - time elapsed %s seconds.';
-  cmUserAbort        = 'Process aborted, user stopped the process - time elapsed %s seconds.';
+  cmUserAbort        = 'User stopped the process - time elapsed %s seconds.';
 
   cmCmdError         = 'Error: command line error';
   cmMemError         = 'Error: not enough memory for operation';
