@@ -427,11 +427,11 @@ begin
     ccAdd:      Result := 'A';
     ccDelete:   Result := 'D';
     ccExtract:  Result := 'E';
-    ccxExtract: Result := 'X';
     ccList:     Result := 'L';
-    ccTest:     Result := 'T';
-    ccRename:   Result := 'R';
     ccOpen:     Result := 'O';
+    ccRename:   Result := 'R';
+    ccTest:     Result := 'T';
+    ccxExtract: Result := 'X';
     else        Result := ' ';
   end;
 

@@ -181,8 +181,8 @@ begin
 
       if FCommandLine.Command in [ccAdd, ccDelete, ccRename] then
       begin
-        ProcesstOption; // process tOption
-        ProcesslOption; // process lOption
+        ProcesstOption;
+        ProcesslOption;
       end;
     end else
       HelpShell;
@@ -379,7 +379,7 @@ var
   I, J, BackTear, NextTear: longint;
   P: THeader;
 begin
-  DoMessage(msgScanning + '...');
+  DoMessage(Format(msgScanning, ['...']));
   FHeaders.MarkItems(FCommandLine.FileMasks, toCopy, toDelete);
   FHeaders.MarkItems(FCommandLine.xOptions, toDelete, toCopy);
 
@@ -522,34 +522,31 @@ begin
           P.FileName := ExtractFileName(P.FileName);
 
         case FCommandLine.uOption of
-          umAdd:           if FileExists(P.FileName) then
-                             P.FileAction := toNone
-                           else
-                             Inc(FTotalSize, P.FileSize);
-
-          umUpdate:        if (not FileExists(P.FileName)) or (P.FileTime <= FileAge(P.FileName)) then
-                             P.FileAction := toNone
-                           else
-                             Inc(FTotalSize, P.FileSize);
-
-          umReplace:       if (not FileExists(P.FileName)) then
-                             P.FileAction := toNone
-                           else
-                             Inc(FTotalSize, P.FileSize);
-
-          umAddUpdate:     if (FileExists(P.FileName)) and (P.FileTime <= FileAge(P.FileName)) then
-                             P.FileAction := toNone
-                           else
-                             Inc(FTotalSize, P.FileSize);
-
-          // umAddReplace: extract file
-          umAddAutoRename: begin
-                             if FileExists(P.FileName) then
-                             begin
-                               P.FileName := GenerateAlternativeFileName(P.FileName, True);
-                             end;
-                             Inc(FTotalSize, P.FileSize);
-                           end;
+          umAdd:       if not FileExists(P.FileName) then
+                         Inc(FTotalSize, P.FileSize)
+                       else
+                         P.FileAction := toNone;
+          umUpdate:    if (FileExists(P.FileName)) and (P.FileTime > FileAge(P.FileName)) then
+                         Inc(FTotalSize, P.FileSize)
+                       else
+                         P.FileAction := toNone;
+          umReplace:   if FileExists(P.FileName) then
+                         Inc(FTotalSize, P.FileSize)
+                       else
+                         P.FileAction := toNone;
+          umAddUpdate: if (not FileExists(P.FileName)) or (P.FileTime > FileAge(P.FileName)) then
+                         Inc(FTotalSize, P.FileSize)
+                       else
+                         P.FileAction := toNone;
+       // umAddReplace: extract file always
+          umAddAutoRename:
+          begin
+            if FileExists(P.FileName) then
+            begin
+              P.FileName := GenerateAlternativeFileName(P.FileName, 1, True);
+            end;
+            Inc(FTotalSize, P.FileSize);
+          end;
         end;
       end;
     end;
@@ -683,34 +680,37 @@ end;
 
 procedure TBeeApp.HelpShell;
 begin
-  DoMessage(Cr + '  Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>');
+  DoMessage(Cr + '  Usage: Bee <command> -<switch 1> -<switch N> <archive-name> <file-names...>');
   DoMessage(Cr + '  Commands:' + Cr);
-  DoMessage('    a   Add files to archive');
-  DoMessage('    d   Delete files from archive');
-  DoMessage('    e   Extract files from archive');
-  DoMessage('    x   eXtract files from archive with path name');
-  DoMessage('    l   List archive');
-  DoMessage('    t   Test archive files');
-  DoMessage('    r   Rename files in archive');
-  DoMessage(Cr + '  Options:' + Cr);
-  DoMessage('    r       Recurse subdirectories');
-  DoMessage('    u       Update files');
-  DoMessage('    f       Freshen files');
-  DoMessage('    e       force file Extention');
-  DoMessage('    s       create Solid archive');
-  DoMessage('    a       add self-extrActor module');
-  DoMessage('    o<mode> set overwrite file Mode (Q-Quit, A-All, S-Skip all)');
-  DoMessage('    m<0..3> set compression Method (0-store...1-default...3-maximal)');
-  DoMessage('    d<0..9> set Dictionary size (d1 uses < 5M, d2 (default) < 10M, d3 < 20M...)' + Cr);
-  DoMessage('    x       eXclude filenames');
-  DoMessage('    t       Test archive after process');
-  DoMessage('    l       List archive after process');
-  DoMessage('    y       set temporany directory');
-  DoMessage('    k       use blowfish crypter/decrypter (min key-length 4 bytes)');
-  DoMessage('    v       show technical information for l (List) command)');
-  DoMessage('    cd<dir> set current archive directory' + Cr);
-  DoMessage('    cfg<filename> use specified configuration file');
-  DoMessage('    pri<0..3>     set process Priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  DoMessage('    a  Add files to archive');
+  DoMessage('    d  Delete files from archive');
+  DoMessage('    e  Extract files from archive');
+  DoMessage('    l  List archive');
+  DoMessage('    r  Rename files in archive');
+  DoMessage('    t  Test archive files');
+  DoMessage('    x  eXtract files from archive with path name');
+  DoMessage(Cr + '  Switches:' + Cr);
+  DoMessage('    -              stop switches parsing');
+  DoMessage('    cd[directory]  set current archive directory');
+  DoMessage('    cfg[filename]  use specified Configuration file');
+  DoMessage('    d<0..9>    set Dictionary size (d1 uses < 5M, d2 (default) < 10M, ...)');
+  DoMessage('    f          Force file extention');
+  DoMessage('    hv<03,04>  set archive file header version');
+  DoMessage('    l          List archive after process');
+  DoMessage('    m<0..3>    set compression Method (0-store, 1-default, ...)');
+  DoMessage('    p          set Password (min length 4 bytes)');
+  DoMessage('    pri<0..3>  set process priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  DoMessage('    r    Recurse subdirectories');
+  DoMessage('    rw   recurse subdirectories only for wildcard names');
+  DoMessage('    s    create Solid archive');
+  DoMessage('    sfx  add self-extractor module');
+  DoMessage('    stl  show technical information for l (list) command');
+  DoMessage('    t    Test archive after process');
+  DoMessage('    u<0..5>  Update files method (0-add files, 1-update older files, 2-replace');
+  DoMessage('             files, 3-add and update older files (default), 4-add and replace');
+  DoMessage('             files, 5-add and autorename existing files)');
+  DoMessage('    wd[direcroty]  set temporany work directory');
+  DoMessage('    x[filenames]   eXclude filenames');
   DoMessage(Cr + '  Use BeeOpt to make most optimal parameters.' + Cr);
 end;
 
@@ -724,7 +724,7 @@ begin
   if Code < ccError then
   begin
     ProcessFilesToAdd;
-    if FTotalSize > 0 then
+    if FTotalSize <> 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
