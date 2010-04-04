@@ -109,7 +109,6 @@ type
       '" already exists,' + Cr + 'Do you want:');
 
     Writeln(' 0 - Add');
-    Writeln(' 0 - Add');
     Writeln(' 1 - Update');
     Writeln(' 2 - Replace');
     Writeln(' 3 - AddUpdate');
@@ -119,11 +118,10 @@ type
     Writeln(' 7 - ReplaceOne');
     Writeln(' 8 - RenameOne');
     Writeln(' 9 - omSkip');
-    Writeln('10 - Quit' + Cr);
-
+    Writeln('10 - Quit');
     repeat
+      Write('Insert code [0.. 10]: ');
       Read(I);
-      Write(#13, #13: 80);
     until I in [0.. 10];
 
     case I of
@@ -141,8 +139,7 @@ type
     end;
   end;
 
-  function TCustomBeeApp.OnRename(const aFileInfo: TFileInfo;
-  const aValue: string): string;
+  function TCustomBeeApp.OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
   begin
     with aFileInfo do
     begin
@@ -150,6 +147,7 @@ type
         ParamToOem(PCharToString(FilePath)),
         ParamToOem(PCharToString(FileName)), '" as (empty to skip):');
     end;
+    Readln;
     Readln(Result);
     // convert oem to param
     Result := OemToParam(Result);

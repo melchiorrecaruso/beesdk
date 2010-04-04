@@ -532,7 +532,7 @@ begin
     
     Item.FileLink := Rec.FileLink;
     Item.FileTime := Rec.FileTime;
-    Result := Rec.FileSize - Item.FileSize;
+    Result := Rec.FileSize;
   end else
     Result := 0;
 end;
@@ -785,10 +785,8 @@ begin
 
     if P <> nil then
       Exclude(P.FileFlags, foLast);
-  end
-  else
+  end else
     ReadItemsB4b(aStream, aAction);
-
   // OffSet := aStream.Seek(0, 1);
   // for I := 0 to FPrimary.Count -1 do
   //   with THeader(FPrimary.Items[I]) do

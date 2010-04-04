@@ -277,7 +277,7 @@ var
   X: double;
 begin
   X := Now;
-  OnRename(aFileInfo, aValue);
+  Result := OnRename(aFileInfo, aValue);
   FStartTime := FStartTime + (Now - X);
 end;
 
@@ -286,7 +286,7 @@ var
   X: double;
 begin
   X := Now;
-  OnPassword(aFileInfo, aValue);
+  Result := OnPassword(aFileInfo, aValue);
   FStartTime := FStartTime + (Now - X);
 end;
 

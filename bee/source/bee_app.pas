@@ -68,11 +68,11 @@ type
     { decode solid sequences using a swapfile }
     procedure ProcessFilesToSwap;
     { find and prepare sequences }
-    procedure  ProcessFilesToAdd;
-    procedure  ProcessFilesToDelete;
-    procedure  ProcessFilesToExtract;
-    procedure  ProcessFilesToTest;
-    procedure  ProcessFilesToRename;
+    procedure ProcessFilesToAdd;
+    procedure ProcessFilesToDelete;
+    procedure ProcessFilesToExtract;
+    procedure ProcessFilesToTest;
+    procedure ProcessFilesToRename;
     procedure ProcessFilesToDecode(const aAction: THeaderAction);
     procedure ProcessFilesToList;
     procedure ProcessFilesToFresh;
@@ -240,8 +240,8 @@ begin
 
   with FCommandLine do
     case Code of
-      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [SizeToStr(SizeOfFile(ArchiveName)), TimeDifference(FStartTime)]));
-      ccWarning:   DoMessage(Format(Cr + cmWarning,   [SizeToStr(SizeOfFile(ArchiveName)), TimeDifference(FStartTime)]));
+      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [TimeDifference(FStartTime)]));
+      ccWarning:   DoMessage(Format(Cr + cmWarning,   [TimeDifference(FStartTime)]));
       ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [TimeDifference(FStartTime)]));
       else         DoMessage(Format(Cr + cmError,     [TimeDifference(FStartTime)]));
   end;
@@ -252,6 +252,7 @@ end;
 function TBeeApp.ProcessFileToOverWrite4Add(var New: TCustomSearchRec; aItem: THeader): TUpdateMode;
 var
   FI: TFileInfo;
+  R: TOverWriteMode;
   S: string;
 begin
   Result := FCommandLine.uOption;
@@ -264,7 +265,8 @@ begin
     FI.FileTime := aItem.FileTime;
     FI.FileAttr := aItem.FileAttr;
 
-    case DoOverwrite(FI, omAddReplace) of
+    R := DoOverwrite(FI, omAddReplace);
+    case R of
       omAdd:           Result := umAdd;
       omUpdate:        Result := umUpdate;
       omReplace:       Result := umReplace;
@@ -273,7 +275,7 @@ begin
       omAddAutoRename: Result := umAddAutoRename;
       omUpdateOne:     Result := umUpdate;
       omReplaceOne:    Result := umReplace;
-      omSkip:          Result := umAddquery;
+      omSkip:          Result := umAddQuery;
       omQuit:          SetCode(ccUserAbort);
       omRenameOne:
       begin
@@ -292,6 +294,12 @@ begin
         end;
       end;
     end;
+
+    if (R in [omAdd, omUpdate, omReplace, omAddUpdate, omAddReplace, omAddAutoRename]) then
+    begin
+      FCommandLine.uOption := Result;
+    end;
+
     StrDispose(FI.FileName);
     StrDispose(FI.FilePath);
   end;
@@ -404,7 +412,7 @@ begin
           end;
           Inc(FTotalSize, FHeaders.AddItem(T, P));
         end;
-        // umAddQuery: nothing to do, skip file
+        umAddQuery: if (P = nil) then Inc(FTotalSize, FHeaders.AddItem (T, P));
       end;
     end;
   end;
@@ -860,7 +868,7 @@ begin
   if Code < ccError then
   begin
     ProcessFilesToAdd;
-    if FTotalSize <> 0 then
+    if FTotalSize > 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);

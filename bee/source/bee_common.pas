@@ -612,7 +612,10 @@ end;
 
 function SizeToStr(const Size: int64): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
-  Result := Format('%u', [Size]);
+  if Size > 0 then
+    Result := Format('%u', [Size])
+  else
+    Result := Format('%u', [0]);
 end;
 
 function AttrToStr(Attr: longint): string; {$IFDEF FPC} inline; {$ENDIF}
