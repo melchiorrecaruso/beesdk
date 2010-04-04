@@ -75,7 +75,6 @@ type
     procedure DoMessage(const aMessage: string); overload;
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
     procedure DoRequest(const aMessage: string);
-    function  DoOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
     function  DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
     function  DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
@@ -84,7 +83,6 @@ type
 
     procedure OnMessage(const aMessage: string); virtual; abstract; 
     procedure OnRequest(const aMessage: string); virtual; abstract;
-    function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; virtual; abstract;
     function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
     function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
     procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
@@ -260,15 +258,6 @@ var
 begin
   X := Now;
   OnMessage(aMessage);
-  FStartTime := FStartTime + (Now - X);
-end;
-
-function TApp.DoOverWrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
-var
-  X: double;
-begin
-  X := Now;
-  Result := OnOverWrite(aFileInfo, aValue);
   FStartTime := FStartTime + (Now - X);
 end;
 

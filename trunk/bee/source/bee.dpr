@@ -68,7 +68,6 @@ type
     destructor Destroy; override;
     procedure OnMessage(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
-    function  OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode; override;
     function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
     function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
     procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); override;
@@ -99,46 +98,6 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  function TCustomBeeApp.OnOverwrite(const aFileInfo: TFileInfo; const aValue: TOverwriteMode): TOverwriteMode;
-  var
-    I: longint;
-  begin
-    Writeln('Warning: file "',
-      ParamToOem(PCharToString(aFileInfo.FilePath)),
-      ParamToOem(PCharToString(aFileInfo.FileName)),
-      '" already exists,' + Cr + 'Do you want:');
-
-    Writeln(' 0 - Add');
-    Writeln(' 1 - Update');
-    Writeln(' 2 - Replace');
-    Writeln(' 3 - AddUpdate');
-    Writeln(' 4 - AddReplace');
-    Writeln(' 5 - AddAutoRename');
-    Writeln(' 6 - UpdateOne');
-    Writeln(' 7 - ReplaceOne');
-    Writeln(' 8 - RenameOne');
-    Writeln(' 9 - omSkip');
-    Writeln('10 - Quit');
-    repeat
-      Write('Insert code [0.. 10]: ');
-      Read(I);
-    until I in [0.. 10];
-
-    case I of
-       0: Result := omAdd;
-       1: Result := omUpdate;
-       2: Result := omReplace;
-       3: Result := omAddUpdate;
-       4: Result := omAddReplace;
-       5: Result := omAddAutoRename;
-       6: Result := omUpdateOne;
-       7: Result := omReplaceOne;
-       8: Result := omRenameOne;
-       9: Result := omSkip;
-      10: Result := omQuit;
-    end;
-  end;
-
   function TCustomBeeApp.OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
   begin
     with aFileInfo do
@@ -147,7 +106,6 @@ type
         ParamToOem(PCharToString(FilePath)),
         ParamToOem(PCharToString(FileName)), '" as (empty to skip):');
     end;
-    Readln;
     Readln(Result);
     // convert oem to param
     Result := OemToParam(Result);
