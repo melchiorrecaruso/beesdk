@@ -60,11 +60,10 @@ type
   {  umReplace       Replace only existing files          }
   {  umAddUpdate     Add and update existing files        }
   {  umAddReplace    Add and replace existing files       }
-  {  umAddAutoRename                                      }
-  {  umAddQuery      Add and query if file already exists }
+  {  umAddAutoRename Add and rename if already exists     }
 
-  TUpdateMode = (umAdd, umUpdate, umReplace, umAddUpdate,
-    umAddReplace, umAddAutoRename, umAddQuery);
+  TUpdateMode = (umAdd, umUpdate, umReplace,
+    umAddUpdate, umAddReplace, umAddAutoRename);
 
   { Compression Method Option:                            }
   {   moStore                                             }
@@ -82,21 +81,6 @@ type
 
   TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
     do80MB, do160MB, do320MB, do640MB ,do1280MB);
-
-  { Overwrite Mode Option:                                }
-  {  omUpdate                                             }
-  {  omAddUpdate                                          }
-  {  omReplace                                            }
-  {  omAddReplace                                         }
-  {  omSkip                                               }
-  {  omAddSkip                                            }
-  {  omRename                                             }
-  {  omAddAutoRename                                      }
-  {  omQuit                                               }
-
-  TOverwriteMode = (omAdd, omUpdate, omReplace, omAddUpdate,
-    omAddReplace, omAddAutoRename, omUpdateOne, omReplaceOne,
-    omRenameOne, omSkip, omQuit);
 
   { Process Priority Option:                              }
   {   prioIdle                                            }

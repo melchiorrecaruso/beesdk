@@ -133,7 +133,7 @@ begin
   FCommand := ccNone;
   FssOption := False;
   FrOption := rmNone;
-  FuOption := umAddQuery;
+  FuOption := umAddUpdate;
   FxOptions.Clear;
   FmOption := moFast;
   FdOption := do10MB;
@@ -442,12 +442,12 @@ begin
   end;
 
   case FuOption of
-    umAdd:        Result := Result + ' -u0';
-    umUpdate:     Result := Result + ' -u1';
-    umReplace:    Result := Result + ' -u2';
-    umAddUpdate:  Result := Result + ' -u3';
-    umAddReplace: Result := Result + ' -u4';
-    umAddQuery:   Result := Result + ' -u5';
+    umAdd:           Result := Result + ' -u0';
+    umUpdate:        Result := Result + ' -u1';
+    umReplace:       Result := Result + ' -u2';
+    umAddUpdate:     Result := Result + ' -u3';
+    umAddReplace:    Result := Result + ' -u4';
+    umAddAutoRename: Result := Result + ' -u5';
   end;
 
   for I := 0 to FxOptions.Count - 1 do

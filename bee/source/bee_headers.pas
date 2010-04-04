@@ -110,11 +110,12 @@ type
       THeaderActions; const aFileName: string): longint; overload;
     function AlreadyFileExists(const aFileName: string): longint; overload;
 
-    function AddItem(const Rec: TCustomSearchRec; Item: THeader): int64; overload;
-    function UpdateItem(const Rec: TCustomSearchRec; Item: THeader): int64;
-    function ReplaceItem(const Rec: TCustomSearchRec; Item: THeader): int64;
-    function AddUpdateItem(const Rec: TCustomSearchRec; Item: THeader): int64;
-    function AddReplaceItem(const Rec: TCustomSearchRec; Item: THeader): int64;
+    function AddItem(const Rec: TCustomSearchRec): int64; overload;
+    function UpdateItem(const Rec: TCustomSearchRec): int64;
+    function ReplaceItem(const Rec: TCustomSearchRec): int64;
+    function AddUpdateItem(const Rec: TCustomSearchRec): int64;
+    function AddReplaceItem(const Rec: TCustomSearchRec): int64;
+    function AddAutoRenameItem(const Rec: TCustomSearchRec): int64;
 
     procedure SortNews(aConfiguration: TConfiguration);
 
@@ -498,8 +499,11 @@ begin
     end;
 end;
 
-function THeaders.AddItem(const Rec: TCustomSearchRec; Item: THeader): int64;
+function THeaders.AddItem(const Rec: TCustomSearchRec): int64;
+var
+  Item: THeader;
 begin
+  Item := SearchItem(Rec.FileName);
   if Item = nil then
   begin
     Item := CreateItem(Rec);
@@ -509,8 +513,11 @@ begin
     Result := 0;
 end;
 
-function THeaders.UpdateItem(const Rec: TCustomSearchRec; Item: THeader): int64;
+function THeaders.UpdateItem(const Rec: TCustomSearchRec): int64;
+var
+  Item: THeader;
 begin
+  Item := SearchItem(Rec.FileName);
   if (Item <> nil) and (Item.FileTime < Rec.FileTime) then
   begin
     if Item.FileAction = toCopy then
@@ -518,13 +525,16 @@ begin
 
     Item.FileLink := Rec.FileLink;
     Item.FileTime := Rec.FileTime;
-    Result := Rec.FileSize - Item.FileSize;
+    Result := Rec.FileSize;
   end else
     Result := 0;
 end;
 
-function THeaders.ReplaceItem(const Rec: TCustomSearchRec; Item: THeader): int64;
+function THeaders.ReplaceItem(const Rec: TCustomSearchRec): int64;
+var
+  Item: THeader;
 begin
+  Item := SearchItem(Rec.FileName);
   if Item <> nil then
   begin
     if Item.FileAction = toCopy then
@@ -537,20 +547,32 @@ begin
     Result := 0;
 end;
 
-function THeaders.AddUpdateItem(const Rec: TCustomSearchRec; Item: THeader): int64;
+function THeaders.AddUpdateItem(const Rec: TCustomSearchRec): int64;
 begin
-  if Item = nil then
-    Result := AddItem(Rec, Item)
-  else
-    Result := UpdateItem(Rec, Item);
+  Result := AddItem(Rec);
+  if Result = 0 then
+  begin
+    Result := UpdateItem(Rec);
+  end;
 end;
 
-function Theaders.AddReplaceItem(const Rec: TCustomSearchRec; Item: THeader): int64;
+function Theaders.AddReplaceItem(const Rec: TCustomSearchRec): int64;
 begin
-  if Item = nil then
-    Result := AddItem(Rec, Item)
-  else
-    Result := ReplaceItem(Rec, Item);
+  Result := AddItem(Rec);
+  if Result = 0 then
+  begin
+    Result := ReplaceItem(Rec);
+  end;
+end;
+
+function Theaders.AddAutoRenameItem(const Rec: TCustomSearchRec): int64;
+begin
+  Result := AddItem(Rec);
+  while Result = 0 do
+  begin
+    Rec.FileName := GenerateAlternativeFileName(Rec.FileName, False);
+    Result := AddItem(Rec);
+  end;
 end;
 
 function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction): longint;
