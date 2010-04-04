@@ -92,8 +92,8 @@ const
 
   { CoreMessage }
 
-  cmSuccesful        = 'Everything went ok, archive size %s bytes, time elapsed %s seconds.';
-  cmWarning          = 'Warning occurred, archive size %s bytes, time elapsed %s seconds.';
+  cmSuccesful        = 'Everything went ok, archive size %s bytes - time elapsed %s seconds.';
+  cmWarning          = 'Warning occurred, archive size %s bytes - time elapsed %s seconds.';
   cmError            = 'Process aborted - time elapsed %s seconds.';
   cmUserAbort        = 'Process aborted, user stopped the process - time elapsed %s seconds.';
 

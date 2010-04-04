@@ -107,8 +107,6 @@ type
       Writeln('Warning: file "',
         ParamToOem(PCharToString(aFileInfo.FilePath)),
         ParamToOem(PCharToString(aFileInfo.FileName)), '" already exists.');
-      
-      // not convert oem to param
       Readln(B);
     until B in [0..3];
     //case  B of
@@ -174,8 +172,7 @@ type
     end;
   end;
 
-  function TCustomBeeApp.OnPassword(const aFileInfo: TFileInfo;
-  const aValue: string): string;
+  function TCustomBeeApp.OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
   var
     S: string;
   begin
