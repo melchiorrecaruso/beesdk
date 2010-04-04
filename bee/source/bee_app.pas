@@ -126,7 +126,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1080 archiver utility, Feb 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1097 archiver utility, Apr 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -265,52 +265,32 @@ begin
     FI.FileAttr := aItem.FileAttr;
 
     case DoOverwrite(FI, omAddReplace) of
-      omAdd: begin
-               Result := umAdd;
-               FCommandLine.uOption := Result;
-             end;
-      omUpdate: begin
-                  Result := umUpdate;
-                  FCommandLine.uOption :=  Result;
-                end;
-      omReplace: begin
-                   Result := umReplace;
-                   FCommandLine.uOption :=  Result;
-                 end;
-      omAddUpdate: begin
-                     Result := umAddUpdate;
-                     FCommandLine.uOption :=  Result;
-                   end;
-      omAddReplace: begin
-                      Result := umAddReplace;
-                      FCommandLine.uOption :=  Result;
-                    end;
-      omAddAutoRename: begin
-                         Result := umAddAutoRename;
-                         FCommandLine.uOption :=  Result;
-                       end;
-      omUpdateOne: Result := umUpdate;
-      omReplaceOne: Result := umReplace;
-      omRenameOne: begin
-                     repeat
-                       S := FixFileName(DoRename(FI, ''));
-                       if Length(S) <> 0 then
-                       begin
-                         if FHeaders.AlreadyFileExists(S) <> -1 then
-                           DoMessage(Format(cmFileExistsWarning, [S]))
-                         else
-                           Break;
-                       end else
-                         Break;
-                     until False;
-                    if Length(S) <> 0 then
-                    begin
-                      New.FileName := S;
-                      Result := umAdd;
-                    end;
-                  end;
-      // omSkip: Result := umAddquery;
-      omQuit: Code := ccUserAbort;
+      omAdd:           Result := umAdd;
+      omUpdate:        Result := umUpdate;
+      omReplace:       Result := umReplace;
+      omAddUpdate:     Result := umAddUpdate;
+      omAddReplace:    Result := umAddReplace;
+      omAddAutoRename: Result := umAddAutoRename;
+      omUpdateOne:     Result := umUpdate;
+      omReplaceOne:    Result := umReplace;
+      omSkip:          Result := umAddquery;
+      omQuit:          SetCode(ccUserAbort);
+      omRenameOne:
+      begin
+        repeat
+          S := FixFileName(DoRename(FI, ''));
+          if (Length(S) <> 0) and (FHeaders.AlreadyFileExists(S) <> -1) then
+          begin
+            DoMessage(Format(cmFileExistsWarning, [S]));
+          end;
+        until (Length(S) = 0) or (FHeaders.AlreadyFileExists(S) <> -1);
+
+        if Length(S) <> 0 then
+        begin
+          New.FileName := S;
+          Result := umAdd;
+        end;
+      end;
     end;
     StrDispose(FI.FileName);
     StrDispose(FI.FilePath);

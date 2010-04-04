@@ -133,7 +133,7 @@ begin
   FCommand := ccNone;
   FssOption := False;
   FrOption := rmNone;
-  FuOption := umAddUpdate;
+  FuOption := umAddQuery;
   FxOptions.Clear;
   FmOption := moFast;
   FdOption := do10MB;
