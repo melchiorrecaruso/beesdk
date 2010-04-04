@@ -231,21 +231,20 @@ begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FTempName);
     end;
-
-    with FCommandLine do
-      case Code of
-        ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [SizeToStr(SizeOfFile(ArchiveName)), TimeDifference(FStartTime)]));
-        ccWarning:   DoMessage(Format(Cr + cmWarning,   [SizeToStr(SizeOfFile(ArchiveName)), TimeDifference(FStartTime)]));
-        ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [TimeDifference(FStartTime)]));
-        else         DoMessage(Format(Cr + cmError,     [TimeDifference(FStartTime)]));
-      end;
-
   end else
   begin
     if Assigned(FArcFile) then
       FreeAndNil(FArcFile);
   end;
   FHeaders.Free;
+
+  with FCommandLine do
+    case Code of
+      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [SizeToStr(SizeOfFile(ArchiveName)), TimeDifference(FStartTime)]));
+      ccWarning:   DoMessage(Format(Cr + cmWarning,   [SizeToStr(SizeOfFile(ArchiveName)), TimeDifference(FStartTime)]));
+      ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [TimeDifference(FStartTime)]));
+      else         DoMessage(Format(Cr + cmError,     [TimeDifference(FStartTime)]));
+  end;
 end;
 
 { Process File To OverWrite routines }
@@ -409,7 +408,6 @@ begin
     if Code < ccError then
     begin
       T := Scanner.Items[I];
-
       P := FHeaders.SearchItem(T.FileName);
       case ProcessFileToOverWrite4Add(T, P) of
         umAdd:        Inc(FTotalSize, FHeaders.AddItem       (T, P));
@@ -430,8 +428,12 @@ begin
       end;
     end;
   end;
-  FHeaders.SortNews(FConfiguration);
   Scanner.Destroy;
+
+  if FTotalSize > 0 then
+    FHeaders.SortNews(FConfiguration)
+  else
+    DoMessage(cmNoFilesWarning, ccWarning);
 end;
 
 procedure TBeeApp.ProcessFilesToFresh;

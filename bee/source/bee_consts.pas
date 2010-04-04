@@ -92,8 +92,8 @@ const
 
   { CoreMessage }
 
-  cmSuccesful        = 'Archive size %s bytes, time elapsed %s seconds.';
-  cmWarning          = 'Warning occurred - archive size %s bytes, time elapsed %s seconds.';
+  cmSuccesful        = 'Everything went ok, archive size %s bytes, time elapsed %s seconds.';
+  cmWarning          = 'Warning occurred, archive size %s bytes, time elapsed %s seconds.';
   cmError            = 'Process aborted - time elapsed %s seconds.';
   cmUserAbort        = 'Process aborted, user stopped the process - time elapsed %s seconds.';
 
@@ -109,6 +109,7 @@ const
 
   cmConfigWarning    = 'Warning: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning= 'Warning: file "%s" already exists';
+  cmNoFilesWarning   = 'Warning: no files to process';
 
   { CorePriority }
 
