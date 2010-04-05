@@ -853,7 +853,7 @@ begin
                 case P.FileAction of
                   haCopy:    Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
                   haExtract: Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
-                  haDelete: DoMessage(msgDeleting + P.FileName);
+                  haDelete:  DoMessage(Format(msgDeleting, [P.FileName]));
                 end;
               end;
             end;
@@ -970,8 +970,11 @@ begin
       TotalFiles := 0;
 
       {$IFDEF CONSOLEAPPLICATION}
-      FHeadersToList.Sort(CompareFn);
-      FHeadersToListPath := '';
+      if not FCommandLine.stlOption then
+      begin
+        FHeadersToList.Sort(CompareFn);
+        FHeadersToListPath := '';
+      end;
       {$ENDIF}
 
       I := 0;

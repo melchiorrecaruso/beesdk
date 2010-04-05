@@ -169,7 +169,7 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.DoMessage(Format(msgAdding, [P.FileName]));
+    emNorm: App.DoMessage(Format(msgUpdating, [P.FileName]));
   end;
 
   P.FileStartPos := Stream.Seek(0, soFromCurrent);
@@ -481,9 +481,9 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmNorm: App.DoMessage(Format(msgExtracting, [P.FileName]));
-    pmNul:  App.DoMessage(Format(msgDecoding,   [P.FileName]));
-    pmSkip: App.DoMessage(Format(msgSkipping,   [P.FileName]));
+    pmNorm: App.DoMessage(Format(msgDecoding, [P.FileName]));
+    pmNul:  App.DoMessage(Format(msgDecoding, [P.FileName]));
+    pmSkip: App.DoMessage(Format(msgSkipping, [P.FileName]));
   end;
   if Mode = pmSkip then Exit;
 
