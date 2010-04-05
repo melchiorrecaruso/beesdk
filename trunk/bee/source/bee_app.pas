@@ -65,18 +65,17 @@ type
     { open/close archive routine }
     procedure OpenArchive(const aAction: THeaderAction);
     procedure CloseArchive(IsModified: boolean);
-    { decode solid sequences using a swapfile }
-    procedure ProcessFilesToSwap;
     { find and prepare sequences }
     procedure ProcessFilesToAdd;
-    procedure ProcessFilesToDelete;
+    procedure ProcessFilesToUpdate;
+    procedure ProcessFilesToSwap;
     procedure ProcessFilesToExtract;
-    procedure ProcessFilesToTest;
-    procedure ProcessFilesToRename;
     procedure ProcessFilesToDecode(const aAction: THeaderAction);
-    procedure ProcessFilesToList;
-    procedure ProcessFilesToFresh;
+    procedure ProcessFilesToTest;
+    procedure ProcessFilesToDelete;
     procedure ProcessFilesDeleted;
+    procedure ProcessFilesToRename;
+    procedure ProcessFilesToList;
     { process options }
     procedure ProcesstOption;
     procedure ProcesslOption;
@@ -272,6 +271,7 @@ begin
         umAddUpdate:     Inc(FTotalSize, FHeaders.AddUpdateItem    (T));
         umAddReplace:    Inc(FTotalSize, FHeaders.AddReplaceItem   (T));
         umAddAutoRename: Inc(FTotalSize, FHeaders.AddAutoRenameItem(T));
+        else DoMessage(cmSequenceError,  ccError);
       end;
     end;
   end;
@@ -279,13 +279,13 @@ begin
   FHeaders.SortNews(FConfiguration);
 end;
 
-procedure TBeeApp.ProcessFilesToFresh;
+procedure TBeeApp.ProcessFilesToUpdate;
 var
   I, J, BackTear, NextTear: longint;
   P: THeader;
 begin
   I := FHeaders.GetBack(FHeaders.GetCount -1, toUpdate);
-  // find sequences and mark as toSwap files that not toFresh
+  // find sequences and mark as toSwap files that not toUpdate
   while I > -1 do
   begin
     BackTear := FHeaders.GetBack(I, foTear);
@@ -300,11 +300,13 @@ begin
       begin
         P := FHeaders.GetItem(J);
         case P.FileAction of
-          toCopy:  begin
-                     P.FileAction := toSwap;
-                     Inc(FTotalSize, P.FileSize * 2);
-                   end;
           toUpdate: Inc(FTotalSize, P.FileSize);
+          toCopy:
+          begin
+            P.FileAction := toSwap;
+            Inc(FTotalSize, P.FileSize * 2);
+          end;
+          else DoMessage(cmSequenceError,  ccError);
         end;
       end;
       I := BackTear;
@@ -732,8 +734,8 @@ begin
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
       if FTempFile <> nil then
       begin
-        ProcessFilesToFresh; // find sequences
-        ProcessFilesToSwap;  // decode solid sequences
+        ProcessFilesToUpdate; // find sequences
+        ProcessFilesToSwap;   // decode solid sequences
         if Code < ccError then
         begin
           if Length(FSwapName) <> 0 then // if exists a modified
