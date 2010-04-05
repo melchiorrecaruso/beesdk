@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1112 - 2010.03.10 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.04.05 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -36,8 +36,8 @@ interface
 uses
   Classes,
   Bee_Types,
-  Bee_Consts,
-  Bee_Common;
+  Bee_Common,
+  Bee_Consts;
 
 type
   { TApp class }
@@ -104,8 +104,8 @@ type
 implementation
 
 uses
-  SysUtils,
-  DateUtils;
+  DateUtils,
+  SysUtils;
 
 { TApp class }
 
@@ -252,7 +252,7 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.DoMessage(const aMessage: string);
+procedure TApp.DoMessage(const aMessage: string); {$IFDEF FPC} inline; {$ENDIF}
 var
   X: double;
 begin
@@ -306,7 +306,7 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.DoClearLine;
+procedure TApp.DoClearLine; {$IFDEF FPC} inline; {$ENDIF}
 var
   X: double;
 begin

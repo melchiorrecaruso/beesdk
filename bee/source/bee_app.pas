@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1112 - 2010.03.10 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.04.05 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -66,25 +66,26 @@ type
     procedure OpenArchive(const aAction: THeaderAction);
     procedure CloseArchive(IsModified: boolean);
     { find and prepare sequences }
-    procedure ProcessFilesToAdd;
-    procedure ProcessFilesToUpdate;
-    procedure ProcessFilesToSwap;
-    procedure ProcessFilesToExtract;
-    procedure ProcessFilesToDecode(const aAction: THeaderAction);
-    procedure ProcessFilesToTest;
-    procedure ProcessFilesToDelete;
+    procedure ProcessFiles2Add;
+    procedure PreprocessSequences;
+    procedure ProcessSequences;
+
+    procedure ProcessFiles2Delete;
     procedure ProcessFilesDeleted;
-    procedure ProcessFilesToRename;
-    procedure ProcessFilesToList;
+    procedure ProcessFiles2Extract;
+    procedure ProcessFiles2Test;
+    procedure ProcessFiles2Decode(const aAction: THeaderAction);
+    procedure ProcessFiles2Rename;
+    procedure ProcessFiles2List;
     { process options }
     procedure ProcesstOption;
     procedure ProcesslOption;
     { sheels routines}
     procedure HelpShell;
     procedure EncodeShell;
+    procedure DeleteShell;
     procedure DecodeShell(const aAction: THeaderAction);
     procedure RenameShell;
-    procedure DeleteShell;
     procedure ListShell;
   protected
     function VersionToStr(const aItem: THeader): string;
@@ -193,7 +194,7 @@ end;
 
 procedure TBeeApp.OpenArchive(const aAction: THeaderAction);
 begin
-  DoMessage(Format(Cr + msgOpening, [FCommandLine.ArchiveName]));
+  DoMessage(Format(Cr + cmOpening, [FCommandLine.ArchiveName]));
   FHeaders := THeaders.Create(FCommandLine);
   if FileExists(FCommandLine.ArchiveName) then
   begin
@@ -245,13 +246,13 @@ end;
 
 { Sequences processing }
 
-procedure TBeeApp.ProcessFilesToAdd;
+procedure TBeeApp.ProcessFiles2Add;
 var
   I: longint;
   T: TCustomSearchRec;
   Scanner: TFileScanner;
 begin
-  DoMessage(Format(msgScanning, ['...']));
+  DoMessage(Format(cmScanning, ['...']));
   Scanner := TFileScanner.Create;
   with FCommandLine do
     for I := 0 to FileMasks.Count - 1 do
@@ -279,7 +280,7 @@ begin
   FHeaders.SortNews(FConfiguration);
 end;
 
-procedure TBeeApp.ProcessFilesToUpdate;
+procedure TBeeApp.ProcessFiles2Update;
 var
   I, J, BackTear, NextTear: longint;
   P: THeader;
@@ -316,7 +317,7 @@ begin
   Inc(FTotalSize, FHeaders.GetPackedSize(haCopy));
 end;
 
-procedure TBeeApp.ProcessFilesToSwap;
+procedure TBeeApp.ProcessSolidSequences;
 var
   P: THeader;
   I, J: longint;
@@ -376,12 +377,12 @@ begin
   end;
 end;
 
-procedure TBeeApp.ProcessFilesToDelete;
+procedure TBeeApp.ProcessFiles2Delete;
 var
   I, J, BackTear, NextTear: longint;
   P: THeader;
 begin
-  DoMessage(Format(msgScanning, ['...']));
+  DoMessage(Format(cmScanning, ['...']));
   FHeaders.MarkItems(FCommandLine.FileMasks, haCopy, haDelete);
   FHeaders.MarkItems(FCommandLine.xOptions, haDelete, haCopy);
 
@@ -463,56 +464,15 @@ begin
   end;
 end;
 
-procedure TBeeApp.ProcessFilesToDecode;
-var
-  P: THeader;
-  I, J: longint;
-  iDictionary, iTable, iTear: longint;
-begin
-  I := FHeaders.GetBack(FHeaders.GetCount -1, aAction); // last header
-  while I > -1 do
-  begin
-    iDictionary := FHeaders.GetBack(I, foDictionary);  // find dictionary info
-    iTable := FHeaders.GetBack(I, foTable);            // find table info
-    iTear := FHeaders.GetBack(I, foTear);              // find tear info
-
-    for J := iTear to (I -1) do
-    begin
-      P := FHeaders.GetItem(J);
-      if P.FileAction in [haNone, haSkip] then
-      begin
-        P.FileAction := haDecode;
-        Inc(FTotalSize, P.FileSize);
-      end;
-    end;
-
-    if iDictionary > -1 then
-    begin
-      P := FHeaders.GetItem(iDictionary);
-      if P.FileAction = haNone then
-        P.FileAction := haSkip;
-    end;
-
-    if iTable > -1 then
-    begin
-      P := FHeaders.GetItem(iTable);
-      if P.FileAction = haNone then
-        P.FileAction := haSkip;
-    end;
-
-    I := FHeaders.GetBack(iTear - 1, aAction);
-  end;
-end;
-
-procedure TBeeApp.ProcessFilesToExtract;
+procedure TBeeApp.ProcessFiles2Extract;
 var
   I: longint;
   P: THeader;
   U: TUpdateMode;
 begin
-  DoMessage(Format(msgScanning, ['...']));
-  FHeaders.MarkItems(FCommandLine.FileMasks, haNone, haExtract);
-  FHeaders.MarkItems(FCommandLine.xOptions, haExtract, haNone);
+  DoMessage(Format(cmScanning, ['...']));
+  FHeaders.MarkItems(FCommandLine.FileMasks, haNone,    haExtract);
+  FHeaders.MarkItems(FCommandLine.xOptions,  haExtract, haNone);
 
   for I  := 0 to FHeaders.GetCount - 1 do
   begin
@@ -558,14 +518,14 @@ begin
   end;
 end;
 
-procedure  TBeeApp.ProcessFilesToTest;
+procedure  TBeeApp.ProcessFiles2Test;
 var
   I: longint;
   P: THeader;
 begin
-  DoMessage(Format(msgScanning, ['...']));
-  FHeaders.MarkItems(FCommandLine.FileMasks, haNone, haDecode);
-  FHeaders.MarkItems(FCommandLine.xOptions, haDecode, haNone);
+  DoMessage(Format(cmScanning, ['...']));
+  FHeaders.MarkItems(FCommandLine.FileMasks, haNone,   haDecode);
+  FHeaders.MarkItems(FCommandLine.xOptions,  haDecode, haNone);
 
   for I  := 0 to FHeaders.GetCount - 1 do
   begin
@@ -580,14 +540,55 @@ begin
   end;
 end;
 
-procedure TBeeApp.ProcessFilesToRename;
+procedure TBeeApp.ProcessFiles2Decode;
+var
+  P: THeader;
+  I, J: longint;
+  iDictionary, iTable, iTear: longint;
+begin
+  I := FHeaders.GetBack(FHeaders.GetCount -1, aAction); // last header
+  while I > -1 do
+  begin
+    iDictionary := FHeaders.GetBack(I, foDictionary);  // find dictionary info
+    iTable := FHeaders.GetBack(I, foTable);            // find table info
+    iTear := FHeaders.GetBack(I, foTear);              // find tear info
+
+    for J := iTear to (I -1) do
+    begin
+      P := FHeaders.GetItem(J);
+      if P.FileAction in [haNone, haSkip] then
+      begin
+        P.FileAction := haDecode;
+        Inc(FTotalSize, P.FileSize);
+      end;
+    end;
+
+    if iDictionary > -1 then
+    begin
+      P := FHeaders.GetItem(iDictionary);
+      if P.FileAction = haNone then
+        P.FileAction := haSkip;
+    end;
+
+    if iTable > -1 then
+    begin
+      P := FHeaders.GetItem(iTable);
+      if P.FileAction = haNone then
+        P.FileAction := haSkip;
+    end;
+
+    I := FHeaders.GetBack(iTear - 1, aAction);
+  end;
+end;
+
+procedure TBeeApp.ProcessFiles2Rename;
 var
   S: string;
   I: longint;
   P: THeader;
   FI: TFileInfo;
 begin
-  DoMessage(Format(msgScanning, ['...']));
+  DoMessage(Format(cmScanning, ['...']));
   FHeaders.MarkItems(FCommandLine.FileMasks, haCopy,  haOther);
   FHeaders.MarkItems(FCommandLine.xOptions,  haOther, haCopy);
 
@@ -628,12 +629,12 @@ begin
   end;
 end;
 
-procedure TBeeApp.ProcessFilesToList;
+procedure TBeeApp.ProcessFiles2List;
 var
   I: longint;
   P: THeader;
 begin
-  DoMessage(Format(msgScanning, ['...']));
+  DoMessage(Format(cmScanning, ['...']));
   FHeaders.MarkItems(FCommandLine.FileMasks, haNone,  haOther);
   FHeaders.MarkItems(FCommandLine.xOptions,  haOther, haNone);
 
@@ -728,15 +729,15 @@ begin
   OpenArchive(haCopy);
   if Code < ccError then
   begin
-    ProcessFilesToAdd;
+    ProcessFiles2Add;
     if FTotalSize <> 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
       if FTempFile <> nil then
       begin
-        ProcessFilesToUpdate; // find sequences
-        ProcessFilesToSwap;   // decode solid sequences
+        ProcessFiles2Update;   // find sequences
+        ProcessSolidSequences; // decode solid sequences
         if Code < ccError then
         begin
           if Length(FSwapName) <> 0 then // if exists a modified
@@ -785,13 +786,13 @@ begin
   if Code < ccError then
   begin
     case aAction of
-      haExtract: ProcessFilesToExtract;
-      haDecode:  ProcessFilesToTest;
+      haExtract: ProcessFiles2Extract;
+      haDecode:  ProcessFiles2Test;
     end;
 
     if FTotalSize <> 0 then
     begin
-      ProcessFilesToDecode(aAction);
+      ProcessFiles2Decode(aAction);
       Decoder := TDecoder.Create(FArcFile, Self);
       for I := 0 to FHeaders.GetCount - 1 do
       begin
@@ -823,14 +824,14 @@ begin
   OpenArchive(haCopy);
   if Code < ccError then
   begin
-    ProcessFilesToDelete;
+    ProcessFiles2Delete;
     if FTotalSize <> 0 then
     begin
       TmpFileName := GenerateFileName(FCommandLine.wdOption);
       TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
       if (TmpFile <> nil) then
       begin
-        ProcessFilesToSwap;    // decode solid sequences
+        ProcessFilesSequences; // decode solid sequences
         if Code < ccError then
         begin
 
@@ -853,7 +854,7 @@ begin
                 case P.FileAction of
                   haCopy:    Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
                   haExtract: Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
-                  haDelete:  DoMessage(Format(msgDeleting, [P.FileName]));
+                  haDelete:  DoMessage(Format(cmDeleting, [P.FileName]));
                 end;
               end;
             end;
@@ -878,7 +879,7 @@ begin
   OpenArchive(haCopy);
   if Code < ccError then
   begin
-    ProcessFilesToRename;
+    ProcessFiles2Rename;
     if FTotalSize <> 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
@@ -925,7 +926,7 @@ begin
   OpenArchive(haNone);
   if Code < ccError then
   begin
-    ProcessFilesToList;
+    ProcessFiles2List;
     if FTotalSize <> 0 then
     begin
       {$IFDEF CONSOLEAPPLICATION}
