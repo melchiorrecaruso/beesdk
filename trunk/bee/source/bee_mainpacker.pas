@@ -46,13 +46,13 @@ uses
   Bee_Interface;
 
 type
-  { Extracting Modes:                                   }
-  {   pmNorm  Extract files                             }
-  {   pmSkip  Extract files, but skip current           }
-  {   pmTest  Test files (Extract to nul)               }
-  {   pmQuit  Cancel extracting                         }
+  { Extracting Modes:                                     }
+  {   pmNorm    Extract files                             }
+  {   pmDecode  Decode files (Extract to nul)             }
+  {   pmTest    Test files (Extract to nul)               }
+  {   pmSkip    Skip files                                }
 
-  TExtractingMode = (pmNorm, pmSkip, pmTest, pmQuit);
+  TExtractingMode = (pmNorm, pmDecode, pmTest, pmSkip);
 
   { Encoding Modes:                                     }
   {   emNorm  Encode files                              }
@@ -408,10 +408,10 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.DoMessage(Format(msgSkipping,   [P.FileName]));
-    pmTest: App.DoMessage(Format(msgTesting,    [P.FileName]));
-    pmNorm: App.DoMessage(Format(msgExtracting, [P.FileName]));
-    pmQuit: Exit;
+    pmNorm:   App.DoMessage(Format(msgExtracting, [P.FileName]));
+    pmDecode: App.DoMessage(Format(msgSkipping,   [P.FileName]));
+    pmTest:   App.DoMessage(Format(msgTesting,    [P.FileName]));
+    pmSkip:   Exit;
   end;
 
   Stream.Seek(P.FileStartPos, soFromBeginning);
@@ -488,10 +488,10 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmSkip: App.DoMessage(Format(msgSkipping, [P.FileName]));
-    pmTest: App.DoMessage(Format(msgTesting,  [P.FileName]));
-    pmNorm: App.DoMessage(Format(msgDecoding, [P.FileName]));
-    pmQuit: Exit;
+    pmNorm:   App.DoMessage(Format(msgDecoding, [P.FileName]));
+    pmTest:   App.DoMessage(Format(msgTesting,  [P.FileName]));
+    pmDecode: App.DoMessage(Format(msgSkipping, [P.FileName]));
+    pmSkip:   Exit;
   end;
 
   Stream.Seek(P.FileStartPos, soFromBeginning);

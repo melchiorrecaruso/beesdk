@@ -59,8 +59,8 @@ type
   // Header actions
 
   THeaderAction =
-   (toUpdate, toFresh, toCopy, toSwap, toExtract, toTest,
-    toSkip, toQuit, toDelete, toRename, toList, toNone);
+   (toAdd, toUpdate, toCopy, toSwap, toExtract, toTest,
+    toDecode, toSkip, toDelete, toRename, toList, toNone);
 
   THeaderActions = set of THeaderAction;
 
@@ -209,7 +209,7 @@ begin
     // - End header data - //
     Result.FileLink     := Rec.FileLink;
     Result.FileStartPos := 0;
-    Result.FileAction   := toUpdate;
+    Result.FileAction   := toAdd;
   except
     FreeAndNil(Result);
   end;
@@ -329,7 +329,7 @@ begin
     FSecondary.Insert(M + 1, P);
 
   // Add item to primary list
-  if P.FileAction = toUpdate then
+  if P.FileAction = toAdd then
   begin
 
     L := FPrimary.Count - FNews;
@@ -521,7 +521,7 @@ begin
   if (Item <> nil) and (Item.FileTime < Rec.FileTime) then
   begin
     if Item.FileAction = toCopy then
-      Item.FileAction := toFresh;
+      Item.FileAction := toUpdate;
 
     Item.FileLink := Rec.FileLink;
     Item.FileTime := Rec.FileTime;
@@ -538,7 +538,7 @@ begin
   if Item <> nil then
   begin
     if Item.FileAction = toCopy then
-      Item.FileAction := toFresh;
+      Item.FileAction := toUpdate;
     
     Item.FileLink := Rec.FileLink;
     Item.FileTime := Rec.FileTime;

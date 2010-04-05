@@ -284,7 +284,7 @@ var
   I, J, BackTear, NextTear: longint;
   P: THeader;
 begin
-  I := FHeaders.GetBack(FHeaders.GetCount -1, toFresh);
+  I := FHeaders.GetBack(FHeaders.GetCount -1, toUpdate);
   // find sequences and mark as toSwap files that not toFresh
   while I > -1 do
   begin
@@ -304,12 +304,12 @@ begin
                      P.FileAction := toSwap;
                      Inc(FTotalSize, P.FileSize * 2);
                    end;
-          toFresh: Inc(FTotalSize, P.FileSize);
+          toUpdate: Inc(FTotalSize, P.FileSize);
         end;
       end;
       I := BackTear;
     end;
-    I := FHeaders.GetBack(I - 1, toFresh);
+    I := FHeaders.GetBack(I - 1, toUpdate);
   end;
   Inc(FTotalSize, FHeaders.GetPackedSize(toCopy));
 end;
@@ -344,14 +344,14 @@ begin
         begin
           CurrDictionary := iDictionary;
           P := FHeaders.GetItem(CurrDictionary);
-          Decoder.DecodeStrm(P, pmQuit, FSwapStrm, P.FileSize, foPassword in P.FileFlags);
+          Decoder.DecodeStrm(P, pmSkip, FSwapStrm, P.FileSize, foPassword in P.FileFlags);
         end;
 
         if (iTable > -1) and (iTable <> CurrTable) and (iTable <> iTear) then
         begin
           CurrTable := iTable;
           P := FHeaders.GetItem(CurrTable);
-          Decoder.DecodeStrm(P, pmQuit, FSwapStrm, P.FileSize, foPassword in P.FileFlags);
+          Decoder.DecodeStrm(P, pmSkip, FSwapStrm, P.FileSize, foPassword in P.FileFlags);
         end;
 
         for J := iTear to I do
@@ -476,9 +476,9 @@ begin
     for J := iTear to (I -1) do
     begin
       P := FHeaders.GetItem(J);
-      if P.FileAction in [toNone, toQuit] then
+      if P.FileAction in [toNone, toSkip] then
       begin
-        P.FileAction := toSkip;
+        P.FileAction := toDecode;
         Inc(FTotalSize, P.FileSize);
       end;
     end;
@@ -486,13 +486,15 @@ begin
     if iDictionary > -1 then
     begin
       P := FHeaders.GetItem(iDictionary);
-      if P.FileAction = toNone then P.FileAction := toQuit;
+      if P.FileAction = toNone then
+        P.FileAction := toSkip;
     end;
 
     if iTable > -1 then
     begin
       P := FHeaders.GetItem(iTable);
-      if P.FileAction = toNone then P.FileAction := toQuit;
+      if P.FileAction = toNone then
+        P.FileAction := toSkip;
     end;
 
     I := FHeaders.GetBack(iTear - 1, aAction);
@@ -582,7 +584,7 @@ var
   P: THeader;
   FI: TFileInfo;
 begin
-  DoMessage(msgScanning + '...');
+  DoMessage(Format(msgScanning, ['...']));
   FHeaders.MarkItems(FCommandLine.FileMasks, toCopy,   toRename);
   FHeaders.MarkItems(FCommandLine.xOptions,  toRename, toCopy);
 
@@ -628,7 +630,7 @@ var
   I: longint;
   P: THeader;
 begin
-  DoMessage(msgScanning + '...');
+  DoMessage(Format(msgScanning, ['...']));
   FHeaders.MarkItems(FCommandLine.FileMasks, toNone, toList);
   FHeaders.MarkItems(FCommandLine.xOptions,   toList, toNone);
 
@@ -751,10 +753,10 @@ begin
               begin
                 P := FHeaders.GetItem(I);
                 case P.FileAction of
+                  toAdd:    Encoder.EncodeFile(P, emNorm);
+                  toUpdate: Encoder.EncodeFile(P, emNorm);
                   toCopy:   Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
                   toSwap:   Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
-                  toFresh:  Encoder.EncodeFile(P, emNorm);
-                  toUpdate: Encoder.EncodeFile(P, emNorm);
                 end;
               end;
             end;
@@ -796,8 +798,8 @@ begin
           case P.FileAction of
             toExtract: Decoder.DecodeFile(P, pmNorm);
             toTest:    Decoder.DecodeFile(P, pmTest);
-            toSkip:    Decoder.DecodeFile(P, pmSkip);
-            toQuit:    Decoder.Decodefile(P, pmQuit);
+            toDecode:  Decoder.DecodeFile(P, pmDecode);
+            toSkip:    Decoder.Decodefile(P, pmSkip);
           end;
         end;
       end;
