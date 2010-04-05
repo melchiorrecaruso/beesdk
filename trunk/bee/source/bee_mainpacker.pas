@@ -27,7 +27,7 @@
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1100 - 2010.03.21 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.04.05 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -37,9 +37,9 @@ unit Bee_MainPacker;
 interface
 
 uses
-  Bee_Types,
-  Bee_Files,
   Bee_Codec,
+  Bee_Files,
+  Bee_Types,
   Bee_Consts,
   Bee_Headers,
   Bee_Modeller,
@@ -47,9 +47,9 @@ uses
 
 type
   { Extracting Modes:                        }
-  {   pmNorm    Extract files                }
-  {   pmNul     Extract files to nul stream  }
-  {   pmSkip    Skip files                   }
+  {   pmNorm  Extract files                  }
+  {   pmNul   Extract files to nul stream    }
+  {   pmSkip  Skip files                     }
 
   TExtractingMode = (pmNorm, pmNul, pmSkip);
 
@@ -100,8 +100,8 @@ type
 implementation
 
 uses
-  SysUtils,
   Classes,
+  SysUtils,
   Bee_Crc,
   Bee_Common,
   Bee_BlowFish;
@@ -169,7 +169,7 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.DoMessage(Format(msgUpdating, [P.FileName]));
+    emNorm: App.DoMessage(Format(cmUpdating, [P.FileName]));
   end;
 
   P.FileStartPos := Stream.Seek(0, soFromCurrent);
@@ -238,7 +238,7 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.DoMessage(Format(msgEncoding, [P.FileName]));
+    emNorm: App.DoMessage(Format(cmEncoding, [P.FileName]));
   end;
 
   P.FileStartPos := Stream.Seek(0, soFromCurrent);
@@ -316,7 +316,7 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    emNorm: App.DoMessage(Format(msgCopying, [P.FileName]));
+    emNorm: App.DoMessage(Format(cmCopying, [P.FileName]));
   end;
 
   P.FileStartPos := Stream.Seek(0, soFromCurrent);
@@ -403,9 +403,9 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmNorm: App.DoMessage(Format(msgExtracting, [P.FileName]));
-    pmNul:  App.DoMessage(Format(msgDecoding,   [P.FileName]));
-    pmSkip: App.DoMessage(Format(msgSkipping,   [P.FileName]));
+    pmNorm: App.DoMessage(Format(cmExtracting, [P.FileName]));
+    pmNul:  App.DoMessage(Format(cmDecoding,   [P.FileName]));
+    pmSkip: App.DoMessage(Format(cmSkipping,   [P.FileName]));
   end;
   if Mode = pmSkip then Exit;
 
@@ -461,7 +461,7 @@ begin
     App.DoMessage(Format(cmFileOpenError, [P.FileName]), ccError);
 
   if Crc <> P.FileCrc then
-    App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
+    App.DoMessage(Format(cmCrcError, [P.FileName]), ccError);
 end;
 
 procedure TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
@@ -481,9 +481,9 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmNorm: App.DoMessage(Format(msgDecoding, [P.FileName]));
-    pmNul:  App.DoMessage(Format(msgDecoding, [P.FileName]));
-    pmSkip: App.DoMessage(Format(msgSkipping, [P.FileName]));
+    pmNorm: App.DoMessage(Format(cmDecoding, [P.FileName]));
+    pmNul:  App.DoMessage(Format(cmDecoding, [P.FileName]));
+    pmSkip: App.DoMessage(Format(cmSkipping, [P.FileName]));
   end;
   if Mode = pmSkip then Exit;
 
@@ -538,7 +538,7 @@ begin
     App.DoMessage(cmStreamError, ccError);
 
   if Crc <> P.FileCrc then
-    App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
+    App.DoMessage(Format(cmCrcError, [P.FileName]), ccError);
 end;
 
 end.
