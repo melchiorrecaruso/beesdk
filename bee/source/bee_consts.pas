@@ -45,25 +45,16 @@ const
 
   { Display message strings }
 
-  msgUpdating    = 'Updating   %s';
-  msgFreshing    = 'Freshing   %s';
-  msgReplacing   = 'Replacing  %s';
-  msgExtracting  = 'Extracting %s';
-  msgTesting     = 'Testing    %s';
-  msgSkipping    = 'Skipping   %s';
-  msgEncoding    = 'Encoding   %s';
-  msgDecoding    = 'Decoding   %s';
-  msgCopying     = 'Copying    %s';
-  msgMoving      = 'Moving     %s';
-  msgDeleting    = 'Deleting   %s';
-  msgScanning    = 'Scanning   %s';
   msgOpening     = 'Opening    %s';
-  msgListing     = 'Listing    %s';
-  msgRenaming    = 'Renaming   %s';
-  msgRename      = 'Rename     %s';
+  msgScanning    = 'Scanning   %s';
   msgAdding      = 'Adding     %s';
-  msgCRCERROR    = 'CRC-ERROR  %s';
-  msgFailed      = 'Failed     %s';
+  msgCopying     = 'Copying    %s';
+  msgEncoding    = 'Encoding   %s';
+  msgCrcError    = 'CRC error  %s';
+  msgExtracting  = 'Extracting %s';
+  msgDecoding    = 'Decoding   %s';
+  msgSkipping    = 'Skipping   %s';
+  msgDeleting    = 'Deleting   %s';
 
   { CoreStatus }
 
@@ -107,6 +98,7 @@ const
   cmStrmReadError    = 'Error: can''t read data from stream';
   cmRenameFileError  = 'Error: can''t rename file "%s" to "%s"';
   cmSequenceError    = 'Error: can''t pre-process sequences';
+  cmStreamError      = 'Error: can''t open stream';
 
   cmConfigWarning    = 'Warning: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning= 'Warning: file "%s" already exists';

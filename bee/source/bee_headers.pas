@@ -59,8 +59,8 @@ type
   // Header actions
 
   THeaderAction =
-   (toAdd, toUpdate, toCopy, toSwap, toExtract, toDecode,
-    toTest, toSkip, toDelete, toRename, toList, toNone);
+   (haAdd,  haUpdate, haCopy, haExtract, haDecode,
+    haSkip, haDelete, haNone, haOther);
 
   THeaderActions = set of THeaderAction;
 
@@ -209,7 +209,7 @@ begin
     // - End header data - //
     Result.FileLink     := Rec.FileLink;
     Result.FileStartPos := 0;
-    Result.FileAction   := toAdd;
+    Result.FileAction   := haAdd;
   except
     FreeAndNil(Result);
   end;
@@ -329,7 +329,7 @@ begin
     FSecondary.Insert(M + 1, P);
 
   // Add item to primary list
-  if P.FileAction = toAdd then
+  if P.FileAction = haAdd then
   begin
 
     L := FPrimary.Count - FNews;
@@ -491,9 +491,9 @@ begin
     aStream.Seek(FModule.Size, 0);
 
   Version := Ord(hv02);
-  MarkAsLast(toDelete);
+  MarkAsLast(haDelete);
   for I := 0 to FPrimary.Count - 1 do
-    if THeader(FPrimary.Items[I]).FileAction <> toDelete then
+    if THeader(FPrimary.Items[I]).FileAction <> haDelete then
     begin
       WriteItem(aStream, THeader(FPrimary.Items[I]), Version);
     end;
@@ -520,8 +520,8 @@ begin
   Item := SearchItem(Rec.FileName);
   if (Item <> nil) and (Item.FileTime < Rec.FileTime) then
   begin
-    if Item.FileAction = toCopy then
-      Item.FileAction := toUpdate;
+    if Item.FileAction = haCopy then
+      Item.FileAction := haUpdate;
 
     Item.FileLink := Rec.FileLink;
     Item.FileTime := Rec.FileTime;
@@ -537,8 +537,8 @@ begin
   Item := SearchItem(Rec.FileName);
   if Item <> nil then
   begin
-    if Item.FileAction = toCopy then
-      Item.FileAction := toUpdate;
+    if Item.FileAction = haCopy then
+      Item.FileAction := haUpdate;
     
     Item.FileLink := Rec.FileLink;
     Item.FileTime := Rec.FileTime;
