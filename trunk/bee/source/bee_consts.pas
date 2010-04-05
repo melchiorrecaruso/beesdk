@@ -47,13 +47,13 @@ const
 
   msgOpening     = 'Opening    %s';
   msgScanning    = 'Scanning   %s';
-  msgAdding      = 'Adding     %s';
+  msgUpdating    = 'Updating   %s';
   msgCopying     = 'Copying    %s';
   msgEncoding    = 'Encoding   %s';
-  msgCrcError    = 'CRC error  %s';
   msgExtracting  = 'Extracting %s';
   msgDecoding    = 'Decoding   %s';
   msgSkipping    = 'Skipping   %s';
+  msgCrcError    = 'CRC error  %s';
   msgDeleting    = 'Deleting   %s';
 
   { CoreStatus }
