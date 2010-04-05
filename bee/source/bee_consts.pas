@@ -106,6 +106,7 @@ const
   cmSwapOpenError    = 'Error: can''t open swap file';
   cmStrmReadError    = 'Error: can''t read data from stream';
   cmRenameFileError  = 'Error: can''t rename file "%s" to "%s"';
+  cmSequenceError    = 'Error: can''t pre-process sequences';
 
   cmConfigWarning    = 'Warning: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning= 'Warning: file "%s" already exists';

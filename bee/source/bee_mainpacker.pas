@@ -48,15 +48,15 @@ uses
 type
   { Extracting Modes:                                     }
   {   pmNorm    Extract files                             }
-  {   pmDecode  Decode files (Extract to nul)             }
-  {   pmTest    Test files (Extract to nul)               }
+  {   pmDecode  Decode files (extract to nul)             }
+  {   pmTest    Test files (extract to nul)               }
   {   pmSkip    Skip files                                }
 
   TExtractingMode = (pmNorm, pmDecode, pmTest, pmSkip);
 
-  { Encoding Modes:                                     }
-  {   emNorm  Encode files                              }
-  {   emOpt   Encode files to nul, with no messages     }
+  { Encoding Modes:                                       }
+  {   emNorm  Encode files                                }
+  {   emOpt   Encode files, with no messages              }
 
   TEncodingMode = (emNorm, emOpt);
 
@@ -210,14 +210,12 @@ begin
     P.FilePacked := Stream.Seek(0, soFromCurrent) - P.FileStartPos;
     Stream.BlowFish.Finish;
 
-    if (not (foMoved in P.FileFlags)) and (P.FilePacked >= P.FileSize) then
+    if (not (foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
     begin
       Include(P.FileFlags, foTear);
       Include(P.FileFlags, foMoved);
-
       Stream.Size := P.FileStartPos;
       App.DecSize(P.FileSize);
-
       EncodeFile(P, emOpt);
     end;
 
@@ -295,11 +293,9 @@ begin
     begin
       Include(P.FileFlags, foTear);
       Include(P.FileFlags, foMoved);
-
       Stream.Size := P.FileStartPos;
       SrcStrm.Seek(SrcPosition, soFromBeginning);
       App.DecSize(P.FileSize);
-
       EncodeStrm(P, emOpt, SrcStrm, SrcSize, SrcEncoded);
     end;
 
@@ -409,9 +405,13 @@ begin
 
   case Mode of
     pmNorm:   App.DoMessage(Format(msgExtracting, [P.FileName]));
-    pmDecode: App.DoMessage(Format(msgSkipping,   [P.FileName]));
+    pmDecode: App.DoMessage(Format(msgDecoding,   [P.FileName]));
     pmTest:   App.DoMessage(Format(msgTesting,    [P.FileName]));
-    pmSkip:   Exit;
+    pmSkip:
+    begin
+      App.DoMessage(Format(msgSkipping, [P.FileName]));
+      Exit;
+    end;
   end;
 
   Stream.Seek(P.FileStartPos, soFromBeginning);
@@ -462,13 +462,11 @@ begin
     DstFile.Free;
     if Mode = pmNorm then
       FileSetAttr(P.FileName, P.FileAttr);
-  end;
+  end else
+    App.DoMessage(Format(cmFileOpenError, [P.FileName]), ccError);
 
-  if Crc = longword(-1) then
-    App.DoMessage(Format(cmFileOpenError, [P.FileName]), ccError)
-  else
-    if Crc <> P.FileCrc then
-      App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
+  if Crc <> P.FileCrc then
+    App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
 end;
 
 procedure TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
@@ -488,10 +486,14 @@ begin
     PPM.FreshSolid;
 
   case Mode of
-    pmNorm:   App.DoMessage(Format(msgDecoding, [P.FileName]));
-    pmTest:   App.DoMessage(Format(msgTesting,  [P.FileName]));
-    pmDecode: App.DoMessage(Format(msgSkipping, [P.FileName]));
-    pmSkip:   Exit;
+    pmNorm:   App.DoMessage(Format(msgExtracting, [P.FileName]));
+    pmDecode: App.DoMessage(Format(msgDecoding,   [P.FileName]));
+    pmTest:   App.DoMessage(Format(msgTesting,    [P.FileName]));
+    pmSkip:
+    begin
+      App.DoMessage(Format(msgSkipping, [P.FileName]));
+      Exit;
+    end;
   end;
 
   Stream.Seek(P.FileStartPos, soFromBeginning);
@@ -542,13 +544,11 @@ begin
     if Mode = pmNorm then
       DstFile.Flush;  // stream flush
     DstFile.BlowFish.Finish; // finish after stream flush
-  end;
+  end else
+    App.DoMessage(Format(cmFileOpenError, [P.FileName]), ccError);
 
-  if Crc = longword(-1) then
-    App.DoMessage(Format(cmFileOpenError, [P.FileName]), ccError)
-  else
-    if Crc <> P.FileCrc then
-      App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
+  if Crc <> P.FileCrc then
+    App.DoMessage(Format(msgCRCERROR, [P.FileName]), ccError);
 end;
 
 end.

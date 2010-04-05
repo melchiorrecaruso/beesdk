@@ -59,8 +59,8 @@ type
   // Header actions
 
   THeaderAction =
-   (toAdd, toUpdate, toCopy, toSwap, toExtract, toTest,
-    toDecode, toSkip, toDelete, toRename, toList, toNone);
+   (toAdd, toUpdate, toCopy, toSwap, toExtract, toDecode,
+    toTest, toSkip, toDelete, toRename, toList, toNone);
 
   THeaderActions = set of THeaderAction;
 
