@@ -505,7 +505,7 @@ function GenerateAlternativeFileName(const FileName: string;
   StartIndex: longint; Check: boolean): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
   repeat
-    Result := ChangeFileExt(FileName, '.' +
+    Result := ChangeFileExt(FileName, '_' +
       IntToStr(StartIndex) + ExtractFileExt(FileName));
 
     Inc(StartIndex);
