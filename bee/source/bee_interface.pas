@@ -89,12 +89,12 @@ type
     procedure OnProgress; virtual; abstract;
     procedure OnClearLine; virtual; abstract;
 
-    property Time: longint Read GetTime;
-    property TotalTime: longint Read GetTotalTime;
-    property Size: int64 Read FSize;
-    property TotalSize: int64 Read FTotalSize;
-    property Percentes: longint Read GetPercentes;
-    property Speed: longint Read GetSpeed;
+    property Time: longint read GetTime;
+    property TotalTime: longint read GetTotalTime;
+    property Size: int64 read FSize;
+    property TotalSize: int64 read FTotalSize;
+    property Percentes: longint read GetPercentes;
+    property Speed: longint read GetSpeed;
     property Suspended: boolean read FSuspended write SetSuspended;
     property Terminated: boolean read FTerminated;
     property Code: byte read FCode write SetCode;

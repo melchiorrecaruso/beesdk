@@ -27,7 +27,7 @@
     v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1110 - 2010.01.23 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.04.07 by Melchiorre Caruso.
 }
 
 unit Bee_Common;
@@ -40,8 +40,8 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFNDEF FPC} Math, {$ENDIF}
-  Bee_Types,
-  Classes;
+  Classes,
+  Bee_Types;
 
 { filename handling routines }
 
@@ -816,7 +816,7 @@ var
 begin
 {$IFDEF UNIX}
   na.sa_handler := SigActionHandler(CtrlHandler);
-  FillChar(na.sa_mask, sizeof(na.sa_mask), #0);
+  FillChar(na.sa_mask, SizeOf(na.sa_mask), #0);
   na.sa_flags    := SA_ONESHOT;
   na.sa_restorer := nil;
   fpSigAction(SIGINT, @na, @oa);
