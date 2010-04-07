@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2010.04.07 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -84,12 +84,11 @@ type
   constructor TCustomBeeApp.Create(aParams: TStringList);
   begin
     inherited Create(aParams);
-    SetLength(FPassword, 0);
+    FPassword := '';
   end;
 
   destructor TCustomBeeApp.Destroy;
   begin
-    SetLength(FPassword, 0);
     inherited Destroy;
   end;
 
@@ -166,9 +165,10 @@ type
       Write('Do you want to use password for this session? [Yes, No]: ');
       Readln(S);
       if (Length(S) = 1) and (UpCase(S[1]) = 'Y') then
+      begin
         FPassword := Result;
-    end
-    else
+      end;
+    end else
       Result := FPassword;
   end;
 
@@ -218,25 +218,27 @@ var
   procedure CtrlHandler(sig: cint);
   begin
     case sig of
-      SIGINT: App.Terminated  := True;
-      SIGQUIT: App.Terminated := True;
-      SIGKILL: App.Terminated := True;
-      SIGSTOP: App.Terminated := True;
+      SIGINT:  App.Code := ccUserAbort;
+      SIGQUIT: App.Code := ccUserAbort;
+      SIGKILL: App.Code := ccUserAbort;
+      SIGSTOP: App.Code := ccUserAbort;
     end;
   end;
   {$ENDIF}
 
 begin
   SetCtrlCHandler(@CtrlHandler);
-
   Params := TStringList.Create;
   for I := 1 to ParamCount do
+  begin
     Params.Add(ParamStr(I));
+  end;
   App := TCustomBeeApp.Create(Params);
   App.Execute;
-
-  ExitCode := App.Code;
-
+  with App do
+  begin
+    ExitCode := Code;
+  end;
   App.Destroy;
   Params.Destroy;
 end.

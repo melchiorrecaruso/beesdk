@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1110 - 2010.04.05 by Melchiorre Caruso.
+    v0.8.0 build 1110 - 2010.04.07 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -685,8 +685,8 @@ end;
 
 procedure TBeeApp.HelpShell;
 begin
-  DoMessage(Cr + 'Usage: Bee <command> -<switch 1> -<switch N> <archive-name> <file-names...>');
-  DoMessage(Cr + 'Commands:' + Cr);
+  DoMessage(Cr + 'Usage: Bee <command> [<switches>...] <archive-name> [<file-names>...]' + Cr);
+  DoMessage('<Commands>');
   DoMessage('  a  Add files to archive');
   DoMessage('  d  Delete files from archive');
   DoMessage('  e  Extract files from archive');
@@ -694,28 +694,28 @@ begin
   DoMessage('  r  Rename files in archive');
   DoMessage('  t  Test archive files');
   DoMessage('  x  eXtract files from archive with path name');
-  DoMessage(Cr + 'Switches:' + Cr);
-  DoMessage('  -              stop switches parsing');
-  DoMessage('  cd[directory]  set current archive directory');
-  DoMessage('  cfg[filename]  use specified Configuration file');
-  DoMessage('  d<0..9>    set Dictionary size (d1 uses < 5M, d2 (default) < 10M, ...)');
-  DoMessage('  f          Force file extention');
-  DoMessage('  hv<03,04>  set archive file header version');
-  DoMessage('  l          List archive after process');
-  DoMessage('  m<0..3>    set compression Method (0-store, 1-default, ...)');
-  DoMessage('  p          set Password (min length 4 bytes)');
-  DoMessage('  pri<0..3>  set process priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
-  DoMessage('  r    Recurse subdirectories');
-  DoMessage('  rw   recurse subdirectories only for wildcard names');
-  DoMessage('  s    create Solid archive');
-  DoMessage('  sfx  add self-extractor module');
-  DoMessage('  stl  show technical information for l (list) command');
-  DoMessage('  t    Test archive after process');
-  DoMessage('  u<0..5>  Update files method (0-add files, 1-update older files, 2-replace');
-  DoMessage('           files, 3-add and update older files (default), 4-add and replace');
-  DoMessage('           files, 5-add and autorename existing files)');
-  DoMessage('  wd[direcroty]  set temporany work directory');
-  DoMessage('  x[filenames]   eXclude filenames');
+  DoMessage('<Switches>');
+  DoMessage('  --              stop switches parsing');
+  DoMessage('  -cd[directory]  set current archive directory');
+  DoMessage('  -cfg[filename]  use specified Configuration file');
+  DoMessage('  -d<0..9>    set Dictionary size (d1 uses < 5M, d2 (default) < 10M, ...)');
+  DoMessage('  -f          Force file extention');
+  DoMessage('  -hv<03,04>  set archive file header version');
+  DoMessage('  -l          List archive after process');
+  DoMessage('  -m<0..3>    set compression Method (0-store, 1-default, ...)');
+  DoMessage('  -p          set Password (min length 4 bytes)');
+  DoMessage('  -pri<0..3>  set process priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  DoMessage('  -r    Recurse subdirectories');
+  DoMessage('  -rw   recurse subdirectories only for wildcard names');
+  DoMessage('  -s    create Solid archive');
+  DoMessage('  -sfx  add self-extractor module');
+  DoMessage('  -stl  show technical information for l (list) command');
+  DoMessage('  -t    Test archive after process');
+  DoMessage('  -u<0..5>  Update files method (0-add files, 1-update older files, 2-replace');
+  DoMessage('            files, 3-add and update older files (default), 4-add and replace');
+  DoMessage('            files, 5-add and autorename existing files)');
+  DoMessage('  -wd[direcroty]  set temporany work directory');
+  DoMessage('  -x[filenames]   eXclude filenames');
   DoMessage(Cr + 'Use BeeOpt to make most optimal parameters.' + Cr);
 end;
 
@@ -1068,7 +1068,6 @@ end;
 function TBeeApp.MethodToStr(const aItem: THeader): string;
 begin
   Result := 'm0a';
-
   if not (foTear in aItem.FileFlags) then
   begin
     Result[1] := 's';
