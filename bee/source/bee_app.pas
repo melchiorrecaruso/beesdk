@@ -172,9 +172,9 @@ begin
         ccDelete:   DeleteShell;
         ccExtract:  DecodeShell(haExtract);
         ccxExtract: DecodeShell(haExtract);
-        ccList:     ListShell;
         ccTest:     DecodeShell(haDecode);
         ccRename:   RenameShell;
+        ccList:     ListShell;
         ccHelp:     HelpShell;
       end;
 
@@ -814,8 +814,6 @@ end;
 
 procedure TBeeApp.DeleteShell;
 var
-  TmpFileName: string;
-  TmpFile: TFileWriter;
   I: longint;
   P: THeader;
   Encoder: TEncoder;
@@ -826,9 +824,9 @@ begin
     MarkItems2Delete;
     if FTotalSize <> 0 then
     begin
-      TmpFileName := GenerateFileName(FCommandLine.wdOption);
-      TmpFile := CreateTFileWriter(TmpFileName, fmCreate);
-      if (TmpFile <> nil) then
+      FTempName := GenerateFileName(FCommandLine.wdOption);
+      FTempFile := CreateTFileWriter(FTempName, fmCreate);
+      if (FTempFile <> nil) then
       begin
         DecodeSequences; // decode solid sequences
         if Code < ccError then
@@ -843,8 +841,8 @@ begin
 
           if FSwapFile <> nil then
           begin
-            FHeaders.WriteItems(TmpFile);
-            Encoder := TEncoder.Create(TmpFile, Self);
+            FHeaders.WriteItems(FTempFile);
+            Encoder := TEncoder.Create(FTempFile, Self);
             for I := 0 to FHeaders.GetCount -1 do
             begin
               if Code < ccError then
@@ -858,7 +856,7 @@ begin
               end;
             end;
             Encoder.Destroy;
-            FHeaders.WriteItems(TmpFile);
+            FHeaders.WriteItems(FTempFile);
           end;
         end;
       end else
@@ -871,9 +869,9 @@ end;
 
 procedure TBeeApp.RenameShell;
 var
-  Encoder: TEncoder;
-  P: THeader;
   I: longint;
+  P: THeader;
+  Encoder: TEncoder;
 begin
   OpenArchive(haCopy);
   if Code < ccError then
