@@ -44,6 +44,7 @@ function ConfirmExtract(CommandLine: TCustomCommandLine): boolean;
 implementation
 
 uses
+  Bee_Types,
   Bee_Common,
   // ---
   BeeGui_AddFrm,
@@ -54,21 +55,18 @@ var
   I: integer;
 begin
   AddFrm := TAddFrm.Create(Application);
-  AddFrm.rOption.Checked := CommandLine.rOption;
+  AddFrm.rOption.Checked := CommandLine.rOption = rmFull;
 
-  if (CommandLine.uOption xor CommandLine.fOption) then
-  begin
-    if CommandLine.uOption then
-      AddFrm.ufOption.ItemIndex := 0
-    else
-      AddFrm.ufOption.ItemIndex := 1;
-  end
-  else
-  begin
-    AddFrm.ufOption.ItemIndex := 2;
+  case CommandLine.uOption of
+    umAdd:           AddFrm.ufOption.ItemIndex := 0;
+    umUpdate:        AddFrm.ufOption.ItemIndex := 1;
+    umReplace:       AddFrm.ufOption.ItemIndex := 2;
+    umAddUpdate:     AddFrm.ufOption.ItemIndex := 3;
+    umAddReplace:    AddFrm.ufOption.ItemIndex := 4;
+    umAddAutoRename: AddFrm.ufOption.ItemIndex := 5;
   end;
 
-  AddFrm.eOption.Text    := CommandLine.eOption;
+  AddFrm.eOption.Text    := CommandLine.fOption;
   AddFrm.sOption.Checked := CommandLine.sOption;
 
   AddFrm.aOptionCheck.Checked := Length(CommandLine.aOption) > 0;

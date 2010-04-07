@@ -248,6 +248,7 @@ implementation
 uses
   Graphics,
   // ---
+  Bee_Types,
   Bee_Common,
   BeeGui_SysUtils;
 
@@ -686,13 +687,19 @@ end;
 
 procedure TCustomArchiveListView.SetMask(const Mask: string; Value: boolean);
 var
-  I:    integer;
+  I: integer;
+  R: TRecursiveMode;
   Node: TArchiveItem;
 begin
+  if Value then
+    R := rmFull
+  else
+    R := rmNone;
+
   for I := 0 to Items.Count -1 do
   begin
     Node := TArchiveItem(Items[I].Data);
-    if FileNameMatch(Node.FileName, Mask, False) then
+    if FileNameMatch(Node.FileName, Mask, R) then
     begin
       Items[I].Selected := Value;
     end;
