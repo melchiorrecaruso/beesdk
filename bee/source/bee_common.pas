@@ -491,6 +491,9 @@ function GenerateFileName(const FilePath: string): string; {$IFDEF FPC} inline; 
 var
   I: longint;
 begin
+  Writeln('<', FilePath, '>');
+
+
   repeat
     Result := '????????.$$$';
     for I := 1 to 8 do
