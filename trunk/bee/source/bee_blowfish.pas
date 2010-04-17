@@ -415,13 +415,12 @@ end;
 
 procedure TBlowFish.Start(const Key: string);
 begin
-  if Length(Key) < MinKeyLength then
-    FStarted := False
-  else
+  if Length(Key) >= MinKeyLength then
   begin
-    FStarted := True;
     Initialize(Key);
-  end;
+    FStarted := True;
+  end else
+  FStarted := False;
 end;
 
 procedure TBlowFish.Finish;
@@ -432,7 +431,7 @@ end;
 function TBlowFish.Encode(var aData; Count: longword): longword;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
-  I:    longword;
+  I: longword;
 begin
   Result := Count mod 8;
   if Result = 0 then
@@ -451,7 +450,7 @@ end;
 function TBlowFish.Decode(var aData; Count: longword): longword;
 var
   Data: array [0..MaxInt - 1] of byte absolute aData;
-  I:    longword;
+  I: longword;
 begin
   Result := Count mod 8;
   if Result = 0 then
