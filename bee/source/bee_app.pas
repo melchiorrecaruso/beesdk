@@ -122,7 +122,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1100 archiver utility, Apr 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1120 archiver utility, Apr 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -202,14 +202,19 @@ begin
     begin
       FHeaders.ReadItems(FArcFile, aAction);
       if (FHeaders.GetCount = 0) and (FArcFile.Size <> 0) then
+      begin
         DoMessage(cmArcTypeError, ccError);
+      end;
     end else
       DoMessage(Format(cmArcOpenError, [FCommandLine.ArchiveName]), ccError);
   end;
 end;
 
 procedure TBeeApp.CloseArchive(IsModified: boolean);
+var
+  S: string;
 begin
+  S := TimeDifference(FStartTime);
   if IsModified then
   begin
     if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
@@ -228,19 +233,16 @@ begin
       SysUtils.DeleteFile(FTempName);
     end;
   end else
-  begin
-    if Assigned(FArcFile) then
-      FreeAndNil(FArcFile);
-  end;
-  FHeaders.Free;
+    if Assigned(FArcFile) then FreeAndNil(FArcFile);
 
   with FCommandLine do
     case Code of
-      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [TimeDifference(FStartTime)]));
-      ccWarning:   DoMessage(Format(Cr + cmWarning,   [TimeDifference(FStartTime)]));
-      ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [TimeDifference(FStartTime)]));
-      else         DoMessage(Format(Cr + cmError,     [TimeDifference(FStartTime)]));
+      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
+      ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
+      ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
+      else         DoMessage(Format(Cr + cmError,     [S]));
   end;
+  FHeaders.Free;
 end;
 
 { Sequences processing }
@@ -275,8 +277,8 @@ begin
       end;
     end;
   end;
-  Scanner.Destroy;
   FHeaders.SortNews(FConfiguration);
+  Scanner.Destroy;
 end;
 
 procedure TBeeApp.MarkItems2Update;
@@ -323,7 +325,7 @@ var
 begin
   DoMessage(Format(cmScanning, ['...']));
   FHeaders.MarkItems(FCommandLine.FileMasks, haCopy, haDelete);
-  FHeaders.MarkItems(FCommandLine.xOptions, haDelete, haCopy);
+  FHeaders.MarkItems(FCommandLine.xOptions,  haDelete, haCopy);
 
   I := FHeaders.GetBack(FHeaders.GetCount -1, haDelete);
   // find sequences and ...
@@ -412,7 +414,7 @@ begin
   end;
 end;
 
-procedure  TBeeApp.MarkItems2Test;
+procedure TBeeApp.MarkItems2Test;
 var
   I: longint;
   P: THeader;
@@ -729,7 +731,7 @@ begin
   if Code < ccError then
   begin
     MarkItems2Add;
-    if FTotalSize <> 0 then
+    if FHeaders.GetCount([haAdd, haUpdate]) <> 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
@@ -789,7 +791,7 @@ begin
       haDecode:  MarkItems2Test;
     end;
 
-    if FTotalSize <> 0 then
+    if FHeaders.GetCount([haExtract, haDecode]) <> 0 then
     begin
       MarkItems2Decode(aAction);
       Decoder := TDecoder.Create(FArcFile, Self);
@@ -822,7 +824,7 @@ begin
   if Code < ccError then
   begin
     MarkItems2Delete;
-    if FTotalSize <> 0 then
+    if FHeaders.GetCount([haDelete]) <> 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
@@ -877,7 +879,7 @@ begin
   if Code < ccError then
   begin
     MarkItems2Rename;
-    if FTotalSize <> 0 then
+    if FHeaders.GetCount([haOther]) <> 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
@@ -924,7 +926,7 @@ begin
   if Code < ccError then
   begin
     MarkItems2List;
-    if FTotalSize <> 0 then
+    if FHeaders.GetCount([haOther]) <> 0 then
     begin
       {$IFDEF CONSOLEAPPLICATION}
       DoMessage(StringOfChar(' ', 79));

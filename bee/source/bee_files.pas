@@ -49,32 +49,36 @@ type
 
   TFileReader = class(TFileStream)
   private
+    FBlowFish: TBlowFish;
     BufferSize: longint;
     BufferReaded: longint;
     Buffer: array [0..$1FFFF] of byte;
   public
-    BlowFish: TBlowFish;
     constructor Create(const FileName: string; Mode: word);
     destructor Destroy; override;
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
+    procedure BlowFish(const AKey: string); overload;
+    procedure BlowFish; overload;
   end;
 
   { TFileWriter }
 
   TFileWriter = class(TFileStream)
   private
+    FBlowFish: TBlowFish;
     BufferSize: longint;
-    Buffer:     array [0..$1FFFF] of byte;
+    Buffer: array [0..$1FFFF] of byte;
   public
-    BlowFish: TBlowFish;
     constructor Create(const FileName: string; Mode: word);
     destructor Destroy; override;
     procedure Flush;
     function Write(const Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
+    procedure BlowFish(const AKey: string); overload;
+    procedure BlowFish; overload;
   end;
 
   { TNulWriter }
@@ -142,13 +146,13 @@ begin
   end;
   BufferSize   := 0;
   BufferReaded := 0;
-  BlowFish     := TBlowFish.Create;
+  FBlowFish     := TBlowFish.Create;
   inherited Create(FileName, Mode);
 end;
 
 destructor TFileReader.Destroy;
 begin
-  BlowFish.Free;
+  FBlowFish.Free;
   inherited Destroy;
 end;
 
@@ -173,8 +177,8 @@ begin
 
         if BufferSize = 0 then Exit; // This causes Result < Count
 
-        if BlowFish.Started then
-          BlowFish.Decode(Buffer, BufferSize);
+        if FBlowFish.Started then
+          FBlowFish.Decode(Buffer, BufferSize);
       end;
       S := Count - Result;
 
@@ -211,6 +215,16 @@ begin
   BufferReaded := 0;
 end;
 
+procedure TFileReader.BlowFish(const AKey: string);
+begin
+  FBlowFish.Start(AKey);
+end;
+
+procedure TFileReader.BlowFish;
+begin
+  FBlowFish.Finish;
+end;
+
 function CreateTFileReader(const FileName: string; Mode: word): TFileReader;
 begin
   try
@@ -229,15 +243,15 @@ begin
     ForceDirectories(ExtractFilePath(FileName));
   end;
   BufferSize := 0;
-  BlowFish   := TBlowFish.Create;
+  FBlowFish   := TBlowFish.Create;
   inherited Create(FileName, Mode);
 end;
 
 procedure TFileWriter.Flush;
 begin
-  if BlowFish.Started then
+  if FBlowFish.Started then
   begin
-    BufferSize := BlowFish.Encode(Buffer, BufferSize);
+    BufferSize := FBlowFish.Encode(Buffer, BufferSize);
   end;
   inherited Write(Buffer, BufferSize);
   BufferSize := 0;
@@ -331,8 +345,18 @@ begin
   begin
     Flush;
   end;
-  BlowFish.Free;
+  FBlowFish.Free;
   inherited Destroy;
+end;
+
+procedure TFileWriter.BlowFish(const AKey: string);
+begin
+  FBlowFish.Start(AKey);
+end;
+
+procedure TFileWriter.BlowFish;
+begin
+  FBlowFish.Finish;
 end;
 
 function CreateTFileWriter(const FileName: string; Mode: word): TFileWriter;
@@ -349,14 +373,14 @@ end;
 constructor TNulWriter.Create;
 begin
   { inherited Create; }
-  BlowFish  := TBlowFish.Create;
+  FBlowFish  := TBlowFish.Create;
   FPosition := 0;
   FSize     := 0;
 end;
 
 destructor TNulWriter.Destroy;
 begin
-  BlowFish.Free;
+  FBlowFish.Free;
   { inherited Destroy; }
 end;
 
