@@ -38,6 +38,7 @@ uses
   // ---
   Bee_Files,
   Bee_Codec, // TSecondaryEncoder, TSecondaryDecoder...
+  Bee_Consts,
   Bee_Common,
   Bee_Modeller, // TBaseCoder...
   Bee_Configuration;
