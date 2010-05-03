@@ -39,6 +39,7 @@ unit Bee_Crc;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   SysUtils;
 

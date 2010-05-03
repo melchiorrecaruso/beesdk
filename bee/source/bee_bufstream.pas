@@ -32,6 +32,7 @@ unit Bee_BufStream;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   Bee_BlowFish;
 

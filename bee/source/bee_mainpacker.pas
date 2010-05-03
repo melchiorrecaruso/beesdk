@@ -37,6 +37,7 @@ unit Bee_MainPacker;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Bee_Codec,
   Bee_Files,
   Bee_Types,

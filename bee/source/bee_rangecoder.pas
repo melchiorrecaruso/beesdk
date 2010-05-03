@@ -53,6 +53,7 @@ unit Bee_RangeCoder;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   Bee_Assembler;
 

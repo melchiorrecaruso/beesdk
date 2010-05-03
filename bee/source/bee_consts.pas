@@ -31,6 +31,9 @@ unit Bee_Consts;
 
 interface
 
+uses
+  {$IFDEF FPC} CMem; {$ENDIF}
+
 const
   Cr = #13#10;
 

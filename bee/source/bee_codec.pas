@@ -38,6 +38,7 @@ unit Bee_Codec;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   Bee_RangeCoder;
 

@@ -37,6 +37,7 @@ unit Bee_Common;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFNDEF FPC} Math, {$ENDIF}

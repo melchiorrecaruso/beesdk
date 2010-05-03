@@ -37,6 +37,7 @@ unit Bee_Files;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Math,
   Classes,
   SysUtils,
