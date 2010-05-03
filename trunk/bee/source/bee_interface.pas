@@ -34,6 +34,7 @@ unit Bee_Interface;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   Bee_Types,
   Bee_Common,

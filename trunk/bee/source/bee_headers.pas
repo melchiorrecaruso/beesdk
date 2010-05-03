@@ -37,6 +37,7 @@ unit Bee_Headers;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   SysUtils,
   Bee_Files,

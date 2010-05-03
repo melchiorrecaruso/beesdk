@@ -35,6 +35,7 @@ unit Bee_Configuration;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   SysUtils;
 

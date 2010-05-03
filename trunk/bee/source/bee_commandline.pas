@@ -32,6 +32,7 @@ unit Bee_CommandLine;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   SysUtils,
   Bee_Types,

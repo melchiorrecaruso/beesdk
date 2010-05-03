@@ -42,6 +42,7 @@ program Bee;
 {$I compiler.inc}
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   {$IFDEF CONSOLEAPPLICATION}
   {$IFDEF MSWINDOWS}
   Windows,

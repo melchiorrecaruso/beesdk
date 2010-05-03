@@ -36,6 +36,7 @@ unit Bee_Modeller;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Math,                                 { Max (), Min (), ...                      }
   Classes,                              { TStream                                  }
   Bee_Codec,                            { TSecondaryFCodec, ...                    }

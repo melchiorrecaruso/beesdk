@@ -33,6 +33,9 @@ unit Bee_Assembler;
 
 interface
 
+uses
+  {$IFDEF FPC} CMem; {$ENDIF}
+
 procedure CopyBytes(const Source, Dest; Count: longword);
 
 procedure FillLongword(const Data; const Count, Value: longword);

@@ -32,6 +32,7 @@ unit Bee_Library;
 interface
 
 uses
+  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   SysUtils,
   {$IFDEF FPC} {$IFDEF PLUGINS}

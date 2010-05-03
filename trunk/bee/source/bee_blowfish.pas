@@ -37,6 +37,9 @@ unit Bee_BlowFish;
 
 interface
 
+uses
+  {$IFDEF FPC} CMem; {$ENDIF}
+
 const
   MinKeyLength = 4; { min key-lengh }
 
