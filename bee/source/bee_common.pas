@@ -37,12 +37,10 @@ unit Bee_Common;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFNDEF FPC} Math, {$ENDIF}
-  Classes,
-  Bee_Types;
+  {$IFDEF UNIX} BaseUnix, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  Classes, Bee_Types;
 
 { filename handling routines }
 

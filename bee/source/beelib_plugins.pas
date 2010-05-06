@@ -32,7 +32,6 @@ unit BeeLib_Plugins;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
   Process,
   Classes,
   SysUtils,

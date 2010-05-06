@@ -38,9 +38,7 @@ unit Bee_Codec;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
-  Classes,
-  Bee_RangeCoder;
+  Classes, Bee_RangeCoder;
 
 const
   MaxFreq = Bee_RangeCoder.MaxFreq;

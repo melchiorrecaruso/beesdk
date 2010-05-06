@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1110 - 2010.04.07 by Melchiorre Caruso.
+    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -39,7 +39,6 @@ unit Bee_App;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   Bee_Files,
   Bee_Types,

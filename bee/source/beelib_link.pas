@@ -32,9 +32,7 @@ unit BeeLib_Link;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
-  Classes,
-  Bee_Types;
+  Classes, Bee_Types;
 
 const
   {$IFDEF MSWINDOWS}

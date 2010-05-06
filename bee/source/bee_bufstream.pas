@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 { Contains:
 
-
+    Buffered stream classes.
 
   Modifyed:
 
-    v0.8.0 build 1110 - 2010.04.07 by Melchiorre Caruso.
+    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
 unit Bee_BufStream;
@@ -32,9 +32,7 @@ unit Bee_BufStream;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
-  Classes,
-  Bee_BlowFish;
+  Classes, Bee_BlowFish;
 
 const
   DefaultBufferCapacity: longint = 128 * 1024;
@@ -42,7 +40,7 @@ const
 type
   { TBufStream }
 
-  TBufStream2 = class(TStream)
+  TBufStream = class(TStream)
   private
     FSource: TStream;
     FCapacity: longint;
@@ -57,14 +55,14 @@ type
     constructor Create(ASource: TStream; ACapacity: longint); overload;
     constructor Create(ASource: TStream); overload;
     destructor Destroy; override;
-    procedure BlowFish(const AKey: string); overload;
-    procedure BlowFish; overload;
+    procedure StartEncode(const AKey: string); overload;
+    procedure FinishEncode; overload;
     property Capacity: longint read FCapacity write SetCapacity;
   end;
 
   { TReadBufStream }
 
-  TReadBufStream2 = class(TBufStream2)
+  TReadBufStream = class(TBufStream)
   public
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
@@ -73,7 +71,7 @@ type
 
   { TWriteBufStream }
 
-  TWriteBufStream2 = class(TBufStream2)
+  TWriteBufStream = class(TBufStream)
   public
     destructor Destroy; override;
     function Write(const Data; Count: longint): longint; override;
@@ -84,12 +82,11 @@ type
 implementation
 
 uses
-  Math,
-  Bee_Assembler;
+  {$IFDEF FPC} Math, {$ENDIF} Bee_Assembler;
 
 { TBufStream class }
 
-constructor TBufStream2.Create(ASource: TStream; ACapacity: longint);
+constructor TBufStream.Create(ASource: TStream; ACapacity: longint);
 begin
   inherited Create;
   SetCapacity(ACapacity);
@@ -97,12 +94,12 @@ begin
   FSource := ASource;
 end;
 
-constructor TBufStream2.Create(ASource: TStream);
+constructor TBufStream.Create(ASource: TStream);
 begin
   Create(ASource, DefaultBufferCapacity);
 end;
 
-destructor TBufStream2.Destroy;
+destructor TBufStream.Destroy;
 begin
   SetCapacity(0);
   FSource := nil;
@@ -110,7 +107,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TBufStream2.SetCapacity(const AValue: longint);
+procedure TBufStream.SetCapacity(const AValue: longint);
 begin
   FBufferSize := 0;
   FBufferReaded := 0;
@@ -118,7 +115,7 @@ begin
   SetLength(FBuffer, FCapacity);
 end;
 
-procedure TBufStream2.FillBuffer;
+procedure TBufStream.FillBuffer;
 begin
   FBufferSize := FSource.Read(FBuffer[0], FCapacity);
   if FBlowFish.Started then
@@ -128,7 +125,7 @@ begin
   FBufferReaded := 0;
 end;
 
-procedure TBufStream2.FlushBuffer;
+procedure TBufStream.FlushBuffer;
 begin
   FSource.Write(FBuffer[0], FBufferSize);
   if FBlowFish.Started then
@@ -138,19 +135,19 @@ begin
   FBufferSize := 0;
 end;
 
-procedure TBufStream2.BlowFish(const AKey: string);
+procedure TBufStream.StartEncode(const AKey: string);
 begin
   FBlowFish.Start(AKey);
 end;
 
-procedure TBufStream2.BlowFish;
+procedure TBufStream.FinishEncode;
 begin
   FBlowFish.Finish;
 end;
 
 { TReadBufStream class }
 
-function TReadBufStream2.Read(var Data; Count: longint): longint;
+function TReadBufStream.Read(var Data; Count: longint): longint;
 var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
   S: longint;
@@ -179,7 +176,7 @@ begin
   end;
 end;
 
-function TReadBufStream2.Seek(Offset: longint; Origin: word): longint;
+function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
 begin
   if (Origin = soFromCurrent) and (OffSet = 0) then
     Result := FSource.Seek(Offset - (FBufferSize - FBufferReaded), Origin)
@@ -190,7 +187,7 @@ begin
   FBufferReaded := 0;
 end;
 
-function TReadBufStream2.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
+function TReadBufStream.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
   if (Origin = soCurrent) and (OffSet = 0) then
     Result := FSource.Seek(Offset + FBufferSize - FBufferReaded, Origin)
@@ -203,13 +200,13 @@ end;
 
 { TWriteBufStream class }
 
-destructor TWriteBufStream2.Destroy;
+destructor TWriteBufStream.Destroy;
 begin
   FlushBuffer;
   inherited Destroy;
 end;
 
-function TWriteBufStream2.Write(const Data; Count: longint): longint;
+function TWriteBufStream.Write(const Data; Count: longint): longint;
 var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
   S: longint;
@@ -242,7 +239,7 @@ begin
     end;
 end;
 
-function TWriteBufStream2.Seek(Offset: longint; Origin: word): longint;
+function TWriteBufStream.Seek(Offset: longint; Origin: word): longint;
 begin
   if FBufferSize > 0 then
   begin
@@ -251,7 +248,7 @@ begin
   Result := FSource.Seek(Offset, Origin);
 end;
 
-function TWriteBufStream2.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
+function TWriteBufStream.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
   if FBufferSize > 0 then
   begin

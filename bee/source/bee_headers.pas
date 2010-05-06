@@ -27,7 +27,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0360 - 2006.06.02 by Melchiorre Caruso;
 
-    v0.8.0 build 1110 - 2010.01.23 by Melchiorre Caruso.
+    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
 unit Bee_Headers;
@@ -37,7 +37,6 @@ unit Bee_Headers;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   SysUtils,
   Bee_Files,

@@ -31,9 +31,6 @@ unit Bee_Types;
 
 interface
 
-uses
-  {$IFDEF FPC} CMem; {$ENDIF}
-
 type
   { Commands:                                             }
   {   ccNone     Nul command                              }

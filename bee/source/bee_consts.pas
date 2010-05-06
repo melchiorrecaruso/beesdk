@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1110 - 2010.04.07 by Melchiorre Caruso.
+    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
 unit Bee_Consts;
@@ -30,9 +30,6 @@ unit Bee_Consts;
 {$I compiler.inc}
 
 interface
-
-uses
-  {$IFDEF FPC} CMem; {$ENDIF}
 
 const
   Cr = #13#10;
