@@ -24,7 +24,7 @@
 
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1110 - 2010.04.05 by Melchiorre Caruso.
+    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -34,7 +34,6 @@ unit Bee_Interface;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   Bee_Types,
   Bee_Common,

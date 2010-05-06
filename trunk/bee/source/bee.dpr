@@ -34,7 +34,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
 
-    v0.8.0 build 1100 - 2010.04.07 by Melchiorre Caruso.
+    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
 program Bee;
@@ -42,7 +42,6 @@ program Bee;
 {$I compiler.inc}
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
   {$IFDEF CONSOLEAPPLICATION}
   {$IFDEF MSWINDOWS}
   Windows,
@@ -226,6 +225,8 @@ var
     end;
   end;
   {$ENDIF}
+
+{$R *.res}
 
 begin
   SetCtrlCHandler(@CtrlHandler);

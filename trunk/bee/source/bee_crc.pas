@@ -29,7 +29,7 @@
 
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
 
-    v0.8.0 build 1110 - 2010.01.17 by Melchiorre Caruso.
+    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
 unit Bee_Crc;
@@ -39,7 +39,6 @@ unit Bee_Crc;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   SysUtils;
 
@@ -102,7 +101,7 @@ begin
   Result := Crc32Tab[byte(aCrc32 xor aData)] xor (aCrc32 shr 8);
 end;
 
-function Crc32File(const aFileName: string): longword; {$IFDEF FPC} inline; {$ENDIF}
+function Crc32File(const aFileName: string): longword;
 var
   Stream: TFileStream;
   Buffer: array [0..$00010000 - 1] of byte;

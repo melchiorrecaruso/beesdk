@@ -25,7 +25,7 @@
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1110 - 2010.01.17 by Melchiorre Caruso.
+    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
 unit Bee_Configuration;
@@ -35,7 +35,6 @@ unit Bee_Configuration;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
   Classes,
   SysUtils;
 

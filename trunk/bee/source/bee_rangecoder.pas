@@ -53,9 +53,7 @@ unit Bee_RangeCoder;
 interface
 
 uses
-  {$IFDEF FPC} CMem, {$ENDIF}
-  Classes,
-  Bee_Assembler;
+  Classes, Bee_Assembler;
 
 const
   TOP     = 1 shl 24;
