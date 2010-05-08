@@ -737,8 +737,8 @@ begin
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
       if FTempFile <> nil then
       begin
-        MarkItems2Update;  // find sequences
-        DecodeSequences; // decode solid sequences
+        MarkItems2Update; // find sequences
+        DecodeSequences;  // decode solid sequences
         if Code < ccError then
         begin
           if Length(FSwapName) <> 0 then // if exists a modified
