@@ -79,16 +79,18 @@ type
     function  DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure DoProgress;
+    {$IFDEF CONSOLEAPPLICATION}
     procedure DoClearLine;
-
+    {$ENDIF}
     procedure OnMessage(const aMessage: string); virtual; abstract; 
     procedure OnRequest(const aMessage: string); virtual; abstract;
     function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
     function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
     procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
     procedure OnProgress; virtual; abstract;
+    {$IFDEF CONSOLEAPPLICATION}
     procedure OnClearLine; virtual; abstract;
-
+    {$ENDIF}
     property Time: longint read GetTime;
     property TotalTime: longint read GetTotalTime;
     property Size: int64 read FSize;
@@ -306,6 +308,7 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
+{$IFDEF CONSOLEAPPLICATION}
 procedure TApp.DoClearLine; {$IFDEF FPC} inline; {$ENDIF}
 var
   X: double;
@@ -314,5 +317,6 @@ begin
   OnClearLine;
   FStartTime := FStartTime + (Now - X); 
 end;
+{$ENDIF}
 
 end.

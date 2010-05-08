@@ -203,7 +203,9 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
+    {$IFDEF CONSOLEAPPLICATION}
     App.DoClearLine;
+    {$ENDIF}
     SrcFile.Free;
 
     P.FilePacked := Stream.Seek(0, soFromCurrent) - P.FileStartPos;
@@ -282,7 +284,9 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
+    {$IFDEF CONSOLEAPPLICATION}
     App.DoClearLine;
+    {$ENDIF}
     SrcStrm.FinishEncode;
 
     P.FilePacked := Stream.Seek(0, soFromCurrent) - P.FileStartPos; // stream flush
@@ -336,7 +340,9 @@ begin
       Progress;
       Inc(I);
     end;
+    {$IFDEF CONSOLEAPPLICATION}
     App.DoClearLine;
+    {$ENDIF}
     SrcStrm.FinishEncode;
 
   end else
@@ -446,7 +452,9 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
+    {$IFDEF CONSOLEAPPLICATION}
     App.DoClearLine;
+    {$ENDIF}
     Stream.FinishEncode;
 
     DstFile.Free;
@@ -527,7 +535,9 @@ begin
       end;
       SecondaryCodec.Flush;
     end;
+    {$IFDEF CONSOLEAPPLICATION}
     App.DoClearLine;
+    {$ENDIF}
     Stream.FinishEncode;
 
     //if Mode = pmNorm then DstFile.Flush; // stream flush
