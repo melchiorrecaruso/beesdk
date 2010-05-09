@@ -47,29 +47,22 @@ type
 
   TBlowFish = class
   private
-    FStarted: boolean;
     P: array [1..18] of longword;
     S: array [1.. 4, 0..255] of longword;
-    procedure Initialize(const Key: string);
     function F(Input: longword): longword;
-    { These two should speak for themselves, Xl and Xr are the first and
-      the second 32 bits of data you want to encrypt or decrypt, P and S
-      are the P-array and the S-boxes which you currently are using.
-
-      Note that the data is not copied or stored before the Blowfish al-
-      gorithm  is applied to it  and  that you have to perform a loop in
-      order to encrypt or decrypt more data than 8 bytes. }
-    procedure Encode(pXl, pXr: Plongword); overload;
-    procedure Decode(pXl, pXr: Plongword); overload;
   public
-    constructor Create;
-    procedure Start(const Key: string);
     { Initialization of a key is needed before performing any encryption
       or decryption of data. }
-    procedure Finish;
-    function Encode(var aData; Count: longword): longword; overload;
-    function Decode(var aData; Count: longword): longword; overload;
-    property Started: boolean Read FStarted;
+    procedure Initialize(const Key: string);
+    { These two should speak for themselves, Xl and Xr are the first and
+        the second 32 bits of data you want to encrypt or decrypt, P and S
+        are the P-array and the S-boxes which you currently are using.
+
+        Note that the data is not copied or stored before the Blowfish al-
+        gorithm  is applied to it  and  that you have to perform a loop in
+        order to encrypt or decrypt more data than 8 bytes. }
+    procedure Encode(pXl, pXr: Plongword);
+    procedure Decode(pXl, pXr: Plongword);
   end;
 
 implementation
@@ -266,29 +259,19 @@ const
 
 { TBlowFish class }
 
-constructor TBlowFish.Create;
-begin
-  FStarted := False;
-end;
-
 procedure TBlowFish.Initialize(const Key: string);
 var
   i, j, k: longint;
   Data, Datal, Datar: longword;
 begin
   { Initialize first the P-array }
-  for i := 1 to 18 do
-    P[i] := PArray[i];
+  for i := 1 to 18  do P[i] := PArray[i];
   { and then the four S-boxes, in order, with a fixed random string.
     This string consists of the hexadecimal digits of Pi. }
-  for j := 0 to 255 do
-    S[1, j] := SBox1[j];
-  for j := 0 to 255 do
-    S[2, j] := SBox2[j];
-  for j := 0 to 255 do
-    S[3, j] := SBox3[j];
-  for j := 0 to 255 do
-    S[4, j] := SBox4[j];
+  for j := 0 to 255 do S[1, j] := SBox1[j];
+  for j := 0 to 255 do S[2, j] := SBox2[j];
+  for j := 0 to 255 do S[3, j] := SBox3[j];
+  for j := 0 to 255 do S[4, j] := SBox4[j];
   { XOR P1 with the first 32 bits of the key, XOR P2 with the second 32
     bits of the key, and so on for all bits of the key (up to P18). Cycle
     throught the key bits repeatedly until the entire P-array has been
@@ -301,14 +284,13 @@ begin
     begin
       Data := ((Data shl 8) or Ord(Key[j]));
       Inc(j);
-      if j > Length(Key) then
-        j := 1;
+      if j > Length(Key) then j := 1;
     end;
     P[i] := P[i] xor Data;
   end;
-    { Encrypt the all-zero string using the Blowfish algorithm using the
-      subkeys described in steps #1 and #2 and replace the elements of the
-      P-array with the output of this process. }
+  { Encrypt the all-zero string using the Blowfish algorithm using the
+    subkeys described in steps #1 and #2 and replace the elements of the
+    P-array with the output of this process. }
   Datal := $00000000;
   Datar := $00000000;
   i     := 1;
@@ -320,8 +302,8 @@ begin
     P[i] := Datar;
     Inc(i);
   end;
-    { Continue the process, replacing the elements of the four S-boxes in
-      order, with the output of the continuously changing Blowfish algorithm. }
+  { Continue the process, replacing the elements of the four S-boxes in
+    order, with the output of the continuously changing Blowfish algorithm. }
   for j := 1 to 4 do
   begin
     i := 0;
@@ -334,9 +316,9 @@ begin
       Inc(i);
     end;
   end;
-    { In total, 521 iterations are required to generate all required subkeys.
-      Applications can store the subkeys rather than re-executing this deri-
-      vation on process. }
+  { In total, 521 iterations are required to generate all required subkeys.
+    Applications can store the subkeys rather than re-executing this deri-
+    vation on process. }
 end;
 
 function TBlowFish.F(Input: longword): longword;
@@ -411,59 +393,6 @@ begin
 
   pXl^ := Xl;
   pXr^ := Xr;
-end;
-
-procedure TBlowFish.Start(const Key: string);
-begin
-  if Length(Key) >= MinKeyLength then
-  begin
-    Initialize(Key);
-    FStarted := True;
-  end else
-  FStarted := False;
-end;
-
-procedure TBlowFish.Finish;
-begin
-  FStarted := False;
-end;
-
-function TBlowFish.Encode(var aData; Count: longword): longword;
-var
-  Data: array [0..MaxInt - 1] of byte absolute aData;
-  I: longword;
-begin
-  Result := Count mod 8;
-  if Result = 0 then
-    Result := Count
-  else
-    Result := Count + (8 - Result);
-
-  I := 0;
-  while I < Result do
-  begin
-    Encode(@Data[I], @Data[I + 4]);
-    Inc(I, 8);
-  end;
-end;
-
-function TBlowFish.Decode(var aData; Count: longword): longword;
-var
-  Data: array [0..MaxInt - 1] of byte absolute aData;
-  I: longword;
-begin
-  Result := Count mod 8;
-  if Result = 0 then
-    Result := Count
-  else
-    Result := Count + (8 - Result);
-
-  I := 0;
-  while I < Result do
-  begin
-    Decode(@Data[I], @Data[I + 4]);
-    Inc(I, 8);
-  end;
 end;
 
 end.
