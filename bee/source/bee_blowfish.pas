@@ -38,7 +38,7 @@ unit Bee_BlowFish;
 interface
 
 const
-  MinKeyLength = 4; { min key-lengh }
+  MinBlowFishKeyLength = 4;
 
 type
   LArray = array [0..3] of byte;
