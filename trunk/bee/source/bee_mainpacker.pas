@@ -140,7 +140,7 @@ begin
   FreePChar(FI.FileName);
   FreePChar(FI.FileName);
 
-  if Length(Result) < MinKeyLength then
+  if Length(Result) < MinBlowFishKeyLength then
   begin
     Exclude(P.FileFlags, foPassword);
   end;

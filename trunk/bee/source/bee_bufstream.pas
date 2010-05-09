@@ -126,7 +126,7 @@ end;
 
 procedure TBufStream.SetBlowFishKey(const Key: string);
 begin
-  FBlowFishKey := Length(Key) >= MinKeyLength;
+  FBlowFishKey := Length(Key) >= MinBlowFishKeyLength;
   if FBlowFishKey then
   begin
     FBlowFish.Initialize(Key);
