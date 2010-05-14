@@ -79,7 +79,7 @@ type
 
   { TReadBlowFishBufStream }
 
-  TReadBlowBlowFishFishBufStream = class(TBufStream)
+  TReadBlowFishBufStream = class(TBufStream)
   private
     FBFK: boolean;
     FBF: TBlowFish;
@@ -89,6 +89,9 @@ type
   public
     constructor Create(ASource: TStream; ACapacity: longint); overload;
     constructor Create(ASource: TStream); overload;
+    destructor Destroy; override;
+    procedure StartDecode(const AKey: string);
+    procedure FinishDecode;
   end;
 
   { TWriteBlowFishBufStream }
@@ -103,6 +106,9 @@ type
   public
     constructor Create(ASource: TStream; ACapacity: longint); overload;
     constructor Create(ASource: TStream); overload;
+    destructor Destroy; override;
+    procedure StartEncode(const AKey: string);
+    procedure FinishEncode;
   end;
 
 implementation
@@ -265,26 +271,125 @@ begin
   Result := FSource.Seek(Offset, Origin);
 end;
 
-
 { TReadBlowFishBufStream class }
 
-constructor TBufStream.Create(ASource: TStream; ACapacity: longint);
+constructor TReadBlowFishBufStream.Create(ASource: TStream; ACapacity: longint);
 begin
-  inherited Create;
-  FSource := ASource;
-  SetCapacity(ACapacity);
+  FBFK := False;
+  FBF  := TBlowFish.Create;
+  inherited Create(ASource, ACapacity);
 end;
 
-constructor TBufStream.Create(ASource: TStream);
+constructor TReadBlowFishBufStream.Create(ASource: TStream);
 begin
-  inherited Create;
-  FSource := ASource;
-  SetCapacity(DefaultBufferCapacity);
+  FBFK := False;
+  FBF  := TBlowFish.Create;
+  inherited Create(ASource);
 end;
 
+destructor TReadBlowFishBufStream.Destroy;
+begin
+  inherited Destroy;
+  FBF.Destroy;
+end;
 
+procedure TReadBlowFishBufStream.FillBuffer;
+var
+  I: longint;
+begin
+  inherited FillBuffer;
+  if FBFK then
+  begin
+    I := 0;
+    while I < FBufferSize do
+    begin
+      FBF.Decode(@FBuffer[I], @FBuffer[I + 4]);
+      Inc(I, 8);
+    end;
+  end;
+end;
 
-{ TWriteBloFishBufStream class }
+procedure TReadBlowFishBufStream.SetCapacity(const AValue: longint);
+begin
+  if (AValue mod 8) = 0 then
+  begin
+    inherited SetCapacity(AValue);
+  end;
+end;
+
+procedure TReadBlowFishBufStream.StartDecode(const AKey: string);
+begin
+  if Length(AKey) >= MinBlowFishKeyLength then
+  begin
+    FBF.Initialize(AKey);
+    FBFK := True;
+  end;
+end;
+
+procedure TReadBlowFishBufStream.FinishDecode;
+begin
+  FBFK := False;
+end;
+
+{ TWriteBlowFishBufStream class }
+
+constructor TWriteBlowFishBufStream.Create(ASource: TStream; ACapacity: longint);
+begin
+  FBFK := False;
+  FBF  := TBlowFish.Create;
+  inherited Create(ASource, ACapacity);
+end;
+
+constructor TWriteBlowFishBufStream.Create(ASource: TStream);
+begin
+  FBFK := False;
+  FBF  := TBlowFish.Create;
+  inherited Create(ASource);
+end;
+
+destructor TWriteBlowFishBufStream.Destroy;
+begin
+  inherited Destroy;
+  FBF.Destroy;
+end;
+
+procedure TWriteBlowFishBufStream.FlushBuffer;
+var
+  I: longint;
+begin
+  if FBFK then
+  begin
+    I := 0;
+    while I < FBufferSize do
+    begin
+      FBF.Encode(@FBuffer[I], @FBuffer[I + 4]);
+      Inc(I, 8);
+    end;
+  end;
+  inherited FlushBuffer;
+end;
+
+procedure TWriteBlowFishBufStream.SetCapacity(const AValue: longint);
+begin
+  if (AValue mod 8) = 0 then
+  begin
+    inherited SetCapacity(AValue);
+  end;
+end;
+
+procedure TWriteBlowFishBufStream.StartEncode(const AKey: string);
+begin
+  if Length(AKey) >= MinBlowFishKeyLength then
+  begin
+    FBF.Initialize(AKey);
+    FBFK := True;
+  end;
+end;
+
+procedure TWriteBlowFishBufStream.Finishencode;
+begin
+  FBFK := False;
+end;
 
 end.
 
