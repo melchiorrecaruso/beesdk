@@ -47,7 +47,7 @@ uses
 type
   { TFileReader }
 
-  TFileReader = class(TReadBufStream)
+  TFileReader = class(TReadBlowFishBufStream)
   private
     FFileStream: TFileStream;
   public
@@ -57,7 +57,7 @@ type
 
   { TFileWriter }
 
-  TFileWriter = class(TWriteBufStream)
+  TFileWriter = class(TWriteBlowFishBufStream)
   private
     FFileStream: TFileStream;
   public

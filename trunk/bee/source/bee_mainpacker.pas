@@ -179,7 +179,7 @@ begin
   if (SrcFile <> nil) then
   begin
     if foPassword in P.FileFlags then
-      Stream.SetBlowFishKey(GetPassword(P));
+      Stream.StartEncode(GetPassword(P));
 
     P.FileSize := SrcFile.Size;
     P.FileAttr := FileGetAttr(P.FileLink);
@@ -209,7 +209,7 @@ begin
     SrcFile.Free;
 
     P.FilePacked := Stream.Seek(0, soFromCurrent) - P.FileStartPos;
-    Stream.ClearBlowFishKey;
+    Stream.FinishEncode;
 
     if (not (foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
     begin
@@ -251,10 +251,10 @@ begin
     if foPassword in P.FileFlags then
     begin
       Password := GetPassword(P);
-      Stream.SetBlowFishKey(Password);
+      Stream.StartEncode(Password);
       if SrcEncoded then
       begin
-        SrcStrm.SetBlowFishKey(Password);
+        SrcStrm.StartDecode(Password);
       end;
     end;
 
@@ -287,10 +287,10 @@ begin
     {$IFDEF CONSOLEAPPLICATION}
     App.DoClearLine;
     {$ENDIF}
-    SrcStrm.ClearBlowFishKey;
+    SrcStrm.FinishDecode;
 
     P.FilePacked := Stream.Seek(0, soFromCurrent) - P.FileStartPos; // stream flush
-    Stream.ClearBlowFishKey;                                        // finish after stream flush
+    Stream.FinishEncode;                                        // finish after stream flush
 
     if (not (foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
     begin
@@ -328,7 +328,7 @@ begin
   if (SrcStrm <> nil) then
   begin
     if SrcEncoded then
-      SrcStrm.SetBlowFishKey(GetPassword(P));
+      SrcStrm.StartDecode(GetPassword(P));
 
     SrcStrm.Seek(SrcStartPos, soFromBeginning);
 
@@ -343,7 +343,7 @@ begin
     {$IFDEF CONSOLEAPPLICATION}
     App.DoClearLine;
     {$ENDIF}
-    SrcStrm.ClearBlowFishKey;
+    SrcStrm.FinishDecode;
 
   end else
     App.DoMessage(cmStrmReadError, ccError);
@@ -426,7 +426,7 @@ begin
   if (DstFile <> nil) then
   begin
     if foPassword in P.FileFlags then
-      Stream.SetBlowFishKey(GetPassword(P));
+      Stream.StartDecode(GetPassword(P));
 
     I := 0;
     if foMoved in P.FileFlags then
@@ -455,7 +455,7 @@ begin
     {$IFDEF CONSOLEAPPLICATION}
     App.DoClearLine;
     {$ENDIF}
-    Stream.ClearBlowFishKey;
+    Stream.FinishDecode;
 
     DstFile.Free;
     if Mode = pmNorm then
@@ -506,9 +506,9 @@ begin
     if foPassword in P.FileFlags then
     begin
       Password := GetPassword(P);
-      Stream.SetBlowFishKey(Password);
+      Stream.StartDecode(Password);
       if DstEncoded then
-        DstFile.SetBlowFishKey(Password);
+        DstFile.StartEncode(Password);
     end;
 
     I := 0;
@@ -538,10 +538,10 @@ begin
     {$IFDEF CONSOLEAPPLICATION}
     App.DoClearLine;
     {$ENDIF}
-    Stream.ClearBlowFishKey;
+    Stream.FinishDecode;
 
     //if Mode = pmNorm then DstFile.Flush; // stream flush
-    DstFile.ClearBlowFishKey;              // finish after stream flush
+    DstFile.FinishEncode;              // finish after stream flush
   end else
     App.DoMessage(cmStreamError, ccError);
 
