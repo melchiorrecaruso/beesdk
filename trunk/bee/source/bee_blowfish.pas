@@ -65,6 +65,7 @@ type
     procedure Decode(pXl, pXr: Plongword);
   end;
 
+
 implementation
 
 const

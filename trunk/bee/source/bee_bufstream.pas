@@ -44,20 +44,17 @@ type
   private
     FSource: TStream;
     FCapacity: longint;
+  protected
     FBufferSize: longint;
     FBufferReaded: longint;
     FBuffer: array of byte;
-    FBlowFishKey: boolean;
-    FBlowFish: TBlowFish;
-    procedure FillBuffer;
-    procedure FlushBuffer;
-    procedure SetCapacity(const AValue: longint);
+    procedure FillBuffer; virtual;
+    procedure FlushBuffer; virtual;
+    procedure SetCapacity(const AValue: longint); virtual;
   public
     constructor Create(ASource: TStream; ACapacity: longint); overload;
     constructor Create(ASource: TStream); overload;
     destructor Destroy; override;
-    procedure ClearBlowFishKey;
-    procedure SetBlowFishKey(const Key: string);
     property Capacity: longint read FCapacity write SetCapacity;
   end;
 
@@ -80,6 +77,34 @@ type
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
   end;
 
+  { TReadBlowFishBufStream }
+
+  TReadBlowBlowFishFishBufStream = class(TBufStream)
+  private
+    FBFK: boolean;
+    FBF: TBlowFish;
+  protected
+    procedure FillBuffer; override;
+    procedure SetCapacity(const AValue: longint); override;
+  public
+    constructor Create(ASource: TStream; ACapacity: longint); overload;
+    constructor Create(ASource: TStream); overload;
+  end;
+
+  { TWriteBlowFishBufStream }
+
+  TWriteBlowFishBufStream = class(TBufStream)
+  private
+    FBFK: boolean;
+    FBF: TBlowFish;
+  protected
+    procedure FlushBuffer; override;
+    procedure SetCapacity(const AValue: longint); override;
+  public
+    constructor Create(ASource: TStream; ACapacity: longint); overload;
+    constructor Create(ASource: TStream); overload;
+  end;
+
 implementation
 
 uses
@@ -91,8 +116,6 @@ constructor TBufStream.Create(ASource: TStream; ACapacity: longint);
 begin
   inherited Create;
   FSource := ASource;
-  FBlowFishKey := False;
-  FBlowFish := TBlowFish.Create;
   SetCapacity(ACapacity);
 end;
 
@@ -100,8 +123,6 @@ constructor TBufStream.Create(ASource: TStream);
 begin
   inherited Create;
   FSource := ASource;
-  FBlowFishKey := False;
-  FBlowFish := TBlowFish.Create;
   SetCapacity(DefaultBufferCapacity);
 end;
 
@@ -109,65 +130,25 @@ destructor TBufStream.Destroy;
 begin
   SetCapacity(0);
   FSource := nil;
-  FBlowFish.Destroy;
   inherited Destroy;
 end;
 
 procedure TBufStream.SetCapacity(const AValue: longint);
 begin
-  if (AValue mod 8) = 0 then
-  begin
-    FBufferSize := 0;
-    FBufferReaded := 0;
-    FCapacity := AValue;
-    SetLength(FBuffer, FCapacity);
-  end;
-end;
-
-procedure TBufStream.SetBlowFishKey(const Key: string);
-begin
-  FBlowFishKey := Length(Key) >= MinBlowFishKeyLength;
-  if FBlowFishKey then
-  begin
-    FBlowFish.Initialize(Key);
-  end;
-end;
-
-procedure TBufStream.ClearBlowFishKey;
-begin
-  FBlowFishKey := False;
+  FBufferSize   := 0;
+  FBufferReaded := 0;
+  FCapacity     := AValue;
+  SetLength(FBuffer, FCapacity);
 end;
 
 procedure TBufStream.FillBuffer;
-var
-  I: longint;
 begin
   FBufferSize := FSource.Read(FBuffer[0], FCapacity);
-  if FBlowFishKey then
-  begin
-    I := 0;
-    while I < FBufferSize do
-    begin
-      FBlowFish.Decode(@FBuffer[I], @FBuffer[I + 4]);
-      Inc(I, 8);
-    end;
-  end;
   FBufferReaded := 0;
 end;
 
 procedure TBufStream.FlushBuffer;
-var
-  I: longint;
 begin
-  if FBlowFishKey then
-  begin
-    I := 0;
-    while I < FBufferSize do
-    begin
-      FBlowFish.Encode(@FBuffer[I], @FBuffer[I + 4]);
-      Inc(I, 8);
-    end;
-  end;
   FSource.Write(FBuffer[0], FBufferSize);
   FBufferSize := 0;
 end;
@@ -283,6 +264,27 @@ begin
   end;
   Result := FSource.Seek(Offset, Origin);
 end;
+
+
+{ TReadBlowFishBufStream class }
+
+constructor TBufStream.Create(ASource: TStream; ACapacity: longint);
+begin
+  inherited Create;
+  FSource := ASource;
+  SetCapacity(ACapacity);
+end;
+
+constructor TBufStream.Create(ASource: TStream);
+begin
+  inherited Create;
+  FSource := ASource;
+  SetCapacity(DefaultBufferCapacity);
+end;
+
+
+
+{ TWriteBloFishBufStream class }
 
 end.
 
