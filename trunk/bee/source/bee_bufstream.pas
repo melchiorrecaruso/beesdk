@@ -79,7 +79,7 @@ type
 
   { TReadBlowFishBufStream }
 
-  TReadBlowFishBufStream = class(TBufStream)
+  TReadBlowFishBufStream = class(TReadBufStream)
   private
     FBFK: boolean;
     FBF: TBlowFish;
@@ -96,7 +96,7 @@ type
 
   { TWriteBlowFishBufStream }
 
-  TWriteBlowFishBufStream = class(TBufStream)
+  TWriteBlowFishBufStream = class(TWriteBufStream)
   private
     FBFK: boolean;
     FBF: TBlowFish;
@@ -114,7 +114,7 @@ type
 implementation
 
 uses
-  {$IFDEF FPC} Math, {$ENDIF} Bee_Assembler;
+  Math, Bee_Assembler;
 
 { TBufStream class }
 
@@ -319,10 +319,10 @@ end;
 
 procedure TReadBlowFishBufStream.StartDecode(const AKey: string);
 begin
-  if Length(AKey) >= MinBlowFishKeyLength then
+  FBFK := Length(AKey) >= MinBlowFishKeyLength;
+  if FBFK then
   begin
     FBF.Initialize(AKey);
-    FBFK := True;
   end;
 end;
 
@@ -379,10 +379,10 @@ end;
 
 procedure TWriteBlowFishBufStream.StartEncode(const AKey: string);
 begin
-  if Length(AKey) >= MinBlowFishKeyLength then
+  FBFK := Length(AKey) >= MinBlowFishKeyLength;
+  if FBFK then
   begin
     FBF.Initialize(AKey);
-    FBFK := True;
   end;
 end;
 
