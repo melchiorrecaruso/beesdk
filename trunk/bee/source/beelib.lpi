@@ -30,7 +30,7 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="7">
+    <Units Count="6">
       <Unit0>
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -56,7 +56,7 @@
         <Filename Value="bee_library.pas"/>
         <UnitName Value="Bee_Library"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="74"/>
         <CursorPos X="84" Y="101"/>
@@ -67,7 +67,7 @@
       <Unit3>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="117"/>
         <CursorPos X="26" Y="126"/>
@@ -78,7 +78,7 @@
       <Unit4>
         <Filename Value="bee_commandline.pas"/>
         <UnitName Value="Bee_CommandLine"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="39"/>
         <CursorPos X="3" Y="39"/>
@@ -89,7 +89,7 @@
       <Unit5>
         <Filename Value="bee_consts.pas"/>
         <UnitName Value="Bee_Consts"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -97,15 +97,6 @@
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit5>
-      <Unit6>
-        <Filename Value="..\beegui\source\packages\packages.include\compiler.inc"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="5" Y="38"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-      </Unit6>
     </Units>
     <JumpHistory Count="10" HistoryIndex="9">
       <Position1>

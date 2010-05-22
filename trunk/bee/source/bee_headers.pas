@@ -67,6 +67,10 @@ type
   // Header structure, order of fields is significant
 
   THeader = class
+  private
+    FileLink: string;
+    FileAction: THeaderAction;
+  public
     // - Start header data - //
     FileFlags: THeaderFlags;
     FileVersion: byte;
@@ -81,8 +85,6 @@ type
     FileStartPos: int64;
     FileName: string;
     // - End header data - //
-    FileLink: string;
-    FileAction: THeaderAction;
   end;
 
   // Headers list                                           
