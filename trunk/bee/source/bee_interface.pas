@@ -102,7 +102,6 @@ type
     property Code: byte read FCode write SetCode;
   end;
 
-
 implementation
 
 uses

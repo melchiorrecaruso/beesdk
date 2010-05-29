@@ -35,7 +35,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="7">
+    <Units Count="8">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -81,10 +81,11 @@
       <Unit4>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="31"/>
-        <CursorPos X="34" Y="178"/>
+        <TopLine Value="54"/>
+        <CursorPos X="56" Y="84"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -103,16 +104,27 @@
       <Unit6>
         <Filename Value="bee_headers.pas"/>
         <UnitName Value="Bee_Headers"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="61"/>
+        <TopLine Value="1"/>
         <CursorPos X="19" Y="51"/>
         <SyntaxHighlighter Value="Delphi"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Text"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="bee_interface.pas"/>
+        <UnitName Value="Bee_Interface"/>
+        <EditorIndex Value="5"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="45"/>
+        <CursorPos X="17" Y="103"/>
+        <SyntaxHighlighter Value="Delphi"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Text"/>
+      </Unit7>
     </Units>
     <JumpHistory Count="3" HistoryIndex="2">
       <Position1>
