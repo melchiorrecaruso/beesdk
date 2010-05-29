@@ -67,7 +67,7 @@ type
   // Header structure, order of fields is significant
 
   THeader = class
-  private
+  public
     FileLink: string;
     FileAction: THeaderAction;
   public
