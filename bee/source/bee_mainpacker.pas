@@ -77,6 +77,11 @@ type
       const SrcSize: int64; SrcEncoded: boolean);
     procedure CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
       const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean);
+  // public
+  //   procedure SetDictionary(aDictionary: byte);
+  //   procedure SetTable(const aTable: TTableParameters);
+  //   procedure FreshFlexible;
+  //   procedure FreshSolid;
   end;
 
   { Decoder class }

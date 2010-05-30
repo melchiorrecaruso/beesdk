@@ -17,9 +17,9 @@
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="7"/>
       <RevisionNr Value="8"/>
-      <BuildNr Value="1258"/>
+      <BuildNr Value="1268"/>
       <Language Value="0809"/>
-      <StringTable Comments="" CompanyName="Melchiorre Caruso" FileDescription="Bee Archiver" FileVersion="0.7.8.1258" InternalName="" LegalCopyright="" LegalTrademarks="" OriginalFilename="" ProductName="Bee Archiver" ProductVersion="0.7.8"/>
+      <StringTable Comments="" CompanyName="Melchiorre Caruso" FileDescription="Bee Archiver" FileVersion="0.7.8.1268" InternalName="" LegalCopyright="" LegalTrademarks="" OriginalFilename="" ProductName="Bee Archiver" ProductVersion="0.7.8"/>
     </VersionInfo>
     <PublishOptions>
       <Version Value="2"/>
@@ -42,8 +42,8 @@
         <UnitName Value="Bee"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="143"/>
-        <CursorPos X="7" Y="190"/>
+        <TopLine Value="23"/>
+        <CursorPos X="5" Y="44"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -81,11 +81,10 @@
       <Unit4>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="54"/>
-        <CursorPos X="56" Y="84"/>
+        <TopLine Value="187"/>
+        <CursorPos X="39" Y="208"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -95,8 +94,8 @@
         <UnitName Value="Bee_App"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="110"/>
-        <CursorPos X="41" Y="125"/>
+        <TopLine Value="20"/>
+        <CursorPos X="19" Y="37"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -104,10 +103,11 @@
       <Unit6>
         <Filename Value="bee_headers.pas"/>
         <UnitName Value="Bee_Headers"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="19" Y="51"/>
+        <CursorPos X="32" Y="79"/>
         <SyntaxHighlighter Value="Delphi"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -118,7 +118,7 @@
         <UnitName Value="Bee_Interface"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="45"/>
+        <TopLine Value="53"/>
         <CursorPos X="17" Y="103"/>
         <SyntaxHighlighter Value="Delphi"/>
         <UsageCount Value="10"/>
@@ -126,7 +126,7 @@
         <DefaultSyntaxHighlighter Value="Text"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="3" HistoryIndex="2">
+    <JumpHistory Count="4" HistoryIndex="3">
       <Position1>
         <Filename Value="bee_headers.pas"/>
         <Caret Line="481" Column="20" TopLine="36"/>
@@ -139,6 +139,10 @@
         <Filename Value="bee_mainpacker.pas"/>
         <Caret Line="178" Column="34" TopLine="37"/>
       </Position3>
+      <Position4>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="84" Column="39" TopLine="60"/>
+      </Position4>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
