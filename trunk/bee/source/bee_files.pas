@@ -51,7 +51,7 @@ type
   private
     FFileStream: TFileStream;
   public
-    constructor Create(const AFileName: string; AMode: word);
+    constructor Create(const aFileName: string; aMode: word);
     destructor Destroy; override;
   end;
 
@@ -61,7 +61,7 @@ type
   private
     FFileStream: TFileStream;
   public
-    constructor Create(const AFileName: string; AMode: word);
+    constructor Create(const aFileName: string; aMode: word);
     destructor Destroy; override;
   end;
 
@@ -108,24 +108,24 @@ type
     property Items[Index: longint]: TCustomSearchRec read GetItem;
   end;
 
-function CreateTFileReader(const AFileName: string; AMode: word): TFileReader;
-function CreateTFileWriter(const AFileName: string; AMode: word): TFileWriter;
+function CreateTFileReader(const aFileName: string; aMode: word): TFileReader;
+function CreateTFileWriter(const aFileName: string; aMode: word): TFileWriter;
 
 implementation
 
-function CreateTFileReader(const AFileName: string; AMode: word): TFileReader;
+function CreateTFileReader(const aFileName: string; aMode: word): TFileReader;
 begin
   try
-    Result := TFileReader.Create(AFileName, AMode);
+    Result := TFileReader.Create(aFileName, aMode);
   except
     Result := nil;
   end;
 end;
 
-function CreateTFileWriter(const AFileName: string; AMode: word): TFileWriter;
+function CreateTFileWriter(const aFileName: string; aMode: word): TFileWriter;
 begin
   try
-    Result := TFileWriter.Create(AFileName, AMode);
+    Result := TFileWriter.Create(aFileName, aMode);
   except
     Result := nil;
   end;
@@ -133,9 +133,9 @@ end;
 
 { TFileReader class }
 
-constructor TFileReader.Create(const AFileName: string; AMode: word);
+constructor TFileReader.Create(const aFileName: string; aMode: word);
 begin
-  FFileStream := TFileStream.Create(AFileName, AMode);
+  FFileStream := TFileStream.Create(aFileName, aMode);
   inherited Create(FFileStream);
 end;
 
@@ -147,13 +147,13 @@ end;
 
 { TFileWriter class }
 
-constructor TFileWriter.Create(const AFileName: string; AMode: word);
+constructor TFileWriter.Create(const aFileName: string; aMode: word);
 begin
   if AMode = fmCreate then
   begin
-    Bee_Common.ForceDirectories(ExtractFilePath(AFileName));
+    Bee_Common.ForceDirectories(ExtractFilePath(aFileName));
   end;
-  FFileStream := TFileStream.Create(AFileName, AMode);
+  FFileStream := TFileStream.Create(aFileName, aMode);
   inherited Create(FFileStream);
 end;
 
