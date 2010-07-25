@@ -36,7 +36,7 @@ const
 
   { Id marker }
 
-  Marker: longint     = $1A656542;
+    Marker: longint   = $1A656542;
 
   { Default file names }
 

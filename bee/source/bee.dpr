@@ -42,6 +42,8 @@ program Bee;
 {$I compiler.inc}
 
 uses
+  // Bee_MainPacker2,
+
   {$IFDEF CONSOLEAPPLICATION}
   {$IFDEF MSWINDOWS}
   Windows,

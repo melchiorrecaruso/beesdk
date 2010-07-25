@@ -445,7 +445,7 @@ begin
       Inc(I);
     until I > IncreaseIndex;
 
-    // Update Tree:
+    // Update Tree...
     I := 0;
     J := I;
     repeat
