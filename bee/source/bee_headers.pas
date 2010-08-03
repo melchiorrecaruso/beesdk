@@ -152,6 +152,41 @@ type
     function GetModule: longint;
   end;
 
+
+
+
+  TArchive = class
+  private
+    FPrimary: TList;
+    FSecondary: TList;
+    function Get(Index: longint): pointer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Delete(Index: Integer); virtual;
+    function Add(Item: pointer): longint; virtual;
+    property Items[Index: longint]: pointer read Get;
+  end;
+
+  TArchiveReader = class(TArchive)
+  private
+  protected
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  TArchiveWriter = class(TArchiveReader)
+  private
+  protected
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+
+
+
 implementation
 
 uses
@@ -159,6 +194,99 @@ uses
   Bee_Types,
   Bee_Consts,
   Bee_Common;
+
+  procedure TArchive.Add(Item: pointer);
+  var
+    L, M, H, I: longint;
+  begin
+    L := 0;
+    M := -2;
+    H := FSecondary.Count - 1;
+    while H >= L do
+    begin
+      M := (L + H) div 2;
+      I := CompareFileName(Item.FileName, THeader(FSecondary.Items[M]).FileName);
+      if I > 0 then
+        L := M + 1
+      else
+        if I < 0 then
+          H := M - 1
+        else
+          H := -2;
+    end;
+
+    if M = -2 then
+      FSecondary.Add(P)
+    else
+      if H <> -2 then
+      begin
+        if I > 0 then
+          FSecondary.Insert(M + 1, Item)
+        else
+          FSecondary.Insert(M, Item);
+      end else
+        FSecondary.Insert(M + 1, Item);
+
+    if P.FileAction = haAdd then
+    begin
+
+      L := FPrimary.Count - FNews;
+      M := -2;
+
+    if FNews <> 0 then
+      H := FPrimary.Count - 1
+    else
+      H := -1;
+
+    while H >= L do
+    begin
+      M := (L + H) div 2;
+
+      I := Compare(P, FPrimary.Items[M]);
+
+      if I > 0 then
+        L := M + 1
+      else
+      if I < 0 then
+        H := M - 1
+      else
+        H := -2;
+    end;
+
+    if M = -2 then
+      FPrimary.Add(P)
+    else
+    if H <> -2 then
+    begin
+      if I > 0 then
+        FPrimary.Insert(M + 1, P)
+      else
+        FPrimary.Insert(M, P);
+    end
+    else
+      FPrimary.Insert(M + 1, P);
+
+    Inc(FNews);
+  end else
+    FPrimary.Insert(FPrimary.Count - FNews, P);
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // THeaders class
 
