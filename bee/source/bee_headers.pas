@@ -56,156 +56,179 @@ type
 
   THeaderFlags = set of THeaderFlag;
 
-  // Header actions
+  { Header actions }
 
-  THeaderAction =
-   (haAdd,  haUpdate, haCopy, haExtract, haDecode,
-    haSkip, haDelete, haNone, haOther);
+  THeaderAction = (haAdd,  haUpdate, haCopy, haExtract, haDecode, haSkip,
+   haDelete, haNone, haUnknow);
 
   THeaderActions = set of THeaderAction;
 
-  // Header structure, order of fields is significant
+  { Header structure, order of fields is significant }
 
   THeader = class
   public
-    FileLink: string;
-    FileAction: THeaderAction;
+    Flags: THeaderFlags;
+    Version: byte;
+    Method: byte;
+    Dictionary: byte;
+    Table: TTableParameters;
+    Size: int64;
+    Time: longint;
+    Attr: longint;
+    Crc: longword;
+    PackedSize: int64;
+    StartPos: int64;
+    Name: string;
   public
-    // - Start header data - //
-    FileFlags: THeaderFlags;
-    FileVersion: byte;
-    FileMethod: byte;
-    FileDictionary: byte;
-    FileTable: TTableParameters;
-    FileSize: int64;
-    FileTime: longint;
-    FileAttr: longint;
-    FileCrc: longword;
-    FilePacked: int64;
-    FileStartPos: int64;
-    FileName: string;
-    // - End header data - //
+    Action: THeaderAction; // reserved
+    Link: string;          // reserved
   end;
 
-  // Headers list                                           
+  THeaderListCompare = function (Item1, Item2: THeader): longint;
 
-  THeaders = class
+  { THeader list }
+
+   THeaderList = class(TObject)
+   private
+     FNewItems: TList;
+     FArcItems: TList;
+     FALLItems: TList;
+     function GetSize(Actions: THeaderActions): int64;
+     function GetPackedSize(Actions: THeaderActions): int64;
+     function GetCount(Actions: THeaderActions): longint;
+     function GetItem(Index: longint): THeader;
+   protected
+     function Compare4NewItems(Item1, Item2: THeader): longint;
+     function Compare4AllItems(Item1, Item2: THeader): longint;
+     procedure Insert(Item: THeader; AList: TList; Compare: THeaderListCompare);
+   public
+     constructor Create;
+     destructor Destroy; override;
+
+     procedure AddToNewItems(Item: THeader);
+     procedure AddToArcItems(Item: THeader);
+
+     procedure Clear; virtual;
+     function Search(const aFileName: string): longint;
+
+     function SetAction(Masks: TStringList; MaskAct, aAction: THeaderAction): longint; overload;
+     function SetAction(Mask: string; MaskAct, aAction: THeaderAction): longint; overload;
+     function SetAction(aIndex: longint; aAction: THeaderAction): longint; overload;
+     function SetAction(aAction: THeaderAction): longint; overload;
+
+     function GetBack(Index: longint; Actions:  THeaderActions): longint; overload;
+     function GetNext(Index: longint; Actions:  THeaderActions): longint; overload;
+     function GetBack(Index: longint; Flag:    THeaderFlag): longint; overload;
+     function GetNext(Index: longint; Flag:    THeaderFlag): longint; overload;
+     // function GetBack(Index: longint; Actions: THeaderActions; const FileName: string): longint; overload;
+     // function GetNext(Index: longint; Actions: THeaderActions; const FileName: string): longint; overload;
+
+     property Size[Actions: THeaderActions]: int64 read GetSize;
+     property PackedSize[Actions: THeaderActions]: int64 read GetPackedSize;
+     property Count[Actions: THeaderActions]: longint read GetCount;
+     property Items[Index: longint]: THeader read GetItem;
+   end;
+
+  { Headers class }
+
+  THeaders = class(THeaderList)
   private
-    FNews: longint;
-    FModule: TStream;
-    FPrimary: TList;
-    FSecondary: TList;
+    FData: TStream;
+    FList: THeaderList;
     FCL: TCommandLine;
-    procedure AddItem(P: THeader); overload;
-    function Compare(P1, P2: THeader): longint;
+    function GetSfxSize: longint;
+    function GetCount(Actions: THeaderActions): longint;
     function CreateItem(const Rec: TCustomSearchRec): THeader; overload;
     function CreateItem(aStream: TStream; aAction: THeaderAction; var aVersion: byte): THeader; overload;
     function FindFirstMarker(aStream: TStream): int64;
     procedure MarkAsLast(aAction: THeaderAction);
-    procedure ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
-    procedure WriteItem(aStream: TStream; P: THeader; var aVersion: byte);
+    procedure ReadItemsB4b(aStream: TStream);
   public
     constructor Create(aCommandLine: TCommandLine);
     destructor Destroy; override;
-    function SearchItem(FileName: string): THeader;
-    function AlreadyFileExists(const aIndex: longint; const aActions:
-      THeaderActions; const aFileName: string): longint; overload;
-    function AlreadyFileExists(const aFileName: string): longint; overload;
-
-    function AddItem(const Rec: TCustomSearchRec): int64; overload;
-    function UpdateItem(const Rec: TCustomSearchRec): int64;
-    function ReplaceItem(const Rec: TCustomSearchRec): int64;
-    function AddUpdateItem(const Rec: TCustomSearchRec): int64;
-    function AddReplaceItem(const Rec: TCustomSearchRec): int64;
-    function AddAutoRenameItem(const Rec: TCustomSearchRec): int64;
-
+    procedure ReadItems(aStream: TStream; Action: THeaderAction); virtual;
+    procedure WriteItems(aStream: TStream); virtual;
     procedure SortNews(aConfiguration: TConfiguration);
 
-    procedure ReadItems(aStream: TStream; aAction: THeaderAction);
-    procedure WriteItems(aStream: TStream);
+    function AddItem(const aRec: TCustomSearchRec): int64;
+    function UpdateItem(const aRec: TCustomSearchRec): int64;
+    function ReplaceItem(const aRec: TCustomSearchRec): int64;
+    function AddUpdateItem(const aRec: TCustomSearchRec): int64;
+    function AddReplaceItem(const aRec: TCustomSearchRec): int64;
+    function AddAutoRenameItem(const aRec: TCustomSearchRec): int64;
 
-    function  MarkItems(Masks: TStringList; MaskAct, aAction: THeaderAction): longint; overload;
-    function  MarkItems(Mask: string; MaskAct, aAction: THeaderAction): longint; overload;
-    procedure MarkItem(aIndex: longint; aAction: THeaderAction);
-    procedure MarkAll(aAction: THeaderAction);
-
-    function GetBack(aChild: longint; aAction: THeaderAction): longint; overload;
-    function GetNext(aChild: longint; aAction: THeaderAction): longint; overload;
-    function GetBack(aChild: longint; aFlag: THeaderFlag): longint; overload;
-    function GetNext(aChild: longint; aFlag: THeaderFlag): longint; overload;
-    function GetBack(aChild: longint; aAction: THeaderAction; const aFileName: string): longint; overload;
-    function GetNext(aChild: longint; aAction: THeaderAction; const aFileName: string): longint; overload;
-    function GetBack(aChild: longint; aActions: THeaderActions; const aFileName: string): longint; overload;
-    function GetNext(aChild: longint; aActions: THeaderActions; const aFileName: string): longint; overload;
-
-    function GetSize(aAction: THeaderAction): int64; overload;
-    function GetSize(aActions: THeaderActions): int64; overload;
-    function GetPackedSize(aAction: THeaderAction): int64; overload;
-    function GetPackedSize(aActions: THeaderActions): int64; overload;
-
-    function GetCount(Actions: THeaderActions): longint; overload;
-    function GetCount: longint; overload;
-
-    function GetItem(aIndex: longint): THeader;
-
-    function SetModule(const aFileName: string): boolean;
-    function GetModule: longint;
+    function LoadSfx(const aFileName: string): boolean;
+    function SaveSfx(const aFileName: string): boolean;
+    property SfxSize: longint read GetSfxSize;
   end;
-
-
-
-
-  TArchive = class
-  private
-    FPrimary: TList;
-    FSecondary: TList;
-    function Get(Index: longint): pointer;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Delete(Index: Integer); virtual;
-    function Add(Item: pointer): longint; virtual;
-    property Items[Index: longint]: pointer read Get;
-  end;
-
-  TArchiveReader = class(TArchive)
-  private
-  protected
-  public
-    constructor Create;
-    destructor Destroy; override;
-  end;
-
-  TArchiveWriter = class(TArchiveReader)
-  private
-  protected
-  public
-    constructor Create;
-    destructor Destroy; override;
-  end;
-
-
 
 
 implementation
 
 uses
-  // Math,
   Bee_Types,
   Bee_Consts,
   Bee_Common;
 
-  procedure TArchive.Add(Item: pointer);
+  constructor THeaderList.Create;
+  begin
+    inherited Create;
+    FArcItems := TList.Create;
+    FNewItems := TList.Create;
+    FALLItems := TList.Create;
+  end;
+
+  destructor THeaderList.Destroy;
+  begin
+    Clear;
+    FArcItems.Free;
+    FNewItems.Free;
+    FALLItems.Free;
+    inherited Destroy;
+  end;
+
+  procedure THeaderList.Clear;
+  var
+    I: longint;
+  begin
+    for I := 0 to FALLItems.Count - 1 do
+    begin
+      THeader(FALLItems.Items[I]).Free;
+    end;
+    FArcItems.Clear;
+    FNewItems.Clear;
+    FALLItems.Clear;
+  end;
+
+  function Compare4NewItems(Item1, Item2: THeader): longint;
+  begin
+    Result := CompareFileName(ExtractFileExt(Item1.Name),
+                              ExtractFileExt(Item2.Name));
+
+    if Result = 0 then
+      Result := CompareFileName(ExtractFileName(Item1.Name),
+                                ExtractFileName(Item2.Name));
+
+    if Result = 0 then
+      Result := CompareFileName(Item1.Name, Item2.Name);
+  end;
+
+  function Compare4AllItems(Item1, Item2: THeader): longint;
+  begin
+    Result := CompareFileName(Item1.Name, Item2.Name);
+  end;
+
+  procedure THeaderList.Insert(Item: THeader; AList: TList; Compare: THeaderListCompare);
   var
     L, M, H, I: longint;
   begin
-    L := 0;
+    L :=  0;
     M := -2;
-    H := FSecondary.Count - 1;
+    H := aList.Count - 1;
     while H >= L do
     begin
       M := (L + H) div 2;
-      I := CompareFileName(Item.FileName, THeader(FSecondary.Items[M]).FileName);
+      I := Compare(Item, THeader(aList.Items[M]));
       if I > 0 then
         L := M + 1
       else
@@ -216,60 +239,28 @@ uses
     end;
 
     if M = -2 then
-      FSecondary.Add(P)
+      aList.Add(Item)
     else
       if H <> -2 then
       begin
         if I > 0 then
-          FSecondary.Insert(M + 1, Item)
+          aList.Insert(M + 1, Item)
         else
-          FSecondary.Insert(M, Item);
+          aList.Insert(M, Item);
       end else
-        FSecondary.Insert(M + 1, Item);
+        aList.Insert(M + 1, Item);
+  end;
 
-    if P.FileAction = haAdd then
-    begin
+  procedure THeaderList.AddToNewItems(Item: THeader);
+  var
+    Func: THeaderListCompare;
+  begin
+    Func := Compare4NewItems;
+    Insert(Item, FNewItems, Func);
 
-      L := FPrimary.Count - FNews;
-      M := -2;
 
-    if FNews <> 0 then
-      H := FPrimary.Count - 1
-    else
-      H := -1;
 
-    while H >= L do
-    begin
-      M := (L + H) div 2;
-
-      I := Compare(P, FPrimary.Items[M]);
-
-      if I > 0 then
-        L := M + 1
-      else
-      if I < 0 then
-        H := M - 1
-      else
-        H := -2;
-    end;
-
-    if M = -2 then
-      FPrimary.Add(P)
-    else
-    if H <> -2 then
-    begin
-      if I > 0 then
-        FPrimary.Insert(M + 1, P)
-      else
-        FPrimary.Insert(M, P);
-    end
-    else
-      FPrimary.Insert(M + 1, P);
-
-    Inc(FNews);
-  end else
-    FPrimary.Insert(FPrimary.Count - FNews, P);
-end;
+  end;
 
 
 
@@ -295,8 +286,6 @@ begin
   inherited Create;
   FCL := aCommandLine;
   FModule := TMemoryStream.Create;
-  FSecondary := TList.Create;
-  FPrimary := TList.Create;
   FNews := 0;
 end;
 
@@ -409,18 +398,7 @@ begin
   end;
 end;
 
-function THeaders.Compare(P1, P2: THeader): longint;
-begin
-  Result := CompareFileName(ExtractFileExt(P1.FileName),
-    ExtractFileExt(P2.FileName));
 
-  if Result = 0 then
-    Result := CompareFileName(ExtractFileName(P1.FileName),
-      ExtractFileName(P2.FileName));
-
-  if Result = 0 then
-    Result := CompareFileName(P1.FileName, P2.FileName);
-end;
 
 procedure THeaders.AddItem(P: THeader);
 var

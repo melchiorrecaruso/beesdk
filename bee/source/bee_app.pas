@@ -506,7 +506,7 @@ begin
   end;
 end;
 
-procedure TBeeApp.MarkItems2Decode;
+procedure TBeeApp.MarkItems2Decode(const aAction: THeaderAction);
 var
   P: THeader;
   I, J: longint;
