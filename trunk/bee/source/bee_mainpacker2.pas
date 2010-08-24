@@ -33,9 +33,9 @@ interface
 uses
   Classes,
   Bee_Codec,
+  Bee_Headers,
   Bee_Modeller,
-  Bee_Configuration,
-  Bee_Headers;
+  Bee_Configuration;
 
 type
 

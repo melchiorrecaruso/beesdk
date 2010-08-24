@@ -58,8 +58,8 @@ type
 
   { Header actions }
 
-  THeaderAction = (haAdd,  haUpdate, haCopy, haExtract, haDecode, haSkip,
-   haDelete, haNone, haUnknow);
+  THeaderAction = (haAdd, haUpdate, haCopy, haExtract,
+     haDecode, haSkip, haDelete, haNone, haUnknow);
 
   THeaderActions = set of THeaderAction;
 
@@ -84,32 +84,29 @@ type
     Link: string;          // reserved
   end;
 
-  THeaderListCompare = function (Item1, Item2: THeader): longint;
+  THeaderListCompare = function(Item1, Item2: THeader): longint;
 
   { THeader list }
 
    THeaderList = class(TObject)
    private
-     FNewItems: TList;
-     FArcItems: TList;
-     FALLItems: TList;
+     FItems: TList;
+     FNews:  TList;
+     FNames: TList;
      function GetSize(Actions: THeaderActions): int64;
      function GetPackedSize(Actions: THeaderActions): int64;
      function GetCount(Actions: THeaderActions): longint;
      function GetItem(Index: longint): THeader;
-   protected
-     function Compare4NewItems(Item1, Item2: THeader): longint;
-     function Compare4AllItems(Item1, Item2: THeader): longint;
-     procedure Insert(Item: THeader; AList: TList; Compare: THeaderListCompare);
+     procedure Insert(aList: TList; aCompare: THeaderListCompare; Item: THeader);
    public
      constructor Create;
      destructor Destroy; override;
 
-     procedure AddToNewItems(Item: THeader);
-     procedure AddToArcItems(Item: THeader);
+     procedure AddNew(Item: THeader);
+     procedure Add(Item: THeader);
 
      procedure Clear; virtual;
-     function Search(const aFileName: string): longint;
+     function Search(const FileName: string): longint;
 
      function SetAction(Masks: TStringList; MaskAct, aAction: THeaderAction): longint; overload;
      function SetAction(Mask: string; MaskAct, aAction: THeaderAction): longint; overload;
@@ -173,17 +170,17 @@ uses
   constructor THeaderList.Create;
   begin
     inherited Create;
-    FArcItems := TList.Create;
-    FNewItems := TList.Create;
-    FALLItems := TList.Create;
+    FItems := TList.Create;
+    FNews  := TList.Create;
+    FNames := TList.Create;
   end;
 
   destructor THeaderList.Destroy;
   begin
     Clear;
-    FArcItems.Free;
-    FNewItems.Free;
-    FALLItems.Free;
+    FItems.Free;
+    FNews.Free;
+    FNames.Free;
     inherited Destroy;
   end;
 
@@ -191,16 +188,16 @@ uses
   var
     I: longint;
   begin
-    for I := 0 to FALLItems.Count - 1 do
+    for I := 0 to FNames.Count - 1 do
     begin
-      THeader(FALLItems.Items[I]).Free;
+      THeader(FNames.Items[I]).Free;
     end;
-    FArcItems.Clear;
-    FNewItems.Clear;
-    FALLItems.Clear;
+    FItems.Clear;
+    FNews.Clear;
+    FNames.Clear;
   end;
 
-  function Compare4NewItems(Item1, Item2: THeader): longint;
+  function CompareExt(Item1, Item2: THeader): longint;
   begin
     Result := CompareFileName(ExtractFileExt(Item1.Name),
                               ExtractFileExt(Item2.Name));
@@ -213,12 +210,12 @@ uses
       Result := CompareFileName(Item1.Name, Item2.Name);
   end;
 
-  function Compare4AllItems(Item1, Item2: THeader): longint;
+  function CompareName(Item1, Item2: THeader): longint;
   begin
     Result := CompareFileName(Item1.Name, Item2.Name);
   end;
 
-  procedure THeaderList.Insert(Item: THeader; AList: TList; Compare: THeaderListCompare);
+  procedure THeaderList.Insert(aList: TList; aCompare: THeaderListCompare; Item: THeader);
   var
     L, M, H, I: longint;
   begin
@@ -228,7 +225,7 @@ uses
     while H >= L do
     begin
       M := (L + H) div 2;
-      I := Compare(Item, THeader(aList.Items[M]));
+      I := aCompare(Item, THeader(aList.Items[M]));
       if I > 0 then
         L := M + 1
       else
@@ -251,15 +248,44 @@ uses
         aList.Insert(M + 1, Item);
   end;
 
-  procedure THeaderList.AddToNewItems(Item: THeader);
+  function THeaderList.Search(const FileName: string): longint;
   var
-    Func: THeaderListCompare;
+    L, M, H, I: longint;
   begin
-    Func := Compare4NewItems;
-    Insert(Item, FNewItems, Func);
+    L := 0;
+    H := FNames.Count - 1;
 
+    while H >= L do
+    begin
+      M := (L + H) div 2;
 
+      I := CompareFileName(FileName, THeader(FNames.Items[M]).FileName);
 
+      if I > 0 then
+        L := M + 1
+      else
+      if I < 0 then
+        H := M - 1
+      else
+        H := -2;
+    end;
+
+    if H = -2 then
+      Result := FNames.Items[M]
+    else
+      Result := nil;
+  end;
+
+  procedure THeaderList.AddNew(Item: THeader);
+  begin
+    Insert(FNames, CompareName, Item);
+    Insert(FNews, CompareExt, Item);
+  end;
+
+  procedure THeaderList.Add(Item: THeader);
+  begin
+    Insert(FNames, CompareName, Item);
+    FItems.Add(Item);
   end;
 
 
@@ -481,34 +507,7 @@ begin
     FPrimary.Insert(FPrimary.Count - FNews, P);
 end;
 
-function THeaders.SearchItem(FileName: string): THeader;
-var
-  L, M, H, I: longint;
-begin
-  L := 0;
-  H := FSecondary.Count - 1;
 
-  FileName := FCL.cdOption + FileName;
-  while H >= L do
-  begin
-    M := (L + H) div 2;
-
-    I := CompareFileName(FileName, THeader(FSecondary.Items[M]).FileName);
-
-    if I > 0 then
-      L := M + 1
-    else
-    if I < 0 then
-      H := M - 1
-    else
-      H := -2;
-  end;
-
-  if H = -2 then
-    Result := FSecondary.Items[M]
-  else
-    Result := nil;
-end;
 
 function THeaders.AlreadyFileExists(const aIndex: longint; const aActions: THeaderActions; const aFileName: string): longint;
 begin
