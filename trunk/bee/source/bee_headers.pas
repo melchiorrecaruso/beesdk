@@ -81,6 +81,7 @@ type
     Name: string;
   public
     Action: THeaderAction; // reserved
+    Index: longint;        // reserved
     Link: string;          // reserved
   end;
 
@@ -88,30 +89,29 @@ type
 
   { THeader list }
 
-   THeaderList = class(TObject)
+   THeaderList = class
    private
      FItems: TList;
-     FNews:  TList;
      FNames: TList;
      function GetSize(Actions: THeaderActions): int64;
      function GetPackedSize(Actions: THeaderActions): int64;
      function GetCount(Actions: THeaderActions): longint;
      function GetItem(Index: longint): THeader;
-     procedure Insert(aList: TList; aCompare: THeaderListCompare; Item: THeader);
+     function Compare(Item1, Item2: THeader): longint;
+     procedure Insert(List: TList; Compare: THeaderListCompare; Item: THeader);
+   protected
+     FCL: TCommandLine;
    public
-     constructor Create;
+     constructor Create(aCommandLine: TCommandLine);
      destructor Destroy; override;
-
-     procedure AddNew(Item: THeader);
-     procedure Add(Item: THeader);
-
      procedure Clear; virtual;
-     function Search(const FileName: string): longint;
+     procedure Add(Item: THeader);
+     function Search(FileName: string): THeader;
 
-     function SetAction(Masks: TStringList; MaskAct, aAction: THeaderAction): longint; overload;
-     function SetAction(Mask: string; MaskAct, aAction: THeaderAction): longint; overload;
-     function SetAction(aIndex: longint; aAction: THeaderAction): longint; overload;
-     function SetAction(aAction: THeaderAction): longint; overload;
+     function SetAction(Masks: TStringList; MaskAct, Action: THeaderAction): longint; overload;
+     function SetAction(Mask: string; MaskAct, Action: THeaderAction): longint; overload;
+     function SetAction(Index: longint; Action: THeaderAction): longint; overload;
+     function SetAction(Action: THeaderAction): longint; overload;
 
      function GetBack(Index: longint; Actions:  THeaderActions): longint; overload;
      function GetNext(Index: longint; Actions:  THeaderActions): longint; overload;
@@ -132,7 +132,6 @@ type
   private
     FData: TStream;
     FList: THeaderList;
-    FCL: TCommandLine;
     function GetSfxSize: longint;
     function GetCount(Actions: THeaderActions): longint;
     function CreateItem(const Rec: TCustomSearchRec): THeader; overload;
@@ -167,20 +166,20 @@ uses
   Bee_Consts,
   Bee_Common;
 
-  constructor THeaderList.Create;
+  constructor THeaderList.Create(aCommandLine: TCommandLine);
   begin
     inherited Create;
     FItems := TList.Create;
-    FNews  := TList.Create;
     FNames := TList.Create;
+    FCL    := aCommandLine;
   end;
 
   destructor THeaderList.Destroy;
   begin
     Clear;
     FItems.Free;
-    FNews.Free;
     FNames.Free;
+    FCL := nil;
     inherited Destroy;
   end;
 
@@ -188,44 +187,54 @@ uses
   var
     I: longint;
   begin
-    for I := 0 to FNames.Count - 1 do
+    for I := 0 to FItems.Count - 1 do
     begin
-      THeader(FNames.Items[I]).Free;
+      THeader(FItems.Items[I]).Free;
     end;
     FItems.Clear;
-    FNews.Clear;
     FNames.Clear;
   end;
 
-  function CompareExt(Item1, Item2: THeader): longint;
+  function THeaderList.Compare(Item1, Item2: THeader): longint;
   begin
-    Result := CompareFileName(ExtractFileExt(Item1.Name),
-                              ExtractFileExt(Item2.Name));
+    if (Item1.Index = -1) and (Item2.Index = -1) then
+    begin
+      Result := CompareFileName(ExtractFileExt(Item1.Name), ExtractFileExt(Item2.Name));
 
-    if Result = 0 then
-      Result := CompareFileName(ExtractFileName(Item1.Name),
-                                ExtractFileName(Item2.Name));
+      if Result = 0 then
+        Result := CompareFileName(ExtractFileName(Item1.Name), ExtractFileName(Item2.Name));
 
-    if Result = 0 then
-      Result := CompareFileName(Item1.Name, Item2.Name);
+      if Result = 0 then
+        Result := CompareFileName(Item1.Name, Item2.Name);
+
+    end else
+    begin
+      if (Item1.Index <> -1) and (Item2.Index <> -1) then
+      begin
+        Result := CompareFileName(Item1.Name, Item2.Name);
+      end else
+
+
+      if (Item1.Index = -1) then
+          Result := 1
+        else
+          Result := -1;
+
+
+    end;
   end;
 
-  function CompareName(Item1, Item2: THeader): longint;
-  begin
-    Result := CompareFileName(Item1.Name, Item2.Name);
-  end;
-
-  procedure THeaderList.Insert(aList: TList; aCompare: THeaderListCompare; Item: THeader);
+  procedure THeaderList.Insert(List: TList; Compare: THeaderListCompare; Item: THeader);
   var
     L, M, H, I: longint;
   begin
     L :=  0;
     M := -2;
-    H := aList.Count - 1;
+    H := List.Count - 1;
     while H >= L do
     begin
       M := (L + H) div 2;
-      I := aCompare(Item, THeader(aList.Items[M]));
+      I := Compare(Item, THeader(List.Items[M]));
       if I > 0 then
         L := M + 1
       else
@@ -236,30 +245,30 @@ uses
     end;
 
     if M = -2 then
-      aList.Add(Item)
+      List.Add(Item)
     else
       if H <> -2 then
       begin
         if I > 0 then
-          aList.Insert(M + 1, Item)
+          List.Insert(M + 1, Item)
         else
-          aList.Insert(M, Item);
+          List.Insert(M, Item);
       end else
-        aList.Insert(M + 1, Item);
+        List.Insert(M + 1, Item);
   end;
 
-  function THeaderList.Search(const FileName: string): longint;
+  function THeaderList.Search(FileName: string): THeader;
   var
     L, M, H, I: longint;
   begin
     L := 0;
     H := FNames.Count - 1;
-
+    FileName := FCL.cdOption + FileName;
     while H >= L do
     begin
       M := (L + H) div 2;
 
-      I := CompareFileName(FileName, THeader(FNames.Items[M]).FileName);
+      I := CompareFileName(FileName, THeader(FNames.Items[M]).Name);
 
       if I > 0 then
         L := M + 1
@@ -288,7 +297,73 @@ uses
     FItems.Add(Item);
   end;
 
+  function THeaderList.SetAction(Masks: TStringList; MaskAct: THeaderAction; Action: THeaderAction): longint;
+  var
+    I: longint;
+  begin
+    Result := 0;
+    for I := 0 to Masks.Count - 1 do
+    begin
+      Inc(Result, SetAction(Masks.Strings[I], MaskAct, Action));
+    end;
+  end;
 
+  function THeaderList.SetAction(Mask: string; MaskAct: THeaderAction; Action: THeaderAction): longint;
+  var
+    I: longint;
+    P: THeader;
+  begin
+    Result := 0;
+    if FileNameUseWildcards(Mask) then
+    begin
+      Mask := FCL.cdOption + Mask;
+      for  I := 0 to FNews.Count - 1 do
+      begin
+        P := THeader(FNews.Items[I]);
+        if (P.Action = MaskAct) and (FileNameMatch(P.Name, Mask, FCL.rOption)) then
+        begin
+          P.Action := Action;
+          Inc(Result);
+        end;
+      end;
+
+      for  I := 0 to FItems.Count - 1 do
+      begin
+        P := THeader(FItems.Items[I]);
+        if (P.Action = MaskAct) and (FileNameMatch(P.Name, Mask, FCL.rOption)) then
+        begin
+          P.Action := Action;
+          Inc(Result);
+        end;
+      end;
+    end else
+    begin
+      P := Search(Mask);
+      if (P <> nil) and (P.Action = MaskAct) then
+      begin
+        P.Action := Action;
+        Inc(Result);
+      end;
+    end;
+  end;
+
+  procedure THeaderList.SetAction(Index: longint; Action: THeaderAction);
+  begin
+    if Index < FNews.Count;
+
+
+    THeader(FPrimary.Items[aIndex]).FileAction := aAction;
+  end;
+
+  procedure THeaderList.MarkAll(aAction: THeaderAction);
+  var
+    I: longint;
+  begin
+    for I := 0 to FPrimary.Count - 1 do
+    begin
+      THeader(FPrimary.Items[I]).FileAction := aAction;
+    end;
+  end;
 
 
 
@@ -310,7 +385,7 @@ uses
 constructor THeaders.Create(aCommandLine: TCommandLine);
 begin
   inherited Create;
-  FCL := aCommandLine;
+
   FModule := TMemoryStream.Create;
   FNews := 0;
 end;
@@ -689,60 +764,7 @@ begin
   end;
 end;
 
-function THeaders.MarkItems(Masks: TStringList; MaskAct: THeaderAction; aAction: THeaderAction): longint;
-var
-  I: longint;
-begin
-  Result := 0;
-  for I := 0 to Masks.Count - 1 do
-  begin
-    Inc(Result, MarkItems(Masks.Strings[I], MaskAct, aAction));
-  end;
-end;
 
-function THeaders.MarkItems(Mask: string; MaskAct: THeaderAction; aAction: THeaderAction): longint;
-var
-  P: THeader;
-  I: longint;
-begin
-  Result := 0;
-  if FileNameUseWildcards(Mask) then
-  begin
-    Mask := FCL.cdOption + Mask;
-    for  I := 0 to FPrimary.Count - 1 do
-    begin
-      P := THeader(FPrimary.Items[I]);
-      if (P.FileAction = MaskAct) and (FileNameMatch(P.FileName, Mask, FCL.rOption)) then
-      begin
-        P.FileAction := aAction;
-        Inc(Result);
-      end;
-    end;
-  end else
-  begin
-    P := SearchItem(Mask);
-    if (P <> nil) and (P.FileAction = MaskAct) then
-    begin
-      P.FileAction := aAction;
-      Inc(Result);
-    end;
-  end;
-end;
-
-procedure THeaders.MarkItem(aIndex: longint; aAction: THeaderAction);
-begin
-  THeader(FPrimary.Items[aIndex]).FileAction := aAction;
-end;
-
-procedure THeaders.MarkAll(aAction: THeaderAction);
-var
-  I: longint;
-begin
-  for I := 0 to FPrimary.Count - 1 do
-  begin
-    THeader(FPrimary.Items[I]).FileAction := aAction;
-  end;
-end;
 
 procedure THeaders.MarkAsLast(aAction: THeaderAction);
 var
