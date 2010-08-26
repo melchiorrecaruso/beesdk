@@ -213,14 +213,13 @@ uses
       begin
         Result := CompareFileName(Item1.Name, Item2.Name);
       end else
-
-
-      if (Item1.Index = -1) then
+        if (Item1.Index < Item2.Index) then
           Result := 1
         else
-          Result := -1;
-
-
+          if (Item1.Index > Item2.Index) then
+            Result := -1
+          else
+            Result := 0;
     end;
   end;
 
