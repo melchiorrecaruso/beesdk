@@ -131,12 +131,11 @@ type
   THeaders = class(THeaderList)
   private
     FSfx: TStream;
-    FCurrent: longint;
     function GetSfxSize: longint;
-    function CreateItem(const Rec: TCustomSearchRec): THeader; overload;
-    function FindFirstMarker(Stream: TStream): int64;
-    procedure MarkAsLast(Action: THeaderAction);
+    function GetFirst(Stream: TStream): int64;
+    procedure SetLast(Action: THeaderAction);
     procedure ReadB4b(Stream: TStream);
+    function CreateItem(const Rec: TCustomSearchRec): THeader; overload;
   public
     constructor Create(CommandLine: TCommandLine);
     destructor Destroy; override;
@@ -489,155 +488,268 @@ begin
   end;
 end;
 
-function ReadItem(Stream: TStream): THeader;
+procedure ReadHv03(Stream: TStream; var Item: THeader);
 var
   I: longint;
 begin
-  Result := THeader.Create;
-  try
-    Stream.Read(Result.Flags, SizeOf(Result.Flags));
+  if foMethod in Item.Flags then
+    Stream.Read(Item.Method, SizeOf(Item.Method))
+  else
+    Item.Method := -1;
 
-    if foVersion in Result.Flags then
-      Stream.Read(Result.Version, SizeOf(Result.Version))
-    else
-      Result.Version := -1;
+  if foDictionary in Item.Flags then
+    Stream.Read(Item.Dictionary, SizeOf(Item.Dictionary))
+  else
+    Item.Dictionary := -1;
 
-    if foMethod in Result.Flags then
-      Stream.Read(Result.Method, SizeOf(Result.Method))
-    else
-      Result.Method := -1;
+  if foTable in Item.Flags then
+    Stream.Read(Item.Table, SizeOf(Item.Table));
 
-    if foDictionary in Result.Flags then
-      Stream.Read(Result.Dictionary, SizeOf(Result.Dictionary))
-    else
-      Result.Dictionary := -1;
+  Stream.Read(I, SizeOf(I));                 //  [ver03]
+  Item.Size := I;                            //  4 bytes
 
-    if foTable in Result.Flags then
-      Stream.Read(Result.Table, SizeOf(Result.Table));
+  Stream.Read(Item.Time, SizeOf(Item.Time)); //  4 bytes
+  Stream.Read(Item.Attr, SizeOf(Item.Attr)); //  4 bytes
+  Stream.Read(Item.Crc,  SizeOf(Item.Crc));  //  4 bytes
+
+  Stream.Read(I, SizeOf(I));                 //  4 bytes
+  Item.PackedSize := I;
+
+  Stream.Read(I, SizeOf(I));                 //  4 bytes
+  Item.StartPos := I;
+
+  Stream.Read(I, SizeOf(I));
+  SetLength(Item.Name, I);
+  if I > 0 then
+  begin
+    Stream.Read(Item.Name[1], I);
+    Item.Name := DoDirSeparators(Item.Name);
+  end;
+  Item.Index  := -1;
+  Item.Action := haCopy;
+  Item.Link   := '';
+end;
+
+procedure ReadHv04(Stream: TStream; var Item: THeader);
+var
+  I: longint;
+begin
 
 
-    if Version < Ord(hv04) then
-    begin                                            //  [ver03] | [ver04]
-      Stream.Read(I, SizeOf(I));                     //  4 bytes | 8 bytes
-      Result.Size := I;
+  // if foVersion in Result.Flags then
+  //   Stream.Read(Result.Version, SizeOf(Result.Version))
+  // else
+  //   Result.Version := -1;
 
-      Stream.Read(Result.Time, SizeOf(Result.Time)); //  4 bytes | 4 bytes
-      Stream.Read(Result.Attr, SizeOf(Result.Attr)); //  4 bytes | 4 bytes
-      Stream.Read(Result.Crc,  SizeOf(Result.Crc));  //  4 bytes | 4 bytes
+  if foMethod in Item.Flags then
+    Stream.Read(Item.Method, SizeOf(Item.Method))
+  else
+    Item.Method := -1;
 
-      Stream.Read(I, SizeOf(I));                     //  4 bytes | 8 bytes
-      Result.PackedSize := I;
+  if foDictionary in Item.Flags then
+    Stream.Read(Item.Dictionary, SizeOf(Item.Dictionary))
+  else
+    Item.Dictionary := -1;
 
-      Stream.Read(I, SizeOf(I));                     //  4 bytes | 8 bytes
-      Result.StartPos := I;
-    end else
-      with Result do
-        Stream.Read(Size,
-          SizeOf(Size) + SizeOf(Time)       + SizeOf(Attr) +
-          SizeOf(Crc)  + SizeOf(PackedSize) + SizeOf(StartPos));
+  if foTable in Item.Flags then
+    Stream.Read(Item.Table, SizeOf(Item.Table));
+                                                         //  [ver04]
+  Stream.Read(Item.Size, SizeOf(Item.Size));             //  8 bytes
+  Stream.Read(Item.Time, SizeOf(Item.Time));             //  4 bytes
+  Stream.Read(Item.Attr, SizeOf(Item.Attr));             //  4 bytes
+  Stream.Read(Item.Crc,  SizeOf(Item.Crc));              //  4 bytes
+  Stream.Read(Item.PackedSize, SizeOf(Item.PackedSize)); //  8 bytes
+  Stream.Read(Item.StartPos, SizeOf(Item.StartPos));     //  8 bytes
 
-    with Result do
+  Stream.Read(I, SizeOf(I));
+  SetLength(Item.Name, I);
+  if I > 0 then
+  begin
+    Stream.Read(Item.Name[1], I);
+    Item.Name := DoDirSeparators(Item.Name);
+  end;
+  Item.Index  := -1;
+  Item.Action := haCopy;
+  Item.Link   := '';
+end;
+
+function THeaders.GetFirst(Stream: TStream): int64;
+var
+  Id: longint;
+  StrmPos: int64;
+begin
+  Result := -1;
+  StrmPos := Stream.Seek(0, 0);
+  while Stream.Read(Id, SizeOf(Id)) = SizeOf(Id) do
+  begin
+    if Id = Marker then
     begin
-      Stream.Read(I, SizeOf(I));
-      SetLength(Name, I);
-
-      if I > 0 then
-      begin
-        Stream.Read(Name[1], I);
-        Name := DoDirSeparators(Name);
-      end;
-      Index  := -1;
-      Action := aAction;
-      SetLength(Link, 0);
+      Result := StrmPos;
+      Break;
     end;
+    Inc(StrmPos, SizeOf(Id));
+  end;
 
-  except
-    FreeAndNil(Result);
+  if Result > 0 then
+  begin
+    Stream.Seek(0, 0);
+    FSfx.Size := 0;
+    FSfx.CopyFrom(Stream, Result);
   end;
 end;
 
-
-
-procedure THeaders.AddItem(P: THeader);
+procedure THeaders.SetLast(Action: THeaderAction);
 var
-  L, M, H, I: longint;
+  I: longint;
 begin
-  // Add item to secondary list
-  L := 0;
-  M := -2;
-  H := FSecondary.Count - 1;
-  while H >= L do
-  begin
-    M := (L + H) div 2;
-
-    I := CompareFileName(P.FileName, THeader(FSecondary.Items[M]).FileName);
-
-    if I > 0 then
-      L := M + 1
-    else
-    if I < 0 then
-      H := M - 1
-    else
-      H := -2;
-  end;
-
-  if M = -2 then
-    FSecondary.Add(P)
-  else
-  if H <> -2 then
-  begin
-    if I > 0 then
-      FSecondary.Insert(M + 1, P)
-    else
-      FSecondary.Insert(M, P);
-  end
-  else
-    FSecondary.Insert(M + 1, P);
-
-  // Add item to primary list
-  if P.FileAction = haAdd then
-  begin
-
-    L := FPrimary.Count - FNews;
-    M := -2;
-
-    if FNews <> 0 then
-      H := FPrimary.Count - 1
-    else
-      H := -1;
-
-    while H >= L do
+  for I := FItems.Count - 1 downto 0 do
+    if (THeader(FItems[I]).Action <> Action) then
     begin
-      M := (L + H) div 2;
-
-      I := Compare(P, FPrimary.Items[M]);
-
-      if I > 0 then
-        L := M + 1
-      else
-      if I < 0 then
-        H := M - 1
-      else
-        H := -2;
+      Include(THeader(FItems[I]).Flags, foLast);
+      Break;
     end;
+end;
 
-    if M = -2 then
-      FPrimary.Add(P)
-    else
-    if H <> -2 then
+procedure THeaders.ReadB4b(Stream: TStream);
+var
+  P: THeader;
+  Ptr: ^longint;
+  Symbol: byte;
+  SymbolIndex: longint;
+  B4bMarker: array [0..3] of byte;
+begin
+  P    := nil;
+  Ptr  := @B4bMarker;
+  Ptr^ := Marker;
+
+  SymbolIndex := 0;
+  Stream.Seek(0, 0);
+  repeat
+    if Stream.Read(Symbol, 1) = 1 then
     begin
-      if I > 0 then
-        FPrimary.Insert(M + 1, P)
+      if Symbol = B4bMarker[SymbolIndex] then
+        Inc(SymbolIndex)
       else
-        FPrimary.Insert(M, P);
+        SymbolIndex := 0;
+
+      if SymbolIndex = SizeOf(Marker) then
+      begin
+        P := THeader.Create;
+        try
+          Stream.Read(P.Flags, SizeOf(P.Flags));
+          if foVersion in P.Flags then
+            Stream.Read(P.Version, SizeOf(P.Version))
+          else
+            P.Version := -1;
+
+          case P.Version of
+            Ord(hv02): ReadHv03(Stream, P);
+            Ord(hv03): ReadHv03(Stream, P);
+            Ord(hv04): ReadHv04(Stream, P);
+          end;
+        except
+          P := nil;
+        end;
+
+
+
+
+
+
+        ReadItem(Stream, aAction, Version);
+        if P <> nil then
+        begin
+          AddItem(P);
+        end;
+        SymbolIndex := 0;
+      end;
+
     end
     else
-      FPrimary.Insert(M + 1, P);
+      Break;
 
-    Inc(FNews);
-  end else
-    FPrimary.Insert(FPrimary.Count - FNews, P);
+  until (P <> nil) and (foLast in P.FileFlags);
+
+  if P <> nil then
+  begin
+    Exclude(P.FileFlags, foLast);
+  end;
 end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+procedure THeaders.Read(aStream: TStream);
+var
+  P:      THeader;
+  // I: longint;
+  Id:     longint;
+  OffSet: int64;
+  Version: byte;
+begin
+  P := nil;
+  Version := Ord(hv02);
+
+  OffSet := FindFirstMarker(aStream);
+  if OffSet > -1 then
+  begin
+    aStream.Seek(OffSet, 0);
+    repeat
+      if (aStream.Read(Id, SizeOf(Id)) = SizeOf(Id)) and (Id = Marker) then
+      begin
+        P := CreateItem(aStream, aAction, Version);
+        if P <> nil then
+        begin
+          AddItem(P);
+        end;
+      end
+      else
+        Break;
+    until (P <> nil) and (foLast in P.FileFlags);
+
+    if P <> nil then
+      Exclude(P.FileFlags, foLast);
+  end else
+    ReadItemsB4b(aStream, aAction);
+  // OffSet := aStream.Seek(0, 1);
+  // for I := 0 to FPrimary.Count -1 do
+  //   with THeader(FPrimary.Items[I]) do
+  //   begin
+  //     FileStartPos := OffSet;
+  //     Inc(OffSet, FilePacked);
+  //   end;
+end;
+
+
+
+
+
+
+
 
 
 
@@ -823,18 +935,7 @@ end;
 
 
 
-procedure THeaders.MarkAsLast(aAction: THeaderAction);
-var
-  I: longint;
-begin
-  for I := FPrimary.Count - 1 downto 0 do
-    with THeader(FPrimary.Items[I]) do
-      if (FileAction <> aAction) then
-      begin
-        Include(FileFlags, foLast);
-        Break;
-      end;
-end;
+
 
 procedure THeaders.SortNews(aConfiguration: TConfiguration);
 var
@@ -898,118 +999,11 @@ begin
   end;
 end;
 
-function THeaders.FindFirstMarker(aStream: TStream): int64;
-var
-  Id:      longint;
-  StrmPos: int64;
-begin
-  Result := -1;
 
-  StrmPos := aStream.Seek(0, 0);
-  while aStream.Read(Id, SizeOf(Id)) = SizeOf(Id) do
-  begin
-    if Id = Marker then
-    begin
-      Result := StrmPos;
-      Break;
-    end;
-    Inc(StrmPos, SizeOf(Id));
-  end;
 
-  if Result > 0 then
-  begin
-    aStream.Seek(0, 0);
-    FModule.Size := 0;
-    FModule.CopyFrom(aStream, Result);
-  end;
-end;
 
-procedure THeaders.ReadItemsB4b(aStream: TStream; aAction: THeaderAction);
-var
-  P:      THeader;
-  Ptr:    ^longint;
-  Symbol: byte;
-  SymbolIndex: longint;
-  B4bMarker: array [0..3] of byte;
-  Version: byte;
-begin
-  P    := nil;
-  Ptr  := @B4bMarker;
-  Ptr^ := Marker;
-  Version := Ord(hv02);
 
-  SymbolIndex := 0;
-  aStream.Seek(0, 0);
-  repeat
-    if aStream.Read(Symbol, 1) = 1 then
-    begin
-      if Symbol = B4bMarker[SymbolIndex] then
-        Inc(SymbolIndex)
-      else
-        SymbolIndex := 0;
 
-      if SymbolIndex = SizeOf(Marker) then
-      begin
-        P := CreateItem(aStream, aAction, Version);
-        if P <> nil then
-        begin
-          AddItem(P);
-        end;
-        SymbolIndex := 0;
-      end;
-
-    end
-    else
-      Break;
-
-  until (P <> nil) and (foLast in P.FileFlags);
-
-  if P <> nil then
-  begin
-    Exclude(P.FileFlags, foLast);
-  end;
-end;
-
-procedure THeaders.ReadItems(aStream: TStream; aAction: THeaderAction);
-var
-  P:      THeader;
-  // I: longint;
-  Id:     longint;
-  OffSet: int64;
-  Version: byte;
-begin
-  P := nil;
-  Version := Ord(hv02);
-
-  OffSet := FindFirstMarker(aStream);
-  if OffSet > -1 then
-  begin
-    aStream.Seek(OffSet, 0);
-    repeat
-      if (aStream.Read(Id, SizeOf(Id)) = SizeOf(Id)) and (Id = Marker) then
-      begin
-        P := CreateItem(aStream, aAction, Version);
-        if P <> nil then
-        begin
-          AddItem(P);
-        end;
-      end
-      else
-        Break;
-    until (P <> nil) and (foLast in P.FileFlags);
-
-    if P <> nil then
-      Exclude(P.FileFlags, foLast);
-  end else
-    ReadItemsB4b(aStream, aAction);
-  // OffSet := aStream.Seek(0, 1);
-  // for I := 0 to FPrimary.Count -1 do
-  //   with THeader(FPrimary.Items[I]) do
-  //   begin
-  //     FileStartPos := OffSet;
-  //     Inc(OffSet, FilePacked);
-  //   end;
-end;
 
 
 
