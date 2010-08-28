@@ -584,41 +584,40 @@ var
   I: longint;
   Back, Next: THeader;
 begin
-  // rescue header informations
-  for I := 0 to FHeaders.GetCount -2 do
+  for I := 0 to FHeaders.Count - 2 do
   begin
-    Back := FHeaders.GetItem(I);
-    Next := FHeaders.GetItem(I + 1);
+    Back := FHeaders.Items[I];
+    Next := FHeaders.Items[I + 1];
 
-    if Back.FileAction = haDelete then
+    if Back.Action = haDelete then
     begin
-      if (foVersion in Back.FileFlags) and (not(foVersion in Next.FileFlags)) then
+      if (foVersion in Back.Flags) and (not(foVersion in Next.Flags)) then
       begin
-        Next.FileVersion := Back.FileVersion;
-        Include(Next.FileFlags, foVersion);
+        Next.Version := Back.Version;
+        Include(Next.Flags, foVersion);
       end;
 
-      if (foMethod in Back.FileFlags) and (not(foMethod in Next.FileFlags)) then
+      if (foMethod in Back.Flags) and (not(foMethod in Next.Flags)) then
       begin
-        Next.FileMethod := Back.FileMethod;
-        Include(Next.FileFlags, foMethod);
+        Next.Method := Back.Method;
+        Include(Next.Flags, foMethod);
       end;
 
-      if (foDictionary in Back.FileFlags) and (not(foDictionary in Next.FileFlags)) then
+      if (foDictionary in Back.Flags) and (not(foDictionary in Next.Flags)) then
       begin
-        Next.FileDictionary := Back.FileDictionary;
-        Include(Next.FileFlags, foDictionary);
+        Next.Dictionary := Back.Dictionary;
+        Include(Next.Flags, foDictionary);
       end;
 
-      if (foTable in Back.FileFlags) and (not(foTable in Next.FileFlags)) then
+      if (foTable in Back.Flags) and (not(foTable in Next.Flags)) then
       begin
-        Next.FileTable := Back.FileTable;
-        Include(Next.FileFlags, foTable);
+        Next.Table := Back.Table;
+        Include(Next.Flags, foTable);
       end;
 
-      if (foTear in Back.FileFlags) and (not(foTear in Next.FileFlags)) then
+      if (foTear in Back.Flags) and (not(foTear in Next.Flags)) then
       begin
-        Include(Next.FileFlags, foTear);
+        Include(Next.Flags, foTear);
       end;
     end;
   end;
