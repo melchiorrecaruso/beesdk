@@ -63,7 +63,7 @@ type
     FCommandLine: TCommandLine;
     FConfiguration: TConfiguration;
     { open/close archive routine }
-    procedure OpenArchive(const aAction: THeaderAction);
+    procedure OpenArchive;
     procedure CloseArchive(IsModified: boolean);
     { find and prepare sequences }
     procedure MarkItems2Add;
@@ -631,6 +631,7 @@ begin
   begin
     FTotalSize := 0;
     FSize      := 0;
+
     FCommandLine.rOption := rmFull;
     FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
@@ -696,13 +697,13 @@ procedure TBeeApp.EncodeShell;
 var
   I: longint;
   P: THeader;
-  Encoder: TEncoder;
+  Encoder: TStreamCoder;
 begin
-  OpenArchive(haCopy);
+  OpenArchive;
   if Code < ccError then
   begin
     MarkItems2Add;
-    if FHeaders.GetCount([haAdd, haUpdate]) <> 0 then
+    if FHeaders.Count([haAdd, haUpdate]) <> 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
