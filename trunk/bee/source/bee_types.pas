@@ -103,11 +103,11 @@ type
   PFileInfo = ^TFileInfo;
 
   TFileInfo = record
-    FileName: PChar;
-    FilePath: PChar;
-    FileSize: int64;
-    FileTime: longint;
-    FileAttr: longint;
+    Name: PChar;
+    Path: PChar;
+    Size: int64;
+    Time: longint;
+    Attr: longint;
   end;
 
   { PFileInfoExtra record }
@@ -115,19 +115,19 @@ type
   PFileInfoExtra = ^TFileInfoExtra;
 
   TFileInfoExtra = record
-    FileName:     PChar;
-    FilePath:     PChar;
-    FileSize:     int64;
-    FileTime:     longint;
-    FileAttr:     longint;
-    FilePacked:   int64;
-    FileRatio:    longint;
-    FileComm:     PChar;
-    FileCrc:      longword;
-    FileMethod:   PChar;
-    FileVersion:  PChar;
-    FilePassword: PChar;
-    FilePosition: longint;
+    Name:       PChar;
+    Path:       PChar;
+    Size:       int64;
+    Time:       longint;
+    Attr:       longint;
+    PackedSize: int64;
+    Ratio:      longint;
+    Comm:       PChar;
+    Crc:        longword;
+    Method:     PChar;
+    Version:    PChar;
+    Password:   PChar;
+    Position:   longint;
   end;
 
 implementation

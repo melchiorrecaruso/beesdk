@@ -83,11 +83,11 @@ type
 
   TCustomSearchRec = class
   public
-    FileName: string;
-    FileSize: int64;
-    FileTime: longint;
-    FileAttr: longint;
-    FileLink: string;
+    Name: string;
+    Size: int64;
+    Time: longint;
+    Attr: longint;
+    Link: string;
   end;
 
   { TFileScanner }
@@ -235,11 +235,11 @@ end;
 function TFileScanner.CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
 begin
   Result := TCustomSearchRec.Create;
-  Result.FileName := DeleteFileDrive(RecPath) + Rec.Name;
-  Result.FileSize := Rec.Size;
-  Result.FileTime := Rec.Time;
-  Result.FileAttr := Rec.Attr;
-  Result.FileLink := RecPath + Rec.Name;
+  Result.Name := DeleteFileDrive(RecPath) + Rec.Name;
+  Result.Size := Rec.Size;
+  Result.Time := Rec.Time;
+  Result.Attr := Rec.Attr;
+  Result.Link := RecPath + Rec.Name;
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
