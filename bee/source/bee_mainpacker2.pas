@@ -75,7 +75,8 @@ type
   public
     function EncodeFrom(const Item: THeader): boolean; overload;
     function DecodeTo(const Item: THeader): boolean; overload;
-    procedure SetCoder(const Item: THeader);
+    function Test(const Item: THeader): boolean;
+    procedure InitializeCoder(const Item: THeader);
   end;
 
 implementation
@@ -240,7 +241,6 @@ end;
 function THeaderStreamCoder.EncodeFrom(const Item: THeader): boolean;
 begin
   Item.StartPos := FStream.Seek(0, soCurrent);
-
   if foMoved in Item.Flags then
     Item.Crc := CopyFrom(Item.Link)
   else
@@ -252,7 +252,6 @@ end;
 function THeaderStreamCoder.DecodeTo(const Item: THeader): boolean;
 begin
   FStream.Seek(Item.StartPos, soFromBeginning);
-
   if foMoved in Item.Flags then
     Result := CopyTo(Item.Link) = Item.Crc
   else
@@ -265,7 +264,22 @@ begin
   end;
 end;
 
-procedure THeaderStreamCoder.SetCoder(const Item: THeader);
+function THeaderStreamCoder.Test(const Item: THeader): boolean;
+var
+  Strm: TNulWriter;
+begin
+  Strm := TNulWriter.Create;
+
+  FStream.Seek(Item.StartPos, soFromBeginning);
+  if foMoved in Item.Flags then
+    Result := CopyTo(Strm, Item.Size) = Item.Crc
+  else
+    Result := DecodeTo(Strm, Item.Size) = Item.Crc;
+
+  Strm.Free;
+end;
+
+procedure THeaderStreamCoder.InitializeCoder(const Item: THeader);
 begin
   if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
   if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
