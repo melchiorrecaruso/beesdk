@@ -90,7 +90,7 @@ type
     constructor Create(ASource: TStream; ACapacity: longint); overload;
     constructor Create(ASource: TStream); overload;
     destructor Destroy; override;
-    procedure StartDecode(const AKey: string);
+    procedure StartDecode(const Value: string);
     procedure FinishDecode;
   end;
 
@@ -107,7 +107,7 @@ type
     constructor Create(ASource: TStream; ACapacity: longint); overload;
     constructor Create(ASource: TStream); overload;
     destructor Destroy; override;
-    procedure StartEncode(const AKey: string);
+    procedure StartEncode(const Value: string);
     procedure FinishEncode;
   end;
 
@@ -317,17 +317,21 @@ begin
   end;
 end;
 
-procedure TReadBlowFishBufStream.StartDecode(const AKey: string);
+procedure TReadBlowFishBufStream.StartDecode(const Value: string);
 begin
-  FBFK := Length(AKey) >= MinBlowFishKeyLength;
+  FBFK := Length(Value) >= MinBlowFishKeyLength;
   if FBFK then
   begin
-    FBF.Initialize(AKey);
+    FBufferSize   := 0;
+    FBufferReaded := 0;
+    FBF.Initialize(Value);
   end;
 end;
 
 procedure TReadBlowFishBufStream.FinishDecode;
 begin
+  FBufferSize   := 0;
+  FBufferReaded := 0;
   FBFK := False;
 end;
 
@@ -377,17 +381,19 @@ begin
   end;
 end;
 
-procedure TWriteBlowFishBufStream.StartEncode(const AKey: string);
+procedure TWriteBlowFishBufStream.StartEncode(const Value: string);
 begin
-  FBFK := Length(AKey) >= MinBlowFishKeyLength;
+  FBFK := Length(Value) >= MinBlowFishKeyLength;
   if FBFK then
   begin
-    FBF.Initialize(AKey);
+    FlushBuffer;
+    FBF.Initialize(Value);
   end;
 end;
 
-procedure TWriteBlowFishBufStream.Finishencode;
+procedure TWriteBlowFishBufStream.FinishEncode;
 begin
+  FlushBuffer;
   FBFK := False;
 end;
 

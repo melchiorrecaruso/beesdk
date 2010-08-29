@@ -536,43 +536,36 @@ procedure TBeeApp.DecodeSequences;
 var
   P: THeader;
   I, CRC: longint;
-  Decoder: TStreamCoder;
   FSwapStrm: TFileWriter;
+  Decoder: THeaderStreamCoder;
 begin
   FSwapName := GenerateFileName(FCommandLine.wdOption);
   FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
   if (FSwapStrm <> nil) then
   begin
-    Decoder := TStreamCoder.Create(FArcFile);
-    for I := 0 to FHeaders.Count -1 do;
+    Decoder := THeaderStreamCoder.Create(FArcFile);
+    for I := 0 to FHeaders.Count - 1 do
       if (Code < ccError) then
       begin
         P := FHeaders.Items[I];
 
-        if foDictionary in P.Flags then Decoder.SetDictionary(P.Dictionary);
-        if foTable      in P.Flags then Decoder.SetTable(P.Table);
-        if foTear       in P.Flags then
-          Decoder.FreshSolid
-        else
-          Decoder.FreshFlexible;
-
+        Decoder.InitializeCoder(P);
         if P.Action = haExtract then
         begin
-          FArcFile.Seek(P.StartPos, 0);
           if foPassword in P.Flags then
           begin
-            FArcFile.StartDecode (GetPassword(P));
+            FArcFile.StartDecode(GetPassword(P));
             FSwapStrm.StartEncode(GetPassword(P));
           end;
+          P.StartPos := FSwapStrm.Seek(0, soCurrent);
 
-          if Decoder.Decode(FSwapStrm, P.Size) <> P.Crc then
+          FArcFile.Seek(P.StartPos, soBeginning);
+          if Decoder.DecodeTo(FSwapStrm, P.Size) <> P.Crc then
+          begin
             DoMessage(Format(cmSequenceError, []), ccError);
-
-          FSwapStrm.Flush;
+          end;
           FSwapStrm.FinishEncode;
           FArcFile.FinishDecode;
-
-          P.StartPos := FSwapStrm.Seek(0, 1);
         end;
       end;
     Decoder.Free;
@@ -699,7 +692,7 @@ procedure TBeeApp.EncodeShell;
 var
   I: longint;
   P: THeader;
-  Encoder: TStreamCoder;
+  Encoder: THeaderStreamCoder;
 begin
   OpenArchive;
   if Code < ccError then
@@ -727,34 +720,28 @@ begin
           if Code < ccError then
           begin
             FHeaders.Write(FTempFile);
-            Encoder := TStreamCoder.Create(FTempFile);
+            Encoder := THeaderStreamCoder.Create(FTempFile);
             for I := 0 to FHeaders.Count - 1 do
             begin
               if Code < ccError then
               begin
                 P := FHeaders.Items[I];
 
-                if foDictionary in P.Flags then Encoder.SetDictionary(P.Dictionary);
-                if foTable      in P.Flags then Encoder.SetTable(P.Table);
-                if foTear       in P.Flags then
-                  Encoder.FreshSolid
-                else
-                  Encoder.FreshFlexible;
-
+                Encoder.InitializeCoder(P);
                 if P.Action in [haNew, haUpdate, haNone, haExtract] then
                 begin
-                  FArcFile.Seek(P.StartPos, 0);
                   if foPassword in P.Flags then
                   begin
                     FArcFile.StartDecode(GetPassword(P));
                     FSwapFile.StartDecode(GetPassword(P));
                   end;
 
-                  case P.FileAction of
-                    haNew:     Encoder.EncodeHeader(P);
-                    haUpdate:  Encoder.EncodeHeader(P);
-                    haNone:    Encoder.Copy(    P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
-                    haExtract: Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
+                  FArcFile.Seek(P.StartPos, soBeginning);
+                  case P.Action of
+                    haNew:     Encoder.EncodeFrom(P);
+                    haUpdate:  Encoder.EncodeFrom(P);
+                    haNone:    Encoder.CopyFrom  (P);
+                    haExtract: Encoder.EncodeStrm(P);
                   end;
 
 
