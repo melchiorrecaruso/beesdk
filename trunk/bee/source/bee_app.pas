@@ -539,7 +539,6 @@ var
   Decoder: TStreamCoder;
   FSwapStrm: TFileWriter;
 begin
-
   FSwapName := GenerateFileName(FCommandLine.wdOption);
   FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
   if (FSwapStrm <> nil) then
@@ -550,11 +549,12 @@ begin
       begin
         P := FHeaders.Items[I];
 
-        if foDictionary in P.Flags then
-          Decoder.SetDictionary(P.Dictionary);
-
-        if foTable in P.Flags then
-          Decoder.SetTable(P.Table);
+        if foDictionary in P.Flags then Decoder.SetDictionary(P.Dictionary);
+        if foTable      in P.Flags then Decoder.SetTable(P.Table);
+        if foTear       in P.Flags then
+          Decoder.FreshSolid
+        else
+          Decoder.FreshFlexible;
 
         if P.Action = haExtract then
         begin
@@ -566,11 +566,13 @@ begin
           end;
 
           if Decoder.Decode(FSwapStrm, P.Size) <> P.Crc then
-          begin
             DoMessage(Format(cmSequenceError, []), ccError);
-          end;
+
+          FSwapStrm.Flush;
           FSwapStrm.FinishEncode;
           FArcFile.FinishDecode;
+
+          P.StartPos := FSwapStrm.Seek(0, 1);
         end;
       end;
     Decoder.Free;
@@ -703,37 +705,62 @@ begin
   if Code < ccError then
   begin
     MarkItems2Add;
-    if FHeaders.Count([haAdd, haUpdate]) <> 0 then
+    if FHeaders.ActionCount[[haNew, haUpdate]] <> 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
       if FTempFile <> nil then
       begin
-        MarkItems2Update; // find sequences
-        DecodeSequences;  // decode solid sequences
+        MarkItems2Update;
+        DecodeSequences;
         if Code < ccError then
         begin
-          if Length(FSwapName) <> 0 then // if exists a modified
-          begin                          // solid sequence open swap file
+          if Length(FSwapName) <> 0 then
+          begin
             FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
             if FSwapFile = nil then
+            begin
               DoMessage(cmSwapOpenError, ccError);
+            end;
           end;
 
           if Code < ccError then
           begin
-            FHeaders.WriteItems(FTempFile);
-            Encoder := TEncoder.Create(FTempFile, Self);
-            for I := 0 to FHeaders.GetCount - 1 do
+            FHeaders.Write(FTempFile);
+            Encoder := TStreamCoder.Create(FTempFile);
+            for I := 0 to FHeaders.Count - 1 do
             begin
               if Code < ccError then
               begin
-                P := FHeaders.GetItem(I);
-                case P.FileAction of
-                  haAdd:     Encoder.EncodeFile(P, emNorm);
-                  haUpdate:  Encoder.EncodeFile(P, emNorm);
-                  haCopy:    Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
-                  haExtract: Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
+                P := FHeaders.Items[I];
+
+                if foDictionary in P.Flags then Encoder.SetDictionary(P.Dictionary);
+                if foTable      in P.Flags then Encoder.SetTable(P.Table);
+                if foTear       in P.Flags then
+                  Encoder.FreshSolid
+                else
+                  Encoder.FreshFlexible;
+
+                if P.Action in [haNew, haUpdate, haNone, haExtract] then
+                begin
+                  FArcFile.Seek(P.StartPos, 0);
+                  if foPassword in P.Flags then
+                  begin
+                    FArcFile.StartDecode(GetPassword(P));
+                    FSwapFile.StartDecode(GetPassword(P));
+                  end;
+
+                  case P.FileAction of
+                    haNew:     Encoder.EncodeHeader(P);
+                    haUpdate:  Encoder.EncodeHeader(P);
+                    haNone:    Encoder.Copy(    P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
+                    haExtract: Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
+                  end;
+
+
+
+
+
                 end;
               end;
             end;

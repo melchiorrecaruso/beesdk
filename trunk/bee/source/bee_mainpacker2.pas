@@ -49,19 +49,52 @@ type
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
-    function Copy(SrcStrm: TStream; Size: int64): longword;
-    function Encode(SrcStrm: TStream; Size: int64): longword;
-    function Decode(DstStrm: TStream; Size: int64): longword;
+    function Copy  (Strm: TStream; const Size: int64): longword; virtual; abstract;
+    function Encode(Strm: TStream; const Size: int64): longword; virtual; abstract;
+    function Decode(Strm: TStream; const Size: int64): longword; virtual; abstract;
     procedure SetTable(const Value: TTableParameters);
     procedure SetDictionary(Value: byte);
     procedure FreshFlexible;
     procedure FreshSolid;
   end;
 
+  { TStreamEncoder class }
+
+  TStreamEncoder = class(TStreamCoder)
+  public
+    function Copy  (Strm: TStream; const Size: int64): longword; override;
+    function Encode(Strm: TStream; const Size: int64): longword; override;
+  end;
+
+  { TStreamDecoder class }
+
+  TStreamDecoder = class(TStreamCoder)
+  public
+    function Copy  (Strm: TStream; const Size: int64): longword; override;
+    function Decode(Strm: TStream; const Size: int64): longword; override;
+  end;
+
+  TFileStreamCoder = class(TStreamCoder)
+  public
+    function Copy  (const FileName: string): longword; overload;
+    function Encode(const FileName: string): longword; overload;
+    function Decode(const FileName: string): longword; overload;
+  end;
+
+  THeaderStreamCoder = class(TFileStreamCoder)
+  public
+    procedure Copy  (const Item: THeader); overload;
+    procedure Encode(const Item: THeader); overload;
+    procedure Decode(const Item: THeader); overload;
+    procedure SetTDF(const Item: THeader);
+  end;
+
+
 implementation
 
 uses
-  Bee_Crc;
+  Bee_Crc,
+  Bee_Files;
 
 { TStreamCoder class }
 
@@ -143,6 +176,82 @@ end;
 procedure TStreamCoder.FreshSolid;
 begin
   FPPM.FreshSolid;
+end;
+
+{ TFileStreamCoder class }
+
+function TFileStreamCoder.Copy(const FileName: string): longword;
+var
+  SrcStrm: TFileReader;
+begin
+  SrcStrm := CreateTFileReader(FileName, fmOpenRead);
+  if SrcStrm <> nil then
+  begin
+    Result := Copy(SrcStrm, SrcStrm.Size);
+    SrcStrm.Free;
+  end else
+    Result := longword(-1);
+end;
+
+function TFileStreamCoder.Encode(const FileName: string): longword;
+var
+  SrcStrm: TFileReader;
+begin
+  SrcStrm := CreateTFileReader(FileName, fmOpenRead);
+  if SrcStrm <> nil then
+  begin
+    Result := Encode(SrcStrm, SrcStrm.Size);
+    SrcStrm.Free;
+  end else
+    Result := longword(-1);
+end;
+
+function TFileStreamCoder.Decode(const FileName: string): longword;
+var
+  DstStrm: TFileWriter;
+begin
+  DstStrm := CreateTFileWriter(FileName, fmCreate);
+  if DstStrm <> nil then
+  begin
+    Result := Decode(DstStrm, DstStrm.Size);
+    DstStrm.Free;
+  end else
+    Result := longword(-1);
+end;
+
+{ THeaderStreamCoder class }
+
+procedure THeaderStreamCoder.Encode(const Item: THeader);
+begin
+  Item.StartPos   := FStream.Seek(0, soCurrent);
+  if foMoved in Item.Flags then
+    Item.Crc := Copy(Item.Link)
+  else
+    Item.Crc := Encode(Item.Link);
+  Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
+end;
+
+function THeaderStreamCoder.Decode(const Item: THeader): longword;
+begin
+  FStream.Seek(Item.StartPos, soFromBeginning);
+  if foMoved in Item.Flags then
+
+    Result := Copy
+  else
+    Result := Decode(Item.Link);
+
+
+  ;
+end;
+
+procedure THeaderStreamCoder.SetTDF(const Item: THeader);
+begin
+  if foDictionary in Item.FileFlags then PPM.SetDictionary(Item.FileDictionary);
+  if foTable      in Item.FileFlags then PPM.SetTable(Item.FileTable);
+  if foTear       in Item.FileFlags then
+    PPM.FreshFlexible
+  else
+    PPM.FreshSolid;
 end;
 
 end.
