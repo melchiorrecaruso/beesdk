@@ -53,6 +53,7 @@ type
   public
     constructor Create(const aFileName: string; aMode: word);
     destructor Destroy; override;
+    procedure Fill;
   end;
 
   { TFileWriter }
@@ -63,6 +64,7 @@ type
   public
     constructor Create(const aFileName: string; aMode: word);
     destructor Destroy; override;
+    procedure Flush;
   end;
 
   { TNulWriter }
@@ -145,6 +147,11 @@ begin
   FFileStream.Free;
 end;
 
+procedure TFileReader.Fill;
+begin
+  FillBuffer;
+end;
+
 { TFileWriter class }
 
 constructor TFileWriter.Create(const aFileName: string; aMode: word);
@@ -161,6 +168,11 @@ destructor TFileWriter.Destroy;
 begin
   inherited Destroy;
   FFileStream.Free;
+end;
+
+procedure TFileWriter.Flush;
+begin
+  FlushBuffer;
 end;
 
 { TNulWriter class }
