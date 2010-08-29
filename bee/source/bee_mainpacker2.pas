@@ -49,10 +49,10 @@ type
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
-    function CopyFrom  (Strm: TStream; Size: int64): longword; virtual;
+    function CopyFrom(Strm: TStream; Size: int64): longword; virtual;
     function EncodeFrom(Strm: TStream; Size: int64): longword; virtual;
-    function DecodeTo  (Strm: TStream; Size: int64): longword; virtual;
-    function CopyTo    (Strm: TStream; Size: int64): longword; virtual;
+    function DecodeTo(Strm: TStream; Size: int64): longword; virtual;
+    function CopyTo(Strm: TStream; Size: int64): longword; virtual;
     procedure SetTable(const Value: TTableParameters);
     procedure SetDictionary(Value: byte);
     procedure FreshFlexible;
@@ -63,19 +63,19 @@ type
 
   TFileStreamCoder = class(TStreamCoder)
   public
-    function CopyFrom  (const FileName: string): longword; overload;
+    function CopyFrom(const FileName: string): longword; overload;
     function EncodeFrom(const FileName: string): longword; overload;
-    function CopyTo    (const FileName: string): longword; overload;
-    function DecodeTo  (const FileName: string): longword; overload;
+    function CopyTo(const FileName: string): longword; overload;
+    function DecodeTo(const FileName: string): longword; overload;
   end;
 
   { THeaderStreamCoder class }
 
   THeaderStreamCoder = class(TFileStreamCoder)
   public
-    function  EncodeFrom(const Item: THeader): boolean; overload;
-    function  DecodeTo  (const Item: THeader): boolean; overload;
-    procedure SetCoder  (const Item: THeader);
+    function EncodeFrom(const Item: THeader): boolean; overload;
+    function DecodeTo(const Item: THeader): boolean; overload;
+    procedure SetCoder(const Item: THeader);
   end;
 
 implementation
@@ -239,7 +239,8 @@ end;
 
 function THeaderStreamCoder.EncodeFrom(const Item: THeader): boolean;
 begin
-  Item.StartPos   := FStream.Seek(0, soCurrent);
+  Item.StartPos := FStream.Seek(0, soCurrent);
+
   if foMoved in Item.Flags then
     Item.Crc := CopyFrom(Item.Link)
   else
@@ -251,6 +252,7 @@ end;
 function THeaderStreamCoder.DecodeTo(const Item: THeader): boolean;
 begin
   FStream.Seek(Item.StartPos, soFromBeginning);
+
   if foMoved in Item.Flags then
     Result := CopyTo(Item.Link) = Item.Crc
   else
@@ -263,14 +265,14 @@ begin
   end;
 end;
 
-procedure THeaderStreamCoder.SetTDF(const Item: THeader);
+procedure THeaderStreamCoder.SetCoder(const Item: THeader);
 begin
-  if foDictionary in Item.FileFlags then PPM.SetDictionary(Item.FileDictionary);
-  if foTable      in Item.FileFlags then PPM.SetTable(Item.FileTable);
-  if foTear       in Item.FileFlags then
-    PPM.FreshFlexible
+  if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
+  if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
+  if foTear       in Item.Flags then
+    FPPM.FreshFlexible
   else
-    PPM.FreshSolid;
+    FPPM.FreshSolid;
 end;
 
 end.
