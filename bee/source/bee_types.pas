@@ -126,7 +126,7 @@ type
     Crc:        longword;
     Method:     PChar;
     Version:    PChar;
-    Password:   PChar;
+    Password:   boolean;
     Position:   longint;
   end;
 

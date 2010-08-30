@@ -83,8 +83,8 @@ implementation
 
 uses
   SysUtils,
-  Bee_Crc,
-  Bee_Files;
+  Bee_Files,
+  Bee_Crc;
 
 { TStreamCoder class }
 

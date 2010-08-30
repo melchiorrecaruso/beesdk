@@ -103,7 +103,7 @@ uses
   Bee_Consts,
   Bee_MainPacker2;
 
-function CompareFn(P1, P2: pointer): longint;
+function CompareFunc(P1, P2: pointer): longint;
 begin
   Result := CompareFileName(
     ExtractFilePath(THeader(P1).Name),
@@ -111,7 +111,7 @@ begin
 
   if Result = 0 then
   begin
-    Result := CompareText(
+    Result := CompareFileName(
       ExtractFileName(THeader(P1).Name),
       ExtractFileName(THeader(P2).Name));
   end;
@@ -123,7 +123,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1132 archiver utility, May 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1134 archiver utility, May 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -164,29 +164,27 @@ procedure TBeeApp.Execute;
 begin
   inherited Execute;
   DoMessage(FSelfName);
-  with FCommandLine do
+  if (FCommandLine.Command <> ccNone) and (FCommandLine.ArchiveName <> '') then
   begin
-    if (Command <> ccNone) and (Length(ArchiveName) <> 0) then
-    begin
-      case FCommandLine.Command of
-        ccAdd:      EncodeShell;
-        ccDelete:   DeleteShell;
-        ccExtract:  DecodeShell(haExtract);
-        ccxExtract: DecodeShell(haExtract);
-        ccTest:     DecodeShell(haDecode);
-        ccRename:   RenameShell;
-        ccList:     ListShell;
-        ccHelp:     HelpShell;
-      end;
+    case FCommandLine.Command of
+      ccAdd:      EncodeShell;
+      ccDelete:   DeleteShell;
+      ccExtract:  DecodeShell(haExtract);
+      ccxExtract: DecodeShell(haExtract);
+      ccTest:     DecodeShell(haDecode);
+      ccRename:   RenameShell;
+      ccList:     ListShell;
+      ccHelp:     HelpShell;
+    end;
 
-      if FCommandLine.Command in [ccAdd, ccDelete, ccRename] then
-      begin
-        ProcesstOption;
-        ProcesslOption;
-      end;
-    end else
-      HelpShell;
-  end;
+    if FCommandLine.Command in [ccAdd, ccDelete, ccRename] then
+    begin
+      ProcesstOption;
+      ProcesslOption;
+    end;
+  end else
+    HelpShell;
+
   SetTerminated(True);
 end;
 
@@ -204,7 +202,7 @@ begin
       FHeaders.Read(FArcFile);
       if (FHeaders.Count = 0) and (FArcFile.Size <> 0) then
       begin
-        DoMessage(cmArcTypeError, ccError);
+        DoMessage(Format(cmArcTypeError, []), ccError);
       end;
     end else
       DoMessage(Format(cmArcOpenError, [FCommandLine.ArchiveName]), ccError);
@@ -215,17 +213,17 @@ procedure TBeeApp.CloseArchive(IsModified: boolean);
 var
   S: string;
 begin
-  S := TimeDifference(FStartTime);
+  if Assigned(FTempFile) then FreeAndNil(FTempFile);
+  if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
+  if Assigned(FArcFile)  then FreeAndNil(FArcFile);
+
   if IsModified then
   begin
-    if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
-    if Assigned(FTempFile) then FreeAndNil(FTempFile);
-    if Assigned(FArcFile)  then FreeAndNil(FArcFile);
-
     if Code < ccError then
     begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FCommandLine.ArchiveName);
+      {To-do: Aggiungere ripristino archivio in caso di errore}
       if not RenameFile(FTempName, FCommandLine.ArchiveName) then
         DoMessage(Format(cmRenameFileError, [FTempName, FCommandLine.ArchiveName]), ccError);
     end else
@@ -233,15 +231,14 @@ begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FTempName);
     end;
-  end else
-    if Assigned(FArcFile) then FreeAndNil(FArcFile);
+  end;
 
-  with FCommandLine do
-    case Code of
-      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
-      ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
-      ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
-      else         DoMessage(Format(Cr + cmError,     [S]));
+  S := TimeDifference(FStartTime);
+  case Code of
+    ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
+    ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
+    ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
+    else         DoMessage(Format(Cr + cmError,     [S]));
   end;
   FHeaders.Free;
 end;
