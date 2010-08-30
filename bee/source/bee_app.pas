@@ -248,114 +248,85 @@ end;
 procedure TBeeApp.MarkItems2Add;
 var
   I: longint;
-  T: TCustomSearchRec;
-  Scanner: TFileScanner;
+  S: TFileScanner;
 begin
   DoMessage(Format(cmScanning, ['...']));
-  Scanner := TFileScanner.Create;
+  S := TFileScanner.Create;
   with FCommandLine do
     for I := 0 to FileMasks.Count - 1 do
     begin
-      Scanner.Scan(FileMasks[I], xOptions, rOption);
+      S.Scan(FileMasks[I], xOptions, rOption);
     end;
 
-  for I := 0 to Scanner.Count - 1 do
-  begin
-    if Code < ccError then
-    begin
-      T := Scanner.Items[I];
-      case FCommandLine.uOption of
-        umAdd:           Inc(FTotalSize, FHeaders.Add          (T));
-        umUpdate:        Inc(FTotalSize, FHeaders.Update       (T));
-        umReplace:       Inc(FTotalSize, FHeaders.Replace      (T));
-        umAddUpdate:     Inc(FTotalSize, FHeaders.AddUpdate    (T));
-        umAddReplace:    Inc(FTotalSize, FHeaders.AddReplace   (T));
-        umAddAutoRename: Inc(FTotalSize, FHeaders.AddAutoRename(T));
-        else DoMessage(cmSequenceError,  ccError);
-      end;
+  for I := 0 to S.Count - 1 do
+    case FCommandLine.uOption of
+      umAdd:           FHeaders.Add          (S.Items[I]);
+      umUpdate:        FHeaders.Update       (S.Items[I]);
+      umReplace:       FHeaders.Replace      (S.Items[I]);
+      umAddUpdate:     FHeaders.AddUpdate    (S.Items[I]);
+      umAddReplace:    FHeaders.AddReplace   (S.Items[I]);
+      umAddAutoRename: FHeaders.AddAutoRename(S.Items[I]);
+      else DoMessage(Format(cmCmdError, []), ccError);
     end;
-  end;
+  S.Free;
+
   FHeaders.Configure(FConfiguration);
-  Scanner.Free;
 end;
 
 procedure TBeeApp.MarkItems2Update;
 var
-  I, J, BackTear, NextTear: longint;
-  P: THeader;
+  I, J: longint;
 begin
-  // find sequences and mark as toSwap files that not toUpdate
+  // find sequences and mark as toExtract files that not toUpdate
   I := FHeaders.GetBack(FHeaders.Count - 1, [haUpdate]);
   while I > -1 do
   begin
-    BackTear := FHeaders.GetBack(I, foTear);
-    NextTear := FHeaders.GetNext(I + 1, foTear);
-
-    if NextTear = -1 then NextTear := FHeaders.Count;
-    // if is solid header
-    if ((NextTear - BackTear) > 1) then
-    begin
-      NextTear := FHeaders.GetBack(NextTear - 1, [haNone]);
-      for J := BackTear to NextTear do
-      begin
-        P := FHeaders.Items[J];
-        case P.Action of
-          haUpdate: Inc(FTotalSize, P.Size);
-          haNone:
-          begin
-            P.Action := haExtract;
-            Inc(FTotalSize, P.Size * 2);
-          end;
-          else DoMessage(cmSequenceError,  ccError);
+    J := FHeaders.GetBack(I, foTear);
+    if (J > -1) then
+      repeat
+        case FHeaders.Items[J].Action of
+          haUpdate: {nothing to do};
+          haNone:   FHeaders.Items[J].Action := haExtract;
+          else      DoMessage(Format(cmSequenceError, []), ccError);
         end;
-      end;
-      I := BackTear;
-    end;
+        Inc(J);
+      until (J = FHeaders.Count) or (foTear in FHeaders.Items[J].Flags);
+
     I := FHeaders.GetBack(I - 1, [haUpdate]);
   end;
-  Inc(FTotalSize, FHeaders.PackedSize[[haNone]]);
 end;
 
 procedure TBeeApp.MarkItems2Delete;
 var
-  I, J, BackTear, NextTear: longint;
+  I, J: longint;
   P: THeader;
 begin
   DoMessage(Format(cmScanning, ['...']));
   FHeaders.SetAction(FCommandLine.FileMasks, haNone, haDelete);
   FHeaders.SetAction(FCommandLine.xOptions,  haDelete, haNone);
 
-  I := FHeaders.GetBack(FHeaders.Count -1, [haDelete]);
-  // find sequences and ...
+
+  repeat
+    I := FHeaders.GetBack(FHeaders.Count - 1, [haDelete]);
+  until (I = -1) or
+
+
+  // find sequences and mark as toExtract files that not toDelete
   while I > -1 do
   begin
-    BackTear := FHeaders.GetBack(I, foTear);
-    NextTear := FHeaders.GetNext(I + 1, foTear);
-
-    if NextTear = -1 then NextTear := FHeaders.Count;
-    // if is solid header
-    if ((NextTear - BackTear) > 1) then
-    begin
-      NextTear := FHeaders.GetBack(NextTear - 1, [haNone]);
-      // if exists an header toDelete
-      if FHeaders.GetBack(NextTear, [haDelete]) > (BackTear - 1) then
-        for J := BackTear to NextTear do
-        begin
-          P := FHeaders.Items[J];
-          case P.Action of
-            haDelete: Inc(FTotalSize, P.Size);
-            haNone:
-            begin
-              P.Action := haExtract;
-              Inc(FTotalSize, P.Size * 2);
-            end;
-          end;
+    J := FHeaders.GetBack(I, foTear);
+    if J > -1 then
+      repeat
+        case FHeaders.Items[J].Action of
+          haDelete: {nothing to do};
+          haNone:   FHeaders.Items[J].Action := haExtract;
+          else      DoMessage(Format(cmSequenceError, []), ccError);
         end;
-      I := BackTear;
-    end;
+        Inc(J);
+      until (J = FHeaders.Count) or (foTear in FHeaders.Items[J].Flags);
+
     I := FHeaders.GetBack(I - 1, [haDelete]);
   end;
-  Inc(FTotalSize, FHeaders.PackedSize[[haNone]]);
 end;
 
 procedure TBeeApp.MarkItems2Extract;

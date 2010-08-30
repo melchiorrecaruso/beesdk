@@ -99,6 +99,7 @@ const
   cmSequenceError     = 'Error: can''t pre-process sequences';
   cmStreamError       = 'Error: can''t open stream';
 
+
   cmConfigWarning     = 'Warning: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning = 'Warning: file "%s" already exists';
   cmNoFilesWarning    = 'Warning: no files to process';
