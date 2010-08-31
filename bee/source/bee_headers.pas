@@ -39,11 +39,13 @@ interface
 uses
   Classes,
   SysUtils,
+  Bee_Types,
   Bee_Files,
   Bee_CommandLine,
   Bee_Configuration;
 
 type
+
   { Header flags }
 
   THeaderFlag =
@@ -163,7 +165,6 @@ const
 implementation
 
 uses
-  Bee_Types,
   Bee_Consts,
   Bee_Common;
 
