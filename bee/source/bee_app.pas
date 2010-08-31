@@ -66,13 +66,13 @@ type
     procedure OpenArchive;
     procedure CloseArchive(IsModified: boolean);
     { find and prepare sequences }
-    procedure MarkItems2Add;
-    procedure MarkItems2Delete;
+    procedure AddItems;
+    procedure DeleteItems;
     procedure MarkItems2Extract;
     procedure MarkItems2Test;
     procedure MarkItems2Rename;
     procedure MarkItems2List;
-    procedure MarkItems2Update;
+    procedure UpdateItems;
     procedure MarkItems2Decode(const aAction: THeaderAction);
     procedure DecodeSequences;
     procedure RecoverSequences;
@@ -245,7 +245,7 @@ end;
 
 { Sequences processing }
 
-procedure TBeeApp.MarkItems2Add;
+procedure TBeeApp.AddItems;
 var
   I: longint;
   S: TFileScanner;
@@ -273,7 +273,7 @@ begin
   FHeaders.Configure(FConfiguration);
 end;
 
-procedure TBeeApp.MarkItems2Update;
+procedure TBeeApp.UpdateItems;
 var
   I, J: longint;
 begin
@@ -286,8 +286,8 @@ begin
       repeat
         case FHeaders.Items[J].Action of
           haUpdate: {nothing to do};
-          haNone:   FHeaders.Items[J].Action := haExtract;
-          else      DoMessage(Format(cmSequenceError, []), ccError);
+          haNone: FHeaders.Items[J].Action := haExtract;
+          else DoMessage(Format(cmSequenceError, []), ccError);
         end;
         Inc(J);
       until (J = FHeaders.Count) or (foTear in FHeaders.Items[J].Flags);
@@ -296,7 +296,7 @@ begin
   end;
 end;
 
-procedure TBeeApp.MarkItems2Delete;
+procedure TBeeApp.DeleteItems;
 var
   I, J: longint;
   P: THeader;
@@ -305,11 +305,14 @@ begin
   FHeaders.SetAction(FCommandLine.FileMasks, haNone, haDelete);
   FHeaders.SetAction(FCommandLine.xOptions,  haDelete, haNone);
 
-
+  // getback ...
   repeat
     I := FHeaders.GetBack(FHeaders.Count - 1, [haDelete]);
-  until (I = -1) or
-
+    P := FHeaders.Items[I + 1];
+    if P <> nil then
+      if P.Action = haNone then
+        if not (foTear in P.Flags) then Break;
+  until I = -1;
 
   // find sequences and mark as toExtract files that not toDelete
   while I > -1 do
@@ -325,11 +328,18 @@ begin
         Inc(J);
       until (J = FHeaders.Count) or (foTear in FHeaders.Items[J].Flags);
 
-    I := FHeaders.GetBack(I - 1, [haDelete]);
+    // getback ...
+    repeat
+      I := FHeaders.GetBack(I - 1, [haDelete]);
+      P := FHeaders.Items[I + 1];
+      if P <> nil then
+        if P.Action = haNone then
+          if not (foTear in P.Flags) then Break;
+    until I = -1;
   end;
 end;
 
-procedure TBeeApp.MarkItems2Extract;
+procedure TBeeApp.ExtractItems;
 var
   I: longint;
   P: THeader;
@@ -341,44 +351,21 @@ begin
 
   for I  := 0 to FHeaders.Count - 1 do
   begin
-    if Code < ccError then
+    P := FHeaders.Items[I];
+    if P.Action = haExtract then
     begin
-      P := FHeaders.Items[I];
-      if P.Action = haExtract then
-      begin
-        if FCommandLine.Command = ccXextract then
-          P.Name := DeleteFilePath(FCommandLine.cdOption, P.Name)
-        else
-          P.Name := ExtractFileName(P.Name);
+      case FCommandLine.Command of
+        ccXextract: P.Link := DeleteFilePath (FCommandLine.cdOption, P.Name)
+        else        P.Link := ExtractFileName(P.Name);
+      end;
 
-
-        case FCommandLine.uOption of
-          umAdd:       if not FileExists(P.Name) then
-                         Inc(FTotalSize, P.Size)
-                       else
-                         P.Action := haNone;
-          umUpdate:    if (FileExists(P.Name)) and (P.Time > FileAge(P.Name)) then
-                         Inc(FTotalSize, P.Size)
-                       else
-                         P.Action := haNone;
-          umReplace:   if FileExists(P.Name) then
-                         Inc(FTotalSize, P.Size)
-                       else
-                         P.Action := haNone;
-          umAddUpdate: if (not FileExists(P.Name)) or (P.Time > FileAge(P.Name)) then
-                         Inc(FTotalSize, P.Size)
-                       else
-                         P.Action := haNone;
-       // umAddReplace: extract file always
-          umAddAutoRename:
-          begin
-            if FileExists(P.Name) then
-            begin
-              P.Name := GenerateAlternativeFileName(P.Name, 1, True);
-            end;
-            Inc(FTotalSize, P.Size);
-          end;
-        end;
+      case FCommandLine.uOption of
+          umUpdate:    if (not FileExists(P.Link)) or  (P.Time <= FileAge(P.Name)) then P.Action := haNone;
+          umAddUpdate: if (    FileExists(P.Link)) and (P.Time <= FileAge(P.Name)) then P.Action := haNone;
+          umReplace:   if (not FileExists(P.Link)) then P.Action := haNone;
+          umAdd:       if (    FileExists(P.Link)) then P.Action := haNone;
+          // umAddReplace: extract file always
+          umAddAutoRename: if FileExists(P.Name) then P.Name := GenerateAlternativeFileName(P.Name, 1, True);
       end;
     end;
   end;

@@ -449,8 +449,13 @@ end;
 
 function THeaderList.GetItem(Index: longint): THeader;
 begin
-  Result := FItems[Index];
+  Result := nil;
+  if (Index > -1) and (Index < FItems.Count) then
+  begin
+    Result := FItems[Index];
+  end;
 end;
+
 
 { Headers class }
 
