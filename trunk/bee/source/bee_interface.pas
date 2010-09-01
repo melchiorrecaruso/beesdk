@@ -37,7 +37,8 @@ uses
   Classes,
   Bee_Types,
   Bee_Common,
-  Bee_Consts;
+  Bee_Consts,
+  Bee_Headers;
 
 type
   { TApp class }
@@ -102,11 +103,27 @@ type
     property Code: byte read FCode write SetCode;
   end;
 
+  function IGetPassword(P: THeader): string;
+
+
 implementation
 
 uses
   DateUtils,
   SysUtils;
+
+function IGetPassword(P: THeader): string;
+//var
+  //FI: TFileInfo;
+begin
+  //FI := NewFileInfo(P);
+  //Result := App.DoPassword(FI, '');
+  //if Length(Result) < MinBlowFishKeyLength then
+  //begin
+  //  Exclude(P.Flags, foPassword);
+  //end;
+  //FreeFileInfo(P);
+end;
 
 { TApp class }
 
