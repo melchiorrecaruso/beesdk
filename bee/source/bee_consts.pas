@@ -98,7 +98,7 @@ const
   cmRenameFileError   = 'Error: can''t rename file "%s" to "%s"';
   cmSequenceError     = 'Error: can''t pre-process sequences';
   cmStreamError       = 'Error: can''t open stream';
-
+  cmTestPswError      = 'Error: password error';
 
   cmConfigWarning     = 'Warning: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning = 'Warning: file "%s" already exists';

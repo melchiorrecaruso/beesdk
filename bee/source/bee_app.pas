@@ -60,10 +60,12 @@ type
     FSwapFile: TFileReader;
     FTempName: string;
     FTempFile: TFileWriter;
+    FPassword: string;
     FCommandLine: TCommandLine;
     FConfiguration: TConfiguration;
     { open/close archive routine }
     procedure OpenArchive;
+    function CheckArchivePassword: boolean;
     procedure CloseArchive(IsModified: boolean);
     { find and prepare sequences }
     procedure SetItemsToAdd;
@@ -87,9 +89,10 @@ type
     procedure RenameShell;
     procedure ListShell;
   protected
+
+
     function VersionToStr(const aItem: THeader): string;
     function MethodToStr(const aItem: THeader): string;
-    function GetPassword(Item: THeader): string;
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
@@ -148,6 +151,7 @@ begin
   FTempFile := nil;
   FSwapName := '';
   FTempName := '';
+  FPassword := '';
 
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -222,6 +226,44 @@ begin
       end;
     end else
       DoMessage(Format(cmArcOpenError, [FCommandLine.ArchiveName]), ccError);
+  end;
+end;
+
+function TBeeApp.CheckArchivePassword: boolean;
+var
+  I: longint;
+  P: THeader;
+  Decoder: THeaderStreamCoder;
+begin
+  Result := True;
+
+  I := FHeaders.GetNext(0, foPassword);
+  if I > -1 then
+  begin
+    // select smaller size item
+    P := FHeaders.Items[0];
+    for I := 1 to FHeaders.Count - 1 do
+      if P.Size > FHeaders.Items[I].Size then
+        P := FHeaders.Items[I];
+
+    // test item
+    Decoder := THeaderStreamCoder.Create(FArcFile);
+    Decoder.InitializeCoder(P);
+
+    FArcFile.StartDecode(FPassword);
+    FArcFile.Seek(P.StartPos, soBeginning);
+
+    Result := Decoder.Test(P);
+    if not Result then
+    begin
+      DoMessage(Format(cmTestPswError, []), ccError);
+    end;
+    FArcFile.FinishDecode;
+
+   end;
+ Decoder.Free;
+
+
   end;
 end;
 
@@ -470,9 +512,8 @@ begin
         begin
           if foPassword in P.Flags then
           begin
-            {To-do: Sistemare gestione password, un archivio una password}
-            FArcFile.StartDecode(GetPassword(P));
-            FSwapStrm.StartEncode(GetPassword(P));
+            FArcFile.StartDecode(FPassword);
+            FSwapStrm.StartEncode(FPassword);
           end;
           FArcFile.Seek(P.StartPos, soBeginning);
 
@@ -1000,18 +1041,7 @@ begin
   end;
 end;
 
-function TBeeApp.GetPassword(P: THeader): string;
-var
-  FI: TFileInfo;
-begin
-  FI := NewFileInfo(P);
-  Result := App.DoPassword(FI, '');
-  if Length(Result) < MinBlowFishKeyLength then
-  begin
-    Exclude(P.Flags, foPassword);
-  end;
-  FreeFileInfo(P);
-end;
+
 
 end.
 
