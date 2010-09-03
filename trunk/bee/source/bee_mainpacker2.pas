@@ -35,6 +35,7 @@ uses
   Bee_Codec,
   Bee_Headers,
   Bee_Modeller,
+  Bee_Interface,
   Bee_Configuration;
 
 type
@@ -46,8 +47,9 @@ type
     FStream: TStream;
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
+    FCounter: TAppCounter;
   public
-    constructor Create(Stream: TStream);
+    constructor Create(Stream: TStream; Counter: TAppCounter);
     destructor Destroy; override;
     function CopyFrom(Strm: TStream; Size: int64): longword; virtual;
     function EncodeFrom(Strm: TStream; Size: int64): longword; virtual;
@@ -93,6 +95,7 @@ begin
   FStream := Stream;
   FSecondaryCodec := TSecondaryEncoder.Create(FStream);
   FPPM := TBaseCoder.Create(FSecondaryCodec);
+  FCounter := TAppCounter;
 end;
 
 destructor TStreamCoder.Destroy;
@@ -100,6 +103,7 @@ begin
   FPPM.Free;
   FSecondaryCodec.Free;
   FStream := nil;
+  FCounter := nil;
 end;
 
 function TStreamCoder.CopyFrom(Strm: TStream; Size: int64): longword;
@@ -112,6 +116,7 @@ begin
     Strm.Read(Symbol, 1);
     FStream.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
+    FCounter.Tick;
     Dec(Size);
   end;
 end;
@@ -127,6 +132,7 @@ begin
     Strm.Read(Symbol, 1);
     FPPM.UpdateModel(Symbol);
     UpdCrc32(Result, Symbol);
+    FCounter.Tick;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
@@ -143,6 +149,7 @@ begin
     Symbol := FPPM.UpdateModel(0);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
+    FCounter.Tick;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
@@ -158,6 +165,7 @@ begin
     FStream.Read(Symbol, 1);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
+    FCounter.Tick;
     Dec(Size);
   end;
 end;

@@ -41,6 +41,19 @@ uses
   Bee_Headers;
 
 type
+
+  TAppCounter class
+  private
+    FSize:
+
+  public
+    procedure Tick;
+
+    property TotalSize: int64 read FTotalSize write SetTotalSize(const Value: int64);
+
+  end;
+
+
   { TApp class }
 
   TApp = class
@@ -76,7 +89,7 @@ type
     procedure DoMessage(const aMessage: string); overload;
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
     procedure DoRequest(const aMessage: string);
-    function  DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
+    function  DoRename(const aItem: THeaderRec; const aValue: string): string;
     function  DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
     procedure DoProgress;
@@ -103,7 +116,18 @@ type
     property Code: byte read FCode write SetCode;
   end;
 
-  function IGetPassword: string;
+
+
+  procedure ITick;
+  function  IGetPassword: string;
+  procedure IPutMessage(const aMessage: string); overload;
+  procedure IPutMessage(const aMessage: string; aCode: byte); overload;
+  procedure NewFileInfo(const THeader; var TFileInfo: TFileInfo);
+
+
+var
+  ITotalSize: int64 = 0;
+  ISize     : int64 = 0;
 
 
 implementation
@@ -111,6 +135,8 @@ implementation
 uses
   DateUtils,
   SysUtils;
+
+procedure ITick;
 
 function IGetPassword: string;
 //var
@@ -124,6 +150,20 @@ begin
   //end;
   //FreeFileInfo(P);
 end;
+
+procedure IPutMessage(const aMessage: string);
+begin
+end;
+
+procedure IPutMessage(const aMessage: string; aCode: byte);
+begin
+end;
+
+procedure NewFileInfo(const THeader; var TFileInfo: TFileInfo);
+begin
+
+end;
+
 
 { TApp class }
 
@@ -279,12 +319,12 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-function TApp.DoRename(const aFileInfo: TFileInfo; const aValue: string): string;
+function TApp.DoRename(const aItem: THeaderRec; const aValue: string): string;
 var
   X: double;
 begin
   X := Now;
-  Result := OnRename(aFileInfo, aValue);
+  // Result := OnRename(aFileInfo, aValue);
   FStartTime := FStartTime + (Now - X);
 end;
 
