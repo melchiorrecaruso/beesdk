@@ -74,7 +74,6 @@ type
     procedure SetItemsToTest;
     procedure SetItemsToRename;
     procedure SetItemsToList;
-    procedure SetItemsToUpdate;
     procedure SetItemsDecode(const aAction: THeaderAction);
     procedure ExtractToSwapFile;
     procedure RecoverSequences;
@@ -103,20 +102,6 @@ uses
   SysUtils,
   Bee_Consts,
   Bee_MainPacker2;
-
-//function CompareFunc(P1, P2: pointer): longint;
-//begin
-//  Result := CompareFileName(
-//    ExtractFilePath(THeader(P1).Name),
-//    ExtractFilePath(THeader(P2).Name));
-//
-//  if Result = 0 then
-//  begin
-//    Result := CompareFileName(
-//      ExtractFileName(THeader(P1).Name),
-//      ExtractFileName(THeader(P2).Name));
-//  end;
-//end;
 
 { TBeeApp class }
 
@@ -280,16 +265,14 @@ end;
 
 procedure TBeeApp.SetItemsToAdd;
 var
-  I: longint;
+  I, J: longint;
   S: TFileScanner;
 begin
   DoMessage(Format(cmScanning, ['...']));
   S := TFileScanner.Create;
   with FCommandLine do
     for I := 0 to FileMasks.Count - 1 do
-    begin
       S.Scan(FileMasks[I], xOptions, rOption);
-    end;
 
   for I := 0 to S.Count - 1 do
     if Code < ccError then
@@ -303,14 +286,8 @@ begin
         else DoMessage(Format(cmCmdError, []), ccError);
       end;
   S.Free;
-
   FHeaders.Configure(FConfiguration);
-end;
 
-procedure TBeeApp.SetItemsToUpdate;
-var
-  I, J: longint;
-begin
   // find sequences and set actions ...
   I := FHeaders.GetBack(FHeaders.Count - 1, [haUpdate]);
   while (I > -1) and (Code < ccError) do
@@ -426,10 +403,9 @@ end;
 
 procedure TBeeApp.SetItemsToRename;
 var
-  S: string;
   I: longint;
   P: THeader;
-  FI: TFileInfo;
+  S: string;
 begin
   DoMessage(Format(cmScanning, ['...']));
   FHeaders.SetAction(FCommandLine.FileMasks, haNone,   haUpdate);
@@ -441,15 +417,13 @@ begin
       P := FHeaders.Items[I];
       if P.Action = haUpdate then
       begin
-        FI := NewFileInfo(P);
         repeat
-          S := FixFileName(DoRename(FI, ''));
+          S := FixFileName(DoRename(P, ''));
           if FHeaders.Search(S) <> nil then
             DoMessage(Format(cmFileExistsWarning, [S]))
           else
             Break;
         until False;
-        FreeFileInfo(FI);
 
         if S <> '' then P.Name := S;
       end;
@@ -557,9 +531,7 @@ procedure TBeeApp.ProcesstOption;
 begin
   if FCommandLine.tOption then
   begin
-    FTotalSize := 0;
-    FSize      := 0;
-
+    Percentes.Clear;
     FCommandLine.rOption := rmFull;
     FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
