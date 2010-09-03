@@ -103,7 +103,7 @@ type
     property Code: byte read FCode write SetCode;
   end;
 
-  function IGetPassword(P: THeader): string;
+  function IGetPassword: string;
 
 
 implementation
@@ -112,7 +112,7 @@ uses
   DateUtils,
   SysUtils;
 
-function IGetPassword(P: THeader): string;
+function IGetPassword: string;
 //var
   //FI: TFileInfo;
 begin

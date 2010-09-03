@@ -89,8 +89,6 @@ type
     procedure RenameShell;
     procedure ListShell;
   protected
-
-
     function VersionToStr(const aItem: THeader): string;
     function MethodToStr(const aItem: THeader): string;
   public
@@ -106,35 +104,19 @@ uses
   Bee_Consts,
   Bee_MainPacker2;
 
-function NewFileInfo(const Item: THeader): TFileInfo;
-begin
-  Result.Name := StringToPChar(ExtractFileName(Item.Name));
-  Result.Path := StringToPChar(ExtractFilePath(Item.Name));
-
-  Result.Size := Item.Size;
-  Result.Time := Item.Time;
-  Result.Attr := Item.Attr;
-end;
-
-procedure FreeFileInfo(var FileInfo: TFileInfo);
-begin
-  FreePChar(FileInfo.Name);
-  FreePChar(FileInfo.Path);
-end;
-
-function CompareFunc(P1, P2: pointer): longint;
-begin
-  Result := CompareFileName(
-    ExtractFilePath(THeader(P1).Name),
-    ExtractFilePath(THeader(P2).Name));
-
-  if Result = 0 then
-  begin
-    Result := CompareFileName(
-      ExtractFileName(THeader(P1).Name),
-      ExtractFileName(THeader(P2).Name));
-  end;
-end;
+//function CompareFunc(P1, P2: pointer): longint;
+//begin
+//  Result := CompareFileName(
+//    ExtractFilePath(THeader(P1).Name),
+//    ExtractFilePath(THeader(P2).Name));
+//
+//  if Result = 0 then
+//  begin
+//    Result := CompareFileName(
+//      ExtractFileName(THeader(P1).Name),
+//      ExtractFileName(THeader(P2).Name));
+//  end;
+//end;
 
 { TBeeApp class }
 
@@ -235,35 +217,28 @@ var
   P: THeader;
   Decoder: THeaderStreamCoder;
 begin
-  Result := True;
-
-  I := FHeaders.GetNext(0, foPassword);
-  if I > -1 then
+  Result := FHeaders.GetNext(0, foPassword) = -1;
+  if not Result then
   begin
+    // get password
+    FPassword := IGetPassword;
     // select smaller size item
     P := FHeaders.Items[0];
     for I := 1 to FHeaders.Count - 1 do
       if P.Size > FHeaders.Items[I].Size then
         P := FHeaders.Items[I];
-
     // test item
     Decoder := THeaderStreamCoder.Create(FArcFile);
     Decoder.InitializeCoder(P);
 
     FArcFile.StartDecode(FPassword);
-    FArcFile.Seek(P.StartPos, soBeginning);
-
     Result := Decoder.Test(P);
     if not Result then
     begin
       DoMessage(Format(cmTestPswError, []), ccError);
     end;
     FArcFile.FinishDecode;
-
-   end;
- Decoder.Free;
-
-
+    Decoder.Free;
   end;
 end;
 
