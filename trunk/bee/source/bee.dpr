@@ -57,22 +57,21 @@ uses
   Bee_App,
   Bee_Types,
   Bee_Consts,
-  Bee_Common;
+  Bee_Common,
+  Bee_Headers;
 
 type
   { TCustomBeeApp class }
 
   TCustomBeeApp = class(TBeeApp)
-  private
-    FPassword: string;
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
     procedure OnMessage(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
-    function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
-    function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
-    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); override;
+    function  OnRename(const aItem: THeaderRec; const aValue: string): string; override;
+    function  OnPassword(const aItem: THeaderRec; const aValue: string): string; override;
+    procedure OnList(const aItem: THeader; aVerbose: boolean); override;
     procedure OnProgress; override;
     procedure OnClearLine; override;
   end;
@@ -86,7 +85,6 @@ type
   constructor TCustomBeeApp.Create(aParams: TStringList);
   begin
     inherited Create(aParams);
-    FPassword := '';
   end;
 
   destructor TCustomBeeApp.Destroy;
@@ -99,21 +97,17 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  function TCustomBeeApp.OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
+  function TCustomBeeApp.OnRename(const aItem: THeaderRec; const aValue: string): string;
   begin
-    with aFileInfo do
-    begin
-      Write('Rename file "',
-        ParamToOem(PCharToString(FilePath)),
-        ParamToOem(PCharToString(FileName)), '" as (empty to skip):');
-    end;
+    Write('Rename file "', ParamToOem(aItem.Name), '" as (empty to skip):');
     Readln(Result);
     // convert oem to param
     Result := OemToParam(Result);
   end;
 
-  procedure TCustomBeeApp.OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
+  procedure TCustomBeeApp.OnList(const aItem: THeader; aVerbose: boolean);
   begin
+    (*
     with aFileInfo do
     begin
       if aVerbose then
@@ -151,27 +145,17 @@ type
         end;
       end;
     end;
+    *)
   end;
 
-  function TCustomBeeApp.OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+  function TCustomBeeApp.OnPassword(const aItem: THeaderRec; const aValue: string): string;
   var
     S: string;
   begin
-    if Length(FPassword) = 0 then
-    begin
-      Write('Insert a key (min length 4 char): ');
-      Readln(Result);
-      // convert oem to param
-      Result := OemToParam(Result);
-      // store password
-      Write('Do you want to use password for this session? [Yes, No]: ');
-      Readln(S);
-      if (Length(S) = 1) and (UpCase(S[1]) = 'Y') then
-      begin
-        FPassword := Result;
-      end;
-    end else
-      Result := FPassword;
+    Write('Insert a key (min length 4 char): ');
+    Readln(Result);
+    // convert oem to param
+    Result := OemToParam(Result);
   end;
 
   procedure TCustomBeeApp.OnRequest(const aMessage: string);
@@ -183,7 +167,7 @@ type
   begin
     // not convert oem to param
     Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
-      Format('%5d KB/s %3d%%', [Speed shr 10, Percentes]));
+      Format('%5d KB/s %3d%%', [Speed shr 10, Percentage]));
   end;
 
   procedure TCustomBeeApp.OnClearLine;

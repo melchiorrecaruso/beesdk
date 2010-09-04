@@ -71,10 +71,10 @@ type
     procedure SetItemsToAdd;
     procedure SetItemsToDelete;
     procedure SetItemsToExtract;
-    procedure SetItemsToTest;
+    // procedure SetItemsToTest;
     procedure SetItemsToRename;
     procedure SetItemsToList;
-    procedure SetItemsDecode(const aAction: THeaderAction);
+    // procedure SetItemsDecode(const aAction: THeaderAction);
     procedure OpenSwapFile;
     // procedure CloseSwapFile;
     procedure RecoverSequences;
@@ -91,7 +91,6 @@ type
   protected
     function VersionToStr(const aItem: THeader): string;
     function MethodToStr(const aItem: THeader): string;
-    procedure Counter;
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
@@ -111,7 +110,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1134 archiver utility, May 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1138 archiver utility, May 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -674,7 +673,7 @@ begin
   begin
     case aAction of
       haExtract: SetItemsToExtract;
-      haDecode:  SetItemsToTest;
+      // haDecode:  SetItemsToTest;
     end;
 
     if FHeaders.GetNext(0, [haExtract, haDecode]) <> -1 then
@@ -713,6 +712,8 @@ begin
 end;
 
 procedure TBeeApp.DeleteShell;
+begin
+(*
 var
   I: longint;
   P: THeader;
@@ -765,9 +766,12 @@ begin
       DoMessage(cmNoFilesWarning, ccWarning);
   end;
   CloseArchive(FTotalSize <> 0);
+  *)
 end;
 
 procedure TBeeApp.RenameShell;
+begin
+(*
 var
   I: longint;
   P: THeader;
@@ -802,9 +806,14 @@ begin
       DoMessage(cmNoFilesWarning, ccWarning);
   end;
   CloseArchive(FTotalSize <> 0);
+  *)
 end;
 
 procedure TBeeApp.ListShell;
+begin
+(*
+end;
+
 var
   I: longint;
   P: THeader;
@@ -959,12 +968,14 @@ begin
   {$IFDEF CONSOLEAPPLICATION}
   FHeadersToList.Free;
   {$ENDIF}
+  *)
 end;
 
 { Protected string routines }
 
 function TBeeApp.MethodToStr(const aItem: THeader): string;
 begin
+  (*
   Result := 'm0a';
   if not (foTear in aItem.FileFlags) then
   begin
@@ -983,11 +994,12 @@ begin
     Result[3] := char(byte('a') + aItem.FileDictionary)
   else
     Result[3] := '?';
+  *)
 end;
 
 function TBeeApp.VersionToStr(const aItem: THeader): string;
 begin
-  case aItem.FileVersion of
+  case aItem.Version of
     Ord(hv02): Result := ' 0' + DecimalSeparator + '2';
     Ord(hv03): Result := ' 0' + DecimalSeparator + '3';
     Ord(hv04): Result := ' 0' + DecimalSeparator + '4';
