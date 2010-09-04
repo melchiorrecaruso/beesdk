@@ -92,12 +92,12 @@ uses
 
 { TStreamCoder class }
 
-constructor TStreamCoder.Create(Stream: TStream; Counter: TAppBenchmark);
+constructor TStreamCoder.Create(Stream: TStream; Ticker: TThreadMethod);
 begin
   FStream := Stream;
   FSecondaryCodec := TSecondaryEncoder.Create(FStream);
   FPPM := TBaseCoder.Create(FSecondaryCodec);
-  FCounter := Counter;
+  FTicker := Ticker;
 end;
 
 destructor TStreamCoder.Destroy;
@@ -105,7 +105,7 @@ begin
   FPPM.Free;
   FSecondaryCodec.Free;
   FStream := nil;
-  FCounter := nil;
+  FTicker := nil;
 end;
 
 function TStreamCoder.CopyFrom(Strm: TStream; Size: int64): longword;
@@ -118,10 +118,7 @@ begin
     Strm.Read(Symbol, 1);
     FStream.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    if FCounter.ProcessedSize and $FFFF = 0 then
-    begin
-      FCounter.Step;
-    end;
+    if Assigned(FTicker) then FTicker;
     Dec(Size);
   end;
 end;
@@ -137,10 +134,7 @@ begin
     Strm.Read(Symbol, 1);
     FPPM.UpdateModel(Symbol);
     UpdCrc32(Result, Symbol);
-    if FCounter.ProcessedSize and $FFFF = 0 then
-    begin
-      FCounter.Step;
-    end;
+    if Assigned(FTicker) then FTicker;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
@@ -157,10 +151,7 @@ begin
     Symbol := FPPM.UpdateModel(0);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    if FCounter.ProcessedSize and $FFFF = 0 then
-    begin
-      FCounter.Step;
-    end;
+    if Assigned(FTicker) then FTicker;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
@@ -176,10 +167,7 @@ begin
     FStream.Read(Symbol, 1);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    if FCounter.ProcessedSize and $FFFF = 0 then
-    begin
-      FCounter.Step;
-    end;
+    if Assigned(FTicker) then FTicker;
     Dec(Size);
   end;
 end;
