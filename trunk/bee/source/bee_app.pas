@@ -217,7 +217,7 @@ begin
     Decoder.InitializeCoder(P);
 
     FArcFile.StartDecode(FPassword);
-    if not Decoder.Test(P) then
+    if not Decoder.DecodeToNul(P) then
     begin
       DoMessage(Format(cmTestPswError, []), ccError);
     end;
@@ -644,6 +644,9 @@ begin
                 haNone:    Encoder.CopyFrom  (FArcFile,  P.PackedSize, P);
                 else DoMessage(Format(cmActionError, []), ccError);
               end;
+              FTempFile.FinishEncode;
+              FSwapFile.FinishDecode;
+              FArcFile .FinishDecode;
             end;
           end;
           Encoder.Destroy;
@@ -662,30 +665,41 @@ procedure TBeeApp.DecodeShell(const aAction: THeaderAction);
 var
   I: longint;
   P: THeader;
-  Decoder: TDecoder;
+  Decoder: THeaderStreamCoder;
 begin
-  OpenArchive(haNone);
+  OpenArchive;
   if Code < ccError then
   begin
     case aAction of
-      haExtract: MarkItems2Extract;
-      haDecode:  MarkItems2Test;
+      haExtract: SetItemsToExtract;
+      haDecode:  SetItemsToTest;
     end;
 
-    if FHeaders.GetCount([haExtract, haDecode]) <> 0 then
+    if FHeaders.GetNext(0, [haExtract, haDecode]) <> -1 then
     begin
-      MarkItems2Decode(aAction);
-      Decoder := TDecoder.Create(FArcFile, Self);
-      for I := 0 to FHeaders.GetCount - 1 do
+      Decoder := THeaderStreamCoder.Create(FArcFile, Self);
+      for I := 0 to FHeaders.Count - 1 do
       begin
         if Code < ccError then
         begin
-          P := FHeaders.GetItem(I);
-          case P.FileAction of
-            haExtract: Decoder.DecodeFile(P, pmNorm);
-            haDecode:  Decoder.DecodeFile(P, pmNul);
-            haSkip:    Decoder.Decodefile(P, pmSkip);
+          P := FHeaders.Items[I];
+
+          Decoder.InitializeCoder(P);
+          if foPassword in P.Flags then
+          begin
+            FArcFile .StartDecode(FPassword);
           end;
+
+          case P.Action of
+            haNone:    {nothing to do};
+            haDecode:  Decoder.DecodeToNul(P);
+            haExtract: if aAction = haExtract then
+                         Decoder.DecodeTo(P)
+                       else
+                         Decoder.DecodeToNul(P);
+            else DoMessage(Format(cmActionError, []), ccError);
+          end;
+          FArcFile.FinishDecode;
         end;
       end;
       Decoder.Destroy;

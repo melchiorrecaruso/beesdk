@@ -47,9 +47,9 @@ type
     FStream: TStream;
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
-    FCounter: TBenchmark;
+    FCounter: TAppBenchmark;
   public
-    constructor Create(Stream: TStream; Counter: TBenchmark);
+    constructor Create(Stream: TStream; Counter: TAppBenchmark);
     destructor Destroy; override;
     function CopyFrom(Strm: TStream; Size: int64): longword; virtual;
     function EncodeFrom(Strm: TStream; Size: int64): longword; virtual;
@@ -79,7 +79,7 @@ type
     function EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
     function EncodeFrom(Item: THeader): boolean; overload;
     function DecodeTo(Item: THeader): boolean; overload;
-    function Test(Item: THeader): boolean;
+    function DecodeToNul(Item: THeader): boolean;
     procedure InitializeCoder(Item: THeader);
   end;
 
@@ -92,7 +92,7 @@ uses
 
 { TStreamCoder class }
 
-constructor TStreamCoder.Create(Stream: TStream; Counter: TBenchmark);
+constructor TStreamCoder.Create(Stream: TStream; Counter: TAppBenchmark);
 begin
   FStream := Stream;
   FSecondaryCodec := TSecondaryEncoder.Create(FStream);
@@ -308,7 +308,7 @@ begin
   end;
 end;
 
-function THeaderStreamCoder.Test(Item: THeader): boolean;
+function THeaderStreamCoder.DecodeToNul(Item: THeader): boolean;
 var
   Strm: TNulWriter;
 begin

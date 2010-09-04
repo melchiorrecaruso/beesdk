@@ -42,9 +42,9 @@ uses
 
 type
 
-  { TBenchmark class }
+  { TAppBenchmark class }
 
-  TBenchmark = class
+  TAppBenchmark = class
   protected
     FStartTime: double;
     FSuspendedTime: double;
@@ -74,7 +74,7 @@ type
 
   { TApp class }
 
-  TApp = class(TBenchmark)
+  TApp = class(TAppBenchmark)
   private
     FCode: byte;
     FTerminated: boolean;
@@ -121,7 +121,7 @@ uses
 
 { TBenchmark class }
 
-constructor TBenchmark.Create;
+constructor TAppBenchmark.Create;
 begin
   inherited Create;
   FSuspended := False;
@@ -131,32 +131,32 @@ begin
   FProcessedSize := 0;
 end;
 
-destructor TBenchmark.Destroy;
+destructor TAppBenchmark.Destroy;
 begin
   // nothing to do
 end;
 
-procedure TBenchmark.SetSize(const Value: int64);
+procedure TAppBenchmark.SetSize(const Value: int64);
 begin
   FSize := Value;
 end;
 
-procedure TBenchmark.SetProcessedSize(const Value: int64);
+procedure TAppBenchmark.SetProcessedSize(const Value: int64);
 begin
   FProcessedSize := Value;
 end;
 
-procedure TBenchmark.Execute;
+procedure TAppBenchmark.Execute;
 begin
   FStartTime := Now;
 end;
 
-procedure TBenchmark.Step;
+procedure TAppBenchmark.Step;
 begin
   Inc(FProcessedSize);
 end;
 
-function TBenchmark.GetSpeed: longint;
+function TAppBenchmark.GetSpeed: longint;
 var
   I: int64;
 begin
@@ -171,7 +171,7 @@ begin
     Result := 0;
 end;
 
-function TBenchmark.GetPercentage: longint;
+function TAppBenchmark.GetPercentage: longint;
 begin
   if FSize <> 0 then
     Result := Round((FProcessedSize / FSize) * 100)
@@ -179,7 +179,7 @@ begin
     Result := 0;
 end;
 
-function TBenchmark.GetElapsedTime: longint;
+function TAppBenchmark.GetElapsedTime: longint;
 begin
   if not FSuspended then
     Result := SecondsBetween(Now, FStartTime)
@@ -187,7 +187,7 @@ begin
     Result := SecondsBetween(FSuspendedTime - FStartTime, 0);
 end;
 
-function TBenchmark.GetRemainingTime: longint;
+function TAppBenchmark.GetRemainingTime: longint;
 var
   I: longint;
 begin
@@ -198,7 +198,7 @@ begin
     Result := 0;
 end;
 
-procedure TBenchmark.SetSuspended(Value: boolean);
+procedure TAppBenchmark.SetSuspended(Value: boolean);
 begin
   if FSuspended <> Value then
   begin
