@@ -47,9 +47,9 @@ type
     FStream: TStream;
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
-    FCounter: TAppBenchmark;
+    FTicker: TThreadMethod;
   public
-    constructor Create(Stream: TStream; Counter: TAppBenchmark);
+    constructor Create(Stream: TStream; Ticker: TThreadMethod);
     destructor Destroy; override;
     function CopyFrom(Strm: TStream; Size: int64): longword; virtual;
     function EncodeFrom(Strm: TStream; Size: int64): longword; virtual;
