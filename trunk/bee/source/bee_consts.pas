@@ -90,13 +90,15 @@ const
   cmCmdError          = 'Error: command line error';
   cmMemError          = 'Error: not enough memory for operation';
   cmArcTypeError      = 'Error: archive type unsupported';
-  cmArcOpenError      = 'Error: can''t open archive "%s"';
-  cmFileOpenError     = 'Error: can''t open file "%s"';
-  cmTempOpenError     = 'Error: can''t open temp file';
-  cmSwapOpenError     = 'Error: can''t open swap file';
+  cmOpenArcError      = 'Error: can''t open archive "%s"';
+  cmOpenFileError     = 'Error: can''t open file "%s"';
+  cmOpenTempError     = 'Error: can''t open temp file';
+  cmCreateSwapError   = 'Error: can''t create swap file';
+  cmOpenSwapError     = 'Error: can''t open swap file';
   cmStrmReadError     = 'Error: can''t read data from stream';
   cmRenameFileError   = 'Error: can''t rename file "%s" to "%s"';
   cmSequenceError     = 'Error: can''t pre-process sequences';
+  cmActionError       = 'Error: internal error';
   cmStreamError       = 'Error: can''t open stream';
   cmTestPswError      = 'Error: password error';
 

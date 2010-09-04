@@ -65,7 +65,7 @@ type
     FConfiguration: TConfiguration;
     { open/close archive routine }
     procedure OpenArchive;
-    function CheckArchivePassword: boolean;
+    procedure CheckArchivePassword;
     procedure CloseArchive(IsModified: boolean);
     { find and prepare sequences }
     procedure SetItemsToAdd;
@@ -75,7 +75,8 @@ type
     procedure SetItemsToRename;
     procedure SetItemsToList;
     procedure SetItemsDecode(const aAction: THeaderAction);
-    procedure ExtractToSwapFile;
+    procedure OpenSwapFile;
+    // procedure CloseSwapFile;
     procedure RecoverSequences;
     { process options }
     procedure ProcesstOption;
@@ -90,6 +91,7 @@ type
   protected
     function VersionToStr(const aItem: THeader): string;
     function MethodToStr(const aItem: THeader): string;
+    procedure Counter;
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
@@ -188,37 +190,34 @@ begin
     begin
       FHeaders.Read(FArcFile);
       if (FHeaders.Count = 0) and (FArcFile.Size <> 0) then
-      begin
         DoMessage(Format(cmArcTypeError, []), ccError);
-      end;
     end else
-      DoMessage(Format(cmArcOpenError, [FCommandLine.ArchiveName]), ccError);
+      DoMessage(Format(cmOpenArcError, [FCommandLine.ArchiveName]), ccError);
   end;
+  CheckArchivePassword;
 end;
 
-function TBeeApp.CheckArchivePassword: boolean;
+procedure TBeeApp.CheckArchivePassword;
 var
   I: longint;
   P: THeader;
   Decoder: THeaderStreamCoder;
 begin
-  Result := FHeaders.GetNext(0, foPassword) = -1;
-  if not Result then
+  if (Code < ccError) and (FHeaders.GetNext(0, foPassword) <> -1) then
   begin
-    // get password
-    FPassword := IGetPassword;
     // select smaller size item
     P := FHeaders.Items[0];
     for I := 1 to FHeaders.Count - 1 do
       if P.Size > FHeaders.Items[I].Size then
         P := FHeaders.Items[I];
+    // get password
+    FPassword := DoPassword(P, FPassword);
     // test item
-    Decoder := THeaderStreamCoder.Create(FArcFile);
+    Decoder := THeaderStreamCoder.Create(FArcFile, Self);
     Decoder.InitializeCoder(P);
 
     FArcFile.StartDecode(FPassword);
-    Result := Decoder.Test(P);
-    if not Result then
+    if not Decoder.Test(P) then
     begin
       DoMessage(Format(cmTestPswError, []), ccError);
     end;
@@ -439,46 +438,56 @@ begin
   FHeaders.SetAction(FCommandLine.xOptions,  haExtract, haNone);
 end;
 
-procedure TBeeApp.ExtractToSwapFile;
+procedure TBeeApp.OpenSwapFile;
 var
   P: THeader;
   I, CRC: longint;
   FSwapStrm: TFileWriter;
   Decoder: THeaderStreamCoder;
 begin
-  FSwapName := GenerateFileName(FCommandLine.wdOption);
-  FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
-  if FSwapStrm <> nil then
+  if (Code < ccError) and (FHeaders.GetNext(0, [haExtract]) <> -1) then
   begin
-    Decoder := THeaderStreamCoder.Create(FArcFile);
-    for I := 0 to FHeaders.Count - 1 do
+    FSwapName := GenerateFileName(FCommandLine.wdOption);
+    FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
+    if FSwapStrm <> nil then
+    begin
+      Decoder := THeaderStreamCoder.Create(FArcFile, Self);
+      for I := 0 to FHeaders.Count - 1 do
+        if Code < ccError then
+        begin
+          P := FHeaders.Items[I];
+
+          Decoder.InitializeCoder(P);
+          if P.Action = haExtract then
+          begin
+            if foPassword in P.Flags then
+            begin
+              FArcFile.StartDecode(FPassword);
+              FSwapStrm.StartEncode(FPassword);
+            end;
+            FArcFile.Seek(P.StartPos, soBeginning);
+
+            P.StartPos := FSwapStrm.Seek(0, soCurrent);
+            if Decoder.DecodeTo(FSwapStrm, P.Size) <> P.Crc then
+            begin
+              DoMessage(Format(cmSequenceError, []), ccError);
+            end;
+            FSwapStrm.FinishEncode;
+            FArcFile.FinishDecode;
+          end;
+        end;
+      Decoder.Free;
+      FreeAndNil(FSwapStrm);
+
       if Code < ccError then
       begin
-        P := FHeaders.Items[I];
-
-        Decoder.InitializeCoder(P);
-        if P.Action = haExtract then
-        begin
-          if foPassword in P.Flags then
-          begin
-            FArcFile.StartDecode(FPassword);
-            FSwapStrm.StartEncode(FPassword);
-          end;
-          FArcFile.Seek(P.StartPos, soBeginning);
-
-          P.StartPos := FSwapStrm.Seek(0, soCurrent);
-          if Decoder.DecodeTo(FSwapStrm, P.Size) <> P.Crc then
-          begin
-            DoMessage(Format(cmSequenceError, []), ccError);
-          end;
-          FSwapStrm.FinishEncode;
-          FArcFile.FinishDecode;
-        end;
+        FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
+        if FSwapFile = nil then
+          DoMessage(cmOpenSwapError, ccError);
       end;
-    Decoder.Free;
-    FreeAndNil(FSwapStrm);
-  end else
-    DoMessage(cmSwapOpenError, ccError);
+    end else
+      DoMessage(cmCreateSwapError, ccError);
+  end;
 end;
 
 procedure TBeeApp.RecoverSequences;
@@ -531,11 +540,12 @@ procedure TBeeApp.ProcesstOption;
 begin
   if FCommandLine.tOption then
   begin
-    Percentes.Clear;
-    FCommandLine.rOption := rmFull;
+    FSize := 0;
+    FProcessedSize := 0;
     FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
     FCommandLine.FileMasks.Add('*');
+    FCommandLine.rOption := rmFull;
     DecodeShell(haDecode);
   end;
 end;
@@ -544,13 +554,12 @@ procedure TBeeApp.ProcesslOption;
 begin
   if FCommandLine.lOption then
   begin
-    FTotalSize := 0;
-    FSize      := 0;
-
-    FCommandLine.rOption := rmFull;
+    FSize := 0;
+    FProcessedSize := 0;
     FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
     FCommandLine.FileMasks.Add('*');
+    FCommandLine.rOption := rmFull;
     ListShell;
   end;
 end;
@@ -602,70 +611,51 @@ begin
   OpenArchive;
   if Code < ccError then
   begin
-    MarkItems2Add;
-    if FHeaders.ActionCount[[haNew, haUpdate]] <> 0 then
+    SetItemsToAdd;
+    if FHeaders.GetNext(0, [haNew, haUpdate]) <> -1 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
       if FTempFile <> nil then
       begin
-        MarkItems2Update;
-        DecodeSequences;
+        OpenSwapFile;
         if Code < ccError then
         begin
-          if Length(FSwapName) <> 0 then
+          FHeaders.Write(FTempFile);
+          Encoder := THeaderStreamCoder.Create(FTempFile, Self);
+          for I := 0 to FHeaders.Count - 1 do
           begin
-            FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
-            if FSwapFile = nil then
+            if Code < ccError then
             begin
-              DoMessage(cmSwapOpenError, ccError);
-            end;
-          end;
+              P := FHeaders.Items[I];
 
-          if Code < ccError then
-          begin
-            FHeaders.Write(FTempFile);
-            Encoder := THeaderStreamCoder.Create(FTempFile);
-            for I := 0 to FHeaders.Count - 1 do
-            begin
-              if Code < ccError then
+              Encoder.InitializeCoder(P);
+              if foPassword in P.Flags then
               begin
-                P := FHeaders.Items[I];
+                FArcFile .StartDecode(FPassword);
+                FSwapFile.StartDecode(FPassword);
+                FTempFile.StartEncode(FPassword);
+              end;
 
-                Encoder.InitializeCoder(P);
-                if P.Action in [haNew, haUpdate, haNone, haExtract] then
-                begin
-                  if foPassword in P.Flags then
-                  begin
-                    FArcFile.StartDecode(GetPassword(P));
-                    FSwapFile.StartDecode(GetPassword(P));
-                  end;
-
-                  FArcFile.Seek(P.StartPos, soBeginning);
-                  case P.Action of
-                    haNew:     Encoder.EncodeFrom(P);
-                    haUpdate:  Encoder.EncodeFrom(P);
-                    haNone:    Encoder.CopyFrom  (P);
-                    haExtract: Encoder.EncodeStrm(P);
-                  end;
-
-
-
-
-
-                end;
+              case P.Action of
+                haNew:     Encoder.EncodeFrom(P);
+                haUpdate:  Encoder.EncodeFrom(P);
+                haExtract: Encoder.EncodeFrom(FSwapFile, P.Size, P);
+                haNone:    Encoder.CopyFrom  (FArcFile,  P.PackedSize, P);
+                else DoMessage(Format(cmActionError, []), ccError);
               end;
             end;
-            Encoder.Destroy;
-            FHeaders.WriteItems(FTempFile);
           end;
+          Encoder.Destroy;
+          FHeaders.Write(FTempFile);
         end;
+
       end else
-        DoMessage(cmTempOpenError, ccError);
+        DoMessage(cmOpenTempError, ccError);
     end else
       DoMessage(cmNoFilesWarning, ccWarning);
   end;
-  CloseArchive(FTotalSize <> 0);
+  CloseArchive(FHeaders.GetNext(0, [haNew, haUpdate]) <> -1);
 end;
 
 procedure TBeeApp.DecodeShell(const aAction: THeaderAction);
