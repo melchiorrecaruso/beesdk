@@ -213,7 +213,7 @@ begin
     // get password
     FPassword := DoPassword(P, FPassword);
     // test item
-    Decoder := THeaderStreamCoder.Create(FArcFile, Self);
+    Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
     Decoder.InitializeCoder(P);
 
     FArcFile.StartDecode(FPassword);
@@ -451,7 +451,7 @@ begin
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
     if FSwapStrm <> nil then
     begin
-      Decoder := THeaderStreamCoder.Create(FArcFile, Self);
+      Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
       for I := 0 to FHeaders.Count - 1 do
         if Code < ccError then
         begin
@@ -460,6 +460,7 @@ begin
           Decoder.InitializeCoder(P);
           if P.Action = haExtract then
           begin
+            DoMessage(Format(cmExtracting, [P.Name]));
             if foPassword in P.Flags then
             begin
               FArcFile.StartDecode(FPassword);
@@ -622,7 +623,7 @@ begin
         if Code < ccError then
         begin
           FHeaders.Write(FTempFile);
-          Encoder := THeaderStreamCoder.Create(FTempFile, Self);
+          Encoder := THeaderStreamCoder.Create(FTempFile, DoTick);
           for I := 0 to FHeaders.Count - 1 do
           begin
             if Code < ccError then
@@ -637,6 +638,7 @@ begin
                 FTempFile.StartEncode(FPassword);
               end;
 
+              DoMessage(Format(cmUpdating, [P.Name]));
               case P.Action of
                 haNew:     Encoder.EncodeFrom(P);
                 haUpdate:  Encoder.EncodeFrom(P);
@@ -677,7 +679,7 @@ begin
 
     if FHeaders.GetNext(0, [haExtract, haDecode]) <> -1 then
     begin
-      Decoder := THeaderStreamCoder.Create(FArcFile, Self);
+      Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
       for I := 0 to FHeaders.Count - 1 do
       begin
         if Code < ccError then
@@ -690,6 +692,7 @@ begin
             FArcFile .StartDecode(FPassword);
           end;
 
+          DoMessage(Format(cmExtracting, [P.Link]));
           case P.Action of
             haNone:    {nothing to do};
             haDecode:  Decoder.DecodeToNul(P);
