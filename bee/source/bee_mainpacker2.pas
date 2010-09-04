@@ -47,9 +47,9 @@ type
     FStream: TStream;
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
-    FCounter: TAppCounter;
+    FCounter: TBenchmark;
   public
-    constructor Create(Stream: TStream; Counter: TAppCounter);
+    constructor Create(Stream: TStream; Counter: TBenchmark);
     destructor Destroy; override;
     function CopyFrom(Strm: TStream; Size: int64): longword; virtual;
     function EncodeFrom(Strm: TStream; Size: int64): longword; virtual;
@@ -75,10 +75,12 @@ type
 
   THeaderStreamCoder = class(TFileStreamCoder)
   public
-    function EncodeFrom(const Item: THeader): boolean; overload;
-    function DecodeTo(const Item: THeader): boolean; overload;
-    function Test(const Item: THeader): boolean;
-    procedure InitializeCoder(const Item: THeader);
+    procedure CopyFrom(Strm: TStream; const Size: int64; Item: THeader); overload;
+    function EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
+    function EncodeFrom(Item: THeader): boolean; overload;
+    function DecodeTo(Item: THeader): boolean; overload;
+    function Test(Item: THeader): boolean;
+    procedure InitializeCoder(Item: THeader);
   end;
 
 implementation
@@ -90,12 +92,12 @@ uses
 
 { TStreamCoder class }
 
-constructor TStreamCoder.Create(Stream: TStream);
+constructor TStreamCoder.Create(Stream: TStream; Counter: TBenchmark);
 begin
   FStream := Stream;
   FSecondaryCodec := TSecondaryEncoder.Create(FStream);
   FPPM := TBaseCoder.Create(FSecondaryCodec);
-  FCounter := TAppCounter;
+  FCounter := Counter;
 end;
 
 destructor TStreamCoder.Destroy;
@@ -116,7 +118,10 @@ begin
     Strm.Read(Symbol, 1);
     FStream.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    FCounter.Tick;
+    if FCounter.ProcessedSize and $FFFF = 0 then
+    begin
+      FCounter.Step;
+    end;
     Dec(Size);
   end;
 end;
@@ -132,7 +137,10 @@ begin
     Strm.Read(Symbol, 1);
     FPPM.UpdateModel(Symbol);
     UpdCrc32(Result, Symbol);
-    FCounter.Tick;
+    if FCounter.ProcessedSize and $FFFF = 0 then
+    begin
+      FCounter.Step;
+    end;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
@@ -149,7 +157,10 @@ begin
     Symbol := FPPM.UpdateModel(0);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    FCounter.Tick;
+    if FCounter.ProcessedSize and $FFFF = 0 then
+    begin
+      FCounter.Step;
+    end;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
@@ -165,7 +176,10 @@ begin
     FStream.Read(Symbol, 1);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    FCounter.Tick;
+    if FCounter.ProcessedSize and $FFFF = 0 then
+    begin
+      FCounter.Step;
+    end;
     Dec(Size);
   end;
 end;
@@ -246,20 +260,42 @@ end;
 
 { THeaderStreamCoder class }
 
-function THeaderStreamCoder.EncodeFrom(const Item: THeader): boolean;
+procedure THeaderStreamCoder.CopyFrom(Strm: TStream; const Size: int64; Item: THeader);
+begin
+  Strm.Seek(Item.StartPos, soBeginning);
+
+  Item.StartPos := FStream.Seek(0,soCurrent);
+  begin
+    CopyFrom(Strm, Size);
+  end;
+  Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
+end;
+
+function THeaderStreamCoder.EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
+begin
+  Strm.Seek(Item.StartPos, soBeginning);
+
+  Item.StartPos := FStream.Seek(0,soCurrent);
+  if foMoved in Item.Flags then
+    Item.Crc := CopyFrom(Strm, Size)
+  else
+    Item.Crc := EncodeFrom(Strm, Size);
+  Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
+end;
+
+function THeaderStreamCoder.EncodeFrom(Item: THeader): boolean;
 begin
   Item.StartPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
     Item.Crc := CopyFrom(Item.Link)
   else
     Item.Crc := EncodeFrom(Item.Link);
-
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 end;
 
-function THeaderStreamCoder.DecodeTo(const Item: THeader): boolean;
+function THeaderStreamCoder.DecodeTo(Item: THeader): boolean;
 begin
-  FStream.Seek(Item.StartPos, soFromBeginning);
+  FStream.Seek(Item.StartPos, soBeginning);
   if foMoved in Item.Flags then
     Result := CopyTo(Item.Link) = Item.Crc
   else
@@ -272,13 +308,13 @@ begin
   end;
 end;
 
-function THeaderStreamCoder.Test(const Item: THeader): boolean;
+function THeaderStreamCoder.Test(Item: THeader): boolean;
 var
   Strm: TNulWriter;
 begin
   Strm := TNulWriter.Create;
 
-  FStream.Seek(Item.StartPos, soFromBeginning);
+  FStream.Seek(Item.StartPos, soBeginning);
   if foMoved in Item.Flags then
     Result := CopyTo(Strm, Item.Size) = Item.Crc
   else
@@ -287,7 +323,7 @@ begin
   Strm.Free;
 end;
 
-procedure THeaderStreamCoder.InitializeCoder(const Item: THeader);
+procedure THeaderStreamCoder.InitializeCoder(Item: THeader);
 begin
   if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
   if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);

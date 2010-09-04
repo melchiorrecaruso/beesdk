@@ -42,93 +42,76 @@ uses
 
 type
 
-  TAppCounter class
-  private
-    FSize:
+  { TBenchmark class }
 
+  TBenchmark = class
+  protected
+    FStartTime: double;
+    FSuspendedTime: double;
+    FSuspended: boolean;
+    FSize: int64;
+    FProcessedSize: int64;
+    function GetElapsedTime: longint;
+    function GetRemainingTime: longint;
+    procedure SetSize(const Value: int64);
+    procedure SetProcessedSize(const Value: int64);
+    procedure SetSuspended(Value: boolean);
+    function GetPercentage: longint;
+    function GetSpeed: longint;
   public
-    procedure Tick;
-
-    property TotalSize: int64 read FTotalSize write SetTotalSize(const Value: int64);
-
+    constructor Create;
+    destructor Destroy; override;
+    procedure Step;
+    procedure Execute;
+    property Speed: longint read GetSpeed;
+    property Percentage: longint read GetPercentage;
+    property ElapsedTime: longint read GetElapsedTime;
+    property RemainingTime: longint read GetRemainingTime;
+    property ProcessedSize: int64 read FProcessedSize write SetProcessedSize;
+    property Size: int64 read FSize write SetSize;
+    property Suspended: boolean read FSuspended write SetSuspended;
   end;
-
 
   { TApp class }
 
-  TApp = class
+  TApp = class(TBenchmark)
   private
     FCode: byte;
     FTerminated: boolean;
   protected
     FParams: TStringList;
-    FStartTime: double;
-    FSuspendedTime: double;
-    FTotalSize: int64;
-    FSize: int64;
-    FSuspended: boolean;
-    function GetSpeed: longint;
-    function GetPercentes: longint;
-    function GetTotalTime: longint;
-    function GetTime: longint;
-    procedure SetPriority(aPriority: byte);
-    procedure SetSuspended(aValue: boolean); overload;
-    procedure SetTerminated(aValue: boolean);
-    procedure SetCode(aCode: byte);
+    procedure SetPriority(Priority: byte);
+    procedure SetTerminated(Value: boolean);
+    procedure SetCode(Code: byte);
   public
-    constructor Create(aParams: TStringList);
-    destructor Destroy; override;
-    procedure Execute; virtual;
-    procedure Terminate;
-
-    procedure IncSize; overload;
-    procedure DecSize; overload;
-    procedure IncSize(const aValue: int64); overload;
-    procedure DecSize(const aValue: int64); overload;
-
     procedure DoMessage(const aMessage: string); overload;
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
     procedure DoRequest(const aMessage: string);
     function  DoRename(const aItem: THeaderRec; const aValue: string): string;
-    function  DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+    function  DoPassword(const aItem: THeaderRec; const aValue: string): string;
     procedure DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
-    procedure DoProgress;
+    procedure DoStep;
     {$IFDEF CONSOLEAPPLICATION}
     procedure DoClearLine;
     {$ENDIF}
-    procedure OnMessage(const aMessage: string); virtual; abstract; 
-    procedure OnRequest(const aMessage: string); virtual; abstract;
-    function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
-    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
-    procedure OnProgress; virtual; abstract;
-    {$IFDEF CONSOLEAPPLICATION}
-    procedure OnClearLine; virtual; abstract;
-    {$ENDIF}
-    property Time: longint read GetTime;
-    property TotalTime: longint read GetTotalTime;
-    property Size: int64 read FSize;
-    property TotalSize: int64 read FTotalSize;
-    property Percentes: longint read GetPercentes;
-    property Speed: longint read GetSpeed;
-    property Suspended: boolean read FSuspended write SetSuspended;
-    property Terminated: boolean read FTerminated;
+  public
+    constructor Create(Params: TStringList);
+    destructor Destroy; override;
+    procedure Execute; virtual;
+    procedure Terminate;
     property Code: byte read FCode write SetCode;
+    property Terminated: boolean read FTerminated;
   end;
 
-
-
-  procedure ITick;
-  function  IGetPassword: string;
-  procedure IPutMessage(const aMessage: string); overload;
-  procedure IPutMessage(const aMessage: string; aCode: byte); overload;
-  procedure NewFileInfo(const THeader; var TFileInfo: TFileInfo);
-
-
-var
-  ITotalSize: int64 = 0;
-  ISize     : int64 = 0;
-
+//procedure OnMessage(const aMessage: string); virtual; abstract;
+//procedure OnRequest(const aMessage: string); virtual; abstract;
+//function  OnRename(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+//function  OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; virtual; abstract;
+//procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
+//procedure OnProgress; virtual; abstract;
+//{$IFDEF CONSOLEAPPLICATION}
+//procedure OnClearLine; virtual; abstract;
+//{$ENDIF}
 
 implementation
 
@@ -136,87 +119,44 @@ uses
   DateUtils,
   SysUtils;
 
-procedure ITick;
+{ TBenchmark class }
 
-function IGetPassword: string;
-//var
-  //FI: TFileInfo;
-begin
-  //FI := NewFileInfo(P);
-  //Result := App.DoPassword(FI, '');
-  //if Length(Result) < MinBlowFishKeyLength then
-  //begin
-  //  Exclude(P.Flags, foPassword);
-  //end;
-  //FreeFileInfo(P);
-end;
-
-procedure IPutMessage(const aMessage: string);
-begin
-end;
-
-procedure IPutMessage(const aMessage: string; aCode: byte);
-begin
-end;
-
-procedure NewFileInfo(const THeader; var TFileInfo: TFileInfo);
-begin
-
-end;
-
-
-{ TApp class }
-
-constructor TApp.Create(aParams: TStringList);
+constructor TBenchmark.Create;
 begin
   inherited Create;
-  FParams := aParams;
-  FCode := ccSuccesful;
-  FTerminated := False;
   FSuspended := False;
+  FStartTime     := 0;
   FSuspendedTime := 0;
-  FStartTime := 0;
-  FTotalSize := 0;
-  FSize := 0;
+  FSize          := 0;
+  FProcessedSize := 0;
 end;
 
-destructor TApp.Destroy;
+destructor TBenchmark.Destroy;
 begin
-  FParams := nil;
-  inherited Destroy;
+  // nothing to do
 end;
 
-procedure TApp.Execute;
+procedure TBenchmark.SetSize(const Value: int64);
+begin
+  FSize := Value;
+end;
+
+procedure TBenchmark.SetProcessedSize(const Value: int64);
+begin
+  FProcessedSize := Value;
+end;
+
+procedure TBenchmark.Execute;
 begin
   FStartTime := Now;
 end;
 
-procedure TApp.Terminate;
+procedure TBenchmark.Step;
 begin
-  SetCode(ccUserAbort);
+  Inc(FProcessedSize);
 end;
 
-procedure TApp.IncSize(const aValue: int64); {$IFDEF FPC} inline; {$ENDIF}
-begin
-  Inc(FSize, aValue);
-end;
-
-procedure TApp.IncSize; {$IFDEF FPC} inline; {$ENDIF}
-begin
-  Inc(FSize);
-end;
-
-procedure TApp.DecSize(const aValue: int64); {$IFDEF FPC} inline; {$ENDIF}
-begin
-  Dec(FSize, aValue);
-end;
-
-procedure TApp.DecSize; {$IFDEF FPC} inline; {$ENDIF}
-begin
-  Dec(FSize);
-end;
-
-function TApp.GetSpeed: longint;
+function TBenchmark.GetSpeed: longint;
 var
   I: int64;
 begin
@@ -231,15 +171,15 @@ begin
     Result := 0;
 end;
 
-function TApp.GetPercentes: longint;
+function TBenchmark.GetPercentage: longint;
 begin
-  if FTotalSize <> 0 then
-    Result := Round((FSize / FTotalSize) * 100)
+  if FSize <> 0 then
+    Result := Round((FProcessedSize / FSize) * 100)
   else
     Result := 0;
 end;
 
-function TApp.GetTotalTime: longint;
+function TBenchmark.GetElapsedTime: longint;
 begin
   if not FSuspended then
     Result := SecondsBetween(Now, FStartTime)
@@ -247,75 +187,101 @@ begin
     Result := SecondsBetween(FSuspendedTime - FStartTime, 0);
 end;
 
-function TApp.GetTime: longint;
+function TBenchmark.GetRemainingTime: longint;
 var
   I: longint;
 begin
   I := GetSpeed;
   if I <> 0 then
-    Result := (FTotalSize - FSize) div I
+    Result := (FSize - FProcessedSize) div I
   else
     Result := 0;
 end;
 
-procedure TApp.SetTerminated(aValue: boolean);
+procedure TBenchmark.SetSuspended(Value: boolean);
 begin
-  if not FTerminated then
+  if FSuspended <> Value then
   begin
-    FTerminated := aValue;
+    if Value then
+      FSuspendedTime := Now
+    else
+      FStartTime := FStartTime + (Now - FSuspendedTime);
+
+    FSuspended := Value;
   end;
 end;
 
-procedure TApp.SetCode(aCode: byte);
+{ TApp class }
+
+constructor TApp.Create(Params: TStringList);
 begin
-  if FCode < aCode then
+  inherited Create;
+  FParams := Params;
+  FCode := ccSuccesful;
+  FTerminated := False;
+end;
+
+destructor TApp.Destroy;
+begin
+  FParams := nil;
+  inherited Destroy;
+end;
+
+procedure TApp.Execute;
+begin
+  inherited Execute;
+end;
+
+procedure TApp.Terminate;
+begin
+  SetCode(ccUserAbort);
+end;
+
+procedure TApp.SetTerminated(Value: boolean);
+begin
+  if not FTerminated then
   begin
-    FCode := aCode;
+    FTerminated := Value;
+  end;
+end;
+
+procedure TApp.SetCode(Code: byte);
+begin
+  if FCode < Code then
+  begin
+    FCode := Code;
     if FCode >= ccError then
       SetTerminated(True);
   end;
 end;
 
-procedure TApp.SetSuspended(aValue: boolean);
-begin
-  if FSuspended <> aValue then
-  begin
-    if aValue then
-      FSuspendedTime := Now
-    else
-      FStartTime := FStartTime + (Now - FSuspendedTime);
-
-    FSuspended := aValue;
-  end;
-end;
-
-procedure TApp.SetPriority(aPriority: byte);
+procedure TApp.SetPriority(Priority: byte);
 begin
   {$IFDEF CONSOLEAPPLICATION}
   {$IFDEF MSWINDOWS}
-  Bee_Common.SetPriority(aPriority);
+  Bee_Common.SetPriority(Priority);
   {$ENDIF}
   {$ELSE}
     { TODO :  DA IMPLEMENTARE}
   {$ENDIF}
 end;
 
-procedure TApp.DoMessage(const aMessage: string; aCode: byte); {$IFDEF FPC} inline; {$ENDIF}
+procedure TApp.DoMessage(const aMessage: string; aCode: byte);
 var
   X: double;
 begin
   SetCode(aCode);
   X := Now;
-  OnMessage(aMessage);
+  // OnMessage(aMessage);
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.DoMessage(const aMessage: string); {$IFDEF FPC} inline; {$ENDIF}
+procedure TApp.DoMessage(const aMessage: string);
 var
   X: double;
 begin
   X := Now;
-  OnMessage(aMessage);
+  // OnMessage(aMessage);
   FStartTime := FStartTime + (Now - X);
 end;
 
@@ -328,12 +294,12 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-function TApp.DoPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+function TApp.DoPassword(const aItem: THeaderRec; const aValue: string): string;
 var
   X: double;
 begin
   X := Now;
-  Result := OnPassword(aFileInfo, aValue);
+  // Result := OnPassword(aFileInfo, aValue);
   FStartTime := FStartTime + (Now - X);
 end;
 
@@ -342,36 +308,36 @@ var
   X: double;
 begin
   X := Now;
-  OnRequest(aMessage);
+  // OnRequest(aMessage);
   FStartTime := FStartTime + (Now - X);
 end;
 
 procedure TApp.DoList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
 var
-  X: double; 
+  X: double;
 begin
   X := Now;
-  OnList(aFileInfo, aVerbose);
+  // OnList(aFileInfo, aVerbose);
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.DoProgress; {$IFDEF FPC} inline; {$ENDIF}
+procedure TApp.DoStep;
 var
   X: double;
 begin
   X := Now;
-  OnProgress;
+  // OnProgress;
   FStartTime := FStartTime + (Now - X);
 end;
 
 {$IFDEF CONSOLEAPPLICATION}
-procedure TApp.DoClearLine; {$IFDEF FPC} inline; {$ENDIF}
+procedure TApp.DoClearLine;
 var
   X: double;
 begin
   X := Now;
-  OnClearLine;
-  FStartTime := FStartTime + (Now - X); 
+  // OnClearLine;
+  FStartTime := FStartTime + (Now - X);
 end;
 {$ENDIF}
 

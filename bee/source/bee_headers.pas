@@ -163,10 +163,6 @@ type
     property SfxSize: longint read GetSfxSize;
   end;
 
-const
-  FullActions = [haNew, haUpdate, haNone, haExtract, haDecode, haDelete];
-
-
 implementation
 
 uses
