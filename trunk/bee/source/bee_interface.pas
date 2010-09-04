@@ -42,10 +42,13 @@ uses
 
 type
 
-  { TAppBenchmark class }
+  { TApp class }
 
-  TAppBenchmark = class
-  protected
+  TApp = class(TAppIo)
+  private
+    FParams: TStringList;
+    FCode: byte;
+    FTerminated: boolean;
     FStartTime: double;
     FSuspendedTime: double;
     FSuspended: boolean;
@@ -58,31 +61,23 @@ type
     procedure SetSuspended(Value: boolean);
     function GetPercentage: longint;
     function GetSpeed: longint;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Step;
-    procedure Execute;
-    property Speed: longint read GetSpeed;
-    property Percentage: longint read GetPercentage;
-    property ElapsedTime: longint read GetElapsedTime;
-    property RemainingTime: longint read GetRemainingTime;
-    property ProcessedSize: int64 read FProcessedSize write SetProcessedSize;
-    property Size: int64 read FSize write SetSize;
-    property Suspended: boolean read FSuspended write SetSuspended;
-  end;
-
-  { TApp class }
-
-  TApp = class(TAppBenchmark)
-  private
-    FCode: byte;
-    FTerminated: boolean;
-  protected
-    FParams: TStringList;
     procedure SetPriority(Priority: byte);
     procedure SetTerminated(Value: boolean);
     procedure SetCode(Code: byte);
+  public
+
+
+    procedure Step;
+        procedure Execute;
+        property Speed: longint read GetSpeed;
+        property Percentage: longint read GetPercentage;
+        property ElapsedTime: longint read GetElapsedTime;
+        property RemainingTime: longint read GetRemainingTime;
+        property ProcessedSize: int64 read FProcessedSize write SetProcessedSize;
+        property Size: int64 read FSize write SetSize;
+        property Suspended: boolean read FSuspended write SetSuspended;
+
+
   public
     procedure DoMessage(const aMessage: string); overload;
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
