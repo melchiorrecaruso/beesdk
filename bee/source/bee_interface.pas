@@ -75,7 +75,7 @@ type
     procedure DoClearLine;
     {$ENDIF}
   public
-    constructor Create(Params: TStringList);
+    constructor Create(aParams: TStringList);
     destructor Destroy; override;
     procedure Execute; virtual;
     procedure Terminate;
@@ -108,7 +108,7 @@ uses
 
 { TApp class }
 
-constructor TApp.Create(Params: TStringList);
+constructor TApp.Create(aParams: TStringList);
 begin
   inherited Create;
   FStartTime     := 0;
@@ -116,7 +116,7 @@ begin
   FSuspended     := False;
   FProcessedSize := 0;
   FSize          := 0;
-  FParams        := Params;
+  FParams        := aParams;
   FTerminated    := False;
   FCode          := ccSuccesful;
 end;
@@ -290,8 +290,7 @@ procedure TApp.DoTick;
 var
   X: double;
 begin
-  while FSuspended do Sleep(250);
-
+  // while FSuspended do Sleep(250);
   if FProcessedSize and $FFFF = 0 then
   begin
     X := Now;

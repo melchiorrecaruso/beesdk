@@ -110,7 +110,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1138 archiver utility, May 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1143 archiver utility, Set 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -645,9 +645,11 @@ begin
                 haNone:    Encoder.CopyFrom  (FArcFile,  P.PackedSize, P);
                 else DoMessage(Format(cmActionError, []), ccError);
               end;
-              FTempFile.FinishEncode;
-              FSwapFile.FinishDecode;
-              FArcFile .FinishDecode;
+
+              if Assigned(FTempFile) then FTempFile.FinishEncode;
+              if Assigned(FSwapFile) then FSwapFile.FinishDecode;
+              if Assigned(FArcFile)  then FArcFile .FinishDecode;
+
             end;
           end;
           Encoder.Destroy;
