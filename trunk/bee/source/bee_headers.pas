@@ -540,12 +540,12 @@ begin
   if foMethod in Item.Flags then
     Stream.Read(Item.Method, SizeOf(Item.Method))
   else
-    Item.Method := -1;
+    Item.Method := 0;
 
   if foDictionary in Item.Flags then
     Stream.Read(Item.Dictionary, SizeOf(Item.Dictionary))
   else
-    Item.Dictionary := -1;
+    Item.Dictionary := 0;
 
   if foTable in Item.Flags then
     Stream.Read(Item.Table, SizeOf(Item.Table));
@@ -582,12 +582,12 @@ begin
   if foMethod in Item.Flags then
     Stream.Read(Item.Method, SizeOf(Item.Method))
   else
-    Item.Method := -1;
+    Item.Method := 0;
 
   if foDictionary in Item.Flags then
     Stream.Read(Item.Dictionary, SizeOf(Item.Dictionary))
   else
-    Item.Dictionary := -1;
+    Item.Dictionary := 0;
 
   if foTable in Item.Flags then
     Stream.Read(Item.Table, SizeOf(Item.Table));
