@@ -134,7 +134,7 @@ begin
     Strm.Read(Symbol, 1);
     FPPM.UpdateModel(Symbol);
     UpdCrc32(Result, Symbol);
-    // if Assigned(FTicker) then FTicker;
+    if Assigned(FTicker) then FTicker;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
@@ -151,7 +151,7 @@ begin
     Symbol := FPPM.UpdateModel(0);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    // if Assigned(FTicker) then FTicker;
+    if Assigned(FTicker) then FTicker;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
@@ -167,7 +167,7 @@ begin
     FStream.Read(Symbol, 1);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    // if Assigned(FTicker) then FTicker;
+    if Assigned(FTicker) then FTicker;
     Dec(Size);
   end;
 end;
