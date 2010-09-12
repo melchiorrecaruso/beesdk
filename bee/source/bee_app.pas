@@ -89,6 +89,7 @@ type
     procedure RenameShell;
     procedure ListShell;
   protected
+    procedure ActionsSize;
     function VersionToStr(const aItem: THeader): string;
     function MethodToStr(const aItem: THeader): string;
   public
@@ -303,6 +304,7 @@ begin
 
     I := FHeaders.GetBack(I - 1, [haUpdate]);
   end;
+  ActionSize;
 end;
 
 procedure TBeeApp.SetItemsToDelete;
@@ -1009,6 +1011,41 @@ begin
   end;
 end;
 
+procedure TBeeApp.ActionsSize;
+var
+  I: longint;
+begin
+  FSize := 0;
+  for I := 0 to FHeaders.Count - 1 do
+  begin
+    case FHeaders.Items[I].Action of
+
+      haNew:     Inc(FSize, FHeaders.Items[I].Size);
+      haNone:    Inc(FSize, FHeaders.Items[I].PackedSize);
+
+
+
+      haUpdate:
+
+
+
+      haExtract,
+
+      haDecode,
+
+      haDelete:
+
+      ;
+
+
+    end;
+
+
+
+
+
+  end;
+end;
 
 
 end.
