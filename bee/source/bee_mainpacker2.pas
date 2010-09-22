@@ -48,14 +48,14 @@ type
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
     FTicker: TThreadMethod;
-    FSilent: boolean;
+    FTick: boolean;
   public
     constructor Create(Stream: TStream; Ticker: TThreadMethod);
     destructor Destroy; override;
-    function CopyFrom(Strm: TStream; Size: int64): longword; virtual;
-    function EncodeFrom(Strm: TStream; Size: int64): longword; virtual;
-    function DecodeTo(Strm: TStream; Size: int64): longword; virtual;
-    function CopyTo(Strm: TStream; Size: int64): longword; virtual;
+    function CopyFrom(Strm: TStream; Size: int64; var CRC: longword): boolean; virtual;
+    function EncodeFrom(Strm: TStream; Size: int64; var CRC: longword): boolean; virtual;
+    function DecodeTo(Strm: TStream; Size: int64; var CRC: longword): boolean; virtual;
+    function CopyTo(Strm: TStream; Size: int64; var CRC: longword): boolean; virtual;
     procedure SetTable(const Value: TTableParameters);
     procedure SetDictionary(Value: byte);
     procedure FreshFlexible;
@@ -99,8 +99,8 @@ begin
   FSecondaryCodec := TSecondaryEncoder.Create(FStream);
   FPPM := TBaseCoder.Create(FSecondaryCodec);
 
-  FSilent := False;
   FTicker := Ticker;
+  FTick   := Assigned(FTicker);
 end;
 
 destructor TStreamCoder.Destroy;
@@ -111,36 +111,36 @@ begin
   FTicker := nil;
 end;
 
-function TStreamCoder.CopyFrom(Strm: TStream; Size: int64): longword;
+function TStreamCoder.CopyFrom(Strm: TStream; Size: int64; var CRC: longword): boolean;
 var
   Symbol: byte;
 begin
-  Result := longword(-1);
-  while Size > 0 do
+  CRC := longword(-1);
+  while (Size > 0) and (Strm.Read(Symbol, 1) = 1) do
   begin
-    Strm.Read(Symbol, 1);
     FStream.Write(Symbol, 1);
-    UpdCrc32(Result, Symbol);
-    if not FSilent then FTicker;
+    UpdCrc32(CRC, Symbol);
+    if FTick then FTicker;
     Dec(Size);
   end;
+  Result := Size = 0;
 end;
 
-function TStreamCoder.EncodeFrom(Strm: TStream; Size: int64): longword;
+function TStreamCoder.EncodeFrom(Strm: TStream; Size: int64; var CRC: longword): boolean;
 var
   Symbol: byte;
 begin
-  Result := longword(-1);
+  CRC := longword(-1);
   FSecondaryCodec.Start;
-  while Size > 0 do
+  while (Size > 0) and (Strm.Read(Symbol, 1) = 1) do
   begin
-    Strm.Read(Symbol, 1);
     FPPM.UpdateModel(Symbol);
     UpdCrc32(Result, Symbol);
-    if not FSilent then FTicker;
+    if FTick then FTicker;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
+  Result := Size = 0;
 end;
 
 function TStreamCoder.DecodeTo(Strm: TStream; Size: int64): longword;
@@ -154,7 +154,7 @@ begin
     Symbol := FPPM.UpdateModel(0);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    if not FSilent then FTicker;
+    if FTick then FTicker;
     Dec(Size);
   end;
   FSecondaryCodec.Flush;
@@ -170,7 +170,7 @@ begin
     FStream.Read(Symbol, 1);
     Strm.Write(Symbol, 1);
     UpdCrc32(Result, Symbol);
-    if not FSilent then FTicker;
+    if FTick then FTicker;
     Dec(Size);
   end;
 end;
@@ -265,16 +265,44 @@ procedure THeaderStreamCoder.EncodeFrom(Strm: TStream; const Size: int64; Item: 
 var
   FStreamPos: int64;
 begin
-  FStreamPos := FStream.Seek(0, soCurrent);
-
   Strm.Seek(Item.StartPos, soBeginning);
+  FStreamPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
     Item.Crc := CopyFrom(Strm, Size)
   else
     Item.Crc := EncodeFrom(Strm, Size);
-
   Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
-  if Item.Size <= Item.PackedSize then
+
+  if Item.PackedSize <= Item.Size then
+  begin
+    Item.StartPos := FStreamPos;
+  end else
+  begin
+    Include(Item.Flags, foMoved);
+    Include(Item.Flags, foTear);
+
+
+
+    FStream.Size := FStreamPos;
+
+    FTick    := False;
+    Item.Crc := CopyFrom(Strm, Size);
+    FTick    := Assigned(FTicker);
+  end;
+end;
+
+function THeaderStreamCoder.EncodeFrom(Item: THeader): boolean;
+var
+  FStreamPos: int64;
+begin
+  FStreamPos := FStream.Seek(0, soCurrent);
+  if foMoved in Item.Flags then
+    Item.Crc := CopyFrom(Item.Link)
+  else
+    Item.Crc := EncodeFrom(Item.Link);
+  Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
+
+  if Item.PackedSize <= Item.Size then
   begin
     Item.StartPos := FStreamPos;
   end else
@@ -283,20 +311,10 @@ begin
     Include(Item.Flags, foTear);
     FStream.Size := FStreamPos;
 
-    FSilent := True;
+    FTick := False;
     CopyFrom(Strm, Size, Item);
-    FSilent := False;
+    FTick := Assigned(FTicker);
   end;
-end;
-
-function THeaderStreamCoder.EncodeFrom(Item: THeader): boolean;
-begin
-  Item.StartPos := FStream.Seek(0, soCurrent);
-  if foMoved in Item.Flags then
-    Item.Crc := CopyFrom(Item.Link)
-  else
-    Item.Crc := EncodeFrom(Item.Link);
-  Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 end;
 
 function THeaderStreamCoder.DecodeTo(Item: THeader): boolean;
