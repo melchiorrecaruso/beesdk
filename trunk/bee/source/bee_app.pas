@@ -111,7 +111,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1143 archiver utility, Set 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1145 archiver utility, Set 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -304,7 +304,7 @@ begin
 
     I := FHeaders.GetBack(I - 1, [haUpdate]);
   end;
-  ActionSize;
+  ActionsSize
 end;
 
 procedure TBeeApp.SetItemsToDelete;
@@ -470,7 +470,7 @@ begin
             FArcFile.Seek(P.StartPos, soBeginning);
 
             P.StartPos := FSwapStrm.Seek(0, soCurrent);
-            if Decoder.DecodeTo(FSwapStrm, P.Size) <> P.Crc then
+            if Decoder.DecodeTo(FSwapStrm, P.Size, P.Crc) = P.Size then
             begin
               DoMessage(Format(cmSequenceError, []), ccError);
             end;
@@ -1025,17 +1025,6 @@ begin
 
 
 
-      haUpdate:
-
-
-
-      haExtract,
-
-      haDecode,
-
-      haDelete:
-
-      ;
 
 
     end;
