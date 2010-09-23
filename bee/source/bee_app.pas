@@ -442,7 +442,8 @@ end;
 procedure TBeeApp.OpenSwapFile;
 var
   P: THeader;
-  I, CRC: longint;
+  I: longint;
+  CRC: longword;
   FSwapStrm: TFileWriter;
   Decoder: THeaderStreamCoder;
 begin
@@ -450,7 +451,7 @@ begin
   begin
     FSwapName := GenerateFileName(FCommandLine.wdOption);
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
-    if FSwapStrm <> nil then
+    if Assigned(FSwapStrm) then
     begin
       Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
       for I := 0 to FHeaders.Count - 1 do
@@ -470,7 +471,7 @@ begin
             FArcFile.Seek(P.StartPos, soBeginning);
 
             P.StartPos := FSwapStrm.Seek(0, soCurrent);
-            if Decoder.DecodeTo(FSwapStrm, P.Size, P.Crc) = P.Size then
+            if (Decoder.DecodeTo(FSwapStrm, P.Size, CRC) <> P.Size) or (P.Crc <> CRC) then
             begin
               DoMessage(Format(cmSequenceError, []), ccError);
             end;
@@ -484,7 +485,7 @@ begin
       if Code < ccError then
       begin
         FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
-        if FSwapFile = nil then
+        if not Assigned(FSwapFile) then
           DoMessage(cmOpenSwapError, ccError);
       end;
     end else
@@ -618,7 +619,7 @@ begin
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
-      if FTempFile <> nil then
+      if Assigned(FTempFile) then
       begin
         OpenSwapFile;
         if Code < ccError then
@@ -626,7 +627,6 @@ begin
           FHeaders.Write(FTempFile);
           Encoder := THeaderStreamCoder.Create(FTempFile, DoTick);
           for I := 0 to FHeaders.Count - 1 do
-          begin
             if Code < ccError then
             begin
               P := FHeaders.Items[I];
@@ -634,9 +634,9 @@ begin
               Encoder.InitializeCoder(P);
               if foPassword in P.Flags then
               begin
-                FArcFile .StartDecode(FPassword);
-                FSwapFile.StartDecode(FPassword);
-                FTempFile.StartEncode(FPassword);
+                if Assigned(FArcFile)  then FArcFile .StartDecode(FPassword);
+                if Assigned(FSwapFile) then FSwapFile.StartDecode(FPassword);
+                if Assigned(FTempFile) then FTempFile.StartEncode(FPassword);
               end;
 
               DoMessage(Format(cmUpdating, [P.Name]));
@@ -647,13 +647,13 @@ begin
                 haNone:    Encoder.CopyFrom  (FArcFile,  P.PackedSize, P);
                 else DoMessage(Format(cmActionError, []), ccError);
               end;
-
+              {$IFDEF CONSOLEAPPLICATION}
+              DoClearLine;
+              {$ENDIF}
               if Assigned(FTempFile) then FTempFile.FinishEncode;
               if Assigned(FSwapFile) then FSwapFile.FinishDecode;
               if Assigned(FArcFile)  then FArcFile .FinishDecode;
-
             end;
-          end;
           Encoder.Destroy;
           FHeaders.Write(FTempFile);
         end;

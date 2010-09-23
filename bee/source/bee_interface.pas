@@ -70,7 +70,7 @@ type
     function DoRename(const aItem: THeaderRec; const aValue: string): string;
     function DoPassword(const aItem: THeaderRec; const aValue: string): string;
     procedure DoList(const aItem: THeader; aVerbose: boolean);
-    procedure DoTick;
+    function DoTick: boolean;
     {$IFDEF CONSOLEAPPLICATION}
     procedure DoClearLine;
     {$ENDIF}
@@ -286,18 +286,22 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.DoTick;
+function TApp.DoTick: boolean; inline;
 var
   X: double;
 begin
-  // while FSuspended do Sleep(250);
   if FProcessedSize and $FFFF = 0 then
   begin
+    // while FSuspended do
+    // begin
+    //   Sleep(250);
+    // end;
     X := Now;
     OnProgress;
     FStartTime := FStartTime + (Now - X);
   end;
   Inc(FProcessedSize);
+  Result := FCode >= ccError;
 end;
 
 {$IFDEF CONSOLEAPPLICATION}

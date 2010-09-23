@@ -40,6 +40,8 @@ uses
 
 type
 
+  TTickerMethod = function: boolean of object;
+
   { TStreamCoder class }
 
   TStreamCoder = class
@@ -47,10 +49,10 @@ type
     FStream: TStream;
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
-    FTicker: TThreadMethod;
+    FTicker: TTickerMethod;
     FTick: boolean;
   public
-    constructor Create(Stream: TStream; Ticker: TThreadMethod);
+    constructor Create(Stream: TStream; Ticker: TTickerMethod);
     destructor Destroy; override;
     function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
     function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
@@ -93,7 +95,7 @@ uses
 
 { TStreamCoder class }
 
-constructor TStreamCoder.Create(Stream: TStream; Ticker: TThreadMethod);
+constructor TStreamCoder.Create(Stream: TStream; Ticker: TTickerMethod);
 begin
   FStream := Stream;
   FSecondaryCodec := TSecondaryEncoder.Create(FStream);
@@ -121,7 +123,7 @@ begin
   begin
     FStream.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
-    if FTick then FTicker;
+    if FTick and FTicker then Break;
     Inc(Result);
   end;
 end;
@@ -137,7 +139,7 @@ begin
   begin
     FPPM.UpdateModel(Symbol);
     UpdCrc32(CRC, Symbol);
-    if FTick then FTicker;
+    if FTick and FTicker then Break;
     Inc(Result);
   end;
   FSecondaryCodec.Flush;
@@ -155,7 +157,7 @@ begin
     Symbol := FPPM.UpdateModel(0);
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
-    if FTick then FTicker;
+    if FTick and FTicker then Break;
     Inc(Result);
   end;
   FSecondaryCodec.Flush;
@@ -171,7 +173,7 @@ begin
   begin
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
-    if FTick then FTicker;
+    if FTick and FTicker then Break;
     Inc(Result);
   end;
 end;
