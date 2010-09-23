@@ -117,7 +117,7 @@ var
 begin
   Result := 0;
   CRC := longword(-1);
-  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+  while (Result < Size) and (Strm.Read(Symbol, 1) > 0) do
   begin
     FStream.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
@@ -133,7 +133,7 @@ begin
   Result := 0;
   CRC := longword(-1);
   FSecondaryCodec.Start;
-  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+  while (Result < Size) and (Strm.Read(Symbol, 1) > 0) do
   begin
     FPPM.UpdateModel(Symbol);
     UpdCrc32(CRC, Symbol);
@@ -167,7 +167,7 @@ var
 begin
   Result := 0;
   CRC := longword(-1);
-  while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
+  while (Result < Size) and (FStream.Read(Symbol, 1) > 0) do
   begin
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
