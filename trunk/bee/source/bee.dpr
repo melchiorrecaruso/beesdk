@@ -166,7 +166,7 @@ type
   procedure TCustomBeeApp.OnProgress;
   begin
     // not convert oem to param
-    Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
+    Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
       Format('%5d KB/s %3d%%', [Speed shr 10, Percentage]));
   end;
 
