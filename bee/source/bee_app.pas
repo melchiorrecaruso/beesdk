@@ -304,7 +304,7 @@ begin
 
     I := FHeaders.GetBack(I - 1, [haUpdate]);
   end;
-  ActionsSize
+  ActionsSize;
 end;
 
 procedure TBeeApp.SetItemsToDelete;
