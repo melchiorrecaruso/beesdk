@@ -289,9 +289,9 @@ begin
     Include(Item.Flags, foTear);
     FStream.Size := FStreamPos;
 
-    FTick    := False;
+    FTick  := False;
     Result := CopyFrom(Strm, Size, Item.Crc) = Size;
-    FTick    := Assigned(FTicker);
+    FTick  := Assigned(FTicker);
   end;
 end;
 
@@ -315,9 +315,9 @@ begin
     Include(Item.Flags, foTear);
     FStream.Size := FStreamPos;
 
-    FTick := False;
+    FTick  := False;
     Result := CopyFrom(Item.Link, Item.Crc);
-    FTick := Assigned(FTicker);
+    FTick  := Assigned(FTicker);
   end;
 end;
 
@@ -334,12 +334,11 @@ begin
   if Result then
   begin
     Result := Item.Crc = CRC;
-  end;
-
-  if Result then
-  begin
-    FileSetAttr(Item.Link, Item.Attr);
-    FileSetDate(Item.Link, Item.Attr);
+    if Result then
+    begin
+      FileSetAttr(Item.Link, Item.Attr);
+      FileSetDate(Item.Link, Item.Attr);
+    end;
   end;
 end;
 
