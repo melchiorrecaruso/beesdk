@@ -383,6 +383,9 @@ end;
 
 procedure TWriteBlowFishBufStream.StartEncode(const Value: string);
 begin
+  WRITELN('BLOWFISH-BUFSTREAM');
+
+
   FBFK := Length(Value) >= MinBlowFishKeyLength;
   if FBFK then
   begin

@@ -42,8 +42,7 @@ program Bee;
 {$I compiler.inc}
 
 uses
-  // Bee_MainPacker2,
-
+  Crt,
   {$IFDEF CONSOLEAPPLICATION}
   {$IFDEF MSWINDOWS}
   Windows,
@@ -70,10 +69,9 @@ type
     procedure OnMessage(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
     function  OnRename(const aItem: THeaderRec; const aValue: string): string; override;
-    function  OnPassword(const aItem: THeaderRec; const aValue: string): string; override;
-    procedure OnList(const aItem: THeader; aVerbose: boolean); override;
+    procedure OnList(const aItem: TFileInfoExtra; aVerbose: boolean); override;
     procedure OnProgress; override;
-    procedure OnClearLine; override;
+    procedure OnClear; override;
   end;
 
   { ------------------------------------------------------------------------ }
@@ -105,57 +103,42 @@ type
     Result := OemToParam(Result);
   end;
 
-  procedure TCustomBeeApp.OnList(const aItem: THeader; aVerbose: boolean);
+  procedure TCustomBeeApp.OnList(const aItem: TFileInfoExtra; aVerbose: boolean);
   begin
-    (*
-    with aFileInfo do
+    with aItem do
     begin
       if aVerbose then
       begin
-        if Length({FilePath +} FileName) <= 15 then
+        if Length({Path +} Name) <= 15 then
         begin
-          Writeln(ParamToOem(Format('%-15s', [{FilePath +} FileName]) +
+          Writeln(ParamToOem(Format('%-15s', [{Path +} Name]) +
             Format(' %10s %10s %4u%% %14s %6s %8.8x %3s',
-            [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-            FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
-        end
-        else
+            [SizeToStr(Size), SizeToStr(PackedSize), Ratio,
+            FileTimeToString(Time), AttrToStr(Attr), Crc, Method])));
+        end else
         begin
-          Writeln(ParamToOem({FilePath +} FileName));
+          Writeln(ParamToOem({Path +} Name));
           Writeln(ParamToOem(StringOfChar(' ', 15) +
             Format(' %10s %10s %4u%% %14s %6s %8.8x %3s',
-            [SizeToStr(FileSize), SizeToStr(FilePacked), FileRatio,
-            FileTimeToString(FileTime), AttrToStr(FileAttr), FileCrc, FileMethod])));
+            [SizeToStr(Size), SizeToStr(PackedSize), Ratio,
+            FileTimeToString(Time), AttrToStr(Attr), Crc, Method])));
         end;
-      end
-      else
+      end else
       begin
-        if Length({FilePath +} FileName) <= 39 then
+        if Length({Path +} Name) <= 39 then
         begin
-          Writeln(ParamToOem(Format('%-39s', [{FilePath +} FileName]) +
-            Format(' %10s %4u%% %14s %6s', [SizeToStr(FileSize),
-            FileRatio, FileTimeToString(FileTime), AttrToStr(FileAttr)])));
-        end
-        else
+          Writeln(ParamToOem(Format('%-39s', [{Path +} Name]) +
+            Format(' %10s %4u%% %14s %6s', [SizeToStr(Size),
+            Ratio, FileTimeToString(Time), AttrToStr(Attr)])));
+        end else
         begin
-          Writeln(ParamToOem({FilePath +} FileName));
+          Writeln(ParamToOem({Path +} Name));
           Writeln(ParamToOem(StringOfChar(' ', 39) +
-            Format(' %10s %4u%% %14s %6s', [SizeToStr(FileSize),
-            FileRatio, FileTimeToString(FileTime), AttrToStr(FileAttr)])));
+            Format(' %10s %4u%% %14s %6s', [SizeToStr(Size),
+            Ratio, FileTimeToString(Time), AttrToStr(Attr)])));
         end;
       end;
     end;
-    *)
-  end;
-
-  function TCustomBeeApp.OnPassword(const aItem: THeaderRec; const aValue: string): string;
-  var
-    S: string;
-  begin
-    Write('Insert a key (min length 4 char): ');
-    Readln(Result);
-    // convert oem to param
-    Result := OemToParam(Result);
   end;
 
   procedure TCustomBeeApp.OnRequest(const aMessage: string);
@@ -166,11 +149,11 @@ type
   procedure TCustomBeeApp.OnProgress;
   begin
     // not convert oem to param
-    Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8 +
+    Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
       Format('%5d KB/s %3d%%', [Speed shr 10, Percentage]));
   end;
 
-  procedure TCustomBeeApp.OnClearLine;
+  procedure TCustomBeeApp.OnClear;
   begin
     Write(#13, #13: 80);
   end;

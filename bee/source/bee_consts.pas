@@ -80,6 +80,7 @@ const
   cmSkipping          = 'Skipping   %s';
   cmCrcError          = 'CRC error  %s';
   cmDeleting          = 'Deleting   %s';
+  cmChecking          = 'Checking   %s';
 
   cmUnknow            = 'Process aborted, unknow error - time elapsed %s seconds.';
   cmSuccesful         = 'Everything went ok - time elapsed %s seconds.';

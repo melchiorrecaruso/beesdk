@@ -123,7 +123,7 @@ begin
   begin
     FStream.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
-    if (Result and $FFFF = 0) and FTick and FTicker then Break;
+    if FTick and (not FTicker) then Break;
     Inc(Result);
   end;
 end;
@@ -139,7 +139,7 @@ begin
   begin
     FPPM.UpdateModel(Symbol);
     UpdCrc32(CRC, Symbol);
-    // if FTick and FTicker then Break;
+    if FTick and (not FTicker) then Break;
     Inc(Result);
   end;
   FSecondaryCodec.Flush;
@@ -157,10 +157,7 @@ begin
     Symbol := FPPM.UpdateModel(0);
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
-    if Result and $FFFF = 0 then
-    begin
-      if FTick and FTicker then Break;
-    end;
+    if FTick and (not FTicker) then Break;
     Inc(Result);
   end;
   FSecondaryCodec.Flush;
@@ -176,10 +173,7 @@ begin
   begin
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
-    if Result and $FFFF = 0 then
-    begin
-      if FTick and FTicker then Break;
-    end;
+    if FTick and (not FTicker) then Break;
     Inc(Result);
   end;
 end;

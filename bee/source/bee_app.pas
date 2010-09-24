@@ -60,7 +60,6 @@ type
     FSwapFile: TFileReader;
     FTempName: string;
     FTempFile: TFileWriter;
-    FPassword: string;
     FCommandLine: TCommandLine;
     FConfiguration: TConfiguration;
     { open/close archive routine }
@@ -120,7 +119,6 @@ begin
   FTempFile := nil;
   FSwapName := '';
   FTempName := '';
-  FPassword := '';
 
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -210,13 +208,12 @@ begin
     for I := 1 to FHeaders.Count - 1 do
       if P.Size > FHeaders.Items[I].Size then
         P := FHeaders.Items[I];
-    // get password
-    FPassword := DoPassword(P, FPassword);
     // test item
+    DoMessage(Format(cmChecking, ['archive password']));
     Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
     Decoder.InitializeCoder(P);
 
-    FArcFile.StartDecode(FPassword);
+    FArcFile.StartDecode(FCommandLine.pOption);
     if not Decoder.DecodeToNul(P) then
     begin
       DoMessage(Format(cmTestPswError, []), ccError);
@@ -465,8 +462,8 @@ begin
             DoMessage(Format(cmExtracting, [P.Name]));
             if foPassword in P.Flags then
             begin
-              FArcFile.StartDecode(FPassword);
-              FSwapStrm.StartEncode(FPassword);
+              FArcFile.StartDecode(FCommandLine.pOption);
+              FSwapStrm.StartEncode(FCommandLine.pOption);
             end;
             FArcFile.Seek(P.StartPos, soBeginning);
 
@@ -631,12 +628,15 @@ begin
             begin
               P := FHeaders.Items[I];
 
+              Writeln('START');
               Encoder.InitializeCoder(P);
+              Writeln('END');
+
               if foPassword in P.Flags then
               begin
-                if Assigned(FArcFile)  then FArcFile .StartDecode(FPassword);
-                if Assigned(FSwapFile) then FSwapFile.StartDecode(FPassword);
-                if Assigned(FTempFile) then FTempFile.StartEncode(FPassword);
+                if Assigned(FArcFile)  then FArcFile .StartDecode(FCommandLine.pOption);
+                if Assigned(FSwapFile) then FSwapFile.StartDecode(FCommandLine.pOption);
+                if Assigned(FTempFile) then FTempFile.StartEncode(FCommandLine.pOption);
               end;
 
               DoMessage(Format(cmUpdating, [P.Name]));
@@ -647,9 +647,7 @@ begin
                 haNone:    Encoder.CopyFrom  (FArcFile,  P.PackedSize, P);
                 else DoMessage(Format(cmActionError, []), ccError);
               end;
-              {$IFDEF CONSOLEAPPLICATION}
-              DoClearLine;
-              {$ENDIF}
+              {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
               if Assigned(FTempFile) then FTempFile.FinishEncode;
               if Assigned(FSwapFile) then FSwapFile.FinishDecode;
               if Assigned(FArcFile)  then FArcFile .FinishDecode;
@@ -692,7 +690,7 @@ begin
           Decoder.InitializeCoder(P);
           if foPassword in P.Flags then
           begin
-            FArcFile .StartDecode(FPassword);
+            FArcFile .StartDecode(FCommandLine.pOption);
           end;
 
           DoMessage(Format(cmExtracting, [P.Link]));
@@ -813,11 +811,21 @@ begin
   *)
 end;
 
-procedure TBeeApp.ListShell;
+function CompareFn(P1, P2: pointer): longint;
 begin
-(*
+  Result := CompareFileName(
+    ExtractFilePath(THeader(P1).Name),
+    ExtractFilePath(THeader(P2).Name));
+
+  if Result = 0 then
+  begin
+    Result := CompareText(
+      ExtractFileName(THeader(P1).Name),
+      ExtractFileName(THeader(P2).Name));
+  end;
 end;
 
+procedure TBeeApp.ListShell;
 var
   I: longint;
   P: THeader;
@@ -833,11 +841,11 @@ begin
   FHeadersToList := TList.Create;
   {$ENDIF}
 
-  OpenArchive(haNone);
+  OpenArchive;
   if Code < ccError then
   begin
-    MarkItems2List;
-    if FHeaders.GetCount([haOther]) <> 0 then
+    SetItemsToList;
+    if FHeaders.GetNext(0, [haExtract]) <> -1 then
     begin
       {$IFDEF CONSOLEAPPLICATION}
       DoMessage(StringOfChar(' ', 79));
@@ -852,24 +860,24 @@ begin
       Method     := -1;
       Dictionary := -1;
 
-      for I := 0 to FHeaders.GetCount -1 do
+      for I := 0 to FHeaders.Count - 1 do
       begin
-        P := FHeaders.GetItem(I);
+        P := FHeaders.Items[I];
 
-        if foVersion in P.FileFlags then
-          Version := P.FileVersion;
+        if foVersion in P.Flags then
+          Version := P.Version;
 
-        if foMethod in P.FileFlags then
-          Method := P.FileMethod;
+        if foMethod in P.Flags then
+          Method := P.Method;
 
-        if foDictionary in P.FileFlags then
-          Dictionary := P.FileDictionary;
+        if foDictionary in P.Flags then
+          Dictionary := P.Dictionary;
 
-        if P.FileAction = haOther then
+        if P.Action = haExtract then
         begin
-          P.FileVersion := Version;
-          P.FileMethod := Method;
-          P.FileDictionary := Dictionary;
+          P.Version    := Version;
+          P.Method     := Method;
+          P.Dictionary := Dictionary;
           {$IFDEF CONSOLEAPPLICATION}
           FHeadersToList.Add(P);
           {$ENDIF}
@@ -894,18 +902,18 @@ begin
       begin
         P := FHeadersToList.Items[I];
       {$ELSE}
-      while I < FHeaders.GetCount do
+      while I < FHeaders.Count do
       begin
-        P := FHeaders.GetItem(I);
+        P := FHeaders.Items[I];
       {$ENDIF}
 
-        FI.FileName := StringToPChar(ExtractFileName(P.FileName));
-        FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
+        FI.Name := ExtractFileName(P.Name);
+        FI.Path := ExtractFilePath(P.Name);
 
         {$IFDEF CONSOLEAPPLICATION}
-        if CompareFileName(FHeadersToListPath, FI.FilePath) <> 0 then
+        if CompareFileName(FHeadersToListPath, FI.Path) <> 0 then
         begin
-          FHeadersToListPath := FI.FilePath;
+          FHeadersToListPath := FI.Path;
           if I = 0 then
             DoMessage(FHeadersToListPath)
           else
@@ -913,42 +921,35 @@ begin
         end;
         {$ENDIF}
 
-        FI.FileSize   := P.FileSize;
-        FI.FilePacked := P.FilePacked;
+        FI.Size       := P.Size;
+        FI.PackedSize := P.PackedSize;
 
-        if FI.FileSize > 0 then
-          FI.FileRatio := Round((FI.FilePacked / FI.FileSize) * 100)
+        if FI.Size > 0 then
+          FI.Ratio := Round((FI.PackedSize / FI.Size) * 100)
         else
-          FI.FileRatio := 100;
+          FI.Ratio := 100;
 
-        FI.FileAttr    := P.FileAttr;
-        FI.FileTime    := P.FileTime;
-        FI.FileComm    := StringToPChar('');
-        FI.FileCrc     := P.FileCrc;
-        FI.FileMethod  := StringToPChar(MethodToStr(P));
-        FI.FileVersion := StringToPChar(VersionToStr(P));
+        FI.Attr    := P.Attr;
+        FI.Time    := P.Time;
+        FI.Comm    := '';
+        FI.Crc     := P.Crc;
+        FI.Method  := MethodToStr(P);
+        FI.Version := VersionToStr(P);
 
-        if foPassword in P.FileFlags then
-          FI.FilePassword := StringToPchar('Yes')
+        if foPassword in P.Flags then
+          FI.Password := 'Yes'
         else
-          FI.FilePassword := StringToPchar('No');
+          FI.Password := 'No';
 
         {$IFDEF CONSOLEAPPLICATION}
-        FI.FilePosition := FHeaders.GetNext(0, haOther, P.FileName);
+        FI.Position := FHeaders.Search(P);
         {$ELSE}
-        FI.FilePosition := I;
+        FI.Position := I;
         {$ENDIF}
         DoList(FI, FCommandLine.stlOption);
 
-        StrDispose(FI.FileName);
-        StrDispose(FI.FilePath);
-        StrDispose(FI.FileComm);
-        StrDispose(FI.FileMethod);
-        StrDispose(FI.FileVersion);
-        StrDispose(FI.FilePassword);
-
-        Inc(TotalSize, P.FileSize);
-        Inc(TotalPack, P.FilePacked);
+        Inc(TotalSize, P.Size);
+        Inc(TotalPack, P.PackedSize);
         Inc(TotalFiles);
         Inc(I);
       end;
@@ -962,7 +963,7 @@ begin
 
       {$IFDEF CONSOLEAPPLICATION}
       // self-extractor module size
-      if FHeaders.GetModule > 0 then
+      if FHeaders.SfxSize > 0 then
         DoMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
     end else
@@ -972,33 +973,36 @@ begin
   {$IFDEF CONSOLEAPPLICATION}
   FHeadersToList.Free;
   {$ENDIF}
-  *)
+
 end;
 
 { Protected string routines }
 
 function TBeeApp.MethodToStr(const aItem: THeader): string;
 begin
-  (*
   Result := 'm0a';
-  if not (foTear in aItem.FileFlags) then
+  if not (foTear in aItem.Flags) then
   begin
     Result[1] := 's';
   end;
 
-  if not (foMoved in aItem.FileFlags) then
+  if not (foMoved in aItem.Flags) then
   begin
-    if aItem.FileMethod in [1..3] then
-      Result[2] := char(byte('0') + aItem.FileMethod)
+    if aItem.Method in [1..3] then
+      Result[2] := char(byte('0') + aItem.Method)
     else
       Result[2] := '?';
   end;
 
-  if aItem.FileDictionary in [0..9] then
-    Result[3] := char(byte('a') + aItem.FileDictionary)
+  if aItem.Dictionary in [0..9] then
+    Result[3] := char(byte('a') + aItem.Dictionary)
   else
     Result[3] := '?';
-  *)
+
+  if foPassword in aItem.Flags then
+  begin                      Writeln('Archive Cripted');
+    Result := UpCase(Result);
+  end;
 end;
 
 function TBeeApp.VersionToStr(const aItem: THeader): string;
@@ -1015,6 +1019,7 @@ procedure TBeeApp.ActionsSize;
 var
   I: longint;
 begin
+  FProcessedSize := 0;
   FSize := 0;
   for I := 0 to FHeaders.Count - 1 do
   begin

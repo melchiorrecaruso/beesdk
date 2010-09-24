@@ -265,6 +265,8 @@ var
   i, j, k: longint;
   Data, Datal, Datar: longword;
 begin
+  WRITELN('BLOWFISH - INITIALIZE');
+
   { Initialize first the P-array }
   for i := 1 to 18  do P[i] := PArray[i];
   { and then the four S-boxes, in order, with a fixed random string.
