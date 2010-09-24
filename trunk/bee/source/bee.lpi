@@ -16,7 +16,7 @@
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="7"/>
       <RevisionNr Value="8"/>
-      <BuildNr Value="1871"/>
+      <BuildNr Value="1872"/>
       <Language Value="0809"/>
       <StringTable CompanyName="Melchiorre Caruso" FileDescription="Bee Archiver" ProductName="Bee Archiver" ProductVersion="0.7.8"/>
     </VersionInfo>
@@ -84,7 +84,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="80"/>
+        <TopLine Value="966"/>
         <CursorPos X="41" Y="113"/>
         <FoldState Value=" T3l70G01112*"/>
         <UsageCount Value="80"/>
