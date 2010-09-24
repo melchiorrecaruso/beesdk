@@ -16,7 +16,7 @@
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="7"/>
       <RevisionNr Value="8"/>
-      <BuildNr Value="1869"/>
+      <BuildNr Value="1871"/>
       <Language Value="0809"/>
       <StringTable CompanyName="Melchiorre Caruso" FileDescription="Bee Archiver" ProductName="Bee Archiver" ProductVersion="0.7.8"/>
     </VersionInfo>
@@ -85,7 +85,7 @@
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="80"/>
-        <CursorPos X="17" Y="105"/>
+        <CursorPos X="41" Y="113"/>
         <FoldState Value=" T3l70G01112*"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
@@ -181,7 +181,7 @@
       </Unit12>
       <Unit13>
         <Filename Value="bee_mainpacker.pas"/>
-        <UnitName Value="Bee_MainPacker2"/>
+        <UnitName Value="Bee_MainPacker"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="22"/>
