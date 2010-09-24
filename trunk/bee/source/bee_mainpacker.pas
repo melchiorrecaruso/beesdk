@@ -18,540 +18,360 @@
 
 { Contains:
 
-    TEncoder class, file encoder;
-    TDecoder class, file decoder;
+    TStreamCoder class, stream encoder/decoder;
 
   Modifyed:
 
-    v0.7.8 build 0148 - 2005.06.23 by Melchiorre Caruso;
-    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-    v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
-
-    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
-unit Bee_MainPacker;
+unit Bee_MainPacker2;
 
 {$I compiler.inc}
 
 interface
 
 uses
+  Classes,
   Bee_Codec,
-  Bee_Files,
-  Bee_Types,
-  Bee_Consts,
   Bee_Headers,
   Bee_Modeller,
-  Bee_Interface;
+  Bee_Interface,
+  Bee_Configuration;
 
 type
-  { Extracting Modes:                        }
-  {   pmNorm  Extract files                  }
-  {   pmNul   Extract files to nul stream    }
-  {   pmSkip  Skip files                     }
 
-  TExtractingMode = (pmNorm, pmNul, pmSkip);
+  TTickerMethod = function: boolean of object;
 
-  { Encoding Modes:                          }
-  {   emNorm  Encode files                   }
-  {   emOpt   Encode files, with no messages }
+  { TStreamCoder class }
 
-  TEncodingMode = (emNorm, emOpt);
-
-  { Encoder class }
-
-  TEncoder = class
+  TStreamCoder = class
   private
-    App: TApp;
-    PPM: TBaseCoder;
-    SecondaryCodec: TSecondaryCodec;
-    Stream: TFileWriter;
-    procedure Progress;
-    function GetPassword(P: THeader): string;
+    FStream: TStream;
+    FPPM: TBaseCoder;
+    FSecondaryCodec: TSecondaryCodec;
+    FTicker: TTickerMethod;
+    FTick: boolean;
   public
-    constructor Create(aStream: TFileWriter; aApp: TApp);
+    constructor Create(Stream: TStream; Ticker: TTickerMethod);
     destructor Destroy; override;
-    procedure EncodeFile(P: THeader; Mode: TEncodingMode);
-    procedure EncodeStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-      const SrcSize: int64; SrcEncoded: boolean);
-    procedure CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-      const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean);
-  // public
-  //   procedure SetDictionary(aDictionary: byte);
-  //   procedure SetTable(const aTable: TTableParameters);
-  //   procedure FreshFlexible;
-  //   procedure FreshSolid;
+    function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    function DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    function CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    procedure SetTable(const Value: TTableParameters);
+    procedure SetDictionary(Value: byte);
+    procedure FreshFlexible;
+    procedure FreshSolid;
   end;
 
-  { Decoder class }
+  { TFileStreamCoder class }
 
-  TDecoder = class
-  private
-    App: TApp;
-    PPM: TBaseCoder;
-    SecondaryCodec: TSecondaryCodec;
-    Stream: TFileReader;
-    procedure Progress;
-    function GetPassword(P: THeader): string;
+  TFileStreamCoder = class(TStreamCoder)
   public
-    constructor Create(aStream: TFileReader; aApp: TApp);
-    destructor Destroy; override;
-    procedure DecodeFile(P: THeader; Mode: TExtractingMode);
-    procedure DecodeStrm(P: THeader; Mode: TExtractingMode; DstStrm: TFileWriter;
-      const DstSize: int64; DstEncoded: boolean);
+    function CopyFrom(const FileName: string; var CRC: longword): boolean; overload;
+    function EncodeFrom(const FileName: string; var CRC: longword): boolean; overload;
+    function CopyTo(const FileName: string; var CRC: longword): boolean; overload;
+    function DecodeTo(const FileName: string; var CRC: longword): boolean; overload;
+  end;
+
+  { THeaderStreamCoder class }
+
+  THeaderStreamCoder = class(TFileStreamCoder)
+  public
+    function CopyFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
+    function EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
+    function EncodeFrom(Item: THeader): boolean; overload;
+    function DecodeTo(Item: THeader): boolean; overload;
+    function DecodeToNul(Item: THeader): boolean;
+    procedure InitializeCoder(Item: THeader);
   end;
 
 implementation
 
 uses
-  Classes,
   SysUtils,
-  Bee_Crc,
-  Bee_Common,
-  Bee_BlowFish;
+  Bee_Files,
+  Bee_Crc;
 
-{ TEncoder class }
+{ TStreamCoder class }
 
-constructor TEncoder.Create(aStream: TFileWriter; aApp: TApp);
+constructor TStreamCoder.Create(Stream: TStream; Ticker: TTickerMethod);
 begin
-  App := aApp;
-  Stream := aStream;
-  SecondaryCodec := TSecondaryEncoder.Create(Stream);
-  PPM := TBaseCoder.Create(SecondaryCodec);
+  FStream := Stream;
+  FSecondaryCodec := TSecondaryEncoder.Create(FStream);
+  FPPM := TBaseCoder.Create(FSecondaryCodec);
+
+  FTicker := Ticker;
+  FTick   := Assigned(FTicker);
 end;
 
-destructor TEncoder.Destroy;
+destructor TStreamCoder.Destroy;
 begin
-  PPM.Free;
-  SecondaryCodec.Free;
-  Stream := nil;
-  App := nil;
+  FPPM.Free;
+  FSecondaryCodec.Free;
+  FStream := nil;
+  FTicker := nil;
 end;
 
-function TEncoder.GetPassword(P: THeader): string;
-var
-  FI: TFileInfo;
-begin
-  FI.FileName := StringToPChar(ExtractFileName(P.FileName));
-  FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
-
-  FI.FileSize := P.FileSize;
-  FI.FileTime := P.FileTime;
-  FI.FileAttr := P.FileAttr;
-
-  Result := App.DoPassword(FI, '');
-
-  FreePChar(FI.FileName);
-  FreePChar(FI.FileName);
-
-  if Length(Result) < MinBlowFishKeyLength then
-  begin
-    Exclude(P.FileFlags, foPassword);
-  end;
-end;
-
-procedure TEncoder.Progress; {$IFDEF FPC} inline; {$ENDIF}
-begin
-  if App.Size and $FFFF = 0 then
-  begin
-    while App.Suspended do Sleep(250);
-    App.DoProgress;
-  end;
-  App.IncSize;
-end;
-
-procedure TEncoder.EncodeFile(P: THeader; Mode: TEncodingMode); {$IFDEF FPC} inline; {$ENDIF}
-var
-  SrcFile: TFileReader;
-  Symbol: byte;
-begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear in P.FileFlags then
-    PPM.FreshFlexible
-  else
-    PPM.FreshSolid;
-
-  case Mode of
-    emNorm: App.DoMessage(Format(cmUpdating, [P.FileName]));
-  end;
-
-  P.FileStartPos := Stream.Seek(0, soFromCurrent);
-  P.FileCrc      := longword(-1);
-
-  SrcFile := CreateTFileReader(P.FileLink, fmOpenRead + fmShareDenyWrite);
-  if (SrcFile <> nil) then
-  begin
-    if foPassword in P.FileFlags then
-      Stream.StartEncode(GetPassword(P));
-
-    P.FileSize := SrcFile.Size;
-    P.FileAttr := FileGetAttr(P.FileLink);
-
-    if foMoved in P.FileFlags then
-    begin
-      while (App.Code < ccError) and (SrcFile.Read(Symbol, 1) = 1) do
-      begin
-        UpdCrc32(P.FileCrc, Symbol);
-        Stream.Write(Symbol, 1);
-        Progress;
-      end;
-    end else
-    begin
-      SecondaryCodec.Start;
-      while (App.Code < ccError) and (SrcFile.Read(Symbol, 1) = 1) do
-      begin
-        UpdCrc32(P.FileCrc, Symbol);
-        PPM.UpdateModel(Symbol);
-        Progress;
-      end;
-      SecondaryCodec.Flush;
-    end;
-    {$IFDEF CONSOLEAPPLICATION}
-    App.DoClearLine;
-    {$ENDIF}
-    SrcFile.Free;
-
-    P.FilePacked := Stream.Seek(0, soFromCurrent) - P.FileStartPos;
-    Stream.FinishEncode;
-
-    if (not (foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
-    begin
-      Include(P.FileFlags, foTear);
-      Include(P.FileFlags, foMoved);
-      Stream.Size := P.FileStartPos;
-      App.DecSize(P.FileSize);
-      EncodeFile(P, emOpt);
-    end;
-
-  end else
-    App.DoMessage(Format(cmFileOpenError, [P.FileLink]), ccError);
-end;
-
-procedure TEncoder.EncodeStrm(P: THeader; Mode: TEncodingMode;
-  SrcStrm: TFileReader; const SrcSize: int64; SrcEncoded: boolean); {$IFDEF FPC} inline; {$ENDIF}
+function TStreamCoder.CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
-  Password: string;
-  SrcPosition: int64;
-  I: int64;
 begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear in P.FileFlags then
-    PPM.FreshFlexible
-  else
-    PPM.FreshSolid;
-
-  case Mode of
-    emNorm: App.DoMessage(Format(cmEncoding, [P.FileName]));
-  end;
-
-  P.FileStartPos := Stream.Seek(0, soFromCurrent);
-  P.FileCrc      := longword(-1);
-
-  if (SrcStrm <> nil) then
+  Result := 0;
+  CRC := longword(-1);
+  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
   begin
-    if foPassword in P.FileFlags then
-    begin
-      Password := GetPassword(P);
-      Stream.StartEncode(Password);
-      if SrcEncoded then
-      begin
-        SrcStrm.StartDecode(Password);
-      end;
-    end;
-
-    SrcPosition := SrcStrm.Seek(0, soFromCurrent);
-
-    I := 0;
-    if foMoved in P.FileFlags then
-    begin
-      while (App.Code < ccError) and (I < SrcSize) do
-      begin
-        SrcStrm.Read(Symbol, 1);
-        UpdCrc32(P.FileCrc, Symbol);
-        Stream.Write(Symbol, 1);
-        Progress;
-        Inc(I);
-      end;
-    end else
-    begin
-      SecondaryCodec.Start;
-      while I < SrcSize do
-      begin
-        SrcStrm.Read(Symbol, 1);
-        UpdCrc32(P.FileCrc, Symbol);
-        PPM.UpdateModel(Symbol);
-        Progress;
-        Inc(I);
-      end;
-      SecondaryCodec.Flush;
-    end;
-    {$IFDEF CONSOLEAPPLICATION}
-    App.DoClearLine;
-    {$ENDIF}
-    SrcStrm.FinishDecode;
-
-    P.FilePacked := Stream.Seek(0, soFromCurrent) - P.FileStartPos; // stream flush
-    Stream.FinishEncode;                                        // finish after stream flush
-
-    if (not (foMoved in P.FileFlags)) and (P.FilePacked > P.FileSize) then
-    begin
-      Include(P.FileFlags, foTear);
-      Include(P.FileFlags, foMoved);
-      Stream.Size := P.FileStartPos;
-      SrcStrm.Seek(SrcPosition, soFromBeginning);
-      App.DecSize(P.FileSize);
-      EncodeStrm(P, emOpt, SrcStrm, SrcSize, SrcEncoded);
-    end;
-
-  end else
-    App.DoMessage(cmStrmReadError, ccError);
+    FStream.Write(Symbol, 1);
+    UpdCrc32(CRC, Symbol);
+    if FTick and (not FTicker) then Break;
+    Inc(Result);
+  end;
 end;
 
-procedure TEncoder.CopyStrm(P: THeader; Mode: TEncodingMode; SrcStrm: TFileReader;
-  const SrcStartPos: int64; const SrcSize: int64; SrcEncoded: boolean); {$IFDEF FPC} inline; {$ENDIF}
+function TStreamCoder.EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
-  I:      int64;
 begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear in P.FileFlags then
-    PPM.FreshFlexible
-  else
-    PPM.FreshSolid;
-
-  case Mode of
-    emNorm: App.DoMessage(Format(cmCopying, [P.FileName]));
-  end;
-
-  P.FileStartPos := Stream.Seek(0, soFromCurrent);
-
-  if (SrcStrm <> nil) then
+  Result := 0;
+  CRC := longword(-1);
+  FSecondaryCodec.Start;
+  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
   begin
-    if SrcEncoded then
-      SrcStrm.StartDecode(GetPassword(P));
-
-    SrcStrm.Seek(SrcStartPos, soFromBeginning);
-
-    I := 0;
-    while (App.Code < ccError) and (I < SrcSize) do
-    begin
-      SrcStrm.Read(Symbol, 1);
-      Stream.Write(Symbol, 1);
-      Progress;
-      Inc(I);
-    end;
-    {$IFDEF CONSOLEAPPLICATION}
-    App.DoClearLine;
-    {$ENDIF}
-    SrcStrm.FinishDecode;
-
-  end else
-    App.DoMessage(cmStrmReadError, ccError);
-end;
-
-{ TDecoder class }
-
-constructor TDecoder.Create(aStream: TFileReader; aApp: TApp);
-begin
-  App := aApp;
-  Stream := aStream;
-  SecondaryCodec := TSecondaryDecoder.Create(Stream);
-  PPM := TBaseCoder.Create(SecondaryCodec);
-end;
-
-destructor TDecoder.Destroy;
-begin
-  PPM.Free;
-  SecondaryCodec.Free;
-  Stream := nil;
-  App := nil;
-end;
-
-function TDecoder.GetPassword(P: THeader): string;
-var
-  FI: TFileInfo;
-begin
-  FI.FileName := StringToPChar(ExtractFileName(P.FileName));
-  FI.FilePath := StringToPChar(ExtractFilePath(P.FileName));
-
-  FI.FileSize := P.FileSize;
-  FI.FileTime := P.FileTime;
-  FI.FileAttr := P.FileAttr;
-
-  Result := App.DoPassword(FI, '');
-
-  FreePChar(FI.FileName);
-  FreePChar(FI.FileName);
-end;
-
-procedure TDecoder.Progress; {$IFDEF FPC} inline; {$ENDIF}
-begin
-  if App.Size and $FFFF = 0 then
-  begin
-    while App.Suspended do Sleep(250);
-    App.DoProgress;
+    FPPM.UpdateModel(Symbol);
+    UpdCrc32(CRC, Symbol);
+    if FTick and (not FTicker) then Break;
+    Inc(Result);
   end;
-  App.IncSize;
+  FSecondaryCodec.Flush;
 end;
 
-procedure TDecoder.DecodeFile(P: THeader; Mode: TExtractingMode); {$IFDEF FPC} inline; {$ENDIF}
+function TStreamCoder.DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
-  DstFile: TFileWriter;
   Symbol: byte;
-  Crc: longword;
-  I: int64;
 begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear in P.FileFlags then
-    PPM.FreshFlexible
-  else
-    PPM.FreshSolid;
-
-  case Mode of
-    pmNorm: App.DoMessage(Format(cmExtracting, [P.FileName]));
-    pmNul:  App.DoMessage(Format(cmDecoding,   [P.FileName]));
-    pmSkip: App.DoMessage(Format(cmSkipping,   [P.FileName]));
-  end;
-  if Mode = pmSkip then Exit;
-
-  Stream.Seek(P.FileStartPos, soFromBeginning);
-  Crc := longword(-1);
-
-  if Mode = pmNorm then
-    DstFile := CreateTFileWriter(P.FileName, fmCreate)
-  else
-    DstFile := TNulWriter.Create;
-
-  if (DstFile <> nil) then
+  Result := 0;
+  CRC := longword(-1);
+  FSecondaryCodec.Start;
+  while (Result < Size) do
   begin
-    if foPassword in P.FileFlags then
-      Stream.StartDecode(GetPassword(P));
-
-    I := 0;
-    if foMoved in P.FileFlags then
-    begin
-      while (App.Code < ccError) and (I < P.FileSize) do
-      begin
-        Stream.Read(Symbol, 1);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
-        Progress;
-        Inc(I);
-      end;
-    end else
-    begin
-      SecondaryCodec.Start;
-      while (App.Code < ccError) and (I < P.FileSize) do
-      begin
-        Symbol := PPM.UpdateModel(0);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
-        Progress;
-        Inc(I);
-      end;
-      SecondaryCodec.Flush;
-    end;
-    {$IFDEF CONSOLEAPPLICATION}
-    App.DoClearLine;
-    {$ENDIF}
-    Stream.FinishDecode;
-
-    DstFile.Free;
-    if Mode = pmNorm then
-    begin
-      FileSetAttr(P.FileName, P.FileAttr);
-      FileSetDate(P.FileName, P.FileTime);
-    end;
-  end else
-    App.DoMessage(Format(cmFileOpenError, [P.FileName]), ccError);
-
-  if Crc <> P.FileCrc then
-    App.DoMessage(Format(cmCrcError, [P.FileName]), ccError);
+    Symbol := FPPM.UpdateModel(0);
+    Strm.Write(Symbol, 1);
+    UpdCrc32(CRC, Symbol);
+    if FTick and (not FTicker) then Break;
+    Inc(Result);
+  end;
+  FSecondaryCodec.Flush;
 end;
 
-procedure TDecoder.DecodeStrm(P: THeader; Mode: TExtractingMode;
-  DstStrm: TFileWriter; const DstSize: int64; DstEncoded: boolean); {$IFDEF FPC} inline; {$ENDIF}
+function TStreamCoder.CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
-  DstFile: TFileWriter;
-  Password: string;
   Symbol: byte;
-  Crc: longword;
-  I: int64;
 begin
-  if foDictionary in P.FileFlags then PPM.SetDictionary(P.FileDictionary);
-  if foTable in P.FileFlags then PPM.SetTable(P.FileTable);
-  if foTear in P.FileFlags then
-    PPM.FreshFlexible
-  else
-    PPM.FreshSolid;
-
-  case Mode of
-    pmNorm: App.DoMessage(Format(cmDecoding, [P.FileName]));
-    pmNul:  App.DoMessage(Format(cmDecoding, [P.FileName]));
-    pmSkip: App.DoMessage(Format(cmSkipping, [P.FileName]));
-  end;
-  if Mode = pmSkip then Exit;
-
-  Stream.Seek(P.FileStartPos, soFromBeginning);
-  Crc := longword(-1);
-
-  if Mode = pmNorm then
-    DstFile := DstStrm
-  else
-    DstFile := TNulWriter.Create;
-
-  if (DstFile <> nil) then
+  Result := 0;
+  CRC := longword(-1);
+  while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
   begin
-    if foPassword in P.FileFlags then
-    begin
-      Password := GetPassword(P);
-      Stream.StartDecode(Password);
-      if DstEncoded then
-        DstFile.StartEncode(Password);
-    end;
+    Strm.Write(Symbol, 1);
+    UpdCrc32(CRC, Symbol);
+    if FTick and (not FTicker) then Break;
+    Inc(Result);
+  end;
+end;
 
-    I := 0;
-    if foMoved in P.FileFlags then
-    begin
-      while (App.Code < ccError) and (I < DstSize) do
-      begin
-        Stream.Read(Symbol, 1);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
-        Progress;
-        Inc(I);
-      end;
-    end else
-    begin
-      SecondaryCodec.Start;
-      while (App.Code < ccError) and (I < DstSize) do
-      begin
-        Symbol := PPM.UpdateModel(0);
-        UpdCrc32(Crc, Symbol);
-        DstFile.Write(Symbol, 1);
-        Progress;
-        Inc(I);
-      end;
-      SecondaryCodec.Flush;
-    end;
-    {$IFDEF CONSOLEAPPLICATION}
-    App.DoClearLine;
-    {$ENDIF}
-    Stream.FinishDecode;
+procedure TStreamCoder.SetDictionary(Value: byte);
+begin
+  FPPM.SetDictionary(Value);
+end;
 
-    //if Mode = pmNorm then DstFile.Flush; // stream flush
-    DstFile.FinishEncode;              // finish after stream flush
+procedure TStreamCoder.SetTable(const Value: TTableParameters);
+begin
+  FPPM.SetTable(Value);
+end;
+
+procedure TStreamCoder.FreshFlexible;
+begin
+  FPPM.FreshFlexible;
+end;
+
+procedure TStreamCoder.FreshSolid;
+begin
+  FPPM.FreshSolid;
+end;
+
+{ TFileStreamCoder class }
+
+function TFileStreamCoder.CopyFrom(const FileName: string; var CRC: longword): boolean;
+var
+  Strm: TFileReader;
+begin
+  CRC  := longword(-1);
+  Strm := CreateTFileReader(FileName, fmOpenRead);
+  if Assigned(Strm) then
+  begin
+    Result := CopyFrom(Strm, Strm.Size, CRC) = Strm.Size;
+    Strm.Free;
   end else
-    App.DoMessage(cmStreamError, ccError);
+    Result := False;
+end;
 
-  if Crc <> P.FileCrc then
-    App.DoMessage(Format(cmCrcError, [P.FileName]), ccError);
+function TFileStreamCoder.EncodeFrom(const FileName: string; var CRC: longword): boolean;
+var
+  Strm: TFileReader;
+begin
+  CRC  := longword(-1);
+  Strm := CreateTFileReader(FileName, fmOpenRead);
+  if Assigned(Strm) then
+  begin
+    Result := EncodeFrom(Strm, Strm.Size, CRC) = Strm.Size;
+    Strm.Free;
+  end else
+    Result := False;
+end;
+
+function TFileStreamCoder.DecodeTo(const FileName: string; var CRC: longword): boolean;
+var
+  Strm: TFileWriter;
+begin
+  CRC  := longword(-1);
+  Strm := CreateTFileWriter(FileName, fmCreate);
+  if Assigned(Strm) then
+  begin
+    Result := DecodeTo(Strm, Strm.Size, CRC) = Strm.Size;
+    Strm.Free;
+  end else
+    Result := False;
+end;
+
+function TFileStreamCoder.CopyTo(const FileName: string; var CRC: longword): boolean;
+var
+  Strm: TFileWriter;
+begin
+  CRC  := longword(-1);
+  Strm := CreateTFileWriter(FileName, fmCreate);
+  if Assigned(Strm) then
+  begin
+    Result := CopyTo(Strm, Strm.Size, CRC) = Strm.Size;
+    Strm.Free;
+  end else
+    Result := False;
+end;
+
+{ THeaderStreamCoder class }
+
+function THeaderStreamCoder.CopyFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
+var
+  CRC: longword;
+begin
+  Strm.Seek(Item.StartPos, soBeginning);
+  Item.StartPos := FStream.Seek(0, soCurrent);
+  begin
+    Result := CopyFrom(Strm, Size, CRC) = Size;
+  end;
+  Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
+end;
+
+function THeaderStreamCoder.EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
+var
+  FStreamPos: int64;
+begin
+  Strm.Seek(Item.StartPos, soBeginning);
+  FStreamPos := FStream.Seek(0, soCurrent);
+  if foMoved in Item.Flags then
+    Result := CopyFrom(Strm, Size, Item.Crc) = Size
+  else
+    Result := EncodeFrom(Strm, Size, Item.Crc) = Size;
+  Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
+
+  if Item.PackedSize <= Item.Size then
+  begin
+    Item.StartPos := FStreamPos;
+  end else
+  begin
+    Include(Item.Flags, foMoved);
+    Include(Item.Flags, foTear);
+    FStream.Size := FStreamPos;
+
+    FTick  := False;
+    Result := CopyFrom(Strm, Size, Item.Crc) = Size;
+    FTick  := Assigned(FTicker);
+  end;
+end;
+
+function THeaderStreamCoder.EncodeFrom(Item: THeader): boolean;
+var
+  FStreamPos: int64;
+begin
+  FStreamPos := FStream.Seek(0, soCurrent);
+  if foMoved in Item.Flags then
+    Result := CopyFrom(Item.Link, Item.Crc)
+  else
+    Result := EncodeFrom(Item.Link, Item.Crc);
+  Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
+
+  if Item.PackedSize <= Item.Size then
+  begin
+    Item.StartPos := FStreamPos;
+  end else
+  begin
+    Include(Item.Flags, foMoved);
+    Include(Item.Flags, foTear);
+    FStream.Size := FStreamPos;
+
+    FTick  := False;
+    Result := CopyFrom(Item.Link, Item.Crc);
+    FTick  := Assigned(FTicker);
+  end;
+end;
+
+function THeaderStreamCoder.DecodeTo(Item: THeader): boolean;
+var
+  CRC: longword;
+begin
+  FStream.Seek(Item.StartPos, soBeginning);
+  if foMoved in Item.Flags then
+    Result := CopyTo(Item.Link, CRC)
+  else
+    Result := DecodeTo(Item.Link, CRC);
+
+  if Result then
+  begin
+    Result := Item.Crc = CRC;
+    if Result then
+    begin
+      FileSetAttr(Item.Link, Item.Attr);
+      FileSetDate(Item.Link, Item.Attr);
+    end;
+  end;
+end;
+
+function THeaderStreamCoder.DecodeToNul(Item: THeader): boolean;
+var
+  Strm: TNulWriter;
+  CRC: longword;
+begin
+  Strm := TNulWriter.Create;
+
+  FStream.Seek(Item.StartPos, soBeginning);
+  if foMoved in Item.Flags then
+    Result := CopyTo(Strm, Item.Size, CRC) = Item.Size
+  else
+    Result := DecodeTo(Strm, Item.Size, CRC) = Item.Size;
+
+  if Result then
+  begin
+    Result := CRC = Item.Crc;
+  end;
+  Strm.Free;
+end;
+
+procedure THeaderStreamCoder.InitializeCoder(Item: THeader);
+begin
+  if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
+  if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
+  if foTear       in Item.Flags then
+    FPPM.FreshFlexible
+  else
+    FPPM.FreshSolid;
 end;
 
 end.
