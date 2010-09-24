@@ -24,7 +24,7 @@
 
 }
 
-unit Bee_MainPacker2;
+unit Bee_MainPacker;
 
 {$I compiler.inc}
 
