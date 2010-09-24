@@ -113,7 +113,8 @@ type
      constructor Create(CommandLine: TCommandLine);
      destructor Destroy; override;
 
-     function Search(FileName: string): THeader; virtual;
+     function Search(FileName: string): THeader; virtual; overload;
+     function Search(Item: THeader): longint; virtual; overload;
 
      function SetAction(Masks: TStringList; MaskAct, Action: THeaderAction): longint; overload;
      function SetAction(Mask: string; MaskAct, Action: THeaderAction): longint; overload;
@@ -167,7 +168,8 @@ implementation
 
 uses
   Bee_Consts,
-  Bee_Common;
+  Bee_Common,
+  Bee_BlowFish;
 
 { Header list }
 
@@ -297,6 +299,19 @@ begin
     Result := FNames[M]
   else
     Result := nil;
+end;
+
+function THeaderList.Search(Item: THeader): longint;
+var
+  I: longint;
+begin
+  Result := -1;
+  for  I := 0 to FItems.Count - 1 do
+    if (THeader(FItems[I]) = Item) then
+    begin
+      Result := I;
+      Break;
+    end;
 end;
 
 function THeaderList.SetAction(Masks: TStringList; MaskAct: THeaderAction; Action: THeaderAction): longint;
@@ -864,7 +879,7 @@ begin
       else
         CurrentExt := FCL.fOption;
 
-      if FCL.pOption then
+      if Length(FCL.pOption) >= MinBlowFishKeyLength then
         Include(P.Flags, foPassword);
 
       if (Method = 0) or (not Configuration.GetTable(CurrentExt, P.Table)) then
@@ -983,7 +998,6 @@ begin
       finally
         Stream.Free;
       end;
-
   end;
 end;
 

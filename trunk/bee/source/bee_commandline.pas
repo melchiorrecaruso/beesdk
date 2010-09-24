@@ -53,7 +53,7 @@ type
     FsOption: boolean;
     FfOption: string;
     FsfxOption: string;
-    FpOption: boolean;
+    FpOption: string;
     FhvOption: ThvOption;
     FtOption: boolean;
     FlOption: boolean;
@@ -74,6 +74,7 @@ type
     procedure SetcfgOption(const aValue: string);
     procedure SetArchiveName(const aValue: string);
     procedure ProcessrOption(var S: string);
+    procedure ProcesspOption(var S: string);
     procedure ProcessuOption(var S: string);
     procedure ProcessxOption(var S: string);
     procedure ProcessmOption(var S: string);
@@ -103,7 +104,7 @@ type
     property sOption: boolean read FsOption write FsOption;
     property fOption: string read FfOption write SetfOption;
     property sfxOption: string read FsfxOption write SetsfxOption;
-    property pOption: boolean read FpOption write FpOption;
+    property pOption: string read FpOption write FpOption;
     property hvOption: ThvOption read FhvOption write FhvOption;
     property tOption: boolean read FtOption write FtOption;
     property lOption: boolean read FlOption write FlOption;
@@ -118,7 +119,11 @@ type
 
 implementation
 
-{$IFNDEF FPC} uses Math; {$ENDIF}
+uses
+  {$IFNDEF FPC}
+  Math,
+  {$ENDIF}
+  Bee_BlowFish;
 
 constructor TCommandLine.Create;
 begin
@@ -140,7 +145,7 @@ begin
   FsOption := False;
   FfOption := '';
   FsfxOption := '';
-  FpOption := False;
+  FpOption := '';
   FhvOption := hv04;
   FtOption := False;
   FlOption := False;
@@ -210,6 +215,15 @@ begin
   end;
 end;
 
+procedure TCommandLine.ProcesspOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  if Length(S) >= MinBlowFishKeyLength then
+  begin
+    FpOption := S;
+  end;
+end;
+
 procedure TCommandLine.ProcessmOption(var S: string);
 begin
   Delete(S, 1, 2);
@@ -261,11 +275,6 @@ end;
 
 procedure TCommandLine.ProcessstlOption(var S: string);
 begin
-  Writeln('Set Option');
-  Writeln('Set Option');
-  Writeln('Set Option');
-
-
   Delete(S, 1, 4);
   if (S = '') or (S = '+') then
     FstlOption := True
@@ -384,7 +393,7 @@ begin
         'D': ProcessdOption(S);
         'S': ProcessOption (S, FsOption);
         'F': ProcessfOption(S);
-        'P': ProcessOption (S, FpOption);
+        'P': ProcessmOption(S);
         'T': ProcessOption (S, FtOption);
         'L': ProcessOption (S, FlOption);
       end; // end case
@@ -464,10 +473,8 @@ begin
   if Length(FfOption)   > 0 then Result := Result + ' -f'   + FfOption;      
   if Length(FsfxOption) > 0 then Result := Result + ' -sfx' + FsfxOption;
 
-  if FpOption then
-    Result := Result + ' -p+'
-  else
-    Result := Result + ' -p-';
+  if Length(FpOption) >= MinBlowFishKeyLength then
+    Result := Result + ' -p' + FpOption;
 
   case FhvOption of
     hv02: Result := Result + ' -hv02';

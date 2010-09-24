@@ -68,11 +68,10 @@ type
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
     procedure DoRequest(const aMessage: string);
     function DoRename(const aItem: THeaderRec; const aValue: string): string;
-    function DoPassword(const aItem: THeaderRec; const aValue: string): string;
-    procedure DoList(const aItem: THeader; aVerbose: boolean);
+    procedure DoList(const aItem: TFileInfoExtra; aVerbose: boolean);
     function DoTick: boolean;
     {$IFDEF CONSOLEAPPLICATION}
-    procedure DoClearLine;
+    procedure DoClear;
     {$ENDIF}
   public
     constructor Create(aParams: TStringList);
@@ -83,10 +82,10 @@ type
     procedure OnRequest(const aMessage: string); virtual; abstract;
     function  OnRename(const aItem: THeaderRec; const aValue: string): string; virtual; abstract;
     function  OnPassword(const aItem: THeaderRec; const aValue: string): string; virtual; abstract;
-    procedure OnList(const aItem: THeader; aVerbose: boolean); virtual; abstract;
+    procedure OnList(const aItem: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
     procedure OnProgress; virtual; abstract;
     {$IFDEF CONSOLEAPPLICATION}
-    procedure OnClearLine; virtual; abstract;
+    procedure OnClear; virtual; abstract;
     {$ENDIF}
     property Speed: longint read GetSpeed;
     property Percentage: longint read GetPercentage;
@@ -152,7 +151,7 @@ begin
     I := MilliSecondsBetween(FSuspendedTime - FStartTime, 0);
 
   if I <> 0 then
-    Result := Round((FSize / I) * 1000)
+    Result := Round((FProcessedSize / I) * 1000)
   else
     Result := 0;
 end;
@@ -259,15 +258,6 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-function TApp.DoPassword(const aItem: THeaderRec; const aValue: string): string;
-var
-  X: double;
-begin
-  X := Now;
-  Result := OnPassword(aItem, aValue);
-  FStartTime := FStartTime + (Now - X);
-end;
-
 procedure TApp.DoRequest(const aMessage: string);
 var
   X: double;
@@ -277,7 +267,7 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.DoList(const aItem: THeader; aVerbose: boolean);
+procedure TApp.DoList(const aItem: TFileInfoExtra; aVerbose: boolean);
 var
   X: double;
 begin
@@ -290,27 +280,24 @@ function TApp.DoTick: boolean; inline;
 var
   X: double;
 begin
-  if (FProcessedSize and $FFFF = 0) then
+  if FProcessedSize and $FFFF = 0 then
   begin
     X := Now;
-    // while FSuspended do
-    // begin
-    //   Sleep(250);
-    // end;
     OnProgress;
+    while FSuspended do Sleep(250);
     FStartTime := FStartTime + (Now - X);
   end;
   Inc(FProcessedSize);
-  Result := FCode >= ccError;
+  Result := FCode < ccError;
 end;
 
 {$IFDEF CONSOLEAPPLICATION}
-procedure TApp.DoClearLine;
+procedure TApp.DoClear;
 var
   X: double;
 begin
   X := Now;
-  OnClearLine;
+  OnClear;
   FStartTime := FStartTime + (Now - X);
 end;
 {$ENDIF}
