@@ -102,7 +102,7 @@ implementation
 uses
   SysUtils,
   Bee_Consts,
-  Bee_MainPacker2;
+  Bee_MainPacker;
 
 { TBeeApp class }
 
