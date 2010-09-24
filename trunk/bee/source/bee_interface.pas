@@ -290,13 +290,13 @@ function TApp.DoTick: boolean; inline;
 var
   X: double;
 begin
-  if FProcessedSize and $FFFF = 0 then
+  if (FProcessedSize and $FFFF = 0) then
   begin
+    X := Now;
     // while FSuspended do
     // begin
     //   Sleep(250);
     // end;
-    X := Now;
     OnProgress;
     FStartTime := FStartTime + (Now - X);
   end;
