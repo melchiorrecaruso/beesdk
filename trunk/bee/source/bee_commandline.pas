@@ -68,6 +68,7 @@ type
     function GetCommandLine: string;
     procedure SetCommandLine(const aValue: string);
     procedure SetfOption(const aValue: string);
+    procedure SetpOption(const aValue: string);
     procedure SetsfxOption(const aValue: string);
     procedure SetwdOption(const aValue: string);
     procedure SetcdOption(const aValue: string);
@@ -104,7 +105,7 @@ type
     property sOption: boolean read FsOption write FsOption;
     property fOption: string read FfOption write SetfOption;
     property sfxOption: string read FsfxOption write SetsfxOption;
-    property pOption: string read FpOption write FpOption;
+    property pOption: string read FpOption write SetpOption;
     property hvOption: ThvOption read FhvOption write FhvOption;
     property tOption: boolean read FtOption write FtOption;
     property lOption: boolean read FlOption write FlOption;
@@ -218,10 +219,7 @@ end;
 procedure TCommandLine.ProcesspOption(var S: string);
 begin
   Delete(S, 1, 2);
-  if Length(S) >= MinBlowFishKeyLength then
-  begin
-    FpOption := S;
-  end;
+  SetpOption(S)
 end;
 
 procedure TCommandLine.ProcessmOption(var S: string);
@@ -393,7 +391,7 @@ begin
         'D': ProcessdOption(S);
         'S': ProcessOption (S, FsOption);
         'F': ProcessfOption(S);
-        'P': ProcessmOption(S);
+        'P': ProcesspOption(S);
         'T': ProcessOption (S, FtOption);
         'L': ProcessOption (S, FlOption);
       end; // end case
@@ -473,7 +471,7 @@ begin
   if Length(FfOption)   > 0 then Result := Result + ' -f'   + FfOption;      
   if Length(FsfxOption) > 0 then Result := Result + ' -sfx' + FsfxOption;
 
-  if Length(FpOption) >= MinBlowFishKeyLength then
+  if Length(FpOption) > 0 then
     Result := Result + ' -p' + FpOption;
 
   case FhvOption of
@@ -513,6 +511,14 @@ begin
   if ExtractFileExt('.' + aValue) <> '.' then
   begin
     FfOption := ExtractFileExt('.' + aValue);
+  end;
+end;
+
+procedure TCommandLine.SetpOption(const aValue: string);
+begin
+  if Length(aValue) >= MinBlowFishKeyLength then
+  begin
+    FpOption := aValue;
   end;
 end;
 

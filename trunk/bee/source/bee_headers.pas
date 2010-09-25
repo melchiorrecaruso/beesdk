@@ -168,8 +168,7 @@ implementation
 
 uses
   Bee_Consts,
-  Bee_Common,
-  Bee_BlowFish;
+  Bee_Common;
 
 { Header list }
 
@@ -879,8 +878,10 @@ begin
       else
         CurrentExt := FCL.fOption;
 
-      if Length(FCL.pOption) >= MinBlowFishKeyLength then
+      if Length(FCL.pOption) > 0 then
+      begin
         Include(P.Flags, foPassword);
+      end;
 
       if (Method = 0) or (not Configuration.GetTable(CurrentExt, P.Table)) then
       begin
