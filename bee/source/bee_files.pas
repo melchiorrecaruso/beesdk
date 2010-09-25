@@ -78,9 +78,9 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function Write(const Data; Count: longint): longint;
-    function Seek(Offset: longint; Origin: word): longint; overload;
-    function Seek(const Offset: int64; Origin: TSeekOrigin): int64; overload;
+    function Write(const Data; Count: longint): longint;  override;
+    function Seek(Offset: longint; Origin: word): longint; override;
+    function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
   end;
 
   { TCustomSearchRec }
