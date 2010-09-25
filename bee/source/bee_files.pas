@@ -73,6 +73,8 @@ type
   private
     FNulPos: int64;
     FNulSize: int64;
+  protected
+    procedure FlushBuffer; override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -184,6 +186,11 @@ begin
 end;
 
 destructor TNulWriter.Destroy;
+begin
+  // nothing to do
+end;
+
+procedure TNulWriter.FlushBuffer;
 begin
   // nothing to do
 end;

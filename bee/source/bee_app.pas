@@ -197,22 +197,26 @@ end;
 
 procedure TBeeApp.CheckArchivePassword;
 var
-  I: longint;
   P: THeader;
+  I: longint;
   Decoder: THeaderStreamCoder;
 begin
+  DoMessage(Format(cmChecking, ['archive password']));
   if (Code < ccError) and (FHeaders.GetNext(0, foPassword) <> -1) then
   begin
     // select smaller size item
     P := FHeaders.Items[0];
     for I := 1 to FHeaders.Count - 1 do
       if P.Size > FHeaders.Items[I].Size then
-        P := FHeaders.Items[I];
+      begin
+         P := FHeaders.Items[I];
+      end;
     // test item
-    DoMessage(Format(cmChecking, ['archive password']));
     Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
-    Decoder.InitializeCoder(P);
-
+    for I := 0 to FHeaders.Search(P) do
+    begin
+      Decoder.InitializeCoder(FHeaders.Items[I]);
+    end;
     FArcFile.StartDecode(FCommandLine.pOption);
     if not Decoder.DecodeToNul(P) then
     begin
@@ -628,10 +632,7 @@ begin
             begin
               P := FHeaders.Items[I];
 
-              Writeln('START');
               Encoder.InitializeCoder(P);
-              Writeln('END');
-
               if foPassword in P.Flags then
               begin
                 if Assigned(FArcFile)  then FArcFile .StartDecode(FCommandLine.pOption);
