@@ -192,7 +192,11 @@ begin
     end else
       DoMessage(Format(cmOpenArcError, [FCommandLine.ArchiveName]), ccError);
   end;
-  CheckArchivePassword;
+
+  if not (FCommandLine.Command in [ccList, ccRename, ccHelp]) then
+  begin
+    CheckArchivePassword;
+  end;
 end;
 
 procedure TBeeApp.CheckArchivePassword;
@@ -201,7 +205,6 @@ var
   I: longint;
   Decoder: THeaderStreamCoder;
 begin
-  DoMessage(Format(cmChecking, ['archive password']));
   if (Code < ccError) and (FHeaders.GetNext(0, foPassword) <> -1) then
   begin
     // select smaller size item
@@ -212,7 +215,7 @@ begin
          P := FHeaders.Items[I];
       end;
     // test item
-    Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
+    Decoder := THeaderStreamCoder.Create(FArcFile, nil);
     for I := 0 to FHeaders.Search(P) do
     begin
       Decoder.InitializeCoder(FHeaders.Items[I]);
@@ -220,7 +223,7 @@ begin
     FArcFile.StartDecode(FCommandLine.pOption);
     if not Decoder.DecodeToNul(P) then
     begin
-      DoMessage(Format(cmTestPswError, []), ccError);
+      DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
     end;
     FArcFile.FinishDecode;
     Decoder.Free;
@@ -674,12 +677,8 @@ begin
   OpenArchive;
   if Code < ccError then
   begin
-    case aAction of
-      haExtract: SetItemsToExtract;
-      // haDecode:  SetItemsToTest;
-    end;
-
-    if FHeaders.GetNext(0, [haExtract, haDecode]) <> -1 then
+    SetItemsToExtract;
+    if FHeaders.GetNext(0, [haExtract]) <> -1 then
     begin
       Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
       for I := 0 to FHeaders.Count - 1 do
@@ -691,19 +690,22 @@ begin
           Decoder.InitializeCoder(P);
           if foPassword in P.Flags then
           begin
-            FArcFile .StartDecode(FCommandLine.pOption);
+            FArcFile.StartDecode(FCommandLine.pOption);
           end;
 
-          DoMessage(Format(cmExtracting, [P.Link]));
+          DoMessage(Format(cmExtracting, [P.Name]));
           case P.Action of
-            haNone:    {nothing to do};
-            haDecode:  Decoder.DecodeToNul(P);
-            haExtract: if aAction = haExtract then
-                         Decoder.DecodeTo(P)
-                       else
-                         Decoder.DecodeToNul(P);
+            haNone: {nothing to do};
+            haExtract:
+              case FCommandLine.Command of
+                ccExtract: if not Decoder.DecodeTo(P)    then DoMessage(Format(cmCrcError, [P.Name]), ccError);
+                ccTest:    if not Decoder.DecodeToNul(P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
+                else       DoMessage(Format(cmActionError, []), ccError);
+              end;
+            haDecode: if not Decoder.DecodeToNul(P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
             else DoMessage(Format(cmActionError, []), ccError);
           end;
+          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
           FArcFile.FinishDecode;
         end;
       end;
@@ -999,11 +1001,6 @@ begin
     Result[3] := char(byte('a') + aItem.Dictionary)
   else
     Result[3] := '?';
-
-  if foPassword in aItem.Flags then
-  begin                      Writeln('Archive Cripted');
-    Result := UpCase(Result);
-  end;
 end;
 
 function TBeeApp.VersionToStr(const aItem: THeader): string;
