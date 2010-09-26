@@ -42,7 +42,6 @@ program Bee;
 {$I compiler.inc}
 
 uses
-  Crt,
   {$IFDEF CONSOLEAPPLICATION}
   {$IFDEF MSWINDOWS}
   Windows,

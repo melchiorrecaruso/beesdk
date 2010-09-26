@@ -193,9 +193,9 @@ begin
       DoMessage(Format(cmOpenArcError, [FCommandLine.ArchiveName]), ccError);
   end;
 
-  if not (FCommandLine.Command in [ccList, ccRename, ccHelp]) then
+  // if not (FCommandLine.Command in [ccList, ccRename, ccHelp]) then
   begin
-    // CheckArchivePassword;
+    CheckArchivePassword;
   end;
 end;
 
@@ -217,7 +217,7 @@ begin
     // test item
     DoMessage(Format(cmChecking, [P.Name]));
     Decoder := THeaderStreamCoder.Create(FArcFile, nil);
-    for I := 0 to FHeaders.Search(P) do
+    for I := 0 to FHeaders.IndexOf(P) do
     begin
       Decoder.InitializeCoder(FHeaders.Items[I]);
     end;
@@ -701,8 +701,10 @@ begin
               case FCommandLine.Command of
                 ccExtract: if not Decoder.DecodeTo   (P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
                 ccTest:    if not Decoder.DecodeToNul(P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
+                else       DoMessage(Format(cmActionError, []), ccError);
               end;
             haDecode:      if not Decoder.DecodeToNul(P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
+            else           DoMessage(Format(cmActionError, []), ccError);
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
           FArcFile.FinishDecode;
@@ -944,7 +946,7 @@ begin
           FI.Password := 'No';
 
         {$IFDEF CONSOLEAPPLICATION}
-        FI.Position := FHeaders.Search(P);
+        FI.Position := FHeaders.IndexOf(P);
         {$ELSE}
         FI.Position := I;
         {$ENDIF}

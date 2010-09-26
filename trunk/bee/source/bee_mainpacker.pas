@@ -294,6 +294,8 @@ begin
     FTick  := False;
     Result := CopyFrom(Strm, Size, Item.Crc) = Size;
     FTick  := Assigned(FTicker);
+
+    Item.PackedSize := Item.Size;
   end;
 end;
 
@@ -320,6 +322,8 @@ begin
     FTick  := False;
     Result := CopyFrom(Item.Link, Item.Crc);
     FTick  := Assigned(FTicker);
+
+    Item.PackedSize := Item.Size;
   end;
 end;
 
@@ -346,11 +350,10 @@ end;
 
 function THeaderStreamCoder.DecodeToNul(Item: THeader): boolean;
 var
-  Strm: TNulWriter;
   CRC: longword;
+  Strm: TNulWriter;
 begin
   Strm := TNulWriter.Create;
-
   FStream.Seek(Item.StartPos, soBeginning);
   if foMoved in Item.Flags then
     Result := CopyTo(Strm, Item.Size, CRC) = Item.Size
