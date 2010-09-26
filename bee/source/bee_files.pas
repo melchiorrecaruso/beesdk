@@ -61,6 +61,9 @@ type
   TFileWriter = class(TWriteBlowFishBufStream)
   private
     FFileStream: TFileStream;
+  protected
+    procedure SetSize(NewSize: longint); override;
+    procedure SetSize64(const NewSize: int64); override;
   public
     constructor Create(const aFileName: string; aMode: word);
     destructor Destroy; override;
@@ -75,6 +78,8 @@ type
     FNulSize: int64;
   protected
     procedure FlushBuffer; override;
+    procedure SetSize(NewSize: longint); override;
+    procedure SetSize64(const NewSize: int64); override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -177,6 +182,16 @@ begin
   FlushBuffer;
 end;
 
+procedure TFileWriter.SetSize(NewSize: longint);
+begin
+  FFileStream.Size := NewSize;
+end;
+
+procedure TFileWriter.SetSize64(const NewSize: int64);
+begin
+  FFileStream.Size := NewSize;
+end;
+
 { TNulWriter class }
 
 constructor TNulWriter.Create;
@@ -191,6 +206,16 @@ begin
 end;
 
 procedure TNulWriter.FlushBuffer;
+begin
+  // nothing to do
+end;
+
+procedure TNulWriter.SetSize(NewSize: longint);
+begin
+  // nothing to do
+end;
+
+procedure TNulWriter.SetSize64(const NewSize: int64);
 begin
   // nothing to do
 end;

@@ -276,7 +276,7 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-function TApp.DoTick: boolean; inline;
+function TApp.DoTick: boolean; {$IFDEF FPC} inline; {$ENDIF}
 var
   X: double;
 begin

@@ -113,8 +113,8 @@ type
      constructor Create(CommandLine: TCommandLine);
      destructor Destroy; override;
 
-     function Search(FileName: string): THeader; virtual; overload;
-     function Search(Item: THeader): longint; virtual; overload;
+     function Search(FileName: string): THeader; virtual;
+     function IndexOf(Item: THeader): longint; virtual; 
 
      function SetAction(Masks: TStringList; MaskAct, Action: THeaderAction): longint; overload;
      function SetAction(Mask: string; MaskAct, Action: THeaderAction): longint; overload;
@@ -300,7 +300,7 @@ begin
     Result := nil;
 end;
 
-function THeaderList.Search(Item: THeader): longint;
+function THeaderList.IndexOf(Item: THeader): longint;
 var
   I: longint;
 begin
