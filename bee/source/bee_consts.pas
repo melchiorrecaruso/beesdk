@@ -101,7 +101,7 @@ const
   cmSequenceError     = 'Error: can''t pre-process sequences';
   cmActionError       = 'Error: internal error';
   cmStreamError       = 'Error: can''t open stream';
-  cmTestPswError      = 'Error: can''t open "%s", wrong password';
+  cmTestPswError      = 'Error: wrong password';
 
   cmConfigWarning     = 'Warning: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning = 'Warning: file "%s" already exists';
