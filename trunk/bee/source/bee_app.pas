@@ -195,7 +195,7 @@ begin
 
   if not (FCommandLine.Command in [ccList, ccRename, ccHelp]) then
   begin
-    CheckArchivePassword;
+    // CheckArchivePassword;
   end;
 end;
 
@@ -210,16 +210,18 @@ begin
     // select smaller size item
     P := FHeaders.Items[0];
     for I := 1 to FHeaders.Count - 1 do
-      if P.Size > FHeaders.Items[I].Size then
+      if (foTear in FHeaders.Items[I].Flags) and (P.Size > FHeaders.Items[I].Size) then
       begin
          P := FHeaders.Items[I];
       end;
     // test item
+    DoMessage(Format(cmChecking, [P.Name]));
     Decoder := THeaderStreamCoder.Create(FArcFile, nil);
     for I := 0 to FHeaders.Search(P) do
     begin
       Decoder.InitializeCoder(FHeaders.Items[I]);
     end;
+
     FArcFile.StartDecode(FCommandLine.pOption);
     if not Decoder.DecodeToNul(P) then
     begin
@@ -363,7 +365,7 @@ begin
   DoMessage(Format(cmScanning, ['...']));
   FHeaders.SetAction(FCommandLine.FileMasks, haNone,    haExtract);
   FHeaders.SetAction(FCommandLine.xOptions,  haExtract, haNone);
-
+  // overwrite routines ...
   if FCommandline.Command in [ccXextract, ccExtract] then
     for I  := 0 to FHeaders.Count - 1 do
     begin
@@ -686,7 +688,6 @@ begin
         if Code < ccError then
         begin
           P := FHeaders.Items[I];
-
           Decoder.InitializeCoder(P);
           if foPassword in P.Flags then
           begin
@@ -695,15 +696,13 @@ begin
 
           DoMessage(Format(cmExtracting, [P.Name]));
           case P.Action of
-            haNone: {nothing to do};
+            haNone:        {nothing to do};
             haExtract:
               case FCommandLine.Command of
-                ccExtract: if not Decoder.DecodeTo(P)    then DoMessage(Format(cmCrcError, [P.Name]), ccError);
+                ccExtract: if not Decoder.DecodeTo   (P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
                 ccTest:    if not Decoder.DecodeToNul(P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
-                else       DoMessage(Format(cmActionError, []), ccError);
               end;
-            haDecode: if not Decoder.DecodeToNul(P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
-            else DoMessage(Format(cmActionError, []), ccError);
+            haDecode:      if not Decoder.DecodeToNul(P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
           FArcFile.FinishDecode;
