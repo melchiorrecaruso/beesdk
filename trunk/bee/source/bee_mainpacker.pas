@@ -154,7 +154,13 @@ begin
   FSecondaryCodec.Start;
   while (Result < Size) do
   begin
+
+    WRITE('DEBUG-1');
+
     Symbol := FPPM.UpdateModel(0);
+
+    WRITELN('DEBUG-2');
+
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
     if FTick and (not FTicker) then Break;
