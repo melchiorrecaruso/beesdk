@@ -48,8 +48,8 @@ type
     FBufferSize: longint;
     FBufferReaded: longint;
     FBuffer: array of byte;
-    procedure FillBuffer; virtual;
-    procedure FlushBuffer; virtual;
+    procedure FillBuffer; virtual; abstract;
+    procedure FlushBuffer; virtual; abstract;
     procedure SetCapacity(const AValue: longint); virtual;
   public
     constructor Create(ASource: TStream; ACapacity: longint); overload;
@@ -61,6 +61,8 @@ type
   { TReadBufStream }
 
   TReadBufStream = class(TBufStream)
+  protected
+    procedure FillBuffer; override;
   public
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
@@ -70,6 +72,8 @@ type
   { TWriteBufStream }
 
   TWriteBufStream = class(TBufStream)
+  protected
+    procedure FlushBuffer; override;
   public
     destructor Destroy; override;
     function Write(const Data; Count: longint): longint; override;
@@ -147,18 +151,6 @@ begin
   SetLength(FBuffer, FCapacity);
 end;
 
-procedure TBufStream.FillBuffer;
-begin
-  FBufferSize := FSource.Read(FBuffer[0], FCapacity);
-  FBufferReaded := 0;
-end;
-
-procedure TBufStream.FlushBuffer;
-begin
-  FSource.Write(FBuffer[0], FBufferSize);
-  FBufferSize := 0;
-end;
-
 { TReadBufStream class }
 
 function TReadBufStream.Read(var Data; Count: longint): longint;
@@ -209,6 +201,12 @@ begin
     Result := FSource.Seek(Offset, Origin);
 
   FBufferSize   := 0;
+  FBufferReaded := 0;
+end;
+
+procedure TReadBufStream.FillBuffer;
+begin
+  FBufferSize := FSource.Read(FBuffer[0], FCapacity);
   FBufferReaded := 0;
 end;
 
@@ -269,6 +267,12 @@ begin
     FlushBuffer;
   end;
   Result := FSource.Seek(Offset, Origin);
+end;
+
+procedure TWriteBufStream.FlushBuffer;
+begin
+  FSource.Write(FBuffer[0], FBufferSize);
+  FBufferSize := 0;
 end;
 
 { TReadBlowFishBufStream class }

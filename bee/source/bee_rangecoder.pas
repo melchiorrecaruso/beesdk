@@ -182,7 +182,9 @@ end;
 
 procedure TRangeCoder.OutputByte(aValue: byte); {$IFDEF FPC} inline; {$ENDIF}
 begin
+  WRITELN('DEBUG-5');
   FStream.Write(aValue, 1);
+  WRITELN('DEBUG-6');
 end;
 
 end.
