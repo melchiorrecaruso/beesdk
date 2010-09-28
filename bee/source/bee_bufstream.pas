@@ -32,7 +32,7 @@ unit Bee_BufStream;
 interface
 
 uses
-  Classes, Bee_BlowFish;
+  Classes, Bee_BlowFish, bufstream;
 
 const
   DefaultBufferCapacity: longint = 128 * 1024;

@@ -44,7 +44,7 @@ type
 
   { TStreamCoder class }
 
-  TStreamEncoder = class
+  TStreamCoder = class
   private
     FStream: TStream;
     FPPM: TBaseCoder;
@@ -54,67 +54,58 @@ type
   public
     constructor Create(Stream: TStream; Ticker: TTickerMethod);
     destructor Destroy; override;
-    function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
-    function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
     procedure SetTable(const Value: TTableParameters);
     procedure SetDictionary(Value: byte);
     procedure FreshFlexible;
     procedure FreshSolid;
   end;
 
+  { TStreamEncoder class }
+
+  TStreamEncoder = class
+  public
+    function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+  end;
 
   { TStreamDecoder class }
 
   TStreamDecoder = class
-  private
-    FStream: TStream;
-    FPPM: TBaseCoder;
-    FSecondaryCodec: TSecondaryCodec;
-    FTicker: TTickerMethod;
-    FTick: boolean;
   public
-    constructor Create(Stream: TStream; Ticker: TTickerMethod);
-    destructor Destroy; override;
-    function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
-    function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
     function DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
     function CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
-    procedure SetTable(const Value: TTableParameters);
-    procedure SetDictionary(Value: byte);
-    procedure FreshFlexible;
-    procedure FreshSolid;
   end;
 
+  { TFileStreamEncoder class }
 
-
-
-
-
-
-
-
-
-
-
-
-
-  { TFileStreamCoder class }
-
-  TFileStreamCoder = class(TStreamCoder)
+  TFileStreamEncoder = class(TStreamEncoder)
   public
     function CopyFrom(const FileName: string; var CRC: longword): boolean; overload;
     function EncodeFrom(const FileName: string; var CRC: longword): boolean; overload;
+  end;
+
+  { TFileStreamDecoder class }
+
+  TFileStreamDecoder = class(TStreamDecoder)
+  public
     function CopyTo(const FileName: string; var CRC: longword): boolean; overload;
     function DecodeTo(const FileName: string; var CRC: longword): boolean; overload;
   end;
 
-  { THeaderStreamCoder class }
+  { THeaderStreamEncoder class }
 
-  THeaderStreamCoder = class(TFileStreamCoder)
+  THeaderStreamEncoder = class(TFileStreamEncoder)
   public
     function CopyFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
     function EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
     function EncodeFrom(Item: THeader): boolean; overload;
+    procedure InitializeCoder(Item: THeader);
+  end;
+
+  { THeaderStreamDecoder class }
+
+  THeaderStreamDecoder = class(TFileStreamDecoder)
+  public
     function DecodeTo(Item: THeader): boolean; overload;
     function DecodeToNul(Item: THeader): boolean;
     procedure InitializeCoder(Item: THeader);
