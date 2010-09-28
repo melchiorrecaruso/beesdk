@@ -44,7 +44,28 @@ type
 
   { TStreamCoder class }
 
-  TStreamCoder = class
+  TStreamEncoder = class
+  private
+    FStream: TStream;
+    FPPM: TBaseCoder;
+    FSecondaryCodec: TSecondaryCodec;
+    FTicker: TTickerMethod;
+    FTick: boolean;
+  public
+    constructor Create(Stream: TStream; Ticker: TTickerMethod);
+    destructor Destroy; override;
+    function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    procedure SetTable(const Value: TTableParameters);
+    procedure SetDictionary(Value: byte);
+    procedure FreshFlexible;
+    procedure FreshSolid;
+  end;
+
+
+  { TStreamDecoder class }
+
+  TStreamDecoder = class
   private
     FStream: TStream;
     FPPM: TBaseCoder;
@@ -63,6 +84,19 @@ type
     procedure FreshFlexible;
     procedure FreshSolid;
   end;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   { TFileStreamCoder class }
 

@@ -63,7 +63,8 @@ type
     FFileStream: TFileStream;
   protected
     procedure SetSize(NewSize: longint); override;
-    procedure SetSize64(const NewSize: int64); override;
+    procedure SetSize(const NewSize: int64); override;
+    procedure SetSize64(const NewSize: Int64); override;
   public
     constructor Create(const aFileName: string; aMode: word);
     destructor Destroy; override;
@@ -79,7 +80,8 @@ type
   protected
     procedure FlushBuffer; override;
     procedure SetSize(NewSize: longint); override;
-    procedure SetSize64(const NewSize: int64); override;
+    procedure SetSize(const NewSize: int64); override;
+    procedure SetSize64(const NewSize: Int64); override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -187,6 +189,11 @@ begin
   FFileStream.Size := NewSize;
 end;
 
+procedure TFileWriter.SetSize(const NewSize: int64);
+begin
+  FFileStream.Size := NewSize;
+end;
+
 procedure TFileWriter.SetSize64(const NewSize: int64);
 begin
   FFileStream.Size := NewSize;
@@ -211,6 +218,11 @@ begin
 end;
 
 procedure TNulWriter.SetSize(NewSize: longint);
+begin
+  // nothing to do
+end;
+
+procedure TNulWriter.SetSize(const NewSize: int64);
 begin
   // nothing to do
 end;
