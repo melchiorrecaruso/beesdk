@@ -130,6 +130,10 @@ procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: longword); {$IFDEF FPC} inl
 var
   Tmp: longword;
 begin
+
+  WRITELN(' ENCODE - ERROR');
+
+
   Tmp   := Low;
   Low   := Low + MulDiv(Range, CumFreq, TotFreq);
   Carry := Carry + longword(Low < Tmp);
