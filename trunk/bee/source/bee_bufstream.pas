@@ -74,6 +74,9 @@ type
   TWriteBufStream = class(TBufStream)
   protected
     procedure FlushBuffer; override;
+    procedure SetSize(NewSize: longint); override;
+    procedure SetSize(const NewSize: int64); override;
+    procedure SetSize64(const NewSize: Int64); override;
   public
     destructor Destroy; override;
     function Write(const Data; Count: longint): longint; override;
@@ -206,7 +209,7 @@ end;
 
 procedure TReadBufStream.FillBuffer;
 begin
-  FBufferSize := FSource.Read(FBuffer[0], FCapacity);
+  FBufferSize   := FSource.Read(FBuffer[0], FCapacity);
   FBufferReaded := 0;
 end;
 
@@ -273,6 +276,21 @@ procedure TWriteBufStream.FlushBuffer;
 begin
   FSource.Write(FBuffer[0], FBufferSize);
   FBufferSize := 0;
+end;
+
+procedure TWriteBufStream.SetSize(NewSize: longint);
+begin
+  FSource.Size := NewSize;
+end;
+
+procedure TWriteBufStream.SetSize(const NewSize: int64);
+begin
+  FSource.Size := NewSize;
+end;
+
+procedure TWriteBufStream.SetSize64(const NewSize: int64);
+begin
+  FSource.Size := NewSize;
 end;
 
 { TReadBlowFishBufStream class }
