@@ -203,7 +203,7 @@ procedure TBeeApp.CheckArchivePassword;
 var
   P: THeader;
   I: longint;
-  Decoder: THeaderStreamCoder;
+  Decoder: THeaderStreamDecoder;
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, foPassword) <> -1) then
   begin
@@ -216,7 +216,7 @@ begin
       end;
     // test item
     DoMessage(Format(cmChecking, [P.Name]));
-    Decoder := THeaderStreamCoder.Create(FArcFile, nil);
+    Decoder := THeaderStreamDecoder.Create(FArcFile, nil);
     for I := 0 to FHeaders.IndexOf(P) do
     begin
       Decoder.InitializeCoder(FHeaders.Items[I]);
@@ -451,7 +451,7 @@ var
   I: longint;
   CRC: longword;
   FSwapStrm: TFileWriter;
-  Decoder: THeaderStreamCoder;
+  Decoder: THeaderStreamDecoder;
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, [haExtract]) <> -1) then
   begin
@@ -459,7 +459,7 @@ begin
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
     if Assigned(FSwapStrm) then
     begin
-      Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
+      Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
       for I := 0 to FHeaders.Count - 1 do
         if Code < ccError then
         begin
@@ -615,7 +615,7 @@ procedure TBeeApp.EncodeShell;
 var
   I: longint;
   P: THeader;
-  Encoder: THeaderStreamCoder;
+  Encoder: THeaderStreamEncoder;
 begin
   OpenArchive;
   if Code < ccError then
@@ -631,7 +631,7 @@ begin
         if Code < ccError then
         begin
           FHeaders.Write(FTempFile);
-          Encoder := THeaderStreamCoder.Create(FTempFile, DoTick);
+          Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
           for I := 0 to FHeaders.Count - 1 do
             if Code < ccError then
             begin
@@ -674,7 +674,7 @@ procedure TBeeApp.DecodeShell(const aAction: THeaderAction);
 var
   I: longint;
   P: THeader;
-  Decoder: THeaderStreamCoder;
+  Decoder: THeaderStreamDecoder;
 begin
   OpenArchive;
   if Code < ccError then
@@ -682,7 +682,7 @@ begin
     SetItemsToExtract;
     if FHeaders.GetNext(0, [haExtract]) <> -1 then
     begin
-      Decoder := THeaderStreamCoder.Create(FArcFile, DoTick);
+      Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
       for I := 0 to FHeaders.Count - 1 do
       begin
         if Code < ccError then
