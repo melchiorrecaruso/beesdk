@@ -42,10 +42,10 @@ type
 
   TTickerMethod = function: boolean of object;
 
-  { TStreamCoder class }
+  { TStreamEncoder class }
 
-  TStreamCoder = class
-  private
+  TStreamEncoder = class
+  protected
     FStream: TStream;
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
@@ -58,12 +58,7 @@ type
     procedure SetDictionary(Value: byte);
     procedure FreshFlexible;
     procedure FreshSolid;
-  end;
 
-  { TStreamEncoder class }
-
-  TStreamEncoder = class
-  public
     function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
     function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
   end;
@@ -71,7 +66,21 @@ type
   { TStreamDecoder class }
 
   TStreamDecoder = class
+  protected
+    FStream: TStream;
+    FPPM: TBaseCoder;
+    FSecondaryCodec: TSecondaryCodec;
+    FTicker: TTickerMethod;
+    FTick: boolean;
   public
+    constructor Create(Stream: TStream; Ticker: TTickerMethod);
+    destructor Destroy; override;
+    procedure SetTable(const Value: TTableParameters);
+    procedure SetDictionary(Value: byte);
+    procedure FreshFlexible;
+    procedure FreshSolid;
+
+
     function DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
     function CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
   end;
@@ -118,9 +127,9 @@ uses
   Bee_Files,
   Bee_Crc;
 
-{ TStreamCoder class }
+{ TStreamEncoder class }
 
-constructor TStreamCoder.Create(Stream: TStream; Ticker: TTickerMethod);
+constructor TStreamEncoder.Create(Stream: TStream; Ticker: TTickerMethod);
 begin
   FStream := Stream;
   FSecondaryCodec := TSecondaryEncoder.Create(FStream);
@@ -130,7 +139,7 @@ begin
   FTick   := Assigned(FTicker);
 end;
 
-destructor TStreamCoder.Destroy;
+destructor TStreamEncoder.Destroy;
 begin
   FPPM.Free;
   FSecondaryCodec.Free;
@@ -138,7 +147,27 @@ begin
   FTicker := nil;
 end;
 
-function TStreamCoder.CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
+procedure TStreamEncoder.SetDictionary(Value: byte);
+begin
+  FPPM.SetDictionary(Value);
+end;
+
+procedure TStreamEncoder.SetTable(const Value: TTableParameters);
+begin
+  FPPM.SetTable(Value);
+end;
+
+procedure TStreamEncoder.FreshFlexible;
+begin
+  FPPM.FreshFlexible;
+end;
+
+procedure TStreamEncoder.FreshSolid;
+begin
+  FPPM.FreshSolid;
+end;
+
+function TStreamEncoder.CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
 begin
@@ -153,7 +182,7 @@ begin
   end;
 end;
 
-function TStreamCoder.EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
+function TStreamEncoder.EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
 begin
@@ -170,31 +199,49 @@ begin
   FSecondaryCodec.Flush;
 end;
 
-function TStreamCoder.DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
-var
-  Symbol: byte;
+{ TStreamDecoder class }
+
+
+constructor TStreamDecoder.Create(Stream: TStream; Ticker: TTickerMethod);
 begin
-  Result := 0;
-  CRC := longword(-1);
-  FSecondaryCodec.Start;
-  while (Result < Size) do
-  begin
+  FStream := Stream;
+  FSecondaryCodec := TSecondaryDecoder.Create(FStream);
+  FPPM := TBaseCoder.Create(FSecondaryCodec);
 
-    WRITE('DEBUG-1');
-
-    Symbol := FPPM.UpdateModel(0);
-
-    WRITELN('DEBUG-2');
-
-    Strm.Write(Symbol, 1);
-    UpdCrc32(CRC, Symbol);
-    if FTick and (not FTicker) then Break;
-    Inc(Result);
-  end;
-  FSecondaryCodec.Flush;
+  FTicker := Ticker;
+  FTick   := Assigned(FTicker);
 end;
 
-function TStreamCoder.CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
+destructor TStreamDecoder.Destroy;
+begin
+  FPPM.Free;
+  FSecondaryCodec.Free;
+  FStream := nil;
+  FTicker := nil;
+end;
+
+procedure TStreamDecoder.SetDictionary(Value: byte);
+begin
+  FPPM.SetDictionary(Value);
+end;
+
+procedure TStreamDecoder.SetTable(const Value: TTableParameters);
+begin
+  FPPM.SetTable(Value);
+end;
+
+procedure TStreamDecoder.FreshFlexible;
+begin
+  FPPM.FreshFlexible;
+end;
+
+procedure TStreamDecoder.FreshSolid;
+begin
+  FPPM.FreshSolid;
+end;
+
+
+function TStreamDecoder.CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
 begin
@@ -209,29 +256,27 @@ begin
   end;
 end;
 
-procedure TStreamCoder.SetDictionary(Value: byte);
+function TStreamDecoder.DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
+var
+  Symbol: byte;
 begin
-  FPPM.SetDictionary(Value);
+  Result := 0;
+  CRC := longword(-1);
+  FSecondaryCodec.Start;
+  while (Result < Size) do
+  begin
+    Symbol := FPPM.UpdateModel(0);
+    Strm.Write(Symbol, 1);
+    UpdCrc32(CRC, Symbol);
+    if FTick and (not FTicker) then Break;
+    Inc(Result);
+  end;
+  FSecondaryCodec.Flush;
 end;
 
-procedure TStreamCoder.SetTable(const Value: TTableParameters);
-begin
-  FPPM.SetTable(Value);
-end;
+{ TFileStreamEncoder class }
 
-procedure TStreamCoder.FreshFlexible;
-begin
-  FPPM.FreshFlexible;
-end;
-
-procedure TStreamCoder.FreshSolid;
-begin
-  FPPM.FreshSolid;
-end;
-
-{ TFileStreamCoder class }
-
-function TFileStreamCoder.CopyFrom(const FileName: string; var CRC: longword): boolean;
+function TFileStreamEncoder.CopyFrom(const FileName: string; var CRC: longword): boolean;
 var
   Strm: TFileReader;
 begin
@@ -245,7 +290,7 @@ begin
     Result := False;
 end;
 
-function TFileStreamCoder.EncodeFrom(const FileName: string; var CRC: longword): boolean;
+function TFileStreamEncoder.EncodeFrom(const FileName: string; var CRC: longword): boolean;
 var
   Strm: TFileReader;
 begin
@@ -259,21 +304,9 @@ begin
     Result := False;
 end;
 
-function TFileStreamCoder.DecodeTo(const FileName: string; var CRC: longword): boolean;
-var
-  Strm: TFileWriter;
-begin
-  CRC  := longword(-1);
-  Strm := CreateTFileWriter(FileName, fmCreate);
-  if Assigned(Strm) then
-  begin
-    Result := DecodeTo(Strm, Strm.Size, CRC) = Strm.Size;
-    Strm.Free;
-  end else
-    Result := False;
-end;
+{ TFileStreamDecoder class }
 
-function TFileStreamCoder.CopyTo(const FileName: string; var CRC: longword): boolean;
+function TFileStreamDecoder.CopyTo(const FileName: string; var CRC: longword): boolean;
 var
   Strm: TFileWriter;
 begin
@@ -287,9 +320,23 @@ begin
     Result := False;
 end;
 
-{ THeaderStreamCoder class }
+function TFileStreamDecoder.DecodeTo(const FileName: string; var CRC: longword): boolean;
+var
+  Strm: TFileWriter;
+begin
+  CRC  := longword(-1);
+  Strm := CreateTFileWriter(FileName, fmCreate);
+  if Assigned(Strm) then
+  begin
+    Result := DecodeTo(Strm, Strm.Size, CRC) = Strm.Size;
+    Strm.Free;
+  end else
+    Result := False;
+end;
 
-function THeaderStreamCoder.CopyFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
+{ THeaderStreamEncoder class }
+
+function THeaderStreamEncoder.CopyFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
 var
   CRC: longword;
 begin
@@ -301,7 +348,7 @@ begin
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 end;
 
-function THeaderStreamCoder.EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
+function THeaderStreamEncoder.EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
 var
   FStreamPos: int64;
 begin
@@ -330,7 +377,7 @@ begin
   end;
 end;
 
-function THeaderStreamCoder.EncodeFrom(Item: THeader): boolean;
+function THeaderStreamEncoder.EncodeFrom(Item: THeader): boolean;
 var
   FStreamPos: int64;
 begin
@@ -358,7 +405,19 @@ begin
   end;
 end;
 
-function THeaderStreamCoder.DecodeTo(Item: THeader): boolean;
+procedure THeaderStreamEncoder.InitializeCoder(Item: THeader);
+begin
+  if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
+  if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
+  if foTear       in Item.Flags then
+    FPPM.FreshFlexible
+  else
+    FPPM.FreshSolid;
+end;
+
+{ THeaderStreamDecoder class }
+
+function THeaderStreamDecoder.DecodeTo(Item: THeader): boolean;
 var
   CRC: longword;
 begin
@@ -379,7 +438,7 @@ begin
   end;
 end;
 
-function THeaderStreamCoder.DecodeToNul(Item: THeader): boolean;
+function THeaderStreamDecoder.DecodeToNul(Item: THeader): boolean;
 var
   CRC: longword;
   Strm: TNulWriter;
@@ -398,7 +457,7 @@ begin
   Strm.Free;
 end;
 
-procedure THeaderStreamCoder.InitializeCoder(Item: THeader);
+procedure THeaderStreamDecoder.InitializeCoder(Item: THeader);
 begin
   if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
   if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
