@@ -42,47 +42,46 @@ type
 
   TTickerMethod = function: boolean of object;
 
-  { TStreamEncoder class }
+  { TStreamCoder class }
 
-  TStreamEncoder = class
+  TStreamCoder = class
   protected
     FStream: TStream;
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
-    FTicker: TTickerMethod;
-    FTick: boolean;
   public
-    constructor Create(Stream: TStream; Ticker: TTickerMethod);
+    constructor Create(Stream: TStream; Decoder: boolean);
     destructor Destroy; override;
     procedure SetTable(const Value: TTableParameters);
     procedure SetDictionary(Value: byte);
     procedure FreshFlexible;
     procedure FreshSolid;
+  end;
 
+  { TStreamEncoder class }
+
+  TStreamEncoder = class(TStreamCoder)
+  private
+    FTicker: TTickerMethod;
+    FTick: boolean;
+  public
+    constructor Create(Stream: TStream; Ticker: TTickerMethod);
+    destructor Destroy; override;
     function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
     function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
   end;
 
   { TStreamDecoder class }
 
-  TStreamDecoder = class
-  protected
-    FStream: TStream;
-    FPPM: TBaseCoder;
-    FSecondaryCodec: TSecondaryCodec;
+  TStreamDecoder = class(TStreamCoder)
+  private
     FTicker: TTickerMethod;
     FTick: boolean;
   public
     constructor Create(Stream: TStream; Ticker: TTickerMethod);
     destructor Destroy; override;
-    procedure SetTable(const Value: TTableParameters);
-    procedure SetDictionary(Value: byte);
-    procedure FreshFlexible;
-    procedure FreshSolid;
-
-
-    function DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
     function CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    function DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
   end;
 
   { TFileStreamEncoder class }
@@ -127,44 +126,58 @@ uses
   Bee_Files,
   Bee_Crc;
 
+{ TStreamCoder class }
+
+constructor TStreamCoder.Create(Stream: TStream; Decoder: boolean);
+begin
+  FStream := Stream;
+  if Decoder then
+    FSecondaryCodec := TSecondaryDecoder.Create(FStream)
+  else
+    FSecondaryCodec := TSecondaryEncoder.Create(FStream);
+  FPPM := TBaseCoder.Create(FSecondaryCodec);
+end;
+
+destructor TStreamCoder.Destroy;
+begin
+  FPPM.Free;
+  FSecondaryCodec.Free;
+  FStream := nil;
+end;
+
+procedure TStreamCoder.SetDictionary(Value: byte);
+begin
+  FPPM.SetDictionary(Value);
+end;
+
+procedure TStreamCoder.SetTable(const Value: TTableParameters);
+begin
+  FPPM.SetTable(Value);
+end;
+
+procedure TStreamCoder.FreshFlexible;
+begin
+  FPPM.FreshFlexible;
+end;
+
+procedure TStreamCoder.FreshSolid;
+begin
+  FPPM.FreshSolid;
+end;
+
 { TStreamEncoder class }
 
 constructor TStreamEncoder.Create(Stream: TStream; Ticker: TTickerMethod);
 begin
-  FStream := Stream;
-  FSecondaryCodec := TSecondaryEncoder.Create(FStream);
-  FPPM := TBaseCoder.Create(FSecondaryCodec);
-
+  inherited Create(Stream, False);
   FTicker := Ticker;
   FTick   := Assigned(FTicker);
 end;
 
 destructor TStreamEncoder.Destroy;
 begin
-  FPPM.Free;
-  FSecondaryCodec.Free;
-  FStream := nil;
   FTicker := nil;
-end;
-
-procedure TStreamEncoder.SetDictionary(Value: byte);
-begin
-  FPPM.SetDictionary(Value);
-end;
-
-procedure TStreamEncoder.SetTable(const Value: TTableParameters);
-begin
-  FPPM.SetTable(Value);
-end;
-
-procedure TStreamEncoder.FreshFlexible;
-begin
-  FPPM.FreshFlexible;
-end;
-
-procedure TStreamEncoder.FreshSolid;
-begin
-  FPPM.FreshSolid;
+  inherited Destroy;
 end;
 
 function TStreamEncoder.CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
