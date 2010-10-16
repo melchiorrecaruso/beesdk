@@ -1,4 +1,4 @@
-The Bee 0.8.0 build 1016 archiver utility, April 2009
+The Bee 0.8.0 build 1020 archiver utility, April 2009
 (C) 1999-2009 Andrew Filinsky and Melchiorre Caruso
 
   Usage: Bee <Command> -<Option 1> -<Option N> <ArchiveName> <FileNames...>
