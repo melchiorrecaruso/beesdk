@@ -214,45 +214,18 @@ end;
 
 { TStreamDecoder class }
 
-
 constructor TStreamDecoder.Create(Stream: TStream; Ticker: TTickerMethod);
 begin
-  FStream := Stream;
-  FSecondaryCodec := TSecondaryDecoder.Create(FStream);
-  FPPM := TBaseCoder.Create(FSecondaryCodec);
-
+  inherited Create(Stream, True);
   FTicker := Ticker;
   FTick   := Assigned(FTicker);
 end;
 
 destructor TStreamDecoder.Destroy;
 begin
-  FPPM.Free;
-  FSecondaryCodec.Free;
-  FStream := nil;
   FTicker := nil;
+  inherited Destroy;
 end;
-
-procedure TStreamDecoder.SetDictionary(Value: byte);
-begin
-  FPPM.SetDictionary(Value);
-end;
-
-procedure TStreamDecoder.SetTable(const Value: TTableParameters);
-begin
-  FPPM.SetTable(Value);
-end;
-
-procedure TStreamDecoder.FreshFlexible;
-begin
-  FPPM.FreshFlexible;
-end;
-
-procedure TStreamDecoder.FreshSolid;
-begin
-  FPPM.FreshSolid;
-end;
-
 
 function TStreamDecoder.CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var

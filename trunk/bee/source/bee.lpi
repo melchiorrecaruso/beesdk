@@ -9,14 +9,14 @@
       </Flags>
       <MainUnit Value="0"/>
       <UseAppBundle Value="False"/>
+      <Icon Value="0"/>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <MinorVersionNr Value="7"/>
-      <RevisionNr Value="8"/>
-      <BuildNr Value="2110"/>
+      <MinorVersionNr Value="8"/>
+      <BuildNr Value="1102"/>
       <Language Value="0809"/>
       <StringTable CompanyName="Melchiorre Caruso" FileDescription="Bee Archiver" ProductName="Bee Archiver" ProductVersion="0.7.8"/>
     </VersionInfo>
@@ -84,10 +84,11 @@
       <Unit4>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="669"/>
-        <CursorPos X="48" Y="703"/>
+        <TopLine Value="671"/>
+        <CursorPos X="34" Y="205"/>
         <UsageCount Value="97"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -150,12 +151,10 @@
       <Unit10>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="198"/>
-        <CursorPos X="39" Y="236"/>
-        <FoldState Value=" T3kI03322157"/>
+        <TopLine Value="129"/>
+        <CursorPos X="65" Y="165"/>
         <UsageCount Value="27"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -198,8 +197,8 @@
         <UnitName Value="Bee_RangeCoder"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="112"/>
-        <CursorPos X="35" Y="134"/>
+        <TopLine Value="141"/>
+        <CursorPos X="28" Y="185"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -216,7 +215,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="bee_files.pas"/>
         <Caret Line="59" Column="32" TopLine="51"/>
@@ -331,8 +330,12 @@
       </Position28>
       <Position29>
         <Filename Value="bee_mainpacker.pas"/>
-        <Caret Line="236" Column="39" TopLine="217"/>
+        <Caret Line="236" Column="39" TopLine="198"/>
       </Position29>
+      <Position30>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="238" Column="41" TopLine="45"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
