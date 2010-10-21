@@ -217,8 +217,7 @@ begin
   begin
     if (Item1.Action <> haNew) and (Item2.Action <> haNew) then
     begin
-      Result := CompareFileName(Item1.Name, Item2.Name);
-
+      Result := 1;
     end else
       if (Item1.Action = haNew) then
         Result := -1
