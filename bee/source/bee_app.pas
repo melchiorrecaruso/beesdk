@@ -110,7 +110,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1151 archiver utility, Set 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1153 archiver utility, Set 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -212,7 +212,7 @@ begin
     for I := 1 to FHeaders.Count - 1 do
       if (foTear in FHeaders.Items[I].Flags) and (P.Size > FHeaders.Items[I].Size) then
       begin
-         P := FHeaders.Items[I];
+        P := FHeaders.Items[I];
       end;
     // test item
     DoMessage(Format(cmChecking, [P.Name]));
@@ -367,7 +367,7 @@ begin
   FHeaders.SetAction(FCommandLine.xOptions,  haExtract, haNone);
   // overwrite routines ...
   if FCommandline.Command in [ccXextract, ccExtract] then
-    for I  := 0 to FHeaders.Count - 1 do
+    for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
       if (P.Action = haExtract) and (Code < ccError) then
@@ -688,6 +688,7 @@ begin
         if Code < ccError then
         begin
           P := FHeaders.Items[I];
+
           Decoder.InitializeCoder(P);
           if foPassword in P.Flags then
           begin
@@ -869,23 +870,26 @@ begin
         P := FHeaders.Items[I];
 
         if foVersion in P.Flags then
-          Version := P.Version;
+          Version := P.Version
+        else
+          P.Version := Version;
 
         if foMethod in P.Flags then
-          Method := P.Method;
+          Method := P.Method
+        else
+          P.Method := Method;
 
         if foDictionary in P.Flags then
-          Dictionary := P.Dictionary;
+          Dictionary := P.Dictionary
+        else
+          P.Dictionary := Dictionary;
 
+        {$IFDEF CONSOLEAPPLICATION}
         if P.Action = haExtract then
         begin
-          P.Version    := Version;
-          P.Method     := Method;
-          P.Dictionary := Dictionary;
-          {$IFDEF CONSOLEAPPLICATION}
           FHeadersToList.Add(P);
-          {$ENDIF}
         end;
+        {$ENDIF}
       end;
 
       TotalSize  := 0;
