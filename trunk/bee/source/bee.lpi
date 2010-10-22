@@ -16,7 +16,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="8"/>
-      <BuildNr Value="1138"/>
+      <BuildNr Value="1150"/>
       <Language Value="0809"/>
       <StringTable CompanyName="Melchiorre Caruso" FileDescription="Bee Archiver" ProductName="Bee Archiver" ProductVersion="0.7.8"/>
     </VersionInfo>
@@ -87,8 +87,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="842"/>
-        <CursorPos X="39" Y="894"/>
+        <TopLine Value="845"/>
+        <CursorPos X="94" Y="861"/>
         <UsageCount Value="99"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -215,7 +215,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
     </Units>
-    <JumpHistory Count="28" HistoryIndex="27">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="bee_app.pas"/>
         <Caret Line="677" Column="28" TopLine="652"/>
@@ -328,6 +328,10 @@
         <Filename Value="bee_app.pas"/>
         <Caret Line="692" Column="38" TopLine="661"/>
       </Position28>
+      <Position29>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="856" Column="87" TopLine="854"/>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
