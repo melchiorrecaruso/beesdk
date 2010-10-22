@@ -853,12 +853,18 @@ begin
     if FHeaders.GetNext(0, [haExtract]) <> -1 then
     begin
       {$IFDEF CONSOLEAPPLICATION}
-      DoMessage(StringOfChar(' ', 79));
+      // DoMessage(StringOfChar(' ', 79));
       if FCommandLine.stlOption then
-        DoMessage('Directory|File' + StringOfChar(' ',  8) + 'Size     Packed Ratio     Date  Time    Attr CRC     Meth')
-      else
-        DoMessage('Directory|File' + StringOfChar(' ', 32) + 'Size Ratio     Date  Time    Attr');
-      DoMessage(StringOfChar('-', 79));
+      begin
+        DoMessage('-------------------------- ---------- ----- -------- ----- ------- ------------');
+        DoMessage('Directory|File        Size     Packed Ratio     Date  Time    Attr CRC     Meth');
+        DoMessage('-------------------------- ---------- ----- -------- ----- ------- ------------');
+      end else
+      begin
+        DoMessage('-------------------------------------------------- ----- -------- ----- -------');
+        DoMessage('Directory|File                                Size Ratio     Date  Time    Attr');
+        DoMessage('-------------------------------------------------- ----- -------- ----- -------');
+      end;
       {$ENDIF}
 
       Version    := -1;
@@ -962,7 +968,11 @@ begin
         Inc(I);
       end;
       {$IFDEF CONSOLEAPPLICATION}
-      DoMessage(StringOfChar('-', 79));
+      if FCommandLine.stlOption then
+        DoMessage('-------------------------- ---------------- -------- ----- ------- ---- -------')
+      else
+        DoMessage('-------------------------------------------------- ----- -------- ----- -------');
+
       if FCommandLine.stlOption then
         DoMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %10s %5s', [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)])))
       else
