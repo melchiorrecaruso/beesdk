@@ -855,12 +855,12 @@ begin
       {$IFDEF CONSOLEAPPLICATION}
       if FCommandLine.sltOption then
       begin
-        DoMessage('Directory|File        Size     Packed Ratio     Date  Time    Attr CRC     Meth');
-        DoMessage('-------------------------- ---------- ----- -------- ----- ------- ------------');
+        DoMessage('Path|Name             Size     Packed Ratio     Date  Time    Attr CRC      MTD');
+        DoMessage('--------------- ---------- ---------- ----- -------- ----- ------- -------- ---');
       end else
       begin
-        DoMessage('Directory|File                                Size Ratio     Date  Time    Attr');
-        DoMessage('-------------------------------------------------- ----- -------- ----- -------');
+        DoMessage('Path|Name                                     Size Ratio     Date  Time    Attr');
+        DoMessage('--------------------------------------- ---------- ----- -------- ----- -------');
       end;
       {$ENDIF}
 
@@ -966,7 +966,7 @@ begin
       end;
       {$IFDEF CONSOLEAPPLICATION}
       if FCommandLine.sltOption then
-        DoMessage('-------------------------- ---------------- -------- ----- ------- ---- -------')
+        DoMessage('--------------- ---------- ---------- ----- -------- ----- ------- -------- ---')
       else
         DoMessage('-------------------------------------------------- ----- -------- ----- -------');
 
