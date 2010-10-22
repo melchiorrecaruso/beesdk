@@ -853,15 +853,12 @@ begin
     if FHeaders.GetNext(0, [haExtract]) <> -1 then
     begin
       {$IFDEF CONSOLEAPPLICATION}
-      // DoMessage(StringOfChar(' ', 79));
-      if FCommandLine.stlOption then
+      if FCommandLine.sltOption then
       begin
-        DoMessage('-------------------------- ---------- ----- -------- ----- ------- ------------');
         DoMessage('Directory|File        Size     Packed Ratio     Date  Time    Attr CRC     Meth');
         DoMessage('-------------------------- ---------- ----- -------- ----- ------- ------------');
       end else
       begin
-        DoMessage('-------------------------------------------------- ----- -------- ----- -------');
         DoMessage('Directory|File                                Size Ratio     Date  Time    Attr');
         DoMessage('-------------------------------------------------- ----- -------- ----- -------');
       end;
@@ -903,7 +900,7 @@ begin
       TotalFiles := 0;
 
       {$IFDEF CONSOLEAPPLICATION}
-      if not FCommandLine.stlOption then
+      if not FCommandLine.sltOption then
       begin
         FHeadersToList.Sort(CompareFn);
         FHeadersToListPath := '';
@@ -960,7 +957,7 @@ begin
         {$ELSE}
         FI.Position := I;
         {$ENDIF}
-        DoList(FI, FCommandLine.stlOption);
+        DoList(FI, FCommandLine.sltOption);
 
         Inc(TotalSize, P.Size);
         Inc(TotalPack, P.PackedSize);
@@ -968,12 +965,12 @@ begin
         Inc(I);
       end;
       {$IFDEF CONSOLEAPPLICATION}
-      if FCommandLine.stlOption then
+      if FCommandLine.sltOption then
         DoMessage('-------------------------- ---------------- -------- ----- ------- ---- -------')
       else
         DoMessage('-------------------------------------------------- ----- -------- ----- -------');
 
-      if FCommandLine.stlOption then
+      if FCommandLine.sltOption then
         DoMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %10s %5s', [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)])))
       else
         DoMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 39 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %5s', [SizeToStr(TotalSize), RatioToStr(TotalPack, TotalSize)])));

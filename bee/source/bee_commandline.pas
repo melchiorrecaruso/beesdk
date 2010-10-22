@@ -57,7 +57,7 @@ type
     FhvOption: ThvOption;
     FtOption: boolean;
     FlOption: boolean;
-    FstlOption: boolean;
+    FsltOption: boolean;
     FwdOption: string;
     FcdOption: string;
     FcfgOption: string;
@@ -83,7 +83,7 @@ type
     procedure ProcessfOption(var S: string);
     procedure ProcesssfxOption(var S: string);
     procedure ProcesshvOption(var S: string);
-    procedure ProcessstlOption(var S: string);
+    procedure ProcesssltOption(var S: string);
     procedure ProcesswdOption(var S: string);
     procedure ProcesscdOption(var S: string);
     procedure ProcesscfgOption(var S: string);
@@ -109,7 +109,7 @@ type
     property hvOption: ThvOption read FhvOption write FhvOption;
     property tOption: boolean read FtOption write FtOption;
     property lOption: boolean read FlOption write FlOption;
-    property stlOption: boolean read FstlOption write FstlOption;
+    property sltOption: boolean read FsltOption write FsltOption;
     property wdOption: string read FwdOption write SetwdOption;
     property cdOption: string read FcdOption write SetcdOption;
     property cfgOption: string read FcfgOption write SetcfgOption;
@@ -150,7 +150,7 @@ begin
   FhvOption := hv04;
   FtOption := False;
   FlOption := False;
-  FstlOption := False;
+  FsltOption := False;
   FwdOption := '';
   FcdOption := '';
   FcfgOption := SelfPath + DefaultCfgName;
@@ -271,14 +271,14 @@ begin
         FhvOption := hv04;
 end;
 
-procedure TCommandLine.ProcessstlOption(var S: string);
+procedure TCommandLine.ProcesssltOption(var S: string);
 begin
   Delete(S, 1, 4);
   if (S = '') or (S = '+') then
-    FstlOption := True
+    FsltOption := True
   else
     if (S = '-') then
-      FstlOption := False;
+      FsltOption := False;
 end;
 
 procedure TCommandLine.ProcesswdOption(var S: string);
@@ -361,8 +361,8 @@ begin
     if (not FssOption) and (Length(S) <> 1) and (S[1] = '-') then
     begin
       // options...
-      if Pos('-STL', UpperCase(S)) = 1 then
-        ProcessstlOption(S)
+      if Pos('-SLT', UpperCase(S)) = 1 then
+        ProcesssltOption(S)
       else
       if Pos('-SFX', UpperCase(S)) = 1 then
         ProcesssfxOption(S)
@@ -483,10 +483,10 @@ begin
   if FtOption then Result := Result + ' -t+' else Result := Result + ' -t-';
   if FlOption then Result := Result + ' -l+' else Result := Result + ' -l-';
 
-  if FstlOption then
-    Result := Result + ' -stl+'
+  if FsltOption then
+    Result := Result + ' -slt+'
   else
-    Result := Result + ' -stl-';
+    Result := Result + ' -slt-';
 
   if Length(FwdOption)  > 0 then Result := Result + ' -wd'  + FwdOption;
   if Length(FcdOption)  > 0 then Result := Result + ' -cd'  + FcdOption;
