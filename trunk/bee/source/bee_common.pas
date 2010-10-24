@@ -229,7 +229,7 @@ begin
 
   if Recursive = rmWildCard then
   begin
-    if FileNameUseWildCards(ExtractFileName(Mask)) then
+    if FileNameUseWildCards(Mask) then
       Recursive := rmFull
     else
       Recursive := rmNone;

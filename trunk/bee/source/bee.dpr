@@ -104,16 +104,10 @@ type
 
   procedure TCustomBeeApp.OnList(const aItem: THeader);
   begin
-    with aItem do
-    begin
-      Writeln(Format('%16s %7s %12s %12s %3s %s', [
-                FileTimeToString(Time),
-                AttrToStr(Attr),
-                SizeToStr(Size),
-                SizeToStr(PackedSize),
-                MethodToStr(aItem),
-                Name]));
-    end;
+    Writeln(Format('%16s %7s %12s %12s %3s %s', [
+      FileTimeToString(aItem.Time), AttrToStr(aItem.Attr),
+      SizeToStr(aItem.Size), SizeToStr(aItem.PackedSize),
+      MethodToStr(aItem), aItem.Name]));
   end;
 
   procedure TCustomBeeApp.OnRequest(const aMessage: string);
