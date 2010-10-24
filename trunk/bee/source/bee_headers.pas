@@ -165,7 +165,7 @@ type
   end;
 
   function MethodToStr(const Item: THeader): string;
-  function VersionToStr(const Item: THeader): string;
+  function VersionToStr(const Ver: byte): string;
 
 implementation
 
@@ -195,13 +195,13 @@ begin
     Result[3] := '?';
 end;
 
-function VersionToStr(const Item: THeader): string;
+function VersionToStr(const Ver: byte): string;
 begin
-  case Item.Version of
-    Ord(hv02): Result := ' 0' + DecimalSeparator + '2';
-    Ord(hv03): Result := ' 0' + DecimalSeparator + '3';
-    Ord(hv04): Result := ' 0' + DecimalSeparator + '4';
-    else       Result := ' ?' + DecimalSeparator + '?';
+  case Ver of
+    Ord(hv02): Result := '0' + DecimalSeparator + '2';
+    Ord(hv03): Result := '0' + DecimalSeparator + '3';
+    Ord(hv04): Result := '0' + DecimalSeparator + '4';
+    else       Result := '?' + DecimalSeparator + '?';
   end;
 end;
 
