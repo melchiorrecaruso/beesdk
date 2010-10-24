@@ -68,7 +68,7 @@ type
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
     procedure DoRequest(const aMessage: string);
     function DoRename(const aItem: THeaderRec; const aValue: string): string;
-    procedure DoList(const aItem: TFileInfoExtra; aVerbose: boolean);
+    procedure DoList(const aItem: THeader);
     function DoTick: boolean;
     {$IFDEF CONSOLEAPPLICATION}
     procedure DoClear;
@@ -82,7 +82,7 @@ type
     procedure OnRequest(const aMessage: string); virtual; abstract;
     function  OnRename(const aItem: THeaderRec; const aValue: string): string; virtual; abstract;
     function  OnPassword(const aItem: THeaderRec; const aValue: string): string; virtual; abstract;
-    procedure OnList(const aItem: TFileInfoExtra; aVerbose: boolean); virtual; abstract;
+    procedure OnList(const aItem: THeader); virtual; abstract;
     procedure OnProgress; virtual; abstract;
     {$IFDEF CONSOLEAPPLICATION}
     procedure OnClear; virtual; abstract;
@@ -267,12 +267,12 @@ begin
   FStartTime := FStartTime + (Now - X);
 end;
 
-procedure TApp.DoList(const aItem: TFileInfoExtra; aVerbose: boolean);
+procedure TApp.DoList(const aItem: THeader);
 var
   X: double;
 begin
   X := Now;
-  OnList(aItem, aVerbose);
+  OnList(aItem);
   FStartTime := FStartTime + (Now - X);
 end;
 

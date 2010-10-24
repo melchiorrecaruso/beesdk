@@ -676,7 +676,7 @@ end;
 
 function DateTimeToString(X: TDateTime): string; {$IFDEF FPC} inline; {$ENDIF}
 begin
-  SysUtils.DateTimeToString(Result, 'dd/mm/yy hh:mm', X);
+  SysUtils.DateTimeToString(Result, 'yyyy-mm-dd hh:nn:ss', X);
 end;
 
 function DateTimeToString(X: TDateTime; const Format: string): string; {$IFDEF FPC} inline; {$ENDIF}
@@ -689,7 +689,7 @@ begin
   try
     Result := DateTimeToString(FileDateToDateTime(X));
   except
-    Result := '--/--/-- --:--';
+    Result := '????-??-?? ??:??';
   end;
 end;
 
@@ -698,7 +698,7 @@ begin
   try
     Result := DateTimeToString(FileDateToDateTime(X), Format);
   except
-    Result := '--/--/-- --:--';
+    Result := '????-??-?? ??:??';
   end;
 end;
 
