@@ -288,7 +288,7 @@ var
   RecName: string;
   RecPath: string;
 begin
-  // directory and recursive mode...
+  // directory and recursive mode ...
   Mask := ExcludeTrailingBackSlash(Mask);
   if DirectoryExists(Mask) then
   begin
@@ -297,24 +297,33 @@ begin
   end;
   RecPath := ExtractFilePath(Mask);
 
-  // search filemask...
+  //  recursive rmWildCard mode...
+  if Recursive = rmWildCard then
+  begin
+    if FileNameUseWildCards(Mask) then
+      Recursive := rmFull
+    else
+      Recursive := rmNone;
+  end;
+
+  // search filemask ...
   Error := FindFirst(RecPath + '*', faAnyFile, Rec);
   while Error = 0 do
   begin
     RecName := RecPath + Rec.Name;
 
-    if FileNameMatch(RecName, Mask, Recursive) then
-      if not FileNameMatch(RecName, ExcludeMasks, Recursive) then
-      begin
-        if (Rec.Attr and faDirectory) = 0 then
-          FList.Add(CreateItem(RecPath, Rec))
-        else
-          { TODO : Verify Recursive <> rmNone }
-          if (Recursive <> rmNone) and (Rec.Name <> '.') and (Rec.Name <> '..') then
-            RecursiveScan(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), ExcludeMasks, Recursive);
-      end;
+    if (Rec.Attr and faDirectory) = 0 then
+    begin
+      if FileNameMatch(RecName, Mask, Recursive) then
+        if not FileNameMatch(RecName, ExcludeMasks, Recursive) then
+          FList.Add(CreateItem(RecPath, Rec));
+
+    end else
+      if (Recursive <> rmNone) and (Rec.Name <> '.') and (Rec.Name <> '..') then
+        RecursiveScan(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), ExcludeMasks, Recursive);
+
     Error := FindNext(Rec);
-  end; // end while error...
+  end; // end while error ...
   FindClose(Rec);
 end;
 

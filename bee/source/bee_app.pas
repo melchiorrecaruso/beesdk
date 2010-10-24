@@ -89,7 +89,6 @@ type
     procedure ListShell;
   protected
     procedure ActionsSize;
-
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
@@ -279,6 +278,7 @@ begin
       S.Scan(FileMasks[I], xOptions, rOption);
 
   for I := 0 to S.Count - 1 do
+  begin
     if Code < ccError then
       case FCommandLine.uOption of
         umAdd:           FHeaders.Add          (S.Items[I]);
@@ -289,6 +289,7 @@ begin
         umAddAutoRename: FHeaders.AddAutoRename(S.Items[I]);
         else DoMessage(Format(cmCmdError, []), ccError);
       end;
+  end;
   S.Free;
   FHeaders.Configure(FConfiguration);
 
@@ -891,7 +892,6 @@ begin
       for I := 0 to FHeadersToList.Count - 1 do
       begin
         P := FHeadersToList.Items[I];
-
         DoList(P);
         Inc(TotalSize, P.Size);
         Inc(TotalPack, P.PackedSize);
@@ -926,8 +926,8 @@ begin
   begin
     case FHeaders.Items[I].Action of
 
-      haNew:     Inc(FSize, FHeaders.Items[I].Size);
-      haNone:    Inc(FSize, FHeaders.Items[I].PackedSize);
+      haNew:  Inc(FSize, FHeaders.Items[I].Size);
+      haNone: Inc(FSize, FHeaders.Items[I].PackedSize);
 
 
 
