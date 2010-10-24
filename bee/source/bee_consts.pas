@@ -81,6 +81,7 @@ const
   cmCrcError          = 'CRC error  %s';
   cmDeleting          = 'Deleting   %s';
   cmChecking          = 'Checking   %s';
+  cmListing           = 'Listing    %s';
 
   cmUnknow            = 'Process aborted, unknow error - time elapsed %s seconds.';
   cmSuccesful         = 'Everything went ok - time elapsed %s seconds.';

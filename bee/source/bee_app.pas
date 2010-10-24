@@ -844,12 +844,6 @@ begin
     SetItemsToList;
     if FHeaders.GetNext(0, [haExtract]) <> -1 then
     begin
-      {$IFDEF CONSOLEAPPLICATION}
-      DoMessage('');
-      DoMessage('   Date      Time     Attr          Size       Packed MTD Name                 ');
-      DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
-      {$ENDIF}
-
       Version    := -1;
       Method     := -1;
       Dictionary := -1;
@@ -879,6 +873,15 @@ begin
         end;
       end;
       {$IFDEF CONSOLEAPPLICATION}
+      DoMessage(Format(cmListing, ['...']) + Cr);
+      DoMessage('Version = ' + VersionToStr(Version));
+      DoMessage('Size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
+      DoMessage('Password = ' );
+      DoMessage('Sfx module = ' + Cr );
+
+      DoMessage('   Date      Time     Attr          Size       Packed MTD Name                 ');
+      DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
+
       if FCommandLine.slsOption then
       begin
         FHeadersToList.Sort(CompareFn);
@@ -897,13 +900,9 @@ begin
         Inc(TotalPack, P.PackedSize);
         Inc(TotalFiles);
       end;
-
       {$IFDEF CONSOLEAPPLICATION}
       DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
       DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPack), TotalFiles]));
-      // self-extractor module size
-      if FHeaders.SfxSize > 0 then
-        DoMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
       FHeadersToList.Free;
     end else
