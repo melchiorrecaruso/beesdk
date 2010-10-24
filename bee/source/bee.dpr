@@ -68,7 +68,7 @@ type
     procedure OnMessage(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
     function  OnRename(const aItem: THeaderRec; const aValue: string): string; override;
-    procedure OnList(const aItem: TFileInfoExtra; aVerbose: boolean); override;
+    procedure OnList(const aItem: THeader); override;
     procedure OnProgress; override;
     procedure OnClear; override;
   end;
@@ -102,41 +102,17 @@ type
     Result := OemToParam(Result);
   end;
 
-  procedure TCustomBeeApp.OnList(const aItem: TFileInfoExtra; aVerbose: boolean);
+  procedure TCustomBeeApp.OnList(const aItem: THeader);
   begin
     with aItem do
     begin
-      if aVerbose then
-      begin
-        if Length({Path +} Name) <= 15 then
-        begin
-          Writeln(ParamToOem(Format('%-15s', [{Path +} Name]) +
-            Format(' %10s %10s %4u%% %14s %6s %8.8x %3s',
-            [SizeToStr(Size), SizeToStr(PackedSize), Ratio,
-            FileTimeToString(Time), AttrToStr(Attr), Crc, Method])));
-        end else
-        begin
-          Writeln(ParamToOem({Path +} Name));
-          Writeln(ParamToOem(StringOfChar(' ', 15) +
-            Format(' %10s %10s %4u%% %14s %6s %8.8x %3s',
-            [SizeToStr(Size), SizeToStr(PackedSize), Ratio,
-            FileTimeToString(Time), AttrToStr(Attr), Crc, Method])));
-        end;
-      end else
-      begin
-        if Length({Path +} Name) <= 39 then
-        begin
-          Writeln(ParamToOem(Format('%-39s', [{Path +} Name]) +
-            Format(' %10s %4u%% %14s %6s', [SizeToStr(Size),
-            Ratio, FileTimeToString(Time), AttrToStr(Attr)])));
-        end else
-        begin
-          Writeln(ParamToOem({Path +} Name));
-          Writeln(ParamToOem(StringOfChar(' ', 39) +
-            Format(' %10s %4u%% %14s %6s', [SizeToStr(Size),
-            Ratio, FileTimeToString(Time), AttrToStr(Attr)])));
-        end;
-      end;
+      Writeln(Format('%16s %7s %12s %12s %3s %s', [
+                FileTimeToString(Time),
+                AttrToStr(Attr),
+                SizeToStr(Size),
+                SizeToStr(PackedSize),
+                MethodToStr(aItem),
+                Name]));
     end;
   end;
 

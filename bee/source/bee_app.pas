@@ -89,8 +89,7 @@ type
     procedure ListShell;
   protected
     procedure ActionsSize;
-    function VersionToStr(const aItem: THeader): string;
-    function MethodToStr(const aItem: THeader): string;
+
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
@@ -834,18 +833,10 @@ procedure TBeeApp.ListShell;
 var
   I: longint;
   P: THeader;
-  FI: TFileInfoExtra;
-  {$IFDEF CONSOLEAPPLICATION}
-  FHeadersToListPath: string;
   FHeadersToList: TList;
-  {$ENDIF}
   TotalPack, TotalSize, TotalFiles: longint;
   Version, Method, Dictionary: longint;
 begin
-  {$IFDEF CONSOLEAPPLICATION}
-  FHeadersToList := TList.Create;
-  {$ENDIF}
-
   OpenArchive;
   if Code < ccError then
   begin
@@ -853,25 +844,19 @@ begin
     if FHeaders.GetNext(0, [haExtract]) <> -1 then
     begin
       {$IFDEF CONSOLEAPPLICATION}
-      if FCommandLine.sltOption then
-      begin
-        DoMessage('Path|Name             Size     Packed Ratio     Date  Time    Attr CRC      MTD');
-        DoMessage('--------------- ---------- ---------- ----- -------- ----- ------- -------- ---');
-      end else
-      begin
-        DoMessage('Path|Name                                     Size Ratio     Date  Time    Attr');
-        DoMessage('--------------------------------------- ---------- ----- -------- ----- -------');
-      end;
+      DoMessage('');
+      DoMessage('   Date      Time     Attr          Size       Packed MTD Name                 ');
+      DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
       {$ENDIF}
 
       Version    := -1;
       Method     := -1;
       Dictionary := -1;
 
+      FHeadersToList := TList.Create;
       for I := 0 to FHeaders.Count - 1 do
       begin
         P := FHeaders.Items[I];
-
         if foVersion in P.Flags then
           Version := P.Version
         else
@@ -887,143 +872,49 @@ begin
         else
           P.Dictionary := Dictionary;
 
-        {$IFDEF CONSOLEAPPLICATION}
         if P.Action = haExtract then
         begin
           FHeadersToList.Add(P);
         end;
-        {$ENDIF}
       end;
+      {$IFDEF CONSOLEAPPLICATION}
+      if FCommandLine.slsOption then
+      begin
+        FHeadersToList.Sort(CompareFn);
+      end;
+      {$ENDIF}
 
       TotalSize  := 0;
       TotalPack  := 0;
       TotalFiles := 0;
 
-      {$IFDEF CONSOLEAPPLICATION}
-      if not FCommandLine.sltOption then
-      begin
-        FHeadersToList.Sort(CompareFn);
-        FHeadersToListPath := '';
-      end;
-      {$ENDIF}
-
-      I := 0;
-      {$IFDEF CONSOLEAPPLICATION}
-      while I < FHeadersToList.Count do
+      for I := 0 to FHeadersToList.Count - 1 do
       begin
         P := FHeadersToList.Items[I];
-      {$ELSE}
-      while I < FHeaders.Count do
-      begin
-        P := FHeaders.Items[I];
-      {$ENDIF}
 
-        FI.Name := ExtractFileName(P.Name);
-        FI.Path := ExtractFilePath(P.Name);
-
-        {$IFDEF CONSOLEAPPLICATION}
-        if CompareFileName(FHeadersToListPath, FI.Path) <> 0 then
-        begin
-          FHeadersToListPath := FI.Path;
-          if I = 0 then
-            DoMessage(FHeadersToListPath)
-          else
-            DoMessage(Cr + FHeadersToListPath);
-        end;
-        {$ENDIF}
-
-        FI.Size       := P.Size;
-        FI.PackedSize := P.PackedSize;
-
-        if FI.Size > 0 then
-          FI.Ratio := Round((FI.PackedSize / FI.Size) * 100)
-        else
-          FI.Ratio := 100;
-
-        FI.Attr    := P.Attr;
-        FI.Time    := P.Time;
-        FI.Comm    := '';
-        FI.Crc     := P.Crc;
-        FI.Method  := MethodToStr(P);
-        FI.Version := VersionToStr(P);
-
-        if foPassword in P.Flags then
-          FI.Password := 'Yes'
-        else
-          FI.Password := 'No';
-
-        {$IFDEF CONSOLEAPPLICATION}
-        FI.Position := FHeaders.IndexOf(P);
-        {$ELSE}
-        FI.Position := I;
-        {$ENDIF}
-        DoList(FI, FCommandLine.sltOption);
-
+        DoList(P);
         Inc(TotalSize, P.Size);
         Inc(TotalPack, P.PackedSize);
         Inc(TotalFiles);
-        Inc(I);
       end;
-      {$IFDEF CONSOLEAPPLICATION}
-      if FCommandLine.sltOption then
-        DoMessage('--------------- ---------- ---------- ----- -------- ----- ------- -------- ---')
-      else
-        DoMessage('-------------------------------------------------- ----- -------- ----- -------');
-
-      if FCommandLine.sltOption then
-        DoMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 15 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %10s %5s', [SizeToStr(TotalSize), SizeToStr(TotalPack), RatioToStr(TotalPack, TotalSize)])))
-      else
-        DoMessage(Format('%d files', [TotalFiles]) + StringOfChar(' ', 39 - Length((Format('%d files', [TotalFiles])))) + (Format(' %10s %5s', [SizeToStr(TotalSize), RatioToStr(TotalPack, TotalSize)])));
-      {$ENDIF}
 
       {$IFDEF CONSOLEAPPLICATION}
+      DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
+      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPack), TotalFiles]));
       // self-extractor module size
       if FHeaders.SfxSize > 0 then
         DoMessage(Cr + 'Note: Bee Self-Extractor module founded');
       {$ENDIF}
+      FHeadersToList.Free;
     end else
       DoMessage(cmNoFilesWarning, ccWarning);
   end;
   CloseArchive(False);
-  {$IFDEF CONSOLEAPPLICATION}
-  FHeadersToList.Free;
-  {$ENDIF}
-
 end;
 
 { Protected string routines }
 
-function TBeeApp.MethodToStr(const aItem: THeader): string;
-begin
-  Result := 'm0a';
-  if not (foTear in aItem.Flags) then
-  begin
-    Result[1] := 's';
-  end;
 
-  if not (foMoved in aItem.Flags) then
-  begin
-    if aItem.Method in [1..3] then
-      Result[2] := char(byte('0') + aItem.Method)
-    else
-      Result[2] := '?';
-  end;
-
-  if aItem.Dictionary in [0..9] then
-    Result[3] := char(byte('a') + aItem.Dictionary)
-  else
-    Result[3] := '?';
-end;
-
-function TBeeApp.VersionToStr(const aItem: THeader): string;
-begin
-  case aItem.Version of
-    Ord(hv02): Result := ' 0' + DecimalSeparator + '2';
-    Ord(hv03): Result := ' 0' + DecimalSeparator + '3';
-    Ord(hv04): Result := ' 0' + DecimalSeparator + '4';
-    else       Result := ' ?' + DecimalSeparator + '?';
-  end;
-end;
 
 procedure TBeeApp.ActionsSize;
 var

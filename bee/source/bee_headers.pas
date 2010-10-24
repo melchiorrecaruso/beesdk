@@ -164,11 +164,46 @@ type
     property SfxSize: longint read GetSfxSize;
   end;
 
+  function MethodToStr(const Item: THeader): string;
+  function VersionToStr(const Item: THeader): string;
+
 implementation
 
 uses
   Bee_Consts,
   Bee_Common;
+
+function MethodToStr(const Item: THeader): string;
+begin
+  Result := 'm0a';
+  if not (foTear in Item.Flags) then
+  begin
+    Result[1] := 's';
+  end;
+
+  if not (foMoved in Item.Flags) then
+  begin
+    if Item.Method in [1..3] then
+      Result[2] := char(byte('0') + Item.Method)
+    else
+      Result[2] := '?';
+  end;
+
+  if Item.Dictionary in [0..9] then
+    Result[3] := char(byte('a') + Item.Dictionary)
+  else
+    Result[3] := '?';
+end;
+
+function VersionToStr(const Item: THeader): string;
+begin
+  case Item.Version of
+    Ord(hv02): Result := ' 0' + DecimalSeparator + '2';
+    Ord(hv03): Result := ' 0' + DecimalSeparator + '3';
+    Ord(hv04): Result := ' 0' + DecimalSeparator + '4';
+    else       Result := ' ?' + DecimalSeparator + '?';
+  end;
+end;
 
 { Header list }
 
