@@ -63,8 +63,6 @@ type
 
   TCustomBeeApp = class(TBeeApp)
   public
-    constructor Create(aParams: TStringList);
-    destructor Destroy; override;
     procedure OnMessage(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
     function  OnRename(const aItem: THeaderRec; const aValue: string): string; override;
@@ -78,16 +76,6 @@ type
   { ------------------------------------------------------------------------ }
 
   { TCustomBeeApp class }
-
-  constructor TCustomBeeApp.Create(aParams: TStringList);
-  begin
-    inherited Create(aParams);
-  end;
-
-  destructor TCustomBeeApp.Destroy;
-  begin
-    inherited Destroy;
-  end;
 
   procedure TCustomBeeApp.OnMessage(const aMessage: string);
   begin
@@ -175,9 +163,8 @@ begin
   end;
   App := TCustomBeeApp.Create(Params);
   App.Execute;
-  with App do
   begin
-    ExitCode := Code;
+    ExitCode := App.Code;
   end;
   App.Destroy;
   Params.Destroy;
