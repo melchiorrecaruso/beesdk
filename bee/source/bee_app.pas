@@ -837,6 +837,7 @@ var
   FHeadersToList: TList;
   TotalPack, TotalSize, TotalFiles: longint;
   Version, Method, Dictionary: longint;
+  Sequences, Passwords, MaxDictSize: longint;
 begin
   OpenArchive;
   if Code < ccError then
@@ -844,9 +845,12 @@ begin
     SetItemsToList;
     if FHeaders.GetNext(0, [haExtract]) <> -1 then
     begin
-      Version    := -1;
-      Method     := -1;
-      Dictionary := -1;
+      Version     := -1;
+      Method      := -1;
+      Dictionary  := -1;
+      Sequences   :=  0;
+      Passwords   :=  0;
+      MaxDictSize :=  0;
 
       FHeadersToList := TList.Create;
       for I := 0 to FHeaders.Count - 1 do
@@ -867,17 +871,40 @@ begin
         else
           P.Dictionary := Dictionary;
 
-        if P.Action = haExtract then
-        begin
-          FHeadersToList.Add(P);
-        end;
+        if Dictionary > MaxDictSize then MaxDictSize := Dictionary;
+
+        if foTear     in P.Flags then Inc(Sequences);
+        if foPassword in P.Flags then Inc(Passwords);
+
+        if P.Action = haExtract  then FHeadersToList.Add(P);
       end;
       {$IFDEF CONSOLEAPPLICATION}
-      DoMessage(Format(cmListing, ['...']) + Cr);
-      DoMessage('Version = ' + VersionToStr(Version));
-      DoMessage('Size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
-      DoMessage('Password = ' );
-      DoMessage('Sfx module = ' + Cr );
+
+      DoMessage(Cr + 'Extraction requirements:');
+      DoMessage('  Headers version = ' + VersionToStr(Version));
+      DoMessage('  Dictionary size = ' + IntToStr(MaxDictSize));
+      DoMessage(Cr + 'Archive features:');
+
+      if Passwords > 0 then
+        DoMessage('  Password  = yes' )
+      else
+        DoMessage('  Password  = no' );
+
+      if FHeaders.SfxSize > 0 then
+        DoMessage('  Module    = yes')
+      else
+        DoMessage('  Module    = no');
+
+      if Sequences <> FHeaders.Count then
+        DoMessage('  Solid     = yes')
+      else
+        DoMessage('  Solid     = no');
+
+      DoMessage('  Items     = ' + IntToStr(FHeaders.Count));
+      DoMessage('  Sequences = ' + IntToStr(Sequences));
+      DoMessage('  Size      = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
+      DoMessage('  Headers size = ' + Cr);
+
 
       DoMessage('   Date      Time     Attr          Size       Packed MTD Name                 ');
       DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
