@@ -139,6 +139,8 @@ type
   private
     FSfx: TStream;
     FNews: longint;
+    FCheck: boolean;
+    FSize: int64;
     procedure SetLast;
     function GetSfxSize: longint;
     function GetFirst(Stream: TStream): int64;
@@ -161,7 +163,10 @@ type
 
     procedure ClearSfx;
     function LoadSfx(const FileName: string): boolean;
+  public
     property SfxSize: longint read GetSfxSize;
+    property Check: boolean read FCheck;
+    property Size: int64 read FSize;
   end;
 
   function MethodToStr(const Item: THeader): string;
@@ -512,8 +517,10 @@ end;
 constructor THeaders.Create(CommandLine: TCommandLine);
 begin
   inherited Create(CommandLine);
-  FSfx  := TMemoryStream.Create;
-  FNews := 0;
+  FSfx   := TMemoryStream.Create;
+  FNews  := 0;
+  FSize  := -1;
+  FCheck := False;
 end;
 
 destructor THeaders.Destroy;
@@ -727,8 +734,8 @@ end;
 procedure THeaders.Read(Stream: TStream);
 var
   P: THeader;
-  // I: longint;
   Id: longint;
+  I: longint;
   OffSet: int64;
   Ver: byte;
 begin
@@ -759,15 +766,17 @@ begin
   end else
     ReadB4b(Stream);
 
-  // if RecalStartPos then
-  // begin
-  //   OffSet := Stream.Seek(0, 1);
-  //   for I := 0 to FItems.Count - 1 do
-  //   begin
-  //     THeader(FItems[I]).FileStartPos := OffSet;
-  //     Inc(OffSet, THeader(FItems[I]).FilePacked);
-  //   end;
-  // end;
+
+  FCheck := True;
+  OffSet := Stream.Seek(0, 1);
+
+  I := 0;
+  while (I < FItems.Count) and FCheck do
+  begin
+    FCheck := THeader(FItems[I]).StartPos = OffSet;
+    Inc(OffSet, THeader(FItems[I]).PackedSize);
+    Inc(I);
+  end;
 end;
 
 procedure WriteHv03(Stream: TStream; const Item: THeader);

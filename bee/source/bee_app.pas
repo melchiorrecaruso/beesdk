@@ -886,23 +886,35 @@ begin
       DoMessage(Cr + 'Archive features:');
 
       if Passwords > 0 then
-        DoMessage('  Password  = yes' )
+        DoMessage('  Password   = yes' )
       else
-        DoMessage('  Password  = no' );
+        DoMessage('  Password   = no' );
 
       if FHeaders.SfxSize > 0 then
-        DoMessage('  Module    = yes')
+        DoMessage('  SFX module = yes')
       else
-        DoMessage('  Module    = no');
+        DoMessage('  SFX module = no');
 
       if Sequences <> FHeaders.Count then
-        DoMessage('  Solid     = yes')
+        DoMessage('  Solid      = yes')
       else
-        DoMessage('  Solid     = no');
+        DoMessage('  Solid      = no');
 
-      DoMessage('  Items     = ' + IntToStr(FHeaders.Count));
-      DoMessage('  Sequences = ' + IntToStr(Sequences));
-      DoMessage('  Size      = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
+      DoMessage('  Items      = ' + IntToStr(FHeaders.Count));
+      DoMessage('  Sequences  = ' + IntToStr(Sequences));
+
+      DoMessage('  Headers size = ' + );
+
+
+
+      DoMessage('  Size       = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
+
+
+       if FHeaders.Check then
+        DoMessage('  H test = passed')
+      else
+        DoMessage('  H test = not passed');
+
       DoMessage('  Headers size = ' + Cr);
 
 
