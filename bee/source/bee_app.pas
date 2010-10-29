@@ -935,8 +935,6 @@ end;
 
 { Protected string routines }
 
-
-
 procedure TBeeApp.ActionsSize;
 var
   I: longint;
