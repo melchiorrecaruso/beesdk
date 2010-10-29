@@ -534,7 +534,7 @@ var
   Id: longint;
   StrmPos: int64;
 begin
-  Result := -1;
+  Result  := -1;
   StrmPos := Stream.Seek(0, 0);
   while Stream.Read(Id, SizeOf(Id)) = SizeOf(Id) do
   begin
@@ -633,7 +633,6 @@ procedure ReadHv04(Stream: TStream; var Item: THeader);
 var
   I: longint;
 begin
-
   if foMethod in Item.Flags then
     Stream.Read(Item.Method, SizeOf(Item.Method))
   else
@@ -739,8 +738,8 @@ var
   OffSet: int64;
   Ver: byte;
 begin
-  P   := nil;
-  Ver := Ord(hv02);
+  P     := nil;
+  Ver   := Ord(hv02);
 
   OffSet := GetFirst(Stream);
   if OffSet > -1 then
@@ -762,13 +761,14 @@ begin
     begin
       Exclude(P.Flags, foLast);
     end;
-
+    FSize := Stream.Seek(0, 1) - OffSet;
   end else
+  begin
     ReadB4b(Stream);
+  end;
 
-
-  FCheck := True;
   OffSet := Stream.Seek(0, 1);
+  FCheck := True;
 
   I := 0;
   while (I < FItems.Count) and FCheck do
