@@ -879,47 +879,30 @@ begin
         if P.Action = haExtract  then FHeadersToList.Add(P);
       end;
       {$IFDEF CONSOLEAPPLICATION}
-
       DoMessage(Cr + 'Extraction requirements:');
       DoMessage('  Headers version = ' + VersionToStr(Version));
       DoMessage('  Dictionary size = ' + IntToStr(MaxDictSize));
+
       DoMessage(Cr + 'Archive features:');
-
       if Passwords > 0 then
-        DoMessage('  Password   = yes' )
+        DoMessage('  Password  = yes' )
       else
-        DoMessage('  Password   = no' );
-
-      if FHeaders.SfxSize > 0 then
-        DoMessage('  SFX module = yes')
-      else
-        DoMessage('  SFX module = no');
+        DoMessage('  Password  = no' );
 
       if Sequences <> FHeaders.Count then
-        DoMessage('  Solid      = yes')
+        DoMessage('  Solid     = yes')
       else
-        DoMessage('  Solid      = no');
+        DoMessage('  Solid     = no');
 
-      DoMessage('  Items      = ' + IntToStr(FHeaders.Count));
-      DoMessage('  Sequences  = ' + IntToStr(Sequences));
+      DoMessage('  Items     = ' + IntToStr(FHeaders.Count));
+      DoMessage('  Sequences = ' + IntToStr(Sequences));
 
-      DoMessage('  Headers size = ' + );
+      DoMessage('  Sfx size     = ' + IntToStr(FHeaders.SfxSize));
+      DoMessage('  Headers size = ' + IntToStr(FHeaders.Size));
+      DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
 
-
-
-      DoMessage('  Size       = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
-
-
-       if FHeaders.Check then
-        DoMessage('  H test = passed')
-      else
-        DoMessage('  H test = not passed');
-
-      DoMessage('  Headers size = ' + Cr);
-
-
-      DoMessage('   Date      Time     Attr          Size       Packed MTD Name                 ');
-      DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
+      DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
+      DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
 
       if FCommandLine.slsOption then
       begin
