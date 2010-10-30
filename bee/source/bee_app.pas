@@ -63,13 +63,13 @@ type
     FCommandLine: TCommandLine;
     FConfiguration: TConfiguration;
     { open/close archive routine }
-    procedure OpenArchive;
-    procedure CheckArchivePassword;
+    function OpenArchive: longint;
+    function CheckArchivePassword: longint;
     procedure CloseArchive(IsModified: boolean);
     { find and prepare sequences }
     procedure SetItemsToAdd;
     procedure SetItemsToDelete;
-    procedure SetItemsToExtract;
+    function SetItemsToExtract: int64;
     // procedure SetItemsToTest;
     procedure SetItemsToRename;
     procedure SetItemsToList;
@@ -173,7 +173,7 @@ end;
 
 { Open / Close archive routines }
 
-procedure TBeeApp.OpenArchive;
+function TBeeApp.OpenArchive: longint;
 begin
   DoMessage(Format(Cr + cmOpening, [FCommandLine.ArchiveName]));
   FHeaders := THeaders.Create(FCommandLine);
@@ -193,9 +193,10 @@ begin
   begin
     CheckArchivePassword;
   end;
+  Result := Code;
 end;
 
-procedure TBeeApp.CheckArchivePassword;
+function TBeeApp.CheckArchivePassword: longint;
 var
   P: THeader;
   I: longint;
@@ -226,6 +227,7 @@ begin
     FArcFile.FinishDecode;
     Decoder.Free;
   end;
+  Result := Code;
 end;
 
 procedure TBeeApp.CloseArchive(IsModified: boolean);
@@ -353,7 +355,7 @@ begin
   end;
 end;
 
-procedure TBeeApp.SetItemsToExtract;
+function TBeeApp.SetItemsToExtract: int64;
 var
   I, J: longint;
   P: THeader;
@@ -412,6 +414,7 @@ begin
       Inc(FSize, P.Size);
     end;
   end;
+  Result := FSize;
 end;
 
 procedure TBeeApp.SetItemsToRename;
@@ -684,11 +687,9 @@ var
   P: THeader;
   Decoder: THeaderStreamDecoder;
 begin
-  OpenArchive;
-  if Code < ccError then
+  if OpenArchive < ccError then
   begin
-    SetItemsToExtract;
-    if FHeaders.GetNext(0, [haExtract]) <> -1 then
+    if SetItemsToExtract > 0 then
     begin
       Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
       for I := 0  to FHeaders.Count - 1 do
@@ -700,18 +701,18 @@ begin
           if P.Action in [haExtract, haDecode] then
           begin
             if foPassword in P.Flags then
+            begin
               FArcFile.StartDecode(FCommandLine.pOption);
-
+            end;
             // show message ...
             case FCommandLine.Command of
               ccExtract: DoMessage(Format(cmExtracting, [P.Name]));
-              ccTest:    DoMessage(Format(cmTesting, [P.Name]));
+              ccTest:    DoMessage(Format(cmTesting,    [P.Name]));
             end;
-
             // process item ...
             case P.Action of
               haExtract:
-               case FCommandLine.Command of
+                case FCommandLine.Command of
                   ccExtract: E := not Decoder.DecodeTo   (P);
                   ccTest:    E := not Decoder.DecodeToNul(P);
                   else       E := False;
