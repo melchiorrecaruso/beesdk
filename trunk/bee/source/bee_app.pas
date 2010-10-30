@@ -87,8 +87,6 @@ type
     procedure DecodeShell(const aAction: THeaderAction);
     procedure RenameShell;
     procedure ListShell;
-  protected
-    procedure ActionsSize;
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
@@ -310,7 +308,6 @@ begin
 
     I := FHeaders.GetBack(I - 1, [haUpdate]);
   end;
-  ActionsSize;
 end;
 
 procedure TBeeApp.SetItemsToDelete;
@@ -365,16 +362,17 @@ begin
   DoMessage(Format(cmScanning, ['...']));
   FHeaders.SetAction(FCommandLine.FileMasks, haNone,    haExtract);
   FHeaders.SetAction(FCommandLine.xOptions,  haExtract, haNone);
-  // overwrite routines ...
+  // STEP1: overwrite routines ...
   if FCommandline.Command in [ccXextract, ccExtract] then
+  begin
     for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
       if (P.Action = haExtract) and (Code < ccError) then
       begin
         case FCommandLine.Command of
-          ccXextract: P.Link := DeleteFilePath (FCommandLine.cdOption, P.Name)
-          else        P.Link := ExtractFileName(P.Name);
+          ccExtract:  P.Link := ExtractFileName(P.Name);
+          ccXextract: P.Link := DeleteFilePath(FCommandLine.cdOption, P.Name);
         end;
 
         case FCommandLine.uOption of
@@ -387,8 +385,9 @@ begin
         end;
       end;
     end;
+  end;
 
-  // find sequences and mark ...
+  // STEP2: find sequences and mark ...
   I := FHeaders.GetBack(FHeaders.Count - 1, [haExtract]);
   while (I > -1) and (Code < ccError) do
   begin
@@ -398,12 +397,20 @@ begin
         case FHeaders.Items[J].Action of
           haExtract: {nothing to do};
           haNone:    FHeaders.Items[J].Action := haDecode;
-          else       DoMessage(Format(cmSequenceError, []), ccError);
         end;
         Inc(J);
       until (J = FHeaders.Count) or (foTear in  FHeaders.Items[J].Flags);
-
     I := FHeaders.GetBack(I - 1, [haExtract]);
+  end;
+
+  // STEP3: calculate bytes to process ...
+  for I := 0 to FHeaders.Count - 1 do
+  begin
+    P := FHeaders.Items[I];
+    if P.Action in [haExtract, haDecode] then
+    begin
+      Inc(FSize, P.Size);
+    end;
   end;
 end;
 
@@ -672,6 +679,7 @@ end;
 
 procedure TBeeApp.DecodeShell(const aAction: THeaderAction);
 var
+  E: boolean;
   I: longint;
   P: THeader;
   Decoder: THeaderStreamDecoder;
@@ -683,34 +691,40 @@ begin
     if FHeaders.GetNext(0, [haExtract]) <> -1 then
     begin
       Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
-      for I := 0 to FHeaders.Count - 1 do
-      begin
-        if Code < ccError then
+      for I := 0  to FHeaders.Count - 1 do
+        if  Code < ccError then
         begin
           P := FHeaders.Items[I];
-
           Decoder.InitializeCoder(P);
-          if foPassword in P.Flags then
-          begin
-            FArcFile.StartDecode(FCommandLine.pOption);
-          end;
 
-          DoMessage(Format(cmExtracting, [P.Name]));
-          case P.Action of
-            haNone:        {nothing to do};
-            haExtract:
-              case FCommandLine.Command of
-                ccExtract: if not Decoder.DecodeTo   (P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
-                ccTest:    if not Decoder.DecodeToNul(P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
-                else       DoMessage(Format(cmActionError, []), ccError);
-              end;
-            haDecode:      if not Decoder.DecodeToNul(P) then DoMessage(Format(cmCrcError, [P.Name]), ccError);
-            else           DoMessage(Format(cmActionError, []), ccError);
+          if P.Action in [haExtract, haDecode] then
+          begin
+            if foPassword in P.Flags then
+              FArcFile.StartDecode(FCommandLine.pOption);
+
+            // show message ...
+            case FCommandLine.Command of
+              ccExtract: DoMessage(Format(cmExtracting, [P.Name]));
+              ccTest:    DoMessage(Format(cmTesting, [P.Name]));
+            end;
+
+            // process item ...
+            case P.Action of
+              haExtract:
+               case FCommandLine.Command of
+                  ccExtract: E := not Decoder.DecodeTo   (P);
+                  ccTest:    E := not Decoder.DecodeToNul(P);
+                  else       E := False;
+                end;
+              haDecode:      E := not Decoder.DecodeToNul(P);
+              else           E := False;
+            end;
+            FArcFile.FinishDecode;
+
+            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+            if E then DoMessage(Format(cmCrcError, [P.Name]), ccError);
           end;
-          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-          FArcFile.FinishDecode;
         end;
-      end;
       Decoder.Destroy;
     end else
       DoMessage(cmNoFilesWarning, ccWarning);
@@ -932,35 +946,6 @@ begin
   end;
   CloseArchive(False);
 end;
-
-{ Protected string routines }
-
-procedure TBeeApp.ActionsSize;
-var
-  I: longint;
-begin
-  FProcessedSize := 0;
-  FSize := 0;
-  for I := 0 to FHeaders.Count - 1 do
-  begin
-    case FHeaders.Items[I].Action of
-
-      haNew:  Inc(FSize, FHeaders.Items[I].Size);
-      haNone: Inc(FSize, FHeaders.Items[I].PackedSize);
-
-
-
-
-
-    end;
-
-
-
-
-
-  end;
-end;
-
 
 end.
 

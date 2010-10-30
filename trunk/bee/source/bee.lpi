@@ -15,11 +15,11 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="8"/>
-      <BuildNr Value="1464"/>
+      <BuildNr Value="1497"/>
       <Language Value="0809"/>
       <StringTable CompanyName="Melchiorre Caruso" FileDescription="Bee Archiver" ProductName="Bee Archiver" ProductVersion="0.7.8"/>
     </VersionInfo>
-    <BuildModes Count="2">
+    <BuildModes Count="2" Active="release">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="release">
         <CompilerOptions>
@@ -89,8 +89,8 @@
         <UnitName Value="Bee"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="31"/>
-        <CursorPos X="55" Y="154"/>
+        <TopLine Value="87"/>
+        <CursorPos X="43" Y="92"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -101,8 +101,8 @@
         <UnitName Value="Bee_Consts"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="55"/>
-        <CursorPos X="41" Y="83"/>
+        <TopLine Value="61"/>
+        <CursorPos X="42" Y="83"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -113,9 +113,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="878"/>
-        <CursorPos X="52" Y="847"/>
-        <FoldState Value=" T3mH0W16"/>
+        <TopLine Value="682"/>
+        <CursorPos X="13" Y="722"/>
+        <FoldState Value=" T3mF0WD"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -125,9 +125,9 @@
         <UnitName Value="Bee_Headers"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="129"/>
-        <CursorPos X="21" Y="167"/>
-        <UsageCount Value="98"/>
+        <TopLine Value="603"/>
+        <CursorPos X="36" Y="585"/>
+        <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
@@ -136,9 +136,9 @@
         <UnitName Value="Bee_Types"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="34"/>
-        <CursorPos X="23" Y="34"/>
-        <UsageCount Value="80"/>
+        <TopLine Value="30"/>
+        <CursorPos X="31" Y="47"/>
+        <UsageCount Value="82"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
@@ -147,9 +147,9 @@
         <UnitName Value="Bee_Common"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="79"/>
-        <CursorPos X="20" Y="116"/>
-        <UsageCount Value="60"/>
+        <TopLine Value="55"/>
+        <CursorPos X="24" Y="61"/>
+        <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
@@ -158,9 +158,9 @@
         <UnitName Value="Bee_Interface"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="44"/>
-        <CursorPos X="40" Y="54"/>
-        <UsageCount Value="60"/>
+        <TopLine Value="227"/>
+        <CursorPos X="15" Y="238"/>
+        <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
@@ -169,9 +169,9 @@
         <UnitName Value="Bee_CommandLine"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="512"/>
-        <CursorPos X="5" Y="56"/>
-        <UsageCount Value="39"/>
+        <TopLine Value="37"/>
+        <CursorPos X="19" Y="46"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
@@ -180,9 +180,9 @@
         <UnitName Value="Bee_MainPacker"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="406"/>
-        <CursorPos X="52" Y="413"/>
-        <UsageCount Value="39"/>
+        <TopLine Value="417"/>
+        <CursorPos X="34" Y="260"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
@@ -193,131 +193,131 @@
         <WindowIndex Value="0"/>
         <TopLine Value="299"/>
         <CursorPos X="43" Y="306"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="771" Column="7" TopLine="741"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="906" Column="39" TopLine="882"/>
       </Position1>
       <Position2>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="733" Column="3" TopLine="728"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="901" Column="59" TopLine="882"/>
       </Position2>
       <Position3>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="765" Column="18" TopLine="741"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="916" Column="29" TopLine="882"/>
       </Position3>
       <Position4>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="519" Column="21" TopLine="505"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="906" Column="39" TopLine="882"/>
       </Position4>
       <Position5>
         <Filename Value="bee_headers.pas"/>
-        <Caret Line="770" Column="16" TopLine="740"/>
+        <Caret Line="767" Column="8" TopLine="734"/>
       </Position5>
       <Position6>
         <Filename Value="bee_headers.pas"/>
-        <Caret Line="101" Column="10" TopLine="77"/>
+        <Caret Line="745" Column="17" TopLine="721"/>
       </Position6>
       <Position7>
         <Filename Value="bee_headers.pas"/>
-        <Caret Line="770" Column="28" TopLine="746"/>
+        <Caret Line="764" Column="41" TopLine="736"/>
       </Position7>
       <Position8>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="772" Column="23" TopLine="746"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="906" Column="52" TopLine="888"/>
       </Position8>
       <Position9>
         <Filename Value="bee_headers.pas"/>
-        <Caret Line="166" Column="1" TopLine="125"/>
+        <Caret Line="764" Column="8" TopLine="740"/>
       </Position9>
       <Position10>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="518" Column="15" TopLine="504"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="908" Column="44" TopLine="882"/>
       </Position10>
       <Position11>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="736" Column="19" TopLine="723"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="916" Column="54" TopLine="882"/>
       </Position11>
       <Position12>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="746" Column="7" TopLine="714"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="902" Column="64" TopLine="883"/>
       </Position12>
       <Position13>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="734" Column="23" TopLine="134"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="937" Column="1" TopLine="146"/>
       </Position13>
       <Position14>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="168" Column="41" TopLine="127"/>
+        <Filename Value="bee.dpr"/>
+        <Caret Line="154" Column="55" TopLine="31"/>
       </Position14>
       <Position15>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="142" Column="9" TopLine="132"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="951" Column="54" TopLine="151"/>
       </Position15>
       <Position16>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="771" Column="52" TopLine="747"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="934" Column="5" TopLine="905"/>
       </Position16>
       <Position17>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="906" Column="39" TopLine="882"/>
+        <Caret Line="89" Column="25" TopLine="75"/>
       </Position17>
       <Position18>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="901" Column="59" TopLine="882"/>
+        <Caret Line="310" Column="7" TopLine="313"/>
       </Position18>
       <Position19>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="916" Column="29" TopLine="882"/>
+        <Caret Line="701" Column="69" TopLine="681"/>
       </Position19>
       <Position20>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="906" Column="39" TopLine="882"/>
+        <Caret Line="703" Column="61" TopLine="686"/>
       </Position20>
       <Position21>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="767" Column="8" TopLine="734"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="374" Column="22" TopLine="358"/>
       </Position21>
       <Position22>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="745" Column="17" TopLine="721"/>
+        <Filename Value="bee_commandline.pas"/>
+        <Caret Line="46" Column="19" TopLine="37"/>
       </Position22>
       <Position23>
-        <Filename Value="bee_headers.pas"/>
-        <Caret Line="764" Column="41" TopLine="736"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="374" Column="20" TopLine="358"/>
       </Position23>
       <Position24>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="906" Column="52" TopLine="888"/>
+        <Filename Value="bee_headers.pas"/>
+        <Caret Line="2" Column="137" TopLine="1"/>
       </Position24>
       <Position25>
         <Filename Value="bee_headers.pas"/>
-        <Caret Line="764" Column="8" TopLine="740"/>
+        <Caret Line="317" Column="27" TopLine="302"/>
       </Position25>
       <Position26>
-        <Filename Value="bee_app.pas"/>
-        <Caret Line="908" Column="44" TopLine="882"/>
+        <Filename Value="bee_headers.pas"/>
+        <Caret Line="374" Column="25" TopLine="347"/>
       </Position26>
       <Position27>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="916" Column="54" TopLine="882"/>
+        <Caret Line="57" Column="47" TopLine="46"/>
       </Position27>
       <Position28>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="902" Column="64" TopLine="883"/>
+        <Caret Line="412" Column="9" TopLine="354"/>
       </Position28>
       <Position29>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="937" Column="1" TopLine="146"/>
+        <Caret Line="395" Column="5" TopLine="413"/>
       </Position29>
       <Position30>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="359" Column="11" TopLine="401"/>
+        <Caret Line="725" Column="9" TopLine="689"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

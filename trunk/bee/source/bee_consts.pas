@@ -76,8 +76,8 @@ const
   cmCopying           = 'Copying    %s';
   cmEncoding          = 'Encoding   %s';
   cmExtracting        = 'Extracting %s';
+  cmTesting           = 'Testing    %s';
   cmDecoding          = 'Decoding   %s';
-  cmSkipping          = 'Skipping   %s';
   cmCrcError          = 'CRC error  %s';
   cmDeleting          = 'Deleting   %s';
   cmChecking          = 'Checking   %s';
