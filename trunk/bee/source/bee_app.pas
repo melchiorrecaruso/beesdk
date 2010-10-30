@@ -67,7 +67,7 @@ type
     function CheckArchivePassword: longint;
     procedure CloseArchive(IsModified: boolean);
     { find and prepare sequences }
-    procedure SetItemsToAdd;
+    function SetItemsToAdd: int64;
     procedure SetItemsToDelete;
     function SetItemsToExtract: int64;
     // procedure SetItemsToTest;
@@ -266,50 +266,57 @@ end;
 
 { Sequences processing }
 
-procedure TBeeApp.SetItemsToAdd;
+function TBeeApp.SetItemsToAdd: int64;
 var
+  P: THeader;
   I, J: longint;
   S: TFileScanner;
 begin
   DoMessage(Format(cmScanning, ['...']));
+  // STEP1: scan file system ...
   S := TFileScanner.Create;
   with FCommandLine do
     for I := 0 to FileMasks.Count - 1 do
       S.Scan(FileMasks[I], xOptions, rOption);
 
   for I := 0 to S.Count - 1 do
-  begin
-    if Code < ccError then
-      case FCommandLine.uOption of
-        umAdd:           FHeaders.Add          (S.Items[I]);
-        umUpdate:        FHeaders.Update       (S.Items[I]);
-        umReplace:       FHeaders.Replace      (S.Items[I]);
-        umAddUpdate:     FHeaders.AddUpdate    (S.Items[I]);
-        umAddReplace:    FHeaders.AddReplace   (S.Items[I]);
-        umAddAutoRename: FHeaders.AddAutoRename(S.Items[I]);
-        else DoMessage(Format(cmCmdError, []), ccError);
-      end;
-  end;
+    case FCommandLine.uOption of
+      umAdd:           FHeaders.Add          (S.Items[I]);
+      umUpdate:        FHeaders.Update       (S.Items[I]);
+      umReplace:       FHeaders.Replace      (S.Items[I]);
+      umAddUpdate:     FHeaders.AddUpdate    (S.Items[I]);
+      umAddReplace:    FHeaders.AddReplace   (S.Items[I]);
+      umAddAutoRename: FHeaders.AddAutoRename(S.Items[I]);
+    end;
   S.Free;
+  // STEP2: configure new items ...
   FHeaders.Configure(FConfiguration);
-
-  // find sequences and set actions ...
+  // STEP3: find sequences and set actions ...
   I := FHeaders.GetBack(FHeaders.Count - 1, [haUpdate]);
-  while (I > -1) and (Code < ccError) do
+  while I > -1 do
   begin
     J := FHeaders.GetBack(I, foTear);
     if J > -1 then
       repeat
         case FHeaders.Items[J].Action of
-          haUpdate: {nothing to do};
           haNone:   FHeaders.Items[J].Action := haExtract;
-          else      DoMessage(Format(cmSequenceError, []), ccError);
         end;
         Inc(J);
       until (J = FHeaders.Count) or (foTear in FHeaders.Items[J].Flags);
-
     I := FHeaders.GetBack(I - 1, [haUpdate]);
   end;
+  // STEP4: calculate bytes to process ...
+  for I := 0 to FHeaders.Count - 1 do
+  begin
+    P := FHeaders.Items[J];
+    case P.Action of
+      haNew:     Inc(FSize, P.Size);
+      haUpdate:  Inc(FSize,
+      haNone:    Inc(FSize, P.PackedSize);
+      haExtract: Inc(Fsize, P.Size * 2)
+    end;
+  end;
+  Result := FSize;
 end;
 
 procedure TBeeApp.SetItemsToDelete;
@@ -701,9 +708,7 @@ begin
           if P.Action in [haExtract, haDecode] then
           begin
             if foPassword in P.Flags then
-            begin
               FArcFile.StartDecode(FCommandLine.pOption);
-            end;
             // show message ...
             case FCommandLine.Command of
               ccExtract: DoMessage(Format(cmExtracting, [P.Name]));
