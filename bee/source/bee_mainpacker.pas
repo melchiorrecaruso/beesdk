@@ -67,7 +67,8 @@ type
   public
     constructor Create(Stream: TStream; Ticker: TTickerMethod);
     destructor Destroy; override;
-    function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    function CopyFrom(Strm: TStream; const Size: int64): int64; overload; virtual;
+    function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual;
     function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
   end;
 
@@ -80,7 +81,8 @@ type
   public
     constructor Create(Stream: TStream; Ticker: TTickerMethod);
     destructor Destroy; override;
-    function CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    function CopyTo(Strm: TStream; const Size: int64): int64; overload; virtual;
+    function CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual;
     function DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
   end;
 
@@ -88,16 +90,16 @@ type
 
   TFileStreamEncoder = class(TStreamEncoder)
   public
-    function CopyFrom(const FileName: string; var CRC: longword): boolean; overload;
-    function EncodeFrom(const FileName: string; var CRC: longword): boolean; overload;
+    function CopyFrom(const FileName: string; var CRC: longword): int64; overload;
+    function EncodeFrom(const FileName: string; var CRC: longword): int64; overload;
   end;
 
   { TFileStreamDecoder class }
 
   TFileStreamDecoder = class(TStreamDecoder)
   public
-    function CopyTo(const FileName: string; var CRC: longword): boolean; overload;
-    function DecodeTo(const FileName: string; var CRC: longword): boolean; overload;
+    function CopyTo(const FileName: string; var CRC: longword): int64; overload;
+    function DecodeTo(const FileName: string; var CRC: longword): int64; overload;
   end;
 
   { THeaderStreamEncoder class }
@@ -171,13 +173,27 @@ constructor TStreamEncoder.Create(Stream: TStream; Ticker: TTickerMethod);
 begin
   inherited Create(Stream, False);
   FTicker := Ticker;
-  FTick   := Assigned(FTicker);
+  FTick := Assigned(FTicker);
 end;
 
 destructor TStreamEncoder.Destroy;
 begin
   FTicker := nil;
+  FTick := False;
   inherited Destroy;
+end;
+
+function TStreamEncoder.CopyFrom(Strm: TStream; const Size: int64): int64;
+var
+  Symbol: byte;
+begin
+  Result := 0;
+  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+  begin
+    FStream.Write(Symbol, 1);
+    if FTick and (not FTicker) then Break;
+    Inc(Result);
+  end;
 end;
 
 function TStreamEncoder.CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
@@ -218,13 +234,27 @@ constructor TStreamDecoder.Create(Stream: TStream; Ticker: TTickerMethod);
 begin
   inherited Create(Stream, True);
   FTicker := Ticker;
-  FTick   := Assigned(FTicker);
+  FTick := Assigned(FTicker);
 end;
 
 destructor TStreamDecoder.Destroy;
 begin
   FTicker := nil;
+  FTick := False;
   inherited Destroy;
+end;
+
+function TStreamDecoder.CopyTo(Strm: TStream; const Size: int64): int64;
+var
+  Symbol: byte;
+begin
+  Result := 0;
+  while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
+  begin
+    Strm.Write(Symbol, 1);
+    if FTick and (not FTicker) then Break;
+    Inc(Result);
+  end;
 end;
 
 function TStreamDecoder.CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
@@ -262,7 +292,7 @@ end;
 
 { TFileStreamEncoder class }
 
-function TFileStreamEncoder.CopyFrom(const FileName: string; var CRC: longword): boolean;
+function TFileStreamEncoder.CopyFrom(const FileName: string; var CRC: longword): int64;
 var
   Strm: TFileReader;
 begin
@@ -270,13 +300,16 @@ begin
   Strm := CreateTFileReader(FileName, fmOpenRead);
   if Assigned(Strm) then
   begin
-    Result := CopyFrom(Strm, Strm.Size, CRC) = Strm.Size;
+    if CopyFrom(Strm, Strm.Size, CRC) = Strm.Size then
+      Result := Strm.Size
+    else
+      Result := -1;
     Strm.Free;
   end else
-    Result := False;
+    Result := -1;
 end;
 
-function TFileStreamEncoder.EncodeFrom(const FileName: string; var CRC: longword): boolean;
+function TFileStreamEncoder.EncodeFrom(const FileName: string; var CRC: longword): int64;
 var
   Strm: TFileReader;
 begin
@@ -284,15 +317,18 @@ begin
   Strm := CreateTFileReader(FileName, fmOpenRead);
   if Assigned(Strm) then
   begin
-    Result := EncodeFrom(Strm, Strm.Size, CRC) = Strm.Size;
+    if EncodeFrom(Strm, Strm.Size, CRC) = Strm.Size then
+      Result := Strm.Size
+    else
+      Result := -1;
     Strm.Free;
   end else
-    Result := False;
+    Result := -1;
 end;
 
 { TFileStreamDecoder class }
 
-function TFileStreamDecoder.CopyTo(const FileName: string; var CRC: longword): boolean;
+function TFileStreamDecoder.CopyTo(const FileName: string; var CRC: longword): int64;
 var
   Strm: TFileWriter;
 begin
@@ -300,10 +336,15 @@ begin
   Strm := CreateTFileWriter(FileName, fmCreate);
   if Assigned(Strm) then
   begin
-    Result := CopyTo(Strm, Strm.Size, CRC) = Strm.Size;
+    if CopyTo(Strm, Strm.Size, CRC) = Strm.Size then
+
+
+      Result := ;
+
+
     Strm.Free;
   end else
-    Result := False;
+    Result := -1;
 end;
 
 function TFileStreamDecoder.DecodeTo(const FileName: string; var CRC: longword): boolean;
@@ -323,15 +364,14 @@ end;
 { THeaderStreamEncoder class }
 
 function THeaderStreamEncoder.CopyFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
-var
-  CRC: longword;
 begin
   Strm.Seek(Item.StartPos, soBeginning);
   Item.StartPos := FStream.Seek(0, soCurrent);
   begin
-    Result := CopyFrom(Strm, Size, CRC) = Size;
+    Result := CopyFrom(Strm, Size) = Size;
   end;
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
+  Item.Size := Size;
 end;
 
 function THeaderStreamEncoder.EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
@@ -345,8 +385,9 @@ begin
   else
     Result := EncodeFrom(Strm, Size, Item.Crc) = Size;
   Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
+  Item.Size := Size;
 
-  if Item.PackedSize <= Item.Size then
+  if Item.PackedSize <= Items.Size then
   begin
     Item.StartPos := FStreamPos;
   end else
@@ -359,20 +400,26 @@ begin
     Result := CopyFrom(Strm, Size, Item.Crc) = Size;
     FTick  := Assigned(FTicker);
 
-    Item.PackedSize := Item.Size;
+    Item.PackedSize := Size;
   end;
 end;
 
 function THeaderStreamEncoder.EncodeFrom(Item: THeader): boolean;
 var
   FStreamPos: int64;
+  FStream: TFileReader;
 begin
+  FStream :=
+
+
+
   FStreamPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
-    Result := CopyFrom(Item.Link, Item.Crc)
+    Result := CopyFrom(FStream, Item.Crc)
   else
-    Result := EncodeFrom(Item.Link, Item.Crc);
+    Result := EncodeFrom(FStream, Item.Crc);
   Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
+  Item.Size := FStream.Size;
 
   if Item.PackedSize <= Item.Size then
   begin
