@@ -337,17 +337,15 @@ begin
   if Assigned(Strm) then
   begin
     if CopyTo(Strm, Strm.Size, CRC) = Strm.Size then
-
-
-      Result := ;
-
-
+      Result :=  Strm.Size
+    else
+      Result := -1;
     Strm.Free;
   end else
     Result := -1;
 end;
 
-function TFileStreamDecoder.DecodeTo(const FileName: string; var CRC: longword): boolean;
+function TFileStreamDecoder.DecodeTo(const FileName: string; var CRC: longword): int64;
 var
   Strm: TFileWriter;
 begin
@@ -355,10 +353,13 @@ begin
   Strm := CreateTFileWriter(FileName, fmCreate);
   if Assigned(Strm) then
   begin
-    Result := DecodeTo(Strm, Strm.Size, CRC) = Strm.Size;
+    if DecodeTo(Strm, Strm.Size, CRC) = Strm.Size then
+      Result := Strm.Size
+    else
+      Result := -1;
     Strm.Free;
   end else
-    Result := False;
+    Result := -1;
 end;
 
 { THeaderStreamEncoder class }
@@ -387,7 +388,7 @@ begin
   Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
   Item.Size := Size;
 
-  if Item.PackedSize <= Items.Size then
+  if Item.PackedSize <= Item.Size then
   begin
     Item.StartPos := FStreamPos;
   end else
