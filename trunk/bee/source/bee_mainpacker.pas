@@ -381,11 +381,10 @@ begin
   Strm.Seek(Item.StartPos, soBeginning);
   FStreamPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
-    Result := CopyFrom(Strm, Size, Item.Crc) = Size
+    Item.Size := CopyFrom(Strm, Size, Item.Crc)
   else
-    Result := EncodeFrom(Strm, Size, Item.Crc) = Size;
+    Item.Size := EncodeFrom(Strm, Size, Item.Crc);
   Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
-  Item.Size := Size;
 
   if Item.PackedSize <= Item.Size then
   begin
@@ -396,12 +395,13 @@ begin
     Include(Item.Flags, foTear);
     FStream.Size := FStreamPos;
 
-    FTick  := False;
-    Result := CopyFrom(Strm, Size, Item.Crc) = Size;
-    FTick  := Assigned(FTicker);
+    FTick     := False;
+    Item.Size := CopyFrom(Strm, Size, Item.Crc);
+    FTick     := Assigned(FTicker);
 
-    Item.PackedSize := Size;
+    Item.PackedSize := Item.Size;
   end;
+  Result := Item.Size <> -1;
 end;
 
 function THeaderStreamEncoder.EncodeFrom(Item: THeader): boolean;
@@ -412,7 +412,7 @@ begin
   if foMoved in Item.Flags then
     Item.Size := CopyFrom(Item.Link, Item.Crc)
   else
-    Item.Size := EncodeFrom(FStream, Item.Crc);
+    Item.Size := EncodeFrom(Item.Link, Item.Crc);
   Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
 
   if Item.PackedSize <= Item.Size then
@@ -424,13 +424,13 @@ begin
     Include(Item.Flags, foTear);
     FStream.Size := FStreamPos;
 
-    FTick  := False;
-    Result := CopyFrom(Item.Link, Item.Crc);
-    FTick  := Assigned(FTicker);
+    FTick     := False;
+    Item.Size := CopyFrom(Item.Link, Item.Crc);
+    FTick     := Assigned(FTicker);
 
     Item.PackedSize := Item.Size;
   end;
-  Result := Item.Size <> -1;
+  Result :=  Item.Size <> -1;
 end;
 
 procedure THeaderStreamEncoder.InitializeCoder(Item: THeader);
@@ -451,9 +451,9 @@ var
 begin
   FStream.Seek(Item.StartPos, soBeginning);
   if foMoved in Item.Flags then
-    Result := CopyTo(Item.Link, CRC)
+    Result := CopyTo(Item.Link, CRC) = Item.Size
   else
-    Result := DecodeTo(Item.Link, CRC);
+    Result := DecodeTo(Item.Link, CRC) = Item.Size;
 
   if Result then
   begin
