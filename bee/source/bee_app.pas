@@ -244,7 +244,7 @@ begin
     begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FCommandLine.ArchiveName);
-      {To-do: Aggiungere ripristino archivio in caso di errore}
+
       if not RenameFile(FTempName, FCommandLine.ArchiveName) then
         DoMessage(Format(cmRenameFileError, [FTempName, FCommandLine.ArchiveName]), ccError);
     end else
@@ -280,6 +280,7 @@ begin
       S.Scan(FileMasks[I], xOptions, rOption);
 
   for I := 0 to S.Count - 1 do
+  begin
     case FCommandLine.uOption of
       umAdd:           FHeaders.Add          (S.Items[I]);
       umUpdate:        FHeaders.Update       (S.Items[I]);
@@ -288,7 +289,9 @@ begin
       umAddReplace:    FHeaders.AddReplace   (S.Items[I]);
       umAddAutoRename: FHeaders.AddAutoRename(S.Items[I]);
     end;
+  end;
   S.Free;
+
   // STEP2: configure new items ...
   FHeaders.Configure(FConfiguration);
   // STEP3: find sequences and set actions ...
@@ -299,23 +302,29 @@ begin
     if J > -1 then
       repeat
         case FHeaders.Items[J].Action of
-          haNone:   FHeaders.Items[J].Action := haExtract;
+          haNone: FHeaders.Items[J].Action := haExtract;
         end;
         Inc(J);
       until (J = FHeaders.Count) or (foTear in FHeaders.Items[J].Flags);
     I := FHeaders.GetBack(I - 1, [haUpdate]);
   end;
+
   // STEP4: calculate bytes to process ...
-  for I := 0 to FHeaders.Count - 1 do
-  begin
-    P := FHeaders.Items[J];
-    case P.Action of
-      haNew:     Inc(FSize, P.Size);
-      haUpdate:  Inc(FSize,
-      haNone:    Inc(FSize, P.PackedSize);
-      haExtract: Inc(Fsize, P.Size * 2)
+  if FHeaders.GetNext(0, [haNew, haUpdate]) <> -1 then
+    for I := 0 to FHeaders.Count - 1 do
+    begin
+      P := FHeaders.Items[I];
+      case P.Action of
+        haNew:     Inc(FSize, P.ExtSize);
+        haNone:    Inc(FSize, P.PackedSize);
+        haExtract: Inc(FSize, P.Size * 2);
+        haUpdate:
+          if (FHeaders.GetNext(I, foTear) <> I + 1) then
+          begin
+            Inc(FSize, P.Size + P.ExtSize);
+          end;
+      end;
     end;
-  end;
   Result := FSize;
 end;
 
@@ -380,17 +389,17 @@ begin
       if (P.Action = haExtract) and (Code < ccError) then
       begin
         case FCommandLine.Command of
-          ccExtract:  P.Link := ExtractFileName(P.Name);
-          ccXextract: P.Link := DeleteFilePath(FCommandLine.cdOption, P.Name);
+          ccExtract:  P.ExtName := ExtractFileName(P.Name);
+          ccXextract: P.ExtName := DeleteFilePath(FCommandLine.cdOption, P.Name);
         end;
 
         case FCommandLine.uOption of
-          umUpdate:    if (not FileExists(P.Link)) or  (P.Time <= FileAge(P.Name)) then P.Action := haNone;
-          umAddUpdate: if (    FileExists(P.Link)) and (P.Time <= FileAge(P.Name)) then P.Action := haNone;
-          umReplace:   if (not FileExists(P.Link)) then P.Action := haNone;
-          umAdd:       if (    FileExists(P.Link)) then P.Action := haNone;
+          umUpdate:    if (not FileExists(P.ExtName)) or  (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
+          umAddUpdate: if (    FileExists(P.ExtName)) and (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
+          umReplace:   if (not FileExists(P.ExtName)) then P.Action := haNone;
+          umAdd:       if (    FileExists(P.ExtName)) then P.Action := haNone;
           // umAddReplace: extract file always
-          umAddAutoRename: if FileExists(P.Name) then P.Name := GenerateAlternativeFileName(P.Name, 1, True);
+          umAddAutoRename: if FileExists(P.ExtName) then P.ExtName := GenerateAlternativeFileName(P.ExtName, 1, True);
         end;
       end;
     end;
@@ -470,38 +479,40 @@ var
   FSwapStrm: TFileWriter;
   Decoder: THeaderStreamDecoder;
 begin
-  if (Code < ccError) and (FHeaders.GetNext(0, [haExtract]) <> -1) then
+  if (Code < ccError) and (FHeaders.GetNext(0, [haExtract]) <> - 1) then
   begin
     FSwapName := GenerateFileName(FCommandLine.wdOption);
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
     if Assigned(FSwapStrm) then
     begin
       Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
-      for I := 0 to FHeaders.Count - 1 do
-        if Code < ccError then
+
+      I := 0;
+      while (I < FHeaders.Count) and (Code < ccError) do
+      begin
+        P := FHeaders.Items[I];
+        Decoder.InitializeCoder(P);
+
+        if (P.Action = haExtract) or
+          ((P.Action = haUpdate) and ((I <> FHeaders.Count - 1) and (I <> FHeaders.GetNext(I, foTear) - 1))) then
         begin
-          P := FHeaders.Items[I];
-
-          Decoder.InitializeCoder(P);
-          if P.Action = haExtract then
+          DoMessage(Format(cmExtracting, [P.Name]));
+          if foPassword in P.Flags then
           begin
-            DoMessage(Format(cmExtracting, [P.Name]));
-            if foPassword in P.Flags then
-            begin
-              FArcFile.StartDecode(FCommandLine.pOption);
-              FSwapStrm.StartEncode(FCommandLine.pOption);
-            end;
-            FArcFile.Seek(P.StartPos, soBeginning);
-
-            P.StartPos := FSwapStrm.Seek(0, soCurrent);
-            if (Decoder.DecodeTo(FSwapStrm, P.Size, CRC) <> P.Size) or (P.Crc <> CRC) then
-            begin
-              DoMessage(Format(cmSequenceError, []), ccError);
-            end;
-            FSwapStrm.FinishEncode;
-            FArcFile.FinishDecode;
+            FArcFile.StartDecode(FCommandLine.pOption);
+            FSwapStrm.StartEncode(FCommandLine.pOption);
           end;
+          FArcFile.Seek(P.StartPos, soBeginning);
+          P.StartPos := FSwapStrm.Seek(0, soCurrent);
+          if (Decoder.DecodeTo(FSwapStrm, P.Size, CRC) <> P.Size) or (P.Crc <> CRC) then
+          begin
+            DoMessage(Format(cmSequenceError, []), ccError);
+          end;
+          FSwapStrm.FinishEncode;
+          FArcFile.FinishDecode;
         end;
+        Inc(I);
+      end;
       Decoder.Free;
       FreeAndNil(FSwapStrm);
 
@@ -634,11 +645,9 @@ var
   P: THeader;
   Encoder: THeaderStreamEncoder;
 begin
-  OpenArchive;
-  if Code < ccError then
+  if OpenArchive < ccError then
   begin
-    SetItemsToAdd;
-    if FHeaders.GetNext(0, [haNew, haUpdate]) <> -1 then
+    if SetItemsToAdd > 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
@@ -653,8 +662,8 @@ begin
             if Code < ccError then
             begin
               P := FHeaders.Items[I];
-
               Encoder.InitializeCoder(P);
+
               if foPassword in P.Flags then
               begin
                 if Assigned(FArcFile)  then FArcFile .StartDecode(FCommandLine.pOption);
@@ -684,7 +693,7 @@ begin
     end else
       DoMessage(cmNoFilesWarning, ccWarning);
   end;
-  CloseArchive(FHeaders.GetNext(0, [haNew, haUpdate]) <> -1);
+  CloseArchive(FSize > 0);
 end;
 
 procedure TBeeApp.DecodeShell(const aAction: THeaderAction);
