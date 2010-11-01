@@ -69,32 +69,32 @@ begin
   AddFrm.eOption.Text    := CommandLine.fOption;
   AddFrm.sOption.Checked := CommandLine.sOption;
 
-  AddFrm.aOptionCheck.Checked := Length(CommandLine.aOption) > 0;
+  AddFrm.aOptionCheck.Checked := Length(CommandLine.sfxOption) > 0;
   if AddFrm.aOptionCheck.Checked then
   begin
-    if CompareFileName(CommandLine.aOption, 'beegui.sfx') = 0 then
+    if CompareFileName(CommandLine.sfxOption, 'beegui.sfx') = 0 then
       AddFrm.aOption.ItemIndex := 0
     else
-    if CompareFileName(CommandLine.aOption, 'bee.sfx') = 0 then
+    if CompareFileName(CommandLine.sfxOption, 'bee.sfx') = 0 then
       AddFrm.aOption.ItemIndex := 1
     else
-    if CommandLine.aOption = 'nul' then
+    if CommandLine.sfxOption = 'nul' then
       AddFrm.aOption.ItemIndex := 2;
   end;
 
-  AddFrm.mOption.ItemIndex := CommandLine.mOption;
-  AddFrm.dOption.ItemIndex := CommandLine.dOption;
+  AddFrm.mOption.ItemIndex := Ord(CommandLine.mOption);
+  AddFrm.dOption.ItemIndex := Ord(CommandLine.dOption);
 
-  for i := 0 to CommandLine.xOption.Count - 1 do
+  for i := 0 to CommandLine.xOptions.Count - 1 do
     AddFrm.FilesMgr.PlusMinus(AddFrm.FilesMgr.AddFile(
-      ExpandFileName(CommandLine.xOption.Strings[i])));
+      ExpandFileName(CommandLine.xOptions.Strings[i])));
 
   AddFrm.tOption.Checked := CommandLine.tOption;
 
-  if Length(CommandLine.yOption) > 0 then
-    AddFrm.yOption.Text := CommandLine.yOption;
+  if Length(CommandLine.wdOption) > 0 then
+    AddFrm.yOption.Text := CommandLine.wdOption;
 
-  AddFrm.kOption.Checked := CommandLine.kOption;
+  AddFrm.kOption.Checked := Length(CommandLine.pOption) > 0;
 
   AddFrm.cdOptionCheck.Checked := Length(CommandLine.cdOption) > 0;
   if AddFrm.cdOptionCheck.Checked then
@@ -115,47 +115,35 @@ begin
 
   if AddFrm.ShowModal = mrOk then
   begin
-    CommandLine.rOption := AddFrm.rOption.Checked;
+    if AddFrm.rOption.Checked then
+      CommandLine.rOption := rmWildCard
+    else
+      CommandLine.rOption := rmNone;
 
-    case AddFrm.ufOption.ItemIndex of
-      0: begin
-           CommandLine.uOption := True;
-           CommandLine.fOption := False;
-         end;
-      1: begin
-           CommandLine.uOption := False;
-           CommandLine.fOption := True;
-         end;
-      else
-         begin
-           CommandLine.uOption := True;
-           CommandLine.fOption := True;
-         end;
-    end;
-
-    CommandLine.eOption := AddFrm.eOption.Text;
+    CommandLine.uOption := TUpdateMode(AddFrm.ufOption.ItemIndex);
+    CommandLine.fOption := AddFrm.eOption.Text;
     CommandLine.sOption := AddFrm.sOption.Checked;
 
     if AddFrm.aOptionCheck.Checked then
     begin
       case AddFrm.aOption.ItemIndex of
-        0: CommandLine.aOption := 'beegui.sfx';
-        1: CommandLine.aOption := 'bee.sfx';
-        2: CommandLine.aOption := 'nul';
+        0: CommandLine.sfxOption := 'beegui.sfx';
+        1: CommandLine.sfxOption := 'bee.sfx';
+        2: CommandLine.sfxOption := 'nul';
       end;
     end;
 
-    CommandLine.mOption := AddFrm.mOption.ItemIndex;
-    CommandLine.dOption := AddFrm.dOption.ItemIndex;
+    CommandLine.mOption := TmOption(AddFrm.mOption.ItemIndex);
+    CommandLine.dOption := TdOption(AddFrm.dOption.ItemIndex);
 
-    CommandLine.xOption.Clear;
+    CommandLine.xOptions.Clear;
     for I := 0 to AddFrm.FilesMgr.Count - 1 do
       if AddFrm.FilesMgr.Excluded[I] = True then
-        CommandLine.xOption.Add(AddFrm.FilesMgr.Items[I]);
+        CommandLine.xOptions.Add(AddFrm.FilesMgr.Items[I]);
 
-    CommandLine.tOption := AddFrm.tOption.Checked;
-    CommandLine.yOption := AddFrm.yOption.Text;
-    CommandLine.kOption := AddFrm.kOption.Checked;
+    CommandLine. tOption := AddFrm.tOption.Checked;
+    CommandLine.wdOption := AddFrm.yOption.Text;
+    // CommandLine. pOption := AddFrm.kOption.Checked;
 
     if AddFrm.cdOptionCheck.Checked then
       CommandLine.cdOption := AddFrm.cdOption.Text
@@ -191,7 +179,7 @@ var
 begin
   ExtractFrm := TExtractFrm.Create(Application);
 
-  ExtractFrm.xCommand.Checked := CommandLine.Command = 'X';
+  ExtractFrm.xCommand.Checked := CommandLine.Command = ccXextract;
 
   { TODO : }
 
@@ -206,7 +194,7 @@ begin
   //   ExtractFrm.ufOption.ItemIndex := 2;
   // end;
 
-  case UpCase(CommandLine.oOption) of
+  case UpCase(CommandLine.uOption) of
     'Y': ExtractFrm.oOption.ItemIndex := 0;
     'A': ExtractFrm.oOption.ItemIndex := 1;
     'S': ExtractFrm.oOption.ItemIndex := 2;
