@@ -87,7 +87,8 @@ type
     Comment: string;
   public
     Action: THeaderAction; { reserved }
-    Link: string;          { reserved }
+    ExtName: string;       { reserved }
+    ExtSize: int64;        { reserved }
   end;
 
   { Header list compare function}
@@ -154,12 +155,12 @@ type
     procedure Write(Stream: TStream); virtual;
     procedure Configure(Configuration: TConfiguration);
 
-    function Add(const Rec: TCustomSearchRec): int64;
-    function Update(const Rec: TCustomSearchRec): int64;
-    function Replace(const Rec: TCustomSearchRec): int64;
-    function AddUpdate(const Rec: TCustomSearchRec): int64;
-    function AddReplace(const Rec: TCustomSearchRec): int64;
-    function AddAutoRename(const Rec: TCustomSearchRec): int64;
+    function Add(const Rec: TCustomSearchRec): boolean;
+    function Update(const Rec: TCustomSearchRec): boolean;
+    function Replace(const Rec: TCustomSearchRec): boolean;
+    function AddUpdate(const Rec: TCustomSearchRec): boolean;
+    function AddReplace(const Rec: TCustomSearchRec): boolean;
+    function AddAutoRename(const Rec: TCustomSearchRec): boolean;
 
     procedure ClearSfx;
     function LoadSfx(const FileName: string): boolean;
@@ -257,12 +258,12 @@ begin
   begin
     if (Item1.Action <> haNew) and (Item2.Action <> haNew) then
     begin
-      Result := 1;
+      Result := -1;
     end else
-      if (Item1.Action = haNew) then
+      if (Item1.Action <> haNew) then
         Result := -1
       else
-        Result :=  1;
+        Result := 1;
   end;
 end;
 
@@ -281,7 +282,7 @@ begin
   while H >= L do
   begin
     M := (L + H) div 2;
-    I := Compare(Item, THeader(List[M]));
+    I := Compare(THeader(List[M]), Item);
     if I > 0 then
       L := M + 1
     else
@@ -294,14 +295,16 @@ begin
   if M = -2 then
     List.Add(Item)
   else
-    if H <> -2 then
+    if H = -2 then
+    begin
+      List.Insert(M + 1, Item);
+    end else
     begin
       if I > 0 then
         List.Insert(M + 1, Item)
       else
         List.Insert(M, Item);
-    end else
-      List.Insert(M + 1, Item);
+    end;
 end;
 
 procedure THeaderList.Insert(Item: THeader);
@@ -571,21 +574,21 @@ begin
   Result := THeader.Create;
   // - Start header data - //
   Result.Flags      := [foTear, foTable];
-  { TODO : Verify Method - Dictionary }
   Result.Version    := Ord(FCL.hvOption);
   Result.Method     := Ord(moFast);
   Result.Dictionary := Ord(do5MB);
   // Result.FileTable
-  Result.Size       := Rec.Size;
+  Result.Size       := -1;
   Result.Time       := Rec.Time;
   Result.Attr       := Rec.Attr;
   Result.Crc        := longword(-1);
-  Result.PackedSize := 0;
-  Result.StartPos   := 0;
-  Result.Name       := FCL.cdOption + Rec.Name;
+  Result.PackedSize := -1;
+  Result.StartPos   := -1;
+  Result.Name       := FCL.cdOption + DeleteFileDrive(Rec.Name);
   // - End header data - //
   Result.Action     := haNew;
-  Result.Link       := Rec.Link;
+  Result.ExtName    := Rec.Name;
+  Result.ExtSize    := Rec.Size;
 end;
 
 procedure ReadHv03(Stream: TStream; var Item: THeader);
@@ -625,8 +628,9 @@ begin
     Stream.Read(Item.Name[1], I);
     Item.Name := DoDirSeparators(Item.Name);
   end;
-  Item.Action := haNone;
-  Item.Link   := '';
+  Item.Action  := haNone;
+  Item.ExtName := '';
+  Item.ExtSize := -1;
 end;
 
 procedure ReadHv04(Stream: TStream; var Item: THeader);
@@ -660,8 +664,9 @@ begin
     Stream.Read(Item.Name[1], I);
     Item.Name := DoDirSeparators(Item.Name);
   end;
-  Item.Action := haNone;
-  Item.Link   := '';
+  Item.Action  := haNone;
+  Item.ExtName := '';
+  Item.ExtSize := -1;
 end;
 
 function ReadHxx(Stream: TStream; var Version: byte): THeader;
@@ -947,81 +952,83 @@ begin
   end;
 end;
 
-function THeaders.Add(const Rec: TCustomSearchRec): int64;
+function THeaders.Add(const Rec: TCustomSearchRec): boolean;
 begin
-  if Search(Rec.Name) = nil then
+  Result := Search(DeleteFileDrive(Rec.Name)) = nil;
+  if Result then
   begin
     Inc(FNews);
     Insert(New(Rec));
-    Result := Rec.Size;
-  end else
-    Result := 0;
+  end;
 end;
 
-function THeaders.Update(const Rec: TCustomSearchRec): int64;
+function THeaders.Update(const Rec: TCustomSearchRec): boolean;
 var
   Item: THeader;
 begin
-  Item := Search(Rec.Name);
-  if (Item <> nil) and (Item.Time < Rec.Time) then
+  Item := Search(DeleteFileDrive(Rec.Name));
+  Result := (Item <> nil) and (Item.Time < Rec.Time);
+
+  if Result then
   begin
     if Item.Action = haNone then
       Item.Action := haUpdate;
 
-    Item.Time := Rec.Time;
-    Item.Link := Rec.Link;
-    Result    := Rec.Size;
-  end else
-    Result := 0;
+    Item.ExtName  := Rec.Name;
+    Item.ExtSize  := Rec.Size;
+    Item.Time     := Rec.Time;
+    Item.Attr     := Rec.Attr;
+  end;
 end;
 
-function THeaders.Replace(const Rec: TCustomSearchRec): int64;
+function THeaders.Replace(const Rec: TCustomSearchRec): boolean;
 var
   Item: THeader;
 begin
-  Item := Search(Rec.Name);
-  if Item <> nil then
+  Item := Search(DeleteFileDrive(Rec.Name));
+  Result := Item <> nil;
+
+  if Result then
   begin
     if Item.Action = haNone then
       Item.Action := haUpdate;
 
-    Item.Time := Rec.Time;
-    Item.Link := Rec.Link;
-    Result    := Rec.Size;
-  end else
-    Result := 0;
+    Item.ExtName  := Rec.Name;
+    Item.ExtSize  := Rec.Size;
+    Item.Time     := Rec.Time;
+    Item.Attr     := Rec.Attr;
+  end;
 end;
 
-function THeaders.AddUpdate(const Rec: TCustomSearchRec): int64;
+function THeaders.AddUpdate(const Rec: TCustomSearchRec): boolean;
 begin
   Result := Add(Rec);
-  if Result = 0 then
+  if not Result then
   begin
     Result := Update(Rec);
   end;
 end;
 
-function Theaders.AddReplace(const Rec: TCustomSearchRec): int64;
+function Theaders.AddReplace(const Rec: TCustomSearchRec): boolean;
 begin
   Result := Add(Rec);
-  if Result = 0 then
+  if not Result then
   begin
     Result := Replace(Rec);
   end;
 end;
 
-function Theaders.AddAutoRename(const Rec: TCustomSearchRec): int64;
+function Theaders.AddAutoRename(const Rec: TCustomSearchRec): boolean;
 var
   I: longint;
 begin
   Result := Add(Rec);
-  if Result = 0 then
+  if not Result then
   begin
     I := 0;
     repeat
        Inc(I);
     until Search(GenerateAlternativeFileName(Rec.Name, I, False)) = nil;
-
     Rec.Name := GenerateAlternativeFileName(Rec.Name, I, False);
     Result   := Add(Rec);
   end;

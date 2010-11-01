@@ -410,9 +410,9 @@ var
 begin
   FStreamPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
-    Item.Size := CopyFrom(Item.Link, Item.Crc)
+    Item.Size := CopyFrom(Item.ExtName, Item.Crc)
   else
-    Item.Size := EncodeFrom(Item.Link, Item.Crc);
+    Item.Size := EncodeFrom(Item.ExtName, Item.Crc);
   Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
 
   if Item.PackedSize <= Item.Size then
@@ -425,7 +425,7 @@ begin
     FStream.Size := FStreamPos;
 
     FTick     := False;
-    Item.Size := CopyFrom(Item.Link, Item.Crc);
+    Item.Size := CopyFrom(Item.ExtName, Item.Crc);
     FTick     := Assigned(FTicker);
 
     Item.PackedSize := Item.Size;
@@ -451,17 +451,17 @@ var
 begin
   FStream.Seek(Item.StartPos, soBeginning);
   if foMoved in Item.Flags then
-    Result := CopyTo(Item.Link, CRC) = Item.Size
+    Result := CopyTo(Item.ExtName, CRC) = Item.Size
   else
-    Result := DecodeTo(Item.Link, CRC) = Item.Size;
+    Result := DecodeTo(Item.ExtName, CRC) = Item.Size;
 
   if Result then
   begin
     Result := Item.Crc = CRC;
     if Result then
     begin
-      FileSetAttr(Item.Link, Item.Attr);
-      FileSetDate(Item.Link, Item.Attr);
+      FileSetAttr(Item.ExtName, Item.Attr);
+      FileSetDate(Item.ExtName, Item.Attr);
     end;
   end;
 end;

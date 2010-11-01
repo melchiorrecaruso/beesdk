@@ -94,7 +94,6 @@ type
     Size: int64;
     Time: longint;
     Attr: longint;
-    Link: string;
   end;
 
   { TFileScanner }
@@ -179,8 +178,6 @@ procedure TFileWriter.Flush;
 begin
   FlushBuffer;
 end;
-
-
 
 { TNulWriter class }
 
@@ -274,11 +271,10 @@ end;
 function TFileScanner.CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
 begin
   Result := TCustomSearchRec.Create;
-  Result.Name := DeleteFileDrive(RecPath) + Rec.Name;
+  Result.Name := RecPath + Rec.Name;
   Result.Size := Rec.Size;
   Result.Time := Rec.Time;
   Result.Attr := Rec.Attr;
-  Result.Link := RecPath + Rec.Name;
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
