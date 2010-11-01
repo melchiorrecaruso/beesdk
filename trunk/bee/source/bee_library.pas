@@ -41,6 +41,7 @@ uses
   Bee_Types,
   Bee_Consts,
   Bee_Common,
+  Bee_Headers,
   Bee_Interface,
   Bee_CommandLine;
 
@@ -79,29 +80,23 @@ type
   TCoreApp = class(TBeeApp)
   private
     FItems:    TList;
-    FItem:     TFileInfo;
+    FItem:     THeaderRec;
     FMessages: TStringList;
     FMessage:  string;
     FPassword: string;
     FStatus:   integer;
   protected
     procedure ClearItems;
-    procedure AddItem(aFileInfo: TFileInfoExtra);
+    procedure AddItem(aItem: THeader);
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
-
-    procedure OnFatalError(const aMessage: string); override;
-    procedure OnError(const aMessage: string); override;
-    procedure OnWarning(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
     procedure OnMessage(const aMessage: string); override;
-    function OnOverwrite(const aFileInfo: TFileInfo; const aValue: string): string; override;
-    function OnRename(const aFileInfo: TFileInfo; const aValue: string): string; override;
-    function OnPassword(const aFileInfo: TFileInfo; const aValue: string): string; override;
-    procedure OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean); override;
+    function  OnRename(const aItem: THeaderRec; const aValue: string): string; override;
+    function  OnPassword(const aItem: THeaderRec; const aValue: string): string; override;
+    procedure OnList(const aItem: THeader); override;
     procedure OnProgress; override;
-    procedure OnClearLine; override;
   end;
 
   { TCore class }
@@ -127,16 +122,13 @@ begin
   FMessages := TStringList.Create;
   FItems    := TList.Create;
 
-  SetLength(FPassword, 0);
-  SetLength(FMessage, 0);
-  FStatus := csReady;
+  FPassword := '';
+  FMessage  := '';
+  FStatus   := csReady;
 end;
 
 destructor TCoreApp.Destroy;
 begin
-  SetLength(FPassword, 0);
-  SetLength(FMessage, 0);
-
   ClearItems;
   FItems.Destroy;
   FMessages.Destroy;
@@ -145,52 +137,35 @@ end;
 
 procedure TCoreApp.ClearItems;
 var
-  I: integer;
+  I: longint;
 begin
   for I := 0 to FItems.Count - 1 do
-  begin
     CoreFreePFileInfoExtra(FItems[I]);
-  end;
 end;
 
-procedure TCoreApp.AddItem(aFileInfo: TFileInfoExtra);
+procedure TCoreApp.AddItem(aItem: THeader);
 var
   P: PFileInfoExtra;
 begin
   P := GetMem(SizeOf(TFileInfoExtra));
   if P <> nil then
   begin
+    P^.Name       := aFileInfo.Name;
+    P^.Path       := aFileInfo.Path;
+    P^.Size       := aFileInfo.Size;
+    P^.Time       := aFileInfo.Time;
+    P^.Attr       := aFileInfo.Attr;
+    P^.PackedSize := aFileInfo.PackedSize;
+    P^.Ratio      := aFileInfo.Ratio;
+    P^.Comm       := aFileInfo.Comm;
+    P^.Crc        := aFileInfo.Crc;
+    P^.Method     := aFileInfo.Method;
+    P^.Version    := aFileInfo.Version;
+    P^.Password   := aFileInfo.Password;
+    P^.Position   := aFileInfo.Position;
+
     FItems.Add(P);
-
-    P^.FileName     := StrNew(aFileInfo.FileName);
-    P^.FilePath     := StrNew(aFileInfo.FilePath);
-    P^.FileSize     := aFileInfo.FileSize;
-    P^.FileTime     := aFileInfo.FileTime;
-    P^.FileAttr     := aFileInfo.FileAttr;
-    P^.FilePacked   := aFileInfo.FilePacked;
-    P^.FileRatio    := aFileInfo.FileRatio;
-    P^.FileComm     := StrNew(aFileInfo.FileComm);
-    P^.FileCrc      := aFileInfo.FileCrc;
-    P^.FileMethod   := StrNew(aFileInfo.FileMethod);
-    P^.FileVersion  := StrNew(aFileInfo.FileVersion);
-    P^.FilePassword := StrNew(aFileInfo.FilePassword);
-    P^.FilePosition := aFileInfo.FilePosition;
   end;
-end;
-
-procedure TCoreApp.OnFatalError(const aMessage: string);
-begin
-  FMessages.Add(aMessage);
-end;
-
-procedure TCoreApp.OnError(const aMessage: string);
-begin
-  FMessages.Add(aMessage);
-end;
-
-procedure TCoreApp.OnWarning(const aMessage: string);
-begin
-  FMessages.Add(aMessage);
 end;
 
 procedure TCoreApp.OnMessage(const aMessage: string);
@@ -199,38 +174,27 @@ begin
   FMessage := aMessage;
 end;
 
-function TCoreApp.OnOverWrite(const aFileInfo: TFileInfo;
-  const aValue: string): string;
+function TCoreApp.OnRename(const aItem: THeaderRec; const aValue: string): string;
 begin
   FMessage := aValue;
-  FItem    := aFileInfo;
-  FStatus  := csWaitingOverwrite;
-  while FStatus = csWaitingOverwrite do
-    Sleep(250);
-
-  if Length(FMessage) = 1 then
-    Result := FMessage[1];
-end;
-
-function TCoreApp.OnRename(const aFileInfo: TFileInfo; const aValue: string): string;
-begin
-  FMessage := aValue;
-  FItem    := aFileInfo;
+  FItem    := aItem;
   FStatus  := csWaitingRename;
   while FStatus = csWaitingRename do
+  begin
     Sleep(250);
-
+  end;
   Result := FMessage;
 end;
 
-function TCoreApp.OnPassword(const aFileInfo: TFileInfo; const aValue: string): string;
+function TCoreApp.OnPassword(const aItem: THeaderRec; const aValue: string): string;
 begin
   FMessage := aValue;
-  FItem    := aFileInfo;
+  FItem    := aItem;
   FStatus  := csWaitingPassword;
   while FStatus = csWaitingPassword do
+  begin
     Sleep(250);
-
+  end;
   Result := FMessage;
 end;
 
@@ -239,12 +203,14 @@ begin
   FMessage := aMessage;
   FStatus  := csWaitingRequest;
   while FStatus = csWaitingRequest do
+  begin
     Sleep(250);
+  end;
 end;
 
-procedure TCoreApp.OnList(const aFileInfo: TFileInfoExtra; aVerbose: boolean);
+procedure TCoreApp.OnList(const aItem: THeader);
 begin
-  AddItem(aFileInfo);
+  AddItem(aItem);
 end;
 
 procedure TCoreApp.OnProgress;
@@ -302,7 +268,7 @@ end;
 
 function CoreLibVersion: integer;
 begin
-  Result := 103;
+  Result := 104;
 end;
 
 procedure CoreFreePChar(P: PChar);

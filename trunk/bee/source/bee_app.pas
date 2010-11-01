@@ -496,7 +496,7 @@ begin
         if (P.Action = haExtract) or
           ((P.Action = haUpdate) and ((I <> FHeaders.Count - 1) and (I <> FHeaders.GetNext(I, foTear) - 1))) then
         begin
-          DoMessage(Format(cmExtracting, [P.Name]));
+          DoMessage(Format(cmDecoding, [P.Name]));
           if foPassword in P.Flags then
           begin
             FArcFile.StartDecode(FCommandLine.pOption);
@@ -508,6 +508,7 @@ begin
           begin
             DoMessage(Format(cmSequenceError, []), ccError);
           end;
+          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
           FSwapStrm.FinishEncode;
           FArcFile.FinishDecode;
         end;

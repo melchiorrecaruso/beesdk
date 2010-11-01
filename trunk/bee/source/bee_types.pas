@@ -103,8 +103,8 @@ type
   PFileInfo = ^TFileInfo;
 
   TFileInfo = record
-    Name: string;
-    Path: string;
+    Name: PChar;
+    Path: PChar;
     Size: int64;
     Time: longint;
     Attr: longint;
@@ -115,18 +115,18 @@ type
   PFileInfoExtra = ^TFileInfoExtra;
 
   TFileInfoExtra = record
-    Name:       string;
-    Path:       string;
+    Name:       PChar;
+    Path:       PChar;
     Size:       int64;
     Time:       longint;
     Attr:       longint;
     PackedSize: int64;
     Ratio:      longint;
-    Comm:       string;
+    Comm:       PChar;
     Crc:        longword;
-    Method:     string;
-    Version:    string;
-    Password:   string;
+    Method:     PChar;
+    Version:    PChar;
+    Password:   PChar;
     Position:   longint;
   end;
 
