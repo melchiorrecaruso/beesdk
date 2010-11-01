@@ -85,6 +85,7 @@ type
     PackedSize: int64;
     StartPos: int64;
     Comment: string;
+    Position: longint;
   public
     Action: THeaderAction; { reserved }
     ExtName: string;       { reserved }
@@ -283,10 +284,10 @@ begin
   begin
     M := (L + H) div 2;
     I := Compare(THeader(List[M]), Item);
-    if I > 0 then
+    if I < 0 then
       L := M + 1
     else
-      if I < 0 then
+      if I > 0 then
         H := M - 1
       else
         H := -2;
@@ -300,7 +301,7 @@ begin
       List.Insert(M + 1, Item);
     end else
     begin
-      if I > 0 then
+      if I < 0 then
         List.Insert(M + 1, Item)
       else
         List.Insert(M, Item);
@@ -720,6 +721,7 @@ begin
         P := ReadHxx(Stream, Ver);
         if P <> nil then
         begin
+          P.Position := FItems.Count;
           Insert(P);
         end;
         SymbolIndex := 0;
@@ -756,6 +758,7 @@ begin
         P := ReadHxx(Stream, Ver);
         if P <> nil then
         begin
+          P.Position := FItems.Count;
           Insert(P);
         end;
       end else Break;
