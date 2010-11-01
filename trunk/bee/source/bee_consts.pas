@@ -72,6 +72,7 @@ const
 
   cmOpening           = 'Opening    %s';
   cmScanning          = 'Scanning   %s';
+  cmAdding            = 'Adding     %s';
   cmUpdating          = 'Updating   %s';
   cmCopying           = 'Copying    %s';
   cmEncoding          = 'Encoding   %s';
