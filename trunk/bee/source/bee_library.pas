@@ -150,19 +150,28 @@ begin
   P := GetMem(SizeOf(TFileInfoExtra));
   if P <> nil then
   begin
-    P^.Name       := aFileInfo.Name;
-    P^.Path       := aFileInfo.Path;
-    P^.Size       := aFileInfo.Size;
-    P^.Time       := aFileInfo.Time;
-    P^.Attr       := aFileInfo.Attr;
-    P^.PackedSize := aFileInfo.PackedSize;
-    P^.Ratio      := aFileInfo.Ratio;
-    P^.Comm       := aFileInfo.Comm;
-    P^.Crc        := aFileInfo.Crc;
-    P^.Method     := aFileInfo.Method;
-    P^.Version    := aFileInfo.Version;
-    P^.Password   := aFileInfo.Password;
-    P^.Position   := aFileInfo.Position;
+    P^.Name       := StringToPChar(ExtractFileName(aItem.Name));
+    P^.Path       := StringToPChar(ExtractFilePath(aItem.Name));
+    P^.Size       := aItem.Size;
+    P^.Time       := aItem.Time;
+    P^.Attr       := aItem.Attr;
+    P^.PackedSize := aItem.PackedSize;
+
+    if aItem.Size > 0 then
+      P^.Ratio    := Trunc(100 * (aItem.Size / aItem.PackedSize))
+    else
+      P^.Ratio    := 0;
+
+    P^.Comm       := StringToPChar(aItem.Comment);
+    P^.Crc        := aItem.Crc;
+    P^.Method     := StringToPChar(MethodToStr(aItem));
+    P^.Version    := StringToPChar(VersionToStr(aItem.Version));
+
+    if foPassword in aItem.Flags then
+      P^.Password   := StringToPChar('yes')
+    else
+      P^.Password   := StringToPChar('no');
+    P^.Position   := aItem.Position;
 
     FItems.Add(P);
   end;
@@ -218,34 +227,22 @@ begin
   // nothing to do
 end;
 
-procedure TCoreApp.OnClearLine;
-begin
-  // nothing to do
-end;
-
 { TCore class }
 
 constructor TCore.Create(const aCommandLine: string);
-var
-  FCommandLine: TCommandLine;
 begin
   inherited Create(True);
   FreeOnTerminate := False;
 
   FParams := TStringList.Create;
-  with FParams do
-  begin
-    Text := aCommandLine;
-  end;
-  FCommandLine := TCommandLine.Create;
-  FCommandLine.Process(FParams);
-    {$IFDEF FPC} {$IFDEF PLUGINS}
+  FParams.Text := aCommandLine;
+  {$IFDEF FPC} {$IFDEF PLUGINS}
   if SevenZipPlugin(FCommandLine.ArchiveName) then
     FApp := TSevenZipApp.Create(FParams)
   else
-    {$ENDIF} {$ENDIF}
+  {$ENDIF} {$ENDIF}
     FApp := TCoreApp.Create(FParams);
-  FreeAndNil(FCommandLine);
+  FParams.Destroy;
 end;
 
 destructor TCore.Destroy;
@@ -284,10 +281,8 @@ begin
   if P <> nil then
     with TFileInfo(P^) do
     begin
-      if FileName <> nil then
-        StrDispose(FileName);
-      if FilePath <> nil then
-        StrDispose(FilePath);
+      if Name <> nil then StrDispose(Name);
+      if Path <> nil then StrDispose(Path);
     end;
 end;
 
@@ -296,18 +291,12 @@ begin
   if P <> nil then
     with TFileInfoExtra(P^) do
     begin
-      if FileName <> nil then
-        StrDispose(FileName);
-      if FilePath <> nil then
-        StrDispose(FilePath);
-      if FileComm <> nil then
-        StrDispose(FileComm);
-      if FileMethod <> nil then
-        StrDispose(FileMethod);
-      if FileVersion <> nil then
-        StrDispose(FileVersion);
-      if FilePassword <> nil then
-        StrDispose(FilePassword);
+      if Name     <> nil then StrDispose(Name);
+      if Path     <> nil then StrDispose(Path);
+      if Comm     <> nil then StrDispose(Comm);
+      if Method   <> nil then StrDispose(Method);
+      if Version  <> nil then StrDispose(Version);
+      if Password <> nil then StrDispose(Password);
     end;
 end;
 
@@ -354,7 +343,7 @@ begin
   Result := (Core <> nil);
   if Result then
   begin
-    Core.FApp.Terminated := True;
+    Core.FApp.Terminate;
     if Core.FApp.FStatus <> csTerminated then
     begin
       Core.FApp.FStatus := csExecuting;
@@ -418,40 +407,35 @@ end;
 
 function CorePercentes: integer;
 begin
+  Result := -1;
   if (Core <> nil) then
-    Result := Core.FApp.Percentes
-  else
-    Result := -1;
+  begin
+    Result := Core.FApp.Percentage
+  end;
 end;
 
 function CoreTime(aValue: integer): integer;
 begin
+  Result := -1;
   if (Core <> nil) then
   begin
     case aValue of
-      -1: Result := Core.FApp.Time;
-      +1: Result := Core.FApp.TotalTime;
-      else
-        Result := -1;
+      -1: Result := Core.FApp.ElapsedTime;
+      +1: Result := Core.FApp.RemainingTime;
     end;
-  end
-  else
-    Result := -1;
+  end;
 end;
 
 function CoreSize(aValue: integer): int64;
 begin
+  Result := -1;
   if (Core <> nil) then
   begin
     case aValue of
-      -1: Result := Core.FApp.Size;
-      +1: Result := Core.FApp.TotalSize;
-      else
-        Result := -1;
+      -1: Result := Core.FApp.ProcessedSize;
+      +1: Result := Core.FApp.Size;
     end;
-  end
-  else
-    Result := -1;
+  end;
 end;
 
 function CoreCode: integer;

@@ -130,7 +130,6 @@ type
     Position:   longint;
   end;
 
-
 implementation
 
 end.
