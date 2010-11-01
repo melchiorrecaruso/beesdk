@@ -106,7 +106,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1153 archiver utility, Set 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1155 archiver utility, Set 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -413,14 +413,12 @@ begin
     if J > -1 then
       repeat
         case FHeaders.Items[J].Action of
-          haExtract: {nothing to do};
           haNone:    FHeaders.Items[J].Action := haDecode;
         end;
         Inc(J);
-      until (J = FHeaders.Count) or (foTear in  FHeaders.Items[J].Flags);
+      until (J = I);
     I := FHeaders.GetBack(I - 1, [haExtract]);
   end;
-
   // STEP3: calculate bytes to process ...
   for I := 0 to FHeaders.Count - 1 do
   begin
@@ -672,7 +670,13 @@ begin
                 if Assigned(FTempFile) then FTempFile.StartEncode(FCommandLine.pOption);
               end;
 
-              DoMessage(Format(cmUpdating, [P.Name]));
+              case P.Action of
+                haNew:     DoMessage(Format(cmAdding, [P.Name]));
+                haUpdate:  DoMessage(Format(cmUpdating, [P.Name]));
+                haExtract: DoMessage(Format(cmEncoding, [P.Name]));
+                haNone:    DoMessage(Format(cmCopying, [P.Name]));
+              end;
+
               case P.Action of
                 haNew:     Encoder.EncodeFrom(P);
                 haUpdate:  Encoder.EncodeFrom(P);
@@ -720,10 +724,15 @@ begin
             if foPassword in P.Flags then
               FArcFile.StartDecode(FCommandLine.pOption);
             // show message ...
-            case FCommandLine.Command of
-              ccExtract: DoMessage(Format(cmExtracting, [P.Name]));
-              ccTest:    DoMessage(Format(cmTesting,    [P.Name]));
+            case P.Action of
+              haExtract:
+                case FCommandLine.Command of
+                  ccExtract: DoMessage(Format(cmExtracting, [P.Name]));
+                  ccTest:    DoMessage(Format(cmTesting,    [P.Name]));
+                end;
+              haDecode:      DoMessage(Format(cmDecoding,   [P.Name]));
             end;
+
             // process item ...
             case P.Action of
               haExtract:
