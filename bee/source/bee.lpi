@@ -109,7 +109,6 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="97"/>
@@ -143,10 +142,11 @@
       <Unit5>
         <Filename Value="bee_common.pas"/>
         <UnitName Value="Bee_Common"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="38"/>
-        <CursorPos X="10" Y="62"/>
+        <TopLine Value="671"/>
+        <CursorPos X="35" Y="701"/>
         <UsageCount Value="70"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
