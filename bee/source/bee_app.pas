@@ -413,10 +413,10 @@ begin
     if J > -1 then
       repeat
         case FHeaders.Items[J].Action of
-          haNone:    FHeaders.Items[J].Action := haDecode;
+          haNone: FHeaders.Items[J].Action := haDecode;
         end;
         Inc(J);
-      until (J = I);
+      until (J <= I);
     I := FHeaders.GetBack(I - 1, [haExtract]);
   end;
   // STEP3: calculate bytes to process ...
