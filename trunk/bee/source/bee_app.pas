@@ -1015,9 +1015,33 @@ begin
 end;
 {$ELSE}
 procedure TBeeApp.ListShell;
+var
+  I: longint;
+  P: THeader;
+  Version, Method, Dictionary: longint;
 begin
+  OpenArchive;
+  if Code < ccError then
+  begin
+    if SetItemsToList > 0 then
+    begin
+      Version     := -1;
+      Method      := -1;
+      Dictionary  := -1;
 
+      for I := 0 to FHeaders.Count - 1 do
+        if Code < ccError then
+        begin
+          P := FHeaders.Items[I];
+          if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
+          if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
+          if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
 
+          DoList(P);
+        end;
+    end;
+  end;
+  CloseArchive(False);
 end;
 {$ENDIF}
 
