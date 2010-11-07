@@ -97,6 +97,7 @@ type
 implementation
 
 uses
+  Math,
   SysUtils,
   Bee_Consts,
   Bee_MainPacker;
@@ -494,6 +495,10 @@ begin
       P := FHeaders.Items[I];
       if P.Actions = [haUpdate] then Inc(FSize, P.PackedSize);
     end;
+  if FSize = 0 then
+  begin
+    DoMessage(cmNoFilesWarning, ccWarning)
+  end;
   Result := FSize;
 end;
 
@@ -912,14 +917,15 @@ begin
   end;
 end;
 
+{$IFDEF CONSOLEAPPLICATION}
 procedure TBeeApp.ListShell;
 var
   I: longint;
   P: THeader;
   FHeadersToList: TList;
-  TotalPack, TotalSize, TotalFiles: longint;
   Version, Method, Dictionary: longint;
-  Sequences, Passwords, MaxDictSize: longint;
+  Sequences, Passwords, MaxDict: longint;
+  TotalPacked, TotalSize, TotalFiles: int64;
 begin
   OpenArchive;
   if Code < ccError then
@@ -929,40 +935,39 @@ begin
       Version     := -1;
       Method      := -1;
       Dictionary  := -1;
+
       Sequences   :=  0;
       Passwords   :=  0;
-      MaxDictSize :=  0;
+      MaxDict     :=  0;
+
+      TotalPacked :=  0;
+      TotalSize   :=  0;
+      TotalFiles  :=  0;
 
       FHeadersToList := TList.Create;
       for I := 0 to FHeaders.Count - 1 do
-      begin
-        P := FHeaders.Items[I];
-        if foVersion in P.Flags then
-          Version := P.Version
-        else
-          P.Version := Version;
+        if Code < ccError then
+        begin
+          P := FHeaders.Items[I];
+          if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
+          if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
+          if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
+          if foTear       in P.Flags then Inc(Sequences);
+          if foPassword   in P.Flags then Inc(Passwords);
 
-        if foMethod in P.Flags then
-          Method := P.Method
-        else
-          P.Method := Method;
+          if Dictionary > MaxDict then MaxDict := Dictionary;
 
-        if foDictionary in P.Flags then
-          Dictionary := P.Dictionary
-        else
-          P.Dictionary := Dictionary;
+          Inc(TotalPacked, P.PackedSize);
+          Inc(TotalSize, P.Size);
+          Inc(TotalFiles);
 
-        if Dictionary > MaxDictSize then MaxDictSize := Dictionary;
+          if haUpdate in P.Actions then FHeadersToList.Add(P);
+        end;
 
-        if foTear     in P.Flags then Inc(Sequences);
-        if foPassword in P.Flags then Inc(Passwords);
-
-        if haUpdate in P.Actions then FHeadersToList.Add(P);
-      end;
-      {$IFDEF CONSOLEAPPLICATION}
       DoMessage(Cr + 'Extraction requirements:');
-      DoMessage('  Headers version = ' + VersionToStr(Version));
-      DoMessage('  Dictionary size = ' + IntToStr(MaxDictSize));
+      DoMessage('  Headers version  = ' + VersionToStr(Version));
+      DoMessage('  Free memory size = ' + IntToStr(Trunc(Power(2, MaxDict)*2560000)));
+      DoMessage('  Free disk space  = ' + IntToStr(TotalSize));
 
       DoMessage(Cr + 'Archive features:');
       if Passwords > 0 then
@@ -975,44 +980,46 @@ begin
       else
         DoMessage('  Solid     = no');
 
-      DoMessage('  Items     = ' + IntToStr(FHeaders.Count));
+      DoMessage('  Items     = ' + IntToStr(TotalFiles));
       DoMessage('  Sequences = ' + IntToStr(Sequences));
 
-      DoMessage('  Sfx size     = ' + IntToStr(FHeaders.SfxSize));
-      DoMessage('  Headers size = ' + IntToStr(FHeaders.Size));
+      DoMessage('  Module  size = ' + IntToStr(FHeaders.ModuleSize));
+      DoMessage('  Packed  size = ' + IntToStr(TotalPacked));
       DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
 
       DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
       DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
 
-      if FCommandLine.slsOption then
-      begin
-        FHeadersToList.Sort(CompareFn);
-      end;
-      {$ENDIF}
+      if FCommandLine.slsOption then FHeadersToList.Sort(CompareFn);
 
-      TotalSize  := 0;
-      TotalPack  := 0;
-      TotalFiles := 0;
+      TotalPacked := 0;
+      TotalSize   := 0;
+      TotalFiles  := 0;
 
       for I := 0 to FHeadersToList.Count - 1 do
-      begin
-        P := FHeadersToList.Items[I];
-        DoList(P);
-        Inc(TotalSize, P.Size);
-        Inc(TotalPack, P.PackedSize);
-        Inc(TotalFiles);
-      end;
-      {$IFDEF CONSOLEAPPLICATION}
+        if Code < ccError then
+        begin
+          P := FHeadersToList.Items[I];
+          Inc(TotalPacked, P.PackedSize);
+          Inc(TotalSize, P.Size);
+          Inc(TotalFiles);
+          DoList(P);
+        end;
       DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
-      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPack), TotalFiles]));
-      {$ENDIF}
-      FHeadersToList.Free;
-    end else
-      DoMessage(cmNoFilesWarning, ccWarning);
+      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPacked), TotalFiles]));
+
+      FHeadersToList.Destroy;
+    end;
   end;
   CloseArchive(False);
 end;
+{$ELSE}
+procedure TBeeApp.ListShell;
+begin
+
+
+end;
+{$ENDIF}
 
 end.
 

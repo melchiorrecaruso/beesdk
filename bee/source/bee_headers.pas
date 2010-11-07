@@ -85,11 +85,10 @@ type
     PackedSize: int64;
     StartPos: int64;
     Comment: string;
-  public
+    Position: longint;       { reserved }
     Actions: THeaderActions; { reserved }
     ExtName: string;         { reserved }
     ExtSize: int64;          { reserved }
-    Position: longint;       { reserved }
   end;
 
   { Header list compare function}
@@ -113,7 +112,7 @@ type
      destructor Destroy; override;
 
      function Search(FileName: string): THeader; virtual;
-     function IndexOf(Item: THeader): longint; virtual; 
+     function IndexOf(Item: THeader): longint; virtual;
 
      function SetActions(Masks: TStringList; MaskActs, Actions: THeaderActions): longint; overload;
      function SetActions(Mask: string; MaskActs, Actions: THeaderActions): longint; overload;
@@ -135,12 +134,10 @@ type
 
   THeaders = class(THeaderList)
   private
-    FSfx: TStream;
     FNews: longint;
-    FCheck: boolean;
-    FSize: int64;
+    FModule: TStream;
     procedure SetLast;
-    function GetSfxSize: longint;
+    function GetModuleSize: longint;
     function GetFirst(Stream: TStream): int64;
     procedure ReadB4b(Stream: TStream);
     function New(const Rec: TCustomSearchRec): THeader; overload;
@@ -159,12 +156,10 @@ type
     function AddReplace(const Rec: TCustomSearchRec): boolean;
     function AddAutoRename(const Rec: TCustomSearchRec): boolean;
 
-    procedure ClearSfx;
-    function LoadSfx(const FileName: string): boolean;
+    function LoadModule(const FileName: string): boolean;
+    procedure ClearModule;
   public
-    property SfxSize: longint read GetSfxSize;
-    property Check: boolean read FCheck;
-    property Size: int64 read FSize;
+    property ModuleSize: longint read GetModuleSize;
   end;
 
   function MethodToStr(const Item: THeader): string;
@@ -369,22 +364,11 @@ var
   P: THeader;
 begin
   Result := 0;
-  if FileNameUseWildcards(Mask) then
+  Mask := FCL.cdOption + Mask;
+  for  I := 0 to FItems.Count - 1 do
   begin
-    Mask := FCL.cdOption + Mask;
-    for  I := 0 to FItems.Count - 1 do
-    begin
-      P := THeader(FItems[I]);
-      if (P.Actions = MaskActs) and (FileNameMatch(P.Name, Mask, FCL.rOption)) then
-      begin
-        P.Actions := Actions;
-        Inc(Result);
-      end;
-    end;
-  end else
-  begin
-    P := Search(Mask);
-    if (P <> nil) and (P.Actions = MaskActs) then
+    P := THeader(FItems[I]);
+    if (P.Actions = MaskActs) and (FileNameMatch(P.Name, Mask, FCL.rOption)) then
     begin
       P.Actions := Actions;
       Inc(Result);
@@ -486,43 +470,7 @@ begin
       Break;
     end;
 end;
-(*
-function THeaderList.GetSize(Action: THeaderAction): int64;
-var
-  I: longint;
-begin
-  Result := 0;
-  for  I := 0 to FItems.Count - 1 do
-    if (Action in THeader(FItems[I]).Actions) then
-    begin
-      Inc(Result, THeader(FItems[I]).Size);
-    end;
-end;
 
-function THeaderList.GetPackedSize(Action: THeaderAction): int64;
-var
-  I: longint;
-begin
-  Result := 0;
-  for  I := 0 to FItems.Count - 1 do
-    if (Action in THeader(FItems[I]).Actions) then
-    begin
-      Inc(Result, THeader(FItems[I]).PackedSize);
-    end;
-end;
-
-function THeaderList.GetActionCount(Action: THeaderAction): longint;
-var
-  I: longint;
-begin
-  Result := 0;
-  for  I := 0 to FItems.Count - 1 do
-    if (Action in THeader(FItems[I]).Actions) then
-    begin
-      Inc(Result);
-    end;
-end;
-*)
 function THeaderList.GetCount: longint;
 begin
   Result := FItems.Count;
@@ -539,15 +487,13 @@ end;
 constructor THeaders.Create(CommandLine: TCommandLine);
 begin
   inherited Create(CommandLine);
-  FSfx   := TMemoryStream.Create;
-  FNews  := 0;
-  FSize  := -1;
-  FCheck := False;
+  FModule := TMemoryStream.Create;
+  FNews   := 0;
 end;
 
 destructor THeaders.Destroy;
 begin
-  FSfx.Free;
+  FModule.Free;
   inherited Destroy;
 end;
 
@@ -571,8 +517,8 @@ begin
   if Result > 0 then
   begin
     Stream.Seek(0, 0);
-    FSfx.Size := 0;
-    FSfx.CopyFrom(Stream, Result);
+    FModule.Size := 0;
+    FModule.CopyFrom(Stream, Result);
   end;
 end;
 
@@ -786,26 +732,21 @@ begin
 
     until (P <> nil) and (foLast in P.Flags);
 
-    if P <> nil then
-    begin
-      Exclude(P.Flags, foLast);
-    end;
-    FSize := Stream.Seek(0, 1) - OffSet;
+    if P <> nil then Exclude(P.Flags, foLast);
   end else
   begin
     ReadB4b(Stream);
   end;
 
-  OffSet := Stream.Seek(0, 1);
-  FCheck := True;
-
-  I := 0;
-  while (I < FItems.Count) and FCheck do
-  begin
-    FCheck := THeader(FItems[I]).StartPos = OffSet;
-    Inc(OffSet, THeader(FItems[I]).PackedSize);
-    Inc(I);
-  end;
+  //OffSet := Stream.Seek(0, 1);
+  //FCheck := True;
+  //I := 0;
+  //while (I < FItems.Count) and FCheck do
+  //begin
+  //  FCheck := THeader(FItems[I]).StartPos = OffSet;
+  //  Inc(OffSet, THeader(FItems[I]).PackedSize);
+  //  Inc(I);
+  //end;
 end;
 
 procedure WriteHv03(Stream: TStream; const Item: THeader);
@@ -890,13 +831,13 @@ var
 begin
   if Stream.Seek(0, 1) = 0 then
   begin
-    if FSfx.Size > 0 then
+    if FModule.Size > 0 then
     begin
-      FSfx.Seek(0, 0);
-      Stream.CopyFrom(FSfx, FSfx.Size);
+      FModule.Seek(0, 0);
+      Stream.CopyFrom(FModule, FModule.Size);
     end;
   end else
-    Stream.Seek(FSfx.Size, 0);
+    Stream.Seek(FModule.Size, 0);
 
   SetLast;
   Ver := Ord(hv02);
@@ -1056,32 +997,32 @@ begin
   end;
 end;
 
-function THeaders.LoadSfx(const FileName: string): boolean;
+function THeaders.LoadModule(const FileName: string): boolean;
 var
   Stream: TStream;
 begin
-  ClearSfx;
+  ClearModule;
   Result := False;
   if FileExists(FileName) then
   begin
     Stream := CreateTFileReader(FileName, fmOpenRead);
     if Stream <> nil then
       try
-        Result    := FSfx.CopyFrom(Stream, Stream.Size) = Stream.Size;
+        Result    := FModule.CopyFrom(Stream, Stream.Size) = Stream.Size;
       finally
         Stream.Free;
       end;
   end;
 end;
 
-procedure THeaders.ClearSfx;
+procedure THeaders.ClearModule;
 begin
-  FSfx.Size := 0;
+  FModule.Size := 0;
 end;
 
-function THeaders.GetSfxSize: longint;
+function THeaders.GetModuleSize: longint;
 begin
-  Result := FSfx.Size;
+  Result := FModule.Size;
 end;
 
 end.
