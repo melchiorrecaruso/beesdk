@@ -95,7 +95,7 @@ type
     Writeln(Format('%16s %7s %12s %12s %3s %s', [
       FileTimeToString(aItem.Time), AttrToStr(aItem.Attr),
       SizeToStr(aItem.Size), SizeToStr(aItem.PackedSize),
-      MethodToStr(aItem), aItem.Name]), ' ', aItem.Position);
+      MethodToStr(aItem), aItem.Name]));
   end;
 
   procedure TCustomBeeApp.OnRequest(const aMessage: string);
