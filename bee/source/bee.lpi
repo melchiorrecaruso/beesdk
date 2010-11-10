@@ -83,6 +83,7 @@
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="82"/>
@@ -106,10 +107,9 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="951"/>
+        <TopLine Value="279"/>
         <CursorPos X="9" Y="974"/>
         <FoldState Value=" T3jK0W4j"/>
         <UsageCount Value="100"/>
@@ -187,8 +187,8 @@
         <UnitName Value="Bee_CommandLine"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="74"/>
-        <CursorPos X="26" Y="98"/>
+        <TopLine Value="159"/>
+        <CursorPos X="80" Y="200"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
