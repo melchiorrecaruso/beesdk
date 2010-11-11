@@ -60,9 +60,7 @@ type
 
   { Header actions }
 
-  THeaderAction = (haUpdate, haDecode);
-
-  THeaderActions = set of THeaderAction;
+  THeaderAction = (haNone, haUpdate, haDecode, haDecodeAndUpdate);
 
   { Header structure, order of fields is significant }
 
@@ -85,10 +83,10 @@ type
     PackedSize: int64;
     StartPos: int64;
     Comment: string;
-    Position: longint;       { reserved }
-    Actions: THeaderActions; { reserved }
-    ExtName: string;         { reserved }
-    ExtSize: int64;          { reserved }
+    Position: longint;     { reserved }
+    Action: THeaderAction; { reserved }
+    ExtName: string;       { reserved }
+    ExtSize: int64;        { reserved }
   end;
 
   { Header list compare function}
