@@ -709,6 +709,11 @@ begin
               end;
 
               DoMessage(Format(cmUpdating, [P.Name]));
+
+
+
+
+
               if P.Actions = [haUpdate]           then Encoder.EncodeFrom(P);
               if P.Actions = [haUpdate, haDecode] then Encoder.EncodeFrom(P);
               if P.Actions = []                   then Encoder.CopyFrom(FArcFile,  P.PackedSize, P);
