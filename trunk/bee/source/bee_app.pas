@@ -108,7 +108,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1159 archiver utility, Nov 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1161 archiver utility, Nov 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -281,7 +281,6 @@ begin
     for I := 0 to FileMasks.Count - 1 do
       S.Scan(FileMasks[I], xOptions, rOption);
 
-  FHeaders.SetActions([haCopy]);
   for I := 0 to S.Count - 1 do
     case FCommandLine.uOption of
       umAdd:           FHeaders.Add          (S.Items[I]);
@@ -296,25 +295,25 @@ begin
   // STEP2: configure new items ...
   FHeaders.Configure(FConfiguration);
   // STEP3: find sequences and set actions ...
-  I := FHeaders.GetBack(FHeaders.Count - 1, haUpdate);
+  I := FHeaders.GetBack(FHeaders.Count - 1, [haUpdate]);
   while I > -1 do
   begin
     BackTear := FHeaders.GetBack(I, foTear);
-    NextTear := FHeaders.GetBack(I + 1, foTear);
+    NextTear := FHeaders.GetNext(I + 1, foTear);
 
     if NextTear = -1 then
       NextTear := FHeaders.Count;
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
-      NextTear := FHeaders.GetBack(NextTear, haCopy);
+      NextTear := FHeaders.GetBack(NextTear - 1, []);
       for J := BackTear to NextTear do
       begin
         Include(FHeaders.Items[J].Actions, haDecode);
       end;
       I := BackTear;
     end;
-    I := FHeaders.GetBack(I - 1, haUpdate);
+    I := FHeaders.GetBack(I - 1, [haUpdate]);
   end;
 
   // STEP4: calculate bytes to process ...
@@ -322,10 +321,10 @@ begin
     for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
+      if P.Actions = []                   then Inc(FSize, P.PackedSize);
       if P.Actions = [haUpdate]           then Inc(FSize, P.ExtSize);
       if P.Actions = [haUpdate, haDecode] then Inc(FSize, P.Size + P.ExtSize);
-      if P.Actions = [haCopy]             then Inc(FSize, P.PackedSize);
-      if P.Actions = [haCopy, haDecode]   then Inc(FSize, P.Size + P.Size);
+      if P.Actions = [haDecode]           then Inc(FSize, P.Size + P.Size);
     end;
   if FSize = 0 then
   begin
@@ -340,11 +339,11 @@ var
   I, J, BackTear, NextTear: longint;
 begin
   DoMessage(Format(cmScanning, ['...']));
-  FHeaders.SetActions(FCommandLine.FileMasks, [haCopy], []);
-  FHeaders.SetActions(FCommandLine.xOptions,  [], [haCopy]);
+  FHeaders.SetActions(FCommandLine.FileMasks, [haUpdate], []);
+  FHeaders.SetActions(FCommandLine.xOptions,  [], [haUpdate]);
 
   // STEP1: find sequences and set actions ...
-  I := FHeaders.GetBack(FHeaders.Count - 1, []);
+  I := FHeaders.GetBack(FHeaders.Count - 1, [haUpdate]);
   while I > -1 do
   begin
     BackTear := FHeaders.GetBack(I, foTear);
@@ -355,23 +354,31 @@ begin
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
-      NextTear := FHeaders.GetBack(NextTear - 1, haCopy);
+      NextTear := FHeaders.GetBack(NextTear - 1, []);
       for J := BackTear to NextTear do
       begin
         Include(FHeaders.Items[J].Actions, haDecode);
       end;
       I := BackTear;
     end;
-    I := FHeaders.GetBack(I - 1, []);
+    I := FHeaders.GetBack(I - 1, [haUpdate]);
   end;
+  // set last header ...
+  for I := FHeaders.Count - 1 downto 0 do
+    if not (haUpdate in FHeaders.Items[I].Actions) then
+    begin
+      Include(FHeaders.Items[I].Flags, foLast);
+      Break;
+    end;
 
   // STEP4: calculate bytes to process ...
-  if FHeaders.GetNext(0, []) > -1 then
+  if FHeaders.GetNext(0, haUpdate) > -1 then
     for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
-      if P.Actions = [haCopy]           then Inc(FSize, P.PackedSize);
-      if P.Actions = [haCopy, haDecode] then Inc(FSize, P.Size + P.Size);
+      if P.Actions = []                   then Inc(FSize, P.PackedSize);
+      if P.Actions = [haDecode]           then Inc(FSize, P.Size + P.Size);
+      if P.Actions = [haUpdate, haDecode] then Inc(FSize, P.Size);
     end;
   Result := FSize;
 end;
@@ -704,8 +711,8 @@ begin
               DoMessage(Format(cmUpdating, [P.Name]));
               if P.Actions = [haUpdate]           then Encoder.EncodeFrom(P);
               if P.Actions = [haUpdate, haDecode] then Encoder.EncodeFrom(P);
-              if P.Actions = [haCopy]             then Encoder.CopyFrom(FArcFile,  P.PackedSize, P);
-              if P.Actions = [haCopy, haDecode]   then Encoder.EncodeFrom(FSwapFile, P.Size, P);
+              if P.Actions = []                   then Encoder.CopyFrom(FArcFile,  P.PackedSize, P);
+              if P.Actions = [haDecode]           then Encoder.EncodeFrom(FSwapFile, P.Size, P);
               {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
 
               if Assigned(FTempFile) then FTempFile.FinishEncode;
