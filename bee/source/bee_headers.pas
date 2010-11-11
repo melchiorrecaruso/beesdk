@@ -60,7 +60,7 @@ type
 
   { Header actions }
 
-  THeaderAction = (haUpdate, haCopy, haDecode);
+  THeaderAction = (haUpdate, haDecode);
 
   THeaderActions = set of THeaderAction;
 
@@ -136,7 +136,6 @@ type
   private
     FNews: longint;
     FModule: TStream;
-    procedure SetLast;
     function GetModuleSize: longint;
     function GetFirst(Stream: TStream): int64;
     procedure ReadB4b(Stream: TStream);
@@ -522,18 +521,6 @@ begin
   end;
 end;
 
-procedure THeaders.SetLast;
-var
-  I: longint;
-begin
-  for I := FItems.Count - 1 downto 0 do
-    if (THeader(FItems[I]).Actions <> []) then
-    begin
-      Include(THeader(FItems[I]).Flags, foLast);
-      Break;
-    end;
-end;
-
 function THeaders.New(const Rec: TCustomSearchRec): THeader;
 begin
   Result := THeader.Create;
@@ -839,12 +826,11 @@ begin
   end else
     Stream.Seek(FModule.Size, 0);
 
-  SetLast;
   Ver := Ord(hv02);
   for I := 0 to FItems.Count - 1 do
   begin
     P := THeader(FItems[I]);
-    if P.Actions <> [] then
+    if not (foLast in P.Flags) then
     begin
       if foVersion in P.Flags then
         Ver := P.Version;
@@ -854,7 +840,8 @@ begin
         Ord(hv03): WriteHv03(Stream, THeader(FItems[I]));
         Ord(hv04): WriteHv04(Stream, THeader(FItems[I]));
       end;
-    end;
+    end else
+      Break;
   end;
 end;
 
@@ -934,7 +921,6 @@ begin
 
   if Result then
   begin
-    Exclude(Item.Actions, haCopy);
     Include(Item.Actions, haUpdate);
 
     Item.ExtName  := Rec.Name;
@@ -953,7 +939,6 @@ begin
 
   if Result then
   begin
-    Exclude(Item.Actions, haCopy);
     Include(Item.Actions, haUpdate);
 
     Item.ExtName  := Rec.Name;
