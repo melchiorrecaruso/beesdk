@@ -74,7 +74,7 @@ type
     function SetItemsToRename: int64;
     function SetItemsToList: int64;
     // procedure SetItemsDecode(const aAction: THeaderAction);
-    procedure OpenSwapFile;
+    function OpenSwapFile: longint;
     // procedure CloseSwapFile;
     procedure RecoverSequences;
     { process options }
@@ -108,7 +108,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1165 archiver utility, Nov 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1167 archiver utility, Nov 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -448,7 +448,7 @@ begin
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
-      NextTear := FHeaders.GetBack(NextTear - 1, haNone);
+      NextTear := FHeaders.GetBack(NextTear - 1, haUpdate);
       for J := BackTear to NextTear do
         case FHeaders.Items[J].Action of
           haNone:               FHeaders.Items[J].Action := haDecode;
@@ -559,7 +559,7 @@ begin
   end;
 end;
 
-procedure TBeeApp.OpenSwapFile;
+function TBeeApp.OpenSwapFile: longint;
 var
   P: THeader;
   I: longint;
@@ -612,6 +612,7 @@ begin
     end else
       DoMessage(cmCreateSwapError, ccError);
   end;
+  Result := Code;
 end;
 
 procedure TBeeApp.RecoverSequences;
@@ -740,8 +741,7 @@ begin
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
       if Assigned(FTempFile) then
       begin
-        OpenSwapFile;
-        if Code < ccError then
+        if OpenSwapFile < ccError then
         begin
           FHeaders.Write(FTempFile);
           Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
@@ -811,17 +811,17 @@ begin
             if foPassword in P.Flags  then FArcFile.StartDecode(FCommandLine.pOption);
 
             case P.Action of
-              // haNone:
-              haUpdate: DoMessage(Format(cmExtracting, [P.Name]));
-              haDecode: DoMessage(Format(cmDecoding, [P.Name]));
-              // haDecodeAndUpdate:
+              // haNone:            nothing to do
+              haUpdate:             DoMessage(Format(cmExtracting, [P.Name]));
+              haDecode:             DoMessage(Format(cmDecoding, [P.Name]));
+              // haDecodeAndUpdate: nothing to do
             end;
 
             case P.Action of
-              haNone:   Check := True;
-              haUpdate: Check := Decoder.DecodeTo(P);
-              haDecode: Check := Decoder.DecodeToNul(P);
-              // haDecodeAndUpdate:
+              haNone:               Check := True;
+              haUpdate:             Check := Decoder.DecodeTo(P);
+              haDecode:             Check := Decoder.DecodeToNul(P);
+              // haDecodeAndUpdate: nothing to do
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
             FArcFile.FinishDecode;
@@ -858,17 +858,17 @@ begin
             if foPassword in P.Flags  then FArcFile.StartDecode(FCommandLine.pOption);
 
             case P.Action of
-              // haNone:
-              haUpdate: DoMessage(Format(cmTesting,  [P.Name]));
-              haDecode: DoMessage(Format(cmDecoding, [P.Name]));
-              // haDecodeAndUpdate:
+              // haNone:            nothing to do
+              haUpdate:             DoMessage(Format(cmTesting,  [P.Name]));
+              haDecode:             DoMessage(Format(cmDecoding, [P.Name]));
+              // haDecodeAndUpdate: nothing to do
             end;
 
             case P.Action of
-              haNone:   Check := True;
-              haUpdate: Check := Decoder.DecodeToNul(P);
-              haDecode: Check := Decoder.DecodeToNul(P);
-              // haDecodeAndUpdate:
+              haNone:               Check := True;
+              haUpdate:             Check := Decoder.DecodeToNul(P);
+              haDecode:             Check := Decoder.DecodeToNul(P);
+              // haDecodeAndUpdate: nothing to do
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
             FArcFile.FinishDecode;
@@ -883,62 +883,67 @@ begin
 end;
 
 procedure TBeeApp.DeleteShell;
-begin
-(*
 var
   I: longint;
   P: THeader;
-  Encoder: TEncoder;
+  Encoder: THeaderStreamEncoder;
 begin
-  OpenArchive(haCopy);
-  if Code < ccError then
+  if OpenArchive < ccError then
   begin
-    MarkItems2Delete;
-    if FHeaders.GetCount([haDelete]) <> 0 then
+    if SetItemsToDelete > 0 then
     begin
       FTempName := GenerateFileName(FCommandLine.wdOption);
       FTempFile := CreateTFileWriter(FTempName, fmCreate);
-      if (FTempFile <> nil) then
+      if Assigned(FTempFile) then
       begin
-        DecodeSequences; // decode solid sequences
-        if Code < ccError then
+        if OpenSwapFile < ccError then
         begin
-
-          if Length(FSwapName) > 0 then  // if SwapSequences has found a
-          begin                          // modified sequence open Swap file
-            FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
-            if FSwapFile = nil then
-              DoMessage(cmSwapOpenError, ccError);
-          end;
-
-          if FSwapFile <> nil then
+          FHeaders.Write(FTempFile);
+          Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
+          for I := 0 to FHeaders.Count -1 do
           begin
-            FHeaders.WriteItems(FTempFile);
-            Encoder := TEncoder.Create(FTempFile, Self);
-            for I := 0 to FHeaders.GetCount -1 do
+            if Code < ccError then
             begin
-              if Code < ccError then
+              P := FHeaders.Items[I];
+              Encoder.InitializeCoder(P);
+
+              if foPassword in P.Flags then
               begin
-                P := FHeaders.GetItem(I);
-                case P.FileAction of
-                  haCopy:    Encoder.CopyStrm  (P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
-                  haExtract: Encoder.EncodeStrm(P, emNorm, FSwapFile, P.FileSize, foPassword in P.FileFlags);
-                  haDelete:  DoMessage(Format(cmDeleting, [P.FileName]));
-                end;
+                if Assigned(FArcFile)  then FArcFile .StartDecode(FCommandLine.pOption);
+                if Assigned(FSwapFile) then FSwapFile.StartDecode(FCommandLine.pOption);
+                if Assigned(FTempFile) then FTempFile.StartEncode(FCommandLine.pOption);
               end;
+
+              case P.Action of
+                haNone:            DoMessage(Format(cmCopying,  [P.Name]));
+                haUpdate:          DoMessage(Format(cmDeleting, [P.Name]));
+                haDecode:          DoMessage(Format(cmEncoding, [P.Name]));
+                haDecodeAndUpdate: DoMessage(Format(cmDeleting, [P.Name]));
+              end;
+
+              case P.Action of
+                haNone:               Encoder.CopyFrom(FArcFile,  P.PackedSize, P);
+                // haUpdate:          nothing to do
+                haDecode:             Encoder.EncodeFrom(FSwapFile, P.Size, P);
+                // haDecodeAndUpdate: nothing to do
+              end;
+              {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+
+              if Assigned(FTempFile) then FTempFile.FinishEncode;
+              if Assigned(FSwapFile) then FSwapFile.FinishDecode;
+              if Assigned(FArcFile)  then FArcFile .FinishDecode;
             end;
-            Encoder.Destroy;
-            RecoverSequences;
-            FHeaders.WriteItems(FTempFile);
           end;
+          Encoder.Destroy;
+          RecoverSequences;
+          FHeaders.Write(FTempFile);
         end;
+
       end else
-        DoMessage(cmTempOpenError, ccError);
-    end else
-      DoMessage(cmNoFilesWarning, ccWarning);
+        DoMessage(cmOpenTempError, ccError);
+    end;
   end;
-  CloseArchive(FTotalSize <> 0);
-  *)
+  CloseArchive(FSize <> 0);
 end;
 
 procedure TBeeApp.RenameShell;
