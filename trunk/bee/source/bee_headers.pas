@@ -83,10 +83,10 @@ type
     PackedSize: int64;
     StartPos: int64;
     Comment: string;
-    Position: longint;     { reserved }
     Action: THeaderAction; { reserved }
     ExtName: string;       { reserved }
     ExtSize: int64;        { reserved }
+    Position: longint;     { reserved }
   end;
 
   { Header list compare function}
@@ -112,13 +112,11 @@ type
      function Search(FileName: string): THeader; virtual;
      function IndexOf(Item: THeader): longint; virtual;
 
-     function SetActions(Masks: TStringList; MaskActs, Actions: THeaderActions): longint; overload;
-     function SetActions(Mask: string; MaskActs, Actions: THeaderActions): longint; overload;
-     function SetActions(Index: longint; Actions: THeaderActions): longint; overload;
-     function SetActions(Actions: THeaderActions): longint; overload;
+     function SetAction(Masks: TStringList; MaskAct, Action: THeaderAction): longint; overload;
+     function SetAction(Mask: string; MaskAct, Action: THeaderAction): longint; overload;
+     function SetAction(Index: longint; Action: THeaderAction): longint; overload;
+     function SetAction(Action: THeaderAction): longint; overload;
 
-     function GetBack(Index: longint; Actions: THeaderActions): longint; overload;
-     function GetNext(Index: longint; Actions: THeaderActions): longint; overload;
      function GetBack(Index: longint; Action: THeaderAction): longint; overload;
      function GetNext(Index: longint; Action: THeaderAction): longint; overload;
      function GetBack(Index: longint; Flag:    THeaderFlag): longint; overload;
@@ -344,18 +342,18 @@ begin
     end;
 end;
 
-function THeaderList.SetActions(Masks: TStringList; MaskActs, Actions: THeaderActions): longint;
+function THeaderList.SetAction(Masks: TStringList; MaskAct, Action: THeaderAction): longint;
 var
   I: longint;
 begin
   Result := 0;
   for  I := 0 to Masks.Count - 1 do
   begin
-    Inc(Result, SetActions(Masks[I], MaskActs, Actions));
+    Inc(Result, SetAction(Masks[I], MaskAct, Action));
   end;
 end;
 
-function THeaderList.SetActions(Mask: string; MaskActs, Actions: THeaderActions): longint;
+function THeaderList.SetAction(Mask: string; MaskAct, Action: THeaderAction): longint;
 var
   I: longint;
   P: THeader;
@@ -365,55 +363,29 @@ begin
   for  I := 0 to FItems.Count - 1 do
   begin
     P := THeader(FItems[I]);
-    if (P.Actions = MaskActs) and (FileNameMatch(P.Name, Mask, FCL.rOption)) then
+    if (P.Action = MaskAct) and (FileNameMatch(P.Name, Mask, FCL.rOption)) then
     begin
-      P.Actions := Actions;
+      P.Action := Action;
       Inc(Result);
     end;
   end;
 end;
 
-function THeaderList.SetActions(Index: longint; Actions: THeaderActions): longint;
+function THeaderList.SetAction(Index: longint; Action: THeaderAction): longint;
 begin
   Result := 1;
-  THeader(FItems[Index]).Actions := Actions;
+  THeader(FItems[Index]).Action := Action;
 end;
 
-function THeaderList.SetActions(Actions: THeaderActions): longint;
+function THeaderList.SetAction(Action: THeaderAction): longint;
 var
   I: longint;
 begin
   Result := FItems.Count;
   for I := 0 to Result - 1 do
   begin
-    THeader(FItems[I]).Actions := Actions;
+    THeader(FItems[I]).Action := Action;
   end;
-end;
-
-function THeaderList.GetNext(Index: longint; Actions: THeaderActions): longint;
-var
-  I: longint;
-begin
-  Result := -1;
-  for  I := Index to FItems.Count - 1 do
-    if (Actions = THeader(FItems[I]).Actions) then
-    begin
-      Result := I;
-      Break;
-    end;
-end;
-
-function THeaderList.GetBack(Index: longint; Actions: THeaderActions): longint;
-var
-  I: longint;
-begin
-  Result := -1;
-  for  I := Index downto 0 do
-    if (Actions = THeader(FItems[I]).Actions) then
-    begin
-      Result := I;
-      Break;
-    end;
 end;
 
 function THeaderList.GetNext(Index: longint; Action: THeaderAction): longint;
@@ -422,7 +394,7 @@ var
 begin
   Result := -1;
   for  I := Index to FItems.Count - 1 do
-    if (Action in THeader(FItems[I]).Actions) then
+    if (Action = THeader(FItems[I]).Action) then
     begin
       Result := I;
       Break;
@@ -435,7 +407,7 @@ var
 begin
   Result := -1;
   for  I := Index downto 0 do
-    if (Action in THeader(FItems[I]).Actions) then
+    if (Action = THeader(FItems[I]).Action) then
     begin
       Result := I;
       Break;
@@ -536,7 +508,7 @@ begin
   Result.StartPos   := -1;
   Result.Name       := FCL.cdOption + DeleteFileDrive(Rec.Name);
   // - End header data - //
-  Result.Actions    := [haUpdate];
+  Result.Action     := haUpdate;
   Result.ExtName    := Rec.Name;
   Result.ExtSize    := Rec.Size;
   Result.Position   := -1;
@@ -579,7 +551,7 @@ begin
     Stream.Read(Item.Name[1], I);
     Item.Name := DoDirSeparators(Item.Name);
   end;
-  Item.Actions  := [];
+  Item.Action   := haNone;
   Item.ExtName  := '';
   Item.ExtSize  := -1;
   Item.Position := -1;
@@ -616,7 +588,7 @@ begin
     Stream.Read(Item.Name[1], I);
     Item.Name := DoDirSeparators(Item.Name);
   end;
-  Item.Actions  := [];
+  Item.Action   := haNone;
   Item.ExtName  := '';
   Item.ExtSize  := -1;
   Item.Position := -1;
@@ -919,8 +891,7 @@ begin
 
   if Result then
   begin
-    Include(Item.Actions, haUpdate);
-
+    Item.Action   := haUpdate;
     Item.ExtName  := Rec.Name;
     Item.ExtSize  := Rec.Size;
     Item.Time     := Rec.Time;
@@ -937,8 +908,7 @@ begin
 
   if Result then
   begin
-    Include(Item.Actions, haUpdate);
-
+    Item.Action   := haUpdate;
     Item.ExtName  := Rec.Name;
     Item.ExtSize  := Rec.Size;
     Item.Time     := Rec.Time;
