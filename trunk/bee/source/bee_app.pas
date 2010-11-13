@@ -66,16 +66,17 @@ type
     function OpenArchive: longint;
     function CheckArchivePassword: longint;
     procedure CloseArchive(IsModified: boolean);
-    { find and prepare sequences }
+    { open/close swapfile routine }
+    function OpenSwapFile: longint;
+    { find and prepare items }
     function SetItemsToEncode: int64;
     function SetItemsToDelete: int64;
     function SetItemsToDecode: int64;
-    // procedure SetItemsToTest: int64;
     function SetItemsToRename: int64;
     function SetItemsToList: int64;
-    // procedure SetItemsDecode(const aAction: THeaderAction);
-    function OpenSwapFile: longint;
-    // procedure CloseSwapFile;
+    { find and prepare sequences }
+    procedure SetSequencesTo(Action: );
+
     procedure RecoverSequences;
     { process options }
     procedure ProcesstOption;
@@ -108,7 +109,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1167 archiver utility, Nov 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1169 archiver utility, Nov 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -266,6 +267,13 @@ begin
 end;
 
 { Sequences processing }
+
+
+procedure SetSequences;
+begin
+
+
+end;
 
 function TBeeApp.SetItemsToEncode: int64;
 var
