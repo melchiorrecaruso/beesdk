@@ -144,6 +144,7 @@ type
     procedure Write(Stream: TStream); virtual;
     procedure Configure(Configuration: TConfiguration);
 
+    procedure Delete(Index: longint);
     function Add(const Rec: TCustomSearchRec): boolean;
     function Update(const Rec: TCustomSearchRec): boolean;
     function Replace(const Rec: TCustomSearchRec): boolean;
@@ -655,10 +656,7 @@ begin
 
   until (P <> nil) and (foLast in P.Flags);
 
-  if P <> nil then
-  begin
-    Exclude(P.Flags, foLast);
-  end;
+  if P <> nil then Exclude(P.Flags, foLast);
 end;
 
 procedure THeaders.Read(Stream: TStream);
@@ -796,12 +794,14 @@ begin
   end else
     Stream.Seek(FModule.Size, 0);
 
-  Ver := Ord(hv02);
-  for I := 0 to FItems.Count - 1 do
+  if FItems.Count > 0 then
   begin
-    P := THeader(FItems[I]);
-    if not (foLast in P.Flags) then
+    Include(THeader(FItems[FItems.Count - 1]).Flags, foLast);
+
+    Ver := Ord(hv02);
+    for I := 0 to FItems.Count - 1 do
     begin
+      P := THeader(FItems[I]);
       if foVersion in P.Flags then
         Ver := P.Version;
 
@@ -810,8 +810,7 @@ begin
         Ord(hv03): WriteHv03(Stream, THeader(FItems[I]));
         Ord(hv04): WriteHv04(Stream, THeader(FItems[I]));
       end;
-    end else
-      Break;
+    end;
   end;
 end;
 
@@ -869,6 +868,56 @@ begin
       Inc(I);
     until I = FItems.Count;
 
+  end;
+end;
+
+procedure THeaders.Delete(Index: longint);
+ var
+   I: longint;
+   Back, Next: THeader;
+begin
+  if Index < FItems.Count - 1 then
+  begin
+    Back := FItems[Index];
+    Next := FItems[Index + 1];
+
+    if (foVersion in Back.Flags) and (not(foVersion in Next.Flags)) then
+    begin
+      Next.Version := Back.Version;
+      Include(Next.Flags, foVersion);
+    end;
+
+    if (foMethod in Back.Flags) and (not(foMethod in Next.Flags)) then
+    begin
+      Next.Method := Back.Method;
+      Include(Next.Flags, foMethod);
+    end;
+
+    if (foDictionary in Back.Flags) and (not(foDictionary in Next.Flags)) then
+    begin
+      Next.Dictionary := Back.Dictionary;
+      Include(Next.Flags, foDictionary);
+    end;
+
+    if (foTable in Back.Flags) and (not(foTable in Next.Flags)) then
+    begin
+      Next.Table := Back.Table;
+      Include(Next.Flags, foTable);
+    end;
+
+    if (foTear in Back.Flags) and (not(foTear in Next.Flags)) then
+    begin
+      Include(Next.Flags, foTear);
+    end;
+
+    I := 0;
+    while I < FNames.Count do
+    begin
+      if FNames[I] = Back then Break;
+      Inc(I);
+    end;
+    FNames.Delete(I);
+    FItems.Delete(Index);
   end;
 end;
 
