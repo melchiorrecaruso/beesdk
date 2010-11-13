@@ -74,10 +74,6 @@ type
     function SetItemsToDecode: int64;
     function SetItemsToRename: int64;
     function SetItemsToList: int64;
-    { find and prepare sequences }
-    procedure SetSequencesTo(Action: );
-
-    procedure RecoverSequences;
     { process options }
     procedure ProcesstOption;
     procedure ProcesslOption;
@@ -268,13 +264,6 @@ end;
 
 { Sequences processing }
 
-
-procedure SetSequences;
-begin
-
-
-end;
-
 function TBeeApp.SetItemsToEncode: int64;
 var
   P: THeader;
@@ -380,14 +369,6 @@ begin
     end;
     I := FHeaders.GetBack(I - 1, haUpdate);
   end;
-  // set last header ...
-  for I := FHeaders.Count - 1 downto 0 do
-    if FHeaders.Items[I].Action <> haUpdate then
-    begin
-      Include(FHeaders.Items[I].Flags, foLast);
-      Break;
-    end;
-
   // STEP4: calculate bytes to process ...
   if (FHeaders.GetNext(0, haUpdate) > -1) or
      (FHeaders.GetNext(0, haDecodeAndUpdate) > -1) then
@@ -621,50 +602,6 @@ begin
       DoMessage(cmCreateSwapError, ccError);
   end;
   Result := Code;
-end;
-
-procedure TBeeApp.RecoverSequences;
-var
-  I: longint;
-  Back, Next: THeader;
-begin
-  for I := 0 to FHeaders.Count - 2 do
-  begin
-    Back := FHeaders.Items[I];
-    Next := FHeaders.Items[I + 1];
-
-    if (Back.Action = haUpdate) or (Back.Action = haDecodeAndUpdate) then
-    begin
-      if (foVersion in Back.Flags) and (not(foVersion in Next.Flags)) then
-      begin
-        Next.Version := Back.Version;
-        Include(Next.Flags, foVersion);
-      end;
-
-      if (foMethod in Back.Flags) and (not(foMethod in Next.Flags)) then
-      begin
-        Next.Method := Back.Method;
-        Include(Next.Flags, foMethod);
-      end;
-
-      if (foDictionary in Back.Flags) and (not(foDictionary in Next.Flags)) then
-      begin
-        Next.Dictionary := Back.Dictionary;
-        Include(Next.Flags, foDictionary);
-      end;
-
-      if (foTable in Back.Flags) and (not(foTable in Next.Flags)) then
-      begin
-        Next.Table := Back.Table;
-        Include(Next.Flags, foTable);
-      end;
-
-      if (foTear in Back.Flags) and (not(foTear in Next.Flags)) then
-      begin
-        Include(Next.Flags, foTear);
-      end;
-    end;
-  end;
 end;
 
 { Option processing }
@@ -943,7 +880,15 @@ begin
             end;
           end;
           Encoder.Destroy;
-          RecoverSequences;
+
+          for I := FHeaders.Count downto 0 do
+          begin
+            P := FHeaders.Items[I];
+            if (P.Action = haUpdate) or (P.Action = haDecodeAndUpdate) then
+            begin
+              FHeaders.Delete(I);
+            end;
+          end;
           FHeaders.Write(FTempFile);
         end;
 
