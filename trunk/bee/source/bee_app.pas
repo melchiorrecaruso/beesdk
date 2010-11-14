@@ -196,29 +196,30 @@ end;
 
 function TBeeApp.CheckArchivePassword: longint;
 var
-  P: THeader;
   I, J: longint;
   Decoder: THeaderStreamDecoder;
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
   begin
-    // select smaller size item
-    P := FHeaders.Items[0];
-    for I := 1 to FHeaders.Count - 1 do
-      if (foTear in FHeaders.Items[I].Flags) and (P.Size > FHeaders.Items[I].Size) then
+    // select smaller size item ...
+    J := 0;
+    I := 1;
+    while I < FHeaders.Count do
+      with FHeaders.Items[I] do
       begin
-        P := FHeaders.Items[I];
+        if (foTear in Flags) and (Size < FHeaders.Items[J].Size) then
+        begin
+          J := I;
+        end;
+        Inc(I);
       end;
-    // test item
-    DoMessage(Format(cmChecking, [P.Name]));
-    Decoder := THeaderStreamDecoder.Create(FArcFile, nil);
-    for I := 0 to FHeaders.IndexOf(P) do
-    begin
-      Decoder.InitializeCoder(FHeaders.Items[I]);
-    end;
 
+    // test item ...
+    DoMessage(Format(cmChecking, [FHeaders.Items[J].Name]));
+    Decoder := THeaderStreamDecoder.Create(FArcFile, nil);
+    for I := 0 to J do Decoder.InitializeCoder(FHeaders.Items[I]);
     FArcFile.StartDecode(FCommandLine.pOption);
-    if not Decoder.DecodeToNul(P) then
+    if not Decoder.DecodeToNul(FHeaders.Items[J]) then
     begin
       DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
     end;

@@ -99,7 +99,10 @@ type
    private
      FItems: TList;
      FNames: TList;
+     function IndexOfItem(Item: THeader): longint;
+     function IndexOfName(Item: THeader): longint;
      function GetItem(Index: longint): THeader;
+     function GetName(Index: longint): THeader;
      function GetCount: longint;
    protected
      FCL: TCommandLine;
@@ -110,7 +113,6 @@ type
      destructor Destroy; override;
 
      function Search(FileName: string): THeader; virtual;
-     function IndexOf(Item: THeader): longint; virtual;
 
      function SetAction(Masks: TStringList; MaskAct, Action: THeaderAction): longint; overload;
      function SetAction(Mask: string; MaskAct, Action: THeaderAction): longint; overload;
@@ -123,6 +125,7 @@ type
      function GetNext(Index: longint; Flag:    THeaderFlag): longint; overload;
 
      property Items[Index: longint]: THeader read GetItem;
+     property Names[Index: longint]: THeader read GetName;
      property Count: longint read GetCount;
    end;
 
@@ -330,7 +333,7 @@ begin
     Result := nil;
 end;
 
-function THeaderList.IndexOf(Item: THeader): longint;
+function THeaderList.IndexOfItem(Item: THeader): longint;
 var
   I: longint;
 begin
@@ -342,6 +345,22 @@ begin
       Break;
     end;
 end;
+
+function THeaderList.IndexOfName(Item: THeader): longint;
+var
+  I: longint;
+begin
+  Result := -1;
+  for  I := 0 to FNames.Count - 1 do
+    if (THeader(FNames[I]) = Item) then
+    begin
+      Result := I;
+      Break;
+    end;
+end;
+
+
+
 
 function THeaderList.SetAction(Masks: TStringList; MaskAct, Action: THeaderAction): longint;
 var
@@ -451,6 +470,10 @@ begin
   Result := FItems[Index];
 end;
 
+function THeaderList.GetName(Index: longint): THeader;
+begin
+  Result := FNames[Index];
+end;
 
 { Headers class }
 
@@ -874,12 +897,14 @@ end;
 procedure THeaders.Delete(Index: longint);
  var
    I: longint;
-   Back, Next: THeader;
+   Item, Next: THeader;
 begin
+  Item := Items[Index];
+
   if Index < FItems.Count - 1 then
   begin
-    Back := FItems[Index];
-    Next := FItems[Index + 1];
+
+    Next := Items[Index + 1];
 
     if (foVersion in Back.Flags) and (not(foVersion in Next.Flags)) then
     begin
@@ -909,16 +934,12 @@ begin
     begin
       Include(Next.Flags, foTear);
     end;
-
-    I := 0;
-    while I < FNames.Count do
-    begin
-      if FNames[I] = Back then Break;
-      Inc(I);
-    end;
-    FNames.Delete(I);
-    FItems.Delete(Index);
   end;
+
+  FNames.Delete(IndexOfName(Back));
+
+  Items[Index].Destroy;
+  FItems.Delete(Index);
 end;
 
 function THeaders.Add(const Rec: TCustomSearchRec): boolean;
