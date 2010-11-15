@@ -679,57 +679,53 @@ var
   P: THeader;
   Encoder: THeaderStreamEncoder;
 begin
-  if OpenArchive < ccError then
+  if (OpenArchive < ccError) and (SetItemsToEncode > 0) then
   begin
-    if SetItemsToEncode > 0 then
+    FTempName := GenerateFileName(FCommandLine.wdOption);
+    FTempFile := CreateTFileWriter(FTempName, fmCreate);
+    if Assigned(FTempFile) then
     begin
-      FTempName := GenerateFileName(FCommandLine.wdOption);
-      FTempFile := CreateTFileWriter(FTempName, fmCreate);
-      if Assigned(FTempFile) then
+      if OpenSwapFile < ccError then
       begin
-        if OpenSwapFile < ccError then
-        begin
-          FHeaders.Write(FTempFile);
-          Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
-          for I := 0 to FHeaders.Count - 1 do
-            if Code < ccError then
+        FHeaders.Write(FTempFile);
+        Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
+        for I := 0 to FHeaders.Count - 1 do
+          if Code < ccError then
+          begin
+            P := FHeaders.Items[I];
+            Encoder.InitializeCoder(P);
+
+            if foPassword in P.Flags then
             begin
-              P := FHeaders.Items[I];
-              Encoder.InitializeCoder(P);
-
-              if foPassword in P.Flags then
-              begin
-                if Assigned(FArcFile)  then FArcFile .StartDecode(FCommandLine.pOption);
-                if Assigned(FSwapFile) then FSwapFile.StartDecode(FCommandLine.pOption);
-                if Assigned(FTempFile) then FTempFile.StartEncode(FCommandLine.pOption);
-              end;
-
-              case P.Action of
-                haNone:            DoMessage(Format(cmCopying,  [P.Name]));
-                haUpdate:          DoMessage(Format(cmUpdating, [P.Name]));
-                haDecode:          DoMessage(Format(cmEncoding, [P.Name]));
-                haDecodeAndUpdate: DoMessage(Format(cmUpdating, [P.Name]));
-              end;
-
-              case P.Action of
-                haNone:            Encoder.CopyFrom(FArcFile,  P.PackedSize, P);
-                haUpdate:          Encoder.EncodeFrom(P);
-                haDecode:          Encoder.EncodeFrom(FSwapFile, P.Size, P);
-                haDecodeAndUpdate: Encoder.EncodeFrom(P);
-              end;
-              {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-
-              if Assigned(FTempFile) then FTempFile.FinishEncode;
-              if Assigned(FSwapFile) then FSwapFile.FinishDecode;
-              if Assigned(FArcFile)  then FArcFile .FinishDecode;
+              if Assigned(FArcFile)  then FArcFile .StartDecode(FCommandLine.pOption);
+              if Assigned(FSwapFile) then FSwapFile.StartDecode(FCommandLine.pOption);
+              if Assigned(FTempFile) then FTempFile.StartEncode(FCommandLine.pOption);
             end;
-          Encoder.Destroy;
-          FHeaders.Write(FTempFile);
-        end;
 
-      end else
-        DoMessage(cmOpenTempError, ccError);
-    end;
+            case P.Action of
+              haNone:            DoMessage(Format(cmCopying,  [P.Name]));
+              haUpdate:          DoMessage(Format(cmUpdating, [P.Name]));
+              haDecode:          DoMessage(Format(cmEncoding, [P.Name]));
+              haDecodeAndUpdate: DoMessage(Format(cmUpdating, [P.Name]));
+            end;
+
+            case P.Action of
+              haNone:            Encoder.CopyFrom(FArcFile,  P.PackedSize, P);
+              haUpdate:          Encoder.EncodeFrom(P);
+              haDecode:          Encoder.EncodeFrom(FSwapFile, P.Size, P);
+              haDecodeAndUpdate: Encoder.EncodeFrom(P);
+            end;
+            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+
+            if Assigned(FTempFile) then FTempFile.FinishEncode;
+            if Assigned(FSwapFile) then FSwapFile.FinishDecode;
+            if Assigned(FArcFile)  then FArcFile .FinishDecode;
+          end;
+        Encoder.Destroy;
+        FHeaders.Write(FTempFile);
+      end;
+    end else
+      DoMessage(cmOpenTempError, ccError);
   end;
   CloseArchive(FSize > 0);
 end;
@@ -741,42 +737,40 @@ var
   Check: boolean;
   Decoder: THeaderStreamDecoder;
 begin
-  if OpenArchive < ccError then
+  if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
   begin
-    if SetItemsToDecode > 0 then
-    begin
-      Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
-      for I := 0  to FHeaders.Count - 1 do
-        if Code < ccError then
+    Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
+    for I := 0  to FHeaders.Count - 1 do
+      if Code < ccError then
+      begin
+        P := FHeaders.Items[I];
+        Decoder.InitializeCoder(P);
+
+        if P.Action in [haUpdate, haDecode] then
         begin
-          P := FHeaders.Items[I];
-          Decoder.InitializeCoder(P);
+          if foPassword in P.Flags then
+            FArcFile.StartDecode(FCommandLine.pOption);
 
-          if (P.Action = haUpdate) or (P.Action = haDecode)  then
-          begin
-            if foPassword in P.Flags  then FArcFile.StartDecode(FCommandLine.pOption);
-
-            case P.Action of
-              // haNone:            nothing to do
-              haUpdate:             DoMessage(Format(cmExtracting, [P.Name]));
-              haDecode:             DoMessage(Format(cmDecoding, [P.Name]));
-              // haDecodeAndUpdate: nothing to do
-            end;
-
-            case P.Action of
-              haNone:               Check := True;
-              haUpdate:             Check := Decoder.DecodeTo(P);
-              haDecode:             Check := Decoder.DecodeToNul(P);
-              // haDecodeAndUpdate: nothing to do
-            end;
-            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-            FArcFile.FinishDecode;
-
-            if not Check then DoMessage(Format(cmCrcError, [P.Name]), ccError);
+          case P.Action of
+            // haNone:            nothing to do
+            haUpdate:             DoMessage(Format(cmExtracting, [P.Name]));
+            haDecode:             DoMessage(Format(cmDecoding,   [P.Name]));
+            // haDecodeAndUpdate: nothing to do
           end;
+
+          case P.Action of
+            haNone:               Check := True;
+            haUpdate:             Check := Decoder.DecodeTo(P);
+            haDecode:             Check := Decoder.DecodeToNul(P);
+            // haDecodeAndUpdate: nothing to do
+          end;
+          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+          FArcFile.FinishDecode;
+
+          if Check = False then DoMessage(Format(cmCrcError, [P.Name]), ccError);
         end;
-      Decoder.Destroy;
-    end;
+      end;
+    Decoder.Destroy;
   end;
   CloseArchive(False);
 end;
@@ -788,42 +782,40 @@ var
   Check: boolean;
   Decoder: THeaderStreamDecoder;
 begin
-  if OpenArchive < ccError then
+  if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
   begin
-    if SetItemsToDecode > 0 then
-    begin
-      Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
-      for I := 0  to FHeaders.Count - 1 do
-        if Code < ccError then
+    Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
+    for I := 0  to FHeaders.Count - 1 do
+      if Code < ccError then
+      begin
+        P := FHeaders.Items[I];
+        Decoder.InitializeCoder(P);
+
+        if P.Action in [haUpdate, haDecode] then
         begin
-          P := FHeaders.Items[I];
-          Decoder.InitializeCoder(P);
+          if foPassword in P.Flags then
+            FArcFile.StartDecode(FCommandLine.pOption);
 
-          if P.Action in [haUpdate, haDecode] then
-          begin
-            if foPassword in P.Flags  then FArcFile.StartDecode(FCommandLine.pOption);
-
-            case P.Action of
-              // haNone:            nothing to do
-              haUpdate:             DoMessage(Format(cmTesting,  [P.Name]));
-              haDecode:             DoMessage(Format(cmDecoding, [P.Name]));
-              // haDecodeAndUpdate: nothing to do
-            end;
-
-            case P.Action of
-              haNone:               Check := True;
-              haUpdate:             Check := Decoder.DecodeToNul(P);
-              haDecode:             Check := Decoder.DecodeToNul(P);
-              // haDecodeAndUpdate: nothing to do
-            end;
-            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-            FArcFile.FinishDecode;
-
-            if not Check then DoMessage(Format(cmCrcError, [P.Name]), ccError);
+          case P.Action of
+            // haNone:            nothing to do
+            haUpdate:             DoMessage(Format(cmTesting,  [P.Name]));
+            haDecode:             DoMessage(Format(cmDecoding, [P.Name]));
+            // haDecodeAndUpdate: nothing to do
           end;
+
+          case P.Action of
+            haNone:               Check := True;
+            haUpdate:             Check := Decoder.DecodeToNul(P);
+            haDecode:             Check := Decoder.DecodeToNul(P);
+            // haDecodeAndUpdate: nothing to do
+          end;
+          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+          FArcFile.FinishDecode;
+
+          if Check = False then DoMessage(Format(cmCrcError, [P.Name]), ccError);
         end;
-      Decoder.Destroy;
-    end;
+      end;
+    Decoder.Destroy;
   end;
   CloseArchive(False);
 end;
@@ -834,68 +826,62 @@ var
   P: THeader;
   Encoder: THeaderStreamEncoder;
 begin
-  if OpenArchive < ccError then
+  if (OpenArchive < ccError) and (SetItemsToDelete > 0) then
   begin
-    if SetItemsToDelete > 0 then
+    FTempName := GenerateFileName(FCommandLine.wdOption);
+    FTempFile := CreateTFileWriter(FTempName, fmCreate);
+    if Assigned(FTempFile) then
     begin
-      FTempName := GenerateFileName(FCommandLine.wdOption);
-      FTempFile := CreateTFileWriter(FTempName, fmCreate);
-      if Assigned(FTempFile) then
+      if OpenSwapFile < ccError then
       begin
-        if OpenSwapFile < ccError then
-        begin
-          for I := FHeaders.Count - 1 downto 0 do
-            if P.Action in [haUpdate, haDecodeAndUpdate] then
-            begin
-              DoMessage(Format(cmDeleting, [P.Name]));
-              FHeaders.Delete(I);
-            end;
-
-          FHeaders.Write(FTempFile);
-          Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
-          for I := 0 to FHeaders.Count - 1 do
+        for I := FHeaders.Count - 1 downto 0 do
+          if P.Action in [haUpdate, haDecodeAndUpdate] then
           begin
-            if Code < ccError then
-            begin
-              P := FHeaders.Items[I];
-              Encoder.InitializeCoder(P);
-
-              if foPassword in P.Flags then
-              begin
-                if Assigned(FArcFile)  then FArcFile .StartDecode(FCommandLine.pOption);
-                if Assigned(FSwapFile) then FSwapFile.StartDecode(FCommandLine.pOption);
-                if Assigned(FTempFile) then FTempFile.StartEncode(FCommandLine.pOption);
-              end;
-
-              case P.Action of
-                haNone:            DoMessage(Format(cmCopying,  [P.Name]));
-                haUpdate:          DoMessage(Format(cmDeleting, [P.Name]));
-                haDecode:          DoMessage(Format(cmEncoding, [P.Name]));
-                haDecodeAndUpdate: DoMessage(Format(cmDeleting, [P.Name]));
-              end;
-
-              case P.Action of
-                haNone:               Encoder.CopyFrom(FArcFile, P.PackedSize, P);
-                // haUpdate:          nothing to do
-                haDecode:             Encoder.EncodeFrom(FSwapFile, P.Size, P);
-                // haDecodeAndUpdate: notihing to do
-              end;
-              {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-
-              if Assigned(FTempFile) then FTempFile.FinishEncode;
-              if Assigned(FSwapFile) then FSwapFile.FinishDecode;
-              if Assigned(FArcFile)  then FArcFile .FinishDecode;
-            end;
+            DoMessage(Format(cmDeleting, [P.Name]));
+            FHeaders.Delete(I);
           end;
-          Encoder.Destroy;
-          FHeaders.Write(FTempFile);
-        end;
 
-      end else
-        DoMessage(cmOpenTempError, ccError);
-    end;
+        FHeaders.Write(FTempFile);
+        Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
+        for I := 0 to FHeaders.Count - 1 do
+          if Code < ccError then
+          begin
+            P := FHeaders.Items[I];
+            Encoder.InitializeCoder(P);
+
+            if foPassword in P.Flags then
+            begin
+              if Assigned(FArcFile)  then FArcFile .StartDecode(FCommandLine.pOption);
+              if Assigned(FSwapFile) then FSwapFile.StartDecode(FCommandLine.pOption);
+              if Assigned(FTempFile) then FTempFile.StartEncode(FCommandLine.pOption);
+            end;
+
+            case P.Action of
+              haNone:               DoMessage(Format(cmCopying,  [P.Name]));
+              haUpdate:             DoMessage(Format(cmDeleting, [P.Name]));
+              haDecode:             DoMessage(Format(cmEncoding, [P.Name]));
+              haDecodeAndUpdate:    DoMessage(Format(cmDeleting, [P.Name]));
+            end;
+
+            case P.Action of
+              haNone:               Encoder.CopyFrom(FArcFile, P.PackedSize, P);
+              // haUpdate:          nothing to do
+              haDecode:             Encoder.EncodeFrom(FSwapFile, P.Size, P);
+              // haDecodeAndUpdate: notihing to do
+            end;
+            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+
+            if Assigned(FTempFile) then FTempFile.FinishEncode;
+            if Assigned(FSwapFile) then FSwapFile.FinishDecode;
+            if Assigned(FArcFile)  then FArcFile .FinishDecode;
+          end;
+        Encoder.Destroy;
+        FHeaders.Write(FTempFile);
+      end;
+    end else
+      DoMessage(cmOpenTempError, ccError);
   end;
-  CloseArchive(FSize <> 0);
+  CloseArchive(FSize > 0);
 end;
 
 procedure TBeeApp.RenameShell;
@@ -962,89 +948,85 @@ var
   Sequences, Passwords, MaxDict: longint;
   TotalPacked, TotalSize, TotalFiles: int64;
 begin
-  OpenArchive;
-  if Code < ccError then
+  if (OpenArchive < ccError) and (SetItemsToList > 0) then
   begin
-    if SetItemsToList > 0 then
-    begin
-      Version     := -1;
-      Method      := -1;
-      Dictionary  := -1;
+    Version     := -1;
+    Method      := -1;
+    Dictionary  := -1;
 
-      Sequences   :=  0;
-      Passwords   :=  0;
-      MaxDict     :=  0;
+    Sequences   :=  0;
+    Passwords   :=  0;
+    MaxDict     :=  0;
 
-      TotalPacked :=  0;
-      TotalSize   :=  0;
-      TotalFiles  :=  0;
+    TotalPacked :=  0;
+    TotalSize   :=  0;
+    TotalFiles  :=  0;
 
-      FHeadersToList := TList.Create;
-      for I := 0 to FHeaders.Count - 1 do
-        if Code < ccError then
-        begin
-          P := FHeaders.Items[I];
-          if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
-          if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
-          if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
-          if foTear       in P.Flags then Inc(Sequences);
-          if foPassword   in P.Flags then Inc(Passwords);
+    FHeadersToList := TList.Create;
+    for I := 0 to FHeaders.Count - 1 do
+      if Code < ccError then
+      begin
+        P := FHeaders.Items[I];
+        if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
+        if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
+        if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
+        if foTear       in P.Flags then Inc(Sequences);
+        if foPassword   in P.Flags then Inc(Passwords);
 
-          if Dictionary > MaxDict then MaxDict := Dictionary;
+        if Dictionary > MaxDict then MaxDict := Dictionary;
 
-          Inc(TotalPacked, P.PackedSize);
-          Inc(TotalSize, P.Size);
-          Inc(TotalFiles);
+        Inc(TotalPacked, P.PackedSize);
+        Inc(TotalSize, P.Size);
+        Inc(TotalFiles);
 
-          if P.Action = haUpdate then FHeadersToList.Add(P);
-        end;
+        if P.Action = haUpdate then FHeadersToList.Add(P);
+      end;
 
-      DoMessage(Cr + 'Extraction requirements:');
-      DoMessage('  Headers version  = ' + VersionToStr(Version));
-      DoMessage('  Free memory size = ' + IntToStr(Trunc(Power(2, MaxDict)*2560000)));
-      DoMessage('  Free disk space  = ' + IntToStr(TotalSize));
+    DoMessage(Cr + 'Extraction requirements:');
+    DoMessage('  Headers version  = ' + VersionToStr(Version));
+    DoMessage('  Free memory size = ' + IntToStr(Trunc(Power(2, MaxDict)*2560000)));
+    DoMessage('  Free disk space  = ' + IntToStr(TotalSize));
 
-      DoMessage(Cr + 'Archive features:');
-      if Passwords > 0 then
-        DoMessage('  Password  = yes' )
-      else
-        DoMessage('  Password  = no' );
+    DoMessage(Cr + 'Archive features:');
+    if Passwords > 0 then
+      DoMessage('  Password  = yes' )
+    else
+      DoMessage('  Password  = no' );
 
-      if Sequences <> FHeaders.Count then
-        DoMessage('  Solid     = yes')
-      else
-        DoMessage('  Solid     = no');
+    if Sequences <> FHeaders.Count then
+      DoMessage('  Solid     = yes')
+    else
+      DoMessage('  Solid     = no');
 
-      DoMessage('  Items     = ' + IntToStr(TotalFiles));
-      DoMessage('  Sequences = ' + IntToStr(Sequences));
+    DoMessage('  Items     = ' + IntToStr(TotalFiles));
+    DoMessage('  Sequences = ' + IntToStr(Sequences));
 
-      DoMessage('  Module  size = ' + IntToStr(FHeaders.ModuleSize));
-      DoMessage('  Packed  size = ' + IntToStr(TotalPacked));
-      DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
+    DoMessage('  Module  size = ' + IntToStr(FHeaders.ModuleSize));
+    DoMessage('  Packed  size = ' + IntToStr(TotalPacked));
+    DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
 
-      DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
-      DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
+    DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
+    DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
 
-      if FCommandLine.slsOption then FHeadersToList.Sort(CompareFn);
+    if FCommandLine.slsOption then FHeadersToList.Sort(CompareFn);
 
-      TotalPacked := 0;
-      TotalSize   := 0;
-      TotalFiles  := 0;
+    TotalPacked := 0;
+    TotalSize   := 0;
+    TotalFiles  := 0;
 
-      for I := 0 to FHeadersToList.Count - 1 do
-        if Code < ccError then
-        begin
-          P := FHeadersToList.Items[I];
-          Inc(TotalPacked, P.PackedSize);
-          Inc(TotalSize, P.Size);
-          Inc(TotalFiles);
-          DoList(P);
-        end;
-      DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
-      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPacked), TotalFiles]));
+    for I := 0 to FHeadersToList.Count - 1 do
+      if Code < ccError then
+      begin
+        P := FHeadersToList.Items[I];
+        Inc(TotalPacked, P.PackedSize);
+        Inc(TotalSize, P.Size);
+        Inc(TotalFiles);
+        DoList(P);
+      end;
+    DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
+    DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPacked), TotalFiles]));
 
-      FHeadersToList.Destroy;
-    end;
+    FHeadersToList.Destroy;
   end;
   CloseArchive(False);
 end;
@@ -1055,26 +1037,21 @@ var
   P: THeader;
   Version, Method, Dictionary: longint;
 begin
-  OpenArchive;
-  if Code < ccError then
+  if (OpenArchive < ccError) and (SetItemsToList > 0) then
   begin
-    if SetItemsToList > 0 then
-    begin
-      Version     := -1;
-      Method      := -1;
-      Dictionary  := -1;
+    Version     := -1;
+    Method      := -1;
+    Dictionary  := -1;
 
-      for I := 0 to FHeaders.Count - 1 do
-        if Code < ccError then
-        begin
-          P := FHeaders.Items[I];
-          if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
-          if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
-          if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
-
-          DoList(P);
-        end;
-    end;
+    for I := 0 to FHeaders.Count - 1 do
+      if Code < ccError then
+      begin
+        P := FHeaders.Items[I];
+        if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
+        if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
+        if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
+         DoList(P);
+      end;
   end;
   CloseArchive(False);
 end;
