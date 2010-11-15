@@ -799,7 +799,7 @@ begin
           P := FHeaders.Items[I];
           Decoder.InitializeCoder(P);
 
-          if (P.Action = haUpdate) or (P.Action = haDecode)  then
+          if P.Action in [haUpdate, haDecode] then
           begin
             if foPassword in P.Flags  then FArcFile.StartDecode(FCommandLine.pOption);
 
@@ -844,9 +844,16 @@ begin
       begin
         if OpenSwapFile < ccError then
         begin
+          for I := FHeaders.Count - 1 downto 0 do
+            if P.Action in [haUpdate, haDecodeAndUpdate] then
+            begin
+              DoMessage(Format(cmDeleting, [P.Name]));
+              FHeaders.Delete(I);
+            end;
+
           FHeaders.Write(FTempFile);
           Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
-          for I := 0 to FHeaders.Count -1 do
+          for I := 0 to FHeaders.Count - 1 do
           begin
             if Code < ccError then
             begin
@@ -868,10 +875,10 @@ begin
               end;
 
               case P.Action of
-                haNone:               Encoder.CopyFrom(FArcFile,  P.PackedSize, P);
+                haNone:               Encoder.CopyFrom(FArcFile, P.PackedSize, P);
                 // haUpdate:          nothing to do
                 haDecode:             Encoder.EncodeFrom(FSwapFile, P.Size, P);
-                // haDecodeAndUpdate: nothing to do
+                // haDecodeAndUpdate: notihing to do
               end;
               {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
 
@@ -881,15 +888,6 @@ begin
             end;
           end;
           Encoder.Destroy;
-
-          for I := FHeaders.Count downto 0 do
-          begin
-            P := FHeaders.Items[I];
-            if (P.Action = haUpdate) or (P.Action = haDecodeAndUpdate) then
-            begin
-              FHeaders.Delete(I);
-            end;
-          end;
           FHeaders.Write(FTempFile);
         end;
 

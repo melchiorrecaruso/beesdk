@@ -897,15 +897,12 @@ end;
 procedure THeaders.Delete(Index: longint);
  var
    I: longint;
-   Item, Next: THeader;
+   Back, Next: THeader;
 begin
-  Item := Items[Index];
-
+  Back := Items[Index];
   if Index < FItems.Count - 1 then
   begin
-
     Next := Items[Index + 1];
-
     if (foVersion in Back.Flags) and (not(foVersion in Next.Flags)) then
     begin
       Next.Version := Back.Version;
@@ -937,9 +934,8 @@ begin
   end;
 
   FNames.Delete(IndexOfName(Back));
-
-  Items[Index].Destroy;
   FItems.Delete(Index);
+  Back.Destroy;
 end;
 
 function THeaders.Add(const Rec: TCustomSearchRec): boolean;
