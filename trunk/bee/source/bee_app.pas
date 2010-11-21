@@ -77,7 +77,7 @@ type
     { process options }
     procedure ProcesstOption;
     procedure ProcesslOption;
-    { sheels routines}
+    { shells routines}
     procedure HelpShell;
     procedure EncodeShell;
     procedure DeleteShell;
@@ -98,6 +98,22 @@ uses
   SysUtils,
   Bee_Consts,
   Bee_MainPacker;
+
+{ help functions }
+
+function CompareFilePath(P1, P2: pointer): longint;
+begin
+  Result := CompareFileName(
+    ExtractFilePath(THeader(P1).Name),
+    ExtractFilePath(THeader(P2).Name));
+
+  if Result = 0 then
+  begin
+    Result := CompareText(
+      ExtractFileName(THeader(P1).Name),
+      ExtractFileName(THeader(P2).Name));
+  end;
+end;
 
 { TBeeApp class }
 
@@ -169,7 +185,7 @@ begin
   SetTerminated(True);
 end;
 
-{ Open / Close archive routines }
+{ open/close archive routines }
 
 function TBeeApp.OpenArchive: longint;
 begin
@@ -263,7 +279,65 @@ begin
   FHeaders.Free;
 end;
 
-{ Sequences processing }
+{ open/close swapfile routine }
+
+function TBeeApp.OpenSwapFile: longint;
+var
+  P: THeader;
+  I: longint;
+  CRC: longword;
+  FSwapStrm: TFileWriter;
+  Decoder: THeaderStreamDecoder;
+begin
+  if (Code < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
+  begin
+    FSwapName := GenerateFileName(FCommandLine.wdOption);
+    FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
+    if Assigned(FSwapStrm) then
+    begin
+      Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
+
+      for I := 0 to FHeaders.Count - 1 do
+        if (Code < ccError) then
+        begin
+          P := FHeaders.Items[I];
+          Decoder.InitializeCoder(P);
+
+          if (P.Action = haDecode) or (P.Action = haDecodeAndUpdate) then
+          begin
+            DoMessage(Format(cmDecoding, [P.Name]));
+            if foPassword in P.Flags then
+            begin
+              FArcFile.StartDecode(FCommandLine.pOption);
+              FSwapStrm.StartEncode(FCommandLine.pOption);
+            end;
+            FArcFile.Seek(P.StartPos, soBeginning);
+            P.StartPos := FSwapStrm.Seek(0, soCurrent);
+            if (Decoder.DecodeTo(FSwapStrm, P.Size, CRC) <> P.Size) or (P.Crc <> CRC) then
+            begin
+              DoMessage(Format(cmSequenceError, []), ccError);
+            end;
+            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+            FSwapStrm.FinishEncode;
+            FArcFile.FinishDecode;
+          end;
+        end;
+      Decoder.Free;
+      FreeAndNil(FSwapStrm);
+
+      if Code < ccError then
+      begin
+        FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
+        if not Assigned(FSwapFile) then
+          DoMessage(cmOpenSwapError, ccError);
+      end;
+    end else
+      DoMessage(cmCreateSwapError, ccError);
+  end;
+  Result := Code;
+end;
+
+{ sequences processing }
 
 function TBeeApp.SetItemsToEncode: int64;
 var
@@ -549,63 +623,7 @@ begin
   end;
 end;
 
-function TBeeApp.OpenSwapFile: longint;
-var
-  P: THeader;
-  I: longint;
-  CRC: longword;
-  FSwapStrm: TFileWriter;
-  Decoder: THeaderStreamDecoder;
-begin
-  if (Code < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
-  begin
-    FSwapName := GenerateFileName(FCommandLine.wdOption);
-    FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
-    if Assigned(FSwapStrm) then
-    begin
-      Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
-
-      for I := 0 to FHeaders.Count - 1 do
-        if (Code < ccError) then
-        begin
-          P := FHeaders.Items[I];
-          Decoder.InitializeCoder(P);
-
-          if (P.Action = haDecode) or (P.Action = haDecodeAndUpdate) then
-          begin
-            DoMessage(Format(cmDecoding, [P.Name]));
-            if foPassword in P.Flags then
-            begin
-              FArcFile.StartDecode(FCommandLine.pOption);
-              FSwapStrm.StartEncode(FCommandLine.pOption);
-            end;
-            FArcFile.Seek(P.StartPos, soBeginning);
-            P.StartPos := FSwapStrm.Seek(0, soCurrent);
-            if (Decoder.DecodeTo(FSwapStrm, P.Size, CRC) <> P.Size) or (P.Crc <> CRC) then
-            begin
-              DoMessage(Format(cmSequenceError, []), ccError);
-            end;
-            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-            FSwapStrm.FinishEncode;
-            FArcFile.FinishDecode;
-          end;
-        end;
-      Decoder.Free;
-      FreeAndNil(FSwapStrm);
-
-      if Code < ccError then
-      begin
-        FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
-        if not Assigned(FSwapFile) then
-          DoMessage(cmOpenSwapError, ccError);
-      end;
-    end else
-      DoMessage(cmCreateSwapError, ccError);
-  end;
-  Result := Code;
-end;
-
-{ Option processing }
+{ option processing }
 
 procedure TBeeApp.ProcesstOption;
 begin
@@ -635,7 +653,7 @@ begin
   end;
 end;
 
-{ Shell procedures }
+{ shell procedures }
 
 procedure TBeeApp.HelpShell;
 begin
@@ -710,7 +728,7 @@ begin
             end;
 
             case P.Action of
-              haNone:            Encoder.CopyFrom(FArcFile,  P.PackedSize, P);
+              haNone:            Encoder.CopyFrom(FArcFile, P.PackedSize, P);
               haUpdate:          Encoder.EncodeFrom(P);
               haDecode:          Encoder.EncodeFrom(FSwapFile, P.Size, P);
               haDecodeAndUpdate: Encoder.EncodeFrom(P);
@@ -924,20 +942,6 @@ begin
   *)
 end;
 
-function CompareFn(P1, P2: pointer): longint;
-begin
-  Result := CompareFileName(
-    ExtractFilePath(THeader(P1).Name),
-    ExtractFilePath(THeader(P2).Name));
-
-  if Result = 0 then
-  begin
-    Result := CompareText(
-      ExtractFileName(THeader(P1).Name),
-      ExtractFileName(THeader(P2).Name));
-  end;
-end;
-
 {$IFDEF CONSOLEAPPLICATION}
 procedure TBeeApp.ListShell;
 var
@@ -1008,7 +1012,7 @@ begin
     DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
     DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
 
-    if FCommandLine.slsOption then FHeadersToList.Sort(CompareFn);
+    if FCommandLine.slsOption then FHeadersToList.Sort(CompareFilePath);
 
     TotalPacked := 0;
     TotalSize   := 0;
