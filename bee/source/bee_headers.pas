@@ -819,19 +819,21 @@ begin
 
   if FItems.Count > 0 then
   begin
-    Include(THeader(FItems[FItems.Count - 1]).Flags, foLast);
+    Include(Items[FItems.Count - 1].Flags, foLast);
 
     Ver := Ord(hv02);
     for I := 0 to FItems.Count - 1 do
     begin
       P := THeader(FItems[I]);
       if foVersion in P.Flags then
+      begin
         Ver := P.Version;
+      end;
 
       case Ver of
-        Ord(hv02): WriteHv03(Stream, THeader(FItems[I]));
-        Ord(hv03): WriteHv03(Stream, THeader(FItems[I]));
-        Ord(hv04): WriteHv04(Stream, THeader(FItems[I]));
+        Ord(hv02): WriteHv03(Stream, Items[I]);
+        Ord(hv03): WriteHv03(Stream, Items[I]);
+        Ord(hv04): WriteHv04(Stream, Items[I]);
       end;
     end;
   end;
