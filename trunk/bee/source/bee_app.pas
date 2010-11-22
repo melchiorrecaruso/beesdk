@@ -293,17 +293,16 @@ begin
   begin
     FSwapName := GenerateFileName(FCommandLine.wdOption);
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
-    if Assigned(FSwapStrm) then
+    if Assigned(FSwapStrm) = True then
     begin
       Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
-
       for I := 0 to FHeaders.Count - 1 do
-        if (Code < ccError) then
+        if Code < ccError then
         begin
           P := FHeaders.Items[I];
           Decoder.InitializeCoder(P);
 
-          if (P.Action = haDecode) or (P.Action = haDecodeAndUpdate) then
+          if P.Action in [haDecode, haDecodeAndUpdate] then
           begin
             DoMessage(Format(cmDecoding, [P.Name]));
             if foPassword in P.Flags then
@@ -315,7 +314,7 @@ begin
             P.StartPos := FSwapStrm.Seek(0, soCurrent);
             if (Decoder.DecodeTo(FSwapStrm, P.Size, CRC) <> P.Size) or (P.Crc <> CRC) then
             begin
-              DoMessage(Format(cmSequenceError, []), ccError);
+              DoMessage(Format(cmCrcError, [P.Name]), ccError);
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
             FSwapStrm.FinishEncode;
@@ -328,7 +327,7 @@ begin
       if Code < ccError then
       begin
         FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
-        if not Assigned(FSwapFile) then
+        if Assigned(FSwapFile) = False then
           DoMessage(cmOpenSwapError, ccError);
       end;
     end else
