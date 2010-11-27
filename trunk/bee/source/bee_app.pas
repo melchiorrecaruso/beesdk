@@ -766,7 +766,9 @@ begin
         if P.Action in [haUpdate, haDecode] then
         begin
           if foPassword in P.Flags then
+          begin
             FArcFile.StartDecode(FCommandLine.pOption);
+          end;
 
           case P.Action of
             // haNone:            nothing to do
@@ -811,7 +813,9 @@ begin
         if P.Action in [haUpdate, haDecode] then
         begin
           if foPassword in P.Flags then
+          begin
             FArcFile.StartDecode(FCommandLine.pOption);
+          end;
 
           case P.Action of
             // haNone:            nothing to do
@@ -851,6 +855,10 @@ begin
     begin
       if OpenSwapFile < ccError then
       begin
+        /\
+
+
+
         for I := FHeaders.Count - 1 downto 0 do
           if P.Action in [haUpdate, haDecodeAndUpdate] then
           begin
