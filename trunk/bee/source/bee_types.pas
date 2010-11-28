@@ -103,18 +103,6 @@ type
   PFileInfo = ^TFileInfo;
 
   TFileInfo = record
-    Name: PChar;
-    Path: PChar;
-    Size: int64;
-    Time: longint;
-    Attr: longint;
-  end;
-
-  { PFileInfoExtra record }
-
-  PFileInfoExtra = ^TFileInfoExtra;
-
-  TFileInfoExtra = record
     Name:       PChar;
     Path:       PChar;
     Size:       int64;

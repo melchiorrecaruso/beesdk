@@ -65,7 +65,7 @@ type
   public
     procedure OnMessage(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
-    function  OnRename(const aItem: THeaderRec; const aValue: string): string; override;
+    function  OnRename(const aItem: THeader; const aValue: string): string; override;
     procedure OnList(const aItem: THeader); override;
     procedure OnProgress; override;
     procedure OnClear; override;
@@ -82,7 +82,7 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  function TCustomBeeApp.OnRename(const aItem: THeaderRec; const aValue: string): string;
+  function TCustomBeeApp.OnRename(const aItem: THeader; const aValue: string): string;
   begin
     Write('Rename file "', ParamToOem(aItem.Name), '" as (empty to skip):');
     Readln(Result);

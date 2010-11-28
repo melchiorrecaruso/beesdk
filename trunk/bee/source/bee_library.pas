@@ -50,7 +50,6 @@ function CoreLibVersion: integer;
 
 procedure CoreFreePChar(P: PChar);
 procedure CoreFreePFileInfo(P: Pointer);
-procedure CoreFreePFileInfoExtra(P: Pointer);
 
 { Library core routines }
 function CoreCreate(aCommandLine: PChar): boolean;
@@ -62,6 +61,7 @@ function CoreSuspend(aValue: boolean): boolean;
 
 function CoreRequest(aValue: PChar): PChar;
 function CoreMessages(aIndex: integer): PChar;
+
 function CoreTime(aValue: integer): integer;
 function CoreSize(aValue: integer): int64;
 
@@ -79,23 +79,26 @@ type
 
   TCustomBeeApp = class(TBeeApp)
   private
-    FItem:     TFileInfo;
-    FItems:    TList;
-    FMessages: TStringList;
-    FMessage:  string;
     FStatus:   integer;
-  protected
-    procedure ClearItems;
-    procedure AddItem(aItem: THeader);
+    FItem:     PFileInfo;
+    FItems:    TList;
+    FMassage   PChar;
+    FMessages: TStringList;
+    function GetItem(Index: longint): PFileInfo;
+    function GetMessage(Index: longint): PChar;
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
 
     procedure OnMessage(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
-    function  OnRename(const aItem: THeaderRec; const aValue: string): string; override;
+    function  OnRename(const aItem: THeader; const aValue: string): string; override;
     procedure OnList(const aItem: THeader); override;
-    procedure OnProgress; override;
+    // procedure OnProgress; override;
+    // procedure OnClear; override;
+    property Items[Index: longint]: PFileInfo read GetItem;
+    property Messages[Index: longint]: PChar read GetMessage;
+
   end;
 
   { TCore class }
@@ -113,78 +116,71 @@ type
 var
   Core: TCore = nil;
 
+function THeaderToPFileInfo(aItem: THeader): PFileInfo;
+begin
+  Result := GetMem(SizeOf(TFileInfo));
+  if Result <> nil then
+  begin
+    Result^.Name       := StringToPChar(ExtractFileName(aItem.Name));
+    Result^.Path       := StringToPChar(ExtractFilePath(aItem.Name));
+    Result^.Size       := aItem.Size;
+    Result^.Time       := aItem.Time;
+    Result^.Attr       := aItem.Attr;
+    Result^.PackedSize := aItem.PackedSize;
+
+    if aItem.Size > 0 then
+      Result^.Ratio    := Trunc(100 * (aItem.Size / aItem.PackedSize))
+    else
+      Result^.Ratio    := 0;
+
+    Result^.Comm       := StringToPChar(aItem.Comment);
+    Result^.Crc        := aItem.Crc;
+    Result^.Method     := StringToPChar(MethodToStr(aItem));
+    Result^.Version    := StringToPChar(VersionToStr(aItem.Version));
+
+    if foPassword in aItem.Flags then
+      Result^.Password   := StringToPChar('yes')
+    else
+      Result^.Password   := StringToPChar('no');
+    Result^.Position   := aItem.Position;
+  end;
+end;
+
 { TCoreApp class }
 
 constructor TCustomBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
-  FItem     := nil;
   FItems    := TList.Create;
   FMessages := TStringList.Create;
-  FMessage  := '';
   FStatus   := csReady;
 end;
 
 destructor TCustomBeeApp.Destroy;
+var
+  I: longint;
 begin
-  ClearItems;
+  for I := 0 to FItems.Count - 1 do
+  begin
+    CoreFreePFileInfo(FItems[I]);
+  end;
   FItems.Destroy;
   FMessages.Destroy;
   inherited Destroy;
 end;
 
-procedure TCustomBeeApp.ClearItems;
+procedure TCustomBeeApp.OnMessage(const aMessage: string);
+begin
+  FMessages.Add(aMessage);
+end;
+
+function TCustomBeeApp.OnRename(const aItem: THeader; const aValue: string): string;
 var
   I: longint;
 begin
-  for I := 0 to FItems.Count - 1 do
-    CoreFreePFileInfoExtra(FItems[I]);
-end;
+  I := FMessages.Add(aValue);
+  FItems.Add(THeaderToPFileInfo(aItem));
 
-procedure TCoreApp.AddItem(aItem: THeader);
-var
-  P: PFileInfoExtra;
-begin
-  P := GetMem(SizeOf(TFileInfoExtra));
-  if P <> nil then
-  begin
-    P^.Name       := StringToPChar(ExtractFileName(aItem.Name));
-    P^.Path       := StringToPChar(ExtractFilePath(aItem.Name));
-    P^.Size       := aItem.Size;
-    P^.Time       := aItem.Time;
-    P^.Attr       := aItem.Attr;
-    P^.PackedSize := aItem.PackedSize;
-
-    if aItem.Size > 0 then
-      P^.Ratio    := Trunc(100 * (aItem.Size / aItem.PackedSize))
-    else
-      P^.Ratio    := 0;
-
-    P^.Comm       := StringToPChar(aItem.Comment);
-    P^.Crc        := aItem.Crc;
-    P^.Method     := StringToPChar(MethodToStr(aItem));
-    P^.Version    := StringToPChar(VersionToStr(aItem.Version));
-
-    if foPassword in aItem.Flags then
-      P^.Password   := StringToPChar('yes')
-    else
-      P^.Password   := StringToPChar('no');
-    P^.Position   := aItem.Position;
-
-    FItems.Add(P);
-  end;
-end;
-
-procedure TCoreApp.OnMessage(const aMessage: string);
-begin
-  FMessages.Add(aMessage);
-  FMessage := aMessage;
-end;
-
-function TCoreApp.OnRename(const aItem: THeaderRec; const aValue: string): string;
-begin
-  FMessage := aValue;
-  FItem    := aItem;
   FStatus  := csWaitingRename;
   while FStatus = csWaitingRename do
   begin
@@ -193,19 +189,7 @@ begin
   Result := FMessage;
 end;
 
-function TCoreApp.OnPassword(const aItem: THeaderRec; const aValue: string): string;
-begin
-  FMessage := aValue;
-  FItem    := aItem;
-  FStatus  := csWaitingPassword;
-  while FStatus = csWaitingPassword do
-  begin
-    Sleep(250);
-  end;
-  Result := FMessage;
-end;
-
-procedure TCoreApp.OnRequest(const aMessage: string);
+procedure TCustomBeeApp.OnRequest(const aMessage: string);
 begin
   FMessage := aMessage;
   FStatus  := csWaitingRequest;
@@ -215,14 +199,9 @@ begin
   end;
 end;
 
-procedure TCoreApp.OnList(const aItem: THeader);
+procedure TCustomBeeApp.OnList(const aItem: THeader);
 begin
-  AddItem(aItem);
-end;
-
-procedure TCoreApp.OnProgress;
-begin
-  // nothing to do
+  FItems.Add(THeaderToPFileInfo(aItem));
 end;
 
 { TCore class }
@@ -278,16 +257,6 @@ procedure CoreFreePFileInfo(P: Pointer);
 begin
   if P <> nil then
     with TFileInfo(P^) do
-    begin
-      if Name <> nil then StrDispose(Name);
-      if Path <> nil then StrDispose(Path);
-    end;
-end;
-
-procedure CoreFreePFileInfoExtra(P: Pointer);
-begin
-  if P <> nil then
-    with TFileInfoExtra(P^) do
     begin
       if Name     <> nil then StrDispose(Name);
       if Path     <> nil then StrDispose(Path);
@@ -354,28 +323,26 @@ begin
   if Core <> nil then
   begin
     case aValue of
-      cpIdle: Core.Priority    := tpIdle;
-      cpLowest: Core.Priority  := tpLowest;
-      cpLower: Core.Priority   := tpLower;
-      cpNormal: Core.Priority  := tpNormal;
-      cpHigher: Core.Priority  := tpHigher;
-      cpHighest: Core.Priority := tpHighest;
+      cpIdle:         Core.Priority := tpIdle;
+      cpLowest:       Core.Priority := tpLowest;
+      cpLower:        Core.Priority := tpLower;
+      cpNormal:       Core.Priority := tpNormal;
+      cpHigher:       Core.Priority := tpHigher;
+      cpHighest:      Core.Priority := tpHighest;
       cpTimeCritical: Core.Priority := tpTimeCritical;
     end;
 
     case Core.Priority of
-      tpIdle: Result    := cpIdle;
-      tpLowest: Result  := cpLowest;
-      tpLower: Result   := cpLower;
-      tpNormal: Result  := cpNormal;
-      tpHigher: Result  := cpHigher;
-      tpHighest: Result := cpHighest;
+      tpIdle:         Result := cpIdle;
+      tpLowest:       Result := cpLowest;
+      tpLower:        Result := cpLower;
+      tpNormal:       Result := cpNormal;
+      tpHigher:       Result := cpHigher;
+      tpHighest:      Result := cpHighest;
       tpTimeCritical: Result := cpTimeCritical;
-      else
-        Result := cpUnknow;
+      else            Result := cpUnknow;
     end;
-  end
-  else
+  end else
     Result := cpUnknow;
 end;
 
@@ -391,15 +358,19 @@ function CoreMessages(aIndex: integer): PChar;
 begin
   if (Core <> nil) then
   begin
-    if aIndex < 0 then
-      Result := StringToPChar(Core.FApp.FMessage)
-    else
+    if aIndex = -1 then aIndex := Core.FApp.FMessages.Count;
+
+
+
+
+    if aIndex > -1 then
     begin
       if aIndex < Core.FApp.FMessages.Count then
         Result := StringToPChar(Core.FApp.FMessages[aIndex])
       else
         Result := nil;
-    end;
+    end else
+      Result := StringToPChar(Core.FApp.FMessage)
   end;
 end;
 
