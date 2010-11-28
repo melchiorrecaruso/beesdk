@@ -75,15 +75,14 @@ function CoreItems(aIndex: integer): Pointer;
 implementation
 
 type
-  { TCoreApp class }
+  { TCustomBeeApp class }
 
-  TCoreApp = class(TBeeApp)
+  TCustomBeeApp = class(TBeeApp)
   private
+    FItem:     TFileInfo;
     FItems:    TList;
-    FItem:     THeaderRec;
     FMessages: TStringList;
     FMessage:  string;
-    FPassword: string;
     FStatus:   integer;
   protected
     procedure ClearItems;
@@ -91,10 +90,10 @@ type
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
-    procedure OnRequest(const aMessage: string); override;
+
     procedure OnMessage(const aMessage: string); override;
+    procedure OnRequest(const aMessage: string); override;
     function  OnRename(const aItem: THeaderRec; const aValue: string): string; override;
-    function  OnPassword(const aItem: THeaderRec; const aValue: string): string; override;
     procedure OnList(const aItem: THeader); override;
     procedure OnProgress; override;
   end;
@@ -103,7 +102,7 @@ type
 
   TCore = class(TThread)
   private
-    FApp:    TCoreApp;
+    FApp:    TCustomBeeApp;
     FParams: TStringList;
   public
     constructor Create(const aCommandLine: string);
@@ -116,18 +115,17 @@ var
 
 { TCoreApp class }
 
-constructor TCoreApp.Create(aParams: TStringList);
+constructor TCustomBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
-  FMessages := TStringList.Create;
+  FItem     := nil;
   FItems    := TList.Create;
-
-  FPassword := '';
+  FMessages := TStringList.Create;
   FMessage  := '';
   FStatus   := csReady;
 end;
 
-destructor TCoreApp.Destroy;
+destructor TCustomBeeApp.Destroy;
 begin
   ClearItems;
   FItems.Destroy;
@@ -135,7 +133,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TCoreApp.ClearItems;
+procedure TCustomBeeApp.ClearItems;
 var
   I: longint;
 begin
