@@ -66,25 +66,22 @@ type
 
   { Header structure, order of fields is significant }
 
-  THeaderRec= class
-  public
-    Name: string;
-    Size: int64;
-    Time: longint;
-    Attr: longint;
-  end;
-
-  THeader = class(THeaderRec)
+  THeader = class
   public
     Flags: THeaderFlags;
     Version: byte;
     Method: byte;
     Dictionary: byte;
     Table: TTableParameters;
+    Size: int64;
+    Time: longint;
+    Attr: longint;
     Crc: longword;
     PackedSize: int64;
     StartPos: int64;
+    Name: string;
     Comment: string;
+  public
     Action: THeaderAction; { reserved }
     ExtName: string;       { reserved }
     ExtSize: int64;        { reserved }
