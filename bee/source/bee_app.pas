@@ -121,7 +121,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1179 archiver utility, Nov 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1247 archiver utility, Dec 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;
@@ -416,8 +416,8 @@ var
   I, J, BackTear, NextTear: longint;
 begin
   DoMessage(Format(cmScanning, ['...']));
-  FHeaders.SetAction(FCommandLine.FileMasks, haUpdate, haNone);
-  FHeaders.SetAction(FCommandLine.xOptions,  haNone, haUpdate);
+  FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
+  FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
 
   // STEP1: find sequences and set actions ...
   I := FHeaders.GetBack(FHeaders.Count - 1, haUpdate);
@@ -548,28 +548,32 @@ end;
 function TBeeApp.SetItemsToRename: int64;
 var
   I: longint;
-  P: THeader;
-  S: string;
+  P, S: THeader;
+  NewName: string;
 begin
   DoMessage(Format(cmScanning, ['...']));
   FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
   FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
 
   for I  := 0 to FHeaders.Count - 1 do
-    if (Code < ccError) then
+    if Code < ccError then
     begin
       P := FHeaders.Items[I];
       if P.Action = haUpdate then
       begin
         repeat
-          S := FixFileName(DoRename(P, ''));
-          if FHeaders.Search(S) <> nil then
-            DoMessage(Format(cmFileExistsWarning, [S]))
+          NewName := FixFileName(DoRename(P, ''));
+          S := FHeaders.Search(NewName);
+          if (S <> nil) and (S <> P) then
+            DoMessage(Format(cmFileExistsWarning, [NewName]))
           else
             Break;
-        until False or (Code >= ccError);
+        until Code >= ccError;
 
-        if S <> '' then P.Name := S;
+        if (Length(NewName) = 0) or (CompareFileName(NewName, P.Name) = 0) then
+          P.Action := haNone
+        else
+          P.Name := NewName;
       end;
     end;
 
@@ -855,16 +859,16 @@ begin
     begin
       if OpenSwapFile < ccError then
       begin
-        /\
-
-
-
+        // delete items ...
         for I := FHeaders.Count - 1 downto 0 do
+        begin
+          P := FHeaders.Items[I];
           if P.Action in [haUpdate, haDecodeAndUpdate] then
           begin
             DoMessage(Format(cmDeleting, [P.Name]));
             FHeaders.Delete(I);
           end;
+        end;
 
         FHeaders.Write(FTempFile);
         Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
@@ -910,43 +914,45 @@ begin
 end;
 
 procedure TBeeApp.RenameShell;
-begin
-(*
 var
   I: longint;
   P: THeader;
-  Encoder: TEncoder;
+  Encoder: THeaderStreamEncoder;
 begin
-  OpenArchive(haCopy);
-  if Code < ccError then
+  if (OpenArchive < ccError) and (SetItemsToRename > 0) then
   begin
-    MarkItems2Rename;
-    if FHeaders.GetCount([haOther]) <> 0 then
+    FTempName := GenerateFileName(FCommandLine.wdOption);
+    FTempFile := CreateTFileWriter(FTempName, fmCreate);
+    if Assigned(FTempFile) then
     begin
-      FTempName := GenerateFileName(FCommandLine.wdOption);
-      FTempFile := CreateTFileWriter(FTempName, fmCreate);
-
-      if (FTempFile <> nil) then
-      begin
-        FHeaders.WriteItems(FTempFile);
-        Encoder := TEncoder.Create(FTempFile, Self);
-        for I := 0 to FHeaders.GetCount -1 do
+      FHeaders.Write(FTempFile);
+      Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
+      for I := 0 to FHeaders.Count - 1 do
+        if Code < ccError then
         begin
-          if Code < ccError then
-          begin
-            P := FHeaders.GetItem(I);
-            Encoder.CopyStrm(P, emNorm, FArcFile, P.FileStartPos, P.FilePacked, False);
+          P := FHeaders.Items[I];
+
+          case P.Action of
+            haNone:               DoMessage(Format(cmCopying, [P.Name]));
+            haUpdate:             DoMessage(Format(cmCopying, [P.Name]));
+            // haDecode:          nothing to do
+            // haDecodeAndUpdate: nothing to do
           end;
+
+          case P.Action of
+            haNone:               Encoder.CopyFrom(FArcFile, P.PackedSize, P);
+            haUpdate:             Encoder.CopyFrom(FArcFile, P.PackedSize, P);
+            // haDecode:          nothing to do
+            // haDecodeAndUpdate: nothing to do
+          end;
+          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
         end;
-        Encoder.Destroy;
-        FHeaders.WriteItems(FTempFile);
-      end else
-        DoMessage(cmTempOpenError, ccError);
+      Encoder.Destroy;
+      FHeaders.Write(FTempFile);
     end else
-      DoMessage(cmNoFilesWarning, ccWarning);
+      DoMessage(cmOpenTempError, ccError);
   end;
-  CloseArchive(FTotalSize <> 0);
-  *)
+  CloseArchive(FSize > 0);
 end;
 
 {$IFDEF CONSOLEAPPLICATION}
@@ -978,6 +984,7 @@ begin
       if Code < ccError then
       begin
         P := FHeaders.Items[I];
+
         if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
         if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
         if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
@@ -990,7 +997,10 @@ begin
         Inc(TotalSize, P.Size);
         Inc(TotalFiles);
 
-        if P.Action = haUpdate then FHeadersToList.Add(P);
+        if P.Action = haUpdate then
+        begin
+          FHeadersToList.Add(P);
+        end;
       end;
 
     DoMessage(Cr + 'Extraction requirements:');
@@ -1058,10 +1068,15 @@ begin
       if Code < ccError then
       begin
         P := FHeaders.Items[I];
+
         if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
         if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
         if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
-         DoList(P);
+
+        if P.Action = haUpdate then
+        begin
+          DoList(P);
+        end;
       end;
   end;
   CloseArchive(False);

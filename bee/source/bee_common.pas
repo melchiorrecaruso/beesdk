@@ -190,40 +190,33 @@ begin
         end;
 end;
 
-function CharCount(const S: string; C: char): longint; {$IFDEF FPC} inline; {$ENDIF}
-var
-  I: longint;
-begin
-  Result := 0;
-  for I := 1 to Length(S) do
-  begin
-    if CompareFileName(S[I], C) = 0 then
-      Inc(Result);
-  end;
-end;
-
 function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; {$IFDEF FPC} inline; {$ENDIF}
 var
-  iFileDrive: string;
-  iFileName: string;
-  iMaskPath: string;
-  iMask: string;
   I: longint;
+  iFileDrive: string;
+  iFilePath:  string;
+  iFileName:  string;
+  iMaskPath:  string;
+  iMaskName:  string;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
-  iFileName := FileName;
-  iMask     := Mask;
+  iFilePath := ExtractFilePath(FileName);
+  iFileName := ExtractFileName(FileName);
+  iMaskPath := ExtractFilePath(Mask);
+  iMaskName := ExtractFileName(Mask);
   {$ELSE}
-  iFileName := UpperCase(FileName);
-  iMask     := UpperCase(Mask);
+  iFilePath := ExtractFilePath(UpperCase(FileName));
+  iFileName := ExtractFileName(UpperCase(FileName));
+  iMaskPath := ExtractFilePath(UpperCase(Mask));
+  iMaskName := ExtractFileName(UpperCase(Mask));
   {$ENDIF}
 
-  if ExtractFileDrive(iMask) = '' then
+  if ExtractFileDrive(iMaskPath) = '' then
   begin
-    iFileDrive := ExtractFileDrive(iFileName);
+    iFileDrive := ExtractFileDrive(iFilePath);
     if iFileDrive <> '' then
     begin
-      iMask := IncludeTrailingBackSlash(iFileDrive) + iMask;
+      iMaskPath := IncludeTrailingBackSlash(iFileDrive) + iMaskPath;
     end;
   end;
 
@@ -237,25 +230,11 @@ begin
 
   if Recursive = rmFull then
   begin
-    iMaskPath := ExtractFilePath(iMask);
-    for I := 1 to CharCount(iFileName, PathDelim) - CharCount(iMask, PathDelim) do
-    begin
-      iMaskPath := IncludeTrailingBackSlash(iMaskPath) + IncludeTrailingBackSlash('*');
-    end;
-    iMask := iMaskPath + ExtractFileName(iMask);
+    iMaskPath := iMaskPath + '*';
   end;
 
-  if CharCount(iFileName, PathDelim) = CharCount(iMask, PathDelim) then
-  begin
-    if MatchPattern(PChar(ExtractFilePath(iFileName)), PChar(ExtractFilePath(iMask))) then
-    begin
-      Result := MatchPattern(PChar(ExtractFileName(iFileName)), PChar(ExtractFileName(iMask)))
-    end else
-    begin
-      Result := False;
-    end;
-  end else
-    Result := False;
+  Result := MatchPattern(PChar(iFilePath), PChar(iMaskPath)) and
+            MatchPattern(PChar(iFileName), PChar(iMaskName));
 end;
 
 function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; {$IFDEF FPC} inline; {$ENDIF}
