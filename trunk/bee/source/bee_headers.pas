@@ -62,6 +62,8 @@ type
 
   THeaderAction = (haNone, haUpdate, haDecode, haDecodeAndUpdate);
 
+  THeaderActions = set of THeaderAction;
+
   { Header structure, order of fields is significant }
 
   THeaderRec= class
@@ -155,8 +157,8 @@ type
     function AddReplace(const Rec: TCustomSearchRec): boolean;
     function AddAutoRename(const Rec: TCustomSearchRec): boolean;
 
-    function LoadModule(const FileName: string): boolean;
     procedure ClearModule;
+    function LoadModule(const FileName: string): boolean;
   public
     property ModuleSize: longint read GetModuleSize;
   end;
@@ -359,9 +361,6 @@ begin
     end;
 end;
 
-
-
-
 function THeaderList.SetAction(Masks: TStringList; MaskAct, Action: THeaderAction): longint;
 var
   I: longint;
@@ -378,9 +377,10 @@ var
   I: longint;
   P: THeader;
 begin
-  Result := 0;
   Mask := FCL.cdOption + Mask;
-  for  I := 0 to FItems.Count - 1 do
+
+  Result := 0;
+  for I  := 0 to FItems.Count - 1 do
   begin
     P := THeader(FItems[I]);
     if (P.Action = MaskAct) and (FileNameMatch(P.Name, Mask, FCL.rOption)) then
@@ -899,45 +899,45 @@ end;
 procedure THeaders.Delete(Index: longint);
  var
    I: longint;
-   Back, Next: THeader;
+   Item, Next: THeader;
 begin
-  Back := Items[Index];
+  Item := Items[Index];
   if Index < FItems.Count - 1 then
   begin
     Next := Items[Index + 1];
-    if (foVersion in Back.Flags) and (not(foVersion in Next.Flags)) then
+    if (foVersion in Item.Flags) and (not(foVersion in Next.Flags)) then
     begin
-      Next.Version := Back.Version;
+      Next.Version := Item.Version;
       Include(Next.Flags, foVersion);
     end;
 
-    if (foMethod in Back.Flags) and (not(foMethod in Next.Flags)) then
+    if (foMethod in Item.Flags) and (not(foMethod in Next.Flags)) then
     begin
-      Next.Method := Back.Method;
+      Next.Method := Item.Method;
       Include(Next.Flags, foMethod);
     end;
 
-    if (foDictionary in Back.Flags) and (not(foDictionary in Next.Flags)) then
+    if (foDictionary in Item.Flags) and (not(foDictionary in Next.Flags)) then
     begin
-      Next.Dictionary := Back.Dictionary;
+      Next.Dictionary := Item.Dictionary;
       Include(Next.Flags, foDictionary);
     end;
 
-    if (foTable in Back.Flags) and (not(foTable in Next.Flags)) then
+    if (foTable in Item.Flags) and (not(foTable in Next.Flags)) then
     begin
-      Next.Table := Back.Table;
+      Next.Table := Item.Table;
       Include(Next.Flags, foTable);
     end;
 
-    if (foTear in Back.Flags) and (not(foTear in Next.Flags)) then
+    if (foTear in Item.Flags) and (not(foTear in Next.Flags)) then
     begin
       Include(Next.Flags, foTear);
     end;
   end;
 
-  FNames.Delete(IndexOfName(Back));
+  FNames.Delete(IndexOfName(Item));
   FItems.Delete(Index);
-  Back.Destroy;
+  Item.Destroy;
 end;
 
 function THeaders.Add(const Rec: TCustomSearchRec): boolean;
