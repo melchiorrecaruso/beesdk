@@ -78,10 +78,10 @@ type
     destructor Destroy; override;
     procedure Execute; virtual;
     procedure Terminate;
+
     procedure OnMessage(const aMessage: string); virtual; abstract;
     procedure OnRequest(const aMessage: string); virtual; abstract;
     function  OnRename(const aItem: THeaderRec; const aValue: string): string; virtual; abstract;
-    function  OnPassword(const aItem: THeaderRec; const aValue: string): string; virtual; abstract;
     procedure OnList(const aItem: THeader); virtual; abstract;
     procedure OnProgress; virtual; abstract;
     {$IFDEF CONSOLEAPPLICATION}
