@@ -562,7 +562,7 @@ begin
       if P.Action = haUpdate then
       begin
         repeat
-          NewName := FixFileName(DoRename(P, ''));
+          NewName := FixFileName(DoRename(P, P.Name));
           S := FHeaders.Search(NewName);
           if (S <> nil) and (S <> P) then
             DoMessage(Format(cmFileExistsWarning, [NewName]))
