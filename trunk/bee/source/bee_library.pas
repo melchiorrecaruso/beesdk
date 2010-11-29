@@ -52,25 +52,30 @@ procedure CoreFreePChar(P: PChar);
 procedure CoreFreePFileInfo(P: Pointer);
 
 { Library core routines }
+
 function CoreCreate(aCommandLine: PChar): boolean;
 function CoreDestroy: boolean;
 function CoreExecute: boolean;
 function CoreTerminate: boolean;
-function CorePriority(aValue: integer): integer;
-function CoreSuspend(aValue: boolean): boolean;
+function CorePriority(aValue: longint): longint;
+function CoreSuspended(aValue: boolean): boolean;
 
-function CoreRequest(aValue: PChar): PChar;
-function CoreMessages(aIndex: integer): PChar;
+function CoreGetItem(aIndex: integer): Pointer;
+function CoreGetMessage(aIndex: integer): PChar;
+function CorePutMessage(aValue: PChar): PChar;
 
-function CoreTime(aValue: integer): integer;
-function CoreSize(aValue: integer): int64;
+{ Core GetInfo param value:                             }
+{    0..MaxInt: items                                   }
+{   -1: speed                                           }
+{   -2: percentage                                      }
+{   -3: status                                          }
+{   -4: exit code                                       }
+{   -5: elapsed time                                    }
+{   -6: remaining time                                  }
+{   -7: processed size                                  }
+{   -8: total size                                      }
 
-function CoreSpeed: integer;
-function CorePercentes: integer;
-function CoreStatus: integer;
-function CoreCode: integer;
-
-function CoreItems(aIndex: integer): Pointer;
+function CoreGetInfo(aValue: longint): Pointer;
 
 implementation
 
@@ -79,17 +84,14 @@ type
 
   TCustomBeeApp = class(TBeeApp)
   private
-    FStatus:   integer;
-    FItem:     PFileInfo;
-    FItems:    TList;
-    FMassage   PChar;
     FMessages: TStringList;
+    FItems:    TList;
+    FStatus:   integer;
     function GetItem(Index: longint): PFileInfo;
     function GetMessage(Index: longint): PChar;
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
-
     procedure OnMessage(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
     function  OnRename(const aItem: THeader; const aValue: string): string; override;
@@ -98,7 +100,6 @@ type
     // procedure OnClear; override;
     property Items[Index: longint]: PFileInfo read GetItem;
     property Messages[Index: longint]: PChar read GetMessage;
-
   end;
 
   { TCore class }
@@ -151,8 +152,8 @@ end;
 constructor TCustomBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
-  FItems    := TList.Create;
   FMessages := TStringList.Create;
+  FItems    := TList.Create;
   FStatus   := csReady;
 end;
 
@@ -178,7 +179,6 @@ function TCustomBeeApp.OnRename(const aItem: THeader; const aValue: string): str
 var
   I: longint;
 begin
-  I := FMessages.Add(aValue);
   FItems.Add(THeaderToPFileInfo(aItem));
 
   FStatus  := csWaitingRename;
@@ -431,11 +431,9 @@ begin
     begin
       Core.FApp.FMessage := PCharToString(aValue);
       Core.FApp.FStatus  := csExecuting;
-    end
-    else
+    end else
       Result := StringToPChar(Core.FApp.FMessage);
-  end
-  else
+  end else
     Result := nil;
 end;
 
