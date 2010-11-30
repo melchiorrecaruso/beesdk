@@ -60,22 +60,8 @@ function CoreTerminate: boolean;
 function CorePriority(aValue: longint): longint;
 function CoreSuspended(aValue: boolean): boolean;
 
-function CoreGetItem(aIndex: integer): Pointer;
-function CoreGetMessage(aIndex: integer): PChar;
-function CorePutMessage(aValue: PChar): PChar;
-
-{ Core GetInfo param value:                             }
-{    0..MaxInt: items                                   }
-{   -1: speed                                           }
-{   -2: percentage                                      }
-{   -3: status                                          }
-{   -4: exit code                                       }
-{   -5: elapsed time                                    }
-{   -6: remaining time                                  }
-{   -7: processed size                                  }
-{   -8: total size                                      }
-
-function CoreGetInfo(aValue: longint): Pointer;
+function CoreGetInfo(aType: longint; aIndex: longint): Pointer;
+function CorePutInfo(aType: longint; aInfo: Pointer): Pointer;
 
 implementation
 
@@ -84,11 +70,9 @@ type
 
   TCustomBeeApp = class(TBeeApp)
   private
-    FMessages: TStringList;
     FItems:    TList;
-    FStatus:   integer;
-    function GetItem(Index: longint): PFileInfo;
-    function GetMessage(Index: longint): PChar;
+    FMessages: TList;
+    FStatus: longint;
   public
     constructor Create(aParams: TStringList);
     destructor Destroy; override;
@@ -98,8 +82,6 @@ type
     procedure OnList(const aItem: THeader); override;
     // procedure OnProgress; override;
     // procedure OnClear; override;
-    property Items[Index: longint]: PFileInfo read GetItem;
-    property Messages[Index: longint]: PChar read GetMessage;
   end;
 
   { TCore class }
@@ -152,7 +134,7 @@ end;
 constructor TCustomBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
-  FMessages := TStringList.Create;
+  FMessages := TList.Create;
   FItems    := TList.Create;
   FStatus   := csReady;
 end;
@@ -161,18 +143,19 @@ destructor TCustomBeeApp.Destroy;
 var
   I: longint;
 begin
-  for I := 0 to FItems.Count - 1 do
-  begin
-    CoreFreePFileInfo(FItems[I]);
-  end;
-  FItems.Destroy;
+  for I := 0 to FMessages.Count - 1 do
+    CoreFreePChar(FMessages[I]);
   FMessages.Destroy;
+
+  for I := 0 to FItems.Count - 1 do
+    CoreFreePFileInfo(FItems[I]);
+  FItems.Destroy;
   inherited Destroy;
 end;
 
 procedure TCustomBeeApp.OnMessage(const aMessage: string);
 begin
-  FMessages.Add(aMessage);
+  FMessages.Add(StringToPChar(aMessage));
 end;
 
 function TCustomBeeApp.OnRename(const aItem: THeader; const aValue: string): string;
@@ -186,12 +169,13 @@ begin
   begin
     Sleep(250);
   end;
-  Result := FMessage;
+  Result := PCharToString(PFileInfo(FItems.Last).Name);
 end;
 
 procedure TCustomBeeApp.OnRequest(const aMessage: string);
 begin
-  FMessage := aMessage;
+  FMessages.Add(StringToPChar(aMessage));
+
   FStatus  := csWaitingRequest;
   while FStatus = csWaitingRequest do
   begin
@@ -218,23 +202,20 @@ begin
     FApp := TSevenZipApp.Create(FParams)
   else
   {$ENDIF} {$ENDIF}
-    FApp := TCoreApp.Create(FParams);
+    FApp := TCustomBeeApp.Create(FParams);
   FParams.Destroy;
 end;
 
 destructor TCore.Destroy;
 begin
   FApp.Destroy;
-  FParams.Destroy;
   inherited Destroy;
 end;
 
 procedure TCore.Execute;
 begin
   FApp.FStatus := csExecuting;
-  begin
-    FApp.Execute;
-  end;
+  FApp.Execute;
   FApp.FStatus := csTerminated;
 end;
 
@@ -242,7 +223,7 @@ end;
 
 function CoreLibVersion: integer;
 begin
-  Result := 104;
+  Result := 105;
 end;
 
 procedure CoreFreePChar(P: PChar);
@@ -296,7 +277,7 @@ begin
   end;
 end;
 
-function CoreSuspend(aValue: boolean): boolean;
+function CoreSuspended(aValue: boolean): boolean;
 begin
   Result := (Core <> nil);
   if Result then
@@ -346,113 +327,48 @@ begin
     Result := cpUnknow;
 end;
 
-function CoreSpeed: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.Speed
-  else
-    Result := -1;
-end;
+{ Core GetInfo params value:      }
+{   0: status         - longint   }
+{   1: exit code      - longint   }
+{   2: speed          - longint   }
+{   3: percentage     - longint   }
+{   4: elapsed time   - longint   }
+{   5: remaining time - longint   }
+{   6: processed size - int64     }
+{   7: total size     - int64     }
+{   8: message        - PChar     }
+{   9: messages count - longint   }
+{  10: item           - PFileInfo }
+{  11: items count    - longint   }
 
-function CoreMessages(aIndex: integer): PChar;
-begin
-  if (Core <> nil) then
-  begin
-    if aIndex = -1 then aIndex := Core.FApp.FMessages.Count;
-
-
-
-
-    if aIndex > -1 then
-    begin
-      if aIndex < Core.FApp.FMessages.Count then
-        Result := StringToPChar(Core.FApp.FMessages[aIndex])
-      else
-        Result := nil;
-    end else
-      Result := StringToPChar(Core.FApp.FMessage)
-  end;
-end;
-
-function CorePercentes: integer;
+function CoreGetInfo(aType: longint; aIndex: longint): Pointer;
 begin
   Result := -1;
   if (Core <> nil) then
-  begin
-    Result := Core.FApp.Percentage
-  end;
+    case aType of
+       0: Result := Pointer(Core.FApp.FStatus);
+       1: Result := Pointer(Core.FApp.Code);
+       2: Result := Pointer(Core.FApp.Speed);
+       3: Result := Pointer(Core.FApp.Percentage);
+       4: Result := Pointer(Core.FApp.ElapsedTime);
+       5: Result := Pointer(Core.FApp.RemainingTime);
+       6: Result := Pointer(Core.FApp.ProcessedSize);
+       7: Result := Pointer(Core.FApp.Size);
+       8: Result := Core.FApp.FMessages[aIndex];
+       9: Result := Pointer(Core.FApp.FMessages.Count);
+      10: Result := Core.FApp.FItems[aIndex];
+      11: Result := Pointer(Core.FApp.FItems.Count);
+    end;
 end;
 
-function CoreTime(aValue: integer): integer;
+function CorePutInfo(aType: longint; aInfo: Pointer): Pointer;
 begin
   Result := -1;
   if (Core <> nil) then
-  begin
-    case aValue of
-      -1: Result := Core.FApp.ElapsedTime;
-      +1: Result := Core.FApp.RemainingTime;
+    case aType of
+       0: Result := Pointer(Core.FApp.FStatus);
+
     end;
-  end;
-end;
-
-function CoreSize(aValue: integer): int64;
-begin
-  Result := -1;
-  if (Core <> nil) then
-  begin
-    case aValue of
-      -1: Result := Core.FApp.ProcessedSize;
-      +1: Result := Core.FApp.Size;
-    end;
-  end;
-end;
-
-function CoreCode: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.Code
-  else
-    Result := ccUnknow;
-end;
-
-function CoreStatus: integer;
-begin
-  if (Core <> nil) then
-    Result := Core.FApp.FStatus
-  else
-    Result := csUnknow;
-end;
-
-function CoreRequest(aValue: PChar): PChar;
-begin
-  if (Core <> nil) then
-  begin
-    if aValue <> nil then
-    begin
-      Core.FApp.FMessage := PCharToString(aValue);
-      Core.FApp.FStatus  := csExecuting;
-    end else
-      Result := StringToPChar(Core.FApp.FMessage);
-  end else
-    Result := nil;
-end;
-
-function CoreItems(aIndex: integer): Pointer;
-begin
-  if (Core <> nil) then
-  begin
-    if aIndex < 0 then
-      Result := @Core.FApp.FItem
-    else
-    begin
-      if aIndex < Core.FApp.FItems.Count then
-        Result := Core.FApp.FItems[aIndex]
-      else
-        Result := nil;
-    end;
-  end
-  else
-    Result := nil;
 end;
 
 end.
