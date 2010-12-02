@@ -47,7 +47,7 @@ exports
   CoreCreate,
   CoreDestroy,
   CoreExecute,
-  CoreSuspend,
+  CoreSuspended,
   CorePriority,
   CoreTerminate;
 
