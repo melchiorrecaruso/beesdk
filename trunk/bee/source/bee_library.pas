@@ -46,22 +46,9 @@ uses
   Bee_CommandLine;
 
 { Library routines }
-function CoreLibVersion: integer;
 
-procedure CoreFreePChar(P: PChar);
-procedure CoreFreePFileInfo(P: Pointer);
-
-{ Library core routines }
-
-function CoreCreate(aCommandLine: PChar): boolean;
-function CoreDestroy: boolean;
-function CoreExecute: boolean;
-function CoreTerminate: boolean;
-function CorePriority(aValue: longint): longint;
-function CoreSuspended(aValue: boolean): boolean;
-
-function CoreGetInfo(aType: longint; aIndex: longint): Pointer;
-function CorePutInfo(aType: longint; aInfo: Pointer): Pointer;
+function CoreVersion: integer;
+function CoreSend(aCode: longint; aData: Pointer): Pointer;
 
 implementation
 
@@ -88,16 +75,41 @@ type
 
   TCore = class(TThread)
   private
-    FApp:    TCustomBeeApp;
     FParams: TStringList;
+    FApp:  TCustomBeeApp;
   public
     constructor Create(const aCommandLine: string);
     destructor Destroy; override;
     procedure Execute; override;
   end;
 
+  { Library routines }
+
+  procedure CoreFreePChar(P: PChar);
+  begin
+    if P <> nil then
+    begin
+      StrDispose(P);
+    end;
+  end;
+
+  procedure CoreFreePFileInfo(P: Pointer);
+  begin
+    if P <> nil then
+      with TFileInfo(P^) do
+      begin
+        if Name     <> nil then StrDispose(Name);
+        if Path     <> nil then StrDispose(Path);
+        if Comm     <> nil then StrDispose(Comm);
+        if Method   <> nil then StrDispose(Method);
+        if Version  <> nil then StrDispose(Version);
+        if Password <> nil then StrDispose(Password);
+      end;
+  end;
+
 var
   Core: TCore = nil;
+
 
 function THeaderToPFileInfo(aItem: THeader): PFileInfo;
 begin
@@ -219,36 +231,12 @@ begin
   FApp.FStatus := csTerminated;
 end;
 
-{ Library routines }
-
-function CoreLibVersion: integer;
-begin
-  Result := 105;
-end;
-
-procedure CoreFreePChar(P: PChar);
-begin
-  if P <> nil then
-  begin
-    StrDispose(P);
-  end;
-end;
-
-procedure CoreFreePFileInfo(P: Pointer);
-begin
-  if P <> nil then
-    with TFileInfo(P^) do
-    begin
-      if Name     <> nil then StrDispose(Name);
-      if Path     <> nil then StrDispose(Path);
-      if Comm     <> nil then StrDispose(Comm);
-      if Method   <> nil then StrDispose(Method);
-      if Version  <> nil then StrDispose(Version);
-      if Password <> nil then StrDispose(Password);
-    end;
-end;
-
 { Library core routines }
+
+function CoreVersion: integer;
+ begin
+   Result := 105;
+ end;
 
 function CoreCreate(aCommandLine: PChar): boolean;
 begin
@@ -341,11 +329,11 @@ end;
 {  10: item           - PFileInfo }
 {  11: items count    - longint   }
 
-function CoreGetInfo(aType: longint; aIndex: longint): Pointer;
+function CoreSend(aCode: longint; aData: Pointer): Pointer;
 begin
   Result := -1;
   if (Core <> nil) then
-    case aType of
+    case aCode of
        0: Result := Pointer(Core.FApp.FStatus);
        1: Result := Pointer(Core.FApp.Code);
        2: Result := Pointer(Core.FApp.Speed);
