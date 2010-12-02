@@ -29,9 +29,9 @@ library BeeLib;
 
 {$I compiler.inc}
 
-uses {$IFDEF MSWINDOWS}
-  Windows, {$ENDIF} {$IFDEF UNIX}
-  cThreads, {$ENDIF}
+uses
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF UNIX} cThreads, {$ENDIF}
   Bee_Library;
 
  // -------------------------------------------------------------------------- //
@@ -41,32 +41,8 @@ uses {$IFDEF MSWINDOWS}
  // -------------------------------------------------------------------------- //
 
 exports
-  CoreLibVersion;
-
-exports
-  CoreCreate,
-  CoreDestroy,
-  CoreExecute,
-  CoreSuspended,
-  CorePriority,
-  CoreTerminate;
-
-exports
-  CorePercentes,
-  CoreSpeed,
-  CoreSize,
-  CoreTime,
-
-  CoreRequest,
-  CoreMessages,
-  CoreStatus,
-  CoreCode;
-
-exports
-  CoreItems;
-
-exports
-  CoreFreePChar;
+  CoreVersion,
+  CoreSend;
 
   // -------------------------------------------------------------------------- //
   //                                                                            //
