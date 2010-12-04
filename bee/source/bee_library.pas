@@ -47,8 +47,7 @@ uses
 
 { Library routines }
 
-function CoreVersion: integer;
-function CoreSend(aCode: longint; aData: Pointer): Pointer;
+function CoreSend(ID, CODE, DATA: Pointer): Pointer;
 
 implementation
 
@@ -75,41 +74,37 @@ type
 
   TCore = class(TThread)
   private
-    FParams: TStringList;
     FApp:  TCustomBeeApp;
+    FParams: TStringList;
   public
     constructor Create(const aCommandLine: string);
     destructor Destroy; override;
     procedure Execute; override;
   end;
 
-  { Library routines }
+{ Library routines }
 
-  procedure CoreFreePChar(P: PChar);
+procedure FreePChar(P: PChar);
+begin
+  if P <> nil then
   begin
-    if P <> nil then
+    StrDispose(P);
+  end;
+end;
+
+procedure FreePFileInfo(P: Pointer);
+begin
+  if P <> nil then
+    with TFileInfo(P^) do
     begin
-      StrDispose(P);
+      if Name     <> nil then StrDispose(Name);
+      if Path     <> nil then StrDispose(Path);
+      if Comm     <> nil then StrDispose(Comm);
+      if Method   <> nil then StrDispose(Method);
+      if Version  <> nil then StrDispose(Version);
+      if Password <> nil then StrDispose(Password);
     end;
-  end;
-
-  procedure CoreFreePFileInfo(P: Pointer);
-  begin
-    if P <> nil then
-      with TFileInfo(P^) do
-      begin
-        if Name     <> nil then StrDispose(Name);
-        if Path     <> nil then StrDispose(Path);
-        if Comm     <> nil then StrDispose(Comm);
-        if Method   <> nil then StrDispose(Method);
-        if Version  <> nil then StrDispose(Version);
-        if Password <> nil then StrDispose(Password);
-      end;
-  end;
-
-var
-  Core: TCore = nil;
-
+end;
 
 function THeaderToPFileInfo(aItem: THeader): PFileInfo;
 begin
@@ -156,11 +151,11 @@ var
   I: longint;
 begin
   for I := 0 to FMessages.Count - 1 do
-    CoreFreePChar(FMessages[I]);
+    FreePChar(FMessages[I]);
   FMessages.Destroy;
 
   for I := 0 to FItems.Count - 1 do
-    CoreFreePFileInfo(FItems[I]);
+    FreePFileInfo(FItems[I]);
   FItems.Destroy;
   inherited Destroy;
 end;
@@ -233,90 +228,8 @@ end;
 
 { Library core routines }
 
-function CoreVersion: integer;
- begin
-   Result := 105;
- end;
-
-function CoreCreate(aCommandLine: PChar): boolean;
-begin
-  Result := (Core = nil);
-  if Result then
-  begin
-    Core := TCore.Create(PCharToString(aCommandLine));
-  end;
-end;
-
-function CoreDestroy: boolean;
-begin
-  Result := (Core <> nil);
-  if Result then
-  begin
-    FreeAndNil(Core);
-  end;
-end;
-
-function CoreExecute: boolean;
-begin
-  Result := (Core <> nil) and (Core.FApp.FStatus = csReady);
-  if Result then
-  begin
-    Core.Resume;
-  end;
-end;
-
-function CoreSuspended(aValue: boolean): boolean;
-begin
-  Result := (Core <> nil);
-  if Result then
-  begin
-    Core.FApp.Suspended := aValue;
-  end;
-end;
-
-function CoreTerminate: boolean;
-begin
-  Result := (Core <> nil);
-  if Result then
-  begin
-    Core.FApp.Terminate;
-    if Core.FApp.FStatus <> csTerminated then
-    begin
-      Core.FApp.FStatus := csExecuting;
-    end;
-  end;
-end;
-
-function CorePriority(aValue: integer): integer;
-begin
-  if Core <> nil then
-  begin
-    case aValue of
-      cpIdle:         Core.Priority := tpIdle;
-      cpLowest:       Core.Priority := tpLowest;
-      cpLower:        Core.Priority := tpLower;
-      cpNormal:       Core.Priority := tpNormal;
-      cpHigher:       Core.Priority := tpHigher;
-      cpHighest:      Core.Priority := tpHighest;
-      cpTimeCritical: Core.Priority := tpTimeCritical;
-    end;
-
-    case Core.Priority of
-      tpIdle:         Result := cpIdle;
-      tpLowest:       Result := cpLowest;
-      tpLower:        Result := cpLower;
-      tpNormal:       Result := cpNormal;
-      tpHigher:       Result := cpHigher;
-      tpHighest:      Result := cpHighest;
-      tpTimeCritical: Result := cpTimeCritical;
-      else            Result := cpUnknow;
-    end;
-  end else
-    Result := cpUnknow;
-end;
-
 { Core GetInfo params value:      }
-{   0: status         - longint   }
+
 {   1: exit code      - longint   }
 {   2: speed          - longint   }
 {   3: percentage     - longint   }
@@ -329,34 +242,54 @@ end;
 {  10: item           - PFileInfo }
 {  11: items count    - longint   }
 
-function CoreSend(aCode: longint; aData: Pointer): Pointer;
+function CoreSend(ID, CODE, DATA: Pointer): Pointer;
 begin
-  Result := -1;
-  if (Core <> nil) then
-    case aCode of
-       0: Result := Pointer(Core.FApp.FStatus);
-       1: Result := Pointer(Core.FApp.Code);
-       2: Result := Pointer(Core.FApp.Speed);
-       3: Result := Pointer(Core.FApp.Percentage);
-       4: Result := Pointer(Core.FApp.ElapsedTime);
-       5: Result := Pointer(Core.FApp.RemainingTime);
-       6: Result := Pointer(Core.FApp.ProcessedSize);
-       7: Result := Pointer(Core.FApp.Size);
-       8: Result := Core.FApp.FMessages[aIndex];
-       9: Result := Pointer(Core.FApp.FMessages.Count);
-      10: Result := Core.FApp.FItems[aIndex];
-      11: Result := Pointer(Core.FApp.FItems.Count);
-    end;
-end;
+  case longint(CODE) of
+    0: Result := TCore.Create(PCharToString(DATA));    // CODE= 0 -> CREATE
+    1: TCore(ID).Destroy;                              // CODE= 1 -> DESTROY
+    2: TCore(ID).Resume;                               // CODE= 2 -> RESUME
+    3: begin                                           // CODE= 3 -> TERMINATE
+         TCore(ID).FApp.Terminate;
+         if TCore(ID).FApp.FStatus <> csTerminated then
+         begin
+           TCore(ID).FApp.FStatus := csExecuting;
+         end;
+       end;
+    4: begin                                           // CODE= 4 -> PRIORITY
+         case longint(DATA) of
+           cpIdle:         TCore(ID).Priority := tpIdle;
+           cpLowest:       TCore(ID).Priority := tpLowest;
+           cpLower:        TCore(ID).Priority := tpLower;
+           cpNormal:       TCore(ID).Priority := tpNormal;
+           cpHigher:       TCore(ID).Priority := tpHigher;
+           cpHighest:      TCore(ID).Priority := tpHighest;
+           cpTimeCritical: TCore(ID).Priority := tpTimeCritical;
+         end;
+         case TCore(ID).Priority of
+           tpIdle:         Result := cpIdle;
+           tpLowest:       Result := cpLowest;
+           tpLower:        Result := cpLower;
+           tpNormal:       Result := cpNormal;
+           tpHigher:       Result := cpHigher;
+           tpHighest:      Result := cpHighest;
+           tpTimeCritical: Result := cpTimeCritical;
+           else            Result := cpUnknow;
+         end;
+       end;
 
-function CorePutInfo(aType: longint; aInfo: Pointer): Pointer;
-begin
-  Result := -1;
-  if (Core <> nil) then
-    case aType of
-       0: Result := Pointer(Core.FApp.FStatus);
-
-    end;
+   10: Result := Pointer(TCore(ID).FApp.FStatus);      // CODE=10 -> STATUS
+   11: Result := Pointer(TCore(ID).FApp.Code);         // CODE=11 -> EXIT CODE
+   12: Result := Pointer(TCore(ID).FApp.Speed);        // CODE=12 -> SPEED
+   13: Result := Pointer(TCore(ID).FApp.Percentage);   // CODE=13 -> PERCENTAGE
+   14: Result := Pointer(TCore(ID).FApp.ElapsedTime);  // CODE=14 -> ETIME
+   15: Result := Pointer(TCore(ID).FApp.RemainingTime);// CODE=15 -> RTIME
+   16: Result := Pointer(TCore(ID).FApp.ProcessedSize);// CODE=16 -> PSIZE
+   17: Result := Pointer(TCore(ID).FApp.Size);         // CODE=17 -> TSIZE
+   18: Result := TCore(ID).FApp.FMessages[longint(DATA)];       // CODE=18 -> MESSAGE
+   19: Result := Pointer(TCore(ID).FApp.FMessages.Count);// CODE=19 -> MCOUNT
+   20: Result := TCore(ID).FApp.FItems[longint(DATA)];          // CODE=20 -> ITEM
+   21: Result := Pointer(TCore(ID).FApp.FItems.Count);   // CODE=21 -> ICOUNT
+  end;
 end;
 
 end.
