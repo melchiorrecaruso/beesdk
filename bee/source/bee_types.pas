@@ -118,6 +118,34 @@ type
     Position:   longint;
   end;
 
+procedure FreePChar(P: PChar);
+procedure FreePFileInfo(P: Pointer);
+
 implementation
+
+uses
+  SysUtils;
+
+procedure FreePChar(P: PChar);
+begin
+  if P <> nil then
+  begin
+    StrDispose(P);
+  end;
+end;
+
+procedure FreePFileInfo(P: Pointer);
+begin
+  if P <> nil then
+    with TFileInfo(P^) do
+    begin
+      if Name     <> nil then StrDispose(Name);
+      if Path     <> nil then StrDispose(Path);
+      if Comm     <> nil then StrDispose(Comm);
+      if Method   <> nil then StrDispose(Method);
+      if Version  <> nil then StrDispose(Version);
+      if Password <> nil then StrDispose(Password);
+    end;
+end;
 
 end.

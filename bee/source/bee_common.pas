@@ -84,7 +84,6 @@ function OemToParam(const Param: string): string;
 
 function StringToPChar(const aValue: string): PChar;
 function PCharToString(aValue: PChar): string;
-procedure FreePChar(var aValue: PChar);
 
 function RatioToStr(const PackedSize, Size: int64): string;
 function SizeToStr(const Size: int64): string;
@@ -573,12 +572,6 @@ begin
     end;
   end else
     SetLength(Result, 0);
-end;
-
-procedure FreePChar(var aValue: PChar); {$IFDEF FPC} inline; {$ENDIF}
-begin
-  StrDispose(aValue);
-  aValue := nil;
 end;
 
 function RatioToStr(const PackedSize, Size: int64): string; {$IFDEF FPC} inline; {$ENDIF}
