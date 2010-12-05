@@ -360,6 +360,28 @@ begin
   FolderBox.Style := csDropDown;
   {$ENDIF}
   {$IFDEF MSWINDOWS}
+
+  // BUG
+  BevelFour.AnchorSideLeft.Control   := BtnUp;
+  BevelFour.AnchorSideLeft.Side      := asrBottom;
+  BevelFour.AnchorSideTop.Control    := FolderBox;
+  BevelFour.AnchorSideBottom.Control := FolderBox;
+  BevelFour.AnchorSideBottom.Side    := asrBottom;
+
+  FolderBoxLabel.AnchorSideLeft.Control   := BevelFour;
+  FolderBoxLabel.AnchorSideLeft.Side      := asrBottom;
+  FolderBoxLabel.AnchorSideTop.Control    := FolderBox;
+  FolderBoxLabel.AnchorSideBottom.Control := FolderBox;
+  FolderBoxLabel.AnchorSideBottom.Side    := asrBottom;
+
+
+  FolderBox.AnchorSideLeft.Control   := FolderBoxLabel;
+  FolderBox.AnchorSideLeft.Side      := asrBottom;
+  FolderBox.AnchorSideTop.Control    := AddressToolBar;
+  FolderBox.AnchorSideBottom.Control := AddressToolBar;
+  FolderBox.AnchorSideBottom.Side    := asrBottom;
+  // END BUG
+
   ToolBar.Height := BtnNew.Height + 8;
   AddressToolBar.Height := FolderBox.Height + 6;
   FolderBox.Style := csOwnerDrawFixed;
