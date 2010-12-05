@@ -42,7 +42,7 @@ type
   { TCommandLine }
 
   TCommandLine = class
-  private
+  protected
     FCommand: TCommand;
     FssOption: boolean;
     FrOption: TRecursiveMode;
@@ -64,9 +64,9 @@ type
     FpriOption: TpriOption;
     FArchiveName: string;
     FFileMasks: TStringList;
-    procedure Initialize;
-    function GetCommandLine: string;
-    procedure SetCommandLine(const aValue: string);
+    procedure Clear; virtual;
+    function GetCommandLine: string; virtual;
+    procedure SetCommandLine(const aValue: string); virtual;
     procedure SetfOption(const aValue: string);
     procedure SetpOption(const aValue: string);
     procedure SetsfxOption(const aValue: string);
@@ -95,7 +95,7 @@ type
     constructor Create;
     destructor Destroy; override;
     property CommandLine: string read GetCommandLine write SetCommandLine;
-    property Command: TCommand read FCommand;
+    property Command: TCommand read FCommand write FCommand;
     property ssOption: boolean read FssOption write FssOption;
     property rOption: TRecursiveMode read FrOption write FrOption;
     property uOption: TUpdateMode read FuOption write FuOption;
@@ -131,10 +131,10 @@ begin
   inherited Create;
   FxOptions := TStringList.Create;
   FFileMasks := TStringList.Create;
-  Initialize;
+  Clear;
 end;
 
-procedure TCommandLine.Initialize;
+procedure TCommandLine.Clear;
 begin
   FCommand := ccNone;
   FssOption := False;
@@ -353,7 +353,7 @@ begin
   Params := TStringList.Create;
   Params.Text := aValue;
   
-  Initialize;
+  Clear;
   // catch options, command, archive name and name of files
   for I := 0 to Params.Count - 1 do
   begin

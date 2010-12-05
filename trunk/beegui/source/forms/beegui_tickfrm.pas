@@ -119,13 +119,12 @@ type
     // ---
     procedure OnTimer(Sender: TObject);
     procedure OnTerminate;
-    procedure OnOverWrite;
-    procedure OnPassword;
     procedure OnExecute;
     procedure OnRename;
     procedure OnList;
   private
     { private declarations }
+    FID:        Pointer;
     FList:      TList;
     FPassword:  string;
     FCanClose:  boolean;
@@ -216,7 +215,7 @@ procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   I: boolean;
 begin
-  CanClose := (CoreStatus = csTerminated) or (CoreStatus = csUnknow);
+  CanClose := longint(CoreSend(FID, csmStatus, nil)) in [csTerminated, csUnknow];
 
   if CanClose = False then
   begin
@@ -224,7 +223,7 @@ begin
     if I = False then BtnPauseRun.Click;
     if MessageDlg(rsConfirmation, rsConfirmAbortProcess, mtConfirmation, [mbYes, mbNo], '') = mrYes then
     begin
-      CoreTerminate;
+      CoreSend(FID, csmTerminate, nil);
       BtnPauseRun.Click;
     end else
       if I = False then BtnPauseRun.Click;
@@ -238,9 +237,9 @@ begin
   FList := aList;
   FCommandLine := aCommandLine;
 
-  P := StringToPChar(FCommandLine.Params.Text);
-  CoreCreate(P);
-  if CoreExecute then
+  P := StringToPChar(FCommandLine.CommandLine);
+  CoreSend(FID, csmCreate, P);
+  CoreSend(FID, csmResume, nil);
   begin
     BtnPauseRun.Enabled := True;
     {$IFDEF MSWINDOWS}
@@ -258,7 +257,7 @@ end;
 
 function TTickFrm.GetFrmCanShow: boolean;
 begin
-  Result := CoreTime(-1) > 0;
+  Result := longint(CoreSend(FID, csmRemainingTime, nil)) > 0;
 end;
 
 procedure TTickFrm.PopupClick(Sender: TObject);
@@ -268,12 +267,12 @@ begin
   Popup_Higher.Checked       := Sender = Popup_Higher;
   Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
 
-  if CoreStatus <> csTerminated then
+  if longint(CoreSend(FID, csmStatus, nil)) <> csTerminated then
   begin
-    if Popup_Idle.Checked         then CorePriority(cpIdle);
-    if Popup_Normal.Checked       then CorePriority(cpNormal);
-    if Popup_Higher.Checked       then CorePriority(cpHigher);
-    if Popup_TimeCritical.Checked then CorePriority(cpTimeCritical);
+    if Popup_Idle.Checked         then CoreSend(FID, csmPriority, Pointer(cpIdle));
+    if Popup_Normal.Checked       then CoreSend(FID, csmPriority, Pointer(cpNormal));
+    if Popup_Higher.Checked       then CoreSend(FID, csmPriority, Pointer(cpHigher));
+    if Popup_TimeCritical.Checked then CoreSend(FID, csmPriority, Pointer(cpTimeCritical));
   end;
 end;
 
@@ -320,19 +319,14 @@ end;
  // ------------------------------------------------------------------------ //
 
 procedure TTickFrm.OnTimer(Sender: TObject);
-var
-  Status: integer;
 begin
   Timer.Enabled := False;
-  Status := CoreStatus;
-  case Status of
+  case longint(CoreSend(FID, csmStatus, nil)) of
     csTerminated:       OnTerminate;
     csExecuting:        OnExecute;
     csWaitingRename:    OnRename;
-    csWaitingPassword:  OnPassword;
-    csWaitingOverWrite: OnOverwrite;
   end;
-  Timer.Enabled := (CoreStatus <> csUnknow);
+  Timer.Enabled := (longint(CoreSend(FID, csmStatus, nil)) <> csUnknow);
 end;
 
 procedure TTickFrm.OnExecute;
@@ -340,7 +334,7 @@ var
   I: int64;
   P: PChar;
 begin
-  I := CoreSize(+1);
+  I := int64(CoreSend(FID, csmSize, nil));
   if I < (1024) then
   begin
     GeneralSize.Caption     := IntToStr(I);
@@ -356,7 +350,7 @@ begin
       GeneralSizeUnit.Caption := 'MB';
     end;
 
-  I := CoreSize(-1);
+  I := int64(CoreSend(FID, csmProcessedSize, nil));
   if I < (1024) then
   begin
     ProcessedSize.Caption     := IntToStr(I);
@@ -372,7 +366,7 @@ begin
       ProcessedSizeUnit.Caption := 'MB';
     end;
 
-  Tick.Position := CorePercentes;
+  Tick.Position := longint(CoreSend(FID, csmPercentage, nil));
   if FSuspended = False then
     Caption := Format(rsProcessStatus, [Tick.Position])
   else
@@ -383,15 +377,14 @@ begin
     Application.Title := Caption;
   end;
 
-  Time.Caption          := TimeToStr(CoreTime(+1));
-  RemainingTime.Caption := TimeToStr(CoreTime(-1));
-  Speed.Caption         := IntToStr (CoreSpeed shr 10);
+  Time.Caption          := TimeToStr(longint(CoreSend(FID, csmElapsedTime, nil)));
+  RemainingTime.Caption := TimeToStr(longint(CoreSend(FID, csmRemainingTime, nil)));
+  Speed.Caption         := IntToStr (longint(CoreSend(FID, csmSpeed, nil)) shr 10);
 
-  P := CoreMessages(-1);
+  P := CoreSend(FID, csmMessage, CoreSend(FID, csmMessageCount, nil));
   if P <> nil then
   begin
     Msg.Caption := PCharToString(P);
-    CoreFreePChar(P);
   end;
 end;
 
@@ -400,7 +393,7 @@ var
   P: PChar;
   I: integer;
 begin
-  ExitCode := CoreCode;
+  ExitCode := longint(CoreSend(FID, csmCode, nil));
   case ExitCode of
     0: Caption := rsProcessTerminated;
     1: Caption := rsProcessTerminated;
@@ -416,23 +409,16 @@ begin
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
-    I := 0;
-    P := CoreMessages(I);
-    while P <> nil do
+    for I := 1 to longint(CoreSend(FID, csmMessageCount, nil)) do
     begin
+      P := CoreSend(FID, csmMessage, Pointer(I));
       Report.Lines.Add(PCharToString(P));
-      CoreFreePChar(P);
-
-      Inc(I);
-      P := CoreMessages(I);
     end;
   end;
   OnList;
 
-  if CoreDestroy then
-  begin
-    FCanClose := True;
-  end;
+  CoreSend(FID, csmDestroy, nil);
+  FCanClose := True;
 
   if Report.Lines.Count > 0 then
     Notebook.ActivePageComponent := ReportPage
@@ -446,124 +432,60 @@ var
   F: TRenameFrm;
   P: PChar;
 begin
-  P  := nil;
-  FI := CoreItems(-1);
-  if FI <> nil then
-  begin
-    F := TRenameFrm.Create(Application);
+  FI := CoreSend(FID, csmItem, CoreSend(FID, csmItemCount, nil));
 
-    F.Caption        := rsRenameFile;
-    F.ToFN.Text      := PCharToString(FI^.FilePath) + PCharToString(FI^.FileName);
-    F.FromFN.Caption := PCharToString(FI^.FilePath) + PCharToString(FI^.FileName);
+  F                := TRenameFrm.Create(Application);
+  F.Caption        := rsRenameFile;
+  F.ToFN.Text      := PCharToString(FI^.Name);
+  F.FromFN.Caption := PCharToString(FI^.Name);
 
-    case F.ShowModal of
-      mrOk: P := StringToPChar(F.ToFN.Text);
-      mrAbort: CoreTerminate;
-    end;
-    FreeAndNil(F);
+  P := nil;
+  case F.ShowModal of
+    mrOk:    P := StringToPChar(F.ToFN.Text);
+    mrAbort: CoreSend(FID, csmTerminate, nil);
   end;
+  F.Free;
 
   if P <> nil then
   begin
-    CoreRequest(P);
+    CoreSend(FID, csmItemName, P);
     FreePChar(P);
   end;
   FI := nil;
-end;
-
-procedure TTickFrm.OnOverwrite;
-var
-  FI: PFileInfo;
-  F: TOverWriteFrm;
-  P: PChar;
-begin
-  P  := nil;
-  FI := CoreItems(-1);
-  if FI <> nil then
-  begin
-    F := TOverWriteFrm.Create(Application);
-
-    F.SetFileName(PCharToString(FI^.FileName));
-    F.SetNewFileTime(FI^.FileTime);
-    F.SetNewFileSize(FI^.FileSize);
-    F.SetOldFileTime(FileAge(FI^.FileName));
-    F.SetOldFileSize(SizeOfFile(FI^.FileName));
-
-    case F.ShowModal of
-      mrAbort   : P := StringToPChar('Q');
-      mrNoToAll : P := StringToPChar('S');
-      mrYesToAll: P := StringToPChar('A');
-      mrNo      : P := StringToPChar('N');
-      mrYes     : P := StringToPChar('Y');
-      else        P := StringToPChar('N');
-    end;
-    FreeAndNil(F);
-  end;
-
-  if P <> nil then
-  begin
-    CoreRequest(P);
-    FreePChar(P);
-  end;
-  FI := nil;
-end;
-
-procedure TTickFrm.OnPassword;
-var
-  FI: PFileInfo;
-  F: TPasswordFrm;
-  P: PChar;
-begin
-  if FPassword = '' then
-  begin
-    F := TPasswordFrm.Create(Application);
-    F.SetPassword(FPassword);
-    if F.ShowModal = mrOK then
-    begin
-      FPassword := F.Password.Text;
-    end;
-    FreeAndNil(F);
-  end;
-  P := StringToPChar(FPassword);
-  CoreRequest(P);
-  FreePChar(P);
 end;
 
 procedure TTickFrm.OnList;
 var
   I: integer;
-  P: PFileInfoExtra;
+  P: PFileInfo;
   Node: TArchiveItem;
 begin
   if Assigned(FList) then
   begin
-    I := 0;
-    P := CoreItems(I);
-    while P <> nil do
+    for I := 1 to longint(CoreSend(FID, csmItemCount, nil)) do
     begin
+      P    := CoreSend(FID, csmItem, nil);
       Node := TArchiveItem.Create;
       try
-        Node.FileName     := PCharToString(P.FileName);
-        Node.FilePath     := PCharToString(P.FilePath);
-        Node.FileSize     := P.FileSize;
-        Node.FilePacked   := P.FilePacked;
-        Node.FileRatio    := P.FileRatio;
-        Node.FileAttr     := P.FileAttr;
-        Node.FileTime     := P.FileTime;
-        Node.FileComm     := PCharToString(P.FileComm);
-        Node.FileCrc      := P.FileCrc;
-        Node.FileMethod   := PCharToString(P.FileMethod);
-        Node.FileVersion  := PCharToString(P.FileVersion);
-        Node.FilePassword := PCharToString(P.FilePassword);
-        Node.FilePosition := P.FilePosition;
+        Node.FileName     := ExtractFileName(PCharToString(P^.Name));
+        Node.FilePath     := ExtractFilePath(PCharToString(P^.Name));
+        Node.FileSize     := P^.Size;
+        Node.FilePacked   := P^.PackedSize;
+        Node.FileRatio    := P^.Ratio;
+        Node.FileAttr     := P^.Attr;
+        Node.FileTime     := P^.Time;
+        Node.FileComm     := PCharToString(P^.Comm);
+        Node.FileCrc      := P^.Crc;
+        Node.FileMethod   := PCharToString(P^.Method);
+        Node.FileVersion  := PCharToString(P^.Version);
+        Node.FilePassword := PCharToString(P^.Password);
+        Node.FilePosition := P^.Position;
       finally
         FList.Add(Node);
       end;
-      Inc(I);
-      P := CoreItems(I);
     end;
   end;
- end;
+end;
 
  // ------------------------------------------------------------------------ //
  //                                                                          //
@@ -573,17 +495,17 @@ begin
 
 procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
 begin
-  if (CoreStatus <> csTerminated) then
+  if longint(CoreSend(FID, csmStatus, nil)) <> csTerminated then
   begin
     FSuspended := not FSuspended;
     if FSuspended then
     begin
       BtnPauseRun.Caption := rsBtnRunCaption;
-      CoreSuspend(True);
+      CoreSend(FID, csmSuspend, Pointer(True));
     end else
     begin
       BtnPauseRun.Caption := rsBtnPauseCaption;
-      CoreSuspend(False);
+      CoreSend(FID, csmSuspend, Pointer(False));
     end;
   end;
 end;
@@ -593,7 +515,7 @@ var
   X, Y: integer;
   FValue: integer;
 begin
-  FValue := CorePriority(cpUnknow);
+  FValue := longint(CoreSend(FID, csmPriority, Pointer(cpUnknow)));
   if FValue <> -1 then
   begin
     Popup_Idle.Checked         := FValue = cpIdle;

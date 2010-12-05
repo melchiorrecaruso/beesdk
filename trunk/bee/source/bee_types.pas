@@ -45,7 +45,7 @@ type
   {   ccOpen     Open archive                             }
 
   TCommand = (ccAdd, ccExtract, ccXextract, ccDelete,
-    ccRename, ccTest, ccList, ccHelp, ccOpen, ccNone);
+    ccRename, ccTest, ccList, ccHelp, ccOpen, ccNone, ccView);
 
   { Recursive Mode Option:                                }
   {  rmNone      No resurse filename                      }
@@ -104,7 +104,6 @@ type
 
   TFileInfo = record
     Name:       PChar;
-    Path:       PChar;
     Size:       int64;
     Time:       longint;
     Attr:       longint;
@@ -140,7 +139,6 @@ begin
     with TFileInfo(P^) do
     begin
       if Name     <> nil then StrDispose(Name);
-      if Path     <> nil then StrDispose(Path);
       if Comm     <> nil then StrDispose(Comm);
       if Method   <> nil then StrDispose(Method);
       if Version  <> nil then StrDispose(Version);

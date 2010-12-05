@@ -65,14 +65,13 @@ type
     ExtractingOptions: TGroupBox;
     mOptionLabel: TLabel;
     dOptionLabel: TLabel;
-    oOptionLabel: TLabel;
+    uOptionLabel: TLabel;
     dOption:   TComboBox;
     mOption:   TComboBox;
-    oOption:   TComboBox;
+    uOption:   TComboBox;
     rOption:   TCheckBox;
     sOption:   TCheckBox;
     tOption:   TCheckBox;
-    kOption:   TCheckBox;
     cdAOption: TCheckBox;
     xCommand:  TCheckBox;
     cdEOption: TCheckBox;
@@ -104,6 +103,7 @@ var
 implementation
 
 uses
+  Bee_Types,
   BeeGui_Consts,
   BeeGui_Messages,
   BeeGui_SysUtils;
@@ -152,13 +152,12 @@ end;
 procedure TConfigFrm.AddOptions(const AFolder: string;
   ACommandLine: tCustomCommandLine);
 begin
-  ACommandLine.mOption := mOption.ItemIndex;
-  ACommandLine.dOption := dOption.ItemIndex;
+  ACommandLine.mOption := TmOption(mOption.ItemIndex);
+  ACommandLine.dOption := TdOption(dOption.ItemIndex);
 
-  ACommandLine.rOption := rOption.Checked;
+  ACommandLine.rOption := TRecursiveMode(rOption.Checked);
   ACommandLine.sOption := sOption.Checked;
   ACommandLine.tOption := tOption.Checked;
-  ACommandLine.kOption := kOption.Checked;
 
   if cdAOption.Checked then
     ACommandLine.cdOption := AFolder
@@ -170,15 +169,11 @@ procedure TConfigFrm.ExtractOptions(const AFolder: string;
   ACommandLine: tCustomCommandLine);
 begin
   if xCommand.Checked then
-    ACommandLine.Command := 'X'
+    ACommandLine.Command := ccXextract
   else
-    ACommandLine.Command := 'E';
+    ACommandLine.Command := ccExtract;
 
-  case oOption.ItemIndex of
-    0: ACommandLine.oOption := 'Y';
-    1: ACommandLine.oOption := 'A';
-    2: ACommandLine.oOption := 'S';
-  end;
+  ACommandLine.uOption := TUpdateMode(uOption.ItemIndex);
 
   if cdEOption.Checked then
     ACommandLine.cdOption := AFolder
