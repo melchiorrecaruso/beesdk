@@ -20,7 +20,6 @@ object MainFrm: TMainFrm
   LCLVersion = '0.9.29'
   object ListView: TArchiveListView
     AnchorSideTop.Control = AddressToolBar
-    AnchorSideTop.Side = asrBottom
     AnchorSideBottom.Control = StatusBar
     Left = 0
     Height = 449
