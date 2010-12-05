@@ -43,6 +43,30 @@ const
   DefaultCfgName      = 'bee.ini';
   DefaultSfxName      = 'bee.sfx';
 
+  { Core Send Messages }
+
+  csmCreate           = 0;
+  csmDestroy          = 1;
+  csmResume           = 2;
+  csmTerminate        = 3;
+  csmPriority         = 4;
+
+  csmStatus           = 10;
+  csmCode             = 11;
+  csmSpeed            = 12;
+  csmPercentage       = 13;
+  csmElapsedTime      = 14;
+  csmRemainingTime    = 15;
+  csmProcessedSize    = 16;
+  csmSize             = 17;
+  csmMessage          = 18;
+  csmMessageCount     = 19;
+  csmItem             = 20;
+  csmItemCount        = 21;
+
+  csmItemName         = 101;
+  csmRequest          = 102;
+
   { CoreStatus }
 
   csUnknow            = $FFFFFFFF;

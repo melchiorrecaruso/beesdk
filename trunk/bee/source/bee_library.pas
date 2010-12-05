@@ -47,7 +47,7 @@ uses
 
 { Library routines }
 
-function CoreSend(ID, CODE, DATA: Pointer): Pointer;
+function CoreSend(ID, MESSAGE, DATA: Pointer): Pointer;
 
 implementation
 
@@ -83,28 +83,6 @@ type
   end;
 
 { Library routines }
-
-procedure FreePChar(P: PChar);
-begin
-  if P <> nil then
-  begin
-    StrDispose(P);
-  end;
-end;
-
-procedure FreePFileInfo(P: Pointer);
-begin
-  if P <> nil then
-    with TFileInfo(P^) do
-    begin
-      if Name     <> nil then StrDispose(Name);
-      if Path     <> nil then StrDispose(Path);
-      if Comm     <> nil then StrDispose(Comm);
-      if Method   <> nil then StrDispose(Method);
-      if Version  <> nil then StrDispose(Version);
-      if Password <> nil then StrDispose(Password);
-    end;
-end;
 
 function THeaderToPFileInfo(aItem: THeader): PFileInfo;
 begin
@@ -151,11 +129,11 @@ var
   I: longint;
 begin
   for I := 0 to FMessages.Count - 1 do
-    FreePChar(FMessages[I]);
+    FreePChar(FMessages.Items[I]);
   FMessages.Destroy;
 
   for I := 0 to FItems.Count - 1 do
-    FreePFileInfo(FItems[I]);
+    FreePFileInfo(FItems.Items[I]);
   FItems.Destroy;
   inherited Destroy;
 end;
@@ -228,67 +206,63 @@ end;
 
 { Library core routines }
 
-{ Core GetInfo params value:      }
-
-{   1: exit code      - longint   }
-{   2: speed          - longint   }
-{   3: percentage     - longint   }
-{   4: elapsed time   - longint   }
-{   5: remaining time - longint   }
-{   6: processed size - int64     }
-{   7: total size     - int64     }
-{   8: message        - PChar     }
-{   9: messages count - longint   }
-{  10: item           - PFileInfo }
-{  11: items count    - longint   }
-
-function CoreSend(ID, CODE, DATA: Pointer): Pointer;
+function CoreSend(ID, MESSAGE, DATA: Pointer): Pointer;
+var
+  P: PChar;
 begin
-  case longint(CODE) of
-    0: Result := TCore.Create(PCharToString(DATA));    // CODE= 0 -> CREATE
-    1: TCore(ID).Destroy;                              // CODE= 1 -> DESTROY
-    2: TCore(ID).Resume;                               // CODE= 2 -> RESUME
-    3: begin                                           // CODE= 3 -> TERMINATE
-         TCore(ID).FApp.Terminate;
-         if TCore(ID).FApp.FStatus <> csTerminated then
-         begin
-           TCore(ID).FApp.FStatus := csExecuting;
-         end;
-       end;
-    4: begin                                           // CODE= 4 -> PRIORITY
-         case longint(DATA) of
-           cpIdle:         TCore(ID).Priority := tpIdle;
-           cpLowest:       TCore(ID).Priority := tpLowest;
-           cpLower:        TCore(ID).Priority := tpLower;
-           cpNormal:       TCore(ID).Priority := tpNormal;
-           cpHigher:       TCore(ID).Priority := tpHigher;
-           cpHighest:      TCore(ID).Priority := tpHighest;
-           cpTimeCritical: TCore(ID).Priority := tpTimeCritical;
-         end;
-         case TCore(ID).Priority of
-           tpIdle:         Result := cpIdle;
-           tpLowest:       Result := cpLowest;
-           tpLower:        Result := cpLower;
-           tpNormal:       Result := cpNormal;
-           tpHigher:       Result := cpHigher;
-           tpHighest:      Result := cpHighest;
-           tpTimeCritical: Result := cpTimeCritical;
-           else            Result := cpUnknow;
-         end;
-       end;
+  case longint(MESSAGE) of
+    csmCreate:    Result := TCore.Create(PCharToString(DATA));
+    csmDestroy:   TCore(ID).Destroy;
+    csmResume:    TCore(ID).Resume;
+    csmTerminate: begin
+      TCore(ID).FApp.Terminate;
+      if TCore(ID).FApp.FStatus <> csTerminated then
+      begin
+        TCore(ID).FApp.FStatus := csExecuting;
+      end;
+    end;
+    csmPriority:  begin
+      case longint(DATA) of
+        cpIdle:         TCore(ID).Priority := tpIdle;
+        cpLowest:       TCore(ID).Priority := tpLowest;
+        cpLower:        TCore(ID).Priority := tpLower;
+        cpNormal:       TCore(ID).Priority := tpNormal;
+        cpHigher:       TCore(ID).Priority := tpHigher;
+        cpHighest:      TCore(ID).Priority := tpHighest;
+        cpTimeCritical: TCore(ID).Priority := tpTimeCritical;
+      end;
+      case TCore(ID).Priority of
+        tpIdle:         Result := cpIdle;
+        tpLowest:       Result := cpLowest;
+        tpLower:        Result := cpLower;
+        tpNormal:       Result := cpNormal;
+        tpHigher:       Result := cpHigher;
+        tpHighest:      Result := cpHighest;
+        tpTimeCritical: Result := cpTimeCritical;
+        else            Result := cpUnknow;
+      end;
+    end;
 
-   10: Result := Pointer(TCore(ID).FApp.FStatus);      // CODE=10 -> STATUS
-   11: Result := Pointer(TCore(ID).FApp.Code);         // CODE=11 -> EXIT CODE
-   12: Result := Pointer(TCore(ID).FApp.Speed);        // CODE=12 -> SPEED
-   13: Result := Pointer(TCore(ID).FApp.Percentage);   // CODE=13 -> PERCENTAGE
-   14: Result := Pointer(TCore(ID).FApp.ElapsedTime);  // CODE=14 -> ETIME
-   15: Result := Pointer(TCore(ID).FApp.RemainingTime);// CODE=15 -> RTIME
-   16: Result := Pointer(TCore(ID).FApp.ProcessedSize);// CODE=16 -> PSIZE
-   17: Result := Pointer(TCore(ID).FApp.Size);         // CODE=17 -> TSIZE
-   18: Result := TCore(ID).FApp.FMessages[longint(DATA)];       // CODE=18 -> MESSAGE
-   19: Result := Pointer(TCore(ID).FApp.FMessages.Count);// CODE=19 -> MCOUNT
-   20: Result := TCore(ID).FApp.FItems[longint(DATA)];          // CODE=20 -> ITEM
-   21: Result := Pointer(TCore(ID).FApp.FItems.Count);   // CODE=21 -> ICOUNT
+    csmStatus:        Result := Pointer(TCore(ID).FApp.FStatus);
+    csmCode:          Result := Pointer(TCore(ID).FApp.Code);
+    csmSpeed:         Result := Pointer(TCore(ID).FApp.Speed);
+    csmPercentage:    Result := Pointer(TCore(ID).FApp.Percentage);
+    csmElapsedTime:   Result := Pointer(TCore(ID).FApp.ElapsedTime);
+    csmRemainingTime: Result := Pointer(TCore(ID).FApp.RemainingTime);
+    csmProcessedSize: Result := Pointer(TCore(ID).FApp.ProcessedSize);
+    csmSize:          Result := Pointer(TCore(ID).FApp.Size);
+    csmMessage:       Result :=         TCore(ID).FApp.FMessages[longint(DATA)];
+    csmMessageCount:  Result := Pointer(TCore(ID).FApp.FMessages.Count);
+    csmItem:          Result :=         TCore(ID).FApp.FItems[longint(DATA)];
+    csmItemCount:     Result := Pointer(TCore(ID).FApp.FItems.Count);
+
+    csmItemName: begin
+      P := PFileInfo(TCore(ID).FApp.FItems[longint(DATA)])^.Name;
+      FreePChar(P);
+
+      P := StrNew(PChar(DATA));
+      TCore(ID).FApp.FStatus := csExecuting;
+    end;
   end;
 end;
 
