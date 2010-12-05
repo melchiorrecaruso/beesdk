@@ -7,13 +7,12 @@ object ConfigFrm: TConfigFrm
   HorzScrollBar.Range = 156
   VertScrollBar.Page = 402
   ActiveControl = Tree
-  AutoScroll = False
   Caption = 'Configuration'
   ClientHeight = 403
   ClientWidth = 561
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '0.9.27'
+  LCLVersion = '0.9.29'
   object Tree: TTreeView
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -106,14 +105,14 @@ object ConfigFrm: TConfigFrm
       AnchorSideRight.Control = mOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
-      Height = 139
+      Height = 70
       Top = 92
       Width = 371
       Anchors = [akTop, akLeft, akRight]
       AutoSize = True
       BorderSpacing.Top = 6
       Caption = 'Options'
-      ClientHeight = 121
+      ClientHeight = 52
       ClientWidth = 367
       TabOrder = 0
       object rOption: TCheckBox
@@ -146,10 +145,7 @@ object ConfigFrm: TConfigFrm
         TabOrder = 1
       end
       object tOption: TCheckBox
-        AnchorSideLeft.Control = kOption
-        AnchorSideTop.Control = kOption
         AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = kOption
         AnchorSideRight.Side = asrBottom
         Left = 12
         Height = 17
@@ -160,22 +156,6 @@ object ConfigFrm: TConfigFrm
         BorderSpacing.Bottom = 6
         Caption = 'Test files after adding (-t Option)'
         TabOrder = 2
-      end
-      object kOption: TCheckBox
-        AnchorSideLeft.Control = sOption
-        AnchorSideTop.Control = sOption
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = sOption
-        AnchorSideRight.Side = asrBottom
-        Left = 12
-        Height = 17
-        Top = 52
-        Width = 349
-        Anchors = [akTop, akLeft, akRight]
-        BorderSpacing.Top = 6
-        BorderSpacing.Bottom = 6
-        Caption = 'Crypt files with password (-k Option)'
-        TabOrder = 3
       end
       object cdAOption: TCheckBox
         AnchorSideLeft.Control = tOption
@@ -193,7 +173,7 @@ object ConfigFrm: TConfigFrm
         Caption = 'Use current archive directory (-cd Option)'
         Checked = True
         State = cbChecked
-        TabOrder = 4
+        TabOrder = 3
       end
     end
     object mOption: TComboBox
@@ -207,7 +187,6 @@ object ConfigFrm: TConfigFrm
       Top = 22
       Width = 371
       Anchors = [akTop, akLeft, akRight]
-      AutoComplete = False
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
       ItemHeight = 13
@@ -218,7 +197,6 @@ object ConfigFrm: TConfigFrm
         '2 - Good'
         '3 - Maximal'
       )
-      ItemWidth = 0
       Style = csDropDownList
       TabOrder = 1
       Text = '1 - Low'
@@ -234,7 +212,6 @@ object ConfigFrm: TConfigFrm
       Top = 65
       Width = 371
       Anchors = [akTop, akLeft, akRight]
-      AutoComplete = False
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
       ItemHeight = 13
@@ -251,7 +228,6 @@ object ConfigFrm: TConfigFrm
         'Level  8   (dictionary size  <   640 MB)'
         'Level  9   (dictionary size  < 1280 MB)'
       )
-      ItemWidth = 0
       Style = csDropDownList
       TabOrder = 2
       Text = 'Level  3   (dictionary size  <     20 MB)'
@@ -275,9 +251,8 @@ object ConfigFrm: TConfigFrm
     ClientWidth = 389
     TabOrder = 2
     Visible = False
-    object oOptionLabel: TLabel
+    object uOptionLabel: TLabel
       AnchorSideLeft.Control = Owner
-      AnchorSideTop.Side = asrBottom
       Left = 12
       Height = 14
       Top = 6
@@ -294,10 +269,10 @@ object ConfigFrm: TConfigFrm
       Transparent = False
     end
     object ExtractingOptions: TGroupBox
-      AnchorSideLeft.Control = oOption
-      AnchorSideTop.Control = oOption
+      AnchorSideLeft.Control = uOption
+      AnchorSideTop.Control = uOption
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = oOptionLabel
+      AnchorSideRight.Control = uOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
       Height = 70
@@ -343,31 +318,32 @@ object ConfigFrm: TConfigFrm
         TabOrder = 1
       end
     end
-    object oOption: TComboBox
-      AnchorSideLeft.Control = oOptionLabel
-      AnchorSideTop.Control = oOptionLabel
+    object uOption: TComboBox
+      AnchorSideLeft.Control = uOptionLabel
+      AnchorSideTop.Control = uOptionLabel
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = oOptionLabel
+      AnchorSideRight.Control = uOptionLabel
       AnchorSideRight.Side = asrBottom
       Left = 12
       Height = 21
       Top = 22
       Width = 371
       Anchors = [akTop, akLeft, akRight]
-      AutoComplete = False
       BorderSpacing.Top = 2
       BorderSpacing.Bottom = 2
       ItemHeight = 13
-      ItemIndex = 0
+      ItemIndex = 3
       Items.Strings = (
-        'Query if Overwrite pre-existing files'
-        'Overwrite pre-existing files'
-        'Skip pre-existing files'
+        'Extract only new files'
+        'Update only existing files'
+        'Replace only existing files'
+        'Extract new and update existing files'
+        'Extract new and replace existing files'
+        'Extract new and auto-rename if already exists'
       )
-      ItemWidth = 0
       Style = csDropDownList
       TabOrder = 1
-      Text = 'Query if Overwrite pre-existing files'
+      Text = 'Extract new and update existing files'
     end
   end
   object BtnOk: TBitBtn

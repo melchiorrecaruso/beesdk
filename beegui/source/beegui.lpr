@@ -43,6 +43,8 @@ uses
   Interfaces,
   LResources,
   // --- //
+  Bee_Types,
+  // --- //
   BeeGui_Consts,
   BeeGui_Package,
   BeeGui_SysUtils,
@@ -76,7 +78,7 @@ begin
     end;
     Application.Run;
   end else
-  if CommandLine.Command = ' ' then
+  if CommandLine.Command = ccNone then
   begin
     Application.Name  := cApplicationName;
     Application.Title := cApplicationName;
@@ -84,7 +86,7 @@ begin
     Application.CreateForm(TConfigFrm, ConfigFrm);
     Application.Run;
   end else
-  if CommandLine.Command = 'L' then
+  if CommandLine.Command = ccList then
   begin
     Application.Name  := cApplicationName;
     Application.Title := cApplicationName;
@@ -96,12 +98,12 @@ begin
     end;
     Application.Run;
   end else
-  if CommandLine.Command = '?' then
+  if CommandLine.Command = ccHelp then
   begin
     Application.CreateForm(TAboutFrm, AboutFrm);
     Application.Run;
   end else
-  if CommandLine.Command = 'V' then
+  if CommandLine.Command = ccView then
   begin
     if (ParamCount = 2) and FileExists(ParamStr(2)) then
     begin

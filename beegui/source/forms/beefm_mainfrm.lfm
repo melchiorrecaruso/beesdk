@@ -1,5 +1,5 @@
 object MainFrm: TMainFrm
-  Left = 275
+  Left = 294
   Height = 634
   Top = 153
   Width = 880
@@ -19,12 +19,12 @@ object MainFrm: TMainFrm
   OnShow = FormShow
   LCLVersion = '0.9.29'
   object ListView: TArchiveListView
+    AnchorSideTop.Control = AddressToolBar
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = StatusBar
     Left = 0
-    Height = 465
-    Top = 130
+    Height = 449
+    Top = 146
     Width = 880
     AutoLoad = True
     OnChangeFolder = ListViewChangeFolder
@@ -148,8 +148,6 @@ object MainFrm: TMainFrm
     PopupMenu = BMenu
     TabOrder = 1
     object BtnOpen: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 65
       Height = 55
       Top = 4
@@ -161,7 +159,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'Open'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -429,8 +426,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuFileOpenClick
     end
     object BtnNew: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 3
       Height = 55
       Top = 4
@@ -442,7 +437,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'New'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -710,8 +704,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuFileNewClick
     end
     object BevelFirst: TBevel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 127
       Height = 55
       Top = 4
@@ -724,8 +716,6 @@ object MainFrm: TMainFrm
       Constraints.MinWidth = 2
     end
     object BtnAdd: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 131
       Height = 55
       Top = 4
@@ -737,7 +727,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'Add'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -1005,8 +994,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsAddClick
     end
     object BtnExtract: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 193
       Height = 55
       Top = 4
@@ -1018,7 +1005,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'Extract'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -1286,8 +1272,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsExtractClick
     end
     object BtnView: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 255
       Height = 55
       Top = 4
@@ -1299,7 +1283,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'View'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -1567,8 +1550,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsViewClick
     end
     object BtnDelete: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 317
       Height = 55
       Top = 4
@@ -1580,7 +1561,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'Delete'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -1848,8 +1828,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsDeleteClick
     end
     object BevelSecond: TBevel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 379
       Height = 55
       Top = 4
@@ -1862,8 +1840,6 @@ object MainFrm: TMainFrm
       Constraints.MinWidth = 2
     end
     object BtnTest: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 383
       Height = 55
       Top = 4
@@ -1875,7 +1851,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'Test'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -2143,8 +2118,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsTestClick
     end
     object BtnCheckOut: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 445
       Height = 55
       Top = 4
@@ -2156,7 +2129,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'CheckOut'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -2424,8 +2396,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsCheckOutClick
     end
     object BevelThird: TBevel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 507
       Height = 55
       Top = 4
@@ -2438,8 +2408,6 @@ object MainFrm: TMainFrm
       Constraints.MinWidth = 2
     end
     object BtnConfig: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 511
       Height = 55
       Top = 4
@@ -2451,7 +2419,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'Config.'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -2719,8 +2686,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuOptionsConfigurationClick
     end
     object BtnHelp: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 573
       Height = 55
       Top = 4
@@ -2732,7 +2697,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'Help'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -3000,8 +2964,6 @@ object MainFrm: TMainFrm
       OnClick = MMenuHelpF1Click
     end
     object BtnExit: TSpeedButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
       Left = 635
       Height = 55
       Top = 4
@@ -3013,7 +2975,6 @@ object MainFrm: TMainFrm
       Constraints.MinHeight = 55
       Constraints.MinWidth = 60
       Caption = 'Exit'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         36200000424D3620000000000000360000002800000040000000200000000100
@@ -3282,8 +3243,11 @@ object MainFrm: TMainFrm
     end
   end
   object AddressToolBar: TToolBar
+    AnchorSideTop.Control = ToolBar
+    AnchorSideTop.Side = asrBottom
+    AnchorSideBottom.Control = ListView
     Left = 0
-    Height = 48
+    Height = 64
     Top = 80
     Width = 880
     ButtonHeight = 24
@@ -3294,6 +3258,7 @@ object MainFrm: TMainFrm
     Flat = False
     Indent = 0
     TabOrder = 2
+    OnClick = AddressToolBarClick
     object BtnUp: TSpeedButton
       AnchorSideLeft.Control = AddressToolBar
       AnchorSideTop.Control = FolderBox
@@ -3310,7 +3275,6 @@ object MainFrm: TMainFrm
       Constraints.MaxWidth = 122
       Constraints.MinWidth = 122
       Caption = 'Livello superiore'
-      Color = clBtnFace
       Flat = True
       Glyph.Data = {
         96030000424D96030000000000003600000028000000180000000C0000000100
@@ -3351,7 +3315,6 @@ object MainFrm: TMainFrm
       AnchorSideLeft.Control = BtnUp
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = FolderBox
-      AnchorSideRight.Control = FolderBoxLabel
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 127
@@ -3366,12 +3329,12 @@ object MainFrm: TMainFrm
       Constraints.MinWidth = 2
     end
     object FolderBoxLabel: TLabel
-      AnchorSideLeft.Control = BevelFour
+      AnchorSideLeft.Control = BtnUp
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = FolderBox
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
-      Left = 139
+      Left = 135
       Height = 22
       Top = 2
       Width = 45
@@ -3391,10 +3354,10 @@ object MainFrm: TMainFrm
       AnchorSideTop.Control = AddressToolBar
       AnchorSideRight.Control = AddressToolBar
       AnchorSideRight.Side = asrBottom
-      Left = 189
+      Left = 185
       Height = 22
       Top = 2
-      Width = 689
+      Width = 693
       Align = alCustom
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 5
@@ -3416,12 +3379,12 @@ object MainFrm: TMainFrm
     FilterIndex = 0
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     left = 24
-    top = 136
+    top = 200
   end
   object PMenu: TPopupMenu
     OnPopup = PMenuPopup
     left = 96
-    top = 192
+    top = 256
     object PMenuOpen: TMenuItem
       Caption = 'Open...'
       Default = True
@@ -3498,12 +3461,12 @@ object MainFrm: TMainFrm
     Font.Name = 'MS Sans Serif'
     MinFontSize = 0
     MaxFontSize = 0
-    left = 160
-    top = 136
+    left = 168
+    top = 200
   end
   object MMenu: TMainMenu
     left = 24
-    top = 192
+    top = 256
     object MMenuFile: TMenuItem
       Caption = 'File'
       object MMenuFileNew: TMenuItem
@@ -3875,11 +3838,11 @@ object MainFrm: TMainFrm
     Filter = 'Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'
     Options = [ofHideReadOnly, ofPathMustExist, ofEnableSizing]
     left = 96
-    top = 136
+    top = 200
   end
   object BMenu: TPopupMenu
-    left = 160
-    top = 192
+    left = 168
+    top = 256
     object BMenuNew: TMenuItem
       Caption = 'New'
       Checked = True
@@ -3954,13 +3917,13 @@ object MainFrm: TMainFrm
   end
   object SmallImages: TIconList
     left = 24
-    top = 256
+    top = 312
   end
   object LargeImages: TIconList
     Height = 32
     Width = 32
     left = 96
-    top = 256
+    top = 312
   end
   object FileProcess: TFileProcess
     Enabled = False
@@ -3968,7 +3931,7 @@ object MainFrm: TMainFrm
     OnTimer = FileProcessTimer
     OnStartTimer = FileProcessStartTimer
     OnStopTimer = FileProcessStopTimer
-    left = 160
-    top = 256
+    left = 168
+    top = 312
   end
 end

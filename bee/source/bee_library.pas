@@ -89,8 +89,7 @@ begin
   Result := GetMem(SizeOf(TFileInfo));
   if Result <> nil then
   begin
-    Result^.Name       := StringToPChar(ExtractFileName(aItem.Name));
-    Result^.Path       := StringToPChar(ExtractFilePath(aItem.Name));
+    Result^.Name       := StringToPChar(aItem.Name);
     Result^.Size       := aItem.Size;
     Result^.Time       := aItem.Time;
     Result^.Attr       := aItem.Attr;
@@ -211,6 +210,7 @@ var
   P: PChar;
 begin
   case longint(MESSAGE) of
+    csmVersion:   Result := Pointer(105);
     csmCreate:    Result := TCore.Create(PCharToString(DATA));
     csmDestroy:   TCore(ID).Destroy;
     csmResume:    TCore(ID).Resume;
@@ -242,6 +242,7 @@ begin
         else            Result := cpUnknow;
       end;
     end;
+    csmSuspend:   TCore(ID).FApp.Suspended := boolean(DATA);
 
     csmStatus:        Result := Pointer(TCore(ID).FApp.FStatus);
     csmCode:          Result := Pointer(TCore(ID).FApp.Code);
@@ -251,9 +252,9 @@ begin
     csmRemainingTime: Result := Pointer(TCore(ID).FApp.RemainingTime);
     csmProcessedSize: Result := Pointer(TCore(ID).FApp.ProcessedSize);
     csmSize:          Result := Pointer(TCore(ID).FApp.Size);
-    csmMessage:       Result :=         TCore(ID).FApp.FMessages[longint(DATA)];
+    csmMessage:       Result :=         TCore(ID).FApp.FMessages[longint(DATA) - 1];
     csmMessageCount:  Result := Pointer(TCore(ID).FApp.FMessages.Count);
-    csmItem:          Result :=         TCore(ID).FApp.FItems[longint(DATA)];
+    csmItem:          Result :=         TCore(ID).FApp.FItems[longint(DATA) - 1];
     csmItemCount:     Result := Pointer(TCore(ID).FApp.FItems.Count);
 
     csmItemName: begin

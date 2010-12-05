@@ -178,29 +178,8 @@ var
   I: integer;
 begin
   ExtractFrm := TExtractFrm.Create(Application);
-
-  ExtractFrm.xCommand.Checked := CommandLine.Command = ccXextract;
-
-  { TODO : }
-
-  // if (FuOption xor FfOption) then
-  // begin
-  //   if FuOption then
-  //     ExtractFrm.ufOption.ItemIndex := 0
-  //   else
-  //     ExtractFrm.ufOption.ItemIndex := 1;
-  // end else
-  // begin
-  //   ExtractFrm.ufOption.ItemIndex := 2;
-  // end;
-
-  case UpCase(CommandLine.uOption) of
-    'Y': ExtractFrm.oOption.ItemIndex := 0;
-    'A': ExtractFrm.oOption.ItemIndex := 1;
-    'S': ExtractFrm.oOption.ItemIndex := 2;
-    else
-      ExtractFrm.oOption.ItemIndex := 0;
-  end;
+  ExtractFrm.uOption.ItemIndex := Ord(CommandLine.uOption);
+  ExtractFrm.xCommand.Checked  := CommandLine.Command = ccXextract;
 
   with ExtractFrm do
   begin
@@ -209,20 +188,16 @@ begin
     cdOptionCheck.Checked := cdOption.Text <> '';
   end;
 
-  if ExtractFrm.ShowModal = mrOk then
+  Result := ExtractFrm.ShowModal = mrOk;
+  if Result then
   begin
-    if ExtractFrm.xCommand.Checked then
-      CommandLine.Command := 'X'
-    else
-      CommandLine.Command := 'E';
+    Result := SetCurrentDir(ExtractFrm.Folder.Text);
 
-    case ExtractFrm.oOption.ItemIndex of
-      0: CommandLine.oOption := 'Y';
-      1: CommandLine.oOption := 'A';
-      2: CommandLine.oOption := 'S';
-      else
-         CommandLine.oOption := 'Y';
-    end;
+    CommandLine.uOption := TUpdateMode(ExtractFrm.uOption.ItemIndex);
+    if ExtractFrm.xCommand.Checked then
+      CommandLine.Command := ccXextract
+    else
+      CommandLine.Command := ccExtract;
 
     if ExtractFrm.cdOptionCheck.Checked then
     begin
@@ -236,11 +211,7 @@ begin
           Strings[I] := IncludeTrailingBackSlash(ExtractFrm.cdOption.Text) + Strings[I];
         end;
     end;
-
-    Result := SetCurrentDir(ExtractFrm.Folder.Text);
-  end else
-    Result := False;
-
+  end;
   FreeAndNil(ExtractFrm);
 end;
 

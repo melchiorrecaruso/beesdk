@@ -1,4 +1,4 @@
-{ Questo è un file risorse generato automaticamente da Lazarus }
+{ This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TAboutFrm','FORMDATA',[
   'TPF0'#9'TAboutFrm'#8'AboutFrm'#4'Left'#3'z'#1#6'Height'#3#184#0#3'Top'#3'>'#1

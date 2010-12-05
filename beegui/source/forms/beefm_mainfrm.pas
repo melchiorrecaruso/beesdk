@@ -223,6 +223,7 @@ type
     BMenuHelp:  TMenuItem;
     BMenuExit:  TMenuItem;
     // ---
+    procedure AddressToolBarClick(Sender: TObject);
     procedure FileProcessStartTimer(Sender: TObject);
     procedure FileProcessStopTimer(Sender: TObject);
     procedure FileProcessTimer(Sender: TObject);
@@ -664,6 +665,11 @@ begin
   IncWorkStatus;
 end;
 
+procedure TMainFrm.AddressToolBarClick(Sender: TObject);
+begin
+
+end;
+
 procedure TMainFrm.FileProcessTimer(Sender: TObject);
 begin
   // monitoring
@@ -676,9 +682,8 @@ begin
     if MessageDlg(rsFreshFile, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
       FCommandLine.Clear;
-      FCommandLine.Command := 'A';
-      FCommandLine.fOption := True;
-      FCommandLine.uOption := False;
+      FCommandLine.Command := ccAdd;
+      FCommandLine.uOption := umUpdate;
       FCommandLine.Confirm := False;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
@@ -719,12 +724,12 @@ begin
   Caption := GetApplicationCaption(cApplicationCaption, rsOpening);
 
   FCommandLine.Clear;
-  FCommandLine.Command := 'L';
+  FCommandLine.Command := ccList;
   FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
   FCommandLine.ArchiveName := aArchiveName;
 
-  FCommandLine.rOption := True;
+  FCommandLine.rOption := rmWildCard;
   FCommandLine.FileMasks.Add('*');
 
   if FCommandLine.Run then
@@ -841,7 +846,7 @@ begin
         end;
       end;
       FCommandLine.Clear;
-      FCommandLine.Command := 'A';
+      FCommandLine.Command := ccAdd;
       FCommandLine.Confirm := True;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
@@ -1107,14 +1112,13 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
-    FCommandLine.Command := 'A';
+    FCommandLine.Command := ccAdd;
     FCommandLine.Confirm := True;
     FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
-
     if FArchiveName = '' then
       FCommandLine.ArchiveName :=
-        GenerateAlternativeFileName(ChangeFileExt(FileNames[0], '.bee'))
+        GenerateAlternativeFileName(ChangeFileExt(FileNames[0], '.bee'), 0, True)
     else
       FCommandLine.ArchiveName := FArchiveName;
 
@@ -1167,7 +1171,7 @@ begin
       if CheckWorkStatus(False) then
       begin
         FCommandLine.Clear;
-        FCommandLine.Command := 'X';
+        FCommandLine.Command := ccXextract;
         FCommandLine.Confirm := False;
         FCommandLine.cdOption := Listview.Folder;
         FCommandLine.Log := MMenuOptionsLogReport.Checked;
@@ -1197,7 +1201,7 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
-    FCommandLine.Command := 'A';
+    FCommandLine.Command := ccAdd;
     FCommandLine.Confirm := True;
     FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
@@ -1217,7 +1221,7 @@ begin
     if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
       FCommandLine.Clear;
-      FCommandLine.Command := 'D';
+      FCommandLine.Command := ccDelete;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
       FCommandLine.ArchiveName := FArchiveName;
@@ -1240,7 +1244,7 @@ begin
     if CheckWorkStatus(False) then
     begin
       FCommandLine.Clear;
-      FCommandLine.Command := 'X';
+      FCommandLine.Command := ccXextract;
       FCommandLine.Confirm := True;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
@@ -1259,7 +1263,7 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
-    FCommandLine.Command := 'X';
+    FCommandLine.Command := ccXextract;
     FCommandLine.Confirm := True;
     FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
@@ -1268,7 +1272,7 @@ begin
     ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
 
     FCommandLine.FileMasks.Add('*');
-    FCommandLine.rOption  := True;
+    FCommandLine.rOption  := rmWildCard;
     FcommandLine.cdOption := '';
     begin
       Execute(FCommandLine.ArchiveName);
@@ -1285,7 +1289,7 @@ begin
     if CheckWorkStatus(False) then
     begin
       FCommandLine.Clear;
-      FCommandLine.Command := 'T';
+      FCommandLine.Command := ccTest;
       FCommandLine.Log := True;
 
       FCommandLine.ArchiveName := FArchiveName;
@@ -1303,7 +1307,7 @@ begin
   if CheckWorkStatus(False) and (ListView.SelCount > 0) then
   begin
     FCommandLine.Clear;
-    FCommandLine.Command := 'R';
+    FCommandLine.Command := ccRename;
     FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
     FCommandLine.ArchiveName := FArchiveName;
@@ -1329,8 +1333,8 @@ begin
     end else
     begin
       FCommandLine.Clear;
-      FCommandLine.Command := 'E';
-      FCommandLine.oOption := 'A';
+      FCommandLine.Command := ccXextract;
+      FCommandLine.uOption := umAddReplace;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
       FCommandLine.ArchiveName := FArchiveName;
@@ -1364,14 +1368,14 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
-    FCommandLine.Command := 'X';
-    FCommandLine.oOption := 'A';
+    FCommandLine.Command := ccXextract;
+    FCommandLine.uOption := umAddReplace;
     FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
     FCommandLine.ArchiveName := FArchiveName;
 
     FCommandLine.FileMasks.Add('*');
-    FCommandLine.rOption  := True;
+    FCommandLine.rOption  := rmWildCard;
     FCommandLine.cdOption := '';
 
     FCheckOutDir := GetApplicationCheckoutDir(cApplicationName);
@@ -1399,13 +1403,13 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
-    FCommandLine.Command := 'T';
+    FCommandLine.Command := ccTest;
     FCommandLine.Log := True;
 
     FCommandLine.ArchiveName := FArchiveName;
 
     FCommandLine.FileMasks.Add('*');
-    FCommandLine.rOption  := True;
+    FCommandLine.rOption  := rmWildCard;
     FCommandLine.cdOption := '';
     begin
       Execute(FCommandLine.ArchiveName);

@@ -45,11 +45,13 @@ const
 
   { Core Send Messages }
 
-  csmCreate           = 0;
-  csmDestroy          = 1;
-  csmResume           = 2;
-  csmTerminate        = 3;
-  csmPriority         = 4;
+  csmVersion          = 0;
+  csmCreate           = 1;
+  csmDestroy          = 2;
+  csmResume           = 3;
+  csmTerminate        = 4;
+  csmPriority         = 5;
+  csmSuspend          = 6;
 
   csmStatus           = 10;
   csmCode             = 11;

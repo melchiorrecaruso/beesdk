@@ -19,11 +19,10 @@
 
       Storage.WriteInteger('TComboBox', 'mOption.ItemIndex' ,mOption.ItemIndex);
       Storage.WriteInteger('TComboBox', 'dOption.ItemIndex' ,dOption.ItemIndex);
-      Storage.WriteInteger('TComboBox', 'oOption.ItemIndex' ,oOption.ItemIndex);
+      Storage.WriteInteger('TComboBox', 'oOption.ItemIndex' ,uOption.ItemIndex);
     
       Storage.WriteBool('TCheckBox', 'rOption.Checked' ,rOption.Checked);
       Storage.WriteBool('TCheckBox', 'sOption.Checked' ,sOption.Checked);
-      Storage.WriteBool('TCheckBox', 'kOption.Checked' ,kOption.Checked);
       Storage.WriteBool('TCheckBox', 'tOption.Checked' ,tOption.Checked);
       Storage.WriteBool('TCheckBox', 'cdAOption.Checked' ,cdAOption.Checked);
 

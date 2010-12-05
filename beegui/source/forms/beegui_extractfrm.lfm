@@ -1,7 +1,7 @@
 object ExtractFrm: TExtractFrm
-  Left = 300
+  Left = 602
   Height = 413
-  Top = 282
+  Top = 140
   Width = 560
   ActiveControl = BtnOk
   Caption = 'Extraction Path and Options'
@@ -32,7 +32,7 @@ object ExtractFrm: TExtractFrm
     ParentColor = False
     Transparent = False
   end
-  object oOptionLabel: TLabel
+  object uOptionLabel: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Folder
     AnchorSideTop.Side = asrBottom
@@ -53,7 +53,7 @@ object ExtractFrm: TExtractFrm
   end
   object Options: TGroupBox
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = oOption
+    AnchorSideTop.Control = uOption
     AnchorSideTop.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 6
@@ -170,9 +170,9 @@ object ExtractFrm: TExtractFrm
     BorderSpacing.Bottom = 6
     TabOrder = 0
   end
-  object oOption: TComboBox
+  object uOption: TComboBox
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = oOptionLabel
+    AnchorSideTop.Control = uOptionLabel
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Options
     AnchorSideRight.Side = asrBottom
@@ -184,17 +184,18 @@ object ExtractFrm: TExtractFrm
     BorderSpacing.Left = 6
     BorderSpacing.Bottom = 6
     ItemHeight = 13
-    ItemIndex = 0
+    ItemIndex = 4
     Items.Strings = (
-      'Query if Overwrite pre-existing files'
-      'Overwrite pre-existing files'
-      'Skip pre-existing files'
-      'Freshen pre-existing files'
-      'Extract files and freshen pre-existing files'
+      'Extract only new files'
+      'Update only existing files'
+      'Replace only existing files'
+      'Extract new and update existing files'
+      'Extract new and replace existing files'
+      'Extract new and auto-rename if already exists'
     )
     Style = csDropDownList
     TabOrder = 1
-    Text = 'Query if Overwrite pre-existing files'
+    Text = 'Extract new and replace existing files'
   end
   object Folders: TTreeView
     AnchorSideLeft.Control = Options
@@ -232,6 +233,10 @@ object ExtractFrm: TExtractFrm
   end
   object Icons: TIconList
     left = 40
+    top = 216
+  end
+  object PopupMenu1: TPopupMenu
+    left = 72
     top = 216
   end
 end

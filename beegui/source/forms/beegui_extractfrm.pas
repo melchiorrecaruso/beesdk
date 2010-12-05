@@ -40,7 +40,7 @@ uses
   Controls,
   Graphics,
   SysUtils,
-  LResources,
+  LResources, Menus,
   // ---
   BeeGui_IconList,
   BeeGui_FolderTreeViewMgr;
@@ -57,9 +57,10 @@ type
     Icons:     TIconList;
     Options:   TGroupBox;
     cdOption:  TEdit;
+    PopupMenu1: TPopupMenu;
     xCommand:  TCheckBox;
-    oOptionLabel: TLabel;
-    oOption:   TComboBox;
+    uOptionLabel: TLabel;
+    uOption:   TComboBox;
     cdOptionCheck: TCheckBox;
     BtnCancel: TBitBtn;
     BtnOk:     TBitBtn;

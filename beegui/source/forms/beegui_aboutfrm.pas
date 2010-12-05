@@ -76,6 +76,7 @@ var
 implementation
 
 uses
+  Bee_Consts,
   BeeGui_Consts,
   {$IFDEF USEDLL}
   BeeLib_Link,
@@ -93,16 +94,19 @@ uses
   {$I beegui_aboutfrm_loadlanguage.inc}
 
 procedure TAboutFrm.FormCreate(Sender: TObject);
+var
+  LibVer: longint;
 begin
   LoadLanguage;
   LoadProperty;
 
   Version.Caption := cApplicationVersion;
   {$IFDEF USEDLL}
+  LibVer := longint(CoreSend(nil, csmVersion, nil));
   LibVersion.Caption := ' BeeLib ' +
-    IntTostr (CoreLibVersion div 100) + '.' +
-    IntTostr((CoreLibVersion mod 100) div 10) + '.' +
-    IntTostr((CoreLibVersion mod 100) mod 10);
+    IntTostr (LibVer div 100) + '.' +
+    IntTostr((LibVer mod 100) div 10) + '.' +
+    IntTostr((LibVer mod 100) mod 10);
   {$ELSE}
   LibVersion.Caption := '';
   {$ENDIF}

@@ -42,14 +42,13 @@
         Storage.WriteString('TComboBox', 'dOption[8]' ,dOption.Items[8]);
         Storage.WriteString('TComboBox', 'dOption[9]' ,dOption.Items[9]);
       
-        Storage.WriteString('TComboBox', 'oOption.Caption' ,oOptionLabel.Caption);
-        Storage.WriteString('TComboBox', 'oOption[0]' ,oOption.Items[0]);
-        Storage.WriteString('TComboBox', 'oOption[1]' ,oOption.Items[1]);
-        Storage.WriteString('TComboBox', 'oOption[2]' ,oOption.Items[2]);
+        Storage.WriteString('TComboBox', 'oOption.Caption' ,uOptionLabel.Caption);
+        Storage.WriteString('TComboBox', 'oOption[0]' ,uOption.Items[0]);
+        Storage.WriteString('TComboBox', 'oOption[1]' ,uOption.Items[1]);
+        Storage.WriteString('TComboBox', 'oOption[2]' ,uOption.Items[2]);
       
         Storage.WriteString('TCheckBox', 'rOption.Caption',   rOption.Caption);
         Storage.WriteString('TCheckBox', 'sOption.Caption',   sOption.Caption);
-        Storage.WriteString('TCheckBox', 'kOption.Caption',   kOption.Caption);
         Storage.WriteString('TCheckBox', 'tOption.Caption',   tOption.Caption);
         Storage.WriteString('TCheckBox', 'cdAOption.Caption', cdAOption.Caption);
         Storage.WriteString('TCheckBox', 'xCommand.Caption',  xCommand.Caption);
