@@ -69,6 +69,7 @@ implementation
 
 uses
   Bee_Types,
+  Bee_Consts,
   BeeGui_Forms;
 
 constructor TCustomCommandLine.Create(UseParams: boolean);
@@ -129,24 +130,20 @@ end;
 
 function TCustomCommandLine.GetCommandLine: string;
 var
+  Params: TStringList;
   S: string;
   C: Char;
 begin
-  S := inherited GetCommandLine;
+  Params      := TStringList.Create;
+  Params.Text := inherited GetCommandLine;
 
-  Result := S[1];
-  if F1Option then
-    Result := Result + ' -F1+'
-  else
-    Result := Result + ' -F1-';
+  if F1Option then Params.Insert(1, '-F1+') else Params.Insert(1, '-F1-');
+  if F2Option then Params.Insert(1, '-F2+') else Params.Insert(1, '-F2-');
 
-  if F2Option then
-    Result := Result + ' -F2+'
-  else
-    Result := Result + ' -F2-';
-
-  Delete(S, 1, 1);
-  Result := Result + S;
+  begin
+    Result := Params.Text;
+  end;
+  Params.Destroy;
 end;
 
 function TCustomCommandLine.GetRun: boolean;

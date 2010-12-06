@@ -9,6 +9,7 @@ object TickFrm: TTickFrm
   ClientWidth = 429
   Font.Height = -11
   Font.Name = 'Tahoma'
+  Menu = MainMenu1
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -579,5 +580,9 @@ object TickFrm: TTickFrm
       ShortCut = 16435
       OnClick = PopupClick
     end
+  end
+  object MainMenu1: TMainMenu
+    left = 224
+    top = 8
   end
 end

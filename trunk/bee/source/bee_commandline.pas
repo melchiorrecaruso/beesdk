@@ -428,82 +428,76 @@ end;
 function TCommandLine.GetCommandLine: string;
 var
   I: longint;
+  Params: TStringList;
 begin
+  Params := TStringList.Create;
   case FCommand of
-    ccHelp:     Result := '?';
-    ccAdd:      Result := 'A';
-    ccDelete:   Result := 'D';
-    ccExtract:  Result := 'E';
-    ccList:     Result := 'L';
-    ccOpen:     Result := 'O';
-    ccRename:   Result := 'R';
-    ccTest:     Result := 'T';
-    ccxExtract: Result := 'X';
-    else        Result := ' ';
+    ccHelp:     Params.Add('?');
+    ccAdd:      Params.Add('A');
+    ccDelete:   Params.Add('D');
+    ccExtract:  Params.Add('E');
+    ccList:     Params.Add('L');
+    ccOpen:     Params.Add('O');
+    ccRename:   Params.Add('R');
+    ccTest:     Params.Add('T');
+    ccxExtract: Params.Add('X');
+    else        Params.Add(' ');
   end;
 
   case FrOption of
-    rmFull:     Result := Result + ' -r+';
-    rmWildCard: Result := Result + ' -rw+';
-    else        Result := Result + ' -r-'
+    rmFull:     Params.Add('-r+' );
+    rmWildCard: Params.Add('-rw+');
+    else        Params.Add('-r-' );
   end;
 
   case FuOption of
-    umAdd:           Result := Result + ' -u0';
-    umUpdate:        Result := Result + ' -u1';
-    umReplace:       Result := Result + ' -u2';
-    umAddUpdate:     Result := Result + ' -u3';
-    umAddReplace:    Result := Result + ' -u4';
-    umAddAutoRename: Result := Result + ' -u5';
+    umAdd:           Params.Add('-u0');
+    umUpdate:        Params.Add('-u1');
+    umReplace:       Params.Add('-u2');
+    umAddUpdate:     Params.Add('-u3');
+    umAddReplace:    Params.Add('-u4');
+    umAddAutoRename: Params.Add('-u5');
   end;
 
   for I := 0 to FxOptions.Count - 1 do
-    Result := Result + ' -x' + FxOptions[I];
+    Params.Add('-x' + FxOptions[I]);
 
-  Result := Result + ' -m' + IntToStr(Ord(FmOption));
-  Result := Result + ' -d' + IntToStr(Ord(FdOption));
+  Params.Add('-m' + IntToStr(Ord(FmOption)));
+  Params.Add('-d' + IntToStr(Ord(FdOption)));
 
-  if FsOption then
-    Result := Result + ' -s+'
-  else
-    Result := Result + ' -s-';
+  if FsOption then Params.Add('-s+') else Params.Add('-s-');
 
-  if Length(FfOption)   > 0 then Result := Result + ' -f'   + FfOption;      
-  if Length(FsfxOption) > 0 then Result := Result + ' -sfx' + FsfxOption;
-
-  if Length(FpOption) > 0 then
-    Result := Result + ' -p' + FpOption;
+  if Length(FfOption)   > 0 then Params.Add('-f'   + FfOption);
+  if Length(FsfxOption) > 0 then Params.Add('-sfx' + FsfxOption);
+  if Length(FpOption)   > 0 then Params.Add('-p'   + FpOption);
 
   case FhvOption of
-    hv02: Result := Result + ' -hv02';
-    hv03: Result := Result + ' -hv03';
-    hv04: Result := Result + ' -hv04';
+    hv02: Params.Add('-hv02');
+    hv03: Params.Add('-hv03');
+    hv04: Params.Add('-hv04');
   end;
 
-  if FtOption then Result := Result + ' -t+' else Result := Result + ' -t-';
-  if FlOption then Result := Result + ' -l+' else Result := Result + ' -l-';
+  if FtOption   then Params.Add('-t+')   else Params.Add('-t-');
+  if FlOption   then Params.Add('-l+')   else Params.Add('-l-');
+  if FslsOption then Params.Add('-sls+') else Params.Add('-sls-');
 
-  if FslsOption then
-    Result := Result + ' -sls+'
-  else
-    Result := Result + ' -sls-';
+  if Length(FwdOption)  > 0 then Params.Add('-wd'  + FwdOption);
+  if Length(FcdOption)  > 0 then Params.Add('-cd'  + FcdOption);
+  if Length(FcfgOption) > 0 then Params.Add('-cfg' + FcfgOption);
 
-  if Length(FwdOption)  > 0 then Result := Result + ' -wd'  + FwdOption;
-  if Length(FcdOption)  > 0 then Result := Result + ' -cd'  + FcdOption;
-  if Length(FcfgOption) > 0 then Result := Result + ' -cfg' + FcfgOption;
+  Params.Add('-pri' + IntToStr(Ord(FpriOption)));
 
+  if FssOption then Params.Add('--+') else Params.Add('---');
 
-  Result := Result + ' -pri' + IntToStr(Ord(FpriOption));
-
-  if FssOption then
-    Result := Result + ' --+'
-  else
-    Result := Result + ' ---';
-
-  Result := Result + ' ' + FArchiveName;
+  Params.Add(FArchiveName);
 
   for I := 0 to FFileMasks.Count - 1 do
-    Result := Result + ' ' + FFileMasks[I];
+    Params.Add(FFileMasks[I]);
+
+  begin
+    Result := Params.Text;
+  end;
+  Params.Destroy;
 end;
 
 procedure TCommandLine.SetfOption(const aValue: string);

@@ -71,7 +71,7 @@ const
 
   { CoreStatus }
 
-  csUnknow            = $FFFFFFFF;
+  csUnknow            = $FFFFFFF0;
   csReady             = $00000000;
   csExecuting         = $00000001;
   csWaitingOverwrite  = $00000002;
@@ -84,7 +84,7 @@ const
 
   { CoreCode }
 
-  ccUnknow            = $FFFFFFFF;
+  ccUnknow            = $FFFFFFF0;
   ccSuccesful         = $00000000; { 0 No error                                               }
   ccWarning           = $00000001; { 1 Warning (Non fatal error(s)). For example, one or more }
                                    {   files were locked by some other application, so they   }

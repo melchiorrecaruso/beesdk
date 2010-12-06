@@ -66,6 +66,7 @@ type
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
     GeneralSizeUnit: TLabel;
+    MainMenu1: TMainMenu;
     ProcessedSizeLabel: TLabel;
     SizeLabelPanel: TPanel;
     SpeedLabel: TLabel;
@@ -238,8 +239,8 @@ begin
   FCommandLine := aCommandLine;
 
   P := StringToPChar(FCommandLine.CommandLine);
-  CoreSend(FID, csmCreate, P);
-  CoreSend(FID, csmResume, nil);
+  FID := CoreSend(nil, csmCreate, P);
+  if boolean(CoreSend(FID, csmResume, nil)) then
   begin
     BtnPauseRun.Enabled := True;
     {$IFDEF MSWINDOWS}
@@ -417,7 +418,7 @@ begin
   end;
   OnList;
 
-  CoreSend(FID, csmDestroy, nil);
+  FID := CoreSend(FID, csmDestroy, nil);
   FCanClose := True;
 
   if Report.Lines.Count > 0 then
@@ -464,7 +465,7 @@ begin
   begin
     for I := 1 to longint(CoreSend(FID, csmItemCount, nil)) do
     begin
-      P    := CoreSend(FID, csmItem, nil);
+      P    := CoreSend(FID, csmItem, Pointer(I));
       Node := TArchiveItem.Create;
       try
         Node.FileName     := ExtractFileName(PCharToString(P^.Name));

@@ -762,10 +762,8 @@ begin
     TickFrm.Execute(FCommandLine, FList);
     repeat
       Application.ProcessMessages;
-      if TickFrm.FrmCanClose then
-        Break;
-      if TickFrm.FrmCanShow then
-        Break;
+      if TickFrm.FrmCanClose then Break;
+      if TickFrm.FrmCanShow then Break;
     until FCommandLine.Log;
     if FCommandLine.Log then
       TickFrm.ShowModal

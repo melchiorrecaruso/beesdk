@@ -32,6 +32,8 @@ unit Bee_Library;
 interface
 
 uses
+  Dialogs,
+
   Classes,
   SysUtils,
   {$IFDEF FPC} {$IFDEF PLUGINS}
@@ -210,59 +212,152 @@ var
   P: PChar;
 begin
   case longint(MESSAGE) of
-    csmVersion:   Result := Pointer(105);
-    csmCreate:    Result := TCore.Create(PCharToString(DATA));
-    csmDestroy:   TCore(ID).Destroy;
-    csmResume:    TCore(ID).Resume;
-    csmTerminate: begin
-      TCore(ID).FApp.Terminate;
-      if TCore(ID).FApp.FStatus <> csTerminated then
+    csmVersion:       Result := Pointer(105);
+    csmCreate:        begin
+      Result := TCore.Create(PCharToString(DATA));
+      ShowMessage('LIB CREATE: ' + PCharToString(DATA));
+    end;
+    csmDestroy:       begin
+      if Assigned(TCore(ID)) then
       begin
+        TCore(ID).Destroy;
+      end;
+      Result := nil;
+    end;
+    csmResume:        begin
+      Result := Pointer(Assigned(TCore(ID)) and (TCore(ID).FApp.FStatus = csReady));
+      if boolean(Result) then
+      begin
+        TCore(ID).Resume;
+      end;
+    end;
+    csmSuspend:       begin
+      Result := Pointer(Assigned(TCore(ID)));
+      if boolean(Result) then
+      begin
+        TCore(ID).FApp.Suspended := boolean(DATA);
+      end;
+    end;
+    csmTerminate:     begin
+      Result := Pointer(Assigned(TCore(ID)));
+      if boolean(Result) then
+      begin
+        TCore(ID).FApp.Terminate;
+        if TCore(ID).FApp.FStatus <> csTerminated then
+        begin
+          TCore(ID).FApp.FStatus := csExecuting;
+        end;
+      end;
+    end;
+    csmPriority:      begin
+      Result := Pointer(Assigned(TCore(ID)));
+      if boolean(Result) then
+      begin
+        case longint(DATA) of
+          cpIdle:         TCore(ID).Priority := tpIdle;
+          cpLowest:       TCore(ID).Priority := tpLowest;
+          cpLower:        TCore(ID).Priority := tpLower;
+          cpNormal:       TCore(ID).Priority := tpNormal;
+          cpHigher:       TCore(ID).Priority := tpHigher;
+          cpHighest:      TCore(ID).Priority := tpHighest;
+          cpTimeCritical: TCore(ID).Priority := tpTimeCritical;
+        end;
+        case TCore(ID).Priority of
+          tpIdle:         Result := cpIdle;
+          tpLowest:       Result := cpLowest;
+          tpLower:        Result := cpLower;
+          tpNormal:       Result := cpNormal;
+          tpHigher:       Result := cpHigher;
+          tpHighest:      Result := cpHighest;
+          tpTimeCritical: Result := cpTimeCritical;
+          else            Result := cpUnknow;
+        end;
+      end;
+    end;
+    csmStatus:        begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.FStatus);
+        False: Result := Pointer(csUnknow);
+      end;
+      // ShowMessage('LIB STATUS: ' + IntToStr(longint(Result)));
+    end;
+    csmCode:          begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.Code);
+        False: Result := Pointer(ccUnknow);
+      end;
+    end;
+    csmSpeed:         begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.Speed);
+        False: Result := Pointer(-1);
+      end;
+    end;
+    csmPercentage:    begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.Percentage);
+        False: Result := Pointer(-1);
+      end;
+    end;
+    csmElapsedTime:   begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.ElapsedTime);
+        False: Result := Pointer(-1);
+      end;
+    end;
+    csmRemainingTime: begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.RemainingTime);
+        False: Result := Pointer(-1);
+      end;
+    end;
+    csmProcessedSize: begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.ProcessedSize);
+        False: Result := Pointer(-1);
+      end;
+    end;
+    csmSize:          begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.Size);
+        False: Result := Pointer(-1);
+      End;
+    end;
+    csmMessage:       begin
+      case Assigned(TCore(ID)) of
+        True:  Result := TCore(ID).FApp.FMessages[longint(DATA) - 1];
+        False: Result := nil;
+      end;
+    end;
+    csmMessageCount:  begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.FMessages.Count);
+        False: Result := Pointer(-1);
+      end;
+    end;
+    csmItem:          begin
+      case Assigned(TCore(ID)) of
+        True:  Result := TCore(ID).FApp.FItems[longint(DATA) - 1];
+        False: Result := nil;
+      end;
+    end;
+    csmItemCount:     begin
+      case Assigned(TCore(ID)) of
+        True:  Result := Pointer(TCore(ID).FApp.FItems.Count);
+        False: Result := nil;
+      end;
+    end;
+
+    csmItemName:      begin
+      Result := Pointer(Assigned(TCore(ID)));
+      if boolean(Result) then
+      begin
+        P := PFileInfo(TCore(ID).FApp.FItems[longint(DATA)])^.Name;
+        FreePChar(P);
+
+        P := StrNew(PChar(DATA));
         TCore(ID).FApp.FStatus := csExecuting;
       end;
-    end;
-    csmPriority:  begin
-      case longint(DATA) of
-        cpIdle:         TCore(ID).Priority := tpIdle;
-        cpLowest:       TCore(ID).Priority := tpLowest;
-        cpLower:        TCore(ID).Priority := tpLower;
-        cpNormal:       TCore(ID).Priority := tpNormal;
-        cpHigher:       TCore(ID).Priority := tpHigher;
-        cpHighest:      TCore(ID).Priority := tpHighest;
-        cpTimeCritical: TCore(ID).Priority := tpTimeCritical;
-      end;
-      case TCore(ID).Priority of
-        tpIdle:         Result := cpIdle;
-        tpLowest:       Result := cpLowest;
-        tpLower:        Result := cpLower;
-        tpNormal:       Result := cpNormal;
-        tpHigher:       Result := cpHigher;
-        tpHighest:      Result := cpHighest;
-        tpTimeCritical: Result := cpTimeCritical;
-        else            Result := cpUnknow;
-      end;
-    end;
-    csmSuspend:   TCore(ID).FApp.Suspended := boolean(DATA);
-
-    csmStatus:        Result := Pointer(TCore(ID).FApp.FStatus);
-    csmCode:          Result := Pointer(TCore(ID).FApp.Code);
-    csmSpeed:         Result := Pointer(TCore(ID).FApp.Speed);
-    csmPercentage:    Result := Pointer(TCore(ID).FApp.Percentage);
-    csmElapsedTime:   Result := Pointer(TCore(ID).FApp.ElapsedTime);
-    csmRemainingTime: Result := Pointer(TCore(ID).FApp.RemainingTime);
-    csmProcessedSize: Result := Pointer(TCore(ID).FApp.ProcessedSize);
-    csmSize:          Result := Pointer(TCore(ID).FApp.Size);
-    csmMessage:       Result :=         TCore(ID).FApp.FMessages[longint(DATA) - 1];
-    csmMessageCount:  Result := Pointer(TCore(ID).FApp.FMessages.Count);
-    csmItem:          Result :=         TCore(ID).FApp.FItems[longint(DATA) - 1];
-    csmItemCount:     Result := Pointer(TCore(ID).FApp.FItems.Count);
-
-    csmItemName: begin
-      P := PFileInfo(TCore(ID).FApp.FItems[longint(DATA)])^.Name;
-      FreePChar(P);
-
-      P := StrNew(PChar(DATA));
-      TCore(ID).FApp.FStatus := csExecuting;
     end;
   end;
 end;
