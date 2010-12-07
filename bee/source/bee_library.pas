@@ -172,6 +172,7 @@ end;
 procedure TCustomBeeApp.OnList(const aItem: THeader);
 begin
   FItems.Add(THeaderToPFileInfo(aItem));
+  FMessages.Add(StringToPChar(Format(cmListing, [aItem.Name])));
 end;
 
 { TCore class }
@@ -270,21 +271,20 @@ begin
           tpHigher:       Result := cpHigher;
           tpHighest:      Result := cpHighest;
           tpTimeCritical: Result := cpTimeCritical;
-          else            Result := cpUnknow;
+          else            Result := -1;
         end;
       end;
     end;
     csmStatus:        begin
       case Assigned(TCore(ID)) of
         True:  Result := Pointer(TCore(ID).FApp.FStatus);
-        False: Result := Pointer(csUnknow);
+        False: Result := Pointer(-1);
       end;
-      // ShowMessage('LIB STATUS: ' + IntToStr(longint(Result)));
     end;
     csmCode:          begin
       case Assigned(TCore(ID)) of
         True:  Result := Pointer(TCore(ID).FApp.Code);
-        False: Result := Pointer(ccUnknow);
+        False: Result := Pointer(-1);
       end;
     end;
     csmSpeed:         begin

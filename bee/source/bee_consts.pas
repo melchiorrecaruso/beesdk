@@ -71,7 +71,6 @@ const
 
   { CoreStatus }
 
-  csUnknow            = $FFFFFFF0;
   csReady             = $00000000;
   csExecuting         = $00000001;
   csWaitingOverwrite  = $00000002;
@@ -84,7 +83,6 @@ const
 
   { CoreCode }
 
-  ccUnknow            = $FFFFFFF0;
   ccSuccesful         = $00000000; { 0 No error                                               }
   ccWarning           = $00000001; { 1 Warning (Non fatal error(s)). For example, one or more }
                                    {   files were locked by some other application, so they   }
@@ -108,6 +106,7 @@ const
   cmCrcError          = 'CRC error  %s';
   cmDeleting          = 'Deleting   %s';
   cmChecking          = 'Checking   %s';
+  cmListing           = 'Listing    %s';
 
   cmUnknow            = 'Process aborted, unknow error - time elapsed %s seconds.';
   cmSuccesful         = 'Everything went ok - time elapsed %s seconds.';
@@ -136,7 +135,6 @@ const
 
   { CorePriority }
 
-  cpUnknow            = $FFFFFFFF;
   cpIdle              = $00000000;
   cpLowest            = $00000001;
   cpLower             = $00000002;

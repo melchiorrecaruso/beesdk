@@ -28,12 +28,9 @@ object TickFrm: TTickFrm
     Anchors = [akRight, akBottom]
     AutoSize = True
     BorderSpacing.Around = 6
-    Cancel = True
-    Caption = 'Blocca'
+    Caption = '&Chiudi'
     Constraints.MinWidth = 80
-    Default = True
-    Kind = bkAbort
-    ModalResult = 3
+    Kind = bkClose
     NumGlyphs = 0
     OnClick = BtnCancelClick
     TabOrder = 1
