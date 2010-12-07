@@ -216,12 +216,14 @@ procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   I: boolean;
 begin
-  CanClose := longint(CoreSend(FID, csmStatus, nil)) in [csTerminated, csUnknow];
+  CanClose := (longint(CoreSend(FID, csmStatus, nil)) = csTerminated) or
+              (longint(CoreSend(FID, csmStatus, nil)) = -1);
 
   if CanClose = False then
   begin
     I := FSuspended;
     if I = False then BtnPauseRun.Click;
+
     if MessageDlg(rsConfirmation, rsConfirmAbortProcess, mtConfirmation, [mbYes, mbNo], '') = mrYes then
     begin
       CoreSend(FID, csmTerminate, nil);
@@ -323,11 +325,11 @@ procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   Timer.Enabled := False;
   case longint(CoreSend(FID, csmStatus, nil)) of
-    csTerminated:       OnTerminate;
-    csExecuting:        OnExecute;
-    csWaitingRename:    OnRename;
+    csTerminated:    OnTerminate;
+    csExecuting:     OnExecute;
+    csWaitingRename: OnRename;
   end;
-  Timer.Enabled := (longint(CoreSend(FID, csmStatus, nil)) <> csUnknow);
+  Timer.Enabled := longint(CoreSend(FID, csmStatus, nil)) <> -1;
 end;
 
 procedure TTickFrm.OnExecute;
@@ -396,10 +398,10 @@ var
 begin
   ExitCode := longint(CoreSend(FID, csmCode, nil));
   case ExitCode of
-    0: Caption := rsProcessTerminated;
-    1: Caption := rsProcessTerminated;
-    2: Caption := rsProcessAborted;
-  else Caption := rsProcessAborted;
+    ccSuccesful: Caption := rsProcessTerminated;
+    ccWarning:   Caption := rsProcessTerminated;
+    ccError:     Caption := rsProcessAborted;
+    else         Caption := rsProcessAborted;
   end;
 
   if FProgressOnTitle then
@@ -421,7 +423,7 @@ begin
   FID := CoreSend(FID, csmDestroy, nil);
   FCanClose := True;
 
-  if Report.Lines.Count > 0 then
+  if Report.Lines.Count <> 0 then
     Notebook.ActivePageComponent := ReportPage
   else
     Close;
@@ -516,7 +518,7 @@ var
   X, Y: integer;
   FValue: integer;
 begin
-  FValue := longint(CoreSend(FID, csmPriority, Pointer(cpUnknow)));
+  FValue := longint(CoreSend(FID, csmPriority, Pointer(-1)));
   if FValue <> -1 then
   begin
     Popup_Idle.Checked         := FValue = cpIdle;
