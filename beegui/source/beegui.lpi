@@ -89,7 +89,7 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="93"/>
         <CursorPos X="1" Y="140"/>
@@ -167,12 +167,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="33"/>
-        <CursorPos X="58" Y="649"/>
-        <FoldState Value=" T3me0331111]33 T1t30Kb"/>
+        <TopLine Value="282"/>
+        <CursorPos X="40" Y="299"/>
+        <FoldState Value=" T3me0322114 pjAnR072 T1t20K:"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -260,10 +259,14 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_ConfigFrm"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="152"/>
         <CursorPos X="38" Y="176"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
@@ -340,7 +343,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="204"/>
         <CursorPos X="57" Y="218"/>
-        <FoldState Value=" T3j20R2 T0m5M60111]36A7"/>
         <UsageCount Value="27"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -381,7 +383,7 @@
       <Unit26>
         <Filename Value="..\..\bee\source\bee_commandline.pas"/>
         <UnitName Value="Bee_CommandLine"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="463"/>
         <CursorPos X="105" Y="479"/>
@@ -392,7 +394,7 @@
       <Unit27>
         <Filename Value="packages\beegui_commandline.pas"/>
         <UnitName Value="BeeGui_CommandLine"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="106"/>
         <CursorPos X="15" Y="137"/>
@@ -403,7 +405,7 @@
       <Unit28>
         <Filename Value="..\..\bee\source\bee_consts.pas"/>
         <UnitName Value="Bee_Consts"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="69"/>
         <CursorPos X="10" Y="90"/>

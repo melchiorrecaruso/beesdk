@@ -299,8 +299,7 @@ begin
     BtnPriority.Enabled := True;
     BtnPauseRun.Enabled := True;
     BtnPauseRun.Caption := rsBtnPauseCaption;
-  end
-  else
+  end else
   begin
     BtnSave.Enabled   := True;
     BtnFont.Enabled   := True;
