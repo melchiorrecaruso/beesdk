@@ -25,7 +25,7 @@
           <Version Value="9"/>
           <SearchPaths>
             <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
-            <UnitOutputDirectory Value="../distribution"/>
+            <UnitOutputDirectory Value="../temp"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>

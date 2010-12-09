@@ -52,8 +52,8 @@
         <UnitName Value="BeeGui_LibLink"/>
         <TopLine Value="62"/>
         <CursorPos X="11" Y="25"/>
-        <SyntaxHighlighter Value="Delphi"/>
         <UsageCount Value="60"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="bee_library.pas"/>
@@ -303,6 +303,9 @@
       </Options>
     </Linking>
     <Other>
+      <CompilerMessages>
+        <UseMsgFile Value="True"/>
+      </CompilerMessages>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
