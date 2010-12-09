@@ -1,7 +1,7 @@
 object ExtractFrm: TExtractFrm
-  Left = 602
+  Left = 428
   Height = 413
-  Top = 140
+  Top = 265
   Width = 560
   ActiveControl = BtnOk
   Caption = 'Extraction Path and Options'

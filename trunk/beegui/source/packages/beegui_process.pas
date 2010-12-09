@@ -143,9 +143,6 @@ var
 begin
   Result := '';
   {$IFDEF MSWINDOWS}
-
-  ShowMessage(FFileName);
-
   FillChar(Buffer, SizeOf(Buffer), #0);
   if FindExecutable(PChar(FFileName), nil, Buffer) > 32 then
   begin
@@ -157,7 +154,6 @@ begin
     end;
     Result := Buffer;
   end;
-  ShowMessage('SEARCH EXEC ' + Result);
   {$ENDIF}
   if FileExists(Result) = False then
   begin

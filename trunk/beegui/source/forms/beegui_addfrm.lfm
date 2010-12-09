@@ -16,7 +16,6 @@ object AddFrm: TAddFrm
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = BtnCancel
     Left = 6
     Height = 272
@@ -306,8 +305,6 @@ object AddFrm: TAddFrm
       object eOption: TEdit
         AnchorSideTop.Control = eOptionLabel
         AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Side = asrBottom
         Left = 6
         Height = 46
         Top = 194
@@ -508,6 +505,7 @@ object AddFrm: TAddFrm
         BorderSpacing.Bottom = 6
         DefaultItemHeight = 18
         Images = FilesImages
+        MultiSelect = True
         PopupMenu = PopupMenu
         ReadOnly = True
         ScrollBars = ssAutoBoth
