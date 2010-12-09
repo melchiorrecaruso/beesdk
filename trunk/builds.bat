@@ -6,7 +6,7 @@
 
 cd beegui\source
 
-fpc -FE..\temp\ -Fiforms\forms.include\ -Fipackages\packages.include\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu..\..\beelib\source\packages\ -Fu..\..\..\..\lazarus\lcl\units\i386-win32\ -Fu..\..\..\..\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\..\lazarus\packager\units\i386-win32\ -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -WG -vew -dLCL -dLCLwin32 beegui.lpr
+fpc -FE..\temp\ -Fiforms\forms.include\ -Fipackages\packages.include\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu..\..\beelib\source\packages\ -Fu..\..\..\lazarus\lcl\units\i386-win32\ -Fu..\..\..\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\lazarus\packager\units\i386-win32\ -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -WG -vew -dLCL -dLCLwin32 beegui.lpr
 
 cd ..
 cd ..
