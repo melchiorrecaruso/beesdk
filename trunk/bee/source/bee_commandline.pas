@@ -450,6 +450,7 @@ begin
     else        Params.Add('-r-' );
   end;
 
+
   case FuOption of
     umAdd:           Params.Add('-u0');
     umUpdate:        Params.Add('-u1');

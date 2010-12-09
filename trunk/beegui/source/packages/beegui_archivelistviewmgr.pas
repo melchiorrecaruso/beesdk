@@ -620,15 +620,12 @@ var
   I, J: integer;
   Node: TArchiveItem;
 begin
-  for I := 0 to Items.Count -1 do
-  begin
+  for I := 0 to Items.Count - 1 do
     if Items[I].Selected then
     begin
       Node := TArchiveItem(Items[I].Data);
-
       if (Node.FileAttr and faDirectory) = faDirectory then
       begin
-
         if FSimpleList then
         begin
           // Absolute Path-Name
@@ -650,7 +647,6 @@ begin
                 FileMasks.Add(DeleteFilePath(Node.FilePath, FilePath + FileName));
               end;
         end;
-
       end else
       begin
         if FSimpleList then
@@ -660,9 +656,7 @@ begin
           // Relative Path-Name
           FileMasks.Add(Node.FileName);
       end;
-
     end;
-  end;
 end;
 
 procedure TCustomArchiveListView.ClearMasks;

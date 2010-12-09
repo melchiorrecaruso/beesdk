@@ -121,7 +121,7 @@ constructor TBeeApp.Create(aParams: TStringList);
 begin
   inherited Create(aParams);
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1247 archiver utility, Dec 2010' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1251 archiver utility, Dec 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders  := nil;

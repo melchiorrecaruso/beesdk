@@ -32,8 +32,6 @@ unit Bee_Library;
 interface
 
 uses
-  Dialogs,
-
   Classes,
   SysUtils,
   {$IFDEF FPC} {$IFDEF PLUGINS}
@@ -68,7 +66,7 @@ type
     procedure OnRequest(const aMessage: string); override;
     function  OnRename(const aItem: THeader; const aValue: string): string; override;
     procedure OnList(const aItem: THeader); override;
-    // procedure OnProgress; override;
+    procedure OnProgress; override;
     // procedure OnClear; override;
   end;
 
@@ -169,6 +167,11 @@ begin
   end;
 end;
 
+procedure TCustomBeeApp.OnProgress;
+begin
+  // nothing to do
+end;
+
 procedure TCustomBeeApp.OnList(const aItem: THeader);
 begin
   FItems.Add(THeaderToPFileInfo(aItem));
@@ -216,7 +219,6 @@ begin
     csmVersion:       Result := Pointer(105);
     csmCreate:        begin
       Result := TCore.Create(PCharToString(DATA));
-      ShowMessage('LIB CREATE: ' + PCharToString(DATA));
     end;
     csmDestroy:       begin
       if Assigned(TCore(ID)) then

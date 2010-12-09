@@ -1,9 +1,9 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TMainFrm','FORMDATA',[
-  'TPF0'#8'TMainFrm'#7'MainFrm'#4'Left'#3'&'#1#6'Height'#3'z'#2#3'Top'#3#153#0#5
-  +'Width'#3'p'#3#14'AllowDropFiles'#9#7'Caption'#6#26'Bee File Manager - Welco'
-  +'me'#12'ClientHeight'#3'g'#2#11'ClientWidth'#3'p'#3#21'Constraints.MinHeight'
+  'TPF0'#8'TMainFrm'#7'MainFrm'#4'Left'#3#31#1#6'Height'#3'z'#2#3'Top'#2'w'#5'W'
+  +'idth'#3'p'#3#14'AllowDropFiles'#9#7'Caption'#6#26'Bee File Manager - Welcom'
+  +'e'#12'ClientHeight'#3'g'#2#11'ClientWidth'#3'p'#3#21'Constraints.MinHeight'
   +#3#180#0#20'Constraints.MinWidth'#3#220#0#12'Font.CharSet'#7#12'ANSI_CHARSET'
   +#4'Menu'#7#5'MMenu'#7'OnClose'#7#9'FormClose'#12'OnCloseQuery'#7#14'FormClos'
   +'eQuery'#8'OnCreate'#7#10'FormCreate'#9'OnDestroy'#7#11'FormDestroy'#11'OnDr'
@@ -3726,197 +3726,199 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +#255#255#0#255#255#0#255#255#0#255#255#0#255#255#0#255#255#0#255#255#0#255
   +#255#0#255#255#0#255#255#0#255#255#0#255#255#0#255#255#0#255#9'NumGlyphs'#2#2
   +#7'Spacing'#2#10#7'OnClick'#7#16'MMenuViewUpClick'#0#0#6'TBevel'#9'BevelFour'
-  +#22'AnchorSideLeft.Control'#7#5'BtnUp'#21'AnchorSideTop.Control'#7#9'FolderB'
-  +'ox'#24'AnchorSideBottom.Control'#7#9'FolderBox'#21'AnchorSideBottom.Side'#7
-  +#9'asrBottom'#4'Left'#2#5#6'Height'#2#22#3'Top'#2#2#5'Width'#2#2#5'Align'#7#8
-  +'alCustom'#7'Anchors'#11#5'akTop'#6'akLeft'#8'akBottom'#0#18'BorderSpacing.L'
-  +'eft'#2#2#19'BorderSpacing.Right'#2#2#20'Constraints.MaxWidth'#2#2#20'Constr'
-  +'aints.MinWidth'#2#2#0#0#6'TLabel'#14'FolderBoxLabel'#22'AnchorSideLeft.Cont'
-  +'rol'#7#5'BtnUp'#21'AnchorSideTop.Control'#7#9'FolderBox'#24'AnchorSideBotto'
-  +'m.Control'#7#9'FolderBox'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2
-  +#13#6'Height'#2#22#3'Top'#2#2#5'Width'#2'-'#5'Align'#7#8'alCustom'#7'Anchors'
-  +#11#5'akTop'#6'akLeft'#8'akBottom'#0#18'BorderSpacing.Left'#2#10#19'BorderSp'
-  +'acing.Right'#2#5#7'Caption'#6#9'Location:'#5'Color'#7#9'clBtnFace'#6'Layout'
-  +#7#8'tlCenter'#11'ParentColor'#8#11'Transparent'#8#0#0#17'TArchiveFolderBox'
-  +#9'FolderBox'#22'AnchorSideLeft.Control'#7#14'FolderBoxLabel'#21'AnchorSideT'
-  +'op.Control'#7#14'AddressToolBar'#23'AnchorSideRight.Control'#7#14'AddressTo'
-  +'olBar'#20'AnchorSideRight.Side'#7#9'asrBottom'#4'Left'#2#18#6'Height'#2#22#3
-  +'Top'#2#2#5'Width'#3'\'#3#5'Align'#7#8'alCustom'#7'Anchors'#11#5'akTop'#6'ak'
-  +'Left'#7'akRight'#0#18'BorderSpacing.Left'#2#5#17'BorderSpacing.Top'#2#2#19
-  +'BorderSpacing.Right'#2#2#20'BorderSpacing.Bottom'#2#2#5'Color'#7#16'clInact'
-  +'iveBorder'#13'DropDownCount'#2#10#7'Enabled'#8#10'ItemHeight'#2#16#8'OnSele'
-  +'ct'#7#15'FolderBoxSelect'#8'ReadOnly'#9#5'Style'#7#16'csOwnerDrawFixed'#8'T'
-  +'abOrder'#2#0#0#0#0#11'TOpenDialog'#10'OpenDialog'#6'Filter'#6'?Bee file (*.'
-  +'bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'#11'FilterIndex'#2#0#7
-  +'Options'#11#14'ofHideReadOnly'#15'ofPathMustExist'#15'ofFileMustExist'#14'o'
-  +'fEnableSizing'#0#4'left'#2#24#3'top'#3#200#0#0#0#10'TPopupMenu'#5'PMenu'#7
-  +'OnPopup'#7#10'PMenuPopup'#4'left'#2'`'#3'top'#3#0#1#0#9'TMenuItem'#9'PMenuO'
-  +'pen'#7'Caption'#6#7'Open...'#7'Default'#9#7'OnClick'#7#21'MMenuActionsViewC'
-  +'lick'#0#0#9'TMenuItem'#18'PMenuOpenIntViewer'#7'Caption'#6#25'Open with int'
-  +'ernal viewer'#7'OnClick'#7#21'MMenuActionsViewClick'#0#0#9'TMenuItem'#7'PMe'
-  +'nuN1'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#12'PMenuExtract'#7'Caption'#6#13'E'
-  +'xtract To...'#8'ShortCut'#4'E'#128#0#0#7'OnClick'#7#24'MMenuActionsExtractC'
-  +'lick'#0#0#9'TMenuItem'#15'PMenuExtractAll'#7'Caption'#6#17'Extract All To..'
-  +'.'#7'OnClick'#7#27'MMenuActionsExtractAllClick'#0#0#9'TMenuItem'#9'PMenuTes'
-  +'t'#7'Caption'#6#19'Test Selected Files'#8'ShortCut'#4'F'#128#0#0#7'OnClick'
-  +#7#21'MMenuActionsTestClick'#0#0#9'TMenuItem'#7'PMenuN2'#7'Caption'#6#1'-'#0
-  +#0#9'TMenuItem'#11'PMenuDelete'#7'Caption'#6#21'Delete Selected Files'#8'Sho'
-  +'rtCut'#4'D'#128#0#0#7'OnClick'#7#23'MMenuActionsDeleteClick'#0#0#9'TMenuIte'
-  +'m'#11'PMenuRename'#7'Caption'#6#21'Rename Selected Files'#7'OnClick'#7#23'M'
-  +'MenuActionsRenameClick'#0#0#9'TMenuItem'#7'PMenuN3'#7'Caption'#6#1'-'#0#0#9
-  +'TMenuItem'#19'PMenuSelectDeselect'#7'Caption'#6#15'Select/Deselect'#0#9'TMe'
-  +'nuItem'#14'PMenuSelectAll'#7'Caption'#6#10'Select All'#7'OnClick'#7#26'MMen'
-  +'uActionsSelectAllClick'#0#0#9'TMenuItem'#15'PMenuSelectMask'#7'Caption'#6#20
-  +'Select File Group...'#7'OnClick'#7#27'MMenuActionsSelectMaskClick'#0#0#9'TM'
-  +'enuItem'#16'PMenuDeselectAll'#7'Caption'#6#12'Deselect All'#7'OnClick'#7#28
-  +'MMenuActionsDeselectAllClick'#0#0#9'TMenuItem'#17'PMenuDeselectMask'#7'Capt'
-  +'ion'#6#22'Deselect File Group...'#0#0#9'TMenuItem'#11'PMenuInvert'#7'Captio'
-  +'n'#6#16'Invert Selection'#7'OnClick'#7#23'MMenuActionsInvertClick'#0#0#0#9
-  +'TMenuItem'#7'PMenuN4'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#13'PMenuProperty'#7
-  +'Caption'#6#8'Property'#7'OnClick'#7#18'PMenuPropertyClick'#0#0#0#11'TFontDi'
-  +'alog'#10'FontDialog'#11'Font.Height'#2#245#9'Font.Name'#6#13'MS Sans Serif'
-  +#11'MinFontSize'#2#0#11'MaxFontSize'#2#0#4'left'#3#168#0#3'top'#3#200#0#0#0#9
-  +'TMainMenu'#5'MMenu'#4'left'#2#24#3'top'#3#0#1#0#9'TMenuItem'#9'MMenuFile'#7
-  ,'Caption'#6#4'File'#0#9'TMenuItem'#12'MMenuFileNew'#7'Caption'#6#6'New...'#8
-  +'ShortCut'#3'N@'#7'OnClick'#7#17'MMenuFileNewClick'#0#0#9'TMenuItem'#13'MMen'
-  +'uFileOpen'#7'Caption'#6#7'Open...'#8'ShortCut'#3'O@'#7'OnClick'#7#18'MMenuF'
-  +'ileOpenClick'#0#0#9'TMenuItem'#14'MMenuFileClose'#7'Caption'#6#5'Close'#8'S'
-  +'hortCut'#3'C@'#7'OnClick'#7#19'MMenuFileCloseClick'#0#0#9'TMenuItem'#11'MMe'
-  +'nuFileN1'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#17'MMenuFileProperty'#7'Captio'
-  +'n'#6#13'Properties...'#7'OnClick'#7#22'MMenuFilePropertyClick'#0#0#9'TMenuI'
-  +'tem'#11'MMenuFileN2'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#13'MMenuFileMove'#7
-  +'Caption'#6#7'Move...'#7'OnClick'#7#18'MMenuFileMoveClick'#0#0#9'TMenuItem'
-  +#13'MMenuFileCopy'#7'Caption'#6#7'Copy...'#7'OnClick'#7#18'MMenuFileCopyClic'
-  +'k'#0#0#9'TMenuItem'#15'MMenuFileRename'#7'Caption'#6#9'Rename...'#7'OnClick'
-  +#7#20'MMenuFileRenameClick'#0#0#9'TMenuItem'#15'MMenuFileDelete'#7'Caption'#6
-  +#6'Delete'#7'OnClick'#7#20'MMenuFileDeleteClick'#0#0#9'TMenuItem'#11'MMenuFi'
-  +'leN3'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#13'MMenuFileExit'#7'Caption'#6#4'E'
-  +'xit'#8'ShortCut'#4's'#128#0#0#7'OnClick'#7#18'MMenuFileExitClick'#0#0#0#9'T'
-  +'MenuItem'#9'MMenuView'#7'Caption'#6#4'View'#0#9'TMenuItem'#17'MMenuViewTool'
-  +'bars'#7'Caption'#6#8'Toolbars'#0#9'TMenuItem'#16'MMenuViewButtons'#7'Captio'
-  +'n'#6#10'Buttons...'#7'OnClick'#7#30'MMenuOptionsConfigurationClick'#0#0#9'T'
-  +'MenuItem'#19'MMenuViewAddressBar'#7'Caption'#6#10'AddressBar'#7'Checked'#9#7
-  +'OnClick'#7#14'ViewStyleClick'#0#0#0#9'TMenuItem'#18'MMenuViewStatusBar'#7'C'
-  +'aption'#6#9'StatusBar'#7'Checked'#9#7'OnClick'#7#14'ViewStyleClick'#0#0#9'T'
-  +'MenuItem'#11'MMenuViewN1'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#19'MMenuViewLa'
-  +'rgeIcons'#7'Caption'#6#11'Large Icons'#7'OnClick'#7#18'ListViewStyleClick'#0
-  +#0#9'TMenuItem'#19'MMenuViewSmallIcons'#7'Caption'#6#11'Small Icons'#7'OnCli'
-  +'ck'#7#18'ListViewStyleClick'#0#0#9'TMenuItem'#13'MMenuViewList'#7'Caption'#6
-  +#4'List'#7'OnClick'#7#18'ListViewStyleClick'#0#0#9'TMenuItem'#15'MMenuViewRe'
-  +'port'#7'Caption'#6#6'Report'#7'Checked'#9#7'OnClick'#7#18'ListViewStyleClic'
-  +'k'#0#0#9'TMenuItem'#11'MMenuViewN2'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#18'M'
-  +'MenuViewRowSelect'#7'Caption'#6#10'Select Row'#7'OnClick'#7#14'ViewStyleCli'
-  +'ck'#0#0#9'TMenuItem'#18'MMenuViewGridLines'#7'Caption'#6#10'Grid Lines'#7'O'
-  +'nClick'#7#14'ViewStyleClick'#0#0#9'TMenuItem'#17'MMenuViewListMode'#7'Capti'
-  +'on'#6#9'List Mode'#7'OnClick'#7#14'ViewStyleClick'#0#0#9'TMenuItem'#11'MMen'
-  +'uViewN3'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#16'MMenuViewOrderBy'#7'Caption'
-  +#6#8'Order by'#0#9'TMenuItem'#20'MMenuViewOrderByName'#7'Caption'#6#4'Name'#7
-  +'Checked'#9#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuItem'#20'MMenuViewOrder'
-  +'BySize'#7'Caption'#6#4'Size'#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuItem'
-  +#22'MMenuViewOrderByPacked'#7'Caption'#6#6'Packed'#7'OnClick'#7#12'OrderByCl'
-  +'ick'#0#0#9'TMenuItem'#21'MMenuViewOrderByRatio'#7'Caption'#6#5'Ratio'#7'OnC'
-  +'lick'#7#12'OrderByClick'#0#0#9'TMenuItem'#20'MMenuViewOrderByType'#7'Captio'
-  +'n'#6#4'Type'#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuItem'#24'MMenuViewOrd'
-  +'erByModified'#7'Caption'#6#8'Modified'#7'OnClick'#7#12'OrderByClick'#0#0#9
-  +'TMenuItem'#26'MMenuViewOrderByAttributes'#7'Caption'#6#10'Attributes'#7'OnC'
-  +'lick'#7#12'OrderByClick'#0#0#9'TMenuItem'#22'MMenuViewOrderByMethod'#7'Capt'
-  +'ion'#6#6'Method'#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuItem'#24'MMenuVie'
-  +'wOrderByPassword'#7'Caption'#6#8'Password'#7'OnClick'#7#12'OrderByClick'#0#0
-  +#9'TMenuItem'#19'MMenuViewOrderByCrc'#7'Caption'#6#3'CRC'#7'OnClick'#7#12'Or'
-  +'derByClick'#0#0#9'TMenuItem'#20'MMenuViewOrderByPath'#7'Caption'#6#4'Path'#7
-  +'OnClick'#7#12'OrderByClick'#0#0#9'TMenuItem'#24'MMenuViewOrderByPosition'#7
-  +'Caption'#6#8'Position'#7'OnClick'#7#12'OrderByClick'#0#0#0#9'TMenuItem'#16
-  +'MMenuViewDetails'#7'Caption'#6#7'Details'#0#9'TMenuItem'#20'MMenuViewDetail'
-  +'sName'#7'Caption'#6#4'Name'#7'Checked'#9#7'OnClick'#7#12'DetailsClick'#0#0#9
-  +'TMenuItem'#20'MMenuViewDetailsSize'#7'Caption'#6#4'Size'#7'Checked'#9#7'OnC'
-  +'lick'#7#12'DetailsClick'#0#0#9'TMenuItem'#22'MMenuViewDetailsPacked'#7'Capt'
-  +'ion'#6#6'Packed'#7'Checked'#9#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'
-  +#21'MMenuViewDetailsRatio'#7'Caption'#6#5'Ratio'#7'Checked'#9#7'OnClick'#7#12
-  +'DetailsClick'#0#0#9'TMenuItem'#20'MMenuViewDetailsType'#7'Caption'#6#4'Type'
-  +#7'Checked'#9#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'#24'MMenuViewDet'
-  +'ailsModified'#7'Caption'#6#8'Modified'#7'Checked'#9#7'OnClick'#7#12'Details'
-  +'Click'#0#0#9'TMenuItem'#26'MMenuViewDetailsAttributes'#7'Caption'#6#10'Attr'
-  +'ibutes'#7'Checked'#9#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'#22'MMen'
-  +'uViewDetailsMethod'#7'Caption'#6#6'Method'#7'Checked'#9#7'OnClick'#7#12'Det'
-  +'ailsClick'#0#0#9'TMenuItem'#24'MMenuViewDetailsPassword'#7'Caption'#6#8'Pas'
-  +'sword'#7'Checked'#9#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'#19'MMenu'
-  +'ViewDetailsCRC'#7'Caption'#6#3'CRC'#7'OnClick'#7#12'DetailsClick'#0#0#9'TMe'
-  ,'nuItem'#20'MMenuViewDetailsPath'#7'Caption'#6#4'Path'#7'OnClick'#7#12'Detai'
-  +'lsClick'#0#0#9'TMenuItem'#24'MMenuViewDetailsPosition'#7'Caption'#6#8'Posit'
-  +'ion'#7'OnClick'#7#12'DetailsClick'#0#0#0#9'TMenuItem'#11'MMenuViewN4'#7'Cap'
-  +'tion'#6#1'-'#0#0#9'TMenuItem'#11'MMenuViewUp'#7'Caption'#6#17'Livello Super'
-  +'iore'#7'OnClick'#7#16'MMenuViewUpClick'#0#0#9'TMenuItem'#15'MMenuViewUpdate'
-  +#7'Caption'#6#8'Aggiorna'#7'OnClick'#7#20'MMenuViewUpdateClick'#0#0#0#9'TMen'
-  +'uItem'#12'MMenuActions'#7'Caption'#6#7'Actions'#0#9'TMenuItem'#15'MMenuActi'
-  +'onsAdd'#7'Caption'#6#31'Add Files and/or Directories...'#8'ShortCut'#3'A '#7
-  +'OnClick'#7#20'MMenuActionsAddClick'#0#0#9'TMenuItem'#18'MMenuActionsDelete'
-  +#7'Caption'#6#21'Delete Selected Files'#8'ShortCut'#3'D '#7'OnClick'#7#23'MM'
-  +'enuActionsDeleteClick'#0#0#9'TMenuItem'#19'MMenuActionsExtract'#7'Caption'#6
-  +#13'Extract To...'#8'ShortCut'#3'E '#7'OnClick'#7#24'MMenuActionsExtractClic'
-  +'k'#0#0#9'TMenuItem'#22'MMenuActionsExtractAll'#7'Caption'#6#17'Extract All '
-  +'To...'#7'OnClick'#7#27'MMenuActionsExtractAllClick'#0#0#9'TMenuItem'#16'MMe'
-  +'nuActionsTest'#7'Caption'#6#10'Test Files'#8'ShortCut'#3'T '#7'OnClick'#7#21
-  +'MMenuActionsTestClick'#0#0#9'TMenuItem'#18'MMenuActionsRename'#7'Caption'#6
-  +#15'Rename Files...'#8'ShortCut'#3'R '#7'OnClick'#7#23'MMenuActionsRenameCli'
-  +'ck'#0#0#9'TMenuItem'#16'MMenuActionsView'#7'Caption'#6#7'View...'#8'ShortCu'
-  +'t'#3'V '#7'OnClick'#7#21'MMenuActionsViewClick'#0#0#9'TMenuItem'#14'MMenuAc'
-  +'tionsN1'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#21'MMenuActionsSelectAll'#7'Cap'
-  +'tion'#6#10'Select All'#8'ShortCut'#4'A'#128#0#0#7'OnClick'#7#26'MMenuAction'
-  +'sSelectAllClick'#0#0#9'TMenuItem'#22'MMenuActionsSelectMask'#7'Caption'#6#20
-  +'Select File Group...'#7'OnClick'#7#27'MMenuActionsSelectMaskClick'#0#0#9'TM'
-  +'enuItem'#23'MMenuActionsDeselectAll'#7'Caption'#6#12'Deselect All'#7'OnClic'
-  +'k'#7#28'MMenuActionsDeselectAllClick'#0#0#9'TMenuItem'#24'MMenuActionsDesel'
-  +'ectMask'#7'Caption'#6#22'Deselect File Group...'#7'OnClick'#7#29'MMenuActio'
-  +'nsDeselectMaskClick'#0#0#9'TMenuItem'#18'MMenuActionsInvert'#7'Caption'#6#16
-  +'Invert Selection'#8'ShortCut'#4'I'#128#0#0#7'OnClick'#7#23'MMenuActionsInve'
-  +'rtClick'#0#0#9'TMenuItem'#14'MMenuActionsN2'#7'Caption'#6#1'-'#0#0#9'TMenuI'
-  +'tem'#20'MMenuActionsCheckOut'#7'Caption'#6#8'CheckOut'#8'ShortCut'#3'O '#7
-  +'OnClick'#7#25'MMenuActionsCheckOutClick'#0#0#9'TMenuItem'#19'MMenuActionsTe'
-  +'stAll'#7'Caption'#6#12'Test Archive'#7'OnClick'#7#24'MMenuActionsTestAllCli'
-  +'ck'#0#0#0#9'TMenuItem'#12'MMenuOptions'#7'Caption'#6#7'Options'#0#9'TMenuIt'
-  +'em'#25'MMenuOptionsConfiguration'#7'Caption'#6#16'Configuration...'#8'Short'
-  +'Cut'#4'C'#128#0#0#7'OnClick'#7#30'MMenuOptionsConfigurationClick'#0#0#9'TMe'
-  +'nuItem'#14'MMenuOptionsN1'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#22'MMenuOptio'
-  +'nsSaveOnExit'#7'Caption'#6#20'Save Setting on Exit'#7'Checked'#9#7'OnClick'
-  +#7#12'OptionsClick'#0#0#9'TMenuItem'#19'MMenuOptionsSaveNow'#7'Caption'#6#16
-  +'Save Setting Now'#7'OnClick'#7#24'MMenuOptionsSaveNowClick'#0#0#9'TMenuItem'
-  +#19'MMenuOptionsDefault'#7'Caption'#6#15'Default Setting'#7'OnClick'#7#24'MM'
-  +'enuOptionsDefaultClick'#0#0#9'TMenuItem'#14'MMenuOptionsN2'#7'Caption'#6#1
-  +'-'#0#0#9'TMenuItem'#21'MMenuOptionsLogReport'#7'Caption'#6#17'Create Log Re'
-  +'port'#7'OnClick'#7#12'OptionsClick'#0#0#0#9'TMenuItem'#9'MMenuHelp'#7'Capti'
-  +'on'#6#4'Help'#0#9'TMenuItem'#11'MMenuHelpF1'#7'Caption'#6#23'Help Contents '
-  +'and Index'#8'ShortCut'#2'p'#7'OnClick'#7#16'MMenuHelpF1Click'#0#0#9'TMenuIt'
-  +'em'#11'MMenuHelpN1'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#17'MMenuHelpInternet'
-  +#7'Caption'#6#16'BeeGui Home Page'#8'ShortCut'#4'H'#128#0#0#7'OnClick'#7#22
-  +'MMenuHelpInternetClick'#0#0#9'TMenuItem'#11'MMenuHelpN2'#7'Caption'#6#1'-'#0
-  +#0#9'TMenuItem'#16'MMenuHelpLicense'#7'Caption'#6#17'License Agreement'#8'Sh'
-  +'ortCut'#4'L'#128#0#0#7'OnClick'#7#21'MMenuHelpLicenseClick'#0#0#9'TMenuItem'
-  +#14'MMenuHelpAbout'#7'Caption'#6#15'About BeeGui...'#7'OnClick'#7#19'MMenuHe'
-  +'lpAboutClick'#0#0#0#0#11'TSaveDialog'#10'SaveDialog'#6'Filter'#6'?Bee file '
-  +'(*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'#7'Options'#11#14'of'
-  +'HideReadOnly'#15'ofPathMustExist'#14'ofEnableSizing'#0#4'left'#2'`'#3'top'#3
-  +#200#0#0#0#10'TPopupMenu'#5'BMenu'#4'left'#3#168#0#3'top'#3#0#1#0#9'TMenuIte'
-  +'m'#8'BMenuNew'#7'Caption'#6#3'New'#7'Checked'#9#7'Enabled'#8#7'OnClick'#7#10
-  +'BMenuClick'#0#0#9'TMenuItem'#9'BMenuOpen'#7'Caption'#6#4'Open'#7'Checked'#9
-  +#7'Enabled'#8#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#7'BMenuN1'#7'Capt'
-  +'ion'#6#10'- Spacer -'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuI'
-  +'tem'#8'BMenuAdd'#7'Caption'#6#3'Add'#7'Checked'#9#7'OnClick'#7#10'BMenuClic'
-  +'k'#0#0#9'TMenuItem'#12'BMenuExtract'#7'Caption'#6#7'Extract'#7'Checked'#9#7
-  +'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuView'#7'Caption'#6#4'View'
-  +#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#11'BMenuDelete'#7
-  +'Caption'#6#6'Delete'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuIt'
-  ,'em'#7'BMenuN2'#7'Caption'#6#10'- Spacer -'#7'Checked'#9#7'OnClick'#7#10'BMe'
-  +'nuClick'#0#0#9'TMenuItem'#9'BMenuTest'#7'Caption'#6#4'Test'#7'Checked'#9#7
-  +'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#13'BMenuCheckOut'#7'Caption'#6#8
-  +'CheckOut'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#7'BMenu'
-  +'N3'#7'Caption'#6#10'- Spacer -'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0
-  +#9'TMenuItem'#18'BMenuConfiguration'#7'Caption'#6#13'Configuration'#7'Checke'
-  +'d'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuHelp'#7'Caption'#6
-  +#4'Help'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuEx'
-  +'it'#7'Caption'#6#4'Exit'#7'OnClick'#7#10'BMenuClick'#0#0#0#9'TIconList'#11
-  +'SmallImages'#4'left'#2#24#3'top'#3'8'#1#0#0#9'TIconList'#11'LargeImages'#6
-  +'Height'#2' '#5'Width'#2' '#4'left'#2'`'#3'top'#3'8'#1#0#0#12'TFileProcess'
-  +#11'FileProcess'#7'Enabled'#8#8'Interval'#3#250#0#7'OnTimer'#7#16'FileProces'
-  +'sTimer'#12'OnStartTimer'#7#21'FileProcessStartTimer'#11'OnStopTimer'#7#20'F'
-  +'ileProcessStopTimer'#4'left'#3#168#0#3'top'#3'8'#1#0#0#0
+  +#22'AnchorSideLeft.Control'#7#5'BtnUp'#19'AnchorSideLeft.Side'#7#9'asrBottom'
+  +#21'AnchorSideTop.Control'#7#9'FolderBox'#24'AnchorSideBottom.Control'#7#9'F'
+  +'olderBox'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2#127#6'Height'#2
+  +#22#3'Top'#2#2#5'Width'#2#2#5'Align'#7#8'alCustom'#7'Anchors'#11#5'akTop'#6
+  +'akLeft'#8'akBottom'#0#18'BorderSpacing.Left'#2#2#19'BorderSpacing.Right'#2#2
+  +#20'Constraints.MaxWidth'#2#2#20'Constraints.MinWidth'#2#2#0#0#6'TLabel'#14
+  +'FolderBoxLabel'#22'AnchorSideLeft.Control'#7#5'BtnUp'#19'AnchorSideLeft.Sid'
+  +'e'#7#9'asrBottom'#21'AnchorSideTop.Control'#7#9'FolderBox'#24'AnchorSideBot'
+  +'tom.Control'#7#9'FolderBox'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'
+  +#3#135#0#6'Height'#2#22#3'Top'#2#2#5'Width'#2'-'#5'Align'#7#8'alCustom'#7'An'
+  +'chors'#11#5'akTop'#6'akLeft'#8'akBottom'#0#18'BorderSpacing.Left'#2#10#19'B'
+  +'orderSpacing.Right'#2#5#7'Caption'#6#9'Location:'#5'Color'#7#9'clBtnFace'#6
+  +'Layout'#7#8'tlCenter'#11'ParentColor'#8#11'Transparent'#8#0#0#17'TArchiveFo'
+  +'lderBox'#9'FolderBox'#22'AnchorSideLeft.Control'#7#14'FolderBoxLabel'#19'An'
+  +'chorSideLeft.Side'#7#9'asrBottom'#21'AnchorSideTop.Control'#7#14'AddressToo'
+  +'lBar'#23'AnchorSideRight.Control'#7#14'AddressToolBar'#20'AnchorSideRight.S'
+  +'ide'#7#9'asrBottom'#4'Left'#3#185#0#6'Height'#2#22#3'Top'#2#2#5'Width'#3#181
+  +#2#5'Align'#7#8'alCustom'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#18'B'
+  +'orderSpacing.Left'#2#5#17'BorderSpacing.Top'#2#2#19'BorderSpacing.Right'#2#2
+  +#20'BorderSpacing.Bottom'#2#2#5'Color'#7#16'clInactiveBorder'#13'DropDownCou'
+  +'nt'#2#10#7'Enabled'#8#10'ItemHeight'#2#16#8'OnSelect'#7#15'FolderBoxSelect'
+  +#8'ReadOnly'#9#5'Style'#7#16'csOwnerDrawFixed'#8'TabOrder'#2#0#0#0#0#11'TOpe'
+  +'nDialog'#10'OpenDialog'#6'Filter'#6'?Bee file (*.bee)|*.bee|Exe file (*.exe'
+  +')|*.exe|All files (*.*)|*'#11'FilterIndex'#2#0#7'Options'#11#14'ofHideReadO'
+  +'nly'#15'ofPathMustExist'#15'ofFileMustExist'#14'ofEnableSizing'#0#4'left'#2
+  +#24#3'top'#3#200#0#0#0#10'TPopupMenu'#5'PMenu'#7'OnPopup'#7#10'PMenuPopup'#4
+  +'left'#2'`'#3'top'#3#0#1#0#9'TMenuItem'#9'PMenuOpen'#7'Caption'#6#7'Open...'
+  +#7'Default'#9#7'OnClick'#7#21'MMenuActionsViewClick'#0#0#9'TMenuItem'#18'PMe'
+  +'nuOpenIntViewer'#7'Caption'#6#25'Open with internal viewer'#7'OnClick'#7#21
+  +'MMenuActionsViewClick'#0#0#9'TMenuItem'#7'PMenuN1'#7'Caption'#6#1'-'#0#0#9
+  +'TMenuItem'#12'PMenuExtract'#7'Caption'#6#13'Extract To...'#8'ShortCut'#4'E'
+  +#128#0#0#7'OnClick'#7#24'MMenuActionsExtractClick'#0#0#9'TMenuItem'#15'PMenu'
+  +'ExtractAll'#7'Caption'#6#17'Extract All To...'#7'OnClick'#7#27'MMenuActions'
+  +'ExtractAllClick'#0#0#9'TMenuItem'#9'PMenuTest'#7'Caption'#6#19'Test Selecte'
+  +'d Files'#8'ShortCut'#4'F'#128#0#0#7'OnClick'#7#21'MMenuActionsTestClick'#0#0
+  +#9'TMenuItem'#7'PMenuN2'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#11'PMenuDelete'#7
+  +'Caption'#6#21'Delete Selected Files'#8'ShortCut'#4'D'#128#0#0#7'OnClick'#7
+  +#23'MMenuActionsDeleteClick'#0#0#9'TMenuItem'#11'PMenuRename'#7'Caption'#6#21
+  +'Rename Selected Files'#7'OnClick'#7#23'MMenuActionsRenameClick'#0#0#9'TMenu'
+  +'Item'#7'PMenuN3'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#19'PMenuSelectDeselect'
+  +#7'Caption'#6#15'Select/Deselect'#0#9'TMenuItem'#14'PMenuSelectAll'#7'Captio'
+  +'n'#6#10'Select All'#7'OnClick'#7#26'MMenuActionsSelectAllClick'#0#0#9'TMenu'
+  +'Item'#15'PMenuSelectMask'#7'Caption'#6#20'Select File Group...'#7'OnClick'#7
+  +#27'MMenuActionsSelectMaskClick'#0#0#9'TMenuItem'#16'PMenuDeselectAll'#7'Cap'
+  +'tion'#6#12'Deselect All'#7'OnClick'#7#28'MMenuActionsDeselectAllClick'#0#0#9
+  +'TMenuItem'#17'PMenuDeselectMask'#7'Caption'#6#22'Deselect File Group...'#0#0
+  +#9'TMenuItem'#11'PMenuInvert'#7'Caption'#6#16'Invert Selection'#7'OnClick'#7
+  +#23'MMenuActionsInvertClick'#0#0#0#9'TMenuItem'#7'PMenuN4'#7'Caption'#6#1'-'
+  +#0#0#9'TMenuItem'#13'PMenuProperty'#7'Caption'#6#8'Property'#7'OnClick'#7#18
+  +'PMenuPropertyClick'#0#0#0#11'TFontDialog'#10'FontDialog'#11'Font.Height'#2
+  +#245#9'Font.Name'#6#13'MS Sans Serif'#11'MinFontSize'#2#0#11'MaxFontSize'#2#0
+  ,#4'left'#3#168#0#3'top'#3#200#0#0#0#9'TMainMenu'#5'MMenu'#4'left'#2#24#3'top'
+  +#3#0#1#0#9'TMenuItem'#9'MMenuFile'#7'Caption'#6#4'File'#0#9'TMenuItem'#12'MM'
+  +'enuFileNew'#7'Caption'#6#6'New...'#8'ShortCut'#3'N@'#7'OnClick'#7#17'MMenuF'
+  +'ileNewClick'#0#0#9'TMenuItem'#13'MMenuFileOpen'#7'Caption'#6#7'Open...'#8'S'
+  +'hortCut'#3'O@'#7'OnClick'#7#18'MMenuFileOpenClick'#0#0#9'TMenuItem'#14'MMen'
+  +'uFileClose'#7'Caption'#6#5'Close'#8'ShortCut'#3'C@'#7'OnClick'#7#19'MMenuFi'
+  +'leCloseClick'#0#0#9'TMenuItem'#11'MMenuFileN1'#7'Caption'#6#1'-'#0#0#9'TMen'
+  +'uItem'#17'MMenuFileProperty'#7'Caption'#6#13'Properties...'#7'OnClick'#7#22
+  +'MMenuFilePropertyClick'#0#0#9'TMenuItem'#11'MMenuFileN2'#7'Caption'#6#1'-'#0
+  +#0#9'TMenuItem'#13'MMenuFileMove'#7'Caption'#6#7'Move...'#7'OnClick'#7#18'MM'
+  +'enuFileMoveClick'#0#0#9'TMenuItem'#13'MMenuFileCopy'#7'Caption'#6#7'Copy...'
+  +#7'OnClick'#7#18'MMenuFileCopyClick'#0#0#9'TMenuItem'#15'MMenuFileRename'#7
+  +'Caption'#6#9'Rename...'#7'OnClick'#7#20'MMenuFileRenameClick'#0#0#9'TMenuIt'
+  +'em'#15'MMenuFileDelete'#7'Caption'#6#6'Delete'#7'OnClick'#7#20'MMenuFileDel'
+  +'eteClick'#0#0#9'TMenuItem'#11'MMenuFileN3'#7'Caption'#6#1'-'#0#0#9'TMenuIte'
+  +'m'#13'MMenuFileExit'#7'Caption'#6#4'Exit'#8'ShortCut'#4's'#128#0#0#7'OnClic'
+  +'k'#7#18'MMenuFileExitClick'#0#0#0#9'TMenuItem'#9'MMenuView'#7'Caption'#6#4
+  +'View'#0#9'TMenuItem'#17'MMenuViewToolbars'#7'Caption'#6#8'Toolbars'#0#9'TMe'
+  +'nuItem'#16'MMenuViewButtons'#7'Caption'#6#10'Buttons...'#7'OnClick'#7#30'MM'
+  +'enuOptionsConfigurationClick'#0#0#9'TMenuItem'#19'MMenuViewAddressBar'#7'Ca'
+  +'ption'#6#10'AddressBar'#7'Checked'#9#7'OnClick'#7#14'ViewStyleClick'#0#0#0#9
+  +'TMenuItem'#18'MMenuViewStatusBar'#7'Caption'#6#9'StatusBar'#7'Checked'#9#7
+  +'OnClick'#7#14'ViewStyleClick'#0#0#9'TMenuItem'#11'MMenuViewN1'#7'Caption'#6
+  +#1'-'#0#0#9'TMenuItem'#19'MMenuViewLargeIcons'#7'Caption'#6#11'Large Icons'#7
+  +'OnClick'#7#18'ListViewStyleClick'#0#0#9'TMenuItem'#19'MMenuViewSmallIcons'#7
+  +'Caption'#6#11'Small Icons'#7'OnClick'#7#18'ListViewStyleClick'#0#0#9'TMenuI'
+  +'tem'#13'MMenuViewList'#7'Caption'#6#4'List'#7'OnClick'#7#18'ListViewStyleCl'
+  +'ick'#0#0#9'TMenuItem'#15'MMenuViewReport'#7'Caption'#6#6'Report'#7'Checked'
+  +#9#7'OnClick'#7#18'ListViewStyleClick'#0#0#9'TMenuItem'#11'MMenuViewN2'#7'Ca'
+  +'ption'#6#1'-'#0#0#9'TMenuItem'#18'MMenuViewRowSelect'#7'Caption'#6#10'Selec'
+  +'t Row'#7'OnClick'#7#14'ViewStyleClick'#0#0#9'TMenuItem'#18'MMenuViewGridLin'
+  +'es'#7'Caption'#6#10'Grid Lines'#7'OnClick'#7#14'ViewStyleClick'#0#0#9'TMenu'
+  +'Item'#17'MMenuViewListMode'#7'Caption'#6#9'List Mode'#7'OnClick'#7#14'ViewS'
+  +'tyleClick'#0#0#9'TMenuItem'#11'MMenuViewN3'#7'Caption'#6#1'-'#0#0#9'TMenuIt'
+  +'em'#16'MMenuViewOrderBy'#7'Caption'#6#8'Order by'#0#9'TMenuItem'#20'MMenuVi'
+  +'ewOrderByName'#7'Caption'#6#4'Name'#7'Checked'#9#7'OnClick'#7#12'OrderByCli'
+  +'ck'#0#0#9'TMenuItem'#20'MMenuViewOrderBySize'#7'Caption'#6#4'Size'#7'OnClic'
+  +'k'#7#12'OrderByClick'#0#0#9'TMenuItem'#22'MMenuViewOrderByPacked'#7'Caption'
+  +#6#6'Packed'#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuItem'#21'MMenuViewOrde'
+  +'rByRatio'#7'Caption'#6#5'Ratio'#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuIt'
+  +'em'#20'MMenuViewOrderByType'#7'Caption'#6#4'Type'#7'OnClick'#7#12'OrderByCl'
+  +'ick'#0#0#9'TMenuItem'#24'MMenuViewOrderByModified'#7'Caption'#6#8'Modified'
+  +#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuItem'#26'MMenuViewOrderByAttribute'
+  +'s'#7'Caption'#6#10'Attributes'#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuIte'
+  +'m'#22'MMenuViewOrderByMethod'#7'Caption'#6#6'Method'#7'OnClick'#7#12'OrderB'
+  +'yClick'#0#0#9'TMenuItem'#24'MMenuViewOrderByPassword'#7'Caption'#6#8'Passwo'
+  +'rd'#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuItem'#19'MMenuViewOrderByCrc'#7
+  +'Caption'#6#3'CRC'#7'OnClick'#7#12'OrderByClick'#0#0#9'TMenuItem'#20'MMenuVi'
+  +'ewOrderByPath'#7'Caption'#6#4'Path'#7'OnClick'#7#12'OrderByClick'#0#0#9'TMe'
+  +'nuItem'#24'MMenuViewOrderByPosition'#7'Caption'#6#8'Position'#7'OnClick'#7
+  +#12'OrderByClick'#0#0#0#9'TMenuItem'#16'MMenuViewDetails'#7'Caption'#6#7'Det'
+  +'ails'#0#9'TMenuItem'#20'MMenuViewDetailsName'#7'Caption'#6#4'Name'#7'Checke'
+  +'d'#9#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'#20'MMenuViewDetailsSize'
+  +#7'Caption'#6#4'Size'#7'Checked'#9#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenu'
+  +'Item'#22'MMenuViewDetailsPacked'#7'Caption'#6#6'Packed'#7'Checked'#9#7'OnCl'
+  +'ick'#7#12'DetailsClick'#0#0#9'TMenuItem'#21'MMenuViewDetailsRatio'#7'Captio'
+  +'n'#6#5'Ratio'#7'Checked'#9#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'#20
+  +'MMenuViewDetailsType'#7'Caption'#6#4'Type'#7'Checked'#9#7'OnClick'#7#12'Det'
+  +'ailsClick'#0#0#9'TMenuItem'#24'MMenuViewDetailsModified'#7'Caption'#6#8'Mod'
+  +'ified'#7'Checked'#9#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'#26'MMenu'
+  +'ViewDetailsAttributes'#7'Caption'#6#10'Attributes'#7'Checked'#9#7'OnClick'#7
+  +#12'DetailsClick'#0#0#9'TMenuItem'#22'MMenuViewDetailsMethod'#7'Caption'#6#6
+  +'Method'#7'Checked'#9#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'#24'MMen'
+  +'uViewDetailsPassword'#7'Caption'#6#8'Password'#7'Checked'#9#7'OnClick'#7#12
+  ,'DetailsClick'#0#0#9'TMenuItem'#19'MMenuViewDetailsCRC'#7'Caption'#6#3'CRC'#7
+  +'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'#20'MMenuViewDetailsPath'#7'Cap'
+  +'tion'#6#4'Path'#7'OnClick'#7#12'DetailsClick'#0#0#9'TMenuItem'#24'MMenuView'
+  +'DetailsPosition'#7'Caption'#6#8'Position'#7'OnClick'#7#12'DetailsClick'#0#0
+  +#0#9'TMenuItem'#11'MMenuViewN4'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#11'MMenuV'
+  +'iewUp'#7'Caption'#6#17'Livello Superiore'#7'OnClick'#7#16'MMenuViewUpClick'
+  +#0#0#9'TMenuItem'#15'MMenuViewUpdate'#7'Caption'#6#8'Aggiorna'#7'OnClick'#7
+  +#20'MMenuViewUpdateClick'#0#0#0#9'TMenuItem'#12'MMenuActions'#7'Caption'#6#7
+  +'Actions'#0#9'TMenuItem'#15'MMenuActionsAdd'#7'Caption'#6#31'Add Files and/o'
+  +'r Directories...'#8'ShortCut'#3'A '#7'OnClick'#7#20'MMenuActionsAddClick'#0
+  +#0#9'TMenuItem'#18'MMenuActionsDelete'#7'Caption'#6#21'Delete Selected Files'
+  +#8'ShortCut'#3'D '#7'OnClick'#7#23'MMenuActionsDeleteClick'#0#0#9'TMenuItem'
+  +#19'MMenuActionsExtract'#7'Caption'#6#13'Extract To...'#8'ShortCut'#3'E '#7
+  +'OnClick'#7#24'MMenuActionsExtractClick'#0#0#9'TMenuItem'#22'MMenuActionsExt'
+  +'ractAll'#7'Caption'#6#17'Extract All To...'#7'OnClick'#7#27'MMenuActionsExt'
+  +'ractAllClick'#0#0#9'TMenuItem'#16'MMenuActionsTest'#7'Caption'#6#10'Test Fi'
+  +'les'#8'ShortCut'#3'T '#7'OnClick'#7#21'MMenuActionsTestClick'#0#0#9'TMenuIt'
+  +'em'#18'MMenuActionsRename'#7'Caption'#6#15'Rename Files...'#8'ShortCut'#3'R'
+  +' '#7'OnClick'#7#23'MMenuActionsRenameClick'#0#0#9'TMenuItem'#16'MMenuAction'
+  +'sView'#7'Caption'#6#7'View...'#8'ShortCut'#3'V '#7'OnClick'#7#21'MMenuActio'
+  +'nsViewClick'#0#0#9'TMenuItem'#14'MMenuActionsN1'#7'Caption'#6#1'-'#0#0#9'TM'
+  +'enuItem'#21'MMenuActionsSelectAll'#7'Caption'#6#10'Select All'#8'ShortCut'#4
+  +'A'#128#0#0#7'OnClick'#7#26'MMenuActionsSelectAllClick'#0#0#9'TMenuItem'#22
+  +'MMenuActionsSelectMask'#7'Caption'#6#20'Select File Group...'#7'OnClick'#7
+  +#27'MMenuActionsSelectMaskClick'#0#0#9'TMenuItem'#23'MMenuActionsDeselectAll'
+  +#7'Caption'#6#12'Deselect All'#7'OnClick'#7#28'MMenuActionsDeselectAllClick'
+  +#0#0#9'TMenuItem'#24'MMenuActionsDeselectMask'#7'Caption'#6#22'Deselect File'
+  +' Group...'#7'OnClick'#7#29'MMenuActionsDeselectMaskClick'#0#0#9'TMenuItem'
+  +#18'MMenuActionsInvert'#7'Caption'#6#16'Invert Selection'#8'ShortCut'#4'I'
+  +#128#0#0#7'OnClick'#7#23'MMenuActionsInvertClick'#0#0#9'TMenuItem'#14'MMenuA'
+  +'ctionsN2'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#20'MMenuActionsCheckOut'#7'Cap'
+  +'tion'#6#8'CheckOut'#8'ShortCut'#3'O '#7'OnClick'#7#25'MMenuActionsCheckOutC'
+  +'lick'#0#0#9'TMenuItem'#19'MMenuActionsTestAll'#7'Caption'#6#12'Test Archive'
+  +#7'OnClick'#7#24'MMenuActionsTestAllClick'#0#0#0#9'TMenuItem'#12'MMenuOption'
+  +'s'#7'Caption'#6#7'Options'#0#9'TMenuItem'#25'MMenuOptionsConfiguration'#7'C'
+  +'aption'#6#16'Configuration...'#8'ShortCut'#4'C'#128#0#0#7'OnClick'#7#30'MMe'
+  +'nuOptionsConfigurationClick'#0#0#9'TMenuItem'#14'MMenuOptionsN1'#7'Caption'
+  +#6#1'-'#0#0#9'TMenuItem'#22'MMenuOptionsSaveOnExit'#7'Caption'#6#20'Save Set'
+  +'ting on Exit'#7'Checked'#9#7'OnClick'#7#12'OptionsClick'#0#0#9'TMenuItem'#19
+  +'MMenuOptionsSaveNow'#7'Caption'#6#16'Save Setting Now'#7'OnClick'#7#24'MMen'
+  +'uOptionsSaveNowClick'#0#0#9'TMenuItem'#19'MMenuOptionsDefault'#7'Caption'#6
+  +#15'Default Setting'#7'OnClick'#7#24'MMenuOptionsDefaultClick'#0#0#9'TMenuIt'
+  +'em'#14'MMenuOptionsN2'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#21'MMenuOptionsLo'
+  +'gReport'#7'Caption'#6#17'Create Log Report'#7'OnClick'#7#12'OptionsClick'#0
+  +#0#0#9'TMenuItem'#9'MMenuHelp'#7'Caption'#6#4'Help'#0#9'TMenuItem'#11'MMenuH'
+  +'elpF1'#7'Caption'#6#23'Help Contents and Index'#8'ShortCut'#2'p'#7'OnClick'
+  +#7#16'MMenuHelpF1Click'#0#0#9'TMenuItem'#11'MMenuHelpN1'#7'Caption'#6#1'-'#0
+  +#0#9'TMenuItem'#17'MMenuHelpInternet'#7'Caption'#6#16'BeeGui Home Page'#8'Sh'
+  +'ortCut'#4'H'#128#0#0#7'OnClick'#7#22'MMenuHelpInternetClick'#0#0#9'TMenuIte'
+  +'m'#11'MMenuHelpN2'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#16'MMenuHelpLicense'#7
+  +'Caption'#6#17'License Agreement'#8'ShortCut'#4'L'#128#0#0#7'OnClick'#7#21'M'
+  +'MenuHelpLicenseClick'#0#0#9'TMenuItem'#14'MMenuHelpAbout'#7'Caption'#6#15'A'
+  +'bout BeeGui...'#7'OnClick'#7#19'MMenuHelpAboutClick'#0#0#0#0#11'TSaveDialog'
+  +#10'SaveDialog'#6'Filter'#6'?Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|A'
+  +'ll files (*.*)|*'#7'Options'#11#14'ofHideReadOnly'#15'ofPathMustExist'#14'o'
+  +'fEnableSizing'#0#4'left'#2'`'#3'top'#3#200#0#0#0#10'TPopupMenu'#5'BMenu'#4
+  +'left'#3#168#0#3'top'#3#0#1#0#9'TMenuItem'#8'BMenuNew'#7'Caption'#6#3'New'#7
+  +'Checked'#9#7'Enabled'#8#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMen'
+  +'uOpen'#7'Caption'#6#4'Open'#7'Checked'#9#7'Enabled'#8#7'OnClick'#7#10'BMenu'
+  +'Click'#0#0#9'TMenuItem'#7'BMenuN1'#7'Caption'#6#10'- Spacer -'#7'Checked'#9
+  +#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#8'BMenuAdd'#7'Caption'#6#3'Add'
+  +#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#12'BMenuExtract'#7
+  +'Caption'#6#7'Extract'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuI'
+  +'tem'#9'BMenuView'#7'Caption'#6#4'View'#7'Checked'#9#7'OnClick'#7#10'BMenuCl'
+  ,'ick'#0#0#9'TMenuItem'#11'BMenuDelete'#7'Caption'#6#6'Delete'#7'Checked'#9#7
+  +'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#7'BMenuN2'#7'Caption'#6#10'- Spa'
+  +'cer -'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuTes'
+  +'t'#7'Caption'#6#4'Test'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMen'
+  +'uItem'#13'BMenuCheckOut'#7'Caption'#6#8'CheckOut'#7'Checked'#9#7'OnClick'#7
+  +#10'BMenuClick'#0#0#9'TMenuItem'#7'BMenuN3'#7'Caption'#6#10'- Spacer -'#7'Ch'
+  +'ecked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#18'BMenuConfiguration'
+  +#7'Caption'#6#13'Configuration'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0
+  +#9'TMenuItem'#9'BMenuHelp'#7'Caption'#6#4'Help'#7'Checked'#9#7'OnClick'#7#10
+  +'BMenuClick'#0#0#9'TMenuItem'#9'BMenuExit'#7'Caption'#6#4'Exit'#7'OnClick'#7
+  +#10'BMenuClick'#0#0#0#9'TIconList'#11'SmallImages'#4'left'#2#24#3'top'#3'8'#1
+  +#0#0#9'TIconList'#11'LargeImages'#6'Height'#2' '#5'Width'#2' '#4'left'#2'`'#3
+  +'top'#3'8'#1#0#0#12'TFileProcess'#11'FileProcess'#7'Enabled'#8#8'Interval'#3
+  +#250#0#7'OnTimer'#7#16'FileProcessTimer'#12'OnStartTimer'#7#21'FileProcessSt'
+  +'artTimer'#11'OnStopTimer'#7#20'FileProcessStopTimer'#4'left'#3#168#0#3'top'
+  +#3'8'#1#0#0#0
 ]);

@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 294
+  Left = 287
   Height = 634
-  Top = 153
+  Top = 119
   Width = 880
   AllowDropFiles = True
   Caption = 'Bee File Manager - Welcome'
@@ -3312,10 +3312,11 @@ object MainFrm: TMainFrm
     end
     object BevelFour: TBevel
       AnchorSideLeft.Control = BtnUp
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = FolderBox
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
-      Left = 5
+      Left = 127
       Height = 22
       Top = 2
       Width = 2
@@ -3328,10 +3329,11 @@ object MainFrm: TMainFrm
     end
     object FolderBoxLabel: TLabel
       AnchorSideLeft.Control = BtnUp
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = FolderBox
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
-      Left = 13
+      Left = 135
       Height = 22
       Top = 2
       Width = 45
@@ -3347,13 +3349,14 @@ object MainFrm: TMainFrm
     end
     object FolderBox: TArchiveFolderBox
       AnchorSideLeft.Control = FolderBoxLabel
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = AddressToolBar
       AnchorSideRight.Control = AddressToolBar
       AnchorSideRight.Side = asrBottom
-      Left = 18
+      Left = 185
       Height = 22
       Top = 2
-      Width = 860
+      Width = 693
       Align = alCustom
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 5
