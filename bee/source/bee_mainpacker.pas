@@ -98,8 +98,8 @@ type
 
   TFileStreamDecoder = class(TStreamDecoder)
   public
-    function CopyTo(const FileName: string; var CRC: longword): int64; overload;
-    function DecodeTo(const FileName: string; var CRC: longword): int64; overload;
+    function CopyTo(const FileName: string; const Size: int64; var CRC: longword): int64; overload;
+    function DecodeTo(const FileName: string; const Size: int64; var CRC: longword): int64; overload;
   end;
 
   { THeaderStreamEncoder class }
@@ -190,8 +190,8 @@ begin
   Result := 0;
   while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
   begin
-    FStream.Write(Symbol, 1);
     if FTick and (not FTicker) then Break;
+    FStream.Write(Symbol, 1);
     Inc(Result);
   end;
 end;
@@ -201,12 +201,12 @@ var
   Symbol: byte;
 begin
   Result := 0;
-  CRC := longword(-1);
+  CRC    := longword(-1);
   while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
   begin
+    if FTick and (not FTicker) then Break;
     FStream.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
-    if FTick and (not FTicker) then Break;
     Inc(Result);
   end;
 end;
@@ -216,13 +216,13 @@ var
   Symbol: byte;
 begin
   Result := 0;
-  CRC := longword(-1);
+  CRC    := longword(-1);
   FSecondaryCodec.Start;
   while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
   begin
+    if FTick and (not FTicker) then Break;
     FPPM.UpdateModel(Symbol);
     UpdCrc32(CRC, Symbol);
-    if FTick and (not FTicker) then Break;
     Inc(Result);
   end;
   FSecondaryCodec.Flush;
@@ -251,8 +251,8 @@ begin
   Result := 0;
   while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
   begin
-    Strm.Write(Symbol, 1);
     if FTick and (not FTicker) then Break;
+    Strm.Write(Symbol, 1);
     Inc(Result);
   end;
 end;
@@ -262,12 +262,12 @@ var
   Symbol: byte;
 begin
   Result := 0;
-  CRC := longword(-1);
+  CRC    := longword(-1);
   while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
   begin
+    if FTick and (not FTicker) then Break;
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
-    if FTick and (not FTicker) then Break;
     Inc(Result);
   end;
 end;
@@ -277,14 +277,14 @@ var
   Symbol: byte;
 begin
   Result := 0;
-  CRC := longword(-1);
+  CRC    := longword(-1);
   FSecondaryCodec.Start;
   while (Result < Size) do
   begin
+    if FTick and (not FTicker) then Break;
     Symbol := FPPM.UpdateModel(0);
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
-    if FTick and (not FTicker) then Break;
     Inc(Result);
   end;
   FSecondaryCodec.Flush;
@@ -296,16 +296,15 @@ function TFileStreamEncoder.CopyFrom(const FileName: string; var CRC: longword):
 var
   Strm: TFileReader;
 begin
-  Result := -1;
+  Result := 0;
   CRC    := longword(-1);
   Strm   := CreateTFileReader(FileName, fmOpenRead);
   if Assigned(Strm) then
   begin
-    if CopyFrom(Strm, Strm.Size, CRC) = Strm.Size then
+    Result := CopyFrom(Strm, Strm.Size, CRC);
     begin
-      Result := Strm.Size;
+      Strm.Free;
     end;
-    Strm.Free;
   end;
 end;
 
@@ -313,52 +312,49 @@ function TFileStreamEncoder.EncodeFrom(const FileName: string; var CRC: longword
 var
   Strm: TFileReader;
 begin
-  Result := -1;
+  Result := 0;
   CRC    := longword(-1);
   Strm   := CreateTFileReader(FileName, fmOpenRead);
   if Assigned(Strm) then
   begin
-    if EncodeFrom(Strm, Strm.Size, CRC) = Strm.Size then
+    Result := EncodeFrom(Strm, Strm.Size, CRC);
     begin
-      Result := Strm.Size;
+      Strm.Free;
     end;
-    Strm.Free;
   end;
 end;
 
 { TFileStreamDecoder class }
 
-function TFileStreamDecoder.CopyTo(const FileName: string; var CRC: longword): int64;
+function TFileStreamDecoder.CopyTo(const FileName: string; const Size: int64; var CRC: longword): int64;
 var
   Strm: TFileWriter;
 begin
-  Result := -1;
+  Result := 0;
   CRC    := longword(-1);
   Strm   := CreateTFileWriter(FileName, fmCreate);
   if Assigned(Strm) then
   begin
-    if CopyTo(Strm, Strm.Size, CRC) = Strm.Size then
+    Result := CopyTo(Strm, Size, CRC);
     begin
-      Result :=  Strm.Size;
+      Strm.Free;
     end;
-    Strm.Free;
   end;
 end;
 
-function TFileStreamDecoder.DecodeTo(const FileName: string; var CRC: longword): int64;
+function TFileStreamDecoder.DecodeTo(const FileName: string; const Size: int64; var CRC: longword): int64;
 var
   Strm: TFileWriter;
 begin
-  Result := -1;
+  Result := 0;
   CRC    := longword(-1);
   Strm   := CreateTFileWriter(FileName, fmCreate);
   if Assigned(Strm) then
   begin
-    if DecodeTo(Strm, Strm.Size, CRC) = Strm.Size then
+    Result := DecodeTo(Strm, Size, CRC);
     begin
-      Result := Strm.Size;
+      Strm.Free;
     end;
-    Strm.Free;
   end;
 end;
 
@@ -375,25 +371,21 @@ begin
 end;
 
 function THeaderStreamEncoder.EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
-var
-  FStreamPos: int64;
 begin
   Strm.Seek(Item.StartPos, soBeginning);
-  FStreamPos := FStream.Seek(0, soCurrent);
+  Item.StartPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
     Item.Size := CopyFrom(Strm, Size, Item.Crc)
   else
     Item.Size := EncodeFrom(Strm, Size, Item.Crc);
-  Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
+  Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 
-  if Item.PackedSize <= Item.Size then
+  if Item.PackedSize > Item.Size then
   begin
-    Item.StartPos := FStreamPos;
-  end else
-  begin
+    FStream.Size := Item.StartPos;
+
     Include(Item.Flags, foMoved);
     Include(Item.Flags, foTear);
-    FStream.Size := FStreamPos;
 
     FTick     := False;
     Item.Size := CopyFrom(Strm, Size, Item.Crc);
@@ -405,24 +397,20 @@ begin
 end;
 
 function THeaderStreamEncoder.EncodeFrom(Item: THeader): boolean;
-var
-  FStreamPos: int64;
 begin
-  FStreamPos := FStream.Seek(0, soCurrent);
+  Item.StartPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
     Item.Size := CopyFrom(Item.ExtName, Item.Crc)
   else
     Item.Size := EncodeFrom(Item.ExtName, Item.Crc);
-  Item.PackedSize := FStream.Seek(0, soCurrent) - FStreamPos;
+  Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 
-  if Item.PackedSize <= Item.Size then
+  if Item.PackedSize > Item.Size then
   begin
-    Item.StartPos := FStreamPos;
-  end else
-  begin
+    FStream.Size := Item.StartPos;
+
     Include(Item.Flags, foMoved);
     Include(Item.Flags, foTear);
-    FStream.Size := FStreamPos;
 
     FTick     := False;
     Item.Size := CopyFrom(Item.ExtName, Item.Crc);
@@ -450,10 +438,10 @@ var
   CRC: longword;
 begin
   FStream.Seek(Item.StartPos, soBeginning);
-  if foMoved in Item.Flags then
-    Result := CopyTo(Item.ExtName, CRC) = Item.Size
-  else
-    Result := DecodeTo(Item.ExtName, CRC) = Item.Size;
+  case foMoved in Item.Flags of
+    False: Result := DecodeTo(Item.ExtName, Item.Size, CRC) = Item.Size;
+    True:  Result := CopyTo  (Item.ExtName, Item.Size, CRC) = Item.Size;
+  end;
 
   if Result then
   begin
@@ -461,7 +449,7 @@ begin
     if Result then
     begin
       FileSetAttr(Item.ExtName, Item.Attr);
-      FileSetDate(Item.ExtName, Item.Attr);
+      FileSetDate(Item.ExtName, Item.Time);
     end;
   end;
 end;

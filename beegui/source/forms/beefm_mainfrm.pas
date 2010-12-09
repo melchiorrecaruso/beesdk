@@ -333,6 +333,7 @@ uses
   Math,
   Bee_Types,
   Bee_Common,
+  Bee_Consts,
   BeeFm_ViewFrm,
   BeeGui_TickFrm,
   BeeGui_AboutFrm,
@@ -711,8 +712,8 @@ begin
 
       FCommandLine.ArchiveName := FArchiveName;
 
-      FCommandLine.cdOption := ListView.Folder;
-      ListView.GetMasks(FCommandLine.FileMasks);
+      FCommandLine.cdOption := ListView.Selected.SubItems[9];
+      FCommandLine.FileMasks.Add(ListView.Selected.Caption);
 
       if SetCurrentDir(ExtractFileDir(FileProcess.FileName)) then
       begin
@@ -721,10 +722,9 @@ begin
     end;
   end;
   DecWorkStatus;
-  SysUtils.DeleteFile(FileProcess.FileName);
 
   SetCurrentDir(GetApplicationTempDir(cApplicationName));
-  SysUtils.RemoveDir(ExtractFileDir(FileProcess.FileName));
+  DeleteDirectory(ExtractFileDir(FileProcess.FileName));
 end;
 
 // Open archive and execute commands
@@ -806,10 +806,8 @@ begin
     TickFrm     := TTickFrm.Create(Application);
     TickFrm.Execute(FCommandLine, nil);
     repeat
-      if TickFrm.FrmCanClose then
-        Break;
-      if TickFrm.FrmCanShow then
-        Break;
+      if TickFrm.FrmCanClose then Break;
+      if TickFrm.FrmCanShow then Break;
       Application.ProcessMessages;
     until FCommandLine.Log;
 
@@ -1346,29 +1344,28 @@ var
 begin
   if CheckWorkStatus(False) and (ListView.SelCount = 1) then
   begin
-    FFileName := ListView.Selected.Caption;
     if Pos('D', ListView.Selected.SubItems[5]) > 0 then
     begin
-      ListView.Folder := ListView.Selected.SubItems[9] + FFileName;
+      ListView.Folder := ListView.Folder + ListView.Selected.Caption;
     end else
     begin
       FCommandLine.Clear;
-      FCommandLine.Command := ccXextract;
+      FCommandLine.Command := ccExtract;
       FCommandLine.uOption := umAddReplace;
       FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Selected.SubItems[9];
-      ListView.GetMasks(FCommandLine.FileMasks);
+      FCommandLine.FileMasks.Add(ListView.Selected.Caption);
 
       if SetCurrentDir(GetApplicationRandomTempDir(cApplicationName)) then
       begin
-        FFileName := IncludeTrailingBackSlash(GetCurrentDir) + FFileName;
+        FFileName := IncludeTrailingBackSlash(GetCurrentDir) + ListView.Selected.Caption;
 
         IncWorkStatus;
         Execute(FCommandLine.ArchiveName);
-        if (ExitCode < 2) then
+        if (ExitCode < ccError) and FileExists(FFileName) then
         begin
           if Sender = PMenuOpenIntViewer then
             with FileProcess do Execute(ParamStr(0) + ' V', FFileName)

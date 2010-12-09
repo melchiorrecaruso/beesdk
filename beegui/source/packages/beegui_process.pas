@@ -135,29 +135,30 @@ end;
 
 function TFileProcess.GetFileExec: string;
 var
-    {$IFDEF MSWINDOWS}
+  {$IFDEF MSWINDOWS}
   P:      PChar;
-  Res:    integer;
   Buffer: array[0..MAX_PATH] of char;
-    {$ENDIF}
+  {$ENDIF}
   OpenDialog: TOpenDialog;
 begin
   Result := '';
-    {$IFDEF MSWINDOWS}
+  {$IFDEF MSWINDOWS}
+
+  ShowMessage(FFileName);
+
   FillChar(Buffer, SizeOf(Buffer), #0);
-  Res := FindExecutable(PChar(FFileName), nil, Buffer);
-  if Res > 32 then
+  if FindExecutable(PChar(FFileName), nil, Buffer) > 32 then
   begin
     P := Buffer;
     while PWord(P)^ <> 0 do
     begin
-      if P^ = #0 then
-        P^ := #32;
+      if P^ = #0 then P^ := #32;
       Inc(P);
     end;
     Result := Buffer;
   end;
-    {$ENDIF}
+  ShowMessage('SEARCH EXEC ' + Result);
+  {$ENDIF}
   if FileExists(Result) = False then
   begin
     OpenDialog := TOpenDialog.Create(nil);
