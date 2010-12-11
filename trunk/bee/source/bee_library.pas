@@ -47,7 +47,7 @@ uses
 
 { Library routines }
 
-function CoreSend(ID, MESSAGE, DATA: Pointer): Pointer;
+function CoreSend(var ID: PtrInt;  MESSAGE, DATA: PtrInt ): PtrInt;
 
 implementation
 
@@ -94,11 +94,6 @@ begin
     Result^.Time       := aItem.Time;
     Result^.Attr       := aItem.Attr;
     Result^.PackedSize := aItem.PackedSize;
-
-    if aItem.Size > 0 then
-      Result^.Ratio    := Trunc(100 * (aItem.Size / aItem.PackedSize))
-    else
-      Result^.Ratio    := 0;
 
     Result^.Comm       := StringToPChar(aItem.Comment);
     Result^.Crc        := aItem.Crc;
@@ -211,12 +206,12 @@ end;
 
 { Library core routines }
 
-function CoreSend(ID, MESSAGE, DATA: Pointer): Pointer;
+function CoreSend(var ID: PtrInt;  MESSAGE, DATA: PtrInt ): PtrInt;
 var
   P: PChar;
 begin
   case longint(MESSAGE) of
-    csmVersion:       Result := Pointer(105);
+    csmVersion:       Result := PtrInt(105);
     csmCreate:        begin
       Result := TCore.Create(PCharToString(DATA));
     end;

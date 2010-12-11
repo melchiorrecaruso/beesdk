@@ -17,10 +17,11 @@
       end;
       Storage.WriteInteger('TForm', 'WindowState', Ord(WindowState));
 
+      Storage.WriteInteger('TComboBox', 'uAOption.ItemIndex' ,uAOption.ItemIndex);
+      Storage.WriteInteger('TComboBox', 'uEOption.ItemIndex' ,uEOption.ItemIndex);
       Storage.WriteInteger('TComboBox', 'mOption.ItemIndex' ,mOption.ItemIndex);
       Storage.WriteInteger('TComboBox', 'dOption.ItemIndex' ,dOption.ItemIndex);
-      Storage.WriteInteger('TComboBox', 'oOption.ItemIndex' ,uOption.ItemIndex);
-    
+
       Storage.WriteBool('TCheckBox', 'rOption.Checked' ,rOption.Checked);
       Storage.WriteBool('TCheckBox', 'sOption.Checked' ,sOption.Checked);
       Storage.WriteBool('TCheckBox', 'tOption.Checked' ,tOption.Checked);

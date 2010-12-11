@@ -41,11 +41,22 @@
         Storage.WriteString('TComboBox', 'dOption[7]' ,dOption.Items[7]);
         Storage.WriteString('TComboBox', 'dOption[8]' ,dOption.Items[8]);
         Storage.WriteString('TComboBox', 'dOption[9]' ,dOption.Items[9]);
-      
-        Storage.WriteString('TComboBox', 'oOption.Caption' ,uOptionLabel.Caption);
-        Storage.WriteString('TComboBox', 'oOption[0]' ,uOption.Items[0]);
-        Storage.WriteString('TComboBox', 'oOption[1]' ,uOption.Items[1]);
-        Storage.WriteString('TComboBox', 'oOption[2]' ,uOption.Items[2]);
+
+        Storage.WriteString('TLabel', 'uAOption.Caption' ,uAOptionLabel.Caption);
+        Storage.WriteString('TComboBox', 'uAOption[0]' ,uAOption.Items[0]);
+        Storage.WriteString('TComboBox', 'uAOption[1]' ,uAOption.Items[1]);
+        Storage.WriteString('TComboBox', 'uAOption[2]' ,uAOption.Items[2]);
+        Storage.WriteString('TComboBox', 'uAOption[3]' ,uAOption.Items[3]);
+        Storage.WriteString('TComboBox', 'uAOption[4]' ,uAOption.Items[4]);
+        Storage.WriteString('TComboBox', 'uAOption[5]' ,uAOption.Items[5]);
+
+        Storage.WriteString('TLabel', 'uEOption.Caption' ,uEOptionLabel.Caption);
+        Storage.WriteString('TComboBox', 'uEOption[0]' ,uEOption.Items[0]);
+        Storage.WriteString('TComboBox', 'uEOption[1]' ,uEOption.Items[1]);
+        Storage.WriteString('TComboBox', 'uEOption[2]' ,uEOption.Items[2]);
+        Storage.WriteString('TComboBox', 'uEOption[3]' ,uEOption.Items[3]);
+        Storage.WriteString('TComboBox', 'uEOption[4]' ,uEOption.Items[4]);
+        Storage.WriteString('TComboBox', 'uEOption[5]' ,uEOption.Items[5]);
       
         Storage.WriteString('TCheckBox', 'rOption.Caption',   rOption.Caption);
         Storage.WriteString('TCheckBox', 'sOption.Caption',   sOption.Caption);

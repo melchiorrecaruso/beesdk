@@ -56,6 +56,8 @@ type
     Buttons:     TCheckGroup;
     GeneralPage: TGroupBox;
     HideWithTickFrmOption: TCheckBox;
+    uAOption: TComboBox;
+    uAOptionLabel: TLabel;
 
     UpBtnCloseOption: TCheckBox;
     Tree:      TTreeView;
@@ -65,10 +67,10 @@ type
     ExtractingOptions: TGroupBox;
     mOptionLabel: TLabel;
     dOptionLabel: TLabel;
-    uOptionLabel: TLabel;
+    uEOptionLabel: TLabel;
     dOption:   TComboBox;
     mOption:   TComboBox;
-    uOption:   TComboBox;
+    uEOption:   TComboBox;
     rOption:   TCheckBox;
     sOption:   TCheckBox;
     tOption:   TCheckBox;
@@ -78,6 +80,7 @@ type
     BtnOk:     TBitBtn;
     HideWithAddFrmOrExtractFrmOption: TCheckBox;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure GeneralPageClick(Sender: TObject);
     procedure TreeChange(Sender: TObject; Node: TTreeNode);
     procedure FormCreate(Sender: TObject);
   private
@@ -128,6 +131,11 @@ begin
   {$ENDIF}
 end;
 
+procedure TConfigFrm.GeneralPageClick(Sender: TObject);
+begin
+
+end;
+
 procedure TConfigFrm.TreeChange(Sender: TObject; Node: TTreeNode);
 begin
   if Assigned(Tree.Selected) then
@@ -173,7 +181,7 @@ begin
   else
     ACommandLine.Command := ccExtract;
 
-  ACommandLine.uOption := TUpdateMode(uOption.ItemIndex);
+  ACommandLine.uOption := TUpdateMode(uEOption.ItemIndex);
 
   if cdEOption.Checked then
     ACommandLine.cdOption := AFolder

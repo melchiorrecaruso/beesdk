@@ -32,9 +32,6 @@ unit BeeFM_MainFrm;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
   Forms,
   Menus,
   Classes,
@@ -1180,7 +1177,7 @@ end;
 procedure TMainFrm.ListViewMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
-  Folder: string;
+  Folder: string = '';
 begin
   if (Button = mbLeft) and FDragStart then
   begin

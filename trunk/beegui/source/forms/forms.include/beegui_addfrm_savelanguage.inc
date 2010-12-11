@@ -16,10 +16,13 @@
 
         Storage.WriteString('TLabel', 'ArchiveName.Caption', ArchiveNameLabel.Caption);
       
-        Storage.WriteString('TLabel', 'ufOption.Caption', ufOptionLabel.Caption);
-        Storage.WriteString('TComboBox', 'ufOption[0]', ufOption.Items[0]);
-        Storage.WriteString('TComboBox', 'ufOption[1]', ufOption.Items[1]);
-        Storage.WriteString('TComboBox', 'ufOption[2]', ufOption.Items[2]);
+        Storage.WriteString('TLabel', 'uOption.Caption', uOptionLabel.Caption);
+        Storage.WriteString('TComboBox', 'uOption[0]', uOption.Items[0]);
+        Storage.WriteString('TComboBox', 'uOption[1]', uOption.Items[1]);
+        Storage.WriteString('TComboBox', 'uOption[2]', uOption.Items[2]);
+        Storage.WriteString('TComboBox', 'uOption[3]', uOption.Items[3]);
+        Storage.WriteString('TComboBox', 'uOption[4]', uOption.Items[4]);
+        Storage.WriteString('TComboBox', 'uOption[5]', uOption.Items[5]);
 
         Storage.WriteString('TLabel', 'mOption.Caption', mOptionLabel.Caption);
         Storage.WriteString('TComboBox', 'mOption[0]', mOption.Items[0]);

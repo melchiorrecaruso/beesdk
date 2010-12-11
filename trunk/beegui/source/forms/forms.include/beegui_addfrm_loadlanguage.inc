@@ -16,10 +16,13 @@
 
         ArchiveNameLabel.Caption := Storage.ReadString('TLabel', 'ArchiveName.Caption', ArchiveNameLabel.Caption);
       
-        ufOptionLabel.Caption := Storage.ReadString('TLabel', 'ufOption.Caption', ufOptionLabel.Caption);
-        ufOption.Items[0] := Storage.ReadString('TComboBox', 'ufOption[0]', ufOption.Items[0]);
-        ufOption.Items[1] := Storage.ReadString('TComboBox', 'ufOption[1]', ufOption.Items[1]);
-        ufOption.Items[2] := Storage.ReadString('TComboBox', 'ufOption[2]', ufOption.Items[2]);
+        uOptionLabel.Caption := Storage.ReadString('TLabel', 'uOption.Caption', uOptionLabel.Caption);
+        uOption.Items[0] := Storage.ReadString('TComboBox', 'uOption[0]', uOption.Items[0]);
+        uOption.Items[1] := Storage.ReadString('TComboBox', 'uOption[1]', uOption.Items[1]);
+        uOption.Items[2] := Storage.ReadString('TComboBox', 'uOption[2]', uOption.Items[2]);
+        uOption.Items[3] := Storage.ReadString('TComboBox', 'uOption[3]', uOption.Items[3]);
+        uOption.Items[4] := Storage.ReadString('TComboBox', 'uOption[4]', uOption.Items[4]);
+        uOption.Items[5] := Storage.ReadString('TComboBox', 'uOption[5]', uOption.Items[5]);
 
         mOptionLabel.Caption := Storage.ReadString('TLabel', 'mOption.Caption', mOptionLabel.Caption);
         mOption.Items[0] := Storage.ReadString('TComboBox', 'mOption[0]', mOption.Items[0]);

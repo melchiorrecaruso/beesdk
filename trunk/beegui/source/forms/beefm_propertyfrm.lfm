@@ -1,18 +1,18 @@
 object InfoFrm: TInfoFrm
-  Left = 265
+  Left = 406
   Height = 446
-  Top = 248
-  Width = 358
+  Top = 224
+  Width = 448
   ActiveControl = Pages
   Caption = 'Properties'
   ClientHeight = 446
-  ClientWidth = 358
+  ClientWidth = 448
   Constraints.MinHeight = 446
   Constraints.MinWidth = 358
   OnClose = FormClose
   OnCreate = FormCreate
   OnPaint = FormPaint
-  LCLVersion = '0.9.27'
+  LCLVersion = '0.9.29'
   object Pages: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -22,7 +22,7 @@ object InfoFrm: TInfoFrm
     Left = 6
     Height = 402
     Top = 6
-    Width = 346
+    Width = 436
     ActivePage = APage
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
@@ -31,66 +31,17 @@ object InfoFrm: TInfoFrm
     object APage: TTabSheet
       Caption = 'General'
       ClientHeight = 376
-      ClientWidth = 338
+      ClientWidth = 428
       object APanel: TPanel
         Left = 0
         Height = 376
         Top = 0
-        Width = 338
+        Width = 428
         Align = alClient
         BevelOuter = bvNone
         ClientHeight = 376
-        ClientWidth = 338
+        ClientWidth = 428
         TabOrder = 0
-        object AEU: TImage
-          AnchorSideLeft.Control = APanel
-          AnchorSideTop.Control = APanel
-          Left = 15
-          Height = 11
-          Top = 20
-          Width = 33
-          BorderSpacing.Left = 15
-          BorderSpacing.Top = 20
-          Picture.Data = {
-            07544269746D617082040000424D820400000000000036000000280000002100
-            00000B00000001001800000000004C0400006400000064000000000000000000
-            0000FFFFFFFFFFFFE76B6BE76B6BE76B6BE76B6BE76B6BE76B6BE76B6BE76B6B
-            E76B6BE76B6BE76B6BE76B6BE76B6BFFFFFFFFFFFFFFFFFFFF8484FF8484FF84
-            84FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF
-            FFFFFFFFFF00FFFFFFFFFFFFE76B6BE76B6BE76B6BE76B6BE76B6BE76B6BE76B
-            6BE76B6BE76B6BE76B6BFFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FFFFFFFF
-            FFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484
-            FF8484FFFFFFFFFFFF00FFFFFFFFFFFFE76B6BE76B6BE76B6BE76B6BE76B6BE7
-            6B6BE76B6BFFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484
-            FF8484FF8484FF8484FFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FF8484FF84
-            84FF8484FF8484FFFFFFFFFFFF00FFFFFFFFFFFFE76B6BE76B6BE76B6BE76B6B
-            FFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF8484FF84
-            84FF8484FF8484FF8484FF8484FF8484FF8484FF8484FFFFFFFFFFFFFFFFFFFF
-            8484FF8484FF8484FF8484FFFFFFFFFFFF00FFFFFFFFFFFFE76B6BFFFFFFFFFF
-            FFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF
-            8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484
-            FF8484FFFFFFFFFFFFFFFFFFFF8484FFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFF
-            8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484
-            FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF84
-            84FF8484FF8484FF8484FF8484FF8484FFFFFFFFFFFFFFFFFF00FFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF84
-            84FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF
-            8484FF8484FF8484FF8484FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8484FF8484FF
-            8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484
-            FF8484FF8484FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF84
-            84FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFF00
-          }
-        end
         object AFU: TImage
           AnchorSideLeft.Control = APanel
           AnchorSideTop.Control = APanel
@@ -141,10 +92,13 @@ object InfoFrm: TInfoFrm
           }
         end
         object AE: TImage
+          AnchorSideTop.Control = AEU
+          AnchorSideTop.Side = asrBottom
           Left = 15
           Height = 67
-          Top = 70
+          Top = 44
           Width = 33
+          Anchors = []
           Picture.Data = {
             07544269746D617016230200424D162302000000000036000000280000002100
             0000780500000100180000000000E02202002700000027000000000000000000
@@ -4527,6 +4481,9 @@ object InfoFrm: TInfoFrm
           }
         end
         object AL: TImage
+          AnchorSideLeft.Control = AEU
+          AnchorSideRight.Control = AEU
+          AnchorSideRight.Side = asrBottom
           Left = 15
           Height = 11
           Top = 185
@@ -4573,9 +4530,9 @@ object InfoFrm: TInfoFrm
           }
         end
         object AF: TImage
-          Left = 14
+          Left = 15
           Height = 69
-          Top = 228
+          Top = 236
           Width = 33
           Picture.Data = {
             07544269746D617016230200424D162302000000000036000000280000002100
@@ -9117,7 +9074,7 @@ object InfoFrm: TInfoFrm
           Left = 85
           Height = 2
           Top = 60
-          Width = 237
+          Width = 327
           Anchors = [akTop, akLeft, akRight]
           BorderSpacing.Top = 8
           BorderSpacing.Bottom = 8
@@ -9195,7 +9152,7 @@ object InfoFrm: TInfoFrm
           Left = 85
           Height = 2
           Top = 140
-          Width = 237
+          Width = 327
           Anchors = [akTop, akLeft, akRight]
           BorderSpacing.Top = 8
         end
@@ -9252,7 +9209,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ANameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 182
           Width = 36
@@ -9271,7 +9228,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ANameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 166
           Width = 36
@@ -9290,7 +9247,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ANameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 150
           Width = 36
@@ -9309,7 +9266,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ANameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 118
           Width = 36
@@ -9328,7 +9285,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ANameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 102
           Width = 36
@@ -9347,7 +9304,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ANameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 86
           Width = 36
@@ -9366,7 +9323,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = ANameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 70
           Width = 36
@@ -9384,7 +9341,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Control = ANameValue
           AnchorSideRight.Control = ANameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 38
           Width = 36
@@ -9402,7 +9359,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Control = APanel
           AnchorSideRight.Control = APanel
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 22
           Width = 36
@@ -9427,21 +9384,70 @@ object InfoFrm: TInfoFrm
           ParentColor = False
           Transparent = False
         end
+        object AEU: TImage
+          AnchorSideLeft.Control = APanel
+          AnchorSideTop.Control = APanel
+          Left = 15
+          Height = 11
+          Top = 20
+          Width = 33
+          BorderSpacing.Left = 15
+          BorderSpacing.Top = 20
+          Picture.Data = {
+            07544269746D617082040000424D820400000000000036000000280000002100
+            00000B00000001001800000000004C0400006400000064000000000000000000
+            0000FFFFFFFFFFFFE76B6BE76B6BE76B6BE76B6BE76B6BE76B6BE76B6BE76B6B
+            E76B6BE76B6BE76B6BE76B6BE76B6BFFFFFFFFFFFFFFFFFFFF8484FF8484FF84
+            84FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF
+            FFFFFFFFFF00FFFFFFFFFFFFE76B6BE76B6BE76B6BE76B6BE76B6BE76B6BE76B
+            6BE76B6BE76B6BE76B6BFFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FFFFFFFF
+            FFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484
+            FF8484FFFFFFFFFFFF00FFFFFFFFFFFFE76B6BE76B6BE76B6BE76B6BE76B6BE7
+            6B6BE76B6BFFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484
+            FF8484FF8484FF8484FFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FF8484FF84
+            84FF8484FF8484FFFFFFFFFFFF00FFFFFFFFFFFFE76B6BE76B6BE76B6BE76B6B
+            FFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF8484FF84
+            84FF8484FF8484FF8484FF8484FF8484FF8484FF8484FFFFFFFFFFFFFFFFFFFF
+            8484FF8484FF8484FF8484FFFFFFFFFFFF00FFFFFFFFFFFFE76B6BFFFFFFFFFF
+            FFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF
+            8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484
+            FF8484FFFFFFFFFFFFFFFFFFFF8484FFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFF
+            8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484
+            FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF84
+            84FF8484FF8484FF8484FF8484FF8484FFFFFFFFFFFFFFFFFF00FFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF84
+            84FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF
+            8484FF8484FF8484FF8484FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8484FF8484FF
+            8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484
+            FF8484FF8484FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFF8484FF8484FF8484FF8484FF8484FF8484FF8484FF8484FF84
+            84FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8484FF8484FF8484FFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFF00
+          }
+        end
       end
     end
     object FPage: TTabSheet
       Caption = 'General'
       ClientHeight = 376
-      ClientWidth = 338
+      ClientWidth = 428
       object FPanel: TPanel
         Left = 0
         Height = 376
         Top = 0
-        Width = 338
+        Width = 428
         Align = alClient
         BevelOuter = bvNone
         ClientHeight = 376
-        ClientWidth = 338
+        ClientWidth = 428
         TabOrder = 0
         object FEU: TImage
           AnchorSideLeft.Control = FPanel
@@ -18519,7 +18525,7 @@ object InfoFrm: TInfoFrm
           Left = 85
           Height = 2
           Top = 60
-          Width = 237
+          Width = 327
           Anchors = [akTop, akLeft, akRight]
           BorderSpacing.Top = 8
           BorderSpacing.Bottom = 8
@@ -18597,7 +18603,7 @@ object InfoFrm: TInfoFrm
           Left = 85
           Height = 2
           Top = 140
-          Width = 237
+          Width = 327
           Anchors = [akTop, akLeft, akRight]
           BorderSpacing.Top = 8
           BorderSpacing.Bottom = 8
@@ -18656,7 +18662,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = FNameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 182
           Width = 36
@@ -18675,7 +18681,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = FNameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 166
           Width = 36
@@ -18694,7 +18700,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = FNameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 150
           Width = 36
@@ -18713,7 +18719,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = FNameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 118
           Width = 36
@@ -18732,7 +18738,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = FNameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 102
           Width = 36
@@ -18751,7 +18757,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = FNameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 86
           Width = 36
@@ -18770,7 +18776,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = FNameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 70
           Width = 36
@@ -18789,7 +18795,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = FNameValue
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 38
           Width = 36
@@ -18807,7 +18813,7 @@ object InfoFrm: TInfoFrm
           AnchorSideTop.Control = FPanel
           AnchorSideRight.Control = FPanel
           AnchorSideRight.Side = asrBottom
-          Left = 286
+          Left = 376
           Height = 14
           Top = 22
           Width = 36
@@ -18842,7 +18848,7 @@ object InfoFrm: TInfoFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 282
+    Left = 372
     Height = 26
     Top = 414
     Width = 70

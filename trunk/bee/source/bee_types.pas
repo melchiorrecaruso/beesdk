@@ -108,7 +108,6 @@ type
     Time:       longint;
     Attr:       longint;
     PackedSize: int64;
-    Ratio:      longint;
     Comm:       PChar;
     Crc:        longword;
     Method:     PChar;

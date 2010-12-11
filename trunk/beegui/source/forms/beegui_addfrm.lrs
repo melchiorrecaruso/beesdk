@@ -1,8 +1,8 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TAddFrm','FORMDATA',[
-  'TPF0'#7'TAddFrm'#6'AddFrm'#4'Left'#3'"'#1#6'Height'#3'<'#1#3'Top'#3'>'#1#5'W'
-  +'idth'#3#144#1#7'Caption'#6#24'Archive Name and Options'#12'ClientHeight'#3
+  'TPF0'#7'TAddFrm'#6'AddFrm'#4'Left'#3#243#1#6'Height'#3'<'#1#3'Top'#3'<'#1#5
+  +'Width'#3#144#1#7'Caption'#6#24'Archive Name and Options'#12'ClientHeight'#3
   +'<'#1#11'ClientWidth'#3#144#1#21'Constraints.MinHeight'#3'<'#1#20'Constraint'
   +'s.MinWidth'#3#144#1#7'OnClose'#7#9'FormClose'#8'OnCreate'#7#10'FormCreate'
   +#11'OnDropFiles'#7#13'FormDropFiles'#10'LCLVersion'#6#6'0.9.29'#0#12'TPageCo'
@@ -18,16 +18,16 @@ LazarusResources.Add('TAddFrm','FORMDATA',[
   +'p.Control'#7#11'PageGeneral'#4'Left'#2#6#6'Height'#2#14#3'Top'#2#6#5'Width'
   +#2'F'#18'BorderSpacing.Left'#2#6#17'BorderSpacing.Top'#2#6#20'BorderSpacing.'
   +'Bottom'#2#2#7'Caption'#6#13'Archive name:'#5'Color'#7#9'clBtnFace'#6'Layout'
-  +#7#8'tlCenter'#11'ParentColor'#8#11'Transparent'#8#0#0#6'TLabel'#13'ufOption'
-  +'Label'#22'AnchorSideLeft.Control'#7#11'PageGeneral'#21'AnchorSideTop.Contro'
-  +'l'#7#19'ArchiveNameComboBox'#18'AnchorSideTop.Side'#7#9'asrBottom'#4'Left'#2
-  +#6#6'Height'#2#14#3'Top'#2'1'#5'Width'#2'E'#18'BorderSpacing.Left'#2#6#17'Bo'
-  +'rderSpacing.Top'#2#6#20'BorderSpacing.Bottom'#2#2#7'Caption'#6#12'Update mo'
-  +'de:'#5'Color'#7#9'clBtnFace'#6'Layout'#7#8'tlCenter'#11'ParentColor'#8#11'T'
-  +'ransparent'#8#0#0#6'TLabel'#12'mOptionLabel'#22'AnchorSideLeft.Control'#7#11
-  +'PageGeneral'#21'AnchorSideTop.Control'#7#8'ufOption'#18'AnchorSideTop.Side'
-  +#7#9'asrBottom'#4'Left'#2#6#6'Height'#2#14#3'Top'#2'\'#5'Width'#2'i'#18'Bord'
-  +'erSpacing.Left'#2#6#17'BorderSpacing.Top'#2#6#20'BorderSpacing.Bottom'#2#2#7
+  +#7#8'tlCenter'#11'ParentColor'#8#11'Transparent'#8#0#0#6'TLabel'#12'uOptionL'
+  +'abel'#22'AnchorSideLeft.Control'#7#11'PageGeneral'#21'AnchorSideTop.Control'
+  +#7#19'ArchiveNameComboBox'#18'AnchorSideTop.Side'#7#9'asrBottom'#4'Left'#2#6
+  +#6'Height'#2#14#3'Top'#2'1'#5'Width'#2'E'#18'BorderSpacing.Left'#2#6#17'Bord'
+  +'erSpacing.Top'#2#6#20'BorderSpacing.Bottom'#2#2#7'Caption'#6#12'Update mode'
+  +':'#5'Color'#7#9'clBtnFace'#6'Layout'#7#8'tlCenter'#11'ParentColor'#8#11'Tra'
+  +'nsparent'#8#0#0#6'TLabel'#12'mOptionLabel'#22'AnchorSideLeft.Control'#7#11
+  +'PageGeneral'#21'AnchorSideTop.Control'#7#7'uOption'#18'AnchorSideTop.Side'#7
+  +#9'asrBottom'#4'Left'#2#6#6'Height'#2#14#3'Top'#2'\'#5'Width'#2'i'#18'Border'
+  +'Spacing.Left'#2#6#17'BorderSpacing.Top'#2#6#20'BorderSpacing.Bottom'#2#2#7
   +'Caption'#6#19'Compression method:'#5'Color'#7#9'clBtnFace'#6'Layout'#7#8'tl'
   +'Center'#11'ParentColor'#8#11'Transparent'#8#0#0#6'TLabel'#12'dOptionLabel'
   +#22'AnchorSideLeft.Control'#7#11'PageGeneral'#21'AnchorSideTop.Control'#7#7
@@ -76,14 +76,14 @@ LazarusResources.Add('TAddFrm','FORMDATA',[
   +#6'Height'#2'%'#3'Top'#2#6#5'Width'#2'F'#7'Anchors'#11#5'akTop'#7'akRight'#8
   +'akBottom'#0#8'AutoSize'#9#19'BorderSpacing.Right'#2#6#7'Caption'#6#8'Save .'
   +'..'#20'Constraints.MinWidth'#2'F'#9'NumGlyphs'#2#0#7'OnClick'#7#12'BtnSaveC'
-  +'lick'#8'TabOrder'#2#1#0#0#9'TComboBox'#8'ufOption'#22'AnchorSideLeft.Contro'
-  +'l'#7#11'PageGeneral'#21'AnchorSideTop.Control'#7#13'ufOptionLabel'#18'Ancho'
-  +'rSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#7'Options'#4'Le'
-  +'ft'#2#6#6'Height'#2#21#3'Top'#2'A'#5'Width'#3#192#0#7'Anchors'#11#5'akTop'#6
-  +'akLeft'#7'akRight'#0#18'BorderSpacing.Left'#2#6#19'BorderSpacing.Right'#2#6
-  +#10'ItemHeight'#2#13#9'ItemIndex'#2#3#13'Items.Strings'#1#6#9'Add files'#6#12
-  +'Update files'#6#13'Replace files'#6#20'Add and update files'#6#21'Add and r'
-  +'eplace files'#6#24'Add and autorename files'#0#5'Style'#7#14'csDropDownList'
+  +'lick'#8'TabOrder'#2#1#0#0#9'TComboBox'#7'uOption'#22'AnchorSideLeft.Control'
+  +#7#11'PageGeneral'#21'AnchorSideTop.Control'#7#12'uOptionLabel'#18'AnchorSid'
+  +'eTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#7'Options'#4'Left'#2
+  +#6#6'Height'#2#21#3'Top'#2'A'#5'Width'#3#192#0#7'Anchors'#11#5'akTop'#6'akLe'
+  +'ft'#7'akRight'#0#18'BorderSpacing.Left'#2#6#19'BorderSpacing.Right'#2#6#10
+  +'ItemHeight'#2#13#9'ItemIndex'#2#3#13'Items.Strings'#1#6#9'Add files'#6#12'U'
+  +'pdate files'#6#13'Replace files'#6#20'Add and update files'#6#21'Add and re'
+  +'place files'#6#24'Add and autorename files'#0#5'Style'#7#14'csDropDownList'
   +#8'TabOrder'#2#2#4'Text'#6#20'Add and update files'#0#0#9'TComboBox'#7'mOpti'
   +'on'#22'AnchorSideLeft.Control'#7#11'PageGeneral'#21'AnchorSideTop.Control'#7
   +#12'mOptionLabel'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.C'
