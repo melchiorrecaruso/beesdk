@@ -1,7 +1,7 @@
 object AddFrm: TAddFrm
-  Left = 290
+  Left = 499
   Height = 316
-  Top = 318
+  Top = 316
   Width = 400
   Caption = 'Archive Name and Options'
   ClientHeight = 316
@@ -49,7 +49,7 @@ object AddFrm: TAddFrm
         ParentColor = False
         Transparent = False
       end
-      object ufOptionLabel: TLabel
+      object uOptionLabel: TLabel
         AnchorSideLeft.Control = PageGeneral
         AnchorSideTop.Control = ArchiveNameComboBox
         AnchorSideTop.Side = asrBottom
@@ -68,7 +68,7 @@ object AddFrm: TAddFrm
       end
       object mOptionLabel: TLabel
         AnchorSideLeft.Control = PageGeneral
-        AnchorSideTop.Control = ufOption
+        AnchorSideTop.Control = uOption
         AnchorSideTop.Side = asrBottom
         Left = 6
         Height = 14
@@ -222,9 +222,9 @@ object AddFrm: TAddFrm
         OnClick = BtnSaveClick
         TabOrder = 1
       end
-      object ufOption: TComboBox
+      object uOption: TComboBox
         AnchorSideLeft.Control = PageGeneral
-        AnchorSideTop.Control = ufOptionLabel
+        AnchorSideTop.Control = uOptionLabel
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Options
         Left = 6

@@ -76,12 +76,11 @@ var
 implementation
 
 uses
-  Bee_Consts,
   BeeGui_Consts,
   {$IFDEF USEDLL}
   BeeLib_Link,
   {$ELSE}
-  Bee_Library,
+  // Bee_Library,
   {$ENDIF}
   BeeGui_Messages,
   BeeGui_SysUtils;
@@ -94,8 +93,10 @@ uses
   {$I beegui_aboutfrm_loadlanguage.inc}
 
 procedure TAboutFrm.FormCreate(Sender: TObject);
+{$IFDEF USEDLL}
 var
   LibVer: longint;
+{$ENDIF}
 begin
   LoadLanguage;
   LoadProperty;

@@ -6,7 +6,7 @@
 
 cd beegui\source
 
-fpc -FE..\temp\ -Fiforms\forms.include\ -Fipackages\packages.include\ -Fuforms\ -Fupackages\ -Fu..\..\bee\source\ -Fu..\..\beelib\source\packages\ -Fu..\..\..\lazarus\lcl\units\i386-win32\ -Fu..\..\..\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\lazarus\packager\units\i386-win32\ -MDelphi -CX -O3 -OoUNCERTAIN -OoREGVAR -XX -WG -vew -dLCL -dLCLwin32 beegui.lpr
+lazbuild -B beegui.lpi
 
 cd ..
 cd ..
@@ -18,8 +18,8 @@ cd ..
 
 cd bee\source
 
-fpc -FE..\temp\ -Fibee.include\    -FU..\temp\ -MDelphi -CX -XX -O3 -OoUNCERTAIN -OoREGVAR -vew -obee.exe    bee.dpr
-fpc -FE..\temp\ -Fibeelib.include\ -FU..\temp\ -MDelphi -CX -XX -O3 -OoUNCERTAIN -OoREGVAR -vew -obeelib.dll beelib.dpr
+lazbuild -B bee.lpi
+lazbuild -B beelib.lpi
 
 cd ..
 cd ..
@@ -31,7 +31,7 @@ cd ..
 
 cd beeopt\source
 
-fpc -FE..\temp\ -Fibeeopt.include\ -Fu..\..\bee\source\ -FU..\temp\ -MDelphi -CX -XX -O3 -OoUNCERTAIN -OoREGVAR -vew -obeeopt.exe beeopt.dpr
+lazbuild beeopt.lpi
 
 cd ..
 cd ..
@@ -43,7 +43,7 @@ cd ..
 
 cd beesfx\console\source
 
-fpc -FE..\temp\ -Fibeesfx.include\ -Fu..\..\..\bee\source\ -Fu. -FU..\temp\ -MDelphi -Sh -CX -Os3 -OoUNCERTAIN -OoREGVAR -XX -vew -l -obeesfx.exe beesfx.dpr
+lazbuild beesfx.lpi
 
 cd ..
 cd ..
@@ -53,7 +53,7 @@ cd beesfx\gui\source
 
 gorc /r main.rc
 
-fpc -FE..\temp\ -Fibeesfx.include\ -Fu..\..\..\bee\source\ -FU..\temp\ -MDelphi -CX -Os3 -OoUNCERTAIN -OoREGVAR -XX -WG -vew -obeesfx.exe beesfx.dpr
+lazbuild beesfx.lpi
 
 cd ..
 cd ..

@@ -12,10 +12,13 @@
         Caption := Storage.ReadString('TForm', 'Caption', Caption);
         FolderLabel.Caption := Storage.ReadString('TLabel', 'FolderLabel.Caption', FolderLabel.Caption);
       
-        uOptionLabel.Caption := Storage.ReadString('TLabel', 'oOptionLabel.Caption', uOptionLabel.Caption);
-        uOption.Items[0]     := Storage.ReadString('TLabel', 'oOption[0]', uOption.Items[0]);
-        uOption.Items[1]     := Storage.ReadString('TLabel', 'oOption[1]', uOption.Items[1]);
-        uOption.Items[2]     := Storage.ReadString('TLabel', 'oOption[2]', uOption.Items[2]);
+        uOptionLabel.Caption := Storage.ReadString('TLabel', 'uOptionLabel.Caption', uOptionLabel.Caption);
+        uOption.Items[0] := Storage.ReadString('TComboBox', 'uOption[0]', uOption.Items[0]);
+        uOption.Items[1] := Storage.ReadString('TComboBox', 'uOption[1]', uOption.Items[1]);
+        uOption.Items[2] := Storage.ReadString('TComboBox', 'uOption[2]', uOption.Items[2]);
+        uOption.Items[3] := Storage.ReadString('TComboBox', 'uOption[3]', uOption.Items[3]);
+        uOption.Items[4] := Storage.ReadString('TComboBox', 'uOption[4]', uOption.Items[4]);
+        uOption.Items[5] := Storage.ReadString('TComboBox', 'uOption[5]', uOption.Items[5]);
 
         Options.Caption       := Storage.ReadString('TGroupBox', 'Options.Caption', Options.Caption);
         xCommand.Caption      := Storage.ReadString('TCheckBox', 'xCommand.Caption', xCommand.Caption);

@@ -58,12 +58,12 @@ begin
   AddFrm.rOption.Checked := CommandLine.rOption = rmFull;
 
   case CommandLine.uOption of
-    umAdd:           AddFrm.ufOption.ItemIndex := 0;
-    umUpdate:        AddFrm.ufOption.ItemIndex := 1;
-    umReplace:       AddFrm.ufOption.ItemIndex := 2;
-    umAddUpdate:     AddFrm.ufOption.ItemIndex := 3;
-    umAddReplace:    AddFrm.ufOption.ItemIndex := 4;
-    umAddAutoRename: AddFrm.ufOption.ItemIndex := 5;
+    umAdd:           AddFrm.uOption.ItemIndex := 0;
+    umUpdate:        AddFrm.uOption.ItemIndex := 1;
+    umReplace:       AddFrm.uOption.ItemIndex := 2;
+    umAddUpdate:     AddFrm.uOption.ItemIndex := 3;
+    umAddReplace:    AddFrm.uOption.ItemIndex := 4;
+    umAddAutoRename: AddFrm.uOption.ItemIndex := 5;
   end;
 
   AddFrm.eOption.Text    := CommandLine.fOption;
@@ -120,7 +120,7 @@ begin
     else
       CommandLine.rOption := rmNone;
 
-    CommandLine.uOption := TUpdateMode(AddFrm.ufOption.ItemIndex);
+    CommandLine.uOption := TUpdateMode(AddFrm.uOption.ItemIndex);
     CommandLine.fOption := AddFrm.eOption.Text;
     CommandLine.sOption := AddFrm.sOption.Checked;
 

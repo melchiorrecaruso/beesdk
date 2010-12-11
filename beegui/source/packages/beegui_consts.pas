@@ -77,7 +77,7 @@ end;
 
 function GetApplicationLanguageID: string;
 var
-  S: string;
+  S: string = '';
 begin
   GetLanguageIDs(S, Result);
   Result := LowerCase(Result);

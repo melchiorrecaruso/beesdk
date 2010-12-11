@@ -473,7 +473,12 @@ begin
         Node.FilePath     := ExtractFilePath(PCharToString(P^.Name));
         Node.FileSize     := P^.Size;
         Node.FilePacked   := P^.PackedSize;
-        Node.FileRatio    := P^.Ratio;
+
+       if Node.FileSize > 0 then
+         Node.FileRatio   := Trunc(100 * (Node.FilePacked / Node.FileSize ))
+       else
+         Node.FileRatio   := 0;
+
         Node.FileAttr     := P^.Attr;
         Node.FileTime     := P^.Time;
         Node.FileComm     := PCharToString(P^.Comm);

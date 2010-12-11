@@ -191,7 +191,6 @@ end;
 
 function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; {$IFDEF FPC} inline; {$ENDIF}
 var
-  I: longint;
   iFileDrive: string;
   iFilePath:  string;
   iFileName:  string;

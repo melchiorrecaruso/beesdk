@@ -19,7 +19,8 @@
 
       mOption.ItemIndex := Storage.ReadInteger('TComboBox', 'mOption.ItemIndex' ,mOption.ItemIndex);
       dOption.ItemIndex := Storage.ReadInteger('TComboBox', 'dOption.ItemIndex' ,dOption.ItemIndex);
-      uOption.ItemIndex := Storage.ReadInteger('TComboBox', 'oOption.ItemIndex' ,uOption.ItemIndex);
+      uAOption.ItemIndex := Storage.ReadInteger('TComboBox', 'uAOption.ItemIndex' ,uAOption.ItemIndex);
+      uEOption.ItemIndex := Storage.ReadInteger('TComboBox', 'uEOption.ItemIndex' ,uEOption.ItemIndex);
 
       rOption.Checked := Storage.ReadBool('TCheckBox', 'rOption.Checked' ,rOption.Checked);
       sOption.Checked := Storage.ReadBool('TCheckBox', 'sOption.Checked' ,sOption.Checked);

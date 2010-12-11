@@ -177,6 +177,7 @@ begin
   R.Caption := IntToStr(Percentage) + '%';
   if Percentage > 100 then
     Percentage := 100;
+
   case Percentage of
     0..6:
     begin
@@ -184,7 +185,7 @@ begin
       E.Height := ED.Top - E.Top;
 
       EU.Visible := True;
-      E.Visible  := True;
+      E .Visible := True;
       ED.Visible := True;
 
       R.Top := ED.Top - 3;
@@ -194,13 +195,12 @@ begin
       case Percentage of
         97..99: Percentage := 96;
       end;
-      F.Height := 1 + (FD.Top - EU.Top - EU.Height - L.Height - 1) *
-        (Percentage - 7) div (96 - 7);
+      F.Height := 1 + (FD.Top - EU.Top - EU.Height - L.Height - 1) * (Percentage - 7) div (96 - 7);
 
       F.Top    := FD.Top - F.Height;
-      L.Top    := F.Top - L.Height;
+      L.Top    := F.Top  - L.Height;
       E.Top    := EU.Top + EU.Height;
-      E.Height := L.Top - E.Top;
+      E.Height := L.Top  - E.Top;
 
       EU.Visible := True;
       E.Visible  := True;
@@ -216,7 +216,7 @@ begin
       F.Height := FD.Top - F.Top;
 
       FU.Visible := True;
-      F.Visible  := True;
+      F .Visible := True;
       FD.Visible := True;
 
       R.Top := FU.Top;

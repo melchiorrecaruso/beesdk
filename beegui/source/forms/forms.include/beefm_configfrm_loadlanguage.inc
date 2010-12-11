@@ -41,12 +41,23 @@
         dOption.Items[7] := Storage.ReadString('TComboBox', 'dOption[7]' ,dOption.Items[7]);
         dOption.Items[8] := Storage.ReadString('TComboBox', 'dOption[8]' ,dOption.Items[8]);
         dOption.Items[9] := Storage.ReadString('TComboBox', 'dOption[9]' ,dOption.Items[9]);
-      
-        uOptionLabel.Caption := Storage.ReadString('TComboBox', 'oOption.Caption' ,uOptionLabel.Caption);
-        uOption.Items[0] := Storage.ReadString('TComboBox', 'oOption[0]' ,uOption.Items[0]);
-        uOption.Items[1] := Storage.ReadString('TComboBox', 'oOption[1]' ,uOption.Items[1]);
-        uOption.Items[2] := Storage.ReadString('TComboBox', 'oOption[2]' ,uOption.Items[2]);
-      
+
+        uAOptionLabel.Caption := Storage.ReadString('TLabel', 'uAOption.Caption' ,uAOptionLabel.Caption);
+        uAOption.Items[0] := Storage.ReadString('TComboBox', 'uAOption[0]' ,uAOption.Items[0]);
+        uAOption.Items[1] := Storage.ReadString('TComboBox', 'uAOption[1]' ,uAOption.Items[1]);
+        uAOption.Items[2] := Storage.ReadString('TComboBox', 'uAOption[2]' ,uAOption.Items[2]);
+        uAOption.Items[3] := Storage.ReadString('TComboBox', 'uAOption[3]' ,uAOption.Items[3]);
+        uAOption.Items[4] := Storage.ReadString('TComboBox', 'uAOption[4]' ,uAOption.Items[4]);
+        uAOption.Items[5] := Storage.ReadString('TComboBox', 'uAOption[5]' ,uAOption.Items[5]);
+
+        uEOptionLabel.Caption := Storage.ReadString('TLabel', 'uEOption.Caption' ,uEOptionLabel.Caption);
+        uEOption.Items[0] := Storage.ReadString('TComboBox', 'uEOption[0]' ,uEOption.Items[0]);
+        uEOption.Items[1] := Storage.ReadString('TComboBox', 'uEOption[1]' ,uEOption.Items[1]);
+        uEOption.Items[2] := Storage.ReadString('TComboBox', 'uEOption[2]' ,uEOption.Items[2]);
+        uEOption.Items[3] := Storage.ReadString('TComboBox', 'uEOption[3]' ,uEOption.Items[3]);
+        uEOption.Items[4] := Storage.ReadString('TComboBox', 'uEOption[4]' ,uEOption.Items[4]);
+        uEOption.Items[5] := Storage.ReadString('TComboBox', 'uEOption[5]' ,uEOption.Items[5]);
+
         rOption.Caption := Storage.ReadString('TCheckBox', 'rOption.Caption',   rOption.Caption);
         sOption.Caption := Storage.ReadString('TCheckBox', 'sOption.Caption',   sOption.Caption);
         tOption.Caption := Storage.ReadString('TCheckBox', 'tOption.Caption',   tOption.Caption);

@@ -12,10 +12,13 @@
         Storage.WriteString('TForm', 'Caption', Caption);
         Storage.WriteString('TLabel', 'FolderLabel.Caption', FolderLabel.Caption);
 
-        Storage.WriteString('TLabel', 'oOptionLabel.Caption', uOptionLabel.Caption);
-        Storage.WriteString('TLabel', 'oOption[0]', uOption.Items[0]);
-        Storage.WriteString('TLabel', 'oOption[1]', uOption.Items[1]);
-        Storage.WriteString('TLabel', 'oOption[2]', uOption.Items[2]);
+        Storage.WriteString('TLabel', 'uOptionLabel.Caption', uOptionLabel.Caption);
+        Storage.WriteString('TComboBox', 'uOption[0]', uOption.Items[0]);
+        Storage.WriteString('TComboBox', 'uOption[1]', uOption.Items[1]);
+        Storage.WriteString('TComboBox', 'uOption[2]', uOption.Items[2]);
+        Storage.WriteString('TComboBox', 'uOption[3]', uOption.Items[3]);
+        Storage.WriteString('TComboBox', 'uOption[4]', uOption.Items[4]);
+        Storage.WriteString('TComboBox', 'uOption[5]', uOption.Items[5]);
     
         Storage.WriteString('TGroupBox', 'Options.Caption', Options.Caption);
         Storage.WriteString('TCheckBox', 'xCommand.Caption', xCommand.Caption);

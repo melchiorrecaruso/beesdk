@@ -73,8 +73,8 @@ type
     eOptionLabel: TLabel;
     mOption:   TComboBox;
     mOptionLabel: TLabel;
-    ufOption:  TComboBox;
-    ufOptionLabel: TLabel;
+    uOption:  TComboBox;
+    uOptionLabel: TLabel;
     yOptionLabel: TLabel;
     Pages:     TPageControl;
     PageGeneral: TTabSheet;
