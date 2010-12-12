@@ -47,7 +47,13 @@ uses
 
 { Library routines }
 
-function CoreSend(var ID: PtrInt;  MESSAGE, DATA: PtrInt ): PtrInt;
+function CoreVersion: longint;
+function CoreCreate(P: PChar): Pointer;
+function CoreGetBool8(ID: Pointer; MESSAGE: longint): boolean;
+function CoreGetInt32(ID: Pointer; MESSAGE: longint): longint;
+function CoreGetInt64(ID: Pointer; MESSAGE: longint): Int64;
+function CoreGetPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer;
+function CoreSetPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean;
 
 implementation
 
@@ -206,155 +212,142 @@ end;
 
 { Library core routines }
 
-function CoreSend(var ID: PtrInt;  MESSAGE, DATA: PtrInt ): PtrInt;
-var
-  P: PChar;
+function CoreVersion: longint;
 begin
-  case longint(MESSAGE) of
-    csmVersion:       Result := PtrInt(105);
-    csmCreate:        begin
-      Result := TCore.Create(PCharToString(DATA));
-    end;
-    csmDestroy:       begin
-      if Assigned(TCore(ID)) then
-      begin
-        TCore(ID).Destroy;
+  Result := 105;
+end;
+
+function CoreCreate(P: PChar): Pointer;
+begin
+  try
+    Result := TCore.Create(PCharToString(P));
+  except
+    Result := nil;
+  end;
+end;
+
+function CoreGetBool8(ID: Pointer; MESSAGE: longint): boolean;
+begin
+  Result := Assigned(TCore(ID));
+  if Result then
+  begin
+    case MESSAGE of
+      csmExecute: begin
+        Result := TCore(ID).FApp.FStatus = csReady;
+        if Result then
+        begin
+          TCore(ID).Resume;
+        end;
       end;
-      Result := nil;
-    end;
-    csmResume:        begin
-      Result := Pointer(Assigned(TCore(ID)) and (TCore(ID).FApp.FStatus = csReady));
-      if boolean(Result) then
-      begin
-        TCore(ID).Resume;
-      end;
-    end;
-    csmSuspend:       begin
-      Result := Pointer(Assigned(TCore(ID)));
-      if boolean(Result) then
-      begin
-        TCore(ID).FApp.Suspended := boolean(DATA);
-      end;
-    end;
-    csmTerminate:     begin
-      Result := Pointer(Assigned(TCore(ID)));
-      if boolean(Result) then
-      begin
+      csmSuspend: TCore(ID).FApp.Suspended := True;
+      csmResume:  TCore(ID).FApp.Suspended := False;
+      csmTerminate: begin
         TCore(ID).FApp.Terminate;
         if TCore(ID).FApp.FStatus <> csTerminated then
         begin
           TCore(ID).FApp.FStatus := csExecuting;
         end;
       end;
+      csmDestroy: TCore(ID).Destroy;
+      else Result := False;
     end;
-    csmPriority:      begin
-      Result := Pointer(Assigned(TCore(ID)));
-      if boolean(Result) then
-      begin
-        case longint(DATA) of
-          cpIdle:         TCore(ID).Priority := tpIdle;
-          cpLowest:       TCore(ID).Priority := tpLowest;
-          cpLower:        TCore(ID).Priority := tpLower;
-          cpNormal:       TCore(ID).Priority := tpNormal;
-          cpHigher:       TCore(ID).Priority := tpHigher;
-          cpHighest:      TCore(ID).Priority := tpHighest;
-          cpTimeCritical: TCore(ID).Priority := tpTimeCritical;
-        end;
-        case TCore(ID).Priority of
-          tpIdle:         Result := cpIdle;
-          tpLowest:       Result := cpLowest;
-          tpLower:        Result := cpLower;
-          tpNormal:       Result := cpNormal;
-          tpHigher:       Result := cpHigher;
-          tpHighest:      Result := cpHighest;
-          tpTimeCritical: Result := cpTimeCritical;
-          else            Result := -1;
-        end;
-      end;
-    end;
-    csmStatus:        begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.FStatus);
-        False: Result := Pointer(-1);
-      end;
-    end;
-    csmCode:          begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.Code);
-        False: Result := Pointer(-1);
-      end;
-    end;
-    csmSpeed:         begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.Speed);
-        False: Result := Pointer(-1);
-      end;
-    end;
-    csmPercentage:    begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.Percentage);
-        False: Result := Pointer(-1);
-      end;
-    end;
-    csmElapsedTime:   begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.ElapsedTime);
-        False: Result := Pointer(-1);
-      end;
-    end;
-    csmRemainingTime: begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.RemainingTime);
-        False: Result := Pointer(-1);
-      end;
-    end;
-    csmProcessedSize: begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.ProcessedSize);
-        False: Result := Pointer(-1);
-      end;
-    end;
-    csmSize:          begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.Size);
-        False: Result := Pointer(-1);
-      End;
-    end;
-    csmMessage:       begin
-      case Assigned(TCore(ID)) of
-        True:  Result := TCore(ID).FApp.FMessages[longint(DATA) - 1];
-        False: Result := nil;
-      end;
-    end;
-    csmMessageCount:  begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.FMessages.Count);
-        False: Result := Pointer(-1);
-      end;
-    end;
-    csmItem:          begin
-      case Assigned(TCore(ID)) of
-        True:  Result := TCore(ID).FApp.FItems[longint(DATA) - 1];
-        False: Result := nil;
-      end;
-    end;
-    csmItemCount:     begin
-      case Assigned(TCore(ID)) of
-        True:  Result := Pointer(TCore(ID).FApp.FItems.Count);
-        False: Result := nil;
-      end;
-    end;
+  end;
+end;
 
-    csmItemName:      begin
-      Result := Pointer(Assigned(TCore(ID)));
-      if boolean(Result) then
-      begin
-        P := PFileInfo(TCore(ID).FApp.FItems[longint(DATA)])^.Name;
-        FreePChar(P);
+function CoreGetInt32(ID: Pointer; MESSAGE: longint): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(ID)) then
+  begin
+    case MESSAGE of
+      csmStatus:        Result := TCore(ID).FApp.FStatus;
+      csmCode:          Result := TCore(ID).FApp.Code;
+      csmSpeed:         Result := TCore(ID).FApp.Speed;
+      csmPercentage:    Result := TCore(ID).FApp.Percentage;
+      csmElapsedTime:   Result := TCore(ID).FApp.ElapsedTime;
+      csmRemainingTime: Result := TCore(ID).FApp.RemainingTime;
 
-        P := StrNew(PChar(DATA));
+      csmPriority:      Result := Ord(TCore(ID).Priority);
+      csmPriorityIdle:  begin
+        TCore(ID).Priority := tpIdle;
+        Result := Ord(TCore(ID).Priority);
+      end;
+      csmPriorityLowest: begin
+        TCore(ID).Priority := tpLowest;
+        Result := Ord(TCore(ID).Priority);
+      end;
+      csmPriorityLower: begin
+        TCore(ID).Priority := tpLower;
+        Result := Ord(TCore(ID).Priority);
+      end;
+      csmPriorityNormal: begin
+        TCore(ID).Priority := tpNormal;
+        Result := Ord(TCore(ID).Priority);
+      end;
+      csmPriorityHigher: begin
+        TCore(ID).Priority := tpHigher;
+        Result := Ord(TCore(ID).Priority);
+      end;
+      csmPriorityHighest: begin
+        TCore(ID).Priority := tpHighest;
+        Result := Ord(TCore(ID).Priority);
+      end;
+      csmPriorityTimeCritical: begin
+        TCore(ID).Priority := tpTimeCritical;
+        Result := Ord(TCore(ID).Priority);
+      end;
+    end;
+  end;
+end;
+
+function CoreGetInt64(ID: Pointer; MESSAGE: longint): Int64;
+begin
+  Result := -1;
+  if Assigned(TCore(ID)) then
+  begin
+    case MESSAGE of
+      csmSize:          Result := TCore(ID).FApp.FSize;
+      csmProcessedSize: Result := TCore(ID).FApp.ProcessedSize;
+    end;
+  end;
+end;
+
+function CoreGetPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer;
+begin
+  Result := nil;
+  if Assigned(TCore(ID)) then
+  begin
+    case MESSAGE of
+      csmMessage: begin
+        if (INDEX = -1) then INDEX := TCore(ID).FApp.FMessages.Count - 1;
+        if (INDEX > -1) and (INDEX <  TCore(ID).FApp.FMessages.Count) then
+        begin
+          Result := TCore(ID).FApp.FMessages[INDEX];
+        end;
+      end;
+      csmItem: begin
+        if (INDEX = -1) then INDEX := TCore(ID).FApp.FItems.Count - 1;
+        if (INDEX > -1) and (INDEX <  TCore(ID).FApp.FItems.Count) then
+        begin
+          Result := TCore(ID).FApp.FItems[INDEX];
+        end;
+      end;
+    end;
+  end;
+end;
+
+function CoreSetPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean;
+begin
+  Result := Assigned(TCore(ID));
+  if Result then
+  begin
+    case MESSAGE of
+      csmWaitingRename: begin
+        FreePChar(PFileInfo(TCore(ID).FApp.FItems.Last)^.Name);
+        PFileInfo(TCore(ID).FApp.FItems.Last)^.Name := StrNew(P);
         TCore(ID).FApp.FStatus := csExecuting;
       end;
+      else Result := False;
     end;
   end;
 end;

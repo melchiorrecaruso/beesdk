@@ -32,7 +32,9 @@ unit BeeLib_Link;
 interface
 
 uses
-  Classes, Bee_Consts, Bee_Types;
+  Classes,
+  Bee_Consts,
+  Bee_Types;
 
 const
   {$IFDEF MSWINDOWS}
@@ -42,7 +44,13 @@ const
   cApplicationLib = 'beelib.so';
   {$ENDIF}
 
-function CoreSend(ID, MESSAGE, DATA: Pointer): Pointer; external cApplicationLib;
+function CoreVersion: longint; external cApplicationLib;
+function CoreCreate(P: PChar): Pointer; external cApplicationLib;
+function CoreGetBool8(ID: Pointer; MESSAGE: longint): boolean; external cApplicationLib;
+function CoreGetInt32(ID: Pointer; MESSAGE: longint): longint; external cApplicationLib;
+function CoreGetInt64(ID: Pointer; MESSAGE: longint): Int64; external cApplicationLib;
+function CoreGetPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer; external cApplicationLib;
+function CoreSetPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean; external cApplicationLib;
 
 implementation
 

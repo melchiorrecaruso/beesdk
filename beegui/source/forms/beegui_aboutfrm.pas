@@ -93,21 +93,16 @@ uses
   {$I beegui_aboutfrm_loadlanguage.inc}
 
 procedure TAboutFrm.FormCreate(Sender: TObject);
-{$IFDEF USEDLL}
-var
-  LibVer: longint;
-{$ENDIF}
 begin
   LoadLanguage;
   LoadProperty;
 
   Version.Caption := cApplicationVersion;
   {$IFDEF USEDLL}
-  LibVer := longint(CoreSend(nil, csmVersion, nil));
   LibVersion.Caption := ' BeeLib ' +
-    IntTostr (LibVer div 100) + '.' +
-    IntTostr((LibVer mod 100) div 10) + '.' +
-    IntTostr((LibVer mod 100) mod 10);
+    IntTostr (CoreVersion div 100) + '.' +
+    IntTostr((CoreVersion mod 100) div 10) + '.' +
+    IntTostr((CoreVersion mod 100) mod 10);
   {$ELSE}
   LibVersion.Caption := '';
   {$ENDIF}

@@ -41,7 +41,13 @@ uses
  // -------------------------------------------------------------------------- //
 
 exports
-  CoreSend;
+  CoreVersion,
+  CoreCreate,
+  CoreGetBool8,
+  CoreGetInt32,
+  CoreGetInt64,
+  CoreGetPointer,
+  CoreSetPointer;
 
   // -------------------------------------------------------------------------- //
   //                                                                            //

@@ -36,38 +36,44 @@ const
 
   { Id marker }
 
-  Marker: longint   = $1A656542;
+  Marker: longint     = $1A656542;
 
   { Default file names }
 
   DefaultCfgName      = 'bee.ini';
   DefaultSfxName      = 'bee.sfx';
 
-  { Core Send Messages }
+  { Core Get/Set messages }
 
-  csmVersion          = 0;
-  csmCreate           = 1;
-  csmDestroy          = 2;
-  csmResume           = 3;
-  csmTerminate        = 4;
-  csmPriority         = 5;
-  csmSuspend          = 6;
+  csmExecute          = 101;
+  csmSuspend          = 102;
+  csmResume           = 103;
+  csmTerminate        = 104;
+  csmDestroy          = 105;
 
-  csmStatus           = 10;
-  csmCode             = 11;
-  csmSpeed            = 12;
-  csmPercentage       = 13;
-  csmElapsedTime      = 14;
-  csmRemainingTime    = 15;
-  csmProcessedSize    = 16;
-  csmSize             = 17;
-  csmMessage          = 18;
-  csmMessageCount     = 19;
-  csmItem             = 20;
-  csmItemCount        = 21;
+  csmStatus           = 201;
+  csmCode             = 202;
+  csmSpeed            = 203;
+  csmPercentage       = 204;
+  csmElapsedTime      = 205;
+  csmRemainingTime    = 206;
 
-  csmItemName         = 101;
-  csmRequest          = 102;
+  csmPriority             = 207;
+  csmPriorityIdle         = 208;
+  csmPriorityLowest       = 209;
+  csmPriorityLower        = 210;
+  csmPriorityNormal       = 211;
+  csmPriorityHigher       = 212;
+  csmPriorityHighest      = 213;
+  csmPriorityTimeCritical = 214;
+
+  csmSize             = 301;
+  csmProcessedSize    = 302;
+
+  csmMessage          = 401;
+  csmItem             = 402;
+
+  csmWaitingRename    = 501;
 
   { CoreStatus }
 
@@ -132,16 +138,6 @@ const
   cmConfigWarning     = 'Warning: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning = 'Warning: file "%s" already exists';
   cmNoFilesWarning    = 'Warning: no files to process';
-
-  { CorePriority }
-
-  cpIdle              = $00000000;
-  cpLowest            = $00000001;
-  cpLower             = $00000002;
-  cpNormal            = $00000003;
-  cpHigher            = $00000004;
-  cpHighest           = $00000005;
-  cpTimeCritical      = $00000006;
 
 implementation
 
