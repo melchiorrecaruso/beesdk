@@ -80,7 +80,7 @@ uses
   {$IFDEF USEDLL}
   BeeLib_Link,
   {$ELSE}
-  // Bee_Library,
+  Bee_Library,
   {$ENDIF}
   BeeGui_Messages,
   BeeGui_SysUtils;
