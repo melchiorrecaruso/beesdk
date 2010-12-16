@@ -86,7 +86,7 @@ type
     procedure RenameShell;
     procedure ListShell;
   public
-    constructor Create(aParams: TStringList);
+    constructor Create(const aCommandLine: string);
     destructor Destroy; override;
     procedure Execute; override;
   end;
@@ -117,9 +117,9 @@ end;
 
 { TBeeApp class }
 
-constructor TBeeApp.Create(aParams: TStringList);
+constructor TBeeApp.Create(const aCommandLine: string);
 begin
-  inherited Create(aParams);
+  inherited Create;
   Randomize; { randomize, uses for unique filename generation }
   FSelfName := 'The Bee 0.8.0 build 1251 archiver utility, Dec 2010' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
@@ -133,7 +133,7 @@ begin
 
   { store command line }
   FCommandLine := TCommandLine.Create;
-  FCommandLine.CommandLine := aParams.Text;
+  FCommandLine.CommandLine := aCommandLine;
 
   { load configuration }
   FConfiguration := TConfiguration.Create;

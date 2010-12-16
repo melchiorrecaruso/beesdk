@@ -51,7 +51,6 @@ type
     FSuspended: boolean;
     FProcessedSize: int64;
     FSize: int64;
-    FParams: TStringList;
     FTerminated: boolean;
     FCode: byte;
     function GetElapsedTime: longint;
@@ -74,7 +73,7 @@ type
     procedure DoClear;
     {$ENDIF}
   public
-    constructor Create(aParams: TStringList);
+    constructor Create;
     destructor Destroy; override;
     procedure Execute; virtual;
     procedure Terminate;
@@ -107,7 +106,7 @@ uses
 
 { TApp class }
 
-constructor TApp.Create(aParams: TStringList);
+constructor TApp.Create;
 begin
   inherited Create;
   FStartTime     := 0;
@@ -115,14 +114,12 @@ begin
   FSuspended     := False;
   FProcessedSize := 0;
   FSize          := 0;
-  FParams        := aParams;
   FTerminated    := False;
   FCode          := ccSuccesful;
 end;
 
 destructor TApp.Destroy;
 begin
-  FParams := nil;
   inherited Destroy;
 end;
 
