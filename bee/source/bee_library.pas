@@ -49,12 +49,12 @@ uses
 
 function CoreVersion: longint;
 function CoreCreate(P: PChar): Pointer;
-function CorePriority(ID:Pointer; MESSAGE: longint): longint;
-function CoreQueryB8(ID: Pointer; MESSAGE: longint): boolean;
-function CoreQueryI32(ID: Pointer; MESSAGE: longint): longint;
-function CoreQueryI64(ID: Pointer; MESSAGE: longint): Int64;
-function CoreQueryPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer;
-function CoreReplyPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean;
+function CorePriority(ID:Pointer; VALUE: longint): longint;
+function CoreQueryB8(ID: Pointer; VALUE: longint): boolean;
+function CoreQueryI32(ID: Pointer; VALUE: longint): longint;
+function CoreQueryI64(ID: Pointer; VALUE: longint): Int64;
+function CoreQueryPointer(ID: Pointer; VALUE, INDEX: longint): Pointer;
+function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean;
 
 implementation
 
@@ -222,12 +222,12 @@ begin
   end;
 end;
 
-function CorePriority(ID: Pointer; MESSAGE: longint): longint;
+function CorePriority(ID: Pointer; VALUE: longint): longint;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
   begin
-    case MESSAGE of
+    case VALUE of
       csmPriorityIdle:         TCore(ID).Priority := tpIdle;
       csmPriorityLowest:       TCore(ID).Priority := tpLowest;
       csmPriorityLower:        TCore(ID).Priority := tpLower;
@@ -240,12 +240,12 @@ begin
   end;
 end;
 
-function CoreQueryB8(ID: Pointer; MESSAGE: longint): boolean;
+function CoreQueryB8(ID: Pointer; VALUE: longint): boolean;
 begin
   Result := Assigned(TCore(ID));
   if Result then
   begin
-    case MESSAGE of
+    case VALUE of
       csmExecute: begin
         Result := TCore(ID).FApp.FStatus = csReady;
         if Result then
@@ -268,12 +268,12 @@ begin
   end;
 end;
 
-function CoreQueryI32(ID: Pointer; MESSAGE: longint): longint;
+function CoreQueryI32(ID: Pointer; VALUE: longint): longint;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
   begin
-    case MESSAGE of
+    case VALUE of
       csmStatus:        Result := TCore(ID).FApp.FStatus;
       csmCode:          Result := TCore(ID).FApp.Code;
       csmSpeed:         Result := TCore(ID).FApp.Speed;
@@ -284,24 +284,24 @@ begin
   end;
 end;
 
-function CoreQueryI64(ID: Pointer; MESSAGE: longint): Int64;
+function CoreQueryI64(ID: Pointer; VALUE: longint): Int64;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
   begin
-    case MESSAGE of
+    case VALUE of
       csmSize:          Result := TCore(ID).FApp.FSize;
       csmProcessedSize: Result := TCore(ID).FApp.ProcessedSize;
     end;
   end;
 end;
 
-function CoreQueryPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer;
+function CoreQueryPointer(ID: Pointer; VALUE, INDEX: longint): Pointer;
 begin
   Result := nil;
   if Assigned(TCore(ID)) then
   begin
-    case MESSAGE of
+    case VALUE of
       csmMessage: begin
         if (INDEX = -1) then INDEX := TCore(ID).FApp.FMessages.Count - 1;
         if (INDEX > -1) and (INDEX <  TCore(ID).FApp.FMessages.Count) then
@@ -320,12 +320,12 @@ begin
   end;
 end;
 
-function CoreReplyPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean;
+function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean;
 begin
   Result := Assigned(TCore(ID));
   if Result then
   begin
-    case MESSAGE of
+    case VALUE of
       csmWaitingRename: begin
         FreePChar(PFileInfo(TCore(ID).FApp.FItems.Last)^.Name);
         PFileInfo(TCore(ID).FApp.FItems.Last)^.Name := StrNew(P);

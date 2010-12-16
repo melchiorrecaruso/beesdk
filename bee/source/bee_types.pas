@@ -102,7 +102,7 @@ type
 
   PFileInfo = ^TFileInfo;
 
-  TFileInfo = record
+  TFileInfo = packed record
     Name:       PChar;
     Size:       int64;
     Time:       longint;
