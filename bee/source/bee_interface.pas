@@ -49,10 +49,10 @@ type
     FStartTime: double;
     FSuspendedTime: double;
     FSuspended: boolean;
-    FProcessedSize: int64;
-    FSize: int64;
     FTerminated: boolean;
     FCode: byte;
+    FSize: int64;
+    FProcessedSize: int64;
     function GetElapsedTime: longint;
     function GetRemainingTime: longint;
     procedure SetSize(const Value: int64);
@@ -82,7 +82,7 @@ type
     procedure OnRequest(const aMessage: string); virtual; abstract;
     function  OnRename(const aItem: THeader; const aValue: string): string; virtual; abstract;
     procedure OnList(const aItem: THeader); virtual; abstract;
-    procedure OnProgress; virtual; abstract;
+    procedure OnTick; virtual; abstract;
     {$IFDEF CONSOLEAPPLICATION}
     procedure OnClear; virtual; abstract;
     {$ENDIF}
@@ -93,8 +93,8 @@ type
     property ProcessedSize: int64 read FProcessedSize write SetProcessedSize;
     property Size: int64 read FSize write SetSize;
     property Suspended: boolean read FSuspended write SetSuspended;
-    property Code: byte read FCode write SetCode;
     property Terminated: boolean read FTerminated;
+    property Code: byte read FCode write SetCode;
   end;
 
 
@@ -112,10 +112,10 @@ begin
   FStartTime     := 0;
   FSuspendedTime := 0;
   FSuspended     := False;
-  FProcessedSize := 0;
-  FSize          := 0;
   FTerminated    := False;
   FCode          := ccSuccesful;
+  FSize          := 0;
+  FProcessedSize := 0;
 end;
 
 destructor TApp.Destroy;
@@ -220,10 +220,10 @@ procedure TApp.SetPriority(Priority: byte);
 begin
   {$IFDEF CONSOLEAPPLICATION}
   {$IFDEF MSWINDOWS}
-  Bee_Common.SetPriority(Priority);
+    Bee_Common.SetPriority(Priority);
   {$ENDIF}
   {$ELSE}
-    { TODO :  DA IMPLEMENTARE}
+    { TODO : }
   {$ENDIF}
 end;
 
@@ -280,7 +280,7 @@ begin
   if FProcessedSize and $FFFF = 0 then
   begin
     X := Now;
-    OnProgress;
+    OnTick;
     while FSuspended do Sleep(250);
     FStartTime := FStartTime + (Now - X);
   end;

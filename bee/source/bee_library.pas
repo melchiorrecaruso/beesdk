@@ -49,6 +49,7 @@ uses
 
 function CoreVersion: longint;
 function CoreCreate(P: PChar): Pointer;
+function CorePriority(ID:Pointer; MESSAGE: longint): longint;
 function CoreQueryB8(ID: Pointer; MESSAGE: longint): boolean;
 function CoreQueryI32(ID: Pointer; MESSAGE: longint): longint;
 function CoreQueryI64(ID: Pointer; MESSAGE: longint): Int64;
@@ -72,7 +73,7 @@ type
     procedure OnRequest(const aMessage: string); override;
     function OnRename(const aItem: THeader; const aValue: string): string; override;
     procedure OnList(const aItem: THeader); override;
-    procedure OnProgress; override;
+    procedure OnTick; override;
     // procedure OnClear; override;
   end;
 
@@ -91,7 +92,7 @@ type
 
 function THeaderToPFileInfo(aItem: THeader): PFileInfo;
 begin
-  Result := GetMem(SizeOf(TFileInfo));
+  GetMem(Result, SizeOf(TFileInfo));
   if Result <> nil then
   begin
     Result^.Name       := StringToPChar(aItem.Name);
@@ -173,7 +174,7 @@ begin
   FMessages.Add(StringToPChar(Format(cmListing, [aItem.Name])));
 end;
 
-procedure TCustomBeeApp.OnProgress;
+procedure TCustomBeeApp.OnTick;
 begin
   // nothing to do
 end;
@@ -184,7 +185,6 @@ constructor TCore.Create(const aCommandLine: string);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
-
   {$IFDEF FPC} {$IFDEF PLUGINS}
   if SevenZipPlugin(FCommandLine.ArchiveName) then
     FApp := TSevenZipApp.Create(aCommandLine)
@@ -219,6 +219,24 @@ begin
     Result := TCore.Create(PCharToString(P));
   except
     Result := nil;
+  end;
+end;
+
+function CorePriority(ID: Pointer; MESSAGE: longint): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(ID)) then
+  begin
+    case MESSAGE of
+      csmPriorityIdle:         TCore(ID).Priority := tpIdle;
+      csmPriorityLowest:       TCore(ID).Priority := tpLowest;
+      csmPriorityLower:        TCore(ID).Priority := tpLower;
+      csmPriorityNormal:       TCore(ID).Priority := tpNormal;
+      csmPriorityHigher:       TCore(ID).Priority := tpHigher;
+      csmPriorityHighest:      TCore(ID).Priority := tpHighest;
+      csmPriorityTimeCritical: TCore(ID).Priority := tpTimeCritical;
+    end;
+    Result := Ord(TCore(ID).Priority);
   end;
 end;
 
@@ -260,38 +278,8 @@ begin
       csmCode:          Result := TCore(ID).FApp.Code;
       csmSpeed:         Result := TCore(ID).FApp.Speed;
       csmPercentage:    Result := TCore(ID).FApp.Percentage;
-      csmElapsedTime:   Result := TCore(ID).FApp.ElapsedTime;
+      csmTime:          Result := TCore(ID).FApp.ElapsedTime;
       csmRemainingTime: Result := TCore(ID).FApp.RemainingTime;
-
-      csmPriority:      Result := Ord(TCore(ID).Priority);
-      csmPriorityIdle:  begin
-        TCore(ID).Priority := tpIdle;
-        Result := Ord(TCore(ID).Priority);
-      end;
-      csmPriorityLowest: begin
-        TCore(ID).Priority := tpLowest;
-        Result := Ord(TCore(ID).Priority);
-      end;
-      csmPriorityLower: begin
-        TCore(ID).Priority := tpLower;
-        Result := Ord(TCore(ID).Priority);
-      end;
-      csmPriorityNormal: begin
-        TCore(ID).Priority := tpNormal;
-        Result := Ord(TCore(ID).Priority);
-      end;
-      csmPriorityHigher: begin
-        TCore(ID).Priority := tpHigher;
-        Result := Ord(TCore(ID).Priority);
-      end;
-      csmPriorityHighest: begin
-        TCore(ID).Priority := tpHighest;
-        Result := Ord(TCore(ID).Priority);
-      end;
-      csmPriorityTimeCritical: begin
-        TCore(ID).Priority := tpTimeCritical;
-        Result := Ord(TCore(ID).Priority);
-      end;
     end;
   end;
 end;

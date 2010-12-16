@@ -67,7 +67,7 @@ type
     procedure OnRequest(const aMessage: string); override;
     function  OnRename(const aItem: THeader; const aValue: string): string; override;
     procedure OnList(const aItem: THeader); override;
-    procedure OnProgress; override;
+    procedure OnTick; override;
     procedure OnClear; override;
   end;
 
@@ -103,7 +103,7 @@ type
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TCustomBeeApp.OnProgress;
+  procedure TCustomBeeApp.OnTick;
   begin
     // not convert oem to param
     Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
@@ -161,7 +161,7 @@ begin
   begin
     Params.Add(ParamStr(I));
   end;
-  App := TCustomBeeApp.Create(Params);
+  App := TCustomBeeApp.Create(Params.Text);
   App.Execute;
   begin
     ExitCode := App.Code;

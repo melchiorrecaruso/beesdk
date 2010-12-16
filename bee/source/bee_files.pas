@@ -77,7 +77,9 @@ type
     procedure FlushBuffer; override;
     procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
+    {$IFDEF FPC}  
     procedure SetSize64(const NewSize: Int64); override;
+    {$ENDIF}
   public
     constructor Create;
     destructor Destroy; override;
@@ -207,10 +209,12 @@ begin
   // nothing to do
 end;
 
+{$IFDEF FPC}  
 procedure TNulWriter.SetSize64(const NewSize: int64);
 begin
   // nothing to do
 end;
+{$ENDIF}
 
 function TNulWriter.Write(const Data; Count: longint): longint;
 begin

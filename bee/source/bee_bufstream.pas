@@ -32,10 +32,11 @@ unit Bee_BufStream;
 interface
 
 uses
-  Classes, Bee_BlowFish, bufstream;
+  Classes, Bee_BlowFish;
 
 const
   DefaultBufferCapacity: longint = 128 * 1024;
+
 
 type
   { TBufStream }
@@ -76,7 +77,9 @@ type
     procedure FlushBuffer; override;
     procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
+    {$IFDEF FPC} 
     procedure SetSize64(const NewSize: Int64); override;
+    {$ENDIF}
   public
     destructor Destroy; override;
     function Write(const Data; Count: longint): longint; override;
@@ -288,10 +291,12 @@ begin
   FSource.Size := NewSize;
 end;
 
+{$IFDEF FPC}
 procedure TWriteBufStream.SetSize64(const NewSize: int64);
 begin
   FSource.Size := NewSize;
 end;
+ {$ENDIF}
 
 { TReadBlowFishBufStream class }
 

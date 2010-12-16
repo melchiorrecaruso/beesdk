@@ -46,11 +46,12 @@ const
 
 function CoreVersion: longint; external cApplicationLib;
 function CoreCreate(P: PChar): Pointer; external cApplicationLib;
-function CoreGetBool8(ID: Pointer; MESSAGE: longint): boolean; external cApplicationLib;
-function CoreGetInt32(ID: Pointer; MESSAGE: longint): longint; external cApplicationLib;
-function CoreGetInt64(ID: Pointer; MESSAGE: longint): Int64; external cApplicationLib;
-function CoreGetPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer; external cApplicationLib;
-function CoreSetPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean; external cApplicationLib;
+function CorePriority(ID:Pointer; MESSAGE: longint): longint; external cApplicationLib;
+function CoreQueryB8(ID: Pointer; MESSAGE: longint): boolean; external cApplicationLib;
+function CoreQueryI32(ID: Pointer; MESSAGE: longint): longint; external cApplicationLib;
+function CoreQueryI64(ID: Pointer; MESSAGE: longint): Int64; external cApplicationLib;
+function CoreQueryPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer; external cApplicationLib;
+function CoreReplyPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean; external cApplicationLib;
 
 implementation
 

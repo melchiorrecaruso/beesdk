@@ -25,7 +25,7 @@
           <Version Value="9"/>
           <SearchPaths>
             <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
-            <UnitOutputDirectory Value="../temp"/>
+            <UnitOutputDirectory Value="../distribution"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -156,7 +156,6 @@
       <Unit6>
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="59"/>
@@ -179,9 +178,10 @@
       <Unit8>
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="257"/>
+        <TopLine Value="44"/>
         <CursorPos X="1" Y="182"/>
         <UsageCount Value="76"/>
         <Loaded Value="True"/>

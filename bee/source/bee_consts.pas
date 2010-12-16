@@ -55,17 +55,8 @@ const
   csmCode             = 202;
   csmSpeed            = 203;
   csmPercentage       = 204;
-  csmElapsedTime      = 205;
+  csmTime             = 205;
   csmRemainingTime    = 206;
-
-  csmPriority             = 207;
-  csmPriorityIdle         = 208;
-  csmPriorityLowest       = 209;
-  csmPriorityLower        = 210;
-  csmPriorityNormal       = 211;
-  csmPriorityHigher       = 212;
-  csmPriorityHighest      = 213;
-  csmPriorityTimeCritical = 214;
 
   csmSize             = 301;
   csmProcessedSize    = 302;
@@ -78,6 +69,15 @@ const
   csmWaitingPassword   = 503;
   csmWaitingRequest    = 504;
   csmWaitingList       = 505;
+
+  csmPriority             = 601;
+  csmPriorityIdle         = 602;
+  csmPriorityLowest       = 603;
+  csmPriorityLower        = 604;
+  csmPriorityNormal       = 605;
+  csmPriorityHigher       = 606;
+  csmPriorityHighest      = 607;
+  csmPriorityTimeCritical = 608;
 
   { CoreStatus }
 

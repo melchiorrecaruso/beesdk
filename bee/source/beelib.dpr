@@ -43,11 +43,12 @@ uses
 exports
   CoreVersion,
   CoreCreate,
-  CoreGetBool8,
-  CoreGetInt32,
-  CoreGetInt64,
-  CoreGetPointer,
-  CoreSetPointer;
+  CorePriority,
+  CoreQueryB8,
+  CoreQueryI32,
+  CoreQueryI64,
+  CoreQueryPointer,
+  CoreReplyPointer;
 
   // -------------------------------------------------------------------------- //
   //                                                                            //
