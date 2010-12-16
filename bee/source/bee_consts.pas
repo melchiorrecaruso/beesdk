@@ -73,7 +73,11 @@ const
   csmMessage          = 401;
   csmItem             = 402;
 
-  csmWaitingRename    = 501;
+  csmWaitingOverwrite  = 501;
+  csmWaitingRename     = 502;
+  csmWaitingPassword   = 503;
+  csmWaitingRequest    = 504;
+  csmWaitingList       = 505;
 
   { CoreStatus }
 

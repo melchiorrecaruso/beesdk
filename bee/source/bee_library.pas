@@ -49,11 +49,11 @@ uses
 
 function CoreVersion: longint;
 function CoreCreate(P: PChar): Pointer;
-function CoreGetBool8(ID: Pointer; MESSAGE: longint): boolean;
-function CoreGetInt32(ID: Pointer; MESSAGE: longint): longint;
-function CoreGetInt64(ID: Pointer; MESSAGE: longint): Int64;
-function CoreGetPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer;
-function CoreSetPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean;
+function CoreQueryB8(ID: Pointer; MESSAGE: longint): boolean;
+function CoreQueryI32(ID: Pointer; MESSAGE: longint): longint;
+function CoreQueryI64(ID: Pointer; MESSAGE: longint): Int64;
+function CoreQueryPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer;
+function CoreReplyPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean;
 
 implementation
 
@@ -62,15 +62,15 @@ type
 
   TCustomBeeApp = class(TBeeApp)
   private
-    FItems:    TList;
-    FMessages: TList;
     FStatus: longint;
+    FMessages: TList;
+    FItems:    TList;
   public
-    constructor Create(aParams: TStringList);
+    constructor Create(const aCommandLine: string);
     destructor Destroy; override;
     procedure OnMessage(const aMessage: string); override;
     procedure OnRequest(const aMessage: string); override;
-    function  OnRename(const aItem: THeader; const aValue: string): string; override;
+    function OnRename(const aItem: THeader; const aValue: string): string; override;
     procedure OnList(const aItem: THeader); override;
     procedure OnProgress; override;
     // procedure OnClear; override;
@@ -80,8 +80,7 @@ type
 
   TCore = class(TThread)
   private
-    FApp:  TCustomBeeApp;
-    FParams: TStringList;
+    FApp: TCustomBeeApp;
   public
     constructor Create(const aCommandLine: string);
     destructor Destroy; override;
@@ -107,20 +106,20 @@ begin
     Result^.Version    := StringToPChar(VersionToStr(aItem.Version));
 
     if foPassword in aItem.Flags then
-      Result^.Password   := StringToPChar('yes')
+      Result^.Password := StringToPChar('yes')
     else
-      Result^.Password   := StringToPChar('no');
+      Result^.Password := StringToPChar('no');
     Result^.Position   := aItem.Position;
   end;
 end;
 
 { TCoreApp class }
 
-constructor TCustomBeeApp.Create(aParams: TStringList);
+constructor TCustomBeeApp.Create(const aCommandLine: string);
 begin
-  inherited Create(aParams);
-  FMessages := TList.Create;
+  inherited Create(aCommandLine);
   FItems    := TList.Create;
+  FMessages := TList.Create;
   FStatus   := csReady;
 end;
 
@@ -149,34 +148,34 @@ var
 begin
   FItems.Add(THeaderToPFileInfo(aItem));
 
-  FStatus  := csWaitingRename;
+  FStatus := csWaitingRename;
   while FStatus = csWaitingRename do
   begin
     Sleep(250);
   end;
-  Result := PCharToString(PFileInfo(FItems.Last).Name);
+  Result := PCharToString(PFileInfo(FItems.Last)^.Name);
 end;
 
 procedure TCustomBeeApp.OnRequest(const aMessage: string);
 begin
   FMessages.Add(StringToPChar(aMessage));
 
-  FStatus  := csWaitingRequest;
+  FStatus := csWaitingRequest;
   while FStatus = csWaitingRequest do
   begin
     Sleep(250);
   end;
 end;
 
-procedure TCustomBeeApp.OnProgress;
-begin
-  // nothing to do
-end;
-
 procedure TCustomBeeApp.OnList(const aItem: THeader);
 begin
   FItems.Add(THeaderToPFileInfo(aItem));
   FMessages.Add(StringToPChar(Format(cmListing, [aItem.Name])));
+end;
+
+procedure TCustomBeeApp.OnProgress;
+begin
+  // nothing to do
 end;
 
 { TCore class }
@@ -186,15 +185,12 @@ begin
   inherited Create(True);
   FreeOnTerminate := False;
 
-  FParams := TStringList.Create;
-  FParams.Text := aCommandLine;
   {$IFDEF FPC} {$IFDEF PLUGINS}
   if SevenZipPlugin(FCommandLine.ArchiveName) then
-    FApp := TSevenZipApp.Create(FParams)
+    FApp := TSevenZipApp.Create(aCommandLine)
   else
   {$ENDIF} {$ENDIF}
-    FApp := TCustomBeeApp.Create(FParams);
-  FParams.Destroy;
+    FApp := TCustomBeeApp.Create(aCommandLine);
 end;
 
 destructor TCore.Destroy;
@@ -226,7 +222,7 @@ begin
   end;
 end;
 
-function CoreGetBool8(ID: Pointer; MESSAGE: longint): boolean;
+function CoreQueryB8(ID: Pointer; MESSAGE: longint): boolean;
 begin
   Result := Assigned(TCore(ID));
   if Result then
@@ -254,7 +250,7 @@ begin
   end;
 end;
 
-function CoreGetInt32(ID: Pointer; MESSAGE: longint): longint;
+function CoreQueryI32(ID: Pointer; MESSAGE: longint): longint;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
@@ -300,7 +296,7 @@ begin
   end;
 end;
 
-function CoreGetInt64(ID: Pointer; MESSAGE: longint): Int64;
+function CoreQueryI64(ID: Pointer; MESSAGE: longint): Int64;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
@@ -312,7 +308,7 @@ begin
   end;
 end;
 
-function CoreGetPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer;
+function CoreQueryPointer(ID: Pointer; MESSAGE, INDEX: longint): Pointer;
 begin
   Result := nil;
   if Assigned(TCore(ID)) then
@@ -336,7 +332,7 @@ begin
   end;
 end;
 
-function CoreSetPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean;
+function CoreReplyPointer(ID: Pointer; MESSAGE: longint; P: Pointer): boolean;
 begin
   Result := Assigned(TCore(ID));
   if Result then
