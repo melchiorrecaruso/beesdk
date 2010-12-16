@@ -272,10 +272,10 @@ begin
 
   if CoreQueryI32(FID, csmStatus) <> csTerminated then
   begin
-    if Popup_Idle.Checked         then CoreQueryI32(FID, csmPriorityIdle);
-    if Popup_Normal.Checked       then CoreQueryI32(FID, csmPriorityNormal);
-    if Popup_Higher.Checked       then CoreQueryI32(FID, csmPriorityHigher);
-    if Popup_TimeCritical.Checked then CoreQueryI32(FID, csmPriorityTimeCritical);
+    if Popup_Idle.Checked         then CorePriority(FID, csmPriorityIdle);
+    if Popup_Normal.Checked       then CorePriority(FID, csmPriorityNormal);
+    if Popup_Higher.Checked       then CorePriority(FID, csmPriorityHigher);
+    if Popup_TimeCritical.Checked then CorePriority(FID, csmPriorityTimeCritical);
   end;
 end;
 
@@ -368,7 +368,7 @@ begin
       ProcessedSizeUnit.Caption := 'MB';
     end;
 
-  Tick.Position := CoreQueryI64(FID, csmPercentage);
+  Tick.Position := CoreQueryI32(FID, csmPercentage);
   if FSuspended = False then
     Caption := Format(rsProcessStatus, [Tick.Position])
   else
@@ -379,7 +379,7 @@ begin
     Application.Title := Caption;
   end;
 
-  Time.Caption          := TimeToStr(CoreQueryI32(FID, csmElapsedTime));
+  Time.Caption          := TimeToStr(CoreQueryI32(FID, csmTime));
   RemainingTime.Caption := TimeToStr(CoreQueryI32(FID, csmRemainingTime));
   Speed.Caption         := IntToStr (CoreQueryI32(FID, csmSpeed) shr 10);
 
@@ -530,7 +530,7 @@ var
   X, Y: integer;
   FValue: integer;
 begin
-  FValue := CoreQueryI32(FID, csmPriority);
+  FValue := CorePriority(FID, csmPriority);
   if FValue <> -1 then
   begin
     Popup_Idle.Checked         := FValue = Ord(tpIdle);

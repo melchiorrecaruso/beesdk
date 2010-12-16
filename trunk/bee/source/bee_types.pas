@@ -135,6 +135,7 @@ end;
 procedure FreePFileInfo(P: Pointer);
 begin
   if P <> nil then
+  begin
     with TFileInfo(P^) do
     begin
       if Name     <> nil then StrDispose(Name);
@@ -143,6 +144,8 @@ begin
       if Version  <> nil then StrDispose(Version);
       if Password <> nil then StrDispose(Password);
     end;
+    FreeMem(P);
+  end;
 end;
 
 end.
