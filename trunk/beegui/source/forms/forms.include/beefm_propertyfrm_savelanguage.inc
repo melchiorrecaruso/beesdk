@@ -10,9 +10,6 @@
       Storage := TMemIniFile.Create(Folder + ('propertyfrm.ini'));
       begin
         Storage.WriteString('TForm', 'Caption', Caption);
-
-        Storage.WriteString('TTabSheet', 'APage.Caption', APage.Caption);
-        Storage.WriteString('TTabSheet', 'FPage.Caption', FPage.Caption);
       
         Storage.WriteString('TLabel', 'AName.Caption',     AName.Caption);
         Storage.WriteString('TLabel', 'AVersion.Caption',  AVersion.Caption);

@@ -41,7 +41,7 @@ uses
   ComCtrls,
   SysUtils,
   IniFiles,
-  LResources,
+  LResources, Spin,
   // ---
   BeeGui_SysUtils,
   BeeGui_ArchiveListViewMgr;
@@ -50,82 +50,82 @@ type
   { TInfoFrm }
 
   TInfoFrm = class(TForm)
-    Pages:   TPageControl;
-    APanel:  TPanel;
-    FPanel:  TPanel;
-    APage:   TTabSheet;
-    FPage:   TTabSheet;
-    AArcSizeValue: TLabel;
     AArcSize: TLabel;
-    AED:     TImage;
-    AFD:     TImage;
-    AE:      TImage;
-    AFilesValue: TLabel;
-    AFilesCryptedValue: TLabel;
+    AArcSizeValue: TLabel;
     ACrypted: TLabel;
-    AFiles:  TLabel;
-    AF:      TImage;
-    AL:      TImage;
-    AModifiedValue: TLabel;
+    F: TImage;
+    AFiles: TLabel;
+    AFilesCryptedValue: TLabel;
+    AFilesValue: TLabel;
     AModified: TLabel;
+    AModifiedValue: TLabel;
+    AName: TLabel;
     ANameValue: TLabel;
-    AName:   TLabel;
-    APackedValue: TLabel;
     APacked: TLabel;
-    AR:      TLabel;
+    APackedValue: TLabel;
+    R: TLabel;
+    AR1: TLabel;
+    AR2: TLabel;
+    ARatio: TLabel;
     ARatioValue: TLabel;
-    ARatio:  TLabel;
+    ASize: TLabel;
     ASizeValue: TLabel;
-    ASize:   TLabel;
-    AEU:     TImage;
-    AFU:     TImage;
-    AVersionValue: TLabel;
     AVersion: TLabel;
+    AVersionValue: TLabel;
     Bevel01: TBevel;
     Bevel02: TBevel;
-    Bevel04: TBevel;
     Bevel03: TBevel;
-    FAttributeValue: TLabel;
+    Bevel04: TBevel;
+    E: TImage;
+    E1: TImage;
+    ED: TImage;
+    EMPTYPanel: TPanel;
+    EU: TImage;
+    EU1: TImage;
+    F1: TImage;
     FAttribute: TLabel;
-    FModifiedValue: TLabel;
-    FModified: TLabel;
-    FED:     TImage;
-    FFD:     TImage;
-    FE:      TImage;
-    FF:      TImage;
-    FL:      TImage;
-    FMethodValue: TLabel;
+    FAttributeValue: TLabel;
+    FD: TImage;
+    FD1: TImage;
     FMethod: TLabel;
+    FMethodValue: TLabel;
+    FModified: TLabel;
+    FModifiedValue: TLabel;
+    FName: TLabel;
     FNameValue: TLabel;
-    FName:   TLabel;
-    FPackedValue: TLabel;
     FPacked: TLabel;
-    FPasswordValue: TLabel;
+    FPackedValue: TLabel;
     FPassword: TLabel;
-    FR:      TLabel;
+    FPasswordValue: TLabel;
+    FRatio: TLabel;
     FRatioValue: TLabel;
-    FRatio:  TLabel;
+    FSize: TLabel;
     FSizeValue: TLabel;
-    FSize:   TLabel;
-    FEU:     TImage;
-    FFU:     TImage;
-    FVersionValue: TLabel;
+    FU: TImage;
+    FULLPanel: TPanel;
     FVersion: TLabel;
+    FVersionValue: TLabel;
+    L: TImage;
+    MIDDLEPanel: TPanel;
     BtnOk:   TBitBtn;
+    ArchivePanel: TPanel;
+    FilePanel: TPanel;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure FormPaint(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     { private declarations }
-    procedure PaintProgressBar(EU, FU, E, L, F, FD, ED: TImage; R: TLabel);
+    FPercentage: longint;
+    procedure SetPercentage(Value: longint);
   public
     { public declarations }
-  public
-    { public declarations }
+    procedure UpdateProgressBar;
     procedure SaveProperty;
     procedure LoadProperty;
     procedure SaveLanguage;
     procedure LoadLanguage;
+  public
+    property Percentage: longint read FPercentage write SetPercentage;
   end;
 
 var
@@ -138,89 +138,39 @@ uses
   BeeGui_Messages,
   BeeFM_ConfigFrm;
 
-procedure TInfoFrm.PaintProgressBar(EU, FU, E, L, F, FD, ED: TImage; R: TLabel);
-var
-  S: string;
-  Percentage: integer;
+
+procedure TInfoFrm.SetPercentage(Value: longint);
 begin
-  S := R.Caption;
-  while Pos('%', S) > 0 do
+  if Value in [0..100] then
   begin
-    Delete(S, Pos('%', S), 1);
+    FPercentage := Value;
   end;
-  TryStrToInt(S, PErcentage);
+end;
 
-  EU.Transparent := True;
-  EU.Visible := False;
-  FU.Transparent := True;
-  FU.Visible := False;
-  FU.Left    := EU.Left;
-  E.Transparent := True;
-  E.Visible  := False;
-  E.Left     := EU.Left;
-  L.Transparent := True;
-  L.Visible  := False;
-  L.Left     := EU.Left;
-  F.Transparent := True;
-  F.Visible  := False;
-  F.Left     := EU.Left;
-  FD.Transparent := True;
-  FD.Visible := False;
-  FD.Left    := EU.Left;
-  ED.Transparent := True;
-  ED.Visible := False;
-  ED.Left    := EU.Left;
+procedure TInfoFrm.UpdateProgressBar;
+var
+  Min, Max: longint;
+begin
+  EMPTYPanel .Visible := False;
+  MIDDLEPanel.Visible := False;
+  FULLPanel  .Visible := False;
 
-  FU.Top := EU.Top;
-  FD.Top := ED.Top + ED.Height - FD.Height;
+  R .Caption  := IntToStr(FPercentage) + '%';
+  AR1.Caption := IntToStr(FPercentage) + '%';
+  AR2.Caption := IntToStr(FPercentage) + '%';
 
-  R.Caption := IntToStr(Percentage) + '%';
-  if Percentage > 100 then
-    Percentage := 100;
-
-  case Percentage of
-    0..6:
+  case FPercentage of
+    0: EMPTYPanel.Visible := True;
+    1..99:
     begin
-      E.Top    := EU.Top + EU.Height;
-      E.Height := ED.Top - E.Top;
+      Min := MIDDLEPanel.Height - L.Height - FD.Height;
+      Max := EU.Height;
 
-      EU.Visible := True;
-      E .Visible := True;
-      ED.Visible := True;
+      L.Top := Min + Trunc((Max - Min) * FPercentage / 100);
 
-      R.Top := ED.Top - 3;
+      MIDDLEPanel.Visible := True;
     end;
-    7..99:
-    begin
-      case Percentage of
-        97..99: Percentage := 96;
-      end;
-      F.Height := 1 + (FD.Top - EU.Top - EU.Height - L.Height - 1) * (Percentage - 7) div (96 - 7);
-
-      F.Top    := FD.Top - F.Height;
-      L.Top    := F.Top  - L.Height;
-      E.Top    := EU.Top + EU.Height;
-      E.Height := L.Top  - E.Top;
-
-      EU.Visible := True;
-      E.Visible  := True;
-      L.Visible  := True;
-      F.Visible  := True;
-      FD.Visible := True;
-
-      R.Top := L.Top;
-    end;
-    100:
-    begin
-      F.Top    := FU.Top + FU.Height;
-      F.Height := FD.Top - F.Top;
-
-      FU.Visible := True;
-      F .Visible := True;
-      FD.Visible := True;
-
-      R.Top := FU.Top;
-    end;
+    100: FULLPanel  .Visible := True;
   end;
 end;
 
@@ -231,26 +181,22 @@ end;
   {$I beefm_propertyfrm_savelanguage.inc}
   {$I beefm_propertyfrm_loadlanguage.inc}
 
-procedure TInfoFrm.FormPaint(Sender: TObject);
-begin
-  if APage.TabVisible then
-    PaintProgressBar(AEU, AFU, AE, AL, AF, AFD, AED, AR);
-
-  if FPage.TabVisible then
-    PaintProgressBar(FEU, FFU, FE, FL, FF, FFD, FED, FR);
-end;
-
 procedure TInfoFrm.FormCreate(Sender: TObject);
 begin
   LoadLanguage;
   LoadProperty;
 end;
 
+procedure TInfoFrm.FormResize(Sender: TObject);
+begin
+  UpdateProgressBar;
+end;
+
 procedure TInfoFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-    {$IFDEF SAVELANGUAGE}
+  {$IFDEF SAVELANGUAGE}
   SaveLanguage;
-    {$ENDIF}
+  {$ENDIF}
   SaveProperty;
 end;
 

@@ -3312,11 +3312,10 @@ object MainFrm: TMainFrm
     end
     object BevelFour: TBevel
       AnchorSideLeft.Control = BtnUp
-      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = FolderBox
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
-      Left = 127
+      Left = 5
       Height = 22
       Top = 2
       Width = 2
@@ -3329,11 +3328,10 @@ object MainFrm: TMainFrm
     end
     object FolderBoxLabel: TLabel
       AnchorSideLeft.Control = BtnUp
-      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = FolderBox
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
-      Left = 135
+      Left = 13
       Height = 22
       Top = 2
       Width = 45
@@ -3349,14 +3347,13 @@ object MainFrm: TMainFrm
     end
     object FolderBox: TArchiveFolderBox
       AnchorSideLeft.Control = FolderBoxLabel
-      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = AddressToolBar
       AnchorSideRight.Control = AddressToolBar
       AnchorSideRight.Side = asrBottom
-      Left = 185
+      Left = 18
       Height = 22
       Top = 2
-      Width = 693
+      Width = 860
       Align = alCustom
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 5
