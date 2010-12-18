@@ -933,16 +933,16 @@ begin
         Ratio := 0;
     end;
 
-    PropertyFrm.AR.Caption := IntToStr(Ratio) + '%';
-    PropertyFrm.ARatioValue.Caption := IntToStr(Ratio) + '%';
+    PropertyFrm.Percentage := Ratio;
+    PropertyFrm.ARatioValue       .Caption := IntToStr(Ratio) + '%';
     PropertyFrm.AFilesCryptedValue.Caption := IntToStr(ListView.Details.FilesCrypted);
-    PropertyFrm.AArcSizeValue.Caption := SizeToStr(SizeOfFile(FArchiveName));
-    PropertyFrm.AModifiedValue.Caption := DateTimeToStr(FileDateToDateTime(FileAge(FArchiveName)));
+    PropertyFrm.AArcSizeValue     .Caption := SizeToStr(SizeOfFile(FArchiveName));
+    PropertyFrm.AModifiedValue    .Caption := DateTimeToStr(FileDateToDateTime(FileAge(FArchiveName)));
 
-    PropertyFrm.Pages.ActivePage := PropertyFrm.APage;
-    PropertyFrm.FPage.TabVisible := False;
-    PropertyFrm.APage.TabVisible := True;
+    PropertyFrm.ArchivePanel.Visible := True;
+    PropertyFrm.FilePanel   .Visible := False;
 
+    PropertyFrm.UpdateProgressBar;
     PropertyFrm.ShowModal;
   finally
     FreeAndNil(PropertyFrm);
@@ -1605,6 +1605,9 @@ end;
  // ---------------------------------------------------------------------- //
 
 procedure TMainFrm.PMenuPropertyClick(Sender: TObject);
+var
+  S: string;
+  R: longint;
 begin
   with ListView do
     if SelCount = 1 then
@@ -1615,21 +1618,30 @@ begin
         try
           PropertyFrm.Caption := rsFileProperty;
 
-          PropertyFrm.FNameValue.Caption    := Selected.Caption;
+          PropertyFrm.FNameValue   .Caption := Selected.Caption;
           PropertyFrm.FVersionValue.Caption := FloatToStr(Details.Version);
 
-          PropertyFrm.FSizeValue.Caption := Selected.SubItems[0];
+          PropertyFrm.FSizeValue  .Caption := Selected.SubItems[0];
           PropertyFrm.FPackedValue.Caption := Selected.SubItems[1];
-          PropertyFrm.FRatioValue.Caption := Selected.SubItems[2];
-          PropertyFrm.FR.Caption := Selected.SubItems[2];
-          PropertyFrm.FAttributeValue.Caption := Selected.SubItems[5];
-          PropertyFrm.FPasswordValue.Caption := Selected.SubItems[7];
-          PropertyFrm.FMethodValue.Caption := Selected.SubItems[6];
-          PropertyFrm.FModifiedValue.Caption := Selected.SubItems[4];
+          PropertyFrm.FRatioValue .Caption := Selected.SubItems[2];
 
-          PropertyFrm.Pages.ActivePage := PropertyFrm.FPage;
-          PropertyFrm.APage.TabVisible := False;
-          PropertyFrm.FPage.TabVisible := True;
+          S := Selected.SubItems[2];
+          while Pos('%', S) > 0 do
+            Delete(S, Pos('%', S), 1);
+
+          if TryStrToInt(S, R) then
+          begin
+            PropertyFrm.Percentage := R;
+          end else
+            PropertyFrm.Percentage := 0;
+
+          PropertyFrm.FAttributeValue.Caption := Selected.SubItems[5];
+          PropertyFrm.FPasswordValue .Caption := Selected.SubItems[7];
+          PropertyFrm.FMethodValue   .Caption := Selected.SubItems[6];
+          PropertyFrm.FModifiedValue .Caption := Selected.SubItems[4];
+
+          PropertyFrm.ArchivePanel.Visible := False;
+          PropertyFrm.FilePanel   .Visible := True;
 
           PropertyFrm.ShowModal;
         finally

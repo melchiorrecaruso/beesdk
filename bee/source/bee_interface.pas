@@ -67,6 +67,7 @@ type
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
     procedure DoRequest(const aMessage: string);
     function DoRename(const aItem: THeader; const aValue: string): string;
+    function DoOverWrite(const aItem: THeader; const aValue: string): string;
     procedure DoList(const aItem: THeader);
     function DoTick: boolean;
     {$IFDEF CONSOLEAPPLICATION}
@@ -81,6 +82,7 @@ type
     procedure OnMessage(const aMessage: string); virtual; abstract;
     procedure OnRequest(const aMessage: string); virtual; abstract;
     function  OnRename(const aItem: THeader; const aValue: string): string; virtual; abstract;
+    function  OnOverWrite(const aItem: THeader; const aValue: string): string; virtual; abstract;
     procedure OnList(const aItem: THeader); virtual; abstract;
     procedure OnTick; virtual; abstract;
     {$IFDEF CONSOLEAPPLICATION}
@@ -252,6 +254,15 @@ var
 begin
   X := Now;
   Result := OnRename(aItem, aValue);
+  FStartTime := FStartTime + (Now - X);
+end;
+
+function TApp.DoOverWrite(const aItem: THeader; const aValue: string): string;
+var
+  X: double;
+begin
+  X := Now;
+  Result := OnOverWrite(aItem, aValue);
   FStartTime := FStartTime + (Now - X);
 end;
 

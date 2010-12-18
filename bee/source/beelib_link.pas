@@ -51,7 +51,7 @@ function CoreQueryB8(ID: Pointer; VALUE: longint): boolean; external cApplicatio
 function CoreQueryI32(ID: Pointer; VALUE: longint): longint; external cApplicationLib;
 function CoreQueryI64(ID: Pointer; VALUE: longint): Int64; external cApplicationLib;
 function CoreQueryPointer(ID: Pointer; VALUE, INDEX: longint): Pointer; external cApplicationLib;
-function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean; external cApplicationLib;
+function CoreSendPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean; external cApplicationLib;
 
 implementation
 

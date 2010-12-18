@@ -65,6 +65,14 @@ type
   TUpdateMode = (umAdd, umUpdate, umReplace,
     umAddUpdate, umAddReplace, umAddAutoRename);
 
+  { Update Mode Option:                                   }
+
+  TOverWriteMode = (omSkip, omSkipAll, omOverWrite, omOverWriteAll);
+
+
+
+
+
   { Compression Method Option:                            }
   {   moStore                                             }
   {   moFast                                              }
