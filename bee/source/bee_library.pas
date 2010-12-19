@@ -34,9 +34,11 @@ interface
 uses
   Classes,
   SysUtils,
-  {$IFDEF FPC} {$IFDEF PLUGINS}
+  {$IFDEF FPC}
+  {$IFDEF PLUGINS}
   BeeLib_Plugins,
-  {$ENDIF} {$ENDIF}
+  {$ENDIF}
+  {$ENDIF}
   Bee_App,
   Bee_Types,
   Bee_Consts,

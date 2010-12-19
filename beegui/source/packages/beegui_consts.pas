@@ -33,22 +33,22 @@ uses
   SysUtils;
 
 const
-  cApplicationVersion   = 'BeeGui 1.0.6 [build 1003]';
-  cApplicationCopyright = '(C) 2003-2009 Andrew Filinsky and Melchiorre Caruso';
+  cApplicationVersion          = 'BeeGui 1.0.6 [build 1003]';
+  cApplicationCopyright        = '(C) 2003-2010 Andrew Filinsky and Melchiorre Caruso';
 
-  cApplicationName    = 'BeeGui';
-  cApplicationTitle   = 'Bee Archive Manager';
-  cApplicationCaption = 'Bee Archive Manager';
+  cApplicationName             = 'BeeGui';
+  cApplicationTitle            = 'Bee Archive Manager';
+  cApplicationCaption          = 'Bee Archive Manager';
 
-  cApplicationViewerName    = 'BeeViewer';
-  cApplicationViewerTitle   = 'Bee File Viewer';
-  cApplicationViewerCaption = 'Bee File Viewer';
+  cApplicationViewerName       = 'BeeViewer';
+  cApplicationViewerTitle      = 'Bee File Viewer';
+  cApplicationViewerCaption    = 'Bee File Viewer';
 
-  cApplicationHomePage = 'http://www.beegui.org';
+  cApplicationHomePage         = 'http://www.beegui.org';
 
-  cApplicationLicenseFile = 'license.htm';
-  cApplicationHelpFile    = 'help.htm';
-  cApplicationDocsFolder  = 'docs';
+  cApplicationLicenseFile      = 'license.htm';
+  cApplicationHelpFile         = 'help.htm';
+  cApplicationDocsFolder       = 'docs';
 
   cApplicationPluginsFolder    = 'plug-ins';
   cApplicationLanguagesFolder  = 'languages';

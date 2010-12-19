@@ -41,7 +41,7 @@ uses
   ComCtrls,
   SysUtils,
   IniFiles,
-  LResources, Spin,
+  LResources,
   // ---
   BeeGui_SysUtils,
   BeeGui_ArchiveListViewMgr;
@@ -64,8 +64,8 @@ type
     APacked: TLabel;
     APackedValue: TLabel;
     R: TLabel;
-    AR1: TLabel;
-    AR2: TLabel;
+    R1: TLabel;
+    R2: TLabel;
     ARatio: TLabel;
     ARatioValue: TLabel;
     ASize: TLabel;
@@ -141,7 +141,7 @@ uses
 
 procedure TInfoFrm.SetPercentage(Value: longint);
 begin
-  if Value in [0..100] then
+  if Value in [0.. 100] then
   begin
     FPercentage := Value;
   end;
@@ -155,9 +155,9 @@ begin
   MIDDLEPanel.Visible := False;
   FULLPanel  .Visible := False;
 
-  R .Caption  := IntToStr(FPercentage) + '%';
-  AR1.Caption := IntToStr(FPercentage) + '%';
-  AR2.Caption := IntToStr(FPercentage) + '%';
+  R .Caption := IntToStr(FPercentage) + '%';
+  R1.Caption := IntToStr(FPercentage) + '%';
+  R2.Caption := IntToStr(FPercentage) + '%';
 
   case FPercentage of
     0: EMPTYPanel.Visible := True;
@@ -170,7 +170,7 @@ begin
 
       MIDDLEPanel.Visible := True;
     end;
-    100: FULLPanel  .Visible := True;
+    100: FULLPanel.Visible := True;
   end;
 end;
 

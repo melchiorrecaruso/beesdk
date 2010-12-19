@@ -5209,7 +5209,7 @@ object InfoFrm: TInfoFrm
       }
       Transparent = True
     end
-    object AR2: TLabel
+    object R2: TLabel
       AnchorSideLeft.Control = FU
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = FU
@@ -9748,7 +9748,7 @@ object InfoFrm: TInfoFrm
       }
       Transparent = True
     end
-    object AR1: TLabel
+    object R1: TLabel
       AnchorSideLeft.Control = ED
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = ED

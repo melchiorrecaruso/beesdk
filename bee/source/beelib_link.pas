@@ -31,17 +31,12 @@ unit BeeLib_Link;
 
 interface
 
-uses
-  Classes,
-  Bee_Consts,
-  Bee_Types;
-
 const
   {$IFDEF MSWINDOWS}
-  cApplicationLib = 'beelib.dll';
+    cApplicationLib = 'beelib.dll';
   {$ENDIF}
   {$IFDEF UNIX}
-  cApplicationLib = 'beelib.so';
+    cApplicationLib = 'beelib.so';
   {$ENDIF}
 
 function CoreVersion: longint; external cApplicationLib;
