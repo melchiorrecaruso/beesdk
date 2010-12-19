@@ -41,7 +41,6 @@ uses
   Dialogs,
   SysUtils,
   Interfaces,
-  LResources,
   // --- //
   Bee_Types,
   // --- //
@@ -61,8 +60,9 @@ var
   TickFrm:     TTickFrm;
   CommandLine: TCustomCommandLine;
 
+{$R *.res}
+
 begin
-  {$I beegui.lrs}
   Application.Initialize;
   Application.HelpFile := '';
 
