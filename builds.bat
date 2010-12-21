@@ -1,7 +1,7 @@
 @echo Off
 
 @echo @ 
-@echo @ Compile BeeGui...
+@echo @ Compile BeeGui..
 @echo @
 
 cd beegui\source
