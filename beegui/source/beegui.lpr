@@ -29,10 +29,6 @@ program BeeGui;
 
 {$I compiler.inc}
 
-{$IFDEF WINDOWS}
-{$R beegui.rc}
-{$ENDIF}
-
 uses
   {$IFDEF UNIX}
   cThreads,
