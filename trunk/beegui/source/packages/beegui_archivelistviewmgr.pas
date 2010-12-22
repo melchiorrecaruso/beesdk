@@ -781,7 +781,7 @@ begin
   for I := 0 to FFiles.Count - 1 do
   begin
     D := ExcludeTrailingBackslash(TArchiveItem(FFiles.Items[I]).FilePath);
-    while (Length(D) > 0) do
+    while Length(D) > 0 do
     begin
       if FFolders.IndexOf(ExtractFilePath(D), ExtractFileName(D)) = -1 then
       begin
