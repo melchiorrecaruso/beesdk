@@ -12,11 +12,10 @@
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
-      <UseVersionInfo Value="True"/>
       <MinorVersionNr Value="8"/>
-      <BuildNr Value="1247"/>
+      <BuildNr Value="1255"/>
       <Language Value="0809"/>
-      <StringTable CompanyName="Melchiorre Caruso" FileDescription="Bee Archiver" ProductName="Bee Archiver" ProductVersion="0.7.8"/>
+      <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2" Active="release">
       <Item1 Name="default" Default="True"/>
@@ -109,9 +108,10 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="999"/>
+        <TopLine Value="111"/>
         <CursorPos X="41" Y="124"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="1">
@@ -178,7 +178,6 @@
       <Unit8>
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="44"/>
