@@ -152,8 +152,6 @@ var
   end;
   {$ENDIF}
 
-{$R *.res}
-
 begin
   SetCtrlCHandler(@CtrlHandler);
   Params := TStringList.Create;
