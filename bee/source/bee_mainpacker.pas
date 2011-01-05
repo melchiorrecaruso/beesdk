@@ -382,6 +382,8 @@ begin
 
   if Item.PackedSize > Item.Size then
   begin
+    InitializeCoder(Item);
+
     FStream.Size := Item.StartPos;
 
     Include(Item.Flags, foMoved);
@@ -406,10 +408,10 @@ begin
     Item.Size := EncodeFrom(Item.ExtName, Item.Crc);
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 
-  (*
-
   if Item.PackedSize > Item.Size then
   begin
+    InitializeCoder(Item);
+
     FStream.Size := Item.StartPos;
 
     Include(Item.Flags, foMoved);
@@ -421,9 +423,6 @@ begin
     FTick           := Assigned(FTicker);
   end;
 
-  Writeln('PACKEDSZE: ', Item.PackedSize);
-
-  *)
   Result :=  Item.Size <> -1;
 end;
 
