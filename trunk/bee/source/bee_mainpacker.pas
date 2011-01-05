@@ -393,6 +393,7 @@ begin
 
     Item.PackedSize := Item.Size;
   end;
+
   Result := Item.Size <> -1;
 end;
 
@@ -405,6 +406,8 @@ begin
     Item.Size := EncodeFrom(Item.ExtName, Item.Crc);
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 
+  (*
+
   if Item.PackedSize > Item.Size then
   begin
     FStream.Size := Item.StartPos;
@@ -412,12 +415,15 @@ begin
     Include(Item.Flags, foMoved);
     Include(Item.Flags, foTear);
 
-    FTick     := False;
-    Item.Size := CopyFrom(Item.ExtName, Item.Crc);
-    FTick     := Assigned(FTicker);
-
+    FTick           := False;
+    Item.Size       := CopyFrom(Item.ExtName, Item.Crc);
     Item.PackedSize := Item.Size;
+    FTick           := Assigned(FTicker);
   end;
+
+  Writeln('PACKEDSZE: ', Item.PackedSize);
+
+  *)
   Result :=  Item.Size <> -1;
 end;
 
