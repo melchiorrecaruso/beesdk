@@ -105,11 +105,12 @@ type
   { THeaderStreamEncoder class }
 
   THeaderStreamEncoder = class(TFileStreamEncoder)
+  private
+    procedure InitializeCoder(Item: THeader);
   public
     function CopyFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
     function EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
     function EncodeFrom(Item: THeader): boolean; overload;
-    procedure InitializeCoder(Item: THeader);
   end;
 
   { THeaderStreamDecoder class }
@@ -382,25 +383,22 @@ begin
 
   if Item.PackedSize > Item.Size then
   begin
-    InitializeCoder(Item);
-
     FStream.Size := Item.StartPos;
-
     Include(Item.Flags, foMoved);
     Include(Item.Flags, foTear);
+    InitializeCoder(Item);
 
-    FTick     := False;
+    FTick := False;
     Item.Size := CopyFrom(Strm, Size, Item.Crc);
-    FTick     := Assigned(FTicker);
-
     Item.PackedSize := Item.Size;
+    FTick := Assigned(FTicker);
   end;
-
   Result := Item.Size <> -1;
 end;
 
 function THeaderStreamEncoder.EncodeFrom(Item: THeader): boolean;
 begin
+  InitializeCoder(Item);
   Item.StartPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
     Item.Size := CopyFrom(Item.ExtName, Item.Crc)
@@ -408,22 +406,20 @@ begin
     Item.Size := EncodeFrom(Item.ExtName, Item.Crc);
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 
+  // optimize compression ...
   if Item.PackedSize > Item.Size then
   begin
-    InitializeCoder(Item);
-
     FStream.Size := Item.StartPos;
-
     Include(Item.Flags, foMoved);
     Include(Item.Flags, foTear);
+    InitializeCoder(Item);
 
-    FTick           := False;
-    Item.Size       := CopyFrom(Item.ExtName, Item.Crc);
+    FTick := False;
+    Item.Size := CopyFrom(Item.ExtName, Item.Crc);
     Item.PackedSize := Item.Size;
-    FTick           := Assigned(FTicker);
+    FTick := Assigned(FTicker);
   end;
-
-  Result :=  Item.Size <> -1;
+  Result := Item.Size <> -1;
 end;
 
 procedure THeaderStreamEncoder.InitializeCoder(Item: THeader);
