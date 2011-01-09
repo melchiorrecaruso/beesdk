@@ -170,7 +170,7 @@
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="394"/>
-        <CursorPos X="10" Y="417"/>
+        <CursorPos X="20" Y="417"/>
         <UsageCount Value="85"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -187,7 +187,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="bee.dpr"/>
         <Caret Line="68" Column="44" TopLine="44"/>
@@ -298,16 +298,12 @@
       </Position27>
       <Position28>
         <Filename Value="bee_headers.pas"/>
-        <Caret Line="333" Column="31" TopLine="842"/>
+        <Caret Line="754" Column="32" TopLine="727"/>
       </Position28>
       <Position29>
         <Filename Value="bee_headers.pas"/>
-        <Caret Line="754" Column="32" TopLine="727"/>
-      </Position29>
-      <Position30>
-        <Filename Value="bee_headers.pas"/>
         <Caret Line="755" Column="27" TopLine="735"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
