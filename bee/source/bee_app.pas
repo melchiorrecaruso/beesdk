@@ -714,7 +714,7 @@ begin
           if Code < ccError then
           begin
             P := FHeaders.Items[I];
-            // Encoder.InitializeCoder(P);
+            Encoder.InitializeCoder(P);
 
             if foPassword in P.Flags then
             begin
@@ -876,7 +876,7 @@ begin
           if Code < ccError then
           begin
             P := FHeaders.Items[I];
-            // Encoder.InitializeCoder(P);
+            Encoder.InitializeCoder(P);
 
             if foPassword in P.Flags then
             begin
