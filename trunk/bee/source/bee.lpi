@@ -110,8 +110,8 @@
         <UnitName Value="Bee_App"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="693"/>
-        <CursorPos X="21" Y="717"/>
+        <TopLine Value="104"/>
+        <CursorPos X="41" Y="124"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="1">
           <Item0 X="13" Y="871" ID="0"/>
@@ -169,8 +169,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="88"/>
-        <CursorPos X="5" Y="112"/>
+        <TopLine Value="358"/>
+        <CursorPos X="30" Y="391"/>
         <UsageCount Value="85"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
