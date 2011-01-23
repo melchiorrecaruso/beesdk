@@ -40,85 +40,83 @@ uses
 
 type
 
-  TTickerMethod = function: boolean of object;
+  TProgressEvent = function: boolean of object;
 
-  { TStreamCoder class }
+  { TStreamEncoder class }
 
-  TStreamCoder = class
+  TStreamEncoder = class
   protected
     FStream: TStream;
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
+    FOnProgress: TProgressEvent;
   public
-    constructor Create(Stream: TStream; Decoder: boolean);
+    constructor Create(Stream: TStream);
     destructor Destroy; override;
     procedure SetTable(const Value: TTableParameters);
     procedure SetDictionary(Value: byte);
     procedure FreshFlexible;
     procedure FreshSolid;
-  end;
-
-  { TStreamEncoder class }
-
-  TStreamEncoder = class(TStreamCoder)
-  private
-    FTicker: TTickerMethod;
-    FTick: boolean;
-  public
-    constructor Create(Stream: TStream; Ticker: TTickerMethod);
-    destructor Destroy; override;
-    function CopyFrom(Strm: TStream; const Size: int64): int64; overload; virtual;
-    function CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual;
-    function EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    function Copy(Strm: TStream; const Size: int64): int64; overload; virtual;
+    function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual;
+    function Encode(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    property OnProgress: TProgressEvent read FOnProgress write FOnProgress;
   end;
 
   { TStreamDecoder class }
 
-  TStreamDecoder = class(TStreamCoder)
-  private
-    FTicker: TTickerMethod;
-    FTick: boolean;
+  TStreamDecoder = class
+  protected
+    FStream: TStream;
+    FPPM: TBaseCoder;
+    FSecondaryCodec: TSecondaryCodec;
+    FOnProgress: TProgressEvent;
   public
-    constructor Create(Stream: TStream; Ticker: TTickerMethod);
+    constructor Create(Stream: TStream);
     destructor Destroy; override;
-    function CopyTo(Strm: TStream; const Size: int64): int64; overload; virtual;
-    function CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual;
-    function DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    procedure SetTable(const Value: TTableParameters);
+    procedure SetDictionary(Value: byte);
+    procedure FreshFlexible;
+    procedure FreshSolid;
+    function Copy(Strm: TStream; const Size: int64): int64; overload; virtual;
+    function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual;
+    function Decode(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
+    property OnProgress: TProgressEvent read FOnProgress write FOnProgress;
   end;
 
   { TFileStreamEncoder class }
 
   TFileStreamEncoder = class(TStreamEncoder)
   public
-    function CopyFrom(const FileName: string; var CRC: longword): int64; overload;
-    function EncodeFrom(const FileName: string; var CRC: longword): int64; overload;
+    function Copy(const FileName: string; var CRC: longword): int64; overload;
+    function Encode(const FileName: string; var CRC: longword): int64; overload;
   end;
 
   { TFileStreamDecoder class }
 
   TFileStreamDecoder = class(TStreamDecoder)
   public
-    function CopyTo(const FileName: string; const Size: int64; var CRC: longword): int64; overload;
-    function DecodeTo(const FileName: string; const Size: int64; var CRC: longword): int64; overload;
+    function Copy(const FileName: string; const Size: int64; var CRC: longword): int64; overload;
+    function Decode(const FileName: string; const Size: int64; var CRC: longword): int64; overload;
   end;
 
-  { THeaderStreamEncoder class }
+  { THeaderEncoder class }
 
-  THeaderStreamEncoder = class(TFileStreamEncoder)
+  THeaderEncoder = class(TFileStreamEncoder)
   public
-    function CopyFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
-    function EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
-    function EncodeFrom(Item: THeader): boolean; overload;
-    procedure InitializeCoder(Item: THeader);
+    function Copy(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
+    function Encode(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
+    function Encode(Item: THeader): boolean; overload;
+    procedure InitCoder(Item: THeader);
   end;
 
-  { THeaderStreamDecoder class }
+  { THeaderDecoder class }
 
-  THeaderStreamDecoder = class(TFileStreamDecoder)
+  THeaderDecoder = class(TFileStreamDecoder)
   public
-    function DecodeTo(Item: THeader): boolean; overload;
-    function DecodeToNul(Item: THeader): boolean;
-    procedure InitializeCoder(Item: THeader);
+    function Decode(Item: THeader): boolean; overload;
+    function Test(Item: THeader): boolean;
+    procedure InitCoder(Item: THeader);
   end;
 
 implementation
@@ -128,75 +126,60 @@ uses
   Bee_Files,
   Bee_Crc;
 
-{ TStreamCoder class }
-
-constructor TStreamCoder.Create(Stream: TStream; Decoder: boolean);
-begin
-  FStream := Stream;
-  if Decoder then
-    FSecondaryCodec := TSecondaryDecoder.Create(FStream)
-  else
-    FSecondaryCodec := TSecondaryEncoder.Create(FStream);
-  FPPM := TBaseCoder.Create(FSecondaryCodec);
-end;
-
-destructor TStreamCoder.Destroy;
-begin
-  FPPM.Free;
-  FSecondaryCodec.Free;
-  FStream := nil;
-end;
-
-procedure TStreamCoder.SetDictionary(Value: byte);
-begin
-  FPPM.SetDictionary(Value);
-end;
-
-procedure TStreamCoder.SetTable(const Value: TTableParameters);
-begin
-  FPPM.SetTable(Value);
-end;
-
-procedure TStreamCoder.FreshFlexible;
-begin
-  FPPM.FreshFlexible;
-end;
-
-procedure TStreamCoder.FreshSolid;
-begin
-  FPPM.FreshSolid;
-end;
-
 { TStreamEncoder class }
 
-constructor TStreamEncoder.Create(Stream: TStream; Ticker: TTickerMethod);
+constructor TStreamEncoder.Create(Stream: TStream);
 begin
-  inherited Create(Stream, False);
-  FTicker := Ticker;
-  FTick := Assigned(FTicker);
+  inherited Create;
+  FStream := Stream;
+  FSecondaryCodec := TSecondaryEncoder.Create(FStream);
+  FPPM := TBaseCoder.Create(FSecondaryCodec);
+  FOnProgress := nil;
 end;
 
 destructor TStreamEncoder.Destroy;
 begin
-  FTicker := nil;
-  FTick := False;
+  FPPM.Free;
+  FSecondaryCodec.Free;
+  FStream := nil;
+  FOnProgress := nil;
   inherited Destroy;
 end;
 
-function TStreamEncoder.CopyFrom(Strm: TStream; const Size: int64): int64;
+procedure TStreamEncoder.SetDictionary(Value: byte);
+begin
+  FPPM.SetDictionary(Value);
+end;
+
+procedure TStreamEncoder.SetTable(const Value: TTableParameters);
+begin
+  FPPM.SetTable(Value);
+end;
+
+procedure TStreamEncoder.FreshFlexible;
+begin
+  FPPM.FreshFlexible;
+end;
+
+procedure TStreamEncoder.FreshSolid;
+begin
+  FPPM.FreshSolid;
+end;
+
+function TStreamEncoder.Copy(Strm: TStream; const Size: int64): int64;
 var
   Symbol: byte;
 begin
   Result := 0;
   while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
   begin
-    if FTick and (not FTicker) then Break;
+    if Assigned(FOnProgress) and (FOnProgress = False) then Break;
     FStream.Write(Symbol, 1);
     Inc(Result);
   end;
 end;
 
-function TStreamEncoder.CopyFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
+function TStreamEncoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
 begin
@@ -204,14 +187,14 @@ begin
   CRC    := longword(-1);
   while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
   begin
-    if FTick and (not FTicker) then Break;
+    if Assigned(FOnProgress) and (FOnProgress = False) then Break;
     FStream.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
     Inc(Result);
   end;
 end;
 
-function TStreamEncoder.EncodeFrom(Strm: TStream; const Size: int64; var CRC: longword): int64;
+function TStreamEncoder.Encode(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
 begin
@@ -220,7 +203,7 @@ begin
   FSecondaryCodec.Start;
   while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
   begin
-    if FTick and (not FTicker) then Break;
+    if Assigned(FOnProgress) and (FOnProgress = False) then Break;
     FPPM.UpdateModel(Symbol);
     UpdCrc32(CRC, Symbol);
     Inc(Result);
@@ -230,28 +213,52 @@ end;
 
 { TStreamDecoder class }
 
-constructor TStreamDecoder.Create(Stream: TStream; Ticker: TTickerMethod);
+constructor TStreamDecoder.Create(Stream: TStream);
 begin
-  inherited Create(Stream, True);
-  FTicker := Ticker;
-  FTick := Assigned(FTicker);
+  inherited Create;
+  FStream := Stream;
+  FSecondaryCodec := TSecondaryDecoder.Create(FStream);
+  FPPM := TBaseCoder.Create(FSecondaryCodec);
+  FOnProgress := nil;
 end;
 
 destructor TStreamDecoder.Destroy;
 begin
-  FTicker := nil;
-  FTick := False;
+  FPPM.Free;
+  FSecondaryCodec.Free;
+  FStream := nil;
+  FOnProgress := nil;
   inherited Destroy;
 end;
 
-function TStreamDecoder.CopyTo(Strm: TStream; const Size: int64): int64;
+procedure TStreamDecoder.SetDictionary(Value: byte);
+begin
+  FPPM.SetDictionary(Value);
+end;
+
+procedure TStreamDecoder.SetTable(const Value: TTableParameters);
+begin
+  FPPM.SetTable(Value);
+end;
+
+procedure TStreamDecoder.FreshFlexible;
+begin
+  FPPM.FreshFlexible;
+end;
+
+procedure TStreamdecoder.FreshSolid;
+begin
+  FPPM.FreshSolid;
+end;
+
+function TStreamDecoder.Copy(Strm: TStream; const Size: int64): int64;
 var
   Symbol: byte;
 begin
   Result := 0;
   while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
   begin
-    if FTick and (not FTicker) then Break;
+    if Assigned(FOnProgress) and (FOnProgress = False) then Break;
     Strm.Write(Symbol, 1);
     Inc(Result);
   end;
@@ -265,7 +272,7 @@ begin
   CRC    := longword(-1);
   while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
   begin
-    if FTick and (not FTicker) then Break;
+    if Assigned(FOnProgress) and (FOnProgress = False) then Break;
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
     Inc(Result);
@@ -281,7 +288,7 @@ begin
   FSecondaryCodec.Start;
   while (Result < Size) do
   begin
-    if FTick and (not FTicker) then Break;
+    if Assigned(FOnProgress) and (FOnProgress = False) then Break;
     Symbol := FPPM.UpdateModel(0);
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
