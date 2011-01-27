@@ -42,9 +42,9 @@ type
 
   TProgressEvent = function: boolean of object;
 
-  { TStreamEncoder class }
+  { TStreamCoder class }
 
-  TStreamEncoder = class
+  TStreamCoder = class
   protected
     FStream: TStream;
     FPPM: TBaseCoder;
@@ -57,31 +57,33 @@ type
     procedure SetDictionary(Value: byte);
     procedure FreshFlexible;
     procedure FreshSolid;
+    function Copy(Strm: TStream; const Size: int64): int64; overload; virtual; abstract;
+    function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual; abstract;
+    function Encode(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
+    function Decode(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
+    property OnProgress: TProgressEvent read FOnProgress write FOnProgress;
+  end;
+
+  { TStreamEncoder class }
+
+  TStreamEncoder = class(TStreamCoder)
+  public
+    constructor Create(Stream: TStream);
+    destructor Destroy; override;
     function Copy(Strm: TStream; const Size: int64): int64; overload; virtual;
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual;
     function Encode(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
-    property OnProgress: TProgressEvent read FOnProgress write FOnProgress;
   end;
 
   { TStreamDecoder class }
 
-  TStreamDecoder = class
-  protected
-    FStream: TStream;
-    FPPM: TBaseCoder;
-    FSecondaryCodec: TSecondaryCodec;
-    FOnProgress: TProgressEvent;
+  TStreamDecoder = class(TStreamCoder)
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
-    procedure SetTable(const Value: TTableParameters);
-    procedure SetDictionary(Value: byte);
-    procedure FreshFlexible;
-    procedure FreshSolid;
     function Copy(Strm: TStream; const Size: int64): int64; overload; virtual;
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual;
     function Decode(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual;
-    property OnProgress: TProgressEvent read FOnProgress write FOnProgress;
   end;
 
   { TFileStreamEncoder class }
@@ -126,44 +128,56 @@ uses
   Bee_Files,
   Bee_Crc;
 
+{ TStreamCoder class }
+
+constructor TStreamCoder.Create(Stream: TStream);
+begin
+  inherited Create;
+  FStream := Stream;
+  FOnProgress := nil;
+end;
+
+destructor TStreamCoder.Destroy;
+begin
+  FOnProgress := nil;
+  FStream := nil;
+  inherited Destroy;
+end;
+
+procedure TStreamCoder.SetDictionary(Value: byte);
+begin
+  FPPM.SetDictionary(Value);
+end;
+
+procedure TStreamCoder.SetTable(const Value: TTableParameters);
+begin
+  FPPM.SetTable(Value);
+end;
+
+procedure TStreamCoder.FreshFlexible;
+begin
+  FPPM.FreshFlexible;
+end;
+
+procedure TStreamCoder.FreshSolid;
+begin
+  FPPM.FreshSolid;
+end;
+
 { TStreamEncoder class }
 
 constructor TStreamEncoder.Create(Stream: TStream);
 begin
-  inherited Create;
-  FStream := Stream;
+  inherited Create(Stream);
   FSecondaryCodec := TSecondaryEncoder.Create(FStream);
   FPPM := TBaseCoder.Create(FSecondaryCodec);
-  FOnProgress := nil;
 end;
 
 destructor TStreamEncoder.Destroy;
 begin
   FPPM.Free;
   FSecondaryCodec.Free;
-  FStream := nil;
-  FOnProgress := nil;
   inherited Destroy;
-end;
-
-procedure TStreamEncoder.SetDictionary(Value: byte);
-begin
-  FPPM.SetDictionary(Value);
-end;
-
-procedure TStreamEncoder.SetTable(const Value: TTableParameters);
-begin
-  FPPM.SetTable(Value);
-end;
-
-procedure TStreamEncoder.FreshFlexible;
-begin
-  FPPM.FreshFlexible;
-end;
-
-procedure TStreamEncoder.FreshSolid;
-begin
-  FPPM.FreshSolid;
 end;
 
 function TStreamEncoder.Copy(Strm: TStream; const Size: int64): int64;
