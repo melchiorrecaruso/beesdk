@@ -229,40 +229,16 @@ end;
 
 constructor TStreamDecoder.Create(Stream: TStream);
 begin
-  inherited Create;
-  FStream := Stream;
+  inherited Create(Stream);
   FSecondaryCodec := TSecondaryDecoder.Create(FStream);
   FPPM := TBaseCoder.Create(FSecondaryCodec);
-  FOnProgress := nil;
 end;
 
 destructor TStreamDecoder.Destroy;
 begin
   FPPM.Free;
   FSecondaryCodec.Free;
-  FStream := nil;
-  FOnProgress := nil;
   inherited Destroy;
-end;
-
-procedure TStreamDecoder.SetDictionary(Value: byte);
-begin
-  FPPM.SetDictionary(Value);
-end;
-
-procedure TStreamDecoder.SetTable(const Value: TTableParameters);
-begin
-  FPPM.SetTable(Value);
-end;
-
-procedure TStreamDecoder.FreshFlexible;
-begin
-  FPPM.FreshFlexible;
-end;
-
-procedure TStreamdecoder.FreshSolid;
-begin
-  FPPM.FreshSolid;
 end;
 
 function TStreamDecoder.Copy(Strm: TStream; const Size: int64): int64;
@@ -278,7 +254,7 @@ begin
   end;
 end;
 
-function TStreamDecoder.CopyTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
+function TStreamDecoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
 begin
@@ -293,7 +269,7 @@ begin
   end;
 end;
 
-function TStreamDecoder.DecodeTo(Strm: TStream; const Size: int64; var CRC: longword): int64;
+function TStreamDecoder.Decode(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
 begin
@@ -313,7 +289,7 @@ end;
 
 { TFileStreamEncoder class }
 
-function TFileStreamEncoder.CopyFrom(const FileName: string; var CRC: longword): int64;
+function TFileStreamEncoder.Copy(const FileName: string; var CRC: longword): int64;
 var
   Strm: TFileReader;
 begin
@@ -322,14 +298,14 @@ begin
   Strm   := CreateTFileReader(FileName, fmOpenRead);
   if Assigned(Strm) then
   begin
-    Result := CopyFrom(Strm, Strm.Size, CRC);
+    Result := Copy(Strm, Strm.Size, CRC);
     begin
       Strm.Free;
     end;
   end;
 end;
 
-function TFileStreamEncoder.EncodeFrom(const FileName: string; var CRC: longword): int64;
+function TFileStreamEncoder.Encode(const FileName: string; var CRC: longword): int64;
 var
   Strm: TFileReader;
 begin
@@ -338,7 +314,7 @@ begin
   Strm   := CreateTFileReader(FileName, fmOpenRead);
   if Assigned(Strm) then
   begin
-    Result := EncodeFrom(Strm, Strm.Size, CRC);
+    Result := Encode(Strm, Strm.Size, CRC);
     begin
       Strm.Free;
     end;
@@ -347,7 +323,7 @@ end;
 
 { TFileStreamDecoder class }
 
-function TFileStreamDecoder.CopyTo(const FileName: string; const Size: int64; var CRC: longword): int64;
+function TFileStreamDecoder.Copy(const FileName: string; const Size: int64; var CRC: longword): int64;
 var
   Strm: TFileWriter;
 begin
@@ -356,14 +332,14 @@ begin
   Strm   := CreateTFileWriter(FileName, fmCreate);
   if Assigned(Strm) then
   begin
-    Result := CopyTo(Strm, Size, CRC);
+    Result := Copy(Strm, Size, CRC);
     begin
       Strm.Free;
     end;
   end;
 end;
 
-function TFileStreamDecoder.DecodeTo(const FileName: string; const Size: int64; var CRC: longword): int64;
+function TFileStreamDecoder.Decode(const FileName: string; const Size: int64; var CRC: longword): int64;
 var
   Strm: TFileWriter;
 begin
@@ -372,33 +348,33 @@ begin
   Strm   := CreateTFileWriter(FileName, fmCreate);
   if Assigned(Strm) then
   begin
-    Result := DecodeTo(Strm, Size, CRC);
+    Result := Decode(Strm, Size, CRC);
     begin
       Strm.Free;
     end;
   end;
 end;
 
-{ THeaderStreamEncoder class }
+{ THeaderEncoder class }
 
-function THeaderStreamEncoder.CopyFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
+function THeaderEncoder.Copy(Strm: TStream; const Size: int64; Item: THeader): boolean;
 begin
   Strm.Seek(Item.StartPos, soBeginning);
   Item.StartPos := FStream.Seek(0, soCurrent);
   begin
-    Result := CopyFrom(Strm, Size) = Size;
+    Result := Copy(Strm, Size) = Size;
   end;
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 end;
 
-function THeaderStreamEncoder.EncodeFrom(Strm: TStream; const Size: int64; Item: THeader): boolean;
+function THeaderEncoder.Encode(Strm: TStream; const Size: int64; Item: THeader): boolean;
 begin
   Strm.Seek(Item.StartPos, soBeginning);
   Item.StartPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
-    Item.Size := CopyFrom(Strm, Size, Item.Crc)
+    Item.Size := Copy(Strm, Size, Item.Crc)
   else
-    Item.Size := EncodeFrom(Strm, Size, Item.Crc);
+    Item.Size := Encode(Strm, Size, Item.Crc);
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 
   // optimize compression ...
@@ -407,7 +383,7 @@ begin
     FStream.Size := Item.StartPos;
     Include(Item.Flags, foMoved);
     Include(Item.Flags, foTear);
-    InitializeCoder(Item);
+    InitCoder(Item);
 
     FTick := False;
     Item.Size := CopyFrom(Strm, Size, Item.Crc);
@@ -417,7 +393,7 @@ begin
   Result := Item.Size <> -1;
 end;
 
-function THeaderStreamEncoder.EncodeFrom(Item: THeader): boolean;
+function THeaderEncoder.Encode(Item: THeader): boolean;
 begin
   Item.StartPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
@@ -442,7 +418,7 @@ begin
   Result := Item.Size <> -1;
 end;
 
-procedure THeaderStreamEncoder.InitializeCoder(Item: THeader);
+procedure THeaderEncoder.InitializeCoder(Item: THeader);
 begin
   if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
   if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
@@ -452,9 +428,9 @@ begin
     FPPM.FreshSolid;
 end;
 
-{ THeaderStreamDecoder class }
+{ THeaderDecoder class }
 
-function THeaderStreamDecoder.DecodeTo(Item: THeader): boolean;
+function THeaderDecoder.Decode(Item: THeader): boolean;
 var
   CRC: longword;
 begin
@@ -475,7 +451,7 @@ begin
   end;
 end;
 
-function THeaderStreamDecoder.DecodeToNul(Item: THeader): boolean;
+function THeaderDecoder.Test(Item: THeader): boolean;
 var
   CRC: longword;
   Strm: TNulWriter;
@@ -494,7 +470,7 @@ begin
   Strm.Free;
 end;
 
-procedure THeaderStreamDecoder.InitializeCoder(Item: THeader);
+procedure THeaderDecoder.InitializeCoder(Item: THeader);
 begin
   if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
   if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
