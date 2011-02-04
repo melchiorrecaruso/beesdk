@@ -62,7 +62,6 @@ implementation
 uses
   SysUtils;
 
-
 { THeaderEncoder class }
 
 function THeaderEncoder.Copy(Strm: TStream; const Size: int64; Item: THeader): boolean;
