@@ -43,8 +43,9 @@ type
   { TStreamCoder class }
 
   TStreamCoder = class
-  private
+  protected
     FStream: TStream;
+  private
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
     FOnUserAbortEvent: TUserAbortEvent;
