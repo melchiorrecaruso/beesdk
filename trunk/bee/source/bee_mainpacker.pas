@@ -42,19 +42,19 @@ type
 
   THeaderEncoder = class(TFileStreamEncoder)
   public
+    procedure Initialize(Item: THeader);
     function Copy(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
-    function Encode(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
-    function Encode(Item: THeader): boolean; overload;
-    procedure InitCoder(Item: THeader);
+    function Write(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
+    function Write(Item: THeader): boolean; overload;
   end;
 
   { THeaderDecoder class }
 
   THeaderDecoder = class(TFileStreamDecoder)
   public
-    function Decode(Item: THeader): boolean; overload;
-    function Test(Item: THeader): boolean;
-    procedure InitCoder(Item: THeader);
+    procedure Initialize(Item: THeader);
+    function Write(Item: THeader): boolean;
+    function WriteToNul(Item: THeader): boolean;
   end;
 
 implementation
@@ -74,14 +74,14 @@ begin
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 end;
 
-function THeaderEncoder.Encode(Strm: TStream; const Size: int64; Item: THeader): boolean;
+function THeaderEncoder.Write(Strm: TStream; const Size: int64; Item: THeader): boolean;
 begin
   Strm.Seek(Item.StartPos, soBeginning);
   Item.StartPos := FStream.Seek(0, soCurrent);
   if foMoved in Item.Flags then
     Item.Size := Copy(Strm, Size, Item.Crc)
   else
-    Item.Size := Encode(Strm, Size, Item.Crc);
+    Item.Size := Write(Strm, Size, Item.Crc);
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 
   // optimize compression ...
@@ -90,7 +90,7 @@ begin
     FStream.Size := Item.StartPos;
     Include(Item.Flags, foMoved);
     Include(Item.Flags, foTear);
-    InitCoder(Item);
+    Initialize(Item);
 
     FTick := False;
     Item.Size := CopyFrom(Strm, Size, Item.Crc);
@@ -125,7 +125,7 @@ begin
   Result := Item.Size <> -1;
 end;
 
-procedure THeaderEncoder.InitializeCoder(Item: THeader);
+procedure THeaderEncoder.Initialize(Item: THeader);
 begin
   if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
   if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
