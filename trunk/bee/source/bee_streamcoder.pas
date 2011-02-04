@@ -59,6 +59,7 @@ type
     function Copy(Strm: TStream; const Size: int64): int64; overload; virtual; abstract;
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual; abstract;
     function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
+    function Read(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
     property OnUserAbortEvent: TUserAbortEvent read FOnUserAbortEvent write FOnUserAbortEvent;
   end;
 
@@ -81,7 +82,7 @@ type
     destructor Destroy; override;
     function Copy(Strm: TStream; const Size: int64): int64; override;
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
-    function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
+    function Read(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
   end;
 
   { TFileStreamEncoder class }
@@ -257,7 +258,7 @@ begin
   end;
 end;
 
-function TStreamDecoder.Write(Strm: TStream; const Size: int64; var CRC: longword): int64;
+function TStreamDecoder.Read(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
 begin
