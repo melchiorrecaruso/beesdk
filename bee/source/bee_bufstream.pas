@@ -37,7 +37,6 @@ uses
 const
   DefaultBufferCapacity: longint = 128 * 1024;
 
-
 type
   { TBufStream }
 
@@ -296,7 +295,7 @@ procedure TWriteBufStream.SetSize64(const NewSize: int64);
 begin
   FSource.Size := NewSize;
 end;
- {$ENDIF}
+{$ENDIF}
 
 { TReadBlowFishBufStream class }
 
