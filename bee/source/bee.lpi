@@ -108,10 +108,11 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="706"/>
-        <CursorPos X="71" Y="741"/>
+        <TopLine Value="709"/>
+        <CursorPos X="75" Y="736"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="1">
           <Item0 X="13" Y="871" ID="0"/>
@@ -166,7 +167,6 @@
       <Unit7>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="37"/>
@@ -183,7 +183,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="19"/>
         <CursorPos X="54" Y="89"/>
-        <FoldState Value=" T3j905Df"/>
         <UsageCount Value="37"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
