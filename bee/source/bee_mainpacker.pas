@@ -37,30 +37,166 @@ uses
   Bee_StreamCoder;
 
 type
-
   { THeaderEncoder class }
 
-  THeaderEncoder = class(TFileStreamEncoder)
+  THeaderEncoder = class(TStreamEncoder)
   public
     procedure Initialize(Item: THeader);
-    function Copy(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
+    function Copy(Strm: TStream; const Size: int64; Item: THeader): boolean;
     function Write(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
     function Write(Item: THeader): boolean; overload;
   end;
 
   { THeaderDecoder class }
 
-  THeaderDecoder = class(TFileStreamDecoder)
+  THeaderDecoder = class(TStreamDecoder)
   public
     procedure Initialize(Item: THeader);
-    function Write(Item: THeader): boolean;
-    function WriteToNul(Item: THeader): boolean;
+    function Read(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
+    function Read(Item: THeader): boolean;
+    function ReadToNul(Item: THeader): boolean;
   end;
 
 implementation
 
 uses
   SysUtils;
+
+
+
+function TStreamEncoder.Copy(Strm: TStream; const Size: int64): int64;
+var
+  Symbol: byte;
+begin
+  Result := 0;
+  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+  begin
+    FStream.Write(Symbol, 1);
+    Inc(Result);
+    if (Result and $FFFF = 0)
+      and Assigned(FOnUserAbortEvent)
+        and FOnUserAbortEvent then Break;
+  end;
+end;
+
+function TStreamEncoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
+var
+  Symbol: byte;
+begin
+  Result := 0;
+  CRC    := longword(-1);
+  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+  begin
+    FStream.Write(Symbol, 1);
+    UpdCrc32(CRC, Symbol);
+    Inc(Result);
+    if (Result and $FFFF = 0)
+      and Assigned(FOnUserAbortEvent)
+        and FOnUserAbortEvent then Break;
+  end;
+end;
+
+
+
+function TStreamDecoder.Copy(Strm: TStream; const Size: int64): int64;
+var
+  Symbol: byte;
+begin
+  Result := 0;
+  while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
+  begin
+    Strm.Write(Symbol, 1);
+    Inc(Result);
+    if (Result and $FFFF = 0)
+      and Assigned(FOnUserAbortEvent)
+        and FOnUserAbortEvent then Break;
+  end;
+end;
+
+function TStreamDecoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
+var
+  Symbol: byte;
+begin
+  Result := 0;
+  CRC    := longword(-1);
+  while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
+  begin
+    Strm.Write(Symbol, 1);
+    UpdCrc32(CRC, Symbol);
+    Inc(Result);
+    if (Result and $FFFF = 0)
+      and Assigned(FOnUserAbortEvent)
+        and FOnUserAbortEvent then Break;
+  end;
+end;
+
+
+{ TFileStreamEncoder class }
+
+function TFileStreamEncoder.Copy(const FileName: string; var CRC: longword): int64;
+var
+  Strm: TFileReader;
+begin
+  Strm := CreateTFileReader(FileName, fmOpenRead);
+  if Assigned(Strm) then
+  begin
+    Result := Copy(Strm, Strm.Size, CRC);
+    Strm.Free;
+  end else
+    Result := 0;
+end;
+
+function TFileStreamEncoder.Write(const FileName: string; var CRC: longword): int64;
+var
+  Strm: TFileReader;
+begin
+  Strm := CreateTFileReader(FileName, fmOpenRead);
+  if Assigned(Strm) then
+  begin
+    Result := Write(Strm, Strm.Size, CRC);
+    Strm.Free;
+  end else
+    Result := 0;
+end;
+
+{ TFileStreamDecoder class }
+
+function TFileStreamDecoder.Copy(const FileName: string; const Size: int64; var CRC: longword): int64;
+var
+  Strm: TFileWriter;
+begin
+  Strm := CreateTFileWriter(FileName, fmCreate);
+  if Assigned(Strm) then
+  begin
+    Result := Copy(Strm, Size, CRC);
+    Strm.Free;
+  end else
+    Result := 0;
+end;
+
+function TFileStreamDecoder.Write(const FileName: string; const Size: int64; var CRC: longword): int64;
+var
+  Strm: TFileWriter;
+begin
+  Strm := CreateTFileWriter(FileName, fmCreate);
+  if Assigned(Strm) then
+  begin
+    Result := Write(Strm, Size, CRC);
+    Strm.Free;
+  end else
+    Result := 0;
+end;
+
+
+
+
+
+
+
+
+
+
+
 
 { THeaderEncoder class }
 

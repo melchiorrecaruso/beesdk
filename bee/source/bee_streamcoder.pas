@@ -33,11 +33,14 @@ interface
 
 uses
   Classes,
+  SysUtils,
   Bee_Codec,
   Bee_Modeller,
   Bee_Configuration;
 
 type
+  { TUserAbortEvent event }
+
   TUserAbortEvent = function: boolean of object;
 
   { TStreamCoder class }
@@ -45,21 +48,18 @@ type
   TStreamCoder = class
   protected
     FStream: TStream;
-  private
     FPPM: TBaseCoder;
     FSecondaryCodec: TSecondaryCodec;
     FOnUserAbortEvent: TUserAbortEvent;
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
-    procedure SetTable(const Value: TTableParameters);
-    procedure SetDictionary(Value: byte);
-    procedure FreshFlexible;
     procedure FreshSolid;
-    function Copy(Strm: TStream; const Size: int64): int64; overload; virtual; abstract;
-    function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload; virtual; abstract;
-    function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
+    procedure FreshFlexible;
+    procedure SetDictionary(Value: byte);
+    procedure SetTable(const Value: TTableParameters);
     function Read(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
+    function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
     property OnUserAbortEvent: TUserAbortEvent read FOnUserAbortEvent write FOnUserAbortEvent;
   end;
 
@@ -69,8 +69,7 @@ type
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
-    function Copy(Strm: TStream; const Size: int64): int64; override;
-    function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
+    function Read(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
     function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
   end;
 
@@ -80,32 +79,17 @@ type
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
-    function Copy(Strm: TStream; const Size: int64): int64; override;
-    function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
     function Read(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
+    function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
   end;
 
-  { TFileStreamEncoder class }
-
-  TFileStreamEncoder = class(TStreamEncoder)
-  public
-    function Copy(const FileName: string; var CRC: longword): int64; overload;
-    function Write(const FileName: string; var CRC: longword): int64; overload;
-  end;
-
-  { TFileStreamDecoder class }
-
-  TFileStreamDecoder = class(TStreamDecoder)
-  public
-    function Copy(const FileName: string; const Size: int64; var CRC: longword): int64; overload;
-    function Write(const FileName: string; const Size: int64; var CRC: longword): int64; overload;
-  end;
+  EStreamEncoderError = class(Exception);
+  EStreamDecoderError = class(Exception);
 
 implementation
 
 uses
-  Bee_Crc,
-  Bee_Files;
+  Bee_Crc;
 
 { TStreamCoder class }
 
@@ -159,38 +143,6 @@ begin
   inherited Destroy;
 end;
 
-function TStreamEncoder.Copy(Strm: TStream; const Size: int64): int64;
-var
-  Symbol: byte;
-begin
-  Result := 0;
-  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
-  begin
-    FStream.Write(Symbol, 1);
-    Inc(Result);
-    if (Result and $FFFF = 0)
-      and Assigned(FOnUserAbortEvent)
-        and FOnUserAbortEvent then Break;
-  end;
-end;
-
-function TStreamEncoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
-var
-  Symbol: byte;
-begin
-  Result := 0;
-  CRC    := longword(-1);
-  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
-  begin
-    FStream.Write(Symbol, 1);
-    UpdCrc32(CRC, Symbol);
-    Inc(Result);
-    if (Result and $FFFF = 0)
-      and Assigned(FOnUserAbortEvent)
-        and FOnUserAbortEvent then Break;
-  end;
-end;
-
 function TStreamEncoder.Write(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
@@ -210,6 +162,11 @@ begin
   FSecondaryCodec.Flush;
 end;
 
+function TStreamEncoder.Read(Strm: TStream; const Size: int64; var CRC: longword): int64;
+begin
+  raise EStreamEncoderError.Create('Invalid stream operation.');
+end;
+
 { TStreamDecoder class }
 
 constructor TStreamDecoder.Create(Stream: TStream);
@@ -224,38 +181,6 @@ begin
   FPPM.Free;
   FSecondaryCodec.Free;
   inherited Destroy;
-end;
-
-function TStreamDecoder.Copy(Strm: TStream; const Size: int64): int64;
-var
-  Symbol: byte;
-begin
-  Result := 0;
-  while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
-  begin
-    Strm.Write(Symbol, 1);
-    Inc(Result);
-    if (Result and $FFFF = 0)
-      and Assigned(FOnUserAbortEvent)
-        and FOnUserAbortEvent then Break;
-  end;
-end;
-
-function TStreamDecoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
-var
-  Symbol: byte;
-begin
-  Result := 0;
-  CRC    := longword(-1);
-  while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
-  begin
-    Strm.Write(Symbol, 1);
-    UpdCrc32(CRC, Symbol);
-    Inc(Result);
-    if (Result and $FFFF = 0)
-      and Assigned(FOnUserAbortEvent)
-        and FOnUserAbortEvent then Break;
-  end;
 end;
 
 function TStreamDecoder.Read(Strm: TStream; const Size: int64; var CRC: longword): int64;
@@ -278,60 +203,9 @@ begin
   FSecondaryCodec.Flush;
 end;
 
-{ TFileStreamEncoder class }
-
-function TFileStreamEncoder.Copy(const FileName: string; var CRC: longword): int64;
-var
-  Strm: TFileReader;
+function TStreamDecoder.Write(Strm: TStream; const Size: int64; var CRC: longword): int64;
 begin
-  Strm := CreateTFileReader(FileName, fmOpenRead);
-  if Assigned(Strm) then
-  begin
-    Result := Copy(Strm, Strm.Size, CRC);
-    Strm.Free;
-  end else
-    Result := 0;
-end;
-
-function TFileStreamEncoder.Write(const FileName: string; var CRC: longword): int64;
-var
-  Strm: TFileReader;
-begin
-  Strm := CreateTFileReader(FileName, fmOpenRead);
-  if Assigned(Strm) then
-  begin
-    Result := Write(Strm, Strm.Size, CRC);
-    Strm.Free;
-  end else
-    Result := 0;
-end;
-
-{ TFileStreamDecoder class }
-
-function TFileStreamDecoder.Copy(const FileName: string; const Size: int64; var CRC: longword): int64;
-var
-  Strm: TFileWriter;
-begin
-  Strm := CreateTFileWriter(FileName, fmCreate);
-  if Assigned(Strm) then
-  begin
-    Result := Copy(Strm, Size, CRC);
-    Strm.Free;
-  end else
-    Result := 0;
-end;
-
-function TFileStreamDecoder.Write(const FileName: string; const Size: int64; var CRC: longword): int64;
-var
-  Strm: TFileWriter;
-begin
-  Strm := CreateTFileWriter(FileName, fmCreate);
-  if Assigned(Strm) then
-  begin
-    Result := Write(Strm, Size, CRC);
-    Strm.Free;
-  end else
-    Result := 0;
+  raise EStreamDecoderError.Create('Invalid stream operation.');
 end;
 
 end.
