@@ -45,9 +45,9 @@ type
   public
     procedure Initialize(Item: THeader);
 
-    function Move(Source: TStream; const Size: int64; Item: THeader): int64; overload;
-    function Write(Source: TStream; const Size: int64; Item: THeader): boolean; overload;
-    function WriteSwap(Source: TStream; const Size: int64; Item: THeader): boolean;
+    function Move(Strm: TStream; const Size: int64; Item: THeader): int64; overload;
+    function Write(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
+    function WriteSwap(Strm: TStream; const Size: int64; Item: THeader): boolean;
     function Write(Item: THeader): boolean; overload;
   end;
 
