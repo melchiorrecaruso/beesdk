@@ -107,7 +107,7 @@ type
     destructor Destroy; override;
 
     procedure SetTable(const T: TTableParameters);
-    procedure SetDictionary(aDictionaryLevel: longword);
+    function SetDictionary(aDictionaryLevel: longword): longword;
     procedure FreshFlexible;
     procedure FreshSolid;
     function UpdateModel(aSymbol: longword): longword;
@@ -165,9 +165,9 @@ begin
   end;
 end;
 
-procedure TBaseCoder.SetDictionary(aDictionaryLevel: longword);
+function TBaseCoder.SetDictionary(aDictionaryLevel: longword): longword;
 begin
-  if (aDictionaryLevel = 0) or (FDictionaryLevel <> aDictionaryLevel) then
+  if (aDictionaryLevel in [0.. 9]) and (aDictionaryLevel <> FDictionaryLevel) then
   begin
     FDictionaryLevel := aDictionaryLevel;
     MaxCounter := 1 shl (17 + Min(Max(0, FDictionaryLevel), 9)) - 1;
@@ -177,6 +177,8 @@ begin
     SetLength(Heap, MaxCounter + 1);
   end;
   FreshFlexible;
+
+  Result := FDictionaryLevel;
 end;
 
 procedure TBaseCoder.FreshFlexible;

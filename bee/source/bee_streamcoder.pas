@@ -18,7 +18,7 @@
 
 { Contains:
 
-    Stream coder/decoder abstract classes
+    Stream coder/decoder classes
 
   Modifyed:
 
@@ -38,14 +38,24 @@ uses
   Bee_Modeller,
   Bee_Configuration;
 
+const
+  DefaultUserAbortEventStepSize: longint  = $FFFF;
+  DefaultDictionaryLevel:        longword = $0002;
+  // DefaultTableParameters:   TTableParameters = ();
+
 type
   { TUserAbortEvent event }
 
   TUserAbortEvent = function: boolean of object;
 
-  { TStreamCoder class }
+  { TStreamCoder abstract class }
 
   TStreamCoder = class
+  private
+    FDictionaryLevel: longword;
+    FTableParameters: TTableParameters;
+    procedure SetDictionaryLevel(Value: longword);
+    procedure SetTableParameters(const Value: TTableParameters);
   protected
     FStream: TStream;
     FPPM: TBaseCoder;
@@ -56,10 +66,10 @@ type
     destructor Destroy; override;
     procedure FreshSolid;
     procedure FreshFlexible;
-    procedure SetDictionary(Value: byte);
-    procedure SetTable(const Value: TTableParameters);
     function Read(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
     function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
+    property DictionaryLevel: longword read FDictionaryLevel write SetDictionaryLevel;
+    property TableParameters: TTableParameters read FTableParameters write SetTableParameters;
     property OnUserAbortEvent: TUserAbortEvent read FOnUserAbortEvent write FOnUserAbortEvent;
   end;
 
@@ -107,13 +117,14 @@ begin
   inherited Destroy;
 end;
 
-procedure TStreamCoder.SetDictionary(Value: byte);
+procedure TStreamCoder.SetDictionaryLevel(Value: longword);
 begin
-  FPPM.SetDictionary(Value);
+  FDictionaryLevel := FPPM.SetDictionary(Value);
 end;
 
-procedure TStreamCoder.SetTable(const Value: TTableParameters);
+procedure TStreamCoder.SetTableParameters(const Value: TTableParameters);
 begin
+  FTableParameters := Value;
   FPPM.SetTable(Value);
 end;
 
@@ -134,6 +145,8 @@ begin
   inherited Create(Stream);
   FSecondaryCodec := TSecondaryEncoder.Create(FStream);
   FPPM := TBaseCoder.Create(FSecondaryCodec);
+  FPPM.SetDictionary(DefaultDictionaryLevel);
+  // SetDefaultTableParameters
 end;
 
 destructor TStreamEncoder.Destroy;
@@ -155,7 +168,7 @@ begin
     FPPM.UpdateModel(Symbol);
     UpdCrc32(CRC, Symbol);
     Inc(Result);
-    if (Result and $FFFF = 0)
+    if (Result and DefaultUserAbortEventStepSize = 0)
       and Assigned(FOnUserAbortEvent)
         and FOnUserAbortEvent then Break;
   end;
@@ -174,6 +187,8 @@ begin
   inherited Create(Stream);
   FSecondaryCodec := TSecondaryDecoder.Create(FStream);
   FPPM := TBaseCoder.Create(FSecondaryCodec);
+  FPPM.SetDictionary(DefaultDictionaryLevel);
+  // SetDefaultTableParameters
 end;
 
 destructor TStreamDecoder.Destroy;
@@ -196,7 +211,7 @@ begin
     Strm.Write(Symbol, 1);
     UpdCrc32(CRC, Symbol);
     Inc(Result);
-    if (Result and $FFFF = 0)
+    if (Result and DefaultUserAbortEventStepSize = 0)
       and Assigned(FOnUserAbortEvent)
         and FOnUserAbortEvent then Break;
   end;
