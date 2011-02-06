@@ -42,7 +42,6 @@ type
   THeaderEncoder = class(TStreamEncoder)
   public
     procedure Initialize(Item: THeader);
-    function Copy(Strm: TStream; const Size: int64; Item: THeader): boolean;
     function Write(Strm: TStream; const Size: int64; Item: THeader): boolean; overload;
     function Write(Item: THeader): boolean; overload;
   end;
@@ -61,6 +60,84 @@ implementation
 
 uses
   SysUtils;
+
+  { THeaderEncoder class }
+
+  procedure THeaderEncoder.Initialize(Item: THeader);
+  begin
+    if foDictionary in Item.Flags then DictionaryLevel := Item.Dictionary;
+    if foTable      in Item.Flags then TableParameters := Item.Table;
+    if foTear       in Item.Flags then FreshFlexible else FreshSolid;
+  end;
+
+  function THeaderEncoder.Write(Strm: TStream; const Size: int64; Item: THeader): boolean;
+  begin
+    Strm.Seek(Item.StartPos, soBeginning);
+    Item.StartPos := FStream.Seek(0, soCurrent);
+    if foMoved in Item.Flags then
+      Item.Size := Copy(Strm, Size, Item.Crc)
+    else
+      Item.Size := Write(Strm, Size, Item.Crc);
+    Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
+
+    // optimize compression ...
+    if Item.PackedSize > Item.Size then
+    begin
+      FStream.Size := Item.StartPos;
+      Include(Item.Flags, foMoved);
+      Include(Item.Flags, foTear);
+      Initialize(Item);
+
+      FTick := False;
+      Item.Size := CopyFrom(Strm, Size, Item.Crc);
+      Item.PackedSize := Item.Size;
+      FTick := Assigned(FTicker);
+    end;
+    Result := Item.Size <> -1;
+  end;
+
+
+
+
+
+
+
+
+  function TFileStreamEncoder.Write(const FileName: string; var CRC: longword): int64;
+  var
+    Strm: TFileReader;
+  begin
+    Strm := CreateTFileReader(FileName, fmOpenRead);
+    if Assigned(Strm) then
+    begin
+      Result := Write(Strm, Strm.Size, CRC);
+      Strm.Free;
+    end else
+      Result := 0;
+  end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -146,18 +223,7 @@ begin
     Result := 0;
 end;
 
-function TFileStreamEncoder.Write(const FileName: string; var CRC: longword): int64;
-var
-  Strm: TFileReader;
-begin
-  Strm := CreateTFileReader(FileName, fmOpenRead);
-  if Assigned(Strm) then
-  begin
-    Result := Write(Strm, Strm.Size, CRC);
-    Strm.Free;
-  end else
-    Result := 0;
-end;
+
 
 { TFileStreamDecoder class }
 
@@ -210,31 +276,7 @@ begin
   Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 end;
 
-function THeaderEncoder.Write(Strm: TStream; const Size: int64; Item: THeader): boolean;
-begin
-  Strm.Seek(Item.StartPos, soBeginning);
-  Item.StartPos := FStream.Seek(0, soCurrent);
-  if foMoved in Item.Flags then
-    Item.Size := Copy(Strm, Size, Item.Crc)
-  else
-    Item.Size := Write(Strm, Size, Item.Crc);
-  Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 
-  // optimize compression ...
-  if Item.PackedSize > Item.Size then
-  begin
-    FStream.Size := Item.StartPos;
-    Include(Item.Flags, foMoved);
-    Include(Item.Flags, foTear);
-    Initialize(Item);
-
-    FTick := False;
-    Item.Size := CopyFrom(Strm, Size, Item.Crc);
-    Item.PackedSize := Item.Size;
-    FTick := Assigned(FTicker);
-  end;
-  Result := Item.Size <> -1;
-end;
 
 function THeaderEncoder.Encode(Item: THeader): boolean;
 begin
@@ -261,15 +303,7 @@ begin
   Result := Item.Size <> -1;
 end;
 
-procedure THeaderEncoder.Initialize(Item: THeader);
-begin
-  if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
-  if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
-  if foTear       in Item.Flags then
-    FPPM.FreshFlexible
-  else
-    FPPM.FreshSolid;
-end;
+
 
 { THeaderDecoder class }
 
