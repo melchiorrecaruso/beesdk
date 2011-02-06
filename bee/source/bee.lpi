@@ -169,9 +169,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="39"/>
-        <CursorPos X="66" Y="46"/>
-        <FoldState Value=" T3iS25V"/>
+        <TopLine Value="36"/>
+        <CursorPos X="31" Y="44"/>
+        <FoldState Value=" T3iU251U"/>
         <UsageCount Value="96"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -184,7 +184,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="52"/>
         <CursorPos X="90" Y="83"/>
-        <FoldState Value=" T3jJ0552222Z"/>
         <UsageCount Value="40"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
