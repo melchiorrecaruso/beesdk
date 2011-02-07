@@ -213,34 +213,42 @@ end;
 function TBeeApp.CheckArchivePassword: longint;
 var
   I, J: longint;
-  Decoder: THeaderStreamDecoder;
+  Smaller, Next: THeader;
+  Decoder: THeaderDecoder;
+  NulWriter: TNulWriter;
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
   begin
     // select smaller size item ...
     J := 0;
-    I := 1;
-    while I < FHeaders.Count do
-      with FHeaders.Items[I] do
+    Smaller := FHeaders.Items[0];
+    for I := 1 to FHeaders.Count - 1 do
+    begin
+      Next := FHeaders.Items[I];
+      if (foTear in Next.Flags) and (Next.Size < Smaller.Size)  then
       begin
-        if (foTear in Flags) and (Size < FHeaders.Items[J].Size) then
-        begin
-          J := I;
-        end;
-        Inc(I);
+        J := I;
+        Smaller := Next;
       end;
+    end;
+    DoMessage(Format(cmChecking, [Smaller.Name]));
 
     // test item ...
-    DoMessage(Format(cmChecking, [FHeaders.Items[J].Name]));
-    Decoder := THeaderStreamDecoder.Create(FArcFile, nil);
-    for I := 0 to J do Decoder.InitializeCoder(FHeaders.Items[I]);
+    NulWriter := TNulWriter.Create;
+    Decoder := THeaderDecoder.Create(FArcFile);
+    Decoder.OnUserAbortEvent := DoUserAbortEvent;
+    for I := 0 to J do
+    begin
+      Decoder.Initialize(FHeaders.Items[I]);
+    end;
     FArcFile.StartDecode(FCommandLine.pOption);
-    if not Decoder.DecodeToNul(FHeaders.Items[J]) then
+    if not Decoder.Read(FHeaders.Items[J], NulWriter, ) then
     begin
       DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
     end;
     FArcFile.FinishDecode;
     Decoder.Free;
+    NulWriter.Free;
   end;
   Result := Code;
 end;
