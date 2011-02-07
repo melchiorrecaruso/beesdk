@@ -41,7 +41,8 @@ type
 
   THeaderEncoder = class(TStreamEncoder)
   private
-    function CopySilent(Strm: TStream; const Size: int64): int64;
+    function CopySilent(Strm: TStream; const Size: int64): int64; overload;
+    function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload;
   public
     procedure Initialize(Item: THeader);
     function Copy (Item: THeader; Strm: TStream; const Size: int64): boolean; overload;
@@ -52,6 +53,8 @@ type
   { THeaderDecoder class }
 
   THeaderDecoder = class(TStreamDecoder)
+  private
+    function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
   public
     procedure Initialize(Item: THeader);
     function Read(Item: THeader; Strm: TStream; const Size: int64): boolean; overload;
@@ -86,22 +89,48 @@ uses
     end;
   end;
 
+  function THeaderEncoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
+  var
+    Symbol: byte;
+  begin
+    Result := 0;
+    CRC    := longword(-1);
+    while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+    begin
+      FStrm.Write(Symbol, 1);
+      UpdCrc32(CRC, Symbol);
+      Inc(Result);
+      if (Result and DefaultUserAbortEventStepSize = 0)
+        and Assigned(FOnUserAbortEvent)
+          and FOnUserAbortEvent then Break;
+    end;
+  end;
+
+  function THeaderEncoder.Copy(Item: THeader; Strm: TStream; const Size: int64): boolean;
+  var
+    Symbol: byte;
+    CRC: longword;
+  begin
+    Item.StartPos := FStrm.Seek(0, soCurrent);
+    Result := Copy(Strm, Size, CRC) = Size;
+  end;
+
   function THeaderEncoder.Write(Item: THeader; Strm: TStream; const Size: int64): boolean;
   var
     StartPos: int64;
   begin
          StartPos :=  Strm.Seek(0, soCurrent);
     Item.StartPos := FStrm.Seek(0, soCurrent);
-    if foMoved in Item.Flags then
-      Item.Size := Copy(Strm, Size, Item.Crc)
-    else
-      Item.Size := Write(Strm, Size, Item.Crc);
+    case foMoved in Item.Flags of
+      True:  Item.Size := Copy (Strm, Size, Item.Crc);
+      False: Item.Size := Write(Strm, Size, Item.Crc);
+    end;
     Item.PackedSize := FStrm.Seek(0, soCurrent) - Item.StartPos;
 
     // optimize compression ...
     if Item.PackedSize > Item.Size then
     begin
-      Strm.Seek(StartPos, soBeginning);
+       Strm.Seek(StartPos, soBeginning);
       FStrm.Size := Item.StartPos;
 
       Include(Item.Flags, foMoved);
@@ -135,167 +164,52 @@ uses
     if foTear       in Item.Flags then FreshFlexible else FreshSolid;
   end;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function TStreamDecoder.Copy(Strm: TStream; const Size: int64): int64;
-var
-  Symbol: byte;
-begin
-  Result := 0;
-  while (Result < Size) and (FStream.Read(Symbol, 1) = 1) do
+  function THeaderDecoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
+  var
+    Symbol: byte;
   begin
-    Strm.Write(Symbol, 1);
-    Inc(Result);
-    if (Result and $FFFF = 0)
-      and Assigned(FOnUserAbortEvent)
-        and FOnUserAbortEvent then Break;
-  end;
-end;
-
-
-
-
-{ TFileStreamEncoder class }
-
-function TFileStreamEncoder.Copy(const FileName: string; var CRC: longword): int64;
-var
-  Strm: TFileReader;
-begin
-  Strm := CreateTFileReader(FileName, fmOpenRead);
-  if Assigned(Strm) then
-  begin
-    Result := Copy(Strm, Strm.Size, CRC);
-    Strm.Free;
-  end else
     Result := 0;
-end;
-
-
-
-{ TFileStreamDecoder class }
-
-function TFileStreamDecoder.Copy(const FileName: string; const Size: int64; var CRC: longword): int64;
-var
-  Strm: TFileWriter;
-begin
-  Strm := CreateTFileWriter(FileName, fmCreate);
-  if Assigned(Strm) then
-  begin
-    Result := Copy(Strm, Size, CRC);
-    Strm.Free;
-  end else
-    Result := 0;
-end;
-
-function TFileStreamDecoder.Write(const FileName: string; const Size: int64; var CRC: longword): int64;
-var
-  Strm: TFileWriter;
-begin
-  Strm := CreateTFileWriter(FileName, fmCreate);
-  if Assigned(Strm) then
-  begin
-    Result := Write(Strm, Size, CRC);
-    Strm.Free;
-  end else
-    Result := 0;
-end;
-
-
-
-
-
-
-
-
-
-
-
-
-{ THeaderEncoder class }
-
-function THeaderEncoder.Copy(Strm: TStream; const Size: int64; Item: THeader): boolean;
-begin
-  Strm.Seek(Item.StartPos, soBeginning);
-  Item.StartPos := FStream.Seek(0, soCurrent);
-  begin
-    Result := Copy(Strm, Size) = Size;
-  end;
-  Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
-end;
-
-
-
-
-
-
-
-{ THeaderDecoder class }
-
-function THeaderDecoder.Decode(Item: THeader): boolean;
-var
-  CRC: longword;
-begin
-  FStream.Seek(Item.StartPos, soBeginning);
-  case foMoved in Item.Flags of
-    False: Result := DecodeTo(Item.ExtName, Item.Size, CRC) = Item.Size;
-    True:  Result := CopyTo  (Item.ExtName, Item.Size, CRC) = Item.Size;
-  end;
-
-  if Result then
-  begin
-    Result := Item.Crc = CRC;
-    if Result then
+    CRC    := longword(-1);
+    while (Result < Size) and (FStrm.Read(Symbol, 1) = 1) do
     begin
-      FileSetAttr(Item.ExtName, Item.Attr);
-      FileSetDate(Item.ExtName, Item.Time);
+      Strm.Write(Symbol, 1);
+      UpdCrc32(CRC, Symbol);
+      Inc(Result);
+      if (Result and $FFFF = 0)
+        and Assigned(FOnUserAbortEvent)
+          and FOnUserAbortEvent then Break;
     end;
   end;
-end;
 
-function THeaderDecoder.Test(Item: THeader): boolean;
-var
-  CRC: longword;
-  Strm: TNulWriter;
-begin
-  Strm := TNulWriter.Create;
-  FStream.Seek(Item.StartPos, soBeginning);
-  if foMoved in Item.Flags then
-    Result := CopyTo(Strm, Item.Size, CRC) = Item.Size
-  else
-    Result := DecodeTo(Strm, Item.Size, CRC) = Item.Size;
-
-  if Result then
+  function THeaderDecoder.Read(Item: THeader; Strm: TStream; const Size: int64): boolean;
+  var
+    CRC: longword;
   begin
-    Result := CRC = Item.Crc;
-  end;
-  Strm.Free;
-end;
+    FStrm.Seek(Item.StartPos, soBeginning);
+    case foMoved in Item.Flags of
+      True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
+      False: Result := Read(Strm, Item.Size, CRC) = Item.Size;
+    end;
 
-procedure THeaderDecoder.InitializeCoder(Item: THeader);
-begin
-  if foDictionary in Item.Flags then FPPM.SetDictionary(Item.Dictionary);
-  if foTable      in Item.Flags then FPPM.SetTable     (Item.Table);
-  if foTear       in Item.Flags then
-    FPPM.FreshFlexible
-  else
-    FPPM.FreshSolid;
-end;
+    if Result then Result := Item.Crc = CRC;
+  end;
+
+  function THeaderDecoder.Read(Item: THeader): boolean;
+  var
+    Strm: TFileWriter;
+  begin
+    Result := False;
+    Strm   := CreateTFileWriter(Item.ExtName, fmCreate);
+    if Assigned(Strm) then
+    begin
+      Result := Read(Item, Strm, Item.Size);
+      if Result then
+      begin
+        FileSetAttr(Item.ExtName, Item.Attr);
+        FileSetDate(Item.ExtName, Item.Time);
+      end;
+      Strm.Free;
+    end;
+  end;
 
 end.

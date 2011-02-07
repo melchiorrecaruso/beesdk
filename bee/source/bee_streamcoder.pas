@@ -68,7 +68,6 @@ type
     procedure FreshFlexible;
     function Read(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
     function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
-    function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
     property DictionaryLevel: longword read FDictionaryLevel write SetDictionaryLevel;
     property TableParameters: TTableParameters read FTableParameters write SetTableParameters;
     property OnUserAbortEvent: TUserAbortEvent read FOnUserAbortEvent write FOnUserAbortEvent;
@@ -80,7 +79,6 @@ type
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
-    function Copy (Strm: TStream; const Size: int64; var CRC: longword): int64; override;
     function Read (Strm: TStream; const Size: int64; var CRC: longword): int64; override;
     function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
   end;
@@ -91,7 +89,6 @@ type
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
-    function Copy (Strm: TStream; const Size: int64; var CRC: longword): int64; override;
     function Read (Strm: TStream; const Size: int64; var CRC: longword): int64; override;
     function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
   end;
@@ -159,23 +156,6 @@ begin
   inherited Destroy;
 end;
 
-function TStreamEncoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
-var
-  Symbol: byte;
-begin
-  Result := 0;
-  CRC    := longword(-1);
-  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
-  begin
-    FStrm.Write(Symbol, 1);
-    UpdCrc32(CRC, Symbol);
-    Inc(Result);
-    if (Result and DefaultUserAbortEventStepSize = 0)
-      and Assigned(FOnUserAbortEvent)
-        and FOnUserAbortEvent then Break;
-  end;
-end;
-
 function TStreamEncoder.Write(Strm: TStream; const Size: int64; var CRC: longword): int64;
 var
   Symbol: byte;
@@ -216,23 +196,6 @@ begin
   FPPM.Free;
   FSecondaryCodec.Free;
   inherited Destroy;
-end;
-
-function TStreamDecoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
-var
-  Symbol: byte;
-begin
-  Result := 0;
-  CRC    := longword(-1);
-  while (Result < Size) and (FStrm.Read(Symbol, 1) = 1) do
-  begin
-    Strm.Write(Symbol, 1);
-    UpdCrc32(CRC, Symbol);
-    Inc(Result);
-    if (Result and $FFFF = 0)
-      and Assigned(FOnUserAbortEvent)
-        and FOnUserAbortEvent then Break;
-  end;
 end;
 
 function TStreamDecoder.Read(Strm: TStream; const Size: int64; var CRC: longword): int64;
