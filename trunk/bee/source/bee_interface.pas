@@ -85,6 +85,7 @@ type
     function  OnOverWrite(const aItem: THeader; const aValue: string): string; virtual; abstract;
     procedure OnList(const aItem: THeader); virtual; abstract;
     procedure OnTick; virtual; abstract;
+    function DoUserAbortEvent: boolean;
     {$IFDEF CONSOLEAPPLICATION}
     procedure OnClear; virtual; abstract;
     {$ENDIF}
@@ -297,6 +298,13 @@ begin
   end;
   Inc(FProcessedSize);
   Result := FCode < ccError;
+end;
+
+function TApp.DoUserAbortEvent: boolean;
+begin
+  Inc(FProcessedSize, $FFFF);
+
+  Result := Code < ccError;
 end;
 
 {$IFDEF CONSOLEAPPLICATION}
