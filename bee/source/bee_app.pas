@@ -318,7 +318,7 @@ begin
               FArcFile. StartDecode(FCommandLine.pOption);
               FSwapStrm.StartEncode(FCommandLine.pOption);
             end;
-            // Da sistemare
+            // da sistemare
 
             FArcFile.Seek(P.StartPos, soBeginning);
             P.StartPos := FSwapStrm.Seek(0, soCurrent);

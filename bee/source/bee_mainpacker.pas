@@ -46,6 +46,7 @@ type
   public
     procedure Initialize(Item: THeader);
     function Copy (Item: THeader; Strm: TStream; const Size: int64): boolean; overload;
+    function Move (Item: THeader; Strm: TStream; const Size: int64): boolean;
     function Write(Item: THeader; Strm: TStream; const Size: int64): boolean; overload;
     function Write(Item: THeader): boolean; overload;
   end;
@@ -57,6 +58,7 @@ type
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
   public
     procedure Initialize(Item: THeader);
+    function Move(Item: THeader; Strm: TStream; const Size: int64): boolean;
     function Read(Item: THeader; Strm: TStream; const Size: int64): boolean; overload;
     function Read(Item: THeader): boolean;
   end;
@@ -107,12 +109,14 @@ uses
   end;
 
   function THeaderEncoder.Copy(Item: THeader; Strm: TStream; const Size: int64): boolean;
-  var
-    Symbol: byte;
-    CRC: longword;
   begin
+    FStrm.Seek(Item.StartPos, soBeginning);
     Item.StartPos := FStrm.Seek(0, soCurrent);
-    Result := Copy(Strm, Size, CRC) = Size;
+
+
+    Item.Size := Copy(Strm, Size, Item.CRC);
+    Item.PackedSize := FStrm.Seek(0, soCurrent) - Item.StartPos;
+    Result := Item.Size = Size;
   end;
 
   function THeaderEncoder.Write(Item: THeader; Strm: TStream; const Size: int64): boolean;
@@ -169,7 +173,7 @@ uses
     Symbol: byte;
   begin
     Result := 0;
-    CRC    := longword(-1);
+    CRC := longword(-1);
     while (Result < Size) and (FStrm.Read(Symbol, 1) = 1) do
     begin
       Strm.Write(Symbol, 1);
@@ -181,14 +185,27 @@ uses
     end;
   end;
 
+  function THeaderDecoder.Move(Item: THeader; Strm: TStream; const Size: int64): boolean;
+  var
+    CRC: longword;
+  begin
+    FStrm.Seek(Item.StartPos, soBeginning);
+    Item.StartPos := Strm.Seek(0, soCurrent);
+    case foMoved in Item.Flags of
+      True:  Result := Copy(Strm, Size, CRC) = Size;
+      False: Result := Read(Strm, Size, CRC) = Size;
+    end;
+    if Result then Result := Item.Crc = CRC;
+  end;
+
   function THeaderDecoder.Read(Item: THeader; Strm: TStream; const Size: int64): boolean;
   var
     CRC: longword;
   begin
     FStrm.Seek(Item.StartPos, soBeginning);
     case foMoved in Item.Flags of
-      True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
-      False: Result := Read(Strm, Item.Size, CRC) = Item.Size;
+      True:  Result := Copy(Strm, Size, CRC) = Size;
+      False: Result := Read(Strm, Size, CRC) = Size;
     end;
     if Result then Result := Item.Crc = CRC;
   end;
