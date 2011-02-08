@@ -190,7 +190,6 @@ uses
       True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
       False: Result := Read(Strm, Item.Size, CRC) = Item.Size;
     end;
-
     if Result then Result := Item.Crc = CRC;
   end;
 
