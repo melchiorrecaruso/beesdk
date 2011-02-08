@@ -212,43 +212,41 @@ end;
 
 function TBeeApp.CheckArchivePassword: longint;
 var
-  I, J: longint;
-  Smaller, Next: THeader;
+  Item: THeader;
+  Smaller, I: longint;
   Decoder: THeaderDecoder;
-  NulWriter: TNulWriter;
+  FNulStrm: TNulWriter;
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
   begin
     // select smaller size item ...
-    J := 0;
-    Smaller := FHeaders.Items[0];
+    Smaller := 0;
     for I := 1 to FHeaders.Count - 1 do
     begin
-      Next := FHeaders.Items[I];
-      if (foTear in Next.Flags) and (Next.Size < Smaller.Size)  then
+      Item := FHeaders.Items[I];
+      if (foTear in Item.Flags) and (Item.Size < FHeaders.Items[Smaller].Size)  then
       begin
-        J := I;
-        Smaller := Next;
+        Smaller := I;
       end;
     end;
-    DoMessage(Format(cmChecking, [Smaller.Name]));
+    Item := FHeaders.Items[Smaller];
 
     // test item ...
-    NulWriter := TNulWriter.Create;
+    DoMessage(Format(cmChecking, [Item.Name]));
     Decoder := THeaderDecoder.Create(FArcFile);
     Decoder.OnUserAbortEvent := DoUserAbortEvent;
-    for I := 0 to J do
-    begin
+    for I := 0 to Smaller do
       Decoder.Initialize(FHeaders.Items[I]);
-    end;
+
+    FNulStrm := TNulWriter.Create;
     FArcFile.StartDecode(FCommandLine.pOption);
-    if not Decoder.Read(FHeaders.Items[J], NulWriter, ) then
+    if Decoder.Read(Item, FNulStrm, Item.Size) = False then
     begin
       DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
     end;
     FArcFile.FinishDecode;
+    FNulStrm.Free;
     Decoder.Free;
-    NulWriter.Free;
   end;
   Result := Code;
 end;
@@ -268,7 +266,7 @@ begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FCommandLine.ArchiveName);
 
-      if not RenameFile(FTempName, FCommandLine.ArchiveName) then
+      if RenameFile(FTempName, FCommandLine.ArchiveName) = False then
         DoMessage(Format(cmRenameFileError, [FTempName, FCommandLine.ArchiveName]), ccError);
     end else
     begin
@@ -295,32 +293,36 @@ var
   I: longint;
   CRC: longword;
   FSwapStrm: TFileWriter;
-  Decoder: THeaderStreamDecoder;
+  Decoder: THeaderDecoder;
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
   begin
     FSwapName := GenerateFileName(FCommandLine.wdOption);
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
-    if Assigned(FSwapStrm) = True then
+    if Assigned(FSwapStrm) then
     begin
-      Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
+      Decoder := THeaderDecoder.Create(FArcFile);
+      Decoder.OnUserAbortEvent := DoUserAbortEvent;
+
       for I := 0 to FHeaders.Count - 1 do
         if Code < ccError then
         begin
           P := FHeaders.Items[I];
-          Decoder.InitializeCoder(P);
+          Decoder.Initialize(P);
 
           if P.Action in [haDecode, haDecodeAndUpdate] then
           begin
             DoMessage(Format(cmDecoding, [P.Name]));
             if foPassword in P.Flags then
             begin
-              FArcFile.StartDecode(FCommandLine.pOption);
+              FArcFile. StartDecode(FCommandLine.pOption);
               FSwapStrm.StartEncode(FCommandLine.pOption);
             end;
+            // Da sistemare
+
             FArcFile.Seek(P.StartPos, soBeginning);
             P.StartPos := FSwapStrm.Seek(0, soCurrent);
-            if (Decoder.DecodeTo(FSwapStrm, P.Size, CRC) <> P.Size) or (P.Crc <> CRC) then
+            if (Decoder.Read(FSwapStrm, P.Size, CRC) <> P.Size) or (P.Crc <> CRC) then
             begin
               DoMessage(Format(cmCrcError, [P.Name]), ccError);
             end;
