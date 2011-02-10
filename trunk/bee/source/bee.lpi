@@ -111,12 +111,12 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="300"/>
-        <CursorPos X="34" Y="705"/>
-        <FoldState Value=" T3le0d1)"/>
+        <TopLine Value="190"/>
+        <CursorPos X="1" Y="214"/>
+        <FoldState Value=" T3jH0C4 pifjO0d1M"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="1">
-          <Item0 X="13" Y="881" ID="0"/>
+          <Item0 X="13" Y="882" ID="0"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -172,7 +172,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="70"/>
         <CursorPos X="44" Y="113"/>
-        <FoldState Value=" T3iV25232-"/>
         <UsageCount Value="99"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
