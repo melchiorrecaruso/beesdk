@@ -706,7 +706,7 @@ procedure TBeeApp.EncodeShell;
 var
   I: longint;
   P: THeader;
-  Encoder: THeaderStreamEncoder;
+  Encoder: THeaderEncoder;
 begin
   if (OpenArchive < ccError) and (SetItemsToEncode > 0) then
   begin
@@ -717,12 +717,14 @@ begin
       if OpenSwapFile < ccError then
       begin
         FHeaders.Write(FTempFile);
-        Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
+        Encoder := THeaderEncoder.Create(FTempFile);
+        Encoder.OnUserAbortEvent := DoUserAbortEvent;
+
         for I := 0 to FHeaders.Count - 1 do
           if Code < ccError then
           begin
             P := FHeaders.Items[I];
-            Encoder.InitializeCoder(P);
+            Encoder.Initialize(P);
 
             if foPassword in P.Flags then
             begin
@@ -739,7 +741,18 @@ begin
             end;
 
             case P.Action of
-              haNone:            Encoder.CopyFrom(FArcFile, P.PackedSize, P);
+              haNone: begin
+                FArcFile.Seek(P.StartPos, soBeginning);
+                P.StartPos := FTempFile.Seek(0, soCurrent);
+
+                Encoder.CopyFrom(FArcFile, P.PackedSize, P);
+              end;
+
+
+
+
+
+
               haUpdate:          Encoder.EncodeFrom(P);
               haDecode:          Encoder.EncodeFrom(FSwapFile, P.Size, P);
               haDecodeAndUpdate: Encoder.EncodeFrom(P);
