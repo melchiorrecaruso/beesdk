@@ -62,12 +62,33 @@ type
     function Read(Item: THeader): boolean;
   end;
 
+  function Move(Item: THeader; Strm: TStream; const Size: int64): boolean;
+
 implementation
 
 uses
   SysUtils,
   Bee_Files,
   Bee_Crc;
+
+
+  function Move(Item: THeader; Strm: TStream; const Size: int64): int64;
+  var
+    Symbol: byte;
+  begin
+    FStrm.Seek(Item.StartPos, soBeginning);
+    Item.StartPos := FStrm.Seek(0, soCurrent);
+
+    Result := 0;
+    while (Result < Size) and (FStrm.Read(Symbol, 1) = 1) do
+    begin
+      Strm.Write(Symbol, 1);
+      Inc(Result);
+      if (Result and $FFFF = 0)
+        and Assigned(FOnUserAbortEvent)
+          and FOnUserAbortEvent then Break;
+    end;
+  end;
 
   { THeaderEncoder class }
 
