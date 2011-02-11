@@ -319,11 +319,8 @@ begin
               FArcFile. StartDecode(FCommandLine.pOption);
               FSwapStrm.StartEncode(FCommandLine.pOption);
             end;
-            // da sistemare
 
-            FArcFile.Seek(P.StartPos, soBeginning);
-            P.StartPos := FSwapStrm.Seek(0, soCurrent);
-            if (Decoder.Read(FSwapStrm, P.Size, CRC) <> P.Size) or (P.Crc <> CRC) then
+            if Decoder.Move(P, FSwapStrm, P.Size) = False then
             begin
               DoMessage(Format(cmCrcError, [P.Name]), ccError);
             end;
