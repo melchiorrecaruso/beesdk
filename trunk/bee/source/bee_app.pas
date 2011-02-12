@@ -241,7 +241,7 @@ begin
 
     FNulStrm := TNulWriter.Create;
     FArcFile.StartDecode(FCommandLine.pOption);
-    if Decoder.Read(Item, FNulStrm, Item.Size) = False then
+    if Decoder.ReadTo(Item, FNulStrm) = False then
     begin
       DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
     end;
@@ -293,11 +293,13 @@ var
   P: THeader;
   I: longint;
   CRC: longword;
+  FNulStrm: TNulWriter;
   FSwapStrm: TFileWriter;
   Decoder: THeaderDecoder;
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
   begin
+    FNulStrm  := TNulWriter.Create;
     FSwapName := GenerateFileName(FCommandLine.wdOption);
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
     if Assigned(FSwapStrm) then
@@ -313,17 +315,32 @@ begin
 
           if P.Action in [haDecode, haDecodeAndUpdate] then
           begin
-            DoMessage(Format(cmDecoding, [P.Name]));
             if foPassword in P.Flags then
             begin
               FArcFile. StartDecode(FCommandLine.pOption);
               FSwapStrm.StartEncode(FCommandLine.pOption);
             end;
 
-            if Decoder.Move(P, FSwapStrm, P.Size) = False then
-            begin
-              DoMessage(Format(cmCrcError, [P.Name]), ccError);
+            case P.Action of
+              haDecode: begin
+                DoMessage(Format(cmDecoding, [P.Name]));
+                if Decoder.ReadTo(P, FSwapStrm) = False then
+                begin
+                  DoMessage(Format(cmCrcError, [P.Name]), ccError);
+                end;
+              end;
+              haDecodeAndUpdate: begin
+                DoMessage(Format(cmSwapping, [P.Name]));
+                if Decoder.Read(P, FSwapStrm) = False then
+                begin
+                  DoMessage(Format(cmCrcError, [P.Name]), ccError);
+                end;
+              end;
             end;
+
+
+
+
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
             FSwapStrm.FinishEncode;
             FArcFile.FinishDecode;
@@ -331,6 +348,7 @@ begin
         end;
       Decoder.Free;
       FreeAndNil(FSwapStrm);
+      FreeAndNil(FNulStrm);
 
       if Code < ccError then
       begin
@@ -741,21 +759,10 @@ begin
             end;
 
             case P.Action of
-              haNone: begin
-                FArcFile.Seek(P.StartPos, soBeginning);
-                P.StartPos := FTempFile.Seek(0, soCurrent);
-
-                Encoder.CopyFrom(FArcFile, P.PackedSize, P);
-              end;
-
-
-
-
-
-
-              haUpdate:          Encoder.EncodeFrom(P);
-              haDecode:          Encoder.EncodeFrom(FSwapFile, P.Size, P);
-              haDecodeAndUpdate: Encoder.EncodeFrom(P);
+              haNone:            Encoder.CopyFrom(P, FArcFile);
+              haUpdate:          Encoder.Write(P);
+              haDecode:          Encoder.WriteFrom(P, FSwapFile);
+              haDecodeAndUpdate: Encoder.Write(P);
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
 
@@ -777,16 +784,18 @@ var
   I: longint;
   P: THeader;
   Check: boolean;
-  Decoder: THeaderStreamDecoder;
+  Decoder: THeaderDecoder;
 begin
   if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
   begin
-    Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
+    Decoder := THeaderDecoder.Create(FArcFile);
+    Decoder.OnUserAbortEvent := DoUserAbortEvent;
+
     for I := 0  to FHeaders.Count - 1 do
       if Code < ccError then
       begin
         P := FHeaders.Items[I];
-        Decoder.InitializeCoder(P);
+        Decoder.Initialize(P);
 
         if P.Action in [haUpdate, haDecode] then
         begin

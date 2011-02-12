@@ -41,13 +41,15 @@ type
 
   THeaderEncoder = class(TStreamEncoder)
   private
-    function CopySilent(Strm: TStream; Size: int64): int64;
+    function CopySilent(Strm: TStream; const Size: int64): int64;
+    function Copy(Strm: TStream; const Size: int64): int64; overload;
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload;
+    function Write(Item: THeader; Strm: TStream; const Size: int64): boolean; overload;
   public
     procedure Initialize(Item: THeader);
-    function Move (Item: THeader; Strm: TStream; const Size: int64): boolean;
-    function Write(Item: THeader; Strm: TStream; const Size: int64): boolean; overload;
-    function Write(Item: THeader): boolean; overload;
+    function CopyFrom(Item: THeader; Strm: TStream): boolean; // from Archive
+    function WriteFrom(Item: THeader; Strm: TStream): boolean;// from Swap
+    function Write(Item: THeader): boolean; overload;         // from File
   end;
 
   { THeaderDecoder class }
@@ -57,12 +59,10 @@ type
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
   public
     procedure Initialize(Item: THeader);
-    function Move(Item: THeader; Strm: TStream; const Size: int64): boolean;
-    function Read(Item: THeader; Strm: TStream; const Size: int64): boolean; overload;
-    function Read(Item: THeader): boolean;
+    function ReadTo(Item: THeader; Strm: TStream): boolean; // to Swap
+    function ReadToNul(Item: THeader): boolean;             // to Nul
+    function Read(Item: THeader): boolean; overload;        // to File
   end;
-
-  function Move(Item: THeader; Strm: TStream; const Size: int64): boolean;
 
 implementation
 
@@ -70,25 +70,6 @@ uses
   SysUtils,
   Bee_Files,
   Bee_Crc;
-
-
-  function Move(Item: THeader; Strm: TStream; const Size: int64): int64;
-  var
-    Symbol: byte;
-  begin
-    FStrm.Seek(Item.StartPos, soBeginning);
-    Item.StartPos := FStrm.Seek(0, soCurrent);
-
-    Result := 0;
-    while (Result < Size) and (FStrm.Read(Symbol, 1) = 1) do
-    begin
-      Strm.Write(Symbol, 1);
-      Inc(Result);
-      if (Result and $FFFF = 0)
-        and Assigned(FOnUserAbortEvent)
-          and FOnUserAbortEvent then Break;
-    end;
-  end;
 
   { THeaderEncoder class }
 
@@ -99,7 +80,7 @@ uses
     if foTear       in Item.Flags then FreshFlexible else FreshSolid;
   end;
 
-  function THeaderEncoder.CopySilent(Strm: TStream; Size: int64): int64;
+  function THeaderEncoder.CopySilent(Strm: TStream; const Size: int64): int64;
   var
     Symbol: byte;
   begin
@@ -110,6 +91,21 @@ uses
       Inc(Result);
     end;
   end;
+
+  function THeaderEncoder.Copy(Strm: TStream; const Size: int64): int64;
+   var
+     Symbol: byte;
+   begin
+     Result := 0;
+     while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+     begin
+       FStrm.Write(Symbol, 1);
+       Inc(Result);
+       if (Result and DefaultUserAbortEventStepSize = 0)
+         and Assigned(FOnUserAbortEvent)
+           and FOnUserAbortEvent then Break;
+     end;
+   end;
 
   function THeaderEncoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
   var
@@ -126,17 +122,6 @@ uses
         and Assigned(FOnUserAbortEvent)
           and FOnUserAbortEvent then Break;
     end;
-  end;
-
-  function THeaderEncoder.Move(Item: THeader; Strm: TStream; const Size: int64): boolean;
-  var
-    CRC: longword;
-  begin
-    Item.StartPos   := FStrm.Seek(0, soCurrent);
-    Item.Size       := Copy(Strm, Size, CRC);
-    Item.PackedSize := FStrm.Seek(0, soCurrent) - Item.StartPos;
-
-    Result := (Item.Size = Size) and (Item.PackedSize = Size);
   end;
 
   function THeaderEncoder.Write(Item: THeader; Strm: TStream; const Size: int64): boolean;
@@ -165,6 +150,21 @@ uses
     end;
     Result := Item.Size = Size;
   end;
+
+  function THeaderEncoder.WriteFrom(Item: THeader; Strm: TStream): boolean;
+  begin
+    Strm.Seek(Item.StartPos, soBeginning);
+    Result := Write(Item, Strm, Item.Size);
+  end;
+
+  function THeaderEncoder.CopyFrom(Item: THeader; Strm: TStream): boolean;
+  var
+   Symbol: byte;
+   begin
+      Strm.Seek(Item.StartPos, soBeginning);
+      Item.StartPos := FStrm.Seek(0, soCurrent);
+      Result := Copy(Strm, Item.PackedSize) = Item.PackedSize;
+   end;
 
   function THeaderEncoder.Write(Item: THeader): boolean;
   var
@@ -205,28 +205,32 @@ uses
     end;
   end;
 
-  function THeaderDecoder.Move(Item: THeader; Strm: TStream; const Size: int64): boolean;
+  function THeaderDecoder.ReadTo(Item: THeader; Strm: TStream): boolean;
   var
     CRC: longword;
   begin
     FStrm.Seek(Item.StartPos, soBeginning);
     Item.StartPos := Strm.Seek(0, soCurrent);
     case foMoved in Item.Flags of
-      True:  Result := Copy(Strm, Size, CRC) = Size;
-      False: Result := Read(Strm, Size, CRC) = Size;
+      True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
+      False: Result := Read(Strm, Item.Size, CRC) = Item.Size;
     end;
     if Result then Result := Item.Crc = CRC;
   end;
 
-  function THeaderDecoder.Read(Item: THeader; Strm: TStream; const Size: int64): boolean;
+  function THeaderDecoder.ReadToNul(Item: THeader): boolean;
   var
     CRC: longword;
+    Strm: TNulWriter;
   begin
+    Strm := TNulWriter.Create;
     FStrm.Seek(Item.StartPos, soBeginning);
     case foMoved in Item.Flags of
-      True:  Result := Copy(Strm, Size, CRC) = Size;
-      False: Result := Read(Strm, Size, CRC) = Size;
+      True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
+      False: Result := Read(Strm, Item.Size, CRC) = Item.Size;
     end;
+    Strm.Free;
+
     if Result then Result := Item.Crc = CRC;
   end;
 
@@ -238,7 +242,7 @@ uses
     Strm   := CreateTFileWriter(Item.ExtName, fmCreate);
     if Assigned(Strm) then
     begin
-      Result := Read(Item, Strm, Item.Size);
+      Result := Read(Item, Strm);
       if Result then
       begin
         FileSetAttr(Item.ExtName, Item.Attr);
