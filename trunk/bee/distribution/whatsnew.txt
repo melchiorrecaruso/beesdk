@@ -644,6 +644,7 @@ Description of history of the Bee:
     * ќптимизатор автоматически увелиивает размер словар€ после пересчета 5000
       вариантов с текущим размером словар€. 
 
+
     * ѕротокол работы оптимизатора размещаетс€ в файле <SourceName>.Log.Txt.
       ƒополнительно в файл протокола выводитс€ информаци€ о количестве
       просчитанных вариантов и текущем размере словар€.
@@ -1273,6 +1274,7 @@ Description of history of the Bee:
 
 2005.10.19
 
+
   Update sources by Melchiorre Caruso:
 
   [*] CharSet problem refixed (for Bee and BeeGui)
@@ -1344,7 +1346,7 @@ Description of history of the Bee:
 
   v0.7.9 build 316 maked.
   
-2009.05.29
+2011.02.12
 
   Update sources by Melchiorre Caruso:
 
