@@ -197,7 +197,7 @@ procedure TBeeApp.StartCrypter(Item: THeader);
 begin
   if foPassword in Item.Flags then
   begin
-    if Assigned(FArchReader) then FArchReader .StartDecode(FCommandLine.pOption);
+    if Assigned(FArchReader) then FArchReader.StartDecode(FCommandLine.pOption);
     if Assigned(FSwapReader) then FSwapReader.StartDecode(FCommandLine.pOption);
     if Assigned(FSwapWriter) then FSwapWriter.StartEncode(FCommandLine.pOption);
     if Assigned(FTempWriter) then FTempWriter.StartEncode(FCommandLine.pOption);
@@ -208,9 +208,10 @@ procedure TBeeApp.StopCrypter(Item: THeader);
 begin
   if foPassword in Item.Flags then
   begin
-    if Assigned(FArcFile)  then FArcFile .FinishDecode;
-    if Assigned(FSwapFile) then FSwapFile.FinishDecode;
-    if Assigned(FTempFile) then FTempFile.FinishEncode;
+    if Assigned(FArchReader) then FArchReader.FinishDecode;
+    if Assigned(FSwapReader) then FSwapReader.FinishDecode;
+    if Assigned(FSwapWriter) then FSwapWriter.FinishEncode;
+    if Assigned(FTempWriter) then FTempWriter.FinishEncode;
   end;
 end;
 
@@ -222,11 +223,11 @@ begin
   FHeaders := THeaders.Create(FCommandLine);
   if FileExists(FCommandLine.ArchiveName) then
   begin
-    FArcFile := CreateTFileReader(FCommandLine.ArchiveName, fmOpenRead + fmShareDenyWrite);
-    if FArcFile <> nil then
+    FArchReader := CreateTFileReader(FCommandLine.ArchiveName, fmOpenRead + fmShareDenyWrite);
+    if Assigned(FArchReader) then
     begin
-      FHeaders.Read(FArcFile);
-      if (FHeaders.Count = 0) and (FArcFile.Size <> 0) then
+      FHeaders.Read(FArchReader);
+      if (FHeaders.Count = 0) and (FArchReader.Size <> 0) then
         DoMessage(Format(cmArcTypeError, []), ccError);
     end else
       DoMessage(Format(cmOpenArcError, [FCommandLine.ArchiveName]), ccError);
@@ -261,16 +262,14 @@ begin
 
     // test item ...
     DoMessage(Format(cmChecking, [Item.Name]));
-    Decoder := THeaderDecoder.Create(FArcFile);
+    Decoder := THeaderDecoder.Create(FArchReader);
     Decoder.OnUserAbortEvent := DoUserAbortEvent;
     for I := 0 to Smaller do
       Decoder.Initialize(FHeaders.Items[I]);
 
     StartCrypter(Item);
     if Decoder.ReadToNul(Item) = False then
-    begin
       DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
-    end;
     StopCrypter(Item);
     Decoder.Free;
   end;
@@ -281,9 +280,10 @@ procedure TBeeApp.CloseArchive(IsModified: boolean);
 var
   S: string;
 begin
-  if Assigned(FTempFile) then FreeAndNil(FTempFile);
-  if Assigned(FSwapFile) then FreeAndNil(FSwapFile);
-  if Assigned(FArcFile)  then FreeAndNil(FArcFile);
+  if Assigned(FTempWriter) then FreeAndNil(FTempWriter);
+  if Assigned(FSwapWriter) then FreeAndNil(FSwapWriter);
+  if Assigned(FSwapReader) then FreeAndNil(FSwapReader);
+  if Assigned(FArchReader) then FreeAndNil(FArchReader);
 
   if IsModified then
   begin
@@ -318,15 +318,14 @@ var
   I: longint;
   P: THeader;
   Decoder: THeaderDecoder;
-
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
   begin
     FSwapName := GenerateFileName(FCommandLine.wdOption);
-    FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
-    if Assigned(FSwapStrm) then
+    FSwapWriter := CreateTFileWriter(FSwapName, fmCreate);
+    if Assigned(FSwapWriter) then
     begin
-      Decoder := THeaderDecoder.Create(FArcFile);
+      Decoder := THeaderDecoder.Create(FArchReader);
       Decoder.OnUserAbortEvent := DoUserAbortEvent;
 
       for I := 0 to FHeaders.Count - 1 do
@@ -337,16 +336,11 @@ begin
 
           if P.Action in [haDecode, haDecodeAndUpdate] then
           begin
-            if foPassword in P.Flags then
-            begin
-              FArcFile. StartDecode(FCommandLine.pOption);
-              FSwapStrm.StartEncode(FCommandLine.pOption);
-            end;
-
+            StartCrypter(P);
             case P.Action of
               haDecode: begin
                 DoMessage(Format(cmSwapping, [P.Name]));
-                if Decoder.ReadTo(P, FSwapStrm) = False then
+                if Decoder.ReadTo(P, FSwapWriter) = False then
                   DoMessage(Format(cmCrcError, [P.Name]), ccError);
               end;
               haDecodeAndUpdate: begin
@@ -356,17 +350,16 @@ begin
               end;
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-            FSwapStrm.FinishEncode;
-            FArcFile.FinishDecode;
+            StopCrypter(P);
           end;
         end;
       Decoder.Free;
-      FreeAndNil(FSwapStrm);
+      FreeAndNil(FSwapWriter);
 
       if Code < ccError then
       begin
-        FSwapFile := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
-        if Assigned(FSwapFile) = False then
+        FSwapReader := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
+        if Assigned(FSwapReader) = False then
           DoMessage(cmOpenSwapError, ccError);
       end;
     end else
@@ -742,7 +735,7 @@ begin
   if (OpenArchive < ccError) and (SetItemsToEncode > 0) then
   begin
     FTempName := GenerateFileName(FCommandLine.wdOption);
-    FTempFile := CreateTFileWriter(FTempName, fmCreate);
+    FTempWriter := CreateTFileWriter(FTempName, fmCreate);
     if Assigned(FTempFile) then
     begin
       if OpenSwapFile < ccError then
