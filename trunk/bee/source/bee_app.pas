@@ -55,13 +55,17 @@ type
   private
     FSelfName: string;
     FHeaders: THeaders;
-    FArcFile: TFileReader;
+    FArchReader: TFileReader;
     FSwapName: string;
-    FSwapFile: TFileReader;
+    FSwapReader: TFileReader;
+    FSwapWriter: TFileWriter;
     FTempName: string;
-    FTempFile: TFileWriter;
+    FTempWriter: TFileWriter;
     FCommandLine: TCommandLine;
     FConfiguration: TConfiguration;
+    { start/stop crypter routine }
+    procedure StartCrypter(Item: THeader);
+    procedure StopCrypter(Item: THeader);
     { open/close archive routine }
     function OpenArchive: longint;
     function CheckArchivePassword: longint;
@@ -124,12 +128,13 @@ begin
   FSelfName := 'The Bee 0.8.0 build 1265 archiver utility, Feb 2011' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
-  FHeaders  := nil;
-  FArcFile  := nil;
-  FSwapFile := nil;
-  FTempFile := nil;
-  FSwapName := '';
-  FTempName := '';
+  FHeaders    := nil;
+  FArchReader := nil;
+  FSwapReader := nil;
+  FSwapWriter := nil;
+  FTempWriter := nil;
+  FSwapName   := '';
+  FTempName   := '';
 
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -186,6 +191,29 @@ begin
   SetTerminated(True);
 end;
 
+{ start/stop crypter routine }
+
+procedure TBeeApp.StartCrypter(Item: THeader);
+begin
+  if foPassword in Item.Flags then
+  begin
+    if Assigned(FArchReader) then FArchReader .StartDecode(FCommandLine.pOption);
+    if Assigned(FSwapReader) then FSwapReader.StartDecode(FCommandLine.pOption);
+    if Assigned(FSwapWriter) then FSwapWriter.StartEncode(FCommandLine.pOption);
+    if Assigned(FTempWriter) then FTempWriter.StartEncode(FCommandLine.pOption);
+  end;
+end;
+
+procedure TBeeApp.StopCrypter(Item: THeader);
+begin
+  if foPassword in Item.Flags then
+  begin
+    if Assigned(FArcFile)  then FArcFile .FinishDecode;
+    if Assigned(FSwapFile) then FSwapFile.FinishDecode;
+    if Assigned(FTempFile) then FTempFile.FinishEncode;
+  end;
+end;
+
 { open/close archive routines }
 
 function TBeeApp.OpenArchive: longint;
@@ -216,7 +244,6 @@ var
   Item: THeader;
   Smaller, I: longint;
   Decoder: THeaderDecoder;
-  FNulStrm: TNulWriter;
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
   begin
@@ -239,14 +266,12 @@ begin
     for I := 0 to Smaller do
       Decoder.Initialize(FHeaders.Items[I]);
 
-    FNulStrm := TNulWriter.Create;
-    FArcFile.StartDecode(FCommandLine.pOption);
-    if Decoder.ReadTo(Item, FNulStrm) = False then
+    StartCrypter(Item);
+    if Decoder.ReadToNul(Item) = False then
     begin
       DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
     end;
-    FArcFile.FinishDecode;
-    FNulStrm.Free;
+    StopCrypter(Item);
     Decoder.Free;
   end;
   Result := Code;
@@ -290,16 +315,13 @@ end;
 
 function TBeeApp.OpenSwapFile: longint;
 var
-  P: THeader;
   I: longint;
-  CRC: longword;
-  FNulStrm: TNulWriter;
-  FSwapStrm: TFileWriter;
+  P: THeader;
   Decoder: THeaderDecoder;
+
 begin
   if (Code < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
   begin
-    FNulStrm  := TNulWriter.Create;
     FSwapName := GenerateFileName(FCommandLine.wdOption);
     FSwapStrm := CreateTFileWriter(FSwapName, fmCreate);
     if Assigned(FSwapStrm) then
@@ -323,24 +345,16 @@ begin
 
             case P.Action of
               haDecode: begin
-                DoMessage(Format(cmDecoding, [P.Name]));
+                DoMessage(Format(cmSwapping, [P.Name]));
                 if Decoder.ReadTo(P, FSwapStrm) = False then
-                begin
                   DoMessage(Format(cmCrcError, [P.Name]), ccError);
-                end;
               end;
               haDecodeAndUpdate: begin
-                DoMessage(Format(cmSwapping, [P.Name]));
-                if Decoder.Read(P, FSwapStrm) = False then
-                begin
+                DoMessage(Format(cmDecoding, [P.Name]));
+                if Decoder.ReadToNul(P) = False then
                   DoMessage(Format(cmCrcError, [P.Name]), ccError);
-                end;
               end;
             end;
-
-
-
-
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
             FSwapStrm.FinishEncode;
             FArcFile.FinishDecode;
@@ -348,7 +362,6 @@ begin
         end;
       Decoder.Free;
       FreeAndNil(FSwapStrm);
-      FreeAndNil(FNulStrm);
 
       if Code < ccError then
       begin
@@ -744,31 +757,27 @@ begin
             P := FHeaders.Items[I];
             Encoder.Initialize(P);
 
-            if foPassword in P.Flags then
-            begin
-              if Assigned(FArcFile)  then FArcFile .StartDecode(FCommandLine.pOption);
-              if Assigned(FSwapFile) then FSwapFile.StartDecode(FCommandLine.pOption);
-              if Assigned(FTempFile) then FTempFile.StartEncode(FCommandLine.pOption);
-            end;
-
+            StartCrypter(P);
             case P.Action of
-              haNone:            DoMessage(Format(cmCopying,  [P.Name]));
-              haUpdate:          DoMessage(Format(cmUpdating, [P.Name]));
-              haDecode:          DoMessage(Format(cmEncoding, [P.Name]));
-              haDecodeAndUpdate: DoMessage(Format(cmUpdating, [P.Name]));
-            end;
-
-            case P.Action of
-              haNone:            Encoder.CopyFrom(P, FArcFile);
-              haUpdate:          Encoder.Write(P);
-              haDecode:          Encoder.WriteFrom(P, FSwapFile);
-              haDecodeAndUpdate: Encoder.Write(P);
+              haNone: begin
+                DoMessage(Format(cmCopying,  [P.Name]));
+                Encoder.CopyFrom(P, FArcFile);
+              end;
+              haUpdate: begin
+                DoMessage(Format(cmUpdating, [P.Name]));
+                Encoder.Write(P);
+              end;
+              haDecode: begin
+                DoMessage(Format(cmEncoding, [P.Name]));
+                Encoder.WriteFrom(P, FSwapFile);
+              end;
+              haDecodeAndUpdate: begin
+                DoMessage(Format(cmUpdating, [P.Name]));
+                Encoder.Write(P);
+              end;
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-
-            if Assigned(FTempFile) then FTempFile.FinishEncode;
-            if Assigned(FSwapFile) then FSwapFile.FinishDecode;
-            if Assigned(FArcFile)  then FArcFile .FinishDecode;
+            StopCrypter(P);
           end;
         Encoder.Destroy;
         FHeaders.Write(FTempFile);
@@ -805,16 +814,15 @@ begin
           end;
 
           case P.Action of
-            // haNone:            nothing to do
-            haUpdate:             DoMessage(Format(cmExtracting, [P.Name]));
-            haDecode:             DoMessage(Format(cmDecoding,   [P.Name]));
-            // haDecodeAndUpdate: nothing to do
-          end;
-
-          case P.Action of
-            haNone:               Check := True;
-            haUpdate:             Check := Decoder.DecodeTo(P);
-            haDecode:             Check := Decoder.DecodeToNul(P);
+            haNone: Check := True;
+            haUpdate: begin
+              DoMessage(Format(cmExtracting, [P.Name]));
+              Check := Decoder.Read(P);
+            end;
+            haDecode: begin
+              DoMessage(Format(cmDecoding, [P.Name]));
+              Check := Decoder.ReadToNul(P);
+            end;
             // haDecodeAndUpdate: nothing to do
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
@@ -837,7 +845,9 @@ var
 begin
   if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
   begin
-    Decoder := THeaderStreamDecoder.Create(FArcFile, DoTick);
+    Decoder := THeaderDecoder.Create(FArcFile);
+    Decoder.OnUserAbortEvent := DoUserAbortEvent;
+
     for I := 0  to FHeaders.Count - 1 do
       if Code < ccError then
       begin
@@ -852,16 +862,15 @@ begin
           end;
 
           case P.Action of
-            // haNone:            nothing to do
-            haUpdate:             DoMessage(Format(cmTesting,  [P.Name]));
-            haDecode:             DoMessage(Format(cmDecoding, [P.Name]));
-            // haDecodeAndUpdate: nothing to do
-          end;
-
-          case P.Action of
-            haNone:               Check := True;
-            haUpdate:             Check := Decoder.DecodeToNul(P);
-            haDecode:             Check := Decoder.DecodeToNul(P);
+            haNone: Check := True;
+            haUpdate: begin
+              DoMessage(Format(cmTesting, [P.Name]));
+              Check := Decoder.DecodeToNul(P);
+            end;
+            haDecode: begin
+              DoMessage(Format(cmDecoding, [P.Name]));
+              Check := Decoder.DecodeToNul(P);
+            end;
             // haDecodeAndUpdate: nothing to do
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
@@ -901,7 +910,9 @@ begin
         end;
 
         FHeaders.Write(FTempFile);
-        Encoder := THeaderStreamEncoder.Create(FTempFile, DoTick);
+        Encoder := THeaderEncoder.Create(FTempFile);
+        Encoder.OnUserAbortEvent := DoUserAbortEvent;
+
         for I := 0 to FHeaders.Count - 1 do
           if Code < ccError then
           begin
@@ -916,20 +927,18 @@ begin
             end;
 
             case P.Action of
-              haNone:               DoMessage(Format(cmCopying,  [P.Name]));
-              haUpdate:             DoMessage(Format(cmDeleting, [P.Name]));
-              haDecode:             DoMessage(Format(cmEncoding, [P.Name]));
-              haDecodeAndUpdate:    DoMessage(Format(cmDeleting, [P.Name]));
-            end;
-
-            case P.Action of
-              haNone:               Encoder.CopyFrom(FArcFile, P.PackedSize, P);
-              // haUpdate:          nothing to do
-              haDecode:             Encoder.EncodeFrom(FSwapFile, P.Size, P);
-              // haDecodeAndUpdate: notihing to do
+              haNone: begin
+                DoMessage(Format(cmCopying,  [P.Name]));
+                Encoder.CopyFrom(FArcFile, P.PackedSize, P);
+              end;
+              haUpdate: DoMessage(Format(cmDeleting, [P.Name]));
+              haDecode: begin
+                DoMessage(Format(cmEncoding, [P.Name]));
+                Encoder.EncodeFrom(FSwapFile, P.Size, P);
+              end;
+              haDecodeAndUpdate: DoMessage(Format(cmDeleting, [P.Name]));
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-
             if Assigned(FTempFile) then FTempFile.FinishEncode;
             if Assigned(FSwapFile) then FSwapFile.FinishDecode;
             if Assigned(FArcFile)  then FArcFile .FinishDecode;

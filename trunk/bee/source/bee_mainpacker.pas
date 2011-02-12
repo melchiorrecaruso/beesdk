@@ -236,13 +236,20 @@ uses
 
   function THeaderDecoder.Read(Item: THeader): boolean;
   var
+    CRC: longword;
     Strm: TFileWriter;
   begin
     Result := False;
     Strm   := CreateTFileWriter(Item.ExtName, fmCreate);
     if Assigned(Strm) then
     begin
-      Result := Read(Item, Strm);
+      FStrm.Seek(Item.StartPos, soBeginning);
+      case foMoved in Item.Flags of
+        True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
+        False: Result := Read(Strm, Item.Size, CRC) = Item.Size;
+      end;
+      if Result then Result := Item.Crc = CRC;
+
       if Result then
       begin
         FileSetAttr(Item.ExtName, Item.Attr);
