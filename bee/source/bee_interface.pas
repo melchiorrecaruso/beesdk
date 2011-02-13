@@ -41,7 +41,6 @@ uses
   Bee_Headers;
 
 type
-
   { TApp class }
 
   TApp = class
@@ -55,8 +54,6 @@ type
     FProcessedSize: int64;
     function GetElapsedTime: longint;
     function GetRemainingTime: longint;
-    procedure SetSize(const Value: int64);
-    procedure SetProcessedSize(const Value: int64);
     procedure SetSuspended(Value: boolean);
     function GetPercentage: longint;
     function GetSpeed: longint;
@@ -69,7 +66,7 @@ type
     function DoRename(const aItem: THeader; const aValue: string): string;
     function DoOverWrite(const aItem: THeader; const aValue: string): string;
     procedure DoList(const aItem: THeader);
-    function DoTick: boolean;
+    function DoUserAbort: boolean;
     {$IFDEF CONSOLEAPPLICATION}
     procedure DoClear;
     {$ENDIF}
@@ -84,11 +81,7 @@ type
     function  OnRename(const aItem: THeader; const aValue: string): string; virtual; abstract;
     function  OnOverWrite(const aItem: THeader; const aValue: string): string; virtual; abstract;
     procedure OnList(const aItem: THeader); virtual; abstract;
-    procedure OnTick; virtual; abstract;
-
-
-
-    function DoUserAbortEvent: boolean;
+    procedure OnProgress; virtual; abstract;
     {$IFDEF CONSOLEAPPLICATION}
     procedure OnClear; virtual; abstract;
     {$ENDIF}
@@ -96,8 +89,8 @@ type
     property Percentage: longint read GetPercentage;
     property ElapsedTime: longint read GetElapsedTime;
     property RemainingTime: longint read GetRemainingTime;
-    property ProcessedSize: int64 read FProcessedSize write SetProcessedSize;
-    property Size: int64 read FSize write SetSize;
+    property ProcessedSize: int64 read FProcessedSize;
+    property Size: int64 read FSize;
     property Suspended: boolean read FSuspended write SetSuspended;
     property Terminated: boolean read FTerminated;
     property Code: byte read FCode write SetCode;
@@ -127,16 +120,6 @@ end;
 destructor TApp.Destroy;
 begin
   inherited Destroy;
-end;
-
-procedure TApp.SetSize(const Value: int64);
-begin
-  FSize := Value;
-end;
-
-procedure TApp.SetProcessedSize(const Value: int64);
-begin
-  FProcessedSize := Value;
 end;
 
 procedure TApp.Execute;
@@ -234,22 +217,14 @@ begin
 end;
 
 procedure TApp.DoMessage(const aMessage: string; aCode: byte);
-var
-  X: double;
 begin
   SetCode(aCode);
-  X := Now;
   OnMessage(aMessage);
-  FStartTime := FStartTime + (Now - X);
 end;
 
 procedure TApp.DoMessage(const aMessage: string);
-var
-  X: double;
 begin
-  X := Now;
   OnMessage(aMessage);
-  FStartTime := FStartTime + (Now - X);
 end;
 
 function TApp.DoRename(const aItem: THeader; const aValue: string): string;
@@ -280,37 +255,21 @@ begin
 end;
 
 procedure TApp.DoList(const aItem: THeader);
-var
-  X: double;
 begin
-  X := Now;
   OnList(aItem);
-  FStartTime := FStartTime + (Now - X);
 end;
 
-function TApp.DoTick: boolean; {$IFDEF FPC} inline; {$ENDIF}
+function TApp.DoUserAbort: boolean;
 var
   X: double;
 begin
-  if FProcessedSize and $FFFF = 0 then
+  Inc(FProcessedSize, $FFFF);
   begin
     X := Now;
-    OnTick;
+    OnProgress;
     while FSuspended do Sleep(250);
     FStartTime := FStartTime + (Now - X);
   end;
-  Inc(FProcessedSize);
-  Result := FCode < ccError;
-end;
-
-function TApp.DoUserAbortEvent: boolean;
-begin
-  Inc(FProcessedSize, $FFFF);
-  OnTick;
-
-
-
-
   Result := Code > ccWarning;
 end;
 
