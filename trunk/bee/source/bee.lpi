@@ -111,9 +111,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="902"/>
-        <CursorPos X="33" Y="932"/>
-        <FoldState Value=" T3jI0C4 pj0jQ0W2[95g0*]9k2lZ0o]RigkK0p2]9bk80u4"/>
+        <TopLine Value="656"/>
+        <CursorPos X="53" Y="691"/>
+        <FoldState Value=" T3jI0C014I"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="1">
           <Item0 X="13" Y="861" ID="0"/>
@@ -172,7 +172,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="79"/>
         <CursorPos X="11" Y="316"/>
-        <FoldState Value=" T3id246 picjD27013P"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -194,7 +193,7 @@
         <UnitName Value="Bee_CommandLine"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="116"/>
+        <TopLine Value="1"/>
         <CursorPos X="17" Y="145"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
