@@ -823,7 +823,7 @@ begin
               DoMessage(Format(cmDecoding, [P.Name]));
               Check := Decoder.ReadToNul(P);
             end;
-            // haDecodeAndUpdate: nothing to do
+            haDecodeAndUpdate: Check := True;
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
 
