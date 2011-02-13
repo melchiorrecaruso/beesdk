@@ -237,7 +237,7 @@ begin
     // test item ...
     DoMessage(Format(cmChecking, [Item.Name]));
     Decoder := THeaderDecoder.Create(FArchReader);
-    Decoder.OnUserAbortEvent := DoUserAbortEvent;
+    Decoder.OnUserAbortEvent := DoUserAbort;
     for I := 0 to Smaller do
       Decoder.Initialize(FHeaders.Items[I]);
 
@@ -298,7 +298,7 @@ begin
     if Assigned(FSwapWriter) then
     begin
       Decoder := THeaderDecoder.Create(FArchReader);
-      Decoder.OnUserAbortEvent := DoUserAbortEvent;
+      Decoder.OnUserAbortEvent := DoUserAbort;
 
       for I := 0 to FHeaders.Count - 1 do
         if Code < ccError then
@@ -714,7 +714,7 @@ begin
       begin
         FHeaders.Write(FTempWriter);
         Encoder := THeaderEncoder.Create(FTempWriter);
-        Encoder.OnUserAbortEvent := DoUserAbortEvent;
+        Encoder.OnUserAbortEvent := DoUserAbort;
 
         for I := 0 to FHeaders.Count - 1 do
           if Code < ccError then
@@ -761,7 +761,7 @@ begin
   if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
   begin
     Decoder := THeaderDecoder.Create(FArchReader);
-    Decoder.OnUserAbortEvent := DoUserAbortEvent;
+    Decoder.OnUserAbortEvent := DoUserAbort;
 
     for I := 0  to FHeaders.Count - 1 do
       if Code < ccError then
@@ -803,7 +803,7 @@ begin
   if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
   begin
     Decoder := THeaderDecoder.Create(FArchReader);
-    Decoder.OnUserAbortEvent := DoUserAbortEvent;
+    Decoder.OnUserAbortEvent := DoUserAbort;
 
     for I := 0  to FHeaders.Count - 1 do
       if Code < ccError then
@@ -862,7 +862,7 @@ begin
 
         FHeaders.Write(FTempWriter);
         Encoder := THeaderEncoder.Create(FTempWriter);
-        Encoder.OnUserAbortEvent := DoUserAbortEvent;
+        Encoder.OnUserAbortEvent := DoUserAbort;
 
         for I := 0 to FHeaders.Count - 1 do
           if Code < ccError then
@@ -907,7 +907,7 @@ begin
     begin
       FHeaders.Write(FTempWriter);
       Encoder := THeaderEncoder.Create(FTempWriter);
-      Encoder.OnUserAbortEvent := DoUserAbortEvent;
+      Encoder.OnUserAbortEvent := DoUserAbort;
 
       for I := 0 to FHeaders.Count - 1 do
         if Code < ccError then
