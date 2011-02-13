@@ -78,8 +78,8 @@ type
 
     procedure OnMessage(const aMessage: string); virtual; abstract;
     procedure OnRequest(const aMessage: string); virtual; abstract;
-    function  OnRename(const aItem: THeader; const aValue: string): string; virtual; abstract;
-    function  OnOverWrite(const aItem: THeader; const aValue: string): string; virtual; abstract;
+    function OnRename(const aItem: THeader; const aValue: string): string; virtual; abstract;
+    function OnOverWrite(const aItem: THeader; const aValue: string): string; virtual; abstract;
     procedure OnList(const aItem: THeader); virtual; abstract;
     procedure OnProgress; virtual; abstract;
     {$IFDEF CONSOLEAPPLICATION}
@@ -275,12 +275,8 @@ end;
 
 {$IFDEF CONSOLEAPPLICATION}
 procedure TApp.DoClear;
-var
-  X: double;
 begin
-  X := Now;
   OnClear;
-  FStartTime := FStartTime + (Now - X);
 end;
 {$ENDIF}
 
