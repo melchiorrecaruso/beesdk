@@ -122,7 +122,7 @@ constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1267 archiver utility, Feb 2011' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1271 archiver utility, Feb 2011' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders    := nil;
@@ -688,7 +688,7 @@ begin
   DoMessage('  -rw   recurse subdirectories only for wildcard names');
   DoMessage('  -s    create Solid archive');
   DoMessage('  -sfx  add self-extractor module');
-  DoMessage('  -stl  show technical information for l (list) command');
+  DoMessage('  -sls  show list sorted by filename - for l (list) command');
   DoMessage('  -t    Test archive after process');
   DoMessage('  -u<0..5>  Update files method (0-add files, 1-update older files, 2-replace');
   DoMessage('            files, 3-add and update older files (default), 4-add and replace');
