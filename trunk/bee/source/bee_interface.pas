@@ -306,8 +306,12 @@ end;
 function TApp.DoUserAbortEvent: boolean;
 begin
   Inc(FProcessedSize, $FFFF);
+  OnTick;
 
-  Result := Code < ccError;
+
+
+
+  Result := Code > ccWarning;
 end;
 
 {$IFDEF CONSOLEAPPLICATION}
