@@ -41,27 +41,34 @@ type
 
   THeaderEncoder = class(TStreamEncoder)
   private
+    FPassword: string;
+  private
     function CopySilent(Strm: TStream; const Size: int64): int64;
     function Copy(Strm: TStream; const Size: int64): int64; overload;
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload;
     function Write(Item: THeader; Strm: TStream; const Size: int64): boolean; overload;
   public
+    constructor Create(Stream: TStream);
     procedure Initialize(Item: THeader);
     function CopyFrom(Item: THeader; Strm: TStream): boolean; // from Archive
     function WriteFrom(Item: THeader; Strm: TStream): boolean;// from Swap
     function Write(Item: THeader): boolean; overload;         // from File
+    property Password: string read FPassword write FPassword;
   end;
 
   { THeaderDecoder class }
 
   THeaderDecoder = class(TStreamDecoder)
   private
+    FPassword: string;
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
   public
+    constructor Create(Stream: TStream);
     procedure Initialize(Item: THeader);
     function ReadTo(Item: THeader; Strm: TStream): boolean; // to Swap
     function ReadToNul(Item: THeader): boolean;             // to Nul
     function Read(Item: THeader): boolean; overload;        // to File
+    property Password: string read FPassword write FPassword;
   end;
 
 implementation
@@ -72,6 +79,12 @@ uses
   Bee_Crc;
 
   { THeaderEncoder class }
+
+  constructor THeaderEncoder.Create(Stream: TStream);
+  begin
+    inherited Create(Stream);
+    FPassword := '';
+  end;
 
   procedure THeaderEncoder.Initialize(Item: THeader);
   begin
@@ -151,13 +164,22 @@ uses
     Result := Item.Size = Size;
   end;
 
-  function THeaderEncoder.WriteFrom(Item: THeader; Strm: TStream): boolean;
+  function THeaderEncoder.WriteFrom(Item: THeader; Strm: TStream): boolean; // from Swap
   begin
+    if foPassword in Item.Flags then
+    begin
+      if FStrm is TFileWriter then TFileWriter(FStrm).StartEncode(FPassword);
+      if  Strm is TFileReader then TFileReader( Strm).StartDecode(FPassword);
+    end;
+
     Strm.Seek(Item.StartPos, soBeginning);
     Result := Write(Item, Strm, Item.Size);
+
+    if FStrm is TFileWriter then TFileWriter(FStrm).FinishEncode;
+    if  Strm is TFileReader then TFileReader( Strm).FinishDecode;
   end;
 
-  function THeaderEncoder.CopyFrom(Item: THeader; Strm: TStream): boolean;
+  function THeaderEncoder.CopyFrom(Item: THeader; Strm: TStream): boolean; // from Archive
   var
    Symbol: byte;
    begin
@@ -166,7 +188,7 @@ uses
       Result := Copy(Strm, Item.PackedSize) = Item.PackedSize;
    end;
 
-  function THeaderEncoder.Write(Item: THeader): boolean;
+  function THeaderEncoder.Write(Item: THeader): boolean; // from File
   var
     Strm: TFileReader;
   begin
@@ -174,12 +196,24 @@ uses
     Strm   := CreateTFileReader(Item.ExtName, fmOpenRead);
     if Assigned(Strm) then
     begin
+      if foPassword in Item.Flags then
+        if FStrm is TFileWriter then
+          TFileWriter(FStrm).StartEncode(FPassword);
+
       Result := Write(Item, Strm, Strm.Size);
-      Strm.Free;
+      if FStrm is TFileWriter then
+        TFileWriter(FStrm).FinishEncode;
+      FreeAndNil(Strm);
     end;
   end;
 
   { TheaderDecoder class }
+
+  constructor THeaderDecoder.Create(Stream: TStream);
+  begin
+    inherited Create(Stream);
+    FPassword := '';
+  end;
 
   procedure THeaderDecoder.Initialize(Item: THeader);
   begin
@@ -205,10 +239,16 @@ uses
     end;
   end;
 
-  function THeaderDecoder.ReadTo(Item: THeader; Strm: TStream): boolean;
+  function THeaderDecoder.ReadTo(Item: THeader; Strm: TStream): boolean; // to Swap
   var
     CRC: longword;
   begin
+    if foPassword in Item.Flags then
+    begin
+      if FStrm is TFileReader then TFileReader(FStrm).StartDecode(FPassword);
+      if  Strm is TFileWriter then TFileWriter( Strm).StartEncode(FPassword);
+    end;
+
     FStrm.Seek(Item.StartPos, soBeginning);
     Item.StartPos := Strm.Seek(0, soCurrent);
     case foMoved in Item.Flags of
@@ -216,6 +256,9 @@ uses
       False: Result := Read(Strm, Item.Size, CRC) = Item.Size;
     end;
     if Result then Result := Item.Crc = CRC;
+
+    if FStrm is TFileReader then TFileReader(FStrm).FinishDecode;
+    if  Strm is TFileWriter then TFileWriter( Strm).FinishEncode;
   end;
 
   function THeaderDecoder.ReadToNul(Item: THeader): boolean;
@@ -223,6 +266,10 @@ uses
     CRC: longword;
     Strm: TNulWriter;
   begin
+    if foPassword in Item.Flags then
+      if FStrm is TFileReader then
+        TFileReader(FStrm).StartDecode(FPassword);
+
     Strm := TNulWriter.Create;
     FStrm.Seek(Item.StartPos, soBeginning);
     case foMoved in Item.Flags of
@@ -231,7 +278,10 @@ uses
     end;
     Strm.Free;
 
-    if Result then Result := Item.Crc = CRC;
+    if FStrm is TFileReader then
+      TFileReader(FStrm).StartDecode(FPassword);
+
+    Result := Result and (Item.Crc = CRC);
   end;
 
   function THeaderDecoder.Read(Item: THeader): boolean;
@@ -243,19 +293,27 @@ uses
     Strm   := CreateTFileWriter(Item.ExtName, fmCreate);
     if Assigned(Strm) then
     begin
+      if foPassword in Item.Flags then
+         if FStrm is TFileReader then
+           TFileReader(FStrm).StartDecode(FPassword);
+
       FStrm.Seek(Item.StartPos, soBeginning);
       case foMoved in Item.Flags of
         True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
         False: Result := Read(Strm, Item.Size, CRC) = Item.Size;
       end;
-      if Result then Result := Item.Crc = CRC;
+      Strm.Free;
+
+      if FStrm is TFileReader then
+        TFileReader(FStrm).StartDecode(FPassword);
+
+      Result := Result and (Item.Crc = CRC);
 
       if Result then
       begin
         FileSetAttr(Item.ExtName, Item.Attr);
         FileSetDate(Item.ExtName, Item.Time);
       end;
-      Strm.Free;
     end;
   end;
 
