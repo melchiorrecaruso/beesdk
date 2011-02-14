@@ -658,7 +658,7 @@ end;
 function FileTimeToString(X: longint): string;
 begin
   try
-    Result := DateTimeToString(FileDateToDateTime(X));
+    Result := DateTimeToString(SysUtils.FileDateToDateTime(X));
   except
     Result := '????-??-?? ??:??:??';
   end;
@@ -667,7 +667,7 @@ end;
 function FileTimeToString(X: longint; const Format: string): string;
 begin
   try
-    Result := DateTimeToString(FileDateToDateTime(X), Format);
+    Result := DateTimeToString(SysUtils.FileDateToDateTime(X), Format);
   except
     Result := '????-??-?? ??:??:??';
   end;
