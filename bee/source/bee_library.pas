@@ -75,7 +75,7 @@ type
     procedure OnRequest(const aMessage: string); override;
     function OnRename(const aItem: THeader; const aValue: string): string; override;
     procedure OnList(const aItem: THeader); override;
-    procedure OnTick; override;
+    procedure OnProgress; override;
     // procedure OnClear; override;
   end;
 
@@ -176,7 +176,7 @@ begin
   FMessages.Add(StringToPChar(Format(cmListing, [aItem.Name])));
 end;
 
-procedure TCustomBeeApp.OnTick;
+procedure TCustomBeeApp.OnProgress;
 begin
   // nothing to do
 end;
