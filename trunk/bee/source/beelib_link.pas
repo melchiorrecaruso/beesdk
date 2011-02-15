@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1110 - 2010.01.23 by Melchiorre Caruso.
+    v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
 }
 
 unit BeeLib_Link;

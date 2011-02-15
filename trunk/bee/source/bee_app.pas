@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1157 - 2010.11.06 by Melchiorre Caruso.
+    v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -122,7 +122,7 @@ constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1271 archiver utility, Feb 2011' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1280 archiver utility, Feb 2011' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders    := nil;
