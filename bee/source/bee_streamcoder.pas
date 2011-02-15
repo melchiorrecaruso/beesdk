@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1157 - 2011.02.04 by Melchiorre Caruso.
+    v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
 }
 
 unit Bee_StreamCoder;

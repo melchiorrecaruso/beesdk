@@ -86,8 +86,8 @@
         <UnitName Value="Bee"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="80"/>
-        <CursorPos X="68" Y="95"/>
+        <TopLine Value="10"/>
+        <CursorPos X="35" Y="37"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -98,8 +98,8 @@
         <UnitName Value="Bee_Consts"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="79"/>
-        <CursorPos X="12" Y="97"/>
+        <TopLine Value="1"/>
+        <CursorPos X="35" Y="25"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -109,8 +109,8 @@
         <UnitName Value="Bee_App"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1007"/>
-        <CursorPos X="39" Y="22"/>
+        <TopLine Value="13"/>
+        <CursorPos X="35" Y="32"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="1">
           <Item0 X="13" Y="861" ID="0"/>
@@ -123,8 +123,8 @@
         <UnitName Value="Bee_Headers"/>
         <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="503"/>
-        <CursorPos X="39" Y="525"/>
+        <TopLine Value="1"/>
+        <CursorPos X="35" Y="30"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -134,8 +134,8 @@
         <UnitName Value="Bee_Types"/>
         <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="66"/>
-        <CursorPos X="29" Y="90"/>
+        <TopLine Value="1"/>
+        <CursorPos X="35" Y="25"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -143,11 +143,10 @@
       <Unit5>
         <Filename Value="bee_common.pas"/>
         <UnitName Value="Bee_Common"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="649"/>
-        <CursorPos X="8" Y="660"/>
+        <TopLine Value="1"/>
+        <CursorPos X="35" Y="30"/>
         <UsageCount Value="101"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -157,8 +156,8 @@
         <UnitName Value="Bee_Interface"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="61"/>
-        <CursorPos X="1" Y="98"/>
+        <TopLine Value="10"/>
+        <CursorPos X="35" Y="27"/>
         <UsageCount Value="101"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -168,8 +167,8 @@
         <UnitName Value="Bee_MainPacker"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="258"/>
-        <CursorPos X="67" Y="267"/>
+        <TopLine Value="1"/>
+        <CursorPos X="56" Y="25"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -180,8 +179,8 @@
         <UnitName Value="Bee_StreamCoder"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="39"/>
-        <CursorPos X="30" Y="47"/>
+        <TopLine Value="1"/>
+        <CursorPos X="33" Y="25"/>
         <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -192,7 +191,7 @@
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="17" Y="145"/>
+        <CursorPos X="35" Y="25"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -203,7 +202,7 @@
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <CursorPos X="57" Y="25"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -211,10 +210,11 @@
       <Unit11>
         <Filename Value="beelib_link.pas"/>
         <UnitName Value="BeeLib_Link"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <CursorPos X="35" Y="25"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -224,8 +224,8 @@
         <UnitName Value="Bee_Files"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="37"/>
-        <CursorPos X="30" Y="61"/>
+        <TopLine Value="1"/>
+        <CursorPos X="35" Y="30"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -235,8 +235,8 @@
         <UnitName Value="Bee_BufStream"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="380"/>
-        <CursorPos X="3" Y="422"/>
+        <TopLine Value="1"/>
+        <CursorPos X="35" Y="25"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
