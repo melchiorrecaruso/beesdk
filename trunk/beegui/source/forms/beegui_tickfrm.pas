@@ -285,9 +285,9 @@ var
 begin
   for I := 0 to Notebook.PageCount -1 do
   begin
-    Notebook.Page[I].TabVisible := False;
+    Notebook.Page[I].Visible := False;
   end;
-  Notebook.Page[Notebook.PageIndex].TabVisible := True;
+  Notebook.Page[Notebook.PageIndex].Visible := True;
 
   if Notebook.PageIndex = 0 then
   begin
@@ -427,7 +427,7 @@ begin
   FID := nil;
 
   if Report.Lines.Count <> 0 then
-    Notebook.ActivePageComponent := ReportPage
+    Notebook.PageIndex := 1
   else
     Close;
 end;

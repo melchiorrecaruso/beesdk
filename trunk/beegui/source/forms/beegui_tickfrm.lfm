@@ -15,7 +15,7 @@ object TickFrm: TTickFrm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   ShowInTaskBar = stAlways
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.31'
   object BtnCancel: TBitBtn
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
@@ -108,15 +108,14 @@ object TickFrm: TTickFrm
     Height = 225
     Top = 6
     Width = 425
+    PageIndex = 0
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
-    OnPageChanged = NotebookPageChanged
-    PageIndex = 0
     TabOrder = 0
+    TabStop = True
     object GeneralPage: TPage
-      Caption = 'General'
-      ClientWidth = 417
-      ClientHeight = 199
+      ClientWidth = 425
+      ClientHeight = 225
       object Msg: TLabel
         AnchorSideLeft.Control = GeneralPage
         AnchorSideRight.Control = GeneralPage
@@ -124,8 +123,8 @@ object TickFrm: TTickFrm
         AnchorSideBottom.Control = Tick
         Left = 6
         Height = 18
-        Top = 149
-        Width = 405
+        Top = 175
+        Width = 413
         Anchors = [akLeft, akRight, akBottom]
         BorderSpacing.Left = 6
         BorderSpacing.Top = 2
@@ -147,8 +146,8 @@ object TickFrm: TTickFrm
         AnchorSideBottom.Side = asrBottom
         Left = 6
         Height = 20
-        Top = 173
-        Width = 405
+        Top = 199
+        Width = 413
         Anchors = [akLeft, akRight, akBottom]
         BorderSpacing.Around = 6
         Constraints.MaxHeight = 20
@@ -160,14 +159,14 @@ object TickFrm: TTickFrm
         AnchorSideTop.Control = GeneralPage
         AnchorSideBottom.Control = Msg
         Left = 6
-        Height = 137
+        Height = 163
         Top = 6
         Width = 89
         Anchors = [akTop, akLeft, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 137
+        ClientHeight = 163
         ClientWidth = 89
         TabOrder = 1
         object TimeLabel: TLabel
@@ -211,15 +210,15 @@ object TickFrm: TTickFrm
         AnchorSideTop.Control = GeneralPage
         AnchorSideRight.Control = UnitPanel
         AnchorSideBottom.Control = Msg
-        Left = 321
-        Height = 137
+        Left = 329
+        Height = 163
         Top = 6
         Width = 50
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 137
+        ClientHeight = 163
         ClientWidth = 50
         TabOrder = 2
         object GeneralSize: TLabel
@@ -285,15 +284,15 @@ object TickFrm: TTickFrm
         AnchorSideRight.Control = GeneralPage
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Msg
-        Left = 377
-        Height = 137
+        Left = 385
+        Height = 163
         Top = 6
         Width = 34
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 137
+        ClientHeight = 163
         ClientWidth = 34
         TabOrder = 3
         object SpeedUnit: TLabel
@@ -360,14 +359,14 @@ object TickFrm: TTickFrm
         AnchorSideTop.Control = GeneralPage
         AnchorSideBottom.Control = Msg
         Left = 101
-        Height = 137
+        Height = 163
         Top = 6
         Width = 61
         Anchors = [akTop, akLeft, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 137
+        ClientHeight = 163
         ClientWidth = 61
         TabOrder = 4
         object RemainingTime: TLabel
@@ -417,15 +416,15 @@ object TickFrm: TTickFrm
         AnchorSideTop.Control = GeneralPage
         AnchorSideRight.Control = SizePanel
         AnchorSideBottom.Control = Msg
-        Left = 234
-        Height = 137
+        Left = 242
+        Height = 163
         Top = 6
         Width = 81
         Anchors = [akTop, akRight, akBottom]
         AutoSize = True
         BorderSpacing.Around = 6
         BevelOuter = bvNone
-        ClientHeight = 137
+        ClientHeight = 163
         ClientWidth = 81
         TabOrder = 5
         object GeneralSizeLabel: TLabel
@@ -480,9 +479,8 @@ object TickFrm: TTickFrm
       end
     end
     object ReportPage: TPage
-      Caption = 'Report'
-      ClientWidth = 401
-      ClientHeight = 145
+      ClientWidth = 802
+      ClientHeight = 290
       object Report: TMemo
         Left = 6
         Height = 133
