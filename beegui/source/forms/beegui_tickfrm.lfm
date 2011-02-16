@@ -479,8 +479,8 @@ object TickFrm: TTickFrm
       end
     end
     object ReportPage: TPage
-      ClientWidth = 1604
-      ClientHeight = 580
+      ClientWidth = 6416
+      ClientHeight = 2320
       object Report: TMemo
         Left = 6
         Height = 133

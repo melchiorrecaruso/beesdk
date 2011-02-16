@@ -212,7 +212,7 @@ end;
 
 function CoreVersion: longint;
 begin
-  Result := 105;
+  Result := 106;
 end;
 
 function CoreCreate(P: PChar): Pointer;

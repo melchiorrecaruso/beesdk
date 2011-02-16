@@ -61,8 +61,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="155"/>
-        <CursorPos X="35" Y="179"/>
+        <TopLine Value="171"/>
+        <CursorPos X="16" Y="215"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -72,7 +72,7 @@
         <UnitName Value="Bee_Consts"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="45"/>
+        <TopLine Value="19"/>
         <CursorPos X="54" Y="55"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
@@ -83,7 +83,7 @@
         <UnitName Value="BeeLib_Link"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="11"/>
+        <TopLine Value="1"/>
         <CursorPos X="32" Y="20"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
@@ -219,7 +219,7 @@
     <SearchPaths>
       <IncludeFiles Value="beelib.include"/>
       <OtherUnitFiles Value="packages;..\..\bee\source;..\..\beegui\source\packages"/>
-      <UnitOutputDirectory Value="..\temp"/>
+      <UnitOutputDirectory Value="..\distribution"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
