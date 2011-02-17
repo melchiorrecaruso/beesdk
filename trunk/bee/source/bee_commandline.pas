@@ -330,6 +330,7 @@ begin
       'T': FCommand := ccTest;
       'R': FCommand := ccRename;
       'O': FCommand := ccOpen;
+      'V': FCommand := ccView;
       else FCommand := ccHelp;
     end;
 end;
