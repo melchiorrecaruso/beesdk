@@ -242,8 +242,7 @@ type
     procedure ListViewKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ListViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure ListViewMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-    procedure ListViewMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure ListViewMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     // ---
     procedure MMenuFileNewClick(Sender: TObject);
@@ -699,11 +698,6 @@ procedure TMainFrm.FileProcessStopTimer(Sender: TObject);
 begin
   if FileProcess.FileIsModified then
   begin
-
-
-    ShowMessage('Ok');
-
-
     if MessageDlg(rsFreshFile, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
       FCommandLine.Clear;
