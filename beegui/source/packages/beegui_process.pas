@@ -113,7 +113,7 @@ procedure TFileProcess.DoOnTimer;
 begin
   if Assigned(FProcess) then
   begin
-    if (FProcess.Running = False) then
+    if FProcess.Running = False then
     begin
       if FProcess.ExitStatus < 2 then
       begin

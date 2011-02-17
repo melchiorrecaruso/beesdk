@@ -699,6 +699,11 @@ procedure TMainFrm.FileProcessStopTimer(Sender: TObject);
 begin
   if FileProcess.FileIsModified then
   begin
+
+
+    ShowMessage('Ok');
+
+
     if MessageDlg(rsFreshFile, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
       FCommandLine.Clear;
