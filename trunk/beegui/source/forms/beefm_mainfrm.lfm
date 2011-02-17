@@ -17,7 +17,7 @@ object MainFrm: TMainFrm
   OnDestroy = FormDestroy
   OnDropFiles = FormDropFiles
   OnShow = FormShow
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.31'
   object ListView: TArchiveListView
     AnchorSideTop.Control = AddressToolBar
     AnchorSideBottom.Control = StatusBar
