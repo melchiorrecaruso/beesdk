@@ -1,0 +1,44 @@
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+100 DIALOGEX 6, 30, 212, 80
+STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_LEFT
+CAPTION "Bee - Self Extractor 0.1.0"
+FONT 8, "Tahoma"
+BEGIN
+  LTEXT "To extract all files in archive to the specified"      , 101, 6,  5, 150,  8
+  LTEXT "folder press the Extract button."                      , 102, 6, 15, 150,  8
+
+  LTEXT "Extraction folder:"                                    , 103, 6, 35, 120,  8
+  EDITTEXT                                                        104, 6, 45, 140, 12
+
+  LTEXT "(C) 2005-2009 Andrew Filinsky and Melchiorre Caruso."  , 105, 6, 65, 200,  8
+
+  PUSHBUTTON "Extract",  IDOK   , 157,   4,  48,  14
+  PUSHBUTTON "Close", IDCLOSE   , 157,  22,  48,  14
+END
+
+200 DIALOGEX 6, 30, 185, 45
+STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_LEFT
+CAPTION "Password ..."
+FONT 8, "Tahoma"
+BEGIN
+  LTEXT "Insert passord:" , 201, 6, 11, 150,  8
+  EDITTEXT                  202, 6, 25, 116, 12
+
+  PUSHBUTTON "Ok"    , IDOK     , 130,  7,  48,  14
+  PUSHBUTTON "Cancel", IDCLOSE  , 130, 24,  48,  14
+END
+
+300 DIALOGEX 6, 30, 185, 44
+STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_LEFT
+CAPTION "Progress ..."
+FONT 8, "Tahoma"
+BEGIN
+  LTEXT "Starting ..."                                             , 301, 6, 10, 170,  8
+  LTEXT "Total progress: 0%"                                       , 302, 6, 25, 120,  8
+
+  PUSHBUTTON "Cancel", IDCLOSE  , 130, 22,  48,  14
+END
