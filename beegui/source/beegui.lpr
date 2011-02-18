@@ -74,63 +74,61 @@ begin
     end;
     Application.Run;
   end else
-  if CommandLine.Command = ccNone then
-  begin
-    Application.Name  := cApplicationName;
-    Application.Title := cApplicationName;
-    Application.CreateForm(TMainFrm, MainFrm);
-    Application.CreateForm(TConfigFrm, ConfigFrm);
-    Application.Run;
-  end else
-  if CommandLine.Command = ccList then
-  begin
-    Application.Name  := cApplicationName;
-    Application.Title := cApplicationName;
-    Application.CreateForm(TMainFrm, MainFrm);
-    Application.CreateForm(TConfigFrm, ConfigFrm);
-    if FileExists(CommandLine.ArchiveName) then
-    begin
-      MainFrm.ShowAndOpenArchive(ParamStr(1));
-    end;
-    Application.Run;
-  end else
-  if CommandLine.Command = ccHelp then
-  begin
-    Application.CreateForm(TAboutFrm, AboutFrm);
-    Application.Run;
-  end else
-  if CommandLine.Command = ccView then
-  begin
-    if (ParamCount = 2) and FileExists(ParamStr(2)) then
-    begin
-      Application.Name  := cApplicationViewerName;
-      Application.Title := cApplicationViewerName;
-      Application.CreateForm(TViewFrm, ViewFrm);
-      begin
-        ViewFrm.LoadFile(ParamStr(2));
+    case CommandLine.Command of
+      ccNone: begin
+        Application.Name  := cApplicationName;
+        Application.Title := cApplicationName;
+        Application.CreateForm(TMainFrm, MainFrm);
+        Application.CreateForm(TConfigFrm, ConfigFrm);
+        Application.Run;
       end;
-      Application.Run;
-    end;
-  end else
-  begin
-    Application.Name  := cApplicationName;
-    Application.Title := cApplicationName;
-    if CommandLine.Run then
-    begin
-      Application.CreateForm(TTickFrm, TickFrm);
-      TickFrm.Execute(CommandLine, nil);
-      TickFrm.ProgressOnTitle := True;
-      repeat
-        Application.ProcessMessages;
-        if TickFrm.FrmCanClose then Break;
-        if TickFrm.FrmCanShow then Break;
-      until CommandLine.Log;
-      if CommandLine.Log then
-        Application.Run
-      else
-        if TickFrm.FrmCanClose = False then
+      ccList: begin
+        Application.Name  := cApplicationName;
+        Application.Title := cApplicationName;
+        Application.CreateForm(TMainFrm, MainFrm);
+        Application.CreateForm(TConfigFrm, ConfigFrm);
+        if FileExists(CommandLine.ArchiveName) then
+        begin
+          MainFrm.ShowAndOpenArchive(ParamStr(1));
+        end;
+        Application.Run;
+      end;
+      ccHelp: begin
+        Application.CreateForm(TAboutFrm, AboutFrm);
+        Application.Run;
+      end;
+      ccView: begin
+        if (ParamCount = 2) and FileExists(ParamStr(2)) then
+        begin
+          Application.Name  := cApplicationViewerName;
+          Application.Title := cApplicationViewerName;
+          Application.CreateForm(TViewFrm, ViewFrm);
+          begin
+            ViewFrm.LoadFile(ParamStr(2));
+          end;
           Application.Run;
+        end;
+      end;
+      else begin
+        Application.Name  := cApplicationName;
+        Application.Title := cApplicationName;
+        if CommandLine.Run then
+        begin
+          Application.CreateForm(TTickFrm, TickFrm);
+          TickFrm.Execute(CommandLine, nil);
+          TickFrm.ProgressOnTitle := True;
+          repeat
+            Application.ProcessMessages;
+            if TickFrm.FrmCanClose then Break;
+            if TickFrm.FrmCanShow then Break;
+          until CommandLine.Log;
+          if CommandLine.Log then
+            Application.Run
+          else
+            if TickFrm.FrmCanClose = False then
+               Application.Run;
+        end;
+      end;
     end;
-  end;
   FreeAndNil(CommandLine);
 end.
