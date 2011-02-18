@@ -76,9 +76,10 @@
         <Filename Value="beeopt.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beeopt"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="23"/>
+        <TopLine Value="26"/>
         <CursorPos X="20" Y="62"/>
         <UsageCount Value="32"/>
         <Loaded Value="True"/>
@@ -91,11 +92,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeOpt_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="104"/>
-        <CursorPos X="14" Y="41"/>
+        <TopLine Value="118"/>
+        <CursorPos X="26" Y="110"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>

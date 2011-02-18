@@ -24,8 +24,8 @@
       <Language Value="0809"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="2">
-      <Item1 Name="default" Default="True"/>
+    <BuildModes Count="2" Active="debug">
+      <Item1 Name="release" Default="True"/>
       <Item2 Name="debug">
         <CompilerOptions>
           <Version Value="10"/>
@@ -53,6 +53,11 @@
             <Debugging>
               <GenerateDebugInfo Value="True"/>
             </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
           </Linking>
           <Other>
             <WriteFPCLogo Value="False"/>
@@ -94,9 +99,10 @@
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="10"/>
+        <TopLine Value="49"/>
         <CursorPos X="49" Y="38"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -307,7 +313,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFm_ViewFrm"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="79"/>
@@ -558,6 +563,7 @@
     </Linking>
     <Other>
       <Verbosity>
+        <ShowErrors Value="False"/>
         <ShowWarn Value="False"/>
         <ShowNotes Value="False"/>
         <ShowHints Value="False"/>
