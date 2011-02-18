@@ -379,10 +379,11 @@
       <Unit25>
         <Filename Value="packages\beegui_consts.pas"/>
         <UnitName Value="BeeGui_Consts"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="25"/>
-        <CursorPos X="59" Y="36"/>
+        <CursorPos X="48" Y="37"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -425,8 +426,8 @@
         <UnitName Value="BeeGui_CommandLine"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="87"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="102"/>
+        <CursorPos X="3" Y="108"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -434,17 +435,16 @@
       <Unit30>
         <Filename Value="..\..\bee\source\bee_commandline.pas"/>
         <UnitName Value="Bee_CommandLine"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="313"/>
-        <CursorPos X="31" Y="333"/>
+        <TopLine Value="71"/>
+        <CursorPos X="34" Y="333"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="forms\beegui_tickfrm.pas"/>
         <Caret Line="290" Column="37" TopLine="266"/>
@@ -558,13 +558,9 @@
         <Caret Line="700" Column="39" TopLine="692"/>
       </Position28>
       <Position29>
-        <Filename Value="forms\beefm_mainfrm.pas"/>
-        <Caret Line="245" Column="70" TopLine="285"/>
-      </Position29>
-      <Position30>
         <Filename Value="..\..\bee\source\bee_commandline.pas"/>
         <Caret Line="46" Column="22" TopLine="35"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

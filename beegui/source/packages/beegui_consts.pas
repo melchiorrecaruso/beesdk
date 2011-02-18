@@ -33,8 +33,8 @@ uses
   SysUtils;
 
 const
-  cApplicationVersion          = 'BeeGui 1.0.6 [build 1016]';
-  cApplicationCopyright        = '(C) 2003-2010 Andrew Filinsky and Melchiorre Caruso';
+  cApplicationVersion          = 'BeeGui 1.0.6 [build 1018]';
+  cApplicationCopyright        = '(C) 2003-2011 Andrew Filinsky and Melchiorre Caruso';
 
   cApplicationName             = 'BeeGui';
   cApplicationTitle            = 'Bee Archive Manager';
