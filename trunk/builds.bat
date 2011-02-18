@@ -1,60 +1,46 @@
 @echo Off
 
 @echo @ 
-@echo @ Compile BeeGui...
+@echo @ Compile BeeGUI ...
 @echo @
 
-cd beegui\source
+lazbuild -B beegui\source\beegui.lpi
 
-lazbuild -B beegui.lpi
-
-cd ..
-cd ..
+delp beegui\distribution
+delp beegui\temp
 
 
 @echo @ 
-@echo @ Compile Bee\BeeLib...
+@echo @ Compile Bee\BeeLIB ...
 @echo @
 
-cd bee\source
+lazbuild -B bee\source\bee.lpi
+lazbuild -B bee\source\beelib.lpi
 
-lazbuild -B bee.lpi
-lazbuild -B beelib.lpi
-
-cd ..
-cd ..
+delp bee\distribution
+delp bee\temp
 
 
 @echo @ 
-@echo @ Compile BeeOpt...
+@echo @ Compile BeeOPT ...
 @echo @
 
-cd beeopt\source
+lazbuild beeopt\source\beeopt.lpi
 
-lazbuild beeopt.lpi
-
-cd ..
-cd ..
+delp beeopt\source\distribution
+delp beeopt\source\temp
 
 
 @echo @ 
-@echo @ Compile BeeSfx...
+@echo @ Compile BeeSFX...
 @echo @
 
-cd beesfx\console\source
+gorc /r beesfx\gui\source\main.rc
 
-lazbuild beesfx.lpi
+lazbuild -B beesfx\console\source\beesfx.lpi
+lazbuild -B beesfx\gui\source\beesfx.lpi
 
-cd ..
-cd ..
-cd ..
-
-cd beesfx\gui\source
-
-gorc /r main.rc
-
-lazbuild beesfx.lpi
-
-cd ..
-cd ..
-cd ..
+delp beesfx\console\distribution
+delp beesfx\gui\distribution
+delp beesfx\console\temp
+delp beesfx\gui\temp
