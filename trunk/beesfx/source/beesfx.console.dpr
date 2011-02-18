@@ -81,10 +81,7 @@ type
 
   function TCustomBeeApp.OnRename(const aItem: THeader; const aValue: string): string;
   begin
-    Write('Rename file "', ParamToOem(aItem.Name), '" as (empty to skip):');
-    Readln(Result);
-    // convert oem to param
-    Result := OemToParam(Result);
+    // nothing to do
   end;
 
   procedure TCustomBeeApp.OnList(const aItem: THeader);
@@ -112,6 +109,7 @@ var
   Params: TStringList;
   App: TCustomBeeApp = nil;
   ExtractionPath: string = '';
+  Password: string;
 
   /// control+c event ///
 
@@ -141,31 +139,35 @@ var
   end;
   {$ENDIF}
 
+  // main-block //
+
   begin
     SetCtrlCHandler(@CtrlHandler);
     Writeln('The Bee self-extractor 0.2.0 build 0100 archiver utility, Feb 2011.' +
       Cr + '(C) 2005-2009 Andrew Filinsky and Melchiorre Caruso.');
 
-    repeat
-      Write(Cr + 'Do you continue with files extraction? [Y, N] ');
-      Readln(Answer);
-    until UpCase(Answer) in ['Y', 'N'];
+    Write(Cr + 'Set extraction path (empty for current path): ');
+    Readln(ExtractionPath);
 
-    if UpCase(Answer) in ['Y', 'y'] then
+    Write(Cr + 'If archive has a password, you can now insert: ');
+    Readln(Password);
+
+    ForceDirectories(ExtractionPath);
+    if SetCurrentDir(ExtractionPath) then
     begin
-      Write(Cr + 'Set extraction path (empty for current path): ');
-      Readln(ExtractionPath);
+      repeat
+        Write(Cr + 'Do you continue with files extraction? [Y, N] ');
+        Readln(Answer);
+      until UpCase(Answer) in ['Y', 'N'];
 
-      Bee_Common.ForceDirectories(ExtractionPath);
-      if SetCurrentDir(ExtractionPath) then
+      if UpCase(Answer) in ['Y', 'y'] then
       begin
-        Write(Cr + 'Start extractor module ...' + Cr);
-
         Params := TStringList.Create;
-        for I := 1 to ParamCount do
-        begin
-          Params.Add(ParamStr(I));
-        end;
+        Params.Add('t');
+        Params.Add('-p' + Password);
+        Params.Add(ParamStr(0));
+
+        Write(Cr + 'Start extractor module ...' + Cr);
         App := TCustomBeeApp.Create(Params.Text);
         App.Execute;
         ExitCode := App.Code;

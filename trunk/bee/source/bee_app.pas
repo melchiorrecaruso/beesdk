@@ -407,6 +407,9 @@ begin
       end;
     end;
 
+  if FCommandLine.sfxOption <> '' then
+    FHeaders.LoadModule(FCommandLine.sfxOption);
+
   Result := FSize;
   if Result = 0 then
   begin
@@ -460,6 +463,9 @@ begin
         haDecodeAndUpdate: Inc(FSize, P.Size);
       end;
     end;
+
+  if FCommandLine.sfxOption <> '' then
+    FHeaders.LoadModule(FCommandLine.sfxOption);
 
   Result := FSize;
   if Result = 0 then

@@ -35,8 +35,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="240"/>
-        <CursorPos X="17" Y="282"/>
+        <TopLine Value="37"/>
+        <CursorPos X="14" Y="53"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -71,7 +71,6 @@
         <TopLine Value="1"/>
         <CursorPos X="36" Y="6"/>
         <UsageCount Value="10"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit4>
       <Unit5>
@@ -82,7 +81,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
     </Units>
-    <JumpHistory Count="10" HistoryIndex="9">
+    <JumpHistory Count="11" HistoryIndex="10">
       <Position1>
         <Filename Value="beesfx.gui.dpr"/>
         <Caret Line="182" Column="21" TopLine="146"/>
@@ -123,6 +122,10 @@
         <Filename Value="beesfx.gui.dpr"/>
         <Caret Line="308" Column="1" TopLine="261"/>
       </Position10>
+      <Position11>
+        <Filename Value="beesfx.gui.dpr"/>
+        <Caret Line="282" Column="17" TopLine="240"/>
+      </Position11>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

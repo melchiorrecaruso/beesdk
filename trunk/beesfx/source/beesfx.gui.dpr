@@ -50,6 +50,7 @@ uses
   Bee_App,
   Bee_Types,
   Bee_Common,
+  Bee_Header,
   Bee_BlowFish,
   Bee_Interface;
 
