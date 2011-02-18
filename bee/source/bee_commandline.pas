@@ -250,12 +250,12 @@ procedure TCommandLine.ProcesssfxOption(var S: string);
 begin
   Delete(S, 1, 4);
   if (S = '+') or (Length(S) = 0) then
-    FsfxOption := DefaultSfxName
+    FsfxOption := ExtractFilePath(ParamStr(0)) + DefaultSfxName
   else
     if (S = '-') then
       FsfxOption := 'nul'
     else
-      FsfxOption := S;
+      FsfxOption := ExtractFilePath(ParamStr(0)) + S;
 end;
 
 procedure TCommandLine.ProcesshvOption(var S: string);

@@ -808,7 +808,7 @@ begin
   begin
     if FModule.Size > 0 then
     begin
-      FModule.Seek(0, 0);
+      FModule.Seek(0, soBeginning);
       Stream.CopyFrom(FModule, FModule.Size);
     end;
   end else
