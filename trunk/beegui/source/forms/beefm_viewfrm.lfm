@@ -1,5 +1,5 @@
 object ViewFrm: TViewFrm
-  Left = 273
+  Left = 421
   Height = 328
   Top = 242
   Width = 411
@@ -11,7 +11,7 @@ object ViewFrm: TViewFrm
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  LCLVersion = '0.9.27'
+  LCLVersion = '0.9.31'
   object BtnFont: TBitBtn
     AnchorSideLeft.Control = Owner
     AnchorSideBottom.Control = Owner
@@ -114,19 +114,19 @@ object ViewFrm: TViewFrm
     Font.Name = 'Default'
     MinFontSize = 0
     MaxFontSize = 0
-    left = 8
-    top = 24
+    left = 16
+    top = 16
   end
   object SaveDialog: TSaveDialog
     Filter = 'Txt files (*.txt)|*.txt|Log files (*.log)|*.log|All files (*.*)|*'
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
-    left = 40
-    top = 24
+    left = 72
+    top = 16
   end
   object PMenu: TPopupMenu
     AutoPopup = False
-    left = 72
-    top = 24
+    left = 120
+    top = 16
     object PMenuSave: TMenuItem
       Caption = 'Save'
       OnClick = PMenuSaveClick
