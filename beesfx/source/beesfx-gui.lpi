@@ -34,10 +34,11 @@
       <Unit0>
         <Filename Value="beesfx-gui.dpr"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="128"/>
-        <CursorPos X="15" Y="137"/>
+        <TopLine Value="62"/>
+        <CursorPos X="12" Y="143"/>
         <FoldState Value=" T3iK2J2a"/>
         <UsageCount Value="39"/>
         <Loaded Value="True"/>
@@ -102,7 +103,7 @@
       </Unit7>
       <Unit8>
         <Filename Value="main-gui.rc"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="21" Y="38"/>
@@ -140,13 +141,10 @@
       <Unit12>
         <Filename Value="..\..\bee\source\bee_headers.pas"/>
         <UnitName Value="Bee_Headers"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="490"/>
         <CursorPos X="37" Y="509"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
@@ -225,7 +223,7 @@
         <UsageCount Value="10"/>
       </Unit22>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="beesfx-gui.dpr"/>
         <Caret Line="172" Column="58" TopLine="126"/>
@@ -342,10 +340,6 @@
         <Filename Value="beesfx-gui.dpr"/>
         <Caret Line="137" Column="15" TopLine="128"/>
       </Position29>
-      <Position30>
-        <Filename Value="..\..\bee\source\bee_headers.pas"/>
-        <Caret Line="693" Column="17" TopLine="682"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -400,7 +394,7 @@
         <ShowAllMessages Value="True"/>
       </ExecuteBefore>
       <ExecuteAfter>
-        <CompileReasons Compile="False" Run="False"/>
+        <Command Value="upx.exe -9 ..\distribution\beesfx-gui.exe"/>
       </ExecuteAfter>
       <CreateMakefileOnBuild Value="True"/>
     </Other>
