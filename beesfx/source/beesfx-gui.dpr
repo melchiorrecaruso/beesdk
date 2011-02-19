@@ -53,9 +53,9 @@ uses
 
 var
   CODE: boolean = TRUE;
+  PERCENTAGE: longint;
   MESSAGE:  string = '';
   PASSWORD: string = '';
-  PERCENTAGE: longint;
 
   ArchReader: TFileReader;
   Decoder: THeaderDecoder;
@@ -77,8 +77,8 @@ var
           case loword(wparam) of
             IDCLOSE: SendMessage(HW, WM_CLOSE, 0, 0);
           end
-        else Result := False;
       end;
+      else Result := False;
     end;
   end;
 
@@ -100,8 +100,8 @@ var
               SetLength(PASSWORD, GetDlgItemText(HW, 202, PChar(PASSWORD), MAX_PATH));
             end;
           end
-        else Result := FALSE;
       end;
+      else Result := FALSE;
     end;
   end;
 
@@ -119,8 +119,8 @@ var
             end;
             IDOk: SendMessage(HW, WM_CLOSE, 0, 0);
           end
-        else Result := FALSE;
       end;
+      else Result := FALSE;
     end;
   end;
 
@@ -135,16 +135,19 @@ begin
   if Assigned(ArchReader) then
   begin
     Headers.Read(ArchReader);
-    // if Headers.Count > 0 then
+    if Headers.Count > 0 then
     begin
       DialogBox(hInstance, MAKEINTRESOURCE(100), 0, @MAIN_FUNC);
       if CODE then
       begin
-        // if Headers.GetNext(0, foPassword) <> -1 then
-        // DialogBox(hInstance, MAKEINTRESOURCE(200), 0, @PASSWORD_FUNC);
+        if Headers.GetNext(0, foPassword) <> -1 then
+        DialogBox(hInstance, MAKEINTRESOURCE(200), 0, @PASSWORD_FUNC);
         if CODE then
         begin
-          // DialogBox(hInstance, MAKEINTRESOURCE(300), 0, @PROGRESS_FUNC);
+          DialogBox(hInstance, MAKEINTRESOURCE(300), 0, @PROGRESS_FUNC);
+
+
+
 
         end;
       end;
@@ -164,7 +167,7 @@ begin
       //    end;
       //  end;
         end;
-      //Decoder.Free;
+      // Decoder.Free;
       ArchReader.Free;
     end;
   end;

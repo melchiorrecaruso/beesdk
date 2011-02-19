@@ -1,7 +1,7 @@
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 100 DIALOGEX 6, 30, 212, 75
-STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
 EXSTYLE WS_EX_LEFT
 CAPTION "BeeSFX - Self Extractor 0.2.0"
 FONT 8, "Tahoma"
@@ -14,11 +14,11 @@ BEGIN
   PUSHBUTTON "Extract", IDOK    , 157,  8,  48,  14
   PUSHBUTTON "Close"  , IDCLOSE , 157, 24,  48,  14
 
-  LTEXT "(C) 2005-2011 Andrew Filinsky and Melchiorre Caruso."  , 105, 6, 63, 200,  8
+  LTEXT "(C) 2005-2011 Andrew Filinsky and Melchiorre Caruso."  , 110, 6, 63, 200,  8
 END
 
 200 DIALOGEX 6, 30, 212, 45
-STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
 EXSTYLE WS_EX_LEFT
 CAPTION "BeeSFX - Insert password"
 FONT 8, "Tahoma"
@@ -30,16 +30,16 @@ BEGIN
   PUSHBUTTON "Cancel", IDCLOSE  , 157, 24,  48,  14
 END
 
-300 DIALOGEX 6, 30, 185, 45
-STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+300 DIALOGEX 6, 30, 212, 45
+STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
 EXSTYLE WS_EX_LEFT
-CAPTION "Progress ..."
+CAPTION "BeeSFX - Extracting ..."
 FONT 8, "Tahoma"
 BEGIN
-  LTEXT "Starting ..."                                     , 301, 6, 10, 170,  8
-  LTEXT "Total progress: 0%"                               , 302, 6, 25, 120,  8
+  LTEXT "Starting ..."                                          , 301, 6, 14, 150,  8
+  LTEXT "Total progress: 0%"                                    , 302, 6, 25, 120,  8
 
-  PUSHBUTTON "Cancel", IDCLOSE  , 130, 22,  48,  14
+  PUSHBUTTON "Cancel", IDCLOSE  , 157, 24,  48,  14
 END
 
 
