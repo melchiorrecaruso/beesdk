@@ -35,12 +35,10 @@ delp beeopt\source\temp
 @echo @ Compile BeeSFX...
 @echo @
 
-gorc /r beesfx\gui\source\main.rc
+gorc /r beesfx\gui\source\main-gui.rc
 
-lazbuild -B beesfx\console\source\beesfx.lpi
-lazbuild -B beesfx\gui\source\beesfx.lpi
+lazbuild -B beesfx\source\beesfx-console.lpi
+lazbuild -B beesfx\source\beesfx-gui.lpi
 
-delp beesfx\console\distribution
-delp beesfx\gui\distribution
-delp beesfx\console\temp
-delp beesfx\gui\temp
+delp beesfx\distribution
+delp beesfx\temp
