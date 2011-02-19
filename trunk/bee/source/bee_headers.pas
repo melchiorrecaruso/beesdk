@@ -691,6 +691,12 @@ begin
   Ver   := Ord(hv02);
 
   OffSet := GetFirst(Stream);
+
+  Writeln;
+  Writeln(OffSet);
+
+  OffSet := -1;
+
   if OffSet > -1 then
   begin
     Stream.Seek(OffSet, 0);
