@@ -35,220 +35,128 @@
     v0.1.0 build 0080 - 2009.09.18 by Melchiorre Caruso.
 }
 
-
 program BeeSfx;
 
 {$I compiler.inc}
 
 uses
-  Classes,
   Windows,
   SysUtils,
-  Messages,
 
-  Bee_Types,
+  Bee_Files,
   Bee_Common,
   Bee_Headers,
-  Bee_BlowFish,
-  Bee_Interface;
+  Bee_MainPacker;
 
 {$R main-gui.res}
 {$R beesfx-ico.res}
 
 var
-  KEY:  string = '';
-  PATH: string = '';
+  PASSWORD: string = '';
+  EXTRACTIONPATH: string = '';
+  OVERWRITEALL: boolean = FALSE;
 
-  MSG: string = '';
-  PERCENTAGE: integer;
-
-  RETURN: boolean;
-
-  // MAIN_HW:     integer = -1;
-  PROGRESS_HW: integer = -1;
-  // PASSWORD_HW: integer = -1;
+  LASTMESSAGE: string = '';
+  LASTPERCENTAGE: longint = 0;
 
   MAIN_FUNC:     pointer = nil;
   PROGRESS_FUNC: pointer = nil;
-  PASSWORD_FUNC: pointer = nil;
 
-type
+  MAIN_HW:       integer = -1;
+  PROGRESS_HW:   integer = -1;
 
-  { TBeeSFXApp class }
+  ArchReader: TFileReader;
+  Decoder: THeaderDecoder;
+  Headers: THeaders;
 
-  TBeeSFXApp = class
-  public
-  end;
-
-  procedure TCustomBeeApp.OnMessage(const aMessage: string);
+  procedure Execute;
+  var
+    I: longint;
+    P: THeader;
+    CODE: boolean;
   begin
-    // MSG := aMessage;
-    // SendMessage(PROGRESS_HW, WM_SETTEXT, 0, 0);
+    Headers   := THeaders.Create(nil);
+    ArchReader := CreateTFileReader(ParamStr(0), fmOpenRead + fmShareDenyWrite);
+    if Assigned(ArchReader) then
+    begin
+      Headers.Read(ArchReader);
+      Decoder := THeaderDecoder.Create(ArchReader);
+      Decoder.Password := PASSWORD;
+
+      CODE := TRUE;
+      for I := 0 to Headers.Count - 1 do
+        if CODE then
+        begin
+          P := Headers.Items[I];
+          Decoder.Initialize(P);
+          if OVERWRITEALL or (FileExists(P.Name) = FALSE) then
+          begin
+            CODE := Decoder.Read(P);
+          end;
+
+          if CODE = FALSE then
+          begin
+            MessageBox(0, PChar('CRC Error'), PChar('BeeSFX message'), MB_OK);
+          end;
+        end;
+      Decoder.Destroy;
+      ArchReader.Destroy;
+    end;
+    Headers.Destroy;
   end;
-
-  procedure TCustomBeeApp.OnRequest(const aMessage: string);
-  begin
-    // MessageBox(0, PChar(aMessage), PChar('Bee message'), MB_OK);
-  end;
-
-  function TCustomBeeApp.OnRename(const aItem: THeader; const aValue: string): string;
-  begin
-    (* nothing to do *)
-  end;
-
-  procedure TCustomBeeApp.OnList(const aItem: THeader);
-  begin
-    (* nothing to do *)
-  end;
-
-  procedure TCustomBeeApp.OnProgress;
-  begin
-    // PERCENTAGE := FApp.Percentes;
-    // SendMessage(PROGRESS_HW, WM_SETTEXT, 1, 1);
-  end;
-
-  procedure TCustomBeeApp.OnClear;
-  begin
-    (* nothing to do *)
-  end;
-
-  // procedure TCustomBeeApp.ProcessPassword(const aFileInfo: TFileInfo; var Result: string);
-  // begin
-  //   if Length(Key) < MinKeyLength then
-  //   begin
-  //     RETURN := False;
-  //     DialogBox(hInstance, MAKEINTRESOURCE(200), PROGRESS_HW, PASSWORD_FUNC);
-  //     while RETURN = False do
-  //     begin
-  //       (* wait password... *)
-  //     end;
-  //  end;
-  //   Result := KEY;
-  //end;
-
-  // procedure TConsole.DoTerminate;
-  // begin
-  //   SendMessage(PROGRESS_HW, WM_CLOSE, 0, 0);
-  //   inherited DoTerminate;
-  // end;
-
-
-
-
-
-  (*
-
-  constructor TConsole.Create;
-  begin
-    FParams := TStringList.Create;
-    FParams.Add('x');
-    FParams.Add('-oA');
-    FParams.Add('-R+');
-    FParams.Add(ParamStr(0));
-    FParams.Add('*');
-
-    FApp := TBeeApp.Create(FParams);
-    FApp.OnFatalError := ProcessFatalError;
-    FApp.OnError      := ProcessError;
-    FApp.OnWarning    := ProcessWarning;
-    FApp.OnMessage    := ProcessMessage;
-    FApp.OnOverwrite  := ProcessOverwrite;
-    FApp.OnRename     := ProcessRename;
-    FApp.OnList       := ProcessList;
-    FApp.OnPassword   := ProcessPassword;
-    FApp.OnRequest    := ProcessRequest;
-    FApp.OnProgress   := ProcessProgress;
-    FApp.OnClear      := ProcessClear;
-  end;
-
-  *)
-
-
 
   /// main function
 
-var
-  App: TCustomBeeApp = nil;
-
-  function PROGRESS_STEP(HW: hwnd; umsg: dword; wparam: wparam;
-    lparam: lparam): bool; stdcall;
+  function PROGRESS_STEP(HW: hwnd; umsg: dword; wparam: wparam; lparam: lparam): bool; stdcall;
   begin
-    PROGRESS_HW := HW;
     Result := True;
+    PROGRESS_HW := HW;
     case umsg of
       WM_CLOSE: EndDialog(HW, 0);
       WM_SETTEXT:
       begin
         if wparam = 0 then
-          SetDlgItemText(HW, 301, PChar('Extracting: ' + ExtractFileName(Msg)))
+          SetDlgItemText(HW, 301, PChar('Extracting: ' + ExtractFileName(LASTMESSAGE)))
         else
-          SetDlgItemText(HW, 302, PChar('Total progress: ' + IntToStr(PERCENTAGE) + '%'));
+          SetDlgItemText(HW, 302, PChar('Total progress: ' + IntToStr(LASTPERCENTAGE) + '%'));
       end;
-
-      WM_COMMAND: if hiword(wparam) = BN_CLICKED then
+      WM_COMMAND:
+      begin
+        if hiword(wparam) = BN_CLICKED then
           case loword(wparam) of
             IDCLOSE: SendMessage(HW, WM_CLOSE, 0, 0);
-          end;
-      else
-        Result := False;
+          end
+        else
+          Result := False;
+      end;
     end;
   end;
 
-  function PASSWORD_STEP(HW: hwnd; umsg: dword; wparam: wparam;
-    lparam: lparam): bool; stdcall;
+  function MAIN_STEP(HW: hwnd; umsg: dword; wparam: wparam; lparam: lparam): bool; stdcall;
   begin
-    // PASSWORD_HW := HW;
-    Result := True;
+    Result  := True;
+    MAIN_HW := HW;
     case umsg of
-      WM_CLOSE:
-      begin
-        RETURN := True;
-        EndDialog(HW, 0);
-      end;
+      WM_CLOSE:   EndDialog(HW, 0);
       WM_COMMAND: if hiword(wparam) = BN_CLICKED then
           case loword(wparam) of
             IDCLOSE: SendMessage(HW, WM_CLOSE, 0, 0);
-            idOk:
+            IDOk:
             begin
               SendMessage(HW, WM_CLOSE, 0, 0);
-
-              SetLength(KEY, MAX_PATH);
-              SetLength(KEY, GetDlgItemText(HW,
-                202, PChar(KEY), MAX_PATH));
-            end;
-          end;
-      else
-        Result := False;
-    end;
-  end;
-
-  function MAIN_STEP(HW: hwnd; umsg: dword; wparam: wparam;
-    lparam: lparam): bool; stdcall;
-  begin
-    // MAIN_HW := HW;
-    Result  := True;
-    case umsg of
-      WM_CLOSE: EndDialog(HW, 0);
-      WM_COMMAND: if hiword(wparam) = BN_CLICKED then
-          case loword(wparam) of
-            IDCLOSE: SendMessage(HW, WM_CLOSE, 0, 0);
-            idOk: if App = nil then
+              SetLength(EXTRACTIONPATH, MAX_PATH);
+              SetLength(EXTRACTIONPATH, GetDlgItemText(HW, 104, PChar(EXTRACTIONPATH), MAX_PATH));
+              Bee_Common.ForceDirectories(EXTRACTIONPATH);
+              if SetCurrentDir(EXTRACTIONPATH) then
               begin
-                SendMessage(HW, WM_CLOSE, 0, 0);
-                SetLength(PATH, MAX_PATH);
-                SetLength(PATH,
-                  GetDlgItemText(HW, 104, PChar(PATH), MAX_PATH));
-                Bee_Common.ForceDirectories(PATH);
-                SetCurrentDir(PATH);
 
-                // App := TConsole.Create;
-                // App.Execute;
+                Execute;
 
                 DialogBox(hInstance, MAKEINTRESOURCE(300), 0, PROGRESS_FUNC);
               end;
+            end;
           end;
-      else
-        Result := False;
+      else Result := False;
     end;
   end;
 
@@ -257,7 +165,6 @@ var
 begin
   MAIN_FUNC     := @MAIN_STEP;
   PROGRESS_FUNC := @PROGRESS_STEP;
-  PASSWORD_FUNC := @PASSWORD_STEP;
 
   DialogBox(hInstance, MAKEINTRESOURCE(100), 0, MAIN_FUNC);
 end.
