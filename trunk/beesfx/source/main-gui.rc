@@ -1,37 +1,47 @@
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
-100 DIALOGEX 6, 30, 212, 200
+100 DIALOGEX 6, 30, 212, 75
 STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_LEFT
 CAPTION "BeeSFX - Self Extractor 0.2.0"
 FONT 8, "Tahoma"
 BEGIN
-  LTEXT "To extract all files in archive to the specified"      , 101, 6,  5, 150,  8
-  LTEXT "folder press the Extract button."                      , 102, 6, 15, 150,  8
+  LTEXT "To extract all files in archive to the specified"      , 101, 6,  8, 150,  8
+  LTEXT "folder press the Extract button."                      , 102, 6, 18, 150,  8
+  LTEXT "Extraction path:"                                      , 103, 6, 34, 150,  8
+  EDITTEXT                                                        104, 6, 45, 200, 12
 
-  LTEXT "Extraction folder:"                                    , 103, 6, 35, 120,  8
-  EDITTEXT                                                        104, 6, 45, 140, 12
+  PUSHBUTTON "Extract", IDOK    , 157,  8,  48,  14
+  PUSHBUTTON "Close"  , IDCLOSE , 157, 24,  48,  14
 
-  LTEXT "Insert archive password:"                              , 105, 6, 63, 120,  8
-  EDITTEXT                                                        106, 6, 73, 140, 12
-
-  AUTOCHECKBOX "Overwrite existing files"                       , 107, 6, 90, 120, 12
-
-
-  LTEXT "(C) 2005-2011 Andrew Filinsky and Melchiorre Caruso."  , 110, 6, 115, 200,  8
-
-  PUSHBUTTON "Extract",  IDOK   , 157,   4,  48,  14
-  PUSHBUTTON "Close", IDCLOSE   , 157,  22,  48,  14
+  LTEXT "(C) 2005-2011 Andrew Filinsky and Melchiorre Caruso."  , 105, 6, 63, 200,  8
 END
 
-200 DIALOGEX 6, 30, 185, 44
+200 DIALOGEX 6, 30, 212, 45
+STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_LEFT
+CAPTION "BeeSFX - Insert password"
+FONT 8, "Tahoma"
+BEGIN
+  LTEXT "Insert passord:"                                       , 201, 6, 14, 150,  8
+  EDITTEXT                                                        202, 6, 25, 140, 12
+
+  PUSHBUTTON "Ok"    , IDOK     , 157,  8,  48,  14
+  PUSHBUTTON "Cancel", IDCLOSE  , 157, 24,  48,  14
+END
+
+300 DIALOGEX 6, 30, 185, 45
 STYLE DS_CENTER	| DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_LEFT
 CAPTION "Progress ..."
 FONT 8, "Tahoma"
 BEGIN
-  LTEXT "Starting ..."                                             , 201, 6, 10, 170,  8
-  LTEXT "Total progress: 0%"                                       , 202, 6, 25, 120,  8
+  LTEXT "Starting ..."                                     , 301, 6, 10, 170,  8
+  LTEXT "Total progress: 0%"                               , 302, 6, 25, 120,  8
 
   PUSHBUTTON "Cancel", IDCLOSE  , 130, 22,  48,  14
 END
+
+
+
+

@@ -11,7 +11,7 @@ object AddFrm: TAddFrm
   OnClose = FormClose
   OnCreate = FormCreate
   OnDropFiles = FormDropFiles
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.31'
   object Pages: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -21,11 +21,11 @@ object AddFrm: TAddFrm
     Height = 272
     Top = 6
     Width = 388
-    ActivePage = PageGeneral
+    ActivePage = PageFiles
     Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Around = 6
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     OnChange = PagesPageChanged
     OnPageChanged = PagesPageChanged
@@ -343,7 +343,7 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Control = Root
         Left = 6
         Height = 14
-        Top = 201
+        Top = 203
         Width = 107
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 6
@@ -360,8 +360,8 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Control = PageFiles
         AnchorSideBottom.Side = asrBottom
         Left = 6
-        Height = 23
-        Top = 217
+        Height = 21
+        Top = 219
         Width = 267
         Anchors = [akLeft, akRight, akBottom]
         BorderSpacing.Left = 6
@@ -497,13 +497,13 @@ object AddFrm: TAddFrm
         AnchorSideRight.Control = BtnFolder
         AnchorSideBottom.Control = RootLabel
         Left = 6
-        Height = 173
+        Height = 175
         Top = 22
         Width = 267
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        DefaultItemHeight = 18
+        DefaultItemHeight = 16
         Images = FilesImages
         MultiSelect = True
         PopupMenu = PopupMenu
@@ -522,8 +522,8 @@ object AddFrm: TAddFrm
         AnchorSideBottom.Control = Root
         AnchorSideBottom.Side = asrBottom
         Left = 279
-        Height = 23
-        Top = 217
+        Height = 21
+        Top = 219
         Width = 95
         Anchors = [akTop, akLeft, akRight, akBottom]
         Min = 0

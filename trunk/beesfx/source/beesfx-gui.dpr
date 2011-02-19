@@ -52,119 +52,121 @@ uses
 {$R beesfx-ico.res}
 
 var
+  CODE: boolean = TRUE;
+  MESSAGE:  string = '';
   PASSWORD: string = '';
-  EXTRACTIONPATH: string = '';
-  OVERWRITEALL: boolean = FALSE;
-
-  LASTMESSAGE: string = '';
-  LASTPERCENTAGE: longint = 0;
-
-  MAIN_FUNC:     pointer = nil;
-  PROGRESS_FUNC: pointer = nil;
-
-  MAIN_HW:       integer = -1;
-  PROGRESS_HW:   integer = -1;
+  PERCENTAGE: longint;
 
   ArchReader: TFileReader;
   Decoder: THeaderDecoder;
   Headers: THeaders;
 
-  procedure Execute;
-  var
-    I: longint;
-    P: THeader;
-    CODE: boolean;
+  function PROGRESS_FUNC(HW: hwnd; umsg: dword; wparam: wparam; lparam: lparam): bool; stdcall;
   begin
-    Headers   := THeaders.Create(nil);
-    ArchReader := CreateTFileReader(ParamStr(0), fmOpenRead + fmShareDenyWrite);
-    if Assigned(ArchReader) then
-    begin
-      Headers.Read(ArchReader);
-      Decoder := THeaderDecoder.Create(ArchReader);
-      Decoder.Password := PASSWORD;
-
-      CODE := TRUE;
-      for I := 0 to Headers.Count - 1 do
-        if CODE then
-        begin
-          P := Headers.Items[I];
-          Decoder.Initialize(P);
-          if OVERWRITEALL or (FileExists(P.Name) = FALSE) then
-          begin
-            CODE := Decoder.Read(P);
-          end;
-
-          if CODE = FALSE then
-          begin
-            MessageBox(0, PChar('CRC Error'), PChar('BeeSFX message'), MB_OK);
-          end;
-        end;
-      Decoder.Destroy;
-      ArchReader.Destroy;
-    end;
-    Headers.Destroy;
-  end;
-
-  /// main function
-
-  function PROGRESS_STEP(HW: hwnd; umsg: dword; wparam: wparam; lparam: lparam): bool; stdcall;
-  begin
-    Result := True;
-    PROGRESS_HW := HW;
+    Result := TRUE;
     case umsg of
-      WM_CLOSE: EndDialog(HW, 0);
-      WM_SETTEXT:
-      begin
-        if wparam = 0 then
-          SetDlgItemText(HW, 301, PChar('Extracting: ' + ExtractFileName(LASTMESSAGE)))
-        else
-          SetDlgItemText(HW, 302, PChar('Total progress: ' + IntToStr(LASTPERCENTAGE) + '%'));
+      WM_CLOSE:   EndDialog(HW, 0);
+      WM_SETTEXT: begin
+        case wparam of
+          0: SetDlgItemText(HW, 301, PChar('Extracting: ' + ExtractFileName(MESSAGE)));
+          1: SetDlgItemText(HW, 302, PChar('Total progress: ' + IntToStr(PERCENTAGE) + '%'));
+        end;
       end;
-      WM_COMMAND:
-      begin
+      WM_COMMAND: begin
         if hiword(wparam) = BN_CLICKED then
           case loword(wparam) of
             IDCLOSE: SendMessage(HW, WM_CLOSE, 0, 0);
           end
-        else
-          Result := False;
+        else Result := False;
       end;
     end;
   end;
 
-  function MAIN_STEP(HW: hwnd; umsg: dword; wparam: wparam; lparam: lparam): bool; stdcall;
+  function PASSWORD_FUNC(HW: hwnd; umsg: dword; wparam: wparam; lparam: lparam): bool; stdcall;
   begin
-    Result  := True;
-    MAIN_HW := HW;
+    Result := TRUE;
     case umsg of
       WM_CLOSE:   EndDialog(HW, 0);
-      WM_COMMAND: if hiword(wparam) = BN_CLICKED then
+      WM_COMMAND: begin
+        if hiword(wparam) = BN_CLICKED then
           case loword(wparam) of
-            IDCLOSE: SendMessage(HW, WM_CLOSE, 0, 0);
-            IDOk:
-            begin
+            IDCLOSE: begin
               SendMessage(HW, WM_CLOSE, 0, 0);
-              SetLength(EXTRACTIONPATH, MAX_PATH);
-              SetLength(EXTRACTIONPATH, GetDlgItemText(HW, 104, PChar(EXTRACTIONPATH), MAX_PATH));
-              Bee_Common.ForceDirectories(EXTRACTIONPATH);
-              if SetCurrentDir(EXTRACTIONPATH) then
-              begin
-
-                Execute;
-
-                DialogBox(hInstance, MAKEINTRESOURCE(300), 0, PROGRESS_FUNC);
-              end;
+              CODE := FALSE;
             end;
-          end;
-      else Result := False;
+            IDOk: begin
+              SendMessage(HW, WM_CLOSE, 0, 0);
+              SetLength(PASSWORD, MAX_PATH);
+              SetLength(PASSWORD, GetDlgItemText(HW, 202, PChar(PASSWORD), MAX_PATH));
+            end;
+          end
+        else Result := FALSE;
+      end;
     end;
   end;
 
-  /// main block
+  function MAIN_FUNC(HW: hwnd; umsg: dword; wparam: wparam; lparam: lparam): bool; stdcall;
+  begin
+    Result := TRUE;
+    case umsg of
+      WM_CLOSE:   EndDialog(HW, 0);
+      WM_COMMAND: begin
+        if hiword(wparam) = BN_CLICKED then
+          case loword(wparam) of
+            IDCLOSE: begin
+              SendMessage(HW, WM_CLOSE, 0, 0);
+              CODE := FALSE;
+            end;
+            IDOk: SendMessage(HW, WM_CLOSE, 0, 0);
+          end
+        else Result := FALSE;
+      end;
+    end;
+  end;
+
+/// main block ///
+
+var
+  I: longint;
 
 begin
-  MAIN_FUNC     := @MAIN_STEP;
-  PROGRESS_FUNC := @PROGRESS_STEP;
+  Headers    := THeaders.Create(nil);
+  ArchReader := CreateTFileReader(ParamStr(0), fmOpenRead + fmShareDenyWrite);
+  if Assigned(ArchReader) then
+  begin
+    Headers.Read(ArchReader);
+    // if Headers.Count > 0 then
+    begin
+      DialogBox(hInstance, MAKEINTRESOURCE(100), 0, @MAIN_FUNC);
+      if CODE then
+      begin
+        // if Headers.GetNext(0, foPassword) <> -1 then
+        // DialogBox(hInstance, MAKEINTRESOURCE(200), 0, @PASSWORD_FUNC);
+        if CODE then
+        begin
+          // DialogBox(hInstance, MAKEINTRESOURCE(300), 0, @PROGRESS_FUNC);
 
-  DialogBox(hInstance, MAKEINTRESOURCE(100), 0, MAIN_FUNC);
+        end;
+      end;
+
+      // Decoder := THeaderDecoder.Create(ArchReader);
+      // Decoder.Password := PASSWORD;
+
+      for I := 0 to Headers.Count - 1 do
+        if CODE then
+        begin
+      //    Decoder.Initialize(Headers.Items[I]);
+
+      //    CODE := Decoder.Read(Headers.Items[I]);
+      //    if CODE = FALSE then
+      //    begin
+      //      MessageBox(0, PChar('CRC Error'), PChar('BeeSFX message'), MB_OK);
+      //    end;
+      //  end;
+        end;
+      //Decoder.Free;
+      ArchReader.Free;
+    end;
+  end;
+  Headers.Destroy;
 end.
