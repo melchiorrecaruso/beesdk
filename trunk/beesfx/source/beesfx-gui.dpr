@@ -46,7 +46,6 @@ uses
   SysUtils,
   Messages,
 
-  Bee_App,
   Bee_Types,
   Bee_Common,
   Bee_Headers,
@@ -75,16 +74,10 @@ var
 
 type
 
-  { TCustomBeeApp class }
+  { TBeeSFXApp class }
 
-  TCustomBeeApp = class(TBeeApp)
+  TBeeSFXApp = class
   public
-    procedure OnMessage(const aMessage: string); override;
-    procedure OnRequest(const aMessage: string); override;
-    function  OnRename(const aItem: THeader; const aValue: string): string; override;
-    procedure OnList(const aItem: THeader); override;
-    procedure OnProgress; override;
-    procedure OnClear; override;
   end;
 
   procedure TCustomBeeApp.OnMessage(const aMessage: string);
