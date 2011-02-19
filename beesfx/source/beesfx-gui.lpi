@@ -34,11 +34,10 @@
       <Unit0>
         <Filename Value="beesfx-gui.dpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="37"/>
-        <CursorPos X="30" Y="42"/>
+        <TopLine Value="76"/>
+        <CursorPos X="28" Y="90"/>
         <UsageCount Value="27"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -102,16 +101,17 @@
       </Unit7>
       <Unit8>
         <Filename Value="main-gui.rc"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="3"/>
-        <CursorPos X="1" Y="19"/>
+        <TopLine Value="1"/>
+        <CursorPos X="35" Y="13"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="6" HistoryIndex="5">
+    <JumpHistory Count="7" HistoryIndex="6">
       <Position1>
         <Filename Value="beesfx-gui.dpr"/>
         <Caret Line="182" Column="21" TopLine="146"/>
@@ -136,6 +136,10 @@
         <Filename Value="main-gui.rc"/>
         <Caret Line="6" Column="34" TopLine="1"/>
       </Position6>
+      <Position7>
+        <Filename Value="beesfx-gui.dpr"/>
+        <Caret Line="46" Column="15" TopLine="40"/>
+      </Position7>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
