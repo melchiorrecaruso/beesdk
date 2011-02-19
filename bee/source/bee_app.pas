@@ -237,7 +237,9 @@ begin
     // test item ...
     DoMessage(Format(cmChecking, [Item.Name]));
     Decoder := THeaderDecoder.Create(FArchReader);
+    Decoder.Password := FCommandLine.pOption;
     Decoder.OnUserAbortEvent := DoUserAbort;
+
     for I := 0 to Smaller do
       Decoder.Initialize(FHeaders.Items[I]);
 
@@ -298,6 +300,7 @@ begin
     if Assigned(FSwapWriter) then
     begin
       Decoder := THeaderDecoder.Create(FArchReader);
+      Decoder.Password := FCommandLine.pOption;
       Decoder.OnUserAbortEvent := DoUserAbort;
 
       for I := 0 to FHeaders.Count - 1 do
@@ -720,6 +723,7 @@ begin
       begin
         FHeaders.Write(FTempWriter);
         Encoder := THeaderEncoder.Create(FTempWriter);
+        Encoder.Password := FCommandLine.pOption;
         Encoder.OnUserAbortEvent := DoUserAbort;
 
         for I := 0 to FHeaders.Count - 1 do
@@ -767,6 +771,7 @@ begin
   if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
   begin
     Decoder := THeaderDecoder.Create(FArchReader);
+    Decoder.Password := FCommandLine.pOption;
     Decoder.OnUserAbortEvent := DoUserAbort;
 
     for I := 0  to FHeaders.Count - 1 do
@@ -809,6 +814,7 @@ begin
   if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
   begin
     Decoder := THeaderDecoder.Create(FArchReader);
+    Decoder.Password := FCommandLine.pOption;
     Decoder.OnUserAbortEvent := DoUserAbort;
 
     for I := 0  to FHeaders.Count - 1 do
@@ -868,6 +874,7 @@ begin
 
         FHeaders.Write(FTempWriter);
         Encoder := THeaderEncoder.Create(FTempWriter);
+        Encoder.Password := FCommandLine.pOption;
         Encoder.OnUserAbortEvent := DoUserAbort;
 
         for I := 0 to FHeaders.Count - 1 do
@@ -913,6 +920,7 @@ begin
     begin
       FHeaders.Write(FTempWriter);
       Encoder := THeaderEncoder.Create(FTempWriter);
+      Encoder.Password := FCommandLine.pOption;
       Encoder.OnUserAbortEvent := DoUserAbort;
 
       for I := 0 to FHeaders.Count - 1 do

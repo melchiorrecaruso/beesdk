@@ -39,8 +39,8 @@ interface
 uses
   Classes,
   SysUtils,
-  Bee_Types,
   Bee_Files,
+  Bee_Types,
   Bee_CommandLine,
   Bee_Configuration;
 

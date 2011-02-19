@@ -33,8 +33,8 @@ interface
 
 uses
   Classes,
+  SysUtils,
   Bee_Headers,
-  Bee_Interface,
   Bee_StreamCoder;
 
 type
@@ -75,7 +75,6 @@ type
 implementation
 
 uses
-  SysUtils,
   Bee_Files,
   Bee_Crc;
 
@@ -204,7 +203,7 @@ uses
       Result := Write(Item, Strm, Strm.Size);
       if FStrm is TFileWriter then
         TFileWriter(FStrm).FinishEncode;
-      FreeAndNil(Strm);
+      Strm.Free;
     end;
   end;
 
