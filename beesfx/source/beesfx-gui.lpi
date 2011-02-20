@@ -37,8 +37,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="62"/>
-        <CursorPos X="12" Y="143"/>
+        <TopLine Value="108"/>
+        <CursorPos X="66" Y="161"/>
         <FoldState Value=" T3iK2J2a"/>
         <UsageCount Value="39"/>
         <Loaded Value="True"/>
@@ -223,7 +223,7 @@
         <UsageCount Value="10"/>
       </Unit22>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="beesfx-gui.dpr"/>
         <Caret Line="172" Column="58" TopLine="126"/>
@@ -340,6 +340,10 @@
         <Filename Value="beesfx-gui.dpr"/>
         <Caret Line="137" Column="15" TopLine="128"/>
       </Position29>
+      <Position30>
+        <Filename Value="beesfx-gui.dpr"/>
+        <Caret Line="155" Column="48" TopLine="84"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
