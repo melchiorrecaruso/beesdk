@@ -124,6 +124,11 @@ var
     end;
   end;
 
+  function UserAbort: boolean;
+  begin
+    Result := not Code;
+  end;
+
 /// main block ///
 
 var
@@ -135,12 +140,12 @@ begin
   if Assigned(ArchReader) then
   begin
     Headers.Read(ArchReader);
-    // if Headers.Count > 0 then
+    if Headers.Count > 0 then
     begin
       DialogBox(hInstance, MAKEINTRESOURCE(100), 0, @MAIN_FUNC);
       if CODE then
       begin
-        // if Headers.GetNext(0, foPassword) <> -1 then
+        if Headers.GetNext(0, foPassword) <> -1 then
           DialogBox(hInstance, MAKEINTRESOURCE(200), 0, @PASSWORD_FUNC);
 
         if CODE then
@@ -148,15 +153,16 @@ begin
           DialogBox(hInstance, MAKEINTRESOURCE(300), 0, @PROGRESS_FUNC);
           Decoder := THeaderDecoder.Create(ArchReader);
           Decoder.Password := PASSWORD;
+
           for I := 0 to Headers.Count - 1 do
             if CODE then
             begin
               Decoder.Initialize(Headers.Items[I]);
-              // CODE := Decoder.Read(Headers.Items[I]);
+              CODE := Decoder.Read(Headers.Items[I]);
             end;
           Decoder.Free;
 
-          if CODE = FALSE then MessageBox(0, PChar('CRC Error'), PChar('BeeSFX message'), MB_OK);
+          if CODE = FALSE then MessageBox(0, PChar('CRC fatal error'), PChar('BeeSFX message'), MB_OK);
         end;
       end;
     end;

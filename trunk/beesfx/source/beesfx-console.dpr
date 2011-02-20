@@ -40,7 +40,7 @@ program BeeSfx;
 
 {$I compiler.inc}
 
-{$R beesfx.ico.res}
+{$R beesfx-ico.res}
 
 uses
   {$IFDEF CONSOLEAPPLICATION}
