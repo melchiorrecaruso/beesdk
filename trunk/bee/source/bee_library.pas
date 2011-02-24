@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2011 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -212,7 +212,7 @@ end;
 
 function CoreVersion: longint;
 begin
-  Result := 106;
+  Result := 105;
 end;
 
 function CoreCreate(P: PChar): Pointer;
