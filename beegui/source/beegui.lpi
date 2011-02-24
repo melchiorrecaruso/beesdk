@@ -5,7 +5,6 @@
     <PathDelim Value="\"/>
     <General>
       <Flags>
-        <SaveClosedFiles Value="False"/>
         <MainUnitHasUsesSectionForAllUnits Value="False"/>
         <LRSInOutputDirectory Value="False"/>
       </Flags>
@@ -24,7 +23,7 @@
       <Language Value="0809"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="2" Active="debug">
+    <BuildModes Count="2" Active="release">
       <Item1 Name="release" Default="True"/>
       <Item2 Name="debug">
         <CompilerOptions>
@@ -94,7 +93,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="27">
+    <Units Count="28">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -245,7 +244,7 @@
         <Filename Value="packages\beegui_forms.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeGui_Forms"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="48" Y="123"/>
@@ -260,7 +259,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1337"/>
         <CursorPos X="70" Y="1366"/>
@@ -315,7 +314,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFm_ViewFrm"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="79"/>
         <CursorPos X="19" Y="105"/>
@@ -347,7 +346,7 @@
       <Unit21>
         <Filename Value="..\..\bee\source\bee_library.pas"/>
         <UnitName Value="Bee_Library"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="41" Y="34"/>
@@ -358,7 +357,7 @@
       <Unit22>
         <Filename Value="..\..\bee\source\bee_consts.pas"/>
         <UnitName Value="Bee_Consts"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="41"/>
         <CursorPos X="56" Y="50"/>
@@ -369,7 +368,6 @@
       <Unit23>
         <Filename Value="..\..\bee\source\beelib_link.pas"/>
         <UnitName Value="BeeLib_Link"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -381,7 +379,7 @@
       <Unit24>
         <Filename Value="packages\beegui_consts.pas"/>
         <UnitName Value="BeeGui_Consts"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="59" Y="36"/>
@@ -403,7 +401,7 @@
       <Unit26>
         <Filename Value="packages\beegui_process.pas"/>
         <UnitName Value="BeeGui_Process"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="98"/>
         <CursorPos X="12" Y="119"/>
@@ -411,6 +409,17 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
+      <Unit27>
+        <Filename Value="packages\packages.include\compiler.inc"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="5" Y="38"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit27>
     </Units>
     <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
