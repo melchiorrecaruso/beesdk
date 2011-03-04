@@ -128,7 +128,7 @@
         <UnitName Value="BeeGui_AddFrm"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="248"/>
+        <TopLine Value="236"/>
         <CursorPos X="13" Y="253"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -379,6 +379,7 @@
       <Unit24>
         <Filename Value="packages\beegui_consts.pas"/>
         <UnitName Value="BeeGui_Consts"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -411,7 +412,6 @@
       </Unit26>
       <Unit27>
         <Filename Value="packages\packages.include\compiler.inc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
