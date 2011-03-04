@@ -24,7 +24,6 @@
           <Version Value="10"/>
           <SearchPaths>
             <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../../../fpprofiler/trunk/fpprof"/>
             <UnitOutputDirectory Value="../distribution"/>
           </SearchPaths>
           <Parsing>
@@ -112,7 +111,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="18"/>
+        <TopLine Value="67"/>
         <CursorPos X="5" Y="41"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="1">
