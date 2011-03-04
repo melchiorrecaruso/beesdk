@@ -36,7 +36,8 @@ uses
   SysUtils,
   StdCtrls,
   Graphics,
-  ExtCtrls;
+  ExtCtrls,
+  LResources;
 
 type
 
@@ -111,5 +112,9 @@ procedure Register;
 begin
   RegisterComponents('BeePackage', [TArchiveFolderBox]);
 end;
+
+initialization
+
+  {$I beegui_archivefolderbox.lrs }
 
 end.

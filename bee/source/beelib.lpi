@@ -17,8 +17,51 @@
     <VersionInfo>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="1">
-      <Item1 Name="default" Default="True"/>
+    <BuildModes Count="2" Active="release">
+      <Item1 Name="release" Default="True"/>
+      <Item2 Name="debug">
+        <CompilerOptions>
+          <Version Value="10"/>
+          <PathDelim Value="\"/>
+          <SearchPaths>
+            <IncludeFiles Value="beelib.include"/>
+            <OtherUnitFiles Value="packages;..\..\bee\source;..\..\beegui\source\packages"/>
+            <UnitOutputDirectory Value="..\distribution"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <CStyleOperator Value="False"/>
+              <AllowLabel Value="False"/>
+              <CPPInline Value="False"/>
+              <UseAnsiStrings Value="False"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <VariablesInRegisters Value="True"/>
+              <UncertainOptimizations Value="True"/>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <UseLineInfoUnit Value="False"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <ExecutableType Value="Library"/>
+            </Options>
+          </Linking>
+          <Other>
+            <CompilerMessages>
+              <UseMsgFile Value="True"/>
+            </CompilerMessages>
+            <CompilerPath Value="$(CompPath)"/>
+          </Other>
+        </CompilerOptions>
+      </Item2>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -61,7 +104,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="67"/>
+        <TopLine Value="19"/>
         <CursorPos X="16" Y="215"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
@@ -241,6 +284,7 @@
     <Linking>
       <Debugging>
         <UseLineInfoUnit Value="False"/>
+        <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
       <Options>
