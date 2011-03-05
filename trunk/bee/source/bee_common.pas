@@ -378,6 +378,8 @@ begin
     Drive := ExtractFileDrive(Result);
     System.Delete(Result, 1, Length(Drive));
   end;
+
+  while Pos(PathDelim, Result) = 1 do Delete(Result, 1, 1);
 end;
 
 function DoDirSeparators(const FileName: string): string; {$IFDEF FPC} inline; {$ENDIF}

@@ -193,7 +193,6 @@ end;
 function TBeeApp.OpenArchive: longint;
 begin
   DoMessage(Format(Cr + cmOpening, [FCommandLine.ArchiveName]));
-
   FHeaders := THeaders.Create(FCommandLine);
   if FileExists(FCommandLine.ArchiveName) then
   begin
@@ -711,6 +710,7 @@ procedure TBeeApp.EncodeShell;
 var
   I: longint;
   P: THeader;
+  Check: boolean;
   Encoder: THeaderEncoder;
 begin
   if (OpenArchive < ccError) and (SetItemsToEncode > 0) then
@@ -726,6 +726,7 @@ begin
         Encoder.Password := FCommandLine.pOption;
         Encoder.OnUserAbortEvent := DoUserAbort;
 
+        Check := True;
         for I := 0 to FHeaders.Count - 1 do
           if Code < ccError then
           begin
@@ -735,22 +736,24 @@ begin
             case P.Action of
               haNone: begin
                 DoMessage(Format(cmCopying, [P.Name]));
-                Encoder.CopyFrom(P, FArchReader);
+                Check := Encoder.CopyFrom(P, FArchReader);
               end;
               haUpdate: begin
                 DoMessage(Format(cmUpdating, [P.Name]));
-                Encoder.Write(P);
+                Check := Encoder.Write(P);
               end;
               haDecode: begin
                 DoMessage(Format(cmEncoding, [P.Name]));
-                Encoder.WriteFrom(P, FSwapReader);
+                Check := Encoder.WriteFrom(P, FSwapReader);
               end;
               haDecodeAndUpdate: begin
                 DoMessage(Format(cmUpdating, [P.Name]));
-                Encoder.Write(P);
+                Check := Encoder.Write(P);
               end;
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+            if Check = False then
+              DoMessage(cmStrmReadError, ccError);
           end;
         Encoder.Destroy;
         FHeaders.Write(FTempWriter);
@@ -774,6 +777,7 @@ begin
     Decoder.Password := FCommandLine.pOption;
     Decoder.OnUserAbortEvent := DoUserAbort;
 
+    Check := True;
     for I := 0  to FHeaders.Count - 1 do
       if Code < ccError then
       begin
@@ -783,7 +787,8 @@ begin
         if P.Action in [haUpdate, haDecode] then
         begin
           case P.Action of
-            haNone:   Check := True;
+            // haNone:            nothing to do
+            // haDecodeAndUpdate: nothing to do
             haUpdate: begin
               DoMessage(Format(cmExtracting, [P.Name]));
               Check := Decoder.Read(P);
@@ -792,11 +797,10 @@ begin
               DoMessage(Format(cmDecoding, [P.Name]));
               Check := Decoder.ReadToNul(P);
             end;
-            // haDecodeAndUpdate: nothing to do
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-
-          if Check = False then DoMessage(Format(cmCrcError, [P.Name]), ccError);
+          if Check = False then
+            DoMessage(Format(cmCrcError, [P.Name]), ccError);
         end;
       end;
     Decoder.Destroy;
@@ -817,6 +821,7 @@ begin
     Decoder.Password := FCommandLine.pOption;
     Decoder.OnUserAbortEvent := DoUserAbort;
 
+    Check := True;
     for I := 0  to FHeaders.Count - 1 do
       if Code < ccError then
       begin
@@ -826,7 +831,8 @@ begin
         if P.Action in [haUpdate, haDecode] then
         begin
           case P.Action of
-            haNone:   Check := True;
+            // haNone:            nothing to do
+            // haDecodeAndUpdate: nothing to do
             haUpdate: begin
               DoMessage(Format(cmTesting, [P.Name]));
               Check := Decoder.ReadToNul(P);
@@ -835,11 +841,10 @@ begin
               DoMessage(Format(cmDecoding, [P.Name]));
               Check := Decoder.ReadToNul(P);
             end;
-            haDecodeAndUpdate: Check := True;
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-
-          if Check = False then DoMessage(Format(cmCrcError, [P.Name]), ccError);
+          if Check = False then
+            DoMessage(Format(cmCrcError, [P.Name]), ccError);
         end;
       end;
     Decoder.Destroy;
@@ -851,6 +856,7 @@ procedure TBeeApp.DeleteShell;
 var
   I: longint;
   P: THeader;
+  Check: boolean;
   Encoder: THeaderEncoder;
 begin
   if (OpenArchive < ccError) and (SetItemsToDelete > 0) then
@@ -877,6 +883,7 @@ begin
         Encoder.Password := FCommandLine.pOption;
         Encoder.OnUserAbortEvent := DoUserAbort;
 
+        Check := True;
         for I := 0 to FHeaders.Count - 1 do
           if Code < ccError then
           begin
@@ -886,16 +893,18 @@ begin
             case P.Action of
               haNone: begin
                 DoMessage(Format(cmCopying, [P.Name]));
-                Encoder.CopyFrom(P, FArchReader);
+                Check := Encoder.CopyFrom(P, FArchReader);
               end;
               haUpdate: DoMessage(Format(cmDeleting, [P.Name]));
               haDecode: begin
                 DoMessage(Format(cmEncoding, [P.Name]));
-                Encoder.WriteFrom(P, FSwapReader);
+                Check := Encoder.WriteFrom(P, FSwapReader);
               end;
               haDecodeAndUpdate: DoMessage(Format(cmDeleting, [P.Name]));
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+            if Check = False then
+              DoMessage(cmStrmReadError, ccError);
           end;
         Encoder.Destroy;
         FHeaders.Write(FTempWriter);
@@ -910,6 +919,7 @@ procedure TBeeApp.RenameShell;
 var
   I: longint;
   P: THeader;
+  Check: boolean;
   Encoder: THeaderEncoder;
 begin
   if (OpenArchive < ccError) and (SetItemsToRename > 0) then
@@ -923,24 +933,27 @@ begin
       Encoder.Password := FCommandLine.pOption;
       Encoder.OnUserAbortEvent := DoUserAbort;
 
+      Check := True;
       for I := 0 to FHeaders.Count - 1 do
         if Code < ccError then
         begin
           P := FHeaders.Items[I];
 
           case P.Action of
+            // haDecode:          nothing to do
+            // haDecodeAndUpdate: nothing to do
             haNone: begin
               DoMessage(Format(cmCopying, [P.Name]));
-              Encoder.CopyFrom(P, FArchReader);
+              Check := Encoder.CopyFrom(P, FArchReader);
             end;
             haUpdate: begin
               DoMessage(Format(cmRenaming, [P.Name]));
-              Encoder.CopyFrom(P, FArchReader);
+              Check := Encoder.CopyFrom(P, FArchReader);
             end;
-            // haDecode:          nothing to do
-            // haDecodeAndUpdate: nothing to do
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+          if Check = False then
+            DoMessage(cmStrmReadError, ccError);
         end;
       Encoder.Destroy;
       FHeaders.Write(FTempWriter);

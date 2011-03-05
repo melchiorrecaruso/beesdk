@@ -179,6 +179,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeGui_TickFrm"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="435"/>
@@ -379,7 +380,6 @@
       <Unit24>
         <Filename Value="packages\beegui_consts.pas"/>
         <UnitName Value="BeeGui_Consts"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
