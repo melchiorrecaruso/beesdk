@@ -37,7 +37,8 @@ var
   rsWelcome:      string = 'Welcome';
   rsWarning:      string = 'Warning';
   rsConfirmation: string = 'Confirmation';
-  rsSelectedItems: string = 'Selected items: ';
+  rsSelectedItems: string = 'Selected items: %s';
+  rsItems:         string = 'Items: %s';
 
   rsOpening:   string = 'Opening...';
   rsFreshFile: string = 'Do you want to fresh file changed in archive?';
@@ -99,6 +100,7 @@ begin
       rsConfirmation  := Storage.ReadString('ResourceString', 'rsConfirmation', rsConfirmation);
 
       rsSelectedItems := Storage.ReadString('ResourceString', 'rsSelectedItems', rsSelectedItems);
+      rsItems         := Storage.ReadString('ResourceString', 'rsItems', rsItems);
 
       rsFileProperty  := Storage.ReadString('ResourceString', 'rsFileProperty', rsFileProperty);
       rsArcProperty   := Storage.ReadString('ResourceString', 'rsArcProperty', rsArcProperty);
@@ -157,6 +159,7 @@ begin
       Storage.WriteString('ResourceString', 'rsWarning', rsWarning);
       Storage.WriteString('ResourceString', 'rsConfirmation', rsConfirmation);
       Storage.WriteString('ResourceString', 'rsSelectedItems', rsSelectedItems);
+      Storage.WriteString('ResourceString', 'rsItems', rsItems);
 
       Storage.WriteString('ResourceString', 'rsFileProperty', rsFileProperty);
       Storage.WriteString('ResourceString', 'rsArcProperty', rsArcProperty);

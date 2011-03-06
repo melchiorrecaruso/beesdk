@@ -56,7 +56,7 @@
     </CompilerOptions>
     <License Value="GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 "/>
-    <Version Major="1" Release="6" Build="185"/>
+    <Version Major="1" Release="6" Build="190"/>
     <Files Count="12">
       <Item1>
         <Filename Value="beegui_addtreeviewmgr.lrs"/>
