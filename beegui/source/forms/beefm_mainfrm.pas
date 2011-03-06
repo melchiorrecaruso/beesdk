@@ -459,13 +459,19 @@ begin
   if ListView.Enabled then
   begin
     StatusBar.BeginUpdate;
-    StatusBar.Panels[0].Text := Format(rsSelectedItems,  [IntToStr(ListView.SelCount)]);
-    StatusBar.Panels[1].Text := SizeToStr(ListView.SelFileSize);
-    StatusBar.Panels[2].Text := SizeToStr(ListView.SelFilePackedSize);
-    if ListView.SelCount > 0 then
-      StatusBar.Panels[3].Text := FileTimeToString(ListView.SelFileTime)
-    else
+    if ListView.SelCount = 0 then
+    begin
+      StatusBar.Panels[0].Text := Format(rsItems, [IntToStr(ListView.Items.Count)]);
+      StatusBar.Panels[1].Text := '';
+      StatusBar.Panels[2].Text := '';
       StatusBar.Panels[3].Text := '';
+    end else
+    begin
+      StatusBar.Panels[0].Text := Format(rsSelectedItems, [IntToStr(ListView.SelCount)]);
+      StatusBar.Panels[1].Text := SizeToStr(ListView.SelFileSize);
+      StatusBar.Panels[2].Text := SizeToStr(ListView.SelFilePackedSize);
+      StatusBar.Panels[3].Text := FileTimeToString(ListView.SelFileTime);
+    end;
     StatusBar.EndUpdate;
   end else
   begin
@@ -496,8 +502,7 @@ begin
   ListViewChangeFolder(Sender);
 end;
 
-procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem;
-  Selected: Boolean);
+procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 begin
   // nothing to do
 end;

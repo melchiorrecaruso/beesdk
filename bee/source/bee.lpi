@@ -75,7 +75,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="t pop.bee"/>
+        <CommandLineParams Value="a -mo pop.bee *.iso"/>
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
@@ -108,12 +108,10 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="99"/>
         <CursorPos X="41" Y="125"/>
-        <FoldState Value=" T3xK0u2 pifkH0z]9kBla0S{"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="1">
           <Item0 X="13" Y="876" ID="0"/>
@@ -168,9 +166,10 @@
       <Unit7>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="273"/>
+        <TopLine Value="45"/>
         <CursorPos X="26" Y="315"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
@@ -237,8 +236,8 @@
         <UnitName Value="Bee_BufStream"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="35" Y="25"/>
+        <TopLine Value="19"/>
+        <CursorPos X="42" Y="43"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
