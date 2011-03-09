@@ -169,7 +169,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="45"/>
+        <TopLine Value="266"/>
         <CursorPos X="26" Y="315"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
@@ -417,4 +417,4 @@
       </Item2>
     </Exceptions>
   </Debugging>
-</CONFIG>
+</CONFIG>
