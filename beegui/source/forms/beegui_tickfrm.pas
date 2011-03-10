@@ -165,7 +165,9 @@ uses
   Bee_Library,
   {$ENDIF}
   BeeGui_Messages,
-  BeeGui_SysUtils;
+  BeeGui_SysUtils,
+
+  BeeFm_ViewFrm;
 
 var
   rsBtnPauseCaption:  string = 'Pause';
@@ -411,27 +413,21 @@ begin
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
   begin
-    I := 0;
-    P := CoreQueryPointer(FID, csmMessage, I);
-    while P <> nil do
-    begin
-      Report.Lines.Add(PCharToString(P));
 
-      Inc(I);
-      P := CoreQueryPointer(FID, csmMessage, I);
-    end;
+
+
   end;
   OnList;
 
   FCanClose := CoreQueryB8(FID, csmDestroy);
   FID := nil;
 
-  if Report.Lines.Count <> 0 then
-  begin
-    Notebook.PageIndex := 1;
+  // if Report.Lines.Count <> 0 then
+  // begin
+    // Notebook.PageIndex := 1;
     NotebookPageChanged(Notebook);
-  end else
-    Close;
+  // end else
+  //   Close;
 end;
 
 procedure TTickFrm.OnRename;
@@ -554,12 +550,32 @@ begin
 end;
 
 procedure TTickFrm.BtnFontClick(Sender: TObject);
+var
+  P: PChar;
+  I: integer;
+  F: TViewFrm;
 begin
-  FontDialog.Font := Report.Font;
-  if FontDialog.Execute then
+
+  F := TViewFrm.Create(Self);
+
+  I := 0;
+  P := CoreQueryPointer(FID, csmMessage, I);
+  while P <> nil do
   begin
-    Report.Font := FontDialog.Font;
+    F.Memo.Lines.Add(PCharToString(P));
+
+    Inc(I);
+    P := CoreQueryPointer(FID, csmMessage, I);
   end;
+
+  F.ShowModal;
+
+  F.Free;
+  // FontDialog.Font := Report.Font;
+  // if FontDialog.Execute then
+  // begin
+  //   Report.Font := FontDialog.Font;
+  // end;
 end;
 
 procedure TTickFrm.BtnSaveClick(Sender: TObject);

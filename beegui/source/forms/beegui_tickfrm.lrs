@@ -178,7 +178,7 @@ LazarusResources.Add('TTickFrm','FORMDATA',[
   +#14#3'Top'#2'&'#5'Width'#2'#'#18'BorderSpacing.Left'#2#6#17'BorderSpacing.To'
   +'p'#2#2#20'BorderSpacing.Bottom'#2#2#7'Caption'#6#6'Speed:'#5'Color'#7#9'clB'
   +'tnFace'#11'ParentColor'#8#11'Transparent'#8#0#0#0#0#5'TPage'#10'ReportPage'
-  +#11'ClientWidth'#3#16#25#12'ClientHeight'#3#16#9#0#5'TMemo'#6'Report'#4'Left'
+  +#11'ClientWidth'#3' 2'#12'ClientHeight'#3' '#18#0#5'TMemo'#6'Report'#4'Left'
   +#2#6#6'Height'#3#133#0#3'Top'#2#6#5'Width'#3#133#1#5'Align'#7#8'alClient'#20
   +'BorderSpacing.Around'#2#6#8'ReadOnly'#9#10'ScrollBars'#7#10'ssAutoBoth'#8'T'
   +'abOrder'#2#0#8'WordWrap'#8#0#0#0#0#7'TBitBtn'#7'BtnSave'#22'AnchorSideLeft.'
