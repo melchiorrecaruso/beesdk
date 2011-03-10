@@ -32,6 +32,7 @@ unit BeeFm_ViewFrm;
 interface
 
 uses
+  Menus,
   Forms,
   Buttons,
   Classes,
@@ -42,7 +43,7 @@ uses
   StdCtrls,
   Controls,
   SysUtils,
-  LResources, Menus;
+  LResources;
 
 type
 
