@@ -279,7 +279,7 @@ uses
     Strm.Free;
 
     if FStrm is TFileReader then
-      TFileReader(FStrm).StartDecode(FPassword);
+      TFileReader(FStrm).FinishDecode;
 
     Result := Result and (Item.Crc = CRC);
   end;
@@ -305,7 +305,7 @@ uses
       Strm.Free;
 
       if FStrm is TFileReader then
-        TFileReader(FStrm).StartDecode(FPassword);
+        TFileReader(FStrm).FinishDecode;
 
       Result := Result and (Item.Crc = CRC);
 
