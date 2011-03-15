@@ -122,7 +122,7 @@ constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1293 archiver utility, Feb 2011' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1295 archiver utility, Feb 2011' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders    := nil;
@@ -241,15 +241,17 @@ begin
 
     for I := 0 to Smaller do
       Decoder.Initialize(FHeaders.Items[I]);
-    Bug
+
     if Decoder.ReadToNul(Item) = False then
       DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
-    Decoder.Free;
+    Decoder.Destroy;
   end;
   Result := Code;
 
   if Result < ccError then
-    Writeln('CHECK PASSWORD PASSED');
+    Writeln('CHECK PASSWORD PASSED')
+  else
+    Writeln('CHECK PASSWORD NOT PASSED')
 end;
 
 procedure TBeeApp.CloseArchive(IsModified: boolean);
