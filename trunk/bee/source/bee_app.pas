@@ -251,7 +251,7 @@ begin
   if Result < ccError then
     Writeln('CHECK PASSWORD PASSED')
   else
-    Writeln('CHECK PASSWORD NOT PASSED')
+    Writeln('CHECK PASSWORD NOT PASSED');
 end;
 
 procedure TBeeApp.CloseArchive(IsModified: boolean);
