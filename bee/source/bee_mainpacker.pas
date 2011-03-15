@@ -203,7 +203,7 @@ uses
       Result := Write(Item, Strm, Strm.Size);
       if FStrm is TFileWriter then
         TFileWriter(FStrm).FinishEncode;
-      Strm.Free;
+      Strm.Destroy;
     end;
   end;
 
