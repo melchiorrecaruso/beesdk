@@ -404,6 +404,8 @@ begin
   if (AValue mod 8) = 0 then
   begin
     inherited SetCapacity(AValue);
+
+    Writeln('SET CAPACITY=', AValue);
   end;
 end;
 
@@ -412,6 +414,8 @@ begin
   FBFK := Length(Value) >= MinBlowFishKeyLength;
   if FBFK then
   begin
+    Writeln('START BLOWFISH');
+
     FlushBuffer;
     FBF.Initialize(Value);
   end;
@@ -421,6 +425,7 @@ procedure TWriteBlowFishBufStream.FinishEncode;
 begin
   FlushBuffer;
   FBFK := False;
+  Writeln('END BLOWFISH');
 end;
 
 end.
