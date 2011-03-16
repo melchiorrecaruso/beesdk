@@ -326,6 +326,15 @@ begin
   inherited FillBuffer;
   if FBFK then
   begin
+
+    I := FBufferSize;
+    while I mod 8 <> 0 do
+    begin
+      FBuffer[I] := 0;
+      Inc(I);
+    end;
+
+
     I := 0;
     while I < FBufferSize do
     begin
@@ -389,6 +398,21 @@ var
 begin
   if FBFK then
   begin
+
+    // OLD CODE - BUGGED
+    while FBufferSize mod 8 <> 0 do
+    begin
+      Inc(FBufferSize);
+    end;
+
+    // I := FBufferSize;
+    // while I mod 8 <> 0 do
+    // begin
+    //   FBuffer[I] := 0;
+    //   Inc(I);
+    // end;
+
+
     I := 0;
     while I < FBufferSize do
     begin
@@ -404,8 +428,6 @@ begin
   if (AValue mod 8) = 0 then
   begin
     inherited SetCapacity(AValue);
-
-    Writeln('SET CAPACITY=', AValue);
   end;
 end;
 
@@ -414,9 +436,6 @@ begin
   FBFK := Length(Value) >= MinBlowFishKeyLength;
   if FBFK then
   begin
-    Writeln('START BLOWFISH');
-
-    FlushBuffer;
     FBF.Initialize(Value);
   end;
 end;
@@ -425,7 +444,6 @@ procedure TWriteBlowFishBufStream.FinishEncode;
 begin
   FlushBuffer;
   FBFK := False;
-  Writeln('END BLOWFISH');
 end;
 
 end.

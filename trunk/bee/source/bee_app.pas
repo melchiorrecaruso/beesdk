@@ -241,18 +241,13 @@ begin
 
     for I := 0 to Smaller do
       Decoder.Initialize(FHeaders.Items[I]);
+
     if Decoder.ReadToNul(Item) = False then
-    begin
       DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
-    end;
+
     Decoder.Destroy;
   end;
   Result := Code;
-
-  if Result < ccError then
-    Writeln('CHECK PASSWORD PASSED')
-  else
-    Writeln('CHECK PASSWORD NOT PASSED');
 end;
 
 procedure TBeeApp.CloseArchive(IsModified: boolean);
