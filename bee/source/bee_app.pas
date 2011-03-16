@@ -241,9 +241,10 @@ begin
 
     for I := 0 to Smaller do
       Decoder.Initialize(FHeaders.Items[I]);
-
     if Decoder.ReadToNul(Item) = False then
+    begin
       DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
+    end;
     Decoder.Destroy;
   end;
   Result := Code;
@@ -320,7 +321,7 @@ begin
               // haUpdate: nothing to do
               haDecode: begin
                 DoMessage(Format(cmSwapping, [P.Name]));
-                if Decoder.ReadTo(P, FSwapWriter) = False then
+                if Decoder.ReadToSwap(P, FSwapWriter) = False then
                   DoMessage(Format(cmCrcError, [P.Name]), ccError);
               end;
               haDecodeAndUpdate: begin
@@ -332,7 +333,7 @@ begin
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
           end;
         end;
-      Decoder.Free;
+      Decoder.Destroy;
       FreeAndNil(FSwapWriter);
 
       if Code < ccError then
@@ -741,19 +742,19 @@ begin
             case P.Action of
               haNone: begin
                 DoMessage(Format(cmCopying, [P.Name]));
-                Check := Encoder.CopyFrom(P, FArchReader);
+                Check := Encoder.WriteFromArch(P, FArchReader);
               end;
               haUpdate: begin
                 DoMessage(Format(cmUpdating, [P.Name]));
-                Check := Encoder.Write(P);
+                Check := Encoder.WriteFromFile(P);
               end;
               haDecode: begin
                 DoMessage(Format(cmEncoding, [P.Name]));
-                Check := Encoder.WriteFrom(P, FSwapReader);
+                Check := Encoder.WriteFromSwap(P, FSwapReader);
               end;
               haDecodeAndUpdate: begin
                 DoMessage(Format(cmUpdating, [P.Name]));
-                Check := Encoder.Write(P);
+                Check := Encoder.WriteFromFile(P);
               end;
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
@@ -796,7 +797,7 @@ begin
             // haDecodeAndUpdate: nothing to do
             haUpdate: begin
               DoMessage(Format(cmExtracting, [P.Name]));
-              Check := Decoder.Read(P);
+              Check := Decoder.ReadToFile(P);
             end;
             haDecode: begin
               DoMessage(Format(cmDecoding, [P.Name]));
@@ -898,12 +899,12 @@ begin
             case P.Action of
               haNone: begin
                 DoMessage(Format(cmCopying, [P.Name]));
-                Check := Encoder.CopyFrom(P, FArchReader);
+                Check := Encoder.WriteFromArch(P, FArchReader);
               end;
               haUpdate: DoMessage(Format(cmDeleting, [P.Name]));
               haDecode: begin
                 DoMessage(Format(cmEncoding, [P.Name]));
-                Check := Encoder.WriteFrom(P, FSwapReader);
+                Check := Encoder.WriteFromSwap(P, FSwapReader);
               end;
               haDecodeAndUpdate: DoMessage(Format(cmDeleting, [P.Name]));
             end;
@@ -949,11 +950,11 @@ begin
             // haDecodeAndUpdate: nothing to do
             haNone: begin
               DoMessage(Format(cmCopying, [P.Name]));
-              Check := Encoder.CopyFrom(P, FArchReader);
+              Check := Encoder.WriteFromArch(P, FArchReader);
             end;
             haUpdate: begin
               DoMessage(Format(cmRenaming, [P.Name]));
-              Check := Encoder.CopyFrom(P, FArchReader);
+              Check := Encoder.WriteFromArch(P, FArchReader);
             end;
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
