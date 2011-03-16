@@ -167,7 +167,8 @@ implementation
 
 uses
   Bee_Consts,
-  Bee_Common;
+  Bee_Common,
+  Bee_BlowFish;
 
 function MethodToStr(const Item: THeader): string;
 begin
@@ -867,7 +868,7 @@ begin
       else
         CurrentExt := FCL.fOption;
 
-      if Length(FCL.pOption) > 0 then
+      if Length(FCL.pOption) >= MinBlowFishKeyLength then
       begin
         Include(P.Flags, foPassword);
       end;
