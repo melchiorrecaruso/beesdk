@@ -168,15 +168,19 @@ uses
   begin
     if foPassword in Item.Flags then
     begin
-      if FStrm is TFileWriter then TFileWriter(FStrm).StartEncode(FPassword);
-      if  Strm is TFileReader then TFileReader( Strm).StartDecode(FPassword);
+      //if FStrm is TFileWriter then
+      TFileWriter(FStrm).StartEncode(FPassword);
+      //if  Strm is TFileReader then
+      TFileReader( Strm).StartDecode(FPassword);
     end;
 
     Strm.Seek(Item.StartPos, soBeginning);
     Result := Write(Item, Strm, Item.Size);
 
-    if FStrm is TFileWriter then TFileWriter(FStrm).FinishEncode;
-    if  Strm is TFileReader then TFileReader( Strm).FinishDecode;
+    //if FStrm is TFileWriter then
+    TFileWriter(FStrm).FinishEncode;
+    // if  Strm is TFileReader then
+    TFileReader( Strm).FinishDecode;
   end;
 
   function THeaderEncoder.CopyFrom(Item: THeader; Strm: TStream): boolean; // from Archive
@@ -197,11 +201,11 @@ uses
     if Assigned(Strm) then
     begin
       if foPassword in Item.Flags then
-        if FStrm is TFileWriter then
+        // if FStrm is TFileWriter then
           TFileWriter(FStrm).StartEncode(FPassword);
 
       Result := Write(Item, Strm, Strm.Size);
-      if FStrm is TFileWriter then
+      // if FStrm is TFileWriter then
         TFileWriter(FStrm).FinishEncode;
       Strm.Destroy;
     end;
