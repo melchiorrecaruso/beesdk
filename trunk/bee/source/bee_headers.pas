@@ -132,7 +132,6 @@ type
 
   THeaders = class(THeaderList)
   private
-    FNews: longint;
     FModule: TStream;
     function GetModuleSize: longint;
     function GetFirst(Stream: TStream): int64;
@@ -479,7 +478,6 @@ constructor THeaders.Create(CommandLine: TCommandLine);
 begin
   inherited Create(CommandLine);
   FModule := TMemoryStream.Create;
-  FNews   := 0;
 end;
 
 destructor THeaders.Destroy;
@@ -517,7 +515,7 @@ function THeaders.New(const Rec: TCustomSearchRec): THeader;
 begin
   Result := THeader.Create;
   // - Start header data - //
-  Result.Flags      := [];
+  Result.Flags      := [foVersion, foMethod, foDictionary, foTable, foTear];
   Result.Version    := Ord(FCL.hvOption);
   Result.Method     := Ord(moFast);
   Result.Dictionary := Ord(do5MB);
@@ -543,12 +541,12 @@ begin
   if foMethod in Item.Flags then
     Stream.Read(Item.Method, SizeOf(Item.Method))
   else
-    Item.Method := 0;
+    Item.Method := -1;
 
   if foDictionary in Item.Flags then
     Stream.Read(Item.Dictionary, SizeOf(Item.Dictionary))
   else
-    Item.Dictionary := 0;
+    Item.Dictionary := -1;
 
   if foTable in Item.Flags then
     Stream.Read(Item.Table, SizeOf(Item.Table));
@@ -840,7 +838,8 @@ end;
 procedure THeaders.Configure(Configuration: TConfiguration);
 var
   P: THeader;
-  I, Method, Dictionary: longint;
+  I: longint;
+  Version, Method, Dictionary: longint;
   CurrentExt, PreviousExt: string;
 begin
   CurrentExt := '.';
@@ -849,21 +848,45 @@ begin
   Dictionary := StrToInt(Configuration.CurrentSection.Values['Dictionary']);
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
-  if FNews > 0 then
-  begin
-    I := FItems.Count - FNews;
 
+  Version    := -1;
+  Method     := -1;
+  Dictionary := -1;
+
+
+
+
+  I := 0;
+  while I < FItems.Count do
+  begin
     P := FItems[I];
-    Include(P.Flags, foVersion);
-    Include(P.Flags, foMethod);
-    Include(P.Flags, foDictionary);
+
+
+
+
+
+
+    if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
+    if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
+
+
+
+    Inc(I);
+  end;
+
+
+
+
+
+
+
+
     repeat
       P            := FItems[I];
       P.Method     := Method;
       P.Dictionary := Dictionary;
 
-      Include(P.Flags, foTear);
-      Include(P.Flags, foTable);
+
 
       PreviousExt := CurrentExt;
       if Length(FCL.fOption) = 0 then
@@ -945,7 +968,6 @@ begin
   Result := Search(DeleteFileDrive(Rec.Name)) = nil;
   if Result then
   begin
-    Inc(FNews);
     Insert(New(Rec));
   end;
 end;
