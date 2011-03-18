@@ -517,7 +517,7 @@ function THeaders.New(const Rec: TCustomSearchRec): THeader;
 begin
   Result := THeader.Create;
   // - Start header data - //
-  Result.Flags      := [foTear, foTable];
+  Result.Flags      := [];
   Result.Version    := Ord(FCL.hvOption);
   Result.Method     := Ord(moFast);
   Result.Dictionary := Ord(do5MB);
@@ -862,6 +862,9 @@ begin
       P.Method     := Method;
       P.Dictionary := Dictionary;
 
+      Include(P.Flags, foTear);
+      Include(P.Flags, foTable);
+
       PreviousExt := CurrentExt;
       if Length(FCL.fOption) = 0 then
         CurrentExt := ExtractFileExt(P.Name)
@@ -876,7 +879,7 @@ begin
       if (Method = 0) or (not Configuration.GetTable(CurrentExt, P.Table)) then
       begin
         Include(P.Flags, foMoved);
-        Include(P.Flags, foTable);
+        Exclude(P.Flags, foTable);
       end else
         if CompareFileName(CurrentExt, PreviousExt) = 0 then
         begin
@@ -890,7 +893,6 @@ begin
 
       Inc(I);
     until I = FItems.Count;
-
   end;
 end;
 

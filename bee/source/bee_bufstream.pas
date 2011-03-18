@@ -389,30 +389,13 @@ var
 begin
   if FBFK then
   begin
-
-    // OLD CODE - BUGGED
-    // while FBufferSize mod 8 <> 0 do
-    // begin
-    //   Inc(FBufferSize);
-    // end;
-
-    // I := FBufferSize;
-    // while I mod 8 <> 0 do
-    // begin
-    //   FBuffer[I] := 0;
-    //   Inc(I);
-    // end;
-
-
     I := 0;
     while I < FBufferSize do
     begin
       FBF.Encode(@FBuffer[I], @FBuffer[I + 4]);
       Inc(I, 8);
     end;
-
     FBufferSize := I;
-
   end;
   inherited FlushBuffer;
 end;
