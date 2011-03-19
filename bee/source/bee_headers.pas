@@ -141,6 +141,9 @@ type
     constructor Create(CommandLine: TCommandLine);
     destructor Destroy; override;
 
+    procedure Pack;
+    procedure Unpack;
+
     procedure Read(Stream: TStream); virtual;
     procedure Write(Stream: TStream); virtual;
     procedure Configure(Configuration: TConfiguration);
@@ -833,6 +836,63 @@ begin
       end;
     end;
   end;
+end;
+
+procedure THeaders.Unpack;
+var
+  I, Version, Method, Dictionary: longint;
+  Table: TTableParameters;
+begin
+  if FItems.Count > 0 then
+  begin
+    Version    := Items[0].Version;
+    Method     := Items[0].Method;
+    Dictionary := Items[0].Dictionary;
+    Table      := Items[0].Table;
+
+    I := 1;
+    while I < FItems.Count do
+    begin
+      if foVersion in Items[I].Flags then
+        Version := Items[I].Version
+      else begin
+        Items[I].Version := Version;
+        Include(Items[I].Flags, foVersion);
+      end;
+
+      if foMethod in Items[I].Flags then
+        Method := Items[I].Method
+      else begin
+        Items[I].Method := Method;
+      end;
+
+      if foDictionary in Items[I].Flags then
+        Dictionary := Items[I].Dictionary
+      else
+        Items[I].Dictionary := Dictionary;
+
+      if foTable in Items[I].Flags then
+        Table := Items[I].Table
+      else
+        Items[I].Table := Table;
+
+
+    end;
+
+
+
+  end;
+
+
+
+
+
+
+end;
+
+procedure THeaders.Pack;
+begin
+
 end;
 
 procedure THeaders.Configure(Configuration: TConfiguration);
