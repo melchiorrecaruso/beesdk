@@ -869,16 +869,24 @@ var
   I, Version, Method, Dictionary: longint;
   Table: TTableParameters;
 begin
-  I := 0;
-  while I < FItems.Count do
+  if FItems.Count > 0 then
   begin
-    P := FItems[I];
+    Version    := P.Version;
+    Method     := P.Method;
+    Dictionary := P.Dictionary;
+    Table      := P.Table;
+
+    I := 1;
+    while I < FItems.Count do
+    begin
+      P := FItems[I];
 
 
 
 
 
-    Inc(I);
+      Inc(I);
+    end;
   end;
 end;
 
