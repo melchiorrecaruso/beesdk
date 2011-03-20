@@ -541,12 +541,12 @@ begin
   if foMethod in Item.Flags then
     Stream.Read(Item.Method, SizeOf(Item.Method))
   else
-    Item.Method := -1;
+    Item.Method := byte(-1);
 
   if foDictionary in Item.Flags then
     Stream.Read(Item.Dictionary, SizeOf(Item.Dictionary))
   else
-    Item.Dictionary := -1;
+    Item.Dictionary := byte(-1);
 
   if foTable in Item.Flags then
     Stream.Read(Item.Table, SizeOf(Item.Table));
@@ -851,6 +851,8 @@ begin
   while I < FItems.Count do
   begin
     P := FItems[I];
+    P.Method := Method;
+    P.Dictionary := Dictionary;
 
     if P.Position = -1 then
     begin
