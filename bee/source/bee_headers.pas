@@ -518,7 +518,7 @@ function THeaders.New(const Rec: TCustomSearchRec): THeader;
 begin
   Result := THeader.Create;
   // - Start header data - //
-  Result.Flags      := [foVersion, foMethod, foDictionary, foTable, foTear];
+  Result.Flags      := [foVersion, foMethod, foDictionary];
   Result.Version    := Ord(FCL.hvOption);
   Result.Method     := Ord(moFast);
   Result.Dictionary := Ord(do5MB);
@@ -864,15 +864,29 @@ begin
 end;
 
 procedure THeaders.Pack;
+var
+  P: THeader;
+  I, Version, Method, Dictionary: longint;
+  Table: TTableParameters;
 begin
+  I := 0;
+  while I < FItems.Count do
+  begin
+    P := FItems[I];
 
+
+
+
+
+    Inc(I);
+  end;
 end;
 
 procedure THeaders.Configure(Configuration: TConfiguration);
 var
   P: THeader;
   I: longint;
-  Version, Method, Dictionary: longint;
+  Method, Dictionary: longint;
   CurrentExt, PreviousExt: string;
 begin
   CurrentExt := '.';
@@ -881,17 +895,15 @@ begin
   Dictionary := StrToInt(Configuration.CurrentSection.Values['Dictionary']);
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
+  I := 0;
+  while I < FItems.Count do
+  begin
+    P := FItems[I];
 
-  Version    := -1;
-  Method     := -1;
-  Dictionary := -1;
-
-    repeat
-      P            := FItems[I];
-      P.Method     := Method;
-      P.Dictionary := Dictionary;
-
-
+    if P.Position = -1 then
+    begin
+      Include(P.Flags, foTable);
+      Include(P.Flags, foTear);
 
       PreviousExt := CurrentExt;
       if Length(FCL.fOption) = 0 then
@@ -908,6 +920,7 @@ begin
       begin
         Include(P.Flags, foMoved);
         Exclude(P.Flags, foTable);
+        Exclude(P.Flags, foMethod);
       end else
         if CompareFileName(CurrentExt, PreviousExt) = 0 then
         begin
@@ -918,9 +931,8 @@ begin
           end;
         end else
           Include(P.Flags, foTable);
-
-      Inc(I);
-    until I = FItems.Count;
+    end;
+    Inc(I);
   end;
 end;
 
