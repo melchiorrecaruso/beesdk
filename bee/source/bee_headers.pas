@@ -141,9 +141,6 @@ type
     constructor Create(CommandLine: TCommandLine);
     destructor Destroy; override;
 
-    procedure Pack;
-    procedure Unpack;
-
     procedure Read(Stream: TStream); virtual;
     procedure Write(Stream: TStream); virtual;
     procedure Configure(Configuration: TConfiguration);
@@ -518,7 +515,7 @@ function THeaders.New(const Rec: TCustomSearchRec): THeader;
 begin
   Result := THeader.Create;
   // - Start header data - //
-  Result.Flags      := [foVersion, foMethod, foDictionary];
+  Result.Flags      := [foVersion, foMethod, foDictionary, foTable, foTear];
   Result.Version    := Ord(FCL.hvOption);
   Result.Method     := Ord(moFast);
   Result.Dictionary := Ord(do5MB);
@@ -838,63 +835,11 @@ begin
   end;
 end;
 
-procedure THeaders.UnPack;
-var
-  P: THeader;
-  I, Version, Method, Dictionary: longint;
-  Table: TTableParameters;
-begin
-  I := 0;
-  while I < FItems.Count do
-  begin
-    P := FItems[I];
-
-    if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
-    if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
-    if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
-    if foTable      in P.Flags then Table      := P.Table      else P.Table      := Table;
-
-    Include(Items[I].Flags, foVersion);
-    Include(Items[I].Flags, foMethod);
-    Include(Items[I].Flags, foDictionary);
-    Include(Items[I].Flags, foTable);
-
-    Inc(I);
-  end;
-end;
-
-procedure THeaders.Pack;
-var
-  P: THeader;
-  I, Version, Method, Dictionary: longint;
-  Table: TTableParameters;
-begin
-  if FItems.Count > 0 then
-  begin
-    Version    := P.Version;
-    Method     := P.Method;
-    Dictionary := P.Dictionary;
-    Table      := P.Table;
-
-    I := 1;
-    while I < FItems.Count do
-    begin
-      P := FItems[I];
-
-
-
-
-
-      Inc(I);
-    end;
-  end;
-end;
-
 procedure THeaders.Configure(Configuration: TConfiguration);
 var
   P: THeader;
-  I: longint;
-  Method, Dictionary: longint;
+  I, Back: longint;
+  Version, Method, Dictionary: longint;
   CurrentExt, PreviousExt: string;
 begin
   CurrentExt := '.';
@@ -910,8 +855,23 @@ begin
 
     if P.Position = -1 then
     begin
-      Include(P.Flags, foTable);
-      Include(P.Flags, foTear);
+      Back := GetBack(I - 1, foVersion);
+      if (Back <> -1) and (THeader(FItems[Back]).Version = P.Version) then
+      begin
+        Exclude(P.Flags, foVersion);
+      end;
+
+      Back := GetBack(I - 1, foMethod);
+      if (Back <> -1) and (THeader(FItems[Back]).Method = P.Method) then
+      begin
+        Exclude(P.Flags, foMethod);
+      end;
+
+      Back := GetBack(I - 1, foDictionary);
+      if (Back <> -1) and (THeader(FItems[Back]).Dictionary = P.Dictionary) then
+      begin
+        Exclude(P.Flags, foDictionary);
+      end;
 
       PreviousExt := CurrentExt;
       if Length(FCL.fOption) = 0 then
@@ -928,7 +888,6 @@ begin
       begin
         Include(P.Flags, foMoved);
         Exclude(P.Flags, foTable);
-        Exclude(P.Flags, foMethod);
       end else
         if CompareFileName(CurrentExt, PreviousExt) = 0 then
         begin
