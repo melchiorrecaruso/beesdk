@@ -838,56 +838,29 @@ begin
   end;
 end;
 
-procedure THeaders.Unpack;
+procedure THeaders.UnPack;
 var
+  P: THeader;
   I, Version, Method, Dictionary: longint;
   Table: TTableParameters;
 begin
-  if FItems.Count > 0 then
+  I := 0;
+  while I < FItems.Count do
   begin
-    Version    := Items[0].Version;
-    Method     := Items[0].Method;
-    Dictionary := Items[0].Dictionary;
-    Table      := Items[0].Table;
+    P := FItems[I];
 
-    I := 1;
-    while I < FItems.Count do
-    begin
-      if foVersion in Items[I].Flags then
-        Version := Items[I].Version
-      else begin
-        Items[I].Version := Version;
-        Include(Items[I].Flags, foVersion);
-      end;
+    if foVersion    in P.Flags then Version    := P.Version    else P.Version    := Version;
+    if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
+    if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
+    if foTable      in P.Flags then Table      := P.Table      else P.Table      := Table;
 
-      if foMethod in Items[I].Flags then
-        Method := Items[I].Method
-      else begin
-        Items[I].Method := Method;
-      end;
+    Include(Items[I].Flags, foVersion);
+    Include(Items[I].Flags, foMethod);
+    Include(Items[I].Flags, foDictionary);
+    Include(Items[I].Flags, foTable);
 
-      if foDictionary in Items[I].Flags then
-        Dictionary := Items[I].Dictionary
-      else
-        Items[I].Dictionary := Dictionary;
-
-      if foTable in Items[I].Flags then
-        Table := Items[I].Table
-      else
-        Items[I].Table := Table;
-
-
-    end;
-
-
-
+    Inc(I);
   end;
-
-
-
-
-
-
 end;
 
 procedure THeaders.Pack;
@@ -912,34 +885,6 @@ begin
   Version    := -1;
   Method     := -1;
   Dictionary := -1;
-
-
-
-
-  I := 0;
-  while I < FItems.Count do
-  begin
-    P := FItems[I];
-
-
-
-
-
-
-    if foMethod     in P.Flags then Method     := P.Method     else P.Method     := Method;
-    if foDictionary in P.Flags then Dictionary := P.Dictionary else P.Dictionary := Dictionary;
-
-
-
-    Inc(I);
-  end;
-
-
-
-
-
-
-
 
     repeat
       P            := FItems[I];
