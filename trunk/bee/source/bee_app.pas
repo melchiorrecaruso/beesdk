@@ -122,7 +122,7 @@ constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1297 archiver utility, Feb 2011' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1299 archiver utility, Feb 2011' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders    := nil;
@@ -257,6 +257,11 @@ begin
   if Assigned(FArchReader) then FreeAndNil(FArchReader);
   if Assigned(FSwapWriter) then FreeAndNil(FSwapWriter);
   if Assigned(FSwapReader) then FreeAndNil(FSwapReader);
+
+
+  FTempWriter.Size;
+
+
   if Assigned(FTempWriter) then FreeAndNil(FTempWriter);
 
   if IsModified then
