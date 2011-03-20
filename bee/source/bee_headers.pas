@@ -801,35 +801,34 @@ procedure THeaders.Write(Stream: TStream);
 var
   I: longint;
   P: THeader;
-  Ver: byte;
+  Version: byte;
 begin
-  if Stream.Seek(0, 1) = 0 then
+  Stream.Seek(0, soBeginning);
+  // white sfx-module ...
+  if FModule.Size > 0 then
   begin
-    if FModule.Size > 0 then
-    begin
-      FModule.Seek(0, soBeginning);
-      Stream.CopyFrom(FModule, FModule.Size);
-    end;
-  end else
-    Stream.Seek(FModule.Size, 0);
+    FModule.Seek(0, soBeginning);
+    Stream.CopyFrom(FModule, FModule.Size);
+  end;
 
+  // write headers ...
   if FItems.Count > 0 then
   begin
     Include(Items[FItems.Count - 1].Flags, foLast);
 
-    Ver := Ord(hv02);
+    Version := Ord(hv02);
     for I := 0 to FItems.Count - 1 do
     begin
       P := THeader(FItems[I]);
       if foVersion in P.Flags then
       begin
-        Ver := P.Version;
+        Version := P.Version;
       end;
 
-      case Ver of
-        Ord(hv02): WriteHv03(Stream, Items[I]);
-        Ord(hv03): WriteHv03(Stream, Items[I]);
-        Ord(hv04): WriteHv04(Stream, Items[I]);
+      case Version of
+        Ord(hv02): WriteHv03(Stream, P);
+        Ord(hv03): WriteHv03(Stream, P);
+        Ord(hv04): WriteHv04(Stream, P);
       end;
     end;
   end;
