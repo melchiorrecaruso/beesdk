@@ -107,10 +107,11 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="222"/>
-        <CursorPos X="60" Y="257"/>
+        <TopLine Value="109"/>
+        <CursorPos X="63" Y="125"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="1">
           <Item0 X="13" Y="869" ID="0"/>
@@ -230,7 +231,6 @@
       <Unit13>
         <Filename Value="bee_bufstream.pas"/>
         <UnitName Value="Bee_BufStream"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="382"/>
