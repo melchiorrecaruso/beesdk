@@ -412,6 +412,7 @@
       </ExecuteBefore>
       <ExecuteAfter>
         <Command Value="upx.exe -9 ..\distribution\beesfx-gui.exe"/>
+        <CompileReasons Compile="False" Build="False" Run="False"/>
       </ExecuteAfter>
       <CreateMakefileOnBuild Value="True"/>
     </Other>

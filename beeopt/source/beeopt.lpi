@@ -16,8 +16,8 @@
     <VersionInfo>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="2">
-      <Item1 Name="default" Default="True"/>
+    <BuildModes Count="2" Active="release">
+      <Item1 Name="release" Default="True"/>
       <Item2 Name="debug">
         <CompilerOptions>
           <Version Value="10"/>
@@ -342,16 +342,14 @@
     <Linking>
       <Debugging>
         <UseLineInfoUnit Value="False"/>
-        <StripSymbols Value="True"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
     <Other>
       <Verbosity>
-        <ShowWarn Value="False"/>
         <ShowNotes Value="False"/>
-        <ShowHints Value="False"/>
         <ShowGenInfo Value="False"/>
+        <ShoLineNum Value="True"/>
       </Verbosity>
       <CompilerMessages>
         <UseMsgFile Value="True"/>
