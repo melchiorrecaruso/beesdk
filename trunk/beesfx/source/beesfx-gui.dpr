@@ -158,7 +158,7 @@ begin
             if CODE then
             begin
               Decoder.Initialize(Headers.Items[I]);
-              CODE := Decoder.Read(Headers.Items[I]);
+              CODE := Decoder.ReadToFile(Headers.Items[I]);
             end;
           Decoder.Free;
 

@@ -257,11 +257,6 @@ begin
   if Assigned(FArchReader) then FreeAndNil(FArchReader);
   if Assigned(FSwapWriter) then FreeAndNil(FSwapWriter);
   if Assigned(FSwapReader) then FreeAndNil(FSwapReader);
-
-
-  FTempWriter.Size;
-
-
   if Assigned(FTempWriter) then FreeAndNil(FTempWriter);
 
   if IsModified then
