@@ -150,7 +150,7 @@ end;
 destructor TFileReader.Destroy;
 begin
   inherited Destroy;
-  FFileStream.Free;
+  FFileStream.Destroy;
 end;
 
 procedure TFileReader.Fill;
@@ -173,7 +173,7 @@ end;
 destructor TFileWriter.Destroy;
 begin
   inherited Destroy;
-  FFileStream.Free;
+  FFileStream.Destroy;
 end;
 
 procedure TFileWriter.Flush;

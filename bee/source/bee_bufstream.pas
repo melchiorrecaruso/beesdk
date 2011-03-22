@@ -410,6 +410,8 @@ end;
 
 procedure TWriteBlowFishBufStream.StartEncode(const Value: string);
 begin
+  FlushBuffer;
+  // set key ...
   FBFK := Length(Value) >= MinBlowFishKeyLength;
   if FBFK then
   begin
