@@ -56,7 +56,7 @@ uses
   Bee_Types,
   Bee_Consts,
   Bee_Common,
-  Bee_Headers, bee_streamcoder;
+  Bee_Headers;
 
 type
   { TCustomBeeApp class }

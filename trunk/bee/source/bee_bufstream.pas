@@ -258,26 +258,23 @@ end;
 
 function TWriteBufStream.Seek(Offset: longint; Origin: word): longint;
 begin
-  if FBufferSize > 0 then
-  begin
-    FlushBuffer;
-  end;
+  FlushBuffer;
   Result := FSource.Seek(Offset, Origin);
 end;
 
 function TWriteBufStream.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
-  if FBufferSize > 0 then
-  begin
-    FlushBuffer;
-  end;
+  FlushBuffer;
   Result := FSource.Seek(Offset, Origin);
 end;
 
-procedure TWriteBufStream.FlushBuffer;
+procedure TWriteBufStream.FlushBuffer; {$IFDEF FPC} inline; {$ENDIF}
 begin
-  FSource.Write(FBuffer[0], FBufferSize);
-  FBufferSize := 0;
+  if FBufferSize > 0 then
+  begin
+    FSource.Write(FBuffer[0], FBufferSize);
+    FBufferSize := 0;
+  end;
 end;
 
 procedure TWriteBufStream.SetSize(NewSize: longint);
