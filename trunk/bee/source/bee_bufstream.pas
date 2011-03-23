@@ -268,7 +268,7 @@ begin
   Result := FSource.Seek(Offset, Origin);
 end;
 
-procedure TWriteBufStream.FlushBuffer; {$IFDEF FPC} inline; {$ENDIF}
+procedure TWriteBufStream.FlushBuffer; // {$IFDEF FPC} inline; {$ENDIF}
 begin
   if FBufferSize > 0 then
   begin
