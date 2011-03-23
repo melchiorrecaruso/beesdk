@@ -18,13 +18,13 @@
       <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2" Active="release">
-      <Item1 Name="debug" Default="True"/>
-      <Item2 Name="release">
+      <Item1 Name="release" Default="True"/>
+      <Item2 Name="debug">
         <CompilerOptions>
           <Version Value="10"/>
           <SearchPaths>
             <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
-            <UnitOutputDirectory Value="../distribution"/>
+            <UnitOutputDirectory Value="../temp"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -38,14 +38,12 @@
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <Optimizations>
-              <VariablesInRegisters Value="True"/>
-              <UncertainOptimizations Value="True"/>
-              <OptimizationLevel Value="3"/>
+              <OptimizationLevel Value="0"/>
             </Optimizations>
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <UseLineInfoUnit Value="False"/>
+              <GenerateDebugInfo Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
           </Linking>
@@ -98,7 +96,7 @@
         <UnitName Value="Bee_Consts"/>
         <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="103"/>
+        <TopLine Value="96"/>
         <CursorPos X="18" Y="137"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -191,7 +189,7 @@
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="457"/>
-        <CursorPos X="48" Y="518"/>
+        <CursorPos X="110" Y="457"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -210,6 +208,7 @@
       <Unit11>
         <Filename Value="beelib_link.pas"/>
         <UnitName Value="BeeLib_Link"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -232,11 +231,10 @@
       <Unit13>
         <Filename Value="bee_bufstream.pas"/>
         <UnitName Value="Bee_BufStream"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="259"/>
-        <CursorPos X="69" Y="271"/>
+        <CursorPos X="43" Y="271"/>
         <UsageCount Value="19"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -257,7 +255,7 @@
         <UnitName Value="Bee_Modeller"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="449"/>
+        <TopLine Value="6"/>
         <CursorPos X="62" Y="466"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -301,7 +299,7 @@
         <UnitName Value="Bee_Codec"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="142"/>
+        <TopLine Value="10"/>
         <CursorPos X="89" Y="154"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -323,7 +321,7 @@
         <UnitName Value="Bee_RangeCoder"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="149"/>
+        <TopLine Value="134"/>
         <CursorPos X="52" Y="183"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -457,7 +455,7 @@
     <Version Value="10"/>
     <SearchPaths>
       <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
-      <UnitOutputDirectory Value="../temp"/>
+      <UnitOutputDirectory Value="../distribution"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
@@ -471,12 +469,14 @@
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
       <Optimizations>
-        <OptimizationLevel Value="0"/>
+        <VariablesInRegisters Value="True"/>
+        <UncertainOptimizations Value="True"/>
+        <OptimizationLevel Value="3"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="True"/>
+        <UseLineInfoUnit Value="False"/>
       </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
