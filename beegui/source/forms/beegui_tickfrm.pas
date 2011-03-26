@@ -51,7 +51,6 @@ uses
   Bee_Consts,
   // ---
   BeeGui_RenameFrm,
-  BeeGui_PasswordFrm,
   BeeGui_OverwriteFrm,
   // ---
   BeeGui_CommandLine,
@@ -127,7 +126,6 @@ type
     { private declarations }
     FID:        Pointer;
     FList:      TList;
-    FPassword:  string;
     FCanClose:  boolean;
     FSuspended: boolean;
     FProgressOnTitle: boolean;
@@ -185,7 +183,7 @@ var
 procedure TTickFrm.FormCreate(Sender: TObject);
 begin
   FCommandLine := nil;
-  FPassword    := '';
+
   FList        := nil;
   FCanClose    := False;
   FSuspended   := False;
@@ -202,7 +200,6 @@ end;
 procedure TTickFrm.FormDestroy(Sender: TObject);
 begin
   FCommandLine := nil;
-  FPassword    := '';
   FList        := nil;
 end;
 
@@ -695,26 +692,6 @@ end;
     if FOnlyAForm then
     begin
       Application.Title := Caption;
-    end;
-  end;
-  
-  procedure TTickFrm.OnKey;
-  var
-    F: TPasswordFrm;
-  begin
-    if FInterfaces.Terminated = False then
-    begin
-      if FPassword = '' then
-      begin
-        F := TPasswordFrm.Create(Application);
-        F.SetPassword(FPassword);
-        if F.ShowModal = mrOK then
-        begin
-          FPassword := F.Password.Text;
-        end;
-        F.Free;
-      end;
-      FInterfaces.OnKey.Answer := FPassword;
     end;
   end;
 

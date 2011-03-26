@@ -3883,41 +3883,42 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +#19'MMenuOptionsDefault'#7'Caption'#6#15'Default Setting'#7'OnClick'#7#24'MM'
   +'enuOptionsDefaultClick'#0#0#9'TMenuItem'#14'MMenuOptionsN2'#7'Caption'#6#1
   +'-'#0#0#9'TMenuItem'#18'MMenuOptionsSetPsw'#7'Caption'#6#15'Set Password...'
-  +#0#0#9'TMenuItem'#21'MMenuOptionsLogReport'#7'Caption'#6#17'Create Log Repor'
-  +'t'#7'OnClick'#7#12'OptionsClick'#0#0#0#9'TMenuItem'#9'MMenuHelp'#7'Caption'
-  +#6#4'Help'#0#9'TMenuItem'#11'MMenuHelpF1'#7'Caption'#6#23'Help Contents and '
-  +'Index'#8'ShortCut'#2'p'#7'OnClick'#7#16'MMenuHelpF1Click'#0#0#9'TMenuItem'
-  +#11'MMenuHelpN1'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#17'MMenuHelpInternet'#7
-  +'Caption'#6#16'BeeGui Home Page'#8'ShortCut'#4'H'#128#0#0#7'OnClick'#7#22'MM'
-  +'enuHelpInternetClick'#0#0#9'TMenuItem'#11'MMenuHelpN2'#7'Caption'#6#1'-'#0#0
-  +#9'TMenuItem'#16'MMenuHelpLicense'#7'Caption'#6#17'License Agreement'#8'Shor'
-  +'tCut'#4'L'#128#0#0#7'OnClick'#7#21'MMenuHelpLicenseClick'#0#0#9'TMenuItem'
-  +#14'MMenuHelpAbout'#7'Caption'#6#15'About BeeGui...'#7'OnClick'#7#19'MMenuHe'
-  +'lpAboutClick'#0#0#0#0#11'TSaveDialog'#10'SaveDialog'#6'Filter'#6'?Bee file '
-  +'(*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'#7'Options'#11#14'of'
-  +'HideReadOnly'#15'ofPathMustExist'#14'ofEnableSizing'#0#4'left'#2'`'#3'top'#3
-  +#200#0#0#0#10'TPopupMenu'#5'BMenu'#4'left'#3#168#0#3'top'#3#0#1#0#9'TMenuIte'
-  +'m'#8'BMenuNew'#7'Caption'#6#3'New'#7'Checked'#9#7'Enabled'#8#7'OnClick'#7#10
-  +'BMenuClick'#0#0#9'TMenuItem'#9'BMenuOpen'#7'Caption'#6#4'Open'#7'Checked'#9
-  +#7'Enabled'#8#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#7'BMenuN1'#7'Capt'
-  +'ion'#6#10'- Spacer -'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuI'
-  +'tem'#8'BMenuAdd'#7'Caption'#6#3'Add'#7'Checked'#9#7'OnClick'#7#10'BMenuClic'
-  +'k'#0#0#9'TMenuItem'#12'BMenuExtract'#7'Caption'#6#7'Extract'#7'Checked'#9#7
-  +'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuView'#7'Caption'#6#4'View'
-  +#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#11'BMenuDelete'#7
-  ,'Caption'#6#6'Delete'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuIt'
-  +'em'#7'BMenuN2'#7'Caption'#6#10'- Spacer -'#7'Checked'#9#7'OnClick'#7#10'BMe'
-  +'nuClick'#0#0#9'TMenuItem'#9'BMenuTest'#7'Caption'#6#4'Test'#7'Checked'#9#7
-  +'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#13'BMenuCheckOut'#7'Caption'#6#8
-  +'CheckOut'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#7'BMenu'
-  +'N3'#7'Caption'#6#10'- Spacer -'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0
-  +#9'TMenuItem'#18'BMenuConfiguration'#7'Caption'#6#13'Configuration'#7'Checke'
-  +'d'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuHelp'#7'Caption'#6
-  +#4'Help'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuEx'
-  +'it'#7'Caption'#6#4'Exit'#7'OnClick'#7#10'BMenuClick'#0#0#0#9'TIconList'#11
-  +'SmallImages'#4'left'#2#24#3'top'#3'8'#1#0#0#9'TIconList'#11'LargeImages'#6
-  +'Height'#2' '#5'Width'#2' '#4'left'#2'`'#3'top'#3'8'#1#0#0#12'TFileProcess'
-  +#11'FileProcess'#7'Enabled'#8#8'Interval'#3#250#0#7'OnTimer'#7#16'FileProces'
-  +'sTimer'#12'OnStartTimer'#7#21'FileProcessStartTimer'#11'OnStopTimer'#7#20'F'
-  +'ileProcessStopTimer'#4'left'#3#168#0#3'top'#3'8'#1#0#0#0
+  +#7'OnClick'#7#23'MMenuOptionsSetPswClick'#0#0#9'TMenuItem'#21'MMenuOptionsLo'
+  +'gReport'#7'Caption'#6#17'Create Log Report'#7'OnClick'#7#12'OptionsClick'#0
+  +#0#0#9'TMenuItem'#9'MMenuHelp'#7'Caption'#6#4'Help'#0#9'TMenuItem'#11'MMenuH'
+  +'elpF1'#7'Caption'#6#23'Help Contents and Index'#8'ShortCut'#2'p'#7'OnClick'
+  +#7#16'MMenuHelpF1Click'#0#0#9'TMenuItem'#11'MMenuHelpN1'#7'Caption'#6#1'-'#0
+  +#0#9'TMenuItem'#17'MMenuHelpInternet'#7'Caption'#6#16'BeeGui Home Page'#8'Sh'
+  +'ortCut'#4'H'#128#0#0#7'OnClick'#7#22'MMenuHelpInternetClick'#0#0#9'TMenuIte'
+  +'m'#11'MMenuHelpN2'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#16'MMenuHelpLicense'#7
+  +'Caption'#6#17'License Agreement'#8'ShortCut'#4'L'#128#0#0#7'OnClick'#7#21'M'
+  +'MenuHelpLicenseClick'#0#0#9'TMenuItem'#14'MMenuHelpAbout'#7'Caption'#6#15'A'
+  +'bout BeeGui...'#7'OnClick'#7#19'MMenuHelpAboutClick'#0#0#0#0#11'TSaveDialog'
+  +#10'SaveDialog'#6'Filter'#6'?Bee file (*.bee)|*.bee|Exe file (*.exe)|*.exe|A'
+  +'ll files (*.*)|*'#7'Options'#11#14'ofHideReadOnly'#15'ofPathMustExist'#14'o'
+  +'fEnableSizing'#0#4'left'#2'`'#3'top'#3#200#0#0#0#10'TPopupMenu'#5'BMenu'#4
+  +'left'#3#168#0#3'top'#3#0#1#0#9'TMenuItem'#8'BMenuNew'#7'Caption'#6#3'New'#7
+  +'Checked'#9#7'Enabled'#8#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMen'
+  +'uOpen'#7'Caption'#6#4'Open'#7'Checked'#9#7'Enabled'#8#7'OnClick'#7#10'BMenu'
+  +'Click'#0#0#9'TMenuItem'#7'BMenuN1'#7'Caption'#6#10'- Spacer -'#7'Checked'#9
+  +#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#8'BMenuAdd'#7'Caption'#6#3'Add'
+  +#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#12'BMenuExtract'#7
+  +'Caption'#6#7'Extract'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuI'
+  +'tem'#9'BMenuView'#7'Caption'#6#4'View'#7'Checked'#9#7'OnClick'#7#10'BMenuCl'
+  ,'ick'#0#0#9'TMenuItem'#11'BMenuDelete'#7'Caption'#6#6'Delete'#7'Checked'#9#7
+  +'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#7'BMenuN2'#7'Caption'#6#10'- Spa'
+  +'cer -'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuTes'
+  +'t'#7'Caption'#6#4'Test'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMen'
+  +'uItem'#13'BMenuCheckOut'#7'Caption'#6#8'CheckOut'#7'Checked'#9#7'OnClick'#7
+  +#10'BMenuClick'#0#0#9'TMenuItem'#7'BMenuN3'#7'Caption'#6#10'- Spacer -'#7'Ch'
+  +'ecked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#18'BMenuConfiguration'
+  +#7'Caption'#6#13'Configuration'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0
+  +#9'TMenuItem'#9'BMenuHelp'#7'Caption'#6#4'Help'#7'Checked'#9#7'OnClick'#7#10
+  +'BMenuClick'#0#0#9'TMenuItem'#9'BMenuExit'#7'Caption'#6#4'Exit'#7'OnClick'#7
+  +#10'BMenuClick'#0#0#0#9'TIconList'#11'SmallImages'#4'left'#2#24#3'top'#3'8'#1
+  +#0#0#9'TIconList'#11'LargeImages'#6'Height'#2' '#5'Width'#2' '#4'left'#2'`'#3
+  +'top'#3'8'#1#0#0#12'TFileProcess'#11'FileProcess'#7'Enabled'#8#8'Interval'#3
+  +#250#0#7'OnTimer'#7#16'FileProcessTimer'#12'OnStartTimer'#7#21'FileProcessSt'
+  +'artTimer'#11'OnStopTimer'#7#20'FileProcessStopTimer'#4'left'#3#168#0#3'top'
+  +#3'8'#1#0#0#0
 ]);
