@@ -3882,15 +3882,16 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +'Save Setting Now'#7'OnClick'#7#24'MMenuOptionsSaveNowClick'#0#0#9'TMenuItem'
   +#19'MMenuOptionsDefault'#7'Caption'#6#15'Default Setting'#7'OnClick'#7#24'MM'
   +'enuOptionsDefaultClick'#0#0#9'TMenuItem'#14'MMenuOptionsN2'#7'Caption'#6#1
-  +'-'#0#0#9'TMenuItem'#21'MMenuOptionsLogReport'#7'Caption'#6#17'Create Log Re'
-  +'port'#7'OnClick'#7#12'OptionsClick'#0#0#0#9'TMenuItem'#9'MMenuHelp'#7'Capti'
-  +'on'#6#4'Help'#0#9'TMenuItem'#11'MMenuHelpF1'#7'Caption'#6#23'Help Contents '
-  +'and Index'#8'ShortCut'#2'p'#7'OnClick'#7#16'MMenuHelpF1Click'#0#0#9'TMenuIt'
-  +'em'#11'MMenuHelpN1'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#17'MMenuHelpInternet'
-  +#7'Caption'#6#16'BeeGui Home Page'#8'ShortCut'#4'H'#128#0#0#7'OnClick'#7#22
-  +'MMenuHelpInternetClick'#0#0#9'TMenuItem'#11'MMenuHelpN2'#7'Caption'#6#1'-'#0
-  +#0#9'TMenuItem'#16'MMenuHelpLicense'#7'Caption'#6#17'License Agreement'#8'Sh'
-  +'ortCut'#4'L'#128#0#0#7'OnClick'#7#21'MMenuHelpLicenseClick'#0#0#9'TMenuItem'
+  +'-'#0#0#9'TMenuItem'#18'MMenuOptionsSetPsw'#7'Caption'#6#15'Set Password...'
+  +#0#0#9'TMenuItem'#21'MMenuOptionsLogReport'#7'Caption'#6#17'Create Log Repor'
+  +'t'#7'OnClick'#7#12'OptionsClick'#0#0#0#9'TMenuItem'#9'MMenuHelp'#7'Caption'
+  +#6#4'Help'#0#9'TMenuItem'#11'MMenuHelpF1'#7'Caption'#6#23'Help Contents and '
+  +'Index'#8'ShortCut'#2'p'#7'OnClick'#7#16'MMenuHelpF1Click'#0#0#9'TMenuItem'
+  +#11'MMenuHelpN1'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#17'MMenuHelpInternet'#7
+  +'Caption'#6#16'BeeGui Home Page'#8'ShortCut'#4'H'#128#0#0#7'OnClick'#7#22'MM'
+  +'enuHelpInternetClick'#0#0#9'TMenuItem'#11'MMenuHelpN2'#7'Caption'#6#1'-'#0#0
+  +#9'TMenuItem'#16'MMenuHelpLicense'#7'Caption'#6#17'License Agreement'#8'Shor'
+  +'tCut'#4'L'#128#0#0#7'OnClick'#7#21'MMenuHelpLicenseClick'#0#0#9'TMenuItem'
   +#14'MMenuHelpAbout'#7'Caption'#6#15'About BeeGui...'#7'OnClick'#7#19'MMenuHe'
   +'lpAboutClick'#0#0#0#0#11'TSaveDialog'#10'SaveDialog'#6'Filter'#6'?Bee file '
   +'(*.bee)|*.bee|Exe file (*.exe)|*.exe|All files (*.*)|*'#7'Options'#11#14'of'
@@ -3904,8 +3905,8 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +'k'#0#0#9'TMenuItem'#12'BMenuExtract'#7'Caption'#6#7'Extract'#7'Checked'#9#7
   +'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#9'BMenuView'#7'Caption'#6#4'View'
   +#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#11'BMenuDelete'#7
-  +'Caption'#6#6'Delete'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuIt'
-  ,'em'#7'BMenuN2'#7'Caption'#6#10'- Spacer -'#7'Checked'#9#7'OnClick'#7#10'BMe'
+  ,'Caption'#6#6'Delete'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuIt'
+  +'em'#7'BMenuN2'#7'Caption'#6#10'- Spacer -'#7'Checked'#9#7'OnClick'#7#10'BMe'
   +'nuClick'#0#0#9'TMenuItem'#9'BMenuTest'#7'Caption'#6#4'Test'#7'Checked'#9#7
   +'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#13'BMenuCheckOut'#7'Caption'#6#8
   +'CheckOut'#7'Checked'#9#7'OnClick'#7#10'BMenuClick'#0#0#9'TMenuItem'#7'BMenu'
