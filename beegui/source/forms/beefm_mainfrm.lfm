@@ -3796,6 +3796,9 @@ object MainFrm: TMainFrm
       object MMenuOptionsN2: TMenuItem
         Caption = '-'
       end
+      object MMenuOptionsSetPsw: TMenuItem
+        Caption = 'Set Password...'
+      end
       object MMenuOptionsLogReport: TMenuItem
         Caption = 'Create Log Report'
         OnClick = OptionsClick

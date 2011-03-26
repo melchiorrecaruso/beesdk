@@ -56,6 +56,7 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
+    MMenuOptionsSetPsw: TMenuItem;
     ToolBar:    TToolBar;
     AddressToolBar: TToolBar;
     FolderBox:  TArchiveFolderBox;
