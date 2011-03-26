@@ -56,6 +56,7 @@ type
   { TMainFrm }
 
   TMainFrm = class(TForm)
+    ProgressBarImages: TImageList;
     MMenuOptionsSetPsw: TMenuItem;
     ToolBar:    TToolBar;
     AddressToolBar: TToolBar;
@@ -234,6 +235,7 @@ type
     procedure FormShow(Sender: TObject);
     // ---
     procedure FolderBoxSelect(Sender: TObject);
+    procedure ListViewChange(Sender: TObject; Item: TListItem; Change: TItemChange);
     // ---
     procedure ListViewChangeFolder(Sender: TObject);
     procedure ListViewColumnClick(Sender: TObject; Column: TListColumn);
@@ -245,6 +247,8 @@ type
     procedure ListViewMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure ListViewMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure ListViewSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
+    // ---
+    procedure StatusBarDrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel; const Rect: TRect);
     // ---
     procedure MMenuFileNewClick(Sender: TObject);
     procedure MMenuFileOpenClick(Sender: TObject);
@@ -466,25 +470,25 @@ begin
     StatusBar.BeginUpdate;
     if ListView.SelCount = 0 then
     begin
-      StatusBar.Panels[0].Text := Format(rsItems, [IntToStr(ListView.Items.Count)]);
-      StatusBar.Panels[1].Text := '';
+      StatusBar.Panels[1].Text := Format(rsItems, [IntToStr(ListView.Items.Count)]);
       StatusBar.Panels[2].Text := '';
       StatusBar.Panels[3].Text := '';
+      StatusBar.Panels[4].Text := '';
     end else
     begin
-      StatusBar.Panels[0].Text := Format(rsSelectedItems, [IntToStr(ListView.SelCount)]);
-      StatusBar.Panels[1].Text := SizeToStr(ListView.SelFileSize);
-      StatusBar.Panels[2].Text := SizeToStr(ListView.SelFilePackedSize);
-      StatusBar.Panels[3].Text := FileTimeToString(ListView.SelFileTime);
+      StatusBar.Panels[1].Text := Format(rsSelectedItems, [IntToStr(ListView.SelCount)]);
+      StatusBar.Panels[2].Text := SizeToStr(ListView.SelFileSize);
+      StatusBar.Panels[3].Text := SizeToStr(ListView.SelFilePackedSize);
+      StatusBar.Panels[4].Text := FileTimeToString(ListView.SelFileTime);
     end;
     StatusBar.EndUpdate;
   end else
   begin
     StatusBar.BeginUpdate;
-    StatusBar.Panels[0].Text := '';
     StatusBar.Panels[1].Text := '';
     StatusBar.Panels[2].Text := '';
     StatusBar.Panels[3].Text := '';
+    StatusBar.Panels[4].Text := '';
     StatusBar.EndUpdate;
   end;
 end;
@@ -525,6 +529,12 @@ begin
     ListView.Folder := FolderBox.Text;
   end else
     FolderBox.Text := ListView.Folder;
+end;
+
+procedure TMainFrm.ListViewChange(Sender: TObject; Item: TListItem;
+  Change: TItemChange);
+begin
+
 end;
 
  // ---------------------------------------------------------------------- //
@@ -782,7 +792,7 @@ begin
     FreeAndNil(TickFrm);
     DecWorkStatus;
 
-    if ExitCode < 2 then
+    if ExitCode < ccError then
     begin
       FFolder := ListView.Folder;
       if ListView.Open(aArchiveName, FList) then
@@ -1105,6 +1115,14 @@ begin
       end else
         Width := 0;
     end;
+end;
+
+procedure TMainFrm.StatusBarDrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel; const Rect: TRect);
+begin
+  if FPassword = '' then
+    ProgressBarImages.Draw(StatusBar.Canvas, Rect.Left, Rect.Top, 0)
+  else
+    ProgressBarImages.Draw(StatusBar.Canvas, Rect.Left, Rect.Top, 1);
 end;
 
 procedure TMainFrm.MMenuViewUpClick(Sender: TObject);
@@ -1576,8 +1594,7 @@ begin
         MMenuFileExitClick(Sender);
       end;
     end;
-  end
-  else
+  end else
     MessageDlg(rsProcessExists, mtInformation, [mbOK], 0);
 end;
 
@@ -1593,6 +1610,7 @@ begin
   finally
     FreeAndNil(PasswordFrm);
   end;
+  StatusBar.Repaint;
 end;
 
  // ---------------------------------------------------------------------- //
