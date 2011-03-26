@@ -255,6 +255,7 @@ type
     procedure MMenuFileRenameClick(Sender: TObject);
     procedure MMenuFileDeleteClick(Sender: TObject);
     procedure MMenuFileExitClick(Sender: TObject);
+    procedure MMenuOptionsSetPswClick(Sender: TObject);
     // ----
     procedure OptionsClick(Sender: TObject);
     procedure OrderByClick(Sender: TObject);
@@ -298,6 +299,7 @@ type
     FDragStart: boolean;
     FWorkStatus:  integer;
     FArchiveName: string;
+    FPassword: string;
     FCommandLine: TCustomCommandLine;
     procedure Execute(const aArchiveName: string);
     procedure OpenArchive(const aArchiveName: string);
@@ -340,7 +342,8 @@ uses
   BeeGui_RenameFrm,
   BeeFm_ConfigFrm,
   BeeFm_SelectFrm,
-  BeeFm_PropertyFrm;
+  BeeFm_PropertyFrm,
+  BeeGui_PasswordFrm;
 
 { TMainFrm }
 
@@ -390,6 +393,7 @@ begin
   LoadProperty;
   // --- //
   FWorkStatus  := 0;
+  FPassword    := '';
   FCommandLine := TCustomCommandLine.Create(False);
   // --- //
   Caption      := GetApplicationCaption(cApplicationCaption, rsWelcome);
@@ -1312,6 +1316,8 @@ begin
       FCommandLine.Command := ccTest;
       FCommandLine.Log := True;
 
+      FCommandLine.pOption := FPassword;
+
       FCommandLine.ArchiveName := FArchiveName;
 
       FCommandLine.cdOption := ListView.Folder;
@@ -1554,6 +1560,20 @@ begin
   end
   else
     MessageDlg(rsProcessExists, mtInformation, [mbOK], 0);
+end;
+
+procedure TMainFrm.MMenuOptionsSetPswClick(Sender: TObject);
+begin
+  PasswordFrm := TPasswordFrm.Create(Application);
+  try
+    PasswordFrm.SetPassword(FPassword);
+    if PasswordFrm.ShowModal = mrOK then
+    begin
+      FPassword := PasswordFrm.Password.Text;
+    end;
+  finally
+    FreeAndNil(PasswordFrm);
+  end;
 end;
 
  // ---------------------------------------------------------------------- //
