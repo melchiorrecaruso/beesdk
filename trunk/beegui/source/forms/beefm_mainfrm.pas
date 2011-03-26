@@ -711,12 +711,13 @@ begin
     if MessageDlg(rsFreshFile, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
       FCommandLine.Clear;
+      FCommandLine.Confirm := False;
       FCommandLine.Command := ccAdd;
       FCommandLine.uOption := umUpdate;
-      FCommandLine.Confirm := False;
-      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+      FCommandLine.pOption := FPassword;
 
       FCommandLine.ArchiveName := FArchiveName;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
       FCommandLine.cdOption := ListView.Selected.SubItems[9];
       FCommandLine.FileMasks.Add(ListView.Selected.Caption);
@@ -752,10 +753,12 @@ begin
   Caption := GetApplicationCaption(cApplicationCaption, rsOpening);
 
   FCommandLine.Clear;
+  FCommandLine.Confirm := False;
   FCommandLine.Command := ccList;
-  FCommandLine.Log := MMenuOptionsLogReport.Checked;
+  FCommandLine.pOption := FPassword;
 
   FCommandLine.ArchiveName := aArchiveName;
+  FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
   FCommandLine.rOption := rmWildCard;
   FCommandLine.FileMasks.Add('*');
@@ -870,11 +873,12 @@ begin
         end;
       end;
       FCommandLine.Clear;
-      FCommandLine.Command := ccAdd;
       FCommandLine.Confirm := True;
-      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+      FCommandLine.Command := ccAdd;
+      FCommandLine.pOption := FPassword;
 
       FCommandLine.ArchiveName := SaveDialog.FileName;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
       ConfigFrm.AddOptions('', FCommandLine);
       begin
@@ -1136,15 +1140,16 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
-    FCommandLine.Command := ccAdd;
     FCommandLine.Confirm := True;
-    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+    FCommandLine.Command := ccAdd;
+    FCommandLine.pOption := FPassword;
 
     if FArchiveName = '' then
       FCommandLine.ArchiveName :=
         GenerateAlternativeFileName(ChangeFileExt(FileNames[0], '.bee'), 0, True)
     else
       FCommandLine.ArchiveName := FArchiveName;
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
     ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
     for I := Low(FileNames) to High(FileNames) do
@@ -1195,13 +1200,14 @@ begin
       if CheckWorkStatus(False) then
       begin
         FCommandLine.Clear;
-        FCommandLine.Command := ccXextract;
         FCommandLine.Confirm := False;
-        FCommandLine.cdOption := Listview.Folder;
-        FCommandLine.Log := MMenuOptionsLogReport.Checked;
+        FCommandLine.Command := ccXextract;
+        FCommandLine.pOption := FPassword;
 
         FCommandLine.ArchiveName := FArchiveName;
+        FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
+        FCommandLine.cdOption := Listview.Folder;
         ListView.GetMasks(FCommandLine.FileMasks);
 
         if SetCurrentDir(Folder) then
@@ -1225,11 +1231,12 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
-    FCommandLine.Command := ccAdd;
     FCommandLine.Confirm := True;
-    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+    FCommandLine.Command := ccAdd;
+    FCommandLine.pOption := FPassword;
 
     FCommandLine.ArchiveName := FArchiveName;
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
     ConfigFrm.AddOptions(ListView.Folder, FCommandLine);
     begin
@@ -1245,10 +1252,12 @@ begin
     if MessageDlg(rsConfirmDeleteFiles, mtInformation, [mbYes, mbNo], 0) = mrYes then
     begin
       FCommandLine.Clear;
+      FCommandLine.Confirm := False;
       FCommandLine.Command := ccDelete;
-      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+      FCommandLine.pOption := FPassword;
 
       FCommandLine.ArchiveName := FArchiveName;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
       FCommandLine.cdOption := ListView.Folder;
       ListView.GetMasks(FCommandLine.FileMasks);
@@ -1268,11 +1277,12 @@ begin
     if CheckWorkStatus(False) then
     begin
       FCommandLine.Clear;
-      FCommandLine.Command := ccXextract;
       FCommandLine.Confirm := True;
-      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+      FCommandLine.Command := ccXextract;
+      FCommandLine.pOption := FPassword;
 
       FCommandLine.ArchiveName := FArchiveName;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
       ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
       ListView.GetMasks(FCommandLine.FileMasks);
@@ -1287,17 +1297,18 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
-    FCommandLine.Command := ccXextract;
     FCommandLine.Confirm := True;
-    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+    FCommandLine.Command := ccXextract;
+    FCommandLine.pOption := FPassword;
 
     FCommandLine.ArchiveName := FArchiveName;
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
     ConfigFrm.ExtractOptions(ListView.Folder, FCommandLine);
 
-    FCommandLine.FileMasks.Add('*');
-    FCommandLine.rOption  := rmWildCard;
     FcommandLine.cdOption := '';
+    FCommandLine.rOption  := rmWildCard;
+    FCommandLine.FileMasks.Add('*');
     begin
       Execute(FCommandLine.ArchiveName);
     end;
@@ -1313,12 +1324,12 @@ begin
     if CheckWorkStatus(False) then
     begin
       FCommandLine.Clear;
+      FCommandLine.Confirm := False;
       FCommandLine.Command := ccTest;
-      FCommandLine.Log := True;
-
       FCommandLine.pOption := FPassword;
 
       FCommandLine.ArchiveName := FArchiveName;
+      FCommandLine.Log := True;
 
       FCommandLine.cdOption := ListView.Folder;
       ListView.GetMasks(FCommandLine.FileMasks);
@@ -1333,10 +1344,12 @@ begin
   if CheckWorkStatus(False) and (ListView.SelCount > 0) then
   begin
     FCommandLine.Clear;
+    FCommandLine.Confirm := False;
     FCommandLine.Command := ccRename;
-    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+    FCommandLine.pOption := FPassword;
 
     FCommandLine.ArchiveName := FArchiveName;
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
     FCommandLine.cdOption := ListView.Folder;
     ListView.GetMasks(FCommandLine.FileMasks);
@@ -1358,11 +1371,13 @@ begin
     end else
     begin
       FCommandLine.Clear;
+      FCommandLine.Confirm := False;
       FCommandLine.Command := ccExtract;
       FCommandLine.uOption := umAddReplace;
-      FCommandLine.Log := MMenuOptionsLogReport.Checked;
+      FCommandLine.pOption := FPassword;
 
       FCommandLine.ArchiveName := FArchiveName;
+      FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
       FCommandLine.cdOption := ListView.Selected.SubItems[9];
       FCommandLine.FileMasks.Add(ListView.Selected.Caption);
@@ -1393,15 +1408,17 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
+    FCommandLine.Confirm := False;
     FCommandLine.Command := ccXextract;
     FCommandLine.uOption := umAddReplace;
-    FCommandLine.Log := MMenuOptionsLogReport.Checked;
+    FCommandLine.pOption := FPassword;
 
     FCommandLine.ArchiveName := FArchiveName;
+    FCommandLine.Log := MMenuOptionsLogReport.Checked;
 
-    FCommandLine.FileMasks.Add('*');
-    FCommandLine.rOption  := rmWildCard;
     FCommandLine.cdOption := '';
+    FCommandLine.rOption  := rmWildCard;
+    FCommandLine.FileMasks.Add('*');
 
     FCheckOutDir := GetApplicationCheckoutDir(cApplicationName);
     ForceDirectories(FCheckOutDir);
@@ -1428,14 +1445,16 @@ begin
   if CheckWorkStatus(False) then
   begin
     FCommandLine.Clear;
+    FCommandLine.Confirm := False;
     FCommandLine.Command := ccTest;
-    FCommandLine.Log := True;
+    FCommandLine.pOption := FPassword;
 
     FCommandLine.ArchiveName := FArchiveName;
+    FCommandLine.Log := True;
 
-    FCommandLine.FileMasks.Add('*');
-    FCommandLine.rOption  := rmWildCard;
     FCommandLine.cdOption := '';
+    FCommandLine.rOption  := rmWildCard;
+    FCommandLine.FileMasks.Add('*');
     begin
       Execute(FCommandLine.ArchiveName);
     end;
