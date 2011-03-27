@@ -1119,10 +1119,10 @@ end;
 
 procedure TMainFrm.StatusBarDrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel; const Rect: TRect);
 begin
-  if FPassword = '' then
-    ProgressBarImages.Draw(StatusBar.Canvas, Rect.Left, Rect.Top, 0)
-  else
-    ProgressBarImages.Draw(StatusBar.Canvas, Rect.Left, Rect.Top, 1);
+  if FPassword <> '' then
+  begin
+    ProgressBarImages.Draw(StatusBar.Canvas, Rect.Left, Rect.Top, 0);
+  end;
 end;
 
 procedure TMainFrm.MMenuViewUpClick(Sender: TObject);
@@ -1606,11 +1606,17 @@ begin
     if PasswordFrm.ShowModal = mrOK then
     begin
       FPassword := PasswordFrm.Password.Text;
-    end;
+    end
   finally
     FreeAndNil(PasswordFrm);
   end;
-  StatusBar.Repaint;
+
+  StatusBar.BeginUpdate;
+  if FPassword = '' then
+    StatusBar.Panels[0].Width := 0
+  else
+    StatusBar.Panels[0].Width := 24;
+  StatusBar.EndUpdate;
 end;
 
  // ---------------------------------------------------------------------- //
