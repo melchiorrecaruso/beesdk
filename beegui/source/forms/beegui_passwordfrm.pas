@@ -48,16 +48,16 @@ type
   { TPasswordFrm }
 
   TPasswordFrm = class(TForm)
-    PasswordImage: TImage;
-    PasswordLabel: TLabel;
-    Password:  TEdit;
     ConfirmPasswordLabel: TLabel;
+    NoteLabel: TLabel;
+    Password:  TEdit;
     ConfirmPassword: TEdit;
     MaskPassword: TCheckBox;
     Bevel:     TBevel;
     BtnClear:  TBitBtn;
     BtnOk:     TBitBtn;
     BtnCancel: TBitBtn;
+    PasswordLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
