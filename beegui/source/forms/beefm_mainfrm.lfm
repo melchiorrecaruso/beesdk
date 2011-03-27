@@ -3805,6 +3805,7 @@ object MainFrm: TMainFrm
       end
       object MMenuOptionsSetPsw: TMenuItem
         Caption = 'Set Password...'
+        ShortCut = 32848
         OnClick = MMenuOptionsSetPswClick
       end
       object MMenuOptionsLogReport: TMenuItem
