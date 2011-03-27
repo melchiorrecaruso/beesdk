@@ -48,6 +48,7 @@ type
   protected
     F1Option: boolean;
     F2Option: boolean;
+
     function GetRun: boolean;
     function GetCommandLine: string; override;
     procedure SetCommandLine(const aValue: string); override;
@@ -56,7 +57,7 @@ type
   public
     constructor Create(UseParams: boolean);
     destructor Destroy; override;
-    procedure Clear;
+    procedure Clear; override;
     property Run: boolean Read GetRun;
     property Log: boolean Read F1Option Write SetF1Option;
     property Confirm: boolean Read F2Option Write SetF2Option;

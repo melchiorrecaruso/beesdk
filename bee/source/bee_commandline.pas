@@ -64,7 +64,6 @@ type
     FpriOption: TpriOption;
     FArchiveName: string;
     FFileMasks: TStringList;
-    procedure Clear; virtual;
     function GetCommandLine: string; virtual;
     procedure SetCommandLine(const aValue: string); virtual;
     procedure SetfOption(const aValue: string);
@@ -94,6 +93,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure Clear; virtual;
     property CommandLine: string read GetCommandLine write SetCommandLine;
     property Command: TCommand read FCommand write FCommand;
     property ssOption: boolean read FssOption write FssOption;
@@ -512,7 +512,7 @@ end;
 
 procedure TCommandLine.SetpOption(const aValue: string);
 begin
-  if Length(aValue) >= MinBlowFishKeyLength then
+  if (Length(aValue) = 0) or (Length(aValue) >= MinBlowFishKeyLength) then
   begin
     FpOption := aValue;
   end;
