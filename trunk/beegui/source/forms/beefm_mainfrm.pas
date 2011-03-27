@@ -1615,7 +1615,7 @@ begin
   if FPassword = '' then
     StatusBar.Panels[0].Width := 0
   else
-    StatusBar.Panels[0].Width := 24;
+    StatusBar.Panels[0].Width := 18;
   StatusBar.EndUpdate;
 end;
 

@@ -94,7 +94,7 @@ begin
   if Length(CommandLine.wdOption) > 0 then
     AddFrm.yOption.Text := CommandLine.wdOption;
 
-  AddFrm.kOption.Checked := Length(CommandLine.pOption) > 0;
+  AddFrm.kOption.Checked := CommandLine.pOption <> '';
 
   AddFrm.cdOptionCheck.Checked := Length(CommandLine.cdOption) > 0;
   if AddFrm.cdOptionCheck.Checked then
@@ -143,7 +143,9 @@ begin
 
     CommandLine. tOption := AddFrm.tOption.Checked;
     CommandLine.wdOption := AddFrm.yOption.Text;
-    // CommandLine. pOption := AddFrm.kOption.Checked;
+
+    if AddFrm.kOption.Checked = False then
+      CommandLine.pOption := '';
 
     if AddFrm.cdOptionCheck.Checked then
       CommandLine.cdOption := AddFrm.cdOption.Text
