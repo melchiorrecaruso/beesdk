@@ -1,13 +1,13 @@
 object MainFrm: TMainFrm
   Left = 287
-  Height = 651
+  Height = 180
   Top = 119
-  Width = 748
+  Width = 220
   Align = alBottom
   AllowDropFiles = True
   Caption = 'Bee File Manager - Welcome'
-  ClientHeight = 632
-  ClientWidth = 748
+  ClientHeight = 180
+  ClientWidth = 220
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -25,9 +25,9 @@ object MainFrm: TMainFrm
     AnchorSideRight.Control = Owner
     AnchorSideBottom.Control = StatusBar
     Left = 0
-    Height = 466
+    Height = 14
     Top = 146
-    Width = 748
+    Width = 220
     AutoLoad = True
     OnChangeFolder = ListViewChangeFolder
     FolderBox = FolderBox
@@ -115,8 +115,8 @@ object MainFrm: TMainFrm
   object StatusBar: TStatusBar
     Left = 0
     Height = 20
-    Top = 612
-    Width = 748
+    Top = 160
+    Width = 220
     Anchors = []
     DragCursor = crDefault
     Panels = <    
@@ -144,7 +144,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 80
     Top = 0
-    Width = 748
+    Width = 220
     ButtonHeight = 60
     ButtonWidth = 0
     Caption = 'ToolBar'
@@ -1278,7 +1278,7 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsExtractClick
     end
     object BtnView: TSpeedButton
-      Left = 255
+      Left = 220
       Height = 55
       Top = 4
       Width = 60
@@ -1556,7 +1556,7 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsViewClick
     end
     object BtnDelete: TSpeedButton
-      Left = 317
+      Left = 220
       Height = 55
       Top = 4
       Width = 60
@@ -1834,7 +1834,7 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsDeleteClick
     end
     object BevelSecond: TBevel
-      Left = 379
+      Left = 220
       Height = 55
       Top = 4
       Width = 2
@@ -1846,7 +1846,7 @@ object MainFrm: TMainFrm
       Constraints.MinWidth = 2
     end
     object BtnTest: TSpeedButton
-      Left = 383
+      Left = 220
       Height = 55
       Top = 4
       Width = 60
@@ -2124,7 +2124,7 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsTestClick
     end
     object BtnCheckOut: TSpeedButton
-      Left = 445
+      Left = 220
       Height = 55
       Top = 4
       Width = 60
@@ -2402,7 +2402,7 @@ object MainFrm: TMainFrm
       OnClick = MMenuActionsCheckOutClick
     end
     object BevelThird: TBevel
-      Left = 507
+      Left = 220
       Height = 55
       Top = 4
       Width = 2
@@ -2414,7 +2414,7 @@ object MainFrm: TMainFrm
       Constraints.MinWidth = 2
     end
     object BtnConfig: TSpeedButton
-      Left = 511
+      Left = 220
       Height = 55
       Top = 4
       Width = 60
@@ -2692,7 +2692,7 @@ object MainFrm: TMainFrm
       OnClick = MMenuOptionsConfigurationClick
     end
     object BtnHelp: TSpeedButton
-      Left = 573
+      Left = 220
       Height = 55
       Top = 4
       Width = 60
@@ -2970,7 +2970,7 @@ object MainFrm: TMainFrm
       OnClick = MMenuHelpF1Click
     end
     object BtnExit: TSpeedButton
-      Left = 635
+      Left = 220
       Height = 55
       Top = 4
       Width = 60
@@ -3255,7 +3255,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 64
     Top = 80
-    Width = 748
+    Width = 220
     ButtonHeight = 24
     ButtonWidth = 0
     Caption = 'AddressToolBar'
@@ -3271,7 +3271,7 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 3
-      Height = 22
+      Height = 24
       Top = 2
       Width = 122
       Align = alCustom
@@ -3323,7 +3323,7 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 5
-      Height = 22
+      Height = 24
       Top = 2
       Width = 2
       Align = alCustom
@@ -3339,7 +3339,7 @@ object MainFrm: TMainFrm
       AnchorSideBottom.Control = FolderBox
       AnchorSideBottom.Side = asrBottom
       Left = 13
-      Height = 22
+      Height = 24
       Top = 2
       Width = 45
       Align = alCustom
@@ -3358,9 +3358,9 @@ object MainFrm: TMainFrm
       AnchorSideRight.Control = AddressToolBar
       AnchorSideRight.Side = asrBottom
       Left = 18
-      Height = 22
+      Height = 24
       Top = 2
-      Width = 728
+      Width = 200
       Align = alCustom
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 5
