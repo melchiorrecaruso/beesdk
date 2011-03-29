@@ -104,9 +104,9 @@ end;
 
 procedure TPasswordFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-    {$IFDEF SAVELANGUAGE}
+  {$IFDEF SAVELANGUAGE}
   SaveLanguage;
-    {$ENDIF}
+  {$ENDIF}
   SaveProperty;
 end;
 
@@ -117,15 +117,13 @@ begin
     if not MaskPassword.Checked then
       CanClose := True
     else
-    if CompareStr(Password.Text, ConfirmPassword.Text) = 0 then
-      CanClose := True
-    else
-    begin
-      MessageDlg(rsWarning, rseConfirmPassword, mtWarning, [mbOK], 0);
-      CanClose := False;
-    end;
-  end
-  else
+      if CompareStr(Password.Text, ConfirmPassword.Text) = 0 then
+        CanClose := True
+      else begin
+        MessageDlg(rsWarning, rseConfirmPassword, mtWarning, [mbOK], 0);
+        CanClose := False;
+      end;
+  end else
     CanClose := True;
 end;
 
@@ -150,8 +148,7 @@ begin
   begin
     Password.PasswordChar := '*';
     ConfirmPassword.Color := clWindow;
-  end
-  else
+  end else
   begin
     Password.PasswordChar := #0;
     ConfirmPassword.Text  := '';
