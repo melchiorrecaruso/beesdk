@@ -15,12 +15,10 @@
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
-      <UseVersionInfo Value="True"/>
-      <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <RevisionNr Value="6"/>
-      <BuildNr Value="5"/>
-      <StringTable FileDescription="Bee Archiver Library" InternalName="beelib" OriginalFilename="beelib" ProductVersion=""/>
+      <BuildNr Value="10"/>
+      <StringTable FileDescription="Bee Archiver Library" LegalCopyright="Copyright (c) 2003-2011 Melchiorre Caruso" ProductName="Bee Archiver" ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2" Active="release">
       <Item1 Name="release" Default="True"/>
@@ -110,7 +108,7 @@
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="35" Y="21"/>
+        <CursorPos X="26" Y="20"/>
         <UsageCount Value="26"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
