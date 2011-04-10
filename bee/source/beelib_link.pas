@@ -48,6 +48,11 @@ function CoreQueryI64(ID: Pointer; VALUE: longint): Int64; external cApplication
 function CoreQueryPointer(ID: Pointer; VALUE, INDEX: longint): Pointer; external cApplicationLib;
 function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean; external cApplicationLib;
 
+CreateObj
+
+
+
+
 implementation
 
 end.
