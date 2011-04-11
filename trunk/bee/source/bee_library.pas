@@ -49,7 +49,7 @@ uses
 
 { Library routines }
 
-function CoreVersion: longint;
+function LibVersion: longint;
 function CoreCreate(P: PChar): Pointer;
 function CorePriority(ID:Pointer; VALUE: longint): longint;
 function CoreQueryB8(ID: Pointer; VALUE: longint): boolean;
@@ -210,7 +210,7 @@ end;
 
 { Library core routines }
 
-function CoreVersion: longint;
+function LibVersion: longint;
 begin
   Result := 105;
 end;
@@ -224,103 +224,216 @@ begin
   end;
 end;
 
-function CorePriority(ID: Pointer; VALUE: longint): longint;
+function CoreDestroy(HANDLE: Pointer): boolean;
 begin
-  Result := -1;
-  if Assigned(TCore(ID)) then
-  begin
-    case VALUE of
-      csmPriorityIdle:         TCore(ID).Priority := tpIdle;
-      csmPriorityLowest:       TCore(ID).Priority := tpLowest;
-      csmPriorityLower:        TCore(ID).Priority := tpLower;
-      csmPriorityNormal:       TCore(ID).Priority := tpNormal;
-      csmPriorityHigher:       TCore(ID).Priority := tpHigher;
-      csmPriorityHighest:      TCore(ID).Priority := tpHighest;
-      csmPriorityTimeCritical: TCore(ID).Priority := tpTimeCritical;
-    end;
-    Result := Ord(TCore(ID).Priority);
-  end;
-end;
-
-function CoreQueryB8(ID: Pointer; VALUE: longint): boolean;
-begin
-  Result := Assigned(TCore(ID));
+  Result := Assigned(TCore(HANDLE));
   if Result then
   begin
-    case VALUE of
-      csmExecute: begin
-        Result := TCore(ID).FApp.FStatus = csReady;
-        if Result then
-        begin
-          TCore(ID).Resume;
-        end;
-      end;
-      csmSuspend: TCore(ID).FApp.Suspended := True;
-      csmResume:  TCore(ID).FApp.Suspended := False;
-      csmTerminate: begin
-        TCore(ID).FApp.Terminate;
-        if TCore(ID).FApp.FStatus <> csTerminated then
-        begin
-          TCore(ID).FApp.FStatus := csExecuting;
-        end;
-      end;
-      csmDestroy: TCore(ID).Destroy;
-      else Result := False;
-    end;
+    TCore(HANDLE).Destroy;
   end;
 end;
 
-function CoreQueryI32(ID: Pointer; VALUE: longint): longint;
+function CoreSetPriority(HANDLE: Pointer; VALUE: longint): longint;
 begin
   Result := -1;
-  if Assigned(TCore(ID)) then
+  if Assigned(TCore(HANDLE)) then
   begin
     case VALUE of
-      csmStatus:        Result := TCore(ID).FApp.FStatus;
-      csmCode:          Result := TCore(ID).FApp.Code;
-      csmSpeed:         Result := TCore(ID).FApp.Speed;
-      csmPercentage:    Result := TCore(ID).FApp.Percentage;
-      csmTime:          Result := TCore(ID).FApp.ElapsedTime;
-      csmRemainingTime: Result := TCore(ID).FApp.RemainingTime;
+      csmPriorityIdle:         TCore(HANDLE).Priority := tpIdle;
+      csmPriorityLowest:       TCore(HANDLE).Priority := tpLowest;
+      csmPriorityLower:        TCore(HANDLE).Priority := tpLower;
+      csmPriorityNormal:       TCore(HANDLE).Priority := tpNormal;
+      csmPriorityHigher:       TCore(HANDLE).Priority := tpHigher;
+      csmPriorityHighest:      TCore(HANDLE).Priority := tpHighest;
+      csmPriorityTimeCritical: TCore(HANDLE).Priority := tpTimeCritical;
+    end;
+    Result := Ord(TCore(HANDLE).Priority);
+  end;
+end;
+
+function CoreGetPriority(HANDLE: Pointer; VALUE: longint): longint;
+begin
+  Result := CoreSetPriority(HANDLE, VALUE);
+end;
+
+function CoreExecute(HANDLE: Pointer): boolean;
+begin
+  Result := Assigned(TCore(HANDLE));
+  if Result then
+  begin
+    Result := TCore(HANDLE).FApp.FStatus = csReady;
+    if Result then
+    begin
+      TCore(HANDLE).Resume;
     end;
   end;
 end;
 
-function CoreQueryI64(ID: Pointer; VALUE: longint): Int64;
+function CoreResume(HANDLE: Pointer): boolean;
+begin
+  Result := Assigned(TCore(HANDLE));
+  if Result then
+  begin
+    TCore(HANDLE).FApp.Suspended := False;
+  end;
+end;
+
+function CoreSuspend(HANDLE: Pointer): boolean;
+begin
+  Result := Assigned(TCore(HANDLE));
+  if Result then
+  begin
+    TCore(HANDLE).FApp.Suspended := True;
+  end;
+end;
+
+function CoreTerminate(HANDLE: Pointer): boolean;
+begin
+  Result := Assigned(TCore(HANDLE));
+  if Result then
+  begin
+    TCore(HANDLE).FApp.Terminate;
+    if TCore(HANDLE).FApp.FStatus <> csTerminated then
+    begin
+      TCore(HANDLE).FApp.FStatus := csExecuting;
+    end;
+  end;
+end;
+
+function CoreGetStatus(HANDLE: Pointer): longint;
 begin
   Result := -1;
-  if Assigned(TCore(ID)) then
+  if Assigned(TCore(HANDLE)) then
   begin
-    case VALUE of
-      csmSize:          Result := TCore(ID).FApp.FSize;
-      csmProcessedSize: Result := TCore(ID).FApp.ProcessedSize;
-    end;
+    Result := TCore(HANDLE).FApp.FStatus;
   end;
 end;
 
-function CoreQueryPointer(ID: Pointer; VALUE, INDEX: longint): Pointer;
+function CoreGetCode(HANDLE: Pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FCode;
+  end;
+end;
+
+function CoreGetSpeed(HANDLE: Pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.Speed;
+  end;
+end;
+
+function CoreGetPercentage(HANDLE: Pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.Percentage;
+  end;
+end;
+
+function CoreGetElapsedTime(HANDLE: Pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.ElapsedTime;
+  end;
+end;
+
+function CoreGetRemainingTime(HANDLE: Pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.RemainingTime;
+  end;
+end;
+
+function CoreGetDataSize(HANDLE: Pointer): Int64;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FSize;
+  end;
+end;
+
+function CoreGetDataProcessedSize(HANDLE: Pointer): Int64;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.ProcessedSize;
+  end;
+end;
+
+function CoreGetMessageCount(HANDLE: Pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FMessages.Count;
+  end;
+end;
+
+function CoreGetLastMessage(HANDLE: Pointer): PChar;
+var
+  I: longint;
 begin
   Result := nil;
-  if Assigned(TCore(ID)) then
+  if Assigned(TCore(HANDLE)) then
   begin
-    case VALUE of
-      csmMessage: begin
-        if (INDEX = -1) then INDEX := TCore(ID).FApp.FMessages.Count - 1;
-        if (INDEX > -1) and (INDEX <  TCore(ID).FApp.FMessages.Count) then
-        begin
-          Result := TCore(ID).FApp.FMessages[INDEX];
-        end;
-      end;
-      csmItem: begin
-        if (INDEX = -1) then INDEX := TCore(ID).FApp.FItems.Count - 1;
-        if (INDEX > -1) and (INDEX <  TCore(ID).FApp.FItems.Count) then
-        begin
-          Result := TCore(ID).FApp.FItems[INDEX];
-        end;
-      end;
-    end;
+    Result := TCore(HANDLE).FApp.FMessages.Last;
   end;
 end;
+
+function CoreGetMessage(HANDLE: Pointer; INDEX: longint): PChar;
+var
+  I: longint;
+begin
+  Result := nil;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FMessages[INDEX];
+  end;
+end;
+
+function CoreGetItemCount(HANDLE: Pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FItems.Count;
+  end;
+end;
+
+function CoreGetItem(HANDLE: Pointer; INDEX: longint): PChar;
+var
+  I: longint;
+begin
+  Result := nil;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FItems[INDEX];
+  end;
+end;
+
+
+
+
+
+
+
+
+
+
+
+
 
 function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean;
 begin
