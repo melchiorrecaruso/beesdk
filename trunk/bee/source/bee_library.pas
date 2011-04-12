@@ -51,12 +51,7 @@ uses
 
 function LibVersion: longint;
 function CoreCreate(P: PChar): Pointer;
-function CorePriority(ID:Pointer; VALUE: longint): longint;
-function CoreQueryB8(ID: Pointer; VALUE: longint): boolean;
-function CoreQueryI32(ID: Pointer; VALUE: longint): longint;
-function CoreQueryI64(ID: Pointer; VALUE: longint): Int64;
-function CoreQueryPointer(ID: Pointer; VALUE, INDEX: longint): Pointer;
-function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean;
+
 
 implementation
 
@@ -354,7 +349,7 @@ begin
   end;
 end;
 
-function CoreGetDataSize(HANDLE: Pointer): Int64;
+function CoreGetSize(HANDLE: Pointer): Int64;
 begin
   Result := -1;
   if Assigned(TCore(HANDLE)) then
@@ -363,7 +358,7 @@ begin
   end;
 end;
 
-function CoreGetDataProcessedSize(HANDLE: Pointer): Int64;
+function CoreGetProcessedSize(HANDLE: Pointer): Int64;
 begin
   Result := -1;
   if Assigned(TCore(HANDLE)) then
@@ -392,7 +387,7 @@ begin
   end;
 end;
 
-function CoreGetMessage(HANDLE: Pointer; INDEX: longint): PChar;
+function CoreGetMessages(HANDLE: Pointer; INDEX: longint): PChar;
 var
   I: longint;
 begin
@@ -412,7 +407,7 @@ begin
   end;
 end;
 
-function CoreGetItem(HANDLE: Pointer; INDEX: longint): PChar;
+function CoreGetItems(HANDLE: Pointer; INDEX: longint): PChar;
 var
   I: longint;
 begin
@@ -423,31 +418,14 @@ begin
   end;
 end;
 
-
-
-
-
-
-
-
-
-
-
-
-
-function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean;
+function CoreSetItemName(HANDLE: Pointer; P: PChar): boolean;
 begin
-  Result := Assigned(TCore(ID));
+  Result := Assigned(TCore(HANDLE));
   if Result then
   begin
-    case VALUE of
-      csmWaitingRename: begin
-        FreePChar(PFileInfo(TCore(ID).FApp.FItems.Last)^.Name);
-        PFileInfo(TCore(ID).FApp.FItems.Last)^.Name := StrNew(P);
-        TCore(ID).FApp.FStatus := csExecuting;
-      end;
-      else Result := False;
-    end;
+    FreePChar(PFileInfo(TCore(HANDLE).FApp.FItems.Last)^.Name);
+    PFileInfo(TCore(HANDLE).FApp.FItems.Last)^.Name := StrNew(P);
+    TCore(HANDLE).FApp.FStatus := csExecuting;
   end;
 end;
 
