@@ -215,8 +215,8 @@ procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   I: boolean;
 begin
-  CanClose := (CoreQueryI32(FID, csmStatus) = csTerminated) or
-              (CoreQueryI32(FID, csmStatus) = -1);
+  CanClose := (CoreGetI32(FID, csmStatus) = csTerminated) or
+              (CoreGetI32(FID, csmStatus) = -1);
 
   if CanClose = False then
   begin
@@ -225,7 +225,7 @@ begin
 
     if MessageDlg(rsConfirmation, rsConfirmAbortProcess, mtConfirmation, [mbYes, mbNo], '') = mrYes then
     begin
-      CoreQueryB8(FID, csmTerminate);
+      CoreSend(FID, csmTerminate);
       BtnPauseRun.Click;
     end else
       if I = False then BtnPauseRun.Click;
@@ -241,7 +241,7 @@ begin
 
   P := StringToPChar(FCommandLine.CommandLine);
   FID := CoreCreate(P);
-  if CoreQueryB8(FID, csmExecute) then
+  if CoreSend(FID, csmExecute) then
   begin
     BtnPauseRun.Enabled := True;
     {$IFDEF MSWINDOWS}
@@ -259,7 +259,7 @@ end;
 
 function TTickFrm.GetFrmCanShow: boolean;
 begin
-  Result := CoreQueryI32(FID, csmRemainingTime) > 0;
+  Result := CoreGetI32(FID, csmRemainingTime) > 0;
 end;
 
 procedure TTickFrm.PopupClick(Sender: TObject);
@@ -269,12 +269,12 @@ begin
   Popup_Higher.Checked       := Sender = Popup_Higher;
   Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
 
-  if CoreQueryI32(FID, csmStatus) <> csTerminated then
+  if CoreGetI32(FID, csmStatus) <> csTerminated then
   begin
-    if Popup_Idle.Checked         then CorePriority(FID, csmPriorityIdle);
-    if Popup_Normal.Checked       then CorePriority(FID, csmPriorityNormal);
-    if Popup_Higher.Checked       then CorePriority(FID, csmPriorityHigher);
-    if Popup_TimeCritical.Checked then CorePriority(FID, csmPriorityTimeCritical);
+    if Popup_Idle.Checked         then CoreSetI32(FID, csmPriorityIdle);
+    if Popup_Normal.Checked       then CoreSetI32(FID, csmPriorityNormal);
+    if Popup_Higher.Checked       then CoreSetI32(FID, csmPriorityHigher);
+    if Popup_TimeCritical.Checked then CoreSetI32(FID, csmPriorityTimeCritical);
   end;
 end;
 
@@ -322,12 +322,12 @@ end;
 procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   Timer.Enabled := False;
-  case CoreQueryI32(FID, csmStatus) of
+  case CoreGetI32(FID, csmStatus) of
     csTerminated:    OnTerminate;
     csExecuting:     OnExecute;
     csWaitingRename: OnRename;
   end;
-  Timer.Enabled := CoreQueryI32(FID, csmStatus) <> -1;
+  Timer.Enabled := CoreGetI32(FID, csmStatus) <> -1;
 end;
 
 procedure TTickFrm.OnExecute;
@@ -335,7 +335,7 @@ var
   I: int64;
   P: PChar;
 begin
-  I := CoreQueryI64(FID, csmSize);
+  I := CoreGetI64(FID, csmSize);
   if I < (1024) then
   begin
     GeneralSize.Caption     := IntToStr(I);
@@ -351,7 +351,7 @@ begin
       GeneralSizeUnit.Caption := 'MB';
     end;
 
-  I := CoreQueryI64(FID, csmProcessedSize);
+  I := CoreGetI64(FID, csmProcessedSize);
   if I < (1024) then
   begin
     ProcessedSize.Caption     := IntToStr(I);
@@ -367,7 +367,7 @@ begin
       ProcessedSizeUnit.Caption := 'MB';
     end;
 
-  Tick.Position := CoreQueryI32(FID, csmPercentage);
+  Tick.Position := CoreGetI32(FID, csmPercentage);
   if FSuspended = False then
     Caption := Format(rsProcessStatus, [Tick.Position])
   else
@@ -378,11 +378,11 @@ begin
     Application.Title := Caption;
   end;
 
-  Time.Caption          := TimeToStr(CoreQueryI32(FID, csmTime));
-  RemainingTime.Caption := TimeToStr(CoreQueryI32(FID, csmRemainingTime));
-  Speed.Caption         := IntToStr (CoreQueryI32(FID, csmSpeed) shr 10);
+  Time.Caption          := TimeToStr(CoreGetI32(FID, csmTime));
+  RemainingTime.Caption := TimeToStr(CoreGetI32(FID, csmRemainingTime));
+  Speed.Caption         := IntToStr (CoreGetI32(FID, csmSpeed) shr 10);
 
-  P := CoreQueryPointer(FID, csmMessage, -1);
+  P := CoreGetPtr(FID, csmMessage, -1);
   if P <> nil then
   begin
     Msg.Caption := PCharToString(P);
@@ -394,7 +394,7 @@ var
   P: PChar;
   I: integer;
 begin
-  ExitCode := CoreQueryI32(FID, csmCode);
+  ExitCode := CoreGetI32(FID, csmCode);
   case ExitCode of
     ccSuccesful: Caption := rsProcessTerminated;
     ccWarning:   Caption := rsProcessTerminated;
@@ -411,17 +411,17 @@ begin
   if FCommandLine.Log or (ExitCode > 0) then
   begin
     I := 0;
-    P := CoreQueryPointer(FID, csmMessage, I);
+    P := CoreGetPtr(FID, csmMessage, I);
     while P <> nil do
     begin
       Report.Lines.Add(PCharToString(P));
       Inc(I);
-      P := CoreQueryPointer(FID, csmMessage, I);
+      P := CoreGetPtr(FID, csmMessage, I);
     end;
   end;
   OnList;
 
-  FCanClose := CoreQueryB8(FID, csmDestroy);
+  FCanClose := CoreSend(FID, csmDestroy);
   FID := nil;
 
   if Report.Lines.Count > 0 then
@@ -438,7 +438,7 @@ var
   F: TRenameFrm;
   P: PChar;
 begin
-  FI := CoreQueryPointer(FID, csmItem, -1);
+  FI := CoreGetPtr(FID, csmItem, -1);
 
   F                := TRenameFrm.Create(Application);
   F.Caption        := rsRenameFile;
@@ -448,13 +448,13 @@ begin
   P := nil;
   case F.ShowModal of
     mrOk:    P := StringToPChar(F.ToFN.Text);
-    mrAbort: CoreQueryB8(FID, csmTerminate);
+    mrAbort: CoreSend(FID, csmTerminate);
   end;
   F.Free;
 
   if P <> nil then
   begin
-    CoreReplyPointer(FID, csmWaitingRename, P);
+    CoreSetPtr(FID, csmWaitingRename, P);
     FreePChar(P);
   end;
   FI := nil;
@@ -469,7 +469,7 @@ begin
   if Assigned(FList) then
   begin
     I := 0;
-    P := CoreQueryPointer(FID, csmItem, I);
+    P := CoreGetPtr(FID, csmItem, I);
     while P <> nil do
     begin
       Node := TArchiveItem.Create;
@@ -497,7 +497,7 @@ begin
       end;
 
       Inc(I);
-      P := CoreQueryPointer(FID, csmItem, I);
+      P := CoreGetPtr(FID, csmItem, I);
     end;
   end;
 end;
@@ -510,17 +510,17 @@ end;
 
 procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
 begin
-  if CoreQueryI32(FID, csmStatus) <> csTerminated then
+  if CoreGetI32(FID, csmStatus) <> csTerminated then
   begin
     FSuspended := not FSuspended;
     if FSuspended then
     begin
       BtnPauseRun.Caption := rsBtnRunCaption;
-      CoreQueryB8(FID, csmSuspend);
+      CoreSend(FID, csmSuspend);
     end else
     begin
       BtnPauseRun.Caption := rsBtnPauseCaption;
-      CoreQueryB8(FID, csmResume);
+      CoreSend(FID, csmResume);
     end;
   end;
 end;
@@ -530,7 +530,7 @@ var
   X, Y: integer;
   FValue: integer;
 begin
-  FValue := CorePriority(FID, csmPriority);
+  FValue := CoreGetI32(FID, csmPriority);
   if FValue <> -1 then
   begin
     Popup_Idle.Checked         := FValue = Ord(tpIdle);

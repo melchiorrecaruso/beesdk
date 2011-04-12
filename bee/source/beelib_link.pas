@@ -39,14 +39,14 @@ const
     cApplicationLib = 'beelib.so';
   {$ENDIF}
 
-function CoreVersion: longint; external cApplicationLib;
-function CoreCreate(P: PChar): Pointer; external cApplicationLib;
-function CorePriority(ID:Pointer; VALUE: longint): longint; external cApplicationLib;
-function CoreQueryB8(ID: Pointer; VALUE: longint): boolean; external cApplicationLib;
-function CoreQueryI32(ID: Pointer; VALUE: longint): longint; external cApplicationLib;
-function CoreQueryI64(ID: Pointer; VALUE: longint): Int64; external cApplicationLib;
-function CoreQueryPointer(ID: Pointer; VALUE, INDEX: longint): Pointer; external cApplicationLib;
-function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean; external cApplicationLib;
+function LibVersion: longint; external cApplicationLib;
+function CoreCreate(P: pchar): pointer; external cApplicationLib;
+function CoreSend  (ID: pointer; VALUE: longint): boolean; external cApplicationLib;
+function CoreGetI32(ID: pointer; VALUE: longint): longint; external cApplicationLib;
+function CoreSetI32(ID: pointer; VALUE: longint): longint; external cApplicationLib;
+function CoreGetI64(ID: pointer; VALUE: longint): int64; external cApplicationLib;
+function CoreGetPtr(ID: pointer; VALUE, INDEX: longint): pointer; external cApplicationLib;
+function CoreSetPtr(ID: pointer; VALUE: longint; P: pointer): boolean; external cApplicationLib;
 
 
 
