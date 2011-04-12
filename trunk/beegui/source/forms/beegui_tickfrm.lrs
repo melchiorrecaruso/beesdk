@@ -1,3 +1,5 @@
+{ This is an automatically generated lazarus resource file }
+
 LazarusResources.Add('TTickFrm','FORMDATA',[
   'TPF0'#8'TTickFrm'#7'TickFrm'#4'Left'#3#136#1#6'Height'#3#13#1#3'Top'#3'/'#1#5
   +'Width'#3#181#1#13'ActiveControl'#7#8'Notebook'#7'Caption'#6#16'0% Processin'
@@ -176,14 +178,14 @@ LazarusResources.Add('TTickFrm','FORMDATA',[
   +#14#3'Top'#2'&'#5'Width'#2'#'#18'BorderSpacing.Left'#2#6#17'BorderSpacing.To'
   +'p'#2#2#20'BorderSpacing.Bottom'#2#2#7'Caption'#6#6'Speed:'#5'Color'#7#9'clB'
   +'tnFace'#11'ParentColor'#8#11'Transparent'#8#0#0#0#0#5'TPage'#10'ReportPage'
-  +#11'ClientWidth'#4#128#200#0#0#12'ClientHeight'#3#128'H'#0#5'TMemo'#6'Report'
-  +#4'Left'#2#6#6'Height'#3#133#0#3'Top'#2#6#5'Width'#3#133#1#5'Align'#7#8'alCl'
-  +'ient'#20'BorderSpacing.Around'#2#6#8'ReadOnly'#9#10'ScrollBars'#7#10'ssAuto'
-  +'Both'#8'TabOrder'#2#0#8'WordWrap'#8#0#0#0#0#7'TBitBtn'#7'BtnSave'#22'Anchor'
-  +'SideLeft.Control'#7#5'Owner'#21'AnchorSideTop.Control'#7#9'BtnCancel'#24'An'
-  +'chorSideBottom.Control'#7#9'BtnCancel'#21'AnchorSideBottom.Side'#7#9'asrBot'
-  +'tom'#4'Left'#2#6#6'Height'#2#26#3'Top'#3#237#0#5'Width'#2'K'#7'Anchors'#11#5
-  +'akTop'#6'akLeft'#8'akBottom'#0#8'AutoSize'#9#18'BorderSpacing.Left'#2#6#19
+  +#11'ClientWidth'#4#0#145#1#0#12'ClientHeight'#4#0#145#0#0#0#5'TMemo'#6'Repor'
+  +'t'#4'Left'#2#6#6'Height'#3#133#0#3'Top'#2#6#5'Width'#3#133#1#5'Align'#7#8'a'
+  +'lClient'#20'BorderSpacing.Around'#2#6#8'ReadOnly'#9#10'ScrollBars'#7#10'ssA'
+  +'utoBoth'#8'TabOrder'#2#0#8'WordWrap'#8#0#0#0#0#7'TBitBtn'#7'BtnSave'#22'Anc'
+  +'horSideLeft.Control'#7#5'Owner'#21'AnchorSideTop.Control'#7#9'BtnCancel'#24
+  +'AnchorSideBottom.Control'#7#9'BtnCancel'#21'AnchorSideBottom.Side'#7#9'asrB'
+  +'ottom'#4'Left'#2#6#6'Height'#2#26#3'Top'#3#237#0#5'Width'#2'K'#7'Anchors'#11
+  +#5'akTop'#6'akLeft'#8'akBottom'#0#8'AutoSize'#9#18'BorderSpacing.Left'#2#6#19
   +'BorderSpacing.Right'#2#6#7'Caption'#6#5' Save'#20'Constraints.MinWidth'#2'K'
   +#9'NumGlyphs'#2#0#7'OnClick'#7#12'BtnSaveClick'#8'TabOrder'#2#5#0#0#7'TBitBt'
   +'n'#7'BtnFont'#22'AnchorSideLeft.Control'#7#7'BtnSave'#19'AnchorSideLeft.Sid'

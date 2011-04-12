@@ -43,7 +43,7 @@ uses
 exports
   LibVersion,
   CoreCreate,
-  CoregetB8,
+  CoreSend,
   CoreGetI32,
   CoreSetI32,
   CoreGetI64,

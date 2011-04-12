@@ -51,13 +51,13 @@ uses
 
 function LibVersion: longint;
 
-function CoreCreate(P: PChar): Pointer;
-function CoreGetB8 (ID: Pointer; VALUE: longint): boolean;
-function CoreGetI32(ID: Pointer; VALUE: longint): longint;
-function CoreSetI32(ID: Pointer; VALUE: longint): longint;
-function CoreGetI64(ID: Pointer; VALUE: longint): int64;
-function CoreGetPtr(ID: Pointer; VALUE, INDEX: longint): Pointer;
-function CoreSetPtr(ID: Pointer; VALUE: longint; P: Pointer): boolean;
+function CoreCreate(P: pchar): pointer;
+function CoreSend  (ID: pointer; VALUE: longint): boolean;
+function CoreGetI32(ID: pointer; VALUE: longint): longint;
+function CoreSetI32(ID: pointer; VALUE: longint): longint;
+function CoreGetI64(ID: pointer; VALUE: longint): int64;
+function CoreGetPtr(ID: pointer; VALUE, INDEX: longint): pointer;
+function CoreSetPtr(ID: pointer; VALUE: longint; P: pointer): boolean;
 
 implementation
 
@@ -92,6 +92,11 @@ type
   end;
 
 { Library routines }
+
+function LibVersion: longint;
+begin
+  Result := 105;
+end;
 
 function THeaderToPFileInfo(aItem: THeader): PFileInfo;
 begin
@@ -211,12 +216,7 @@ end;
 
 { Library core routines }
 
-function LibVersion: longint;
-begin
-  Result := 105;
-end;
-
-function CoreCreate(P: PChar): Pointer;
+function CoreCreate(P: pchar): pointer;
 begin
   try
     Result := TCore.Create(PCharToString(P));
@@ -225,7 +225,7 @@ begin
   end;
 end;
 
-function CoreGetB8(ID: Pointer; VALUE: longint): boolean;
+function CoreSend(ID: pointer; VALUE: longint): boolean;
 begin
   Result := Assigned(TCore(ID));
   if Result then
@@ -253,7 +253,7 @@ begin
   end;
 end;
 
-function CoreGetI32(ID: Pointer; VALUE: longint): longint;
+function CoreGetI32(ID: pointer; VALUE: longint): longint;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
@@ -269,7 +269,7 @@ begin
   end;
 end;
 
-function CoreSetI32(ID: Pointer; VALUE: longint): longint;
+function CoreSetI32(ID: pointer; VALUE: longint): longint;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
@@ -287,7 +287,7 @@ begin
   end;
 end;
 
-function CoreGetI64(ID: Pointer; VALUE: longint): Int64;
+function CoreGetI64(ID: pointer; VALUE: longint): int64;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
@@ -299,7 +299,7 @@ begin
   end;
 end;
 
-function CoreGetPtr(ID: Pointer; VALUE, INDEX: longint): Pointer;
+function CoreGetPtr(ID: pointer; VALUE, INDEX: longint): pointer;
 begin
   Result := nil;
   if Assigned(TCore(ID)) then
@@ -323,7 +323,7 @@ begin
   end;
 end;
 
-function CoreSetPtr(ID: Pointer; VALUE: longint; P: Pointer): boolean;
+function CoreSetPtr(ID: pointer; VALUE: longint; P: pointer): boolean;
 begin
   Result := Assigned(TCore(ID));
   if Result then
