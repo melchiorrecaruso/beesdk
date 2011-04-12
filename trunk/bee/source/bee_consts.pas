@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
+    v0.8.0 build 1280 - 2011.04.12 by Melchiorre Caruso.
 }
 
 unit Bee_Consts;
