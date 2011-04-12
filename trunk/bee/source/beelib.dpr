@@ -41,14 +41,14 @@ uses
  // -------------------------------------------------------------------------- //
 
 exports
-  CoreVersion,
+  LibVersion,
   CoreCreate,
-  CorePriority,
-  CoreQueryB8,
-  CoreQueryI32,
-  CoreQueryI64,
-  CoreQueryPointer,
-  CoreReplyPointer;
+  CoregetB8,
+  CoreGetI32,
+  CoreSetI32,
+  CoreGetI64,
+  CoreGetPtr,
+  CoreSetPtr;
 
   // -------------------------------------------------------------------------- //
   //                                                                            //

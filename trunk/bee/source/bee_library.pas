@@ -49,14 +49,15 @@ uses
 
 { Library routines }
 
-function CoreVersion: longint;
+function LibVersion: longint;
+
 function CoreCreate(P: PChar): Pointer;
-function CorePriority(ID:Pointer; VALUE: longint): longint;
-function CoreQueryB8(ID: Pointer; VALUE: longint): boolean;
-function CoreQueryI32(ID: Pointer; VALUE: longint): longint;
-function CoreQueryI64(ID: Pointer; VALUE: longint): Int64;
-function CoreQueryPointer(ID: Pointer; VALUE, INDEX: longint): Pointer;
-function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean;
+function CoreGetB8 (ID: Pointer; VALUE: longint): boolean;
+function CoreGetI32(ID: Pointer; VALUE: longint): longint;
+function CoreSetI32(ID: Pointer; VALUE: longint): longint;
+function CoreGetI64(ID: Pointer; VALUE: longint): int64;
+function CoreGetPtr(ID: Pointer; VALUE, INDEX: longint): Pointer;
+function CoreSetPtr(ID: Pointer; VALUE: longint; P: Pointer): boolean;
 
 implementation
 
@@ -210,7 +211,7 @@ end;
 
 { Library core routines }
 
-function CoreVersion: longint;
+function LibVersion: longint;
 begin
   Result := 105;
 end;
@@ -224,25 +225,7 @@ begin
   end;
 end;
 
-function CorePriority(ID: Pointer; VALUE: longint): longint;
-begin
-  Result := -1;
-  if Assigned(TCore(ID)) then
-  begin
-    case VALUE of
-      csmPriorityIdle:         TCore(ID).Priority := tpIdle;
-      csmPriorityLowest:       TCore(ID).Priority := tpLowest;
-      csmPriorityLower:        TCore(ID).Priority := tpLower;
-      csmPriorityNormal:       TCore(ID).Priority := tpNormal;
-      csmPriorityHigher:       TCore(ID).Priority := tpHigher;
-      csmPriorityHighest:      TCore(ID).Priority := tpHighest;
-      csmPriorityTimeCritical: TCore(ID).Priority := tpTimeCritical;
-    end;
-    Result := Ord(TCore(ID).Priority);
-  end;
-end;
-
-function CoreQueryB8(ID: Pointer; VALUE: longint): boolean;
+function CoreGetB8(ID: Pointer; VALUE: longint): boolean;
 begin
   Result := Assigned(TCore(ID));
   if Result then
@@ -270,7 +253,7 @@ begin
   end;
 end;
 
-function CoreQueryI32(ID: Pointer; VALUE: longint): longint;
+function CoreGetI32(ID: Pointer; VALUE: longint): longint;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
@@ -286,7 +269,25 @@ begin
   end;
 end;
 
-function CoreQueryI64(ID: Pointer; VALUE: longint): Int64;
+function CoreSetI32(ID: Pointer; VALUE: longint): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(ID)) then
+  begin
+    case VALUE of
+      csmPriorityIdle:         TCore(ID).Priority := tpIdle;
+      csmPriorityLowest:       TCore(ID).Priority := tpLowest;
+      csmPriorityLower:        TCore(ID).Priority := tpLower;
+      csmPriorityNormal:       TCore(ID).Priority := tpNormal;
+      csmPriorityHigher:       TCore(ID).Priority := tpHigher;
+      csmPriorityHighest:      TCore(ID).Priority := tpHighest;
+      csmPriorityTimeCritical: TCore(ID).Priority := tpTimeCritical;
+    end;
+    Result := Ord(TCore(ID).Priority);
+  end;
+end;
+
+function CoreGetI64(ID: Pointer; VALUE: longint): Int64;
 begin
   Result := -1;
   if Assigned(TCore(ID)) then
@@ -298,7 +299,7 @@ begin
   end;
 end;
 
-function CoreQueryPointer(ID: Pointer; VALUE, INDEX: longint): Pointer;
+function CoreGetPtr(ID: Pointer; VALUE, INDEX: longint): Pointer;
 begin
   Result := nil;
   if Assigned(TCore(ID)) then
@@ -322,7 +323,7 @@ begin
   end;
 end;
 
-function CoreReplyPointer(ID: Pointer; VALUE: longint; P: Pointer): boolean;
+function CoreSetPtr(ID: Pointer; VALUE: longint; P: Pointer): boolean;
 begin
   Result := Assigned(TCore(ID));
   if Result then
