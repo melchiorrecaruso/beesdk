@@ -2,8 +2,8 @@
 
 LazarusResources.Add('TMainFrm','FORMDATA',[
   'TPF0'#8'TMainFrm'#7'MainFrm'#4'Left'#3#31#1#6'Height'#3'0'#2#3'Top'#2'w'#5'W'
-  +'idth'#3#130#2#5'Align'#7#8'alBottom'#14'AllowDropFiles'#9#7'Caption'#6#26'B'
-  +'ee File Manager - Welcome'#12'ClientHeight'#3#29#2#11'ClientWidth'#3#130#2
+  +'idth'#3#228#2#5'Align'#7#8'alBottom'#14'AllowDropFiles'#9#7'Caption'#6#26'B'
+  +'ee File Manager - Welcome'#12'ClientHeight'#3#29#2#11'ClientWidth'#3#228#2
   +#21'Constraints.MinHeight'#3#180#0#20'Constraints.MinWidth'#3#220#0#12'Font.'
   +'CharSet'#7#12'ANSI_CHARSET'#4'Menu'#7#5'MMenu'#7'OnClose'#7#9'FormClose'#12
   +'OnCloseQuery'#7#14'FormCloseQuery'#8'OnCreate'#7#10'FormCreate'#9'OnDestroy'
@@ -11,7 +11,7 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +'w'#10'LCLVersion'#6#6'0.9.31'#0#16'TArchiveListView'#8'ListView'#22'AnchorS'
   +'ideLeft.Control'#7#5'Owner'#21'AnchorSideTop.Control'#7#14'AddressToolBar'
   +#23'AnchorSideRight.Control'#7#5'Owner'#24'AnchorSideBottom.Control'#7#9'Sta'
-  +'tusBar'#4'Left'#2#0#6'Height'#3'w'#1#3'Top'#3#146#0#5'Width'#3#130#2#8'Auto'
+  +'tusBar'#4'Left'#2#0#6'Height'#3'w'#1#3'Top'#3#146#0#5'Width'#3#228#2#8'Auto'
   +'Load'#9#14'OnChangeFolder'#7#20'ListViewChangeFolder'#9'FolderBox'#7#9'Fold'
   +'erBox'#5'Align'#7#5'alTop'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#8'ak'
   +'Bottom'#0#17'BorderSpacing.Top'#2#2#7'Columns'#14#1#7'Caption'#6#4'Name'#5
@@ -34,12 +34,12 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +'KeyUp'#7#13'ListViewKeyUp'#11'OnMouseDown'#7#17'ListViewMouseDown'#11'OnMou'
   +'seMove'#7#17'ListViewMouseMove'#9'OnMouseUp'#7#15'ListViewMouseUp'#12'OnSel'
   +'ectItem'#7#18'ListViewSelectItem'#0#0#10'TStatusBar'#9'StatusBar'#4'Left'#2
-  +#0#6'Height'#2#20#3'Top'#3#9#2#5'Width'#3#130#2#7'Anchors'#11#0#10'DragCurso'
+  +#0#6'Height'#2#20#3'Top'#3#9#2#5'Width'#3#228#2#7'Anchors'#11#0#10'DragCurso'
   +'r'#7#9'crDefault'#6'Panels'#14#1#5'Bevel'#7#6'pbNone'#5'Style'#7#11'psOwner'
   +'Draw'#5'Width'#2#0#0#1#5'Width'#3#150#0#0#1#5'Width'#2'd'#0#1#5'Width'#2'd'
   +#0#1#5'Width'#3#144#1#0#0#11'SimplePanel'#8#11'OnDrawPanel'#7#18'StatusBarDr'
   +'awPanel'#0#0#8'TToolBar'#7'ToolBar'#4'Left'#2#0#6'Height'#2'P'#3'Top'#2#0#5
-  +'Width'#3#130#2#12'ButtonHeight'#2'<'#11'ButtonWidth'#2#0#7'Caption'#6#7'Too'
+  +'Width'#3#228#2#12'ButtonHeight'#2'<'#11'ButtonWidth'#2#0#7'Caption'#6#7'Too'
   +'lBar'#10'DragCursor'#7#9'crDefault'#11'EdgeBorders'#11#5'ebTop'#8'ebBottom'
   +#0#4'Flat'#8#9'PopupMenu'#7#5'BMenu'#8'TabOrder'#2#1#0#12'TSpeedButton'#7'Bt'
   +'nOpen'#4'Left'#2'A'#6'Height'#2'7'#3'Top'#2#4#5'Width'#2'<'#5'Align'#7#6'al'
@@ -3677,7 +3677,7 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +#7'OnClick'#7#18'MMenuFileExitClick'#0#0#0#8'TToolBar'#14'AddressToolBar'#21
   +'AnchorSideTop.Control'#7#7'ToolBar'#18'AnchorSideTop.Side'#7#9'asrBottom'#24
   +'AnchorSideBottom.Control'#7#8'ListView'#4'Left'#2#0#6'Height'#2'@'#3'Top'#2
-  +'P'#5'Width'#3#130#2#12'ButtonHeight'#2#24#11'ButtonWidth'#2#0#7'Caption'#6
+  +'P'#5'Width'#3#228#2#12'ButtonHeight'#2#24#11'ButtonWidth'#2#0#7'Caption'#6
   +#14'AddressToolBar'#10'DragCursor'#7#9'crDefault'#11'EdgeBorders'#11#8'ebBot'
   +'tom'#0#4'Flat'#8#6'Indent'#2#0#8'TabOrder'#2#2#7'OnClick'#7#19'AddressToolB'
   +'arClick'#0#12'TSpeedButton'#5'BtnUp'#22'AnchorSideLeft.Control'#7#14'Addres'
@@ -3742,7 +3742,7 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +'rchiveFolderBox'#9'FolderBox'#22'AnchorSideLeft.Control'#7#14'FolderBoxLabe'
   +'l'#21'AnchorSideTop.Control'#7#14'AddressToolBar'#23'AnchorSideRight.Contro'
   +'l'#7#14'AddressToolBar'#20'AnchorSideRight.Side'#7#9'asrBottom'#4'Left'#2#18
-  +#6'Height'#2#22#3'Top'#2#2#5'Width'#3'n'#2#5'Align'#7#8'alCustom'#7'Anchors'
+  +#6'Height'#2#22#3'Top'#2#2#5'Width'#3#208#2#5'Align'#7#8'alCustom'#7'Anchors'
   +#11#5'akTop'#6'akLeft'#7'akRight'#0#18'BorderSpacing.Left'#2#5#17'BorderSpac'
   +'ing.Top'#2#2#19'BorderSpacing.Right'#2#2#20'BorderSpacing.Bottom'#2#2#5'Col'
   +'or'#7#16'clInactiveBorder'#13'DropDownCount'#2#10#7'Enabled'#8#10'ItemHeigh'
@@ -3922,18 +3922,18 @@ LazarusResources.Add('TMainFrm','FORMDATA',[
   +'rocess'#7'Enabled'#8#8'Interval'#3#250#0#7'OnTimer'#7#16'FileProcessTimer'
   +#12'OnStartTimer'#7#21'FileProcessStartTimer'#11'OnStopTimer'#7#20'FileProce'
   +'ssStopTimer'#4'left'#3#168#0#3'top'#3'8'#1#0#0#10'TImageList'#17'ProgressBa'
-  +'rImages'#4'left'#3#168#0#3'top'#3'p'#1#6'Bitmap'#10#14#4#0#0'Li'#1#0#0#0#16
-  +#0#0#0#16#0#0#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255
-  +#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0'D'#176#227#150'D'#176
-  +#227#255'D'#176#227#255'D'#176#227#150#255#255#255#0#255#255#255#0#255#255
+  +'rImages'#4'left'#2'`'#3'top'#3'x'#1#6'Bitmap'#10#14#4#0#0'Li'#1#0#0#0#16#0#0
+  +#0#16#0#0#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255
+  +#255#0#255#255#255#0#255#255#255#0#255#255#255#0'D'#176#227#150'D'#176#227
+  +#255'D'#176#227#255'D'#176#227#150#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255
+  +#255#255#0#255#255#255#0#255#255#255#0'D'#176#227#150'D'#176#227#255#222#248
+  +#252#255#222#248#252#255'D'#176#227#255'D'#176#227#150#255#255#255#0#255#255
   +#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
-  +#255#255#255#0#255#255#255#0#255#255#255#0'D'#176#227#150'D'#176#227#255#222
-  +#248#252#255#222#248#252#255'D'#176#227#255'D'#176#227#150#255#255#255#0#255
-  +#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255
-  +#255#0#255#255#255#0#255#255#255#0'D'#176#227#150'D'#176#227#255#206#245#252
-  +#255#158#235#249#255#190#242#251#255#254#255#255#255'D'#176#227#255'B'#171
-  +#223#156#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255
-  +#0#255#255#255#0#255#255#255#0'D'#176#227#150'D'#176#227#255#206#245#252#255
+  +#255#255#255#0#255#255#255#0'D'#176#227#150'D'#176#227#255#206#245#252#255
+  +#158#235#249#255#190#242#251#255#254#255#255#255'D'#176#227#255'B'#171#223
+  +#156#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0#255#255#255#0
+  +#255#255#255#0#255#255#255#0'D'#176#227#150'D'#176#227#255#206#245#252#255
   +#141#231#248#255#161#236#249#255'D'#176#227#255'D'#176#227#255#255#255#255
   +#255'9'#161#223#255'9'#149#200#191#255#255#255#0#255#255#255#0#255#255#255#0
   +#255#255#255#0#255#255#255#0#255#255#255#0'D'#176#227#255#222#248#252#255#141

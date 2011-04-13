@@ -2,12 +2,12 @@ object MainFrm: TMainFrm
   Left = 287
   Height = 560
   Top = 119
-  Width = 642
+  Width = 740
   Align = alBottom
   AllowDropFiles = True
   Caption = 'Bee File Manager - Welcome'
   ClientHeight = 541
-  ClientWidth = 642
+  ClientWidth = 740
   Constraints.MinHeight = 180
   Constraints.MinWidth = 220
   Font.CharSet = ANSI_CHARSET
@@ -27,7 +27,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 375
     Top = 146
-    Width = 642
+    Width = 740
     AutoLoad = True
     OnChangeFolder = ListViewChangeFolder
     FolderBox = FolderBox
@@ -116,7 +116,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 20
     Top = 521
-    Width = 642
+    Width = 740
     Anchors = []
     DragCursor = crDefault
     Panels = <    
@@ -144,7 +144,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 80
     Top = 0
-    Width = 642
+    Width = 740
     ButtonHeight = 60
     ButtonWidth = 0
     Caption = 'ToolBar'
@@ -3255,7 +3255,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 64
     Top = 80
-    Width = 642
+    Width = 740
     ButtonHeight = 24
     ButtonWidth = 0
     Caption = 'AddressToolBar'
@@ -3360,7 +3360,7 @@ object MainFrm: TMainFrm
       Left = 18
       Height = 22
       Top = 2
-      Width = 622
+      Width = 720
       Align = alCustom
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 5
@@ -3943,8 +3943,8 @@ object MainFrm: TMainFrm
     top = 312
   end
   object ProgressBarImages: TImageList
-    left = 168
-    top = 368
+    left = 96
+    top = 376
     Bitmap = {
       4C69010000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF0044B0E39644B0E3FF44B0E3FF44B0E396FFFF

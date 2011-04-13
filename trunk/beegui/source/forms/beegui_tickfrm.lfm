@@ -1,7 +1,7 @@
 object TickFrm: TTickFrm
-  Left = 535
+  Left = 506
   Height = 269
-  Top = 225
+  Top = 227
   Width = 437
   ActiveControl = Notebook
   Caption = '0% Processing...'
@@ -206,7 +206,7 @@ object TickFrm: TTickFrm
       object SizePanel: TPanel
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = GeneralPage
-        AnchorSideRight.Control = UnitPanel
+        AnchorSideRight.Control = UnitsPanel
         AnchorSideBottom.Control = Msg
         Left = 329
         Height = 166
@@ -276,7 +276,7 @@ object TickFrm: TTickFrm
           Transparent = False
         end
       end
-      object UnitPanel: TPanel
+      object UnitsPanel: TPanel
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = GeneralPage
         AnchorSideRight.Control = GeneralPage
@@ -294,10 +294,10 @@ object TickFrm: TTickFrm
         ClientWidth = 34
         TabOrder = 3
         object SpeedUnit: TLabel
-          AnchorSideLeft.Control = UnitPanel
+          AnchorSideLeft.Control = UnitsPanel
           AnchorSideTop.Control = ProcessedSizeUnit
           AnchorSideTop.Side = asrBottom
-          AnchorSideRight.Control = UnitPanel
+          AnchorSideRight.Control = UnitsPanel
           AnchorSideRight.Side = asrBottom
           Left = 6
           Height = 14
@@ -314,7 +314,7 @@ object TickFrm: TTickFrm
           Transparent = False
         end
         object ProcessedSizeUnit: TLabel
-          AnchorSideLeft.Control = UnitPanel
+          AnchorSideLeft.Control = UnitsPanel
           AnchorSideTop.Control = GeneralSizeUnit
           AnchorSideTop.Side = asrBottom
           AnchorSideRight.Control = SpeedUnit
@@ -333,8 +333,8 @@ object TickFrm: TTickFrm
           Transparent = False
         end
         object GeneralSizeUnit: TLabel
-          AnchorSideLeft.Control = UnitPanel
-          AnchorSideTop.Control = UnitPanel
+          AnchorSideLeft.Control = UnitsPanel
+          AnchorSideTop.Control = UnitsPanel
           AnchorSideRight.Control = SpeedUnit
           AnchorSideRight.Side = asrBottom
           Left = 6
