@@ -71,7 +71,7 @@ type
     TimePanel: TPanel;
     RemainingTime: TLabel;
     ElapsedTime: TLabel;
-    UnitPanel: TPanel;
+    UnitsPanel: TPanel;
     ProcessedSize: TLabel;
     ProcessedSizeUnit: TLabel;
     SizePanel: TPanel;
