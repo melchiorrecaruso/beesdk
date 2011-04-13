@@ -43,51 +43,15 @@ const
   DefaultCfgName      = 'bee.ini';
   DefaultSfxName      = 'bee.sfx';
 
-  { Core Get/Set messages }
-
-  csmExecute          = 101;
-  csmSuspend          = 102;
-  csmResume           = 103;
-  csmTerminate        = 104;
-  csmDestroy          = 105;
-
-  csmStatus           = 201;
-  csmCode             = 202;
-  csmSpeed            = 203;
-  csmPercentage       = 204;
-  csmTime             = 205;
-  csmRemainingTime    = 206;
-
-  csmSize             = 301;
-  csmProcessedSize    = 302;
-
-  csmMessage          = 401;
-  csmItem             = 402;
-
-  csmWaitingOverwrite  = 501;
-  csmWaitingRename     = 502;
-  csmWaitingPassword   = 503;
-  csmWaitingRequest    = 504;
-  csmWaitingList       = 505;
-
-  csmPriority             = 601;
-  csmPriorityIdle         = 602;
-  csmPriorityLowest       = 603;
-  csmPriorityLower        = 604;
-  csmPriorityNormal       = 605;
-  csmPriorityHigher       = 606;
-  csmPriorityHighest      = 607;
-  csmPriorityTimeCritical = 608;
-
   { CoreStatus }
 
   csReady             = $00000000;
   csExecuting         = $00000001;
-  csWaitingOverwrite  = $00000002;
-  csWaitingRename     = $00000003;
-  csWaitingPassword   = $00000004;
-  csWaitingRequest    = $00000005;
-  csWaitingList       = $00000006;
+  csWaitOverwrite     = $00000002;
+  csWaitRename        = $00000003;
+  csWaitPassword      = $00000004;
+  csWaitRequest       = $00000005;
+  csWaitList          = $00000006;
   csTerminated        = $00000007;
   csSuspended         = $00000008;
 
