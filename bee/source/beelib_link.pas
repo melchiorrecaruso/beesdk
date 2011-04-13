@@ -40,15 +40,36 @@ const
   {$ENDIF}
 
 function LibVersion: longint; external cApplicationLib;
+
 function CoreCreate(P: pchar): pointer; external cApplicationLib;
-function CoreSend  (ID: pointer; VALUE: longint): boolean; external cApplicationLib;
-function CoreGetI32(ID: pointer; VALUE: longint): longint; external cApplicationLib;
-function CoreSetI32(ID: pointer; VALUE: longint): longint; external cApplicationLib;
-function CoreGetI64(ID: pointer; VALUE: longint): int64; external cApplicationLib;
-function CoreGetPtr(ID: pointer; VALUE, INDEX: longint): pointer; external cApplicationLib;
-function CoreSetPtr(ID: pointer; VALUE: longint; P: pointer): boolean; external cApplicationLib;
+function CoreExecute(HANDLE: pointer): boolean; external cApplicationLib;
+function CoreSuspend(HANDLE: pointer; VALUE: boolean): boolean; external cApplicationLib;
+function CoreTerminate(HANDLE: pointer): boolean; external cApplicationLib;
+function CoreDestroy(HANDLE: pointer): boolean; external cApplicationLib;
 
+function CoreGetStatus(HANDLE: pointer): longint; external cApplicationLib;
+function CoreGetCode(HANDLE: pointer): longint; external cApplicationLib;
+function CoreGetSpeed(HANDLE: pointer): longint; external cApplicationLib;
+function CoreGetPercentage(HANDLE: pointer): longint; external cApplicationLib;
+function CoreGetElapsedTime(HANDLE: pointer): longint; external cApplicationLib;
+function CoreGetRemainingTime(HANDLE: pointer): longint; external cApplicationLib;
 
+procedure CoreSetPriority(HANDLE: pointer; VALUE: longint); external cApplicationLib;
+function CoreGetPriority(HANDLE: pointer): longint; external cApplicationLib;
+
+function CoreGetSize(HANDLE: pointer): int64; external cApplicationLib;
+function CoreGetProcessedSize(HANDLE: pointer): int64; external cApplicationLib;
+
+function CoreGetMessage(HANDLE: pointer): pchar; external cApplicationLib;
+function CoreGetMessages(HANDLE: pointer; INDEX: longint): pchar; external cApplicationLib;
+function CoreGetMessageCount(HANDLE: pointer): longint; external cApplicationLib;
+
+function CoreGetItem(HANDLE: pointer): pointer; external cApplicationLib;
+function CoreGetItems(HANDLE: pointer; INDEX: longint): pointer; external cApplicationLib;
+function CoreGetItemCount(HANDLE: pointer): longint; external cApplicationLib;
+
+function CoreGetItemPending(HANDLE: pointer; STATUS: longint): pointer; external cApplicationLib;
+procedure CoreSetItemPending(HANDLE: pointer; STATUS: longint; VALUE: pointer); external cApplicationLib;
 
 implementation
 

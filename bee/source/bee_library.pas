@@ -52,12 +52,34 @@ uses
 function LibVersion: longint;
 
 function CoreCreate(P: pchar): pointer;
-function CoreSend  (ID: pointer; VALUE: longint): boolean;
-function CoreGetI32(ID: pointer; VALUE: longint): longint;
-function CoreSetI32(ID: pointer; VALUE: longint): longint;
-function CoreGetI64(ID: pointer; VALUE: longint): int64;
-function CoreGetPtr(ID: pointer; VALUE, INDEX: longint): pointer;
-function CoreSetPtr(ID: pointer; VALUE: longint; P: pointer): boolean;
+function CoreExecute(HANDLE: pointer): boolean;
+function CoreSuspend(HANDLE: pointer; VALUE: boolean): boolean;
+function CoreTerminate(HANDLE: pointer): boolean;
+function CoreDestroy(HANDLE: pointer): boolean;
+
+function CoreGetStatus(HANDLE: pointer): longint;
+function CoreGetCode(HANDLE: pointer): longint;
+function CoreGetSpeed(HANDLE: pointer): longint;
+function CoreGetPercentage(HANDLE: pointer): longint;
+function CoreGetElapsedTime(HANDLE: pointer): longint;
+function CoreGetRemainingTime(HANDLE: pointer): longint;
+
+procedure CoreSetPriority(HANDLE: pointer; VALUE: longint);
+function CoreGetPriority(HANDLE: pointer): longint;
+
+function CoreGetSize(HANDLE: pointer): int64;
+function CoreGetProcessedSize(HANDLE: pointer): int64;
+
+function CoreGetMessage(HANDLE: pointer): pchar;
+function CoreGetMessages(HANDLE: pointer; INDEX: longint): pchar;
+function CoreGetMessageCount(HANDLE: pointer): longint;
+
+function CoreGetItem(HANDLE: pointer): pointer;
+function CoreGetItems(HANDLE: pointer; INDEX: longint): pointer;
+function CoreGetItemCount(HANDLE: pointer): longint;
+
+function CoreGetItemPending(HANDLE: pointer; STATUS: longint): pointer;
+procedure CoreSetItemPending(HANDLE: pointer; STATUS: longint; VALUE: pointer);
 
 implementation
 
@@ -157,8 +179,8 @@ var
 begin
   FItems.Add(THeaderToPFileInfo(aItem));
 
-  FStatus := csWaitingRename;
-  while FStatus = csWaitingRename do
+  FStatus := csWaitRename;
+  while FStatus = csWaitRename do
   begin
     Sleep(250);
   end;
@@ -169,8 +191,8 @@ procedure TCustomBeeApp.OnRequest(const aMessage: string);
 begin
   FMessages.Add(StringToPChar(aMessage));
 
-  FStatus := csWaitingRequest;
-  while FStatus = csWaitingRequest do
+  FStatus := csWaitRequest;
+  while FStatus = csWaitRequest do
   begin
     Sleep(250);
   end;
@@ -225,118 +247,223 @@ begin
   end;
 end;
 
-function CoreSend(ID: pointer; VALUE: longint): boolean;
+function CoreExecute(HANDLE: pointer): boolean;
 begin
-  Result := Assigned(TCore(ID));
+  Result := Assigned(TCore(HANDLE));
   if Result then
   begin
-    case VALUE of
-      csmExecute: begin
-        Result := TCore(ID).FApp.FStatus = csReady;
-        if Result then
-        begin
-          TCore(ID).Resume;
-        end;
-      end;
-      csmSuspend: TCore(ID).FApp.Suspended := True;
-      csmResume:  TCore(ID).FApp.Suspended := False;
-      csmTerminate: begin
-        TCore(ID).FApp.Terminate;
-        if TCore(ID).FApp.FStatus <> csTerminated then
-        begin
-          TCore(ID).FApp.FStatus := csExecuting;
-        end;
-      end;
-      csmDestroy: TCore(ID).Destroy;
-      else Result := False;
+    Result := TCore(HANDLE).FApp.FStatus = csReady;
+    if Result then
+    begin
+      TCore(HANDLE).Resume;
     end;
   end;
 end;
 
-function CoreGetI32(ID: pointer; VALUE: longint): longint;
+function CoreSuspend(HANDLE: pointer; VALUE: boolean): boolean;
+begin
+  Result := Assigned(TCore(HANDLE));
+  if Result then
+  begin
+    TCore(HANDLE).FApp.Suspended := VALUE;
+  end;
+end;
+
+function CoreTerminate(HANDLE: pointer): boolean;
+begin
+  Result := Assigned(TCore(HANDLE));
+  if Result then
+  begin
+    TCore(HANDLE).FApp.Terminate;
+    if TCore(HANDLE).FApp.FStatus <> csTerminated then
+    begin
+      TCore(HANDLE).FApp.FStatus := csExecuting;
+    end;
+  end;
+end;
+
+function CoreDestroy(HANDLE: pointer): boolean;
+begin
+  Result := Assigned(TCore(HANDLE));
+  if Result then
+  begin
+    TCore(HANDLE).Destroy;
+  end;
+end;
+
+function CoreGetStatus(HANDLE: pointer): longint;
 begin
   Result := -1;
-  if Assigned(TCore(ID)) then
+  if Assigned(TCore(HANDLE)) then
   begin
-    case VALUE of
-      csmStatus:        Result := TCore(ID).FApp.FStatus;
-      csmCode:          Result := TCore(ID).FApp.Code;
-      csmSpeed:         Result := TCore(ID).FApp.Speed;
-      csmPercentage:    Result := TCore(ID).FApp.Percentage;
-      csmTime:          Result := TCore(ID).FApp.ElapsedTime;
-      csmRemainingTime: Result := TCore(ID).FApp.RemainingTime;
-    end;
+    Result := TCore(HANDLE).FApp.FStatus;
   end;
 end;
 
-function CoreSetI32(ID: pointer; VALUE: longint): longint;
+function CoreGetCode(HANDLE: pointer): longint;
 begin
   Result := -1;
-  if Assigned(TCore(ID)) then
+  if Assigned(TCore(HANDLE)) then
   begin
-    case VALUE of
-      csmPriorityIdle:         TCore(ID).Priority := tpIdle;
-      csmPriorityLowest:       TCore(ID).Priority := tpLowest;
-      csmPriorityLower:        TCore(ID).Priority := tpLower;
-      csmPriorityNormal:       TCore(ID).Priority := tpNormal;
-      csmPriorityHigher:       TCore(ID).Priority := tpHigher;
-      csmPriorityHighest:      TCore(ID).Priority := tpHighest;
-      csmPriorityTimeCritical: TCore(ID).Priority := tpTimeCritical;
-    end;
-    Result := Ord(TCore(ID).Priority);
+    Result := TCore(HANDLE).FApp.Code;
   end;
 end;
 
-function CoreGetI64(ID: pointer; VALUE: longint): int64;
+function CoreGetSpeed(HANDLE: pointer): longint;
 begin
   Result := -1;
-  if Assigned(TCore(ID)) then
+  if Assigned(TCore(HANDLE)) then
   begin
-    case VALUE of
-      csmSize:          Result := TCore(ID).FApp.FSize;
-      csmProcessedSize: Result := TCore(ID).FApp.ProcessedSize;
-    end;
+    Result := TCore(HANDLE).FApp.Speed;
   end;
 end;
 
-function CoreGetPtr(ID: pointer; VALUE, INDEX: longint): pointer;
+function CoreGetPercentage(HANDLE: pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.Percentage;
+  end;
+end;
+
+function CoreGetElapsedTime(HANDLE: pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.ElapsedTime;
+  end;
+end;
+
+function CoreGetRemainingTime(HANDLE: pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.RemainingTime;
+  end;
+end;
+
+procedure CoreSetPriority(HANDLE: pointer; VALUE: longint);
+begin
+  if Assigned(TCore(HANDLE)) then
+  begin
+    TCore(HANDLE).Priority := TThreadPriority(VALUE);
+  end;
+end;
+
+function CoreGetPriority(HANDLE: pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := Ord(TCore(HANDLE).Priority);
+  end;
+end;
+
+function CoreGetSize(HANDLE: pointer): int64;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FSize;
+  end;
+end;
+
+function CoreGetProcessedSize(HANDLE: pointer): int64;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.ProcessedSize;
+  end;
+end;
+
+function CoreGetMessage(HANDLE: pointer): pchar;
 begin
   Result := nil;
-  if Assigned(TCore(ID)) then
+  if Assigned(TCore(HANDLE)) then
   begin
-    case VALUE of
-      csmMessage: begin
-        if (INDEX = -1) then INDEX := TCore(ID).FApp.FMessages.Count - 1;
-        if (INDEX > -1) and (INDEX <  TCore(ID).FApp.FMessages.Count) then
-        begin
-          Result := TCore(ID).FApp.FMessages[INDEX];
-        end;
-      end;
-      csmItem: begin
-        if (INDEX = -1) then INDEX := TCore(ID).FApp.FItems.Count - 1;
-        if (INDEX > -1) and (INDEX <  TCore(ID).FApp.FItems.Count) then
-        begin
-          Result := TCore(ID).FApp.FItems[INDEX];
-        end;
-      end;
-    end;
+    Result := TCore(HANDLE).FApp.FMessages.Last;
   end;
 end;
 
-function CoreSetPtr(ID: pointer; VALUE: longint; P: pointer): boolean;
+function CoreGetMessages(HANDLE: pointer; INDEX: longint): pchar;
 begin
-  Result := Assigned(TCore(ID));
-  if Result then
+  Result := nil;
+  if Assigned(TCore(HANDLE)) then
   begin
-    case VALUE of
-      csmWaitingRename: begin
-        FreePChar(PFileInfo(TCore(ID).FApp.FItems.Last)^.Name);
-        PFileInfo(TCore(ID).FApp.FItems.Last)^.Name := StrNew(P);
-        TCore(ID).FApp.FStatus := csExecuting;
-      end;
-      else Result := False;
-    end;
+    Result := TCore(HANDLE).FApp.FMessages[INDEX];
   end;
+end;
+
+function CoreGetMessageCount(HANDLE: pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FMessages.Count;
+  end;
+end;
+
+function CoreGetItem(HANDLE: pointer): pointer;
+begin
+  Result := nil;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FItems.Last;
+  end;
+end;
+
+function CoreGetItems(HANDLE: pointer; INDEX: longint): pointer;
+begin
+  Result := nil;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FItems[INDEX];
+  end;
+end;
+
+function CoreGetItemCount(HANDLE: pointer): longint;
+begin
+  Result := -1;
+  if Assigned(TCore(HANDLE)) then
+  begin
+    Result := TCore(HANDLE).FApp.FItems.Count;
+  end;
+end;
+
+function CoreGetItemPending(HANDLE: pointer; STATUS: longint): pointer;
+begin
+  Result := nil;
+  if Assigned(TCore(HANDLE)) then
+    case TCore(HANDLE).FApp.FStatus of
+      csWaitOverwrite: Result := TCore(HANDLE).FApp.FItems.Last;
+      csWaitRename:    Result := TCore(HANDLE).FApp.FItems.Last;
+      csWaitPassword:  Result := TCore(HANDLE).FApp.FItems.Last;
+      csWaitRequest:   Result := TCore(HANDLE).FApp.FItems.Last;
+      csWaitList:      Result := TCore(HANDLE).FApp.FItems.Last;
+    end;
+end;
+
+procedure CoreSetItemPending(HANDLE: pointer; STATUS: longint; VALUE: pointer);
+begin
+  if Assigned(TCore(HANDLE)) then
+    case TCore(HANDLE).FApp.FStatus of
+      // csWaitOverwrite:
+      // csWaitPassword:
+      // csWaitRequest:
+      // csWaitList:
+      csWaitRename: begin
+        with PFileInfo(TCore(HANDLE).FApp.FItems.Last)^ do
+        begin
+          FreePChar(Name);
+          Name := StrNew(VALUE);
+        end;
+        TCore(HANDLE).FApp.FStatus := csExecuting;
+      end;
+    end;
 end;
 
 end.
