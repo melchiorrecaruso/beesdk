@@ -71,7 +71,7 @@ type
     SpeedLabel: TLabel;
     TimePanel: TPanel;
     RemainingTime: TLabel;
-    ElapsedTime:    TLabel;
+    Time: TLabel;
     UnitPanel: TPanel;
     ProcessedSize: TLabel;
     ProcessedSizeUnit: TLabel;
@@ -85,8 +85,8 @@ type
     Popup_Normal: TMenuItem;
     Popup:   TPopupMenu;
     RemainingTimeLabel: TLabel;
+    TimeLabel: TLabel;
     SaveDialog: TSaveDialog;
-    ElapsedTimeLabel: TLabel;
     Timer:   TIdleTimer;
     // ---
     Notebook: TNotebook;
@@ -237,7 +237,6 @@ var
 begin
   FList := aList;
   FCommandLine := aCommandLine;
-
   P := StringToPChar(FCommandLine.CommandLine);
   FID := CoreCreate(P);
   if CoreExecute(FID) then
@@ -386,7 +385,7 @@ begin
 
   ShowMessage('DEBUG 1');
 
-  ElapsedTime.Caption   := TimeToStr(CoreGetElapsedTime(FID));
+  Time.Caption   := TimeToStr(CoreGetElapsedTime(FID));
   RemainingTime.Caption := TimeToStr(CoreGetRemainingTime(FID));
   Speed.Caption         := IntToStr (CoreGetSpeed(FID) shr 10);
 
