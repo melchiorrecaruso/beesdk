@@ -777,6 +777,7 @@ begin
   begin
     IncWorkStatus;
     FList   := TList.Create;
+
     TickFrm := TTickFrm.Create(Application);
     TickFrm.Execute(FCommandLine, FList);
     repeat

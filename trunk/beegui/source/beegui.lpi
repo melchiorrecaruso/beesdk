@@ -95,14 +95,14 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="45">
+    <Units Count="46">
       <Unit0>
         <Filename Value="beegui.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beegui"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="48"/>
+        <TopLine Value="39"/>
         <CursorPos X="20" Y="60"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -182,8 +182,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="221"/>
-        <CursorPos X="23" Y="232"/>
+        <TopLine Value="364"/>
+        <CursorPos X="3" Y="388"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -256,10 +256,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeFM_MainFrm"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="357"/>
-        <CursorPos X="59" Y="366"/>
+        <TopLine Value="764"/>
+        <CursorPos X="28" Y="781"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
@@ -331,7 +334,7 @@
         <UnitName Value="BeeGui_DragDropFrm"/>
         <TopLine Value="33"/>
         <CursorPos X="3" Y="64"/>
-        <UsageCount Value="139"/>
+        <UsageCount Value="140"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
@@ -490,8 +493,8 @@
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <WindowIndex Value="0"/>
-          <TopLine Value="1"/>
-          <CursorPos X="1" Y="1"/>
+          <TopLine Value="365"/>
+          <CursorPos X="23" Y="392"/>
         </ExtraEditor1>
         <UsageCount Value="17"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
@@ -525,18 +528,22 @@
       </Unit41>
       <Unit42>
         <Filename Value="forms\forms.include\beegui_tickfrm_loadlanguage.inc"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="36" Y="16"/>
+        <CursorPos X="9" Y="16"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
         <Filename Value="forms\forms.include\beegui_tickfrm_savelanguage.inc"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="47" Y="16"/>
+        <CursorPos X="67" Y="16"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit43>
       <Unit44>
@@ -548,8 +555,45 @@
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit44>
+      <Unit45>
+        <Filename Value="..\..\..\lazarus\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="673"/>
+        <CursorPos X="17" Y="697"/>
+        <UsageCount Value="10"/>
+      </Unit45>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="7" HistoryIndex="6">
+      <Position1>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="366" Column="59" TopLine="357"/>
+      </Position1>
+      <Position2>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="909" Column="12" TopLine="901"/>
+      </Position2>
+      <Position3>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="755" Column="11" TopLine="715"/>
+      </Position3>
+      <Position4>
+        <Filename Value="forms\beefm_mainfrm.pas"/>
+        <Caret Line="781" Column="28" TopLine="764"/>
+      </Position4>
+      <Position5>
+        <Filename Value="forms\forms.include\beegui_tickfrm_savelanguage.inc"/>
+        <Caret Line="16" Column="47" TopLine="1"/>
+      </Position5>
+      <Position6>
+        <Filename Value="forms\forms.include\beegui_tickfrm_loadlanguage.inc"/>
+        <Caret Line="16" Column="96" TopLine="1"/>
+      </Position6>
+      <Position7>
+        <Filename Value="forms\beegui_tickfrm.pas"/>
+        <Caret Line="74" Column="5" TopLine="56"/>
+      </Position7>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="10"/>
