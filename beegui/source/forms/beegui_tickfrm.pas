@@ -65,13 +65,12 @@ type
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
     GeneralSizeUnit: TLabel;
-    MainMenu1: TMainMenu;
     ProcessedSizeLabel: TLabel;
     SizeLabelPanel: TPanel;
     SpeedLabel: TLabel;
     TimePanel: TPanel;
     RemainingTime: TLabel;
-    Time: TLabel;
+    ElapsedTime: TLabel;
     UnitPanel: TPanel;
     ProcessedSize: TLabel;
     ProcessedSizeUnit: TLabel;
@@ -85,7 +84,7 @@ type
     Popup_Normal: TMenuItem;
     Popup:   TPopupMenu;
     RemainingTimeLabel: TLabel;
-    TimeLabel: TLabel;
+    ElapsedTimeLabel: TLabel;
     SaveDialog: TSaveDialog;
     Timer:   TIdleTimer;
     // ---
@@ -385,7 +384,7 @@ begin
 
   ShowMessage('DEBUG 1');
 
-  Time.Caption   := TimeToStr(CoreGetElapsedTime(FID));
+  ElapsedTime.Caption   := TimeToStr(CoreGetElapsedTime(FID));
   RemainingTime.Caption := TimeToStr(CoreGetRemainingTime(FID));
   Speed.Caption         := IntToStr (CoreGetSpeed(FID) shr 10);
 

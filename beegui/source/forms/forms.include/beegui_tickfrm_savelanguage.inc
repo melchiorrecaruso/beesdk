@@ -13,7 +13,7 @@
         Storage.WriteString('TPage', 'GeneralPage.Caption', GeneralPage.Caption);
         Storage.WriteString('TPage', 'ReportPage.Caption', ReportPage.Caption);
     
-        Storage.WriteString('TLabel', 'ElapsedTimeLabel.Caption', TimeLabel.Caption);
+        Storage.WriteString('TLabel', 'ElapsedTimeLabel.Caption', ElapsedTimeLabel.Caption);
         Storage.WriteString('TLabel', 'RemainingTimeLabel.Caption', RemainingTimeLabel.Caption);
         Storage.WriteString('TLabel', 'GeneralSizeLabel.Caption', GeneralSizeLabel.Caption);
         Storage.WriteString('TLabel', 'ProcessedSizeLabel.Caption', ProcessedSizeLabel.Caption);
