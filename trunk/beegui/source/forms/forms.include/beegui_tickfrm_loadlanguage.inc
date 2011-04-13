@@ -13,7 +13,7 @@
         GeneralPage.Caption := Storage.ReadString('TPage', 'GeneralPage.Caption', GeneralPage.Caption);
         ReportPage.Caption  := Storage.ReadString('TPage', 'ReportPage.Caption', ReportPage.Caption);
     
-        TimeLabel.Caption   := Storage.ReadString('TLabel', 'ElapsedTimeLabel.Caption', TimeLabel.Caption);
+        ElapsedTimeLabel.Caption   := Storage.ReadString('TLabel', 'ElapsedTimeLabel.Caption', ElapsedTimeLabel.Caption);
         RemainingTimeLabel.Caption := Storage.ReadString('TLabel', 'RemainingTimeLabel.Caption', RemainingTimeLabel.Caption);
         GeneralSizeLabel.Caption   := Storage.ReadString('TLabel', 'GeneralSizeLabel.Caption', GeneralSizeLabel.Caption);
         ProcessedSizeLabel.Caption := Storage.ReadString('TLabel', 'ProcessedSizeLabel.Caption', ProcessedSizeLabel.Caption);
