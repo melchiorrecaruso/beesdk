@@ -45,15 +45,16 @@ const
 
   { CoreStatus }
 
-  csReady             = $00000000;
-  csExecuting         = $00000001;
-  csWaitOverwrite     = $00000002;
-  csWaitRename        = $00000003;
-  csWaitPassword      = $00000004;
-  csWaitRequest       = $00000005;
-  csWaitList          = $00000006;
-  csTerminated        = $00000007;
-  csSuspended         = $00000008;
+  csUnknow            = $00000000;
+  csReady             = $00000001;
+  csExecuting         = $00000002;
+  csWaitOverwrite     = $00000003;
+  csWaitRename        = $00000004;
+  csWaitPassword      = $00000005;
+  csWaitRequest       = $00000006;
+  csWaitList          = $00000007;
+  csTerminated        = $00000008;
+  csSuspended         = $00000009;
 
   { CoreCode }
 
