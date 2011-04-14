@@ -51,6 +51,7 @@ uses
   Bee_Consts,
   // ---
   BeeGui_RenameFrm,
+  BeeGui_PasswordFrm,
   BeeGui_OverwriteFrm,
   // ---
   BeeGui_CommandLine,
@@ -70,8 +71,8 @@ type
     SpeedLabel: TLabel;
     TimePanel: TPanel;
     RemainingTime: TLabel;
-    ElapsedTime: TLabel;
-    UnitsPanel: TPanel;
+    ElapsedTime:    TLabel;
+    UnitPanel: TPanel;
     ProcessedSize: TLabel;
     ProcessedSizeUnit: TLabel;
     SizePanel: TPanel;
@@ -84,8 +85,8 @@ type
     Popup_Normal: TMenuItem;
     Popup:   TPopupMenu;
     RemainingTimeLabel: TLabel;
-    ElapsedTimeLabel: TLabel;
     SaveDialog: TSaveDialog;
+    ElapsedTimeLabel: TLabel;
     Timer:   TIdleTimer;
     // ---
     Notebook: TNotebook;
@@ -214,7 +215,7 @@ procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   I: boolean;
 begin
-  CanClose := (CoreGetStatus(FID) = csTerminated) or (CoreGetStatus(FID) = -1);
+  CanClose := CoreGetStatus(FID) in [-1, csTerminated];
 
   if CanClose = False then
   begin
@@ -279,11 +280,11 @@ procedure TTickFrm.NotebookPageChanged(Sender: TObject);
 var
   I: integer;
 begin
-  //for I := 0 to Notebook.PageCount -1 do
-  //begin
-  //  Notebook.Page[I].Visible := False;
-  //end;
-  //Notebook.Page[Notebook.PageIndex].Visible := True;
+  // for I := 0 to Notebook.PageCount -1 do
+  // begin
+  //   Notebook.Page[I].TabVisible := False;
+  // end;
+  // Notebook.Page[Notebook.PageIndex].TabVisible := True;
 
   if Notebook.PageIndex = 0 then
   begin
@@ -319,9 +320,6 @@ end;
 procedure TTickFrm.OnTimer(Sender: TObject);
 begin
   Timer.Enabled := FALSE;
-
-   ShowMessage('DEBUG 1');
-
   case CoreGetStatus(FID) of
     csTerminated: OnTerminate;
     csExecuting:  OnExecute;
@@ -382,11 +380,9 @@ begin
     Application.Title := Caption;
   end;
 
-  ShowMessage('DEBUG 1');
-
-  ElapsedTime.Caption   := TimeToStr(CoreGetElapsedTime(FID));
+  ElapsedTime.Caption   := TimeToStr(CoreGetElapsedTime  (FID));
   RemainingTime.Caption := TimeToStr(CoreGetRemainingTime(FID));
-  Speed.Caption         := IntToStr (CoreGetSpeed(FID) shr 10);
+  Speed.Caption         := IntToStr (CoreGetSpeed (FID) shr 10);
 
   P := CoreGetMessage(FID);
   if P <> nil then
@@ -413,9 +409,6 @@ begin
     Application.Title := Caption;
   end;
 
-
-  ShowMessage('LOG');
-
   Report.Lines.Clear;
   if FCommandLine.Log or (ExitCode > 0) then
     for I := 0 to CoreGetItemCount(FID) - 1 do
@@ -426,12 +419,7 @@ begin
         Report.Lines.Add(PCharToString(P));
       end;
     end;
-
-  ShowMessage('LIST');
-
   OnList;
-
-
 
   FCanClose := CoreDestroy(FID);
   FID := nil;
@@ -520,7 +508,7 @@ end;
 
 procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
 begin
-  if CoreGetStatus(FID) <> csTerminated then
+  if  CoreGetStatus(FID) <> csTerminated then
   begin
     FSuspended := not FSuspended;
     if FSuspended then
@@ -702,6 +690,26 @@ end;
     if FOnlyAForm then
     begin
       Application.Title := Caption;
+    end;
+  end;
+  
+  procedure TTickFrm.OnKey;
+  var
+    F: TPasswordFrm;
+  begin
+    if FInterfaces.Terminated = False then
+    begin
+      if FPassword = '' then
+      begin
+        F := TPasswordFrm.Create(Application);
+        F.SetPassword(FPassword);
+        if F.ShowModal = mrOK then
+        begin
+          FPassword := F.Password.Text;
+        end;
+        F.Free;
+      end;
+      FInterfaces.OnKey.Answer := FPassword;
     end;
   end;
 
