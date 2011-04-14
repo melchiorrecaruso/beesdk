@@ -42,13 +42,36 @@ uses
 
 exports
   LibVersion,
+
   CoreCreate,
-  CoreSend,
-  CoreGetI32,
-  CoreSetI32,
-  CoreGetI64,
-  CoreGetPtr,
-  CoreSetPtr;
+  CoreDestroy,
+  CoreExecute,
+  CoreSuspend,
+  CoreTerminate,
+
+  CoreSetPriority,
+  CoreGetPriority,
+
+  CoreGetStatus,
+  CoreGetCode,
+  CoreGetSpeed,
+  CoreGetPercentage,
+  CoreGetElapsedTime,
+  CoreGetRemainingTime,
+
+  CoreGetSize,
+  CoreGetProcessedSize,
+
+  CoreGetMessage,
+  CoreGetMessages,
+  CoreGetMessageCount,
+
+  CoreGetItem,
+  CoreGetItems,
+  CoreGetItemCount,
+
+  CoreGetItemPending,
+  CoreSetItemPending;
 
   // -------------------------------------------------------------------------- //
   //                                                                            //
