@@ -215,7 +215,7 @@ procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   I: boolean;
 begin
-  CanClose := CoreGetStatus(FID) in [-1, csTerminated];
+  CanClose := CoreGetStatus(FID) in [csUnknow, csTerminated];
 
   if CanClose = False then
   begin

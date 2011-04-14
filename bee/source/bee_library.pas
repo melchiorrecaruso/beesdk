@@ -293,7 +293,7 @@ end;
 
 function CoreGetStatus(HANDLE: pointer): longint;
 begin
-  Result := -1;
+  Result := csUnknow;
   if Assigned(TCore(HANDLE)) then
   begin
     Result := TCore(HANDLE).FApp.FStatus;
