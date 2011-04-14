@@ -83,10 +83,11 @@
         <Filename Value="beelib.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="14"/>
-        <CursorPos X="7" Y="46"/>
+        <TopLine Value="36"/>
+        <CursorPos X="1" Y="45"/>
         <UsageCount Value="109"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -106,9 +107,8 @@
         <UnitName Value="Bee_Library"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="63"/>
+        <TopLine Value="18"/>
         <CursorPos X="32" Y="51"/>
-        <FoldState Value=" T7iNIE1 T3j9039 picjM04215!"/>
         <UsageCount Value="28"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -127,11 +127,10 @@
       <Unit4>
         <Filename Value="beelib_link.pas"/>
         <UnitName Value="BeeLib_Link"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="7"/>
-        <CursorPos X="19" Y="44"/>
+        <TopLine Value="29"/>
+        <CursorPos X="1" Y="44"/>
         <UsageCount Value="27"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -141,7 +140,7 @@
         <UnitName Value="Bee_Interface"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="67"/>
+        <TopLine Value="73"/>
         <CursorPos X="14" Y="91"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -278,7 +277,7 @@
       </Position29>
       <Position30>
         <Filename Value="beelib.dpr"/>
-        <Caret Line="46" Column="14" TopLine="14"/>
+        <Caret Line="46" Column="7" TopLine="14"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
