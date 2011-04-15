@@ -10,8 +10,8 @@
     begin
       Storage := TMemIniFile.Create(Folder + ('tickfrm.ini'));
       begin
-        Storage.WriteString('TPage', 'GeneralPage.Caption', GeneralPage.Caption);
-        Storage.WriteString('TPage', 'ReportPage.Caption', ReportPage.Caption);
+        //Storage.WriteString('TPage', 'GeneralPage.Caption', GeneralPage.Caption);
+        //Storage.WriteString('TPage', 'ReportPage.Caption', ReportPage.Caption);
     
         Storage.WriteString('TLabel', 'ElapsedTimeLabel.Caption', ElapsedTimeLabel.Caption);
         Storage.WriteString('TLabel', 'RemainingTimeLabel.Caption', RemainingTimeLabel.Caption);
