@@ -62,39 +62,31 @@ type
   { TTickFrm }
 
   TTickFrm = class(TForm)
+    ElapsedTime: TLabel;
+    ElapsedTimeLabel: TLabel;
     FontDialog: TFontDialog;
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
     GeneralSizeUnit: TLabel;
-    ProcessedSizeLabel: TLabel;
-    SizeLabelPanel: TPanel;
-    SpeedLabel: TLabel;
-    TimePanel: TPanel;
-    RemainingTime: TLabel;
-    ElapsedTime:    TLabel;
-    UnitPanel: TPanel;
+    GeneralPanel: TPanel;
+    Msg: TLabel;
     ProcessedSize: TLabel;
+    ProcessedSizeLabel: TLabel;
     ProcessedSizeUnit: TLabel;
-    SizePanel: TPanel;
-    Speed:   TLabel;
+    RemainingTime: TLabel;
+    RemainingTimeLabel: TLabel;
+    Report: TMemo;
+    Speed: TLabel;
+    SpeedLabel: TLabel;
     SpeedUnit: TLabel;
-    TimeLabelPanel: TPanel;
     Popup_Idle: TMenuItem;
     Popup_TimeCritical: TMenuItem;
     Popup_Higher: TMenuItem;
     Popup_Normal: TMenuItem;
     Popup:   TPopupMenu;
-    RemainingTimeLabel: TLabel;
     SaveDialog: TSaveDialog;
-    ElapsedTimeLabel: TLabel;
+    Tick: TProgressBar;
     Timer:   TIdleTimer;
-    // ---
-    Notebook: TNotebook;
-    GeneralPage: TPage;
-    Msg:     TLabel;
-    Tick:    TProgressBar;
-    ReportPage: TPage;
-    Report:  TMemo;
     // ---
     BtnSave: TBitBtn;
     BtnFont: TBitBtn;
@@ -106,6 +98,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
+    procedure GeneralPanelClick(Sender: TObject);
     // ---
     procedure NotebookPageChanged(Sender: TObject);
     // ---
@@ -203,6 +196,11 @@ begin
   FList        := nil;
 end;
 
+procedure TTickFrm.GeneralPanelClick(Sender: TObject);
+begin
+
+end;
+
 procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   {$IFDEF SAVELANGUAGE}
@@ -286,6 +284,7 @@ begin
   // end;
   // Notebook.Page[Notebook.PageIndex].TabVisible := True;
 
+  (*
   if Notebook.PageIndex = 0 then
   begin
     BtnSave.Enabled   := False;
@@ -309,6 +308,7 @@ begin
   end;
   BtnCancel.Cancel := True;
   ActiveControl    := BtnCancel;
+  *)
 end;
 
  // ------------------------------------------------------------------------ //
@@ -426,8 +426,8 @@ begin
 
   if Report.Lines.Count > 0 then
   begin
-    Notebook.PageIndex := 1;
-    NotebookPageChanged(Notebook);
+    // Notebook.PageIndex := 1;
+    // NotebookPageChanged(Notebook);
   end else
     Close;
 end;

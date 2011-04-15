@@ -1785,6 +1785,7 @@ begin
 end;
 
 initialization
+
   {$I beefm_mainfrm.lrs}
 
 end.
