@@ -62,6 +62,7 @@ type
   { TTickFrm }
 
   TTickFrm = class(TForm)
+    Bevel: TBevel;
     ElapsedTime: TLabel;
     ElapsedTimeLabel: TLabel;
     FontDialog: TFontDialog;
@@ -100,7 +101,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure GeneralPanelClick(Sender: TObject);
     // ---
-    procedure NotebookPageChanged(Sender: TObject);
+    procedure PanelChanged(Sender: TObject);
     // ---
     procedure PopupClick(Sender: TObject);
     // ---
@@ -196,11 +197,6 @@ begin
   FList        := nil;
 end;
 
-procedure TTickFrm.GeneralPanelClick(Sender: TObject);
-begin
-
-end;
-
 procedure TTickFrm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   {$IFDEF SAVELANGUAGE}
@@ -274,18 +270,23 @@ begin
   end;
 end;
 
-procedure TTickFrm.NotebookPageChanged(Sender: TObject);
+procedure TTickFrm.PanelChanged(Sender: TObject);
 var
   I: integer;
 begin
+
+
+
+
+
   // for I := 0 to Notebook.PageCount -1 do
   // begin
   //   Notebook.Page[I].TabVisible := False;
   // end;
   // Notebook.Page[Notebook.PageIndex].TabVisible := True;
 
-  (*
-  if Notebook.PageIndex = 0 then
+
+  if GeneralPanel.Visible then
   begin
     BtnSave.Enabled   := False;
     BtnFont.Enabled   := False;
@@ -308,7 +309,6 @@ begin
   end;
   BtnCancel.Cancel := True;
   ActiveControl    := BtnCancel;
-  *)
 end;
 
  // ------------------------------------------------------------------------ //

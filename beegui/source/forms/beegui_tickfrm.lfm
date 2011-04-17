@@ -1,11 +1,11 @@
 object TickFrm: TTickFrm
-  Left = 388
-  Height = 698
-  Top = 180
-  Width = 937
+  Left = 328
+  Height = 386
+  Top = 158
+  Width = 571
   Caption = '0% Processing...'
-  ClientHeight = 698
-  ClientWidth = 937
+  ClientHeight = 386
+  ClientWidth = 571
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnClose = FormClose
@@ -19,9 +19,9 @@ object TickFrm: TTickFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 851
+    Left = 485
     Height = 26
-    Top = 666
+    Top = 354
     Width = 80
     Anchors = [akRight, akBottom]
     AutoSize = True
@@ -41,9 +41,9 @@ object TickFrm: TTickFrm
     AnchorSideRight.Control = BtnPauseRun
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
-    Left = 684
+    Left = 318
     Height = 26
-    Top = 666
+    Top = 354
     Width = 80
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -84,9 +84,9 @@ object TickFrm: TTickFrm
     AnchorSideRight.Control = BtnCancel
     AnchorSideBottom.Control = BtnCancel
     AnchorSideBottom.Side = asrBottom
-    Left = 770
+    Left = 404
     Height = 26
-    Top = 666
+    Top = 354
     Width = 75
     Anchors = [akTop, akRight, akBottom]
     AutoSize = True
@@ -105,7 +105,7 @@ object TickFrm: TTickFrm
     AnchorSideBottom.Side = asrBottom
     Left = 6
     Height = 26
-    Top = 666
+    Top = 354
     Width = 75
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
@@ -125,7 +125,7 @@ object TickFrm: TTickFrm
     AnchorSideBottom.Side = asrBottom
     Left = 87
     Height = 26
-    Top = 666
+    Top = 354
     Width = 75
     Anchors = [akTop, akLeft, akBottom]
     AutoSize = True
@@ -137,28 +137,16 @@ object TickFrm: TTickFrm
     OnClick = BtnFontClick
     TabOrder = 3
   end
-  object Report: TMemo
-    Left = 87
-    Height = 146
-    Top = 456
-    Width = 641
-    Align = alCustom
-    BorderSpacing.Around = 6
-    ReadOnly = True
-    ScrollBars = ssAutoBoth
-    TabOrder = 5
-    WordWrap = False
-  end
   object GeneralPanel: TPanel
-    Left = 88
-    Height = 216
-    Top = 224
-    Width = 632
+    Left = 24
+    Height = 128
+    Top = 24
+    Width = 433
     BevelInner = bvRaised
     BevelOuter = bvLowered
-    ClientHeight = 216
-    ClientWidth = 632
-    TabOrder = 6
+    ClientHeight = 128
+    ClientWidth = 433
+    TabOrder = 5
     OnClick = GeneralPanelClick
     object RemainingTime: TLabel
       AnchorSideLeft.Control = ElapsedTimeLabel
@@ -167,12 +155,12 @@ object TickFrm: TTickFrm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = RemainingTimeLabel
       AnchorSideBottom.Side = asrBottom
-      Left = 117
+      Left = 127
       Height = 14
       Top = 24
       Width = 45
       Anchors = [akTop, akLeft, akBottom]
-      BorderSpacing.Left = 6
+      BorderSpacing.Left = 20
       BorderSpacing.Right = 10
       Caption = '00:00:00'
       Color = clBtnFace
@@ -187,13 +175,13 @@ object TickFrm: TTickFrm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = ElapsedTimeLabel
       AnchorSideBottom.Side = asrBottom
-      Left = 117
+      Left = 127
       Height = 14
       Top = 8
       Width = 45
       Alignment = taCenter
       Anchors = [akTop, akLeft, akBottom]
-      BorderSpacing.Left = 6
+      BorderSpacing.Left = 20
       BorderSpacing.Right = 20
       Caption = '00:00:00'
       Color = clBtnFace
@@ -211,7 +199,7 @@ object TickFrm: TTickFrm
       Width = 99
       BorderSpacing.Left = 6
       BorderSpacing.Top = 6
-      BorderSpacing.Right = 10
+      BorderSpacing.Right = 1
       BorderSpacing.Bottom = 2
       Caption = 'Time elapsed:####'
       Color = clBtnFace
@@ -242,13 +230,15 @@ object TickFrm: TTickFrm
       AnchorSideLeft.Control = ElapsedTime
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = GeneralPanel
-      Left = 182
+      AnchorSideRight.Control = GeneralSize
+      Left = 207
       Height = 14
       Top = 8
       Width = 90
-      BorderSpacing.Left = 20
+      Anchors = [akTop, akRight]
+      BorderSpacing.Left = 30
       BorderSpacing.Top = 6
-      BorderSpacing.Right = 10
+      BorderSpacing.Right = 20
       BorderSpacing.Bottom = 2
       Caption = 'Total size:#####'
       Color = clBtnFace
@@ -260,7 +250,7 @@ object TickFrm: TTickFrm
       AnchorSideLeft.Control = GeneralSizeLabel
       AnchorSideTop.Control = GeneralSizeLabel
       AnchorSideTop.Side = asrBottom
-      Left = 182
+      Left = 207
       Height = 14
       Top = 24
       Width = 75
@@ -276,7 +266,7 @@ object TickFrm: TTickFrm
       AnchorSideLeft.Control = ProcessedSizeLabel
       AnchorSideTop.Control = ProcessedSizeLabel
       AnchorSideTop.Side = asrBottom
-      Left = 182
+      Left = 207
       Height = 14
       Top = 40
       Width = 35
@@ -291,13 +281,17 @@ object TickFrm: TTickFrm
       AnchorSideLeft.Control = GeneralSizeLabel
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = GeneralSizeLabel
-      AnchorSideRight.Side = asrBottom
-      Left = 287
+      AnchorSideRight.Control = GeneralSizeUnit
+      AnchorSideBottom.Control = GeneralSizeLabel
+      AnchorSideBottom.Side = asrBottom
+      Left = 317
       Height = 14
       Top = 8
       Width = 50
       Alignment = taRightJustify
+      Anchors = [akTop, akRight, akBottom]
       BorderSpacing.Left = 15
+      BorderSpacing.Right = 25
       Caption = '---'
       Color = clBtnFace
       Constraints.MinWidth = 50
@@ -309,12 +303,14 @@ object TickFrm: TTickFrm
       AnchorSideTop.Control = ProcessedSizeLabel
       AnchorSideRight.Control = GeneralSize
       AnchorSideRight.Side = asrBottom
-      Left = 287
+      AnchorSideBottom.Control = ProcessedSizeLabel
+      AnchorSideBottom.Side = asrBottom
+      Left = 317
       Height = 14
       Top = 24
       Width = 50
       Alignment = taRightJustify
-      Anchors = [akTop, akLeft, akRight]
+      Anchors = [akTop, akLeft, akRight, akBottom]
       Caption = '---'
       Color = clBtnFace
       Constraints.MinWidth = 50
@@ -327,7 +323,7 @@ object TickFrm: TTickFrm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = SpeedLabel
       AnchorSideBottom.Side = asrBottom
-      Left = 287
+      Left = 317
       Height = 14
       Top = 40
       Width = 50
@@ -340,50 +336,54 @@ object TickFrm: TTickFrm
       Transparent = False
     end
     object SpeedUnit: TLabel
-      AnchorSideTop.Side = asrBottom
+      AnchorSideLeft.Control = GeneralSizeUnit
+      AnchorSideTop.Control = Speed
+      AnchorSideRight.Control = GeneralPanel
       AnchorSideRight.Side = asrBottom
-      Left = 449
+      AnchorSideBottom.Control = Speed
+      AnchorSideBottom.Side = asrBottom
+      Left = 392
       Height = 14
       Top = 40
-      Width = 22
-      BorderSpacing.Left = 6
-      BorderSpacing.Top = 2
+      Width = 33
+      Anchors = [akTop, akLeft, akRight, akBottom]
       BorderSpacing.Right = 6
-      BorderSpacing.Bottom = 2
       Caption = 'KB/s'
       Color = clBtnFace
       ParentColor = False
       Transparent = False
     end
     object ProcessedSizeUnit: TLabel
-      AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = SpeedUnit
+      AnchorSideLeft.Control = GeneralSizeUnit
+      AnchorSideTop.Control = ProcessedSize
+      AnchorSideRight.Control = GeneralPanel
       AnchorSideRight.Side = asrBottom
-      Left = 449
+      AnchorSideBottom.Control = ProcessedSize
+      AnchorSideBottom.Side = asrBottom
+      Left = 392
       Height = 14
       Top = 24
-      Width = 13
-      BorderSpacing.Left = 6
-      BorderSpacing.Top = 2
-      BorderSpacing.Right = 6
-      BorderSpacing.Bottom = 2
+      Width = 29
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Right = 10
       Caption = 'KB'
       Color = clBtnFace
       ParentColor = False
       Transparent = False
     end
     object GeneralSizeUnit: TLabel
-      AnchorSideRight.Control = SpeedUnit
+      AnchorSideTop.Control = GeneralSize
+      AnchorSideRight.Control = GeneralPanel
       AnchorSideRight.Side = asrBottom
-      Left = 449
+      AnchorSideBottom.Control = GeneralSize
+      AnchorSideBottom.Side = asrBottom
+      Left = 392
       Height = 14
       Top = 8
-      Width = 13
-      BorderSpacing.Left = 6
-      BorderSpacing.Top = 6
-      BorderSpacing.Right = 6
-      BorderSpacing.Bottom = 2
-      Caption = 'KB'
+      Width = 29
+      Anchors = [akTop, akRight, akBottom]
+      BorderSpacing.Right = 10
+      Caption = 'KB##'
       Color = clBtnFace
       ParentColor = False
       Transparent = False
@@ -391,8 +391,8 @@ object TickFrm: TTickFrm
     object Msg: TLabel
       Left = 8
       Height = 18
-      Top = 164
-      Width = 616
+      Top = 76
+      Width = 417
       Align = alBottom
       BorderSpacing.Left = 6
       BorderSpacing.Top = 2
@@ -409,8 +409,8 @@ object TickFrm: TTickFrm
     object Tick: TProgressBar
       Left = 8
       Height = 20
-      Top = 188
-      Width = 616
+      Top = 100
+      Width = 417
       Align = alBottom
       BorderSpacing.Around = 6
       Constraints.MaxHeight = 20
@@ -418,28 +418,51 @@ object TickFrm: TTickFrm
       TabOrder = 0
     end
   end
+  object Bevel: TBevel
+    AnchorSideLeft.Control = BtnSave
+    AnchorSideRight.Control = BtnCancel
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = BtnCancel
+    Left = 6
+    Height = 2
+    Top = 342
+    Width = 559
+    Anchors = [akLeft, akRight, akBottom]
+    BorderSpacing.Bottom = 10
+  end
+  object Report: TMemo
+    Left = 24
+    Height = 106
+    Top = 160
+    Width = 433
+    Anchors = []
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 6
+    WordWrap = False
+  end
   object Timer: TIdleTimer
     Enabled = False
     Interval = 250
     OnTimer = OnTimer
-    left = 24
-    top = 64
+    left = 496
+    top = 32
   end
   object SaveDialog: TSaveDialog
     Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
-    left = 112
-    top = 64
+    left = 496
+    top = 88
   end
   object FontDialog: TFontDialog
     MinFontSize = 0
     MaxFontSize = 0
-    left = 112
-    top = 112
+    left = 496
+    top = 144
   end
   object Popup: TPopupMenu
     AutoPopup = False
-    left = 24
-    top = 112
+    left = 496
+    top = 200
     object Popup_Idle: TMenuItem
       Caption = 'Idle'
       ShortCut = 16432
