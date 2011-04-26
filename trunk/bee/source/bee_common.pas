@@ -231,8 +231,8 @@ begin
     iMaskPath := iMaskPath + '*';
   end;
 
-  Result := MatchPattern(PChar(iFilePath), PChar(iMaskPath)) and
-            MatchPattern(PChar(iFileName), PChar(iMaskName));
+  Result :=  MatchPattern(PChar(iFilePath), PChar(iMaskPath)) and
+             MatchPattern(PChar(iFileName), PChar(iMaskName));
 end;
 
 function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; {$IFDEF FPC} inline; {$ENDIF}
