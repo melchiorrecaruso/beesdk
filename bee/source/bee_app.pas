@@ -70,11 +70,11 @@ type
     { open/close swapfile routine }
     function OpenSwapFile: longint;
     { find and prepare items }
-    function SetItemsToEncode: int64;
-    function SetItemsToDelete: int64;
-    function SetItemsToDecode: int64;
-    function SetItemsToRename: int64;
-    function SetItemsToList: int64;
+    function SetItemsToEncode: boolean;
+    function SetItemsToDelete: boolean;
+    function SetItemsToDecode: boolean;
+    function SetItemsToRename: boolean;
+    function SetItemsToList: boolean;
     { process options }
     procedure ProcesstOption;
     procedure ProcesslOption;
@@ -345,7 +345,7 @@ end;
 
 { sequences processing }
 
-function TBeeApp.SetItemsToEncode: int64;
+function TBeeApp.SetItemsToEncode: boolean;
 var
   P: THeader;
   S: TFileScanner;
@@ -397,8 +397,11 @@ begin
   end;
 
   // STEP4: calculate bytes to process ...
-  if (FHeaders.GetNext(0, haUpdate) > -1) or
-     (FHeaders.GetNext(0, haDecodeAndUpdate) > -1) then
+  Result := (FHeaders.GetNext(0, haUpdate         ) > -1) or
+            (FHeaders.GetNext(0, haDecodeAndUpdate) > -1);
+
+  if Result then
+  begin
     for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
@@ -410,17 +413,13 @@ begin
       end;
     end;
 
-  if FCommandLine.sfxOption <> '' then
-    FHeaders.LoadModule(FCommandLine.sfxOption);
-
-  Result := FSize;
-  if Result = 0 then
-  begin
+    if FCommandLine.sfxOption <> '' then
+      FHeaders.LoadModule(FCommandLine.sfxOption);
+  end else
     DoMessage(cmNoFilesWarning, ccWarning);
-  end;
 end;
 
-function TBeeApp.SetItemsToDelete: int64;
+function TBeeApp.SetItemsToDelete: boolean;
 var
   P: THeader;
   I, J, BackTear, NextTear: longint;
@@ -453,9 +452,14 @@ begin
     end;
     I := FHeaders.GetBack(I - 1, haUpdate);
   end;
+
+
   // STEP4: calculate bytes to process ...
-  if (FHeaders.GetNext(0, haUpdate) > -1) or
-     (FHeaders.GetNext(0, haDecodeAndUpdate) > -1) then
+  Result := (FHeaders.GetNext(0, haUpdate         ) > -1) or
+            (FHeaders.GetNext(0, haDecodeAndUpdate) > -1);
+
+  if Result then
+  begin
     for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
@@ -467,17 +471,13 @@ begin
       end;
     end;
 
-  if FCommandLine.sfxOption <> '' then
-    FHeaders.LoadModule(FCommandLine.sfxOption);
-
-  Result := FSize;
-  if Result = 0 then
-  begin
+    if FCommandLine.sfxOption <> '' then
+      FHeaders.LoadModule(FCommandLine.sfxOption);
+  end else
     DoMessage(cmNoFilesWarning, ccWarning);
-  end;
 end;
 
-function TBeeApp.SetItemsToDecode: int64;
+function TBeeApp.SetItemsToDecode: boolean;
 var
   P: THeader;
   U: TUpdateMode;
@@ -538,8 +538,11 @@ begin
   end;
 
   // STEP4: calculate bytes to process ...
-  if (FHeaders.GetNext(0, haUpdate) > -1) or
-     (FHeaders.GetNext(0, haDecodeAndUpdate) > -1) then
+  Result := (FHeaders.GetNext(0, haUpdate         ) > -1) or
+            (FHeaders.GetNext(0, haDecodeAndUpdate) > -1);
+
+  if Result then
+  begin
     for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
@@ -550,15 +553,11 @@ begin
         // haDecodeAndUpdate: nothing to do
       end;
     end;
-
-  Result := FSize;
-  if Result = 0 then
-  begin
+  end else
     DoMessage(cmNoFilesWarning, ccWarning);
-  end;
 end;
 
-function TBeeApp.SetItemsToRename: int64;
+function TBeeApp.SetItemsToRename: boolean;
 var
   I: longint;
   P, S: THeader;
@@ -591,7 +590,10 @@ begin
     end;
 
   // STEP4: calculate bytes to process ...
-  if FHeaders.GetNext(0, haUpdate) > -1 then
+  Result :=  FHeaders.GetNext(0, haUpdate) > -1;
+
+  if Result then
+  begin
     for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
@@ -602,15 +604,11 @@ begin
         // haDecodeAndUpdate: nothing to do
       end;
     end;
-
-  Result := FSize;
-  if Result = 0 then
-  begin
+  end else
     DoMessage(cmNoFilesWarning, ccWarning);
-  end;
 end;
 
-function TBeeApp.SetItemsToList: int64;
+function TBeeApp.SetItemsToList: boolean;
 var
   I: longint;
   P: THeader;
@@ -620,7 +618,10 @@ begin
   FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
 
   // STEP4: calculate bytes to process ...
-  if FHeaders.GetNext(0, haUpdate) > -1 then
+  Result := FHeaders.GetNext(0, haUpdate) > -1;
+
+  if Result then
+  begin
     for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
@@ -631,12 +632,8 @@ begin
         // haDecodeAndUpdate: nothing to do
       end;
     end;
-
-  Result := FSize;
-  if Result = 0 then
-  begin
+  end else
     DoMessage(cmNoFilesWarning, ccWarning);
-  end;
 end;
 
 { option processing }
@@ -714,7 +711,7 @@ var
   Check: boolean;
   Encoder: THeaderEncoder;
 begin
-  if (OpenArchive < ccError) and (SetItemsToEncode > 0) then
+  if (OpenArchive < ccError) and (SetItemsToEncode = TRUE) then
   begin
     FTempName   := GenerateFileName(FCommandLine.wdOption);
     FTempWriter := CreateTFileWriter(FTempName, fmCreate);
@@ -772,7 +769,7 @@ var
   Check: boolean;
   Decoder: THeaderDecoder;
 begin
-  if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
+  if (OpenArchive < ccError) and (SetItemsToDecode = TRUE) then
   begin
     Decoder := THeaderDecoder.Create(FArchReader);
     Decoder.Password := FCommandLine.pOption;
@@ -816,7 +813,7 @@ var
   Check: boolean;
   Decoder: THeaderDecoder;
 begin
-  if (OpenArchive < ccError) and (SetItemsToDecode > 0) then
+  if (OpenArchive < ccError) and (SetItemsToDecode = TRUE) then
   begin
     Decoder := THeaderDecoder.Create(FArchReader);
     Decoder.Password := FCommandLine.pOption;
@@ -860,7 +857,7 @@ var
   Check: boolean;
   Encoder: THeaderEncoder;
 begin
-  if (OpenArchive < ccError) and (SetItemsToDelete > 0) then
+  if (OpenArchive < ccError) and (SetItemsToDelete = TRUE) then
   begin
     FTempName   := GenerateFileName(FCommandLine.wdOption);
     FTempWriter := CreateTFileWriter(FTempName, fmCreate);
@@ -923,7 +920,7 @@ var
   Check: boolean;
   Encoder: THeaderEncoder;
 begin
-  if (OpenArchive < ccError) and (SetItemsToRename > 0) then
+  if (OpenArchive < ccError) and (SetItemsToRename = TRUE) then
   begin
     FTempName   := GenerateFileName(FCommandLine.wdOption);
     FTempWriter := CreateTFileWriter(FTempName, fmCreate);
@@ -974,7 +971,7 @@ var
   Sequences, Passwords, MaxDict: longint;
   TotalPacked, TotalSize, TotalFiles: int64;
 begin
-  if (OpenArchive < ccError) and (SetItemsToList > 0) then
+  if (OpenArchive < ccError) and (SetItemsToList = TRUE) then
   begin
     Version     := -1;
     Method      := -1;
