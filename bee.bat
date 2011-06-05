@@ -1,5 +1,5 @@
 @echo @ 
-@echo @ Compile Bee\BeeLIB ...
+@echo @ Compile Bee\BeeLIB2 ...
 @echo @
 
 lazbuild -B bee\source\bee.lpi
