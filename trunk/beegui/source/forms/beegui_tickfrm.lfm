@@ -147,7 +147,6 @@ object TickFrm: TTickFrm
     ClientHeight = 128
     ClientWidth = 433
     TabOrder = 5
-    OnClick = GeneralPanelClick
     object RemainingTime: TLabel
       AnchorSideLeft.Control = ElapsedTimeLabel
       AnchorSideLeft.Side = asrBottom

@@ -1064,7 +1064,7 @@ var
   P: THeader;
   Version, Method, Dictionary: longint;
 begin
-  if (OpenArchive < ccError) and (SetItemsToList > 0) then
+  if (OpenArchive < ccError) and (SetItemsToList = TRUE) then
   begin
     Version     := -1;
     Method      := -1;

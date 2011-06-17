@@ -99,7 +99,6 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
-    procedure GeneralPanelClick(Sender: TObject);
     // ---
     procedure PanelChanged(Sender: TObject);
     // ---
@@ -188,7 +187,6 @@ begin
   Tick.Smooth := True;
   {$ENDIF}
   FProgressOnTitle := False;
-  NotebookPageChanged(Sender);
 end;
 
 procedure TTickFrm.FormDestroy(Sender: TObject);
