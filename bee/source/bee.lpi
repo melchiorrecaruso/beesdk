@@ -105,7 +105,6 @@
       <Unit2>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="950"/>
@@ -254,6 +253,7 @@
       <Unit15>
         <Filename Value="bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="6"/>
