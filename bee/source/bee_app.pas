@@ -141,8 +141,10 @@ begin
   FConfiguration := TConfiguration.Create;
   if FileExists(FCommandLine.cfgOption) then
     FConfiguration.LoadFromFile(FCommandLine.cfgOption)
-  else
+  else begin
+    FConfiguration.CurrentSection.Add('.def=0F4040497AABD3FB8EC6BCFCF0DCFBFFF9281F13406F40426B8FB8CCFBFCFBFFFDF7F3F0FEEC1B271A3409');
     DoMessage(Format(cmConfigWarning, [FCommandLine.cfgOption]), ccWarning);
+  end;
 
   { load method and dictionary level }
   FConfiguration.Selector('\main');
