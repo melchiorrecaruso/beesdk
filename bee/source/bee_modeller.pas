@@ -351,7 +351,7 @@ begin
         P := P.Next;
         repeat
           J := K * P.K;
-
+          
           Dec(R, J);
           Inc(Freq[P.C], J);
 
