@@ -1,26 +1,32 @@
 program Test;
 
 {$I compiler.inc}
+{$DEFINE REGCALL}
 
 uses
   Classes,
   SysUtils,
-  Bee_Files,
-  Bee_Common,
-  Bee_MainPacker2,
-  Bee_Configuration;
+  //Bee_Files,
+  Bee_Common;
+  //Bee_MainPacker,
+  //Bee_Configuration;
+
+const
+  CCOUNT = 10;
 
 var
   X: double;
-  FTable: TTableParameters;
-  SrcStream: TFileReader;
-  DstStream: TFileWriter;
-  FStreamCoder: TStreamCoder;
-  FConfiguration: TConfiguration;
+  I: longint;
+  A: array [0.. $FFFFFFF]of byte;
+  // FTable: TTableParameters;
+  // SrcStream: TFileReader;
+  // DstStream: TFileWriter;
+  // FStreamCoder: TStreamCoder;
+  // FConfiguration: TConfiguration;
 
 begin
+  (*
   X := Now;
-
   FConfiguration := TConfiguration.Create;
   if FileExists('Bee.ini') then
     FConfiguration.LoadFromFile('Bee.ini')
@@ -49,8 +55,19 @@ begin
   SrcStream.Free;
   DstStream.Free;
 
-  Writeln(TimeDifference(X));
-
   FConfiguration.Free;
+  *)
+
+  Writeln('SPEED-TEST');
+
+  X := Now;
+  for I := 0 to CCOUNT do
+  begin
+    WRITELN('FillChar(', I,')');
+    MyFillChar(A, Length(A), Char(I));
+  end;
+  WRITELN('END');
+
+  Writeln(TimeDifference(X));
 end.
 
