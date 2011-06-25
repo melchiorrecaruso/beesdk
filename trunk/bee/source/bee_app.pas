@@ -122,7 +122,7 @@ constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1315 archiver utility, July 2011' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1317 archiver utility, July 2011' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders    := nil;
@@ -141,10 +141,8 @@ begin
   FConfiguration := TConfiguration.Create;
   if FileExists(FCommandLine.cfgOption) then
     FConfiguration.LoadFromFile(FCommandLine.cfgOption)
-  else begin
-    FConfiguration.CurrentSection.Add('.def=0F4040497AABD3FB8EC6BCFCF0DCFBFFF9281F13406F40426B8FB8CCFBFCFBFFFDF7F3F0FEEC1B271A3409');
+  else
     DoMessage(Format(cmConfigWarning, [FCommandLine.cfgOption]), ccWarning);
-  end;
 
   { load method and dictionary level }
   FConfiguration.Selector('\main');

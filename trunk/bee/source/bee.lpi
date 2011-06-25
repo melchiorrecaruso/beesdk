@@ -80,7 +80,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="4">
+    <Units Count="3">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -95,17 +95,6 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
-        <Filename Value="bee_common.pas"/>
-        <UnitName Value="Bee_Common"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="755"/>
-        <CursorPos X="3" Y="791"/>
-        <UsageCount Value="101"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit1>
-      <Unit2>
         <Filename Value="bee_streamcoder.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee_StreamCoder"/>
@@ -114,65 +103,41 @@
         <CursorPos X="33" Y="25"/>
         <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="bee_modeller.pas"/>
-        <UnitName Value="Bee_Modeller"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="bee_app.pas"/>
+        <UnitName Value="Bee_App"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="25"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="121"/>
+        <CursorPos X="77" Y="145"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit3>
+      </Unit2>
     </Units>
-    <JumpHistory Count="11" HistoryIndex="10">
+    <JumpHistory Count="5" HistoryIndex="4">
       <Position1>
         <Filename Value="bee.dpr"/>
         <Caret Line="155" Column="22" TopLine="122"/>
       </Position1>
       <Position2>
-        <Filename Value="bee_common.pas"/>
-        <Caret Line="139" Column="3" TopLine="104"/>
+        <Filename Value="bee.dpr"/>
+        <Caret Line="157" Column="8" TopLine="122"/>
       </Position2>
       <Position3>
-        <Filename Value="bee_common.pas"/>
-        <Caret Line="140" Column="16" TopLine="114"/>
+        <Filename Value="bee.dpr"/>
+        <Caret Line="157" Column="8" TopLine="122"/>
       </Position3>
       <Position4>
-        <Filename Value="bee_common.pas"/>
-        <Caret Line="137" Column="73" TopLine="124"/>
+        <Filename Value="bee.dpr"/>
+        <Caret Line="155" Column="29" TopLine="125"/>
       </Position4>
       <Position5>
         <Filename Value="bee.dpr"/>
-        <Caret Line="157" Column="8" TopLine="122"/>
-      </Position5>
-      <Position6>
-        <Filename Value="bee_common.pas"/>
-        <Caret Line="45" Column="15" TopLine="21"/>
-      </Position6>
-      <Position7>
-        <Filename Value="bee.dpr"/>
-        <Caret Line="157" Column="8" TopLine="122"/>
-      </Position7>
-      <Position8>
-        <Filename Value="bee.dpr"/>
-        <Caret Line="155" Column="29" TopLine="125"/>
-      </Position8>
-      <Position9>
-        <Filename Value="bee.dpr"/>
         <Caret Line="157" Column="7" TopLine="125"/>
-      </Position9>
-      <Position10>
-        <Filename Value="bee_common.pas"/>
-        <Caret Line="45" Column="14" TopLine="21"/>
-      </Position10>
-      <Position11>
-        <Filename Value="bee_common.pas"/>
-        <Caret Line="133" Column="1" TopLine="108"/>
-      </Position11>
+      </Position5>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
