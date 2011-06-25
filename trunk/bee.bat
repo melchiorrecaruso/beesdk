@@ -5,5 +5,5 @@
 lazbuild -B bee\source\bee.lpi
 lazbuild -B bee\source\beelib.lpi
 
-delp bee\distribution
 delp bee\temp
+delp bee\distribution

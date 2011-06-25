@@ -22,6 +22,9 @@
       <Item2 Name="debug">
         <CompilerOptions>
           <Version Value="10"/>
+          <Target>
+            <Filename Value="../distribution/bee"/>
+          </Target>
           <SearchPaths>
             <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
             <UnitOutputDirectory Value="../temp"/>
