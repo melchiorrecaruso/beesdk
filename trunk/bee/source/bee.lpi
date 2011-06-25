@@ -454,9 +454,12 @@
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="10"/>
+    <Target>
+      <Filename Value="../distribution/bee"/>
+    </Target>
     <SearchPaths>
       <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
-      <UnitOutputDirectory Value="../distribution"/>
+      <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
