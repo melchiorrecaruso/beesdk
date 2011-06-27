@@ -1,9 +1,7 @@
 program Test;
 
-{$I compiler.inc}
-{$DEFINE REGCALL}
-
 uses
+  FastcodeFillCharUnit,
   Classes,
   SysUtils,
   //Bee_Files,
@@ -23,6 +21,10 @@ var
   // DstStream: TFileWriter;
   // FStreamCoder: TStreamCoder;
   // FConfiguration: TConfiguration;
+
+
+
+
 
 begin
   (*
@@ -64,10 +66,11 @@ begin
   for I := 0 to CCOUNT do
   begin
     WRITELN('FillChar(', I,')');
-    MyFillChar(A, Length(A), Char(I));
+    FillChar(A, Length(A), Char(I));
   end;
   WRITELN('END');
 
   Writeln(TimeDifference(X));
+  READLN;
 end.
 
