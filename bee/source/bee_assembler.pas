@@ -97,7 +97,7 @@ asm
   MOV     EDI, Dest
 end;
 
-function MulDiv(A, B, C: longword): longword;
+function MulDiv(A, B, C: longword): longword; 
 asm
   MUL     B
   DIV     C
