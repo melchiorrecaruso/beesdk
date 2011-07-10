@@ -150,7 +150,6 @@
       </Unit5>
       <Unit6>
         <Filename Value="bee.include\compiler.inc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -173,6 +172,7 @@
       <Unit8>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="100"/>
