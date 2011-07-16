@@ -129,10 +129,11 @@
       <Unit4>
         <Filename Value="bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="317"/>
-        <CursorPos X="1" Y="336"/>
+        <TopLine Value="443"/>
+        <CursorPos X="5" Y="490"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -142,8 +143,8 @@
         <UnitName Value="Bee_RangeCoder"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="36"/>
+        <CursorPos X="37" Y="163"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -172,17 +173,16 @@
       <Unit8>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="100"/>
-        <CursorPos X="41" Y="125"/>
+        <TopLine Value="1046"/>
+        <CursorPos X="49" Y="1057"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="bee.dpr"/>
         <Caret Line="193" Column="23" TopLine="155"/>
@@ -299,6 +299,10 @@
         <Filename Value="bee_modeller.pas"/>
         <Caret Line="316" Column="3" TopLine="292"/>
       </Position29>
+      <Position30>
+        <Filename Value="bee_modeller.pas"/>
+        <Caret Line="336" Column="1" TopLine="20"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
