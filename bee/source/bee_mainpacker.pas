@@ -152,7 +152,7 @@ uses
     // optimize compression ...
     if Item.PackedSize > Item.Size then
     begin
-       Strm.Seek(StartPos, soBeginning);
+      Strm.Seek(StartPos, soBeginning);
       FStrm.Size := Item.StartPos;
 
       Include(Item.Flags, foMoved);
