@@ -41,7 +41,10 @@ uses
 const
   DefaultUserAbortEventStepSize: longint  = $FFFF;
   DefaultDictionaryLevel:        longword = $0002;
-  // DefaultTableParameters:   TTableParameters = ();
+  DefaultTableParameters: TTableParameters =
+    (  3, 163, 157,  65,  93, 117, 135, 109, 126, 252, 172, 252, 152, 227, 249,
+     249, 253, 196,  27,  82,  93,  74, 182, 245,  40,  67,  77, 143, 133, 135,
+     128, 155, 207, 177, 225, 251, 253, 248,  73,  35,  15, 107, 143);
 
 type
   { TUserAbortEvent event }
@@ -123,7 +126,13 @@ begin
 end;
 
 procedure TStreamCoder.SetTableParameters(const Value: TTableParameters);
+var
+  I: longint;
 begin
+  // -- DEBUG --
+  // for I := Low(Value) to High(Value) do
+  //   System.Writeln(Value[I],', ');
+  // -- END --
   FTableParameters := Value;
   FPPM.SetTable(Value);
 end;
