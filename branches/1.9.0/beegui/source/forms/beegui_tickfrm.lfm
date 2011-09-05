@@ -1,0 +1,486 @@
+object TickFrm: TTickFrm
+  Left = 328
+  Height = 386
+  Top = 158
+  Width = 571
+  Caption = '0% Processing...'
+  ClientHeight = 386
+  ClientWidth = 571
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  ShowInTaskBar = stAlways
+  LCLVersion = '0.9.31'
+  object BtnCancel: TBitBtn
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 485
+    Height = 26
+    Top = 354
+    Width = 80
+    Anchors = [akRight, akBottom]
+    AutoSize = True
+    BorderSpacing.Around = 6
+    Cancel = True
+    Caption = 'Blocca'
+    Constraints.MinWidth = 80
+    Default = True
+    Kind = bkAbort
+    ModalResult = 3
+    NumGlyphs = 0
+    OnClick = BtnCancelClick
+    TabOrder = 0
+  end
+  object BtnPriority: TBitBtn
+    AnchorSideTop.Control = BtnCancel
+    AnchorSideRight.Control = BtnPauseRun
+    AnchorSideBottom.Control = BtnCancel
+    AnchorSideBottom.Side = asrBottom
+    Left = 318
+    Height = 26
+    Top = 354
+    Width = 80
+    Anchors = [akTop, akRight, akBottom]
+    AutoSize = True
+    BorderSpacing.Left = 6
+    BorderSpacing.Right = 6
+    Caption = 'Priority'
+    Constraints.MinWidth = 80
+    Glyph.Data = {
+      46020000424D460200000000000036000000280000000F0000000B0000000100
+      18000000000010020000C40E0000C40E00000000000000000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00
+      0000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FF000000000000000000FF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FFFF00FF00000000000000
+      0000000000000000FF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FF
+      FF00FFFF00FF000000000000000000000000000000000000000000FF00FFFF00
+      FFFF00FFFF00FF000000FF00FFFF00FFFF00FF00000000000000000000000000
+      0000000000000000000000000000FF00FFFF00FFFF00FF000000FF00FFFF00FF
+      0000000000000000000000000000000000000000000000000000000000000000
+      00FF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FF
+      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FF000000
+    }
+    Layout = blGlyphRight
+    NumGlyphs = 0
+    OnClick = BtnPriorityClick
+    PopupMenu = Popup
+    Spacing = 5
+    TabOrder = 2
+  end
+  object BtnPauseRun: TBitBtn
+    AnchorSideTop.Control = BtnCancel
+    AnchorSideRight.Control = BtnCancel
+    AnchorSideBottom.Control = BtnCancel
+    AnchorSideBottom.Side = asrBottom
+    Left = 404
+    Height = 26
+    Top = 354
+    Width = 75
+    Anchors = [akTop, akRight, akBottom]
+    AutoSize = True
+    BorderSpacing.Left = 6
+    BorderSpacing.Right = 6
+    Caption = 'Pause'
+    Constraints.MinWidth = 75
+    NumGlyphs = 0
+    OnClick = BtnPauseRunClick
+    TabOrder = 1
+  end
+  object BtnSave: TBitBtn
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = BtnCancel
+    AnchorSideBottom.Control = BtnCancel
+    AnchorSideBottom.Side = asrBottom
+    Left = 6
+    Height = 26
+    Top = 354
+    Width = 75
+    Anchors = [akTop, akLeft, akBottom]
+    AutoSize = True
+    BorderSpacing.Left = 6
+    BorderSpacing.Right = 6
+    Caption = ' Save'
+    Constraints.MinWidth = 75
+    NumGlyphs = 0
+    OnClick = BtnSaveClick
+    TabOrder = 4
+  end
+  object BtnFont: TBitBtn
+    AnchorSideLeft.Control = BtnSave
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = BtnCancel
+    AnchorSideBottom.Control = BtnCancel
+    AnchorSideBottom.Side = asrBottom
+    Left = 87
+    Height = 26
+    Top = 354
+    Width = 75
+    Anchors = [akTop, akLeft, akBottom]
+    AutoSize = True
+    BorderSpacing.Left = 6
+    BorderSpacing.Right = 6
+    Caption = 'Font'
+    Constraints.MinWidth = 75
+    NumGlyphs = 0
+    OnClick = BtnFontClick
+    TabOrder = 3
+  end
+  object GeneralPanel: TPanel
+    Left = 24
+    Height = 128
+    Top = 24
+    Width = 433
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
+    ClientHeight = 128
+    ClientWidth = 433
+    TabOrder = 5
+    object RemainingTime: TLabel
+      AnchorSideLeft.Control = ElapsedTimeLabel
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = RemainingTimeLabel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = RemainingTimeLabel
+      AnchorSideBottom.Side = asrBottom
+      Left = 127
+      Height = 14
+      Top = 24
+      Width = 45
+      Anchors = [akTop, akLeft, akBottom]
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 10
+      Caption = '00:00:00'
+      Color = clBtnFace
+      Layout = tlBottom
+      ParentColor = False
+      Transparent = False
+    end
+    object ElapsedTime: TLabel
+      AnchorSideLeft.Control = ElapsedTimeLabel
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = ElapsedTimeLabel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = ElapsedTimeLabel
+      AnchorSideBottom.Side = asrBottom
+      Left = 127
+      Height = 14
+      Top = 8
+      Width = 45
+      Alignment = taCenter
+      Anchors = [akTop, akLeft, akBottom]
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 20
+      Caption = '00:00:00'
+      Color = clBtnFace
+      Layout = tlBottom
+      ParentColor = False
+      Transparent = False
+    end
+    object ElapsedTimeLabel: TLabel
+      AnchorSideLeft.Control = GeneralPanel
+      AnchorSideTop.Control = GeneralPanel
+      AnchorSideRight.Side = asrBottom
+      Left = 8
+      Height = 14
+      Top = 8
+      Width = 99
+      BorderSpacing.Left = 6
+      BorderSpacing.Top = 6
+      BorderSpacing.Right = 1
+      BorderSpacing.Bottom = 2
+      Caption = 'Time elapsed:####'
+      Color = clBtnFace
+      Layout = tlBottom
+      ParentColor = False
+      Transparent = False
+    end
+    object RemainingTimeLabel: TLabel
+      AnchorSideLeft.Control = GeneralPanel
+      AnchorSideTop.Control = ElapsedTimeLabel
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Side = asrBottom
+      Left = 8
+      Height = 14
+      Top = 24
+      Width = 77
+      BorderSpacing.Left = 6
+      BorderSpacing.Top = 2
+      BorderSpacing.Right = 6
+      BorderSpacing.Bottom = 2
+      Caption = 'Remaining time:'
+      Color = clBtnFace
+      Layout = tlBottom
+      ParentColor = False
+      Transparent = False
+    end
+    object GeneralSizeLabel: TLabel
+      AnchorSideLeft.Control = ElapsedTime
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = GeneralPanel
+      AnchorSideRight.Control = GeneralSize
+      Left = 207
+      Height = 14
+      Top = 8
+      Width = 90
+      Anchors = [akTop, akRight]
+      BorderSpacing.Left = 30
+      BorderSpacing.Top = 6
+      BorderSpacing.Right = 20
+      BorderSpacing.Bottom = 2
+      Caption = 'Total size:#####'
+      Color = clBtnFace
+      Layout = tlBottom
+      ParentColor = False
+      Transparent = False
+    end
+    object ProcessedSizeLabel: TLabel
+      AnchorSideLeft.Control = GeneralSizeLabel
+      AnchorSideTop.Control = GeneralSizeLabel
+      AnchorSideTop.Side = asrBottom
+      Left = 207
+      Height = 14
+      Top = 24
+      Width = 75
+      BorderSpacing.Top = 2
+      BorderSpacing.Bottom = 2
+      Caption = 'Processed size:'
+      Color = clBtnFace
+      Layout = tlBottom
+      ParentColor = False
+      Transparent = False
+    end
+    object SpeedLabel: TLabel
+      AnchorSideLeft.Control = ProcessedSizeLabel
+      AnchorSideTop.Control = ProcessedSizeLabel
+      AnchorSideTop.Side = asrBottom
+      Left = 207
+      Height = 14
+      Top = 40
+      Width = 35
+      BorderSpacing.Top = 2
+      BorderSpacing.Bottom = 2
+      Caption = 'Speed:'
+      Color = clBtnFace
+      ParentColor = False
+      Transparent = False
+    end
+    object GeneralSize: TLabel
+      AnchorSideLeft.Control = GeneralSizeLabel
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = GeneralSizeLabel
+      AnchorSideRight.Control = GeneralSizeUnit
+      AnchorSideBottom.Control = GeneralSizeLabel
+      AnchorSideBottom.Side = asrBottom
+      Left = 317
+      Height = 14
+      Top = 8
+      Width = 50
+      Alignment = taRightJustify
+      Anchors = [akTop, akRight, akBottom]
+      BorderSpacing.Left = 15
+      BorderSpacing.Right = 25
+      Caption = '---'
+      Color = clBtnFace
+      Constraints.MinWidth = 50
+      ParentColor = False
+      Transparent = False
+    end
+    object ProcessedSize: TLabel
+      AnchorSideLeft.Control = GeneralSize
+      AnchorSideTop.Control = ProcessedSizeLabel
+      AnchorSideRight.Control = GeneralSize
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = ProcessedSizeLabel
+      AnchorSideBottom.Side = asrBottom
+      Left = 317
+      Height = 14
+      Top = 24
+      Width = 50
+      Alignment = taRightJustify
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      Caption = '---'
+      Color = clBtnFace
+      Constraints.MinWidth = 50
+      ParentColor = False
+      Transparent = False
+    end
+    object Speed: TLabel
+      AnchorSideLeft.Control = GeneralSize
+      AnchorSideTop.Control = SpeedLabel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = SpeedLabel
+      AnchorSideBottom.Side = asrBottom
+      Left = 317
+      Height = 14
+      Top = 40
+      Width = 50
+      Alignment = taRightJustify
+      Anchors = [akTop, akLeft, akBottom]
+      Caption = '---'
+      Color = clBtnFace
+      Constraints.MinWidth = 50
+      ParentColor = False
+      Transparent = False
+    end
+    object SpeedUnit: TLabel
+      AnchorSideLeft.Control = GeneralSizeUnit
+      AnchorSideTop.Control = Speed
+      AnchorSideRight.Control = GeneralPanel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Speed
+      AnchorSideBottom.Side = asrBottom
+      Left = 392
+      Height = 14
+      Top = 40
+      Width = 33
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Right = 6
+      Caption = 'KB/s'
+      Color = clBtnFace
+      ParentColor = False
+      Transparent = False
+    end
+    object ProcessedSizeUnit: TLabel
+      AnchorSideLeft.Control = GeneralSizeUnit
+      AnchorSideTop.Control = ProcessedSize
+      AnchorSideRight.Control = GeneralPanel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = ProcessedSize
+      AnchorSideBottom.Side = asrBottom
+      Left = 392
+      Height = 14
+      Top = 24
+      Width = 29
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Right = 10
+      Caption = 'KB'
+      Color = clBtnFace
+      ParentColor = False
+      Transparent = False
+    end
+    object GeneralSizeUnit: TLabel
+      AnchorSideTop.Control = GeneralSize
+      AnchorSideRight.Control = GeneralPanel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = GeneralSize
+      AnchorSideBottom.Side = asrBottom
+      Left = 392
+      Height = 14
+      Top = 8
+      Width = 29
+      Anchors = [akTop, akRight, akBottom]
+      BorderSpacing.Right = 10
+      Caption = 'KB##'
+      Color = clBtnFace
+      ParentColor = False
+      Transparent = False
+    end
+    object Msg: TLabel
+      Left = 8
+      Height = 18
+      Top = 76
+      Width = 417
+      Align = alBottom
+      BorderSpacing.Left = 6
+      BorderSpacing.Top = 2
+      BorderSpacing.Right = 6
+      BorderSpacing.Bottom = 2
+      Caption = '...'
+      Color = clBtnFace
+      Constraints.MaxHeight = 18
+      Constraints.MinHeight = 18
+      Layout = tlBottom
+      ParentColor = False
+      Transparent = False
+    end
+    object Tick: TProgressBar
+      Left = 8
+      Height = 20
+      Top = 100
+      Width = 417
+      Align = alBottom
+      BorderSpacing.Around = 6
+      Constraints.MaxHeight = 20
+      Constraints.MinHeight = 20
+      TabOrder = 0
+    end
+  end
+  object Bevel: TBevel
+    AnchorSideLeft.Control = BtnSave
+    AnchorSideRight.Control = BtnCancel
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = BtnCancel
+    Left = 6
+    Height = 2
+    Top = 342
+    Width = 559
+    Anchors = [akLeft, akRight, akBottom]
+    BorderSpacing.Bottom = 10
+  end
+  object Report: TMemo
+    Left = 24
+    Height = 106
+    Top = 160
+    Width = 433
+    Anchors = []
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 6
+    WordWrap = False
+  end
+  object Timer: TIdleTimer
+    Enabled = False
+    Interval = 250
+    OnTimer = OnTimer
+    left = 496
+    top = 32
+  end
+  object SaveDialog: TSaveDialog
+    Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
+    left = 496
+    top = 88
+  end
+  object FontDialog: TFontDialog
+    MinFontSize = 0
+    MaxFontSize = 0
+    left = 496
+    top = 144
+  end
+  object Popup: TPopupMenu
+    AutoPopup = False
+    left = 496
+    top = 200
+    object Popup_Idle: TMenuItem
+      Caption = 'Idle'
+      ShortCut = 16432
+      OnClick = PopupClick
+    end
+    object Popup_Normal: TMenuItem
+      Caption = 'Normal'
+      ShortCut = 16433
+      OnClick = PopupClick
+    end
+    object Popup_Higher: TMenuItem
+      Caption = 'Higher'
+      ShortCut = 16434
+      OnClick = PopupClick
+    end
+    object Popup_TimeCritical: TMenuItem
+      Caption = 'Time critical'
+      ShortCut = 16435
+      OnClick = PopupClick
+    end
+  end
+end
