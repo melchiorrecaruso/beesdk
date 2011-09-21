@@ -47,6 +47,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="True"/>
+              <DebugInfoType Value="dsStabs"/>
             </Debugging>
             <LinkSmart Value="True"/>
           </Linking>
@@ -60,7 +61,7 @@
             </CompilerMessages>
             <CompilerPath Value="$(CompPath)"/>
             <ExecuteAfter>
-              <CompileReasons Compile="False" Build="False" Run="False"/>
+              <CompileReasons Run="False" Build="False" Compile="False"/>
             </ExecuteAfter>
           </Other>
         </CompilerOptions>
@@ -98,12 +99,11 @@
         <Filename Value="bee_streamcoder.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee_StreamCoder"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="108"/>
         <CursorPos X="7" Y="134"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="110"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
@@ -123,7 +123,7 @@
         <UnitName Value="Bee_Codec"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="22"/>
+        <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
@@ -134,7 +134,7 @@
         <UnitName Value="Bee_Modeller"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="443"/>
+        <TopLine Value="440"/>
         <CursorPos X="5" Y="490"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
@@ -145,7 +145,7 @@
         <UnitName Value="Bee_RangeCoder"/>
         <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="36"/>
+        <TopLine Value="85"/>
         <CursorPos X="37" Y="163"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
@@ -199,7 +199,7 @@
         <UnitName Value="Bee_Headers"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="845"/>
+        <TopLine Value="1"/>
         <CursorPos X="22" Y="75"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -208,9 +208,10 @@
       <Unit11>
         <Filename Value="bee_configuration.pas"/>
         <UnitName Value="Bee_Configuration"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="88"/>
+        <TopLine Value="36"/>
         <CursorPos X="55" Y="36"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
@@ -221,7 +222,7 @@
         <UnitName Value="Bee_Consts"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="68"/>
+        <TopLine Value="64"/>
         <CursorPos X="3" Y="109"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -377,6 +378,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <DebugInfoType Value="dsAuto"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
       <LinkSmart Value="True"/>
@@ -391,7 +393,7 @@
       </CompilerMessages>
       <CompilerPath Value="$(CompPath)"/>
       <ExecuteAfter>
-        <CompileReasons Compile="False" Build="False" Run="False"/>
+        <CompileReasons Run="False" Build="False" Compile="False"/>
       </ExecuteAfter>
     </Other>
   </CompilerOptions>
