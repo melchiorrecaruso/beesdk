@@ -1373,4 +1373,4 @@ Description of history of the Bee:
   [*] Bee_Interface.pas, significant source code rearrangement performed; 
   [*] Bee_Headers, added support for 64bits filesize, significant source code rearrangement performed.
 
-  v0.8.0 build 1040 maked.
+  v0.8.0 build 1041 maked.
