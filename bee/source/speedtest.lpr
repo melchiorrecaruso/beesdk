@@ -103,12 +103,13 @@ begin
     begin
       Output.Write(Symbol, 1);
       E.Update(Symbol);
-      if E.Count = 4 * 1024 then
-      begin
-        // Writeln('Count = ', E.Count);
-        Write(' ', E.Entropy:2:4,' ');
-      end;
+      //if E.Count = 4 * 1024 then
+      //begin
+      //  // Writeln('Count = ', E.Count);
+      //  Write(' ', E.Entropy:2:4,' ');
+      //end;
     end;
+    Write(' ', E.Entropy:2:4,' ');
     E.Free;
 
     Output.Free;
