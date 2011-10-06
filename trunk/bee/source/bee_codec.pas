@@ -94,6 +94,8 @@ end;
 
 function TSecondaryEncoder.UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
 begin
+  Writeln('UpdateSymbol-1'); Readln;
+
   if aSymbol = 0 then
     Encode(0, Freq0, Freq0 + Freq1)
   else

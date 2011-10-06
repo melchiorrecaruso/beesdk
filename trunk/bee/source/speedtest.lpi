@@ -1,24 +1,25 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
-    <Version Value="7"/>
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasTitleStatement Value="False"/>
-        <UseDefaultCompilerOptions Value="True"/>
       </Flags>
       <MainUnit Value="0"/>
-      <TargetFileExt Value=".exe"/>
       <UseAppBundle Value="False"/>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <Language Value=""/>
       <CharSet Value=""/>
-      <StringTable Comments="" CompanyName="" FileDescription="" FileVersion="0.0.0.0" InternalName="" LegalCopyright="" LegalTrademarks="" OriginalFilename="" ProductName="" ProductVersion=""/>
+      <StringTable ProductVersion=""/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <IgnoreBinaries Value="False"/>
@@ -41,10 +42,11 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="75"/>
-        <CursorPos X="29" Y="104"/>
+        <TopLine Value="78"/>
+        <CursorPos X="5" Y="111"/>
         <UsageCount Value="67"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -70,12 +72,14 @@
         <TopLine Value="1"/>
         <CursorPos X="10" Y="28"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
         <Filename Value="C:\Programmi\FPC\2.4.0\source\fpcsrc\rtl\objpas\sysutils\filutilh.inc"/>
         <TopLine Value="55"/>
         <CursorPos X="25" Y="87"/>
         <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="bee_files.pas"/>
@@ -101,6 +105,7 @@
         <TopLine Value="716"/>
         <CursorPos X="14" Y="736"/>
         <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
         <Filename Value="C:\Programmi\FPC\2.4.0\source\fpcsrc\rtl\objpas\classes\streams.inc"/>
@@ -108,13 +113,14 @@
         <TopLine Value="793"/>
         <CursorPos X="47" Y="804"/>
         <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
         <Filename Value="bee.include\compiler.inc"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="C:\Programmi\FPC\2.4.0\source\fpcsrc\rtl\inc\systemh.inc"/>
@@ -122,6 +128,7 @@
         <TopLine Value="499"/>
         <CursorPos X="11" Y="515"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
         <Filename Value="bufstream_new.pas"/>
@@ -147,6 +154,7 @@
         <TopLine Value="1"/>
         <CursorPos X="21" Y="27"/>
         <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="C:\Programmi\FPC\2.4.0\source\fpcsrc\packages\fcl-base\src\bufstream.pp"/>
@@ -155,6 +163,7 @@
         <TopLine Value="88"/>
         <CursorPos X="26" Y="110"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="bee_modeller.pas"/>
@@ -171,6 +180,7 @@
         <TopLine Value="158"/>
         <CursorPos X="8" Y="170"/>
         <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
         <Filename Value="C:\Programmi\FPC\2.4.0\source\fpcsrc\rtl\inc\heaph.inc"/>
@@ -178,6 +188,7 @@
         <TopLine Value="50"/>
         <CursorPos X="10" Y="94"/>
         <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
         <Filename Value="bee_bufstream.pas"/>
@@ -216,6 +227,7 @@
         <TopLine Value="2000"/>
         <CursorPos X="3" Y="2005"/>
         <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
         <Filename Value="C:\Programmi\FPC\2.4.0\source\fpcsrc\packages\fcl-base\src\blowfish.pp"/>
@@ -224,6 +236,7 @@
         <TopLine Value="654"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
         <Filename Value="bee_blowfish.pas"/>
@@ -355,10 +368,10 @@
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="8"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="bee.include\"/>
+      <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
       <UnitOutputDirectory Value="..\distribution"/>
     </SearchPaths>
     <Parsing>
@@ -367,7 +380,6 @@
         <CStyleOperator Value="False"/>
         <AllowLabel Value="False"/>
         <CPPInline Value="False"/>
-        <UseAnsiStrings Value="True"/>
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
@@ -379,9 +391,16 @@
       </Optimizations>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="True"/>
+        <DebugInfoType Value="dsAuto"/>
+      </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
     <Other>
+      <CompilerMessages>
+        <UseMsgFile Value="True"/>
+      </CompilerMessages>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>

@@ -46,6 +46,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <DebugInfoType Value="dsAuto"/>
               <UseLineInfoUnit Value="False"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -76,7 +77,6 @@
         <Filename Value="beeopt.dpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beeopt"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="26"/>
@@ -92,9 +92,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeOpt_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="118"/>
+        <TopLine Value="573"/>
         <CursorPos X="26" Y="110"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
@@ -341,6 +342,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <DebugInfoType Value="dsAuto"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>
       <LinkSmart Value="True"/>
