@@ -34,6 +34,8 @@ var
   Output: TStream;
   InputBuff: TStream;
   OutputBuff: TStream;
+
+
   E: TEntroper;
 
 
@@ -76,7 +78,8 @@ begin
     OutputBuff := TWriteBufStream.Create(Output);
     TWriteBufStream(InputBuff).Capacity := 128;
 
-    while InputBuff.Read(Symbol, 1) = 1 do
+    Writeln('SCRITTURA');
+    while InputBuff.Read(Symbol, 1) <> 0 do
     begin
       OutputBuff.Write(Symbol, 1);
     end;
@@ -91,6 +94,8 @@ begin
 end;
 
 procedure Copy3;
+var
+  I: cardinal;
 begin
   X := Now;
   if FileExists(ParamStr(1)) then
@@ -98,19 +103,11 @@ begin
     Input      := TFileReader.Create(ParamStr(1), fmOpenRead);
     Output     := TFileWriter.Create(ParamStr(2), fmCreate);
 
-    E := TEntroper.Create;
-    while TFileReader(Input).Read(Symbol, 1) = 1 do
+    Writeln('SCRITTURA');
+    while  Input.Read(I, SizeOf(I)) <> 0 do
     begin
-      Output.Write(Symbol, 1);
-      E.Update(Symbol);
-      //if E.Count = 4 * 1024 then
-      //begin
-      //  // Writeln('Count = ', E.Count);
-      //  Write(' ', E.Entropy:2:4,' ');
-      //end;
+      Output.Write(I, SizeOf(I));
     end;
-    Write(' ', E.Entropy:2:4,' ');
-    E.Free;
 
     Output.Free;
     Input.Free;
@@ -120,7 +117,7 @@ end;
 
 
 begin
-  // Copy1;
   Copy3;
+  Copy1;
 end.
 

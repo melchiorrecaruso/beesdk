@@ -81,7 +81,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="bee.dpr"/>
         <IsPartOfProject Value="True"/>
@@ -99,41 +99,67 @@
         <Filename Value="bee_streamcoder.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee_StreamCoder"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="108"/>
-        <CursorPos X="7" Y="134"/>
+        <TopLine Value="186"/>
+        <CursorPos X="25" Y="32"/>
         <UsageCount Value="110"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
-        <Filename Value="bee_codec.pas"/>
-        <UnitName Value="Bee_Codec"/>
-        <IsVisibleTab Value="True"/>
+        <Filename Value="bee_app.pas"/>
+        <UnitName Value="Bee_App"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="136"/>
-        <CursorPos X="39" Y="103"/>
-        <UsageCount Value="18"/>
+        <TopLine Value="716"/>
+        <CursorPos X="47" Y="732"/>
+        <FoldState Value=" T3jY0X3g"/>
+        <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
-        <Filename Value="bee_rangecoder.pas"/>
-        <UnitName Value="Bee_RangeCoder"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <UnitName Value="Bee_MainPacker"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="58"/>
-        <CursorPos X="37" Y="163"/>
-        <UsageCount Value="18"/>
+        <TopLine Value="35"/>
+        <CursorPos X="32" Y="43"/>
+        <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="bee_headers.pas"/>
+        <UnitName Value="Bee_Headers"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="64"/>
+        <CursorPos X="59" Y="114"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit4>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
+    <JumpHistory Count="4" HistoryIndex="3">
       <Position1>
         <Filename Value="bee.dpr"/>
         <Caret Line="125" Column="44" TopLine="92"/>
       </Position1>
+      <Position2>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="163" Column="1" TopLine="190"/>
+      </Position2>
+      <Position3>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="43" Column="32" TopLine="35"/>
+      </Position3>
+      <Position4>
+        <Filename Value="bee_streamcoder.pas"/>
+        <Caret Line="38" Column="7" TopLine="24"/>
+      </Position4>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
