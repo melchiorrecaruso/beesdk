@@ -71,6 +71,7 @@ type
     procedure FreshFlexible;
     function Read(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
     function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; virtual; abstract;
+    function Write2(Strm: TStream; const Size: int64): int64; virtual; abstract;
     property DictionaryLevel: longword read FDictionaryLevel write SetDictionaryLevel;
     property TableParameters: TTableParameters read FTableParameters write SetTableParameters;
     property OnUserAbortEvent: TUserAbortEvent read FOnUserAbortEvent write FOnUserAbortEvent;
@@ -84,6 +85,7 @@ type
     destructor Destroy; override;
     function Read (Strm: TStream; const Size: int64; var CRC: longword): int64; override;
     function Write(Strm: TStream; const Size: int64; var CRC: longword): int64; override;
+    function Write2(Strm: TStream; const Size: int64): int64; override;
   end;
 
   { TStreamDecoder class }
@@ -176,6 +178,23 @@ begin
   begin
     FPPM.UpdateModel(Symbol);
     UpdCrc32(CRC, Symbol);
+    Inc(Result);
+    if (Result and DefaultUserAbortEventStepSize = 0)
+      and Assigned(FOnUserAbortEvent)
+        and FOnUserAbortEvent then Break;
+  end;
+  FSecondaryCodec.Flush;
+end;
+
+function TStreamEncoder.Write2(Strm: TStream; const Size: int64): int64;
+var
+  Symbol: byte;
+begin
+  Result := 0;
+  FSecondaryCodec.Start;
+  while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+  begin
+    FPPM.UpdateModel(Symbol);
     Inc(Result);
     if (Result and DefaultUserAbortEventStepSize = 0)
       and Assigned(FOnUserAbortEvent)
