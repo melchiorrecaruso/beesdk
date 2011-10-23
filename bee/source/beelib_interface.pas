@@ -19,7 +19,6 @@
 { Contains:
 
   Modifyed:
-
 }
 
 unit BeeLib_Interface;
