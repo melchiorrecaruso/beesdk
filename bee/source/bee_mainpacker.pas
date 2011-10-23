@@ -34,15 +34,15 @@ interface
 uses
   Classes,
   SysUtils,
+  // ---
   Bee_Headers,
-  BeeLib_Types,
-
-
   // {$IFDEF USECDLL}
-  //  BeeLib_Link;
+  //  BeeLib_Link,
   //{$ELSE}
-  BeeLib_StreamCoder;
+  BeeLib_StreamCoder,
   //{$ENDIF}
+  BeeLib_Interface;
+
 
 type
   { THeaderCoder class }

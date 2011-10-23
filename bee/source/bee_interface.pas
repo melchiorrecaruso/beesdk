@@ -38,8 +38,7 @@ uses
   Bee_Types,
   Bee_Consts,
   Bee_Common,
-  Bee_Headers,
-  BeeLib_Types;
+  Bee_Headers;
 
 type
   { TApp class }
@@ -103,6 +102,9 @@ type
 implementation
 
 uses
+  BeeLib_Configuration,
+  BeeLib_Interface,
+
   DateUtils,
   SysUtils;
 

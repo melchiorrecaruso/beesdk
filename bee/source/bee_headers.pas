@@ -43,7 +43,7 @@ uses
   Bee_Types,
   Bee_CommandLine,
   Bee_Configuration,
-  BeeLib_Types;
+  BeeLib_Configuration;
 
 type
 
