@@ -147,8 +147,8 @@
         <UnitName Value="Bee_Interface"/>
         <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="85"/>
-        <CursorPos X="20" Y="106"/>
+        <TopLine Value="36"/>
+        <CursorPos X="14" Y="83"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -156,10 +156,11 @@
       <Unit6>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="106"/>
+        <CursorPos X="41" Y="126"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -222,11 +223,10 @@
       <Unit12>
         <Filename Value="bee_liblink.pas"/>
         <UnitName Value="BeeLib_Link"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="22"/>
-        <CursorPos X="1" Y="1"/>
+        <CursorPos X="40" Y="32"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -236,7 +236,7 @@
         <UnitName Value="Bee_MainPacker"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="19"/>
+        <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -258,14 +258,14 @@
         <UnitName Value="Bee_Types"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="4"/>
+        <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
     </Units>
-    <JumpHistory Count="19" HistoryIndex="18">
+    <JumpHistory Count="22" HistoryIndex="21">
       <Position1>
         <Filename Value="bee.lpr"/>
         <Caret Line="169" Column="1" TopLine="128"/>
@@ -342,6 +342,18 @@
         <Filename Value="bee_mainpacker.pas"/>
         <Caret Line="40" Column="19" TopLine="24"/>
       </Position19>
+      <Position20>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="32" Column="32" TopLine="76"/>
+      </Position20>
+      <Position21>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position21>
+      <Position22>
+        <Filename Value="bee_interface.pas"/>
+        <Caret Line="106" Column="20" TopLine="85"/>
+      </Position22>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
