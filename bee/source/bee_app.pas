@@ -98,7 +98,9 @@ uses
   Math,
   SysUtils,
   Bee_Consts,
-  Bee_MainPacker;
+  Bee_MainPacker,
+  BeeLib_Link,
+  BeeLib_Assembler;
 
 { help functions }
 
@@ -122,7 +124,7 @@ constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1326 archiver utility, July 2011' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1341 archiver utility, July 2011' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders    := nil;
@@ -235,9 +237,8 @@ begin
 
     // test item ...
     DoMessage(Format(cmChecking, [Item.Name]));
-    Decoder := THeaderDecoder.Create(FArchReader);
+    Decoder := THeaderDecoder.Create(FArchReader, @DoFill, @DoFlush, Self, @DoTick);
     Decoder.Password := FCommandLine.pOption;
-    Decoder.OnUserAbortEvent := DoUserAbort;
 
     for I := 0 to Smaller do
       Decoder.Initialize(FHeaders.Items[I]);
@@ -299,9 +300,9 @@ begin
     FSwapWriter := CreateTFileWriter(FSwapName, fmCreate);
     if Assigned(FSwapWriter) then
     begin
-      Decoder := THeaderDecoder.Create(FArchReader);
+      Decoder := THeaderDecoder.Create(FArchReader, @DoFill, @DoFlush, Self, @DoTick);
       Decoder.Password := FCommandLine.pOption;
-      Decoder.OnUserAbortEvent := DoUserAbort;
+      Decoder.OnTickEvent := @DoTick;
 
       for I := 0 to FHeaders.Count - 1 do
         if Code < ccError then
@@ -720,9 +721,8 @@ begin
       if OpenSwapFile < ccError then
       begin
         FHeaders.Write(FTempWriter);
-        Encoder := THeaderEncoder.Create(FTempWriter);
+        Encoder := THeaderEncoder.Create(FTempWriter, @DoFill, @DoFlush, Self, @DoTick);
         Encoder.Password := FCommandLine.pOption;
-        Encoder.OnUserAbortEvent := DoUserAbort;
 
         Check := True;
         for I := 0 to FHeaders.Count - 1 do
@@ -771,9 +771,8 @@ var
 begin
   if (OpenArchive < ccError) and (SetItemsToDecode = TRUE) then
   begin
-    Decoder := THeaderDecoder.Create(FArchReader);
+    Decoder := THeaderDecoder.Create(FArchReader, @DoFill, @DoFlush, Self, @DoTick);
     Decoder.Password := FCommandLine.pOption;
-    Decoder.OnUserAbortEvent := DoUserAbort;
 
     Check := True;
     for I := 0  to FHeaders.Count - 1 do
@@ -815,9 +814,8 @@ var
 begin
   if (OpenArchive < ccError) and (SetItemsToDecode = TRUE) then
   begin
-    Decoder := THeaderDecoder.Create(FArchReader);
+    Decoder := THeaderDecoder.Create(FArchReader, @DoFill,  @DoFlush, Self, @DoTick);
     Decoder.Password := FCommandLine.pOption;
-    Decoder.OnUserAbortEvent := DoUserAbort;
 
     Check := True;
     for I := 0  to FHeaders.Count - 1 do
@@ -877,9 +875,8 @@ begin
         end;
 
         FHeaders.Write(FTempWriter);
-        Encoder := THeaderEncoder.Create(FTempWriter);
+        Encoder := THeaderEncoder.Create(FTempWriter, @DoFill, @DoFlush, Self, @DoTick);
         Encoder.Password := FCommandLine.pOption;
-        Encoder.OnUserAbortEvent := DoUserAbort;
 
         Check := True;
         for I := 0 to FHeaders.Count - 1 do
@@ -927,9 +924,8 @@ begin
     if Assigned(FTempWriter) then
     begin
       FHeaders.Write(FTempWriter);
-      Encoder := THeaderEncoder.Create(FTempWriter);
+      Encoder := THeaderEncoder.Create(FTempWriter, @DoFill, @DoFlush, Self, @DoTick);
       Encoder.Password := FCommandLine.pOption;
-      Encoder.OnUserAbortEvent := DoUserAbort;
 
       Check := True;
       for I := 0 to FHeaders.Count - 1 do

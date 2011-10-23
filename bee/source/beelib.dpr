@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2011 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,54 +30,37 @@ library BeeLib;
 {$I compiler.inc}
 
 uses
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  {$IFDEF UNIX} cThreads, {$ENDIF}
-  Bee_Library;
+  BeeLib_StreamCoder,
+  Beelib_Assembler;
 
- // -------------------------------------------------------------------------- //
- //                                                                            //
- //  Library core routines exported                                            //
- //                                                                            //
- // -------------------------------------------------------------------------- //
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  Library core routines exported                                          //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
+
+function DllVersion: longword;
+begin
+  Result := 107;
+end;
 
 exports
-  LibVersion,
+  DllVersion,
+  CreateEncoder,
+  CreateDecoder,
+  DestroyCoder,
+  SetDictionaryLevel,
+  SetTableParameters,
+  FreshFlexible,
+  FreshSolid,
+  Encode,
+  Decode;
 
-  CoreCreate,
-  CoreDestroy,
-  CoreExecute,
-  CoreSuspend,
-  CoreTerminate,
-
-  CoreSetPriority,
-  CoreGetPriority,
-
-  CoreGetStatus,
-  CoreGetCode,
-  CoreGetSpeed,
-  CoreGetPercentage,
-  CoreGetElapsedTime,
-  CoreGetRemainingTime,
-
-  CoreGetSize,
-  CoreGetProcessedSize,
-
-  CoreGetMessage,
-  CoreGetMessages,
-  CoreGetMessageCount,
-
-  CoreGetItem,
-  CoreGetItems,
-  CoreGetItemCount,
-
-  CoreGetItemPending,
-  CoreSetItemPending;
-
-  // -------------------------------------------------------------------------- //
-  //                                                                            //
-  //  Library main block                                                        //
-  //                                                                            //
-  // -------------------------------------------------------------------------- //
+  // ------------------------------------------------------------------------ //
+  //                                                                          //
+  //  Library main block                                                      //
+  //                                                                          //
+  // ------------------------------------------------------------------------ //
 
 begin
   // initialization code

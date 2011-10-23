@@ -27,7 +27,7 @@
     v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
-unit Bee_Assembler;
+unit BeeLib_Assembler;
 
 {$I compiler.inc}
 
@@ -97,7 +97,7 @@ asm
   MOV     EDI, Dest
 end;
 
-function MulDiv(A, B, C: longword): longword; 
+function MulDiv(A, B, C: longword): longword;
 asm
   MUL     B
   DIV     C

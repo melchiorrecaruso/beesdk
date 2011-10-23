@@ -29,7 +29,7 @@
     v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
-unit Bee_Modeller;
+unit BeeLib_Modeller;
 
 {$I compiler.inc}
 
@@ -37,10 +37,9 @@ interface
 
 uses
   Math,                                 { Max (), Min (), ...                      }
-  Classes,                              { TStream                                  }
-  Bee_Codec,                            { TSecondaryFCodec, ...                    }
-  Bee_Assembler,                        { Low-level routines ...                   }
-  Bee_Configuration;                    { TTable, TTableCol, ...                   }
+  BeeLib_Codec,                         { TSecondaryFCodec, ...                    }
+  BeeLib_Assembler,                     { Low-level routines ...                   }
+  BeeLib_Types;                         { TTable, TTableCol, ...                   }
 
 const
   BitChain  = 4;                        { Size of data portion, bit                }
@@ -377,6 +376,8 @@ begin
     Inc(I);
   until (I = ListCount) or (R <= Part[MaxSymbol + 5]);
   ListCount := I;
+
+  // Writeln('ListCount = ', ListCount);
 end;
 
 function TBaseCoder.Tail(Node: PNode): PNode;
@@ -422,11 +423,20 @@ begin
 
   if ListCount > 0 then Account;
 
+
+
+
   // Update aSymbol...
   AddLongword(Freq[0], MaxSymbol + 1, R shr BitChain + 1);
 
   Symbol := FCodec.UpdateSymbol(Freq, Symbol);
+
+
+
+
   Add(Symbol);
+
+
 
   if ListCount > 0 then
   begin
@@ -469,7 +479,6 @@ begin
   Symbol := aSymbol shr $4;
   Step;
   Result := Symbol shl 4;
-
   Part   := @Table.T[1];
   Symbol := aSymbol and $F;
   Step;
@@ -488,3 +497,4 @@ begin
 end;
 
 end.
+

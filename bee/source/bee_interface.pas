@@ -38,7 +38,8 @@ uses
   Bee_Types,
   Bee_Consts,
   Bee_Common,
-  Bee_Headers;
+  Bee_Headers,
+  BeeLib_Types;
 
 type
   { TApp class }
@@ -60,6 +61,7 @@ type
     procedure SetPriority(Priority: byte);
     procedure SetCode(Code: byte);
     procedure SetTerminated(Value: boolean);
+
     procedure DoMessage(const aMessage: string); overload;
     procedure DoMessage(const aMessage: string; aCode: byte); overload;
     procedure DoRequest(const aMessage: string);
@@ -96,11 +98,20 @@ type
     property Code: byte read FCode write SetCode;
   end;
 
+  function DoTick(Handle: pointer): boolean; {$IFDEF USECDLL} cdecl; {$ENDIF}
+
 implementation
 
 uses
   DateUtils,
   SysUtils;
+
+function DoTick(Handle: pointer): boolean;
+begin
+  Result := TApp(Handle).DoUserAbort;
+end;
+
+
 
 { TApp class }
 
@@ -262,7 +273,7 @@ function TApp.DoUserAbort: boolean;
 var
   X: double;
 begin
-  Inc(FProcessedSize, $FFFF);
+  Inc(FProcessedSize, DefaultTickStepSize);
   begin
     X := Now;
     OnProgress;

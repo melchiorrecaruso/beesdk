@@ -42,7 +42,8 @@ uses
   Bee_Files,
   Bee_Types,
   Bee_CommandLine,
-  Bee_Configuration;
+  Bee_Configuration,
+  BeeLib_Types;
 
 type
 

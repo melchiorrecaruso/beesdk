@@ -36,22 +36,10 @@ interface
 
 uses
   Classes,
-  SysUtils;
-
-const
-  TableSize = 20;
-  TableCols = 2;
+  SysUtils,
+  BeeLib_Types;
 
 type
-  TTableCol = array [0..TableSize] of longword;
-
-  TTable = packed record
-    Level: longword;
-    T: array [0..TableCols - 1] of TTableCol;
-  end;
-
-  TTableParameters = array [1..SizeOf(TTable) div 4] of byte;
-
   TConfigSection = class(TStringList)
   public
     function GetTable(const Ext: string; var T: TTableParameters): boolean;
