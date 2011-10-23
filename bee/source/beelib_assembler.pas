@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2010 Andrew Filinsky
+  Copyright (c) 2003-2011 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,12 +24,10 @@
 
     v0.7.9 build 0383 - 2007.06.27 by Andrew Filinsky;
 
-    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
+    v0.8.0 build 1200 - 2011.10.23 by Melchiorre Caruso.
 }
 
 unit BeeLib_Assembler;
-
-{$I compiler.inc}
 
 interface
 

@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2010 Andrew Filinsky
+  Copyright (c) 1999-2011 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,12 +28,10 @@
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   
-    v0.8.0 build 1400 - 2011.08.04 by Melchiorre Caruso.
+    v0.8.0 build 1400 - 2011.10.23 by Melchiorre Caruso.
 }
 
 unit BeeLib_Codec;
-
-{$I compiler.inc}
 
 interface
 

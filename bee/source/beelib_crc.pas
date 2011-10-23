@@ -23,7 +23,7 @@
     Table is calculated by Sasha Leshinsky.
 
     (C) 1998 Dmitry Auzhin;
-    (C) 1999-2005 Andrew Filinsky.
+    (C) 1999-2010 Andrew Filinsky.
 
   Modifyed:
 
@@ -34,14 +34,12 @@
 
 unit BeeLib_Crc;
 
-{$I compiler.inc}
-
 interface
 
 { Crc32 calculating routines }
 
 procedure UpdCrc32(var aCrc32: longword; aData: byte);
-function UpdateCrc32(const aCrc32: longword; aData: byte): longword;
+function  UpdateCrc32(const aCrc32: longword; aData: byte): longword;
 
 implementation
 

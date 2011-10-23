@@ -28,7 +28,6 @@
 
   (C) 2003 Evgeny Shelwien;
   (C) 2003-2010 Andrew Filinsky.
-  (C) 2010-2011 Melchiorre Caruso.
 
   Created:
 
@@ -48,8 +47,6 @@
 }
 
 unit BeeLib_RangeCoder;
-
-{$I compiler.inc}
 
 interface
 
