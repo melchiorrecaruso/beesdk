@@ -7,7 +7,7 @@
       <Version Value="10"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <UnitOutputDirectory Value="..\temp"/>
+        <UnitOutputDirectory Value="..\distribution"/>
       </SearchPaths>
       <Parsing>
         <SyntaxOptions>

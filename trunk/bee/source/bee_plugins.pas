@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2008-2010 Melchiorre Caruso
+  Copyright (c) 2008-2011 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
     v0.1.40 build 0642 - 2010.01.23 by Melchiorre Caruso.
 }
 
-unit BeeLib_Plugins;
+unit Bee_Plugins;
 
 {$I Compiler.inc}
 
