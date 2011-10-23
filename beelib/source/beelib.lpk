@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="beelib"/>
+    <CompilerOptions>
+      <Version Value="10"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="..\temp"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <SyntaxMode Value="Delphi"/>
+          <CStyleOperator Value="False"/>
+          <AllowLabel Value="False"/>
+          <CPPInline Value="False"/>
+          <UseAnsiStrings Value="False"/>
+        </SyntaxOptions>
+      </Parsing>
+      <CodeGeneration>
+        <SmartLinkUnit Value="True"/>
+        <Optimizations>
+          <VariablesInRegisters Value="True"/>
+          <UncertainOptimizations Value="True"/>
+          <OptimizationLevel Value="3"/>
+        </Optimizations>
+      </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <DebugInfoType Value="dsAuto"/>
+          <UseLineInfoUnit Value="False"/>
+        </Debugging>
+      </Linking>
+      <Other>
+        <CompilerMessages>
+          <UseMsgFile Value="True"/>
+        </CompilerMessages>
+        <CompilerPath Value="$(CompPath)"/>
+      </Other>
+    </CompilerOptions>
+    <Files Count="9">
+      <Item1>
+        <Filename Value="beelib_assembler.pas"/>
+        <UnitName Value="BeeLib_Assembler"/>
+      </Item1>
+      <Item2>
+        <Filename Value="beelib_codec.pas"/>
+        <UnitName Value="BeeLib_Codec"/>
+      </Item2>
+      <Item3>
+        <Filename Value="beelib_configuration.pas"/>
+        <UnitName Value="BeeLib_Configuration"/>
+      </Item3>
+      <Item4>
+        <Filename Value="beelib_crc.pas"/>
+        <UnitName Value="BeeLib_Crc"/>
+      </Item4>
+      <Item5>
+        <Filename Value="beelib_interface.pas"/>
+        <UnitName Value="BeeLib_Interface"/>
+      </Item5>
+      <Item6>
+        <Filename Value="beelib_modeller.pas"/>
+        <UnitName Value="BeeLib_Modeller"/>
+      </Item6>
+      <Item7>
+        <Filename Value="beelib_rangecoder.pas"/>
+        <UnitName Value="BeeLib_RangeCoder"/>
+      </Item7>
+      <Item8>
+        <Filename Value="beelib_stream.pas"/>
+        <UnitName Value="BeeLib_Stream"/>
+      </Item8>
+      <Item9>
+        <Filename Value="beelib_streamcoder.pas"/>
+        <UnitName Value="BeeLib_StreamCoder"/>
+      </Item9>
+    </Files>
+    <Type Value="RunAndDesignTime"/>
+    <RequiredPkgs Count="1">
+      <Item1>
+        <PackageName Value="FCL"/>
+      </Item1>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
