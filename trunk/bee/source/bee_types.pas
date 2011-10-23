@@ -72,7 +72,6 @@ type
 
 
 
-
   { Compression Method Option:                            }
   {   moStore                                             }
   {   moFast                                              }
@@ -106,54 +105,13 @@ type
 
   ThvOption = (hv02, hv03, hv04);
 
-  { PFileInfo record }
 
-  PFileInfo = ^TFileInfo;
 
-  TFileInfo = packed record
-    Name:       PChar;
-    Size:       int64;
-    Time:       longint;
-    Attr:       longint;
-    PackedSize: int64;
-    Comm:       PChar;
-    Crc:        longword;
-    Method:     PChar;
-    Version:    PChar;
-    Password:   PChar;
-    Position:   longint;
-  end;
 
-procedure FreePChar(P: PChar);
-procedure FreePFileInfo(P: Pointer);
+
+
+
 
 implementation
-
-uses
-  SysUtils;
-
-procedure FreePChar(P: PChar);
-begin
-  if P <> nil then
-  begin
-    StrDispose(P);
-  end;
-end;
-
-procedure FreePFileInfo(P: Pointer);
-begin
-  if P <> nil then
-  begin
-    with TFileInfo(P^) do
-    begin
-      if Name     <> nil then StrDispose(Name);
-      if Comm     <> nil then StrDispose(Comm);
-      if Method   <> nil then StrDispose(Method);
-      if Version  <> nil then StrDispose(Version);
-      if Password <> nil then StrDispose(Password);
-    end;
-    FreeMem(P);
-  end;
-end;
 
 end.

@@ -28,20 +28,20 @@
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
   
-    v0.8.0 build 1100 - 2010.01.23 by Melchiorre Caruso.
+    v0.8.0 build 1400 - 2011.08.04 by Melchiorre Caruso.
 }
 
-unit Bee_Codec;
+unit BeeLib_Codec;
 
 {$I compiler.inc}
 
 interface
 
 uses
-  Classes, Bee_RangeCoder;
+  BeeLib_RangeCoder;
 
 const
-  MaxFreq = Bee_RangeCoder.MaxFreq;
+  MaxFreq = BeeLib_RangeCoder.MaxFreq;
 
 type
   { Array of Frequencyes }
@@ -82,20 +82,18 @@ implementation
 
 { TSecondaryEncoder }
 
-procedure TSecondaryEncoder.Start; {$IFDEF FPC} inline; {$ENDIF}
+procedure TSecondaryEncoder.Start;
 begin
   StartEncode;
 end;
 
-procedure TSecondaryEncoder.Flush; {$IFDEF FPC} inline; {$ENDIF}
+procedure TSecondaryEncoder.Flush;
 begin
   FinishEncode;
 end;
 
-function TSecondaryEncoder.UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
+function TSecondaryEncoder.UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword;
 begin
-  Writeln('UpdateSymbol-1'); Readln;
-
   if aSymbol = 0 then
     Encode(0, Freq0, Freq0 + Freq1)
   else
@@ -103,7 +101,7 @@ begin
   Result := aSymbol;
 end;
 
-function TSecondaryEncoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
+function TSecondaryEncoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
 var
   CumFreq, TotFreq, I: longword;
 begin
@@ -130,17 +128,17 @@ end;
 
 { TSecondaryDecoder }
 
-procedure TSecondaryDecoder.Start; {$IFDEF FPC} inline; {$ENDIF}
+procedure TSecondaryDecoder.Start;
 begin
   StartDecode;
 end;
 
-procedure TSecondaryDecoder.Flush; {$IFDEF FPC} inline; {$ENDIF}
+procedure TSecondaryDecoder.Flush;
 begin
   FinishDecode;
 end;
 
-function TSecondaryDecoder.UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
+function TSecondaryDecoder.UpdateSymbol(Freq0, Freq1, aSymbol: longword): longword;
 begin
   if GetFreq(Freq0 + Freq1) < Freq0 then
   begin
@@ -153,7 +151,7 @@ begin
   end;
 end;
 
-function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
+function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
 var
   CumFreq, TotFreq, SumFreq: longword;
 begin

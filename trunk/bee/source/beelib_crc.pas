@@ -32,22 +32,16 @@
     v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
-unit Bee_Crc;
+unit BeeLib_Crc;
 
 {$I compiler.inc}
 
 interface
 
-uses
-  Classes,
-  SysUtils;
-
 { Crc32 calculating routines }
 
 procedure UpdCrc32(var aCrc32: longword; aData: byte);
 function UpdateCrc32(const aCrc32: longword; aData: byte): longword;
-function Crc32File(const aFileName: string): longword;
-function Crc32Str(const aString: string): longword;
 
 implementation
 
@@ -99,47 +93,6 @@ end;
 function UpdateCrc32(const aCrc32: longword; aData: byte): longword; {$IFDEF FPC} inline; {$ENDIF}
 begin
   Result := Crc32Tab[byte(aCrc32 xor aData)] xor (aCrc32 shr 8);
-end;
-
-function Crc32File(const aFileName: string): longword;
-var
-  Stream: TFileStream;
-  Buffer: array [0..$00010000 - 1] of byte;
-  Readed: longint;
-  I:      longint;
-begin
-  Result := longword(-1);
-  try
-    Stream := TFileStream.Create(aFileName, fmOpenRead or fmShareDenyWrite);
-  except
-    Stream := nil;
-  end;
-
-  if Stream <> nil then
-  begin
-    repeat
-      Readed := Stream.Read(Buffer, SizeOf(Buffer));
-      for I := 0 to Readed - 1 do
-      begin
-        Result := UpdateCrc32(Result, Buffer[I]);
-      end;
-    until Readed = 0;
-    Stream.Free;
-  end;
-
-  Result := not Result;
-end;
-
-function Crc32Str(const aString: string): longword; {$IFDEF FPC} inline; {$ENDIF}
-var
-  I: longint;
-begin
-  Result := longword(-1);
-  for I := 1 to Length(aString) do
-  begin
-    Result := UpdateCrc32(Result, Ord(aString[I]));
-  end;
-  Result := not Result;
 end;
 
 end.

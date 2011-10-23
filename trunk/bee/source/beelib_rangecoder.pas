@@ -28,6 +28,7 @@
 
   (C) 2003 Evgeny Shelwien;
   (C) 2003-2010 Andrew Filinsky.
+  (C) 2010-2011 Melchiorre Caruso.
 
   Created:
 
@@ -43,17 +44,18 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-    v0.8.0 build 1100 - 2010.03.21 by Melchiorre Caruso.
+    v0.8.0 build 1100 - 2011.08.02 by Melchiorre Caruso.
 }
 
-unit Bee_RangeCoder;
+unit BeeLib_RangeCoder;
 
 {$I compiler.inc}
 
 interface
 
 uses
-  Classes, Bee_Assembler;
+  BeeLib_Stream,
+  BeeLib_Assembler;
 
 const
   TOP     = 1 shl 24;
@@ -74,10 +76,9 @@ type
     Cache:   longword;
     FFNum:   longword;
     procedure ShiftLow;
-    function InputByte: byte;
-    procedure OutputByte(aValue: byte);
   public
-    constructor Create(aStream: TStream);
+    constructor Create(Stream: TStream);
+    destructor Destroy; override;
     procedure StartEncode;
     procedure StartDecode;
     procedure FinishEncode;
@@ -91,13 +92,19 @@ implementation
 
 { TRangeCoder }
 
-constructor TRangeCoder.Create(aStream: TStream);
+constructor TRangeCoder.Create(Stream: TStream);
 begin
   inherited Create;
-  FStream := aStream;
+  FStream := Stream;
 end;
 
-procedure TRangeCoder.StartEncode; {$IFDEF FPC} inline; {$ENDIF}
+destructor TRangeCoder.Destroy;
+begin
+  FStream := nil;
+  inherited Destroy;
+end;
+
+procedure TRangeCoder.StartEncode;
 begin
   Range := $FFFFFFFF;
   Low   := 0;
@@ -105,28 +112,28 @@ begin
   Carry := 0;
 end;
 
-procedure TRangeCoder.StartDecode; {$IFDEF FPC} inline; {$ENDIF}
+procedure TRangeCoder.StartDecode;
 var
   I: longword;
 begin
   StartEncode;
   for I := 0 to NUM do
-    Code := Code shl 8 + InputByte;
+    Code := Code shl 8 + FStream.Read;
 end;
 
-procedure TRangeCoder.FinishEncode; {$IFDEF FPC} inline; {$ENDIF}
+procedure TRangeCoder.FinishEncode;
 var
   I: longword;
 begin
   for I := 0 to NUM do ShiftLow;
 end;
 
-procedure TRangeCoder.FinishDecode; {$IFDEF FPC} inline; {$ENDIF}
+procedure TRangeCoder.FinishDecode;
 begin
   { nothing to do }
 end;
 
-procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: longword); {$IFDEF FPC} inline; {$ENDIF}
+procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: longword);
 var
   Tmp: longword;
 begin
@@ -141,30 +148,30 @@ begin
   end;
 end;
 
-procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: longword); {$IFDEF FPC} inline; {$ENDIF}
+procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: longword);
 begin
   Code  := Code - MulDiv(Range, CumFreq, TotFreq);
   Range := MulDiv(Range, Freq, TotFreq);
   while Range < TOP do
   begin
-    Code  := Code  shl 8 + InputByte;
+    Code  := Code  shl 8 + FStream.Read;
     Range := Range shl 8;
   end;
 end;
 
-function TRangeCoder.GetFreq(TotFreq: longword): longword; {$IFDEF FPC} inline; {$ENDIF}
+function TRangeCoder.GetFreq(TotFreq: longword): longword;
 begin
   Result := MulDecDiv(Code + 1, TotFreq, Range);
 end;
 
-procedure TRangeCoder.ShiftLow; {$IFDEF FPC} inline; {$ENDIF}
+procedure TRangeCoder.ShiftLow;
 begin
   if (Low < Thres) or (Carry <> 0) then
   begin
-    OutputByte(Cache + Carry);
+    FStream.Write(Cache + Carry);
     while FFNum <> 0 do
     begin
-      OutputByte(Carry - 1);
+      FStream.Write(Carry - 1);
       Dec(FFNum);
     end;
     Cache := Low shr 24;
@@ -173,16 +180,6 @@ begin
     Inc(FFNum);
 
   Low := Low shl 8;
-end;
-
-function TRangeCoder.InputByte: byte; {$IFDEF FPC} inline; {$ENDIF}
-begin
-  FStream.Read(Result, 1);
-end;
-
-procedure TRangeCoder.OutputByte(aValue: byte); {$IFDEF FPC} inline; {$ENDIF}
-begin
-  FStream.Write(aValue, 1);
 end;
 
 end.

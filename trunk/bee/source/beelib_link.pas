@@ -31,6 +31,9 @@ unit BeeLib_Link;
 
 interface
 
+uses
+  BeeLib_Types;
+
 const
   {$IFDEF MSWINDOWS}
     cApplicationLib = 'beelib.dll';
@@ -39,37 +42,21 @@ const
     cApplicationLib = 'beelib.so';
   {$ENDIF}
 
-function LibVersion: longint; external cApplicationLib;
+function  DllVersion: longword; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
 
-function CoreCreate(P: pchar): pointer; external cApplicationLib;
-function CoreExecute(HANDLE: pointer): boolean; external cApplicationLib;
-function CoreSuspend(HANDLE: pointer; VALUE: boolean): boolean; external cApplicationLib;
-function CoreTerminate(HANDLE: pointer): boolean; external cApplicationLib;
-function CoreDestroy(HANDLE: pointer): boolean; external cApplicationLib;
+function  CreateEncoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv: TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+function  CreateDecoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv: TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
 
-function CoreGetStatus(HANDLE: pointer): longint; external cApplicationLib;
-function CoreGetCode(HANDLE: pointer): longint; external cApplicationLib;
-function CoreGetSpeed(HANDLE: pointer): longint; external cApplicationLib;
-function CoreGetPercentage(HANDLE: pointer): longint; external cApplicationLib;
-function CoreGetElapsedTime(HANDLE: pointer): longint; external cApplicationLib;
-function CoreGetRemainingTime(HANDLE: pointer): longint; external cApplicationLib;
+procedure DestroyCoder(Handle: pointer); {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
 
-procedure CoreSetPriority(HANDLE: pointer; VALUE: longint); external cApplicationLib;
-function CoreGetPriority(HANDLE: pointer): longint; external cApplicationLib;
+procedure SetDictionaryLevel(Handle: pointer; Value: longword);               {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+procedure SetTableParameters(Handle: pointer; const Value: TTableParameters); {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
 
-function CoreGetSize(HANDLE: pointer): int64; external cApplicationLib;
-function CoreGetProcessedSize(HANDLE: pointer): int64; external cApplicationLib;
+procedure FreshFlexible(Handle: pointer); {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+procedure FreshSolid(Handle: pointer);    {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
 
-function CoreGetMessage(HANDLE: pointer): pchar; external cApplicationLib;
-function CoreGetMessages(HANDLE: pointer; INDEX: longint): pchar; external cApplicationLib;
-function CoreGetMessageCount(HANDLE: pointer): longint; external cApplicationLib;
-
-function CoreGetItem(HANDLE: pointer): pointer; external cApplicationLib;
-function CoreGetItems(HANDLE: pointer; INDEX: longint): pointer; external cApplicationLib;
-function CoreGetItemCount(HANDLE: pointer): longint; external cApplicationLib;
-
-function CoreGetItemPending(HANDLE: pointer; STATUS: longint): pointer; external cApplicationLib;
-procedure CoreSetItemPending(HANDLE: pointer; STATUS: longint; VALUE: pointer); external cApplicationLib;
+function  Encode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: longword): int64; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+function  Decode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: longword): int64; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
 
 implementation
 

@@ -123,7 +123,7 @@ type
 implementation
 
 uses
-  Math, Bee_Assembler;
+  Math, BeeLib_Assembler;
 
 { TBufStream class }
 
