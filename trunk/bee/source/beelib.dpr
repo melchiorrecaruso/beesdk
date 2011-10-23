@@ -27,11 +27,8 @@
 
 library BeeLib;
 
-{$I compiler.inc}
-
 uses
-  BeeLib_StreamCoder,
-  Beelib_Assembler;
+  BeeLib_StreamCoder;
 
   // ------------------------------------------------------------------------ //
   //                                                                          //

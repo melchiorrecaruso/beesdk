@@ -30,15 +30,13 @@
 {$S-}
 {$I-}
 
-{*$INLINE ON}
-{*$DEFINE PLUGINS}
-
+{$INLINE OFF}
 {$IFDEF MSWINDOWS}
-  {*$DEFINE FILENAMECASESENSITIVE}
+   // Windows directives
 {$ELSE}
   {$IFDEF UNIX}
-    {$DEFINE FILENAMECASESENSITIVE}
+   // Unix directives
   {$ELSE}
-    todo: define filenamecasesensitive
+   // Other OS directives
   {$ENDIF}
 {$ENDIF}

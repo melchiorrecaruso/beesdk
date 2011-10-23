@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2010 Andrew Filinsky
+  Copyright (c) 2003-2011 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,35 +31,33 @@
 
 unit BeeLib_Modeller;
 
-{$I compiler.inc}
-
 interface
 
 uses
-  Math,                                 { Max (), Min (), ...                      }
-  BeeLib_Codec,                         { TSecondaryFCodec, ...                    }
-  BeeLib_Assembler,                     { Low-level routines ...                   }
-  BeeLib_Types;                         { TTable, TTableCol, ...                   }
+  Math,                             { Max (), Min (), ...                      }
+  BeeLib_Codec,                     { TSecondaryFCodec, ...                    }
+  BeeLib_Assembler,                 { Low-level routines ...                   }
+  BeeLib_Configuration;             { TTable, TTableCol, ...                   }
 
 const
-  BitChain  = 4;                        { Size of data portion, bit                }
-  MaxSymbol = 1 shl BitChain - 1;       { Size of source alphabet, symbols         }
-  Increment = 8;                        { Increment of symbol frequency            }
+  BitChain  = 4;                    { Size of data portion, bit                }
+  MaxSymbol = 1 shl BitChain - 1;   { Size of source alphabet, symbols         }
+  Increment = 8;                    { Increment of symbol frequency            }
 
 type
-  PNode  = ^TNode;                      { Pointer to modeller's node information   }
-  PPNode = ^PNode;                      { Array of nodes...                        }
+  PNode  = ^TNode;                  { Pointer to modeller's node information   }
+  PPNode = ^PNode;                  { Array of nodes...                        }
 
   { Modeller's node information }
 
   TNode = packed record
-    Next, Up: PNode;                    { Next node of this or high level          }
-    K: word;                            { Frequency of this symbol                 }
-    C: byte;                            { This symbol itself                       }
-    D: byte;                            { Used for incoming data storage           }
+    Next, Up: PNode;                { Next node of this or high level          }
+    K: word;                        { Frequency of this symbol                 }
+    C: byte;                        { This symbol itself                       }
+    D: byte;                        { Used for incoming data storage           }
     case longword of
-      1: (A: longint);                  { Source address                           }
-      2: (Tear: PNode);                 { Next free node                           }
+      1: (A: longint);              { Source address                           }
+      2: (Tear: PNode);             { Next free node                           }
   end;
 
   { PPM modeller }
@@ -67,15 +65,15 @@ type
   TBaseCoder = class
   private
     FDictionaryLevel: longword;
-    FCodec: TSecondaryCodec;            { Secondary encoder or decoder             }
+    FCodec: TSecondaryCodec;        { Secondary encoder or decoder             }
 
     Symbol: longword;
     Pos:    longword;
     LowestPos: longint;
 
-    MaxCounter,                         { Maximal heap size                        }
-    SafeCounter,                        { Safe heap size                           }
-    Counter: longword;                  { Current heap size                        }
+    MaxCounter,                     { Maximal heap size                        }
+    SafeCounter,                    { Safe heap size                           }
+    Counter: longword;              { Current heap size                        }
 
     Heap:      array of TNode;
     Cuts:      array of PNode;
@@ -90,9 +88,9 @@ type
     IncreaseIndex: longword;
     I, R, Q: longword;
 
-    Freq:  TFreq;                       { Symbol frequencyes                       }
-    Part:  ^TTableCol;                  { Part of parameters Table                 }
-    Table: TTable;                      { Parameters Table                         }
+    Freq:  TFreq;                   { Symbol frequencyes                       }
+    Part:  ^TTableCol;              { Part of parameters Table                 }
+    Table: TTable;                  { Parameters Table                         }
 
     procedure Add(aSymbol: longword);
     procedure CreateChild(Parent: PNode);
@@ -153,7 +151,8 @@ begin
   for I := 0 to 1 do
   begin
     aPart    := @Table.T[I];
-    aPart[0] := aPart[0] + 256; // Weight of first-encoutered deterministic symbol
+    aPart[0] := aPart[0] + 256;
+    // Weight of first-encoutered deterministic symbol
     aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
     // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32
     aPart[MaxSymbol + 3] := Increment * aPart[MaxSymbol + 3] shl 2;
