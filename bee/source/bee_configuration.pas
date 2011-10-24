@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2010 Andrew Filinsky
+  Copyright (c) 2003-2011 Andrew Filinsky
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ type
   public
     function GetTable(const Ext: string; var T: TTableParameters): boolean;
     procedure PutData(const Name: string; var Data; aCount: longint);
-    function GetData(const Name: string; var Data; aCount: longint): boolean;
+    function  GetData(const Name: string; var Data; aCount: longint): boolean;
   end;
 
   TConfiguration = class(TStringList)
@@ -58,7 +58,7 @@ type
     procedure SaveToFile(const FileName: string); override;
     function GetTable(const Ext: string; var T: TTableParameters): boolean;
     procedure PutData(const Name: string; var Data; aCount: longint);
-    function GetData(const Name: string; var Data; aCount: longint): boolean;
+    function  GetData(const Name: string; var Data; aCount: longint): boolean;
     procedure Selector(const Name: string);
     function Split(const S: string; var Name, Value: string): boolean;
   end;

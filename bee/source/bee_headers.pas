@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2010 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2011 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
