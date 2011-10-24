@@ -25,7 +25,10 @@
     v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
 }
 
-unit BeeLib_Link;
+unit Bee_LibLink;
+
+{$link beelib_main.o}
+{$linklib c}
 
 interface
 
