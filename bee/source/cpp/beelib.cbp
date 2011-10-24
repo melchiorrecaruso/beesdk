@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="beelib" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\beelib" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="user32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\beelib" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-fomit-frame-pointer" />
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+					<Add option="-Wfatal-errors" />
+					<Add option="-DBUILD_DLL" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-march=core2" />
+			<Add option="-march=pentium-m" />
+			<Add option="-march=nocona" />
+			<Add option="-march=prescott" />
+			<Add option="-march=pentium4" />
+			<Add option="-march=pentium3" />
+			<Add option="-march=pentium2" />
+			<Add option="-march=i686" />
+			<Add option="-march=pentium-mmx" />
+			<Add option="-march=i586" />
+			<Add option="-march=i486" />
+			<Add option="-march=i386" />
+			<Add option="-fexpensive-optimizations" />
+			<Add option="-Os" />
+			<Add option="-O3" />
+			<Add option="-O2" />
+			<Add option="-O1" />
+			<Add option="-O" />
+			<Add option="-Wfatal-errors" />
+		</Compiler>
+		<Linker>
+			<Add option="-s" />
+		</Linker>
+		<Unit filename="beelib_assembler.cpp" />
+		<Unit filename="beelib_assembler.h" />
+		<Unit filename="beelib_codec.cpp" />
+		<Unit filename="beelib_codec.h" />
+		<Unit filename="beelib_crc.cpp" />
+		<Unit filename="beelib_crc.h" />
+		<Unit filename="beelib_main.cpp" />
+		<Unit filename="beelib_main.h" />
+		<Unit filename="beelib_modeller.cpp" />
+		<Unit filename="beelib_modeller.h" />
+		<Unit filename="beelib_rangecoder.cpp" />
+		<Unit filename="beelib_rangecoder.h" />
+		<Unit filename="beelib_stream.cpp" />
+		<Unit filename="beelib_stream.h" />
+		<Unit filename="beelib_types.cpp" />
+		<Unit filename="beelib_types.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
