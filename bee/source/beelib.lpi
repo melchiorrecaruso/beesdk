@@ -101,7 +101,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="25" Y="24"/>
-        <FoldState Value=" T3iR067 pj1jP0S~"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -113,7 +112,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="23" Y="30"/>
-        <FoldState Value=" T3i20C6A"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -197,7 +195,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
     </Units>
-    <JumpHistory Count="3" HistoryIndex="2">
+    <JumpHistory Count="2" HistoryIndex="1">
       <Position1>
         <Filename Value="beelib.lpr"/>
         <Caret Line="34" Column="11" TopLine="26"/>
@@ -206,19 +204,18 @@
         <Filename Value="beelib.lpr"/>
         <Caret Line="44" Column="32" TopLine="26"/>
       </Position2>
-      <Position3>
-        <Filename Value="beelib.dpr"/>
-        <Caret Line="49" Column="10" TopLine="20"/>
-      </Position3>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="10"/>
     <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="..\distribution\beelib"/>
+    </Target>
     <SearchPaths>
       <IncludeFiles Value="beelib.include"/>
       <OtherUnitFiles Value="..\..\beegui\source\packages"/>
-      <UnitOutputDirectory Value="..\distribution"/>
+      <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
