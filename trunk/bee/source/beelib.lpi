@@ -81,7 +81,7 @@
     </RunParams>
     <Units Count="10">
       <Unit0>
-        <Filename Value="beelib.dpr"/>
+        <Filename Value="beelib.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="beelib"/>
         <IsVisibleTab Value="True"/>
@@ -199,11 +199,11 @@
     </Units>
     <JumpHistory Count="3" HistoryIndex="2">
       <Position1>
-        <Filename Value="beelib.dpr"/>
+        <Filename Value="beelib.lpr"/>
         <Caret Line="34" Column="11" TopLine="26"/>
       </Position1>
       <Position2>
-        <Filename Value="beelib.dpr"/>
+        <Filename Value="beelib.lpr"/>
         <Caret Line="44" Column="32" TopLine="26"/>
       </Position2>
       <Position3>

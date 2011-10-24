@@ -79,11 +79,6 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="1">
-      <Item1>
-        <PackageName Value="beelib"/>
-      </Item1>
-    </RequiredPackages>
     <Units Count="15">
       <Unit0>
         <Filename Value="bee.lpr"/>
