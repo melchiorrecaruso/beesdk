@@ -36,11 +36,9 @@ uses
   SysUtils,
   // ---
   Bee_Headers,
-  // {$IFDEF USECDLL}
-  //  BeeLib_Link,
-  //{$ELSE}
-  BeeLib_StreamCoder,
-  //{$ENDIF}
+
+
+  Bee_LibLink, // BeeLib_StreamCoder,
   BeeLib_Interface;
 
 
