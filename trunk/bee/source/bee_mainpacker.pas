@@ -37,8 +37,8 @@ uses
   // ---
   Bee_Headers,
 
-
-  Bee_LibLink, // BeeLib_StreamCoder,
+  // BeeLib_StreamCoder,
+  Bee_LibLink,
   BeeLib_Interface;
 
 

@@ -29,23 +29,22 @@
 #ifndef BEELIB_MAIN_H
 #define BEELIB_MAIN_H
 
+#include <stdio.h>
 #include "beelib_types.h"
 
-#define LIB_API extern "C" __declspec(dllexport)
+unsigned int DllVersion();
 
-LIB_API unsigned int DllVersion();
+void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv);
+void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv);
+void  DestroyCoder (void* Handle);
 
-LIB_API void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv);
-LIB_API void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv);
-LIB_API void  DestroyCoder (void* Handle);
+void SetDictionaryLevel(void* Handle, signed int Value);
+void SetTableParameters(void* Handle, const TTableParameters& Value);
 
-LIB_API void SetDictionaryLevel(void* Handle, signed int Value);
-LIB_API void SetTableParameters(void* Handle, const TTableParameters& Value);
+void FreshFlexible(void* Handle);
+void FreshSolid   (void* Handle);
 
-LIB_API void FreshFlexible(void* Handle);
-LIB_API void FreshSolid   (void* Handle);
-
-LIB_API int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC);
-LIB_API int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC);
+int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC);
+int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC);
 
 #endif //  BEELIB_MAIN_H
