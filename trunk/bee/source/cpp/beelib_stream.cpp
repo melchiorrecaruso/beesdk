@@ -1,4 +1,4 @@
-#include "beelib_stream.h"
+#include "beelib_stream.hpp"
 
 
 TStream::TStream(void* Handle)

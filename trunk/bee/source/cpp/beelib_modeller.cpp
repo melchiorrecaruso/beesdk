@@ -1,4 +1,4 @@
-#include "beelib_modeller.h"
+#include "beelib_modeller.hpp"
 #include <cmath>
 
 #define min(X, Y)  ((X) < (Y) ? (X) : (Y))

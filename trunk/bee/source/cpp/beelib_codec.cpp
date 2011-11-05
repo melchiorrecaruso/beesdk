@@ -1,4 +1,4 @@
-#include "beelib_codec.h"
+#include "beelib_codec.hpp"
 
 /* TSecondaryCodec */
 

@@ -1,4 +1,4 @@
-#include "beelib_crc.h"
+#include "beelib_crc.hpp"
 
 unsigned int Crc32Tab [256] =  {
 

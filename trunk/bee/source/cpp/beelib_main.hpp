@@ -30,21 +30,21 @@
 #define BEELIB_MAIN_H
 
 #include <stdio.h>
-#include "beelib_types.h"
+#include "beelib_types.hpp"
 
-unsigned int DllVersion();
+extern "C" unsigned int DllVersion();
 
-void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv);
-void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv);
-void  DestroyCoder (void* Handle);
+extern "C" void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv);
+extern "C" void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv);
+extern "C" void  DestroyCoder (void* Handle);
 
-void SetDictionaryLevel(void* Handle, signed int Value);
-void SetTableParameters(void* Handle, const TTableParameters& Value);
+extern "C" void  SetDictionaryLevel(void* Handle, signed int Value);
+extern "C" void  SetTableParameters(void* Handle, const TTableParameters& Value);
 
-void FreshFlexible(void* Handle);
-void FreshSolid   (void* Handle);
+extern "C" void  FreshFlexible(void* Handle);
+extern "C" void  FreshSolid   (void* Handle);
 
-int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC);
-int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC);
+extern "C" int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC);
+extern "C" int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC);
 
 #endif //  BEELIB_MAIN_H

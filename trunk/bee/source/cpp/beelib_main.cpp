@@ -1,11 +1,11 @@
-#include "beelib_main.h"
+#include "beelib_main.hpp"
 
-#include "beelib_crc.h"
-#include "beelib_codec.h"
-#include "beelib_types.h"
-#include "beelib_stream.h"
-#include "beelib_modeller.h"
-#include "beelib_assembler.h"
+#include "beelib_crc.hpp"
+#include "beelib_codec.hpp"
+#include "beelib_types.hpp"
+#include "beelib_stream.hpp"
+#include "beelib_modeller.hpp"
+#include "beelib_assembler.hpp"
 
 struct TStreamCoder
 {
@@ -18,33 +18,40 @@ struct TStreamCoder
   TSecondaryCodec* SecondaryCodec;
 };
 
-unsigned int DllVersion()
+extern "C" unsigned int DllVersion()
 {
   return 107;
 };
 
-void SetDictionaryLevel(void* Handle, signed int Value)
+extern "C" void SetDictionaryLevel(void* Handle, signed int Value)
 {
   TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
   (*StreamCoder).PPM->SetDictionary(Value);
   return;
 };
 
-void SetTableParameters(void* Handle, const TTableParameters& Value)
+extern "C" void SetTableParameters(void* Handle, const TTableParameters& Value)
 {
   TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
   (*StreamCoder).PPM->SetTable(Value);
   return;
 };
 
-void FreshSolid(void* Handle)
+extern "C" void FreshFlexible(void* Handle)
+{
+  TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
+  (*StreamCoder).PPM->FreshFlexible();
+  return;
+};
+
+extern "C" void FreshSolid(void* Handle)
 {
   TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
   (*StreamCoder).PPM->FreshSolid();
   return;
-}
+};
 
-void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
+extern "C" void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
 {
   TStreamCoder* StreamCoder = new TStreamCoder;
 
@@ -59,9 +66,9 @@ void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, v
   StreamCoder->PPM            = new TBaseCoder(StreamCoder->SecondaryCodec);
 
   return StreamCoder;
-}
+};
 
-int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
+extern "C" int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
 {
 	               CRC = (unsigned int)-1;
           int64 result = 0;
@@ -89,9 +96,9 @@ int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
   (*Source).~TReadStream();
 
   return result;
-}
+};
 
-void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
+extern "C" void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
 {
   TStreamCoder* StreamCoder = new TStreamCoder;
 
@@ -106,9 +113,9 @@ void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, v
   StreamCoder->PPM            = new TBaseCoder(StreamCoder->SecondaryCodec);
 
   return StreamCoder;
-}
+};
 
-int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
+extern "C" int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
 {
                    CRC = (unsigned int)-1;
           int64 result = 0;
@@ -134,9 +141,9 @@ int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
   StreamCoder->SecondaryCodec->Flush();
   (*Dest).~TWriteStream();
   return result;
-}
+};
 
-void DestroyCoder(void* Handle)
+extern "C" void DestroyCoder(void* Handle)
 {
   TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
 
@@ -146,4 +153,4 @@ void DestroyCoder(void* Handle)
 
   delete StreamCoder;
   return;
-}
+};

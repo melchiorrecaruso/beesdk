@@ -35,7 +35,7 @@
 #ifndef BEELIB_CODEC_H
 #define BEELIB_CODEC_H
 
-#include "beelib_rangecoder.h"
+#include "beelib_rangecoder.hpp"
 
 /* Array of Frequencyes */
 
