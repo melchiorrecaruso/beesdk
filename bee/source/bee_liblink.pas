@@ -27,38 +27,42 @@
 
 unit Bee_LibLink;
 
-{$link beelib_main.o}
-{$linklib c}
+{$link \cpp\obj\release\beelib_main.o}
+
+{$linklib libmsvcrt}
 
 interface
 
-uses
-  BeeLib_Interface,
-  BeeLib_Configuration;
+//uses
+  // CTypes,
 
-const
-  {$IFDEF MSWINDOWS}
-    cApplicationLib = 'beelib.dll';
-  {$ENDIF}
-  {$IFDEF UNIX}
-    cApplicationLib = 'beelib.so';
-  {$ENDIF}
+  // BeeLib_Interface,
+  // BeeLib_Configuration;
 
-function  DllVersion: longword; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+function  DllVersion: longword; cdecl; external;
 
-function  CreateEncoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv: TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
-function  CreateDecoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv: TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+procedure FreshFlexible(Handle: pointer); cdecl; external;
 
-procedure DestroyCoder(Handle: pointer); {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+(*
 
-procedure SetDictionaryLevel(Handle: pointer; Value: longword);               {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
-procedure SetTableParameters(Handle: pointer; const Value: TTableParameters); {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+function  CreateEncoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv:
+            TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer; cdecl; external;
 
-procedure FreshFlexible(Handle: pointer); {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
-procedure FreshSolid(Handle: pointer);    {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+function  CreateDecoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv:
+            TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer; cdecl; external;
 
-function  Encode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: longword): int64; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
-function  Decode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: longword): int64; {$IFDEF USECDLL} cdecl; {$ENDIF}  external cApplicationLib;
+procedure DestroyCoder(Handle: pointer); cdecl; external;
+
+procedure SetDictionaryLevel(Handle: pointer; Value: longint); cdecl; external;
+procedure SetTableParameters(Handle: pointer; const Value: TTableParameters); cdecl; external;
+
+
+procedure FreshSolid(Handle: pointer); cdecl; external;
+
+function  Encode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: longword): int64; cdecl; external;
+function  Decode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: longword): int64; cdecl; external;
+
+*)
 
 implementation
 
