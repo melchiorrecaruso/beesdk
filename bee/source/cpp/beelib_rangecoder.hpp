@@ -50,9 +50,9 @@
 #ifndef BEELIB_RANGECODER_H
 #define BEELIB_RANGECODER_H
 
-#include "beelib_types.h"
-#include "beelib_stream.h"
-#include "beelib_assembler.h"
+#include "beelib_types.hpp"
+#include "beelib_stream.hpp"
+#include "beelib_assembler.hpp"
 
 
 static const int TOP     = 1 << 24;

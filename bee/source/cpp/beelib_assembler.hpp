@@ -30,7 +30,7 @@
 #ifndef BEELIB_ASSEMBLER_H
 #define BEELIB_ASSEMBLER_H
 
-#include "beelib_types.h"
+#include "beelib_types.hpp"
 
 // void FillLongword (void* Data, unsigned int Count, unsigned int Value);
 // void AddLongword  (void* Data, unsigned int Count, unsigned int Value);

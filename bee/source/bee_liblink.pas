@@ -27,23 +27,18 @@
 
 unit Bee_LibLink;
 
-{$link \cpp\obj\release\beelib_main.o}
+{$link    \cpp\obj\release\beelib_main.o}
+{$linklib \cpp\bin\release\beelib.dll}
 
 {$linklib libmsvcrt}
 
 interface
 
-//uses
-  // CTypes,
-
-  // BeeLib_Interface,
-  // BeeLib_Configuration;
+uses
+  BeeLib_Interface,
+  BeeLib_Configuration;
 
 function  DllVersion: longword; cdecl; external;
-
-procedure FreshFlexible(Handle: pointer); cdecl; external;
-
-(*
 
 function  CreateEncoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv:
             TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer; cdecl; external;
@@ -56,13 +51,11 @@ procedure DestroyCoder(Handle: pointer); cdecl; external;
 procedure SetDictionaryLevel(Handle: pointer; Value: longint); cdecl; external;
 procedure SetTableParameters(Handle: pointer; const Value: TTableParameters); cdecl; external;
 
-
+procedure FreshFlexible(Handle: pointer); cdecl; external;
 procedure FreshSolid(Handle: pointer); cdecl; external;
 
 function  Encode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: longword): int64; cdecl; external;
 function  Decode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: longword): int64; cdecl; external;
-
-*)
 
 implementation
 

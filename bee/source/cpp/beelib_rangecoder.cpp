@@ -1,4 +1,4 @@
-#include "beelib_rangecoder.h"
+#include "beelib_rangecoder.hpp"
 
 
 TRangeCoder::TRangeCoder(TStream* Stream)

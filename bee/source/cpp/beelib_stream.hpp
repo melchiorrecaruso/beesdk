@@ -27,7 +27,7 @@
 #ifndef BEELIB_STREAM_H
 #define BEELIB_STREAM_H
 
-#include "beelib_types.h"
+#include "beelib_types.hpp"
 #include <cstddef>
 
 

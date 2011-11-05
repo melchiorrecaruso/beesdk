@@ -1,6 +1,6 @@
-// beelib_types.cpp: 
+// beelib_types.cpp:
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "beelib_types.h"
+#include "beelib_types.hpp"
 
