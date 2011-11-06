@@ -97,7 +97,7 @@ type
     property Code: byte read FCode write SetCode;
   end;
 
-  function DoTick(Handle: pointer): boolean; {$IFDEF USECDLL} cdecl; {$ENDIF}
+  function DoTick(Handle: pointer): boolean; {$IFDEF cppDLL} cdecl; {$ENDIF}
 
 implementation
 

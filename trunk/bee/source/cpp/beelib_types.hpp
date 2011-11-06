@@ -44,7 +44,7 @@ typedef unsigned long long uint64;
 
 typedef unsigned int TTableCol [TableSize];
 
-typedef struct {
+typedef struct TTable {
   unsigned int Level;
   TTableCol T [TableCols];
 } TTable;

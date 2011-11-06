@@ -18,40 +18,40 @@ struct TStreamCoder
   TSecondaryCodec* SecondaryCodec;
 };
 
-extern "C" unsigned int DllVersion()
+LIB_API unsigned int DllVersion()
 {
   return 107;
 };
 
-extern "C" void SetDictionaryLevel(void* Handle, signed int Value)
+LIB_API void SetDictionaryLevel(void* Handle, signed int Value)
 {
   TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
   (*StreamCoder).PPM->SetDictionary(Value);
   return;
 };
 
-extern "C" void SetTableParameters(void* Handle, const TTableParameters& Value)
+LIB_API void SetTableParameters(void* Handle, const TTableParameters& Value)
 {
   TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
   (*StreamCoder).PPM->SetTable(Value);
   return;
 };
 
-extern "C" void FreshFlexible(void* Handle)
+LIB_API void FreshFlexible(void* Handle)
 {
   TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
   (*StreamCoder).PPM->FreshFlexible();
   return;
 };
 
-extern "C" void FreshSolid(void* Handle)
+LIB_API void FreshSolid(void* Handle)
 {
   TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
   (*StreamCoder).PPM->FreshSolid();
   return;
 };
 
-extern "C" void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
+LIB_API void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
 {
   TStreamCoder* StreamCoder = new TStreamCoder;
 
@@ -68,7 +68,7 @@ extern "C" void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent O
   return StreamCoder;
 };
 
-extern "C" int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
+LIB_API int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
 {
 	               CRC = (unsigned int)-1;
           int64 result = 0;
@@ -98,7 +98,7 @@ extern "C" int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned 
   return result;
 };
 
-extern "C" void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
+LIB_API void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
 {
   TStreamCoder* StreamCoder = new TStreamCoder;
 
@@ -115,7 +115,7 @@ extern "C" void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent O
   return StreamCoder;
 };
 
-extern "C" int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
+LIB_API int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
 {
                    CRC = (unsigned int)-1;
           int64 result = 0;
@@ -143,7 +143,7 @@ extern "C" int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned 
   return result;
 };
 
-extern "C" void DestroyCoder(void* Handle)
+LIB_API void DestroyCoder(void* Handle)
 {
   TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
 

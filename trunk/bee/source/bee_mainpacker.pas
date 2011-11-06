@@ -36,11 +36,16 @@ uses
   SysUtils,
   // ---
   Bee_Headers,
-
-  // BeeLib_StreamCoder,
-  Bee_LibLink,
-  BeeLib_Interface;
-
+  BeeLib_Interface,
+  {$IFDEF USE-cppDLL}
+    Bee_LibLink;
+  {$ELSE}
+    {$IFDEF USE-fpcDLL}
+      Bee_LibLink;
+    {$ELSE}
+      BeeLib_StreamCoder;
+    {$ENDIF}
+  {$ENDIF}
 
 type
   { THeaderCoder class }

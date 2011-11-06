@@ -119,8 +119,8 @@ type
 function CreateTFileReader(const aFileName: string; aMode: word): TFileReader;
 function CreateTFileWriter(const aFileName: string; aMode: word): TFileWriter;
 
-function DoFill (Stream: pointer; var Buffer; Count: longint): longint; {$IFDEF USECDLL} cdecl; {$ENDIF}
-function DoFlush(Stream: pointer; var Buffer; Count: longint): longint; {$IFDEF USECDLL} cdecl; {$ENDIF}
+function DoFill (Stream: pointer; var Buffer; Count: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
+function DoFlush(Stream: pointer; var Buffer; Count: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
 
 implementation
 

@@ -23,6 +23,8 @@
 
 unit BeeLib_StreamCoder;
 
+{$I compiler.inc}
+
 interface
 
 uses
