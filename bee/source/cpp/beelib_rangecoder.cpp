@@ -1,6 +1,5 @@
 #include "beelib_rangecoder.hpp"
 
-
 TRangeCoder::TRangeCoder(TStream* Stream)
 {
   FStream = Stream;

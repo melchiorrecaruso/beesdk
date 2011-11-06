@@ -6,29 +6,12 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
-				<Option output="bin\debug\beelib" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin\debug" />
-				<Option object_output="obj\debug\" />
-				<Option type="3" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Compiler>
-					<Add option="-Wall" />
-					<Add option="-g" />
-					<Add option="-DBUILD_DLL" />
-				</Compiler>
-				<Linker>
-					<Add library="user32" />
-				</Linker>
-			</Target>
 			<Target title="Release">
 				<Option output="bin\release\beelib" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin\release" />
 				<Option object_output="obj\release\" />
 				<Option type="3" />
 				<Option compiler="gcc" />
-				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-fomit-frame-pointer" />
 					<Add option="-fexpensive-optimizations" />

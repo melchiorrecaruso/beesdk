@@ -85,5 +85,4 @@ private:
           void Decode (unsigned int CumFreq, unsigned int Freq, unsigned int TotFreq);
 };
 
-
 #endif //  BEELIB_RANGECODER_H
