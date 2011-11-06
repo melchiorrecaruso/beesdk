@@ -37,10 +37,10 @@ uses
   // ---
   Bee_Headers,
   BeeLib_Interface,
-  {$IFDEF USE-cppDLL}
+  {$IFDEF cppDLL}
     Bee_LibLink;
   {$ELSE}
-    {$IFDEF USE-fpcDLL}
+    {$IFDEF fpcDLL}
       Bee_LibLink;
     {$ELSE}
       BeeLib_StreamCoder;
