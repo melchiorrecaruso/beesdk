@@ -69,7 +69,7 @@ void TBaseCoder::SetDictionary(unsigned int aDictionaryLevel)
 
 void TBaseCoder::FreshFlexible()
 {
-  Tear            = NULL;
+  Tear            = 0;
   CurrentFreeNode = &heap[0];
   LastFreeNode    = &heap[MaxCounter];
   Counter         = 0;
@@ -80,8 +80,8 @@ void TBaseCoder::FreshFlexible()
   Root = CurrentFreeNode;
   CurrentFreeNode++;
 
-  Root->Next = NULL;
-  Root->Up   = NULL;
+  Root->Next = 0;
+  Root->Up   = 0;
   Root->K    = Increment;
   Root->c    = 0;
   Root->A    = 1;
@@ -114,12 +114,12 @@ void TBaseCoder::CreateChild(PNode Parent)
   {
     result = Tear;
     PNode Link = result->Tear;
-    if (result->Next != NULL)
+    if (result->Next != 0)
     {
       result->Next->Tear = Link;
       Link = result->Next;
     }
-    if (result->Up != NULL)
+    if (result->Up != 0)
     {
       result->Up->Tear = Link;
       Link = result->Up;
@@ -131,7 +131,7 @@ void TBaseCoder::CreateChild(PNode Parent)
 
   result->Next = Parent->Up;
   Parent->Up   = result;
-  result->Up   = NULL;
+  result->Up   = 0;
   result->A    = Parent->A + 1;
   result->c    = heap[Parent->A & MaxCounter].D;
   result->K    = Increment;
@@ -152,7 +152,7 @@ void TBaseCoder::Cut()
 
   (*I) = Root;
 
-  PNode P = NULL;
+  PNode P = 0;
   int Bound = (SafeCounter * 3) / 4;
   do
   {
@@ -160,7 +160,7 @@ void TBaseCoder::Cut()
     do
     {
       Bound--;
-      if (P->Up != NULL)
+      if (P->Up != 0)
         if (P->A > LowestPos)
         {
           *J = P;
@@ -170,11 +170,11 @@ void TBaseCoder::Cut()
         {
           P->Up->Tear = Tear;
           Tear = P->Up;
-          P->Up = NULL;
+          P->Up = 0;
         }
       P = P->Next;
     }
-    while (!(P == NULL));
+    while (!(P == 0));
     I++;
   }
   while (!((I == J) || (Bound < 0)));
@@ -194,7 +194,7 @@ void TBaseCoder::Cut_Tail(PPNode I, PPNode J)
   {
     (*I)->Up->Tear = P;
     P = (*I)->Up;
-    (*I)->Up = NULL;
+    (*I)->Up = 0;
     I++;
   }
   while (!(I == J));
@@ -213,13 +213,13 @@ void TBaseCoder::Account()
   do
   {
     PNode P = List[I];
-    if (P->Up != NULL)
+    if (P->Up !=0)
     {
       P = P->Up;
       if (IncreaseIndex == 0)
         IncreaseIndex = I;
 
-      if (P->Next != NULL)
+      if (P->Next != 0)
       {
         // Undetermined context ...
         K = P->K * (*Part)[MaxSymbol + 2] >> 5;
@@ -233,7 +233,7 @@ void TBaseCoder::Account()
           K += P->K;
           P = P->Next;
         }
-        while (! (P == NULL));
+        while (! (P == 0));
         Q += (*Part)[J];
 
         // Account:
@@ -252,7 +252,7 @@ void TBaseCoder::Account()
           Freq[P->c] += J;
 		  P = P->Next;
         }
-        while (!(P == NULL));
+        while (!(P == 0));
       }
       else
       {
@@ -284,7 +284,7 @@ PNode TBaseCoder::Tail(PNode node)
   node->A = Pos;
   PNode result = node->Up;
 
-  if (result == NULL)
+  if (result == 0)
     CreateChild(node);
   else
   {
@@ -294,7 +294,7 @@ PNode TBaseCoder::Tail(PNode node)
       {
         PNode P = result;
         result  = result->Next;
-        if (result == NULL)
+        if (result == 0)
         {
           CreateChild(node);
           break;
@@ -337,7 +337,7 @@ void TBaseCoder::Step()
 
   symbol = FCodec->UpdateSymbol(Freq, symbol);
   Add(symbol);
-  PNode P = NULL;
+  PNode P = 0;
   if (ListCount > 0)
   {
     // Update frequencies...
@@ -355,7 +355,7 @@ void TBaseCoder::Step()
           P->K >>= 1;
           P = P->Next;
         }
-        while (!(P == NULL));
+        while (!(P == 0));
       I++;
     }
     while (!(I > IncreaseIndex));
@@ -366,7 +366,7 @@ void TBaseCoder::Step()
     do
     {
       P = Tail(List[I]);
-      if (P != NULL)
+      if (P != 0)
       {
         List[J] = P;
         J++;

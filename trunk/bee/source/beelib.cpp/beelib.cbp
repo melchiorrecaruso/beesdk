@@ -25,18 +25,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-march=core2" />
 			<Add option="-march=pentium-m" />
-			<Add option="-march=nocona" />
-			<Add option="-march=prescott" />
-			<Add option="-march=pentium4" />
-			<Add option="-march=pentium3" />
-			<Add option="-march=pentium2" />
-			<Add option="-march=i686" />
-			<Add option="-march=pentium-mmx" />
-			<Add option="-march=i586" />
-			<Add option="-march=i486" />
-			<Add option="-march=i386" />
 			<Add option="-fexpensive-optimizations" />
 			<Add option="-Os" />
 			<Add option="-O3" />

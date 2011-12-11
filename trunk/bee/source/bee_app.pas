@@ -120,10 +120,16 @@ end;
 { TBeeApp class }
 
 constructor TBeeApp.Create(const aCommandLine: string);
+const
+  TOP     = 1 shl 24;
+  NUM     = 4;
+  Thres   = 255 * longword(TOP);
+  MaxFreq = TOP - 1;
+
 begin
   inherited Create;
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1355 archiver utility, July 2011' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1359 archiver utility, July 2011' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders    := nil;
