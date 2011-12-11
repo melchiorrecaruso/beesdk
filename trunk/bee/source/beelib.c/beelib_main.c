@@ -22,8 +22,8 @@ struct TStreamEncoder {
 
 PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFillBuffer aFillBuffer, PFlushBuffer aFlushBuffer)
 {
-  result = malloc(sizeof(struct TStreamEncoder));
-  WriteStream_Initialize(result->Stream)
+  PStreamEncoder result = malloc(sizeof(struct TStreamEncoder));
+  result->Stream = WriteStream_Initialize(aStream);
 
 
   result->Stream
