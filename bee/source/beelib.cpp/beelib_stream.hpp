@@ -28,7 +28,6 @@
 #define BEELIB_STREAM_H
 
 #include "beelib_types.hpp"
-#include <cstddef>
 
 
 /* Default TStream buffer capacity */

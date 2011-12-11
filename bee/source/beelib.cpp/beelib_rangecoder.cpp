@@ -7,7 +7,7 @@ TRangeCoder::TRangeCoder(TStream* Stream)
 
 TRangeCoder::~TRangeCoder()
 {
-  FStream = NULL;
+  FStream = 0;
 }
 
 void TRangeCoder::StartEncode()

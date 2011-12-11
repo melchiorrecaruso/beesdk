@@ -9,7 +9,7 @@ TStream::TStream(void* Handle)
 
 TStream::~TStream()
 {
-  FHandle = NULL;
+  FHandle = 0;
 }
 
 void TStream::ClearBuffer()
@@ -25,7 +25,7 @@ TReadStream::TReadStream(void* Handle, TFillEvent OnFillEvent): TStream(Handle)
 
 TReadStream::~TReadStream()
 {
-  FOnFillEvent = NULL;
+  FOnFillEvent = 0;
 }
 
 void TReadStream::FillBuffer()
@@ -72,7 +72,7 @@ TWriteStream::TWriteStream(void* Handle, TFlushEvent OnFlushEvent): TStream(Hand
 TWriteStream::~TWriteStream()
 {
   FlushBuffer();
-  FOnFlushEvent = NULL;
+  FOnFlushEvent = 0;
 }
 
 void TWriteStream::FlushBuffer()

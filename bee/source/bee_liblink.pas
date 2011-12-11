@@ -35,13 +35,13 @@ uses
   BeeLib_Interface,
   BeeLib_Configuration;
 
-const
-  {$IFDEF MSWINDOWS}
+  const
+    {$IFDEF MSWINDOWS}
     cApplicationLib = 'beelib.dll';
-  {$ENDIF}
-  {$IFDEF UNIX}
-    cApplicationLib = 'beelib.so';
-  {$ENDIF}
+    {$ENDIF}
+    {$IFDEF UNIX}
+     cApplicationLib = 'beelib.so';
+    {$ENDIF}
 
 function  DllVersion: longword;
             {$IFDEF cppDLL} cdecl; {$ENDIF} external cApplicationLib;
