@@ -47,7 +47,7 @@ typedef struct TReadStream *PReadStream;
 
 typedef struct TWriteStream *PWriteStream;
 
-  PWriteStream WriteStream_Malloc     (PStream aStream, PFillBuffer aFillBuffer);
+  PWriteStream WriteStream_Malloc     (PStream aStream, PFlushBuffer aFlushBuffer);
           void WriteStream_Free       (PWriteStream Self);
           void WriteStream_ClearBuffer(PWriteStream Self);
           void WriteStream_FlushBuffer(PWriteStream Self);

@@ -20,36 +20,100 @@ struct TStreamEncoder {
          PBaseCoder BaseCoder;
 };
 
-PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFillBuffer aFillBuffer, PFlushBuffer aFlushBuffer)
+PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFlushBuffer aFlushBuffer)
 {
   PStreamEncoder result = malloc(sizeof(struct TStreamEncoder));
-  result->Stream = WriteStream_Initialize(aStream);
+
+  result->Stream = WriteStream_Malloc(aStream, aFlushBuffer);
+  result->SecondaryEncoder = SecondaryEncoder_Malloc(result->Stream);
+  result->BaseCoder = BaseCoder_Malloc(result->SecondaryEncoder);
+
+  return result;
+};
+
+void StreamEncoder_Free(PStreamEncoder Self)
+{
+  BaseCoder_Free(Self->BaseCoder);
+  SecondaryEncoder_Free(Self->SecondaryEncoder);
+  WriteStream_Free(Self->Stream);
+  free(Self);
+};
+
+void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, unsigned int Value)
+{
+  BaseCoder_SetDictionary(Self->BaseCoder, Value);
+};
 
 
-  result->Stream
 
 
 
-  result->Stream = aStream;
-  result->
+
+
+
+
+
+
+
+
+
+           void StreamEncoder_SetTableParameters(PStreamEncoder Self, TTableParameters *Value);
+           void StreamEncoder_FreshFlexible     (PStreamEncoder Self);
+           void StreamEncoder_FreshSolid        (PStreamEncoder Self);
+  long long int StreamEncoder_Encode            (PStreamEncoder Self, PStream aStream, long long int Size, unsigned int *CRC);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* TStreamDecoder struct/methods implementation */
+
+
+struct TStreamDecoder {
+        PReadStream Stream;
+  PSecondaryDecoder SecondaryDecoder;
+         PBaseCoder BaseCoder;
+};
+
+PStreamDecoder StreamDecoder_Malloc(PStream aStream, PFillBuffer aFillBuffer)
+{
+  PStreamDecoder result = malloc(sizeof(struct TStreamDecoder));
+
+  result->Stream = ReadStream_Malloc(aStream, aFillBuffer);
+  result->SecondaryDecoder = SecondaryDecoder_Malloc(result->Stream);
+  result->BaseCoder = BaseCoder_Malloc(result->SecondaryDecoder);
 
   return result;
 };
 
 
-PStreamDecoder StreamDecoder_Malloc(PReadStream aStream, PStreamFill aStreamFill, PStreamFlush aStreamFlush)
-{
-  return malloc(sizeof(struct TStreamDecoder));
-};
 
 
-
-           void StreamEncoder_Free              (PStreamEncoder Self);
-           void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, unsigned int Value);
-           void StreamEncoder_SetTableParameters(PStreamEncoder Self, TTableParameters *Value);
-           void StreamEncoder_FreshFlexible     (PStreamEncoder Self);
-           void StreamEncoder_FreshSolid        (PStreamEncoder Self);
-  long long int StreamEncoder_Encode            (PStreamEncoder Self, PStream aStream, long long int Size, unsigned int *CRC);
 
 
 void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, signed int Value)
@@ -61,12 +125,7 @@ void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, signed int Value)
 
 /* TStreamDecoder struct/methods implementation */
 
-struct TStreamDecoder {
-        PReadStream Stream;
-       PStreamFlush StreamFlush;
-  PSecondaryDecoder SecondaryDecoder;
-         PBaseCoder BaseCoder;
-};
+
 
 void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, signed int Value)
 {
