@@ -38,7 +38,7 @@ unsigned int DllVersion();
 
 typedef struct TStreamEncoder *PStreamEncoder;
 
- PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFillBuffer aFillBuffer, PFlushBuffer aFlushBuffer);
+ PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFlushBuffer aFlushBuffer);
 
            void StreamEncoder_Free              (PStreamEncoder Self);
            void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, unsigned int Value);
@@ -51,7 +51,7 @@ typedef struct TStreamEncoder *PStreamEncoder;
 
 typedef struct TStreamDecoder *PStreamDecoder;
 
- PStreamDecoder StreamDecoder_Malloc(PStream aStream, PFillBuffer aStreamFill, PFlushBuffer aFlushBuffer);
+ PStreamDecoder StreamDecoder_Malloc(PStream aStream, PFillBuffer aStreamFill);
 
            void StreamDecoder_Free              (PStreamDecoder Self);
            void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, unsigned int Value);
