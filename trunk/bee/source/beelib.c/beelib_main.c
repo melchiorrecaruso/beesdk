@@ -64,16 +64,14 @@ long long int StreamEncoder_Encode(PStreamEncoder Self, PStream aStream, PFillBu
       long long result = 0;
   unsigned char Symbol = 0;
 
-  TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
+  PReadStream Source = ReadStream(aStream, aFillBuffer);
 
-  TReadStream* Source = new TReadStream(StrmPtr, StreamCoder->OnFill);
-
-  StreamCoder->Stream->ClearBuffer();
-  StreamCoder->SecondaryCodec->Start();
+  ReadStream_ClearBuffer(Source);
+  SecondaryCodec_Start(Self->SecondaryEncoder);
   while (result < Size)
   {
-    Symbol = Source->Read();
-    StreamCoder->PPM->UpdateModel(Symbol);
+    Symbol = ReadStream_Read(Source);
+    BaseDecoder_UpdateSymbol(Self->BaseCoder, Symbol);
     UpdCrc32(CRC, Symbol);
     result++;
 
