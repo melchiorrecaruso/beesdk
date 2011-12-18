@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="beelib" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="release">
+				<Option output="bin\release\beelib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin\release" />
+				<Option object_output="obj\release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="beelib_assembler.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="beelib_assembler.h" />
+		<Unit filename="beelib_codec.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="beelib_codec.h" />
+		<Unit filename="beelib_crc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="beelib_crc.h" />
+		<Unit filename="beelib_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="beelib_main.h" />
+		<Unit filename="beelib_modeller.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="beelib_modeller.h" />
+		<Unit filename="beelib_rangecoder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="beelib_rangecoder.h" />
+		<Unit filename="beelib_stream.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="beelib_stream.h" />
+		<Unit filename="beelib_types.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
