@@ -45,7 +45,7 @@ typedef struct TStreamEncoder *PStreamEncoder;
            void StreamEncoder_SetTableParameters(PStreamEncoder Self, TTableParameters *Value);
            void StreamEncoder_FreshFlexible     (PStreamEncoder Self);
            void StreamEncoder_FreshSolid        (PStreamEncoder Self);
-  long long int StreamEncoder_Encode            (PStreamEncoder Self, PStream aStream, long long int Size, unsigned int *CRC);
+  long long int StreamEncoder_Encode            (PStreamEncoder Self, PStream aStream, PFillBuffer aFillBuffer, long long int Size, unsigned int *CRC);
 
 /* TStreamDecoder struct/methods */
 
@@ -58,6 +58,6 @@ typedef struct TStreamDecoder *PStreamDecoder;
            void StreamDecoder_SetTableParameters(PStreamDecoder Self, TTableParameters *Value);
            void StreamDecoder_FreshFlexible     (PStreamDecoder Self);
            void StreamDecoder_FreshSolid        (PStreamDecoder Self);
-  long long int StreamEncoder_Decode            (PStreamDecoder Self, PStream aStream, long long int Size, unsigned int *CRC);
+  long long int StreamEncoder_Decode            (PStreamDecoder Self, PStream aStream, PFlushBuffer aFlushBuffer, long long int Size, unsigned int *CRC);
 
 #endif //  BEELIB_MAIN_H

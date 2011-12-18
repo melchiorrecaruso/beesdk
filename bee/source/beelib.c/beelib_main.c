@@ -27,7 +27,6 @@ PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFlushBuffer aFlushBuffer)
   result->Stream = WriteStream_Malloc(aStream, aFlushBuffer);
   result->SecondaryEncoder = SecondaryEncoder_Malloc(result->Stream);
   result->BaseCoder = BaseCoder_Malloc(result->SecondaryEncoder);
-
   return result;
 };
 
@@ -44,24 +43,50 @@ void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, unsigned int Value)
   BaseCoder_SetDictionary(Self->BaseCoder, Value);
 };
 
+void StreamEncoder_SetTableParameters(PStreamEncoder Self, TTableParameters *Value)
+{
+  BaseCoder_SetTable(Self->BaseCoder, Value);
+};
 
+void StreamEncoder_FreshFlexible(PStreamEncoder Self)
+{
+  BaseCoder_FreshFlexible(Self->BaseCoder);
+};
 
+void StreamEncoder_FreshSolid(PStreamEncoder Self)
+{
+  BaseCoder_FreshSolid(Self->BaseCoder);
+};
 
+long long int StreamEncoder_Encode(PStreamEncoder Self, PStream aStream, PFillBuffer aFillBuffer, long long int Size, unsigned int *CRC)
+{
+	               CRC = (unsigned int)-1;
+      long long result = 0;
+  unsigned char Symbol = 0;
 
+  TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
 
+  TReadStream* Source = new TReadStream(StrmPtr, StreamCoder->OnFill);
 
+  StreamCoder->Stream->ClearBuffer();
+  StreamCoder->SecondaryCodec->Start();
+  while (result < Size)
+  {
+    Symbol = Source->Read();
+    StreamCoder->PPM->UpdateModel(Symbol);
+    UpdCrc32(CRC, Symbol);
+    result++;
 
+    if ((result & DefaultTickStepSize) == 0)
+      if (StreamCoder->OnTick != 0)
+	    if (StreamCoder->OnTick(StreamCoder->Tick)) break;
+  }
+  StreamCoder->SecondaryCodec->Flush();
+  StreamCoder->Stream->FlushBuffer();
+  (*Source).~TReadStream();
 
-
-
-
-
-
-           void StreamEncoder_SetTableParameters(PStreamEncoder Self, TTableParameters *Value);
-           void StreamEncoder_FreshFlexible     (PStreamEncoder Self);
-           void StreamEncoder_FreshSolid        (PStreamEncoder Self);
-  long long int StreamEncoder_Encode            (PStreamEncoder Self, PStream aStream, long long int Size, unsigned int *CRC);
-
+  return result;
+};
 
 
 
@@ -195,35 +220,7 @@ void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, v
   return StreamCoder;
 };
 
-int64 Encode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
-{
-	               CRC = (unsigned int)-1;
-          int64 result = 0;
-  unsigned char Symbol = 0;
 
-  TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
-
-  TReadStream* Source = new TReadStream(StrmPtr, StreamCoder->OnFill);
-
-  StreamCoder->Stream->ClearBuffer();
-  StreamCoder->SecondaryCodec->Start();
-  while (result < Size)
-  {
-    Symbol = Source->Read();
-    StreamCoder->PPM->UpdateModel(Symbol);
-    UpdCrc32(CRC, Symbol);
-    result++;
-
-    if ((result & DefaultTickStepSize) == 0)
-      if (StreamCoder->OnTick != 0)
-	    if (StreamCoder->OnTick(StreamCoder->Tick)) break;
-  }
-  StreamCoder->SecondaryCodec->Flush();
-  StreamCoder->Stream->FlushBuffer();
-  (*Source).~TReadStream();
-
-  return result;
-};
 
 void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
 {
