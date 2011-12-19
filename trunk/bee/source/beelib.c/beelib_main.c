@@ -67,7 +67,7 @@ long long int StreamEncoder_Encode(PStreamEncoder Self, PStream aStream, PFillBu
   PReadStream Source = ReadStream(aStream, aFillBuffer);
 
   ReadStream_ClearBuffer(Source);
-  SecondaryCodec_Start(Self->SecondaryEncoder);
+  SecondaryEncodec_Start(Self->SecondaryEncoder);
   while (result < Size)
   {
     Symbol = ReadStream_Read(Source);
@@ -75,14 +75,14 @@ long long int StreamEncoder_Encode(PStreamEncoder Self, PStream aStream, PFillBu
     UpdCrc32(CRC, Symbol);
     result++;
 
-    if ((result & DefaultTickStepSize) == 0)
-      if (StreamCoder->OnTick != 0)
-	    if (StreamCoder->OnTick(StreamCoder->Tick)) break;
+    // if ((result & DefaultTickStepSize) == 0)
+      // if (StreamCoder->OnTick != 0)
+	    // if (StreamCoder->OnTick(StreamCoder->Tick)) break;
   }
-  StreamCoder->SecondaryCodec->Flush();
-  StreamCoder->Stream->FlushBuffer();
-  (*Source).~TReadStream();
+  SecondaryEncoder_FinishEncode(Self->SecondaryEncoder);
+  WriteStream_FlushBuffer(Self->Stream);
 
+  ReadStream_Free(Source);
   return result;
 };
 
