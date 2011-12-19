@@ -58,4 +58,10 @@ const TTableParameters DefaultTableParameters = {3, 163, 157,  65,  93,
 
 static const int DefaultDictionaryLevel = 2;
 
+// ------------------------------------------------------------------ //
+//  Default tick step size                                            //
+// ------------------------------------------------------------------ //
+
+static const int DefaultTickStepSize    = 0xFFFF;
+
 #endif // BEELIB_TYPES_H
