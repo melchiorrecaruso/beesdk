@@ -33,14 +33,13 @@
 #ifndef BEELIB_MODELLER_H
 #define BEELIB_MODELLER_H
 
-#include "beelib_codec.h" // TSecondaryEncoder, ...
-#include "beelib_types.h" // TTable, TTableCol, ...
+#include "beelib_types.h"      // TTable, TTableCol, ...
 
 /* TBaseCoder struct/methods */
 
 typedef struct TBaseCoder *PBaseCoder;
 
-  PBaseCoder BaseCoder_Malloc       (void* aCodec);
+  PBaseCoder BaseCoder_Malloc       (void *aCodec);
         void BaseCoder_Free         (PBaseCoder Self);
         void BaseCoder_SetTable     (PBaseCoder Self, TTableParameters *T);
         void BaseCoder_SetDictionary(PBaseCoder Self, unsigned int aDictLevel);

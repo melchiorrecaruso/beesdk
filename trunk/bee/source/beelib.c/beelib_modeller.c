@@ -1,6 +1,8 @@
-#include "beelib_codec.h"
+#include <math.h>
+#include <stdlib.h>
 #include "beelib_modeller.h"
 #include "beelib_assembler.h"
+#include "beelib_rangecoder.h"
 
 #define min(X, Y)  ((X) < (Y) ? (X) : (Y))
 #define max(X, Y)  ((X) > (Y) ? (X) : (Y))
@@ -11,7 +13,7 @@
 
 /* PPM modeller's node information */
 
-typedef struct TNode {
+struct TNode{
   unsigned short int K;          // frequency of This symbol
   unsigned char C;               // This symbol itself
   unsigned char D;               // Used FOR incoming data storage
@@ -59,12 +61,16 @@ struct TBaseCoder {
   struct TTable Table;            // parameters Table
 };
 
-void BaseCoder_Initialize(PBaseCoder Self, void *aCodec)
+PBaseCoder BaseCoder_Malloc(void *aCodec)
 {
+  PBaseCoder Self = malloc(sizeof(struct TBaseCoder));
+
   Self->Codec   = aCodec;
   Self->Freq    = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
   Self->List    = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
   Self->CutsLen = 0;
+
+  return Self;
 }
 
 void BaseCoder_Free(PBaseCoder Self)
@@ -152,6 +158,7 @@ void BaseCoder_Cut(PBaseCoder Self)
     {
       Bound--;
       if (P->Up != 0)
+      {
         if (P->A > Self->LowestPos)
         {
           *J = P;
@@ -163,6 +170,7 @@ void BaseCoder_Cut(PBaseCoder Self)
           Self->Tear = P->Up;
           P->Up = 0;
         }
+      }
       P = P->Next;
     }
     while (!(P == 0));
@@ -309,7 +317,7 @@ void BaseEncoder_Step(PBaseCoder Self)
   }
   while (!(I == MAXSYMBOL + 1));
 
-  Self->Symbol = SecondaryEncoder_UpdateSymbol(Self->Codec, Self->Freq, Self->Symbol);
+  Self->Symbol = RangeEncoder_UpdateSymbol(Self->Codec, Self->Freq, Self->Symbol);
 
   BaseCoder_Add(Self, Self->Symbol);
 

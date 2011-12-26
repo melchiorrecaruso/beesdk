@@ -36,7 +36,7 @@
 
 typedef unsigned int TTableCol[TABLESIZE]; /* [0..20] */
 
-typedef struct TTable {
+struct TTable{
   int Level;
   TTableCol T[TABLECOLS]; /* [0..1] */
 };

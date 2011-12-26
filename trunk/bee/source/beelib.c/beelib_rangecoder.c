@@ -56,6 +56,14 @@ void RangeEncoder_ShiftLow(PRangeEncoder Self)
   return;
 }
 
+void RangeEncoder_FinishEncode(PRangeEncoder Self)
+{
+  int I;
+  for (I = 0; I <= NUM; I++)
+    RangeEncoder_ShiftLow(Self);
+  return;
+}
+
 void RangeEncoder_Encode(PRangeEncoder Self, unsigned int CumFreq, unsigned int Freq, unsigned int TotFreq)
 {
   unsigned int Tmp = Self->Low;
@@ -70,14 +78,35 @@ void RangeEncoder_Encode(PRangeEncoder Self, unsigned int CumFreq, unsigned int 
   return;
 }
 
-void RangeEncoder_FinishEncode(PRangeEncoder Self)
+unsigned int RangeEncoder_UpdateSymbol(PRangeEncoder Self, TFreq Freq, unsigned int aSymbol)
 {
-  int I;
-  for (I = 0; I <= NUM; I++)
-    RangeEncoder_ShiftLow(Self);
-  return;
-}
+  unsigned int CumFreq = 0, TotFreq = 0, I = 0;
 
+  // Count CumFreq...
+  I = CumFreq;
+  while (I < aSymbol)
+  {
+    CumFreq += Freq[I];
+    I++;
+  }
+
+  // Count TotFreq...
+  TotFreq = CumFreq;
+
+  I = FREQSIZE;
+  do
+  {
+    I--;
+    TotFreq += Freq[I];
+  }
+  while (!(I == aSymbol));
+
+  // Encode...
+  RangeEncoder_Encode(Self, CumFreq, Freq[aSymbol], TotFreq);
+
+  // Return Result...
+  return aSymbol;
+}
 /* TRangeDecoder struct/methods implementation */
 
 struct TRangeDecoder {
@@ -117,6 +146,11 @@ void RangeDecoder_StartDecode(PRangeDecoder Self)
       + ReadStream_Read(Self->Stream);
 }
 
+void RangeDecoder_FinishDecode(PRangeDecoder Self)
+{
+  // nothing to do
+}
+
 unsigned int RangeDecoder_GetFreq(PRangeDecoder Self, unsigned int TotFreq)
 {
   // return MulDecDiv(Code + 1, TotFreq, Range);
@@ -137,7 +171,34 @@ void RangeDecoder_Decode(PRangeDecoder Self, unsigned int CumFreq, unsigned int 
   }
 }
 
-void RangeDecoder_FinishDecode(PRangeDecoder Self)
+unsigned int RangeDecoder_UpdateSymbol(PRangeDecoder Self, TFreq Freq, unsigned int aSymbol)
 {
+  unsigned int CumFreq = 0, TotFreq = 0, SumFreq = 0;
 
+  // Count TotFreq...
+  TotFreq = 0;
+
+  aSymbol = FREQSIZE;
+  do
+  {
+    aSymbol--;
+    TotFreq += Freq[aSymbol];
+  }
+
+  while (!(aSymbol == 0));
+  // Count CumFreq...
+  CumFreq = RangeDecoder_GetFreq(Self, TotFreq);
+
+  // Search aSymbol...
+  SumFreq = 0;
+  aSymbol = SumFreq;
+  while (SumFreq + Freq[aSymbol] <= CumFreq)
+  {
+    SumFreq += Freq[aSymbol];
+    aSymbol++;
+  }
+  // Finish Decode...
+  RangeDecoder_Decode(Self, SumFreq, Freq[aSymbol], TotFreq);
+  // Return Result...
+  return aSymbol;
 }
