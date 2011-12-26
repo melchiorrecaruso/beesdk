@@ -37,10 +37,7 @@
 
 #include "beelib_rangecoder.h"
 
-/* Array of Frequencyes */
 
-#define FREQSIZE 16
-typedef unsigned int *TFreq;
 
 /* TSecondaryEncoder struct/methods */
 
@@ -50,7 +47,7 @@ typedef struct TRangeEncoder *PSecondaryEncoder;
                void SecondaryEncoder_Free        (PSecondaryEncoder Self);
                void SecondaryEncoder_StartEncode (PSecondaryEncoder Self);
                void SecondaryEncoder_FinishEncode(PSecondaryEncoder Self);
-       unsigned int SecondaryEncoder_UpdateSymbol(PSecondaryEncoder Self, TFreq Freq, unsigned int aSymbol);
+
 
 /* TSecondaryDecoder struct methods */
 
@@ -60,6 +57,6 @@ typedef struct TRangeDecoder *PSecondaryDecoder;
                void SecondaryDecoder_Free        (PSecondaryDecoder Self);
                void SecondaryDecoder_StartDecode (PSecondaryDecoder Self);
                void SecondaryDecoder_FinishDecode(PSecondaryDecoder Self);
-       unsigned int SecondaryDecoder_UpdateSymbol(PSecondaryDecoder Self, TFreq Freq, unsigned int aSymbol);
+
 
 #endif //  BEELIB_CODEC_H

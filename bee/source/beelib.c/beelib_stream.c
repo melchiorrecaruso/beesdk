@@ -15,8 +15,8 @@ PReadStream ReadStream_Malloc(PStream aStream, PFillBuffer aFillBuffer)
 {
   PReadStream Self = malloc(sizeof(struct TReadStream));
 
-  Self->Stream       = aStream;
   Self->FillBuffer   = aFillBuffer;
+  Self->Stream       = aStream;
   Self->BufferSize   = 0;
   Self->BufferReaded = 0;
 
@@ -64,11 +64,15 @@ struct TWriteStream {
           char Buffer[DEFAULT_BUFFER_CAPACITY];
 };
 
-void WriteStream_Initialize(PWriteStream Self, PStream aStream, PFlushBuffer aFlushBuffer)
+PWriteStream WriteStream_Malloc(PStream aStream, PFlushBuffer aFlushBuffer)
 {
-  Self->Stream      = aStream;
+  PWriteStream Self = malloc(sizeof(struct TWriteStream));
+
   Self->FlushBuffer = aFlushBuffer;
+  Self->Stream      = aStream;
   Self->BufferSize  = 0;
+
+  return Self;
 }
 
 void WriteStream_ClearBuffer(PWriteStream Self)
