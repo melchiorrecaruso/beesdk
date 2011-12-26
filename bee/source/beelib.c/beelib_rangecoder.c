@@ -1,6 +1,6 @@
+#include <stdlib.h>
 #include "beelib_assembler.h"
 #include "beelib_rangecoder.h"
-#include <stdlib.h>
 
 /* TRangeEncoder struct/methods implementation */
 
