@@ -4,8 +4,8 @@
 #include "beelib_assembler.h"
 #include "beelib_rangecoder.h"
 
-#define min(X, Y)  ((X) < (Y) ? (X) : (Y))
-#define max(X, Y)  ((X) > (Y) ? (X) : (Y))
+#define min(X, Y) ((X) < (Y) ? (X) : (Y))
+#define max(X, Y) ((X) > (Y) ? (X) : (Y))
 
 #define BITCHAIN   4             // Size of data portion, bit
 #define MAXSYMBOL 15             // Size of source alphabet, symbols
@@ -469,102 +469,3 @@ unsigned int BaseEncoder_UpdateSymbol(PBaseCoder Self, unsigned int aSymbol)
   Self->List[Self->ListCount - 1] = Self->Root;
   return result;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
