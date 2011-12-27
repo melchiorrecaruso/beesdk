@@ -24,7 +24,6 @@ PRangeEncoder RangeEncoder_Malloc(PWriteStream aStream)
 
 void RangeEncoder_Free(PRangeEncoder Self)
 {
-  Self->Stream = 0;
   free(Self);
 }
 
@@ -129,7 +128,6 @@ PRangeDecoder RangeDecoder_Malloc(PReadStream aStream)
 
 void RangeDecoder_Free(PRangeDecoder Self)
 {
-  Self->Stream = 0;
   free(Self);
 }
 
