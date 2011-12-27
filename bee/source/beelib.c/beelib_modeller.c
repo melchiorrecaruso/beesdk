@@ -43,7 +43,6 @@ struct TBaseCoder {
           PNode Heap;
          PPNode Cuts;
          PPNode List;
-   unsigned int CutsLen;
    unsigned int ListCount;
 
           PNode Root;
