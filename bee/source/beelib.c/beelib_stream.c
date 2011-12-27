@@ -23,6 +23,11 @@ PReadStream ReadStream_Malloc(PStream aStream, PFillBuffer aFillBuffer)
   return Self;
 }
 
+void ReadStream_Free(PReadStream Self)
+{
+  free(Self);
+}
+
 void ReadStream_ClearBuffer(PReadStream Self)
 {
   Self->BufferSize   = 0;
@@ -73,6 +78,11 @@ PWriteStream WriteStream_Malloc(PStream aStream, PFlushBuffer aFlushBuffer)
   Self->BufferSize  = 0;
 
   return Self;
+}
+
+void WriteStream_Free(PWriteStream Self)
+{
+  free(Self);
 }
 
 void WriteStream_ClearBuffer(PWriteStream Self)

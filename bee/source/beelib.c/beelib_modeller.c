@@ -32,6 +32,7 @@ typedef PNode *PPNode;           // Array of nodes...
 
 struct TBaseCoder {
            void *Codec;
+  PUpdateSymbol UpdateSymbol;
    unsigned int DictLevel;
    unsigned int Symbol;
    unsigned int Pos;
@@ -66,8 +67,9 @@ PBaseCoder BaseCoder_Malloc(void *aCodec)
 
   Self->Codec   = aCodec;
   Self->Freq    = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
+  Self->Heap      = 0;
+  Self->Cuts      = 0;
   Self->List    = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
-  Self->CutsLen = 0;
 
   return Self;
 }
@@ -79,7 +81,7 @@ void BaseCoder_Free(PBaseCoder Self)
   free(Self->Cuts);
   free(Self->List);
 
-  Self->CutsLen = 0;
+  free(Self);
 }
 
 void BaseCoder_Add(PBaseCoder Self, unsigned int aSymbol)

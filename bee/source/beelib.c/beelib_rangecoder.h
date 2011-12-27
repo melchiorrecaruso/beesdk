@@ -36,6 +36,8 @@ typedef unsigned int *TFreq;
 #define THRES    4278190080
 #define MAXFREQ  16777215
 
+typedef int (*PUpdateSymbol) (void*, void*, unsigned char);
+
  /* TRangeEncoder struct/methods */
 
 typedef struct TRangeEncoder *PRangeEncoder;
