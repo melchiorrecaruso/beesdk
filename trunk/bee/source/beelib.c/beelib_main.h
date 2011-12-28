@@ -56,6 +56,6 @@ typedef struct TStreamDecoder *PStreamDecoder;
             void StreamDecoder_SetTableParameters(PStreamDecoder Self, TTableParameters *Value);
             void StreamDecoder_FreshFlexible     (PStreamDecoder Self);
             void StreamDecoder_FreshSolid        (PStreamDecoder Self);
-   long long int StreamEncoder_Decode            (PStreamDecoder Self, PStream aStream, PFlushBuffer aFlushBuffer, long long int Size, unsigned int *CRC);
+   long long int StreamDecoder_Decode            (PStreamDecoder Self, PStream aStream, PFlushBuffer aFlushBuffer, long long int Size, unsigned int *CRC);
 
 #endif //  BEELIB_MAIN_H
