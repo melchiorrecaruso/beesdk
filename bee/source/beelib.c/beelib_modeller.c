@@ -61,15 +61,16 @@ struct TBaseCoder {
   struct TTable Table;            // parameters Table
 };
 
-PBaseCoder BaseCoder_Malloc(void *aCodec)
+PBaseCoder BaseCoder_Malloc(void *aCodec, PUpdateSymbol aUpdateSymbol)
 {
   PBaseCoder Self = malloc(sizeof(struct TBaseCoder));
 
-  Self->Codec   = aCodec;
-  Self->Freq    = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
-  Self->Heap      = 0;
-  Self->Cuts      = 0;
-  Self->List    = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
+  Self->Codec        = aCodec;
+  Self->UpdateSymbol = aUpdateSymbol;
+  Self->Freq         = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
+  Self->Heap         = 0;
+  Self->Cuts         = 0;
+  Self->List         = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
 
   return Self;
 }
@@ -80,7 +81,6 @@ void BaseCoder_Free(PBaseCoder Self)
   free(Self->Heap);
   free(Self->Cuts);
   free(Self->List);
-
   free(Self);
 }
 
@@ -138,10 +138,9 @@ void BaseCoder_CutTail(PBaseCoder Self, PPNode I, PPNode J)
 
 void BaseCoder_Cut(PBaseCoder Self)
 {
-  if (Self->CutsLen == 0)
+  if (Self->Cuts == 0)
   {
     Self->Cuts = malloc(sizeof(PPNode)*(Self->MaxCounter + 1));
-	Self->CutsLen = Self->MaxCounter + 1;
   }
 
   PPNode I = &(Self->Cuts[0]);
@@ -150,8 +149,8 @@ void BaseCoder_Cut(PBaseCoder Self)
 
   (*I) = Self->Root;
 
-  PNode P = 0;
   int Bound = (Self->SafeCounter * 3) / 4;
+  PNode P = 0;
   do
   {
     P = (*I)->Up;
@@ -296,10 +295,10 @@ void BaseCoder_Account(PBaseCoder Self)
   Self->ListCount = Self->I;
 }
 
-void BaseEncoder_Step(PBaseCoder Self)
+void BaseCoder_Step(PBaseCoder Self)
 {
   // ClearLongword(&Freq[0], MaxSymbol + 1);
-  int H;
+   int H;
   for (H = 0; H < MAXSYMBOL + 2; H++)
     Self->Freq[H] = 0;
 
@@ -318,7 +317,7 @@ void BaseEncoder_Step(PBaseCoder Self)
   }
   while (!(I == MAXSYMBOL + 1));
 
-  Self->Symbol = RangeEncoder_UpdateSymbol(Self->Codec, Self->Freq, Self->Symbol);
+  Self->Symbol = Self->UpdateSymbol(Self->Codec, Self->Freq, Self->Symbol);
 
   BaseCoder_Add(Self, Self->Symbol);
 
@@ -431,7 +430,7 @@ void BaseCoder_SetDictionary(PBaseCoder Self, unsigned int aDictLevel)
     Self->SafeCounter = Self->MaxCounter - 64;
 
 	free(Self->Cuts);
-	Self->CutsLen = 0;
+	Self->Cuts = 0;
 
 	free(Self->Heap);
 	Self->Heap = malloc(sizeof(struct TNode)*(Self->MaxCounter + 1));
@@ -439,17 +438,17 @@ void BaseCoder_SetDictionary(PBaseCoder Self, unsigned int aDictLevel)
   BaseCoder_FreshFlexible(Self);
 }
 
-unsigned int BaseEncoder_UpdateSymbol(PBaseCoder Self, unsigned int aSymbol)
+unsigned int BaseCoder_UpdateSymbol(PBaseCoder Self, unsigned int aSymbol)
 {
   Self->Part = &(Self->Table.T[0]);
 
   unsigned int result = 0;
   Self->Symbol = aSymbol >> 0x4;
-  BaseEncoder_Step(Self);
+  BaseCoder_Step(Self);
   result = Self->Symbol << 4;
   Self->Part = &(Self->Table.T[1]);
   Self->Symbol = aSymbol & 0xF;
-  BaseEncoder_Step(Self);
+  BaseCoder_Step(Self);
   result += Self->Symbol;
 
   // Reduce Tree...
