@@ -25,16 +25,17 @@ PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFlushBuffer aFlushBuffer)
 {
   PStreamEncoder Self = malloc(sizeof(struct TStreamEncoder));
 
-  Self->Stream = WriteStream_Malloc(aStream, aFlushBuffer);
+  Self->Stream       = WriteStream_Malloc(aStream, aFlushBuffer);
   Self->RangeEncoder = RangeEncoder_Malloc(Self->Stream);
-  Self->BaseCoder = BaseCoder_Malloc(Self->RangeEncoder, RangeEncoder_UpdateSymbol);
+  Self->BaseCoder    = BaseCoder_Malloc(Self->RangeEncoder, (PUpdateSymbol)RangeEncoder_UpdateSymbol);
+
   return Self;
 };
 
 void StreamEncoder_Free(PStreamEncoder Self)
 {
   BaseCoder_Free(Self->BaseCoder);
-  SecondaryEncoder_Free(Self->SecondaryEncoder);
+  RangeEncoder_Free(Self->RangeEncoder);
   WriteStream_Free(Self->Stream);
   free(Self);
 };
@@ -61,185 +62,81 @@ void StreamEncoder_FreshSolid(PStreamEncoder Self)
 
 long long int StreamEncoder_Encode(PStreamEncoder Self, PStream aStream, PFillBuffer aFillBuffer, long long int Size, unsigned int *CRC)
 {
-	               CRC = (unsigned int)-1;
+                  *CRC = (unsigned int)-1;
       long long result = 0;
   unsigned char Symbol = 0;
 
-  PReadStream Source = ReadStream(aStream, aFillBuffer);
+  PReadStream Source = ReadStream_Malloc(aStream, aFillBuffer);
 
-  ReadStream_ClearBuffer(Source);
-  SecondaryEncodec_Start(Self->SecondaryEncoder);
+  RangeEncoder_StartEncode(Self->RangeEncoder);
   while (result < Size)
   {
     Symbol = ReadStream_Read(Source);
-    BaseDecoder_UpdateSymbol(Self->BaseCoder, Symbol);
-    UpdCrc32(CRC, Symbol);
+    BaseCoder_UpdateSymbol(Self->BaseCoder, Symbol);
+    *CRC = UpdateCrc32(*CRC, Symbol);
     result++;
 
     // if ((result & DefaultTickStepSize) == 0)
       // if (StreamCoder->OnTick != 0)
 	    // if (StreamCoder->OnTick(StreamCoder->Tick)) break;
   }
-  SecondaryEncoder_FinishEncode(Self->SecondaryEncoder);
+  RangeEncoder_FinishEncode(Self->RangeEncoder);
   WriteStream_FlushBuffer(Self->Stream);
 
   ReadStream_Free(Source);
   return result;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* TStreamDecoder struct/methods implementation */
-
 
 struct TStreamDecoder {
         PReadStream Stream;
-  PSecondaryDecoder SecondaryDecoder;
+      PRangeDecoder RangeDecoder;
          PBaseCoder BaseCoder;
 };
 
 PStreamDecoder StreamDecoder_Malloc(PStream aStream, PFillBuffer aFillBuffer)
 {
-  PStreamDecoder result = malloc(sizeof(struct TStreamDecoder));
+  PStreamDecoder Self = malloc(sizeof(struct TStreamDecoder));
 
-  result->Stream = ReadStream_Malloc(aStream, aFillBuffer);
-  result->SecondaryDecoder = SecondaryDecoder_Malloc(result->Stream);
-  result->BaseCoder = BaseCoder_Malloc(result->SecondaryDecoder);
+  Self->Stream       = ReadStream_Malloc(aStream, aFillBuffer);
+  Self->RangeDecoder = RangeDecoder_Malloc(Self->Stream);
+  Self->BaseCoder    = BaseCoder_Malloc(Self->RangeDecoder, (PUpdateSymbol)RangeDecoder_UpdateSymbol);
 
-  return result;
+  return Self;
 };
 
+void StreamDecoder_Free(PStreamDecoder Self)
+{
+  BaseCoder_Free(Self->BaseCoder);
+  RangeDecoder_Free(Self->RangeDecoder);
+  ReadStream_Free(Self->Stream);
+  free(Self);
+};
 
-
-
-
-
-void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, signed int Value)
+void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, unsigned int Value)
 {
   BaseCoder_SetDictionary(Self->BaseCoder, Value);
-  return;
 };
 
-
-/* TStreamDecoder struct/methods implementation */
-
-
-
-void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, signed int Value)
+void StreamDecoder_SetTableParameters(PStreamDecoder Self, TTableParameters *Value)
 {
-  BaseCoder_SetDictionary(Self->BaseCoder, Value);
-  return;
+  BaseCoder_SetTable(Self->BaseCoder, Value);
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void SetTableParameters(void* Handle, const TTableParameters& Value)
+void StreamDecoder_FreshFlexible(PStreamDecoder Self)
 {
-  TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
-  (*StreamCoder).PPM->SetTable(Value);
-  return;
+  BaseCoder_FreshFlexible(Self->BaseCoder);
 };
 
-void FreshFlexible(void* Handle)
+void StreamDecoder_FreshSolid(PStreamDecoder Self)
 {
-  TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
-  (*StreamCoder).PPM->FreshFlexible();
-  return;
+  BaseCoder_FreshSolid(Self->BaseCoder);
 };
 
-void FreshSolid(void* Handle)
+long long int StreamDecoder_Decode(PStreamDecoder Self, PStream aStream, PFlushBuffer aFlushBuffer, long long int Size, unsigned int *CRC)
 {
-  TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
-  (*StreamCoder).PPM->FreshSolid();
-  return;
-};
-
-void* CreateEncoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
-{
-  TStreamCoder* StreamCoder = new TStreamCoder;
-
-  StreamCoder->Tick    = TickPtr;
-  StreamCoder->OnTick  = OnTickEv;
-
-  StreamCoder->Stream  = new TWriteStream(StrmPtr, OnFlushEv);
-  StreamCoder->OnFill  = OnFillEv;
-  StreamCoder->OnFlush = OnFlushEv;
-
-  StreamCoder->SecondaryCodec = new TSecondaryEncoder(StreamCoder->Stream);
-  StreamCoder->PPM            = new TBaseCoder(StreamCoder->SecondaryCodec);
-
-  return StreamCoder;
-};
-
-
-
-void* CreateDecoder(void* StrmPtr, TFillEvent OnFillEv, TFlushEvent OnFlushEv, void* TickPtr, TTickEvent OnTickEv)
-{
-  TStreamCoder* StreamCoder = new TStreamCoder;
-
-  StreamCoder->Tick    = TickPtr;
-  StreamCoder->OnTick  = OnTickEv;
-
-  StreamCoder->Stream  = new TReadStream(StrmPtr, OnFillEv);
-  StreamCoder->OnFill  = OnFillEv;
-  StreamCoder->OnFlush = OnFlushEv;
-
-  StreamCoder->SecondaryCodec = new TSecondaryDecoder(StreamCoder->Stream);
-  StreamCoder->PPM            = new TBaseCoder(StreamCoder->SecondaryCodec);
-
-  return StreamCoder;
-};
-
-int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
-{
+  /*
                    CRC = (unsigned int)-1;
           int64 result = 0;
   unsigned char Symbol = 0;
@@ -264,16 +161,8 @@ int64 Decode(void* Handle, void* StrmPtr, const int64 Size, unsigned int& CRC)
   StreamCoder->SecondaryCodec->Flush();
   (*Dest).~TWriteStream();
   return result;
+
+  */
+  return 0;
 };
 
-void DestroyCoder(void* Handle)
-{
-  TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
-
-  StreamCoder->PPM->~TBaseCoder();
-  StreamCoder->SecondaryCodec->~TSecondaryCodec();
-  StreamCoder->Stream->~TStream();
-
-  delete StreamCoder;
-  return;
-};

@@ -129,7 +129,7 @@ const
 begin
   inherited Create;
   Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1359 archiver utility, July 2011' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1361 archiver utility, July 2011' + Cr +
                '(C) 1999-2010 Andrew Filinsky and Melchiorre Caruso';
 
   FHeaders    := nil;
