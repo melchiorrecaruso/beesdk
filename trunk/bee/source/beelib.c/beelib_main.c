@@ -1,11 +1,12 @@
-#include "beelib_main.h"
+#include <stdlib.h>
 
 #include "beelib_crc.h"
-#include "beelib_codec.h"
+#include "beelib_main.h"
 #include "beelib_types.h"
 #include "beelib_stream.h"
 #include "beelib_modeller.h"
 #include "beelib_assembler.h"
+#include "beelib_rangecoder.h"
 
 unsigned int DllVersion()
 {
@@ -16,18 +17,18 @@ unsigned int DllVersion()
 
 struct TStreamEncoder {
        PWriteStream Stream;
-  PSecondaryEncoder SecondaryEncoder;
+      PRangeEncoder RangeEncoder;
          PBaseCoder BaseCoder;
 };
 
 PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFlushBuffer aFlushBuffer)
 {
-  PStreamEncoder result = malloc(sizeof(struct TStreamEncoder));
+  PStreamEncoder Self = malloc(sizeof(struct TStreamEncoder));
 
-  result->Stream = WriteStream_Malloc(aStream, aFlushBuffer);
-  result->SecondaryEncoder = SecondaryEncoder_Malloc(result->Stream);
-  result->BaseCoder = BaseCoder_Malloc(result->SecondaryEncoder);
-  return result;
+  Self->Stream = WriteStream_Malloc(aStream, aFlushBuffer);
+  Self->RangeEncoder = RangeEncoder_Malloc(Self->Stream);
+  Self->BaseCoder = BaseCoder_Malloc(Self->RangeEncoder, RangeEncoder_UpdateSymbol);
+  return Self;
 };
 
 void StreamEncoder_Free(PStreamEncoder Self)
