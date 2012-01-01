@@ -34,8 +34,12 @@ const
 
 type
   TTickEvent  = function(Ticker: pointer): boolean;
-  TFillEvent  = function(Stream: pointer; var Buffer; Count: longint): longint;
-  TFlushEvent = function(Stream: pointer; var Buffer; Count: longint): longint;
+  TFillBuffer  = function(Stream: pointer; var Buffer; Count: longint): longint;
+  TFlushBuffer = function(Stream: pointer; var Buffer; Count: longint): longint;
+
+
+
+
 
 implementation
 

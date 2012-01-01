@@ -152,6 +152,9 @@ begin
   begin
     aPart    := @Table.T[I];
     aPart[0] := aPart[0] + 256;
+
+    Writeln(aPart[0]);
+
     // Weight of first-encoutered deterministic symbol
     aPart[MaxSymbol + 2] := aPart[MaxSymbol + 2] + 32;
     // Recency scaling, r = r'' / 32, r'' = (r' + 1) * 32

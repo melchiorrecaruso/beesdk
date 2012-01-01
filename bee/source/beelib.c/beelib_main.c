@@ -10,7 +10,7 @@
 
 unsigned int DllVersion()
 {
-  return 110;
+  return 111;
 };
 
 /* TStreamEncoder struct/methods implementation */

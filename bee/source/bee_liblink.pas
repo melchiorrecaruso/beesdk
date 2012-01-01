@@ -32,19 +32,86 @@ unit Bee_LibLink;
 interface
 
 uses
+  cTypes,
   BeeLib_Interface,
   BeeLib_Configuration;
 
-  const
-    {$IFDEF MSWINDOWS}
-    cApplicationLib = 'beelib.dll';
-    {$ENDIF}
-    {$IFDEF UNIX}
-     cApplicationLib = 'beelib.so';
-    {$ENDIF}
+{$IFDEF cppDLL}
+  {$IFDEF MSWINDOWS}
+    {$linklib libgcc}
+    {$linklib libmsvcrt}
+  {$ENDIF}
 
-function  DllVersion: longword;
-            {$IFDEF cppDLL} cdecl; {$ENDIF} external cApplicationLib;
+  {$IFDEF UNIX}
+  {$ENDIF}
+
+  {$link beelib.c\obj\release\beelib_assembler.o}
+  {$link beelib.c\obj\release\beelib_crc.o}
+  {$link beelib.c\obj\release\beelib_main.o}
+  {$link beelib.c\obj\release\beelib_modeller.o}
+  {$link beelib.c\obj\release\beelib_rangecoder.o}
+  {$link beelib.c\obj\release\beelib_stream.o}
+
+  function DllVersion:cuint; cdecl; external;
+
+  function  StreamEncoder_Malloc
+    (aStream: pointer; aFlushBuffer: TFlushBuffer): pointer; cdecl; external;
+
+  procedure StreamEncoder_Free
+    (Self: pointer); cdecl; external;
+
+  procedure StreamEncoder_SetDictionaryLevel
+    (Self: pointer; Value: cuint); cdecl; external;
+
+  procedure StreamEncoder_SetTableParameters
+    (Self: pointer; Value: pointer); cdecl; external;
+
+  procedure StreamEncoder_FreshFlexible
+    (Self: pointer); cdecl; external;
+
+  procedure StreamEncoder_FreshSolid
+    (Self: pointer); cdecl; external;
+
+  function  StreamEncoder_Encode
+    (Self: pointer; aStream: pointer; aFillBuffer: TFillBuffer;
+     Size: clonglong; CRC: pcuint): clonglong; cdecl; external;
+
+  function StreamDecoder_Malloc
+    (aStream:pointer; aFillBuffer:TFillBuffer):pointer; cdecl; external;
+
+  procedure StreamDecoder_Free
+    (Self: pointer); cdecl; external;
+
+  procedure StreamDecoder_SetDictionaryLevel
+    (Self: pointer; Value:cuint); cdecl; external;
+
+  procedure StreamDecoder_SetTableParameters
+    (Self: pointer; Value: pointer); cdecl; external;
+
+  procedure StreamDecoder_FreshFlexible
+    (Self: pointer); cdecl; external;
+
+  procedure StreamDecoder_FreshSolid
+    (Self: pointer); cdecl; external;
+
+  function StreamDecoder_Decode
+    (Self: pointer; aStream: pointer; aFlushBuffer: TFlushBuffer;
+     Size: clonglong; CRC: pcuint): clonglong; cdecl; external;
+
+{$ENDIF}
+
+{$IFDEF fpcDLL}
+
+
+const
+  {$IFDEF MSWINDOWS}
+   cApplicationLib = 'beelib.dll';
+  {$ENDIF}
+  {$IFDEF UNIX}
+   cApplicationLib = 'beelib.so';
+  {$ENDIF}
+
+function  DllVersion: longword; external cApplicationLib;
 
 function  CreateEncoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv:
             TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer;
@@ -74,6 +141,8 @@ function  Encode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: 
 
 function  Decode(Handle: pointer; StrmPtr: pointer; const Size: int64; var CRC: longword): int64;
             {$IFDEF cppDLL} cdecl; {$ENDIF} external cApplicationLib;
+
+{$ENDIF}
 
 implementation
 

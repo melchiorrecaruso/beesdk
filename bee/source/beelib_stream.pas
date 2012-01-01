@@ -54,10 +54,10 @@ type
   TReadStream = class(TStream)
   private
     FBufferReaded: longint;
-    FOnFillEvent: TFillEvent;
+    FOnFillEvent: TFillBuffer;
     procedure FillBuffer;
   public
-    constructor Create(Handle: pointer; OnFillEvent: TFillEvent);
+    constructor Create(Handle: pointer; OnFillEvent: TFillBuffer);
     destructor Destroy; override;
     procedure FlushBuffer; override;
     function Read: byte; override;
