@@ -37,6 +37,7 @@ uses
   // ---
   Bee_Headers,
   BeeLib_Interface,
+  BeeLib_Configuration,
   {$IFDEF cppDLL}
     Bee_LibLink;
   {$ELSE}
@@ -46,6 +47,10 @@ uses
       BeeLib_StreamCoder;
     {$ENDIF}
   {$ENDIF}
+
+
+
+
 
 type
   { THeaderCoder class }
@@ -57,21 +62,20 @@ type
     FStream: TStream;
     FPassword: string;
     FOnTickEvent: TTickEvent;
-    FOnFillEvent: TFillEvent;
-    FOnFlushEvent: TFlushEvent;
+    FOnFillBuffer: TFillBuffer;
+    FOnFlushBuffer: TFlushBuffer;
   public
     constructor Create(
       Stream: TStream;
-      OnFill: TFillEvent;
-      OnFlush: TFlushEvent;
+      OnFill: TFillBuffer;
+      OnFlush: TFlushBuffer;
       Ticker: pointer;
       OnTick: TTickEvent);
     destructor Destroy; override;
-    procedure Initialize(Item: THeader);
     property Password: string read FPassword write FPassword;
     property OnTickEvent: TTickEvent read FOnTickEvent write FOnTickEvent;
-    property OnFillEvent: TFillEvent read FOnFillEvent write FOnFillEvent;
-    property OnFlushEvent: TFlushEvent read FOnFlushEvent write FOnFlushEvent;
+    property OnFillEvent: TFillBuffer read FOnFillBuffer write FOnFillBuffer;
+    property OnFlushEvent: TFlushBuffer read FOnFlushBuffer write FOnFlushBuffer;
   end;
 
   { THeaderEncoder class }
@@ -85,11 +89,12 @@ type
   public
     constructor Create(
       Stream: TStream;
-      OnFill: TFillEvent;
-      OnFlush: TFlushEvent;
+      OnFill: TFillBuffer;
+      OnFlush: TFlushBuffer;
       Ticker: pointer;
       OnTick: TTickEvent);
     destructor Destroy; override;
+    procedure Initialize(Item: THeader);
     function WriteFromArch(Item: THeader; Strm: TStream): boolean;
     function WriteFromSwap(Item: THeader; Strm: TStream): boolean;
     function WriteFromFile(Item: THeader): boolean;
@@ -103,11 +108,12 @@ type
   public
     constructor Create(
       Stream: TStream;
-      OnFill: TFillEvent;
-      OnFlush: TFlushEvent;
+      OnFill: TFillBuffer;
+      OnFlush: TFlushBuffer;
       Ticker: pointer;
       OnTick: TTickEvent);
     destructor Destroy; override;
+    procedure Initialize(Item: THeader);
     function ReadToSwap(Item: THeader; Strm: TStream): boolean;
     function ReadToNul(Item: THeader): boolean;
     function ReadToFile(Item: THeader): boolean; overload;
@@ -123,61 +129,70 @@ uses
 
   constructor THeaderCoder.Create(
     Stream: TStream;
-    OnFill: TFillEvent;
-    OnFlush: TFlushEvent;
+    OnFill: TFillBuffer;
+    OnFlush: TFlushBuffer;
     Ticker: pointer;
     OnTick: TTickEvent);
   begin
-    FCoder        := nil;
-    FPassword     := '';
-    FStream       := Stream;
-    FOnFillEvent  := OnFill;
-    FOnFlushEvent := OnFlush;
-    FOwner        := Ticker;
-    FOnTickevent  := OnTick;
+    FCoder         := nil;
+    FPassword      := '';
+    FStream        := Stream;
+    FOnFillBuffer  := OnFill;
+    FOnFlushBuffer := OnFlush;
+    FOwner         := Ticker;
+    FOnTickevent   := OnTick;
   end;
 
   destructor THeaderCoder.Destroy;
   begin
-    FCoder        := nil;
-    FStream       := nil;
-    FOnFillEvent  := nil;
-    FOnFlushEvent := nil;
-    FOwner        := nil;
-    FOnTickevent  := nil;
-  end;
-
-  procedure THeaderCoder.Initialize(Item: THeader);
-  begin
-    if foDictionary in Item.Flags then
-      SetDictionaryLevel(FCoder, Item.Dictionary);
-
-    if foTable in Item.Flags then
-      SetTableParameters(FCoder, Item.Table);
-
-    if foTear in Item.Flags then
-      FreshFlexible(FCoder)
-    else
-      FreshSolid(FCoder);
+    FCoder         := nil;
+    FStream        := nil;
+    FOnFillBuffer  := nil;
+    FOnFlushBuffer := nil;
+    FOwner         := nil;
+    FOnTickevent   := nil;
   end;
 
   { THeaderEncoder class }
 
   constructor THeaderEncoder.Create(
     Stream: TStream;
-    OnFill: TFillEvent;
-    OnFlush: TFlushEvent;
+    OnFill: TFillBuffer;
+    OnFlush: TFlushBuffer;
     Ticker: pointer;
     OnTick: TTickEvent);
   begin
     inherited Create(Stream, OnFill, OnFlush, Ticker, OnTick);
-    FCoder := CreateEncoder(Stream, OnFill, OnFlush, Ticker, OnTick);
+    FCoder := StreamEncoder_Malloc(Stream, OnFlush);
+    Writeln('THeaderEncoder.Create = ', DllVersion);
   end;
 
   destructor THeaderEncoder.Destroy;
   begin
-    DestroyCoder(FCoder);
+    StreamEncoder_Free(FCoder);
     inherited Destroy;
+  end;
+
+  procedure THeaderEncoder.Initialize(Item: THeader);
+  var
+    I: longint;
+  begin
+    Writeln('THeaderEncoder.Initialize - BEGIN');
+
+    if foDictionary in Item.Flags then
+      StreamEncoder_SetDictionaryLevel(FCoder, Item.Dictionary);
+
+    if foTable in Item.Flags then
+      StreamEncoder_SetTableParameters(FCoder, @Item.Table);
+
+
+
+    if foTear in Item.Flags then
+      StreamEncoder_FreshFlexible(FCoder)
+    else
+      StreamEncoder_FreshSolid(FCoder);
+
+    Writeln('THeaderEncoder.Initialize - END');
   end;
 
   function THeaderEncoder.CopySilent(Strm: TStream; const Size: int64): int64;
@@ -229,13 +244,15 @@ uses
   function THeaderEncoder.Write(Item: THeader; Strm: TStream; const Size: int64): boolean;
   var
     StartPos: int64;
+    CRC: longword;
   begin
          StartPos :=  Strm.Seek(0, soCurrent);
     Item.StartPos := FStream.Seek(0, soCurrent);
     case foMoved in Item.Flags of
       True:  Item.Size := Copy (Strm, Size, Item.Crc);
-      False: Item.Size := Encode(Fcoder, Strm, Size, Item.Crc);
+      False: Item.Size := StreamEncoder_Encode(FCoder, Strm, FOnFillBuffer, Size, @CRC);
     end;
+    Item.Crc        := CRC;
     Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
 
     // optimize compression ...
@@ -301,19 +318,33 @@ uses
 
   constructor THeaderDecoder.Create(
     Stream: TStream;
-    OnFill: TFillEvent;
-    OnFlush: TFlushEvent;
+    OnFill: TFillBuffer;
+    OnFlush: TFlushBuffer;
     Ticker: pointer;
     OnTick: TTickEvent);
   begin
     inherited Create(Stream, OnFill, OnFlush, Ticker, OnTick);
-    FCoder := CreateDecoder(Stream, OnFill, OnFlush, Ticker, OnTick);
+    FCoder := StreamDecoder_Malloc(Stream, OnFill);
   end;
 
   destructor THeaderDecoder.Destroy;
   begin
-    DestroyCoder(FCoder);
+    StreamDecoder_Free(FCoder);
     inherited Destroy;
+  end;
+
+  procedure THeaderDecoder.Initialize(Item: THeader);
+  begin
+    if foDictionary in Item.Flags then
+      StreamDecoder_SetDictionaryLevel(FCoder, Item.Dictionary);
+
+    if foTable in Item.Flags then
+      StreamDecoder_SetTableParameters(FCoder, @Item.Table);
+
+    if foTear in Item.Flags then
+      StreamDecoder_FreshFlexible(FCoder)
+    else
+      StreamDecoder_FreshSolid(FCoder);
   end;
 
   function THeaderDecoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
@@ -348,7 +379,7 @@ uses
     Item.StartPos := Strm.Seek(0, soCurrent);
     case foMoved in Item.Flags of
       True:  Result := Copy          (Strm, Item.Size, CRC) = Item.Size;
-      False: Result := Decode(FCoder, Strm, Item.Size, CRC) = Item.Size;
+      False: Result := StreamDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
     end;
     if Result then Result := Item.Crc = CRC;
 
@@ -369,7 +400,7 @@ uses
     FStream.Seek(Item.StartPos, soBeginning);
     case foMoved in Item.Flags of
       True:  Result := Copy          (Strm, Item.Size, CRC) = Item.Size;
-      False: Result := Decode(FCoder, Strm, Item.Size, CRC) = Item.Size;
+      False: Result := StreamDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
     end;
     Strm.Free;
 
@@ -395,7 +426,7 @@ uses
       FStream.Seek(Item.StartPos, soBeginning);
       case foMoved in Item.Flags of
         True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
-        False: Result := Decode(FCoder, Strm, Item.Size, CRC) = Item.Size;
+        False: Result := StreamDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
       end;
       Strm.Free;
 

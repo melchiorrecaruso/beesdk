@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "beelib_modeller.h"
 #include "beelib_assembler.h"
@@ -373,20 +374,31 @@ void BaseCoder_SetTable(PBaseCoder Self, TTableParameters *T)
   for (J = 0; J <= TABLECOLS - 1; J++)
     for (K = 0; K <= TABLESIZE - 1; K++)
     {
-      Self->Table.T[J][K] = ((int) T[I]) + 1;
+      Self->Table.T[J][K] = (unsigned int)(T[I]) + 1;
       I++;
     }
 
   for (I = 0; I <= 1; I++)
   {
-    TTableCol* aPart = &Self->Table.T[I];
+    TTableCol *aPart;
 
-    *aPart[0]             = *aPart[0] + 256;                                // Weight of first-encoutered deterministic symbol
-    *aPart[MAXSYMBOL + 2] = *aPart[MAXSYMBOL + 2] + 32;                     // Recency scaling, R = R'' / 32, R'' = (R' + 1) * 32
-    *aPart[MAXSYMBOL + 3] = INCREMENT * (*aPart[MAXSYMBOL + 3]) << 2;       // Zero-valued parameter allowed...
-    *aPart[MAXSYMBOL + 4] = *aPart[MAXSYMBOL + 4] / 8;
+    aPart = &Self->Table.T[I];
+
+    *aPart[0]             =                  *aPart[0] + 256;               // Weight of first-encoutered deterministic symbol
+    *aPart[MAXSYMBOL + 2] =                  *aPart[MAXSYMBOL + 2] + 32;    // Recency scaling, R = R'' / 32, R'' = (R' + 1) * 32
+    *aPart[MAXSYMBOL + 3] = INCREMENT *      *aPart[MAXSYMBOL + 3] << 2;   // Zero-valued parameter allowed...
+    *aPart[MAXSYMBOL + 4] =                  *aPart[MAXSYMBOL + 4] / 8;
     *aPart[MAXSYMBOL + 5] = floor(pow(1.082, *aPart[MAXSYMBOL + 5]) + 0.5); // Lowest value of interval
+
+    printf("%d\n", (unsigned char) *aPart[0]);
+    printf("%d\n", (unsigned char) *aPart[MAXSYMBOL + 2]);
+    printf("%d\n", (unsigned char) *aPart[MAXSYMBOL + 3]);
+    printf("%d\n", (unsigned char) *aPart[MAXSYMBOL + 4]);
+    printf("%d\n", (unsigned char) *aPart[MAXSYMBOL + 5]);
+
   }
+
+  printf("BaseCoder_SetTable_[3]\n");
 }
 
 void BaseCoder_FreshFlexible(PBaseCoder Self)

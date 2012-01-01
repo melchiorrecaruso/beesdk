@@ -56,7 +56,22 @@ const
      249, 253, 196,  27,  82,  93,  74, 182, 245,  40,  67,  77, 143, 133, 135,
      128, 155, 207, 177, 225, 251, 253, 248,  73,  35,  15, 107, 143);
 
+
+procedure DEBUG_PRINTTABLEPARAMETERS(const T: TTableParameters);
+
 implementation
+
+procedure DEBUG_PRINTTABLEPARAMETERS(const T: TTableParameters);
+var
+  I: longint;
+begin
+  Writeln('DEBUG_PRINTTABLEPARAMETERS - START');
+  for I := Low(T) to High(T) do
+  begin
+    Writeln(T[I]);
+  end;
+  Writeln('DEBUG_PRINTTABLEPARAMETERS - END');
+end;
 
 end.
 

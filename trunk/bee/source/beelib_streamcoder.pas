@@ -31,8 +31,8 @@ uses
   BeeLib_Interface,
   BeeLib_Configuration;
 
-  function  CreateEncoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv: TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer;
-  function  CreateDecoder(StrmPtr: pointer; OnFillEv: TFillEvent; OnFlushEv: TFlushEvent; TickPtr: pointer; OnTickEv: TTickEvent): pointer;
+  function  CreateEncoder(StrmPtr: pointer; OnFillEv: TFillBuffer; OnFlushEv: TFlushBuffer; TickPtr: pointer; OnTickEv: TTickEvent): pointer;
+  function  CreateDecoder(StrmPtr: pointer; OnFillEv: TFillBuffer; OnFlushEv: TFlushBuffer; TickPtr: pointer; OnTickEv: TTickEvent): pointer;
 
   procedure DestroyCoder(Handle: pointer);
 
