@@ -43,7 +43,7 @@ typedef struct TBaseCoder *PBaseCoder;
 
     PBaseCoder BaseCoder_Malloc       (void *aCodec, PUpdateSymbol aUpdateSymbol);
           void BaseCoder_Free         (PBaseCoder Self);
-          void BaseCoder_SetTable     (PBaseCoder Self, TTableParameters *T);
+          void BaseCoder_SetTable     (PBaseCoder Self, const TTableParameters *T);
           void BaseCoder_SetDictionary(PBaseCoder Self, unsigned int aDictLevel);
           void BaseCoder_FreshFlexible(PBaseCoder Self);
           void BaseCoder_FreshSolid   (PBaseCoder Self);

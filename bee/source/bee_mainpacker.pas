@@ -182,10 +182,11 @@ uses
     if foDictionary in Item.Flags then
       StreamEncoder_SetDictionaryLevel(FCoder, Item.Dictionary);
 
+
+    // DEBUG_PRINTTABLEPARAMETERS(Item.Table);
+
     if foTable in Item.Flags then
       StreamEncoder_SetTableParameters(FCoder, @Item.Table);
-
-
 
     if foTear in Item.Flags then
       StreamEncoder_FreshFlexible(FCoder)

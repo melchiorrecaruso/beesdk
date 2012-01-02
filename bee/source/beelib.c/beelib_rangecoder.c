@@ -1,6 +1,19 @@
 #include <stdlib.h>
-#include "beelib_assembler.h"
 #include "beelib_rangecoder.h"
+
+static inline unsigned int MulDiv(unsigned int A, unsigned int B, unsigned int C)
+{
+  return (unsigned int)(((long long unsigned int)A *
+                         (long long unsigned int)B)/
+                         (long long unsigned int)C);
+}
+
+static inline unsigned int MulDecDiv(unsigned int A, unsigned int B, unsigned int C)
+{
+    return (unsigned int)((((long long unsigned int)A *
+                            (long long unsigned int)B) - 1) /
+                            (long long unsigned int)C);
+}
 
 /* TRangeEncoder struct/methods implementation */
 
@@ -51,7 +64,7 @@ void RangeEncoder_ShiftLow(PRangeEncoder Self)
   else
     Self->FFNum++;
 
-  Self->Low = Self->Low << 8;
+  Self->Low <<= 8;
   return;
 }
 
@@ -67,11 +80,11 @@ void RangeEncoder_Encode(PRangeEncoder Self, unsigned int CumFreq, unsigned int 
 {
   unsigned int Tmp = Self->Low;
   Self->Low       += MulDiv(Self->Range, CumFreq, TotFreq);
-  Self->Carry     += (unsigned int) (Self->Low < Tmp);
+   Self->Carry    += (unsigned int) (Self->Low < Tmp);
   Self->Range      = MulDiv(Self->Range, Freq, TotFreq);
   while (Self->Range < TOP)
   {
-    Self->Range = Self->Range << 8;
+    Self->Range <<= 8;
     RangeEncoder_ShiftLow(Self);
   }
   return;
@@ -151,10 +164,7 @@ void RangeDecoder_FinishDecode(PRangeDecoder Self)
 
 unsigned int RangeDecoder_GetFreq(PRangeDecoder Self, unsigned int TotFreq)
 {
-  // return MulDecDiv(Code + 1, TotFreq, Range);
-  return
-    (unsigned int) ((unsigned long long)(Self->Code + 1) *
-    (unsigned long long)TotFreq / (unsigned long long)Self->Range);
+  return MulDecDiv(Self->Code + 1, TotFreq, Self->Range);
 }
 
 void RangeDecoder_Decode(PRangeDecoder Self, unsigned int CumFreq, unsigned int Freq, unsigned int TotFreq)

@@ -12,8 +12,9 @@
 				<Option object_output="obj\release\" />
 				<Option type="2" />
 				<Option compiler="gcc" />
+				<Option projectCompilerOptionsRelation="0" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-O3" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -21,12 +22,9 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-O3" />
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="beelib_assembler.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="beelib_assembler.h" />
 		<Unit filename="beelib_crc.c">
 			<Option compilerVar="CC" />
 		</Unit>
