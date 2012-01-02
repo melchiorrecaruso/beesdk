@@ -45,7 +45,7 @@ void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, unsigned int Value)
   BaseCoder_SetDictionary(Self->BaseCoder, Value);
 };
 
-void StreamEncoder_SetTableParameters(PStreamEncoder Self, TTableParameters *Value)
+void StreamEncoder_SetTableParameters(PStreamEncoder Self, const TTableParameters *Value)
 {
   BaseCoder_SetTable(Self->BaseCoder, Value);
 };
@@ -119,7 +119,7 @@ void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, unsigned int Value)
   BaseCoder_SetDictionary(Self->BaseCoder, Value);
 };
 
-void StreamDecoder_SetTableParameters(PStreamDecoder Self, TTableParameters *Value)
+void StreamDecoder_SetTableParameters(PStreamDecoder Self, const TTableParameters *Value)
 {
   BaseCoder_SetTable(Self->BaseCoder, Value);
 };

@@ -40,6 +40,7 @@ uses
   {$IFDEF MSWINDOWS}
     {$linklib libgcc}
     {$linklib libmsvcrt}
+    {$linklib libm}
   {$ENDIF}
 
   {$IFDEF UNIX}
