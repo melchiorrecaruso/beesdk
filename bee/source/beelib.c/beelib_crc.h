@@ -1,6 +1,5 @@
 /*
-  Copyright (c) 1998 Dmitry Auzhin;
-            (c) 1999-2010 Andrew Filinsky.
+  Copyright (c) 2010-2012 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,25 +16,19 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/* Contains:
+/*
+  Contains:
 
-    Routines for CRC32 calculating (c) 1998 Dmitry Auzhin;
-    Table is calculated by Sasha Leshinsky.
-
-    (c) 1998 Dmitry Auzhin;
-    (c) 1999-2005 Andrew Filinsky.
+    Routines for Crc32 calculating.
 
   Modifyed:
 
-    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-
-    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 */
 #ifndef BEELIB_CRC_H
 #define BEELIB_CRC_H
 
 /* Crc32 calculating routine */
 
-unsigned int UpdateCrc32(unsigned int aCrc32, unsigned char aData);
+inline unsigned int UpdateCrc32(unsigned int aCrc32, unsigned char aSymbol);
 
 #endif //  BEELIB_CRC_H

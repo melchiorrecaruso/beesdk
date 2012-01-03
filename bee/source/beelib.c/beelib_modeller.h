@@ -33,7 +33,7 @@
 #ifndef BEELIB_MODELLER_H
 #define BEELIB_MODELLER_H
 
-#include "beelib_types.h"      // TTable, TTableCol, ...
+#include "beelib_common.h"      // TTable, TTableCol, ...
 
 typedef unsigned int (*PUpdateSymbol) (void*, unsigned int*, unsigned int);
 

@@ -25,10 +25,13 @@
 			<Add option="-O3" />
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="beelib_crc.c">
+		<Linker>
+			<Add option="-s" />
+		</Linker>
+		<Unit filename="beelib_common.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="beelib_crc.h" />
+		<Unit filename="beelib_common.h" />
 		<Unit filename="beelib_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -45,7 +48,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="beelib_stream.h" />
-		<Unit filename="beelib_types.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
