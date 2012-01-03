@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2010-2011 Melchiorre Caruso
+  Copyright (c) 2010-2012 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,27 +30,28 @@
 //  Configuration table types                                         //
 // ------------------------------------------------------------------ //
 
-#define TABLESIZE       21
-#define TABLECOLS        2
-#define TABLEPARAMETERS 43
+#define TABLESIZE       20  // array [0..20]
+#define TABLECOLS        1  // array [0.. 1]
+#define TABLEPARAMETERS 42  // array [0..42]
 
-typedef unsigned int TTableCol[TABLESIZE]; /* [0..20] */
+typedef unsigned int TTableCol[TABLESIZE + 1];
 
 struct TTable{
   int Level;
-  TTableCol T[TABLECOLS]; /* [0..1] */
+  TTableCol T[TABLECOLS + 1];
 };
 
-typedef unsigned char TTableParameters[TABLEPARAMETERS]; /* [0..42] */
+typedef unsigned char TTableParameters[TABLEPARAMETERS + 1];
 
 // ------------------------------------------------------------------ //
 //  Default table parameters                                          //
 // ------------------------------------------------------------------ //
 
-// static const TTableParameters DefaultTableParameters = { 3,
-//  163, 157,  65,  93, 117, 135, 109, 126, 252, 172, 252, 152, 227, 249,
-//  249, 253, 196,  27,  82,  93,  74, 182, 245,  40,  67,  77, 143, 133,
-//  135, 128, 155, 207, 177, 225, 251, 253, 248,  73,  35,  15, 107, 143};
+static const TTableParameters DefaultTableParameters = {
+    3, 163, 157,  65,  93, 117, 135, 109, 126, 252, 172, 252, 152,
+  227, 249, 249, 253, 196,  27,  82,  93,  74, 182, 245,  40,  67,
+   77, 143, 133, 135, 128, 155, 207, 177, 225, 251, 253, 248,  73,
+   35,  15, 107, 143};
 
 // ------------------------------------------------------------------ //
 //  Default dictionary level                                          //
@@ -59,9 +60,9 @@ typedef unsigned char TTableParameters[TABLEPARAMETERS]; /* [0..42] */
 static const int DefaultDictionaryLevel = 2;
 
 // ------------------------------------------------------------------ //
-//  Default tick step size                                            //
+//  Crc32 calculating routine                                         //
 // ------------------------------------------------------------------ //
 
-static const int DefaultTickStepSize    = 0xFFFF;
+inline unsigned int UpdateCrc32(unsigned int aCrc32, unsigned char aSymbol);
 
 #endif // BEELIB_TYPES_H

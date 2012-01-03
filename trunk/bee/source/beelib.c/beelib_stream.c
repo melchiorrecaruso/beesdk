@@ -1,5 +1,7 @@
-#include "beelib_stream.h"
 #include <stdlib.h>
+#include "beelib_stream.h"
+
+#define DEFAULT_BUFFER_CAPACITY 65536
 
 /* TReadStream struct/methods implemetation */
 

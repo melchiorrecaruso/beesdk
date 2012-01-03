@@ -1,7 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include "beelib_modeller.h"
-#include "beelib_assembler.h"
 #include "beelib_rangecoder.h"
 
 #define min(X, Y) ((X) < (Y) ? (X) : (Y))
@@ -369,8 +368,8 @@ void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
   unsigned int I = 1;
   unsigned int J , K;
 
-  for (J = 0; J <= TABLECOLS - 1; J++)
-    for (K = 0; K <= TABLESIZE - 1; K++)
+  for (J = 0; J <= TABLECOLS; J++)
+    for (K = 0; K <= TABLESIZE; K++)
     {
       Self->Table.T[J][K] = (signed int)(*T)[I] + 1;
       I++;

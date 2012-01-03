@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2003-2011 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2010-2012 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,17 +19,14 @@
 /*
   Contains:
 
-    Bee library exports.
-
   Modifyed:
 
-    v1.0.0 build 0106 - 2009.08.12 by Melchiorre Caruso.
 */
 
 #ifndef BEELIB_MAIN_H
 #define BEELIB_MAIN_H
 
-#include "beelib_types.h"
+#include "beelib_common.h"
 #include "beelib_stream.h"
 
 unsigned int DllVersion();

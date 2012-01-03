@@ -27,8 +27,6 @@
 #ifndef BEELIB_STREAM_H
 #define BEELIB_STREAM_H
 
-#define DEFAULT_BUFFER_CAPACITY 65536
-
 typedef void *PStream;
 typedef int (*PFillBuffer ) (void*, void*, int);
 typedef int (*PFlushBuffer) (void*, void*, int);

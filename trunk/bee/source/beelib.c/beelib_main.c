@@ -1,16 +1,12 @@
 #include <stdlib.h>
-
-#include "beelib_crc.h"
 #include "beelib_main.h"
-#include "beelib_types.h"
 #include "beelib_stream.h"
 #include "beelib_modeller.h"
-#include "beelib_assembler.h"
 #include "beelib_rangecoder.h"
 
 unsigned int DllVersion()
 {
-  return 111;
+  return 118;
 };
 
 /* TStreamEncoder struct/methods implementation */
@@ -26,7 +22,7 @@ PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFlushBuffer aFlushBuffer)
   PStreamEncoder Self = malloc(sizeof(struct TStreamEncoder));
 
   Self->Stream       = WriteStream_Malloc(aStream, aFlushBuffer);
-  Self->RangeEncoder = RangeEncoder_Malloc(Self->Stream);
+  Self->RangeEncoder = RangeEncoder_Create(Self->Stream);
   Self->BaseCoder    = BaseCoder_Malloc(Self->RangeEncoder, (PUpdateSymbol)RangeEncoder_UpdateSymbol);
 
   return Self;
@@ -35,7 +31,7 @@ PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFlushBuffer aFlushBuffer)
 void StreamEncoder_Free(PStreamEncoder Self)
 {
   BaseCoder_Free(Self->BaseCoder);
-  RangeEncoder_Free(Self->RangeEncoder);
+  RangeEncoder_Destroy(Self->RangeEncoder);
   WriteStream_Free(Self->Stream);
   free(Self);
 };
@@ -100,7 +96,7 @@ PStreamDecoder StreamDecoder_Malloc(PStream aStream, PFillBuffer aFillBuffer)
   PStreamDecoder Self = malloc(sizeof(struct TStreamDecoder));
 
   Self->Stream       = ReadStream_Malloc(aStream, aFillBuffer);
-  Self->RangeDecoder = RangeDecoder_Malloc(Self->Stream);
+  Self->RangeDecoder = RangeDecoder_Create(Self->Stream);
   Self->BaseCoder    = BaseCoder_Malloc(Self->RangeDecoder, (PUpdateSymbol)RangeDecoder_UpdateSymbol);
 
   return Self;
@@ -109,7 +105,7 @@ PStreamDecoder StreamDecoder_Malloc(PStream aStream, PFillBuffer aFillBuffer)
 void StreamDecoder_Free(PStreamDecoder Self)
 {
   BaseCoder_Free(Self->BaseCoder);
-  RangeDecoder_Free(Self->RangeDecoder);
+  RangeDecoder_Destroy(Self->RangeDecoder);
   ReadStream_Free(Self->Stream);
   free(Self);
 };

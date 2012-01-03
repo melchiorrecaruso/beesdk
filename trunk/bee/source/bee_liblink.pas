@@ -46,12 +46,11 @@ uses
   {$IFDEF UNIX}
   {$ENDIF}
 
-  {$link beelib.c\obj\release\beelib_assembler.o}
-  {$link beelib.c\obj\release\beelib_crc.o}
-  {$link beelib.c\obj\release\beelib_main.o}
-  {$link beelib.c\obj\release\beelib_modeller.o}
-  {$link beelib.c\obj\release\beelib_rangecoder.o}
+  {$link beelib.c\obj\release\beelib_common.o}
   {$link beelib.c\obj\release\beelib_stream.o}
+  {$link beelib.c\obj\release\beelib_rangecoder.o}
+  {$link beelib.c\obj\release\beelib_modeller.o}
+  {$link beelib.c\obj\release\beelib_main.o}
 
   function DllVersion:cuint; cdecl; external;
 

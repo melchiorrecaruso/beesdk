@@ -1,97 +1,75 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include "beelib_common.h"
 #include "beelib_rangecoder.h"
 
-static inline unsigned int MulDiv(unsigned int A, unsigned int B, unsigned int C)
-{
-  // return (unsigned int)(((long long unsigned int)A *
-  //                       (long long unsigned int)B)/
-  //                       (long long unsigned int)C);
+/* Range coder const definitions */
 
-
-
-
-
-  long long unsigned int R = A;
-
-
-asm (
-    "movl %1, %%eax;"
-    "mul  %1;"
-    "div  %2;"
-    "movl %%eax, %0;"
-    : "=r"(R)
-    :  "r"(A), "r"(B), "r"(C)
-    : "%eax");
-
-  printf("%d\n", A);
-
-    return A;
-
-
-
-
-
-}
-
-static inline unsigned int MulDecDiv(unsigned int A, unsigned int B, unsigned int C)
-{
-    return (unsigned int)((((long long unsigned int)A *
-                            (long long unsigned int)B) - 1) /
-                            (long long unsigned int)C);
-}
+#define TOP      16777216
+#define NUM      4
+#define THRES    4278190080
 
 /* TRangeEncoder struct/methods implementation */
 
 struct TRangeEncoder {
-  PWriteStream Stream;
-  unsigned int Range;
-  unsigned int Low;
-  unsigned int Code;
-  unsigned int Carry;
-  unsigned int Cache;
+  PWriteStream FStream;
+  unsigned int FRange;
+  unsigned int FLow;
+  unsigned int FCode;
+  unsigned int FCarry;
+  unsigned int FCache;
   unsigned int FFNum;
 };
 
-PRangeEncoder RangeEncoder_Malloc(PWriteStream aStream)
+PRangeEncoder RangeEncoder_Create(PWriteStream aStream)
 {
   PRangeEncoder Self = malloc(sizeof(struct TRangeEncoder));
-
-  Self->Stream = aStream;
+  Self->FStream = aStream;
   return Self;
 }
 
-void RangeEncoder_Free(PRangeEncoder Self)
+void* RangeEncoder_Destroy(PRangeEncoder Self)
 {
   free(Self);
+  return 0;
 }
 
 void RangeEncoder_StartEncode(PRangeEncoder Self)
 {
-  Self->Range = 0xFFFFFFFF;
-  Self->Low   = 0;
-  Self->FFNum = 0;
-  Self->Carry = 0;
+  Self->FRange = 0xFFFFFFFF;
+  Self->FLow   = 0;
+  Self->FFNum  = 0;
+  Self->FCarry = 0;
 }
 
-void RangeEncoder_ShiftLow(PRangeEncoder Self)
+static inline void RangeEncoder_ShiftLow(PRangeEncoder Self)
 {
-  if ((Self->Low < THRES) || (Self->Carry != 0))
+  if ((Self->FLow < THRES) || (Self->FCarry != 0))
   {
-    WriteStream_Write(Self->Stream, Self->Cache + Self->Carry);
+    WriteStream_Write(Self->FStream, Self->FCache + Self->FCarry);
     while (Self->FFNum != 0)
     {
-      WriteStream_Write(Self->Stream, Self->Carry - 1);
+      WriteStream_Write(Self->FStream, Self->FCarry - 1);
       Self->FFNum--;
     }
-    Self->Cache = Self->Low >> 24;
-    Self->Carry = 0;
-  }
-  else
+    Self->FCache = Self->FLow >> 24;
+    Self->FCarry = 0;
+  } else
     Self->FFNum++;
 
-  Self->Low <<= 8;
-  return;
+  Self->FLow <<= 8;
+}
+
+static inline void RangeEncoder_Encode(PRangeEncoder Self, unsigned int CumFreq,  unsigned int Freq,  unsigned int TotFreq)
+{
+  unsigned int Temp = Self->FLow;
+  Self->FLow       += MulDiv(Self->FRange, CumFreq, TotFreq);
+  Self->FCarry     += (unsigned int)(Self->FLow < Temp);
+  Self->FRange      = MulDiv(Self->FRange, Freq, TotFreq);
+  while (Self->FRange < TOP)
+  {
+    Self->FRange <<= 8;
+    RangeEncoder_ShiftLow(Self);
+  }
 }
 
 void RangeEncoder_FinishEncode(PRangeEncoder Self)
@@ -99,29 +77,12 @@ void RangeEncoder_FinishEncode(PRangeEncoder Self)
   int I;
   for (I = 0; I <= NUM; I++)
     RangeEncoder_ShiftLow(Self);
-  return;
-}
-
-void RangeEncoder_Encode(PRangeEncoder Self, unsigned int CumFreq, unsigned int Freq, unsigned int TotFreq)
-{
-  unsigned int Tmp = Self->Low;
-  Self->Low       += MulDiv(Self->Range, CumFreq, TotFreq);
-   Self->Carry    += (unsigned int) (Self->Low < Tmp);
-  Self->Range      = MulDiv(Self->Range, Freq, TotFreq);
-  while (Self->Range < TOP)
-  {
-    Self->Range <<= 8;
-    RangeEncoder_ShiftLow(Self);
-  }
-  return;
 }
 
 unsigned int RangeEncoder_UpdateSymbol(PRangeEncoder Self, TFreq Freq, unsigned int aSymbol)
 {
-  unsigned int CumFreq = 0, TotFreq = 0, I = 0;
-
   // Count CumFreq...
-  I = CumFreq;
+  unsigned int CumFreq = 0, I = 0;
   while (I < aSymbol)
   {
     CumFreq += Freq[I];
@@ -129,8 +90,7 @@ unsigned int RangeEncoder_UpdateSymbol(PRangeEncoder Self, TFreq Freq, unsigned 
   }
 
   // Count TotFreq...
-  TotFreq = CumFreq;
-
+  unsigned int TotFreq = CumFreq;
   I = FREQSIZE;
   do
   {
@@ -142,7 +102,7 @@ unsigned int RangeEncoder_UpdateSymbol(PRangeEncoder Self, TFreq Freq, unsigned 
   // Encode...
   RangeEncoder_Encode(Self, CumFreq, Freq[aSymbol], TotFreq);
 
-  // Return Result...
+  // Return result...
   return aSymbol;
 }
 /* TRangeDecoder struct/methods implementation */
@@ -157,7 +117,7 @@ struct TRangeDecoder {
   unsigned int FFNum;
 };
 
-PRangeDecoder RangeDecoder_Malloc(PReadStream aStream)
+PRangeDecoder RangeDecoder_Create(PReadStream aStream)
 {
   PRangeDecoder Self = malloc(sizeof(struct TRangeDecoder));
 
@@ -165,9 +125,10 @@ PRangeDecoder RangeDecoder_Malloc(PReadStream aStream)
   return Self;
 }
 
-void RangeDecoder_Free(PRangeDecoder Self)
+void* RangeDecoder_Destroy(PRangeDecoder Self)
 {
   free(Self);
+  return 0;
 }
 
 void RangeDecoder_StartDecode(PRangeDecoder Self)

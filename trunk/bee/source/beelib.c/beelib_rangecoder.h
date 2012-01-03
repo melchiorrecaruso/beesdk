@@ -1,6 +1,5 @@
 /*
-  Copyright (c) 2003 Evgeny Shelwien;
-  Copyright (c) 2003-2011 Andrew Filinsky
+  Copyright (c) 2010-2012 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,22 +25,20 @@
 
 #include "beelib_stream.h"
 
+#define MAXFREQ  16777215
+
 /* Array of Frequencyes */
 
-typedef unsigned int *TFreq;
 #define FREQSIZE 16
 
-#define TOP      16777216
-#define NUM      4
-#define THRES    4278190080
-#define MAXFREQ  16777215
+typedef unsigned int *TFreq;
 
  /* TRangeEncoder struct/methods */
 
 typedef struct TRangeEncoder *PRangeEncoder;
 
-  PRangeEncoder RangeEncoder_Malloc      (PWriteStream aStream);
-           void RangeEncoder_Free        (PRangeEncoder Self);
+  PRangeEncoder RangeEncoder_Create      (PWriteStream aStream);
+          void* RangeEncoder_Destroy     (PRangeEncoder Self);
            void RangeEncoder_StartEncode (PRangeEncoder Self);
            void RangeEncoder_FinishEncode(PRangeEncoder Self);
    unsigned int RangeEncoder_UpdateSymbol(PRangeEncoder Self, TFreq Freq, unsigned int aSymbol);
@@ -50,8 +47,8 @@ typedef struct TRangeEncoder *PRangeEncoder;
 
 typedef struct TRangeDecoder *PRangeDecoder;
 
-  PRangeDecoder RangeDecoder_Malloc      (PReadStream aStream);
-           void RangeDecoder_Free        (PRangeDecoder Self);
+  PRangeDecoder RangeDecoder_Create      (PReadStream aStream);
+          void* RangeDecoder_Destroy     (PRangeDecoder Self);
            void RangeDecoder_StartDecode (PRangeDecoder Self);
            void RangeDecoder_FinishDecode(PRangeDecoder Self);
    unsigned int RangeDecoder_GetFreq     (PRangeDecoder Self, unsigned int TotFreq);
