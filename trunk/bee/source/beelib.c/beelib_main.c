@@ -58,7 +58,7 @@ void StreamEncoder_FreshSolid(PStreamEncoder Self)
 
 long long int StreamEncoder_Encode(PStreamEncoder Self, PStream aStream, PFillBuffer aFillBuffer, long long int Size, unsigned int *CRC)
 {
-                  *CRC = (unsigned int)-1;
+                  *CRC = InitCRC32();
       long long result = 0;
   unsigned char Symbol = 0;
 
@@ -69,7 +69,7 @@ long long int StreamEncoder_Encode(PStreamEncoder Self, PStream aStream, PFillBu
   {
     Symbol = ReadStream_Read(Source);
     BaseCoder_UpdateSymbol(Self->BaseCoder, Symbol);
-    *CRC = UpdateCrc32(*CRC, Symbol);
+    *CRC = UpdateCRC32(*CRC, Symbol);
     result++;
 
     // if ((result & DefaultTickStepSize) == 0)
