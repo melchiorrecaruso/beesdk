@@ -1,11 +1,37 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "beelib_rangecoder.h"
 
 static inline unsigned int MulDiv(unsigned int A, unsigned int B, unsigned int C)
 {
-  return (unsigned int)(((long long unsigned int)A *
-                         (long long unsigned int)B)/
-                         (long long unsigned int)C);
+  // return (unsigned int)(((long long unsigned int)A *
+  //                       (long long unsigned int)B)/
+  //                       (long long unsigned int)C);
+
+
+
+
+
+  long long unsigned int R = A;
+
+
+asm (
+    "movl %1, %%eax;"
+    "mul  %1;"
+    "div  %2;"
+    "movl %%eax, %0;"
+    : "=r"(R)
+    :  "r"(A), "r"(B), "r"(C)
+    : "%eax");
+
+  printf("%d\n", A);
+
+    return A;
+
+
+
+
+
 }
 
 static inline unsigned int MulDecDiv(unsigned int A, unsigned int B, unsigned int C)
