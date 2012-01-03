@@ -19,6 +19,15 @@
 /*
   Contains:
 
+    Crc32 routine:
+
+     Polynomial = x^32 + x^26 + x^23 + x^22 + x^16 + x^12 + x^11 +
+                  x^10 + x^8  + x^7  + x^5  + x^4  + x^2  + x + 1
+
+    Crc64 routine:
+
+     Polynomial = x^64 + x^4 + x^3 + x + 1
+
   Modifyed:
 
 */
@@ -30,18 +39,31 @@
 //  Configuration table types                                         //
 // ------------------------------------------------------------------ //
 
+typedef long long unsigned int uint64;
+typedef long long   signed int  int64;
+
+typedef      long unsigned int uint32;
+typedef      long   signed int  int32;
+
+typedef           unsigned char uint8;
+typedef             signed char  int8;
+
+// ------------------------------------------------------------------ //
+//  Configuration table types                                         //
+// ------------------------------------------------------------------ //
+
 #define TABLESIZE       20  // array [0..20]
 #define TABLECOLS        1  // array [0.. 1]
 #define TABLEPARAMETERS 42  // array [0..42]
 
-typedef unsigned int TTableCol[TABLESIZE + 1];
+typedef uint32 TTableCol[TABLESIZE + 1];
 
 struct TTable{
-  int Level;
+  int32 Level;
   TTableCol T[TABLECOLS + 1];
 };
 
-typedef unsigned char TTableParameters[TABLEPARAMETERS + 1];
+typedef uint8 TTableParameters[TABLEPARAMETERS + 1];
 
 // ------------------------------------------------------------------ //
 //  Default table parameters                                          //
@@ -57,19 +79,22 @@ static const TTableParameters DefaultTableParameters = {
 //  Default dictionary level                                          //
 // ------------------------------------------------------------------ //
 
-static const int DefaultDictionaryLevel = 2;
+static const int32 DefaultDictionaryLevel = 2;
 
 // ------------------------------------------------------------------ //
-//  Crc32 calculating routine                                         //
+//  CRC calculating routine                                           //
 // ------------------------------------------------------------------ //
+inline uint32 InitCRC32();
+inline uint32 UpdateCRC32(uint32 aCRC, uint8 aSymbol);
 
-inline unsigned int UpdateCrc32(unsigned int aCrc32, unsigned char aSymbol);
+inline uint64 InitCRC64();
+inline uint64 UpdateCRC64(uint64 aCRC, uint8 aSymbol);
 
 // ------------------------------------------------------------------ //
 //  Common routine                                                    //
 // ------------------------------------------------------------------ //
 
-inline unsigned int MulDiv(unsigned int A, unsigned int B, unsigned int C);
-inline unsigned int MulDecDiv(unsigned int A, unsigned int B, unsigned int C);
+inline uint32 MulDiv   (uint32 A, uint32 B, uint32 C);
+inline uint32 MulDecDiv(uint32 A, uint32 B, uint32 C);
 
 #endif // BEELIB_COMMON_H
