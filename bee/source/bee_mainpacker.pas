@@ -48,10 +48,6 @@ uses
     {$ENDIF}
   {$ENDIF}
 
-
-
-
-
 type
   { THeaderCoder class }
 
@@ -61,21 +57,21 @@ type
     FOwner: pointer;
     FStream: TStream;
     FPassword: string;
-    FOnTickEvent: TTickEvent;
-    FOnFillBuffer: TFillBuffer;
-    FOnFlushBuffer: TFlushBuffer;
+    FOnTickEvent: TTicker;
+    FOnFillBuffer: TReader;
+    FOnFlushBuffer: TWriter;
   public
     constructor Create(
       Stream: TStream;
-      OnFill: TFillBuffer;
-      OnFlush: TFlushBuffer;
+      OnFill: TReader;
+      OnFlush: TWriter;
       Ticker: pointer;
-      OnTick: TTickEvent);
+      OnTick: TTicker);
     destructor Destroy; override;
     property Password: string read FPassword write FPassword;
-    property OnTickEvent: TTickEvent read FOnTickEvent write FOnTickEvent;
-    property OnFillEvent: TFillBuffer read FOnFillBuffer write FOnFillBuffer;
-    property OnFlushEvent: TFlushBuffer read FOnFlushBuffer write FOnFlushBuffer;
+    property OnTickEvent: TTicker read FOnTickEvent write FOnTickEvent;
+    property OnFillEvent: TReader read FOnFillBuffer write FOnFillBuffer;
+    property OnFlushEvent: TWriter read FOnFlushBuffer write FOnFlushBuffer;
   end;
 
   { THeaderEncoder class }
@@ -89,10 +85,10 @@ type
   public
     constructor Create(
       Stream: TStream;
-      OnFill: TFillBuffer;
-      OnFlush: TFlushBuffer;
+      OnFill: TReader;
+      OnFlush: TWriter;
       Ticker: pointer;
-      OnTick: TTickEvent);
+      OnTick: TTicker);
     destructor Destroy; override;
     procedure Initialize(Item: THeader);
     function WriteFromArch(Item: THeader; Strm: TStream): boolean;
@@ -108,10 +104,10 @@ type
   public
     constructor Create(
       Stream: TStream;
-      OnFill: TFillBuffer;
-      OnFlush: TFlushBuffer;
+      OnFill: TReader;
+      OnFlush: TWriter;
       Ticker: pointer;
-      OnTick: TTickEvent);
+      OnTick: TTicker);
     destructor Destroy; override;
     procedure Initialize(Item: THeader);
     function ReadToSwap(Item: THeader; Strm: TStream): boolean;
@@ -129,10 +125,10 @@ uses
 
   constructor THeaderCoder.Create(
     Stream: TStream;
-    OnFill: TFillBuffer;
-    OnFlush: TFlushBuffer;
+    OnFill: TReader;
+    OnFlush: TWriter;
     Ticker: pointer;
-    OnTick: TTickEvent);
+    OnTick: TTicker);
   begin
     FCoder         := nil;
     FPassword      := '';
@@ -157,19 +153,18 @@ uses
 
   constructor THeaderEncoder.Create(
     Stream: TStream;
-    OnFill: TFillBuffer;
-    OnFlush: TFlushBuffer;
+    OnFill: TReader;
+    OnFlush: TWriter;
     Ticker: pointer;
-    OnTick: TTickEvent);
+    OnTick: TTicker);
   begin
     inherited Create(Stream, OnFill, OnFlush, Ticker, OnTick);
-    FCoder := StreamEncoder_Malloc(Stream, OnFlush);
-    Writeln('THeaderEncoder.Create = ', DllVersion);
+    FCoder := StreamEncoder_Create(Stream, OnFlush);
   end;
 
   destructor THeaderEncoder.Destroy;
   begin
-    StreamEncoder_Free(FCoder);
+    StreamEncoder_Destroy(FCoder);
     inherited Destroy;
   end;
 
@@ -177,13 +172,8 @@ uses
   var
     I: longint;
   begin
-    Writeln('THeaderEncoder.Initialize - BEGIN');
-
     if foDictionary in Item.Flags then
       StreamEncoder_SetDictionaryLevel(FCoder, Item.Dictionary);
-
-
-    // DEBUG_PRINTTABLEPARAMETERS(Item.Table);
 
     if foTable in Item.Flags then
       StreamEncoder_SetTableParameters(FCoder, @Item.Table);
@@ -192,8 +182,6 @@ uses
       StreamEncoder_FreshFlexible(FCoder)
     else
       StreamEncoder_FreshSolid(FCoder);
-
-    Writeln('THeaderEncoder.Initialize - END');
   end;
 
   function THeaderEncoder.CopySilent(Strm: TStream; const Size: int64): int64;
@@ -220,7 +208,7 @@ uses
 
        if (Result and DefaultTickStepSize = 0)
          and Assigned(FOnTickEvent)
-         and FOnTickEvent(FOwner) then Break;
+         and (FOnTickEvent(FOwner) = 0) then Break;
      end;
    end;
 
@@ -238,7 +226,7 @@ uses
 
       if (Result and DefaultTickStepSize = 0)
         and Assigned(FOnTickEvent)
-        and FOnTickEvent(FOwner) then Break;
+        and (FOnTickEvent(FOwner) = 0) then Break;
     end;
   end;
 
@@ -319,18 +307,18 @@ uses
 
   constructor THeaderDecoder.Create(
     Stream: TStream;
-    OnFill: TFillBuffer;
-    OnFlush: TFlushBuffer;
+    OnFill: TReader;
+    OnFlush: TWriter;
     Ticker: pointer;
-    OnTick: TTickEvent);
+    OnTick: TTicker);
   begin
     inherited Create(Stream, OnFill, OnFlush, Ticker, OnTick);
-    FCoder := StreamDecoder_Malloc(Stream, OnFill);
+    FCoder := StreamDecoder_Create(Stream, OnFill);
   end;
 
   destructor THeaderDecoder.Destroy;
   begin
-    StreamDecoder_Free(FCoder);
+    StreamDecoder_Destroy(FCoder);
     inherited Destroy;
   end;
 
@@ -360,9 +348,9 @@ uses
       UpdCrc32(CRC, Symbol);
       Inc(Result);
 
-      if (Result and DefaultTickStepSize = 0)
-        and Assigned(FOnTickEvent)
-        and FOnTickEvent(FOwner) then Break;
+      //if (Result and DefaultTickStepSize = 0)
+      //  and Assigned(FOnTickEvent)
+      //  and FOnTickEvent(FOwner) then Break;
     end;
   end;
 

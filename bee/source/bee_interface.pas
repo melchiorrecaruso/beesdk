@@ -97,7 +97,7 @@ type
     property Code: byte read FCode write SetCode;
   end;
 
-  function DoTick(Handle: pointer): boolean; {$IFDEF cppDLL} cdecl; {$ENDIF}
+  function DoTick(Handle: pointer): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
 
 implementation
 
@@ -108,12 +108,13 @@ uses
   DateUtils,
   SysUtils;
 
-function DoTick(Handle: pointer): boolean;
+function DoTick(Handle: pointer): longint;
 begin
-  Result := TApp(Handle).DoUserAbort;
+  case TApp(Handle).DoUserAbort of
+    True : Result := -1;
+    False: Result :=  0;
+  end;
 end;
-
-
 
 { TApp class }
 

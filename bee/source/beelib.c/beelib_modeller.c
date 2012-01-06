@@ -30,8 +30,8 @@ typedef PNode *PPNode;           // Array of nodes...
 /* TBaseCoder PPM modeller struct/methods implementation */
 
 struct TBaseCoder {
-           void *Codec;
-  PUpdateSymbol UpdateSymbol;
+          void *Codec;
+        PUpdate Update;
    unsigned int DictLevel;
    unsigned int Symbol;
    unsigned int Pos;
@@ -60,27 +60,28 @@ struct TBaseCoder {
   struct TTable Table;            // parameters Table
 };
 
-PBaseCoder BaseCoder_Malloc(void *aCodec, PUpdateSymbol aUpdateSymbol)
+PBaseCoder BaseCoder_Create(void *aCodec, PUpdate aUpdate)
 {
   PBaseCoder Self = malloc(sizeof(struct TBaseCoder));
 
-  Self->Codec        = aCodec;
-  Self->UpdateSymbol = aUpdateSymbol;
-  Self->Freq         = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
-  Self->Heap         = 0;
-  Self->Cuts         = 0;
-  Self->List         = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
+  Self->Codec  = aCodec;
+  Self->Update = aUpdate;
+  Self->Freq   = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
+  Self->Heap   = 0;
+  Self->Cuts   = 0;
+  Self->List   = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
 
   return Self;
 }
 
-void BaseCoder_Free(PBaseCoder Self)
+void *BaseCoder_Destroy(PBaseCoder Self)
 {
   free(Self->Freq);
   free(Self->Heap);
   free(Self->Cuts);
   free(Self->List);
   free(Self);
+  return 0;
 }
 
 void BaseCoder_Add(PBaseCoder Self, unsigned int aSymbol)
@@ -316,7 +317,7 @@ void BaseCoder_Step(PBaseCoder Self)
   }
   while (!(I == MAXSYMBOL + 1));
 
-  Self->Symbol = Self->UpdateSymbol(Self->Codec, Self->Freq, Self->Symbol);
+  Self->Symbol = Self->Update(Self->Codec, Self->Freq, Self->Symbol);
 
   BaseCoder_Add(Self, Self->Symbol);
 
@@ -428,7 +429,7 @@ void BaseCoder_FreshSolid(PBaseCoder Self)
     Self->ListCount = 0;
 }
 
-void BaseCoder_SetDictionary(PBaseCoder Self, unsigned int aDictLevel)
+void BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel)
 {
   if (aDictLevel != Self->DictLevel)
   {
@@ -445,7 +446,7 @@ void BaseCoder_SetDictionary(PBaseCoder Self, unsigned int aDictLevel)
   BaseCoder_FreshFlexible(Self);
 }
 
-unsigned int BaseCoder_UpdateSymbol(PBaseCoder Self, unsigned int aSymbol)
+uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
 {
   Self->Part = &(Self->Table.T[0]);
 

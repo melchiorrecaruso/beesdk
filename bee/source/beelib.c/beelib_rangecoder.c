@@ -11,19 +11,21 @@
 /* TRangeEncoder struct/methods implementation */
 
 struct TRangeEncoder {
-  PWriteStream FStream;
-  unsigned int FRange;
-  unsigned int FLow;
-  unsigned int FCode;
-  unsigned int FCarry;
-  unsigned int FCache;
-  unsigned int FFNum;
+    void *FStream;
+  PWrite FWrite;
+  uint32 FRange;
+  uint32 FLow;
+  uint32 FCode;
+  uint32 FCarry;
+  uint32 FCache;
+  uint32 FFNum;
 };
 
-PRangeEncoder RangeEncoder_Create(PWriteStream aStream)
+PRangeEncoder RangeEncoder_Create(void *aStream, PWrite aWrite)
 {
   PRangeEncoder Self = malloc(sizeof(struct TRangeEncoder));
-  Self->FStream = aStream;
+  Self->FStream      = aStream;
+  Self->FWrite       = aWrite;
   return Self;
 }
 
@@ -45,10 +47,11 @@ static inline void RangeEncoder_ShiftLow(PRangeEncoder Self)
 {
   if ((Self->FLow < THRES) || (Self->FCarry != 0))
   {
-    WriteStream_Write(Self->FStream, Self->FCache + Self->FCarry);
+    Self->FWrite(Self->FStream, Self->FCache + Self->FCarry);
+
     while (Self->FFNum != 0)
     {
-      WriteStream_Write(Self->FStream, Self->FCarry - 1);
+      Self->FWrite(Self->FStream, Self->FCarry - 1);
       Self->FFNum--;
     }
     Self->FCache = Self->FLow >> 24;
@@ -59,12 +62,12 @@ static inline void RangeEncoder_ShiftLow(PRangeEncoder Self)
   Self->FLow <<= 8;
 }
 
-static inline void RangeEncoder_Encode(PRangeEncoder Self, unsigned int CumFreq,  unsigned int Freq,  unsigned int TotFreq)
+static inline void RangeEncoder_Encode(PRangeEncoder Self, uint32 CumFreq,  uint32 Freq,  uint32 TotFreq)
 {
-  unsigned int Temp = Self->FLow;
-  Self->FLow       += MulDiv(Self->FRange, CumFreq, TotFreq);
-  Self->FCarry     += (unsigned int)(Self->FLow < Temp);
-  Self->FRange      = MulDiv(Self->FRange, Freq, TotFreq);
+  uint32 Temp   = Self->FLow;
+  Self->FLow   += MulDiv(Self->FRange, CumFreq, TotFreq);
+  Self->FCarry += (uint32)(Self->FLow < Temp);
+  Self->FRange  = MulDiv(Self->FRange, Freq, TotFreq);
   while (Self->FRange < TOP)
   {
     Self->FRange <<= 8;
@@ -74,54 +77,52 @@ static inline void RangeEncoder_Encode(PRangeEncoder Self, unsigned int CumFreq,
 
 void RangeEncoder_FinishEncode(PRangeEncoder Self)
 {
-  int I;
+  int32 I;
   for (I = 0; I <= NUM; I++)
     RangeEncoder_ShiftLow(Self);
 }
 
-unsigned int RangeEncoder_UpdateSymbol(PRangeEncoder Self, TFreq Freq, unsigned int aSymbol)
+uint32 RangeEncoder_Update(PRangeEncoder Self, TFreq Freq, uint32 aSymbol)
 {
   // Count CumFreq...
-  unsigned int CumFreq = 0, I = 0;
+  uint32 CumFreq = 0, I = 0;
   while (I < aSymbol)
   {
     CumFreq += Freq[I];
     I++;
   }
-
   // Count TotFreq...
-  unsigned int TotFreq = CumFreq;
-  I = FREQSIZE;
+  uint32 TotFreq = CumFreq;
+  I = TFREQSIZE;
   do
   {
     I--;
     TotFreq += Freq[I];
   }
   while (!(I == aSymbol));
-
   // Encode...
   RangeEncoder_Encode(Self, CumFreq, Freq[aSymbol], TotFreq);
-
   // Return result...
   return aSymbol;
 }
 /* TRangeDecoder struct/methods implementation */
 
 struct TRangeDecoder {
-   PReadStream Stream;
-  unsigned int Range;
-  unsigned int Low;
-  unsigned int Code;
-  unsigned int Carry;
-  unsigned int Cache;
-  unsigned int FFNum;
+    void *FStream;
+   PRead FRead;
+  uint32 FRange;
+  uint32 FLow;
+  uint32 FCode;
+  uint32 FCarry;
+  uint32 FCache;
+  uint32 FFNum;
 };
 
-PRangeDecoder RangeDecoder_Create(PReadStream aStream)
+PRangeDecoder RangeDecoder_Create(void *aStream, PRead aRead)
 {
   PRangeDecoder Self = malloc(sizeof(struct TRangeDecoder));
-
-  Self->Stream = aStream;
+  Self->FStream      = aStream;
+  Self->FRead        = aRead;
   return Self;
 }
 
@@ -133,15 +134,18 @@ void* RangeDecoder_Destroy(PRangeDecoder Self)
 
 void RangeDecoder_StartDecode(PRangeDecoder Self)
 {
-  Self->Range = 0xFFFFFFFF;
-  Self->Low   = 0;
+  Self->FRange = 0xFFFFFFFF;
+  Self->FLow   = 0;
   Self->FFNum = 0;
-  Self->Carry = 0;
+  Self->FCarry = 0;
 
-  int I;
+  uint8 Symbol;
+  int32 I;
   for (I = 0; I <= NUM; I++)
-    Self->Code = (Self->Code << 8)
-      + ReadStream_Read(Self->Stream);
+  {
+    Self->FRead(Self->FStream, &Symbol);
+    Self->FCode = (Self->FCode << 8) + Symbol;
+  }
 }
 
 void RangeDecoder_FinishDecode(PRangeDecoder Self)
@@ -149,31 +153,33 @@ void RangeDecoder_FinishDecode(PRangeDecoder Self)
   // nothing to do
 }
 
-unsigned int RangeDecoder_GetFreq(PRangeDecoder Self, unsigned int TotFreq)
+uint32 RangeDecoder_GetFreq(PRangeDecoder Self, uint32 TotFreq)
 {
-  return MulDecDiv(Self->Code + 1, TotFreq, Self->Range);
+  return MulDecDiv(Self->FCode + 1, TotFreq, Self->FRange);
 }
 
-void RangeDecoder_Decode(PRangeDecoder Self, unsigned int CumFreq, unsigned int Freq, unsigned int TotFreq)
+void RangeDecoder_Decode(PRangeDecoder Self, uint32 CumFreq, uint32 Freq, uint32 TotFreq)
 {
-  Self->Code -= MulDiv(Self->Range, CumFreq, TotFreq);
-  Self->Range = MulDiv(Self->Range,    Freq, TotFreq);
+  Self->FCode -= MulDiv(Self->FRange, CumFreq, TotFreq);
+  Self->FRange = MulDiv(Self->FRange,    Freq, TotFreq);
 
-  while (Self->Range < TOP)
+  uint8 Symbol;
+  while (Self->FRange < TOP)
   {
-    Self->Code  = (Self->Code  << 8) + ReadStream_Read((PReadStream)Self->Stream);
-    Self->Range = (Self->Range << 8);
+    Self->FRead(Self->FStream, &Symbol);
+    Self->FCode  <<= 8;
+    Self->FCode   += Symbol;
+    Self->FRange <<= 8;
   }
 }
 
-unsigned int RangeDecoder_UpdateSymbol(PRangeDecoder Self, TFreq Freq, unsigned int aSymbol)
+uint32 RangeDecoder_Update(PRangeDecoder Self, TFreq Freq, uint32 aSymbol)
 {
-  unsigned int CumFreq = 0, TotFreq = 0, SumFreq = 0;
+  uint32 CumFreq = 0, TotFreq = 0, SumFreq = 0;
 
   // Count TotFreq...
   TotFreq = 0;
-
-  aSymbol = FREQSIZE;
+  aSymbol = TFREQSIZE;
   do
   {
     aSymbol--;
@@ -183,7 +189,6 @@ unsigned int RangeDecoder_UpdateSymbol(PRangeDecoder Self, TFreq Freq, unsigned 
   while (!(aSymbol == 0));
   // Count CumFreq...
   CumFreq = RangeDecoder_GetFreq(Self, TotFreq);
-
   // Search aSymbol...
   SumFreq = 0;
   aSymbol = SumFreq;
