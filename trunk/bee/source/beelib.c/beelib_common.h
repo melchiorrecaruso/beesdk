@@ -21,13 +21,8 @@
 
     Crc32 routine:
 
-     Polynomial = x^32 + x^26 + x^23 + x^22 + x^16 + x^12 + x^11 +
-                  x^10 + x^8  + x^7  + x^5  + x^4  + x^2  + x + 1
-
-    Crc64 routine:
-
-     Polynomial = x^64 + x^4 + x^3 + x + 1
-
+    Polynomial = x^32 + x^26 + x^23 + x^22 + x^16 + x^12 + x^11 +
+                 x^10 + x^8  + x^7  + x^5  + x^4  + x^2  + x + 1;
   Modifyed:
 
 */
@@ -39,14 +34,22 @@
 //  Configuration table types                                         //
 // ------------------------------------------------------------------ //
 
-typedef long long unsigned int uint64;
-typedef long long   signed int  int64;
+#define uint64 long long unsigned int
+#define  int64 long long   signed int
 
-typedef      long unsigned int uint32;
-typedef      long   signed int  int32;
+#define uint32      long unsigned int
+#define  int32      long   signed int
 
-typedef           unsigned char uint8;
-typedef             signed char  int8;
+#define uint8            unsigned char
+#define  int8              signed char
+
+// ------------------------------------------------------------------ //
+//                                                                    //
+// ------------------------------------------------------------------ //
+
+typedef int32 (*PWrite) (void*, uint8 );
+typedef int32 (*PRead ) (void*, uint8*);
+typedef int32 (*PTick ) (void*        );
 
 // ------------------------------------------------------------------ //
 //  Configuration table types                                         //
@@ -84,11 +87,8 @@ static const int32 DefaultDictionaryLevel = 2;
 // ------------------------------------------------------------------ //
 //  CRC calculating routine                                           //
 // ------------------------------------------------------------------ //
-inline uint32 InitCRC32();
-inline uint32 UpdateCRC32(uint32 aCRC, uint8 aSymbol);
 
-inline uint64 InitCRC64();
-inline uint64 UpdateCRC64(uint64 aCRC, uint8 aSymbol);
+inline uint32 UpdateCRC32(uint32 aCRC, uint8 aSymbol);
 
 // ------------------------------------------------------------------ //
 //  Common routine                                                    //

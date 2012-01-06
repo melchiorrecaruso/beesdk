@@ -23,35 +23,34 @@
 #ifndef BEELIB_RANGECODER_H
 #define BEELIB_RANGECODER_H
 
-#include "beelib_stream.h"
+#include "beelib_common.h"
 
-#define MAXFREQ  16777215
+#define MAXFREQ   16777215
+#define TFREQSIZE 16
 
 /* Array of Frequencyes */
 
-#define FREQSIZE 16
-
-typedef unsigned int *TFreq;
+typedef uint32 *TFreq;
 
  /* TRangeEncoder struct/methods */
 
 typedef struct TRangeEncoder *PRangeEncoder;
 
-  PRangeEncoder RangeEncoder_Create      (PWriteStream aStream);
-          void* RangeEncoder_Destroy     (PRangeEncoder Self);
-           void RangeEncoder_StartEncode (PRangeEncoder Self);
-           void RangeEncoder_FinishEncode(PRangeEncoder Self);
-   unsigned int RangeEncoder_UpdateSymbol(PRangeEncoder Self, TFreq Freq, unsigned int aSymbol);
+  PRangeEncoder  RangeEncoder_Create      (void *aStream, PWrite aWrite);
+           void *RangeEncoder_Destroy     (PRangeEncoder Self);
+           void  RangeEncoder_StartEncode (PRangeEncoder Self);
+           void  RangeEncoder_FinishEncode(PRangeEncoder Self);
+         uint32  RangeEncoder_Update      (PRangeEncoder Self, TFreq Freq, uint32 aSymbol);
 
  /* TRangeDecoder struct/methods */
 
 typedef struct TRangeDecoder *PRangeDecoder;
 
-  PRangeDecoder RangeDecoder_Create      (PReadStream aStream);
-          void* RangeDecoder_Destroy     (PRangeDecoder Self);
-           void RangeDecoder_StartDecode (PRangeDecoder Self);
-           void RangeDecoder_FinishDecode(PRangeDecoder Self);
-   unsigned int RangeDecoder_GetFreq     (PRangeDecoder Self, unsigned int TotFreq);
-   unsigned int RangeDecoder_UpdateSymbol(PRangeDecoder Self, TFreq Freq, unsigned int aSymbol);
+  PRangeDecoder  RangeDecoder_Create      (void *aStream, PRead aRead);
+           void *RangeDecoder_Destroy     (PRangeDecoder Self);
+           void  RangeDecoder_StartDecode (PRangeDecoder Self);
+           void  RangeDecoder_FinishDecode(PRangeDecoder Self);
+         uint32  RangeDecoder_GetFreq     (PRangeDecoder Self, uint32 TotFreq);
+         uint32  RangeDecoder_Update      (PRangeDecoder Self, TFreq Freq, uint32 aSymbol);
 
 #endif //  BEELIB_RANGECODER_H

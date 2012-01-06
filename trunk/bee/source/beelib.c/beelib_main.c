@@ -1,42 +1,39 @@
 #include <stdlib.h>
 #include "beelib_main.h"
-#include "beelib_stream.h"
 #include "beelib_modeller.h"
 #include "beelib_rangecoder.h"
 
-unsigned int DllVersion()
+#define DefaultTickStepSize 0xFFFF
+
+unsigned int LibVersion()
 {
-  return 118;
+  return 102;
 };
 
 /* TStreamEncoder struct/methods implementation */
 
 struct TStreamEncoder {
-       PWriteStream Stream;
-      PRangeEncoder RangeEncoder;
-         PBaseCoder BaseCoder;
+  PRangeEncoder RangeEncoder;
+     PBaseCoder BaseCoder;
 };
 
-PStreamEncoder StreamEncoder_Malloc(PStream aStream, PFlushBuffer aFlushBuffer)
+PStreamEncoder StreamEncoder_Create(void *aStream, PWrite aWrite)
 {
   PStreamEncoder Self = malloc(sizeof(struct TStreamEncoder));
-
-  Self->Stream       = WriteStream_Malloc(aStream, aFlushBuffer);
-  Self->RangeEncoder = RangeEncoder_Create(Self->Stream);
-  Self->BaseCoder    = BaseCoder_Malloc(Self->RangeEncoder, (PUpdateSymbol)RangeEncoder_UpdateSymbol);
-
+  Self->RangeEncoder  = RangeEncoder_Create(aStream, aWrite);
+  Self->BaseCoder     = BaseCoder_Create(Self->RangeEncoder, (PUpdate)RangeEncoder_Update);
   return Self;
 };
 
-void StreamEncoder_Free(PStreamEncoder Self)
+void* StreamEncoder_Destroy(PStreamEncoder Self)
 {
-  BaseCoder_Free(Self->BaseCoder);
+  BaseCoder_Destroy(Self->BaseCoder);
   RangeEncoder_Destroy(Self->RangeEncoder);
-  WriteStream_Free(Self->Stream);
   free(Self);
+  return 0;
 };
 
-void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, unsigned int Value)
+void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, uint32 Value)
 {
   BaseCoder_SetDictionary(Self->BaseCoder, Value);
 };
@@ -56,61 +53,51 @@ void StreamEncoder_FreshSolid(PStreamEncoder Self)
   BaseCoder_FreshSolid(Self->BaseCoder);
 };
 
-long long int StreamEncoder_Encode(PStreamEncoder Self, PStream aStream, PFillBuffer aFillBuffer, long long int Size, unsigned int *CRC)
+uint64 StreamEncoder_Encode(PStreamEncoder Self, void *aStream, PRead aRead, uint64 Size, uint32 *CRC)
 {
-                  *CRC = InitCRC32();
-      long long result = 0;
-  unsigned char Symbol = 0;
-
-  PReadStream Source = ReadStream_Malloc(aStream, aFillBuffer);
+           *CRC = 0xFFFFFFFF;
+   uint8 Symbol = 0;
+  uint64 result = 0;
 
   RangeEncoder_StartEncode(Self->RangeEncoder);
-  while (result < Size)
+  while ((result < Size) && (aRead(aStream, &Symbol) == 1))
   {
-    Symbol = ReadStream_Read(Source);
-    BaseCoder_UpdateSymbol(Self->BaseCoder, Symbol);
+    BaseCoder_Update(Self->BaseCoder, Symbol);
     *CRC = UpdateCRC32(*CRC, Symbol);
     result++;
 
-    // if ((result & DefaultTickStepSize) == 0)
-      // if (StreamCoder->OnTick != 0)
-	    // if (StreamCoder->OnTick(StreamCoder->Tick)) break;
+    if ((result & DefaultTickStepSize) == 0)
+     if (Self->OnTick != 0)
+	   if (StreamCoder->OnTick(StreamCoder->Tick) == 0) break;
   }
   RangeEncoder_FinishEncode(Self->RangeEncoder);
-  WriteStream_FlushBuffer(Self->Stream);
-
-  ReadStream_Free(Source);
   return result;
 };
 
 /* TStreamDecoder struct/methods implementation */
 
 struct TStreamDecoder {
-        PReadStream Stream;
       PRangeDecoder RangeDecoder;
          PBaseCoder BaseCoder;
 };
 
-PStreamDecoder StreamDecoder_Malloc(PStream aStream, PFillBuffer aFillBuffer)
+PStreamDecoder StreamDecoder_Create(void *aStream, PRead aRead)
 {
   PStreamDecoder Self = malloc(sizeof(struct TStreamDecoder));
-
-  Self->Stream       = ReadStream_Malloc(aStream, aFillBuffer);
-  Self->RangeDecoder = RangeDecoder_Create(Self->Stream);
-  Self->BaseCoder    = BaseCoder_Malloc(Self->RangeDecoder, (PUpdateSymbol)RangeDecoder_UpdateSymbol);
-
+  Self->RangeDecoder = RangeDecoder_Create(aStream, aRead);
+  Self->BaseCoder    = BaseCoder_Create(Self->RangeDecoder, (PUpdate)RangeDecoder_Update);
   return Self;
 };
 
-void StreamDecoder_Free(PStreamDecoder Self)
+void* StreamDecoder_Destroy(PStreamDecoder Self)
 {
-  BaseCoder_Free(Self->BaseCoder);
+  BaseCoder_Destroy(Self->BaseCoder);
   RangeDecoder_Destroy(Self->RangeDecoder);
-  ReadStream_Free(Self->Stream);
   free(Self);
+  return 0;
 };
 
-void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, unsigned int Value)
+void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, uint32 Value)
 {
   BaseCoder_SetDictionary(Self->BaseCoder, Value);
 };
@@ -130,10 +117,10 @@ void StreamDecoder_FreshSolid(PStreamDecoder Self)
   BaseCoder_FreshSolid(Self->BaseCoder);
 };
 
-long long int StreamDecoder_Decode(PStreamDecoder Self, PStream aStream, PFlushBuffer aFlushBuffer, long long int Size, unsigned int *CRC)
+uint64 StreamDecoder_Decode(PStreamDecoder Self, void *aStream, PWrite aWrite, uint64 Size, uint32 *CRC)
 {
   /*
-                   CRC = (unsigned int)-1;
+                   CRC = 0xFFFFFFFF;
           int64 result = 0;
   unsigned char Symbol = 0;
 

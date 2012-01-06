@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2003-2011 Andrew Filinsky
+  Copyright (c) 2010-2012 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,35 +19,30 @@
 /*
   Contains:
 
-    TBaseCoder class, PPM modeller;
-
   Modifyed:
 
-    v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
-    v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
-    v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
-
-    v0.8.0 build 1400 - 2011.08.04 by Melchiorre Caruso.
 */
 
 #ifndef BEELIB_MODELLER_H
 #define BEELIB_MODELLER_H
 
-#include "beelib_common.h"      // TTable, TTableCol, ...
+#include "beelib_common.h"
 
-typedef unsigned int (*PUpdateSymbol) (void*, unsigned int*, unsigned int);
+/* UpdateSymbol routine definition */
+
+typedef uint32 (*PUpdate) (void*, uint32*, uint32);
 
 /* TBaseCoder struct/methods */
 
 typedef struct TBaseCoder *PBaseCoder;
 
-    PBaseCoder BaseCoder_Malloc       (void *aCodec, PUpdateSymbol aUpdateSymbol);
-          void BaseCoder_Free         (PBaseCoder Self);
-          void BaseCoder_SetTable     (PBaseCoder Self, const TTableParameters *T);
-          void BaseCoder_SetDictionary(PBaseCoder Self, unsigned int aDictLevel);
-          void BaseCoder_FreshFlexible(PBaseCoder Self);
-          void BaseCoder_FreshSolid   (PBaseCoder Self);
-          void BaseCoder_Free         (PBaseCoder Self);
-  unsigned int BaseCoder_UpdateSymbol (PBaseCoder Self, unsigned int aSymbol);
+  PBaseCoder  BaseCoder_Create       (void *aCodec, PUpdate aUpdate);
+        void *BaseCoder_Destroy      (PBaseCoder Self);
+        void  BaseCoder_SetTable     (PBaseCoder Self, const TTableParameters *T);
+        void  BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel);
+        void  BaseCoder_FreshFlexible(PBaseCoder Self);
+        void  BaseCoder_FreshSolid   (PBaseCoder Self);
+        void  BaseCoder_Free         (PBaseCoder Self);
+      uint32  BaseCoder_Update       (PBaseCoder Self, uint32 aSymbol);
 
 #endif //  BEELIB_MODELLER_H

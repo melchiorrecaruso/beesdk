@@ -33,13 +33,9 @@ const
   DefaultTickStepSize = $FFFF;
 
 type
-  TTickEvent  = function(Ticker: pointer): boolean;
-  TFillBuffer  = function(Stream: pointer; var Buffer; Count: longint): longint;
-  TFlushBuffer = function(Stream: pointer; var Buffer; Count: longint): longint;
-
-
-
-
+  TTicker = function(Ticker: pointer             ): longint;
+  TReader = function(Stream: pointer; ch: pointer): longint;
+  TWriter = function(Stream: pointer; ch: byte   ): longint;
 
 implementation
 

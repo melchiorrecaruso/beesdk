@@ -47,18 +47,17 @@ uses
   {$ENDIF}
 
   {$link beelib.c\obj\release\beelib_common.o}
-  {$link beelib.c\obj\release\beelib_stream.o}
   {$link beelib.c\obj\release\beelib_rangecoder.o}
   {$link beelib.c\obj\release\beelib_modeller.o}
   {$link beelib.c\obj\release\beelib_main.o}
 
-  function DllVersion:cuint; cdecl; external;
+  function LibVersion:cuint; cdecl; external;
 
-  function  StreamEncoder_Malloc
-    (aStream: pointer; aFlushBuffer: TFlushBuffer): pointer; cdecl; external;
+  function  StreamEncoder_Create
+    (aStream: pointer; aFlushBuffer: TWriter): pointer; cdecl; external;
 
-  procedure StreamEncoder_Free
-    (Self: pointer); cdecl; external;
+  function StreamEncoder_Destroy
+    (Self: pointer): pointer; cdecl; external;
 
   procedure StreamEncoder_SetDictionaryLevel
     (Self: pointer; Value: cuint); cdecl; external;
@@ -73,14 +72,14 @@ uses
     (Self: pointer); cdecl; external;
 
   function  StreamEncoder_Encode
-    (Self: pointer; aStream: pointer; aFillBuffer: TFillBuffer;
-     Size: clonglong; CRC: pcuint): clonglong; cdecl; external;
+    (Self: pointer; aStream: pointer; aFillBuffer: TReader;
+     Size: clonglong; CRC: pcuint): cint64; cdecl; external;
 
-  function StreamDecoder_Malloc
-    (aStream:pointer; aFillBuffer:TFillBuffer):pointer; cdecl; external;
+  function StreamDecoder_Create
+    (aStream:pointer; aFillBuffer:TReader):pointer; cdecl; external;
 
-  procedure StreamDecoder_Free
-    (Self: pointer); cdecl; external;
+  function StreamDecoder_Destroy
+    (Self: pointer): pointer; cdecl; external;
 
   procedure StreamDecoder_SetDictionaryLevel
     (Self: pointer; Value:cuint); cdecl; external;
@@ -95,8 +94,8 @@ uses
     (Self: pointer); cdecl; external;
 
   function StreamDecoder_Decode
-    (Self: pointer; aStream: pointer; aFlushBuffer: TFlushBuffer;
-     Size: clonglong; CRC: pcuint): clonglong; cdecl; external;
+    (Self: pointer; aStream: pointer; aFlushBuffer: TWriter;
+     Size: clonglong; CRC: pcuint): cint64; cdecl; external;
 
 {$ENDIF}
 

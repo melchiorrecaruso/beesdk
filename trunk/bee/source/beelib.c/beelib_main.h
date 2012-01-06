@@ -27,32 +27,39 @@
 #define BEELIB_MAIN_H
 
 #include "beelib_common.h"
-#include "beelib_stream.h"
 
-unsigned int DllVersion();
+unsigned int BeeVersion();
 
-/* TStreamEncoder struct/methods */
+typedef struct TBStream
 
-typedef struct TStreamEncoder *PStreamEncoder;
 
-  PStreamEncoder StreamEncoder_Malloc            (PStream aStream, PFlushBuffer aFlushBuffer);
-            void StreamEncoder_Free              (PStreamEncoder Self);
-            void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, unsigned int Value);
+
+
+
+/* TBeeEncoder struct/methods */
+
+typedef struct TBeeEnc *PStreamEncoder;
+
+  PStreamEncoder StreamEncoder_Create            (void *aStream, PWrite aWrite, void *aPtr, PTick aTick);
+           void* StreamEncoder_Destroy           (PStreamEncoder Self);
+            void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, uint32 Value);
             void StreamEncoder_SetTableParameters(PStreamEncoder Self, const TTableParameters *Value);
             void StreamEncoder_FreshFlexible     (PStreamEncoder Self);
             void StreamEncoder_FreshSolid        (PStreamEncoder Self);
-   long long int StreamEncoder_Encode            (PStreamEncoder Self, PStream aStream, PFillBuffer aFillBuffer, long long int Size, unsigned int *CRC);
+
+
+          uint64 StreamEncoder_Encode            (PStreamEncoder Self, void *aStream, uint32 Size, uint32 *CRC);
 
 /* TStreamDecoder struct/methods */
 
 typedef struct TStreamDecoder *PStreamDecoder;
 
-  PStreamDecoder StreamDecoder_Malloc            (PStream aStream, PFillBuffer aFillBuffer);
-            void StreamDecoder_Free              (PStreamDecoder Self);
-            void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, unsigned int Value);
+  PStreamDecoder StreamDecoder_Create            (void* aStream, PRead aRead);
+           void* StreamDecoder_Destroy           (PStreamDecoder Self);
+            void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, uint32 Value);
             void StreamDecoder_SetTableParameters(PStreamDecoder Self, const TTableParameters *Value);
             void StreamDecoder_FreshFlexible     (PStreamDecoder Self);
             void StreamDecoder_FreshSolid        (PStreamDecoder Self);
-   long long int StreamDecoder_Decode            (PStreamDecoder Self, PStream aStream, PFlushBuffer aFlushBuffer, long long int Size, unsigned int *CRC);
+          uint64 StreamDecoder_Decode            (PStreamDecoder Self, void *aStream, PWrite aWrite, uint64 Size, uint32 *CRC);
 
 #endif //  BEELIB_MAIN_H
