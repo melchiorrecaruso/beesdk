@@ -12,20 +12,20 @@
 
 struct TRangeEncoder {
     void *FStream;
-  PWrite FWrite;
-  uint32 FRange;
-  uint32 FLow;
-  uint32 FCode;
-  uint32 FCarry;
-  uint32 FCache;
-  uint32 FFNum;
+  PWriter FWriter;
+   uint32 FRange;
+   uint32 FLow;
+   uint32 FCode;
+   uint32 FCarry;
+   uint32 FCache;
+   uint32 FFNum;
 };
 
-PRangeEncoder RangeEncoder_Create(void *aStream, PWrite aWrite)
+PRangeEncoder RangeEncoder_Create(void *aStream, PWriter aWriter)
 {
   PRangeEncoder Self = malloc(sizeof(struct TRangeEncoder));
   Self->FStream      = aStream;
-  Self->FWrite       = aWrite;
+  Self->FWriter      = aWriter;
   return Self;
 }
 
@@ -47,11 +47,11 @@ static inline void RangeEncoder_ShiftLow(PRangeEncoder Self)
 {
   if ((Self->FLow < THRES) || (Self->FCarry != 0))
   {
-    Self->FWrite(Self->FStream, Self->FCache + Self->FCarry);
+    Self->FWriter(Self->FStream, Self->FCache + Self->FCarry);
 
     while (Self->FFNum != 0)
     {
-      Self->FWrite(Self->FStream, Self->FCarry - 1);
+      Self->FWriter(Self->FStream, Self->FCarry - 1);
       Self->FFNum--;
     }
     Self->FCache = Self->FLow >> 24;
@@ -108,21 +108,21 @@ uint32 RangeEncoder_Update(PRangeEncoder Self, TFreq Freq, uint32 aSymbol)
 /* TRangeDecoder struct/methods implementation */
 
 struct TRangeDecoder {
-    void *FStream;
-   PRead FRead;
-  uint32 FRange;
-  uint32 FLow;
-  uint32 FCode;
-  uint32 FCarry;
-  uint32 FCache;
-  uint32 FFNum;
+     void *FStream;
+  PReader FReader;
+   uint32 FRange;
+   uint32 FLow;
+   uint32 FCode;
+   uint32 FCarry;
+   uint32 FCache;
+   uint32 FFNum;
 };
 
-PRangeDecoder RangeDecoder_Create(void *aStream, PRead aRead)
+PRangeDecoder RangeDecoder_Create(void *aStream, PReader aReader)
 {
   PRangeDecoder Self = malloc(sizeof(struct TRangeDecoder));
   Self->FStream      = aStream;
-  Self->FRead        = aRead;
+  Self->FReader      = aReader;
   return Self;
 }
 
@@ -143,7 +143,7 @@ void RangeDecoder_StartDecode(PRangeDecoder Self)
   int32 I;
   for (I = 0; I <= NUM; I++)
   {
-    Self->FRead(Self->FStream, &Symbol);
+    Self->FReader(Self->FStream, &Symbol);
     Self->FCode = (Self->FCode << 8) + Symbol;
   }
 }
@@ -166,7 +166,7 @@ void RangeDecoder_Decode(PRangeDecoder Self, uint32 CumFreq, uint32 Freq, uint32
   uint8 Symbol;
   while (Self->FRange < TOP)
   {
-    Self->FRead(Self->FStream, &Symbol);
+    Self->FReader(Self->FStream, &Symbol);
     Self->FCode  <<= 8;
     Self->FCode   += Symbol;
     Self->FRange <<= 8;

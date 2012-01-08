@@ -159,12 +159,13 @@ uses
     OnTick: TTicker);
   begin
     inherited Create(Stream, OnFill, OnFlush, Ticker, OnTick);
-    FCoder := StreamEncoder_Create(Stream, OnFlush);
+    FCoder := BeeEncoder_Create(Stream, OnFlush);
+    BeeEncoder_SetTicker(FCoder, Ticker, OnTick);
   end;
 
   destructor THeaderEncoder.Destroy;
   begin
-    StreamEncoder_Destroy(FCoder);
+    FCoder := BeeEncoder_Destroy(FCoder);
     inherited Destroy;
   end;
 
@@ -173,15 +174,15 @@ uses
     I: longint;
   begin
     if foDictionary in Item.Flags then
-      StreamEncoder_SetDictionaryLevel(FCoder, Item.Dictionary);
+      BeeEncoder_SetDictionaryLevel(FCoder, Item.Dictionary);
 
     if foTable in Item.Flags then
-      StreamEncoder_SetTableParameters(FCoder, @Item.Table);
+      BeeEncoder_SetTableParameters(FCoder, @Item.Table);
 
     if foTear in Item.Flags then
-      StreamEncoder_FreshFlexible(FCoder)
+      BeeEncoder_FreshFlexible(FCoder)
     else
-      StreamEncoder_FreshSolid(FCoder);
+      BeeEncoder_FreshSolid(FCoder);
   end;
 
   function THeaderEncoder.CopySilent(Strm: TStream; const Size: int64): int64;
@@ -239,7 +240,7 @@ uses
     Item.StartPos := FStream.Seek(0, soCurrent);
     case foMoved in Item.Flags of
       True:  Item.Size := Copy (Strm, Size, Item.Crc);
-      False: Item.Size := StreamEncoder_Encode(FCoder, Strm, FOnFillBuffer, Size, @CRC);
+      False: Item.Size := BeeEncoder_Encode(FCoder, Strm, FOnFillBuffer, Size, @CRC);
     end;
     Item.Crc        := CRC;
     Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
@@ -313,27 +314,28 @@ uses
     OnTick: TTicker);
   begin
     inherited Create(Stream, OnFill, OnFlush, Ticker, OnTick);
-    FCoder := StreamDecoder_Create(Stream, OnFill);
+    FCoder := BeeDecoder_Create(Stream, OnFill);
+    BeeDecoder_SetTicker(FCoder, Ticker, OnTick);
   end;
 
   destructor THeaderDecoder.Destroy;
   begin
-    StreamDecoder_Destroy(FCoder);
+    FCoder := BeeDecoder_Destroy(FCoder);
     inherited Destroy;
   end;
 
   procedure THeaderDecoder.Initialize(Item: THeader);
   begin
     if foDictionary in Item.Flags then
-      StreamDecoder_SetDictionaryLevel(FCoder, Item.Dictionary);
+      BeeDecoder_SetDictionaryLevel(FCoder, Item.Dictionary);
 
     if foTable in Item.Flags then
-      StreamDecoder_SetTableParameters(FCoder, @Item.Table);
+      BeeDecoder_SetTableParameters(FCoder, @Item.Table);
 
     if foTear in Item.Flags then
-      StreamDecoder_FreshFlexible(FCoder)
+      BeeDecoder_FreshFlexible(FCoder)
     else
-      StreamDecoder_FreshSolid(FCoder);
+      BeeDecoder_FreshSolid(FCoder);
   end;
 
   function THeaderDecoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
@@ -368,7 +370,7 @@ uses
     Item.StartPos := Strm.Seek(0, soCurrent);
     case foMoved in Item.Flags of
       True:  Result := Copy          (Strm, Item.Size, CRC) = Item.Size;
-      False: Result := StreamDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
+      False: Result := BeeDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
     end;
     if Result then Result := Item.Crc = CRC;
 
@@ -389,7 +391,7 @@ uses
     FStream.Seek(Item.StartPos, soBeginning);
     case foMoved in Item.Flags of
       True:  Result := Copy          (Strm, Item.Size, CRC) = Item.Size;
-      False: Result := StreamDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
+      False: Result := BeeDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
     end;
     Strm.Free;
 
@@ -415,7 +417,7 @@ uses
       FStream.Seek(Item.StartPos, soBeginning);
       case foMoved in Item.Flags of
         True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
-        False: Result := StreamDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
+        False: Result := BeeDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
       end;
       Strm.Free;
 
