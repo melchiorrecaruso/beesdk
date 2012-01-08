@@ -47,9 +47,9 @@
 //                                                                    //
 // ------------------------------------------------------------------ //
 
-typedef int32 (*PWrite) (void*, uint8 );
-typedef int32 (*PRead ) (void*, uint8*);
-typedef int32 (*PTick ) (void*        );
+typedef int32 (*PWriter) (void*, uint8 );
+typedef int32 (*PReader) (void*, uint8*);
+typedef int32 (*PTicker) (void*        );
 
 // ------------------------------------------------------------------ //
 //  Configuration table types                                         //

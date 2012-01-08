@@ -5,27 +5,33 @@
 
 #define DefaultTickStepSize 0xFFFF
 
-unsigned int LibVersion()
+unsigned int BeeVersion()
 {
   return 102;
 };
 
-/* TStreamEncoder struct/methods implementation */
+/* TBeeEncoder struct/methods implementation */
 
-struct TStreamEncoder {
+struct TBeeEncoder {
+        PTicker Ticker;
+           void *TickHandle;
   PRangeEncoder RangeEncoder;
      PBaseCoder BaseCoder;
 };
 
-PStreamEncoder StreamEncoder_Create(void *aStream, PWrite aWrite)
+PBeeEncoder BeeEncoder_Create(void *aStream, PWriter aWriter)
 {
-  PStreamEncoder Self = malloc(sizeof(struct TStreamEncoder));
-  Self->RangeEncoder  = RangeEncoder_Create(aStream, aWrite);
+  PBeeEncoder Self    = malloc(sizeof(struct TBeeEncoder));
+  Self->RangeEncoder  = RangeEncoder_Create(aStream, aWriter);
   Self->BaseCoder     = BaseCoder_Create(Self->RangeEncoder, (PUpdate)RangeEncoder_Update);
+
+  Self->TickHandle    = 0;
+  Self->Ticker        = 0;
+
   return Self;
 };
 
-void* StreamEncoder_Destroy(PStreamEncoder Self)
+void* BeeEncoder_Destroy(PBeeEncoder Self)
 {
   BaseCoder_Destroy(Self->BaseCoder);
   RangeEncoder_Destroy(Self->RangeEncoder);
@@ -33,63 +39,75 @@ void* StreamEncoder_Destroy(PStreamEncoder Self)
   return 0;
 };
 
-void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, uint32 Value)
+void BeeEncoder_SetDictionaryLevel(PBeeEncoder Self, uint32 Value)
 {
   BaseCoder_SetDictionary(Self->BaseCoder, Value);
 };
 
-void StreamEncoder_SetTableParameters(PStreamEncoder Self, const TTableParameters *Value)
+void BeeEncoder_SetTableParameters(PBeeEncoder Self, const TTableParameters *Value)
 {
   BaseCoder_SetTable(Self->BaseCoder, Value);
 };
 
-void StreamEncoder_FreshFlexible(PStreamEncoder Self)
+void BeeEncoder_SetTicker(PBeeEncoder Self, void *aTickHandle, PTicker aTicker)
+{
+  Self->TickHandle = aTickHandle;
+  Self->Ticker     = aTicker;
+};
+
+void BeeEncoder_FreshFlexible(PBeeEncoder Self)
 {
   BaseCoder_FreshFlexible(Self->BaseCoder);
 };
 
-void StreamEncoder_FreshSolid(PStreamEncoder Self)
+void BeeEncoder_FreshSolid(PBeeEncoder Self)
 {
   BaseCoder_FreshSolid(Self->BaseCoder);
 };
 
-uint64 StreamEncoder_Encode(PStreamEncoder Self, void *aStream, PRead aRead, uint64 Size, uint32 *CRC)
+uint64 BeeEncoder_Encode(PBeeEncoder Self, void *aStream, PReader aReader, uint64 Size, uint32 *CRC)
 {
            *CRC = 0xFFFFFFFF;
    uint8 Symbol = 0;
   uint64 result = 0;
 
   RangeEncoder_StartEncode(Self->RangeEncoder);
-  while ((result < Size) && (aRead(aStream, &Symbol) == 1))
+  while ((result < Size) && (aReader(aStream, &Symbol) == 1))
   {
     BaseCoder_Update(Self->BaseCoder, Symbol);
     *CRC = UpdateCRC32(*CRC, Symbol);
     result++;
 
     if ((result & DefaultTickStepSize) == 0)
-     if (Self->OnTick != 0)
-	   if (StreamCoder->OnTick(StreamCoder->Tick) == 0) break;
+      if (Self->Ticker != 0)
+	    if (Self->Ticker(Self->TickHandle) != 0) break;
   }
   RangeEncoder_FinishEncode(Self->RangeEncoder);
   return result;
 };
 
-/* TStreamDecoder struct/methods implementation */
+/* TBeeDecoder struct/methods implementation */
 
-struct TStreamDecoder {
-      PRangeDecoder RangeDecoder;
-         PBaseCoder BaseCoder;
+struct TBeeDecoder {
+        PTicker Ticker;
+           void *TickHandle;
+  PRangeDecoder RangeDecoder;
+     PBaseCoder BaseCoder;
 };
 
-PStreamDecoder StreamDecoder_Create(void *aStream, PRead aRead)
+PBeeDecoder BeeDecoder_Create(void *aStream, PReader aReader)
 {
-  PStreamDecoder Self = malloc(sizeof(struct TStreamDecoder));
-  Self->RangeDecoder = RangeDecoder_Create(aStream, aRead);
+  PBeeDecoder Self   = malloc(sizeof(struct TBeeDecoder));
+  Self->RangeDecoder = RangeDecoder_Create(aStream, aReader);
   Self->BaseCoder    = BaseCoder_Create(Self->RangeDecoder, (PUpdate)RangeDecoder_Update);
+
+  Self->TickHandle   = 0;
+  Self->Ticker       = 0;
+
   return Self;
 };
 
-void* StreamDecoder_Destroy(PStreamDecoder Self)
+void* BeeDecoder_Destroy(PBeeDecoder Self)
 {
   BaseCoder_Destroy(Self->BaseCoder);
   RangeDecoder_Destroy(Self->RangeDecoder);
@@ -97,27 +115,33 @@ void* StreamDecoder_Destroy(PStreamDecoder Self)
   return 0;
 };
 
-void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, uint32 Value)
+void BeeDecoder_SetDictionaryLevel(PBeeDecoder Self, uint32 Value)
 {
   BaseCoder_SetDictionary(Self->BaseCoder, Value);
 };
 
-void StreamDecoder_SetTableParameters(PStreamDecoder Self, const TTableParameters *Value)
+void BeeDecoder_SetTableParameters(PBeeDecoder Self, const TTableParameters *Value)
 {
   BaseCoder_SetTable(Self->BaseCoder, Value);
 };
 
-void StreamDecoder_FreshFlexible(PStreamDecoder Self)
+void BeeDecoder_SetTicker(PBeeDecoder Self, void *aTickHandle, PTicker aTicker)
+{
+  Self->TickHandle = aTickHandle;
+  Self->Ticker     = aTicker;
+};
+
+void BeeDecoder_FreshFlexible(PBeeDecoder Self)
 {
   BaseCoder_FreshFlexible(Self->BaseCoder);
 };
 
-void StreamDecoder_FreshSolid(PStreamDecoder Self)
+void BeeDecoder_FreshSolid(PBeeDecoder Self)
 {
   BaseCoder_FreshSolid(Self->BaseCoder);
 };
 
-uint64 StreamDecoder_Decode(PStreamDecoder Self, void *aStream, PWrite aWrite, uint64 Size, uint32 *CRC)
+uint64 BeeDecoder_Decode(PBeeDecoder Self, void *aStream, PWriter aWriter, uint64 Size, uint32 *CRC)
 {
   /*
                    CRC = 0xFFFFFFFF;

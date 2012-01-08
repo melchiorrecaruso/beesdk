@@ -36,7 +36,7 @@ typedef uint32 *TFreq;
 
 typedef struct TRangeEncoder *PRangeEncoder;
 
-  PRangeEncoder  RangeEncoder_Create      (void *aStream, PWrite aWrite);
+  PRangeEncoder  RangeEncoder_Create      (void *aStream, PWriter aWriter);
            void *RangeEncoder_Destroy     (PRangeEncoder Self);
            void  RangeEncoder_StartEncode (PRangeEncoder Self);
            void  RangeEncoder_FinishEncode(PRangeEncoder Self);
@@ -46,7 +46,7 @@ typedef struct TRangeEncoder *PRangeEncoder;
 
 typedef struct TRangeDecoder *PRangeDecoder;
 
-  PRangeDecoder  RangeDecoder_Create      (void *aStream, PRead aRead);
+  PRangeDecoder  RangeDecoder_Create      (void *aStream, PReader aReader);
            void *RangeDecoder_Destroy     (PRangeDecoder Self);
            void  RangeDecoder_StartDecode (PRangeDecoder Self);
            void  RangeDecoder_FinishDecode(PRangeDecoder Self);

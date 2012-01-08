@@ -53,47 +53,53 @@ uses
 
   function LibVersion:cuint; cdecl; external;
 
-  function  StreamEncoder_Create
+  function  BeeEncoder_Create
     (aStream: pointer; aFlushBuffer: TWriter): pointer; cdecl; external;
 
-  function StreamEncoder_Destroy
+  function BeeEncoder_Destroy
     (Self: pointer): pointer; cdecl; external;
 
-  procedure StreamEncoder_SetDictionaryLevel
+  procedure BeeEncoder_SetDictionaryLevel
     (Self: pointer; Value: cuint); cdecl; external;
 
-  procedure StreamEncoder_SetTableParameters
+  procedure BeeEncoder_SetTableParameters
     (Self: pointer; Value: pointer); cdecl; external;
 
-  procedure StreamEncoder_FreshFlexible
+  procedure BeeEncoder_SetTicker
+    (Self: pointer; aTickHeandle: pointer; aTick: TTicker); cdecl; external;
+
+  procedure BeeEncoder_FreshFlexible
     (Self: pointer); cdecl; external;
 
-  procedure StreamEncoder_FreshSolid
+  procedure BeeEncoder_FreshSolid
     (Self: pointer); cdecl; external;
 
-  function  StreamEncoder_Encode
+  function BeeEncoder_Encode
     (Self: pointer; aStream: pointer; aFillBuffer: TReader;
      Size: clonglong; CRC: pcuint): cint64; cdecl; external;
 
-  function StreamDecoder_Create
+  function BeeDecoder_Create
     (aStream:pointer; aFillBuffer:TReader):pointer; cdecl; external;
 
-  function StreamDecoder_Destroy
+  function BeeDecoder_Destroy
     (Self: pointer): pointer; cdecl; external;
 
-  procedure StreamDecoder_SetDictionaryLevel
+  procedure BeeDecoder_SetDictionaryLevel
     (Self: pointer; Value:cuint); cdecl; external;
 
-  procedure StreamDecoder_SetTableParameters
+  procedure BeeDecoder_SetTableParameters
     (Self: pointer; Value: pointer); cdecl; external;
 
-  procedure StreamDecoder_FreshFlexible
+  procedure BeeDecoder_SetTicker
+    (Self: pointer; aTickHeandle: pointer; aTick: TTicker); cdecl; external;
+
+  procedure BeeDecoder_FreshFlexible
     (Self: pointer); cdecl; external;
 
-  procedure StreamDecoder_FreshSolid
+  procedure BeeDecoder_FreshSolid
     (Self: pointer); cdecl; external;
 
-  function StreamDecoder_Decode
+  function BeeDecoder_Decode
     (Self: pointer; aStream: pointer; aFlushBuffer: TWriter;
      Size: clonglong; CRC: pcuint): cint64; cdecl; external;
 

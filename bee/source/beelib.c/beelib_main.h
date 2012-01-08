@@ -30,36 +30,30 @@
 
 unsigned int BeeVersion();
 
-typedef struct TBStream
-
-
-
-
-
 /* TBeeEncoder struct/methods */
 
-typedef struct TBeeEnc *PStreamEncoder;
+typedef struct TBeeEncoder *PBeeEncoder;
 
-  PStreamEncoder StreamEncoder_Create            (void *aStream, PWrite aWrite, void *aPtr, PTick aTick);
-           void* StreamEncoder_Destroy           (PStreamEncoder Self);
-            void StreamEncoder_SetDictionaryLevel(PStreamEncoder Self, uint32 Value);
-            void StreamEncoder_SetTableParameters(PStreamEncoder Self, const TTableParameters *Value);
-            void StreamEncoder_FreshFlexible     (PStreamEncoder Self);
-            void StreamEncoder_FreshSolid        (PStreamEncoder Self);
-
-
-          uint64 StreamEncoder_Encode            (PStreamEncoder Self, void *aStream, uint32 Size, uint32 *CRC);
+  PBeeEncoder BeeEncoder_Create            (void *aStream, PWriter aWriter);
+        void* BeeEncoder_Destroy           (PBeeEncoder Self);
+         void BeeEncoder_SetDictionaryLevel(PBeeEncoder Self, uint32 Value);
+         void BeeEncoder_SetTableParameters(PBeeEncoder Self, const TTableParameters *Value);
+         void BeeEncoder_SetTicker         (PBeeEncoder Self, void *aTickHandle, PTicker aTicker);
+         void BeeEncoder_FreshFlexible     (PBeeEncoder Self);
+         void BeeEncoder_FreshSolid        (PBeeEncoder Self);
+       uint64 BeeEncoder_Encode            (PBeeEncoder Self, void *aStream, PReader aReader, uint64 Size, uint32 *CRC);
 
 /* TStreamDecoder struct/methods */
 
-typedef struct TStreamDecoder *PStreamDecoder;
+typedef struct TBeeDecoder *PBeeDecoder;
 
-  PStreamDecoder StreamDecoder_Create            (void* aStream, PRead aRead);
-           void* StreamDecoder_Destroy           (PStreamDecoder Self);
-            void StreamDecoder_SetDictionaryLevel(PStreamDecoder Self, uint32 Value);
-            void StreamDecoder_SetTableParameters(PStreamDecoder Self, const TTableParameters *Value);
-            void StreamDecoder_FreshFlexible     (PStreamDecoder Self);
-            void StreamDecoder_FreshSolid        (PStreamDecoder Self);
-          uint64 StreamDecoder_Decode            (PStreamDecoder Self, void *aStream, PWrite aWrite, uint64 Size, uint32 *CRC);
+  PBeeDecoder BeeDecoder_Create            (void* aStream, PReader aReader);
+        void* BeeDecoder_Destroy           (PBeeDecoder Self);
+         void BeeDecoder_SetDictionaryLevel(PBeeDecoder Self, uint32 Value);
+         void BeeDecoder_SetTableParameters(PBeeDecoder Self, const TTableParameters *Value);
+         void BeeDecoder_SetTicker         (PBeeDecoder Self, void *aTickHandle, PTicker aTicker);
+         void BeeDecoder_FreshFlexible     (PBeeDecoder Self);
+         void BeeDecoder_FreshSolid        (PBeeDecoder Self);
+       uint64 BeeDecoder_Decode            (PBeeDecoder Self, void *aStream, PWriter aWriter, uint64 Size, uint32 *CRC);
 
 #endif //  BEELIB_MAIN_H
