@@ -47,9 +47,9 @@
 //                                                                    //
 // ------------------------------------------------------------------ //
 
-typedef int32 (*PWriter) (void*, uint8 );
-typedef int32 (*PReader) (void*, uint8*);
-typedef int32 (*PTicker) (void*        );
+typedef int32 (*PStreamWrite) (void*, void*, int32);
+typedef int32 (*PStreamRead)  (void*, void*, int32);
+typedef int32 (*PStreamTick)  (void*,        int32);
 
 // ------------------------------------------------------------------ //
 //  Configuration table types                                         //

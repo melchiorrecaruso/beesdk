@@ -41,10 +41,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="beelib_rangecoder.h" />
-		<Unit filename="beelib_stream.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="beelib_stream.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
