@@ -34,14 +34,14 @@ unsigned int BeeVersion();
 
 typedef struct TBeeEncoder *PBeeEncoder;
 
-  PBeeEncoder BeeEncoder_Create            (void *aStream, PWriter aWriter);
+  PBeeEncoder BeeEncoder_Create            (void *aStream, PStreamWrite aStreamWrite);
         void* BeeEncoder_Destroy           (PBeeEncoder Self);
          void BeeEncoder_SetDictionaryLevel(PBeeEncoder Self, uint32 Value);
          void BeeEncoder_SetTableParameters(PBeeEncoder Self, const TTableParameters *Value);
          void BeeEncoder_SetTicker         (PBeeEncoder Self, void *aTickHandle, PTicker aTicker);
          void BeeEncoder_FreshFlexible     (PBeeEncoder Self);
          void BeeEncoder_FreshSolid        (PBeeEncoder Self);
-       uint64 BeeEncoder_Encode            (PBeeEncoder Self, void *aStream, PReader aReader, uint64 Size, uint32 *CRC);
+       uint64 BeeEncoder_Encode            (PBeeEncoder Self, void *aStream, PFill aFill, uint64 Size, uint32 *CRC);
 
 /* TStreamDecoder struct/methods */
 
