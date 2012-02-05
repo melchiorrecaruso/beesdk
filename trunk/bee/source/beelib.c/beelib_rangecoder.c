@@ -77,6 +77,8 @@ void RangeEncoder_FinishEncode(PRangeEncoder Self)
   int32 I;
   for (I = 0; I <= NUM; I++)
     RangeEncoder_ShiftLow(Self);
+
+  WriteStream_FlushBuffer(Self->FStream);
 }
 
 uint32 RangeEncoder_Update(PRangeEncoder Self, TFreq Freq, uint32 aSymbol)
