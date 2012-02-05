@@ -119,8 +119,8 @@ type
 function CreateTFileReader(const aFileName: string; aMode: word): TFileReader;
 function CreateTFileWriter(const aFileName: string; aMode: word): TFileWriter;
 
-function DoFill (Stream: pointer; ch: pointer): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
-function DoFlush(Stream: pointer; ch: byte   ): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
+function DoFill (Stream: pointer; Data: pointer; Size: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
+function DoFlush(Stream: pointer; Data: pointer; Size: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
 
 implementation
 
@@ -142,14 +142,14 @@ begin
   end;
 end;
 
-function DoFill(Stream: pointer; ch: pointer): longint;
+function DoFill(Stream: pointer; Data: pointer; Size: longint): longint;
 begin
-  Result := TFileReader(Stream).Read(ch^, 1);
+  Result := TFileReader(Stream).Read(Data^, Size);
 end;
 
-function DoFlush(Stream: pointer; ch: byte): longint;
+function DoFlush(Stream: pointer; Data: pointer; Size: longint): longint;
 begin
-  Result := TFileWriter(Stream).Write(ch, 1);
+  Result := TFileWriter(Stream).Write(Data^, Size);
 end;
 
 { TFileReader class }
