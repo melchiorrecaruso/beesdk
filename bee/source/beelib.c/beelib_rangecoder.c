@@ -22,8 +22,7 @@ struct TRangeEncoder {
 PRangeEncoder RangeEncoder_Create(PWriteStream aStream)
 {
   PRangeEncoder Self = malloc(sizeof(struct TRangeEncoder));
-
-  Self->FStream = aStream;
+  Self->FStream      = aStream;
   return Self;
 }
 
@@ -76,8 +75,9 @@ void RangeEncoder_FinishEncode(PRangeEncoder Self)
 {
   int32 I;
   for (I = 0; I <= NUM; I++)
+  {
     RangeEncoder_ShiftLow(Self);
-
+  }
   WriteStream_FlushBuffer(Self->FStream);
 }
 
@@ -119,8 +119,7 @@ struct TRangeDecoder {
 PRangeDecoder RangeDecoder_Create(PReadStream aStream)
 {
   PRangeDecoder Self = malloc(sizeof(struct TRangeDecoder));
-
-  Self->FStream = aStream;
+  Self->FStream      = aStream;
   return Self;
 }
 

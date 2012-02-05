@@ -1,5 +1,7 @@
-#include "beelib_stream.h"
 #include <stdlib.h>
+#include "beelib_stream.h"
+
+/* Default buffer capacity */
 
 #define DEFAULT_BUFFER_CAPACITY 65536
 
@@ -82,6 +84,7 @@ PWriteStream WriteStream_Create(void *aStrmHandle, PStrmWrite aStrmWrite)
 
 void WriteStream_Destroy(PWriteStream Self)
 {
+  WriteStream_FlushBuffer(Self);
   free(Self);
 }
 

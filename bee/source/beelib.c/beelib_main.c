@@ -80,6 +80,7 @@ uint64 BeeEncoder_Encode(PBeeEncoder Self, void *aStrmHandle, PStrmRead aStrmRea
   {
     Symbol = ReadStream_Read(Source);
     BaseCoder_Update(Self->BaseCoder, Symbol);
+
     *CRC = UpdateCRC32(*CRC, Symbol);
     result++;
 
@@ -152,33 +153,26 @@ void BeeDecoder_FreshSolid(PBeeDecoder Self)
 
 uint64 BeeDecoder_Decode(PBeeDecoder Self, void *aStrmHandle, PStrmWrite aStrmWrite, uint64 Size, uint32 *CRC)
 {
-  /*
-                   CRC = 0xFFFFFFFF;
-          int64 result = 0;
-  unsigned char Symbol = 0;
+           *CRC = 0xFFFFFFFF;
+   uint8 Symbol = 0;
+  uint64 result = 0;
 
-  TStreamCoder* StreamCoder = (TStreamCoder*) Handle;
-
-  TWriteStream* Dest = new TWriteStream(StrmPtr, StreamCoder->OnFlush);
-
-  StreamCoder->Stream->ClearBuffer();
-  StreamCoder->SecondaryCodec->Start();
+  PWriteStream Dest = WriteStream_Create(aStrmHandle, aStrmWrite);
+  RangeDecoder_StartDecode(Self->RangeDecoder);
   while (result < Size)
   {
-    Symbol = StreamCoder->PPM->UpdateModel(0);
-	Dest->Write(Symbol);
-    UpdCrc32(CRC, Symbol);
+    Symbol = BaseCoder_Update(Self->BaseCoder, 0);
+    WriteStream_Write(Dest, Symbol);
+
+	*CRC = UpdateCRC32(*CRC, Symbol);
     result++;
 
     if ((result & DefaultTickStepSize) == 0)
-	  if (StreamCoder->OnTick != 0)
-	    if (StreamCoder->OnTick(StreamCoder->Tick)) break;
+      if (Self->TickSend != 0)
+	    if (Self->TickSend(Self->TickHandle) != 0) break;
   }
-  StreamCoder->SecondaryCodec->Flush();
-  (*Dest).~TWriteStream();
+  RangeDecoder_FinishDecode(Self->RangeDecoder);
+  WriteStream_Destroy(Dest);
   return result;
-
-  */
-  return 0;
 };
 
