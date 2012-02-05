@@ -44,12 +44,12 @@
 #define  int8              signed char
 
 // ------------------------------------------------------------------ //
-//                                                                    //
+//  Interface definitions                                             //
 // ------------------------------------------------------------------ //
 
-typedef int32 (*PStreamWrite) (void*, void*, int32);
-typedef int32 (*PStreamRead)  (void*, void*, int32);
-typedef int32 (*PStreamTick)  (void*,        int32);
+typedef int32 (*PTickSend)  (void*);
+typedef int32 (*PStrmRead)  (void*, void*, int32);
+typedef int32 (*PStrmWrite) (void*, void*, int32);
 
 // ------------------------------------------------------------------ //
 //  Configuration table types                                         //

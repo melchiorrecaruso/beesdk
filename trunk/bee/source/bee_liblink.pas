@@ -47,14 +47,15 @@ uses
   {$ENDIF}
 
   {$link beelib.c\obj\release\beelib_common.o}
-  {$link beelib.c\obj\release\beelib_rangecoder.o}
-  {$link beelib.c\obj\release\beelib_modeller.o}
   {$link beelib.c\obj\release\beelib_main.o}
+  {$link beelib.c\obj\release\beelib_modeller.o}
+  {$link beelib.c\obj\release\beelib_rangecoder.o}
+  {$link beelib.c\obj\release\beelib_stream.o}
 
-  function LibVersion:cuint; cdecl; external;
+  function BeeVersion:cuint; cdecl; external;
 
   function  BeeEncoder_Create
-    (aStream: pointer; aFlushBuffer: TWriter): pointer; cdecl; external;
+    (aStrmHandle: pointer; aStrmWrite: TWriter): pointer; cdecl; external;
 
   function BeeEncoder_Destroy
     (Self: pointer): pointer; cdecl; external;
@@ -66,7 +67,7 @@ uses
     (Self: pointer; Value: pointer); cdecl; external;
 
   procedure BeeEncoder_SetTicker
-    (Self: pointer; aTickHeandle: pointer; aTick: TTicker); cdecl; external;
+    (Self: pointer; aTickHandle: pointer; aTickSend: TTicker); cdecl; external;
 
   procedure BeeEncoder_FreshFlexible
     (Self: pointer); cdecl; external;
@@ -75,11 +76,11 @@ uses
     (Self: pointer); cdecl; external;
 
   function BeeEncoder_Encode
-    (Self: pointer; aStream: pointer; aFillBuffer: TReader;
+    (Self: pointer; aStrmHandle: pointer; aStrmRead: TReader;
      Size: clonglong; CRC: pcuint): cint64; cdecl; external;
 
   function BeeDecoder_Create
-    (aStream:pointer; aFillBuffer:TReader):pointer; cdecl; external;
+    (aStrmHandle:pointer; aStrmRead:TReader):pointer; cdecl; external;
 
   function BeeDecoder_Destroy
     (Self: pointer): pointer; cdecl; external;
@@ -91,7 +92,7 @@ uses
     (Self: pointer; Value: pointer); cdecl; external;
 
   procedure BeeDecoder_SetTicker
-    (Self: pointer; aTickHeandle: pointer; aTick: TTicker); cdecl; external;
+    (Self: pointer; aTickHeandle: pointer; aTickSend: TTicker); cdecl; external;
 
   procedure BeeDecoder_FreshFlexible
     (Self: pointer); cdecl; external;
@@ -100,7 +101,7 @@ uses
     (Self: pointer); cdecl; external;
 
   function BeeDecoder_Decode
-    (Self: pointer; aStream: pointer; aFlushBuffer: TWriter;
+    (Self: pointer; aStrmHandle: pointer; aStrmWrite: TWriter;
      Size: clonglong; CRC: pcuint): cint64; cdecl; external;
 
 {$ENDIF}
