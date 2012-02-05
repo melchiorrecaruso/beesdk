@@ -27,6 +27,7 @@
 #define BEELIB_MAIN_H
 
 #include "beelib_common.h"
+#include "beelib_stream.h"
 
 unsigned int BeeVersion();
 
@@ -34,26 +35,26 @@ unsigned int BeeVersion();
 
 typedef struct TBeeEncoder *PBeeEncoder;
 
-  PBeeEncoder BeeEncoder_Create            (void *aStream, PStreamWrite aStreamWrite);
+  PBeeEncoder BeeEncoder_Create            (void *aStrmHandle, PStrmWrite aStrmWrite);
         void* BeeEncoder_Destroy           (PBeeEncoder Self);
          void BeeEncoder_SetDictionaryLevel(PBeeEncoder Self, uint32 Value);
          void BeeEncoder_SetTableParameters(PBeeEncoder Self, const TTableParameters *Value);
-         void BeeEncoder_SetTicker         (PBeeEncoder Self, void *aTickHandle, PTicker aTicker);
+         void BeeEncoder_SetTicker         (PBeeEncoder Self, void *aTickHandle, PTickSend aTickSend);
          void BeeEncoder_FreshFlexible     (PBeeEncoder Self);
          void BeeEncoder_FreshSolid        (PBeeEncoder Self);
-       uint64 BeeEncoder_Encode            (PBeeEncoder Self, void *aStream, PFill aFill, uint64 Size, uint32 *CRC);
+       uint64 BeeEncoder_Encode            (PBeeEncoder Self, void *aStrmHandle, PStrmRead aStrmRead, uint64 Size, uint32 *CRC);
 
 /* TStreamDecoder struct/methods */
 
 typedef struct TBeeDecoder *PBeeDecoder;
 
-  PBeeDecoder BeeDecoder_Create            (void* aStream, PReader aReader);
+  PBeeDecoder BeeDecoder_Create            (void* aStrmHandle, PStrmRead aStrmRead);
         void* BeeDecoder_Destroy           (PBeeDecoder Self);
          void BeeDecoder_SetDictionaryLevel(PBeeDecoder Self, uint32 Value);
          void BeeDecoder_SetTableParameters(PBeeDecoder Self, const TTableParameters *Value);
-         void BeeDecoder_SetTicker         (PBeeDecoder Self, void *aTickHandle, PTicker aTicker);
+         void BeeDecoder_SetTicker         (PBeeDecoder Self, void *aTickHandle, PTickSend aTickSend);
          void BeeDecoder_FreshFlexible     (PBeeDecoder Self);
          void BeeDecoder_FreshSolid        (PBeeDecoder Self);
-       uint64 BeeDecoder_Decode            (PBeeDecoder Self, void *aStream, PWriter aWriter, uint64 Size, uint32 *CRC);
+       uint64 BeeDecoder_Decode            (PBeeDecoder Self, void *aStrmHandle, PStrmWrite aStrmWrite, uint64 Size, uint32 *CRC);
 
 #endif //  BEELIB_MAIN_H
