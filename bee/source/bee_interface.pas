@@ -35,9 +35,7 @@ interface
 
 uses
   Classes,
-  Bee_Types,
   Bee_Consts,
-  Bee_Common,
   Bee_Headers;
 
 type
@@ -45,89 +43,54 @@ type
 
   TApp = class
   protected
-    FStartTime: double;
-    FSuspendedTime: double;
-    FSuspended: boolean;
+    FExitCode: byte;
+    FSuspended:  boolean;
     FTerminated: boolean;
-    FCode: byte;
-    FSize: int64;
     FProcessedSize: int64;
-    function GetElapsedTime: longint;
-    function GetRemainingTime: longint;
-    procedure SetSuspended(Value: boolean);
-    function GetPercentage: longint;
-    function GetSpeed: longint;
-    procedure SetPriority(Priority: byte);
-    procedure SetCode(Code: byte);
+    FTotalSize: int64;
+    function GetProgress: longint;
+    procedure SetPriority(Value: byte);
+    procedure SetExitCode(Value: byte);
     procedure SetTerminated(Value: boolean);
-
-    procedure DoMessage(const aMessage: string); overload;
-    procedure DoMessage(const aMessage: string; aCode: byte); overload;
-    procedure DoRequest(const aMessage: string);
-    function DoRename(const aItem: THeader; const aValue: string): string;
-    function DoOverWrite(const aItem: THeader; const aValue: string): string;
-    procedure DoList(const aItem: THeader);
-    function DoUserAbort: boolean;
-    {$IFDEF CONSOLEAPPLICATION}
-    procedure DoClear;
-    {$ENDIF}
+    procedure SetSuspended(Value: boolean);
+    procedure DoMessage(const aMessage: string); overload; virtual; abstract;
+    procedure DoMessage(const aMessage: string; aExitCode: byte); overload; virtual;
+    procedure DoRequest(const aMessage: string); virtual abstract;
+    function DoRename(const aItem: THeader; const aValue: string): string; virtual abstract;
+    function DoOverWrite(const aItem: THeader; const aValue: string): string; virtual; abstract;
+    procedure DoList(const aItem: THeader); virtual; abstract;
+    procedure DoClear; virtual abstract;
+    procedure DoTick(Value: longint); virtual;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Execute; virtual;
-    procedure Terminate;
+    procedure Execute; virtual; abstract;
+    procedure Terminate; virtual;
+  public
+    property Progress: longint read GetProgress;
+    property ProcessedSize: int64 read FProcessedSize write FProcessedSize;
+    property TotalSize: int64 read FTotalSize write FTotalSize;
 
-    procedure OnMessage(const aMessage: string); virtual; abstract;
-    procedure OnRequest(const aMessage: string); virtual; abstract;
-    function OnRename(const aItem: THeader; const aValue: string): string; virtual; abstract;
-    function OnOverWrite(const aItem: THeader; const aValue: string): string; virtual; abstract;
-    procedure OnList(const aItem: THeader); virtual; abstract;
-    procedure OnProgress; virtual; abstract;
-    {$IFDEF CONSOLEAPPLICATION}
-    procedure OnClear; virtual; abstract;
-    {$ENDIF}
-    property Speed: longint read GetSpeed;
-    property Percentage: longint read GetPercentage;
-    property ElapsedTime: longint read GetElapsedTime;
-    property RemainingTime: longint read GetRemainingTime;
-    property ProcessedSize: int64 read FProcessedSize;
-    property Size: int64 read FSize;
     property Suspended: boolean read FSuspended write SetSuspended;
     property Terminated: boolean read FTerminated;
-    property Code: byte read FCode write SetCode;
+    property ExitCode: byte read FExitCode;
   end;
-
-  function DoTick(Handle: pointer): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
 
 implementation
 
 uses
-  BeeLib_Configuration,
-  BeeLib_Interface,
-
-  DateUtils,
-  SysUtils;
-
-function DoTick(Handle: pointer): longint;
-begin
-  case TApp(Handle).DoUserAbort of
-    True : Result := -1;
-    False: Result :=  0;
-  end;
-end;
+  Bee_Common;
 
 { TApp class }
 
 constructor TApp.Create;
 begin
   inherited Create;
-  FStartTime     := 0;
-  FSuspendedTime := 0;
-  FSuspended     := False;
-  FTerminated    := False;
-  FCode          := ccSuccesful;
-  FSize          := 0;
+  FTotalSize     := 0;
   FProcessedSize := 0;
+  FTerminated    := False;
+  FSuspended     := False;
+  FExitCode      := ccSuccesful;
 end;
 
 destructor TApp.Destroy;
@@ -135,162 +98,71 @@ begin
   inherited Destroy;
 end;
 
-procedure TApp.Execute;
-begin
-  FStartTime := Now;
-end;
-
-function TApp.GetSpeed: longint;
-var
-  I: int64;
-begin
-  if not FSuspended then
-    I := MilliSecondsBetween(Now, FStartTime)
-  else
-    I := MilliSecondsBetween(FSuspendedTime - FStartTime, 0);
-
-  if I <> 0 then
-    Result := Round((FProcessedSize / I) * 1000)
-  else
-    Result := 0;
-end;
-
-function TApp.GetPercentage: longint;
-begin
-  if FSize <> 0 then
-    Result := Round((FProcessedSize / FSize) * 100)
-  else
-    Result := 0;
-end;
-
-function TApp.GetElapsedTime: longint;
-begin
-  if not FSuspended then
-    Result := SecondsBetween(Now, FStartTime)
-  else
-    Result := SecondsBetween(FSuspendedTime - FStartTime, 0);
-end;
-
-function TApp.GetRemainingTime: longint;
-var
-  I: longint;
-begin
-  I := GetSpeed;
-  if I <> 0 then
-    Result := (FSize - FProcessedSize) div I
-  else
-    Result := 0;
-end;
-
-procedure TApp.SetSuspended(Value: boolean);
-begin
-  if FSuspended <> Value then
-  begin
-    if Value then
-      FSuspendedTime := Now
-    else
-      FStartTime := FStartTime + (Now - FSuspendedTime);
-
-    FSuspended := Value;
-  end;
-end;
-
 procedure TApp.Terminate;
 begin
-  SetCode(ccUserAbort);
+  SetExitCode(ccUserAbort);
+end;
+
+function TApp.GetProgress: longint;
+begin
+  if FTotalSize <> 0 then
+     Result := Round((FProcessedSize / FTotalSize) * 100)
+   else
+     Result := 0;
 end;
 
 procedure TApp.SetTerminated(Value: boolean);
 begin
-  if not FTerminated then
+  if FTerminated = False then
   begin
     FTerminated := Value;
+    if FTerminated = True then
+    begin
+      FSuspended  := False;
+    end;
   end;
 end;
 
-procedure TApp.SetCode(Code: byte);
+procedure TApp.SetSuspended(Value: boolean);
 begin
-  if FCode < Code then
+  if FTerminated = False then
   begin
-    FCode := Code;
-    if FCode >= ccError then
-      SetTerminated(True);
+    FSuspended := Value;
   end;
 end;
 
-procedure TApp.SetPriority(Priority: byte);
+procedure TApp.SetExitCode(Value: byte);
+begin
+  if FTerminated = False then
+  begin
+    if FExitCode < Value then
+    begin
+      FExitCode := Value;
+      if FExitCode >= ccError then
+        SetTerminated(True);
+    end;
+  end;
+end;
+
+procedure TApp.SetPriority(Value: byte);
 begin
   {$IFDEF CONSOLEAPPLICATION}
   {$IFDEF MSWINDOWS}
-    Bee_Common.SetPriority(Priority);
+    Bee_Common.SetPriority(Value);
   {$ENDIF}
   {$ELSE}
     { TODO : }
   {$ENDIF}
 end;
 
-procedure TApp.DoMessage(const aMessage: string; aCode: byte);
+procedure TApp.DoMessage(const aMessage: string; aExitCode: byte);
 begin
-  SetCode(aCode);
-  OnMessage(aMessage);
+  SetExitCode(aExitCode);
 end;
 
-procedure TApp.DoMessage(const aMessage: string);
+procedure TApp.DoTick(Value: longint);
 begin
-  OnMessage(aMessage);
+  Inc(FProcessedSize, Value);
 end;
-
-function TApp.DoRename(const aItem: THeader; const aValue: string): string;
-var
-  X: double;
-begin
-  X := Now;
-  Result := OnRename(aItem, aValue);
-  FStartTime := FStartTime + (Now - X);
-end;
-
-function TApp.DoOverWrite(const aItem: THeader; const aValue: string): string;
-var
-  X: double;
-begin
-  X := Now;
-  Result := OnOverWrite(aItem, aValue);
-  FStartTime := FStartTime + (Now - X);
-end;
-
-procedure TApp.DoRequest(const aMessage: string);
-var
-  X: double;
-begin
-  X := Now;
-  OnRequest(aMessage);
-  FStartTime := FStartTime + (Now - X);
-end;
-
-procedure TApp.DoList(const aItem: THeader);
-begin
-  OnList(aItem);
-end;
-
-function TApp.DoUserAbort: boolean;
-var
-  X: double;
-begin
-  Inc(FProcessedSize, DefaultTickStepSize);
-  begin
-    X := Now;
-    OnProgress;
-    while FSuspended do Sleep(250);
-    FStartTime := FStartTime + (Now - X);
-  end;
-  Result := Code > ccWarning;
-end;
-
-{$IFDEF CONSOLEAPPLICATION}
-procedure TApp.DoClear;
-begin
-  OnClear;
-end;
-{$ENDIF}
 
 end.

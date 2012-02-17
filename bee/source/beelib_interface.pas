@@ -33,9 +33,8 @@ const
   DefaultTickStepSize = $FFFF;
 
 type
-  TTicker = function(Ticker: pointer): longint;
-  TReader = function(Stream: pointer; Data: pointer; Size: longint): longint;
-  TWriter = function(Stream: pointer; Data: pointer; Size: longint): longint;
+  TStreamRead  = function(Stream: pointer; Data: pointer; DataSize: longint): longint;
+  TStreamWrite = function(Stream: pointer; Data: pointer; DataSize: longint): longint;
 
 implementation
 

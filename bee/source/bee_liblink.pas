@@ -52,57 +52,35 @@ uses
   {$link beelib.c\obj\release\beelib_rangecoder.o}
   {$link beelib.c\obj\release\beelib_stream.o}
 
-  function BeeVersion:cuint; cdecl; external;
+  function BeeVersion: cuint; cdecl; external;
 
   function  BeeEncoder_Create
-    (aStrmHandle: pointer; aStrmWrite: TWriter): pointer; cdecl; external;
+    (Stream: pointer; StreamWrite: TStreamWrite): pointer; cdecl; external;
 
-  function BeeEncoder_Destroy
-    (Self: pointer): pointer; cdecl; external;
+  procedure BeeEncoder_Destroy      (Self: pointer);                 cdecl; external;
+  procedure BeeEncoder_SetDictionary(Self: pointer; Level: cuint);   cdecl; external;
+  procedure BeeEncoder_SetTable     (Self: pointer; Table: pointer); cdecl; external;
 
-  procedure BeeEncoder_SetDictionaryLevel
-    (Self: pointer; Value: cuint); cdecl; external;
+  procedure BeeEncoder_FreshFlexible(Self: pointer); cdecl; external;
+  procedure BeeEncoder_FreshSolid   (Self: pointer); cdecl; external;
 
-  procedure BeeEncoder_SetTableParameters
-    (Self: pointer; Value: pointer); cdecl; external;
-
-  procedure BeeEncoder_SetTicker
-    (Self: pointer; aTickHandle: pointer; aTickSend: TTicker); cdecl; external;
-
-  procedure BeeEncoder_FreshFlexible
-    (Self: pointer); cdecl; external;
-
-  procedure BeeEncoder_FreshSolid
-    (Self: pointer); cdecl; external;
-
-  function BeeEncoder_Encode
-    (Self: pointer; aStrmHandle: pointer; aStrmRead: TReader;
-     Size: clonglong; CRC: pcuint): cint64; cdecl; external;
+  procedure BeeEncoder_EncodeBegin  (Self: pointer); cdecl; external;
+  procedure BeeEncoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint); cdecl; external;
+  procedure BeeEncoder_EncodeEnd    (Self: pointer); cdecl; external;
 
   function BeeDecoder_Create
-    (aStrmHandle:pointer; aStrmRead:TReader):pointer; cdecl; external;
+    (Stream: pointer; StreamRead: TStreamRead): pointer; cdecl; external;
 
-  function BeeDecoder_Destroy
-    (Self: pointer): pointer; cdecl; external;
+  procedure BeeDecoder_Destroy      (Self: pointer);                 cdecl; external;
+  procedure BeeDecoder_SetDictionary(Self: pointer; Level:cuint);    cdecl; external;
+  procedure BeeDecoder_SetTable     (Self: pointer; Table: pointer); cdecl; external;
 
-  procedure BeeDecoder_SetDictionaryLevel
-    (Self: pointer; Value:cuint); cdecl; external;
+  procedure BeeDecoder_FreshFlexible(Self: pointer); cdecl; external;
+  procedure BeeDecoder_FreshSolid   (Self: pointer); cdecl; external;
 
-  procedure BeeDecoder_SetTableParameters
-    (Self: pointer; Value: pointer); cdecl; external;
-
-  procedure BeeDecoder_SetTicker
-    (Self: pointer; aTickHeandle: pointer; aTickSend: TTicker); cdecl; external;
-
-  procedure BeeDecoder_FreshFlexible
-    (Self: pointer); cdecl; external;
-
-  procedure BeeDecoder_FreshSolid
-    (Self: pointer); cdecl; external;
-
-  function BeeDecoder_Decode
-    (Self: pointer; aStrmHandle: pointer; aStrmWrite: TWriter;
-     Size: clonglong; CRC: pcuint): cint64; cdecl; external;
+  procedure BeeDecoder_DecodeBegin  (Self: pointer); cdecl; external;
+  procedure BeeDecoder_Decode       (Self: pointer; Buffer: pointer; BuffSize:  longint); cdecl; external;
+  procedure BeeDecoder_DecodeEnd    (Self: pointer); cdecl; external;
 
 {$ENDIF}
 

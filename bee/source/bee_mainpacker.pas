@@ -49,29 +49,23 @@ uses
   {$ENDIF}
 
 type
+  TTickEvent = function(Value: longint): boolean of object;
+
+type
   { THeaderCoder class }
 
   THeaderCoder = class
   private
-    FCoder: pointer;
-    FOwner: pointer;
     FStream: TStream;
+    FPPM: pointer;
+    FCoder: pointer;
     FPassword: string;
-    FOnTickEvent: TTicker;
-    FOnFillBuffer: TReader;
-    FOnFlushBuffer: TWriter;
+    FOnTick: TTickEvent;
   public
-    constructor Create(
-      Stream: TStream;
-      OnFill: TReader;
-      OnFlush: TWriter;
-      Ticker: pointer;
-      OnTick: TTicker);
+    constructor Create(Strm: TStream);
     destructor Destroy; override;
+    property OnTick: TTickEvent read FOnTick write FOnTick;
     property Password: string read FPassword write FPassword;
-    property OnTickEvent: TTicker read FOnTickEvent write FOnTickEvent;
-    property OnFillEvent: TReader read FOnFillBuffer write FOnFillBuffer;
-    property OnFlushEvent: TWriter read FOnFlushBuffer write FOnFlushBuffer;
   end;
 
   { THeaderEncoder class }
@@ -83,12 +77,7 @@ type
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload;
     function Write(Item: THeader; Strm: TStream; const Size: int64): boolean;
   public
-    constructor Create(
-      Stream: TStream;
-      OnFill: TReader;
-      OnFlush: TWriter;
-      Ticker: pointer;
-      OnTick: TTicker);
+    constructor Create(Strm: TStream);
     destructor Destroy; override;
     procedure Initialize(Item: THeader);
     function WriteFromArch(Item: THeader; Strm: TStream): boolean;
@@ -102,12 +91,7 @@ type
   private
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
   public
-    constructor Create(
-      Stream: TStream;
-      OnFill: TReader;
-      OnFlush: TWriter;
-      Ticker: pointer;
-      OnTick: TTicker);
+    constructor Create(Strm: TStream);
     destructor Destroy; override;
     procedure Initialize(Item: THeader);
     function ReadToSwap(Item: THeader; Strm: TStream): boolean;
@@ -121,51 +105,37 @@ uses
   Bee_Files,
   BeeLib_Crc;
 
-{ THeaderCoder class }
+  { THeaderCoder class }
 
-  constructor THeaderCoder.Create(
-    Stream: TStream;
-    OnFill: TReader;
-    OnFlush: TWriter;
-    Ticker: pointer;
-    OnTick: TTicker);
+  constructor THeaderCoder.Create(Strm: TStream);
   begin
-    FCoder         := nil;
-    FPassword      := '';
-    FStream        := Stream;
-    FOnFillBuffer  := OnFill;
-    FOnFlushBuffer := OnFlush;
-    FOwner         := Ticker;
-    FOnTickevent   := OnTick;
+    FStream   := Strm;
+    FPPM      :=  nil;
+    FCoder    :=  nil;
+    FPassword :=   '';
+    FOnTick   :=  nil;
   end;
 
   destructor THeaderCoder.Destroy;
   begin
-    FCoder         := nil;
-    FStream        := nil;
-    FOnFillBuffer  := nil;
-    FOnFlushBuffer := nil;
-    FOwner         := nil;
-    FOnTickevent   := nil;
+    FStream   := nil;
+    FPPM      := nil;
+    FCoder    := nil;
+    FPassword :=  '';
+    FOnTick   := nil;
   end;
 
   { THeaderEncoder class }
 
-  constructor THeaderEncoder.Create(
-    Stream: TStream;
-    OnFill: TReader;
-    OnFlush: TWriter;
-    Ticker: pointer;
-    OnTick: TTicker);
+  constructor THeaderEncoder.Create(Strm: TStream);
   begin
-    inherited Create(Stream, OnFill, OnFlush, Ticker, OnTick);
-    FCoder := BeeEncoder_Create(Stream, OnFlush);
-    BeeEncoder_SetTicker(FCoder, Ticker, OnTick);
+    inherited Create(Strm);
+    FCoder := BeeEncoder_Create(FStream, @DoFlush);
   end;
 
   destructor THeaderEncoder.Destroy;
   begin
-    FCoder := BeeEncoder_Destroy(FCoder);
+    BeeEncoder_Destroy(FCoder);
     inherited Destroy;
   end;
 
@@ -174,10 +144,10 @@ uses
     I: longint;
   begin
     if foDictionary in Item.Flags then
-      BeeEncoder_SetDictionaryLevel(FCoder, Item.Dictionary);
+      BeeEncoder_SetDictionary(FCoder, Item.Dictionary);
 
     if foTable in Item.Flags then
-      BeeEncoder_SetTableParameters(FCoder, @Item.Table);
+      BeeEncoder_SetTable(FCoder, @Item.Table);
 
     if foTear in Item.Flags then
       BeeEncoder_FreshFlexible(FCoder)
@@ -207,9 +177,9 @@ uses
        FStream.Write(Symbol, 1);
        Inc(Result);
 
-       if (Result and DefaultTickStepSize = 0)
-         and Assigned(FOnTickEvent)
-         and (FOnTickEvent(FOwner) = 0) then Break;
+       // if (Result and DefaultTickStepSize = 0)
+       //   and Assigned(FOnTick)
+       //  and (FOnTick(FOwner) = 0) then Break;
      end;
    end;
 
@@ -225,9 +195,9 @@ uses
       UpdCrc32(CRC, Symbol);
       Inc(Result);
 
-      if (Result and DefaultTickStepSize = 0)
-        and Assigned(FOnTickEvent)
-        and (FOnTickEvent(FOwner) = 0) then Break;
+      // if (Result and DefaultTickStepSize = 0)
+      //  and Assigned(FOnTickEvent)
+      //  and (FOnTickEvent(FOwner) = 0) then Break;
     end;
   end;
 
