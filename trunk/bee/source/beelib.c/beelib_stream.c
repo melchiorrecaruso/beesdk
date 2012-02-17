@@ -8,18 +8,18 @@
 /* TReadStream struct/methods implemetation */
 
 struct TReadStream {
-        void *StrmHandle;
-    PStrmRead StrmRead;
-          int BufferSize;
-          int BufferReaded;
-         char Buffer[DEFAULT_BUFFER_CAPACITY];
+         void *Stream;
+   PStreamRead StreamRead;
+           int BufferSize;
+           int BufferReaded;
+          char Buffer[DEFAULT_BUFFER_CAPACITY];
 };
 
-PReadStream ReadStream_Create(void *aStrmHandle, PStrmRead aStrmRead)
+PReadStream ReadStream_Create(void *aStream, PStreamRead aStreamRead)
 {
   PReadStream Self = malloc(sizeof(struct TReadStream));
-  Self->StrmHandle = aStrmHandle;
-  Self->StrmRead   = aStrmRead;
+  Self->Stream     = aStream;
+  Self->StreamRead = aStreamRead;
 
   Self->BufferReaded = 0;
   Self->BufferSize   = 0;
@@ -39,7 +39,7 @@ void ReadStream_ClearBuffer(PReadStream Self)
 
 void ReadStream_FillBuffer(PReadStream Self)
 {
-  Self->BufferSize   = Self->StrmRead(Self->StrmHandle, &(Self->Buffer[0]), DEFAULT_BUFFER_CAPACITY);
+  Self->BufferSize   = Self->StreamRead(Self->Stream, &(Self->Buffer[0]), DEFAULT_BUFFER_CAPACITY);
   Self->BufferReaded = 0;
 }
 
@@ -66,17 +66,17 @@ char ReadStream_Read(PReadStream Self)
 /* TWriteStream struct/methods implemetation */
 
 struct TWriteStream {
-       void *StrmHandle;
-  PStrmWrite StrmWrite;
-         int BufferSize;
-        char Buffer[DEFAULT_BUFFER_CAPACITY];
+         void *Stream;
+  PStreamWrite StreamWrite;
+           int BufferSize;
+          char Buffer[DEFAULT_BUFFER_CAPACITY];
 };
 
-PWriteStream WriteStream_Create(void *aStrmHandle, PStrmWrite aStrmWrite)
+PWriteStream WriteStream_Create(void *aStream, PStreamWrite aStreamWrite)
 {
   PWriteStream Self = malloc(sizeof(struct TWriteStream));
-  Self->StrmHandle  = aStrmHandle;
-  Self->StrmWrite   = aStrmWrite;
+  Self->Stream      = aStream;
+  Self->StreamWrite = aStreamWrite;
 
   Self->BufferSize  = 0;
   return Self;
@@ -97,7 +97,7 @@ void WriteStream_FlushBuffer(PWriteStream Self)
 {
   if (Self->BufferSize != 0)
   {
-    Self->StrmWrite(Self->StrmHandle, &(Self->Buffer[0]), Self->BufferSize);
+    Self->StreamWrite(Self->Stream, &(Self->Buffer[0]), Self->BufferSize);
     Self->BufferSize = 0;
   }
 }

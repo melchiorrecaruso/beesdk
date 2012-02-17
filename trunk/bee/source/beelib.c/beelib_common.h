@@ -47,9 +47,8 @@
 //  Interface definitions                                             //
 // ------------------------------------------------------------------ //
 
-typedef int32 (*PTickSend)  (void*);
-typedef int32 (*PStrmRead)  (void*, void*, int32);
-typedef int32 (*PStrmWrite) (void*, void*, int32);
+typedef int32 (*PStreamRead)  (void*, void*, int32);
+typedef int32 (*PStreamWrite) (void*, void*, int32);
 
 // ------------------------------------------------------------------ //
 //  Configuration table types                                         //
@@ -83,12 +82,6 @@ static const TTableParameters DefaultTableParameters = {
 // ------------------------------------------------------------------ //
 
 static const int32 DefaultDictionaryLevel = 2;
-
-// ------------------------------------------------------------------ //
-//  CRC calculating routine                                           //
-// ------------------------------------------------------------------ //
-
-inline uint32 UpdateCRC32(uint32 aCRC, uint8 aSymbol);
 
 // ------------------------------------------------------------------ //
 //  Common routine                                                    //

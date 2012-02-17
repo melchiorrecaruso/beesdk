@@ -3,8 +3,6 @@
 #include "beelib_modeller.h"
 #include "beelib_rangecoder.h"
 
-#define DefaultTickStepSize 0xFFFF
-
 unsigned int BeeVersion()
 {
   return 103;
@@ -13,49 +11,38 @@ unsigned int BeeVersion()
 /* TBeeEncoder struct/methods implementation */
 
 struct TBeeEncoder {
-          void *TickHandle;
-      PTickSend TickSend;
    PWriteStream WriteStream;
   PRangeEncoder RangeEncoder;
      PBaseCoder BaseCoder;
 };
 
-PBeeEncoder BeeEncoder_Create(void *aStrmHandle, PStrmWrite aStrmWrite)
+PBeeEncoder BeeEncoder_Create(void *aStream, PStreamWrite aStreamWrite)
 {
   PBeeEncoder Self   = malloc(sizeof(struct TBeeEncoder));
-  Self->WriteStream  =  WriteStream_Create(aStrmHandle, aStrmWrite);
+
+  Self->WriteStream  =  WriteStream_Create(aStream, aStreamWrite);
   Self->RangeEncoder = RangeEncoder_Create(Self->WriteStream);
   Self->BaseCoder    =    BaseCoder_Create(Self->RangeEncoder, (PUpdate)RangeEncoder_Update);
-
-  Self->TickHandle   = 0;
-  Self->TickSend     = 0;
-
   return Self;
 };
 
-void* BeeEncoder_Destroy(PBeeEncoder Self)
+void BeeEncoder_Destroy(PBeeEncoder Self)
 {
      BaseCoder_Destroy(Self->BaseCoder);
   RangeEncoder_Destroy(Self->RangeEncoder);
    WriteStream_Destroy(Self->WriteStream);
+
   free(Self);
-  return 0;
 };
 
-void BeeEncoder_SetDictionaryLevel(PBeeEncoder Self, uint32 Value)
+void BeeEncoder_SetDictionary(PBeeEncoder Self, uint32 Level)
 {
-  BaseCoder_SetDictionary(Self->BaseCoder, Value);
+  BaseCoder_SetDictionary(Self->BaseCoder, Level);
 };
 
-void BeeEncoder_SetTableParameters(PBeeEncoder Self, const TTableParameters *Value)
+void BeeEncoder_SetTable(PBeeEncoder Self, const TTableParameters *Table)
 {
-  BaseCoder_SetTable(Self->BaseCoder, Value);
-};
-
-void BeeEncoder_SetTicker(PBeeEncoder Self, void *aTickHandle, PTickSend aTickSend)
-{
-  Self->TickHandle = aTickHandle;
-  Self->TickSend   = aTickSend;
+  BaseCoder_SetTable(Self->BaseCoder, Table);
 };
 
 void BeeEncoder_FreshFlexible(PBeeEncoder Self)
@@ -68,77 +55,59 @@ void BeeEncoder_FreshSolid(PBeeEncoder Self)
   BaseCoder_FreshSolid(Self->BaseCoder);
 };
 
-uint64 BeeEncoder_Encode(PBeeEncoder Self, void *aStrmHandle, PStrmRead aStrmRead, uint64 Size, uint32 *CRC)
+void BeeEncoder_EncodeBegin(PBeeEncoder Self)
 {
-           *CRC = 0xFFFFFFFF;
-   uint8 Symbol = 0;
-  uint64 result = 0;
-
-  PReadStream Source = ReadStream_Create(aStrmHandle, aStrmRead);
   RangeEncoder_StartEncode(Self->RangeEncoder);
-  while (result < Size)
+};
+
+void BeeEncoder_Encode(PBeeEncoder Self, char *Buffer, int32 BufSize)
+{
+  int32 I;
+  for (I = 0; I < BufSize; I++)
   {
-    Symbol = ReadStream_Read(Source);
-    BaseCoder_Update(Self->BaseCoder, Symbol);
-
-    *CRC = UpdateCRC32(*CRC, Symbol);
-    result++;
-
-    if ((result & DefaultTickStepSize) == 0)
-      if (Self->TickSend != 0)
-	    if (Self->TickSend(Self->TickHandle) != 0) break;
+    BaseCoder_Update(Self->BaseCoder, Buffer[I]);
   }
+};
+
+void BeeEncoder_EncodeEnd(PBeeEncoder Self)
+{
   RangeEncoder_FinishEncode(Self->RangeEncoder);
-  ReadStream_Destroy(Source);
-  return result;
 };
 
 /* TBeeDecoder struct/methods implementation */
 
 struct TBeeDecoder {
-          void *TickHandle;
-      PTickSend TickSend;
     PReadStream ReadStream;
   PRangeDecoder RangeDecoder;
      PBaseCoder BaseCoder;
 };
 
-PBeeDecoder BeeDecoder_Create(void *aStrmHandle, PStrmRead aStrmRead)
+PBeeDecoder BeeDecoder_Create(void *aStream, PStreamRead aStreamRead)
 {
   PBeeDecoder Self   = malloc(sizeof(struct TBeeDecoder));
-  Self->ReadStream   =   ReadStream_Create(aStrmHandle, aStrmRead);
+
+  Self->ReadStream   =   ReadStream_Create(aStream, aStreamRead);
   Self->RangeDecoder = RangeDecoder_Create(Self->ReadStream);
   Self->BaseCoder    =    BaseCoder_Create(Self->RangeDecoder, (PUpdate)RangeDecoder_Update);
-
-  Self->TickHandle   = 0;
-  Self->TickSend     = 0;
-
   return Self;
 };
 
-void* BeeDecoder_Destroy(PBeeDecoder Self)
+void BeeDecoder_Destroy(PBeeDecoder Self)
 {
      BaseCoder_Destroy(Self->BaseCoder);
   RangeDecoder_Destroy(Self->RangeDecoder);
     ReadStream_Destroy(Self->ReadStream);
   free(Self);
-  return 0;
 };
 
-void BeeDecoder_SetDictionaryLevel(PBeeDecoder Self, uint32 Value)
+void BeeDecoder_SetDictionary(PBeeDecoder Self, uint32 Level)
 {
-  BaseCoder_SetDictionary(Self->BaseCoder, Value);
+  BaseCoder_SetDictionary(Self->BaseCoder, Level);
 };
 
-void BeeDecoder_SetTableParameters(PBeeDecoder Self, const TTableParameters *Value)
+void BeeDecoder_SetTableParameters(PBeeDecoder Self, const TTableParameters *Table)
 {
-  BaseCoder_SetTable(Self->BaseCoder, Value);
-};
-
-void BeeDecoder_SetTicker(PBeeDecoder Self, void *aTickHandle, PTickSend aTickSend)
-{
-  Self->TickHandle = aTickHandle;
-  Self->TickSend   = aTickSend;
+  BaseCoder_SetTable(Self->BaseCoder, Table);
 };
 
 void BeeDecoder_FreshFlexible(PBeeDecoder Self)
@@ -151,28 +120,22 @@ void BeeDecoder_FreshSolid(PBeeDecoder Self)
   BaseCoder_FreshSolid(Self->BaseCoder);
 };
 
-uint64 BeeDecoder_Decode(PBeeDecoder Self, void *aStrmHandle, PStrmWrite aStrmWrite, uint64 Size, uint32 *CRC)
+void BeeDecoder_DecodeBegin(PBeeDecoder Self)
 {
-           *CRC = 0xFFFFFFFF;
-   uint8 Symbol = 0;
-  uint64 result = 0;
-
-  PWriteStream Dest = WriteStream_Create(aStrmHandle, aStrmWrite);
   RangeDecoder_StartDecode(Self->RangeDecoder);
-  while (result < Size)
+};
+
+void BeeDecoder_Decode(PBeeDecoder Self, char *Buffer, int32 BufSize)
+{
+  int32 I;
+  for (I = 0; I < BufSize; I++)
   {
-    Symbol = BaseCoder_Update(Self->BaseCoder, 0);
-    WriteStream_Write(Dest, Symbol);
-
-	*CRC = UpdateCRC32(*CRC, Symbol);
-    result++;
-
-    if ((result & DefaultTickStepSize) == 0)
-      if (Self->TickSend != 0)
-	    if (Self->TickSend(Self->TickHandle) != 0) break;
+    Buffer[I] = BaseCoder_Update(Self->BaseCoder, 0);
   }
+};
+
+void BeeDecoder_DecodeEnd(PBeeDecoder Self)
+{
   RangeDecoder_FinishDecode(Self->RangeDecoder);
-  WriteStream_Destroy(Dest);
-  return result;
 };
 
