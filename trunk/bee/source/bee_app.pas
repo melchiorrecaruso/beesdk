@@ -211,7 +211,7 @@ begin
   begin
     CheckArchivePassword;
   end;
-  Result := Code;
+  Result := ExitCode;
 end;
 
 function TBeeApp.CheckArchivePassword: longint;
@@ -220,7 +220,7 @@ var
   Smaller, I: longint;
   Decoder: THeaderDecoder;
 begin
-  if (Code < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
+  if (ExitCode < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
   begin
     // select smaller size item ...
     Smaller := 0;
@@ -236,7 +236,7 @@ begin
 
     // test item ...
     DoMessage(Format(cmChecking, [Item.Name]));
-    Decoder := THeaderDecoder.Create(FArchReader, @DoFill, @DoFlush, Self, @DoTick);
+    Decoder := THeaderDecoder.Create(FArchReader);
     Decoder.Password := FCommandLine.pOption;
 
     for I := 0 to Smaller do
@@ -720,7 +720,7 @@ begin
       if OpenSwapFile < ccError then
       begin
         FHeaders.Write(FTempWriter);
-        Encoder := THeaderEncoder.Create(FTempWriter, @DoFill, @DoFlush, Self, @DoTick);
+        Encoder := THeaderEncoder.Create(FTempWriter);
         Encoder.Password := FCommandLine.pOption;
 
         Check := True;
