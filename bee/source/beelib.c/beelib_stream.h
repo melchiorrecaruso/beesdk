@@ -29,7 +29,7 @@
 
 typedef struct TReadStream *PReadStream;
 
-  PReadStream ReadStream_Create     (void *aStrmHandle, PStrmRead aStrmRead);
+  PReadStream ReadStream_Create     (void *aStream, PStreamRead aStreamRead);
          void ReadStream_Destroy    (PReadStream Self);
          void ReadStream_ClearBuffer(PReadStream Self);
          void ReadStream_FillBuffer (PReadStream Self);
@@ -39,7 +39,7 @@ typedef struct TReadStream *PReadStream;
 
 typedef struct TWriteStream *PWriteStream;
 
-  PWriteStream WriteStream_Create     (void *aStrmHandle, PStrmWrite aStrmWrite);
+  PWriteStream WriteStream_Create     (void *aStream, PStreamWrite aStreamWrite);
           void WriteStream_Destroy    (PWriteStream Self);
           void WriteStream_ClearBuffer(PWriteStream Self);
           void WriteStream_FlushBuffer(PWriteStream Self);
