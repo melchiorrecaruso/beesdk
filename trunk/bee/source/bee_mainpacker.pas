@@ -73,7 +73,6 @@ type
 
   THeaderEncoder = class(THeaderCoder)
   private
-    function CopySilent(Strm: TStream; const Size: int64): int64;
     function Copy(Strm: TStream; const Size: int64): int64; overload;
     function Copy(Strm: TStream; const Size: int64; var CRC: longword): int64; overload;
     function Write(Item: THeader; Strm: TStream; const Size: int64): boolean;
@@ -151,48 +150,30 @@ uses
     inherited Destroy;
   end;
 
-  function THeaderEncoder.CopySilent(Strm: TStream; const Size: int64): int64;
+  function THeaderEncoder.Copy(Strm: TStream; const Size: int64): int64;
   var
-    Loop:   longint;
+    Count:  longint;
     Readed: longint;
     Writed: longint;
     Buffer: array[0.. $FFFF] of byte;
   begin
     Result := 0;
-    Loop := (Size div SizeOf(Buffer));
-    while Loop > 0 do
+    Count  := Size div SizeOf(Buffer);
+    while Count > 0 do
     begin
       Readed := Strm.Read(Buffer, SizeOf(Buffer));
       Writed := FStream.Write(Buffer, Readed);
-      if Readed = Writed then
-      begin
-        Inc(Result, Readed);
-      end;
-      Dec(Loop);
+      Inc(Result, Writed);
+      Dec(Count);
+
+      if Assigned(FOnTick) and (FOnTick(Writed)) then Break;
     end;
     Readed := Strm.Read(Buffer, Size mod SizeOf(Buffer));
     Writed := FStream.Write(Buffer, Readed);
-    if Readed = Writed then
-    begin
-      Inc(Result, Readed);
-    end;
+    Inc(Result, Writed);
+
+    if Assigned(FOnTick) and (FOnTick(Writed)) then Break;
   end;
-
-  function THeaderEncoder.Copy(Strm: TStream; const Size: int64): int64;
-   var
-     Symbol: byte;
-   begin
-     Result := 0;
-     while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
-     begin
-       FStream.Write(Symbol, 1);
-       Inc(Result);
-
-       // if (Result and DefaultTickStepSize = 0)
-       //   and Assigned(FOnTick)
-       //  and (FOnTick(FOwner) = 0) then Break;
-     end;
-   end;
 
   function THeaderEncoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
   var
@@ -200,16 +181,21 @@ uses
   begin
     Result := 0;
     CRC    := longword(-1);
-    while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+    Count  := Size div SizeOf(Buffer);
+    while Count > 0 do
     begin
-      FStream.Write(Symbol, 1);
-      UpdCrc32(CRC, Symbol);
-      Inc(Result);
+      Readed := Strm.Read(Buffer, SizeOf(Buffer));
+      Writed := FStream.Write(Buffer, Readed);     UpdCrc32(CRC, Symbol);
+      Inc(Result, Writed);
+      Dec(Count);
 
-      // if (Result and DefaultTickStepSize = 0)
-      //  and Assigned(FOnTickEvent)
-      //  and (FOnTickEvent(FOwner) = 0) then Break;
+      if Assigned(FOnTick) and (FOnTick(Writed)) then Break;
     end;
+    Readed := Strm.Read(Buffer, Size mod SizeOf(Buffer));
+    Writed := FStream.Write(Buffer, Readed);
+    Inc(Result, Writed);
+
+    if Assigned(FOnTick) and (FOnTick(Writed)) then Break;
   end;
 
   function THeaderEncoder.Write(Item: THeader; Strm: TStream; const Size: int64): boolean;
