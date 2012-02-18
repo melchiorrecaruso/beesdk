@@ -52,35 +52,32 @@ uses
   {$link beelib.c\obj\release\beelib_rangecoder.o}
   {$link beelib.c\obj\release\beelib_stream.o}
 
-  function BeeVersion: cuint; cdecl; external;
+  function  RangeEncoder_Create
+    (aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
 
-  function  BeeEncoder_Create
-    (Stream: pointer; StreamWrite: TStreamWrite): pointer; cdecl; external;
+  procedure RangeEncoder_Destroy     (Self: pointer); cdecl; external;
+  procedure RangeEncoder_StartEncode (Self: pointer); cdecl; external;
+  procedure RangeEncoder_FinishEncode(Self: pointer); cdecl; external;
 
-  procedure BeeEncoder_Destroy      (Self: pointer);                 cdecl; external;
-  procedure BeeEncoder_SetDictionary(Self: pointer; Level: cuint);   cdecl; external;
-  procedure BeeEncoder_SetTable     (Self: pointer; Table: pointer); cdecl; external;
+  function  RangeDecoder_Create
+   (aStream: pointer; aStreamRead: TStreamRead): pointer; cdecl; external;
 
-  procedure BeeEncoder_FreshFlexible(Self: pointer); cdecl; external;
-  procedure BeeEncoder_FreshSolid   (Self: pointer); cdecl; external;
+  procedure RangeDecoder_Destroy     (Self: pointer); cdecl; external;
+  procedure RangeDecoder_StartDecode (Self: pointer); cdecl; external;
+  procedure RangeDecoder_FinishDecode(Self: pointer); cdecl; external;
 
-  procedure BeeEncoder_EncodeBegin  (Self: pointer); cdecl; external;
-  procedure BeeEncoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint); cdecl; external;
-  procedure BeeEncoder_EncodeEnd    (Self: pointer); cdecl; external;
+  function  BaseCoder_Create
+    (aCoder: pointer): pointer; cdecl; external;
 
-  function BeeDecoder_Create
-    (Stream: pointer; StreamRead: TStreamRead): pointer; cdecl; external;
+  procedure BaseCoder_Destroy      (Self :pointer); cdecl; external;
+  procedure BaseCoder_SetTable     (Self: pointer; Table: pointer); cdecl; external;
+  procedure BaseCoder_SetDictionary(Self: pointer; Level: longint); cdecl; external;
+  procedure BaseCoder_FreshFlexible(Self: pointer); cdecl; external;
+  procedure BaseCoder_FreshSolid   (Self: pointer); cdecl; external;
+  procedure BaseCoder_Free         (Self: pointer); cdecl; external;
 
-  procedure BeeDecoder_Destroy      (Self: pointer);                 cdecl; external;
-  procedure BeeDecoder_SetDictionary(Self: pointer; Level:cuint);    cdecl; external;
-  procedure BeeDecoder_SetTable     (Self: pointer; Table: pointer); cdecl; external;
-
-  procedure BeeDecoder_FreshFlexible(Self: pointer); cdecl; external;
-  procedure BeeDecoder_FreshSolid   (Self: pointer); cdecl; external;
-
-  procedure BeeDecoder_DecodeBegin  (Self: pointer); cdecl; external;
-  procedure BeeDecoder_Decode       (Self: pointer; Buffer: pointer; BuffSize:  longint); cdecl; external;
-  procedure BeeDecoder_DecodeEnd    (Self: pointer); cdecl; external;
+  procedure Basecoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint);  cdecl; external;
+  procedure Basecoder_Decode       (Self: pointer; Buffer: pointer; BufSize: longint);  cdecl; external;
 
 {$ENDIF}
 

@@ -19,17 +19,17 @@ struct TRangeEncoder {
         uint32 FFNum;
 };
 
-PRangeEncoder RangeEncoder_Create(PWriteStream aStream)
+PRangeEncoder RangeEncoder_Create(void *aStream, PStreamWrite aStreamWrite)
 {
   PRangeEncoder Self = malloc(sizeof(struct TRangeEncoder));
-  Self->FStream      = aStream;
+  Self->FStream = WriteStream_Create(aStream, aStreamWrite);
   return Self;
 }
 
-void* RangeEncoder_Destroy(PRangeEncoder Self)
+void RangeEncoder_Destroy(PRangeEncoder Self)
 {
+  WriteStream_Destroy(Self->FStream);
   free(Self);
-  return 0;
 }
 
 void RangeEncoder_StartEncode(PRangeEncoder Self)
@@ -116,17 +116,17 @@ struct TRangeDecoder {
        uint32 FFNum;
 };
 
-PRangeDecoder RangeDecoder_Create(PReadStream aStream)
+PRangeDecoder RangeDecoder_Create(void *aStream, PStreamRead aStreamRead)
 {
   PRangeDecoder Self = malloc(sizeof(struct TRangeDecoder));
-  Self->FStream      = aStream;
+  Self->FStream = ReadStream_Create(aStream, aStreamRead);
   return Self;
 }
 
-void* RangeDecoder_Destroy(PRangeDecoder Self)
+void RangeDecoder_Destroy(PRangeDecoder Self)
 {
+  ReadStream_Destroy(Self->FStream);
   free(Self);
-  return 0;
 }
 
 void RangeDecoder_StartDecode(PRangeDecoder Self)

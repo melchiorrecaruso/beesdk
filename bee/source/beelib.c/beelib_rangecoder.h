@@ -37,21 +37,21 @@ typedef uint32 *TFreq;
 
 typedef struct TRangeEncoder *PRangeEncoder;
 
-  PRangeEncoder  RangeEncoder_Create      (PWriteStream aStream);
-           void *RangeEncoder_Destroy     (PRangeEncoder Self);
-           void  RangeEncoder_StartEncode (PRangeEncoder Self);
-           void  RangeEncoder_FinishEncode(PRangeEncoder Self);
-         uint32  RangeEncoder_Update      (PRangeEncoder Self, TFreq Freq, uint32 aSymbol);
+  PRangeEncoder RangeEncoder_Create      (void *aStream, PStreamWrite aStreamWrite);
+           void RangeEncoder_Destroy     (PRangeEncoder Self);
+           void RangeEncoder_StartEncode (PRangeEncoder Self);
+           void RangeEncoder_FinishEncode(PRangeEncoder Self);
+         uint32 RangeEncoder_Update      (PRangeEncoder Self, TFreq Freq, uint32 aSymbol);
 
  /* TRangeDecoder struct/methods */
 
 typedef struct TRangeDecoder *PRangeDecoder;
 
-  PRangeDecoder  RangeDecoder_Create      (PReadStream aStream);
-           void *RangeDecoder_Destroy     (PRangeDecoder Self);
-           void  RangeDecoder_StartDecode (PRangeDecoder Self);
-           void  RangeDecoder_FinishDecode(PRangeDecoder Self);
-         uint32  RangeDecoder_GetFreq     (PRangeDecoder Self, uint32 TotFreq);
-         uint32  RangeDecoder_Update      (PRangeDecoder Self, TFreq Freq, uint32 aSymbol);
+  PRangeDecoder RangeDecoder_Create      (void *aStream, PStreamRead aStreamRead);
+           void RangeDecoder_Destroy     (PRangeDecoder Self);
+           void RangeDecoder_StartDecode (PRangeDecoder Self);
+           void RangeDecoder_FinishDecode(PRangeDecoder Self);
+         uint32 RangeDecoder_GetFreq     (PRangeDecoder Self, uint32 TotFreq);
+         uint32 RangeDecoder_Update      (PRangeDecoder Self, TFreq Freq, uint32 aSymbol);
 
 #endif //  BEELIB_RANGECODER_H
