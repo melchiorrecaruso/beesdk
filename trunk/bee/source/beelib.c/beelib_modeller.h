@@ -44,5 +44,7 @@ typedef struct TBaseCoder *PBaseCoder;
         void  BaseCoder_FreshSolid   (PBaseCoder Self);
         void  BaseCoder_Free         (PBaseCoder Self);
       uint32  BaseCoder_Update       (PBaseCoder Self, uint32 aSymbol);
+        void  Basecoder_Encode       (PBaseCoder Self, char *Buffer, int32 BufSize);
+        void  Basecoder_Decode       (PBaseCoder Self, char *Buffer, int32 BufSize);
 
 #endif //  BEELIB_MODELLER_H

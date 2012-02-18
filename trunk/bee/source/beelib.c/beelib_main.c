@@ -11,7 +11,6 @@ unsigned int BeeVersion()
 /* TBeeEncoder struct/methods implementation */
 
 struct TBeeEncoder {
-   PWriteStream WriteStream;
   PRangeEncoder RangeEncoder;
      PBaseCoder BaseCoder;
 };
@@ -20,8 +19,8 @@ PBeeEncoder BeeEncoder_Create(void *aStream, PStreamWrite aStreamWrite)
 {
   PBeeEncoder Self   = malloc(sizeof(struct TBeeEncoder));
 
-  Self->WriteStream  =  WriteStream_Create(aStream, aStreamWrite);
-  Self->RangeEncoder = RangeEncoder_Create(Self->WriteStream);
+
+  Self->RangeEncoder = RangeEncoder_Create(aStream, aStreamWrite);
   Self->BaseCoder    =    BaseCoder_Create(Self->RangeEncoder, (PUpdate)RangeEncoder_Update);
   return Self;
 };
@@ -30,8 +29,6 @@ void BeeEncoder_Destroy(PBeeEncoder Self)
 {
      BaseCoder_Destroy(Self->BaseCoder);
   RangeEncoder_Destroy(Self->RangeEncoder);
-   WriteStream_Destroy(Self->WriteStream);
-
   free(Self);
 };
 
@@ -77,7 +74,6 @@ void BeeEncoder_EncodeEnd(PBeeEncoder Self)
 /* TBeeDecoder struct/methods implementation */
 
 struct TBeeDecoder {
-    PReadStream ReadStream;
   PRangeDecoder RangeDecoder;
      PBaseCoder BaseCoder;
 };
@@ -85,9 +81,7 @@ struct TBeeDecoder {
 PBeeDecoder BeeDecoder_Create(void *aStream, PStreamRead aStreamRead)
 {
   PBeeDecoder Self   = malloc(sizeof(struct TBeeDecoder));
-
-  Self->ReadStream   =   ReadStream_Create(aStream, aStreamRead);
-  Self->RangeDecoder = RangeDecoder_Create(Self->ReadStream);
+  Self->RangeDecoder = RangeDecoder_Create(aStream, aStreamRead);
   Self->BaseCoder    =    BaseCoder_Create(Self->RangeDecoder, (PUpdate)RangeDecoder_Update);
   return Self;
 };
@@ -96,7 +90,6 @@ void BeeDecoder_Destroy(PBeeDecoder Self)
 {
      BaseCoder_Destroy(Self->BaseCoder);
   RangeDecoder_Destroy(Self->RangeDecoder);
-    ReadStream_Destroy(Self->ReadStream);
   free(Self);
 };
 

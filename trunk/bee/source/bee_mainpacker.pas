@@ -57,15 +57,16 @@ type
   THeaderCoder = class
   private
     FStream: TStream;
-    FPPM: pointer;
+    FModeller: pointer;
     FCoder: pointer;
     FPassword: string;
     FOnTick: TTickEvent;
   public
     constructor Create(Strm: TStream);
     destructor Destroy; override;
-    property OnTick: TTickEvent read FOnTick write FOnTick;
+    procedure Initialize(Item: THeader);
     property Password: string read FPassword write FPassword;
+    property OnTick: TTickEvent read FOnTick write FOnTick;
   end;
 
   { THeaderEncoder class }
@@ -79,7 +80,6 @@ type
   public
     constructor Create(Strm: TStream);
     destructor Destroy; override;
-    procedure Initialize(Item: THeader);
     function WriteFromArch(Item: THeader; Strm: TStream): boolean;
     function WriteFromSwap(Item: THeader; Strm: TStream): boolean;
     function WriteFromFile(Item: THeader): boolean;
@@ -93,7 +93,6 @@ type
   public
     constructor Create(Strm: TStream);
     destructor Destroy; override;
-    procedure Initialize(Item: THeader);
     function ReadToSwap(Item: THeader; Strm: TStream): boolean;
     function ReadToNul(Item: THeader): boolean;
     function ReadToFile(Item: THeader): boolean; overload;
@@ -109,20 +108,31 @@ uses
 
   constructor THeaderCoder.Create(Strm: TStream);
   begin
+    inherited Create;
     FStream   := Strm;
-    FPPM      :=  nil;
-    FCoder    :=  nil;
     FPassword :=   '';
     FOnTick   :=  nil;
   end;
 
   destructor THeaderCoder.Destroy;
   begin
-    FStream   := nil;
-    FPPM      := nil;
-    FCoder    := nil;
-    FPassword :=  '';
-    FOnTick   := nil;
+    inherited Destroy;
+  end;
+
+  procedure THeaderCoder.Initialize(Item: THeader);
+  var
+    I: longint;
+  begin
+    if foDictionary in Item.Flags then
+      BaseCoder_SetDictionary(FModeller, Item.Dictionary);
+
+    if foTable in Item.Flags then
+      BaseCoder_SetTable(FModeller, @Item.Table);
+
+    if foTear in Item.Flags then
+      BaseCoder_FreshFlexible(FModeller)
+    else
+      BaseCoder_FreshSolid(FModeller);
   end;
 
   { THeaderEncoder class }
@@ -130,40 +140,41 @@ uses
   constructor THeaderEncoder.Create(Strm: TStream);
   begin
     inherited Create(Strm);
-    FCoder := BeeEncoder_Create(FStream, @DoFlush);
+    FCoder := RangeEncoder_Create(FStream, @DoFlush);
+    FModeller := BaseCoder_Create(FCoder);
   end;
 
   destructor THeaderEncoder.Destroy;
   begin
-    BeeEncoder_Destroy(FCoder);
+    RangeEncoder_Destroy(FCoder);
+    BaseCoder_Destroy(FModeller);
     inherited Destroy;
-  end;
-
-  procedure THeaderEncoder.Initialize(Item: THeader);
-  var
-    I: longint;
-  begin
-    if foDictionary in Item.Flags then
-      BeeEncoder_SetDictionary(FCoder, Item.Dictionary);
-
-    if foTable in Item.Flags then
-      BeeEncoder_SetTable(FCoder, @Item.Table);
-
-    if foTear in Item.Flags then
-      BeeEncoder_FreshFlexible(FCoder)
-    else
-      BeeEncoder_FreshSolid(FCoder);
   end;
 
   function THeaderEncoder.CopySilent(Strm: TStream; const Size: int64): int64;
   var
-    Symbol: byte;
+    Loop:   longint;
+    Readed: longint;
+    Writed: longint;
+    Buffer: array[0.. $FFFF] of byte;
   begin
     Result := 0;
-    while (Result < Size) and (Strm.Read(Symbol, 1) = 1) do
+    Loop := (Size div SizeOf(Buffer));
+    while Loop > 0 do
     begin
-      FStream.Write(Symbol, 1);
-      Inc(Result);
+      Readed := Strm.Read(Buffer, SizeOf(Buffer));
+      Writed := FStream.Write(Buffer, Readed);
+      if Readed = Writed then
+      begin
+        Inc(Result, Readed);
+      end;
+      Dec(Loop);
+    end;
+    Readed := Strm.Read(Buffer, Size mod SizeOf(Buffer));
+    Writed := FStream.Write(Buffer, Readed);
+    if Readed = Writed then
+    begin
+      Inc(Result, Readed);
     end;
   end;
 
@@ -292,20 +303,6 @@ uses
   begin
     FCoder := BeeDecoder_Destroy(FCoder);
     inherited Destroy;
-  end;
-
-  procedure THeaderDecoder.Initialize(Item: THeader);
-  begin
-    if foDictionary in Item.Flags then
-      BeeDecoder_SetDictionaryLevel(FCoder, Item.Dictionary);
-
-    if foTable in Item.Flags then
-      BeeDecoder_SetTableParameters(FCoder, @Item.Table);
-
-    if foTear in Item.Flags then
-      BeeDecoder_FreshFlexible(FCoder)
-    else
-      BeeDecoder_FreshSolid(FCoder);
   end;
 
   function THeaderDecoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
