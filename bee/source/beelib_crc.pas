@@ -93,4 +93,9 @@ begin
   Result := Crc32Tab[byte(aCrc32 xor aData)] xor (aCrc32 shr 8);
 end;
 
+function UpdateCrc32(const aCrc32: longword; aData: byte): longword; {$IFDEF FPC} inline; {$ENDIF}
+begin
+  Result := Crc32Tab[byte(aCrc32 xor aData)] xor (aCrc32 shr 8);
+end;
+
 end.
