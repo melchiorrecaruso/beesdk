@@ -43,12 +43,16 @@ type
 
   TApp = class
   protected
-    FExitCode: byte;
+    FStart: TDateTime;
+    FLastTick: TDateTime;
     FSuspended:  boolean;
     FTerminated: boolean;
+    FExitCode: byte;
+
+    FSpeed: longint;
+    FProgress: longint;
     FProcessedSize: int64;
     FTotalSize: int64;
-    function GetProgress: longint;
     procedure SetPriority(Value: byte);
     procedure SetExitCode(Value: byte);
     procedure SetTerminated(Value: boolean);
@@ -60,14 +64,16 @@ type
     function DoOverWrite(const aItem: THeader; const aValue: string): string; virtual; abstract;
     procedure DoList(const aItem: THeader); virtual; abstract;
     procedure DoClear; virtual abstract;
-    procedure DoTick(Value: longint); virtual;
+    function DoTick(Value: longint): boolean; virtual;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Execute; virtual; abstract;
     procedure Terminate; virtual;
+    procedure Abort;
   public
-    property Progress: longint read GetProgress;
+    property Speed: longint read FSpeed;
+    property Progress: longint read FProgress;
     property ProcessedSize: int64 read FProcessedSize write FProcessedSize;
     property TotalSize: int64 read FTotalSize write FTotalSize;
 
@@ -79,6 +85,8 @@ type
 implementation
 
 uses
+  SysUtils,
+  DateUtils,
   Bee_Common;
 
 { TApp class }
@@ -86,11 +94,16 @@ uses
 constructor TApp.Create;
 begin
   inherited Create;
+  FStart         := Now;
+  FLastTick      := Now;
+  FSuspended     := False;
+  FTerminated    := False;
+  FExitCode      := ccSuccesful;
+
+  FSpeed         := 0;
+  FProgress      := 0;
   FTotalSize     := 0;
   FProcessedSize := 0;
-  FTerminated    := False;
-  FSuspended     := False;
-  FExitCode      := ccSuccesful;
 end;
 
 destructor TApp.Destroy;
@@ -103,12 +116,9 @@ begin
   SetExitCode(ccUserAbort);
 end;
 
-function TApp.GetProgress: longint;
+procedure TApp.Abort;
 begin
-  if FTotalSize <> 0 then
-     Result := Round((FProcessedSize / FTotalSize) * 100)
-   else
-     Result := 0;
+  SetExitCode(ccUserAbort);
 end;
 
 procedure TApp.SetTerminated(Value: boolean);
@@ -160,9 +170,18 @@ begin
   SetExitCode(aExitCode);
 end;
 
-procedure TApp.DoTick(Value: longint);
+function TApp.DoTick(Value: longint): boolean;
 begin
   Inc(FProcessedSize, Value);
+
+  FProgress := Round((FProcessedSize / FTotalSize) * 100);
+  FSpeed    := Round((Value / MilliSecondsBetween(Now, FLastTick)) * 1000);
+  while FSuspended do
+  begin
+    Sleep(250);
+  end;
+  FLastTick := Now;
+  Result    := FTerminated;
 end;
 
 end.

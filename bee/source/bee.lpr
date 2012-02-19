@@ -63,12 +63,12 @@ type
 
   TCustomBeeApp = class(TBeeApp)
   public
-    procedure OnMessage(const aMessage: string); override;
-    procedure OnRequest(const aMessage: string); override;
-    function  OnRename(const aItem: THeader; const aValue: string): string; override;
-    procedure OnList(const aItem: THeader); override;
-    procedure OnProgress; override;
-    procedure OnClear; override;
+    procedure DoMessage(const aMessage: string); override;
+    procedure DoRequest(const aMessage: string); override;
+    function  DoRename(const aItem: THeader; const aValue: string): string; override;
+    procedure DoList(const aItem: THeader); override;
+    function  DoTick(Value: longint): boolean; override;
+    procedure DoClear; override;
   end;
 
   { ------------------------------------------------------------------------ }
@@ -77,12 +77,12 @@ type
 
   { TCustomBeeApp class }
 
-  procedure TCustomBeeApp.OnMessage(const aMessage: string);
+  procedure TCustomBeeApp.DoMessage(const aMessage: string);
   begin
     Writeln(ParamToOem(aMessage));
   end;
 
-  function TCustomBeeApp.OnRename(const aItem: THeader; const aValue: string): string;
+  function TCustomBeeApp.DoRename(const aItem: THeader; const aValue: string): string;
   begin
     Write('Rename file "', ParamToOem(aItem.Name), '" as (empty to skip):');
     Readln(Result);
@@ -90,7 +90,7 @@ type
     Result := OemToParam(Result);
   end;
 
-  procedure TCustomBeeApp.OnList(const aItem: THeader);
+  procedure TCustomBeeApp.DoList(const aItem: THeader);
   begin
     Writeln(Format('%16s %7s %12s %12s %3s %s', [
       FileTimeToString(aItem.Time), AttrToStr(aItem.Attr),
@@ -98,19 +98,20 @@ type
       MethodToStr(aItem), aItem.Name]));
   end;
 
-  procedure TCustomBeeApp.OnRequest(const aMessage: string);
+  procedure TCustomBeeApp.DoRequest(const aMessage: string);
   begin
     Writeln(ParamToOem(aMessage));
   end;
 
-  procedure TCustomBeeApp.OnProgress;
+  function TCustomBeeApp.DoTick(Value: longint): boolean;
   begin
+    inherited DoTick(Value);
     // not convert oem to param
     Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
-      Format('%5d KB/s %3d%%', [Speed shr 10, Percentage]));
+      Format('%5d KB/s %3d%%', [Speed shr 10, Progress]));
   end;
 
-  procedure TCustomBeeApp.OnClear;
+  procedure TCustomBeeApp.DoClear;
   begin
     Write(#13, #13: 80);
   end;
@@ -130,11 +131,11 @@ var
   function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
-      CTRL_C_EVENT:        App.Code := ccUserAbort;
-      CTRL_BREAK_EVENT:    App.Code := ccUserAbort;
-      CTRL_CLOSE_EVENT:    App.Code := ccUserAbort;
-      CTRL_LOGOFF_EVENT:   App.Code := ccUserAbort;
-      CTRL_SHUTDOWN_EVENT: App.Code := ccUserAbort;
+      CTRL_C_EVENT:        App.Abort;
+      CTRL_BREAK_EVENT:    App.Abort;
+      CTRL_CLOSE_EVENT:    App.Abort;
+      CTRL_LOGOFF_EVENT:   App.Abort;
+      CTRL_SHUTDOWN_EVENT: App.Abort;
     end;
     Result := True;
   end;
@@ -144,10 +145,10 @@ var
   procedure CtrlHandler(sig: cint);
   begin
     case sig of
-      SIGINT:  App.Code := ccUserAbort;
-      SIGQUIT: App.Code := ccUserAbort;
-      SIGKILL: App.Code := ccUserAbort;
-      SIGSTOP: App.Code := ccUserAbort;
+      SIGINT:  App.App.Abort;
+      SIGQUIT: App.App.Abort;
+      SIGKILL: App.App.Abort;
+      SIGSTOP: App.App.Abort;
     end;
   end;
   {$ENDIF}
@@ -162,7 +163,7 @@ begin
   App := TCustomBeeApp.Create(Params.Text);
   App.Execute;
   begin
-    ExitCode := App.Code;
+    ExitCode := App.ExitCode;
   end;
   App.Destroy;
   Params.Destroy;
