@@ -155,7 +155,7 @@ uses
     Count:  longint;
     Readed: longint;
     Writed: longint;
-    Buffer: array[0.. $FFFF] of byte;
+    Buffer: array[0..$FFFF] of byte;
   begin
     Result := 0;
     Count  := Size div SizeOf(Buffer);
@@ -166,18 +166,21 @@ uses
       Inc(Result, Writed);
       Dec(Count);
 
-      if Assigned(FOnTick) and (FOnTick(Writed)) then Break;
+      if Assigned(FOnTick) and (FOnTick(Writed)) then Exit;
     end;
     Readed := Strm.Read(Buffer, Size mod SizeOf(Buffer));
     Writed := FStream.Write(Buffer, Readed);
     Inc(Result, Writed);
 
-    if Assigned(FOnTick) and (FOnTick(Writed)) then Break;
+    if Assigned(FOnTick) then FOnTick(Writed);
   end;
 
   function THeaderEncoder.Copy(Strm: TStream; const Size: int64; var CRC: longword): int64;
   var
-    Symbol: byte;
+    Count:  longint;
+    Readed: longint;
+    Writed: longint;
+    Buffer: array[0..$FFFF] of byte;
   begin
     Result := 0;
     CRC    := longword(-1);
@@ -185,17 +188,19 @@ uses
     while Count > 0 do
     begin
       Readed := Strm.Read(Buffer, SizeOf(Buffer));
-      Writed := FStream.Write(Buffer, Readed);     UpdCrc32(CRC, Symbol);
+      Writed := FStream.Write(Buffer, Readed);
+      UpdateCrc32(CRC, Buffer, Writed);
       Inc(Result, Writed);
       Dec(Count);
 
-      if Assigned(FOnTick) and (FOnTick(Writed)) then Break;
+      if Assigned(FOnTick) and (FOnTick(Writed)) then Exit;
     end;
     Readed := Strm.Read(Buffer, Size mod SizeOf(Buffer));
     Writed := FStream.Write(Buffer, Readed);
+    UpdateCRC32(CRC, Buffer, Writed);
     Inc(Result, Writed);
 
-    if Assigned(FOnTick) and (FOnTick(Writed)) then Break;
+    if Assigned(FOnTick) then FOnTick(Writed);
   end;
 
   function THeaderEncoder.Write(Item: THeader; Strm: TStream; const Size: int64): boolean;
