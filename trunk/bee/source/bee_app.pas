@@ -236,7 +236,7 @@ begin
 
     // test item ...
     DoMessage(Format(cmChecking, [Item.Name]));
-    Decoder := THeaderDecoder.Create(FArchReader);
+    Decoder := THeaderDecoder.Create(FArchReader, DoTick);
     Decoder.Password := FCommandLine.pOption;
 
     for I := 0 to Smaller do
@@ -247,7 +247,7 @@ begin
 
     Decoder.Destroy;
   end;
-  Result := Code;
+  Result := ExitCode;
 end;
 
 procedure TBeeApp.CloseArchive(IsModified: boolean);
@@ -261,7 +261,7 @@ begin
 
   if IsModified then
   begin
-    if Code < ccError then
+    if ExitCode < ccError then
     begin
       SysUtils.DeleteFile(FSwapName);
       SysUtils.DeleteFile(FCommandLine.ArchiveName);
@@ -275,8 +275,8 @@ begin
     end;
   end;
 
-  S := TimeDifference(FStartTime);
-  case Code of
+  S := TimeDifference(FStart);
+  case ExitCode of
     ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
     ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
     ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
@@ -293,18 +293,17 @@ var
   P: THeader;
   Decoder: THeaderDecoder;
 begin
-  if (Code < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
+  if (ExitCode < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
   begin
     FSwapName   := GenerateFileName(FCommandLine.wdOption);
     FSwapWriter := CreateTFileWriter(FSwapName, fmCreate);
     if Assigned(FSwapWriter) then
     begin
-      Decoder := THeaderDecoder.Create(FArchReader, @DoFill, @DoFlush, Self, @DoTick);
+      Decoder := THeaderDecoder.Create(FArchReader, DoTick);
       Decoder.Password := FCommandLine.pOption;
-      Decoder.OnTickEvent := @DoTick;
 
       for I := 0 to FHeaders.Count - 1 do
-        if Code < ccError then
+        if ExitCode < ccError then
         begin
           P := FHeaders.Items[I];
           Decoder.Initialize(P);
@@ -331,7 +330,7 @@ begin
       Decoder.Destroy;
       FreeAndNil(FSwapWriter);
 
-      if Code < ccError then
+      if ExitCode < ccError then
       begin
         FSwapReader := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
         if Assigned(FSwapReader) = False then
@@ -340,7 +339,7 @@ begin
     end else
       DoMessage(cmCreateSwapError, ccError);
   end;
-  Result := Code;
+  Result := ExitCode;
 end;
 
 { sequences processing }
@@ -406,10 +405,10 @@ begin
     begin
       P := FHeaders.Items[I];
       case P.Action of
-        haNone:            Inc(FSize, P.PackedSize);
-        haUpdate:          Inc(FSize, P.ExtSize);
-        haDecode:          Inc(FSize, P.Size + P.Size);
-        haDecodeAndUpdate: Inc(FSize, P.Size + P.ExtSize);
+        haNone:            Inc(FTotalSize, P.PackedSize);
+        haUpdate:          Inc(FTotalSize, P.ExtSize);
+        haDecode:          Inc(FTotalSize, P.Size + P.Size);
+        haDecodeAndUpdate: Inc(FTotalSize, P.Size + P.ExtSize);
       end;
     end;
 
@@ -464,10 +463,10 @@ begin
     begin
       P := FHeaders.Items[I];
       case P.Action of
-        haNone:            Inc(FSize, P.PackedSize);
+        haNone:            Inc(FTotalSize, P.PackedSize);
         // haUpdate:       nothing to do
-        haDecode:          Inc(FSize, P.Size + P.Size);
-        haDecodeAndUpdate: Inc(FSize, P.Size);
+        haDecode:          Inc(FTotalSize, P.Size + P.Size);
+        haDecodeAndUpdate: Inc(FTotalSize, P.Size);
       end;
     end;
 
@@ -493,7 +492,7 @@ begin
     for I := 0 to FHeaders.Count - 1 do
     begin
       P := FHeaders.Items[I];
-      if (P.Action = haUpdate) and (Code < ccError) then
+      if (P.Action = haUpdate) and (ExitCode < ccError) then
       begin
         case FCommandLine.Command of
           ccExtract:  P.ExtName := ExtractFileName(P.Name);
@@ -548,8 +547,8 @@ begin
       P := FHeaders.Items[I];
       case P.Action of
         // haNone:            nothing to do
-        haUpdate:             Inc(FSize, P.Size);
-        haDecode:             Inc(FSize, P.Size);
+        haUpdate:             Inc(FTotalSize, P.Size);
+        haDecode:             Inc(FTotalSize, P.Size);
         // haDecodeAndUpdate: nothing to do
       end;
     end;
@@ -568,7 +567,7 @@ begin
   FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
 
   for I  := 0 to FHeaders.Count - 1 do
-    if Code < ccError then
+    if ExitCode < ccError then
     begin
       P := FHeaders.Items[I];
       if P.Action = haUpdate then
@@ -580,7 +579,7 @@ begin
             DoMessage(Format(cmFileExistsWarning, [NewName]))
           else
             Break;
-        until Code >= ccError;
+        until ExitCode >= ccError;
 
         if (Length(NewName) = 0) or (CompareFileName(NewName, P.Name) = 0) then
           P.Action := haNone
@@ -598,8 +597,8 @@ begin
     begin
       P := FHeaders.Items[I];
       case P.Action of
-        haNone:               Inc(FSize, P.PackedSize);
-        haUpdate:             Inc(FSize, P.PackedSize);
+        haNone:               Inc(FTotalSize, P.PackedSize);
+        haUpdate:             Inc(FTotalSize, P.PackedSize);
         // haDecode:          nothing to do
         // haDecodeAndUpdate: nothing to do
       end;
@@ -627,7 +626,7 @@ begin
       P := FHeaders.Items[I];
       case P.Action of
         // haNone:            nothing to do
-        haUpdate:             Inc(FSize, P.PackedSize);
+        haUpdate:             Inc(FTotalSize, P.PackedSize);
         // haDecode:          nothing to do
         // haDecodeAndUpdate: nothing to do
       end;
@@ -640,9 +639,9 @@ end;
 
 procedure TBeeApp.ProcesstOption;
 begin
-  if (Code < ccError) and FCommandLine.tOption then
+  if (ExitCode < ccError) and FCommandLine.tOption then
   begin
-    FSize := 0;
+    FTotalSize     := 0;
     FProcessedSize := 0;
     FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
@@ -654,9 +653,9 @@ end;
 
 procedure TBeeApp.ProcesslOption;
 begin
-  if (Code < ccError) and FCommandLine.lOption then
+  if (ExitCode < ccError) and FCommandLine.lOption then
   begin
-    FSize := 0;
+    FTotalSize     := 0;
     FProcessedSize := 0;
     FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
@@ -720,12 +719,12 @@ begin
       if OpenSwapFile < ccError then
       begin
         FHeaders.Write(FTempWriter);
-        Encoder := THeaderEncoder.Create(FTempWriter);
+        Encoder := THeaderEncoder.Create(FTempWriter, DoTick);
         Encoder.Password := FCommandLine.pOption;
 
         Check := True;
         for I := 0 to FHeaders.Count - 1 do
-          if Code < ccError then
+          if ExitCode < ccError then
           begin
             P := FHeaders.Items[I];
             Encoder.Initialize(P);
@@ -758,7 +757,7 @@ begin
     end else
       DoMessage(cmOpenTempError, ccError);
   end;
-  CloseArchive(FSize > 0);
+  CloseArchive(FTotalSize > 0);
 end;
 
 procedure TBeeApp.DecodeShell;
@@ -770,12 +769,12 @@ var
 begin
   if (OpenArchive < ccError) and (SetItemsToDecode = TRUE) then
   begin
-    Decoder := THeaderDecoder.Create(FArchReader, @DoFill, @DoFlush, Self, @DoTick);
+    Decoder := THeaderDecoder.Create(FArchReader, DoTick);
     Decoder.Password := FCommandLine.pOption;
 
     Check := True;
     for I := 0  to FHeaders.Count - 1 do
-      if Code < ccError then
+      if ExitCode < ccError then
       begin
         P := FHeaders.Items[I];
         Decoder.Initialize(P);
@@ -813,12 +812,12 @@ var
 begin
   if (OpenArchive < ccError) and (SetItemsToDecode = TRUE) then
   begin
-    Decoder := THeaderDecoder.Create(FArchReader, @DoFill,  @DoFlush, Self, @DoTick);
+    Decoder := THeaderDecoder.Create(FArchReader, DoTick);
     Decoder.Password := FCommandLine.pOption;
 
     Check := True;
     for I := 0  to FHeaders.Count - 1 do
-      if Code < ccError then
+      if ExitCode < ccError then
       begin
         P := FHeaders.Items[I];
         Decoder.Initialize(P);
@@ -874,12 +873,12 @@ begin
         end;
 
         FHeaders.Write(FTempWriter);
-        Encoder := THeaderEncoder.Create(FTempWriter, @DoFill, @DoFlush, Self, @DoTick);
+        Encoder := THeaderEncoder.Create(FTempWriter, DoTick);
         Encoder.Password := FCommandLine.pOption;
 
         Check := True;
         for I := 0 to FHeaders.Count - 1 do
-          if Code < ccError then
+          if ExitCode < ccError then
           begin
             P := FHeaders.Items[I];
             Encoder.Initialize(P);
@@ -906,7 +905,7 @@ begin
     end else
       DoMessage(cmOpenTempError, ccError);
   end;
-  CloseArchive(FSize > 0);
+  CloseArchive(FTotalSize > 0);
 end;
 
 procedure TBeeApp.RenameShell;
@@ -923,12 +922,12 @@ begin
     if Assigned(FTempWriter) then
     begin
       FHeaders.Write(FTempWriter);
-      Encoder := THeaderEncoder.Create(FTempWriter, @DoFill, @DoFlush, Self, @DoTick);
+      Encoder := THeaderEncoder.Create(FTempWriter, DoTick);
       Encoder.Password := FCommandLine.pOption;
 
       Check := True;
       for I := 0 to FHeaders.Count - 1 do
-        if Code < ccError then
+        if ExitCode < ccError then
         begin
           P := FHeaders.Items[I];
 
@@ -953,7 +952,7 @@ begin
     end else
       DoMessage(cmOpenTempError, ccError);
   end;
-  CloseArchive(FSize > 0);
+  CloseArchive(FTotalSize > 0);
 end;
 
 {$IFDEF CONSOLEAPPLICATION}
@@ -982,7 +981,7 @@ begin
 
     FHeadersToList := TList.Create;
     for I := 0 to FHeaders.Count - 1 do
-      if Code < ccError then
+      if ExitCode < ccError then
       begin
         P := FHeaders.Items[I];
 
@@ -1037,7 +1036,7 @@ begin
     TotalFiles  := 0;
 
     for I := 0 to FHeadersToList.Count - 1 do
-      if Code < ccError then
+      if ExitCode < ccError then
       begin
         P := FHeadersToList.Items[I];
         Inc(TotalPacked, P.PackedSize);

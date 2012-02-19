@@ -56,34 +56,28 @@ type
 
   THeaderCoder = class
   private
-    FStream: TStream;
-    FModeller: pointer;
-    FCoder: pointer;
+    FTick: TTickEvent;
     FPassword: string;
-    FOnTick: TTickEvent;
-    FTickEnabled: boolean;
-    procedure SetTick(Value: boolean);
-    procedure SetOnTick(Value: TTickEvent);
+    FStream: TStream;
+    FCoder: pointer;
+    FModeller: pointer;
   public
-    constructor Create(Stream: TStream);
+    constructor Create(Stream: TStream; Tick: TTickEvent);
     destructor Destroy; override;
     procedure Initialize(Item: THeader);
-  public
     property Password: string read FPassword write FPassword;
-    property OnTick: TTickEvent read FOnTick write SetOnTick;
-    property TickEnabled: boolean read FTickEnabled write SetTick;
   end;
 
   { THeaderEncoder class }
 
   THeaderEncoder = class(THeaderCoder)
   private
-    function Copy                (Stream: TStream; const Size: int64): int64; overload;
+    function Copy                (Stream: TStream; const Size: int64;  Silent:  boolean): int64; overload;
     function Copy                (Stream: TStream; const Size: int64; var CRC: longword): int64; overload;
     function Encode              (Stream: TStream; const Size: int64; var CRC: longword): int64;
     function Write(Item: THeader; Stream: TStream; const Size: int64): boolean;
   public
-    constructor Create(Stream: TStream);
+    constructor Create(Stream: TStream; Tick: TTickEvent);
     destructor Destroy; override;
 
     function WriteFromArch(Item: THeader; Stream: TStream): boolean;
@@ -98,7 +92,7 @@ type
     function Copy  (Stream: TStream; const Size: int64; var CRC: longword): int64;
     function Decode(Stream: TStream; const Size: int64; var CRC: longword): int64;
   public
-    constructor Create(Stream: TStream);
+    constructor Create(Stream: TStream; Tick: TTickEvent);
     destructor Destroy; override;
 
     function ReadToSwap(Item: THeader; Stream: TStream): boolean;
@@ -114,13 +108,12 @@ uses
 
   { THeaderCoder class }
 
-  constructor THeaderCoder.Create(Stream: TStream);
+  constructor THeaderCoder.Create(Stream: TStream; Tick: TTickEvent);
   begin
     inherited Create;
-    FStream      := Stream;
-    FPassword    := '';
-    FOnTick      := nil;
-    FTickEnabled := False;
+    FTick    := Tick;
+    FPassword := '';
+    FStream   := Stream;
   end;
 
   destructor THeaderCoder.Destroy;
@@ -142,22 +135,11 @@ uses
       BaseCoder_FreshSolid(FModeller);
   end;
 
-  procedure THeaderCoder.SetTick(Value: boolean);
-  begin
-    FTickEnabled := Assigned(FOnTick) and Value;
-  end;
-
-  procedure THeaderCoder.SetOnTick(Value: TTickEvent);
-  begin
-    FOnTick := Value;
-    FTickEnabled := Assigned(FOnTick);
-  end;
-
   { THeaderEncoder class }
 
-  constructor THeaderEncoder.Create(Stream: TStream);
+  constructor THeaderEncoder.Create(Stream: TStream; Tick: TTickEvent);
   begin
-    inherited Create(Stream);
+    inherited Create(Stream, Tick);
     FCoder    := RangeEncoder_Create(FStream, @DoFlush);
     FModeller := BaseCoder_Create(FCoder);
   end;
@@ -169,7 +151,7 @@ uses
     inherited Destroy;
   end;
 
-  function THeaderEncoder.Copy(Stream: TStream; const Size: int64): int64;
+  function THeaderEncoder.Copy(Stream: TStream; const Size: int64; Silent: boolean): int64;
   var
     Count:  longint;
     Readed: longint;
@@ -185,13 +167,13 @@ uses
       Inc(Result, Writed);
       Dec(Count);
 
-      if FTickEnabled and (FOnTick(Writed)) then Exit;
+      if (not Silent) and FTick(Writed) then Exit;
     end;
     Readed :=  Stream.Read (Buffer, Size mod SizeOf(Buffer));
     Writed := FStream.Write(Buffer, Readed);
     Inc(Result, Writed);
 
-    if FTickEnabled then FOnTick(Writed);
+    if (not Silent) then FTick(Writed);
   end;
 
   function THeaderEncoder.Copy(Stream: TStream; const Size: int64; var CRC: longword): int64;
@@ -212,14 +194,20 @@ uses
       Inc(Result, Writed);
       Dec(Count);
 
-      if FTickEnabled and (FOnTick(Writed)) then Exit;
+      if FTick(Writed) then Exit;
     end;
     Readed :=  Stream.Read (Buffer, Size mod SizeOf(Buffer));
     Writed := FStream.Write(Buffer, Readed);
     UpdateCRC32(CRC, Buffer, Writed);
     Inc(Result, Writed);
 
-    if FTickEnabled then FOnTick(Writed);
+    FTick(Writed);
+  end;
+
+  function THeaderEncoder.Encode(Stream: TStream; const Size: int64; var CRC: longword): int64;
+  begin
+
+
   end;
 
   function THeaderEncoder.Write(Item: THeader; Stream: TStream; const Size: int64): boolean;
@@ -246,9 +234,7 @@ uses
       Include(Item.Flags, foTear);
       Initialize(Item);
 
-      SetTick(False);
-      Item.PackedSize := Copy(Stream, Size);
-      SetTick(True);
+      Item.PackedSize := Copy(Stream, Size, TRUE);
     end;
     Result := Item.Size = Size;
   end;
@@ -258,7 +244,7 @@ uses
     if foPassword in Item.Flags then
     begin
       if FStream is TFileWriter then TFileWriter(FStream).StartEncode(FPassword);
-      if    Stream is TFileReader then TFileReader( Stream).StartDecode(FPassword);
+      if  Stream is TFileReader then TFileReader( Stream).StartDecode(FPassword);
     end;
 
     Stream.Seek(Item.StartPos, soBeginning);
@@ -274,7 +260,7 @@ uses
    begin
      Stream.Seek(Item.StartPos, soBeginning);
      Item.StartPos := FStream.Seek(0, soCurrent);
-     Result := Copy(Stream, Item.PackedSize) = Item.PackedSize;
+     Result := Copy(Stream, Item.PackedSize, FALSE) = Item.PackedSize;
    end;
 
   function THeaderEncoder.WriteFromFile(Item: THeader): boolean;
@@ -299,9 +285,9 @@ uses
 
   { TheaderDecoder class }
 
-  constructor THeaderDecoder.Create(Stream: TStream);
+  constructor THeaderDecoder.Create(Stream: TStream; Tick: TTickEvent);
   begin
-    inherited Create(Stream);
+    inherited Create(Stream, Tick);
     FCoder    := RangeDecoder_Create(FStream, @DoFill);
     FModeller := BaseCoder_Create(FCoder);
   end;
@@ -331,14 +317,19 @@ uses
       Inc(Result, Writed);
       Dec(Count);
 
-      if FTickEnabled and FOnTick(Writed) then Exit;
+      if FTick(Writed) then Exit;
     end;
     Readed := FStream.Read(Buffer, Size mod SizeOf(Buffer));
     Writed := Stream.Write(Buffer, Readed);
     UpdateCRC32(CRC, Buffer, Writed);
     Inc(Result, Writed);
 
-    if FTickEnabled then FOnTick(Writed);
+    FTick(Writed);
+  end;
+
+  function THeaderDecoder.Decode(Stream: TStream; const Size: int64; var CRC: longword): int64;
+  begin
+
   end;
 
   function THeaderDecoder.ReadToSwap(Item: THeader; Stream: TStream): boolean;
@@ -354,8 +345,8 @@ uses
     FStream.Seek(Item.StartPos, soBeginning);
     Item.StartPos := Stream.Seek(0, soCurrent);
     case foMoved in Item.Flags of
-      True:  Result := Copy          (Stream, Item.Size, CRC) = Item.Size;
-      False: Result := BeeDecoder_Decode(FCoder, Stream, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
+      True:  Result := Copy  (Stream, Item.Size, CRC) = Item.Size;
+      False: Result := Decode(Stream, Item.Size, CRC) = Item.Size;
     end;
     if Result then Result := Item.Crc = CRC;
 
@@ -369,21 +360,20 @@ uses
     Strm: TNulWriter;
   begin
     if foPassword in Item.Flags then
-      if FStream is TFileReader then
-        TFileReader(FStream).StartDecode(FPassword);
+    begin
+      if FStream is TFileReader then TFileReader(FStream).StartDecode(FPassword);
+    end;
 
     Strm := TNulWriter.Create;
     FStream.Seek(Item.StartPos, soBeginning);
     case foMoved in Item.Flags of
-      True:  Result := Copy          (Strm, Item.Size, CRC) = Item.Size;
-      False: Result := BeeDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
+      True:  Result := Copy  (Strm, Item.Size, CRC) = Item.Size;
+      False: Result := Decode(Strm, Item.Size, CRC) = Item.Size;
     end;
+    Result := Result and (Item.Crc = CRC);
     Strm.Free;
 
-    if FStream is TFileReader then
-      TFileReader(FStream).FinishDecode;
-
-    Result := Result and (Item.Crc = CRC);
+    if FStream is TFileReader then TFileReader(FStream).FinishDecode;
   end;
 
   function THeaderDecoder.ReadToFile(Item: THeader): boolean;
@@ -401,16 +391,14 @@ uses
 
       FStream.Seek(Item.StartPos, soBeginning);
       case foMoved in Item.Flags of
-        True:  Result := Copy(Strm, Item.Size, CRC) = Item.Size;
-        False: Result := BeeDecoder_Decode(FCoder, Strm, FOnFlushBuffer, Item.Size, @CRC) = Item.Size;
+        True:  Result := Copy  (Strm, Item.Size, CRC) = Item.Size;
+        False: Result := Decode(strm, Item.Size, CRC) = Item.Size;
       end;
       Strm.Free;
 
-      if FStream is TFileReader then
-        TFileReader(FStream).FinishDecode;
+      if FStream is TFileReader then TFileReader(FStream).FinishDecode;
 
       Result := Result and (Item.Crc = CRC);
-
       if Result then
       begin
         FileSetAttr(Item.ExtName, Item.Attr);
