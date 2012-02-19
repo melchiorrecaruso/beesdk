@@ -47,7 +47,6 @@ uses
   {$ENDIF}
 
   {$link beelib.c\obj\release\beelib_common.o}
-  {$link beelib.c\obj\release\beelib_main.o}
   {$link beelib.c\obj\release\beelib_modeller.o}
   {$link beelib.c\obj\release\beelib_rangecoder.o}
   {$link beelib.c\obj\release\beelib_stream.o}
@@ -74,10 +73,9 @@ uses
   procedure BaseCoder_SetDictionary(Self: pointer; Level: longint); cdecl; external;
   procedure BaseCoder_FreshFlexible(Self: pointer); cdecl; external;
   procedure BaseCoder_FreshSolid   (Self: pointer); cdecl; external;
-  procedure BaseCoder_Free         (Self: pointer); cdecl; external;
 
-  procedure Basecoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint);  cdecl; external;
-  procedure Basecoder_Decode       (Self: pointer; Buffer: pointer; BufSize: longint);  cdecl; external;
+  procedure BaseCoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint);  cdecl; external;
+  procedure BaseCoder_Decode       (Self: pointer; Buffer: pointer; BufSize: longint);  cdecl; external;
 
 {$ENDIF}
 

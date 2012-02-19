@@ -163,28 +163,20 @@ var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
   S: longint;
 begin
-  if (Count = SizeOf(Byte)) and (FBufferReaded < FBufferSize) then
-  begin
-    Byte(Data) := FBuffer[FBufferReaded];
-    Result := SizeOf(Byte);
-    Inc(FBufferReaded, Result);
-  end else
-  begin
-    Result := 0;
-    repeat
-      if FBufferReaded = FBufferSize then
-      begin
-        FillBuffer;
-        if FBufferSize = 0 then Exit;
-      end;
-      S := Min(Count - Result, FBufferSize - FBufferReaded);
+  Result := 0;
+  repeat
+    if FBufferReaded = FBufferSize then
+    begin
+      FillBuffer;
+      if FBufferSize = 0 then Exit;
+    end;
+    S := Min(Count - Result, FBufferSize - FBufferReaded);
 
-      Move(FBuffer[FBufferReaded], Bytes[Result], S);
+    Move(FBuffer[FBufferReaded], Bytes[Result], S);
 
-      Inc(Result, S);
-      Inc(FBufferReaded, S);
-    until Result = Count;
-  end;
+    Inc(Result, S);
+    Inc(FBufferReaded, S);
+  until Result = Count;
 end;
 
 function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
@@ -228,32 +220,26 @@ var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
   S: longint;
 begin
-  if (Count = SizeOf(Byte)) and (FCapacity > FBufferSize) then
-  begin
-    FBuffer[FBufferSize] := Byte(Data);
-    Inc(FBufferSize);
-    Result := SizeOf(Byte);
-  end else
   if Count > (FCapacity - FBufferSize) then
-    begin
-      Result := 0;
-      repeat
-        S := FCapacity - FBufferSize;
-        CopyBytes(Bytes[Result], FBuffer[FBufferSize], S);
-        Inc(Result, S);
-        Inc(FBufferSize, S);
-        FlushBuffer;
-      until ((Count - Result) <= FCapacity);
+  begin
+    Result := 0;
+    repeat
+      S := FCapacity - FBufferSize;
+      CopyBytes(Bytes[Result], FBuffer[FBufferSize], S);
+      Inc(Result, S);
+      Inc(FBufferSize, S);
+      FlushBuffer;
+    until ((Count - Result) <= FCapacity);
 
-      CopyBytes(Bytes[Result], FBuffer[FBufferSize], Count - Result);
-      Inc(FBufferSize, Count - Result);
-      Inc(Result, Count - Result);
-    end else
-    begin
-      CopyBytes(Data, FBuffer[FBufferSize], Count);
-      Inc(FBufferSize, Count);
-      Result := Count;
-    end;
+    CopyBytes(Bytes[Result], FBuffer[FBufferSize], Count - Result);
+    Inc(FBufferSize, Count - Result);
+    Inc(Result, Count - Result);
+  end else
+  begin
+    CopyBytes(Data, FBuffer[FBufferSize], Count);
+    Inc(FBufferSize, Count);
+    Result := Count;
+  end;
 end;
 
 function TWriteBufStream.Seek(Offset: longint; Origin: word): longint;

@@ -28,23 +28,17 @@
 
 #include "beelib_common.h"
 
-/* UpdateSymbol routine definition */
-
-typedef uint32 (*PUpdate) (void*, uint32*, uint32);
-
 /* TBaseCoder struct/methods */
 
 typedef struct TBaseCoder *PBaseCoder;
 
-  PBaseCoder  BaseCoder_Create       (void *aCodec, PUpdate aUpdate);
-        void *BaseCoder_Destroy      (PBaseCoder Self);
-        void  BaseCoder_SetTable     (PBaseCoder Self, const TTableParameters *T);
-        void  BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel);
-        void  BaseCoder_FreshFlexible(PBaseCoder Self);
-        void  BaseCoder_FreshSolid   (PBaseCoder Self);
-        void  BaseCoder_Free         (PBaseCoder Self);
-      uint32  BaseCoder_Update       (PBaseCoder Self, uint32 aSymbol);
-        void  Basecoder_Encode       (PBaseCoder Self, char *Buffer, int32 BufSize);
-        void  Basecoder_Decode       (PBaseCoder Self, char *Buffer, int32 BufSize);
+  PBaseCoder BaseCoder_Create       (void *aCodec);
+        void BaseCoder_Destroy      (PBaseCoder Self);
+        void BaseCoder_SetTable     (PBaseCoder Self, const TTableParameters *T);
+        void BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel);
+        void BaseCoder_FreshFlexible(PBaseCoder Self);
+        void BaseCoder_FreshSolid   (PBaseCoder Self);
+        void BaseCoder_Encode       (PBaseCoder Self, char *Buffer, int32 BufSize);
+        void BaseCoder_Decode       (PBaseCoder Self, char *Buffer, int32 BufSize);
 
 #endif //  BEELIB_MODELLER_H

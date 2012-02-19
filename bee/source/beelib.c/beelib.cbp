@@ -29,10 +29,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="beelib_common.h" />
-		<Unit filename="beelib_main.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="beelib_main.h" />
 		<Unit filename="beelib_modeller.c">
 			<Option compilerVar="CC" />
 		</Unit>

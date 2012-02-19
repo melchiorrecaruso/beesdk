@@ -70,7 +70,6 @@ type
     destructor Destroy; override;
     procedure Execute; virtual; abstract;
     procedure Terminate; virtual;
-    procedure Abort;
   public
     property Speed: longint read FSpeed;
     property Progress: longint read FProgress;
@@ -116,11 +115,6 @@ begin
   SetExitCode(ccUserAbort);
 end;
 
-procedure TApp.Abort;
-begin
-  SetExitCode(ccUserAbort);
-end;
-
 procedure TApp.SetTerminated(Value: boolean);
 begin
   if FTerminated = False then
@@ -149,7 +143,7 @@ begin
     begin
       FExitCode := Value;
       if FExitCode >= ccError then
-        SetTerminated(True);
+        SetTerminated(TRUE);
     end;
   end;
 end;
@@ -175,13 +169,12 @@ begin
   Inc(FProcessedSize, Value);
 
   FProgress := Round((FProcessedSize / FTotalSize) * 100);
-  FSpeed    := Round((Value / MilliSecondsBetween(Now, FLastTick)) * 1000);
+  // FSpeed    := Round((FProcessedSize / MilliSecondsBetween(Now, FStart) * 1000));
   while FSuspended do
   begin
     Sleep(250);
   end;
-  FLastTick := Now;
-  Result    := FTerminated;
+  Result := FTerminated;
 end;
 
 end.
