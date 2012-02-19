@@ -133,7 +133,7 @@ void RangeDecoder_StartDecode(PRangeDecoder Self)
 {
   Self->FRange = 0xFFFFFFFF;
   Self->FLow   = 0;
-  Self->FFNum = 0;
+  Self->FFNum  = 0;
   Self->FCarry = 0;
 
   int32 I;

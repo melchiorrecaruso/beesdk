@@ -84,7 +84,7 @@ var
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
   I: longint;
 begin
-  for I := 1 to DataSize do
+  for I := 0 to (DataSize - 1) do
   begin
     aCRC32 := CRC32Tab[byte(aCRC32 xor Bytes[I])] xor (aCRC32 shr 8);
   end;

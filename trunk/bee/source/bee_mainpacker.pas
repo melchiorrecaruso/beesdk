@@ -48,6 +48,9 @@ uses
     {$ENDIF}
   {$ENDIF}
 
+// const
+//  DEFAULT_BUFFER_SIZE = 64 * 1024;
+
 type
   TTickEvent = function(Value: longint): boolean of object;
 
@@ -111,7 +114,7 @@ uses
   constructor THeaderCoder.Create(Stream: TStream; Tick: TTickEvent);
   begin
     inherited Create;
-    FTick    := Tick;
+    FTick     := Tick;
     FPassword := '';
     FStream   := Stream;
   end;
@@ -153,14 +156,14 @@ uses
 
   function THeaderEncoder.Copy(Stream: TStream; const Size: int64; Silent: boolean): int64;
   var
-    Count:  longint;
+    Count:  int64;
     Readed: longint;
     Writed: longint;
     Buffer: array[0..$FFFF] of byte;
   begin
     Result := 0;
     Count  := Size div SizeOf(Buffer);
-    while Count > 0 do
+    while Count <> 0 do
     begin
       Readed :=  Stream.Read (Buffer, SizeOf(Buffer));
       Writed := FStream.Write(Buffer, Readed);
@@ -178,7 +181,7 @@ uses
 
   function THeaderEncoder.Copy(Stream: TStream; const Size: int64; var CRC: longword): int64;
   var
-    Count:  longint;
+    Count:  int64;
     Readed: longint;
     Writed: longint;
     Buffer: array[0..$FFFF] of byte;
@@ -186,7 +189,7 @@ uses
     Result := 0;
     CRC    := longword(-1);
     Count  := Size div SizeOf(Buffer);
-    while Count > 0 do
+    while Count <> 0 do
     begin
       Readed :=  Stream.Read (Buffer, SizeOf(Buffer));
       Writed := FStream.Write(Buffer, Readed);
@@ -205,9 +208,40 @@ uses
   end;
 
   function THeaderEncoder.Encode(Stream: TStream; const Size: int64; var CRC: longword): int64;
+  var
+    Count:  int64;
+    Readed: longint;
+    Buffer: array[0..$FFFF] of byte;
   begin
 
+    Writeln('ENCODE: RangeEncoder_StartEncode');
+    RangeEncoder_StartEncode(FCoder);
 
+
+    Result := 0;
+    CRC    := longword(-1);
+    Count  := Size div SizeOf(Buffer);
+    while Count <> 0 do
+    begin
+      Readed := Stream.Read(Buffer, SizeOf(Buffer));
+
+      Writeln('ENCODE: BaseCoder_Encode');
+      BaseCoder_Encode(FModeller, @Buffer, Readed);
+
+      Writeln('ENCODE: UpdateCrc32');
+      UpdateCrc32(CRC, Buffer, Readed);
+      Inc(Result, Readed);
+      Dec(Count);
+
+      if FTick(Readed) then Exit;
+    end;
+    Readed := Stream.Read(Buffer, Size mod SizeOf(Buffer));
+    BaseCoder_Encode(FModeller, @Buffer, Readed);
+    UpdateCRC32(CRC, Buffer, Readed);
+    Inc(Result, Readed);
+    FTick(Readed);
+
+    RangeEncoder_FinishEncode(FCoder);
   end;
 
   function THeaderEncoder.Write(Item: THeader; Stream: TStream; const Size: int64): boolean;
@@ -301,10 +335,10 @@ uses
 
   function THeaderDecoder.Copy(Stream: TStream; const Size: int64; var CRC: longword): int64;
   var
-    Count:  longint;
+    Count:  int64;
     Readed: longint;
     Writed: longint;
-    Buffer: array[0..$FFFF] of byte;
+    Buffer: array[0..$1FFFE] of byte;
   begin
     Result := 0;
     CRC    := longword(-1);
@@ -317,7 +351,7 @@ uses
       Inc(Result, Writed);
       Dec(Count);
 
-      if FTick(Writed) then Exit;
+      if FTick(Writed) then Break;
     end;
     Readed := FStream.Read(Buffer, Size mod SizeOf(Buffer));
     Writed := Stream.Write(Buffer, Readed);

@@ -105,7 +105,7 @@ type
 
   function TCustomBeeApp.DoTick(Value: longint): boolean;
   begin
-    inherited DoTick(Value);
+    Result := inherited DoTick(Value);
     // not convert oem to param
     Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
       Format('%5d KB/s %3d%%', [Speed shr 10, Progress]));
@@ -131,11 +131,11 @@ var
   function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
-      CTRL_C_EVENT:        App.Abort;
-      CTRL_BREAK_EVENT:    App.Abort;
-      CTRL_CLOSE_EVENT:    App.Abort;
-      CTRL_LOGOFF_EVENT:   App.Abort;
-      CTRL_SHUTDOWN_EVENT: App.Abort;
+      CTRL_C_EVENT:        App.Terminate;
+      CTRL_BREAK_EVENT:    App.Terminate;
+      CTRL_CLOSE_EVENT:    App.Terminate;
+      CTRL_LOGOFF_EVENT:   App.Terminate;
+      CTRL_SHUTDOWN_EVENT: App.Terminate;
     end;
     Result := True;
   end;
@@ -145,10 +145,10 @@ var
   procedure CtrlHandler(sig: cint);
   begin
     case sig of
-      SIGINT:  App.App.Abort;
-      SIGQUIT: App.App.Abort;
-      SIGKILL: App.App.Abort;
-      SIGSTOP: App.App.Abort;
+      SIGINT:  App.Terminate;
+      SIGQUIT: App.Terminate;
+      SIGKILL: App.Terminate;
+      SIGSTOP: App.Terminate;
     end;
   end;
   {$ENDIF}

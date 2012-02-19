@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include "beelib_modeller.h"
@@ -31,7 +32,6 @@ typedef PNode *PPNode;           // Array of nodes...
 
 struct TBaseCoder {
           void *Codec;
-        PUpdate Update;
    unsigned int DictLevel;
    unsigned int Symbol;
    unsigned int Pos;
@@ -60,12 +60,11 @@ struct TBaseCoder {
   struct TTable Table;            // parameters Table
 };
 
-PBaseCoder BaseCoder_Create(void *aCodec, PUpdate aUpdate)
+PBaseCoder BaseCoder_Create(void *aCodec)
 {
   PBaseCoder Self = malloc(sizeof(struct TBaseCoder));
 
   Self->Codec  = aCodec;
-  Self->Update = aUpdate;
   Self->Freq   = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
   Self->Heap   = 0;
   Self->Cuts   = 0;
@@ -74,14 +73,13 @@ PBaseCoder BaseCoder_Create(void *aCodec, PUpdate aUpdate)
   return Self;
 }
 
-void *BaseCoder_Destroy(PBaseCoder Self)
+void BaseCoder_Destroy(PBaseCoder Self)
 {
   free(Self->Freq);
   free(Self->Heap);
   free(Self->Cuts);
   free(Self->List);
   free(Self);
-  return 0;
 }
 
 void BaseCoder_Add(PBaseCoder Self, unsigned int aSymbol)
@@ -317,7 +315,7 @@ void BaseCoder_Step(PBaseCoder Self)
   }
   while (!(I == MAXSYMBOL + 1));
 
-  Self->Symbol = Self->Update(Self->Codec, Self->Freq, Self->Symbol);
+  Self->Symbol = RangeEncoder_Update(Self->Codec, Self->Freq, Self->Symbol);
 
   BaseCoder_Add(Self, Self->Symbol);
 
@@ -359,41 +357,6 @@ void BaseCoder_Step(PBaseCoder Self)
     }
     while (!(I == Self->ListCount));
     Self->ListCount = J;
-  }
-}
-
-void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
-{
-  Self->Table.Level = (unsigned int)(*T)[0] & 0xF;
-
-  unsigned int I = 1;
-  unsigned int J , K;
-
-  for (J = 0; J <= TABLECOLS; J++)
-    for (K = 0; K <= TABLESIZE; K++)
-    {
-      Self->Table.T[J][K] = (signed int)(*T)[I] + 1;
-      I++;
-    }
-
-  for (I = 0; I <= 1; I++)
-  {
-    TTableCol *aPart;
-    aPart = &(Self->Table.T[I]);
-
-    (*aPart)[0]             =                  (*aPart)[0] + 256;               // Weight of first-encoutered deterministic symbol
-    (*aPart)[MAXSYMBOL + 2] =                  (*aPart)[MAXSYMBOL + 2]  + 32;   // Recency scaling, R = R'' / 32, R'' = (R' + 1) * 32
-    (*aPart)[MAXSYMBOL + 3] = INCREMENT *      (*aPart)[MAXSYMBOL + 3] << 2;    // Zero-valued parameter allowed...
-    (*aPart)[MAXSYMBOL + 4] =                  (*aPart)[MAXSYMBOL + 4]  / 8;
-    (*aPart)[MAXSYMBOL + 5] = floor(pow(1.082, (*aPart)[MAXSYMBOL + 5]) + 0.5); // Lowest value of interval
-
-    // printf(" -DOPO- \n");
-    // printf("%d\n", (*aPart)[0]);
-    // printf("%d\n", (*aPart)[MAXSYMBOL + 2]);
-    // printf("%d\n", (*aPart)[MAXSYMBOL + 3]);
-    // printf("%d\n", (*aPart)[MAXSYMBOL + 4]);
-    // printf("%d\n", (*aPart)[MAXSYMBOL + 5]);
-
   }
 }
 
@@ -446,8 +409,46 @@ void BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel)
   BaseCoder_FreshFlexible(Self);
 }
 
+void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
+{
+  Self->Table.Level = (unsigned int)(*T)[0] & 0xF;
+
+  unsigned int I = 1;
+  unsigned int J , K;
+
+  for (J = 0; J <= TABLECOLS; J++)
+    for (K = 0; K <= TABLESIZE; K++)
+    {
+      Self->Table.T[J][K] = (signed int)(*T)[I] + 1;
+      I++;
+    }
+
+  for (I = 0; I <= 1; I++)
+  {
+    TTableCol *aPart;
+    aPart = &(Self->Table.T[I]);
+
+    (*aPart)[0]             =                  (*aPart)[0] + 256;               // Weight of first-encoutered deterministic symbol
+    (*aPart)[MAXSYMBOL + 2] =                  (*aPart)[MAXSYMBOL + 2]  + 32;   // Recency scaling, R = R'' / 32, R'' = (R' + 1) * 32
+    (*aPart)[MAXSYMBOL + 3] = INCREMENT *      (*aPart)[MAXSYMBOL + 3] << 2;    // Zero-valued parameter allowed...
+    (*aPart)[MAXSYMBOL + 4] =                  (*aPart)[MAXSYMBOL + 4]  / 8;
+    (*aPart)[MAXSYMBOL + 5] = floor(pow(1.082, (*aPart)[MAXSYMBOL + 5]) + 0.5); // Lowest value of interval
+
+    // printf(" -DOPO- \n");
+    // printf("%d\n", (*aPart)[0]);
+    // printf("%d\n", (*aPart)[MAXSYMBOL + 2]);
+    // printf("%d\n", (*aPart)[MAXSYMBOL + 3]);
+    // printf("%d\n", (*aPart)[MAXSYMBOL + 4]);
+    // printf("%d\n", (*aPart)[MAXSYMBOL + 5]);
+
+  }
+}
+
 uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
 {
+
+  printf("Ciao \n");
+
   Self->Part = &(Self->Table.T[0]);
 
   unsigned int result = 0;
@@ -477,3 +478,21 @@ uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
   Self->List[Self->ListCount - 1] = Self->Root;
   return result;
 }
+
+void BaseCoder_Encode(PBaseCoder Self, char *Buffer, int32 BufSize)
+{
+  int32 I;
+  for (I = 0; I < BufSize; I++)
+  {
+    BaseCoder_Update(Self, (uint32)Buffer[I]);
+  }
+};
+
+void BaseCoder_Decode(PBaseCoder Self, char *Buffer, int32 BufSize)
+{
+  int32 I;
+  for (I = 0; I < BufSize; I++)
+  {
+    Buffer[I] = BaseCoder_Update(Self, 0);
+  }
+};
