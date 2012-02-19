@@ -36,15 +36,14 @@ unit BeeLib_Crc;
 
 interface
 
-{ Crc32 calculating routines }
+{ CRC32 calculating routines }
 
-procedure UpdCrc32(var aCrc32: longword; aData: byte);
-function  UpdateCrc32(const aCrc32: longword; aData: byte): longword;
+procedure UpdateCRC32(var aCRC32: longword; var Data; DataSize: longint);
 
 implementation
 
 const
-  Crc32Tab: array [0..255] of longword = (
+  CRC32Tab: array [0..255] of longword = (
     $00000000, $77073096, $EE0E612C, $990951BA, $076DC419, $706AF48F, $E963A535, $9E6495A3,
     $0EDB8832, $79DCB8A4, $E0D5E91E, $97D2D988, $09B64C2B, $7EB17CBD, $E7B82D07, $90BF1D91,
     $1DB71064, $6AB020F2, $F3B97148, $84BE41DE, $1ADAD47D, $6DDDE4EB, $F4D4B551, $83D385C7,
@@ -78,24 +77,17 @@ const
     $BDBDF21C, $CABAC28A, $53B39330, $24B4A3A6, $BAD03605, $CDD70693, $54DE5729, $23D967BF,
     $B3667A2E, $C4614AB8, $5D681B02, $2A6F2B94, $B40BBE37, $C30C8EA1, $5A05DF1B, $2D02EF8D);
 
-{ Crc32 calculating routines }
+{ CRC32 calculating routines }
 
-procedure UpdCrc32(var aCrc32: longword; aData: byte); {$IFDEF FPC} inline; {$ENDIF}
+procedure UpdateCRC32(var aCRC32: longword; var Data; DataSize: longint);
 var
-  Temp: longword;
+  Bytes: array [0..$FFFFFFF] of byte absolute Data;
+  I: longint;
 begin
-  Temp   := aCrc32;
-  aCrc32 := Crc32Tab[byte(Temp xor aData)] xor (Temp shr 8);
-end;
-
-function UpdateCrc32(const aCrc32: longword; aData: byte): longword; {$IFDEF FPC} inline; {$ENDIF}
-begin
-  Result := Crc32Tab[byte(aCrc32 xor aData)] xor (aCrc32 shr 8);
-end;
-
-function UpdateCrc32(const aCrc32: longword; aData: byte): longword; {$IFDEF FPC} inline; {$ENDIF}
-begin
-  Result := Crc32Tab[byte(aCrc32 xor aData)] xor (aCrc32 shr 8);
+  for I := 1 to DataSize do
+  begin
+    aCRC32 := CRC32Tab[byte(aCRC32 xor Bytes[I])] xor (aCRC32 shr 8);
+  end;
 end;
 
 end.
