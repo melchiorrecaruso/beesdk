@@ -446,9 +446,6 @@ void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
 
 uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
 {
-
-  printf("Ciao \n");
-
   Self->Part = &(Self->Table.T[0]);
 
   unsigned int result = 0;
@@ -479,16 +476,20 @@ uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
   return result;
 }
 
-void BaseCoder_Encode(PBaseCoder Self, char *Buffer, int32 BufSize)
+void BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
 {
   int32 I;
   for (I = 0; I < BufSize; I++)
   {
-    BaseCoder_Update(Self, (uint32)Buffer[I]);
+    // printf("Buffer[I] = %d \n", Buffer[I]);
+
+    BaseCoder_Update(Self, Buffer[I]);
+
+
   }
 };
 
-void BaseCoder_Decode(PBaseCoder Self, char *Buffer, int32 BufSize)
+void BaseCoder_Decode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
 {
   int32 I;
   for (I = 0; I < BufSize; I++)
