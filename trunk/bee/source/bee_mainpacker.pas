@@ -214,7 +214,7 @@ uses
     Buffer: array[0..$FFFF] of byte;
   begin
 
-    Writeln('ENCODE: RangeEncoder_StartEncode');
+    // Writeln('ENCODE: RangeEncoder_StartEncode');
     RangeEncoder_StartEncode(FCoder);
 
 
@@ -224,11 +224,10 @@ uses
     while Count <> 0 do
     begin
       Readed := Stream.Read(Buffer, SizeOf(Buffer));
-
-      Writeln('ENCODE: BaseCoder_Encode');
+      // Writeln('ENCODE: BaseCoder_Encode');
       BaseCoder_Encode(FModeller, @Buffer, Readed);
 
-      Writeln('ENCODE: UpdateCrc32');
+      // Writeln('ENCODE: UpdateCrc32');
       UpdateCrc32(CRC, Buffer, Readed);
       Inc(Result, Readed);
       Dec(Count);
