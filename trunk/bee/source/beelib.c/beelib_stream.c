@@ -12,14 +12,14 @@ struct TReadStream {
    PStreamRead StreamRead;
            int BufferSize;
            int BufferReaded;
-          char Buffer[DEFAULT_BUFFER_CAPACITY];
+         uint8 Buffer[DEFAULT_BUFFER_CAPACITY];
 };
 
 PReadStream ReadStream_Create(void *aStream, PStreamRead aStreamRead)
 {
-  PReadStream Self = malloc(sizeof(struct TReadStream));
-  Self->Stream     = aStream;
-  Self->StreamRead = aStreamRead;
+  PReadStream Self   = malloc(sizeof(struct TReadStream));
+  Self->Stream       = aStream;
+  Self->StreamRead   = aStreamRead;
 
   Self->BufferReaded = 0;
   Self->BufferSize   = 0;
@@ -43,9 +43,9 @@ void ReadStream_FillBuffer(PReadStream Self)
   Self->BufferReaded = 0;
 }
 
-char ReadStream_Read(PReadStream Self)
+uint8 ReadStream_Read(PReadStream Self)
 {
-  char result = 0;
+  uint8 result = 0;
   if (Self->BufferReaded < Self->BufferSize)
   {
     result = Self->Buffer[Self->BufferReaded];
@@ -84,7 +84,6 @@ PWriteStream WriteStream_Create(void *aStream, PStreamWrite aStreamWrite)
 
 void WriteStream_Destroy(PWriteStream Self)
 {
-  WriteStream_FlushBuffer(Self);
   free(Self);
 }
 
@@ -102,7 +101,7 @@ void WriteStream_FlushBuffer(PWriteStream Self)
   }
 }
 
-void WriteStream_Write(PWriteStream Self, char Data)
+void WriteStream_Write(PWriteStream Self, uint8 Data)
 {
   if (Self->BufferSize == DEFAULT_BUFFER_CAPACITY)
   {
