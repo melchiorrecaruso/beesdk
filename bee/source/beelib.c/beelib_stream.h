@@ -33,7 +33,7 @@ typedef struct TReadStream *PReadStream;
          void ReadStream_Destroy    (PReadStream Self);
          void ReadStream_ClearBuffer(PReadStream Self);
          void ReadStream_FillBuffer (PReadStream Self);
-         char ReadStream_Read       (PReadStream Self);
+        uint8 ReadStream_Read       (PReadStream Self);
 
 /* TWriteStream struct/methods implementation */
 
@@ -43,6 +43,6 @@ typedef struct TWriteStream *PWriteStream;
           void WriteStream_Destroy    (PWriteStream Self);
           void WriteStream_ClearBuffer(PWriteStream Self);
           void WriteStream_FlushBuffer(PWriteStream Self);
-          void WriteStream_Write      (PWriteStream Self, char Data);
+          void WriteStream_Write      (PWriteStream Self, uint8 Data);
 
 #endif // BEELIB_STREAM_H

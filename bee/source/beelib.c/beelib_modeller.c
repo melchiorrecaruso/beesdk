@@ -66,8 +66,8 @@ PBaseCoder BaseCoder_Create(void *aCodec)
 
   Self->Codec  = aCodec;
   Self->Freq   = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
-  Self->Heap   = 0;
-  Self->Cuts   = 0;
+  Self->Heap   = NULL;
+  Self->Cuts   = NULL;
   Self->List   = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
 
   return Self;
@@ -75,11 +75,19 @@ PBaseCoder BaseCoder_Create(void *aCodec)
 
 void BaseCoder_Destroy(PBaseCoder Self)
 {
+  printf("C1 \n");
   free(Self->Freq);
+
+
+  printf("C2 \n");
   free(Self->Heap);
+  printf("C3 \n");
   free(Self->Cuts);
+  printf("C4 \n");
   free(Self->List);
+  printf("C5 \n");
   free(Self);
+  printf("C6 \n");
 }
 
 void BaseCoder_Add(PBaseCoder Self, unsigned int aSymbol)
@@ -481,11 +489,7 @@ void BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
   int32 I;
   for (I = 0; I < BufSize; I++)
   {
-    // printf("Buffer[I] = %d \n", Buffer[I]);
-
     BaseCoder_Update(Self, Buffer[I]);
-
-
   }
 };
 
