@@ -149,15 +149,8 @@ uses
 
   destructor THeaderEncoder.Destroy;
   begin
-    Writeln('OK-11');
-
     BaseCoder_Destroy(FModeller);
-    Writeln('OK-12');
-
     RangeEncoder_Destroy(FCoder);
-
-    Writeln('OK-13');
-
     inherited Destroy;
   end;
 
@@ -235,18 +228,13 @@ uses
 
       if FTick(Readed) then Exit;
     end;
-    Writeln('OK-4');
     Readed := Stream.Read(Buffer, Size mod SizeOf(Buffer));
     BaseCoder_Encode(FModeller, @Buffer, Readed);
     UpdateCRC32(CRC, Buffer, Readed);
     Inc(Result, Readed);
     FTick(Readed);
 
-    Writeln('OK-5');
-
     RangeEncoder_FinishEncode(FCoder);
-
-    Writeln('OK-6');
   end;
 
   function THeaderEncoder.Write(Item: THeader; Stream: TStream; const Size: int64): boolean;
@@ -263,8 +251,6 @@ uses
     Item.PackedSize := FStream.Seek(0, soCurrent) - Item.StartPos;
     Item.Crc        := CRC;
 
-     Writeln('OK-7');
-
     // optimize compression ...
     if Item.PackedSize > Item.Size then
     begin
@@ -278,8 +264,6 @@ uses
       Item.PackedSize := Copy(Stream, Size, TRUE);
     end;
     Result := Item.Size = Size;
-
-    Writeln('OK-8');
   end;
 
   function THeaderEncoder.WriteFromSwap(Item: THeader; Stream: TStream): boolean;

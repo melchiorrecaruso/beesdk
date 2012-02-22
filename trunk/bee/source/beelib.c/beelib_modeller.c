@@ -56,7 +56,7 @@ struct TBaseCoder {
    unsigned int Q;
 
           TFreq Freq;             // symbol frequencyes
-      TTableCol *Part;            // Part of parameters Table
+     TTableCol *Part;             // Part of parameters Table
   struct TTable Table;            // parameters Table
 };
 
@@ -75,19 +75,11 @@ PBaseCoder BaseCoder_Create(void *aCodec)
 
 void BaseCoder_Destroy(PBaseCoder Self)
 {
-  printf("C1 \n");
   free(Self->Freq);
-
-
-  printf("C2 \n");
   free(Self->Heap);
-  printf("C3 \n");
   free(Self->Cuts);
-  printf("C4 \n");
   free(Self->List);
-  printf("C5 \n");
   free(Self);
-  printf("C6 \n");
 }
 
 void BaseCoder_Add(PBaseCoder Self, unsigned int aSymbol)
@@ -105,12 +97,12 @@ void BaseCoder_CreateChild(PBaseCoder Self, PNode Parent)
   {
     result = Self->Tear;
     PNode Link = result->Tear;
-    if (result->Next != 0)
+    if (result->Next != NULL)
     {
       result->Next->Tear = Link;
       Link = result->Next;
     }
-    if (result->Up != 0)
+    if (result->Up != NULL)
     {
       result->Up->Tear = Link;
       Link = result->Up;
@@ -122,7 +114,7 @@ void BaseCoder_CreateChild(PBaseCoder Self, PNode Parent)
 
   result->Next = Parent->Up;
   Parent->Up   = result;
-  result->Up   = 0;
+  result->Up   = NULL;
   result->A    = Parent->A + 1;
   result->C    = Self->Heap[Parent->A & Self->MaxCounter].D;
   result->K    = INCREMENT;
@@ -135,7 +127,7 @@ void BaseCoder_CutTail(PBaseCoder Self, PPNode I, PPNode J)
   {
     (*I)->Up->Tear = P;
     P = (*I)->Up;
-    (*I)->Up = 0;
+    (*I)->Up = NULL;
     I++;
   }
   while (!(I == J));
@@ -144,7 +136,7 @@ void BaseCoder_CutTail(PBaseCoder Self, PPNode I, PPNode J)
 
 void BaseCoder_Cut(PBaseCoder Self)
 {
-  if (Self->Cuts == 0)
+  if (Self->Cuts == NULL)
   {
     Self->Cuts = malloc(sizeof(PPNode)*(Self->MaxCounter + 1));
   }
@@ -156,14 +148,14 @@ void BaseCoder_Cut(PBaseCoder Self)
   (*I) = Self->Root;
 
   int Bound = (Self->SafeCounter * 3) / 4;
-  PNode P = 0;
+  PNode P = NULL;
   do
   {
     P = (*I)->Up;
     do
     {
       Bound--;
-      if (P->Up != 0)
+      if (P->Up != NULL)
       {
         if (P->A > Self->LowestPos)
         {
@@ -174,12 +166,12 @@ void BaseCoder_Cut(PBaseCoder Self)
         {
           P->Up->Tear = Self->Tear;
           Self->Tear = P->Up;
-          P->Up = 0;
+          P->Up = NULL;
         }
       }
       P = P->Next;
     }
-    while (!(P == 0));
+    while (!(P == NULL));
     I++;
   }
   while (!((I == J) || (Bound < 0)));
@@ -196,7 +188,7 @@ PNode BaseCoder_Tail(PBaseCoder Self, PNode Node)
   Node->A = Self->Pos;
   PNode result = Node->Up;
 
-  if (result == 0)
+  if (result == NULL)
     BaseCoder_CreateChild(Self, Node);
   else
   {
@@ -206,7 +198,7 @@ PNode BaseCoder_Tail(PBaseCoder Self, PNode Node)
       {
         PNode P = result;
         result  = result->Next;
-        if (result == 0)
+        if (result == NULL)
         {
           BaseCoder_CreateChild(Self, Node);
           break;
@@ -236,13 +228,13 @@ void BaseCoder_Account(PBaseCoder Self)
   do
   {
     PNode P = Self->List[Self->I];
-    if (P->Up !=0)
+    if (P->Up !=NULL)
     {
       P = P->Up;
       if (Self->IncreaseIndex == 0)
         Self->IncreaseIndex = Self->I;
 
-      if (P->Next != 0)
+      if (P->Next != NULL)
       {
         // Undetermined context ...
         K = P->K * (*(Self->Part))[MAXSYMBOL + 2] >> 5;
@@ -256,7 +248,7 @@ void BaseCoder_Account(PBaseCoder Self)
           K += P->K;
           P = P->Next;
         }
-        while (! (P == 0));
+        while (! (P == NULL));
         Self->Q += (*(Self->Part))[J];
 
         // Account:
@@ -275,7 +267,7 @@ void BaseCoder_Account(PBaseCoder Self)
           Self->Freq[P->C] += J;
 		  P = P->Next;
         }
-        while (!(P == 0));
+        while (!(P == NULL));
       }
       else
       {
@@ -305,7 +297,7 @@ void BaseCoder_Step(PBaseCoder Self)
 {
   // ClearLongword(&Freq[0], MaxSymbol + 1);
    int H;
-  for (H = 0; H < MAXSYMBOL + 2; H++)
+  for (H = 0; H < MAXSYMBOL + 1; H++)
     Self->Freq[H] = 0;
 
   Self->R = MAXFREQ - MAXSYMBOL - 1;
@@ -327,7 +319,7 @@ void BaseCoder_Step(PBaseCoder Self)
 
   BaseCoder_Add(Self, Self->Symbol);
 
-  PNode P = 0;
+  PNode P = NULL;
   if (Self->ListCount > 0)
   {
     // Update frequencies...
@@ -345,7 +337,7 @@ void BaseCoder_Step(PBaseCoder Self)
           P->K >>= 1;
           P = P->Next;
         }
-        while (!(P == 0));
+        while (!(P == NULL));
       I++;
     }
     while (!(I > Self->IncreaseIndex));
@@ -356,7 +348,7 @@ void BaseCoder_Step(PBaseCoder Self)
     do
     {
       P = BaseCoder_Tail(Self, Self->List[I]);
-      if (P != 0)
+      if (P != NULL)
       {
         Self->List[J] = P;
         J++;
@@ -370,7 +362,7 @@ void BaseCoder_Step(PBaseCoder Self)
 
 void BaseCoder_FreshFlexible(PBaseCoder Self)
 {
-  Self->Tear            = 0;
+  Self->Tear            = NULL;
   Self->CurrentFreeNode = &(Self->Heap[0]);
   Self->LastFreeNode    = &(Self->Heap[Self->MaxCounter]);
   Self->Counter         = 0;
@@ -381,8 +373,8 @@ void BaseCoder_FreshFlexible(PBaseCoder Self)
   Self->Root = Self->CurrentFreeNode;
   Self->CurrentFreeNode++;
 
-  Self->Root->Next = 0;
-  Self->Root->Up   = 0;
+  Self->Root->Next = NULL;
+  Self->Root->Up   = NULL;
   Self->Root->K    = INCREMENT;
   Self->Root->C    = 0;
   Self->Root->A    = 1;
@@ -409,7 +401,7 @@ void BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel)
     Self->SafeCounter = Self->MaxCounter - 64;
 
 	free(Self->Cuts);
-	Self->Cuts = 0;
+	Self->Cuts = NULL;
 
 	free(Self->Heap);
 	Self->Heap = malloc(sizeof(struct TNode)*(Self->MaxCounter + 1));
