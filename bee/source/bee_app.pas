@@ -747,19 +747,12 @@ begin
                 Check := Encoder.WriteFromFile(P);
               end;
             end;
-
-             Writeln('OK-9');
-
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
             if Check = False then
               DoMessage(cmStrmReadError, ccError);
           end;
-        Writeln('OK-10');
 
         Encoder.Destroy;
-
-        Writeln('OK-14');
-
         FHeaders.Write(FTempWriter);
       end;
     end else

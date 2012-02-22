@@ -1,8 +1,11 @@
 #include "beelib_common.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 // ------------------------------------------------------------------ //
 //  Common routine                                                    //
 // ------------------------------------------------------------------ //
+
 
 inline uint32 MulDiv(uint32 A, uint32 B, uint32 C)
 {
@@ -18,6 +21,7 @@ inline uint32 MulDiv(uint32 A, uint32 B, uint32 C)
   );
   return A;
 }
+
 
 inline uint32 MulDecDiv(uint32 A, uint32 B, uint32 C)
 {
