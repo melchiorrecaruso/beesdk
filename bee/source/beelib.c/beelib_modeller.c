@@ -82,14 +82,14 @@ void BaseCoder_Destroy(PBaseCoder Self)
   free(Self);
 }
 
-void BaseCoder_Add(PBaseCoder Self, unsigned int aSymbol)
+static inline void BaseCoder_Add(PBaseCoder Self, unsigned int aSymbol)
 {
   Self->Pos++;
   Self->LowestPos++;
   Self->Heap[Self->Pos & Self->MaxCounter].D = aSymbol;
 }
 
-void BaseCoder_CreateChild(PBaseCoder Self, PNode Parent)
+static inline void BaseCoder_CreateChild(PBaseCoder Self, PNode Parent)
 {
   Self->Counter++;
   PNode result = Self->CurrentFreeNode;
@@ -120,7 +120,7 @@ void BaseCoder_CreateChild(PBaseCoder Self, PNode Parent)
   result->K    = INCREMENT;
 }
 
-void BaseCoder_CutTail(PBaseCoder Self, PPNode I, PPNode J)
+static inline void BaseCoder_CutTail(PBaseCoder Self, PPNode I, PPNode J)
 {
   PNode P = Self->Tear;
   do
@@ -134,7 +134,7 @@ void BaseCoder_CutTail(PBaseCoder Self, PPNode I, PPNode J)
   Self->Tear = P;
 }
 
-void BaseCoder_Cut(PBaseCoder Self)
+static inline void BaseCoder_Cut(PBaseCoder Self)
 {
   if (Self->Cuts == NULL)
   {
@@ -183,7 +183,7 @@ void BaseCoder_Cut(PBaseCoder Self)
   Self->ListCount = 0;
 }
 
-PNode BaseCoder_Tail(PBaseCoder Self, PNode Node)
+static inline PNode BaseCoder_Tail(PBaseCoder Self, PNode Node)
 {
   Node->A = Self->Pos;
   PNode result = Node->Up;
@@ -216,7 +216,7 @@ PNode BaseCoder_Tail(PBaseCoder Self, PNode Node)
   return result;
 }
 
-void BaseCoder_Account(PBaseCoder Self)
+static inline void BaseCoder_Account(PBaseCoder Self)
 {
   Self->I = 0;
   Self->Q = 0;
@@ -293,7 +293,7 @@ void BaseCoder_Account(PBaseCoder Self)
   Self->ListCount = Self->I;
 }
 
-void BaseCoder_Step(PBaseCoder Self)
+static inline void BaseCoder_Step(PBaseCoder Self)
 {
   // ClearLongword(&Freq[0], MaxSymbol + 1);
    int H;
@@ -444,7 +444,7 @@ void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
   }
 }
 
-uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
+static inline uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
 {
   Self->Part = &(Self->Table.T[0]);
 
@@ -476,7 +476,7 @@ uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
   return result;
 }
 
-void BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
+inline void BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
 {
   int32 I;
   for (I = 0; I < BufSize; I++)
@@ -485,7 +485,7 @@ void BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
   }
 };
 
-void BaseCoder_Decode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
+inline void BaseCoder_Decode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
 {
   int32 I;
   for (I = 0; I < BufSize; I++)

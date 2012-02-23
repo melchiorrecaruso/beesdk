@@ -31,19 +31,19 @@ void ReadStream_Destroy(PReadStream Self)
   free(Self);
 }
 
-void ReadStream_ClearBuffer(PReadStream Self)
+inline void ReadStream_ClearBuffer(PReadStream Self)
 {
   Self->BufferReaded = 0;
   Self->BufferSize   = 0;
 }
 
-void ReadStream_FillBuffer(PReadStream Self)
+inline void ReadStream_FillBuffer(PReadStream Self)
 {
   Self->BufferSize   = Self->StreamRead(Self->Stream, &(Self->Buffer[0]), DEFAULT_BUFFER_CAPACITY);
   Self->BufferReaded = 0;
 }
 
-uint8 ReadStream_Read(PReadStream Self)
+inline uint8 ReadStream_Read(PReadStream Self)
 {
   uint8 result = 0;
   if (Self->BufferReaded < Self->BufferSize)
@@ -87,12 +87,12 @@ void WriteStream_Destroy(PWriteStream Self)
   free(Self);
 }
 
-void WriteStream_ClearBuffer(PWriteStream Self)
+inline void WriteStream_ClearBuffer(PWriteStream Self)
 {
   Self->BufferSize = 0;
 }
 
-void WriteStream_FlushBuffer(PWriteStream Self)
+inline void WriteStream_FlushBuffer(PWriteStream Self)
 {
   if (Self->BufferSize != 0)
   {
@@ -101,7 +101,7 @@ void WriteStream_FlushBuffer(PWriteStream Self)
   }
 }
 
-void WriteStream_Write(PWriteStream Self, uint8 Data)
+inline void WriteStream_Write(PWriteStream Self, uint8 Data)
 {
   if (Self->BufferSize == DEFAULT_BUFFER_CAPACITY)
   {
