@@ -11,8 +11,6 @@
 #define MAXSYMBOL 15             // Size of source alphabet, symbols
 #define INCREMENT  8             // Increment of symbol frequency
 
-typedef uint32 (*PUpdateSymbol) (void*, uint32*, uint32);
-
 /* PPM modeller's node information */
 
 struct TNode{
@@ -293,7 +291,7 @@ static inline void BaseCoder_Account(PBaseCoder Self)
   Self->ListCount = Self->I;
 }
 
-static inline void BaseEncoder_Step(PBaseCoder Self)
+static inline void BaseCoder_Step(PBaseCoder Self, PRangeCoder_Update Update)
 {
   // ClearLongword(&Freq[0], MaxSymbol + 1);
   int32 H;
@@ -302,73 +300,8 @@ static inline void BaseEncoder_Step(PBaseCoder Self)
 
   Self->R = MAXFREQ - MAXSYMBOL - 1;
 
-  if (Self->ListCount > 0) BaseCoder_Account(Self);
-
-  // Update aSymbol...
-  // AddLongword(&Freq[0], MaxSymbol + 1, (R >> BitChain) + 1);
-  uint32 I = 0, J = (Self->R >> BITCHAIN) + 1;
-  do
-  {
-    Self->Freq[I] += J;
-    I++;
-  }
-  while (!(I == MAXSYMBOL + 1));
-
-  Self->Symbol = RangeEncoder_Update(Self->Codec, Self->Freq, Self->Symbol);
-
-  BaseCoder_Add(Self, Self->Symbol);
-
-  PNode P = NULL;
   if (Self->ListCount > 0)
-  {
-    // Update frequencies...
-    uint32 I = 0;
-    do
-    {
-      P = Self->List[I];
-      if (I == Self->IncreaseIndex)
-        P->K += INCREMENT;                // Special case...
-      else
-        P->K +=  (*(Self->Part))[MAXSYMBOL + 4];  // General case...
-      if (P->K > (*(Self->Part))[MAXSYMBOL + 3])
-        do
-        {
-          P->K >>= 1;
-          P = P->Next;
-        }
-        while (!(P == NULL));
-      I++;
-    }
-    while (!(I > Self->IncreaseIndex));
-
-    // Update Tree...
-    I = 0;
-    J = I;
-    do
-    {
-      P = BaseCoder_Tail(Self, Self->List[I]);
-      if (P != NULL)
-      {
-        Self->List[J] = P;
-        J++;
-      }
-      I++;
-    }
-    while (!(I == Self->ListCount));
-    Self->ListCount = J;
-  }
-}
-
-static inline void BaseDecoder_Step(PBaseCoder Self)
-{
-  // ClearLongword(&Freq[0], MaxSymbol + 1);
-  int32 H;
-  for (H = 0; H < MAXSYMBOL + 1; H++)
-    Self->Freq[H] = 0;
-
-  Self->R = MAXFREQ - MAXSYMBOL - 1;
-
-  if (Self->ListCount > 0) BaseCoder_Account(Self);
+    BaseCoder_Account(Self);
 
   // Update aSymbol...
   // AddLongword(&Freq[0], MaxSymbol + 1, (R >> BitChain) + 1);
@@ -380,7 +313,7 @@ static inline void BaseDecoder_Step(PBaseCoder Self)
   }
   while (!(I == MAXSYMBOL + 1));
 
-  Self->Symbol = RangeDecoder_Update(Self->Codec, Self->Freq);
+  Self->Symbol = Update(Self->Codec, Self->Freq, Self->Symbol);
 
   BaseCoder_Add(Self, Self->Symbol);
 
@@ -501,17 +434,19 @@ void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
   }
 }
 
-static inline uint32 BaseEncoder_Update(PBaseCoder Self, uint32 aSymbol)
+static inline uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol, PRangeCoder_Update Update)
 {
   Self->Part = &(Self->Table.T[0]);
 
-  unsigned int result = 0;
+  uint32 result = 0;
   Self->Symbol = aSymbol >> 0x4;
-  BaseEncoder_Step(Self);
+  BaseCoder_Step(Self, Update);
+
   result = Self->Symbol << 4;
   Self->Part = &(Self->Table.T[1]);
   Self->Symbol = aSymbol & 0xF;
-  BaseEncoder_Step(Self);
+  BaseCoder_Step(Self, Update);
+
   result += Self->Symbol;
 
   // Reduce Tree...
@@ -524,39 +459,7 @@ static inline uint32 BaseEncoder_Update(PBaseCoder Self, uint32 aSymbol)
     // MoveLongwordUnchecked(List[1], List[0], ListCount - 1);
     uint32 H;
     for (H = 1; H < Self->ListCount; H++)
-       Self->List[H - 1] = Self->List[H];
-  }
-  else
-    Self->ListCount++;
-
-  Self->List[Self->ListCount - 1] = Self->Root;
-  return result;
-}
-
-static inline uint32 BaseDecoder_Update(PBaseCoder Self, uint32 aSymbol)
-{
-  Self->Part = &(Self->Table.T[0]);
-
-  unsigned int result = 0;
-  Self->Symbol = aSymbol >> 0x4;
-  BaseDecoder_Step(Self);
-  result = Self->Symbol << 4;
-  Self->Part = &(Self->Table.T[1]);
-  Self->Symbol = aSymbol & 0xF;
-  BaseDecoder_Step(Self);
-  result += Self->Symbol;
-
-  // Reduce Tree...
-  if (Self->SafeCounter < Self->Counter)
-    BaseCoder_Cut(Self);
-
-  // Update NodeList...
-  if (Self->ListCount > Self->Table.Level)
-  {
-    // MoveLongwordUnchecked(List[1], List[0], ListCount - 1);
-    uint32 H;
-    for (H = 1; H < Self->ListCount; H++)
-       Self->List[H - 1] = Self->List[H];
+      Self->List[H - 1] = Self->List[H];
   }
   else
     Self->ListCount++;
@@ -568,17 +471,17 @@ static inline uint32 BaseDecoder_Update(PBaseCoder Self, uint32 aSymbol)
 inline void BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
 {
   int32 I;
-  for (I = 0; I < BufSize; I++)
+  for  (I = 0; I < BufSize; I++)
   {
-    BaseEncoder_Update(Self, Buffer[I]);
+    BaseCoder_Update(Self, Buffer[I], (PRangeCoder_Update)RangeEncoder_Update);
   }
 };
 
 inline void BaseCoder_Decode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
 {
   int32 I;
-  for (I = 0; I < BufSize; I++)
+  for  (I = 0; I < BufSize; I++)
   {
-    Buffer[I] = BaseEncoder_Update(Self, 0);
+    Buffer[I] = BaseCoder_Update(Self, 0, (PRangeCoder_Update)RangeDecoder_Update);
   }
 };

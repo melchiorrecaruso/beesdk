@@ -33,7 +33,7 @@
 
 typedef uint32 *TFreq;
 
- /* TRangeEncoder struct/methods */
+/* TRangeEncoder struct/methods */
 
 typedef struct TRangeEncoder *PRangeEncoder;
 
@@ -52,6 +52,10 @@ typedef struct TRangeDecoder *PRangeDecoder;
            void RangeDecoder_StartDecode (PRangeDecoder Self);
            void RangeDecoder_FinishDecode(PRangeDecoder Self);
          uint32 RangeDecoder_GetFreq     (PRangeDecoder Self, uint32 TotFreq);
-         uint32 RangeDecoder_Update      (PRangeDecoder Self, TFreq Freq);
+         uint32 RangeDecoder_Update      (PRangeDecoder Self, TFreq Freq, uint32 aSymbol);
+
+/* RangeCoder_Update definition */
+
+typedef uint32 (*PRangeCoder_Update) (void*, uint32*, uint32);
 
 #endif //  BEELIB_RANGECODER_H

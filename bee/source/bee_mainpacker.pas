@@ -355,8 +355,33 @@ uses
   end;
 
   function THeaderDecoder.Decode(Stream: TStream; const Size: int64; var CRC: longword): int64;
+  var
+    Count:  int64;
+    Writed: longint;
+    Buffer: array[0..$FFFF] of byte;
   begin
+    RangeDecoder_StartDecode(FCoder);
 
+    Result := 0;
+    CRC    := longword(-1);
+    Count  := Size div SizeOf(Buffer);
+    while Count <> 0 do
+    begin
+      BaseCoder_Decode(FModeller, @Buffer, SizeOf(Buffer));
+      Writed := Stream.Write(Buffer, SizeOf(Buffer));
+      UpdateCrc32(CRC, Buffer, Writed);
+      Inc(Result, Writed);
+      Dec(Count);
+
+      if FTick(Writed) then Exit;
+    end;
+    BaseCoder_Decode(FModeller, @Buffer, SizeOf(Buffer));
+    Writed := Stream.Write(Buffer, Size mod SizeOf(Buffer));
+    UpdateCRC32(CRC, Buffer, Writed);
+    Inc(Result, Writed);
+    FTick(Writed);
+
+    RangeDecoder_FinishDecode(FCoder);
   end;
 
   function THeaderDecoder.ReadToSwap(Item: THeader; Stream: TStream): boolean;

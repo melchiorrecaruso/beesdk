@@ -105,6 +105,7 @@ inline uint32 RangeEncoder_Update(PRangeEncoder Self, TFreq Freq, uint32 aSymbol
   // Return result...
   return aSymbol;
 }
+
 /* TRangeDecoder struct/methods implementation */
 
 struct TRangeDecoder {
@@ -166,12 +167,12 @@ static inline void RangeDecoder_Decode(PRangeDecoder Self, uint32 CumFreq, uint3
   }
 }
 
-inline uint32 RangeDecoder_Update(PRangeDecoder Self, TFreq Freq)
+inline uint32 RangeDecoder_Update(PRangeDecoder Self, TFreq Freq, uint32 aSymbol)
 {
   uint32 CumFreq = 0, TotFreq = 0, SumFreq = 0;
 
   // Count TotFreq...
-  uint32 aSymbol = TFREQSIZE;
+  aSymbol = TFREQSIZE;
   do
   {
     aSymbol--;
