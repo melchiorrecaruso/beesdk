@@ -9,7 +9,6 @@
 
 inline uint32 MulDiv(uint32 A, uint32 B, uint32 C)
 {
-  // return (uint32)(((uint64)A * (uint64)B) / (uint64)C);
   asm volatile (
     "movl %1, %%eax;"
     "mul  %2;"
@@ -25,5 +24,18 @@ inline uint32 MulDiv(uint32 A, uint32 B, uint32 C)
 
 inline uint32 MulDecDiv(uint32 A, uint32 B, uint32 C)
 {
-  return (uint32)((((uint64)A * (uint64)B)-1)/(uint64)C);
+  // return (uint32)((((uint64)A * (uint64)B)-1)/(uint64)C);
+  asm volatile (
+    "movl %1, %%eax;"
+    "mul  %2;"
+    "dec  %%eax;"
+    "div  %3;"
+    "movl %%eax, %0;"
+    : "=r"(A)
+    :  "0"(A), "r"(B), "r"(C)
+    : "%eax"
+  );
+  return A;
+
+
 }

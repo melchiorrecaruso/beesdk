@@ -82,7 +82,7 @@ void RangeEncoder_FinishEncode(PRangeEncoder Self)
   WriteStream_FlushBuffer(Self->FStream);
 }
 
-uint32 RangeEncoder_Update(PRangeEncoder Self, TFreq Freq, uint32 aSymbol)
+inline uint32 RangeEncoder_Update(PRangeEncoder Self, TFreq Freq, uint32 aSymbol)
 {
   // Count CumFreq...
   uint32 CumFreq = 0, I = 0;
@@ -149,12 +149,12 @@ void RangeDecoder_FinishDecode(PRangeDecoder Self)
   // nothing to do
 }
 
-uint32 RangeDecoder_GetFreq(PRangeDecoder Self, uint32 TotFreq)
+inline uint32 RangeDecoder_GetFreq(PRangeDecoder Self, uint32 TotFreq)
 {
   return MulDecDiv(Self->FCode + 1, TotFreq, Self->FRange);
 }
 
-void RangeDecoder_Decode(PRangeDecoder Self, uint32 CumFreq, uint32 Freq, uint32 TotFreq)
+static inline void RangeDecoder_Decode(PRangeDecoder Self, uint32 CumFreq, uint32 Freq, uint32 TotFreq)
 {
   Self->FCode -= MulDiv(Self->FRange, CumFreq, TotFreq);
   Self->FRange = MulDiv(Self->FRange,    Freq, TotFreq);
@@ -166,7 +166,7 @@ void RangeDecoder_Decode(PRangeDecoder Self, uint32 CumFreq, uint32 Freq, uint32
   }
 }
 
-uint32 RangeDecoder_Update(PRangeDecoder Self, TFreq Freq)
+inline uint32 RangeDecoder_Update(PRangeDecoder Self, TFreq Freq)
 {
   uint32 CumFreq = 0, TotFreq = 0, SumFreq = 0;
 
