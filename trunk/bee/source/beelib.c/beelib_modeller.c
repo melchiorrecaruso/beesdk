@@ -11,6 +11,8 @@
 #define MAXSYMBOL 15             // Size of source alphabet, symbols
 #define INCREMENT  8             // Increment of symbol frequency
 
+typedef uint32 (*PUpdateSymbol) (void*, uint32*, uint32);
+
 /* PPM modeller's node information */
 
 struct TNode{
@@ -64,11 +66,11 @@ PBaseCoder BaseCoder_Create(void *aCodec)
 {
   PBaseCoder Self = malloc(sizeof(struct TBaseCoder));
 
-  Self->Codec  = aCodec;
-  Self->Freq   = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
-  Self->Heap   = NULL;
-  Self->Cuts   = NULL;
-  Self->List   = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
+  Self->Codec     = aCodec;
+  Self->Freq      = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
+  Self->Heap      = NULL;
+  Self->Cuts      = NULL;
+  Self->List      = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
 
   return Self;
 }
@@ -147,7 +149,7 @@ static inline void BaseCoder_Cut(PBaseCoder Self)
 
   (*I) = Self->Root;
 
-  int Bound = (Self->SafeCounter * 3) / 4;
+  int32 Bound = (Self->SafeCounter * 3) / 4;
   PNode P = NULL;
   do
   {
@@ -192,7 +194,7 @@ static inline PNode BaseCoder_Tail(PBaseCoder Self, PNode Node)
     BaseCoder_CreateChild(Self, Node);
   else
   {
-    unsigned char C = Self->Symbol;
+    uint8 C = Self->Symbol;
     if (result->C != C)
       for (;;)
       {
@@ -222,9 +224,7 @@ static inline void BaseCoder_Account(PBaseCoder Self)
   Self->Q = 0;
   Self->IncreaseIndex = 0;
 
-  unsigned int J = 0;
-  unsigned int K = 0;
-
+  uint32 J = 0, K = 0;
   do
   {
     PNode P = Self->List[Self->I];
@@ -293,10 +293,10 @@ static inline void BaseCoder_Account(PBaseCoder Self)
   Self->ListCount = Self->I;
 }
 
-static inline void BaseCoder_Step(PBaseCoder Self)
+static inline void BaseEncoder_Step(PBaseCoder Self)
 {
   // ClearLongword(&Freq[0], MaxSymbol + 1);
-   int H;
+  int32 H;
   for (H = 0; H < MAXSYMBOL + 1; H++)
     Self->Freq[H] = 0;
 
@@ -306,8 +306,7 @@ static inline void BaseCoder_Step(PBaseCoder Self)
 
   // Update aSymbol...
   // AddLongword(&Freq[0], MaxSymbol + 1, (R >> BitChain) + 1);
-  unsigned int J = (Self->R >> BITCHAIN) + 1;
-  unsigned int I = 0;
+  uint32 I = 0, J = (Self->R >> BITCHAIN) + 1;
   do
   {
     Self->Freq[I] += J;
@@ -323,7 +322,73 @@ static inline void BaseCoder_Step(PBaseCoder Self)
   if (Self->ListCount > 0)
   {
     // Update frequencies...
-    unsigned int I = 0;
+    uint32 I = 0;
+    do
+    {
+      P = Self->List[I];
+      if (I == Self->IncreaseIndex)
+        P->K += INCREMENT;                // Special case...
+      else
+        P->K +=  (*(Self->Part))[MAXSYMBOL + 4];  // General case...
+      if (P->K > (*(Self->Part))[MAXSYMBOL + 3])
+        do
+        {
+          P->K >>= 1;
+          P = P->Next;
+        }
+        while (!(P == NULL));
+      I++;
+    }
+    while (!(I > Self->IncreaseIndex));
+
+    // Update Tree...
+    I = 0;
+    J = I;
+    do
+    {
+      P = BaseCoder_Tail(Self, Self->List[I]);
+      if (P != NULL)
+      {
+        Self->List[J] = P;
+        J++;
+      }
+      I++;
+    }
+    while (!(I == Self->ListCount));
+    Self->ListCount = J;
+  }
+}
+
+static inline void BaseDecoder_Step(PBaseCoder Self)
+{
+  // ClearLongword(&Freq[0], MaxSymbol + 1);
+  int32 H;
+  for (H = 0; H < MAXSYMBOL + 1; H++)
+    Self->Freq[H] = 0;
+
+  Self->R = MAXFREQ - MAXSYMBOL - 1;
+
+  if (Self->ListCount > 0) BaseCoder_Account(Self);
+
+  // Update aSymbol...
+  // AddLongword(&Freq[0], MaxSymbol + 1, (R >> BitChain) + 1);
+  uint32 I = 0, J = (Self->R >> BITCHAIN) + 1;
+  do
+  {
+    Self->Freq[I] += J;
+    I++;
+  }
+  while (!(I == MAXSYMBOL + 1));
+
+  Self->Symbol = RangeDecoder_Update(Self->Codec, Self->Freq);
+
+  BaseCoder_Add(Self, Self->Symbol);
+
+  PNode P = NULL;
+  if (Self->ListCount > 0)
+  {
+    // Update frequencies...
+    uint32 I = 0;
     do
     {
       P = Self->List[I];
@@ -378,7 +443,7 @@ void BaseCoder_FreshFlexible(PBaseCoder Self)
   Self->Root->K    = INCREMENT;
   Self->Root->C    = 0;
   Self->Root->A    = 1;
-  Self->LowestPos  = - ((int) Self->MaxCounter);
+  Self->LowestPos  = - ((int32) Self->MaxCounter);
 }
 
 void BaseCoder_FreshSolid(PBaseCoder Self)
@@ -411,15 +476,15 @@ void BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel)
 
 void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
 {
-  Self->Table.Level = (unsigned int)(*T)[0] & 0xF;
+  Self->Table.Level = (uint32)(*T)[0] & 0xF;
 
-  unsigned int I = 1;
-  unsigned int J , K;
+  uint32 I = 1;
+  uint32 J , K;
 
   for (J = 0; J <= TABLECOLS; J++)
     for (K = 0; K <= TABLESIZE; K++)
     {
-      Self->Table.T[J][K] = (signed int)(*T)[I] + 1;
+      Self->Table.T[J][K] = (int32)(*T)[I] + 1;
       I++;
     }
 
@@ -433,28 +498,20 @@ void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
     (*aPart)[MAXSYMBOL + 3] = INCREMENT *      (*aPart)[MAXSYMBOL + 3] << 2;    // Zero-valued parameter allowed...
     (*aPart)[MAXSYMBOL + 4] =                  (*aPart)[MAXSYMBOL + 4]  / 8;
     (*aPart)[MAXSYMBOL + 5] = floor(pow(1.082, (*aPart)[MAXSYMBOL + 5]) + 0.5); // Lowest value of interval
-
-    // printf(" -DOPO- \n");
-    // printf("%d\n", (*aPart)[0]);
-    // printf("%d\n", (*aPart)[MAXSYMBOL + 2]);
-    // printf("%d\n", (*aPart)[MAXSYMBOL + 3]);
-    // printf("%d\n", (*aPart)[MAXSYMBOL + 4]);
-    // printf("%d\n", (*aPart)[MAXSYMBOL + 5]);
-
   }
 }
 
-static inline uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
+static inline uint32 BaseEncoder_Update(PBaseCoder Self, uint32 aSymbol)
 {
   Self->Part = &(Self->Table.T[0]);
 
   unsigned int result = 0;
   Self->Symbol = aSymbol >> 0x4;
-  BaseCoder_Step(Self);
+  BaseEncoder_Step(Self);
   result = Self->Symbol << 4;
   Self->Part = &(Self->Table.T[1]);
   Self->Symbol = aSymbol & 0xF;
-  BaseCoder_Step(Self);
+  BaseEncoder_Step(Self);
   result += Self->Symbol;
 
   // Reduce Tree...
@@ -465,7 +522,39 @@ static inline uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol)
   if (Self->ListCount > Self->Table.Level)
   {
     // MoveLongwordUnchecked(List[1], List[0], ListCount - 1);
-    unsigned int H;
+    uint32 H;
+    for (H = 1; H < Self->ListCount; H++)
+       Self->List[H - 1] = Self->List[H];
+  }
+  else
+    Self->ListCount++;
+
+  Self->List[Self->ListCount - 1] = Self->Root;
+  return result;
+}
+
+static inline uint32 BaseDecoder_Update(PBaseCoder Self, uint32 aSymbol)
+{
+  Self->Part = &(Self->Table.T[0]);
+
+  unsigned int result = 0;
+  Self->Symbol = aSymbol >> 0x4;
+  BaseDecoder_Step(Self);
+  result = Self->Symbol << 4;
+  Self->Part = &(Self->Table.T[1]);
+  Self->Symbol = aSymbol & 0xF;
+  BaseDecoder_Step(Self);
+  result += Self->Symbol;
+
+  // Reduce Tree...
+  if (Self->SafeCounter < Self->Counter)
+    BaseCoder_Cut(Self);
+
+  // Update NodeList...
+  if (Self->ListCount > Self->Table.Level)
+  {
+    // MoveLongwordUnchecked(List[1], List[0], ListCount - 1);
+    uint32 H;
     for (H = 1; H < Self->ListCount; H++)
        Self->List[H - 1] = Self->List[H];
   }
@@ -481,7 +570,7 @@ inline void BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
   int32 I;
   for (I = 0; I < BufSize; I++)
   {
-    BaseCoder_Update(Self, Buffer[I]);
+    BaseEncoder_Update(Self, Buffer[I]);
   }
 };
 
@@ -490,6 +579,6 @@ inline void BaseCoder_Decode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
   int32 I;
   for (I = 0; I < BufSize; I++)
   {
-    Buffer[I] = BaseCoder_Update(Self, 0);
+    Buffer[I] = BaseEncoder_Update(Self, 0);
   }
 };
