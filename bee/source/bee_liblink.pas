@@ -74,8 +74,8 @@ uses
   procedure BaseCoder_FreshFlexible(Self: pointer); cdecl; external;
   procedure BaseCoder_FreshSolid   (Self: pointer); cdecl; external;
 
-  procedure BaseCoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint);  cdecl; external;
-  procedure BaseCoder_Decode       (Self: pointer; Buffer: pointer; BufSize: longint);  cdecl; external;
+  procedure BaseCoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint); cdecl; external;
+  procedure BaseCoder_Decode       (Self: pointer; Buffer: pointer; BufSize: longint); cdecl; external;
 
 {$ENDIF}
 

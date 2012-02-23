@@ -169,7 +169,7 @@ begin
   Inc(FProcessedSize, Value);
 
   FProgress := Round((FProcessedSize / FTotalSize) * 100);
-  // FSpeed    := Round((FProcessedSize / MilliSecondsBetween(Now, FStart) * 1000));
+  FSpeed    := Round((FProcessedSize / MilliSecondsBetween(Now, FStart) * 1000));
   while FSuspended do
   begin
     Sleep(250);
