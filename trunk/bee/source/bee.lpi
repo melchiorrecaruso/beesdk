@@ -53,7 +53,7 @@
             </CompilerMessages>
             <CompilerPath Value="$(CompPath)"/>
             <ExecuteAfter>
-              <CompileReasons Run="False" Build="False" Compile="False"/>
+              <CompileReasons Compile="False" Build="False" Run="False"/>
             </ExecuteAfter>
           </Other>
         </CompilerOptions>
@@ -93,7 +93,7 @@
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="53"/>
-        <CursorPos X="88" Y="77"/>
+        <CursorPos X="88" Y="78"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -112,10 +112,11 @@
       <Unit3>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="741"/>
-        <CursorPos X="9" Y="754"/>
+        <TopLine Value="115"/>
+        <CursorPos X="41" Y="126"/>
         <UsageCount Value="55"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -166,10 +167,9 @@
       </Unit7>
       <Unit8>
         <Filename Value="bee.include\compiler.inc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
+        <TopLine Value="15"/>
         <CursorPos X="12" Y="33"/>
         <UsageCount Value="38"/>
         <Loaded Value="True"/>
@@ -181,7 +181,7 @@
         <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="149"/>
-        <CursorPos X="37" Y="169"/>
+        <CursorPos X="3" Y="172"/>
         <UsageCount Value="35"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -408,7 +408,7 @@
       </CompilerMessages>
       <CompilerPath Value="$(CompPath)"/>
       <ExecuteAfter>
-        <CompileReasons Run="False" Build="False" Compile="False"/>
+        <CompileReasons Compile="False" Build="False" Run="False"/>
       </ExecuteAfter>
     </Other>
   </CompilerOptions>
