@@ -19,12 +19,10 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-fexpensive-optimizations" />
 			<Add option="-O3" />
 			<Add option="-Wall" />
 		</Compiler>
-		<Linker>
-			<Add option="-s" />
-		</Linker>
 		<Unit filename="beelib_common.c">
 			<Option compilerVar="CC" />
 		</Unit>
