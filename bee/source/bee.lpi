@@ -73,7 +73,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="16">
+    <Units Count="10">
       <Unit0>
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -90,10 +90,10 @@
       <Unit1>
         <Filename Value="bee_liblink.pas"/>
         <UnitName Value="Bee_LibLink"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="23"/>
-        <CursorPos X="5" Y="34"/>
+        <TopLine Value="37"/>
+        <CursorPos X="37" Y="31"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -101,11 +101,10 @@
       <Unit2>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="28"/>
-        <CursorPos X="15" Y="38"/>
+        <TopLine Value="31"/>
+        <CursorPos X="12" Y="44"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -113,7 +112,7 @@
       <Unit3>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="115"/>
         <CursorPos X="41" Y="126"/>
@@ -122,115 +121,49 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
-        <Filename Value="bee_types.pas"/>
-        <UnitName Value="Bee_Types"/>
-        <EditorIndex Value="12"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="22"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="41"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="beelib_interface.pas"/>
-        <UnitName Value="BeeLib_Interface"/>
-        <EditorIndex Value="10"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="10"/>
-        <CursorPos X="1" Y="38"/>
-        <UsageCount Value="41"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="beelib_streamcoder.pas"/>
-        <UnitName Value="BeeLib_StreamCoder"/>
-        <EditorIndex Value="4"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="85"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="39"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="bee_files.pas"/>
-        <UnitName Value="Bee_Files"/>
-        <EditorIndex Value="6"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="60"/>
-        <CursorPos X="30" Y="124"/>
-        <UsageCount Value="39"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit7>
-      <Unit8>
         <Filename Value="bee.include\compiler.inc"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="15"/>
         <CursorPos X="12" Y="33"/>
         <UsageCount Value="38"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit8>
-      <Unit9>
+      </Unit4>
+      <Unit5>
         <Filename Value="bee_interface.pas"/>
         <UnitName Value="Bee_Interface"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="149"/>
         <CursorPos X="3" Y="172"/>
         <UsageCount Value="35"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit9>
-      <Unit10>
-        <Filename Value="bee_bufstream.pas"/>
-        <UnitName Value="Bee_BufStream"/>
-        <EditorIndex Value="7"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="147"/>
-        <CursorPos X="86" Y="65"/>
-        <UsageCount Value="29"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit10>
-      <Unit11>
-        <Filename Value="beelib_crc.pas"/>
-        <UnitName Value="BeeLib_Crc"/>
-        <EditorIndex Value="3"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="23"/>
-        <CursorPos X="27" Y="83"/>
-        <UsageCount Value="27"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit11>
-      <Unit12>
+      </Unit5>
+      <Unit6>
         <Filename Value="bee_consts.pas"/>
         <UnitName Value="Bee_Consts"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="52"/>
         <CursorPos X="3" Y="68"/>
         <UsageCount Value="24"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit12>
-      <Unit13>
+      </Unit6>
+      <Unit7>
         <Filename Value="beelib_modeller.pas"/>
         <UnitName Value="BeeLib_Modeller"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="236"/>
+        <TopLine Value="1"/>
         <CursorPos X="14" Y="262"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit13>
-      <Unit14>
+      </Unit7>
+      <Unit8>
         <Filename Value="beelib_assembler.pas"/>
         <UnitName Value="BeeLib_Assembler"/>
         <EditorIndex Value="1"/>
@@ -240,20 +173,21 @@
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="beelib_configuration.pas"/>
-        <UnitName Value="BeeLib_Configuration"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="beelib_rangecoder.pas"/>
+        <UnitName Value="BeeLib_RangeCoder"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="46"/>
+        <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit15>
+      </Unit9>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="bee.lpr"/>
         <Caret Line="107" Column="16" TopLine="94"/>
@@ -370,10 +304,6 @@
         <Filename Value="bee_liblink.pas"/>
         <Caret Line="34" Column="5" TopLine="23"/>
       </Position29>
-      <Position30>
-        <Filename Value="beelib_interface.pas"/>
-        <Caret Line="38" Column="1" TopLine="10"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
