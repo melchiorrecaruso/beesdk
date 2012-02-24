@@ -40,11 +40,8 @@ uses
   {$IFDEF cppDLL}
     Bee_LibLink;
   {$ELSE}
-    {$IFDEF fpcDLL}
-      Bee_LibLink;
-    {$ELSE}
-      BeeLib_StreamCoder;
-    {$ENDIF}
+    BeeLib_Modeller;
+    BeeLib_
   {$ENDIF}
 
 // const

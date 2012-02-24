@@ -31,9 +31,6 @@ unit Bee_LibLink;
 
 interface
 
-uses
-  BeeLib_Configuration;
-
 {$IFDEF MSWINDOWS}
   {$linklib libmsvcrt}
 {$ENDIF}
