@@ -36,7 +36,6 @@ uses
   SysUtils,
   // ---
   Bee_Headers,
-  BeeLib_Interface,
   BeeLib_Configuration,
   {$IFDEF cppDLL}
     Bee_LibLink;
