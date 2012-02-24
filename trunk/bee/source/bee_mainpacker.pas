@@ -331,7 +331,7 @@ uses
     Count:  int64;
     Readed: longint;
     Writed: longint;
-    Buffer: array[0..$1FFFE] of byte;
+    Buffer: array[0..$FFFF] of byte;
   begin
     Result := 0;
     CRC    := longword(-1);
