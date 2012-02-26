@@ -48,10 +48,26 @@
 
 unit BeeLib_RangeCoder;
 
-interface
+{$I compiler.inc}
 
 uses
-  BeeLib_Stream,
+  Classes;
+
+interface
+
+function  RangeEncoder_Create      (aStream: TStream): pointer;
+procedure RangeEncoder_Destroy     (Self: pointer);
+procedure RangeEncoder_StartEncode (Self: pointer);
+procedure RangeEncoder_FinishEncode(Self: pointer);
+
+function  RangeDecoder_Create      (aStream: TStream): pointer;
+procedure RangeDecoder_Destroy     (Self: pointer);
+procedure RangeDecoder_StartDecode (Self: pointer);
+procedure RangeDecoder_FinishDecode(Self: pointer);
+
+implementation
+
+uses
   BeeLib_Assembler;
 
 const
@@ -63,8 +79,7 @@ const
 type
   { TRangeCoder }
 
-  TRangeCoder = class
-  private
+  TRangeCoder = packed record
     FStream: TStream;
     Range:   longword;
     Low:     longword;
@@ -72,27 +87,17 @@ type
     Carry:   longword;
     Cache:   longword;
     FFNum:   longword;
-    procedure ShiftLow;
-  public
-    constructor Create(Stream: TStream);
-    destructor Destroy; override;
-    procedure StartEncode;
-    procedure StartDecode;
-    procedure FinishEncode;
-    procedure FinishDecode;
-    procedure Encode(CumFreq, Freq, TotFreq: longword);
-    function GetFreq(TotFreq: longword): longword;
-    procedure Decode(CumFreq, Freq, TotFreq: longword);
   end;
-
-implementation
 
 { TRangeCoder }
 
-constructor TRangeCoder.Create(Stream: TStream);
+function TRangeCoder_Create(Stream: TStream): pointer;
 begin
-  inherited Create;
-  FStream := Stream;
+  Result := GetMem(SizeOf(TRangeCoder), 0);
+  with Result^ do
+  begin
+    FStream := aStream;
+  end;
 end;
 
 destructor TRangeCoder.Destroy;

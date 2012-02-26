@@ -36,8 +36,9 @@ interface
 {$ENDIF}
 
 {$IFDEF UNIX}
-// {$linklib libm}
-// {$linklib libgcc}
+//{$linklib libmath}
+//{$linklib libgcc}
+
 {$ENDIF}
 
 {$link beelib.c\obj\release\beelib_common.o}
