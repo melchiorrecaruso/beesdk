@@ -93,7 +93,7 @@
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="30"/>
-        <CursorPos X="23" Y="35"/>
+        <CursorPos X="28" Y="34"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -112,6 +112,7 @@
       <Unit3>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="115"/>
@@ -133,7 +134,6 @@
       <Unit5>
         <Filename Value="beelib_assembler.pas"/>
         <UnitName Value="BeeLib_Assembler"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="27"/>
