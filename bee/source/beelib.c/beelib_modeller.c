@@ -64,10 +64,10 @@ PBaseCoder BaseCoder_Create(void *aCodec)
   PBaseCoder Self = malloc(sizeof(struct TBaseCoder));
 
   Self->Codec     = aCodec;
-  Self->Freq      = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
+  Self->Freq      = malloc(sizeof(uint32)*(MAXSYMBOL + 1));
   Self->Heap      = NULL;
   Self->Cuts      = NULL;
-  Self->List      = malloc(sizeof(unsigned int)*(MAXSYMBOL + 1));
+  Self->List      = malloc(sizeof(uint32)*(MAXSYMBOL + 1));
 
   return Self;
 }
@@ -81,7 +81,7 @@ void BaseCoder_Destroy(PBaseCoder Self)
   free(Self);
 }
 
-static inline void BaseCoder_Add(PBaseCoder Self, unsigned int aSymbol)
+static inline void BaseCoder_Add(PBaseCoder Self, uint32 aSymbol)
 {
   Self->Pos++;
   Self->LowestPos++;
