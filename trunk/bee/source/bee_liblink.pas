@@ -56,6 +56,7 @@ function  RangeEncoder_Create
 procedure RangeEncoder_Destroy     (Self: pointer); cdecl; external;
 procedure RangeEncoder_StartEncode (Self: pointer); cdecl; external;
 procedure RangeEncoder_FinishEncode(Self: pointer); cdecl; external;
+function  RangeEncoder_Update      (Self: pointer; Freq: pointer; aSymbol: longword): longword; cdecl; external;
 
 function  RangeDecoder_Create
    (aStream: pointer; aStreamRead: TStreamRead): pointer; cdecl; external;

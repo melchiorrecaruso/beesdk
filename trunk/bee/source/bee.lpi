@@ -90,7 +90,6 @@
       <Unit1>
         <Filename Value="bee_liblink.pas"/>
         <UnitName Value="Bee_LibLink"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="30"/>
@@ -134,6 +133,7 @@
       <Unit5>
         <Filename Value="beelib_assembler.pas"/>
         <UnitName Value="BeeLib_Assembler"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="27"/>
