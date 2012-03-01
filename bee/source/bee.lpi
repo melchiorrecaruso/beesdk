@@ -80,8 +80,8 @@
         <UnitName Value="Bee"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="90"/>
-        <CursorPos X="48" Y="141"/>
+        <TopLine Value="123"/>
+        <CursorPos X="1" Y="170"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -93,7 +93,7 @@
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="30"/>
-        <CursorPos X="28" Y="34"/>
+        <CursorPos X="51" Y="38"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -112,7 +112,6 @@
       <Unit3>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="115"/>
@@ -145,9 +144,10 @@
       <Unit6>
         <Filename Value="bee_rangecoder.pas"/>
         <UnitName Value="BeeLib_RangeCoder"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="70"/>
+        <TopLine Value="3"/>
         <CursorPos X="17" Y="99"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -165,7 +165,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="25" HistoryIndex="24">
+    <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
         <Filename Value="bee.lpr"/>
         <Caret Line="107" Column="16" TopLine="94"/>
@@ -266,6 +266,10 @@
         <Filename Value="bee.lpr"/>
         <Caret Line="170" Column="1" TopLine="19"/>
       </Position25>
+      <Position26>
+        <Filename Value="bee.lpr"/>
+        <Caret Line="141" Column="48" TopLine="90"/>
+      </Position26>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
