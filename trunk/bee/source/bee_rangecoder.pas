@@ -64,7 +64,7 @@ function  RangeEncoder_Create      (aStream: TStream): pointer;
 procedure RangeEncoder_Destroy     (Self: pointer);
 procedure RangeEncoder_StartEncode (Self: pointer);
 procedure RangeEncoder_FinishEncode(Self: pointer);
-function  RangeEncoder_Update      (Self: pointer, const TFreq Freq, uint32 aSymbol);
+function  RangeEncoder_Update      (Self: pointer; const Freq: TFreq; aSymbol: longword): longword;
 
 function  RangeDecoder_Create      (aStream: TStream): pointer;
 procedure RangeDecoder_Destroy     (Self: pointer);
@@ -86,7 +86,7 @@ type
   { TRangeCoder }
 
   TRangeCoder = packed record
-    Stream: TStream;
+    FStream: TStream;
     Range:   longword;
     Low:     longword;
     Code:    longword;
@@ -99,10 +99,10 @@ type
 
 function TRangeCoder_Create(aStream: TStream): pointer;
 begin
-  Result := GetMem(SizeOf(TRangeCoder), 0);
-  with Result^ do
+  Result := GetMem(SizeOf(TRangeCoder));
+  with TRangeCoder(Result^) do
   begin
-    Stream := aStream;
+    FStream := aStream;
   end;
 end;
 
@@ -113,7 +113,7 @@ end;
 
 procedure TRangeCoder_StartEncode(Self: pointer);
 begin
-  with Result^ do
+  with TRangeCoder(Self^) do
   begin
     Range := $FFFFFFFF;
     Low   := 0;
@@ -122,31 +122,54 @@ begin
   end;
 end;
 
-procedure TRangeCoder_StartDecode;
+procedure TRangeCoder_StartDecode(Self: pointer);
 var
   I: longword;
 begin
   TRangeCoder_StartEncode(Self);
-  with Result^ do
+  with TRangeCoder(Self^) do
   begin
-    for I := 0 to NUM do
-      Code := Code shl 8 + FStream.Read;
+    // for I := 0 to NUM do Code := Code shl 8 + FStream.Read;
   end;
 end;
 
-procedure TRangeCoder.FinishEncode;
+procedure TRangeCoder_ShiftLow(Self: pointer);
+begin
+  with TRangeCoder(Self^) do
+  begin
+    if (Low < Thres) or (Carry <> 0) then
+    begin
+      FStream.Write(Cache + Carry, 1);
+      while FFNum <> 0 do
+      begin
+        FStream.Write(Carry - 1);
+        Dec(FFNum);
+      end;
+      Cache := Low shr 24;
+      Carry := 0;
+    end else
+      Inc(FFNum);
+
+    Low := Low shl 8;
+  end;
+end;
+
+procedure TRangeCoder_FinishEncode(Self: pointer);
 var
   I: longword;
 begin
-  for I := 0 to NUM do ShiftLow;
+  with TRangeCoder(Self^) do
+  begin
+    for I := 0 to NUM do ShiftLow;
+  end;
 end;
 
-procedure TRangeCoder.FinishDecode;
+procedure TRangeCoder_FinishDecode(Self: pointer);
 begin
   { nothing to do }
 end;
 
-procedure TRangeCoder.Encode(Self: TRangeCoder; CumFreq, Freq, TotFreq: longword);
+procedure TRangeCoder_Encode(Self: TRangeCoder; CumFreq, Freq, TotFreq: longword);
 var
   Tmp: longword;
 begin
@@ -220,23 +243,7 @@ begin
   Result := MulDecDiv(Code + 1, TotFreq, Range);
 end;
 
-procedure TRangeCoder.ShiftLow;
-begin
-  if (Low < Thres) or (Carry <> 0) then
-  begin
-    FStream.Write(Cache + Carry);
-    while FFNum <> 0 do
-    begin
-      FStream.Write(Carry - 1);
-      Dec(FFNum);
-    end;
-    Cache := Low shr 24;
-    Carry := 0;
-  end else
-    Inc(FFNum);
 
-  Low := Low shl 8;
-end;
 
 function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
 var
