@@ -40,12 +40,8 @@ uses
   {$IFDEF cppDLL}
     Bee_LibLink;
   {$ELSE}
-    BeeLib_Modeller;
-    BeeLib_
+    Bee_Modeller;
   {$ENDIF}
-
-// const
-//  DEFAULT_BUFFER_SIZE = 64 * 1024;
 
 type
   TTickEvent = function(Value: longint): boolean of object;
@@ -102,8 +98,8 @@ type
 implementation
 
 uses
-  Bee_Files,
-  BeeLib_Crc;
+  Bee_Crc,
+  Bee_Files;
 
   { THeaderCoder class }
 

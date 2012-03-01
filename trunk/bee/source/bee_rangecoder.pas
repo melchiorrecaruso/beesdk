@@ -46,19 +46,25 @@
     v0.8.0 build 1100 - 2011.08.02 by Melchiorre Caruso.
 }
 
-unit BeeLib_RangeCoder;
+unit Bee_RangeCoder;
 
 {$I compiler.inc}
+
+interface
 
 uses
   Classes;
 
-interface
+type
+  { Array of Frequencyes }
+
+  TFreq = array of longword;
 
 function  RangeEncoder_Create      (aStream: TStream): pointer;
 procedure RangeEncoder_Destroy     (Self: pointer);
 procedure RangeEncoder_StartEncode (Self: pointer);
 procedure RangeEncoder_FinishEncode(Self: pointer);
+function  RangeEncoder_Update      (Self: pointer, const TFreq Freq, uint32 aSymbol);
 
 function  RangeDecoder_Create      (aStream: TStream): pointer;
 procedure RangeDecoder_Destroy     (Self: pointer);
@@ -80,7 +86,7 @@ type
   { TRangeCoder }
 
   TRangeCoder = packed record
-    FStream: TStream;
+    Stream: TStream;
     Range:   longword;
     Low:     longword;
     Code:    longword;
@@ -91,36 +97,41 @@ type
 
 { TRangeCoder }
 
-function TRangeCoder_Create(Stream: TStream): pointer;
+function TRangeCoder_Create(aStream: TStream): pointer;
 begin
   Result := GetMem(SizeOf(TRangeCoder), 0);
   with Result^ do
   begin
-    FStream := aStream;
+    Stream := aStream;
   end;
 end;
 
-destructor TRangeCoder.Destroy;
+procedure TRangeCoder_Destroy(Self: pointer);
 begin
-  FStream := nil;
-  inherited Destroy;
+  FreeMem(Self);
 end;
 
-procedure TRangeCoder.StartEncode;
+procedure TRangeCoder_StartEncode(Self: pointer);
 begin
-  Range := $FFFFFFFF;
-  Low   := 0;
-  FFNum := 0;
-  Carry := 0;
+  with Result^ do
+  begin
+    Range := $FFFFFFFF;
+    Low   := 0;
+    FFNum := 0;
+    Carry := 0;
+  end;
 end;
 
-procedure TRangeCoder.StartDecode;
+procedure TRangeCoder_StartDecode;
 var
   I: longword;
 begin
-  StartEncode;
-  for I := 0 to NUM do
-    Code := Code shl 8 + FStream.Read;
+  TRangeCoder_StartEncode(Self);
+  with Result^ do
+  begin
+    for I := 0 to NUM do
+      Code := Code shl 8 + FStream.Read;
+  end;
 end;
 
 procedure TRangeCoder.FinishEncode;
@@ -135,7 +146,7 @@ begin
   { nothing to do }
 end;
 
-procedure TRangeCoder.Encode(CumFreq, Freq, TotFreq: longword);
+procedure TRangeCoder.Encode(Self: TRangeCoder; CumFreq, Freq, TotFreq: longword);
 var
   Tmp: longword;
 begin
@@ -149,6 +160,49 @@ begin
     ShiftLow;
   end;
 end;
+
+function TRangeCoder.UpdateSymbol(Self: TRangeCoder; const Freq: TFreq; aSymbol: longword): longword;
+var
+  CumFreq, TotFreq, I: longword;
+begin
+  // Count CumFreq...
+  CumFreq := 0;
+  I := CumFreq;
+  while I < aSymbol do
+  begin
+    Inc(CumFreq, Freq[I]);
+    Inc(I);
+  end;
+  // Count TotFreq...
+  TotFreq := CumFreq;
+  I := Length(Freq);
+  repeat
+    Dec(I);
+    Inc(TotFreq, Freq[I]);
+  until I = aSymbol;
+  // Encode...
+  Encode(CumFreq, Freq[aSymbol], TotFreq);
+  // Return Result...
+  Result := aSymbol;
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: longword);
 begin
@@ -182,6 +236,33 @@ begin
     Inc(FFNum);
 
   Low := Low shl 8;
+end;
+
+function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
+var
+  CumFreq, TotFreq, SumFreq: longword;
+begin
+  // Count TotFreq...
+  TotFreq := 0;
+  aSymbol := Length(Freq);
+  repeat
+    Dec(aSymbol);
+    Inc(TotFreq, Freq[aSymbol]);
+  until aSymbol = 0;
+  // Count CumFreq...
+  CumFreq := GetFreq(TotFreq);
+  // Search aSymbol...
+  SumFreq := 0;
+  aSymbol := SumFreq;
+  while SumFreq + Freq[aSymbol] <= CumFreq do
+  begin
+    Inc(SumFreq, Freq[aSymbol]);
+    Inc(aSymbol);
+  end;
+  // Finish Decode...
+  Decode(SumFreq, Freq[aSymbol], TotFreq);
+  // Return Result...
+  Result := aSymbol;
 end;
 
 end.
