@@ -32,7 +32,7 @@
     v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
 }
 
-unit BeeLib_Crc;
+unit Bee_Crc;
 
 interface
 

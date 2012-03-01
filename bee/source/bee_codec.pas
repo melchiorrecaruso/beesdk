@@ -35,16 +35,8 @@ unit BeeLib_Codec;
 
 interface
 
-uses
-  BeeLib_RangeCoder;
-
-const
-  MaxFreq = BeeLib_RangeCoder.MaxFreq;
-
 type
-  { Array of Frequencyes }
 
-  TFreq = array of longword;
 
   { Abstract secondary codec, like a RangeCoder or Arithmetic Coder }
 
@@ -99,30 +91,7 @@ begin
   Result := aSymbol;
 end;
 
-function TSecondaryEncoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
-var
-  CumFreq, TotFreq, I: longword;
-begin
-  // Count CumFreq...
-  CumFreq := 0;
-  I := CumFreq;
-  while I < aSymbol do
-  begin
-    Inc(CumFreq, Freq[I]);
-    Inc(I);
-  end;
-  // Count TotFreq...
-  TotFreq := CumFreq;
-  I := Length(Freq);
-  repeat
-    Dec(I);
-    Inc(TotFreq, Freq[I]);
-  until I = aSymbol;
-  // Encode...
-  Encode(CumFreq, Freq[aSymbol], TotFreq);
-  // Return Result...
-  Result := aSymbol;
-end;
+
 
 { TSecondaryDecoder }
 
