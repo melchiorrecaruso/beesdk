@@ -435,8 +435,8 @@ var
         TPopulation(List[I]).Save(Stream);
       end;
       Stream.Free;
+      DeleteFile(FileName + '.bkp');
     end;
-    DeleteFile(FileName + '.bkp');
   end;
 
   procedure TPopulations.Live;
@@ -506,6 +506,7 @@ var
           DrawDictionaryLevel((1 shl (17 + Min(Max(0, DictionaryLevel), 9))) * 20 shr 20);
 
         NulWriter.Seek(0, 0);
+        Writeln(NulWriter.Seek(0, 0));
         RangeEncoder_StartEncode(Coder);
 
         for I := 0 to Bodyes.Count -1 do
@@ -611,7 +612,7 @@ var
       FConfiguration := TConfiguration.Create;
       FConfiguration.Selector ('\main');
       FConfiguration.CurrentSection.Values ['Method']     := '3';
-      FConfiguration.CurrentSection.Values ['Dictionary'] := '3';
+      FConfiguration.CurrentSection.Values ['Dictionary'] := '5';
 
       for I := 1 to ParamCount do
       begin
@@ -652,7 +653,7 @@ var
         end else
         if S[1] in ['-', '/'] then
         begin
-
+          // nothing to do
         end else
         if FSourceFile = '' then
         begin
