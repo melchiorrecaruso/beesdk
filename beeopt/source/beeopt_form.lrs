@@ -9,10 +9,10 @@ LazarusResources.Add('TMainForm','FORMDATA',[
   +'y'#7#11'FormDestroy'#19'OnWindowStateChange'#7#21'FormWindowStateChange'#10
   +'ParentFont'#9#8'Position'#7#9'poDefault'#8'ShowHint'#9#10'LCLVersion'#6#6'0'
   +'.9.31'#7'Visible'#9#0#12'TPageControl'#11'PageControl'#4'Left'#2#2#6'Height'
-  +#3#239#0#3'Top'#2#2#5'Width'#3'.'#1#10'ActivePage'#7#14'TabSheet_About'#5'Al'
-  +'ign'#7#8'alClient'#20'BorderSpacing.Around'#2#2#8'TabIndex'#2#1#8'TabOrder'
-  +#2#0#0#9'TTabSheet'#17'TabSheet_Progress'#7'Caption'#6#11'Progress...'#12'Cl'
-  +'ientHeight'#3#213#0#11'ClientWidth'#3'&'#1#0#6'TLabel'#15'Label_Extension'
+  +#3#239#0#3'Top'#2#2#5'Width'#3'.'#1#10'ActivePage'#7#17'TabSheet_Progress'#5
+  +'Align'#7#8'alClient'#20'BorderSpacing.Around'#2#2#8'TabIndex'#2#0#8'TabOrde'
+  +'r'#2#0#0#9'TTabSheet'#17'TabSheet_Progress'#7'Caption'#6#11'Progress...'#12
+  +'ClientHeight'#3#213#0#11'ClientWidth'#3'&'#1#0#6'TLabel'#15'Label_Extension'
   +#22'AnchorSideLeft.Control'#7#17'TabSheet_Progress'#21'AnchorSideTop.Control'
   +#7#17'TabSheet_Progress'#4'Left'#2#6#6'Height'#2#14#3'Top'#2#10#5'Width'#3
   +#132#0#18'BorderSpacing.Left'#2#6#17'BorderSpacing.Top'#2#10#7'Caption'#6#27
@@ -77,7 +77,7 @@ LazarusResources.Add('TMainForm','FORMDATA',[
   +#10#5'Width'#3#26#1#5'Align'#7#8'alClient'#18'BorderSpacing.Left'#2#6#17'Bor'
   +'derSpacing.Top'#2#10#19'BorderSpacing.Right'#2#6#20'BorderSpacing.Bottom'#2
   +#6#7'Caption'#12#29#1#0#0'BeeOpt 0.7.7.f (C) 1999-2005 Andrew Filinsky'#13#10
-  +'Freeware version, Feb 2005'#13#10#13#10'This program calculates parameters '
+  +'Freeware version, Feb 2012'#13#10#13#10'This program calculates parameters '
   +'for Bee 0.7.7 archiver utility, then better compression ratio will be avail'
   +'able by using them. '#13#10#13#10'Please, send constructed *.ini and *.dat '
   +'files'#13#10'to e-mail: filinsky@mail.ru'#11'ParentColor'#8#8'WordWrap'#9#0
