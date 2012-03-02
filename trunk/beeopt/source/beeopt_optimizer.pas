@@ -499,7 +499,7 @@ var
         Person.Genome[1] := CurrentPopulation + 1;
         BaseCoder_SetTable(Modeller, @Person.Genome);
 
-        DictionaryLevel  := CurrentAge div 2000 + 1;
+        DictionaryLevel := CurrentAge div 2000 + 1;
         BaseCoder_SetDictionary(Modeller, DictionaryLevel);
 
         if Assigned(DrawDictionaryLevel) then
@@ -526,9 +526,10 @@ var
           BaseCoder_Encode(Modeller, @TBody(Bodyes[I]).Data[Readed], TBody(Bodyes[I]).Size mod $FFFF);
           Inc(Readed, TBody(Bodyes[I]).Size mod $FFFF);
 
-           Application.ProcessMessages;
+          Application.ProcessMessages;
           if Optimizer.NeedToClose = True then Break;
         end;
+
         RangeEncoder_FinishEncode(Coder);
       end;
 
@@ -610,7 +611,7 @@ var
       FConfiguration := TConfiguration.Create;
       FConfiguration.Selector ('\main');
       FConfiguration.CurrentSection.Values ['Method']     := '3';
-      FConfiguration.CurrentSection.Values ['Dictionary'] := '5';
+      FConfiguration.CurrentSection.Values ['Dictionary'] := '3';
 
       for I := 1 to ParamCount do
       begin

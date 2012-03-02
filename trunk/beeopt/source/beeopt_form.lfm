@@ -24,10 +24,10 @@ object MainForm: TMainForm
     Height = 239
     Top = 2
     Width = 302
-    ActivePage = TabSheet_About
+    ActivePage = TabSheet_Progress
     Align = alClient
     BorderSpacing.Around = 2
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object TabSheet_Progress: TTabSheet
       Caption = 'Progress...'
@@ -217,7 +217,7 @@ object MainForm: TMainForm
         BorderSpacing.Top = 10
         BorderSpacing.Right = 6
         BorderSpacing.Bottom = 6
-        Caption = 'BeeOpt 0.7.7.f (C) 1999-2005 Andrew Filinsky'#13#10'Freeware version, Feb 2005'#13#10#13#10'This program calculates parameters for Bee 0.7.7 archiver utility, then better compression ratio will be available by using them. '#13#10#13#10'Please, send constructed *.ini and *.dat files'#13#10'to e-mail: filinsky@mail.ru'
+        Caption = 'BeeOpt 0.7.7.f (C) 1999-2005 Andrew Filinsky'#13#10'Freeware version, Feb 2012'#13#10#13#10'This program calculates parameters for Bee 0.7.7 archiver utility, then better compression ratio will be available by using them. '#13#10#13#10'Please, send constructed *.ini and *.dat files'#13#10'to e-mail: filinsky@mail.ru'
         ParentColor = False
         WordWrap = True
       end
