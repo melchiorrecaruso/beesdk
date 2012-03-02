@@ -214,18 +214,19 @@ end;
 
 procedure TNulWriter.SetSize(NewSize: longint);
 begin
-  // nothing to do
+  SetSize64(NewSize);
 end;
 
 procedure TNulWriter.SetSize(const NewSize: int64);
 begin
-  // nothing to do
+  SetSize64(NewSize);
 end;
 
 {$IFDEF FPC}  
 procedure TNulWriter.SetSize64(const NewSize: int64);
 begin
-  // nothing to do
+  FNulPos  := NewSize;
+  FNulSize := NewSize;
 end;
 {$ENDIF}
 
