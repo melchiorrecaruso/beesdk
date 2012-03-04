@@ -147,7 +147,7 @@ void RangeDecoder_StartDecode(PRangeDecoder Self)
 
 void RangeDecoder_FinishDecode(PRangeDecoder Self)
 {
-  // nothing to do
+  ReadStream_ClearBuffer(Self->FStream);
 }
 
 inline uint32 RangeDecoder_GetFreq(PRangeDecoder Self, uint32 TotFreq)

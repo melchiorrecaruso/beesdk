@@ -506,9 +506,8 @@ var
           DrawDictionaryLevel((1 shl (17 + Min(Max(0, DictionaryLevel), 9))) * 20 shr 20);
 
         NulWriter.Seek(0, 0);
-        Writeln(NulWriter.Seek(0, 0));
-        RangeEncoder_StartEncode(Coder);
 
+        RangeEncoder_StartEncode(Coder);
         for I := 0 to Bodyes.Count -1 do
         begin
           BaseCoder_FreshFlexible(Modeller);
@@ -530,8 +529,10 @@ var
           Application.ProcessMessages;
           if Optimizer.NeedToClose = True then Break;
         end;
-
         RangeEncoder_FinishEncode(Coder);
+
+        Writeln('Readed = ', Readed);
+        Writeln('Writed = ', NulWriter.Seek(0, 1));
       end;
 
       if Optimizer.NeedToClose = True then
@@ -681,7 +682,7 @@ var
       if Assigned(DrawExtension)  then DrawExtension(FSourceFile);
 
       NulWriter := TNulWriter.Create;
-      Coder     := RangeEncoder_Create(NulWriter, @DoFlush);
+      Coder     := RangeEncoder_Create(NulWriter, @DoFlushNul);
       Modeller  := BaseCoder_Create(Coder);
     end;
 
