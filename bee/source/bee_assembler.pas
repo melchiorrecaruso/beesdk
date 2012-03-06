@@ -27,7 +27,7 @@
     v0.8.0 build 1200 - 2011.10.23 by Melchiorre Caruso.
 }
 
-unit BeeLib_Assembler;
+unit Bee_Assembler;
 
 interface
 
