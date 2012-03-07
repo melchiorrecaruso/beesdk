@@ -119,9 +119,8 @@ type
 function CreateTFileReader(const aFileName: string; aMode: word): TFileReader;
 function CreateTFileWriter(const aFileName: string; aMode: word): TFileWriter;
 
-function DoFill (Stream: pointer; Data: pointer; Size: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
-function DoFlush(Stream: pointer; Data: pointer; Size: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
-
+function DoFill    (Stream: pointer; Data: pointer; Size: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
+function DoFlush   (Stream: pointer; Data: pointer; Size: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
 function DoFlushNul(Stream: pointer; Data: pointer; Size: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
 
 implementation
@@ -152,11 +151,15 @@ end;
 function DoFlush(Stream: pointer; Data: pointer; Size: longint): longint;
 begin
   Result := TFileWriter(Stream).Write(Data^, Size);
+
+  Writeln('DoFlush = ', Size);
 end;
 
 function DoFlushNul(Stream: pointer; Data: pointer; Size: longint): longint;
 begin
   Result := TNulWriter(Stream).Write(Data^, Size);
+
+  Writeln('DoFlushNul = ', Size);
 end;
 
 { TFileReader class }
@@ -239,16 +242,12 @@ end;
 
 function TNulWriter.Write(const Data; Count: longint): longint;
 begin
-  count:= 65536;
-
   Inc(FNulPos, Count);
   if FNulPos > FNulSize then
   begin
     FNulSize := FNulPos;
   end;
   Result := Count;
-
-  Writeln('Count = ', Count, ' | Size = ', FNulPos);
 end;
 
 function TNulWriter.Seek(Offset: longint; Origin: word): longint;

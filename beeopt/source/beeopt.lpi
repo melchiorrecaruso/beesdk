@@ -152,11 +152,11 @@
         <Filename Value="beeopt_optimizer.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeOpt_Optimizer"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="483"/>
-        <CursorPos X="36" Y="679"/>
-        <FoldState Value=" T3kf2H3 T0;R62k"/>
+        <TopLine Value="659"/>
+        <CursorPos X="66" Y="683"/>
         <UsageCount Value="52"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -204,11 +204,11 @@
       <Unit18>
         <Filename Value="..\..\bee\source\bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="231"/>
-        <CursorPos X="17" Y="242"/>
+        <TopLine Value="152"/>
+        <CursorPos X="31" Y="155"/>
+        <FoldState Value=" T3jf071P"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>

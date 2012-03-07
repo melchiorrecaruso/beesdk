@@ -73,12 +73,11 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="8">
+    <Units Count="9">
       <Unit0>
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="138"/>
@@ -91,7 +90,7 @@
       <Unit1>
         <Filename Value="bee_liblink.pas"/>
         <UnitName Value="Bee_LibLink"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="27"/>
         <CursorPos X="51" Y="38"/>
@@ -102,7 +101,7 @@
       <Unit2>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="23"/>
         <CursorPos X="31" Y="37"/>
@@ -113,7 +112,7 @@
       <Unit3>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="115"/>
         <CursorPos X="41" Y="126"/>
@@ -123,7 +122,7 @@
       </Unit3>
       <Unit4>
         <Filename Value="bee.include\compiler.inc"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="36"/>
@@ -134,7 +133,7 @@
       <Unit5>
         <Filename Value="bee_rangecoder.pas"/>
         <UnitName Value="Bee_RangeCoder"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="129"/>
         <CursorPos X="23" Y="149"/>
@@ -145,7 +144,7 @@
       <Unit6>
         <Filename Value="beelib_stream.pas"/>
         <UnitName Value="BeeLib_Stream"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="30" Y="40"/>
@@ -156,7 +155,7 @@
       <Unit7>
         <Filename Value="bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="8"/>
         <CursorPos X="9" Y="32"/>
@@ -164,6 +163,18 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="bee_files.pas"/>
+        <UnitName Value="Bee_Files"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="136"/>
+        <CursorPos X="1" Y="162"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit8>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
