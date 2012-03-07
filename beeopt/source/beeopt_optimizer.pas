@@ -496,14 +496,16 @@ var
         end;
 
       begin
-        Person.Genome[1] := CurrentPopulation + 1;
+        Person.Genome := DefaultTableParameters;
+
+        // Person.Genome[1] := CurrentPopulation + 1;
         BaseCoder_SetTable(Modeller, @Person.Genome);
 
         DictionaryLevel := CurrentAge div 2000 + 1;
         BaseCoder_SetDictionary(Modeller, DictionaryLevel);
 
         if Assigned(DrawDictionaryLevel) then
-          DrawDictionaryLevel((1 shl (17 + Min(Max(0, DictionaryLevel), 9))) * 20 shr 20);
+          DrawDictionaryLevel(DictionaryLevel);
 
         NulWriter.Seek(0, 0);
 
@@ -516,15 +518,13 @@ var
           Loop   := TBody(Bodyes[I]).Size div $FFFF;
           while Loop <> 0 do
           begin
-            BaseCoder_Encode(Modeller, @TBody(Bodyes[I]).Data[Readed], $FFFF);
-            Inc(Readed, $FFFF);
+            Inc(Readed, BaseCoder_Encode(Modeller, @TBody(Bodyes[I]).Data[Readed], $FFFF));
             Dec(Loop);
 
             Application.ProcessMessages;
             if Optimizer.NeedToClose = True then Break;
           end;
-          BaseCoder_Encode(Modeller, @TBody(Bodyes[I]).Data[Readed], TBody(Bodyes[I]).Size mod $FFFF);
-          Inc(Readed, TBody(Bodyes[I]).Size mod $FFFF);
+          Inc(Readed, BaseCoder_Encode(Modeller, @TBody(Bodyes[I]).Data[Readed], TBody(Bodyes[I]).Size mod $FFFF));
 
           Application.ProcessMessages;
           if Optimizer.NeedToClose = True then Break;
