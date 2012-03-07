@@ -239,12 +239,16 @@ end;
 
 function TNulWriter.Write(const Data; Count: longint): longint;
 begin
+  count:= 65536;
+
   Inc(FNulPos, Count);
   if FNulPos > FNulSize then
   begin
     FNulSize := FNulPos;
   end;
   Result := Count;
+
+  Writeln('Count = ', Count, ' | Size = ', FNulPos);
 end;
 
 function TNulWriter.Seek(Offset: longint; Origin: word): longint;
@@ -261,8 +265,8 @@ function TNulWriter.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
   case Origin of
     soBeginning: FNulPos := OffSet;
-    soCurrent: FNulPos := Min(FNulSize, FNulPos + Offset);
-    soEnd: FNulPos := Max(0, FNulPos - Offset);
+    soCurrent:   FNulPos := Min(FNulSize, FNulPos + Offset);
+    soEnd:       FNulPos := Max(0, FNulPos - Offset);
   end;
   Result := FNulPos;
 end;

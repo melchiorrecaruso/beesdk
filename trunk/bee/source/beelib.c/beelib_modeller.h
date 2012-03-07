@@ -38,7 +38,7 @@ typedef struct TBaseCoder *PBaseCoder;
         void BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel);
         void BaseCoder_FreshFlexible(PBaseCoder Self);
         void BaseCoder_FreshSolid   (PBaseCoder Self);
-        void BaseCoder_Encode       (PBaseCoder Self, uint8 *Buffer, int32 BufSize);
-        void BaseCoder_Decode       (PBaseCoder Self, uint8 *Buffer, int32 BufSize);
+       int32 BaseCoder_Encode       (PBaseCoder Self, uint8 *Buffer, int32 BufSize);
+       int32 BaseCoder_Decode       (PBaseCoder Self, uint8 *Buffer, int32 BufSize);
 
 #endif //  BEELIB_MODELLER_H

@@ -71,8 +71,8 @@ procedure BaseCoder_SetTable     (Self: pointer; Table: pointer); cdecl; externa
 procedure BaseCoder_SetDictionary(Self: pointer; Level: longint); cdecl; external;
 procedure BaseCoder_FreshFlexible(Self: pointer); cdecl; external;
 procedure BaseCoder_FreshSolid   (Self: pointer); cdecl; external;
-procedure BaseCoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint); cdecl; external;
-procedure BaseCoder_Decode       (Self: pointer; Buffer: pointer; BufSize: longint); cdecl; external;
+function  BaseCoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
+function  BaseCoder_Decode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 
 implementation
 

@@ -53,7 +53,7 @@
             </CompilerMessages>
             <CompilerPath Value="$(CompPath)"/>
             <ExecuteAfter>
-              <CompileReasons Run="False" Build="False" Compile="False"/>
+              <CompileReasons Compile="False" Build="False" Run="False"/>
             </ExecuteAfter>
           </Other>
         </CompilerOptions>
@@ -78,9 +78,10 @@
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="123"/>
+        <TopLine Value="138"/>
         <CursorPos X="1" Y="170"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -122,7 +123,6 @@
       </Unit3>
       <Unit4>
         <Filename Value="bee.include\compiler.inc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -165,7 +165,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="bee.lpr"/>
         <Caret Line="147" Column="44" TopLine="139"/>
@@ -282,6 +282,10 @@
         <Filename Value="beelib_stream.pas"/>
         <Caret Line="57" Column="30" TopLine="33"/>
       </Position29>
+      <Position30>
+        <Filename Value="bee.lpr"/>
+        <Caret Line="170" Column="1" TopLine="123"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -291,7 +295,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
-      <Libraries Value="C:/MinGW32/lib/;C:/MinGW32/lib/gcc/mingw32/4.6.1/"/>
+      <Libraries Value="C:/MinGW32/lib/;C:/MinGW32/lib/gcc/mingw32/4.6.1/;C:/Program Files/MinGW32/lib/;C:/Program Files/MinGW32/lib/gcc/mingw32/4.6.1/"/>
       <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
     <Parsing>
@@ -327,7 +331,7 @@
       </CompilerMessages>
       <CompilerPath Value="$(CompPath)"/>
       <ExecuteAfter>
-        <CompileReasons Run="False" Build="False" Compile="False"/>
+        <CompileReasons Compile="False" Build="False" Run="False"/>
       </ExecuteAfter>
     </Other>
   </CompilerOptions>

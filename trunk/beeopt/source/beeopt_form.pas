@@ -129,7 +129,8 @@ end;
 
 procedure TMainForm.DoDrawDictionaryLevel(DictionaryLevel: longint);
 begin
-  Label_DictionaryLevelValue.Caption := Format('%d', [DictionaryLevel]);
+  Label_DictionaryLevelValue.Caption := Format ('%d (~%d Mb)', [DictionaryLevel,
+    (1 shl (17 + Min (Max (0, DictionaryLevel), 9))) * 20 shr 20]);
 end;
 
 procedure TMainForm.DoDrawExtension(const Extension: string);

@@ -467,20 +467,22 @@ static inline uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol, PRangeCod
   return result;
 }
 
-inline void BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
+inline int32 BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
 {
   int32 I;
   for  (I = 0; I < BufSize; I++)
   {
     BaseCoder_Update(Self, Buffer[I], (PRangeCoder_Update)RangeEncoder_Update);
   }
+  return I;
 };
 
-inline void BaseCoder_Decode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
+inline int32 BaseCoder_Decode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
 {
   int32 I;
   for  (I = 0; I < BufSize; I++)
   {
     Buffer[I] = BaseCoder_Update(Self, 0, (PRangeCoder_Update)RangeDecoder_Update);
   }
+  return I;
 };
