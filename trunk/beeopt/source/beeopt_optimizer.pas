@@ -496,9 +496,7 @@ var
         end;
 
       begin
-        Person.Genome := DefaultTableParameters;
-
-        // Person.Genome[1] := CurrentPopulation + 1;
+        Person.Genome[1] := CurrentPopulation + 1;
         BaseCoder_SetTable(Modeller, @Person.Genome);
 
         DictionaryLevel := CurrentAge div 2000 + 1;
