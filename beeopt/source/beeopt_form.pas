@@ -4,6 +4,8 @@
 
 unit BeeOpt_Form;
 
+{$I compiler.inc}
+
 interface
 
 uses
@@ -27,6 +29,8 @@ type
 
   TMainForm = class (TForm)
     Label_Level: TLabel;
+    Label_BestPackedSize: TLabel;
+    Label_BestPackedSizeValue: TLabel;
     PageControl: TPageControl;
     TabSheet_Progress: TTabSheet;
     TabSheet_About: TTabSheet;
@@ -58,6 +62,7 @@ type
     procedure DoDrawImprovment(Improvment: double);
     procedure DoDrawCost(Cost: longint);
     procedure DoDrawSampleSize(SampleSize: longint);
+    procedure DoDrawBestPackedSize(BestPackedSize: longint);
     procedure DoDrawDictionaryLevel(DictionaryLevel: longint);
     procedure DoDrawExtension(const Extension: string);
   end;
@@ -77,6 +82,7 @@ begin
   DrawImprovment      := DoDrawImprovment;
   DrawCost            := DoDrawCost;
   DrawSampleSize      := DoDrawSampleSize;
+  DrawBestPackedSize  := DoDrawBestPackedSize;
   DrawDictionaryLevel := DoDrawDictionaryLevel;
   DrawExtension       := DoDrawExtension;
 
@@ -97,6 +103,13 @@ end;
 procedure TMainForm.DoDrawMessage(const Message: string);
 begin
   MainForm.StatusBar.Panels[0].Text := Message;
+  if Optimizer.NeedToClose then
+  begin
+    while PageControl.PageCount > 1 do
+    begin
+      PageControl.Pages[0].Destroy;
+    end;
+  end;
 end;
 
 procedure TMainForm.DoDrawCurrAge(CurrentAge: longint);
@@ -125,6 +138,12 @@ end;
 procedure TMainForm.DoDrawSampleSize(SampleSize: longint);
 begin
   Label_SampleSizeValue.Caption := Format('%d', [SampleSize]);
+end;
+
+procedure TMainForm.DoDrawBestPackedSize(BestPackedSize: longint);
+begin
+  Label_BestPackedSizeValue.Caption := Format('%d', [BestPackedSize]);
+  TrayIcon.Hint := Format('Best packed size %d', [BestPackedSize]);
 end;
 
 procedure TMainForm.DoDrawDictionaryLevel(DictionaryLevel: longint);

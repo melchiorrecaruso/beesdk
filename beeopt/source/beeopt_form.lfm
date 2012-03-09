@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 382
+  Left = 363
   Height = 263
-  Top = 224
+  Top = 214
   Width = 306
   HorzScrollBar.Page = 299
   VertScrollBar.Page = 239
@@ -24,10 +24,10 @@ object MainForm: TMainForm
     Height = 239
     Top = 2
     Width = 302
-    ActivePage = TabSheet_About
+    ActivePage = TabSheet_Progress
     Align = alClient
     BorderSpacing.Around = 2
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object TabSheet_Progress: TTabSheet
       Caption = 'Progress...'
@@ -201,6 +201,30 @@ object MainForm: TMainForm
         Caption = 'Compression Level:'
         ParentColor = False
       end
+      object Label_BestPackedSize: TLabel
+        AnchorSideTop.Control = Label_PackedSize
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = Label_SampleSize
+        AnchorSideRight.Side = asrBottom
+        Left = 40
+        Height = 14
+        Top = 168
+        Width = 98
+        Anchors = [akTop, akRight]
+        BorderSpacing.Top = 6
+        Caption = 'Best Size of Packed:'
+        ParentColor = False
+      end
+      object Label_BestPackedSizeValue: TLabel
+        AnchorSideLeft.Control = Label_ExtensionValue
+        AnchorSideTop.Control = Label_BestPackedSize
+        Left = 168
+        Height = 14
+        Top = 168
+        Width = 6
+        Caption = '?'
+        ParentColor = False
+      end
     end
     object TabSheet_About: TTabSheet
       Caption = 'About'
@@ -266,7 +290,7 @@ object MainForm: TMainForm
     }
     Visible = True
     OnClick = TrayIconClick
-    left = 32
-    top = 192
+    left = 264
+    top = 200
   end
 end
