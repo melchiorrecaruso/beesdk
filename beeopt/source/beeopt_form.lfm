@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 363
+  Left = 236
   Height = 263
-  Top = 214
+  Top = 203
   Width = 306
   HorzScrollBar.Page = 299
   VertScrollBar.Page = 239
@@ -290,7 +290,7 @@ object MainForm: TMainForm
     }
     Visible = True
     OnClick = TrayIconClick
-    left = 264
-    top = 200
+    left = 256
+    top = 184
   end
 end
