@@ -464,125 +464,124 @@ var
     DictionaryLevel: longint;
     I, J, Loop, Readed: longint;
   begin
-      FullSize := 1;
-      HalfSize := 1;
+    FullSize := 1;
+    HalfSize := 1;
 
-      if CurrentAge mod 2000 = 0 then
+    if CurrentAge mod 2000 = 0 then
+    begin
+      for I := 0 to Count -1 do
       begin
-        for I := 0 to Count -1 do
-        begin
-          TPopulation(List[I]).MarkToRecalculate;
-        end;
-        Inc(CurrentAge);
+        TPopulation(List[I]).MarkToRecalculate;
+      end;
+      Inc(CurrentAge);
+    end;
+
+    Population1 := List[CurrentPopulation];
+
+    if Population1.Count = 0 then
+    begin
+      Person := TPerson.Create;
+      if Assigned(DrawMessage) then
+        DrawMessage('Generate random creature ...');
+    end else
+      if TPerson(Population1.First).Cost = 0 then
+      begin
+        Person := Population1.Extract(Population1.First);
+        if Assigned(DrawMessage) then
+          DrawMessage('Recalculate creature estimation ...');
+      end else
+      begin
+        repeat
+          repeat
+            Population2 := List[Max(0, Min(CurrentPopulation + Random(3) -1, Count -1))];
+          until Population2.Count > 0;
+          Parent1 := Population1.List[Random(Population1.Count)];
+          Parent2 := Population2.List[Random(Population2.Count)];
+        until Parent1 <> Parent2;
+
+        repeat
+          Person := TPerson.Create(Parent1, Parent2);
+          if Population1.HasPerson(Person) then
+          begin
+            FreeAndNil(Person);
+          end;
+        until Person <> nil;
+        if Assigned(DrawMessage) then
+          DrawMessage('Creatures optimization ...');
       end;
 
-      Population1 := List[CurrentPopulation];
+    begin
+      Person.Genome[1] := CurrentPopulation + 1;
+      BaseCoder_SetTable(Modeller, @Person.Genome);
 
-      if Population1.Count = 0 then
+      DictionaryLevel := CurrentAge div 2000 + 1;
+      BaseCoder_SetDictionary(Modeller, DictionaryLevel);
+
+      if Assigned(DrawDictionaryLevel) then
+        DrawDictionaryLevel(DictionaryLevel);
+
+      NulWriter.Seek(0, 0);
+      RangeEncoder_StartEncode(Coder);
+      for I := 0 to Bodyes.Count -1 do
       begin
-        Person := TPerson.Create;
-        if Assigned(DrawMessage) then
-          DrawMessage('Generate random creature ...');
-      end else
-        if TPerson(Population1.First).Cost = 0 then
+        BaseCoder_FreshFlexible(Modeller);
+
+        Readed := 0;
+        Loop   := TBody(Bodyes[I]).Size div $FFFF;
+        while Loop <> 0 do
         begin
-          Person := Population1.Extract(Population1.First);
-          if Assigned(DrawMessage) then
-            DrawMessage('Recalculate creature estimation ...');
-        end else
-        begin
-          repeat
-            repeat
-              Population2 := List[Max(0, Min(CurrentPopulation + Random(3) -1, Count -1))];
-            until Population2.Count > 0;
-            Parent1 := Population1.List[Random(Population1.Count)];
-            Parent2 := Population2.List[Random(Population2.Count)];
-          until Parent1 <> Parent2;
-
-          repeat
-            Person := TPerson.Create(Parent1, Parent2);
-            if Population1.HasPerson(Person) then
-            begin
-              FreeAndNil(Person);
-            end;
-          until Person <> nil;
-          if Assigned(DrawMessage) then
-            DrawMessage('Creatures optimization ...');
-        end;
-
-      begin
-        Person.Genome[1] := CurrentPopulation + 1;
-        BaseCoder_SetTable(Modeller, @Person.Genome);
-
-        DictionaryLevel := CurrentAge div 2000 + 1;
-        BaseCoder_SetDictionary(Modeller, DictionaryLevel);
-
-        if Assigned(DrawDictionaryLevel) then
-          DrawDictionaryLevel(DictionaryLevel);
-
-        NulWriter.Seek(0, 0);
-
-        RangeEncoder_StartEncode(Coder);
-        for I := 0 to Bodyes.Count -1 do
-        begin
-          BaseCoder_FreshFlexible(Modeller);
-
-          Readed := 0;
-          Loop   := TBody(Bodyes[I]).Size div $FFFF;
-          while Loop <> 0 do
-          begin
-            Inc(Readed, BaseCoder_Encode(Modeller,
-              @TBody(Bodyes[I]).Data[Readed], $FFFF));
-            Dec(Loop);
-
-            Application.ProcessMessages;
-            if Optimizer.NeedToClose = True then Break;
-          end;
           Inc(Readed, BaseCoder_Encode(Modeller,
-            @TBody(Bodyes[I]).Data[Readed], TBody(Bodyes[I]).Size mod $FFFF));
+            @TBody(Bodyes[I]).Data[Readed], $FFFF));
+          Dec(Loop);
 
           Application.ProcessMessages;
           if Optimizer.NeedToClose = True then Break;
         end;
-        RangeEncoder_FinishEncode(Coder);
+        Inc(Readed, BaseCoder_Encode(Modeller,
+          @TBody(Bodyes[I]).Data[Readed], TBody(Bodyes[I]).Size mod $FFFF));
+
+        Application.ProcessMessages;
+        if Optimizer.NeedToClose = True then Break;
       end;
-
-      if Optimizer.NeedToClose = True then
-      begin
-        Population1.Add(Person);
-        Exit;
-      end else
-        Person.Cost := NulWriter.Seek(0, 1);
-
-      begin
-        if Population1.Count > 0 then
-        begin
-          if TPerson(Population1.First).Cost > 0 then Inc(CurrentAge);
-          if TPerson(Population1.First).Cost > Person.Cost then
-          begin
-            Inc(Improvements);
-            BestPackedSize := Min(BestPackedSize, Person.Cost);
-          end;
-        end;
-        Population1.Add(Person);
-
-        if (Population1.Count > FullSize) and (TPerson(Population1.First).Cost > 0) then
-        begin
-          while Population1.Count > HalfSize do
-          begin
-            TPerson(Population1.Extract(Population1.Last)).Free;
-          end;
-        end;
-      end;
-
-      WriteText(Optimizer.FSourceFile + '.log.txt', Format('%d' + #9, [TPerson(Population1.First).Cost]));
-      if CurrentPopulation = 14 then
-      begin
-        WriteText(Optimizer.FSourceFile + '.log.txt', Format('| %5d turn, -d%d, %d jumps (%1.1f%%).' + Cr,
-          [CurrentAge, DictionaryLevel, Improvements, Improvements / (CurrentAge + 1) * 100]));
-      end;
-      CurrentPopulation := (CurrentPopulation + 1) mod 15;
+      RangeEncoder_FinishEncode(Coder);
     end;
+
+    if Optimizer.NeedToClose = True then
+    begin
+      Population1.Add(Person);
+      Exit;
+    end else
+      Person.Cost := NulWriter.Seek(0, 1);
+
+    begin
+      if Population1.Count > 0 then
+      begin
+        if TPerson(Population1.First).Cost > 0 then Inc(CurrentAge);
+        if TPerson(Population1.First).Cost > Person.Cost then
+        begin
+          Inc(Improvements);
+          BestPackedSize := Min(BestPackedSize, Person.Cost);
+        end;
+      end;
+      Population1.Add(Person);
+
+      if (Population1.Count > FullSize) and (TPerson(Population1.First).Cost > 0) then
+      begin
+        while Population1.Count > HalfSize do
+        begin
+          TPerson(Population1.Extract(Population1.Last)).Free;
+        end;
+      end;
+    end;
+
+    WriteText(Optimizer.FSourceFile + '.log.txt', Format('%d' + #9, [TPerson(Population1.First).Cost]));
+    if CurrentPopulation = 14 then
+    begin
+      WriteText(Optimizer.FSourceFile + '.log.txt', Format('| %5d turn, -d%d, %d jumps (%1.1f%%).' + Cr,
+        [CurrentAge, DictionaryLevel, Improvements, Improvements / (CurrentAge + 1) * 100]));
+    end;
+    CurrentPopulation := (CurrentPopulation + 1) mod 15;
+  end;
 
   procedure TPopulations.MarkToRecalculate;
   var
@@ -667,11 +666,6 @@ var
         if Pos('-PRI', S) = 1 then
         begin
           SetPriority(StrToInt(Copy(ParamStr(I), 5, MaxInt)));
-        end else
-        if Pos('-N', S) = 1 then
-        begin
-          Delete(S, 1, 2);
-          // nThreads := Max(1, Min(StrToInt(S), 16));
         end else
         if S[1] in ['-', '/'] then
         begin
