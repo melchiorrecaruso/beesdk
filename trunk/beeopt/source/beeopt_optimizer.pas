@@ -37,7 +37,11 @@ uses
   Bee_Files,
   Bee_Consts,
   Bee_Common,
-  Bee_LibLink,
+  {$IFDEF cppDLL}
+    Bee_LibLink,
+  {$ELSE}
+    Bee_Modeller,
+  {$ENDIF}
   Bee_Configuration,
   BeeLib_Configuration;
 
@@ -137,6 +141,7 @@ type
   TDrawImprovment          = procedure(Improvment: double) of object;
   TDrawCost                = procedure(Cost: longint) of object;
   TDrawSampleSize          = procedure(SampleSize: longint) of object;
+  TDrawBestPackedSize      = procedure(BestPackedSize: longint) of object;
   TDrawDictionaryLevel     = procedure(DictionaryLevel: longint) of object;
   TDrawExtension           = procedure(const Extension: string) of object;
 
@@ -149,6 +154,7 @@ var
   DrawImprovment:          TDrawImprovment          = nil;
   DrawCost:                TDrawCost                = nil;
   DrawSampleSize:          TDrawSampleSize          = nil;
+  DrawBestPackedSize:      TDrawBestPackedSize      = nil;
   DrawDictionaryLevel:     TDrawDictionaryLevel     = nil;
   DrawExtension:           TDrawExtension           = nil;
 
@@ -161,10 +167,16 @@ const
 var
   Bodyes:     TList;
   BodyesSize: longint;
+  BestPackedSize:   longint;
 
   Coder:      pointer;
   Modeller:   pointer;
   NulWriter:  TNulWriter;
+
+  function DoFlushNul(Stream: pointer; Data: pointer; DataSize: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
+  begin
+    Result := TNulWriter(Stream).Write(Data^, DataSize);
+  end;
 
   /// TBody...
 
@@ -469,12 +481,14 @@ var
       if Population1.Count = 0 then
       begin
         Person := TPerson.Create;
-        if Assigned(DrawMessage) then DrawMessage('Generate random creature ...');
+        if Assigned(DrawMessage) then
+          DrawMessage('Generate random creature ...');
       end else
         if TPerson(Population1.First).Cost = 0 then
         begin
           Person := Population1.Extract(Population1.First);
-          if Assigned(DrawMessage) then DrawMessage('Recalculate creature estimation ...');
+          if Assigned(DrawMessage) then
+            DrawMessage('Recalculate creature estimation ...');
         end else
         begin
           repeat
@@ -492,7 +506,8 @@ var
               FreeAndNil(Person);
             end;
           until Person <> nil;
-          if Assigned(DrawMessage) then DrawMessage('Creatures optimization ...');
+          if Assigned(DrawMessage) then
+            DrawMessage('Creatures optimization ...');
         end;
 
       begin
@@ -516,21 +531,20 @@ var
           Loop   := TBody(Bodyes[I]).Size div $FFFF;
           while Loop <> 0 do
           begin
-            Inc(Readed, BaseCoder_Encode(Modeller, @TBody(Bodyes[I]).Data[Readed], $FFFF));
+            Inc(Readed, BaseCoder_Encode(Modeller,
+              @TBody(Bodyes[I]).Data[Readed], $FFFF));
             Dec(Loop);
 
             Application.ProcessMessages;
             if Optimizer.NeedToClose = True then Break;
           end;
-          Inc(Readed, BaseCoder_Encode(Modeller, @TBody(Bodyes[I]).Data[Readed], TBody(Bodyes[I]).Size mod $FFFF));
+          Inc(Readed, BaseCoder_Encode(Modeller,
+            @TBody(Bodyes[I]).Data[Readed], TBody(Bodyes[I]).Size mod $FFFF));
 
           Application.ProcessMessages;
           if Optimizer.NeedToClose = True then Break;
         end;
         RangeEncoder_FinishEncode(Coder);
-
-        Writeln('Readed = ', Readed);
-        Writeln('Writed = ', NulWriter.Seek(0, 1));
       end;
 
       if Optimizer.NeedToClose = True then
@@ -544,7 +558,11 @@ var
         if Population1.Count > 0 then
         begin
           if TPerson(Population1.First).Cost > 0 then Inc(CurrentAge);
-          if TPerson(Population1.First).Cost > Person.Cost then Inc(Improvements);
+          if TPerson(Population1.First).Cost > Person.Cost then
+          begin
+            Inc(Improvements);
+            BestPackedSize := Min(BestPackedSize, Person.Cost);
+          end;
         end;
         Population1.Add(Person);
 
@@ -579,34 +597,34 @@ var
     Improvements := 0;
   end;
 
-    destructor  TPopulations.Destroy;
+  destructor  TPopulations.Destroy;
+  begin
+    while Count > 0 do
     begin
-      while Count > 0 do
-      begin
-        TPopulation(Extract(First)).Free;
-      end;
-      inherited Destroy;
+      TPopulation(Extract(First)).Free;
     end;
+    inherited Destroy;
+  end;
 
-    /// TOptimizer
+  /// TOptimizer
 
-    constructor TOptimizer.Create;
-    var
-      T: TSearchRec;
-      I: longint;
-      S: string;
-    begin
-      inherited Create;
-      Randomize;
+  constructor TOptimizer.Create;
+  var
+    T: TSearchRec;
+    I: longint;
+    S: string;
+  begin
+    inherited Create;
+    Randomize;
 
-      FSourceFile := '';
+    FSourceFile := '';
 
-      NeedToRecalculate := False;
-      NeedToReduceIni   := False;
-      NeedToClose       := False;
-      NeedToRun         := True;
+    NeedToRecalculate := False;
+    NeedToReduceIni   := False;
+    NeedToClose       := False;
+    NeedToRun         := True;
 
-      FWorld := TPopulations.Create;
+    FWorld := TPopulations.Create;
 
       FConfiguration := TConfiguration.Create;
       FConfiguration.Selector ('\main');
@@ -650,6 +668,11 @@ var
         begin
           SetPriority(StrToInt(Copy(ParamStr(I), 5, MaxInt)));
         end else
+        if Pos('-N', S) = 1 then
+        begin
+          Delete(S, 1, 2);
+          // nThreads := Max(1, Min(StrToInt(S), 16));
+        end else
         if S[1] in ['-', '/'] then
         begin
           // nothing to do
@@ -676,8 +699,11 @@ var
         end;
         FindClose(T);
       end;
-      if Assigned(DrawSampleSize) then DrawSampleSize(BodyesSize);
-      if Assigned(DrawExtension)  then DrawExtension(FSourceFile);
+      BestPackedSize := BodyesSize;
+
+      if Assigned(DrawSampleSize)     then DrawSampleSize    (BodyesSize);
+      if Assigned(DrawBestPackedSize) then DrawBestPackedSize(BodyesSize);
+      if Assigned(DrawExtension)      then DrawExtension     (FSourceFile);
 
       NulWriter := TNulWriter.Create;
       Coder     := RangeEncoder_Create(NulWriter, @DoFlushNul);
@@ -703,6 +729,10 @@ var
 
     procedure TOptimizer.Display;
     begin
+      Writeln('This is BeeOpt 0.8.0 utility (C) 2002-2009 Andrew Filinsky.');
+      Writeln('This program calculates parameters for Bee 0.8.0 archiver utility,');
+      Writeln('then better compression ratio will be available by using them.');
+      Writeln;
       Writeln('Usage: BeeOpt <Ext> [<Options>]');
       Writeln;
       Writeln('<Ext>: Is the name of folder, which contains a set of');
@@ -920,11 +950,6 @@ var
 
     procedure TOptimizer.Evolution;
     begin
-      Writeln('This is BeeOpt 0.8.0 utility (C) 2002-2009 Andrew Filinsky.');
-      Writeln('This program calculates parameters for Bee 0.8.0 archiver utility,');
-      Writeln('then better compression ratio will be available by using them.');
-      Writeln;
-
       if NeedToCollectConfig then
       begin
         CollectConfigurations(FConfigurationName);
@@ -937,8 +962,10 @@ var
         FWorld.MarkToRecalculate;
         FWorld.Save(FSourceFile + '.dat');
 
-        if Assigned(DrawMessage) then DrawMessage('Parameters will be re-estimated at next run...');
-        Exit;
+        if Assigned(DrawMessage) then
+          DrawMessage('Parameters will be re-estimated at next run...');
+
+        NeedToClose := True;
       end;
 
       if NeedToMerge then
@@ -950,50 +977,60 @@ var
         FWorld.CurrentAge := (FWorld.CurrentAge div 2000) * 2000 + 1;
         FWorld.Save (FSourceFile + '.dat');
 
-        if Assigned(DrawMessage) then DrawMessage('All "' + FSourceFile + '.dat" merged. Run again to continue...');
-        Exit;
+        if Assigned(DrawMessage) then
+          DrawMessage('All "' + FSourceFile + '.dat" merged. Run again to continue...');
+
+        NeedToClose := True;
       end;
 
       if NeedToRun = False then
       begin
-        if Assigned(DrawMessage) then DrawMessage('Configuration file was maked.');
-        Exit;
+        if Assigned(DrawMessage) then
+          DrawMessage('Configuration file was maked.');
+
+        NeedToClose := True;
       end;
 
       if FSourceFile = '' then
       begin
-        if Assigned(DrawMessage) then DrawMessage('Folder is not selected.');
-        Exit;
+        if Assigned(DrawMessage) then
+          DrawMessage('Folder is not selected.');
+
+        NeedToClose := True;
       end;
 
       if Bodyes.Count = 0 then
       begin
-        if Assigned(DrawMessage) then DrawMessage('No Files for Optimization.');
-        Exit;
+        if Assigned(DrawMessage) then
+          DrawMessage('No Files for Optimization.');
+
+        NeedToClose := True;
       end;
 
-      if Assigned(DrawMessage) then DrawMessage('Optimization of ".' + FSourceFile + '" file extension:');
+      if not NeedToClose then
+      begin
+        if Assigned(DrawMessage) then
+          DrawMessage('Optimization of ".' + FSourceFile + '" file extension:');
 
-      FWorld.Free;
-      FWorld := TPopulations.Create(FSourceFile + '.dat');
-      repeat
-        if Assigned(DrawCurrAge)        then DrawCurrAge(FWorld.CurrentAge);
-        if Assigned(DrawCurrPopulation) then DrawCurrPopulation(FWorld.CurrentPopulation + 1);
-        if Assigned(DrawImprovment)     then DrawImprovment(FWorld.Improvements / (FWorld.CurrentAge + 1) * 100);
-        if Assigned(DrawCost) then
+        FWorld.Free;
+        FWorld := TPopulations.Create(FSourceFile + '.dat');
+        while not NeedToClose do
         begin
-          if TPopulation (FWorld.List[FWorld.CurrentPopulation]).Count > 0 then
-             DrawCost(TPerson(TPopulation(FWorld.List[FWorld.CurrentPopulation]).First).Cost)
-           else
-             DrawCost(0);
-        end;
-
-        FWorld.Live;
-        if not NeedToClose then
-        begin
+          if Assigned(DrawCurrAge)        then DrawCurrAge(FWorld.CurrentAge);
+          if Assigned(DrawCurrPopulation) then DrawCurrPopulation(FWorld.CurrentPopulation + 1);
+          if Assigned(DrawImprovment)     then DrawImprovment(FWorld.Improvements / (FWorld.CurrentAge + 1) * 100);
+          if Assigned(DrawCost) then
+          begin
+            if TPopulation (FWorld.List[FWorld.CurrentPopulation]).Count > 0 then
+               DrawCost(TPerson(TPopulation(FWorld.List[FWorld.CurrentPopulation]).First).Cost)
+             else
+               DrawCost(0);
+          end;
+          FWorld.Live;
           FWorld.Save(FSourceFile + '.dat');
+          if Assigned(DrawBestPackedSize) then DrawBestPackedSize(BestPackedSize);
         end;
-      until NeedToClose;
+      end;
     end;
 
     procedure TOptimizer.ReduceSection(Section: TConfigSection);

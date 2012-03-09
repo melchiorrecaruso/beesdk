@@ -29,6 +29,8 @@
 
 unit Bee_Assembler;
 
+{$I compiler.inc}
+
 interface
 
 procedure CopyBytes(const Source, Dest; Count: longword);
