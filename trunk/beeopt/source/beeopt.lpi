@@ -53,7 +53,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="BeeOpt_Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="99"/>
@@ -155,10 +154,11 @@
         <Filename Value="beeopt_optimizer.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BeeOpt_Optimizer"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="510"/>
-        <CursorPos X="52" Y="517"/>
+        <TopLine Value="658"/>
+        <CursorPos X="61" Y="669"/>
         <FoldState Value=" T3lA2H8 piYjS2A772Q"/>
         <UsageCount Value="63"/>
         <Loaded Value="True"/>
