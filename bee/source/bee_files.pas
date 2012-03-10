@@ -150,8 +150,6 @@ end;
 function DoFlush(Stream: pointer; Data: pointer; Size: longint): longint;
 begin
   Result := TFileWriter(Stream).Write(Data^, Size);
-
-  Writeln('DoFlush = ', Size);
 end;
 
 { TFileReader class }
