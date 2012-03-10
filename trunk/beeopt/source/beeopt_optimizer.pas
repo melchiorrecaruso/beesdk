@@ -557,13 +557,14 @@ var
       if Population1.Count > 0 then
       begin
         if TPerson(Population1.First).Cost > 0 then Inc(CurrentAge);
-        if TPerson(Population1.First).Cost > Person.Cost then
-        begin
-          Inc(Improvements);
-          BestPackedSize := Min(BestPackedSize, Person.Cost);
-        end;
+        if TPerson(Population1.First).Cost > Person.Cost then Inc(Improvements);
       end;
       Population1.Add(Person);
+
+      if Population1.Count > 0 then
+      begin
+        BestPackedSize := Min(BestPackedSize, TPerson(Population1.First).Cost);
+      end;
 
       if (Population1.Count > FullSize) and (TPerson(Population1.First).Cost > 0) then
       begin
@@ -592,8 +593,8 @@ var
       TPopulation(List[I]).MarkToRecalculate;
     end;
     CurrentPopulation := 0;
-    CurrentAge   := 0;
-    Improvements := 0;
+    CurrentAge        := 0;
+    Improvements      := 0;
   end;
 
   destructor  TPopulations.Destroy;
