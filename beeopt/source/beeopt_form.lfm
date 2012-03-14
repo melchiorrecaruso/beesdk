@@ -1,15 +1,15 @@
 object MainForm: TMainForm
   Left = 873
-  Height = 263
+  Height = 0
   Top = 104
-  Width = 306
+  Width = 0
   HorzScrollBar.Page = 299
   VertScrollBar.Page = 239
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Bee optimizer'
-  ClientHeight = 263
-  ClientWidth = 306
+  ClientHeight = 0
+  ClientWidth = 0
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -20,10 +20,10 @@ object MainForm: TMainForm
   LCLVersion = '0.9.31'
   Visible = True
   object PageControl: TPageControl
-    Left = 2
-    Height = 239
-    Top = 2
-    Width = 302
+    Left = 0
+    Height = 0
+    Top = 0
+    Width = 0
     ActivePage = TabSheet_About
     Align = alClient
     BorderSpacing.Around = 2
@@ -228,14 +228,14 @@ object MainForm: TMainForm
     end
     object TabSheet_About: TTabSheet
       Caption = 'About'
-      ClientHeight = 213
-      ClientWidth = 294
+      ClientHeight = 0
+      ClientWidth = 0
       ImageIndex = 2
       object Label_About: TLabel
-        Left = 6
-        Height = 197
-        Top = 10
-        Width = 282
+        Left = 0
+        Height = 0
+        Top = 2
+        Width = 0
         Align = alClient
         BorderSpacing.Left = 6
         BorderSpacing.Top = 10
@@ -250,8 +250,8 @@ object MainForm: TMainForm
   object StatusBar: TStatusBar
     Left = 0
     Height = 20
-    Top = 243
-    Width = 306
+    Top = -20
+    Width = 0
     Panels = <    
       item
         Alignment = taRightJustify

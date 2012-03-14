@@ -109,6 +109,9 @@ begin
     begin
       PageControl.Pages[0].Destroy;
     end;
+  end else
+  begin
+    PageControl.ActivePageIndex := 0;
   end;
 end;
 

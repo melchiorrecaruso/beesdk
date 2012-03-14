@@ -668,10 +668,6 @@ var
         begin
           SetPriority(StrToInt(Copy(ParamStr(I), 5, MaxInt)));
         end else
-        if Pos('-AGE', S) = 1 then
-        begin
-          SetPriority(StrToInt(Copy(ParamStr(I), 5, MaxInt)));
-        end else
 
         if S[1] in ['-', '/'] then
         begin
