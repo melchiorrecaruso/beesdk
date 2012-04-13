@@ -13,7 +13,7 @@
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="2" Y="13"/>
+        <CursorPos X="8" Y="22"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -21,11 +21,23 @@
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="1" HistoryIndex="0">
+    <JumpHistory Count="4" HistoryIndex="3">
       <Position1>
         <Filename Value="iroloz.lpr"/>
         <Caret Line="3" Column="23" TopLine="1"/>
       </Position1>
+      <Position2>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="17" Column="63" TopLine="1"/>
+      </Position2>
+      <Position3>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="15" Column="17" TopLine="1"/>
+      </Position3>
+      <Position4>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="13" Column="4" TopLine="1"/>
+      </Position4>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>
