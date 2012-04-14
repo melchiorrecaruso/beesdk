@@ -12,16 +12,16 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="36"/>
-        <CursorPos X="13" Y="69"/>
-        <UsageCount Value="21"/>
+        <TopLine Value="67"/>
+        <CursorPos X="24" Y="92"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit0>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="21" HistoryIndex="20">
       <Position1>
         <Filename Value="iroloz.lpr"/>
         <Caret Line="3" Column="23" TopLine="1"/>
@@ -54,6 +54,58 @@
         <Filename Value="iroloz.lpr"/>
         <Caret Line="37" Column="57" TopLine="13"/>
       </Position8>
+      <Position9>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="68" Column="61" TopLine="38"/>
+      </Position9>
+      <Position10>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="69" Column="41" TopLine="40"/>
+      </Position10>
+      <Position11>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="76" Column="52" TopLine="33"/>
+      </Position11>
+      <Position12>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="25" Column="57" TopLine="1"/>
+      </Position12>
+      <Position13>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="74" Column="67" TopLine="34"/>
+      </Position13>
+      <Position14>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="82" Column="22" TopLine="55"/>
+      </Position14>
+      <Position15>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="81" Column="17" TopLine="55"/>
+      </Position15>
+      <Position16>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="102" Column="5" TopLine="59"/>
+      </Position16>
+      <Position17>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="80" Column="12" TopLine="59"/>
+      </Position17>
+      <Position18>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="99" Column="37" TopLine="60"/>
+      </Position18>
+      <Position19>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="107" Column="21" TopLine="72"/>
+      </Position19>
+      <Position20>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="88" Column="7" TopLine="75"/>
+      </Position20>
+      <Position21>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="108" Column="49" TopLine="73"/>
+      </Position21>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>
