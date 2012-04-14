@@ -62,30 +62,35 @@ type
 
   procedure TDictionary.UpdateDictionary(Symbol: byte);
   begin
-    Writeln('TDictionary.UpdateDictionary::START');
+    // Writeln('Symbol = ', Symbol);
 
     m_context := m_context shl 8;
+    // Writeln('m_context = ', m_context);
+
     m_context := m_context or Symbol;
+    // Writeln('m_context = ', m_context);
+
     m_context := m_context and m_prefix_mask;
+    // Writeln('m_context = ', m_context);
 
     m_self_addressed_dictionary[m_index and m_buffer_mask] := m_last_position_lookup[m_context];
+    // Writeln('m_self_addressed_dictionary = ', m_self_addressed_dictionary[m_index and m_buffer_mask]);
+
     m_last_position_lookup[m_context] := m_index;
+    // Writeln('m_last_position_lookup = ', m_last_position_lookup[m_context]);
 
     Inc(m_index);
-
-
-
-    Writeln(m_context);
-    Writeln('TDictionary.UpdateDictionary::END');
+    // Writeln('m_index = ', m_index);
   end;
 
   function TDictionary.GetNextPosition(Position: longint): longint;
   begin
     result := m_self_addressed_dictionary[position and m_buffer_mask];
+    // Writeln('TDictionary.GetNextPosition = ', Result);
   end;
 
 const
-  Data     = '12345678901234567890123456789012345678901234567890';
+
   DataSize = 50;
 
   Prefix_Size = 2; // can be 1, 2 or 3. It means how many elements we compare.
@@ -101,6 +106,8 @@ var
 
   k: longint;
 
+  Data: array of byte;
+
 begin
 
   // 5 is a bitlength of circular history buffer. Since it is circular buffer it looks back on
@@ -108,16 +115,20 @@ begin
 
   Dictionary := TDictionary.Create(Prefix_Size, 5);
 
+  SetLength(Data, DataSize);
+  for k := 0 to DataSize - 1 do
+  begin
+    Data[k] := (k + 1) mod 10;
+  end;
+
   index := 0;
-
   repeat
-    Dictionary.UpdateDictionary(byte(Data[index]));
+    Dictionary.UpdateDictionary(Data[index]);
     position := index;
-
-    while True do
+    while true do
     begin
-
       New_Position := Dictionary.getNextPosition(Position);
+
       if (new_position >= position) then Break; // positions should only going back in history
       if (new_position < prefix_size - 1) then Break; // should not go to negative array index
 
@@ -129,21 +140,28 @@ begin
       for k := 0 to prefix_size - 1 do
       begin
         current_word := current_word shl 8;
-        current_word := current_word or byte(Data[index - k]);
+          // Writeln('current_word = ', current_word);
+
+        current_word := current_word or Data[index - k];
+          // Writeln('current_word = ', current_word);
 
         offset_word  := offset_word  shl 8;
-        offset_word  := offset_word  or byte(Data[new_position - k]);
+          // Writeln('offset_word = ', offset_word);
+
+        offset_word  := offset_word  or Data[new_position - k];
+          // Writeln('offset_word = ', offset_word);
+
       end;
 
       if (current_word <> offset_word) then Break;
       // end of optional part
 
-      Writeln(Format('%u %u %D %D', [current_word, offset_word, new_position, index]));
+      Writeln(Format('%8u %8u %8u %8u', [current_word, offset_word, new_position, index]));
       position := new_position;
     end;
-  Writeln('-------------------');
-  Inc(Index);
-  until Index < DataSize;
+    Writeln('-----------------');
+    Inc(Index);
+  until Index = DataSize;
   Dictionary.Destroy;
 end.
 
