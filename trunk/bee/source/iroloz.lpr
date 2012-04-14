@@ -6,8 +6,8 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes
-  { you can add units after this };
+  Classes,
+  SysUtils;
 
 type
   TDictionary = class
@@ -29,6 +29,7 @@ type
   var
     I: longint;
   begin
+
     case PrefixSize of
       1: m_prefix_mask := $FF;
       2: m_prefix_mask := $FFFF;
@@ -41,7 +42,7 @@ type
       m_last_position_lookup[I] := 0;
     end;
 
-    m_buffer_mask := (1 shr OffsetLen) - 1;
+    m_buffer_mask := (1 shl OffsetLen) - 1;
 
     SetLength(m_self_addressed_dictionary, m_buffer_mask + 1);
     for I := 0 to m_buffer_mask do
@@ -61,7 +62,9 @@ type
 
   procedure TDictionary.UpdateDictionary(Symbol: byte);
   begin
-    m_context := m_context shr 8;
+    Writeln('TDictionary.UpdateDictionary::START');
+
+    m_context := m_context shl 8;
     m_context := m_context or Symbol;
     m_context := m_context and m_prefix_mask;
 
@@ -69,6 +72,11 @@ type
     m_last_position_lookup[m_context] := m_index;
 
     Inc(m_index);
+
+
+
+    Writeln(m_context);
+    Writeln('TDictionary.UpdateDictionary::END');
   end;
 
   function TDictionary.GetNextPosition(Position: longint): longint;
@@ -88,8 +96,10 @@ var
   New_Position: longint;
   Dictionary: TDictionary;
 
-  Current_Word: longint;
-  Offset_Word: longint;
+  current_word: longint;
+  offset_word: longint;
+
+  k: longint;
 
 begin
 
@@ -101,27 +111,37 @@ begin
   index := 0;
 
   repeat
-    Dictionary.UpdateDictionary(byte(Data[Index]));
-    Position := Index;
+    Dictionary.UpdateDictionary(byte(Data[index]));
+    position := index;
 
     while True do
     begin
 
       New_Position := Dictionary.getNextPosition(Position);
-      if (New_position >= Position) then Break; // positions should only going back in history
-      if (New_position < prefix_size - 1) then Break; //should not go to negative array index
+      if (new_position >= position) then Break; // positions should only going back in history
+      if (new_position < prefix_size - 1) then Break; // should not go to negative array index
+
       // next word match verification is optional, it works without it since in encoding
       // and decoding operations are going in the same way
+      current_word := 0;
+      offset_word  := 0;
 
-      Current_Word := 0;
-      Offset_Word  := 0;
+      for k := 0 to prefix_size - 1 do
+      begin
+        current_word := current_word shl 8;
+        current_word := current_word or byte(Data[index - k]);
 
+        offset_word  := offset_word  shl 8;
+        offset_word  := offset_word  or byte(Data[new_position - k]);
+      end;
 
+      if (current_word <> offset_word) then Break;
+      // end of optional part
 
-
+      Writeln(Format('%u %u %D %D', [current_word, offset_word, new_position, index]));
+      position := new_position;
     end;
-  Writeln('--------------------');
-
+  Writeln('-------------------');
   Inc(Index);
   until Index < DataSize;
   Dictionary.Destroy;

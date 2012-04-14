@@ -45,11 +45,11 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="iroloz"/>
+      <Filename Value="..\distribution\iroloz"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      <UnitOutputDirectory Value="..\temp"/>
     </SearchPaths>
     <Other>
       <CompilerMessages>

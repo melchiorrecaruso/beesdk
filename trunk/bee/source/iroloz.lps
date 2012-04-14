@@ -12,16 +12,16 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="67"/>
-        <CursorPos X="24" Y="92"/>
-        <UsageCount Value="22"/>
+        <TopLine Value="46"/>
+        <CursorPos X="22" Y="78"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
       </Unit0>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="21" HistoryIndex="20">
+    <JumpHistory Count="24" HistoryIndex="23">
       <Position1>
         <Filename Value="iroloz.lpr"/>
         <Caret Line="3" Column="23" TopLine="1"/>
@@ -106,6 +106,18 @@
         <Filename Value="iroloz.lpr"/>
         <Caret Line="108" Column="49" TopLine="73"/>
       </Position21>
+      <Position22>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="124" Column="40" TopLine="95"/>
+      </Position22>
+      <Position23>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="133" Column="26" TopLine="95"/>
+      </Position23>
+      <Position24>
+        <Filename Value="iroloz.lpr"/>
+        <Caret Line="9" Column="11" TopLine="1"/>
+      </Position24>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>
