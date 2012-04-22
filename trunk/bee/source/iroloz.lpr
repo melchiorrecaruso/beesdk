@@ -23,35 +23,20 @@ type
     destructor Destroy; override;
     procedure UpdateDictionary(Symbol: byte);
     function GetNextPosition(Position: longint): longint;
+    procedure EraseData;
   end;
 
   constructor TDictionary.Create(PrefixSize: longint; OffsetLen: longint);
-  var
-    I: longint;
   begin
-
     case PrefixSize of
       1: m_prefix_mask := $FF;
       2: m_prefix_mask := $FFFF;
     else m_prefix_mask := $FFFFFF;
     end;
-
-    SetLength(m_last_position_lookup, m_prefix_mask + 1);
-    for I := 0 to m_prefix_mask do
-    begin
-      m_last_position_lookup[I] := 0;
-    end;
-
     m_buffer_mask := (1 shl OffsetLen) - 1;
-
+    SetLength(m_last_position_lookup, m_prefix_mask + 1);
     SetLength(m_self_addressed_dictionary, m_buffer_mask + 1);
-    for I := 0 to m_buffer_mask do
-    begin
-      m_self_addressed_dictionary[I] := 0;
-    end;
-
-    m_context := 0;
-    m_index   := 0;
+    EraseData;
   end;
 
   destructor TDictionary.Destroy;
@@ -62,32 +47,76 @@ type
 
   procedure TDictionary.UpdateDictionary(Symbol: byte);
   begin
-    // Writeln('Symbol = ', Symbol);
-
     m_context := m_context shl 8;
-    // Writeln('m_context = ', m_context);
-
     m_context := m_context or Symbol;
-    // Writeln('m_context = ', m_context);
-
     m_context := m_context and m_prefix_mask;
-    // Writeln('m_context = ', m_context);
-
     m_self_addressed_dictionary[m_index and m_buffer_mask] := m_last_position_lookup[m_context];
-    // Writeln('m_self_addressed_dictionary = ', m_self_addressed_dictionary[m_index and m_buffer_mask]);
-
     m_last_position_lookup[m_context] := m_index;
-    // Writeln('m_last_position_lookup = ', m_last_position_lookup[m_context]);
-
     Inc(m_index);
-    // Writeln('m_index = ', m_index);
   end;
 
   function TDictionary.GetNextPosition(Position: longint): longint;
   begin
     result := m_self_addressed_dictionary[position and m_buffer_mask];
-    // Writeln('TDictionary.GetNextPosition = ', Result);
   end;
+
+  procedure TDictionary.EraseData;
+  var
+    I: longint;
+  begin
+    for I := 0 to m_prefix_mask do
+    begin
+      m_last_position_lookup[I] := 0;
+    end;
+
+    for I := 0 to m_buffer_mask do
+    begin
+      m_self_addressed_dictionary[I] := 0;
+    end;
+    m_context := 0;
+    m_index   := 0;
+  end;
+
+// Several following functions and classes are taken from open source
+// http://balz.sourceforge.net/ and written by Ilia Muraviev. I found
+// it very convenient. I added only some cosmetic changes.
+
+procedure ExeTransform(var Data; y: longint; n: longint);
+var
+  Buf: array [0..$FFFFFFF] of byte absolute Data;
+  I, E: longint;
+begin
+  I := 0;
+  E := n - 8;
+  // search for pe file header
+
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const
 
@@ -140,17 +169,9 @@ begin
       for k := 0 to prefix_size - 1 do
       begin
         current_word := current_word shl 8;
-          // Writeln('current_word = ', current_word);
-
         current_word := current_word or Data[index - k];
-          // Writeln('current_word = ', current_word);
-
         offset_word  := offset_word  shl 8;
-          // Writeln('offset_word = ', offset_word);
-
         offset_word  := offset_word  or Data[new_position - k];
-          // Writeln('offset_word = ', offset_word);
-
       end;
 
       if (current_word <> offset_word) then Break;
