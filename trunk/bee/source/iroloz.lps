@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="iroloz.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -12,8 +12,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="58"/>
-        <CursorPos X="49" Y="86"/>
+        <TopLine Value="47"/>
+        <CursorPos X="21" Y="88"/>
         <FoldState Value=" T3S2B4*"/>
         <UsageCount Value="32"/>
         <Loaded Value="True"/>
@@ -42,6 +42,14 @@
         <CursorPos X="52" Y="163"/>
         <UsageCount Value="10"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="C:\Documents and Settings\Quacquero\Desktop\irolz2_cpp.pas"/>
+        <UnitName Value="irolz2_cpp"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="127"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+      </Unit4>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
