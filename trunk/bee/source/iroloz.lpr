@@ -85,33 +85,118 @@ procedure ExeTransform(var Data; y: longint; n: longint);
 var
   Buf: array [0..$FFFFFFF] of byte absolute Data;
   I, E: longint;
+  P: ^longint;
+  Addr: ^longint;
 begin
-  I := 0;
   E := n - 8;
-  // search for pe file header
 
+  // search for pe file header
+  I := 0;
+  repeat
+    P := @Buf[I];
+    if (P^ = $4550) then Break;
+
+    Inc(I);
+  until (I < E);
+
+  // perform call/jmp address translation
+  while (I < E) do
+  begin
+    Inc(I);
+    if (Buf[I - 1] and 254) = $e8 then
+    begin
+      Addr := @Buf[I];
+
+      if (boolean(y)) then
+      begin
+        if (Addr^ >= -1) and (Addr^ < (n-1)) then Inc(Addr^, I)
+        else if (Addr^ > 0) and (Addr^ < n) then Dec(Addr^, n);
+      end else
+      begin
+        if (Addr^ < 0) then
+        begin
+          if ((Addr^ + I) >= 0) then Inc(Addr^, n);
+        end else
+          if (Addr^ < n) then Dec(Addr^, I);
+      end;
+      Inc(I, 4);
+    end;
+  end;
 end;
 
 
+//source: http://balz.sourceforge.net/
+
+type
+  TPredictor = class
+  private
+    P1: word;
+    P2: word;
+  public
+    constructor Create;
+    function P: longint;
+    procedure Update(Bit: longint);
+  end;
+
+  constructor TPredictor.Create;
+  begin
+    P1 := 1 shl 15;
+    P2 := 1 shl 15;
+  end;
+
+  function TPredictor.P: longint;
+  begin
+    Result :=  P1 + P2;
+  end;
+
+  procedure TPredictor.Update(Bit: longint);
+  begin
+    if boolean(Bit) then
+    begin
+      P1 := P1 + ((not P1) shr 3);
+      P2 := P2 + ((not P2) shr 6);
+    end else
+    begin
+      P1 := P1 - (P1 shr 3);
+      P2 := P2 - (P2 shr 6);
+    end;
+  end;
+
+// This coder Ilia Muraviev derived from Mahoney's fpaq0
+// source: http://balz.sourceforge.net/
+
+type
+  TEncoder = class
+  private
+    x1: longword;
+    x2: longword;
+  public
+    constructor Create;
+    procedure Encode(P: longint; Bit: longint);
+  end;
+
+  constructor TEncoder.Create;
+  begin
+    x1 :=  0;
+    x2 := longword(-1);
+  end;
+
+  procedure TEncoder.Encode(P: longint; Bit: longint);
+  var
+    xmid: longword;
+  begin
+    xmid := x1 + ((x2 - x1) * P) shr 17;
+    if Boolean(Bit) then
+      x2 := xmid
+    else
+      x1 := xmid + 1;
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+  end;
 
 
 
