@@ -64,6 +64,7 @@ type
   protected
     procedure FillBuffer; override;
   public
+    function ReadInfint64(var Data: int64): longint;
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
@@ -81,6 +82,7 @@ type
     {$ENDIF}
   public
     destructor Destroy; override;
+    function WriteInfint64(Data: int64): longint;
     function Write(const Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
@@ -179,6 +181,14 @@ begin
   until Result = Count;
 end;
 
+function TReadBufStream.ReadInfint64(var Data: int64): longint;
+var
+  Bytes: array [0..$FFFFFFF] of byte absolute Data;
+begin
+
+
+end;
+
 function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
 begin
   if (Origin = soFromCurrent) and (OffSet = 0) then
@@ -240,6 +250,34 @@ begin
     Inc(FBufferSize, Count);
     Result := Count;
   end;
+end;
+
+function TWriteBufStream.WriteInfint64(Data: int64): longint;
+var
+  Buffer: int64;
+begin
+  Result := 0;
+  Buffer := Data and $7F;
+  while (Data shl 7) > 0 do
+  begin
+    Buffer := Buffer shr 8;
+    Buffer := Buffer or ((Data and $7F) or $80);
+   end;
+
+   while (True) do
+   begin
+     if Write(Buffer, 1) = 0 then
+     begin
+       Result := 0;
+       Exit;
+     end;
+     Inc(Result);
+
+     if (Buffer and $80) > 0 then
+       Buffer := Buffer shr 8
+     else
+       Break;
+   end;
 end;
 
 function TWriteBufStream.Seek(Offset: longint; Origin: word): longint;
