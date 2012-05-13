@@ -190,7 +190,10 @@ begin
   repeat
     Inc(Result, Read(Bits, 1));
 
-    Data := Data or ();
+
+
+
+    // Data := Data or ();
 
 
 
@@ -266,18 +269,26 @@ end;
 
 function TWriteBufStream.WriteInfint(Data: int64): longint;
 var
-  Bits: byte;
+  Bs: array[0..9] of byte;
+  B: byte;
 begin
+
   Result := 0;
   repeat
-    Bits := Data and $7F;
-    Data := Data shl 7;
+    B    := Data and $7F;
+    Data := Data shr 7;
     if Data > 0 then
     begin
-      Bits := Bits or $80
+      B := B or $80
     end;
-    Inc(Result, Write(Bits, 1));
+    Bs[Result] := B;
+    Inc(Result);
   until Data = 0;
+
+  if Write(Bs[0], Result) <> Result then
+  begin
+    Result := 0;
+  end;
 end;
 
 function TWriteBufStream.Seek(Offset: longint; Origin: word): longint;
