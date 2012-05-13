@@ -99,7 +99,7 @@ uses
   SysUtils,
   Bee_Consts,
   Bee_MainPacker,
-  BeeLib_Assembler;
+  Bee_Assembler;
 
 { help functions }
 
