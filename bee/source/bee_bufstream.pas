@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2010 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2012 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
+    v0.8.0 build xxxx - 2012.05.13 by Melchiorre Caruso.
 }
 
 unit Bee_BufStream;
@@ -35,7 +35,7 @@ uses
   Classes, Bee_BlowFish;
 
 const
-  DefaultBufferCapacity: longint = 128 * 1024;
+  DefaultBufferCapacity: longint = $20000;
 
 type
   { TBufStream }
@@ -64,7 +64,7 @@ type
   protected
     procedure FillBuffer; override;
   public
-    function ReadInfint64(var Data: int64): longint;
+    function ReadInfint(var Data: int64): longint;
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
@@ -78,11 +78,11 @@ type
     procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
     {$IFDEF FPC} 
-    procedure SetSize64(const NewSize: Int64); override;
+    procedure SetSize64(const NewSize: int64); override;
     {$ENDIF}
   public
     destructor Destroy; override;
-    function WriteInfint64(Data: int64): longint;
+    function WriteInfint(Data: int64): longint;
     function Write(const Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
@@ -181,12 +181,24 @@ begin
   until Result = Count;
 end;
 
-function TReadBufStream.ReadInfint64(var Data: int64): longint;
+function TReadBufStream.ReadInfint(var Data: int64): longint;
 var
-  Bytes: array [0..$FFFFFFF] of byte absolute Data;
+  Bits: int64;
 begin
+  Result := 0;
+  Data   := 0;
+  repeat
+    Inc(Result, Read(Bits, 1));
+
+    Data := Data or ();
 
 
+
+
+
+
+
+  until (Bits and $80) = 0;
 end;
 
 function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
@@ -252,32 +264,20 @@ begin
   end;
 end;
 
-function TWriteBufStream.WriteInfint64(Data: int64): longint;
+function TWriteBufStream.WriteInfint(Data: int64): longint;
 var
-  Buffer: int64;
+  Bits: byte;
 begin
   Result := 0;
-  Buffer := Data and $7F;
-  while (Data shl 7) > 0 do
-  begin
-    Buffer := Buffer shr 8;
-    Buffer := Buffer or ((Data and $7F) or $80);
-   end;
-
-   while (True) do
-   begin
-     if Write(Buffer, 1) = 0 then
-     begin
-       Result := 0;
-       Exit;
-     end;
-     Inc(Result);
-
-     if (Buffer and $80) > 0 then
-       Buffer := Buffer shr 8
-     else
-       Break;
-   end;
+  repeat
+    Bits := Data and $7F;
+    Data := Data shl 7;
+    if Data > 0 then
+    begin
+      Bits := Bits or $80
+    end;
+    Inc(Result, Write(Bits, 1));
+  until Data = 0;
 end;
 
 function TWriteBufStream.Seek(Offset: longint; Origin: word): longint;
