@@ -7,29 +7,72 @@ interface
 uses
   Classes, SysUtils;
 
-const
-  HT0 = $00000;
-  HT1 = $00001;
+type
+  THeaderType        = (htCustom, htBinding);
+  THeaderCoderType   = (hctBee, hctRoloz);
+  THeaderCrypterType = (hctBlowFish);
 
-const
-  HF1_VERSION     = $00001;
-  HF1_NAME        = $00002;
-  HF1_SIZE        = $00004;
-  HF1_CODER       = $00008;
-  HF1_CTIME       = $00010;
-  HF1_MTIME       = $00020;
-  HF1_ATIME       = $00040;
-  HF1_ATTRIBUTES  = $00080;
-  HF1_MODE        = $00100;
-  HF1_CRC         = $00200;
-  HF1_CRYPTER     = $00400;
-  HF1_DISK        = $00800;
-  HF1_SEEK        = $01000;
-  HF1_UID         = $02000;
-  HF1_GID         = $04000;
-  HF1_UNAME       = $08000;
-  HF1_GNAME       = $10000;
-  HF1_COMMENT     = $20000;
+type
+  THeaderCustomFlag = (
+    hcfVERSION,
+    hcfNAME,
+    hcfSIZE,
+    hcfCODER,
+    hcfCTIME,
+    hcfMTIME,
+    hcfATIME,
+    hcfATTRIBUTES,
+    hcfMODE,
+    hcfCRC,
+    hcfCRYPTER,
+    hcfDISK,
+    hcfSEEK,
+    hcfUID,
+    hcfGID,
+    hcfUNAME,
+    hcfGNAME,
+    hcfCOMMENT);
+
+  THeaderBindingFlag = (
+    hbfVERSION,
+    hbfID,
+    hbfDISK,
+    hbfDISKs,
+    hbfCOMMENT,
+    hbfCRC);
+
+  THeaderCoderBeeFlag = (
+    hcbfVERSION,
+    hcbfMETHOD,
+    hcbfDICTIONARY,
+    hcbfTABLE,
+    hcbfTEAR,
+    hcbfMOVED);
+
+  THeaderCoderRolozFlag = (
+    hcrfVERSION);
+
+  THeaderCrypterBlowFishFlag = (
+    hcrfVERSION);
+
+type
+  THeaderCustomFlags     = set of THeaderCustomFlag;
+  THeaderBindingFlags    = set of THeaderBindingFlag;
+  THeaderCoderBeeFlags   = set of THeaderCoderBeeFlag;
+  THeaderCoderRolozFlags = set of THeaderCoderRolozFlag;
+
+  THeaderCrypterBlowFiskFlags = set of THeaderCrypterBlowFiskFlag;
+
+
+
+
+
+
+
+
+
+
+
 
 type
   TArcHeaderTypeCustom = packed record
