@@ -64,7 +64,7 @@ type
   protected
     procedure FillBuffer; override;
   public
-    function ReadInfint(var Data: int64): longint;
+    function ReadInfint(var Data: qword): longint;
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
@@ -82,7 +82,7 @@ type
     {$ENDIF}
   public
     destructor Destroy; override;
-    function WriteInfint(Data: int64): longint;
+    function WriteInfint(Data: qword): longint;
     function Write(const Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
@@ -181,27 +181,24 @@ begin
   until Result = Count;
 end;
 
-function TReadBufStream.ReadInfint(var Data: int64): longint;
+function TReadBufStream.ReadInfint(var Data: qword): longint;
 var
-  Bits: int64;
+  LastByte: byte;
+  Temp: qword;
 begin
-  Result := 0;
   Data   := 0;
+  Result := 0;
   repeat
-    Inc(Result, Read(Bits, 1));
-
-
-
-
-    // Data := Data or ();
-
-
-
-
-
-
-
-  until (Bits and $80) = 0;
+    if Read(LastByte, 1) <> 1 then
+    begin
+      Result := 0;
+      Exit;
+    end;
+    Temp := LastByte and $7F;
+    Temp := Temp shl (7 * Result);
+    Data := Data or Temp;
+    Inc(Result);
+  until (LastByte and $80) = 0;
 end;
 
 function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
@@ -267,28 +264,24 @@ begin
   end;
 end;
 
-function TWriteBufStream.WriteInfint(Data: int64): longint;
+function TWriteBufStream.WriteInfint(Data: qword): longint;
 var
-  Bs: array[0..9] of byte;
-  B: byte;
+  LocalBuffer: array[0..9] of byte;
+  LastByte: byte;
 begin
-
   Result := 0;
   repeat
-    B    := Data and $7F;
+    LastByte := Data and $7F;
     Data := Data shr 7;
-    if Data > 0 then
+    if Data <> 0 then
     begin
-      B := B or $80
+      LastByte := LastByte or $80
     end;
-    Bs[Result] := B;
+    LocalBuffer [Result] := LastByte;
     Inc(Result);
   until Data = 0;
 
-  if Write(Bs[0], Result) <> Result then
-  begin
-    Result := 0;
-  end;
+  if Write(LocalBuffer[0], Result) <> Result then Result := 0;
 end;
 
 function TWriteBufStream.Seek(Offset: longint; Origin: word): longint;
