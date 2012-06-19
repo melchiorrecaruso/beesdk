@@ -7,61 +7,64 @@ interface
 uses
   Classes, SysUtils;
 
-type
-  THeaderType        = (htCustom, htBinding);
-  THeaderCoderType   = (hctBee, hctRoloz);
-  THeaderCrypterType = (hctBlowFish);
+const
+  /// Header type
 
-type
-  THeaderCustomFlag = (
-    hcfVERSION,
-    hcfNAME,
-    hcfSIZE,
-    hcfCODER,
-    hcfCTIME,
-    hcfMTIME,
-    hcfATIME,
-    hcfATTRIBUTES,
-    hcfMODE,
-    hcfCRC,
-    hcfCRYPTER,
-    hcfDISK,
-    hcfSEEK,
-    hcfUID,
-    hcfGID,
-    hcfUNAME,
-    hcfGNAME,
-    hcfCOMMENT);
+  htCUSTOM    = $00000;
+  htBINDING   = $00001;
 
-  THeaderBindingFlag = (
-    hbfVERSION,
-    hbfID,
-    hbfDISK,
-    hbfDISKs,
-    hbfCOMMENT,
-    hbfCRC);
+  /// Header coder type
 
-  THeaderCoderBeeFlag = (
-    hcbfVERSION,
-    hcbfMETHOD,
-    hcbfDICTIONARY,
-    hcbfTABLE,
-    hcbfTEAR,
-    hcbfMOVED);
+  hctBEE      = $00000;
+  hctROLOZ    = $00001;
+  hctBLOWFISH = $00000;
 
-  THeaderCoderRolozFlag = (
-    hcrfVERSION);
+  /// Header custom flag
 
-  THeaderCrypterBlowFishFlag = (
-    hcrfVERSION);
+  hcfVERSION
+  hcfNAME
+  hcfSIZE
+  hcfCODER
+  hcfCTIME
+  hcfMTIME
+  hcfATIME
+  hcfATTRIBUTES
+  hcfMODE
+  hcfCRC
+  hcfCRYPTER
+  hcfDISK
+  hcfSEEK
+  hcfUID
+  hcfGID
+  hcfUNAME
+  hcfGNAME
+  hcfCOMMENT
 
-type
-  THeaderCustomFlags     = set of THeaderCustomFlag;
-  THeaderBindingFlags    = set of THeaderBindingFlag;
-  THeaderCoderBeeFlags   = set of THeaderCoderBeeFlag;
-  THeaderCoderRolozFlags = set of THeaderCoderRolozFlag;
+  /// Header binding flag
 
-  THeaderCrypterBlowFiskFlags = set of THeaderCrypterBlowFiskFlag;
+  hbfVERSION
+  hbfID
+  hbfDISK
+  hbfDISKs
+  hbfCOMMENT
+  hbfCRC
+
+  /// Header bee coder flag
+
+  hbcfVERSION
+  hbcfMETHOD
+  hbcfDICTIONARY
+  hbcfTABLE
+  hbcfTEAR
+  hbcfMOVED
+
+  /// Header roloz coder flag
+
+  hrcfVERSION
+
+  /// Header blowfish coder flag
+
+  hbcfVERSION
 
 
 
