@@ -1,114 +1,121 @@
 unit BeeSDK_Archive;
 
-{$mode objfpc}{$H+}
-
 interface
 
 uses
   Classes, SysUtils;
 
 const
-  /// Header type
+  // Header                   -type-
 
-  htCUSTOM    = $00000;
-  htBINDING   = $00001;
+  htBINDING                 = $00000;
+  htGENERIC                 = $00001;
 
-  /// Header coder type
+  // Header BINDING           -flag-
 
-  hctBEE      = $00000;
-  hctROLOZ    = $00001;
-  hctBLOWFISH = $00000;
+  hbfVERSION                = $00001;
+  hbfID                     = $00002;
+  hbfDISK                   = $00004;
+  hbfDISKs                  = $00008;
+  hbfCRC                    = $00010;
+  hbfCOMMENT                = $00020;
 
-  /// Header custom flag
+  // Header CUSTOM            -flag-
 
-  hcfVERSION
-  hcfNAME
-  hcfSIZE
-  hcfCODER
-  hcfCTIME
-  hcfMTIME
-  hcfATIME
-  hcfATTRIBUTES
-  hcfMODE
-  hcfCRC
-  hcfCRYPTER
-  hcfDISK
-  hcfSEEK
-  hcfUID
-  hcfGID
-  hcfUNAME
-  hcfGNAME
-  hcfCOMMENT
+  hcfVERSION                = $00001;
+  hcfNAME                   = $00002;
+  hcfSIZE                   = $00004;
+  hcfCTIME                  = $00008;
+  hcfMTIME                  = $00010;
+  hcfATIME                  = $00020;
+  hcfATTRIBUTES             = $00040;
+  hcfMODE                   = $00080;
+  hcfCRC                    = $00100;
+  hcfCODER                  = $00200;
+  hcfCRYPTER                = $00400;
+  hcfDISK                   = $00800;
+  hcfSEEK                   = $01000;
+  hcfUID                    = $02000;
+  hcfGID                    = $04000;
+  hcfUNAME                  = $08000;
+  hcfGNAME                  = $10000;
+  hcfCOMMENT                = $20000;
 
-  /// Header binding flag
+  /// Header CODER            -type-
 
-  hbfVERSION
-  hbfID
-  hbfDISK
-  hbfDISKs
-  hbfCOMMENT
-  hbfCRC
+  hcotBEE                   = $00000;
+  hcotROLOZ                 = $00001;
 
-  /// Header bee coder flag
+  /// Header CRYPTER          -type-
 
-  hbcfVERSION
-  hbcfMETHOD
-  hbcfDICTIONARY
-  hbcfTABLE
-  hbcfTEAR
-  hbcfMOVED
+  hcrtBLOWFISH              = $00000;
 
-  /// Header roloz coder flag
+  /// Header CODER BEE        -flag-
 
-  hrcfVERSION
+  hbcofVERSION              = $00001;
+  hbcofMETHOD               = $00002;
+  hbcofDICTIONARY           = $00004;
+  hbcofTABLE                = $00008;
+  hbcofTEAR                 = $00010;
 
-  /// Header blowfish coder flag
+  /// Header CODER ROLOZ      -flag-
 
-  hbcfVERSION
+  hrcofVERSION              = $00001;
 
+  /// Header CRYPTER BLOWFISH -flag-
 
-
-
-
-
-
-
-
-
-
+  hbcrfVERSION              = $00001;
 
 type
-  TArcHeaderTypeCustom = packed record
+  THeaderCustom = packed record
     Flags: longword;
     Version: longword;
-    FileNameLen: longword;
-    FileName: string;
+    NameLen: longword;
+    Name: string;
     Size: qword;
-    StoredSize: qword;
-    CFileTime: longword;
-    MFileTime: longword;
-    AFileTime: longword;
+    CTime: longword;
+    MTime: longword;
+    ATime: longword;
     Attributes: longword;
     Mode: longword;
     CRC: longword;
+
     case longword of
-      0: (Coder: longword);
-      1: (Coder: longint);
+      hcotBEE: (BEE:
+      packed record
+        Flags: longword;
+        Version: longword;
+        StoredSize: qword;
+      end;);
+      hcotROLOZ: (ROLOZ:
+      packed record
+        Flags: longword;
+        Version: longword;
+        StoredSize: qword;
+      end;);
     end;
+
     Crypter: packed record
-      FType: longword;
-      FFlags: longword;
-      FVersion: longword;
+
+      Flags: longword;
+      Version: longword;
     end;
 
-
-
-
+    Disk: longword;
+    Seek: longword;
+    UID: longword;
+    GID: longword;
+    UNameLen: longword;
+    UName: string;
+    GNameLen: longword;
+    GName: string;
+    CommentLen: longword;
+    Comment: longword;
   end;
 
 
 type
-  TArcHeader = class(TObject)
+  THeaderBinding = packed record
   private
     FType: longword;
 
