@@ -58,7 +58,7 @@ const
   hbcofTABLE                = $00008;
   hbcofTEAR                 = $00010;
 
-  /// Header CODER ROLOZ      -flag-
+  /// Header CODER ROLOZ      Type-flag-
 
   hrcofVERSION              = $00001;
 
@@ -66,25 +66,15 @@ const
 
   hbcrfVERSION              = $00001;
 
+
 type
-  TBeeInfo = packed record
-    Flags: longword;
-    Version: longword;
-    StoredSize: qword;
+  THeader = packed record
+    HType: longwrod;
+    HInfo: pointer;
   end;
 
-  TRolozInfo = packed record
-    Flags: longword;
-    Version: longword;
-    StoredSize: qword;
-  end;
 
-   TBlowFishInfo = packed record
-     Flags: longword;
-     Version: longword;
-   end;
-
-  THeaderGeneric = packed record
+  THeaderGenericInfo = packed record
     Flags: longword;
     Version: longword;
     NameLen: longword;
@@ -96,12 +86,8 @@ type
     Attributes: longword;
     Mode: longword;
     CRC: longword;
-    case longword of
-      hcotBEE:   (BeeInfo:   TBeeInfo);
-      hcotROLOZ: (RolozInfo: TRolozInfo);
-
-    case longword of
-      hcrtBlowFish: (BlowFishInfo: TBlowFishInfo);
+    Coder: pointer;
+    Crypter: pointer;
     Disk: longword;
     Seek: longword;
     UID: longword;
@@ -114,14 +100,36 @@ type
     Comment: longword;
   end;
 
-
-type
   THeaderBinding = packed record
   private
     FType: longword;
 
     FData: pointer;
   end;
+
+
+
+
+type
+  TBeeCoderInfo = packed record
+    Flags: longword;
+    Version: longword;
+    StoredSize: qword;
+  end;
+
+  TRolozCoderInfo = packed record
+    Flags: longword;
+    Version: longword;
+    StoredSize: qword;
+  end;
+
+   TBlowFishCrypterInfo = packed record
+     Flags: longword;
+     Version: longword;
+   end;
+
+
+
 
 type
   TArcHeaderCustom =
