@@ -67,7 +67,24 @@ const
   hbcrfVERSION              = $00001;
 
 type
-  THeaderCustom = packed record
+  TBeeInfo = packed record
+    Flags: longword;
+    Version: longword;
+    StoredSize: qword;
+  end;
+
+  TRolozInfo = packed record
+    Flags: longword;
+    Version: longword;
+    StoredSize: qword;
+  end;
+
+   TBlowFishInfo = packed record
+     Flags: longword;
+     Version: longword;
+   end;
+
+  THeaderGeneric = packed record
     Flags: longword;
     Version: longword;
     NameLen: longword;
@@ -79,28 +96,12 @@ type
     Attributes: longword;
     Mode: longword;
     CRC: longword;
+    case longword of
+      hcotBEE:   (BeeInfo:   TBeeInfo);
+      hcotROLOZ: (RolozInfo: TRolozInfo);
 
     case longword of
-      hcotBEE: (BEE:
-      packed record
-        Flags: longword;
-        Version: longword;
-        StoredSize: qword;
-      end;);
-      hcotROLOZ: (ROLOZ:
-      packed record
-        Flags: longword;
-        Version: longword;
-        StoredSize: qword;
-      end;);
-    end;
-
-    Crypter: packed record
-
-      Flags: longword;
-      Version: longword;
-    end;
-
+      hcrtBlowFish: (BlowFishInfo: TBlowFishInfo);
     Disk: longword;
     Seek: longword;
     UID: longword;
