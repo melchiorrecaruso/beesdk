@@ -67,41 +67,33 @@ const
   hbcrfVERSION              = $00001;
 
 type
-  TCoder = class
+  TBeeCoder = class(TObject)
   public
     Flags: longword;
+    Version: longword;
+    Method: longword;
+    Dictionary: longword;
+    Table: longword;
+    StoredSize: qword;
   end;
 
-  TBeeCoder = class(TCoder)
+  TRolozCoder = class(TObject)
   public
+    Flags: longword;
     Version: longword;
     StoredSize: qword;
   end;
 
-  TRolozCoder = class(TCoder)
-  public
-    Version: longword;
-    StoredSize: qword;
-  end;
-
-  TCrypter = class
+  TBlowFishCrypter = class(TObject)
   public
     Flags: longword;
-  end;
-
-  TBlowFishCrypter = class(TCrypter)
-  public
     Version: longword;
   end;
 
 type
-  THeader = class
+  TGenericHeader = class(TObject)
   public
     Flags: longword;
-  end;
-
-  TGenericHeader = class(THeader)
-  public
     Version: longword;
     NameLen: longword;
     Name: string;
@@ -112,8 +104,8 @@ type
     Attributes: longword;
     Mode: longword;
     CRC: longword;
-    Coder: TCoder;
-    Crypter: TCrypter;
+    Coder: TObject;
+    Crypter: TObject;
     Disk: longword;
     Seek: qword;
     UID: longword;
@@ -124,9 +116,12 @@ type
     GName: string;
     CommentLen: longword;
     Comment: string;
+    DiskName: string;
+    DiskSize: qword;
+    Action: longword;
   end;
 
-  TBindingHeader = class(THeader)
+  TBindingHeader = class(TObject)
   public
     Version: longword;
     ID: qword;
@@ -139,180 +134,29 @@ type
   end;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-type
-  TArcHeaderCustom =
-  protected
-    FFlags: longword;
-
-
-
-
-
-
-
-
-
-
-    Method:  byte;
-
-
-
-    FDiskFileName     : string;
-
-    NextItem          : TBeeArchiveItem;
-    FAction           : TBeeArchiveAction;
-
-
-
-
-
-
-
-
-    FIsEncrypted      : Boolean;
-
-    FTagged           : Boolean;
-
-
-  protected
-    function GetCompressedSize : Int64; virtual;
-    function GetCRC32 : Longint; virtual;
-    function GetDiskPath : string;
-    function GetExternalFileAttributes : LongWord; virtual;
-    function GetFileName : string; virtual;
-    function GetIsDirectory: Boolean; virtual;
-    function GetIsEncrypted : Boolean; virtual;
-    function GetLastModFileDate : Word; virtual;
-    function GetLastModFileTime : Word; virtual;
-    function GetNativeFileAttributes : LongInt; virtual;
-    function GetStoredPath : string;
-    function GetUncompressedSize : Int64; virtual;
-    procedure SetCompressedSize(const Value : Int64); virtual;
-    procedure SetCRC32(const Value : Longint); virtual;
-    procedure SetExternalFileAttributes( Value : LongWord ); virtual;
-    procedure SetFileName(const Value : string); virtual;
-    procedure SetIsEncrypted(Value : Boolean); virtual;
-    procedure SetLastModFileDate(const Value : Word); virtual;
-    procedure SetLastModFileTime(const Value : Word); virtual;
-    procedure SetUncompressedSize(const Value : Int64); virtual;
-    function GetLastModTimeAsDateTime: TDateTime; virtual;
-    procedure SetLastModTimeAsDateTime(const Value: TDateTime); virtual;
-
-  public {methods}
-    constructor Create;
-    destructor Destroy; override;
-    function MatchesDiskName(const FileMask : string) : Boolean;
-    function MatchesStoredName(const FileMask : string) : Boolean;
-    function MatchesStoredNameEx(const FileMask : string) : Boolean;
-
-
-  public {properties}
-    property Action : TAbArchiveAction
-      read FAction
-      write FAction;
-    property CompressedSize : Int64
-      read GetCompressedSize
-      write SetCompressedSize;
-    property CRC32 : Longint
-      read GetCRC32
-      write SetCRC32;
-    property DiskFileName : string
-      read FDiskFileName
-      write FDiskFileName;
-    property DiskPath : string
-      read GetDiskPath;
-    property ExternalFileAttributes : LongWord
-      read GetExternalFileAttributes
-      write SetExternalFileAttributes;
-    property FileName : string
-      read GetFileName
-      write SetFileName;
-    property IsDirectory: Boolean
-      read GetIsDirectory;
-    property IsEncrypted : Boolean
-      read GetIsEncrypted
-      write SetIsEncrypted;
-    property LastModFileDate : Word
-      read GetLastModFileDate
-      write SetLastModFileDate;
-    property LastModFileTime : Word
-      read GetLastModFileTime
-      write SetLastModFileTime;
-    property NativeFileAttributes : LongInt
-      read GetNativeFileAttributes;
-    property StoredPath : string
-      read GetStoredPath;
-    property Tagged : Boolean
-      read FTagged
-      write FTagged;
-    property UncompressedSize : Int64
-      read GetUncompressedSize
-      write SetUncompressedSize;
-
-    property LastModTimeAsDateTime : TDateTime
-      read GetLastModTimeAsDateTime
-      write SetLastModTimeAsDateTime;
-  end;
-
-
-{ ===== TAbArchiveListEnumerator ============================================ }
-type
-  TAbArchiveList = class;
-  TAbArchiveListEnumerator = class
+  THeaderList = class
   private
-    FIndex: Integer;
-    FList: TAbArchiveList;
+    FGenerics: TList;
+    FBinding: TBindingHeader;
+
+    function IndexOfItem(Item: THeader): longint;
+    function IndexOfName(Item: THeader): longint;
+    function GetItem(Index: longint): THeader;
+    function GetName(Index: longint): THeader;
+    function GetCount: longint;
+
+
+
   public
-    constructor Create(aList: TAbArchiveList);
-    function GetCurrent: TAbArchiveItem;
-    function MoveNext: Boolean;
-    property Current: TAbArchiveItem read GetCurrent;
+
+
+
   end;
+
+
+
+
+
 
 
 { ===== TAbArchiveList ====================================================== }
