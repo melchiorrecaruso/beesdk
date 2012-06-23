@@ -66,30 +66,56 @@ const
 
   hbcrfVERSION              = $00001;
 
-
 type
-  THeader = packed record
-    HType: longwrod;
-    HInfo: pointer;
+  TCoder = class
+  public
+    Flags: longword;
   end;
 
+  TBeeCoder = class(TCoder)
+  public
+    Version: longword;
+    StoredSize: qword;
+  end;
 
-  THeaderGenericInfo = packed record
+  TRolozCoder = class(TCoder)
+  public
+    Version: longword;
+    StoredSize: qword;
+  end;
+
+  TCrypter = class
+  public
     Flags: longword;
+  end;
+
+  TBlowFishCrypter = class(TCrypter)
+  public
+    Version: longword;
+  end;
+
+type
+  THeader = class
+  public
+    Flags: longword;
+  end;
+
+  TGenericHeader = class(THeader)
+  public
     Version: longword;
     NameLen: longword;
     Name: string;
     Size: qword;
-    CTime: longword;
-    MTime: longword;
-    ATime: longword;
+    CreationTime: longword;
+    ModificationTime: longword;
+    AccesTime: longword;
     Attributes: longword;
     Mode: longword;
     CRC: longword;
-    Coder: pointer;
-    Crypter: pointer;
+    Coder: TCoder;
+    Crypter: TCrypter;
     Disk: longword;
-    Seek: longword;
+    Seek: qword;
     UID: longword;
     GID: longword;
     UNameLen: longword;
@@ -97,36 +123,63 @@ type
     GNameLen: longword;
     GName: string;
     CommentLen: longword;
-    Comment: longword;
+    Comment: string;
   end;
 
-  THeaderBinding = packed record
-  private
-    FType: longword;
-
-    FData: pointer;
-  end;
-
-
-
-
-type
-  TBeeCoderInfo = packed record
-    Flags: longword;
+  TBindingHeader = class(THeader)
+  public
     Version: longword;
-    StoredSize: qword;
+    ID: qword;
+    DISK: longword;
+    DISKs: longword;
+    CRC: longword;
+    CommentLen: longword;
+    Comment: string;
+    Seek: qword;
   end;
 
-  TRolozCoderInfo = packed record
-    Flags: longword;
-    Version: longword;
-    StoredSize: qword;
-  end;
 
-   TBlowFishCrypterInfo = packed record
-     Flags: longword;
-     Version: longword;
-   end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
