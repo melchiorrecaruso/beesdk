@@ -66,6 +66,9 @@ const
 
   hbcrfVERSION              = $00001;
 
+
+
+
 type
   TBeeCoder = class(TObject)
   public
@@ -89,6 +92,14 @@ type
     Flags: longword;
     Version: longword;
   end;
+
+
+type
+  { Header actions }
+
+  THeaderAction = (haNone, haUpdate, haDecode, haDecodeAndUpdate);
+
+  THeaderActions = set of THeaderAction;
 
 type
   TGenericHeader = class(TObject)
@@ -148,10 +159,17 @@ type
 
 
   public
-
+    constructor Create;
+    destructor Destroy; override;
 
 
   end;
+
+
+implementation
+
+
+
 
 
 

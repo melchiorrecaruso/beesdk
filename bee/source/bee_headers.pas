@@ -166,8 +166,8 @@ type
 implementation
 
 uses
-  Bee_Consts,
   Bee_Common,
+  Bee_Consts,
   Bee_BlowFish;
 
 function MethodToStr(const Item: THeader): string;
