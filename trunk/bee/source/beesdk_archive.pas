@@ -144,31 +144,26 @@ type
     Seek: qword;
   end;
 
-
   THeaderList = class
   private
     FGenerics: TList;
     FBinding: TBindingHeader;
-
-    function IndexOfItem(Item: THeader): longint;
-    function IndexOfName(Item: THeader): longint;
-    function GetItem(Index: longint): THeader;
-    function GetName(Index: longint): THeader;
-    function GetCount: longint;
-
-
-
   public
     constructor Create;
     destructor Destroy; override;
-
-
   end;
 
 
 implementation
 
 
+
+
+  function ReadGenericHeader: TGenericHeader;
+  begin
+
+
+  end;
 
 
 
