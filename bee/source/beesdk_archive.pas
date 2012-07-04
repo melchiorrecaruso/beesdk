@@ -156,14 +156,22 @@ type
 
 implementation
 
-
-
-
   function ReadGenericHeader: TGenericHeader;
   begin
-
-
   end;
+
+  function WriteGenericHeader(Item: TGenericHeader): boolean;
+  begin
+  end;
+
+  function ReadBindingHeader: TGenericHeader;
+  begin
+  end;
+
+  function WriteBindingHeader(Item: TGenericHeader): boolean;
+  begin
+  end;
+
 
 
 
