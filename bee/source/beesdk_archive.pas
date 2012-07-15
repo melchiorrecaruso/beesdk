@@ -149,15 +149,32 @@ type
     FGenerics: TList;
     FBinding: TBindingHeader;
   public
-    constructor Create;
-    destructor Destroy; override;
+
   end;
 
 
 implementation
 
+  function OpenArchive(const ArchiveName: string): boolean;
+  begin
+    Result := False;
+    if FileExists(ArchiveName) then
+    begin
+
+
+
+      Result := True;
+    end;
+  end;
+
+
+
   function ReadGenericHeader: TGenericHeader;
   begin
+
+
+
+
   end;
 
   function WriteGenericHeader(Item: TGenericHeader): boolean;
@@ -178,7 +195,7 @@ implementation
 
 
 
-
+(*
 
 { ===== TAbArchiveList ====================================================== }
 
@@ -526,9 +543,7 @@ type
      write FOnSave;
  end;
 
-
-
-implementation
+          *)
 
 end.
 
