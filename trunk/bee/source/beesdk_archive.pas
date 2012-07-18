@@ -103,6 +103,10 @@ type
 
 type
   TGenericHeader = class(TObject)
+  private
+    Action: longword;
+    DiskName: string;
+    DiskSize: qword;
   public
     Flags: longword;
     Version: longword;
@@ -127,9 +131,6 @@ type
     GName: string;
     CommentLen: longword;
     Comment: string;
-    DiskName: string;
-    DiskSize: qword;
-    Action: longword;
   end;
 
   TBindingHeader = class(TObject)
@@ -146,6 +147,7 @@ type
 
   THeaderList = class
   private
+    FSorted: TList;
     FGenerics: TList;
     FBinding: TBindingHeader;
   public
@@ -155,16 +157,11 @@ type
 
 implementation
 
-  function OpenArchive(const ArchiveName: string): boolean;
+  function OpenArchive(Archive: TStream): boolean;
   begin
     Result := False;
-    if FileExists(ArchiveName) then
-    begin
 
 
-
-      Result := True;
-    end;
   end;
 
 
