@@ -3,7 +3,7 @@ unit BeeSDK_Archive;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, Bee_Files;
 
 const
   // Header                   -type-
@@ -174,8 +174,16 @@ implementation
 
   end;
 
-  function WriteGenericHeader(Item: TGenericHeader): boolean;
+  function WriteGenericHeader(Item: TGenericHeader; Stream: TStream): boolean;
   begin
+    if (Item.Flags and hcfVERSION) > 0 then
+
+
+    Item.Version;
+
+
+
+
   end;
 
   function ReadBindingHeader: TGenericHeader;
