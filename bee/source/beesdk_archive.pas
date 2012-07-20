@@ -5,74 +5,92 @@ interface
 uses
   Classes, SysUtils, Bee_Files;
 
-const
-  // Header                   -type-
+type
+  // Header type
 
-  htBINDING                 = $00000;
-  htGENERIC                 = $00001;
+  THeaderType = (
+    htBINDING,
+    htCUSTOM
+  );
 
-  // Header BINDING           -flag-
+  // BINDING Header flag
 
-  hbfVERSION                = $00001;
-  hbfID                     = $00002;
-  hbfDISK                   = $00004;
-  hbfDISKs                  = $00008;
-  hbfCRC                    = $00010;
-  hbfCOMMENT                = $00020;
+  TBindingHeaderFlag = (
+    bhfVERSION,
+    bhfID,
+    bhfDISK,
+    bhfDISKs,
+    bhfCOMMENT,
+    bhfCRC
+  );
 
-  // Header CUSTOM            -flag-
+  TBindingHeaderFlags = set of TBindingHeaderFlag;
 
-  hcfVERSION                = $00001;
-  hcfNAME                   = $00002;
-  hcfSIZE                   = $00004;
-  hcfCTIME                  = $00008;
-  hcfMTIME                  = $00010;
-  hcfATIME                  = $00020;
-  hcfATTRIBUTES             = $00040;
-  hcfMODE                   = $00080;
-  hcfCRC                    = $00100;
-  hcfCODER                  = $00200;
-  hcfCRYPTER                = $00400;
-  hcfDISK                   = $00800;
-  hcfSEEK                   = $01000;
-  hcfUID                    = $02000;
-  hcfGID                    = $04000;
-  hcfUNAME                  = $08000;
-  hcfGNAME                  = $10000;
-  hcfCOMMENT                = $20000;
+  // CUSTOM Header flag
 
-  /// Header CODER            -type-
+  TCustomHeaderFlag = (
+    chfVERSION,
+    chfNAME,
+    chfSIZE,
+    chfCTIME,
+    chfMTIME,
+    chfATIME,
+    chfATTRIBUTES,
+    chfMODE,
+    chfCRC,
+    chfCODER,
+    chfCRYPTER,
+    chfDISK,
+    hcfSEEK,
+    chfUID,
+    chfGID,
+    chfUNAME,
+    chfGNAME,
+    chfCOMMENT
+  );
 
-  hcotBEE                   = $00000;
-  hcotROLOZ                 = $00001;
+  TCustomHeaderFlags = set of TCustomHeaderFlag;
 
-  /// Header CRYPTER          -type-
+  /// Coder type
 
-  hcrtBLOWFISH              = $00000;
+  TCoderType = (
+    chtBEE,
+    chtROLOZ,
+    chtBLOWFISH
+  );
 
-  /// Header CODER BEE        -flag-
+  /// BEE Coder flag
 
-  hbcofVERSION              = $00001;
-  hbcofMETHOD               = $00002;
-  hbcofDICTIONARY           = $00004;
-  hbcofTABLE                = $00008;
-  hbcofTEAR                 = $00010;
+  TBeeCoderFlag = (
+    bcfVERSION,
+    bcfMETHOD,
+    bcfDICTIONARY,
+    bcfTABLE,
+    bcfTEAR
+  );
 
-  /// Header CODER ROLOZ      Type-flag-
+   TBeeCoderFlags = set of TBeeCoderFlag;
 
-  hrcofVERSION              = $00001;
+  /// ROLOZ Coder flag
 
-  /// Header CRYPTER BLOWFISH -flag-
+  TRolozCoderFlag = (
+    rcfVERSION
+  );
 
-  hbcrfVERSION              = $00001;
+  TRolozCoderFlags = set of TRolozCoderFlag;
 
+  /// BLOWFISH Coder type
 
+  TBlowFishCoderFlag = (
+    bfcfVERSION
+  );
 
+  TBlowFishCoderFlags = set of TBlowFishCoderFlag;
 
 type
   TBeeCoder = class(TObject)
   public
-    Flags: longword;
+    Flags: TBeeCoderFlags;
     Version: longword;
     Method: longword;
     Dictionary: longword;
@@ -82,33 +100,30 @@ type
 
   TRolozCoder = class(TObject)
   public
-    Flags: longword;
+    Flags: TRolozCoderFlags;
     Version: longword;
     StoredSize: qword;
   end;
 
-  TBlowFishCrypter = class(TObject)
+  TBlowFishCoder = class(TObject)
   public
-    Flags: longword;
+    Flags: TBlowFishCoderFlags;
     Version: longword;
   end;
-
 
 type
   { Header actions }
 
-  THeaderAction = (haNone, haUpdate, haDecode, haDecodeAndUpdate);
-
-  THeaderActions = set of THeaderAction;
+  TAction = (haNone, haUpdate, haDecode, haDecodeAndUpdate);
 
 type
-  TGenericHeader = class(TObject)
+  TCustomHeader = class(TObject)
   private
-    Action: longword;
+    Action: TAction;
     DiskName: string;
     DiskSize: qword;
   public
-    Flags: longword;
+    Flags: TCustomHeaderFlags;
     Version: longword;
     NameLen: longword;
     Name: string;
@@ -135,20 +150,20 @@ type
 
   TBindingHeader = class(TObject)
   public
+    Flags: TBindingHeaderFlags;
     Version: longword;
     ID: qword;
     DISK: longword;
     DISKs: longword;
-    CRC: longword;
     CommentLen: longword;
     Comment: string;
+    CRC: longword;
     Seek: qword;
   end;
 
   THeaderList = class
   private
-    FSorted: TList;
-    FGenerics: TList;
+    FCustoms: TList;
     FBinding: TBindingHeader;
   public
 
@@ -166,31 +181,36 @@ implementation
 
 
 
-  function ReadGenericHeader: TGenericHeader;
+  function ReadCustomHeader(Item: TCustomHeader; Stream: TFileReader): boolean;
+  var
+    qw: qword;
   begin
+    Result := False;
+    try
+      Stream.ReadInfint(qw);  Item.Flags := qw;
+
+
+
+
+    except
+      Result := False;
+    end;
+  end;
+
+  function WriteGenericHeader(Item: TCustomHeader; Stream: TFileWriter): boolean;
+  begin
+
 
 
 
 
   end;
 
-  function WriteGenericHeader(Item: TGenericHeader; Stream: TStream): boolean;
-  begin
-    if (Item.Flags and hcfVERSION) > 0 then
-
-
-    Item.Version;
-
-
-
-
-  end;
-
-  function ReadBindingHeader: TGenericHeader;
+  function ReadBindingHeader(Item: TBindingHeader; Stream: TFileReader): boolean;
   begin
   end;
 
-  function WriteBindingHeader(Item: TGenericHeader): boolean;
+  function WriteBindingHeader(Item: TBindingHeader; Stream: TFileWriter): boolean;
   begin
   end;
 
