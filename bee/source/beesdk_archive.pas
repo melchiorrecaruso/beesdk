@@ -5,92 +5,71 @@ interface
 uses
   Classes, SysUtils, Bee_Files;
 
-type
-  // Header type
+const
+  /// Header type
 
-  THeaderType = (
-    htBINDING,
-    htCUSTOM
-  );
+  htBINDING      =  $00001;
+  htCUSTOM       =  $00002;
 
-  // BINDING Header flag
+  /// BINDING Header flag
 
-  TBindingHeaderFlag = (
-    bhfVERSION,
-    bhfID,
-    bhfDISK,
-    bhfDISKs,
-    bhfCOMMENT,
-    bhfCRC
-  );
+  bhfVERSION     =  $00001;
+  bhfID          =  $00002;
+  bhfDISK        =  $00004;
+  bhfDISKs       =  $00008;
+  bhfCOMMENT     =  $00010;
+  bhfCRC         =  $00020;
 
-  TBindingHeaderFlags = set of TBindingHeaderFlag;
+  /// CUSTOM Header flag
 
-  // CUSTOM Header flag
+  chfVERSION     =  $00001;
+  chfNAME        =  $00002;
+  chfSIZE        =  $00004;
+  chfCTIME       =  $00008;
+  chfMTIME       =  $00010;
+  chfATIME       =  $00020;
+  chfATTRIBUTES  =  $00040;
+  chfMODE        =  $00080;
+  chfCRC         =  $00100;
+  chfCODER       =  $00200;
+  chfCRYPTER     =  $00400;
+  chfDISK        =  $00800;
+  chfSEEK        =  $01000;
+  chfUID         =  $02000;
+  chfUNAME       =  $04000;
+  chfGID         =  $08000;
+  chfGNAME       =  $10000;
+  chfCOMMENT     =  $20000;
 
-  TCustomHeaderFlag = (
-    chfVERSION,
-    chfNAME,
-    chfSIZE,
-    chfCTIME,
-    chfMTIME,
-    chfATIME,
-    chfATTRIBUTES,
-    chfMODE,
-    chfCRC,
-    chfCODER,
-    chfCRYPTER,
-    chfDISK,
-    hcfSEEK,
-    chfUID,
-    chfGID,
-    chfUNAME,
-    chfGNAME,
-    chfCOMMENT
-  );
+  /// CODER type
 
-  TCustomHeaderFlags = set of TCustomHeaderFlag;
-
-  /// Coder type
-
-  TCoderType = (
-    chtBEE,
-    chtROLOZ,
-    chtBLOWFISH
-  );
+  cotBEE         =  $00001;
+  cotROLOZ       =  $00002;
 
   /// BEE Coder flag
 
-  TBeeCoderFlag = (
-    bcfVERSION,
-    bcfMETHOD,
-    bcfDICTIONARY,
-    bcfTABLE,
-    bcfTEAR
-  );
-
-   TBeeCoderFlags = set of TBeeCoderFlag;
+  bcofVERSION    =  $00001;
+  bcofMETHOD     =  $00002;
+  bcofDICTIONARY =  $00004;
+  bcofTABLE      =  $00008;
 
   /// ROLOZ Coder flag
 
-  TRolozCoderFlag = (
-    rcfVERSION
-  );
+  rcofVERSION    =  $00001;
 
-  TRolozCoderFlags = set of TRolozCoderFlag;
+  /// CRYPTER type
 
-  /// BLOWFISH Coder type
+  crtBLOWFISH    =  $00001;
 
-  TBlowFishCoderFlag = (
-    bfcfVERSION
-  );
+  /// BLOWFISH Crypter flag
 
-  TBlowFishCoderFlags = set of TBlowFishCoderFlag;
+  bfcrfVERSION   =  $00001;
+
 
 type
   TBeeCoder = class(TObject)
   public
-    Flags: TBeeCoderFlags;
+    Flags: longword;
     Version: longword;
     Method: longword;
     Dictionary: longword;
@@ -100,14 +79,14 @@ type
 
   TRolozCoder = class(TObject)
   public
-    Flags: TRolozCoderFlags;
+    Flags: longword;
     Version: longword;
     StoredSize: qword;
   end;
 
-  TBlowFishCoder = class(TObject)
+  TBlowFishCrypter = class(TObject)
   public
-    Flags: TBlowFishCoderFlags;
+    Flags: longword;
     Version: longword;
   end;
 
@@ -123,14 +102,13 @@ type
     DiskName: string;
     DiskSize: qword;
   public
-    Flags: TCustomHeaderFlags;
+    Flags: longword;
     Version: longword;
-    NameLen: longword;
     Name: string;
     Size: qword;
-    CreationTime: longword;
-    ModificationTime: longword;
-    AccesTime: longword;
+    CTime: longword;
+    MTime: longword;
+    ATime: longword;
     Attributes: longword;
     Mode: longword;
     CRC: longword;
@@ -140,17 +118,14 @@ type
     Seek: qword;
     UID: longword;
     GID: longword;
-    UNameLen: longword;
     UName: string;
-    GNameLen: longword;
     GName: string;
-    CommentLen: longword;
     Comment: string;
   end;
 
   TBindingHeader = class(TObject)
   public
-    Flags: TBindingHeaderFlags;
+    Flags: longword;
     Version: longword;
     ID: qword;
     DISK: longword;
@@ -172,43 +147,191 @@ type
 
 implementation
 
-  function OpenArchive(Archive: TStream): boolean;
-  begin
-    Result := False;
+function OpenArchive(Archive: TStream): boolean;
+begin
+  Result := False;
+end;
 
+function ReadBeeCoder(Stream: TFileReader): TBeeCoder;
+begin
+  Result := TBeeCoder.Create;
+  Result.Flags := Stream.ReadInfint;
 
+  if (Result.Flags and bcofVERSION) > 0 then
+    Result.Version := Stream.ReadInfint;
+
+  if (Result.Flags and bcofMETHOD) > 0 then
+    Result.Method := Stream.ReadInfint;
+
+  if (Result.Flags and bcofDICTIONARY) > 0 then
+    Result.Dictionary := Stream.ReadInfint;
+
+  if (Result.Flags and bcofTABLE) > 0 then
+    Stream.Read(Result.Table, SizeOf(Result.Table));
+end;
+
+function ReadRolozCoder(Stream: TFileReader): TRolozCoder;
+begin
+  Result := TRolozCoder.Create;
+  Result.Flags := Stream.ReadInfint;
+
+  if (Result.Flags and rcofVERSION) > 0 then
+    Result.Version := Stream.ReadInfint;
+end;
+
+function ReadCoder(Stream: TFileReader): TObject;
+begin
+  case Stream.ReadInfint of
+    cotBEE:   Result := ReadBeeCoder(Stream);
+    cotROLOZ: Result := ReadRolozCoder(Stream);
+    else      Result := nil;
   end;
+end;
 
+function ReadBlowFishCrypter(Stream: TFileReader): TBlowFishCrypter;
+begin
+  Result := TBlowFishCrypter.Create;
+  Result.Flags := Stream.ReadInfint;
 
+  if (Result.Flags and bfcrfVERSION) > 0 then
+    Result.Version := Stream.ReadInfint;
+end;
 
-  function ReadCustomHeader(Item: TCustomHeader; Stream: TFileReader): boolean;
-  var
-    qw: qword;
+function ReadCrypter(Stream: TFileReader): TObject;
+begin
+  case Stream.ReadInfint of
+    crtBLOWFISH: Result := ReadBlowFishCrypter(Stream);
+    else         Result := nil;
+  end;
+end;
+
+function ReadCustomHeader(Stream: TFileReader): TCustomHeader;
+begin
+  Result := TCustomHeader.Create;
+  Result.Flags := Stream.ReadInfint;
+
+  if (Result.Flags and chfVERSION) > 0 then
+    Result.Version := Stream.ReadInfint;
+
+  if (Result.Flags and chfNAME) > 0 then
+    Result.Name := Stream.ReadAnsiString;
+
+  if (Result.Flags and chfSIZE) > 0 then
+    Result.Size := Stream.ReadInfint;
+
+  if (Result.Flags and chfCTIME) > 0 then
+    Result.CTime := Stream.ReadInfint;
+
+  if (Result.Flags and chfMTIME) > 0 then
+    Result.MTime := Stream.ReadInfint;
+
+  if (Result.Flags and chfATIME) > 0 then
+    Result.ATime := Stream.ReadInfint;
+
+  if (Result.Flags and chfATTRIBUTES) > 0 then
+    Result.Attributes := Stream.ReadInfint;
+
+  if (Result.Flags and chfMODE) > 0 then
+    Result.Mode := Stream.ReadInfint;
+
+  if (Result.Flags and chfCRC) > 0 then
+    Result.CRC := Stream.ReadInfint;
+
+  if (Result.Flags and chfCODER) > 0 then
+    Result.Coder := ReadCoder(Stream)
+  else
+    Result.Coder := nil;
+
+  if (Result.Flags and chfCRYPTER) > 0 then
+    Result.Crypter := ReadCrypter(Stream)
+  else
+    Result.Crypter := nil;
+
+  if (Result.Flags and chfDISK) > 0 then
+    Result.Disk := Stream.ReadInfint;
+
+  if (Result.Flags and chfSEEK) > 0 then
+    Result.Seek := Stream.ReadInfint;
+
+  if (Result.Flags and chfUID) > 0 then
+    Result.UID := Stream.ReadInfint;
+
+  if (Result.Flags and chfUNAME) > 0 then
+    Result.UName := Stream.ReadAnsiString;
+
+  if (Result.Flags and chfGID) > 0 then
+    Result.GID := Stream.ReadInfint;
+
+  if (Result.Flags and chfGNAME) > 0 then
+    Result.GName := Stream.ReadAnsiString;
+
+  if (Result.Flags and chfCOMMENT) > 0 then
+    Result.Comment := Stream.ReadAnsiString;
+end;
+
+function ReadBindingHeader(Stream: TFileReader): TBindingHeader;
+begin
+  Result := TBindingHeader.Create;
+  Result.Flags := Stream.ReadInfint;
+
+  if (Result.Flags and bhfVERSION) > 0 then
+    Result.Version := Stream.ReadInfint;
+
+  if (Result.Flags and bhfID) > 0 then
+    Result.ID := Stream.ReadInfint;
+
+  if (Result.Flags and bhfDISK) > 0 then
+    Result.DISK := Stream.ReadInfint;
+
+  if (Result.Flags and bhfDISKs) > 0 then
+    Result.DISKs := Stream.ReadInfint;
+
+  if (Result.Flags and bhfCOMMENT) > 0 then
+    Result.Comment := Stream.ReadAnsiString;
+
+  if (Result.Flags and bhfCRC) > 0 then
+    Result.CRC := Stream.ReadInfint;
+
+  Result.Seek := Stream.ReadInfint;
+end;
+
+function ReadHeader(Stream: TFileReader): TObject;
+var
+  I: longword;
+  LocalBuffer: array [0.. 9] of byte;
+begin
+  Stream.Seek(SizeOf(LocalBuffer), soFromEnd);
+  Stream.Read(LocalBuffer[0], SizeOf(LocalBuffer));
+
+  I := SizeOf(LocalBuffer) - 1;
+  while I >= 0 do
   begin
-    Result := False;
-    try
-      Stream.ReadInfint(qw);  Item.Flags := qw;
-
-
-
-
-    except
-      Result := False;
+    if (LocalBuffer[I] and $80) = 0 then
+    begin
+      Break;
     end;
+    Dec(I);
   end;
 
-  function WriteGenericHeader(Item: TCustomHeader; Stream: TFileWriter): boolean;
-  begin
+  SizeOf(LocalBuffer) - I;
 
 
 
 
 
-  end;
 
-  function ReadBindingHeader(Item: TBindingHeader; Stream: TFileReader): boolean;
-  begin
-  end;
+end;
+
+function WriteGenericHeader(Item: TCustomHeader; Stream: TFileWriter): boolean;
+begin
+
+
+
+
+
+end;
+
+
 
   function WriteBindingHeader(Item: TBindingHeader; Stream: TFileWriter): boolean;
   begin

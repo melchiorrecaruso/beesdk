@@ -64,7 +64,7 @@ type
   protected
     procedure FillBuffer; override;
   public
-    function ReadInfint(var Data: qword): longint;
+    function ReadInfint: qword;
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
@@ -181,24 +181,23 @@ begin
   until Result = Count;
 end;
 
-function TReadBufStream.ReadInfint(var Data: qword): longint;
+function TReadBufStream.ReadInfint: qword;
 var
-  LastByte: byte;
   Temp: qword;
+  Last: byte;
+  Count: longint;
 begin
-  Data   := 0;
   Result := 0;
-  repeat
-    if Read(LastByte, 1) <> 1 then
-    begin
-      Result := 0;
-      Exit;
-    end;
-    Temp := LastByte and $7F;
-    Temp := Temp shl (7 * Result);
-    Data := Data or Temp;
-    Inc(Result);
-  until (LastByte and $80) = 0;
+  Count  := 0;
+  while Read(Last, 1) = 1 do
+  begin
+    Temp := Last and $7F;
+    Temp := Temp shl (7 * Count);
+    Result := Result or Temp;
+
+    if (Last and $80) = $80 then Break;
+    Inc(Count);
+  end;
 end;
 
 function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
