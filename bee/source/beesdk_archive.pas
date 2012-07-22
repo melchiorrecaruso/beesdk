@@ -214,7 +214,7 @@ begin
     Result.Version := Stream.ReadInfint;
 
   if (Result.Flags and chfNAME) > 0 then
-    Result.Name := Stream.ReadAnsiString;
+    Result.Name := Stream.ReadInfString;
 
   if (Result.Flags and chfSIZE) > 0 then
     Result.Size := Stream.ReadInfint;
@@ -257,16 +257,16 @@ begin
     Result.UID := Stream.ReadInfint;
 
   if (Result.Flags and chfUNAME) > 0 then
-    Result.UName := Stream.ReadAnsiString;
+    Result.UName := Stream.ReadInfString;
 
   if (Result.Flags and chfGID) > 0 then
     Result.GID := Stream.ReadInfint;
 
   if (Result.Flags and chfGNAME) > 0 then
-    Result.GName := Stream.ReadAnsiString;
+    Result.GName := Stream.ReadInfString;
 
   if (Result.Flags and chfCOMMENT) > 0 then
-    Result.Comment := Stream.ReadAnsiString;
+    Result.Comment := Stream.ReadInfString;
 end;
 
 function ReadBindingHeader(Stream: TFileReader): TBindingHeader;
@@ -287,7 +287,7 @@ begin
     Result.DISKs := Stream.ReadInfint;
 
   if (Result.Flags and bhfCOMMENT) > 0 then
-    Result.Comment := Stream.ReadAnsiString;
+    Result.Comment := Stream.ReadInfString;
 
   if (Result.Flags and bhfCRC) > 0 then
     Result.CRC := Stream.ReadInfint;

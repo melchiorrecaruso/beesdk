@@ -65,6 +65,7 @@ type
     procedure FillBuffer; override;
   public
     function ReadInfint: qword;
+    function ReadInfString: string;
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
@@ -197,6 +198,18 @@ begin
 
     if (Last and $80) = $80 then Break;
     Inc(Count);
+  end;
+end;
+
+function TReadBufStream.ReadInfString: string;
+var
+  q: qword;
+begin
+  q := ReadInfint;
+  SetLength(Result, q);
+  if q > 0 then
+  begin
+    Read(Result[1], q);
   end;
 end;
 
