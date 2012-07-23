@@ -84,6 +84,7 @@ type
   public
     destructor Destroy; override;
     function WriteInfint(Data: qword): longint;
+    function WriteInfString(const Data: string): longint;
     function Write(const Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
@@ -122,6 +123,9 @@ type
     procedure StartEncode(const Value: string);
     procedure FinishEncode;
   end;
+
+  function ReadMagicSeek(Stream: TStream): qword;
+  procedure WriteMagicSeek(Stream: TStream);
 
 implementation
 
@@ -184,8 +188,8 @@ end;
 
 function TReadBufStream.ReadInfint: qword;
 var
-  Temp: qword;
   Last: byte;
+  Temp: qword;
   Count: longint;
 begin
   Result := 0;
@@ -294,6 +298,18 @@ begin
   until Data = 0;
 
   if Write(LocalBuffer[0], Result) <> Result then Result := 0;
+end;
+
+function TWriteBufStream.WriteInfString(const Data: string): longint;
+var
+  q: qword;
+begin
+  q := Length(Data);
+  Result := WriteInfint(q);
+  if q > 0 then
+  begin
+    Result := Write(Data[1], q));
+  end;
 end;
 
 function TWriteBufStream.Seek(Offset: longint; Origin: word): longint;
