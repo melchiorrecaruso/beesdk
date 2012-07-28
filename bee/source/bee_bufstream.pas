@@ -124,9 +124,6 @@ type
     procedure FinishEncode;
   end;
 
-  function ReadMagicSeek(Stream: TStream): qword;
-  procedure WriteMagicSeek(Stream: TStream);
-
 implementation
 
 uses
@@ -308,7 +305,7 @@ begin
   Result := WriteInfint(q);
   if q > 0 then
   begin
-    Result := Write(Data[1], q));
+    Result := Write(Data[1], q);
   end;
 end;
 
