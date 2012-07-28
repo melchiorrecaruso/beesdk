@@ -6,6 +6,10 @@ uses
   Classes, SysUtils, Bee_Files;
 
 const
+  { beex id marker }
+
+  beexMarker     = $1A656542;
+
   /// Header type
 
   htBINDING      =  $00001;
@@ -147,9 +151,10 @@ type
 
 implementation
 
-function OpenArchive(Archive: TStream): boolean;
+function ReadMagicSeek(Stream: TStream): qword;
 begin
-  Result := False;
+
+
 end;
 
 function ReadBeeCoder(Stream: TFileReader): TBeeCoder;
@@ -296,28 +301,36 @@ begin
 end;
 
 function ReadHeader(Stream: TFileReader): TObject;
-var
-  I: longword;
-  LocalBuffer: array [0.. 9] of byte;
 begin
-  Stream.Seek(SizeOf(LocalBuffer), soFromEnd);
-  Stream.Read(LocalBuffer[0], SizeOf(LocalBuffer));
+end;
 
-  I := SizeOf(LocalBuffer) - 1;
-  while I >= 0 do
+function ReadHeaders(Stream: TFileReader; List: TList): boolean;
+var
+  Marker: longword;
+  HeaderType: longword;
+begin
+  Result := False;
+  Stream.Seek(ReadMagicSeek(Stream), soFromBeginning);
+
+  Marker := 0;
+  Stream.Read(Marker, 4);
+  if Marker = beexMarker then
   begin
-    if (LocalBuffer[I] and $80) = 0 then
-    begin
-      Break;
-    end;
-    Dec(I);
+    repeat
+      HeaderType := Stream.ReadInfint;
+      case HeaderType of
+        htCUSTOM:  List.Add(ReadCustomHeader(Stream));
+        htBINDING: List.Add(ReadBindingHeader(Stream));
+        else       Break;
+      end;
+    until HeaderType = htBINDING;
+    Result := HeaderType = htBINDING
   end;
-
-  SizeOf(LocalBuffer) - I;
-
+end;
 
 
-
+procedure WriteMagicSeek(Stream: TStream);
+begin
 
 
 end;
