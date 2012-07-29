@@ -6,44 +6,48 @@ uses
   Classes, SysUtils, Bee_Common, Bee_Files, BeeLib_Configuration;
 
 const
-  { beex id marker }
+  /// beex id marker
+  beexMARKER =  $1A656542;
 
-  beexMarker     =  $1A656542;
+type
+  /// archive item type
+  TBeeArchiveItemType = (
+    aitCUSTOM,
+    aitBINDING);
 
-  /// Header type
+  /// archive binding item flag
+  TBeeArchiveBindingItemFlag = (
+    abifVERSION,
+    abifID,
+    abifDISK,
+    abifDISKs,
+    abifCOMMENT,
+    abifCRC);
 
-  htBINDING      =  $00001;
-  htCUSTOM       =  $00002;
+  TBeeArchiveBindingItemFlags = set of TBeeArchiveBindingItemFlag;
 
-  /// BINDING Header flag
+  /// archive custom item flag
+  TBeeArchiveCustomItemFlag = (
+    acifVERSION,
+    acifNAME,
+    acifSIZE,
+    acifCTIME,
+    acifMTIME,
+    acifATIME,
+    acifATTRIBUTES,
+    acifMODE,
+    acifCRC,
+    acifCODER,
+    acifCRYPTER,
+    acifDISK,
+    acifSEEK,
+    acifUID,
+    acifUNAME,
+    acifGID,
+    acifGNAME,
+    acifCOMMENT);
 
-  bhfVERSION     =  $00001;
-  bhfID          =  $00002;
-  bhfDISK        =  $00004;
-  bhfDISKs       =  $00008;
-  bhfCOMMENT     =  $00010;
-  bhfCRC         =  $00020;
-
-  /// CUSTOM Header flag
-
-  chfVERSION     =  $00001;
-  chfNAME        =  $00002;
-  chfSIZE        =  $00004;
-  chfCTIME       =  $00008;
-  chfMTIME       =  $00010;
-  chfATIME       =  $00020;
-  chfATTRIBUTES  =  $00040;
-  chfMODE        =  $00080;
-  chfCRC         =  $00100;
-  chfCODER       =  $00200;
-  chfCRYPTER     =  $00400;
-  chfDISK        =  $00800;
-  chfSEEK        =  $01000;
-  chfUID         =  $02000;
-  chfUNAME       =  $04000;
-  chfGID         =  $08000;
-  chfGNAME       =  $10000;
-  chfCOMMENT     =  $20000;
+  TBeeArchiveCustomItemFlags = set of TBeeArchiveCustomItemFlag;
 
   /// CODER type
 
@@ -122,7 +126,7 @@ type
     FAction: TBeeArchiveItemAction;
 
     FFlags: longword;
-    FVersionNeedToExtract: longword;
+    FVersionNeededToExtract: longword;
     FFileName: string;
     FUncompressedSize: qword;
     FCreationTime: longword;
@@ -159,7 +163,7 @@ type
   public {methods}
     property Action: TBeeArchiveItemAction read FAction write FAction;
     property Flags: longword read FFlags;
-    property VersionNeedToExtract: longword read FVersionNeedToExtract;
+    property VersionNeededToExtract: longword read FVersionNeededToExtract;
     property FileName: string read FFileName write SetFileName;
     property UncompressedSize: qword read FUncompressedSize;
     property CreationTime: longword read FCreationTime;
@@ -185,14 +189,14 @@ type
   TBeeBindingItem = class(TObject)
   protected {private}
     FFlags: longword;
-    FVersionNeedToExtract: longword;
+    FVersionNeededToExtract: longword;
     FID: qword;
     FCRC: longword;
     FDiskNumber: longword;
     FDiskSeek: qword;
     FComment: string;
   protected {property methods}
-    procedure SetVersionNeedToExtract(Value: longword);
+    procedure SetVersionNeededToExtract(Value: longword);
     procedure SetID(const Value: qword);
     procedure SetCRC(Value: longword);
     procedure SetDiskNumber(const Value: longword);
@@ -201,10 +205,11 @@ type
   public {methods}
     constructor Create;
     destructor Destroy; override;
+    function IsAssigned(Flag: longword): boolean;
   public
     property Flags: longword read FFlags;
     property VersionNeedToExtract: longword
-       read FVersionNeedToExtract write SetVersionNeedToExtract;
+       read FVersionNeededToExtract write SetVersionNeededToExtract;
 
     property ID: qword read FID write SetID;
     property CRC: longword read FCRC write SetCRC;
@@ -213,7 +218,7 @@ type
     property Comment: string read FComment write SetComment;
   end;
 
-  TBeeArchiveList = class
+  TBeeArchiveList = class(TObject)
   private {private}
     FItems: TList;
     FLastItem: TBeeArchiveItem;
@@ -224,106 +229,156 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Add(Item : TBeeArchiveItem);
-    procedure Delete(Index: longint);
-    procedure Clear;
     function Find(const FileName: string): longint;
+    procedure Clear;
   public {properties}
     property Count: longint read GetCount;
     property Items[Index : longint]: TBeeArchiveItem read GetItem;
     property LastItem: TBeeArchiveItem read FLastItem;
   end;
 
-
 implementation
+
+// TBeeBindingItem class
+
+constructor TBeeBindingItem.Create;
+begin
+  inherited Create;
+  FFlags :=  0;
+end;
+
+destructor TBeeBindingItem.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function TBeeBindingItem.IsAssigned(Flag: longword): boolean;
+begin
+  Result := (FFlags and Flag) = Flag;
+end;
+
+procedure TBeeBindingItem.SetVersionNeededToExtract(Value: longword);
+begin
+  if Value <> longword(-1) then
+  begin
+    FVersionNeededToEstract := Value;
+    FFlags := FFlags or bhfVERSION;
+  end else
+  begin
+
+
+  end;
+end;
+
+
+
+// TBeeArchiveList class
 
 constructor TBeeArchiveList.Create;
 begin
-  FItems := TList.Create;
+  inherited Create;
   FLastItem := nil;
+  FItems := TList.Create;
 end;
 
 destructor TBeeArchiveList.Destroy;
-var
-  I: longint;
 begin
-  for I := FItems.Count downto 0 do
-  begin
-    TBeeArchiveItem(FItems[I]).Destroy;
-  end;
-  FItems.Clear;
+  Clear;
+  FItems.Destroy;
   inherited Destroy;
 end;
 
 procedure TBeeArchiveList.Add(Item: TBeeArchiveItem);
 var
-  L, M, H, I: longint;
+  Lo, Med, Hi, I: longint;
 begin
-  Item.NextItem := FLastItem;
-  FLastItem := Item;
-  L :=  0;
-  M := -2;
-  H := FItems.Count - 1;
-  while H >= L do
+  if FItems.Count = 0 then
   begin
-    M := (L + H) div 2;
-    I := Bee_Common.CompareFileName(
-      TBeeArchiveItem(FItems[M]).FileName, Item.FileName);
-
-    if I > 0 then
-      L := M + 1
-    else
-      if I < 0 then
-        H := M - 1
-      else
-        H := -2;
-  end;
-
-  if M = -2 then
-    FItems.Add(Item)
-  else
-    if H = -2 then
+    FItems.Add(Item);
+  end else
+  begin
+    Lo := 0;
+    Hi := FItems.Count - 1;
+    while Hi >= Lo do
     begin
-      FItems.Insert(M + 1, Item);
+      Med := (Lo + Hi) div 2;
+      I := Bee_Common.CompareFileName(Item.FileName,
+        TBeeArchiveItem(FItems[Med]).FileName);
+
+      if I > 0 then
+        Lo := Med + 1
+      else
+        if I < 0 then
+          Hi := Med - 1
+        else
+          Hi := -2;
+    end;
+
+    if Hi = -2 then
+    begin
+      FItems.Insert(Med + 1, Item);
     end else
     begin
-      if I < 0 then
-        FItems.Insert(M + 1, Item)
+      if I > 0 then
+        FItems.Insert(Med + 1, Item)
       else
-        FItems.Insert(M, Item);
+        FItems.Insert(Med, Item);
     end;
+  end;
+  Item.NextItem := FLastItem;
+  FLastItem := Item;
 end;
 
 function TBeeArchiveList.Find(const FileName: string): longint;
 var
-  L, M, H, I: longint;
+  Lo, Med, Hi, I: longint;
 begin
-  L := 0;
-  H := FItems.Count - 1;
-  while H >= L do
+  Lo := 0;
+  Hi := FItems.Count - 1;
+  while Hi >= Lo do
   begin
-    M := (L + H) div 2;
-    I := Bee_Common.CompareFileName(
-      TBeeArchiveItem(FItems[M]).FileName, FileName);
+    Med := (Lo + Hi) div 2;
+    I := Bee_Common.CompareFileName(FileName,
+      TBeeArchiveItem(FItems[Med]).FileName);
 
     if I > 0 then
-      L := M + 1
+      Lo := Med + 1
     else
       if I < 0 then
-        H := M - 1
+        Hi := Med - 1
       else
-        H := -2;
+        Hi := -2;
   end;
 
-  if H = -2 then
-    Result := M
+  if Hi = -2 then
+    Result := Med
   else
     Result := -1;
 end;
 
+procedure TBeeArchiveList.Clear;
+var
+  I: longint;
+begin
+  for I := FItems.Count - 1 downto 0 do
+  begin
+    TBeeArchiveItem(FItems[I]).Destroy;
+  end;
+  FItems.Clear;
+  FLastItem := nil;
+end;
 
+function TBeeArchiveList.GetCount: longint;
+begin
+  Result := FItems.Count;
+end;
 
+function TBeeArchiveList.GetItem(Index: longint): TBeeArchiveItem;
+begin
+  Result := TBeeArchiveItem(FItems[Index]);
+end;
 
-
+//
 
 
 
