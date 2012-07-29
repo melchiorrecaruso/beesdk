@@ -3,12 +3,12 @@ unit BeeSDK_Archive;
 interface
 
 uses
-  Classes, SysUtils, Bee_Files;
+  Classes, SysUtils, Bee_Common, Bee_Files, BeeLib_Configuration;
 
 const
   { beex id marker }
 
-  beexMarker     = $1A656542;
+  beexMarker     =  $1A656542;
 
   /// Header type
 
@@ -56,6 +56,7 @@ const
   bcofMETHOD     =  $00002;
   bcofDICTIONARY =  $00004;
   bcofTABLE      =  $00008;
+  bcofTEAR       =  $00010;
 
   /// ROLOZ Coder flag
 
@@ -69,24 +70,26 @@ const
 
   bfcrfVERSION   =  $00001;
 
-
 type
   TBeeCoder = class(TObject)
   protected {private}
     FFlags: longword;
     FMethod: longword;
     FDictionary: longword;
-    FTable: longword;
+    FTable: TTableParameters;
     FCompressedSize: qword;
   protected {property methods}
     procedure SetMethod(Value: longword);
     procedure SetDictionary(Value: longword);
-    procedure SetTable(Value: longword);
+    procedure SetTable(Value: TTableParameters);
+  public {methods}
+    constructor Create;
+    destructor Destroy; override;
   public {properties}
     property Flags: longword read FFlags;
     property Method: longword read FMethod write SetMethod;
     property Dictionary: longword read FDictionary write SetDictionary;
-    property Table: longword read FTable write SetTable;
+    property Table: TTableParameters read FTable write SetTable;
     property CompressedSize: qword read FCompressedSize write FCompressedSize;
   end;
 
@@ -94,28 +97,30 @@ type
   protected {private}
     FFlags: longword;
     FCompressedSize: qword;
-  protected {property methods}
   public {methods}
+    constructor Create;
+    destructor Destroy; override;
   public {properties}
     property Flags: longword read FFlags;
     property CompressedSize: qword read FCompressedSize write FCompressedSize;
   end;
 
   TBlowFishCrypter = class(TObject)
-  public
-    Flags: longword;
-    Version: longword;
+  protected {private}
+    FFlags: longword;
+  public {properties}
+    property Flags: longword read FFlags;
   end;
 
-type
   { Describe the pending action for an archive item }
 
-  TBeeArchiveAction = (aaNone, aaUpdate, aaDecode, aaDecodeAndUpdate);
+  TBeeArchiveItemAction = (aaNone, aaUpdate, aaDecode, aaDecodeAndUpdate);
 
-type
   TBeeArchiveItem = class(TObject)
   protected {private}
-    FAction: TBeeArchiveAction;
+    NextItem : TBeeArchiveItem;
+    FAction: TBeeArchiveItemAction;
+
     FFlags: longword;
     FVersionNeedToExtract: longword;
     FFileName: string;
@@ -130,76 +135,199 @@ type
     FCrypter: TObject;
     FDiskNumber: longword;
     FDiskSeek: qword;
+
     FExternalFileName: string;
     FExternalAttributes: longword;
     FExternalUncompressedSize: qword;
+
     FUserID: longword;
     FGroupID: longword;
     FUserName: string;
     FGroupName: string;
     FComment: string;
   protected {property methods}
-    // function GetVersionNeedToExtract: longword;
-    // function GetFileName: string;
-    // function GetUncompressedSize: qword;
-    // function GetCreationTime: longword;
-    // function GetLastModifiedTime: longword;
-    // function GetLastAccessTime: longword;
-    // function GetAttributes: longword;
-    // function GetMode: longword;
-    // function GetCRC: longword;
-    // FCoder: TObject;
-    // FCrypter: TObject;
-    // function GetDiskNumber: longword;
-    //  FDiskSeek: qword;
-    //  FExternalFileName: string;
-    //  FExternalAttributes: longword;
-    //  FExternalUncompressedSize: qword;
-    //  FUserID: longword;
-    //  FGroupID: longword;
-    //  FUserName: string;
-    // FGroupName: string;
-    //  FComment: string;
-  public
-    property Action: TBeeArchiveAction read FAction write FAction;
-    property Flags: longword read GetFlags write SetFlags;
+    procedure SetFileName(const Value: string);
+
+    procedure SetDiskNumber(const Value: longword);
+    procedure SetDiskSeek(const Value: qword);
+
+    procedure SetUserID(const Value: longword);
+    procedure SetUserName(const Value: string);
+    procedure SetGroupID(const Value: longword);
+    procedure SetGroupName(const Value: string);
+    procedure SetComment(const Value: string);
+  public {methods}
+    property Action: TBeeArchiveItemAction read FAction write FAction;
+    property Flags: longword read FFlags;
     property VersionNeedToExtract: longword read FVersionNeedToExtract;
-    property FileName: string read FFileName write FFileName;
+    property FileName: string read FFileName write SetFileName;
+    property UncompressedSize: qword read FUncompressedSize;
+    property CreationTime: longword read FCreationTime;
+    property LastModifiedTime: longword read FLastModifiedTime;
+    property LastAccessTime: longword read FLastAccessTime;
+    property Attributes: longword read FAttributes;
+    property Mode: longword read FMode;
+    property CRC: longword read FCRC;
+    property DiskNumber: longword read FDiskNumber write SetDiskNumber;
+    property DiskSeek: qword read FDiskSeek write SetDiskSeek;
 
+    property ExternalFileName: string read FExternalFileName;
+    property ExternalAttributes: longword read FExternalAttributes;
+    property ExternalUncompressedSize: qword read FExternalUncompressedSize;
 
-
+    property UserID: longword read FUserID write SetUserID;
+    property UserName: string read FUserName write SetUserName;
+    property GroupID: longword read FGroupID write SetGroupID;
+    property GroupName: string read FGroupName write SetGroupName;
+    property Comment: string read FComment write SetComment;
   end;
 
-  TBindingHeader = class(TObject)
+  TBeeBindingItem = class(TObject)
+  protected {private}
+    FFlags: longword;
+    FVersionNeedToExtract: longword;
+    FID: qword;
+    FCRC: longword;
+    FDiskNumber: longword;
+    FDiskSeek: qword;
+    FComment: string;
+  protected {property methods}
+    procedure SetVersionNeedToExtract(Value: longword);
+    procedure SetID(const Value: qword);
+    procedure SetCRC(Value: longword);
+    procedure SetDiskNumber(const Value: longword);
+    procedure SetDiskSeek(const Value: qword);
+    procedure SetComment(const Value: string);
+  public {methods}
+    constructor Create;
+    destructor Destroy; override;
   public
-    Flags: longword;
-    Version: longword;
-    ID: qword;
-    DISK: longword;
-    DISKs: longword;
-    CommentLen: longword;
-    Comment: string;
-    CRC: longword;
-    Seek: qword;
+    property Flags: longword read FFlags;
+    property VersionNeedToExtract: longword
+       read FVersionNeedToExtract write SetVersionNeedToExtract;
+
+    property ID: qword read FID write SetID;
+    property CRC: longword read FCRC write SetCRC;
+    property DiskNumber: longword read FDiskNumber write SetDiskNumber;
+    property DiskSeek: qword read FDiskSeek write SetDiskSeek;
+    property Comment: string read FComment write SetComment;
   end;
 
-  THeaderList = class
-  private
+  TBeeArchiveList = class
+  private {private}
     FItems: TList;
-    FBinding: TBindingHeader;
-
-
-  public
-
-
-
-
+    FLastItem: TBeeArchiveItem;
+  private { methods}
+    function GetCount : longint;
+    function GetItem(Index : longint): TBeeArchiveItem;
+  public {methods}
+    constructor Create;
+    destructor Destroy; override;
+    procedure Add(Item : TBeeArchiveItem);
+    procedure Delete(Index: longint);
+    procedure Clear;
+    function Find(const FileName: string): longint;
+  public {properties}
+    property Count: longint read GetCount;
+    property Items[Index : longint]: TBeeArchiveItem read GetItem;
+    property LastItem: TBeeArchiveItem read FLastItem;
   end;
 
 
 implementation
 
-function ReadMagicSeek(Stream: TStream): qword;
+constructor TBeeArchiveList.Create;
+begin
+  FItems := TList.Create;
+  FLastItem := nil;
+end;
+
+destructor TBeeArchiveList.Destroy;
+var
+  I: longint;
+begin
+  for I := FItems.Count downto 0 do
+  begin
+    TBeeArchiveItem(FItems[I]).Destroy;
+  end;
+  FItems.Clear;
+  inherited Destroy;
+end;
+
+procedure TBeeArchiveList.Add(Item: TBeeArchiveItem);
+var
+  L, M, H, I: longint;
+begin
+  Item.NextItem := FLastItem;
+  FLastItem := Item;
+  L :=  0;
+  M := -2;
+  H := FItems.Count - 1;
+  while H >= L do
+  begin
+    M := (L + H) div 2;
+    I := Bee_Common.CompareFileName(
+      TBeeArchiveItem(FItems[M]).FileName, Item.FileName);
+
+    if I > 0 then
+      L := M + 1
+    else
+      if I < 0 then
+        H := M - 1
+      else
+        H := -2;
+  end;
+
+  if M = -2 then
+    FItems.Add(Item)
+  else
+    if H = -2 then
+    begin
+      FItems.Insert(M + 1, Item);
+    end else
+    begin
+      if I < 0 then
+        FItems.Insert(M + 1, Item)
+      else
+        FItems.Insert(M, Item);
+    end;
+end;
+
+function TBeeArchiveList.Find(const FileName: string): longint;
+var
+  L, M, H, I: longint;
+begin
+  L := 0;
+  H := FItems.Count - 1;
+  while H >= L do
+  begin
+    M := (L + H) div 2;
+    I := Bee_Common.CompareFileName(
+      TBeeArchiveItem(FItems[M]).FileName, FileName);
+
+    if I > 0 then
+      L := M + 1
+    else
+      if I < 0 then
+        H := M - 1
+      else
+        H := -2;
+  end;
+
+  if H = -2 then
+    Result := M
+  else
+    Result := -1;
+end;
+
+
+
+
+
+
+
+
+function ReadMagicSeek(Stream: TFileReader): qword;
 begin
 
 
