@@ -72,20 +72,33 @@ const
 
 type
   TBeeCoder = class(TObject)
-  public
-    Flags: longword;
-    Version: longword;
-    Method: longword;
-    Dictionary: longword;
-    Table: longword;
-    StoredSize: qword;
+  protected {private}
+    FFlags: longword;
+    FMethod: longword;
+    FDictionary: longword;
+    FTable: longword;
+    FCompressedSize: qword;
+  protected {property methods}
+    procedure SetMethod(Value: longword);
+    procedure SetDictionary(Value: longword);
+    procedure SetTable(Value: longword);
+  public {properties}
+    property Flags: longword read FFlags;
+    property Method: longword read FMethod write SetMethod;
+    property Dictionary: longword read FDictionary write SetDictionary;
+    property Table: longword read FTable write SetTable;
+    property CompressedSize: qword read FCompressedSize write FCompressedSize;
   end;
 
   TRolozCoder = class(TObject)
-  public
-    Flags: longword;
-    Version: longword;
-    StoredSize: qword;
+  protected {private}
+    FFlags: longword;
+    FCompressedSize: qword;
+  protected {property methods}
+  public {methods}
+  public {properties}
+    property Flags: longword read FFlags;
+    property CompressedSize: qword read FCompressedSize write FCompressedSize;
   end;
 
   TBlowFishCrypter = class(TObject)
@@ -95,36 +108,66 @@ type
   end;
 
 type
-  { Header actions }
+  { Describe the pending action for an archive item }
 
-  TAction = (haNone, haUpdate, haDecode, haDecodeAndUpdate);
+  TBeeArchiveAction = (aaNone, aaUpdate, aaDecode, aaDecodeAndUpdate);
 
 type
-  TCustomHeader = class(TObject)
-  private
-    Action: TAction;
-    DiskName: string;
-    DiskSize: qword;
+  TBeeArchiveItem = class(TObject)
+  protected {private}
+    FAction: TBeeArchiveAction;
+    FFlags: longword;
+    FVersionNeedToExtract: longword;
+    FFileName: string;
+    FUncompressedSize: qword;
+    FCreationTime: longword;
+    FLastModifiedTime: longword;
+    FLastAccessTime: longword;
+    FAttributes: longword;
+    FMode: longword;
+    FCRC: longword;
+    FCoder: TObject;
+    FCrypter: TObject;
+    FDiskNumber: longword;
+    FDiskSeek: qword;
+    FExternalFileName: string;
+    FExternalAttributes: longword;
+    FExternalUncompressedSize: qword;
+    FUserID: longword;
+    FGroupID: longword;
+    FUserName: string;
+    FGroupName: string;
+    FComment: string;
+  protected {property methods}
+    // function GetVersionNeedToExtract: longword;
+    // function GetFileName: string;
+    // function GetUncompressedSize: qword;
+    // function GetCreationTime: longword;
+    // function GetLastModifiedTime: longword;
+    // function GetLastAccessTime: longword;
+    // function GetAttributes: longword;
+    // function GetMode: longword;
+    // function GetCRC: longword;
+    // FCoder: TObject;
+    // FCrypter: TObject;
+    // function GetDiskNumber: longword;
+    //  FDiskSeek: qword;
+    //  FExternalFileName: string;
+    //  FExternalAttributes: longword;
+    //  FExternalUncompressedSize: qword;
+    //  FUserID: longword;
+    //  FGroupID: longword;
+    //  FUserName: string;
+    // FGroupName: string;
+    //  FComment: string;
   public
-    Flags: longword;
-    Version: longword;
-    Name: string;
-    Size: qword;
-    CTime: longword;
-    MTime: longword;
-    ATime: longword;
-    Attributes: longword;
-    Mode: longword;
-    CRC: longword;
-    Coder: TObject;
-    Crypter: TObject;
-    Disk: longword;
-    Seek: qword;
-    UID: longword;
-    GID: longword;
-    UName: string;
-    GName: string;
-    Comment: string;
+    property Action: TBeeArchiveAction read FAction write FAction;
+    property Flags: longword read GetFlags write SetFlags;
+    property VersionNeedToExtract: longword read FVersionNeedToExtract;
+    property FileName: string read FFileName write FFileName;
+
+
+
   end;
 
   TBindingHeader = class(TObject)
@@ -142,9 +185,14 @@ type
 
   THeaderList = class
   private
-    FCustoms: TList;
+    FItems: TList;
     FBinding: TBindingHeader;
+
+
   public
+
+
+
 
   end;
 

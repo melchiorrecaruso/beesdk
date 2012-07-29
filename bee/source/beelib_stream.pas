@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2010-2011 Melchiorre Caruso
+  Copyright (c) 2010-2012 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ unit BeeLib_Stream;
 
 interface
 
-uses
-  BeeLib_Interface;
+// uses
+//   BeeLib_Interface;
 
 const
   { Default TStream buffer capacity }
@@ -34,7 +34,7 @@ const
   DefaultBufferCapacity = 128 * 1024;
 
 type
-  { TStream abstract class }
+  { TBeeStream abstract class }
 
   TStream = class
   private
