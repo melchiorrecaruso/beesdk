@@ -7,7 +7,8 @@ unit beesdk;
 interface
 
 uses
-  BeeSDK_Archive, Bee_BufStream, Bee_Files, LazarusPackageIntf;
+  BeeSDK_Archive, Bee_BufStream, Bee_Files, BeeLib_Configuration, 
+  LazarusPackageIntf;
 
 implementation
 

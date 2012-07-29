@@ -25,7 +25,7 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="3">
+    <Files Count="4">
       <Item1>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
@@ -38,6 +38,10 @@
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
       </Item3>
+      <Item4>
+        <Filename Value="beelib_configuration.pas"/>
+        <UnitName Value="BeeLib_Configuration"/>
+      </Item4>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="1">
