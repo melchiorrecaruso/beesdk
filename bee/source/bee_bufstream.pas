@@ -32,7 +32,7 @@ unit Bee_BufStream;
 interface
 
 uses
-  Classes, Bee_BlowFish;
+  Classes;
 
 const
   DefaultBufferCapacity: longint = $20000;
@@ -41,19 +41,18 @@ type
   { TBufStream }
 
   TBufStream = class(TStream)
-  private
+  protected
     FSource: TStream;
     FCapacity: longint;
-  protected
     FBufferSize: longint;
     FBufferReaded: longint;
     FBuffer: array of byte;
     procedure FillBuffer; virtual; abstract;
     procedure FlushBuffer; virtual; abstract;
-    procedure SetCapacity(const AValue: longint); virtual;
+    procedure SetCapacity(const aValue: longint); virtual;
   public
-    constructor Create(ASource: TStream; ACapacity: longint); overload;
-    constructor Create(ASource: TStream); overload;
+    constructor Create(aSource: TStream; aCapacity: longint); overload;
+    constructor Create(aSource: TStream); overload;
     destructor Destroy; override;
     property Capacity: longint read FCapacity write SetCapacity;
   end;
@@ -64,8 +63,6 @@ type
   protected
     procedure FillBuffer; override;
   public
-    function ReadInfint: qword;
-    function ReadInfString: string;
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
@@ -78,85 +75,48 @@ type
     procedure FlushBuffer; override;
     procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
-    {$IFDEF FPC} 
+    {$IFDEF FPC}
     procedure SetSize64(const NewSize: int64); override;
     {$ENDIF}
   public
     destructor Destroy; override;
-    function WriteInfint(Data: qword): longint;
-    function WriteInfString(const Data: string): longint;
     function Write(const Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
   end;
 
-  { TReadBlowFishBufStream }
-
-  TReadBlowFishBufStream = class(TReadBufStream)
-  private
-    FBFK: boolean;
-    FBF: TBlowFish;
-  protected
-    procedure FillBuffer; override;
-    procedure SetCapacity(const AValue: longint); override;
-  public
-    constructor Create(ASource: TStream; ACapacity: longint); overload;
-    constructor Create(ASource: TStream); overload;
-    destructor Destroy; override;
-    procedure StartDecode(const Value: string);
-    procedure FinishDecode;
-  end;
-
-  { TWriteBlowFishBufStream }
-
-  TWriteBlowFishBufStream = class(TWriteBufStream)
-  private
-    FBFK: boolean;
-    FBF: TBlowFish;
-  protected
-    procedure FlushBuffer; override;
-    procedure SetCapacity(const AValue: longint); override;
-  public
-    constructor Create(ASource: TStream; ACapacity: longint); overload;
-    constructor Create(ASource: TStream); overload;
-    destructor Destroy; override;
-    procedure StartEncode(const Value: string);
-    procedure FinishEncode;
-  end;
-
 implementation
 
 uses
-  Math, Bee_Assembler;
+  SysUtils, Math, Bee_Assembler;
 
 { TBufStream class }
 
-constructor TBufStream.Create(ASource: TStream; ACapacity: longint);
+constructor TBufStream.Create(aSource: TStream; aCapacity: longint);
 begin
   inherited Create;
-  FSource := ASource;
-  SetCapacity(ACapacity);
+  FSource := aSource;
+  SetCapacity(aCapacity);
 end;
 
-constructor TBufStream.Create(ASource: TStream);
+constructor TBufStream.Create(aSource: TStream);
 begin
   inherited Create;
-  FSource := ASource;
+  FSource := aSource;
   SetCapacity(DefaultBufferCapacity);
 end;
 
 destructor TBufStream.Destroy;
 begin
   SetCapacity(0);
-  FSource := nil;
   inherited Destroy;
 end;
 
-procedure TBufStream.SetCapacity(const AValue: longint);
+procedure TBufStream.SetCapacity(const aValue: longint);
 begin
   FBufferSize   := 0;
   FBufferReaded := 0;
-  FCapacity     := AValue;
+  FCapacity     := aValue;
   SetLength(FBuffer, FCapacity);
 end;
 
@@ -181,37 +141,6 @@ begin
     Inc(Result, S);
     Inc(FBufferReaded, S);
   until Result = Count;
-end;
-
-function TReadBufStream.ReadInfint: qword;
-var
-  Last: byte;
-  Temp: qword;
-  Count: longint;
-begin
-  Result := 0;
-  Count  := 0;
-  while Read(Last, 1) = 1 do
-  begin
-    Temp := Last and $7F;
-    Temp := Temp shl (7 * Count);
-    Result := Result or Temp;
-
-    if (Last and $80) = $80 then Break;
-    Inc(Count);
-  end;
-end;
-
-function TReadBufStream.ReadInfString: string;
-var
-  q: qword;
-begin
-  q := ReadInfint;
-  SetLength(Result, q);
-  if q > 0 then
-  begin
-    Read(Result[1], q);
-  end;
 end;
 
 function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
@@ -277,38 +206,6 @@ begin
   end;
 end;
 
-function TWriteBufStream.WriteInfint(Data: qword): longint;
-var
-  LocalBuffer: array[0..9] of byte;
-  LastByte: byte;
-begin
-  Result := 0;
-  repeat
-    LastByte := Data and $7F;
-    Data := Data shr 7;
-    if Data <> 0 then
-    begin
-      LastByte := LastByte or $80
-    end;
-    LocalBuffer [Result] := LastByte;
-    Inc(Result);
-  until Data = 0;
-
-  if Write(LocalBuffer[0], Result) <> Result then Result := 0;
-end;
-
-function TWriteBufStream.WriteInfString(const Data: string): longint;
-var
-  q: qword;
-begin
-  q := Length(Data);
-  Result := WriteInfint(q);
-  if q > 0 then
-  begin
-    Result := Write(Data[1], q);
-  end;
-end;
-
 function TWriteBufStream.Seek(Offset: longint; Origin: word): longint;
 begin
   FlushBuffer;
@@ -321,7 +218,7 @@ begin
   Result := FSource.Seek(Offset, Origin);
 end;
 
-procedure TWriteBufStream.FlushBuffer; // {$IFDEF FPC} inline; {$ENDIF}
+procedure TWriteBufStream.FlushBuffer;
 begin
   if FBufferSize > 0 then
   begin
@@ -347,6 +244,7 @@ begin
 end;
 {$ENDIF}
 
+(*
 { TReadBlowFishBufStream class }
 
 constructor TReadBlowFishBufStream.Create(ASource: TStream; ACapacity: longint);
@@ -474,6 +372,7 @@ begin
   FlushBuffer;
   FBFK := False;
 end;
+*)
 
 end.
 
