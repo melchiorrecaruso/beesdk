@@ -38,9 +38,19 @@ interface
 
 uses
   Classes,
+  SysUtils,
   {$IFNDEF FPC} Math, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF} Bee_Types;
+
+function GenerateArchiveID(Len: longint): string;
+
+function GetFileMode(const Rec: TSearchRec): longint;
+function GetFileCreationTime(const Rec: TSearchRec): longint;
+function GetFileLastAccessTime(const Rec: TSearchRec): longint;
+function GetFileLastModifiedTime(const Rec: TSearchRec): longint;
+
+function GetDiskFree(const FileName: string): int64;
 
 { filename handling routines }
 
@@ -124,12 +134,64 @@ procedure SetCtrlCHandler(CtrlHandler: pointer);
 
 implementation
 
-uses
-  SysUtils;
-
 const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
   HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
+
+function GenerateArchiveID(Len: longint): string;
+var
+  I: longint;
+begin
+  SetLength(Result, Len);
+  for I := 1 to Len do
+    Result[I] := char(Random(255));
+end;
+
+function GetFileMode(const Rec: TSearchRec): longint;
+begin
+end;
+
+function GetFileCreationTime(const Rec: TSearchRec): longint;
+begin
+end;
+
+function GetFileLastAccessTime(const Rec: TSearchRec): longint;
+begin
+end;
+
+function GetFileLastModifiedTime(const Rec: TSearchRec): longint;
+begin
+end;
+
+function GetDiskFree(const FileName: string): int64;
+{$IFDEF MSWINDOWS}
+var
+  FreeAvailable, TotalSpace: int64;
+begin
+  if GetDiskFreeSpaceEx(PChar(ExtractFilePath(ExpandFileName(FileName))),
+    FreeAvailable, TotalSpace, nil) then
+    Result := FreeAvailable
+  else
+    Result := -1;
+{$ENDIF}
+{$IFDEF UNIX}
+var
+  FStats : {$IFDEF PosixAPI}_statvfs{$ELSE}TStatFs{$ENDIF};
+begin
+  {$IF DEFINED(LibcAPI)}
+  if statfs(PAnsiChar(ExtractFilePath(ArchiveName)), FStats) = 0 then
+    Result := int64(FStats.f_bAvail) * int64(FStats.f_bsize)
+  {$ELSEIF DEFINED(FPCUnixAPI)}
+  if fpStatFS(PAnsiChar(ExtractFilePath(ArchiveName)), @FStats) = 0 then
+    Result := int64(FStats.bAvail) * int64(FStats.bsize)
+  {$ELSEIF DEFINED(PosixAPI)}
+  if statvfs(PAnsiChar(AbSysString(ExtractFilePath(ArchiveName))), FStats) = 0 then
+    Result := int64(FStats.f_bavail) * int64(FStats.f_bsize)
+  {$IFEND}
+  else
+    Result := -1;
+{$ENDIF}
+end;
 
 { filename handling routines }
 
@@ -343,7 +405,7 @@ begin
   begin
     FolderPath := Copy(Mask, 1, FirstSlash);
     FolderName := Copy(Mask, FirstSlash + 1, LastSlash - (FirstSlash + 1));
-    Error      := FindFirst(FolderPath + '*', faAnyFile, Rec);
+    Error      := SysUtils.FindFirst(FolderPath + '*', faAnyFile, Rec);
     while Error = 0 do
     begin
       if ((Rec.Attr and faDirectory) = faDirectory) and
@@ -352,9 +414,9 @@ begin
           ExpandFileMask(FolderPath + Rec.Name + Copy(Mask, LastSlash,
             (Length(Mask) + 1) - LastSlash), Masks, Recursive);
 
-      Error := FindNext(Rec);
+      Error := SysUtils.FindNext(Rec);
     end;
-    FindClose(Rec);
+    SysUtils.FindClose(Rec);
   end else
     if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
@@ -759,12 +821,12 @@ var
   Err: longint;
   Rec: TSearchRec;
 begin
-  Err := FindFirst(FileName, faAnyFile, Rec);
+  Err := SysUtils.FindFirst(FileName, faAnyFile, Rec);
   if (Err = 0) and ((Rec.Attr and faDirectory) = 0) then
     Result := Rec.Size
   else
     Result := -1;
-  FindClose(Rec);
+  SysUtils.FindClose(Rec);
 end;
 
 { system control }
