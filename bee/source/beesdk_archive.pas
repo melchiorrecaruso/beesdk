@@ -238,7 +238,7 @@ type
     property GroupID: longword read FGroupID write SetGroupID;
     property GroupName: string read FGroupName write SetGroupName;
     property Comment: string read FComment write SetComment;
-    property FileName: string read FFileName write SetFileName;
+    property FileName: string read FFileName;
     property Position: longint read FPosition;
 
     property Coder: TBeeArchiveCoder read FCoder;
@@ -322,11 +322,10 @@ type
   TBeeArchiveFailureEvent = procedure(
     const ErrorMessage: string; ErrorCode: longint) of object;
 
-  TBeeArchiveConfirm = (aeaYes, aeaNo, aeaSkip,
-    aeaYesAll, aeaNoAll, aeaSkipAll, aeaAbort);
+  TBeeArchiveRenameConfirm = (arcRename, arcSkip, arcAbort);
 
   TBeeArchiveRenameEvent = procedure(Item: TBeeArchiveCustomItem;
-    var NewFileName: string; var Confirm: TBeeArchiveConfirm) of object;
+    var NewFileName: string; var Confirm: TBeeArchiveRenameConfirm) of object;
 
   TBeeArchiveViewer = class(TObject)
   private {private}
@@ -359,7 +358,6 @@ type
 
   TBeeArchiveRenamer = class(TBeeArchiveViewer)
   private
-    FConfirm: TBeeArchiveConfirm;
     FThreshold: int64;
     FTotalSize: int64;
     FProcessedSize: int64;
@@ -368,17 +366,17 @@ type
     procedure SetWorkDirectory(const Value: string);
   private
     procedure DoRename(Item: TBeeArchiveCustomItem;
-      var NewFileName: string; var Confirm: TBeeArchiveConfirm);
+      var NewFileName: string; var Confirm: TBeeArchiveRenameConfirm);
   public
     constructor Create;
     destructor Destroy; override;
     procedure SaveArchive;
+    function Rename(Index: longint; const NewFileName: string): boolean;
   public
     property Threshold: int64 read FThreshold write FThreshold;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
     property OnRenameEvent: TBeeArchiveRenameEvent
       read FOnRename write FOnRename;
-    property Confirm: TBeeArchiveConfirm read FConfirm write FConfirm;
   end;
 
 
@@ -1452,14 +1450,27 @@ begin
 end;
 
 procedure TBeeArchiveRenamer.DoRename(Item: TBeeArchiveCustomItem;
-  var NewFileName: string; var Confirm: TBeeArchiveConfirm);
+  var NewFileName: string; var Confirm: TBeeArchiveRenameConfirm);
 begin
   if Assigned(FOnRename) then
     FOnRename(Item, NewFileName, Confirm);
 end;
 
+function TBeeArchiveRenamer.Rename(Index: longint; const NewFileName: string): boolean;
+begin
+  Result := FArchiveCustomItems.Find(NewFileName) = -1;
+  if Result = TRUE then
+  begin
+    FArchiveCustomItems.Items[Index].FFileName := NewFileName;
+    FArchiveCustomItems.Items[Index].FTag      := aitRename;
+  end;
+end;
+
 procedure TBeeArchiveRenamer.SaveArchive;
 var
+  Confirm: TBeeArchiveRenameConfirm;
+  Check: boolean;
+
   I: longint;
   Item: TBeeArchiveCustomItem;
 
@@ -1474,34 +1485,42 @@ begin
   begin
     FTotalSize := 0;
     FProcessedSize := 0;
+
+    Check   := FALSE;
+    Confirm := arcAbort;
     for I := 0 to FArchiveCustomItems.Count -1 do
     begin
       Item := FArchiveCustomItems.Items[I];
       Inc(FTotalSize, Item.CompressedSize);
-
       if Item.FTag = aitRename then
       begin
-
         repeat
+          Confirm := arcAbort;
           NewFileName := Item.FileName;
           if Assigned(FOnRename) then
-            DoRename(Item, NewFileName, FConfirm);
-          if Confirm <> aeaYES then
+            DoRename(Item, NewFileName, Confirm);
+          if Confirm = arcRename then
+            Check := TRUE
+          else
             Break;
         until FArchiveCustomItems.Find(NewFileName) = -1;
 
         case Confirm of
-          aeaYes: Item.FileName := NewFileName;
-          // aeaNo
-          // aeaSkip
-          // aeaYesAll
-          aeaNoAll:   Break;
-          aeaSkipAll: Break;
-          aeaAbort:   Break;
+          arcRename: Item.FileName := NewFileName;
+          // arcSkip:   Break;
+          arcAbort:  Break;
         end;
       end;
     end;
 
+    if Check = TRUE then
+    begin
+
+
+
+
+
+    end;
 
 
 
