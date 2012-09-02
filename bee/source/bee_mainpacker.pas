@@ -86,7 +86,8 @@ type
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
-    function Copy  (Stream: TStream; const Size: int64; var CRC: longword): int64;
+    function Copy  (Stream: TStream; const Size: int64): int64; overload;
+    function Copy  (Stream: TStream; const Size: int64; var CRC: longword): int64; overload;
     function Encode(Stream: TStream; const Size: int64; var CRC: longword): int64;
   end;
 
@@ -174,6 +175,31 @@ begin
   BaseCoder_Destroy(FModeller);
   RangeEncoder_Destroy(FCoder);
   inherited Destroy;
+end;
+
+function THeaderEncoder.Copy(Stream: TStream; const Size: int64): int64;
+var
+  Count:  int64;
+  Readed: longint;
+  Writed: longint;
+  Buffer: array[0..$FFFF] of byte;
+begin
+  Result := 0;
+  Count  := Size div SizeOf(Buffer);
+  while Count <> 0 do
+  begin
+    Readed :=  Stream.Read (Buffer, SizeOf(Buffer));
+    Writed := FStream.Write(Buffer, Readed);
+    Inc(Result, Writed);
+    Dec(Count);
+
+    if DoProgress(Writed) = FALSE then Exit;
+  end;
+  Readed :=  Stream.Read (Buffer, Size mod SizeOf(Buffer));
+  Writed := FStream.Write(Buffer, Readed);
+  Inc(Result, Writed);
+
+  DoProgress(Writed);
 end;
 
 function THeaderEncoder.Copy(Stream: TStream; const Size: int64; var CRC: longword): int64;
