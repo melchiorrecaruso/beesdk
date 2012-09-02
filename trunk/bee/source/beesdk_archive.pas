@@ -319,6 +319,8 @@ type
     property Items[Index: longint]: TBeeArchiveCustomItem read GetItem;
   end;
 
+
+
   TBeeArchiveFailureEvent = procedure(
     const ErrorMessage: string; ErrorCode: longint) of object;
 
@@ -329,6 +331,11 @@ type
 
   TBeeArchiveViewer = class(TObject)
   private {private}
+    FSuspended:  boolean;
+    FTerminated: boolean;
+    FExitCode: byte;
+
+    FCurrentDirectory: string;
     FArchiveName: string;
     FArchiveReader: TFileReader;
     FArchiveCustomItems: TBeeArchiveCustomItems;
@@ -343,17 +350,29 @@ type
   private {event method}
     procedure DoFailure(const ErrorMessage: string; ErrorCode: longint);
   private { methods}
-    procedure SetArchiveName(const Value: string);
     function GetItem(Index: longint): TBeeArchiveCustomItem;
+    procedure SetArchiveName(const Value: string);
+    procedure SetCurrentDirectory(const Value: string);
+
+    procedure SetSuspended(Value: boolean);
+    procedure SetTerminated(Value: boolean);
+    procedure SetExitCode(Value: byte);
   public {methods}
     constructor Create;
     destructor Destroy; override;
     procedure OpenArchive(const aArchiveName: string);
     procedure CloseArchive;
     function Find(const aFileName: string): longint;
+    procedure Terminate;
   public {properties}
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property Items[Index: longint]: TBeeArchiveCustomItem read GetItem;
+    property CurrentDirectory: string
+       read FCurrentDirectory write SetCurrentDirectory;
+
+    property Suspended: boolean read FSuspended write SetSuspended;
+    property Terminated: boolean read FTerminated;
+    property ExitCode: byte read FExitCode;
   end;
 
   TBeeArchiveRenamer = class(TBeeArchiveViewer)
@@ -365,13 +384,17 @@ type
     FOnRename: TBeeArchiveRenameEvent;
     procedure SetWorkDirectory(const Value: string);
   private
+    function IsNeededToSave: boolean;
+    function DoProgress(Value: longint): boolean;
     procedure DoRename(Item: TBeeArchiveCustomItem;
       var NewFileName: string; var Confirm: TBeeArchiveRenameConfirm);
   public
     constructor Create;
     destructor Destroy; override;
     procedure SaveArchive;
-    function Rename(Index: longint; const NewFileName: string): boolean;
+    procedure Tag(const FileMask: string; Recursive: TRecursiveMode);
+    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode);
+    procedure UnTagAll;
   public
     property Threshold: int64 read FThreshold write FThreshold;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
@@ -1289,6 +1312,7 @@ end;
 constructor TBeeArchiveViewer.Create;
 begin
   inherited Create;
+  FExitCode      := ccSuccesful;
   FArchiveName   := '';
   FArchiveReader := nil;
   FArchiveCustomItems := TBeeArchiveCustomItems.Create;
@@ -1302,6 +1326,44 @@ begin
   FArchiveBindingItem.Destroy;
   FArchiveLocatorItem.Destroy;
   inherited Destroy;
+end;
+
+procedure TBeeArchiveViewer.Terminate;
+begin
+  SetExitCode(ccUserAbort);
+end;
+
+procedure TBeeArchiveViewer.SetTerminated(Value: boolean);
+begin
+  if FTerminated = False then
+  begin
+    FTerminated := Value;
+    if FTerminated = True then
+    begin
+      FSuspended := False;
+    end;
+  end;
+end;
+
+procedure TBeeArchiveViewer.SetSuspended(Value: boolean);
+begin
+  if FTerminated = False then
+  begin
+    FSuspended := Value;
+  end;
+end;
+
+procedure TBeeArchiveViewer.SetExitCode(Value: byte);
+begin
+  if FTerminated = False then
+  begin
+    if FExitCode < Value then
+    begin
+      FExitCode := Value;
+      if FExitCode >= ccError then
+        SetTerminated(TRUE);
+    end;
+  end;
 end;
 
 procedure TBeeArchiveViewer.OpenArchive(const aArchiveName: string);
@@ -1427,6 +1489,11 @@ begin
   Result := FArchiveCustomItems.Items[Index];
 end;
 
+procedure TBeeArchiveViewer.SetCurrentDirectory(const Value: string);
+begin
+  FCurrentDirectory := Value;
+end;
+
 procedure TBeeArchiveViewer.DoFailure(const ErrorMessage: string; ErrorCode: longint);
 begin
   if Assigned(FOnFailure) then
@@ -1449,6 +1516,16 @@ begin
   inherited Destroy;
 end;
 
+function TBeeArchiveRenamer.DoProgress(Value: longint): boolean;
+begin
+  Inc(FProcessedSize, Value);
+  while FSuspended do
+  begin
+    Sleep(250);
+  end;
+  Result := ExitCode < ccError;
+end;
+
 procedure TBeeArchiveRenamer.DoRename(Item: TBeeArchiveCustomItem;
   var NewFileName: string; var Confirm: TBeeArchiveRenameConfirm);
 begin
@@ -1456,90 +1533,137 @@ begin
     FOnRename(Item, NewFileName, Confirm);
 end;
 
-function TBeeArchiveRenamer.Rename(Index: longint; const NewFileName: string): boolean;
+procedure TBeeArchiveRenamer.Tag(const FileMask: string; Recursive: TRecursiveMode);
+var
+  I: longint;
+  Item: TBeeArchiveCustomItem;
 begin
-  Result := FArchiveCustomItems.Find(NewFileName) = -1;
-  if Result = TRUE then
+  for I := 0 to FArchiveCustomItems.Count - 1 do
   begin
-    FArchiveCustomItems.Items[Index].FFileName := NewFileName;
-    FArchiveCustomItems.Items[Index].FTag      := aitRename;
+    Item := FArchiveCustomItems.Items[I];
+    if FileNameMatch(Item.FileName, FileMask, Recursive) then
+    begin
+      Item.FTag := aitRename;
+    end;
   end;
+end;
+
+procedure TBeeArchiveRenamer.UnTag(const FileMask: string; Recursive: TRecursiveMode);
+var
+  I: longint;
+  Item: TBeeArchiveCustomItem;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+  begin
+    Item := FArchiveCustomItems.Items[I];
+    if FileNameMatch(Item.FileName, FileMask, Recursive) then
+    begin
+      Item.FTag := aitNone;
+    end;
+  end;
+end;
+
+procedure TBeeArchiveRenamer.UnTagAll;
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+  begin
+    FArchiveCustomItems.Items[I].FTag := aitNone;
+  end;
+end;
+
+function TBeeArchiveRenamer.IsNeededToSave: boolean;
+var
+  I: longint;
+  Item: TBeeArchiveCustomItem;
+  Confirm: TBeeArchiveRenameConfirm;
+  NewFileName: string;
+begin
+  Result         := FALSE;
+  FTotalSize     := 0;
+  FProcessedSize := 0;
+  for I := 0 to FArchiveCustomItems.Count -1 do
+  begin
+    Item := FArchiveCustomItems.Items[I];
+    Inc(FTotalSize, Item.CompressedSize);
+    if Item.FTag = aitRename then
+    begin
+      repeat
+        Confirm := arcAbort;
+        NewFileName := Item.FileName;
+        if Assigned(FOnRename) then
+          DoRename(Item, NewFileName, Confirm);
+        if Confirm <> arcRename then Break;
+      until FArchiveCustomItems.Find(NewFileName) = -1;
+
+      case Confirm of
+        arcRename:
+        begin
+          Result := TRUE;
+          Item.FFileName := NewFileName;
+        end;
+        arcSkip: Item.FTag:= aitNone;
+        arcAbort:
+        begin
+          Result := FALSE;
+          Break;
+        end;
+      end;
+
+    end; // if end
+  end; // for end
 end;
 
 procedure TBeeArchiveRenamer.SaveArchive;
 var
-  Confirm: TBeeArchiveRenameConfirm;
-  Check: boolean;
-
   I: longint;
-  Item: TBeeArchiveCustomItem;
-
-  NewFileName: string;
-
   TempName: string;
   TempWriter: TFileWriter;
+  Encoder: THeaderEncoder;
+  Item: TBeeArchiveCustomItem;
 begin
-  TempName   := GenerateFileName(FWorkDirectory);
-  TempWriter := TFileWriter.Create(TempName, FThreshold);
-  if Assigned(TempWriter) then
+  if IsNeededToSave then
   begin
-    FTotalSize := 0;
-    FProcessedSize := 0;
-
-    Check   := FALSE;
-    Confirm := arcAbort;
-    for I := 0 to FArchiveCustomItems.Count -1 do
+    TempName   := GenerateFileName(FWorkDirectory);
+    TempWriter := TFileWriter.Create(TempName, FThreshold);
+    if Assigned(TempWriter) then
     begin
-      Item := FArchiveCustomItems.Items[I];
-      Inc(FTotalSize, Item.CompressedSize);
-      if Item.FTag = aitRename then
-      begin
-        repeat
-          Confirm := arcAbort;
-          NewFileName := Item.FileName;
-          if Assigned(FOnRename) then
-            DoRename(Item, NewFileName, Confirm);
-          if Confirm = arcRename then
-            Check := TRUE
-          else
-            Break;
-        until FArchiveCustomItems.Find(NewFileName) = -1;
+      Encoder := THeaderEncoder.Create(TempWriter);
+      Encoder.OnProgress := @DoProgress;
 
-        case Confirm of
-          arcRename: Item.FileName := NewFileName;
-          // arcSkip:   Break;
-          arcAbort:  Break;
+      for I := 0 to FArchiveCustomItems.Count - 1 do
+        if ExitCode < ccError  then
+        begin
+          Item := FArchiveCustomItems.Items[I];
+
+          FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+          case Item.FTag of
+            aitNone:
+            aitRename:
+          end;
+
+          Encoder.Copy(FArchiveReader, Item.CompressedSize);
+
+
+
+
+
         end;
-      end;
+
+
+
+
+
+
+
+
+
+
+
+
+      FreeandNil(TempWriter);
     end;
-
-    if Check = TRUE then
-    begin
-
-
-
-
-
-    end;
-
-
-
-
-
-
-
-    FArchiveReader.DiskNumber := FArchiveBindingItem.DiskNumber;
-    FArchiveReader.Seek(FArchiveBindingItem.DiskSeek, soBeginning);
-
-
-
-
-
-
-
-
-
-    FreeandNil(TempWriter);
   end;
   CloseArchive;
 end;
@@ -1928,5 +2052,51 @@ end;
     end;
 
      *)
+
+
+procedure TBeeArchiveViewer.Copy(Item: TBeeArchiveCustomItem);
+var
+  CRC: longword;
+  Stream: TStream;
+begin
+  if Item.FExternalStream <> nil then
+  begin
+    Stream := Item.FExternalStream;
+    Stream.Seek(Item.FExternalDiskSeek, soBeginning);
+  end else
+    Stream := CreateTFileReader(Item.ExternalFileName, fmOpenRead);
+
+  if Stream <> nil then
+  begin
+    Item.DiskSeek := FTempWriter.Seek(0, soCurrent); // flush buffer
+    // Item.DiskNumber := FTempWriter.DiskNumber;
+    if Assigned(Item.Coder) then
+    begin
+      FBeeEncoder.CompressionMethod := TBeeArchiveMainCoder(Item.Coder).Method;
+      FBeeEncoder.DictionaryLevel   := TBeeArchiveMainCoder(Item.Coder).Dictionary;
+      FBeeEncoder.TableParameters   := TBeeArchiveMainCoder(Item.Coder).Table;
+      FBeeEncoder.Tear              := TBeeArchiveMainCoder(Item.Coder).Tear;
+
+      Item.UncompressedSize     := FBeeEncoder.Encode(Stream, Item.ExternalUncompressedSize, CRC);
+      Item.Coder.CompressedSize := FTempWriter.Seek(0, soCurrent) - Item.DiskSeek;
+
+      // optimize compression ...
+      if Item.Coder.CompressedSize >= Item.UncompressedSize then
+      begin
+        FreeAndNil(Item.FCoder);
+        Stream.Seek(Item.FExternalDiskSeek, soBeginning);
+        FTempWriter.Size      := Item.DiskSeek;
+        Item.UncompressedSize := FTempWriter.Read(Stream, Item.ExternalUncompressedSize);
+      end;
+    end else
+      Item.UncompressedSize := FBeeEncoder.Copy(Stream, Item.ExternalUncompressedSize, CRC);
+
+    Item.CRC := CRC;
+
+    if Item.FExternalStream = nil then Stream.Destroy;
+  end;
+end;
+
+
 end.
 
