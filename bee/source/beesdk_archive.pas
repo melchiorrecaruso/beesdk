@@ -1586,6 +1586,8 @@ begin
   for I := 0 to FArchiveCustomItems.Count -1 do
   begin
     Item := FArchiveCustomItems.Items[I];
+    Item.FExternalStream := FArchiveReader;
+
     Inc(FTotalSize, Item.CompressedSize);
     if Item.FTag = aitRename then
     begin
@@ -1638,30 +1640,19 @@ begin
           Item := FArchiveCustomItems.Items[I];
 
           FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
-          case Item.FTag of
-            aitNone:
-            aitRename:
-          end;
-
+          Item.DiskSeek   := TempWriter.Seek(0, soCurrent);
+          Item.DiskNumber := TempWriter.CurrentImage;
+          // case Item.FTag of
+          //   aitNone:   DoItemProgress(Item);
+          //   aitRename: DoItemProgress(Item);
+          // end;
           Encoder.Copy(FArchiveReader, Item.CompressedSize);
 
-
-
-
-
+          if FArchiveReader.IsValidStream = False then SetExitCode(ccError);
+          if TempWriter    .IsValidStream = False then SetExitCode(ccError);
         end;
 
-
-
-
-
-
-
-
-
-
-
-
+      Encoder.Destroy;
       FreeandNil(TempWriter);
     end;
   end;
@@ -1675,6 +1666,8 @@ begin
     FWorkDirectory := IncludeTrailingBackSlash(Value);
   end;
 end;
+
+
 
 
 
@@ -2054,48 +2047,7 @@ end;
      *)
 
 
-procedure TBeeArchiveViewer.Copy(Item: TBeeArchiveCustomItem);
-var
-  CRC: longword;
-  Stream: TStream;
-begin
-  if Item.FExternalStream <> nil then
-  begin
-    Stream := Item.FExternalStream;
-    Stream.Seek(Item.FExternalDiskSeek, soBeginning);
-  end else
-    Stream := CreateTFileReader(Item.ExternalFileName, fmOpenRead);
 
-  if Stream <> nil then
-  begin
-    Item.DiskSeek := FTempWriter.Seek(0, soCurrent); // flush buffer
-    // Item.DiskNumber := FTempWriter.DiskNumber;
-    if Assigned(Item.Coder) then
-    begin
-      FBeeEncoder.CompressionMethod := TBeeArchiveMainCoder(Item.Coder).Method;
-      FBeeEncoder.DictionaryLevel   := TBeeArchiveMainCoder(Item.Coder).Dictionary;
-      FBeeEncoder.TableParameters   := TBeeArchiveMainCoder(Item.Coder).Table;
-      FBeeEncoder.Tear              := TBeeArchiveMainCoder(Item.Coder).Tear;
-
-      Item.UncompressedSize     := FBeeEncoder.Encode(Stream, Item.ExternalUncompressedSize, CRC);
-      Item.Coder.CompressedSize := FTempWriter.Seek(0, soCurrent) - Item.DiskSeek;
-
-      // optimize compression ...
-      if Item.Coder.CompressedSize >= Item.UncompressedSize then
-      begin
-        FreeAndNil(Item.FCoder);
-        Stream.Seek(Item.FExternalDiskSeek, soBeginning);
-        FTempWriter.Size      := Item.DiskSeek;
-        Item.UncompressedSize := FTempWriter.Read(Stream, Item.ExternalUncompressedSize);
-      end;
-    end else
-      Item.UncompressedSize := FBeeEncoder.Copy(Stream, Item.ExternalUncompressedSize, CRC);
-
-    Item.CRC := CRC;
-
-    if Item.FExternalStream = nil then Stream.Destroy;
-  end;
-end;
 
 
 end.
