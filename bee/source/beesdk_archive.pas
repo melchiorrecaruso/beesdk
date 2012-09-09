@@ -151,9 +151,12 @@ type
 
   TBeeArchiveItemTag = (
     aitNone,
+    aitView,
+    aitRename,
+
     aitAdd,
     aitUpdate,
-    aitRename,
+
     aitExtract,
     aitDelete,
     aitDecode,
@@ -319,17 +322,21 @@ type
     property Items[Index: longint]: TBeeArchiveCustomItem read GetItem;
   end;
 
+  TBeeArchiveProgressEvent = function(Value: longint): boolean of object;
 
+  TBeeArchiveMessageEvent = procedure(const Message: string) of object;
 
   TBeeArchiveFailureEvent = procedure(
     const ErrorMessage: string; ErrorCode: longint) of object;
 
-  TBeeArchiveRenameConfirm = (arcRename, arcSkip, arcAbort);
+  TBeeArchiveConfirm = (arcOk, arcCancel, arcAbort);
 
   TBeeArchiveRenameEvent = procedure(Item: TBeeArchiveCustomItem;
-    var NewFileName: string; var Confirm: TBeeArchiveRenameConfirm) of object;
+    var NewFileName: string; var Confirm: TBeeArchiveConfirm) of object;
 
   TBeeArchiveViewer = class(TObject)
+  protected
+    FOwnerTag: TBeeArchiveItemTag;
   private {private}
     FSuspended:  boolean;
     FTerminated: boolean;
@@ -347,8 +354,13 @@ type
     procedure UnPack;
   private {event variables}
     FOnFailure: TBeeArchiveFailureEvent;
+    FOnMessage: TBeeArchiveMessageEvent;
+
   private {event method}
     procedure DoFailure(const ErrorMessage: string; ErrorCode: longint);
+    procedure DoMessage(const Message: string);
+
+
   private { methods}
     function GetItem(Index: longint): TBeeArchiveCustomItem;
     procedure SetArchiveName(const Value: string);
@@ -363,6 +375,12 @@ type
     procedure OpenArchive(const aArchiveName: string);
     procedure CloseArchive;
     function Find(const aFileName: string): longint;
+
+    procedure TagAll;
+    procedure Tag(const FileMask: string; Recursive: TRecursiveMode);
+    procedure UnTagAll;
+    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode);
+
     procedure Terminate;
   public {properties}
     property ArchiveName: string read FArchiveName write SetArchiveName;
@@ -375,29 +393,37 @@ type
     property ExitCode: byte read FExitCode;
   end;
 
-  TBeeArchiveRenamer = class(TBeeArchiveViewer)
-  private
-    FThreshold: int64;
+  TBeeArchiverBuilder = class(TBeeArchiveViewer)
+  protected
     FTotalSize: int64;
     FProcessedSize: int64;
+  private
+    FThreshold: int64;
     FWorkDirectory: string;
-    FOnRename: TBeeArchiveRenameEvent;
+    FOnProgress: TBeeArchiveProgressEvent;
+  private
+    constructor Create;
+    destructor Destroy; override;
+
     procedure SetWorkDirectory(const Value: string);
+    function DoProgress(Value: longint): boolean;
+  public
+    property Threshold: int64 read FThreshold write FThreshold;
+    property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
+  end;
+
+  TBeeArchiveRenamer = class(TBeeArchiverBuilder)
+  private
+    FOnRename: TBeeArchiveRenameEvent;
   private
     function IsNeededToSave: boolean;
-    function DoProgress(Value: longint): boolean;
     procedure DoRename(Item: TBeeArchiveCustomItem;
-      var NewFileName: string; var Confirm: TBeeArchiveRenameConfirm);
+      var NewFileName: string; var Confirm: TBeeArchiveConfirm);
   public
     constructor Create;
     destructor Destroy; override;
     procedure SaveArchive;
-    procedure Tag(const FileMask: string; Recursive: TRecursiveMode);
-    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode);
-    procedure UnTagAll;
   public
-    property Threshold: int64 read FThreshold write FThreshold;
-    property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
     property OnRenameEvent: TBeeArchiveRenameEvent
       read FOnRename write FOnRename;
   end;
@@ -1312,6 +1338,8 @@ end;
 constructor TBeeArchiveViewer.Create;
 begin
   inherited Create;
+  FOwnerTag := aitNone;
+
   FExitCode      := ccSuccesful;
   FArchiveName   := '';
   FArchiveReader := nil;
@@ -1502,38 +1530,26 @@ begin
   end;
 end;
 
-// TBeeArchiveRenamer class
-
-constructor TBeeArchiveRenamer.Create;
+procedure TBeeArchiveViewer.DoMessage(const Message: string);
 begin
-  inherited Create;
-  FThreshold     :=  0;
-  FWorkDirectory := '';
-end;
-
-destructor TBeeArchiveRenamer.Destroy;
-begin
-  inherited Destroy;
-end;
-
-function TBeeArchiveRenamer.DoProgress(Value: longint): boolean;
-begin
-  Inc(FProcessedSize, Value);
-  while FSuspended do
+  if Assigned(FOnMessage) then
   begin
-    Sleep(250);
+    FOnMessage(Message);
   end;
-  Result := ExitCode < ccError;
 end;
 
-procedure TBeeArchiveRenamer.DoRename(Item: TBeeArchiveCustomItem;
-  var NewFileName: string; var Confirm: TBeeArchiveRenameConfirm);
+
+procedure TBeeArchiveViewer.TagAll;
+var
+  I: longint;
 begin
-  if Assigned(FOnRename) then
-    FOnRename(Item, NewFileName, Confirm);
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+  begin
+    FArchiveCustomItems.Items[I].FTag := FOwnerTag;
+  end;
 end;
 
-procedure TBeeArchiveRenamer.Tag(const FileMask: string; Recursive: TRecursiveMode);
+procedure TBeeArchiveViewer.Tag(const FileMask: string; Recursive: TRecursiveMode);
 var
   I: longint;
   Item: TBeeArchiveCustomItem;
@@ -1543,12 +1559,22 @@ begin
     Item := FArchiveCustomItems.Items[I];
     if FileNameMatch(Item.FileName, FileMask, Recursive) then
     begin
-      Item.FTag := aitRename;
+      Item.FTag := FOwnerTag;
     end;
   end;
 end;
 
-procedure TBeeArchiveRenamer.UnTag(const FileMask: string; Recursive: TRecursiveMode);
+procedure TBeeArchiveViewer.UnTagAll;
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+  begin
+    FArchiveCustomItems.Items[I].FTag := aitNone;
+  end;
+end;
+
+procedure TBeeArchiveViewer.UnTag(const FileMask: string; Recursive: TRecursiveMode);
 var
   I: longint;
   Item: TBeeArchiveCustomItem;
@@ -1563,21 +1589,83 @@ begin
   end;
 end;
 
-procedure TBeeArchiveRenamer.UnTagAll;
-var
-  I: longint;
+
+
+
+
+// TBeeArchiveBuilder class
+
+constructor TBeeArchiverBuilder.Create;
 begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do
+  inherited Create;
+  FOwnerTag := aitNone;
+
+
+  FThreshold     :=  0;
+  FWorkDirectory := '';
+end;
+
+destructor TBeeArchiverBuilder.Destroy;
+begin
+  inherited Destroy;
+end;
+
+procedure TBeeArchiverBuilder.SetWorkDirectory(const Value: string);
+begin
+  if (Value = '') or DirectoryExists(Value) then
   begin
-    FArchiveCustomItems.Items[I].FTag := aitNone;
+    FWorkDirectory := IncludeTrailingBackSlash(Value);
   end;
 end;
+
+
+function TBeeArchiverBuilder.DoProgress(Value: longint): boolean;
+begin
+  Inc(FProcessedSize, Value);
+  while FSuspended do
+  begin
+    Sleep(250);
+  end;
+  Result := ExitCode < ccError;
+end;
+
+
+
+
+// TBeeArchiveRenamer class
+
+constructor TBeeArchiveRenamer.Create;
+begin
+  inherited Create;
+
+end;
+
+destructor TBeeArchiveRenamer.Destroy;
+begin
+  inherited Destroy;
+end;
+
+
+
+procedure TBeeArchiveRenamer.DoRename(Item: TBeeArchiveCustomItem;
+  var NewFileName: string; var Confirm: TBeeArchiveConfirm);
+begin
+  Confirm := arcCancel;
+  if Assigned(FOnRename) then
+  begin
+    NewFileName := Item.FileName;
+    FOnRename(Item, NewFileName, Confirm);
+  end;
+end;
+
+
+
 
 function TBeeArchiveRenamer.IsNeededToSave: boolean;
 var
   I: longint;
   Item: TBeeArchiveCustomItem;
-  Confirm: TBeeArchiveRenameConfirm;
+  Confirm: TBeeArchiveConfirm;
   NewFileName: string;
 begin
   Result         := FALSE;
@@ -1592,20 +1680,16 @@ begin
     if Item.FTag = aitRename then
     begin
       repeat
-        Confirm := arcAbort;
-        NewFileName := Item.FileName;
-        if Assigned(FOnRename) then
-          DoRename(Item, NewFileName, Confirm);
-        if Confirm <> arcRename then Break;
-      until FArchiveCustomItems.Find(NewFileName) = -1;
+        DoRename(Item, NewFileName, Confirm);
+      until (Confirm <> arcOk) or (FArchiveCustomItems.Find(NewFileName) = -1);
 
       case Confirm of
-        arcRename:
+        arcOk:
         begin
           Result := TRUE;
           Item.FFileName := NewFileName;
         end;
-        arcSkip: Item.FTag:= aitNone;
+        arcCancel: Item.FTag:= aitNone;
         arcAbort:
         begin
           Result := FALSE;
@@ -1638,14 +1722,14 @@ begin
         if ExitCode < ccError  then
         begin
           Item := FArchiveCustomItems.Items[I];
-
           FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+
           Item.DiskSeek   := TempWriter.Seek(0, soCurrent);
           Item.DiskNumber := TempWriter.CurrentImage;
-          // case Item.FTag of
-          //   aitNone:   DoItemProgress(Item);
-          //   aitRename: DoItemProgress(Item);
-          // end;
+          case Item.FTag of
+            aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
+            aitRename: DoMessage(Format(cmRenaming, [Item.FileName]));
+          end;
           Encoder.Copy(FArchiveReader, Item.CompressedSize);
 
           if FArchiveReader.IsValidStream = False then SetExitCode(ccError);
@@ -1659,13 +1743,7 @@ begin
   CloseArchive;
 end;
 
-procedure TBeeArchiveRenamer.SetWorkDirectory(const Value: string);
-begin
-  if (Value = '') or DirectoryExists(Value) then
-  begin
-    FWorkDirectory := IncludeTrailingBackSlash(Value);
-  end;
-end;
+
 
 
 
