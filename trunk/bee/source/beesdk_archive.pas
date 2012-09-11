@@ -322,7 +322,7 @@ type
     property Items[Index: longint]: TBeeArchiveCustomItem read GetItem;
   end;
 
-  TBeeArchiveProgressEvent = function(Value: longint): boolean of object;
+  TBeeArchiveProgressEvent = procedure(Value: longint) of object;
 
   TBeeArchiveMessageEvent = procedure(const Message: string) of object;
 
@@ -333,6 +333,12 @@ type
 
   TBeeArchiveRenameEvent = procedure(Item: TBeeArchiveCustomItem;
     var NewFileName: string; var Confirm: TBeeArchiveConfirm) of object;
+
+  TBeeArchiveEraseEvent = procedure(Item: TBeeArchiveCustomItem;
+    var Confirm: TBeeArchiveConfirm) of object;
+
+
+  // a class for each command
 
   TBeeArchiveViewer = class(TObject)
   protected
@@ -349,8 +355,8 @@ type
     FArchiveBindingItem: TBeeArchiveBindingItem;
     FArchiveLocatorItem: TBeeArchiveLocatorItem;
     function Read(aStream: TFileReader): boolean;
-    procedure Write(aStream: TFileWriter);
-    procedure Pack;
+
+
     procedure UnPack;
   private {event variables}
     FOnFailure: TBeeArchiveFailureEvent;
@@ -373,13 +379,13 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure OpenArchive(const aArchiveName: string);
-    procedure CloseArchive;
+    procedure CloseArchive; virtual;
     function Find(const aFileName: string): longint;
 
-    procedure TagAll;
-    procedure Tag(const FileMask: string; Recursive: TRecursiveMode);
-    procedure UnTagAll;
-    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode);
+    procedure TagAll; virtual;
+    procedure Tag(const FileMask: string; Recursive: TRecursiveMode); virtual;
+    procedure UnTagAll; virtual;
+    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode); virtual;
 
     procedure Terminate;
   public {properties}
@@ -393,6 +399,26 @@ type
     property ExitCode: byte read FExitCode;
   end;
 
+  TBeeArchiveExtractor = class(TBeeArchiveViewer)
+  private
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure CloseArchive; override;
+  public
+  end;
+
+  TBeeArchiveTester = class(TBeeArchiveExtractor)
+  private
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure CloseArchive; override;
+  public
+  end;
+
   TBeeArchiverBuilder = class(TBeeArchiveViewer)
   protected
     FTotalSize: int64;
@@ -402,14 +428,23 @@ type
     FWorkDirectory: string;
     FOnProgress: TBeeArchiveProgressEvent;
   private
-    constructor Create;
-    destructor Destroy; override;
+    procedure Write(aStream: TFileWriter);
 
     procedure SetWorkDirectory(const Value: string);
     function DoProgress(Value: longint): boolean;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Pack;
+
+
   public
     property Threshold: int64 read FThreshold write FThreshold;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
+
+
   end;
 
   TBeeArchiveRenamer = class(TBeeArchiverBuilder)
@@ -423,10 +458,34 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure SaveArchive;
+    procedure CloseArchive; override;
   public
     property OnRenameEvent: TBeeArchiveRenameEvent
       read FOnRename write FOnRename;
   end;
+
+  TBeeArchiveEraser = class(TBeeArchiverBuilder)
+  private
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure SaveArchive;
+    procedure CloseArchive; override;
+  public
+  end;
+
+  TBeeArchiveAdder = class(TBeeArchiverBuilder)
+  private
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure SaveArchive;
+    procedure CloseArchive; override;
+  public
+  end;
+
 
 
   (*
@@ -1338,9 +1397,9 @@ end;
 constructor TBeeArchiveViewer.Create;
 begin
   inherited Create;
-  FOwnerTag := aitNone;
+  FOwnerTag := aitView;
+  FExitCode := ccSuccesful;
 
-  FExitCode      := ccSuccesful;
   FArchiveName   := '';
   FArchiveReader := nil;
   FArchiveCustomItems := TBeeArchiveCustomItems.Create;
@@ -1359,6 +1418,11 @@ end;
 procedure TBeeArchiveViewer.Terminate;
 begin
   SetExitCode(ccUserAbort);
+end;
+
+function TBeeArchiveViewer.GetItem(Index: longint): TBeeArchiveCustomItem;
+begin
+  Result := FArchiveCustomItems.Items[Index];
 end;
 
 procedure TBeeArchiveViewer.SetTerminated(Value: boolean);
@@ -1392,6 +1456,53 @@ begin
         SetTerminated(TRUE);
     end;
   end;
+end;
+
+procedure TBeeArchiveViewer.SetCurrentDirectory(const Value: string);
+begin
+  FCurrentDirectory := Value;
+end;
+
+procedure TBeeArchiveViewer.SetArchiveName(const Value: string);
+begin
+  OpenArchive(Value);
+end;
+
+function TBeeArchiveViewer.Read(aStream: TFileReader): boolean;
+var
+  T: longword;
+begin
+  Result := FALSE;
+  T := longword(aStream.ReadInfWord);
+  if T = aitLocator then
+  begin
+    FArchiveLocatorItem.Read(aStream);
+    if alifVersionNeededToRead in FArchiveLocatorItem.FFlags then
+      if FArchiveLocatorItem.VersionNeededToRead > beexVERSION then
+        Exit;
+
+    if alifDisksNumber in FArchiveLocatorItem.FFlags then
+      aStream.ImagesNumber := FArchiveLocatorItem.DisksNumber;
+    if alifDiskNumber in FArchiveLocatorItem.FFlags then
+      aStream.SeekImage(FArchiveLocatorItem.DiskNumber, FArchiveLocatorItem.DiskSeek);
+
+    if aStream.ReadDWord = beexMARKER then
+      repeat
+        T := longword(aStream.ReadInfWord);
+        case T of
+          aitCustom:  FArchiveCustomItems.Add(TBeeArchiveCustomItem.Read(aStream));
+          aitBinding: FArchiveBindingItem.Read(aStream);
+          // aitLocator: already readed;
+          else        Exit;
+        end;
+        Result := (T = aitEnd);
+      until Result;
+  end;
+end;
+
+procedure TBeeArchiveViewer.UnPack;
+begin
+
 end;
 
 procedure TBeeArchiveViewer.OpenArchive(const aArchiveName: string);
@@ -1433,111 +1544,10 @@ begin
   FArchiveLocatorItem.Clear;
 end;
 
-function TBeeArchiveViewer.Read(aStream: TFileReader): boolean;
-var
-  T: longword;
-begin
-  Result := FALSE;
-  T := longword(aStream.ReadInfWord);
-  if T = aitLocator then
-  begin
-    FArchiveLocatorItem.Read(aStream);
-    if alifVersionNeededToRead in FArchiveLocatorItem.FFlags then
-      if FArchiveLocatorItem.VersionNeededToRead > beexVERSION then
-        Exit;
-
-    if alifDisksNumber in FArchiveLocatorItem.FFlags then
-      aStream.ImagesNumber := FArchiveLocatorItem.DisksNumber;
-    if alifDiskNumber in FArchiveLocatorItem.FFlags then
-      aStream.SeekImage(FArchiveLocatorItem.DiskNumber, FArchiveLocatorItem.DiskSeek);
-
-    if aStream.ReadDWord = beexMARKER then
-      repeat
-        T := longword(aStream.ReadInfWord);
-        case T of
-          aitCustom:  FArchiveCustomItems.Add(TBeeArchiveCustomItem.Read(aStream));
-          aitBinding: FArchiveBindingItem.Read(aStream);
-          // aitLocator: already readed;
-          else        Exit;
-        end;
-        Result := (T = aitEnd);
-      until Result;
-  end;
-end;
-
-procedure TBeeArchiveViewer.Write(aStream: TFileWriter);
-var
-  MagicSeek: int64;
-  I: longword;
-begin
-  FArchiveLocatorItem.DiskNumber := aStream.CurrentImage;
-  FArchiveLocatorItem.DiskSeek   := aStream.Seek(0, soFromCurrent);
-
-  aStream.WriteDWord(beexMARKER);
-  for I := 0 to FArchiveCustomItems.Count - 1 do
-  begin
-    aStream.WriteInfWord(aitCustom);
-    FArchiveCustomItems.Items[I].Write(aStream);
-  end;
-  aStream.WriteInfWord(aitBinding);
-  FArchiveBindingItem.Write(aStream);
-
-  if aStream.Threshold > 0 then aStream.CreateImage;
-
-  // Copiare SFX module
-
-  MagicSeek := aStream.Seek(0, soFromCurrent);
-  aStream.WriteInfWord(aitLocator);
-  FArchiveLocatorItem.Write(aStream);
-  WriteMagicSeek(aStream, MagicSeek);
-end;
-
-procedure TBeeArchiveViewer.UnPack;
-begin
-
-end;
-
-procedure TBeeArchiveViewer.Pack;
-begin
-
-end;
-
 function TBeeArchiveViewer.Find(const aFileName: string): longint;
 begin
   Result := FArchiveCustomItems.Find(aFileName);
 end;
-
-procedure TBeeArchiveViewer.SetArchiveName(const Value: string);
-begin
-  OpenArchive(Value);
-end;
-
-function TBeeArchiveViewer.GetItem(Index: longint): TBeeArchiveCustomItem;
-begin
-  Result := FArchiveCustomItems.Items[Index];
-end;
-
-procedure TBeeArchiveViewer.SetCurrentDirectory(const Value: string);
-begin
-  FCurrentDirectory := Value;
-end;
-
-procedure TBeeArchiveViewer.DoFailure(const ErrorMessage: string; ErrorCode: longint);
-begin
-  if Assigned(FOnFailure) then
-  begin
-    FOnFailure(ErrorMessage, ErrorCode);
-  end;
-end;
-
-procedure TBeeArchiveViewer.DoMessage(const Message: string);
-begin
-  if Assigned(FOnMessage) then
-  begin
-    FOnMessage(Message);
-  end;
-end;
-
 
 procedure TBeeArchiveViewer.TagAll;
 var
@@ -1589,18 +1599,28 @@ begin
   end;
 end;
 
+procedure TBeeArchiveViewer.DoFailure(const ErrorMessage: string; ErrorCode: longint);
+begin
+  if Assigned(FOnFailure) then
+  begin
+    FOnFailure(ErrorMessage, ErrorCode);
+  end;
+end;
 
-
-
+procedure TBeeArchiveViewer.DoMessage(const Message: string);
+begin
+  if Assigned(FOnMessage) then
+  begin
+    FOnMessage(Message);
+  end;
+end;
 
 // TBeeArchiveBuilder class
 
 constructor TBeeArchiverBuilder.Create;
 begin
   inherited Create;
-  FOwnerTag := aitNone;
-
-
+  FOwnerTag      := aitNone;
   FThreshold     :=  0;
   FWorkDirectory := '';
 end;
@@ -1618,48 +1638,62 @@ begin
   end;
 end;
 
+procedure TBeeArchiverBuilder.Write(aStream: TFileWriter);
+var
+  MagicSeek: int64;
+  I: longword;
+begin
+  FArchiveLocatorItem.DiskNumber := aStream.CurrentImage;
+  FArchiveLocatorItem.DiskSeek   := aStream.Seek(0, soFromCurrent);
+
+  aStream.WriteDWord(beexMARKER);
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+  begin
+    aStream.WriteInfWord(aitCustom);
+    FArchiveCustomItems.Items[I].Write(aStream);
+  end;
+  aStream.WriteInfWord(aitBinding);
+  FArchiveBindingItem.Write(aStream);
+
+  if aStream.Threshold > 0 then aStream.CreateImage;
+
+  // Copiare SFX module
+
+  MagicSeek := aStream.Seek(0, soFromCurrent);
+  aStream.WriteInfWord(aitLocator);
+  FArchiveLocatorItem.Write(aStream);
+  WriteMagicSeek(aStream, MagicSeek);
+end;
+
+procedure TBeeArchiverBuilder.Pack;
+begin
+
+end;
 
 function TBeeArchiverBuilder.DoProgress(Value: longint): boolean;
 begin
+  while FSuspended do Sleep(250);
+
   Inc(FProcessedSize, Value);
-  while FSuspended do
+  if Assigned(FOnProgress) then
   begin
-    Sleep(250);
+    DoProgress(Round(FProcessedSize/FTotalSize * 100));
   end;
   Result := ExitCode < ccError;
 end;
-
-
-
 
 // TBeeArchiveRenamer class
 
 constructor TBeeArchiveRenamer.Create;
 begin
   inherited Create;
-
+  FOwnerTag := aitRename;
 end;
 
 destructor TBeeArchiveRenamer.Destroy;
 begin
   inherited Destroy;
 end;
-
-
-
-procedure TBeeArchiveRenamer.DoRename(Item: TBeeArchiveCustomItem;
-  var NewFileName: string; var Confirm: TBeeArchiveConfirm);
-begin
-  Confirm := arcCancel;
-  if Assigned(FOnRename) then
-  begin
-    NewFileName := Item.FileName;
-    FOnRename(Item, NewFileName, Confirm);
-  end;
-end;
-
-
-
 
 function TBeeArchiveRenamer.IsNeededToSave: boolean;
 var
@@ -1743,9 +1777,22 @@ begin
   CloseArchive;
 end;
 
+procedure TBeeArchiveRenamer.CloseArchive;
+begin
+  inherited CloseArchive;
+  // rename ...
+end;
 
-
-
+procedure TBeeArchiveRenamer.DoRename(Item: TBeeArchiveCustomItem;
+  var NewFileName: string; var Confirm: TBeeArchiveConfirm);
+begin
+  Confirm := arcCancel;
+  if Assigned(FOnRename) then
+  begin
+    NewFileName := Item.FileName;
+    FOnRename(Item, NewFileName, Confirm);
+  end;
+end;
 
 
 
