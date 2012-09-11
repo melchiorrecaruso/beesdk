@@ -25,22 +25,23 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
+    <Version Major="2"/>
     <Files Count="4">
       <Item1>
-        <Filename Value="beesdk_archive.pas"/>
-        <UnitName Value="BeeSDK_Archive"/>
-      </Item1>
-      <Item2>
         <Filename Value="bee_bufstream.pas"/>
         <UnitName Value="Bee_BufStream"/>
-      </Item2>
-      <Item3>
+      </Item1>
+      <Item2>
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
-      </Item3>
-      <Item4>
+      </Item2>
+      <Item3>
         <Filename Value="beelib_configuration.pas"/>
         <UnitName Value="BeeLib_Configuration"/>
+      </Item3>
+      <Item4>
+        <Filename Value="beesdk_archive.pas"/>
+        <UnitName Value="BeeSDK_Archive"/>
       </Item4>
     </Files>
     <Type Value="RunAndDesignTime"/>

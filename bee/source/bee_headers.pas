@@ -522,8 +522,8 @@ begin
   Result.Dictionary := Ord(do5MB);
   // Result.FileTable
   Result.Size       := -1;
-  Result.Time       := Rec.Time;
-  Result.Attr       := Rec.Attr;
+  Result.Time       := Rec.LastModifiedTime;
+  Result.Attr       := Rec.Attributes;
   Result.Crc        := longword(-1);
   Result.PackedSize := -1;
   Result.StartPos   := -1;
@@ -964,15 +964,15 @@ var
   Item: THeader;
 begin
   Item := Search(DeleteFileDrive(Rec.Name));
-  Result := (Item <> nil) and (Item.Time < Rec.Time);
+  Result := (Item <> nil) and (Item.Time < Rec.LastModifiedTime);
 
   if Result then
   begin
     Item.Action   := haUpdate;
     Item.ExtName  := Rec.Name;
     Item.ExtSize  := Rec.Size;
-    Item.Time     := Rec.Time;
-    Item.Attr     := Rec.Attr;
+    Item.Time     := Rec.LastModifiedTime;
+    Item.Attr     := Rec.Attributes;
   end;
 end;
 
@@ -988,8 +988,8 @@ begin
     Item.Action   := haUpdate;
     Item.ExtName  := Rec.Name;
     Item.ExtSize  := Rec.Size;
-    Item.Time     := Rec.Time;
-    Item.Attr     := Rec.Attr;
+    Item.Time     := Rec.LastModifiedTime;
+    Item.Attr     := Rec.Attributes;
   end;
 end;
 
