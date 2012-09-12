@@ -337,89 +337,80 @@ type
   TBeeArchiveEraseEvent = procedure(Item: TBeeArchiveCustomItem;
     var Confirm: TBeeArchiveConfirm) of object;
 
-
   // a class for each command
 
-  TBeeArchiveViewer = class(TObject)
-  protected
-    FOwnerTag: TBeeArchiveItemTag;
-  private {private}
+  TBeeArchiveReader = class(TObject)
+  private
+    FArchiveName: string;
+    FArchiveReader: TFileReader;
     FSuspended:  boolean;
     FTerminated: boolean;
     FExitCode: byte;
-
-    FCurrentDirectory: string;
-    FArchiveName: string;
-    FArchiveReader: TFileReader;
+    FOnFailure: TBeeArchiveFailureEvent;
+    FOnMessage: TBeeArchiveMessageEvent;
     FArchiveCustomItems: TBeeArchiveCustomItems;
     FArchiveBindingItem: TBeeArchiveBindingItem;
     FArchiveLocatorItem: TBeeArchiveLocatorItem;
     function Read(aStream: TFileReader): boolean;
-
-
     procedure UnPack;
-  private {event variables}
-    FOnFailure: TBeeArchiveFailureEvent;
-    FOnMessage: TBeeArchiveMessageEvent;
-
-  private {event method}
-    procedure DoFailure(const ErrorMessage: string; ErrorCode: longint);
-    procedure DoMessage(const Message: string);
-
-
-  private { methods}
+    function GetCount: longint;
     function GetItem(Index: longint): TBeeArchiveCustomItem;
     procedure SetArchiveName(const Value: string);
-    procedure SetCurrentDirectory(const Value: string);
-
     procedure SetSuspended(Value: boolean);
     procedure SetTerminated(Value: boolean);
     procedure SetExitCode(Value: byte);
-  public {methods}
+    procedure DoFailure(const ErrorMessage: string; ErrorCode: longint);
+    procedure DoMessage(const Message: string);
+  public
     constructor Create;
     destructor Destroy; override;
+
+    procedure Terminate;
     procedure OpenArchive(const aArchiveName: string);
     procedure CloseArchive; virtual;
     function Find(const aFileName: string): longint;
-
-    procedure TagAll; virtual;
-    procedure Tag(const FileMask: string; Recursive: TRecursiveMode); virtual;
-    procedure UnTagAll; virtual;
-    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode); virtual;
-
-    procedure Terminate;
-  public {properties}
+  public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property Items[Index: longint]: TBeeArchiveCustomItem read GetItem;
-    property CurrentDirectory: string
-       read FCurrentDirectory write SetCurrentDirectory;
+    property Count: longint read GetCount;
 
     property Suspended: boolean read FSuspended write SetSuspended;
     property Terminated: boolean read FTerminated;
     property ExitCode: byte read FExitCode;
+
+    property OnFailure: TBeeArchiveFailureEvent read FOnFailure write FOnFailure;
+    property OnMessage: TBeeArchiveMessageEvent read FOnMessage write FOnMessage;
+  end;
+
+  TBeeArchiveViewer = class(TBeeArchiveReader)
+  private
+    FOwnerTag: TBeeArchiveItemTag;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure TagAll; virtual;
+    procedure UnTagAll; virtual;
+    procedure Tag(const FileMask: string; Recursive: TRecursiveMode); virtual;
+    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode); virtual;
   end;
 
   TBeeArchiveExtractor = class(TBeeArchiveViewer)
   private
-  private
   public
     constructor Create;
     destructor Destroy; override;
-    procedure CloseArchive; override;
   public
   end;
 
   TBeeArchiveTester = class(TBeeArchiveExtractor)
   private
-  private
   public
     constructor Create;
     destructor Destroy; override;
-    procedure CloseArchive; override;
   public
   end;
 
-  TBeeArchiverBuilder = class(TBeeArchiveViewer)
+  TBeeArchiverWriter = class(TBeeArchiveReader)
   protected
     FTotalSize: int64;
     FProcessedSize: int64;
@@ -1420,6 +1411,11 @@ begin
   SetExitCode(ccUserAbort);
 end;
 
+function TBeeArchiveViewer.GetCount: longint;
+begin
+  Result := FArchiveCustomItems.Count;
+end;
+
 function TBeeArchiveViewer.GetItem(Index: longint): TBeeArchiveCustomItem;
 begin
   Result := FArchiveCustomItems.Items[Index];
@@ -1456,11 +1452,6 @@ begin
         SetTerminated(TRUE);
     end;
   end;
-end;
-
-procedure TBeeArchiveViewer.SetCurrentDirectory(const Value: string);
-begin
-  FCurrentDirectory := Value;
 end;
 
 procedure TBeeArchiveViewer.SetArchiveName(const Value: string);
