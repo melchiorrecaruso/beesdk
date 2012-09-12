@@ -33,12 +33,12 @@ uses
   Classes,
   SysUtils,
   // ---
-  BeeLib_Configuration,
-  {$IFDEF cppDLL}
-    Bee_LibLink;
-  {$ELSE}
-    Bee_Modeller;
-  {$ENDIF}
+  BeeLib_Configuration;
+  // {$IFDEF cppDLL}
+  //   Bee_LibLink;
+  // {$ELSE}
+  //  Bee_Modeller;
+  // {$ENDIF}
 
 type
   TProgressEvent = function(Value: longint): boolean of object;
@@ -86,6 +86,7 @@ type
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
+
     function Copy  (Stream: TStream; const Size: int64): int64; overload;
     function Copy  (Stream: TStream; const Size: int64; var CRC: longword): int64; overload;
     function Encode(Stream: TStream; const Size: int64; var CRC: longword): int64;
@@ -97,6 +98,7 @@ type
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
+
     function Copy  (Stream: TStream; const Size: int64; var CRC: longword): int64;
     function Decode(Stream: TStream; const Size: int64; var CRC: longword): int64;
   end;
@@ -121,11 +123,11 @@ begin
 end;
 
 procedure THeaderCoder.FreshModeller;
-begin
+begin (*
   if FTear then
     BaseCoder_FreshFlexible(FModeller)
   else
-    BaseCoder_FreshSolid(FModeller);
+    BaseCoder_FreshSolid(FModeller); *)
 end;
 
 function THeaderCoder.DoProgress(Value: longint): boolean;
@@ -166,14 +168,14 @@ end;
 constructor THeaderEncoder.Create(Stream: TStream);
 begin
   inherited Create(Stream);
-  FCoder    := RangeEncoder_Create(FStream, @DoFlush);
-  FModeller := BaseCoder_Create(FCoder);
+  // FCoder    := RangeEncoder_Create(FStream, @DoFlush);
+  // FModeller := BaseCoder_Create(FCoder);
 end;
 
 destructor THeaderEncoder.Destroy;
 begin
-  BaseCoder_Destroy(FModeller);
-  RangeEncoder_Destroy(FCoder);
+  // BaseCoder_Destroy(FModeller);
+  // RangeEncoder_Destroy(FCoder);
   inherited Destroy;
 end;
 
@@ -236,6 +238,7 @@ var
   Readed: longint;
   Buffer: array[0..$FFFF] of byte;
 begin
+  (*
   FreshModeller;
   RangeEncoder_StartEncode(FCoder);
 
@@ -258,7 +261,7 @@ begin
   Inc(Result, Readed);
   DoProgress(Readed);
 
-  RangeEncoder_FinishEncode(FCoder);
+  RangeEncoder_FinishEncode(FCoder); *)
 end;
 
   { TheaderDecoder class }
@@ -266,14 +269,14 @@ end;
 constructor THeaderDecoder.Create(Stream: TStream);
 begin
   inherited Create(Stream);
-  FCoder    := RangeDecoder_Create(FStream, @DoFill);
-  FModeller := BaseCoder_Create(FCoder);
+  // FCoder    := RangeDecoder_Create(FStream, @DoFill);
+  // FModeller := BaseCoder_Create(FCoder);
 end;
 
 destructor THeaderDecoder.Destroy;
 begin
-  BaseCoder_Destroy(FModeller);
-  RangeDecoder_Destroy(FCoder);
+  // BaseCoder_Destroy(FModeller);
+  // RangeDecoder_Destroy(FCoder);
   inherited Destroy;
 end;
 
@@ -311,6 +314,7 @@ var
   Writed: longint;
   Buffer: array[0..$FFFF] of byte;
 begin
+  (*
   RangeDecoder_StartDecode(FCoder);
 
   Result := 0;
@@ -332,7 +336,7 @@ begin
   Inc(Result, Writed);
   DoProgress(Writed);
 
-  RangeDecoder_FinishDecode(FCoder);
+  RangeDecoder_FinishDecode(FCoder); *)
 end;
 
 end.
