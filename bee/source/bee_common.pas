@@ -74,6 +74,8 @@ function DoDirSeparators(const FileName: string): string;
 function FixFileName(const FileName: string): string;
 function FixDirName(const DirName: string): string;
 
+function IsValidFileName(const FileName : string): boolean;
+
 function SelfName: string;
 function SelfPath: string;
 function GenerateFileName(const FilePath: string): string;
@@ -515,6 +517,21 @@ begin
     Delete(Result, I, 1);
     I := System.Pos('"', Result);
   end;
+end;
+
+function IsValidFileName(const FileName : string): boolean;
+const
+  InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
+var
+  I: longint;
+begin
+  Result := FileName <> '';
+  if Result then
+    for I := 1 to Length(FileName) do
+    begin
+      Result := not (FileName[I] in InvalidCharacters) ;
+      if not Result then Break;
+    end;
 end;
 
 function SelfName: string; {$IFDEF FPC} inline; {$ENDIF}

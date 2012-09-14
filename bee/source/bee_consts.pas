@@ -100,6 +100,8 @@ const
   cmCreateSwapError   = 'Error: can''t create swap file';
   cmOpenSwapError     = 'Error: can''t open swap file';
   cmStrmReadError     = 'Error: can''t read data from stream';
+  cmStrmWriteError    = 'Error: can''t write data to stream';
+
   cmRenameFileError   = 'Error: can''t rename file "%s" to "%s"';
   cmSequenceError     = 'Error: can''t decode file "%s"';
   cmActionError       = 'Error: internal error';
