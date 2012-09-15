@@ -1695,7 +1695,6 @@ begin
   while I > -1 do
   begin
     Item := FArchiveCustomItems.Items[I];
-
     if Item.FTag = aitCommon then
       if Assigned(Item.Coder) then
         if Item.Coder.Tear = FALSE then
@@ -1704,56 +1703,25 @@ begin
           while I > -1 do
           begin
             Item := FArchiveCustomItems.Items[I];
+            if Item.FTag = aitNone then
+              Item.FTag := aitDecode;
 
-            if Assigned(Item.Coder) = FALSE then Break;
-            if Item.Coder.Tear      = TRUE  then Break;
-
-            if Item.FTag = aitCommon    then Break;
-
-            Item.FTag = aitDecode;
-
+            if Item.Coder.Tear = TRUE then Break;
             Dec(I);
           end;
-
-
-
-
-
         end;
-
-
-
-
-
     Dec(I);
   end;
 
-
-  I := FHeaders.GetBack(FHeaders.Count - 1, haUpdate);
-  while I > -1 do
+  for I := 0 to FArchiveCustomItems.Count - 1 do
   begin
-    BackTear := FHeaders.GetBack(I, foTear);
-    NextTear := FHeaders.GetNext(I + 1, foTear);
-
-    if NextTear = -1 then
-      NextTear := FHeaders.Count;
-    // if is solid sequences
-    if (NextTear - BackTear) > 1 then
-    begin
-      NextTear := FHeaders.GetBack(NextTear - 1, haUpdate);
-      for J := BackTear to NextTear do
-        case FHeaders.Items[J].Action of
-          haNone:               FHeaders.Items[J].Action := haDecode;
-          // haUpdate:          FHeaders.Items[J].Action := haDecodeAndUpdate;
-          // haDecode:          nothing to do
-          // haDecodeAndUpdate: nothing to do
-        end;
-      I := BackTear;
+    Item := FArchiveCustomItems.Items[I];
+    case Item.FTag of
+    //aitNone:   nothing to do
+      aitCommon: Inc(FTotalSize, Item.UncompressedSize);
+      aitDecode: Inc(FTotalSize, Item.UncompressedSize);
     end;
-    I := FHeaders.GetBack(I - 1, haUpdate);
   end;
-
-
 end;
 
 procedure TBeeArchiveExtractor.DoExtract(Item: TBeeArchiveCustomItem;
