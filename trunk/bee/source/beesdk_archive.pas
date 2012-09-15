@@ -19,16 +19,24 @@ uses
 
 const
   /// beex archive marker
-  beexMARKER  = $1A656542;
+  beexMARKER   = $1A656542;
 
   /// beex archive version
-  beexVERSION = 1;
+  beexVERSION  = 1;
 
   /// archive item type
-  aitCustom  = $00;
-  aitBinding = $01;
-  aitLocator = $7E;
-  aitEnd     = $7F;
+  aitCustom    = $00;
+  aitBinding   = $01;
+  aitLocator   = $7E;
+  aitEnd       = $7F;
+
+  /// archive coder type
+  actNone      = $00;
+  actMain      = $01;
+
+  /// archive crypter type
+  acrtNone     = $00;
+  acrtMain     = $01;
 
 type
   /// archive locator item flag
@@ -72,12 +80,6 @@ type
 
   TBeeArchiveCustomItemFlags = set of TBeeArchiveCustomItemFlag;
 
-  /// archive coder type
-  TBeeArchiveCoderType = (
-    actNone,
-    actMain,
-    actRoloz);
-
   /// archive main coder flag
   TBeeArchiveMainCoderFlag = (
     amcfMethod,
@@ -88,34 +90,21 @@ type
 
   TBeeArchiveMainCoderFlags = set of TBeeArchiveMainCoderFlag;
 
-  /// archive crypter type
-  TBeeArchiveCrypterType = (
-    acrtNone,
-    acrtMain);
-
 type
-  TBeeArchiveCoder = class(TObject)
-  protected {private}
-    FCompressedSize: qword;
-    procedure SetCompressedSize(const Value: qword); virtual;
-  public {methods}
-  public {properties}
-    property CompressedSize: qword read FCompressedSize write SetCompressedSize;
-  end;
-
-  TBeeArchiveMainCoder = class(TBeeArchiveCoder)
+  TBeeArchiveMainCoder = class
   protected {private}
     FFlags: TBeeArchiveMainCoderFlags;
     FMethod: longword;
     FDictionary: longword;
     FTable: TTableParameters;
+    FCompressedSize: qword;
   protected {property methods}
     procedure SetMethod(Value: longword);
     procedure SetDictionary(Value: longword);
     procedure SetTable(const Value: TTableParameters);
     function GetTear: boolean;
     procedure SetTear(Value: boolean);
-    procedure SetCompressedSize(const Value: qword); override;
+    procedure SetCompressedSize(const Value: qword);
   public {methods}
     constructor Create;
     constructor Read(Stream: TFileReader);
@@ -127,16 +116,7 @@ type
     property Dictionary: longword read FDictionary write SetDictionary;
     property Table: TTableParameters read FTable write SetTable;
     property Tear: boolean read GetTear write SetTear;
-  end;
-
-  TBeeArchiveRolozCoder = class(TBeeArchiveCoder)
-  protected {private}
-  public {methods}
-    constructor Create;
-    constructor Read(Stream: TFileReader);
-    procedure Write(Stream: TFileWriter);
-    destructor Destroy; override;
-  public {properties}
+    property CompressedSize: qword read FCompressedSize write SetCompressedSize;
   end;
 
   TBeeArchiveMainCrypter = class(TObject)
@@ -171,8 +151,8 @@ type
     FAttributes: longword;
     FMode: longword;
     FCRC: longword;
-    FCoder: TBeeArchiveCoder;
-    FCrypter: TObject;
+    FCoder: TBeeArchiveMainCoder;
+    FCrypter: TBeeArchiveMainCrypter;
     FDiskNumber: longword;
     FDiskSeek: qword;
 
@@ -240,7 +220,7 @@ type
     property FileName: string read FFileName;
     property Position: longint read FPosition;
 
-    property Coder: TBeeArchiveCoder read FCoder;
+    property Coder: TBeeArchiveMainCoder read FCoder;
     property CompressedSize: int64 read GetCompressedSize;
   end;
 
@@ -581,10 +561,7 @@ end;
 
 // TBeeArchiveCoder class
 
-procedure TBeeArchiveCoder.SetCompressedSize(const Value: qword);
-begin
-  FCompressedSize := Value;
-end;
+
 
 // TBeeArchiveMainCoder class
 
@@ -679,7 +656,7 @@ procedure TBeeArchiveMainCoder.SetCompressedSize(const Value: qword);
 begin
   if Value <> qword(-1) then
   begin
-    inherited SetCompressedSize(Value);
+    FCompressedSize := Value; ;
     Include(FFlags, amcfCompressedSize);
   end else
     Exclude(FFlags, amcfCompressedSize);
@@ -704,25 +681,13 @@ end;
 
 // TBeeArchiveRolozCoder class
 
-constructor TBeeArchiveRolozCoder.Create;
-begin
-  inherited Create;
-end;
 
-constructor TBeeArchiveRolozCoder.Read(Stream: TFileReader);
-begin
-  inherited Create;
-end;
 
-procedure TBeeArchiveRolozCoder.Write(Stream: TFileWriter);
-begin
-  // nothing to do
-end;
 
-destructor TBeeArchiveRolozCoder.Destroy;
-begin
-  inherited Destroy;
-end;
+
+
+
+
 
 // TBeeArchiveMainCrypter class
 
@@ -857,15 +822,14 @@ begin
 
   FCoder := nil;
   if (acifCoder in FFlags) then
-    case TBeeArchiveCoderType(longword(Stream.ReadInfWord)) of
+    case longword(Stream.ReadInfWord) of
       // actNone: nothing to do
       actMain:  FCoder := TBeeArchiveMainCoder.Read(Stream);
-      actRoloz: FCoder := TBeeArchiveRolozCoder.Read(Stream);
     end;
 
   FCrypter := nil;
   if (acifCrypter in FFlags) then
-    case TBeeArchiveCrypterType(longword(Stream.ReadInfWord)) of
+    case longword(Stream.ReadInfWord) of
       // acrtNone: nothing to do
       acrtMain: FCrypter := TBeeArchiveMainCrypter.Read(Stream);
     end;
@@ -1037,17 +1001,14 @@ begin
 
   if (acifCoder in FFlags) then
   begin
-    if FCoder.ClassType = TBeeArchiveMainCoder then
-      Stream.WriteInfWord(Ord(actMain))
-    else
-      if FCoder.ClassType = TBeeArchiveRolozCoder then
-        Stream.WriteInfWord(Ord(actRoloz));
+    Stream.WriteInfWord(actMain);
+    FCoder.Write(Stream);
   end;
 
   if (acifCrypter in FFlags) then
   begin
-    if FCrypter.ClassType = TBeeArchiveMainCrypter then
-      Stream.WriteInfWord(Ord(acrtMain));
+    Stream.WriteInfWord(Ord(acrtMain));
+    FCrypter.Write(Stream);
   end;
 
   if (acifUserID in FFlags) then
@@ -1737,15 +1698,28 @@ begin
 
     if Item.FTag = aitCommon then
       if Assigned(Item.Coder) then
-        if Item.Coder is TBeeArchiveMainCoder then
-          with Item.Coder as TBeeArchiveMainCoder do
+        if Item.Coder.Tear = FALSE then
+        begin
+          Dec(I);
+          while I > -1 do
           begin
-            if Tear = FALSE then
-            begin
+            Item := FArchiveCustomItems.Items[I];
 
+            if Assigned(Item.Coder) = FALSE then Break;
+            if Item.Coder.Tear      = TRUE  then Break;
 
-            end;
+            if Item.FTag = aitCommon    then Break;
+
+            Item.FTag = aitDecode;
+
+            Dec(I);
           end;
+
+
+
+
+
+        end;
 
 
 
