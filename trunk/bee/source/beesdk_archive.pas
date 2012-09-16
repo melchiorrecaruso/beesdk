@@ -330,6 +330,7 @@ type
     FOnFailure: TBeeArchiveFailureEvent;
     FOnMessage: TBeeArchiveMessageEvent;
     FOnProgress: TBeeArchiveProgressEvent;
+    FOnRequestImage: TFileReaderRequestImageEvent;
     FArchiveCustomItems: TBeeArchiveCustomItems;
     FArchiveBindingItem: TBeeArchiveBindingItem;
     FArchiveLocatorItem: TBeeArchiveLocatorItem;
@@ -344,7 +345,6 @@ type
     procedure DoFailure(const ErrorMessage: string);
     procedure DoMessage(const Message: string);
     function DoProgress(Value: longint): boolean;
-
   public
     constructor Create;
     destructor Destroy; override;
@@ -374,6 +374,7 @@ type
     property OnFailure: TBeeArchiveFailureEvent read FOnFailure write FOnFailure;
     property OnMessage: TBeeArchiveMessageEvent read FOnMessage write FOnMessage;
     property OnProgress: TBeeArchiveProgressEvent read FOnProgress write FOnProgress;
+    property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
   end;
 
   TBeeArchiveWriter = class(TBeeArchiveReader)
@@ -400,12 +401,14 @@ type
 
   TBeeArchiveExtractor = class(TBeeArchiveReader)
   private
+    FDecoder: THeaderDecoder;
     FIsNeededToExtract: boolean;
     FOnExtract: TBeeArchiveExtractEvent;
     procedure CheckTags;
     procedure CheckSequences;
     procedure DoExtract(Item: TBeeArchiveCustomItem;
       var ExtractAs: string; var Confirm: TBeeArchiveConfirm);
+    procedure Extract(Item: TBeeArchiveCustomItem);
   public
     constructor Create;
     procedure ExtractTagged;
@@ -569,7 +572,7 @@ constructor TBeeArchiveMainCoder.Create;
 begin
   inherited Create;
   FFlags := [];
-  //FFlags          := [amcfMethod, amcfDictionary, {amcfTable,}
+  // FFlags          := [amcfMethod, amcfDictionary, {amcfTable,}
   //                    amcfTear, amcfCompressedSize];
   //FMethod         := Ord(moFast);
   //FDictionary     := Ord(do5MB);
@@ -1446,6 +1449,7 @@ begin
   if FileExists(aArchiveName) then
   begin
     FArchiveReader := TFileReader.Create(aArchiveName, 1);
+    FArchiveReader.OnRequestImage := FOnRequestImage;
     if Assigned(FArchiveReader) then
     begin
       MagicSeek := ReadMagicSeek(FArchiveReader);
@@ -1696,6 +1700,7 @@ begin
   begin
     Item := FArchiveCustomItems.Items[I];
     if Item.FTag = aitCommon then
+    begin
       if Assigned(Item.Coder) then
         if Item.Coder.Tear = FALSE then
         begin
@@ -1710,6 +1715,7 @@ begin
             Dec(I);
           end;
         end;
+    end;
     Dec(I);
   end;
 
@@ -1735,18 +1741,88 @@ begin
   end;
 end;
 
-procedure TBeeArchiveExtractor.ExtractTagged;
+procedure TBeeArchiveExtractor.Extract(Item: TBeeArchiveCustomItem);
+var
+  CRC: longword;
+  Strm: TFileWriter;
 begin
+  case Item.Ftag of
+    aitCommon: Strm := TFileWriter.Create(Item.FExternalFileName, fmCreate);
+    aitDecode: Strm := TNulWriter.Create;
+  end;
 
+  if Assigned(Strm) then
+  begin
+    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    case Item.Coder.Method of
+      0: FDecoder.Copy  (Strm, Item.UncompressedSize, CRC);
+    else FDecoder.Decode(Strm, Item.UncompressedSize, CRC);
+    end;
+    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
+    if not Strm          .IsValidStream then DoFailure(cmStrmWriteError);
 
+    if not Item.Crc = CRC then
+      DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
 
+    Strm.Destroy;
+    if (ExitCode < ccError) and (Item.Ftag = aitCommon) then
+    begin
+      FileSetAttr(Item.FExternalFileName, Item.FExternalAttributes);
+      FileSetDate(Item.FExternalFileName, Item.LastModifiedTime);
+    end;
+  end else
+    DoFailure(cmStrmWriteError);
+end;
 
+procedure TBeeArchiveExtractor.ExtractTagged;
+var
+  I: longint;
+  Item: TBeeArchiveCustomItem;
+begin
+  CheckTags;
+  if FIsNeededToExtract then
+  begin
+    CheckSequences;
+    FDecoder := THeaderDecoder.Create(FArchiveReader);
+    FDecoder.OnProgress := @DoProgress;
+    for I := 0 to FArchiveCustomItems.Count - 1 do
+      if ExitCode < ccError then
+      begin
+        Item := FArchiveCustomItems.Items[I];
+        if Item.FTag <> aitNone then
+        begin
+          case Item.FTag of
+          //aitNone:   nothing to do
+            aitCommon: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
+            aitDecode: DoMessage(Format(cmDecoding,   [Item.FExternalFileName]));
+          end;
 
+          if Assigned(Item.Coder) then
+          begin
+            FDecoder.CompressionMethod := Item.Coder.Method;
+            FDecoder.DictionaryLevel   := Item.Coder.Dictionary;
+            FDecoder.TableParameters   := Item.Coder.Table;
+            FDecoder.Tear              := Item.Coder.Tear;
+          end;
 
+          case Item.FTag of
+          //aitNone:   nothing to do
+            aitCommon: Extract(Item);
+            aitDecode: Extract(Item);
+          end;
+          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+        end;
+      end;
+    FDecoder.Destroy;
+  end;
+  CloseArchive;
 end;
 
 procedure TBeeArchiveExtractor.TestTagged;
 begin
+  CheckSequences;
+
+
 
 
 end;
@@ -2182,36 +2258,7 @@ end;
       if FStream is TFileReader then TFileReader(FStream).FinishDecode;
     end;
 
-    function THeaderDecoder.ReadToFile(Item: THeader): boolean;
-    var
-      CRC: longword;
-      Strm: TFileWriter;
-    begin
-      Result := False;
-      Strm   := CreateTFileWriter(Item.ExtName, fmCreate);
-      if Assigned(Strm) then
-      begin
-        if foPassword in Item.Flags then
-           if FStream is TFileReader then
-             TFileReader(FStream).StartDecode(FPassword);
 
-        FStream.Seek(Item.StartPos, soBeginning);
-        case foMoved in Item.Flags of
-          True:  Result := Copy  (Strm, Item.Size, CRC) = Item.Size;
-          False: Result := Decode(strm, Item.Size, CRC) = Item.Size;
-        end;
-        Strm.Free;
-
-        if FStream is TFileReader then TFileReader(FStream).FinishDecode;
-
-        Result := Result and (Item.Crc = CRC);
-        if Result then
-        begin
-          FileSetAttr(Item.ExtName, Item.Attr);
-          FileSetDate(Item.ExtName, Item.Time);
-        end;
-      end;
-    end;
 
      *)
 
