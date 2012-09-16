@@ -90,7 +90,7 @@ type
     FCurrentImageSize: int64;
     FThreshold: int64;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
-    function GetIsValidStream: boolean;
+    function GetIsValidStream: boolean; virtual;
     function GetImageName(ImageNumber: longword): string;
     function GetCurrentImage: longword;
   public
@@ -122,6 +122,7 @@ type
     FNulPos: int64;
     FNulSize: int64;
   protected
+    function GetIsValidStream: boolean; override;
     procedure FlushBuffer; override;
     procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
@@ -574,6 +575,11 @@ begin
     soEnd:       FNulPos := Max(0, FNulPos - Offset);
   end;
   Result := FNulPos;
+end;
+
+function TNulWriter.GetIsValidStream: boolean;
+begin
+  Result := TRUE;
 end;
 
 { TFileScanner class }
