@@ -374,7 +374,8 @@ type
     property OnFailure: TBeeArchiveFailureEvent read FOnFailure write FOnFailure;
     property OnMessage: TBeeArchiveMessageEvent read FOnMessage write FOnMessage;
     property OnProgress: TBeeArchiveProgressEvent read FOnProgress write FOnProgress;
-    property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
+    property OnRequestImage: TFileReaderRequestImageEvent
+      read FOnRequestImage write FOnRequestImage;
   end;
 
   TBeeArchiveWriter = class(TBeeArchiveReader)
@@ -387,6 +388,7 @@ type
     FSwapReader: TFileReader;
     FSwapWriter: TFileWriter;
     FWorkDirectory: string;
+    FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
   private
     procedure Write(aStream: TFileWriter);
     procedure Pack;
@@ -397,6 +399,8 @@ type
   public
     property Threshold: int64 read FThreshold write FThreshold;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
+    property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
+      read FOnRequestBlankDisk write FOnRequestBlankDisk;
   end;
 
   TBeeArchiveExtractor = class(TBeeArchiveReader)
@@ -409,6 +413,7 @@ type
     procedure DoExtract(Item: TBeeArchiveCustomItem;
       var ExtractAs: string; var Confirm: TBeeArchiveConfirm);
     procedure Extract(Item: TBeeArchiveCustomItem);
+    procedure Test(Item: TBeeArchiveCustomItem);
   public
     constructor Create;
     procedure ExtractTagged;
@@ -432,13 +437,21 @@ type
 
   TBeeArchiveEraser = class(TBeeArchiveWriter)
   private
-  private
+    FEncoder: THeaderEncoder;
+    FDecoder: THeaderDecoder;
+    FIsNeededToErase: boolean;
+    FOnErase: TBeeArchiveEraseEvent;
+    procedure CheckTags;
+    procedure DoErase(Item: TBeeArchiveCustomItem;
+      var Confirm: TBeeArchiveConfirm);
   public
+    constructor Create;
+    procedure EraseTagged;
   public
+    property OnEraseEvent: TBeeArchiveEraseEvent read FOnErase write FOnErase;
   end;
 
   TBeeArchiveAdder = class(TBeeArchiveWriter)
-  private
   private
   public
   public
@@ -829,6 +842,8 @@ begin
       // actNone: nothing to do
       actMain:  FCoder := TBeeArchiveMainCoder.Read(Stream);
     end;
+  if not Assigned(FCoder) then
+    FCoder := TBeeArchiveMainCoder.Create;
 
   FCrypter := nil;
   if (acifCrypter in FFlags) then
@@ -836,6 +851,8 @@ begin
       // acrtNone: nothing to do
       acrtMain: FCrypter := TBeeArchiveMainCrypter.Read(Stream);
     end;
+  if not Assigned(FCrypter) then
+    FCrypter := TBeeArchiveMainCrypter.Create;
 
   if (acifUserID in FFlags) then
     FUserID := Stream.ReadInfWord;
@@ -1445,6 +1462,8 @@ procedure TBeeArchiveReader.OpenArchive(const aArchiveName: string);
 var
   MagicSeek: int64;
 begin
+  DoMessage(Format(Cr + cmOpening, [aArchiveName]));
+
   CloseArchive;
   if FileExists(aArchiveName) then
   begin
@@ -1659,8 +1678,8 @@ procedure TBeeArchiveExtractor.CheckTags;
 var
   I: longint;
   Item: TBeeArchiveCustomItem;
-  ExtractAs: string;
   Confirm: TBeeArchiveConfirm;
+  ExtractAs: string;
 begin
   DoMessage(Format(cmScanning, ['...']));
   for I := 0 to FArchiveCustomItems.Count - 1 do
@@ -1818,16 +1837,69 @@ begin
   CloseArchive;
 end;
 
-procedure TBeeArchiveExtractor.TestTagged;
+procedure TBeeArchiveExtractor.Test(Item: TBeeArchiveCustomItem);
+var
+  CRC: longword;
+  Strm: TFileWriter;
 begin
-  CheckSequences;
+  Strm := TNulWriter.Create;
+  if Assigned(Strm) then
+  begin
+    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    case Item.Coder.Method of
+      0: FDecoder.Copy  (Strm, Item.UncompressedSize, CRC);
+    else FDecoder.Decode(Strm, Item.UncompressedSize, CRC);
+    end;
+    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
+    if not Strm          .IsValidStream then DoFailure(cmStrmWriteError);
 
+    if not Item.Crc = CRC then
+      DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
 
-
-
+    Strm.Destroy;
+  end else
+    DoFailure(cmStrmWriteError);
 end;
 
+procedure TBeeArchiveExtractor.TestTagged;
+var
+  I: longint;
+  Item: TBeeArchiveCustomItem;
+begin
+  CheckSequences;
+  FDecoder := THeaderDecoder.Create(FArchiveReader);
+  FDecoder.OnProgress := @DoProgress;
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+    if ExitCode < ccError then
+    begin
+      Item := FArchiveCustomItems.Items[I];
+      if Item.FTag <> aitNone then
+      begin
+        case Item.FTag of
+        //aitNone:   nothing to do
+          aitCommon: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
+          aitDecode: DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
+        end;
 
+        if Assigned(Item.Coder) then
+        begin
+          FDecoder.CompressionMethod := Item.Coder.Method;
+          FDecoder.DictionaryLevel   := Item.Coder.Dictionary;
+          FDecoder.TableParameters   := Item.Coder.Table;
+          FDecoder.Tear              := Item.Coder.Tear;
+        end;
+
+        case Item.FTag of
+        //aitNone:   nothing to do
+          aitCommon: Test(Item);
+          aitDecode: Test(Item);
+        end;
+        {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+      end;
+    end;
+  FDecoder.Destroy;
+  CloseArchive;
+end;
 
 // TBeeArchiveRenamer class
 
@@ -1879,6 +1951,7 @@ begin
   begin
     FTempName   := GenerateFileName(FWorkDirectory);
     FTempWriter := TFileWriter.Create(FTempName, FThreshold);
+    FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
     if Assigned(FTempWriter) then
     begin
       Encoder := THeaderEncoder.Create(FTempWriter);
@@ -1921,7 +1994,38 @@ begin
   end;
 end;
 
-            (*
+// TBeeArchiveEraser class
+
+constructor TBeeArchiveEraser.Create;
+begin
+  inherited Create;
+  FIsNeededToErase := FALSE;
+end;
+
+procedure TBeeArchiveEraser.DoErase(Item: TBeeArchiveCustomItem;
+  var Confirm: TBeeArchiveConfirm);
+begin
+  Confirm := arcCancel;
+  if Assigned(FOnErase) then
+  begin
+    FOnErase(Item, Confirm);
+  end;
+end;
+
+procedure TBeeArchiveEraser.CheckTags;
+begin
+
+
+end;
+
+procedure TBeeArchiveEraser.EraseTagged;
+begin
+
+
+end;
+
+
+(*
 
 
 
