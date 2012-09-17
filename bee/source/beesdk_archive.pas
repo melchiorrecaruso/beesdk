@@ -442,6 +442,7 @@ type
     FIsNeededToErase: boolean;
     FOnErase: TBeeArchiveEraseEvent;
     procedure CheckTags;
+    procedure CheckSequences;
     procedure DoErase(Item: TBeeArchiveCustomItem;
       var Confirm: TBeeArchiveConfirm);
   public
@@ -2013,9 +2014,69 @@ begin
 end;
 
 procedure TBeeArchiveEraser.CheckTags;
+var
+  I: longint;
+  Item: TBeeArchiveCustomItem;
+  Confirm: TBeeArchiveConfirm;
 begin
+  DoMessage(Format(cmScanning, ['...']));
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+  begin
+    Item := FArchiveCustomItems.Items[I];
+    if Item.FTag = aitCommon then
+    begin
+      DoErase(Item, Confirm);
+      case Confirm of
+        arcOk:     FIsNeededToErase := TRUE;
+        arcCancel: Item.FTag := aitNone;
+        arcAbort:
+        begin
+          FIsNeededToErase := FALSE;
+          Break;
+        end;
+      end;
+    end;
+  end;
+end;
 
+procedure TBeeArchiveEraser.CheckSequences;
+var
+  I: longint;
+  Item: TBeeArchiveCustomItem;
+begin
+  I := FArchiveCustomItems.Count - 1;
+  while I > -1 do
+  begin
+    Item := FArchiveCustomItems.Items[I];
+    if Item.FTag = aitCommon then
+    begin
+      if Assigned(Item.Coder) then
+        if Item.Coder.Tear = FALSE then
+        begin
+          Dec(I);
+          while I > -1 do
+          begin
+            Item := FArchiveCustomItems.Items[I];
+            if Item.FTag = aitNone then
+              Item.FTag := aitDecode;
 
+            if Item.Coder.Tear = TRUE then Break;
+            Dec(I);
+          end;
+        end;
+    end;
+    Dec(I);
+  end;
+
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+  begin
+    Item := FArchiveCustomItems.Items[I];
+    case Item.FTag of
+    //aitNone:   nothing to do
+      aitCommon: Inc(FTotalSize, Item.UncompressedSize);
+      aitDecode: Inc(FTotalSize, Item.UncompressedSize);
+    end;
+  end;
 end;
 
 procedure TBeeArchiveEraser.EraseTagged;
