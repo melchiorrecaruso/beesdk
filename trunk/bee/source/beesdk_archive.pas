@@ -336,6 +336,10 @@ type
     FArchiveLocatorItem: TBeeArchiveLocatorItem;
     function Read(aStream: TFileReader): boolean;
     procedure UnPack;
+    function GetBackTag(Index: longint; aTag: TBeeArchiveItemTag): longint;
+    function GetNextTag(Index: longint; aTag: TBeeArchiveItemTag): longint;
+    function GetBackTear(Index: longint): longint;
+    function GetNextTear(Index: longint): longint;
     function GetCount: longint;
     function GetItem(Index: longint): TBeeArchiveCustomItem;
     procedure SetArchiveName(const Value: string);
@@ -345,6 +349,7 @@ type
     procedure DoFailure(const ErrorMessage: string);
     procedure DoMessage(const Message: string);
     function DoProgress(Value: longint): boolean;
+
   public
     constructor Create;
     destructor Destroy; override;
@@ -1459,6 +1464,58 @@ begin
 
 end;
 
+function TBeeArchiveReader.GetBackTag(Index: longint; aTag: TBeeArchiveItemTag): longint;
+var
+  I: longint;
+begin
+  Result := -1;
+  for  I := Index downto 0 do
+    if FArchiveCustomItems.Items[Index].FTag = aTag then
+    begin
+      Result := I;
+      Break;
+    end;
+end;
+
+function TBeeArchiveReader.GetNextTag(Index: longint; aTag: TBeeArchiveItemTag): longint;
+var
+  I: longint;
+begin
+  Result := -1;
+  for  I := Index to FArchiveCustomItems.Count - 1 do
+    if FArchiveCustomItems.Items[Index].FTag = aTag then
+    begin
+      Result := I;
+      Break;
+    end;
+end;
+
+function TBeeArchiveReader.GetBackTear(Index: longint): longint;
+var
+  I: longint;
+begin
+  Result := -1;
+  for  I := Index downto 0 do
+    if FArchiveCustomItems.Items[Index].Coder.Tear then
+    begin
+      Result := I;
+      Break;
+    end;
+end;
+
+function TBeeArchiveReader.GetNextTear(Index: longint): longint;
+var
+  I: longint;
+begin
+  Result := -1;
+  for  I := Index to FArchiveCustomItems.Count - 1 do
+    if FArchiveCustomItems.Items[Index].Coder.Tear then
+    begin
+      Result := I;
+      Break;
+    end;
+end;
+
 procedure TBeeArchiveReader.OpenArchive(const aArchiveName: string);
 var
   MagicSeek: int64;
@@ -2041,32 +2098,36 @@ end;
 
 procedure TBeeArchiveEraser.CheckSequences;
 var
-  I: longint;
+  I, LAstTear: longint;
   Item: TBeeArchiveCustomItem;
 begin
-  I := FArchiveCustomItems.Count - 1;
+
+
+  // STEP1: find sequences and set actions ...
+  I := FHeaders.GetBack(FHeaders.Count - 1, haUpdate);
   while I > -1 do
   begin
-    Item := FArchiveCustomItems.Items[I];
-    if Item.FTag = aitCommon then
-    begin
-      if Assigned(Item.Coder) then
-        if Item.Coder.Tear = FALSE then
-        begin
-          Dec(I);
-          while I > -1 do
-          begin
-            Item := FArchiveCustomItems.Items[I];
-            if Item.FTag = aitNone then
-              Item.FTag := aitDecode;
+    BackTear := FHeaders.GetBack(I, foTear);
+    NextTear := FHeaders.GetNext(I + 1, foTear);
 
-            if Item.Coder.Tear = TRUE then Break;
-            Dec(I);
-          end;
+    if NextTear = -1 then
+      NextTear := FHeaders.Count;
+    // if is solid sequences
+    if (NextTear - BackTear) > 1 then
+    begin
+      NextTear := FHeaders.GetBack(NextTear - 1, haNone);
+      for J := BackTear to NextTear do
+        case FHeaders.Items[J].Action of
+          haNone:               FHeaders.Items[J].Action := haDecode;
+          haUpdate:             FHeaders.Items[J].Action := haDecodeAndUpdate;
+          // haDecode:          nothing to do
+          // haDecodeAndUpdate: nothing to do
         end;
+      I := BackTear;
     end;
-    Dec(I);
+    I := FHeaders.GetBack(I - 1, haUpdate);
   end;
+
 
   for I := 0 to FArchiveCustomItems.Count - 1 do
   begin
