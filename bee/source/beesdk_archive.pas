@@ -131,12 +131,10 @@ type
 
   TBeeArchiveItemTag = (
     aitNone,
-    aitCommon,
-
     aitAdd,
     aitUpdate,
     aitDecode,
-    aitDecodeAndEncode);
+    aitDecodeAndUpdate);
 
   TBeeArchiveCustomItem = class(TObject)
   protected {private}
@@ -1570,7 +1568,7 @@ end;
 
 procedure TBeeArchiveReader.Tag(Index: longint);
 begin
-  FArchiveCustomItems.Items[Index].FTag := aitCommon;
+  FArchiveCustomItems.Items[Index].FTag := aitUpdate;
 end;
 
 procedure TBeeArchiveReader.Tag(const FileMask: string; Recursive: TRecursiveMode);
@@ -1744,7 +1742,7 @@ begin
   begin
     Item := FArchiveCustomItems.Items[I];
 
-    if Item.FTag = aitCommon then
+    if Item.FTag = aitUpdate then
     begin
       repeat
         DoExtract(Item, ExtractAs, Confirm);
@@ -1769,40 +1767,46 @@ end;
 
 procedure TBeeArchiveExtractor.CheckSequences;
 var
-  I: longint;
+  I, J, BackTear, NextTear: longint;
   Item: TBeeArchiveCustomItem;
 begin
-  I := FArchiveCustomItems.Count - 1;
+  // STEP2: find sequences and mark ...
+  I := GetBackTag(FArchiveCustomItems.Count - 1, aitUpdate);
   while I > -1 do
   begin
-    Item := FArchiveCustomItems.Items[I];
-    if Item.FTag = aitCommon then
-    begin
-      if Assigned(Item.Coder) then
-        if Item.Coder.Tear = FALSE then
-        begin
-          Dec(I);
-          while I > -1 do
-          begin
-            Item := FArchiveCustomItems.Items[I];
-            if Item.FTag = aitNone then
-              Item.FTag := aitDecode;
+    BackTear := GetBackTear(I);
+    NextTear := GetNextTear(I + 1);
 
-            if Item.Coder.Tear = TRUE then Break;
-            Dec(I);
-          end;
+    if NextTear = -1 then
+      NextTear := FArchiveCustomItems.Count;
+    // if is solid sequences
+    if (NextTear - BackTear) > 1 then
+    begin
+      NextTear := GetBackTag(NextTear - 1, aitUpdate);
+      for J := BackTear to NextTear do
+      begin
+        Item := FArchiveCustomItems.Items[J];
+        case Item.FTag of
+          aitNone:            Item.FTag := aitDecode;
+          aitUpdate:          Item.FTag := aitDecodeAndUpdate;
+        //aitDecode:          nothing to do
+        //aitDecodeAndUpdate: nothing to do
         end;
+      end;
+      I := BackTear;
     end;
-    Dec(I);
+    I := GetBackTag(I - 1, aitUpdate);
   end;
 
+  // STEP2: calculate bytes to process ...
   for I := 0 to FArchiveCustomItems.Count - 1 do
   begin
     Item := FArchiveCustomItems.Items[I];
     case Item.FTag of
-    //aitNone:   nothing to do
-      aitCommon: Inc(FTotalSize, Item.UncompressedSize);
-      aitDecode: Inc(FTotalSize, Item.UncompressedSize);
+    //aitNone:            nothing to do
+      aitUpdate:          Inc(FTotalSize, Item.UncompressedSize);
+      aitDecode:          Inc(FTotalSize, Item.UncompressedSize);
+      aitDecodeAndUpdate: Inc(FTotalSize, Item.UncompressedSize);
     end;
   end;
 end;
@@ -1824,7 +1828,7 @@ var
   Strm: TFileWriter;
 begin
   case Item.Ftag of
-    aitCommon: Strm := TFileWriter.Create(Item.FExternalFileName, fmCreate);
+    aitUpdate: Strm := TFileWriter.Create(Item.FExternalFileName, fmCreate);
     aitDecode: Strm := TNulWriter.Create;
   end;
 
@@ -1842,7 +1846,7 @@ begin
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
 
     Strm.Destroy;
-    if (ExitCode < ccError) and (Item.Ftag = aitCommon) then
+    if (ExitCode < ccError) and (Item.Ftag = aitUpdate) then
     begin
       FileSetAttr(Item.FExternalFileName, Item.FExternalAttributes);
       FileSetDate(Item.FExternalFileName, Item.LastModifiedTime);
@@ -1870,7 +1874,7 @@ begin
         begin
           case Item.FTag of
           //aitNone:   nothing to do
-            aitCommon: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
+            aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
             aitDecode: DoMessage(Format(cmDecoding,   [Item.FExternalFileName]));
           end;
 
@@ -1884,7 +1888,7 @@ begin
 
           case Item.FTag of
           //aitNone:   nothing to do
-            aitCommon: Extract(Item);
+            aitUpdate: Extract(Item);
             aitDecode: Extract(Item);
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
@@ -1935,7 +1939,7 @@ begin
       begin
         case Item.FTag of
         //aitNone:   nothing to do
-          aitCommon: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
+          aitUpdate: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
           aitDecode: DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
         end;
 
@@ -1949,7 +1953,7 @@ begin
 
         case Item.FTag of
         //aitNone:   nothing to do
-          aitCommon: Test(Item);
+          aitUpdate: Test(Item);
           aitDecode: Test(Item);
         end;
         {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
@@ -1974,7 +1978,7 @@ begin
     Item := FArchiveCustomItems.Items[I];
 
     Inc(FTotalSize, Item.CompressedSize);
-    if Item.FTag = aitCommon then
+    if Item.FTag = aitUpdate then
     begin
       repeat
         DoRename(Item, RemaneAs, Confirm);
@@ -2024,7 +2028,7 @@ begin
           Item.DiskNumber := FTempWriter.CurrentImage;
           case Item.FTag of
             aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
-            aitCommon: DoMessage(Format(cmRenaming, [Item.FileName]));
+            aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
           end;
           Encoder.Copy(FArchiveReader, Item.CompressedSize);
 
@@ -2080,7 +2084,7 @@ begin
   for I := 0 to FArchiveCustomItems.Count - 1 do
   begin
     Item := FArchiveCustomItems.Items[I];
-    if Item.FTag = aitCommon then
+    if Item.FTag = aitUpdate then
     begin
       DoErase(Item, Confirm);
       case Confirm of
@@ -2098,44 +2102,44 @@ end;
 
 procedure TBeeArchiveEraser.CheckSequences;
 var
-  I, LAstTear: longint;
+  I, J, BackTear, NextTear: longint;
   Item: TBeeArchiveCustomItem;
 begin
-
-
-  // STEP1: find sequences and set actions ...
-  I := FHeaders.GetBack(FHeaders.Count - 1, haUpdate);
+  // STEP1: find sequences and set tag ...
+  I := GetBackTag(FArchiveCustomItems.Count - 1, aitUpdate);
   while I > -1 do
   begin
-    BackTear := FHeaders.GetBack(I, foTear);
-    NextTear := FHeaders.GetNext(I + 1, foTear);
+    BackTear := GetBackTear(I);
+    NextTear := GetNextTear(I + 1);
 
     if NextTear = -1 then
-      NextTear := FHeaders.Count;
+      NextTear := FArchiveCustomItems.Count;
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
-      NextTear := FHeaders.GetBack(NextTear - 1, haNone);
+      NextTear := GetBackTag(NextTear - 1, aitNone);
       for J := BackTear to NextTear do
-        case FHeaders.Items[J].Action of
-          haNone:               FHeaders.Items[J].Action := haDecode;
-          haUpdate:             FHeaders.Items[J].Action := haDecodeAndUpdate;
-          // haDecode:          nothing to do
-          // haDecodeAndUpdate: nothing to do
+      begin
+        Item := FArchiveCustomItems.Items[J];
+        case Item.FTag of
+          aitNone:   Item.FTag := aitDecode;
+          aitUpdate: Item.FTag := aitDecodeAndUpdate;
         end;
+      end;
       I := BackTear;
     end;
-    I := FHeaders.GetBack(I - 1, haUpdate);
+    I := GetBackTag(I - 1, aitUpdate);
   end;
 
-
+  // STEP2: calculate bytes to process ...
   for I := 0 to FArchiveCustomItems.Count - 1 do
   begin
-    Item := FArchiveCustomItems.Items[I];
+    Item := FArchiveCustomItems.Items[J];
     case Item.FTag of
-    //aitNone:   nothing to do
-      aitCommon: Inc(FTotalSize, Item.UncompressedSize);
-      aitDecode: Inc(FTotalSize, Item.UncompressedSize);
+      aitNone:            Inc(FTotalSize, Item.CompressedSize);
+    //aitUpdate:          nothing to do
+      aitDecode:          Inc(FTotalSize, Item.UncompressedSize * 2);
+      aitDecodeAndUpdate: Inc(FTotalSize, Item.UncompressedSize);
     end;
   end;
 end;
