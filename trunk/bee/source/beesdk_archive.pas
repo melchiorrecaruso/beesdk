@@ -395,6 +395,7 @@ type
   private
     procedure Write(aStream: TFileWriter);
     procedure Pack;
+    procedure OpenSwapFile;
     procedure SetWorkDirectory(const Value: string);
   public
     constructor Create;
@@ -442,14 +443,12 @@ type
   private
     FEncoder: THeaderEncoder;
     FDecoder: THeaderDecoder;
-    FIsNeededToErase: boolean;
     FOnErase: TBeeArchiveEraseEvent;
     procedure CheckTags;
     procedure CheckSequences;
     procedure DoErase(Item: TBeeArchiveCustomItem;
       var Confirm: TBeeArchiveConfirm);
   public
-    constructor Create;
     procedure EraseTagged;
   public
     property OnEraseEvent: TBeeArchiveEraseEvent read FOnErase write FOnErase;
@@ -1680,6 +1679,61 @@ begin
 
 end;
 
+procedure TBeeArchiveWriter.OpenSwapFile;
+var
+  I: longint;
+  P: THeader;
+  Decoder: THeaderDecoder;
+begin
+  if (ExitCode < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
+  begin
+    FSwapName   := GenerateFileName(FCommandLine.wdOption);
+    FSwapWriter := CreateTFileWriter(FSwapName, fmCreate);
+    if Assigned(FSwapWriter) then
+    begin
+      Decoder := THeaderDecoder.Create(FArchReader, DoTick);
+      Decoder.Password := FCommandLine.pOption;
+
+      for I := 0 to FHeaders.Count - 1 do
+        if ExitCode < ccError then
+        begin
+          P := FHeaders.Items[I];
+          Decoder.Initialize(P);
+
+          if P.Action in [haDecode, haDecodeAndUpdate] then
+          begin
+            case P.Action of
+              // haNone: nothing to do
+              // haUpdate: nothing to do
+              haDecode: begin
+                DoMessage(Format(cmSwapping, [P.Name]));
+                if Decoder.ReadToSwap(P, FSwapWriter) = False then
+                  DoMessage(Format(cmCrcError, [P.Name]), ccError);
+              end;
+              haDecodeAndUpdate: begin
+                DoMessage(Format(cmDecoding, [P.Name]));
+                if Decoder.ReadToNul(P) = False then
+                  DoMessage(Format(cmCrcError, [P.Name]), ccError);
+              end;
+            end;
+            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+          end;
+        end;
+      Decoder.Destroy;
+      FreeAndNil(FSwapWriter);
+
+      if ExitCode < ccError then
+      begin
+        FSwapReader := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
+        if Assigned(FSwapReader) = False then
+          DoMessage(cmOpenSwapError, ccError);
+      end;
+    end else
+      DoMessage(cmCreateSwapError, ccError);
+  end;
+  Result := ExitCode;
+end;
+
 procedure TBeeArchiveWriter.CloseArchive;
 begin
   if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
@@ -1787,10 +1841,9 @@ begin
       begin
         Item := FArchiveCustomItems.Items[J];
         case Item.FTag of
-          aitNone:            Item.FTag := aitDecode;
-          aitUpdate:          Item.FTag := aitDecodeAndUpdate;
-        //aitDecode:          nothing to do
-        //aitDecodeAndUpdate: nothing to do
+          aitNone:   Item.FTag := aitDecode;
+        //aitUpdate: nothing to do
+        //aitDecode: nothing to do
         end;
       end;
       I := BackTear;
@@ -1799,14 +1852,13 @@ begin
   end;
 
   // STEP2: calculate bytes to process ...
-  for I := 0 to FArchiveCustomItems.Count - 1 do
+  for J := 0 to FArchiveCustomItems.Count - 1 do
   begin
-    Item := FArchiveCustomItems.Items[I];
+    Item := FArchiveCustomItems.Items[J];
     case Item.FTag of
-    //aitNone:            nothing to do
-      aitUpdate:          Inc(FTotalSize, Item.UncompressedSize);
-      aitDecode:          Inc(FTotalSize, Item.UncompressedSize);
-      aitDecodeAndUpdate: Inc(FTotalSize, Item.UncompressedSize);
+    //aitNone:   nothing to do
+      aitUpdate: Inc(FTotalSize, Item.UncompressedSize);
+      aitDecode: Inc(FTotalSize, Item.UncompressedSize);
     end;
   end;
 end;
@@ -1828,6 +1880,7 @@ var
   Strm: TFileWriter;
 begin
   case Item.Ftag of
+  //aitNone:   nothing to do
     aitUpdate: Strm := TFileWriter.Create(Item.FExternalFileName, fmCreate);
     aitDecode: Strm := TNulWriter.Create;
   end;
@@ -1861,33 +1914,28 @@ var
   Item: TBeeArchiveCustomItem;
 begin
   CheckTags;
+  CheckSequences;
   if FIsNeededToExtract then
   begin
-    CheckSequences;
     FDecoder := THeaderDecoder.Create(FArchiveReader);
     FDecoder.OnProgress := @DoProgress;
     for I := 0 to FArchiveCustomItems.Count - 1 do
       if ExitCode < ccError then
       begin
         Item := FArchiveCustomItems.Items[I];
-        if Item.FTag <> aitNone then
+        if Item.FTag in [aitUpdate, aitDecode] then
         begin
           case Item.FTag of
-          //aitNone:   nothing to do
             aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
             aitDecode: DoMessage(Format(cmDecoding,   [Item.FExternalFileName]));
           end;
 
-          if Assigned(Item.Coder) then
-          begin
-            FDecoder.CompressionMethod := Item.Coder.Method;
-            FDecoder.DictionaryLevel   := Item.Coder.Dictionary;
-            FDecoder.TableParameters   := Item.Coder.Table;
-            FDecoder.Tear              := Item.Coder.Tear;
-          end;
+          FDecoder.CompressionMethod := Item.Coder.Method;
+          FDecoder.DictionaryLevel   := Item.Coder.Dictionary;
+          FDecoder.TableParameters   := Item.Coder.Table;
+          FDecoder.Tear              := Item.Coder.Tear;
 
           case Item.FTag of
-          //aitNone:   nothing to do
             aitUpdate: Extract(Item);
             aitDecode: Extract(Item);
           end;
@@ -1935,24 +1983,19 @@ begin
     if ExitCode < ccError then
     begin
       Item := FArchiveCustomItems.Items[I];
-      if Item.FTag <> aitNone then
+      if Item.FTag in [aitUpdate, aitDecode] then
       begin
         case Item.FTag of
-        //aitNone:   nothing to do
           aitUpdate: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
           aitDecode: DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
         end;
 
-        if Assigned(Item.Coder) then
-        begin
-          FDecoder.CompressionMethod := Item.Coder.Method;
-          FDecoder.DictionaryLevel   := Item.Coder.Dictionary;
-          FDecoder.TableParameters   := Item.Coder.Table;
-          FDecoder.Tear              := Item.Coder.Tear;
-        end;
+        FDecoder.CompressionMethod := Item.Coder.Method;
+        FDecoder.DictionaryLevel   := Item.Coder.Dictionary;
+        FDecoder.TableParameters   := Item.Coder.Table;
+        FDecoder.Tear              := Item.Coder.Tear;
 
         case Item.FTag of
-        //aitNone:   nothing to do
           aitUpdate: Test(Item);
           aitDecode: Test(Item);
         end;
@@ -1978,7 +2021,7 @@ begin
     Item := FArchiveCustomItems.Items[I];
 
     Inc(FTotalSize, Item.CompressedSize);
-    if Item.FTag = aitUpdate then
+    if Item.FTag in [aitUpdate] then
     begin
       repeat
         DoRename(Item, RemaneAs, Confirm);
@@ -2058,12 +2101,6 @@ end;
 
 // TBeeArchiveEraser class
 
-constructor TBeeArchiveEraser.Create;
-begin
-  inherited Create;
-  FIsNeededToErase := FALSE;
-end;
-
 procedure TBeeArchiveEraser.DoErase(Item: TBeeArchiveCustomItem;
   var Confirm: TBeeArchiveConfirm);
 begin
@@ -2084,15 +2121,15 @@ begin
   for I := 0 to FArchiveCustomItems.Count - 1 do
   begin
     Item := FArchiveCustomItems.Items[I];
-    if Item.FTag = aitUpdate then
+    if Item.FTag in [aitUpdate] then
     begin
       DoErase(Item, Confirm);
       case Confirm of
-        arcOk:     FIsNeededToErase := TRUE;
+        arcOk:     FIsNeededToSave := TRUE;
         arcCancel: Item.FTag := aitNone;
         arcAbort:
         begin
-          FIsNeededToErase := FALSE;
+          FIsNeededToSave := FALSE;
           Break;
         end;
       end;
@@ -2146,6 +2183,39 @@ end;
 
 procedure TBeeArchiveEraser.EraseTagged;
 begin
+  CheckTags;
+  CheckSequences;
+  if FIsNeededToSave then
+  begin
+    FTempName   := GenerateFileName(FWorkDirectory);
+    FTempWriter := TFileWriter.Create(FTempName, FThreshold);
+    FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
+    if Assigned(FTempWriter) then
+    begin
+
+
+      if OpenSwapFile < ccError then
+           begin
+             // delete items ...
+             for I := FHeaders.Count - 1 downto 0 do
+             begin
+               P := FHeaders.Items[I];
+               if P.Action in [haUpdate, haDecodeAndUpdate] then
+               begin
+                 DoMessage(Format(cmDeleting, [P.Name]));
+                 FHeaders.Delete(I);
+               end;
+             end;
+
+
+
+
+    end;
+  end;
+
+
+
+
 
 
 end;
