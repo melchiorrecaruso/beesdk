@@ -318,6 +318,7 @@ type
 
   TBeeArchiveReader = class(TObject)
   private
+    FDecoder: THeaderDecoder;
     FTotalSize: int64;
     FProcessedSize: int64;
     FArchiveName: string;
@@ -334,6 +335,7 @@ type
     FArchiveLocatorItem: TBeeArchiveLocatorItem;
     function Read(aStream: TFileReader): boolean;
     procedure UnPack;
+    procedure DecodeTo(Stream: TStream; Item: TBeeArchiveCustomItem);
     function GetBackTag(Index: longint; aTag: TBeeArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TBeeArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
@@ -383,7 +385,9 @@ type
 
   TBeeArchiveWriter = class(TBeeArchiveReader)
   private
+    FEncoder: THeaderEncoder;
     FIsNeededToSave: boolean;
+    FIsNeededToSwap: boolean;
     FThreshold: int64;
     FTempName: string;
     FTempWriter: TFileWriter;
@@ -395,7 +399,7 @@ type
   private
     procedure Write(aStream: TFileWriter);
     procedure Pack;
-    procedure OpenSwapFile;
+    procedure OpenSwap;
     procedure SetWorkDirectory(const Value: string);
   public
     constructor Create;
@@ -409,15 +413,12 @@ type
 
   TBeeArchiveExtractor = class(TBeeArchiveReader)
   private
-    FDecoder: THeaderDecoder;
     FIsNeededToExtract: boolean;
     FOnExtract: TBeeArchiveExtractEvent;
     procedure CheckTags;
     procedure CheckSequences;
     procedure DoExtract(Item: TBeeArchiveCustomItem;
       var ExtractAs: string; var Confirm: TBeeArchiveConfirm);
-    procedure Extract(Item: TBeeArchiveCustomItem);
-    procedure Test(Item: TBeeArchiveCustomItem);
   public
     constructor Create;
     procedure ExtractTagged;
@@ -441,8 +442,6 @@ type
 
   TBeeArchiveEraser = class(TBeeArchiveWriter)
   private
-    FEncoder: THeaderEncoder;
-    FDecoder: THeaderDecoder;
     FOnErase: TBeeArchiveEraseEvent;
     procedure CheckTags;
     procedure CheckSequences;
@@ -1461,6 +1460,35 @@ begin
 
 end;
 
+procedure TBeeArchiveReader.DecodeTo(Stream: TStream; Item: TBeeArchiveCustomItem);
+var
+  CRC: longword;
+  Strm: TFileWriter;
+begin
+  Strm := TFileWriter.Create(Item.FExternalFileName, fmCreate);
+  if Assigned(Strm) then
+  begin
+    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    case Item.Coder.Method of
+      0: FDecoder.Copy  (Strm, Item.UncompressedSize, CRC);
+    else FDecoder.Decode(Strm, Item.UncompressedSize, CRC);
+    end;
+    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
+    if not Strm          .IsValidStream then DoFailure(cmStrmWriteError);
+
+    if not Item.Crc = CRC then
+      DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
+
+    Strm.Destroy;
+    if ExitCode < ccError then
+    begin
+      FileSetAttr(Item.FExternalFileName, Item.FExternalAttributes);
+      FileSetDate(Item.FExternalFileName, Item.LastModifiedTime);
+    end;
+  end else
+    DoFailure(cmStrmWriteError);
+end;
+
 function TBeeArchiveReader.GetBackTag(Index: longint; aTag: TBeeArchiveItemTag): longint;
 var
   I: longint;
@@ -1643,6 +1671,7 @@ constructor TBeeArchiveWriter.Create;
 begin
   inherited Create;
   FIsNeededToSave  := FALSE;
+  FIsNeededToSwap  := FALSE;
   FThreshold       := 0;
   FWorkDirectory   := '';
 end;
@@ -1679,59 +1708,57 @@ begin
 
 end;
 
-procedure TBeeArchiveWriter.OpenSwapFile;
+procedure TBeeArchiveWriter.OpenSwap;
 var
+  CRC: longword;
   I: longint;
-  P: THeader;
-  Decoder: THeaderDecoder;
+  Item: TBeeArchiveCustomItem;
 begin
-  if (ExitCode < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
+  if (ExitCode < ccError) and (FIsNeededToSwap) then
   begin
-    FSwapName   := GenerateFileName(FCommandLine.wdOption);
-    FSwapWriter := CreateTFileWriter(FSwapName, fmCreate);
+    FSwapName   := GenerateFileName(FWorkDirectory);
+    FSwapWriter := TFileWriter.Create(FSwapName, 0);
     if Assigned(FSwapWriter) then
     begin
-      Decoder := THeaderDecoder.Create(FArchReader, DoTick);
-      Decoder.Password := FCommandLine.pOption;
+      FDecoder := THeaderDecoder.Create(FArchiveReader);
+      FDecoder.OnProgress := @DoProgress;
 
-      for I := 0 to FHeaders.Count - 1 do
+      for I := 0 to FArchiveCustomItems.Count - 1 do
         if ExitCode < ccError then
         begin
-          P := FHeaders.Items[I];
-          Decoder.Initialize(P);
+          Item := FArchiveCustomItems.Items[I];
 
-          if P.Action in [haDecode, haDecodeAndUpdate] then
+          FDecoder.CompressionMethod := Item.Coder.Method;
+          FDecoder.DictionaryLevel   := Item.Coder.Dictionary;
+          FDecoder.TableParameters   := Item.Coder.Table;
+          FDecoder.Tear              := Item.Coder.Tear;
+
+          if Item.FTag in [aitDecode, aitDecodeAndUpdate] then
           begin
-            case P.Action of
-              // haNone: nothing to do
-              // haUpdate: nothing to do
-              haDecode: begin
-                DoMessage(Format(cmSwapping, [P.Name]));
-                if Decoder.ReadToSwap(P, FSwapWriter) = False then
-                  DoMessage(Format(cmCrcError, [P.Name]), ccError);
-              end;
-              haDecodeAndUpdate: begin
-                DoMessage(Format(cmDecoding, [P.Name]));
-                if Decoder.ReadToNul(P) = False then
-                  DoMessage(Format(cmCrcError, [P.Name]), ccError);
-              end;
+            case Item.FTag of
+              aitDecode:          DoMessage(Format(cmSwapping, [Item.FileName]));
+              aitDecodeAndUpdate: DoMessage(Format(cmDecoding, [Item.FileName]));
+            end;
+
+            case Item.FTag of
+              aitDecode:          DecodeTo(nil, Item);
+              aitDecodeAndUpdate: DecodeTo(nil, Item);
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
           end;
         end;
-      Decoder.Destroy;
+      FDecoder.Destroy;
       FreeAndNil(FSwapWriter);
 
       if ExitCode < ccError then
       begin
-        FSwapReader := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
+        FSwapReader := TFileReader.Create(FSwapName, fmOpenRead + fmShareDenyWrite);
         if Assigned(FSwapReader) = False then
-          DoMessage(cmOpenSwapError, ccError);
+          DoFailure(cmOpenSwapError);
       end;
     end else
-      DoMessage(cmCreateSwapError, ccError);
+      DoFailure(cmCreateSwapError);
   end;
-  Result := ExitCode;
 end;
 
 procedure TBeeArchiveWriter.CloseArchive;
@@ -1874,39 +1901,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveExtractor.Extract(Item: TBeeArchiveCustomItem);
-var
-  CRC: longword;
-  Strm: TFileWriter;
-begin
-  case Item.Ftag of
-  //aitNone:   nothing to do
-    aitUpdate: Strm := TFileWriter.Create(Item.FExternalFileName, fmCreate);
-    aitDecode: Strm := TNulWriter.Create;
-  end;
 
-  if Assigned(Strm) then
-  begin
-    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
-    case Item.Coder.Method of
-      0: FDecoder.Copy  (Strm, Item.UncompressedSize, CRC);
-    else FDecoder.Decode(Strm, Item.UncompressedSize, CRC);
-    end;
-    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
-    if not Strm          .IsValidStream then DoFailure(cmStrmWriteError);
-
-    if not Item.Crc = CRC then
-      DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
-
-    Strm.Destroy;
-    if (ExitCode < ccError) and (Item.Ftag = aitUpdate) then
-    begin
-      FileSetAttr(Item.FExternalFileName, Item.FExternalAttributes);
-      FileSetDate(Item.FExternalFileName, Item.LastModifiedTime);
-    end;
-  end else
-    DoFailure(cmStrmWriteError);
-end;
 
 procedure TBeeArchiveExtractor.ExtractTagged;
 var
@@ -1936,8 +1931,8 @@ begin
           FDecoder.Tear              := Item.Coder.Tear;
 
           case Item.FTag of
-            aitUpdate: Extract(Item);
-            aitDecode: Extract(Item);
+            aitUpdate: DecodeTo(nil, Item);
+            aitDecode: DecodeTo(nil, Item);
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
         end;
@@ -1945,30 +1940,6 @@ begin
     FDecoder.Destroy;
   end;
   CloseArchive;
-end;
-
-procedure TBeeArchiveExtractor.Test(Item: TBeeArchiveCustomItem);
-var
-  CRC: longword;
-  Strm: TFileWriter;
-begin
-  Strm := TNulWriter.Create;
-  if Assigned(Strm) then
-  begin
-    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
-    case Item.Coder.Method of
-      0: FDecoder.Copy  (Strm, Item.UncompressedSize, CRC);
-    else FDecoder.Decode(Strm, Item.UncompressedSize, CRC);
-    end;
-    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
-    if not Strm          .IsValidStream then DoFailure(cmStrmWriteError);
-
-    if not Item.Crc = CRC then
-      DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
-
-    Strm.Destroy;
-  end else
-    DoFailure(cmStrmWriteError);
 end;
 
 procedure TBeeArchiveExtractor.TestTagged;
@@ -1996,8 +1967,8 @@ begin
         FDecoder.Tear              := Item.Coder.Tear;
 
         case Item.FTag of
-          aitUpdate: Test(Item);
-          aitDecode: Test(Item);
+          aitUpdate: DecodeTo(nil, Item);
+          aitDecode: DecodeTo(nil, Item);
         end;
         {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
       end;
@@ -2135,6 +2106,8 @@ begin
       end;
     end;
   end;
+
+  if FIsNeededToSave then CheckSequences;
 end;
 
 procedure TBeeArchiveEraser.CheckSequences;
@@ -2162,6 +2135,8 @@ begin
           aitNone:   Item.FTag := aitDecode;
           aitUpdate: Item.FTag := aitDecodeAndUpdate;
         end;
+        if Item.FTag in [aitDecode] then
+          FIsNeededToSwap := TRUE;
       end;
       I := BackTear;
     end;
@@ -2193,7 +2168,7 @@ begin
     if Assigned(FTempWriter) then
     begin
 
-
+      (*
       if OpenSwapFile < ccError then
            begin
              // delete items ...
@@ -2207,7 +2182,7 @@ begin
                end;
              end;
 
-
+       *)
 
 
     end;
@@ -2514,27 +2489,7 @@ begin
   FDefaultBindingItemFlags := [];
 end;
 
-  function THeaderDecoder.ReadToSwap(Item: THeader; Stream: TStream): boolean;
-    var
-      CRC: longword;
-    begin
-      if foPassword in Item.Flags then
-      begin
-        if FStream is TFileReader then TFileReader(FStream).StartDecode(FPassword);
-        if  Stream is TFileWriter then TFileWriter( Stream).StartEncode(FPassword);
-      end;
 
-      FStream.Seek(Item.StartPos, soBeginning);
-      Item.StartPos := Stream.Seek(0, soCurrent);
-      case foMoved in Item.Flags of
-        True:  Result := Copy  (Stream, Item.Size, CRC) = Item.Size;
-        False: Result := Decode(Stream, Item.Size, CRC) = Item.Size;
-      end;
-      if Result then Result := Item.Crc = CRC;
-
-      if FStream is TFileReader then TFileReader(FStream).FinishDecode;
-      if  Stream is TFileWriter then TFileWriter( Stream).FinishEncode;
-    end;
 
     function THeaderDecoder.ReadToNul(Item: THeader): boolean;
     var
