@@ -87,7 +87,7 @@ type
     constructor Create(Stream: TStream);
     destructor Destroy; override;
 
-    function Copy  (Stream: TStream; const Size: int64): int64; overload;
+    function Copy  (Stream: TStream; const Size: int64):                    int64; overload;
     function Copy  (Stream: TStream; const Size: int64; var CRC: longword): int64; overload;
     function Encode(Stream: TStream; const Size: int64; var CRC: longword): int64;
   end;
@@ -238,6 +238,8 @@ var
   Readed: longint;
   Buffer: array[0..$FFFF] of byte;
 begin
+  if Stream = nil then Stream := TNulWriter.Create;
+
   (*
   FreshModeller;
   RangeEncoder_StartEncode(FCoder);
@@ -330,7 +332,7 @@ begin
 
     if DoProgress(Writed) = FALSE then Exit;
   end;
-  BaseCoder_Decode(FModeller, @Buffer, SizeOf(Buffer));
+  BaseCoder_Decode(FModeller, @Buffer, Size mod SizeOf(Buffer));
   Writed := Stream.Write(Buffer, Size mod SizeOf(Buffer));
   UpdateCRC32(CRC, Buffer, Writed);
   Inc(Result, Writed);
