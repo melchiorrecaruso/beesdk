@@ -314,6 +314,8 @@ type
   TBeeArchiveEraseEvent = procedure(Item: TBeeArchiveCustomItem;
     var Confirm: TBeeArchiveConfirm) of object;
 
+  TBeeStreamMode = (emToStream, emToFile,  emToNul);
+
   // a class for each command
 
   TBeeArchiveReader = class(TObject)
@@ -335,7 +337,14 @@ type
     FArchiveLocatorItem: TBeeArchiveLocatorItem;
     function Read(aStream: TFileReader): boolean;
     procedure UnPack;
-    procedure DecodeTo(Stream: TStream; Item: TBeeArchiveCustomItem);
+
+
+    procedure Swap(Item: TBeeArchiveCustomItem; Stream: TFileWriter);
+    procedure Test(Item: TBeeArchiveCustomItem);
+    procedure Extract(Item: TBeeArchiveCustomItem);
+
+
+
     function GetBackTag(Index: longint; aTag: TBeeArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TBeeArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
@@ -1460,26 +1469,70 @@ begin
 
 end;
 
-procedure TBeeArchiveReader.DecodeTo(Stream: TStream; Item: TBeeArchiveCustomItem);
+procedure TBeeArchiveReader.Swap(Item: TBeeArchiveCustomItem; Stream: TFileWriter);
 var
   CRC: longword;
-  Strm: TFileWriter;
 begin
-  Strm := TFileWriter.Create(Item.FExternalFileName, fmCreate);
-  if Assigned(Strm) then
+  if Assigned(Stream) then
   begin
     FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
     case Item.Coder.Method of
-      0: FDecoder.Copy  (Strm, Item.UncompressedSize, CRC);
-    else FDecoder.Decode(Strm, Item.UncompressedSize, CRC);
+      0: FDecoder.Copy  (Stream, Item.UncompressedSize, CRC);
+    else FDecoder.Decode(Stream, Item.UncompressedSize, CRC);
     end;
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
-    if not Strm          .IsValidStream then DoFailure(cmStrmWriteError);
+    if not Stream        .IsValidStream then DoFailure(cmStrmWriteError);
+
+    if not Item.Crc = CRC then
+      DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
+  end else
+    DoFailure(cmStrmWriteError);
+end;
+
+procedure TBeeArchiveReader.Test(Item: TBeeArchiveCustomItem);
+var
+  CRC: longword;
+  Stream: TFileWriter;
+begin
+  Stream := TNulWriter.Create;
+  if Assigned(Stream) then
+  begin
+    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    case Item.Coder.Method of
+      0: FDecoder.Copy  (Stream, Item.UncompressedSize, CRC);
+    else FDecoder.Decode(Stream, Item.UncompressedSize, CRC);
+    end;
+    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
+    if not Stream        .IsValidStream then DoFailure(cmStrmWriteError);
 
     if not Item.Crc = CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
 
-    Strm.Destroy;
+    Stream.Destroy;
+  end else
+    DoFailure(cmStrmWriteError);
+end;
+
+procedure TBeeArchiveReader.Extract(Item: TBeeArchiveCustomItem);
+var
+  CRC: longword;
+  Stream: TFileWriter;
+begin
+  Stream := TFileWriter.Create(Item.FExternalFileName, fmCreate);
+  if Assigned(Stream) then
+  begin
+    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    case Item.Coder.Method of
+      0: FDecoder.Copy  (Stream, Item.UncompressedSize, CRC);
+    else FDecoder.Decode(Stream, Item.UncompressedSize, CRC);
+    end;
+    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
+    if not Stream        .IsValidStream then DoFailure(cmStrmWriteError);
+
+    if not Item.Crc = CRC then
+      DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
+
+    Stream.Destroy;
     if ExitCode < ccError then
     begin
       FileSetAttr(Item.FExternalFileName, Item.FExternalAttributes);
@@ -1741,8 +1794,8 @@ begin
             end;
 
             case Item.FTag of
-              aitDecode:          DecodeTo(nil, Item);
-              aitDecodeAndUpdate: DecodeTo(nil, Item);
+              aitDecode:          Swap(Item, FSwapWriter);
+              aitDecodeAndUpdate: Test(Item);
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
           end;
@@ -1921,8 +1974,9 @@ begin
         if Item.FTag in [aitUpdate, aitDecode] then
         begin
           case Item.FTag of
-            aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
-            aitDecode: DoMessage(Format(cmDecoding,   [Item.FExternalFileName]));
+            aitUpdate:          DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
+            aitDecode:          DoMessage(Format(cmDecoding,   [Item.FExternalFileName]));
+            aitDecodeAndUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
           end;
 
           FDecoder.CompressionMethod := Item.Coder.Method;
@@ -1931,8 +1985,9 @@ begin
           FDecoder.Tear              := Item.Coder.Tear;
 
           case Item.FTag of
-            aitUpdate: DecodeTo(nil, Item);
-            aitDecode: DecodeTo(nil, Item);
+            aitUpdate:          Extract(Item);
+            aitDecode:          Test   (Item);
+            aitDecodeAndUpdate: Extract(Item);
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
         end;
@@ -1957,8 +2012,9 @@ begin
       if Item.FTag in [aitUpdate, aitDecode] then
       begin
         case Item.FTag of
-          aitUpdate: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
-          aitDecode: DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
+          aitUpdate:          DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
+          aitDecode:          DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
+          aitDecodeAndUpdate: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
         end;
 
         FDecoder.CompressionMethod := Item.Coder.Method;
@@ -1967,8 +2023,9 @@ begin
         FDecoder.Tear              := Item.Coder.Tear;
 
         case Item.FTag of
-          aitUpdate: DecodeTo(nil, Item);
-          aitDecode: DecodeTo(nil, Item);
+          aitUpdate:          Test(Item);
+          aitDecode:          Test(Item);
+          aitDecodeAndUpdate: Test(Item);
         end;
         {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
       end;
@@ -2096,7 +2153,7 @@ begin
     begin
       DoErase(Item, Confirm);
       case Confirm of
-        arcOk:     FIsNeededToSave := TRUE;
+        arcOk:  FIsNeededToSave := TRUE;
         arcCancel: Item.FTag := aitNone;
         arcAbort:
         begin
