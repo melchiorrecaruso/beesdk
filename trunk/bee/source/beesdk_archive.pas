@@ -153,23 +153,15 @@ type
     FCrypter: TBeeArchiveMainCrypter;
     FDiskNumber: longword;
     FDiskSeek: qword;
-
-    FExternalFileName: string;
-    FExternalAttributes: longword;
-    FExternalUncompressedSize: qword;
-    FExternalStream: TStream;
-    FExternalDiskNumber: longint;
-    FExternalDiskSeek: int64;
-
-
     FUserID: longword;
     FGroupID: longword;
     FUserName: string;
     FGroupName: string;
     FComment: string;
     FFileName: string;
-    FPosition: longint;
 
+    FExternalFileName: string;
+    FPosition: longint;
   protected {property methods}
     function GetCompressedSize: int64;
     procedure SetUncompressedSize(const Value: qword);
@@ -205,11 +197,6 @@ type
     property CRC: longword read FCRC write SetCRC;
     property DiskNumber: longword read FDiskNumber write SetDiskNumber;
     property DiskSeek: qword read FDiskSeek write SetDiskSeek;
-
-    property ExternalFileName: string read FExternalFileName;
-    property ExternalAttributes: longword read FExternalAttributes;
-    property ExternalUncompressedSize: qword read FExternalUncompressedSize;
-
     property UserID: longword read FUserID write SetUserID;
     property UserName: string read FUserName write SetUserName;
     property GroupID: longword read FGroupID write SetGroupID;
@@ -339,8 +326,8 @@ type
     procedure UnPack;
 
 
-    procedure Swap(Item: TBeeArchiveCustomItem; Stream: TFileWriter);
-    procedure Test(Item: TBeeArchiveCustomItem);
+    procedure Swap   (Item: TBeeArchiveCustomItem; Stream: TFileWriter);
+    procedure Test   (Item: TBeeArchiveCustomItem);
     procedure Extract(Item: TBeeArchiveCustomItem);
 
 
@@ -790,13 +777,6 @@ begin
   if (acifMode in FFLags) then
     FMode := SearchRec.Mode;
 
-  FExternalFileName         := SearchRec.Name;
-  FExternalAttributes       := SearchRec.Attributes;
-  FExternalUncompressedSize := SearchRec.Size;
-  FExternalStream           := nil;
-  FExternalDiskSeek         := 0;
-  FExternalDiskNumber       := 0;
-
   if (acifUserID in FFLags) then
     FUserID := SearchRec.UserID;
 
@@ -808,6 +788,8 @@ begin
 
   if (acifGroupName in FFLags) then
     FGroupName := SearchRec.GroupName;
+
+  FExternalFileName := SearchRec.Name;
 end;
 
 constructor TBeeArchiveCustomItem.Read(Stream: TFileReader);
@@ -1476,6 +1458,9 @@ begin
   if Assigned(Stream) then
   begin
     FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+
+    Item.DiskNumber := Stream.CurrentImage;
+    Item.DiskSeek   := Stream.Seek(0, soCurrent);
     case Item.Coder.Method of
       0: FDecoder.Copy  (Stream, Item.UncompressedSize, CRC);
     else FDecoder.Decode(Stream, Item.UncompressedSize, CRC);
@@ -1535,7 +1520,7 @@ begin
     Stream.Destroy;
     if ExitCode < ccError then
     begin
-      FileSetAttr(Item.FExternalFileName, Item.FExternalAttributes);
+      FileSetAttr(Item.FExternalFileName, Item.Attributes);
       FileSetDate(Item.FExternalFileName, Item.LastModifiedTime);
     end;
   end else
@@ -1954,8 +1939,6 @@ begin
   end;
 end;
 
-
-
 procedure TBeeArchiveExtractor.ExtractTagged;
 var
   I: longint;
@@ -2216,7 +2199,6 @@ end;
 procedure TBeeArchiveEraser.EraseTagged;
 begin
   CheckTags;
-  CheckSequences;
   if FIsNeededToSave then
   begin
     FTempName   := GenerateFileName(FWorkDirectory);
@@ -2224,10 +2206,13 @@ begin
     FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
     if Assigned(FTempWriter) then
     begin
+      if FIsNeededToSwap then
+      begin
 
-      (*
-      if OpenSwapFile < ccError then
-           begin
+      end;
+
+
+
              // delete items ...
              for I := FHeaders.Count - 1 downto 0 do
              begin
@@ -2242,7 +2227,8 @@ begin
        *)
 
 
-    end;
+    end else
+      DoFailure(cmOpenTempError);
   end;
 
 
