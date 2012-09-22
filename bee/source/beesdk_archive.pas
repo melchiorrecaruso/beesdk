@@ -270,6 +270,7 @@ type
     FItems: TList;
     FNames: TList;
   private { methods}
+    function FindName(const FileName: string): longint;
     function GetCount : longint;
     function GetItem(Index: longint): TBeeArchiveCustomItem;
   public {methods}
@@ -277,6 +278,7 @@ type
     destructor Destroy; override;
     procedure Add(Item : TBeeArchiveCustomItem);
     function Find(const FileName: string): longint;
+    procedure Delete(Index: longint);
     procedure Clear;
   public {properties}
     property Count: longint read GetCount;
@@ -1304,7 +1306,7 @@ begin
     FNames.Add(Item);
 end;
 
-function TBeeArchiveCustomItems.Find(const FileName: string): longint;
+function TBeeArchiveCustomItems.FindName(const FileName: string): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
@@ -1326,9 +1328,38 @@ begin
   end;
 
   if Hi = -2 then
-    Result := TBeeArchiveCustomItem(FNames[Med]).Position
+    Result := Med
   else
     Result := -1;
+end;
+
+function TBeeArchiveCustomItems.Find(const FileName: string): longint;
+begin
+  Result := FindName(FileName);
+  if Result <> -1 then
+  begin
+    Result := TBeeArchiveCustomItem(FNames[Result]).Position
+  end;
+end;
+
+procedure TBeeArchiveCustomItems.Delete(Index: longint);
+var
+  Item, Next: TBeeArchiveCustomItem;
+begin
+  Item := Items[Index];
+  if Index < FItems.Count - 1 then
+  begin
+    Next := Items[Index + 1];
+
+    if (Item.Coder.Tear) and (not(Next.Coder.Tear)) then
+    begin
+      Next.Coder.Tear := TRUE;
+    end;
+  end;
+
+  FNames.Delete(FindName(Item.FileName));
+  FItems.Delete(Item.Position);
+  Item.Destroy;
 end;
 
 function TBeeArchiveCustomItems.GetCount: longint;
@@ -1673,7 +1704,7 @@ end;
 
 function TBeeArchiveReader.Find(const aFileName: string): longint;
 begin
-  Result := FArchiveCustomItems.Find(aFileName);
+  Result := FArchiveCustomItems.FindName(aFileName);
 end;
 
 procedure TBeeArchiveReader.DoFailure(const ErrorMessage: string);
@@ -2036,7 +2067,7 @@ begin
     begin
       repeat
         DoRename(Item, RemaneAs, Confirm);
-      until (Confirm <> arcOk) or (FArchiveCustomItems.Find(RemaneAs) = -1);
+      until (Confirm <> arcOk) or (FArchiveCustomItems.FindName(RemaneAs) = -1);
 
       case Confirm of
         arcOk:
@@ -2197,7 +2228,11 @@ begin
 end;
 
 procedure TBeeArchiveEraser.EraseTagged;
+var
+  I: longint;
+  Item: TBeeArchiveCustomItem;
 begin
+
   CheckTags;
   if FIsNeededToSave then
   begin
@@ -2206,13 +2241,17 @@ begin
     FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
     if Assigned(FTempWriter) then
     begin
-      if FIsNeededToSwap then
+      OpenSwap;
+      if ExitCode < ccError  then
       begin
+
+
+
+
 
       end;
 
-
-
+             (*
              // delete items ...
              for I := FHeaders.Count - 1 downto 0 do
              begin
@@ -2223,8 +2262,8 @@ begin
                  FHeaders.Delete(I);
                end;
              end;
+             *)
 
-       *)
 
 
     end else
