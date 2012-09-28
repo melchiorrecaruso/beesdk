@@ -41,7 +41,6 @@ const
 type
   /// archive locator flag
   TArchiveLocatorFlag = (
-    alifVersionNeededToRead,
     alifDisksNumber,
     alifDiskNumber);
 
@@ -91,27 +90,21 @@ type
   TArchiveLocator = class(TObject)
    private
      FFlags: TArchiveLocatorFlags;
-     FVersionNeededToRead: longword;
      FDisksNumber: longword;
      FDiskNumber: longword;
      FDiskSeek: int64;
-     procedure SetVersionNeededToRead(Value: longword);
      procedure SetDisksNumber(Value: longword);
      procedure SetDiskNumber(Value: longword);
-     procedure SetDiskSeek(const Value: int64);
    public
      constructor Create;
-     destructor Destroy; override;
-     constructor Read(Stream: TFileReader);
+     function Read(Stream: TFileReader): boolean;
      procedure Write(Stream: TFileWriter);
      procedure Clear;
    public
      property Flags: TArchiveLocatorFlags read FFlags;
-     property VersionNeededToRead: longword
-        read FVersionNeededToRead write SetVersionNeededToRead;
      property DisksNumber: longword read FDisksNumber write SetDisksNumber;
      property DiskNumber: longword read FDiskNumber write SetDiskNumber;
-     property DiskSeek: int64 read FDiskSeek write SetDiskSeek;
+     property DiskSeek: int64 read FDiskSeek write FDiskSeek;
    end;
 
 
@@ -571,6 +564,113 @@ begin
 
 end;
 
+// TBeeArchiveLolatorItem class
+
+constructor TArchiveLocator.Create;
+begin
+  inherited Create;
+  Clear;
+end;
+
+function TArchiveLocator.Read(Stream: TFileReader): boolean;
+begin
+  if Stream.ReadInfWord <= beexVERSION then
+  begin
+    FFlags := TArchiveLocatorFlags(longword(Stream.ReadInfWord));
+    if (alifDisksNumber in FFlags) then
+        FDisksNumber := Stream.ReadInfWord;
+
+    if (alifDiskNumber in FFlags) then
+      FDiskNumber := Stream.ReadInfWord;
+
+    FDiskSeek := ReadMagicSeek(Stream);
+  end else
+    FFlags := [];
+end;
+
+procedure TArchiveLocator.SetDisksNumber(Value: longword);
+begin
+  if Value <> longword(-1) then
+  begin
+    FDisksNumber := Value;
+    Include(FFlags, alifDisksNumber);
+  end else
+    Exclude(FFlags, alifDisksNumber);
+end;
+
+procedure TArchiveLocator.SetDiskNumber(Value: longword);
+begin
+  if Value <> longword(-1) then
+  begin
+    FDiskNumber := Value;
+    Include(FFlags, alifDiskNumber);
+  end else
+    Exclude(FFlags, alifDiskNumber);
+end;
+
+procedure TArchiveLocator.Write(Stream: TFileWriter);
+begin
+  Stream.WriteInfWord(beexVERSION);
+  Stream.WriteInfWord(longword(FFlags));
+
+  if (alifDisksNumber in FFlags) then
+    Stream.WriteInfWord(FDisksNumber);
+
+  if (alifDiskNumber in FFlags) then
+    Stream.WriteInfWord(FDiskNumber);
+
+  WriteMagicSeek(Stream, FDiskSeek);
+end;
+
+procedure TArchiveLocator.Clear;
+begin
+  FFlags := [];
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // TBeeArchiveCoder class
 
 
@@ -970,91 +1070,7 @@ begin
   Stream.WriteInfWord(FEncryptionMethod);
 end;
 
-// TBeeArchiveLolatorItem class
 
-constructor TArchiveLocator.Create;
-begin
-  inherited Create;
-  FFlags := [];
-end;
-
-constructor TArchiveLocator.Read(Stream: TFileReader);
-begin
-  inherited Create;
-  FFlags := TArchiveLocatorFlags(longword(Stream.ReadInfWord));
-
-  if (alifVersionNeededToRead in FFlags) then
-    FVersionNeededToRead := Stream.ReadInfWord;
-
-  if (alifDisksNumber in FFlags) then
-      FDisksNumber := Stream.ReadInfWord;
-
-  if (alifDiskNumber in FFlags) then
-    FDiskNumber := Stream.ReadInfWord;
-
-  FDiskSeek := Stream.ReadInfWord;
-end;
-
-destructor TArchiveLocator.Destroy;
-begin
-  inherited Destroy;
-end;
-
-procedure TArchiveLocator.SetVersionNeededToRead(Value: longword);
-begin
-  if Value <> longword(-1) then
-  begin
-    FVersionNeededToRead := Value;
-    Include(FFlags, alifVersionNeededToRead);
-  end else
-    Exclude(FFlags, alifVersionNeededToRead);
-end;
-
-procedure TArchiveLocator.SetDisksNumber(Value: longword);
-begin
-  if Value <> longword(-1) then
-  begin
-    FDisksNumber := Value;
-    Include(FFlags, alifDisksNumber);
-  end else
-    Exclude(FFlags, alifDisksNumber);
-end;
-
-procedure TArchiveLocator.SetDiskNumber(Value: longword);
-begin
-  if Value <> longword(-1) then
-  begin
-    FDiskNumber := Value;
-    Include(FFlags, alifDiskNumber);
-  end else
-    Exclude(FFlags, alifDiskNumber);
-end;
-
-procedure TArchiveLocator.SetDiskSeek(const Value: int64);
-begin
-  FDiskSeek := Value;
-end;
-
-procedure TArchiveLocator.Write(Stream: TFileWriter);
-begin
-  Stream.WriteInfWord(longword(FFlags));
-
-  if (alifVersionNeededToRead in FFlags) then
-    Stream.WriteInfWord(FVersionNeededToRead);
-
-  if (alifDisksNumber in FFlags) then
-    Stream.WriteInfWord(FDisksNumber);
-
-  if (alifDiskNumber in FFlags) then
-    Stream.WriteInfWord(FDiskNumber);
-
-  Stream.WriteInfWord(FDiskSeek);
-end;
-
-procedure TArchiveLocator.Clear;
-begin
-  FFlags := [];
-end;
 
 // TBeeArchiveBindingItem class
 
@@ -1379,10 +1395,7 @@ begin
   T := longword(aStream.ReadInfWord);
   if T = aitLocator then
   begin
-    FArchiveLocatorItem.Read(aStream);
-    if alifVersionNeededToRead in FArchiveLocatorItem.FFlags then
-      if FArchiveLocatorItem.VersionNeededToRead > beexVERSION then
-        Exit;
+    if FArchiveLocatorItem.Read(aStream) = FALSE then Exit;
 
     if alifDisksNumber in FArchiveLocatorItem.FFlags then
       aStream.ImagesNumber := FArchiveLocatorItem.DisksNumber;
