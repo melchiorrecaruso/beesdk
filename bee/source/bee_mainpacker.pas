@@ -33,12 +33,12 @@ uses
   Classes,
   SysUtils,
   // ---
-  BeeLib_Configuration;
-  // {$IFDEF cppDLL}
-  //   Bee_LibLink;
-  // {$ELSE}
-  //  Bee_Modeller;
-  // {$ENDIF}
+  BeeLib_Configuration,
+  {$IFDEF cppDLL}
+    Bee_LibLink;
+  {$ELSE}
+    Bee_Modeller;
+  {$ENDIF}
 
 type
   TProgressEvent = function(Value: longint): boolean of object;
@@ -52,13 +52,10 @@ type
     FOnProgressEvent: TProgressEvent;
     FCoder: pointer;
     FModeller: pointer;
-    FCompressionMethod: longint;
     FDictionaryLevel: longint;
     FTableParameters: TTableParameters;
     FTear: boolean;
-    procedure FreshModeller;
   private
-    procedure SetCompressionMethod(Value: longint);
     procedure SetDictionaryLevel(Value: longint);
     procedure SetTableParameters(const Value: TTableParameters);
     procedure SetTear(Value: boolean);
@@ -68,8 +65,6 @@ type
     constructor Create(Stream: TStream);
     destructor Destroy; override;
   public
-    property CompressionMethod: longint
-      read FCompressionMethod write SetCompressionMethod;
     property DictionaryLevel: longint
       read FDictionaryLevel write SetDictionaryLevel;
     property TableParameters: TTableParameters
@@ -122,14 +117,6 @@ begin
   inherited Destroy;
 end;
 
-procedure THeaderCoder.FreshModeller;
-begin (*
-  if FTear then
-    BaseCoder_FreshFlexible(FModeller)
-  else
-    BaseCoder_FreshSolid(FModeller); *)
-end;
-
 function THeaderCoder.DoProgress(Value: longint): boolean;
 begin
   Result := TRUE;
@@ -139,28 +126,28 @@ begin
   end;
 end;
 
-procedure THeaderCoder.SetCompressionMethod(Value: longint);
-begin
-  if Value in [1..3] then
-    if Value <> FCompressionMethod then
-      FCompressionMethod := Value;
-end;
-
 procedure THeaderCoder.SetDictionaryLevel(Value: longint);
 begin
   if Value in [0..9] then
     if Value <> FDictionaryLevel then
-    FDictionaryLevel := Value;
+      FDictionaryLevel := Value;
+
+  BaseCoder_SetDictionary(FModeller, FDictionaryLevel);
 end;
 
 procedure THeaderCoder.SetTableParameters(const Value: TTableParameters);
 begin
   FTableParameters := Value;
+  BaseCoder_SetTable(FModeller, @FTableParameters);
 end;
 
 procedure THeaderCoder.SetTear(Value: boolean);
 begin
   FTear := Value;
+  if FTear then
+    BaseCoder_FreshFlexible(FModeller)
+  else
+    BaseCoder_FreshSolid(FModeller);
 end;
 
 /// THeaderEncoder class
@@ -168,14 +155,14 @@ end;
 constructor THeaderEncoder.Create(Stream: TStream);
 begin
   inherited Create(Stream);
-  // FCoder    := RangeEncoder_Create(FStream, @DoFlush);
-  // FModeller := BaseCoder_Create(FCoder);
+  FCoder    := RangeEncoder_Create(FStream, @DoFlush);
+  FModeller := BaseCoder_Create(FCoder);
 end;
 
 destructor THeaderEncoder.Destroy;
 begin
-  // BaseCoder_Destroy(FModeller);
-  // RangeEncoder_Destroy(FCoder);
+  BaseCoder_Destroy(FModeller);
+  RangeEncoder_Destroy(FCoder);
   inherited Destroy;
 end;
 
@@ -240,8 +227,7 @@ var
 begin
   if Stream = nil then Stream := TNulWriter.Create;
 
-  (*
-  FreshModeller;
+  // FreshModeller;
   RangeEncoder_StartEncode(FCoder);
 
   Result := 0;
@@ -263,7 +249,7 @@ begin
   Inc(Result, Readed);
   DoProgress(Readed);
 
-  RangeEncoder_FinishEncode(FCoder); *)
+  RangeEncoder_FinishEncode(FCoder);
 end;
 
   { TheaderDecoder class }
@@ -271,14 +257,14 @@ end;
 constructor THeaderDecoder.Create(Stream: TStream);
 begin
   inherited Create(Stream);
-  // FCoder    := RangeDecoder_Create(FStream, @DoFill);
-  // FModeller := BaseCoder_Create(FCoder);
+  FCoder    := RangeDecoder_Create(FStream, @DoFill);
+  FModeller := BaseCoder_Create(FCoder);
 end;
 
 destructor THeaderDecoder.Destroy;
 begin
-  // BaseCoder_Destroy(FModeller);
-  // RangeDecoder_Destroy(FCoder);
+  BaseCoder_Destroy(FModeller);
+  RangeDecoder_Destroy(FCoder);
   inherited Destroy;
 end;
 
@@ -316,7 +302,6 @@ var
   Writed: longint;
   Buffer: array[0..$FFFF] of byte;
 begin
-  (*
   RangeDecoder_StartDecode(FCoder);
 
   Result := 0;
@@ -338,7 +323,7 @@ begin
   Inc(Result, Writed);
   DoProgress(Writed);
 
-  RangeDecoder_FinishDecode(FCoder); *)
+  RangeDecoder_FinishDecode(FCoder);
 end;
 
 end.
