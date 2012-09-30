@@ -128,10 +128,7 @@ end;
 
 procedure THeaderCoder.SetDictionaryLevel(Value: longint);
 begin
-  if Value in [0..9] then
-    if Value <> FDictionaryLevel then
-      FDictionaryLevel := Value;
-
+  FDictionaryLevel := Value;
   BaseCoder_SetDictionary(FModeller, FDictionaryLevel);
 end;
 
@@ -225,9 +222,6 @@ var
   Readed: longint;
   Buffer: array[0..$FFFF] of byte;
 begin
-  if Stream = nil then Stream := TNulWriter.Create;
-
-  // FreshModeller;
   RangeEncoder_StartEncode(FCoder);
 
   Result := 0;

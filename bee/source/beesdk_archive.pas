@@ -279,16 +279,11 @@ type
     FArchiveCustomItems: TBeeArchiveCustomItems;
     FArchiveBindingItem: TBeeArchiveBinding;
     FArchiveLocatorItem: TArchiveLocator;
-    function Read(aStream: TFileReader): boolean;
-
-
     procedure InitDecoder (Item: TArchiveItem);
     procedure DecodeToSwap(Item: TArchiveItem);
     procedure DecodeToNil (Item: TArchiveItem);
     procedure DecodeToFile(Item: TArchiveItem);
-
-
-
+    function Read(aStream: TFileReader): boolean;
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
@@ -302,12 +297,12 @@ type
     procedure DoFailure(const ErrorMessage: string);
     procedure DoMessage(const Message: string);
     function DoProgress(Value: longint): boolean;
-
   public
     constructor Create;
     destructor Destroy; override;
     procedure OpenArchive(const aArchiveName: string);
     procedure CloseArchive; virtual;
+    procedure Terminate;
 
     procedure TagAll;
     procedure Tag(Index: longint); virtual; overload;
@@ -315,11 +310,9 @@ type
     procedure UnTagAll;
     procedure UnTag(Index: longint); virtual; overload;
     procedure UnTag(const FileMask: string; Recursive: TRecursiveMode); overload;
-
     function IsTagged(Index: longint): boolean; virtual;
 
     function Find(const aFileName: string): longint;
-    procedure Terminate;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property Items[Index: longint]: TArchiveItem read GetItem;
@@ -346,8 +339,7 @@ type
     FTempWriter: TFileWriter;
     FWorkDirectory: string;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
-
-    procedure InitEncoder (Item: TArchiveItem);
+    procedure InitEncoder      (Item: TArchiveItem);
     procedure EncodeFromArchive(Item: TArchiveItem);
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
@@ -2107,18 +2099,17 @@ begin
           if ExitCode < ccError then
           begin
             Item := FArchiveCustomItems.Items[I];
-            InitDecoder(Item);
-
             case Item.FTag of
               aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
-              aitUpdate:          DoMessage(Format(cmDeleting, [Item.FileName]));
+            //aitUpdate:          DoMessage(Format(cmDeleting, [Item.FileName]));
               aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
-              aitDecodeAndUpdate: DoMessage(Format(cmDeleting, [Item.FileName]));
+            //aitDecodeAndUpdate: DoMessage(Format(cmDeleting, [Item.FileName]));
             end;
 
+            InitDecoder(Item);
             case Item.FTag of
               aitNone:   EncodeFromArchive(Item);
-              aitDecode: EncodeFromSwap (Item);
+              aitDecode: EncodeFromSwap   (Item);
             end;
 
             if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
@@ -2126,9 +2117,12 @@ begin
             if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
           end;
         FEncoder.Destroy;
-        Write(FTempWriter);
-        if not FTempWriter.IsValidStream then
-          DoFailure(cmStrmWriteError);
+        if ExitCode < ccError then
+        begin
+          Write(FTempWriter);
+          if not FTempWriter.IsValidStream then
+            DoFailure(cmStrmWriteError);
+        end;
       end;
     end else
       DoFailure(cmOpenTempError);
