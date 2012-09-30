@@ -237,25 +237,26 @@ type
     property Items[Index: longint]: TArchiveItem read GetItem;
   end;
 
-  TBeeArchiveProgressEvent = procedure(Value: longint) of object;
+  TArchiveProgressEvent = procedure(Value: longint) of object;
 
-  TBeeArchiveMessageEvent = procedure(const Message: string) of object;
+  TArchiveMessageEvent = procedure(const Message: string) of object;
 
-  TBeeArchiveFailureEvent = procedure(
+  TArchiveFailureEvent = procedure(
     const ErrorMessage: string; ErrorCode: longint) of object;
 
-  TBeeArchiveConfirm = (arcOk, arcCancel, arcAbort);
+  TArchiveConfirm = (arcOk, arcCancel, arcAbort);
 
-  TBeeArchiveRenameEvent = procedure(Item: TArchiveItem;
-    var RenameAs: string; var Confirm: TBeeArchiveConfirm) of object;
+  TArchiveRenameEvent = procedure(Item: TArchiveItem;
+    var RenameAs: string; var Confirm: TArchiveConfirm) of object;
 
-  TBeeArchiveExtractEvent = procedure(Item: TArchiveItem;
-    var ExtractAs: string; var Confirm: TBeeArchiveConfirm) of object;
+  TArchiveExtractEvent = procedure(Item: TArchiveItem;
+    var ExtractAs: string; var Confirm: TArchiveConfirm) of object;
 
-  TBeeArchiveEraseEvent = procedure(Item: TArchiveItem;
-    var Confirm: TBeeArchiveConfirm) of object;
+  TArchiveEraseEvent = procedure(Item: TArchiveItem;
+    var Confirm: TArchiveConfirm) of object;
 
-  TBeeStreamMode = (emToStream, emToFile,  emToNul);
+  TArchiveUpdateEvent = procedure(Item: TArchiveItem;
+    var Confirm: TArchiveConfirm) of object;
 
   // a class for each command
 
@@ -272,9 +273,9 @@ type
     FSuspended:  boolean;
     FTerminated: boolean;
     FExitCode: byte;
-    FOnFailure: TBeeArchiveFailureEvent;
-    FOnMessage: TBeeArchiveMessageEvent;
-    FOnProgress: TBeeArchiveProgressEvent;
+    FOnFailure: TArchiveFailureEvent;
+    FOnMessage: TArchiveMessageEvent;
+    FOnProgress: TArchiveProgressEvent;
     FOnRequestImage: TFileReaderRequestImageEvent;
     FArchiveCustomItems: TBeeArchiveCustomItems;
     FArchiveBindingItem: TBeeArchiveBinding;
@@ -322,9 +323,9 @@ type
     property Terminated: boolean read FTerminated;
     property ExitCode: byte read FExitCode;
 
-    property OnFailure: TBeeArchiveFailureEvent read FOnFailure write FOnFailure;
-    property OnMessage: TBeeArchiveMessageEvent read FOnMessage write FOnMessage;
-    property OnProgress: TBeeArchiveProgressEvent read FOnProgress write FOnProgress;
+    property OnFailure: TArchiveFailureEvent read FOnFailure write FOnFailure;
+    property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
+    property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
     property OnRequestImage: TFileReaderRequestImageEvent
       read FOnRequestImage write FOnRequestImage;
   end;
@@ -361,150 +362,90 @@ type
   TBeeArchiveExtractor = class(TBeeArchiveReader)
   private
     FIsNeededToExtract: boolean;
-    FOnExtract: TBeeArchiveExtractEvent;
+    FOnExtract: TArchiveExtractEvent;
     procedure CheckTags;
     procedure CheckSequences;
     procedure DoExtract(Item: TArchiveItem;
-      var ExtractAs: string; var Confirm: TBeeArchiveConfirm);
+      var ExtractAs: string; var Confirm: TArchiveConfirm);
   public
     constructor Create;
     procedure ExtractTagged;
     procedure TestTagged;
   public
-    property OnExtraction: TBeeArchiveExtractEvent
+    property OnExtraction: TArchiveExtractEvent
       read FOnExtract write FOnExtract;
   end;
 
   TBeeArchiveRenamer = class(TBeeArchiveWriter)
   private
-    FOnRename: TBeeArchiveRenameEvent;
+    FOnRename: TArchiveRenameEvent;
     procedure CheckTags;
     procedure DoRename(Item: TArchiveItem;
-      var RenameAs: string; var Confirm: TBeeArchiveConfirm);
+      var RenameAs: string; var Confirm: TArchiveConfirm);
   public
     procedure RenameTagged;
   public
-    property OnRenameEvent: TBeeArchiveRenameEvent read FOnRename write FOnRename;
+    property OnRenameEvent: TArchiveRenameEvent read FOnRename write FOnRename;
   end;
 
   TBeeArchiveEraser = class(TBeeArchiveWriter)
   private
-    FOnErase: TBeeArchiveEraseEvent;
+    FOnErase: TArchiveEraseEvent;
     procedure CheckTags;
     procedure CheckSequences;
-    procedure DoErase(Item: TArchiveItem;
-      var Confirm: TBeeArchiveConfirm);
+    procedure DoErase(Item: TArchiveItem; var Confirm: TArchiveConfirm);
   public
     procedure EraseTagged;
   public
-    property OnEraseEvent: TBeeArchiveEraseEvent read FOnErase write FOnErase;
+    property OnEraseEvent: TArchiveEraseEvent read FOnErase write FOnErase;
   end;
 
-  TBeeArchiveAdder = class(TBeeArchiveWriter)
+  TBeeArchiveUpdater = class(TBeeArchiveWriter)
   private
-  public
-  public
-  end;
-
-
-
-  (*
-
-  TBeeArchiveAdder = class(TBeeArchiveViewer)
-  private
-    FWorkDirectory: string;
-    FNeededToSave: boolean;
-
-    FSwapName: string;
-    FSwapReader: TFileReader;
-    FSwapWriter: TFileWriter;
-
-    FTempName: string;
-    FTempWriter: TFileWriter;
-
-    FDefaultCustomItemFlags: TBeeArchiveCustomItemFlags;
-    FDefaultBindingItemFlags: TBeeArchiveBindingItemFlags;
-
-    FCompressionCoder: TBeeArchiveCoderType;
-    FCrypterCoder: TBeeArchiveCrypterType;
-
+    FCompressionMethod: longint;
     FCompressionLevel: longint;
     FDictionaryLevel: longint;
+    FSolidCompression: boolean;
     FConfigurationName: string;
     FConfiguration: TConfiguration;
-
-    FSolid: boolean;
     FForceFileExtension: string;
-
-    FBeeEncoder: THeaderEncoder;
-    FBeeDecoder: THeaderDecoder;
-
-
-    procedure Encode(Item: TBeeArchiveCustomItem);
-    procedure Copy(Item: TBeeArchiveCustomItem);
-
-    function CreateSwap: boolean;
-    procedure ConfigureCoders;
-    procedure ConfigureCrypters;
+    FOnUpdate: TArchiveUpdateEvent;
+    procedure SetCompressionMethod(Value: longint);
     procedure SetCompressionLevel(Value: longint);
     procedure SetDictionaryLevel(Value: longint);
     procedure SetConfigurationName(const Value: string);
+    procedure SetForceFileExtension(const Value: string);
 
+    // procedure Configure;
+    procedure CheckTags;
+    procedure CheckSequences;
+    procedure DoUpdate(Item: TArchiveItem;
+      var UseExternalFileName: string; var Confirm: TArchiveConfirm);
   public
-
-    procedure Add(SearchRec: TCustomSearchRec; const UseFileName: string;
-         UseFlags: TBeeArchiveCustomItemFlags);
-
-       procedure Update(SearchRec: TCustomSearchRec; const UseFileName: string;
-          UseFlags: TBeeArchiveCustomItemFlags);
-
-       procedure Replace(SearchRec: TCustomSearchRec; const UseFileName: string;
-          UseFlags: TBeeArchiveCustomItemFlags);
+    constructor Create;
+    // procedure UpdateTagged;
+    // procedure Update(SearchRec: TCustomSearchRec;
+    //  const UseFileName: string; UseFlags: TArchiveItemFlags);
   public
-    property DefaultCustomItemFlags: TBeeArchiveCustomItemFlags
-      read FDefaultCustomItemFlags write FDefaultCustomItemFlags;
-    property DefaultBindingItemFlags: TBeeArchiveBindingItemFlags
-      read FDefaultBindingItemFlags write FDefaultBindingItemFlags;
-
-    property CompressionCoder: TBeeArchiveCoderType
-      read FCompressionCoder write FCompressionCoder;
-    property CrypterCoder: TBeeArchiveCrypterType
-      read FCrypterCoder write FCrypterCoder;
-
+    property CompressionMethod: longint
+      read FCompressionLevel write SetCompressionLevel;
     property CompressionLevel: longint
       read FCompressionLevel write SetCompressionLevel;
     property DictionaryLevel: longint
       read FDictionaryLevel write SetDictionaryLevel;
+    property SolidCompression: boolean
+      read FSolidCompression write FSolidCompression;
+
     property ConfigurationName: string
       read FConfigurationName write SetConfigurationName;
-
     property ForceFileExtension: string
       read FForceFileExtension write FForceFileExtension;
 
-    property Solid: boolean read FSolid write FSolid;
-
-    property WorkDirectory: string read FWorkDirectory write FWorkDirectory;
-
-  end;
-
-  TBeeArchiveEraser = class(TBeeArchiveViewer)
-  private
-  public
-     procedure Delete(Index: longint);
-  end;
-
-  TBeeArchiveExtractor = class(TBeeArchiveViewer)
-  private
-  public
-  end;
-
-  TBeeArchiveTester = class(TBeeArchiveViewer)
-  private
-  public
+    property OnUpdateEvent: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
   end;
 
 
-        *)
+
 
 implementation
 
@@ -1731,7 +1672,7 @@ procedure TBeeArchiveExtractor.CheckTags;
 var
   I: longint;
   Item: TArchiveItem;
-  Confirm: TBeeArchiveConfirm;
+  Confirm: TArchiveConfirm;
   ExtractAs: string;
 begin
   DoMessage(Format(cmScanning, ['...']));
@@ -1767,7 +1708,7 @@ var
   I, J, BackTear, NextTear: longint;
   Item: TArchiveItem;
 begin
-  // STEP2: find sequences and mark ...
+  // STEP2: find sequences and tag ...
   I := GetBackTag(FArchiveCustomItems.Count - 1, aitUpdate);
   while I > -1 do
   begin
@@ -1807,7 +1748,7 @@ begin
 end;
 
 procedure TBeeArchiveExtractor.DoExtract(Item: TArchiveItem;
-  var ExtractAs: string; var Confirm: TBeeArchiveConfirm);
+  var ExtractAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
   if Assigned(FOnExtract) then
@@ -1895,7 +1836,7 @@ procedure TBeeArchiveRenamer.CheckTags;
 var
   I: longint;
   Item: TArchiveItem;
-  Confirm: TBeeArchiveConfirm;
+  Confirm: TArchiveConfirm;
   RemaneAs: string;
 begin
   DoMessage(Format(cmScanning, ['...']));
@@ -1972,7 +1913,7 @@ begin
 end;
 
 procedure TBeeArchiveRenamer.DoRename(Item: TArchiveItem;
-  var RenameAs: string; var Confirm: TBeeArchiveConfirm);
+  var RenameAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
   if Assigned(FOnRename) then
@@ -1985,7 +1926,7 @@ end;
 // TBeeArchiveEraser class
 
 procedure TBeeArchiveEraser.DoErase(Item: TArchiveItem;
-  var Confirm: TBeeArchiveConfirm);
+  var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
   if Assigned(FOnErase) then
@@ -1998,7 +1939,7 @@ procedure TBeeArchiveEraser.CheckTags;
 var
   I: longint;
   Item: TArchiveItem;
-  Confirm: TBeeArchiveConfirm;
+  Confirm: TArchiveConfirm;
 begin
   DoMessage(Format(cmScanning, ['...']));
   for I := 0 to FArchiveCustomItems.Count - 1 do
@@ -2129,38 +2070,106 @@ begin
   end;
 end;
 
+// TBeeArchiveUpdater class
+
+constructor TBeeArchiveUpdater.Create;
+begin
+  inherited Create;
+  FCompressionMethod  := 0;
+  FCompressionLevel   := 0;;
+  FDictionaryLevel    := 0;
+  FSolidCompression   := FALSE;
+  FConfigurationName  := '';
+  FConfiguration      := nil;
+  FForceFileExtension := '';
+  FOnUpdate           := nil;
+end;
+
+procedure TBeeArchiveUpdater.SetCompressionMethod(Value: longint);
+begin
+  if Value in [0..1] then FCompressionMethod := Value;
+end;
+
+procedure TBeeArchiveUpdater.SetCompressionLevel(Value: longint);
+begin
+  if Value in [1..3] then FCompressionLevel := Value;
+end;
+
+procedure TBeeArchiveUpdater.SetDictionaryLevel(Value: longint);
+begin
+  if Value in [0..9] then FDictionaryLevel := Value;
+end;
+
+procedure TBeeArchiveUpdater.SetConfigurationName(const Value: string);
+begin
+  if FileExists(Value) then FConfigurationName := Value;
+end;
+
+procedure TBeeArchiveUpdater.SetForceFileExtension(const Value: string);
+begin
+  FForceFileExtension := Value;
+end;
+
+procedure TBeeArchiveUpdater.CheckSequences;
+var
+  Item: TArchiveItem;
+  I, J, BackTear, NextTear: longint;
+begin
+  DoMessage(Format(cmScanning, ['...']));
+  // STEP1: configure new items ...
+  // Configure;
+  // STEP2: find sequences and tag ...
+  I := GetBackTag(FArchiveCustomItems.Count - 1, aitUpdate);
+  while I > -1 do
+  begin
+    BackTear := GetBackTear(I);
+    NextTear := GetNextTear(I + 1);
+
+    if NextTear = -1 then
+      NextTear := FArchiveCustomItems.Count;
+    // if is solid sequences
+    if (NextTear - BackTear) > 1 then
+    begin
+      NextTear := GetBackTag(NextTear - 1, aitNone);
+      for J := BackTear to NextTear do
+      begin
+        Item := FArchiveCustomItems.Items[J];
+        case Item.FTag of
+          aitNone:            Item.FTag := aitDecode;
+          aitUpdate:          Item.FTag := aitDecodeAndUpdate;
+        //aitDecode:          nothing to do
+        //aitDecodeAndUpdate: nothing to do
+        end;
+      end;
+      I := BackTear;
+    end;
+    I := GetBackTag(I - 1, aitUpdate);
+  end;
+
+  // STEP3: calculate bytes to process ...
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+  begin
+    Item := FArchiveCustomItems.Items[I];
+    case Item.FTag of
+      aitNone:            Inc(FTotalSize, Item.CompressedSize);
+      aitUpdate:          Inc(FTotalSize, Item.ExtSize);
+      aitDecode:          Inc(FTotalSize, Item.Size + Item.Size);
+      aitDecodeAndUpdate: Inc(FTotalSize, Item.Size + Item.ExtSize);
+    end;
+  end;
+
+    if FCommandLine.sfxOption <> '' then
+      FHeaders.LoadModule(FCommandLine.sfxOption);
+  end else
+    DoMessage(cmNoFilesWarning, ccWarning);
+
+
+end;
 
 (*
 
 
 
-
-function TBeeArchiveAdder.CreateSwap: boolean;
-var
-  I: longint;
-  Decoder: THeaderDecoder;
-begin
-  Result      := FALSE;
-  FSwapName   := GenerateFileName(FWorkDirectory);
-  FSwapWriter := CreateTFileWriter(FSwapName, fmCreate);
-  if Assigned(FSwapWriter) then
-  begin
-  // trova le sequenze
-  // e sposta sul file di swap i dati da ricodificare
-
-
-
-
-
-    Result := FSwapWriter.Size <> 0;
-    FSwapWriter.Destroy;
-  end;
-end;
-
-procedure TBeeArchiveAdder.ConfigureCrypters;
-begin
-  // nothing to do
-end;
 
 procedure TBeeArchiveAdder.ConfigureCoders;
 var
@@ -2215,31 +2224,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveViewer.SaveArchive;
-var
-  I: longint;
-begin
-  if FArchiveBusy then Exit;
-  if FNeededToSave then
-  begin
-    FArchiveBusy := TRUE;
-    ConfigureCoders;
 
-    FTempName   := GenerateFileName(FWorkDirectory);
-    FTempWriter := CreateTFileWriter(FWorkDirectory, fmCreate);
-    // ...
-    FBeeEncoder := THeaderEncoder.Create(FTempWriter);
-    FBeeDecoder := THeaderDecoder.Create(FArchiveReader);
-
-
-    FBeeEncoder.Destroy;
-    FBeeDecoder.Destroy;
-    // ...
-    FTempWriter.Destroy;
-
-    FArchiveBusy := FALSE;
-  end;
-end;
 
 procedure TBeeArchiveViewer.Add(SearchRec: TCustomSearchRec;
   const UseFileName: string; UseFlags: TArchiveItemFlags);
@@ -2297,45 +2282,6 @@ begin
     end;
   FArchiveBusy := FALSE;
 end;
-
-procedure TBeeArchiveViewer.Delete(Index: longint);
-begin
-  if FArchiveBusy then Exit;
-
-  FArchiveBusy := TRUE;
-  with FArchiveCustomItems.Items[Index] do
-    begin
-      FTag := aitDelete;
-      FNeededToSave := TRUE;
-    end;
-  FArchiveBusy := FALSE;
-end;
-
-
-
-procedure TBeeArchiveViewer.SetCompressionLevel(Value: longint);
-begin
-  if Value in [1..3] then FCompressionLevel := Value;
-end;
-
-procedure TBeeArchiveViewer.SetDictionaryLevel(Value: longint);
-begin
-  if Value in [0..9] then FDictionaryLevel := Value;
-end;
-
-procedure TBeeArchiveViewer.SetConfigurationName(const Value: string);
-begin
-  FConfiguration.Clear;
-  if FileExists(Value) then
-  begin
-    FConfigurationName := Value;
-    FConfiguration.LoadFromFile(FConfigurationName);
-  end;
-end;
-
-
-
-
 
 
 procedure TBeeArchiveViewer.Encode(Item: TArchiveItem);
@@ -2396,56 +2342,6 @@ end;
 
 
 
-
-
-
-   constructor TBeeArchiveAdder.Create;
-begin
-  inherited Create;
-  FWorkDirectory := '';
-
-  FTempName          := '';
-  FTempWriter        := nil;
-
-  FSwapName          := '';
-  FSwapReader        := nil;
-  FSwapWriter        := nil;
-
-  FCompressionLevel  :=  1;
-  FDictionaryLevel   :=  3;
-  FConfigurationName := '';
-  FConfiguration     := TConfiguration.Create;
-
-  FSolid              := FALSE;
-  FForceFileExtension := '.';
-
-  FDefaultCustomItemFlags  := [];
-  FDefaultBindingItemFlags := [];
-end;
-
-
-
-    function THeaderDecoder.ReadToNul(Item: THeader): boolean;
-    var
-      CRC: longword;
-      Strm: TNulWriter;
-    begin
-      if foPassword in Item.Flags then
-      begin
-        if FStream is TFileReader then TFileReader(FStream).StartDecode(FPassword);
-      end;
-
-      Strm := TNulWriter.Create;
-      FStream.Seek(Item.StartPos, soBeginning);
-      case foMoved in Item.Flags of
-        True:  Result := Copy  (Strm, Item.Size, CRC) = Item.Size;
-        False: Result := Decode(Strm, Item.Size, CRC) = Item.Size;
-      end;
-      Result := Result and (Item.Crc = CRC);
-      Strm.Free;
-
-      if FStream is TFileReader then TFileReader(FStream).FinishDecode;
-    end;
 
 
 
