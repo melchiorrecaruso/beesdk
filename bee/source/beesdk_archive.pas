@@ -260,7 +260,7 @@ type
 
   // a class for each command
 
-  TBeeArchiveReader = class(TObject)
+  TArchiveReaderBase = class(TObject)
   private
     FDecoder: THeaderDecoder;
     FTotalSize: int64;
@@ -305,14 +305,6 @@ type
     procedure CloseArchive; virtual;
     procedure Terminate;
 
-    procedure TagAll;
-    procedure Tag(Index: longint); virtual; overload;
-    procedure Tag(const FileMask: string; Recursive: TRecursiveMode); overload;
-    procedure UnTagAll;
-    procedure UnTag(Index: longint); virtual; overload;
-    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode); overload;
-    function IsTagged(Index: longint): boolean; virtual;
-
     function Find(const aFileName: string): longint;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
@@ -330,7 +322,17 @@ type
       read FOnRequestImage write FOnRequestImage;
   end;
 
-  TBeeArchiveWriter = class(TBeeArchiveReader)
+  TArchiveReader = class(TArchiveReaderBase)
+  public
+    procedure TagAll;
+    procedure Tag(Index: longint); overload;
+    procedure Tag(const FileMask: string; Recursive: TRecursiveMode); overload;
+    procedure UnTagAll;
+    procedure UnTag(Index: longint); overload;
+    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode); overload;
+  end;
+
+  TArchiveWriterBase = class(TArchiveReaderBase)
   private
     FEncoder: THeaderEncoder;
     FIsNeededToSave: boolean;
@@ -359,7 +361,17 @@ type
       read FOnRequestBlankDisk write FOnRequestBlankDisk;
   end;
 
-  TBeeArchiveExtractor = class(TBeeArchiveReader)
+  TArchiveWriter = class(TArchiveWriterBase)
+  public
+    procedure TagAll;
+    procedure Tag(Index: longint); overload;
+    procedure Tag(const FileMask: string; Recursive: TRecursiveMode); overload;
+    procedure UnTagAll;
+    procedure UnTag(Index: longint); overload;
+    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode); overload;
+  end;
+
+  TBeeArchiveExtractor = class(TArchiveReader)
   private
     FIsNeededToExtract: boolean;
     FOnExtract: TArchiveExtractEvent;
@@ -376,7 +388,7 @@ type
       read FOnExtract write FOnExtract;
   end;
 
-  TBeeArchiveRenamer = class(TBeeArchiveWriter)
+  TBeeArchiveRenamer = class(TArchiveWriter)
   private
     FOnRename: TArchiveRenameEvent;
     procedure CheckTags;
@@ -388,7 +400,7 @@ type
     property OnRenameEvent: TArchiveRenameEvent read FOnRename write FOnRename;
   end;
 
-  TBeeArchiveEraser = class(TBeeArchiveWriter)
+  TBeeArchiveEraser = class(TArchiveWriter)
   private
     FOnErase: TArchiveEraseEvent;
     procedure CheckTags;
@@ -400,7 +412,7 @@ type
     property OnEraseEvent: TArchiveEraseEvent read FOnErase write FOnErase;
   end;
 
-  TBeeArchiveUpdater = class(TBeeArchiveWriter)
+  TBeeArchiveUpdater = class(TArchiveWriterBase)
   private
     FCompressionMethod: longint;
     FCompressionLevel: longint;
@@ -419,10 +431,12 @@ type
     // procedure Configure;
     procedure CheckTags;
     procedure CheckSequences;
-    procedure DoUpdate(Item: TArchiveItem;
-      var UseExternalFileName: string; var Confirm: TArchiveConfirm);
+
+    //procedure DoUpdate(Item: TArchiveItem;
+    //  var UseExternalFileName: string; var Confirm: TArchiveConfirm);
   public
     constructor Create;
+
     // procedure UpdateTagged;
     // procedure Update(SearchRec: TCustomSearchRec;
     //  const UseFileName: string; UseFlags: TArchiveItemFlags);
@@ -1124,9 +1138,9 @@ begin
   Result := TArchiveItem(FItems[Index]);
 end;
 
-// TBeeArchiveReader class
+// TArchiveReaderBase class
 
-constructor TBeeArchiveReader.Create;
+constructor TArchiveReaderBase.Create;
 begin
   inherited Create;
   FExitCode := ccSuccesful;
@@ -1136,7 +1150,7 @@ begin
   FArchiveLocatorItem := TArchiveLocator.Create;
 end;
 
-destructor TBeeArchiveReader.Destroy;
+destructor TArchiveReaderBase.Destroy;
 begin
   FArchiveCustomItems.Destroy;
   FArchiveBindingItem.Destroy;
@@ -1144,22 +1158,22 @@ begin
   inherited Destroy;
 end;
 
-procedure TBeeArchiveReader.Terminate;
+procedure TArchiveReaderBase.Terminate;
 begin
   SetExitCode(ccUserAbort);
 end;
 
-function TBeeArchiveReader.GetCount: longint;
+function TArchiveReaderBase.GetCount: longint;
 begin
   Result := FArchiveCustomItems.Count;
 end;
 
-function TBeeArchiveReader.GetItem(Index: longint): TArchiveItem;
+function TArchiveReaderBase.GetItem(Index: longint): TArchiveItem;
 begin
   Result := FArchiveCustomItems.Items[Index];
 end;
 
-procedure TBeeArchiveReader.SetTerminated(Value: boolean);
+procedure TArchiveReaderBase.SetTerminated(Value: boolean);
 begin
   if FTerminated = False then
   begin
@@ -1171,7 +1185,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveReader.SetSuspended(Value: boolean);
+procedure TArchiveReaderBase.SetSuspended(Value: boolean);
 begin
   if FTerminated = False then
   begin
@@ -1179,7 +1193,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveReader.SetExitCode(Value: byte);
+procedure TArchiveReaderBase.SetExitCode(Value: byte);
 begin
   if FTerminated = False then
   begin
@@ -1192,12 +1206,12 @@ begin
   end;
 end;
 
-procedure TBeeArchiveReader.SetArchiveName(const Value: string);
+procedure TArchiveReaderBase.SetArchiveName(const Value: string);
 begin
   OpenArchive(Value);
 end;
 
-function TBeeArchiveReader.Read(aStream: TFileReader): boolean;
+function TArchiveReaderBase.Read(aStream: TFileReader): boolean;
 var
   T: longword;
 begin
@@ -1232,7 +1246,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveReader.InitDecoder(Item: TArchiveItem);
+procedure TArchiveReaderBase.InitDecoder(Item: TArchiveItem);
 begin
   if acfDictionaryLevel in Item.FCompressionFlags then
     FDecoder.DictionaryLevel := Item.DictionaryLevel;
@@ -1243,7 +1257,7 @@ begin
   FDecoder.Tear := Item.SolidCompression;
 end;
 
-procedure TBeeArchiveReader.DecodeToSwap(Item: TArchiveItem);
+procedure TArchiveReaderBase.DecodeToSwap(Item: TArchiveItem);
 var
   CRC: longword;
 begin
@@ -1266,7 +1280,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-procedure TBeeArchiveReader.DecodeToNil(Item: TArchiveItem);
+procedure TArchiveReaderBase.DecodeToNil(Item: TArchiveItem);
 var
   CRC: longword;
   Stream: TFileWriter;
@@ -1290,7 +1304,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-procedure TBeeArchiveReader.DecodeToFile(Item: TArchiveItem);
+procedure TArchiveReaderBase.DecodeToFile(Item: TArchiveItem);
 var
   CRC: longword;
   Stream: TFileWriter;
@@ -1319,7 +1333,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-function TBeeArchiveReader.GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
+function TArchiveReaderBase.GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
 var
   I: longint;
 begin
@@ -1332,7 +1346,7 @@ begin
     end;
 end;
 
-function TBeeArchiveReader.GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
+function TArchiveReaderBase.GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
 var
   I: longint;
 begin
@@ -1345,7 +1359,7 @@ begin
     end;
 end;
 
-function TBeeArchiveReader.GetBackTear(Index: longint): longint;
+function TArchiveReaderBase.GetBackTear(Index: longint): longint;
 var
   I: longint;
 begin
@@ -1358,7 +1372,7 @@ begin
     end;
 end;
 
-function TBeeArchiveReader.GetNextTear(Index: longint): longint;
+function TArchiveReaderBase.GetNextTear(Index: longint): longint;
 var
   I: longint;
 begin
@@ -1371,7 +1385,7 @@ begin
     end;
 end;
 
-procedure TBeeArchiveReader.OpenArchive(const aArchiveName: string);
+procedure TArchiveReaderBase.OpenArchive(const aArchiveName: string);
 var
   MagicSeek: int64;
 begin
@@ -1402,7 +1416,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveReader.CloseArchive;
+procedure TArchiveReaderBase.CloseArchive;
 begin
   FArchiveName := '';
   if FArchiveReader <> nil then
@@ -1416,66 +1430,19 @@ begin
   FTotalSize     := 0;
 end;
 
-procedure TBeeArchiveReader.TagAll;
-var
-  I: longint;
-begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do Tag(I);
-end;
-
-procedure TBeeArchiveReader.Tag(Index: longint);
-begin
-  FArchiveCustomItems.Items[Index].FTag := aitUpdate;
-end;
-
-procedure TBeeArchiveReader.Tag(const FileMask: string; Recursive: TRecursiveMode);
-var
-  I: longint;
-begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do
-    with FArchiveCustomItems.Items[I] do
-      if FileNameMatch(FileName, FileMask, Recursive) then Tag(I);
-end;
-
-procedure TBeeArchiveReader.UnTagAll;
-var
-  I: longint;
-begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do UnTag(I);
-end;
-
-procedure TBeeArchiveReader.UnTag(Index: longint);
-begin
-  FArchiveCustomItems.Items[Index].FTag := aitNone;
-end;
-
-procedure TBeeArchiveReader.UnTag(const FileMask: string; Recursive: TRecursiveMode);
-var
-  I: longint;
-begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do
-    with FArchiveCustomItems.Items[I] do
-      if FileNameMatch(FileName, FileMask, Recursive) then UnTag(I);
-end;
-
-function TBeeArchiveReader.IsTagged(Index: longint): boolean;
-begin
-  Result := FArchiveCustomItems.Items[Index].FTag <> aitNone;
-end;
-
-function TBeeArchiveReader.Find(const aFileName: string): longint;
+function TArchiveReaderBase.Find(const aFileName: string): longint;
 begin
   Result := FArchiveCustomItems.Find(aFileName);
 end;
 
-procedure TBeeArchiveReader.DoFailure(const ErrorMessage: string);
+procedure TArchiveReaderBase.DoFailure(const ErrorMessage: string);
 begin
   SetExitCode(ccError);
   if Assigned(FOnFailure) then
     FOnFailure(ErrorMessage, ccError);
 end;
 
-procedure TBeeArchiveReader.DoMessage(const Message: string);
+procedure TArchiveReaderBase.DoMessage(const Message: string);
 begin
   if Assigned(FOnMessage) then
   begin
@@ -1483,7 +1450,7 @@ begin
   end;
 end;
 
-function TBeeArchiveReader.DoProgress(Value: longint): boolean;
+function TArchiveReaderBase.DoProgress(Value: longint): boolean;
 begin
   while FSuspended do Sleep(250);
 
@@ -1495,9 +1462,53 @@ begin
   Result := ExitCode < ccError;
 end;
 
-// TBeeArchiveWriter class
+// TArchiveReader class
 
-constructor TBeeArchiveWriter.Create;
+procedure TArchiveReader.TagAll;
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do Tag(I);
+end;
+
+procedure TArchiveReader.Tag(Index: longint);
+begin
+  FArchiveCustomItems.Items[Index].FTag := aitUpdate;
+end;
+
+procedure TArchiveReader.Tag(const FileMask: string; Recursive: TRecursiveMode);
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+    with FArchiveCustomItems.Items[I] do
+      if FileNameMatch(FileName, FileMask, Recursive) then Tag(I);
+end;
+
+procedure TArchiveReader.UnTagAll;
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do UnTag(I);
+end;
+
+procedure TArchiveReader.UnTag(Index: longint);
+begin
+  FArchiveCustomItems.Items[Index].FTag := aitNone;
+end;
+
+procedure TArchiveReader.UnTag(const FileMask: string; Recursive: TRecursiveMode);
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+    with FArchiveCustomItems.Items[I] do
+      if FileNameMatch(FileName, FileMask, Recursive) then UnTag(I);
+end;
+
+// TArchiveWriterBase class
+
+constructor TArchiveWriterBase.Create;
 begin
   inherited Create;
   FIsNeededToSave  := FALSE;
@@ -1506,7 +1517,7 @@ begin
   FWorkDirectory   := '';
 end;
 
-procedure TBeeArchiveWriter.Write(aStream: TFileWriter);
+procedure TArchiveWriterBase.Write(aStream: TFileWriter);
 var
   MagicSeek: int64;
   I: longword;
@@ -1533,12 +1544,12 @@ begin
   WriteMagicSeek(aStream, MagicSeek);
 end;
 
-procedure TBeeArchiveWriter.Pack;
+procedure TArchiveWriterBase.Pack;
 begin
 
 end;
 
-function TBeeArchiveWriter.OpenSwap: longint;
+function TArchiveWriterBase.OpenSwap: longint;
 var
   CRC: longword;
   I: longint;
@@ -1588,7 +1599,7 @@ begin
   Result := ExitCode;
 end;
 
-procedure TBeeArchiveWriter.CloseArchive;
+procedure TArchiveWriterBase.CloseArchive;
 begin
   if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
   if Assigned(FSwapWriter)    then FreeAndNil(FSwapWriter);
@@ -1623,7 +1634,7 @@ begin
 end;
 
 
-procedure TBeeArchiveWriter.InitEncoder(Item: TArchiveItem);
+procedure TArchiveWriterBase.InitEncoder(Item: TArchiveItem);
 begin
   if acfDictionaryLevel in Item.FCompressionFlags then
     FEncoder.DictionaryLevel := Item.DictionaryLevel;
@@ -1634,30 +1645,74 @@ begin
   FEncoder.Tear := Item.SolidCompression;
 end;
 
-procedure TBeeArchiveWriter.EncodeFromArchive(Item: TArchiveItem);
+procedure TArchiveWriterBase.EncodeFromArchive(Item: TArchiveItem);
 begin
 
 
 end;
 
-procedure TBeeArchiveWriter.EncodeFromSwap(Item: TArchiveItem);
+procedure TArchiveWriterBase.EncodeFromSwap(Item: TArchiveItem);
 begin
 
 
 end;
 
-procedure TBeeArchiveWriter.EncodeFromFile(Item: TArchiveItem);
+procedure TArchiveWriterBase.EncodeFromFile(Item: TArchiveItem);
 begin
 
 
 end;
 
-procedure TBeeArchiveWriter.SetWorkDirectory(const Value: string);
+procedure TArchiveWriterBase.SetWorkDirectory(const Value: string);
 begin
   if (Value = '') or DirectoryExists(Value) then
   begin
     FWorkDirectory := IncludeTrailingBackSlash(Value);
   end;
+end;
+
+// TArchiveWriter class
+
+procedure TArchiveWriter.TagAll;
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do Tag(I);
+end;
+
+procedure TArchiveWriter.Tag(Index: longint);
+begin
+  FArchiveCustomItems.Items[Index].FTag := aitUpdate;
+end;
+
+procedure TArchiveWriter.Tag(const FileMask: string; Recursive: TRecursiveMode);
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+    with FArchiveCustomItems.Items[I] do
+      if FileNameMatch(FileName, FileMask, Recursive) then Tag(I);
+end;
+
+procedure TArchiveWriter.UnTagAll;
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do UnTag(I);
+end;
+
+procedure TArchiveWriter.UnTag(Index: longint);
+begin
+  FArchiveCustomItems.Items[Index].FTag := aitNone;
+end;
+
+procedure TArchiveWriter.UnTag(const FileMask: string; Recursive: TRecursiveMode);
+var
+  I: longint;
+begin
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+    with FArchiveCustomItems.Items[I] do
+      if FileNameMatch(FileName, FileMask, Recursive) then UnTag(I);
 end;
 
 // TBeeArchiveExtractor class
@@ -2110,6 +2165,12 @@ begin
   FForceFileExtension := Value;
 end;
 
+procedure TBeeArchiveUpdater.CheckTags;
+begin
+
+
+end;
+
 procedure TBeeArchiveUpdater.CheckSequences;
 var
   Item: TArchiveItem;
@@ -2146,6 +2207,7 @@ begin
     I := GetBackTag(I - 1, aitUpdate);
   end;
 
+  (*
   // STEP3: calculate bytes to process ...
   for I := 0 to FArchiveCustomItems.Count - 1 do
   begin
@@ -2163,7 +2225,7 @@ begin
   end else
     DoMessage(cmNoFilesWarning, ccWarning);
 
-
+  *)
 end;
 
 (*
