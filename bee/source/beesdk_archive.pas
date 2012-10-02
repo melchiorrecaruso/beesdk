@@ -183,8 +183,7 @@ type
     procedure ClearCompressionTable;
     procedure SetEncryptionMethod(Value: longword);
   public {methods}
-    constructor Create(SearchRec: TCustomSearchRec; UseFlags: TArchiveItemFlags;
-      const UseFileName: string; const UseComment: string);
+    constructor Create(SearchRec: TCustomSearchRec; DefaultFlags: TArchiveItemFlags);
     constructor Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
   public {property}
@@ -256,7 +255,7 @@ type
     var Confirm: TArchiveConfirm) of object;
 
   TArchiveUpdateEvent = procedure(Item: TArchiveItem;
-    var Confirm: TArchiveConfirm) of object;
+    var UpdateWith; var Confirm: TArchiveConfirm) of object;
 
   // a class for each command
 
@@ -414,6 +413,7 @@ type
 
   TBeeArchiveUpdater = class(TArchiveWriterBase)
   private
+    FDefaultFlags: TArchiveItemFlags;
     FCompressionMethod: longint;
     FCompressionLevel: longint;
     FDictionaryLevel: longint;
@@ -432,14 +432,13 @@ type
     procedure CheckTags;
     procedure CheckSequences;
 
-    //procedure DoUpdate(Item: TArchiveItem;
-    //  var UseExternalFileName: string; var Confirm: TArchiveConfirm);
+    procedure DoUpdate(Item: TArchiveItem; var UpdateWith: string;
+      var Confirm: TArchiveConfirm);
   public
     constructor Create;
 
     // procedure UpdateTagged;
-    // procedure Update(SearchRec: TCustomSearchRec;
-    //  const UseFileName: string; UseFlags: TArchiveItemFlags);
+    procedure Tag(Index: longint; SearchRec: TCustomSearchRec);
   public
     property CompressionMethod: longint
       read FCompressionLevel write SetCompressionLevel;
@@ -454,6 +453,8 @@ type
       read FConfigurationName write SetConfigurationName;
     property ForceFileExtension: string
       read FForceFileExtension write FForceFileExtension;
+
+    property DefaultFlags: TArchiveItemFlags read FDefaultFlags write FDefaultFlags;
 
     property OnUpdateEvent: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
   end;
@@ -628,12 +629,10 @@ end;
 
 // TArchiveItem class
 
-constructor TArchiveItem.Create(SearchRec: TCustomSearchRec;
-  UseFlags: TArchiveItemFlags; const UseFileName: string;
-  const UseComment: string);
+constructor TArchiveItem.Create(SearchRec: TCustomSearchRec; DefaultFlags: TArchiveItemFlags);
 begin
   inherited Create;
-  FFlags := UseFlags;
+  FFlags := DefaultFlags;
   Exclude(FFlags, aifSessionFlags);
 
   if (aifUncompressedSize in FFLags) then FUncompressedSize := SearchRec.Size;
@@ -649,9 +648,9 @@ begin
   if (aifUserName         in FFLags) then FUserName         := SearchRec.UserName;
   if (aifGroupID          in FFLags) then FGroupID          := SearchRec.GroupID;
   if (aifGroupName        in FFLags) then FGroupName        := SearchRec.GroupName;
-  if (aifComment          in FFLags) then FComment          := UseComment;
+//if (aifComment          in FFLags) then FComment          := UseComment;
 
-  FFileName := UseFileName;
+  FFileName := SearchRec.Name;
 
   // data descriptor
   FCompressionMethod := 0;
@@ -2165,6 +2164,32 @@ begin
   FForceFileExtension := Value;
 end;
 
+
+procedure TBeeArchiveUpdater.Tag(Index: longint; SearchRec: TCustomSearchRec);
+var
+  Item: TArchiveItem;
+begin
+  if Index > -1 then
+  begin
+    Item      := FArchiveCustomItems.Items[Index];
+    Item.FTag := aitUpdate;
+  end else
+  begin
+    Item      := TArchiveItem.Create(SearchRec, DefaultFlags);
+    Item.FTag := aitAdd;
+  end;
+end;
+
+procedure TBeeArchiveUpdater.DoUpdate(Item: TArchiveItem;
+  var UpdateWith: string; var Confirm: TArchiveConfirm);
+begin
+  Confirm := arcCancel;
+  if Assigned(FOnUpdate) then
+  begin
+    FOnUpdate(Item, Item.FExternalFileName, Confirm);
+  end;
+end;
+
 procedure TBeeArchiveUpdater.CheckTags;
 begin
 
@@ -2227,6 +2252,10 @@ begin
 
   *)
 end;
+
+
+
+
 
 (*
 
