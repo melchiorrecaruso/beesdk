@@ -254,8 +254,8 @@ type
   TArchiveEraseEvent = procedure(Item: TArchiveItem;
     var Confirm: TArchiveConfirm) of object;
 
-  TArchiveUpdateEvent = procedure(Item: TArchiveItem;
-    var UpdateWith; var Confirm: TArchiveConfirm) of object;
+  TArchiveUpdateEvent = procedure(SearchRec: TCustomSearchRec;
+    var UpdateAs; var Confirm: TArchiveConfirm) of object;
 
   // a class for each command
 
@@ -413,6 +413,7 @@ type
 
   TBeeArchiveUpdater = class(TArchiveWriterBase)
   private
+    FIsNeededToAbort: boolean;
     FDefaultFlags: TArchiveItemFlags;
     FCompressionMethod: longint;
     FCompressionLevel: longint;
@@ -431,14 +432,12 @@ type
     // procedure Configure;
     procedure CheckTags;
     procedure CheckSequences;
-
-    procedure DoUpdate(Item: TArchiveItem; var UpdateWith: string;
-      var Confirm: TArchiveConfirm);
+    procedure DoUpdate(SearchRec: TCustomSearchRec;
+      var UpdateAs: string; var Confirm: TArchiveConfirm);
   public
     constructor Create;
-
-    // procedure UpdateTagged;
-    procedure Tag(Index: longint; SearchRec: TCustomSearchRec);
+    procedure UpdateTagged;
+    procedure Tag(SearchRec: TCustomSearchRec);
   public
     property CompressionMethod: longint
       read FCompressionLevel write SetCompressionLevel;
@@ -1755,6 +1754,7 @@ begin
       end;
     end;
   end;
+  if FIsNeededToExtract then CheckSequences;
 end;
 
 procedure TBeeArchiveExtractor.CheckSequences;
@@ -1807,7 +1807,7 @@ begin
   Confirm := arcCancel;
   if Assigned(FOnExtract) then
   begin
-    Item.FExternalFileName := Item.FileName;
+    ExtractAs := Item.FileName;
     FOnExtract(Item, ExtractAs, Confirm);
   end;
 end;
@@ -1818,7 +1818,6 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  CheckSequences;
   if FIsNeededToExtract then
   begin
     FDecoder := THeaderDecoder.Create(FArchiveReader);
@@ -2137,6 +2136,7 @@ begin
   FConfiguration      := nil;
   FForceFileExtension := '';
   FOnUpdate           := nil;
+  FIsNeededToAbort    := FALSE;
 end;
 
 procedure TBeeArchiveUpdater.SetCompressionMethod(Value: longint);
@@ -2164,36 +2164,84 @@ begin
   FForceFileExtension := Value;
 end;
 
-
-procedure TBeeArchiveUpdater.Tag(Index: longint; SearchRec: TCustomSearchRec);
+procedure TBeeArchiveUpdater.Tag(SearchRec: TCustomSearchRec);
 var
+  I: longint;
   Item: TArchiveItem;
+  Confirm: TArchiveConfirm;
+  UpdateAs: string;
 begin
-  if Index > -1 then
-  begin
-    Item      := FArchiveCustomItems.Items[Index];
-    Item.FTag := aitUpdate;
-  end else
-  begin
-    Item      := TArchiveItem.Create(SearchRec, DefaultFlags);
-    Item.FTag := aitAdd;
+  DoUpdate(SearchRec, UpdateAs, Confirm);
+  case Confirm of
+    arcOk: begin
+      I := Find(UpdateAs);
+      if I = -1 then
+      begin
+        Item           := TArchiveItem.Create(SearchRec, DefaultFlags);
+        Item.FFileName := UpdateAs;
+        Item.FTag      := aitAdd;
+      end else
+      begin
+        Item           := FArchiveCustomItems.Items[I];
+        Item.FTag      := aitUpdate;
+      end;
+      FIsNeededToSave := TRUE;
+    end;
+    // arcCancel: nothing to do
+    arcAbort: FIsNeededToAbort := TRUE;
   end;
 end;
 
-procedure TBeeArchiveUpdater.DoUpdate(Item: TArchiveItem;
-  var UpdateWith: string; var Confirm: TArchiveConfirm);
+procedure TBeeArchiveUpdater.UpdateTagged;
+begin
+  if FIsNeededToAbort = FALSE then
+  begin
+    CheckTags;
+    if FIsNeededToSave then
+    begin
+      FTempName   := GenerateFileName(FWorkDirectory);
+      FTempWriter := TFileWriter.Create(FTempName, FThreshold);
+      FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
+      if Assigned(FTempWriter) then
+      begin
+        if OpenSwap < ccError  then
+        begin
+
+
+        end;
+      end;
+
+
+
+
+
+
+    end;
+  end;
+end;
+
+
+procedure TBeeArchiveUpdater.DoUpdate(SearchRec: TCustomSearchRec;
+  var UpdateAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
   if Assigned(FOnUpdate) then
   begin
-    FOnUpdate(Item, Item.FExternalFileName, Confirm);
+    UpdateAs := SearchRec.Name;
+    FOnUpdate(SearchRec, UpdateAs, Confirm);
   end;
 end;
 
 procedure TBeeArchiveUpdater.CheckTags;
+var
+  I:longint;
 begin
 
 
+
+
+
+  if FIsNeededToSave then CheckSequences;
 end;
 
 procedure TBeeArchiveUpdater.CheckSequences;
@@ -2252,6 +2300,7 @@ begin
 
   *)
 end;
+
 
 
 
