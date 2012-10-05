@@ -160,6 +160,7 @@ type
     FPosition: longint;
     FTag: TArchiveItemTag;
     FExternalFileName: string;
+    FExternalFileSize: int64;
     function GetSolidCompression: boolean;
     procedure SetUncompressedSize(const Value: int64);
     procedure SetCreationTime(Value: longword);
@@ -183,9 +184,10 @@ type
     procedure ClearCompressionTable;
     procedure SetEncryptionMethod(Value: longword);
   public {methods}
-    constructor Create(SearchRec: TCustomSearchRec; DefaultFlags: TArchiveItemFlags);
+    constructor Create(DefaultFlags: TArchiveItemFlags);
     constructor Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
+    procedure Update(SearchRec: TCustomSearchRec);
   public {property}
     property Flags: TArchiveItemFlags read FFlags;
     property UncompressedSize: int64 read FUncompressedSize;
@@ -413,7 +415,6 @@ type
 
   TBeeArchiveUpdater = class(TArchiveWriterBase)
   private
-    FIsNeededToAbort: boolean;
     FDefaultFlags: TArchiveItemFlags;
     FCompressionMethod: longint;
     FCompressionLevel: longint;
@@ -628,13 +629,15 @@ end;
 
 // TArchiveItem class
 
-constructor TArchiveItem.Create(SearchRec: TCustomSearchRec; DefaultFlags: TArchiveItemFlags);
+constructor TArchiveItem.Create(DefaultFlags: TArchiveItemFlags);
 begin
   inherited Create;
   FFlags := DefaultFlags;
-  Exclude(FFlags, aifSessionFlags);
+end;
 
-  if (aifUncompressedSize in FFLags) then FUncompressedSize := SearchRec.Size;
+procedure TArchiveItem.Update(SearchRec: TCustomSearchRec);
+begin
+//if (aifUncompressedSize in FFLags) then FUncompressedSize := SearchRec.Size;
   if (aifCreationTime     in FFLags) then FCreationTime     := SearchRec.CreationTime;
   if (aifLastModifiedTime in FFLags) then FLastModifiedTime := SearchRec.LastModifiedTime;
   if (aifLastAccessTime   in FFLags) then FLastAccessTime   := SearchRec.LastAccessTime;
@@ -649,21 +652,23 @@ begin
   if (aifGroupName        in FFLags) then FGroupName        := SearchRec.GroupName;
 //if (aifComment          in FFLags) then FComment          := UseComment;
 
-  FFileName := SearchRec.Name;
+//FFileName := SearchRec.Name;
 
-  // data descriptor
-  FCompressionMethod := 0;
-  FCompressionFlags  := [];
+// data descriptor
+//FCompressionMethod := 0;
+//FCompressionFlags  := [];
 //FCompressedSize    := 0;
 //FCompressionLevel  := 0;
 //FDictionaryLevel   := 0;
 //FCompressionTable  := nil;
-  FEncryptionMethod  := 0;
+//FEncryptionMethod  := 0;
 
 //FPosition := -1;
-  FTag := aitAdd;
   FExternalFileName := SearchRec.Name;
+  FExternalFileSize := SearchRec.Size;
 end;
+
+
 
 constructor TArchiveItem.Read(Stream: TFileReader);
 begin
@@ -1580,6 +1585,8 @@ begin
               aitDecodeAndUpdate: DecodeToNil (Item);
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+            if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
+            if not FSwapWriter   .IsValidStream then DoFailure(cmStrmWriteError);
           end;
         end;
       FDecoder.Destroy;
@@ -1630,7 +1637,6 @@ begin
   FProcessedSize  := 0;
   FTotalSize      := 0;
 end;
-
 
 procedure TArchiveWriterBase.InitEncoder(Item: TArchiveItem);
 begin
@@ -1730,31 +1736,28 @@ var
 begin
   DoMessage(Format(cmScanning, ['...']));
   for I := 0 to FArchiveCustomItems.Count - 1 do
-  begin
-    Item := FArchiveCustomItems.Items[I];
-
-    if Item.FTag = aitUpdate then
+    if ExitCode < ccError then
     begin
-      repeat
-        DoExtract(Item, ExtractAs, Confirm);
-      until (Confirm <> arcOk) or (IsValidFileName(ExtractAs));
+      Item := FArchiveCustomItems.Items[I];
+      if Item.FTag = aitUpdate then
+      begin
+        repeat
+          DoExtract(Item, ExtractAs, Confirm);
+        until (Confirm <> arcOk) or (IsValidFileName(ExtractAs));
 
-      case Confirm of
-        arcOk:
-        begin
-          FIsNeededToExtract := TRUE;
-          Item.FExternalFileName := ExtractAs;
-        end;
-        arcCancel: Item.FTag:= aitNone;
-        arcAbort:
-        begin
-          FIsNeededToExtract := FALSE;
-          Break;
+        case Confirm of
+          arcOk: begin
+            FIsNeededToExtract     := TRUE;
+            Item.FExternalFileName := ExtractAs;
+          end;
+          arcCancel: Item.FTag:= aitNone;
+          arcAbort:  DoFailure(cmUserAbort);
         end;
       end;
     end;
-  end;
-  if FIsNeededToExtract then CheckSequences;
+
+  if ExitCode < ccError then
+    if FIsNeededToExtract then CheckSequences;
 end;
 
 procedure TBeeArchiveExtractor.CheckSequences;
@@ -1838,7 +1841,7 @@ begin
 
           case Item.FTag of
             aitUpdate:          DecodeToFile(Item);
-            aitDecode:          DecodeToNil   (Item);
+            aitDecode:          DecodeToNil (Item);
             aitDecodeAndUpdate: DecodeToFile(Item);
           end;
           {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
@@ -1894,32 +1897,27 @@ var
 begin
   DoMessage(Format(cmScanning, ['...']));
   for I := 0 to FArchiveCustomItems.Count - 1 do
-  begin
-    Item := FArchiveCustomItems.Items[I];
-
-    Inc(FTotalSize, Item.CompressedSize);
-    if Item.FTag in [aitUpdate] then
+    if ExitCode < ccError then
     begin
-      repeat
-        DoRename(Item, RemaneAs, Confirm);
-      until (Confirm <> arcOk) or (FArchiveCustomItems.GetNameIndex(RemaneAs) = -1);
+      Item := FArchiveCustomItems.Items[I];
 
-      case Confirm of
-        arcOk:
-        begin
-          FIsNeededToSave := TRUE;
-          Item.FFileName  := RemaneAs;
-        end;
-        arcCancel: Item.FTag:= aitNone;
-        arcAbort:
-        begin
-          FIsNeededToSave := FALSE;
-          Break;
-        end;
-      end;
+      Inc(FTotalSize, Item.CompressedSize);
+      if Item.FTag in [aitUpdate] then
+      begin
+        repeat
+          DoRename(Item, RemaneAs, Confirm);
+        until (Confirm <> arcOk) or (FArchiveCustomItems.GetNameIndex(RemaneAs) = -1);
 
+        case Confirm of
+          arcOk: begin
+            FIsNeededToSave := TRUE;
+            Item.FFileName  := RemaneAs;
+          end;
+          arcCancel: Item.FTag:= aitNone;
+          arcAbort:  DoFailure(cmUserAbort);
+        end;
+      end; // if end
     end; // if end
-  end; // for end
 end;
 
 procedure TBeeArchiveRenamer.RenameTagged;
@@ -1951,7 +1949,7 @@ begin
             aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
           end;
           Encoder.Copy(FArchiveReader, Item.CompressedSize);
-
+          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
           if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
           if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
         end;
@@ -1996,24 +1994,23 @@ var
 begin
   DoMessage(Format(cmScanning, ['...']));
   for I := 0 to FArchiveCustomItems.Count - 1 do
-  begin
-    Item := FArchiveCustomItems.Items[I];
-    if Item.FTag in [aitUpdate] then
+    if ExitCode < ccError then
+
     begin
-      DoErase(Item, Confirm);
-      case Confirm of
-        arcOk:  FIsNeededToSave := TRUE;
-        arcCancel: Item.FTag := aitNone;
-        arcAbort:
-        begin
-          FIsNeededToSave := FALSE;
-          Break;
+      Item := FArchiveCustomItems.Items[I];
+      if Item.FTag in [aitUpdate] then
+      begin
+        DoErase(Item, Confirm);
+        case Confirm of
+          arcOk:  FIsNeededToSave := TRUE;
+          arcCancel: Item.FTag := aitNone;
+          arcAbort:  DoFailure(cmUserAbort);
         end;
       end;
     end;
-  end;
 
-  if FIsNeededToSave then CheckSequences;
+  if ExitCode < ccError then
+    if FIsNeededToSave then CheckSequences;
 end;
 
 procedure TBeeArchiveEraser.CheckSequences;
@@ -2105,7 +2102,7 @@ begin
               aitNone:   EncodeFromArchive(Item);
               aitDecode: EncodeFromSwap   (Item);
             end;
-
+            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
             if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
             if not FSwapReader   .IsValidStream then DoFailure(cmStrmReadError);
             if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
@@ -2121,6 +2118,7 @@ begin
     end else
       DoFailure(cmOpenTempError);
   end;
+  CloseArchive;
 end;
 
 // TBeeArchiveUpdater class
@@ -2136,32 +2134,17 @@ begin
   FConfiguration      := nil;
   FForceFileExtension := '';
   FOnUpdate           := nil;
-  FIsNeededToAbort    := FALSE;
 end;
 
-procedure TBeeArchiveUpdater.SetCompressionMethod(Value: longint);
+procedure TBeeArchiveUpdater.DoUpdate(SearchRec: TCustomSearchRec;
+  var UpdateAs: string; var Confirm: TArchiveConfirm);
 begin
-  if Value in [0..1] then FCompressionMethod := Value;
-end;
-
-procedure TBeeArchiveUpdater.SetCompressionLevel(Value: longint);
-begin
-  if Value in [1..3] then FCompressionLevel := Value;
-end;
-
-procedure TBeeArchiveUpdater.SetDictionaryLevel(Value: longint);
-begin
-  if Value in [0..9] then FDictionaryLevel := Value;
-end;
-
-procedure TBeeArchiveUpdater.SetConfigurationName(const Value: string);
-begin
-  if FileExists(Value) then FConfigurationName := Value;
-end;
-
-procedure TBeeArchiveUpdater.SetForceFileExtension(const Value: string);
-begin
-  FForceFileExtension := Value;
+  Confirm := arcCancel;
+  if Assigned(FOnUpdate) then
+  begin
+    UpdateAs := SearchRec.Name;
+    FOnUpdate(SearchRec, UpdateAs, Confirm);
+  end;
 end;
 
 procedure TBeeArchiveUpdater.Tag(SearchRec: TCustomSearchRec);
@@ -2176,59 +2159,15 @@ begin
     arcOk: begin
       I := Find(UpdateAs);
       if I = -1 then
-      begin
-        Item           := TArchiveItem.Create(SearchRec, DefaultFlags);
-        Item.FFileName := UpdateAs;
-        Item.FTag      := aitAdd;
-      end else
-      begin
-        Item           := FArchiveCustomItems.Items[I];
-        Item.FTag      := aitUpdate;
-      end;
+        Item := TArchiveItem.Create(DefaultFlags)
+      else
+        Item := FArchiveCustomItems.Items[I];
+      Item.Update(SearchRec);
+      Item.FFileName  := UpdateAs;
       FIsNeededToSave := TRUE;
     end;
     // arcCancel: nothing to do
-    arcAbort: FIsNeededToAbort := TRUE;
-  end;
-end;
-
-procedure TBeeArchiveUpdater.UpdateTagged;
-begin
-  if FIsNeededToAbort = FALSE then
-  begin
-    CheckTags;
-    if FIsNeededToSave then
-    begin
-      FTempName   := GenerateFileName(FWorkDirectory);
-      FTempWriter := TFileWriter.Create(FTempName, FThreshold);
-      FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
-      if Assigned(FTempWriter) then
-      begin
-        if OpenSwap < ccError  then
-        begin
-
-
-        end;
-      end;
-
-
-
-
-
-
-    end;
-  end;
-end;
-
-
-procedure TBeeArchiveUpdater.DoUpdate(SearchRec: TCustomSearchRec;
-  var UpdateAs: string; var Confirm: TArchiveConfirm);
-begin
-  Confirm := arcCancel;
-  if Assigned(FOnUpdate) then
-  begin
-    UpdateAs := SearchRec.Name;
-    FOnUpdate(SearchRec, UpdateAs, Confirm);
+    arcAbort: DoFailure(cmUserAbort);
   end;
 end;
 
@@ -2236,11 +2175,6 @@ procedure TBeeArchiveUpdater.CheckTags;
 var
   I:longint;
 begin
-
-
-
-
-
   if FIsNeededToSave then CheckSequences;
 end;
 
@@ -2280,26 +2214,108 @@ begin
     I := GetBackTag(I - 1, aitUpdate);
   end;
 
-  (*
   // STEP3: calculate bytes to process ...
   for I := 0 to FArchiveCustomItems.Count - 1 do
   begin
     Item := FArchiveCustomItems.Items[I];
     case Item.FTag of
       aitNone:            Inc(FTotalSize, Item.CompressedSize);
-      aitUpdate:          Inc(FTotalSize, Item.ExtSize);
-      aitDecode:          Inc(FTotalSize, Item.Size + Item.Size);
-      aitDecodeAndUpdate: Inc(FTotalSize, Item.Size + Item.ExtSize);
+      aitAdd:             Inc(FTotalSize, Item.FExternalFileSize);
+      aitUpdate:          Inc(FTotalSize, Item.FExternalFileSize);
+      aitDecode:          Inc(FTotalSize, Item.UncompressedSize + Item.UncompressedSize);
+      aitDecodeAndUpdate: Inc(FTotalSize, Item.UncompressedSize + Item.FExternalFileSize);
     end;
   end;
-
-    if FCommandLine.sfxOption <> '' then
-      FHeaders.LoadModule(FCommandLine.sfxOption);
-  end else
-    DoMessage(cmNoFilesWarning, ccWarning);
-
-  *)
 end;
+
+procedure TBeeArchiveUpdater.UpdateTagged;
+var
+  I: longint;
+  Item: TArchiveItem;
+begin
+  if FIsNeededToAbort = FALSE then
+  begin
+    CheckTags;
+    if FIsNeededToSave then
+    begin
+      FTempName   := GenerateFileName(FWorkDirectory);
+      FTempWriter := TFileWriter.Create(FTempName, FThreshold);
+      FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
+      if Assigned(FTempWriter) then
+      begin
+        if OpenSwap < ccError  then
+        begin
+          FEncoder := THeaderEncoder.Create(FTempWriter);
+          FEncoder.OnProgress := @DoProgress;
+
+          for I := 0 to FArchiveCustomItems.Count - 1 do
+            if ExitCode < ccError then
+            begin
+              Item := FArchiveCustomItems.Items[I];
+              case Item.FTag of
+                aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
+                aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
+                aitUpdate:          DoMessage(Format(cmUpdating, [Item.FileName]));
+                aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
+                aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
+              end;
+
+              InitEncoder(Item);
+              case Item.FTag of
+                aitNone:            EncodeFromArchive(Item);
+                aitAdd:             EncodeFromFile   (Item);
+                aitUpdate:          EncodeFromFile   (Item);
+                aitDecode:          EncodeFromSwap   (Item);
+                aitDecodeAndUpdate: EncodeFromFile   (Item);
+              end;
+              {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
+              if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
+              if not FSwapReader   .IsValidStream then DoFailure(cmStrmReadError);
+              if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
+            end;
+          FEncoder.Destroy;
+          if ExitCode < ccError then
+          begin
+            Write(FTempWriter);
+            if not FTempWriter.IsValidStream then
+              DoFailure(cmStrmWriteError);
+          end;
+        end;
+      end;
+    end;
+  end;
+  CloseArchive;
+end;
+
+procedure TBeeArchiveUpdater.SetCompressionMethod(Value: longint);
+begin
+  if Value in [0..1] then FCompressionMethod := Value;
+end;
+
+procedure TBeeArchiveUpdater.SetCompressionLevel(Value: longint);
+begin
+  if Value in [1..3] then FCompressionLevel := Value;
+end;
+
+procedure TBeeArchiveUpdater.SetDictionaryLevel(Value: longint);
+begin
+  if Value in [0..9] then FDictionaryLevel := Value;
+end;
+
+procedure TBeeArchiveUpdater.SetConfigurationName(const Value: string);
+begin
+  if FileExists(Value) then FConfigurationName := Value;
+end;
+
+procedure TBeeArchiveUpdater.SetForceFileExtension(const Value: string);
+begin
+  FForceFileExtension := Value;
+end;
+
+
+
+
+
 
 
 
