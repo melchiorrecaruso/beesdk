@@ -162,6 +162,7 @@ type
     FExternalFileName: string;
     FExternalFileSize: int64;
     function GetSolidCompression: boolean;
+    procedure SetCompressedSize(const Value: int64);
     procedure SetUncompressedSize(const Value: int64);
     procedure SetCreationTime(Value: longword);
     procedure SetLastModifiedTime(Value: longword);
@@ -430,7 +431,7 @@ type
     procedure SetConfigurationName(const Value: string);
     procedure SetForceFileExtension(const Value: string);
 
-    // procedure Configure;
+    procedure Configure;
     procedure CheckTags;
     procedure CheckSequences;
     procedure DoUpdate(SearchRec: TCustomSearchRec;
@@ -750,6 +751,11 @@ end;
 function TArchiveItem.GetSolidCompression: boolean;
 begin
   Result := acfSolidCompression in FCompressionFlags;
+end;
+
+procedure TArchiveItem.SetCompressedSize(const Value: int64);
+begin
+  FCompressedSize := Value;
 end;
 
 procedure TArchiveItem.SetUncompressedSize(const Value: int64);
@@ -1651,17 +1657,42 @@ end;
 
 procedure TArchiveWriterBase.EncodeFromArchive(Item: TArchiveItem);
 begin
-  FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+  if Assigned(FArchiveReader) then
+  begin
+     FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
 
+     Item.SetDiskSeek(FTempWriter.Seek(0, soCurrent));
+     Item.SetDiskNumber(FTempWriter.CurrentImage);
+
+     FEncoder.Copy(FArchiveReader, Item.CompressedSize);
+
+
+     Item.SetCompressedSize(FTempWriter.Seek(0, soCurrent) -  Item.DiskSeek);
+
+  end else
+    DoFailure(cmStrmReadError);
 end;
 
 procedure TArchiveWriterBase.EncodeFromSwap(Item: TArchiveItem);
 var
   CRC: longword;
-  Stream: TStream;
 begin
-  FSwapReader.Seek(Item.DiskSeek, soBeginning);
+  if Assigned(FSwapReader) then
+  begin
+    FSwapReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
 
+    Item.SetDiskSeek(FTempWriter.Seek(0, soCurrent));
+    Item.SetDiskNumber(FTempWriter.CurrentImage);
+    case Item.CompressionMethod of
+      0: Item.SetUncompressedSize(FEncoder.Encode(FSwapReader, Item.UncompressedSize, CRC));
+    else Item.SetUncompressedSize(FEncoder.Encode(FSwapReader, Item.UncompressedSize, CRC));
+    end;
+    Item.SetCRC(CRC);
+
+    Item.SetCompressedSize(FTempWriter.Seek(0, soCurrent) -  Item.DiskSeek);
+
+  end else
+    DoFailure(cmStrmReadError);
 end;
 
 procedure TArchiveWriterBase.EncodeFromFile(Item: TArchiveItem);
@@ -1672,37 +1703,22 @@ begin
   Stream := TFileReader.Create(Item.FExternalFileName, 0);
   if Stream <> nil then
   begin
-    Item.SetDiskSeek(FTempWriter.Seek(0, soCurrent)); // flush buffer
+    Item.SetDiskSeek(FTempWriter.Seek(0, soCurrent));
     Item.SetDiskNumber(FTempWriter.CurrentImage);
+    case Item.CompressionMethod of
+      0: Item.SetUncompressedSize(FEncoder.Encode(Stream, Item.FExternalFileSize, CRC));
+    else Item.SetUncompressedSize(FEncoder.Encode(Stream, Item.FExternalFileSize, CRC));
+    end;
+    Item.SetCRC(CRC);
 
+    // if FTempWriter.CurrentImage = Item.DiskNumber then
+    Item.SetCompressedSize(FTempWriter.Seek(0, soCurrent) -  Item.DiskSeek);
+    // else
+    //   Item.SetCompressedSize(FTempWriter.Seek(0, soCurrent) - (Item.DiskSeek - FTempWriter.Threshold));
 
-
-      FBeeEncoder.CompressionMethod := TBeeArchiveMainCoder(Item.Coder).CompressionLevel;
-      FBeeEncoder.DictionaryLevel   := TBeeArchiveMainCoder(Item.Coder).DictionaryLevel;
-      FBeeEncoder.TableParameters   := TBeeArchiveMainCoder(Item.Coder).CompressionTable;
-      FBeeEncoder.Tear              := TBeeArchiveMainCoder(Item.Coder).SolidCompression;
-
-      Item.UncompressedSize     := FBeeEncoder.Encode(Stream, Item.ExternalUncompressedSize, CRC);
-      Item.Coder.CompressedSize := FTempWriter.Seek(0, soCurrent) - Item.DiskSeek;
-
-      // optimize compression ...
-      if Item.Coder.CompressedSize >= Item.UncompressedSize then
-      begin
-        FreeAndNil(Item.FCoder);
-        Stream.Seek(Item.FExternalDiskSeek, soBeginning);
-        FTempWriter.Size      := Item.DiskSeek;
-        Item.UncompressedSize := FTempWriter.Read(Stream, Item.ExternalUncompressedSize);
-      end;
-    end else
-      Item.UncompressedSize := FBeeEncoder.Copy(Stream, Item.ExternalUncompressedSize, CRC);
-
-    Item.CRC := CRC;
-
-    if Item.FExternalStream = nil then Stream.Destroy;
+    Stream.Destroy;
   end else
     DoFailure(Format(cmOpenFileError, [Item.FExternalFileName]));
-end;
-
 end;
 
 procedure TArchiveWriterBase.SetWorkDirectory(const Value: string);
@@ -2174,6 +2190,55 @@ begin
   FOnUpdate           := nil;
 end;
 
+procedure TBeeArchiveUpdater.Configure;
+var
+  I: longint;
+  CurrentItem: TArchiveItem;
+  CurrentTable: TTableParameters;
+  CurrentFileExt: string;
+  PreviousFileExt: string;
+begin
+  if FCompressionCoder = actNONE then Exit;
+  if FCompressionCoder = actMAIN then
+  begin
+    CurrentFileExt := '.';
+    FConfiguration.Selector('\main');
+    FConfiguration.CurrentSection.Values['Method'] := IntToStr(FCompressionLevel);
+    FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FDictionaryLevel);
+    FConfiguration.Selector('\m' + FConfiguration.CurrentSection.Values['Method']);
+
+    for I := 0 to FArchiveCustomItems.Count - 1 do
+    begin
+      CurrentItem := FArchiveCustomItems.Items[I];
+      if CurrentItem.FTag = aitAdd then
+      begin
+        PreviousFileExt := CurrentFileExt;
+        if FForceFileExtension = '' then
+          CurrentFileExt := ExtractFileExt(CurrentItem.ExternalFileName)
+        else
+          CurrentFileExt := FForceFileExtension;
+
+        CurrentItem.FCoder := TBeeArchiveMainCoder.Create;
+        with TBeeArchiveMainCoder(CurrentItem.FCoder) do
+        begin
+          Method     := FCompressionLevel;
+          Dictionary := FDictionaryLevel;
+
+          if FConfiguration.GetTable(CurrentFileExt, CurrentTable) then
+            Table := CurrentTable
+          else
+            Table := DefaultTableParameters;
+
+          Tear := TRUE;
+          if Solid then
+            if CompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
+              Tear := FALSE;
+        end;
+      end;
+    end;
+  end;
+end;
+
 procedure TBeeArchiveUpdater.DoUpdate(SearchRec: TCustomSearchRec;
   var UpdateAs: string; var Confirm: TArchiveConfirm);
 begin
@@ -2271,7 +2336,7 @@ var
   I: longint;
   Item: TArchiveItem;
 begin
-  if FIsNeededToAbort = FALSE then
+  if ExitCode < ccError then
   begin
     CheckTags;
     if FIsNeededToSave then
@@ -2349,160 +2414,6 @@ procedure TBeeArchiveUpdater.SetForceFileExtension(const Value: string);
 begin
   FForceFileExtension := Value;
 end;
-
-
-
-
-
-
-
-
-
-
-
-(*
-
-
-
-
-procedure TBeeArchiveAdder.ConfigureCoders;
-var
-  I: longint;
-  CurrentItem: TArchiveItem;
-  CurrentTable: TTableParameters;
-  CurrentFileExt: string;
-  PreviousFileExt: string;
-begin
-  if FCompressionCoder = actNONE then Exit;
-  if FCompressionCoder = actMAIN then
-  begin
-    CurrentFileExt := '.';
-    FConfiguration.Selector('\main');
-    FConfiguration.CurrentSection.Values['Method'] := IntToStr(FCompressionLevel);
-    FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FDictionaryLevel);
-    FConfiguration.Selector('\m' + FConfiguration.CurrentSection.Values['Method']);
-
-    for I := 0 to FArchiveCustomItems.Count - 1 do
-    begin
-      CurrentItem := FArchiveCustomItems.Items[I];
-      if CurrentItem.FTag = aitAdd then
-      begin
-        PreviousFileExt := CurrentFileExt;
-        if FForceFileExtension = '' then
-          CurrentFileExt := ExtractFileExt(CurrentItem.ExternalFileName)
-        else
-          CurrentFileExt := FForceFileExtension;
-
-        CurrentItem.FCoder := TBeeArchiveMainCoder.Create;
-        with TBeeArchiveMainCoder(CurrentItem.FCoder) do
-        begin
-          Method     := FCompressionLevel;
-          Dictionary := FDictionaryLevel;
-
-          if FConfiguration.GetTable(CurrentFileExt, CurrentTable) then
-            Table := CurrentTable
-          else
-            Table := DefaultTableParameters;
-
-          Tear := TRUE;
-          if Solid then
-            if CompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
-              Tear := FALSE;
-        end;
-      end;
-    end;
-  end;
-  if FCompressionCoder = actROLOZ then
-  begin
-    // nothing to do
-  end;
-end;
-
-
-
-procedure TBeeArchiveViewer.Add(SearchRec: TCustomSearchRec;
-  const UseFileName: string; UseFlags: TArchiveItemFlags);
-begin
-  if FArchiveBusy then Exit;
-
-  FArchiveBusy := TRUE;
-  if Find(UseFileName) = -1 then
-  begin
-    FArchiveCustomItems.Add(TArchiveItem.Create(
-      SearchRec, UseFileName, UseFlags));
-    FNeededToSave := TRUE;
-  end;
-  FArchiveBusy  := FALSE;
-end;
-
-procedure TBeeArchiveViewer.Update(SearchRec: TCustomSearchRec;
-  const UseFileName: string; UseFlags: TArchiveItemFlags);
-var
-  Index: longint;
-begin
-  if FArchiveBusy then Exit;
-
-  FArchiveBusy := TRUE;
-  Index := Find(UseFileName);
-  if Index <> -1 then
-    with FArchiveCustomItems.Items[Index] do
-      if SearchRec.LastModifiedTime > LastModifiedTime then
-      begin
-        FTag := aitUpdate;
-        // copiare tutti i dati
-        FNeededToSave := TRUE;
-      end;
-  FArchiveBusy := FALSE;
-end;
-
-procedure TBeeArchiveViewer.Replace(SearchRec: TCustomSearchRec;
-  const UseFileName: string; UseFlags: TArchiveItemFlags);
-var
-  Index: longint;
-begin
-  if FArchiveBusy then Exit;
-
-  FArchiveBusy := TRUE;
-  Index := Find(UseFileName);
-  if Index <> -1 then
-    with FArchiveCustomItems.Items[Index] do
-    begin
-      FTag := aitUpdate;
-
-      // copiare tutti i dati
-
-
-      FNeededToSave := TRUE;
-    end;
-  FArchiveBusy := FALSE;
-end;
-
-
-
-
-procedure TBeeArchiveViewer.Copy(Item: TArchiveItem);
-var
-  CRC: longword;
-  Stream: TStream;
-begin
-  Stream := Item.FExternalStream;
-  Stream.Seek(Item.FExternalDiskSeek, soBeginning);
-
-  Item.DiskSeek := FTempWriter.Seek(0, soCurrent);
-  FBeeEncoder.Copy(Stream, Item.ExternalUncompressedSize, CRC);
-end;
-
-
-
-
-
-
-
-     *)
-
-
-
-
 
 end.
 
