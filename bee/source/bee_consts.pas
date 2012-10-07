@@ -108,7 +108,7 @@ const
   cmStreamError       = 'Error: can''t open stream';
   cmTestPswError      = 'Error: wrong password';
 
-  cmConfigWarning     = 'Warning: configuration file "%s" not found, data will be stored';
+  cmConfigError       = 'Error: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning = 'Warning: file "%s" already exists';
   cmNoFilesWarning    = 'Warning: no files to process';
 
