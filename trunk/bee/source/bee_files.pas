@@ -618,10 +618,10 @@ begin
   Result.LastModifiedTime := GetFileLastModifiedTime(Rec);
   Result.LastAccessTime   := GetFileLastAccessTime(Rec);
   Result.Mode             := GetFileMode(Rec);
-  Result.UserID           :=
-  Result.UserName         :=
-  Result.GroupID          :=
-  Result.GroupName        :=
+  // Result.UserID           :=
+  // Result.UserName         :=
+  // Result.GroupID          :=
+  // Result.GroupName        :=
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
