@@ -212,7 +212,7 @@ type
     property CompressedSize: int64 read FCompressedSize;
     property CompressionLevel: longword read FCompressionLevel;
     property DictionaryLevel: longword read FDictionaryLevel;
-    property SolidCompression: boolean read GetSolidCompression;
+    property SolidCompression: boolean read GetSolidCompression write SetSolidCompression;
     property CompressionTable: TTableParameters read FCompressionTable;
     property EncryptionMethod: longword read FEncryptionMethod;
 
@@ -422,6 +422,7 @@ type
     FCompressionLevel: longint;
     FDictionaryLevel: longint;
     FSolidCompression: boolean;
+    FEncryptionMethod: longword;
     FConfigurationName: string;
     FConfiguration: TConfiguration;
     FForceFileExtension: string;
@@ -451,6 +452,10 @@ type
       read FDictionaryLevel write SetDictionaryLevel;
     property SolidCompression: boolean
       read FSolidCompression write FSolidCompression;
+
+    property EncrypMethod: longint
+      read FCompressionLevel write SetCompressionLevel;
+
 
     property ConfigurationName: string
       read FConfigurationName write SetConfigurationName;
@@ -2182,10 +2187,12 @@ end;
 constructor TBeeArchiveUpdater.Create;
 begin
   inherited Create;
-  FCompressionMethod  := 0;
+  FCompressionMethod  := actNone;
   FCompressionLevel   := 0;;
   FDictionaryLevel    := 0;
   FSolidCompression   := FALSE;
+  FEncryptionMethod   := acrtNone;
+
   FConfigurationName  := '';
   FConfiguration      := nil;
   FForceFileExtension := '';
@@ -2195,7 +2202,13 @@ begin
 end;
 
 destructor TBeeArchiveUpdater.Destroy;
+var
+  I: longint;
 begin
+  for I := 0 to FSearchRecs.Count - 1 do
+  begin
+    TCustomSearchRec(FSearchRecs[I]^).Destroy;
+  end;
   FSearchRecs.Destroy;
   inherited destroy;
 end;
@@ -2208,42 +2221,44 @@ var
   CurrentFileExt: string;
   PreviousFileExt: string;
 begin
+  FConfiguration.Create;
+  if FileExists(FConfigurationName) then
+    FConfiguration.LoadFromFile(FConfigurationName);
+
   CurrentFileExt := '.';
   FConfiguration.Selector('\main');
   FConfiguration.CurrentSection.Values['Method'] := IntToStr(FCompressionLevel);
   FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FDictionaryLevel);
   FConfiguration.Selector('\m' + FConfiguration.CurrentSection.Values['Method']);
 
-    for I := 0 to FArchiveCustomItems.Count - 1 do
+  for I := 0 to FArchiveCustomItems.Count - 1 do
+  begin
+    CurrentItem := FArchiveCustomItems.Items[I];
+    if CurrentItem.FTag = aitAdd then
     begin
-      CurrentItem := FArchiveCustomItems.Items[I];
-      if CurrentItem.FTag = aitAdd then
-      begin
-        PreviousFileExt := CurrentFileExt;
-        if FForceFileExtension = '' then
-          CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
-        else
-          CurrentFileExt := FForceFileExtension;
-        (*
-        CurrentItem.FCoder := TBeeArchiveMainCoder.Create;
-        with TBeeArchiveMainCoder(CurrentItem.FCoder) do
-        begin
-          Method     := FCompressionLevel;
-          Dictionary := FDictionaryLevel;
+      CurrentItem.FCompressionMethod := FCompressionMethod;
+      CurrentItem.FCompressionLevel  := FCompressionLevel;
+      CurrentItem.FDictionaryLevel   := FDictionaryLevel;
+      CurrentItem.FEncryptionMethod  := FEncryptionMethod;
 
-          if FConfiguration.GetTable(CurrentFileExt, CurrentTable) then
-            Table := CurrentTable
-          else
-            Table := DefaultTableParameters;
+      PreviousFileExt := CurrentFileExt;
+      if FForceFileExtension = '' then
+        CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
+      else
+        CurrentFileExt := FForceFileExtension;
 
-          Tear := TRUE;
-          if Solid then
-            if CompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
-              Tear := FALSE;
-        end;
-      end;*)
+      if FConfiguration.GetTable(CurrentFileExt, CurrentTable) then
+        CurrentItem.FCompressionTable := CurrentTable
+      else
+        CurrentItem.FCompressionTable := DefaultTableParameters;
+
+      CurrentItem.SolidCompression := FALSE;
+      if SolidCompression then
+        if CompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
+          CurrentItem.SolidCompression := TRUE;
     end;
   end;
+  FreeAndNil(FConfiguration);
 end;
 
 procedure TBeeArchiveUpdater.DoUpdate(SearchRec: TCustomSearchRec;
@@ -2261,9 +2276,7 @@ procedure TBeeArchiveUpdater.Tag(SearchRec: TCustomSearchRec);
 var
   Csr: TCustomSearchRec;
 begin
-  Csr := TCustomSearchRec.Create;
-  FSearchRecs.Add(Csr);
-
+  Csr                  := TCustomSearchRec.Create;
   Csr.Name             := SearchRec.Name;
   Csr.Size             := SearchRec.Size;
   Csr.Attributes       := SearchRec.Attributes;
@@ -2275,6 +2288,8 @@ begin
   Csr.UserName         := SearchRec.UserName;
   Csr.GroupID          := SearchRec.GroupID;
   Csr.GroupName        := SearchRec.GroupName;
+
+  FSearchRecs.Add(Csr);
 end;
 
 function CompareCustomSearchRecExt(Item1, Item2: pointer): longint;
@@ -2296,27 +2311,32 @@ var
 begin
   FSearchRecs.Sort(@CompareCustomSearchRecExt);
   for J := 0 to FSearchRecs.Count - 1 do
-  begin
-    Csr := TCustomSearchRec(FSearchRecs[J]^);
-    DoUpdate(Csr, UpdateAs, Confirm);
-    case Confirm of
-      arcOk:
-      begin
-        I := Find(UpdateAs);
-        if I = -1 then
+    if ExitCode < ccError then
+    begin
+      Csr := TCustomSearchRec(FSearchRecs[J]^);
+      DoUpdate(Csr, UpdateAs, Confirm);
+      case Confirm of
+        arcOk:
         begin
-          Item := TArchiveItem.Create(DefaultFlags);
-          FArchiveCustomItems.Add(Item);
-          Item.FFileName := UpdateAs;
-        end else
-          Item := FArchiveCustomItems.Items[I];
-        Item.Update(Csr);
-        FIsNeededToSave := TRUE;
+          I := Find(UpdateAs);
+          if I = -1 then
+          begin
+            Item           := TArchiveItem.Create(DefaultFlags);
+            Item.FTag      := aitAdd;
+            Item.FFileName := UpdateAs;
+            FArchiveCustomItems.Add(Item);
+          end else
+          begin
+            Item      := FArchiveCustomItems.Items[I];
+            Item.FTag := aitUpdate;
+          end;
+          Item.Update(Csr);
+          FIsNeededToSave := TRUE;
+        end;
+      //arcCancel: nothing to do
+        arcAbort:  DoFailure(cmUserAbort);
       end;
-    //arcCancel: nothing to do
-      arcAbort:  DoFailure(cmUserAbort);
     end;
-  end;
 
   if ExitCode < ccError then
     if FIsNeededToSave then CheckSequences;
@@ -2329,7 +2349,7 @@ var
 begin
   DoMessage(Format(cmScanning, ['...']));
   // STEP1: configure new items ...
-  // Configure;
+  Configure;
   // STEP2: find sequences and tag ...
   I := GetBackTag(FArchiveCustomItems.Count - 1, aitUpdate);
   while I > -1 do
