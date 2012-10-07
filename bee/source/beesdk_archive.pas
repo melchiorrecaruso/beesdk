@@ -416,6 +416,7 @@ type
 
   TBeeArchiveUpdater = class(TArchiveWriterBase)
   private
+    FSearchRecs: TList;
     FDefaultFlags: TArchiveItemFlags;
     FCompressionMethod: longint;
     FCompressionLevel: longint;
@@ -438,6 +439,7 @@ type
       var UpdateAs: string; var Confirm: TArchiveConfirm);
   public
     constructor Create;
+    destructor Destroy; override;
     procedure UpdateTagged;
     procedure Tag(SearchRec: TCustomSearchRec);
   public
@@ -2188,6 +2190,14 @@ begin
   FConfiguration      := nil;
   FForceFileExtension := '';
   FOnUpdate           := nil;
+
+  FSearchRecs := TList.Create;
+end;
+
+destructor TBeeArchiveUpdater.Destroy;
+begin
+  FSearchRecs.Destroy;
+  inherited destroy;
 end;
 
 procedure TBeeArchiveUpdater.Configure;
@@ -2198,14 +2208,11 @@ var
   CurrentFileExt: string;
   PreviousFileExt: string;
 begin
-  if FCompressionCoder = actNONE then Exit;
-  if FCompressionCoder = actMAIN then
-  begin
-    CurrentFileExt := '.';
-    FConfiguration.Selector('\main');
-    FConfiguration.CurrentSection.Values['Method'] := IntToStr(FCompressionLevel);
-    FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FDictionaryLevel);
-    FConfiguration.Selector('\m' + FConfiguration.CurrentSection.Values['Method']);
+  CurrentFileExt := '.';
+  FConfiguration.Selector('\main');
+  FConfiguration.CurrentSection.Values['Method'] := IntToStr(FCompressionLevel);
+  FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FDictionaryLevel);
+  FConfiguration.Selector('\m' + FConfiguration.CurrentSection.Values['Method']);
 
     for I := 0 to FArchiveCustomItems.Count - 1 do
     begin
@@ -2214,10 +2221,10 @@ begin
       begin
         PreviousFileExt := CurrentFileExt;
         if FForceFileExtension = '' then
-          CurrentFileExt := ExtractFileExt(CurrentItem.ExternalFileName)
+          CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
         else
           CurrentFileExt := FForceFileExtension;
-
+        (*
         CurrentItem.FCoder := TBeeArchiveMainCoder.Create;
         with TBeeArchiveMainCoder(CurrentItem.FCoder) do
         begin
@@ -2234,7 +2241,7 @@ begin
             if CompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
               Tear := FALSE;
         end;
-      end;
+      end;*)
     end;
   end;
 end;
@@ -2252,33 +2259,67 @@ end;
 
 procedure TBeeArchiveUpdater.Tag(SearchRec: TCustomSearchRec);
 var
-  I: longint;
-  Item: TArchiveItem;
-  Confirm: TArchiveConfirm;
-  UpdateAs: string;
+  Csr: TCustomSearchRec;
 begin
-  DoUpdate(SearchRec, UpdateAs, Confirm);
-  case Confirm of
-    arcOk: begin
-      I := Find(UpdateAs);
-      if I = -1 then
-        Item := TArchiveItem.Create(DefaultFlags)
-      else
-        Item := FArchiveCustomItems.Items[I];
-      Item.Update(SearchRec);
-      Item.FFileName  := UpdateAs;
-      FIsNeededToSave := TRUE;
-    end;
-    // arcCancel: nothing to do
-    arcAbort: DoFailure(cmUserAbort);
-  end;
+  Csr := TCustomSearchRec.Create;
+  FSearchRecs.Add(Csr);
+
+  Csr.Name             := SearchRec.Name;
+  Csr.Size             := SearchRec.Size;
+  Csr.Attributes       := SearchRec.Attributes;
+  Csr.CreationTime     := SearchRec.CreationTime;
+  Csr.LastModifiedTime := SearchRec.LastModifiedTime;
+  Csr.LastAccessTime   := SearchRec.LastAccessTime;
+  Csr.Mode             := SearchRec.Mode;
+  Csr.UserID           := SearchRec.UserID;
+  Csr.UserName         := SearchRec.UserName;
+  Csr.GroupID          := SearchRec.GroupID;
+  Csr.GroupName        := SearchRec.GroupName;
+end;
+
+function CompareCustomSearchRecExt(Item1, Item2: pointer): longint;
+var
+  Ext1, Ext2: string;
+begin
+  Ext1   := TCustomSearchRec(Item1^).Name;
+  Ext2   := TCustomSearchRec(Item2^).Name;
+  Result := Bee_Common.CompareFileName(Ext1, Ext2);
 end;
 
 procedure TBeeArchiveUpdater.CheckTags;
 var
-  I:longint;
+  I, J: longint;
+  Item: TArchiveItem;
+  Confirm: TArchiveConfirm;
+  Csr: TCustomSearchRec;
+  UpdateAs: string;
 begin
-  if FIsNeededToSave then CheckSequences;
+  FSearchRecs.Sort(@CompareCustomSearchRecExt);
+  for J := 0 to FSearchRecs.Count - 1 do
+  begin
+    Csr := TCustomSearchRec(FSearchRecs[J]^);
+    DoUpdate(Csr, UpdateAs, Confirm);
+    case Confirm of
+      arcOk:
+      begin
+        I := Find(UpdateAs);
+        if I = -1 then
+        begin
+          Item := TArchiveItem.Create(DefaultFlags);
+          FArchiveCustomItems.Add(Item);
+          Item.FFileName := UpdateAs;
+        end else
+          Item := FArchiveCustomItems.Items[I];
+        Item.Update(Csr);
+        FIsNeededToSave := TRUE;
+      end;
+    //arcCancel: nothing to do
+      arcAbort:  DoFailure(cmUserAbort);
+    end;
+  end;
+
+  if ExitCode < ccError then
+    if FIsNeededToSave then CheckSequences;
 end;
 
 procedure TBeeArchiveUpdater.CheckSequences;
@@ -2336,9 +2377,9 @@ var
   I: longint;
   Item: TArchiveItem;
 begin
-  if ExitCode < ccError then
-  begin
-    CheckTags;
+  if ExitCode < ccError then Exit;
+
+  CheckTags;
     if FIsNeededToSave then
     begin
       FTempName   := GenerateFileName(FWorkDirectory);
@@ -2386,7 +2427,6 @@ begin
         end;
       end;
     end;
-  end;
   CloseArchive;
 end;
 

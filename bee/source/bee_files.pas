@@ -656,7 +656,6 @@ begin
       if FileNameMatch(RecName, Mask, Recursive) then
         if not FileNameMatch(RecName, ExcludeMasks, Recursive) then
           FList.Add(CreateItem(RecPath, Rec));
-
     end else
       if (Recursive <> rmNone) and (Rec.Name <> '.') and (Rec.Name <> '..') then
         RecursiveScan(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), ExcludeMasks, Recursive);
