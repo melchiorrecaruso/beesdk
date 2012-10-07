@@ -50,6 +50,9 @@ function GetFileCreationTime(const Rec: TSearchRec): longint;
 function GetFileLastAccessTime(const Rec: TSearchRec): longint;
 function GetFileLastModifiedTime(const Rec: TSearchRec): longint;
 
+
+
+
 function GetDiskFree(const FileName: string): int64;
 
 { filename handling routines }
