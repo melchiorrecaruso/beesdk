@@ -279,9 +279,10 @@ type
     FOnMessage: TArchiveMessageEvent;
     FOnProgress: TArchiveProgressEvent;
     FOnRequestImage: TFileReaderRequestImageEvent;
-    FArchiveCustomItems: TBeeArchiveCustomItems;
-    FArchiveBindingItem: TBeeArchiveBinding;
-    FArchiveLocatorItem: TArchiveLocator;
+    FArchiveItems: TBeeArchiveCustomItems;
+    FArchiveBinding: TBeeArchiveBinding;
+    FArchiveLocator: TArchiveLocator;
+    procedure UnPack;
     procedure InitDecoder (Item: TArchiveItem);
     procedure DecodeToSwap(Item: TArchiveItem);
     procedure DecodeToNil (Item: TArchiveItem);
@@ -1162,16 +1163,16 @@ begin
   Randomize;
   FExitCode := ccSuccesful;
 
-  FArchiveCustomItems := TBeeArchiveCustomItems.Create;
-  FArchiveBindingItem := TBeeArchiveBinding.Create;
-  FArchiveLocatorItem := TArchiveLocator.Create;
+  FArchiveItems := TBeeArchiveCustomItems.Create;
+  FArchiveBinding := TBeeArchiveBinding.Create;
+  FArchiveLocator := TArchiveLocator.Create;
 end;
 
 destructor TArchiveReaderBase.Destroy;
 begin
-  FArchiveCustomItems.Destroy;
-  FArchiveBindingItem.Destroy;
-  FArchiveLocatorItem.Destroy;
+  FArchiveItems.Destroy;
+  FArchiveBinding.Destroy;
+  FArchiveLocator.Destroy;
   inherited Destroy;
 end;
 
@@ -1182,12 +1183,12 @@ end;
 
 function TArchiveReaderBase.GetCount: longint;
 begin
-  Result := FArchiveCustomItems.Count;
+  Result := FArchiveItems.Count;
 end;
 
 function TArchiveReaderBase.GetItem(Index: longint): TArchiveItem;
 begin
-  Result := FArchiveCustomItems.Items[Index];
+  Result := FArchiveItems.Items[Index];
 end;
 
 procedure TArchiveReaderBase.SetTerminated(Value: boolean);
@@ -1238,11 +1239,11 @@ begin
   begin
     if longword(aStream.ReadInfWord) <= beexVERSION then Exit;
 
-    FArchiveLocatorItem.Read(aStream);
-    if alfDisksNumber in FArchiveLocatorItem.FFlags then
-      aStream.ImagesNumber := FArchiveLocatorItem.DisksNumber;
-    if alfDiskNumber in FArchiveLocatorItem.FFlags then
-      aStream.SeekImage(FArchiveLocatorItem.DiskNumber, FArchiveLocatorItem.DiskSeek);
+    FArchiveLocator.Read(aStream);
+    if alfDisksNumber in FArchiveLocator.FFlags then
+      aStream.ImagesNumber := FArchiveLocator.DisksNumber;
+    if alfDiskNumber in FArchiveLocator.FFlags then
+      aStream.SeekImage(FArchiveLocator.DiskNumber, FArchiveLocator.DiskSeek);
 
     if aStream.ReadDWord = beexMARKER then
       repeat
@@ -1252,14 +1253,91 @@ begin
           if longword(aStream.ReadInfWord) <= beexVERSION then Exit;
 
           case T of
-            aitItem:    FArchiveCustomItems.Add(TArchiveItem.Read(aStream));
-            aitBinding: FArchiveBindingItem.Read(aStream);
+            aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
+            aitBinding: FArchiveBinding.Read(aStream);
           //aitLocator: already readed;
             else        Exit;
           end;
         end;
         Result := (T = aitEnd);
       until Result;
+  end;
+end;
+
+procedure TArchiveReaderBase.UnPack;
+var
+  I: longint;
+  CurrentItem: TArchiveItem;
+  PreviusItem: TArchiveItem;
+begin
+  PreviusItem := nil;
+  for I := 0 to FArchiveItems.Count - 1 do
+  begin
+    CurrentItem := FArchiveItems.Items[I];
+    if not (aifSessionFlags in CurrentItem.Flags) then
+    begin
+      if not (aifUncompressedSize in CurrentItem.Flags) then
+        CurrentItem.FUncompressedSize := PreviusItem.UncompressedSize;
+
+      if not (aifCreationTime in CurrentItem.Flags) then
+        CurrentItem.FCreationTime := PreviusItem.CreationTime;
+
+
+
+
+    end;
+    PreviusItem :=  CurrentItem;
+
+
+    aifCreationTime,
+    aifLastModifiedTime,
+    aifLastAccessTime,
+    aifAttributes,
+    aifMode,
+    aifCRC,
+    aifDiskNumber,
+    aifDiskSeek,
+    aifUserID,
+    aifUserName,
+    aifGroupID,
+    aifGroupName,
+    aifComment,
+    aifCompressionMethod,
+    aifEncryptionMethod);
+
+
+
+
+    FFlags: TArchiveItemFlags;
+    FUncompressedSize: int64;
+    FCreationTime: longword;
+    FLastModifiedTime: longword;
+    FLastAccessTime: longword;
+    FAttributes: longword;
+    FMode: longword;
+    FCRC: longword;
+    FDiskNumber: longword;
+    FDiskSeek: int64;
+    FUserID: longword;
+    FUserName: string;
+    FGroupID: longword;
+    FGroupName: string;
+    FComment: string;
+    FFileName: string;
+    FCompressionMethod: longword;
+    FCompressionFlags: TArchiveCompressionFlags;
+    FCompressedSize: int64;
+    FCompressionLevel: longword;
+    FDictionaryLevel: longword;
+    FCompressionTable: TTableParameters;
+    FEncryptionMethod: longword;
+
+    FPosition: longint;
+    FTag: TArchiveItemTag;
+    FExternalFileName: string;
+    FExternalFileSize: int64;
+
+
   end;
 end;
 
@@ -1356,7 +1434,7 @@ var
 begin
   Result := -1;
   for  I := Index downto 0 do
-    if FArchiveCustomItems.Items[Index].FTag = aTag then
+    if FArchiveItems.Items[Index].FTag = aTag then
     begin
       Result := I;
       Break;
@@ -1368,8 +1446,8 @@ var
   I: longint;
 begin
   Result := -1;
-  for  I := Index to FArchiveCustomItems.Count - 1 do
-    if FArchiveCustomItems.Items[Index].FTag = aTag then
+  for  I := Index to FArchiveItems.Count - 1 do
+    if FArchiveItems.Items[Index].FTag = aTag then
     begin
       Result := I;
       Break;
@@ -1382,7 +1460,7 @@ var
 begin
   Result := -1;
   for  I := Index downto 0 do
-    if FArchiveCustomItems.Items[Index].SolidCompression then
+    if FArchiveItems.Items[Index].SolidCompression then
     begin
       Result := I;
       Break;
@@ -1394,8 +1472,8 @@ var
   I: longint;
 begin
   Result := -1;
-  for  I := Index to FArchiveCustomItems.Count - 1 do
-    if FArchiveCustomItems.Items[Index].SolidCompression then
+  for  I := Index to FArchiveItems.Count - 1 do
+    if FArchiveItems.Items[Index].SolidCompression then
     begin
       Result := I;
       Break;
@@ -1422,7 +1500,7 @@ begin
         if Read(FArchiveReader) then
         begin
           FArchiveName := aArchiveName;
-          if FArchiveCustomItems.Count = 0 then
+          if FArchiveItems.Count = 0 then
             DoFailure(Format(cmArcTypeError, [aArchiveName]));
         end else
           DoFailure(Format(cmArcTypeError, [aArchiveName]));
@@ -1439,9 +1517,9 @@ begin
   if FArchiveReader <> nil then
     FreeAndNil(FArchiveReader);
 
-  FArchiveCustomItems.Clear;
-//FArchiveBindingItem.Clear;
-//FArchiveLocatorItem.Clear;
+  FArchiveItems.Clear;
+//FArchiveBinding.Clear;
+//FArchiveLocator.Clear;
 
   FProcessedSize := 0;
   FTotalSize     := 0;
@@ -1449,7 +1527,7 @@ end;
 
 function TArchiveReaderBase.Find(const aFileName: string): longint;
 begin
-  Result := FArchiveCustomItems.Find(aFileName);
+  Result := FArchiveItems.Find(aFileName);
 end;
 
 procedure TArchiveReaderBase.DoFailure(const ErrorMessage: string);
@@ -1485,20 +1563,20 @@ procedure TArchiveReader.TagAll;
 var
   I: longint;
 begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do Tag(I);
+  for I := 0 to FArchiveItems.Count - 1 do Tag(I);
 end;
 
 procedure TArchiveReader.Tag(Index: longint);
 begin
-  FArchiveCustomItems.Items[Index].FTag := aitUpdate;
+  FArchiveItems.Items[Index].FTag := aitUpdate;
 end;
 
 procedure TArchiveReader.Tag(const FileMask: string; Recursive: TRecursiveMode);
 var
   I: longint;
 begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do
-    with FArchiveCustomItems.Items[I] do
+  for I := 0 to FArchiveItems.Count - 1 do
+    with FArchiveItems.Items[I] do
       if FileNameMatch(FileName, FileMask, Recursive) then Tag(I);
 end;
 
@@ -1506,20 +1584,20 @@ procedure TArchiveReader.UnTagAll;
 var
   I: longint;
 begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do UnTag(I);
+  for I := 0 to FArchiveItems.Count - 1 do UnTag(I);
 end;
 
 procedure TArchiveReader.UnTag(Index: longint);
 begin
-  FArchiveCustomItems.Items[Index].FTag := aitNone;
+  FArchiveItems.Items[Index].FTag := aitNone;
 end;
 
 procedure TArchiveReader.UnTag(const FileMask: string; Recursive: TRecursiveMode);
 var
   I: longint;
 begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do
-    with FArchiveCustomItems.Items[I] do
+  for I := 0 to FArchiveItems.Count - 1 do
+    with FArchiveItems.Items[I] do
       if FileNameMatch(FileName, FileMask, Recursive) then UnTag(I);
 end;
 
@@ -1539,17 +1617,17 @@ var
   MagicSeek: int64;
   I: longword;
 begin
-  FArchiveLocatorItem.DiskNumber := aStream.CurrentImage;
-  FArchiveLocatorItem.DiskSeek   := aStream.Seek(0, soFromCurrent);
+  FArchiveLocator.DiskNumber := aStream.CurrentImage;
+  FArchiveLocator.DiskSeek   := aStream.Seek(0, soFromCurrent);
 
   aStream.WriteDWord(beexMARKER);
-  for I := 0 to FArchiveCustomItems.Count - 1 do
+  for I := 0 to FArchiveItems.Count - 1 do
   begin
     aStream.WriteInfWord(aitItem);
-    FArchiveCustomItems.Items[I].Write(aStream);
+    FArchiveItems.Items[I].Write(aStream);
   end;
   aStream.WriteInfWord(aitBinding);
-  FArchiveBindingItem.Write(aStream);
+  FArchiveBinding.Write(aStream);
 
   if aStream.Threshold > 0 then aStream.CreateImage;
 
@@ -1557,7 +1635,7 @@ begin
 
   MagicSeek := aStream.Seek(0, soFromCurrent);
   aStream.WriteInfWord(aitLocator);
-  FArchiveLocatorItem.Write(aStream);
+  FArchiveLocator.Write(aStream);
   WriteMagicSeek(aStream, MagicSeek);
 end;
 
@@ -1581,10 +1659,10 @@ begin
       FDecoder := THeaderDecoder.Create(FArchiveReader);
       FDecoder.OnProgress := @DoProgress;
 
-      for I := 0 to FArchiveCustomItems.Count - 1 do
+      for I := 0 to FArchiveItems.Count - 1 do
         if ExitCode < ccError then
         begin
-          Item := FArchiveCustomItems.Items[I];
+          Item := FArchiveItems.Items[I];
 
           InitDecoder(Item);
           if Item.FTag in [aitDecode, aitDecodeAndUpdate] then
@@ -1644,9 +1722,9 @@ begin
   FSwapName       := '';
   FTempName       := '';
 
-  FArchiveCustomItems.Clear;
-  // FArchiveBindingItem.Clear;
-  // FArchiveLocatorItem.Clear;
+  FArchiveItems.Clear;
+  // FArchiveBinding.Clear;
+  // FArchiveLocator.Clear;
 
   FProcessedSize  := 0;
   FTotalSize      := 0;
@@ -1756,20 +1834,20 @@ procedure TArchiveWriter.TagAll;
 var
   I: longint;
 begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do Tag(I);
+  for I := 0 to FArchiveItems.Count - 1 do Tag(I);
 end;
 
 procedure TArchiveWriter.Tag(Index: longint);
 begin
-  FArchiveCustomItems.Items[Index].FTag := aitUpdate;
+  FArchiveItems.Items[Index].FTag := aitUpdate;
 end;
 
 procedure TArchiveWriter.Tag(const FileMask: string; Recursive: TRecursiveMode);
 var
   I: longint;
 begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do
-    with FArchiveCustomItems.Items[I] do
+  for I := 0 to FArchiveItems.Count - 1 do
+    with FArchiveItems.Items[I] do
       if FileNameMatch(FileName, FileMask, Recursive) then Tag(I);
 end;
 
@@ -1777,20 +1855,20 @@ procedure TArchiveWriter.UnTagAll;
 var
   I: longint;
 begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do UnTag(I);
+  for I := 0 to FArchiveItems.Count - 1 do UnTag(I);
 end;
 
 procedure TArchiveWriter.UnTag(Index: longint);
 begin
-  FArchiveCustomItems.Items[Index].FTag := aitNone;
+  FArchiveItems.Items[Index].FTag := aitNone;
 end;
 
 procedure TArchiveWriter.UnTag(const FileMask: string; Recursive: TRecursiveMode);
 var
   I: longint;
 begin
-  for I := 0 to FArchiveCustomItems.Count - 1 do
-    with FArchiveCustomItems.Items[I] do
+  for I := 0 to FArchiveItems.Count - 1 do
+    with FArchiveItems.Items[I] do
       if FileNameMatch(FileName, FileMask, Recursive) then UnTag(I);
 end;
 
@@ -1821,10 +1899,10 @@ var
   ExtractAs: string;
 begin
   DoMessage(Format(cmScanning, ['...']));
-  for I := 0 to FArchiveCustomItems.Count - 1 do
+  for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
     begin
-      Item := FArchiveCustomItems.Items[I];
+      Item := FArchiveItems.Items[I];
       if Item.FTag = aitUpdate then
       begin
         repeat
@@ -1851,21 +1929,21 @@ var
   Item: TArchiveItem;
 begin
   // STEP2: find sequences and tag ...
-  I := GetBackTag(FArchiveCustomItems.Count - 1, aitUpdate);
+  I := GetBackTag(FArchiveItems.Count - 1, aitUpdate);
   while I > -1 do
   begin
     BackTear := GetBackTear(I);
     NextTear := GetNextTear(I + 1);
 
     if NextTear = -1 then
-      NextTear := FArchiveCustomItems.Count;
+      NextTear := FArchiveItems.Count;
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
       NextTear := GetBackTag(NextTear - 1, aitUpdate);
       for J := BackTear to NextTear do
       begin
-        Item := FArchiveCustomItems.Items[J];
+        Item := FArchiveItems.Items[J];
         case Item.FTag of
           aitNone:   Item.FTag := aitDecode;
         //aitUpdate: nothing to do
@@ -1878,9 +1956,9 @@ begin
   end;
 
   // STEP2: calculate bytes to process ...
-  for J := 0 to FArchiveCustomItems.Count - 1 do
+  for J := 0 to FArchiveItems.Count - 1 do
   begin
-    Item := FArchiveCustomItems.Items[J];
+    Item := FArchiveItems.Items[J];
     case Item.FTag of
     //aitNone:   nothing to do
       aitUpdate: Inc(FTotalSize, Item.UncompressedSize);
@@ -1899,10 +1977,10 @@ begin
   begin
     FDecoder := THeaderDecoder.Create(FArchiveReader);
     FDecoder.OnProgress := @DoProgress;
-    for I := 0 to FArchiveCustomItems.Count - 1 do
+    for I := 0 to FArchiveItems.Count - 1 do
       if ExitCode < ccError then
       begin
-        Item := FArchiveCustomItems.Items[I];
+        Item := FArchiveItems.Items[I];
 
         InitDecoder(Item);
         if Item.FTag in [aitUpdate, aitDecode] then
@@ -1935,10 +2013,10 @@ begin
   CheckSequences;
   FDecoder := THeaderDecoder.Create(FArchiveReader);
   FDecoder.OnProgress := @DoProgress;
-  for I := 0 to FArchiveCustomItems.Count - 1 do
+  for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
     begin
-      Item := FArchiveCustomItems.Items[I];
+      Item := FArchiveItems.Items[I];
 
       InitDecoder(Item);
       if Item.FTag in [aitUpdate, aitDecode] then
@@ -1983,17 +2061,17 @@ var
   RemaneAs: string;
 begin
   DoMessage(Format(cmScanning, ['...']));
-  for I := 0 to FArchiveCustomItems.Count - 1 do
+  for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
     begin
-      Item := FArchiveCustomItems.Items[I];
+      Item := FArchiveItems.Items[I];
 
       Inc(FTotalSize, Item.CompressedSize);
       if Item.FTag in [aitUpdate] then
       begin
         repeat
           DoRename(Item, RemaneAs, Confirm);
-        until (Confirm <> arcOk) or (FArchiveCustomItems.GetNameIndex(RemaneAs) = -1);
+        until (Confirm <> arcOk) or (FArchiveItems.GetNameIndex(RemaneAs) = -1);
 
         case Confirm of
           arcOk: begin
@@ -2023,10 +2101,10 @@ begin
     begin
       Encoder := THeaderEncoder.Create(FTempWriter);
       Encoder.OnProgress := @DoProgress;
-      for I := 0 to FArchiveCustomItems.Count - 1 do
+      for I := 0 to FArchiveItems.Count - 1 do
         if ExitCode < ccError  then
         begin
-          Item := FArchiveCustomItems.Items[I];
+          Item := FArchiveItems.Items[I];
           FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
 
           Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
@@ -2069,11 +2147,11 @@ var
   Confirm: TArchiveConfirm;
 begin
   DoMessage(Format(cmScanning, ['...']));
-  for I := 0 to FArchiveCustomItems.Count - 1 do
+  for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
 
     begin
-      Item := FArchiveCustomItems.Items[I];
+      Item := FArchiveItems.Items[I];
       if Item.FTag in [aitUpdate] then
       begin
         DoErase(Item, Confirm);
@@ -2094,21 +2172,21 @@ var
   Item: TArchiveItem;
 begin
   // STEP1: find sequences and set tag ...
-  I := GetBackTag(FArchiveCustomItems.Count - 1, aitUpdate);
+  I := GetBackTag(FArchiveItems.Count - 1, aitUpdate);
   while I > -1 do
   begin
     BackTear := GetBackTear(I);
     NextTear := GetNextTear(I + 1);
 
     if NextTear = -1 then
-      NextTear := FArchiveCustomItems.Count;
+      NextTear := FArchiveItems.Count;
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
       NextTear := GetBackTag(NextTear - 1, aitNone);
       for J := BackTear to NextTear do
       begin
-        Item := FArchiveCustomItems.Items[J];
+        Item := FArchiveItems.Items[J];
         case Item.FTag of
           aitNone:   Item.FTag := aitDecode;
           aitUpdate: Item.FTag := aitDecodeAndUpdate;
@@ -2122,9 +2200,9 @@ begin
   end;
 
   // STEP2: calculate bytes to process ...
-  for I := 0 to FArchiveCustomItems.Count - 1 do
+  for I := 0 to FArchiveItems.Count - 1 do
   begin
-    Item := FArchiveCustomItems.Items[J];
+    Item := FArchiveItems.Items[J];
     case Item.FTag of
       aitNone:            Inc(FTotalSize, Item.CompressedSize);
     //aitUpdate:          nothing to do
@@ -2149,22 +2227,22 @@ begin
     begin
       if OpenSwap < ccError  then
       begin
-        for I := FArchiveCustomItems.Count - 1 downto 0 do
+        for I := FArchiveItems.Count - 1 downto 0 do
         begin
-          Item := FArchiveCustomItems.Items[I];
+          Item := FArchiveItems.Items[I];
           if Item.FTag in [aitUpdate, aitDecodeAndUpdate] then
           begin
             DoMessage(Format(cmDeleting, [Item.FileName]));
-            FArchiveCustomItems.Delete(I);
+            FArchiveItems.Delete(I);
           end;
         end;
 
         FEncoder := THeaderEncoder.Create(FTempWriter);
         FEncoder.OnProgress := @DoProgress;
-        for I := 0 to FArchiveCustomItems.Count - 1 do
+        for I := 0 to FArchiveItems.Count - 1 do
           if ExitCode < ccError then
           begin
-            Item := FArchiveCustomItems.Items[I];
+            Item := FArchiveItems.Items[I];
             case Item.FTag of
               aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
             //aitUpdate:          DoMessage(Format(cmDeleting, [Item.FileName]));
@@ -2278,9 +2356,9 @@ begin
     FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FDictionaryLevel);
     FConfiguration.Selector('\m' + FConfiguration.CurrentSection.Values['Method']);
 
-    for I := 0 to FArchiveCustomItems.Count - 1 do
+    for I := 0 to FArchiveItems.Count - 1 do
     begin
-      CurrentItem := FArchiveCustomItems.Items[I];
+      CurrentItem := FArchiveItems.Items[I];
       if CurrentItem.FTag = aitAdd then
       begin
         CurrentItem.FCompressionMethod := FCompressionMethod;
@@ -2342,10 +2420,10 @@ begin
             Item           := TArchiveItem.Create(DefaultFlags);
             Item.FTag      := aitAdd;
             Item.FFileName := UpdateAs;
-            FArchiveCustomItems.Add(Item);
+            FArchiveItems.Add(Item);
           end else
           begin
-            Item := FArchiveCustomItems.Items[I];
+            Item := FArchiveItems.Items[I];
             if Item.FTag = aitNone then
             begin
               Item.FTag := aitUpdate;
@@ -2371,21 +2449,21 @@ begin
   // STEP1: configure new items ...
   Configure;
   // STEP2: find sequences and tag ...
-  I := GetBackTag(FArchiveCustomItems.Count - 1, aitUpdate);
+  I := GetBackTag(FArchiveItems.Count - 1, aitUpdate);
   while I > -1 do
   begin
     BackTear := GetBackTear(I);
     NextTear := GetNextTear(I + 1);
 
     if NextTear = -1 then
-      NextTear := FArchiveCustomItems.Count;
+      NextTear := FArchiveItems.Count;
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
       NextTear := GetBackTag(NextTear - 1, aitNone);
       for J := BackTear to NextTear do
       begin
-        Item := FArchiveCustomItems.Items[J];
+        Item := FArchiveItems.Items[J];
         case Item.FTag of
           aitNone:            Item.FTag := aitDecode;
           aitUpdate:          Item.FTag := aitDecodeAndUpdate;
@@ -2399,9 +2477,9 @@ begin
   end;
 
   // STEP3: calculate bytes to process ...
-  for I := 0 to FArchiveCustomItems.Count - 1 do
+  for I := 0 to FArchiveItems.Count - 1 do
   begin
-    Item := FArchiveCustomItems.Items[I];
+    Item := FArchiveItems.Items[I];
     case Item.FTag of
       aitNone:            Inc(FTotalSize, Item.CompressedSize);
       aitAdd:             Inc(FTotalSize, Item.FExternalFileSize);
@@ -2430,10 +2508,10 @@ begin
         FEncoder := THeaderEncoder.Create(FTempWriter);
         FEncoder.OnProgress := @DoProgress;
 
-        for I := 0 to FArchiveCustomItems.Count - 1 do
+        for I := 0 to FArchiveItems.Count - 1 do
           if (ExitCode < ccError) then
           begin
-            Item := FArchiveCustomItems.Items[I];
+            Item := FArchiveItems.Items[I];
             case Item.FTag of
               aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
               aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
