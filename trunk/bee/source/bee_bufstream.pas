@@ -40,7 +40,7 @@ const
 type
   { TBufStream }
 
-  TBufStream = class(TStream)
+  TBufStream = class(TObject)
   protected
     FSource: TStream;
     FCapacity: longint;
@@ -63,9 +63,9 @@ type
   protected
     procedure FillBuffer; override;
   public
-    function Read(var Data; Count: longint): longint; override;
-    function Seek(Offset: longint; Origin: word): longint; override;
-    function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
+    function Read(var Data; Count: longint): longint; virtual;
+    function Seek(Offset: longint; Origin: word): longint; virtual; overload;
+    function Seek(const Offset: int64; Origin: TSeekOrigin): int64; virtual; overload;
   end;
 
   { TWriteBufStream }
@@ -73,16 +73,13 @@ type
   TWriteBufStream = class(TBufStream)
   protected
     procedure FlushBuffer; override;
-    procedure SetSize(NewSize: longint); override;
-    procedure SetSize(const NewSize: int64); override;
-    {$IFDEF FPC}
-    procedure SetSize64(const NewSize: int64); override;
-    {$ENDIF}
+    procedure SetSize(NewSize: longint); virtual; overload;
+    procedure SetSize(const NewSize: int64); virtual; overload;
   public
     destructor Destroy; override;
-    function Write(const Data; Count: longint): longint; override;
-    function Seek(Offset: longint; Origin: word): longint; override;
-    function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
+    function Write(const Data; Count: longint): longint; virtual;
+    function Seek(Offset: longint; Origin: word): longint; virtual; overload;
+    function Seek(const Offset: int64; Origin: TSeekOrigin): int64; virtual; overload;
   end;
 
 implementation
@@ -236,13 +233,6 @@ procedure TWriteBufStream.SetSize(const NewSize: int64);
 begin
   FSource.Size := NewSize;
 end;
-
-{$IFDEF FPC}
-procedure TWriteBufStream.SetSize64(const NewSize: int64);
-begin
-  FSource.Size := NewSize;
-end;
-{$ENDIF}
 
 (*
 { TReadBlowFishBufStream class }
