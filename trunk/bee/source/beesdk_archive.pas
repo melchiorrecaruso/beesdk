@@ -1572,8 +1572,6 @@ end;
 procedure TArchiveWriterBase.EncodeFromSwap(Item: TArchiveItem);
 var
   ABSPosition: int64;
-  IsNeededOptimize: boolean;
-  IsPossibleOptimize: boolean;
 begin
   if Assigned(FSwapReader) then
   begin
@@ -1586,17 +1584,14 @@ begin
       else     FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
     end;
     Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
+    // Optimize encoding ...
+    if Item.FCompressedSize > Item.FUncompressedSize then
+      if Item.FDiskNumber = FTempWriter.CurrentImage then
+      begin
+        FTempWriter.Seek(Item.DiskSeek, soBeginning);
+        FTempWriter.s
 
-    case Item.CompressionMethod of
-      actMain: IsNeededOptimize := Item.FCompressedSize >= Item.FUncompressedSize;
-      else     IsNeededOptimize := FALSE;
-    end;
-    IsPossibleOptimize := Item.FDiskNumber = FTempWriter.CurrentImage;
-    if IsPossibleOptimize and IsNeededOptimize then
-    begin
-
-
-    end;
+      end;
 
     if not FSwapReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);
