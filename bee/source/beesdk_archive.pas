@@ -30,11 +30,11 @@ const
   aitLocator   = $7E;
   aitEnd       = $7F;
 
-  /// archive compression type
+  /// archive compression method
   actNone      = $00;
   actMain      = $01;
 
-  /// archive encryption type
+  /// archive encryption method
   acrtNone     = $00;
   acrtMain     = $01;
 
@@ -1148,13 +1148,16 @@ end;
 
 procedure TArchiveReaderBase.InitDecoder(Item: TArchiveItem);
 begin
-  if acfDictionaryLevel in Item.FCompressionFlags then
-    FDecoder.DictionaryLevel := Item.DictionaryLevel;
+  if Item.CompressionMethod = actMain then
+  begin
+    if acfDictionaryLevel in Item.FCompressionFlags then
+      FDecoder.DictionaryLevel := Item.DictionaryLevel;
 
-  if acfCompressionTable in Item.FCompressionFlags then
-    FDecoder.TableParameters := Item.CompressionTable;
+    if acfCompressionTable in Item.FCompressionFlags then
+      FDecoder.CompressionTable := Item.CompressionTable;
 
-  FDecoder.Tear := Item.SolidCompression;
+    FDecoder.FreshModeller(Item.SolidCompression);
+  end;
 end;
 
 procedure TArchiveReaderBase.DecodeToSwap(Item: TArchiveItem);
@@ -1543,20 +1546,22 @@ begin
       FEncoder.DictionaryLevel := Item.DictionaryLevel;
 
     if acfCompressionTable in Item.FCompressionFlags then
-      FEncoder.TableParameters := Item.CompressionTable;
+      FEncoder.CompressionTable := Item.CompressionTable;
 
-    FEncoder.Tear := Item.SolidCompression;
+    FEncoder.FreshModeller(Item.SolidCompression);
   end;
 end;
 
 procedure TArchiveWriterBase.EncodeFromArchive(Item: TArchiveItem);
+var
+  NulCRC:longword;
 begin
   if Assigned(FArchiveReader) then
   begin
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
     Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
     Item.FDiskNumber := FTempWriter.CurrentImage;
-    FEncoder.Copy(FArchiveReader, Item.FCompressedSize);
+    FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
 
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
@@ -1565,25 +1570,33 @@ begin
 end;
 
 procedure TArchiveWriterBase.EncodeFromSwap(Item: TArchiveItem);
+var
+  ABSPosition: int64;
+  IsNeededOptimize: boolean;
+  IsPossibleOptimize: boolean;
 begin
   if Assigned(FSwapReader) then
   begin
     FSwapReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-    Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
+    ABSPosition      := FTempWriter.ABSPosition;
+    Item.FDiskSeek   := FTempWriter.Position;
     Item.FDiskNumber := FTempWriter.CurrentImage;
-    case Item.CompressionMethod of
-      0: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
-    else FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
+    case Item.FCompressionMethod of
+      actMain: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
+      else     FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
     end;
+    Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
+
+    case Item.CompressionMethod of
+      actMain: IsNeededOptimize := Item.FCompressedSize >= Item.FUncompressedSize;
+      else     IsNeededOptimize := FALSE;
+    end;
+    IsPossibleOptimize := Item.FDiskNumber = FTempWriter.CurrentImage;
+    if IsPossibleOptimize and IsNeededOptimize then
+    begin
 
 
-
-
-    // sistemare
-    Item.FCompressedSize := FTempWriter.Seek(0, soCurrent) - Item.FDiskSeek;
-
-
-
+    end;
 
     if not FSwapReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);

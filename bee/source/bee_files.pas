@@ -65,10 +65,10 @@ type
     destructor Destroy; override;
     procedure Fill;
 
+    function ReadDWord: dword;
     function ReadInfWord: qword;
     function ReadInfString: string;
     function Read(var Data; Count: longint): longint; override;
-    function Write(const Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
     procedure SeekImage(ImageNumber: longword; const Offset: int64);
@@ -93,18 +93,19 @@ type
     function GetIsValidStream: boolean; virtual;
     function GetImageName(ImageNumber: longword): string;
     function GetCurrentImage: longword;
-    function GetPosition: int64; override;
+    function GetABSPosition: int64;
+    function GetPosition: int64;
   public
     constructor Create(const aFileName: string; const aThreshold: int64);
     destructor Destroy; override;
     procedure Flush;
 
     procedure CreateImage;
+    procedure WriteDWord(Data: dword);
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
     function Write(const Data; Count: longint): longint; override;
     function WriteUnspanned(const Data; Count: longint): longint;
-    function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
   public
@@ -114,6 +115,8 @@ type
     property Threshold: int64 read FThreshold;
     property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
        read FOnRequestBlankDisk write FOnRequestBlankDisk;
+    property ABSPosition: int64 read GetABSPosition;
+    property Position: int64 read GetPosition;
   end;
 
   { TNulWriter }
@@ -127,9 +130,6 @@ type
     procedure FlushBuffer; override;
     procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
-    {$IFDEF FPC}  
-    procedure SetSize64(const NewSize: Int64); override;
-    {$ENDIF}
   public
     constructor Create;
     destructor Destroy; override;
@@ -263,6 +263,11 @@ begin
     GotoImage(FImagesNumber);
 end;
 
+function TFileReader.ReadDWord: dword;
+begin
+  Read(Result, SizeOf(Result));
+end;
+
 function TFileReader.ReadInfWord: qword;
 var
   Last: byte;
@@ -310,12 +315,6 @@ begin
 
     if Count > 0 then GotoImage(FCurrentImage + 1);
   end;
-end;
-
-function TFileReader.Write(const Data; Count: longint): longint;
-begin
-  if Assigned(FSource) then
-    FreeAndNil(FSource);
 end;
 
 function TFileReader.Seek(Offset: longint; Origin: word): longint;
@@ -378,9 +377,14 @@ begin
   Result := FCurrentImage;
 end;
 
-function TFileWriter.GetPosition: int64;
+function TFileWriter.GetABSPosition: int64;
 begin
   Result := (FCurrentImage * FThreshold) + Seek(0, soCurrent);
+end;
+
+function TFileWriter.GetPosition: int64;
+begin
+  Result := Seek(0, soCurrent);
 end;
 
 procedure TFileWriter.CreateImage;
@@ -407,6 +411,11 @@ begin
   except
     FSource := nil;
   end;
+end;
+
+procedure TFileWriter.WriteDWord(Data: dword);
+begin
+  Write(Data, SizeOf(Data));
 end;
 
 procedure TFileWriter.WriteInfWord(Data: qword);
@@ -499,12 +508,6 @@ begin
   end;
 end;
 
-function TFileWriter.Read(var Data; Count: longint): longint;
-begin
-  if Assigned(FSource) then
-    FreeAndNil(FSource);
-end;
-
 function TFileWriter.Seek(Offset: longint; Origin: word): longint;
 begin
   if Assigned(FSource) then
@@ -537,21 +540,15 @@ end;
 
 procedure TNulWriter.SetSize(NewSize: longint);
 begin
-  SetSize64(NewSize);
+  FNulPos  := NewSize;
+  FNulSize := NewSize;
 end;
 
 procedure TNulWriter.SetSize(const NewSize: int64);
 begin
-  SetSize64(NewSize);
-end;
-
-{$IFDEF FPC}  
-procedure TNulWriter.SetSize64(const NewSize: int64);
-begin
   FNulPos  := NewSize;
   FNulSize := NewSize;
 end;
-{$ENDIF}
 
 function TNulWriter.Write(const Data; Count: longint): longint;
 begin
