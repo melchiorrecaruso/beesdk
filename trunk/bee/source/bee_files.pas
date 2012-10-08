@@ -93,6 +93,7 @@ type
     function GetIsValidStream: boolean; virtual;
     function GetImageName(ImageNumber: longword): string;
     function GetCurrentImage: longword;
+    function GetPosition: int64; override;
   public
     constructor Create(const aFileName: string; const aThreshold: int64);
     destructor Destroy; override;
@@ -375,6 +376,11 @@ function TFileWriter.GetCurrentImage: longword;
 begin
   FlushBuffer;
   Result := FCurrentImage;
+end;
+
+function TFileWriter.GetPosition: int64;
+begin
+  Result := (FCurrentImage * FThreshold) + Seek(0, soCurrent);
 end;
 
 procedure TFileWriter.CreateImage;

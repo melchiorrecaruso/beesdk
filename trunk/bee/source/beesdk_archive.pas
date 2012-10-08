@@ -1553,7 +1553,7 @@ procedure TArchiveWriterBase.EncodeFromArchive(Item: TArchiveItem);
 begin
   if Assigned(FArchiveReader) then
   begin
-    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
     Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
     Item.FDiskNumber := FTempWriter.CurrentImage;
     FEncoder.Copy(FArchiveReader, Item.FCompressedSize);
@@ -1568,7 +1568,7 @@ procedure TArchiveWriterBase.EncodeFromSwap(Item: TArchiveItem);
 begin
   if Assigned(FSwapReader) then
   begin
-    FSwapReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    FSwapReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
     Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
     Item.FDiskNumber := FTempWriter.CurrentImage;
     case Item.CompressionMethod of
