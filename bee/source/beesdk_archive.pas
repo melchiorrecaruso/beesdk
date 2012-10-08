@@ -162,28 +162,7 @@ type
     FExternalFileName: string;
     FExternalFileSize: int64;
     function GetSolidCompression: boolean;
-    procedure SetCompressedSize(const Value: int64);
-    procedure SetUncompressedSize(const Value: int64);
-    procedure SetCreationTime(Value: longword);
-    procedure SetLastModifiedTime(Value: longword);
-    procedure SetLastAccessTime(Value: longword);
-    procedure SetAttributes(Value: longword);
-    procedure SetMode(Value: longword);
-    procedure SetCRC(Value: longword);
-    procedure SetDiskNumber(Value: longword);
-    procedure SetDiskSeek(const Value: int64);
-    procedure SetUserID(Value: longword);
-    procedure SetUserName(const Value: string);
-    procedure SetGroupID(Value: longword);
-    procedure SetGroupName(const Value: string);
-    procedure SetComment(const Value: string);
-    procedure SetCompressionMethod(Value: longword);
-    procedure SetCompressionLevel(Value: longword);
-    procedure SetDictionaryLevel(Value: longword);
     procedure SetSolidCompression(Value: boolean);
-    procedure SetCompressionTable(Value: TTableParameters);
-    procedure ClearCompressionTable;
-    procedure SetEncryptionMethod(Value: longword);
   public {methods}
     constructor Create(DefaultFlags: TArchiveItemFlags);
     constructor Read(Stream: TFileReader);
@@ -761,190 +740,12 @@ begin
   Result := acfSolidCompression in FCompressionFlags;
 end;
 
-procedure TArchiveItem.SetCompressedSize(const Value: int64);
-begin
-  FCompressedSize := Value;
-end;
-
-procedure TArchiveItem.SetUncompressedSize(const Value: int64);
-begin
-  FUncompressedSize := Value;
-  if Value <> 0 then
-    Include(FFlags, aifUncompressedSize)
-  else
-    Exclude(FFlags, aifUncompressedSize);
-end;
-
-procedure TArchiveItem.SetCreationTime(Value: longword);
-begin
-  FCreationTime := Value;
-  if Value <> 0 then
-    Include(FFlags, aifCreationTime)
-  else
-    Exclude(FFlags, aifCreationTime);
-end;
-
-procedure TArchiveItem.SetLastModifiedTime(Value: longword);
-begin
-  FLastModifiedTime := Value;
-  if Value <> 0 then
-    Include(FFlags, aifLastModifiedTime)
-  else
-    Exclude(FFlags, aifLastModifiedTime);
-end;
-
-procedure TArchiveItem.SetLastAccessTime(Value: longword);
-begin
-  FLastAccessTime := Value;
-  if Value <> 0 then
-    Include(FFlags, aifLastAccessTime)
-  else
-    Exclude(FFlags, aifLastAccessTime);
-end;
-
-procedure TArchiveItem.SetAttributes(Value: longword);
-begin
-  FAttributes := Value;
-  if Value <> 0 then
-    Include(FFlags, aifAttributes)
-  else
-    Exclude(FFlags, aifAttributes);
-end;
-
-procedure TArchiveItem.SetMode(Value: longword);
-begin
-  FMode := Value;
-  if Value <> 0 then
-    Include(FFlags, aifMode)
-  else
-    Exclude(FFlags, aifMode);
-end;
-
-procedure TArchiveItem.SetCRC(Value: longword);
-begin
-  FCRC := Value;
-  if Value <> 0 then
-    Include(FFlags, aifCRC)
-  else
-    Exclude(FFlags, aifCRC);
-end;
-
-procedure TArchiveItem.SetDiskNumber(Value: longword);
-begin
-  FDiskNumber := Value;
-  if Value <> 0 then
-    Include(FFlags, aifDiskNumber)
-  else
-    Exclude(FFlags, aifDiskNumber);
-end;
-
-procedure TArchiveItem.SetDiskSeek(const Value: int64);
-begin
-  FDiskSeek := Value;
-  if Value <> 0 then
-    Include(FFlags, aifDiskSeek)
-  else
-    Exclude(FFlags, aifDiskSeek);
-end;
-
-procedure TArchiveItem.SetUserID(Value: longword);
-begin
-  FUserID := Value;
-  if Value <> 0 then
-    Include(FFlags, aifUserID)
-  else
-    Exclude(FFlags, aifUserID);
-end;
-
-procedure TArchiveItem.SetUserName(const Value: string);
-begin
-  FUserName := Value;
-  if Value <> '' then
-    Include(FFlags, aifUserName)
-  else
-    Exclude(FFlags, aifUserName);
-end;
-
-procedure TArchiveItem.SetGroupID(Value: longword);
-begin
-  FGroupID := Value;
-  if Value <> 0 then
-    Include(FFlags, aifGroupID)
-  else
-    Exclude(FFlags, aifGroupID);
-end;
-
-procedure TArchiveItem.SetGroupName(const Value: string);
-begin
-  FGroupName := Value;
-  if Value <> '' then
-    Include(FFlags, aifGroupName)
-  else
-    Exclude(FFlags, aifGroupName);
-end;
-
-procedure TArchiveItem.SetComment(const Value: string);
-begin
-  FComment := Value;
-  if Value <> '' then
-    Include(FFlags, aifComment)
-  else
-    Exclude(FFlags, aifComment);
-end;
-
-procedure TArchiveItem.SetCompressionMethod(Value: longword);
-begin
-  FCompressionMethod := Value;
-  if Value <> 0 then
-    Include(FFlags, aifCompressionMethod)
-  else
-    Exclude(FFlags, aifCompressionMethod);
-end;
-
-procedure TArchiveItem.SetCompressionLevel(Value: longword);
-begin
-  FCompressionLevel := Value;
-  if Value <> 0 then
-    Include(FCompressionFlags, acfCompressionLevel)
-  else
-    Exclude(FCompressionFlags, acfCompressionLevel);
-end;
-
-procedure TArchiveItem.SetDictionaryLevel(Value: longword);
-begin
-  FDictionaryLevel := Value;
-  if Value <> 0 then
-    Include(FCompressionFlags, acfDictionaryLevel)
-  else
-    Exclude(FCompressionFlags, acfDictionaryLevel);
-end;
-
 procedure TArchiveItem.SetSolidCompression(Value: boolean);
 begin
   if Value then
     Include(FCompressionFlags, acfSolidCompression)
   else
     Exclude(FCompressionFlags, acfSolidCompression);
-end;
-
-procedure TArchiveItem.SetCompressionTable(Value: TTableParameters);
-begin
-  FCompressionTable := Value;
-  Include(FCompressionFlags, acfCompressionTable);
-end;
-
-procedure TArchiveItem.ClearCompressionTable;
-begin
-  Exclude(FCompressionFlags, acfCompressionTable);
-end;
-
-procedure TArchiveItem.SetEncryptionMethod(Value: longword);
-begin
-  FEncryptionMethod := Value;
-  if Value <> 0 then
-    Include(FFlags, aifEncryptionMethod)
-  else
-    Exclude(FFlags, aifEncryptionMethod);
 end;
 
 // TBeeArchiveCustomItems class
@@ -1056,7 +857,7 @@ begin
   if Index < FItems.Count - 1 then
   begin
     Next := Items[Index + 1];
-
+    (*
     if  (not(aifSessionFlags in Next.Flags)) then
     begin
       if    (aifUncompressedSize in Item.Flags) and
@@ -1138,7 +939,9 @@ begin
       if    (acfCompressionTable in Item.CompressionFlags) and
         (not(acfCompressionTable in Item.CompressionFlags)) then
         Next.SetCompressionTable(Item.CompressionTable);
-    end;
+
+
+    end; *)
   end;
   FNames.Delete(GetNameIndex(Item.FileName));
   FItems.Delete(Item.Position);
@@ -1270,6 +1073,8 @@ var
   CurrentItem: TArchiveItem;
   PreviusItem: TArchiveItem;
 begin
+
+  (*
   PreviusItem := nil;
   for I := 0 to FArchiveItems.Count - 1 do
   begin
@@ -1338,7 +1143,7 @@ begin
     FExternalFileSize: int64;
 
 
-  end;
+  end; *)
 end;
 
 procedure TArchiveReaderBase.InitDecoder(Item: TArchiveItem);
@@ -1360,8 +1165,8 @@ begin
   begin
     FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
 
-    Item.SetDiskNumber(FSwapWriter.CurrentImage);
-    Item.SetDiskSeek(FSwapWriter.Seek(0, soCurrent));
+    Item.FDiskNumber := FSwapWriter.CurrentImage;
+    Item.FDiskSeek   := FSwapWriter.Seek(0, soCurrent);
     case Item.CompressionLevel of
       0: FDecoder.Copy  (FSwapWriter, Item.UncompressedSize, CRC);
     else FDecoder.Decode(FSwapWriter, Item.UncompressedSize, CRC);
@@ -1748,15 +1553,10 @@ procedure TArchiveWriterBase.EncodeFromArchive(Item: TArchiveItem);
 begin
   if Assigned(FArchiveReader) then
   begin
-     FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
-
-     Item.SetDiskSeek  (FTempWriter.Seek(0, soCurrent));
-     Item.SetDiskNumber(FTempWriter.CurrentImage);
-
-     FEncoder.Copy(FArchiveReader, Item.CompressedSize);
-
-
-     Item.SetCompressedSize(FTempWriter.Seek(0, soCurrent) -  Item.DiskSeek);
+    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
+    Item.FDiskNumber := FTempWriter.CurrentImage;
+    FEncoder.Copy(FArchiveReader, Item.FCompressedSize);
 
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
@@ -1765,22 +1565,24 @@ begin
 end;
 
 procedure TArchiveWriterBase.EncodeFromSwap(Item: TArchiveItem);
-var
-  CRC: longword;
 begin
   if Assigned(FSwapReader) then
   begin
     FSwapReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
-
-    Item.SetDiskSeek(FTempWriter.Seek(0, soCurrent));
-    Item.SetDiskNumber(FTempWriter.CurrentImage);
+    Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
+    Item.FDiskNumber := FTempWriter.CurrentImage;
     case Item.CompressionMethod of
-      0: Item.SetUncompressedSize(FEncoder.Encode(FSwapReader, Item.UncompressedSize, CRC));
-    else Item.SetUncompressedSize(FEncoder.Encode(FSwapReader, Item.UncompressedSize, CRC));
+      0: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
+    else FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
     end;
-    Item.SetCRC(CRC);
 
-    Item.SetCompressedSize(FTempWriter.Seek(0, soCurrent) -  Item.DiskSeek);
+
+
+
+    // sistemare
+    Item.FCompressedSize := FTempWriter.Seek(0, soCurrent) - Item.FDiskSeek;
+
+
 
 
     if not FSwapReader.IsValidStream then DoFailure(cmStrmReadError);
@@ -1791,22 +1593,20 @@ end;
 
 procedure TArchiveWriterBase.EncodeFromFile(Item: TArchiveItem);
 var
-  CRC: longword;
   Stream: TFileReader;
 begin
   Stream := TFileReader.Create(Item.FExternalFileName, 0);
   if Stream <> nil then
   begin
-    Item.SetDiskSeek(FTempWriter.Seek(0, soCurrent));
-    Item.SetDiskNumber(FTempWriter.CurrentImage);
+    Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
+    Item.FDiskNumber := FTempWriter.CurrentImage;
     case Item.CompressionMethod of
-      0: Item.SetUncompressedSize(FEncoder.Encode(Stream, Item.FExternalFileSize, CRC));
-    else Item.SetUncompressedSize(FEncoder.Encode(Stream, Item.FExternalFileSize, CRC));
+      0: Item.FUncompressedSize := FEncoder.Encode(Stream, Item.FExternalFileSize, Item.FCRC);
+    else Item.FUncompressedSize := FEncoder.Encode(Stream, Item.FExternalFileSize, Item.FCRC);
     end;
-    Item.SetCRC(CRC);
 
     // if FTempWriter.CurrentImage = Item.DiskNumber then
-    Item.SetCompressedSize(FTempWriter.Seek(0, soCurrent) -  Item.DiskSeek);
+    Item.FCompressedSize := FTempWriter.Seek(0, soCurrent) -  Item.DiskSeek;
     // else
     //   Item.SetCompressedSize(FTempWriter.Seek(0, soCurrent) - (Item.DiskSeek - FTempWriter.Threshold));
 
