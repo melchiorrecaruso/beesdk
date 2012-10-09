@@ -95,6 +95,7 @@ type
     function GetCurrentImage: longword;
     function GetABSPosition: int64;
     function GetPosition: int64;
+    function GetSize: int64;
   public
     constructor Create(const aFileName: string; const aThreshold: int64);
     destructor Destroy; override;
@@ -117,6 +118,7 @@ type
        read FOnRequestBlankDisk write FOnRequestBlankDisk;
     property ABSPosition: int64 read GetABSPosition;
     property Position: int64 read GetPosition;
+    property Size: int64 read GetSize write SetSize;
   end;
 
   { TNulWriter }
@@ -385,6 +387,15 @@ end;
 function TFileWriter.GetPosition: int64;
 begin
   Result := Seek(0, soCurrent);
+end;
+
+function TFileWriter.GetSize: int64;
+var
+  I: int64;
+begin
+  I := Seek(0, soCurrent);
+  Result := Seek(0, soEnd);
+  Seek(I, soBeginning);
 end;
 
 procedure TFileWriter.CreateImage;

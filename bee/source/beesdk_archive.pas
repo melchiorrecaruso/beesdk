@@ -1576,12 +1576,13 @@ begin
   if Assigned(FSwapReader) then
   begin
     FSwapReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-    ABSPosition      := FTempWriter.ABSPosition;
+
     Item.FDiskSeek   := FTempWriter.Position;
     Item.FDiskNumber := FTempWriter.CurrentImage;
+    ABSPosition      := FTempWriter.ABSPosition;
     case Item.FCompressionMethod of
       actMain: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
-      else     FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
+      else     FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC);
     end;
     Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
     // Optimize encoding ...
@@ -1589,9 +1590,21 @@ begin
       if Item.FDiskNumber = FTempWriter.CurrentImage then
       begin
         FTempWriter.Seek(Item.DiskSeek, soBeginning);
-        FTempWriter.s
+        FTempWriter.Size := Item.DiskSeek;
+
+        Item.CompressionMethod := actNone;
+        FEncoder.Copy();
+
+
 
       end;
+
+    Include(Item.FFlags, aifDiskSeek);
+    Include(Item.FFlags, aifDiskNumber);
+    case Item.FCompressionMethod of
+      actMain: Include(Item.Flags, aifCompressiomMethod);
+      else     Exclude(Item.Flags, aifCompressiomMethod);
+    end;
 
     if not FSwapReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);
