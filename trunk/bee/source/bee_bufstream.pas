@@ -143,7 +143,7 @@ end;
 function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
 begin
   if (Origin = soFromCurrent) and (OffSet = 0) then
-    Result := FSource.Seek(Offset - (FBufferSize - FBufferReaded), Origin)
+    Result := FSource.Seek(FBufferReaded - FBufferSize, Origin)
   else
     Result := FSource.Seek(Offset, Origin);
 
@@ -154,7 +154,7 @@ end;
 function TReadBufStream.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
 begin
   if (Origin = soCurrent) and (OffSet = 0) then
-    Result := FSource.Seek(Offset + FBufferSize - FBufferReaded, Origin)
+    Result := FSource.Seek(FBufferReaded - FBufferSize, Origin)
   else
     Result := FSource.Seek(Offset, Origin);
 
