@@ -71,9 +71,7 @@ type
     aifUserName,
     aifGroupID,
     aifGroupName,
-    aifComment,
-    aifCompressionMethod,
-    aifEncryptionMethod);
+    aifComment);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -412,8 +410,8 @@ type
     procedure SetDictionaryLevel(Value: longint);
     procedure SetConfigurationName(const Value: string);
     procedure SetForceFileExtension(const Value: string);
-
-    procedure Configure;
+    procedure ConfigureCrypter;
+    procedure ConfigureCoder;
     procedure CheckTags;
     procedure CheckSequences;
     procedure DoUpdate(SearchRec: TCustomSearchRec;
@@ -1585,26 +1583,9 @@ begin
       else     FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC);
     end;
     Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
-    // Optimize encoding ...
-    if Item.FCompressedSize > Item.FUncompressedSize then
-      if Item.FDiskNumber = FTempWriter.CurrentImage then
-      begin
-        FTempWriter.Seek(Item.DiskSeek, soBeginning);
-        FTempWriter.Size := Item.DiskSeek;
-
-        Item.CompressionMethod := actNone;
-        FEncoder.Copy();
-
-
-
-      end;
 
     Include(Item.FFlags, aifDiskSeek);
     Include(Item.FFlags, aifDiskNumber);
-    case Item.FCompressionMethod of
-      actMain: Include(Item.Flags, aifCompressiomMethod);
-      else     Exclude(Item.Flags, aifCompressiomMethod);
-    end;
 
     if not FSwapReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);
@@ -2155,7 +2136,22 @@ begin
   FSearchRecs.Add(Csr);
 end;
 
-procedure TBeeArchiveUpdater.Configure;
+procedure TBeeArchiveUpdater.ConfigureCrypter;
+var
+  I: longint;
+  CurrentItem: TArchiveItem;
+begin
+  for I := 0 to FArchiveItems.Count - 1 do
+  begin
+    CurrentItem := FArchiveItems.Items[I];
+    if CurrentItem.FTag = aitAdd then
+    begin
+      CurrentItem.FEncryptionMethod := FEncryptionMethod;
+    end;
+  end;
+end;
+
+procedure TBeeArchiveUpdater.ConfigureCoder;
 var
   I: longint;
   CurrentItem: TArchiveItem;
@@ -2182,26 +2178,38 @@ begin
       CurrentItem := FArchiveItems.Items[I];
       if CurrentItem.FTag = aitAdd then
       begin
+        Exclude(CurrentItem.FCompressionFlags, acfCompressionLevel);
+        Exclude(CurrentItem.FCompressionFlags, acfDictionaryLevel);
+        Exclude(CurrentItem.FCompressionFlags, acfSolidCompression);
+        Exclude(CurrentItem.FCompressionFlags, acfCompressionTable);
+
         CurrentItem.FCompressionMethod := FCompressionMethod;
-        CurrentItem.FCompressionLevel  := FCompressionLevel;
-        CurrentItem.FDictionaryLevel   := FDictionaryLevel;
-        CurrentItem.FEncryptionMethod  := FEncryptionMethod;
+        if CurrentItem.FCompressionMethod = acrtMain then
+        begin
+          CurrentItem.FCompressionLevel  := FCompressionLevel;
+          CurrentItem.FDictionaryLevel   := FDictionaryLevel;
 
-        PreviousFileExt := CurrentFileExt;
-        if FForceFileExtension = '' then
-          CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
-        else
-          CurrentFileExt := FForceFileExtension;
+          Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
+          Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
 
-        if FConfiguration.GetTable(CurrentFileExt, CurrentTable) then
-          CurrentItem.FCompressionTable := CurrentTable
-        else
-          CurrentItem.FCompressionTable := DefaultTableParameters;
+          PreviousFileExt := CurrentFileExt;
+          if FForceFileExtension = '' then
+            CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
+          else
+            CurrentFileExt := FForceFileExtension;
 
-        CurrentItem.SolidCompression := FALSE;
-        if SolidCompression then
+          if FConfiguration.GetTable(CurrentFileExt, CurrentTable) then
+            CurrentItem.FCompressionTable := CurrentTable
+          else
+            CurrentItem.FCompressionTable := DefaultTableParameters;
+
           if CompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
-            CurrentItem.SolidCompression := TRUE;
+          begin
+            if SolidCompression then
+              Include(CurrentItem.FCompressionFlags, acfSolidCompression);
+          end else
+            Include(CurrentItem.FCompressionFlags, acfCompressionTable);
+        end;
       end;
     end;
   end;
@@ -2267,8 +2275,8 @@ var
   I, J, BackTear, NextTear: longint;
 begin
   DoMessage(Format(cmScanning, ['...']));
-  // STEP1: configure new items ...
-  Configure;
+  // STEP1: ConfigureCoder new items ...
+  ConfigureCoder;
   // STEP2: find sequences and tag ...
   I := GetBackTag(FArchiveItems.Count - 1, aitUpdate);
   while I > -1 do
