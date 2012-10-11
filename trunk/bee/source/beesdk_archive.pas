@@ -1552,14 +1552,20 @@ end;
 
 procedure TArchiveWriterBase.EncodeFromArchive(Item: TArchiveItem);
 var
+  ABSPosition: int64;
   NulCRC:longword;
 begin
   if Assigned(FArchiveReader) then
   begin
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-    Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
+
+    ABSPosition      := FTempWriter.ABSPosition;
+    Item.FDiskSeek   := FTempWriter.Position;
     Item.FDiskNumber := FTempWriter.CurrentImage;
     FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
+
+    Include(Item.FFlags, aifDiskSeek);
+    Include(Item.FFlags, aifDiskNumber);
 
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
@@ -1575,9 +1581,9 @@ begin
   begin
     FSwapReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
 
+    ABSPosition      := FTempWriter.ABSPosition;
     Item.FDiskSeek   := FTempWriter.Position;
     Item.FDiskNumber := FTempWriter.CurrentImage;
-    ABSPosition      := FTempWriter.ABSPosition;
     case Item.FCompressionMethod of
       actMain: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
       else     FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC);
@@ -1595,27 +1601,26 @@ end;
 
 procedure TArchiveWriterBase.EncodeFromFile(Item: TArchiveItem);
 var
+  ABSPosition: int64;
   Stream: TFileReader;
 begin
   Stream := TFileReader.Create(Item.FExternalFileName, 0);
   if Stream <> nil then
   begin
-    Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
+    ABSPosition      := FTempWriter.ABSPosition;
+    Item.FDiskSeek   := FTempWriter.Position;
     Item.FDiskNumber := FTempWriter.CurrentImage;
     case Item.CompressionMethod of
-      0: Item.FUncompressedSize := FEncoder.Encode(Stream, Item.FExternalFileSize, Item.FCRC);
-    else Item.FUncompressedSize := FEncoder.Encode(Stream, Item.FExternalFileSize, Item.FCRC);
+      actMain: FEncoder.Encode(Stream, Item.FExternalFileSize, Item.FCRC);
+      else     FEncoder.Encode(Stream, Item.FExternalFileSize, Item.FCRC);
     end;
+    Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
 
-    // if FTempWriter.CurrentImage = Item.DiskNumber then
-    Item.FCompressedSize := FTempWriter.Seek(0, soCurrent) -  Item.DiskSeek;
-    // else
-    //   Item.SetCompressedSize(FTempWriter.Seek(0, soCurrent) - (Item.DiskSeek - FTempWriter.Threshold));
+    Include(Item.FFlags, aifDiskSeek);
+    Include(Item.FFlags, aifDiskNumber);
 
-
-
-    if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);
     if not Stream     .IsValidStream then DoFailure(cmStrmReadError);
+    if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);
 
     Stream.Destroy;
   end else
@@ -2147,6 +2152,10 @@ begin
     if CurrentItem.FTag = aitAdd then
     begin
       CurrentItem.FEncryptionMethod := FEncryptionMethod;
+      if CurrentItem.FEncryptionMethod = acrtMain then
+      begin
+        // nothing to do
+      end;
     end;
   end;
 end;
