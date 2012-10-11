@@ -1169,13 +1169,13 @@ begin
     Item.FDiskNumber := FSwapWriter.CurrentImage;
     Item.FDiskSeek   := FSwapWriter.Seek(0, soCurrent);
     case Item.CompressionLevel of
-      0: FDecoder.Copy  (FSwapWriter, Item.UncompressedSize, CRC);
-    else FDecoder.Decode(FSwapWriter, Item.UncompressedSize, CRC);
+      actMain: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
+      else     FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
     end;
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FSwapWriter   .IsValidStream then DoFailure(cmStrmWriteError);
 
-    if not Item.Crc = CRC then
+    if Item.FCrc <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
   end else
     DoFailure(cmStrmWriteError);
@@ -1189,15 +1189,15 @@ begin
   Stream := TNulWriter.Create;
   if Assigned(Stream) then
   begin
-    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
     case Item.CompressionLevel of
-      0: FDecoder.Copy  (Stream, Item.UncompressedSize, CRC);
-    else FDecoder.Decode(Stream, Item.UncompressedSize, CRC);
+      actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
+      else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
     end;
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not Stream        .IsValidStream then DoFailure(cmStrmWriteError);
 
-    if not Item.Crc = CRC then
+    if Item.FCrc <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
 
     Stream.Destroy;
@@ -1215,20 +1215,20 @@ begin
   begin
     FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
     case Item.CompressionLevel of
-      0: FDecoder.Copy  (Stream, Item.UncompressedSize, CRC);
-    else FDecoder.Decode(Stream, Item.UncompressedSize, CRC);
+      actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
+      else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
     end;
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not Stream        .IsValidStream then DoFailure(cmStrmWriteError);
 
-    if not Item.Crc = CRC then
+    if Item.FCrc <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
 
     Stream.Destroy;
     if ExitCode < ccError then
     begin
-      FileSetAttr(Item.FExternalFileName, Item.Attributes);
-      FileSetDate(Item.FExternalFileName, Item.LastModifiedTime);
+      FileSetAttr(Item.FExternalFileName, Item.FAttributes);
+      FileSetDate(Item.FExternalFileName, Item.FLastModifiedTime);
     end;
   end else
     DoFailure(cmStrmWriteError);
@@ -1291,8 +1291,6 @@ var
   MagicSeek: int64;
 begin
   DoMessage(Format(Cr + cmOpening, [aArchiveName]));
-
-  CloseArchive;
   if FileExists(aArchiveName) then
   begin
     FArchiveReader := TFileReader.Create(aArchiveName, 1);
@@ -1424,7 +1422,7 @@ var
   I: longword;
 begin
   FArchiveLocator.DiskNumber := aStream.CurrentImage;
-  FArchiveLocator.DiskSeek   := aStream.Seek(0, soFromCurrent);
+  FArchiveLocator.DiskSeek   := aStream.Position;
 
   aStream.WriteDWord(beexMARKER);
   for I := 0 to FArchiveItems.Count - 1 do
@@ -1439,7 +1437,7 @@ begin
 
   // Copiare SFX module
 
-  MagicSeek := aStream.Seek(0, soFromCurrent);
+  MagicSeek := aStream.Position;
   aStream.WriteInfWord(aitLocator);
   FArchiveLocator.Write(aStream);
   WriteMagicSeek(aStream, MagicSeek);
