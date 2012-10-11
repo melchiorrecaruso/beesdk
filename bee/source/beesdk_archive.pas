@@ -1072,6 +1072,19 @@ var
   PreviusItem: TArchiveItem;
 begin
 
+
+
+
+
+
+
+
+
+
+
+
+
+
   (*
   PreviusItem := nil;
   for I := 0 to FArchiveItems.Count - 1 do
@@ -1213,7 +1226,7 @@ begin
   Stream := TFileWriter.Create(Item.FExternalFileName, fmCreate);
   if Assigned(Stream) then
   begin
-    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+    FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
     case Item.CompressionLevel of
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
@@ -1444,8 +1457,59 @@ begin
 end;
 
 procedure TArchiveWriterBase.Pack;
+var
+  I: longint;
+  CurrentItem: TArchiveItem;
+  PreviusItem: TArchiveItem;
 begin
+  if FArchiveItems.Count > 0 then
+  begin
+    PreviusItem := FArchiveItems.Items[0];
+    for I := 1 to FArchiveItems.Count - 1 do
+      if not (aifSessionFlags in CurrentItem.FFlags) then
+      begin
+        CurrentItem := FArchiveItems.Items[I];
 
+        GetBack
+
+
+        if CurrentItem.FUncompressedSize
+
+
+
+
+    FUncompressedSize: int64;
+    FCreationTime: longword;
+    FLastModifiedTime: longword;
+    FLastAccessTime: longword;
+    FAttributes: longword;
+    FMode: longword;
+    FCRC: longword;
+    FDiskNumber: longword;
+    FDiskSeek: int64;
+    FUserID: longword;
+    FUserName: string;
+    FGroupID: longword;
+    FGroupName: string;
+    FComment: string;
+    FFileName: string;
+    FCompressionMethod: longword;
+    FCompressionFlags: TArchiveCompressionFlags;
+    FCompressedSize: int64;
+    FCompressionLevel: longword;
+    FDictionaryLevel: longword;
+    FCompressionTable: TTableParameters;
+    FEncryptionMethod: longword;
+
+
+
+
+
+
+
+      end else
+        PreviusItem := FArchiveItems.Items[I];
+  end;
 end;
 
 function TArchiveWriterBase.OpenSwap: longint;
@@ -1472,8 +1536,8 @@ begin
           if Item.FTag in [aitDecode, aitDecodeAndUpdate] then
           begin
             case Item.FTag of
-              aitDecode:          DoMessage(Format(cmSwapping, [Item.FileName]));
-              aitDecodeAndUpdate: DoMessage(Format(cmDecoding, [Item.FileName]));
+              aitDecode:          DoMessage(Format(cmSwapping, [Item.FFileName]));
+              aitDecodeAndUpdate: DoMessage(Format(cmDecoding, [Item.FFileName]));
             end;
 
             case Item.FTag of
