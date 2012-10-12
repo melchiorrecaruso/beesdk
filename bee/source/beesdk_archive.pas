@@ -30,15 +30,14 @@ const
   aitLocator   = $7E;
   aitEnd       = $7F;
 
+type
   /// archive compression method
-  actNone      = $00;
-  actMain      = $01;
+  TArchiveCompressionMethod = (actNone, actMain);
 
   /// archive encryption method
-  acrtNone     = $00;
-  acrtMain     = $01;
+  TArchiveEncryptionMethod = (acrtNone, acrtMain);
 
-type
+
   /// archive locator flag
   TArchiveLocatorFlag = (
     alfDisksNumber,
@@ -48,25 +47,19 @@ type
 
   /// archive binding flag
   TArchiveBindingFlag = (
-    abfID,
-    abfCRC,
-    abfSelfExtractorSize,
     abfComment);
 
   TArchiveBindingFlags = set of TArchiveBindingFlag;
 
   /// archive item flag
   TArchiveItemFlag = (
-    aifSessionFlags,
+    aifDefaultFlags,
     aifUncompressedSize,
     aifCreationTime,
     aifLastModifiedTime,
     aifLastAccessTime,
     aifAttributes,
     aifMode,
-    aifCRC,
-    aifDiskNumber,
-    aifDiskSeek,
     aifUserID,
     aifUserName,
     aifGroupID,
@@ -91,40 +84,30 @@ type
      FDisksNumber: longword;
      FDiskNumber: longword;
      FDiskSeek: int64;
-     procedure SetDisksNumber(Value: longword);
-     procedure SetDiskNumber(Value: longword);
+     FMagikSeek: int64;
    public
      constructor Create;
      procedure Read(Stream: TFileReader);
      procedure Write(Stream: TFileWriter);
    public
      property Flags: TArchiveLocatorFlags read FFlags;
-     property DisksNumber: longword read FDisksNumber write SetDisksNumber;
-     property DiskNumber: longword read FDiskNumber write SetDiskNumber;
-     property DiskSeek: int64 read FDiskSeek write FDiskSeek;
+     property DisksNumber: longword read FDisksNumber;
+     property DiskNumber: longword read FDiskNumber;
+     property DiskSeek: int64 read FDiskSeek;
+     property MagikSeek: int64 read FMagikSeek;
    end;
 
-  TBeeArchiveBinding = class(TObject)
+  TArchiveBinding = class(TObject)
   private
     FFlags: TArchiveBindingFlags;
-    FID: string;
-    FCRC: longword;
-    FSfxSize: longword;
     FComment: string;
-    procedure SetID(const Value: string);
-    procedure SetCRC(Value: longword);
-    procedure SetSfxSize(Value: longword);
-    procedure SetComment(const Value: string);
   public
     constructor Create;
-    constructor Read(Stream: TFileReader);
+    procedure Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
   public
     property Flags: TArchiveBindingFlags read FFlags;
-    property ID: string read FID write SetID;
-    property CRC: longword read FCRC write SetCRC;
-    property SfxSize: longword read FSfxSize write SetSfxSize;
-    property Comment: string read FComment write SetComment;
+    property Comment: string read FComment;
   end;
 
   TArchiveItemTag = (aitNone, aitAdd, aitUpdate, aitDecode, aitDecodeAndUpdate);
@@ -138,7 +121,7 @@ type
     FLastAccessTime: longword;
     FAttributes: longword;
     FMode: longword;
-    FCRC: longword;
+    FCRC32: longword;
     FDiskNumber: longword;
     FDiskSeek: int64;
     FUserID: longword;
@@ -147,13 +130,13 @@ type
     FGroupName: string;
     FComment: string;
     FFileName: string;
-    FCompressionMethod: longword;
+    FCompressionMethod: TArchiveCompressionMethod;
     FCompressionFlags: TArchiveCompressionFlags;
     FCompressedSize: int64;
-    FCompressionLevel: longword;
-    FDictionaryLevel: longword;
+    FCompressionLevel: TmOption;
+    FDictionaryLevel: TdOption;
     FCompressionTable: TTableParameters;
-    FEncryptionMethod: longword;
+    FEncryptionMethod: TArchiveEncryptionMethod;
 
     FPosition: longint;
     FTag: TArchiveItemTag;
@@ -174,7 +157,7 @@ type
     property LastAccessTime: longword read FLastAccessTime;
     property Attributes: longword read FAttributes;
     property Mode: longword read FMode;
-    property CRC: longword read FCRC;
+    property CRC32: longword read FCRC32;
     property DiskNumber: longword read FDiskNumber;
     property DiskSeek: int64 read FDiskSeek;
     property UserID: longword read FUserID;
@@ -184,14 +167,14 @@ type
     property Comment: string read FComment;
     property FileName: string read FFileName;
 
-    property CompressionMethod: longword read FCompressionMethod;
+    property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod;
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
     property CompressedSize: int64 read FCompressedSize;
-    property CompressionLevel: longword read FCompressionLevel;
-    property DictionaryLevel: longword read FDictionaryLevel;
+    property CompressionLevel: TmOption read FCompressionLevel;
+    property DictionaryLevel: TdOption read FDictionaryLevel;
     property SolidCompression: boolean read GetSolidCompression write SetSolidCompression;
     property CompressionTable: TTableParameters read FCompressionTable;
-    property EncryptionMethod: longword read FEncryptionMethod;
+    property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
 
     property Position: longint read FPosition;
   end;
@@ -257,8 +240,6 @@ type
     FOnProgress: TArchiveProgressEvent;
     FOnRequestImage: TFileReaderRequestImageEvent;
     FArchiveItems: TBeeArchiveCustomItems;
-    FArchiveBinding: TBeeArchiveBinding;
-    FArchiveLocator: TArchiveLocator;
     procedure UnPack;
     procedure InitDecoder (Item: TArchiveItem);
     procedure DecodeToSwap(Item: TArchiveItem);
@@ -396,18 +377,15 @@ type
   private
     FSearchRecs: TList;
     FDefaultFlags: TArchiveItemFlags;
-    FCompressionMethod: longint;
-    FCompressionLevel: longint;
-    FDictionaryLevel: longint;
+    FCompressionMethod: TArchiveCompressionMethod;
+    FCompressionLevel: TmOption;
+    FDictionaryLevel: TdOption;
     FSolidCompression: boolean;
-    FEncryptionMethod: longword;
+    FEncryptionMethod: TArchiveEncryptionMethod;
     FConfigurationName: string;
     FConfiguration: TConfiguration;
     FForceFileExtension: string;
     FOnUpdate: TArchiveUpdateEvent;
-    procedure SetCompressionMethod(Value: longint);
-    procedure SetCompressionLevel(Value: longint);
-    procedure SetDictionaryLevel(Value: longint);
     procedure SetConfigurationName(const Value: string);
     procedure SetForceFileExtension(const Value: string);
     procedure ConfigureCrypter;
@@ -422,18 +400,20 @@ type
     procedure UpdateTagged;
     procedure Tag(SearchRec: TCustomSearchRec);
   public
-    property CompressionMethod: longint
-      read FCompressionLevel write SetCompressionLevel;
-    property CompressionLevel: longint
-      read FCompressionLevel write SetCompressionLevel;
-    property DictionaryLevel: longint
-      read FDictionaryLevel write SetDictionaryLevel;
+    property CompressionMethod: TArchiveCompressionMethod
+      read FCompressionMethod write FCompressionMethod;
+
+    property CompressionLevel: TmOption
+      read FCompressionLevel write FCompressionLevel;
+
+    property DictionaryLevel: TdOption
+      read FDictionaryLevel  write FDictionaryLevel;
+
     property SolidCompression: boolean
       read FSolidCompression write FSolidCompression;
 
-    property EncrypMethod: longint
-      read FCompressionLevel write SetCompressionLevel;
-
+    property EncrypionMethod: TArchiveEncryptionMethod
+      read FEncryptionMethod write FEncryptionMethod;
 
     property ConfigurationName: string
       read FConfigurationName write SetConfigurationName;
@@ -444,9 +424,6 @@ type
 
     property OnUpdateEvent: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
   end;
-
-
-
 
 implementation
 
@@ -470,147 +447,62 @@ end;
 constructor TArchiveLocator.Create;
 begin
   inherited Create;
-  FFlags := [];
-  FDisksNumber := 0;
-  FDiskNumber  := 0;
+  FFlags       := [];
+  FDisksNumber :=  0;
+  FDiskNumber  :=  0;
+  FMagikSeek   :=  0;
 end;
 
 procedure TArchiveLocator.Read(Stream: TFileReader);
 begin
   FFlags := TArchiveLocatorFlags(longword(Stream.ReadInfWord));
   if (alfDisksNumber in FFlags) then
-    FDisksNumber := Stream.ReadInfWord
-  else
-    FDisksNumber := 0;
+    FDisksNumber := Stream.ReadInfWord;
 
-  if (alfDiskNumber in FFlags) then
-    FDiskNumber := Stream.ReadInfWord
-  else
-     FDiskNumber := 0;
+  if (alfDiskNumber  in FFlags) then
+    FDiskNumber := Stream.ReadInfWord;
 
-  FDiskSeek := ReadMagicSeek(Stream);
+  FDiskSeek  := Stream.ReadInfWord;
+  FMagikSeek := ReadMagicSeek(Stream);
 end;
 
 procedure TArchiveLocator.Write(Stream: TFileWriter);
 begin
   Stream.WriteInfWord(longword(FFlags));
-
   if (alfDisksNumber in FFlags) then
     Stream.WriteInfWord(FDisksNumber);
 
-  if (alfDiskNumber in FFlags) then
+  if (alfDiskNumber  in FFlags) then
     Stream.WriteInfWord(FDiskNumber);
 
-  WriteMagicSeek(Stream, FDiskSeek);
+  Stream.WriteInfWord(FDiskSeek);
+  WriteMagicSeek(Stream, FMagikSeek);
 end;
 
-procedure TArchiveLocator.SetDisksNumber(Value: longword);
-begin
-  FDisksNumber := Value;
-  if FDisksNumber <> 0 then
-    Include(FFlags, alfDisksNumber)
-  else
-    Exclude(FFlags, alfDisksNumber);
-end;
+// TArchiveBinding class
 
-procedure TArchiveLocator.SetDiskNumber(Value: longword);
-begin
-  FDiskNumber := Value;
-  if FDiskNumber <> 0 then
-    Include(FFlags, alfDiskNumber)
-  else
-    Exclude(FFlags, alfDiskNumber);
-end;
-
-// TBeeArchiveBinding class
-
-constructor TBeeArchiveBinding.Create;
+constructor TArchiveBinding.Create;
 begin
   inherited Create;
   FFlags   := [];
-  FID      := '';
-  FCRC     :=  0;
-  FSfxSize :=  0;
   FComment := '';
 end;
 
-constructor TBeeArchiveBinding.Read(Stream: TFileReader);
+procedure TArchiveBinding.Read(Stream: TFileReader);
 begin
   inherited Create;
   FFlags := TArchiveBindingFlags(longword(Stream.ReadInfWord));
-  if (abfID  in FFlags) then
-    FID := Stream.ReadInfString
-  else
-    FID := '';
-
-  if (abfCRC in FFlags) then
-    FCRC := Stream.ReadInfWord
-  else
-    FCRC :=  0;
-
-  if (abfSelfExtractorSize in FFlags) then
-    FSfxSize := Stream.ReadInfWord
-  else
-    FSfxSize :=  0;
 
   if (abfComment in FFlags) then
-    FComment := Stream.ReadInfString
-  else
-    FComment := '';
+    FComment := Stream.ReadInfString;
 end;
 
-procedure TBeeArchiveBinding.Write(Stream: TFileWriter);
+procedure TArchiveBinding.Write(Stream: TFileWriter);
 begin
   Stream.WriteInfWord(longword(FFlags));
 
-  if (abfID in FFlags) then
-    Stream.WriteInfString(FID);
-
-  if (abfCRC in FFlags) then
-    Stream.WriteInfWord(FCRC);
-
-  if (abfSelfExtractorSize in FFlags) then
-    Stream.WriteInfWord(FSfxSize);
-
   if (abfComment in FFlags) then
     Stream.WriteInfString(FComment);
-end;
-
-procedure TBeeArchiveBinding.SetID(const Value: string);
-begin
-  FID := Value;
-  if FID <> '' then
-    Include(FFlags, abfID)
-  else
-    Exclude(FFlags, abfID);
-end;
-
-procedure TBeeArchiveBinding.SetCRC(Value: longword);
-begin
-  FCRC := Value;
-  if FCRC <> 0 then
-    Include(FFlags, abfCRC)
-  else
-    Exclude(FFlags, abfCRC);
-end;
-
-procedure TBeeArchiveBinding.SetSfxSize(Value: longword);
-begin
-  FSfxSize := Value;
-  if FSfxSize <> 0 then
-  begin
-    Include(FFlags, abfSelfExtractorSize)
-  end else
-    Exclude(FFlags, abfSelfExtractorSize);
-end;
-
-procedure TBeeArchiveBinding.SetComment(const Value: string);
-begin
-  FComment := Value;
-  if FComment <> '' then
-    Include(FFlags, abfComment)
-  else
-    Exclude(FFlags, abfComment);
 end;
 
 // TArchiveItem class
@@ -619,6 +511,35 @@ constructor TArchiveItem.Create(DefaultFlags: TArchiveItemFlags);
 begin
   inherited Create;
   FFlags := DefaultFlags;
+  FUncompressedSize  :=  0;
+  FCreationTime      :=  0;
+  FLastModifiedTime  :=  0;
+  FLastAccessTime    :=  0;
+  FAttributes        :=  0;
+  FMode              :=  0;
+  FUserID            :=  0;
+  FUserName          := '';
+  FGroupID           :=  0;
+  FGroupName         := '';
+  FComment           := '';
+  FFileName          := '';
+
+  // Data descriptor
+  FCompressionMethod := actNone;
+  FCompressionFlags  := [];
+  FCRC32             :=  0;
+  FDiskNumber        :=  0;
+  FDiskSeek          :=  0;
+  FCompressedSize    :=  0;
+  FCompressionLevel  := moStore;
+  FDictionaryLevel   := do2MB;
+//FCompressionTable  := EmptyTableParameters;
+  FEncryptionMethod  := acrtNone;
+
+  FTag               := aitNone;
+  FPosition          := -1;
+  FExternalFileName  := '';
+  FExternalFileSize  :=  0;
 end;
 
 procedure TArchiveItem.Update(SearchRec: TCustomSearchRec);
@@ -629,36 +550,36 @@ begin
   if (aifLastAccessTime   in FFLags) then FLastAccessTime   := SearchRec.LastAccessTime;
   if (aifAttributes       in FFLags) then FAttributes       := SearchRec.Attributes;
   if (aifMode             in FFLags) then FMode             := SearchRec.Mode;
-//if (aifCRC              in FFLags) then FCRC              := 0;
-//if (aifDiskNumber       in FFLags) then FDiskNumber       := 0;
-//if (aifDiskSeek         in FFLags) then FDiskSeek         := 0;
   if (aifUserID           in FFLags) then FUserID           := SearchRec.UserID;
   if (aifUserName         in FFLags) then FUserName         := SearchRec.UserName;
   if (aifGroupID          in FFLags) then FGroupID          := SearchRec.GroupID;
   if (aifGroupName        in FFLags) then FGroupName        := SearchRec.GroupName;
 //if (aifComment          in FFLags) then FComment          := UseComment;
 
-//FFileName := SearchRec.Name;
+  FFileName := SearchRec.Name;
 
-// data descriptor
-//FCompressionMethod := 0;
-//FCompressionFlags  := [];
-//FCompressedSize    := 0;
-//FCompressionLevel  := 0;
-//FDictionaryLevel   := 0;
-//FCompressionTable  := nil;
-//FEncryptionMethod  := 0;
+  // Data descriptor
+  // FCompressionMethod := actNone;
+  // FCompressionFlags  := [];
+  // FCRC32             :=  0;
+  // FDiskNumber        :=  0;
+  // FDiskSeek          :=  0;
+  // FCompressedSize    :=  0;
+  // FCompressionLevel  :=  0;
+  // FDictionaryLevel   :=  0;
+  // FCompressionTable  :=  EmptyTableParameters;
+  // FEncryptionMethod  :=  0;
 
-//FPosition := -1;
+  // FTag           := aitNone;
+  // FPosition      := -1;
   FExternalFileName := SearchRec.Name;
   FExternalFileSize := SearchRec.Size;
 end;
 
-
-
 constructor TArchiveItem.Read(Stream: TFileReader);
 begin
-  FFlags := TArchiveItemFlags(longword(Stream.ReadInfWord));
+  FFileName := Stream.ReadInfString;
+  FFlags    := TArchiveItemFlags(longword(Stream.ReadInfWord));
 
   if (aifUncompressedSize in FFlags) then FUncompressedSize := Stream.ReadInfWord;
   if (aifCreationTime     in FFlags) then FCreationTime     := Stream.ReadInfWord;
@@ -666,36 +587,35 @@ begin
   if (aifLastAccessTime   in FFlags) then FLastAccessTime   := Stream.ReadInfword;
   if (aifAttributes       in FFlags) then FAttributes       := Stream.ReadInfWord;
   if (aifMode             in FFlags) then FMode             := Stream.ReadInfWord;
-  if (aifCRC              in FFlags) then FCRC              := Stream.ReadInfWord;
-  if (aifDiskNumber       in FFlags) then FDiskNumber       := Stream.ReadInfWord;
-  if (aifDiskSeek         in FFlags) then FDiskSeek         := Stream.ReadInfWord;
   if (aifUserID           in FFlags) then FUserID           := Stream.ReadInfWord;
   if (aifUserName         in FFlags) then FUserName         := Stream.ReadInfString;
   if (aifGroupID          in FFlags) then FGroupID          := Stream.ReadInfWord;
   if (aifGroupName        in FFlags) then FGroupName        := Stream.ReadInfString;
   if (aifComment          in FFlags) then FComment          := Stream.ReadInfString;
 
-  FFileName:= Stream.ReadInfString;
+  // Data descryptor
+  if FUncompressedSize > 0 then
+  begin
+    FCompressionMethod := TArchiveCompressionMethod(longword(Stream.ReadInfWord));
+    FDiskNumber        := Stream.ReadInfWord;
+    FDiskSeek          := Stream.ReadInfWord;
+    FCRC32             := Stream.ReadInfWord;
 
-  // data descryptor
-  FCompressionMethod := longword(Stream.ReadInfWord);
-  case FCompressionMethod of
-    1: begin
-         FCompressionFlags := TArchiveCompressionFlags(longword(Stream.ReadInfWord));
-         if (acfCompressionLevel in FCompressionFlags) then
-           FCompressionLevel := Stream.ReadInfWord;
-         if (acfDictionaryLevel  in CompressionFlags) then
-           FDictionaryLevel  := Stream.ReadInfWord;
-         if (acfCompressionTable in FCompressionFlags) then
-           Stream.Read(FCompressionTable, SizeOf(TTableParameters));
-         FCompressedSize := Stream.ReadInfWord;
-       end;
+    if FCompressionMethod = actMain then
+    begin
+      FCompressionFlags := TArchiveCompressionFlags(longword(Stream.ReadInfWord));
+      if (acfCompressionLevel in FCompressionFlags) then FCompressionLevel := TmOption(Stream.ReadInfWord);
+      if (acfDictionaryLevel  in FCompressionFlags) then FDictionaryLevel  := TdOption(Stream.ReadInfWord);
+      if (acfCompressionTable in FCompressionFlags) then Stream.Read(FCompressionTable, SizeOf(TTableParameters));
+      FCompressedSize := Stream.ReadInfWord;
+    end;
+    FEncryptionMethod := TArchiveEncryptionMethod(longword(Stream.ReadInfWord));
   end;
-  FEncryptionMethod := longword(Stream.ReadInfWord);
 end;
 
 procedure TArchiveItem.Write(Stream: TFileWriter);
 begin
+  Stream.WriteInfString(FFileName);
   Stream.WriteInfWord(longword(FFlags));
 
   if (aifUncompressedSize in FFlags) then Stream.WriteInfWord(FUncompressedSize);
@@ -704,33 +624,30 @@ begin
   if (aifLastAccessTime   in FFlags) then Stream.WriteInfWord(FLastAccessTime);
   if (aifAttributes       in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifMode             in FFlags) then Stream.WriteInfWord(FMode);
-  if (aifCRC              in FFlags) then Stream.WriteInfWord(FCRC);
-  if (aifDiskNumber       in FFlags) then Stream.WriteInfWord(FDiskNumber);
-  if (aifDiskSeek         in FFlags) then Stream.WriteInfWord(FDiskSeek);
   if (aifUserID           in FFlags) then Stream.WriteInfWord(FUserID);
   if (aifUserName         in FFlags) then Stream.WriteInfString(FUserName);
   if (aifGroupID          in FFlags) then Stream.WriteInfWord(FGroupID);
   if (aifGroupName        in FFlags) then Stream.WriteInfString(FGroupName);
   if (aifComment          in FFlags) then Stream.WriteInfString(FComment);
 
-  Stream.WriteInfString(FFileName);
+  // Data descriptor
+  if FUncompressedSize > 0 then
+  begin
+    Stream.WriteInfWord(Ord(FCompressionMethod));
+    Stream.WriteInfWord(FDiskNumber);
+    Stream.WriteInfWord(FDiskSeek);
+    Stream.WriteInfWord(FCRC32);
 
-  // data descriptor
-  Stream.WriteInfWord(FCompressionMethod);
-  case FCompressionMethod of
-    1: begin
-         Stream.WriteInfWord(longword(FCompressionFlags));
-         if (acfCompressionLevel in FCompressionFlags) then
-           Stream.WriteInfWord(FCompressionLevel);
-         if (acfDictionaryLevel  in CompressionFlags)  then
-           Stream.WriteInfWord(FDictionaryLevel);
-         if (acfCompressionTable in FCompressionFlags) then
-           Stream.Write(FCompressionTable, SizeOf(TTableParameters));
-
-         Stream.WriteInfWord(FCompressedSize);
-       end;
+    if FCompressionMethod = actMain then
+    begin
+      Stream.WriteInfWord(longword(FCompressionFlags));
+      if (acfCompressionLevel in FCompressionFlags) then Stream.WriteInfWord(Ord(FCompressionLevel));
+      if (acfDictionaryLevel  in CompressionFlags)  then Stream.WriteInfWord(Ord(FDictionaryLevel));
+      if (acfCompressionTable in FCompressionFlags) then Stream.Write(FCompressionTable, SizeOf(TTableParameters));
+      Stream.WriteInfWord(FCompressedSize);
+    end;
+    Stream.WriteInfWord(Ord(FEncryptionMethod));
   end;
-  Stream.WriteInfWord(FEncryptionMethod);
 end;
 
 function TArchiveItem.GetSolidCompression: boolean;
@@ -768,9 +685,9 @@ var
   I: longint;
 begin
   for I := 0 to FItems.Count - 1 do
-  begin
     TArchiveItem(FItems[I]).Destroy;
-  end;
+  FItems.Clear;
+  FNames.Clear;
 end;
 
 procedure TBeeArchiveCustomItems.Add(Item: TArchiveItem);
@@ -856,7 +773,7 @@ begin
   begin
     Next := Items[Index + 1];
     (*
-    if  (not(aifSessionFlags in Next.Flags)) then
+    if  (not(aifDefaultFlags in Next.Flags)) then
     begin
       if    (aifUncompressedSize in Item.Flags) and
         (not(aifUncompressedSize in Next.Flags)) then
@@ -882,8 +799,8 @@ begin
         (not(aifMode in Next.Flags)) then
         Next.SetMode(Item.Mode);
 
-      if    (aifCRC in Item.Flags) and
-        (not(aifCRC in Next.Flags)) then
+      if    (aifCRC32 in Item.Flags) and
+        (not(aifCRC32 in Next.Flags)) then
         Next.SetCRC(Item.CRC);
 
       if    (aifDiskNumber in Item.Flags) and
@@ -962,18 +879,13 @@ constructor TArchiveReaderBase.Create;
 begin
   inherited Create;
   Randomize;
-  FExitCode := ccSuccesful;
-
+  FExitCode     := ccSuccesful;
   FArchiveItems := TBeeArchiveCustomItems.Create;
-  FArchiveBinding := TBeeArchiveBinding.Create;
-  FArchiveLocator := TArchiveLocator.Create;
 end;
 
 destructor TArchiveReaderBase.Destroy;
 begin
   FArchiveItems.Destroy;
-  FArchiveBinding.Destroy;
-  FArchiveLocator.Destroy;
   inherited Destroy;
 end;
 
@@ -1032,37 +944,37 @@ end;
 
 function TArchiveReaderBase.Read(aStream: TFileReader): boolean;
 var
-  T: longword;
+  Marker: longword;
+  Locator: TArchiveLocator;
+  Binding: TArchiveBinding;
 begin
-  Result := FALSE;
-  T := longword(aStream.ReadInfWord);
-  if T = aitLocator then
-  begin
-    if longword(aStream.ReadInfWord) <= beexVERSION then Exit;
+  Result  := FALSE;
+  Marker  := longword(aStream.ReadInfWord);
+  if Marker = aitLocator then
+    if longword(aStream.ReadInfWord) <= beexVERSION then
+    begin
+      Locator := TArchiveLocator.Create;
+      Locator.Read(aStream);
 
-    FArchiveLocator.Read(aStream);
-    if alfDisksNumber in FArchiveLocator.FFlags then
-      aStream.ImagesNumber := FArchiveLocator.DisksNumber;
-    if alfDiskNumber in FArchiveLocator.FFlags then
-      aStream.SeekImage(FArchiveLocator.DiskNumber, FArchiveLocator.DiskSeek);
-
-    if aStream.ReadDWord = beexMARKER then
-      repeat
-        T := longword(aStream.ReadInfWord);
-        if T <> aitEnd then
-        begin
-          if longword(aStream.ReadInfWord) <= beexVERSION then Exit;
-
-          case T of
+      aStream.ImagesNumber := Locator.DisksNumber;
+      aStream.SeekImage(Locator.DiskNumber, Locator.DiskSeek);
+      if aStream.ReadDWord = beexMARKER then
+      begin
+        Binding := TArchiveBinding.Create;
+        repeat
+          Marker := longword(aStream.ReadInfWord);
+          case Marker of
             aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
-            aitBinding: FArchiveBinding.Read(aStream);
+            aitBinding: Binding.Read(aStream);
           //aitLocator: already readed;
-            else        Exit;
+            else        Marker := aitEnd;
           end;
-        end;
-        Result := (T = aitEnd);
-      until Result;
-  end;
+          Result := (Marker = aitEnd);
+        until Result;
+        Binding.Destroy;
+      end;
+      Locator.Destroy;
+    end;
 end;
 
 procedure TArchiveReaderBase.UnPack;
@@ -1090,7 +1002,7 @@ begin
   for I := 0 to FArchiveItems.Count - 1 do
   begin
     CurrentItem := FArchiveItems.Items[I];
-    if not (aifSessionFlags in CurrentItem.Flags) then
+    if not (aifDefaultFlags in CurrentItem.Flags) then
     begin
       if not (aifUncompressedSize in CurrentItem.Flags) then
         CurrentItem.FUncompressedSize := PreviusItem.UncompressedSize;
@@ -1110,7 +1022,7 @@ begin
     aifLastAccessTime,
     aifAttributes,
     aifMode,
-    aifCRC,
+    aifCRC32,
     aifDiskNumber,
     aifDiskSeek,
     aifUserID,
@@ -1162,7 +1074,7 @@ begin
   if Item.CompressionMethod = actMain then
   begin
     if acfDictionaryLevel in Item.FCompressionFlags then
-      FDecoder.DictionaryLevel := Item.DictionaryLevel;
+      FDecoder.DictionaryLevel := Ord(Item.DictionaryLevel);
 
     if acfCompressionTable in Item.FCompressionFlags then
       FDecoder.CompressionTable := Item.CompressionTable;
@@ -1181,14 +1093,14 @@ begin
 
     Item.FDiskNumber := FSwapWriter.CurrentImage;
     Item.FDiskSeek   := FSwapWriter.Seek(0, soCurrent);
-    case Item.CompressionLevel of
+    case Item.CompressionMethod of
       actMain: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
     end;
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FSwapWriter   .IsValidStream then DoFailure(cmStrmWriteError);
 
-    if Item.FCrc <> CRC then
+    if Item.FCRC32 <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
   end else
     DoFailure(cmStrmWriteError);
@@ -1203,14 +1115,14 @@ begin
   if Assigned(Stream) then
   begin
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-    case Item.CompressionLevel of
+    case Item.CompressionMethod of
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
     end;
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not Stream        .IsValidStream then DoFailure(cmStrmWriteError);
 
-    if Item.FCrc <> CRC then
+    if Item.FCRC32 <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
 
     Stream.Destroy;
@@ -1227,14 +1139,14 @@ begin
   if Assigned(Stream) then
   begin
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-    case Item.CompressionLevel of
+    case Item.CompressionMethod of
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
     end;
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not Stream        .IsValidStream then DoFailure(cmStrmWriteError);
 
-    if Item.FCrc <> CRC then
+    if Item.FCRC32 <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
 
     Stream.Destroy;
@@ -1335,9 +1247,6 @@ begin
     FreeAndNil(FArchiveReader);
 
   FArchiveItems.Clear;
-//FArchiveBinding.Clear;
-//FArchiveLocator.Clear;
-
   FProcessedSize := 0;
   FTotalSize     := 0;
 end;
@@ -1357,20 +1266,16 @@ end;
 procedure TArchiveReaderBase.DoMessage(const Message: string);
 begin
   if Assigned(FOnMessage) then
-  begin
     FOnMessage(Message);
-  end;
 end;
 
 function TArchiveReaderBase.DoProgress(Value: longint): boolean;
 begin
-  while FSuspended do Sleep(250);
-
   Inc(FProcessedSize, Value);
   if Assigned(FOnProgress) then
-  begin
     DoProgress(Round(FProcessedSize/FTotalSize * 100));
-  end;
+
+  while FSuspended do Sleep(250);
   Result := ExitCode < ccError;
 end;
 
@@ -1425,17 +1330,21 @@ begin
   inherited Create;
   FIsNeededToSave  := FALSE;
   FIsNeededToSwap  := FALSE;
-  FThreshold       := 0;
+  FThreshold       :=  0;
   FWorkDirectory   := '';
 end;
 
 procedure TArchiveWriterBase.Write(aStream: TFileWriter);
 var
-  MagicSeek: int64;
   I: longword;
+  Locator: TArchiveLocator;
+  Binding: TArchiveBinding;
 begin
-  FArchiveLocator.DiskNumber := aStream.CurrentImage;
-  FArchiveLocator.DiskSeek   := aStream.Position;
+  Locator := TArchiveLocator.Create;
+  Locator.FDiskNumber := aStream.CurrentImage;
+  if Locator.FDiskNumber > 0 then
+    Include(Locator.FFlags,  alfDiskNumber);
+  Locator.FDiskSeek := aStream.Position;
 
   aStream.WriteDWord(beexMARKER);
   for I := 0 to FArchiveItems.Count - 1 do
@@ -1444,16 +1353,20 @@ begin
     FArchiveItems.Items[I].Write(aStream);
   end;
   aStream.WriteInfWord(aitBinding);
-  FArchiveBinding.Write(aStream);
+  Binding := TArchiveBinding.Create;
+  Binding.Write(aStream);
+  Binding.Destroy;
 
   if aStream.Threshold > 0 then aStream.CreateImage;
 
-  // Copiare SFX module
+  Locator.FDisksNumber := aStream.CurrentImage;
+  if Locator.FDisksNumber > 0 then
+    Include(Locator.FFlags,  alfDisksNumber);
 
-  MagicSeek := aStream.Position;
+  Locator.FMagikSeek := aStream.Position;
   aStream.WriteInfWord(aitLocator);
-  FArchiveLocator.Write(aStream);
-  WriteMagicSeek(aStream, MagicSeek);
+  Locator.Write(aStream);
+  Locator.Destroy;
 end;
 
 procedure TArchiveWriterBase.Pack;
@@ -1466,49 +1379,70 @@ begin
   begin
     PreviusItem := FArchiveItems.Items[0];
     for I := 1 to FArchiveItems.Count - 1 do
-      if not (aifSessionFlags in CurrentItem.FFlags) then
+    begin
+      CurrentItem := FArchiveItems.Items[I];
+      if (aifDefaultFlags in CurrentItem.FFlags) then
       begin
-        CurrentItem := FArchiveItems.Items[I];
+        Exclude(CurrentItem.FFlags, aifUncompressedSize);
+        Exclude(CurrentItem.FFlags, aifCreationTime);
+        Exclude(CurrentItem.FFlags, aifLastModifiedTime);
+        Exclude(CurrentItem.FFlags, aifLastAccessTime);
+        Exclude(CurrentItem.FFlags, aifAttributes);
+        Exclude(CurrentItem.FFlags, aifMode);
+        Exclude(CurrentItem.FFlags, aifUserID);
+        Exclude(CurrentItem.FFlags, aifUserName);
+        Exclude(CurrentItem.FFlags, aifGroupID);
+        Exclude(CurrentItem.FFlags, aifGroupName);
+        Exclude(CurrentItem.FFlags, aifComment);
+        Exclude(CurrentItem.FCompressionFlags, acfCompressionLevel);
+        Exclude(CurrentItem.FCompressionFlags, acfDictionaryLevel);
+        // Exclude(CurrentItem.FCompressionFlags, acfCompressionTable);
 
-        GetBack
+        if CurrentItem.FUncompressedSize <> PreviusItem.FUncompressedSize then
+          Include(CurrentItem.FFlags, aifUncompressedSize);
 
+        if CurrentItem.FCreationTime <> PreviusItem.FCreationTime then
+          Include(CurrentItem.FFlags, aifCreationTime);
 
-        if CurrentItem.FUncompressedSize
+        if CurrentItem.FLastModifiedTime <> PreviusItem.FLastModifiedTime then
+          Include(CurrentItem.FFlags, aifLastModifiedTime);
 
+        if CurrentItem.FLastAccessTime <> PreviusItem.FLastAccessTime then
+          Include(CurrentItem.FFlags, aifLastAccessTime);
 
+        if CurrentItem.FAttributes <> PreviusItem.FAttributes then
+          Include(CurrentItem.FFlags, aifAttributes);
 
+        if CurrentItem.FMode <> PreviusItem.FMode then
+          Include(CurrentItem.FFlags, aifMode);
 
-    FUncompressedSize: int64;
-    FCreationTime: longword;
-    FLastModifiedTime: longword;
-    FLastAccessTime: longword;
-    FAttributes: longword;
-    FMode: longword;
-    FCRC: longword;
-    FDiskNumber: longword;
-    FDiskSeek: int64;
-    FUserID: longword;
-    FUserName: string;
-    FGroupID: longword;
-    FGroupName: string;
-    FComment: string;
-    FFileName: string;
-    FCompressionMethod: longword;
-    FCompressionFlags: TArchiveCompressionFlags;
-    FCompressedSize: int64;
-    FCompressionLevel: longword;
-    FDictionaryLevel: longword;
-    FCompressionTable: TTableParameters;
-    FEncryptionMethod: longword;
+        if CurrentItem.FUserID <> PreviusItem.FUserID then
+          Include(CurrentItem.FFlags, aifUserID);
 
+        if CurrentItem.FUserName <> PreviusItem.FUserName then
+          Include(CurrentItem.FFlags, aifUserName);
 
+        if CurrentItem.FGroupID <> PreviusItem.FGroupID then
+          Include(CurrentItem.FFlags, aifGroupID);
 
+        if CurrentItem.FGroupName <> PreviusItem.FGroupName then
+          Include(CurrentItem.FFlags, aifGroupName);
 
+        if CurrentItem.FComment <> PreviusItem.FComment then
+          Include(CurrentItem.FFlags, aifComment);
 
+        // Data descriptor
+        if CurrentItem.FCompressionLevel <> PreviusItem.FCompressionLevel then
+          Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
 
+        if CurrentItem.FDictionaryLevel <> PreviusItem.FDictionaryLevel then
+          Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
 
-      end else
-        PreviusItem := FArchiveItems.Items[I];
+        //if CurrentItem.FCompressionTable <> PreviusItem.FCompressionTable then
+        //  Include(CurrentItem.FCompressionFlags, acfCompressionTable);
+      end;
+      PreviusItem := CurrentItem;
+    end;
   end;
 end;
 
@@ -1603,7 +1537,7 @@ begin
   if Item.CompressionMethod = actMain then
   begin
     if acfDictionaryLevel in Item.FCompressionFlags then
-      FEncoder.DictionaryLevel := Item.DictionaryLevel;
+      FEncoder.DictionaryLevel := Ord(Item.DictionaryLevel);
 
     if acfCompressionTable in Item.FCompressionFlags then
       FEncoder.CompressionTable := Item.CompressionTable;
@@ -1626,9 +1560,6 @@ begin
     Item.FDiskNumber := FTempWriter.CurrentImage;
     FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
 
-    Include(Item.FFlags, aifDiskSeek);
-    Include(Item.FFlags, aifDiskNumber);
-
     if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
   end else
@@ -1647,13 +1578,10 @@ begin
     Item.FDiskSeek   := FTempWriter.Position;
     Item.FDiskNumber := FTempWriter.CurrentImage;
     case Item.FCompressionMethod of
-      actMain: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC);
-      else     FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC);
+      actMain: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC32);
+      else     FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC32);
     end;
     Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
-
-    Include(Item.FFlags, aifDiskSeek);
-    Include(Item.FFlags, aifDiskNumber);
 
     if not FSwapReader.IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);
@@ -1669,17 +1597,16 @@ begin
   Stream := TFileReader.Create(Item.FExternalFileName, 0);
   if Stream <> nil then
   begin
+    Item.FUncompressedSize := Item.FExternalFileSize;
+
     ABSPosition      := FTempWriter.ABSPosition;
     Item.FDiskSeek   := FTempWriter.Position;
     Item.FDiskNumber := FTempWriter.CurrentImage;
     case Item.CompressionMethod of
-      actMain: FEncoder.Encode(Stream, Item.FExternalFileSize, Item.FCRC);
-      else     FEncoder.Encode(Stream, Item.FExternalFileSize, Item.FCRC);
+      actMain: FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
+      else     FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
     end;
-    Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
-
-    Include(Item.FFlags, aifDiskSeek);
-    Include(Item.FFlags, aifDiskNumber);
+    Item.FCompressedSize   := FTempWriter.ABSPosition - ABSPosition;
 
     if not Stream     .IsValidStream then DoFailure(cmStrmReadError);
     if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);
@@ -2152,8 +2079,8 @@ begin
   FOnUpdate           := nil;
 
   FCompressionMethod  := actNone;
-  FCompressionLevel   := Ord(moFast);
-  FDictionaryLevel    := Ord(do10MB);
+  FCompressionLevel   := moFast;
+  FDictionaryLevel    := do2MB;
   FSolidCompression   := FALSE;
   FEncryptionMethod   := acrtNone;
 
@@ -2240,8 +2167,8 @@ begin
   begin
     CurrentFileExt := '.';
     FConfiguration.Selector('\main');
-    FConfiguration.CurrentSection.Values['Method'] := IntToStr(FCompressionLevel);
-    FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(FDictionaryLevel);
+    FConfiguration.CurrentSection.Values['Method'] := IntToStr(Ord(FCompressionLevel));
+    FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(FDictionaryLevel));
     FConfiguration.Selector('\m' + FConfiguration.CurrentSection.Values['Method']);
 
     for I := 0 to FArchiveItems.Count - 1 do
@@ -2255,7 +2182,7 @@ begin
         Exclude(CurrentItem.FCompressionFlags, acfCompressionTable);
 
         CurrentItem.FCompressionMethod := FCompressionMethod;
-        if CurrentItem.FCompressionMethod = acrtMain then
+        if CurrentItem.FCompressionMethod = actMain then
         begin
           CurrentItem.FCompressionLevel  := FCompressionLevel;
           CurrentItem.FDictionaryLevel   := FDictionaryLevel;
@@ -2444,21 +2371,6 @@ begin
     end;
   end;
   CloseArchive;
-end;
-
-procedure TBeeArchiveUpdater.SetCompressionMethod(Value: longint);
-begin
-  if Value in [0..1] then FCompressionMethod := Value;
-end;
-
-procedure TBeeArchiveUpdater.SetCompressionLevel(Value: longint);
-begin
-  if Value in [1..3] then FCompressionLevel := Value;
-end;
-
-procedure TBeeArchiveUpdater.SetDictionaryLevel(Value: longint);
-begin
-  if Value in [0..9] then FDictionaryLevel := Value;
 end;
 
 procedure TBeeArchiveUpdater.SetConfigurationName(const Value: string);
