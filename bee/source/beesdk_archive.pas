@@ -13,6 +13,8 @@ uses
   Bee_Files,
   Bee_Types,
   Bee_Consts,
+
+
   Bee_MainPacker,
 
   BeeLib_Configuration;
@@ -254,19 +256,18 @@ type
     FSwapReader: TFileReader;
     FSwapWriter: TFileWriter;
     FSuspended:  boolean;
-    FTerminated: boolean;
-    FExitCode: byte;
-    FOnFailure: TArchiveFailureEvent;
-    FOnMessage: TArchiveMessageEvent;
+    FExitCode: longint;
     FOnProgress: TArchiveProgressEvent;
+    FOnMessage: TArchiveMessageEvent;
+    FOnFailure: TArchiveFailureEvent;
     FOnRequestImage: TFileReaderRequestImageEvent;
     FArchiveItems: TBeeArchiveCustomItems;
-    procedure UnPack;
     procedure InitDecoder (Item: TArchiveItem);
     procedure DecodeToSwap(Item: TArchiveItem);
     procedure DecodeToNil (Item: TArchiveItem);
     procedure DecodeToFile(Item: TArchiveItem);
-    function Read(aStream: TFileReader): boolean;
+    procedure UnPackCentralDirectory;
+    function ReadCentralDirectory(aStream: TFileReader): boolean;
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
@@ -274,32 +275,29 @@ type
     function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
     procedure SetArchiveName(const Value: string);
-    procedure SetSuspended(Value: boolean);
-    procedure SetTerminated(Value: boolean);
     procedure SetExitCode(Value: byte);
-    procedure DoFailure(const ErrorMessage: string);
-    procedure DoMessage(const Message: string);
+
     function DoProgress(Value: longint): boolean;
+    procedure DoMessage(const Message: string);
+    procedure DoFailure(const ErrorMessage: string);
+    procedure DoRequestImage(ImageNumber: longint;
+      var ImageName: string; var Abort: boolean);
   public
     constructor Create;
     destructor Destroy; override;
-    procedure OpenArchive(const aArchiveName: string);
     procedure CloseArchive; virtual;
-    procedure Terminate;
-
+    procedure OpenArchive(const aArchiveName: string);
     function Find(const aFileName: string): longint;
+    procedure Terminate;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
-    property Suspended: boolean read FSuspended write SetSuspended;
-    property Terminated: boolean read FTerminated;
-    property ExitCode: byte read FExitCode;
-
-    property OnFailure: TArchiveFailureEvent read FOnFailure write FOnFailure;
-    property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
+    property Suspended: boolean read FSuspended write FSuspended;
     property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
+    property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
+    property OnFailure: TArchiveFailureEvent read FOnFailure write FOnFailure;
     property OnRequestImage: TFileReaderRequestImageEvent
       read FOnRequestImage write FOnRequestImage;
   end;
@@ -330,7 +328,7 @@ type
     procedure EncodeFromFile   (Item: TArchiveItem);
   private
     procedure Write(aStream: TFileWriter);
-    procedure Pack;
+    procedure PackCentralDirectory;
     function OpenSwap: longint;
     procedure SetWorkDirectory(const Value: string);
   public
@@ -443,10 +441,13 @@ type
 
     property DefaultFlags: TArchiveItemFlags read FDefaultFlags write FDefaultFlags;
 
-    property OnUpdateEvent: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
+    property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
   end;
 
 implementation
+
+uses
+  Bee_Assembler;
 
 // TBeeArchiveLolatorItem class
 
@@ -828,6 +829,7 @@ end;
 procedure TArchiveReaderBase.Terminate;
 begin
   SetExitCode(ccUserAbort);
+  FSuspended := False;
 end;
 
 function TArchiveReaderBase.GetCount: longint;
@@ -840,36 +842,11 @@ begin
   Result := FArchiveItems.Items[Index];
 end;
 
-procedure TArchiveReaderBase.SetTerminated(Value: boolean);
-begin
-  if FTerminated = False then
-  begin
-    FTerminated := Value;
-    if FTerminated = True then
-    begin
-      FSuspended := False;
-    end;
-  end;
-end;
-
-procedure TArchiveReaderBase.SetSuspended(Value: boolean);
-begin
-  if FTerminated = False then
-  begin
-    FSuspended := Value;
-  end;
-end;
-
 procedure TArchiveReaderBase.SetExitCode(Value: byte);
 begin
-  if FTerminated = False then
+  if FExitCode < Value then
   begin
-    if FExitCode < Value then
-    begin
-      FExitCode := Value;
-      if FExitCode >= ccError then
-        SetTerminated(TRUE);
-    end;
+    FExitCode := Value;
   end;
 end;
 
@@ -878,7 +855,7 @@ begin
   OpenArchive(Value);
 end;
 
-function TArchiveReaderBase.Read(aStream: TFileReader): boolean;
+function TArchiveReaderBase.ReadCentralDirectory(aStream: TFileReader): boolean;
 var
   Marker: longword;
   Locator: TArchiveLocator;
@@ -913,10 +890,11 @@ begin
         Binding.Destroy;
       end;
       Locator.Destroy;
+      if Result then UnPackCentralDirectory;
     end;
 end;
 
-procedure TArchiveReaderBase.UnPack;
+procedure TArchiveReaderBase.UnPackCentralDirectory;
 var
   I: longint;
   CurrentItem: TArchiveItem;
@@ -1102,6 +1080,7 @@ end;
 
 procedure TArchiveReaderBase.OpenArchive(const aArchiveName: string);
 begin
+  CloseArchive;
   DoMessage(Format(Cr + cmOpening, [aArchiveName]));
   if FileExists(aArchiveName) then
   begin
@@ -1109,7 +1088,7 @@ begin
     FArchiveReader.OnRequestImage := FOnRequestImage;
     if Assigned(FArchiveReader) then
     begin
-      if Read(FArchiveReader) then
+      if ReadCentralDirectory(FArchiveReader) then
       begin
         FArchiveName := aArchiveName;
         if FArchiveItems.Count = 0 then
@@ -1123,18 +1102,37 @@ end;
 
 procedure TArchiveReaderBase.CloseArchive;
 begin
-  FArchiveName := '';
-  if FArchiveReader <> nil then
-    FreeAndNil(FArchiveReader);
+  if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
+  if Assigned(FSwapReader)    then FreeAndNil(FSwapReader);
+  if Assigned(FSwapWriter)    then FreeAndNil(FSwapWriter);
 
+  FTotalSize     :=  0;
+  FProcessedSize :=  0;
+  FArchiveName   := '';
+  FSwapName      := '';
+  FSuspended     := FALSE;
+  FExitCode      := ccSuccesful;
   FArchiveItems.Clear;
-  FProcessedSize := 0;
-  FTotalSize     := 0;
 end;
 
 function TArchiveReaderBase.Find(const aFileName: string): longint;
 begin
   Result := FArchiveItems.Find(aFileName);
+end;
+
+function TArchiveReaderBase.DoProgress(Value: longint): boolean;
+begin
+  Inc(FProcessedSize, Value);
+  if Assigned(FOnProgress) then
+    FOnProgress(MulDiv(100, FProcessedSize, FTotalSize));
+
+  while FSuspended do Sleep(250);
+  Result := FExitCode < ccError;
+end;
+
+procedure TArchiveReaderBase.DoMessage(const Message: string);
+begin
+  if Assigned(FOnMessage) then FOnMessage(Message);
 end;
 
 procedure TArchiveReaderBase.DoFailure(const ErrorMessage: string);
@@ -1144,20 +1142,12 @@ begin
     FOnFailure(ErrorMessage, ccError);
 end;
 
-procedure TArchiveReaderBase.DoMessage(const Message: string);
+procedure TArchiveReaderBase.DoRequestImage(ImageNumber: longint;
+  var ImageName: string; var Abort: boolean);
 begin
-  if Assigned(FOnMessage) then
-    FOnMessage(Message);
-end;
-
-function TArchiveReaderBase.DoProgress(Value: longint): boolean;
-begin
-  Inc(FProcessedSize, Value);
-  if Assigned(FOnProgress) then
-    DoProgress(Round(FProcessedSize/FTotalSize * 100));
-
-  while FSuspended do Sleep(250);
-  Result := ExitCode < ccError;
+  Abort := True;
+  if Assigned(FOnRequestImage) then
+    FOnRequestImage(ImageNumber, ImageName, Abort);
 end;
 
 // TArchiveReader class
@@ -1228,6 +1218,7 @@ begin
     Include(Locator.FFlags,  alfDiskNumber);
   Locator.FDiskSeek := aStream.Position;
 
+  PackCentralDirectory;
   aStream.WriteDWord(beexMARKER);
   for I := 0 to FArchiveItems.Count - 1 do
   begin
@@ -1253,7 +1244,7 @@ begin
   Locator.Destroy;
 end;
 
-procedure TArchiveWriterBase.Pack;
+procedure TArchiveWriterBase.PackCentralDirectory;
 var
   I: longint;
   CurrentItem: TArchiveItem;
@@ -1314,6 +1305,43 @@ begin
     end;
   end;
 end;
+
+(*
+function TBeeApp.CheckArchivePassword: longint;
+var
+  Item: THeader;
+  Smaller, I: longint;
+  Decoder: THeaderDecoder;
+begin
+  if (ExitCode < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
+  begin
+    // select smaller size item ...
+    Smaller := 0;
+    for I := 1 to FHeaders.Count - 1 do
+    begin
+      Item := FHeaders.Items[I];
+      if (foTear in Item.Flags) and (Item.Size < FHeaders.Items[Smaller].Size)  then
+      begin
+        Smaller := I;
+      end;
+    end;
+    Item := FHeaders.Items[Smaller];
+
+    // test item ...
+    DoMessage(Format(cmChecking, [Item.Name]));
+    Decoder := THeaderDecoder.Create(FArchReader, DoTick);
+    Decoder.Password := FCommandLine.pOption;
+
+    for I := 0 to Smaller do
+      Decoder.Initialize(FHeaders.Items[I]);
+
+    if Decoder.ReadToNul(Item) = False then
+      DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
+
+    Decoder.Destroy;
+  end;
+  Result := ExitCode;
+end; *)
 
 function TArchiveWriterBase.OpenSwap: longint;
 var
@@ -1388,15 +1416,10 @@ begin
       SysUtils.DeleteFile(FTempName);
     end;
   end;
+
   FIsNeededToSave := FALSE;
-  FArchiveName    := '';
-  FSwapName       := '';
   FTempName       := '';
-
-  FArchiveItems.Clear;
-
-  FProcessedSize  := 0;
-  FTotalSize      := 0;
+  inherited CloseArchive;
 end;
 
 procedure TArchiveWriterBase.InitEncoder(Item: TArchiveItem);

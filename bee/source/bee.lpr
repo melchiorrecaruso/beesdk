@@ -55,9 +55,7 @@ uses
   Bee_App,
   Bee_Types,
   Bee_Consts,
-  Bee_Common,
-  Bee_Headers,
-  Beesdk_Archive;
+  Bee_Common;
 
 type
   { TCustomBeeApp class }
