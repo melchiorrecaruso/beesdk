@@ -353,7 +353,7 @@ type
     procedure UnTag(const FileMask: string; Recursive: TRecursiveMode); overload;
   end;
 
-  TBeeArchiveExtractor = class(TArchiveReader)
+  TArchiveExtractor = class(TArchiveReader)
   private
     FIsNeededToExtract: boolean;
     FOnExtract: TArchiveExtractEvent;
@@ -370,7 +370,7 @@ type
       read FOnExtract write FOnExtract;
   end;
 
-  TBeeArchiveRenamer = class(TArchiveWriter)
+  TArchiveRenamer = class(TArchiveWriter)
   private
     FOnRename: TArchiveRenameEvent;
     procedure CheckTags;
@@ -382,7 +382,7 @@ type
     property OnRenameEvent: TArchiveRenameEvent read FOnRename write FOnRename;
   end;
 
-  TBeeArchiveEraser = class(TArchiveWriter)
+  TArchiveEraser = class(TArchiveWriter)
   private
     FOnErase: TArchiveEraseEvent;
     procedure CheckTags;
@@ -394,7 +394,7 @@ type
     property OnEraseEvent: TArchiveEraseEvent read FOnErase write FOnErase;
   end;
 
-  TBeeArchiveUpdater = class(TArchiveWriterBase)
+  TArchiveUpdater = class(TArchiveWriterBase)
   private
     FSearchRecs: TList;
     FDefaultFlags: TArchiveItemFlags;
@@ -1535,15 +1535,15 @@ begin
       if FileNameMatch(FileName, FileMask, Recursive) then UnTag(I);
 end;
 
-// TBeeArchiveExtractor class
+// TArchiveExtractor class
 
-constructor TBeeArchiveExtractor.Create;
+constructor TArchiveExtractor.Create;
 begin
   inherited Create;
   FIsNeededToExtract := FALSE;
 end;
 
-procedure TBeeArchiveExtractor.DoExtract(Item: TArchiveItem;
+procedure TArchiveExtractor.DoExtract(Item: TArchiveItem;
   var ExtractAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
@@ -1554,7 +1554,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveExtractor.CheckTags;
+procedure TArchiveExtractor.CheckTags;
 var
   I: longint;
   Item: TArchiveItem;
@@ -1586,7 +1586,7 @@ begin
   if (ExitCode < ccError) and FIsNeededToExtract then CheckSequences;
 end;
 
-procedure TBeeArchiveExtractor.CheckSequences;
+procedure TArchiveExtractor.CheckSequences;
 var
   I, J, BackTear, NextTear: longint;
   Item: TArchiveItem;
@@ -1630,7 +1630,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveExtractor.ExtractTagged;
+procedure TArchiveExtractor.ExtractTagged;
 var
   I: longint;
   Item: TArchiveItem;
@@ -1668,7 +1668,7 @@ begin
   CloseArchive;
 end;
 
-procedure TBeeArchiveExtractor.TestTagged;
+procedure TArchiveExtractor.TestTagged;
 var
   I: longint;
   Item: TArchiveItem;
@@ -1703,9 +1703,9 @@ begin
   CloseArchive;
 end;
 
-// TBeeArchiveRenamer class
+// TArchiveRenamer class
 
-procedure TBeeArchiveRenamer.DoRename(Item: TArchiveItem;
+procedure TArchiveRenamer.DoRename(Item: TArchiveItem;
   var RenameAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
@@ -1716,7 +1716,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveRenamer.CheckTags;
+procedure TArchiveRenamer.CheckTags;
 var
   I: longint;
   Item: TArchiveItem;
@@ -1748,7 +1748,7 @@ begin
     end; // if end
 end;
 
-procedure TBeeArchiveRenamer.RenameTagged;
+procedure TArchiveRenamer.RenameTagged;
 var
   I: longint;
   Encoder: THeaderEncoder;
@@ -1791,9 +1791,9 @@ begin
   CloseArchive;
 end;
 
-// TBeeArchiveEraser class
+// TArchiveEraser class
 
-procedure TBeeArchiveEraser.DoErase(Item: TArchiveItem;
+procedure TArchiveEraser.DoErase(Item: TArchiveItem;
   var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
@@ -1803,7 +1803,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveEraser.CheckTags;
+procedure TArchiveEraser.CheckTags;
 var
   I: longint;
   Item: TArchiveItem;
@@ -1829,7 +1829,7 @@ begin
   if (ExitCode < ccError) and FIsNeededToSave then CheckSequences;
 end;
 
-procedure TBeeArchiveEraser.CheckSequences;
+procedure TArchiveEraser.CheckSequences;
 var
   I, J, BackTear, NextTear: longint;
   Item: TArchiveItem;
@@ -1875,7 +1875,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveEraser.EraseTagged;
+procedure TArchiveEraser.EraseTagged;
 var
   I: longint;
   Item: TArchiveItem;
@@ -1937,9 +1937,9 @@ begin
   CloseArchive;
 end;
 
-// TBeeArchiveUpdater class
+// TArchiveUpdater class
 
-constructor TBeeArchiveUpdater.Create;
+constructor TArchiveUpdater.Create;
 begin
   inherited Create;
   FSearchRecs         := TList.Create;
@@ -1956,17 +1956,17 @@ begin
   FForceFileExtension :=  '';
 end;
 
-destructor TBeeArchiveUpdater.Destroy;
+destructor TArchiveUpdater.Destroy;
 var
   I: longint;
 begin
   for I := 0 to FSearchRecs.Count - 1 do
     TCustomSearchRec(FSearchRecs[I]^).Destroy;
   FSearchRecs.Destroy;
-  inherited destroy;
+  inherited Destroy;
 end;
 
-procedure TBeeArchiveUpdater.DoUpdate(SearchRec: TCustomSearchRec;
+procedure TArchiveUpdater.DoUpdate(SearchRec: TCustomSearchRec;
   var UpdateAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
@@ -1977,7 +1977,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveUpdater.Tag(SearchRec: TCustomSearchRec);
+procedure TArchiveUpdater.Tag(SearchRec: TCustomSearchRec);
 var
   Csr: TCustomSearchRec;
 begin
@@ -1997,7 +1997,7 @@ begin
   FSearchRecs.Add(Csr);
 end;
 
-procedure TBeeArchiveUpdater.ConfigureCrypter;
+procedure TArchiveUpdater.ConfigureCrypter;
 var
   I: longint;
   CurrentItem: TArchiveItem;
@@ -2017,7 +2017,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveUpdater.ConfigureCoder;
+procedure TArchiveUpdater.ConfigureCoder;
 var
   I: longint;
   CurrentItem: TArchiveItem;
@@ -2092,7 +2092,7 @@ begin
   Result := Bee_Common.CompareFileName(Ext1, Ext2);
 end;
 
-procedure TBeeArchiveUpdater.CheckTags;
+procedure TArchiveUpdater.CheckTags;
 var
   I, J: longint;
   Item: TArchiveItem;
@@ -2136,7 +2136,7 @@ begin
   if (ExitCode < ccError) and FIsNeededToSave then CheckSequences;
 end;
 
-procedure TBeeArchiveUpdater.CheckSequences;
+procedure TArchiveUpdater.CheckSequences;
 var
   Item: TArchiveItem;
   I, J, BackTear, NextTear: longint;
@@ -2186,7 +2186,7 @@ begin
   end;
 end;
 
-procedure TBeeArchiveUpdater.UpdateTagged;
+procedure TArchiveUpdater.UpdateTagged;
 var
   I: longint;
   Item: TArchiveItem;
@@ -2242,12 +2242,12 @@ begin
   CloseArchive;
 end;
 
-procedure TBeeArchiveUpdater.SetConfigurationName(const Value: string);
+procedure TArchiveUpdater.SetConfigurationName(const Value: string);
 begin
   FConfigurationName := Value;
 end;
 
-procedure TBeeArchiveUpdater.SetForceFileExtension(const Value: string);
+procedure TArchiveUpdater.SetForceFileExtension(const Value: string);
 begin
   FForceFileExtension := Value;
 end;

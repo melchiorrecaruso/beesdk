@@ -1,6 +1,6 @@
-program test;
+program Test;
 
-{$mode delphi}{$H+}
+{$mode delphi}
 
 uses
   {$IFDEF UNIX}
@@ -11,12 +11,23 @@ uses
   Classes,
   SysUtils,
   CustApp,
+
+  Bee_Files,
   BeeSdk_Archive;
 
 type
   { TMyApplication }
 
   TMyApplication = class(TCustomApplication)
+  private
+    FArchiveUpdater: TArchiveUpdater;
+    procedure OnProgress(Value: longint);
+    procedure OnMessage(const Message: string);
+    procedure OnFailure(const ErrorMessage: string; ErrorCode: longint);
+    procedure OnRename(Item: TArchiveItem; var RenameAs: string; var Confirm: TArchiveConfirm);
+    procedure OnExtract(Item: TArchiveItem; var ExtractAs: string; var Confirm: TArchiveConfirm);
+    procedure OnErase(Item: TArchiveItem; var Confirm: TArchiveConfirm);
+    procedure OnUpdate(SearchRec: TCustomSearchRec; var UpdateAs; var Confirm: TArchiveConfirm);
   protected
     procedure DoRun; override;
   public
@@ -31,22 +42,31 @@ procedure TMyApplication.DoRun;
 var
   ErrorMsg: String;
 begin
+  writeln('BEE SDK Tester - B.0001');
   // quick check parameters
-  ErrorMsg:=CheckOptions('h','help');
-  if ErrorMsg<>'' then begin
+  ErrorMsg := CheckOptions('h','help');
+  if ErrorMsg <> '' then
+  begin
     ShowException(Exception.Create(ErrorMsg));
     Terminate;
     Exit;
   end;
 
   // parse parameters
-  if HasOption('h','help') then begin
+  if HasOption('h','help') then
+  begin
     WriteHelp;
     Terminate;
     Exit;
   end;
 
-  { add your program here }
+  FArchiveUpdater := TArchiveUpdater.Create;
+  FArchiveUpdater.OnUpdateEvent := OnUpdate;
+  FArchiveUpdater.o
+
+
+
+  FArchiveUpdater.Destroy;
 
   // stop program loop
   Terminate;
@@ -66,14 +86,47 @@ end;
 procedure TMyApplication.WriteHelp;
 begin
   { add your help code here }
-  writeln('Usage: ',ExeName,' -h');
+  writeln('Usage: ',ExtractFileName(ExeName),' -h');
+end;
+
+procedure TMyApplication.OnProgress(Value: longint);
+begin
+end;
+
+procedure TMyApplication.OnMessage(const Message: string);
+begin
+end;
+
+procedure TMyApplication.OnFailure(const ErrorMessage: string; ErrorCode: longint);
+begin
+end;
+
+procedure TMyApplication.OnRename(Item: TArchiveItem;
+  var RenameAs: string; var Confirm: TArchiveConfirm);
+begin
+end;
+
+procedure TMyApplication.OnExtract(Item: TArchiveItem;
+  var ExtractAs: string; var Confirm: TArchiveConfirm);
+begin
+end;
+
+procedure TMyApplication.OnErase(Item: TArchiveItem;
+  var Confirm: TArchiveConfirm);
+begin
+end;
+
+procedure TMyApplication.OnUpdate(SearchRec: TCustomSearchRec;
+  var UpdateAs; var Confirm: TArchiveConfirm);
+begin
 end;
 
 var
   Application: TMyApplication;
+
 begin
   Application:=TMyApplication.Create(nil);
-  Application.Title:='My Application';
+  Application.Title:='BEE SDK Tester';
   Application.Run;
   Application.Free;
 end.
