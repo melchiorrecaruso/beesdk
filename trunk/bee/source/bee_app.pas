@@ -70,11 +70,7 @@ type
 
 
     { open/close archive routine }
-    function OpenArchive: longint;
-    function CheckArchivePassword: longint;
-    procedure CloseArchive(IsModified: boolean);
-    { open/close swapfile routine }
-    function OpenSwapFile: longint;
+
     { find and prepare items }
     function SetItemsToEncode: boolean;
     function SetItemsToDelete: boolean;
@@ -112,14 +108,14 @@ uses
 function CompareFilePath(P1, P2: pointer): longint;
 begin
   Result := CompareFileName(
-    ExtractFilePath(THeader(P1).Name),
-    ExtractFilePath(THeader(P2).Name));
+    ExtractFilePath(TArchiveItem(P1).FileName),
+    ExtractFilePath(TArchiveItem(P2).FileName));
 
   if Result = 0 then
   begin
     Result := CompareText(
-      ExtractFileName(THeader(P1).Name),
-      ExtractFileName(THeader(P2).Name));
+      ExtractFileName(TArchiveItem(P1).FileName),
+      ExtractFileName(TArchiveItem(P2).FileName));
   end;
 end;
 
@@ -147,7 +143,6 @@ end;
 
 procedure TBeeApp.Execute;
 begin
-  inherited Execute;
   DoMessage(FSelfName);
   if (FCommandLine.Command <> ccNone) and (FCommandLine.ArchiveName <> '') then
   begin
@@ -172,6 +167,46 @@ begin
 
   SetTerminated(True);
 end;
+
+
+procedure TBeeApp.OnProgress(Value: longint);
+begin
+end;
+
+procedure TBeeApp.OnMessage(const Message: string);
+begin
+end;
+
+procedure TBeeApp.OnFailure(const ErrorMessage: string; ErrorCode: longint);
+begin
+end;
+
+procedure TBeeApp.OnRename(Item: TArchiveItem;
+  var RenameAs: string; var Confirm: TArchiveConfirm);
+begin
+end;
+
+procedure TBeeApp.OnExtract(Item: TArchiveItem;
+  var ExtractAs: string; var Confirm: TArchiveConfirm);
+begin
+end;
+
+procedure TBeeApp.OnErase(Item: TArchiveItem;
+  var Confirm: TArchiveConfirm);
+begin
+end;
+
+procedure TBeeApp.OnUpdate(SearchRec: TCustomSearchRec;
+  var UpdateAs; var Confirm: TArchiveConfirm);
+begin
+end;
+
+procedure TBeeApp.OnRequestBlankDisk(var Abort : Boolean);
+begin
+end;
+
+procedure TBeeApp.OnRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
+
 
 { sequences processing }
 
