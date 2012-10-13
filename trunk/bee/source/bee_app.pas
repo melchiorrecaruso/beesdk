@@ -43,26 +43,32 @@ uses
   Bee_Files,
   Bee_Types,
   Bee_Common,
-  Bee_Headers,
-  Bee_Interface,
   Bee_CommandLine,
-  Bee_Configuration;
+  Bee_Configuration,
+  BeeSDK_Archive;
 
 type
   { TBeeApp class }
 
-  TBeeApp = class(TApp)
+  TBeeApp = class(TObject)
   private
     FSelfName: string;
-    FHeaders: THeaders;
-    FArchReader: TFileReader;
-    FSwapName: string;
-    FSwapReader: TFileReader;
-    FSwapWriter: TFileWriter;
-    FTempName: string;
-    FTempWriter: TFileWriter;
+
     FCommandLine: TCommandLine;
-    FConfiguration: TConfiguration;
+
+    procedure OnProgress(Value: longint);
+    procedure OnMessage(const Message: string);
+    procedure OnFailure(const ErrorMessage: string; ErrorCode: longint);
+    procedure OnRename(Item: TArchiveItem; var RenameAs: string; var Confirm: TArchiveConfirm);
+    procedure OnExtract(Item: TArchiveItem; var ExtractAs: string; var Confirm: TArchiveConfirm);
+    procedure OnErase(Item: TArchiveItem; var Confirm: TArchiveConfirm);
+    procedure OnUpdate(SearchRec: TCustomSearchRec; var UpdateAs; var Confirm: TArchiveConfirm);
+
+    procedure OnRequestBlankDisk(var Abort : Boolean);
+    procedure OnRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
+
+
+
     { open/close archive routine }
     function OpenArchive: longint;
     function CheckArchivePassword: longint;
@@ -89,7 +95,7 @@ type
   public
     constructor Create(const aCommandLine: string);
     destructor Destroy; override;
-    procedure Execute; override;
+    procedure Execute;
   end;
 
 implementation
@@ -122,33 +128,12 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  Randomize; { randomize, uses for unique filename generation }
-  FSelfName := 'The Bee 0.8.0 build 1559 archiver utility, July 2012' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1561 archiver utility, July 2012' + Cr +
                '(C) 1999-2012 Andrew Filinsky and Melchiorre Caruso';
-
-  FHeaders    := nil;
-  FArchReader := nil;
-  FSwapReader := nil;
-  FSwapWriter := nil;
-  FTempWriter := nil;
-  FSwapName   := '';
-  FTempName   := '';
 
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
-
-  { load configuration }
-  FConfiguration := TConfiguration.Create;
-  if FileExists(FCommandLine.cfgOption) then
-    FConfiguration.LoadFromFile(FCommandLine.cfgOption)
-  else
-    DoMessage(Format(cmConfigWarning, [FCommandLine.cfgOption]), ccWarning);
-
-  { load method and dictionary level }
-  FConfiguration.Selector('\main');
-  FConfiguration.CurrentSection.Values['Method']     := IntToStr(Ord(FCommandLine.mOption));
-  FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(FCommandLine.dOption));
 
   { set thread priority }
   SetPriority(Ord(FCommandLine.priOption));
@@ -156,7 +141,6 @@ end;
 
 destructor TBeeApp.Destroy;
 begin
-  FConfiguration.Destroy;
   FCommandLine.Destroy;
   inherited Destroy;
 end;
@@ -189,234 +173,7 @@ begin
   SetTerminated(True);
 end;
 
-{ open/close archive routines }
-
-function TBeeApp.OpenArchive: longint;
-begin
-  DoMessage(Format(Cr + cmOpening, [FCommandLine.ArchiveName]));
-  FHeaders := THeaders.Create(FCommandLine);
-  if FileExists(FCommandLine.ArchiveName) then
-  begin
-    FArchReader := CreateTFileReader(FCommandLine.ArchiveName, fmOpenRead + fmShareDenyWrite);
-    if Assigned(FArchReader) then
-    begin
-      FHeaders.Read(FArchReader);
-      if (FHeaders.Count = 0) and (FArchReader.Size <> 0) then
-        DoMessage(Format(cmArcTypeError, []), ccError);
-    end else
-      DoMessage(Format(cmOpenArcError, [FCommandLine.ArchiveName]), ccError);
-  end;
-
-  if FCommandLine.Command in [ccAdd, ccDelete] then
-  begin
-    CheckArchivePassword;
-  end;
-  Result := ExitCode;
-end;
-
-function TBeeApp.CheckArchivePassword: longint;
-var
-  Item: THeader;
-  Smaller, I: longint;
-  Decoder: THeaderDecoder;
-begin
-  if (ExitCode < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
-  begin
-    // select smaller size item ...
-    Smaller := 0;
-    for I := 1 to FHeaders.Count - 1 do
-    begin
-      Item := FHeaders.Items[I];
-      if (foTear in Item.Flags) and (Item.Size < FHeaders.Items[Smaller].Size)  then
-      begin
-        Smaller := I;
-      end;
-    end;
-    Item := FHeaders.Items[Smaller];
-
-    // test item ...
-    DoMessage(Format(cmChecking, [Item.Name]));
-    Decoder := THeaderDecoder.Create(FArchReader, DoTick);
-    Decoder.Password := FCommandLine.pOption;
-
-    for I := 0 to Smaller do
-      Decoder.Initialize(FHeaders.Items[I]);
-
-    if Decoder.ReadToNul(Item) = False then
-      DoMessage(Format(cmTestPswError, [FCommandLine.ArchiveName]), ccError);
-
-    Decoder.Destroy;
-  end;
-  Result := ExitCode;
-end;
-
-procedure TBeeApp.CloseArchive(IsModified: boolean);
-var
-  S: string;
-begin
-  if Assigned(FArchReader) then FreeAndNil(FArchReader);
-  if Assigned(FSwapWriter) then FreeAndNil(FSwapWriter);
-  if Assigned(FSwapReader) then FreeAndNil(FSwapReader);
-  if Assigned(FTempWriter) then FreeAndNil(FTempWriter);
-
-  if IsModified then
-  begin
-    if ExitCode < ccError then
-    begin
-      SysUtils.DeleteFile(FSwapName);
-      SysUtils.DeleteFile(FCommandLine.ArchiveName);
-
-      if RenameFile(FTempName, FCommandLine.ArchiveName) = False then
-        DoMessage(Format(cmRenameFileError, [FTempName, FCommandLine.ArchiveName]), ccError);
-    end else
-    begin
-      SysUtils.DeleteFile(FSwapName);
-      SysUtils.DeleteFile(FTempName);
-    end;
-  end;
-
-  S := TimeDifference(FStart);
-  case ExitCode of
-    ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
-    ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
-    ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
-    else         DoMessage(Format(Cr + cmError,     [S]));
-  end;
-  FHeaders.Free;
-end;
-
-{ open/close swapfile routine }
-
-function TBeeApp.OpenSwapFile: longint;
-var
-  I: longint;
-  P: THeader;
-  Decoder: THeaderDecoder;
-begin
-  if (ExitCode < ccError) and (FHeaders.GetNext(0, haDecode) > -1) then
-  begin
-    FSwapName   := GenerateFileName(FCommandLine.wdOption);
-    FSwapWriter := CreateTFileWriter(FSwapName, fmCreate);
-    if Assigned(FSwapWriter) then
-    begin
-      Decoder := THeaderDecoder.Create(FArchReader, DoTick);
-      Decoder.Password := FCommandLine.pOption;
-
-      for I := 0 to FHeaders.Count - 1 do
-        if ExitCode < ccError then
-        begin
-          P := FHeaders.Items[I];
-          Decoder.Initialize(P);
-
-          if P.Action in [haDecode, haDecodeAndUpdate] then
-          begin
-            case P.Action of
-              // haNone: nothing to do
-              // haUpdate: nothing to do
-              haDecode: begin
-                DoMessage(Format(cmSwapping, [P.Name]));
-                if Decoder.ReadToSwap(P, FSwapWriter) = False then
-                  DoMessage(Format(cmCrcError, [P.Name]), ccError);
-              end;
-              haDecodeAndUpdate: begin
-                DoMessage(Format(cmDecoding, [P.Name]));
-                if Decoder.ReadToNul(P) = False then
-                  DoMessage(Format(cmCrcError, [P.Name]), ccError);
-              end;
-            end;
-            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-          end;
-        end;
-      Decoder.Destroy;
-      FreeAndNil(FSwapWriter);
-
-      if ExitCode < ccError then
-      begin
-        FSwapReader := CreateTFileReader(FSwapName, fmOpenRead + fmShareDenyWrite);
-        if Assigned(FSwapReader) = False then
-          DoMessage(cmOpenSwapError, ccError);
-      end;
-    end else
-      DoMessage(cmCreateSwapError, ccError);
-  end;
-  Result := ExitCode;
-end;
-
 { sequences processing }
-
-function TBeeApp.SetItemsToEncode: boolean;
-var
-  P: THeader;
-  S: TFileScanner;
-  I, J, BackTear, NextTear: longint;
-begin
-  DoMessage(Format(cmScanning, ['...']));
-  // STEP1: scan file system ...
-  S := TFileScanner.Create;
-  with FCommandLine do
-    for I := 0 to FileMasks.Count - 1 do
-      S.Scan(FileMasks[I], xOptions, rOption);
-
-  for I := 0 to S.Count - 1 do
-    case FCommandLine.uOption of
-      umAdd:           FHeaders.Add          (S.Items[I]);
-      umUpdate:        FHeaders.Update       (S.Items[I]);
-      umReplace:       FHeaders.Replace      (S.Items[I]);
-      umAddUpdate:     FHeaders.AddUpdate    (S.Items[I]);
-      umAddReplace:    FHeaders.AddReplace   (S.Items[I]);
-      umAddAutoRename: FHeaders.AddAutoRename(S.Items[I]);
-    end;
-  S.Free;
-
-  // STEP2: configure new items ...
-  FHeaders.Configure(FConfiguration);
-  // STEP3: find sequences and set actions ...
-  I := FHeaders.GetBack(FHeaders.Count - 1, haUpdate);
-  while I > -1 do
-  begin
-    BackTear := FHeaders.GetBack(I, foTear);
-    NextTear := FHeaders.GetNext(I + 1, foTear);
-
-    if NextTear = -1 then
-      NextTear := FHeaders.Count;
-    // if is solid sequences
-    if (NextTear - BackTear) > 1 then
-    begin
-      NextTear := FHeaders.GetBack(NextTear - 1, haNone);
-      for J := BackTear to NextTear do
-        case FHeaders.Items[J].Action of
-          haNone:               FHeaders.Items[J].Action := haDecode;
-          haUpdate:             FHeaders.Items[J].Action := haDecodeAndUpdate;
-          // haDecode:          nothing to do
-          // haDecodeAndUpdate: nothing to do
-        end;
-      I := BackTear;
-    end;
-    I := FHeaders.GetBack(I - 1, haUpdate);
-  end;
-
-  // STEP4: calculate bytes to process ...
-  Result := (FHeaders.GetNext(0, haUpdate         ) > -1) or
-            (FHeaders.GetNext(0, haDecodeAndUpdate) > -1);
-
-  if Result then
-  begin
-    for I := 0 to FHeaders.Count - 1 do
-    begin
-      P := FHeaders.Items[I];
-      case P.Action of
-        haNone:            Inc(FTotalSize, P.PackedSize);
-        haUpdate:          Inc(FTotalSize, P.ExtSize);
-        haDecode:          Inc(FTotalSize, P.Size + P.Size);
-        haDecodeAndUpdate: Inc(FTotalSize, P.Size + P.ExtSize);
-      end;
-    end;
-
-    if FCommandLine.sfxOption <> '' then
-      FHeaders.LoadModule(FCommandLine.sfxOption);
-  end else
-    DoMessage(cmNoFilesWarning, ccWarning);
-end;
 
 function TBeeApp.SetItemsToDelete: boolean;
 var
@@ -706,10 +463,33 @@ end;
 procedure TBeeApp.EncodeShell;
 var
   I: longint;
-  P: THeader;
-  Check: boolean;
-  Encoder: THeaderEncoder;
+  Scanner: TFileScanner;
+  Updater: TArchiveUpdater;
 begin
+  DoMessage(Format(cmScanning, ['...']));
+  Updater := TArchiveUpdater.Create;
+
+
+  // STEP1: scan file system ...
+  Scanner := TFileScanner.Create;
+  with FCommandLine do
+    for I := 0 to FileMasks.Count - 1 do
+      S.Scan(FileMasks[I], xOptions, rOption);
+
+  for I := 0 to S.Count - 1 do
+    case FCommandLine.uOption of
+      umAdd:           FHeaders.Add          (S.Items[I]);
+      umUpdate:        FHeaders.Update       (S.Items[I]);
+      umReplace:       FHeaders.Replace      (S.Items[I]);
+      umAddUpdate:     FHeaders.AddUpdate    (S.Items[I]);
+      umAddReplace:    FHeaders.AddReplace   (S.Items[I]);
+      umAddAutoRename: FHeaders.AddAutoRename(S.Items[I]);
+    end;
+  S.Free;
+
+
+
+
   if (OpenArchive < ccError) and (SetItemsToEncode = TRUE) then
   begin
     FTempName   := GenerateFileName(FCommandLine.wdOption);

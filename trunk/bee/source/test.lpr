@@ -28,6 +28,9 @@ type
     procedure OnExtract(Item: TArchiveItem; var ExtractAs: string; var Confirm: TArchiveConfirm);
     procedure OnErase(Item: TArchiveItem; var Confirm: TArchiveConfirm);
     procedure OnUpdate(SearchRec: TCustomSearchRec; var UpdateAs; var Confirm: TArchiveConfirm);
+
+    procedure OnRequestBlankDisk(var Abort : Boolean);
+    procedure OnRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
   protected
     procedure DoRun; override;
   public
@@ -61,13 +64,16 @@ begin
   end;
 
   FArchiveUpdater := TArchiveUpdater.Create;
-  FArchiveUpdater.OnUpdateEvent := OnUpdate;
-  FArchiveUpdater.o
+  FArchiveUpdater.OnUpdate           := OnUpdate;
+  FArchiveUpdater.OnProgress         := OnProgress;
+  FArchiveUpdater.OnMessage          := OnMessage;
+  FArchiveUpdater.OnFailure          := OnFailure;
+  FArchiveUpdater.OnRequestImage     := OnRequestImage;
+  FArchiveUpdater.OnRequestBlankDisk := OnRequestBlankDisk;
 
 
 
   FArchiveUpdater.Destroy;
-
   // stop program loop
   Terminate;
 end;
@@ -118,6 +124,14 @@ end;
 
 procedure TMyApplication.OnUpdate(SearchRec: TCustomSearchRec;
   var UpdateAs; var Confirm: TArchiveConfirm);
+begin
+end;
+
+procedure TMyApplication.OnRequestBlankDisk(var Abort : Boolean);
+begin
+end;
+
+procedure TMyApplication.OnRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
 begin
 end;
 

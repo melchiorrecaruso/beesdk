@@ -35,8 +35,7 @@ interface
 
 uses
   Classes,
-  Bee_Consts,
-  Bee_Headers;
+  Bee_Consts;
 
 type
   { TApp class }
