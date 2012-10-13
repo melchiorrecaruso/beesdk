@@ -198,8 +198,8 @@ constructor TFileReader.Create(const aFileName: string; aImagesNumber: longword)
 begin
   inherited Create(nil);
   FFileName       := aFileName;
-  FCurrentImage   := aImagesNumber - 1;
-  FImagesNumber   := aImagesNumber - 1;
+  FCurrentImage   := Max(aImagesNumber - 1, 0);
+  FImagesNumber   := Max(aImagesNumber - 1, 0);
   FOnRequestImage := nil;
 
   GotoImage(FCurrentImage);
