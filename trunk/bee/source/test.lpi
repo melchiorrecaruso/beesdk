@@ -8,7 +8,7 @@
         <MainUnitHasCreateFormStatements Value="False"/>
       </Flags>
       <MainUnit Value="0"/>
-      <Title Value="My Application"/>
+      <Title Value="BEE SDK Tester"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <ActiveWindowIndexAtStart Value="0"/>
@@ -37,11 +37,13 @@
         <Filename Value="test.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="test"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="42"/>
-        <CursorPos X="51" Y="59"/>
-        <UsageCount Value="147"/>
+        <TopLine Value="39"/>
+        <CursorPos X="76" Y="55"/>
+        <FoldState Value=" T3iV049\"/>
+        <UsageCount Value="148"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
@@ -49,19 +51,18 @@
         <Filename Value="C:\Programmi\FPC\2.6.0\source\packages\fcl-base\src\custapp.pp"/>
         <UnitName Value="CustApp"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="47"/>
-        <CursorPos X="3" Y="29"/>
-        <UsageCount Value="5"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
       </Unit1>
       <Unit2>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1214"/>
-        <CursorPos X="40" Y="1248"/>
-        <FoldState Value=" T7jPKB01116 piZnRNo T3sE05247 pj3nK0701B,"/>
+        <TopLine Value="92"/>
+        <CursorPos X="1" Y="223"/>
+        <FoldState Value=" T7j8KF2 pigjMRI3 pj8kEJ84 T3sE05247u"/>
         <UsageCount Value="71"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -269,123 +270,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="475" Column="41" TopLine="455"/>
+        <Caret Line="456" Column="20" TopLine="397"/>
       </Position1>
       <Position2>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="470" Column="51" TopLine="453"/>
+        <Caret Line="471" Column="36" TopLine="453"/>
       </Position2>
       <Position3>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="473" Column="17" TopLine="453"/>
+        <Caret Line="481" Column="15" TopLine="462"/>
       </Position3>
       <Position4>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="472" Column="45" TopLine="453"/>
+        <Caret Line="1112" Column="7" TopLine="1094"/>
       </Position4>
       <Position5>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="459" Column="51" TopLine="453"/>
+        <Caret Line="887" Column="3" TopLine="881"/>
       </Position5>
       <Position6>
-        <Filename Value="bee_files.pas"/>
-        <Caret Line="433" Column="1" TopLine="429"/>
+        <Filename Value="beesdk_archive.pas"/>
+        <Caret Line="1104" Column="63" TopLine="1095"/>
       </Position6>
       <Position7>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="472" Column="6" TopLine="398"/>
+        <Filename Value="bee_files.pas"/>
+        <Caret Line="64" Column="23" TopLine="45"/>
       </Position7>
       <Position8>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="480" Column="8" TopLine="467"/>
+        <Caret Line="1104" Column="63" TopLine="1095"/>
       </Position8>
       <Position9>
-        <Filename Value="test.lpr"/>
-        <Caret Line="79" Column="1" TopLine="42"/>
+        <Filename Value="beesdk_archive.pas"/>
+        <Caret Line="1238" Column="53" TopLine="614"/>
       </Position9>
       <Position10>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="99" Column="43" TopLine="85"/>
+        <Caret Line="881" Column="10" TopLine="862"/>
       </Position10>
       <Position11>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="39" Column="3" TopLine="20"/>
+        <Caret Line="1115" Column="54" TopLine="1098"/>
       </Position11>
       <Position12>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="101" Column="40" TopLine="86"/>
+        <Caret Line="1240" Column="57" TopLine="292"/>
       </Position12>
       <Position13>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="456" Column="20" TopLine="397"/>
+        <Caret Line="1109" Column="20" TopLine="1095"/>
       </Position13>
       <Position14>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="471" Column="36" TopLine="453"/>
+        <Caret Line="1243" Column="11" TopLine="1191"/>
       </Position14>
       <Position15>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="481" Column="15" TopLine="462"/>
+        <Caret Line="888" Column="38" TopLine="876"/>
       </Position15>
       <Position16>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1112" Column="7" TopLine="1094"/>
+        <Caret Line="1251" Column="52" TopLine="1228"/>
       </Position16>
       <Position17>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="887" Column="3" TopLine="881"/>
+        <Filename Value="test.lpr"/>
+        <Caret Line="79" Column="1" TopLine="42"/>
       </Position17>
       <Position18>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1104" Column="63" TopLine="1095"/>
+        <Filename Value="test.lpr"/>
+        <Caret Line="59" Column="51" TopLine="42"/>
       </Position18>
       <Position19>
-        <Filename Value="bee_files.pas"/>
-        <Caret Line="64" Column="23" TopLine="45"/>
+        <Filename Value="test.lpr"/>
+        <Caret Line="48" Column="75" TopLine="21"/>
       </Position19>
       <Position20>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1104" Column="63" TopLine="1095"/>
+        <Filename Value="test.lpr"/>
+        <Caret Line="13" Column="24" TopLine="1"/>
       </Position20>
       <Position21>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1238" Column="53" TopLine="614"/>
+        <Caret Line="356" Column="23" TopLine="288"/>
       </Position21>
       <Position22>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="881" Column="10" TopLine="862"/>
+        <Caret Line="373" Column="21" TopLine="300"/>
       </Position22>
       <Position23>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1115" Column="54" TopLine="1098"/>
+        <Caret Line="385" Column="20" TopLine="346"/>
       </Position23>
       <Position24>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1240" Column="57" TopLine="292"/>
+        <Caret Line="397" Column="21" TopLine="356"/>
       </Position24>
       <Position25>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1109" Column="20" TopLine="1095"/>
+        <Filename Value="test.lpr"/>
+        <Caret Line="77" Column="37" TopLine="45"/>
       </Position25>
       <Position26>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1243" Column="11" TopLine="1191"/>
+        <Filename Value="test.lpr"/>
+        <Caret Line="55" Column="3" TopLine="29"/>
       </Position26>
       <Position27>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="888" Column="38" TopLine="876"/>
+        <Caret Line="1952" Column="46" TopLine="1933"/>
       </Position27>
       <Position28>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1251" Column="52" TopLine="1228"/>
+        <Filename Value="test.lpr"/>
+        <Caret Line="97" Column="6" TopLine="31"/>
       </Position28>
       <Position29>
         <Filename Value="test.lpr"/>
-        <Caret Line="79" Column="1" TopLine="42"/>
+        <Caret Line="27" Column="53" TopLine="12"/>
       </Position29>
       <Position30>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1247" Column="55" TopLine="1314"/>
+        <Filename Value="test.lpr"/>
+        <Caret Line="15" Column="13" TopLine="8"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
