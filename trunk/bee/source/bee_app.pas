@@ -53,8 +53,9 @@ type
   TBeeApp = class(TObject)
   private
     FSelfName: string;
-
     FCommandLine: TCommandLine;
+
+
 
     procedure OnProgress(Value: longint);
     procedure OnMessage(const Message: string);
