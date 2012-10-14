@@ -43,6 +43,59 @@ uses
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF} Bee_Types;
 
+function IncludeTrailingBackSpace(const DirName: string): string;
+function ExcludeTrailingBackSpace(const DirName: string): string;
+function IncludeTrailingBackSlash(const DirName: string): string;
+function ExcludeTrailingBackSlash(const DirName: string): string;
+
+implementation
+
+function IncludeTrailingBackSpace(const DirName: string): string;
+var
+  Len: longint;
+begin
+  Len := Length(DirName);
+  if (Len > 0) and (not (DirName[Len] in [' '])) then
+    Result := DirName + ' '
+  else
+    Result := DirName;
+end;
+
+function ExcludeTrailingBackSpace(const DirName: string): string;
+var
+  Len: longint;
+begin
+  Len := Length(DirName);
+  if (Len > 0) and (DirName[Len] in [' ']) then
+    Result := Copy(DirName, 1, Len - 1)
+  else
+    Result := DirName;
+end;
+
+function IncludeTrailingBackSlash(const DirName: string): string;
+var
+  Len: longint;
+begin
+  Len := Length(DirName);
+  if (Len > 0) and (not (DirName[Len] in ['\', '/'])) then
+    Result := DirName + PathDelim
+  else
+    Result := DirName;
+end;
+
+function ExcludeTrailingBackSlash(const DirName: string): string;
+var
+  Len: longint;
+begin
+  Len := Length(DirName);
+  if (Len > 0) and (DirName[Len] in ['\', '/']) then
+    Result := Copy(DirName, 1, Len - 1)
+  else
+    Result := DirName;
+end;
+
+
+
 
 
 function GetFileMode(const Rec: TSearchRec): longint;
@@ -65,10 +118,7 @@ function FileNameHasDrive(const FileName: string): boolean;
 function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; overload;
 function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
 
-function IncludeTrailingBackSpace(const DirName: string): string;
-function ExcludeTrailingBackSpace(const DirName: string): string;
-function IncludeTrailingBackSlash(const DirName: string): string;
-function ExcludeTrailingBackSlash(const DirName: string): string;
+
 
 function CompareFileName(const S1, S2: string): longint;
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
@@ -291,49 +341,6 @@ begin
   end;
 end;
 
-function IncludeTrailingBackSpace(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (not (DirName[Len] in [' '])) then
-    Result := DirName + ' '
-  else
-    Result := DirName;
-end;
-
-function ExcludeTrailingBackSpace(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (DirName[Len] in [' ']) then
-    Result := Copy(DirName, 1, Len - 1)
-  else
-    Result := DirName;
-end;
-
-function IncludeTrailingBackSlash(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (not (DirName[Len] in ['\', '/'])) then
-    Result := DirName + PathDelim
-  else
-    Result := DirName;
-end;
-
-function ExcludeTrailingBackSlash(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (DirName[Len] in ['\', '/']) then
-    Result := Copy(DirName, 1, Len - 1)
-  else
-    Result := DirName;
-end;
 
 function CompareFileName(const S1, S2: string): longint;
 begin
