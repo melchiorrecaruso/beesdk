@@ -536,7 +536,7 @@ end;
 
 procedure TCommandLine.SetcdOption(const aValue: string);
 begin
-  FcdOption := IncludeTrailingBackslash(FixDirName(aValue));
+  FcdOption := IncludeTrailingBackSlash(FixDirName(aValue));
 end;
 
 procedure TCommandLine.SetcfgOption(const aValue: string);

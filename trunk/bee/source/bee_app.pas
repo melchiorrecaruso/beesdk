@@ -55,10 +55,10 @@ type
     FSelfName: string;
     FCommandLine: TCommandLine;
 
-
+    procedure DoMessage(const Message: string);
 
     procedure OnProgress(Value: longint);
-    procedure OnMessage(const Message: string);
+
     procedure OnFailure(const ErrorMessage: string; ErrorCode: longint);
     procedure OnRename(Item: TArchiveItem; var RenameAs: string; var Confirm: TArchiveConfirm);
     procedure OnExtract(Item: TArchiveItem; var ExtractAs: string; var Confirm: TArchiveConfirm);
@@ -68,16 +68,6 @@ type
     procedure OnRequestBlankDisk(var Abort : Boolean);
     procedure OnRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
 
-
-
-    { open/close archive routine }
-
-    { find and prepare items }
-    function SetItemsToEncode: boolean;
-    function SetItemsToDelete: boolean;
-    function SetItemsToDecode: boolean;
-    function SetItemsToRename: boolean;
-    function SetItemsToList: boolean;
     { process options }
     procedure ProcesstOption;
     procedure ProcesslOption;
@@ -166,7 +156,7 @@ begin
   end else
     HelpShell;
 
-  SetTerminated(True);
+  // SetTerminated(True);
 end;
 
 
@@ -174,7 +164,7 @@ procedure TBeeApp.OnProgress(Value: longint);
 begin
 end;
 
-procedure TBeeApp.OnMessage(const Message: string);
+procedure TBeeApp.DoMessage(const Message: string);
 begin
 end;
 
@@ -207,225 +197,8 @@ begin
 end;
 
 procedure TBeeApp.OnRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
-
-
-{ sequences processing }
-
-function TBeeApp.SetItemsToDelete: boolean;
-var
-  P: THeader;
-  I, J, BackTear, NextTear: longint;
 begin
-  DoMessage(Format(cmScanning, ['...']));
-  FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
-  FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
 
-  // STEP1: find sequences and set actions ...
-  I := FHeaders.GetBack(FHeaders.Count - 1, haUpdate);
-  while I > -1 do
-  begin
-    BackTear := FHeaders.GetBack(I, foTear);
-    NextTear := FHeaders.GetNext(I + 1, foTear);
-
-    if NextTear = -1 then
-      NextTear := FHeaders.Count;
-    // if is solid sequences
-    if (NextTear - BackTear) > 1 then
-    begin
-      NextTear := FHeaders.GetBack(NextTear - 1, haNone);
-      for J := BackTear to NextTear do
-        case FHeaders.Items[J].Action of
-          haNone:               FHeaders.Items[J].Action := haDecode;
-          haUpdate:             FHeaders.Items[J].Action := haDecodeAndUpdate;
-          // haDecode:          nothing to do
-          // haDecodeAndUpdate: nothing to do
-        end;
-      I := BackTear;
-    end;
-    I := FHeaders.GetBack(I - 1, haUpdate);
-  end;
-
-
-  // STEP4: calculate bytes to process ...
-  Result := (FHeaders.GetNext(0, haUpdate         ) > -1) or
-            (FHeaders.GetNext(0, haDecodeAndUpdate) > -1);
-
-  if Result then
-  begin
-    for I := 0 to FHeaders.Count - 1 do
-    begin
-      P := FHeaders.Items[I];
-      case P.Action of
-        haNone:            Inc(FTotalSize, P.PackedSize);
-        // haUpdate:       nothing to do
-        haDecode:          Inc(FTotalSize, P.Size + P.Size);
-        haDecodeAndUpdate: Inc(FTotalSize, P.Size);
-      end;
-    end;
-
-    if FCommandLine.sfxOption <> '' then
-      FHeaders.LoadModule(FCommandLine.sfxOption);
-  end else
-    DoMessage(cmNoFilesWarning, ccWarning);
-end;
-
-function TBeeApp.SetItemsToDecode: boolean;
-var
-  P: THeader;
-  U: TUpdateMode;
-  I, J: longint;
-  BackTear, NextTear: longint;
-begin
-  DoMessage(Format(cmScanning, ['...']));
-  FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
-  FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
-  // STEP1: overwrite routines ...
-  if FCommandline.Command in [ccXextract, ccExtract] then
-  begin
-    for I := 0 to FHeaders.Count - 1 do
-    begin
-      P := FHeaders.Items[I];
-      if (P.Action = haUpdate) and (ExitCode < ccError) then
-      begin
-        case FCommandLine.Command of
-          ccExtract:  P.ExtName := ExtractFileName(P.Name);
-          ccXextract: P.ExtName := DeleteFilePath(FCommandLine.cdOption, P.Name);
-        end;
-
-        case FCommandLine.uOption of
-          umUpdate:    if (not FileExists(P.ExtName)) or  (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
-          umAddUpdate: if (    FileExists(P.ExtName)) and (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
-          umReplace:   if (not FileExists(P.ExtName)) then P.Action := haNone;
-          umAdd:       if (    FileExists(P.ExtName)) then P.Action := haNone;
-          // umAddReplace: extract file always
-          umAddAutoRename: if FileExists(P.ExtName)   then P.ExtName := GenerateAlternativeFileName(P.ExtName, 1, True);
-        end;
-      end;
-    end;
-  end;
-
-  // STEP2: find sequences and mark ...
-  I := FHeaders.GetBack(FHeaders.Count - 1, haUpdate);
-  while I > -1 do
-  begin
-    BackTear := FHeaders.GetBack(I, foTear);
-    NextTear := FHeaders.GetNext(I + 1, foTear);
-
-    if NextTear = -1 then
-      NextTear := FHeaders.Count;
-    // if is solid sequences
-    if (NextTear - BackTear) > 1 then
-    begin
-      NextTear := FHeaders.GetBack(NextTear - 1, haUpdate);
-      for J := BackTear to NextTear do
-        case FHeaders.Items[J].Action of
-          haNone:               FHeaders.Items[J].Action := haDecode;
-          // haUpdate:          FHeaders.Items[J].Action := haDecodeAndUpdate;
-          // haDecode:          nothing to do
-          // haDecodeAndUpdate: nothing to do
-        end;
-      I := BackTear;
-    end;
-    I := FHeaders.GetBack(I - 1, haUpdate);
-  end;
-
-  // STEP4: calculate bytes to process ...
-  Result := (FHeaders.GetNext(0, haUpdate         ) > -1) or
-            (FHeaders.GetNext(0, haDecodeAndUpdate) > -1);
-
-  if Result then
-  begin
-    for I := 0 to FHeaders.Count - 1 do
-    begin
-      P := FHeaders.Items[I];
-      case P.Action of
-        // haNone:            nothing to do
-        haUpdate:             Inc(FTotalSize, P.Size);
-        haDecode:             Inc(FTotalSize, P.Size);
-        // haDecodeAndUpdate: nothing to do
-      end;
-    end;
-  end else
-    DoMessage(cmNoFilesWarning, ccWarning);
-end;
-
-function TBeeApp.SetItemsToRename: boolean;
-var
-  I: longint;
-  P, S: THeader;
-  NewName: string;
-begin
-  DoMessage(Format(cmScanning, ['...']));
-  FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
-  FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
-
-  for I  := 0 to FHeaders.Count - 1 do
-    if ExitCode < ccError then
-    begin
-      P := FHeaders.Items[I];
-      if P.Action = haUpdate then
-      begin
-        repeat
-          NewName := FixFileName(DoRename(P, P.Name));
-          S := FHeaders.Search(NewName);
-          if (S <> nil) and (S <> P) then
-            DoMessage(Format(cmFileExistsWarning, [NewName]))
-          else
-            Break;
-        until ExitCode >= ccError;
-
-        if (Length(NewName) = 0) or (CompareFileName(NewName, P.Name) = 0) then
-          P.Action := haNone
-        else
-          P.Name := NewName;
-      end;
-    end;
-
-  // STEP4: calculate bytes to process ...
-  Result :=  FHeaders.GetNext(0, haUpdate) > -1;
-
-  if Result then
-  begin
-    for I := 0 to FHeaders.Count - 1 do
-    begin
-      P := FHeaders.Items[I];
-      case P.Action of
-        haNone:               Inc(FTotalSize, P.PackedSize);
-        haUpdate:             Inc(FTotalSize, P.PackedSize);
-        // haDecode:          nothing to do
-        // haDecodeAndUpdate: nothing to do
-      end;
-    end;
-  end else
-    DoMessage(cmNoFilesWarning, ccWarning);
-end;
-
-function TBeeApp.SetItemsToList: boolean;
-var
-  I: longint;
-  P: THeader;
-begin
-  DoMessage(Format(cmScanning, ['...']));
-  FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
-  FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
-
-  // STEP4: calculate bytes to process ...
-  Result := FHeaders.GetNext(0, haUpdate) > -1;
-
-  if Result then
-  begin
-    for I := 0 to FHeaders.Count - 1 do
-    begin
-      P := FHeaders.Items[I];
-      case P.Action of
-        // haNone:            nothing to do
-        haUpdate:             Inc(FTotalSize, P.PackedSize);
-        // haDecode:          nothing to do
-        // haDecodeAndUpdate: nothing to do
-      end;
-    end;
-  end else
-    DoMessage(cmNoFilesWarning, ccWarning);
 end;
 
 { option processing }
@@ -434,8 +207,6 @@ procedure TBeeApp.ProcesstOption;
 begin
   if (ExitCode < ccError) and FCommandLine.tOption then
   begin
-    FTotalSize     := 0;
-    FProcessedSize := 0;
     FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
     FCommandLine.FileMasks.Add('*');
@@ -448,8 +219,6 @@ procedure TBeeApp.ProcesslOption;
 begin
   if (ExitCode < ccError) and FCommandLine.lOption then
   begin
-    FTotalSize     := 0;
-    FProcessedSize := 0;
     FCommandLine.xOptions.Clear;
     FCommandLine.FileMasks.Clear;
     FCommandLine.FileMasks.Add('*');
@@ -499,29 +268,41 @@ end;
 procedure TBeeApp.EncodeShell;
 var
   I: longint;
+  CurrentMask: string;
   Scanner: TFileScanner;
   Updater: TArchiveUpdater;
 begin
   DoMessage(Format(cmScanning, ['...']));
   Updater := TArchiveUpdater.Create;
-
-
-  // STEP1: scan file system ...
   Scanner := TFileScanner.Create;
   with FCommandLine do
     for I := 0 to FileMasks.Count - 1 do
-      S.Scan(FileMasks[I], xOptions, rOption);
+      Scanner.Scan(FileMasks[I], xOptions, rOption);
 
-  for I := 0 to S.Count - 1 do
-    case FCommandLine.uOption of
-      umAdd:           FHeaders.Add          (S.Items[I]);
-      umUpdate:        FHeaders.Update       (S.Items[I]);
-      umReplace:       FHeaders.Replace      (S.Items[I]);
-      umAddUpdate:     FHeaders.AddUpdate    (S.Items[I]);
-      umAddReplace:    FHeaders.AddReplace   (S.Items[I]);
-      umAddAutoRename: FHeaders.AddAutoRename(S.Items[I]);
+  for I := 0 to Scanner.Count - 1 do
+  begin            IncludeTrailingBackSlash
+    CurrentMask := FCommandLine.cdOption + Scanner.Items[I].Name;
+
+    if Updater.Find(CurrentMask) = -1 then
+    begin
+      case FCommandLine.uOption of
+        umAdd:           Updater.Tag(Scanner.Items[I]);
+        umAddUpdate:     Updater.Tag(Scanner.Items[I]);
+        umAddReplace:    Updater.Tag(Scanner.Items[I]);
+        umAddAutoRename: Updater.Tag(Scanner.Items[I]);
+      end;
+    end else
+    begin
+      case FCommandLine.uOption of
+        umUpdate:        Updater.Tag(Scanner.Items[I]);
+        umReplace:       Updater.Tag(Scanner.Items[I]);
+        umAddUpdate:     Updater.Tag(Scanner.Items[I]);
+        umAddReplace:    Updater.Tag(Scanner.Items[I]);
+        umAddAutoRename: Updater.Tag(Scanner.Items[I]);
+      end;
     end;
-  S.Free;
+  end;
+  Scanner.Free;
 
 
 
@@ -584,6 +365,36 @@ var
   Check: boolean;
   Decoder: THeaderDecoder;
 begin
+
+  DoMessage(Format(cmScanning, ['...']));
+    FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
+    FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
+    // STEP1: overwrite routines ...
+    if FCommandline.Command in [ccXextract, ccExtract] then
+    begin
+      for I := 0 to FHeaders.Count - 1 do
+      begin
+        P := FHeaders.Items[I];
+        if (P.Action = haUpdate) and (ExitCode < ccError) then
+        begin
+          case FCommandLine.Command of
+            ccExtract:  P.ExtName := ExtractFileName(P.Name);
+            ccXextract: P.ExtName := DeleteFilePath(FCommandLine.cdOption, P.Name);
+          end;
+
+          case FCommandLine.uOption of
+            umUpdate:    if (not FileExists(P.ExtName)) or  (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
+            umAddUpdate: if (    FileExists(P.ExtName)) and (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
+            umReplace:   if (not FileExists(P.ExtName)) then P.Action := haNone;
+            umAdd:       if (    FileExists(P.ExtName)) then P.Action := haNone;
+            // umAddReplace: extract file always
+            umAddAutoRename: if FileExists(P.ExtName)   then P.ExtName := GenerateAlternativeFileName(P.ExtName, 1, True);
+          end;
+        end;
+      end;
+    end;
+
+
   if (OpenArchive < ccError) and (SetItemsToDecode = TRUE) then
   begin
     Decoder := THeaderDecoder.Create(FArchReader, DoTick);
@@ -670,6 +481,13 @@ var
   Check: boolean;
   Encoder: THeaderEncoder;
 begin
+
+  DoMessage(Format(cmScanning, ['...']));
+  FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
+  FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
+
+
+
   if (OpenArchive < ccError) and (SetItemsToDelete = TRUE) then
   begin
     FTempName   := GenerateFileName(FCommandLine.wdOption);
@@ -732,6 +550,13 @@ var
   Check: boolean;
   Encoder: THeaderEncoder;
 begin
+
+   DoMessage(Format(cmScanning, ['...']));
+  FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
+  FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
+
+
+
   if (OpenArchive < ccError) and (SetItemsToRename = TRUE) then
   begin
     FTempName   := GenerateFileName(FCommandLine.wdOption);
@@ -782,6 +607,12 @@ var
   Sequences, Passwords, MaxDict: longint;
   TotalPacked, TotalSize, TotalFiles: int64;
 begin
+
+  DoMessage(Format(cmScanning, ['...']));
+    FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
+    FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
+
+
   if (OpenArchive < ccError) and (SetItemsToList = TRUE) then
   begin
     Version     := -1;
