@@ -43,7 +43,7 @@ uses
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF} Bee_Types;
 
-function GenerateArchiveID(Len: longint): string;
+
 
 function GetFileMode(const Rec: TSearchRec): longint;
 function GetFileCreationTime(const Rec: TSearchRec): longint;
@@ -145,15 +145,6 @@ const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
   HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
 
-function GenerateArchiveID(Len: longint): string;
-var
-  I: longint;
-begin
-  SetLength(Result, Len);
-  for I := 1 to Len do
-    Result[I] := char(Random(255));
-end;
-
 function GetFileMode(const Rec: TSearchRec): longint;
 begin
 end;
@@ -171,33 +162,7 @@ begin
 end;
 
 function GetDiskFree(const FileName: string): int64;
-{$IFDEF MSWINDOWS}
-var
-  FreeAvailable, TotalSpace: int64;
 begin
-  if GetDiskFreeSpaceEx(PChar(ExtractFilePath(ExpandFileName(FileName))),
-    FreeAvailable, TotalSpace, nil) then
-    Result := FreeAvailable
-  else
-    Result := -1;
-{$ENDIF}
-{$IFDEF UNIX}
-var
-  FStats : {$IFDEF PosixAPI}_statvfs{$ELSE}TStatFs{$ENDIF};
-begin
-  {$IF DEFINED(LibcAPI)}
-  if statfs(PAnsiChar(ExtractFilePath(ArchiveName)), FStats) = 0 then
-    Result := int64(FStats.f_bAvail) * int64(FStats.f_bsize)
-  {$ELSEIF DEFINED(FPCUnixAPI)}
-  if fpStatFS(PAnsiChar(ExtractFilePath(ArchiveName)), @FStats) = 0 then
-    Result := int64(FStats.bAvail) * int64(FStats.bsize)
-  {$ELSEIF DEFINED(PosixAPI)}
-  if statvfs(PAnsiChar(AbSysString(ExtractFilePath(ArchiveName))), FStats) = 0 then
-    Result := int64(FStats.f_bavail) * int64(FStats.f_bsize)
-  {$IFEND}
-  else
-    Result := -1;
-{$ENDIF}
 end;
 
 { filename handling routines }
