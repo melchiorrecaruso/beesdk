@@ -711,7 +711,7 @@ begin
     while Hi >= Lo do
     begin
       Med := (Lo + Hi) div 2;
-      I := Bee_Common.CompareFileName(Item.FileName,
+      I := AnsiCompareFileName(Item.FileName,
         TArchiveItem(FNames[Med]).FileName);
 
       if I > 0 then
@@ -746,7 +746,7 @@ begin
   while Hi >= Lo do
   begin
     Med := (Lo + Hi) div 2;
-    I := Bee_Common.CompareFileName(FileName,
+    I := AnsiCompareFileName(FileName,
       TArchiveItem(FNames[Med]).FileName);
 
     if I > 0 then
