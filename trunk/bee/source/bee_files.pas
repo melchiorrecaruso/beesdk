@@ -402,7 +402,7 @@ procedure TFileWriter.CreateImage;
 var
   Abort: boolean;
 begin
-  while GetDiskFree(FFileName) > 0 do
+  while GetDriveFreeSpace(FFileName) > 0 do
   begin
     Abort := TRUE;
     if Assigned(FOnRequestBlankDisk) then
@@ -657,7 +657,7 @@ begin
   //  recursive rmWildCard mode...
   if Recursive = rmWildCard then
   begin
-    if FileNameUseWildCards(Mask) then
+    if FileNameHasWildCards(Mask) then
       Recursive := rmFull
     else
       Recursive := rmNone;

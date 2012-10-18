@@ -43,80 +43,34 @@ uses
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF} Bee_Types;
 
-function IncludeTrailingBackSpace(const DirName: string): string;
-function ExcludeTrailingBackSpace(const DirName: string): string;
-function IncludeTrailingBackSlash(const DirName: string): string;
-function ExcludeTrailingBackSlash(const DirName: string): string;
-
-implementation
-
-function IncludeTrailingBackSpace(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (not (DirName[Len] in [' '])) then
-    Result := DirName + ' '
-  else
-    Result := DirName;
-end;
-
-function ExcludeTrailingBackSpace(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (DirName[Len] in [' ']) then
-    Result := Copy(DirName, 1, Len - 1)
-  else
-    Result := DirName;
-end;
-
-function IncludeTrailingBackSlash(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (not (DirName[Len] in ['\', '/'])) then
-    Result := DirName + PathDelim
-  else
-    Result := DirName;
-end;
-
-function ExcludeTrailingBackSlash(const DirName: string): string;
-var
-  Len: longint;
-begin
-  Len := Length(DirName);
-  if (Len > 0) and (DirName[Len] in ['\', '/']) then
-    Result := Copy(DirName, 1, Len - 1)
-  else
-    Result := DirName;
-end;
-
-
-
-
-
 function GetFileMode(const Rec: TSearchRec): longint;
 function GetFileCreationTime(const Rec: TSearchRec): longint;
 function GetFileLastAccessTime(const Rec: TSearchRec): longint;
 function GetFileLastModifiedTime(const Rec: TSearchRec): longint;
+function GetDriveFreeSpace(const FileName: string): int64;
+
+function FileNameHasWildcards(const FileName: string): boolean;
+function FileNameMatch(const FileName,         Mask:  string;      Recursive: TRecursiveMode): boolean; overload;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
+
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
+
+{ hex routines }
+
+function Hex(const Data; Count: longint): string;
+function HexToData(const S: string; var Data; Count: longint): boolean;
 
 
 
-
-function GetDiskFree(const FileName: string): int64;
+(*
+;
 
 { filename handling routines }
 
-function FileNamePos(const Substr, Str: string): longint;
-function FileNameLastPos(const Substr, Str: string): longint;
-function FileNameUseWildcards(const FileName: string): boolean;
-function FileNameHasDrive(const FileName: string): boolean;
+function AnsiFileNamePos(const FilePath:string; const FileName: string): longint;
+function AnsiFileNameHasWildcards(const FileName: string): boolean;
+function AnsiFileNameHasDrive(const FileName: string): boolean;
 
-function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean; overload;
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
 
 
 
@@ -156,7 +110,7 @@ function RatioToStr(const PackedSize, Size: int64): string;
 function SizeToStr(const Size: int64): string;
 function AttrToStr(Attr: longint): string;
 
-function ReverseString(const Str: string): string; 
+function ReverseString(const Str: string): string;
 
 { time handling routines }
 
@@ -167,10 +121,7 @@ function DateTimeToString(X: TDateTime; const Format: string): string; overload;
 function FileTimeToString(X: longint): string; overload;
 function FileTimeToString(X: longint; const Format: string): string; overload;
 
-{ hex routines }
 
-function Hex(const Data; Count: longint): string;
-function HexToData(const S: string; var Data; Count: longint): boolean;
 
 { low level functions }
 
@@ -189,53 +140,68 @@ function SetPriority(Priority: longint): boolean; { Priority is 0..3 }
 
 procedure SetCtrlCHandler(CtrlHandler: pointer);
 
+
+*)
+
 implementation
 
 const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
   HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
 
+
+
 function GetFileMode(const Rec: TSearchRec): longint;
 begin
+
 end;
 
 function GetFileCreationTime(const Rec: TSearchRec): longint;
 begin
+  // Result := Rec.FindData.ftCreationTime;
 end;
 
 function GetFileLastAccessTime(const Rec: TSearchRec): longint;
 begin
+  // Result := Rec.FindData.ftLastAccessTime;
 end;
 
 function GetFileLastModifiedTime(const Rec: TSearchRec): longint;
 begin
+  // Result := Rec.FindData.ftLastWriteTime;
 end;
 
-function GetDiskFree(const FileName: string): int64;
+function GetDriveFreeSpace(const FileName: string): int64;
+{$IFDEF MSWINDOWS}
+var
+  FreeAvailable, TotalSpace: int64;
 begin
-end;
-
-{ filename handling routines }
-
-function FileNamePos(const Substr, Str: string): longint;
+  if GetDiskFreeSpaceEx(PChar(ExtractFilePath(ExpandFileName(FileName))),
+     FreeAvailable, TotalSpace, nil) then
+    Result := FreeAvailable
+  else
+    Result := -1;
+{$ENDIF}
+{$IFDEF UNIX}
+var
+  FStats: {$IFDEF PosixAPI}_statvfs{$ELSE}TStatFs{$ENDIF};
 begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Result := System.Pos(SubStr, Str);
-  {$ELSE}
-  Result := System.Pos(UpperCase(SubStr), UpperCase(Str));
-  {$ENDIF}
+  {$IF DEFINED(LibcAPI)}
+  if statfs(PAnsiChar(ExtractFilePath(FileName)), FStats) = 0 then
+    Result := int64(FStats.f_bAvail) * int64(FStats.f_bsize)
+  {$ELSEIF DEFINED(FPCUnixAPI)}
+  if fpStatFS(PAnsiChar(ExtractFilePath(FileName)), @FStats) = 0 then
+    Result := int64(FStats.bAvail) * int64(FStats.bsize)
+  {$ELSEIF DEFINED(PosixAPI)}
+  if statvfs(PAnsiChar(AbSysString(ExtractFilePath(FileName))), FStats) = 0 then
+    Result := int64(FStats.f_bavail) * int64(FStats.f_bsize)
+  {$IFEND}
+  else
+    Result := -1;
+{$ENDIF}
 end;
 
-function FileNameLastPos(const Substr, Str: string): longint;
-begin
-  Result := FileNamePos(ReverseString(SubStr), ReverseString(Str));
-  if (Result <> 0) then
-  begin
-    Result := Length(Str) - Length(SubStr) - Result + 2;
-  end;
-end;
-
-function FileNameUseWildcards(const FileName: string): boolean;
+function FileNameHasWildcards(const FileName: string): boolean;
 begin
   if System.Pos('*', FileName) > 0 then
     Result := True
@@ -244,13 +210,6 @@ begin
       Result := True
     else
       Result := False;
-end;
-
-function FileNameHasDrive(const FileName: string): boolean;
-begin
-  Result := Length(ExtractFileDrive(FileName)) > 0;
-  if (Result = FALSE) and (Length(FileName) > 0) then
-    Result := FileName[1] in AllowDirectorySeparators;
 end;
 
 function MatchPattern(Element, Pattern: PChar): boolean;
@@ -311,7 +270,7 @@ begin
 
   if Recursive = rmWildCard then
   begin
-    if FileNameUseWildCards(Mask) then
+    if FileNameHasWildCards(Mask) then
       Recursive := rmFull
     else
       Recursive := rmNone;
@@ -339,16 +298,6 @@ begin
       Break;
     end;
   end;
-end;
-
-
-function CompareFileName(const S1, S2: string): longint;
-begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Result := SysUtils.CompareStr(S1, S2);
-  {$ELSE}
-  Result := SysUtils.CompareText(S1, S2);
-  {$ENDIF}
 end;
 
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
@@ -406,6 +355,102 @@ begin
   end else
     if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
+
+
+{ hex routines }
+
+function Hex(const Data; Count: longint): string;
+var
+  I, J: longint;
+  K:    longword;
+begin
+  SetLength(Result, Count shl 1);
+  J := 1;
+  for I := 0 to Count - 1 do
+  begin
+    K := TByteArray(Data) [I];
+    Result[J] := HexaDecimals[K shr 4];
+    Inc(J);
+    Result[J] := HexaDecimals[K and $f];
+    Inc(J);
+  end;
+end;
+
+function HexToData(const S: string; var Data; Count: longint): boolean;
+var
+  I: longint;
+begin
+  Result := False;
+  if Length(S) < Count * 2 then Exit;
+
+  for I := 0 to Count - 1 do
+  begin
+    if (S[I * 2 + 1] in ['0'..'9', 'A'..'F']) and (S[I * 2 + 2] in ['0'..'9', 'A'..'F']) then
+    begin
+      TByteArray(Data)[I] := HexValues[S[I * 2 + 1]] shl 4 + HexValues[S[I * 2 + 2]]
+    end else
+      Exit;
+  end;
+  Result := True;
+end;
+
+
+
+(*
+
+
+
+
+implementation
+
+
+
+{ filename handling routines }
+
+function FileNamePos(const Substr, Str: string): longint;
+begin
+  {$IFDEF FILENAMECASESENSITIVE}
+  Result := System.Pos(SubStr, Str);
+  {$ELSE}
+  Result := System.Pos(UpperCase(SubStr), UpperCase(Str));
+  {$ENDIF}
+end;
+
+function FileNameLastPos(const Substr, Str: string): longint;
+begin
+  Result := FileNamePos(ReverseString(SubStr), ReverseString(Str));
+  if (Result <> 0) then
+  begin
+    Result := Length(Str) - Length(SubStr) - Result + 2;
+  end;
+end;
+
+
+
+function FileNameHasDrive(const FileName: string): boolean;
+begin
+  Result := Length(ExtractFileDrive(FileName)) > 0;
+  if (Result = FALSE) and (Length(FileName) > 0) then
+    Result := FileName[1] in AllowDirectorySeparators;
+end;
+
+
+
+
+
+
+
+
+function CompareFileName(const S1, S2: string): longint;
+begin
+  {$IFDEF FILENAMECASESENSITIVE}
+  Result := SysUtils.CompareStr(S1, S2);
+  {$ELSE}
+  Result := SysUtils.CompareText(S1, S2);
+  {$ENDIF}
+end;
+
+
 
 function DeleteFilePath(const FilePath, FileName: string): string;
 begin
@@ -735,42 +780,7 @@ begin
   end;
 end;
 
-{ hex routines }
 
-function Hex(const Data; Count: longint): string;
-var
-  I, J: longint;
-  K:    longword;
-begin
-  SetLength(Result, Count shl 1);
-  J := 1;
-  for I := 0 to Count - 1 do
-  begin
-    K := TByteArray(Data) [I];
-    Result[J] := HexaDecimals[K shr 4];
-    Inc(J);
-    Result[J] := HexaDecimals[K and $f];
-    Inc(J);
-  end;
-end;
-
-function HexToData(const S: string; var Data; Count: longint): boolean;
-var
-  I: longint;
-begin
-  Result := False;
-  if Length(S) < Count * 2 then Exit;
-
-  for I := 0 to Count - 1 do
-  begin
-    if (S[I * 2 + 1] in ['0'..'9', 'A'..'F']) and (S[I * 2 + 2] in ['0'..'9', 'A'..'F']) then
-    begin
-      TByteArray(Data)[I] := HexValues[S[I * 2 + 1]] shl 4 + HexValues[S[I * 2 + 2]]
-    end else
-      Exit;
-  end;
-  Result := True;
-end;
 
 { low level functions }
 
@@ -857,6 +867,6 @@ begin
 {$IFDEF MSWINDOWS}
   Windows.SetConsoleCtrlHandler(CtrlHandler, True);
 {$ENDIF}
-end;
+end;      *)
 
 end.
