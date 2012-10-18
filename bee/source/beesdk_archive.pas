@@ -2093,7 +2093,7 @@ begin
           else
             CurrentItem.FCompressionTable := DefaultTableParameters;
 
-          if CompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
+          if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
           begin
             if SolidCompression then
               Include(CurrentItem.FCompressionFlags, acfSolidCompression);
@@ -2112,7 +2112,7 @@ var
 begin
   Ext1   := TCustomSearchRec(Item1^).Name;
   Ext2   := TCustomSearchRec(Item2^).Name;
-  Result := Bee_Common.CompareFileName(Ext1, Ext2);
+  Result := AnsiCompareFileName(Ext1, Ext2);
 end;
 
 procedure TArchiveUpdater.CheckTags;
