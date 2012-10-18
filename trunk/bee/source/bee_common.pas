@@ -55,6 +55,15 @@ function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TR
 
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 
+
+function SelfName: string;
+function SelfPath: string;
+
+function IsValidFileName(const FileName: string): boolean;
+function GenerateFileName(const FilePath: string): string;
+function GenerateAlternativeFileName(const FileName: string;
+  StartIndex: longint; Check: boolean): string;
+
 { hex routines }
 
 function Hex(const Data; Count: longint): string;
@@ -83,13 +92,11 @@ function DoDirSeparators(const FileName: string): string;
 function FixFileName(const FileName: string): string;
 function FixDirName(const DirName: string): string;
 
-function IsValidFileName(const FileName : string): boolean;
 
-function SelfName: string;
-function SelfPath: string;
-function GenerateFileName(const FilePath: string): string;
-function GenerateAlternativeFileName(const FileName: string;
-  StartIndex: longint; Check: boolean): string;
+
+
+
+
 
 { directory handling routines }
 
@@ -356,6 +363,56 @@ begin
     if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
 
+function GenerateFileName(const FilePath: string): string;
+var
+  I: longint;
+begin
+  repeat
+    Result := '????????.$$$';
+    for I := 1 to 8 do
+    begin
+      Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
+    end;
+    Result := IncludeTrailingBackSlash(FilePath) + Result;
+  until FileAge(Result) = -1;
+end;
+
+function IsValidFileName(const FileName : string): boolean;
+const
+  InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
+var
+  I: longint;
+begin
+  Result := FileName <> '';
+  if Result then
+    for I := 1 to Length(FileName) do
+    begin
+      Result := not (FileName[I] in InvalidCharacters) ;
+      if not Result then Break;
+    end;
+end;
+
+function SelfName: string;
+begin
+  Result := ExtractFileName(ParamStr(0));
+end;
+
+function SelfPath: string;
+begin
+  Result := ExtractFilePath(ParamStr(0));
+end;
+
+
+function GenerateAlternativeFileName(const FileName: string;
+  StartIndex: longint; Check: boolean): string;
+begin
+  repeat
+    Result := ChangeFileExt(FileName, '_' +
+      IntToStr(StartIndex) + ExtractFileExt(FileName));
+
+    Inc(StartIndex);
+  until (not Check) or (FileAge(Result) = -1) ;
+end;
 
 { hex routines }
 
@@ -434,21 +491,6 @@ begin
     Result := FileName[1] in AllowDirectorySeparators;
 end;
 
-
-
-
-
-
-
-
-function CompareFileName(const S1, S2: string): longint;
-begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Result := SysUtils.CompareStr(S1, S2);
-  {$ELSE}
-  Result := SysUtils.CompareText(S1, S2);
-  {$ENDIF}
-end;
 
 
 
@@ -545,55 +587,9 @@ begin
   Result := ExcludeTrailingBackSlash(Result);
 end;
 
-function IsValidFileName(const FileName : string): boolean;
-const
-  InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
-var
-  I: longint;
-begin
-  Result := FileName <> '';
-  if Result then
-    for I := 1 to Length(FileName) do
-    begin
-      Result := not (FileName[I] in InvalidCharacters) ;
-      if not Result then Break;
-    end;
-end;
 
-function SelfName: string;
-begin
-  Result := ExtractFileName(ParamStr(0));
-end;
 
-function SelfPath: string;
-begin
-  Result := ExtractFilePath(ParamStr(0));
-end;
 
-function GenerateFileName(const FilePath: string): string;
-var
-  I: longint;
-begin
-  repeat
-    Result := '????????.$$$';
-    for I := 1 to 8 do
-    begin
-      Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
-    end;
-    Result := IncludeTrailingBackSlash(FilePath) + Result;
-  until FileAge(Result) = -1;
-end;
-
-function GenerateAlternativeFileName(const FileName: string;
-  StartIndex: longint; Check: boolean): string;
-begin
-  repeat
-    Result := ChangeFileExt(FileName, '_' +
-      IntToStr(StartIndex) + ExtractFileExt(FileName));
-
-    Inc(StartIndex);
-  until (not Check) or (FileAge(Result) = -1) ;
-end;
 
 { directory handling routines }
 
