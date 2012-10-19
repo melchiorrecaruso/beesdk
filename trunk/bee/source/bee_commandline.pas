@@ -528,7 +528,7 @@ end;
 
 procedure TCommandLine.SetwdOption(const aValue: string);
 begin
-  if Bee_Common.DirectoryExists(aValue) then
+  if DirectoryExists(aValue) then
   begin
     FwdOption := aValue;
   end;
@@ -536,7 +536,8 @@ end;
 
 procedure TCommandLine.SetcdOption(const aValue: string);
 begin
-  FcdOption := IncludeTrailingBackSlash(FixDirName(aValue));
+  if Length(aValue) > 0 then
+    FcdOption := IncludeTrailingBackSlash(FixDirName(aValue));
 end;
 
 procedure TCommandLine.SetcfgOption(const aValue: string);

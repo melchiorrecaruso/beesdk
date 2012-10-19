@@ -43,32 +43,40 @@ uses
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF} Bee_Types;
 
+function SelfName: string;
+function SelfPath: string;
+
 function GetFileMode(const Rec: TSearchRec): longint;
 function GetFileCreationTime(const Rec: TSearchRec): longint;
 function GetFileLastAccessTime(const Rec: TSearchRec): longint;
 function GetFileLastModifiedTime(const Rec: TSearchRec): longint;
 function GetDriveFreeSpace(const FileName: string): int64;
 
-function FileNameHasWildcards(const FileName: string): boolean;
 function FileNameMatch(const FileName,         Mask:  string;      Recursive: TRecursiveMode): boolean; overload;
 function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
+function FileNameHasWildcards(const FileName: string): boolean;
 
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
-
-
-function SelfName: string;
-function SelfPath: string;
-
+function FixFileName(const FileName: string): string;
+function FixDirName(const DirName: string): string;
 function IsValidFileName(const FileName: string): boolean;
 function GenerateFileName(const FilePath: string): string;
 function GenerateAlternativeFileName(const FileName: string;
   StartIndex: longint; Check: boolean): string;
+
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 
 { hex routines }
 
 function Hex(const Data; Count: longint): string;
 function HexToData(const S: string; var Data; Count: longint): boolean;
 
+{ system control }
+
+{$IFDEF MSWINDOWS}
+function SetPriority(Priority: longint): boolean; { Priority is 0..3 }
+{$ENDIF}
+
+procedure SetCtrlCHandler(CtrlHandler: pointer);
 
 
 (*
@@ -89,8 +97,7 @@ procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRec
 function DeleteFilePath(const FilePath, FileName: string): string;
 function DeleteFileDrive(const FileName: string): string;
 function DoDirSeparators(const FileName: string): string;
-function FixFileName(const FileName: string): string;
-function FixDirName(const DirName: string): string;
+
 
 
 
@@ -139,13 +146,7 @@ function WriteText(const FileName, S: string): boolean;
 
 function SizeOfFile(const FileName: string): int64;
 
-{ system control }
 
-{$IFDEF MSWINDOWS}
-function SetPriority(Priority: longint): boolean; { Priority is 0..3 }
-{$ENDIF}
-
-procedure SetCtrlCHandler(CtrlHandler: pointer);
 
 
 *)
@@ -156,7 +157,15 @@ const
   HexaDecimals: array [0..15] of char = '0123456789ABCDEF';
   HexValues: array ['0'..'F'] of byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15);
 
+function SelfName: string;
+begin
+  Result := ExtractFileName(ParamStr(0));
+end;
 
+function SelfPath: string;
+begin
+  Result := ExtractFilePath(ParamStr(0));
+end;
 
 function GetFileMode(const Rec: TSearchRec): longint;
 begin
@@ -206,17 +215,6 @@ begin
   else
     Result := -1;
 {$ENDIF}
-end;
-
-function FileNameHasWildcards(const FileName: string): boolean;
-begin
-  if System.Pos('*', FileName) > 0 then
-    Result := True
-  else
-    if System.Pos('?', FileName) > 0 then
-      Result := True
-    else
-      Result := False;
 end;
 
 function MatchPattern(Element, Pattern: PChar): boolean;
@@ -307,6 +305,117 @@ begin
   end;
 end;
 
+function FileNameHasWildcards(const FileName: string): boolean;
+begin
+  if System.Pos('*', FileName) > 0 then
+    Result := True
+  else
+    if System.Pos('?', FileName) > 0 then
+      Result := True
+    else
+      Result := False;
+end;
+
+function IsValidFileName(const FileName : string): boolean;
+const
+  InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
+var
+  I: longint;
+begin
+  Result := FileName <> '';
+  if Result then
+    for I := 1 to Length(FileName) do
+    begin
+      Result := not (FileName[I] in InvalidCharacters) ;
+      if not Result then Break;
+    end;
+end;
+
+function FixFileName(const FileName: string): string;
+var
+  I: longint;
+begin
+  Result := FileName;
+  DoDirSeparators(Result);
+
+  I := System.Pos('*', Result);
+  while I > 0 do
+  begin
+    Delete(Result, I, 1);
+    I := System.Pos('*', Result);
+  end;
+
+  I := System.Pos('?', Result);
+  while I > 0 do
+  begin
+    Delete(Result, I, 1);
+    I := System.Pos('?', Result);
+  end;
+
+  I := System.Pos('"', Result);
+  while I > 0 do
+  begin
+    Delete(Result, I, 1);
+    I := System.Pos('"', Result);
+  end;
+end;
+
+function FixDirName(const DirName: string): string;
+var
+  I: longint;
+begin
+  Result := DirName;
+  DoDirSeparators(Result);
+
+  I := System.Pos('*', Result);
+  while I > 0 do
+  begin
+    Delete(Result, I, 1);
+    I := System.Pos('*', Result);
+  end;
+
+  I := System.Pos('?', Result);
+  while I > 0 do
+  begin
+    Delete(Result, I, 1);
+    I := System.Pos('?', Result);
+  end;
+
+  I := System.Pos('"', Result);
+  while I > 0 do
+  begin
+    Delete(Result, I, 1);
+    I := System.Pos('"', Result);
+  end;
+
+  Result := ExcludeTrailingBackSlash(Result);
+end;
+
+function GenerateFileName(const FilePath: string): string;
+var
+  I: longint;
+begin
+  repeat
+    Result := '????????.$$$';
+    for I := 1 to 8 do
+    begin
+      Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
+    end;
+    Result := IncludeTrailingBackSlash(FilePath) + Result;
+  until FileAge(Result) = -1;
+end;
+
+function GenerateAlternativeFileName(const FileName: string;
+  StartIndex: longint; Check: boolean): string;
+begin
+  repeat
+    Result := ChangeFileExt(FileName, '_' +
+      IntToStr(StartIndex) + ExtractFileExt(FileName));
+
+    Inc(StartIndex);
+  until (not Check) or (FileAge(Result) = -1) ;
+end;
+
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 var
   I:     longint;
@@ -363,57 +472,6 @@ begin
     if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
 
-function GenerateFileName(const FilePath: string): string;
-var
-  I: longint;
-begin
-  repeat
-    Result := '????????.$$$';
-    for I := 1 to 8 do
-    begin
-      Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
-    end;
-    Result := IncludeTrailingBackSlash(FilePath) + Result;
-  until FileAge(Result) = -1;
-end;
-
-function IsValidFileName(const FileName : string): boolean;
-const
-  InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
-var
-  I: longint;
-begin
-  Result := FileName <> '';
-  if Result then
-    for I := 1 to Length(FileName) do
-    begin
-      Result := not (FileName[I] in InvalidCharacters) ;
-      if not Result then Break;
-    end;
-end;
-
-function SelfName: string;
-begin
-  Result := ExtractFileName(ParamStr(0));
-end;
-
-function SelfPath: string;
-begin
-  Result := ExtractFilePath(ParamStr(0));
-end;
-
-
-function GenerateAlternativeFileName(const FileName: string;
-  StartIndex: longint; Check: boolean): string;
-begin
-  repeat
-    Result := ChangeFileExt(FileName, '_' +
-      IntToStr(StartIndex) + ExtractFileExt(FileName));
-
-    Inc(StartIndex);
-  until (not Check) or (FileAge(Result) = -1) ;
-end;
-
 { hex routines }
 
 function Hex(const Data; Count: longint): string;
@@ -449,6 +507,38 @@ begin
       Exit;
   end;
   Result := True;
+end;
+
+{ system control }
+
+{$IFDEF MSWINDOWS}
+function SetPriority(Priority: longint): boolean;
+const
+  PriorityValue: array [0..3] of longint = (IDLE_PRIORITY_CLASS,
+    NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS);
+begin
+  Result := SetPriorityClass(GetCurrentProcess,
+    PriorityValue[Max(0, Min(Priority, 3))]);
+end;
+{$ENDIF}
+
+procedure SetCtrlCHandler(CtrlHandler: pointer);
+{$IFDEF UNIX}
+var
+  oa, na: SigActionRec;
+{$ENDIF}
+begin
+{$IFDEF UNIX}
+  na.sa_handler := SigActionHandler(CtrlHandler);
+  FillChar(na.sa_mask, SizeOf(na.sa_mask), #0);
+  na.sa_flags    := SA_ONESHOT;
+  na.sa_restorer := nil;
+  fpSigAction(SIGINT, @na, @oa);
+{$ENDIF}
+
+{$IFDEF MSWINDOWS}
+  Windows.SetConsoleCtrlHandler(CtrlHandler, True);
+{$ENDIF}
 end;
 
 
@@ -530,62 +620,6 @@ begin
   end;
 end;
 
-function FixFileName(const FileName: string): string;
-var
-  I: longint;
-begin
-  Result := DoDirSeparators(FileName);
-
-  I := System.Pos('*', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('*', Result);
-  end;
-
-  I := System.Pos('?', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('?', Result);
-  end;
-
-  I := System.Pos('"', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('"', Result);
-  end;
-end;
-
-function FixDirName(const DirName: string): string;
-var
-  I: longint;
-begin
-  Result := DoDirSeparators(DirName);
-
-  I := System.Pos('*', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('*', Result);
-  end;
-
-  I := System.Pos('?', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('?', Result);
-  end;
-
-  I := System.Pos('"', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('"', Result);
-  end;
-  Result := ExcludeTrailingBackSlash(Result);
-end;
 
 
 
@@ -833,36 +867,6 @@ begin
   SysUtils.FindClose(Rec);
 end;
 
-{ system control }
-
-{$IFDEF MSWINDOWS}
-function SetPriority(Priority: longint): boolean;
-const
-  PriorityValue: array [0..3] of longint = (IDLE_PRIORITY_CLASS,
-    NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS);
-begin
-  Result := SetPriorityClass(GetCurrentProcess,
-    PriorityValue[Max(0, Min(Priority, 3))]);
-end;
-{$ENDIF}
-
-procedure SetCtrlCHandler(CtrlHandler: pointer);
-{$IFDEF UNIX}
-var
-  oa, na: SigActionRec;
-{$ENDIF}
-begin
-{$IFDEF UNIX}
-  na.sa_handler := SigActionHandler(CtrlHandler);
-  FillChar(na.sa_mask, SizeOf(na.sa_mask), #0);
-  na.sa_flags    := SA_ONESHOT;
-  na.sa_restorer := nil;
-  fpSigAction(SIGINT, @na, @oa);
-{$ENDIF}
-
-{$IFDEF MSWINDOWS}
-  Windows.SetConsoleCtrlHandler(CtrlHandler, True);
-{$ENDIF}
-end;      *)
+     *)
 
 end.
