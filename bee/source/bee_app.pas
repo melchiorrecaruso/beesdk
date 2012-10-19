@@ -180,6 +180,32 @@ end;
 procedure TBeeApp.OnExtract(Item: TArchiveItem;
   var ExtractAs: string; var Confirm: TArchiveConfirm);
 begin
+
+
+  case FCommandLine.Command of
+    ccExtract:  ExtractAs := ExtractFileName(Item.FileName);
+    ccXextract: ExtractAs := DeleteFilePath(FCommandLine.cdOption, P.Name);
+  end;
+
+
+
+
+
+
+
+          case FCommandLine.uOption of
+            umUpdate:    if (not FileExists(P.ExtName)) or  (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
+            umAddUpdate: if (    FileExists(P.ExtName)) and (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
+            umReplace:   if (not FileExists(P.ExtName)) then P.Action := haNone;
+            umAdd:       if (    FileExists(P.ExtName)) then P.Action := haNone;
+            // umAddReplace: extract file always
+            umAddAutoRename: if FileExists(P.ExtName)   then P.ExtName := GenerateAlternativeFileName(P.ExtName, 1, True);
+          end;
+        end;
+      end;
+    end;
+
+
 end;
 
 procedure TBeeApp.OnErase(Item: TArchiveItem;
@@ -330,6 +356,8 @@ var
   Extractor: TArchiveExtractor;
 begin
   Extractor := TArchiveExtractor.Create;
+  // ...
+  Extractor.OnExtraction := OnExtract;
 
 
 
@@ -340,68 +368,7 @@ begin
   for I := 0 to FCommandLine.xOptions.Count - 1 do
     Extractor.UnTag(FCommandLine.xOptions[I], FCommandLine.rOption);
 
-
-
-    // STEP1: overwrite routines ...
-    if FCommandline.Command in [ccXextract, ccExtract] then
-    begin
-      for I := 0 to FHeaders.Count - 1 do
-      begin
-        P := FHeaders.Items[I];
-        if (P.Action = haUpdate) and (ExitCode < ccError) then
-        begin
-          case FCommandLine.Command of
-            ccExtract:  P.ExtName := ExtractFileName(P.Name);
-            ccXextract: P.ExtName := DeleteFilePath(FCommandLine.cdOption, P.Name);
-          end;
-
-          case FCommandLine.uOption of
-            umUpdate:    if (not FileExists(P.ExtName)) or  (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
-            umAddUpdate: if (    FileExists(P.ExtName)) and (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
-            umReplace:   if (not FileExists(P.ExtName)) then P.Action := haNone;
-            umAdd:       if (    FileExists(P.ExtName)) then P.Action := haNone;
-            // umAddReplace: extract file always
-            umAddAutoRename: if FileExists(P.ExtName)   then P.ExtName := GenerateAlternativeFileName(P.ExtName, 1, True);
-          end;
-        end;
-      end;
-    end;
-
-
-  if (OpenArchive < ccError) and (SetItemsToDecode = TRUE) then
-  begin
-    Decoder := THeaderDecoder.Create(FArchReader, DoTick);
-    Decoder.Password := FCommandLine.pOption;
-
-    Check := True;
-    for I := 0  to FHeaders.Count - 1 do
-      if ExitCode < ccError then
-      begin
-        P := FHeaders.Items[I];
-        Decoder.Initialize(P);
-
-        if P.Action in [haUpdate, haDecode] then
-        begin
-          case P.Action of
-            // haNone:            nothing to do
-            // haDecodeAndUpdate: nothing to do
-            haUpdate: begin
-              DoMessage(Format(cmExtracting, [P.Name]));
-              Check := Decoder.ReadToFile(P);
-            end;
-            haDecode: begin
-              DoMessage(Format(cmDecoding, [P.Name]));
-              Check := Decoder.ReadToNul(P);
-            end;
-          end;
-          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-          if Check = False then
-            DoMessage(Format(cmCrcError, [P.Name]), ccError);
-        end;
-      end;
-    Decoder.Destroy;
-  end;
-  CloseArchive(False);
+  Extractor.ExtractTagged;
 end;
 
 procedure TBeeApp.TestShell;
