@@ -98,7 +98,7 @@ uses
 
 function CompareFilePath(P1, P2: pointer): longint;
 begin
-  Result := CompareFileName(
+  Result := AnsiCompareFileName(
     ExtractFilePath(TArchiveItem(P1).FileName),
     ExtractFilePath(TArchiveItem(P2).FileName));
 
@@ -272,15 +272,22 @@ var
   Scanner: TFileScanner;
   Updater: TArchiveUpdater;
 begin
-  DoMessage(Format(cmScanning, ['...']));
   Updater := TArchiveUpdater.Create;
+  //Updater.OnUpdate           := OnUpdate;
+  //Updater.OnProgress         := OnProgress;
+  //Updater.OnMessage          := OnMessage;
+  //Updater.OnFailure          := OnFailure;
+  //Updater.OnRequestImage     := OnRequestImage;
+  //Updater.OnRequestBlankDisk := OnRequestBlankDisk;
+
+  DoMessage(Format(cmScanning, ['...']));
   Scanner := TFileScanner.Create;
   with FCommandLine do
     for I := 0 to FileMasks.Count - 1 do
       Scanner.Scan(FileMasks[I], xOptions, rOption);
 
   for I := 0 to Scanner.Count - 1 do
-  begin            IncludeTrailingBackSlash
+  begin
     CurrentMask := FCommandLine.cdOption + Scanner.Items[I].Name;
 
     if Updater.Find(CurrentMask) = -1 then
@@ -304,71 +311,37 @@ begin
   end;
   Scanner.Free;
 
-
-
-
-  if (OpenArchive < ccError) and (SetItemsToEncode = TRUE) then
-  begin
-    FTempName   := GenerateFileName(FCommandLine.wdOption);
-    FTempWriter := CreateTFileWriter(FTempName, fmCreate);
-    if Assigned(FTempWriter) then
-    begin
-      if OpenSwapFile < ccError then
-      begin
-        FHeaders.Write(FTempWriter);
-        Encoder := THeaderEncoder.Create(FTempWriter, DoTick);
-        Encoder.Password := FCommandLine.pOption;
-
-        Check := True;
-        for I := 0 to FHeaders.Count - 1 do
-          if ExitCode < ccError then
-          begin
-            P := FHeaders.Items[I];
-            Encoder.Initialize(P);
-
-            case P.Action of
-              haNone: begin
-                DoMessage(Format(cmCopying, [P.Name]));
-                Check := Encoder.WriteFromArch(P, FArchReader);
-              end;
-              haUpdate: begin
-                DoMessage(Format(cmUpdating, [P.Name]));
-                Check := Encoder.WriteFromFile(P);
-              end;
-              haDecode: begin
-                DoMessage(Format(cmEncoding, [P.Name]));
-                Check := Encoder.WriteFromSwap(P, FSwapReader);
-              end;
-              haDecodeAndUpdate: begin
-                DoMessage(Format(cmUpdating, [P.Name]));
-                Check := Encoder.WriteFromFile(P);
-              end;
-            end;
-            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-            if Check = False then
-              DoMessage(cmStrmReadError, ccError);
-          end;
-
-        Encoder.Destroy;
-        FHeaders.Write(FTempWriter);
-      end;
-    end else
-      DoMessage(cmOpenTempError, ccError);
+  Updater.ArchiveName       := FCommandLine.ArchiveName;
+  Updater.ArchivePassword   := FCommandLine.pOption;
+  case FCommandLine.mOption of
+    moStore: Updater.CompressionMethod := actNone;
+    else     Updater.CompressionMethod := actMain;
   end;
-  CloseArchive(FTotalSize > 0);
+  Updater.CompressionLevel  := FCommandLine.mOption;
+  Updater.DictionaryLevel   := FCommandLine.dOption;
+  Updater.SolidCompression  := FCommandLine.sOption;
+
+  Updater.UpdateTagged;
 end;
 
 procedure TBeeApp.DecodeShell;
 var
   I: longint;
-  P: THeader;
-  Check: boolean;
-  Decoder: THeaderDecoder;
+  Extractor: TArchiveExtractor;
 begin
+  Extractor := TArchiveExtractor.Create;
+
+
 
   DoMessage(Format(cmScanning, ['...']));
-    FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
-    FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
+  for I := 0 to FCommandLine.FileMasks.Count - 1 do
+    Extractor.Tag(FCommandLine.FileMasks[I], FCommandLine.rOption);
+
+  for I := 0 to FCommandLine.xOptions.Count - 1 do
+    Extractor.UnTag(FCommandLine.xOptions[I], FCommandLine.rOption);
+
+
+
     // STEP1: overwrite routines ...
     if FCommandline.Command in [ccXextract, ccExtract] then
     begin

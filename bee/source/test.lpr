@@ -44,6 +44,7 @@ type
 procedure TMyApplication.DoRun;
 var
   ErrorMsg: String;
+  Scanner: TFileScanner;
 begin
   writeln('BEE SDK Tester - B.0001');
   // quick check parameters
@@ -63,6 +64,11 @@ begin
     Exit;
   end;
 
+
+  Scanner := TFileScanner.Create;
+  Scanner.Scan('test.exe');
+
+
   FArchiveUpdater := TArchiveUpdater.Create;
   FArchiveUpdater.OnUpdate           := OnUpdate;
   FArchiveUpdater.OnProgress         := OnProgress;
@@ -70,6 +76,9 @@ begin
   FArchiveUpdater.OnFailure          := OnFailure;
   FArchiveUpdater.OnRequestImage     := OnRequestImage;
   FArchiveUpdater.OnRequestBlankDisk := OnRequestBlankDisk;
+
+
+
 
 
 

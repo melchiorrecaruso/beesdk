@@ -251,6 +251,7 @@ type
     FTotalSize: int64;
     FProcessedSize: int64;
     FArchiveName: string;
+    FArchivePassword: string;
     FArchiveReader: TFileReader;
     FSwapName: string;
     FSwapReader: TFileReader;
@@ -291,6 +292,7 @@ type
     procedure Terminate;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
+    property ArchivePassword: string read FArchivePassword write FArchivePassword;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
