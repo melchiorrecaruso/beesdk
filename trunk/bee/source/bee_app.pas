@@ -180,30 +180,21 @@ end;
 procedure TBeeApp.OnExtract(Item: TArchiveItem;
   var ExtractAs: string; var Confirm: TArchiveConfirm);
 begin
-
-
   case FCommandLine.Command of
     ccExtract:  ExtractAs := ExtractFileName(Item.FileName);
-    ccXextract: ExtractAs := DeleteFilePath(FCommandLine.cdOption, P.Name);
+    ccXextract: ExtractAs := DeleteFilePath(FCommandLine.cdOption, Item.FileName);
   end;
 
+  Confirm := arcOk;
+  case FCommandLine.uOption of
+    umUpdate:    if (not FileExists(ExtractAs)) or  (Item.LastModifiedTime <= FileAge(ExtractAs)) then Confirm := arcCancel;
+    umAddUpdate: if (    FileExists(ExtractAs)) and (Item.LastModifiedTime <= FileAge(ExtractAs)) then Confirm := arcCancel;
+    umReplace:   if (not FileExists(ExtractAs)) then Confirm := arcCancel;
+    umAdd:       if (    FileExists(ExtractAs)) then Confirm := arcCancel;
+    // umAddReplace: extract file always
+    umAddAutoRename: if FileExists(P.ExtName)   then P.ExtName := GenerateAlternativeFileName(P.ExtName, 1, True);
+  end;
 
-
-
-
-
-
-          case FCommandLine.uOption of
-            umUpdate:    if (not FileExists(P.ExtName)) or  (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
-            umAddUpdate: if (    FileExists(P.ExtName)) and (P.Time <= FileAge(P.ExtName)) then P.Action := haNone;
-            umReplace:   if (not FileExists(P.ExtName)) then P.Action := haNone;
-            umAdd:       if (    FileExists(P.ExtName)) then P.Action := haNone;
-            // umAddReplace: extract file always
-            umAddAutoRename: if FileExists(P.ExtName)   then P.ExtName := GenerateAlternativeFileName(P.ExtName, 1, True);
-          end;
-        end;
-      end;
-    end;
 
 
 end;
@@ -672,4 +663,4 @@ end;
 {$ENDIF}
 
 end.
-
+

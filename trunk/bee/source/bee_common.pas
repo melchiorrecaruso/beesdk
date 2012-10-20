@@ -55,6 +55,7 @@ function GetDriveFreeSpace(const FileName: string): int64;
 function FileNameMatch(const FileName,         Mask:  string;      Recursive: TRecursiveMode): boolean; overload;
 function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
 function FileNameHasWildcards(const FileName: string): boolean;
+function FileNamePos(const FilePath, FileName: string): longint;
 
 function FixFileName(const FileName: string): string;
 function FixDirName(const DirName: string): string;
@@ -62,6 +63,7 @@ function IsValidFileName(const FileName: string): boolean;
 function GenerateFileName(const FilePath: string): string;
 function GenerateAlternativeFileName(const FileName: string;
   StartIndex: longint; Check: boolean): string;
+function DeleteFilePath(const FilePath, FileName: string): string;
 
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 
@@ -80,7 +82,7 @@ procedure SetCtrlCHandler(CtrlHandler: pointer);
 
 { filename handling routines }
 
-function AnsiFileNamePos(const FilePath:string; const FileName: string): longint;
+
 function AnsiFileNameHasWildcards(const FileName: string): boolean;
 function AnsiFileNameHasDrive(const FileName: string): boolean;
 
@@ -90,7 +92,7 @@ function AnsiFileNameHasDrive(const FileName: string): boolean;
 function CompareFileName(const S1, S2: string): longint;
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 
-function DeleteFilePath(const FilePath, FileName: string): string;
+
 function DeleteFileDrive(const FileName: string): string;
 function DoDirSeparators(const FileName: string): string;
 
@@ -311,6 +313,17 @@ begin
       Result := False;
 end;
 
+function FileNamePos(const FilePath, FileName: string): longint;
+begin
+  {$IFDEF FILENAMECASESENSITIVE}
+  Result := System.Pos(FilePath, FileName);
+  {$ELSE}
+  Result := System.Pos(UpperCase(FilePath), UpperCase(FileName));
+  {$ENDIF}
+end;
+
+
+
 function IsValidFileName(const FileName : string): boolean;
 const
   InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
@@ -409,6 +422,15 @@ begin
 
     Inc(StartIndex);
   until (not Check) or (FileAge(Result) = -1) ;
+end;
+
+function DeleteFilePath(const FilePath, FileName: string): string;
+begin
+  Result := FileName;
+  if FileNamePos(FilePath, Result) = 1 then
+  begin
+    Delete(Result, 1, Length(FilePath));
+  end;
 end;
 
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
@@ -555,14 +577,7 @@ implementation
 
 { filename handling routines }
 
-function FileNamePos(const Substr, Str: string): longint;
-begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Result := System.Pos(SubStr, Str);
-  {$ELSE}
-  Result := System.Pos(UpperCase(SubStr), UpperCase(Str));
-  {$ENDIF}
-end;
+
 
 function FileNameLastPos(const Substr, Str: string): longint;
 begin
@@ -585,14 +600,7 @@ end;
 
 
 
-function DeleteFilePath(const FilePath, FileName: string): string;
-begin
-  Result := FileName;
-  if FileNamePos(FilePath, Result) = 1 then
-  begin
-    Delete(Result, 1, Length(FilePath));
-  end;
-end;
+
 
 function DeleteFileDrive(const FileName: string): string;
 var
@@ -870,4 +878,4 @@ end;
 
      *)
 
-end.
+end.
