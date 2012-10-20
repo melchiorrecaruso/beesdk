@@ -71,11 +71,7 @@ function Hex(const Data; Count: longint): string;
 function HexToData(const S: string; var Data; Count: longint): boolean;
 
 { system control }
-
-{$IFDEF MSWINDOWS}
 function SetPriority(Priority: longint): boolean; { Priority is 0..3 }
-{$ENDIF}
-
 procedure SetCtrlCHandler(CtrlHandler: pointer);
 
 
@@ -202,18 +198,17 @@ begin
 var
   FStats: {$IFDEF PosixAPI}_statvfs{$ELSE}TStatFs{$ENDIF};
 begin
+  Result := -1;
   {$IF DEFINED(LibcAPI)}
   if statfs(PAnsiChar(ExtractFilePath(FileName)), FStats) = 0 then
-    Result := int64(FStats.f_bAvail) * int64(FStats.f_bsize)
+    Result := int64(FStats.f_bAvail) * int64(FStats.f_bsize);
   {$ELSEIF DEFINED(FPCUnixAPI)}
   if fpStatFS(PAnsiChar(ExtractFilePath(FileName)), @FStats) = 0 then
-    Result := int64(FStats.bAvail) * int64(FStats.bsize)
+    Result := int64(FStats.bAvail) * int64(FStats.bsize);
   {$ELSEIF DEFINED(PosixAPI)}
   if statvfs(PAnsiChar(AbSysString(ExtractFilePath(FileName))), FStats) = 0 then
-    Result := int64(FStats.f_bavail) * int64(FStats.f_bsize)
+    Result := int64(FStats.f_bavail) * int64(FStats.f_bsize);
   {$IFEND}
-  else
-    Result := -1;
 {$ENDIF}
 end;
 
@@ -511,14 +506,20 @@ end;
 
 { system control }
 
-{$IFDEF MSWINDOWS}
+
 function SetPriority(Priority: longint): boolean;
+{$IFDEF MSWINDOWS}
 const
   PriorityValue: array [0..3] of longint = (IDLE_PRIORITY_CLASS,
     NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS);
 begin
   Result := SetPriorityClass(GetCurrentProcess,
     PriorityValue[Max(0, Min(Priority, 3))]);
+end;
+{$ENDIF}
+{$IFDEF UNIX}
+begin
+  // ...
 end;
 {$ENDIF}
 
@@ -869,4 +870,4 @@ end;
 
      *)
 
-end.
+end.
