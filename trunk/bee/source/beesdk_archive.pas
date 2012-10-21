@@ -241,7 +241,7 @@ type
     var Confirm: TArchiveConfirm) of object;
 
   TArchiveUpdateEvent = procedure(SearchRec: TCustomSearchRec;
-    var UpdateAs; var Confirm: TArchiveConfirm) of object;
+    var UpdateAs: string; var Confirm: TArchiveConfirm) of object;
 
   // a class for each command
 

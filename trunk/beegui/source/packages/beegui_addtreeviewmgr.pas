@@ -126,7 +126,7 @@ var
 begin
   Result := '';
   for j := 1 to Min(Length(Str1), Length(Str2)) do
-    if CompareFileName(Str1[j], Str2[j]) = 0 then
+    if AnsiCompareFileName(Str1[j], Str2[j]) = 0 then
     begin
       Result := Result + Str1[j];
     end
