@@ -306,12 +306,10 @@ type
 
   TArchiveReader = class(TArchiveReaderBase)
   public
+    procedure Tag(Index: longint);
+    procedure UnTag(Index: longint);
     procedure TagAll;
-    procedure Tag(Index: longint); overload;
-    procedure Tag(const FileMask: string; Recursive: TRecursiveMode); overload;
     procedure UnTagAll;
-    procedure UnTag(Index: longint); overload;
-    procedure UnTag(const FileMask: string; Recursive: TRecursiveMode); overload;
   end;
 
   TArchiveWriterBase = class(TArchiveReaderBase)
@@ -1083,7 +1081,6 @@ end;
 procedure TArchiveReaderBase.OpenArchive(const aArchiveName: string);
 begin
   CloseArchive;
-  DoMessage(Format(Cr + cmOpening, [aArchiveName]));
   if FileExists(aArchiveName) then
   begin
     FArchiveReader := TFileReader.Create(aArchiveName, 1);
@@ -1166,15 +1163,6 @@ begin
   FArchiveItems.Items[Index].FTag := aitUpdate;
 end;
 
-procedure TArchiveReader.Tag(const FileMask: string; Recursive: TRecursiveMode);
-var
-  I: longint;
-begin
-  for I := 0 to FArchiveItems.Count - 1 do
-    with FArchiveItems.Items[I] do
-      if FileNameMatch(FileName, FileMask, Recursive) then Tag(I);
-end;
-
 procedure TArchiveReader.UnTagAll;
 var
   I: longint;
@@ -1185,15 +1173,6 @@ end;
 procedure TArchiveReader.UnTag(Index: longint);
 begin
   FArchiveItems.Items[Index].FTag := aitNone;
-end;
-
-procedure TArchiveReader.UnTag(const FileMask: string; Recursive: TRecursiveMode);
-var
-  I: longint;
-begin
-  for I := 0 to FArchiveItems.Count - 1 do
-    with FArchiveItems.Items[I] do
-      if FileNameMatch(FileName, FileMask, Recursive) then UnTag(I);
 end;
 
 // TArchiveWriterBase class

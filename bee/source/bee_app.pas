@@ -56,12 +56,12 @@ type
     FCommandLine: TCommandLine;
 
     FUpdater: TArchiveUpdater;
-
+    FExtractor: TArchiveExtractor;
+    FEraser: TArchiveEraser;
+    FRenamer: TArchiveRenamer;
 
     procedure DoMessage(const Message: string);
-
     procedure OnProgress(Value: longint);
-
     procedure OnFailure(const ErrorMessage: string; ErrorCode: longint);
     procedure OnRename(Item: TArchiveItem; var RenameAs: string; var Confirm: TArchiveConfirm);
     procedure OnExtract(Item: TArchiveItem; var ExtractAs: string; var Confirm: TArchiveConfirm);
@@ -78,8 +78,7 @@ type
     procedure HelpShell;
     procedure EncodeShell;
     procedure DeleteShell;
-    procedure DecodeShell;
-    procedure TestShell;
+    procedure DecodeShell(TestMode: boolean);
     procedure RenameShell;
     procedure ListShell;
   public
@@ -143,9 +142,9 @@ begin
     case FCommandLine.Command of
       ccAdd:      EncodeShell;
       ccDelete:   DeleteShell;
-      ccExtract:  DecodeShell;
-      ccxExtract: DecodeShell;
-      ccTest:     TestShell;
+      ccExtract:  DecodeShell(FALSE);
+      ccxExtract: DecodeShell(FALSE);
+      ccTest:     DecodeShell(TRUE);
       ccRename:   RenameShell;
       ccList:     ListShell;
       ccHelp:     HelpShell;
@@ -158,10 +157,7 @@ begin
     end;
   end else
     HelpShell;
-
-  // SetTerminated(True);
 end;
-
 
 procedure TBeeApp.OnProgress(Value: longint);
 begin
@@ -223,7 +219,7 @@ begin
   case FCommandLine.uOption of
     umAdd:           if (I =  -1) then Confirm := arcOk;
     umReplace:       if (I <> -1) then Confirm := arcOk;
-    unUpdate:        if (I <> -1) and (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
+    umUpdate:        if (I <> -1) and (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
     umAddUpdate:     if (I =  -1) or  (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
     umAddReplace:    Confirm := arcOk;
     umAddAutoRename: begin
@@ -260,7 +256,7 @@ begin
     FCommandLine.FileMasks.Clear;
     FCommandLine.FileMasks.Add('*');
     FCommandLine.rOption := rmFull;
-    TestShell;
+    DecodeShell(TRUE);
   end;
 end;
 
@@ -318,16 +314,26 @@ procedure TBeeApp.EncodeShell;
 var
   I: longint;
   Scanner: TFileScanner;
-  Updater: TArchiveUpdater;
 begin
-  Updater := TArchiveUpdater.Create;
-  //Updater.OnUpdate           := OnUpdate;
-  //Updater.OnProgress         := OnProgress;
-  //Updater.OnMessage          := OnMessage;
-  //Updater.OnFailure          := OnFailure;
-  //Updater.OnRequestImage     := OnRequestImage;
-  //Updater.OnRequestBlankDisk := OnRequestBlankDisk;
+  FUpdater := TArchiveUpdater.Create;
+  FUpdater.OnRequestBlankDisk := OnRequestBlankDisk;
+  FUpdater.OnRequestImage     := OnRequestImage;
+  FUpdater.OnFailure          := OnFailure;
+  FUpdater.OnMessage          := DoMessage;
+  FUpdater.OnProgress         := OnProgress;
+  FUpdater.OnUpdate           := OnUpdate;
 
+  case FCommandLine.mOption of
+    moStore: FUpdater.CompressionMethod := actNone;
+    else     FUpdater.CompressionMethod := actMain;
+  end;
+  FUpdater.CompressionLevel  := FCommandLine.mOption;
+  FUpdater.DictionaryLevel   := FCommandLine.dOption;
+  FUpdater.SolidCompression  := FCommandLine.sOption;
+  FUpdater.ArchivePassword   := FCommandLine.pOption;
+
+  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
+  FUpdater.OpenArchive(FCommandLine.ArchiveName);
   DoMessage(Format(cmScanning, ['...']));
   Scanner := TFileScanner.Create;
   with FCommandLine do
@@ -335,207 +341,100 @@ begin
       Scanner.Scan(FileMasks[I], xOptions, rOption);
 
   for I := 0 to Scanner.Count - 1 do
-    Updater.Tag(Scanner.Items[I]);
+    FUpdater.Tag(Scanner.Items[I]);
   Scanner.Free;
 
-  Updater.ArchiveName       := FCommandLine.ArchiveName;
-  Updater.ArchivePassword   := FCommandLine.pOption;
-  case FCommandLine.mOption of
-    moStore: Updater.CompressionMethod := actNone;
-    else     Updater.CompressionMethod := actMain;
-  end;
-  Updater.CompressionLevel  := FCommandLine.mOption;
-  Updater.DictionaryLevel   := FCommandLine.dOption;
-  Updater.SolidCompression  := FCommandLine.sOption;
-
-  Updater.UpdateTagged;
+  FUpdater.UpdateTagged;
+  FUpdater.Destroy;
 end;
 
-procedure TBeeApp.DecodeShell;
+procedure TBeeApp.DecodeShell(TestMode: boolean);
 var
   I: longint;
-  Extractor: TArchiveExtractor;
 begin
-  Extractor := TArchiveExtractor.Create;
-  // ...
-  Extractor.OnExtraction := OnExtract;
+  FExtractor := TArchiveExtractor.Create;
+  FExtractor.OnRequestImage := OnRequestImage;
+  FExtractor.OnFailure      := OnFailure;
+  FExtractor.OnMessage      := DoMessage;
+  FExtractor.OnProgress     := OnProgress;
+  FExtractor.OnExtraction   := OnExtract;
 
+  FExtractor.ArchivePassword := FCommandLine.pOption;
 
-
+  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
+  FExtractor.OpenArchive(FCommandLine.ArchiveName);
   DoMessage(Format(cmScanning, ['...']));
-  for I := 0 to FCommandLine.FileMasks.Count - 1 do
-    Extractor.Tag(FCommandLine.FileMasks[I], FCommandLine.rOption);
+  for I := 0 to FExtractor.Count - 1 do
+    if FileNameMatch(FExtractor.Items[I].FileName,
+      FCommandLine.FileMasks, FCommandLine.rOption) then FExtractor.Tag(I);
 
-  for I := 0 to FCommandLine.xOptions.Count - 1 do
-    Extractor.UnTag(FCommandLine.xOptions[I], FCommandLine.rOption);
+  for I := 0 to FExtractor.Count - 1 do
+    if  FileNameMatch(FExtractor.Items[I].FileName,
+      FCommandLine.xOptions, FCommandLine.rOption) then FExtractor.UnTag(I);
 
-  Extractor.ExtractTagged;
-end;
-
-procedure TBeeApp.TestShell;
-var
-  I: longint;
-  P: THeader;
-  Check: boolean;
-  Decoder: THeaderDecoder;
-begin
-  if (OpenArchive < ccError) and (SetItemsToDecode = TRUE) then
-  begin
-    Decoder := THeaderDecoder.Create(FArchReader, DoTick);
-    Decoder.Password := FCommandLine.pOption;
-
-    Check := True;
-    for I := 0  to FHeaders.Count - 1 do
-      if ExitCode < ccError then
-      begin
-        P := FHeaders.Items[I];
-        Decoder.Initialize(P);
-
-        if P.Action in [haUpdate, haDecode] then
-        begin
-          case P.Action of
-            // haNone:            nothing to do
-            // haDecodeAndUpdate: nothing to do
-            haUpdate: begin
-              DoMessage(Format(cmTesting, [P.Name]));
-              Check := Decoder.ReadToNul(P);
-            end;
-            haDecode: begin
-              DoMessage(Format(cmDecoding, [P.Name]));
-              Check := Decoder.ReadToNul(P);
-            end;
-          end;
-          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-          if Check = False then
-            DoMessage(Format(cmCrcError, [P.Name]), ccError);
-        end;
-      end;
-    Decoder.Destroy;
+  case TestMode of
+    True:  FExtractor.TestTagged;
+    False: FExtractor.ExtractTagged;
   end;
-  CloseArchive(False);
+  FExtractor.Destroy;
 end;
 
 procedure TBeeApp.DeleteShell;
 var
   I: longint;
-  P: THeader;
-  Check: boolean;
-  Encoder: THeaderEncoder;
 begin
+  FEraser := TArchiveEraser.Create;
+  FEraser.OnRequestBlankDisk := OnRequestBlankDisk;
+  FEraser.OnRequestImage     := OnRequestImage;
+  FEraser.OnFailure          := OnFailure;
+  FEraser.OnMessage          := DoMessage;
+  FEraser.OnProgress         := OnProgress;
+  FEraser.OnEraseEvent       := OnErase;
 
+  FEraser.ArchivePassword    :=  FCommandLine.pOption;
+
+  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
+  FEraser.OpenArchive(FCommandLine.ArchiveName);
   DoMessage(Format(cmScanning, ['...']));
-  FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
-  FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
+  for I := 0 to FEraser.Count - 1 do
+    if FileNameMatch(FEraser.Items[I].FileName,
+      FCommandLine.FileMasks, FCommandLine.rOption) then FEraser.Tag(I);
 
+  for I := 0 to FEraser.Count - 1 do
+    if  FileNameMatch(FEraser.Items[I].FileName,
+      FCommandLine.xOptions, FCommandLine.rOption) then FEraser.UnTag(I);
 
-
-  if (OpenArchive < ccError) and (SetItemsToDelete = TRUE) then
-  begin
-    FTempName   := GenerateFileName(FCommandLine.wdOption);
-    FTempWriter := CreateTFileWriter(FTempName, fmCreate);
-    if Assigned(FTempWriter) then
-    begin
-      if OpenSwapFile < ccError then
-      begin
-        // delete items ...
-        for I := FHeaders.Count - 1 downto 0 do
-        begin
-          P := FHeaders.Items[I];
-          if P.Action in [haUpdate, haDecodeAndUpdate] then
-          begin
-            DoMessage(Format(cmDeleting, [P.Name]));
-            FHeaders.Delete(I);
-          end;
-        end;
-
-        FHeaders.Write(FTempWriter);
-        Encoder := THeaderEncoder.Create(FTempWriter, DoTick);
-        Encoder.Password := FCommandLine.pOption;
-
-        Check := True;
-        for I := 0 to FHeaders.Count - 1 do
-          if ExitCode < ccError then
-          begin
-            P := FHeaders.Items[I];
-            Encoder.Initialize(P);
-
-            case P.Action of
-              haNone: begin
-                DoMessage(Format(cmCopying, [P.Name]));
-                Check := Encoder.WriteFromArch(P, FArchReader);
-              end;
-              haUpdate: DoMessage(Format(cmDeleting, [P.Name]));
-              haDecode: begin
-                DoMessage(Format(cmEncoding, [P.Name]));
-                Check := Encoder.WriteFromSwap(P, FSwapReader);
-              end;
-              haDecodeAndUpdate: DoMessage(Format(cmDeleting, [P.Name]));
-            end;
-            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-            if Check = False then
-              DoMessage(cmStrmReadError, ccError);
-          end;
-        Encoder.Destroy;
-        FHeaders.Write(FTempWriter);
-      end;
-    end else
-      DoMessage(cmOpenTempError, ccError);
-  end;
-  CloseArchive(FTotalSize > 0);
+  FEraser.EraseTagged;
+  FEraser.Destroy;
 end;
 
 procedure TBeeApp.RenameShell;
 var
   I: longint;
-  P: THeader;
-  Check: boolean;
-  Encoder: THeaderEncoder;
 begin
+  FRenamer := TArchiveRenamer.Create;
+  FRenamer.OnRequestBlankDisk := OnRequestBlankDisk;
+  FRenamer.OnRequestImage     := OnRequestImage;
+  FRenamer.OnFailure          := OnFailure;
+  FRenamer.OnMessage          := DoMessage;
+  FRenamer.OnProgress         := OnProgress;
+  FRenamer.OnRenameEvent      := OnRename;
 
-   DoMessage(Format(cmScanning, ['...']));
-  FHeaders.SetAction(FCommandLine.FileMasks, haNone, haUpdate);
-  FHeaders.SetAction(FCommandLine.xOptions,  haUpdate, haNone);
+  FRenamer.ArchivePassword    := FCommandLine.pOption;
 
+  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
+  FRenamer.OpenArchive(FCommandLine.ArchiveName);
+  DoMessage(Format(cmScanning, ['...']));
+  for I := 0 to FRenamer.Count - 1 do
+    if FileNameMatch(FRenamer.Items[I].FileName,
+      FCommandLine.FileMasks, FCommandLine.rOption) then FRenamer.Tag(I);
 
+  for I := 0 to FRenamer.Count - 1 do
+    if  FileNameMatch(FRenamer.Items[I].FileName,
+      FCommandLine.xOptions, FCommandLine.rOption) then FRenamer.UnTag(I);
 
-  if (OpenArchive < ccError) and (SetItemsToRename = TRUE) then
-  begin
-    FTempName   := GenerateFileName(FCommandLine.wdOption);
-    FTempWriter := CreateTFileWriter(FTempName, fmCreate);
-    if Assigned(FTempWriter) then
-    begin
-      FHeaders.Write(FTempWriter);
-      Encoder := THeaderEncoder.Create(FTempWriter, DoTick);
-      Encoder.Password := FCommandLine.pOption;
-
-      Check := True;
-      for I := 0 to FHeaders.Count - 1 do
-        if ExitCode < ccError then
-        begin
-          P := FHeaders.Items[I];
-
-          case P.Action of
-            // haDecode:          nothing to do
-            // haDecodeAndUpdate: nothing to do
-            haNone: begin
-              DoMessage(Format(cmCopying, [P.Name]));
-              Check := Encoder.WriteFromArch(P, FArchReader);
-            end;
-            haUpdate: begin
-              DoMessage(Format(cmRenaming, [P.Name]));
-              Check := Encoder.WriteFromArch(P, FArchReader);
-            end;
-          end;
-          {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-          if Check = False then
-            DoMessage(cmStrmReadError, ccError);
-        end;
-      Encoder.Destroy;
-      FHeaders.Write(FTempWriter);
-    end else
-      DoMessage(cmOpenTempError, ccError);
-  end;
-  CloseArchive(FTotalSize > 0);
+  FRenamer.RenameTagged;
+  FRenamer.Destroy;
 end;
 
 {$IFDEF CONSOLEAPPLICATION}
