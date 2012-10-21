@@ -69,9 +69,6 @@ type
 
   TOverWriteMode = (omSkip, omSkipAll, omOverWrite, omOverWriteAll);
 
-
-
-
   { Compression Method Option:                            }
   {   moStore                                             }
   {   moFast                                              }
