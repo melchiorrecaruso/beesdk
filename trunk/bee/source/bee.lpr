@@ -99,9 +99,9 @@ begin
   end;
   App := TBeeApp.Create(Params.Text);
   App.Execute;
-  begin
-    ExitCode := App.ExitCode;
-  end;
+  //begin
+  //  ExitCode := App.ExitCode;
+  //end;
   App.Destroy;
   Params.Destroy;
 end.
