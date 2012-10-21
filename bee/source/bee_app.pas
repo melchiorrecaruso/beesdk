@@ -55,6 +55,9 @@ type
     FSelfName: string;
     FCommandLine: TCommandLine;
 
+    FUpdater: TArchiveUpdater;
+
+
     procedure DoMessage(const Message: string);
 
     procedure OnProgress(Value: longint);
@@ -207,26 +210,35 @@ end;
 
 procedure TBeeApp.OnUpdate(SearchRec: TCustomSearchRec;
   var UpdateAs; var Confirm: TArchiveConfirm);
+var
+  I: longint;
+  Item: TArchiveItem;
 begin
-  if Updater.Find(CurrentMask) = -1 then
-     begin
-       case FCommandLine.uOption of
-         umAdd:           Updater.Tag(Scanner.Items[I]);
-         umAddUpdate:     Updater.Tag(Scanner.Items[I]);
-         umAddReplace:    Updater.Tag(Scanner.Items[I]);
-         umAddAutoRename: Updater.Tag(Scanner.Items[I]);
-       end;
-     end else
-     begin
-       case FCommandLine.uOption of
-         umUpdate:        Updater.Tag(Scanner.Items[I]);
-         umReplace:       Updater.Tag(Scanner.Items[I]);
-         umAddUpdate:     Updater.Tag(Scanner.Items[I]);
-         umAddReplace:    Updater.Tag(Scanner.Items[I]);
-         umAddAutoRename: Updater.Tag(Scanner.Items[I]);
-       end;
-     end;
-   end;
+
+  UpdateAs := FCommandLine.cdOption + SearchRec.Name;
+
+  Confirm := Cancel;
+  I := FUpdater.Find(UpdateAs);
+  if I = -1 then
+  begin
+    case FCommandLine.uOption of
+      umAdd:           Confirm := arcOk;
+      umAddUpdate:     Confirm := arcOk;
+      umAddReplace:    Confirm := arcOk;
+      umAddAutoRename: Confirm := arcOk;
+    end;
+  end else
+  begin
+    Item :=FUpdater.Items[I];
+    case FCommandLine.uOption of
+      umUpdate:        Updater.Tag(SearchRec);
+      umReplace:       Updater.Tag(SearchRec);
+      umAddUpdate:     Updater.Tag(SearchRec);
+      umAddReplace:    Updater.Tag(SearchRec);
+      umAddAutoRename: Updater.Tag(SearchRec);
+    end;
+  end;
+
 
 
 end;
