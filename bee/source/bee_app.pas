@@ -66,7 +66,7 @@ type
     procedure OnRename(Item: TArchiveItem; var RenameAs: string; var Confirm: TArchiveConfirm);
     procedure OnExtract(Item: TArchiveItem; var ExtractAs: string; var Confirm: TArchiveConfirm);
     procedure OnErase(Item: TArchiveItem; var Confirm: TArchiveConfirm);
-    procedure OnUpdate(SearchRec: TCustomSearchRec; var UpdateAs; var Confirm: TArchiveConfirm);
+    procedure OnUpdate(SearchRec: TCustomSearchRec; var UpdateAs: string; var Confirm: TArchiveConfirm);
 
     procedure OnRequestBlankDisk(var Abort : Boolean);
     procedure OnRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
@@ -209,35 +209,33 @@ begin
 end;
 
 procedure TBeeApp.OnUpdate(SearchRec: TCustomSearchRec;
-  var UpdateAs; var Confirm: TArchiveConfirm);
+  var UpdateAs: string; var Confirm: TArchiveConfirm);
 var
   I: longint;
   Item: TArchiveItem;
 begin
-
   UpdateAs := FCommandLine.cdOption + SearchRec.Name;
-
-  Confirm := Cancel;
   I := FUpdater.Find(UpdateAs);
-  if I = -1 then
-  begin
-    case FCommandLine.uOption of
-      umAdd:           Confirm := arcOk;
-      umAddUpdate:     Confirm := arcOk;
-      umAddReplace:    Confirm := arcOk;
-      umAddAutoRename: Confirm := arcOk;
-    end;
-  end else
-  begin
-    Item :=FUpdater.Items[I];
-    case FCommandLine.uOption of
-      umUpdate:        Updater.Tag(SearchRec);
-      umReplace:       Updater.Tag(SearchRec);
-      umAddUpdate:     Updater.Tag(SearchRec);
-      umAddReplace:    Updater.Tag(SearchRec);
-      umAddAutoRename: Updater.Tag(SearchRec);
+  if I <> -1 then
+    Item := FUpdater.Items[I];
+
+  Confirm := arcCancel;
+  case FCommandLine.uOption of
+    umAdd:           if (I =  -1) then Confirm := arcOk;
+    umReplace:       if (I <> -1) then Confirm := arcOk;
+    unUpdate:        if (I <> -1) and (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
+    umAddUpdate:     if (I =  -1) or  (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
+    umAddReplace:    Confirm := arcOk;
+    umAddAutoRename: begin
+      while I <> -1 do
+      begin
+        UpdateAs := UpdateAs;
+        I := FUpdater.Find(UpdateAs);
+      end;
+      Confirm := arcOk;
     end;
   end;
+
 
 
 
