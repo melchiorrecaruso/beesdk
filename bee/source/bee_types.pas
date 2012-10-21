@@ -102,13 +102,6 @@ type
 
   ThvOption = (hv02, hv03, hv04);
 
-
-
-
-
-
-
-
 implementation
 
 end.

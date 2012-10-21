@@ -44,7 +44,6 @@ uses
   Bee_Types,
   Bee_Common,
   Bee_CommandLine,
-  Bee_Configuration,
   BeeSDK_Archive;
 
 type
@@ -89,11 +88,8 @@ type
 implementation
 
 uses
-  Math,
   SysUtils,
-  Bee_Consts,
-  Bee_MainPacker,
-  Bee_Assembler;
+  Bee_Consts;
 
 { help functions }
 
@@ -167,30 +163,23 @@ begin
     HelpShell;
 end;
 
-procedure TBeeApp.DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
+procedure TBeeApp.DoRequestImage(ImageNumber: longint;
+  var ImageName: string; var Abort: boolean);
 begin
-
+  Writeln(ParamToOem(ImageName));
+  Readln;
 end;
 
 procedure TBeeApp.DoRequestBlankDisk(var Abort : Boolean);
 begin
+  Writeln(ParamToOem('Insert blank disk.'));
+  Readln;
 end;
 
-
-
-
-
-
-procedure TBeeApp.DoClear;
+procedure TBeeApp.DoFailure(const ErrorMessage: string; ErrorCode: longint);
 begin
-  Write(#13, #13: 80);
-end;
-
-procedure TBeeApp.DoProgress(Value: longint);
-begin
-  Writeln(Value);
-  //Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
-  //  Format('%5d KB/s %3d%%', [Speed shr 10, Progress]));
+  ExitCode := ErrorCode;
+  Writeln(ParamToOem(ErrorMessage));
 end;
 
 procedure TBeeApp.DoMessage(const Message: string);
@@ -198,18 +187,11 @@ begin
   Writeln(ParamToOem(Message));
 end;
 
-procedure TBeeApp.DoFailure(const ErrorMessage: string; ErrorCode: longint);
+procedure TBeeApp.DoProgress(Value: longint);
 begin
-  Writeln(ParamToOem(ErrorMessage));
-end;
-
-procedure TBeeApp.DoRename(Item: TArchiveItem;
-  var RenameAs: string; var Confirm: TArchiveConfirm);
-begin
-  Write('Rename file "', ParamToOem(RenameAs), '" as (empty to skip):');
-  Readln(RenameAs);
-  // convert oem to param
-  RenameAs := OemToParam(RenameAs);
+  Writeln(Value);
+  //Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
+  //  Format('%5d KB/s %3d%%', [Speed shr 10, Progress]));
 end;
 
 procedure TBeeApp.DoExtract(Item: TArchiveItem;
@@ -233,11 +215,6 @@ begin
       Confirm := arcOk;
     end;
   end;
-end;
-
-procedure TBeeApp.DoErase(Item: TArchiveItem;
-  var Confirm: TArchiveConfirm);
-begin
 end;
 
 procedure TBeeApp.DoUpdate(SearchRec: TCustomSearchRec;
@@ -267,15 +244,27 @@ begin
       Confirm := arcOk;
     end;
   end;
-
-
-
-
 end;
 
+procedure TBeeApp.DoRename(Item: TArchiveItem;
+  var RenameAs: string; var Confirm: TArchiveConfirm);
+begin
+  Write('Rename file "', ParamToOem(RenameAs), '" as (empty to skip):');
+  Readln(RenameAs);
+  // convert oem to param
+  RenameAs := OemToParam(RenameAs);
+end;
 
+procedure TBeeApp.DoErase(Item: TArchiveItem;
+  var Confirm: TArchiveConfirm);
+begin
+  Confirm :=arcOk;
+end;
 
-
+procedure TBeeApp.DoClear;
+begin
+  Write(#13, #13: 80);
+end;
 
 { option processing }
 
