@@ -57,72 +57,10 @@ uses
   Bee_Consts,
   Bee_Common;
 
-type
-  { TCustomBeeApp class }
-
-  TCustomBeeApp = class(TBeeApp)
-  public
-    procedure DoMessage(const aMessage: string); override;
-    procedure DoRequest(const aMessage: string); override;
-    function  DoRename(const aItem: THeader; const aValue: string): string; override;
-    procedure DoList(const aItem: THeader); override;
-    function  DoTick(Value: longint): boolean; override;
-    procedure DoClear; override;
-  end;
-
-  { ------------------------------------------------------------------------ }
-  { Implementation                                                           }
-  { ------------------------------------------------------------------------ }
-
-  { TCustomBeeApp class }
-
-  procedure TCustomBeeApp.DoMessage(const aMessage: string);
-  begin
-    Writeln(ParamToOem(aMessage));
-  end;
-
-  function TCustomBeeApp.DoRename(const aItem: THeader; const aValue: string): string;
-  begin
-    Write('Rename file "', ParamToOem(aItem.Name), '" as (empty to skip):');
-    Readln(Result);
-    // convert oem to param
-    Result := OemToParam(Result);
-  end;
-
-  procedure TCustomBeeApp.DoList(const aItem: THeader);
-  begin
-    Writeln(Format('%16s %7s %12s %12s %3s %s', [
-      FileTimeToString(aItem.Time), AttrToStr(aItem.Attr),
-      SizeToStr(aItem.Size), SizeToStr(aItem.PackedSize),
-      MethodToStr(aItem), aItem.Name]));
-  end;
-
-  procedure TCustomBeeApp.DoRequest(const aMessage: string);
-  begin
-    Writeln(ParamToOem(aMessage));
-  end;
-
-  function TCustomBeeApp.DoTick(Value: longint): boolean;
-  begin
-    Result := inherited DoTick(Value);
-    // not convert oem to param
-    Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
-      Format('%5d KB/s %3d%%', [Speed shr 10, Progress]));
-  end;
-
-  procedure TCustomBeeApp.DoClear;
-  begin
-    Write(#13, #13: 80);
-  end;
-
-  { ------------------------------------------------------------------------ }
-  { main block                                                               }
-  { ------------------------------------------------------------------------ }
-
 var
   I:      longint;
   Params: TStringList;
-  App:    TCustomBeeApp;
+  App:    TBeeApp;
 
   { control+c event }
 
@@ -159,7 +97,7 @@ begin
   begin
     Params.Add(ParamStr(I));
   end;
-  App := TCustomBeeApp.Create(Params.Text);
+  App := TBeeApp.Create(Params.Text);
   App.Execute;
   begin
     ExitCode := App.ExitCode;
