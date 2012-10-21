@@ -185,18 +185,19 @@ begin
     ccXextract: ExtractAs := DeleteFilePath(FCommandLine.cdOption, Item.FileName);
   end;
 
-  Confirm := arcOk;
+  Confirm := arcCancel;
   case FCommandLine.uOption of
-    umUpdate:    if (not FileExists(ExtractAs)) or  (Item.LastModifiedTime <= FileAge(ExtractAs)) then Confirm := arcCancel;
-    umAddUpdate: if (    FileExists(ExtractAs)) and (Item.LastModifiedTime <= FileAge(ExtractAs)) then Confirm := arcCancel;
-    umReplace:   if (not FileExists(ExtractAs)) then Confirm := arcCancel;
-    umAdd:       if (    FileExists(ExtractAs)) then Confirm := arcCancel;
-    // umAddReplace: extract file always
-    umAddAutoRename: if FileExists(P.ExtName)   then P.ExtName := GenerateAlternativeFileName(P.ExtName, 1, True);
+    umAdd:           if (not FileExists(ExtractAs)) then Confirm := arcOk;
+    umReplace:       if (    FileExists(ExtractAs)) then Confirm := arcOk;
+    umUpdate:        if (    FileExists(ExtractAs)) and (Item.LastModifiedTime > FileAge(ExtractAs)) then Confirm := arcOk;
+    umAddUpdate:     if (not FileExists(ExtractAs)) or  (Item.LastModifiedTime > FileAge(ExtractAs)) then Confirm := arcOk;
+    umAddReplace:    Confirm := arcOk;
+    umAddAutoRename: begin
+      if FileExists(ExtractAs) then
+        ExtractAs := GenerateAlternativeFileName(ExtractAs, 1, True);
+      Confirm := arcOk;
+    end;
   end;
-
-
-
 end;
 
 procedure TBeeApp.OnErase(Item: TArchiveItem;
@@ -207,6 +208,27 @@ end;
 procedure TBeeApp.OnUpdate(SearchRec: TCustomSearchRec;
   var UpdateAs; var Confirm: TArchiveConfirm);
 begin
+  if Updater.Find(CurrentMask) = -1 then
+     begin
+       case FCommandLine.uOption of
+         umAdd:           Updater.Tag(Scanner.Items[I]);
+         umAddUpdate:     Updater.Tag(Scanner.Items[I]);
+         umAddReplace:    Updater.Tag(Scanner.Items[I]);
+         umAddAutoRename: Updater.Tag(Scanner.Items[I]);
+       end;
+     end else
+     begin
+       case FCommandLine.uOption of
+         umUpdate:        Updater.Tag(Scanner.Items[I]);
+         umReplace:       Updater.Tag(Scanner.Items[I]);
+         umAddUpdate:     Updater.Tag(Scanner.Items[I]);
+         umAddReplace:    Updater.Tag(Scanner.Items[I]);
+         umAddAutoRename: Updater.Tag(Scanner.Items[I]);
+       end;
+     end;
+   end;
+
+
 end;
 
 procedure TBeeApp.OnRequestBlankDisk(var Abort : Boolean);
@@ -285,7 +307,6 @@ end;
 procedure TBeeApp.EncodeShell;
 var
   I: longint;
-  CurrentMask: string;
   Scanner: TFileScanner;
   Updater: TArchiveUpdater;
 begin
@@ -304,28 +325,7 @@ begin
       Scanner.Scan(FileMasks[I], xOptions, rOption);
 
   for I := 0 to Scanner.Count - 1 do
-  begin
-    CurrentMask := FCommandLine.cdOption + Scanner.Items[I].Name;
-
-    if Updater.Find(CurrentMask) = -1 then
-    begin
-      case FCommandLine.uOption of
-        umAdd:           Updater.Tag(Scanner.Items[I]);
-        umAddUpdate:     Updater.Tag(Scanner.Items[I]);
-        umAddReplace:    Updater.Tag(Scanner.Items[I]);
-        umAddAutoRename: Updater.Tag(Scanner.Items[I]);
-      end;
-    end else
-    begin
-      case FCommandLine.uOption of
-        umUpdate:        Updater.Tag(Scanner.Items[I]);
-        umReplace:       Updater.Tag(Scanner.Items[I]);
-        umAddUpdate:     Updater.Tag(Scanner.Items[I]);
-        umAddReplace:    Updater.Tag(Scanner.Items[I]);
-        umAddAutoRename: Updater.Tag(Scanner.Items[I]);
-      end;
-    end;
-  end;
+    Updater.Tag(Scanner.Items[I]);
   Scanner.Free;
 
   Updater.ArchiveName       := FCommandLine.ArchiveName;
