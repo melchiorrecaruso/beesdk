@@ -310,6 +310,7 @@ type
     procedure UnTag(Index: longint);
     procedure TagAll;
     procedure UnTagAll;
+    function IsTagged(Index: longint): boolean;
   end;
 
   TArchiveWriterBase = class(TArchiveReaderBase)
@@ -1151,16 +1152,21 @@ end;
 
 // TArchiveReader class
 
+procedure TArchiveReader.Tag(Index: longint);
+begin
+  FArchiveItems.Items[Index].FTag := aitUpdate;
+end;
+
+procedure TArchiveReader.UnTag(Index: longint);
+begin
+  FArchiveItems.Items[Index].FTag := aitNone;
+end;
+
 procedure TArchiveReader.TagAll;
 var
   I: longint;
 begin
   for I := 0 to FArchiveItems.Count - 1 do Tag(I);
-end;
-
-procedure TArchiveReader.Tag(Index: longint);
-begin
-  FArchiveItems.Items[Index].FTag := aitUpdate;
 end;
 
 procedure TArchiveReader.UnTagAll;
@@ -1170,9 +1176,9 @@ begin
   for I := 0 to FArchiveItems.Count - 1 do UnTag(I);
 end;
 
-procedure TArchiveReader.UnTag(Index: longint);
+function TArchiveReader.IsTagged(Index: longint): boolean;
 begin
-  FArchiveItems.Items[Index].FTag := aitNone;
+  Result := FArchiveItems.Items[Index].FTag = aitUpdate;
 end;
 
 // TArchiveWriterBase class

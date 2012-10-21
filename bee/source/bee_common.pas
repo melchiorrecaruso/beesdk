@@ -72,6 +72,11 @@ procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRec
 function Hex(const Data; Count: longint): string;
 function HexToData(const S: string; var Data; Count: longint): boolean;
 
+{ oem-ansi charset functions }
+
+function ParamToOem(const Param: string): string;
+function OemToParam(const Param: string): string;
+
 { system control }
 function SetPriority(Priority: longint): boolean; { Priority is 0..3 }
 procedure SetCtrlCHandler(CtrlHandler: pointer);
@@ -108,10 +113,7 @@ function DoDirSeparators(const FileName: string): string;
 function DirectoryExists(const DirName: string): boolean;
 function ForceDirectories(const DirName: string): boolean;
 
-{ oem-ansi charset functions }
 
-function ParamToOem(const Param: string): string;
-function OemToParam(const Param: string): string;
 
 { string, pchar routines }
 
@@ -526,6 +528,36 @@ begin
   Result := True;
 end;
 
+{ oem-ansi charset functions }
+
+function ParamToOem(const Param: string): string;
+begin
+  if Length(Param) <> 0 then
+  begin
+    {$IFDEF MSWINDOWS}
+    SetLength(Result, Length(Param));
+    CharToOem(PChar(Param), PChar(Result));
+    {$ELSE}
+    Result := Param;
+    {$ENDIF}
+  end else
+    Result := '';
+end;
+
+function OemToParam(const Param: string): string;
+begin
+  if Length(Param) <> 0 then
+  begin
+    {$IFDEF MSWINDOWS}
+    SetLength(Result, Length(Param));
+    OemToChar(PChar(Param), PChar(Result));
+    {$ELSE}
+    Result := Param;
+    {$ENDIF}
+  end else
+    Result := '';
+end;
+
 { system control }
 
 
@@ -665,35 +697,7 @@ begin
     Result := True;
 end;
 
-{ oem-ansi charset functions }
 
-function ParamToOem(const Param: string): string;
-begin
-  if Length(Param) <> 0 then
-  begin
-    {$IFDEF MSWINDOWS}
-    SetLength(Result, Length(Param));
-    CharToOem(PChar(Param), PChar(Result));
-    {$ELSE}
-    Result := Param;
-    {$ENDIF}
-  end else
-    Result := '';
-end;
-
-function OemToParam(const Param: string): string;
-begin
-  if Length(Param) <> 0 then
-  begin
-    {$IFDEF MSWINDOWS}
-    SetLength(Result, Length(Param));
-    OemToChar(PChar(Param), PChar(Result));
-    {$ELSE}
-    Result := Param;
-    {$ENDIF}
-  end else
-    Result := '';
-end;
 
 { string and pchar routines }
 
