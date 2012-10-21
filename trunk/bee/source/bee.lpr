@@ -42,25 +42,16 @@ program Bee;
 {$I compiler.inc}
 
 uses
-  {$IFDEF CONSOLEAPPLICATION}
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
-  {$IFDEF UNIX}
-  BaseUnix,
-  {$ENDIF}
-  {$ENDIF}
   Classes,
-  SysUtils,
-  Bee_App,
-  Bee_Types,
-  Bee_Consts,
-  Bee_Common;
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  {$IFDEF UNIX} BaseUnix, {$ENDIF}
+  Bee_Common,
+  Bee_App;
 
 var
-  I:      longint;
+  I: longint;
   Params: TStringList;
-  App:    TBeeApp;
+  Application: TBeeApp;
 
   { control+c event }
 
@@ -68,11 +59,11 @@ var
   function CtrlHandler(CtrlType: longword): longbool;
   begin
     case CtrlType of
-      CTRL_C_EVENT:        App.Terminate;
-      CTRL_BREAK_EVENT:    App.Terminate;
-      CTRL_CLOSE_EVENT:    App.Terminate;
-      CTRL_LOGOFF_EVENT:   App.Terminate;
-      CTRL_SHUTDOWN_EVENT: App.Terminate;
+      CTRL_C_EVENT:        Application.Terminate;
+      CTRL_BREAK_EVENT:    Application.Terminate;
+      CTRL_CLOSE_EVENT:    Application.Terminate;
+      CTRL_LOGOFF_EVENT:   Application.Terminate;
+      CTRL_SHUTDOWN_EVENT: Application.Terminate;
     end;
     Result := True;
   end;
@@ -94,14 +85,10 @@ begin
   SetCtrlCHandler(@CtrlHandler);
   Params := TStringList.Create;
   for I := 1 to ParamCount do
-  begin
     Params.Add(ParamStr(I));
-  end;
-  App := TBeeApp.Create(Params.Text);
-  App.Execute;
-  //begin
-  //  ExitCode := App.ExitCode;
-  //end;
-  App.Destroy;
+
+  Application := TBeeApp.Create(Params.Text);
+  Application.Execute;
+  Application.Destroy;
   Params.Destroy;
 end.
