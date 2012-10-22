@@ -7,16 +7,12 @@ interface
 uses
   Classes,
   SysUtils,
-
-  Bee_Configuration,
-  Bee_Common,
   Bee_Files,
   Bee_Types,
+  Bee_Common,
   Bee_Consts,
-
-
   Bee_MainPacker,
-
+  Bee_Configuration,
   BeeLib_Configuration;
 
 const
@@ -252,6 +248,7 @@ type
     FProcessedSize: int64;
     FArchiveName: string;
     FArchivePassword: string;
+    FArchiveComment: string;
     FArchiveReader: TFileReader;
     FSwapName: string;
     FSwapReader: TFileReader;
@@ -293,6 +290,7 @@ type
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property ArchivePassword: string read FArchivePassword write FArchivePassword;
+    property ArchiveComment: string read FArchiveComment write FArchiveComment;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
@@ -328,7 +326,7 @@ type
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
   private
-    procedure Write(aStream: TFileWriter);
+    procedure WriteCentralDirectory(aStream: TFileWriter);
     procedure PackCentralDirectory;
     function OpenSwap: longint;
     procedure SetWorkDirectory(const Value: string);
@@ -888,6 +886,9 @@ begin
           end;
           Result := (Marker = aitEnd);
         until Result;
+
+        // ...
+        FArchiveComment := Binding.Comment;
         Binding.Destroy;
       end;
       Locator.Destroy;
@@ -1192,7 +1193,7 @@ begin
   FWorkDirectory   := '';
 end;
 
-procedure TArchiveWriterBase.Write(aStream: TFileWriter);
+procedure TArchiveWriterBase.WriteCentralDirectory(aStream: TFileWriter);
 var
   I: longword;
   Locator: TArchiveLocator;
@@ -1214,6 +1215,7 @@ begin
   end;
   aStream.WriteInfWord(aitBinding);
   Binding := TArchiveBinding.Create;
+  Binding.FComment := FArchiveComment;
   Binding.Write(aStream);
   Binding.Destroy;
 
@@ -1792,7 +1794,7 @@ begin
           //if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
         end;
       Encoder.Destroy;
-      Write(FTempWriter);
+      WriteCentralDirectory(FTempWriter);
       if not FTempWriter.IsValidStream then
         DoFailure(cmStrmWriteError);
     end else
@@ -1936,7 +1938,7 @@ begin
         FEncoder.Destroy;
         if ExitCode < ccError then
         begin
-          Write(FTempWriter);
+          WriteCentralDirectory(FTempWriter);
           if not FTempWriter.IsValidStream then
             DoFailure(cmStrmWriteError);
         end;
@@ -2242,7 +2244,7 @@ begin
         FEncoder.Destroy;
         if (ExitCode < ccError) then
         begin
-          Write(FTempWriter);
+          WriteCentralDirectory(FTempWriter);
           if not FTempWriter.IsValidStream then
             DoFailure(cmStrmWriteError);
         end;
