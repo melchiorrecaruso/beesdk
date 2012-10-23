@@ -223,6 +223,7 @@ var
   I: longint;
   Item: TArchiveItem;
 begin
+  Writeln('DoUpdate - START');
   UpdateAs := FCommandLine.cdOption + SearchRec.Name;
   I := FUpdater.Find(UpdateAs);
   if I <> -1 then
@@ -244,6 +245,7 @@ begin
       Confirm := arcOk;
     end;
   end;
+  Writeln('DoUpdate - END');
 end;
 
 procedure TBeeApp.DoRename(Item: TArchiveItem;
@@ -335,6 +337,8 @@ var
   I: longint;
   Scanner: TFileScanner;
 begin
+  Writeln('EncodeShell - START');
+
   FUpdater := TArchiveUpdater.Create;
   FUpdater.OnRequestBlankDisk := DoRequestBlankDisk;
   FUpdater.OnRequestImage     := DoRequestImage;
@@ -342,6 +346,8 @@ begin
   FUpdater.OnMessage          := DoMessage;
   FUpdater.OnProgress         := DoProgress;
   FUpdater.OnUpdate           := DoUpdate;
+
+  Writeln('EncodeShell - STEP1');
 
   case FCommandLine.mOption of
     moStore: FUpdater.CompressionMethod := actNone;
@@ -351,6 +357,8 @@ begin
   FUpdater.DictionaryLevel   := FCommandLine.dOption;
   FUpdater.SolidCompression  := FCommandLine.sOption;
   FUpdater.ArchivePassword   := FCommandLine.pOption;
+
+  Writeln('EncodeShell - STEP2');
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
@@ -364,8 +372,11 @@ begin
     FUpdater.Tag(Scanner.Items[I]);
   Scanner.Free;
 
+  Writeln('EncodeShell - STEP3');
   FUpdater.UpdateTagged;
+  Writeln('EncodeShell - STEP4');
   FUpdater.Destroy;
+  Writeln('EncodeShell - END');
 end;
 
 procedure TBeeApp.DecodeShell(TestMode: boolean);
