@@ -1961,14 +1961,12 @@ end;
 procedure TArchiveUpdater.DoUpdate(SearchRec: TCustomSearchRec;
   var UpdateAs: string; var Confirm: TArchiveConfirm);
 begin
-  Writeln('DoUpdate - START');
   Confirm := arcCancel;
   if Assigned(FOnUpdate) then
   begin
     UpdateAs := SearchRec.Name;
     FOnUpdate(SearchRec, UpdateAs, Confirm);
   end;
-  Writeln('DoUpdate - END');
 end;
 
 procedure TArchiveUpdater.Tag(SearchRec: TCustomSearchRec);
@@ -2019,7 +2017,8 @@ var
   CurrentFileExt: string;
   PreviousFileExt: string;
 begin
-  FConfiguration.Create;
+  Writeln('ConfigureCoder - START');
+  FConfiguration := TConfiguration.Create;
   if FileExists(FConfigurationName) then
     FConfiguration.LoadFromFile(FConfigurationName)
   else
@@ -2075,6 +2074,7 @@ begin
     end;
   end;
   FreeAndNil(FConfiguration);
+  Writeln('ConfigureCoder - END');
 end;
 
 function CompareCustomSearchRecExt(Item1, Item2: pointer): longint;
@@ -2095,20 +2095,12 @@ var
   UpdateAs: string;
 begin
   Writeln('CheckTags - START');
-
   FSearchRecs.Sort(@CompareCustomSearchRecExt);
-
-  Writeln('CheckTags - STEP1');
-
   for J := 0 to FSearchRecs.Count - 1 do
     if ExitCode < ccError then
     begin
-      Csr := TCustomSearchRec(FSearchRecs[J]^);
-
-      Writeln('CheckTags - STEP2');
+      Csr := TCustomSearchRec(FSearchRecs.Items[J]);
       DoUpdate(Csr, UpdateAs, Confirm);
-
-      Writeln('CheckTags - STEP3');
       case Confirm of
         arcOk:
         begin
@@ -2136,6 +2128,7 @@ begin
     end;
 
   if (ExitCode < ccError) and FIsNeededToSave then CheckSequences;
+  Writeln('CheckTags - END');
 end;
 
 procedure TArchiveUpdater.CheckSequences;
@@ -2143,7 +2136,7 @@ var
   Item: TArchiveItem;
   I, J, BackTear, NextTear: longint;
 begin
-  DoMessage(Format(cmScanning, ['...']));
+  Writeln('CheckSequences - START');
   // STEP1: ConfigureCoder new items ...
   ConfigureCoder;
   // STEP2: find sequences and tag ...
@@ -2186,6 +2179,7 @@ begin
       aitDecodeAndUpdate: Inc(FTotalSize, Item.UncompressedSize + Item.FExternalFileSize);
     end;
   end;
+  Writeln('CheckSequences - END');
 end;
 
 procedure TArchiveUpdater.UpdateTagged;
@@ -2222,6 +2216,8 @@ begin
               aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
               aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
             end;
+
+            Abort;
 
             InitEncoder(Item);
             case Item.FTag of
