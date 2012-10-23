@@ -452,8 +452,8 @@ begin
   inherited Create;
   FDiskSeek    :=  0;
   FFlags       := [];
-  FDisksNumber :=  0;
-  FDiskNumber  :=  0;
+  FDisksNumber :=  1;
+  FDiskNumber  :=  1;
 end;
 
 procedure TArchiveLocator.Read(Stream: TFileReader);
@@ -856,9 +856,16 @@ var
   Marker: longword;
   Locator: TArchiveLocator;
   Binding: TArchiveBinding;
+  MagikSeek: int64;
 begin
   Result := FALSE;
   // Read MagikSeek
+  FArchiveReader.Seek(SizeOf(longword), soFromEnd);
+  MagikSeek := FArchiveReader.ReadDWord;
+
+  Writeln('ReadCentralDirectory.MagikSeek = ', MagikSeek);
+
+
   FArchiveReader.Seek(SizeOf(longword), soFromEnd);
   FArchiveReader.Seek(FArchiveReader.ReadDWord, soFromEnd);
   // Read Locator Marker
@@ -1202,8 +1209,10 @@ var
 begin
   Locator := TArchiveLocator.Create;
   Locator.FDiskNumber := aStream.CurrentImage;
-  if Locator.FDiskNumber > 0 then
+  if Locator.FDiskNumber <> 1 then
     Include(Locator.FFlags,  alfDiskNumber);
+  Writeln('Locator.FDiskNumber = ', Locator.FDiskNumber);
+
   Locator.FDiskSeek := aStream.Position;
 
   PackCentralDirectory;
@@ -1222,15 +1231,19 @@ begin
   if aStream.Threshold > 0 then aStream.CreateImage;
 
   Locator.FDisksNumber := aStream.CurrentImage;
-  if Locator.FDisksNumber > 0 then
+  if Locator.FDisksNumber <> 1 then
     Include(Locator.FFlags,  alfDisksNumber);
+  Writeln('Locator.FDisksNumber = ', Locator.FDisksNumber);
 
-  MagikSeek := aStream.Position;
-  aStream.WriteInfWord(aitLocator);
-  Locator.Write(aStream);
-  MagikSeek := aStream.Position - MagikSeek;
-  aStream.WriteDWord(longword(MagikSeek));
+  MagikSeek := aStream.Position;                                                 Writeln('Start Position = ', aStream.Position);
+  aStream.WriteInfWord(aitLocator);                                              Writeln('Locator Marker = ', aStream.Position);
+  Locator.Write(aStream);                                                        Writeln('Locator Write = ', aStream.Position);
+  MagikSeek := aStream.Position - MagikSeek + SizeOf(longword);
+  aStream.WriteDWord(longword(MagikSeek));                                       Writeln('MagikSeek = ', aStream.Position);
   Locator.Destroy;
+
+
+  Writeln('Locator.MagikSeek = ', MagikSeek);
 end;
 
 procedure TArchiveWriterBase.PackCentralDirectory;
