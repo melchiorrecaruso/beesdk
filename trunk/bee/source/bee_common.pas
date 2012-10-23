@@ -324,8 +324,6 @@ begin
   {$ENDIF}
 end;
 
-
-
 function IsValidFileName(const FileName : string): boolean;
 const
   InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
@@ -408,10 +406,11 @@ begin
   repeat
     Result := '????????.$$$';
     for I := 1 to 8 do
-    begin
       Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
-    end;
-    Result := IncludeTrailingBackSlash(FilePath) + Result;
+
+    if Length(FilePath) > 0 then
+      Result := IncludeTrailingBackSlash(FilePath) + Result;
+
   until FileAge(Result) = -1;
 end;
 

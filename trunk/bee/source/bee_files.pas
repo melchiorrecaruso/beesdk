@@ -155,6 +155,8 @@ type
     UserName: string;
     GroupID: longword;
     GroupName: string;
+  public
+     constructor CreateFrom(Item: TCustomSearchRec);
   end;
 
   { TFileScanner }
@@ -198,8 +200,9 @@ constructor TFileReader.Create(const aFileName: string; aImagesNumber: longword)
 begin
   inherited Create(nil);
   FFileName       := aFileName;
-  FCurrentImage   := Max(aImagesNumber - 1, 0);
-  FImagesNumber   := Max(aImagesNumber - 1, 0);
+  FImagesNumber   := aImagesNumber;
+  FCurrentImage   := aImagesNumber;
+
   FOnRequestImage := nil;
 
   GotoImage(FCurrentImage);
@@ -402,13 +405,17 @@ procedure TFileWriter.CreateImage;
 var
   Abort: boolean;
 begin
-  while GetDriveFreeSpace(FFileName) > 0 do
-  begin
-    Abort := TRUE;
-    if Assigned(FOnRequestBlankDisk) then
-      FOnRequestBlankDisk(Abort);
-    if Abort then Exit;
-  end;
+  Writeln('TFileWriter.CreateImage - START');
+  Writeln('TFileWriter.CreateImage = ', FFileName);
+
+  if FThreshold > 0 then
+    while GetDriveFreeSpace(FFileName) > 0 do
+    begin
+      Abort := TRUE;
+      if Assigned(FOnRequestBlankDisk) then
+        FOnRequestBlankDisk(Abort);
+      if Abort then Exit;
+    end;
 
   Inc(FCurrentImage);
   FCurrentImageSize := 0;
@@ -416,12 +423,14 @@ begin
     FreeAndNil(FSource);
 
   RenameFile(FFileName, GetImageName(FCurrentImage));
-  ForceDirectories(ExtractFilePath(FFileName));
   try
+    if ExtractFilePath(FFileName) <> '' then
+      ForceDirectories(ExtractFilePath(FFileName));
     FSource := TFileStream.Create(FFileName, fmCreate or fmShareDenyWrite);
   except
     FSource := nil;
   end;
+  Writeln('TFileWriter.CreateImage - END');
 end;
 
 procedure TFileWriter.WriteDWord(Data: dword);
@@ -594,6 +603,24 @@ end;
 function TNulWriter.GetIsValidStream: boolean;
 begin
   Result := TRUE;
+end;
+
+{ TCustomSearchRec class }
+
+constructor TCustomSearchRec.CreateFrom(Item: TCustomSearchRec);
+begin
+  inherited Create;
+  Name             := Item.Name;
+  Size             := Item.Size;
+  Attributes       := Item.Attributes;
+  CreationTime     := Item.CreationTime;
+  LastModifiedTime := Item.LastModifiedTime;
+  LastAccessTime   := Item.LastAccessTime;
+  Mode             := Item.Mode;
+  UserID           := Item.UserID;
+  UserName         := Item.UserName;
+  GroupID          := Item.GroupID;
+  GroupName        := Item.GroupName;
 end;
 
 { TFileScanner class }
