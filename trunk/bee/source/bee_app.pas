@@ -189,7 +189,7 @@ end;
 
 procedure TBeeApp.DoProgress(Value: longint);
 begin
-  Writeln(Value);
+  Writeln('Progress ', Value);
   //Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
   //  Format('%5d KB/s %3d%%', [Speed shr 10, Progress]));
 end;
