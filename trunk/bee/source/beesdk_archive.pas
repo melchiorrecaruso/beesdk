@@ -858,9 +858,15 @@ var
   Binding: TArchiveBinding;
   MagikSeek: int64;
 begin
+  Writeln('ReadCentralDirectory - START');
+
+
   Result := FALSE;
   // Read MagikSeek
   FArchiveReader.Seek(SizeOf(longword), soFromEnd);
+
+  Writeln('ReadCentralDirectory - STEP1');
+
   MagikSeek := FArchiveReader.ReadDWord;
 
   Writeln('ReadCentralDirectory.MagikSeek = ', MagikSeek);
@@ -1094,8 +1100,11 @@ begin
     FArchiveReader.OnRequestImage := FOnRequestImage;
     if Assigned(FArchiveReader) then
     begin
+      Writeln('TArchiveReaderBase.OpenArchive - STEP1');
       if ReadCentralDirectory(FArchiveReader) then
       begin
+        Writeln('TArchiveReaderBase.OpenArchive - STEP2');
+
         FArchiveName := aArchiveName;
         if FArchiveItems.Count = 0 then
           DoFailure(Format(cmArcTypeError, [aArchiveName]));
