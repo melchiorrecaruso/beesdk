@@ -860,17 +860,18 @@ var
 begin
   Writeln('ReadCentralDirectory - START');
 
-
   Result := FALSE;
   // Read MagikSeek
-  FArchiveReader.Seek(SizeOf(longword), soFromEnd);
+  FArchiveReader.Seek(-SizeOf(longword), soFromEnd);
 
-  Writeln('ReadCentralDirectory - STEP1');
+  Writeln('ReadCentralDirectory.Position = ', FArchiveReader.Seek(0, socurrent));
 
   MagikSeek := FArchiveReader.ReadDWord;
 
   Writeln('ReadCentralDirectory.MagikSeek = ', MagikSeek);
 
+
+  readln;
 
   FArchiveReader.Seek(SizeOf(longword), soFromEnd);
   FArchiveReader.Seek(FArchiveReader.ReadDWord, soFromEnd);

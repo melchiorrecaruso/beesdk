@@ -201,7 +201,7 @@ begin
   inherited Create(nil);
   FFileName       := aFileName;
   FImagesNumber   := aImagesNumber;
-  FCurrentImage   := aImagesNumber;
+  FCurrentImage   := 0;
 
   FOnRequestImage := nil;
 
@@ -233,8 +233,11 @@ var
   Abort: boolean;
   ImageName: string;
 begin
-  if ImageNumber >= FImagesNumber then ImageNumber := 0;
-  if ImageNumber <> FCurrentImage then
+  FCurrentImage := ImageNumber;
+  if Assigned(FSource) then
+    FreeAndNil(FSource);
+
+  if ImageNumber < ImagesNumber then
   begin
     ImageName := GetImageName(ImageNumber);
     while FileExists(ImageName) = FALSE do
@@ -244,10 +247,6 @@ begin
         FOnRequestImage(ImageNumber, ImageName, Abort);
       if Abort then Exit;
     end;
-
-    FCurrentImage := ImageNumber;
-    if Assigned(FSource) then
-      FreeAndNil(FSource);
 
     try
       FSource := TFileStream.Create(ImageName, fmOpenRead or fmShareDenyWrite);
@@ -318,9 +317,14 @@ begin
   while Assigned(FSource) and (Count > 0) do
   begin
     Readed := inherited Read(PBuffer^, Count);
+
+    Writeln('TFileReader.Readed = ', Readed);
+
     Inc(Result,  Readed);
     Inc(PBuffer, Readed);
     Dec(Count,   Readed);
+
+    Writeln('TFileReader.Count = ', Count);
 
     if Count > 0 then GotoImage(FCurrentImage + 1);
   end;
