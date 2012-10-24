@@ -270,7 +270,9 @@ end;
 
 function TFileReader.ReadDWord: dword;
 begin
+  Writeln('TFileReader.ReadDWord - START');
   Read(Result, SizeOf(Result));
+  Writeln('TFileReader.ReadDWord - END');
 end;
 
 function TFileReader.ReadInfWord: qword;
@@ -309,6 +311,8 @@ var
   Readed: longint;
   PBuffer: PByte;
 begin
+  Writeln('TFileReader.Read - START');
+
   Result  := 0;
   PBuffer := @Data;
   while Assigned(FSource) and (Count > 0) do
@@ -320,6 +324,7 @@ begin
 
     if Count > 0 then GotoImage(FCurrentImage + 1);
   end;
+  Writeln('TFileReader.Read - END');
 end;
 
 function TFileReader.Seek(Offset: longint; Origin: word): longint;
