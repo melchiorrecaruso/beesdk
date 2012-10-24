@@ -856,30 +856,27 @@ var
   Marker: longword;
   Locator: TArchiveLocator;
   Binding: TArchiveBinding;
-  MagikSeek: int64;
 begin
   Writeln('ReadCentralDirectory - START');
 
   Result := FALSE;
   // Read MagikSeek
   FArchiveReader.Seek(-SizeOf(longword), soFromEnd);
-
-  Writeln('ReadCentralDirectory.Position = ', FArchiveReader.Seek(0, socurrent));
-
-  MagikSeek := FArchiveReader.ReadDWord;
-
-  Writeln('ReadCentralDirectory.MagikSeek = ', MagikSeek);
-
-
-  readln;
-
-  FArchiveReader.Seek(SizeOf(longword), soFromEnd);
-  FArchiveReader.Seek(FArchiveReader.ReadDWord, soFromEnd);
+  FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd);
   // Read Locator Marker
-  Marker  := longword(aStream.ReadInfWord);
+  Marker := longword(aStream.ReadInfWord);
+
+  Writeln('Marker = ', Marker);
+  Readln;
+
   if Marker = aitLocator then
     if longword(aStream.ReadInfWord) <= beexVERSION then
     begin
+
+
+      Writeln('beexVERSION');
+      Readln;
+
       Locator := TArchiveLocator.Create;
       Locator.Read(aStream);
 
