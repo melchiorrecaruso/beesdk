@@ -861,16 +861,19 @@ begin
 
   Result := FALSE;
   // Read MagikSeek
-  FArchiveReader.Seek(-SizeOf(longword), soFromEnd);
-  FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd);
-  // Read Locator Marker
-  Marker := longword(aStream.ReadInfWord);
+  Writeln(FArchiveReader.Seek(-SizeOf(longword), soFromEnd));
+  Writeln(FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd));
 
-  Writeln('Marker = ', Marker);
-  Readln;
+
+  Writeln('aitLocator = ', aitLocator);
+  // Read Locator Marker
+  Marker := aStream.ReadInfWord;
+
+  Writeln('Marker     = ', Marker);
+
 
   if Marker = aitLocator then
-    if longword(aStream.ReadInfWord) <= beexVERSION then
+    if aStream.ReadInfWord <= beexVERSION then
     begin
 
 
@@ -1242,15 +1245,22 @@ begin
     Include(Locator.FFlags,  alfDisksNumber);
   Writeln('Locator.FDisksNumber = ', Locator.FDisksNumber);
 
-  MagikSeek := aStream.Position;                                                 Writeln('Start Position = ', aStream.Position);
-  aStream.WriteInfWord(aitLocator);                                              Writeln('Locator Marker = ', aStream.Position);
-  Locator.Write(aStream);                                                        Writeln('Locator Write = ', aStream.Position);
+  MagikSeek := aStream.Position;
+
+  Writeln('Locator.aitLocator = ', aStream.Position);
+  aStream.WriteInfWord(aitLocator);
+
+  aStream.WriteInfWord(beexVERSION);
+
+
+  Writeln('Locator.Data = ', aStream.Position);
+  Locator.Write(aStream);
+
+  Writeln('MagikSeek = ', aStream.Position);
   MagikSeek := aStream.Position - MagikSeek + SizeOf(longword);
-  aStream.WriteDWord(longword(MagikSeek));                                       Writeln('MagikSeek = ', aStream.Position);
+  aStream.WriteDWord(longword(MagikSeek));
+
   Locator.Destroy;
-
-
-  Writeln('Locator.MagikSeek = ', MagikSeek);
 end;
 
 procedure TArchiveWriterBase.PackCentralDirectory;

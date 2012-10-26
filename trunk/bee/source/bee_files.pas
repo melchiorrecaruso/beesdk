@@ -267,7 +267,7 @@ begin
   while Read(Last, 1) = 1 do
   begin
     Temp   := Last and $7F;
-    Temp   := Temp shl (7 * Count);
+    Temp   := Temp shr (7 * Count);
     Result := Result or Temp;
 
     if (Last and $80) = $80 then Break;
@@ -293,7 +293,7 @@ var
   Readed: longint;
   PBuffer: PByte;
 begin
-  Writeln('TFileReader.Read - START');
+  // Writeln('TFileReader.Read - START');
 
   Result  := 0;
   PBuffer := @Data;
@@ -301,13 +301,13 @@ begin
   begin
     Readed := inherited Read(PBuffer^, Count);
 
-    Writeln('TFileReader.Readed = ', Readed);
+    // Writeln('TFileReader.Readed = ', Readed);
 
     Inc(Result,  Readed);
     Inc(PBuffer, Readed);
     Dec(Count,   Readed);
 
-    Writeln('TFileReader.Count = ', Count);
+    // Writeln('TFileReader.Count = ', Count);
 
     if Count > 0 then
     begin
@@ -315,7 +315,7 @@ begin
       GotoImage;
     end;
   end;
-  Writeln('TFileReader.Read - END');
+  // Writeln('TFileReader.Read - END');
 end;
 
 procedure TFileReader.Fill;
@@ -365,7 +365,7 @@ constructor TFileWriter.Create(const aFileName: string; const aThreshold: int64)
 begin
   inherited Create(nil);
   FFileName := aFileName;
-  FCurrentImage := 0;
+  FCurrentImage     := 0;
   FCurrentImageSize := 0;
   FThreshold := aThreshold;
   FOnRequestBlankDisk := nil;
@@ -456,6 +456,7 @@ var
   LastByte: byte;
   Count: longint;
 begin
+  Writeln(' DATA = ', Data);
   Count := 0;
   repeat
     LastByte := Data and $7F;
@@ -467,7 +468,7 @@ begin
     LocalBuffer[Count] := LastByte;
     Inc(Count);
   until Data = 0;
-
+  Writeln('WRITED = ', Count);
   Write(LocalBuffer[0], Count);
 end;
 
