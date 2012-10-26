@@ -56,13 +56,13 @@ type
     FImageNumber: longword;
     FImagesNumber: longword;
     FOnRequestImage: TFileReaderRequestImageEvent;
-    function GetIsValidStream: boolean;
-    function GetImageName(aImageNumber: longword): string;
-    procedure GotoImage(aImageNumber: longword);
+    procedure GotoImage;
+    function GetImageName: string;
+    function GetIsValid: boolean;
     procedure SetImagesNumber(Value: longword);
     procedure SetImageNumber(Value: longword);
   public
-    constructor Create(const aFileName: string; aImagesNumber: longword);
+    constructor Create(const aFileName: string);
     destructor Destroy; override;
     procedure Fill;
 
@@ -72,9 +72,9 @@ type
     function Read(var Data; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
-    procedure SeekImage(ImageNumber: longword; const Offset: int64);
+    procedure SeekImage(aImageNumber: longword; const Offset: int64);
   public
-    property IsValidStream: boolean read GetIsValidStream;
+    property IsValid: boolean read GetIsValid;
     property ImagesNumber: longword read FImagesNumber write SetImagesNumber;
     property ImageNumber: longword read FImageNumber write SetImageNumber;
     property OnRequestImage: TFileReaderRequestImageEvent
@@ -92,7 +92,7 @@ type
     FCurrentImageSize: int64;
     FThreshold: int64;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
-    function GetIsValidStream: boolean; virtual;
+    function GetIsValid: boolean; virtual;
     function GetImageName(ImageNumber: longword): string;
     function GetCurrentImage: longword;
     function GetABSPosition: int64;
@@ -112,7 +112,7 @@ type
     function Seek(Offset: longint; Origin: word): longint; override;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
   public
-    property IsValidStream: boolean read GetIsValidStream;
+    property IsValid: boolean read GetIsValid;
     property CurrentImage: longword read GetCurrentImage;
     property CurrentImageSize: int64 read FCurrentImageSize;
     property Threshold: int64 read FThreshold;
@@ -130,7 +130,7 @@ type
     FNulPos: int64;
     FNulSize: int64;
   protected
-    function GetIsValidStream: boolean; override;
+    function GetIsValid: boolean; override;
     procedure FlushBuffer; override;
     procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
@@ -198,37 +198,32 @@ end;
 
 { TFileReader class }
 
-constructor TFileReader.Create(const aFileName: string; aImagesNumber: longword);
+constructor TFileReader.Create(const aFileName: string);
 begin
   inherited Create(nil);
   FFileName       := aFileName;
-  FImagesNumber   := aImagesNumber;
+  FImagesNumber   := 1;
   FImageNumber    := 1;
   FOnRequestImage := nil;
-  GotoImage(FImageNumber);
+  GotoImage;
 end;
 
 destructor TFileReader.Destroy;
 begin
   if Assigned(FSource) then
-    FreeAndNil(FSource);
+     FreeAndNil(FSource);
   inherited Destroy;
 end;
 
-procedure TFileReader.Fill;
+function TFileReader.GetImageName: string;
 begin
-  FillBuffer;
-end;
-
-function TFileReader.GetImageName(aImageNumber: longword): string;
-begin
-  if aImageNumber <> FImagesNumber then
-    Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [aImageNumber]))
+  if FImageNumber <> FImagesNumber then
+    Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [FImageNumber]))
   else
     Result := FFileName;
 end;
 
-procedure TFileReader.GotoImage(aImageNumber: longword);
+procedure TFileReader.GotoImage;
 var
   Abort: boolean;
   ImageName: string;
@@ -236,44 +231,29 @@ begin
   if Assigned(FSource) then
     FreeAndNil(FSource);
 
-  FImageNumber := aImageNumber;
-  if FImageNumber in [1..FImagesNumber] then
-  begin
-    ImageName := GetImageName(FImageNumber);
-    while FileExists(ImageName) = FALSE do
+  if FImageNumber >= 1 then
+    if FImageNumber <= FImagesNumber then
     begin
-      Abort := TRUE;
-      if Assigned(FOnRequestImage) then
-        FOnRequestImage(FImageNumber, ImageName, Abort);
-      if Abort then Exit;
+      ImageName := GetImageName;
+      while FileExists(ImageName) = FALSE do
+      begin
+        Abort := TRUE;
+        if Assigned(FOnRequestImage) then
+          FOnRequestImage(FImageNumber, ImageName, Abort);
+        if Abort then Exit;
+      end;
+
+      try
+        FSource := TFileStream.Create(ImageName, fmOpenRead or fmShareDenyWrite);
+      except
+        FSource := nil;
+      end;
     end;
-
-    try
-      FSource := TFileStream.Create(ImageName, fmOpenRead or fmShareDenyWrite);
-    except
-      FSource := nil;
-    end;
-  end;
-end;
-
-procedure TFileReader.SetImagesNumber(Value: longword);
-begin
-  FImagesNumber := Value;
-  FImageNumber  := 1;
-  GotoImage(FImageNumber);
-end;
-
-procedure TFileReader.SetImageNumber(Value: longword);
-begin
-  FImageNumber := Value;
-  GotoImage(FImageNumber);
 end;
 
 function TFileReader.ReadDWord: dword;
 begin
-  Writeln('TFileReader.ReadDWord - START');
   Read(Result, SizeOf(Result));
-  Writeln('TFileReader.ReadDWord - END');
 end;
 
 function TFileReader.ReadInfWord: qword;
@@ -300,10 +280,11 @@ var
   Len: longint;
 begin
   Len := ReadInfWord;
-  SetLength(Result, Len);
-  if Len > 0 then
+  if Assigned(FSource) then
   begin
-    Read(Result[1], Len);
+    SetLength(Result, Len);
+    if Len > 0 then
+      Read(Result[1], Len);
   end;
 end;
 
@@ -328,9 +309,19 @@ begin
 
     Writeln('TFileReader.Count = ', Count);
 
-    if Count > 0 then GotoImage(FImageNumber + 1);
+    if Count > 0 then
+    begin
+      Inc(FImageNumber);
+      GotoImage;
+    end;
   end;
   Writeln('TFileReader.Read - END');
+end;
+
+procedure TFileReader.Fill;
+begin
+  if Assigned(FSource) then
+     FillBuffer;
 end;
 
 function TFileReader.Seek(Offset: longint; Origin: word): longint;
@@ -345,17 +336,27 @@ begin
     inherited Seek(Offset, Origin);
 end;
 
-procedure TFileReader.SeekImage(ImageNumber: longword; const Offset: int64);
+procedure TFileReader.SeekImage(aImageNumber: longword; const Offset: int64);
 begin
-  if FImageNumber <> ImageNumber then
-    GotoImage(ImageNumber);
-
+  SetImageNumber(aImageNumber);
   Seek(Offset, soBeginning);
 end;
 
-function TFileReader.GetIsValidStream: boolean;
+function TFileReader.GetIsValid: boolean;
 begin
   Result := Assigned(FSource);
+end;
+
+procedure TFileReader.SetImagesNumber(Value: longword);
+begin
+  FImagesNumber := Value;
+  GotoImage;
+end;
+
+procedure TFileReader.SetImageNumber(Value: longword);
+begin
+  FImageNumber := Value;
+  GotoImage;
 end;
 
 { TFileWriter class }
@@ -490,7 +491,7 @@ begin
     Result := FFileName;
 end;
 
-function TFileWriter.GetIsValidStream: boolean;
+function TFileWriter.GetIsValid: boolean;
 begin
   Result := Assigned(FSource);
 end;
@@ -611,7 +612,7 @@ begin
   Result := FNulPos;
 end;
 
-function TNulWriter.GetIsValidStream: boolean;
+function TNulWriter.GetIsValid: boolean;
 begin
   Result := TRUE;
 end;
