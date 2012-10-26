@@ -270,7 +270,7 @@ begin
     Temp   := Temp shr (7 * Count);
     Result := Result or Temp;
 
-    if (Last and $80) = $80 then Break;
+    if (Last and $80) = 0 then Break;
     Inc(Count);
   end;
 end;

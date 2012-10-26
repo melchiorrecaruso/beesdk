@@ -863,29 +863,25 @@ begin
   // Read MagikSeek
   Writeln(FArchiveReader.Seek(-SizeOf(longword), soFromEnd));
   Writeln(FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd));
-
-
-  Writeln('aitLocator = ', aitLocator);
   // Read Locator Marker
   Marker := aStream.ReadInfWord;
-
-  Writeln('Marker     = ', Marker);
-
-
   if Marker = aitLocator then
+  begin
+    Writeln('aitLocator = ', aitLocator);
+    Writeln('Marker     = ', Marker);
     if aStream.ReadInfWord <= beexVERSION then
     begin
-
-
-      Writeln('beexVERSION');
-      Readln;
-
       Locator := TArchiveLocator.Create;
       Locator.Read(aStream);
+
+      Writeln('Locator.DiskNumber = ', Locator.DiskNumber);
+      Writeln('Locator.DiskSeek = '  , Locator.DiskSeek);
 
       aStream.SeekImage(Locator.DiskNumber, Locator.DiskSeek);
       if aStream.ReadDWord = beexMARKER then
       begin
+        Writeln('BINDING');
+
         Binding := TArchiveBinding.Create;
         repeat
           Marker := longword(aStream.ReadInfWord);
@@ -905,6 +901,8 @@ begin
       Locator.Destroy;
       if Result then UnPackCentralDirectory;
     end;
+  end;
+  Readln;
 end;
 
 procedure TArchiveReaderBase.UnPackCentralDirectory;
@@ -1221,9 +1219,9 @@ begin
   Locator.FDiskNumber := aStream.CurrentImage;
   if Locator.FDiskNumber <> 1 then
     Include(Locator.FFlags,  alfDiskNumber);
-  Writeln('Locator.FDiskNumber = ', Locator.FDiskNumber);
-
   Locator.FDiskSeek := aStream.Position;
+  Writeln('Locator.FDiskNumber = ', Locator.FDiskNumber);
+  Writeln('Locator.FDiskSeek   = ', Locator.FDiskSeek);
 
   PackCentralDirectory;
   aStream.WriteDWord(beexMARKER);
@@ -1246,20 +1244,14 @@ begin
   Writeln('Locator.FDisksNumber = ', Locator.FDisksNumber);
 
   MagikSeek := aStream.Position;
-
-  Writeln('Locator.aitLocator = ', aStream.Position);
+  Writeln('Locator.aitLocator = ', MagikSeek);
   aStream.WriteInfWord(aitLocator);
-
   aStream.WriteInfWord(beexVERSION);
-
-
   Writeln('Locator.Data = ', aStream.Position);
   Locator.Write(aStream);
-
   Writeln('MagikSeek = ', aStream.Position);
   MagikSeek := aStream.Position - MagikSeek + SizeOf(longword);
   aStream.WriteDWord(longword(MagikSeek));
-
   Locator.Destroy;
 end;
 
