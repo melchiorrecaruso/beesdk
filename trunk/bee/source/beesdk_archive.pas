@@ -974,8 +974,8 @@ begin
       actMain: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
     end;
-    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
-    if not FSwapWriter   .IsValidStream then DoFailure(cmStrmWriteError);
+    if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
+    if not FSwapWriter   .IsValid then DoFailure(cmStrmWriteError);
 
     if Item.FCRC32 <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
@@ -996,8 +996,8 @@ begin
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
     end;
-    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
-    if not Stream        .IsValidStream then DoFailure(cmStrmWriteError);
+    if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
+    if not Stream        .IsValid then DoFailure(cmStrmWriteError);
 
     if Item.FCRC32 <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
@@ -1020,8 +1020,8 @@ begin
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
     end;
-    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
-    if not Stream        .IsValidStream then DoFailure(cmStrmWriteError);
+    if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
+    if not Stream        .IsValid then DoFailure(cmStrmWriteError);
 
     if Item.FCRC32 <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
@@ -1094,7 +1094,7 @@ begin
   CloseArchive;
   if FileExists(aArchiveName) then
   begin
-    FArchiveReader := TFileReader.Create(aArchiveName, 1);
+    FArchiveReader := TFileReader.Create(aArchiveName);
     FArchiveReader.OnRequestImage := FOnRequestImage;
     if Assigned(FArchiveReader) then
     begin
@@ -1387,8 +1387,8 @@ begin
               aitDecodeAndUpdate: DecodeToNil (Item);
             end;
             {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-            if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
-            if not FSwapWriter   .IsValidStream then DoFailure(cmStrmWriteError);
+            if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
+            if not FSwapWriter   .IsValid then DoFailure(cmStrmWriteError);
           end;
         end;
       FDecoder.Destroy;
@@ -1396,7 +1396,7 @@ begin
 
       if ExitCode < ccError then
       begin
-        FSwapReader := TFileReader.Create(FSwapName, 1);
+        FSwapReader := TFileReader.Create(FSwapName);
         if Assigned(FSwapReader) = False then
           DoFailure(cmOpenSwapError);
       end;
@@ -1465,8 +1465,8 @@ begin
     Item.FDiskNumber := FTempWriter.CurrentImage;
     FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
 
-    if not FArchiveReader.IsValidStream then DoFailure(cmStrmReadError);
-    if not FTempWriter   .IsValidStream then DoFailure(cmStrmWriteError);
+    if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
+    if not FTempWriter   .IsValid then DoFailure(cmStrmWriteError);
   end else
     DoFailure(cmStrmReadError);
 end;
@@ -1488,8 +1488,8 @@ begin
     end;
     Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
 
-    if not FSwapReader.IsValidStream then DoFailure(cmStrmReadError);
-    if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);
+    if not FSwapReader.IsValid then DoFailure(cmStrmReadError);
+    if not FTempWriter.IsValid then DoFailure(cmStrmWriteError);
   end else
     DoFailure(cmStrmReadError);
 end;
@@ -1500,7 +1500,7 @@ var
   Stream: TFileReader;
 begin
   Writeln('EncodeFromFile - START');
-  Stream := TFileReader.Create(Item.FExternalFileName, 1);
+  Stream := TFileReader.Create(Item.FExternalFileName);
   if Stream <> nil then
   begin
     Item.FUncompressedSize := Item.FExternalFileSize;
@@ -1514,8 +1514,8 @@ begin
     end;
     Item.FCompressedSize   := FTempWriter.ABSPosition - ABSPosition;
 
-    if not Stream     .IsValidStream then DoFailure(cmStrmReadError);
-    if not FTempWriter.IsValidStream then DoFailure(cmStrmWriteError);
+    if not Stream     .IsValid then DoFailure(cmStrmReadError);
+    if not FTempWriter.IsValid then DoFailure(cmStrmWriteError);
 
     Stream.Destroy;
   end else
@@ -1804,7 +1804,7 @@ begin
         end;
       Encoder.Destroy;
       WriteCentralDirectory(FTempWriter);
-      if not FTempWriter.IsValidStream then
+      if not FTempWriter.IsValid then
         DoFailure(cmStrmWriteError);
     end else
       DoFailure(cmOpenTempError);
@@ -1948,7 +1948,7 @@ begin
         if ExitCode < ccError then
         begin
           WriteCentralDirectory(FTempWriter);
-          if not FTempWriter.IsValidStream then
+          if not FTempWriter.IsValid then
             DoFailure(cmStrmWriteError);
         end;
       end;
@@ -2242,7 +2242,7 @@ begin
         if (ExitCode < ccError) then
         begin
           WriteCentralDirectory(FTempWriter);
-          if not FTempWriter.IsValidStream then
+          if not FTempWriter.IsValid then
             DoFailure(cmStrmWriteError);
         end;
       end;
