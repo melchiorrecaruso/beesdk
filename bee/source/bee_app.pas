@@ -58,6 +58,7 @@ type
     FRenamer: TArchiveRenamer;
     FEraser: TArchiveEraser;
     FReader: TArchiveReader;
+    function CompressionMethodToStr(Item: TArchiveItem): string;
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoRequestBlankDisk(var Abort : Boolean);
     procedure DoFailure(const ErrorMessage: string; ErrorCode: longint);
@@ -468,6 +469,14 @@ begin
   FRenamer.Destroy;
 end;
 
+function TBeeApp.CompressionMethodToStr(Item: TArchiveItem): string;
+begin
+  case Item.CompressionMethod of
+    actNone: Result := 'm0';
+    actMain: Result := 'me';
+  end;
+end;
+
 procedure TBeeApp.ListShell;
 var
   I: longint;
@@ -572,10 +581,10 @@ begin
     Inc(TotalPackedSize, Item.CompressedSize);
     Inc(TotalFiles);
 
-    //Writeln(Format('%16s %7s %12s %12s %3s %s', [
-    //  FileTimeToString(aItem.Time), AttrToStr(aItem.Attr),
-    //  SizeToStr(aItem.Size), SizeToStr(aItem.PackedSize),
-    //  MethodToStr(aItem), aItem.Name]));
+    Writeln(Format('%16s %7s %12s %12s %3s %s', [
+      FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
+      SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
+      CompressionMethodToStr(Item), Item.FileName]));
   end;
   DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
   // DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPacked), TotalFiles]));

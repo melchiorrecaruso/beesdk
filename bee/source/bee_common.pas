@@ -67,6 +67,19 @@ function DeleteFilePath(const FilePath, FileName: string): string;
 
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 
+function RatioToStr(const PackedSize, Size: int64): string;
+function SizeToStr(const Size: int64): string;
+function AttrToStr(Attr: longint): string;
+
+{ time handling routines }
+
+function TimeDifference(X: double): string;
+function TimeToStr(T: longint): string;
+function DateTimeToString(X: TDateTime): string; overload;
+function DateTimeToString(X: TDateTime; const Format: string): string; overload;
+function FileTimeToString(X: longint): string; overload;
+function FileTimeToString(X: longint; const Format: string): string; overload;
+
 { hex routines }
 
 function Hex(const Data; Count: longint): string;
@@ -120,20 +133,11 @@ function ForceDirectories(const DirName: string): boolean;
 function StringToPChar(const aValue: string): PChar;
 function PCharToString(aValue: PChar): string;
 
-function RatioToStr(const PackedSize, Size: int64): string;
-function SizeToStr(const Size: int64): string;
-function AttrToStr(Attr: longint): string;
+
 
 function ReverseString(const Str: string): string;
 
-{ time handling routines }
 
-function TimeDifference(X: double): string;
-function TimeToStr(T: longint): string;
-function DateTimeToString(X: TDateTime): string; overload;
-function DateTimeToString(X: TDateTime; const Format: string): string; overload;
-function FileTimeToString(X: longint): string; overload;
-function FileTimeToString(X: longint; const Format: string): string; overload;
 
 
 
@@ -490,6 +494,96 @@ begin
     if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
 
+function RatioToStr(const PackedSize, Size: int64): string;
+begin
+  if Size > 0 then
+    Result := Format('%u%%', [Round((PackedSize / Size) * 100)])
+  else
+    Result := Format('%u%%', [100]);
+end;
+
+function SizeToStr(const Size: int64): string;
+begin
+  if Size > 0 then
+    Result := Format('%u', [Size])
+  else
+    Result := Format('%u', [0]);
+end;
+
+function AttrToStr(Attr: longint): string;
+begin
+  Result := 'RHSVDAL';
+  if Attr and faReadOnly  = 0 then Result[1] := '.';
+  if Attr and faHidden    = 0 then Result[2] := '.';
+  if Attr and faSysFile   = 0 then Result[3] := '.';
+  if Attr and faVolumeId  = 0 then Result[4] := '.';
+  if Attr and faDirectory = 0 then Result[5] := '.';
+  if Attr and faArchive   = 0 then Result[6] := '.';
+  if Attr and faSymLink   = 0 then Result[7] := '.';
+end;
+
+{ time handling routines }
+
+function TimeDifference(X: double): string;
+begin
+  Result := Format('%0.2f', [(Now - X) * (24 * 60 * 60)]);
+end;
+
+function TimeToStr(T: longint): string;
+var
+  H, M, S:    string;
+  ZH, ZM, ZS: longint;
+begin
+  ZH := T div 3600;
+  ZM := T div 60 - ZH * 60;
+  ZS := T - (ZH * 3600 + ZM * 60);
+
+  if ZH < 10 then
+    H := '0' + IntToStr(ZH)
+  else
+    H := IntToStr(ZH);
+
+  if ZM < 10 then
+    M := '0' + IntToStr(ZM)
+  else
+    M := IntToStr(ZM);
+
+  if ZS < 10 then
+    S := '0' + IntToStr(ZS)
+  else
+    S := IntToStr(ZS);
+
+  Result := H + ':' + M + ':' + S;
+end;
+
+function DateTimeToString(X: TDateTime): string;
+begin
+  SysUtils.DateTimeToString(Result, 'yyyy-mm-dd hh:nn:ss', X);
+end;
+
+function DateTimeToString(X: TDateTime; const Format: string): string;
+begin
+  SysUtils.DateTimeToString(Result, Format, X);
+end;
+
+function FileTimeToString(X: longint): string;
+begin
+  try
+    Result := DateTimeToString(SysUtils.FileDateToDateTime(X));
+  except
+    Result := '????-??-?? ??:??:??';
+  end;
+end;
+
+function FileTimeToString(X: longint; const Format: string): string;
+begin
+  try
+    Result := DateTimeToString(SysUtils.FileDateToDateTime(X), Format);
+  except
+    Result := '????-??-?? ??:??:??';
+  end;
+end;
+
 { hex routines }
 
 function Hex(const Data; Count: longint): string;
@@ -722,33 +816,7 @@ begin
     SetLength(Result, 0);
 end;
 
-function RatioToStr(const PackedSize, Size: int64): string;
-begin
-  if Size > 0 then
-    Result := Format('%u%%', [Round((PackedSize / Size) * 100)])
-  else
-    Result := Format('%u%%', [100]);
-end;
 
-function SizeToStr(const Size: int64): string;
-begin
-  if Size > 0 then
-    Result := Format('%u', [Size])
-  else
-    Result := Format('%u', [0]);
-end;
-
-function AttrToStr(Attr: longint): string;
-begin
-  Result := 'RHSVDAL';
-  if Attr and faReadOnly  = 0 then Result[1] := '.';
-  if Attr and faHidden    = 0 then Result[2] := '.';
-  if Attr and faSysFile   = 0 then Result[3] := '.';
-  if Attr and faVolumeId  = 0 then Result[4] := '.';
-  if Attr and faDirectory = 0 then Result[5] := '.';
-  if Attr and faArchive   = 0 then Result[6] := '.';
-  if Attr and faSymLink   = 0 then Result[7] := '.';
-end;
 
 function ReverseString(const Str: string): string;
 var
@@ -762,65 +830,7 @@ begin
   end;
 end;
 
-function TimeDifference(X: double): string;
-begin
-  Result := Format('%0.2f', [(Now - X) * (24 * 60 * 60)]);
-end;
 
-function TimeToStr(T: longint): string;
-var
-  H, M, S:    string;
-  ZH, ZM, ZS: longint;
-begin
-  ZH := T div 3600;
-  ZM := T div 60 - ZH * 60;
-  ZS := T - (ZH * 3600 + ZM * 60);
-
-  if ZH < 10 then
-    H := '0' + IntToStr(ZH)
-  else
-    H := IntToStr(ZH);
-
-  if ZM < 10 then
-    M := '0' + IntToStr(ZM)
-  else
-    M := IntToStr(ZM);
-
-  if ZS < 10 then
-    S := '0' + IntToStr(ZS)
-  else
-    S := IntToStr(ZS);
-
-  Result := H + ':' + M + ':' + S;
-end;
-
-function DateTimeToString(X: TDateTime): string;
-begin
-  SysUtils.DateTimeToString(Result, 'yyyy-mm-dd hh:nn:ss', X);
-end;
-
-function DateTimeToString(X: TDateTime; const Format: string): string;
-begin
-  SysUtils.DateTimeToString(Result, Format, X);
-end;
-
-function FileTimeToString(X: longint): string;
-begin
-  try
-    Result := DateTimeToString(SysUtils.FileDateToDateTime(X));
-  except
-    Result := '????-??-?? ??:??:??';
-  end;
-end;
-
-function FileTimeToString(X: longint; const Format: string): string;
-begin
-  try
-    Result := DateTimeToString(SysUtils.FileDateToDateTime(X), Format);
-  except
-    Result := '????-??-?? ??:??:??';
-  end;
-end;
 
 
 
