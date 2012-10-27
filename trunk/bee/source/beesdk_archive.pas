@@ -880,11 +880,15 @@ begin
       aStream.SeekImage(Locator.DiskNumber, Locator.DiskSeek);
       if aStream.ReadDWord = beexMARKER then
       begin
-        Writeln('BINDING');
-
         Binding := TArchiveBinding.Create;
         repeat
-          Marker := longword(aStream.ReadInfWord);
+          Marker := aStream.ReadInfWord;
+          Writeln('-aitItem    = ', aitItem);
+          Writeln('-aitBinding = ', aitBinding);
+          Writeln('-aitLocator = ', aitLocator);
+          Writeln('-aitEnd     = ', aitEnd);
+          Writeln('-MARKER     = ', Marker);
+
           case Marker of
             aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
             aitBinding: Binding.Read(aStream);
@@ -902,7 +906,7 @@ begin
       if Result then UnPackCentralDirectory;
     end;
   end;
-  Readln;
+  // Readln;
 end;
 
 procedure TArchiveReaderBase.UnPackCentralDirectory;

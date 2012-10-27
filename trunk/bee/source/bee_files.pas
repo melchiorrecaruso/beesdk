@@ -267,7 +267,7 @@ begin
   while Read(Last, 1) = 1 do
   begin
     Temp   := Last and $7F;
-    Temp   := Temp shr (7 * Count);
+    Temp   := Temp shl (7 * Count);
     Result := Result or Temp;
 
     if (Last and $80) = 0 then Break;
