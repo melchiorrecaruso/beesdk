@@ -513,7 +513,13 @@ begin
   inherited Create;
   /// Item property ///
   FFileName            := '';
-  FFlags               := [];
+  FFlags               :=
+    [ aifUncompressedSize,
+    aifLastModifiedTime,
+    aifAttributes,
+    aifMode,
+    aifComment ];
+
   FUncompressedSize    :=  0;
   FCreationTime        :=  0;
   FLastModifiedTime    :=  0;
