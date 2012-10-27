@@ -17,10 +17,11 @@ uses
 
 const
   /// beex archive marker
-  beexMARKER   = $1A656542;
+  beexArchiveMarker = $1A656542;
 
   /// beex archive version
-  beexVERSION  = $00;
+  beexVersionNeededToRead    = $00;
+  beexVersionNeededToExtract = $00;
 
   /// archive item type
   aitItem      = $01;
@@ -88,37 +89,6 @@ type
     aefEncryptionMethod);
 
   TArchiveEncryptionFlags = set of TArchiveEncryptionFlag;
-
-type
-  TArchiveLocator = class(TObject)
-  private
-    FDiskSeek: int64;
-    FFlags: TArchiveLocatorFlags;
-    FDisksNumber: longword;
-    FDiskNumber: longword;
-  public
-    constructor Create;
-    procedure Read(Stream: TFileReader);
-    procedure Write(Stream: TFileWriter);
-  public
-    property DiskSeek: int64 read FDiskSeek;
-    property Flags: TArchiveLocatorFlags read FFlags;
-    property DisksNumber: longword read FDisksNumber;
-    property DiskNumber: longword read FDiskNumber;
-  end;
-
-  TArchiveBinding = class(TObject)
-  private
-    FFlags: TArchiveBindingFlags;
-    FComment: string;
-  public
-    constructor Create;
-    procedure Read(Stream: TFileReader);
-    procedure Write(Stream: TFileWriter);
-  public
-    property Flags: TArchiveBindingFlags read FFlags;
-    property Comment: string read FComment;
-  end;
 
   TArchiveItemTag = (aitNone, aitAdd, aitUpdate, aitDecode, aitDecodeAndUpdate);
 
@@ -445,29 +415,6 @@ implementation
 uses
   Bee_Assembler;
 
-// TBeeArchiveLolatorItem class
-
-constructor TArchiveLocator.Create;
-begin
-  inherited Create;
-  FDiskSeek    :=  0;
-  FFlags       := [];
-  FDisksNumber :=  1;
-  FDiskNumber  :=  1;
-end;
-
-procedure TArchiveLocator.Read(Stream: TFileReader);
-begin
-  FFlags := TArchiveLocatorFlags(longword(Stream.ReadInfWord));
-  if (alfDisksNumber in FFlags) then
-    FDisksNumber := Stream.ReadInfWord;
-
-  if (alfDiskNumber  in FFlags) then
-    FDiskNumber := Stream.ReadInfWord;
-
-  FDiskSeek  := Stream.ReadInfWord;
-end;
-
 procedure TArchiveLocator.Write(Stream: TFileWriter);
 begin
   Stream.WriteInfWord(longword(FFlags));
@@ -491,11 +438,7 @@ end;
 
 procedure TArchiveBinding.Read(Stream: TFileReader);
 begin
-  inherited Create;
-  FFlags := TArchiveBindingFlags(longword(Stream.ReadInfWord));
 
-  if (abfComment in FFlags) then
-    FComment := Stream.ReadInfString;
 end;
 
 procedure TArchiveBinding.Write(Stream: TFileWriter);
@@ -857,62 +800,49 @@ begin
   OpenArchive(Value);
 end;
 
-function TArchiveReaderBase.ReadCentralDirectory(aStream: TFileReader): boolean;
+procedure TArchiveReaderBase.ReadCentralDirectory(aStream: TFileReader);
 var
   Marker: longword;
-  Locator: TArchiveLocator;
-  Binding: TArchiveBinding;
+  LocatorDisksNumber: longword;
+  LocatorDiskNumber: longword
+  LocatorDiskSeek: longword
+  LocatorFlags: TArchiveLocatorFlags;
+  BindingFlags: TArchiveBindingFlags;
 begin
-  Writeln('ReadCentralDirectory - START');
-
-  Result := FALSE;
   // Read MagikSeek
   Writeln(FArchiveReader.Seek(-SizeOf(longword), soFromEnd));
   Writeln(FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd));
   // Read Locator Marker
-  Marker := aStream.ReadInfWord;
-  if Marker = aitLocator then
-  begin
-    Writeln('aitLocator = ', aitLocator);
-    Writeln('Marker     = ', Marker);
-    if aStream.ReadInfWord <= beexVERSION then
+  if aStream.ReadInfWord = aitLocator then
+    if aStream.ReadInfWord <= beexVersionNeededToRead then
     begin
-      Locator := TArchiveLocator.Create;
-      Locator.Read(aStream);
-
-      Writeln('Locator.DiskNumber = ', Locator.DiskNumber);
-      Writeln('Locator.DiskSeek = '  , Locator.DiskSeek);
-
-      aStream.SeekImage(Locator.DiskNumber, Locator.DiskSeek);
+      LocatorFlags := TArchiveLocatorFlags(longword(Stream.ReadInfWord));
+      if (alfDisksNumber in LocatorFlags) then LocatorDisksNumber := Stream.ReadInfWord else LocatorDisksNumber := 1;
+      if (alfDiskNumber  in LocatorFlags) then LocatorDiskNumber  := Stream.ReadInfWord else LocatorDiskNumber  := 1;
+      LocatorDiskSeek := Stream.ReadInfWord;
+      // Seek on CentralDirectory
+      aStream.ImagesNumber := LocatorDisksNumber;
+      aStream.SeekImage(LocatorDiskNumber, LocatorDiskSeek);
       if aStream.ReadDWord = beexMARKER then
       begin
-        Binding := TArchiveBinding.Create;
-        repeat
+        while ExitCode < ccError do
+        begin
           Marker := aStream.ReadInfWord;
-          Writeln('-aitItem    = ', aitItem);
-          Writeln('-aitBinding = ', aitBinding);
-          Writeln('-aitLocator = ', aitLocator);
-          Writeln('-aitEnd     = ', aitEnd);
-          Writeln('-MARKER     = ', Marker);
-
           case Marker of
             aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
-            aitBinding: Binding.Read(aStream);
-          //aitLocator: already readed;
-            else        Marker := aitEnd;
+            aitBinding: begin
+              BindingFlags := TArchiveBindingFlags(longword(Stream.ReadInfWord));
+              if (abfComment in FFlags) then FArchiveComment := Stream.ReadInfString else FArchiveComment := '';
+            end;
+            aitLocator: Break;
+            else DoFailure(cmArcTypeError);
           end;
-          Result := (Marker = aitEnd);
-        until Result;
-
-        // ...
-        FArchiveComment := Binding.Comment;
-        Binding.Destroy;
+        end;
       end;
-      Locator.Destroy;
       if Result then UnPackCentralDirectory;
-    end;
-  end;
-  // Readln;
+    end else
+      DoFailure();
+  Readln;
 end;
 
 procedure TArchiveReaderBase.UnPackCentralDirectory;
