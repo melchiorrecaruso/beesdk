@@ -1947,13 +1947,19 @@ begin
   FreeAndNil(FConfiguration);
 end;
 
-function CompareCustomSearchRecExt(Item1, Item2: pointer): longint;
-var
-  Ext1, Ext2: string;
+function CompareCustomSearchRec(Item1, Item2: pointer): longint;
 begin
-  Ext1   := TCustomSearchRec(Item1^).Name;
-  Ext2   := TCustomSearchRec(Item2^).Name;
-  Result := AnsiCompareFileName(Ext1, Ext2);
+  Result := AnsiCompareFileName(
+    ExtractFileExt(TCustomSearchRec(Item1).Name),
+    ExtractFileExt(TCustomSearchRec(Item2).Name));
+
+  if Result = 0 then
+  begin
+    if TCustomSearchRec(Item1).Size < TCustomSearchRec(Item2).Size then
+      Result := -1
+    else
+      Result :=  1;
+  end;
 end;
 
 procedure TArchiveUpdater.CheckTags;
@@ -1964,7 +1970,7 @@ var
   Csr: TCustomSearchRec;
   UpdateAs: string;
 begin
-  FSearchRecs.Sort(@CompareCustomSearchRecExt);
+  FSearchRecs.Sort(@CompareCustomSearchRec);
   for J := 0 to FSearchRecs.Count - 1 do
     if ExitCode < ccError then
     begin
