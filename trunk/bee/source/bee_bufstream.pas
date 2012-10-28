@@ -133,7 +133,7 @@ begin
     end;
     S := Min(Count - Result, FBufferSize - FBufferReaded);
 
-    Move(FBuffer[FBufferReaded], Bytes[Result], S);
+    CopyBytes(FBuffer[FBufferReaded], Bytes[Result], S);
 
     Inc(Result, S);
     Inc(FBufferReaded, S);

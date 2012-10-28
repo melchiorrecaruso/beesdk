@@ -46,10 +46,6 @@ uses
 function SelfName: string;
 function SelfPath: string;
 
-function GetFileMode(const Rec: TSearchRec): longint;
-function GetFileCreationTime(const Rec: TSearchRec): longint;
-function GetFileLastAccessTime(const Rec: TSearchRec): longint;
-function GetFileLastModifiedTime(const Rec: TSearchRec): longint;
 function GetDriveFreeSpace(const FileName: string): int64;
 
 function FileNameMatch(const FileName,         Mask:  string;      Recursive: TRecursiveMode): boolean; overload;
@@ -57,9 +53,9 @@ function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TR
 function FileNameHasWildcards(const FileName: string): boolean;
 function FileNamePos(const FilePath, FileName: string): longint;
 
+function IsValidFileName(const FileName: string): boolean;
 function FixFileName(const FileName: string): string;
 function FixDirName(const DirName: string): string;
-function IsValidFileName(const FileName: string): boolean;
 function GenerateFileName(const FilePath: string): string;
 function GenerateAlternativeFileName(const FileName: string;
   StartIndex: longint; Check: boolean): string;
@@ -169,26 +165,6 @@ end;
 function SelfPath: string;
 begin
   Result := ExtractFilePath(ParamStr(0));
-end;
-
-function GetFileMode(const Rec: TSearchRec): longint;
-begin
-
-end;
-
-function GetFileCreationTime(const Rec: TSearchRec): longint;
-begin
-  // Result := Rec.FindData.ftCreationTime;
-end;
-
-function GetFileLastAccessTime(const Rec: TSearchRec): longint;
-begin
-  // Result := Rec.FindData.ftLastAccessTime;
-end;
-
-function GetFileLastModifiedTime(const Rec: TSearchRec): longint;
-begin
-  // Result := Rec.FindData.ftLastWriteTime;
 end;
 
 function GetDriveFreeSpace(const FileName: string): int64;
@@ -761,74 +737,11 @@ end;
 
 { directory handling routines }
 
-function DirectoryExists(const DirName: string): boolean;
-var
-  Code: longint;
-begin
-  Code := FileGetAttr(DirName);
-  Result := (Code <> -1) and (faDirectory and Code <> 0);
-end;
-
-function ForceDirectories(const DirName: string): boolean;
-var
-  S: string;
-begin
-  if Length(DirName) <> 0 then
-  begin
-    S := ExcludeTrailingBackSlash(DirName);
-
-    if (DirectoryExists(S) = False) and (ExtractFilePath(S) <> S) then
-    begin
-      if ForceDirectories(ExtractFilePath(S)) then
-        Result := CreateDir(S)
-      else
-        Result := False;
-    end else
-      Result := True;
-
-  end else
-    Result := True;
-end;
 
 
 
-{ string and pchar routines }
-
-function StringToPChar(const aValue: string): PChar;
-begin
-  Result := StrAlloc(Length(aValue) + 1);
-  Result := StrPCopy(Result, aValue);
-end;
-
-function PCharToString(aValue: PChar): string;
-var
-  I: longint;
-begin
-  if aValue <> nil then
-  begin
-    I := StrLen(aValue);
-    if I <> 0 then
-    begin
-      SetLength(Result, I);
-      Move(aValue^, Result[1], I);
-    end;
-  end else
-    SetLength(Result, 0);
-end;
 
 
-
-function ReverseString(const Str: string): string;
-var
-  I, Len: longint;
-begin
-  Len := Length(Str);
-  SetLength(Result, Len);
-  for I := 1 to Len do
-  begin
-    Result[I] := Str[(Len + 1) - I];
-  end;
-end;
 
 
 

@@ -39,6 +39,7 @@ unit Bee_App;
 interface
 
 uses
+  // Crt,
   Classes,
   Bee_Files,
   Bee_Types,
@@ -52,7 +53,6 @@ type
   TBeeApp = class(TObject)
   private
     FSelfName: string;
-    FStartTime: double;
     FCommandLine: TCommandLine;
     FExtractor: TArchiveExtractor;
     FUpdater: TArchiveUpdater;
@@ -62,9 +62,8 @@ type
     function CompressionMethodToStr(Item: TArchiveItem): string;
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoRequestBlankDisk(var Abort : Boolean);
-    procedure DoFailure(const ErrorMessage: string; ErrorCode: longint);
     procedure DoMessage(const Message: string);
-    procedure DoProgress(Value: longint);
+    procedure DoProgress(Percentage: longint);
     procedure DoExtract(Item: TArchiveItem; var ExtractAs: string; var Confirm: TArchiveConfirm);
     procedure DoUpdate(SearchRec: TCustomSearchRec; var UpdateAs: string; var Confirm: TArchiveConfirm);
     procedure DoRename(Item: TArchiveItem; var RenameAs: string; var Confirm: TArchiveConfirm);
@@ -116,8 +115,6 @@ begin
   inherited Create;
   FSelfName := 'The Bee 0.8.0 build 1563 archiver utility, July 2012' + Cr +
                '(C) 1999-2012 Andrew Filinsky and Melchiorre Caruso';
-
-  FStartTime := Now;
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
@@ -142,7 +139,11 @@ begin
 end;
 
 procedure TBeeApp.Execute;
+var
+  S: string;
+  StartTime: double;
 begin
+  StartTime := Now;
   DoMessage(FSelfName);
   if (FCommandLine.Command <> ccNone) and (FCommandLine.ArchiveName <> '') then
   begin
@@ -165,8 +166,13 @@ begin
   end else
     HelpShell;
 
-  Writeln(TimeDifference(FStartTime));
-  Readln;
+  S := TimeDifference(StartTime);
+  case ExitCode of
+    ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
+    ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
+    ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
+    else         DoMessage(Format(Cr + cmError,     [S]));
+  end;
 end;
 
 procedure TBeeApp.DoRequestImage(ImageNumber: longint;
@@ -182,22 +188,14 @@ begin
   Readln;
 end;
 
-procedure TBeeApp.DoFailure(const ErrorMessage: string; ErrorCode: longint);
-begin
-  ExitCode := ErrorCode;
-  Writeln(ParamToOem(ErrorMessage));
-end;
-
 procedure TBeeApp.DoMessage(const Message: string);
 begin
   Writeln(ParamToOem(Message));
 end;
 
-procedure TBeeApp.DoProgress(Value: longint);
+procedure TBeeApp.DoProgress(Percentage: longint);
 begin
-
-  Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
-    Format('%5d KB/s %3d%%', [0, Value]));
+  Write(#8#8#8#8#8#8, Format('(%3d%%)', [Percentage]));
 end;
 
 procedure TBeeApp.DoExtract(Item: TArchiveItem;
@@ -229,7 +227,6 @@ var
   I: longint;
   Item: TArchiveItem;
 begin
-  Writeln('DoUpdate - START');
   UpdateAs := FCommandLine.cdOption + SearchRec.Name;
   I := FUpdater.Find(UpdateAs);
   if I <> -1 then
@@ -251,7 +248,6 @@ begin
       Confirm := arcOk;
     end;
   end;
-  Writeln('DoUpdate - END');
 end;
 
 procedure TBeeApp.DoRename(Item: TArchiveItem;
@@ -271,7 +267,7 @@ end;
 
 procedure TBeeApp.DoClear;
 begin
-  Write(#13, #13: 80);
+  Write(#13, #13:80);
 end;
 
 { option processing }
@@ -343,17 +339,14 @@ var
   I: longint;
   Scanner: TFileScanner;
 begin
-  Writeln('EncodeShell - START');
-
   FUpdater := TArchiveUpdater.Create;
   FUpdater.OnRequestBlankDisk := DoRequestBlankDisk;
   FUpdater.OnRequestImage     := DoRequestImage;
-  FUpdater.OnFailure          := DoFailure;
+  FUpdater.OnFailure          := DoMessage;
   FUpdater.OnMessage          := DoMessage;
   FUpdater.OnProgress         := DoProgress;
+  FUpdater.OnClearProgress    := DoClear;
   FUpdater.OnUpdate           := DoUpdate;
-
-  Writeln('EncodeShell - STEP1');
 
   case FCommandLine.mOption of
     moStore: FUpdater.CompressionMethod := actNone;
@@ -363,8 +356,6 @@ begin
   FUpdater.DictionaryLevel   := FCommandLine.dOption;
   FUpdater.SolidCompression  := FCommandLine.sOption;
   FUpdater.ArchivePassword   := FCommandLine.pOption;
-
-  Writeln('EncodeShell - STEP2');
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
@@ -378,11 +369,8 @@ begin
     FUpdater.Tag(Scanner.Items[I]);
   Scanner.Free;
 
-  Writeln('EncodeShell - STEP3');
   FUpdater.UpdateTagged;
-  Writeln('EncodeShell - STEP4');
   FUpdater.Destroy;
-  Writeln('EncodeShell - END');
 end;
 
 procedure TBeeApp.DecodeShell(TestMode: boolean);
@@ -391,9 +379,10 @@ var
 begin
   FExtractor := TArchiveExtractor.Create;
   FExtractor.OnRequestImage := DoRequestImage;
-  FExtractor.OnFailure      := DoFailure;
+  FExtractor.OnFailure      := DoMessage;
   FExtractor.OnMessage      := DoMessage;
   FExtractor.OnProgress     := DoProgress;
+  FExtractor.OnClearProgress:= DoClear;
   FExtractor.OnExtraction   := DoExtract;
 
   FExtractor.ArchivePassword := FCommandLine.pOption;
@@ -423,9 +412,10 @@ begin
   FEraser := TArchiveEraser.Create;
   FEraser.OnRequestBlankDisk := DoRequestBlankDisk;
   FEraser.OnRequestImage     := DoRequestImage;
-  FEraser.OnFailure          := DoFailure;
+  FEraser.OnFailure          := DoMessage;
   FEraser.OnMessage          := DoMessage;
   FEraser.OnProgress         := DoProgress;
+  FEraser.OnClearProgress    := DoClear;
   FEraser.OnEraseEvent       := DoErase;
 
   FEraser.ArchivePassword    :=  FCommandLine.pOption;
@@ -452,9 +442,10 @@ begin
   FRenamer := TArchiveRenamer.Create;
   FRenamer.OnRequestBlankDisk := DoRequestBlankDisk;
   FRenamer.OnRequestImage     := DoRequestImage;
-  FRenamer.OnFailure          := DoFailure;
+  FRenamer.OnFailure          := DoMessage;
   FRenamer.OnMessage          := DoMessage;
   FRenamer.OnProgress         := DoProgress;
+  FRenamer.OnClearProgress    := DoClear;
   FRenamer.OnRenameEvent      := DoRename;
 
   FRenamer.ArchivePassword    := FCommandLine.pOption;
@@ -499,9 +490,10 @@ var
 begin
   FReader := TArchiveReader.Create;
   FReader.OnRequestImage  := DoRequestImage;
-  FReader.OnFailure       := DoFailure;
+  FReader.OnFailure       := DoMessage;
   FReader.OnMessage       := DoMessage;
   FReader.OnProgress      := DoProgress;
+  FReader.OnClearProgress := DoClear;
 
   FReader.ArchivePassword := FCommandLine.pOption;
 
