@@ -52,6 +52,7 @@ type
   TBeeApp = class(TObject)
   private
     FSelfName: string;
+    FStartTime: double;
     FCommandLine: TCommandLine;
     FExtractor: TArchiveExtractor;
     FUpdater: TArchiveUpdater;
@@ -116,6 +117,7 @@ begin
   FSelfName := 'The Bee 0.8.0 build 1563 archiver utility, July 2012' + Cr +
                '(C) 1999-2012 Andrew Filinsky and Melchiorre Caruso';
 
+  FStartTime := Now;
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
@@ -162,6 +164,9 @@ begin
     end;
   end else
     HelpShell;
+
+  Writeln(TimeDifference(FStartTime));
+  Readln;
 end;
 
 procedure TBeeApp.DoRequestImage(ImageNumber: longint;
@@ -190,9 +195,9 @@ end;
 
 procedure TBeeApp.DoProgress(Value: longint);
 begin
-  Writeln('Progress ', Value);
-  //Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
-  //  Format('%5d KB/s %3d%%', [Speed shr 10, Progress]));
+
+  Write(#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8,
+    Format('%5d KB/s %3d%%', [0, Value]));
 end;
 
 procedure TBeeApp.DoExtract(Item: TArchiveItem;

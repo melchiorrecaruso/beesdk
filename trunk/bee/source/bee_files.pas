@@ -158,7 +158,7 @@ type
     GroupID: longword;
     GroupName: string;
   public
-     constructor CreateFrom(Item: TCustomSearchRec);
+    constructor CreateFrom(Item: TCustomSearchRec);
   end;
 
   { TFileScanner }
@@ -293,21 +293,14 @@ var
   Readed: longint;
   PBuffer: PByte;
 begin
-  // Writeln('TFileReader.Read - START');
-
   Result  := 0;
   PBuffer := @Data;
   while Assigned(FSource) and (Count > 0) do
   begin
     Readed := inherited Read(PBuffer^, Count);
-
-    // Writeln('TFileReader.Readed = ', Readed);
-
     Inc(Result,  Readed);
     Inc(PBuffer, Readed);
     Dec(Count,   Readed);
-
-    // Writeln('TFileReader.Count = ', Count);
 
     if Count > 0 then
     begin
@@ -315,7 +308,6 @@ begin
       GotoImage;
     end;
   end;
-  // Writeln('TFileReader.Read - END');
 end;
 
 procedure TFileReader.Fill;
@@ -456,7 +448,6 @@ var
   LastByte: byte;
   Count: longint;
 begin
-  Writeln(' DATA = ', Data);
   Count := 0;
   repeat
     LastByte := Data and $7F;
@@ -468,7 +459,6 @@ begin
     LocalBuffer[Count] := LastByte;
     Inc(Count);
   until Data = 0;
-  Writeln('WRITED = ', Count);
   Write(LocalBuffer[0], Count);
 end;
 
