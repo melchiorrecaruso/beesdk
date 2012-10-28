@@ -113,8 +113,8 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1563 archiver utility, July 2012' + Cr +
-               '(C) 1999-2012 Andrew Filinsky and Melchiorre Caruso';
+  FSelfName := 'The Bee 0.8.0 build 1565 archiver utility, July 2012' + Cr +
+               '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
@@ -143,10 +143,11 @@ var
   S: string;
   StartTime: double;
 begin
-  StartTime := Now;
   DoMessage(FSelfName);
-  if (FCommandLine.Command <> ccNone) and (FCommandLine.ArchiveName <> '') then
+  if (FCommandLine.Command <> ccNone) and
+     (FCommandLine.ArchiveName <> '') then
   begin
+    StartTime := Now;
     case FCommandLine.Command of
       ccAdd:      EncodeShell;
       ccDelete:   DeleteShell;
@@ -155,24 +156,17 @@ begin
       ccTest:     DecodeShell(TRUE);
       ccRename:   RenameShell;
       ccList:     ListShell;
-      ccHelp:     HelpShell;
     end;
 
-    if FCommandLine.Command in [ccAdd, ccDelete, ccRename] then
-    begin
-      ProcesstOption;
-      ProcesslOption;
+    S := TimeDifference(StartTime);
+    case ExitCode of
+      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
+      ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
+      ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
+      else         DoMessage(Format(Cr + cmError,     [S]));
     end;
   end else
     HelpShell;
-
-  S := TimeDifference(StartTime);
-  case ExitCode of
-    ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
-    ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
-    ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
-    else         DoMessage(Format(Cr + cmError,     [S]));
-  end;
 end;
 
 procedure TBeeApp.DoRequestImage(ImageNumber: longint;
@@ -224,6 +218,7 @@ end;
 procedure TBeeApp.DoUpdate(SearchRec: TCustomSearchRec;
   var UpdateAs: string; var Confirm: TArchiveConfirm);
 var
+  ch: char;
   I: longint;
   Item: TArchiveItem;
 begin
@@ -246,6 +241,23 @@ begin
         I := FUpdater.Find(UpdateAs);
       end;
       Confirm := arcOk;
+    end;
+    umAddQuery: begin
+
+       repeat
+         Write('Replace "', Item.FileName ,'" with "', SearchRec.Name, '"?');
+         Readln(ch);
+         DoClear;
+         case Upcase(ch) of
+           'Y':
+           'N':
+           'A';
+           'Q':
+           else ;
+         end
+
+       until Upcase(ch) in [];
+
     end;
   end;
 end;
@@ -371,6 +383,8 @@ begin
 
   FUpdater.UpdateTagged;
   FUpdater.Destroy;
+  ProcesstOption;
+  ProcesslOption;
 end;
 
 procedure TBeeApp.DecodeShell(TestMode: boolean);
@@ -433,6 +447,8 @@ begin
 
   FEraser.EraseTagged;
   FEraser.Destroy;
+  ProcesstOption;
+  ProcesslOption;
 end;
 
 procedure TBeeApp.RenameShell;
@@ -463,6 +479,8 @@ begin
 
   FRenamer.RenameTagged;
   FRenamer.Destroy;
+  ProcesstOption;
+  ProcesslOption;
 end;
 
 function TBeeApp.CompressionMethodToStr(Item: TArchiveItem): string;

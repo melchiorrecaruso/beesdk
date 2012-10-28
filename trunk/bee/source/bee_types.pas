@@ -45,7 +45,7 @@ type
   {   ccOpen     Open archive                             }
 
   TCommand = (ccAdd, ccExtract, ccXextract, ccDelete,
-    ccRename, ccTest, ccList, ccHelp, ccOpen, ccNone, ccView);
+    ccRename, ccTest, ccList, ccOpen, ccNone, ccView);
 
   { Recursive Mode Option:                                }
   {  rmNone      No resurse filename                      }
@@ -61,9 +61,10 @@ type
   {  umAddUpdate     Add and update existing files        }
   {  umAddReplace    Add and replace existing files       }
   {  umAddAutoRename Add and rename if already exists     }
+  {  umAddQuery      Add and query if already exists      }
 
-  TUpdateMode = (umAdd, umUpdate, umReplace,
-    umAddUpdate, umAddReplace, umAddAutoRename);
+  TUpdateMode = (umAdd, umUpdate, umReplace, umAddUpdate,
+    umAddReplace, umAddAutoRename, umAddQuery);
 
   { Update Mode Option:                                   }
 

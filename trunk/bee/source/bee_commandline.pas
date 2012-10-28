@@ -201,7 +201,7 @@ end;
 procedure TCommandLine.ProcessuOption(var S: string);
 begin
   Delete(S, 1, 2);
-  if (Length(S) = 1) and (S[1] in ['0'..'5']) then
+  if (Length(S) = 1) and (S[1] in ['0'..'6']) then
   begin
     FuOption := TUpdateMode(StrToInt(S[1]));
   end;
@@ -321,7 +321,6 @@ procedure TCommandLine.ProcessCommand(var S: string);
 begin
   if Length(S) = 1 then
     case Upcase(S[1]) of
-      '?': FCommand := ccHelp;
       'A': FCommand := ccAdd;
       'D': FCommand := ccDelete;
       'E': FCommand := ccExtract;
@@ -331,7 +330,7 @@ begin
       'R': FCommand := ccRename;
       'O': FCommand := ccOpen;
       'V': FCommand := ccView;
-      else FCommand := ccHelp;
+      else FCommand := ccNone;
     end;
 end;
 
@@ -433,7 +432,6 @@ var
 begin
   Params := TStringList.Create;
   case FCommand of
-    ccHelp:     Params.Add('?');
     ccAdd:      Params.Add('A');
     ccDelete:   Params.Add('D');
     ccExtract:  Params.Add('E');
