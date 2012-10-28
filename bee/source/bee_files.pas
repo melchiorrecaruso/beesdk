@@ -149,14 +149,7 @@ type
     Name: string;
     Size: int64;
     Attributes: longint;
-    CreationTime: longint;
     LastModifiedTime: longint;
-    LastAccessTime: longint;
-    Mode: longint;
-    UserID: longword;
-    UserName: string;
-    GroupID: longword;
-    GroupName: string;
   public
     constructor CreateFrom(Item: TCustomSearchRec);
   end;
@@ -409,9 +402,6 @@ procedure TFileWriter.CreateImage;
 var
   Abort: boolean;
 begin
-  Writeln('TFileWriter.CreateImage - START');
-  Writeln('TFileWriter.CreateImage = ', FFileName);
-
   if FThreshold > 0 then
     while GetDriveFreeSpace(FFileName) > 0 do
     begin
@@ -434,7 +424,6 @@ begin
   except
     FSource := nil;
   end;
-  Writeln('TFileWriter.CreateImage - END');
 end;
 
 procedure TFileWriter.WriteDWord(Data: dword);
@@ -616,14 +605,7 @@ begin
   Name             := Item.Name;
   Size             := Item.Size;
   Attributes       := Item.Attributes;
-  CreationTime     := Item.CreationTime;
   LastModifiedTime := Item.LastModifiedTime;
-  LastAccessTime   := Item.LastAccessTime;
-  Mode             := Item.Mode;
-  UserID           := Item.UserID;
-  UserName         := Item.UserName;
-  GroupID          := Item.GroupID;
-  GroupName        := Item.GroupName;
 end;
 
 { TFileScanner class }
@@ -654,18 +636,11 @@ end;
 
 function TFileScanner.CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
 begin
-  Result                  := TCustomSearchRec.Create;
-  Result.Name             := RecPath + Rec.Name;
-  Result.Size             := Rec.Size;
-  Result.Attributes       := Rec.Attr;
-  Result.CreationTime     := GetFileCreationTime(Rec);
-  Result.LastModifiedTime := GetFileLastModifiedTime(Rec);
-  Result.LastAccessTime   := GetFileLastAccessTime(Rec);
-  Result.Mode             := GetFileMode(Rec);
-  // Result.UserID           :=
-  // Result.UserName         :=
-  // Result.GroupID          :=
-  // Result.GroupName        :=
+  Result := TCustomSearchRec.Create;
+  Result.Name := RecPath + Rec.Name;
+  Result.Size := Rec.Size;
+  Result.Attributes := Rec.Attr;
+  Result.LastModifiedTime := Rec.Time;
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);

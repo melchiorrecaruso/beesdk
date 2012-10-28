@@ -46,15 +46,8 @@ type
   /// archive item flag
   TArchiveItemFlag = (
     aifUncompressedSize,
-    aifCreationTime,
     aifLastModifiedTime,
-    aifLastAccessTime,
     aifAttributes,
-    aifMode,
-    aifUserID,
-    aifUserName,
-    aifGroupID,
-    aifGroupName,
     aifComment);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
@@ -98,15 +91,8 @@ type
     FFileName: string;
     FFlags: TArchiveItemFlags;
     FUncompressedSize: int64;
-    FCreationTime: longword;
     FLastModifiedTime: longword;
-    FLastAccessTime: longword;
     FAttributes: longword;
-    FMode: longword;
-    FUserID: longword;
-    FUserName: string;
-    FGroupID: longword;
-    FGroupName: string;
     FComment: string;
     // Data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
@@ -140,15 +126,8 @@ type
     property FileName: string read FFileName;
     property Flags: TArchiveItemFlags read FFlags;
     property UncompressedSize: int64 read FUncompressedSize;
-    property CreationTime: longword read FCreationTime;
     property LastModifiedTime: longword read FLastModifiedTime;
-    property LastAccessTime: longword read FLastAccessTime;
     property Attributes: longword read FAttributes;
-    property Mode: longword read FMode;
-    property UserID: longword read FUserID;
-    property UserName: string read FUserName;
-    property GroupID: longword read FGroupID;
-    property GroupName: string read FGroupName;
     property Comment: string read FComment;
     // Data property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
@@ -188,12 +167,11 @@ type
     property Items[Index: longint]: TArchiveItem read GetItem;
   end;
 
-  TArchiveProgressEvent = procedure(Value: longint) of object;
+  TArchiveProgressEvent = procedure(Percentage: longint) of object;
+
+  TArchiveClearProgressEvent = procedure of object;
 
   TArchiveMessageEvent = procedure(const Message: string) of object;
-
-  TArchiveFailureEvent = procedure(
-    const ErrorMessage: string; ErrorCode: longint) of object;
 
   TArchiveConfirm = (arcOk, arcCancel, arcAbort);
 
@@ -226,7 +204,8 @@ type
     FSuspended:  boolean;
     FOnProgress: TArchiveProgressEvent;
     FOnMessage: TArchiveMessageEvent;
-    FOnFailure: TArchiveFailureEvent;
+    FOnFailure: TArchiveMessageEvent;
+    FOnClearProgress: TArchiveClearProgressEvent;
     FOnRequestImage: TFileReaderRequestImageEvent;
     FArchiveItems: TArchiveCustomItems;
     procedure InitDecoder (Item: TArchiveItem);
@@ -242,20 +221,20 @@ type
     function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
     procedure SetArchiveName(const Value: string);
-    procedure SetExitCode(Value: byte);
-
-    function DoProgress(Value: longint): boolean;
-    procedure DoMessage(const Message: string);
-    procedure DoFailure(const ErrorMessage: string);
+    procedure SetExitCode(Value: longint);
     procedure DoRequestImage(ImageNumber: longint;
       var ImageName: string; var Abort: boolean);
+    procedure DoFailure(const ErrorMessage: string);
+    procedure DoMessage(const Message: string);
+    function DoProgress(Value: longint): boolean;
+    procedure DoClear;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure CloseArchive; virtual;
     procedure OpenArchive(const aArchiveName: string);
-    function Find(const aFileName: string): longint;
+    procedure CloseArchive; virtual;
     procedure Terminate;
+    function Find(const aFileName: string): longint;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property ArchivePassword: string read FArchivePassword write FArchivePassword;
@@ -265,8 +244,9 @@ type
 
     property Suspended: boolean read FSuspended write FSuspended;
     property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
+    property OnClearProgress: TArchiveClearProgressEvent read FOnClearProgress write FOnClearProgress;
     property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
-    property OnFailure: TArchiveFailureEvent read FOnFailure write FOnFailure;
+    property OnFailure: TArchiveMessageEvent read FOnFailure write FOnFailure;
     property OnRequestImage: TFileReaderRequestImageEvent
       read FOnRequestImage write FOnRequestImage;
   end;
@@ -421,30 +401,16 @@ constructor TArchiveItem.Create;
 begin
   inherited Create;
   /// Item property ///
-  FFileName            := '';
-  FFlags               := [
+  FFileName := '';
+  FFlags := [
     aifUncompressedSize,
-    aifCreationTime,
     aifLastModifiedTime,
-    aifLastAccessTime,
     aifAttributes,
-    aifMode,
-    aifUserID,
-    aifUserName,
-    aifGroupID,
-    aifGroupName,
     aifComment];
 
   FUncompressedSize    :=  0;
-  FCreationTime        :=  0;
   FLastModifiedTime    :=  0;
-  FLastAccessTime      :=  0;
   FAttributes          :=  0;
-  FMode                :=  0;
-  FUserID              :=  0;
-  FUserName            := '';
-  FGroupID             :=  0;
-  FGroupName           := '';
   FComment             := '';
   /// Data descriptor property ///
   FDataDescriptorFlags := [
@@ -458,7 +424,7 @@ begin
   FDiskSeek            :=  0;
   FCRC32               :=  0;
   /// Compression property ///
-  FCompressionFlags    := [
+  FCompressionFlags := [
     acfCompressionMethod,
     acfCompressionLevel,
     acfDictionaryLevel,
@@ -485,15 +451,8 @@ begin
   /// Item property ///
 //FFileName := SearchRec.Name;
 //if (aifUncompressedSize in FFLags) then FUncompressedSize := SearchRec.Size;
-  if (aifCreationTime     in FFLags) then FCreationTime     := SearchRec.CreationTime;
   if (aifLastModifiedTime in FFLags) then FLastModifiedTime := SearchRec.LastModifiedTime;
-  if (aifLastAccessTime   in FFLags) then FLastAccessTime   := SearchRec.LastAccessTime;
   if (aifAttributes       in FFLags) then FAttributes       := SearchRec.Attributes;
-  if (aifMode             in FFLags) then FMode             := SearchRec.Mode;
-  if (aifUserID           in FFLags) then FUserID           := SearchRec.UserID;
-  if (aifUserName         in FFLags) then FUserName         := SearchRec.UserName;
-  if (aifGroupID          in FFLags) then FGroupID          := SearchRec.GroupID;
-  if (aifGroupName        in FFLags) then FGroupName        := SearchRec.GroupName;
 //if (aifComment          in FFLags) then FComment          := UseComment;
 
   /// Data descriptor property ///
@@ -527,15 +486,8 @@ begin
   FFileName := Stream.ReadInfString;
   FFlags    := TArchiveItemFlags(longword(Stream.ReadInfWord));
   if (aifUncompressedSize  in FFlags) then FUncompressedSize := Stream.ReadInfWord;
-  if (aifCreationTime      in FFlags) then FCreationTime     := Stream.ReadInfWord;
   if (aifLastModifiedTime  in FFlags) then FLastModifiedTime := Stream.ReadInfWord;
-  if (aifLastAccessTime    in FFlags) then FLastAccessTime   := Stream.ReadInfword;
   if (aifAttributes        in FFlags) then FAttributes       := Stream.ReadInfWord;
-  if (aifMode              in FFlags) then FMode             := Stream.ReadInfWord;
-  if (aifUserID            in FFlags) then FUserID           := Stream.ReadInfWord;
-  if (aifUserName          in FFlags) then FUserName         := Stream.ReadInfString;
-  if (aifGroupID           in FFlags) then FGroupID          := Stream.ReadInfWord;
-  if (aifGroupName         in FFlags) then FGroupName        := Stream.ReadInfString;
   if (aifComment           in FFlags) then FComment          := Stream.ReadInfString;
   /// Data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
@@ -560,15 +512,8 @@ begin
   Stream.WriteInfString(FFileName);
   Stream.WriteInfWord(longword(FFlags));
   if (aifUncompressedSize  in FFlags) then Stream.WriteInfWord(FUncompressedSize);
-  if (aifCreationTime      in FFlags) then Stream.WriteInfWord(FCreationTime);
   if (aifLastModifiedTime  in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
-  if (aifLastAccessTime    in FFlags) then Stream.WriteInfWord(FLastAccessTime);
   if (aifAttributes        in FFlags) then Stream.WriteInfWord(FAttributes);
-  if (aifMode              in FFlags) then Stream.WriteInfWord(FMode);
-  if (aifUserID            in FFlags) then Stream.WriteInfWord(FUserID);
-  if (aifUserName          in FFlags) then Stream.WriteInfString(FUserName);
-  if (aifGroupID           in FFlags) then Stream.WriteInfWord(FGroupID);
-  if (aifGroupName         in FFlags) then Stream.WriteInfString(FGroupName);
   if (aifComment           in FFlags) then Stream.WriteInfString(FComment);
   /// Data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
@@ -744,8 +689,8 @@ constructor TArchiveReaderBase.Create;
 begin
   inherited Create;
   Randomize;
-  ExitCode      := ccSuccesful;
   FArchiveItems := TArchiveCustomItems.Create;
+  ExitCode := ccSuccesful;
 end;
 
 destructor TArchiveReaderBase.Destroy;
@@ -770,12 +715,10 @@ begin
   Result := FArchiveItems.Items[Index];
 end;
 
-procedure TArchiveReaderBase.SetExitCode(Value: byte);
+procedure TArchiveReaderBase.SetExitCode(Value: longint);
 begin
   if ExitCode < Value then
-  begin
     ExitCode := Value;
-  end;
 end;
 
 procedure TArchiveReaderBase.SetArchiveName(const Value: string);
@@ -844,15 +787,8 @@ begin
       CurrentItem := FArchiveItems.Items[I];
       /// Item property ///
       if not(aifUncompressedSize  in CurrentItem.Flags) then CurrentItem.FUncompressedSize := PreviusItem.FUncompressedSize;
-      if not(aifCreationTime      in CurrentItem.Flags) then CurrentItem.FCreationTime     := PreviusItem.FCreationTime;
       if not(aifLastModifiedTime  in CurrentItem.Flags) then CurrentItem.FLastModifiedTime := PreviusItem.FLastModifiedTime;
-      if not(aifLastAccessTime    in CurrentItem.Flags) then CurrentItem.FLastAccessTime   := PreviusItem.FLastAccessTime;
       if not(aifAttributes        in CurrentItem.Flags) then CurrentItem.FAttributes       := PreviusItem.FAttributes;
-      if not(aifMode              in CurrentItem.Flags) then CurrentItem.FMode             := PreviusItem.FMode;
-      if not(aifUserID            in CurrentItem.Flags) then CurrentItem.FUserID           := PreviusItem.FUserID;
-      if not(aifUserName          in CurrentItem.Flags) then CurrentItem.FUserName         := PreviusItem.FUserName;
-      if not(aifGroupID           in CurrentItem.Flags) then CurrentItem.FGroupID          := PreviusItem.FGroupID;
-      if not(aifGroupName         in CurrentItem.Flags) then CurrentItem.FGroupName        := PreviusItem.FGroupName;
       if not(aifComment           in CurrentItem.Flags) then CurrentItem.FComment          := PreviusItem.FComment;
       /// Data descryptor property ///
       if not(adfCompressedSize    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
@@ -900,6 +836,8 @@ begin
       actMain: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
     end;
+    DoClear;
+
     if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
     if not FSwapWriter   .IsValid then DoFailure(cmStrmWriteError);
 
@@ -922,6 +860,8 @@ begin
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
     end;
+    DoClear;
+
     if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
     if not Stream        .IsValid then DoFailure(cmStrmWriteError);
 
@@ -946,6 +886,8 @@ begin
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
     end;
+    DoClear;
+
     if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
     if not Stream        .IsValid then DoFailure(cmStrmWriteError);
 
@@ -994,7 +936,7 @@ var
 begin
   Result := -1;
   for  I := Index downto 0 do
-    if FArchiveItems.Items[Index].SolidCompression then
+    if FArchiveItems.Items[Index].SolidCompression = FALSE then
     begin
       Result := I;
       Break;
@@ -1007,7 +949,7 @@ var
 begin
   Result := -1;
   for  I := Index to FArchiveItems.Count - 1 do
-    if FArchiveItems.Items[Index].SolidCompression then
+    if FArchiveItems.Items[Index].SolidCompression = FALSE then
     begin
       Result := I;
       Break;
@@ -1016,7 +958,6 @@ end;
 
 procedure TArchiveReaderBase.OpenArchive(const aArchiveName: string);
 begin
-  Writeln('TArchiveReaderBase.OpenArchive - START');
   CloseArchive;
   if FileExists(aArchiveName) then
   begin
@@ -1024,12 +965,9 @@ begin
     FArchiveReader.OnRequestImage := FOnRequestImage;
     if Assigned(FArchiveReader) then
     begin
-      Writeln('TArchiveReaderBase.OpenArchive - STEP1');
       ReadCentralDirectory(FArchiveReader);
       if ExitCode < ccError then
       begin
-        Writeln('TArchiveReaderBase.OpenArchive - STEP2');
-
         FArchiveName := aArchiveName;
         if FArchiveItems.Count = 0 then
           DoFailure(Format(cmArcTypeError, [aArchiveName]));
@@ -1039,7 +977,6 @@ begin
       DoFailure(Format(cmOpenArcError, [aArchiveName]));
   end else
     FArchiveName := aArchiveName;
-  Writeln('TArchiveReaderBase.OpenArchive - END');
 end;
 
 procedure TArchiveReaderBase.CloseArchive;
@@ -1053,13 +990,18 @@ begin
   FArchiveName   := '';
   FSwapName      := '';
   FSuspended     := FALSE;
-  ExitCode       := ccSuccesful;
   FArchiveItems.Clear;
 end;
 
 function TArchiveReaderBase.Find(const aFileName: string): longint;
 begin
   Result := FArchiveItems.Find(aFileName);
+end;
+
+procedure TArchiveReaderBase.DoClear;
+begin
+  if Assigned(FOnClearProgress) then
+    FOnClearProgress;
 end;
 
 function TArchiveReaderBase.DoProgress(Value: longint): boolean;
@@ -1081,7 +1023,7 @@ procedure TArchiveReaderBase.DoFailure(const ErrorMessage: string);
 begin
   SetExitCode(ccError);
   if Assigned(FOnFailure) then
-    FOnFailure(ErrorMessage, ccError);
+    FOnFailure(ErrorMessage);
 end;
 
 procedure TArchiveReaderBase.DoRequestImage(ImageNumber: longint;
@@ -1201,26 +1143,12 @@ begin
       CurrentItem := FArchiveItems.Items[I];
       /// Item property ///
       Include(CurrentItem.FFlags, aifUncompressedSize);
-      Include(CurrentItem.FFlags, aifCreationTime);
       Include(CurrentItem.FFlags, aifLastModifiedTime);
-      Include(CurrentItem.FFlags, aifLastAccessTime);
       Include(CurrentItem.FFlags, aifAttributes);
-      Include(CurrentItem.FFlags, aifMode);
-      Include(CurrentItem.FFlags, aifUserID);
-      Include(CurrentItem.FFlags, aifUserName);
-      Include(CurrentItem.FFlags, aifGroupID);
-      Include(CurrentItem.FFlags, aifGroupName);
       Include(CurrentItem.FFlags, aifComment);
       if CurrentItem.FUncompressedSize = PreviusItem.FUncompressedSize then Exclude(CurrentItem.FFlags, aifUncompressedSize);
-      if CurrentItem.FCreationTime     = PreviusItem.FCreationTime     then Exclude(CurrentItem.FFlags, aifCreationTime);
       if CurrentItem.FLastModifiedTime = PreviusItem.FLastModifiedTime then Exclude(CurrentItem.FFlags, aifLastModifiedTime);
-      if CurrentItem.FLastAccessTime   = PreviusItem.FLastAccessTime   then Exclude(CurrentItem.FFlags, aifLastAccessTime);
       if CurrentItem.FAttributes       = PreviusItem.FAttributes       then Exclude(CurrentItem.FFlags, aifAttributes);
-      if CurrentItem.FMode             = PreviusItem.FMode             then Exclude(CurrentItem.FFlags, aifMode);
-      if CurrentItem.FUserID           = PreviusItem.FUserID           then Exclude(CurrentItem.FFlags, aifUserID);
-      if CurrentItem.FUserName         = PreviusItem.FUserName         then Exclude(CurrentItem.FFlags, aifUserName);
-      if CurrentItem.FGroupID          = PreviusItem.FGroupID          then Exclude(CurrentItem.FFlags, aifGroupID);
-      if CurrentItem.FGroupName        = PreviusItem.FGroupName        then Exclude(CurrentItem.FFlags, aifGroupName);
       if CurrentItem.FComment          = PreviusItem.FComment          then Exclude(CurrentItem.FFlags, aifComment);
       /// Data descriptor property ///
       Include(CurrentItem.FDataDescriptorFlags, adfCompressedSize);
@@ -1256,7 +1184,7 @@ var
   Smaller, I: longint;
   Decoder: THeaderDecoder;
 begin
-  if (FExitCode < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
+  if (ArchiveExitCode < ccError) and (FHeaders.GetNext(0, foPassword) > -1) then
   begin
     // select smaller size item ...
     Smaller := 0;
@@ -1283,7 +1211,7 @@ begin
 
     Decoder.Destroy;
   end;
-  Result := FExitCode;
+  Result := ArchiveExitCode;
 end; *)
 
 function TArchiveWriterBase.OpenSwap: longint;
@@ -1342,8 +1270,6 @@ end;
 
 procedure TArchiveWriterBase.CloseArchive;
 begin
-  Writeln('TArchiveWriterBase.CloseArchive - START');
-
   if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
   if Assigned(FSwapWriter)    then FreeAndNil(FSwapWriter);
   if Assigned(FSwapReader)    then FreeAndNil(FSwapReader);
@@ -1351,7 +1277,7 @@ begin
 
   if FIsNeededToSave then
   begin
-    Writeln('TArchiveWriterBase.CloseArchive - SAVE');
+
     if ExitCode < ccError then
     begin
       SysUtils.DeleteFile(FSwapName);
@@ -1368,7 +1294,6 @@ begin
   FIsNeededToSave := FALSE;
   FTempName       := '';
   inherited CloseArchive;
-  Writeln('TArchiveWriterBase.CloseArchive - END');
 end;
 
 procedure TArchiveWriterBase.InitEncoder(Item: TArchiveItem);
@@ -1398,6 +1323,7 @@ begin
     Item.FDiskSeek   := FTempWriter.Position;
     Item.FDiskNumber := FTempWriter.CurrentImage;
     FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
+    DoClear;
 
     if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
     if not FTempWriter   .IsValid then DoFailure(cmStrmWriteError);
@@ -1420,6 +1346,7 @@ begin
       actMain: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC32);
       else     FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC32);
     end;
+    DoClear;
     Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
 
     if not FSwapReader.IsValid then DoFailure(cmStrmReadError);
@@ -1433,7 +1360,6 @@ var
   ABSPosition: int64;
   Stream: TFileReader;
 begin
-  Writeln('EncodeFromFile - START');
   Stream := TFileReader.Create(Item.FExternalFileName);
   if Stream <> nil then
   begin
@@ -1446,6 +1372,7 @@ begin
       actMain: FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
       else     FEncoder.Copy  (Stream, Item.FUncompressedSize, Item.FCRC32);
     end;
+    DoClear;
     Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
 
     if not Stream     .IsValid then DoFailure(cmStrmReadError);
@@ -1454,7 +1381,6 @@ begin
     Stream.Destroy;
   end else
     DoFailure(Format(cmOpenFileError, [Item.FExternalFileName]));
-  Writeln('EncodeFromFile - END');
 end;
 
 procedure TArchiveWriterBase.SetWorkDirectory(const Value: string);
@@ -1576,9 +1502,9 @@ begin
   end;
 
   // STEP2: calculate bytes to process ...
-  for J := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FArchiveItems.Count - 1 do
   begin
-    Item := FArchiveItems.Items[J];
+    Item := FArchiveItems.Items[I];
     case Item.FTag of
     //aitNone:   nothing to do
       aitUpdate: Inc(FTotalSize, Item.UncompressedSize);
@@ -1616,7 +1542,6 @@ begin
             aitDecode:          DecodeToNil (Item);
             aitDecodeAndUpdate: DecodeToFile(Item);
           end;
-
         end;
       end;
     FDecoder.Destroy;
@@ -1630,10 +1555,6 @@ var
   Item: TArchiveItem;
 begin
   CheckSequences;
-
-   Writeln('AAA');
-  Readln;
-
   FDecoder := THeaderDecoder.Create(FArchiveReader);
   FDecoder.OnProgress := @DoProgress;
   for I := 0 to FArchiveItems.Count - 1 do
@@ -1644,6 +1565,7 @@ begin
       InitDecoder(Item);
       if Item.FTag in [aitUpdate, aitDecode] then
       begin
+        Item.FExternalFileName := Item.FileName;
         case Item.FTag of
           aitUpdate:          DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
           aitDecode:          DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
@@ -1655,7 +1577,6 @@ begin
           aitDecode:          DecodeToNil(Item);
           aitDecodeAndUpdate: DecodeToNil(Item);
         end;
-
       end;
     end;
   FDecoder.Destroy;
@@ -1771,7 +1692,6 @@ begin
   DoMessage(Format(cmScanning, ['...']));
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
-
     begin
       Item := FArchiveItems.Items[I];
       if Item.FTag in [aitUpdate] then
@@ -1969,7 +1889,6 @@ var
   CurrentFileExt: string;
   PreviousFileExt: string;
 begin
-  Writeln('ConfigureCoder - START');
   FConfiguration := TConfiguration.Create;
   if FileExists(FConfigurationName) then
     FConfiguration.LoadFromFile(FConfigurationName)
@@ -2026,7 +1945,6 @@ begin
     end;
   end;
   FreeAndNil(FConfiguration);
-  Writeln('ConfigureCoder - END');
 end;
 
 function CompareCustomSearchRecExt(Item1, Item2: pointer): longint;
@@ -2046,7 +1964,6 @@ var
   Csr: TCustomSearchRec;
   UpdateAs: string;
 begin
-  Writeln('CheckTags - START');
   FSearchRecs.Sort(@CompareCustomSearchRecExt);
   for J := 0 to FSearchRecs.Count - 1 do
     if ExitCode < ccError then
@@ -2080,7 +1997,6 @@ begin
     end;
 
   if (ExitCode < ccError) and FIsNeededToSave then CheckSequences;
-  Writeln('CheckTags - END');
 end;
 
 procedure TArchiveUpdater.CheckSequences;
@@ -2088,7 +2004,6 @@ var
   Item: TArchiveItem;
   I, J, BackTear, NextTear: longint;
 begin
-  Writeln('CheckSequences - START');
   // STEP1: ConfigureCoder new items ...
   ConfigureCoder;
   // STEP2: find sequences and tag ...
@@ -2131,7 +2046,6 @@ begin
       aitDecodeAndUpdate: Inc(FTotalSize, Item.UncompressedSize + Item.FExternalFileSize);
     end;
   end;
-  Writeln('CheckSequences - END');
 end;
 
 procedure TArchiveUpdater.UpdateTagged;
@@ -2139,9 +2053,7 @@ var
   I: longint;
   Item: TArchiveItem;
 begin
-  Writeln('UpdateTagged - START');
   CheckTags;
-
   if (ExitCode < ccError) and  FIsNeededToSave then
   begin
     FTempName   := GenerateFileName(FWorkDirectory);
@@ -2174,7 +2086,7 @@ begin
               aitDecode:          EncodeFromSwap   (Item);
               aitDecodeAndUpdate: EncodeFromFile   (Item);
             end;
-            Writeln('UpdateTagged - STEP4');
+
           end;
         FEncoder.Destroy;
         if (ExitCode < ccError) then
