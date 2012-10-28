@@ -248,13 +248,13 @@ begin
          Write('Replace "', Item.FileName ,'" with "', SearchRec.Name, '"?');
          Readln(ch);
          DoClear;
-         case Upcase(ch) of
-           'Y':
-           'N':
-           'A';
-           'Q':
-           else ;
-         end
+        // case Upcase(ch) of
+        //   'Y':
+        //   'N':
+        //   'A':
+        //   'Q':
+        //   else ;
+        // end
 
        until Upcase(ch) in [];
 
