@@ -234,7 +234,7 @@ type
     procedure DecodeToNil (Item: TArchiveItem);
     procedure DecodeToFile(Item: TArchiveItem);
     procedure UnPackCentralDirectory;
-    function ReadCentralDirectory(aStream: TFileReader): boolean;
+    procedure ReadCentralDirectory(aStream: TFileReader);
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
@@ -415,40 +415,6 @@ implementation
 uses
   Bee_Assembler;
 
-procedure TArchiveLocator.Write(Stream: TFileWriter);
-begin
-  Stream.WriteInfWord(longword(FFlags));
-  if (alfDisksNumber in FFlags) then
-    Stream.WriteInfWord(FDisksNumber);
-
-  if (alfDiskNumber  in FFlags) then
-    Stream.WriteInfWord(FDiskNumber);
-
-  Stream.WriteInfWord(FDiskSeek);
-end;
-
-// TArchiveBinding class
-
-constructor TArchiveBinding.Create;
-begin
-  inherited Create;
-  FFlags   := [];
-  FComment := '';
-end;
-
-procedure TArchiveBinding.Read(Stream: TFileReader);
-begin
-
-end;
-
-procedure TArchiveBinding.Write(Stream: TFileWriter);
-begin
-  Stream.WriteInfWord(longword(FFlags));
-
-  if (abfComment in FFlags) then
-    Stream.WriteInfString(FComment);
-end;
-
 // TArchiveItem class
 
 constructor TArchiveItem.Create;
@@ -456,12 +422,18 @@ begin
   inherited Create;
   /// Item property ///
   FFileName            := '';
-  FFlags               :=
-    [ aifUncompressedSize,
+  FFlags               := [
+    aifUncompressedSize,
+    aifCreationTime,
     aifLastModifiedTime,
+    aifLastAccessTime,
     aifAttributes,
     aifMode,
-    aifComment ];
+    aifUserID,
+    aifUserName,
+    aifGroupID,
+    aifGroupName,
+    aifComment];
 
   FUncompressedSize    :=  0;
   FCreationTime        :=  0;
@@ -475,13 +447,24 @@ begin
   FGroupName           := '';
   FComment             := '';
   /// Data descriptor property ///
-  FDataDescriptorFlags := [];
+  FDataDescriptorFlags := [
+    adfCompressedSize,
+    adfDiskNumber,
+    adfDiskSeek,
+    adfCRC32];
+
   FCompressedSize      :=  0;
   FDiskNumber          :=  0;
   FDiskSeek            :=  0;
   FCRC32               :=  0;
   /// Compression property ///
-  FCompressionFlags    := [];
+  FCompressionFlags    := [
+    acfCompressionMethod,
+    acfCompressionLevel,
+    acfDictionaryLevel,
+    acfSolidCompression,
+    acfCompressionTable];
+
   FCompressionMethod   := actNone;
   FCompressionLevel    := moStore;
   FDictionaryLevel     := do2MB;
@@ -804,45 +787,47 @@ procedure TArchiveReaderBase.ReadCentralDirectory(aStream: TFileReader);
 var
   Marker: longword;
   LocatorDisksNumber: longword;
-  LocatorDiskNumber: longword
-  LocatorDiskSeek: longword
+  LocatorDiskNumber: longword;
+  LocatorDiskSeek: longword;
   LocatorFlags: TArchiveLocatorFlags;
   BindingFlags: TArchiveBindingFlags;
 begin
   // Read MagikSeek
-  Writeln(FArchiveReader.Seek(-SizeOf(longword), soFromEnd));
-  Writeln(FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd));
+  FArchiveReader.Seek(-SizeOf(longword), soFromEnd);
+  FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd);
   // Read Locator Marker
   if aStream.ReadInfWord = aitLocator then
     if aStream.ReadInfWord <= beexVersionNeededToRead then
     begin
-      LocatorFlags := TArchiveLocatorFlags(longword(Stream.ReadInfWord));
-      if (alfDisksNumber in LocatorFlags) then LocatorDisksNumber := Stream.ReadInfWord else LocatorDisksNumber := 1;
-      if (alfDiskNumber  in LocatorFlags) then LocatorDiskNumber  := Stream.ReadInfWord else LocatorDiskNumber  := 1;
-      LocatorDiskSeek := Stream.ReadInfWord;
+      LocatorFlags := TArchiveLocatorFlags(longword(aStream.ReadInfWord));
+      if (alfDisksNumber in LocatorFlags) then LocatorDisksNumber := aStream.ReadInfWord else LocatorDisksNumber := 1;
+      if (alfDiskNumber  in LocatorFlags) then LocatorDiskNumber  := aStream.ReadInfWord else LocatorDiskNumber  := 1;
+      LocatorDiskSeek := aStream.ReadInfWord;
       // Seek on CentralDirectory
       aStream.ImagesNumber := LocatorDisksNumber;
       aStream.SeekImage(LocatorDiskNumber, LocatorDiskSeek);
-      if aStream.ReadDWord = beexMARKER then
+      if aStream.ReadDWord = beexArchiveMarker then
       begin
         while ExitCode < ccError do
         begin
           Marker := aStream.ReadInfWord;
           case Marker of
-            aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
+            aitItem: FArchiveItems.Add(TArchiveItem.Read(aStream));
             aitBinding: begin
-              BindingFlags := TArchiveBindingFlags(longword(Stream.ReadInfWord));
-              if (abfComment in FFlags) then FArchiveComment := Stream.ReadInfString else FArchiveComment := '';
+              BindingFlags := TArchiveBindingFlags(longword(aStream.ReadInfWord));
+              if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString else FArchiveComment := '';
             end;
             aitLocator: Break;
+            aitEnd: Break;
             else DoFailure(cmArcTypeError);
           end;
         end;
-      end;
-      if Result then UnPackCentralDirectory;
+      end else
+        DoFailure(cmArcTypeError);
+
+      if ExitCode < ccError then UnPackCentralDirectory;
     end else
-      DoFailure();
-  Readln;
+      DoFailure(cmArcTypeError);
 end;
 
 procedure TArchiveReaderBase.UnPackCentralDirectory;
@@ -1040,7 +1025,8 @@ begin
     if Assigned(FArchiveReader) then
     begin
       Writeln('TArchiveReaderBase.OpenArchive - STEP1');
-      if ReadCentralDirectory(FArchiveReader) then
+      ReadCentralDirectory(FArchiveReader);
+      if ExitCode < ccError then
       begin
         Writeln('TArchiveReaderBase.OpenArchive - STEP2');
 
@@ -1151,48 +1137,54 @@ end;
 procedure TArchiveWriterBase.WriteCentralDirectory(aStream: TFileWriter);
 var
   I: longword;
-  Locator: TArchiveLocator;
-  Binding: TArchiveBinding;
+  BindingFlags: TArchiveBindingFlags;
+  LocatorFlags: TArchiveLocatorFlags;
+  LocatorDisksNumber: longword;
+  LocatorDiskNumber: longword;
+  LocatorDiskSeek: int64;
   MagikSeek: int64;
 begin
-  Locator := TArchiveLocator.Create;
-  Locator.FDiskNumber := aStream.CurrentImage;
-  if Locator.FDiskNumber <> 1 then
-    Include(Locator.FFlags,  alfDiskNumber);
-  Locator.FDiskSeek := aStream.Position;
-  Writeln('Locator.FDiskNumber = ', Locator.FDiskNumber);
-  Writeln('Locator.FDiskSeek   = ', Locator.FDiskSeek);
+  LocatorFlags      := [];
+  LocatorDiskSeek   := aStream.Position;
+  LocatorDiskNumber := aStream.CurrentImage;
+  if LocatorDiskNumber <> 1 then
+    Include(LocatorFlags,  alfDiskNumber);
 
   PackCentralDirectory;
-  aStream.WriteDWord(beexMARKER);
+  aStream.WriteDWord(beexArchiveMarker);
   for I := 0 to FArchiveItems.Count - 1 do
   begin
     aStream.WriteInfWord(aitItem);
     FArchiveItems.Items[I].Write(aStream);
   end;
+
+  BindingFlags := [];
+  if Length(FArchiveComment) > 0 then
+    Include(BindingFlags,  abfComment);
+
   aStream.WriteInfWord(aitBinding);
-  Binding := TArchiveBinding.Create;
-  Binding.FComment := FArchiveComment;
-  Binding.Write(aStream);
-  Binding.Destroy;
+  aStream.WriteInfWord(longword(BindingFlags));
+  if (abfComment in BindingFlags) then
+    aStream.WriteInfString(FArchiveComment);
+  aStream.WriteInfWord(aitEnd);
 
-  if aStream.Threshold > 0 then aStream.CreateImage;
-
-  Locator.FDisksNumber := aStream.CurrentImage;
-  if Locator.FDisksNumber <> 1 then
-    Include(Locator.FFlags,  alfDisksNumber);
-  Writeln('Locator.FDisksNumber = ', Locator.FDisksNumber);
+  if aStream.Threshold > 0 then
+    aStream.CreateImage;
 
   MagikSeek := aStream.Position;
-  Writeln('Locator.aitLocator = ', MagikSeek);
+  LocatorDisksNumber := aStream.CurrentImage;
+  if LocatorDisksNumber <> 1 then
+    Include(LocatorFlags,  alfDisksNumber);
+
   aStream.WriteInfWord(aitLocator);
-  aStream.WriteInfWord(beexVERSION);
-  Writeln('Locator.Data = ', aStream.Position);
-  Locator.Write(aStream);
-  Writeln('MagikSeek = ', aStream.Position);
-  MagikSeek := aStream.Position - MagikSeek + SizeOf(longword);
-  aStream.WriteDWord(longword(MagikSeek));
-  Locator.Destroy;
+  aStream.WriteInfWord(beexVersionneededToRead);
+  aStream.WriteInfWord(longword(LocatorFlags));
+  if (alfDisksNumber in LocatorFlags) then aStream.WriteInfWord(LocatorDisksNumber);
+  if (alfDiskNumber  in LocatorFlags) then aStream.WriteInfWord(LocatorDiskNumber);
+  aStream.WriteInfWord(LocatorDiskSeek);
+  aStream.WriteInfWord(aitEnd);
+
+  aStream.WriteDWord(longword(aStream.Position - MagikSeek + SizeOf(longword)));
 end;
 
 procedure TArchiveWriterBase.PackCentralDirectory;
@@ -1307,7 +1299,7 @@ begin
 
     if Assigned(FSwapWriter) then
     begin
-      FSwapWriter.WriteDWord(beexMARKER);
+      FSwapWriter.WriteDWord(beexArchiveMarker);
 
       FDecoder := THeaderDecoder.Create(FArchiveReader);
       FDecoder.OnProgress := @DoProgress;
@@ -1454,7 +1446,7 @@ begin
       actMain: FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
       else     FEncoder.Copy  (Stream, Item.FUncompressedSize, Item.FCRC32);
     end;
-    Item.FCompressedSize   := FTempWriter.ABSPosition - ABSPosition;
+    Item.FCompressedSize := FTempWriter.ABSPosition - ABSPosition;
 
     if not Stream     .IsValid then DoFailure(cmStrmReadError);
     if not FTempWriter.IsValid then DoFailure(cmStrmWriteError);
@@ -1638,6 +1630,10 @@ var
   Item: TArchiveItem;
 begin
   CheckSequences;
+
+   Writeln('AAA');
+  Readln;
+
   FDecoder := THeaderDecoder.Create(FArchiveReader);
   FDecoder.OnProgress := @DoProgress;
   for I := 0 to FArchiveItems.Count - 1 do
@@ -1725,7 +1721,7 @@ begin
     if Assigned(FTempWriter) then
     begin
       FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
-      FTempWriter.WriteDWord(beexMARKER);
+      FTempWriter.WriteDWord(beexArchiveMarker);
 
       Encoder := THeaderEncoder.Create(FTempWriter);
       Encoder.OnProgress := @DoProgress;
@@ -1852,7 +1848,7 @@ begin
     if Assigned(FTempWriter) then
     begin
       FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
-      FTempWriter.WriteDWord(beexMARKER);
+      FTempWriter.WriteDWord(beexArchiveMarker);
 
       if OpenSwap < ccError  then
       begin
@@ -2153,7 +2149,7 @@ begin
     if Assigned(FTempWriter) then
     begin
       FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
-      FTempWriter.WriteDWord(beexMARKER);
+      FTempWriter.WriteDWord(beexArchiveMarker);
       if OpenSwap < ccError  then
       begin
         FEncoder := THeaderEncoder.Create(FTempWriter);

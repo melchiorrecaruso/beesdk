@@ -186,18 +186,18 @@ begin
     Result := 0;
     repeat
       S := FCapacity - FBufferSize;
-      CopyBytes(Bytes[Result], FBuffer[FBufferSize], S);
+      Move(Bytes[Result], FBuffer[FBufferSize], S);
       Inc(Result, S);
       Inc(FBufferSize, S);
       FlushBuffer;
     until ((Count - Result) <= FCapacity);
 
-    CopyBytes(Bytes[Result], FBuffer[FBufferSize], Count - Result);
+    Move(Bytes[Result], FBuffer[FBufferSize], Count - Result);
     Inc(FBufferSize, Count - Result);
     Inc(Result, Count - Result);
   end else
   begin
-    CopyBytes(Data, FBuffer[FBufferSize], Count);
+    Move(Data, FBuffer[FBufferSize], Count);
     Inc(FBufferSize, Count);
     Result := Count;
   end;
