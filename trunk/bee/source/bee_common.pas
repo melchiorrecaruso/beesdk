@@ -38,10 +38,9 @@ interface
 
 uses
   Classes,
-  SysUtils,
   {$IFNDEF FPC} Math, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF} Bee_Types;
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF} SysUtils;
 
 function SelfName: string;
 function SelfPath: string;

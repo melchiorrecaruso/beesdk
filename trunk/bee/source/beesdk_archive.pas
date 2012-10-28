@@ -173,7 +173,7 @@ type
 
   TArchiveMessageEvent = procedure(const Message: string) of object;
 
-  TArchiveConfirm = (arcOk, arcCancel, arcAbort);
+  TArchiveConfirm = (arcOk, arcCancel, arcQuit);
 
   TArchiveRenameEvent = procedure(Item: TArchiveItem;
     var RenameAs: string; var Confirm: TArchiveConfirm) of object;
@@ -189,7 +189,7 @@ type
 
   // a class for each command
 
-  TArchiveReaderBase = class(TObject)
+  TArchiveReader = class(TObject)
   private
     FDecoder: THeaderDecoder;
     FTotalSize: int64;
@@ -251,7 +251,7 @@ type
       read FOnRequestImage write FOnRequestImage;
   end;
 
-  TArchiveReader = class(TArchiveReaderBase)
+  TCustomArchiveReader = class(TArchiveReader)
   public
     procedure Tag(Index: longint);
     procedure UnTag(Index: longint);
@@ -260,7 +260,7 @@ type
     function IsTagged(Index: longint): boolean;
   end;
 
-  TArchiveWriterBase = class(TArchiveReaderBase)
+  TArchiveWriter = class(TArchiveReader)
   private
     FEncoder: THeaderEncoder;
     FIsNeededToSave: boolean;
@@ -289,7 +289,7 @@ type
       read FOnRequestBlankDisk write FOnRequestBlankDisk;
   end;
 
-  TArchiveWriter = class(TArchiveWriterBase)
+  TCustomArchiveWriter = class(TArchiveWriter)
   public
     procedure TagAll;
     procedure UnTagAll;
@@ -297,7 +297,7 @@ type
     procedure UnTag(Index: longint);
   end;
 
-  TArchiveExtractor = class(TArchiveReader)
+  TArchiveExtractor = class(TCustomArchiveReader)
   private
     FIsNeededToExtract: boolean;
     FOnExtract: TArchiveExtractEvent;
@@ -314,7 +314,7 @@ type
       read FOnExtract write FOnExtract;
   end;
 
-  TArchiveRenamer = class(TArchiveWriter)
+  TArchiveRenamer = class(TCustomArchiveWriter)
   private
     FOnRename: TArchiveRenameEvent;
     procedure CheckTags;
@@ -326,7 +326,7 @@ type
     property OnRenameEvent: TArchiveRenameEvent read FOnRename write FOnRename;
   end;
 
-  TArchiveEraser = class(TArchiveWriter)
+  TArchiveEraser = class(TCustomArchiveWriter)
   private
     FOnErase: TArchiveEraseEvent;
     procedure CheckTags;
@@ -338,7 +338,7 @@ type
     property OnEraseEvent: TArchiveEraseEvent read FOnErase write FOnErase;
   end;
 
-  TArchiveUpdater = class(TArchiveWriterBase)
+  TArchiveUpdater = class(TArchiveWriter)
   private
     FSearchRecs: TList;
     FDefaultFlags: TArchiveItemFlags;
@@ -683,9 +683,9 @@ begin
   Result := TArchiveItem(FItems[Index]);
 end;
 
-// TArchiveReaderBase class
+// TArchiveReader class
 
-constructor TArchiveReaderBase.Create;
+constructor TArchiveReader.Create;
 begin
   inherited Create;
   Randomize;
@@ -693,40 +693,40 @@ begin
   ExitCode := ccSuccesful;
 end;
 
-destructor TArchiveReaderBase.Destroy;
+destructor TArchiveReader.Destroy;
 begin
   FArchiveItems.Destroy;
   inherited Destroy;
 end;
 
-procedure TArchiveReaderBase.Terminate;
+procedure TArchiveReader.Terminate;
 begin
   SetExitCode(ccUserAbort);
   FSuspended := False;
 end;
 
-function TArchiveReaderBase.GetCount: longint;
+function TArchiveReader.GetCount: longint;
 begin
   Result := FArchiveItems.Count;
 end;
 
-function TArchiveReaderBase.GetItem(Index: longint): TArchiveItem;
+function TArchiveReader.GetItem(Index: longint): TArchiveItem;
 begin
   Result := FArchiveItems.Items[Index];
 end;
 
-procedure TArchiveReaderBase.SetExitCode(Value: longint);
+procedure TArchiveReader.SetExitCode(Value: longint);
 begin
   if ExitCode < Value then
     ExitCode := Value;
 end;
 
-procedure TArchiveReaderBase.SetArchiveName(const Value: string);
+procedure TArchiveReader.SetArchiveName(const Value: string);
 begin
   OpenArchive(Value);
 end;
 
-procedure TArchiveReaderBase.ReadCentralDirectory(aStream: TFileReader);
+procedure TArchiveReader.ReadCentralDirectory(aStream: TFileReader);
 var
   Marker: longword;
   LocatorDisksNumber: longword;
@@ -773,7 +773,7 @@ begin
       DoFailure(cmArcTypeError);
 end;
 
-procedure TArchiveReaderBase.UnPackCentralDirectory;
+procedure TArchiveReader.UnPackCentralDirectory;
 var
   I: longint;
   CurrentItem: TArchiveItem;
@@ -808,7 +808,7 @@ begin
   end;
 end;
 
-procedure TArchiveReaderBase.InitDecoder(Item: TArchiveItem);
+procedure TArchiveReader.InitDecoder(Item: TArchiveItem);
 begin
   if Item.CompressionMethod = actMain then
   begin
@@ -822,7 +822,7 @@ begin
   end;
 end;
 
-procedure TArchiveReaderBase.DecodeToSwap(Item: TArchiveItem);
+procedure TArchiveReader.DecodeToSwap(Item: TArchiveItem);
 var
   CRC: longword;
 begin
@@ -847,7 +847,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-procedure TArchiveReaderBase.DecodeToNil(Item: TArchiveItem);
+procedure TArchiveReader.DecodeToNil(Item: TArchiveItem);
 var
   CRC: longword;
   Stream: TFileWriter;
@@ -873,7 +873,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-procedure TArchiveReaderBase.DecodeToFile(Item: TArchiveItem);
+procedure TArchiveReader.DecodeToFile(Item: TArchiveItem);
 var
   CRC: longword;
   Stream: TFileWriter;
@@ -904,7 +904,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-function TArchiveReaderBase.GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
+function TArchiveReader.GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
 var
   I: longint;
 begin
@@ -917,7 +917,7 @@ begin
     end;
 end;
 
-function TArchiveReaderBase.GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
+function TArchiveReader.GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
 var
   I: longint;
 begin
@@ -930,7 +930,7 @@ begin
     end;
 end;
 
-function TArchiveReaderBase.GetBackTear(Index: longint): longint;
+function TArchiveReader.GetBackTear(Index: longint): longint;
 var
   I: longint;
 begin
@@ -943,7 +943,7 @@ begin
     end;
 end;
 
-function TArchiveReaderBase.GetNextTear(Index: longint): longint;
+function TArchiveReader.GetNextTear(Index: longint): longint;
 var
   I: longint;
 begin
@@ -956,7 +956,7 @@ begin
     end;
 end;
 
-procedure TArchiveReaderBase.OpenArchive(const aArchiveName: string);
+procedure TArchiveReader.OpenArchive(const aArchiveName: string);
 begin
   CloseArchive;
   if FileExists(aArchiveName) then
@@ -979,7 +979,7 @@ begin
     FArchiveName := aArchiveName;
 end;
 
-procedure TArchiveReaderBase.CloseArchive;
+procedure TArchiveReader.CloseArchive;
 begin
   if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
   if Assigned(FSwapReader)    then FreeAndNil(FSwapReader);
@@ -993,18 +993,18 @@ begin
   FArchiveItems.Clear;
 end;
 
-function TArchiveReaderBase.Find(const aFileName: string): longint;
+function TArchiveReader.Find(const aFileName: string): longint;
 begin
   Result := FArchiveItems.Find(aFileName);
 end;
 
-procedure TArchiveReaderBase.DoClear;
+procedure TArchiveReader.DoClear;
 begin
   if Assigned(FOnClearProgress) then
     FOnClearProgress;
 end;
 
-function TArchiveReaderBase.DoProgress(Value: longint): boolean;
+function TArchiveReader.DoProgress(Value: longint): boolean;
 begin
   Inc(FProcessedSize, Value);
   if Assigned(FOnProgress) then
@@ -1014,19 +1014,19 @@ begin
   Result := ExitCode < ccError;
 end;
 
-procedure TArchiveReaderBase.DoMessage(const Message: string);
+procedure TArchiveReader.DoMessage(const Message: string);
 begin
   if Assigned(FOnMessage) then FOnMessage(Message);
 end;
 
-procedure TArchiveReaderBase.DoFailure(const ErrorMessage: string);
+procedure TArchiveReader.DoFailure(const ErrorMessage: string);
 begin
   SetExitCode(ccError);
   if Assigned(FOnFailure) then
     FOnFailure(ErrorMessage);
 end;
 
-procedure TArchiveReaderBase.DoRequestImage(ImageNumber: longint;
+procedure TArchiveReader.DoRequestImage(ImageNumber: longint;
   var ImageName: string; var Abort: boolean);
 begin
   Abort := True;
@@ -1034,40 +1034,40 @@ begin
     FOnRequestImage(ImageNumber, ImageName, Abort);
 end;
 
-// TArchiveReader class
+// TCustomArchiveReader class
 
-procedure TArchiveReader.Tag(Index: longint);
+procedure TCustomArchiveReader.Tag(Index: longint);
 begin
   FArchiveItems.Items[Index].FTag := aitUpdate;
 end;
 
-procedure TArchiveReader.UnTag(Index: longint);
+procedure TCustomArchiveReader.UnTag(Index: longint);
 begin
   FArchiveItems.Items[Index].FTag := aitNone;
 end;
 
-procedure TArchiveReader.TagAll;
+procedure TCustomArchiveReader.TagAll;
 var
   I: longint;
 begin
   for I := 0 to FArchiveItems.Count - 1 do Tag(I);
 end;
 
-procedure TArchiveReader.UnTagAll;
+procedure TCustomArchiveReader.UnTagAll;
 var
   I: longint;
 begin
   for I := 0 to FArchiveItems.Count - 1 do UnTag(I);
 end;
 
-function TArchiveReader.IsTagged(Index: longint): boolean;
+function TCustomArchiveReader.IsTagged(Index: longint): boolean;
 begin
   Result := FArchiveItems.Items[Index].FTag = aitUpdate;
 end;
 
-// TArchiveWriterBase class
+// TArchiveWriter class
 
-constructor TArchiveWriterBase.Create;
+constructor TArchiveWriter.Create;
 begin
   inherited Create;
   FIsNeededToSave  := FALSE;
@@ -1076,7 +1076,7 @@ begin
   FWorkDirectory   := '';
 end;
 
-procedure TArchiveWriterBase.WriteCentralDirectory(aStream: TFileWriter);
+procedure TArchiveWriter.WriteCentralDirectory(aStream: TFileWriter);
 var
   I: longword;
   BindingFlags: TArchiveBindingFlags;
@@ -1129,7 +1129,7 @@ begin
   aStream.WriteDWord(longword(aStream.Position - MagikSeek + SizeOf(longword)));
 end;
 
-procedure TArchiveWriterBase.PackCentralDirectory;
+procedure TArchiveWriter.PackCentralDirectory;
 var
   I: longint;
   CurrentItem: TArchiveItem;
@@ -1214,7 +1214,7 @@ begin
   Result := ArchiveExitCode;
 end; *)
 
-function TArchiveWriterBase.OpenSwap: longint;
+function TArchiveWriter.OpenSwap: longint;
 var
   CRC: longword;
   I: longint;
@@ -1268,7 +1268,7 @@ begin
   Result := ExitCode;
 end;
 
-procedure TArchiveWriterBase.CloseArchive;
+procedure TArchiveWriter.CloseArchive;
 begin
   if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
   if Assigned(FSwapWriter)    then FreeAndNil(FSwapWriter);
@@ -1296,7 +1296,7 @@ begin
   inherited CloseArchive;
 end;
 
-procedure TArchiveWriterBase.InitEncoder(Item: TArchiveItem);
+procedure TArchiveWriter.InitEncoder(Item: TArchiveItem);
 begin
   if Item.CompressionMethod = actMain then
   begin
@@ -1310,7 +1310,7 @@ begin
   end;
 end;
 
-procedure TArchiveWriterBase.EncodeFromArchive(Item: TArchiveItem);
+procedure TArchiveWriter.EncodeFromArchive(Item: TArchiveItem);
 var
   ABSPosition: int64;
   NulCRC:longword;
@@ -1331,7 +1331,7 @@ begin
     DoFailure(cmStrmReadError);
 end;
 
-procedure TArchiveWriterBase.EncodeFromSwap(Item: TArchiveItem);
+procedure TArchiveWriter.EncodeFromSwap(Item: TArchiveItem);
 var
   ABSPosition: int64;
 begin
@@ -1355,7 +1355,7 @@ begin
     DoFailure(cmStrmReadError);
 end;
 
-procedure TArchiveWriterBase.EncodeFromFile(Item: TArchiveItem);
+procedure TArchiveWriter.EncodeFromFile(Item: TArchiveItem);
 var
   ABSPosition: int64;
   Stream: TFileReader;
@@ -1383,7 +1383,7 @@ begin
     DoFailure(Format(cmOpenFileError, [Item.FExternalFileName]));
 end;
 
-procedure TArchiveWriterBase.SetWorkDirectory(const Value: string);
+procedure TArchiveWriter.SetWorkDirectory(const Value: string);
 begin
   FWorkDirectory := Value;
   if Length(FWorkDirectory) > 0 then
@@ -1392,28 +1392,28 @@ begin
   end;
 end;
 
-// TArchiveWriter class
+// TCustomArchiveWriter class
 
-procedure TArchiveWriter.TagAll;
+procedure TCustomArchiveWriter.TagAll;
 var
   I: longint;
 begin
   for I := 0 to FArchiveItems.Count - 1 do Tag(I);
 end;
 
-procedure TArchiveWriter.Tag(Index: longint);
+procedure TCustomArchiveWriter.Tag(Index: longint);
 begin
   FArchiveItems.Items[Index].FTag := aitUpdate;
 end;
 
-procedure TArchiveWriter.UnTagAll;
+procedure TCustomArchiveWriter.UnTagAll;
 var
   I: longint;
 begin
   for I := 0 to FArchiveItems.Count - 1 do UnTag(I);
 end;
 
-procedure TArchiveWriter.UnTag(Index: longint);
+procedure TCustomArchiveWriter.UnTag(Index: longint);
 begin
   FArchiveItems.Items[Index].FTag := aitNone;
 end;
@@ -1461,7 +1461,7 @@ begin
             Item.FExternalFileName := ExtractAs;
           end;
           arcCancel: Item.FTag:= aitNone;
-          arcAbort:  DoFailure(cmUserAbort);
+          arcQuit:  DoFailure(cmUserAbort);
         end;
       end;
     end;
@@ -1622,7 +1622,7 @@ begin
             Item.FFileName  := RemaneAs;
           end;
           arcCancel: Item.FTag:= aitNone;
-          arcAbort:  DoFailure(cmUserAbort);
+          arcQuit:  DoFailure(cmUserAbort);
         end;
       end; // if end
     end; // if end
@@ -1700,7 +1700,7 @@ begin
         case Confirm of
           arcOk:     FIsNeededToSave := TRUE;
           arcCancel: Item.FTag := aitNone;
-          arcAbort:  DoFailure(cmUserAbort);
+          arcQuit:  DoFailure(cmUserAbort);
         end;
       end;
     end;
@@ -1998,7 +1998,7 @@ begin
           FIsNeededToSave := TRUE;
         end;
       //arcCancel: nothing to do
-        arcAbort:  DoFailure(cmUserAbort);
+        arcQuit: ExitCode := ccUserAbort;
       end;
     end;
 

@@ -58,7 +58,8 @@ type
     FUpdater: TArchiveUpdater;
     FRenamer: TArchiveRenamer;
     FEraser: TArchiveEraser;
-    FReader: TArchiveReader;
+    FReader: TCustomArchiveReader;
+    function QueryToUser: TArchiveConfirm;
     function CompressionMethodToStr(Item: TArchiveItem): string;
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoRequestBlankDisk(var Abort : Boolean);
@@ -215,17 +216,35 @@ begin
   end;
 end;
 
+function TBeeApp.QueryToUser: TArchiveConfirm;
+var
+  Ch: char;
+begin
+  Result := arcCancel;
+  repeat
+    Readln(Ch);
+    case Upcase(Ch) of
+      'Y': Result := arcOk;
+      'N': Result := arcCancel;
+      'Q': Result := arcQuit;
+      else Write(ParamToOem('Yes, No, or Quit? '));
+    end;
+  until Upcase(Ch) in ['Y', 'N', 'Q'];
+end;
+
 procedure TBeeApp.DoUpdate(SearchRec: TCustomSearchRec;
   var UpdateAs: string; var Confirm: TArchiveConfirm);
 var
-  ch: char;
-  I: longint;
+  I, Index: longint;
   Item: TArchiveItem;
+  AlternativeFileName: string;
 begin
   UpdateAs := FCommandLine.cdOption + SearchRec.Name;
   I := FUpdater.Find(UpdateAs);
   if I <> -1 then
+  begin
     Item := FUpdater.Items[I];
+  end;
 
   Confirm := arcCancel;
   case FCommandLine.uOption of
@@ -235,29 +254,31 @@ begin
     umAddUpdate:     if (I =  -1) or  (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
     umAddReplace:    Confirm := arcOk;
     umAddAutoRename: begin
-      while I <> -1 do
+      if (I <> - 1) then
       begin
-        UpdateAs := UpdateAs;
-        I := FUpdater.Find(UpdateAs);
+        Index := 0;
+        repeat
+          AlternativeFileName := ChangeFileExt(UpdateAs, '.' + IntToStr(Index) + ExtractFileExt(UpdateAs));
+          Inc(Index);
+        until FUpdater.Find(AlternativeFileName) = -1;
+        UpdateAs := AlternativeFileName;
       end;
       Confirm := arcOk;
     end;
     umAddQuery: begin
-
-       repeat
-         Write('Replace "', Item.FileName ,'" with "', SearchRec.Name, '"?');
-         Readln(ch);
-         DoClear;
-        // case Upcase(ch) of
-        //   'Y':
-        //   'N':
-        //   'A':
-        //   'Q':
-        //   else ;
-        // end
-
-       until Upcase(ch) in [];
-
+      if (I <> - 1) then
+      begin
+        Write(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '));
+        Confirm := QueryToUser;
+      end else
+        Confirm := arcOk;
+    end;
+    umQuery: begin
+      if (I <> - 1) then
+        Write(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '))
+      else
+        Write(ParamToOem('Add "' + SearchRec.Name + '"? '));
+      Confirm := QueryToUser;
     end;
   end;
 end;
@@ -506,7 +527,7 @@ var
   TotalPackedSize: int64;
   TotalFiles:longint;
 begin
-  FReader := TArchiveReader.Create;
+  FReader := TCustomArchiveReader.Create;
   FReader.OnRequestImage  := DoRequestImage;
   FReader.OnFailure       := DoMessage;
   FReader.OnMessage       := DoMessage;
