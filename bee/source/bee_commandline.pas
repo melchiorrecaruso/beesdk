@@ -39,6 +39,64 @@ uses
   Bee_Common;
 
 type
+  { Commands:                                             }
+  {   ccNone     Nul command                              }
+  {   ccAdd      Add files                                }
+  {   ccExtract  Extract file                             }
+  {   ceXextract Extract file with full path              }
+  {   ccTest     Test files                               }
+  {   ccDelete   Delete files                             }
+  {   ccRename   Rename files                             }
+  {   ccList     List files                               }
+
+  TCommand = (ccNone, ccAdd, ccExtract, ccXextract, ccTest,
+    ccDelete, ccRename,  ccList);
+
+  { Recursive Mode Option:                                }
+  {  rmNone      No resurse filename                      }
+  {  rmWildcard  Recurse olny filename with wildcard      }
+  {  rmFull      Recurse all filename                     }
+
+  TRecursiveMode = (rmNone, rmWildCard, rmFull);
+
+  { Update Mode Option:                                   }
+  {  umAdd           Add only new files                   }
+  {  umUpdate        Update only existing files           }
+  {  umReplace       Replace only existing files          }
+  {  umQuery         Query always                         }
+  {  umAddUpdate     Add and update existing files        }
+  {  umAddReplace    Add and replace existing files       }
+  {  umAddQuery      Add and query if already exists      }
+  {  umAddAutoRename Add and rename if already exists     }
+
+  TUpdateMode = (umAdd, umUpdate, umReplace, umQuery,
+    umAddUpdate, umAddReplace, umAddQuery, umAddAutoRename);
+
+  { Compression Method Option:                            }
+  {   moStore                                             }
+  {   moFast                                              }
+  {   moNormal                                            }
+  {   moMaximum                                           }
+
+  TmOption = (moStore, moFast, moNormal, moMaximum);
+
+  { Compression Dictionary Level Option:                  }
+  {   do2MB                                               }
+  {   do5MB                                               }
+  {   ..                                                  }
+  {   do1280MB                                            }
+
+  TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
+    do80MB, do160MB, do320MB, do640MB ,do1280MB);
+
+  { Process Priority Option:                              }
+  {   prioIdle                                            }
+  {   prioNormal                                          }
+  {   prioHigh                                            }
+  {   prioRealTime                                        }
+
+  TpriOption = (prioIdle, prioNormal, prioHigh, prioRealTime);
+
   { TCommandLine }
 
   TCommandLine = class
@@ -54,7 +112,6 @@ type
     FfOption: string;
     FsfxOption: string;
     FpOption: string;
-    FhvOption: ThvOption;
     FtOption: boolean;
     FlOption: boolean;
     FslsOption: boolean;
@@ -81,7 +138,6 @@ type
     procedure ProcessdOption(var S: string);
     procedure ProcessfOption(var S: string);
     procedure ProcesssfxOption(var S: string);
-    procedure ProcesshvOption(var S: string);
     procedure ProcessslsOption(var S: string);
     procedure ProcesswdOption(var S: string);
     procedure ProcesscdOption(var S: string);
@@ -106,7 +162,6 @@ type
     property fOption: string read FfOption write SetfOption;
     property sfxOption: string read FsfxOption write SetsfxOption;
     property pOption: string read FpOption write SetpOption;
-    property hvOption: ThvOption read FhvOption write FhvOption;
     property tOption: boolean read FtOption write FtOption;
     property lOption: boolean read FlOption write FlOption;
     property slsOption: boolean read FslsOption write FslsOption;
@@ -147,7 +202,6 @@ begin
   FfOption := '';
   FsfxOption := '';
   FpOption := '';
-  FhvOption := hv04;
   FtOption := False;
   FlOption := False;
   FslsOption := False;
@@ -201,7 +255,7 @@ end;
 procedure TCommandLine.ProcessuOption(var S: string);
 begin
   Delete(S, 1, 2);
-  if (Length(S) = 1) and (S[1] in ['0'..'6']) then
+  if (Length(S) = 1) and (S[1] in ['0'..'7']) then
   begin
     FuOption := TUpdateMode(StrToInt(S[1]));
   end;
@@ -258,19 +312,6 @@ begin
       FsfxOption := ExtractFilePath(ParamStr(0)) + S;
 end;
 
-procedure TCommandLine.ProcesshvOption(var S: string);
-begin
-  Delete(S, 1, 3);
-  if S = '02' then
-    FhvOption := hv02
-  else
-    if S = '03' then
-      FhvOption := hv03
-    else
-      if S = '04' then
-        FhvOption := hv04;
-end;
-
 procedure TCommandLine.ProcessslsOption(var S: string);
 begin
   Delete(S, 1, 4);
@@ -322,14 +363,12 @@ begin
   if Length(S) = 1 then
     case Upcase(S[1]) of
       'A': FCommand := ccAdd;
-      'D': FCommand := ccDelete;
       'E': FCommand := ccExtract;
       'X': FCommand := ccxExtract;
-      'L': FCommand := ccList;
       'T': FCommand := ccTest;
+      'D': FCommand := ccDelete;
       'R': FCommand := ccRename;
-      'O': FCommand := ccOpen;
-      'V': FCommand := ccView;
+      'L': FCommand := ccList;
       else FCommand := ccNone;
     end;
 end;
@@ -375,9 +414,6 @@ begin
       else
       if Pos('-WD', UpperCase(S)) = 1 then
         ProcesswdOption(S)
-      else
-      if Pos('-HV', UpperCase(S)) = 1 then
-        ProcesshvOption(S)
       else
       if Pos('-CD', UpperCase(S)) = 1 then
         ProcesscdOption(S)
@@ -433,13 +469,12 @@ begin
   Params := TStringList.Create;
   case FCommand of
     ccAdd:      Params.Add('A');
-    ccDelete:   Params.Add('D');
     ccExtract:  Params.Add('E');
-    ccList:     Params.Add('L');
-    ccOpen:     Params.Add('O');
-    ccRename:   Params.Add('R');
-    ccTest:     Params.Add('T');
     ccxExtract: Params.Add('X');
+    ccTest:     Params.Add('T');
+    ccDelete:   Params.Add('D');
+     ccRename:  Params.Add('R');
+    ccList:     Params.Add('L');
     else        Params.Add(' ');
   end;
 
@@ -470,12 +505,6 @@ begin
   if Length(FfOption)   > 0 then Params.Add('-f'   + FfOption);
   if Length(FsfxOption) > 0 then Params.Add('-sfx' + FsfxOption);
   if Length(FpOption)   > 0 then Params.Add('-p'   + FpOption);
-
-  case FhvOption of
-    hv02: Params.Add('-hv02');
-    hv03: Params.Add('-hv03');
-    hv04: Params.Add('-hv04');
-  end;
 
   if FtOption   then Params.Add('-t+')   else Params.Add('-t-');
   if FlOption   then Params.Add('-l+')   else Params.Add('-l-');
