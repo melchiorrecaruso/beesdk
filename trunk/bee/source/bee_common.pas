@@ -49,6 +49,8 @@ function GetDriveFreeSpace(const FileName: string): int64;
 
 function FileNameMatch(const FileName,         Mask:  string;      Recursive: TRecursiveMode): boolean; overload;
 function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
+
+
 function FileNameHasWildcards(const FileName: string): boolean;
 function FileNamePos(const FilePath, FileName: string): longint;
 

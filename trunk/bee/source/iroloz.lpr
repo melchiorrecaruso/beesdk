@@ -192,7 +192,7 @@ type
       x1 := xmid + 1;
 
 
-
+       MatchesMask('','');
 
 
 
