@@ -66,7 +66,7 @@ begin
 
 
   Scanner := TFileScanner.Create;
-  Scanner.Scan('test.exe');
+  Scanner.Scan('test.exe'); MatchesMask('','');
 
 
   FArchiveUpdater := TArchiveUpdater.Create;

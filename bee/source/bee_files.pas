@@ -40,7 +40,6 @@ uses
   Math,
   Classes,
   SysUtils,
-  Bee_Types,
   Bee_Common,
   Bee_BufStream;
 

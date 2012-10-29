@@ -13,7 +13,7 @@
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="166"/>
-        <CursorPos X="5" Y="194"/>
+        <CursorPos X="27" Y="195"/>
         <UsageCount Value="39"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -181,4 +181,5 @@
       </Position30>
     </JumpHistory>
   </ProjectSession>
+  <EditorMacros Count="0"/>
 </CONFIG>
