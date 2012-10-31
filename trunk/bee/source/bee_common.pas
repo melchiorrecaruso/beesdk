@@ -38,6 +38,7 @@ interface
 
 uses
   Classes,
+  Masks,
   {$IFNDEF FPC} Math, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF} SysUtils;
