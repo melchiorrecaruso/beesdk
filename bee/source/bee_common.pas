@@ -77,9 +77,7 @@ procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRec
 
 {  }
 
-function RatioToStr(const PackedSize, Size: int64): string;
-function SizeToStr(const Size: int64): string;
-function AttrToStr(Attr: longint): string;
+
 
 { time handling routines }
 
@@ -340,7 +338,7 @@ begin
     for I := 1 to 8 do
       Result[I] := char(byte('A') + Random(byte('Z') - byte('A')));
 
-    if Length(FilePath) > 0 then
+    if FilePath <> '' then
       Result := IncludeTrailingBackSlash(FilePath) + Result;
 
   until FileAge(Result) = -1;
@@ -437,33 +435,7 @@ begin
     if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
 
-function RatioToStr(const PackedSize, Size: int64): string;
-begin
-  if Size > 0 then
-    Result := Format('%u%%', [Round((PackedSize / Size) * 100)])
-  else
-    Result := Format('%u%%', [100]);
-end;
 
-function SizeToStr(const Size: int64): string;
-begin
-  if Size > 0 then
-    Result := Format('%u', [Size])
-  else
-    Result := Format('%u', [0]);
-end;
-
-function AttrToStr(Attr: longint): string;
-begin
-  Result := 'RHSVDAL';
-  if Attr and faReadOnly  = 0 then Result[1] := '.';
-  if Attr and faHidden    = 0 then Result[2] := '.';
-  if Attr and faSysFile   = 0 then Result[3] := '.';
-  if Attr and faVolumeId  = 0 then Result[4] := '.';
-  if Attr and faDirectory = 0 then Result[5] := '.';
-  if Attr and faArchive   = 0 then Result[6] := '.';
-  if Attr and faSymLink   = 0 then Result[7] := '.';
-end;
 
 { time handling routines }
 

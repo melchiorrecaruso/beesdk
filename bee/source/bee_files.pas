@@ -284,16 +284,15 @@ end;
 function TFileReader.Read(var Data; Count: longint): longint;
 var
   Readed: longint;
-  PBuffer: PByte;
+  Bytes: PByte;
 begin
-  Result  := 0;
-  PBuffer := @Data;
+  Result := 0;
+  Bytes := @Data;
   while Assigned(FSource) and (Count > 0) do
   begin
-    Readed := inherited Read(PBuffer^, Count);
-    Inc(Result,  Readed);
-    Inc(PBuffer, Readed);
-    Dec(Count,   Readed);
+    Readed := inherited Read(Bytes[Result], Count);
+    Inc(Result, Readed);
+    Dec(Count,  Readed);
 
     if Count > 0 then
     begin
@@ -479,24 +478,24 @@ end;
 function TFileWriter.Write(const Data; Count: longint): longint;
 var
   Writed: longint;
-  PBuffer: PByte;
+  Bytes: PByte;
 begin
   if FThreshold = 0 then
   begin
     Result := WriteUnspanned(Data, Count);
   end else
   begin
-    Result  := 0;
-    PBuffer := @Data;
+    Result := 0;
+    Bytes := @Data;
     while Assigned(FSource) and (Count > 0) do
     begin
-      Writed := inherited Write(PBuffer^, Min(Count, FThreshold - FCurrentImageSize));
+      Writed := inherited Write(Bytes[Result], Min(Count, FThreshold - FCurrentImageSize));
       Inc(FCurrentImageSize, Writed);
-      Inc(Result,  Writed);
-      Inc(PBuffer, Writed);
-      Dec(Count,   Writed);
+      Inc(Result, Writed);
+      Dec(Count,  Writed);
 
-      if Count > 0 then CreateImage;
+      if Count > 0 then
+        CreateImage;
     end;
   end;
 end;
@@ -504,17 +503,16 @@ end;
 function TFileWriter.WriteUnspanned(const Data; Count: longint): longint;
 var
   Writed: longint;
-  PBuffer: PByte;
+  Bytes: PByte;
 begin
   Result  := 0;
-  PBuffer := @Data;
+  Bytes := @Data;
   while Assigned(FSource) and (Count > 0) do
   begin
-    Writed := inherited Write(PBuffer^, Count);
+    Writed := inherited Write(Bytes[Result], Count);
     Inc(FCurrentImageSize, Writed);
-    Inc(Result,  Writed);
-    Inc(PBuffer, Writed);
-    Dec(Count,   Writed);
+    Inc(Result, Writed);
+    Dec(Count,  Writed);
 
     if Writed = 0 then FreeAndNil(FSource);
   end;
@@ -636,10 +634,10 @@ end;
 
 function TFileScanner.CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
 begin
-  Result := TCustomSearchRec.Create;
-  Result.Name := RecPath + Rec.Name;
-  Result.Size := Rec.Size;
-  Result.Attributes := Rec.Attr;
+  Result                  := TCustomSearchRec.Create;
+  Result.Name             := RecPath + Rec.Name;
+  Result.Size             := Rec.Size;
+  Result.Attributes       := Rec.Attr;
   Result.LastModifiedTime := Rec.Time;
 end;
 

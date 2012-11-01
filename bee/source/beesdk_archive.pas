@@ -45,6 +45,7 @@ type
 
   /// archive item flag
   TArchiveItemFlag = (
+    aifVersionNeededToExtract,
     aifUncompressedSize,
     aifLastModifiedTime,
     aifAttributes,
@@ -90,6 +91,7 @@ type
     // Item property
     FFileName: string;
     FFlags: TArchiveItemFlags;
+    FVersionNeededToExtract: longword;
     FUncompressedSize: int64;
     FLastModifiedTime: longword;
     FAttributes: longword;
@@ -125,6 +127,7 @@ type
     // Item property
     property FileName: string read FFileName;
     property Flags: TArchiveItemFlags read FFlags;
+    property VersionNeededToExtract: longword read FVersionNeededToExtract;
     property UncompressedSize: int64 read FUncompressedSize;
     property LastModifiedTime: longword read FLastModifiedTime;
     property Attributes: longword read FAttributes;
@@ -390,10 +393,66 @@ type
     property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
   end;
 
+function CompressionMethodToStr(Item: TArchiveItem): string;
+function VersionToStr(Item: TArchiveItem): string;
+function RatioToStr(const PackedSize, Size: int64): string;
+function SizeToStr(const Size: int64): string;
+function AttrToStr(Attr: longint): string;
+
 implementation
 
 uses
   Bee_Assembler;
+
+function CompressionMethodToStr(Item: TArchiveItem): string;
+begin
+  Result := 'm0a';
+  if Item.CompressionMethod <> actNone then
+  begin
+     if Item.SolidCompression then
+     begin
+       Result[1] := 's';
+     end;
+     Result[2] := char(byte('0') + Ord(Item.CompressionLevel));
+     Result[3] := char(byte('a') + Ord(Item.DictionaryLevel ));
+  end;
+end;
+
+function VersionToStr(Item: TArchiveItem): string;
+begin
+  Result := '?';
+  case Item.VersionNeededToExtract of
+    0: Result := '0';
+  end;
+end;
+
+function RatioToStr(const PackedSize, Size: int64): string;
+begin
+  if Size > 0 then
+    Result := Format('%u%%', [Round((PackedSize / Size) * 100)])
+  else
+    Result := Format('%u%%', [100]);
+end;
+
+function SizeToStr(const Size: int64): string;
+begin
+  if Size > 0 then
+    Result := Format('%u', [Size])
+  else
+    Result := Format('%u', [0]);
+end;
+
+function AttrToStr(Attr: longint): string;
+begin
+  Result := 'RHSVDAL';
+  if Attr and faReadOnly  = 0 then Result[1] := '.';
+  if Attr and faHidden    = 0 then Result[2] := '.';
+  if Attr and faSysFile   = 0 then Result[3] := '.';
+  if Attr and faVolumeId  = 0 then Result[4] := '.';
+  if Attr and faDirectory = 0 then Result[5] := '.';
+  if Attr and faArchive   = 0 then Result[6] := '.';
+  if Attr and faSymLink   = 0 then Result[7] := '.';
+end;
 
 // TArchiveItem class
 
@@ -403,6 +462,7 @@ begin
   /// Item property ///
   FFileName := '';
   FFlags := [
+    aifVersionNeededToExtract,
     aifUncompressedSize,
     aifLastModifiedTime,
     aifAttributes,
@@ -450,10 +510,11 @@ procedure TArchiveItem.Update(SearchRec: TCustomSearchRec);
 begin
   /// Item property ///
 //FFileName := SearchRec.Name;
-//if (aifUncompressedSize in FFLags) then FUncompressedSize := SearchRec.Size;
-  if (aifLastModifiedTime in FFLags) then FLastModifiedTime := SearchRec.LastModifiedTime;
-  if (aifAttributes       in FFLags) then FAttributes       := SearchRec.Attributes;
-//if (aifComment          in FFLags) then FComment          := UseComment;
+  if (aifVersionNeededToExtract in FFLags) then FVersionNeededToExtract := beexVersionNeededToExtract;
+//if (aifUncompressedSize       in FFLags) then FUncompressedSize       := SearchRec.Size;
+  if (aifLastModifiedTime       in FFLags) then FLastModifiedTime       := SearchRec.LastModifiedTime;
+  if (aifAttributes             in FFLags) then FAttributes             := SearchRec.Attributes;
+//if (aifComment                in FFLags) then FComment                := UseComment;
 
   /// Data descriptor property ///
 //FDataDescriptorFlags := [];
@@ -485,10 +546,11 @@ begin
   /// Item property ///
   FFileName := Stream.ReadInfString;
   FFlags    := TArchiveItemFlags(longword(Stream.ReadInfWord));
-  if (aifUncompressedSize  in FFlags) then FUncompressedSize := Stream.ReadInfWord;
-  if (aifLastModifiedTime  in FFlags) then FLastModifiedTime := Stream.ReadInfWord;
-  if (aifAttributes        in FFlags) then FAttributes       := Stream.ReadInfWord;
-  if (aifComment           in FFlags) then FComment          := Stream.ReadInfString;
+  if (aifVersionNeededToExtract  in FFlags) then FVersionNeededToExtract := Stream.ReadInfWord;
+  if (aifUncompressedSize        in FFlags) then FUncompressedSize       := Stream.ReadInfWord;
+  if (aifLastModifiedTime        in FFlags) then FLastModifiedTime       := Stream.ReadInfWord;
+  if (aifAttributes              in FFlags) then FAttributes             := Stream.ReadInfWord;
+  if (aifComment                 in FFlags) then FComment                := Stream.ReadInfString;
   /// Data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (adfCompressedSize    in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -511,10 +573,11 @@ begin
   /// Item property ///
   Stream.WriteInfString(FFileName);
   Stream.WriteInfWord(longword(FFlags));
-  if (aifUncompressedSize  in FFlags) then Stream.WriteInfWord(FUncompressedSize);
-  if (aifLastModifiedTime  in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
-  if (aifAttributes        in FFlags) then Stream.WriteInfWord(FAttributes);
-  if (aifComment           in FFlags) then Stream.WriteInfString(FComment);
+  if (aifVersionNeededToExtract  in FFlags) then Stream.WriteInfWord(FVersionNeededToExtract);
+  if (aifUncompressedSize        in FFlags) then Stream.WriteInfWord(FUncompressedSize);
+  if (aifLastModifiedTime        in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
+  if (aifAttributes              in FFlags) then Stream.WriteInfWord(FAttributes);
+  if (aifComment                 in FFlags) then Stream.WriteInfString(FComment);
   /// Data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (adfCompressedSize    in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
@@ -786,10 +849,11 @@ begin
     begin
       CurrentItem := FArchiveItems.Items[I];
       /// Item property ///
-      if not(aifUncompressedSize  in CurrentItem.Flags) then CurrentItem.FUncompressedSize := PreviusItem.FUncompressedSize;
-      if not(aifLastModifiedTime  in CurrentItem.Flags) then CurrentItem.FLastModifiedTime := PreviusItem.FLastModifiedTime;
-      if not(aifAttributes        in CurrentItem.Flags) then CurrentItem.FAttributes       := PreviusItem.FAttributes;
-      if not(aifComment           in CurrentItem.Flags) then CurrentItem.FComment          := PreviusItem.FComment;
+      if not(aifVersionNeededToExtract  in CurrentItem.Flags) then CurrentItem.FVersionNeededToExtract := PreviusItem.FVersionNeededToExtract;
+      if not(aifUncompressedSize        in CurrentItem.Flags) then CurrentItem.FUncompressedSize       := PreviusItem.FUncompressedSize;
+      if not(aifLastModifiedTime        in CurrentItem.Flags) then CurrentItem.FLastModifiedTime       := PreviusItem.FLastModifiedTime;
+      if not(aifAttributes              in CurrentItem.Flags) then CurrentItem.FAttributes             := PreviusItem.FAttributes;
+      if not(aifComment                 in CurrentItem.Flags) then CurrentItem.FComment                := PreviusItem.FComment;
       /// Data descryptor property ///
       if not(adfCompressedSize    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
       if not(adfDiskNumber        in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
@@ -1142,14 +1206,16 @@ begin
     begin
       CurrentItem := FArchiveItems.Items[I];
       /// Item property ///
+      Include(CurrentItem.FFlags, aifVersionNeededToExtract);
       Include(CurrentItem.FFlags, aifUncompressedSize);
       Include(CurrentItem.FFlags, aifLastModifiedTime);
       Include(CurrentItem.FFlags, aifAttributes);
       Include(CurrentItem.FFlags, aifComment);
-      if CurrentItem.FUncompressedSize = PreviusItem.FUncompressedSize then Exclude(CurrentItem.FFlags, aifUncompressedSize);
-      if CurrentItem.FLastModifiedTime = PreviusItem.FLastModifiedTime then Exclude(CurrentItem.FFlags, aifLastModifiedTime);
-      if CurrentItem.FAttributes       = PreviusItem.FAttributes       then Exclude(CurrentItem.FFlags, aifAttributes);
-      if CurrentItem.FComment          = PreviusItem.FComment          then Exclude(CurrentItem.FFlags, aifComment);
+      if CurrentItem.FVersionNeededToExtract = PreviusItem.FVersionNeededToExtract then Exclude(CurrentItem.FFlags, aifVersionNeededToExtract);
+      if CurrentItem.FUncompressedSize       = PreviusItem.FUncompressedSize       then Exclude(CurrentItem.FFlags, aifUncompressedSize);
+      if CurrentItem.FLastModifiedTime       = PreviusItem.FLastModifiedTime       then Exclude(CurrentItem.FFlags, aifLastModifiedTime);
+      if CurrentItem.FAttributes             = PreviusItem.FAttributes             then Exclude(CurrentItem.FFlags, aifAttributes);
+      if CurrentItem.FComment                = PreviusItem.FComment                then Exclude(CurrentItem.FFlags, aifComment);
       /// Data descriptor property ///
       Include(CurrentItem.FDataDescriptorFlags, adfCompressedSize);
       Include(CurrentItem.FDataDescriptorFlags, adfDiskNumber);
@@ -1386,7 +1452,7 @@ end;
 procedure TArchiveWriter.SetWorkDirectory(const Value: string);
 begin
   FWorkDirectory := Value;
-  if Length(FWorkDirectory) > 0 then
+  if FWorkDirectory <> '' then
   begin
     FWorkDirectory := IncludeTrailingBackSlash(FWorkDirectory);
   end;

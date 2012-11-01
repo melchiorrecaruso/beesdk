@@ -326,7 +326,7 @@ end;
 procedure TCommandLine.ProcesscdOption(var S: string);
 begin
   Delete(S, 1, 3);
-  if Length(S) > 0 then
+  if S <> '' then
   begin
     FcdOption := IncludeTrailingBackslash(S);
   end;
@@ -531,7 +531,7 @@ end;
 
 procedure TCommandLine.SetpOption(const aValue: string);
 begin
-  if (Length(aValue) = 0) or (Length(aValue) >= MinBlowFishKeyLength) then
+  if (aValue = '') or (Length(aValue) >= MinBlowFishKeyLength) then
   begin
     FpOption := aValue;
   end;
@@ -555,7 +555,7 @@ end;
 
 procedure TCommandLine.SetcdOption(const aValue: string);
 begin
-  if Length(aValue) > 0 then
+  if aValue <> '' then
     FcdOption := IncludeTrailingBackSlash(aValue);
 end;
 
