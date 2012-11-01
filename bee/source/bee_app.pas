@@ -39,7 +39,6 @@ unit Bee_App;
 interface
 
 uses
-  // Crt,
   Classes,
   Bee_Files,
   Bee_Common,
@@ -88,6 +87,7 @@ type
 implementation
 
 uses
+  Math,
   SysUtils,
   Bee_Consts;
 
@@ -112,7 +112,7 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1569 archiver utility, July 2012' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1571 archiver utility, July 2012' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -506,15 +506,18 @@ procedure TBeeApp.ListShell;
 var
   I: longint;
   Item: TArchiveItem;
-  FItemToList: TList;
+  ItemToList: TList;
+
+  VersionNeededToExtract: longword;
   CompressionMethod: TArchiveCompressionMethod;
   CompressionLevel: TmOption;
   DictionaryLevel: TdOption;
   WithSolidCompression: longint;
   WithArchivePassword: longint;
+  MaxDictionaryLevel: TdOption;
 
-  TotalSize: int64;
   TotalPackedSize: int64;
+  TotalSize: int64;
   TotalFiles:longint;
 begin
   FReader := TCustomArchiveReader.Create;
@@ -537,72 +540,67 @@ begin
     if  FileNameMatch(FReader.Items[I].FileName,
       FCommandLine.xOptions, FCommandLine.rOption) then FReader.UnTag(I);
 
-  CompressionMethod := actNone;
-  CompressionLevel  := moStore;
-  DictionaryLevel   := do2MB;
-  WithSolidCompression  := 0;
-  WithArchivePassword   := 0;
-
-  TotalPackedSize   := 0;
-  TotalSize         := 0;
-  TotalFiles        := 0;
-
-  FItemToList := TList.Create;
-  for I := 0 to FReader.Count - 1 do
-  begin
-    Item := FReader.Items[I];
-
-    if acfCompressionMethod in Item.CompressionFlags then CompressionMethod := Item.CompressionMethod;
-    if acfCompressionLevel  in Item.CompressionFlags then CompressionLevel  := Item.CompressionLevel;
-    if acfDictionaryLevel   in Item.CompressionFlags then DictionaryLevel   := Item.DictionaryLevel;
-    if acfSolidCompression  in Item.CompressionFlags then Inc(WithSolidCompression);
-    if aefEncryptionMethod  in Item.EncryptionFlags  then Inc(WithArchivePassword);
-
-    Inc(TotalSize, Item.UncompressedSize);
-    Inc(TotalPackedSize, Item.CompressedSize);
-    Inc(TotalFiles);
-
-    if FReader.IsTagged(I) then
-    begin
-      FItemToList.Add(Item);
-    end;
-  end;
-
-  DoMessage(Cr + 'Extraction requirements:');
-  // DoMessage('  Headers version  = ' + VersionToStr(Version));
-  // DoMessage('  Free memory size = ' + IntToStr(Trunc(Power(2, MaxDict)*2560000)));
-  DoMessage('  Free disk space  = ' + IntToStr(TotalSize));
-
-  DoMessage(Cr + 'Archive features:');
-  case WithArchivePassword of
-    0:   DoMessage('  Password  = no' );
-    else DoMessage('  Password  = yes');
-  end;
-
-  case WithSolidCompression of
-    0:   DoMessage('  Solid     = no' );
-    else DoMessage('  Solid     = yes');
-  end;
-
-  DoMessage('  Items     = ' + IntToStr(TotalFiles));
-  //DoMessage('  Sequences = ' + IntToStr(Sequences));
-
-  //DoMessage('  Module  size = ' + IntToStr(FHeaders.ModuleSize));
-  //DoMessage('  Packed  size = ' + IntToStr(TotalPacked));
-  //DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
-
-  DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
-  DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
-
-  if FCommandLine.slsOption then FItemToList.Sort(CompareFilePath);
+  VersionNeededToExtract := 0;
+  CompressionMethod      := actNone;
+  CompressionLevel       := moStore;
+  DictionaryLevel        := do2MB;
+  WithSolidCompression   := 0;
+  WithArchivePassword    := 0;
+  MaxDictionaryLevel     := do2MB;
 
   TotalPackedSize := 0;
   TotalSize       := 0;
   TotalFiles      := 0;
 
-  for I := 0 to FItemToList.Count - 1 do
+  ItemToList := TList.Create;
+  for I := 0 to FReader.Count - 1 do
   begin
-    Item := FItemToList.Items[I];
+    Item := FReader.Items[I];
+    if FReader.IsTagged(I) then
+      ItemToList.Add(Item);
+
+    if aifVersionNeededToExtract in Item.Flags            then VersionNeededToExtract := Item.VersionNeededToExtract;
+    if acfCompressionMethod      in Item.CompressionFlags then CompressionMethod      := Item.CompressionMethod;
+    if acfCompressionLevel       in Item.CompressionFlags then CompressionLevel       := Item.CompressionLevel;
+    if acfDictionaryLevel        in Item.CompressionFlags then DictionaryLevel        := Item.DictionaryLevel;
+    if acfSolidCompression       in Item.CompressionFlags then Inc(WithSolidCompression);
+    if aefEncryptionMethod       in Item.EncryptionFlags  then Inc(WithArchivePassword);
+
+    if DictionaryLevel > MaxDictionaryLevel then
+      MaxDictionaryLevel := DictionaryLevel;
+
+    Inc(TotalPackedSize, Item.CompressedSize);
+    Inc(TotalSize, Item.UncompressedSize);
+    Inc(TotalFiles);
+  end;
+
+  DoMessage(Cr + 'Extraction requirements:');
+  DoMessage('  Minimun version extractor = ' + VersionToStr(VersionNeededToExtract));
+  DoMessage('  Minimun free memory size = ' + IntToStr($500000 * Ord(MaxDictionaryLevel)));
+  DoMessage('  Minimun free disk size = ' + IntToStr(TotalSize));
+
+  DoMessage(Cr + 'Archive features:');
+  DoMessage('  Items archived = ' + IntToStr(TotalFiles));
+  DoMessage('  Items with solid solid compression = ' + IntToStr(WithSolidCompression));
+  DoMessage('  Items encrypted = ' + IntToStr(WithArchivePassword));
+
+  DoMessage('  Self-Extractor moduse size = ' + IntToStr(0));
+  DoMessage('  Archived packed size = ' + IntToStr(TotalPackedSize));
+  DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
+
+  DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
+  DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
+
+  if FCommandLine.slsOption then
+    ItemToList.Sort(CompareFilePath);
+
+  TotalPackedSize := 0;
+  TotalSize       := 0;
+  TotalFiles      := 0;
+
+  for I := 0 to ItemToList.Count - 1 do
+  begin
+    Item := ItemToList.Items[I];
     Inc(TotalSize, Item.UncompressedSize);
     Inc(TotalPackedSize, Item.CompressedSize);
     Inc(TotalFiles);
@@ -613,9 +611,9 @@ begin
       CompressionMethodToStr(Item), Item.FileName]));
   end;
   DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
-  // DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPacked), TotalFiles]));
+  DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPackedSize), TotalFiles]));
 
-  FItemToList.Destroy;
+  ItemToList.Destroy;
   FReader.Destroy;
 end;
 

@@ -88,6 +88,8 @@ function DateTimeToString(X: TDateTime; const Format: string): string; overload;
 function FileTimeToString(X: longint): string; overload;
 function FileTimeToString(X: longint; const Format: string): string; overload;
 
+function SizeOfFile(const FileName: string): int64;
+
 { hex routines }
 
 function Hex(const Data; Count: longint): string;
@@ -536,6 +538,19 @@ begin
   Result := True;
 end;
 
+function SizeOfFile(const FileName: string): int64;
+var
+  Err: longint;
+  Rec: TSearchRec;
+begin
+  Err := SysUtils.FindFirst(FileName, faAnyFile, Rec);
+  if (Err = 0) and ((Rec.Attr and faDirectory) = 0) then
+    Result := Rec.Size
+  else
+    Result := -1;
+  SysUtils.FindClose(Rec);
+end;
+
 { oem-ansi charset functions }
 
 function ParamToOem(const Param: string): string;
@@ -698,18 +713,7 @@ begin
     Result := False;
 end;
 
-function SizeOfFile(const FileName: string): int64;
-var
-  Err: longint;
-  Rec: TSearchRec;
-begin
-  Err := SysUtils.FindFirst(FileName, faAnyFile, Rec);
-  if (Err = 0) and ((Rec.Attr and faDirectory) = 0) then
-    Result := Rec.Size
-  else
-    Result := -1;
-  SysUtils.FindClose(Rec);
-end;
+
 
      *)
 
