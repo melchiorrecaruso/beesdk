@@ -394,7 +394,7 @@ type
   end;
 
 function CompressionMethodToStr(Item: TArchiveItem): string;
-function VersionToStr(Item: TArchiveItem): string;
+function VersionToStr(Version: longword): string;
 function RatioToStr(const PackedSize, Size: int64): string;
 function SizeToStr(const Size: int64): string;
 function AttrToStr(Attr: longint): string;
@@ -418,10 +418,10 @@ begin
   end;
 end;
 
-function VersionToStr(Item: TArchiveItem): string;
+function VersionToStr(Version: longword): string;
 begin
   Result := '?';
-  case Item.VersionNeededToExtract of
+  case Version of
     0: Result := '0';
   end;
 end;
