@@ -37,10 +37,12 @@ unit Bee_Common;
 interface
 
 uses
+  Masks,
   Classes,
+  SysUtils,
   {$IFNDEF FPC} Math, {$ENDIF}
-  {$IFDEF UNIX} BaseUnix, {$ENDIF}
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF} SysUtils;
+  {$IFDEF UNIX} BaseUnix; {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows; {$ENDIF}
 
 type
   TRecursiveMode = (rmNone, rmWildCard, rmFull);
@@ -50,22 +52,30 @@ function SelfPath: string;
 
 function GetDriveFreeSpace(const FileName: string): int64;
 
+{ filename handling routines }
+
 function FileNameMatch(const FileName,         Mask:  string;      Recursive: TRecursiveMode): boolean; overload;
 function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
 
 
 function FileNameHasWildcards(const FileName: string): boolean;
 function FileNamePos(const FilePath, FileName: string): longint;
+function FileNameIsValid(const FileName: string): boolean;
 
-function IsValidFileName(const FileName: string): boolean;
-function FixFileName(const FileName: string): string;
-function FixDirName(const DirName: string): string;
+
+
 function GenerateFileName(const FilePath: string): string;
 function GenerateAlternativeFileName(const FileName: string;
   StartIndex: longint; Check: boolean): string;
+
+
 function DeleteFilePath(const FilePath, FileName: string): string;
+function DeleteFileDrive(const FileName: string): string;
+
 
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
+
+{  }
 
 function RatioToStr(const PackedSize, Size: int64): string;
 function SizeToStr(const Size: int64): string;
@@ -91,6 +101,7 @@ function ParamToOem(const Param: string): string;
 function OemToParam(const Param: string): string;
 
 { system control }
+
 function SetPriority(Priority: longint): boolean; { Priority is 0..3 }
 procedure SetCtrlCHandler(CtrlHandler: pointer);
 
@@ -98,21 +109,18 @@ procedure SetCtrlCHandler(CtrlHandler: pointer);
 (*
 ;
 
-{ filename handling routines }
-
-
-function AnsiFileNameHasWildcards(const FileName: string): boolean;
-function AnsiFileNameHasDrive(const FileName: string): boolean;
 
 
 
 
-function CompareFileName(const S1, S2: string): longint;
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
 
 
-function DeleteFileDrive(const FileName: string): string;
-function DoDirSeparators(const FileName: string): string;
+
+
+
+
+
+
 
 
 
@@ -123,8 +131,7 @@ function DoDirSeparators(const FileName: string): string;
 
 { directory handling routines }
 
-function DirectoryExists(const DirName: string): boolean;
-function ForceDirectories(const DirName: string): boolean;
+
 
 
 
@@ -308,7 +315,7 @@ begin
   {$ENDIF}
 end;
 
-function IsValidFileName(const FileName : string): boolean;
+function FileNameIsValid(const FileName : string): boolean;
 const
   InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
 var
@@ -323,65 +330,6 @@ begin
     end;
 end;
 
-function FixFileName(const FileName: string): string;
-var
-  I: longint;
-begin
-  Result := FileName;
-  DoDirSeparators(Result);
-
-  I := System.Pos('*', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('*', Result);
-  end;
-
-  I := System.Pos('?', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('?', Result);
-  end;
-
-  I := System.Pos('"', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('"', Result);
-  end;
-end;
-
-function FixDirName(const DirName: string): string;
-var
-  I: longint;
-begin
-  Result := DirName;
-  DoDirSeparators(Result);
-
-  I := System.Pos('*', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('*', Result);
-  end;
-
-  I := System.Pos('?', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('?', Result);
-  end;
-
-  I := System.Pos('"', Result);
-  while I > 0 do
-  begin
-    Delete(Result, I, 1);
-    I := System.Pos('"', Result);
-  end;
-
-  Result := ExcludeTrailingBackSlash(Result);
-end;
 
 function GenerateFileName(const FilePath: string): string;
 var
@@ -416,6 +364,21 @@ begin
   begin
     Delete(Result, 1, Length(FilePath));
   end;
+end;
+
+function DeleteFileDrive(const FileName: string): string;
+var
+  Drive: string;
+begin
+  Result := FileName;
+  if Length(Result) > 0 then
+  begin
+    Drive := ExtractFileDrive(Result);
+    System.Delete(Result, 1, Length(Drive));
+  end;
+
+  while Pos(PathDelim, Result) = 1 do
+    Delete(Result, 1, 1);
 end;
 
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
@@ -703,36 +666,6 @@ begin
 end;
 
 
-
-
-
-
-function DeleteFileDrive(const FileName: string): string;
-var
-  Drive: string;
-begin
-  Result := FileName;
-  if Length(Result) > 0 then
-  begin
-    Drive := ExtractFileDrive(Result);
-    System.Delete(Result, 1, Length(Drive));
-  end;
-
-  while Pos(PathDelim, Result) = 1 do Delete(Result, 1, 1);
-end;
-
-function DoDirSeparators(const FileName: string): string;
-var
-  I, Len: longint;
-begin
-  Result := FileName;
-  Len := Length(Result);
-  for I := 1 to Len do
-  begin
-    if Result[I] in ['\', '/'] then
-      Result[I] := PathDelim;
-  end;
-end;
 
 
 

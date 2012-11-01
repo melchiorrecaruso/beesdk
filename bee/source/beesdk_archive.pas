@@ -1453,7 +1453,7 @@ begin
       begin
         repeat
           DoExtract(Item, ExtractAs, Confirm);
-        until (Confirm <> arcOk) or (IsValidFileName(ExtractAs));
+        until (Confirm <> arcOk) or (FileNameIsValid(ExtractAs));
 
         case Confirm of
           arcOk: begin
