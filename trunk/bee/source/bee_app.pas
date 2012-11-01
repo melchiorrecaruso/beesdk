@@ -391,6 +391,7 @@ begin
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
   DoMessage(Format(cmScanning, ['...']));
+
   Scanner := TFileScanner.Create;
   with FCommandLine do
     for I := 0 to FileMasks.Count - 1 do

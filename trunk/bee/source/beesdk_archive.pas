@@ -225,8 +225,7 @@ type
     function GetItem(Index: longint): TArchiveItem;
     procedure SetArchiveName(const Value: string);
     procedure SetExitCode(Value: longint);
-    procedure DoRequestImage(ImageNumber: longint;
-      var ImageName: string; var Abort: boolean);
+    procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoFailure(const ErrorMessage: string);
     procedure DoMessage(const Message: string);
     function DoProgress(Value: longint): boolean;
@@ -798,42 +797,47 @@ var
   LocatorFlags: TArchiveLocatorFlags;
   BindingFlags: TArchiveBindingFlags;
 begin
-  // Read MagikSeek
-  FArchiveReader.Seek(-SizeOf(longword), soFromEnd);
-  FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd);
-  // Read Locator Marker
-  if aStream.ReadInfWord = aitLocator then
-    if aStream.ReadInfWord <= beexVersionNeededToRead then
-    begin
-      LocatorFlags := TArchiveLocatorFlags(longword(aStream.ReadInfWord));
-      if (alfDisksNumber in LocatorFlags) then LocatorDisksNumber := aStream.ReadInfWord else LocatorDisksNumber := 1;
-      if (alfDiskNumber  in LocatorFlags) then LocatorDiskNumber  := aStream.ReadInfWord else LocatorDiskNumber  := 1;
-      LocatorDiskSeek := aStream.ReadInfWord;
-      // Seek on CentralDirectory
-      aStream.ImagesNumber := LocatorDisksNumber;
-      aStream.SeekImage(LocatorDiskNumber, LocatorDiskSeek);
-      if aStream.ReadDWord = beexArchiveMarker then
+  // Read Marker
+  FArchiveReader.Seek(-2*SizeOf(longword), soFromEnd);
+  if FArchiveReader.ReadDWord = beexArchiveMarker then
+  begin
+    // Read MagikSeek
+    FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd);
+    // Read Locator Marker
+    if aStream.ReadInfWord = aitLocator then
+      if aStream.ReadInfWord <= beexVersionNeededToRead then
       begin
-        while ExitCode < ccError do
+        LocatorFlags := TArchiveLocatorFlags(longword(aStream.ReadInfWord));
+        if (alfDisksNumber in LocatorFlags) then LocatorDisksNumber := aStream.ReadInfWord else LocatorDisksNumber := 1;
+        if (alfDiskNumber  in LocatorFlags) then LocatorDiskNumber  := aStream.ReadInfWord else LocatorDiskNumber  := 1;
+        LocatorDiskSeek := aStream.ReadInfWord;
+        // Seek on CentralDirectory
+        aStream.ImagesNumber := LocatorDisksNumber;
+        aStream.SeekImage(LocatorDiskNumber, LocatorDiskSeek);
+        if aStream.ReadDWord = beexArchiveMarker then
         begin
-          Marker := aStream.ReadInfWord;
-          case Marker of
-            aitItem: FArchiveItems.Add(TArchiveItem.Read(aStream));
-            aitBinding: begin
-              BindingFlags := TArchiveBindingFlags(longword(aStream.ReadInfWord));
-              if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString else FArchiveComment := '';
+          while ExitCode < ccError do
+          begin
+            Marker := aStream.ReadInfWord;
+            case Marker of
+              aitItem: FArchiveItems.Add(TArchiveItem.Read(aStream));
+              aitBinding: begin
+                BindingFlags := TArchiveBindingFlags(longword(aStream.ReadInfWord));
+                if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString else FArchiveComment := '';
+              end;
+              aitLocator: Break;
+              aitEnd: Break;
+              else DoFailure(cmArcTypeError);
             end;
-            aitLocator: Break;
-            aitEnd: Break;
-            else DoFailure(cmArcTypeError);
           end;
-        end;
+        end else
+          DoFailure(cmArcTypeError);
+
+        if ExitCode < ccError then UnPackCentralDirectory;
       end else
         DoFailure(cmArcTypeError);
-
-      if ExitCode < ccError then UnPackCentralDirectory;
-    end else
-      DoFailure(cmArcTypeError);
+  end else
+    DoFailure(cmArcTypeError);
 end;
 
 procedure TArchiveReader.UnPackCentralDirectory;
@@ -1166,7 +1170,7 @@ begin
 
   BindingFlags := [];
   if Length(FArchiveComment) > 0 then
-    Include(BindingFlags,  abfComment);
+    Include(BindingFlags, abfComment);
 
   aStream.WriteInfWord(aitBinding);
   aStream.WriteInfWord(longword(BindingFlags));
@@ -1180,7 +1184,7 @@ begin
   MagikSeek := aStream.Position;
   LocatorDisksNumber := aStream.CurrentImage;
   if LocatorDisksNumber <> 1 then
-    Include(LocatorFlags,  alfDisksNumber);
+    Include(LocatorFlags, alfDisksNumber);
 
   aStream.WriteInfWord(aitLocator);
   aStream.WriteInfWord(beexVersionneededToRead);
@@ -1189,6 +1193,7 @@ begin
   if (alfDiskNumber  in LocatorFlags) then aStream.WriteInfWord(LocatorDiskNumber);
   aStream.WriteInfWord(LocatorDiskSeek);
   aStream.WriteInfWord(aitEnd);
+  aStream.WriteDWord(beexArchiveMarker);
 
   aStream.WriteDWord(longword(aStream.Position - MagikSeek + SizeOf(longword)));
 end;
@@ -2021,10 +2026,8 @@ begin
 
   if Result = 0 then
   begin
-    if TCustomSearchRec(Item1).Size < TCustomSearchRec(Item2).Size then
-      Result := -1
-    else
-      Result :=  1;
+    if TCustomSearchRec(Item1).Size < TCustomSearchRec(Item2).Size then Result := -1
+    else if TCustomSearchRec(Item1).Size > TCustomSearchRec(Item2).Size then Result :=  1;
   end;
 end;
 
