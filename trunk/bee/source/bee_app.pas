@@ -42,7 +42,6 @@ uses
   // Crt,
   Classes,
   Bee_Files,
-  Bee_Types,
   Bee_Common,
   Bee_CommandLine,
   BeeSDK_Archive;
@@ -114,7 +113,7 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1565 archiver utility, July 2012' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1567 archiver utility, July 2012' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;

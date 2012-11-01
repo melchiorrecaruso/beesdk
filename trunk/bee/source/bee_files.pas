@@ -41,6 +41,7 @@ uses
   Classes,
   SysUtils,
   Bee_Common,
+  Bee_CommandLine,
   Bee_BufStream;
 
 type
