@@ -59,7 +59,6 @@ type
     FEraser: TArchiveEraser;
     FReader: TCustomArchiveReader;
     function QueryToUser: TArchiveConfirm;
-    function CompressionMethodToStr(Item: TArchiveItem): string;
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoRequestBlankDisk(var Abort : Boolean);
     procedure DoMessage(const Message: string);
@@ -113,7 +112,7 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1567 archiver utility, July 2012' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1569 archiver utility, July 2012' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -501,14 +500,6 @@ begin
   FRenamer.Destroy;
   ProcesstOption;
   ProcesslOption;
-end;
-
-function TBeeApp.CompressionMethodToStr(Item: TArchiveItem): string;
-begin
-  case Item.CompressionMethod of
-    actNone: Result := 'm0';
-    actMain: Result := 'me';
-  end;
 end;
 
 procedure TBeeApp.ListShell;

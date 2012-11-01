@@ -35,7 +35,7 @@ uses
   Classes;
 
 const
-  DefaultBufferCapacity: longint = $20000;
+  DefaultBufferCapacity: longint = $100000;
 
 type
   { TBufStream }
@@ -121,12 +121,11 @@ end;
 
 function TReadBufStream.Read(var Data; Count: longint): longint;
 var
-  P: PByte;
-  Bytes: array [0..$FFFFFFF] of byte absolute Data;
+  Bytes: PByte;
   S: longint;
 begin
-  P      := @Data;
   Result := 0;
+  Bytes := @Data;
   repeat
     if FBufferReaded = FBufferSize then
     begin
@@ -136,9 +135,8 @@ begin
     S := Min(Count - Result, FBufferSize - FBufferReaded);
 
     CopyBytes(FBuffer[FBufferReaded], Bytes[Result], S);
-
-    Inc(Result, S);
     Inc(FBufferReaded, S);
+    Inc(Result, S);
   until Result = Count;
 end;
 
@@ -180,28 +178,29 @@ end;
 
 function TWriteBufStream.Write(const Data; Count: longint): longint;
 var
-  Bytes: array [0..$FFFFFFF] of byte absolute Data;
+  Bytes: PByte;
   S: longint;
 begin
+  Result := 0;
+  Bytes := @Data;
   if Count > (FCapacity - FBufferSize) then
   begin
-    Result := 0;
     repeat
       S := FCapacity - FBufferSize;
-      Move(Bytes[Result], FBuffer[FBufferSize], S);
-      Inc(Result, S);
+      CopyBytes(Bytes[Result], FBuffer[FBufferSize], S);
       Inc(FBufferSize, S);
+      Inc(Result, S);
       FlushBuffer;
     until ((Count - Result) <= FCapacity);
 
-    Move(Bytes[Result], FBuffer[FBufferSize], Count - Result);
+    CopyBytes(Bytes[Result], FBuffer[FBufferSize], Count - Result);
     Inc(FBufferSize, Count - Result);
     Inc(Result, Count - Result);
   end else
   begin
-    Move(Data, FBuffer[FBufferSize], Count);
+    CopyBytes(Bytes[Result], FBuffer[FBufferSize], Count);
     Inc(FBufferSize, Count);
-    Result := Count;
+    Inc(Result, Count);
   end;
 end;
 
