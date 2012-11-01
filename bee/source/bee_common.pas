@@ -38,10 +38,12 @@ interface
 
 uses
   Classes,
-  Masks,
   {$IFNDEF FPC} Math, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF} SysUtils;
+
+type
+  TRecursiveMode = (rmNone, rmWildCard, rmFull);
 
 function SelfName: string;
 function SelfPath: string;

@@ -34,9 +34,8 @@ interface
 uses
   Classes,
   SysUtils,
-  Bee_Types,
-  Bee_Consts,
-  Bee_Common;
+  Bee_Common,
+  Bee_Consts;
 
 type
   { Commands:                                             }
@@ -51,13 +50,6 @@ type
 
   TCommand = (ccNone, ccAdd, ccExtract, ccXextract, ccTest,
     ccDelete, ccRename,  ccList);
-
-  { Recursive Mode Option:                                }
-  {  rmNone      No resurse filename                      }
-  {  rmWildcard  Recurse olny filename with wildcard      }
-  {  rmFull      Recurse all filename                     }
-
-  TRecursiveMode = (rmNone, rmWildCard, rmFull);
 
   { Update Mode Option:                                   }
   {  umAdd           Add only new files                   }

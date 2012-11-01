@@ -8,11 +8,11 @@ uses
   Classes,
   SysUtils,
   Bee_Files,
-  Bee_Types,
   Bee_Common,
   Bee_Consts,
   Bee_MainPacker,
   Bee_Configuration,
+  Bee_CommandLine,
   BeeLib_Configuration;
 
 const
