@@ -121,9 +121,11 @@ end;
 
 function TReadBufStream.Read(var Data; Count: longint): longint;
 var
+  P: PByte;
   Bytes: array [0..$FFFFFFF] of byte absolute Data;
   S: longint;
 begin
+  P      := @Data;
   Result := 0;
   repeat
     if FBufferReaded = FBufferSize then

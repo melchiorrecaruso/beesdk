@@ -326,9 +326,9 @@ end;
 procedure TCommandLine.ProcesscdOption(var S: string);
 begin
   Delete(S, 1, 3);
-  if Length(S) <> 0 then
+  if Length(S) > 0 then
   begin
-    FcdOption := IncludeTrailingBackslash(FixDirName(S));
+    FcdOption := IncludeTrailingBackslash(S);
   end;
 end;
 
@@ -556,7 +556,7 @@ end;
 procedure TCommandLine.SetcdOption(const aValue: string);
 begin
   if Length(aValue) > 0 then
-    FcdOption := IncludeTrailingBackSlash(FixDirName(aValue));
+    FcdOption := IncludeTrailingBackSlash(aValue);
 end;
 
 procedure TCommandLine.SetcfgOption(const aValue: string);
