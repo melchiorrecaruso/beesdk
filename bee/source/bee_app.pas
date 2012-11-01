@@ -512,9 +512,9 @@ var
   CompressionMethod: TArchiveCompressionMethod;
   CompressionLevel: TmOption;
   DictionaryLevel: TdOption;
+  MaxDictionaryLevel: TdOption;
   WithSolidCompression: longint;
   WithArchivePassword: longint;
-  MaxDictionaryLevel: TdOption;
 
   TotalPackedSize: int64;
   TotalSize: int64;
@@ -585,7 +585,7 @@ begin
   DoMessage('  Items encrypted = ' + IntToStr(WithArchivePassword));
 
   DoMessage('  Self-Extractor moduse size = ' + IntToStr(0));
-  DoMessage('  Archived packed size = ' + IntToStr(TotalPackedSize));
+  DoMessage('  Archive packed data size = ' + IntToStr(TotalPackedSize));
   DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
 
   DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
