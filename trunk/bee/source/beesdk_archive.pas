@@ -117,7 +117,6 @@ type
     FExternalFileName: string;
     FExternalFileSize: int64;
     function GetSolidCompression: boolean;
-    procedure SetSolidCompression(Value: boolean);
   public {methods}
     constructor Create;
     constructor Read(Stream: TFileReader);
@@ -143,7 +142,7 @@ type
     property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod;
     property CompressionLevel: TmOption read FCompressionLevel;
     property DictionaryLevel: TdOption read FDictionaryLevel;
-    property SolidCompression: boolean read GetSolidCompression write SetSolidCompression;
+    property SolidCompression: boolean read GetSolidCompression;
     property CompressionTable: TTableParameters read FCompressionTable;
     // Encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
@@ -408,12 +407,12 @@ begin
   Result := 'm0a';
   if Item.CompressionMethod <> actNone then
   begin
-     if Item.SolidCompression then
-     begin
-       Result[1] := 's';
-     end;
-     Result[2] := char(byte('0') + Ord(Item.CompressionLevel));
-     Result[3] := char(byte('a') + Ord(Item.DictionaryLevel ));
+    if Item.SolidCompression then
+    begin
+      Result[1] := 's';
+    end;
+    Result[2] := char(byte('0') + Ord(Item.CompressionLevel));
+    Result[3] := char(byte('a') + Ord(Item.DictionaryLevel ));
   end;
 end;
 
@@ -467,10 +466,11 @@ begin
     aifAttributes,
     aifComment];
 
-  FUncompressedSize    :=  0;
-  FLastModifiedTime    :=  0;
-  FAttributes          :=  0;
-  FComment             := '';
+  FVersionNeededToExtract := beexVersionNeededToExtract;
+  FUncompressedSize       := 0;
+  FLastModifiedTime       := 0;
+  FAttributes             := 0;
+  FComment                := '';
   /// Data descriptor property ///
   FDataDescriptorFlags := [
     adfCompressedSize,
@@ -478,25 +478,25 @@ begin
     adfDiskSeek,
     adfCRC32];
 
-  FCompressedSize      :=  0;
-  FDiskNumber          :=  0;
-  FDiskSeek            :=  0;
-  FCRC32               :=  0;
+  FCompressedSize := 0;
+  FDiskNumber     := 0;
+  FDiskSeek       := 0;
+  FCRC32          := 0;
   /// Compression property ///
   FCompressionFlags := [
     acfCompressionMethod,
     acfCompressionLevel,
     acfDictionaryLevel,
-    acfSolidCompression,
+  //acfSolidCompression,
     acfCompressionTable];
 
   FCompressionMethod   := actNone;
   FCompressionLevel    := moStore;
   FDictionaryLevel     := do2MB;
-//FCompressionTable    := EmptyTableParameters;
+  FCompressionTable    := DefaultTableParameters;
 
   /// Encryption property ///
-  FEncryptionFlags     := [];
+  FEncryptionFlags   := [aefEncryptionMethod];
   FEncryptionMethod  := acrtNone;
   /// Reserved property ///
   FTag               := aitNone;
@@ -508,34 +508,10 @@ end;
 procedure TArchiveItem.Update(SearchRec: TCustomSearchRec);
 begin
   /// Item property ///
-//FFileName := SearchRec.Name;
   if (aifVersionNeededToExtract in FFLags) then FVersionNeededToExtract := beexVersionNeededToExtract;
-//if (aifUncompressedSize       in FFLags) then FUncompressedSize       := SearchRec.Size;
   if (aifLastModifiedTime       in FFLags) then FLastModifiedTime       := SearchRec.LastModifiedTime;
   if (aifAttributes             in FFLags) then FAttributes             := SearchRec.Attributes;
-//if (aifComment                in FFLags) then FComment                := UseComment;
-
-  /// Data descriptor property ///
-//FDataDescriptorFlags := [];
-//FCompressedSize      :=  0;
-//FDiskNumber          :=  0;
-//FDiskSeek            :=  0;
-//FCRC32               :=  0;
-
-  /// Compression property ///
-//FCompressionFlags  := [];
-//FCompressionMethod := actNone;
-//FCompressionLevel  :=  0;
-//FDictionaryLevel   :=  0;
-//FCompressionTable  :=  EmptyTableParameters;
-
-  /// Encryption property ///
-//FEncryptionFlags  := [];
-//FEncryptionMethod :=  0;
-
   /// Reserved property ///
-//FTag              := aitNone;
-//FPosition         := -1;
   FExternalFileName := SearchRec.Name;
   FExternalFileSize := SearchRec.Size;
 end;
@@ -597,14 +573,6 @@ end;
 function TArchiveItem.GetSolidCompression: boolean;
 begin
   Result := acfSolidCompression in FCompressionFlags;
-end;
-
-procedure TArchiveItem.SetSolidCompression(Value: boolean);
-begin
-  if Value then
-    Include(FCompressionFlags, acfSolidCompression)
-  else
-    Exclude(FCompressionFlags, acfSolidCompression);
 end;
 
 // TArchiveCustomItems class
@@ -720,7 +688,7 @@ begin
 
     if    (acfSolidCompression in Item.CompressionFlags) and
       (not(acfSolidCompression in Next.CompressionFlags)) then
-       Next.SetSolidCompression(TRUE);
+      Include(Next.FCompressionFlags, acfSolidCompression);
 
     if    (acfCompressionTable in Item.CompressionFlags) and
       (not(acfCompressionTable in Next.CompressionFlags)) then
@@ -923,6 +891,9 @@ begin
   Stream := TNulWriter.Create;
   if Assigned(Stream) then
   begin
+    Writeln('aaaa');
+    Readln;
+
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
     case Item.CompressionMethod of
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
@@ -939,6 +910,9 @@ begin
     Stream.Destroy;
   end else
     DoFailure(cmStrmWriteError);
+
+  Writeln('bbbb');
+  Readln;
 end;
 
 procedure TArchiveReader.DecodeToFile(Item: TArchiveItem);
@@ -1004,11 +978,13 @@ var
 begin
   Result := -1;
   for  I := Index downto 0 do
-    if FArchiveItems.Items[Index].SolidCompression = FALSE then
+  begin
+    if FArchiveItems.Items[I].SolidCompression = FALSE then
     begin
       Result := I;
       Break;
     end;
+  end;
 end;
 
 function TArchiveReader.GetNextTear(Index: longint): longint;
@@ -1017,7 +993,7 @@ var
 begin
   Result := -1;
   for  I := Index to FArchiveItems.Count - 1 do
-    if FArchiveItems.Items[Index].SolidCompression = FALSE then
+    if FArchiveItems.Items[I].SolidCompression = FALSE then
     begin
       Result := I;
       Break;
