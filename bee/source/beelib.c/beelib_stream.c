@@ -3,7 +3,7 @@
 
 /* Default buffer capacity */
 
-#define DEFAULT_BUFFER_CAPACITY 65536
+#define DEFAULT_BUFFER_CAPACITY 1
 
 /* TReadStream struct/methods implemetation */
 
