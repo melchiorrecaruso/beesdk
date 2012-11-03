@@ -38,7 +38,6 @@ interface
 {$IFDEF UNIX}
 //{$linklib libmath}
 //{$linklib libgcc}
-
 {$ENDIF}
 
 {$link beelib.c\obj\release\beelib_common.o}
