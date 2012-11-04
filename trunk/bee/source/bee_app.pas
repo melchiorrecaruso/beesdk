@@ -565,7 +565,9 @@ begin
     if acfCompressionLevel       in Item.CompressionFlags then CompressionLevel       := Item.CompressionLevel;
     if acfDictionaryLevel        in Item.CompressionFlags then DictionaryLevel        := Item.DictionaryLevel;
     if acfSolidCompression       in Item.CompressionFlags then Inc(WithSolidCompression);
-    if aefEncryptionMethod       in Item.EncryptionFlags  then Inc(WithArchivePassword);
+    if aefEncryptionMethod       in Item.EncryptionFlags  then
+      if Item.EncryptionMethod <> acrtNone then
+        Inc(WithArchivePassword);
 
     if DictionaryLevel > MaxDictionaryLevel then
       MaxDictionaryLevel := DictionaryLevel;
@@ -577,12 +579,12 @@ begin
 
   DoMessage(Cr + 'Extraction requirements:');
   DoMessage('  Minimun version extractor = ' + VersionToStr(VersionNeededToExtract));
-  DoMessage('  Minimun free memory size = ' + IntToStr($500000 * Ord(MaxDictionaryLevel)));
+  DoMessage('  Minimun free memory size = ' + IntToStr(Round($280000*power(2, Ord(MaxDictionaryLevel)))));
   DoMessage('  Minimun free disk size = ' + IntToStr(TotalSize));
 
   DoMessage(Cr + 'Archive features:');
   DoMessage('  Items archived = ' + IntToStr(TotalFiles));
-  DoMessage('  Items with solid solid compression = ' + IntToStr(WithSolidCompression));
+  DoMessage('  Items with solid compression = ' + IntToStr(WithSolidCompression));
   DoMessage('  Items encrypted = ' + IntToStr(WithArchivePassword));
 
   DoMessage('  Self-Extractor moduse size = ' + IntToStr(0));

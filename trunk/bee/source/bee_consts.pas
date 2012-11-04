@@ -78,7 +78,6 @@ const
   cmExtracting        = 'Extracting %s';
   cmTesting           = 'Testing    %s';
   cmDecoding          = 'Decoding   %s';
-  cmCrcError          = 'CRC error  %s';
   cmDeleting          = 'Deleting   %s';
   cmChecking          = 'Checking   %s';
   cmListing           = 'Listing    %s';
@@ -107,6 +106,7 @@ const
   cmActionError       = 'Error: internal error';
   cmStreamError       = 'Error: can''t open stream';
   cmTestPswError      = 'Error: wrong password';
+  cmCrcError          = 'Error: wrong CRC decoding "%s"';
 
   cmConfigError       = 'Error: configuration file "%s" not found, data will be stored';
   cmFileExistsWarning = 'Warning: file "%s" already exists';
