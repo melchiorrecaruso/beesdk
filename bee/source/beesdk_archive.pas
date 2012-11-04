@@ -891,9 +891,6 @@ begin
   Stream := TNulWriter.Create;
   if Assigned(Stream) then
   begin
-    Writeln('aaaa');
-    Readln;
-
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
     case Item.CompressionMethod of
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
@@ -910,9 +907,6 @@ begin
     Stream.Destroy;
   end else
     DoFailure(cmStrmWriteError);
-
-  Writeln('bbbb');
-  Readln;
 end;
 
 procedure TArchiveReader.DecodeToFile(Item: TArchiveItem);
