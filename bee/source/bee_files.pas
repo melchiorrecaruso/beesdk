@@ -296,8 +296,12 @@ begin
 
     if Count > 0 then
     begin
-      Inc(FImageNumber);
-      GotoImage;
+      if FImageNumber < FImagesNumber then
+      begin
+        Inc(FImageNumber);
+        GotoImage;
+      end else
+        Break;
     end;
   end;
 end;
