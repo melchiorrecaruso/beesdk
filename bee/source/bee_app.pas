@@ -383,10 +383,11 @@ begin
     moStore: FUpdater.CompressionMethod := actNone;
     else     FUpdater.CompressionMethod := actMain;
   end;
-  FUpdater.CompressionLevel  := FCommandLine.mOption;
-  FUpdater.DictionaryLevel   := FCommandLine.dOption;
-  FUpdater.SolidCompression  := FCommandLine.sOption;
-  FUpdater.ArchivePassword   := FCommandLine.pOption;
+  FUpdater.CompressionLevel   := FCommandLine.mOption;
+  FUpdater.DictionaryLevel    := FCommandLine.dOption;
+  FUpdater.SolidCompression   := FCommandLine.sOption;
+  FUpdater.ForceFileExtension := FCommandLine.fOption;
+  FUpdater.ArchivePassword    := FCommandLine.pOption;
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
