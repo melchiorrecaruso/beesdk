@@ -177,28 +177,30 @@ var
   Readed: longint;
   Buffer: array[0..$FFFF] of byte;
 begin
-  RangeEncoder_StartEncode(FCoder);
-
   Result := 0;
   CRC    := longword(-1);
-  Count  := Size div SizeOf(Buffer);
-  while Count <> 0 do
+
+  if Size <> 0 then
   begin
-    Readed := Stream.Read(Buffer, SizeOf(Buffer));
+    RangeEncoder_StartEncode(FCoder);
+    Count  := Size div SizeOf(Buffer);
+    while Count <> 0 do
+    begin
+      Readed := Stream.Read(Buffer, SizeOf(Buffer));
+      BaseCoder_Encode(FModeller, @Buffer, Readed);
+      UpdateCrc32(CRC, Buffer, Readed);
+      Inc(Result, Readed);
+      Dec(Count);
+
+      if DoProgress(Readed) = FALSE then Exit;
+    end;
+    Readed := Stream.Read(Buffer, Size mod SizeOf(Buffer));
     BaseCoder_Encode(FModeller, @Buffer, Readed);
-    UpdateCrc32(CRC, Buffer, Readed);
+    UpdateCRC32(CRC, Buffer, Readed);
     Inc(Result, Readed);
-    Dec(Count);
-
-    if DoProgress(Readed) = FALSE then Exit;
+    DoProgress(Readed);
+    RangeEncoder_FinishEncode(FCoder);
   end;
-  Readed := Stream.Read(Buffer, Size mod SizeOf(Buffer));
-  BaseCoder_Encode(FModeller, @Buffer, Readed);
-  UpdateCRC32(CRC, Buffer, Readed);
-  Inc(Result, Readed);
-  DoProgress(Readed);
-
-  RangeEncoder_FinishEncode(FCoder);
 end;
 
   { TheaderDecoder class }
@@ -252,28 +254,30 @@ var
   Writed: longint;
   Buffer: array[0..$FFFF] of byte;
 begin
-  RangeDecoder_StartDecode(FCoder);
-
   Result := 0;
   CRC    := longword(-1);
-  Count  := Size div SizeOf(Buffer);
-  while Count <> 0 do
+
+  if Size <> 0 then
   begin
-    BaseCoder_Decode(FModeller, @Buffer, SizeOf(Buffer));
-    Writed := Stream.Write(Buffer, SizeOf(Buffer));
-    UpdateCrc32(CRC, Buffer, Writed);
+    RangeDecoder_StartDecode(FCoder);
+    Count  := Size div SizeOf(Buffer);
+    while Count <> 0 do
+    begin
+      BaseCoder_Decode(FModeller, @Buffer, SizeOf(Buffer));
+      Writed := Stream.Write(Buffer, SizeOf(Buffer));
+      UpdateCrc32(CRC, Buffer, Writed);
+      Inc(Result, Writed);
+      Dec(Count);
+
+      if DoProgress(Writed) = FALSE then Exit;
+    end;
+    BaseCoder_Decode(FModeller, @Buffer, Size mod SizeOf(Buffer));
+    Writed := Stream.Write(Buffer, Size mod SizeOf(Buffer));
+    UpdateCRC32(CRC, Buffer, Writed);
     Inc(Result, Writed);
-    Dec(Count);
-
-    if DoProgress(Writed) = FALSE then Exit;
+    DoProgress(Writed);
+    RangeDecoder_FinishDecode(FCoder);
   end;
-  BaseCoder_Decode(FModeller, @Buffer, Size mod SizeOf(Buffer));
-  Writed := Stream.Write(Buffer, Size mod SizeOf(Buffer));
-  UpdateCRC32(CRC, Buffer, Writed);
-  Inc(Result, Writed);
-  DoProgress(Writed);
-
-  RangeDecoder_FinishDecode(FCoder);
 end;
 
 end.
