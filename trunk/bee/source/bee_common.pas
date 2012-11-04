@@ -37,7 +37,6 @@ unit Bee_Common;
 interface
 
 uses
-  Masks,
   Classes,
   SysUtils,
   {$IFNDEF FPC} Math, {$ENDIF}
