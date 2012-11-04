@@ -105,8 +105,11 @@ end;
 
 procedure THeaderCoder.SetDictionaryLevel(Value: longint);
 begin
-  FDictionaryLevel := Value;
-  BaseCoder_SetDictionary(FModeller, FDictionaryLevel);
+  if Value <> FDictionaryLevel then
+  begin
+    FDictionaryLevel := Value;
+    BaseCoder_SetDictionary(FModeller, FDictionaryLevel);
+  end;
 end;
 
 procedure THeaderCoder.SetCompressionTable(const Value: TTableParameters);
