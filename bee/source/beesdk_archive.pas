@@ -946,7 +946,7 @@ var
 begin
   Result := -1;
   for  I := Index downto 0 do
-    if FArchiveItems.Items[Index].FTag = aTag then
+    if FArchiveItems.Items[I].FTag = aTag then
     begin
       Result := I;
       Break;
@@ -959,7 +959,7 @@ var
 begin
   Result := -1;
   for  I := Index to FArchiveItems.Count - 1 do
-    if FArchiveItems.Items[Index].FTag = aTag then
+    if FArchiveItems.Items[I].FTag = aTag then
     begin
       Result := I;
       Break;
