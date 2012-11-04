@@ -120,10 +120,10 @@ end;
 
 procedure THeaderCoder.FreshModeller(SolidCompression: boolean);
 begin
-  if SolidCompression then
-    BaseCoder_FreshSolid(FModeller)
+  if SolidCompression = FALSE then
+    BaseCoder_FreshFlexible(FModeller)
   else
-    BaseCoder_FreshFlexible(FModeller);
+    BaseCoder_FreshSolid(FModeller);
 end;
 
 /// THeaderEncoder class
