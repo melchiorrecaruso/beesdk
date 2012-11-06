@@ -67,9 +67,6 @@ type
     procedure DoRename(Item: TArchiveItem; var RenameAs: string; var Confirm: TArchiveConfirm);
     procedure DoErase(Item: TArchiveItem; var Confirm: TArchiveConfirm);
     procedure DoClear;
-    { process options }
-    procedure ProcesstOption;
-    procedure ProcesslOption;
     { shells routines}
     procedure HelpShell;
     procedure EncodeShell;
@@ -301,32 +298,6 @@ begin
   Write(#13, #13:80);
 end;
 
-{ option processing }
-
-procedure TBeeApp.ProcesstOption;
-begin
-  if (ExitCode < ccError) and FCommandLine.tOption then
-  begin
-    FCommandLine.xOptions.Clear;
-    FCommandLine.FileMasks.Clear;
-    FCommandLine.FileMasks.Add('*');
-    FCommandLine.rOption := rmFull;
-    DecodeShell(TRUE);
-  end;
-end;
-
-procedure TBeeApp.ProcesslOption;
-begin
-  if (ExitCode < ccError) and FCommandLine.lOption then
-  begin
-    FCommandLine.xOptions.Clear;
-    FCommandLine.FileMasks.Clear;
-    FCommandLine.FileMasks.Add('*');
-    FCommandLine.rOption := rmFull;
-    ListShell;
-  end;
-end;
-
 { shell procedures }
 
 procedure TBeeApp.HelpShell;
@@ -391,21 +362,21 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
-  DoMessage(Format(cmScanning, ['...']));
+  if ExitCode < ccError then
+  begin
+    DoMessage(Format(cmScanning, ['...']));
+    Scanner := TFileScanner.Create;
+    with FCommandLine do
+      for I := 0 to FileMasks.Count - 1 do
+        Scanner.Scan(FileMasks[I], xOptions, rOption);
 
-  Scanner := TFileScanner.Create;
-  with FCommandLine do
-    for I := 0 to FileMasks.Count - 1 do
-      Scanner.Scan(FileMasks[I], xOptions, rOption);
+    for I := 0 to Scanner.Count - 1 do
+      FUpdater.Tag(Scanner.Items[I]);
+    Scanner.Free;
 
-  for I := 0 to Scanner.Count - 1 do
-    FUpdater.Tag(Scanner.Items[I]);
-  Scanner.Free;
-
-  FUpdater.UpdateTagged;
+    FUpdater.UpdateTagged;
+  end;
   FUpdater.Destroy;
-  ProcesstOption;
-  ProcesslOption;
 end;
 
 procedure TBeeApp.DecodeShell(TestMode: boolean);
@@ -413,29 +384,32 @@ var
   I: longint;
 begin
   FExtractor := TArchiveExtractor.Create;
-  FExtractor.OnRequestImage := DoRequestImage;
-  FExtractor.OnFailure      := DoMessage;
-  FExtractor.OnMessage      := DoMessage;
-  FExtractor.OnProgress     := DoProgress;
-  FExtractor.OnClearProgress:= DoClear;
-  FExtractor.OnExtraction   := DoExtract;
+  FExtractor.OnRequestImage  := DoRequestImage;
+  FExtractor.OnFailure       := DoMessage;
+  FExtractor.OnMessage       := DoMessage;
+  FExtractor.OnProgress      := DoProgress;
+  FExtractor.OnClearProgress := DoClear;
+  FExtractor.OnExtraction    := DoExtract;
 
   FExtractor.ArchivePassword := FCommandLine.pOption;
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FExtractor.OpenArchive(FCommandLine.ArchiveName);
-  DoMessage(Format(cmScanning, ['...']));
-  for I := 0 to FExtractor.Count - 1 do
-    if FileNameMatch(FExtractor.Items[I].FileName,
-      FCommandLine.FileMasks, FCommandLine.rOption) then FExtractor.Tag(I);
+  if ExitCode < ccError then
+  begin
+    DoMessage(Format(cmScanning, ['...']));
+    for I := 0 to FExtractor.Count - 1 do
+      if FileNameMatch(FExtractor.Items[I].FileName,
+        FCommandLine.FileMasks, FCommandLine.rOption) then FExtractor.Tag(I);
 
-  for I := 0 to FExtractor.Count - 1 do
-    if  FileNameMatch(FExtractor.Items[I].FileName,
-      FCommandLine.xOptions, FCommandLine.rOption) then FExtractor.UnTag(I);
+    for I := 0 to FExtractor.Count - 1 do
+      if  FileNameMatch(FExtractor.Items[I].FileName,
+        FCommandLine.xOptions, FCommandLine.rOption) then FExtractor.UnTag(I);
 
-  case TestMode of
-    True:  FExtractor.TestTagged;
-    False: FExtractor.ExtractTagged;
+    case TestMode of
+      True:  FExtractor.TestTagged;
+      False: FExtractor.ExtractTagged;
+    end;
   end;
   FExtractor.Destroy;
 end;
@@ -457,19 +431,20 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FEraser.OpenArchive(FCommandLine.ArchiveName);
-  DoMessage(Format(cmScanning, ['...']));
-  for I := 0 to FEraser.Count - 1 do
-    if FileNameMatch(FEraser.Items[I].FileName,
-      FCommandLine.FileMasks, FCommandLine.rOption) then FEraser.Tag(I);
+  if ExitCode < ccError then
+  begin
+    DoMessage(Format(cmScanning, ['...']));
+    for I := 0 to FEraser.Count - 1 do
+      if FileNameMatch(FEraser.Items[I].FileName,
+        FCommandLine.FileMasks, FCommandLine.rOption) then FEraser.Tag(I);
 
-  for I := 0 to FEraser.Count - 1 do
-    if  FileNameMatch(FEraser.Items[I].FileName,
-      FCommandLine.xOptions, FCommandLine.rOption) then FEraser.UnTag(I);
+    for I := 0 to FEraser.Count - 1 do
+      if  FileNameMatch(FEraser.Items[I].FileName,
+        FCommandLine.xOptions, FCommandLine.rOption) then FEraser.UnTag(I);
 
-  FEraser.EraseTagged;
+    FEraser.EraseTagged;
+  end;
   FEraser.Destroy;
-  ProcesstOption;
-  ProcesslOption;
 end;
 
 procedure TBeeApp.RenameShell;
@@ -489,19 +464,20 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FRenamer.OpenArchive(FCommandLine.ArchiveName);
-  DoMessage(Format(cmScanning, ['...']));
-  for I := 0 to FRenamer.Count - 1 do
-    if FileNameMatch(FRenamer.Items[I].FileName,
-      FCommandLine.FileMasks, FCommandLine.rOption) then FRenamer.Tag(I);
+  if ExitCode < ccError then
+  begin
+    DoMessage(Format(cmScanning, ['...']));
+    for I := 0 to FRenamer.Count - 1 do
+      if FileNameMatch(FRenamer.Items[I].FileName,
+        FCommandLine.FileMasks, FCommandLine.rOption) then FRenamer.Tag(I);
 
-  for I := 0 to FRenamer.Count - 1 do
-    if  FileNameMatch(FRenamer.Items[I].FileName,
-      FCommandLine.xOptions, FCommandLine.rOption) then FRenamer.UnTag(I);
+    for I := 0 to FRenamer.Count - 1 do
+      if  FileNameMatch(FRenamer.Items[I].FileName,
+        FCommandLine.xOptions, FCommandLine.rOption) then FRenamer.UnTag(I);
 
-  FRenamer.RenameTagged;
+    FRenamer.RenameTagged;
+  end;
   FRenamer.Destroy;
-  ProcesstOption;
-  ProcesslOption;
 end;
 
 procedure TBeeApp.ListShell;
@@ -533,91 +509,94 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FReader.OpenArchive(FCommandLine.ArchiveName);
-  DoMessage(Format(cmScanning, ['...']));
-  for I := 0 to FReader.Count - 1 do
-    if FileNameMatch(FReader.Items[I].FileName,
-      FCommandLine.FileMasks, FCommandLine.rOption) then FReader.Tag(I);
-
-  for I := 0 to FReader.Count - 1 do
-    if  FileNameMatch(FReader.Items[I].FileName,
-      FCommandLine.xOptions, FCommandLine.rOption) then FReader.UnTag(I);
-
-  VersionNeededToExtract := 0;
-  CompressionMethod      := actNone;
-  CompressionLevel       := moStore;
-  DictionaryLevel        := do2MB;
-  WithSolidCompression   := 0;
-  WithArchivePassword    := 0;
-  MaxDictionaryLevel     := do2MB;
-
-  TotalPackedSize := 0;
-  TotalSize       := 0;
-  TotalFiles      := 0;
-
-  ItemToList := TList.Create;
-  for I := 0 to FReader.Count - 1 do
+  if ExitCode < ccError then
   begin
-    Item := FReader.Items[I];
-    if FReader.IsTagged(I) then
-      ItemToList.Add(Item);
+    DoMessage(Format(cmScanning, ['...']));
+    for I := 0 to FReader.Count - 1 do
+      if FileNameMatch(FReader.Items[I].FileName,
+        FCommandLine.FileMasks, FCommandLine.rOption) then FReader.Tag(I);
 
-    if aifVersionNeededToExtract in Item.Flags            then VersionNeededToExtract := Item.VersionNeededToExtract;
-    if acfCompressionMethod      in Item.CompressionFlags then CompressionMethod      := Item.CompressionMethod;
-    if acfCompressionLevel       in Item.CompressionFlags then CompressionLevel       := Item.CompressionLevel;
-    if acfDictionaryLevel        in Item.CompressionFlags then DictionaryLevel        := Item.DictionaryLevel;
-    if acfSolidCompression       in Item.CompressionFlags then Inc(WithSolidCompression);
-    if aefEncryptionMethod       in Item.EncryptionFlags  then
-      if Item.EncryptionMethod <> acrtNone then
-        Inc(WithArchivePassword);
+    for I := 0 to FReader.Count - 1 do
+      if  FileNameMatch(FReader.Items[I].FileName,
+        FCommandLine.xOptions, FCommandLine.rOption) then FReader.UnTag(I);
 
-    if DictionaryLevel > MaxDictionaryLevel then
-      MaxDictionaryLevel := DictionaryLevel;
+    VersionNeededToExtract := 0;
+    CompressionMethod      := actNone;
+    CompressionLevel       := moStore;
+    DictionaryLevel        := do2MB;
+    WithSolidCompression   := 0;
+    WithArchivePassword    := 0;
+    MaxDictionaryLevel     := do2MB;
 
-    Inc(TotalPackedSize, Item.CompressedSize);
-    Inc(TotalSize, Item.UncompressedSize);
-    Inc(TotalFiles);
+    TotalPackedSize := 0;
+    TotalSize       := 0;
+    TotalFiles      := 0;
+
+    ItemToList := TList.Create;
+    for I := 0 to FReader.Count - 1 do
+    begin
+      Item := FReader.Items[I];
+      if FReader.IsTagged(I) then
+        ItemToList.Add(Item);
+
+      if aifVersionNeededToExtract in Item.Flags            then VersionNeededToExtract := Item.VersionNeededToExtract;
+      if acfCompressionMethod      in Item.CompressionFlags then CompressionMethod      := Item.CompressionMethod;
+      if acfCompressionLevel       in Item.CompressionFlags then CompressionLevel       := Item.CompressionLevel;
+      if acfDictionaryLevel        in Item.CompressionFlags then DictionaryLevel        := Item.DictionaryLevel;
+      if acfSolidCompression       in Item.CompressionFlags then Inc(WithSolidCompression);
+      if aefEncryptionMethod       in Item.EncryptionFlags  then
+        if Item.EncryptionMethod <> acrtNone then
+          Inc(WithArchivePassword);
+
+      if DictionaryLevel > MaxDictionaryLevel then
+        MaxDictionaryLevel := DictionaryLevel;
+
+      Inc(TotalPackedSize, Item.CompressedSize);
+      Inc(TotalSize, Item.UncompressedSize);
+      Inc(TotalFiles);
+    end;
+
+    DoMessage(Cr + 'Extraction requirements:');
+    DoMessage('  Minimun version extractor = ' + VersionToStr(VersionNeededToExtract));
+    DoMessage('  Minimun free memory size = ' + IntToStr(Round($280000*power(2, Ord(MaxDictionaryLevel)))));
+    DoMessage('  Minimun free disk size = ' + IntToStr(TotalSize));
+
+    DoMessage(Cr + 'Archive features:');
+    DoMessage('  Items archived = ' + IntToStr(TotalFiles));
+    DoMessage('  Items with solid compression = ' + IntToStr(WithSolidCompression));
+    DoMessage('  Items encrypted = ' + IntToStr(WithArchivePassword));
+
+    DoMessage('  Self-Extractor moduse size = ' + IntToStr(0));
+    DoMessage('  Archive packed data size = ' + IntToStr(TotalPackedSize));
+    DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
+
+    DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
+    DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
+
+    if FCommandLine.slsOption then
+      ItemToList.Sort(CompareFilePath);
+
+    TotalPackedSize := 0;
+    TotalSize       := 0;
+    TotalFiles      := 0;
+
+    for I := 0 to ItemToList.Count - 1 do
+    begin
+      Item := ItemToList.Items[I];
+      Inc(TotalSize, Item.UncompressedSize);
+      Inc(TotalPackedSize, Item.CompressedSize);
+      Inc(TotalFiles);
+
+      Writeln(Format('%16s %7s %12s %12s %3s %s', [
+        FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
+        SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
+        CompressionMethodToStr(Item), Item.FileName]));
+    end;
+    DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
+    DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPackedSize), TotalFiles]));
+
+    ItemToList.Destroy;
   end;
-
-  DoMessage(Cr + 'Extraction requirements:');
-  DoMessage('  Minimun version extractor = ' + VersionToStr(VersionNeededToExtract));
-  DoMessage('  Minimun free memory size = ' + IntToStr(Round($280000*power(2, Ord(MaxDictionaryLevel)))));
-  DoMessage('  Minimun free disk size = ' + IntToStr(TotalSize));
-
-  DoMessage(Cr + 'Archive features:');
-  DoMessage('  Items archived = ' + IntToStr(TotalFiles));
-  DoMessage('  Items with solid compression = ' + IntToStr(WithSolidCompression));
-  DoMessage('  Items encrypted = ' + IntToStr(WithArchivePassword));
-
-  DoMessage('  Self-Extractor moduse size = ' + IntToStr(0));
-  DoMessage('  Archive packed data size = ' + IntToStr(TotalPackedSize));
-  DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
-
-  DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
-  DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
-
-  if FCommandLine.slsOption then
-    ItemToList.Sort(CompareFilePath);
-
-  TotalPackedSize := 0;
-  TotalSize       := 0;
-  TotalFiles      := 0;
-
-  for I := 0 to ItemToList.Count - 1 do
-  begin
-    Item := ItemToList.Items[I];
-    Inc(TotalSize, Item.UncompressedSize);
-    Inc(TotalPackedSize, Item.CompressedSize);
-    Inc(TotalFiles);
-
-    Writeln(Format('%16s %7s %12s %12s %3s %s', [
-      FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
-      SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
-      CompressionMethodToStr(Item), Item.FileName]));
-  end;
-  DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
-  DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPackedSize), TotalFiles]));
-
-  ItemToList.Destroy;
   FReader.Destroy;
 end;
 

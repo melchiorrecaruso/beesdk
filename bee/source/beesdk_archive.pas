@@ -1026,8 +1026,7 @@ begin
         FArchiveName := aArchiveName;
         if FArchiveItems.Count = 0 then
           DoFailure(Format(cmArcTypeError, [aArchiveName]));
-      end else
-        DoFailure(Format(cmArcTypeError, [aArchiveName]));
+      end;
     end else
       DoFailure(Format(cmOpenArcError, [aArchiveName]));
   end else
@@ -1036,8 +1035,6 @@ end;
 
 procedure TArchiveReader.CloseArchive;
 begin
-  if Assigned(FDecoder) then
-    FreeAndnil(FDecoder);
   FTotalSize       :=  0;
   FProcessedSize   :=  0;
   FArchiveName     := '';
