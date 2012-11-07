@@ -117,6 +117,7 @@ type
     FExternalFileName: string;
     FExternalFileSize: int64;
     function GetSolidCompression: boolean;
+    procedure SetVersionNeededToExtract(Value: longint);
   public {methods}
     constructor Create;
     constructor Read(Stream: TFileReader);
@@ -456,46 +457,28 @@ end;
 constructor TArchiveItem.Create;
 begin
   inherited Create;
-  /// Item property ///
   FFileName := '';
-  FFlags := [
-    aifVersionNeededToExtract,
-    aifUncompressedSize,
-    aifLastModifiedTime,
-    aifAttributes,
-    aifComment];
-
-  FVersionNeededToExtract := beexVersionNeededToExtract;
+  /// Item property ///
+  FFlags                  := [];
+  FVersionNeededToExtract :=  0;
   FUncompressedSize       :=  0;
   FLastModifiedTime       :=  0;
   FAttributes             :=  0;
   FComment                := '';
   /// Data descriptor property ///
-  FDataDescriptorFlags := [
-    adfCompressedSize,
-    adfDiskNumber,
-    adfDiskSeek,
-    adfCRC32];
-
-  FCompressedSize := 0;
-  FDiskNumber     := 0;
-  FDiskSeek       := 0;
-  FCRC32          := 0;
+  FDataDescriptorFlags := [];
+  FCompressedSize      :=  0;
+  FDiskNumber          :=  0;
+  FDiskSeek            :=  0;
+  FCRC32               :=  0;
   /// Compression property ///
-  FCompressionFlags := [
-    acfCompressionMethod,
-    acfCompressionLevel,
-    acfDictionaryLevel,
-    acfSolidCompression,
-    acfCompressionTable];
-
-  FCompressionMethod   := actNone;
-  FCompressionLevel    := moStore;
-  FDictionaryLevel     := do2MB;
-  FCompressionTable    := EmptyTableParameters;
-
+  FCompressionFlags  := [];
+  FCompressionMethod := actNone;
+  FCompressionLevel  := moStore;
+  FDictionaryLevel   := do2MB;
+  FCompressionTable  := DefaultTableParameters;
   /// Encryption property ///
-  FEncryptionFlags   := [aefEncryptionMethod];
+  FEncryptionFlags   := [];
   FEncryptionMethod  := acrtNone;
   /// Reserved property ///
   FTag               := aitNone;
@@ -507,9 +490,8 @@ end;
 procedure TArchiveItem.Update(SearchRec: TCustomSearchRec);
 begin
   /// Item property ///
-  FVersionNeededToExtract := beexVersionNeededToExtract;
-  FLastModifiedTime       := SearchRec.LastModifiedTime;
-  FAttributes             := SearchRec.Attributes;
+  FLastModifiedTime := SearchRec.LastModifiedTime;
+  FAttributes       := SearchRec.Attributes;
   /// Reserved property ///
   FExternalFileName := SearchRec.Name;
   FExternalFileSize := SearchRec.Size;
@@ -544,8 +526,8 @@ end;
 
 procedure TArchiveItem.Write(Stream: TFileWriter);
 begin
-  /// Item property ///
   Stream.WriteInfString(FFileName);
+  /// Item property ///
   Stream.WriteInfWord(longword(FFlags));
   if (aifVersionNeededToExtract  in FFlags) then Stream.WriteInfWord(FVersionNeededToExtract);
   if (aifUncompressedSize        in FFlags) then Stream.WriteInfWord(FUncompressedSize);
@@ -572,6 +554,12 @@ end;
 function TArchiveItem.GetSolidCompression: boolean;
 begin
   Result := acfSolidCompression in FCompressionFlags;
+end;
+
+procedure TArchiveItem.SetVersionNeededToExtract(Value: longint);
+begin
+  if FVersionNeededToExtract < Value then
+    FVersionNeededToExtract := Value;
 end;
 
 // TArchiveCustomItems class
@@ -718,11 +706,6 @@ constructor TArchiveReader.Create;
 begin
   inherited Create;
   Randomize;
-  ExitCode := ccSuccesful;
-
-  FDecoder         := nil;
-  FTotalSize       := 0;
-  FProcessedSize   := 0;
   FArchiveName     := '';
   FArchiveComment  := '';
   FArchivePassword := '';
@@ -739,6 +722,7 @@ begin
   FOnRequestImage  := nil;
 
   FArchiveItems    := TArchiveCustomItems.Create;
+  ExitCode         := ccSuccesful;
 end;
 
 destructor TArchiveReader.Destroy;
@@ -774,7 +758,7 @@ begin
   OpenArchive(Value);
 end;
 
-procedure TArchiveReader.ReadCentralDirectory(aStream: TFileReader);
+procedure TArchiveReader.ReadCentralDirectory(aStream: TFileReader); {TODO: da controllare/semplificate}
 var
   Marker: longword;
   LocatorDisksNumber: longword;
@@ -838,23 +822,15 @@ begin
     begin
       CurrentItem := FArchiveItems.Items[I];
       /// Item property ///
-      if not(aifVersionNeededToExtract  in CurrentItem.Flags) then CurrentItem.FVersionNeededToExtract := PreviusItem.FVersionNeededToExtract;
-      if not(aifUncompressedSize        in CurrentItem.Flags) then CurrentItem.FUncompressedSize       := PreviusItem.FUncompressedSize;
-      if not(aifLastModifiedTime        in CurrentItem.Flags) then CurrentItem.FLastModifiedTime       := PreviusItem.FLastModifiedTime;
-      if not(aifAttributes              in CurrentItem.Flags) then CurrentItem.FAttributes             := PreviusItem.FAttributes;
-      if not(aifComment                 in CurrentItem.Flags) then CurrentItem.FComment                := PreviusItem.FComment;
+      if not(aifUncompressedSize  in CurrentItem.Flags) then CurrentItem.FUncompressedSize := PreviusItem.FUncompressedSize;
+      if not(aifLastModifiedTime  in CurrentItem.Flags) then CurrentItem.FLastModifiedTime := PreviusItem.FLastModifiedTime;
+      if not(aifAttributes        in CurrentItem.Flags) then CurrentItem.FAttributes       := PreviusItem.FAttributes;
+      if not(aifComment           in CurrentItem.Flags) then CurrentItem.FComment          := PreviusItem.FComment;
       /// Data descryptor property ///
       if not(adfCompressedSize    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
       if not(adfDiskNumber        in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
       if not(adfDiskSeek          in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskSeek       := PreviusItem.FDiskSeek;
       if not(adfCRC32             in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCRC32          := PreviusItem.FCRC32;
-      /// Compression property ///
-      if not(acfCompressionMethod in CurrentItem.FCompressionFlags)    then CurrentItem.FCompressionMethod := PreviusItem.FCompressionMethod;
-      if not(acfCompressionLevel  in CurrentItem.FCompressionFlags)    then CurrentItem.FCompressionLevel  := PreviusItem.FCompressionLevel;
-      if not(acfDictionaryLevel   in CurrentItem.FCompressionFlags)    then CurrentItem.FDictionaryLevel   := PreviusItem.FDictionaryLevel;
-      if not(acfCompressionTable  in CurrentItem.FCompressionFlags)    then CurrentItem.FCompressionTable  := PreviusItem.FCompressionTable;
-      /// Encryption property ///
-      if not(aefEncryptionMethod  in CurrentItem.FEncryptionFlags)     then CurrentItem.FEncryptionMethod := PreviusItem.FEncryptionMethod;
 
       PreviusItem := CurrentItem;
     end;
@@ -875,7 +851,7 @@ begin
   end;
 end;
 
-procedure TArchiveReader.DecodeToSwap(Item: TArchiveItem);
+procedure TArchiveReader.DecodeToSwap(Item: TArchiveItem); {TODO: da controllare}
 var
   CRC: longword;
 begin
@@ -900,7 +876,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-procedure TArchiveReader.DecodeToNil(Item: TArchiveItem);
+procedure TArchiveReader.DecodeToNil(Item: TArchiveItem); {TODO: da controllare}
 var
   CRC: longword;
   Stream: TFileWriter;
@@ -926,7 +902,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-procedure TArchiveReader.DecodeToFile(Item: TArchiveItem);
+procedure TArchiveReader.DecodeToFile(Item: TArchiveItem); {TODO: da controllare}
 var
   CRC: longword;
   Stream: TFileWriter;
@@ -1011,7 +987,7 @@ begin
     end;
 end;
 
-procedure TArchiveReader.OpenArchive(const aArchiveName: string);
+procedure TArchiveReader.OpenArchive(const aArchiveName: string); {TODO: da controllare}
 begin
   CloseArchive;
   if FileExists(aArchiveName) then
@@ -1035,8 +1011,6 @@ end;
 
 procedure TArchiveReader.CloseArchive;
 begin
-  FTotalSize       :=  0;
-  FProcessedSize   :=  0;
   FArchiveName     := '';
   FArchivePassword := '';
   FArchiveComment  := '';
@@ -1127,16 +1101,15 @@ end;
 constructor TArchiveWriter.Create;
 begin
   inherited Create;
-  FEncoder        := nil;
-  FIsNeededToSave := FALSE;
-  FIsNeededToSwap := FALSE;
-  FThreshold      :=   0;
-  FTempName       :=  '';
-  FTempWriter     := nil;
-  FWorkDirectory  :=  '';
+  FIsNeededToSave     := FALSE;
+  FIsNeededToSwap     := FALSE;
+  FWorkDirectory      :=  '';
+  FThreshold          :=   0;
+  FTempWriter         := nil;
+  FOnRequestBlankDisk := nil;
 end;
 
-procedure TArchiveWriter.WriteCentralDirectory(aStream: TFileWriter);
+procedure TArchiveWriter.WriteCentralDirectory(aStream: TFileWriter); {TODO: da controllare}
 var
   I: longword;
   BindingFlags: TArchiveBindingFlags;
@@ -1203,23 +1176,15 @@ begin
     begin
       CurrentItem := FArchiveItems.Items[I];
       /// Item property ///
-      if CurrentItem.FVersionNeededToExtract = PreviusItem.FVersionNeededToExtract then Exclude(CurrentItem.FFlags, aifVersionNeededToExtract) else Include(CurrentItem.FFlags, aifVersionNeededToExtract);
-      if CurrentItem.FUncompressedSize       = PreviusItem.FUncompressedSize       then Exclude(CurrentItem.FFlags, aifUncompressedSize)       else Include(CurrentItem.FFlags, aifUncompressedSize);
-      if CurrentItem.FLastModifiedTime       = PreviusItem.FLastModifiedTime       then Exclude(CurrentItem.FFlags, aifLastModifiedTime)       else Include(CurrentItem.FFlags, aifLastModifiedTime);
-      if CurrentItem.FAttributes             = PreviusItem.FAttributes             then Exclude(CurrentItem.FFlags, aifAttributes)             else Include(CurrentItem.FFlags, aifAttributes);
-      if CurrentItem.FComment                = PreviusItem.FComment                then Exclude(CurrentItem.FFlags, aifComment)                else Include(CurrentItem.FFlags, aifComment);
+      if CurrentItem.FUncompressedSize = PreviusItem.FUncompressedSize then Exclude(CurrentItem.FFlags, aifUncompressedSize) else Include(CurrentItem.FFlags, aifUncompressedSize);
+      if CurrentItem.FLastModifiedTime = PreviusItem.FLastModifiedTime then Exclude(CurrentItem.FFlags, aifLastModifiedTime) else Include(CurrentItem.FFlags, aifLastModifiedTime);
+      if CurrentItem.FAttributes       = PreviusItem.FAttributes       then Exclude(CurrentItem.FFlags, aifAttributes)       else Include(CurrentItem.FFlags, aifAttributes);
+      if CurrentItem.FComment          = PreviusItem.FComment          then Exclude(CurrentItem.FFlags, aifComment)          else Include(CurrentItem.FFlags, aifComment);
       /// Data descriptor property ///
-      if CurrentItem.FCompressedSize = PreviusItem.FCompressedSize then Exclude(CurrentItem.FDataDescriptorFlags, adfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, adfCompressedSize);
-      if CurrentItem.FDiskNumber     = PreviusItem.FDiskNumber     then Exclude(CurrentItem.FDataDescriptorFlags, adfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, adfDiskNumber);
-      if CurrentItem.FDiskseek       = PreviusItem.FDiskSeek       then Exclude(CurrentItem.FDataDescriptorFlags, adfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, adfDiskSeek);
-      if CurrentItem.FCRC32          = PreviusItem.FCRC32          then Exclude(CurrentItem.FDataDescriptorFlags, adfCRC32)          else Include(CurrentItem.FDataDescriptorFlags, adfCRC32);
-      /// Compression property ///
-      if CurrentItem.FCompressionMethod = PreviusItem.FCompressionMethod then Exclude(CurrentItem.FCompressionFlags, acfCompressionMethod) else Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-      if CurrentItem.FCompressionLevel  = PreviusItem.FCompressionLevel  then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevel)  else Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
-      if CurrentItem.FDictionaryLevel   = PreviusItem.FDictionaryLevel   then Exclude(CurrentItem.FCompressionFlags, acfDictionaryLevel)   else Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
-    //if CurrentItem.FCompressionTable  = PreviusItem.FCompressionTable  then Exclude(CurrentItem.FCompressionFlags, acfCompressionTable)  else Include(CurrentItem.FCompressionFlags, acfCompressionTable);
-      /// Encryption property ///
-      if CurrentItem.FEncryptionMethod  = PreviusItem.FEncryptionMethod  then Exclude(CurrentItem.FEncryptionFlags, aefEncryptionMethod)   else Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
+      if CurrentItem.FCompressedSize   = PreviusItem.FCompressedSize then Exclude(CurrentItem.FDataDescriptorFlags, adfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, adfCompressedSize);
+      if CurrentItem.FDiskNumber       = PreviusItem.FDiskNumber     then Exclude(CurrentItem.FDataDescriptorFlags, adfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, adfDiskNumber);
+      if CurrentItem.FDiskseek         = PreviusItem.FDiskSeek       then Exclude(CurrentItem.FDataDescriptorFlags, adfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, adfDiskSeek);
+      if CurrentItem.FCRC32            = PreviusItem.FCRC32          then Exclude(CurrentItem.FDataDescriptorFlags, adfCRC32)          else Include(CurrentItem.FDataDescriptorFlags, adfCRC32);
 
       PreviusItem := CurrentItem;
     end;
@@ -1263,7 +1228,7 @@ begin
   Result := ArchiveExitCode;
 end; *)
 
-function TArchiveWriter.OpenSwap: longint;
+function TArchiveWriter.OpenSwap: longint; {TODO: da controllare}
 var
   CRC: longword;
   I: longint;
@@ -1326,7 +1291,6 @@ begin
 
   if FIsNeededToSave then
   begin
-
     if ExitCode < ccError then
     begin
       SysUtils.DeleteFile(FSwapName);
@@ -1340,8 +1304,9 @@ begin
     end;
   end;
 
-  FIsNeededToSave := FALSE;
   FTempName       := '';
+  FIsNeededToSave := FALSE;
+  FIsNeededToSwap := FALSE;
   inherited CloseArchive;
 end;
 
@@ -1359,7 +1324,7 @@ begin
   end;
 end;
 
-procedure TArchiveWriter.EncodeFromArchive(Item: TArchiveItem);
+procedure TArchiveWriter.EncodeFromArchive(Item: TArchiveItem); {TODO: da controllare}
 var
   ABSPosition: int64;
   NulCRC:longword;
@@ -1380,7 +1345,7 @@ begin
     DoFailure(cmStrmReadError);
 end;
 
-procedure TArchiveWriter.EncodeFromSwap(Item: TArchiveItem);
+procedure TArchiveWriter.EncodeFromSwap(Item: TArchiveItem); {TODO: da controllare}
 var
   ABSPosition: int64;
 begin
@@ -1404,7 +1369,7 @@ begin
     DoFailure(cmStrmReadError);
 end;
 
-procedure TArchiveWriter.EncodeFromFile(Item: TArchiveItem);
+procedure TArchiveWriter.EncodeFromFile(Item: TArchiveItem); {TODO: da controllare}
 var
   ABSPosition: int64;
   Stream: TFileReader;
@@ -1473,9 +1438,10 @@ constructor TArchiveExtractor.Create;
 begin
   inherited Create;
   FIsNeededToExtract := FALSE;
+  FOnExtract         := nil;
 end;
 
-procedure TArchiveExtractor.DoExtract(Item: TArchiveItem;
+procedure TArchiveExtractor.DoExtract(Item: TArchiveItem; {TODO: da controllare}
   var ExtractAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
@@ -1493,7 +1459,6 @@ var
   Confirm: TArchiveConfirm;
   ExtractAs: string;
 begin
-  DoMessage(Format(cmScanning, ['...']));
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
     begin
