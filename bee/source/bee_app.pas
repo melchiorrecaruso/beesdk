@@ -109,12 +109,16 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1575 archiver utility, July 2012' + Cr +
-               '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
+  FExtractor := nil;
+  FUpdater   := nil;
+  FRenamer   := nil;
+  FEraser    := nil;
+  FReader    := nil;
+  FSelfName  := 'The Bee 0.8.0 build 1579 archiver utility, July 2012' + Cr +
+                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
-
   { set thread priority }
   SetPriority(Ord(FCommandLine.priOption));
 end;
@@ -341,13 +345,13 @@ var
   I: longint;
   Scanner: TFileScanner;
 begin
-  FUpdater := TArchiveUpdater.Create;
+  FUpdater                    := TArchiveUpdater.Create;
   FUpdater.OnRequestBlankDisk := DoRequestBlankDisk;
   FUpdater.OnRequestImage     := DoRequestImage;
-  FUpdater.OnFailure          := DoMessage;
-  FUpdater.OnMessage          := DoMessage;
   FUpdater.OnProgress         := DoProgress;
-  FUpdater.OnClearProgress    := DoClear;
+  FUpdater.OnMessage          := DoMessage;
+  FUpdater.OnFailure          := DoMessage;
+  FUpdater.OnClear            := DoClear;
   FUpdater.OnUpdate           := DoUpdate;
 
   case FCommandLine.mOption of
@@ -359,6 +363,7 @@ begin
   FUpdater.SolidCompression   := FCommandLine.sOption;
   FUpdater.ForceFileExtension := FCommandLine.fOption;
   FUpdater.ArchivePassword    := FCommandLine.pOption;
+//FUpdater.ArchiveComment     :=
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
@@ -376,19 +381,19 @@ begin
 
     FUpdater.UpdateTagged;
   end;
-  FUpdater.Destroy;
+  FreeAndNil(FUpdater);
 end;
 
 procedure TBeeApp.DecodeShell(TestMode: boolean);
 var
   I: longint;
 begin
-  FExtractor := TArchiveExtractor.Create;
+  FExtractor                 := TArchiveExtractor.Create;
   FExtractor.OnRequestImage  := DoRequestImage;
-  FExtractor.OnFailure       := DoMessage;
-  FExtractor.OnMessage       := DoMessage;
   FExtractor.OnProgress      := DoProgress;
-  FExtractor.OnClearProgress := DoClear;
+  FExtractor.OnMessage       := DoMessage;
+  FExtractor.OnFailure       := DoMessage;
+  FExtractor.OnClear         := DoClear;
   FExtractor.OnExtraction    := DoExtract;
 
   FExtractor.ArchivePassword := FCommandLine.pOption;
@@ -407,24 +412,24 @@ begin
         FCommandLine.xOptions, FCommandLine.rOption) then FExtractor.UnTag(I);
 
     case TestMode of
-      True:  FExtractor.TestTagged;
-      False: FExtractor.ExtractTagged;
+      FALSE: FExtractor.ExtractTagged;
+      TRUE:  FExtractor.TestTagged;
     end;
   end;
-  FExtractor.Destroy;
+  FreeAndNil(FExtractor);
 end;
 
 procedure TBeeApp.DeleteShell;
 var
   I: longint;
 begin
-  FEraser := TArchiveEraser.Create;
+  FEraser                    := TArchiveEraser.Create;
   FEraser.OnRequestBlankDisk := DoRequestBlankDisk;
   FEraser.OnRequestImage     := DoRequestImage;
-  FEraser.OnFailure          := DoMessage;
-  FEraser.OnMessage          := DoMessage;
   FEraser.OnProgress         := DoProgress;
-  FEraser.OnClearProgress    := DoClear;
+  FEraser.OnMessage          := DoMessage;
+  FEraser.OnFailure          := DoMessage;
+  FEraser.OnClear            := DoClear;
   FEraser.OnEraseEvent       := DoErase;
 
   FEraser.ArchivePassword    :=  FCommandLine.pOption;
@@ -444,20 +449,20 @@ begin
 
     FEraser.EraseTagged;
   end;
-  FEraser.Destroy;
+  FreeAndNil(FEraser);
 end;
 
 procedure TBeeApp.RenameShell;
 var
   I: longint;
 begin
-  FRenamer := TArchiveRenamer.Create;
+  FRenamer                    := TArchiveRenamer.Create;
   FRenamer.OnRequestBlankDisk := DoRequestBlankDisk;
   FRenamer.OnRequestImage     := DoRequestImage;
-  FRenamer.OnFailure          := DoMessage;
-  FRenamer.OnMessage          := DoMessage;
   FRenamer.OnProgress         := DoProgress;
-  FRenamer.OnClearProgress    := DoClear;
+  FRenamer.OnMessage          := DoMessage;
+  FRenamer.OnFailure          := DoMessage;
+  FRenamer.OnClear            := DoClear;
   FRenamer.OnRenameEvent      := DoRename;
 
   FRenamer.ArchivePassword    := FCommandLine.pOption;
@@ -477,7 +482,7 @@ begin
 
     FRenamer.RenameTagged;
   end;
-  FRenamer.Destroy;
+  FreeAndNil(FRenamer);
 end;
 
 procedure TBeeApp.ListShell;
@@ -494,16 +499,16 @@ var
   WithSolidCompression: longint;
   WithArchivePassword: longint;
 
-  TotalPackedSize: int64;
   TotalSize: int64;
+  TotalPackedSize: int64;
   TotalFiles:longint;
 begin
-  FReader := TCustomArchiveReader.Create;
+  FReader                 := TCustomArchiveReader.Create;
   FReader.OnRequestImage  := DoRequestImage;
-  FReader.OnFailure       := DoMessage;
-  FReader.OnMessage       := DoMessage;
   FReader.OnProgress      := DoProgress;
-  FReader.OnClearProgress := DoClear;
+  FReader.OnMessage       := DoMessage;
+  FReader.OnFailure       := DoMessage;
+  FReader.OnClear         := DoClear;
 
   FReader.ArchivePassword := FCommandLine.pOption;
 
@@ -597,7 +602,7 @@ begin
 
     ItemToList.Destroy;
   end;
-  FReader.Destroy;
+  FreeAndNil(FReader);
 end;
 
 end.
