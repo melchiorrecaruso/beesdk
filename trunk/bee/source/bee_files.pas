@@ -675,7 +675,6 @@ begin
   while Error = 0 do
   begin
     RecName := RecPath + Rec.Name;
-
     if (Rec.Attr and faDirectory) = 0 then
     begin
       if FileNameMatch(RecName, Mask, Recursive) then

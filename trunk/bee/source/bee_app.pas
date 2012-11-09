@@ -57,7 +57,7 @@ type
     FRenamer: TArchiveRenamer;
     FEraser: TArchiveEraser;
     FReader: TCustomArchiveReader;
-    function QueryToUser: TArchiveConfirm;
+    function QueryToUser(Confirm: TArchiveConfirm): boolean;
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoRequestBlankDisk(var Abort : Boolean);
     procedure DoMessage(const Message: string);
@@ -215,20 +215,37 @@ begin
   end;
 end;
 
-function TBeeApp.QueryToUser: TArchiveConfirm;
+function TBeeApp.QueryToUser(Confirm: TArchiveConfirm): boolean;
 var
   Ch: char;
 begin
-  Result := arcCancel;
-  repeat
+  Readln(Ch);
+  while Pos(Upcase(Ch), 'YNQ01234567') = -1 do
+  begin
+    Write(ParamToOem('Yes, No, or Quit? '));
     Readln(Ch);
-    case Upcase(Ch) of
-      'Y': Result := arcOk;
-      'N': Result := arcCancel;
-      'Q': Result := arcQuit;
-      else Write(ParamToOem('Yes, No, or Quit? '));
+  end;
+
+  Result  := TRUE;
+  Confirm := arcCancel;
+  case Upcase(Ch) of
+    'Y': Confirm := arcOk;
+    'N': Confirm := arcCancel;
+    'Q': Confirm := arcQuit;
+    else begin
+      Result := FALSE;
+      case Upcase(Ch) of
+        '0': FCommandLine.uOption := umAdd;
+        '1': FCommandLine.uOption := umUpdate;
+        '2': FCommandLine.uOption := umReplace;
+        '3': FCommandLine.uOption := umQuery;
+        '4': FCommandLine.uOption := umAddUpdate;
+        '5': FCommandLine.uOption := umAddReplace;
+        '6': FCommandLine.uOption := umAddQuery;
+        '7': FCommandLine.uOption := umAddAutoRename;
+      end;
     end;
-  until Upcase(Ch) in ['Y', 'N', 'Q'];
+  end;
 end;
 
 procedure TBeeApp.DoUpdate(SearchRec: TCustomSearchRec;
@@ -266,7 +283,8 @@ begin
       if (I <> - 1) then
       begin
         Write(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '));
-        Confirm := QueryToUser;
+        if QueryToUser(Confirm) = FALSE then
+          DoUpdate(SearchRec, UpdateAs, Confirm);
       end else
         Confirm := arcOk;
     end;
@@ -275,7 +293,8 @@ begin
         Write(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '))
       else
         Write(ParamToOem('Add "' + SearchRec.Name + '"? '));
-      Confirm := QueryToUser;
+      if QueryToUser(Confirm) = FALSE then
+        DoUpdate(SearchRec, UpdateAs, Confirm);
     end;
   end;
 end;
