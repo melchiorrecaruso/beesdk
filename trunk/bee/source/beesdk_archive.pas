@@ -459,14 +459,22 @@ begin
   inherited Create;
   FFileName := '';
   /// Item property ///
-  FFlags                  := [];
+  FFlags := [
+    aifUncompressedSize,
+    aifLastModifiedTime,
+    aifAttributes,
+    aifComment];
   FVersionNeededToExtract :=  0;
   FUncompressedSize       :=  0;
   FLastModifiedTime       :=  0;
   FAttributes             :=  0;
   FComment                := '';
   /// Data descriptor property ///
-  FDataDescriptorFlags := [];
+  FDataDescriptorFlags := [
+    adfCompressedSize,
+    adfDiskNumber,
+    adfDiskSeek,
+    adfCRC32];
   FCompressedSize      :=  0;
   FDiskNumber          :=  0;
   FDiskSeek            :=  0;
@@ -1898,6 +1906,7 @@ var
   CurrentTable: TTableParameters;
   CurrentFileExt: string;
   PreviousFileExt: string;
+  FirstItem: longint;
 begin
   FConfiguration := TConfiguration.Create;
   if FileExists(FConfigurationName) then
@@ -1913,21 +1922,27 @@ begin
     FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(FDictionaryLevel));
     FConfiguration.Selector('\m' + FConfiguration.CurrentSection.Values['Method']);
 
+    FirstItem := -1;
     for I := 0 to FArchiveItems.Count - 1 do
     begin
       CurrentItem := FArchiveItems.Items[I];
       if CurrentItem.FTag = aitAdd then
       begin
-        Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-        Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
-        Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
-        Exclude(CurrentItem.FCompressionFlags, acfSolidCompression);
-        Exclude(CurrentItem.FCompressionFlags, acfCompressionTable);
-
+        if FirstItem = -1 then
+        begin
+          Include(CurrentItem.FFlags, aifVersionNeededToExtract);
+          Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
+          Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
+          Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
+          FirstItem := I;
+        end;
+        CurrentItem.SetVersionNeededToExtract(beexVersionNeededToExtract);
         CurrentItem.FCompressionMethod := FCompressionMethod;
         CurrentItem.FCompressionLevel  := FCompressionLevel;
         CurrentItem.FDictionaryLevel   := FDictionaryLevel;
 
+        Exclude(CurrentItem.FCompressionFlags, acfSolidCompression);
+        Exclude(CurrentItem.FCompressionFlags, acfCompressionTable);
         if CurrentItem.FCompressionMethod = actMain then
         begin
           PreviousFileExt := CurrentFileExt;
