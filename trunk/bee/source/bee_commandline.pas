@@ -105,7 +105,6 @@ type
     FsfxOption: string;
     FpOption: string;
     FtOption: boolean;
-    FlOption: boolean;
     FslsOption: boolean;
     FwdOption: string;
     FcdOption: string;
@@ -155,7 +154,6 @@ type
     property sfxOption: string read FsfxOption write SetsfxOption;
     property pOption: string read FpOption write SetpOption;
     property tOption: boolean read FtOption write FtOption;
-    property lOption: boolean read FlOption write FlOption;
     property slsOption: boolean read FslsOption write FslsOption;
     property wdOption: string read FwdOption write SetwdOption;
     property cdOption: string read FcdOption write SetcdOption;
@@ -195,7 +193,6 @@ begin
   FsfxOption := '';
   FpOption := '';
   FtOption := False;
-  FlOption := False;
   FslsOption := False;
   FwdOption := '';
   FcdOption := '';
@@ -421,7 +418,6 @@ begin
         'F': ProcessfOption(S);
         'P': ProcesspOption(S);
         'T': ProcessOption (S, FtOption);
-        'L': ProcessOption (S, FlOption);
       end; // end case
     end else
 
@@ -476,7 +472,6 @@ begin
     else        Params.Add('-r-' );
   end;
 
-
   case FuOption of
     umAdd:           Params.Add('-u0');
     umUpdate:        Params.Add('-u1');
@@ -499,7 +494,6 @@ begin
   if Length(FpOption)   > 0 then Params.Add('-p'   + FpOption);
 
   if FtOption   then Params.Add('-t+')   else Params.Add('-t-');
-  if FlOption   then Params.Add('-l+')   else Params.Add('-l-');
   if FslsOption then Params.Add('-sls+') else Params.Add('-sls-');
 
   if Length(FwdOption)  > 0 then Params.Add('-wd'  + FwdOption);

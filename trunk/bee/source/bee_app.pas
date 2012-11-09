@@ -114,7 +114,7 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1579 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1581 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -241,9 +241,7 @@ begin
   UpdateAs := FCommandLine.cdOption + SearchRec.Name;
   I := FUpdater.Find(UpdateAs);
   if I <> -1 then
-  begin
     Item := FUpdater.Items[I];
-  end;
 
   Confirm := arcCancel;
   case FCommandLine.uOption of
@@ -321,20 +319,16 @@ begin
   DoMessage('  -cfg[filename]  use specified Configuration file');
   DoMessage('  -d<0..9>    set Dictionary size (d1 uses < 5M, d2 (default) < 10M, ...)');
   DoMessage('  -f          Force file extention');
-  DoMessage('  -hv<03,04>  set archive file header version');
-  DoMessage('  -l          List archive after process');
   DoMessage('  -m<0..3>    set compression Method (0-store, 1-default, ...)');
   DoMessage('  -p          set Password (min length 4 bytes)');
-  DoMessage('  -pri<0..3>  set process priority (0-Idle, 1-Normal, 2-High, 3-RealTime)');
+  DoMessage('  -pri<0..3>  set process priority (0-idle, 1-normal, 2-high, 3-realtime)');
   DoMessage('  -r    Recurse subdirectories');
   DoMessage('  -rw   recurse subdirectories only for wildcard names');
   DoMessage('  -s    create Solid archive');
   DoMessage('  -sfx  add self-extractor module');
   DoMessage('  -sls  show list sorted by filename - for l (list) command');
   DoMessage('  -t    Test archive after process');
-  DoMessage('  -u<0..5>  Update files method (0-add files, 1-update older files, 2-replace');
-  DoMessage('            files, 3-add and update older files (default), 4-add and replace');
-  DoMessage('            files, 5-add and autorename existing files)');
+  DoMessage('  -u<0..7>  Update files method (0-add files, 1-update files, ...)');
   DoMessage('  -wd[direcroty]  set temporany work directory');
   DoMessage('  -x[filenames]   eXclude filenames');
   DoMessage(Cr + 'Use BeeOpt to make most optimal parameters.' + Cr);

@@ -161,7 +161,7 @@ type
   public {methods}
     constructor Create;
     destructor Destroy; override;
-    procedure Add(Item : TArchiveItem);
+    function Add(Item : TArchiveItem): longint;
     procedure Delete(Index: longint);
     procedure Clear;
     function Find(const FileName: string): longint;
@@ -598,7 +598,7 @@ begin
   FNames.Clear;
 end;
 
-procedure TArchiveCustomItems.Add(Item: TArchiveItem);
+function TArchiveCustomItems.Add(Item: TArchiveItem): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
@@ -634,6 +634,7 @@ begin
     end;
   end else
     FNames.Add(Item);
+   Result := Item.FPosition;
 end;
 
 function TArchiveCustomItems.GetNameIndex(const FileName: string): longint;
@@ -1999,6 +2000,7 @@ var
   Csr: TCustomSearchRec;
   UpdateAs: string;
 begin
+  FIsNeededToSave := FALSE;
   FSearchRecs.Sort(@CompareCustomSearchRec);
   for J := 0 to FSearchRecs.Count - 1 do
     if ExitCode < ccError then
@@ -2006,22 +2008,18 @@ begin
       Csr := TCustomSearchRec(FSearchRecs.Items[J]);
       DoUpdate(Csr, UpdateAs, Confirm);
       case Confirm of
-        arcOk:
-        begin
+        arcOk: begin
           I := Find(UpdateAs);
           if I = -1 then
           begin
-            Item           := TArchiveItem.Create;
-            Item.FTag      := aitAdd;
+            Item := FArchiveItems.Items[FArchiveItems.Add(TArchiveItem.Create)];
             Item.FFileName := UpdateAs;
-            FArchiveItems.Add(Item);
+            Item.FTag      := aitAdd;
           end else
           begin
             Item := FArchiveItems.Items[I];
             if Item.FTag = aitNone then
-            begin
               Item.FTag := aitUpdate;
-            end;
           end;
           Item.Update(Csr);
           FIsNeededToSave := TRUE;
