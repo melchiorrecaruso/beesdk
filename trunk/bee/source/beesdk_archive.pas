@@ -216,7 +216,7 @@ type
     procedure DecodeToNil (Item: TArchiveItem);
     procedure DecodeToFile(Item: TArchiveItem);
     procedure UnPackCentralDirectory;
-    procedure ReadCentralDirectory(aStream: TFileReader);
+    function ReadCentralDirectory(aStream: TFileReader): boolean;
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
@@ -233,7 +233,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure OpenArchive(const aArchiveName: string);
+    function OpenArchive(const aArchiveName: string): boolean;
     procedure CloseArchive; virtual;
     procedure Terminate;
     function Find(const aFileName: string): longint;
@@ -758,7 +758,7 @@ begin
   OpenArchive(Value);
 end;
 
-procedure TArchiveReader.ReadCentralDirectory(aStream: TFileReader); {TODO: da controllare/semplificate}
+function TArchiveReader.ReadCentralDirectory(aStream: TFileReader): boolean;
 var
   Marker: longword;
   LocatorDisksNumber: longword;
@@ -767,6 +767,7 @@ var
   LocatorFlags: TArchiveLocatorFlags;
   BindingFlags: TArchiveBindingFlags;
 begin
+  Result := FALSE;
   // Read Marker
   FArchiveReader.Seek(-2*SizeOf(longword), soFromEnd);
   if FArchiveReader.ReadDWord = beexArchiveMarker then
@@ -784,28 +785,24 @@ begin
         // Seek on CentralDirectory
         aStream.SeekImage(LocatorDiskNumber, LocatorDiskSeek);
         if aStream.ReadDWord = beexArchiveMarker then
-        begin
-          while ExitCode < ccError do
-          begin
+          repeat
             Marker := aStream.ReadInfWord;
             case Marker of
-              aitItem: FArchiveItems.Add(TArchiveItem.Read(aStream));
+              aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
               aitBinding: begin
                 BindingFlags := TArchiveBindingFlags(longword(aStream.ReadInfWord));
-                if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString else FArchiveComment := '';
+                if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString;
               end;
-              aitLocator: Break;
-              aitEnd: Break;
-              else DoFailure(cmArcTypeError);
+              aitEnd: Result := TRUE;
+              else    Break;
             end;
-          end;
-        end else
-          DoFailure(cmArcTypeError);
+          until Marker = aitEnd;
+      end;
+  end;
 
-        if ExitCode < ccError then UnPackCentralDirectory;
-      end else
-        DoFailure(cmArcTypeError);
-  end else
+  if Result = TRUE then
+    UnPackCentralDirectory
+  else
     DoFailure(cmArcTypeError);
 end;
 
@@ -851,7 +848,7 @@ begin
   end;
 end;
 
-procedure TArchiveReader.DecodeToSwap(Item: TArchiveItem); {TODO: da controllare}
+procedure TArchiveReader.DecodeToSwap(Item: TArchiveItem);
 var
   CRC: longword;
 begin
@@ -876,7 +873,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-procedure TArchiveReader.DecodeToNil(Item: TArchiveItem); {TODO: da controllare}
+procedure TArchiveReader.DecodeToNil(Item: TArchiveItem);
 var
   CRC: longword;
   Stream: TFileWriter;
@@ -902,7 +899,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-procedure TArchiveReader.DecodeToFile(Item: TArchiveItem); {TODO: da controllare}
+procedure TArchiveReader.DecodeToFile(Item: TArchiveItem);
 var
   CRC: longword;
   Stream: TFileWriter;
@@ -987,7 +984,7 @@ begin
     end;
 end;
 
-procedure TArchiveReader.OpenArchive(const aArchiveName: string); {TODO: da controllare}
+function TArchiveReader.OpenArchive(const aArchiveName: string): boolean;
 begin
   CloseArchive;
   if FileExists(aArchiveName) then
@@ -996,8 +993,7 @@ begin
     FArchiveReader.OnRequestImage := FOnRequestImage;
     if Assigned(FArchiveReader) then
     begin
-      ReadCentralDirectory(FArchiveReader);
-      if ExitCode < ccError then
+      if ReadCentralDirectory(FArchiveReader) then
       begin
         FArchiveName := aArchiveName;
         if FArchiveItems.Count = 0 then
@@ -1007,6 +1003,7 @@ begin
       DoFailure(Format(cmOpenArcError, [aArchiveName]));
   end else
     FArchiveName := aArchiveName;
+  Result := ExitCode < ccError;
 end;
 
 procedure TArchiveReader.CloseArchive;
@@ -1109,7 +1106,7 @@ begin
   FOnRequestBlankDisk := nil;
 end;
 
-procedure TArchiveWriter.WriteCentralDirectory(aStream: TFileWriter); {TODO: da controllare}
+procedure TArchiveWriter.WriteCentralDirectory(aStream: TFileWriter);
 var
   I: longword;
   BindingFlags: TArchiveBindingFlags;
@@ -1228,21 +1225,19 @@ begin
   Result := ArchiveExitCode;
 end; *)
 
-function TArchiveWriter.OpenSwap: longint; {TODO: da controllare}
+function TArchiveWriter.OpenSwap: longint;
 var
-  CRC: longword;
   I: longint;
+  CRC: longword;
   Item: TArchiveItem;
 begin
   if (ExitCode < ccError) and (FIsNeededToSwap) then
   begin
     FSwapName   := GenerateFileName(FWorkDirectory);
     FSwapWriter := TFileWriter.Create(FSwapName, 0);
-
     if Assigned(FSwapWriter) then
     begin
       FSwapWriter.WriteDWord(beexArchiveMarker);
-
       FDecoder := THeaderDecoder.Create(FArchiveReader);
       FDecoder.OnProgress := @DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
@@ -1269,11 +1264,10 @@ begin
         end;
       FDecoder.Destroy;
       FreeAndNil(FSwapWriter);
-
       if ExitCode < ccError then
       begin
         FSwapReader := TFileReader.Create(FSwapName);
-        if Assigned(FSwapReader) = False then
+        if Assigned(FSwapReader) = FALSE then
           DoFailure(cmOpenSwapError);
       end;
     end else
@@ -1305,6 +1299,8 @@ begin
   end;
 
   FTempName       := '';
+  FThreshold      :=  0;
+  FWorkDirectory  := '';
   FIsNeededToSave := FALSE;
   FIsNeededToSwap := FALSE;
   inherited CloseArchive;
@@ -1324,7 +1320,7 @@ begin
   end;
 end;
 
-procedure TArchiveWriter.EncodeFromArchive(Item: TArchiveItem); {TODO: da controllare}
+procedure TArchiveWriter.EncodeFromArchive(Item: TArchiveItem);
 var
   ABSPosition: int64;
   NulCRC:longword;
@@ -1345,7 +1341,7 @@ begin
     DoFailure(cmStrmReadError);
 end;
 
-procedure TArchiveWriter.EncodeFromSwap(Item: TArchiveItem); {TODO: da controllare}
+procedure TArchiveWriter.EncodeFromSwap(Item: TArchiveItem);
 var
   ABSPosition: int64;
 begin
@@ -1369,7 +1365,7 @@ begin
     DoFailure(cmStrmReadError);
 end;
 
-procedure TArchiveWriter.EncodeFromFile(Item: TArchiveItem); {TODO: da controllare}
+procedure TArchiveWriter.EncodeFromFile(Item: TArchiveItem);
 var
   ABSPosition: int64;
   Stream: TFileReader;
@@ -1441,7 +1437,7 @@ begin
   FOnExtract         := nil;
 end;
 
-procedure TArchiveExtractor.DoExtract(Item: TArchiveItem; {TODO: da controllare}
+procedure TArchiveExtractor.DoExtract(Item: TArchiveItem;
   var ExtractAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
