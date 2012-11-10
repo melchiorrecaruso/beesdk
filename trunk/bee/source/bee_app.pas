@@ -57,7 +57,7 @@ type
     FRenamer: TArchiveRenamer;
     FEraser: TArchiveEraser;
     FReader: TCustomArchiveReader;
-    function QueryToUser(Confirm: TArchiveConfirm): boolean;
+    function QueryToUser(var Confirm: TArchiveConfirm): boolean;
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoRequestBlankDisk(var Abort : Boolean);
     procedure DoMessage(const Message: string);
@@ -215,7 +215,7 @@ begin
   end;
 end;
 
-function TBeeApp.QueryToUser(Confirm: TArchiveConfirm): boolean;
+function TBeeApp.QueryToUser(var Confirm: TArchiveConfirm): boolean;
 var
   Ch: char;
 begin
@@ -268,8 +268,6 @@ begin
     umAddUpdate:     if (I =  -1) or  (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
     umAddReplace:    Confirm := arcOk;
     umAddAutoRename: begin
-      Writeln(UpdateAs, ' = ', I);
-
       if (I <> - 1) then
       begin
         Index := 0;

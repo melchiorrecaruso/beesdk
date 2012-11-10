@@ -119,7 +119,7 @@ type
     function GetSolidCompression: boolean;
     procedure SetVersionNeededToExtract(Value: longint);
   public {methods}
-    constructor Create;
+    constructor Create(const aFileName: string);
     constructor Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
     procedure Update(SearchRec: TCustomSearchRec);
@@ -454,10 +454,10 @@ end;
 
 // TArchiveItem class
 
-constructor TArchiveItem.Create;
+constructor TArchiveItem.Create(const aFileName: string);
 begin
   inherited Create;
-  FFileName := '';
+  FFileName := aFileName;
   /// Item property ///
   FFlags := [
     aifVersionNeededToExtract,
@@ -603,7 +603,7 @@ var
   Lo, Med, Hi, I: longint;
 begin
   Item.FPosition := FItems.Add(Item);
-  if FNames.Count <> 0 then
+  if FNames.Count > 0 then
   begin
     Lo := 0;
     Hi := FNames.Count - 1;
@@ -624,6 +624,7 @@ begin
 
     if Hi = -2 then
     begin
+      Writeln('CRASH'); halt;
       FNames.Insert(Med + 1, Item);
     end else
     begin
@@ -634,6 +635,7 @@ begin
     end;
   end else
     FNames.Add(Item);
+
    Result := Item.FPosition;
 end;
 
@@ -641,6 +643,9 @@ function TArchiveCustomItems.GetNameIndex(const FileName: string): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
+
+  // Writeln(FileName);
+
   Lo := 0;
   Hi := FNames.Count - 1;
   while Hi >= Lo do
@@ -657,11 +662,9 @@ begin
       else
         Hi := -2;
   end;
-
+  Result := -1;
   if Hi = -2 then
-    Result := Med
-  else
-    Result := -1;
+    Result := Med;
 end;
 
 function TArchiveCustomItems.Find(const FileName: string): longint;
@@ -2012,9 +2015,8 @@ begin
           I := Find(UpdateAs);
           if I = -1 then
           begin
-            Item := FArchiveItems.Items[FArchiveItems.Add(TArchiveItem.Create)];
-            Item.FFileName := UpdateAs;
-            Item.FTag      := aitAdd;
+            Item := FArchiveItems.Items[FArchiveItems.Add(TArchiveItem.Create(UpdateAs))];
+            Item.FTag := aitAdd
           end else
           begin
             Item := FArchiveItems.Items[I];
