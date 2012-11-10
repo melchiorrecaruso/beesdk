@@ -117,7 +117,6 @@ type
     FExternalFileName: string;
     FExternalFileSize: int64;
     function GetSolidCompression: boolean;
-    procedure SetVersionNeededToExtract(Value: longint);
   public {methods}
     constructor Create(const aFileName: string);
     constructor Read(Stream: TFileReader);
@@ -205,15 +204,15 @@ type
     FSwapReader: TFileReader;
     FSwapWriter: TFileWriter;
     FSuspended:  boolean;
+    FArchiveItems: TArchiveCustomItems;
+    FOnRequestImage: TFileReaderRequestImageEvent;
     FOnProgress: TArchiveProgressEvent;
     FOnMessage: TArchiveMessageEvent;
     FOnFailure: TArchiveMessageEvent;
     FOnClear: TArchiveClearEvent;
-    FOnRequestImage: TFileReaderRequestImageEvent;
-    FArchiveItems: TArchiveCustomItems;
     procedure InitDecoder (Item: TArchiveItem);
+    procedure DecodeToNul (Item: TArchiveItem);
     procedure DecodeToSwap(Item: TArchiveItem);
-    procedure DecodeToNil (Item: TArchiveItem);
     procedure DecodeToFile(Item: TArchiveItem);
     procedure UnPackCentralDirectory;
     function ReadCentralDirectory(aStream: TFileReader): boolean;
@@ -244,12 +243,13 @@ type
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
-    property Suspended: boolean read FSuspended write FSuspended;
-    property OnClear: TArchiveClearEvent read FOnClear write FOnClear;
+    property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
     property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
     property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
     property OnFailure: TArchiveMessageEvent read FOnFailure write FOnFailure;
-    property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
+    property OnClear: TArchiveClearEvent read FOnClear write FOnClear;
+
+    property Suspended: boolean read FSuspended write FSuspended;
   end;
 
   TCustomArchiveReader = class(TArchiveReader)
@@ -266,9 +266,9 @@ type
     FEncoder: THeaderEncoder;
     FIsNeededToSave: boolean;
     FIsNeededToSwap: boolean;
-    FThreshold: int64;
     FTempName: string;
     FTempWriter: TFileWriter;
+    FThreshold: int64;
     FWorkDirectory: string;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
     procedure InitEncoder      (Item: TArchiveItem);
@@ -276,10 +276,10 @@ type
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
   private
+    procedure SetWorkDirectory(const Value: string);
     procedure WriteCentralDirectory(aStream: TFileWriter);
     procedure PackCentralDirectory;
     function OpenSwap: longint;
-    procedure SetWorkDirectory(const Value: string);
   public
     constructor Create;
     procedure CloseArchive; override;
@@ -342,7 +342,6 @@ type
   TArchiveUpdater = class(TArchiveWriter)
   private
     FSearchRecs: TList;
-    FDefaultFlags: TArchiveItemFlags;
     FCompressionMethod: TArchiveCompressionMethod;
     FCompressionLevel: TmOption;
     FDictionaryLevel: TdOption;
@@ -366,27 +365,13 @@ type
     procedure UpdateTagged;
     procedure Tag(SearchRec: TCustomSearchRec);
   public
-    property CompressionMethod: TArchiveCompressionMethod
-      read FCompressionMethod write FCompressionMethod;
-
-    property CompressionLevel: TmOption
-      read FCompressionLevel write FCompressionLevel;
-
-    property DictionaryLevel: TdOption
-      read FDictionaryLevel  write FDictionaryLevel;
-
-    property SolidCompression: boolean
-      read FSolidCompression write FSolidCompression;
-
-    property EncrypionMethod: TArchiveEncryptionMethod
-      read FEncryptionMethod write FEncryptionMethod;
-
-    property ConfigurationName: string
-      read FConfigurationName write SetConfigurationName;
-    property ForceFileExtension: string
-      read FForceFileExtension write FForceFileExtension;
-
-    property DefaultFlags: TArchiveItemFlags read FDefaultFlags write FDefaultFlags;
+    property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod write FCompressionMethod;
+    property CompressionLevel: TmOption read FCompressionLevel write FCompressionLevel;
+    property DictionaryLevel: TdOption read FDictionaryLevel  write FDictionaryLevel;
+    property SolidCompression: boolean read FSolidCompression write FSolidCompression;
+    property EncrypionMethod: TArchiveEncryptionMethod read FEncryptionMethod write FEncryptionMethod;
+    property ConfigurationName: string read FConfigurationName write SetConfigurationName;
+    property ForceFileExtension: string read FForceFileExtension write FForceFileExtension;
 
     property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
   end;
@@ -508,8 +493,8 @@ end;
 
 constructor TArchiveItem.Read(Stream: TFileReader);
 begin
-  /// Item property ///
   FFileName := Stream.ReadInfString;
+  /// Item property ///
   FFlags    := TArchiveItemFlags(longword(Stream.ReadInfWord));
   if (aifVersionNeededToExtract in FFlags) then FVersionNeededToExtract := Stream.ReadInfWord;
   if (aifUncompressedSize       in FFlags) then FUncompressedSize       := Stream.ReadInfWord;
@@ -563,12 +548,6 @@ end;
 function TArchiveItem.GetSolidCompression: boolean;
 begin
   Result := acfSolidCompression in FCompressionFlags;
-end;
-
-procedure TArchiveItem.SetVersionNeededToExtract(Value: longint);
-begin
-  if FVersionNeededToExtract < Value then
-    FVersionNeededToExtract := Value;
 end;
 
 // TArchiveCustomItems class
@@ -643,9 +622,6 @@ function TArchiveCustomItems.GetNameIndex(const FileName: string): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
-
-  // Writeln(FileName);
-
   Lo := 0;
   Hi := FNames.Count - 1;
   while Hi >= Lo do
@@ -747,7 +723,7 @@ end;
 procedure TArchiveReader.Terminate;
 begin
   SetExitCode(ccUserAbort);
-  FSuspended := False;
+  FSuspended := FALSE;
 end;
 
 function TArchiveReader.GetCount: longint;
@@ -762,8 +738,7 @@ end;
 
 procedure TArchiveReader.SetExitCode(Value: longint);
 begin
-  if ExitCode < Value then
-    ExitCode := Value;
+  if ExitCode < Value then ExitCode := Value;
 end;
 
 procedure TArchiveReader.SetArchiveName(const Value: string);
@@ -782,11 +757,11 @@ var
 begin
   Result := FALSE;
   // Read Marker
-  FArchiveReader.Seek(-2*SizeOf(longword), soFromEnd);
-  if FArchiveReader.ReadDWord = beexArchiveMarker then
+  aStream.Seek(-2*SizeOf(longword), soFromEnd);
+  if aStream.ReadDWord = beexArchiveMarker then
   begin
     // Read MagikSeek
-    FArchiveReader.Seek(-FArchiveReader.ReadDWord, soFromEnd);
+    aStream.Seek(-aStream.ReadDWord, soFromEnd);
     // Read Locator Marker
     if aStream.ReadInfWord = aitLocator then
       if aStream.ReadInfWord <= beexVersionNeededToRead then
@@ -886,7 +861,7 @@ begin
     DoClear;
 
     if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
-    if not FSwapWriter   .IsValid then DoFailure(cmStrmWriteError);
+    if not FSwapWriter.IsValid then DoFailure(cmStrmWriteError);
 
     if Item.FCRC32 <> CRC then
       DoFailure(Format(cmCrcError, [Item.FExternalFileName]));
@@ -894,7 +869,7 @@ begin
     DoFailure(cmStrmWriteError);
 end;
 
-procedure TArchiveReader.DecodeToNil(Item: TArchiveItem);
+procedure TArchiveReader.DecodeToNul(Item: TArchiveItem);
 var
   CRC: longword;
   Stream: TFileWriter;
@@ -925,7 +900,7 @@ var
   CRC: longword;
   Stream: TFileWriter;
 begin
-  Stream := TFileWriter.Create(Item.FExternalFileName, fmCreate);
+  Stream := TFileWriter.Create(Item.FExternalFileName, 0);
   if Assigned(Stream) then
   begin
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
@@ -1033,7 +1008,7 @@ begin
   FArchiveComment  := '';
   if Assigned(FArchiveReader) then
     FreeAndNil(FArchiveReader);
-  FSwapName := '';
+  FSwapName :='';
   if Assigned(FSwapReader) then
     FreeAndNil(FSwapReader);
   if Assigned(FSwapWriter) then
@@ -1120,9 +1095,11 @@ begin
   inherited Create;
   FIsNeededToSave     := FALSE;
   FIsNeededToSwap     := FALSE;
-  FWorkDirectory      :=  '';
-  FThreshold          :=   0;
+
+  FTempName           :=  '';
   FTempWriter         := nil;
+  FThreshold          :=   0;
+  FWorkDirectory      :=  '';
   FOnRequestBlankDisk := nil;
 end;
 
@@ -1258,56 +1235,59 @@ var
   CRC: longword;
   Item: TArchiveItem;
 begin
-  if (ExitCode < ccError) and (FIsNeededToSwap) then
-  begin
-    FSwapName   := GenerateFileName(FWorkDirectory);
-    FSwapWriter := TFileWriter.Create(FSwapName, 0);
-    if Assigned(FSwapWriter) then
+  if ExitCode < ccError then
+    if FIsNeededToSwap then
     begin
-      FSwapWriter.WriteDWord(beexArchiveMarker);
-      FDecoder := THeaderDecoder.Create(FArchiveReader);
-      FDecoder.OnProgress := @DoProgress;
-      for I := 0 to FArchiveItems.Count - 1 do
+      FSwapName   := GenerateFileName(FWorkDirectory);
+      FSwapWriter := TFileWriter.Create(FSwapName, 0);
+      if Assigned(FSwapWriter) then
+      begin
+        FSwapWriter.WriteDWord(beexArchiveMarker);
+        FDecoder := THeaderDecoder.Create(FArchiveReader);
+        FDecoder.OnProgress := @DoProgress;
+        for I := 0 to FArchiveItems.Count - 1 do
+          if ExitCode < ccError then
+          begin
+            Item := FArchiveItems.Items[I];
+
+            InitDecoder(Item);
+            if Item.FTag in [aitDecode, aitDecodeAndUpdate] then
+            begin
+              case Item.FTag of
+                aitDecode:          DoMessage(Format(cmSwapping, [Item.FFileName]));
+                aitDecodeAndUpdate: DoMessage(Format(cmDecoding, [Item.FFileName]));
+              end;
+
+              case Item.FTag of
+                aitDecode:          DecodeToSwap(Item);
+                aitDecodeAndUpdate: DecodeToNul (Item);
+              end;
+              DoClear;
+              if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
+              if not FSwapWriter.IsValid then DoFailure(cmStrmWriteError);
+            end;
+          end;
+        FDecoder.Destroy;
+        FreeAndNil(FSwapWriter);
+
         if ExitCode < ccError then
         begin
-          Item := FArchiveItems.Items[I];
-
-          InitDecoder(Item);
-          if Item.FTag in [aitDecode, aitDecodeAndUpdate] then
-          begin
-            case Item.FTag of
-              aitDecode:          DoMessage(Format(cmSwapping, [Item.FFileName]));
-              aitDecodeAndUpdate: DoMessage(Format(cmDecoding, [Item.FFileName]));
-            end;
-
-            case Item.FTag of
-              aitDecode:          DecodeToSwap(Item);
-              aitDecodeAndUpdate: DecodeToNil (Item);
-            end;
-            {$IFDEF CONSOLEAPPLICATION} DoClear; {$ENDIF}
-            if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
-            if not FSwapWriter   .IsValid then DoFailure(cmStrmWriteError);
-          end;
+          FSwapReader := TFileReader.Create(FSwapName);
+          if not Assigned(FSwapReader) then
+            DoFailure(cmOpenSwapError);
         end;
-      FDecoder.Destroy;
-      FreeAndNil(FSwapWriter);
-      if ExitCode < ccError then
-      begin
-        FSwapReader := TFileReader.Create(FSwapName);
-        if Assigned(FSwapReader) = FALSE then
-          DoFailure(cmOpenSwapError);
-      end;
-    end else
-      DoFailure(cmCreateSwapError);
-  end;
+
+      end else
+        DoFailure(cmCreateSwapError);
+    end;
   Result := ExitCode;
 end;
 
 procedure TArchiveWriter.CloseArchive;
 begin
   if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
-  if Assigned(FSwapWriter)    then FreeAndNil(FSwapWriter);
   if Assigned(FSwapReader)    then FreeAndNil(FSwapReader);
+  if Assigned(FSwapWriter)    then FreeAndNil(FSwapWriter);
   if Assigned(FTempWriter)    then FreeAndNil(FTempWriter);
 
   if FIsNeededToSave then
@@ -1325,12 +1305,18 @@ begin
     end;
   end;
 
-  FTempName       := '';
-  FThreshold      :=  0;
-  FWorkDirectory  := '';
-  FIsNeededToSave := FALSE;
-  FIsNeededToSwap := FALSE;
-  inherited CloseArchive;
+  FArchiveName     := '';
+  FArchivePassword := '';
+  FArchiveComment  := '';
+  FSwapName        := '';
+  FTempName        := '';
+  FThreshold       :=  0;
+  FWorkDirectory   := '';
+
+  FSuspended       := FALSE;
+  FIsNeededToSave  := FALSE;
+  FIsNeededToSwap  := FALSE;
+  FArchiveItems.Clear;
 end;
 
 procedure TArchiveWriter.InitEncoder(Item: TArchiveItem);
@@ -1350,7 +1336,7 @@ end;
 procedure TArchiveWriter.EncodeFromArchive(Item: TArchiveItem);
 var
   ABSPosition: int64;
-  NulCRC:longword;
+  NulCRC: longword;
 begin
   if Assigned(FArchiveReader) then
   begin
@@ -1460,8 +1446,7 @@ end;
 constructor TArchiveExtractor.Create;
 begin
   inherited Create;
-  FIsNeededToExtract := FALSE;
-  FOnExtract         := nil;
+  FOnExtract := nil;
 end;
 
 procedure TArchiveExtractor.DoExtract(Item: TArchiveItem;
@@ -1482,6 +1467,7 @@ var
   Confirm: TArchiveConfirm;
   ExtractAs: string;
 begin
+  FIsNeededToExtract := FALSE;
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
     begin
@@ -1503,7 +1489,8 @@ begin
       end;
     end;
 
-  if (ExitCode < ccError) and FIsNeededToExtract then CheckSequences;
+  if ExitCode < ccError then
+    if FIsNeededToExtract then CheckSequences;
 end;
 
 procedure TArchiveExtractor.CheckSequences;
@@ -1556,33 +1543,34 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  if (ExitCode < ccError) and FIsNeededToExtract then
-  begin
-    FDecoder := THeaderDecoder.Create(FArchiveReader);
-    FDecoder.OnProgress := @DoProgress;
-    for I := 0 to FArchiveItems.Count - 1 do
-      if ExitCode < ccError then
-      begin
-        Item := FArchiveItems.Items[I];
-
-        InitDecoder(Item);
-        if Item.FTag in [aitUpdate, aitDecode] then
+  if ExitCode < ccError then
+    if FIsNeededToExtract then
+    begin
+      FDecoder := THeaderDecoder.Create(FArchiveReader);
+      FDecoder.OnProgress := @DoProgress;
+      for I := 0 to FArchiveItems.Count - 1 do
+        if ExitCode < ccError then
         begin
-          case Item.FTag of
-            aitUpdate:          DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
-            aitDecode:          DoMessage(Format(cmDecoding,   [Item.FExternalFileName]));
-            aitDecodeAndUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
-          end;
+          Item := FArchiveItems.Items[I];
 
-          case Item.FTag of
-            aitUpdate:          DecodeToFile(Item);
-            aitDecode:          DecodeToNil (Item);
-            aitDecodeAndUpdate: DecodeToFile(Item);
+          InitDecoder(Item);
+          if Item.FTag in [aitUpdate, aitDecode] then
+          begin
+            case Item.FTag of
+              aitUpdate:          DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
+              aitDecode:          DoMessage(Format(cmDecoding,   [Item.FExternalFileName]));
+              aitDecodeAndUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
+            end;
+
+            case Item.FTag of
+              aitUpdate:          DecodeToFile(Item);
+              aitDecode:          DecodeToNul (Item);
+              aitDecodeAndUpdate: DecodeToFile(Item);
+            end;
           end;
         end;
-      end;
-    FDecoder.Destroy;
-  end;
+      FreeAndNil(FDecoder);
+    end;
   CloseArchive;
 end;
 
@@ -1610,13 +1598,13 @@ begin
         end;
 
         case Item.FTag of
-          aitUpdate:          DecodeToNil(Item);
-          aitDecode:          DecodeToNil(Item);
-          aitDecodeAndUpdate: DecodeToNil(Item);
+          aitUpdate:          DecodeToNul(Item);
+          aitDecode:          DecodeToNul(Item);
+          aitDecodeAndUpdate: DecodeToNul(Item);
         end;
       end;
     end;
-  FDecoder.Destroy;
+  FreeAndNil(FDecoder);
   CloseArchive;
 end;
 
@@ -1640,7 +1628,7 @@ var
   Confirm: TArchiveConfirm;
   RemaneAs: string;
 begin
-  DoMessage(Format(cmScanning, ['...']));
+  FIsNeededToSave := FALSE;
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
     begin
@@ -1659,10 +1647,10 @@ begin
             Item.FFileName  := RemaneAs;
           end;
           arcCancel: Item.FTag:= aitNone;
-          arcQuit:  DoFailure(cmUserAbort);
+          arcQuit: DoFailure(cmUserAbort);
         end;
-      end; // if end
-    end; // if end
+      end;
+    end;
 end;
 
 procedure TArchiveRenamer.RenameTagged;
@@ -1672,39 +1660,40 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  if (ExitCode < ccError) and FIsNeededToSave then
-  begin
-    FTempName   := GenerateFileName(FWorkDirectory);
-    FTempWriter := TFileWriter.Create(FTempName, FThreshold);
-    if Assigned(FTempWriter) then
+  if ExitCode < ccError then
+    if FIsNeededToSave then
     begin
-      FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
-      FTempWriter.WriteDWord(beexArchiveMarker);
+      FTempName   := GenerateFileName(FWorkDirectory);
+      FTempWriter := TFileWriter.Create(FTempName, 0);
+      if Assigned(FTempWriter) then
+      begin
+        FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
+        FTempWriter.WriteDWord(beexArchiveMarker);
 
-      Encoder := THeaderEncoder.Create(FTempWriter);
-      Encoder.OnProgress := @DoProgress;
-      for I := 0 to FArchiveItems.Count - 1 do
-        if ExitCode < ccError  then
-        begin
-          Item := FArchiveItems.Items[I];
-          FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+        Encoder := THeaderEncoder.Create(FTempWriter);
+        Encoder.OnProgress := @DoProgress;
+        for I := 0 to FArchiveItems.Count - 1 do
+          if ExitCode < ccError  then
+          begin
+            Item := FArchiveItems.Items[I];
+            FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
 
-          Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
-          Item.FDiskNumber := FTempWriter.CurrentImage;
-          case Item.FTag of
-            aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
-            aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
+            Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
+            Item.FDiskNumber := FTempWriter.CurrentImage;
+            case Item.FTag of
+              aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
+              aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
+            end;
+            EncodeFromArchive(Item);
           end;
-          EncodeFromArchive(Item);
+        FreeandNil(Encoder);
+        WriteCentralDirectory(FTempWriter);
+        if not FTempWriter.IsValid then
+          DoFailure(cmStrmWriteError);
 
-        end;
-      Encoder.Destroy;
-      WriteCentralDirectory(FTempWriter);
-      if not FTempWriter.IsValid then
-        DoFailure(cmStrmWriteError);
-    end else
-      DoFailure(cmOpenTempError);
-  end;
+      end else
+        DoFailure(cmOpenTempError);
+    end;
   CloseArchive;
 end;
 
@@ -1726,7 +1715,7 @@ var
   Item: TArchiveItem;
   Confirm: TArchiveConfirm;
 begin
-  DoMessage(Format(cmScanning, ['...']));
+  FIsNeededToSave := FALSE;
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
     begin
@@ -1735,14 +1724,15 @@ begin
       begin
         DoErase(Item, Confirm);
         case Confirm of
-          arcOk:     FIsNeededToSave := TRUE;
+          arcOk: FIsNeededToSave := TRUE;
           arcCancel: Item.FTag := aitNone;
-          arcQuit:  DoFailure(cmUserAbort);
+          arcQuit: DoFailure(cmUserAbort);
         end;
       end;
     end;
 
-  if (ExitCode < ccError) and FIsNeededToSave then CheckSequences;
+  if ExitCode < ccError then
+    if FIsNeededToSave then CheckSequences;
 end;
 
 procedure TArchiveEraser.CheckSequences;
@@ -1797,59 +1787,58 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  if (ExitCode < ccError) and FIsNeededToSave then
-  begin
-    FTempName   := GenerateFileName(FWorkDirectory);
-    FTempWriter := TFileWriter.Create(FTempName, FThreshold);
-
-    if Assigned(FTempWriter) then
+  if ExitCode < ccError then
+    if FIsNeededToSave then
     begin
-      FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
-      FTempWriter.WriteDWord(beexArchiveMarker);
-
-      if OpenSwap < ccError  then
+      FTempName   := GenerateFileName(FWorkDirectory);
+      FTempWriter := TFileWriter.Create(FTempName, 0);
+      if Assigned(FTempWriter) then
       begin
-        for I := FArchiveItems.Count - 1 downto 0 do
+        FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
+        FTempWriter.WriteDWord(beexArchiveMarker);
+        if OpenSwap < ccError  then
         begin
-          Item := FArchiveItems.Items[I];
-          if Item.FTag in [aitUpdate, aitDecodeAndUpdate] then
-          begin
-            DoMessage(Format(cmDeleting, [Item.FileName]));
-            FArchiveItems.Delete(I);
-          end;
-        end;
-
-        FEncoder := THeaderEncoder.Create(FTempWriter);
-        FEncoder.OnProgress := @DoProgress;
-        for I := 0 to FArchiveItems.Count - 1 do
-          if ExitCode < ccError then
+          for I := FArchiveItems.Count - 1 downto 0 do
           begin
             Item := FArchiveItems.Items[I];
-            case Item.FTag of
-              aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
-            //aitUpdate:          DoMessage(Format(cmDeleting, [Item.FileName]));
-              aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
-            //aitDecodeAndUpdate: DoMessage(Format(cmDeleting, [Item.FileName]));
+            if Item.FTag in [aitUpdate, aitDecodeAndUpdate] then
+            begin
+              DoMessage(Format(cmDeleting, [Item.FileName]));
+              FArchiveItems.Delete(I);
             end;
-
-            InitDecoder(Item);
-            case Item.FTag of
-              aitNone:   EncodeFromArchive(Item);
-              aitDecode: EncodeFromSwap   (Item);
-            end;
-
           end;
-        FEncoder.Destroy;
-        if ExitCode < ccError then
-        begin
-          WriteCentralDirectory(FTempWriter);
-          if not FTempWriter.IsValid then
-            DoFailure(cmStrmWriteError);
+
+          FEncoder := THeaderEncoder.Create(FTempWriter);
+          FEncoder.OnProgress := @DoProgress;
+          for I := 0 to FArchiveItems.Count - 1 do
+            if ExitCode < ccError then
+            begin
+              Item := FArchiveItems.Items[I];
+              case Item.FTag of
+                aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
+              //aitUpdate:          DoMessage(Format(cmDeleting, [Item.FileName]));
+                aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
+              //aitDecodeAndUpdate: DoMessage(Format(cmDeleting, [Item.FileName]));
+              end;
+
+              InitDecoder(Item);
+              case Item.FTag of
+                aitNone:   EncodeFromArchive(Item);
+                aitDecode: EncodeFromSwap   (Item);
+              end;
+            end;
+          FreeandNil(FEncoder);
+          if ExitCode < ccError then
+          begin
+            WriteCentralDirectory(FTempWriter);
+            if not FTempWriter.IsValid then
+              DoFailure(cmStrmWriteError);
+          end;
         end;
-      end;
-    end else
-      DoFailure(cmOpenTempError);
-  end;
+
+      end else
+        DoFailure(cmOpenTempError);
+     end;
   CloseArchive;
 end;
 
@@ -1945,7 +1934,7 @@ begin
       CurrentItem := FArchiveItems.Items[I];
       if CurrentItem.FTag = aitAdd then
       begin
-        CurrentItem.SetVersionNeededToExtract(beexVersionNeededToExtract);
+        CurrentItem.FVersionNeededToExtract := beexVersionNeededToExtract;
 
         Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
         Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
@@ -2031,7 +2020,8 @@ begin
       end;
     end;
 
-  if (ExitCode < ccError) and FIsNeededToSave then CheckSequences;
+  if ExitCode < ccError then
+    if FIsNeededToSave then CheckSequences;
 end;
 
 procedure TArchiveUpdater.CheckSequences;
@@ -2089,50 +2079,53 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  if (ExitCode < ccError) and  FIsNeededToSave then
-  begin
-    FTempName   := GenerateFileName(FWorkDirectory);
-    FTempWriter := TFileWriter.Create(FTempName, FThreshold);
-    if Assigned(FTempWriter) then
+  if ExitCode < ccError then
+    if FIsNeededToSave then
     begin
-      FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
-      FTempWriter.WriteDWord(beexArchiveMarker);
-      if OpenSwap < ccError  then
+      FTempName   := GenerateFileName(FWorkDirectory);
+      FTempWriter := TFileWriter.Create(FTempName, 0);
+      if Assigned(FTempWriter) then
       begin
-        FEncoder := THeaderEncoder.Create(FTempWriter);
-        FEncoder.OnProgress := @DoProgress;
-        for I := 0 to FArchiveItems.Count - 1 do
+        FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
+        FTempWriter.WriteDWord(beexArchiveMarker);
+        if OpenSwap < ccError  then
+        begin
+
+          FEncoder := THeaderEncoder.Create(FTempWriter);
+          FEncoder.OnProgress := @DoProgress;
+          for I := 0 to FArchiveItems.Count - 1 do
+            if (ExitCode < ccError) then
+            begin
+              Item := FArchiveItems.Items[I];
+              case Item.FTag of
+                aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
+                aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
+                aitUpdate:          DoMessage(Format(cmUpdating, [Item.FileName]));
+                aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
+                aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
+              end;
+
+              InitEncoder(Item);
+              case Item.FTag of
+                aitNone:            EncodeFromArchive(Item);
+                aitAdd:             EncodeFromFile   (Item);
+                aitUpdate:          EncodeFromFile   (Item);
+                aitDecode:          EncodeFromSwap   (Item);
+                aitDecodeAndUpdate: EncodeFromFile   (Item);
+              end;
+
+            end;
+          FreeAndNil(FEncoder);
           if (ExitCode < ccError) then
           begin
-            Item := FArchiveItems.Items[I];
-            case Item.FTag of
-              aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
-              aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
-              aitUpdate:          DoMessage(Format(cmUpdating, [Item.FileName]));
-              aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
-              aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
-            end;
-
-            InitEncoder(Item);
-            case Item.FTag of
-              aitNone:            EncodeFromArchive(Item);
-              aitAdd:             EncodeFromFile   (Item);
-              aitUpdate:          EncodeFromFile   (Item);
-              aitDecode:          EncodeFromSwap   (Item);
-              aitDecodeAndUpdate: EncodeFromFile   (Item);
-            end;
-
+            WriteCentralDirectory(FTempWriter);
+            if not FTempWriter.IsValid then
+              DoFailure(cmStrmWriteError);
           end;
-        FEncoder.Destroy;
-        if (ExitCode < ccError) then
-        begin
-          WriteCentralDirectory(FTempWriter);
-          if not FTempWriter.IsValid then
-            DoFailure(cmStrmWriteError);
         end;
+
       end;
     end;
-  end;
   CloseArchive;
 end;
 
