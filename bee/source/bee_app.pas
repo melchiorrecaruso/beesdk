@@ -114,7 +114,7 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1581 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1585 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -262,11 +262,11 @@ begin
 
   Confirm := arcCancel;
   case FCommandLine.uOption of
-    umAdd:           if (I =  -1) then Confirm := arcOk;
-    umReplace:       if (I <> -1) then Confirm := arcOk;
-    umUpdate:        if (I <> -1) and (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
-    umAddUpdate:     if (I =  -1) or  (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
-    umAddReplace:    Confirm := arcOk;
+    umAdd:        if (I =  -1) then Confirm := arcOk;
+    umReplace:    if (I <> -1) then Confirm := arcOk;
+    umUpdate:     if (I <> -1) and (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
+    umAddUpdate:  if (I =  -1) or  (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
+    umAddReplace: Confirm := arcOk;
     umAddAutoRename: begin
       if (I <> - 1) then
       begin
