@@ -269,6 +269,7 @@ type
     FTempName: string;
     FTempWriter: TFileWriter;
     FThreshold: int64;
+    FTestTemporaryArchive: boolean;
     FWorkDirectory: string;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
     procedure InitEncoder      (Item: TArchiveItem);
@@ -279,12 +280,14 @@ type
     procedure SetWorkDirectory(const Value: string);
     procedure WriteCentralDirectory(aStream: TFileWriter);
     procedure PackCentralDirectory;
+    procedure TestTemporaneyArchive;
     function OpenSwap: longint;
   public
     constructor Create;
     procedure CloseArchive; override;
   public
     property Threshold: int64 read FThreshold write FThreshold;
+    property TestTemporaryArchive: boolean read FTestTemporaryArchive write FTestTemporaryArchive;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
     property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
       read FOnRequestBlankDisk write FOnRequestBlankDisk;
@@ -1283,6 +1286,33 @@ begin
   Result := ExitCode;
 end;
 
+procedure TArchiveWriter.TestTemporaneyArchive;
+var
+  I: longint;
+  Tester: TArchiveExtractor;
+begin
+  Tester                 := TArchiveExtractor.Create;
+  Tester.OnRequestImage  := OnRequestImage;
+  Tester.OnProgress      := OnProgress;
+  Tester.OnMessage       := OnMessage;
+  Tester.OnFailure       := OnMessage;
+  Tester.OnClear         := OnClear;
+  // Tester.OnExtraction := OnExtract;
+
+  Tester.ArchivePassword := FArchivePassword;
+
+  DoMessage(Format(cmOpening, [FTempName]));
+  Tester.OpenArchive(FTempName);
+  if ExitCode < ccError then
+  begin
+    DoMessage(Format(cmScanning, ['...']));
+    for I := 0 to Tester.Count - 1 do
+      Tester.Tag(I);
+    Tester.TestTagged;
+  end;
+  FreeAndNil(Tester);
+end;
+
 procedure TArchiveWriter.CloseArchive;
 begin
   if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
@@ -1292,6 +1322,9 @@ begin
 
   if FIsNeededToSave then
   begin
+    if FTestTemporaryArchive then
+      TestTemporaneyArchive;
+
     if ExitCode < ccError then
     begin
       SysUtils.DeleteFile(FSwapName);
