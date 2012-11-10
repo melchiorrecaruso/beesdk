@@ -268,6 +268,8 @@ begin
     umAddUpdate:     if (I =  -1) or  (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
     umAddReplace:    Confirm := arcOk;
     umAddAutoRename: begin
+      Writeln(UpdateAs, ' = ', I);
+
       if (I <> - 1) then
       begin
         Index := 0;
