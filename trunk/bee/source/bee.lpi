@@ -128,7 +128,6 @@
       <Unit4>
         <Filename Value="bee_common.pas"/>
         <UnitName Value="Bee_Common"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="299"/>
@@ -228,10 +227,12 @@
       <Unit13>
         <Filename Value="bee_modeller.pas"/>
         <UnitName Value="Bee_Modeller"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="161"/>
-        <CursorPos X="29" Y="180"/>
+        <CursorPos X="41" Y="177"/>
+        <FoldState Value=" T3lg053 pifjB0=2 pj3kZ0LW"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
