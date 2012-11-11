@@ -61,14 +61,14 @@ struct TBaseCoder {
 
 PBaseCoder BaseCoder_Create(void *aCodec)
 {
-  PBaseCoder Self = malloc(   sizeof(struct TBaseCoder));
+  PBaseCoder Self = malloc(sizeof(struct TBaseCoder));
 
   Self->Codec     = aCodec;
+  Self->DictLevel = 0;
   Self->Freq      = malloc(sizeof(uint32)*(MAXSYMBOL + 1));
   Self->Heap      = NULL;
   Self->Cuts      = NULL;
   Self->List      = malloc(sizeof(uint32)*(MAXSYMBOL + 1));
-  Self->DictLevel = 0;
 
   return Self;
 }

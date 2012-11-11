@@ -41,4 +41,4 @@ typedef struct TBaseCoder *PBaseCoder;
        int32 BaseCoder_Encode       (PBaseCoder Self, uint8 *Buffer, int32 BufSize);
        int32 BaseCoder_Decode       (PBaseCoder Self, uint8 *Buffer, int32 BufSize);
 
-#endif //  BEELIB_MODELLER_H
+#endif /* BEELIB_MODELLER_H */
