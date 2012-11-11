@@ -21,7 +21,7 @@ struct TRangeEncoder {
 
 PRangeEncoder RangeEncoder_Create(void *aStream, PStreamWrite aStreamWrite)
 {
-  PRangeEncoder Self = calloc(1, sizeof(struct TRangeEncoder));
+  PRangeEncoder Self = malloc(sizeof(struct TRangeEncoder));
   Self->FStream      = WriteStream_Create(aStream, aStreamWrite);
   return Self;
 }
@@ -120,7 +120,7 @@ struct TRangeDecoder {
 
 PRangeDecoder RangeDecoder_Create(void *aStream, PStreamRead aStreamRead)
 {
-  PRangeDecoder Self = calloc(1, sizeof(struct TRangeDecoder));
+  PRangeDecoder Self = malloc(sizeof(struct TRangeDecoder));
   Self->FStream      = ReadStream_Create(aStream, aStreamRead);
   return Self;
 }
