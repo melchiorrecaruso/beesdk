@@ -17,7 +17,7 @@ struct TReadStream {
 
 PReadStream ReadStream_Create(void *aStream, PStreamRead aStreamRead)
 {
-  PReadStream Self   = malloc(sizeof(struct TReadStream));
+  PReadStream Self   = calloc(1, sizeof(struct TReadStream));
   Self->Stream       = aStream;
   Self->StreamRead   = aStreamRead;
 
@@ -74,7 +74,7 @@ struct TWriteStream {
 
 PWriteStream WriteStream_Create(void *aStream, PStreamWrite aStreamWrite)
 {
-  PWriteStream Self = malloc(sizeof(struct TWriteStream));
+  PWriteStream Self = calloc(1, sizeof(struct TWriteStream));
   Self->Stream      = aStream;
   Self->StreamWrite = aStreamWrite;
 

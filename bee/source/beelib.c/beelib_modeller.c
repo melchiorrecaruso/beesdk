@@ -62,9 +62,7 @@ struct TBaseCoder {
 
 PBaseCoder BaseCoder_Create(void *aCodec)
 {
-  PBaseCoder Self2 = malloc(sizeof(struct TBaseCoder));
-  PBaseCoder Self  = malloc(sizeof(struct TBaseCoder));
-  free(Self2);
+  PBaseCoder Self = calloc(1, sizeof(struct TBaseCoder));
 
   Self->Codec     = aCodec;
   Self->Freq      = malloc(sizeof(uint32)*(MAXSYMBOL + 1));
