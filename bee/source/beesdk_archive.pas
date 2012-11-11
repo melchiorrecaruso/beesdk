@@ -1,6 +1,6 @@
 unit BeeSDK_Archive;
 
-{$mode objfpc}{$H+}
+{$I compiler.inc}
 
 interface
 
@@ -1096,14 +1096,16 @@ end;
 constructor TArchiveWriter.Create;
 begin
   inherited Create;
-  FIsNeededToSave     := FALSE;
-  FIsNeededToSwap     := FALSE;
+  FIsNeededToSave       := FALSE;
+  FIsNeededToSwap       := FALSE;
 
-  FTempName           :=  '';
-  FTempWriter         := nil;
-  FThreshold          :=   0;
-  FWorkDirectory      :=  '';
-  FOnRequestBlankDisk := nil;
+  FTempName             := '';
+  FTempWriter           := nil;
+  FTestTemporaryArchive := FALSE;
+
+  FThreshold            := 0;
+  FWorkDirectory        := '';
+  FOnRequestBlankDisk   := nil;
 end;
 
 procedure TArchiveWriter.WriteCentralDirectory(aStream: TFileWriter);
@@ -1247,7 +1249,7 @@ begin
       begin
         FSwapWriter.WriteDWord(beexArchiveMarker);
         FDecoder := THeaderDecoder.Create(FArchiveReader);
-        FDecoder.OnProgress := @DoProgress;
+        FDecoder.OnProgress := DoProgress;
         for I := 0 to FArchiveItems.Count - 1 do
           if ExitCode < ccError then
           begin
@@ -1270,7 +1272,7 @@ begin
               if not FSwapWriter.IsValid then DoFailure(cmStrmWriteError);
             end;
           end;
-        FDecoder.Destroy;
+        FreeAndNil(FDecoder);
         FreeAndNil(FSwapWriter);
 
         if ExitCode < ccError then
@@ -1288,29 +1290,28 @@ end;
 
 procedure TArchiveWriter.TestTemporaneyArchive;
 var
-  I: longint;
   Tester: TArchiveExtractor;
 begin
-  Tester                 := TArchiveExtractor.Create;
-  Tester.OnRequestImage  := OnRequestImage;
-  Tester.OnProgress      := OnProgress;
-  Tester.OnMessage       := OnMessage;
-  Tester.OnFailure       := OnMessage;
-  Tester.OnClear         := OnClear;
-  // Tester.OnExtraction := OnExtract;
-
-  Tester.ArchivePassword := FArchivePassword;
-
-  DoMessage(Format(cmOpening, [FTempName]));
-  Tester.OpenArchive(FTempName);
   if ExitCode < ccError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
-    for I := 0 to Tester.Count - 1 do
-      Tester.Tag(I);
-    Tester.TestTagged;
+    Tester                 := TArchiveExtractor.Create;
+    Tester.OnRequestImage  := OnRequestImage;
+    Tester.OnProgress      := OnProgress;
+    Tester.OnMessage       := OnMessage;
+    Tester.OnFailure       := OnMessage;
+    Tester.OnClear         := OnClear;
+    Tester.OnExtraction    := nil;
+
+    Tester.ArchivePassword := FArchivePassword;
+
+    Tester.OpenArchive(FTempName);
+    if ExitCode < ccError then
+    begin
+      Tester.TagAll;
+      Tester.TestTagged;
+    end;
+    FreeAndNil(Tester);
   end;
-  FreeAndNil(Tester);
 end;
 
 procedure TArchiveWriter.CloseArchive;
@@ -1580,7 +1581,7 @@ begin
     if FIsNeededToExtract then
     begin
       FDecoder := THeaderDecoder.Create(FArchiveReader);
-      FDecoder.OnProgress := @DoProgress;
+      FDecoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
         if ExitCode < ccError then
         begin
@@ -1614,7 +1615,7 @@ var
 begin
   CheckSequences;
   FDecoder := THeaderDecoder.Create(FArchiveReader);
-  FDecoder.OnProgress := @DoProgress;
+  FDecoder.OnProgress := DoProgress;
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitCode < ccError then
     begin
@@ -1704,7 +1705,7 @@ begin
         FTempWriter.WriteDWord(beexArchiveMarker);
 
         Encoder := THeaderEncoder.Create(FTempWriter);
-        Encoder.OnProgress := @DoProgress;
+        Encoder.OnProgress := DoProgress;
         for I := 0 to FArchiveItems.Count - 1 do
           if ExitCode < ccError  then
           begin
@@ -1842,7 +1843,7 @@ begin
           end;
 
           FEncoder := THeaderEncoder.Create(FTempWriter);
-          FEncoder.OnProgress := @DoProgress;
+          FEncoder.OnProgress := DoProgress;
           for I := 0 to FArchiveItems.Count - 1 do
             if ExitCode < ccError then
             begin
@@ -2125,7 +2126,7 @@ begin
         begin
 
           FEncoder := THeaderEncoder.Create(FTempWriter);
-          FEncoder.OnProgress := @DoProgress;
+          FEncoder.OnProgress := DoProgress;
           for I := 0 to FArchiveItems.Count - 1 do
             if (ExitCode < ccError) then
             begin
