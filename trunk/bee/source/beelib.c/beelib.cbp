@@ -14,13 +14,20 @@
 				<Option compiler="gcc" />
 				<Option projectCompilerOptionsRelation="0" />
 				<Compiler>
+					<Add option="-fexpensive-optimizations" />
 					<Add option="-O3" />
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
 				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-fexpensive-optimizations" />
 			<Add option="-O3" />
+			<Add option="-Wextra" />
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="beelib_common.c">
