@@ -25,13 +25,7 @@
   v0.7.9 build 1179 - 2010.11.27 by Melchiorre Caruso.
 }
 
-{$R-}
-{$Q-}
-{$S-}
-{$I-}
-
 {$INLINE OFF}
-{$DEFINE CONSOLEAPPLICATION}
 
 {$IFDEF MSWINDOWS}
   {*$DEFINE FILENAMECASESENSITIVE}

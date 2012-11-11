@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "beelib_modeller.h"
 #include "beelib_rangecoder.h"
 
@@ -61,7 +62,9 @@ struct TBaseCoder {
 
 PBaseCoder BaseCoder_Create(void *aCodec)
 {
-  PBaseCoder Self = malloc(sizeof(struct TBaseCoder));
+  PBaseCoder Self2 = malloc(sizeof(struct TBaseCoder));
+  PBaseCoder Self  = malloc(sizeof(struct TBaseCoder));
+  free(Self2);
 
   Self->Codec     = aCodec;
   Self->Freq      = malloc(sizeof(uint32)*(MAXSYMBOL + 1));

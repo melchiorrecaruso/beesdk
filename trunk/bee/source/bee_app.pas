@@ -114,7 +114,7 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1585 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1587 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -371,12 +371,13 @@ begin
     moStore: FUpdater.CompressionMethod := actNone;
     else     FUpdater.CompressionMethod := actMain;
   end;
-  FUpdater.CompressionLevel   := FCommandLine.mOption;
-  FUpdater.DictionaryLevel    := FCommandLine.dOption;
-  FUpdater.SolidCompression   := FCommandLine.sOption;
-  FUpdater.ForceFileExtension := FCommandLine.fOption;
-  FUpdater.ArchivePassword    := FCommandLine.pOption;
-//FUpdater.ArchiveComment     :=
+  FUpdater.CompressionLevel     := FCommandLine.mOption;
+  FUpdater.DictionaryLevel      := FCommandLine.dOption;
+  FUpdater.SolidCompression     := FCommandLine.sOption;
+  FUpdater.ForceFileExtension   := FCommandLine.fOption;
+  FUpdater.ArchivePassword      := FCommandLine.pOption;
+  FUpdater.TestTemporaryArchive := FCommandLine.tOption;
+//FUpdater.ArchiveComment       :=
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
@@ -445,7 +446,8 @@ begin
   FEraser.OnClear            := DoClear;
   FEraser.OnEraseEvent       := DoErase;
 
-  FEraser.ArchivePassword    :=  FCommandLine.pOption;
+  FUpdater.TestTemporaryArchive := FCommandLine.tOption;
+  FEraser.ArchivePassword       := FCommandLine.pOption;
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FEraser.OpenArchive(FCommandLine.ArchiveName);
@@ -478,7 +480,8 @@ begin
   FRenamer.OnClear            := DoClear;
   FRenamer.OnRenameEvent      := DoRename;
 
-  FRenamer.ArchivePassword    := FCommandLine.pOption;
+  FUpdater.TestTemporaryArchive := FCommandLine.tOption;
+  FRenamer.ArchivePassword      := FCommandLine.pOption;
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FRenamer.OpenArchive(FCommandLine.ArchiveName);
