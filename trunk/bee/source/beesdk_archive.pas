@@ -1329,6 +1329,9 @@ begin
     if ExitCode < ccError then
     begin
       SysUtils.DeleteFile(FSwapName);
+
+      // SaveSpanning //
+
       SysUtils.DeleteFile(FArchiveName);
       if RenameFile(FTempName, FArchiveName) = False then
         DoFailure(Format(cmRenameFileError, [FTempName, FArchiveName]));
