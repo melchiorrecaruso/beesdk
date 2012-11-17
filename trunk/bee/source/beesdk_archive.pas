@@ -1321,7 +1321,12 @@ begin
   if ExitCode < ccError then
   begin
 
-    Writeln(GetDriveFreeSpace(FArchiveName));
+    Writeln(GetDriveFreeSpace(FArchiveName), ' ', SizeOfFile(FArchiveName));
+
+
+
+
+
 
     //Self.Threshold = 0
 
@@ -1341,6 +1346,7 @@ begin
   if Assigned(FSwapWriter)    then FreeAndNil(FSwapWriter);
   if Assigned(FTempWriter)    then FreeAndNil(FTempWriter);
 
+  FArchiveItems.Clear;
   if FIsNeededToSave then
   begin
     if FTestTemporaryArchive then
@@ -1360,7 +1366,6 @@ begin
   FSuspended       := FALSE;
   FIsNeededToSave  := FALSE;
   FIsNeededToSwap  := FALSE;
-  FArchiveItems.Clear;
 end;
 
 procedure TArchiveWriter.InitEncoder(Item: TArchiveItem);
