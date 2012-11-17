@@ -24,10 +24,10 @@ const
   beexVersionNeededToExtract = $00;
 
   /// archive item type
-  aitItem      = $01;
-  aitBinding   = $02;
-  aitLocator   = $7E;
-  aitEnd       = $7F;
+  aitItem    = $01;
+  aitBinding = $02;
+  aitLocator = $7E;
+  aitEnd     = $7F;
 
 type
   /// archive locator flag
@@ -281,6 +281,7 @@ type
     procedure WriteCentralDirectory(aStream: TFileWriter);
     procedure PackCentralDirectory;
     procedure TestTemporaneyArchive;
+    procedure SaveArchive;
     function OpenSwap: longint;
   public
     constructor Create;
@@ -1314,6 +1315,18 @@ begin
   end;
 end;
 
+procedure TArchiveWriter.SaveArchive;
+begin
+
+
+
+
+  SysUtils.DeleteFile(FArchiveName);
+      if RenameFile(FTempName, FArchiveName) = False then
+        DoFailure(Format(cmRenameFileError, [FTempName, FArchiveName]));
+
+end;
+
 procedure TArchiveWriter.CloseArchive;
 begin
   if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
@@ -1323,23 +1336,14 @@ begin
 
   if FIsNeededToSave then
   begin
+    SysUtils.DeleteFile(FSwapName);
     if FTestTemporaryArchive then
       TestTemporaneyArchive;
 
     if ExitCode < ccError then
-    begin
-      SysUtils.DeleteFile(FSwapName);
-
-      // SaveSpanning //
-
-      SysUtils.DeleteFile(FArchiveName);
-      if RenameFile(FTempName, FArchiveName) = False then
-        DoFailure(Format(cmRenameFileError, [FTempName, FArchiveName]));
-    end else
-    begin
-      SysUtils.DeleteFile(FSwapName);
+      SaveArchive;
+    else
       SysUtils.DeleteFile(FTempName);
-    end;
   end;
 
   FArchiveName     := '';
