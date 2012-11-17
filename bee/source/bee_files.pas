@@ -405,28 +405,30 @@ procedure TFileWriter.CreateImage;
 var
   Abort: boolean;
 begin
+  if Assigned(FSource) then
+    FreeAndNil(FSource);
+
   if FThreshold > 0 then
-    while GetDriveFreeSpace(FFileName) > 0 do
+    // while GetDriveFreeSpace(FFileName) > 0 do
     begin
+      Writeln(' - RequestDisk - ');
+
       Abort := TRUE;
       if Assigned(FOnRequestBlankDisk) then
         FOnRequestBlankDisk(Abort);
       if Abort then Exit;
     end;
 
-  Inc(FCurrentImage);
-  FCurrentImageSize := 0;
-  if Assigned(FSource) then
-    FreeAndNil(FSource);
-
-  RenameFile(FFileName, GetImageName(FCurrentImage));
+  RenameFile(FFileName, GetImageName(FCurrentImage + 1));
   try
     if ExtractFilePath(FFileName) <> '' then
       ForceDirectories(ExtractFilePath(FFileName));
     FSource := TFileStream.Create(FFileName, fmCreate or fmShareDenyWrite);
+    Inc(FCurrentImage);
   except
     FSource := nil;
   end;
+  FCurrentImageSize := 0;
 end;
 
 procedure TFileWriter.WriteDWord(Data: dword);
@@ -498,8 +500,7 @@ begin
       Inc(Result, Writed);
       Dec(Count,  Writed);
 
-      if Count > 0 then
-        CreateImage;
+      if Count > 0 then CreateImage;
     end;
   end;
 end;
