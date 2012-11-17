@@ -281,7 +281,7 @@ type
     procedure WriteCentralDirectory(aStream: TFileWriter);
     procedure PackCentralDirectory;
     procedure TestTemporaneyArchive;
-    procedure SaveArchive;
+    procedure SaveTemporaneyArchive;
     function OpenSwap: longint;
   public
     constructor Create;
@@ -1315,16 +1315,24 @@ begin
   end;
 end;
 
-procedure TArchiveWriter.SaveArchive;
+procedure TArchiveWriter.SaveTemporaneyArchive;
 begin
+  SysUtils.DeleteFile(FSwapName);
+  if ExitCode < ccError then
+  begin
 
 
 
+    Self.Threshold = 0
 
-  SysUtils.DeleteFile(FArchiveName);
+
+    SysUtils.DeleteFile(FArchiveName);
       if RenameFile(FTempName, FArchiveName) = False then
         DoFailure(Format(cmRenameFileError, [FTempName, FArchiveName]));
 
+
+  end;
+  SysUtils.DeleteFile(FTempName)
 end;
 
 procedure TArchiveWriter.CloseArchive;
@@ -1336,14 +1344,10 @@ begin
 
   if FIsNeededToSave then
   begin
-    SysUtils.DeleteFile(FSwapName);
     if FTestTemporaryArchive then
       TestTemporaneyArchive;
 
-    if ExitCode < ccError then
-      SaveArchive;
-    else
-      SysUtils.DeleteFile(FTempName);
+    SaveTemporaneyArchive;
   end;
 
   FArchiveName     := '';
