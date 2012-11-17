@@ -106,6 +106,7 @@ type
     FpOption: string;
     FtOption: boolean;
     FslsOption: boolean;
+    FiOption: int64;
     FwdOption: string;
     FcdOption: string;
     FcfgOption: string;
@@ -130,6 +131,7 @@ type
     procedure ProcessfOption(var S: string);
     procedure ProcesssfxOption(var S: string);
     procedure ProcessslsOption(var S: string);
+    procedure ProcessiOption(var S: string);
     procedure ProcesswdOption(var S: string);
     procedure ProcesscdOption(var S: string);
     procedure ProcesscfgOption(var S: string);
@@ -155,6 +157,7 @@ type
     property pOption: string read FpOption write SetpOption;
     property tOption: boolean read FtOption write FtOption;
     property slsOption: boolean read FslsOption write FslsOption;
+    property iOption: int64 read FiOption write FiOption;
     property wdOption: string read FwdOption write SetwdOption;
     property cdOption: string read FcdOption write SetcdOption;
     property cfgOption: string read FcfgOption write SetcfgOption;
@@ -317,6 +320,15 @@ begin
   if DirectoryExists(ExcludeTrailingBackslash(S)) then
   begin
     FwdOption := ExcludeTrailingBackslash(S);
+  end;
+end;
+
+procedure TCommandLine.ProcessiOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  if not TryStrToInt64(S, FiOption) then
+  begin
+    FiOption := 0;
   end;
 end;
 

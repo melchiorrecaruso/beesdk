@@ -101,6 +101,7 @@ const
   cmStrmReadError     = 'Error: can''t read data from stream';
   cmStrmWriteError    = 'Error: can''t write data to stream';
 
+  cmSplitArcError     = 'Error: can''t split temporary archive "%s"';
   cmRenameFileError   = 'Error: can''t rename file "%s" to "%s"';
   cmSequenceError     = 'Error: can''t decode file "%s"';
   cmActionError       = 'Error: internal error';

@@ -371,13 +371,14 @@ begin
     moStore: FUpdater.CompressionMethod := actNone;
     else     FUpdater.CompressionMethod := actMain;
   end;
-  FUpdater.CompressionLevel     := FCommandLine.mOption;
-  FUpdater.DictionaryLevel      := FCommandLine.dOption;
-  FUpdater.SolidCompression     := FCommandLine.sOption;
-  FUpdater.ForceFileExtension   := FCommandLine.fOption;
-  FUpdater.ArchivePassword      := FCommandLine.pOption;
-  FUpdater.TestTemporaryArchive := FCommandLine.tOption;
-//FUpdater.ArchiveComment       :=
+  FUpdater.CompressionLevel   := FCommandLine.mOption;
+  FUpdater.DictionaryLevel    := FCommandLine.dOption;
+  FUpdater.SolidCompression   := FCommandLine.sOption;
+  FUpdater.ForceFileExtension := FCommandLine.fOption;
+  FUpdater.ArchivePassword    := FCommandLine.pOption;
+  FUpdater.TestTempArchive    := FCommandLine.tOption;
+  FUpdater.Threshold          := FCommandLine.iOption;
+//FUpdater.ArchiveComment     :=
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
@@ -446,8 +447,9 @@ begin
   FEraser.OnClear            := DoClear;
   FEraser.OnEraseEvent       := DoErase;
 
-  FUpdater.TestTemporaryArchive := FCommandLine.tOption;
-  FEraser.ArchivePassword       := FCommandLine.pOption;
+  FEraser.TestTempArchive    := FCommandLine.tOption;
+  FEraser.ArchivePassword    := FCommandLine.pOption;
+  FEraser.Threshold          := FCommandLine.iOption;
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FEraser.OpenArchive(FCommandLine.ArchiveName);
@@ -480,8 +482,9 @@ begin
   FRenamer.OnClear            := DoClear;
   FRenamer.OnRenameEvent      := DoRename;
 
-  FUpdater.TestTemporaryArchive := FCommandLine.tOption;
-  FRenamer.ArchivePassword      := FCommandLine.pOption;
+  FRenamer.TestTempArchive    := FCommandLine.tOption;
+  FRenamer.ArchivePassword    := FCommandLine.pOption;
+  FRenamer.Threshold          := FCommandLine.iOption;
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FRenamer.OpenArchive(FCommandLine.ArchiveName);
