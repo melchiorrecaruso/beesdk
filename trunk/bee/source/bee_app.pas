@@ -180,6 +180,7 @@ procedure TBeeApp.DoRequestBlankDisk(var Abort : Boolean);
 begin
   Writeln(ParamToOem('Insert blank disk.'));
   Readln;
+  Abort := FALSE;
 end;
 
 procedure TBeeApp.DoMessage(const Message: string);
@@ -367,6 +368,8 @@ begin
   FUpdater.OnClear            := DoClear;
   FUpdater.OnUpdate           := DoUpdate;
 
+  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
+  FUpdater.OpenArchive(FCommandLine.ArchiveName);
   case FCommandLine.mOption of
     moStore: FUpdater.CompressionMethod := actNone;
     else     FUpdater.CompressionMethod := actMain;
@@ -380,8 +383,6 @@ begin
   FUpdater.Threshold          := FCommandLine.iOption;
 //FUpdater.ArchiveComment     :=
 
-  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
-  FUpdater.OpenArchive(FCommandLine.ArchiveName);
   if ExitCode < ccError then
   begin
     DoMessage(Format(cmScanning, ['...']));
