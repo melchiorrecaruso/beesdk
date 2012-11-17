@@ -269,7 +269,7 @@ type
     FTempName: string;
     FTempWriter: TFileWriter;
     FThreshold: int64;
-    FTestTemporaryArchive: boolean;
+    FTestTempArchive: boolean;
     FWorkDirectory: string;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
     procedure InitEncoder      (Item: TArchiveItem);
@@ -280,15 +280,15 @@ type
     procedure SetWorkDirectory(const Value: string);
     procedure WriteCentralDirectory(aStream: TFileWriter);
     procedure PackCentralDirectory;
-    procedure TestTemporaneyArchive;
-    procedure SaveTemporaneyArchive;
+    procedure TestTemporaryArchive;
+    procedure SaveTemporaryArchive;
     function OpenSwap: longint;
   public
     constructor Create;
     procedure CloseArchive; override;
   public
     property Threshold: int64 read FThreshold write FThreshold;
-    property TestTemporaryArchive: boolean read FTestTemporaryArchive write FTestTemporaryArchive;
+    property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
     property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
       read FOnRequestBlankDisk write FOnRequestBlankDisk;
@@ -1097,16 +1097,16 @@ end;
 constructor TArchiveWriter.Create;
 begin
   inherited Create;
-  FIsNeededToSave       := FALSE;
-  FIsNeededToSwap       := FALSE;
+  FIsNeededToSave     := FALSE;
+  FIsNeededToSwap     := FALSE;
 
-  FTempName             := '';
-  FTempWriter           := nil;
-  FTestTemporaryArchive := FALSE;
+  FTempName           := '';
+  FTempWriter         := nil;
+  FTestTempArchive    := FALSE;
 
-  FThreshold            := 0;
-  FWorkDirectory        := '';
-  FOnRequestBlankDisk   := nil;
+  FThreshold          := 0;
+  FWorkDirectory      := '';
+  FOnRequestBlankDisk := nil;
 end;
 
 procedure TArchiveWriter.WriteCentralDirectory(aStream: TFileWriter);
@@ -1289,7 +1289,7 @@ begin
   Result := ExitCode;
 end;
 
-procedure TArchiveWriter.TestTemporaneyArchive;
+procedure TArchiveWriter.TestTemporaryArchive;
 var
   Tester: TArchiveExtractor;
 begin
@@ -1315,28 +1315,54 @@ begin
   end;
 end;
 
-procedure TArchiveWriter.SaveTemporaneyArchive;
+procedure TArchiveWriter.SaveTemporaryArchive;
+var
+  I: longint;
 begin
   SysUtils.DeleteFile(FSwapName);
   if ExitCode < ccError then
   begin
+    if FThreshold > 0 then
+    begin
+      FArchiveReader := TFileReader.Create(FTempName);
+      FTempWriter    := TFileWriter.Create(FArchiveName, FThreshold);
+      FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
+      FTempWriter.WriteDWord(beexArchiveMarker);
 
-    Writeln(GetDriveFreeSpace(FArchiveName), ' ', SizeOfFile(FArchiveName));
+      FTotalSize     := 0;
+      FProcessedSize := 0;
+      for I := 0 to FArchiveItems.Count - 1 do
+      begin
+        FArchiveItems.Items[I].FTag := aitNone;
+        Inc(FTotalSize, FArchiveItems.Items[I].UncompressedSize);
+      end;
 
+      FEncoder := THeaderEncoder.Create(FTempWriter);
+      FEncoder.OnProgress := DoProgress;
+      for I := 0 to FArchiveItems.Count - 1 do
+        if ExitCode < ccError  then
+        begin
+          DoMessage(Format(cmCopying, [FArchiveItems.Items[I].FileName]));
+          EncodeFromArchive(FArchiveItems.Items[I]);
+        end;
+      FreeAndNil(FEncoder);
+      WriteCentralDirectory(FTempWriter);
+      if not FTempWriter.IsValid then
+        DoFailure(cmStrmWriteError);
 
-
-
-
-
-    //Self.Threshold = 0
-
-
-    SysUtils.DeleteFile(FArchiveName);
-    if RenameFile(FTempName, FArchiveName) = False then
-      DoFailure(Format(cmRenameFileError, [FTempName, FArchiveName]));
-
+      FreeAndNil(FTempWriter);
+      FreeAndNil(FArchiveName);
+      if ExitCode < ccError then
+        SysUtils.DeleteFile(FTempName)
+      else
+        DoFailure(Format(cmSplitArcError, [FTempName]));
+    end else
+    begin
+      SysUtils.DeleteFile(FArchiveName);
+      if not RenameFile(FTempName, FArchiveName) then
+        DoFailure(Format(cmRenameFileError, [FTempName, FArchiveName]));
+    end;
   end;
-  SysUtils.DeleteFile(FTempName)
 end;
 
 procedure TArchiveWriter.CloseArchive;
@@ -1346,14 +1372,13 @@ begin
   if Assigned(FSwapWriter)    then FreeAndNil(FSwapWriter);
   if Assigned(FTempWriter)    then FreeAndNil(FTempWriter);
 
-  FArchiveItems.Clear;
   if FIsNeededToSave then
   begin
-    if FTestTemporaryArchive then
-      TestTemporaneyArchive;
-
-    SaveTemporaneyArchive;
+    if FTestTempArchive then
+      TestTemporaryArchive;
+    SaveTemporaryArchive;
   end;
+  FArchiveItems.Clear;
 
   FArchiveName     := '';
   FArchivePassword := '';
@@ -1705,7 +1730,6 @@ end;
 procedure TArchiveRenamer.RenameTagged;
 var
   I: longint;
-  Encoder: THeaderEncoder;
   Item: TArchiveItem;
 begin
   CheckTags;
@@ -1719,23 +1743,19 @@ begin
         FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
         FTempWriter.WriteDWord(beexArchiveMarker);
 
-        Encoder := THeaderEncoder.Create(FTempWriter);
-        Encoder.OnProgress := DoProgress;
+        FEncoder := THeaderEncoder.Create(FTempWriter);
+        FEncoder.OnProgress := DoProgress;
         for I := 0 to FArchiveItems.Count - 1 do
           if ExitCode < ccError  then
           begin
             Item := FArchiveItems.Items[I];
-            FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
-
-            Item.FDiskSeek   := FTempWriter.Seek(0, soCurrent);
-            Item.FDiskNumber := FTempWriter.CurrentImage;
             case Item.FTag of
               aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
               aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
             end;
             EncodeFromArchive(Item);
           end;
-        FreeandNil(Encoder);
+        FreeandNil(FEncoder);
         WriteCentralDirectory(FTempWriter);
         if not FTempWriter.IsValid then
           DoFailure(cmStrmWriteError);
