@@ -1321,15 +1321,14 @@ begin
   if ExitCode < ccError then
   begin
 
+    Writeln(GetDriveFreeSpace(FArchiveName));
 
-
-    Self.Threshold = 0
+    //Self.Threshold = 0
 
 
     SysUtils.DeleteFile(FArchiveName);
-      if RenameFile(FTempName, FArchiveName) = False then
-        DoFailure(Format(cmRenameFileError, [FTempName, FArchiveName]));
-
+    if RenameFile(FTempName, FArchiveName) = False then
+      DoFailure(Format(cmRenameFileError, [FTempName, FArchiveName]));
 
   end;
   SysUtils.DeleteFile(FTempName)
