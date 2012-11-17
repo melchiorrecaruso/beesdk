@@ -194,6 +194,7 @@ begin
   FsOption := False;
   FfOption := '';
   FsfxOption := '';
+  FiOption := 0;
   FpOption := '';
   FtOption := False;
   FslsOption := False;
@@ -314,21 +315,22 @@ begin
       FslsOption := False;
 end;
 
-procedure TCommandLine.ProcesswdOption(var S: string);
-begin
-  Delete(S, 1, 3);
-  if DirectoryExists(ExcludeTrailingBackslash(S)) then
-  begin
-    FwdOption := ExcludeTrailingBackslash(S);
-  end;
-end;
-
 procedure TCommandLine.ProcessiOption(var S: string);
 begin
   Delete(S, 1, 2);
   if not TryStrToInt64(S, FiOption) then
   begin
     FiOption := 0;
+  end;
+  Writeln(FiOption);
+end;
+
+procedure TCommandLine.ProcesswdOption(var S: string);
+begin
+  Delete(S, 1, 3);
+  if DirectoryExists(ExcludeTrailingBackslash(S)) then
+  begin
+    FwdOption := ExcludeTrailingBackslash(S);
   end;
 end;
 
@@ -430,6 +432,7 @@ begin
         'F': ProcessfOption(S);
         'P': ProcesspOption(S);
         'T': ProcessOption (S, FtOption);
+        'I': ProcessiOption(S);
       end; // end case
     end else
 
@@ -473,7 +476,7 @@ begin
     ccxExtract: Params.Add('X');
     ccTest:     Params.Add('T');
     ccDelete:   Params.Add('D');
-     ccRename:  Params.Add('R');
+    ccRename:   Params.Add('R');
     ccList:     Params.Add('L');
     else        Params.Add(' ');
   end;
@@ -507,6 +510,7 @@ begin
 
   if FtOption   then Params.Add('-t+')   else Params.Add('-t-');
   if FslsOption then Params.Add('-sls+') else Params.Add('-sls-');
+
 
   if Length(FwdOption)  > 0 then Params.Add('-wd'  + FwdOption);
   if Length(FcdOption)  > 0 then Params.Add('-cd'  + FcdOption);

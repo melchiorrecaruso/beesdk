@@ -1322,6 +1322,10 @@ begin
   SysUtils.DeleteFile(FSwapName);
   if ExitCode < ccError then
   begin
+
+
+    Writeln(FThreshold);
+
     if FThreshold > 0 then
     begin
       FArchiveReader := TFileReader.Create(FTempName);
