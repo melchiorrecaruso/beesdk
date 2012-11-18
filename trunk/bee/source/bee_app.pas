@@ -180,18 +180,18 @@ procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
 var
   Ch: char;
 begin
-  Write(ParamToOem('Insert blank disk #'+ IntToStr(DiskNumber)) + '. ');
+  Write(ParamToOem('Insert blank disk number #'+ IntToStr(DiskNumber)) + '? ');
   Readln(Ch);
   Ch := UpCase(OemToParam(Ch)[1]);
-  while Pos(Ch, 'CQ') < 1 do
+  while Pos(Ch, 'YQ') < 1 do
   begin
-    Write('Continue, or Quit? ');
+    Write('Yes, or Quit? ');
     Readln(Ch);
     Ch := UpCase(OemToParam(Ch)[1]);
   end;
 
   case Ch of
-    'C': Abort := FALSE;
+    'Y': Abort := FALSE;
     else Abort := TRUE;
   end;
 end;
