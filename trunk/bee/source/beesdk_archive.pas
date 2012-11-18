@@ -775,7 +775,11 @@ begin
         if (alfDiskNumber  in LocatorFlags) then LocatorDiskNumber  := aStream.ReadInfWord else LocatorDiskNumber  := 1;
         LocatorDiskSeek := aStream.ReadInfWord;
         // Seek on CentralDirectory
-        aStream.SeekImage(LocatorDiskNumber, LocatorDiskSeek);
+
+        aStream.ImageNumber := LocatorDiskNumber;
+        aStream.ImagesNumber := LocatorDisksNumber;
+        aStream.Seek(LocatorDiskSeek, soBeginning);
+
         if aStream.ReadDWord = beexArchiveMarker then
           repeat
             Marker := aStream.ReadInfWord;
@@ -1143,7 +1147,7 @@ begin
   aStream.WriteInfWord(aitEnd);
 
   if aStream.Threshold > 0 then
-    if (aStream.Threshold - aStream.Size) < 1024 then
+    if (aStream.Threshold - aStream.Size) < 512 then
       aStream.CreateNewImage(0);
 
   if not aStream.IsValid then DoFailure(cmStrmWriteError);
@@ -1160,8 +1164,8 @@ begin
   if (alfDiskNumber  in LocatorFlags) then aStream.WriteInfWord(LocatorDiskNumber);
   aStream.WriteInfWord(LocatorDiskSeek);
   aStream.WriteInfWord(aitEnd);
-  aStream.WriteDWord(beexArchiveMarker);
 
+  aStream.WriteDWord(beexArchiveMarker);
   aStream.WriteDWord(longword(aStream.Position - MagikSeek + SizeOf(longword)));
 end;
 
@@ -1326,26 +1330,20 @@ begin
   begin
     if FThreshold > 0 then
     begin
+      DoMessage(Format(cmSplitting, [FArchiveName]));
+
       FArchiveReader := TFileReader.Create(FTempName, nil);
       FTempWriter    := TFileWriter.Create(FArchiveName, FThreshold, FOnRequestBlankDisk);
       FTempWriter.WriteDWord(beexArchiveMarker);
 
-      FTotalSize     := 0;
-      FProcessedSize := 0;
-      for I := 0 to FArchiveItems.Count - 1 do
-      begin
-        FArchiveItems.Items[I].FTag := aitNone;
-        Inc(FTotalSize, FArchiveItems.Items[I].UncompressedSize);
-      end;
-
       FEncoder := THeaderEncoder.Create(FTempWriter);
       FEncoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
+      begin
+        FArchiveItems.Items[I].FTag := aitNone;
         if ExitCode < ccError  then
-        begin
-          DoMessage(Format(cmSplitting, [FArchiveItems.Items[I].FileName]));
           EncodeFromArchive(FArchiveItems.Items[I]);
-        end;
+      end;
       FreeAndNil(FEncoder);
       WriteCentralDirectory(FTempWriter);
       if not FTempWriter.IsValid then
