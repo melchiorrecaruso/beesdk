@@ -84,10 +84,9 @@
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="44"/>
+        <TopLine Value="41"/>
         <CursorPos X="1" Y="94"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -96,10 +95,11 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="161"/>
-        <CursorPos X="46" Y="188"/>
+        <TopLine Value="170"/>
+        <CursorPos X="7" Y="194"/>
         <FoldState Value=" T3j60C081b"/>
         <UsageCount Value="95"/>
         <Loaded Value="True"/>
