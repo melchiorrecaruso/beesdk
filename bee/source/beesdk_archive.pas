@@ -20,8 +20,8 @@ const
   beexArchiveMarker = $1A656542;
 
   /// beex archive version
-  beexVersionNeededToRead    = $00;
-  beexVersionNeededToExtract = $00;
+  beexVersionNeededToRead    = $50;
+  beexVersionNeededToExtract = $50;
 
   /// archive item type
   aitItem    = $01;
@@ -199,6 +199,7 @@ type
     FArchiveName: string;
     FArchiveComment: string;
     FArchivePassword: string;
+    FArchiveSpanning: longint;
     FArchiveReader: TFileReader;
     FSwapName: string;
     FSwapReader: TFileReader;
@@ -240,6 +241,7 @@ type
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property ArchivePassword: string read FArchivePassword write FArchivePassword;
     property ArchiveComment: string read FArchiveComment write FArchiveComment;
+    property ArchiveSpanning: longint read FArchiveSpanning;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
@@ -407,9 +409,9 @@ end;
 
 function VersionToStr(Version: longword): string;
 begin
-  Result := '?';
   case Version of
-    0: Result := '0';
+    80:  Result := '0.8.0';
+    else Result := '?.?.?';
   end;
 end;
 
@@ -454,7 +456,7 @@ begin
     aifLastModifiedTime,
     aifAttributes,
     aifComment];
-  FVersionNeededToExtract :=  0;
+  FVersionNeededToExtract :=  beexVersionNeededToExtract;
   FUncompressedSize       :=  0;
   FLastModifiedTime       :=  0;
   FAttributes             :=  0;
@@ -702,6 +704,7 @@ begin
   FArchiveName     := '';
   FArchiveComment  := '';
   FArchivePassword := '';
+  FArchiveSpanning :=  0;
   FArchiveReader   := nil;
   FSwapName        := '';
   FSwapReader      := nil;
@@ -774,7 +777,10 @@ begin
         if (alfDisksNumber in LocatorFlags) then LocatorDisksNumber := aStream.ReadInfWord else LocatorDisksNumber := 1;
         if (alfDiskNumber  in LocatorFlags) then LocatorDiskNumber  := aStream.ReadInfWord else LocatorDiskNumber  := 1;
         LocatorDiskSeek := aStream.ReadInfWord;
+        FArchiveSpanning := LocatorDisksNumber;
         // Seek on CentralDirectory
+
+
 
         aStream.ImageNumber := LocatorDiskNumber;
         aStream.ImagesNumber := LocatorDisksNumber;
@@ -1012,6 +1018,7 @@ procedure TArchiveReader.CloseArchive;
 begin
   FArchiveName     := '';
   FArchivePassword := '';
+  FArchiveSpanning :=  0;
   FArchiveComment  := '';
   if Assigned(FArchiveReader) then
     FreeAndNil(FArchiveReader);
@@ -1381,6 +1388,7 @@ begin
 
   FArchiveName     := '';
   FArchivePassword := '';
+  FArchiveSpanning :=  0;
   FArchiveComment  := '';
   FSwapName        := '';
   FTempName        := '';

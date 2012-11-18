@@ -322,7 +322,6 @@ begin
   begin
     FiOption := 0;
   end;
-  Writeln(FiOption);
 end;
 
 procedure TCommandLine.ProcesswdOption(var S: string);
