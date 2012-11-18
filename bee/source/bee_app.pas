@@ -177,6 +177,8 @@ begin
 end;
 
 procedure TBeeApp.DoRequestBlankDisk(var Abort : Boolean);
+var
+  Ch: char;
 begin
   Writeln(ParamToOem('Insert blank disk.'));
   Readln;

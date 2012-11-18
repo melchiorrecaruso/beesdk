@@ -62,7 +62,8 @@ type
     procedure SetImagesNumber(Value: longword);
     procedure SetImageNumber(Value: longword);
   public
-    constructor Create(const aFileName: string);
+    constructor Create(const aFileName: string;
+       aRequestImage: TFileReaderRequestImageEvent);
     destructor Destroy; override;
     procedure Fill;
 
@@ -77,8 +78,6 @@ type
     property IsValid: boolean read GetIsValid;
     property ImagesNumber: longword read FImagesNumber write SetImagesNumber;
     property ImageNumber: longword read FImageNumber write SetImageNumber;
-    property OnRequestImage: TFileReaderRequestImageEvent
-      read FOnRequestImage write FOnRequestImage;
   end;
 
   { TFileWriter }
@@ -99,11 +98,12 @@ type
     function GetPosition: int64;
     function GetSize: int64;
   public
-    constructor Create(const aFileName: string; const aThreshold: int64);
+    constructor Create(const aFileName: string; const aThreshold: int64;
+      aRequestBlankDisk: TFileWriterRequestBlankDiskEvent);
     destructor Destroy; override;
     procedure Flush;
 
-    procedure CreateImage;
+    procedure CreateNewImage(const aThreshold: int64);
     procedure WriteDWord(Data: dword);
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
@@ -116,8 +116,7 @@ type
     property CurrentImage: longword read GetCurrentImage;
     property CurrentImageSize: int64 read FCurrentImageSize;
     property Threshold: int64 read FThreshold;
-    property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
-       read FOnRequestBlankDisk write FOnRequestBlankDisk;
+
     property ABSPosition: int64 read GetABSPosition;
     property Position: int64 read GetPosition;
     property Size: int64 read GetSize write SetSize;
@@ -191,13 +190,14 @@ end;
 
 { TFileReader class }
 
-constructor TFileReader.Create(const aFileName: string);
+constructor TFileReader.Create(const aFileName: string;
+  aRequestImage: TFileReaderRequestImageEvent);
 begin
   inherited Create(nil);
   FFileName       := aFileName;
   FImagesNumber   := 1;
   FImageNumber    := 1;
-  FOnRequestImage := nil;
+  FOnRequestImage := aRequestImage;
   GotoImage;
 end;
 
@@ -349,18 +349,15 @@ end;
 
 { TFileWriter class }
 
-constructor TFileWriter.Create(const aFileName: string; const aThreshold: int64);
+constructor TFileWriter.Create(const aFileName: string;
+  const aThreshold: int64; aRequestBlankDisk: TFileWriterRequestBlankDiskEvent);
 begin
   inherited Create(nil);
   FFileName := aFileName;
-  FCurrentImage     := 0;
-  FCurrentImageSize := 0;
-
-  if aThreshold > 0 then
-    FThreshold := aThreshold;
-  FOnRequestBlankDisk := nil;
-
-  CreateImage;
+  FCurrentImage       := 0;
+  FCurrentImageSize   := 0;
+  FOnRequestBlankDisk := aRequestBlankDisk;
+  CreateNewImage(Max(0, aThreshold));
 end;
 
 destructor TFileWriter.Destroy;
@@ -403,36 +400,37 @@ begin
   Seek(I, soBeginning);
 end;
 
-procedure TFileWriter.CreateImage;
+procedure TFileWriter.CreateNewImage(const aThreshold: int64);
 var
   Abort: boolean;
 begin
   if Assigned(FSource) then
+  begin
+    FlushBuffer;
     FreeAndNil(FSource);
+  end;
+  FThreshold := aThreshold;
+  FCurrentImageSize := 0;
 
   if FThreshold > 0 then
-    // while GetDriveFreeSpace(FFileName) > 0 do
-    begin
-      Writeln(' - RequestDisk - ');
-
-      Abort := TRUE;
-      if Assigned(FOnRequestBlankDisk) then
-        FOnRequestBlankDisk(Abort);
-      if Abort then Exit;
-    end;
-
-  FCurrentImageSize := 0;
-  Inc(FCurrentImage);
+      // while GetDriveFreeSpace(FFileName) > 0 do
+      begin
+        Abort := TRUE;
+        if Assigned(FOnRequestBlankDisk) then
+          FOnRequestBlankDisk(Abort);
+        if Abort then Exit;
+      end;
 
   RenameFile(FFileName, GetImageName(FCurrentImage));
   try
     if ExtractFilePath(FFileName) <> '' then
       ForceDirectories(ExtractFilePath(FFileName));
     FSource := TFileStream.Create(FFileName, fmCreate or fmShareDenyWrite);
+
+    Inc(FCurrentImage);
   except
     FSource := nil;
   end;
-
 end;
 
 procedure TFileWriter.WriteDWord(Data: dword);
@@ -504,7 +502,7 @@ begin
       Inc(Result, Writed);
       Dec(Count,  Writed);
 
-      if Count > 0 then CreateImage;
+      if Count > 0 then CreateNewImage(FThreshold);
     end;
   end;
 end;

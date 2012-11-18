@@ -904,7 +904,7 @@ var
   CRC: longword;
   Stream: TFileWriter;
 begin
-  Stream := TFileWriter.Create(Item.FExternalFileName, 0);
+  Stream := TFileWriter.Create(Item.FExternalFileName, 0, nil);
   if Assigned(Stream) then
   begin
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
@@ -989,8 +989,7 @@ begin
   CloseArchive;
   if FileExists(aArchiveName) then
   begin
-    FArchiveReader := TFileReader.Create(aArchiveName);
-    FArchiveReader.OnRequestImage := FOnRequestImage;
+    FArchiveReader := TFileReader.Create(aArchiveName, FOnRequestImage);
     if Assigned(FArchiveReader) then
     begin
       if ReadCentralDirectory(FArchiveReader) then
@@ -1144,7 +1143,10 @@ begin
   aStream.WriteInfWord(aitEnd);
 
   if aStream.Threshold > 0 then
-    aStream.CreateImage;
+    if (aStream.Threshold - aStream.Size) < 1024 then
+      aStream.CreateNewImage(0);
+
+  if not aStream.IsValid then DoFailure(cmStrmWriteError);
 
   MagikSeek := aStream.Position;
   LocatorDisksNumber := aStream.CurrentImage;
@@ -1245,7 +1247,7 @@ begin
     if FIsNeededToSwap then
     begin
       FSwapName   := GenerateFileName(FWorkDirectory);
-      FSwapWriter := TFileWriter.Create(FSwapName, 0);
+      FSwapWriter := TFileWriter.Create(FSwapName, 0, nil);
       if Assigned(FSwapWriter) then
       begin
         FSwapWriter.WriteDWord(beexArchiveMarker);
@@ -1278,7 +1280,7 @@ begin
 
         if ExitCode < ccError then
         begin
-          FSwapReader := TFileReader.Create(FSwapName);
+          FSwapReader := TFileReader.Create(FSwapName, nil);
           if not Assigned(FSwapReader) then
             DoFailure(cmOpenSwapError);
         end;
@@ -1324,9 +1326,8 @@ begin
   begin
     if FThreshold > 0 then
     begin
-      FArchiveReader := TFileReader.Create(FTempName);
-      FTempWriter    := TFileWriter.Create(FArchiveName, FThreshold);
-      FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
+      FArchiveReader := TFileReader.Create(FTempName, nil);
+      FTempWriter    := TFileWriter.Create(FArchiveName, FThreshold, FOnRequestBlankDisk);
       FTempWriter.WriteDWord(beexArchiveMarker);
 
       FTotalSize     := 0;
@@ -1342,7 +1343,7 @@ begin
       for I := 0 to FArchiveItems.Count - 1 do
         if ExitCode < ccError  then
         begin
-          DoMessage(Format(cmCopying, [FArchiveItems.Items[I].FileName]));
+          DoMessage(Format(cmSplitting, [FArchiveItems.Items[I].FileName]));
           EncodeFromArchive(FArchiveItems.Items[I]);
         end;
       FreeAndNil(FEncoder);
@@ -1351,7 +1352,7 @@ begin
         DoFailure(cmStrmWriteError);
 
       FreeAndNil(FTempWriter);
-      FreeAndNil(FArchiveName);
+      FreeAndNil(FArchiveReader);
       if ExitCode < ccError then
         SysUtils.DeleteFile(FTempName)
       else
@@ -1412,20 +1413,16 @@ var
   ABSPosition: int64;
   NulCRC: longword;
 begin
-  if Assigned(FArchiveReader) then
-  begin
-    FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
+  FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
 
-    ABSPosition      := FTempWriter.ABSPosition;
-    Item.FDiskSeek   := FTempWriter.Position;
-    Item.FDiskNumber := FTempWriter.CurrentImage;
-    FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
-    DoClear;
+  ABSPosition      := FTempWriter.ABSPosition;
+  Item.FDiskSeek   := FTempWriter.Position;
+  Item.FDiskNumber := FTempWriter.CurrentImage;
+  FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
+  DoClear;
 
-    if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
-    if not FTempWriter   .IsValid then DoFailure(cmStrmWriteError);
-  end else
-    DoFailure(cmStrmReadError);
+  if not FArchiveReader.IsValid then DoFailure(cmStrmReadError);
+  if not FTempWriter   .IsValid then DoFailure(cmStrmWriteError);
 end;
 
 procedure TArchiveWriter.EncodeFromSwap(Item: TArchiveItem);
@@ -1457,7 +1454,7 @@ var
   ABSPosition: int64;
   Stream: TFileReader;
 begin
-  Stream := TFileReader.Create(Item.FExternalFileName);
+  Stream := TFileReader.Create(Item.FExternalFileName, nil);
   if Stream <> nil then
   begin
     Item.FUncompressedSize := Item.FExternalFileSize;
@@ -1737,10 +1734,9 @@ begin
     if FIsNeededToSave then
     begin
       FTempName   := GenerateFileName(FWorkDirectory);
-      FTempWriter := TFileWriter.Create(FTempName, 0);
+      FTempWriter := TFileWriter.Create(FTempName, 0, nil);
       if Assigned(FTempWriter) then
       begin
-        FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
         FTempWriter.WriteDWord(beexArchiveMarker);
 
         FEncoder := THeaderEncoder.Create(FTempWriter);
@@ -1860,10 +1856,9 @@ begin
     if FIsNeededToSave then
     begin
       FTempName   := GenerateFileName(FWorkDirectory);
-      FTempWriter := TFileWriter.Create(FTempName, 0);
+      FTempWriter := TFileWriter.Create(FTempName, 0, nil);
       if Assigned(FTempWriter) then
       begin
-        FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
         FTempWriter.WriteDWord(beexArchiveMarker);
         if OpenSwap < ccError  then
         begin
@@ -2152,10 +2147,9 @@ begin
     if FIsNeededToSave then
     begin
       FTempName   := GenerateFileName(FWorkDirectory);
-      FTempWriter := TFileWriter.Create(FTempName, 0);
+      FTempWriter := TFileWriter.Create(FTempName, 0, nil);
       if Assigned(FTempWriter) then
       begin
-        FTempWriter.OnRequestBlankDisk := FOnRequestBlankDisk;
         FTempWriter.WriteDWord(beexArchiveMarker);
         if OpenSwap < ccError  then
         begin

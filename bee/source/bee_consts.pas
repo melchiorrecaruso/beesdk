@@ -74,6 +74,7 @@ const
   cmAdding            = 'Adding     %s';
   cmUpdating          = 'Updating   %s';
   cmCopying           = 'Copying    %s';
+  cmSplitting         = 'Splitting  %s';
   cmEncoding          = 'Encoding   %s';
   cmExtracting        = 'Extracting %s';
   cmTesting           = 'Testing    %s';
