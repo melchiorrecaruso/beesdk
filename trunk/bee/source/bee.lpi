@@ -17,7 +17,7 @@
       <Language Value="0809"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="2" Active="Debug">
+    <BuildModes Count="2" Active="Release">
       <Item1 Name="Release" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -98,8 +98,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="170"/>
-        <CursorPos X="7" Y="194"/>
+        <TopLine Value="82"/>
+        <CursorPos X="42" Y="117"/>
         <FoldState Value=" T3j60C081b"/>
         <UsageCount Value="95"/>
         <Loaded Value="True"/>
