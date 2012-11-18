@@ -355,7 +355,9 @@ begin
   FFileName := aFileName;
   FCurrentImage     := 0;
   FCurrentImageSize := 0;
-  FThreshold := aThreshold;
+
+  if aThreshold > 0 then
+    FThreshold := aThreshold;
   FOnRequestBlankDisk := nil;
 
   CreateImage;
@@ -419,16 +421,18 @@ begin
       if Abort then Exit;
     end;
 
-  RenameFile(FFileName, GetImageName(FCurrentImage + 1));
+  FCurrentImageSize := 0;
+  Inc(FCurrentImage);
+
+  RenameFile(FFileName, GetImageName(FCurrentImage));
   try
     if ExtractFilePath(FFileName) <> '' then
       ForceDirectories(ExtractFilePath(FFileName));
     FSource := TFileStream.Create(FFileName, fmCreate or fmShareDenyWrite);
-    Inc(FCurrentImage);
   except
     FSource := nil;
   end;
-  FCurrentImageSize := 0;
+
 end;
 
 procedure TFileWriter.WriteDWord(Data: dword);
@@ -510,7 +514,7 @@ var
   Writed: longint;
   Bytes: PByte;
 begin
-  Result  := 0;
+  Result := 0;
   Bytes := @Data;
   while Assigned(FSource) and (Count > 0) do
   begin
@@ -521,6 +525,7 @@ begin
 
     if Writed = 0 then FreeAndNil(FSource);
   end;
+  FThreshold := 0;
 end;
 
 function TFileWriter.Seek(Offset: longint; Origin: word): longint;
