@@ -57,7 +57,7 @@ type
     FRenamer: TArchiveRenamer;
     FEraser: TArchiveEraser;
     FReader: TCustomArchiveReader;
-    function QueryToUser(var Confirm: TArchiveConfirm): boolean;
+    function QueryToUser(var Confirm: TArchiveConfirm): char;
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
     procedure DoMessage(const Message: string);
@@ -180,13 +180,18 @@ procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
 var
   Ch: char;
 begin
-  repeat
-    Write(ParamToOem('Insert blank disk #'+ IntToStr(DiskNumber) + ' end digit: Yes to continue or Quit to quit: '));
+  Write(ParamToOem('Insert blank disk #'+ IntToStr(DiskNumber)) + '. ');
+  Readln(Ch);
+  Ch := UpCase(OemToParam(Ch)[1]);
+  while Pos(Ch, 'CQ') < 1 do
+  begin
+    Write('Continue, or Quit? ');
     Readln(Ch);
-  until Pos(Upcase(Ch), 'YQ') > 0;
+    Ch := UpCase(OemToParam(Ch)[1]);
+  end;
 
-  case Upcase(Ch) of
-    'Y': Abort := FALSE;
+  case Ch of
+    'C': Abort := FALSE;
     else Abort := TRUE;
   end;
 end;
@@ -224,36 +229,30 @@ begin
   end;
 end;
 
-function TBeeApp.QueryToUser(var Confirm: TArchiveConfirm): boolean;
-var
-  Ch: char;
+function TBeeApp.QueryToUser(var Confirm: TArchiveConfirm): char;
 begin
-  Readln(Ch);
-  while Pos(Upcase(Ch), 'YNQ01234567') = -1 do
+  Readln(Result);
+  Result := UpCase(Result);
+  while Pos(Result, 'YNQ01234567') < 1 do
   begin
     Write(ParamToOem('Yes, No, or Quit? '));
-    Readln(Ch);
+    Readln(Result);
+    Result := UpCase(Result);
   end;
 
-  Result  := TRUE;
   Confirm := arcCancel;
-  case Upcase(Ch) of
+  case Result of
     'Y': Confirm := arcOk;
     'N': Confirm := arcCancel;
     'Q': Confirm := arcQuit;
-    else begin
-      Result := FALSE;
-      case Upcase(Ch) of
-        '0': FCommandLine.uOption := umAdd;
-        '1': FCommandLine.uOption := umUpdate;
-        '2': FCommandLine.uOption := umReplace;
-        '3': FCommandLine.uOption := umQuery;
-        '4': FCommandLine.uOption := umAddUpdate;
-        '5': FCommandLine.uOption := umAddReplace;
-        '6': FCommandLine.uOption := umAddQuery;
-        '7': FCommandLine.uOption := umAddAutoRename;
-      end;
-    end;
+    '0': FCommandLine.uOption := umAdd;
+    '1': FCommandLine.uOption := umUpdate;
+    '2': FCommandLine.uOption := umReplace;
+    '3': FCommandLine.uOption := umQuery;
+    '4': FCommandLine.uOption := umAddUpdate;
+    '5': FCommandLine.uOption := umAddReplace;
+    '6': FCommandLine.uOption := umAddQuery;
+    '7': FCommandLine.uOption := umAddAutoRename;
   end;
 end;
 
@@ -292,17 +291,17 @@ begin
       if (I <> - 1) then
       begin
         Write(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '));
-        if QueryToUser(Confirm) = FALSE then
+        if Pos(QueryToUser(Confirm), '01234567') > 0 then
           DoUpdate(SearchRec, UpdateAs, Confirm);
       end else
         Confirm := arcOk;
     end;
     umQuery: begin
       if (I <> - 1) then
-        Writeln(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '))
+        Write(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '))
       else
-        Writeln(ParamToOem('Add "' + SearchRec.Name + '"? '));
-      if QueryToUser(Confirm) = FALSE then
+        Write(ParamToOem('Add "' + SearchRec.Name + '"? '));
+      if Pos(QueryToUser(Confirm), '01234567') > 0 then
         DoUpdate(SearchRec, UpdateAs, Confirm);
     end;
   end;
@@ -622,7 +621,7 @@ begin
       Inc(TotalPackedSize, Item.CompressedSize);
       Inc(TotalFiles);
 
-      Writeln(Format('%16s %7s %12s %12s %3s %s', [
+      DoMessage(Format('%16s %7s %12s %12s %3s %s', [
         FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
         SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
         CompressionMethodToStr(Item), Item.FileName]));
