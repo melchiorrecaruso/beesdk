@@ -584,16 +584,18 @@ begin
     end;
 
     DoMessage(Cr + 'Extraction requirements:');
-    DoMessage('  Minimun version extractor = ' + VersionToStr(VersionNeededToExtract));
+    DoMessage('  Minimun version archive extractor = ' + VersionToStr(VersionNeededToExtract));
     DoMessage('  Minimun free memory size = ' + IntToStr(Round($280000*power(2, Ord(MaxDictionaryLevel)))));
     DoMessage('  Minimun free disk size = ' + IntToStr(TotalSize));
 
     DoMessage(Cr + 'Archive features:');
     DoMessage('  Items archived = ' + IntToStr(TotalFiles));
-    DoMessage('  Items with solid compression = ' + IntToStr(WithSolidCompression));
     DoMessage('  Items encrypted = ' + IntToStr(WithArchivePassword));
+    DoMessage('  Items with solid compression = ' + IntToStr(WithSolidCompression));
 
-    DoMessage('  Self-Extractor moduse size = ' + IntToStr(0));
+    DoMessage(Cr + '  Self-extractor module size = ' + IntToStr(0));
+
+    DoMessage(Cr + '  Archive images number = ' + IntToStr(FReader.ArchiveSpanning));
     DoMessage('  Archive packed data size = ' + IntToStr(TotalPackedSize));
     DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
 
