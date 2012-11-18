@@ -82,7 +82,7 @@ type
 
   { TFileWriter }
 
-  TFileWriterRequestBlankDiskEvent = procedure(var Abort : Boolean) of object;
+  TFileWriterRequestBlankDiskEvent = procedure(DiskNumber: longint; var Abort : Boolean) of object;
 
   TFileWriter = class(TWriteBufStream)
   private
@@ -421,7 +421,7 @@ begin
       begin
         Abort := TRUE;
         if Assigned(FOnRequestBlankDisk) then
-          FOnRequestBlankDisk(Abort);
+          FOnRequestBlankDisk(FCurrentImage, Abort);
         if Abort then Exit;
       end;
 
