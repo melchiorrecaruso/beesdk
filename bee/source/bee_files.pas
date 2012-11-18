@@ -223,6 +223,7 @@ var
 begin
   if Assigned(FSource) then
     FreeAndNil(FSource);
+  ClearBuffer;
 
   if FImageNumber >= 1 then
     if FImageNumber <= FImagesNumber then
@@ -409,8 +410,11 @@ begin
     FlushBuffer;
     FreeAndNil(FSource);
   end;
-  FThreshold := aThreshold;
+  ClearBuffer;
+
   FCurrentImageSize := 0;
+  FThreshold := aThreshold;
+
 
   if FThreshold > 0 then
       // while GetDriveFreeSpace(FFileName) > 0 do

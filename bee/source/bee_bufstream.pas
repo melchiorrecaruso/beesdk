@@ -47,6 +47,7 @@ type
     FBufferSize: longint;
     FBufferReaded: longint;
     FBuffer: array of byte;
+    procedure ClearBuffer;
     procedure FillBuffer; virtual; abstract;
     procedure FlushBuffer; virtual; abstract;
     procedure SetCapacity(const aValue: longint); virtual;
@@ -107,6 +108,12 @@ destructor TBufStream.Destroy;
 begin
   SetCapacity(0);
   inherited Destroy;
+end;
+
+procedure TBufStream.ClearBuffer;
+begin
+  FBufferSize   := 0;
+  FBufferReaded := 0;
 end;
 
 procedure TBufStream.SetCapacity(const aValue: longint);
