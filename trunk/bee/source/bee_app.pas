@@ -59,7 +59,7 @@ type
     FReader: TCustomArchiveReader;
     function QueryToUser(var Confirm: TArchiveConfirm): boolean;
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
-    procedure DoRequestBlankDisk(var Abort : Boolean);
+    procedure DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
     procedure DoMessage(const Message: string);
     procedure DoProgress(Percentage: longint);
     procedure DoExtract(Item: TArchiveItem; var ExtractAs: string; var Confirm: TArchiveConfirm);
@@ -114,7 +114,7 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1599 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1601 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -176,13 +176,19 @@ begin
   Readln;
 end;
 
-procedure TBeeApp.DoRequestBlankDisk(var Abort : Boolean);
+procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
 var
   Ch: char;
 begin
-  Write(ParamToOem('Insert blank disk.'));
-  Readln;
-  Abort := FALSE;
+  repeat
+    Write(ParamToOem('Insert blank disk #'+ IntToStr(DiskNumber) + ' end digit: Yes to continue or Quit to quit: '));
+    Readln(Ch);
+  until Pos(Upcase(Ch), 'YQ') > 0;
+
+  case Upcase(Ch) of
+    'Y': Abort := FALSE;
+    else Abort := TRUE;
+  end;
 end;
 
 procedure TBeeApp.DoMessage(const Message: string);
@@ -293,9 +299,9 @@ begin
     end;
     umQuery: begin
       if (I <> - 1) then
-        Write(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '))
+        Writeln(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '))
       else
-        Write(ParamToOem('Add "' + SearchRec.Name + '"? '));
+        Writeln(ParamToOem('Add "' + SearchRec.Name + '"? '));
       if QueryToUser(Confirm) = FALSE then
         DoUpdate(SearchRec, UpdateAs, Confirm);
     end;

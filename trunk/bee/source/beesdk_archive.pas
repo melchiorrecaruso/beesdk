@@ -1337,8 +1337,6 @@ begin
   begin
     if FThreshold > 0 then
     begin
-      DoMessage(Format(cmSplitting, [FArchiveName]));
-
       FArchiveReader := TFileReader.Create(FTempName, nil);
       FTempWriter    := TFileWriter.Create(FArchiveName, FThreshold, FOnRequestBlankDisk);
       FTempWriter.WriteDWord(beexArchiveMarker);
@@ -1359,9 +1357,13 @@ begin
       FreeAndNil(FTempWriter);
       FreeAndNil(FArchiveReader);
       if ExitCode < ccError then
+      begin
         SysUtils.DeleteFile(FTempName)
-      else
+      end else
+      begin
+        SysUtils.DeleteFile(FArchiveName);
         DoFailure(Format(cmSplitArcError, [FTempName]));
+      end;
     end else
     begin
       SysUtils.DeleteFile(FArchiveName);
