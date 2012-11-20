@@ -95,7 +95,6 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="82"/>
@@ -163,9 +162,10 @@
       <Unit7>
         <Filename Value="bee_commandline.pas"/>
         <UnitName Value="Bee_CommandLine"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="43"/>
+        <TopLine Value="1"/>
         <CursorPos X="49" Y="64"/>
         <UsageCount Value="93"/>
         <Loaded Value="True"/>
