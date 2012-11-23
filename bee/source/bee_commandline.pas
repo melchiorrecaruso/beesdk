@@ -100,7 +100,7 @@ type
     FxOptions: TStringList;
     FmOption: TmOption;
     FdOption: TdOption;
-    FsOption: boolean;
+    FsOption: int64;
     FfOption: string;
     FsfxOption: string;
     FpOption: string;
@@ -113,6 +113,26 @@ type
     FpriOption: TpriOption;
     FArchiveName: string;
     FFileMasks: TStringList;
+    procedure ProcessOptionSS (var S: string);
+    procedure ProcessOptionR  (var S: string);
+    procedure ProcessOptionU  (var S: string);
+    procedure ProcessOptionX  (var S: string);
+    procedure ProcessOptionM  (var S: string);
+    procedure ProcessOptionD  (var S: string);
+    procedure ProcessOptionS  (var S: string);
+    procedure ProcessOptionF  (var S: string);
+    procedure ProcessOptionSFX(var S: string);
+    procedure ProcessOptionP  (var S: string);
+    procedure ProcessOptionT  (var S: string);
+    procedure ProcessOptionSLS(var S: string);
+    procedure ProcessOptionI  (var S: string);
+    procedure ProcessOptionWD (var S: string);
+    procedure ProcessOptionCD (var S: string);
+    procedure ProcessOptionCFG(var S: string);
+    procedure ProcessOptionPRI(var S: string);
+    procedure ProcessCommand(var S: string);
+    procedure ProcessArchiveName(var S: string);
+
     function GetCommandLine: string; virtual;
     procedure SetCommandLine(const aValue: string); virtual;
     procedure SetfOption(const aValue: string);
@@ -122,23 +142,6 @@ type
     procedure SetcdOption(const aValue: string);
     procedure SetcfgOption(const aValue: string);
     procedure SetArchiveName(const aValue: string);
-    procedure ProcessrOption(var S: string);
-    procedure ProcesspOption(var S: string);
-    procedure ProcessuOption(var S: string);
-    procedure ProcessxOption(var S: string);
-    procedure ProcessmOption(var S: string);
-    procedure ProcessdOption(var S: string);
-    procedure ProcessfOption(var S: string);
-    procedure ProcesssfxOption(var S: string);
-    procedure ProcessslsOption(var S: string);
-    procedure ProcessiOption(var S: string);
-    procedure ProcesswdOption(var S: string);
-    procedure ProcesscdOption(var S: string);
-    procedure ProcesscfgOption(var S: string);
-    procedure ProcesspriOption(var S: string);
-    procedure ProcessCommand(var S: string);
-    procedure ProcessArchiveName(var S: string);
-    procedure ProcessOption(var S: string; var Option: boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -151,7 +154,7 @@ type
     property xOptions: TStringList read FxOptions;
     property mOption: TmOption read FmOption write FmOption;
     property dOption: TdOption read FdOption write FdOption;
-    property sOption: boolean read FsOption write FsOption;
+    property sOption: int64 read FsOption write FsOption;
     property fOption: string read FfOption write SetfOption;
     property sfxOption: string read FsfxOption write SetsfxOption;
     property pOption: string read FpOption write SetpOption;
@@ -191,7 +194,7 @@ begin
   FxOptions.Clear;
   FmOption := moFast;
   FdOption := do10MB;
-  FsOption := False;
+  FsOption := 0;
   FfOption := '';
   FsfxOption := '';
   FiOption := 0;
@@ -213,19 +216,23 @@ begin
   inherited Destroy;
 end;
 
-procedure TCommandLine.ProcessOption(var S: string; var Option: boolean);
+procedure TCommandLine.ProcessOptionSS(var S: string);
 begin
-  if Length(S) <> 1 then
+  if Length(S) > 1 then
   begin
     Delete(S, 1, 2);
     if (S = '') or (S = '+') then
-      Option := True
+      FssOption := True
     else
-      if (S = '-') then Option := False;
-  end;
+      if (S = '-') then
+        FssOption := False
+      else
+        ExitCode := ccCmdError;
+  end else
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcessrOption(var S: string);
+procedure TCommandLine.ProcessOptionR(var S: string);
 begin
   if Pos('-RW', UpperCase(S)) = 1 then
   begin
@@ -233,7 +240,10 @@ begin
     if (S = '') or (S = '+') then
       FrOption := rmWildCard
     else
-      if (S = '-') then FrOption := rmNone;
+      if (S = '-') then
+        FrOption := rmNone
+      else
+        ExitCode := ccCmdError;
   end else
     if Pos('-R', UpperCase(S)) = 1 then
     begin
@@ -241,50 +251,67 @@ begin
       if (S = '') or (S = '+') then
         FrOption := rmFull
       else
-        if (S = '-') then FrOption := rmNone;
-    end;
+        if (S = '-') then
+          FrOption := rmNone
+        else
+          ExitCode := ccCmdError;
+    end else
+      ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcessuOption(var S: string);
+procedure TCommandLine.ProcessOptionU(var S: string);
 begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'7']) then
   begin
     FuOption := TUpdateMode(StrToInt(S[1]));
-  end;
+  end else
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcessxOption(var S: string);
+procedure TCommandLine.ProcessOptionX(var S: string);
 begin
   Delete(S, 1, 2);
-  if Length(S) <> 0 then
+  if Length(S) > 0 then
   begin
     FxOptions.Add(S);
-  end;
+  end else
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcesspOption(var S: string);
-begin
-  Delete(S, 1, 2);
-  SetpOption(S)
-end;
-
-procedure TCommandLine.ProcessmOption(var S: string);
+procedure TCommandLine.ProcessOptionM(var S: string);
 begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'3']) then
   begin
     FmOption := TmOption(StrToInt(S[1]));
-  end;
+  end else
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcessdOption(var S: string);
+procedure TCommandLine.ProcessOptionD(var S: string);
 begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'9']) then
   begin
     FdOption := TdOption(StrToInt(S[1]));
-  end;
+  end else
+    ExitCode := ccCmdError;
+end;
+
+procedure TCommandLine.ProcessOptionS(var S: string);
+var
+  I: int64;
+begin
+  Delete(S, 1, 2);
+  if Length(S) > 0 then
+  begin
+    if TryStrToInt64(S, I) then
+      FsOption := I
+    else
+      ExitCode := ccCmdError;
+  end else
+    ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessfOption(var S: string);
@@ -292,6 +319,27 @@ begin
   Delete(S, 1, 2);
   SetfOption(S);
 end;
+
+
+
+
+
+
+
+
+
+
+procedure TCommandLine.ProcesspOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  SetpOption(S)
+end;
+
+
+
+
+
+
 
 procedure TCommandLine.ProcesssfxOption(var S: string);
 begin
@@ -421,16 +469,16 @@ begin
         ProcesscdOption(S)
       else
       case UpCase(S[2]) of
-        '-': ProcessOption (S, FssOption);
+        '-': Process_Option(S);
         'R': ProcessrOption(S);
         'U': ProcessuOption(S);
         'X': ProcessxOption(S);
         'M': ProcessmOption(S);
         'D': ProcessdOption(S);
-        'S': ProcessOption (S, FsOption);
+        'S': ProcesssOption(S);
         'F': ProcessfOption(S);
         'P': ProcesspOption(S);
-        'T': ProcessOption (S, FtOption);
+        'T': ProcesstOption(S);
         'I': ProcessiOption(S);
       end; // end case
     end else
