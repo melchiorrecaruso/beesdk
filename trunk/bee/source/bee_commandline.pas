@@ -173,9 +173,7 @@ type
 implementation
 
 uses
-  {$IFNDEF FPC}
   Math,
-  {$ENDIF}
   Bee_BlowFish;
 
 constructor TCommandLine.Create;
@@ -311,12 +309,11 @@ end;
 procedure TCommandLine.ProcessOptionS(var S: string);
 begin
   Delete(S, 1, 2);
-  if Length(S) > 0 then
-  begin
-    if TryStrToInt64(S, FsOption) = FALSE then
+  if TryStrToInt64(S, FsOption) = FALSE then
+    ExitCode := ccCmdError
+  else
+    if FsOption < 0 then
       ExitCode := ccCmdError;
-  end else
-    ExitCode := ccCmdError;
 
   if (Command in [ccAdd]) = FALSE then
     ExitCode := ccCmdError;
@@ -399,7 +396,10 @@ procedure TCommandLine.ProcessOptionI(var S: string);
 begin
   Delete(S, 1, 2);
   if TryStrToInt64(S, FiOption) = FALSE then
-    ExitCode := ccCmdError;
+    ExitCode := ccCmdError
+  else
+    if FiOption < 0 then
+      ExitCode := ccCmdError;
 
   if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
     ExitCode := ccCmdError;
