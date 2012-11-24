@@ -136,12 +136,12 @@ type
 
     function GetCommandLine: string; virtual;
     procedure SetCommandLine(const aValue: string); virtual;
-    procedure SetfOption(const aValue: string);
-    procedure SetpOption(const aValue: string);
-    procedure SetsfxOption(const aValue: string);
-    procedure SetwdOption(const aValue: string);
-    procedure SetcdOption(const aValue: string);
-    procedure SetcfgOption(const aValue: string);
+    procedure SetOptionF(const aValue: string);
+    procedure SetOptionP(const aValue: string);
+    procedure SetOptionSFX(const aValue: string);
+    procedure SetOptionWD(const aValue: string);
+    procedure SetOptionCD(const aValue: string);
+    procedure SetOptionCFG(const aValue: string);
     procedure SetArchiveName(const aValue: string);
   public
     constructor Create;
@@ -156,15 +156,15 @@ type
     property mOption: TmOption read FmOption write FmOption;
     property dOption: TdOption read FdOption write FdOption;
     property sOption: int64 read FsOption write FsOption;
-    property fOption: string read FfOption write SetfOption;
-    property sfxOption: string read FsfxOption write SetsfxOption;
-    property pOption: string read FpOption write SetpOption;
+    property fOption: string read FfOption write SetOptionF;
+    property sfxOption: string read FsfxOption write SetOptionSFX;
+    property pOption: string read FpOption write SetOptionP;
     property tOption: boolean read FtOption write FtOption;
     property slsOption: boolean read FslsOption write FslsOption;
     property iOption: int64 read FiOption write FiOption;
-    property wdOption: string read FwdOption write SetwdOption;
-    property cdOption: string read FcdOption write SetcdOption;
-    property cfgOption: string read FcfgOption write SetcfgOption;
+    property wdOption: string read FwdOption write SetOptionWD;
+    property cdOption: string read FcdOption write SetOptionCD;
+    property cfgOption: string read FcfgOption write SetOptionCFG;
     property priOption: TpriOption read FpriOption write FpriOption;
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property FileMasks: TStringList read FFileMasks;
@@ -326,7 +326,7 @@ procedure TCommandLine.ProcessOptionF(var S: string);
 begin
   Delete(S, 1, 2);
   if ExtractFileExt('.' + S) <> '.' then
-    SetfOption(S)
+    SetOptionF(S)
   else
     ExitCode := ccCmdError;
 
@@ -357,7 +357,7 @@ procedure TCommandLine.ProcessOptionP(var S: string);
 begin
   Delete(S, 1, 2);
   if Length(S) >= MinBlowFishKeyLength then
-    SetpOption(S)
+    SetOptionP(S)
   else
     ExitCode := ccCmdError;
 
@@ -640,47 +640,42 @@ begin
   Params.Destroy;
 end;
 
-procedure TCommandLine.SetfOption(const aValue: string);
+procedure TCommandLine.SetOptionF(const aValue: string);
 begin
   if ExtractFileExt('.' + aValue) <> '.' then
     FfOption := ExtractFileExt('.' + aValue);
 end;
 
-procedure TCommandLine.SetpOption(const aValue: string);
+procedure TCommandLine.SetOptionP(const aValue: string);
 begin
-  if (aValue = '') or (Length(aValue) >= MinBlowFishKeyLength) then
+  if Length(aValue) >= MinBlowFishKeyLength then
     FpOption := aValue;
 end;
 
-procedure TCommandLine.SetsfxOption(const aValue: string);
+procedure TCommandLine.SetOptionSFX(const aValue: string);
 begin
-  if Length(aValue) = 0 then
-    FsfxOption := ''
+  if FileExists(aValue) then
+    FsfxOption := aValue
   else
-    if FileExists(aValue) then
-      FsfxOption := aValue
-    else
-      FsfxOption := 'nul';
+    FsfxOption := 'nul';
 end;
 
-procedure TCommandLine.SetwdOption(const aValue: string);
+procedure TCommandLine.SetOptionWD(const aValue: string);
 begin
   if DirectoryExists(aValue) then
     FwdOption := aValue;
 end;
 
-procedure TCommandLine.SetcdOption(const aValue: string);
+procedure TCommandLine.SetOptionCD(const aValue: string);
 begin
-  if aValue <> '' then
+  if Length(aValue) > 0 then
     FcdOption := IncludeTrailingBackSlash(aValue);
 end;
 
-procedure TCommandLine.SetcfgOption(const aValue: string);
+procedure TCommandLine.SetOptionCFG(const aValue: string);
 begin
   if FileExists(aValue) then
-  begin
     FcfgOption := aValue;
-  end;
 end;
 
 procedure TCommandLine.SetArchiveName(const aValue: string);
