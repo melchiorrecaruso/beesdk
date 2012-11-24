@@ -718,7 +718,6 @@ begin
   FOnRequestImage  := nil;
 
   FArchiveItems    := TArchiveCustomItems.Create;
-  // ExitCode         := ccSuccesful;
 end;
 
 destructor TArchiveReader.Destroy;
@@ -2034,8 +2033,12 @@ begin
 
           if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
           begin
-            if SolidCompression > 0 then
-              Include(CurrentItem.FCompressionFlags, acfSolidCompression);
+            Dec(SolidBlock, CurrentItem.UncompressedSize);
+            if SolidBlock > 0 then
+              Include(CurrentItem.FCompressionFlags, acfSolidCompression)
+            else
+              SolidBlock := SolidCompression;
+
           end else
             Include(CurrentItem.FCompressionFlags, acfCompressionTable);
         end;

@@ -114,8 +114,10 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1605 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1607 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
+
+  ExitCode := ccSuccesful;
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
