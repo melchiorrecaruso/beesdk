@@ -90,8 +90,8 @@ const
   cmWarning           = 'Warning occurred - time elapsed %s seconds.';
   cmError             = 'Process aborted - time elapsed %s seconds.';
   cmUserAbort         = 'User stopped the process - time elapsed %s seconds.';
+  cmCmdError          = 'Command line error.';
 
-  cmCmdError          = 'Error: command line error';
   cmMemError          = 'Error: not enough memory for operation';
   cmArcTypeError      = 'Error: archive type unsupported';
   cmOpenArcError      = 'Error: can''t open archive "%s"';
