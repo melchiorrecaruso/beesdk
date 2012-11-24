@@ -194,7 +194,7 @@ begin
   FuOption     := umAddUpdate;
   FxOptions.Clear;
   FmOption     := moFast;
-  FdOption     := do10MB;
+  FdOption     := do5MB;
   FsOption     := 0;
   FfOption     := '';
   FsfxOption   := '';
@@ -219,18 +219,14 @@ end;
 
 procedure TCommandLine.ProcessOptionSS(var S: string);
 begin
-  if Length(S) > 1 then
-  begin
-    Delete(S, 1, 2);
-    if (S = '') or (S = '+') then
-      FssOption := True
+  Delete(S, 1, 2);
+  if (S = '') or (S = '+') then
+    FssOption := True
+  else
+    if (S = '-') then
+      FssOption := False
     else
-      if (S = '-') then
-        FssOption := False
-      else
-        ExitCode := ccCmdError;
-  end else
-    ExitCode := ccCmdError;
+      ExitCode := ccCmdError;
 
   if (FCommand in [ccHelp]) = TRUE then
     ExitCode := ccCmdError;
@@ -249,18 +245,16 @@ begin
       else
         ExitCode := ccCmdError;
   end else
-    if Pos('-R', UpperCase(S)) = 1 then
-    begin
-      Delete(S, 1, 2);
-      if (S = '') or (S = '+') then
-        FrOption := rmFull
+  begin
+    Delete(S, 1, 2);
+    if (S = '') or (S = '+') then
+      FrOption := rmFull
+    else
+      if (S = '-') then
+        FrOption := rmNone
       else
-        if (S = '-') then
-          FrOption := rmNone
-        else
-          ExitCode := ccCmdError;
-    end else
-      ExitCode := ccCmdError;
+        ExitCode := ccCmdError;
+  end;
 
   if (FCommand in [ccHelp]) = TRUE then
     ExitCode := ccCmdError;
@@ -270,9 +264,8 @@ procedure TCommandLine.ProcessOptionU(var S: string);
 begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'7']) then
-  begin
-    FuOption := TUpdateMode(StrToInt(S[1]));
-  end else
+    FuOption := TUpdateMode(StrToInt(S[1]))
+  else
     ExitCode := ccCmdError;
 
   if (Command in [ccAdd, ccExtract, ccXextract]) = FALSE then
@@ -283,9 +276,8 @@ procedure TCommandLine.ProcessOptionX(var S: string);
 begin
   Delete(S, 1, 2);
   if Length(S) > 0 then
-  begin
-    FxOptions.Add(S);
-  end else
+    FxOptions.Add(S)
+  else
     ExitCode := ccCmdError;
 
   if (FCommand in [ccHelp]) = TRUE then
@@ -296,9 +288,8 @@ procedure TCommandLine.ProcessOptionM(var S: string);
 begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'3']) then
-  begin
-    FmOption := TmOption(StrToInt(S[1]));
-  end else
+    FmOption := TmOption(StrToInt(S[1]))
+  else
     ExitCode := ccCmdError;
 
   if (Command in [ccAdd]) = FALSE then
@@ -309,9 +300,8 @@ procedure TCommandLine.ProcessOptionD(var S: string);
 begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'9']) then
-  begin
-    FdOption := TdOption(StrToInt(S[1]));
-  end else
+    FdOption := TdOption(StrToInt(S[1]))
+  else
     ExitCode := ccCmdError;
 
   if (Command in [ccAdd]) = FALSE then
@@ -319,15 +309,11 @@ begin
 end;
 
 procedure TCommandLine.ProcessOptionS(var S: string);
-var
-  I: int64;
 begin
   Delete(S, 1, 2);
   if Length(S) > 0 then
   begin
-    if TryStrToInt64(S, I) then
-      FsOption := I
-    else
+    if TryStrToInt64(S, FsOption) = FALSE then
       ExitCode := ccCmdError;
   end else
     ExitCode := ccCmdError;
@@ -339,7 +325,7 @@ end;
 procedure TCommandLine.ProcessOptionF(var S: string);
 begin
   Delete(S, 1, 2);
-  if Length(S) > 0 then
+  if ExtractFileExt('.' + S) <> '.' then
     SetfOption(S)
   else
     ExitCode := ccCmdError;
@@ -355,12 +341,12 @@ begin
     FsfxOption := ExtractFilePath(ParamStr(0)) + DefaultSfxName
   else
     if (S = '-') then
-      FsfxOption := ''
+      FsfxOption := 'nul'
     else
-      FsfxOption := ExtractFilePath(ParamStr(0)) + S;
+      FsfxOption := S;
 
   if Length(FsfxOption) > 0 then
-    if not FileExists(FsfxOption) then
+    if FileExists(FsfxOption) = FALSE then
       ExitCode := ccCmdError;
 
   if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
@@ -381,20 +367,16 @@ end;
 
 procedure TCommandLine.ProcessOptionT(var S: string);
 begin
-  if Length(S) > 1 then
-  begin
-    Delete(S, 1, 2);
-    if (S = '') or (S = '+') then
-      FtOption := True
+  Delete(S, 1, 2);
+  if (S = '') or (S = '+') then
+    FtOption := True
+  else
+    if (S = '-') then
+      FtOption := False
     else
-      if (S = '-') then
-        FtOption := False
-      else
-        ExitCode := ccCmdError;
-  end else
-    ExitCode := ccCmdError;
+      ExitCode := ccCmdError;
 
-  if not (Command in [ccAdd, ccDelete, ccRename]) then
+  if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
     ExitCode := ccCmdError;
 end;
 
@@ -409,44 +391,40 @@ begin
     else
       ExitCode := ccCmdError;
 
-  if not (Command in [ccList]) then
+  if (Command in [ccList]) = FALSE then
     ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessOptionI(var S: string);
-var
-  I: int64;
 begin
   Delete(S, 1, 2);
-  if TryStrToInt64(S, I) then
-    FiOption := I
-  else
+  if TryStrToInt64(S, FiOption) = FALSE then
     ExitCode := ccCmdError;
 
-  if not (Command in [ccAdd, ccDelete, ccRename]) then
+  if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
     ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessOptionWD(var S: string);
 begin
   Delete(S, 1, 3);
-  if DirectoryExists(ExcludeTrailingBackslash(S)) then
-  begin
-    FwdOption := ExcludeTrailingBackslash(S);
-  end else
+  FwdOption := ExcludeTrailingBackslash(S);
+  if DirectoryExists(FwdOption) = FALSE then
     ExitCode := ccCmdError;
 
-  if not (Command in [ccAdd, ccDelete, ccRename]) then
+  if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
     ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessOptionCD(var S: string);
 begin
   Delete(S, 1, 3);
-  if S <> '' then
-  begin
-    FcdOption := IncludeTrailingBackslash(S);
-  end else
+  if Length(S) > 0 then
+    FcdOption := IncludeTrailingBackSlash(S)
+  else
+    ExitCode := ccCmdError;
+
+  if (Command in [ccHelp]) = TRUE then
     ExitCode := ccCmdError;
 end;
 
@@ -458,7 +436,7 @@ begin
   else
     ExitCode := ccCmdError;
 
-  if not (Command in [ccAdd]) then
+  if (Command in [ccAdd]) = FALSE then
     ExitCode := ccCmdError;
 end;
 
@@ -469,12 +447,14 @@ begin
     FpriOption := TpriOption(StrToInt(S[1]))
   else
     ExitCode := ccCmdError;
+
+  if (Command in [ccHelp]) = TRUE then
+    ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessCommand(const S: string);
 begin
   if Length(S) = 1 then
-  begin
     case Upcase(S[1]) of
       'A': FCommand := ccAdd;
       'E': FCommand := ccExtract;
@@ -485,19 +465,17 @@ begin
       'L': FCommand := ccList;
       'H': FCommand := ccHelp;
       else ExitCode := ccCmdError;
-    end;
-  end else
-    ExitCode := ccCmdError;
+    end
+  else ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessArchiveName(var S: string);
 begin
-  FssOption := True;
+  FssOption    := TRUE;
   FArchiveName := S;
-  if ExtractFileExt(FArchiveName) = '' then
-  begin
-    FArchiveName := ChangeFileExt(FArchiveName, '.bee');
-  end;
+  //if FileExists(FArchiveName) = FALSE then
+  //  if ExtractFileExt(FArchiveName) = '' then
+  //    FArchiveName := ChangeFileExt(FArchiveName, '.bee');
 
   // check if archive exists
   if (FCommand in [ccHelp]) = TRUE then
@@ -512,7 +490,7 @@ procedure TCommandLine.ProcessFileMasks(const S: string);
 begin
   FFileMasks.Add(S);
 
-  if FCommand in [ccHelp] then
+  if (FCommand in [ccHelp]) = TRUE then
     ExitCode := ccCmdError;
 end;
 
@@ -665,33 +643,30 @@ end;
 procedure TCommandLine.SetfOption(const aValue: string);
 begin
   if ExtractFileExt('.' + aValue) <> '.' then
-  begin
     FfOption := ExtractFileExt('.' + aValue);
-  end;
 end;
 
 procedure TCommandLine.SetpOption(const aValue: string);
 begin
   if (aValue = '') or (Length(aValue) >= MinBlowFishKeyLength) then
-  begin
     FpOption := aValue;
-  end;
 end;
 
 procedure TCommandLine.SetsfxOption(const aValue: string);
 begin
-  if FileExists(aValue) then
-    FsfxOption := aValue
+  if Length(aValue) = 0 then
+    FsfxOption := ''
   else
-    FsfxOption := '';
+    if FileExists(aValue) then
+      FsfxOption := aValue
+    else
+      FsfxOption := 'nul';
 end;
 
 procedure TCommandLine.SetwdOption(const aValue: string);
 begin
   if DirectoryExists(aValue) then
-  begin
     FwdOption := aValue;
-  end;
 end;
 
 procedure TCommandLine.SetcdOption(const aValue: string);
