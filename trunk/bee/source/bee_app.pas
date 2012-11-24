@@ -114,7 +114,7 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1603 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1605 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { store command line }
   FCommandLine := TCommandLine.Create;
@@ -143,11 +143,9 @@ var
   S: string;
   StartTime: double;
 begin
+  StartTime := Now;
   DoMessage(FSelfName);
-  if (FCommandLine.Command <> ccNone) and
-     (FCommandLine.ArchiveName <> '') then
-  begin
-    StartTime := Now;
+  if ExitCode < ccError then
     case FCommandLine.Command of
       ccAdd:      EncodeShell;
       ccDelete:   DeleteShell;
@@ -156,17 +154,17 @@ begin
       ccTest:     DecodeShell(TRUE);
       ccRename:   RenameShell;
       ccList:     ListShell;
+      ccHelp:     HelpShell;
     end;
 
-    S := TimeDifference(StartTime);
-    case ExitCode of
-      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
-      ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
-      ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
-      else         DoMessage(Format(Cr + cmError,     [S]));
-    end;
-  end else
-    HelpShell;
+  S := TimeDifference(StartTime);
+  case ExitCode of
+    ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
+    ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
+    ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
+    ccCmdError:  DoMessage(Format(Cr + cmCmdError,  [ ]));
+    else         DoMessage(Format(Cr + cmError,     [S]));
+  end;
 end;
 
 procedure TBeeApp.DoRequestImage(ImageNumber: longint;
@@ -340,6 +338,7 @@ begin
   DoMessage('  r  Rename files in archive');
   DoMessage('  t  Test archive files');
   DoMessage('  x  eXtract files from archive with path name');
+  DoMessage('  h  show command line Help');
   DoMessage('<Switches>');
   DoMessage('  --              stop switches parsing');
   DoMessage('  -cd[directory]  set current archive directory');

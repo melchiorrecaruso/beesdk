@@ -48,8 +48,8 @@ type
   {   ccRename   Rename files                             }
   {   ccList     List files                               }
 
-  TCommand = (ccNone, ccAdd, ccExtract, ccXextract, ccTest,
-    ccDelete, ccRename,  ccList);
+  TCommand = (ccAdd, ccExtract, ccXextract, ccTest,
+    ccDelete, ccRename, ccList, ccHelp);
 
   { Update Mode Option:                                   }
   {  umAdd           Add only new files                   }
@@ -130,8 +130,9 @@ type
     procedure ProcessOptionCD (var S: string);
     procedure ProcessOptionCFG(var S: string);
     procedure ProcessOptionPRI(var S: string);
-    procedure ProcessCommand(var S: string);
+    procedure ProcessCommand(const S: string);
     procedure ProcessArchiveName(var S: string);
+    procedure ProcessFileMasks(const S: string);
 
     function GetCommandLine: string; virtual;
     procedure SetCommandLine(const aValue: string); virtual;
@@ -187,24 +188,24 @@ end;
 
 procedure TCommandLine.Clear;
 begin
-  FCommand := ccNone;
-  FssOption := False;
-  FrOption := rmNone;
-  FuOption := umAddUpdate;
+  FCommand     := ccHelp;
+  FssOption    := False;
+  FrOption     := rmNone;
+  FuOption     := umAddUpdate;
   FxOptions.Clear;
-  FmOption := moFast;
-  FdOption := do10MB;
-  FsOption := 0;
-  FfOption := '';
-  FsfxOption := '';
-  FiOption := 0;
-  FpOption := '';
-  FtOption := False;
-  FslsOption := False;
-  FwdOption := '';
-  FcdOption := '';
-  FcfgOption := SelfPath + DefaultCfgName;
-  FpriOption := prioNormal;
+  FmOption     := moFast;
+  FdOption     := do10MB;
+  FsOption     := 0;
+  FfOption     := '';
+  FsfxOption   := '';
+  FiOption     := 0;
+  FpOption     := '';
+  FtOption     := False;
+  FslsOption   := False;
+  FwdOption    := '';
+  FcdOption    := '';
+  FcfgOption   := SelfPath + DefaultCfgName;
+  FpriOption   := prioNormal;
   FArchiveName := '';
   FFileMasks.Clear;
 end;
@@ -229,6 +230,9 @@ begin
       else
         ExitCode := ccCmdError;
   end else
+    ExitCode := ccCmdError;
+
+  if (FCommand in [ccHelp]) = TRUE then
     ExitCode := ccCmdError;
 end;
 
@@ -257,6 +261,9 @@ begin
           ExitCode := ccCmdError;
     end else
       ExitCode := ccCmdError;
+
+  if (FCommand in [ccHelp]) = TRUE then
+    ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessOptionU(var S: string);
@@ -266,6 +273,9 @@ begin
   begin
     FuOption := TUpdateMode(StrToInt(S[1]));
   end else
+    ExitCode := ccCmdError;
+
+  if (Command in [ccAdd, ccExtract, ccXextract]) = FALSE then
     ExitCode := ccCmdError;
 end;
 
@@ -277,6 +287,9 @@ begin
     FxOptions.Add(S);
   end else
     ExitCode := ccCmdError;
+
+  if (FCommand in [ccHelp]) = TRUE then
+    ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessOptionM(var S: string);
@@ -287,6 +300,9 @@ begin
     FmOption := TmOption(StrToInt(S[1]));
   end else
     ExitCode := ccCmdError;
+
+  if (Command in [ccAdd]) = FALSE then
+    ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessOptionD(var S: string);
@@ -296,6 +312,9 @@ begin
   begin
     FdOption := TdOption(StrToInt(S[1]));
   end else
+    ExitCode := ccCmdError;
+
+  if (Command in [ccAdd]) = FALSE then
     ExitCode := ccCmdError;
 end;
 
@@ -312,105 +331,150 @@ begin
       ExitCode := ccCmdError;
   end else
     ExitCode := ccCmdError;
+
+  if (Command in [ccAdd]) = FALSE then
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcessfOption(var S: string);
+procedure TCommandLine.ProcessOptionF(var S: string);
 begin
   Delete(S, 1, 2);
-  SetfOption(S);
+  if Length(S) > 0 then
+    SetfOption(S)
+  else
+    ExitCode := ccCmdError;
+
+  if (Command in [ccAdd]) = FALSE then
+    ExitCode := ccCmdError;
 end;
 
-
-
-
-
-
-
-
-
-
-procedure TCommandLine.ProcesspOption(var S: string);
-begin
-  Delete(S, 1, 2);
-  SetpOption(S)
-end;
-
-
-
-
-
-
-
-procedure TCommandLine.ProcesssfxOption(var S: string);
+procedure TCommandLine.ProcessOptionSFX(var S: string);
 begin
   Delete(S, 1, 4);
-  if (S = '+') or (Length(S) = 0) then
+  if (Length(S) = 0) or (S = '+')  then
     FsfxOption := ExtractFilePath(ParamStr(0)) + DefaultSfxName
   else
     if (S = '-') then
-      FsfxOption := 'nul'
+      FsfxOption := ''
     else
       FsfxOption := ExtractFilePath(ParamStr(0)) + S;
+
+  if Length(FsfxOption) > 0 then
+    if not FileExists(FsfxOption) then
+      ExitCode := ccCmdError;
+
+  if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcessslsOption(var S: string);
+procedure TCommandLine.ProcessOptionP(var S: string);
+begin
+  Delete(S, 1, 2);
+  if Length(S) >= MinBlowFishKeyLength then
+    SetpOption(S)
+  else
+    ExitCode := ccCmdError;
+
+  if (Command in [ccRename, ccList, ccHelp]) = TRUE then
+    ExitCode := ccCmdError;
+end;
+
+procedure TCommandLine.ProcessOptionT(var S: string);
+begin
+  if Length(S) > 1 then
+  begin
+    Delete(S, 1, 2);
+    if (S = '') or (S = '+') then
+      FtOption := True
+    else
+      if (S = '-') then
+        FtOption := False
+      else
+        ExitCode := ccCmdError;
+  end else
+    ExitCode := ccCmdError;
+
+  if not (Command in [ccAdd, ccDelete, ccRename]) then
+    ExitCode := ccCmdError;
+end;
+
+procedure TCommandLine.ProcessOptionSLS(var S: string);
 begin
   Delete(S, 1, 4);
   if (S = '') or (S = '+') then
     FslsOption := True
   else
     if (S = '-') then
-      FslsOption := False;
+      FslsOption := False
+    else
+      ExitCode := ccCmdError;
+
+  if not (Command in [ccList]) then
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcessiOption(var S: string);
+procedure TCommandLine.ProcessOptionI(var S: string);
+var
+  I: int64;
 begin
   Delete(S, 1, 2);
-  if not TryStrToInt64(S, FiOption) then
-  begin
-    FiOption := 0;
-  end;
+  if TryStrToInt64(S, I) then
+    FiOption := I
+  else
+    ExitCode := ccCmdError;
+
+  if not (Command in [ccAdd, ccDelete, ccRename]) then
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcesswdOption(var S: string);
+procedure TCommandLine.ProcessOptionWD(var S: string);
 begin
   Delete(S, 1, 3);
   if DirectoryExists(ExcludeTrailingBackslash(S)) then
   begin
     FwdOption := ExcludeTrailingBackslash(S);
-  end;
+  end else
+    ExitCode := ccCmdError;
+
+  if not (Command in [ccAdd, ccDelete, ccRename]) then
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcesscdOption(var S: string);
+procedure TCommandLine.ProcessOptionCD(var S: string);
 begin
   Delete(S, 1, 3);
   if S <> '' then
   begin
     FcdOption := IncludeTrailingBackslash(S);
-  end;
+  end else
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcesscfgOption(var S: string);
+procedure TCommandLine.ProcessOptionCFG(var S: string);
 begin
   Delete(S, 1, 4);
   if FileExists(S) then
-  begin
-    FcfgOption := S;
-  end;
+    FcfgOption := S
+  else
+    ExitCode := ccCmdError;
+
+  if not (Command in [ccAdd]) then
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcesspriOption(var S: string);
+procedure TCommandLine.ProcessOptionPRI(var S: string);
 begin
   Delete(S, 1, 4);
   if (Length(S) = 1) and (S[1] in ['0'.. '3']) then
-  begin
-    FpriOption := TpriOption(StrToInt(S[1]));
-  end;
+    FpriOption := TpriOption(StrToInt(S[1]))
+  else
+    ExitCode := ccCmdError;
 end;
 
-procedure TCommandLine.ProcessCommand(var S: string);
+procedure TCommandLine.ProcessCommand(const S: string);
 begin
   if Length(S) = 1 then
+  begin
     case Upcase(S[1]) of
       'A': FCommand := ccAdd;
       'E': FCommand := ccExtract;
@@ -419,8 +483,11 @@ begin
       'D': FCommand := ccDelete;
       'R': FCommand := ccRename;
       'L': FCommand := ccList;
-      else FCommand := ccNone;
+      'H': FCommand := ccHelp;
+      else ExitCode := ccCmdError;
     end;
+  end else
+    ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.ProcessArchiveName(var S: string);
@@ -431,6 +498,22 @@ begin
   begin
     FArchiveName := ChangeFileExt(FArchiveName, '.bee');
   end;
+
+  // check if archive exists
+  if (FCommand in [ccHelp]) = TRUE then
+    ExitCode := ccCmdError
+  else
+    if (FCommand in [ccAdd]) = FALSE then
+      if FileExists(FArchiveName) = FALSE then
+        ExitCode := ccCmdError;
+end;
+
+procedure TCommandLine.ProcessFileMasks(const S: string);
+begin
+  FFileMasks.Add(S);
+
+  if FCommand in [ccHelp] then
+    ExitCode := ccCmdError;
 end;
 
 procedure TCommandLine.SetCommandLine(const aValue: string);
@@ -439,73 +522,74 @@ var
   S: string;
   Params: TStringList;
 begin
+  Clear;
   Params := TStringList.Create;
   Params.Text := aValue;
-  
-  Clear;
-  // catch options, command, archive name and name of files
-  for I := 0 to Params.Count - 1 do
-  begin
-    S := Params[I];
-    if (not FssOption) and (Length(S) <> 1) and (S[1] = '-') then
+  // catch command
+  if Params.Count > 0 then
+    ProcessCommand(Params[0]);
+  // catch options, archive name and name of files
+  if Params.Count > 1 then
+    for I := 1 to Params.Count - 1 do
     begin
-      // options...
-      if Pos('-SLS', UpperCase(S)) = 1 then
-        ProcessslsOption(S)
-      else
-      if Pos('-SFX', UpperCase(S)) = 1 then
-        ProcesssfxOption(S)
-      else
-      if Pos('-PRI', UpperCase(S)) = 1 then
-        ProcesspriOption(S)
-      else
-      if Pos('-CFG', UpperCase(S)) = 1 then
-        ProcesscfgOption(S)
-      else
-      if Pos('-WD', UpperCase(S)) = 1 then
-        ProcesswdOption(S)
-      else
-      if Pos('-CD', UpperCase(S)) = 1 then
-        ProcesscdOption(S)
-      else
-      case UpCase(S[2]) of
-        '-': Process_Option(S);
-        'R': ProcessrOption(S);
-        'U': ProcessuOption(S);
-        'X': ProcessxOption(S);
-        'M': ProcessmOption(S);
-        'D': ProcessdOption(S);
-        'S': ProcesssOption(S);
-        'F': ProcessfOption(S);
-        'P': ProcesspOption(S);
-        'T': ProcesstOption(S);
-        'I': ProcessiOption(S);
-      end; // end case
-    end else
+      S := Params[I];
+      if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
+      begin
+        // options...
+        if Pos('-SLS', UpperCase(S)) = 1 then
+          ProcessOptionSLS(S)
+        else
+        if Pos('-SFX', UpperCase(S)) = 1 then
+          ProcessOptionSFX(S)
+        else
+        if Pos('-PRI', UpperCase(S)) = 1 then
+          ProcessOptionPRI(S)
+        else
+        if Pos('-CFG', UpperCase(S)) = 1 then
+          ProcessOptionCFG(S)
+        else
+        if Pos('-WD', UpperCase(S)) = 1 then
+          ProcessOptionWD(S)
+        else
+        if Pos('-CD', UpperCase(S)) = 1 then
+          ProcessOptionCD(S)
+        else
+        case UpCase(S[2]) of
+          '-': ProcessOptionSS(S);
+          'R': ProcessOptionR (S);
+          'U': ProcessOptionU (S);
+          'X': ProcessOptionX (S);
+          'M': ProcessOptionM (S);
+          'D': ProcessOptionD (S);
+          'S': ProcessOptionS (S);
+          'F': ProcessOptionF (S);
+          'P': ProcessOptionP (S);
+          'T': ProcessOptionT (S);
+          'I': ProcessOptionI (S);
+          else ExitCode := ccCmdError;
+        end; // end case
+      end else
 
-    if FCommand = ccNone then
-      ProcessCommand(S)
-    else
       if FArchiveName = '' then
         ProcessArchiveName(S)
       else
-        FFileMasks.Add(S); // command or filenames ...
+        ProcessFileMasks(S);
 
-  end; // end for loop
+    end; // end for loop
   Params.Free;
 
   // check file masks
   if FFileMasks.Count = 0 then
   begin
     case FCommand of
-     {ccAdd: nothing to do}
-     {ccDelete:  nothing to do}
-      ccExtract: FFileMasks.Add('*');
-      ccList: FFileMasks.Add('*');
-     {ccRename: nothing to do}
-      ccTest: FFileMasks.Add('*');
+      ccAdd:      ExitCode := ccCmdError;
+      ccDelete:   ExitCode := ccCmdError;
+      ccRename:   ExitCode := ccCmdError;
+
+      ccExtract:  FFileMasks.Add('*');
       ccxExtract: FFileMasks.Add('*');
-     {ccHelp:  nothing to do}
+      ccTest:     FFileMasks.Add('*');
+      ccList:     FFileMasks.Add('*');
     end;
     FrOption := rmFull;
   end;
@@ -549,7 +633,7 @@ begin
   Params.Add('-m' + IntToStr(Ord(FmOption)));
   Params.Add('-d' + IntToStr(Ord(FdOption)));
 
-  if FsOption then Params.Add('-s+') else Params.Add('-s-');
+  if FsOption > 0 then Params.Add('-s+') else Params.Add('-s-');
 
   if Length(FfOption)   > 0 then Params.Add('-f'   + FfOption);
   if Length(FsfxOption) > 0 then Params.Add('-sfx' + FsfxOption);
@@ -599,7 +683,7 @@ begin
   if FileExists(aValue) then
     FsfxOption := aValue
   else
-    FsfxOption := 'nul';
+    FsfxOption := '';
 end;
 
 procedure TCommandLine.SetwdOption(const aValue: string);

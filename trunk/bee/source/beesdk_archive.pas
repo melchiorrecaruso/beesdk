@@ -351,7 +351,7 @@ type
     FCompressionMethod: TArchiveCompressionMethod;
     FCompressionLevel: TmOption;
     FDictionaryLevel: TdOption;
-    FSolidCompression: boolean;
+    FSolidCompression: int64;
     FEncryptionMethod: TArchiveEncryptionMethod;
     FConfigurationName: string;
     FConfiguration: TConfiguration;
@@ -374,7 +374,7 @@ type
     property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod write FCompressionMethod;
     property CompressionLevel: TmOption read FCompressionLevel write FCompressionLevel;
     property DictionaryLevel: TdOption read FDictionaryLevel  write FDictionaryLevel;
-    property SolidCompression: boolean read FSolidCompression write FSolidCompression;
+    property SolidCompression: int64 read FSolidCompression write FSolidCompression;
     property EncrypionMethod: TArchiveEncryptionMethod read FEncryptionMethod write FEncryptionMethod;
     property ConfigurationName: string read FConfigurationName write SetConfigurationName;
     property ForceFileExtension: string read FForceFileExtension write FForceFileExtension;
@@ -718,7 +718,7 @@ begin
   FOnRequestImage  := nil;
 
   FArchiveItems    := TArchiveCustomItems.Create;
-  ExitCode         := ccSuccesful;
+  // ExitCode         := ccSuccesful;
 end;
 
 destructor TArchiveReader.Destroy;
@@ -1925,7 +1925,7 @@ begin
   FCompressionMethod  := actNone;
   FCompressionLevel   := moFast;
   FDictionaryLevel    := do2MB;
-  FSolidCompression   := FALSE;
+  FSolidCompression   := 0;
   FEncryptionMethod   := acrtNone;
 
   FConfigurationName  := SelfPath + DefaultCfgName;
@@ -1982,6 +1982,7 @@ end;
 procedure TArchiveUpdater.ConfigureCoder;
 var
   I: longint;
+  SolidBlock: int64;
   CurrentItem: TArchiveItem;
   CurrentTable: TTableParameters;
   CurrentFileExt: string;
@@ -2001,6 +2002,7 @@ begin
     FConfiguration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(FDictionaryLevel));
     FConfiguration.Selector('\m' + FConfiguration.CurrentSection.Values['Method']);
 
+    SolidBlock := SolidCompression;
     for I := 0 to FArchiveItems.Count - 1 do
     begin
       CurrentItem := FArchiveItems.Items[I];
@@ -2032,7 +2034,7 @@ begin
 
           if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
           begin
-            if SolidCompression then
+            if SolidCompression > 0 then
               Include(CurrentItem.FCompressionFlags, acfSolidCompression);
           end else
             Include(CurrentItem.FCompressionFlags, acfCompressionTable);
