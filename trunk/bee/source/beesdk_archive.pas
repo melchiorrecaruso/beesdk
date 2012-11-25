@@ -924,7 +924,7 @@ begin
       DoFailure(Format(emCrcError, [Item.FExternalFileName]));
 
     Stream.Destroy;
-    if ErrorCode < ecError then
+    if ExitCode < ecError then
     begin
       FileSetAttr(Item.FExternalFileName, Item.FAttributes);
       FileSetDate(Item.FExternalFileName, Item.FLastModifiedTime);
@@ -1041,7 +1041,7 @@ begin
     FOnProgress(MulDiv(100, FProcessedSize, FTotalSize));
 
   while FSuspended do Sleep(250);
-  Result := ErrorCode < ecError;
+  Result := ExitCode < ecError;
 end;
 
 procedure TArchiveReader.DoMessage(const Message: string);
@@ -1211,7 +1211,7 @@ var
   Smaller, I: longint;
   Decoder: THeaderDecoder;
 begin
-  if (ErrorCode < ecError) and (FHeaders.GetNext(0, foPassword) > -1) then
+  if (ExitCode < ecError) and (FHeaders.GetNext(0, foPassword) > -1) then
   begin
     // select smaller size item ...
     Smaller := 0;
@@ -1238,7 +1238,7 @@ begin
 
     Decoder.Destroy;
   end;
-  Result := ErrorCode;
+  Result := ExitCode;
 end; *)
 
 function TArchiveWriter.OpenSwap: longint;
@@ -1247,7 +1247,7 @@ var
   CRC: longword;
   Item: TArchiveItem;
 begin
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
     if FIsNeededToSwap then
     begin
       FSwapName   := GenerateFileName(FWorkDirectory);
@@ -1258,7 +1258,7 @@ begin
         FDecoder := THeaderDecoder.Create(FArchiveReader);
         FDecoder.OnProgress := DoProgress;
         for I := 0 to FArchiveItems.Count - 1 do
-          if ErrorCode < ecError then
+          if ExitCode < ecError then
           begin
             Item := FArchiveItems.Items[I];
 
@@ -1282,7 +1282,7 @@ begin
         FreeAndNil(FDecoder);
         FreeAndNil(FSwapWriter);
 
-        if ErrorCode < ecError then
+        if ExitCode < ecError then
         begin
           FSwapReader := TFileReader.Create(FSwapName, nil);
           if not Assigned(FSwapReader) then
@@ -1292,14 +1292,14 @@ begin
       end else
         DoFailure(emCreateSwapError);
     end;
-  Result := ErrorCode;
+  Result := ExitCode;
 end;
 
 procedure TArchiveWriter.TestTemporaryArchive;
 var
   Tester: TArchiveExtractor;
 begin
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
   begin
     Tester                 := TArchiveExtractor.Create;
     Tester.OnRequestImage  := OnRequestImage;
@@ -1312,7 +1312,7 @@ begin
     Tester.ArchivePassword := FArchivePassword;
 
     Tester.OpenArchive(FTempName);
-    if ErrorCode < ecError then
+    if ExitCode < ecError then
     begin
       Tester.TagAll;
       Tester.TestTagged;
@@ -1326,7 +1326,7 @@ var
   I: longint;
 begin
   SysUtils.DeleteFile(FSwapName);
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
   begin
     if FThreshold > 0 then
     begin
@@ -1339,7 +1339,7 @@ begin
       for I := 0 to FArchiveItems.Count - 1 do
       begin
         FArchiveItems.Items[I].FTag := aitNone;
-        if ErrorCode < ecError  then
+        if ExitCode < ecError  then
           EncodeFromArchive(FArchiveItems.Items[I]);
       end;
       FreeAndNil(FEncoder);
@@ -1349,7 +1349,7 @@ begin
 
       FreeAndNil(FTempWriter);
       FreeAndNil(FArchiveReader);
-      if ErrorCode < ecError then
+      if ExitCode < ecError then
       begin
         SysUtils.DeleteFile(FTempName)
       end else
@@ -1541,7 +1541,7 @@ var
 begin
   FIsNeededToExtract := FALSE;
   for I := 0 to FArchiveItems.Count - 1 do
-    if ErrorCode < ecError then
+    if ExitCode < ecError then
     begin
       Item := FArchiveItems.Items[I];
       if Item.FTag = aitUpdate then
@@ -1561,7 +1561,7 @@ begin
       end;
     end;
 
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
     if FIsNeededToExtract then CheckSequences;
 end;
 
@@ -1615,13 +1615,13 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
     if FIsNeededToExtract then
     begin
       FDecoder := THeaderDecoder.Create(FArchiveReader);
       FDecoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
-        if ErrorCode < ecError then
+        if ExitCode < ecError then
         begin
           Item := FArchiveItems.Items[I];
 
@@ -1655,7 +1655,7 @@ begin
   FDecoder := THeaderDecoder.Create(FArchiveReader);
   FDecoder.OnProgress := DoProgress;
   for I := 0 to FArchiveItems.Count - 1 do
-    if ErrorCode < ecError then
+    if ExitCode < ecError then
     begin
       Item := FArchiveItems.Items[I];
 
@@ -1702,7 +1702,7 @@ var
 begin
   FIsNeededToSave := FALSE;
   for I := 0 to FArchiveItems.Count - 1 do
-    if ErrorCode < ecError then
+    if ExitCode < ecError then
     begin
       Item := FArchiveItems.Items[I];
 
@@ -1731,7 +1731,7 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
     if FIsNeededToSave then
     begin
       FTempName   := GenerateFileName(FWorkDirectory);
@@ -1743,7 +1743,7 @@ begin
         FEncoder := THeaderEncoder.Create(FTempWriter);
         FEncoder.OnProgress := DoProgress;
         for I := 0 to FArchiveItems.Count - 1 do
-          if ErrorCode < ecError then
+          if ExitCode < ecError then
           begin
             Item := FArchiveItems.Items[I];
             case Item.FTag of
@@ -1783,7 +1783,7 @@ var
 begin
   FIsNeededToSave := FALSE;
   for I := 0 to FArchiveItems.Count - 1 do
-    if ErrorCode < ecError then
+    if ExitCode < ecError then
     begin
       Item := FArchiveItems.Items[I];
       if Item.FTag in [aitUpdate] then
@@ -1797,7 +1797,7 @@ begin
       end;
     end;
 
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
     if FIsNeededToSave then CheckSequences;
 end;
 
@@ -1853,7 +1853,7 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
     if FIsNeededToSave then
     begin
       FTempName   := GenerateFileName(FWorkDirectory);
@@ -1876,7 +1876,7 @@ begin
           FEncoder := THeaderEncoder.Create(FTempWriter);
           FEncoder.OnProgress := DoProgress;
           for I := 0 to FArchiveItems.Count - 1 do
-            if ErrorCode < ecError then
+            if ExitCode < ecError then
             begin
               Item := FArchiveItems.Items[I];
               case Item.FTag of
@@ -1893,7 +1893,7 @@ begin
               end;
             end;
           FreeandNil(FEncoder);
-          if ErrorCode < ecError then
+          if ExitCode < ecError then
           begin
             WriteCentralDirectory(FTempWriter);
             if not FTempWriter.IsValid then
@@ -1987,7 +1987,7 @@ begin
   else
     DoFailure(Format(emConfigError, [FConfigurationName]));
 
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
   begin
     CurrentFileExt := '.';
     FConfiguration.Selector('\main');
@@ -2069,7 +2069,7 @@ begin
   FIsNeededToSave := FALSE;
   FSearchRecs.Sort(@CompareCustomSearchRec);
   for J := 0 to FSearchRecs.Count - 1 do
-    if ErrorCode < ecError then
+    if ExitCode < ecError then
     begin
       Csr := TCustomSearchRec(FSearchRecs.Items[J]);
       DoUpdate(Csr, UpdateAs, Confirm);
@@ -2094,7 +2094,7 @@ begin
       end;
     end;
 
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
     if FIsNeededToSave then CheckSequences;
 end;
 
@@ -2153,7 +2153,7 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  if ErrorCode < ecError then
+  if ExitCode < ecError then
     if FIsNeededToSave then
     begin
       FTempName   := GenerateFileName(FWorkDirectory);
@@ -2167,7 +2167,7 @@ begin
           FEncoder := THeaderEncoder.Create(FTempWriter);
           FEncoder.OnProgress := DoProgress;
           for I := 0 to FArchiveItems.Count - 1 do
-            if ErrorCode < ecError then
+            if ExitCode < ecError then
             begin
               Item := FArchiveItems.Items[I];
               case Item.FTag of
@@ -2189,7 +2189,7 @@ begin
 
             end;
           FreeAndNil(FEncoder);
-          if ErrorCode < ecError then
+          if ExitCode < ecError then
           begin
             WriteCentralDirectory(FTempWriter);
             if not FTempWriter.IsValid then
