@@ -33,147 +33,16 @@ unit Bee_Interface;
 
 interface
 
-uses
-  Classes,
-  Bee_Consts;
+const
 
-type
-  { TApp class }
 
-  TApp = class
-  protected
-    FStart: TDateTime;
-    FLastTick: TDateTime;
-    FSuspended:  boolean;
-    FTerminated: boolean;
-    FExitCode: byte;
+var
+  BeeExitCode: longint = 0;
 
-    FSpeed: longint;
-    FProgress: longint;
-    FProcessedSize: int64;
-    FTotalSize: int64;
-    procedure SetPriority(Value: byte);
-    procedure SetExitCode(Value: byte);
-    procedure SetTerminated(Value: boolean);
-    procedure SetSuspended(Value: boolean);
-    procedure DoMessage(const aMessage: string); overload; virtual; abstract;
-    procedure DoMessage(const aMessage: string; aExitCode: byte); overload; virtual;
-    procedure DoRequest(const aMessage: string); virtual abstract;
-    function DoRename(const aItem: THeader; const aValue: string): string; virtual abstract;
-    function DoOverWrite(const aItem: THeader; const aValue: string): string; virtual; abstract;
-    procedure DoList(const aItem: THeader); virtual; abstract;
-    procedure DoClear; virtual abstract;
-    function DoTick(Value: longint): boolean; virtual;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Execute; virtual; abstract;
-    procedure Terminate; virtual;
-  public
-    property Speed: longint read FSpeed;
-    property Progress: longint read FProgress;
-    property ProcessedSize: int64 read FProcessedSize write FProcessedSize;
-    property TotalSize: int64 read FTotalSize write FTotalSize;
-
-    property Suspended: boolean read FSuspended write SetSuspended;
-    property Terminated: boolean read FTerminated;
-    property ExitCode: byte read FExitCode;
-  end;
+function SetBeeExitCode(aExitCode: longint):longint;
 
 implementation
 
-uses
-  SysUtils,
-  DateUtils,
-  Bee_Common;
 
-{ TApp class }
-
-constructor TApp.Create;
-begin
-  inherited Create;
-  FStart         := Now;
-  FLastTick      := Now;
-  FSuspended     := False;
-  FTerminated    := False;
-  FExitCode      := ccSuccesful;
-
-  FSpeed         := 0;
-  FProgress      := 0;
-  FTotalSize     := 0;
-  FProcessedSize := 0;
-end;
-
-destructor TApp.Destroy;
-begin
-  inherited Destroy;
-end;
-
-procedure TApp.Terminate;
-begin
-  SetExitCode(ccUserAbort);
-end;
-
-procedure TApp.SetTerminated(Value: boolean);
-begin
-  if FTerminated = False then
-  begin
-    FTerminated := Value;
-    if FTerminated = True then
-    begin
-      FSuspended  := False;
-    end;
-  end;
-end;
-
-procedure TApp.SetSuspended(Value: boolean);
-begin
-  if FTerminated = False then
-  begin
-    FSuspended := Value;
-  end;
-end;
-
-procedure TApp.SetExitCode(Value: byte);
-begin
-  if FTerminated = False then
-  begin
-    if FExitCode < Value then
-    begin
-      FExitCode := Value;
-      if FExitCode >= ccError then
-        SetTerminated(TRUE);
-    end;
-  end;
-end;
-
-procedure TApp.SetPriority(Value: byte);
-begin
-  {$IFDEF CONSOLEAPPLICATION}
-  {$IFDEF MSWINDOWS}
-    Bee_Common.SetPriority(Value);
-  {$ENDIF}
-  {$ELSE}
-    { TODO : }
-  {$ENDIF}
-end;
-
-procedure TApp.DoMessage(const aMessage: string; aExitCode: byte);
-begin
-  SetExitCode(aExitCode);
-end;
-
-function TApp.DoTick(Value: longint): boolean;
-begin
-  Inc(FProcessedSize, Value);
-
-  FProgress := Round((FProcessedSize / FTotalSize) * 100);
-  FSpeed    := Round((FProcessedSize / MilliSecondsBetween(Now, FStart) * 1000));
-  while FSuspended do
-  begin
-    Sleep(250);
-  end;
-  Result := FTerminated;
-end;
 
 end.
