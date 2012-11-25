@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2005-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2005-2012 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,16 +18,11 @@
 
 { Contains:
 
-    TApp class
-
   Modifyed:
 
-    v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
-
-    v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
 }
 
-unit Bee_ExitCode;
+unit Bee_Interface;
 
 {$I compiler.inc}
 
@@ -44,46 +39,46 @@ const
   ecUserAbort         = $000000FF; { 255 User stopped the process                             }
 
 const
-  cmUnknow            = 'Process aborted, unknow error - time elapsed %s seconds.';
-  cmSuccesful         = 'Everything went ok - time elapsed %s seconds.';
-  cmWarning           = 'Warning occurred - time elapsed %s seconds.';
-  cmError             = 'Process aborted - time elapsed %s seconds.';
-  cmUserAbort         = 'User stopped the process - time elapsed %s seconds.';
-  cmCmdError          = 'Command line error.';
+  emUnknow            = 'Process aborted, unknow error - time elapsed %s seconds.';
+  emSuccesful         = 'Everything went ok - time elapsed %s seconds.';
+  emWarning           = 'Warning occurred - time elapsed %s seconds.';
+  emError             = 'Process aborted - time elapsed %s seconds.';
+  emUserAbort         = 'User stopped the process - time elapsed %s seconds.';
+  emCmdError          = 'Command line error.';
 
-  cmMemError          = 'Error: not enough memory for operation';
-  cmArcTypeError      = 'Error: archive type unsupported';
-  cmOpenArcError      = 'Error: can''t open archive "%s"';
-  cmOpenFileError     = 'Error: can''t open file "%s"';
-  cmOpenTempError     = 'Error: can''t open temp file';
-  cmCreateSwapError   = 'Error: can''t create swap file';
-  cmOpenSwapError     = 'Error: can''t open swap file';
-  cmStrmReadError     = 'Error: can''t read data from stream';
-  cmStrmWriteError    = 'Error: can''t write data to stream';
+  emMemError          = 'Error: not enough memory for operation';
+  emArcTypeError      = 'Error: archive type unsupported';
+  emOpenArcError      = 'Error: can''t open archive "%s"';
+  emOpenFileError     = 'Error: can''t open file "%s"';
+  emOpenTempError     = 'Error: can''t open temp file';
+  emCreateSwapError   = 'Error: can''t create swap file';
+  emOpenSwapError     = 'Error: can''t open swap file';
+  emStrmReadError     = 'Error: can''t read data from stream';
+  emStrmWriteError    = 'Error: can''t write data to stream';
 
-  cmSplitArcError     = 'Error: can''t split temporary archive "%s"';
-  cmRenameFileError   = 'Error: can''t rename file "%s" to "%s"';
-  cmSequenceError     = 'Error: can''t decode file "%s"';
-  cmActionError       = 'Error: internal error';
-  cmStreamError       = 'Error: can''t open stream';
-  cmTestPswError      = 'Error: wrong password';
-  cmCrcError          = 'Error: wrong CRC decoding "%s"';
+  emSplitArcError     = 'Error: can''t split temporary archive "%s"';
+  emRenameFileError   = 'Error: can''t rename file "%s" to "%s"';
+  emSequenceError     = 'Error: can''t decode file "%s"';
+  emActionError       = 'Error: internal error';
+  emStreamError       = 'Error: can''t open stream';
+  emTestPswError      = 'Error: wrong password';
+  emCrcError          = 'Error: wrong CRC decoding "%s"';
 
-  cmConfigError       = 'Error: configuration file "%s" not found, data will be stored';
-  cmFileExistsWarning = 'Warning: file "%s" already exists';
-  cmNoFilesWarning    = 'Warning: no files to process';
+  emConfigError       = 'Error: configuration file "%s" not found, data will be stored';
+  emFileExistsWarning = 'Warning: file "%s" already exists';
+  emNoFilesWarning    = 'Warning: no files to process';
 
 var
-  BeeExitCode: longint;
+  ErrorCode: longint;
 
-function SetBeeExitCode(Code: longint):longint;
+function SetErrorCode(aErrorCode: longint):longint;
 
 implementation
 
-function SetBeeExitCode(Code: longint):longint;
+function SetErrorCode(aErrorCode: longint):longint;
 begin
-  if Code > BeeExitCode then
-    BeeExitCode := Cose;
+  if aErrorCode > ErrorCode then
+    ErrorCode := aErrorCode;
 end;
 
 end.
