@@ -34,15 +34,27 @@ unit Bee_Interface;
 interface
 
 const
+  ecSuccesful         = $00000000; { 0 No error                                               }
+  ecWarning           = $00000001; { 1 Warning (Non fatal error(s)). For example, one or more }
+                                   {   files were locked by some other application, so they   }
+                                   {   were not compressed                                    }
+  ecError             = $00000002; { 2 Fatal error                                            }
+  ecCmdError          = $00000007; { 7 Command line error                                     }
+  ecMemError          = $00000008; { 8 Not enough memory for operation                        }
+  ecUserAbort         = $000000FF; { 255 User stopped the process                             }
 
 
 var
-  BeeExitCode: longint = 0;
+  BeeExitCode: longint;
 
-function SetBeeExitCode(aExitCode: longint):longint;
+function SetBeeExitCode(Code: longint):longint;
 
 implementation
 
-
+function SetBeeExitCode(Code: longint):longint;
+begin
+  if Code > BeeExitCode then
+    BeeExitCode := Cose;
+end;
 
 end.
