@@ -226,7 +226,7 @@ type
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoFailure(const ErrorMessage: string);
     procedure DoMessage(const Message: string);
-    function DoProgress(Value: longint): boolean;
+    procedure DoProgress(Value: longint);
     procedure DoClear;
   public
     constructor Create;
@@ -1034,14 +1034,13 @@ begin
   if Assigned(FOnClear) then FOnClear;
 end;
 
-function TArchiveReader.DoProgress(Value: longint): boolean;
+procedure TArchiveReader.DoProgress(Value: longint);
 begin
   Inc(FProcessedSize, Value);
   if Assigned(FOnProgress) then
-    FOnProgress(MulDiv(100, FProcessedSize, FTotalSize));
+    FOnProgress(Round((FProcessedSize/FTotalSize)*100));
 
   while FSuspended do Sleep(250);
-  Result := ExitCode < ecError;
 end;
 
 procedure TArchiveReader.DoMessage(const Message: string);
