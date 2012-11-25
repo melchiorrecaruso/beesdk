@@ -34,6 +34,7 @@ uses
   SysUtils,
   // ---
   Bee_Files,
+  Bee_Interface,
   BeeLib_Configuration,
   {$IFDEF cppDLL}
     Bee_LibLink;
@@ -42,7 +43,7 @@ uses
   {$ENDIF}
 
 type
-  TProgressEvent = function(Value: longint): boolean of object;
+  TProgressEvent = procedure(Value: longint) of object;
 
 type
   { THeaderCoder class }
@@ -56,7 +57,7 @@ type
     FOnProgressEvent: TProgressEvent;
     procedure SetDictionaryLevel(Value: longint);
     procedure SetCompressionTable(const Value: TTableParameters);
-    function DoProgress(Value: longint): boolean;
+    procedure DoProgress(Value: longint);
   public
     procedure FreshModeller(SolidCompression: boolean);
   public
@@ -96,11 +97,10 @@ uses
 
 /// THeaderCoder class
 
-function THeaderCoder.DoProgress(Value: longint): boolean;
+procedure THeaderCoder.DoProgress(Value: longint);
 begin
-  Result := TRUE;
   if Assigned(FOnProgressEvent) then
-    Result := FOnProgressEvent(Value);
+    FOnProgressEvent(Value);
 end;
 
 procedure THeaderCoder.SetDictionaryLevel(Value: longint);
@@ -153,21 +153,19 @@ begin
   Result := 0;
   CRC    := longword(-1);
   Count  := Size div SizeOf(Buffer);
-  while Count <> 0 do
+  while (Count <> 0) and (ExitCode < ecError) do
   begin
     Readed :=  Stream.Read (Buffer, SizeOf(Buffer));
     Writed := FStream.Write(Buffer, Readed);
     UpdateCrc32(CRC, Buffer, Writed);
     Inc(Result, Writed);
+    DoProgress(Writed);
     Dec(Count);
-
-    if DoProgress(Writed) = FALSE then Exit;
   end;
   Readed :=  Stream.Read (Buffer, Size mod SizeOf(Buffer));
   Writed := FStream.Write(Buffer, Readed);
   UpdateCRC32(CRC, Buffer, Writed);
   Inc(Result, Writed);
-
   DoProgress(Writed);
 end;
 
@@ -184,15 +182,14 @@ begin
   begin
     RangeEncoder_StartEncode(FCoder);
     Count  := Size div SizeOf(Buffer);
-    while Count <> 0 do
+    while (Count <> 0) and (ExitCode < ecError) do
     begin
       Readed := Stream.Read(Buffer, SizeOf(Buffer));
       BaseCoder_Encode(FModeller, @Buffer, Readed);
       UpdateCrc32(CRC, Buffer, Readed);
       Inc(Result, Readed);
+      DoProgress(Readed);
       Dec(Count);
-
-      if DoProgress(Readed) = FALSE then Exit;
     end;
     Readed := Stream.Read(Buffer, Size mod SizeOf(Buffer));
     BaseCoder_Encode(FModeller, @Buffer, Readed);
@@ -230,21 +227,19 @@ begin
   Result := 0;
   CRC    := longword(-1);
   Count  := Size div SizeOf(Buffer);
-  while Count <> 0 do
+  while (Count <> 0) and (ExitCode < ecError) do
   begin
     Readed := FStream.Read(Buffer, SizeOf(Buffer));
     Writed := Stream.Write(Buffer, Readed);
     UpdateCrc32(CRC, Buffer, Writed);
     Inc(Result, Writed);
+    DoProgress(Writed);
     Dec(Count);
-
-    if DoProgress(Writed) = FALSE then Break;
   end;
   Readed := FStream.Read(Buffer, Size mod SizeOf(Buffer));
   Writed := Stream.Write(Buffer, Readed);
   UpdateCRC32(CRC, Buffer, Writed);
   Inc(Result, Writed);
-
   DoProgress(Writed);
 end;
 
@@ -261,15 +256,14 @@ begin
   begin
     RangeDecoder_StartDecode(FCoder);
     Count  := Size div SizeOf(Buffer);
-    while Count <> 0 do
+    while (Count <> 0) and (ExitCode < ecError) do
     begin
       BaseCoder_Decode(FModeller, @Buffer, SizeOf(Buffer));
       Writed := Stream.Write(Buffer, SizeOf(Buffer));
       UpdateCrc32(CRC, Buffer, Writed);
       Inc(Result, Writed);
+      DoProgress(Writed);
       Dec(Count);
-
-      if DoProgress(Writed) = FALSE then Exit;
     end;
     BaseCoder_Decode(FModeller, @Buffer, Size mod SizeOf(Buffer));
     Writed := Stream.Write(Buffer, Size mod SizeOf(Buffer));
