@@ -68,17 +68,16 @@ const
   emFileExistsWarning = 'Warning: file "%s" already exists';
   emNoFilesWarning    = 'Warning: no files to process';
 
-var
-  ErrorCode: longint;
-
-function SetErrorCode(aErrorCode: longint):longint;
+procedure SetExitCode(aExitCode: longint);
 
 implementation
 
-function SetErrorCode(aErrorCode: longint):longint;
+procedure SetExitCode(aExitCode: longint);
 begin
-  if aErrorCode > ErrorCode then
-    ErrorCode := aErrorCode;
+  if ExitCode < aExitCode then
+  begin
+    ExitCode := aExitCode;
+  end;
 end;
 
 end.

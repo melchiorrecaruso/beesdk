@@ -9,7 +9,6 @@ uses
   SysUtils,
   Bee_Files,
   Bee_Common,
-  Bee_Consts,
   Bee_MainPacker,
   Bee_CommandLine,
   Bee_Configuration,
@@ -728,7 +727,7 @@ end;
 
 procedure TArchiveReader.Terminate;
 begin
-  SetErrorCode(ecUserAbort);
+  SetExitCode(ecUserAbort);
   FSuspended := FALSE;
 end;
 
@@ -1052,7 +1051,7 @@ end;
 
 procedure TArchiveReader.DoFailure(const ErrorMessage: string);
 begin
-  SetErrorCode(ecError);
+  SetExitCode(ecError);
   if Assigned(FOnFailure) then
     FOnFailure(ErrorMessage);
 end;
@@ -2091,7 +2090,7 @@ begin
           FIsNeededToSave := TRUE;
         end;
       //arcCancel: nothing to do
-        arcQuit: SetErrorCode(ecUserAbort);
+        arcQuit: SetExitCode(ecUserAbort);
       end;
     end;
 
