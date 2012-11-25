@@ -43,31 +43,7 @@ const
   DefaultCfgName      = 'bee.ini';
   DefaultSfxName      = 'bee.sfx';
 
-  { CoreStatus }
-
-  csUnknow            = $00000000;
-  csReady             = $00000001;
-  csExecuting         = $00000002;
-  csWaitOverwrite     = $00000003;
-  csWaitRename        = $00000004;
-  csWaitPassword      = $00000005;
-  csWaitRequest       = $00000006;
-  csWaitList          = $00000007;
-  csTerminated        = $00000008;
-  csSuspended         = $00000009;
-
-  { CoreCode }
-
-  ccSuccesful         = $00000000; { 0 No error                                               }
-  ccWarning           = $00000001; { 1 Warning (Non fatal error(s)). For example, one or more }
-                                   {   files were locked by some other application, so they   }
-                                   {   were not compressed                                    }
-  ccError             = $00000002; { 2 Fatal error                                            }
-  ccCmdError          = $00000007; { 7 Command line error                                     }
-  ccMemError          = $00000008; { 8 Not enough memory for operation                        }
-  ccUserAbort         = $000000FF; { 255 User stopped the process                             }
-
-  { CoreMessage }
+  { Messages }
 
   cmOpening           = 'Opening    %s';
   cmScanning          = 'Scanning   %s';
