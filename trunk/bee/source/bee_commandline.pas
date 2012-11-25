@@ -100,13 +100,13 @@ type
     FxOptions: TStringList;
     FmOption: TmOption;
     FdOption: TdOption;
-    FsOption: int64;
+    FsOption: qword;
     FfOption: string;
     FsfxOption: string;
     FpOption: string;
     FtOption: boolean;
     FslsOption: boolean;
-    FiOption: int64;
+    FiOption: qword;
     FwdOption: string;
     FcdOption: string;
     FcfgOption: string;
@@ -155,13 +155,13 @@ type
     property xOptions: TStringList read FxOptions;
     property mOption: TmOption read FmOption write FmOption;
     property dOption: TdOption read FdOption write FdOption;
-    property sOption: int64 read FsOption write FsOption;
+    property sOption: qword read FsOption write FsOption;
     property fOption: string read FfOption write SetOptionF;
     property sfxOption: string read FsfxOption write SetOptionSFX;
     property pOption: string read FpOption write SetOptionP;
     property tOption: boolean read FtOption write FtOption;
     property slsOption: boolean read FslsOption write FslsOption;
-    property iOption: int64 read FiOption write FiOption;
+    property iOption: qword read FiOption write FiOption;
     property wdOption: string read FwdOption write SetOptionWD;
     property cdOption: string read FcdOption write SetOptionCD;
     property cfgOption: string read FcfgOption write SetOptionCFG;
@@ -175,6 +175,57 @@ implementation
 uses
   Math,
   Bee_BlowFish;
+
+function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
+var
+  I: longint;
+  J: extended;
+  Multiple: qword;
+begin
+  I := Pos('B', UpCase(S));
+  if (I > 0) and (I = Length(S)) then
+  begin
+    SetLength(S, I - 1);
+  end;
+
+  I := Pos('K', UpCase(S));
+  if (I > 0) and (I = Length(S)) then
+  begin
+    SetLength(S, I - 1);
+    Multiple := 1024;
+  end else
+  begin
+    I := Pos('M', UpCase(S));
+    if (I > 0) and (I = Length(S)) then
+    begin
+      SetLength(S, I - 1);
+      Multiple := 1024*1024;
+    end else
+    begin
+      I := Pos('G', UpCase(S));
+      if (I > 0) and (I = Length(S)) then
+      begin
+        SetLength(S, I - 1);
+        Multiple := 1024*1024*1024;
+      end else
+      begin
+        I := Pos('T', UpCase(S));
+        if (I > 0) and (I = Length(S)) then
+        begin
+          SetLength(S, I - 1);
+          Multiple := 1024*1024*1024*1024;
+        end else
+          Multiple := 1;
+      end;
+    end;
+  end;
+
+  Result := TryStrToFloat(S, J);
+  if Result then
+  begin
+    Q := Round(J * Multiple);
+  end;
+end;
 
 constructor TCommandLine.Create;
 begin
@@ -309,11 +360,8 @@ end;
 procedure TCommandLine.ProcessOptionS(var S: string);
 begin
   Delete(S, 1, 2);
-  if TryStrToInt64(S, FsOption) = FALSE then
-    ExitCode := ccCmdError
-  else
-    if FsOption < 0 then
-      ExitCode := ccCmdError;
+  if TryStrWithMultToQWord(S, FsOption) = FALSE then
+    ExitCode := ccCmdError;
 
   if (Command in [ccAdd]) = FALSE then
     ExitCode := ccCmdError;
@@ -395,11 +443,8 @@ end;
 procedure TCommandLine.ProcessOptionI(var S: string);
 begin
   Delete(S, 1, 2);
-  if TryStrToInt64(S, FiOption) = FALSE then
-    ExitCode := ccCmdError
-  else
-    if FiOption < 0 then
-      ExitCode := ccCmdError;
+  if TryStrWithMultToQWord(S, FiOption) = FALSE then
+    ExitCode := ccCmdError;
 
   if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
     ExitCode := ccCmdError;
@@ -473,9 +518,9 @@ procedure TCommandLine.ProcessArchiveName(var S: string);
 begin
   FssOption    := TRUE;
   FArchiveName := S;
-  //if FileExists(FArchiveName) = FALSE then
-  //  if ExtractFileExt(FArchiveName) = '' then
-  //    FArchiveName := ChangeFileExt(FArchiveName, '.bee');
+  if FileExists(FArchiveName) = FALSE then
+    if ExtractFileExt(FArchiveName) = '' then
+      FArchiveName := ChangeFileExt(FArchiveName, '.bee');
 
   // check if archive exists
   if (FCommand in [ccHelp]) = TRUE then

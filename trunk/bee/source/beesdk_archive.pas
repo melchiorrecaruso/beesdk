@@ -1153,7 +1153,7 @@ begin
   aStream.WriteInfWord(aitEnd);
 
   if aStream.Threshold > 0 then
-    if (aStream.Threshold - aStream.Size) < 512 then
+    //if (aStream.Threshold - aStream.Size) < 512 then
       aStream.CreateNewImage(0);
 
   if not aStream.IsValid then DoFailure(cmStrmWriteError);
@@ -2034,13 +2034,16 @@ begin
           if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
           begin
             Dec(SolidBlock, CurrentItem.UncompressedSize);
-            if SolidBlock > 0 then
+            if SolidBlock >= 0 then
               Include(CurrentItem.FCompressionFlags, acfSolidCompression)
             else
               SolidBlock := SolidCompression;
-
           end else
+          begin
             Include(CurrentItem.FCompressionFlags, acfCompressionTable);
+            SolidBlock := SolidCompression;
+          end;
+
         end;
       end;
     end;
