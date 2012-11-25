@@ -86,7 +86,7 @@ implementation
 uses
   Math,
   SysUtils,
-  Bee_Consts;
+  Bee_Interface;
 
 { help functions }
 
@@ -117,7 +117,7 @@ begin
   FSelfName  := 'The Bee 0.8.0 build 1607 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
 
-  ExitCode := ccSuccesful;
+  ErrorCode := ecSuccesful;
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
@@ -147,7 +147,7 @@ var
 begin
   StartTime := Now;
   DoMessage(FSelfName);
-  if ExitCode < ccError then
+  if ErrorCode < ecError then
     case FCommandLine.Command of
       ccAdd:      EncodeShell;
       ccDelete:   DeleteShell;
@@ -162,12 +162,12 @@ begin
   if (FCommandLine.Command in [ccList, ccHelp]) = FALSE then
   begin
     S := TimeDifference(StartTime);
-    case ExitCode of
-      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
-      ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
-      ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
-      ccCmdError:  DoMessage(Format(Cr + cmCmdError,  [ ]));
-      else         DoMessage(Format(Cr + cmError,     [S]));
+    case ErrorCode of
+      ecSuccesful: DoMessage(Format(Cr + emSuccesful, [S]));
+      ecWarning:   DoMessage(Format(Cr + emWarning,   [S]));
+      ecUserAbort: DoMessage(Format(Cr + emUserAbort, [S]));
+      ecCmdError:  DoMessage(Format(Cr + emCmdError,  [ ]));
+      else         DoMessage(Format(Cr + emError,     [S]));
     end;
   end;
 end;
@@ -394,7 +394,7 @@ begin
   FUpdater.Threshold          := FCommandLine.iOption;
 //FUpdater.ArchiveComment     :=
 
-  if ExitCode < ccError then
+  if ErrorCode < ecError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     Scanner := TFileScanner.Create;
@@ -427,7 +427,7 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FExtractor.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode < ccError then
+  if ErrorCode < ecError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FExtractor.Count - 1 do
@@ -465,7 +465,7 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FEraser.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode < ccError then
+  if ErrorCode < ecError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FEraser.Count - 1 do
@@ -500,7 +500,7 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FRenamer.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode < ccError then
+  if ErrorCode < ecError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FRenamer.Count - 1 do
@@ -545,7 +545,7 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FReader.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode < ccError then
+  if ErrorCode < ecError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FReader.Count - 1 do
