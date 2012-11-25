@@ -159,13 +159,16 @@ begin
       ccHelp:     HelpShell;
     end;
 
-  S := TimeDifference(StartTime);
-  case ExitCode of
-    ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
-    ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
-    ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
-    ccCmdError:  DoMessage(Format(Cr + cmCmdError,  [ ]));
-    else         DoMessage(Format(Cr + cmError,     [S]));
+  if (FCommandLine.Command in [ccList, ccHelp]) = FALSE then
+  begin
+    S := TimeDifference(StartTime);
+    case ExitCode of
+      ccSuccesful: DoMessage(Format(Cr + cmSuccesful, [S]));
+      ccWarning:   DoMessage(Format(Cr + cmWarning,   [S]));
+      ccUserAbort: DoMessage(Format(Cr + cmUserAbort, [S]));
+      ccCmdError:  DoMessage(Format(Cr + cmCmdError,  [ ]));
+      else         DoMessage(Format(Cr + cmError,     [S]));
+    end;
   end;
 end;
 
@@ -180,7 +183,7 @@ procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
 var
   Ch: char;
 begin
-  Write(ParamToOem('Insert blank disk number #'+ IntToStr(DiskNumber)) + '? ');
+  Write(ParamToOem('Insert blank disk number #'+ IntToStr(DiskNumber)) + '. Continue? ');
   Readln(Ch);
   Ch := UpCase(OemToParam(Ch)[1]);
   while Pos(Ch, 'YQ') < 1 do
@@ -605,31 +608,36 @@ begin
     DoMessage('  Archive packed data size = ' + IntToStr(TotalPackedSize));
     DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
 
-    DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
-    DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
-
-    if FCommandLine.slsOption then
-      ItemToList.Sort(CompareFilePath);
-
-    TotalPackedSize := 0;
-    TotalSize       := 0;
-    TotalFiles      := 0;
-
-    for I := 0 to ItemToList.Count - 1 do
+    if ItemToList.Count > 0 then
     begin
-      Item := ItemToList.Items[I];
-      Inc(TotalSize, Item.UncompressedSize);
-      Inc(TotalPackedSize, Item.CompressedSize);
-      Inc(TotalFiles);
+      DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
+      DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
 
-      DoMessage(Format('%16s %7s %12s %12s %3s %s', [
-        FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
-        SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
-        CompressionMethodToStr(Item), Item.FileName]));
+      if FCommandLine.slsOption then
+        ItemToList.Sort(CompareFilePath);
+
+      TotalPackedSize := 0;
+      TotalSize       := 0;
+      TotalFiles      := 0;
+
+      for I := 0 to ItemToList.Count - 1 do
+      begin
+        Item := ItemToList.Items[I];
+        Inc(TotalSize, Item.UncompressedSize);
+        Inc(TotalPackedSize, Item.CompressedSize);
+        Inc(TotalFiles);
+
+        DoMessage(Format('%16s %7s %12s %12s %3s %s', [
+          FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
+          SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
+          CompressionMethodToStr(Item), Item.FileName]));
+      end;
+      DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
+      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)' + Cr, [SizeToStr(TotalSize), SizeToStr(TotalPackedSize), TotalFiles]));
+    end else
+    begin
+      DoMessage(Cr + 'Nothing to list.' + Cr);
     end;
-    DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
-    DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPackedSize), TotalFiles]));
-
     ItemToList.Destroy;
   end;
   FreeAndNil(FReader);
