@@ -106,9 +106,10 @@
       <Unit2>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="146"/>
+        <TopLine Value="1320"/>
         <CursorPos X="68" Y="171"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
@@ -238,10 +239,9 @@
       <Unit14>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="21"/>
+        <TopLine Value="180"/>
         <CursorPos X="60" Y="46"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
