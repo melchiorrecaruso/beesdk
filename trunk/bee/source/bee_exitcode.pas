@@ -27,7 +27,7 @@
     v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
 }
 
-unit Bee_Interface;
+unit Bee_ExitCode;
 
 {$I compiler.inc}
 
@@ -43,6 +43,35 @@ const
   ecMemError          = $00000008; { 8 Not enough memory for operation                        }
   ecUserAbort         = $000000FF; { 255 User stopped the process                             }
 
+const
+  cmUnknow            = 'Process aborted, unknow error - time elapsed %s seconds.';
+  cmSuccesful         = 'Everything went ok - time elapsed %s seconds.';
+  cmWarning           = 'Warning occurred - time elapsed %s seconds.';
+  cmError             = 'Process aborted - time elapsed %s seconds.';
+  cmUserAbort         = 'User stopped the process - time elapsed %s seconds.';
+  cmCmdError          = 'Command line error.';
+
+  cmMemError          = 'Error: not enough memory for operation';
+  cmArcTypeError      = 'Error: archive type unsupported';
+  cmOpenArcError      = 'Error: can''t open archive "%s"';
+  cmOpenFileError     = 'Error: can''t open file "%s"';
+  cmOpenTempError     = 'Error: can''t open temp file';
+  cmCreateSwapError   = 'Error: can''t create swap file';
+  cmOpenSwapError     = 'Error: can''t open swap file';
+  cmStrmReadError     = 'Error: can''t read data from stream';
+  cmStrmWriteError    = 'Error: can''t write data to stream';
+
+  cmSplitArcError     = 'Error: can''t split temporary archive "%s"';
+  cmRenameFileError   = 'Error: can''t rename file "%s" to "%s"';
+  cmSequenceError     = 'Error: can''t decode file "%s"';
+  cmActionError       = 'Error: internal error';
+  cmStreamError       = 'Error: can''t open stream';
+  cmTestPswError      = 'Error: wrong password';
+  cmCrcError          = 'Error: wrong CRC decoding "%s"';
+
+  cmConfigError       = 'Error: configuration file "%s" not found, data will be stored';
+  cmFileExistsWarning = 'Warning: file "%s" already exists';
+  cmNoFilesWarning    = 'Warning: no files to process';
 
 var
   BeeExitCode: longint;

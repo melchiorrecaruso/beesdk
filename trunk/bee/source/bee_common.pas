@@ -43,6 +43,32 @@ uses
   {$IFDEF UNIX} BaseUnix; {$ENDIF}
   {$IFDEF MSWINDOWS} Windows; {$ENDIF}
 
+const
+  Cr = #13#10;
+
+  { Default file names }
+
+  DefaultCfgName      = 'bee.ini';
+  DefaultSfxName      = 'bee.sfx';
+
+  { Messages }
+
+  cmOpening           = 'Opening    %s';
+  cmScanning          = 'Scanning   %s';
+  cmAdding            = 'Adding     %s';
+  cmUpdating          = 'Updating   %s';
+  cmCopying           = 'Copying    %s';
+  cmSplitting         = 'Splitting  %s';
+  cmEncoding          = 'Encoding   %s';
+  cmExtracting        = 'Extracting %s';
+  cmTesting           = 'Testing    %s';
+  cmDecoding          = 'Decoding   %s';
+  cmDeleting          = 'Deleting   %s';
+  cmChecking          = 'Checking   %s';
+  cmListing           = 'Listing    %s';
+  cmSwapping          = 'Swapping   %s';
+  cmRenaming          = 'Renaming   %s';
+
 type
   TRecursiveMode = (rmNone, rmWildCard, rmFull);
 
