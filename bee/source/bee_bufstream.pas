@@ -86,7 +86,7 @@ type
 implementation
 
 uses
-  SysUtils, Math, Bee_Assembler;
+  SysUtils, Math, Bee_Assembler, Bee_Interface;
 
 { TBufStream class }
 
@@ -227,7 +227,10 @@ procedure TWriteBufStream.FlushBuffer;
 begin
   if FBufferSize > 0 then
   begin
-    FSource.Write(FBuffer[0], FBufferSize);
+    if FSource.Write(FBuffer[0], FBufferSize) <> FBufferSize then
+    begin
+      SetExitCode(ecError);
+    end;
     FBufferSize := 0;
   end;
 end;

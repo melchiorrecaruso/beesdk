@@ -1323,6 +1323,7 @@ end;
 procedure TArchiveWriter.SaveTemporaryArchive;
 var
   I: longint;
+  Item: TArchiveItem;
 begin
   SysUtils.DeleteFile(FSwapName);
   if ExitCode < ecError then
@@ -1336,11 +1337,14 @@ begin
       FEncoder := THeaderEncoder.Create(FTempWriter);
       FEncoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
-      begin
-        FArchiveItems.Items[I].FTag := aitNone;
         if ExitCode < ecError  then
-          EncodeFromArchive(FArchiveItems.Items[I]);
-      end;
+        begin
+          Item      := FArchiveItems.Items[I];
+          Item.FTag := aitNone;
+
+          DoMessage(Format(cmCopying, [Item.FileName]));
+          EncodeFromArchive(Item);
+        end;
       FreeAndNil(FEncoder);
       WriteCentralDirectory(FTempWriter);
       if not FTempWriter.IsValid then
