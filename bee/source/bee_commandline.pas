@@ -225,8 +225,6 @@ begin
   begin
     Q := Round(J * Multiple);
   end;
-  Writeln(Q);
-  Readln;
 end;
 
 constructor TCommandLine.Create;
