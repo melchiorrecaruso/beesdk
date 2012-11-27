@@ -114,7 +114,7 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1615 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1617 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
 
   ExitCode := ecSuccesful;
@@ -632,9 +632,6 @@ begin
       end;
       DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
       DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)' + Cr, [SizeToStr(TotalSize), SizeToStr(TotalPackedSize), TotalFiles]));
-    end else
-    begin
-      DoMessage(Cr + 'Nothing to list.' + Cr);
     end;
     ItemToList.Destroy;
   end;
