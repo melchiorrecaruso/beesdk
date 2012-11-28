@@ -42,38 +42,34 @@ type
 
   TBufStream = class(TObject)
   protected
-    FSource: TStream;
-    FCapacity: longint;
+    FSource: THandle;
     FBufferSize: longint;
     FBufferReaded: longint;
     FBuffer: array of byte;
     procedure ClearBuffer;
-    procedure FillBuffer; virtual; abstract;
-    procedure FlushBuffer; virtual; abstract;
-    procedure SetCapacity(const aValue: longint); virtual;
+    function FillBuffer: longint; virtual; abstract;
+    function FlushBuffer: longint; virtual; abstract;
   public
-    constructor Create(aSource: TStream; aCapacity: longint); overload;
-    constructor Create(aSource: TStream); overload;
+    constructor Create(aSource: THandle);
     destructor Destroy; override;
-    property Capacity: longint read FCapacity write SetCapacity;
   end;
 
   { TReadBufStream }
 
   TReadBufStream = class(TBufStream)
   protected
-    procedure FillBuffer; override;
+    function FillBuffer: longint; override;
   public
     function Read(var Data; Count: longint): longint; virtual;
-    function Seek(Offset: longint; Origin: word): longint; virtual; overload;
-    function Seek(const Offset: int64; Origin: TSeekOrigin): int64; virtual; overload;
+    function Seek(Offset: longint; Origin: longint): longint; virtual; overload;
+    function Seek(Offset: int64; Origin: longint): int64; virtual; overload;
   end;
 
   { TWriteBufStream }
 
   TWriteBufStream = class(TBufStream)
   protected
-    procedure FlushBuffer; override;
+    function FlushBuffer: longint; override;
     procedure SetSize(NewSize: longint); virtual; overload;
     procedure SetSize(const NewSize: int64); virtual; overload;
   public
@@ -86,27 +82,24 @@ type
 implementation
 
 uses
-  SysUtils, Math, Bee_Assembler, Bee_Interface;
+  Math,
+  SysUtils,
+  Bee_Assembler;
 
 { TBufStream class }
 
-constructor TBufStream.Create(aSource: TStream; aCapacity: longint);
+constructor TBufStream.Create(aSource: THandle);
 begin
   inherited Create;
   FSource := aSource;
-  SetCapacity(aCapacity);
-end;
-
-constructor TBufStream.Create(aSource: TStream);
-begin
-  inherited Create;
-  FSource := aSource;
-  SetCapacity(DefaultBufferCapacity);
+  FBufferSize   := 0;
+  FBufferReaded := 0;
+  SetLength(FBuffer, DefaultBufferCapacity);
 end;
 
 destructor TBufStream.Destroy;
 begin
-  SetCapacity(0);
+  SetLength(FBuffer, 0);
   inherited Destroy;
 end;
 
@@ -116,87 +109,57 @@ begin
   FBufferReaded := 0;
 end;
 
-procedure TBufStream.SetCapacity(const aValue: longint);
-begin
-  FBufferSize   := 0;
-  FBufferReaded := 0;
-  FCapacity     := aValue;
-  SetLength(FBuffer, FCapacity);
-end;
-
 { TReadBufStream class }
 
 function TReadBufStream.Read(var Data; Count: longint): longint;
 var
   Bytes: PByte;
-  S: longint;
+  I: longint;
 begin
-
-  Result := Count;
-
-
-  Bytes := @Data;
-  while (ExitCode < ecError) and (Count > 0) do
-  begin
-    if FBufferReaded = FBufferSize then
-    begin
-      FillBuffer;
-      if FBufferSize = 0 then Break;
-    end;
-    S := Min(Count, FBufferSize - FBufferReaded);
-
-    CopyBytes(FBuffer[FBufferReaded], Bytes[0], S);
-    Inc(FBufferReaded, S);
-    Inc(Bytes, S);
-    Dec(Count, S);
-  end;
-
-  if Count <> 0 then
-    SetExitCode(ecError);
-
-   (*
   Result := 0;
-  Bytes := @Data;
+  Bytes  := @Data;
   repeat
     if FBufferReaded = FBufferSize then
     begin
       FillBuffer;
       if FBufferSize = 0 then Exit;
     end;
-    S := Min(Count - Result, FBufferSize - FBufferReaded);
 
-    CopyBytes(FBuffer[FBufferReaded], Bytes[Result], S);
-    Inc(FBufferReaded, S);
-    Inc(Result, S);
+    I := Min(Count - Result, FBufferSize - FBufferReaded);
+
+    CopyBytes(FBuffer[FBufferReaded], Bytes[Result], I);
+    Inc(FBufferReaded, I);
+    Inc(Result, I);
   until Result = Count;
-   *)
 end;
 
-function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
+function TReadBufStream.Seek(Offset: longint; Origin: longint): longint;
 begin
-  if (Origin = soFromCurrent) and (OffSet = 0) then
-    Result := FSource.Seek(FBufferReaded - FBufferSize, Origin)
-  else
-    Result := FSource.Seek(Offset, Origin);
+  if (Origin = fsFromCurrent) and (OffSet = 0) then
+    OffSet := FBufferReaded - FBufferSize;
 
+  Result        := FileSeek(FSource, Offset, Origin);
   FBufferSize   := 0;
   FBufferReaded := 0;
 end;
 
-function TReadBufStream.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
+function TReadBufStream.Seek(Offset: int64; Origin: longint): int64;
 begin
-  if (Origin = soCurrent) and (OffSet = 0) then
-    Result := FSource.Seek(FBufferReaded - FBufferSize, Origin)
-  else
-    Result := FSource.Seek(Offset, Origin);
+  if (Origin = fsFromCurrent) and (OffSet = 0) then
+    OffSet := FBufferReaded - FBufferSize;
 
+  Result        := FileSeek(FSource, Offset, Origin);
   FBufferSize   := 0;
   FBufferReaded := 0;
 end;
 
-procedure TReadBufStream.FillBuffer;
+function TReadBufStream.FillBuffer: longint;
 begin
-  FBufferSize   := FSource.Read(FBuffer[0], FCapacity);
+  Result := FileRead(FSource, FBuffer[0], DefaultBufferCapacity);
+
+  if
+
+  FBufferSize   :=
   FBufferReaded := 0;
 end;
 
