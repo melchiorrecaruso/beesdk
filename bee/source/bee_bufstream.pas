@@ -131,6 +131,30 @@ var
   Bytes: PByte;
   S: longint;
 begin
+
+  Result := Count;
+
+
+  Bytes := @Data;
+  while (ExitCode < ecError) and (Count > 0) do
+  begin
+    if FBufferReaded = FBufferSize then
+    begin
+      FillBuffer;
+      if FBufferSize = 0 then Break;
+    end;
+    S := Min(Count, FBufferSize - FBufferReaded);
+
+    CopyBytes(FBuffer[FBufferReaded], Bytes[0], S);
+    Inc(FBufferReaded, S);
+    Inc(Bytes, S);
+    Dec(Count, S);
+  end;
+
+  if Count <> 0 then
+    SetExitCode(ecError);
+
+   (*
   Result := 0;
   Bytes := @Data;
   repeat
@@ -145,6 +169,7 @@ begin
     Inc(FBufferReaded, S);
     Inc(Result, S);
   until Result = Count;
+   *)
 end;
 
 function TReadBufStream.Seek(Offset: longint; Origin: word): longint;
