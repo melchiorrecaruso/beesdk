@@ -39,8 +39,8 @@ type
   /// archive binding flag
   TArchiveBindingFlag = (
     abfComment);
-    abfSFX
-    abf
+    //abfSFX
+    //abf
 
   TArchiveBindingFlags = set of TArchiveBindingFlag;
 
