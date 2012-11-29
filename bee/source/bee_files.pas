@@ -70,12 +70,11 @@ type
     function ReadDWord: dword;
     function ReadInfWord: qword;
     function ReadInfString: string;
-    function Read(var Data; Count: longint): longint; override;
-    function Seek(Offset: longint; Origin: word): longint; override;
-    function Seek(const Offset: int64; Origin: TSeekOrigin): int64;override;
+    procedure Read(Data: PByte; Count: longint); override;
+    function Seek(Offset: longint; Origin: longint): longint; override;
+    function Seek(Offset: int64; Origin: longint): int64; override;
     procedure SeekImage(aImageNumber: longword; const Offset: int64);
   public
-    property IsValid: boolean read GetIsValid;
     property ImagesNumber: longword read FImagesNumber write SetImagesNumber;
     property ImageNumber: longword read FImageNumber write SetImageNumber;
   end;
@@ -107,10 +106,9 @@ type
     procedure WriteDWord(Data: dword);
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
-    function Write(const Data; Count: longint): longint; override;
-    function WriteUnspanned(const Data; Count: longint): longint;
-    function Seek(Offset: longint; Origin: word): longint; override;
-    function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
+    procedure Write(Data: PByte; Count: longint); override;
+    function Seek(Offset: longint; Origin: longint): longint; override;
+    function Seek(const Offset: int64; Origin: longint): int64; override;
   public
     property IsValid: boolean read GetIsValid;
     property CurrentImage: longword read GetCurrentImage;
@@ -130,15 +128,14 @@ type
     FNulSize: int64;
   protected
     function GetIsValid: boolean; override;
-    procedure FlushBuffer; override;
     procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
   public
     constructor Create;
     destructor Destroy; override;
-    function Write(const Data; Count: longint): longint;  override;
-    function Seek(Offset: longint; Origin: word): longint; override;
-    function Seek(const Offset: int64; Origin: TSeekOrigin): int64; override;
+    procedure Write(Data: PByte; Count: longint);  override;
+    function Seek(Offset: longint; Origin: longint): longint; override;
+    function Seek(const Offset: int64; Origin: longint): int64; override;
   end;
 
   { TCustomSearchRec }
@@ -171,21 +168,21 @@ type
     property Items[Index: longint]: TCustomSearchRec read GetItem;
   end;
 
-function DoFill (Stream: pointer; Data: pointer;
-   Size: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
-function DoFlush(Stream: pointer; Data: pointer;
-   Size: longint): longint; {$IFDEF cppDLL} cdecl; {$ENDIF}
+procedure DoFill (Stream: pointer; Data: pointer;
+  Size: longint); {$IFDEF cppDLL} cdecl; {$ENDIF}
+procedure DoFlush(Stream: pointer; Data: pointer;
+  Size: longint); {$IFDEF cppDLL} cdecl; {$ENDIF}
 
 implementation
 
-function DoFill(Stream: pointer; Data: pointer; Size: longint): longint;
+procedure DoFill(Stream: pointer; Data: pointer; Size: longint);
 begin
-  Result := TFileReader(Stream).Read(Data^, Size);
+  TFileReader(Stream).Read(Data, Size);
 end;
 
-function DoFlush(Stream: pointer; Data: pointer; Size: longint): longint;
+procedure DoFlush(Stream: pointer; Data: pointer; Size: longint);
 begin
-  Result := TFileWriter(Stream).Write(Data^, Size);
+  TFileWriter(Stream).Write(Data, Size);
 end;
 
 { TFileReader class }
@@ -193,7 +190,7 @@ end;
 constructor TFileReader.Create(const aFileName: string;
   aRequestImage: TFileReaderRequestImageEvent);
 begin
-  inherited Create(nil);
+  inherited Create(-1);
   FFileName       := aFileName;
   FImagesNumber   := 1;
   FImageNumber    := 1;
@@ -203,8 +200,8 @@ end;
 
 destructor TFileReader.Destroy;
 begin
-  if Assigned(FSource) then
-     FreeAndNil(FSource);
+  if FSource <> -1 then
+    FileClose(FSource);
   inherited Destroy;
 end;
 
@@ -221,8 +218,9 @@ var
   Abort: boolean;
   ImageName: string;
 begin
-  if Assigned(FSource) then
-    FreeAndNil(FSource);
+  if FSource <> -1 then
+    FileClose(FSource);
+  FSource := -1;
   ClearBuffer;
 
   if FImageNumber >= 1 then
@@ -237,17 +235,13 @@ begin
         if Abort then Exit;
       end;
 
-      try
-        FSource := TFileStream.Create(ImageName, fmOpenRead or fmShareDenyWrite);
-      except
-        FSource := nil;
-      end;
+      FSource := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
     end;
 end;
 
 function TFileReader.ReadDWord: dword;
 begin
-  Read(Result, SizeOf(Result));
+  Read(@Result, SizeOf(Result));
 end;
 
 function TFileReader.ReadInfWord: qword;
@@ -551,11 +545,6 @@ begin
 end;
 
 destructor TNulWriter.Destroy;
-begin
-  // nothing to do
-end;
-
-procedure TNulWriter.FlushBuffer;
 begin
   // nothing to do
 end;
