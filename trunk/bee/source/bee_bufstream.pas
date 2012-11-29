@@ -47,8 +47,6 @@ type
     FBufferReaded: longint;
     FBuffer: array of byte;
     procedure ClearBuffer;
-    function FillBuffer: longint; virtual; abstract;
-    function FlushBuffer: longint; virtual; abstract;
   public
     constructor Create(aSource: THandle);
     destructor Destroy; override;
@@ -58,9 +56,9 @@ type
 
   TReadBufStream = class(TBufStream)
   protected
-    function FillBuffer: longint; override;
+    procedure FillBuffer;
   public
-    function Read(var Data; Count: longint): longint; virtual;
+    procedure Read(var Data; Count: longint); virtual;
     function Seek(Offset: longint; Origin: longint): longint; virtual; overload;
     function Seek(Offset: int64; Origin: longint): int64; virtual; overload;
   end;
@@ -69,12 +67,11 @@ type
 
   TWriteBufStream = class(TBufStream)
   protected
-    function FlushBuffer: longint; override;
+    procedure FlushBuffer;
     procedure SetSize(NewSize: longint); virtual; overload;
     procedure SetSize(const NewSize: int64); virtual; overload;
   public
-    destructor Destroy; override;
-    function Write(const Data; Count: longint): longint; virtual;
+    procedure Write(const Data; Count: longint); virtual;
     function Seek(Offset: longint; Origin: word): longint; virtual; overload;
     function Seek(const Offset: int64; Origin: TSeekOrigin): int64; virtual; overload;
   end;
@@ -111,26 +108,24 @@ end;
 
 { TReadBufStream class }
 
-function TReadBufStream.Read(var Data; Count: longint): longint;
+procedure TReadBufStream.Read(var Data; Count: longint);
 var
   Bytes: PByte;
   I: longint;
 begin
-  Result := 0;
-  Bytes  := @Data;
+  Bytes := @Data;
   repeat
     if FBufferReaded = FBufferSize then
     begin
       FillBuffer;
       if FBufferSize = 0 then Exit;
     end;
+    I := Min(Count, FBufferSize - FBufferReaded);
 
-    I := Min(Count - Result, FBufferSize - FBufferReaded);
-
-    CopyBytes(FBuffer[FBufferReaded], Bytes[Result], I);
+    CopyBytes(FBuffer[FBufferReaded], Bytes[0], I);
     Inc(FBufferReaded, I);
-    Inc(Result, I);
-  until Result = Count;
+    Dec(Count, I);
+  until Count > 0;
 end;
 
 function TReadBufStream.Seek(Offset: longint; Origin: longint): longint;
@@ -153,35 +148,24 @@ begin
   FBufferReaded := 0;
 end;
 
-function TReadBufStream.FillBuffer: longint;
+procedure TReadBufStream.FillBuffer;
 begin
-  Result := FileRead(FSource, FBuffer[0], DefaultBufferCapacity);
-
-  if
-
-  FBufferSize   :=
+  FBufferSize   := FileRead(FSource, FBuffer[0], DefaultBufferCapacity);
   FBufferReaded := 0;
 end;
 
 { TWriteBufStream class }
 
-destructor TWriteBufStream.Destroy;
-begin
-  FlushBuffer;
-  inherited Destroy;
-end;
-
-function TWriteBufStream.Write(const Data; Count: longint): longint;
+procedure TWriteBufStream.Write(const Data; Count: longint);
 var
   Bytes: PByte;
-  S: longint;
+  I: longint;
 begin
-  Result := 0;
   Bytes := @Data;
-  if Count > (FCapacity - FBufferSize) then
+  if Count > (DefaultBufferCapacity - FBufferSize) then
   begin
     repeat
-      S := FCapacity - FBufferSize;
+      I := DefaultBufferCapacity - FBufferSize;
       CopyBytes(Bytes[Result], FBuffer[FBufferSize], S);
       Inc(FBufferSize, S);
       Inc(Result, S);
