@@ -857,25 +857,20 @@ procedure TArchiveReader.DecodeToSwap(Item: TArchiveItem);
 var
   CRC: longword;
 begin
-  if Assigned(FSwapWriter) then
-  begin
-    FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+  FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
 
-    Item.FDiskNumber := FSwapWriter.CurrentImage;
-    Item.FDiskSeek   := FSwapWriter.Seek(0, fsFromCurrent);
-    case Item.CompressionMethod of
-      actMain: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
-      else     FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
-    end;
-    DoClear;
+  Item.FDiskNumber := FSwapWriter.CurrentImage;
+  Item.FDiskSeek   := FSwapWriter.Seek(0, fsFromCurrent);
+  case Item.CompressionMethod of
+    actMain: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
+    else     FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
+  end;
+  DoClear;
 
-    if not FArchiveReader.IsValid then DoFailure(emStrmReadError);
-    if not FSwapWriter.IsValid then DoFailure(emStrmWriteError);
 
-    if Item.FCRC32 <> CRC then
-      DoFailure(Format(emCrcError, [Item.FExternalFileName]));
-  end else
-    DoFailure(emStrmWriteError);
+  if Item.FCRC32 <> CRC then
+    DoFailure(Format(emCrcError, [Item.FExternalFileName]));
+
 end;
 
 procedure TArchiveReader.DecodeToNul(Item: TArchiveItem);

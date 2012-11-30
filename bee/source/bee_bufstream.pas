@@ -156,7 +156,7 @@ begin
   FBufferReaded := 0;
   FBufferSize   := FileRead(FSource, FBuffer[0], DefaultBufferCapacity);
 
-  if FBufferSize = -1 then
+  if FBufferSize < 0 then
     FBufferSize := 0;
 end;
 
@@ -168,9 +168,10 @@ var
 begin
   Result := 0;
   repeat
-    if DefaultBufferCapacity = FBufferSize  then
+    if FBufferSize = DefaultBufferCapacity then
     begin
       FlushBuffer;
+      // if...
     end;
     I := Min(Count - Result, DefaultBufferCapacity - FBufferSize);
 
@@ -195,19 +196,26 @@ end;
 procedure TWriteBufStream.FlushBuffer;
 begin
   if FileWrite(FSource, FBuffer[0], FBufferSize) <> FBufferSize then
-    SetExitCode(ecError);
-
+  begin
+    ExitCode := 105;
+  end;
   FBufferSize := 0;
 end;
 
 procedure TWriteBufStream.SetSize(NewSize: longint);
 begin
-  FileTruncate(FSource, NewSize);
+  if FileTruncate(FSource, NewSize) = FALSE then
+  begin
+    ExitCode := 101;
+  end;
 end;
 
 procedure TWriteBufStream.SetSize(const NewSize: int64);
 begin
-  FileTruncate(FSource, NewSize);
+  if FileTruncate(FSource, NewSize) = FALSE then
+  begin
+    ExitCode := 101;
+  end;
 end;
 
 (*

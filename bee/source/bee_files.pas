@@ -53,18 +53,17 @@ type
   TFileReader = class(TReadBufStream)
   private
     FFileName: string;
-    FImageNumber: longword;
-    FImagesNumber: longword;
+    FImageNumber: longint;
+    FImagesNumber: longint;
     FOnRequestImage: TFileReaderRequestImageEvent;
     procedure GotoImage;
     function GetImageName: string;
-    procedure SetImagesNumber(Value: longword);
-    procedure SetImageNumber(Value: longword);
+    procedure SetImagesNumber(Value: longint);
+    procedure SetImageNumber(Value: longint);
   public
     constructor Create(const aFileName: string;
        aRequestImage: TFileReaderRequestImageEvent);
     destructor Destroy; override;
-    procedure Fill;
 
     function ReadDWord: dword;
     function ReadInfWord: qword;
@@ -72,10 +71,10 @@ type
     function Read(Data: PByte; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
-    procedure SeekImage(aImageNumber: longword; const Offset: int64);
+    procedure SeekImage(aImageNumber: longint; const Offset: int64);
   public
-    property ImagesNumber: longword read FImagesNumber write SetImagesNumber;
-    property ImageNumber: longword read FImageNumber write SetImageNumber;
+    property ImagesNumber: longint read FImagesNumber write SetImagesNumber;
+    property ImageNumber: longint read FImageNumber write SetImageNumber;
   end;
 
   { TFileWriter }
@@ -237,7 +236,7 @@ begin
 
       FSource := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
       if FSource < 0 then
-        SetExitCode(ecError);
+        ExitCode := 102;
     end;
 end;
 
@@ -254,8 +253,7 @@ var
 begin
   Result := 0;
   Count  := 0;
-  while TRUE do
-  begin
+  repeat
     Read(@Last, 1);
     Temp   := Last and $7F;
     Temp   := Temp shl (7 * Count);
@@ -263,7 +261,7 @@ begin
 
     if (Last and $80) = 0 then Break;
     Inc(Count);
-  end;
+  until FALSE;
 end;
 
 function TFileReader.ReadInfString: string;
@@ -293,12 +291,7 @@ begin
       end else
         Break;
     end;
-  until Result < Count;
-end;
-
-procedure TFileReader.Fill;
-begin
-  FillBuffer;
+  until Result = Count;
 end;
 
 function TFileReader.Seek(Offset: longint; Origin: longint): longint;
@@ -311,22 +304,28 @@ begin
   inherited Seek(Offset, Origin);
 end;
 
-procedure TFileReader.SeekImage(aImageNumber: longword; const Offset: int64);
+procedure TFileReader.SeekImage(aImageNumber: longint; const Offset: int64);
 begin
   SetImageNumber(aImageNumber);
   Seek(Offset, fsFromBeginning);
 end;
 
-procedure TFileReader.SetImagesNumber(Value: longword);
+procedure TFileReader.SetImagesNumber(Value: longint);
 begin
-  FImagesNumber := Value;
-  GotoImage;
+  if FImagesNumber <> Value then
+  begin
+    FImagesNumber := Value;
+    SetImageNumber(1);
+  end;
 end;
 
-procedure TFileReader.SetImageNumber(Value: longword);
+procedure TFileReader.SetImageNumber(Value: longint);
 begin
-  FImageNumber := Value;
-  GotoImage;
+  if FImageNumber <> Value then
+  begin
+    FImageNumber := Value;
+    GotoImage;
+  end;
 end;
 
 { TFileWriter class }
