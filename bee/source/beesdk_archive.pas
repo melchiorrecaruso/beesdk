@@ -754,11 +754,11 @@ var
 begin
   Result := FALSE;
   // Read Marker
-  aStream.Seek(-2*SizeOf(longword), soFromEnd);
+  aStream.Seek(-2*SizeOf(longword), fsFromEnd);
   if aStream.ReadDWord = beexArchiveMarker then
   begin
     // Read MagikSeek
-    aStream.Seek(-aStream.ReadDWord, soFromEnd);
+    aStream.Seek(-aStream.ReadDWord, fsFromEnd);
     // Read Locator Marker
     if aStream.ReadInfWord = aitLocator then
       if aStream.ReadInfWord <= beexVersionNeededToRead then
@@ -869,6 +869,7 @@ var
   Stream: TFileWriter;
 begin
   Stream := TNulWriter.Create;
+
   FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
 
   case Item.CompressionMethod of
@@ -877,24 +878,16 @@ begin
   end;
   DoClear;
 
-
-
-
   if (ExitCode = 0) and (Item.FCRC32 <> CRC) then
   begin
-    Writeln(Item.FDiskNumber, ' ', Item.FDiskSeek);
+    Writeln('UncompressedSize = ', Item.FUncompressedSize);
+    Writeln('DiskNumber       = ', Item.FDiskNumber);
+    Writeln('DiskSeek         = ', Item.FDiskSeek);
 
-
-    Writeln(Stream.Size);
-    Writeln(Item.FUncompressedSize);
-
-    Writeln(ExitCode);
-    Writeln(Item.FCRC32, ' = ', CRC );
-
+    Writeln('CurrDiskNumber   = ', FArchiveReader.ImageNumber);
+    Writeln('CurrDiskSeek     = ', FArchiveReader.Seek(0, fsFromCurrent));
 
     DoFault(154, Format(emCrcError, [Item.FExternalFileName]));
-
-
   end;
 
   Stream.Destroy;

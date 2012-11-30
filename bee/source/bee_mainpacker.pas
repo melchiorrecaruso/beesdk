@@ -152,22 +152,24 @@ var
 begin
   Result := 0;
   CRC    := longword(-1);
-
-  Count  := Size div SizeOf(Buffer);
-  while (Count <> 0) and (ExitCode <> 0) do
+  if Size > 0 then
   begin
-    Readed :=  Stream.Read (Buffer, SizeOf(Buffer));
+    Count  := Size div SizeOf(Buffer);
+    while (Count <> 0) and (ExitCode = 0) do
+    begin
+      Readed :=  Stream.Read (Buffer, SizeOf(Buffer));
+      Writed := FStream.Write(Buffer, Readed);
+      UpdateCrc32(CRC, Buffer, Writed);
+      Inc(Result, Writed);
+      DoProgress(Writed);
+      Dec(Count);
+    end;
+    Readed :=  Stream.Read (Buffer, Size mod SizeOf(Buffer));
     Writed := FStream.Write(Buffer, Readed);
-    UpdateCrc32(CRC, Buffer, Writed);
+    UpdateCRC32(CRC, Buffer, Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
-    Dec(Count);
   end;
-  Readed :=  Stream.Read (Buffer, Size mod SizeOf(Buffer));
-  Writed := FStream.Write(Buffer, Readed);
-  UpdateCRC32(CRC, Buffer, Writed);
-  Inc(Result, Writed);
-  DoProgress(Writed);
 end;
 
 function THeaderEncoder.Encode(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
@@ -178,12 +180,11 @@ var
 begin
   Result := 0;
   CRC    := longword(-1);
-
-  if Size <> 0 then
+  if Size > 0 then
   begin
     RangeEncoder_StartEncode(FCoder);
     Count  := Size div SizeOf(Buffer);
-    while (Count <> 0) and (ExitCode <> 0) do
+    while (Count <> 0) and (ExitCode = 0) do
     begin
       Readed := Stream.Read(Buffer, SizeOf(Buffer));
       BaseCoder_Encode(FModeller, @Buffer, Readed);
@@ -227,22 +228,24 @@ var
 begin
   Result := 0;
   CRC    := longword(-1);
-
-  Count  := Size div SizeOf(Buffer);
-  while (Count <> 0) and (ExitCode <> 0) do
+  if Size > 0 then
   begin
-    Readed := FStream.Read(Buffer, SizeOf(Buffer));
+    Count  := Size div SizeOf(Buffer);
+    while (Count <> 0) and (ExitCode = 0) do
+    begin
+      Readed := FStream.Read(Buffer, SizeOf(Buffer));
+      Writed := Stream.Write(Buffer, Readed);
+      UpdateCrc32(CRC, Buffer, Writed);
+      Inc(Result, Writed);
+      DoProgress(Writed);
+      Dec(Count);
+    end;
+    Readed := FStream.Read(Buffer, Size mod SizeOf(Buffer));
     Writed := Stream.Write(Buffer, Readed);
-    UpdateCrc32(CRC, Buffer, Writed);
+    UpdateCRC32(CRC, Buffer, Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
-    Dec(Count);
   end;
-  Readed := FStream.Read(Buffer, Size mod SizeOf(Buffer));
-  Writed := Stream.Write(Buffer, Readed);
-  UpdateCRC32(CRC, Buffer, Writed);
-  Inc(Result, Writed);
-  DoProgress(Writed);
 end;
 
 function THeaderDecoder.Decode(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
@@ -253,12 +256,11 @@ var
 begin
   Result := 0;
   CRC    := longword(-1);
-
-  if Size <> 0 then
+  if Size > 0 then
   begin
     RangeDecoder_StartDecode(FCoder);
     Count  := Size div SizeOf(Buffer);
-    while (Count <> 0) and (ExitCode <> 0) do
+    while (Count <> 0) and (ExitCode = 0) do
     begin
       BaseCoder_Decode(FModeller, @Buffer, SizeOf(Buffer));
       Writed := Stream.Write(Buffer, SizeOf(Buffer));

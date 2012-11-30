@@ -117,7 +117,7 @@ begin
     if FBufferReaded = FBufferSize then
     begin
       FillBuffer;
-      if FBufferSize = 0 then Exit;
+      if FBufferSize = 0 then Break;
     end;
     I := Min(Count - Result, FBufferSize - FBufferReaded);
 
@@ -155,6 +155,8 @@ procedure TReadBufStream.FillBuffer;
 begin
   FBufferReaded := 0;
   FBufferSize   := FileRead(FSource, FBuffer[0], DefaultBufferCapacity);
+
+  Writeln('Fill BufferSize =', FBufferSize);
 
   if FBufferSize = -1 then
   begin
