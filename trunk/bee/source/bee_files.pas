@@ -234,9 +234,6 @@ begin
       if FSource <> -1 then
         FileClose(FSource);
 
-      Writeln('Switch to = ', ImageName);
-
-
       FSource := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
       if FSource < 0 then
         ExitCode := 102;
@@ -283,7 +280,7 @@ function TFileReader.Read(Data: PByte; Count: longint): longint;
 begin
   Result := 0;
   repeat
-    Inc(Result, inherited Read(Data, Count));
+    Inc(Result, inherited Read(Data, Count - Result));
 
     if Result < Count then
     begin
@@ -292,9 +289,7 @@ begin
         Inc(FImageNumber);
         GotoImage;
       end else
-      begin
         Break;
-      end;
     end;
   until Result = Count;
 end;
