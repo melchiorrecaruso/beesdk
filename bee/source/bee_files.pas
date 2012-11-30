@@ -234,6 +234,9 @@ begin
       if FSource <> -1 then
         FileClose(FSource);
 
+      Writeln('Switch to = ', ImageName);
+
+
       FSource := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
       if FSource < 0 then
         ExitCode := 102;
@@ -289,7 +292,9 @@ begin
         Inc(FImageNumber);
         GotoImage;
       end else
+      begin
         Break;
+      end;
     end;
   until Result = Count;
 end;
@@ -312,11 +317,7 @@ end;
 
 procedure TFileReader.SetImagesNumber(Value: longint);
 begin
-  if FImagesNumber <> Value then
-  begin
-    FImagesNumber := Value;
-    SetImageNumber(1);
-  end;
+  FImagesNumber := Value;
 end;
 
 procedure TFileReader.SetImageNumber(Value: longint);
@@ -382,30 +383,29 @@ procedure TFileWriter.CreateNewImage(const aThreshold: int64);
 var
   Abort: boolean;
 begin
-  if FSource <> -1  then
+  if FSource <> -1 then
   begin
     FlushBuffer;
     FileClose(FSource);
-  end;
-  ClearBuffer;
+  end else
+    ClearBuffer;
 
-  FCurrentImageSize := 0;
   FThreshold := aThreshold;
-
-
   if FThreshold > 0 then
-      // while GetDriveFreeSpace(FFileName) > 0 do
-      begin
-        Abort := TRUE;
-        if Assigned(FOnRequestBlankDisk) then
-          FOnRequestBlankDisk(FCurrentImage, Abort);
-        if Abort then Exit;
-      end;
+    // while GetDriveFreeSpace(FFileName) > 0 do
+    begin
+      Abort := TRUE;
+      if Assigned(FOnRequestBlankDisk) then
+        FOnRequestBlankDisk(FCurrentImage, Abort);
+      if Abort then Exit;
+    end;
 
   RenameFile(FFileName, GetImageName(FCurrentImage));
   if ExtractFilePath(FFileName) <> '' then
     ForceDirectories(ExtractFilePath(FFileName));
   FSource := FileCreate(FFileName);
+
+  FCurrentImageSize := 0;
   Inc(FCurrentImage);
 end;
 

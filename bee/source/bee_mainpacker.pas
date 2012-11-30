@@ -43,7 +43,7 @@ uses
   {$ENDIF}
 
 type
-  TProgressEvent = procedure(Value: longint) of object;
+  TArchiveProgressEvent = procedure(Value: longint) of object;
 
 type
   { THeaderCoder class }
@@ -54,7 +54,7 @@ type
     FModeller: pointer;
     FDictionaryLevel: longint;
     FCompressionTable: TTableParameters;
-    FOnProgressEvent: TProgressEvent;
+    FOnProgressEvent: TArchiveProgressEvent;
     procedure SetDictionaryLevel(Value: longint);
     procedure SetCompressionTable(const Value: TTableParameters);
     procedure DoProgress(Value: longint);
@@ -63,7 +63,7 @@ type
   public
     property DictionaryLevel: longint read FDictionaryLevel write SetDictionaryLevel;
     property CompressionTable: TTableParameters read FCompressionTable write SetCompressionTable;
-    property OnProgress: TProgressEvent read FOnProgressEvent write FOnProgressEvent;
+    property OnProgress: TArchiveProgressEvent read FOnProgressEvent write FOnProgressEvent;
   end;
 
   { THeaderEncoder class }
@@ -152,8 +152,9 @@ var
 begin
   Result := 0;
   CRC    := longword(-1);
+
   Count  := Size div SizeOf(Buffer);
-  while (Count <> 0) and (ExitCode < ecError) do
+  while (Count <> 0) and (ExitCode <> 0) do
   begin
     Readed :=  Stream.Read (Buffer, SizeOf(Buffer));
     Writed := FStream.Write(Buffer, Readed);
@@ -182,7 +183,7 @@ begin
   begin
     RangeEncoder_StartEncode(FCoder);
     Count  := Size div SizeOf(Buffer);
-    while (Count <> 0) and (ExitCode < ecError) do
+    while (Count <> 0) and (ExitCode <> 0) do
     begin
       Readed := Stream.Read(Buffer, SizeOf(Buffer));
       BaseCoder_Encode(FModeller, @Buffer, Readed);
@@ -226,8 +227,9 @@ var
 begin
   Result := 0;
   CRC    := longword(-1);
+
   Count  := Size div SizeOf(Buffer);
-  while (Count <> 0) and (ExitCode < ecError) do
+  while (Count <> 0) and (ExitCode <> 0) do
   begin
     Readed := FStream.Read(Buffer, SizeOf(Buffer));
     Writed := Stream.Write(Buffer, Readed);
@@ -256,7 +258,7 @@ begin
   begin
     RangeDecoder_StartDecode(FCoder);
     Count  := Size div SizeOf(Buffer);
-    while (Count <> 0) and (ExitCode < ecError) do
+    while (Count <> 0) and (ExitCode <> 0) do
     begin
       BaseCoder_Decode(FModeller, @Buffer, SizeOf(Buffer));
       Writed := Stream.Write(Buffer, SizeOf(Buffer));

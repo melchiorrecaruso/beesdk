@@ -29,10 +29,11 @@ unit Bee_Interface;
 interface
 
 const
-  ecSuccesful         = 0;     { 0 No error                                               }
-  ecCmdError          = $1001; { 7 Command line error                                     }
-  ecMemError          = $1002; { 8 Not enough memory for operation                        }
-  ecUserAbort         = $1999; { 255 User stopped the process                             }
+  ecCmdError          = 7;   { 7 Command line error              }
+  ecMemError          = 8;   { 8 Not enough memory for operation }
+  ecCustError         = 9;
+  ecUserAbort         = 255; { 255 User stopped the process      }
+
 
 const
   emUnknow            = 'Process aborted, unknow error - time elapsed %s seconds.';
