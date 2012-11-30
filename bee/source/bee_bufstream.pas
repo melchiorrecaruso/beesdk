@@ -156,7 +156,8 @@ begin
   FBufferReaded := 0;
   FBufferSize   := FileRead(FSource, FBuffer[0], DefaultBufferCapacity);
 
-  Writeln('Fill BufferSize =', FBufferSize);
+  if FBufferSize <> DefaultBufferCapacity then
+    Writeln('Fill BufferSize =', FBufferSize);
 
   if FBufferSize = -1 then
   begin

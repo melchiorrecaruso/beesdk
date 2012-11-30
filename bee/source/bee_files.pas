@@ -234,6 +234,8 @@ begin
       if FSource <> -1 then
         FileClose(FSource);
 
+      Writeln('GotoImage = ', ImageName);
+
       FSource := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
       if FSource < 0 then
         ExitCode := 102;
