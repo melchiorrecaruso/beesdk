@@ -58,7 +58,6 @@ type
     FOnRequestImage: TFileReaderRequestImageEvent;
     procedure GotoImage;
     function GetImageName: string;
-    function GetIsValid: boolean;
     procedure SetImagesNumber(Value: longword);
     procedure SetImageNumber(Value: longword);
   public
@@ -70,9 +69,9 @@ type
     function ReadDWord: dword;
     function ReadInfWord: qword;
     function ReadInfString: string;
-    procedure Read(Data: PByte; Count: longint); override;
+    function Read(Data: PByte; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: longint): longint; override;
-    function Seek(Offset: int64; Origin: longint): int64; override;
+    function Seek(const Offset: int64; Origin: longint): int64; override;
     procedure SeekImage(aImageNumber: longword; const Offset: int64);
   public
     property ImagesNumber: longword read FImagesNumber write SetImagesNumber;
@@ -81,7 +80,8 @@ type
 
   { TFileWriter }
 
-  TFileWriterRequestBlankDiskEvent = procedure(DiskNumber: longint; var Abort : Boolean) of object;
+  TFileWriterRequestBlankDiskEvent = procedure(DiskNumber: longint;
+     var Abort : Boolean) of object;
 
   TFileWriter = class(TWriteBufStream)
   private
@@ -90,7 +90,6 @@ type
     FCurrentImageSize: int64;
     FThreshold: int64;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
-    function GetIsValid: boolean; virtual;
     function GetImageName(ImageNumber: longword): string;
     function GetCurrentImage: longword;
     function GetABSPosition: int64;
@@ -106,11 +105,11 @@ type
     procedure WriteDWord(Data: dword);
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
-    procedure Write(Data: PByte; Count: longint); override;
+    function WriteUnspanned(Data: PByte; Count: longint): longint;
+    function Write(Data: PByte; Count: longint): longint; override;
     function Seek(Offset: longint; Origin: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
   public
-    property IsValid: boolean read GetIsValid;
     property CurrentImage: longword read GetCurrentImage;
     property CurrentImageSize: int64 read FCurrentImageSize;
     property Threshold: int64 read FThreshold;
@@ -127,13 +126,12 @@ type
     FNulPos: int64;
     FNulSize: int64;
   protected
-    function GetIsValid: boolean; override;
     procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Write(Data: PByte; Count: longint);  override;
+    function Write(Data: PByte; Count: longint): longint;  override;
     function Seek(Offset: longint; Origin: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
   end;
@@ -174,6 +172,9 @@ procedure DoFlush(Stream: pointer; Data: pointer;
   Size: longint); {$IFDEF cppDLL} cdecl; {$ENDIF}
 
 implementation
+
+uses
+   Bee_Interface;
 
 procedure DoFill(Stream: pointer; Data: pointer; Size: longint);
 begin
@@ -218,11 +219,6 @@ var
   Abort: boolean;
   ImageName: string;
 begin
-  if FSource <> -1 then
-    FileClose(FSource);
-  FSource := -1;
-  ClearBuffer;
-
   if FImageNumber >= 1 then
     if FImageNumber <= FImagesNumber then
     begin
@@ -235,7 +231,13 @@ begin
         if Abort then Exit;
       end;
 
+      ClearBuffer;
+      if FSource <> -1 then
+        FileClose(FSource);
+
       FSource := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
+      if FSource < 0 then
+        SetExitCode(ecError);
     end;
 end;
 
@@ -252,8 +254,9 @@ var
 begin
   Result := 0;
   Count  := 0;
-  while Read(Last, 1) = 1 do
+  while TRUE do
   begin
+    Read(@Last, 1);
     Temp   := Last and $7F;
     Temp   := Temp shl (7 * Count);
     Result := Result or Temp;
@@ -268,28 +271,20 @@ var
   Len: longint;
 begin
   Len := ReadInfWord;
-  if Assigned(FSource) then
+  SetLength(Result, Len);
+  if Len > 0 then
   begin
-    SetLength(Result, Len);
-    if Len > 0 then
-      Read(Result[1], Len);
+    Read(@Result[1], Len);
   end;
 end;
 
-function TFileReader.Read(var Data; Count: longint): longint;
-var
-  Readed: longint;
-  Bytes: PByte;
+function TFileReader.Read(Data: PByte; Count: longint): longint;
 begin
   Result := 0;
-  Bytes := @Data;
-  while Assigned(FSource) and (Count > 0) do
-  begin
-    Readed := inherited Read(Bytes[Result], Count);
-    Inc(Result, Readed);
-    Dec(Count,  Readed);
+  repeat
+    Inc(Result, inherited Read(Data, Count));
 
-    if Count > 0 then
+    if Result < Count then
     begin
       if FImageNumber < FImagesNumber then
       begin
@@ -298,36 +293,28 @@ begin
       end else
         Break;
     end;
-  end;
+  until Result < Count;
 end;
 
 procedure TFileReader.Fill;
 begin
-  if Assigned(FSource) then
-     FillBuffer;
+  FillBuffer;
 end;
 
-function TFileReader.Seek(Offset: longint; Origin: word): longint;
+function TFileReader.Seek(Offset: longint; Origin: longint): longint;
 begin
-  if Assigned(FSource) then
-    inherited Seek(Offset, Origin);
+  inherited Seek(Offset, Origin);
 end;
 
-function TFileReader.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
+function TFileReader.Seek(const Offset: int64; Origin: longint): int64;
 begin
-  if Assigned(FSource) then
-    inherited Seek(Offset, Origin);
+  inherited Seek(Offset, Origin);
 end;
 
 procedure TFileReader.SeekImage(aImageNumber: longword; const Offset: int64);
 begin
   SetImageNumber(aImageNumber);
-  Seek(Offset, soBeginning);
-end;
-
-function TFileReader.GetIsValid: boolean;
-begin
-  Result := Assigned(FSource);
+  Seek(Offset, fsFromBeginning);
 end;
 
 procedure TFileReader.SetImagesNumber(Value: longword);
@@ -347,7 +334,7 @@ end;
 constructor TFileWriter.Create(const aFileName: string;
   const aThreshold: int64; aRequestBlankDisk: TFileWriterRequestBlankDiskEvent);
 begin
-  inherited Create(nil);
+  inherited Create(-1);
   FFileName := aFileName;
   FCurrentImage       := 0;
   FCurrentImageSize   := 0;
@@ -357,11 +344,8 @@ end;
 
 destructor TFileWriter.Destroy;
 begin
-  if Assigned(FSource) then
-  begin
-    FlushBuffer;
-    FreeAndNil(FSource);
-  end;
+  if FSource <> -1 then
+    FileClose(FSource);
   inherited Destroy;
 end;
 
@@ -378,31 +362,31 @@ end;
 
 function TFileWriter.GetABSPosition: int64;
 begin
-  Result := (FCurrentImage * FThreshold) + Seek(0, soCurrent);
+  Result := (FCurrentImage * FThreshold) + Seek(0, fsFromCurrent);
 end;
 
 function TFileWriter.GetPosition: int64;
 begin
-  Result := Seek(0, soCurrent);
+  Result := Seek(0, fsFromCurrent);
 end;
 
 function TFileWriter.GetSize: int64;
 var
   I: int64;
 begin
-  I := Seek(0, soCurrent);
-  Result := Seek(0, soEnd);
-  Seek(I, soBeginning);
+  I := Seek(0, fsFromCurrent);
+  Result := Seek(0, fsFromEnd);
+  Seek(I, fsFromBeginning);
 end;
 
 procedure TFileWriter.CreateNewImage(const aThreshold: int64);
 var
   Abort: boolean;
 begin
-  if Assigned(FSource) then
+  if FSource <> -1  then
   begin
     FlushBuffer;
-    FreeAndNil(FSource);
+    FileClose(FSource);
   end;
   ClearBuffer;
 
@@ -420,20 +404,15 @@ begin
       end;
 
   RenameFile(FFileName, GetImageName(FCurrentImage));
-  try
-    if ExtractFilePath(FFileName) <> '' then
-      ForceDirectories(ExtractFilePath(FFileName));
-    FSource := TFileStream.Create(FFileName, fmCreate or fmShareDenyWrite);
-
-    Inc(FCurrentImage);
-  except
-    FSource := nil;
-  end;
+  if ExtractFilePath(FFileName) <> '' then
+    ForceDirectories(ExtractFilePath(FFileName));
+  FSource := FileCreate(FFileName);
+  Inc(FCurrentImage);
 end;
 
 procedure TFileWriter.WriteDWord(Data: dword);
 begin
-  Write(Data, SizeOf(Data));
+  Write(@Data, SizeOf(Data));
 end;
 
 procedure TFileWriter.WriteInfWord(Data: qword);
@@ -453,7 +432,7 @@ begin
     LocalBuffer[Count] := LastByte;
     Inc(Count);
   until Data = 0;
-  Write(LocalBuffer[0], Count);
+  Write(@LocalBuffer[0], Count);
 end;
 
 procedure TFileWriter.WriteInfString(const Data: string);
@@ -464,7 +443,7 @@ begin
   WriteInfWord(Len);
   if Len > 0 then
   begin
-    Write(Data[1], Len);
+    Write(@Data[1], Len);
   end;
 end;
 
@@ -476,15 +455,9 @@ begin
     Result := FFileName;
 end;
 
-function TFileWriter.GetIsValid: boolean;
-begin
-  Result := Assigned(FSource);
-end;
-
-function TFileWriter.Write(const Data; Count: longint): longint;
+function TFileWriter.Write(Data: PByte; Count: longint): longint;
 var
-  Writed: longint;
-  Bytes: PByte;
+  I: longint;
 begin
   if FThreshold = 0 then
   begin
@@ -492,48 +465,34 @@ begin
   end else
   begin
     Result := 0;
-    Bytes := @Data;
-    while Assigned(FSource) and (Count > 0) do
-    begin
-      Writed := inherited Write(Bytes[Result], Min(Count, FThreshold - FCurrentImageSize));
-      Inc(FCurrentImageSize, Writed);
-      Inc(Result, Writed);
-      Dec(Count,  Writed);
+    repeat
+      if FThreshold = FCurrentImageSize then
+      begin
+        CreateNewImage(FThreshold);
+      end;
+      I := Min(Count - Result, FThreshold - FCurrentImageSize);
 
-      if Count > 0 then CreateNewImage(FThreshold);
-    end;
+      inherited Write(@Data[Result], I);
+      Inc(FCurrentImageSize, I);
+      Inc(Result, I);
+    until Result = Count;
   end;
 end;
 
-function TFileWriter.WriteUnspanned(const Data; Count: longint): longint;
-var
-  Writed: longint;
-  Bytes: PByte;
+function TFileWriter.WriteUnspanned(Data: PByte; Count: longint): longint;
 begin
-  Result := 0;
-  Bytes := @Data;
-  while Assigned(FSource) and (Count > 0) do
-  begin
-    Writed := inherited Write(Bytes[Result], Count);
-    Inc(FCurrentImageSize, Writed);
-    Inc(Result, Writed);
-    Dec(Count,  Writed);
-
-    if Writed = 0 then FreeAndNil(FSource);
-  end;
+  Result     := inherited Write(Data, Count);
   FThreshold := 0;
 end;
 
-function TFileWriter.Seek(Offset: longint; Origin: word): longint;
+function TFileWriter.Seek(Offset: longint; Origin: longint): longint;
 begin
-  if Assigned(FSource) then
-    Result := inherited Seek(OffSet, Origin);
+  Result := inherited Seek(OffSet, Origin);
 end;
 
-function TFileWriter.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
+function TFileWriter.Seek(const Offset: int64; Origin: longint): int64;
 begin
-  if Assigned(FSource) then
-    Result := inherited Seek(OffSet, Origin);
+  Result := inherited Seek(OffSet, Origin);
 end;
 
 { TNulWriter class }
@@ -561,7 +520,7 @@ begin
   FNulSize := NewSize;
 end;
 
-function TNulWriter.Write(const Data; Count: longint): longint;
+function TNulWriter.Write(Data: PByte; Count: longint): longint;
 begin
   Inc(FNulPos, Count);
   if FNulPos > FNulSize then
@@ -571,29 +530,24 @@ begin
   Result := Count;
 end;
 
-function TNulWriter.Seek(Offset: longint; Origin: word): longint;
+function TNulWriter.Seek(Offset: longint; Origin: longint): longint;
 begin
   case Origin of
-    soFromBeginning: FNulPos := OffSet;
-    soFromCurrent:   FNulPos := Min(FNulSize, FNulPos + Offset);
-    soFromEnd:       FNulPos := Max(0, FNulPos - Offset);
+    fsFromBeginning: FNulPos := OffSet;
+    fsFromCurrent:   FNulPos := Min(FNulSize, FNulPos + Offset);
+    fsFromEnd:       FNulPos := Max(0, FNulPos - Offset);
   end;
   Result := FNulPos;
 end;
 
-function TNulWriter.Seek(const Offset: int64; Origin: TSeekOrigin): int64;
+function TNulWriter.Seek(const Offset: int64; Origin: longint): int64;
 begin
   case Origin of
-    soBeginning: FNulPos := OffSet;
-    soCurrent:   FNulPos := Min(FNulSize, FNulPos + Offset);
-    soEnd:       FNulPos := Max(0, FNulPos - Offset);
+    fsFromBeginning: FNulPos := OffSet;
+    fsFromCurrent:   FNulPos := Min(FNulSize, FNulPos + Offset);
+    fsFromEnd:       FNulPos := Max(0, FNulPos - Offset);
   end;
   Result := FNulPos;
-end;
-
-function TNulWriter.GetIsValid: boolean;
-begin
-  Result := TRUE;
 end;
 
 { TCustomSearchRec class }
