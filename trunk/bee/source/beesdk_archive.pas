@@ -519,7 +519,7 @@ begin
   if (acfCompressionMethod in FCompressionFlags)    then FCompressionMethod := TArchiveCompressionMethod(Stream.ReadInfWord);
   if (acfCompressionLevel  in FCompressionFlags)    then FCompressionLevel  := TmOption(Stream.ReadInfWord);
   if (acfDictionaryLevel   in FCompressionFlags)    then FDictionaryLevel   := TdOption(Stream.ReadInfWord);
-  if (acfCompressionTable  in FCompressionFlags)    then Stream.Read(FCompressionTable, SizeOf(TTableParameters));
+  if (acfCompressionTable  in FCompressionFlags)    then Stream.Read(@FCompressionTable, SizeOf(TTableParameters));
   /// Encryption property ///
   FEncryptionFlags := TArchiveEncryptionFlags(longword(Stream.ReadInfWord));
   if (aefEncryptionMethod  in FEncryptionFlags)     then FEncryptionMethod := TArchiveEncryptionMethod(Stream.ReadInfWord);
@@ -546,7 +546,7 @@ begin
   if (acfCompressionMethod in FCompressionFlags)    then Stream.WriteInfWord(Ord(FCompressionMethod));
   if (acfCompressionLevel  in FCompressionFlags)    then Stream.WriteInfWord(Ord(FCompressionLevel));
   if (acfDictionaryLevel   in FCompressionFlags)    then Stream.WriteInfWord(Ord(FDictionaryLevel));
-  if (acfCompressionTable  in FCompressionFlags)    then Stream.Write(FCompressionTable, SizeOf(TTableParameters));
+  if (acfCompressionTable  in FCompressionFlags)    then Stream.Write(@FCompressionTable, SizeOf(TTableParameters));
   /// Encryption property ///
   Stream.WriteInfWord(longword(FEncryptionFlags));
   if (aefEncryptionMethod  in FEncryptionFlags)     then Stream.WriteInfWord(Ord(FEncryptionMethod));
@@ -779,7 +779,7 @@ begin
 
         aStream.ImageNumber := LocatorDiskNumber;
         aStream.ImagesNumber := LocatorDisksNumber;
-        aStream.Seek(LocatorDiskSeek, soBeginning);
+        aStream.Seek(LocatorDiskSeek, fsFromBeginning);
 
         if aStream.ReadDWord = beexArchiveMarker then
           repeat
@@ -862,7 +862,7 @@ begin
     FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
 
     Item.FDiskNumber := FSwapWriter.CurrentImage;
-    Item.FDiskSeek   := FSwapWriter.Seek(0, soCurrent);
+    Item.FDiskSeek   := FSwapWriter.Seek(0, fsFromCurrent);
     case Item.CompressionMethod of
       actMain: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
