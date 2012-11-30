@@ -29,14 +29,10 @@ unit Bee_Interface;
 interface
 
 const
-  ecSuccesful         = $00000000; { 0 No error                                               }
-  ecWarning           = $00000001; { 1 Warning (Non fatal error(s)). For example, one or more }
-                                   {   files were locked by some other application, so they   }
-                                   {   were not compressed                                    }
-  ecError             = $00000002; { 2 Fatal error                                            }
-  ecCmdError          = $00000007; { 7 Command line error                                     }
-  ecMemError          = $00000008; { 8 Not enough memory for operation                        }
-  ecUserAbort         = $000000FF; { 255 User stopped the process                             }
+  ecSuccesful         = 0;     { 0 No error                                               }
+  ecCmdError          = $1001; { 7 Command line error                                     }
+  ecMemError          = $1002; { 8 Not enough memory for operation                        }
+  ecUserAbort         = $1999; { 255 User stopped the process                             }
 
 const
   emUnknow            = 'Process aborted, unknow error - time elapsed %s seconds.';
@@ -68,16 +64,6 @@ const
   emFileExistsWarning = 'Warning: file "%s" already exists';
   emNoFilesWarning    = 'Warning: no files to process';
 
-procedure SetExitCode(aExitCode: longint);
-
 implementation
-
-procedure SetExitCode(aExitCode: longint);
-begin
-  if ExitCode < aExitCode then
-  begin
-    ExitCode := aExitCode;
-  end;
-end;
 
 end.
