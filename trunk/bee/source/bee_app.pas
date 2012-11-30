@@ -117,7 +117,7 @@ begin
   FSelfName  := 'The Bee 0.8.0 build 1617 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
 
-  ExitCode := ecSuccesful;
+  ExitCode := 0;
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
@@ -147,7 +147,7 @@ var
 begin
   StartTime := Now;
   DoMessage(FSelfName);
-  if ExitCode < ecError then
+  if ExitCode = 0 then
     case FCommandLine.Command of
       ccAdd:      EncodeShell;
       ccDelete:   DeleteShell;
@@ -162,10 +162,11 @@ begin
 
   S := TimeDifference(StartTime);
   case ExitCode of
-    ecSuccesful: DoMessage(Format(Cr + emSuccesful, [S]));
-    ecWarning:   DoMessage(Format(Cr + emWarning,   [S]));
-    ecUserAbort: DoMessage(Format(Cr + emUserAbort, [S]));
+    0:           DoMessage(Format(Cr + emSuccesful, [S]));
     ecCmdError:  DoMessage(Format(Cr + emCmdError,  [ ]));
+    ecMemError:  DoMessage(Format(Cr + emMemError,  [ ]));
+    ecCustError: DoMessage(Format(Cr + emError,     [S]));
+    ecUserAbort: DoMessage(Format(Cr + emUserAbort, [S]));
     else         DoMessage(Format(Cr + emError,     [S]));
   end;
 end;
@@ -373,7 +374,6 @@ begin
   FUpdater.OnRequestImage     := DoRequestImage;
   FUpdater.OnProgress         := DoProgress;
   FUpdater.OnMessage          := DoMessage;
-  FUpdater.OnFailure          := DoMessage;
   FUpdater.OnClear            := DoClear;
   FUpdater.OnUpdate           := DoUpdate;
 
@@ -392,7 +392,7 @@ begin
   FUpdater.Threshold          := FCommandLine.iOption;
 //FUpdater.ArchiveComment     :=
 
-  if ExitCode < ecError then
+  if ExitCode = 0 then
   begin
     DoMessage(Format(cmScanning, ['...']));
     Scanner := TFileScanner.Create;
@@ -417,7 +417,6 @@ begin
   FExtractor.OnRequestImage  := DoRequestImage;
   FExtractor.OnProgress      := DoProgress;
   FExtractor.OnMessage       := DoMessage;
-  FExtractor.OnFailure       := DoMessage;
   FExtractor.OnClear         := DoClear;
   FExtractor.OnExtraction    := DoExtract;
 
@@ -425,7 +424,7 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FExtractor.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode < ecError then
+  if ExitCode = 0 then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FExtractor.Count - 1 do
@@ -453,7 +452,6 @@ begin
   FEraser.OnRequestImage     := DoRequestImage;
   FEraser.OnProgress         := DoProgress;
   FEraser.OnMessage          := DoMessage;
-  FEraser.OnFailure          := DoMessage;
   FEraser.OnClear            := DoClear;
   FEraser.OnEraseEvent       := DoErase;
 
@@ -463,7 +461,7 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FEraser.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode < ecError then
+  if ExitCode = 0 then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FEraser.Count - 1 do
@@ -488,7 +486,6 @@ begin
   FRenamer.OnRequestImage     := DoRequestImage;
   FRenamer.OnProgress         := DoProgress;
   FRenamer.OnMessage          := DoMessage;
-  FRenamer.OnFailure          := DoMessage;
   FRenamer.OnClear            := DoClear;
   FRenamer.OnRenameEvent      := DoRename;
 
@@ -498,7 +495,7 @@ begin
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FRenamer.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode < ecError then
+  if ExitCode = 0 then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FRenamer.Count - 1 do
@@ -536,14 +533,13 @@ begin
   FReader.OnRequestImage  := DoRequestImage;
   FReader.OnProgress      := DoProgress;
   FReader.OnMessage       := DoMessage;
-  FReader.OnFailure       := DoMessage;
   FReader.OnClear         := DoClear;
 
   FReader.ArchivePassword := FCommandLine.pOption;
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FReader.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode < ecError then
+  if ExitCode = 0 then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FReader.Count - 1 do
