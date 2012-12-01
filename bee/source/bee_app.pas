@@ -165,9 +165,9 @@ begin
     0:           DoMessage(Format(Cr + emSuccesful, [S]));
     ecCmdError:  DoMessage(Format(Cr + emCmdError,  [ ]));
     ecMemError:  DoMessage(Format(Cr + emMemError,  [ ]));
-    ecCustError: DoMessage(Format(Cr + emError,     [S]));
+    ecCustError: DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
     ecUserAbort: DoMessage(Format(Cr + emUserAbort, [S]));
-    else         DoMessage(Format(Cr + emError,     [S]));
+    else         DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
   end;
 end;
 

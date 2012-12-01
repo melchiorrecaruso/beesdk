@@ -850,6 +850,7 @@ var
   CRC: longword;
 begin
   FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
+//FArchiveReader.Optimize(Item.FUncompressedSize);
 
   Item.FDiskNumber := FSwapWriter.CurrentImage;
   Item.FDiskSeek   := FSwapWriter.Seek(0, fsFromCurrent);
@@ -871,6 +872,7 @@ begin
   Stream := TNulWriter.Create;
 
   FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
+  // FArchiveReader.Optimize(Item.FUncompressedSize);
 
   case Item.CompressionMethod of
     actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
@@ -879,16 +881,7 @@ begin
   DoClear;
 
   if (ExitCode = 0) and (Item.FCRC32 <> CRC) then
-  begin
-    Writeln('UncompressedSize = ', Item.FUncompressedSize);
-    Writeln('DiskNumber       = ', Item.FDiskNumber);
-    Writeln('DiskSeek         = ', Item.FDiskSeek);
-
-    Writeln('CurrDiskNumber   = ', FArchiveReader.ImageNumber);
-    Writeln('CurrDiskSeek     = ', FArchiveReader.Seek(0, fsFromCurrent));
-
     DoFault(154, Format(emCrcError, [Item.FExternalFileName]));
-  end;
 
   Stream.Destroy;
 end;
@@ -902,6 +895,8 @@ begin
   if Assigned(Stream) then
   begin
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
+  //FArchiveReader.Optimize(Item.FUncompressedSize);
+
     case Item.CompressionMethod of
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
       else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
@@ -1433,7 +1428,17 @@ begin
   Stream := TFileReader.Create(Item.FExternalFileName, nil);
   if Stream <> nil then
   begin
+    Stream.Optimize(Item.FExternalFileSize);
+
+    FTempWriter.Optimize(1024*1024*5);
+
+
+
+
     Item.FUncompressedSize := Item.FExternalFileSize;
+
+
+
 
     ABSPosition      := FTempWriter.ABSPosition;
     Item.FDiskSeek   := FTempWriter.Position;
@@ -1635,11 +1640,11 @@ begin
       if Item.FTag in [aitUpdate, aitDecode] then
       begin
         Item.FExternalFileName := Item.FileName;
-        //case Item.FTag of
-        //  aitUpdate:          DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
-        //  aitDecode:          DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
-        //  aitDecodeAndUpdate: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
-        //end;
+        case Item.FTag of
+          aitUpdate:          DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
+          aitDecode:          DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
+          aitDecodeAndUpdate: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
+        end;
 
         case Item.FTag of
           aitUpdate:          DecodeToNul(Item);
