@@ -484,10 +484,7 @@ end;
 
 function TFileWriter.WriteUnspanned(Data: PByte; Count: longint): longint;
 begin
-  FileWrite(FSource, Data[0], Count);
-
-
-  // Result     := inherited Write(Data, Count);
+  Result     := inherited Write(Data, Count);
   FThreshold := 0;
 end;
 

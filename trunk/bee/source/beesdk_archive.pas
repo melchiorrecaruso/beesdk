@@ -872,7 +872,7 @@ begin
   Stream := TNulWriter.Create;
 
   FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-  // FArchiveReader.Optimize(Item.FUncompressedSize);
+  FArchiveReader.Optimize(Item.FUncompressedSize);
 
   case Item.CompressionMethod of
     actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
