@@ -43,14 +43,16 @@ type
   TBufStream = class(TObject)
   protected
     FSource: THandle;
+    FPosition: int64;
     FBufferSize: longint;
     FBufferReaded: longint;
     FBuffer: array of byte;
   public
     constructor Create(aSource: THandle);
     destructor Destroy; override;
-  public
     procedure Optimize(const Size: int64);
+  public
+
   end;
 
   { TReadBufStream }
@@ -88,6 +90,7 @@ constructor TBufStream.Create(aSource: THandle);
 begin
   inherited Create;
   FSource := aSource;
+  FPosition     := 0;
   FBufferSize   := 0;
   FBufferReaded := 0;
   SetLength(FBuffer, 4 * MinBufferCapacity);
@@ -184,12 +187,24 @@ begin
     Inc(FBufferSize, I);
     Inc(Result, I);
   until Result = Count;
+
+  Inc(FPosition, Result);
 end;
 
 function TWriteBufStream.Seek(const Offset: int64; Origin: longint): int64;
 begin
+
+  if (Origin = fsFromCurrent) and (OffSet = 0) then
+  begin
+    Result := FPosition;
+    Exit;
+  end;
+
+
   FlushBuffer;
   Result := FileSeek(FSource, Offset, Origin);
+
+  FPosition := Result;
 end;
 
 procedure TWriteBufStream.FlushBuffer;
@@ -198,6 +213,10 @@ var
 begin
   if FBufferSize > 0 then
   begin
+
+    // if FBufferSize <> Length(FBuffer) then Writeln(FBufferSize);
+
+
     Err := FileWrite(FSource, FBuffer[0], FBufferSize);
     if Err = -1 then
       ExitCode := 103

@@ -872,7 +872,7 @@ begin
   Stream := TNulWriter.Create;
 
   FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-  FArchiveReader.Optimize(Item.FUncompressedSize);
+//FArchiveReader.Optimize(Item.FUncompressedSize);
 
   case Item.CompressionMethod of
     actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
@@ -1428,17 +1428,12 @@ begin
   Stream := TFileReader.Create(Item.FExternalFileName, nil);
   if Stream <> nil then
   begin
-    Stream.Optimize(Item.FExternalFileSize);
-
     FTempWriter.Optimize(1024*1024*5);
-
+    Stream.Optimize(Item.FExternalFileSize);
 
 
 
     Item.FUncompressedSize := Item.FExternalFileSize;
-
-
-
 
     ABSPosition      := FTempWriter.ABSPosition;
     Item.FDiskSeek   := FTempWriter.Position;
@@ -1640,11 +1635,15 @@ begin
       if Item.FTag in [aitUpdate, aitDecode] then
       begin
         Item.FExternalFileName := Item.FileName;
+
+        (*
         case Item.FTag of
           aitUpdate:          DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
           aitDecode:          DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
           aitDecodeAndUpdate: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
         end;
+
+        *)
 
         case Item.FTag of
           aitUpdate:          DecodeToNul(Item);
@@ -2141,6 +2140,7 @@ begin
             if ExitCode = 0 then
             begin
               Item := FArchiveItems.Items[I];
+              (*
               case Item.FTag of
                 aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
                 aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
@@ -2148,6 +2148,7 @@ begin
                 aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
                 aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
               end;
+              *)
 
               InitEncoder(Item);
               case Item.FTag of
