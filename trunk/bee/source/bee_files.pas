@@ -69,7 +69,6 @@ type
     function ReadInfWord: qword;
     function ReadInfString: string;
     function Read(Data: PByte; Count: longint): longint; override;
-    function Seek(Offset: longint; Origin: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
     procedure SeekImage(aImageNumber: longint; const Offset: int64);
   public
@@ -106,7 +105,6 @@ type
     procedure WriteInfString(const Data: string);
     function WriteUnspanned(Data: PByte; Count: longint): longint;
     function Write(Data: PByte; Count: longint): longint; override;
-    function Seek(Offset: longint; Origin: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
   public
     property CurrentImage: longword read GetCurrentImage;
@@ -125,13 +123,11 @@ type
     FNulPos: int64;
     FNulSize: int64;
   protected
-    procedure SetSize(NewSize: longint); override;
     procedure SetSize(const NewSize: int64); override;
   public
     constructor Create;
     destructor Destroy; override;
     function Write(Data: PByte; Count: longint): longint;  override;
-    function Seek(Offset: longint; Origin: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
   end;
 
@@ -201,7 +197,10 @@ end;
 destructor TFileReader.Destroy;
 begin
   if FSource <> -1 then
+  begin
     FileClose(FSource);
+    FSource := -1;
+  end;
   inherited Destroy;
 end;
 
@@ -230,14 +229,17 @@ begin
         if Abort then Exit;
       end;
 
-      ClearBuffer;
-      if FSource <> -1 then
-        FileClose(FSource);
+      FBufferSize   := 0;
+      FBufferReaded := 0;
 
-      Writeln('GotoImage = ', ImageName);
+      if FSource <> -1 then
+      begin
+        FileClose(FSource);
+        FSource := -1;
+      end;
 
       FSource := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
-      if FSource < 0 then
+      if FSource = -1 then
         ExitCode := 102;
     end;
 end;
@@ -282,7 +284,7 @@ function TFileReader.Read(Data: PByte; Count: longint): longint;
 begin
   Result := 0;
   repeat
-    Inc(Result, inherited Read(Data, Count - Result));
+    Inc(Result, inherited Read(@Data[Result], Count - Result));
 
     if Result < Count then
     begin
@@ -294,11 +296,6 @@ begin
         Break;
     end;
   until Result = Count;
-end;
-
-function TFileReader.Seek(Offset: longint; Origin: longint): longint;
-begin
-  inherited Seek(Offset, Origin);
 end;
 
 function TFileReader.Seek(const Offset: int64; Origin: longint): int64;
@@ -342,7 +339,11 @@ end;
 destructor TFileWriter.Destroy;
 begin
   if FSource <> -1 then
+  begin
+    FlushBuffer;
     FileClose(FSource);
+    FSource := -1;
+  end;
   inherited Destroy;
 end;
 
@@ -380,13 +381,6 @@ procedure TFileWriter.CreateNewImage(const aThreshold: int64);
 var
   Abort: boolean;
 begin
-  if FSource <> -1 then
-  begin
-    FlushBuffer;
-    FileClose(FSource);
-  end else
-    ClearBuffer;
-
   FThreshold := aThreshold;
   if FThreshold > 0 then
     // while GetDriveFreeSpace(FFileName) > 0 do
@@ -397,10 +391,23 @@ begin
       if Abort then Exit;
     end;
 
+  if FSource <> -1 then
+  begin
+    FlushBuffer;
+    FileClose(FSource);
+    FSource := -1;
+  end;
+
   RenameFile(FFileName, GetImageName(FCurrentImage));
   if ExtractFilePath(FFileName) <> '' then
     ForceDirectories(ExtractFilePath(FFileName));
   FSource := FileCreate(FFileName);
+
+  if FSource = -1 then
+    ExitCode := 102;
+
+  FBufferSize   := 0;
+  FBufferReaded := 0;
 
   FCurrentImageSize := 0;
   Inc(FCurrentImage);
@@ -477,13 +484,11 @@ end;
 
 function TFileWriter.WriteUnspanned(Data: PByte; Count: longint): longint;
 begin
-  Result     := inherited Write(Data, Count);
-  FThreshold := 0;
-end;
+  FileWrite(FSource, Data[0], Count);
 
-function TFileWriter.Seek(Offset: longint; Origin: longint): longint;
-begin
-  Result := inherited Seek(OffSet, Origin);
+
+  // Result     := inherited Write(Data, Count);
+  FThreshold := 0;
 end;
 
 function TFileWriter.Seek(const Offset: int64; Origin: longint): int64;
@@ -504,12 +509,6 @@ begin
   // nothing to do
 end;
 
-procedure TNulWriter.SetSize(NewSize: longint);
-begin
-  FNulPos  := NewSize;
-  FNulSize := NewSize;
-end;
-
 procedure TNulWriter.SetSize(const NewSize: int64);
 begin
   FNulPos  := NewSize;
@@ -524,16 +523,6 @@ begin
     FNulSize := FNulPos;
   end;
   Result := Count;
-end;
-
-function TNulWriter.Seek(Offset: longint; Origin: longint): longint;
-begin
-  case Origin of
-    fsFromBeginning: FNulPos := OffSet;
-    fsFromCurrent:   FNulPos := Min(FNulSize, FNulPos + Offset);
-    fsFromEnd:       FNulPos := Max(0, FNulPos - Offset);
-  end;
-  Result := FNulPos;
 end;
 
 function TNulWriter.Seek(const Offset: int64; Origin: longint): int64;

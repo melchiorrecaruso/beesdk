@@ -34,7 +34,8 @@ uses
   Classes;
 
 const
-  DefaultBufferCapacity: longint = $100000;
+  MinBufferCapacity = 1024;
+  MaxBufferCapacity = 1024 * 1024;
 
 type
   { TBufStream }
@@ -45,10 +46,11 @@ type
     FBufferSize: longint;
     FBufferReaded: longint;
     FBuffer: array of byte;
-    procedure ClearBuffer;
   public
     constructor Create(aSource: THandle);
     destructor Destroy; override;
+  public
+    procedure Optimize(const Size: int64);
   end;
 
   { TReadBufStream }
@@ -58,8 +60,7 @@ type
     procedure FillBuffer;
   public
     function Read(Data: PByte; Count: longint): longint; virtual;
-    function Seek(Offset: longint; Origin: longint): longint; virtual; overload;
-    function Seek(const Offset: int64; Origin: longint): int64; virtual; overload;
+    function Seek(const Offset: int64; Origin: longint): int64; virtual;
   end;
 
   { TWriteBufStream }
@@ -67,12 +68,10 @@ type
   TWriteBufStream = class(TBufStream)
   protected
     procedure FlushBuffer;
-    procedure SetSize(NewSize: longint); virtual; overload;
-    procedure SetSize(const NewSize: int64); virtual; overload;
+    procedure SetSize(const NewSize: int64); virtual;
   public
     function Write(Data: PByte; Count: longint): longint; virtual;
-    function Seek(Offset: longint; Origin: longint): longint; virtual; overload;
-    function Seek(const Offset: int64; Origin: longint): int64; virtual; overload;
+    function Seek(const Offset: int64; Origin: longint): int64; virtual;
   end;
 
 implementation
@@ -91,7 +90,7 @@ begin
   FSource := aSource;
   FBufferSize   := 0;
   FBufferReaded := 0;
-  SetLength(FBuffer, DefaultBufferCapacity);
+  SetLength(FBuffer, 4 * MinBufferCapacity);
 end;
 
 destructor TBufStream.Destroy;
@@ -100,10 +99,23 @@ begin
   inherited Destroy;
 end;
 
-procedure TBufStream.ClearBuffer;
+procedure TBufStream.Optimize(const Size: int64);
+var
+  I: longint;
 begin
-  FBufferSize   := 0;
-  FBufferReaded := 0;
+  I := MinBufferCapacity;
+  if Size > I then
+  begin
+    I := MaxBufferCapacity;
+    while (Size div I) = 0 do I := I div 2;
+  end;
+
+  if Length(FBuffer) <> I then
+  begin
+    FBufferSize   := 0;
+    FBufferReaded := 0;
+    SetLength(FBuffer, I);
+  end;
 end;
 
 { TReadBufStream class }
@@ -127,16 +139,6 @@ begin
   until Result = Count;
 end;
 
-function TReadBufStream.Seek(Offset: longint; Origin: longint): longint;
-begin
-  if (Origin = fsFromCurrent) and (OffSet = 0) then
-    OffSet := FBufferReaded - FBufferSize;
-
-  Result        := FileSeek(FSource, Offset, Origin);
-  FBufferSize   := 0;
-  FBufferReaded := 0;
-end;
-
 function TReadBufStream.Seek(const Offset: int64; Origin: longint): int64;
 var
   NewOffset: int64;
@@ -146,23 +148,20 @@ begin
   else
     NewOffset := Offset;
 
-  Result        := FileSeek(FSource, NewOffset, Origin);
   FBufferSize   := 0;
   FBufferReaded := 0;
+  Result        := FileSeek(FSource, NewOffset, Origin);
 end;
 
 procedure TReadBufStream.FillBuffer;
 begin
   FBufferReaded := 0;
-  FBufferSize   := FileRead(FSource, FBuffer[0], DefaultBufferCapacity);
-
-  if FBufferSize <> DefaultBufferCapacity then
-    Writeln('Fill BufferSize =', FBufferSize);
+  FBufferSize   := FileRead(FSource, FBuffer[0], Length(FBuffer));
 
   if FBufferSize = -1 then
   begin
     FBufferSize := 0;
-    ExitCode  := 103;
+    ExitCode    := 103;
   end;
 end;
 
@@ -174,23 +173,17 @@ var
 begin
   Result := 0;
   repeat
-    if FBufferSize = DefaultBufferCapacity then
+    if FBufferSize = Length(FBuffer) then
     begin
       FlushBuffer;
       // if...
     end;
-    I := Min(Count - Result, DefaultBufferCapacity - FBufferSize);
+    I := Min(Count - Result, Length(FBuffer) - FBufferSize);
 
     CopyBytes(Data[Result], FBuffer[FBufferSize], I);
     Inc(FBufferSize, I);
     Inc(Result, I);
   until Result = Count;
-end;
-
-function TWriteBufStream.Seek(Offset: longint; Origin: longint): longint;
-begin
-  FlushBuffer;
-  Result := FileSeek(FSource, Offset, Origin);
 end;
 
 function TWriteBufStream.Seek(const Offset: int64; Origin: longint): int64;
@@ -200,17 +193,19 @@ begin
 end;
 
 procedure TWriteBufStream.FlushBuffer;
+var
+  Err: longint;
 begin
-  if FileWrite(FSource, FBuffer[0], FBufferSize) <> FBufferSize then
+  if FBufferSize > 0 then
   begin
-    ExitCode := 160;
+    Err := FileWrite(FSource, FBuffer[0], FBufferSize);
+    if Err = -1 then
+      ExitCode := 103
+    else
+      if Err <> FBufferSize then
+       ExitCode := 160;
+    FBufferSize := 0;
   end;
-  FBufferSize := 0;
-end;
-
-procedure TWriteBufStream.SetSize(NewSize: longint);
-begin
-  FileTruncate(FSource, NewSize);
 end;
 
 procedure TWriteBufStream.SetSize(const NewSize: int64);

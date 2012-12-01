@@ -36,10 +36,9 @@ const
 
 
 const
-  emUnknow            = 'Process aborted, unknow error - time elapsed %s seconds.';
+  emUnknow            = 'Process aborted (error #%u) - time elapsed %s seconds.';
   emSuccesful         = 'Everything went ok - time elapsed %s seconds.';
   emWarning           = 'Warning occurred - time elapsed %s seconds.';
-  emError             = 'Process aborted - time elapsed %s seconds.';
   emUserAbort         = 'User stopped the process - time elapsed %s seconds.';
   emCmdError          = 'Command line error.';
 
