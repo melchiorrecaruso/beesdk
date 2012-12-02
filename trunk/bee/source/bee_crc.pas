@@ -38,7 +38,7 @@ interface
 
 { CRC32 calculating routines }
 
-procedure UpdateCRC32(var aCRC32: longword; var Data; DataSize: longint);
+procedure UpdateCRC32(var aCRC32: longword; Data: PByte; DataSize: longint);
 
 implementation
 
@@ -79,14 +79,13 @@ const
 
 { CRC32 calculating routines }
 
-procedure UpdateCRC32(var aCRC32: longword; var Data; DataSize: longint);
+procedure UpdateCRC32(var aCRC32: longword; Data: PByte; DataSize: longint);
 var
-  Bytes: array [0..$FFFFFFF] of byte absolute Data;
   I: longint;
 begin
   for I := 0 to (DataSize - 1) do
   begin
-    aCRC32 := CRC32Tab[byte(aCRC32 xor Bytes[I])] xor (aCRC32 shr 8);
+    aCRC32 := CRC32Tab[byte(aCRC32 xor Data[I])] xor (aCRC32 shr 8);
   end;
 end;
 

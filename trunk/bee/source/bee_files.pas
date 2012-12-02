@@ -287,6 +287,11 @@ begin
   end;
 end;
 
+function TFileReader.ReadDirect(Data: PByte; Count: longint): longint;
+begin
+  Result := FileRead(FSource, Data[0], Count);
+end;
+
 function TFileReader.Read(Data: PByte; Count: longint): longint;
 begin
   Result := 0;
@@ -463,6 +468,12 @@ begin
     Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [ImageNumber]))
   else
     Result := FFileName;
+end;
+
+
+function TFileWriter.WriteDirect(Data: PByte; Count: longint): longint;
+begin
+  Result := FileWrite(FSource, Data, Count);
 end;
 
 function TFileWriter.Write(Data: PByte; Count: longint): longint;

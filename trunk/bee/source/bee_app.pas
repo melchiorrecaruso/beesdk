@@ -205,7 +205,7 @@ end;
 
 procedure TBeeApp.DoProgress(Percentage: longint);
 begin
-  // Write(#8#8#8#8#8#8, Format('(%3d%%)', [Percentage]));
+  Write(#8#8#8#8#8#8, Format('(%3d%%)', [Percentage]));
 end;
 
 procedure TBeeApp.DoExtract(Item: TArchiveItem;
