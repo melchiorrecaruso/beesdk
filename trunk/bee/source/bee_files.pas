@@ -68,10 +68,6 @@ type
     function ReadDWord: dword;
     function ReadInfWord: qword;
     function ReadInfString: string;
-
-
-    function ReadDirect(Data: PByte; Count: longint): longint;
-
     function Read(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
     procedure SeekImage(aImageNumber: longint; const Offset: int64);
@@ -107,9 +103,6 @@ type
     procedure WriteDWord(Data: dword);
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
-
-    function WriteDirect(Data: PByte; Count: longint): longint; virtual;
-
     function WriteUnspanned(Data: PByte; Count: longint): longint;
     function Write(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
@@ -136,8 +129,6 @@ type
     destructor Destroy; override;
     function Write(Data: PByte; Count: longint): longint;  override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
-
-    function WriteDirect(Data: PByte; Count: longint): longint; override;
   end;
 
   { TCustomSearchRec }
@@ -287,11 +278,6 @@ begin
   begin
     Read(@Result[1], Len);
   end;
-end;
-
-function TFileReader.ReadDirect(Data: PByte; Count: longint): longint;
-begin
-  Result := FileRead(FSource, Data[0], Count);
 end;
 
 function TFileReader.Read(Data: PByte; Count: longint): longint;
@@ -472,11 +458,6 @@ begin
     Result := FFileName;
 end;
 
-function TFileWriter.WriteDirect(Data: PByte; Count: longint): longint;
-begin
-  Result := FileWrite(FSource, Data[0], Count);
-end;
-
 function TFileWriter.Write(Data: PByte; Count: longint): longint;
 var
   I: longint;
@@ -539,11 +520,6 @@ begin
     FNulSize := FNulPos;
   end;
   Result := Count;
-end;
-
-function TNulWriter.WriteDirect(Data: PByte; Count: longint): longint;
-begin
-  Result := Write(Data, Count);
 end;
 
 function TNulWriter.Seek(const Offset: int64; Origin: longint): int64;
