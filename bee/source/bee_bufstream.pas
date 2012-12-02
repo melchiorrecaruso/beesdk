@@ -102,7 +102,7 @@ constructor TBufStream.Create(aSource: THandle);
 begin
   inherited Create;
   FSource := aSource;
-  SetCapacity(4 * MinBufferCapacity);
+  SetCapacity(4*MinBufferCapacity);
 end;
 
 destructor TBufStream.Destroy;
@@ -130,6 +130,13 @@ function TReadBufStream.Read(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
+  if FBufferReaded = FBufferSize then
+    if (Count mod Length(FBuffer)) = 0 then
+    begin
+      Result := FileRead(FSource, Data[0], Count);
+      Exit;
+    end;
+
   Result := 0;
   repeat
     if FBufferReaded = FBufferSize then
@@ -177,6 +184,13 @@ function TWriteBufStream.Write(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
+  if FBufferSize = 0 then
+    if (Count mod Length(FBuffer)) = 0 then
+    begin
+      Result := FileWrite(FSource, Data[0], Count);
+      Exit;
+    end;
+
   Result := 0;
   repeat
     if FBufferSize = Length(FBuffer) then

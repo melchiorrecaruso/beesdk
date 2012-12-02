@@ -103,12 +103,12 @@ uses
 constructor THeaderCoder.Create;
 begin
   inherited Create;
-  SetLength(FBuffer, 0);
+  FBuffer := nil;
 end;
 
 destructor THeaderCoder.Destroy;
 begin
-  SetLength(FBuffer, 0);
+  FBuffer := nil;
   inherited Destroy;
 end;
 
@@ -184,6 +184,7 @@ begin
     UpdateCRC32(CRC,        @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
+    FBuffer := nil;
   end;
 end;
 
@@ -213,6 +214,7 @@ begin
     UpdateCRC32(CRC,            @FBuffer[0], Readed);
     Inc(Result, Readed);
     DoProgress(Readed);
+    FBuffer := nil;
     RangeEncoder_FinishEncode(FCoder);
   end;
 end;
@@ -260,6 +262,7 @@ begin
     UpdateCRC32(CRC,       @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
+    FBuffer := nil;
   end;
 end;
 
@@ -289,6 +292,7 @@ begin
     UpdateCRC32(CRC,            @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
+    FBuffer := nil;
     RangeDecoder_FinishDecode(FCoder);
   end;
 end;

@@ -99,7 +99,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="97"/>
         <CursorPos X="42" Y="117"/>
-        <FoldState Value=" T3l80IG"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -123,7 +122,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="500"/>
         <CursorPos X="5" Y="523"/>
-        <FoldState Value=" T3l103126 pidjf03B9"/>
+        <FoldState Value=" T3l103126@"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -142,12 +141,13 @@
       <Unit5>
         <Filename Value="bee_bufstream.pas"/>
         <UnitName Value="Bee_BufStream"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="67"/>
-        <CursorPos X="33" Y="85"/>
-        <FoldState Value=" T3jE058 pj3jU03~"/>
-        <UsageCount Value="55"/>
+        <TopLine Value="169"/>
+        <CursorPos X="1" Y="193"/>
+        <FoldState Value=" T3jL0411213o"/>
+        <UsageCount Value="56"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
@@ -158,19 +158,18 @@
         <WindowIndex Value="0"/>
         <TopLine Value="28"/>
         <CursorPos X="11" Y="73"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="246"/>
-        <CursorPos X="1" Y="275"/>
-        <UsageCount Value="40"/>
+        <TopLine Value="163"/>
+        <CursorPos X="37" Y="167"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
@@ -181,7 +180,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
@@ -192,12 +191,12 @@
         <WindowIndex Value="0"/>
         <TopLine Value="19"/>
         <CursorPos X="22" Y="28"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="bee_files.pas"/>
         <Caret Line="476" Column="33" TopLine="391"/>
@@ -314,6 +313,10 @@
         <Filename Value="bee_mainpacker.pas"/>
         <Caret Line="247" Column="52" TopLine="238"/>
       </Position29>
+      <Position30>
+        <Filename Value="bee_bufstream.pas"/>
+        <Caret Line="190" Column="26" TopLine="169"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
