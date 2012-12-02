@@ -50,6 +50,7 @@ type
 
   THeaderCoder = class
   private
+    FBuffer: array of byte;
     FCoder: pointer;
     FModeller: pointer;
     FDictionaryLevel: longint;
@@ -59,6 +60,8 @@ type
     procedure SetCompressionTable(const Value: TTableParameters);
     procedure DoProgress(Value: longint);
   public
+    constructor Create;
+    destructor Destroy; override;
     procedure FreshModeller(SolidCompression: boolean);
   public
     property DictionaryLevel: longint read FDictionaryLevel write SetDictionaryLevel;
@@ -93,9 +96,21 @@ type
 implementation
 
 uses
-  Bee_Crc;
+  Bee_Crc, Bee_BufStream;
 
 /// THeaderCoder class
+
+constructor THeaderCoder.Create;
+begin
+  inherited Create;
+  SetLength(FBuffer, 0);
+end;
+
+destructor THeaderCoder.Destroy;
+begin
+  SetLength(FBuffer, 0);
+  inherited Destroy;
+end;
 
 procedure THeaderCoder.DoProgress(Value: longint);
 begin
@@ -148,62 +163,54 @@ var
   Count:  int64;
   Readed: longint;
   Writed: longint;
-  Buffer: array of byte;
 begin
-  SetLength(Buffer, 1024*1024);
-
   Result := 0;
   CRC    := longword(-1);
   if Size > 0 then
   begin
-    Count  := Size div Length(Buffer);
+    SetLength(FBuffer, GetCapacity(Size));
+    Count  := Size div Length(FBuffer);
     while (Count <> 0) and (ExitCode = 0) do
     begin
-      Readed :=  Stream.Read (@Buffer[0], Length(Buffer));
-      Writed := FStream.Write(@Buffer[0], Readed);
-      UpdateCrc32(CRC, @Buffer[0], Writed);
+      Readed :=  Stream.Read (@FBuffer[0], Length(FBuffer));
+      Writed := FStream.Write(@FBuffer[0], Readed);
+      UpdateCrc32(CRC,        @FBuffer[0], Writed);
       Inc(Result, Writed);
       DoProgress(Writed);
       Dec(Count);
     end;
-
-    if (Size mod Length(Buffer)) > 0 then
-    begin
-      Readed :=  Stream.Read (@Buffer[0], Size mod Length(Buffer));
-      Writed := FStream.Write(@Buffer[0], Readed);
-      UpdateCRC32(CRC, @Buffer[0], Writed);
-      Inc(Result, Writed);
-      DoProgress(Writed);
-    end;
+    Readed :=  Stream.Read (@FBuffer[0], Size mod Length(FBuffer));
+    Writed := FStream.Write(@FBuffer[0], Readed);
+    UpdateCRC32(CRC,        @FBuffer[0], Writed);
+    Inc(Result, Writed);
+    DoProgress(Writed);
   end;
-
-  SetLength(Buffer, 0);
 end;
 
 function THeaderEncoder.Encode(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
 var
   Count:  int64;
   Readed: longint;
-  Buffer: array[0..$FFFF] of byte;
 begin
   Result := 0;
   CRC    := longword(-1);
   if Size > 0 then
   begin
     RangeEncoder_StartEncode(FCoder);
-    Count  := Size div SizeOf(Buffer);
+    SetLength(FBuffer, GetCapacity(Size));
+    Count  := Size div Length(FBuffer);
     while (Count <> 0) and (ExitCode = 0) do
     begin
-      Readed := Stream.Read(Buffer, SizeOf(Buffer));
-      BaseCoder_Encode(FModeller, @Buffer, Readed);
-      UpdateCrc32(CRC, Buffer, Readed);
+      Readed := Stream.Read      (@FBuffer[0], Length(FBuffer));
+      BaseCoder_Encode(FModeller, @FBuffer[0], Readed);
+      UpdateCrc32(CRC,            @FBuffer[0], Readed);
       Inc(Result, Readed);
       DoProgress(Readed);
       Dec(Count);
     end;
-    Readed := Stream.Read(Buffer, Size mod SizeOf(Buffer));
-    BaseCoder_Encode(FModeller, @Buffer, Readed);
-    UpdateCRC32(CRC, Buffer, Readed);
+    Readed := Stream.Read      (@FBuffer[0], Size mod Length(FBuffer));
+    BaseCoder_Encode(FModeller, @FBuffer[0], Readed);
+    UpdateCRC32(CRC,            @FBuffer[0], Readed);
     Inc(Result, Readed);
     DoProgress(Readed);
     RangeEncoder_FinishEncode(FCoder);
@@ -232,62 +239,54 @@ var
   Count:  int64;
   Readed: longint;
   Writed: longint;
-  Buffer: array of byte;
 begin
-  SetLength(Buffer, 1024*1024);
-
   Result := 0;
   CRC    := longword(-1);
   if Size > 0 then
   begin
-    Count  := Size div Length(Buffer);
+    SetLength(FBuffer, GetCapacity(Size));
+    Count  := Size div Length(FBuffer);
     while (Count <> 0) and (ExitCode = 0) do
     begin
-      Readed := FStream.Read(@Buffer[0], Length(Buffer));
-      Writed := Stream.Write(@Buffer[0], Readed);
-      UpdateCrc32(CRC, @Buffer[0], Writed);
+      Readed := FStream.Read(@FBuffer[0], Length(FBuffer));
+      Writed := Stream.Write(@FBuffer[0], Readed);
+      UpdateCrc32(CRC,       @FBuffer[0], Writed);
       Inc(Result, Writed);
       DoProgress(Writed);
       Dec(Count);
     end;
-
-    if (Size mod Length(Buffer)) > 0 then
-    begin
-      Readed := FStream.Read(@Buffer[0], Size mod Length(Buffer));
-      Writed := Stream.Write(@Buffer[0], Readed);
-      UpdateCRC32(CRC, @Buffer[0], Writed);
-      Inc(Result, Writed);
-      DoProgress(Writed);
-    end;
+    Readed := FStream.Read(@FBuffer[0], Size mod Length(FBuffer));
+    Writed := Stream.Write(@FBuffer[0], Readed);
+    UpdateCRC32(CRC,       @FBuffer[0], Writed);
+    Inc(Result, Writed);
+    DoProgress(Writed);
   end;
-
-  SetLength(Buffer, 0);
 end;
 
 function THeaderDecoder.Decode(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
 var
   Count:  int64;
   Writed: longint;
-  Buffer: array[0..$FFFF] of byte;
 begin
   Result := 0;
   CRC    := longword(-1);
   if Size > 0 then
   begin
     RangeDecoder_StartDecode(FCoder);
-    Count  := Size div SizeOf(Buffer);
+    SetLength(FBuffer, GetCapacity(Size));
+    Count  := Size div Length(FBuffer);
     while (Count <> 0) and (ExitCode = 0) do
     begin
-      BaseCoder_Decode(FModeller, @Buffer, SizeOf(Buffer));
-      Writed := Stream.Write(Buffer, SizeOf(Buffer));
-      UpdateCrc32(CRC, Buffer, Writed);
+      BaseCoder_Decode(FModeller, @FBuffer[0], Length(FBuffer));
+      Writed := Stream.Write(     @FBuffer[0], Length(FBuffer));
+      UpdateCrc32(CRC,            @FBuffer[0], Writed);
       Inc(Result, Writed);
       DoProgress(Writed);
       Dec(Count);
     end;
-    BaseCoder_Decode(FModeller, @Buffer, Size mod SizeOf(Buffer));
-    Writed := Stream.Write(Buffer, Size mod SizeOf(Buffer));
-    UpdateCRC32(CRC, Buffer, Writed);
+    BaseCoder_Decode(FModeller, @FBuffer[0], Size mod Length(FBuffer));
+    Writed := Stream.Write(     @FBuffer[0], Size mod Length(FBuffer));
+    UpdateCRC32(CRC,            @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
     RangeDecoder_FinishDecode(FCoder);
