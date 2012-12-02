@@ -95,6 +95,7 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="206"/>
@@ -107,11 +108,10 @@
       <Unit2>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1417"/>
-        <CursorPos X="43" Y="1432"/>
+        <CursorPos X="44" Y="1431"/>
         <FoldState Value=" T3-U0Hf"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
@@ -122,9 +122,9 @@
         <UnitName Value="Bee_Files"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="348"/>
-        <CursorPos X="51" Y="371"/>
-        <FoldState Value=" T3l10312114k"/>
+        <TopLine Value="76"/>
+        <CursorPos X="19" Y="111"/>
+        <FoldState Value=" T3l80312114s"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>

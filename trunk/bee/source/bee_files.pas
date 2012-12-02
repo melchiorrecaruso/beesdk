@@ -68,6 +68,10 @@ type
     function ReadDWord: dword;
     function ReadInfWord: qword;
     function ReadInfString: string;
+
+
+    function ReadDirect(Data: PByte; Count: longint): longint;
+
     function Read(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
     procedure SeekImage(aImageNumber: longint; const Offset: int64);
@@ -103,6 +107,9 @@ type
     procedure WriteDWord(Data: dword);
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
+
+    function WriteDirect(Data: PByte; Count: longint): longint;
+
     function WriteUnspanned(Data: PByte; Count: longint): longint;
     function Write(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
