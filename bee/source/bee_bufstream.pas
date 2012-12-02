@@ -43,14 +43,13 @@ type
   TBufStream = class(TObject)
   protected
     FSource: THandle;
-    FPosition: int64;
     FBufferSize: longint;
     FBufferReaded: longint;
     FBuffer: array of byte;
   public
     constructor Create(aSource: THandle);
     destructor Destroy; override;
-    procedure Optimize(const Size: int64);
+    function SetCapacity(Value: longint): longint;
   public
 
   end;
@@ -76,6 +75,8 @@ type
     function Seek(const Offset: int64; Origin: longint): int64; virtual;
   end;
 
+  function GetCapacity(const Size: int64): longint;
+
 implementation
 
 uses
@@ -84,16 +85,24 @@ uses
   Bee_Assembler,
   Bee_Interface;
 
+function GetCapacity(const Size: int64): longint;
+begin
+  Result := MinBufferCapacity;
+  if Size > Result then
+  begin
+    Result := MaxBufferCapacity;
+    while (Size div Result) = 0 do
+      Result := Result div 2;
+  end;
+end;
+
 { TBufStream class }
 
 constructor TBufStream.Create(aSource: THandle);
 begin
   inherited Create;
   FSource := aSource;
-  FPosition     := 0;
-  FBufferSize   := 0;
-  FBufferReaded := 0;
-  SetLength(FBuffer, 4 * MinBufferCapacity);
+  SetCapacity(4 * MinBufferCapacity);
 end;
 
 destructor TBufStream.Destroy;
@@ -102,23 +111,17 @@ begin
   inherited Destroy;
 end;
 
-procedure TBufStream.Optimize(const Size: int64);
-var
-  I: longint;
+function TBufStream.SetCapacity(Value: longint): longint;
 begin
-  I := MinBufferCapacity;
-  if Size > I then
-  begin
-    I := MaxBufferCapacity;
-    while (Size div I) = 0 do I := I div 2;
-  end;
-
-  if Length(FBuffer) <> I then
-  begin
-    FBufferSize   := 0;
-    FBufferReaded := 0;
-    SetLength(FBuffer, I);
-  end;
+  if Value >= MinBufferCapacity then
+    if Value <= MaxBufferCapacity then
+      if Length(FBuffer) <> Value then
+      begin
+        SetLength(FBuffer, Value);
+        FBufferReaded := 0;
+        FBufferSize   := 0;
+      end;
+  Result := Length(FBuffer);
 end;
 
 { TReadBufStream class }
@@ -187,24 +190,12 @@ begin
     Inc(FBufferSize, I);
     Inc(Result, I);
   until Result = Count;
-
-  Inc(FPosition, Result);
 end;
 
 function TWriteBufStream.Seek(const Offset: int64; Origin: longint): int64;
 begin
-
-  if (Origin = fsFromCurrent) and (OffSet = 0) then
-  begin
-    Result := FPosition;
-    Exit;
-  end;
-
-
   FlushBuffer;
   Result := FileSeek(FSource, Offset, Origin);
-
-  FPosition := Result;
 end;
 
 procedure TWriteBufStream.FlushBuffer;
@@ -213,10 +204,6 @@ var
 begin
   if FBufferSize > 0 then
   begin
-
-    // if FBufferSize <> Length(FBuffer) then Writeln(FBufferSize);
-
-
     Err := FileWrite(FSource, FBuffer[0], FBufferSize);
     if Err = -1 then
       ExitCode := 103

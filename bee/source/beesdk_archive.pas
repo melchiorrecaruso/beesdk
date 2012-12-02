@@ -1428,8 +1428,8 @@ begin
   Stream := TFileReader.Create(Item.FExternalFileName, nil);
   if Stream <> nil then
   begin
-    FTempWriter.Optimize(1024*1024*5);
-    Stream.Optimize(Item.FExternalFileSize);
+    // FTempWriter.Optimize(1024*1024*5);
+    // Stream.Optimize(Item.FExternalFileSize);
 
 
 
