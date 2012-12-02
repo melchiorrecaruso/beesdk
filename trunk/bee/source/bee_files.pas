@@ -108,7 +108,7 @@ type
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
 
-    function WriteDirect(Data: PByte; Count: longint): longint;
+    function WriteDirect(Data: PByte; Count: longint): longint; virtual;
 
     function WriteUnspanned(Data: PByte; Count: longint): longint;
     function Write(Data: PByte; Count: longint): longint; override;
@@ -136,6 +136,8 @@ type
     destructor Destroy; override;
     function Write(Data: PByte; Count: longint): longint;  override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
+
+    function WriteDirect(Data: PByte; Count: longint): longint; override;
   end;
 
   { TCustomSearchRec }
@@ -470,10 +472,9 @@ begin
     Result := FFileName;
 end;
 
-
 function TFileWriter.WriteDirect(Data: PByte; Count: longint): longint;
 begin
-  Result := FileWrite(FSource, Data, Count);
+  Result := FileWrite(FSource, Data[0], Count);
 end;
 
 function TFileWriter.Write(Data: PByte; Count: longint): longint;
@@ -538,6 +539,11 @@ begin
     FNulSize := FNulPos;
   end;
   Result := Count;
+end;
+
+function TNulWriter.WriteDirect(Data: PByte; Count: longint): longint;
+begin
+  Result := Write(Data, Count);
 end;
 
 function TNulWriter.Seek(const Offset: int64; Origin: longint): int64;

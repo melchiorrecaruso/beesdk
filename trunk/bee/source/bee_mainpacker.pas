@@ -150,9 +150,7 @@ var
   Writed: longint;
   Buffer: array of byte;
 begin
-  SetLength(Buffer, 4096);
-
-  Writeln(Length(Buffer));
+  SetLength(Buffer, 1024*1024);
 
   Result := 0;
   CRC    := longword(-1);
@@ -234,28 +232,36 @@ var
   Count:  int64;
   Readed: longint;
   Writed: longint;
-  Buffer: array[0..$FFFF] of byte;
+  Buffer: array of byte;
 begin
+  SetLength(Buffer, 1024*1024);
+
   Result := 0;
   CRC    := longword(-1);
   if Size > 0 then
   begin
-    Count  := Size div SizeOf(Buffer);
+    Count  := Size div Length(Buffer);
     while (Count <> 0) and (ExitCode = 0) do
     begin
-      Readed := FStream.Read(Buffer, SizeOf(Buffer));
-      Writed := Stream.Write(Buffer, Readed);
-      UpdateCrc32(CRC, Buffer, Writed);
+      Readed := FStream.Read(@Buffer[0], Length(Buffer));
+      Writed := Stream.Write(@Buffer[0], Readed);
+      UpdateCrc32(CRC, @Buffer[0], Writed);
       Inc(Result, Writed);
       DoProgress(Writed);
       Dec(Count);
     end;
-    Readed := FStream.Read(Buffer, Size mod SizeOf(Buffer));
-    Writed := Stream.Write(Buffer, Readed);
-    UpdateCRC32(CRC, Buffer, Writed);
-    Inc(Result, Writed);
-    DoProgress(Writed);
+
+    if (Size mod Length(Buffer)) > 0 then
+    begin
+      Readed := FStream.Read(@Buffer[0], Size mod Length(Buffer));
+      Writed := Stream.Write(@Buffer[0], Readed);
+      UpdateCRC32(CRC, @Buffer[0], Writed);
+      Inc(Result, Writed);
+      DoProgress(Writed);
+    end;
   end;
+
+  SetLength(Buffer, 0);
 end;
 
 function THeaderDecoder.Decode(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
