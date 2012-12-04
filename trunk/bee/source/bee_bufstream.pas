@@ -33,10 +33,6 @@ interface
 uses
   Classes;
 
-const
-  MinBufferCapacity = 1024;
-  MaxBufferCapacity = 1024 * 1024;
-
 type
   { TBufStream }
 
@@ -85,7 +81,13 @@ uses
   Bee_Assembler,
   Bee_Interface;
 
+const
+  DefaultBufferCapacity = 4096;
+
 function GetCapacity(const Size: int64): longint;
+const
+  MinBufferCapacity = 1024;
+  MaxBufferCapacity = 1024 * 1024;
 begin
   Result := MinBufferCapacity;
   if Size > Result then
@@ -105,7 +107,7 @@ begin
   FPosition     := 0;
   FBufferSize   := 0;
   FBufferReaded := 0;
-  SetLength(FBuffer, 4*MinBufferCapacity);
+  SetLength(FBuffer, DefaultBufferCapacity);
 end;
 
 destructor TBufStream.Destroy;
@@ -120,26 +122,19 @@ function TReadBufStream.Read(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
-  if (FBufferReaded = FBufferSize) and ((Count mod Length(FBuffer)) = 0) then
-  begin
-    Result := FileRead(FSource, Data[0], Count);
-  end else
-  begin
+  Result := 0;
+  repeat
+    if FBufferReaded = FBufferSize then
+    begin
+      FillBuffer;
+      if FBufferSize = 0 then Break;
+    end;
+    I := Min(Count - Result, FBufferSize - FBufferReaded);
 
-    Result := 0;
-    repeat
-      if FBufferReaded = FBufferSize then
-      begin
-        FillBuffer;
-        if FBufferSize = 0 then Break;
-      end;
-      I := Min(Count - Result, FBufferSize - FBufferReaded);
-
-      CopyBytes(FBuffer[FBufferReaded], Data[Result], I);
-      Inc(FBufferReaded, I);
-      Inc(Result, I);
-    until Result = Count;
-  end;
+    Move(FBuffer[FBufferReaded], Data[Result], I);
+    Inc(FBufferReaded, I);
+    Inc(Result, I);
+  until Result = Count;
 
   Inc(FPosition, Result);
 end;
@@ -178,14 +173,6 @@ function TWriteBufStream.Write(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
-  if FBufferSize = 0 then
-    if (Count mod Length(FBuffer)) = 0 then
-    begin
-      Result := FileWrite(FSource, Data[0], Count);
-      Inc(FPosition, Result);
-      Exit;
-    end;
-
   Result := 0;
   repeat
     if FBufferSize = Length(FBuffer) then
@@ -195,7 +182,7 @@ begin
     end;
     I := Min(Count - Result, Length(FBuffer) - FBufferSize);
 
-    CopyBytes(Data[Result], FBuffer[FBufferSize], I);
+    Move(Data[Result], FBuffer[FBufferSize], I);
     Inc(FBufferSize, I);
     Inc(Result, I);
   until Result = Count;
