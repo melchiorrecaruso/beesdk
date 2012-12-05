@@ -97,7 +97,6 @@ type
     constructor Create(const aFileName: string; const aThreshold: int64;
       aRequestBlankDisk: TFileWriterRequestBlankDiskEvent);
     destructor Destroy; override;
-    procedure Flush;
 
     procedure CreateNewImage(const aThreshold: int64);
     procedure WriteDWord(Data: dword);
@@ -196,10 +195,10 @@ end;
 
 destructor TFileReader.Destroy;
 begin
-  if FSource <> -1 then
+  if FHandle <> -1 then
   begin
-    FileClose(FSource);
-    FSource := -1;
+    FileClose(FHandle);
+    FHandle := -1;
   end;
   inherited Destroy;
 end;
@@ -232,14 +231,14 @@ begin
       FBufferSize   := 0;
       FBufferReaded := 0;
 
-      if FSource <> -1 then
+      if FHandle <> -1 then
       begin
-        FileClose(FSource);
-        FSource := -1;
+        FileClose(FHandle);
+        FHandle := -1;
       end;
 
-      FSource := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
-      if FSource = -1 then
+      FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
+      if FHandle = -1 then
         ExitCode := 102;
     end;
 end;
@@ -338,18 +337,13 @@ end;
 
 destructor TFileWriter.Destroy;
 begin
-  if FSource <> -1 then
+  if FHandle <> -1 then
   begin
     FlushBuffer;
-    FileClose(FSource);
-    FSource := -1;
+    FileClose(FHandle);
+    FHandle := -1;
   end;
   inherited Destroy;
-end;
-
-procedure TFileWriter.Flush;
-begin
-  FlushBuffer;
 end;
 
 function TFileWriter.GetCurrentImage: longword;
@@ -391,19 +385,19 @@ begin
       if Abort then Exit;
     end;
 
-  if FSource <> -1 then
+  if FHandle <> -1 then
   begin
     FlushBuffer;
-    FileClose(FSource);
-    FSource := -1;
+    FileClose(FHandle);
+    FHandle := -1;
   end;
 
   RenameFile(FFileName, GetImageName(FCurrentImage));
   if ExtractFilePath(FFileName) <> '' then
     ForceDirectories(ExtractFilePath(FFileName));
-  FSource := FileCreate(FFileName);
+  FHandle := FileCreate(FFileName);
 
-  if FSource = -1 then
+  if FHandle = -1 then
     ExitCode := 102;
 
   FBufferSize   := 0;
