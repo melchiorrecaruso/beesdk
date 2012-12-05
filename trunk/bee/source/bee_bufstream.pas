@@ -42,12 +42,11 @@ type
     FPosition: int64;
     FBufferSize: longint;
     FBufferReaded: longint;
-    FBuffer: array of byte;
   public
     constructor Create(aSource: THandle);
     destructor Destroy; override;
   public
-
+    FBuffer: array of byte;
   end;
 
   { TReadBufStream }
