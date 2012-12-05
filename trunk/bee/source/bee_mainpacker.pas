@@ -172,20 +172,16 @@ begin
     Count  := Size div Length(FBuffer);
     while (Count <> 0) and (ExitCode = 0) do
     begin
-    Readed := FileRead ( Stream.Handle, FBuffer[0], Length(FBuffer));
-    Writed := FileWrite(FStream.Handle, FBuffer[0], Length(FBuffer));
-    //Readed :=  Stream.Read (@FBuffer[0], Length(FBuffer));
-    //Writed := FStream.Write(@FBuffer[0], Readed);
+      Readed :=  Stream.Read (@FBuffer[0], Length(FBuffer));
+      Writed := FStream.Write(@FBuffer[0], Readed);
       UpdateCrc32(CRC,        @FBuffer[0], Writed);
       Inc(Result, Writed);
       DoProgress(Writed);
       Dec(Count);
     end;
-  Readed := FileRead ( Stream.Handle, FBuffer[0], Length(FBuffer));
-  Writed := FileWrite(FStream.Handle, FBuffer[0], Length(FBuffer));
-  //Readed :=  Stream.Read (@FBuffer[0], Size mod Length(FBuffer));
-  //Writed := FStream.Write(@FBuffer[0], Readed);
-    UpdateCRC32(CRC,        @FBuffer[0], Writed);
+      Readed :=  Stream.Read (@FBuffer[0], Size mod Length(FBuffer));
+      Writed := FStream.Write(@FBuffer[0], Readed);
+    UpdateCRC32(CRC,          @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
   end;
@@ -253,16 +249,16 @@ begin
     Count  := Size div Length(FBuffer);
     while (Count <> 0) and (ExitCode = 0) do
     begin
-      Readed := FStream.Read(@FBuffer[0], Length(FBuffer));
-      Writed := Stream.Write(@FBuffer[0], Readed);
-      UpdateCrc32(CRC,       @FBuffer[0], Writed);
+      Readed := FStream.Read (@FBuffer[0], Length(FBuffer));
+      Writed :=  Stream.Write(@FBuffer[0], Readed);
+      UpdateCrc32(CRC,        @FBuffer[0], Writed);
       Inc(Result, Writed);
       DoProgress(Writed);
       Dec(Count);
     end;
-    Readed := FStream.Read(@FBuffer[0], Size mod Length(FBuffer));
-    Writed := Stream.Write(@FBuffer[0], Readed);
-    UpdateCRC32(CRC,       @FBuffer[0], Writed);
+    Readed := FStream.Read (@FBuffer[0], Size mod Length(FBuffer));
+    Writed :=  Stream.Write(@FBuffer[0], Readed);
+    UpdateCRC32(CRC,        @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
     FBuffer := nil;

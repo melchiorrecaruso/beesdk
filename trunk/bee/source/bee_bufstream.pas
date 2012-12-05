@@ -46,9 +46,7 @@ type
   public
     constructor Create(aSource: THandle);
     destructor Destroy; override;
-  public
     procedure SetCapacity(Value: longint);
-    property Handle: THandle read FHandle;
   end;
 
   { TReadBufStream }
@@ -84,7 +82,7 @@ uses
 
 const
   MinBufferCapacity = 1024;
-  MaxBufferCapacity = 1024 * 1024;
+  MaxBufferCapacity = 1024*1024;
   DefBufferCapacity = 4096;
 
 function GetCapacity(const Size: int64): longint;
