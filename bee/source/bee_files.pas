@@ -198,7 +198,6 @@ begin
   if FHandle <> -1 then
   begin
     FileClose(FHandle);
-    FHandle := -1;
   end;
   inherited Destroy;
 end;
@@ -228,13 +227,11 @@ begin
         if Abort then Exit;
       end;
 
-      FBufferSize   := 0;
-      FBufferReaded := 0;
 
+      ClearBuffer;
       if FHandle <> -1 then
       begin
         FileClose(FHandle);
-        FHandle := -1;
       end;
 
       FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
@@ -400,8 +397,7 @@ begin
   if FHandle = -1 then
     ExitCode := 102;
 
-  FBufferSize   := 0;
-  FBufferReaded := 0;
+  ClearBuffer;
 
   FCurrentImageSize := 0;
   Inc(FCurrentImage);
