@@ -39,11 +39,9 @@ type
   TBufStream = class(TObject)
   protected
     FHandle: THandle;
-    FPosition: int64;
     FBufferSize: longint;
     FBufferIndex: longint;
     FBuffer: array of byte;
-    procedure ClearBuffer;
   public
     constructor Create(aHandle: THandle);
     destructor Destroy; override;
@@ -54,20 +52,27 @@ type
   TReadBufStream = class(TBufStream)
   protected
     procedure FillBuffer;
+    procedure ClearBuffer;
   public
+    constructor Create(aHandle: THandle);
     function Read(Data: PByte; Count: longint): longint; virtual;
-    function Seek(const Offset: int64; Origin: longint): int64; virtual;
+    procedure SeekFromBeginning(const Offset: int64); virtual;
+    procedure SeekFromEnd      (const Offset: int64); virtual;
   end;
 
   { TWriteBufStream }
 
   TWriteBufStream = class(TBufStream)
+  private
+    FPosition: int64;
   protected
+    procedure FlushBuffer;
+    procedure ClearBuffer;
     procedure SetSize(const NewSize: int64); virtual;
   public
-    procedure FlushBuffer;
+    constructor Create(aHandle: THandle);
     function Write(Data: PByte; Count: longint): longint; virtual;
-    function Seek(const Offset: int64; Origin: longint): int64; virtual;
+    function SeekFromCurrent: int64; virtual;
   end;
 
   function GetCapacity(const Size: int64): longint;
@@ -102,9 +107,7 @@ constructor TBufStream.Create(aHandle: THandle);
 begin
   inherited Create;
   FHandle := aHandle;
-
-  ClearBuffer;
-  SetLength(FBuffer, DefBufferCapacity);
+  SetLength(FBuffer, 0);
 end;
 
 destructor TBufStream.Destroy;
@@ -113,20 +116,28 @@ begin
   inherited Destroy;
 end;
 
-procedure TBufStream.ClearBuffer;
+{ TReadBufStream class }
+
+constructor TReadBufStream.Create(aHandle: THandle);
 begin
-  FPosition    := 0;
+  inherited Create(aHandle);
+  if FHandle = -1 then
+    ExitCode := 102;
+
+  ClearBuffer;
+  SetLength(FBuffer, DefBufferCapacity);
+end;
+
+procedure TReadBufStream.ClearBuffer;
+begin
   FBufferSize  := 0;
   FBufferIndex := 0;
 end;
-
-{ TReadBufStream class }
 
 function TReadBufStream.Read(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
-
   Result := 0;
   repeat
     if FBufferIndex = FBufferSize then
@@ -140,20 +151,20 @@ begin
     Inc(FBufferIndex, I);
     Inc(Result, I);
   until Result = Count;
-  //Inc(FPosition, Result);
 end;
 
-function TReadBufStream.Seek(const Offset: int64; Origin: longint): int64;
+procedure TReadBufStream.SeekFromBeginning(const Offset: int64);
 begin
-  //if (Origin <> fsFromBeginning) or (Offset <> FPosition) then
-  //begin
-  //  ClearBuffer;
-  //  FPosition := FileSeek(FHandle, Offset, Origin);
-  //end;
-  //Result := FPosition;
+  FileSeek(FHandle, Offset, fsFromBeginning);
+  FBufferSize  := 0;
+  FBufferIndex := 0;
+end;
 
-  ClearBuffer;
-  Result := FileSeek(FHandle, Offset, Origin);
+procedure TReadBufStream.SeekFromEnd(const Offset: int64);
+begin
+  FileSeek(FHandle, Offset, fsFromEnd);
+  FBufferSize  := 0;
+  FBufferIndex := 0;
 end;
 
 procedure TReadBufStream.FillBuffer; inline;
@@ -169,6 +180,23 @@ begin
 end;
 
 { TWriteBufStream class }
+
+constructor TWriteBufStream.Create(aHandle: THandle);
+begin
+  inherited Create(aHandle);
+  if FHandle = -1 then
+    ExitCode := 102;
+
+  ClearBuffer;
+  SetLength(FBuffer, DefBufferCapacity);
+end;
+
+procedure TWriteBufStream.ClearBuffer;
+begin
+  FBufferSize  := 0;
+  FBufferIndex := 0;
+  FPosition    := 0;
+end;
 
 function TWriteBufStream.Write(Data: PByte; Count: longint): longint;
 var
@@ -190,17 +218,9 @@ begin
   Inc(FPosition, Result);
 end;
 
-function TWriteBufStream.Seek(const Offset: int64; Origin: longint): int64;
+function TWriteBufStream.SeekFromCurrent: int64;
 begin
-  if (Origin <> fsFromCurrent) or (OffSet <> 0) then
-  begin
-    FlushBuffer;
-    FPosition := FileSeek(FHandle, Offset, Origin);
-  end;
   Result := FPosition;
-
-  //FlushBuffer;
-  //Result := FileSeek(FHandle, Offset, Origin);
 end;
 
 procedure TWriteBufStream.FlushBuffer; inline;
@@ -221,9 +241,9 @@ begin
   FlushBuffer;
   if FileTruncate(FHandle, NewSize) then
   begin
-    FPosition    := NewSize;
     FBufferSize  := 0;
     FBufferIndex := 0;
+    FPosition    := NewSize;
   end else
     ExitCode := 160;
 end;
