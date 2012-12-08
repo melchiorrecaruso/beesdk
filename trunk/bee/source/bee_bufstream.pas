@@ -37,6 +37,8 @@ type
   { TBufStream }
 
   TBufStream = class(TObject)
+  private
+    FPosition: int64;
   protected
     FHandle: THandle;
     FBufferSize: longint;
@@ -63,8 +65,6 @@ type
   { TWriteBufStream }
 
   TWriteBufStream = class(TBufStream)
-  private
-    FPosition: int64;
   protected
     procedure FlushBuffer;
     procedure ClearBuffer;
@@ -132,6 +132,7 @@ procedure TReadBufStream.ClearBuffer;
 begin
   FBufferSize  := 0;
   FBufferIndex := 0;
+  FPosition    := 0;
 end;
 
 function TReadBufStream.Read(Data: PByte; Count: longint): longint;
@@ -151,18 +152,22 @@ begin
     Inc(FBufferIndex, I);
     Inc(Result, I);
   until Result = Count;
+  Inc(FPosition, Result);
 end;
 
 procedure TReadBufStream.SeekFromBeginning(const Offset: int64);
 begin
-  FileSeek(FHandle, Offset, fsFromBeginning);
-  FBufferSize  := 0;
-  FBufferIndex := 0;
+  if FPosition <> OffSet then
+  begin
+    FPosition    := FileSeek(FHandle, Offset, fsFromBeginning);
+    FBufferSize  := 0;
+    FBufferIndex := 0;
+  end;
 end;
 
 procedure TReadBufStream.SeekFromEnd(const Offset: int64);
 begin
-  FileSeek(FHandle, Offset, fsFromEnd);
+  FPosition    := FileSeek(FHandle, Offset, fsFromEnd);
   FBufferSize  := 0;
   FBufferIndex := 0;
 end;

@@ -179,8 +179,8 @@ begin
       DoProgress(Writed);
       Dec(Count);
     end;
-      Readed :=  Stream.Read (@FBuffer[0], Size mod Length(FBuffer));
-      Writed := FStream.Write(@FBuffer[0], Readed);
+    Readed :=  Stream.Read (@FBuffer[0], Size mod Length(FBuffer));
+    Writed := FStream.Write(@FBuffer[0], Readed);
     UpdateCRC32(CRC,          @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
@@ -213,7 +213,6 @@ begin
     UpdateCRC32(CRC,            @FBuffer[0], Readed);
     Inc(Result, Readed);
     DoProgress(Readed);
-    FBuffer := nil;
     RangeEncoder_FinishEncode(FCoder);
   end;
 end;
@@ -261,7 +260,6 @@ begin
     UpdateCRC32(CRC,        @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
-    FBuffer := nil;
   end;
 end;
 
@@ -291,7 +289,6 @@ begin
     UpdateCRC32(CRC,            @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
-    FBuffer := nil;
     RangeDecoder_FinishDecode(FCoder);
   end;
 end;
