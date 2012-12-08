@@ -80,15 +80,12 @@ type
   TFileWriter = class(TWriteBufStream)
   protected
     FFileName: string;
-    FCurrentImage: longint;
   public
     constructor Create(const aFileName: string);
     destructor Destroy; override;
     procedure WriteDWord(Data: dword);
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
-  public
-    property CurrentImage: longint read FCurrentImage;
   end;
 
   { TFileSplitter }
@@ -99,7 +96,7 @@ type
   TFileSplitter = class(TFileWriter)
   private
     FThreshold: int64;
-
+    FCurrentImage: longint;
     FCurrentImageSize: int64;
     FOnRequestBlankDisk: TFileSplitterRequestBlankDiskEvent;
     function GetImageName(ImageNumber: longword): string;
@@ -110,7 +107,7 @@ type
     procedure CreateImage;
     function Write(Data: PByte; Count: longint): longint; override;
   public
-
+    property CurrentImage: longint read FCurrentImage;
     property CurrentImageSize: int64 read FCurrentImageSize;
     property Threshold: int64 read FThreshold;
   end;
@@ -316,7 +313,7 @@ constructor TFileWriter.Create(const aFileName: string);
 begin
   inherited Create(FileCreate(aFileName));
   FFileName     := aFileName;
-  FCurrentImage := 1;
+
 end;
 
 destructor TFileWriter.Destroy;
@@ -372,8 +369,8 @@ constructor TFileSplitter.Create(const aFileName: string;
   const aThreshold: int64; aRequestBlankDisk: TFileSplitterRequestBlankDiskEvent);
 begin
   inherited Create(aFileName);
-  FThreshold := aThreshold;
-
+  FThreshold          := aThreshold;
+  FCurrentImage       := 1;
   FCurrentImageSize   := 1;
   FOnRequestBlankDisk := aRequestBlankDisk;
 end;
