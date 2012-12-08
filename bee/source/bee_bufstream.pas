@@ -39,6 +39,7 @@ type
   TBufStream = class(TObject)
   protected
     FHandle: THandle;
+    FPosition: int64;
     FBufferSize: longint;
     FBufferIndex: longint;
     FBuffer: array of byte;
@@ -114,6 +115,7 @@ end;
 
 procedure TBufStream.ClearBuffer;
 begin
+  FPosition    := 0;
   FBufferSize  := 0;
   FBufferIndex := 0;
 end;
@@ -124,6 +126,7 @@ function TReadBufStream.Read(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
+
   Result := 0;
   repeat
     if FBufferIndex = FBufferSize then
@@ -137,10 +140,18 @@ begin
     Inc(FBufferIndex, I);
     Inc(Result, I);
   until Result = Count;
+  //Inc(FPosition, Result);
 end;
 
 function TReadBufStream.Seek(const Offset: int64; Origin: longint): int64;
 begin
+  //if (Origin <> fsFromBeginning) or (Offset <> FPosition) then
+  //begin
+  //  ClearBuffer;
+  //  FPosition := FileSeek(FHandle, Offset, Origin);
+  //end;
+  //Result := FPosition;
+
   ClearBuffer;
   Result := FileSeek(FHandle, Offset, Origin);
 end;
@@ -176,25 +187,30 @@ begin
     Inc(FBufferIndex, I);
     Inc(Result, I);
   until Result = Count;
+  Inc(FPosition, Result);
 end;
 
 function TWriteBufStream.Seek(const Offset: int64; Origin: longint): int64;
 begin
-  FlushBuffer;
-  Result := FileSeek(FHandle, Offset, Origin);
+  if (Origin <> fsFromCurrent) or (OffSet <> 0) then
+  begin
+    FlushBuffer;
+    FPosition := FileSeek(FHandle, Offset, Origin);
+  end;
+  Result := FPosition;
+
+  //FlushBuffer;
+  //Result := FileSeek(FHandle, Offset, Origin);
 end;
 
-procedure TWriteBufStream.FlushBuffer;
+procedure TWriteBufStream.FlushBuffer; inline;
 begin
   if FBufferIndex > 0 then
   begin
-    FBufferSize := FileWrite(FHandle, FBuffer[0], FBufferIndex);
-    if FBufferSize = -1 then
-      ExitCode := 103
-    else
-      if FBufferSize <> FBufferIndex then
-       ExitCode := 160;
-
+    if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
+    begin
+      ExitCode := 160;
+    end;
     FBufferSize  := 0;
     FBufferIndex := 0;
   end;
@@ -205,6 +221,7 @@ begin
   FlushBuffer;
   if FileTruncate(FHandle, NewSize) then
   begin
+    FPosition    := NewSize;
     FBufferSize  := 0;
     FBufferIndex := 0;
   end else
