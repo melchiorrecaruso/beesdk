@@ -173,7 +173,8 @@ implementation
 
 uses
   Math,
-  Bee_BlowFish;
+  Bee_BlowFish,
+  Bee_Interface;
 
 function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
 var
@@ -440,13 +441,20 @@ begin
 end;
 
 procedure TCommandLine.ProcessOptionI(var S: string);
+var
+  I: longint;
 begin
   Delete(S, 1, 2);
+
+  for I := 1 to Length(S) do
+    if S[I] in ['.', ','] then
+      S[I] := DecimalSeparator;
+
   if TryStrWithMultToQWord(S, FiOption) = FALSE then
-    ExitCode := 7;
+    SetExitCode(ecCmdLineError);
 
   if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
-    ExitCode := 7;
+    SetExitCode(ecCmdLineError);
 end;
 
 procedure TCommandLine.ProcessOptionWD(var S: string);
@@ -519,7 +527,7 @@ begin
   FArchiveName := S;
   if FileExists(FArchiveName) = FALSE then
     if ExtractFileExt(FArchiveName) = '' then
-      FArchiveName := ChangeFileExt(FArchiveName, '.bee');
+      FArchiveName := ChangeFileExt(FArchiveName, '.beex');
 
   // check if archive exists
   if (FCommand in [ccHelp]) = TRUE then

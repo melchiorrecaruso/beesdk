@@ -269,7 +269,7 @@ type
     FThreshold: int64;
     FTestTempArchive: boolean;
     FWorkDirectory: string;
-    FOnRequestBlankDisk: TFileSplitterRequestBlankDiskEvent;
+    FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
     procedure InitEncoder      (Item: TArchiveItem);
     procedure EncodeFromArchive(Item: TArchiveItem);
     procedure EncodeFromSwap   (Item: TArchiveItem);
@@ -288,7 +288,7 @@ type
     property Threshold: int64 read FThreshold write FThreshold;
     property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
-    property OnRequestBlankDisk: TFileSplitterRequestBlankDiskEvent
+    property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
       read FOnRequestBlankDisk write FOnRequestBlankDisk;
   end;
 
@@ -792,7 +792,7 @@ begin
   if Result = TRUE then
     UnPackCentralDirectory
   else
-    DoFault(ecCustError, emArcTypeError);
+    DoFault(ecUnknowError, emArcTypeError);
 end;
 
 procedure TArchiveReader.UnPackCentralDirectory;
@@ -850,7 +850,6 @@ var
   CRC: longword;
 begin
   FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
-//FArchiveReader.Optimize(Item.FUncompressedSize);
 
   Item.FDiskNumber := 1;
   Item.FDiskSeek   := FSwapWriter.SeekFromCurrent;
@@ -870,9 +869,7 @@ var
   Stream: TFileWriter;
 begin
   Stream := TNulWriter.Create;
-
   FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-//FArchiveReader.Optimize(Item.FUncompressedSize);
 
   case Item.CompressionMethod of
     actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
@@ -895,7 +892,6 @@ begin
   if Assigned(Stream) then
   begin
     FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-  //FArchiveReader.Optimize(Item.FUncompressedSize);
 
     case Item.CompressionMethod of
       actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
@@ -982,10 +978,10 @@ begin
       begin
         FArchiveName := aArchiveName;
         if FArchiveItems.Count = 0 then
-          DoFault(ecCustError, Format(emArcTypeError, [aArchiveName]));
+          DoFault(ecArchiveTypeError, Format(emArcTypeError, [aArchiveName]));
       end;
     end else
-      DoFault(ecCustError, Format(emOpenArcError, [aArchiveName]));
+      DoFault(ecUnknowError, Format(emOpenArcError, [aArchiveName]));
   end else
     FArchiveName := aArchiveName;
 end;
@@ -1035,7 +1031,7 @@ end;
 
 procedure TArchiveReader.DoFault(FaultCode: longint; const FaultMessage: string);
 begin
-  ExitCode := FaultCode;
+  SetExitCode(FaultCode);
   DoMessage(FaultMessage);
 end;
 
@@ -1107,13 +1103,9 @@ var
 begin
   LocatorFlags      := [];
   LocatorDiskSeek   := aStream.SeekFromCurrent;
-  LocatorDiskNumber := 1;
-  if aStream is TFileSplitter then
-  begin
-    LocatorDiskNumber := TFileSplitter(aStream).CurrentImage;
-    if LocatorDiskNumber <> 1 then
-      Include(LocatorFlags,  alfDiskNumber);
-  end;
+  LocatorDiskNumber := aStream.CurrentImage;
+  if LocatorDiskNumber <> 1 then
+    Include(LocatorFlags,  alfDiskNumber);
 
   PackCentralDirectory;
   aStream.WriteDWord(beexArchiveMarker);
@@ -1133,18 +1125,16 @@ begin
     aStream.WriteInfString(FArchiveComment);
   aStream.WriteInfWord(aitEnd);
 
-  if aStream is TFileSplitter then
-    if (FThreshold - TFileSplitter(aStream).SeekFromCurrent) < 512 then
-      TFileSplitter(aStream).CreateImage;
+  if aStream.Threshold > 0 then
+    if (aStream.Threshold - aStream.SeekFromCurrent) < 512 then
+    begin
+      aStream.CreateImage;
+    end;
 
   MagikSeek := aStream.SeekFromCurrent;
-  LocatorDisksNumber := 1;
-  if aStream is TFileSplitter then
-  begin
-    LocatorDisksNumber := TFileSplitter(aStream).CurrentImage;
-    if LocatorDisksNumber <> 1 then
-      Include(LocatorFlags, alfDisksNumber);
-  end;
+  LocatorDisksNumber := aStream.CurrentImage;
+  if LocatorDisksNumber <> 1 then
+    Include(LocatorFlags, alfDisksNumber);
 
   aStream.WriteInfWord(aitLocator);
   aStream.WriteInfWord(beexVersionneededToRead);
@@ -1311,54 +1301,48 @@ procedure TArchiveWriter.SaveTemporaryArchive;
 var
   I: longint;
   Item: TArchiveItem;
-  NulCRC: longword;
 begin
   SysUtils.DeleteFile(FSwapName);
-  if ExitCode = 0 then
+  if ExitCode = ecNoError then
   begin
     if FThreshold > 0 then
     begin
       FArchiveReader := TFileReader.Create(FTempName, nil);
-      FTempWriter    := TFileSplitter.Create(FArchiveName, FThreshold, FOnRequestBlankDisk);
+      FTempWriter    := TFileWriter.Create(FArchiveName, FThreshold, FOnRequestBlankDisk);
       FTempWriter.WriteDWord(beexArchiveMarker);
 
       FEncoder := THeaderEncoder.Create(FTempWriter);
       FEncoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
-        if ExitCode = 0  then
+        if ExitCode = ecNoError  then
         begin
           Item      := FArchiveItems.Items[I];
           Item.FTag := aitNone;
 
           DoMessage(Format(cmCopying, [Item.FileName]));
-          FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
-
-          Item.FDiskNumber := TFileSplitter(FTempWriter).CurrentImage;
-          Item.FDiskSeek   := TFileSplitter(FTempWriter).SeekFromCurrent;
-          begin
-            FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
-          end;
-          DoClear;
+          EncodeFromArchive(Item);
         end;
       FreeAndNil(FEncoder);
       WriteCentralDirectory(FTempWriter);
 
       FreeAndNil(FTempWriter);
       FreeAndNil(FArchiveReader);
-      if ExitCode = 0 then
-      begin
-        SysUtils.DeleteFile(FTempName)
-      end else
-      begin
-        SysUtils.DeleteFile(FArchiveName);
-        DoFault(ecCustError, Format(emSplitArcError, [FTempName]));
-      end;
+      if ExitCode in [ecNoError, ecUserAbort] = FALSE then
+        DoFault(ExitCode, Format(emSplitArcError, [FTempName]));
+
     end else
     begin
       SysUtils.DeleteFile(FArchiveName);
+      if ExtractFilePath(FArchiveName) <> '' then
+        ForceDirectories(ExtractFilePath(FArchiveName));
       if not RenameFile(FTempName, FArchiveName) then
-        DoFault(ecCustError, Format(emRenameFileError, [FTempName, FArchiveName]));
+        DoFault(ecUnknowError, Format(emRenameFileError, [FTempName, FArchiveName]));
     end;
+  end;
+
+  if ExitCode in [ecNoError, ecUserAbort] then
+  begin
+    SysUtils.DeleteFile(FTempName);
   end;
 end;
 
@@ -1411,7 +1395,7 @@ var
 begin
   FArchiveReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
 
-  Item.FDiskNumber := 1;
+  Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
   begin
     FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
@@ -1423,7 +1407,7 @@ procedure TArchiveWriter.EncodeFromSwap(Item: TArchiveItem);
 begin
   FSwapReader.SeekImage(Item.FDiskNumber, Item.FDiskSeek);
 
-  Item.FDiskNumber := 1;
+  Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
   case Item.FCompressionMethod of
     actMain: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC32);
@@ -1443,7 +1427,7 @@ begin
   begin
     Item.FUncompressedSize := Item.FExternalFileSize;
 
-    Item.FDiskNumber := 1;
+    Item.FDiskNumber := FTempWriter.CurrentImage;
     Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
     case Item.CompressionMethod of
       actMain: FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
@@ -1962,7 +1946,7 @@ begin
   if FileExists(FConfigurationName) then
     FConfiguration.LoadFromFile(FConfigurationName)
   else
-    DoFault(ecCustError, Format(emConfigError, [FConfigurationName]));
+    DoFault(ecUnknowError, Format(emConfigError, [FConfigurationName]));
 
   if ExitCode = 0 then
   begin
