@@ -114,7 +114,7 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1623 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1627 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
 
   ExitCode := 0;
@@ -159,15 +159,14 @@ begin
       ccHelp:     HelpShell;
     end;
 
-
   S := TimeDifference(StartTime);
   case ExitCode of
-    0:           DoMessage(Format(Cr + emSuccesful, [S]));
-    ecCmdError:  DoMessage(Format(Cr + emCmdError,  [ ]));
-    ecMemError:  DoMessage(Format(Cr + emMemError,  [ ]));
-    ecCustError: DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
-    ecUserAbort: DoMessage(Format(Cr + emUserAbort, [S]));
-    else         DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
+    ecNoError:      DoMessage(Format(Cr + emNoError,   [S]));
+    ecCmdLineError: DoMessage(Format(Cr + emCmdError,  [ ]));
+    ecMemError:     DoMessage(Format(Cr + emMemError,  [ ]));
+    ecUnknowError:  DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
+    ecUserAbort:    DoMessage(Format(Cr + emUserAbort, [S]));
+    else            DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
   end;
 end;
 

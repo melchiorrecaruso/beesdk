@@ -29,15 +29,30 @@ unit Bee_Interface;
 interface
 
 const
-  ecCmdError          = 7;   { 7 Command line error              }
+  ecNoError           = 0;
+  ecUnknowError       = 1;
+
+
+  ecCmdLineError      = 7;   { 7 Command line error              }
   ecMemError          = 8;   { 8 Not enough memory for operation }
-  ecCustError         = 9;
+
+  ecArchiveTypeError  = 14;
+
+  ecCreateStreamError = 13;
+  ecOpenStreamError   = 12;
+  ecFillStreamError   = 9;
+  ecFlushStreamError  = 10;
+  ecResizeStreamError = 11;
+  ecSplittingError    = 15;
+
+
   ecUserAbort         = 255; { 255 User stopped the process      }
 
 
 const
-  emUnknow            = 'Process aborted (error #%u) - time elapsed %s seconds.';
-  emSuccesful         = 'Everything went ok - time elapsed %s seconds.';
+  emNoError           = 'Everything went ok - time elapsed %s seconds.';
+  emUnknow            = 'Process aborted (exit code #%.5u) - time elapsed %s seconds.';
+
   emWarning           = 'Warning occurred - time elapsed %s seconds.';
   emUserAbort         = 'User stopped the process - time elapsed %s seconds.';
   emCmdError          = 'Command line error.';
@@ -64,6 +79,16 @@ const
   emFileExistsWarning = 'Warning: file "%s" already exists';
   emNoFilesWarning    = 'Warning: no files to process';
 
+  procedure SetExitCode(Value: longint);
+
 implementation
+
+  procedure SetExitCode(Value: longint);
+  begin
+    if ExitCode = ecNoError then
+    begin
+      ExitCode := Value;
+    end;
+  end;
 
 end.

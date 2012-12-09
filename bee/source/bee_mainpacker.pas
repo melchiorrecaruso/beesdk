@@ -165,9 +165,10 @@ var
   Writed: longint;
 begin
   Result := 0;
-  CRC    := longword(-1);
+  CRC    := 0;
   if Size > 0 then
   begin
+    CRC := longword(-1);
     SetLength(FBuffer, GetCapacity(Size));
     Count  := Size div Length(FBuffer);
     while (Count <> 0) and (ExitCode = 0) do
@@ -181,7 +182,7 @@ begin
     end;
     Readed :=  Stream.Read (@FBuffer[0], Size mod Length(FBuffer));
     Writed := FStream.Write(@FBuffer[0], Readed);
-    UpdateCRC32(CRC,          @FBuffer[0], Writed);
+    UpdateCRC32(CRC,        @FBuffer[0], Writed);
     Inc(Result, Writed);
     DoProgress(Writed);
   end;
@@ -193,9 +194,10 @@ var
   Readed: longint;
 begin
   Result := 0;
-  CRC    := longword(-1);
+  CRC    := 0;
   if Size > 0 then
   begin
+    CRC := longword(-1);
     RangeEncoder_StartEncode(FCoder);
     SetLength(FBuffer, GetCapacity(Size));
     Count  := Size div Length(FBuffer);
@@ -241,9 +243,10 @@ var
   Writed: longint;
 begin
   Result := 0;
-  CRC    := longword(-1);
+  CRC    := 0;
   if Size > 0 then
   begin
+    CRC := longword(-1);
     SetLength(FBuffer, GetCapacity(Size));
     Count  := Size div Length(FBuffer);
     while (Count <> 0) and (ExitCode = 0) do
@@ -269,9 +272,10 @@ var
   Writed: longint;
 begin
   Result := 0;
-  CRC    := longword(-1);
+  CRC    := 0;
   if Size > 0 then
   begin
+    CRC := longword(-1);
     RangeDecoder_StartDecode(FCoder);
     SetLength(FBuffer, GetCapacity(Size));
     Count  := Size div Length(FBuffer);
