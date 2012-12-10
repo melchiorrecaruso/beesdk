@@ -56,10 +56,10 @@ type
     FImageNumber: longint;
     FImagesNumber: longint;
     FOnRequestImage: TFileReaderRequestImageEvent;
-    procedure OpenImage;
-    function GetImageName: string;
+    procedure OpenImage(Value: longint);
     procedure SetImagesNumber(Value: longint);
     procedure SetImageNumber(Value: longint);
+    function GetImageName(Value: longint): string;
   public
     constructor Create(const aFileName: string;
        aRequestImage: TFileReaderRequestImageEvent);
@@ -177,10 +177,10 @@ constructor TFileReader.Create(const aFileName: string;
 begin
   inherited Create(-1);
   FFileName       := aFileName;
-  FImageNumber    := 0;
+  FImageNumber    := 1;
   FImagesNumber   := 1;
   FOnRequestImage := aRequestImage;
-  OpenImage;
+  OpenImage(FImageNumber);
 end;
 
 destructor TFileReader.Destroy;
@@ -190,49 +190,43 @@ begin
   inherited Destroy;
 end;
 
-function TFileReader.GetImageName: string;
+function TFileReader.GetImageName(Value: longint): string;
 begin
-  if FImageNumber <> FImagesNumber then
-    Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [FImageNumber]))
+  if Value <> FImagesNumber then
+    Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [Value]))
   else
     Result := FFileName;
 end;
 
-procedure TFileReader.OpenImage;
+procedure TFileReader.OpenImage(Value: longint);
 var
   Abort: boolean;
   ImageName: string;
 begin
+  ClearBuffer;
+  FileClose(FHandle);
   if ExitCode = ecNoError then
-  begin
-    if FHandle <> -1 then
+    if (Value >= 1) and (Value <= FImagesNumber) then
     begin
-      FileClose(FHandle);
-      FHandle := -1;
-    end;
-
-    Inc(FImageNumber);
-    if (FImageNumber >= 1) and (FImageNumber <= FImagesNumber) then
-    begin
-      ImageName := GetImageName;
+      ImageName := GetImageName(Value);
       while FileExists(ImageName) = FALSE do
       begin
         Abort := TRUE;
         if Assigned(FOnRequestImage) then
-          FOnRequestImage(FImageNumber, ImageName, Abort);
+          FOnRequestImage(Value, ImageName, Abort);
         if Abort then
           SetExitCode(ecUserAbort);
       end;
-    end;
-  end;
 
-  if ExitCode = ecNoError then
-  begin
-    ClearBuffer;
-    FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
-    if FHandle = -1 then
-      SetExitCode(ecOpenStreamError);
-  end;
+      if ExitCode = ecNoError then
+      begin
+        FImageNumber := Value;
+        FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
+        if FHandle = -1 then
+          SetExitCode(ecOpenStreamError);
+      end;
+    end;
+
 end;
 
 function TFileReader.ReadDWord: dword;
@@ -279,12 +273,8 @@ begin
 
     if Result < Count then
     begin
-      if FImageNumber < FImagesNumber then
-      begin
-        OpenImage;
-        if FHandle = -1 then Break;
-      end else
-        Break;
+      OpenImage(FImageNumber + 1);
+      if ExitCode <> ecNoError then Break;
     end;
   until Result = Count;
 end;
@@ -303,10 +293,7 @@ end;
 procedure TFileReader.SetImageNumber(Value: longint);
 begin
   if FImageNumber <> Value then
-  begin
-    FImageNumber := Value;
-    OpenImage;
-  end;
+    OpenImage(Value);
 end;
 
 { TFileWriter class }
@@ -336,11 +323,8 @@ end;
 
 destructor TFileWriter.Destroy;
 begin
-  if FHandle <> -1 then
-  begin
-    FlushBuffer;
-    FileClose(FHandle);
-  end;
+  FlushBuffer;
+  FileClose(FHandle);
   inherited Destroy;
 end;
 
@@ -390,18 +374,13 @@ procedure TFileWriter.CreateImage;
 var
   Abort: boolean;
 begin
-  if ExitCode = ecNoError then
-  begin
-    if FHandle <> -1 then
-    begin
-      FlushBuffer;
-      FileClose(FHandle);
-      FHandle := -1;
-      RenameFile(FFileName, GetImageName);
-    end;
-  end;
+  FlushBuffer;
+  ClearBuffer;
+  FileClose(FHandle);
+  RenameFile(FFileName, GetImageName);
 
   if ExitCode = ecNoError then
+  begin
     if FThreshold > 0 then
     begin
       // while GetDriveFreeSpace(FFileName) > FThreshold do
@@ -410,21 +389,20 @@ begin
         if Assigned(FOnRequestBlankDisk) then
           FOnRequestBlankDisk(FCurrentImage + 1, Abort);
         if Abort then
-          ExitCode := ecUserAbort;
+          SetExitCode(ecUserAbort);
       end;
     end;
-
-  if ExitCode = ecNoError then
-  begin
-    ClearBuffer;
-    if ExtractFilePath(FFileName) <> '' then
-      ForceDirectories(ExtractFilePath(FFileName));
-    FHandle := FileCreate(FFileName);
-    if FHandle = -1 then
-      SetExitCode(ecCreateStreamError);;
-
-    FCurrentImageSize := 0;
     Inc(FCurrentImage);
+    FCurrentImageSize := 0;
+
+    if ExitCode = ecNoError then
+    begin
+      if ExtractFilePath(FFileName) <> '' then
+        ForceDirectories(ExtractFilePath(FFileName));
+      FHandle := FileCreate(FFileName);
+      if FHandle = -1 then
+        SetExitCode(ecCreateStreamError);;
+    end;
   end;
 end;
 
@@ -442,7 +420,7 @@ begin
       if FCurrentImageSize = FThreshold then
       begin
         CreateImage;
-        if FHandle = -1 then Break;
+        if ExitCode <> ecNoError then Break;
       end;
       I := Min(Count - Result, FThreshold - FCurrentImageSize);
 
