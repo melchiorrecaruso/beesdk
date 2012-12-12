@@ -93,13 +93,12 @@ type
     constructor Create(const aFileName: string; const aThreshold: int64;
       aRequestBlankDisk: TFileWriterRequestBlankDiskEvent); overload;
     destructor Destroy; override;
+    procedure CreateImage;
 
     procedure WriteDWord(Data: dword);
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
     function Write(Data: PByte; Count: longint): longint; override;
-
-    procedure CreateImage;
   public
     property Threshold: int64 read FThreshold;
     property CurrentImage: longint read FCurrentImage;
@@ -185,7 +184,7 @@ end;
 
 destructor TFileReader.Destroy;
 begin
-  if FHandle <> -1 then
+  if FHandle = -1 then
     FileClose(FHandle);
   inherited Destroy;
 end;
@@ -203,8 +202,12 @@ var
   Abort: boolean;
   ImageName: string;
 begin
+  if FHandle <> -1 then
+  begin
+    FileClose(FHandle);
+  end;
   ClearBuffer;
-  FileClose(FHandle);
+
   if ExitCode = ecNoError then
     if (Value >= 1) and (Value <= FImagesNumber) then
     begin
@@ -270,7 +273,6 @@ begin
   Result := 0;
   repeat
     Inc(Result, inherited Read(@Data[Result], Count - Result));
-
     if Result < Count then
     begin
       OpenImage(FImageNumber + 1);
@@ -374,10 +376,13 @@ procedure TFileWriter.CreateImage;
 var
   Abort: boolean;
 begin
-  FlushBuffer;
+  if FHandle = -1 then
+  begin
+    FlushBuffer;
+    FileClose(FHandle);
+    RenameFile(FFileName, GetImageName);
+  end;
   ClearBuffer;
-  FileClose(FHandle);
-  RenameFile(FFileName, GetImageName);
 
   if ExitCode = ecNoError then
   begin
@@ -392,11 +397,11 @@ begin
           SetExitCode(ecUserAbort);
       end;
     end;
-    Inc(FCurrentImage);
-    FCurrentImageSize := 0;
 
     if ExitCode = ecNoError then
     begin
+      Inc(FCurrentImage);
+      FCurrentImageSize := 0;
       if ExtractFilePath(FFileName) <> '' then
         ForceDirectories(ExtractFilePath(FFileName));
       FHandle := FileCreate(FFileName);
