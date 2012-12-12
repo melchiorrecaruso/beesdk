@@ -1126,7 +1126,7 @@ begin
   aStream.WriteInfWord(aitEnd);
 
   if aStream.Threshold > 0 then
-    if (aStream.Threshold - aStream.SeekFromCurrent) < 512 then
+    // if (aStream.Threshold - aStream.SeekFromCurrent) < 512 then
     begin
       aStream.CreateImage;
     end;
@@ -1322,6 +1322,8 @@ begin
           DoMessage(Format(cmCopying, [Item.FileName]));
           EncodeFromArchive(Item);
         end;
+
+
       FreeAndNil(FEncoder);
       WriteCentralDirectory(FTempWriter);
 
