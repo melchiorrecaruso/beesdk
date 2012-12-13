@@ -174,14 +174,15 @@ end;
 constructor TFileReader.Create(const aFileName: string;
   aRequestImage: TFileReaderRequestImageEvent);
 begin
-  inherited Create(FileOpen(aFileName, fmOpenRead or fmShareDenyWrite));
-  if FHandle = -1 then
-    SetExitCode(ecOpenStreamError);
-
+  inherited Create(-1);
   FFileName       := aFileName;
   FImageNumber    := 1;
   FImagesNumber   := 1;
   FOnRequestImage := aRequestImage;
+
+  FHandle := FileOpen(GetImageName, fmOpenRead or fmShareDenyWrite);
+  if FHnadle = -1 then
+    SetExitCode(ecOpenStreamError);
 end;
 
 destructor TFileReader.Destroy;
@@ -191,31 +192,32 @@ begin
 end;
 
 function TFileReader.GetImageName(Value: longint): string;
+var
+  Abort: boolean;
 begin
   if Value <> FImagesNumber then
     Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [Value]))
   else
     Result := FFileName;
+
+  while FileExists(Result) = FALSE do
+  begin
+    Abort := TRUE;
+    if Assigned(FOnRequestImage) then
+      FOnRequestImage(FImageNumber, Result, Abort);
+    if Abort then
+      SetExitCode(ecUserAbort);
+  end;
 end;
 
 procedure TFileReader.OpenImage(Value: longint);
 var
-  Abort: boolean;
   ImageName: string;
 begin
   FileClose(FHandle);
   FImageNumber := Value;
 
-  ImageName := GetImageName(FImageNumber);
-  while FileExists(ImageName) = FALSE do
-  begin
-    Abort := TRUE;
-    if Assigned(FOnRequestImage) then
-      FOnRequestImage(FImageNumber, ImageName, Abort);
-    if Abort then
-      SetExitCode(ecUserAbort);
-  end;
-
+  ImageName := GetImageName(Value);
   FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
   if FHandle = -1 then
     SetExitCode(ecOpenStreamError);
@@ -366,9 +368,17 @@ begin
   end;
 end;
 
-function TFileWriter.GetImageName: string;
+function TFileWriter.GetImageName(Value: longint): string;
 begin
-  Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [FCurrentImage]))
+  Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [Value]))
+  // while GetDriveFreeSpace(FFileName) > FThreshold do
+  begin
+    Abort := TRUE;
+    if Assigned(FOnRequestBlankDisk) then
+      FOnRequestBlankDisk(Value, Abort);
+    if Abort then
+      SetExitCode(ecUserAbort);
+  end;
 end;
 
 procedure TFileWriter.CreateImage;
@@ -381,14 +391,7 @@ begin
     SetExitCode(ecSplittingError);
 
   Inc(FCurrentImage);
-  // while GetDriveFreeSpace(FFileName) > FThreshold do
-  begin
-    Abort := TRUE;
-    if Assigned(FOnRequestBlankDisk) then
-      FOnRequestBlankDisk(FCurrentImage, Abort);
-    if Abort then
-      SetExitCode(ecUserAbort);
-  end;
+
 
   if ExtractFilePath(FFileName) <> '' then
     ForceDirectories(ExtractFilePath(FFileName));
