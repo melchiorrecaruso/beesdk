@@ -178,7 +178,7 @@ constructor TFileReader.Create(const aFileName: string;
 var
   ImageName: string;
 begin
-  inherited Create(-1);
+  inherited Create(THandle(-1));
   FFileName       := aFileName;
   FImageNumber    := 1;
   FImagesNumber   := 1;
@@ -311,7 +311,7 @@ constructor TFileWriter.Create(const aFileName: string);
 var
   ImageName: string;
 begin
-  inherited Create(-1);
+  inherited Create(THandle(-1));
   FFileName           := aFileName;
   FThreshold          := 0;
   FCurrentImage       := 1;
@@ -334,7 +334,7 @@ constructor TFileWriter.Create(const aFileName: string; const aThreshold: int64;
 var
   ImageName: string;
 begin
-  inherited Create(-1);
+  inherited Create(THandle(-1));
   FFileName           := aFileName;
   FThreshold          := Max(0, aThreshold);
   FCurrentImage       := 1;
@@ -408,7 +408,7 @@ begin
   Result := FFileName;
 
   if FThreshold > 0 then
-    while GetDriveFreeSpace(Result) > FThreshold do
+    while GetDriveFreeSpace(Result) <= FThreshold do
     begin
       Abort := TRUE;
       if Assigned(FOnRequestBlankDisk) then
@@ -419,8 +419,6 @@ begin
 end;
 
 procedure TFileWriter.CreateNewImage;
-var
-  Abort: boolean;
 begin
   FlushBuffer;
   FileClose(FHandle);
