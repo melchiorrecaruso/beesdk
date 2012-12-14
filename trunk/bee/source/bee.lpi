@@ -106,12 +106,11 @@
       <Unit2>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="863"/>
         <CursorPos X="3" Y="883"/>
-        <FoldState Value=" T3;G0B3P p0tQ053n"/>
+        <FoldState Value=" T3;G0B3y"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -123,7 +122,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="308"/>
         <CursorPos X="61" Y="310"/>
-        <FoldState Value=" T3kY0311319 pj8lJ054r"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -142,10 +140,11 @@
       <Unit5>
         <Filename Value="bee_bufstream.pas"/>
         <UnitName Value="Bee_BufStream"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="140"/>
-        <CursorPos X="18" Y="127"/>
+        <TopLine Value="152"/>
+        <CursorPos X="3" Y="160"/>
         <UsageCount Value="98"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -168,7 +167,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="140"/>
         <CursorPos X="1" Y="161"/>
-        <FoldState Value=" T3kV0S122U"/>
         <UsageCount Value="84"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
