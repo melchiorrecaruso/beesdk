@@ -204,7 +204,7 @@ begin
   if Value = FImagesNumber then
     Result := FFileName
   else
-    Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [Value]));
+    Result := FFileName + '.' + Format('%.3d', [Value]);
 end;
 
 function TFileReader.RequestImage(Value: longint): string;
@@ -399,7 +399,7 @@ end;
 
 function TFileWriter.GetImageName(Value: longint): string;
 begin
-  Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [Value]));
+  Result := FFileName + '.' + Format('%.3d', [Value]);
 end;
 
 function TFileWriter.RequestImage(Value: longint): string;
