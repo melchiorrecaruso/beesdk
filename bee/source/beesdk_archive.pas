@@ -859,7 +859,7 @@ begin
   end;
   DoClear;
 
-  if (ExitCode = 0) and (Item.FCRC32 <> CRC) then
+  if (ExitCode = ecNoError) and (Item.FCRC32 <> CRC) then
     DoFault(154, Format(emCrcError, [Item.FExternalFileName]));
 end;
 
@@ -877,7 +877,12 @@ begin
   end;
   DoClear;
 
-  if (ExitCode = 0) and (Item.FCRC32 <> CRC) then
+  Writeln(Item.FCRC32);
+  Writeln(CRC);
+
+
+
+  if (ExitCode = ecNoError) and (Item.FCRC32 <> CRC) then
     DoFault(154, Format(emCrcError, [Item.FExternalFileName]));
 
   Stream.Destroy;
@@ -899,11 +904,11 @@ begin
     end;
     DoClear;
 
-    if (ExitCode = 0) and (Item.FCRC32 <> CRC) then
+    if (ExitCode = ecNoError) and (Item.FCRC32 <> CRC) then
       DoFault(154, Format(emCrcError, [Item.FExternalFileName]));
 
     Stream.Destroy;
-    if ExitCode = 0 then
+    if ExitCode = ecNoError then
     begin
       FileSetAttr(Item.FExternalFileName, Item.FAttributes);
       FileSetDate(Item.FExternalFileName, Item.FLastModifiedTime);
@@ -1322,8 +1327,6 @@ begin
           DoMessage(Format(cmCopying, [Item.FileName]));
           EncodeFromArchive(Item);
         end;
-
-
       FreeAndNil(FEncoder);
       WriteCentralDirectory(FTempWriter);
 
@@ -1436,6 +1439,8 @@ begin
       else     FEncoder.Copy  (Stream, Item.FUncompressedSize, Item.FCRC32);
     end;
     DoClear;
+
+    Writeln(Item.FCRC32);
 
     Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
     Stream.Destroy;

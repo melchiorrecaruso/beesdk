@@ -230,9 +230,8 @@ begin
   if FBufferIndex > 0 then
   begin
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
-    begin
       SetExitCode(ecFlushStreamError);
-    end;
+
     FBufferIndex := 0;
   end;
 end;

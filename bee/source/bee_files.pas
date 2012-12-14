@@ -406,7 +406,6 @@ var
   Abort: boolean;
 begin
   Result := FFileName;
-
   if FThreshold > 0 then
     while GetDriveFreeSpace(Result) <= FThreshold do
     begin

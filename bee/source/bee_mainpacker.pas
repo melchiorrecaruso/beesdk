@@ -171,7 +171,7 @@ begin
     CRC := longword(-1);
     SetLength(FBuffer, GetCapacity(Size));
     Count  := Size div Length(FBuffer);
-    while (Count <> 0) and (ExitCode = 0) do
+    while (Count <> 0) and (ExitCode = ecNoError) do
     begin
       Readed :=  Stream.Read (@FBuffer[0], Length(FBuffer));
       Writed := FStream.Write(@FBuffer[0], Readed);
@@ -201,7 +201,7 @@ begin
     RangeEncoder_StartEncode(FCoder);
     SetLength(FBuffer, GetCapacity(Size));
     Count  := Size div Length(FBuffer);
-    while (Count <> 0) and (ExitCode = 0) do
+    while (Count <> 0) and (ExitCode = ecNoError) do
     begin
       Readed := Stream.Read      (@FBuffer[0], Length(FBuffer));
       BaseCoder_Encode(FModeller, @FBuffer[0], Readed);
@@ -249,7 +249,7 @@ begin
     CRC := longword(-1);
     SetLength(FBuffer, GetCapacity(Size));
     Count  := Size div Length(FBuffer);
-    while (Count <> 0) and (ExitCode = 0) do
+    while (Count <> 0) and (ExitCode = ecNoError) do
     begin
       Readed := FStream.Read (@FBuffer[0], Length(FBuffer));
       Writed :=  Stream.Write(@FBuffer[0], Readed);
@@ -279,7 +279,7 @@ begin
     RangeDecoder_StartDecode(FCoder);
     SetLength(FBuffer, GetCapacity(Size));
     Count  := Size div Length(FBuffer);
-    while (Count <> 0) and (ExitCode = 0) do
+    while (Count <> 0) and (ExitCode = ecNoError) do
     begin
       BaseCoder_Decode(FModeller, @FBuffer[0], Length(FBuffer));
       Writed := Stream.Write(     @FBuffer[0], Length(FBuffer));
