@@ -606,7 +606,7 @@ begin
 
     if Hi = -2 then
     begin
-      Writeln('CRASH'); halt;
+      SetExitCode(ecUnknowError);
       FNames.Insert(Med + 1, Item);
     end else
     begin
@@ -851,7 +851,7 @@ var
 begin
   FArchiveReader.SeekImage(Item.DiskNumber, Item.DiskSeek);
 
-  Item.FDiskNumber := 1;
+  Item.FDiskNumber := FSwapWriter.CurrentImage;
   Item.FDiskSeek   := FSwapWriter.SeekFromCurrent;
   case Item.CompressionMethod of
     actMain: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
@@ -876,11 +876,6 @@ begin
     else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
   end;
   DoClear;
-
-  Writeln(Item.FCRC32);
-  Writeln(CRC);
-
-
 
   if (ExitCode = ecNoError) and (Item.FCRC32 <> CRC) then
     DoFault(154, Format(emCrcError, [Item.FExternalFileName]));
@@ -1142,7 +1137,7 @@ begin
     Include(LocatorFlags, alfDisksNumber);
 
   aStream.WriteInfWord(aitLocator);
-  aStream.WriteInfWord(beexVersionneededToRead);
+  aStream.WriteInfWord(beexVersionNeededToRead);
   aStream.WriteInfWord(longword(LocatorFlags));
   if (alfDisksNumber in LocatorFlags) then aStream.WriteInfWord(LocatorDisksNumber);
   if (alfDiskNumber  in LocatorFlags) then aStream.WriteInfWord(LocatorDiskNumber);
@@ -1319,7 +1314,7 @@ begin
       FEncoder := THeaderEncoder.Create(FTempWriter);
       FEncoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
-        if ExitCode = ecNoError  then
+        if ExitCode = ecNoError then
         begin
           Item      := FArchiveItems.Items[I];
           Item.FTag := aitNone;
@@ -1439,8 +1434,6 @@ begin
       else     FEncoder.Copy  (Stream, Item.FUncompressedSize, Item.FCRC32);
     end;
     DoClear;
-
-    Writeln(Item.FCRC32);
 
     Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
     Stream.Destroy;
@@ -1633,15 +1626,11 @@ begin
       if Item.FTag in [aitUpdate, aitDecode] then
       begin
         Item.FExternalFileName := Item.FileName;
-
-        (*
         case Item.FTag of
           aitUpdate:          DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
           aitDecode:          DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
           aitDecodeAndUpdate: DoMessage(Format(cmTesting,  [Item.FExternalFileName]));
         end;
-
-        *)
 
         case Item.FTag of
           aitUpdate:          DecodeToNul(Item);
@@ -2138,7 +2127,7 @@ begin
             if ExitCode = 0 then
             begin
               Item := FArchiveItems.Items[I];
-              (*
+
               case Item.FTag of
                 aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
                 aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
@@ -2146,7 +2135,6 @@ begin
                 aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
                 aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
               end;
-              *)
 
               InitEncoder(Item);
               case Item.FTag of
