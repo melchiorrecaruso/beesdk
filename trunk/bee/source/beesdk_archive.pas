@@ -1128,7 +1128,7 @@ begin
   if aStream.Threshold > 0 then
     // if (aStream.Threshold - aStream.SeekFromCurrent) < 512 then
     begin
-      aStream.CreateImage;
+      aStream.CreateNewImage;
     end;
 
   MagikSeek := aStream.SeekFromCurrent;
