@@ -229,7 +229,8 @@ begin
   ClearBuffer;
   FileClose(FHandle);
 
-  ImageName := RequestImage(Value);
+  FImageNumber := Value;
+  ImageName := RequestImage(FImageNumber);
   if ExitCode = ecNoError then
   begin
     FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
@@ -321,9 +322,9 @@ begin
   ImageName := RequestImage(FCurrentImage);
   if ExitCode = ecNoError then
   begin
-    if ExtractFilePath(FFileName) <> '' then
-      ForceDirectories(ExtractFilePath(FFileName));
-    FHandle := FileCreate(FFileName);
+    if ExtractFilePath(ImageName) <> '' then
+      ForceDirectories(ExtractFilePath(ImageName));
+    FHandle := FileCreate(ImageName);
     if FHandle = -1 then
       SetExitCode(ecCreateStreamError);
   end;
@@ -344,9 +345,9 @@ begin
   ImageName := RequestImage(FCurrentImage);
   if ExitCode = ecNoError then
   begin
-    if ExtractFilePath(FFileName) <> '' then
-      ForceDirectories(ExtractFilePath(FFileName));
-    FHandle := FileCreate(FFileName);
+    if ExtractFilePath(ImageName) <> '' then
+      ForceDirectories(ExtractFilePath(ImageName));
+    FHandle := FileCreate(ImageName);
     if FHandle = -1 then
       SetExitCode(ecCreateStreamError);
   end;
@@ -418,6 +419,8 @@ begin
 end;
 
 procedure TFileWriter.CreateNewImage;
+var
+  ImageName: string;
 begin
   FlushBuffer;
   FileClose(FHandle);
@@ -427,13 +430,13 @@ begin
   if ExitCode = ecNoError then
   begin
     Inc(FCurrentImage);
-    RequestImage(FCurrentImage);
+    ImageName := RequestImage(FCurrentImage);
 
     if ExitCode = ecNoError then
     begin
-      if ExtractFilePath(FFileName) <> '' then
-        ForceDirectories(ExtractFilePath(FFileName));
-      FHandle := FileCreate(FFileName);
+      if ExtractFilePath(ImageName) <> '' then
+        ForceDirectories(ExtractFilePath(ImageName));
+      FHandle := FileCreate(ImageName);
       if FHandle = -1 then
         SetExitCode(ecCreateStreamError);
     end;
