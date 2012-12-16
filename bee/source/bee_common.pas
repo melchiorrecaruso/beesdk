@@ -53,6 +53,7 @@ const
 
   { Messages }
 
+  cmCreating          = 'Creating   %s';
   cmOpening           = 'Opening    %s';
   cmScanning          = 'Scanning   %s';
   cmAdding            = 'Adding     %s';

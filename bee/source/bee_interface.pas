@@ -29,12 +29,14 @@ unit Bee_Interface;
 interface
 
 const
-  ecNoError           = 0;
+  ecNoError           = 0;  { 1 No error                         }
   ecUnknowError       = 1;
-
-
   ecCmdLineError      = 7;   { 7 Command line error              }
   ecMemError          = 8;   { 8 Not enough memory for operation }
+
+
+
+
 
   ecArchiveTypeError  = 14;
 
@@ -53,11 +55,16 @@ const
   emNoError           = 'Everything went ok - time elapsed %s seconds.';
   emUnknow            = 'Process aborted (exit code #%.5u) - time elapsed %s seconds.';
 
-  emWarning           = 'Warning occurred - time elapsed %s seconds.';
-  emUserAbort         = 'User stopped the process - time elapsed %s seconds.';
-  emCmdError          = 'Command line error.';
+  emMemError          = 'Process aborted (exit code #%.5u), not enough memory for operation - time elapsed %s seconds.';
+  emCmdLineError      = 'Command line error (exit code #%.5u) - time elapsed %s seconds.';
 
-  emMemError          = 'Error: not enough memory for operation';
+
+
+
+  emUserAbort         = 'User stopped the process - time elapsed %s seconds.';
+
+
+
   emArcTypeError      = 'Error: archive type unsupported';
   emOpenArcError      = 'Error: can''t open archive "%s"';
   emOpenFileError     = 'Error: can''t open file "%s"';

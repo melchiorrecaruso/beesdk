@@ -161,12 +161,20 @@ begin
 
   S := TimeDifference(StartTime);
   case ExitCode of
-    ecNoError:      DoMessage(Format(Cr + emNoError,   [S]));
-    ecCmdLineError: DoMessage(Format(Cr + emCmdError,  [ ]));
-    ecMemError:     DoMessage(Format(Cr + emMemError,  [ ]));
-    ecUnknowError:  DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
-    ecUserAbort:    DoMessage(Format(Cr + emUserAbort, [S]));
-    else            DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
+    ecNoError:          DoMessage(Format(Cr + emNoError,     [ExitCode, S]));
+    ecUnknowError:      DoMessage(Format(Cr + emUnknow,      [ExitCode, S]));
+    ecCmdLineError:     DoMessage(Format(Cr + emCmdLineError,[ExitCode, S]));
+    ecMemError:         DoMessage(Format(Cr + emMemError,    [ ]));
+    //ecArchiveTypeError:
+    //ecCreateStreamError:
+    //ecOpenStreamError:
+    //ecFillStreamError:
+    //ecFlushStreamError:
+    //ecResizeStreamError:
+    //ecSplittingError:
+
+    ecUserAbort:        DoMessage(Format(Cr + emUserAbort, [S]));
+    else                DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
   end;
 end;
 
@@ -376,7 +384,6 @@ begin
   FUpdater.OnClear            := DoClear;
   FUpdater.OnUpdate           := DoUpdate;
 
-  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
   case FCommandLine.mOption of
     moStore: FUpdater.CompressionMethod := actNone;
@@ -424,7 +431,6 @@ begin
 
   FExtractor.ArchivePassword := FCommandLine.pOption;
 
-  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FExtractor.OpenArchive(FCommandLine.ArchiveName);
   if ExitCode = 0 then
   begin
@@ -462,7 +468,6 @@ begin
   FEraser.Threshold          := FCommandLine.iOption;
   FEraser.WorkDirectory      := FCommandLine.wdOption;
 
-  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FEraser.OpenArchive(FCommandLine.ArchiveName);
   if ExitCode = 0 then
   begin
@@ -497,7 +502,6 @@ begin
   FRenamer.Threshold          := FCommandLine.iOption;
   FRenamer.WorkDirectory      := FCommandLine.wdOption;
 
-  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FRenamer.OpenArchive(FCommandLine.ArchiveName);
   if ExitCode = 0 then
   begin
@@ -541,7 +545,6 @@ begin
 
   FReader.ArchivePassword := FCommandLine.pOption;
 
-  DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FReader.OpenArchive(FCommandLine.ArchiveName);
   if ExitCode = 0 then
   begin
@@ -631,7 +634,7 @@ begin
           CompressionMethodToStr(Item), Item.FileName]));
       end;
       DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
-      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)' + Cr, [SizeToStr(TotalSize), SizeToStr(TotalPackedSize), TotalFiles]));
+      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPackedSize), TotalFiles]));
     end;
     ItemToList.Destroy;
   end;

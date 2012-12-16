@@ -971,6 +971,8 @@ begin
   CloseArchive;
   if FileExists(aArchiveName) then
   begin
+    DoMessage(Format(cmOpening, [aArchiveName]));
+
     FArchiveReader := TFileReader.Create(aArchiveName, FOnRequestImage);
     if Assigned(FArchiveReader) then
     begin
@@ -983,7 +985,10 @@ begin
     end else
       DoFault(ecUnknowError, Format(emOpenArcError, [aArchiveName]));
   end else
+  begin
+    DoMessage(Format(cmCreating, [aArchiveName]));
     FArchiveName := aArchiveName;
+  end;
 end;
 
 procedure TArchiveReader.CloseArchive;
@@ -1307,6 +1312,11 @@ begin
   begin
     if FThreshold > 0 then
     begin
+      FTotalSize     := 0;
+      FProcessedSize := 0;
+      for I := 0 to FArchiveItems.Count - 1 do
+        Inc(FTotalSize, Item.CompressedSize);
+
       FArchiveReader := TFileReader.Create(FTempName, nil);
       FTempWriter    := TFileWriter.Create(FArchiveName, FThreshold, FOnRequestBlankDisk);
       FTempWriter.WriteDWord(beexArchiveMarker);
@@ -1316,8 +1326,7 @@ begin
       for I := 0 to FArchiveItems.Count - 1 do
         if ExitCode = ecNoError then
         begin
-          Item      := FArchiveItems.Items[I];
-          Item.FTag := aitNone;
+          Item := FArchiveItems.Items[I];
 
           DoMessage(Format(cmCopying, [Item.FileName]));
           EncodeFromArchive(Item);
@@ -2114,9 +2123,6 @@ begin
     if FIsNeededToSave then
     begin
       FTempName   := GenerateFileName(FWorkDirectory);
-
-      Writeln(FTempName);
-
       FTempWriter := TFileWriter.Create(FTempName);
       if Assigned(FTempWriter) then
       begin
@@ -2127,7 +2133,7 @@ begin
           FEncoder := THeaderEncoder.Create(FTempWriter);
           FEncoder.OnProgress := DoProgress;
           for I := 0 to FArchiveItems.Count - 1 do
-            if ExitCode = 0 then
+            if ExitCode = ecNoError then
             begin
               Item := FArchiveItems.Items[I];
 
