@@ -2114,6 +2114,9 @@ begin
     if FIsNeededToSave then
     begin
       FTempName   := GenerateFileName(FWorkDirectory);
+
+      Writeln(FTempName);
+
       FTempWriter := TFileWriter.Create(FTempName);
       if Assigned(FTempWriter) then
       begin
