@@ -79,7 +79,7 @@
         <WorkingDirectory Value="C:\Users\Elena\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -95,10 +95,11 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="90"/>
-        <CursorPos X="56" Y="124"/>
+        <CursorPos X="42" Y="117"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -117,11 +118,10 @@
       <Unit3>
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="347"/>
-        <CursorPos X="39" Y="207"/>
+        <TopLine Value="201"/>
+        <CursorPos X="41" Y="223"/>
         <FoldState Value=" T3lN0403373w"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
@@ -141,7 +141,7 @@
       <Unit5>
         <Filename Value="bee_bufstream.pas"/>
         <UnitName Value="Bee_BufStream"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="158"/>
         <CursorPos X="43" Y="193"/>
@@ -193,8 +193,19 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="bee_common.pas"/>
+        <UnitName Value="Bee_Common"/>
+        <EditorIndex Value="9"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="53"/>
+        <CursorPos X="10" Y="78"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit10>
     </Units>
-    <JumpHistory Count="26" HistoryIndex="25">
+    <JumpHistory Count="27" HistoryIndex="26">
       <Position1>
         <Filename Value="bee_files.pas"/>
         <Caret Line="427" Column="17" TopLine="361"/>
@@ -299,6 +310,10 @@
         <Filename Value="beesdk_archive.pas"/>
         <Caret Line="879" Column="1" TopLine="861"/>
       </Position26>
+      <Position27>
+        <Filename Value="bee_files.pas"/>
+        <Caret Line="408" Column="29" TopLine="353"/>
+      </Position27>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
