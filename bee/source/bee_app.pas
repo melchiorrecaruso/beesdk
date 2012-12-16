@@ -114,7 +114,7 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1633 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1635 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
 
   ExitCode := 0;
@@ -386,9 +386,12 @@ begin
   FUpdater.DictionaryLevel    := FCommandLine.dOption;
   FUpdater.SolidCompression   := FCommandLine.sOption;
   FUpdater.ForceFileExtension := FCommandLine.fOption;
+
   FUpdater.ArchivePassword    := FCommandLine.pOption;
   FUpdater.TestTempArchive    := FCommandLine.tOption;
   FUpdater.Threshold          := FCommandLine.iOption;
+  FUpdater.WorkDirectory      := FCommandLine.wdOption;
+
 //FUpdater.ArchiveComment     :=
 
   if ExitCode = 0 then
@@ -457,6 +460,7 @@ begin
   FEraser.TestTempArchive    := FCommandLine.tOption;
   FEraser.ArchivePassword    := FCommandLine.pOption;
   FEraser.Threshold          := FCommandLine.iOption;
+  FEraser.WorkDirectory      := FCommandLine.wdOption;
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FEraser.OpenArchive(FCommandLine.ArchiveName);
@@ -491,6 +495,7 @@ begin
   FRenamer.TestTempArchive    := FCommandLine.tOption;
   FRenamer.ArchivePassword    := FCommandLine.pOption;
   FRenamer.Threshold          := FCommandLine.iOption;
+  FRenamer.WorkDirectory      := FCommandLine.wdOption;
 
   DoMessage(Format(cmOpening, [FCommandLine.ArchiveName]));
   FRenamer.OpenArchive(FCommandLine.ArchiveName);
