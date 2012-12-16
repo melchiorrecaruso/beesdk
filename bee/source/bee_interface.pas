@@ -34,13 +34,16 @@ const
   ecCmdLineError      = 7;   { 7 Command line error              }
   ecMemError          = 8;   { 8 Not enough memory for operation }
 
-
-
-
-
   ecArchiveTypeError  = 14;
-
   ecCreateStreamError = 13;
+
+
+
+
+
+
+
+
   ecOpenStreamError   = 12;
   ecFillStreamError   = 9;
   ecFlushStreamError  = 10;
@@ -53,20 +56,21 @@ const
 
 const
   emNoError           = 'Everything went ok - time elapsed %s seconds.';
-  emUnknow            = 'Process aborted (exit code #%.5u) - time elapsed %s seconds.';
-
-  emMemError          = 'Process aborted (exit code #%.5u), not enough memory for operation - time elapsed %s seconds.';
+  emUnknowError       = 'Unknow error (exit code #%.5u) - time elapsed %s seconds.';
   emCmdLineError      = 'Command line error (exit code #%.5u) - time elapsed %s seconds.';
+  emMemError          = 'Allocation memory error (exit code #%.5u) - time elapsed %s seconds.';
+  emArcTypeError      = 'Archive type error (exit code #%.5u) - time elapsed %s seconds.';
 
 
+  emOpenArcError      = 'Error: can''t open archive "%s"';
 
 
   emUserAbort         = 'User stopped the process - time elapsed %s seconds.';
 
 
 
-  emArcTypeError      = 'Error: archive type unsupported';
-  emOpenArcError      = 'Error: can''t open archive "%s"';
+
+
   emOpenFileError     = 'Error: can''t open file "%s"';
   emOpenTempError     = 'Error: can''t open temp file';
   emCreateSwapError   = 'Error: can''t create swap file';

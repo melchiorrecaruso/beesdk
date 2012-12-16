@@ -161,8 +161,8 @@ begin
 
   S := TimeDifference(StartTime);
   case ExitCode of
-    ecNoError:          DoMessage(Format(Cr + emNoError,     [ExitCode, S]));
-    ecUnknowError:      DoMessage(Format(Cr + emUnknow,      [ExitCode, S]));
+    ecNoError:          DoMessage(Format(Cr + emNoError,     [          S]));
+    ecUnknowError:      DoMessage(Format(Cr + emUnknowError, [ExitCode, S]));
     ecCmdLineError:     DoMessage(Format(Cr + emCmdLineError,[ExitCode, S]));
     ecMemError:         DoMessage(Format(Cr + emMemError,    [ ]));
     //ecArchiveTypeError:
@@ -173,8 +173,8 @@ begin
     //ecResizeStreamError:
     //ecSplittingError:
 
-    ecUserAbort:        DoMessage(Format(Cr + emUserAbort, [S]));
-    else                DoMessage(Format(Cr + emUnknow,    [ExitCode, S]));
+    ecUserAbort:        DoMessage(Format(Cr + emUserAbort,   [S]));
+    else                DoMessage(Format(Cr + emUnknowError, [ExitCode, S]));
   end;
 end;
 

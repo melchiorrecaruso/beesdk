@@ -1312,10 +1312,12 @@ begin
   begin
     if FThreshold > 0 then
     begin
-      FTotalSize     := 0;
+      DoMessage(Format(cmSplitting, ['...']));
+
       FProcessedSize := 0;
+      FTotalSize     := 0;
       for I := 0 to FArchiveItems.Count - 1 do
-        Inc(FTotalSize, Item.CompressedSize);
+        Inc(FTotalSize, FArchiveItems.Items[I].CompressedSize);
 
       FArchiveReader := TFileReader.Create(FTempName, nil);
       FTempWriter    := TFileWriter.Create(FArchiveName, FThreshold, FOnRequestBlankDisk);
