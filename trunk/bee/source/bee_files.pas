@@ -219,6 +219,8 @@ begin
       FOnRequestImage(Value, Result, Abort);
     if Abort then
       SetExitCode(ecUserAbort);
+
+    if ExitCode <> ecNoError then Break;
   end;
 end;
 
@@ -415,6 +417,8 @@ begin
         FOnRequestBlankDisk(Value, Abort);
       if Abort then
         SetExitCode(ecUserAbort);
+
+      if ExitCode <> ecNoError then Break;
     end;
 end;
 
