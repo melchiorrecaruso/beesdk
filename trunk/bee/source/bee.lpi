@@ -110,7 +110,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="967"/>
         <CursorPos X="51" Y="986"/>
-        <FoldState Value=" T3rE0e111E"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -187,8 +186,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="59" Y="67"/>
+        <TopLine Value="52"/>
+        <CursorPos X="1" Y="45"/>
         <UsageCount Value="93"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
