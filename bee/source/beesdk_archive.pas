@@ -792,7 +792,7 @@ begin
   if Result = TRUE then
     UnPackCentralDirectory
   else
-    DoFault(ecUnknowError, emArcTypeError);
+    DoFault(ecUnknowError, emArchiveTypeError);
 end;
 
 procedure TArchiveReader.UnPackCentralDirectory;
@@ -980,7 +980,7 @@ begin
       begin
         FArchiveName := aArchiveName;
         if FArchiveItems.Count = 0 then
-          DoFault(ecArchiveTypeError, Format(emArcTypeError, [aArchiveName]));
+          DoFault(ecArchiveTypeError, Format(emArchiveTypeError, [aArchiveName]));
       end;
     end else
       DoFault(ecUnknowError, Format(emOpenArcError, [aArchiveName]));
