@@ -28,44 +28,72 @@ unit Bee_Interface;
 
 interface
 
+
 const
-  ecNoError           = 0;  { 1 No error                         }
+  ecNoError           = 0;
+  emNoError           = 'Everything went ok - time elapsed %s seconds.';
+
   ecUnknowError       = 1;
-  ecCmdLineError      = 7;   { 7 Command line error              }
-  ecMemError          = 8;   { 8 Not enough memory for operation }
+  emUnknowError       = 'Unknow error (exit code #001) - time elapsed %s seconds.';
 
-  ecArchiveTypeError  = 14;
+  ecCmdLineError      = 7;
+  emCmdLineError      = 'Command line error (exit code #007) - time elapsed %s seconds.';
+
+  ecAllocMemError     = 8;
+  emAllocMemError     = 'Allocation memory error (exit code #008) - time elapsed %s seconds.';
+
   ecCreateStreamError = 13;
-
-
-
-
-
-
-
+  emCreateStreamError = 'Create stream error (exit code #013) - time elapsed %s seconds.';
 
   ecOpenStreamError   = 12;
+  emOpenStreamError   = 'Open stream error (exit code #012) - time elapsed %s seconds.';
+
   ecFillStreamError   = 9;
+  emFillStreamError   = 'Fill stream error (exit code #009) - time elapsed %s seconds.';
+
   ecFlushStreamError  = 10;
+  emFlushStreamError  = 'Flush stream error (exit code #010) - time elapsed %s seconds.';
+
   ecResizeStreamError = 11;
-  ecSplittingError    = 15;
+  emResizeStreamError = 'Resize stream error (exit code #011) - time elapsed %s seconds.';
+
+  ecSplitStreamError  = 15;
+  emSplitStreamError  = 'Split stream error (exit code #015) - time elapsed %s seconds.';
+
+  ecArchiveTypeError  = 14;
+  emArchiveTypeError  = 'Archive type error (exit code #014) - time elapsed %s seconds.';
+
+  ecUserAbortError    = 255;
+  emUserAbortError    = 'User abort error (exit code #255) - time elapsed %s seconds.';
 
 
-  ecUserAbort         = 255; { 255 User stopped the process      }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 const
-  emNoError           = 'Everything went ok - time elapsed %s seconds.';
-  emUnknowError       = 'Unknow error (exit code #%.5u) - time elapsed %s seconds.';
-  emCmdLineError      = 'Command line error (exit code #%.5u) - time elapsed %s seconds.';
-  emMemError          = 'Allocation memory error (exit code #%.5u) - time elapsed %s seconds.';
-  emArcTypeError      = 'Archive type error (exit code #%.5u) - time elapsed %s seconds.';
 
 
-  emOpenArcError      = 'Error: can''t open archive "%s"';
 
 
-  emUserAbort         = 'User stopped the process - time elapsed %s seconds.';
+
+
+
+
+
+
+
 
 
 
@@ -90,6 +118,10 @@ const
   emFileExistsWarning = 'Warning: file "%s" already exists';
   emNoFilesWarning    = 'Warning: no files to process';
 
+var
+  // ExitCode: longint = ecNoError;
+  ExitMessage:  string = '';
+
   procedure SetExitCode(Value: longint);
 
 implementation
@@ -97,9 +129,13 @@ implementation
   procedure SetExitCode(Value: longint);
   begin
     if ExitCode = ecNoError then
-    begin
       ExitCode := Value;
-    end;
+  end;
+
+  procedure SetExitMessage(const Value: string);
+  begin
+    if ExitMessage = '' then
+      ExitMessage := Value;
   end;
 
 end.

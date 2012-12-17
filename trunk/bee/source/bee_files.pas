@@ -218,7 +218,7 @@ begin
     if Assigned(FOnRequestImage) then
       FOnRequestImage(Value, Result, Abort);
     if Abort then
-      SetExitCode(ecUserAbort);
+      SetExitCode(ecUserAbortError);
 
     if ExitCode <> ecNoError then Break;
   end;
@@ -416,7 +416,7 @@ begin
       if Assigned(FOnRequestBlankDisk) then
         FOnRequestBlankDisk(Value, Abort);
       if Abort then
-        SetExitCode(ecUserAbort);
+        SetExitCode(ecUserAbortError);
 
       if ExitCode <> ecNoError then Break;
     end;
@@ -429,7 +429,7 @@ begin
   FlushBuffer;
   FileClose(FHandle);
   if RenameFile(FFileName, GetImageName(FCurrentImage)) = FALSE then
-    SetExitCode(ecSplittingError);
+    SetExitCode(ecSplitStreamError);
 
   if ExitCode = ecNoError then
   begin
