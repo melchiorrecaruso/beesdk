@@ -30,13 +30,13 @@ interface
 
 
 const
-  ecNoError           =   0;  emNoError           = 'Everything went ok - time elapsed %s seconds.';
-  ecUnknowError       =   1;  emUnknowError       = 'Unknow error (exit code #001) - time elapsed %s seconds.';
-  ecCmdLineError      =   7;  emCmdLineError      = 'Command line error (exit code #007) - time elapsed %s seconds.';
+  esNoError           =   0;  emNoError           = 'Everything went ok - time elapsed %s seconds.';
+  esUnknowError       =   1;  emUnknowError       = 'Unknow error (exit code #001) - time elapsed %s seconds.';
+  esCmdLineError      =   7;  emCmdLineError      = 'Command line error (exit code #007) - time elapsed %s seconds.';
 
-  ecAllocMemError     =   8;  emAllocMemError     = 'Allocation memory error (exit code #008) - time elapsed %s seconds.';
+  esAllocMemError     =   8;  emAllocMemError     = 'Allocation memory error (exit code #008) - time elapsed %s seconds.';
 
-  ecCreateStreamError =  13;  emCreateStreamError = 'Create stream error (exit code #013) - time elapsed %s seconds.';
+  esCreateStreamError =  13;  emCreateStreamError = 'Create stream error (exit code #013) - time elapsed %s seconds.';
   ecOpenStreamError   =  12;  emOpenStreamError   = 'Open stream error (exit code #012) - time elapsed %s seconds.';
   ecFillStreamError   =   9;  emFillStreamError   = 'Fill stream error (exit code #009) - time elapsed %s seconds.';
   ecFlushStreamError  =  10;  emFlushStreamError  = 'Flush stream error (exit code #010) - time elapsed %s seconds.';
@@ -56,43 +56,19 @@ const
 
 
 
-
-const
-
-  emOpenFileError     = 'Error: can''t open file "%s"';
-  emOpenTempError     = 'Error: can''t open temp file';
-  emCreateSwapError   = 'Error: can''t create swap file';
-  emOpenSwapError     = 'Error: can''t open swap file';
-  emStrmReadError     = 'Error: can''t read data from stream';
-  emStrmWriteError    = 'Error: can''t write data to stream';
-
-  emSplitArcError     = 'Error: can''t split temporary archive "%s"';
-  emRenameFileError   = 'Error: can''t rename file "%s" to "%s"';
-  emSequenceError     = 'Error: can''t decode file "%s"';
-  emActionError       = 'Error: internal error';
-  emStreamError       = 'Error: can''t open stream';
-  emTestPswError      = 'Error: wrong password';
-  emCrcError          = 'Error: wrong CRC decoding "%s"';
-
-  emConfigError       = 'Error: configuration file "%s" not found, data will be stored';
-  emFileExistsWarning = 'Warning: file "%s" already exists';
-  emNoFilesWarning    = 'Warning: no files to process';
-
 var
-  iExitCode: longint = ecNoError;
-  iExitMessage: string = '';
+  ExitStatus: longint = ecNoError;
 
-  procedure SetExit(aExitCode: longint; const aExitMessage: string);
+  procedure SetExitStatus(aExitStatus: longint);
 
 implementation
 
-  procedure SetExit(aExitCode: longint; const aExitMessage: string);
+  procedure SetExitStaus(aExitStatus: longint);
   begin
-    if iExitCode = ecNoError then
-      iExitCode := aExitCode;
-
-    if iExitMessage = '' then
-      iExitMessage := aExitMessage;
+    if ExitStatus = esNoError then
+    begin
+       ExitStatus := aExitStatus;
+    end;
   end;
 
 end.
