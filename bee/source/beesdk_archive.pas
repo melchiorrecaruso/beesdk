@@ -606,7 +606,7 @@ begin
 
     if Hi = -2 then
     begin
-      SetExitCode(ecUnknowError);
+      SetExitStatus(esUnknowError);
       FNames.Insert(Med + 1, Item);
     end else
     begin

@@ -37,11 +37,11 @@ const
   esAllocMemError     =   8;  emAllocMemError     = 'Allocation memory error (exit code #008) - time elapsed %s seconds.';
 
   esCreateStreamError =  13;  emCreateStreamError = 'Create stream error (exit code #013) - time elapsed %s seconds.';
-  ecOpenStreamError   =  12;  emOpenStreamError   = 'Open stream error (exit code #012) - time elapsed %s seconds.';
-  ecFillStreamError   =   9;  emFillStreamError   = 'Fill stream error (exit code #009) - time elapsed %s seconds.';
-  ecFlushStreamError  =  10;  emFlushStreamError  = 'Flush stream error (exit code #010) - time elapsed %s seconds.';
-  ecResizeStreamError =  11;  emResizeStreamError = 'Resize stream error (exit code #011) - time elapsed %s seconds.';
-  ecSplitStreamError  =  15;  emSplitStreamError  = 'Split stream error (exit code #015) - time elapsed %s seconds.';
+  esOpenStreamError   =  12;  emOpenStreamError   = 'Open stream error (exit code #012) - time elapsed %s seconds.';
+  esFillStreamError   =   9;  emFillStreamError   = 'Fill stream error (exit code #009) - time elapsed %s seconds.';
+  esFlushStreamError  =  10;  emFlushStreamError  = 'Flush stream error (exit code #010) - time elapsed %s seconds.';
+  esResizeStreamError =  11;  emResizeStreamError = 'Resize stream error (exit code #011) - time elapsed %s seconds.';
+  esSplitStreamError  =  15;  emSplitStreamError  = 'Split stream error (exit code #015) - time elapsed %s seconds.';
 
 
 
@@ -52,18 +52,18 @@ const
 
 
 
-  ecUserAbortError    = 255;  emUserAbortError    = 'User abort error (exit code #255) - time elapsed %s seconds.';
+  esUserAbortError    = 255;  emUserAbortError    = 'User abort error (exit code #255) - time elapsed %s seconds.';
 
 
 
 var
-  ExitStatus: longint = ecNoError;
+  ExitStatus: longint = esNoError;
 
   procedure SetExitStatus(aExitStatus: longint);
 
 implementation
 
-  procedure SetExitStaus(aExitStatus: longint);
+  procedure SetExitStatus(aExitStatus: longint);
   begin
     if ExitStatus = esNoError then
     begin
