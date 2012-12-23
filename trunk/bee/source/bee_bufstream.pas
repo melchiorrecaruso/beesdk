@@ -179,7 +179,7 @@ begin
 
   if FBufferSize = -1 then
   begin
-    SetExitCode(ecFillStreamError);
+    SetExitStatus(esFillStreamError);
     FBufferSize := 0;
   end;
 end;
@@ -209,7 +209,7 @@ begin
     if FBufferIndex = Length(FBuffer) then
     begin
       FlushBuffer;
-      if ExitCode <> ecNoError then Break;
+      if ExitStatus <> esNoError then Break;
     end;
     I := Min(Count - Result, Length(FBuffer) - FBufferIndex);
 
@@ -230,7 +230,7 @@ begin
   if FBufferIndex > 0 then
   begin
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
-      SetExitCode(ecFlushStreamError);
+      SetExitStatus(esFlushStreamError);
 
     FBufferIndex := 0;
   end;
@@ -239,14 +239,14 @@ end;
 procedure TWriteBufStream.SetSize(const NewSize: int64);
 begin
   FlushBuffer;
-  if ExitCode = ecNoError then
+  if ExitStatus = esNoError then
   begin
     if FileTruncate(FHandle, NewSize) then
     begin
       FPosition    := NewSize;
       FBufferIndex := 0;
     end else
-      SetExitCode(ecResizeStreamError);
+      SetExitStatus(esResizeStreamError);
   end;
 end;
 

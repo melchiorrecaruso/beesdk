@@ -185,11 +185,11 @@ begin
   FOnRequestImage := aRequestImage;
 
   ImageName := RequestImage(FImageNumber);
-  if ExitCode = ecNoError then
+  if ExitStatus = esNoError then
   begin
     FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
     if FHandle = -1 then
-      SetExitCode(ecOpenStreamError);
+      SetExitStatus(esOpenStreamError);
   end;
 end;
 
@@ -218,9 +218,9 @@ begin
     if Assigned(FOnRequestImage) then
       FOnRequestImage(Value, Result, Abort);
     if Abort then
-      SetExitCode(ecUserAbortError);
+      SetExitStatus(esUserAbortError);
 
-    if ExitCode <> ecNoError then Break;
+    if ExitStatus <> esNoError then Break;
   end;
 end;
 
@@ -233,11 +233,11 @@ begin
 
   FImageNumber := Value;
   ImageName := RequestImage(FImageNumber);
-  if ExitCode = ecNoError then
+  if ExitStatus = esNoError then
   begin
     FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
     if FHandle = -1 then
-      SetExitCode(ecOpenStreamError);
+      SetExitStatus(esOpenStreamError);
   end;
 end;
 
@@ -286,7 +286,7 @@ begin
     if Result < Count then
     begin
       OpenImage(FImageNumber + 1);
-      if ExitCode <> ecNoError then Break;
+      if ExitStatus <> esNoError then Break;
     end;
   until Result = Count;
 end;
@@ -322,13 +322,13 @@ begin
   FOnRequestBlankDisk := nil;
 
   ImageName := RequestImage(FCurrentImage);
-  if ExitCode = ecNoError then
+  if ExitStatus = esNoError then
   begin
     if ExtractFilePath(ImageName) <> '' then
       ForceDirectories(ExtractFilePath(ImageName));
     FHandle := FileCreate(ImageName);
     if FHandle = -1 then
-      SetExitCode(ecCreateStreamError);
+      SetExitStatus(esCreateStreamError);
   end;
 end;
 
@@ -345,13 +345,13 @@ begin
   FOnRequestBlankDisk := aRequestBlankDisk;
 
   ImageName := RequestImage(FCurrentImage);
-  if ExitCode = ecNoError then
+  if ExitStatus = esNoError then
   begin
     if ExtractFilePath(ImageName) <> '' then
       ForceDirectories(ExtractFilePath(ImageName));
     FHandle := FileCreate(ImageName);
     if FHandle = -1 then
-      SetExitCode(ecCreateStreamError);
+      SetExitStatus(esCreateStreamError);
   end;
 end;
 
@@ -416,9 +416,9 @@ begin
       if Assigned(FOnRequestBlankDisk) then
         FOnRequestBlankDisk(Value, Abort);
       if Abort then
-        SetExitCode(ecUserAbortError);
+        SetExitStatus(esUserAbortError);
 
-      if ExitCode <> ecNoError then Break;
+      if ExitStatus <> esNoError then Break;
     end;
 end;
 
@@ -429,20 +429,20 @@ begin
   FlushBuffer;
   FileClose(FHandle);
   if RenameFile(FFileName, GetImageName(FCurrentImage)) = FALSE then
-    SetExitCode(ecSplitStreamError);
+    SetExitStatus(esSplitStreamError);
 
-  if ExitCode = ecNoError then
+  if ExitStatus = esNoError then
   begin
     Inc(FCurrentImage);
     ImageName := RequestImage(FCurrentImage);
 
-    if ExitCode = ecNoError then
+    if ExitStatus = esNoError then
     begin
       if ExtractFilePath(ImageName) <> '' then
         ForceDirectories(ExtractFilePath(ImageName));
       FHandle := FileCreate(ImageName);
       if FHandle = -1 then
-        SetExitCode(ecCreateStreamError);
+        SetExitStatus(esCreateStreamError);
     end;
   end;
   FCurrentImageSize := 0;
@@ -463,7 +463,7 @@ begin
       if FCurrentImageSize = FThreshold then
       begin
         CreateNewImage;
-        if ExitCode <> ecNoError then Break;
+        if ExitStatus <> esNoError then Break;
       end;
       I := Min(Count - Result, FThreshold - FCurrentImageSize);
 
