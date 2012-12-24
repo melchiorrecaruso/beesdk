@@ -42,12 +42,15 @@ const
   esFlushStreamError  =  10;  emFlushStreamError  = 'Flush stream error (exit code #010) - time elapsed %s seconds.';
   esResizeStreamError =  11;  emResizeStreamError = 'Resize stream error (exit code #011) - time elapsed %s seconds.';
   esSplitStreamError  =  15;  emSplitStreamError  = 'Split stream error (exit code #015) - time elapsed %s seconds.';
+  esRenameTempError   =  21;  emRenameTempError   = 'Rename temporary archive error (exit code #021) - time elapsed %s seconds.';
 
 
 
 
 
-  ecArchiveTypeError  =  14;  emArchiveTypeError  = 'Archive type error (exit code #014) - time elapsed %s seconds.';
+  esCRCError          =  18;  emCRCError          = 'Data CRC error (exit code #018) - time elapsed %s seconds.';
+
+  esArchiveTypeError  =  14;  emArchiveTypeError  = 'Archive type error (exit code #014) - time elapsed %s seconds.';
 
 
 
@@ -66,9 +69,7 @@ implementation
   procedure SetExitStatus(aExitStatus: longint);
   begin
     if ExitStatus = esNoError then
-    begin
-       ExitStatus := aExitStatus;
-    end;
+      ExitStatus := aExitStatus;
   end;
 
 end.

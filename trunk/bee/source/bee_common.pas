@@ -69,6 +69,7 @@ const
   cmListing           = 'Listing    %s';
   cmSwapping          = 'Swapping   %s';
   cmRenaming          = 'Renaming   %s';
+  cmLoading           = 'Loading    %s';
 
 type
   TRecursiveMode = (rmNone, rmWildCard, rmFull);
