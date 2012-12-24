@@ -39,8 +39,6 @@ type
   /// archive binding flag
   TArchiveBindingFlag = (
     abfComment);
-    //abfSFX
-    //abf
 
   TArchiveBindingFlags = set of TArchiveBindingFlag;
 
@@ -150,7 +148,7 @@ type
     property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
   end;
 
-  TArchiveCustomItems = class(TObject)
+  TArchiveItems = class(TObject)
   private {private}
     FItems: TList;
     FNames: TList;
@@ -190,34 +188,33 @@ type
 
   TArchiveReader = class(TObject)
   private
-    FDecoder: THeaderDecoder;
     FTotalSize: int64;
     FProcessedSize: int64;
+    FDecoder: THeaderDecoder;
     FArchiveName: string;
     FArchiveComment: string;
     FArchivePassword: string;
-    FArchiveSpanning: longint;
     FArchiveReader: TFileReader;
+    FArchiveItems: TArchiveItems;
     FSwapName: string;
     FSwapReader: TFileReader;
     FSwapWriter: TFileWriter;
     FSuspended:  boolean;
-    FArchiveItems: TArchiveCustomItems;
-    FOnRequestImage: TFileReaderRequestImageEvent;
-    FOnProgress: TArchiveProgressEvent;
     FOnMessage: TArchiveMessageEvent;
+    FOnProgress: TArchiveProgressEvent;
+    FOnRequestImage: TFileReaderRequestImageEvent;
     procedure InitDecoder (Item: TArchiveItem);
     procedure DecodeToNul (Item: TArchiveItem);
     procedure DecodeToSwap(Item: TArchiveItem);
     procedure DecodeToFile(Item: TArchiveItem);
-    procedure UnPackCentralDirectory;
     function ReadCentralDirectory(aStream: TFileReader): boolean;
+    procedure UnPackCentralDirectory;
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
     function GetNextTear(Index: longint): longint;
-    function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
+    function GetCount: longint;
     procedure SetArchiveName(const Value: string);
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoMessage(const Message: string);
@@ -225,31 +222,30 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure CloseArchive; virtual;
-    procedure OpenArchive(const aArchiveName: string);
     function Find(const aFileName: string): longint;
+    procedure OpenArchive(const aArchiveName: string);
+    procedure CloseArchive; virtual;
+    procedure Suspend(Value: boolean);
     procedure Terminate;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
-    property ArchivePassword: string read FArchivePassword write FArchivePassword;
     property ArchiveComment: string read FArchiveComment write FArchiveComment;
-    property ArchiveSpanning: longint read FArchiveSpanning;
+    property ArchivePassword: string read FArchivePassword write FArchivePassword;
+
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
     property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
     property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
     property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
-
-    property Suspended: boolean read FSuspended write FSuspended;
   end;
 
   TCustomArchiveReader = class(TArchiveReader)
   public
-    procedure Tag(Index: longint);
-    procedure UnTag(Index: longint);
     procedure TagAll;
     procedure UnTagAll;
+    procedure Tag(Index: longint);
+    procedure UnTag(Index: longint);
     function IsTagged(Index: longint): boolean;
   end;
 
@@ -258,11 +254,11 @@ type
     FEncoder: THeaderEncoder;
     FIsNeededToSave: boolean;
     FIsNeededToSwap: boolean;
+    FThreshold: int64;
     FTempName: string;
     FTempWriter: TFileWriter;
-    FThreshold: int64;
-    FTestTempArchive: boolean;
     FWorkDirectory: string;
+    FTestTempArchive: boolean;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
     procedure InitEncoder      (Item: TArchiveItem);
     procedure EncodeFromArchive(Item: TArchiveItem);
@@ -280,8 +276,8 @@ type
     procedure CloseArchive; override;
   public
     property Threshold: int64 read FThreshold write FThreshold;
-    property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
+    property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
     property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
       read FOnRequestBlankDisk write FOnRequestBlankDisk;
   end;
@@ -292,6 +288,7 @@ type
     procedure UnTagAll;
     procedure Tag(Index: longint);
     procedure UnTag(Index: longint);
+    function IsTagged(Index: longint): boolean;
   end;
 
   TArchiveExtractor = class(TCustomArchiveReader)
@@ -320,7 +317,8 @@ type
   public
     procedure RenameTagged;
   public
-    property OnRenameEvent: TArchiveRenameEvent read FOnRename write FOnRename;
+    property OnRenameEvent: TArchiveRenameEvent
+      read FOnRename write FOnRename;
   end;
 
   TArchiveEraser = class(TCustomArchiveWriter)
@@ -332,7 +330,8 @@ type
   public
     procedure EraseTagged;
   public
-    property OnEraseEvent: TArchiveEraseEvent read FOnErase write FOnErase;
+    property OnEraseEvent: TArchiveEraseEvent
+      read FOnErase write FOnErase;
   end;
 
   TArchiveUpdater = class(TArchiveWriter)
@@ -347,8 +346,6 @@ type
     FConfiguration: TConfiguration;
     FForceFileExtension: string;
     FOnUpdate: TArchiveUpdateEvent;
-    procedure SetConfigurationName(const Value: string);
-    procedure SetForceFileExtension(const Value: string);
     procedure ConfigureCrypter;
     procedure ConfigureCoder;
     procedure CheckTags;
@@ -358,15 +355,15 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure UpdateTagged;
     procedure Tag(SearchRec: TCustomSearchRec);
+    procedure UpdateTagged;
   public
     property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod write FCompressionMethod;
     property CompressionLevel: TmOption read FCompressionLevel write FCompressionLevel;
     property DictionaryLevel: TdOption read FDictionaryLevel  write FDictionaryLevel;
     property SolidCompression: int64 read FSolidCompression write FSolidCompression;
     property EncrypionMethod: TArchiveEncryptionMethod read FEncryptionMethod write FEncryptionMethod;
-    property ConfigurationName: string read FConfigurationName write SetConfigurationName;
+    property ConfigurationName: string read FConfigurationName write FConfigurationName;
     property ForceFileExtension: string read FForceFileExtension write FForceFileExtension;
 
     property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
@@ -547,16 +544,16 @@ begin
   Result := acfSolidCompression in FCompressionFlags;
 end;
 
-// TArchiveCustomItems class
+// TArchiveItems class
 
-constructor TArchiveCustomItems.Create;
+constructor TArchiveItems.Create;
 begin
   inherited Create;
   FItems := TList.Create;
   FNames := TList.Create;
 end;
 
-destructor TArchiveCustomItems.Destroy;
+destructor TArchiveItems.Destroy;
 begin
   Clear;
   FItems.Destroy;
@@ -564,7 +561,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TArchiveCustomItems.Clear;
+procedure TArchiveItems.Clear;
 var
   I: longint;
 begin
@@ -574,7 +571,7 @@ begin
   FNames.Clear;
 end;
 
-function TArchiveCustomItems.Add(Item: TArchiveItem): longint;
+function TArchiveItems.Add(Item: TArchiveItem): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
@@ -615,7 +612,7 @@ begin
    Result := Item.FPosition;
 end;
 
-function TArchiveCustomItems.GetNameIndex(const FileName: string): longint;
+function TArchiveItems.GetNameIndex(const FileName: string): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
@@ -640,7 +637,7 @@ begin
     Result := Med;
 end;
 
-function TArchiveCustomItems.Find(const FileName: string): longint;
+function TArchiveItems.Find(const FileName: string): longint;
 begin
   Result := GetNameIndex(FileName);
   if Result <> -1 then
@@ -649,7 +646,7 @@ begin
   end;
 end;
 
-procedure TArchiveCustomItems.Delete(Index: longint);
+procedure TArchiveItems.Delete(Index: longint);
 var
   I: longint;
   Item, Next: TArchiveItem;
@@ -676,12 +673,12 @@ begin
   Item.Destroy;
 end;
 
-function TArchiveCustomItems.GetCount: longint;
+function TArchiveItems.GetCount: longint;
 begin
   Result := FItems.Count;
 end;
 
-function TArchiveCustomItems.GetItem(Index: longint): TArchiveItem;
+function TArchiveItems.GetItem(Index: longint): TArchiveItem;
 begin
   Result := TArchiveItem(FItems[Index]);
 end;
@@ -695,8 +692,9 @@ begin
   FArchiveName     := '';
   FArchiveComment  := '';
   FArchivePassword := '';
-  FArchiveSpanning :=  0;
   FArchiveReader   := nil;
+  FArchiveItems    := TArchiveItems.Create;
+
   FSwapName        := '';
   FSwapReader      := nil;
   FSwapWriter      := nil;
@@ -705,8 +703,6 @@ begin
   FOnMessage       := nil;
   FOnProgress      := nil;
   FOnRequestImage  := nil;
-
-  FArchiveItems    := TArchiveCustomItems.Create;
 end;
 
 destructor TArchiveReader.Destroy;
@@ -718,7 +714,12 @@ end;
 procedure TArchiveReader.Terminate;
 begin
   SetExitStatus(esUserAbortError);
-  FSuspended := FALSE;
+  Suspend(FALSE);
+end;
+
+procedure TArchiveReader.Suspend(Value: boolean);
+begin
+  FSuspended := Value;
 end;
 
 function TArchiveReader.GetCount: longint;
@@ -760,7 +761,6 @@ begin
         if (alfDisksNumber in LocatorFlags) then LocatorDisksNumber := aStream.ReadInfWord else LocatorDisksNumber := 1;
         if (alfDiskNumber  in LocatorFlags) then LocatorDiskNumber  := aStream.ReadInfWord else LocatorDiskNumber  := 1;
         LocatorDiskSeek := aStream.ReadInfWord;
-        FArchiveSpanning := LocatorDisksNumber;
         // Read CentralDirectory
         aStream.ImagesNumber := LocatorDisksNumber;
         aStream.ImageNumber  := LocatorDiskNumber;
@@ -971,18 +971,17 @@ end;
 procedure TArchiveReader.CloseArchive;
 begin
   FArchiveName     := '';
-  FArchivePassword := '';
-  FArchiveSpanning :=  0;
   FArchiveComment  := '';
+  FArchivePassword := '';
   if Assigned(FArchiveReader) then
     FreeAndNil(FArchiveReader);
+  FArchiveItems.Clear;
   FSwapName :='';
   if Assigned(FSwapReader) then
     FreeAndNil(FSwapReader);
   if Assigned(FSwapWriter) then
     FreeAndNil(FSwapWriter);
   FSuspended := FALSE;
-  FArchiveItems.Clear;
 end;
 
 function TArchiveReader.Find(const aFileName: string): longint;
@@ -993,9 +992,11 @@ end;
 procedure TArchiveReader.DoProgress(Value: longint);
 begin
   Inc(FProcessedSize, Value);
-  if Assigned(FOnProgress) then
-    if (FProcessedSize and $FFFF) = 0 then
+  if (FProcessedSize and $FFFF) = 0 then
+  begin
+    if Assigned(FOnProgress) then
       FOnProgress(Round((FProcessedSize/FTotalSize)*100));
+  end;
 
   while FSuspended do Sleep(250);
 end;
@@ -1055,9 +1056,9 @@ begin
 
   FTempName           := '';
   FTempWriter         := nil;
-  FTestTempArchive    := FALSE;
 
   FThreshold          := 0;
+  FTestTempArchive    := FALSE;
   FWorkDirectory      := '';
   FOnRequestBlankDisk := nil;
 end;
@@ -1266,8 +1267,8 @@ begin
   begin
     if FThreshold > 0 then
     begin
-      FProcessedSize := 0;
       FTotalSize     := 0;
+      FProcessedSize := 0;
       for I := 0 to FArchiveItems.Count - 1 do
       begin
         FArchiveItems.Items[I].FTag := aitUpdate;
@@ -1323,12 +1324,12 @@ begin
       TestTemporaryArchive;
     SaveTemporaryArchive;
   end;
-  FArchiveItems.Clear;
 
   FArchiveName     := '';
-  FArchivePassword := '';
-  FArchiveSpanning :=  0;
   FArchiveComment  := '';
+  FArchivePassword := '';
+  FArchiveItems.Clear;
+
   FSwapName        := '';
   FTempName        := '';
   FThreshold       :=  0;
@@ -1430,6 +1431,11 @@ end;
 procedure TCustomArchiveWriter.UnTag(Index: longint);
 begin
   FArchiveItems.Items[Index].FTag := aitNone;
+end;
+
+function TCustomArchiveWriter.IsTagged(Index: longint): boolean;
+begin
+  Result := FArchiveItems.Items[Index].FTag = aitUpdate;
 end;
 
 // TArchiveExtractor class
@@ -2100,16 +2106,6 @@ begin
       end;
     end;
   CloseArchive;
-end;
-
-procedure TArchiveUpdater.SetConfigurationName(const Value: string);
-begin
-  FConfigurationName := Value;
-end;
-
-procedure TArchiveUpdater.SetForceFileExtension(const Value: string);
-begin
-  FForceFileExtension := Value;
 end;
 
 end.

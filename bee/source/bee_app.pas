@@ -600,7 +600,6 @@ begin
 
     DoMessage(Cr + '  Self-extractor module size = ' + IntToStr(0));
 
-    DoMessage(Cr + '  Archive images number = ' + IntToStr(FReader.ArchiveSpanning));
     DoMessage('  Archive packed data size = ' + IntToStr(TotalPackedSize));
     DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
 
