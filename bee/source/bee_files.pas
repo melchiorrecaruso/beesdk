@@ -62,8 +62,9 @@ type
     function RequestImage(Value: longint): string;
     procedure OpenImage(Value: longint);
   public
+    constructor Create(const aFileName: string); overload;
     constructor Create(const aFileName: string;
-       aRequestImage: TFileReaderRequestImageEvent);
+       aRequestImage: TFileReaderRequestImageEvent); overload;
     destructor Destroy; override;
 
     function ReadDWord: dword;
@@ -172,6 +173,25 @@ begin
 end;
 
 { TFileReader class }
+
+constructor TFileReader.Create(const aFileName: string);
+var
+  ImageName: string;
+begin
+  inherited Create(THandle(-1));
+  FFileName       := aFileName;
+  FImageNumber    := 1;
+  FImagesNumber   := 1;
+  FOnRequestImage := nil;
+
+  ImageName := RequestImage(FImageNumber);
+  if ExitStatus = esNoError then
+  begin
+    FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
+    if FHandle = -1 then
+      SetExitStatus(esOpenStreamError);
+  end;
+end;
 
 constructor TFileReader.Create(const aFileName: string;
   aRequestImage: TFileReaderRequestImageEvent);
@@ -429,7 +449,7 @@ begin
   FlushBuffer;
   FileClose(FHandle);
   if RenameFile(FFileName, GetImageName(FCurrentImage)) = FALSE then
-    SetExitStatus(esSplitStreamError);
+    SetExitStatus(esRenameTempError);
 
   if ExitStatus = esNoError then
   begin

@@ -114,7 +114,7 @@ begin
   FRenamer   := nil;
   FEraser    := nil;
   FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1635 archiver utility, July 2012' + Cr +
+  FSelfName  := 'The Bee 0.8.0 build 1637 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
 
   ExitCode := 0;
@@ -161,10 +161,10 @@ begin
 
   S := TimeDifference(StartTime);
   case ExitCode of
-    ecNoError:          DoMessage(Format(Cr + emNoError,     [          S]));
-    ecUnknowError:      DoMessage(Format(Cr + emUnknowError, [ExitCode, S]));
-    ecCmdLineError:     DoMessage(Format(Cr + emCmdLineError,[ExitCode, S]));
-    ecMemError:         DoMessage(Format(Cr + emMemError,    [ ]));
+    esNoError:          DoMessage(Format(Cr + emNoError,       [          S]));
+    esUnknowError:      DoMessage(Format(Cr + emUnknowError,   [ExitCode, S]));
+    esCmdLineError:     DoMessage(Format(Cr + emCmdLineError,  [ExitCode, S]));
+    esAllocMemError:    DoMessage(Format(Cr + emAllocMemError, [ ]));
     //ecArchiveTypeError:
     //ecCreateStreamError:
     //ecOpenStreamError:
@@ -173,7 +173,7 @@ begin
     //ecResizeStreamError:
     //ecSplittingError:
 
-    ecUserAbort:        DoMessage(Format(Cr + emUserAbort,   [S]));
+    esUserAbortError:   DoMessage(Format(Cr + emUserAbortError,        [S]));
     else                DoMessage(Format(Cr + emUnknowError, [ExitCode, S]));
   end;
 end;
@@ -381,7 +381,6 @@ begin
   FUpdater.OnRequestImage     := DoRequestImage;
   FUpdater.OnProgress         := DoProgress;
   FUpdater.OnMessage          := DoMessage;
-  FUpdater.OnClear            := DoClear;
   FUpdater.OnUpdate           := DoUpdate;
 
   FUpdater.OpenArchive(FCommandLine.ArchiveName);
@@ -426,7 +425,6 @@ begin
   FExtractor.OnRequestImage  := DoRequestImage;
   FExtractor.OnProgress      := DoProgress;
   FExtractor.OnMessage       := DoMessage;
-  FExtractor.OnClear         := DoClear;
   FExtractor.OnExtraction    := DoExtract;
 
   FExtractor.ArchivePassword := FCommandLine.pOption;
@@ -460,7 +458,6 @@ begin
   FEraser.OnRequestImage     := DoRequestImage;
   FEraser.OnProgress         := DoProgress;
   FEraser.OnMessage          := DoMessage;
-  FEraser.OnClear            := DoClear;
   FEraser.OnEraseEvent       := DoErase;
 
   FEraser.TestTempArchive    := FCommandLine.tOption;
@@ -494,7 +491,6 @@ begin
   FRenamer.OnRequestImage     := DoRequestImage;
   FRenamer.OnProgress         := DoProgress;
   FRenamer.OnMessage          := DoMessage;
-  FRenamer.OnClear            := DoClear;
   FRenamer.OnRenameEvent      := DoRename;
 
   FRenamer.TestTempArchive    := FCommandLine.tOption;
@@ -541,7 +537,6 @@ begin
   FReader.OnRequestImage  := DoRequestImage;
   FReader.OnProgress      := DoProgress;
   FReader.OnMessage       := DoMessage;
-  FReader.OnClear         := DoClear;
 
   FReader.ArchivePassword := FCommandLine.pOption;
 
