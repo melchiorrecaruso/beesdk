@@ -117,7 +117,6 @@ begin
   FSelfName  := 'The Bee 0.8.0 build 1637 archiver utility, July 2012' + Cr +
                 '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
 
-  ExitCode := 0;
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
@@ -147,7 +146,7 @@ var
 begin
   StartTime := Now;
   DoMessage(FSelfName);
-  if ExitCode = 0 then
+  if ExitStatus = esNoError then
     case FCommandLine.Command of
       ccAdd:      EncodeShell;
       ccDelete:   DeleteShell;
@@ -160,10 +159,10 @@ begin
     end;
 
   S := TimeDifference(StartTime);
-  case ExitCode of
+  case ExitStatus of
     esNoError:          DoMessage(Format(Cr + emNoError,       [          S]));
-    esUnknowError:      DoMessage(Format(Cr + emUnknowError,   [ExitCode, S]));
-    esCmdLineError:     DoMessage(Format(Cr + emCmdLineError,  [ExitCode, S]));
+    esUnknowError:      DoMessage(Format(Cr + emUnknowError,   [ExitStatus, S]));
+    esCmdLineError:     DoMessage(Format(Cr + emCmdLineError,  [ExitStatus, S]));
     esAllocMemError:    DoMessage(Format(Cr + emAllocMemError, [ ]));
     //ecArchiveTypeError:
     //ecCreateStreamError:
@@ -173,8 +172,8 @@ begin
     //ecResizeStreamError:
     //ecSplittingError:
 
-    esUserAbortError:   DoMessage(Format(Cr + emUserAbortError,        [S]));
-    else                DoMessage(Format(Cr + emUnknowError, [ExitCode, S]));
+    esUserAbortError:   DoMessage(Format(Cr + emUserAbortError,          [S]));
+    else                DoMessage(Format(Cr + emUnknowError, [ExitStatus, S]));
   end;
 end;
 
@@ -400,7 +399,7 @@ begin
 
 //FUpdater.ArchiveComment     :=
 
-  if ExitCode = 0 then
+  if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     Scanner := TFileScanner.Create;
@@ -430,7 +429,7 @@ begin
   FExtractor.ArchivePassword := FCommandLine.pOption;
 
   FExtractor.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode = 0 then
+  if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FExtractor.Count - 1 do
@@ -466,7 +465,7 @@ begin
   FEraser.WorkDirectory      := FCommandLine.wdOption;
 
   FEraser.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode = 0 then
+  if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FEraser.Count - 1 do
@@ -499,7 +498,7 @@ begin
   FRenamer.WorkDirectory      := FCommandLine.wdOption;
 
   FRenamer.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode = 0 then
+  if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FRenamer.Count - 1 do
@@ -539,9 +538,8 @@ begin
   FReader.OnMessage       := DoMessage;
 
   FReader.ArchivePassword := FCommandLine.pOption;
-
-  FReader.OpenArchive(FCommandLine.ArchiveName);
-  if ExitCode = 0 then
+  FReader.ArchiveName     := FCommandLine.ArchiveName;
+  if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FReader.Count - 1 do
