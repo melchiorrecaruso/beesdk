@@ -326,7 +326,8 @@ type
     FOnErase: TArchiveEraseEvent;
     procedure CheckTags;
     procedure CheckSequences;
-    procedure DoErase(Item: TArchiveItem; var Confirm: TArchiveConfirm);
+    procedure DoErase(Item: TArchiveItem;
+      var Confirm: TArchiveConfirm);
   public
     procedure EraseTagged;
   public
@@ -336,7 +337,6 @@ type
 
   TArchiveUpdater = class(TArchiveWriter)
   private
-    FSearchRecs: TList;
     FCompressionMethod: TArchiveCompressionMethod;
     FCompressionLevel: TmOption;
     FDictionaryLevel: TdOption;
@@ -345,6 +345,7 @@ type
     FConfigurationName: string;
     FConfiguration: TConfiguration;
     FForceFileExtension: string;
+    FSearchRecs: TList;
     FOnUpdate: TArchiveUpdateEvent;
     procedure ConfigureCrypter;
     procedure ConfigureCoder;
@@ -1466,7 +1467,7 @@ var
 begin
   FIsNeededToExtract := FALSE;
   for I := 0 to FArchiveItems.Count - 1 do
-    if ExitCode = 0 then
+    if ExitStatus = esNoError then
     begin
       Item := FArchiveItems.Items[I];
       if Item.FTag = aitUpdate then
@@ -1481,12 +1482,12 @@ begin
             Item.FExternalFileName := ExtractAs;
           end;
           arcCancel: Item.FTag:= aitNone;
-          arcQuit:   ExitCode := esUserAbortError;
+          arcQuit:   SetExitStatus(esUserAbortError);
         end;
       end;
     end;
 
-  if ExitCode = 0 then
+  if ExitStatus = esNoError then
     if FIsNeededToExtract then CheckSequences;
 end;
 
@@ -1540,13 +1541,13 @@ var
   Item: TArchiveItem;
 begin
   CheckTags;
-  if ExitCode = 0 then
+  if ExitStatus = esNoError then
     if FIsNeededToExtract then
     begin
       FDecoder := THeaderDecoder.Create(FArchiveReader);
       FDecoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
-        if ExitCode = 0 then
+        if ExitStatus = esNoError then
         begin
           Item := FArchiveItems.Items[I];
 
@@ -1580,7 +1581,7 @@ begin
   FDecoder := THeaderDecoder.Create(FArchiveReader);
   FDecoder.OnProgress := DoProgress;
   for I := 0 to FArchiveItems.Count - 1 do
-    if ExitCode = 0 then
+    if ExitStatus = esNoError then
     begin
       Item := FArchiveItems.Items[I];
 
@@ -1644,7 +1645,7 @@ begin
             Item.FFileName  := RemaneAs;
           end;
           arcCancel: Item.FTag := aitNone;
-          arcQuit:   ExitCode  := esUserAbortError;
+          arcQuit:   SetExitStatus(esUserAbortError);
         end;
       end;
     end;
@@ -1700,7 +1701,7 @@ var
 begin
   FIsNeededToSave := FALSE;
   for I := 0 to FArchiveItems.Count - 1 do
-    if ExitCode = 0 then
+    if ExitStatus = esNoError then
     begin
       Item := FArchiveItems.Items[I];
       if Item.FTag in [aitUpdate] then
@@ -1709,12 +1710,12 @@ begin
         case Confirm of
           arcOk: FIsNeededToSave := TRUE;
           arcCancel: Item.FTag := aitNone;
-          arcQuit:   ExitCode  := esUserAbortError;
+          arcQuit:   SetExitStatus(esUserAbortError);
         end;
       end;
     end;
 
-  if ExitCode = 0 then
+  if ExitStatus = esNoError then
     if FIsNeededToSave then CheckSequences;
 end;
 
