@@ -198,6 +198,15 @@ type
     FEncoder: THeaderEncoder;
     FDecoder: THeaderDecoder;
 
+    FCompressionMethod: TArchiveCompressionMethod;
+    FCompressionLevel: TmOption;
+    FDictionaryLevel: TdOption;
+    FSolidCompression: int64;
+    FEncryptionMethod: TArchiveEncryptionMethod;
+    FConfigurationName: string;
+    FForceFileExtension: string;
+    FSearchRecs: TList;
+
     FArchiveName: string;
     FArchiveComment: string;
     FArchivePassword: string;
@@ -209,8 +218,6 @@ type
 
     FTempName: string;
     FTempWriter: TFileWriter;
-
-
 
     FArchiveItems: TArchiveItems;
 
@@ -224,15 +231,7 @@ type
     FOnRequestImage: TFileReaderRequestImageEvent;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
 
-                        FCompressionMethod: TArchiveCompressionMethod;
-                 FCompressionLevel: TmOption;
-                 FDictionaryLevel: TdOption;
-                 FSolidCompression: int64;
-                 FEncryptionMethod: TArchiveEncryptionMethod;
-                 FConfigurationName: string;
-                 FConfiguration: TConfiguration;
-                 FForceFileExtension: string;
-                 FSearchRecs: TList;
+
 
 
 
@@ -268,12 +267,11 @@ type
     function GetItem(Index: longint): TArchiveItem;
     function GetCount: longint;
     procedure SetArchiveName(const Value: string);
+
+
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoMessage(const Message: string);
     procedure DoProgress(Value: longint);
-
-
-
 
     procedure CheckTags4Extarct;
     procedure CheckSequences4Extract;
@@ -286,7 +284,7 @@ type
 
     procedure CheckTags4Delete;
     procedure CheckSequences4Delete;
-    procedure DoErase(Item: TArchiveItem;
+    procedure DoDelete(Item: TArchiveItem;
       var Confirm: TArchiveConfirm);
 
     procedure CheckTags4Update;
@@ -296,72 +294,71 @@ type
     procedure DoUpdate(SearchRec: TCustomSearchRec;
       var UpdateAs: string; var Confirm: TArchiveConfirm);
 
-
-
   public
     constructor Create;
     destructor Destroy; override;
-
-    constructor Create;
-      procedure CloseArchive; override;
-
-
-    function Find(const aFileName: string): longint;
+    procedure CloseArchive; override;
     procedure OpenArchive(const aArchiveName: string);
-    procedure CloseArchive; virtual;
-    procedure Suspend(Value: boolean);
-    procedure Terminate;
+    function Find(const aFileName: string): longint;
 
-    procedure TagAll;
     procedure UnTagAll;
-    procedure Tag(Index: longint);
     procedure UnTag(Index: longint);
+    procedure TagAll;
+    procedure Tag(Index: longint);
     procedure Tag(SearchRec: TCustomSearchRec);
     function IsTagged(Index: longint): boolean;
 
-    procedure TestTagged;
     procedure ExtractTagged;
+    procedure TestTagged;
     procedure RenameTagged;
-    procedure EraseTagged;
+    procedure DeleteTagged;
+    procedure UpdateTagged;
 
-
-        procedure UpdateTagged;
-
-
-
-
+    procedure Suspend(Value: boolean);
+    procedure Terminate;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property ArchiveComment: string read FArchiveComment write FArchiveComment;
-    property ArchivePassword: string read FArchivePassword write FArchivePassword;
+    property ArchivePassword: string
+      read FArchivePassword write FArchivePassword;
+
+    property CompressionMethod: TArchiveCompressionMethod
+      read FCompressionMethod write FCompressionMethod;
+    property CompressionLevel: TmOption
+      read FCompressionLevel write FCompressionLevel;
+    property DictionaryLevel: TdOption
+      read FDictionaryLevel  write FDictionaryLevel;
+    property SolidCompression: int64
+      read FSolidCompression write FSolidCompression;
+    property EncrypionMethod: TArchiveEncryptionMethod
+      read FEncryptionMethod write FEncryptionMethod;
+    property ConfigurationName: string
+      read FConfigurationName write FConfigurationName;
+    property ForceFileExtension: string
+      read FForceFileExtension write FForceFileExtension;
+
+    property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
+    property Threshold: int64 read FThreshold write FThreshold;
+    property TestTempArchive: boolean
+      read FTestTempArchive write FTestTempArchive;
+
+    property OnExtraction: TArchiveExtractEvent
+      read FOnExtract write FOnExtract;
+    property OnRenameEvent: TArchiveRenameEvent read FOnRename write FOnRename;
+    property OnDeleteEvent: TArchiveDeleteEvent read FOnDelete write FOnDelete;
+    property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
+
+    property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
+      read FOnRequestBlankDisk write FOnRequestBlankDisk;
+    property OnRequestImage: TFileReaderRequestImageEvent
+      read FOnRequestImage write FOnRequestImage;
+    property OnProgress: TArchiveProgressEvent
+      read FOnProgress write FOnProgress;
+    property OnMessage: TArchiveMessageEvent
+      read FOnMessage write FOnMessage;
 
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
-
-    property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
-    property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
-    property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
-
-    property Threshold: int64 read FThreshold write FThreshold;
-    property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
-    property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
-    property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
-        read FOnRequestBlankDisk write FOnRequestBlankDisk;
-
-    property OnExtraction: TArchiveExtractEvent read FOnExtract write FOnExtract;
-    property OnRenameEvent: TArchiveRenameEvent read FOnRename write FOnRename;
-    property OnEraseEvent: TArchiveEraseEvent read FOnErase write FOnErase;
-
-    property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod write FCompressionMethod;
-       property CompressionLevel: TmOption read FCompressionLevel write FCompressionLevel;
-       property DictionaryLevel: TdOption read FDictionaryLevel  write FDictionaryLevel;
-       property SolidCompression: int64 read FSolidCompression write FSolidCompression;
-       property EncrypionMethod: TArchiveEncryptionMethod read FEncryptionMethod write FEncryptionMethod;
-       property ConfigurationName: string read FConfigurationName write FConfigurationName;
-       property ForceFileExtension: string read FForceFileExtension write FForceFileExtension;
-
-       property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
-
   end;
 
 function CompressionMethodToStr(Item: TArchiveItem): string;
