@@ -178,7 +178,7 @@ type
   TArchiveExtractEvent = procedure(Item: TArchiveItem;
     var ExtractAs: string; var Confirm: TArchiveConfirm) of object;
 
-  TArchiveEraseEvent = procedure(Item: TArchiveItem;
+  TArchiveDeleteEvent = procedure(Item: TArchiveItem;
     var Confirm: TArchiveConfirm) of object;
 
   TArchiveUpdateEvent = procedure(SearchRec: TCustomSearchRec;
@@ -215,12 +215,24 @@ type
     FArchiveItems: TArchiveItems;
 
 
-
+    FOnUpdate: TArchiveUpdateEvent;
+    FOnDelete: TArchiveDeleteEvent;
+    FOnRename: TArchiveRenameEvent;
+    FOnExtract: TArchiveExtractEvent;
     FOnMessage: TArchiveMessageEvent;
     FOnProgress: TArchiveProgressEvent;
     FOnRequestImage: TFileReaderRequestImageEvent;
     FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
 
+                        FCompressionMethod: TArchiveCompressionMethod;
+                 FCompressionLevel: TmOption;
+                 FDictionaryLevel: TdOption;
+                 FSolidCompression: int64;
+                 FEncryptionMethod: TArchiveEncryptionMethod;
+                 FConfigurationName: string;
+                 FConfiguration: TConfiguration;
+                 FForceFileExtension: string;
+                 FSearchRecs: TList;
 
 
 
@@ -262,42 +274,29 @@ type
 
 
 
-       FOnExtract: TArchiveExtractEvent;
-       procedure CheckTags;
-       procedure CheckSequences;
-       procedure DoExtract(Item: TArchiveItem;
-         var ExtractAs: string; var Confirm: TArchiveConfirm);
+
+    procedure CheckTags4Extarct;
+    procedure CheckSequences4Extract;
+    procedure DoExtract(Item: TArchiveItem;
+      var ExtractAs: string; var Confirm: TArchiveConfirm);
+
+    procedure CheckTags4Rename;
+    procedure DoRename(Item: TArchiveItem;
+      var RenameAs: string; var Confirm: TArchiveConfirm);
+
+    procedure CheckTags4Delete;
+    procedure CheckSequences4Delete;
+    procedure DoErase(Item: TArchiveItem;
+      var Confirm: TArchiveConfirm);
+
+    procedure CheckTags4Update;
+    procedure CheckSequences4Update;
+    procedure ConfigureCrypter;
+    procedure ConfigureCoder;
+    procedure DoUpdate(SearchRec: TCustomSearchRec;
+      var UpdateAs: string; var Confirm: TArchiveConfirm);
 
 
-       FOnRename: TArchiveRenameEvent;
-          procedure CheckTags;
-          procedure DoRename(Item: TArchiveItem;
-            var RenameAs: string; var Confirm: TArchiveConfirm);
-
-
-
-          FOnErase: TArchiveEraseEvent;
-              procedure CheckTags;
-              procedure CheckSequences;
-              procedure DoErase(Item: TArchiveItem;
-                var Confirm: TArchiveConfirm);
-
-              FCompressionMethod: TArchiveCompressionMethod;
-                 FCompressionLevel: TmOption;
-                 FDictionaryLevel: TdOption;
-                 FSolidCompression: int64;
-                 FEncryptionMethod: TArchiveEncryptionMethod;
-                 FConfigurationName: string;
-                 FConfiguration: TConfiguration;
-                 FForceFileExtension: string;
-                 FSearchRecs: TList;
-                 FOnUpdate: TArchiveUpdateEvent;
-                 procedure ConfigureCrypter;
-                 procedure ConfigureCoder;
-                 procedure CheckTags;
-                 procedure CheckSequences;
-                 procedure DoUpdate(SearchRec: TCustomSearchRec;
-                   var UpdateAs: string; var Confirm: TArchiveConfirm);
 
   public
     constructor Create;
