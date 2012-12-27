@@ -189,28 +189,26 @@ type
   TArchiver = class(TObject)
   private
     FSuspended: boolean;
-    FIsNeededToSave: boolean;
+    FIsNeededToRun: boolean;
     FIsNeededToSwap: boolean;
-    FIsNeededToExtract: boolean;
-
-    FTotalSize: int64;
+    FIsNeededToSave: boolean;
     FProcessedSize: int64;
-    FEncoder: THeaderEncoder;
-    FDecoder: THeaderDecoder;
+    FTotalSize: int64;
 
+    FSearchRecs: TList;
     FCompressionMethod: TArchiveCompressionMethod;
     FCompressionLevel: TmOption;
+    FCompressionBlock: int64;
     FDictionaryLevel: TdOption;
-    FSolidCompression: int64;
-    FEncryptionMethod: TArchiveEncryptionMethod;
     FConfigurationName: string;
     FForceFileExtension: string;
-    FSearchRecs: TList;
+    FEncryptionMethod: TArchiveEncryptionMethod;
 
     FArchiveName: string;
     FArchiveComment: string;
     FArchivePassword: string;
     FArchiveReader: TFileReader;
+    FArchiveItems: TArchiveItems;
 
     FSwapName: string;
     FSwapReader: TFileReader;
@@ -219,74 +217,82 @@ type
     FTempName: string;
     FTempWriter: TFileWriter;
 
-    FArchiveItems: TArchiveItems;
-
-
-    FOnUpdate: TArchiveUpdateEvent;
-    FOnDelete: TArchiveDeleteEvent;
-    FOnRename: TArchiveRenameEvent;
-    FOnExtract: TArchiveExtractEvent;
-    FOnMessage: TArchiveMessageEvent;
-    FOnProgress: TArchiveProgressEvent;
-    FOnRequestImage: TFileReaderRequestImageEvent;
-    FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
+    FWorkDirectory: string;
+    FTestTempArchive: boolean;
+    FThreshold: int64;
 
 
 
 
 
 
-       FThreshold: int64;
-
-       FWorkDirectory: string;
-       FTestTempArchive: boolean;
-
-       procedure InitEncoder      (Item: TArchiveItem);
-       procedure EncodeFromArchive(Item: TArchiveItem);
-       procedure EncodeFromSwap   (Item: TArchiveItem);
-       procedure EncodeFromFile   (Item: TArchiveItem);
-
-       procedure SetWorkDirectory(const Value: string);
-        procedure WriteCentralDirectory(aStream: TFileWriter);
-        procedure PackCentralDirectory;
-        procedure TestTemporaryArchive;
-        procedure SaveTemporaryArchive;
-        procedure OpenSwap;
 
 
-    procedure InitDecoder (Item: TArchiveItem);
-    procedure DecodeToNul (Item: TArchiveItem);
-    procedure DecodeToSwap(Item: TArchiveItem);
-    procedure DecodeToFile(Item: TArchiveItem);
-    function ReadCentralDirectory(aStream: TFileReader): boolean;
+
+  private
+    FEncoder: THeaderEncoder;
+    procedure InitEncoder      (Item: TArchiveItem);
+    procedure EncodeFromArchive(Item: TArchiveItem);
+    procedure EncodeFromSwap   (Item: TArchiveItem);
+    procedure EncodeFromFile   (Item: TArchiveItem);
+  private
+    FDecoder: THeaderDecoder;
+    procedure InitDecoder      (Item: TArchiveItem);
+    procedure DecodeToNul      (Item: TArchiveItem);
+    procedure DecodeToSwap     (Item: TArchiveItem);
+    procedure DecodeToFile     (Item: TArchiveItem);
+  private
+    procedure ReadCentralDirectory(aStream: TFileReader);
+    procedure WriteCentralDirectory(aStream: TFileWriter);
     procedure UnPackCentralDirectory;
+    procedure PackCentralDirectory;
+
+    procedure TestTemporaryArchive;
+    procedure SaveTemporaryArchive;
+    procedure OpenSwap;
+  private
+    procedure SetArchiveName(const Value: string);
+    procedure SetWorkDirectory(const Value: string);
+
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
     function GetNextTear(Index: longint): longint;
     function GetItem(Index: longint): TArchiveItem;
     function GetCount: longint;
-    procedure SetArchiveName(const Value: string);
 
+  private
+    FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
 
-    procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
+  private
+    FOnRequestImage: TFileReaderRequestImageEvent;
+    procedure DoRequestImage(ImageNumber: longint;
+      var ImageName: string; var Abort: boolean);
+  private
+    FOnMessage: TArchiveMessageEvent;
     procedure DoMessage(const Message: string);
+  private
+    FOnProgress: TArchiveProgressEvent;
     procedure DoProgress(Value: longint);
-
+  private
+    FOnExtract: TArchiveExtractEvent;
     procedure CheckTags4Extarct;
     procedure CheckSequences4Extract;
     procedure DoExtract(Item: TArchiveItem;
       var ExtractAs: string; var Confirm: TArchiveConfirm);
-
+  private
+    FOnRename: TArchiveRenameEvent;
     procedure CheckTags4Rename;
     procedure DoRename(Item: TArchiveItem;
       var RenameAs: string; var Confirm: TArchiveConfirm);
-
+  private
+    FOnDelete: TArchiveDeleteEvent;
     procedure CheckTags4Delete;
     procedure CheckSequences4Delete;
     procedure DoDelete(Item: TArchiveItem;
       var Confirm: TArchiveConfirm);
-
+  private
+    FOnUpdate: TArchiveUpdateEvent;
     procedure CheckTags4Update;
     procedure CheckSequences4Update;
     procedure ConfigureCrypter;
@@ -317,8 +323,10 @@ type
     procedure Suspend(Value: boolean);
     procedure Terminate;
   public
-    property ArchiveName: string read FArchiveName write SetArchiveName;
-    property ArchiveComment: string read FArchiveComment write FArchiveComment;
+    property ArchiveName: string
+      read FArchiveName write SetArchiveName;
+    property ArchiveComment: string
+      read FArchiveComment write FArchiveComment;
     property ArchivePassword: string
       read FArchivePassword write FArchivePassword;
 
@@ -328,8 +336,8 @@ type
       read FCompressionLevel write FCompressionLevel;
     property DictionaryLevel: TdOption
       read FDictionaryLevel  write FDictionaryLevel;
-    property SolidCompression: int64
-      read FSolidCompression write FSolidCompression;
+    property CompressionBlock: int64
+      read FCompression write FSolidCompression;
     property EncrypionMethod: TArchiveEncryptionMethod
       read FEncryptionMethod write FEncryptionMethod;
     property ConfigurationName: string
@@ -337,16 +345,20 @@ type
     property ForceFileExtension: string
       read FForceFileExtension write FForceFileExtension;
 
-    property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
-    property Threshold: int64 read FThreshold write FThreshold;
+    property WorkDirectory: string
+      read FWorkDirectory write SetWorkDirectory;
     property TestTempArchive: boolean
       read FTestTempArchive write FTestTempArchive;
+    property Threshold: int64 read FThreshold write FThreshold;
 
     property OnExtraction: TArchiveExtractEvent
       read FOnExtract write FOnExtract;
-    property OnRenameEvent: TArchiveRenameEvent read FOnRename write FOnRename;
-    property OnDeleteEvent: TArchiveDeleteEvent read FOnDelete write FOnDelete;
-    property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
+    property OnRenameEvent: TArchiveRenameEvent
+      read FOnRename write FOnRename;
+    property OnDeleteEvent: TArchiveDeleteEvent
+      read FOnDelete write FOnDelete;
+    property OnUpdate: TArchiveUpdateEvent
+      read FOnUpdate write FOnUpdate;
 
     property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent
       read FOnRequestBlankDisk write FOnRequestBlankDisk;
