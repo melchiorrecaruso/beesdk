@@ -52,21 +52,20 @@ type
   private
     FSelfName: string;
     FCommandLine: TCommandLine;
-    FExtractor: TArchiveExtractor;
-    FUpdater: TArchiveUpdater;
-    FRenamer: TArchiveRenamer;
-    FEraser: TArchiveEraser;
-    FReader: TCustomArchiveReader;
+    FArchiver: TArchiver;
     function QueryToUser(var Confirm: TArchiveConfirm): char;
-    procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     procedure DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
-    procedure DoMessage(const Message: string);
+    procedure DoRequestImage(ImageNumber: longint;
+      var ImageName: string; var Abort: boolean);
     procedure DoProgress(Percentage: longint);
-    procedure DoExtract(Item: TArchiveItem; var ExtractAs: string; var Confirm: TArchiveConfirm);
-    procedure DoUpdate(SearchRec: TCustomSearchRec; var UpdateAs: string; var Confirm: TArchiveConfirm);
-    procedure DoRename(Item: TArchiveItem; var RenameAs: string; var Confirm: TArchiveConfirm);
-    procedure DoErase(Item: TArchiveItem; var Confirm: TArchiveConfirm);
-    procedure DoClear;
+    procedure DoMessage(const Message: string);
+    procedure DoExtract(Item: TArchiveItem;
+      var ExtractAs: string; var Confirm: TArchiveConfirm);
+    procedure DoRename(Item: TArchiveItem;
+      var RenameAs: string; var Confirm: TArchiveConfirm);
+    procedure DoDelete(Item: TArchiveItem; var Confirm: TArchiveConfirm);
+    procedure DoUpdate(SearchRec: TCustomSearchRec;
+      var UpdateAs: string; var Confirm: TArchiveConfirm);
     { shells routines}
     procedure HelpShell;
     procedure EncodeShell;
@@ -77,8 +76,8 @@ type
   public
     constructor Create(const aCommandLine: string);
     destructor Destroy; override;
-    procedure Execute;
     procedure Terminate;
+    procedure Execute;
   end;
 
 implementation
@@ -109,14 +108,17 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FExtractor := nil;
-  FUpdater   := nil;
-  FRenamer   := nil;
-  FEraser    := nil;
-  FReader    := nil;
-  FSelfName  := 'The Bee 0.8.0 build 1637 archiver utility, July 2012' + Cr +
-                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
-
+  FSelfName := 'The Bee 0.8.0 build 1637 archiver utility, July 2012' + Cr +
+               '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
+  FArchiver := TArchiver.Create;
+  FArchiver.OnRequestBlankImage := DoRequestBlankDisk;
+  FArchiver.OnRequestImage      := DoRequestImage;
+  FArchiver.OnProgress          := DoProgress;
+  FArchiver.OnMessage           := DoMessage;
+  FArchiver.OnExtract           := DoExtract;
+  FArchiver.OnRename            := DoRename;
+  FArchiver.OnDelete            := DoDelete;
+  FArchiver.OnUpdate            := DoUpdate;
   { store command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.CommandLine := aCommandLine;
@@ -127,16 +129,13 @@ end;
 destructor TBeeApp.Destroy;
 begin
   FCommandLine.Destroy;
+  FArchiver.Destroy;
   inherited Destroy;
 end;
 
 procedure TBeeApp.Terminate;
 begin
-  if Assigned(FExtractor) then FExtractor.Terminate;
-  if Assigned(FUpdater)   then FUpdater.Terminate;
-  if Assigned(FRenamer)   then FRenamer.Terminate;
-  if Assigned(FEraser)    then FEraser.Terminate;
-  if Assigned(FReader)    then FReader.Terminate;
+  FArchiver.Terminate;
 end;
 
 procedure TBeeApp.Execute;
@@ -177,12 +176,6 @@ begin
   end;
 end;
 
-procedure TBeeApp.DoRequestImage(ImageNumber: longint;
-  var ImageName: string; var Abort: boolean);
-begin
-  Writeln(ParamToOem(ImageName));
-  Readln;
-end;
 
 procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
 var
@@ -204,15 +197,26 @@ begin
   end;
 end;
 
-procedure TBeeApp.DoMessage(const Message: string);
+procedure TBeeApp.DoRequestImage(ImageNumber: longint;
+  var ImageName: string; var Abort: boolean);
 begin
-  Writeln(ParamToOem(Message));
+  Writeln(ParamToOem(ImageName));
+  Readln;
 end;
 
 procedure TBeeApp.DoProgress(Percentage: longint);
 begin
   Write(#8#8#8#8#8#8, Format('(%3d%%)', [Percentage]));
 end;
+
+procedure TBeeApp.DoMessage(const Message: string);
+begin
+  Writeln(ParamToOem(Message));
+end;
+
+
+
+
 
 procedure TBeeApp.DoExtract(Item: TArchiveItem;
   var ExtractAs: string; var Confirm: TArchiveConfirm);
@@ -272,9 +276,9 @@ var
   AlternativeFileName: string;
 begin
   UpdateAs := FCommandLine.cdOption + SearchRec.Name;
-  I := FUpdater.Find(UpdateAs);
+  I := FArchiver.Find(UpdateAs);
   if I <> -1 then
-    Item := FUpdater.Items[I];
+    Item := FArchiver.Items[I];
 
   Confirm := arcCancel;
   case FCommandLine.uOption of
@@ -290,7 +294,7 @@ begin
         repeat
           AlternativeFileName := ChangeFileExt(UpdateAs, '.' + IntToStr(Index) + ExtractFileExt(UpdateAs));
           Inc(Index);
-        until FUpdater.Find(AlternativeFileName) = -1;
+        until FArchiver.Find(AlternativeFileName) = -1;
         UpdateAs := AlternativeFileName;
       end;
       Confirm := arcOk;
@@ -324,15 +328,11 @@ begin
   RenameAs := OemToParam(RenameAs);
 end;
 
-procedure TBeeApp.DoErase(Item: TArchiveItem;
-  var Confirm: TArchiveConfirm);
+procedure TBeeApp.DoDelete(Item: TArchiveItem;
+var
+  Confirm: TArchiveConfirm);
 begin
   Confirm :=arcOk;
-end;
-
-procedure TBeeApp.DoClear;
-begin
-  Write(#13, #13:80);
 end;
 
 { shell procedures }
@@ -375,24 +375,23 @@ var
   I: longint;
   Scanner: TFileScanner;
 begin
-  FUpdater                    := TArchiveUpdater.Create;
-  FUpdater.OnRequestBlankDisk := DoRequestBlankDisk;
-  FUpdater.OnRequestImage     := DoRequestImage;
-  FUpdater.OnProgress         := DoProgress;
-  FUpdater.OnMessage          := DoMessage;
-  FUpdater.OnUpdate           := DoUpdate;
-
-  FUpdater.OpenArchive(FCommandLine.ArchiveName);
+  FArchiver.OpenArchive(FCommandLine.ArchiveName);
   case FCommandLine.mOption of
-    moStore: FUpdater.CompressionMethod := actNone;
-    else     FUpdater.CompressionMethod := actMain;
+    moStore: FArchiver.CompressionMethod := actNone;
+    else     FArchiver.CompressionMethod := actMain;
   end;
-  FUpdater.CompressionLevel   := FCommandLine.mOption;
-  FUpdater.DictionaryLevel    := FCommandLine.dOption;
-  FUpdater.SolidCompression   := FCommandLine.sOption;
-  FUpdater.ForceFileExtension := FCommandLine.fOption;
+  FArchiver.CompressionLevel   := FCommandLine.mOption;
+  FArchiver.CompressionBlock   := FCommandLine.sOption;
+  FArchiver.DictionaryLevel    := FCommandLine.dOption;
+  FArchiver.ConfigurationName  := FCommandLine.cfgOption;
+  FArchiver.ForceFileExtension := FCommandLine.fOption;
 
-  FUpdater.ArchivePassword    := FCommandLine.pOption;
+
+
+  FArchiver.ArchivePassword    := FCommandLine.pOption;
+
+
+
   FUpdater.TestTempArchive    := FCommandLine.tOption;
   FUpdater.Threshold          := FCommandLine.iOption;
   FUpdater.WorkDirectory      := FCommandLine.wdOption;

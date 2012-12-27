@@ -80,6 +80,12 @@ type
   TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
     do80MB, do160MB, do320MB, do640MB ,do1280MB);
 
+  { Encryption Method Option:                            }
+  {   eoNone                                             }
+  {   eoBlowFish                                         }
+
+  TemOption = (emNone, emBlowFish);
+
   { Process Priority Option:                              }
   {   prioIdle                                            }
   {   prioNormal                                          }
@@ -102,6 +108,7 @@ type
     FsOption: qword;
     FfOption: string;
     FsfxOption: string;
+    FemOption: string;
     FpOption: string;
     FtOption: boolean;
     FslsOption: boolean;
