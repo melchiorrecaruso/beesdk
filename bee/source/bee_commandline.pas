@@ -37,50 +37,50 @@ uses
   Bee_Common;
 
 type
-  { Commands:                                             }
-  {   cNone     Nul command                               }
-  {   cAdd      Add files                               a }
-  {   cExtract  Extract file                            e }
-  {   eXextract Extract file with full path             x }
-  {   cTest     Test files                              t }
-  {   cDelete   Delete files                            d }
-  {   cRename   Rename files                            r }
-  {   cList     List files                              l }
+  { Commands:                               }
+  {   cNone     Nul command                 }
+  {   cAdd      Add files                   }
+  {   cExtract  Extract file                }
+  {   eXextract Extract file with full path }
+  {   cTest     Test files                  }
+  {   cDelete   Delete files                }
+  {   cRename   Rename files                }
+  {   cList     List files                  }
 
   TCommand = (cAdd, cExtract, cXextract, cTest, cDelete, 
     cRename, cList, cHelp);
 
-  { Update Mode Option:                                   }
-  {   u:Add            Add only new files               0 }
-  {   u:Update         Update only existing files       1 }
-  {   u:Replace        Replace only existing files      2 }
-  {   u:Query          Query always                     3 }
-  {   u:Add:Update     Add and update existing files    4 }
-  {   u:Add:Replace    Add and replace existing files   5 }
-  {   u:Add:Query      Add and query if already exists  6 }
-  {   u:Add:AutoRename Add and rename if already exists 7 }
+  { Update Mode Option:                                  }
+  {   um:Add            Add only new files               }
+  {   um:Update         Update only existing files       }
+  {   um:Replace        Replace only existing files      }
+  {   um:Query          Query always                     }
+  {   um:Add:Update     Add and update existing files    }
+  {   um:Add:Replace    Add and replace existing files   }
+  {   um:Add:Query      Add and query if already exists  }
+  {   um:Add:AutoRename Add and rename if already exists }
   
   TUpdateMode = (umAdd, umUpdate, umReplace, umQuery,
     umAddUpdate, umAddReplace, umAddQuery, umAddAutoRename);
 
-  { Compression Method Option:                            }
-  {   cm:m=store                                          }
-  {   cm:m=bee :l=x:d=x                                   }
-  {   cm:m=ppmd:l=x:d=x                                   }
+  { Compression Method Option: }
+  {   cm:m=store               }
+  {   cm:m=bee :l=x:d=x:s=x    }
+  {   cm:m=ppmd:l=x:d=x:s=x    }
 
   TcmOption = string;
 
-  { Encryption Method Option:                             }
-  {   em:none                                             }
-  {   em:blowfish:x                                       }
+  { Encryption Method Option: }
+  {   em:m=none               }
+  {   em:m=blowfish:p=x       }
 
   TemOption = string;
 
-  { Process Priority Option:                              }
-  {   priIdle                                             }
-  {   priNormal                                           }
-  {   priHigh                                             }
-  {   priRealTime                                         }
+  { Process Priority Option: }
+  {   priIdle                }
+  {   priNormal              }
+  {   priHigh                }
+  {   priRealTime            }
 
   TpriOption = (priIdle, priNormal, priHigh, priRealTime);
 
@@ -91,11 +91,11 @@ type
     FCommand: TCommand;
     FssOption: boolean;
     FrOption: TRecursiveMode;
-    FuOption: TUpdateMode;
+    FumOption: TUpdateMode;
     FxOptions: TStringList;
-    FmOption: TmOption;
-    FdOption: TdOption;
-    FsOption: qword;
+    FcmOption: string;
+   
+    
     FfOption: string;
     FsfxOption: string;
     FemOption: string;
