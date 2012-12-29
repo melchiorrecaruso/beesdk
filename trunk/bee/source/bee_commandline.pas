@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2012 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,61 +38,51 @@ uses
 
 type
   { Commands:                                             }
-  {   ccNone     Nul command                              }
-  {   ccAdd      Add files                                }
-  {   ccExtract  Extract file                             }
-  {   ceXextract Extract file with full path              }
-  {   ccTest     Test files                               }
-  {   ccDelete   Delete files                             }
-  {   ccRename   Rename files                             }
-  {   ccList     List files                               }
+  {   cNone     Nul command                               }
+  {   cAdd      Add files                               a }
+  {   cExtract  Extract file                            e }
+  {   eXextract Extract file with full path             x }
+  {   cTest     Test files                              t }
+  {   cDelete   Delete files                            d }
+  {   cRename   Rename files                            r }
+  {   cList     List files                              l }
 
-  TCommand = (ccAdd, ccExtract, ccXextract, ccTest,
-    ccDelete, ccRename, ccList, ccHelp);
+  TCommand = (cAdd, cExtract, cXextract, cTest, cDelete, 
+    cRename, cList, cHelp);
 
   { Update Mode Option:                                   }
-  {  umAdd           Add only new files                   }
-  {  umUpdate        Update only existing files           }
-  {  umReplace       Replace only existing files          }
-  {  umQuery         Query always                         }
-  {  umAddUpdate     Add and update existing files        }
-  {  umAddReplace    Add and replace existing files       }
-  {  umAddQuery      Add and query if already exists      }
-  {  umAddAutoRename Add and rename if already exists     }
-
+  {   u:Add            Add only new files               0 }
+  {   u:Update         Update only existing files       1 }
+  {   u:Replace        Replace only existing files      2 }
+  {   u:Query          Query always                     3 }
+  {   u:Add:Update     Add and update existing files    4 }
+  {   u:Add:Replace    Add and replace existing files   5 }
+  {   u:Add:Query      Add and query if already exists  6 }
+  {   u:Add:AutoRename Add and rename if already exists 7 }
+  
   TUpdateMode = (umAdd, umUpdate, umReplace, umQuery,
     umAddUpdate, umAddReplace, umAddQuery, umAddAutoRename);
 
   { Compression Method Option:                            }
-  {   moStore                                             }
-  {   moFast                                              }
-  {   moNormal                                            }
-  {   moMaximum                                           }
+  {   cm:m=store                                          }
+  {   cm:m=bee :l=x:d=x                                   }
+  {   cm:m=ppmd:l=x:d=x                                   }
 
-  TmOption = (moStore, moFast, moNormal, moMaximum);
+  TcmOption = string;
 
-  { Compression Dictionary Level Option:                  }
-  {   do2MB                                               }
-  {   do5MB                                               }
-  {   ..                                                  }
-  {   do1280MB                                            }
+  { Encryption Method Option:                             }
+  {   em:none                                             }
+  {   em:blowfish:x                                       }
 
-  TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
-    do80MB, do160MB, do320MB, do640MB ,do1280MB);
-
-  { Encryption Method Option:                            }
-  {   eoNone                                             }
-  {   eoBlowFish                                         }
-
-  TemOption = (emNone, emBlowFish);
+  TemOption = string;
 
   { Process Priority Option:                              }
-  {   prioIdle                                            }
-  {   prioNormal                                          }
-  {   prioHigh                                            }
-  {   prioRealTime                                        }
+  {   priIdle                                             }
+  {   priNormal                                           }
+  {   priHigh                                             }
+  {   priRealTime                                         }
 
-  TpriOption = (prioIdle, prioNormal, prioHigh, prioRealTime);
+  TpriOption = (priIdle, priNormal, priHigh, priRealTime);
 
   { TCommandLine }
 
