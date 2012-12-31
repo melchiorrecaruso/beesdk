@@ -1,4 +1,4 @@
-unit BeeSDK_Archive2;
+unit BeeSDK_Archive;
 
 {$I compiler.inc}
 

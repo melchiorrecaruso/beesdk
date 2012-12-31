@@ -339,34 +339,29 @@ end;
 
 procedure TBeeApp.HelpShell;
 begin
-  DoMessage(Cr + 'Usage: Bee <command> [<switches>...] <archive-name> [<file-names>...]' + Cr);
-  DoMessage('<Commands>');
+  DoMessage(Cr + 'Usage: Bee <command> [<switches>...] <archive-name> [<file-names>...]');
+  DoMessage(Cr + '<Commands>');
   DoMessage('  a  Add files to archive');
   DoMessage('  d  Delete files from archive');
   DoMessage('  e  Extract files from archive');
+  DoMessage('  h  show command line Help');
   DoMessage('  l  List archive');
   DoMessage('  r  Rename files in archive');
   DoMessage('  t  Test archive files');
   DoMessage('  x  eXtract files from archive with path name');
-  DoMessage('  h  show command line Help');
-  DoMessage('<Switches>');
-  DoMessage('  --              stop switches parsing');
-  DoMessage('  -cd[directory]  set current archive directory');
-  DoMessage('  -cfg[filename]  use specified Configuration file');
-  DoMessage('  -d<0..9>    set Dictionary size (d1 uses < 5M, d2 (default) < 10M, ...)');
-  DoMessage('  -f          Force file extention');
-  DoMessage('  -m<0..3>    set compression Method (0-store, 1-default, ...)');
-  DoMessage('  -p          set Password (min length 4 bytes)');
-  DoMessage('  -pri<0..3>  set process priority (0-idle, 1-normal, 2-high, 3-realtime)');
-  DoMessage('  -r    Recurse subdirectories');
-  DoMessage('  -rw   recurse subdirectories only for wildcard names');
-  DoMessage('  -s    create Solid archive');
-  DoMessage('  -sfx  add self-extractor module');
+  DoMessage(Cr + '<Switches>');
+  DoMessage('  --            stop switches parsing');
+  DoMessage('  -cd[dirname]  set current archive directory');
+  DoMessage('  -cm{params}   set Compression method');
+  DoMessage('  -em{params}   set Encryption method)');
+  DoMessage('  -pri{params}  set process Priority ');
+  DoMessage('  -r[-|w]       Recurse subdirectories');
+  DoMessage('  -sfx[filename]  add self-extractor module');
   DoMessage('  -sls  show list sorted by filename - for l (list) command');
-  DoMessage('  -t    Test archive after process');
-  DoMessage('  -u<0..7>  Update files method (0-add files, 1-update files, ...)');
-  DoMessage('  -wd[direcroty]  set temporany work directory');
-  DoMessage('  -x[filenames]   eXclude filenames');
+  DoMessage('  -t    Test temorary archive after process');
+  DoMessage('  -um   Update files method');
+  DoMessage('  -wd[dirname]   set temporany work directory');
+  DoMessage('  -x[filenames]  eXclude filenames');
   DoMessage(Cr + 'Use BeeOpt to make most optimal parameters.' + Cr);
 end;
 
@@ -392,9 +387,9 @@ begin
 
 
 
-  FUpdater.TestTempArchive    := FCommandLine.tOption;
-  FUpdater.Threshold          := FCommandLine.iOption;
-  FUpdater.WorkDirectory      := FCommandLine.wdOption;
+  FArchiver.TestTempArchive    := FCommandLine.tOption;
+  FArchiver.Threshold          := FCommandLine.iOption;
+  FArchiver.WorkDirectory      := FCommandLine.wdOption;
 
 //FUpdater.ArchiveComment     :=
 
@@ -407,10 +402,10 @@ begin
         Scanner.Scan(FileMasks[I], xOptions, rOption);
 
     for I := 0 to Scanner.Count - 1 do
-      FUpdater.Tag(Scanner.Items[I]);
+      FArchiver.Tag(Scanner.Items[I]);
     Scanner.Free;
 
-    FUpdater.UpdateTagged;
+    FArchiver.UpdateTagged;
   end;
   FreeAndNil(FUpdater);
 end;
