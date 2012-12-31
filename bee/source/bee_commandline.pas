@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2012 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,52 +37,62 @@ uses
   Bee_Common;
 
 type
-  { Commands:                               }
-  {   cNone     Nul command                 }
-  {   cAdd      Add files                   }
-  {   cExtract  Extract file                }
-  {   eXextract Extract file with full path }
-  {   cTest     Test files                  }
-  {   cDelete   Delete files                }
-  {   cRename   Rename files                }
-  {   cList     List files                  }
+  { Commands:                                             }
+  {   ccNone     Nul command                              }
+  {   ccAdd      Add files                                }
+  {   ccExtract  Extract file                             }
+  {   ceXextract Extract file with full path              }
+  {   ccTest     Test files                               }
+  {   ccDelete   Delete files                             }
+  {   ccRename   Rename files                             }
+  {   ccList     List files                               }
 
-  TCommand = (cAdd, cExtract, cXextract, cTest, cDelete, 
-    cRename, cList, cHelp);
+  TCommand = (ccAdd, ccExtract, ccXextract, ccTest,
+    ccDelete, ccRename, ccList, ccHelp);
 
-  { Update Mode Option:                                  }
-  {   um:Add            Add only new files               }
-  {   um:Update         Update only existing files       }
-  {   um:Replace        Replace only existing files      }
-  {   um:Query          Query always                     }
-  {   um:Add:Update     Add and update existing files    }
-  {   um:Add:Replace    Add and replace existing files   }
-  {   um:Add:Query      Add and query if already exists  }
-  {   um:Add:AutoRename Add and rename if already exists }
-  
+  { Update Mode Option:                                   }
+  {  umAdd           Add only new files                   }
+  {  umUpdate        Update only existing files           }
+  {  umReplace       Replace only existing files          }
+  {  umQuery         Query always                         }
+  {  umAddUpdate     Add and update existing files        }
+  {  umAddReplace    Add and replace existing files       }
+  {  umAddQuery      Add and query if already exists      }
+  {  umAddAutoRename Add and rename if already exists     }
+
   TUpdateMode = (umAdd, umUpdate, umReplace, umQuery,
     umAddUpdate, umAddReplace, umAddQuery, umAddAutoRename);
 
-  { Compression Method Option: }
-  {   cm:m=store               }
-  {   cm:m=bee :l=x:d=x:s=x    }
-  {   cm:m=ppmd:l=x:d=x:s=x    }
+  { Compression Method Option:                            }
+  {   moStore                                             }
+  {   moFast                                              }
+  {   moNormal                                            }
+  {   moMaximum                                           }
 
-  TcmOption = string;
+  TmOption = (moStore, moFast, moNormal, moMaximum);
 
-  { Encryption Method Option: }
-  {   em:m=none               }
-  {   em:m=blowfish:p=x       }
+  { Compression Dictionary Level Option:                  }
+  {   do2MB                                               }
+  {   do5MB                                               }
+  {   ..                                                  }
+  {   do1280MB                                            }
 
-  TemOption = string;
+  TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
+    do80MB, do160MB, do320MB, do640MB ,do1280MB);
 
-  { Process Priority Option: }
-  {   priIdle                }
-  {   priNormal              }
-  {   priHigh                }
-  {   priRealTime            }
+  { Encryption Method Option:                            }
+  {   eoNone                                             }
+  {   eoBlowFish                                         }
 
-  TpriOption = (priIdle, priNormal, priHigh, priRealTime);
+  TemOption = (emNone, emBlowFish);
+
+  { Process Priority Option:                              }
+  {   prioIdle                                            }
+  {   prioNormal                                          }
+  {   prioHigh                                            }
+  {   prioRealTime                                        }
+
+  TpriOption = (prioIdle, prioNormal, prioHigh, prioRealTime);
 
   { TCommandLine }
 
@@ -91,11 +101,11 @@ type
     FCommand: TCommand;
     FssOption: boolean;
     FrOption: TRecursiveMode;
-    FumOption: TUpdateMode;
+    FuOption: TUpdateMode;
     FxOptions: TStringList;
-    FcmOption: string;
-   
-    
+    FmOption: TmOption;
+    FdOption: TdOption;
+    FsOption: qword;
     FfOption: string;
     FsfxOption: string;
     FemOption: string;
@@ -733,3 +743,4 @@ begin
 end;
 
 end.
+

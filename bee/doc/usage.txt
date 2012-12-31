@@ -7,17 +7,17 @@ The Bee 0.8.0 build 1020 archiver utility, April 2009
 
     a   Add files to archive
     d   Delete files from archive
+    r   Rename files in archive
+    t   Test archive files
     e   Extract files from archive
     x   eXtract files from archive with path name
     l   List archive
-    t   Test archive files
-    r   Rename files in archive
+    h   show command line Help
 
   Options:
 
     r       Recurse subdirectories
     u       Update files
-    f       Freshen files
     e       force file Extention
     s       create Solid archive
     a       add self-extrActor module
