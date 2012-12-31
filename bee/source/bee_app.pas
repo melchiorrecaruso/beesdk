@@ -407,7 +407,6 @@ begin
 
     FArchiver.UpdateTagged;
   end;
-  FreeAndNil(FUpdater);
 end;
 
 procedure TBeeApp.DecodeShell(TestMode: boolean);
