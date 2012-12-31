@@ -69,7 +69,7 @@ type
     acfCompressionMethod,
     acfCompressionLevel,
     acfDictionaryLevel,
-    acfSolidCompression,
+    acfCompressionBlock,
     acfCompressionTable);
 
   TArchiveCompressionFlags = set of TArchiveCompressionFlag;
@@ -211,6 +211,10 @@ type
     FArchiveReader: TFileReader;
     FArchiveItems: TArchiveItems;
 
+    FArchiveSFX: string;
+    FArchiveSFXMod: TMemoryStream;
+
+
     FSwapName: string;
     FSwapReader: TFileReader;
     FSwapWriter: TFileWriter;
@@ -245,6 +249,7 @@ type
     procedure SaveTemporaryArchive;
   private
     procedure SetArchiveName(const Value: string);
+    procedure SetArchiveSFX(const Value: string);
     procedure SetWorkDirectory(const Value: string);
 
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
@@ -309,6 +314,7 @@ type
 
     procedure OpenArchive(const aArchiveName: string);
     procedure CloseArchive;
+
     procedure Terminate;
     procedure Suspend(Value: boolean);
 
@@ -333,6 +339,8 @@ type
       read FArchiveComment write FArchiveComment;
     property ArchivePassword: string
       read FArchivePassword write FArchivePassword;
+    property ArchiveSFX: string
+      read FArchiveSFX write SetArchiveSFX;
 
     property CompressionMethod: TArchiveCompressionMethod
       read FCompressionMethod write FCompressionMethod;
@@ -549,7 +557,7 @@ end;
 
 function TArchiveItem.GetSolidCompression: boolean;
 begin
-  Result := acfSolidCompression in FCompressionFlags;
+  Result := acfCompressionBlock in FCompressionFlags;
 end;
 
 // TArchiveItems class
@@ -664,9 +672,9 @@ begin
   begin
     Next := Items[Index + 1];
 
-    if(not(acfSolidCompression in Item.CompressionFlags)) and
-      (   (acfSolidCompression in Next.CompressionFlags)) then
-      Exclude(Next.FCompressionFlags, acfSolidCompression);
+    if(not(acfCompressionBlock in Item.CompressionFlags)) and
+      (   (acfCompressionBlock in Next.CompressionFlags)) then
+      Exclude(Next.FCompressionFlags, acfCompressionBlock);
 
     if(   (acfCompressionTable in Item.CompressionFlags)) and
       (not(acfCompressionTable in Next.CompressionFlags)) then
@@ -1064,7 +1072,6 @@ begin
   begin
     DoMessage(Format(cmOpening, [aArchiveName]));
     FArchiveReader := TFileReader.Create(aArchiveName, FOnRequestImage);
-
     ReadCentralDirectory(FArchiveReader);
     if ExitStatus = esNoError then
     begin
@@ -1072,6 +1079,7 @@ begin
       if FArchiveItems.Count = 0 then
         SetExitStatus(esArchiveTypeError);
     end;
+
   end else
   begin
     DoMessage(Format(cmCreating, [aArchiveName]));
@@ -1193,7 +1201,7 @@ begin
     end;
   end;
 
-  //
+  // ---
   if ExitStatus in [esNoError, esUserAbortError] then
     SysUtils.DeleteFile(FTempName);
 end;
@@ -1211,6 +1219,7 @@ begin
       TestTemporaryArchive;
     SaveTemporaryArchive;
   end;
+
   FSearchRecs.Clear;
 
   FArchiveName     := '';
@@ -1311,6 +1320,11 @@ end;
 procedure TArchiver.SetArchiveName(const Value: string);
 begin
   OpenArchive(Value);
+end;
+
+procedure TArchiver.SetArchiveSFX(const Value: string);
+begin
+  FArchiveSFX := Value;
 end;
 
 procedure TArchiver.SetWorkDirectory(const Value: string);
@@ -1814,9 +1828,9 @@ var
   Item: TArchiveItem;
 begin
   CheckTags4Delete;
-  if ExitStatus = esNoError then
+  if FIsNeededToRun then
   begin
-    if FIsNeededToSave then
+    if ExitStatus = esNoError then
     begin
       CheckSequences4Delete;
       FTempName   := GenerateFileName(FWorkDirectory);
@@ -1914,12 +1928,11 @@ var
   PreviousFileExt: string;
   Configuration: TConfiguration;
 begin
-  DoMessage(Format(cmLoading, [FConfigurationName]));
   Configuration := TConfiguration.Create;
   if FileExists(FConfigurationName) then
     Configuration.LoadFromFile(FConfigurationName)
   else
-    SetExitStatus(esOpenStreamError);
+    SetExitStatus(esLoadConfigError);
 
   if ExitStatus = esNoError then
   begin
@@ -1940,7 +1953,7 @@ begin
         Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
         Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
         Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
-        Exclude(CurrentItem.FCompressionFlags, acfSolidCompression);
+        Exclude(CurrentItem.FCompressionFlags, acfCompressionBlock);
         Exclude(CurrentItem.FCompressionFlags, acfCompressionTable);
 
         CurrentItem.FCompressionMethod := FCompressionMethod;
@@ -1963,7 +1976,7 @@ begin
           begin
             Dec(SolidBlock, CurrentItem.UncompressedSize);
             if SolidBlock >= 0 then
-              Include(CurrentItem.FCompressionFlags, acfSolidCompression)
+              Include(CurrentItem.FCompressionFlags, acfCompressionBlock)
             else
               SolidBlock := CompressionBlock;
           end else

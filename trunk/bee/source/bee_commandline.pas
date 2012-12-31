@@ -38,17 +38,17 @@ uses
 
 type
   { Commands:                                             }
-  {   ccNone     Nul command                              }
-  {   ccAdd      Add files                                }
-  {   ccExtract  Extract file                             }
-  {   ceXextract Extract file with full path              }
-  {   ccTest     Test files                               }
-  {   ccDelete   Delete files                             }
-  {   ccRename   Rename files                             }
-  {   ccList     List files                               }
+  {   cNone     Nul command                               }
+  {   cAdd      Add files                                 }
+  {   cExtract  Extract file                              }
+  {   eXextract Extract file with full path               }
+  {   cTest     Test files                                }
+  {   cDelete   Delete files                              }
+  {   cRename   Rename files                              }
+  {   cList     List files                                }
 
-  TCommand = (ccAdd, ccExtract, ccXextract, ccTest,
-    ccDelete, ccRename, ccList, ccHelp);
+  TCommand = (cAdd, cExtract, cXextract, cTest, cDelete,
+    cRename, cList, cHelp);
 
   { Update Mode Option:                                   }
   {  umAdd           Add only new files                   }
@@ -64,6 +64,12 @@ type
     umAddUpdate, umAddReplace, umAddQuery, umAddAutoRename);
 
   { Compression Method Option:                            }
+  {   cmStore                                             }
+  {   cmBee                                               }
+
+  TcmOption = (cmStore, cmBee);
+
+  { Compression Level Option:                             }
   {   moStore                                             }
   {   moFast                                              }
   {   moNormal                                            }
@@ -100,9 +106,15 @@ type
   protected
     FCommand: TCommand;
     FssOption: boolean;
+
+
+
+
+
     FrOption: TRecursiveMode;
     FuOption: TUpdateMode;
     FxOptions: TStringList;
+    FcmOption: TcmOption;
     FmOption: TmOption;
     FdOption: TdOption;
     FsOption: qword;
@@ -244,7 +256,7 @@ end;
 
 procedure TCommandLine.Clear;
 begin
-  FCommand     := ccHelp;
+  FCommand     := cHelp;
   FssOption    := False;
   FrOption     := rmNone;
   FuOption     := umAddUpdate;
@@ -284,7 +296,7 @@ begin
     else
       SetExitStatus(esCmdLineError);
 
-  if (FCommand in [ccHelp]) = TRUE then
+  if (FCommand in [cHelp]) = TRUE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -312,7 +324,7 @@ begin
         SetExitStatus(esCmdLineError);
   end;
 
-  if (FCommand in [ccHelp]) = TRUE then
+  if (FCommand in [cHelp]) = TRUE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -324,7 +336,7 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd, ccExtract, ccXextract]) = FALSE then
+  if (Command in [cAdd, cExtract, cXextract]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -336,7 +348,7 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if (FCommand in [ccHelp]) = TRUE then
+  if (FCommand in [cHelp]) = TRUE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -348,7 +360,7 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd]) = FALSE then
+  if (Command in [cAdd]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -360,7 +372,7 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd]) = FALSE then
+  if (Command in [cAdd]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -370,7 +382,7 @@ begin
   if TryStrWithMultToQWord(S, FsOption) = FALSE then
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd]) = FALSE then
+  if (Command in [cAdd]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -382,7 +394,7 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd]) = FALSE then
+  if (Command in [cAdd]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -401,7 +413,7 @@ begin
     if FileExists(FsfxOption) = FALSE then
       SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
+  if (Command in [cAdd, cDelete, cRename]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -413,7 +425,7 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccRename, ccList, ccHelp]) = TRUE then
+  if (Command in [cRename, cList, cHelp]) = TRUE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -428,7 +440,7 @@ begin
     else
       SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
+  if (Command in [cAdd, cDelete, cRename]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -443,7 +455,7 @@ begin
     else
       SetExitStatus(esCmdLineError);
 
-  if (Command in [ccList]) = FALSE then
+  if (Command in [cList]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -460,7 +472,7 @@ begin
   if TryStrWithMultToQWord(S, FiOption) = FALSE then
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
+  if (Command in [cAdd, cDelete, cRename]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -471,7 +483,7 @@ begin
   if DirectoryExists(FwdOption) = FALSE then
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd, ccDelete, ccRename]) = FALSE then
+  if (Command in [cAdd, cDelete, cRename]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -483,7 +495,7 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccHelp]) = TRUE then
+  if (Command in [cHelp]) = TRUE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -495,7 +507,7 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccAdd]) = FALSE then
+  if (Command in [cAdd]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -507,7 +519,7 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if (Command in [ccHelp]) = TRUE then
+  if (Command in [cHelp]) = TRUE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -515,14 +527,14 @@ procedure TCommandLine.ProcessCommand(const S: string);
 begin
   if Length(S) = 1 then
     case Upcase(S[1]) of
-      'A': FCommand := ccAdd;
-      'E': FCommand := ccExtract;
-      'X': FCommand := ccxExtract;
-      'T': FCommand := ccTest;
-      'D': FCommand := ccDelete;
-      'R': FCommand := ccRename;
-      'L': FCommand := ccList;
-      'H': FCommand := ccHelp;
+      'A': FCommand := cAdd;
+      'E': FCommand := cExtract;
+      'X': FCommand := cxExtract;
+      'T': FCommand := cTest;
+      'D': FCommand := cDelete;
+      'R': FCommand := cRename;
+      'L': FCommand := cList;
+      'H': FCommand := cHelp;
       else SetExitStatus(esCmdLineError);
     end
   else SetExitStatus(esCmdLineError);
@@ -537,10 +549,10 @@ begin
       FArchiveName := ChangeFileExt(FArchiveName, '.beex');
 
   // check if archive exists
-  if (FCommand in [ccHelp]) = TRUE then
+  if (FCommand in [cHelp]) = TRUE then
     SetExitStatus(esCmdLineError)
   else
-    if (FCommand in [ccAdd]) = FALSE then
+    if (FCommand in [cAdd]) = FALSE then
       if FileExists(FArchiveName) = FALSE then
         SetExitStatus(esCmdLineError);
 end;
@@ -549,7 +561,7 @@ procedure TCommandLine.ProcessFileMasks(const S: string);
 begin
   FFileMasks.Add(S);
 
-  if (FCommand in [ccHelp]) = TRUE then
+  if (FCommand in [cHelp]) = TRUE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -619,14 +631,14 @@ begin
   if FFileMasks.Count = 0 then
   begin
     case FCommand of
-      ccAdd:      SetExitStatus(esCmdLineError);
-      ccDelete:   SetExitStatus(esCmdLineError);
-      ccRename:   SetExitStatus(esCmdLineError);
+      cAdd:      SetExitStatus(esCmdLineError);
+      cDelete:   SetExitStatus(esCmdLineError);
+      cRename:   SetExitStatus(esCmdLineError);
 
-      ccExtract:  FFileMasks.Add('*');
-      ccxExtract: FFileMasks.Add('*');
-      ccTest:     FFileMasks.Add('*');
-      ccList:     FFileMasks.Add('*');
+      cExtract:  FFileMasks.Add('*');
+      cxExtract: FFileMasks.Add('*');
+      cTest:     FFileMasks.Add('*');
+      cList:     FFileMasks.Add('*');
     end;
     FrOption := rmFull;
   end;
@@ -639,14 +651,14 @@ var
 begin
   Params := TStringList.Create;
   case FCommand of
-    ccAdd:      Params.Add('A');
-    ccExtract:  Params.Add('E');
-    ccxExtract: Params.Add('X');
-    ccTest:     Params.Add('T');
-    ccDelete:   Params.Add('D');
-    ccRename:   Params.Add('R');
-    ccList:     Params.Add('L');
-    else        Params.Add(' ');
+    cAdd:      Params.Add('A');
+    cExtract:  Params.Add('E');
+    cxExtract: Params.Add('X');
+    cTest:     Params.Add('T');
+    cDelete:   Params.Add('D');
+    cRename:   Params.Add('R');
+    cList:     Params.Add('L');
+    else       Params.Add(' ');
   end;
 
   case FrOption of

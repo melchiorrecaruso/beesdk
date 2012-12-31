@@ -53,6 +53,9 @@ type
     FSelfName: string;
     FCommandLine: TCommandLine;
     FArchiver: TArchiver;
+    procedure OpenArchive;
+    procedure CloseArchive;
+
     function QueryToUser(var Confirm: TArchiveConfirm): char;
     procedure DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
     procedure DoRequestImage(ImageNumber: longint;
@@ -66,6 +69,9 @@ type
     procedure DoDelete(Item: TArchiveItem; var Confirm: TArchiveConfirm);
     procedure DoUpdate(SearchRec: TCustomSearchRec;
       var UpdateAs: string; var Confirm: TArchiveConfirm);
+
+
+
     { shells routines}
     procedure HelpShell;
     procedure EncodeShell;
@@ -108,7 +114,7 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1637 archiver utility, July 2012' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1643 archiver utility, July 2012' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   FArchiver := TArchiver.Create;
   FArchiver.OnRequestBlankImage := DoRequestBlankDisk;
@@ -147,99 +153,28 @@ begin
   DoMessage(FSelfName);
   if ExitStatus = esNoError then
     case FCommandLine.Command of
-      ccAdd:      EncodeShell;
-      ccDelete:   DeleteShell;
-      ccExtract:  DecodeShell(FALSE);
-      ccxExtract: DecodeShell(FALSE);
-      ccTest:     DecodeShell(TRUE);
-      ccRename:   RenameShell;
-      ccList:     ListShell;
-      ccHelp:     HelpShell;
+      cAdd:      EncodeShell;
+      cDelete:   DeleteShell;
+      cExtract:  DecodeShell(FALSE);
+      cxExtract: DecodeShell(FALSE);
+      cTest:     DecodeShell(TRUE);
+      cRename:   RenameShell;
+      cList:     ListShell;
+      cHelp:     HelpShell;
     end;
 
   S := TimeDifference(StartTime);
   case ExitStatus of
-    esNoError:          DoMessage(Format(Cr + emNoError,       [          S]));
-    esUnknowError:      DoMessage(Format(Cr + emUnknowError,   [ExitStatus, S]));
-    esCmdLineError:     DoMessage(Format(Cr + emCmdLineError,  [ExitStatus, S]));
-    esAllocMemError:    DoMessage(Format(Cr + emAllocMemError, [ ]));
-    //ecArchiveTypeError:
-    //ecCreateStreamError:
-    //ecOpenStreamError:
-    //ecFillStreamError:
-    //ecFlushStreamError:
-    //ecResizeStreamError:
-    //ecSplittingError:
-
-    esUserAbortError:   DoMessage(Format(Cr + emUserAbortError,          [S]));
-    else                DoMessage(Format(Cr + emUnknowError, [ExitStatus, S]));
+    esNoError:          DoMessage(Format(emNoError,       [S]));
+    esUnknowError:      DoMessage(Format(emUnknowError,   [S]));
+    esCmdLineError:     DoMessage(Format(emCmdLineError,  [S]));
+    esAllocMemError:    DoMessage(Format(emAllocMemError, [S]));
+    esUserAbortError:   DoMessage(Format(emUserAbortError,[S]));
+    else                DoMessage(Format(emUnknowError,   [S]));
   end;
 end;
 
-
-procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
-var
-  Ch: char;
-begin
-  Write(ParamToOem('Insert blank disk number #'+ IntToStr(DiskNumber)) + '. Continue? ');
-  Readln(Ch);
-  Ch := UpCase(OemToParam(Ch)[1]);
-  while Pos(Ch, 'YQ') < 1 do
-  begin
-    Write('Yes, or Quit? ');
-    Readln(Ch);
-    Ch := UpCase(OemToParam(Ch)[1]);
-  end;
-
-  case Ch of
-    'Y': Abort := FALSE;
-    else Abort := TRUE;
-  end;
-end;
-
-procedure TBeeApp.DoRequestImage(ImageNumber: longint;
-  var ImageName: string; var Abort: boolean);
-begin
-  Writeln(ParamToOem(ImageName));
-  Readln;
-end;
-
-procedure TBeeApp.DoProgress(Percentage: longint);
-begin
-  Write(#8#8#8#8#8#8, Format('(%3d%%)', [Percentage]));
-end;
-
-procedure TBeeApp.DoMessage(const Message: string);
-begin
-  Writeln(ParamToOem(Message));
-end;
-
-
-
-
-
-procedure TBeeApp.DoExtract(Item: TArchiveItem;
-  var ExtractAs: string; var Confirm: TArchiveConfirm);
-begin
-  case FCommandLine.Command of
-    ccExtract:  ExtractAs := ExtractFileName(Item.FileName);
-    ccXextract: ExtractAs := DeleteFilePath(FCommandLine.cdOption, Item.FileName);
-  end;
-
-  Confirm := arcCancel;
-  case FCommandLine.uOption of
-    umAdd:           if (not FileExists(ExtractAs)) then Confirm := arcOk;
-    umReplace:       if (    FileExists(ExtractAs)) then Confirm := arcOk;
-    umUpdate:        if (    FileExists(ExtractAs)) and (Item.LastModifiedTime > FileAge(ExtractAs)) then Confirm := arcOk;
-    umAddUpdate:     if (not FileExists(ExtractAs)) or  (Item.LastModifiedTime > FileAge(ExtractAs)) then Confirm := arcOk;
-    umAddReplace:    Confirm := arcOk;
-    umAddAutoRename: begin
-      if FileExists(ExtractAs) then
-        ExtractAs := GenerateAlternativeFileName(ExtractAs, 1, True);
-      Confirm := arcOk;
-    end;
-  end;
-end;
+//
 
 function TBeeApp.QueryToUser(var Confirm: TArchiveConfirm): char;
 begin
@@ -266,6 +201,87 @@ begin
     '6': FCommandLine.uOption := umAddQuery;
     '7': FCommandLine.uOption := umAddAutoRename;
   end;
+end;
+
+//
+
+procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
+var
+  Ch: char;
+begin
+  Write(#8#8#8#8#8#8);
+  Write(ParamToOem('Insert blank disk number #'+ IntToStr(DiskNumber)) + '. Continue? ');
+  Readln(Ch);
+  Ch := UpCase(OemToParam(Ch)[1]);
+  while Pos(Ch, 'YNQ') < 1 do
+  begin
+    Write('Yes, No or Quit? ');
+    Readln(Ch);
+    Ch := UpCase(OemToParam(Ch)[1]);
+  end;
+
+  case Ch of
+    'Y': Abort := FALSE;
+    else Abort := TRUE;
+  end;
+end;
+
+procedure TBeeApp.DoRequestImage(ImageNumber: longint;
+  var ImageName: string; var Abort: boolean);
+begin
+  Write(#8#8#8#8#8#8);
+  Writeln(ParamToOem(ImageName));
+  Readln;
+end;
+
+procedure TBeeApp.DoMessage(const Message: string);
+begin
+  Write(#8#8#8#8#8#8);
+  Writeln(ParamToOem(Message));
+end;
+
+procedure TBeeApp.DoProgress(Percentage: longint);
+begin
+  Write(#8#8#8#8#8#8);
+  Write(Format('(%3d%%)', [Percentage]));
+end;
+
+procedure TBeeApp.DoExtract(Item: TArchiveItem;
+  var ExtractAs: string; var Confirm: TArchiveConfirm);
+begin
+  case FCommandLine.Command of
+    cExtract:  ExtractAs := ExtractFileName(Item.FileName);
+    cXextract: ExtractAs := DeleteFilePath(FCommandLine.cdOption, Item.FileName);
+  end;
+
+  Confirm := arcCancel;
+  case FCommandLine.uOption of
+    umAdd:           if (not FileExists(ExtractAs)) then Confirm := arcOk;
+    umReplace:       if (    FileExists(ExtractAs)) then Confirm := arcOk;
+    umUpdate:        if (    FileExists(ExtractAs)) and (Item.LastModifiedTime > FileAge(ExtractAs)) then Confirm := arcOk;
+    umAddUpdate:     if (not FileExists(ExtractAs)) or  (Item.LastModifiedTime > FileAge(ExtractAs)) then Confirm := arcOk;
+    umAddReplace:    Confirm := arcOk;
+    umAddAutoRename: begin
+      if FileExists(ExtractAs) then
+        ExtractAs := GenerateAlternativeFileName(ExtractAs, 1, True);
+      Confirm := arcOk;
+    end;
+  end;
+end;
+
+procedure TBeeApp.DoRename(Item: TArchiveItem;
+  var RenameAs: string; var Confirm: TArchiveConfirm);
+begin
+  Write('Rename file "', ParamToOem(RenameAs), '" as (empty to skip):');
+  Readln(RenameAs);
+  // convert oem to param
+  RenameAs := OemToParam(RenameAs);
+end;
+
+procedure TBeeApp.DoDelete(Item: TArchiveItem;
+  var Confirm: TArchiveConfirm);
+begin
+  Confirm :=arcOk;
 end;
 
 procedure TBeeApp.DoUpdate(SearchRec: TCustomSearchRec;
@@ -319,20 +335,38 @@ begin
   end;
 end;
 
-procedure TBeeApp.DoRename(Item: TArchiveItem;
-  var RenameAs: string; var Confirm: TArchiveConfirm);
+//
+
+procedure TBeeApp.OpenArchive;
 begin
-  Write('Rename file "', ParamToOem(RenameAs), '" as (empty to skip):');
-  Readln(RenameAs);
-  // convert oem to param
-  RenameAs := OemToParam(RenameAs);
+  FArchiver.OpenArchive(FCommandLine.ArchiveName);
+  // compression mode
+  case FCommandLine.mOption of
+    moStore: FArchiver.CompressionMethod := actNone;
+    else     FArchiver.CompressionMethod := actMain;
+  end;
+  FArchiver.CompressionLevel   := FCommandLine.mOption;
+  FArchiver.DictionaryLevel    := FCommandLine.dOption;
+  FArchiver.CompressionBlock   := FCommandLine.sOption;
+  FArchiver.ConfigurationName  := FCommandLine.cfgOption;
+  FArchiver.ForceFileExtension := FCommandLine.fOption;
+  // encryption mode
+  case Length(FCommandLine.pOption) of
+    0:   FArchiver.EncrypionMethod := acrtNone;
+    else FArchiver.EncrypionMethod := acrtMain;
+  end;
+  FArchiver.ArchivePassword := FCommandLine.pOption;
+  // ...
+  FArchiver.Threshold       := FCommandLine.iOption;
+  FArchiver.ArchiveSFX      := FCommandLine.sfxOption;
+  FArchiver.TestTempArchive := FCommandLine.tOption;
+  FArchiver.WorkDirectory   := FCommandLine.wdOption;
+  //FUpdater.ArchiveComment :=
 end;
 
-procedure TBeeApp.DoDelete(Item: TArchiveItem;
-var
-  Confirm: TArchiveConfirm);
+procedure TBeeApp.CloseArchive;
 begin
-  Confirm :=arcOk;
+  FArchiver.CloseArchive;
 end;
 
 { shell procedures }
@@ -370,29 +404,7 @@ var
   I: longint;
   Scanner: TFileScanner;
 begin
-  FArchiver.OpenArchive(FCommandLine.ArchiveName);
-  case FCommandLine.mOption of
-    moStore: FArchiver.CompressionMethod := actNone;
-    else     FArchiver.CompressionMethod := actMain;
-  end;
-  FArchiver.CompressionLevel   := FCommandLine.mOption;
-  FArchiver.CompressionBlock   := FCommandLine.sOption;
-  FArchiver.DictionaryLevel    := FCommandLine.dOption;
-  FArchiver.ConfigurationName  := FCommandLine.cfgOption;
-  FArchiver.ForceFileExtension := FCommandLine.fOption;
-
-
-
-  FArchiver.ArchivePassword    := FCommandLine.pOption;
-
-
-
-  FArchiver.TestTempArchive    := FCommandLine.tOption;
-  FArchiver.Threshold          := FCommandLine.iOption;
-  FArchiver.WorkDirectory      := FCommandLine.wdOption;
-
-//FUpdater.ArchiveComment     :=
-
+  OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
@@ -403,108 +415,77 @@ begin
 
     for I := 0 to Scanner.Count - 1 do
       FArchiver.Tag(Scanner.Items[I]);
-    Scanner.Free;
+    FreeAndNil(Scanner);
 
     FArchiver.UpdateTagged;
   end;
+  CloseArchive;
 end;
 
 procedure TBeeApp.DecodeShell(TestMode: boolean);
 var
   I: longint;
 begin
-  FExtractor                 := TArchiveExtractor.Create;
-  FExtractor.OnRequestImage  := DoRequestImage;
-  FExtractor.OnProgress      := DoProgress;
-  FExtractor.OnMessage       := DoMessage;
-  FExtractor.OnExtraction    := DoExtract;
-
-  FExtractor.ArchivePassword := FCommandLine.pOption;
-
-  FExtractor.OpenArchive(FCommandLine.ArchiveName);
+  OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
-    for I := 0 to FExtractor.Count - 1 do
-      if FileNameMatch(FExtractor.Items[I].FileName,
-        FCommandLine.FileMasks, FCommandLine.rOption) then FExtractor.Tag(I);
+    for I := 0 to FArchiver.Count - 1 do
+      if FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
 
-    for I := 0 to FExtractor.Count - 1 do
-      if  FileNameMatch(FExtractor.Items[I].FileName,
-        FCommandLine.xOptions, FCommandLine.rOption) then FExtractor.UnTag(I);
+    for I := 0 to FArchiver.Count - 1 do
+      if  FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
 
     case TestMode of
-      FALSE: FExtractor.ExtractTagged;
-      TRUE:  FExtractor.TestTagged;
+      FALSE: FArchiver.ExtractTagged;
+      TRUE:  FArchiver.TestTagged;
     end;
   end;
-  FreeAndNil(FExtractor);
+  CloseArchive;
 end;
 
 procedure TBeeApp.DeleteShell;
 var
   I: longint;
 begin
-  FEraser                    := TArchiveEraser.Create;
-  FEraser.OnRequestBlankDisk := DoRequestBlankDisk;
-  FEraser.OnRequestImage     := DoRequestImage;
-  FEraser.OnProgress         := DoProgress;
-  FEraser.OnMessage          := DoMessage;
-  FEraser.OnEraseEvent       := DoErase;
-
-  FEraser.TestTempArchive    := FCommandLine.tOption;
-  FEraser.ArchivePassword    := FCommandLine.pOption;
-  FEraser.Threshold          := FCommandLine.iOption;
-  FEraser.WorkDirectory      := FCommandLine.wdOption;
-
-  FEraser.OpenArchive(FCommandLine.ArchiveName);
+  OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
-    for I := 0 to FEraser.Count - 1 do
-      if FileNameMatch(FEraser.Items[I].FileName,
-        FCommandLine.FileMasks, FCommandLine.rOption) then FEraser.Tag(I);
+    for I := 0 to FArchiver.Count - 1 do
+      if FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
 
-    for I := 0 to FEraser.Count - 1 do
-      if  FileNameMatch(FEraser.Items[I].FileName,
-        FCommandLine.xOptions, FCommandLine.rOption) then FEraser.UnTag(I);
+    for I := 0 to FArchiver.Count - 1 do
+      if  FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
 
-    FEraser.EraseTagged;
+    FArchiver.DeleteTagged;
   end;
-  FreeAndNil(FEraser);
+  CloseArchive;
 end;
 
 procedure TBeeApp.RenameShell;
 var
   I: longint;
 begin
-  FRenamer                    := TArchiveRenamer.Create;
-  FRenamer.OnRequestBlankDisk := DoRequestBlankDisk;
-  FRenamer.OnRequestImage     := DoRequestImage;
-  FRenamer.OnProgress         := DoProgress;
-  FRenamer.OnMessage          := DoMessage;
-  FRenamer.OnRenameEvent      := DoRename;
-
-  FRenamer.TestTempArchive    := FCommandLine.tOption;
-  FRenamer.ArchivePassword    := FCommandLine.pOption;
-  FRenamer.Threshold          := FCommandLine.iOption;
-  FRenamer.WorkDirectory      := FCommandLine.wdOption;
-
-  FRenamer.OpenArchive(FCommandLine.ArchiveName);
+  OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
-    for I := 0 to FRenamer.Count - 1 do
-      if FileNameMatch(FRenamer.Items[I].FileName,
-        FCommandLine.FileMasks, FCommandLine.rOption) then FRenamer.Tag(I);
+    for I := 0 to FArchiver.Count - 1 do
+      if FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
 
-    for I := 0 to FRenamer.Count - 1 do
-      if  FileNameMatch(FRenamer.Items[I].FileName,
-        FCommandLine.xOptions, FCommandLine.rOption) then FRenamer.UnTag(I);
+    for I := 0 to FArchiver.Count - 1 do
+      if  FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
 
-    FRenamer.RenameTagged;
+    FArchiver.RenameTagged;
   end;
-  FreeAndNil(FRenamer);
+  CloseArchive;
 end;
 
 procedure TBeeApp.ListShell;
@@ -525,23 +506,17 @@ var
   TotalPackedSize: int64;
   TotalFiles:longint;
 begin
-  FReader                 := TCustomArchiveReader.Create;
-  FReader.OnRequestImage  := DoRequestImage;
-  FReader.OnProgress      := DoProgress;
-  FReader.OnMessage       := DoMessage;
-
-  FReader.ArchivePassword := FCommandLine.pOption;
-  FReader.ArchiveName     := FCommandLine.ArchiveName;
+  OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
-    for I := 0 to FReader.Count - 1 do
-      if FileNameMatch(FReader.Items[I].FileName,
-        FCommandLine.FileMasks, FCommandLine.rOption) then FReader.Tag(I);
+    for I := 0 to FArchiver.Count - 1 do
+      if FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
 
-    for I := 0 to FReader.Count - 1 do
-      if  FileNameMatch(FReader.Items[I].FileName,
-        FCommandLine.xOptions, FCommandLine.rOption) then FReader.UnTag(I);
+    for I := 0 to FArchiver.Count - 1 do
+      if  FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
 
     VersionNeededToExtract := 0;
     CompressionMethod      := actNone;
@@ -556,17 +531,17 @@ begin
     TotalFiles      := 0;
 
     ItemToList := TList.Create;
-    for I := 0 to FReader.Count - 1 do
+    for I := 0 to FArchiver.Count - 1 do
     begin
-      Item := FReader.Items[I];
-      if FReader.IsTagged(I) then
+      Item := FArchiver.Items[I];
+      if FArchiver.IsTagged(I) then
         ItemToList.Add(Item);
 
       if aifVersionNeededToExtract in Item.Flags            then VersionNeededToExtract := Item.VersionNeededToExtract;
       if acfCompressionMethod      in Item.CompressionFlags then CompressionMethod      := Item.CompressionMethod;
       if acfCompressionLevel       in Item.CompressionFlags then CompressionLevel       := Item.CompressionLevel;
       if acfDictionaryLevel        in Item.CompressionFlags then DictionaryLevel        := Item.DictionaryLevel;
-      if acfSolidCompression       in Item.CompressionFlags then Inc(WithSolidCompression);
+      if acfCompressionBlock       in Item.CompressionFlags then Inc(WithSolidCompression);
       if aefEncryptionMethod       in Item.EncryptionFlags  then
         if Item.EncryptionMethod <> acrtNone then
           Inc(WithArchivePassword);
@@ -623,7 +598,7 @@ begin
     end;
     ItemToList.Destroy;
   end;
-  FreeAndNil(FReader);
+  CloseArchive;
 end;
 
 end.
