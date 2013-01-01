@@ -92,7 +92,7 @@ type
     FFlags: TArchiveItemFlags;
     FVersionNeededToExtract: longword;
     FUncompressedSize: int64;
-    FLastModifiedTime: longword;
+    FLastModifiedTime: longint;
     FAttributes: longword;
     FComment: string;
     // Data descriptor property
@@ -127,7 +127,7 @@ type
     property Flags: TArchiveItemFlags read FFlags;
     property VersionNeededToExtract: longword read FVersionNeededToExtract;
     property UncompressedSize: int64 read FUncompressedSize;
-    property LastModifiedTime: longword read FLastModifiedTime;
+    property LastModifiedTime: longint read FLastModifiedTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
     // Data property
