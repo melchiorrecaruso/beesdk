@@ -49,8 +49,6 @@ const
   esCaseError         = 303;  emCaseError         = 'Case statement error (exit code #303) - time elapsed %s seconds.';
   esLoadConfigError   = 304;  emLoadConfigError   = 'Load configuration error (exit code #304) - time elapsed %s seconds.';
 
-
-
 var
   ExitStatus: longint = esNoError;
 
