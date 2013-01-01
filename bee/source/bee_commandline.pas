@@ -38,17 +38,17 @@ uses
 
 type
   { Commands:                                             }
-  {   cNone     Nul command                               }
   {   cAdd      Add files                                 }
-  {   cExtract  Extract file                              }
-  {   eXextract Extract file with full path               }
-  {   cTest     Test files                                }
   {   cDelete   Delete files                              }
-  {   cRename   Rename files                              }
+  {   cExtract  Extract file                              }
+  {   cHelp     Show Help                                 }
   {   cList     List files                                }
+  {   cRename   Rename files                              }
+  {   cTest     Test files                                }
+  {   eXextract Extract file with full path               }
 
-  TCommand = (cAdd, cExtract, cXextract, cTest, cDelete,
-    cRename, cList, cHelp);
+  TCommand = (cAdd, cDelete, cExtract, cHelp, cList,
+    cRename, cTest, cXextract);
 
   { Update Mode Option:                                   }
   {  umAdd           Add only new files                   }

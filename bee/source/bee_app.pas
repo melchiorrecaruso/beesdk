@@ -53,15 +53,14 @@ type
     FSelfName: string;
     FCommandLine: TCommandLine;
     FArchiver: TArchiver;
-    procedure OpenArchive;
-    procedure CloseArchive;
-
-    function QueryToUser(var Confirm: TArchiveConfirm): char;
+    function QueryToUser(const Message: string;
+      var Confirm: TArchiveConfirm): TUpdateMode;
+    { Events routines}
     procedure DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
     procedure DoRequestImage(ImageNumber: longint;
       var ImageName: string; var Abort: boolean);
-    procedure DoProgress(Percentage: longint);
     procedure DoMessage(const Message: string);
+    procedure DoProgress(Percentage: longint);
     procedure DoExtract(Item: TArchiveItem;
       var ExtractAs: string; var Confirm: TArchiveConfirm);
     procedure DoRename(Item: TArchiveItem;
@@ -69,21 +68,21 @@ type
     procedure DoDelete(Item: TArchiveItem; var Confirm: TArchiveConfirm);
     procedure DoUpdate(SearchRec: TCustomSearchRec;
       var UpdateAs: string; var Confirm: TArchiveConfirm);
-
-
-
+    { Open/close routines}
+    procedure OpenArchive;
+    procedure CloseArchive;
     { shells routines}
-    procedure HelpShell;
     procedure EncodeShell;
-    procedure DeleteShell;
     procedure DecodeShell(TestMode: boolean);
-    procedure RenameShell;
+    procedure DeleteShell;
+    procedure HelpShell;
     procedure ListShell;
+    procedure RenameShell;
   public
     constructor Create(const aCommandLine: string);
     destructor Destroy; override;
-    procedure Terminate;
     procedure Execute;
+    procedure Terminate;
   end;
 
 implementation
@@ -114,8 +113,9 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1643 archiver utility, July 2012' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1645 archiver utility, Feb 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
+  { set archiver events }
   FArchiver := TArchiver.Create;
   FArchiver.OnRequestBlankImage := DoRequestBlankDisk;
   FArchiver.OnRequestImage      := DoRequestImage;
@@ -139,56 +139,69 @@ begin
   inherited Destroy;
 end;
 
-procedure TBeeApp.Terminate;
-begin
-  FArchiver.Terminate;
-end;
-
 procedure TBeeApp.Execute;
 var
-  S: string;
   StartTime: double;
 begin
   StartTime := Now;
   DoMessage(FSelfName);
   if ExitStatus = esNoError then
     case FCommandLine.Command of
-      cAdd:      EncodeShell;
-      cDelete:   DeleteShell;
-      cExtract:  DecodeShell(FALSE);
+      cAdd     : EncodeShell;
+      cDelete  : DeleteShell;
+      cExtract : DecodeShell(FALSE);
+      cHelp    : HelpShell;
+      cList    : ListShell;
+      cRename  : RenameShell;
+      cTest    : DecodeShell(TRUE);
       cxExtract: DecodeShell(FALSE);
-      cTest:     DecodeShell(TRUE);
-      cRename:   RenameShell;
-      cList:     ListShell;
-      cHelp:     HelpShell;
     end;
 
-  S := TimeDifference(StartTime);
   case ExitStatus of
-    esNoError:          DoMessage(Format(emNoError,       [S]));
-    esUnknowError:      DoMessage(Format(emUnknowError,   [S]));
-    esCmdLineError:     DoMessage(Format(emCmdLineError,  [S]));
-    esAllocMemError:    DoMessage(Format(emAllocMemError, [S]));
-    esUserAbortError:   DoMessage(Format(emUserAbortError,[S]));
-    else                DoMessage(Format(emUnknowError,   [S]));
+    esNoError          : DoMessage(Cr + Format(emNoError,           [TimeDifference(StartTime)]));
+    esUnknowError      : DoMessage(Cr + Format(emUnknowError,       [TimeDifference(StartTime)]));
+    esCmdLineError     : DoMessage(Cr + Format(emCmdLineError,      [TimeDifference(StartTime)]));
+    esAllocMemError    : DoMessage(Cr + Format(emAllocMemError,     [TimeDifference(StartTime)]));
+
+    esCreateStreamError: DoMessage(Cr + Format(emCreateStreamError, [TimeDifference(StartTime)]));
+    esOpenStreamError  : DoMessage(Cr + Format(emOpenStreamError,   [TimeDifference(StartTime)]));
+    esFillStreamError  : DoMessage(Cr + Format(emFillStreamError,   [TimeDifference(StartTime)]));
+    esFlushStreamError : DoMessage(Cr + Format(emFlushStreamError,  [TimeDifference(StartTime)]));
+    esResizeStreamError: DoMessage(Cr + Format(emResizeStreamError, [TimeDifference(StartTime)]));
+    esSplitStreamError : DoMessage(Cr + Format(emSplitStreamError,  [TimeDifference(StartTime)]));
+    esRenameTempError  : DoMessage(Cr + Format(emRenameTempError,   [TimeDifference(StartTime)]));
+
+    esUserAbortError   : DoMessage(Cr + Format(emUserAbortError,    [TimeDifference(StartTime)]));
+
+    esArchiveTypeError : DoMessage(Cr + Format(emArchiveTypeError,  [TimeDifference(StartTime)]));
+    esCRCError         : DoMessage(Cr + Format(emCRCError,          [TimeDifference(StartTime)]));
+    esCaseError        : DoMessage(Cr + Format(emCaseError,         [TimeDifference(StartTime)]));
+    esLoadConfigError  : DoMessage(Cr + Format(emLoadConfigError,   [TimeDifference(StartTime)]));
+    else                 DoMessage(Cr + Format(emUnknowError,       [TimeDifference(StartTime)]));
   end;
+end;
+
+procedure TBeeApp.Terminate;
+begin
+  FArchiver.Terminate;
 end;
 
 //
 
-function TBeeApp.QueryToUser(var Confirm: TArchiveConfirm): char;
+function TBeeApp.QueryToUser(const Message: string;
+  var Confirm: TArchiveConfirm): char;
 var
   Answer: string;
 begin
-  Readln(Answer);
-  Answer := UpperCase(OemToParam(Answer));
-  while (Length(Answer) <> 1) or (Pos(Answer, 'YNQ01234567') < 1) do
-  begin
-    Write(ParamToOem('Yes, No, or Quit? '));
-
+  Write(#8#8#8#8#8#8, ParamToOem(Query));
+  repeat
     Readln(Answer);
     Answer := UpperCase(OemToParam(Answer));
-  end;
+    if (Length(Answer) = 1) then
+      if (Pos(Answer, 'YNQ01234567') > -1) then Break;
+
+    Write(ParamToOem('Yes, No, or Quit? '));
+  until TRUE;
   Result := Answer[1];
 
   Confirm := arcCancel;
@@ -216,15 +229,13 @@ begin
   Write(#8#8#8#8#8#8, ParamToOem('Insert blank disk number #'
     + IntToStr(DiskNumber)) + '. Continue? ');
 
-  Readln(Answer);
-  Answer := UpperCase(OemToParam(Answer));
-  while (Length(Answer) <> 1) or (Pos(Answer, 'YNQ') < 1) do
-  begin
-    Write(ParamToOem('Yes, No or Quit? '));
-
+  repeat
     Readln(Answer);
-    Answer := UpCase(OemToParam(Answer));
-  end;
+    Answer := UpperCase(OemToParam(Answer));
+    if Length(Answer) = 1 then
+      if Pos(Answer, 'YNQ') > -1 then Break;
+    Write(ParamToOem('Yes, No or Quit? '));
+  until TRUE;
 
   if Answer = 'Y' then
     Abort := FALSE
@@ -240,15 +251,13 @@ begin
   Write(#8#8#8#8#8#8, ParamToOem('Insert disk number #'
     + IntToStr(ImageNumber)) + '. Continue? ');
 
-  Readln(Answer);
-  Answer := UpperCase(OemToParam(Answer));
-  while (Length(Answer) <> 1) or (Pos(Answer, 'YNQ') < 1) do
-  begin
-    Write(ParamToOem('Yes, No or Quit? '));
-
+  repeat
     Readln(Answer);
-    Answer := UpCase(OemToParam(Answer));
-  end;
+    Answer := UpperCase(OemToParam(Answer));
+    if Length(Answer) = 1 then
+      if Pos(Answer, 'YNQ') > -1 then Break;
+    Write(ParamToOem('Yes, No or Quit? '));
+  until TRUE;
 
   if Answer = 'Y' then
     Abort := FALSE
@@ -270,27 +279,46 @@ procedure TBeeApp.DoExtract(Item: TArchiveItem;
   var ExtractAs: string; var Confirm: TArchiveConfirm);
 begin
   case FCommandLine.Command of
-    cExtract:  ExtractAs := ExtractFileName(Item.FileName);
-    cXextract: ExtractAs := DeleteFilePath(FCommandLine.cdOption, Item.FileName);
+    cExtract : ExtractAs := ExtractFileName(                       Item.FileName);
+    cXextract: ExtractAs := DeleteFilePath (FCommandLine.cdOption, Item.FileName);
   end;
-
-  //umQuery,
-  // umAddQuery,
-
 
   Confirm := arcCancel;
   case FCommandLine.uOption of
-    umAdd:           if (not FileExists(ExtractAs)) then Confirm := arcOk;
-    umReplace:       if (    FileExists(ExtractAs)) then Confirm := arcOk;
-    umUpdate:        if (    FileExists(ExtractAs)) and (Item.LastModifiedTime > FileAge(ExtractAs)) then Confirm := arcOk;
-    umAddUpdate:     if (not FileExists(ExtractAs)) or  (Item.LastModifiedTime > FileAge(ExtractAs)) then Confirm := arcOk;
-    umAddReplace:    Confirm := arcOk;
+    umAdd          : if FileExists(ExtractAs) = FALSE then Confirm := arcOk;
+    umReplace      : if FileExists(ExtractAs) = TRUE  then Confirm := arcOk;
+    umUpdate       : if FileExists(ExtractAs) = TRUE  then
+                       if Item.LastModifiedTime > FileAge(ExtractAs) then
+                         Confirm := arcOk;
+
+    umAddUpdate    : if FileExists(ExtractAs) = FALSE then
+                       Confirm := arcOk
+                     else
+                       if Item.LastModifiedTime > FileAge(ExtractAs) then
+                         Confirm := arcOk;
+
+    umAddReplace   : Confirm := arcOk;
     umAddAutoRename: begin
-      if FileExists(ExtractAs) then
-        ExtractAs := GenerateAlternativeFileName(ExtractAs, 1, True);
       Confirm := arcOk;
+      if FileExists(ExtractAs) = TRUE do
+        ExtractAs := GenerateAlternativeFileName(ExtractAs, 1, TRUE);
+    end;
+    umQuery        : begin
+    end;
+    umAddQuery     : begin
     end;
   end;
+
+
+
+
+
+
+  ,
+
+
+
+
 end;
 
 procedure TBeeApp.DoRename(Item: TArchiveItem;
@@ -315,7 +343,7 @@ procedure TBeeApp.DoUpdate(SearchRec: TCustomSearchRec;
 var
   I, Index: longint;
   Item: TArchiveItem;
-  AlternativeFileName: string;
+  S: string;
 begin
   UpdateAs := FCommandLine.cdOption + SearchRec.Name;
   I := FArchiver.Find(UpdateAs);
@@ -334,18 +362,18 @@ begin
       begin
         Index := 0;
         repeat
-          AlternativeFileName := ChangeFileExt(UpdateAs, '.' + IntToStr(Index) + ExtractFileExt(UpdateAs));
+          S := ChangeFileExt(UpdateAs, '.' + IntToStr(Index) + ExtractFileExt(UpdateAs));
           Inc(Index);
-        until FArchiver.Find(AlternativeFileName) = -1;
-        UpdateAs := AlternativeFileName;
+        until FArchiver.Find(S) = -1;
+        UpdateAs := S;
       end;
       Confirm := arcOk;
     end;
     umAddQuery: begin
       if (I <> - 1) then
       begin
-        Write(#8#8#8#8#8#8, ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '));
-        if Pos(QueryToUser(Confirm), '01234567') > 0 then
+        S := 'Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? ';
+        if Pos(QueryToUser(S, Confirm), '01234567') > 0 then
           DoUpdate(SearchRec, UpdateAs, Confirm);
       end else
         Confirm := arcOk;
