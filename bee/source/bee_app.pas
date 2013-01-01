@@ -177,15 +177,19 @@ end;
 //
 
 function TBeeApp.QueryToUser(var Confirm: TArchiveConfirm): char;
+var
+  Answer: string;
 begin
-  Readln(Result);
-  Result := UpCase(Result);
-  while Pos(Result, 'YNQ01234567') < 1 do
+  Readln(Answer);
+  Answer := UpperCase(OemToParam(Answer));
+  while (Length(Answer) <> 1) or (Pos(Answer, 'YNQ01234567') < 1) do
   begin
     Write(ParamToOem('Yes, No, or Quit? '));
-    Readln(Result);
-    Result := UpCase(Result);
+
+    Readln(Answer);
+    Answer := UpperCase(OemToParam(Answer));
   end;
+  Result := Answer[1];
 
   Confirm := arcCancel;
   case Result of
@@ -207,43 +211,59 @@ end;
 
 procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
 var
-  Ch: char;
+  Answer: string;
 begin
-  Write(#8#8#8#8#8#8);
-  Write(ParamToOem('Insert blank disk number #'+ IntToStr(DiskNumber)) + '. Continue? ');
-  Readln(Ch);
-  Ch := UpCase(OemToParam(Ch)[1]);
-  while Pos(Ch, 'YNQ') < 1 do
+  Write(#8#8#8#8#8#8, ParamToOem('Insert blank disk number #'
+    + IntToStr(DiskNumber)) + '. Continue? ');
+
+  Readln(Answer);
+  Answer := UpperCase(OemToParam(Answer));
+  while (Length(Answer) <> 1) or (Pos(Answer, 'YNQ') < 1) do
   begin
-    Write('Yes, No or Quit? ');
-    Readln(Ch);
-    Ch := UpCase(OemToParam(Ch)[1]);
+    Write(ParamToOem('Yes, No or Quit? '));
+
+    Readln(Answer);
+    Answer := UpCase(OemToParam(Answer));
   end;
 
-  case Ch of
-    'Y': Abort := FALSE;
-    else Abort := TRUE;
-  end;
+  if Answer = 'Y' then
+    Abort := FALSE
+  else
+    Abort := TRUE;
 end;
 
 procedure TBeeApp.DoRequestImage(ImageNumber: longint;
   var ImageName: string; var Abort: boolean);
+var
+  Answer: string;
 begin
-  Write(#8#8#8#8#8#8);
-  Writeln(ParamToOem(ImageName));
-  Readln;
+  Write(#8#8#8#8#8#8, ParamToOem('Insert disk number #'
+    + IntToStr(ImageNumber)) + '. Continue? ');
+
+  Readln(Answer);
+  Answer := UpperCase(OemToParam(Answer));
+  while (Length(Answer) <> 1) or (Pos(Answer, 'YNQ') < 1) do
+  begin
+    Write(ParamToOem('Yes, No or Quit? '));
+
+    Readln(Answer);
+    Answer := UpCase(OemToParam(Answer));
+  end;
+
+  if Answer = 'Y' then
+    Abort := FALSE
+  else
+    Abort := TRUE;
 end;
 
 procedure TBeeApp.DoMessage(const Message: string);
 begin
-  Write(#8#8#8#8#8#8);
-  Writeln(ParamToOem(Message));
+  Writeln(#8#8#8#8#8#8, ParamToOem(Message));
 end;
 
 procedure TBeeApp.DoProgress(Percentage: longint);
 begin
-  Write(#8#8#8#8#8#8);
-  Write(Format('(%3d%%)', [Percentage]));
+  Write(#8#8#8#8#8#8, Format('(%3d%%)', [Percentage]));
 end;
 
 procedure TBeeApp.DoExtract(Item: TArchiveItem;
@@ -253,6 +273,10 @@ begin
     cExtract:  ExtractAs := ExtractFileName(Item.FileName);
     cXextract: ExtractAs := DeleteFilePath(FCommandLine.cdOption, Item.FileName);
   end;
+
+  //umQuery,
+  // umAddQuery,
+
 
   Confirm := arcCancel;
   case FCommandLine.uOption of
@@ -272,7 +296,9 @@ end;
 procedure TBeeApp.DoRename(Item: TArchiveItem;
   var RenameAs: string; var Confirm: TArchiveConfirm);
 begin
-  Write('Rename file "', ParamToOem(RenameAs), '" as (empty to skip):');
+  Write(#8#8#8#8#8#8, ParamToOem('Rename file "'
+    + RenameAs + '" as (empty to skip): '));
+
   Readln(RenameAs);
   // convert oem to param
   RenameAs := OemToParam(RenameAs);
@@ -318,7 +344,7 @@ begin
     umAddQuery: begin
       if (I <> - 1) then
       begin
-        Write(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '));
+        Write(#8#8#8#8#8#8, ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '));
         if Pos(QueryToUser(Confirm), '01234567') > 0 then
           DoUpdate(SearchRec, UpdateAs, Confirm);
       end else
@@ -326,9 +352,9 @@ begin
     end;
     umQuery: begin
       if (I <> - 1) then
-        Write(ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '))
+        Write(#8#8#8#8#8#8, ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '))
       else
-        Write(ParamToOem('Add "' + SearchRec.Name + '"? '));
+        Write(#8#8#8#8#8#8, ParamToOem('Add "' + SearchRec.Name + '"? '));
       if Pos(QueryToUser(Confirm), '01234567') > 0 then
         DoUpdate(SearchRec, UpdateAs, Confirm);
     end;
