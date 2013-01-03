@@ -36,6 +36,10 @@ uses
   SysUtils,
   Bee_Common;
 
+const
+  cmUPDATE : array[0.. 7] of string = ('ADD', 'UPDATE' ,'REPLACE' ,'QUERY',
+    'ADD:UPDATE','ADD:REPLACE', 'ADD:QUERY','ADD:AUTORAME');
+
 type
   { Commands:                                             }
   {   cAdd      Add files                                 }
@@ -62,6 +66,9 @@ type
 
   TUpdateMode = (umAdd, umUpdate, umReplace, umQuery,
     umAddUpdate, umAddReplace, umAddQuery, umAddAutoRename);
+
+
+
 
   { Compression Method Option:                            }
   {   cmStore                                             }

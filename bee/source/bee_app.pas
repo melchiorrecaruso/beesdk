@@ -54,7 +54,7 @@ type
     FCommandLine: TCommandLine;
     FArchiver: TArchiver;
     function QueryToUser(const Message: string;
-      var Confirm: TArchiveConfirm): TUpdateMode;
+      var Confirm: TArchiveConfirm): boolean;
     { Events routines}
     procedure DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
     procedure DoRequestImage(ImageNumber: longint;
@@ -189,35 +189,38 @@ end;
 //
 
 function TBeeApp.QueryToUser(const Message: string;
-  var Confirm: TArchiveConfirm): char;
+  var Confirm: TArchiveConfirm): boolean;
 var
   Answer: string;
+  I: longint;
 begin
-  Write(#8#8#8#8#8#8, ParamToOem(Query));
+  Write(#8#8#8#8#8#8, ParamToOem(Message));
+
+  Result := FALSE;
   repeat
     Readln(Answer);
     Answer := UpperCase(OemToParam(Answer));
-    if (Length(Answer) = 1) then
-      if (Pos(Answer, 'YNQ01234567') > -1) then Break;
+    if Length(Answer) = 1 then
+      if Pos(Answer, 'YNQ') > -1 then
+      begin
+        case Answer[1] of
+          'Y': Confirm := arcOk;
+          'N': Confirm := arcCancel;
+          'Q': Confirm := arcQuit;
+        end;
+        Break;
+      end;
 
-    Write(ParamToOem('Yes, No, or Quit? '));
+    for I := Low(cmUPDATE) to High(cmUPDATE) do
+      if Answer = cmUPDATE[I] then
+      begin
+        FCommandLine.uOption := TUpdateMode(I);
+        Result := TRUE;
+        Break;
+      end;
+
+    Write(#8#8#8#8#8#8, ParamToOem('Yes, No, or Quit? '));
   until TRUE;
-  Result := Answer[1];
-
-  Confirm := arcCancel;
-  case Result of
-    'Y': Confirm := arcOk;
-    'N': Confirm := arcCancel;
-    'Q': Confirm := arcQuit;
-    '0': FCommandLine.uOption := umAdd;
-    '1': FCommandLine.uOption := umUpdate;
-    '2': FCommandLine.uOption := umReplace;
-    '3': FCommandLine.uOption := umQuery;
-    '4': FCommandLine.uOption := umAddUpdate;
-    '5': FCommandLine.uOption := umAddReplace;
-    '6': FCommandLine.uOption := umAddQuery;
-    '7': FCommandLine.uOption := umAddAutoRename;
-  end;
 end;
 
 //
@@ -272,11 +275,15 @@ end;
 
 procedure TBeeApp.DoProgress(Percentage: longint);
 begin
-  Write(#8#8#8#8#8#8, Format('(%3d%%)', [Percentage]));
+  Write(#8#8#8#8#8#8, ParamToOem(Format('(%3d%%)', [Percentage])));
 end;
 
 procedure TBeeApp.DoExtract(Item: TArchiveItem;
   var ExtractAs: string; var Confirm: TArchiveConfirm);
+var
+  B: boolean;
+  StartName: string;
+  StartIndex: longint;
 begin
   case FCommandLine.Command of
     cExtract : ExtractAs := ExtractFileName(                       Item.FileName);
@@ -299,26 +306,32 @@ begin
 
     umAddReplace   : Confirm := arcOk;
     umAddAutoRename: begin
+      StartIndex := 0;
+      StartName  := ExtractAs;
+      while FileExists(ExtractAs) = TRUE do
+        ExtractAs := GenerateAlternativeFileName(StartName, StartIndex);
       Confirm := arcOk;
-      if FileExists(ExtractAs) = TRUE do
-        ExtractAs := GenerateAlternativeFileName(ExtractAs, 1, TRUE);
     end;
     umQuery        : begin
+      if FileExists(ExtractAs) = TRUE then
+        B := QueryToUser('Overwrite "' + ExtractAs + '"? ', Confirm)
+      else
+        B := QueryToUser('Extract "'   + ExtractAs + '"? ', Confirm);
+
+      if B = TRUE then
+        DoExtract(Item, ExtractAs, Confirm);
     end;
     umAddQuery     : begin
+      if FileExists(ExtractAs) = TRUE then
+      begin
+        B := QueryToUser('Overwrite "' + ExtractAs + '"? ', Confirm);
+
+        if B = TRUE then
+          DoExtract(Item, ExtractAs, Confirm);
+      end else
+        Confirm := arcOk;
     end;
   end;
-
-
-
-
-
-
-  ,
-
-
-
-
 end;
 
 procedure TBeeApp.DoRename(Item: TArchiveItem;
@@ -341,9 +354,11 @@ end;
 procedure TBeeApp.DoUpdate(SearchRec: TCustomSearchRec;
   var UpdateAs: string; var Confirm: TArchiveConfirm);
 var
-  I, Index: longint;
+  B: boolean;
+  StartIndex: longint;
+  StartName: string;
   Item: TArchiveItem;
-  S: string;
+  I: longint;
 begin
   UpdateAs := FCommandLine.cdOption + SearchRec.Name;
   I := FArchiver.Find(UpdateAs);
@@ -352,38 +367,43 @@ begin
 
   Confirm := arcCancel;
   case FCommandLine.uOption of
-    umAdd:        if (I =  -1) then Confirm := arcOk;
-    umReplace:    if (I <> -1) then Confirm := arcOk;
-    umUpdate:     if (I <> -1) and (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
-    umAddUpdate:  if (I =  -1) or  (SearchRec.LastModifiedTime > Item.LastModifiedTime) then Confirm := arcOk;
-    umAddReplace: Confirm := arcOk;
+    umAdd          : if I =  -1 then Confirm := arcOk;
+    umReplace      : if I <> -1 then Confirm := arcOk;
+    umUpdate       : if I <> -1 then
+                       if SearchRec.LastModifiedTime > Item.LastModifiedTime then
+                         Confirm := arcOk;
+
+    umAddUpdate    : if I =  -1 then
+                       Confirm := arcOk
+                     else
+                       if SearchRec.LastModifiedTime > Item.LastModifiedTime then
+                         Confirm := arcOk;
+
+    umAddReplace   : Confirm := arcOk;
     umAddAutoRename: begin
-      if (I <> - 1) then
-      begin
-        Index := 0;
-        repeat
-          S := ChangeFileExt(UpdateAs, '.' + IntToStr(Index) + ExtractFileExt(UpdateAs));
-          Inc(Index);
-        until FArchiver.Find(S) = -1;
-        UpdateAs := S;
-      end;
+      StartIndex := 0;
+      StartName  := UpdateAs;
+      while FArchiver.Find(UpdateAs) <> -1 do
+        UpdateAs := GenerateAlternativeFileName(StartName, StartIndex);
       Confirm := arcOk;
     end;
-    umAddQuery: begin
-      if (I <> - 1) then
+    umAddQuery     : begin
+      if I <> - 1 then
       begin
-        S := 'Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? ';
-        if Pos(QueryToUser(S, Confirm), '01234567') > 0 then
+        B := QueryToUser('Overwrite "' + Item.FileName + '"? ', Confirm);
+
+        if B = TRUE then
           DoUpdate(SearchRec, UpdateAs, Confirm);
       end else
         Confirm := arcOk;
     end;
-    umQuery: begin
-      if (I <> - 1) then
-        Write(#8#8#8#8#8#8, ParamToOem('Replace "' + Item.FileName + '" with "' + SearchRec.Name + '"? '))
+    umQuery        : begin
+      if I <> - 1 then
+        B := QueryToUser('Overwrite "' + Item.FileName  + '"? ', Confirm)
       else
-        Write(#8#8#8#8#8#8, ParamToOem('Add "' + SearchRec.Name + '"? '));
-      if Pos(QueryToUser(Confirm), '01234567') > 0 then
+        B := QueryToUser('Add "'       + SearchRec.Name + '"? ', Confirm);
+
+      if B = TRUE then
         DoUpdate(SearchRec, UpdateAs, Confirm);
     end;
   end;

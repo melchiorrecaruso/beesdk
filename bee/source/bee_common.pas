@@ -93,7 +93,7 @@ function FileNameIsValid(const FileName: string): boolean;
 
 function GenerateFileName(const FilePath: string): string;
 function GenerateAlternativeFileName(const FileName: string;
-  StartIndex: longint; Check: boolean): string;
+  var StartIndex: longint): string;
 
 
 function DeleteFilePath(const FilePath, FileName: string): string;
@@ -374,14 +374,11 @@ begin
 end;
 
 function GenerateAlternativeFileName(const FileName: string;
-  StartIndex: longint; Check: boolean): string;
+  var StartIndex: longint): string;
 begin
-  repeat
-    Result := ChangeFileExt(FileName, '_' +
+  Inc(StartIndex);
+  Result := ChangeFileExt(FileName, '_' +
       IntToStr(StartIndex) + ExtractFileExt(FileName));
-
-    Inc(StartIndex);
-  until (not Check) or (FileAge(Result) = -1) ;
 end;
 
 function DeleteFilePath(const FilePath, FileName: string): string;
