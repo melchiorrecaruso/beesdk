@@ -113,7 +113,7 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1645 archiver utility, Feb 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1649 archiver utility, Feb 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -157,73 +157,35 @@ begin
       cxExtract: DecodeShell(FALSE);
     end;
 
-  case ExitStatus of
-    esNoError          : DoMessage(Cr + Format(emNoError,           [TimeDifference(StartTime)]));
-    esUnknowError      : DoMessage(Cr + Format(emUnknowError,       [TimeDifference(StartTime)]));
-    esCmdLineError     : DoMessage(Cr + Format(emCmdLineError,      [TimeDifference(StartTime)]));
-    esAllocMemError    : DoMessage(Cr + Format(emAllocMemError,     [TimeDifference(StartTime)]));
+  if FCommandLine.Command <> cHelp then
+    case ExitStatus of
+      esNoError          : DoMessage(Cr + Format(emNoError,           [TimeDifference(StartTime)]));
+      esUnknowError      : DoMessage(Cr + Format(emUnknowError,       [TimeDifference(StartTime)]));
+      esCmdLineError     : DoMessage(Cr + Format(emCmdLineError,      [TimeDifference(StartTime)]));
+      esAllocMemError    : DoMessage(Cr + Format(emAllocMemError,     [TimeDifference(StartTime)]));
 
-    esCreateStreamError: DoMessage(Cr + Format(emCreateStreamError, [TimeDifference(StartTime)]));
-    esOpenStreamError  : DoMessage(Cr + Format(emOpenStreamError,   [TimeDifference(StartTime)]));
-    esFillStreamError  : DoMessage(Cr + Format(emFillStreamError,   [TimeDifference(StartTime)]));
-    esFlushStreamError : DoMessage(Cr + Format(emFlushStreamError,  [TimeDifference(StartTime)]));
-    esResizeStreamError: DoMessage(Cr + Format(emResizeStreamError, [TimeDifference(StartTime)]));
-    esSplitStreamError : DoMessage(Cr + Format(emSplitStreamError,  [TimeDifference(StartTime)]));
-    esRenameTempError  : DoMessage(Cr + Format(emRenameTempError,   [TimeDifference(StartTime)]));
+      esCreateStreamError: DoMessage(Cr + Format(emCreateStreamError, [TimeDifference(StartTime)]));
+      esOpenStreamError  : DoMessage(Cr + Format(emOpenStreamError,   [TimeDifference(StartTime)]));
+      esFillStreamError  : DoMessage(Cr + Format(emFillStreamError,   [TimeDifference(StartTime)]));
+      esFlushStreamError : DoMessage(Cr + Format(emFlushStreamError,  [TimeDifference(StartTime)]));
+      esResizeStreamError: DoMessage(Cr + Format(emResizeStreamError, [TimeDifference(StartTime)]));
+      esSplitStreamError : DoMessage(Cr + Format(emSplitStreamError,  [TimeDifference(StartTime)]));
+      esRenameTempError  : DoMessage(Cr + Format(emRenameTempError,   [TimeDifference(StartTime)]));
 
-    esUserAbortError   : DoMessage(Cr + Format(emUserAbortError,    [TimeDifference(StartTime)]));
+      esUserAbortError   : DoMessage(Cr + Format(emUserAbortError,    [TimeDifference(StartTime)]));
 
-    esArchiveTypeError : DoMessage(Cr + Format(emArchiveTypeError,  [TimeDifference(StartTime)]));
-    esCRCError         : DoMessage(Cr + Format(emCRCError,          [TimeDifference(StartTime)]));
-    esCaseError        : DoMessage(Cr + Format(emCaseError,         [TimeDifference(StartTime)]));
-    esLoadConfigError  : DoMessage(Cr + Format(emLoadConfigError,   [TimeDifference(StartTime)]));
-    else                 DoMessage(Cr + Format(emUnknowError,       [TimeDifference(StartTime)]));
-  end;
+      esArchiveTypeError : DoMessage(Cr + Format(emArchiveTypeError,  [TimeDifference(StartTime)]));
+      esCRCError         : DoMessage(Cr + Format(emCRCError,          [TimeDifference(StartTime)]));
+      esCaseError        : DoMessage(Cr + Format(emCaseError,         [TimeDifference(StartTime)]));
+      esLoadConfigError  : DoMessage(Cr + Format(emLoadConfigError,   [TimeDifference(StartTime)]));
+      else                 DoMessage(Cr + Format(emUnknowError,       [TimeDifference(StartTime)]));
+    end;
 end;
 
 procedure TBeeApp.Terminate;
 begin
   FArchiver.Terminate;
 end;
-
-//
-
-function TBeeApp.QueryToUser(const Message: string;
-  var Confirm: TArchiveConfirm): boolean;
-var
-  Answer: string;
-  I: longint;
-begin
-  Write(#8#8#8#8#8#8, ParamToOem(Message));
-
-  Result := FALSE;
-  repeat
-    Readln(Answer);
-    Answer := UpperCase(OemToParam(Answer));
-    if Length(Answer) = 1 then
-      if Pos(Answer, 'YNQ') > -1 then
-      begin
-        case Answer[1] of
-          'Y': Confirm := arcOk;
-          'N': Confirm := arcCancel;
-          'Q': Confirm := arcQuit;
-        end;
-        Break;
-      end;
-
-    for I := Low(cmUPDATE) to High(cmUPDATE) do
-      if Answer = cmUPDATE[I] then
-      begin
-        FCommandLine.uOption := TUpdateMode(I);
-        Result := TRUE;
-        Break;
-      end;
-
-    Write(#8#8#8#8#8#8, ParamToOem('Yes, No, or Quit? '));
-  until TRUE;
-end;
-
-//
 
 procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
 var
@@ -270,7 +232,7 @@ end;
 
 procedure TBeeApp.DoMessage(const Message: string);
 begin
-  Writeln(#8#8#8#8#8#8, ParamToOem(Message));
+  Writeln(#13, #13: 8, ParamToOem(Message));
 end;
 
 procedure TBeeApp.DoProgress(Percentage: longint);
@@ -409,6 +371,41 @@ begin
   end;
 end;
 
+function TBeeApp.QueryToUser(const Message: string;
+  var Confirm: TArchiveConfirm): boolean;
+var
+  Answer: string;
+  I: longint;
+begin
+  Write(#8#8#8#8#8#8, ParamToOem(Message));
+
+  Result := FALSE;
+  repeat
+    Readln(Answer);
+    Answer := UpperCase(OemToParam(Answer));
+    if Length(Answer) = 1 then
+      if Pos(Answer, 'YNQ') > -1 then
+      begin
+        case Answer[1] of
+          'Y': Confirm := arcOk;
+          'N': Confirm := arcCancel;
+          'Q': Confirm := arcQuit;
+        end;
+        Break;
+      end;
+
+    for I := Low(cmUPDATE) to High(cmUPDATE) do
+      if Answer = cmUPDATE[I] then
+      begin
+        FCommandLine.uOption := TUpdateMode(I);
+        Result := TRUE;
+        Break;
+      end;
+
+    Write(#8#8#8#8#8#8, ParamToOem('Yes, No, or Quit? '));
+  until TRUE;
+end;
+
 //
 
 procedure TBeeApp.OpenArchive;
@@ -435,7 +432,9 @@ begin
   FArchiver.ArchiveSFX      := FCommandLine.sfxOption;
   FArchiver.TestTempArchive := FCommandLine.tOption;
   FArchiver.WorkDirectory   := FCommandLine.wdOption;
-  //FUpdater.ArchiveComment :=
+
+  if FCommandLine.cOption <> '' then
+    FArchiver.ArchiveComment  := FCommandLine.cOption;
 end;
 
 procedure TBeeApp.CloseArchive;
@@ -449,28 +448,30 @@ procedure TBeeApp.HelpShell;
 begin
   DoMessage(Cr + 'Usage: Bee <command> [<switches>...] <archive-name> [<file-names>...]');
   DoMessage(Cr + '<Commands>');
-  DoMessage('  a  Add files to archive');
-  DoMessage('  d  Delete files from archive');
-  DoMessage('  e  Extract files from archive');
-  DoMessage('  h  show command line Help');
-  DoMessage('  l  List archive');
-  DoMessage('  r  Rename files in archive');
-  DoMessage('  t  Test archive files');
-  DoMessage('  x  eXtract files from archive with path name');
-  DoMessage(Cr + '<Switches>');
-  DoMessage('  --            stop switches parsing');
-  DoMessage('  -cd[dirname]  set current archive directory');
-  DoMessage('  -cm{params}   set Compression method');
-  DoMessage('  -em{params}   set Encryption method)');
-  DoMessage('  -pri{params}  set process Priority ');
-  DoMessage('  -r[-|w]       Recurse subdirectories');
-  DoMessage('  -sfx[filename]  add self-extractor module');
-  DoMessage('  -sls  show list sorted by filename - for l (list) command');
-  DoMessage('  -t    Test temorary archive after process');
-  DoMessage('  -um   Update files method');
-  DoMessage('  -wd[dirname]   set temporany work directory');
-  DoMessage('  -x[filenames]  eXclude filenames');
-  DoMessage(Cr + 'Use BeeOpt to make most optimal parameters.' + Cr);
+  DoMessage('  a  add files to archive');
+  DoMessage('  d  delete files from archive');
+  DoMessage('  e  extract files from archive');
+  DoMessage('  h  show this help');
+  DoMessage('  l  list contents of archive');
+  DoMessage('  r  rename files in archive');
+  DoMessage('  t  test integrity of archive files');
+  DoMessage('  x  extract files from archive with path name');
+  DoMessage('<Switches>');
+  DoMessage('  -c{comment}: set archive comment');
+  DoMessage('  -cd{path}: set current archive directory');
+  DoMessage('  -cm{parameters}: set compression method');
+  DoMessage('  -em{parameters}: set encryption method');
+  DoMessage('  -pri{parameters}: set process Priority ');
+  DoMessage('  -r[-|w]: recurse subdirectories');
+  DoMessage('  -sfx[{sfx-name}]: add self-extractor module');
+  DoMessage('  -sls: show list sorted by filename - for l (list) command');
+  DoMessage('  -ss: stop switches parsing');
+  DoMessage('  -t: Test temorary archive after process');
+  DoMessage('  -u{parameters}: update files method');
+  DoMessage('  -v{size}[b|k|m|g]: create volumes ');
+  DoMessage('  -wd[{path}]: set temporany work directory');
+  DoMessage('  -x{names}: eXclude filenames');
+  DoMessage(Cr + 'Use BeeOpt to make most optimal parameters.');
 end;
 
 procedure TBeeApp.EncodeShell;
@@ -571,10 +572,16 @@ var
   VersionNeededToExtract: longword;
   CompressionMethod: TArchiveCompressionMethod;
   CompressionLevel: TmOption;
+
+
+
   DictionaryLevel: TdOption;
   MaxDictionaryLevel: TdOption;
-  WithSolidCompression: longint;
+  EncriptionMethod: TArchiveEncryptionMethod;
   WithArchivePassword: longint;
+
+  WithSolidCompression: longint;
+
 
   TotalSize: int64;
   TotalPackedSize: int64;
@@ -599,6 +606,8 @@ begin
     WithSolidCompression   := 0;
     WithArchivePassword    := 0;
     MaxDictionaryLevel     := do2MB;
+
+    EncriptionMethod      := acrtNone;
 
     TotalPackedSize := 0;
     TotalSize       := 0;
