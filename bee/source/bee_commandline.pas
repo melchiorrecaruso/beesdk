@@ -116,7 +116,7 @@ type
 
 
 
-
+    FcOption: string;
 
     FrOption: TRecursiveMode;
     FuOption: TUpdateMode;
@@ -138,6 +138,9 @@ type
     FpriOption: TpriOption;
     FArchiveName: string;
     FFileMasks: TStringList;
+
+    procedure ProcessOptionC  (var S: string);
+
     procedure ProcessOptionSS (var S: string);
     procedure ProcessOptionR  (var S: string);
     procedure ProcessOptionU  (var S: string);
@@ -175,6 +178,9 @@ type
     property CommandLine: string read GetCommandLine write SetCommandLine;
     property Command: TCommand read FCommand write FCommand;
     property ssOption: boolean read FssOption write FssOption;
+
+    property cOption: string read FcOption write FcOption;
+
     property rOption: TRecursiveMode read FrOption write FrOption;
     property uOption: TUpdateMode read FuOption write FuOption;
     property xOptions: TStringList read FxOptions;
@@ -265,6 +271,9 @@ procedure TCommandLine.Clear;
 begin
   FCommand     := cHelp;
   FssOption    := False;
+
+  FcOption     := '';
+
   FrOption     := rmNone;
   FuOption     := umAddUpdate;
   FxOptions.Clear;
@@ -294,7 +303,7 @@ end;
 
 procedure TCommandLine.ProcessOptionSS(var S: string);
 begin
-  Delete(S, 1, 2);
+  Delete(S, 1, 3);
   if (S = '') or (S = '+') then
     FssOption := True
   else
@@ -332,6 +341,15 @@ begin
   end;
 
   if (FCommand in [cHelp]) = TRUE then
+    SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessOptionC(var S: string);
+begin
+  Delete(S, 1, 2);
+  FcOption := S;
+
+  if (Command in [cAdd, cDelete, cRename]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
 
@@ -487,8 +505,11 @@ procedure TCommandLine.ProcessOptionWD(var S: string);
 begin
   Delete(S, 1, 3);
   FwdOption := ExcludeTrailingBackslash(S);
-  if DirectoryExists(FwdOption) = FALSE then
-    SetExitStatus(esCmdLineError);
+  if FwdOption = '' then
+    FwdOption := ExcludeTrailingBackSlash(GetTempDir)
+  else
+    if DirectoryExists(FwdOption) = FALSE then
+      SetExitStatus(esCmdLineError);
 
   if (Command in [cAdd, cDelete, cRename]) = FALSE then
     SetExitStatus(esCmdLineError);
@@ -535,13 +556,13 @@ begin
   if Length(S) = 1 then
     case Upcase(S[1]) of
       'A': FCommand := cAdd;
-      'E': FCommand := cExtract;
-      'X': FCommand := cxExtract;
-      'T': FCommand := cTest;
       'D': FCommand := cDelete;
-      'R': FCommand := cRename;
-      'L': FCommand := cList;
+      'E': FCommand := cExtract;
       'H': FCommand := cHelp;
+      'L': FCommand := cList;
+      'R': FCommand := cRename;
+      'T': FCommand := cTest;
+      'X': FCommand := cxExtract;
       else SetExitStatus(esCmdLineError);
     end
   else SetExitStatus(esCmdLineError);
@@ -610,8 +631,11 @@ begin
         if Pos('-CD', UpperCase(S)) = 1 then
           ProcessOptionCD(S)
         else
+        if Pos('-SS', UpperCase(S)) = 1 then
+          ProcessOptionSS(S)
+        else
         case UpCase(S[2]) of
-          '-': ProcessOptionSS(S);
+          'C': ProcessOptionC (S);
           'R': ProcessOptionR (S);
           'U': ProcessOptionU (S);
           'X': ProcessOptionX (S);
