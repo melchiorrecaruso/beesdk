@@ -86,7 +86,7 @@
         <UnitName Value="Bee"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="55"/>
+        <TopLine Value="44"/>
         <CursorPos X="27" Y="64"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -98,9 +98,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="185"/>
-        <CursorPos X="42" Y="235"/>
-        <FoldState Value=" T3jA0C5 pj2jS0K024]BbkY0X]9iaje0M3 T0nBL6212("/>
+        <TopLine Value="97"/>
+        <CursorPos X="41" Y="116"/>
+        <FoldState Value=" T3jA0C01524 T0nBL6212q"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -134,7 +134,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="501"/>
         <CursorPos X="55" Y="508"/>
-        <FoldState Value=" T3lc0n131Q"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -166,7 +165,7 @@
         <UnitName Value="Bee_MainPacker"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="261"/>
+        <TopLine Value="250"/>
         <CursorPos X="27" Y="266"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
@@ -188,7 +187,7 @@
         <UnitName Value="Bee_Interface"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="27"/>
+        <TopLine Value="15"/>
         <CursorPos X="73" Y="23"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
