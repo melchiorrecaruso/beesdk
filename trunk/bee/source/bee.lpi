@@ -98,7 +98,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="97"/>
+        <TopLine Value="111"/>
         <CursorPos X="41" Y="116"/>
         <FoldState Value=" T3jA0C01524 T0nBL6212q"/>
         <UsageCount Value="100"/>
@@ -132,8 +132,8 @@
         <UnitName Value="Bee_CommandLine"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="501"/>
-        <CursorPos X="55" Y="508"/>
+        <TopLine Value="1"/>
+        <CursorPos X="73" Y="242"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -188,7 +188,7 @@
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="15"/>
-        <CursorPos X="73" Y="23"/>
+        <CursorPos X="29" Y="20"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -200,7 +200,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="356"/>
         <CursorPos X="39" Y="363"/>
-        <UsageCount Value="49"/>
+        <UsageCount Value="50"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
