@@ -104,7 +104,7 @@ type
     // Compression property
     FCompressionFlags: TArchiveCompressionFlags;
     FCompressionMethod: TArchiveCompressionMethod;
-    FCompressionLevel: TmOption;
+    FCompressionLevel: TclOption;
     FDictionaryLevel: TdOption;
     FCompressionTable: TTableParameters;
     // Encryption property
@@ -139,7 +139,7 @@ type
     // Compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
     property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod;
-    property CompressionLevel: TmOption read FCompressionLevel;
+    property CompressionLevel: TclOption read FCompressionLevel;
     property DictionaryLevel: TdOption read FDictionaryLevel;
     property SolidCompression: boolean read GetSolidCompression;
     property CompressionTable: TTableParameters read FCompressionTable;
@@ -199,7 +199,7 @@ type
 
     FConfigurationName: string;
     FCompressionMethod: TArchiveCompressionMethod;
-    FCompressionLevel: TmOption;
+    FCompressionLevel: TclOption;
     FCompressionBlock: int64;
     FDictionaryLevel: TdOption;
     FForceFileExtension: string;
@@ -344,7 +344,7 @@ type
 
     property CompressionMethod: TArchiveCompressionMethod
       read FCompressionMethod write FCompressionMethod;
-    property CompressionLevel: TmOption
+    property CompressionLevel: TclOption
       read FCompressionLevel write FCompressionLevel;
     property DictionaryLevel: TdOption
       read FDictionaryLevel  write FDictionaryLevel;
@@ -478,7 +478,7 @@ begin
   /// Compression property ///
   FCompressionFlags  := [];
   FCompressionMethod := actNone;
-  FCompressionLevel  := moStore;
+  FCompressionLevel  := moFast;
   FDictionaryLevel   := do2MB;
   FCompressionTable  := DefaultTableParameters;
   /// Encryption property ///
@@ -520,7 +520,7 @@ begin
   /// Compression property ///
   FCompressionFlags := TArchiveCompressionFlags(longword(Stream.ReadInfWord));
   if (acfCompressionMethod in FCompressionFlags)    then FCompressionMethod := TArchiveCompressionMethod(Stream.ReadInfWord);
-  if (acfCompressionLevel  in FCompressionFlags)    then FCompressionLevel  := TmOption(Stream.ReadInfWord);
+  if (acfCompressionLevel  in FCompressionFlags)    then FCompressionLevel  := TclOption(Stream.ReadInfWord);
   if (acfDictionaryLevel   in FCompressionFlags)    then FDictionaryLevel   := TdOption(Stream.ReadInfWord);
   if (acfCompressionTable  in FCompressionFlags)    then Stream.Read(@FCompressionTable, SizeOf(TTableParameters));
   /// Encryption property ///
