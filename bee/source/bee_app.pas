@@ -310,7 +310,7 @@ end;
 procedure TBeeApp.DoDelete(Item: TArchiveItem;
   var Confirm: TArchiveConfirm);
 begin
-  Confirm :=arcOk;
+  Confirm := arcOk;
 end;
 
 procedure TBeeApp.DoUpdate(SearchRec: TCustomSearchRec;
@@ -375,7 +375,6 @@ function TBeeApp.QueryToUser(const Message: string;
   var Confirm: TArchiveConfirm): boolean;
 var
   Answer: string;
-  I: longint;
 begin
   Write(#8#8#8#8#8#8, ParamToOem(Message));
 
@@ -394,19 +393,18 @@ begin
         Break;
       end;
 
-    for I := Low(cmUPDATE) to High(cmUPDATE) do
-      if Answer = cmUPDATE[I] then
-      begin
-        FCommandLine.uOption := TUpdateMode(I);
-        Result := TRUE;
-        Break;
-      end;
+    if CheckUpdateMethod(Answer) <> -1 then
+    begin
+      FCommandLine.uOption := TUpdateMode(CheckUpdateMethod(Answer));
+      Result := TRUE;
+      Break;
+    end;
 
     Write(#8#8#8#8#8#8, ParamToOem('Yes, No, or Quit? '));
   until TRUE;
 end;
 
-//
+// --- //
 
 procedure TBeeApp.OpenArchive;
 begin

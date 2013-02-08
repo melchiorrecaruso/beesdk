@@ -36,76 +36,47 @@ uses
   SysUtils,
   Bee_Common;
 
-const
-  cmUPDATE : array[0.. 7] of string = ('ADD', 'UPDATE' ,'REPLACE' ,'QUERY',
-    'ADD:UPDATE','ADD:REPLACE', 'ADD:QUERY','ADD:AUTORAME');
-
 type
-  { Commands:                                             }
-  {   cAdd      Add files                                 }
-  {   cDelete   Delete files                              }
-  {   cExtract  Extract file                              }
-  {   cHelp     Show Help                                 }
-  {   cList     List files                                }
-  {   cRename   Rename files                              }
-  {   cTest     Test files                                }
-  {   eXextract Extract file with full path               }
+  // Command:
+  //   cAdd      Add files
+  //   cDelete   Delete files
+  //   cExtract  Extract file
+  //   cHelp     Show Help
+  //   cList     List files
+  //   cRename   Rename files
+  //   cTest     Test files
+  //   eXextract Extract file with full path
 
-  TCommand = (cAdd, cDelete, cExtract, cHelp, cList,
-    cRename, cTest, cXextract);
+  TCommand = (cAdd, cDelete, cExtract, cHelp, cList, cRename, cTest, cXextract);
 
-  { Update Mode Option:                                   }
-  {  umAdd           Add only new files                   }
-  {  umUpdate        Update only existing files           }
-  {  umReplace       Replace only existing files          }
-  {  umQuery         Query always                         }
-  {  umAddUpdate     Add and update existing files        }
-  {  umAddReplace    Add and replace existing files       }
-  {  umAddQuery      Add and query if already exists      }
-  {  umAddAutoRename Add and rename if already exists     }
+  // Update Method:
+  //   umAdd           Add only new files
+  //   umUpdate        Update only existing files
+  //   umReplace       Replace only existing files
+  //   umQuery         Query always
+  //   umAddUpdate     Add and update existing files
+  //   umAddReplace    Add and replace existing files
+  //   umAddQuery      Add and query if already exists
+  //   umAddAutoRename Add and rename if already exists
 
-  TUpdateMode = (umAdd, umUpdate, umReplace, umQuery,
+  TUpdateMethod = (umAdd, umUpdate, umReplace, umQuery,
     umAddUpdate, umAddReplace, umAddQuery, umAddAutoRename);
 
+  // Compression Method
 
+  TCompressionMethod = string;
 
+  // Encryption Method
 
-  { Compression Method Option:                            }
-  {   cmStore                                             }
-  {   cmBee                                               }
+  TEncryptionMethod = string;
 
-  TcmOption = (cmStore, cmBee);
+  // Process Priority
+  //   ppIdle
+  //   ppNormal
+  //   ppHigh
+  //   ppRealTime
 
-  { Compression Level Option:                             }
-  {   moStore                                             }
-  {   moFast                                              }
-  {   moNormal                                            }
-  {   moMaximum                                           }
-
-  TmOption = (moStore, moFast, moNormal, moMaximum);
-
-  { Compression Dictionary Level Option:                  }
-  {   do2MB                                               }
-  {   do5MB                                               }
-  {   ..                                                  }
-  {   do1280MB                                            }
-
-  TdOption = (do2MB, do5MB, do10MB, do20MB, do40MB,
-    do80MB, do160MB, do320MB, do640MB ,do1280MB);
-
-  { Encryption Method Option:                            }
-  {   eoNone                                             }
-  {   eoBlowFish                                         }
-
-  TemOption = (emNone, emBlowFish);
-
-  { Process Priority Option:                              }
-  {   prioIdle                                            }
-  {   prioNormal                                          }
-  {   prioHigh                                            }
-  {   prioRealTime                                        }
-
-  TpriOption = (prioIdle, prioNormal, prioHigh, prioRealTime);
+  TProcessPriorty = (ppIdle, ppNormal, ppHigh, ppRealTime);
 
   { TCommandLine }
 
@@ -122,7 +93,7 @@ type
     FuOption: TUpdateMode;
     FxOptions: TStringList;
     FcmOption: TcmOption;
-    FmOption: TmOption;
+    FmOption: TclOption;
     FdOption: TdOption;
     FsOption: qword;
     FfOption: string;
@@ -184,7 +155,7 @@ type
     property rOption: TRecursiveMode read FrOption write FrOption;
     property uOption: TUpdateMode read FuOption write FuOption;
     property xOptions: TStringList read FxOptions;
-    property mOption: TmOption read FmOption write FmOption;
+    property mOption: TclOption read FmOption write FmOption;
     property dOption: TdOption read FdOption write FdOption;
     property sOption: qword read FsOption write FsOption;
     property fOption: string read FfOption write SetOptionF;
@@ -201,12 +172,30 @@ type
     property FileMasks: TStringList read FFileMasks;
   end;
 
+  function CheckUpdateMethod(const Answer: string): longint;
+
 implementation
 
 uses
   Math,
   Bee_BlowFish,
   Bee_Interface;
+
+function CheckUpdateMethod(const Answer: string): longint;
+const
+  cUpdateMethod : array[0..7] of string = ('ADD', 'UPDATE', 'REPLACE', 'QUERY',
+    'ADD:UPDATE', 'ADD:REPLACE', 'ADD:QUERY', 'ADD:AUTORENAME');
+var
+  I: longint;
+begin
+  Result := -1;
+  for I := Low(cUpdateMethod) to High(cUpdateMethod) do
+    if UpperCaser(Answer) = cmUPDATE[I] then
+    begin
+      Result := I;
+      Break;
+    end;
+end;
 
 function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
 var
@@ -381,7 +370,7 @@ procedure TCommandLine.ProcessOptionM(var S: string);
 begin
   Delete(S, 1, 2);
   if (Length(S) = 1) and (S[1] in ['0'..'3']) then
-    FmOption := TmOption(StrToInt(S[1]))
+    FmOption := TclOption(StrToInt(S[1]))
   else
     SetExitStatus(esCmdLineError);
 
