@@ -62,14 +62,6 @@ type
   TUpdateMethod = (umAdd, umUpdate, umReplace, umQuery,
     umAddUpdate, umAddReplace, umAddQuery, umAddAutoRename);
 
-  // Compression Method
-
-  TCompressionMethod = string;
-
-  // Encryption Method
-
-  TEncryptionMethod = string;
-
   // Process Priority
   //   ppIdle
   //   ppNormal
@@ -78,99 +70,11 @@ type
 
   TProcessPriorty = (ppIdle, ppNormal, ppHigh, ppRealTime);
 
-  { TCommandLine }
-
-  TCommandLine = class
-  protected
-    FCommand: TCommand;
-    FssOption: boolean;
+  // CommandLine routines
+  function GetCommand: TCommand;
 
 
 
-    FcOption: string;
-
-    FrOption: TRecursiveMode;
-    FuOption: TUpdateMode;
-    FxOptions: TStringList;
-    FcmOption: TcmOption;
-    FmOption: TclOption;
-    FdOption: TdOption;
-    FsOption: qword;
-    FfOption: string;
-    FsfxOption: string;
-    FemOption: string;
-    FpOption: string;
-    FtOption: boolean;
-    FslsOption: boolean;
-    FiOption: qword;
-    FwdOption: string;
-    FcdOption: string;
-    FcfgOption: string;
-    FpriOption: TpriOption;
-    FArchiveName: string;
-    FFileMasks: TStringList;
-
-    procedure ProcessOptionC  (var S: string);
-
-    procedure ProcessOptionSS (var S: string);
-    procedure ProcessOptionR  (var S: string);
-    procedure ProcessOptionU  (var S: string);
-    procedure ProcessOptionX  (var S: string);
-    procedure ProcessOptionM  (var S: string);
-    procedure ProcessOptionD  (var S: string);
-    procedure ProcessOptionS  (var S: string);
-    procedure ProcessOptionF  (var S: string);
-    procedure ProcessOptionSFX(var S: string);
-    procedure ProcessOptionP  (var S: string);
-    procedure ProcessOptionT  (var S: string);
-    procedure ProcessOptionSLS(var S: string);
-    procedure ProcessOptionI  (var S: string);
-    procedure ProcessOptionWD (var S: string);
-    procedure ProcessOptionCD (var S: string);
-    procedure ProcessOptionCFG(var S: string);
-    procedure ProcessOptionPRI(var S: string);
-    procedure ProcessCommand(const S: string);
-    procedure ProcessArchiveName(var S: string);
-    procedure ProcessFileMasks(const S: string);
-
-    function GetCommandLine: string; virtual;
-    procedure SetCommandLine(const aValue: string); virtual;
-    procedure SetOptionF(const aValue: string);
-    procedure SetOptionP(const aValue: string);
-    procedure SetOptionSFX(const aValue: string);
-    procedure SetOptionWD(const aValue: string);
-    procedure SetOptionCD(const aValue: string);
-    procedure SetOptionCFG(const aValue: string);
-    procedure SetArchiveName(const aValue: string);
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Clear; virtual;
-    property CommandLine: string read GetCommandLine write SetCommandLine;
-    property Command: TCommand read FCommand write FCommand;
-    property ssOption: boolean read FssOption write FssOption;
-
-    property cOption: string read FcOption write FcOption;
-
-    property rOption: TRecursiveMode read FrOption write FrOption;
-    property uOption: TUpdateMode read FuOption write FuOption;
-    property xOptions: TStringList read FxOptions;
-    property mOption: TclOption read FmOption write FmOption;
-    property dOption: TdOption read FdOption write FdOption;
-    property sOption: qword read FsOption write FsOption;
-    property fOption: string read FfOption write SetOptionF;
-    property sfxOption: string read FsfxOption write SetOptionSFX;
-    property pOption: string read FpOption write SetOptionP;
-    property tOption: boolean read FtOption write FtOption;
-    property slsOption: boolean read FslsOption write FslsOption;
-    property iOption: qword read FiOption write FiOption;
-    property wdOption: string read FwdOption write SetOptionWD;
-    property cdOption: string read FcdOption write SetOptionCD;
-    property cfgOption: string read FcfgOption write SetOptionCFG;
-    property priOption: TpriOption read FpriOption write FpriOption;
-    property ArchiveName: string read FArchiveName write SetArchiveName;
-    property FileMasks: TStringList read FFileMasks;
-  end;
 
   function CheckUpdateMethod(const Answer: string): longint;
 
@@ -180,6 +84,34 @@ uses
   Math,
   Bee_BlowFish,
   Bee_Interface;
+
+function GetCommand: TCommand;
+begin
+  Result := cHelp;
+  if ParamCount > 0 then
+  begin
+    if Length(Params[0]) = 1 then
+      case Upcase(Params[0]) of
+        'A': FCommand := cAdd;
+        'D': FCommand := cDelete;
+        'E': FCommand := cExtract;
+        'H': FCommand := cHelp;
+        'L': FCommand := cList;
+        'R': FCommand := cRename;
+        'T': FCommand := cTest;
+        'X': FCommand := cxExtract;
+        else SetExitStatus(esCmdLineError);
+      end
+    else SetExitStatus(esCmdLineError);
+  end;
+
+end;
+
+
+
+
+
+
 
 function CheckUpdateMethod(const Answer: string): longint;
 const
@@ -540,22 +472,7 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCommand(const S: string);
-begin
-  if Length(S) = 1 then
-    case Upcase(S[1]) of
-      'A': FCommand := cAdd;
-      'D': FCommand := cDelete;
-      'E': FCommand := cExtract;
-      'H': FCommand := cHelp;
-      'L': FCommand := cList;
-      'R': FCommand := cRename;
-      'T': FCommand := cTest;
-      'X': FCommand := cxExtract;
-      else SetExitStatus(esCmdLineError);
-    end
-  else SetExitStatus(esCmdLineError);
-end;
+
 
 procedure TCommandLine.ProcessArchiveName(var S: string);
 begin
