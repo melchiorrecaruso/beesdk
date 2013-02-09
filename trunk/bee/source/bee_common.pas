@@ -72,7 +72,7 @@ const
   cmLoading           = 'Loading    %s';
 
 type
-  TRecursiveMode = (rmNone, rmWildCard, rmFull);
+  TRecursiveMethod = (rmNone, rmWildCard, rmFull);
 
 function SelfName: string;
 function SelfPath: string;
@@ -81,8 +81,8 @@ function GetDriveFreeSpace(const FileName: string): int64;
 
 { filename handling routines }
 
-function FileNameMatch(const FileName,         Mask:  string;      Recursive: TRecursiveMode): boolean; overload;
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean; overload;
+function FileNameMatch(const FileName,         Mask:  string;      Recursive: TRecursiveMethod): boolean; overload;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMethod): boolean; overload;
 
 
 function FileNameHasWildcards(const FileName: string): boolean;
@@ -100,7 +100,7 @@ function DeleteFilePath(const FilePath, FileName: string): string;
 function DeleteFileDrive(const FileName: string): string;
 
 
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMethod);
 
 {  }
 
@@ -261,7 +261,7 @@ begin
         end;
 end;
 
-function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMode): boolean;
+function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMethod): boolean;
 var
   iFileDrive: string;
   iFilePath:  string;
@@ -307,7 +307,7 @@ begin
              MatchPattern(PChar(iFileName), PChar(iMaskName));
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMode): boolean;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMethod): boolean;
 var
   I: longint;
 begin
@@ -405,7 +405,7 @@ begin
     Delete(Result, 1, 1);
 end;
 
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMode);
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMethod);
 var
   I:     longint;
   Error: longint;
