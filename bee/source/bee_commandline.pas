@@ -70,11 +70,66 @@ type
 
   TProcessPriorty = (ppIdle, ppNormal, ppHigh, ppRealTime);
 
-  // CommandLine routines
-  function GetCommand: TCommand;
+  // TCommandLine class
 
-
-
+  TCommandLine = class
+  protected
+    FCommand: TCommand;
+    FcOption: string;
+    FcdOption: string;
+    FcmOption: string;
+    FemOption: string;
+    FppOption: TProcessPriorty;
+    FrOption: TRecursiveMethod;
+    FsfxOption: string;
+    FslsOption: boolean;
+    FssOption: boolean;
+    FtOption: boolean;
+    FuOption: TUpdateMethod;
+    FvOption: qword;
+    FwdOption: string;
+    FxOptions: TStringList;
+    FArchiveName: string;
+    FFileMasks: TStringList;
+    procedure ProcessCommand(const S: string);
+    procedure ProcessOptionC  (var S: string);
+    procedure ProcessOptionCD (var S: string);
+    procedure ProcessOptionCM (var S: string);
+    procedure ProcessOptionEM (var S: string);
+    procedure ProcessOptionPP (var S: string);
+    procedure ProcessOptionR  (var S: string);
+    procedure ProcessOptionSFX(var S: string);
+    procedure ProcessOptionSLS(var S: string);
+    procedure ProcessOptionSS (var S: string);
+    procedure ProcessOptionT  (var S: string);
+    procedure ProcessOptionU  (var S: string);
+    procedure ProcessOptionV  (var S: string);
+    procedure ProcessOptionWD (var S: string);
+    procedure ProcessOptionX (var S: string);
+    procedure ProcessArchiveName(var S: string);
+    procedure ProcessFileMasks(const S: string);
+  public
+    constructor Create;
+    destructor Destroy; override;
+  public
+    property Command: TCommand read FCommand;
+    property cOption: string read FcOption;
+    property cdOption: string read FcdOption;
+    property cmOption: string read FcmOption;
+    property emOption: string read FcmOption;
+    property ppOption: TProcessPriorty read FppOption;
+    property rOption: TRecursiveMethod read FrOption;
+    property sfxOption: string read FsfxOption;
+    property slsOption: boolean read FslsOption;
+    property ssOption: boolean read FssOption;
+    property tOption: boolean read FtOption;
+    property uOption: TUpdateMethod read FuOption;
+    property vOption: qword read FvOption;
+    property wdOption: string read FwdOption;
+    property xOptions: TStringList read FxOptions;
+    property ArchiveName: string read FArchiveName;
+    property FileMasks: TStringList read FFileMasks;
+  end;
 
   function CheckUpdateMethod(const Answer: string): longint;
 
@@ -84,50 +139,6 @@ uses
   Math,
   Bee_BlowFish,
   Bee_Interface;
-
-function GetCommand: TCommand;
-begin
-  Result := cHelp;
-  if ParamCount > 0 then
-  begin
-    if Length(Params[0]) = 1 then
-      case Upcase(Params[0]) of
-        'A': FCommand := cAdd;
-        'D': FCommand := cDelete;
-        'E': FCommand := cExtract;
-        'H': FCommand := cHelp;
-        'L': FCommand := cList;
-        'R': FCommand := cRename;
-        'T': FCommand := cTest;
-        'X': FCommand := cxExtract;
-        else SetExitStatus(esCmdLineError);
-      end
-    else SetExitStatus(esCmdLineError);
-  end;
-
-end;
-
-
-
-
-
-
-
-function CheckUpdateMethod(const Answer: string): longint;
-const
-  cUpdateMethod : array[0..7] of string = ('ADD', 'UPDATE', 'REPLACE', 'QUERY',
-    'ADD:UPDATE', 'ADD:REPLACE', 'ADD:QUERY', 'ADD:AUTORENAME');
-var
-  I: longint;
-begin
-  Result := -1;
-  for I := Low(cUpdateMethod) to High(cUpdateMethod) do
-    if UpperCaser(Answer) = cmUPDATE[I] then
-    begin
-      Result := I;
-      Break;
-    end;
-end;
 
 function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
 var
@@ -188,6 +199,41 @@ begin
   Clear;
 end;
 
+destructor TCommandLine.Destroy;
+begin
+  FxOptions.Destroy;
+  FFileMasks.Destroy;
+  inherited Destroy;
+end;
+
+procedure TCommandLine.ProcessCommand(const S: string);
+begin
+  Result := cHelp;
+  if ParamCount > 0 then
+  begin
+    if Length(Params[0]) = 1 then
+      case Upcase(Params[0]) of
+        'A': FCommand := cAdd;
+        'D': FCommand := cDelete;
+        'E': FCommand := cExtract;
+        'H': FCommand := cHelp;
+        'L': FCommand := cList;
+        'R': FCommand := cRename;
+        'T': FCommand := cTest;
+        'X': FCommand := cxExtract;
+        else SetExitStatus(esCmdLineError);
+      end
+    else SetExitStatus(esCmdLineError);
+  end;
+
+end;
+
+
+
+
+
+
+
 procedure TCommandLine.Clear;
 begin
   FCommand     := cHelp;
@@ -215,12 +261,7 @@ begin
   FFileMasks.Clear;
 end;
 
-destructor TCommandLine.Destroy;
-begin
-  FxOptions.Destroy;
-  FFileMasks.Destroy;
-  inherited Destroy;
-end;
+
 
 procedure TCommandLine.ProcessOptionSS(var S: string);
 begin
