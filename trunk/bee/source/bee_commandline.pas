@@ -70,20 +70,28 @@ type
 
   TProcessPriority = (ppIdle, ppNormal, ppHigh, ppRealTime);
 
+  // TCommandLineOptions
+
+  TCommandLineOption = (
+    clcOption, clcdOption,  clcmOption,  clemOption, clppOption,
+    clrOption, clsfxOption, clslsOption, clssOption, cltOption,
+    cluOption, clvOption,   clwdOption,  clxOptions);
+
+  TCommandLineOptions = set of TCommandLineOption;
+
   // TCommandLine class
 
   TCommandLine = class
   protected
     FCommand: TCommand;
+    FOptions: TCommandLineOptions;
     FcOption: string;
-    FcOptionAssigned: boolean;
     FcdOption: string;
     FcmOption: string;
     FemOption: string;
     FppOption: TProcessPriority;
     FrOption: TRecursiveMethod;
     FsfxOption: string;
-    FsfxOptionAssigned: boolean;
     FslsOption: boolean;
     FssOption: boolean;
     FtOption: boolean;
@@ -115,15 +123,14 @@ type
     destructor Destroy; override;
   public
     property Command: TCommand read FCommand;
+    property Options: TCommandLineOptions read FOptions;
     property cOption: string read FcOption;
-    property cOptionAssisged: boolean read FcOptionAssigned;
     property cdOption: string read FcdOption;
     property cmOption: string read FcmOption;
     property emOption: string read FcmOption;
     property ppOption: TProcessPriority read FppOption;
     property rOption: TRecursiveMethod read FrOption;
     property sfxOption: string read FsfxOption;
-    property sfxOptionAssisged: boolean read FsfxOptionAssigned;
     property slsOption: boolean read FslsOption;
     property ssOption: boolean read FssOption;
     property tOption: boolean read FtOption;
@@ -198,25 +205,11 @@ end;
 constructor TCommandLine.Create;
 begin
   inherited Create;
-  FCommand           := cHelp;
-  FcOption           := '';
-  FcOptionAssigned   := FALSE;
-  FcdOption          := '';
-  FcmOption          := '';
-  FemOption          := '';
-  FppOption          := ppNormal;
-  FrOption           := rmNone;
-  FsfxOption         := '';
-  FsfxOptionAssigned := FALSE;
-  FslsOption         := False;
-  FssOption          := False;
-  FtOption           := False;
-  FuOption           := umAddUpdate;
-  FvOption           := 0;
-  FwdOption          := '';
-  FxOptions          := TStringList.Create;
-  FArchiveName       := '';
-  FFileMasks         := TStringList.Create;
+  FCommand     := cHelp;
+  FOptions     := [];
+  FxOptions    := TStringList.Create;
+  FArchiveName := '';
+  FFileMasks   := TStringList.Create;
 end;
 
 destructor TCommandLine.Destroy;
@@ -248,6 +241,7 @@ begin
   Delete(S, 1, 2);
   FcOption := S;
 
+  Include(FOptions, clcOption);
   if (Command in [cAdd, cDelete, cRename]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
@@ -258,8 +252,9 @@ begin
   if Length(S) > 0 then
     FcdOption := IncludeTrailingBackSlash(S)
   else
-    SetExitStatus(esCmdLineError);
+    FcdOption := '';
 
+  Include(FOptions, clcdOption);
   if (Command in [cHelp]) = TRUE then
     SetExitStatus(esCmdLineError);
 end;
@@ -267,11 +262,9 @@ end;
 procedure TCommandLine.ProcessOptionCM(var S: string);
 begin
   Delete(S, 1, 3);
-  if Length(S) > 0 then
-    FcmOption := S
-  else
-    SetExitStatus(esCmdLineError);
+  FcmOption := S;
 
+  Include(FOptions, clcmOption);
   if (Command in [cAdd]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
@@ -279,11 +272,9 @@ end;
 procedure TCommandLine.ProcessOptionEM(var S: string);
 begin
   Delete(S, 1, 3);
-  if Length(S) > 0 then
-    FemOption := S
-  else
-    SetExitStatus(esCmdLineError);
+  FemOption := S;
 
+  Include(FOptions, clemOption);
   if (Command in [cAdd]) = FALSE then
     SetExitStatus(esCmdLineError);
 end;
@@ -292,8 +283,10 @@ procedure TCommandLine.ProcessOptionPP(var S: string);
 begin
   Delete(S, 1, 4);
   if (Length(S) = 1) and (S[1] in ['0'..'3']) then
-    FppOption := TProcessPriority(StrToInt(S[1]))
-  else
+  begin
+    FppOption := TProcessPriority(StrToInt(S[1]));
+    Include(FOptions, clppOption);
+  end else
     SetExitStatus(esCmdLineError);
 
   if (Command in [cHelp]) = TRUE then
@@ -313,6 +306,9 @@ begin
         FrOption := rmFull
       else
         SetExitStatus(esCmdLineError);
+
+  if UpperCase(S) in ['W', '-'] then
+    Include(FOptions, clrOption);
 
   if (FCommand in [cHelp]) = TRUE then
     SetExitStatus(esCmdLineError);
