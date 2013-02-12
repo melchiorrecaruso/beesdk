@@ -580,22 +580,15 @@ begin
   // check file masks
   if FFileMasks.Count = 0 then
   begin
-    case FCommand of
-      cAdd:      SetExitStatus(esCmdLineError);
-      cDelete:   SetExitStatus(esCmdLineError);
-      cExtract:  FFileMasks.Add('*');
-     //cHelp:     nothing to do
-      cList:     FFileMasks.Add('*');
-      cRename:   SetExitStatus(esCmdLineError);
-      cTest:     FFileMasks.Add('*');
-      cXextract: FFileMasks.Add('*');
-    end;
-
-    if ExitStatus = esNoError then
-    begin
-      FrOption := rmFull;
-      Include(FOptions, clrOption);
-    end;
+    if FCommand in [cAdd, cDelete, cRename] then
+      SetExitStatus(esCmdLineError)
+    else
+      if FCommand in [cExtract, cList, cTest, cXextract] then
+      begin
+        FFileMasks.Add('*');
+        FrOption := rmWildCard;
+        Include(FOptions, clrOption);
+      end;
   end;
 end;
 
