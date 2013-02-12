@@ -52,7 +52,7 @@ type
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
-  // archive data descriptor flag
+  /// archive data descriptor flag
   TArchiveDataDescriptorFlag = (
     adfCompressedSize,
     adfDiskNumber,
@@ -62,7 +62,10 @@ type
   TArchiveDataDescriptorFlags = set of TArchiveDataDescriptorFlag;
 
   /// archive compression method
-  TArchiveCompressionMethod = (actNone, actMain);
+  TArchiveCompressionMethod = (acmNone, acmMain);
+
+  /// archive compression level
+  TArchiveCompressionLevel = (aclFast, aclNormal, aclMaximum);
 
   /// archive compression flag
   TArchiveCompressionFlag = (
@@ -75,7 +78,7 @@ type
   TArchiveCompressionFlags = set of TArchiveCompressionFlag;
 
   /// archive encryption method
-  TArchiveEncryptionMethod = (acrtNone, acrtMain);
+  TArchiveEncryptionMethod = (acrmNone, acrmMain);
 
   /// archive encryption flag
   TArchiveEncryptionFlag = (
@@ -104,7 +107,7 @@ type
     // Compression property
     FCompressionFlags: TArchiveCompressionFlags;
     FCompressionMethod: TArchiveCompressionMethod;
-    FCompressionLevel: TclOption;
+    FCompressionLevel: TArchiveCompressionLevel;
     FDictionaryLevel: TdOption;
     FCompressionTable: TTableParameters;
     // Encryption property
