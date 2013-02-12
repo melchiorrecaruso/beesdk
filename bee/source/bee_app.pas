@@ -127,7 +127,7 @@ begin
   FArchiver.OnUpdate            := DoUpdate;
   { store command line }
   FCommandLine := TCommandLine.Create;
-  FCommandLine.CommandLine := aCommandLine;
+  FCommandLine.Execute;
   { set thread priority }
   SetPriority(Ord(FCommandLine.priOption));
 end;
@@ -373,9 +373,6 @@ end;
 
 function TBeeApp.QueryToUser(const Message: string;
   var Confirm: TArchiveConfirm): boolean;
-const
-  cUpdateMethod: array[0..7] of string = ('ADD', 'UPDATE', 'REPLACE', 'QUERY',
-    'ADD:UPDATE', 'ADD:REPLACE', 'ADD:QUERY', 'ADD:AUTORENAME');
 var
   Answer: string;
   I: longint;
@@ -397,10 +394,10 @@ begin
         Break;
       end;
 
-    for I := Low(cUpdateMethod) to High(cUpdateMethod) do
-    if UpperCaser(Answer) = cmUPDATE[I] then
+    I := CheckUpdateMethod(Answer);
+    if I <> -1 then
     begin
-      FCommandLine.uOption := TUpdateMode(I);
+      FCommandLine.uOption := TUpdateMethod(I);
       Result := TRUE;
       Break;
     end;
@@ -464,7 +461,7 @@ begin
   DoMessage('  -cd{path}: set current archive directory');
   DoMessage('  -cm{parameters}: set compression method');
   DoMessage('  -em{parameters}: set encryption method');
-  DoMessage('  -pri{parameters}: set process Priority ');
+  DoMessage('  -pp{parameters}: set process Priority ');
   DoMessage('  -r[-|w]: recurse subdirectories');
   DoMessage('  -sfx[{sfx-name}]: add self-extractor module');
   DoMessage('  -sls: show list sorted by filename - for l (list) command');
