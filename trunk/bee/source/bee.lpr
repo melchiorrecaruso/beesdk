@@ -49,8 +49,6 @@ uses
   Bee_App;
 
 var
-  I: longint;
-  Params: TStringList;
   Application: TBeeApp;
 
   { control+c event }
@@ -83,12 +81,7 @@ var
 
 begin
   SetCtrlCHandler(@CtrlHandler);
-  Params := TStringList.Create;
-  for I := 1 to ParamCount do
-    Params.Add(ParamStr(I));
-
-  Application := TBeeApp.Create(Params.Text);
+  Application := TBeeApp.Create;
   Application.Execute;
   Application.Destroy;
-  Params.Destroy;
 end.

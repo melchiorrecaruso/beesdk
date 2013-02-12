@@ -139,12 +139,12 @@ type
     FList: TList;
     function GetCount: integer;
     function GetItem(Index: longint): TCustomSearchRec;
-    procedure RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
+    procedure RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMethod);
     function CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
+    procedure Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMethod);
     procedure Clear;
     property Count: integer read GetCount;
     property Items[Index: longint]: TCustomSearchRec read GetItem;
@@ -525,7 +525,7 @@ begin
   Result.LastModifiedTime := Rec.Time;
 end;
 
-procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
+procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMethod);
 var
   Error: longint;
   Rec: TSearchRec;
@@ -569,7 +569,7 @@ begin
   FindClose(Rec);
 end;
 
-procedure TFileScanner.Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMode);
+procedure TFileScanner.Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMethod);
 var
   I: longint;
   Masks: TStringList;
