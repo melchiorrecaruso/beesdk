@@ -129,7 +129,7 @@ begin
   FCommandLine := TCommandLine.Create;
   FCommandLine.Execute;
   { set thread priority }
-  SetPriority(Ord(FCommandLine.priOption));
+  SetPriority(Ord(FCommandLine.ppOption));
 end;
 
 destructor TBeeApp.Destroy;
@@ -394,7 +394,7 @@ begin
         Break;
       end;
 
-    I := CheckUpdateMethod(Answer);
+    I := GetUpdateMethod(Answer);
     if I <> -1 then
     begin
       FCommandLine.uOption := TUpdateMethod(I);
@@ -412,21 +412,41 @@ procedure TBeeApp.OpenArchive;
 begin
   FArchiver.OpenArchive(FCommandLine.ArchiveName);
   // compression mode
-  case FCommandLine.mOption of
-    moStore: FArchiver.CompressionMethod := actNone;
-    else     FArchiver.CompressionMethod := actMain;
+  if clcmOption in FCommandLine.Options then
+  begin
+    if GetCompressionMethod(FCommandLine.cmOption) <> -1 then
+      FArchiver.CompressionMethod := TArchiveCompressionMethod(
+        GetCompressionMethod(FCommandLine.cmOption));
+
+    if GetCompressionLevel(FCommandLine.cmOption) <> -1 then
+      FArchiver.CompressionLevel := TArchiveCompressionLevel(
+        GetCompressionLevel(FCommandLine.cmOption));
+
+    if GetDictionaryLevel(FCommandLine.cmOption) <> -1 then
+      FArchiver.DictionaryLevel := TArchiveDictionaryLevel(
+        GetDictionaryLevel(FCommandLine.cmOption));
+
+    if GetCompressionBlock(FCommandLine.cmOption) <> -1 then
+      FArchiver.CompressionBlock := GetCompressionBlock(FCommandLine.cmOption);
+
+    if GetForceFileExtension(FCommandLine.cmOption) <> '' then
+      FArchiver.ForceFileExtension := GetForceFileExtension(FCommandLine.cmOption);
+
+    if GetConfigurationName(FCommandLine.cmOption) <> '' then
+      FArchiver.ConfigurationName := GetConfigurationName(FCommandLine.cmOption);
   end;
-  FArchiver.CompressionLevel   := FCommandLine.mOption;
-  FArchiver.DictionaryLevel    := FCommandLine.dOption;
-  FArchiver.CompressionBlock   := FCommandLine.sOption;
-  FArchiver.ConfigurationName  := FCommandLine.cfgOption;
-  FArchiver.ForceFileExtension := FCommandLine.fOption;
+
   // encryption mode
-  case Length(FCommandLine.pOption) of
-    0:   FArchiver.EncrypionMethod := acrtNone;
-    else FArchiver.EncrypionMethod := acrtMain;
+  if clemOption in FCommandLine.Options then
+  begin
+    if GetEncryptionMethod(FCommandLine.emOption) <> -1 then
+      FArchiver.EncrypionMethod := TArchiveEncryptionMethod(
+        GetEncryptionMethod(FCommandLine.emOption));
+
+    if GetEncryptionPassword(FCommandLine.emOption) <> '' then
+      FArchiver.EncryptionPassword :=GetEncryptionPassword(FCommandLine.emOption);
   end;
-  FArchiver.ArchivePassword := FCommandLine.pOption;
+
   // ...
   FArchiver.Threshold       := FCommandLine.iOption;
   FArchiver.ArchiveSFX      := FCommandLine.sfxOption;
