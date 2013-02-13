@@ -62,10 +62,14 @@ type
   TArchiveDataDescriptorFlags = set of TArchiveDataDescriptorFlag;
 
   /// archive compression method
-  TArchiveCompressionMethod = (acmNone, acmMain);
+  TArchiveCompressionMethod = (acmNone, acmBee);
 
   /// archive compression level
   TArchiveCompressionLevel = (aclFast, aclNormal, aclMaximum);
+
+  /// archive dictionary level
+  TArchiveDictionaryLevel = (adl2MB, adl5MB, adl10MB, adl20MB, adl40MB, adl80MB,
+    adl160MB, adl320MB, adl640MB, adl1280MB);
 
   /// archive compression flag
   TArchiveCompressionFlag = (
@@ -78,7 +82,7 @@ type
   TArchiveCompressionFlags = set of TArchiveCompressionFlag;
 
   /// archive encryption method
-  TArchiveEncryptionMethod = (acrmNone, acrmMain);
+  TArchiveEncryptionMethod = (aemNone, aemBlowFish);
 
   /// archive encryption flag
   TArchiveEncryptionFlag = (
@@ -108,7 +112,7 @@ type
     FCompressionFlags: TArchiveCompressionFlags;
     FCompressionMethod: TArchiveCompressionMethod;
     FCompressionLevel: TArchiveCompressionLevel;
-    FDictionaryLevel: TdOption;
+    FDictionaryLevel: TArchiveDictionaryLevel;
     FCompressionTable: TTableParameters;
     // Encryption property
     FEncryptionFlags: TArchiveEncryptionFlags;
@@ -142,8 +146,8 @@ type
     // Compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
     property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod;
-    property CompressionLevel: TclOption read FCompressionLevel;
-    property DictionaryLevel: TdOption read FDictionaryLevel;
+    property CompressionLevel: TArchiveCompressionLevel read FCompressionLevel;
+    property DictionaryLevel: TArchiveDictionaryLevel read FDictionaryLevel;
     property SolidCompression: boolean read GetSolidCompression;
     property CompressionTable: TTableParameters read FCompressionTable;
     // Encryption property
@@ -202,15 +206,17 @@ type
 
     FConfigurationName: string;
     FCompressionMethod: TArchiveCompressionMethod;
-    FCompressionLevel: TclOption;
+    FCompressionLevel: TArchiveCompressionLevel;
     FCompressionBlock: int64;
-    FDictionaryLevel: TdOption;
+    FDictionaryLevel: TArchiveDictionaryLevel;
     FForceFileExtension: string;
+
     FEncryptionMethod: TArchiveEncryptionMethod;
+    FEncryptionPassword: string;
+
 
     FArchiveName: string;
     FArchiveComment: string;
-    FArchivePassword: string;
     FArchiveReader: TFileReader;
     FArchiveItems: TArchiveItems;
 
@@ -334,31 +340,31 @@ type
     procedure RenameTagged;
     procedure DeleteTagged;
     procedure UpdateTagged;
-
   public
     property ArchiveName: string
       read FArchiveName write SetArchiveName;
     property ArchiveComment: string
       read FArchiveComment write FArchiveComment;
-    property ArchivePassword: string
-      read FArchivePassword write FArchivePassword;
     property ArchiveSFX: string
       read FArchiveSFX write SetArchiveSFX;
 
     property CompressionMethod: TArchiveCompressionMethod
       read FCompressionMethod write FCompressionMethod;
-    property CompressionLevel: TclOption
+    property CompressionLevel: TArchiveCompressionLevel
       read FCompressionLevel write FCompressionLevel;
-    property DictionaryLevel: TdOption
+    property DictionaryLevel: TArchiveDictionaryLevel
       read FDictionaryLevel  write FDictionaryLevel;
     property CompressionBlock: int64
       read FCompressionBlock write FCompressionBlock;
-    property EncrypionMethod: TArchiveEncryptionMethod
-      read FEncryptionMethod write FEncryptionMethod;
-    property ConfigurationName: string
-      read FConfigurationName write FConfigurationName;
     property ForceFileExtension: string
       read FForceFileExtension write FForceFileExtension;
+    property ConfigurationName: string
+      read FConfigurationName write FConfigurationName;
+
+    property EncrypionMethod: TArchiveEncryptionMethod
+      read FEncryptionMethod write FEncryptionMethod;
+    property EncryptionPassword: string
+      read FEncryptionPassword write FEncryptionPassword;
 
     property WorkDirectory: string
       read FWorkDirectory write SetWorkDirectory;
@@ -403,7 +409,7 @@ uses
 function CompressionMethodToStr(Item: TArchiveItem): string;
 begin
   Result := 'm0a';
-  if Item.CompressionMethod <> actNone then
+  if Item.CompressionMethod <> acmNone then
   begin
     if Item.SolidCompression then
     begin
@@ -480,13 +486,13 @@ begin
   FCRC32             :=  0;
   /// Compression property ///
   FCompressionFlags  := [];
-  FCompressionMethod := actNone;
-  FCompressionLevel  := moFast;
-  FDictionaryLevel   := do2MB;
+  FCompressionMethod := acmNone;
+  FCompressionLevel  := aclFast;
+  FDictionaryLevel   := adl2MB;
   FCompressionTable  := DefaultTableParameters;
   /// Encryption property ///
   FEncryptionFlags   := [];
-  FEncryptionMethod  := acrtNone;
+  FEncryptionMethod  := aemNone;
   /// Reserved property ///
   FTag               := aitAdd;
   FPosition          := -1;
@@ -523,8 +529,8 @@ begin
   /// Compression property ///
   FCompressionFlags := TArchiveCompressionFlags(longword(Stream.ReadInfWord));
   if (acfCompressionMethod in FCompressionFlags)    then FCompressionMethod := TArchiveCompressionMethod(Stream.ReadInfWord);
-  if (acfCompressionLevel  in FCompressionFlags)    then FCompressionLevel  := TclOption(Stream.ReadInfWord);
-  if (acfDictionaryLevel   in FCompressionFlags)    then FDictionaryLevel   := TdOption(Stream.ReadInfWord);
+  if (acfCompressionLevel  in FCompressionFlags)    then FCompressionLevel  := TArchiveCompressionLevel(Stream.ReadInfWord);
+  if (acfDictionaryLevel   in FCompressionFlags)    then FDictionaryLevel   := TArchiveDictionaryLevel(Stream.ReadInfWord);
   if (acfCompressionTable  in FCompressionFlags)    then Stream.Read(@FCompressionTable, SizeOf(TTableParameters));
   /// Encryption property ///
   FEncryptionFlags := TArchiveEncryptionFlags(longword(Stream.ReadInfWord));
@@ -716,16 +722,16 @@ begin
 
   FSearchRecs         := TList.Create;
   FConfigurationName  := SelfPath + DefaultCfgName;
-  FCompressionMethod  := actNone;
-  FCompressionLevel   := moFast;
+  FCompressionMethod  := acmNone;
+  FCompressionLevel   := aclFast;
   FCompressionBlock   := 0;
-  FDictionaryLevel    := do2MB;
+  FDictionaryLevel    := adl5MB;
   FForceFileExtension :=  '';
-  FEncryptionMethod   := acrtNone;
+  FEncryptionMethod   := aemNone;
+  FEncryptionPassword := '';
 
   FArchiveName     := '';
   FArchiveComment  := '';
-  FArchivePassword := '';
   FArchiveReader   := nil;
   FArchiveItems    := TArchiveItems.Create;
 
@@ -756,7 +762,7 @@ end;
 
 procedure TArchiver.InitEncoder(Item: TArchiveItem);
 begin
-  if Item.CompressionMethod = actMain then
+  if Item.CompressionMethod = acmBee then
   begin
     if acfDictionaryLevel in Item.FCompressionFlags then
       FEncoder.DictionaryLevel := Ord(Item.DictionaryLevel);
@@ -788,7 +794,7 @@ begin
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
   case Item.FCompressionMethod of
-    actMain: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC32);
+    acmBee: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC32);
     else     FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC32);
   end;
   Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
@@ -805,7 +811,7 @@ begin
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
   case Item.CompressionMethod of
-    actMain: FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
+    acmBee: FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
     else     FEncoder.Copy  (Stream, Item.FUncompressedSize, Item.FCRC32);
   end;
   Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
@@ -815,7 +821,7 @@ end;
 
 procedure TArchiver.InitDecoder(Item: TArchiveItem);
 begin
-  if Item.CompressionMethod = actMain then
+  if Item.CompressionMethod = acmBee then
   begin
     if acfDictionaryLevel in Item.FCompressionFlags then
       FDecoder.DictionaryLevel := Ord(Item.DictionaryLevel);
@@ -836,7 +842,7 @@ begin
   Item.FDiskNumber := FSwapWriter.CurrentImage;
   Item.FDiskSeek   := FSwapWriter.SeekFromCurrent;
   case Item.CompressionMethod of
-    actMain: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
+    acmBee: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
     else     FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
   end;
 
@@ -853,7 +859,7 @@ begin
 
   FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
   case Item.CompressionMethod of
-    actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
+    acmBee: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
     else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
   end;
   Stream.Destroy;
@@ -871,7 +877,7 @@ begin
 
   FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
   case Item.CompressionMethod of
-    actMain: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
+    acmBee: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
     else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
   end;
   Stream.Destroy;
@@ -1143,7 +1149,7 @@ begin
     Tester.OnProgress          := OnProgress;
     Tester.OnMessage           := OnMessage;
 
-    Tester.ArchivePassword := FArchivePassword;
+    Tester.EncryptionPassword := FEncryptionPassword;
 
     Tester.OpenArchive(FTempName);
     if ExitStatus = esNoError then
@@ -1227,9 +1233,9 @@ begin
 
   FArchiveName     := '';
   FArchiveComment  := '';
-  FArchivePassword := '';
   FArchiveItems.Clear;
 
+  FEncryptionPassword := '';
   FSwapName        := '';
   FTempName        := '';
 end;
@@ -1962,7 +1968,7 @@ begin
         CurrentItem.FCompressionMethod := FCompressionMethod;
         CurrentItem.FCompressionLevel  := FCompressionLevel;
         CurrentItem.FDictionaryLevel   := FDictionaryLevel;
-        if CurrentItem.FCompressionMethod = actMain then
+        if CurrentItem.FCompressionMethod = acmBee then
         begin
           PreviousFileExt := CurrentFileExt;
           if FForceFileExtension = '' then

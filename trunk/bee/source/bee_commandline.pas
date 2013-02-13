@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
+    v0.8.0 build 1864 - 2013.02.13 by Melchiorre Caruso.
 }
 
 unit Bee_CommandLine;
@@ -135,7 +135,7 @@ type
     property slsOption: boolean read FslsOption;
     property ssOption: boolean read FssOption;
     property tOption: boolean read FtOption;
-    property uOption: TUpdateMethod read FuOption;
+    property uOption: TUpdateMethod read FuOption write FuOption;
     property vOption: qword read FvOption;
     property wdOption: string read FwdOption;
     property xOptions: TStringList read FxOptions;
@@ -143,7 +143,15 @@ type
     property FileMasks: TStringList read FFileMasks;
   end;
 
-  function GetUpdateMethod(const Answer: string): longint;
+  function GetUpdateMethod(const S: string): longint;
+  function GetCompressionMethod(const S: string): longint;
+  function GetCompressionLevel(const S: string): longint;
+  function GetDictionaryLevel(const S: string): longint;
+  function GetCompressionBlock(const S: string): int64;
+  function GetForceFileExtension(const S: string): string;
+  function GetConfigurationName(const S: string): string;
+  function GetEncryptionMethod(const S: string): longint;
+  function GetEncryptionPassword(const S: string): string;
 
 implementation
 
@@ -152,17 +160,53 @@ uses
   Bee_BlowFish,
   Bee_Interface;
 
- function GetUpdateMethod(const Answer: string): longint;
+ function GetUpdateMethod(const S: string): longint;
  begin
-   if UpCase(Answer) = 'ADD'            then Result := 0 else
-   if UpCase(Answer) = 'UPDATE'         then Result := 1 else
-   if UpCase(Answer) = 'REPLACE'        then Result := 2 else
-   if UpCase(Answer) = 'QUERY'          then Result := 3 else
-   if UpCase(Answer) = 'ADD+UPDATE'     then Result := 4 else
-   if UpCase(Answer) = 'ADD+REPLACE'    then Result := 5 else
-   if UpCase(Answer) = 'ADD+QUERY'      then Result := 6 else
-   if UpCase(Answer) = 'ADD+AUTORENAME' then Result := 7 else Result := -1;
+   if UpCase(S) = 'ADD'            then Result := 0 else
+   if UpCase(S) = 'UPDATE'         then Result := 1 else
+   if UpCase(S) = 'REPLACE'        then Result := 2 else
+   if UpCase(S) = 'QUERY'          then Result := 3 else
+   if UpCase(S) = 'ADD&UPDATE'     then Result := 4 else
+   if UpCase(S) = 'ADD&REPLACE'    then Result := 5 else
+   if UpCase(S) = 'ADD&QUERY'      then Result := 6 else
+   if UpCase(S) = 'ADD&AUTORENAME' then Result := 7 else Result := -1;
  end;
+
+ function GetCompressionMethod(const S: string): longint;
+ begin
+ end;
+
+ function GetCompressionLevel(const S: string): longint;
+ begin
+ end;
+
+ function GetDictionaryLevel(const S: string): longint;
+ begin
+ end;
+
+ function GetCompressionBlock(const S: string): int64;
+ begin
+ end;
+
+ function GetForceFileExtension(const S: string): string;
+ begin
+ end;
+
+ function GetConfigurationName(const S: string): string;
+ begin
+ end;
+
+ function GetEncryptionMethod(const S: string): longint;
+ begin
+ end;
+
+ function GetEncryptionPassword(const S: string): string;
+ begin
+ end;
+
+
+
+
 
 function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
 var
