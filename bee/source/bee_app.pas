@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2010 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2003-2013 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
+    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -51,8 +51,11 @@ type
   TBeeApp = class(TObject)
   private
     FSelfName: string;
-    FCommandLine: TCommandLine;
     FArchiver: TArchiver;
+    FCommandLine: TCommandLine;
+    FUpdateMethod: TUpdateMethod;
+    FAssumeYesOnAllQueries: boolean;
+    { Help routines}
     function QueryToUser(const Message: string;
       var Confirm: TArchiveConfirm): boolean;
     { Events routines}
@@ -79,7 +82,7 @@ type
     procedure ListShell;
     procedure RenameShell;
   public
-    constructor Create(const aCommandLine: string);
+    constructor Create;
     destructor Destroy; override;
     procedure Execute;
     procedure Terminate;
@@ -110,10 +113,10 @@ end;
 
 { TBeeApp class }
 
-constructor TBeeApp.Create(const aCommandLine: string);
+constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1657 archiver utility, Feb 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1659 archiver utility, Feb 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -125,11 +128,20 @@ begin
   FArchiver.OnRename            := DoRename;
   FArchiver.OnDelete            := DoDelete;
   FArchiver.OnUpdate            := DoUpdate;
-  { store command line }
+  { load command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.Execute;
+  { set update method }
+  FUpdateMethod := umAddUpdate;
+  if cluOption in FCommandLine.Options then
+    FUpdateMethod := FCommandLine.uOption;
+  { set if assume yes on all queries }
+  FAssumeYesOnAllQueries := FALSE;
+  if clyOption in FCommandLine.Options then
+    FAssumeYesOnAllQueries := FCommandLine.yOption;
   { set thread priority }
-  SetPriority(Ord(FCommandLine.ppOption));
+  if clppOption in FCommandLine.Options then
+    SetPriority(Ord(FCommandLine.ppOption));
 end;
 
 destructor TBeeApp.Destroy;
@@ -253,7 +265,7 @@ begin
   end;
 
   Confirm := arcCancel;
-  case FCommandLine.uOption of
+  case FUpdateMethod of
     umAdd          : if FileExists(ExtractAs) = FALSE then Confirm := arcOk;
     umReplace      : if FileExists(ExtractAs) = TRUE  then Confirm := arcOk;
     umUpdate       : if FileExists(ExtractAs) = TRUE  then
@@ -280,7 +292,7 @@ begin
       else
         B := QueryToUser('Extract "'   + ExtractAs + '"? ', Confirm);
 
-      if B = TRUE then
+      if B = FALSE then
         DoExtract(Item, ExtractAs, Confirm);
     end;
     umAddQuery     : begin
@@ -288,7 +300,7 @@ begin
       begin
         B := QueryToUser('Overwrite "' + ExtractAs + '"? ', Confirm);
 
-        if B = TRUE then
+        if B = FALSE then
           DoExtract(Item, ExtractAs, Confirm);
       end else
         Confirm := arcOk;
@@ -328,7 +340,7 @@ begin
     Item := FArchiver.Items[I];
 
   Confirm := arcCancel;
-  case FCommandLine.uOption of
+  case FUpdateMethod of
     umAdd          : if I =  -1 then Confirm := arcOk;
     umReplace      : if I <> -1 then Confirm := arcOk;
     umUpdate       : if I <> -1 then
@@ -354,7 +366,7 @@ begin
       begin
         B := QueryToUser('Overwrite "' + Item.FileName + '"? ', Confirm);
 
-        if B = TRUE then
+        if B = FALSE then
           DoUpdate(SearchRec, UpdateAs, Confirm);
       end else
         Confirm := arcOk;
@@ -365,7 +377,7 @@ begin
       else
         B := QueryToUser('Add "'       + SearchRec.Name + '"? ', Confirm);
 
-      if B = TRUE then
+      if B = FALSE then
         DoUpdate(SearchRec, UpdateAs, Confirm);
     end;
   end;
@@ -376,32 +388,34 @@ function TBeeApp.QueryToUser(const Message: string;
 var
   Answer: string;
 begin
-  Write(#8#8#8#8#8#8, ParamToOem(Message));
-
-  Result := FALSE;
-  repeat
-    Readln(Answer);
-    Answer := UpperCase(OemToParam(Answer));
-    if Length(Answer) = 1 then
-      if Pos(Answer, 'YNQ') > -1 then
-      begin
-        case Answer[1] of
-          'Y': Confirm := arcOk;
-          'N': Confirm := arcCancel;
-          'Q': Confirm := arcQuit;
+  Result := TRUE;
+  if FAssumeYesOnAllQueries = FALSE then
+  begin
+    Write(#8#8#8#8#8#8, ParamToOem(Message));
+    repeat
+      Readln(Answer);
+      Answer := UpperCase(OemToParam(Answer));
+      if Length(Answer) = 1 then
+        if Pos(Answer, 'YNQA') > -1 then
+        begin
+          case Answer[1] of
+            'Y': Confirm := arcOk;
+            'N': Confirm := arcCancel;
+            'Q': Confirm := arcQuit;
+          end;
+          Break;
         end;
+
+      if GetUpdateMethod(Answer) <> -1 then
+      begin
+        FUpdateMethod := TUpdateMethod(GetUpdateMethod(Answer));
+        Result := FALSE;
         Break;
       end;
-
-    if GetUpdateMethod(Answer) <> -1 then
-    begin
-      FCommandLine.uOption := TUpdateMethod(GetUpdateMethod(Answer));
-      Result := TRUE;
-      Break;
-    end;
-
-    Write(#8#8#8#8#8#8, ParamToOem('Yes, No, or Quit? '));
-  until TRUE;
+      Write(#8#8#8#8#8#8, ParamToOem('Yes, No, or Quit? '));
+    until TRUE;
+  end else
+    Confirm := arcOk;
 end;
 
 // --- //
@@ -423,7 +437,7 @@ begin
     FArchiver.SelfExtractor := FCommandLine.sfxOption;
   // archive comment
   if clcOption in FCommandLine.Options then
-    FArchiver.ArchiveComment := FCommandLine.cOption;
+    FArchiver.ArchiveComment := FCommandLine.acOption;
   // test temporary archive
   if cltOption in FCommandLine.Options then
     FArchiver.TestTempArchive := FCommandLine.tOption;
@@ -443,14 +457,14 @@ procedure TBeeApp.HelpShell;
 begin
   DoMessage(Cr + 'Usage: Bee <command> [<switches>...] <archive-name> [<file-names>...]');
   DoMessage(Cr + '<Commands>');
-  DoMessage('  a  add files to archive');
-  DoMessage('  d  delete files from archive');
-  DoMessage('  e  extract files from archive');
-  DoMessage('  h  show this help');
-  DoMessage('  l  list contents of archive');
-  DoMessage('  r  rename files in archive');
-  DoMessage('  t  test integrity of archive files');
-  DoMessage('  x  extract files from archive with path name');
+  DoMessage('  a: add files to archive');
+  DoMessage('  d: delete files from archive');
+  DoMessage('  e: extract files from archive');
+  DoMessage('  h: show this help');
+  DoMessage('  l: list contents of archive');
+  DoMessage('  r: rename files in archive');
+  DoMessage('  t: test integrity of archive files');
+  DoMessage('  x: extract files from archive with path name');
   DoMessage('<Switches>');
   DoMessage('  -c{comment}: set archive comment');
   DoMessage('  -cd{path}: set current archive directory');
@@ -458,7 +472,7 @@ begin
   DoMessage('  -ep{parameters}: set encryption parameters');
   DoMessage('  -pp{parameters}: set process Priority ');
   DoMessage('  -r[-|w]: recurse subdirectories');
-  DoMessage('  -sfx[{sfx-name}]: add self-extractor module');
+  DoMessage('  -sfx[{sfx-name}]: create self-extracting archive');
   DoMessage('  -sls: show list sorted by filename - for l (list) command');
   DoMessage('  -ss: stop switches parsing');
   DoMessage('  -t: Test temorary archive after process');
@@ -466,6 +480,7 @@ begin
   DoMessage('  -v{size}[b|k|m|g]: create volumes ');
   DoMessage('  -wd[{path}]: set temporany work directory');
   DoMessage('  -x{names}: eXclude filenames');
+  DoMessage('  -y: assume yes on all queries');
   DoMessage(Cr + 'Use BeeOpt to make most optimal parameters.');
 end;
 
@@ -479,7 +494,7 @@ begin
   begin
     DoMessage(Format(cmScanning, ['...']));
     Scanner := TFileScanner.Create;
-    for I := 0 to FileMasks.Count - 1 do
+    for I := 0 to FCommandLine.FileMasks.Count - 1 do
       Scanner.Scan(
         FCommandLine.FileMasks[I],
         FCommandLine.xOptions,
@@ -566,16 +581,6 @@ var
   Item: TArchiveItem;
   ItemToList: TList;
 
-  VersionNeededToExtract: longword;
-  CompressionMethod: TArchiveCompressionMethod;
-  CompressionLevel: TArchiveCompressionLevel;
-  DictionaryLevel: TArchiveDictionaryLevel;
-  MaxDictionaryLevel: TArchiveDictionaryLevel;
-  EncryptionMethod: TArchiveEncryptionMethod;
-
-  ItemsEncrypted: longint;
-
-
   TotalSize: int64;
   TotalPackedSize: int64;
   TotalFiles:longint;
@@ -592,85 +597,40 @@ begin
       if  FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
 
-    VersionNeededToExtract := 0;
-    CompressionMethod      := actNone;
-    CompressionLevel       := moStore;
-    DictionaryLevel        := do2MB;
-    WithSolidCompression   := 0;
-    WithArchivePassword    := 0;
-    MaxDictionaryLevel     := do2MB;
-
-    EncriptionMethod      := acrtNone;
-
-    TotalPackedSize := 0;
     TotalSize       := 0;
+    TotalPackedSize := 0;
     TotalFiles      := 0;
 
     ItemToList := TList.Create;
     for I := 0 to FArchiver.Count - 1 do
-    begin
-      Item := FArchiver.Items[I];
       if FArchiver.IsTagged(I) then
+      begin
+        Item := FArchiver.Items[I];
         ItemToList.Add(Item);
 
-      if aifVersionNeededToExtract in Item.Flags            then VersionNeededToExtract := Item.VersionNeededToExtract;
-      if acfCompressionMethod      in Item.CompressionFlags then CompressionMethod      := Item.CompressionMethod;
-      if acfCompressionLevel       in Item.CompressionFlags then CompressionLevel       := Item.CompressionLevel;
-      if acfDictionaryLevel        in Item.CompressionFlags then DictionaryLevel        := Item.DictionaryLevel;
-      if acfCompressionBlock       in Item.CompressionFlags then Inc(WithSolidCompression);
-      if aefEncryptionMethod       in Item.EncryptionFlags  then
-        if Item.EncryptionMethod <> acrtNone then
-          Inc(WithArchivePassword);
-
-      if DictionaryLevel > MaxDictionaryLevel then
-        MaxDictionaryLevel := DictionaryLevel;
-
-      Inc(TotalPackedSize, Item.CompressedSize);
-      Inc(TotalSize, Item.UncompressedSize);
-      Inc(TotalFiles);
-    end;
-
-    DoMessage(Cr + 'Extraction requirements:');
-    DoMessage('  Minimun version archive extractor = ' + VersionToStr(VersionNeededToExtract));
-    DoMessage('  Minimun free memory size = ' + IntToStr(Round($280000*power(2, Ord(MaxDictionaryLevel)))));
-    DoMessage('  Minimun free disk size = ' + IntToStr(TotalSize));
-
-    DoMessage(Cr + 'Archive features:');
-    DoMessage('  Items archived = ' + IntToStr(TotalFiles));
-    DoMessage('  Items encrypted = ' + IntToStr(WithArchivePassword));
-    DoMessage('  Items with solid compression = ' + IntToStr(WithSolidCompression));
-
-    DoMessage(Cr + '  Self-extractor module size = ' + IntToStr(0));
-
-    DoMessage('  Archive packed data size = ' + IntToStr(TotalPackedSize));
-    DoMessage('  Archive size = ' + SizeToStr(SizeOfFile(FCommandLine.ArchiveName)));
-
-    if ItemToList.Count > 0 then
-    begin
-      DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
-      DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
-
-      if FCommandLine.slsOption then
-        ItemToList.Sort(CompareFilePath);
-
-      TotalPackedSize := 0;
-      TotalSize       := 0;
-      TotalFiles      := 0;
-
-      for I := 0 to ItemToList.Count - 1 do
-      begin
-        Item := ItemToList.Items[I];
         Inc(TotalSize, Item.UncompressedSize);
         Inc(TotalPackedSize, Item.CompressedSize);
         Inc(TotalFiles);
+      end;
 
+    if ItemToList.Count > 0 then
+    begin
+      if FCommandLine.slsOption then
+        ItemToList.Sort(CompareFilePath);
+
+      DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
+      DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
+      for I := 0 to ItemToList.Count - 1 do
+      begin
+        Item := ItemToList.Items[I];
         DoMessage(Format('%16s %7s %12s %12s %3s %s', [
           FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
           SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
           CompressionMethodToStr(Item), Item.FileName]));
       end;
       DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
-      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize), SizeToStr(TotalPackedSize), TotalFiles]));
+      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize),
+        SizeToStr(TotalPackedSize), TotalFiles]));
     end;
     ItemToList.Destroy;
   end;

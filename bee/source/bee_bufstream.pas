@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2012 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2013 Andrew Filinsky and Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
   Modifyed:
 
+    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
 unit Bee_BufStream;
@@ -35,7 +36,6 @@ uses
 
 type
   { TBufStream }
-
   TBufStream = class(TObject)
   protected
     FHandle: THandle;
@@ -46,7 +46,6 @@ type
   end;
 
   { TReadBufStream }
-
   TReadBufStream = class(TBufStream)
   private
     FPosition: int64;
@@ -63,7 +62,6 @@ type
   end;
 
   { TWriteBufStream }
-
   TWriteBufStream = class(TBufStream)
   private
     FPosition: int64;
@@ -85,7 +83,6 @@ implementation
 uses
   Math,
   SysUtils,
-  Bee_Assembler,
   Bee_Interface;
 
 const
@@ -174,13 +171,12 @@ end;
 
 procedure TReadBufStream.FillBuffer;
 begin
-  FBufferSize  := FileRead(FHandle, FBuffer[0], Length(FBuffer));
   FBufferIndex := 0;
-
+  FBufferSize  := FileRead(FHandle, FBuffer[0], Length(FBuffer));
   if FBufferSize = -1 then
   begin
-    SetExitStatus(esFillStreamError);
     FBufferSize := 0;
+    SetExitStatus(esFillStreamError);
   end;
 end;
 
