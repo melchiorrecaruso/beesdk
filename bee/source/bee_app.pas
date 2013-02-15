@@ -113,7 +113,7 @@ end;
 constructor TBeeApp.Create(const aCommandLine: string);
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1655 archiver utility, Feb 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1657 archiver utility, Feb 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -471,17 +471,19 @@ end;
 
 procedure TBeeApp.EncodeShell;
 var
-  I: longint;
   Scanner: TFileScanner;
+  I: longint;
 begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
     Scanner := TFileScanner.Create;
-    with FCommandLine do
-      for I := 0 to FileMasks.Count - 1 do
-        Scanner.Scan(FileMasks[I], xOptions, rOption);
+    for I := 0 to FileMasks.Count - 1 do
+      Scanner.Scan(
+        FCommandLine.FileMasks[I],
+        FCommandLine.xOptions,
+        FCommandLine.rOption);
 
     for I := 0 to Scanner.Count - 1 do
       FArchiver.Tag(Scanner.Items[I]);
@@ -505,7 +507,7 @@ begin
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
 
     for I := 0 to FArchiver.Count - 1 do
-      if  FileNameMatch(FArchiver.Items[I].FileName,
+      if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
 
     case TestMode of
@@ -566,16 +568,12 @@ var
 
   VersionNeededToExtract: longword;
   CompressionMethod: TArchiveCompressionMethod;
-  CompressionLevel: TmOption;
+  CompressionLevel: TArchiveCompressionLevel;
+  DictionaryLevel: TArchiveDictionaryLevel;
+  MaxDictionaryLevel: TArchiveDictionaryLevel;
+  EncryptionMethod: TArchiveEncryptionMethod;
 
-
-
-  DictionaryLevel: TdOption;
-  MaxDictionaryLevel: TdOption;
-  EncriptionMethod: TArchiveEncryptionMethod;
-  WithArchivePassword: longint;
-
-  WithSolidCompression: longint;
+  ItemsEncrypted: longint;
 
 
   TotalSize: int64;
