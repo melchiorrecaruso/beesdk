@@ -375,7 +375,6 @@ function TBeeApp.QueryToUser(const Message: string;
   var Confirm: TArchiveConfirm): boolean;
 var
   Answer: string;
-  I: longint;
 begin
   Write(#8#8#8#8#8#8, ParamToOem(Message));
 
@@ -394,10 +393,9 @@ begin
         Break;
       end;
 
-    I := GetUpdateMethod(Answer);
-    if I <> -1 then
+    if GetUpdateMethod(Answer) <> -1 then
     begin
-      FCommandLine.uOption := TUpdateMethod(I);
+      FCommandLine.uOption := TUpdateMethod(GetUpdateMethod(Answer));
       Result := TRUE;
       Break;
     end;
@@ -411,23 +409,27 @@ end;
 procedure TBeeApp.OpenArchive;
 begin
   FArchiver.OpenArchive(FCommandLine.ArchiveName);
+  // work directory
+  if clwdOption in FCommandLine.Options then
+    FArchiver.WorkDirectory := FCommandLine.wdOption;
   // compression mode
-  if clcmOption in FCommandLine.Options then
+  if clcpOption in FCommandLine.Options then
     FArchiver.CompressionParams := FCommandLine.cpOption;
   // encryption mode
-  if clemOption in FCommandLine.Options then
+  if clepOption in FCommandLine.Options then
     FArchiver.EncryptionParams := FCommandLine.epOption;
-
-
-
-  // ...
-  FArchiver.Threshold       := FCommandLine.vOption;
-  FArchiver.ArchiveSFX      := FCommandLine.sfxOption;
-  FArchiver.TestTempArchive := FCommandLine.tOption;
-  FArchiver.WorkDirectory   := FCommandLine.wdOption;
-
-  if FCommandLine.cOption <> '' then
-    FArchiver.ArchiveComment  := FCommandLine.cOption;
+  // self extractor
+  if clsfxOption in FCommandLine.Options then
+    FArchiver.SelfExtractor := FCommandLine.sfxOption;
+  // archive comment
+  if clcOption in FCommandLine.Options then
+    FArchiver.ArchiveComment := FCommandLine.cOption;
+  // test temporary archive
+  if cltOption in FCommandLine.Options then
+    FArchiver.TestTempArchive := FCommandLine.tOption;
+  // volume size
+  if clvOption in FCommandLine.Options then
+    FArchiver.Threshold := FCommandLine.vOption;
 end;
 
 procedure TBeeApp.CloseArchive;
