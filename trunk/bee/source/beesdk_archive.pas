@@ -1235,14 +1235,19 @@ begin
   end;
 
   FSearchRecs.Clear;
-
-  FArchiveName     := '';
-  FArchiveComment  := '';
   FArchiveItems.Clear;
 
-  FEncryptionParams := '';
-  FSwapName         := '';
-  FTempName         := '';
+  FArchiveName       := '';
+  FSwapName          := '';
+  FTempName          := '';
+
+  FWorkDirectory     := '';
+  FCompressionParams := '';
+  FEncryptionParams  := '';
+  FSelfExtractor     := '';
+  FArchiveComment    := '';
+  FTestTempArchive   := FALSE;
+  FThreshold         := 0;
 end;
 
 // TArchiver # FIND #
