@@ -73,7 +73,7 @@ type
   // TCommandLineOptions
 
   TCommandLineOption = (
-    clcOption, clcdOption,  clcmOption,  clemOption, clppOption,
+    clcOption, clcdOption,  clcpOption,  clepOption, clppOption,
     clrOption, clsfxOption, clslsOption, clssOption, cltOption,
     cluOption, clvOption,   clwdOption,  clxOption);
 
@@ -286,7 +286,7 @@ begin
   if Command in [cAdd] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clcmOption);
+      Include(FOptions, clcpOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -299,7 +299,7 @@ begin
   if Command in [cAdd] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clemOption);
+      Include(FOptions, clepOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
