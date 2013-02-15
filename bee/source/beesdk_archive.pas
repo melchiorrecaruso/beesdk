@@ -202,26 +202,11 @@ type
     FProcessedSize: int64;
     FTotalSize: int64;
 
-    FSearchRecs: TList;
-
-    FConfigurationName: string;
-    FCompressionMethod: TArchiveCompressionMethod;
-    FCompressionLevel: TArchiveCompressionLevel;
-    FCompressionBlock: int64;
-    FDictionaryLevel: TArchiveDictionaryLevel;
-    FForceFileExtension: string;
-
-    FEncryptionMethod: TArchiveEncryptionMethod;
-    FEncryptionPassword: string;
-
-
     FArchiveName: string;
-    FArchiveComment: string;
     FArchiveReader: TFileReader;
     FArchiveItems: TArchiveItems;
-
-    FArchiveSFX: string;
-    FArchiveSFXMod: TMemoryStream;
+    FSearchRecs: TList;
+    FSelfExtractorStream: TMemoryStream;
 
 
     FSwapName: string;
@@ -232,9 +217,12 @@ type
     FTempWriter: TFileWriter;
 
     FWorkDirectory: string;
+    FCompressionParams: string;
+    FEncryptionParams: string;
+    FSelfExtractor: string;
+    FArchiveComment: string;
     FTestTempArchive: boolean;
     FThreshold: int64;
-
   private
     FEncoder: THeaderEncoder;
     procedure InitEncoder      (Item: TArchiveItem);
@@ -258,7 +246,7 @@ type
     procedure SaveTemporaryArchive;
   private
     procedure SetArchiveName(const Value: string);
-    procedure SetArchiveSFX(const Value: string);
+    procedure SetSelfExtractor(const Value: string);
     procedure SetWorkDirectory(const Value: string);
 
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
@@ -271,52 +259,44 @@ type
   private
     FOnRequestBlankImage: TFileWriterRequestBlankImageEvent;
     procedure DoRequestBlankImage(ImageNumber: longint;
-     var Abort : Boolean);
-
+      var Abort : Boolean);
   private
     FOnRequestImage: TFileReaderRequestImageEvent;
     procedure DoRequestImage(ImageNumber: longint;
       var ImageName: string; var Abort: boolean);
-
   private
     FOnMessage: TArchiveMessageEvent;
     procedure DoMessage(const Message: string);
-
   private
     FOnProgress: TArchiveProgressEvent;
     procedure DoProgress(Value: longint);
-
   private
     FOnExtract: TArchiveExtractEvent;
     procedure CheckTags4Test;
     procedure CheckTags4Extract;
     procedure CheckSequences4Extract;
-    procedure DoExtract(Item: TArchiveItem;
-      var ExtractAs: string; var Confirm: TArchiveConfirm);
-
+    procedure DoExtract(Item: TArchiveItem; var ExtractAs: string;
+      var Confirm: TArchiveConfirm);
   private
     FOnRename: TArchiveRenameEvent;
     procedure CheckTags4Rename;
     procedure CheckSequences4Rename;
-    procedure DoRename(Item: TArchiveItem;
-      var RenameAs: string; var Confirm: TArchiveConfirm);
-
+    procedure DoRename(Item: TArchiveItem; var RenameAs: string;
+      var Confirm: TArchiveConfirm);
   private
     FOnDelete: TArchiveDeleteEvent;
     procedure CheckTags4Delete;
     procedure CheckSequences4Delete;
     procedure DoDelete(Item: TArchiveItem;
       var Confirm: TArchiveConfirm);
-
   private
     FOnUpdate: TArchiveUpdateEvent;
     procedure CheckTags4Update;
     procedure CheckSequences4Update;
     procedure ConfigureCrypter;
     procedure ConfigureCoder;
-    procedure DoUpdate(SearchRec: TCustomSearchRec;
-      var UpdateAs: string; var Confirm: TArchiveConfirm);
-
+    procedure DoUpdate(SearchRec: TCustomSearchRec; var UpdateAs: string;
+      var Confirm: TArchiveConfirm);
   public
     constructor Create;
     destructor Destroy; override;
@@ -345,26 +325,13 @@ type
       read FArchiveName write SetArchiveName;
     property ArchiveComment: string
       read FArchiveComment write FArchiveComment;
-    property ArchiveSFX: string
-      read FArchiveSFX write SetArchiveSFX;
+    property SelfExtractor: string
+      read FSelfExtractor write SetSelfExtractor;
 
-    property CompressionMethod: TArchiveCompressionMethod
-      read FCompressionMethod write FCompressionMethod;
-    property CompressionLevel: TArchiveCompressionLevel
-      read FCompressionLevel write FCompressionLevel;
-    property DictionaryLevel: TArchiveDictionaryLevel
-      read FDictionaryLevel  write FDictionaryLevel;
-    property CompressionBlock: int64
-      read FCompressionBlock write FCompressionBlock;
-    property ForceFileExtension: string
-      read FForceFileExtension write FForceFileExtension;
-    property ConfigurationName: string
-      read FConfigurationName write FConfigurationName;
-
-    property EncrypionMethod: TArchiveEncryptionMethod
-      read FEncryptionMethod write FEncryptionMethod;
-    property EncryptionPassword: string
-      read FEncryptionPassword write FEncryptionPassword;
+    property CompressionParams: string
+      read FCompressionParams write FCompressionParams;
+    property EncryptionParams: string
+      read FEncryptionParams write FEncryptionParams;
 
     property WorkDirectory: string
       read FWorkDirectory write SetWorkDirectory;
@@ -372,6 +339,14 @@ type
       read FTestTempArchive write FTestTempArchive;
     property Threshold: int64 read FThreshold write FThreshold;
 
+    property OnRequestBlankImage: TFileWriterRequestBlankImageEvent
+      read FOnRequestBlankImage write FOnRequestBlankImage;
+    property OnRequestImage: TFileReaderRequestImageEvent
+      read FOnRequestImage write FOnRequestImage;
+    property OnMessage: TArchiveMessageEvent
+      read FOnMessage write FOnMessage;
+    property OnProgress: TArchiveProgressEvent
+      read FOnProgress write FOnProgress;
     property OnExtract: TArchiveExtractEvent
       read FOnExtract write FOnExtract;
     property OnRename: TArchiveRenameEvent
@@ -380,15 +355,6 @@ type
       read FOnDelete write FOnDelete;
     property OnUpdate: TArchiveUpdateEvent
       read FOnUpdate write FOnUpdate;
-
-    property OnRequestBlankImage: TFileWriterRequestBlankImageEvent
-      read FOnRequestBlankImage write FOnRequestBlankImage;
-    property OnRequestImage: TFileReaderRequestImageEvent
-      read FOnRequestImage write FOnRequestImage;
-    property OnProgress: TArchiveProgressEvent
-      read FOnProgress write FOnProgress;
-    property OnMessage: TArchiveMessageEvent
-      read FOnMessage write FOnMessage;
 
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
@@ -405,6 +371,50 @@ implementation
 uses
   Bee_Assembler,
   Bee_Interface;
+
+
+function GetCompressionMethod(const Params: string): TArchiveCompressionMethod;
+begin
+  Result := acmNone;
+end;
+
+function GetCompressionBlock(const Params: string): int64;
+begin
+  Result := 0;
+end;
+
+function GetCompressionLevel(const Params: string): TArchiveCompressionLevel;
+begin
+  Result := aclFast;
+end;
+
+function GetDictionaryLevel(const Params: string): TArchiveDictionaryLevel;
+begin
+  Result := adl2MB;
+end;
+
+function GetForceFileExtension(const Params: string): string;
+begin
+  Result := '';
+end;
+
+function GetEncryptionMethod(const Params: string): TArchiveEncryptionMethod;
+begin
+  Result := aemNone;
+end;
+
+function GetConfigurationFileName(const Params: string): string;
+begin
+  Result := SelfPath + DefaultCfgName;
+end;
+
+
+
+
+
+
+
+
 
 function CompressionMethodToStr(Item: TArchiveItem): string;
 begin
@@ -720,20 +730,8 @@ begin
   FIsNeededToSwap  := FALSE;
   FIsNeededToSave  := FALSE;
 
-  FSearchRecs         := TList.Create;
-  FConfigurationName  := SelfPath + DefaultCfgName;
-  FCompressionMethod  := acmNone;
-  FCompressionLevel   := aclFast;
-  FCompressionBlock   := 0;
-  FDictionaryLevel    := adl5MB;
-  FForceFileExtension :=  '';
-  FEncryptionMethod   := aemNone;
-  FEncryptionPassword := '';
-
   FArchiveName     := '';
-  FArchiveComment  := '';
   FArchiveReader   := nil;
-  FArchiveItems    := TArchiveItems.Create;
 
   FSwapName        := '';
   FSwapReader      := nil;
@@ -742,9 +740,16 @@ begin
   FTempName        := '';
   FTempWriter      := nil;
 
-  FWorkDirectory   := '';
-  FTestTempArchive := FALSE;
-  FThreshold       := 0;
+  FArchiveItems    := TArchiveItems.Create;
+  FSearchRecs      := TList.Create;
+
+  FWorkDirectory      := '';
+  FCompressionParams  := '';
+  FEncryptionParams   := '';
+  FSelfExtractor      := '';
+  FArchiveComment     := '';
+  FTestTempArchive    := FALSE;
+  FThreshold          := 0;
 end;
 
 destructor TArchiver.Destroy;
@@ -1149,7 +1154,7 @@ begin
     Tester.OnProgress          := OnProgress;
     Tester.OnMessage           := OnMessage;
 
-    Tester.EncryptionPassword := FEncryptionPassword;
+    Tester.EncryptionParams := FEncryptionParams;
 
     Tester.OpenArchive(FTempName);
     if ExitStatus = esNoError then
@@ -1235,9 +1240,9 @@ begin
   FArchiveComment  := '';
   FArchiveItems.Clear;
 
-  FEncryptionPassword := '';
-  FSwapName        := '';
-  FTempName        := '';
+  FEncryptionParams := '';
+  FSwapName         := '';
+  FTempName         := '';
 end;
 
 // TArchiver # FIND #
@@ -1331,9 +1336,9 @@ begin
   OpenArchive(Value);
 end;
 
-procedure TArchiver.SetArchiveSFX(const Value: string);
+procedure TArchiver.SetSelfExtractor(const Value: string);
 begin
-  FArchiveSFX := Value;
+  FSelfExtractor := Value;
 end;
 
 procedure TArchiver.SetWorkDirectory(const Value: string);
@@ -1918,7 +1923,7 @@ begin
     if CurrentItem.FTag = aitAdd then
     begin
       Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
-      CurrentItem.FEncryptionMethod := FEncryptionMethod;
+      CurrentItem.FEncryptionMethod := GetEncryptionMethod(FEncryptionParams);
       //if CurrentItem.FEncryptionMethod = acrtMain then
       //begin
       //  nothing to do
@@ -1938,8 +1943,8 @@ var
   Configuration: TConfiguration;
 begin
   Configuration := TConfiguration.Create;
-  if FileExists(FConfigurationName) then
-    Configuration.LoadFromFile(FConfigurationName)
+  if FileExists(GetConfigurationFileName(FCompressionParams)) then
+    Configuration.LoadFromFile(GetConfigurationFileName(FCompressionParams))
   else
     SetExitStatus(esLoadConfigError);
 
@@ -1947,11 +1952,11 @@ begin
   begin
     CurrentFileExt := '.';
     Configuration.Selector('\main');
-    Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(FCompressionLevel));
-    Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(FDictionaryLevel));
+    Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(GetCompressionLevel(FCompressionParams)));
+    Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetDictionaryLevel (FCompressionParams)));
     Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
-    SolidBlock := FCompressionBlock;
+    SolidBlock := GetCompressionBlock(FCompressionParams);
     for I := 0 to FArchiveItems.Count - 1 do
     begin
       CurrentItem := FArchiveItems.Items[I];
@@ -1965,16 +1970,16 @@ begin
         Exclude(CurrentItem.FCompressionFlags, acfCompressionBlock);
         Exclude(CurrentItem.FCompressionFlags, acfCompressionTable);
 
-        CurrentItem.FCompressionMethod := FCompressionMethod;
-        CurrentItem.FCompressionLevel  := FCompressionLevel;
-        CurrentItem.FDictionaryLevel   := FDictionaryLevel;
+        CurrentItem.FCompressionMethod := GetCompressionMethod(FCompressionParams);
+        CurrentItem.FCompressionLevel  := GetCompressionLevel (FCompressionParams);
+        CurrentItem.FDictionaryLevel   := GetDictionaryLevel  (FCompressionParams);
         if CurrentItem.FCompressionMethod = acmBee then
         begin
           PreviousFileExt := CurrentFileExt;
-          if FForceFileExtension = '' then
+          if GetForceFileExtension(FCompressionParams) = '' then
             CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
           else
-            CurrentFileExt := FForceFileExtension;
+            CurrentFileExt := GetForceFileExtension(FCompressionParams);
 
           if Configuration.GetTable(CurrentFileExt, CurrentTable) then
             CurrentItem.FCompressionTable := CurrentTable
@@ -1987,11 +1992,11 @@ begin
             if SolidBlock >= 0 then
               Include(CurrentItem.FCompressionFlags, acfCompressionBlock)
             else
-              SolidBlock := CompressionBlock;
+              SolidBlock := GetCompressionBlock(FCompressionParams);
           end else
           begin
             Include(CurrentItem.FCompressionFlags, acfCompressionTable);
-            SolidBlock := FCompressionBlock;
+            SolidBlock := GetCompressionBlock(FCompressionParams);
           end;
 
         end;

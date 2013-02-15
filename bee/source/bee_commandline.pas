@@ -87,8 +87,8 @@ type
     FOptions: TCommandLineOptions;
     FcOption: string;
     FcdOption: string;
-    FcmOption: string;
-    FemOption: string;
+    FcpOption: string;
+    FepOption: string;
     FppOption: TProcessPriority;
     FrOption: TRecursiveMethod;
     FsfxOption: string;
@@ -104,8 +104,8 @@ type
     procedure ProcessCommand(const S: string);
     procedure ProcessCOption  (var S: string);
     procedure ProcessCDOption (var S: string);
-    procedure ProcessCMOption (var S: string);
-    procedure ProcessEMOption (var S: string);
+    procedure ProcessCPOption (var S: string);
+    procedure ProcessEPOption (var S: string);
     procedure ProcessPPOption (var S: string);
     procedure ProcessROption  (var S: string);
     procedure ProcessSFXOption(var S: string);
@@ -127,8 +127,8 @@ type
     property Options: TCommandLineOptions read FOptions;
     property cOption: string read FcOption;
     property cdOption: string read FcdOption;
-    property cmOption: string read FcmOption;
-    property emOption: string read FemOption;
+    property cpOption: string read FcpOption;
+    property epOption: string read FepOption;
     property ppOption: TProcessPriority read FppOption;
     property rOption: TRecursiveMethod read FrOption;
     property sfxOption: string read FsfxOption;
@@ -144,14 +144,6 @@ type
   end;
 
   function GetUpdateMethod(const S: string): longint;
-  function GetCompressionMethod(const S: string): longint;
-  function GetCompressionLevel(const S: string): longint;
-  function GetDictionaryLevel(const S: string): longint;
-  function GetCompressionBlock(const S: string): int64;
-  function GetForceFileExtension(const S: string): string;
-  function GetConfigurationName(const S: string): string;
-  function GetEncryptionMethod(const S: string): longint;
-  function GetEncryptionPassword(const S: string): string;
 
 implementation
 
@@ -171,42 +163,6 @@ uses
    if UpCase(S) = 'ADD&QUERY'      then Result := 6 else
    if UpCase(S) = 'ADD&AUTORENAME' then Result := 7 else Result := -1;
  end;
-
- function GetCompressionMethod(const S: string): longint;
- begin
- end;
-
- function GetCompressionLevel(const S: string): longint;
- begin
- end;
-
- function GetDictionaryLevel(const S: string): longint;
- begin
- end;
-
- function GetCompressionBlock(const S: string): int64;
- begin
- end;
-
- function GetForceFileExtension(const S: string): string;
- begin
- end;
-
- function GetConfigurationName(const S: string): string;
- begin
- end;
-
- function GetEncryptionMethod(const S: string): longint;
- begin
- end;
-
- function GetEncryptionPassword(const S: string): string;
- begin
- end;
-
-
-
-
 
 function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
 var
@@ -322,10 +278,10 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCMOption(var S: string);
+procedure TCommandLine.ProcessCPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FcmOption := S;
+  FcpOption := S;
 
   if Command in [cAdd] then
   begin
@@ -335,10 +291,10 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessEMOption(var S: string);
+procedure TCommandLine.ProcessEPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FemOption := S;
+  FepOption := S;
 
   if Command in [cAdd] then
   begin
@@ -575,11 +531,11 @@ begin
         if Pos('-CD', UpperCase(S)) = 1 then
           ProcessCDOption(S)
         else
-        if Pos('-CM', UpperCase(S)) = 1 then
-          ProcessCMOption(S)
+        if Pos('-CP', UpperCase(S)) = 1 then
+          ProcessCPOption(S)
         else
-        if Pos('-EM', UpperCase(S)) = 1 then
-          ProcessEMOption(S)
+        if Pos('-EP', UpperCase(S)) = 1 then
+          ProcessEPOption(S)
         else
         if Pos('-PP', UpperCase(S)) = 1 then
           ProcessPPOption(S)

@@ -413,42 +413,15 @@ begin
   FArchiver.OpenArchive(FCommandLine.ArchiveName);
   // compression mode
   if clcmOption in FCommandLine.Options then
-  begin
-    if GetCompressionMethod(FCommandLine.cmOption) <> -1 then
-      FArchiver.CompressionMethod := TArchiveCompressionMethod(
-        GetCompressionMethod(FCommandLine.cmOption));
-
-    if GetCompressionLevel(FCommandLine.cmOption) <> -1 then
-      FArchiver.CompressionLevel := TArchiveCompressionLevel(
-        GetCompressionLevel(FCommandLine.cmOption));
-
-    if GetDictionaryLevel(FCommandLine.cmOption) <> -1 then
-      FArchiver.DictionaryLevel := TArchiveDictionaryLevel(
-        GetDictionaryLevel(FCommandLine.cmOption));
-
-    if GetCompressionBlock(FCommandLine.cmOption) <> -1 then
-      FArchiver.CompressionBlock := GetCompressionBlock(FCommandLine.cmOption);
-
-    if GetForceFileExtension(FCommandLine.cmOption) <> '' then
-      FArchiver.ForceFileExtension := GetForceFileExtension(FCommandLine.cmOption);
-
-    if GetConfigurationName(FCommandLine.cmOption) <> '' then
-      FArchiver.ConfigurationName := GetConfigurationName(FCommandLine.cmOption);
-  end;
-
+    FArchiver.CompressionParams := FCommandLine.cpOption;
   // encryption mode
   if clemOption in FCommandLine.Options then
-  begin
-    if GetEncryptionMethod(FCommandLine.emOption) <> -1 then
-      FArchiver.EncrypionMethod := TArchiveEncryptionMethod(
-        GetEncryptionMethod(FCommandLine.emOption));
+    FArchiver.EncryptionParams := FCommandLine.epOption;
 
-    if GetEncryptionPassword(FCommandLine.emOption) <> '' then
-      FArchiver.EncryptionPassword :=GetEncryptionPassword(FCommandLine.emOption);
-  end;
+
 
   // ...
-  FArchiver.Threshold       := FCommandLine.iOption;
+  FArchiver.Threshold       := FCommandLine.vOption;
   FArchiver.ArchiveSFX      := FCommandLine.sfxOption;
   FArchiver.TestTempArchive := FCommandLine.tOption;
   FArchiver.WorkDirectory   := FCommandLine.wdOption;
@@ -479,8 +452,8 @@ begin
   DoMessage('<Switches>');
   DoMessage('  -c{comment}: set archive comment');
   DoMessage('  -cd{path}: set current archive directory');
-  DoMessage('  -cm{parameters}: set compression method');
-  DoMessage('  -em{parameters}: set encryption method');
+  DoMessage('  -cp{parameters}: set compression parameters');
+  DoMessage('  -ep{parameters}: set encryption parameters');
   DoMessage('  -pp{parameters}: set process Priority ');
   DoMessage('  -r[-|w]: recurse subdirectories');
   DoMessage('  -sfx[{sfx-name}]: add self-extractor module');
