@@ -75,7 +75,7 @@ type
   TCommandLineOption = (
     clcOption, clcdOption,  clcpOption,  clepOption, clppOption,
     clrOption, clsfxOption, clslsOption, clssOption, cltOption,
-    cluOption, clvOption,   clwdOption,  clxOption);
+    cluOption, clvOption,   clwdOption,  clxOption, clyOption);
 
   TCommandLineOptions = set of TCommandLineOption;
 
@@ -85,7 +85,7 @@ type
   protected
     FCommand: TCommand;
     FOptions: TCommandLineOptions;
-    FcOption: string;
+    FacOption: string;
     FcdOption: string;
     FcpOption: string;
     FepOption: string;
@@ -99,10 +99,11 @@ type
     FvOption: qword;
     FwdOption: string;
     FxOptions: TStringList;
+    FyOption: boolean;
     FArchiveName: string;
     FFileMasks: TStringList;
     procedure ProcessCommand(const S: string);
-    procedure ProcessCOption  (var S: string);
+    procedure ProcessACOption (var S: string);
     procedure ProcessCDOption (var S: string);
     procedure ProcessCPOption (var S: string);
     procedure ProcessEPOption (var S: string);
@@ -116,6 +117,7 @@ type
     procedure ProcessVOption  (var S: string);
     procedure ProcessWDOption (var S: string);
     procedure ProcessXOption  (var S: string);
+    procedure ProcessYOption  (var S: string);
     procedure ProcessArchiveName(var S: string);
     procedure ProcessFileMasks(const S: string);
   public
@@ -125,7 +127,7 @@ type
   public
     property Command: TCommand read FCommand;
     property Options: TCommandLineOptions read FOptions;
-    property cOption: string read FcOption;
+    property acOption: string read FacOption;
     property cdOption: string read FcdOption;
     property cpOption: string read FcpOption;
     property epOption: string read FepOption;
@@ -135,10 +137,11 @@ type
     property slsOption: boolean read FslsOption;
     property ssOption: boolean read FssOption;
     property tOption: boolean read FtOption;
-    property uOption: TUpdateMethod read FuOption write FuOption;
+    property uOption: TUpdateMethod read FuOption;
     property vOption: qword read FvOption;
     property wdOption: string read FwdOption;
     property xOptions: TStringList read FxOptions;
+    property yOption: boolean read FyOption;
     property ArchiveName: string read FArchiveName;
     property FileMasks: TStringList read FFileMasks;
   end;
@@ -152,17 +155,17 @@ uses
   Bee_BlowFish,
   Bee_Interface;
 
- function GetUpdateMethod(const S: string): longint;
- begin
-   if UpCase(S) = 'ADD'            then Result := 0 else
-   if UpCase(S) = 'UPDATE'         then Result := 1 else
-   if UpCase(S) = 'REPLACE'        then Result := 2 else
-   if UpCase(S) = 'QUERY'          then Result := 3 else
-   if UpCase(S) = 'ADD&UPDATE'     then Result := 4 else
-   if UpCase(S) = 'ADD&REPLACE'    then Result := 5 else
-   if UpCase(S) = 'ADD&QUERY'      then Result := 6 else
-   if UpCase(S) = 'ADD&AUTORENAME' then Result := 7 else Result := -1;
- end;
+function GetUpdateMethod(const S: string): longint;
+begin
+  if UpCase(S) = 'ADD'            then Result := 0 else
+  if UpCase(S) = 'UPDATE'         then Result := 1 else
+  if UpCase(S) = 'REPLACE'        then Result := 2 else
+  if UpCase(S) = 'QUERY'          then Result := 3 else
+  if UpCase(S) = 'ADD&UPDATE'     then Result := 4 else
+  if UpCase(S) = 'ADD&REPLACE'    then Result := 5 else
+  if UpCase(S) = 'ADD&QUERY'      then Result := 6 else
+  if UpCase(S) = 'ADD&AUTORENAME' then Result := 7 else Result := -1;
+end;
 
 function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
 var
@@ -249,10 +252,10 @@ begin
   else SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCOption(var S: string);
+procedure TCommandLine.ProcessACOption(var S: string);
 begin
-  Delete(S, 1, 2);
-  FcOption := S;
+  Delete(S, 1, 3);
+  FacOption := S;
 
   if Command in [cAdd, cDelete, cRename] then
   begin
@@ -485,6 +488,22 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
+procedure TCommandLine.ProcessYOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  if S = '' then
+    FyOption := TRUE
+  else
+    SetExitStatus(esCmdLineError);
+
+  if Command in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, clyOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
 procedure TCommandLine.ProcessArchiveName(var S: string);
 begin
   FssOption := TRUE;
@@ -525,8 +544,8 @@ begin
       if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
       begin
         // options...
-        if Pos('-C', UpperCase(S)) = 1 then
-          ProcessCOption(S)
+        if Pos('-AC', UpperCase(S)) = 1 then
+          ProcessACOption(S)
         else
         if Pos('-CD', UpperCase(S)) = 1 then
           ProcessCDOption(S)
@@ -566,6 +585,9 @@ begin
         else
         if Pos('-X', UpperCase(S)) = 1 then
           ProcessXOption(S)
+        else
+        if Pos('-Y', UpperCase(S)) = 1 then
+          ProcessYOption(S)
         else
           SetExitStatus(esCmdLineError);
       end else
