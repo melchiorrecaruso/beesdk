@@ -225,7 +225,6 @@ type
   TArchiver = class(TObject)
   private
     FSuspended: boolean;
-    FTerminated: boolean;
     FIsNeededToRun: boolean;
     FIsNeededToSwap: boolean;
     FIsNeededToSave: boolean;
@@ -264,18 +263,18 @@ type
     procedure DecodeToSwap     (Item: TArchiveItem);
     procedure DecodeToFile     (Item: TArchiveItem);
   private
+    procedure PackCentralDirectory;
     procedure WriteCentralDirectory(aStream: TFileWriter);
     procedure ReadCentralDirectory(aStream: TFileReader);
-    procedure PackCentralDirectory;
     procedure UnPackCentralDirectory;
 
-    procedure OpenSwap;
+    procedure Swapping;
     procedure TestTemporaryArchive;
     procedure SaveTemporaryArchive;
   private
     procedure SetArchiveName(const Value: string);
-    procedure SetSelfExtractor(const Value: string);
     procedure SetWorkDirectory(const Value: string);
+    procedure SetSfxName(const Value: string);
 
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
@@ -349,7 +348,7 @@ type
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property ArchiveComment: string read FArchiveComment write FArchiveComment;
-    property ArchiveSelfExtractor: string read FSfxName write FSfxName;
+    property SelfExtractor: string read FSfxName write FSfxName;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
     property CompressionParams: string read FCompressionParams write FCompressionParams;
     property EncryptionParams: string read FEncryptionParams write FEncryptionParams;
@@ -739,34 +738,30 @@ constructor TArchiver.Create;
 begin
   inherited Create;
   Randomize;
-
-  FTerminated      := TRUE;
-  FSuspended       := FALSE;
-  FIsNeededToRun   := FALSE;
-  FIsNeededToSwap  := FALSE;
-  FIsNeededToSave  := FALSE;
-
-  FArchiveName     := '';
-  FArchiveReader   := nil;
-  FSwapName        := '';
-  FSwapReader      := nil;
-  FSwapWriter      := nil;
-  FTempName        := '';
-  FTempWriter      := nil;
-
-
-
-  FWorkDirectory      := '';
-  FCompressionParams  := '';
-  FEncryptionParams   := '';
-  FSelfExtractor      := '';
-  FArchiveComment     := '';
-  FTestTempArchive    := FALSE;
-  FThreshold          := 0;
-
+  FSuspended         := FALSE;
+  FIsNeededToRun     := FALSE;
+  FIsNeededToSwap    := FALSE;
+  FIsNeededToSave    := FALSE;
+  // files and streams
+  FArchiveName       := '';
+  FArchiveReader     := nil;
+  FSwapName          := '';
+  FSwapReader        := nil;
+  FSwapWriter        := nil;
+  FTempName          := '';
+  FTempWriter        := nil;
+  FSfxName           := '';
+  FSfxStream         := nil;
+  // options
+  FWorkDirectory     := '';
+  FCompressionParams := '';
+  FEncryptionParams  := '';
+  FArchiveComment    := '';
+  FTestTempArchive   := FALSE;
+  FVolumeSize        := 0;
   // items list
-  FArchiveItems    := TArchiveItems.Create;
-  FSearchRecs      := TList.Create;
+  FArchiveItems      := TArchiveItems.Create;
+  FSearchRecs        := TList.Create;
 end;
 
 destructor TArchiver.Destroy;
@@ -1118,7 +1113,7 @@ begin
   end;
 end;
 
-procedure TArchiver.OpenSwap;
+procedure TArchiver.Swapping;
 var
   I: longint;
   CRC: longword;
@@ -1167,11 +1162,10 @@ begin
     Tester := TArchiver.Create;
     Tester.OnRequestBlankImage := OnRequestBlankImage;
     Tester.OnRequestImage      := OnRequestImage;
-
     Tester.OnProgress          := OnProgress;
     Tester.OnMessage           := OnMessage;
 
-    Tester.EncryptionParams := FEncryptionParams;
+    Tester.EncryptionParams    := FEncryptionParams;
 
     Tester.OpenArchive(FTempName);
     if ExitStatus = esNoError then
@@ -1191,7 +1185,7 @@ begin
   SysUtils.DeleteFile(FSwapName);
   if ExitStatus = esNoError then
   begin
-    if FThreshold > 0 then
+    if FVolumeSize > 0 then
     begin
       FTotalSize     := 0;
       FProcessedSize := 0;
@@ -1202,7 +1196,7 @@ begin
       end;
 
       FArchiveReader := TFileReader.Create(FTempName, FOnRequestImage);
-      FTempWriter    := TFileWriter.Create(FArchiveName, FOnRequestBlankImage, FThreshold);
+      FTempWriter    := TFileWriter.Create(FArchiveName, FOnRequestBlankImage, FVolumeSize);
       FTempWriter.WriteDWord(beexArchiveMarker);
 
       FEncoder := TStreamEncoder.Create(FTempWriter);
@@ -1211,7 +1205,6 @@ begin
         if ExitStatus = esNoError then
         begin
           Item := FArchiveItems.Items[I];
-
           case Item.FTag of
             aitUpdate: DoMessage(Format(cmSplitting, [Item.FileName]));
           end;
@@ -1250,21 +1243,17 @@ begin
       TestTemporaryArchive;
     SaveTemporaryArchive;
   end;
-
-  FSearchRecs.Clear;
   FArchiveItems.Clear;
+  FSearchRecs.Clear;
 
-  FArchiveName       := '';
-  FSwapName          := '';
-  FTempName          := '';
+  FArchiveName := '';
+  FSwapName    := '';
+  FTempName    := '';
 
-  FWorkDirectory     := '';
-  FCompressionParams := '';
-  FEncryptionParams  := '';
-  FSelfExtractor     := '';
-  FArchiveComment    := '';
-  FTestTempArchive   := FALSE;
-  FThreshold         := 0;
+  FSuspended      := FALSE;
+  FIsNeededToRun  := FALSE;
+  FIsNeededToSwap := FALSE;
+  FIsNeededToSave := FALSE;
 end;
 
 // TArchiver # FIND #
@@ -1279,8 +1268,7 @@ end;
 procedure TArchiver.Terminate;
 begin
   SetExitStatus(esUserAbortError);
-  FSuspended  := FALSE;
-  FTerminated := TRUE;
+  FSuspended := FALSE;
 end;
 
 procedure TArchiver.Suspend(Value: boolean);
@@ -1288,7 +1276,7 @@ begin
   FSuspended := Value;
 end;
 
-// TArchiver # GET/SET #
+// TArchiver # GET #
 
 function TArchiver.GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
 var
@@ -1354,14 +1342,16 @@ begin
   Result := FArchiveItems.Items[Index];
 end;
 
+// TArchiver # SET PROPERTY #
+
 procedure TArchiver.SetArchiveName(const Value: string);
 begin
   OpenArchive(Value);
 end;
 
-procedure TArchiver.SetSelfExtractor(const Value: string);
+procedure TArchiver.SetSfxName(const Value: string);
 begin
-  FSelfExtractor := Value;
+  FSfxName := Value;
 end;
 
 procedure TArchiver.SetWorkDirectory(const Value: string);
@@ -1375,8 +1365,7 @@ end;
 
 // TArchiver # DO EVENT #
 
-procedure TArchiver.DoRequestBlankImage(ImageNumber: longint;
- var Abort : Boolean);
+procedure TArchiver.DoRequestBlankImage(ImageNumber: longint; var Abort : Boolean);
 begin
   Abort := TRUE;
   if Assigned(FOnRequestImage) then
@@ -1531,11 +1520,6 @@ procedure TArchiver.CheckTags4Test;
 var
   I: longint;
 begin
-  FSuspended       := FALSE;
-  FIsNeededToRun   := FALSE;
-  FIsNeededToSwap  := FALSE;
-  FIsNeededToSave  := FALSE;
-
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitStatus = esNoError then
       if FArchiveItems.Items[I].FTag = aitUpdate then
@@ -1552,11 +1536,6 @@ var
   Confirm: TArchiveConfirm;
   ExtractAs: string;
 begin
-  FSuspended       := FALSE;
-  FIsNeededToRun   := FALSE;
-  FIsNeededToSwap  := FALSE;
-  FIsNeededToSave  := FALSE;
-
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitStatus = esNoError then
     begin
@@ -1703,11 +1682,6 @@ var
   Confirm: TArchiveConfirm;
   RemaneAs: string;
 begin
-  FSuspended       := FALSE;
-  FIsNeededToRun   := FALSE;
-  FIsNeededToSwap  := FALSE;
-  FIsNeededToSave  := FALSE;
-
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitStatus = esNoError then
     begin
@@ -1787,11 +1761,6 @@ var
   Item: TArchiveItem;
   Confirm: TArchiveConfirm;
 begin
-  FSuspended       := FALSE;
-  FIsNeededToRun   := FALSE;
-  FIsNeededToSwap  := FALSE;
-  FIsNeededToSave  := FALSE;
-
   for I := 0 to FArchiveItems.Count - 1 do
     if ExitStatus = esNoError then
     begin
@@ -1874,7 +1843,7 @@ begin
       FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
       FTempWriter.WriteDWord(beexArchiveMarker);
 
-      if FIsNeededToSwap then OpenSwap;
+      if FIsNeededToSwap then Swapping;
       if ExitStatus = esNoError then
       begin
         for I := FArchiveItems.Count - 1 downto 0 do
@@ -2037,11 +2006,6 @@ var
   Csr: TCustomSearchRec;
   UpdateAs: string;
 begin
-  FSuspended       := FALSE;
-  FIsNeededToRun   := FALSE;
-  FIsNeededToSwap  := FALSE;
-  FIsNeededToSave  := FALSE;
-
   FSearchRecs.Sort(@CompareCustomSearchRec);
   for J := 0 to FSearchRecs.Count - 1 do
     if ExitStatus = esNoError then
@@ -2141,7 +2105,7 @@ begin
       FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
       FTempWriter.WriteDWord(beexArchiveMarker);
 
-      if FIsNeededToSwap then OpenSwap;
+      if FIsNeededToSwap then Swapping;
       if ExitStatus = esNoError then
       begin
         FEncoder := TStreamEncoder.Create(FTempWriter);
