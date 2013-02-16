@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2010 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 1999-2013 Andrew Filinsky and Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ uses
   // ---
   Bee_Files,
   Bee_Interface,
-  BeeLib_Configuration,
-  {$IFDEF cppDLL}
+  Bee_Configuration,
+  {$IFDEF cLib}
     Bee_LibLink;
   {$ELSE}
     Bee_Modeller;

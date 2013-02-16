@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2011 Andrew Filinsky
+  Copyright (c) 2003-2013 Andrew Filinsky.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
+    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
 unit Bee_Configuration;
@@ -35,7 +35,42 @@ unit Bee_Configuration;
 interface
 
 uses
-  Classes, SysUtils, BeeLib_Configuration;
+  Classes,
+  SysUtils;
+
+// -------------------------------------------------------------------------- //
+//  Configuration tables type                                                 //
+// -------------------------------------------------------------------------- //
+
+const
+  TableSize = 20;
+  TableCols = 2;
+
+type
+  TTableCol = array [0..TableSize] of longword;
+
+  TTable = packed record
+    Level: longword;
+    T: array [0..TableCols - 1] of TTableCol;
+  end;
+
+  TTableParameters = array [1..SizeOf(TTable) div 4] of byte;
+
+// -------------------------------------------------------------------------- //
+//  Default table parameters                                                  //
+// -------------------------------------------------------------------------- //
+
+const
+  DefaultDictionaryLevel: longword = $0002;
+  DefaultTableParameters: TTableParameters =
+    (  3, 163, 157,  65,  93, 117, 135, 109, 126, 252, 172, 252, 152, 227, 249,
+     249, 253, 196,  27,  82,  93,  74, 182, 245,  40,  67,  77, 143, 133, 135,
+     128, 155, 207, 177, 225, 251, 253, 248,  73,  35,  15, 107, 143);
+
+  EmptyTableParameters: TTableParameters =
+    (  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+       0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+       0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0);
 
 // -------------------------------------------------------------------------- //
 //  Configuration class                                                       //

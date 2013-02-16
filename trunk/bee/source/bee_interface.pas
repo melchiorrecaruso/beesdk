@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2005-2012 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,8 +18,11 @@
 
 { Contains:
 
+    ExitStaus, run time application exit status.
+
   Modifyed:
 
+    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
