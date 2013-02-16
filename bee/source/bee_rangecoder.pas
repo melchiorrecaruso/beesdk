@@ -74,7 +74,7 @@ procedure RangeDecoder_FinishDecode(Self: pointer);
 implementation
 
 uses
-  BeeLib_Assembler;
+  Bee_Assembler;
 
 const
   TOP     = 1 shl 24;

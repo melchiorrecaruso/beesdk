@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2008 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2010-2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,15 +18,17 @@
 
 { Contains:
 
-  Bee project compiler directives
+    Bee project compiler directives.
 
   Modifyed:
 
-  v0.7.9 build 1179 - 2010.11.27 by Melchiorre Caruso.
+    v0.7.9 build 1179 - 2010.11.27 by Melchiorre Caruso;
+
+    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
 {$INLINE OFF}
-{$DEFINE cppDLL}
+{$DEFINE cLib}
 
 {$IFDEF MSWINDOWS}
   {*$DEFINE FILENAMECASESENSITIVE}

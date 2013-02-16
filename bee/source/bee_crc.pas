@@ -1,6 +1,7 @@
 {
   Copyright (c) 1998 Dmitry Auzhin;
-            (c) 1999-2010 Andrew Filinsky.
+            (c) 1999-2009 Andrew Filinsky;
+            (c) 2010-2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,17 +23,16 @@
     Routines for Crc32 calculating (c) 1998 Dmitry Auzhin;
     Table is calculated by Sasha Leshinsky.
 
-    (C) 1998 Dmitry Auzhin;
-    (C) 1999-2010 Andrew Filinsky.
-
   Modifyed:
 
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
 
-    v0.8.0 build 1120 - 2010.05.06 by Melchiorre Caruso.
+    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
 unit Bee_Crc;
+
+{$I compiler.inc}
 
 interface
 

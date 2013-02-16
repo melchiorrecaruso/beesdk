@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2013 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1864 - 2013.02.13 by Melchiorre Caruso.
+    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
 unit Bee_CommandLine;

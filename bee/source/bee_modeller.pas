@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2011 Andrew Filinsky
+  Copyright (c) 2003-2013 Andrew Filinsky.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ interface
 
 uses
   Math,                             { Max (), Min (), ...                      }
-  BeeLib_Codec,                     { TSecondaryFCodec, ...                    }
+  Bee_Codec,                        { TSecondaryFCodec, ...                    }
   BeeLib_Assembler,                 { Low-level routines ...                   }
   BeeLib_Configuration;             { TTable, TTableCol, ...                   }
 
