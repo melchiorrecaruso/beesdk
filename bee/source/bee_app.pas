@@ -444,7 +444,7 @@ begin
     FArchiver.TestTempArchive := FCommandLine.tOption;
   // volume size
   if clvOption in FCommandLine.Options then
-    FArchiver.Threshold := FCommandLine.vOption;
+    FArchiver.VolumeSize := FCommandLine.vOption;
 end;
 
 procedure TBeeApp.CloseArchive;
