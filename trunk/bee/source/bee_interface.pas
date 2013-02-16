@@ -44,6 +44,8 @@ const
   esResizeStreamError = 205;  emResizeStreamError = 'Resize stream error (exit code #205) - time elapsed %s seconds.';
   esSplitStreamError  = 206;  emSplitStreamError  = 'Split stream error (exit code #206) - time elapsed %s seconds.';
   esRenameTempError   = 207;  emRenameTempError   = 'Rename temporary archive error (exit code #207) - time elapsed %s seconds.';
+  esBlowFishError     = 208;  emBlowFishError     = 'BlowFish stream size error (exit code #208) - time elapsed %s seconds.';
+
 
   esUserAbortError    = 255;  emUserAbortError    = 'User abort error (exit code #255) - time elapsed %s seconds.';
 

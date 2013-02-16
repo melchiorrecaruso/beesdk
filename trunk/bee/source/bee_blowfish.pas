@@ -18,7 +18,7 @@
 
 { Contains:
 
-    TBlowFish class,
+    TBlowFish class.
   
     kind of encrypter-decrypter.
     Output is multiple of 64bits.
@@ -28,7 +28,7 @@
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
     v0.7.9 build 0360 - 2006.12.28 by Melchiorre Caruso;
   
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v0.8.0 build 1864 - 2013.02.16 by Melchiorre Caruso.
 }
 
 unit Bee_BlowFish;
@@ -36,6 +36,9 @@ unit Bee_BlowFish;
 {$I compiler.inc}
 
 interface
+
+uses
+  Bee_Interface;
 
 const
   MinBlowFishKeyLength = 4;
@@ -50,10 +53,6 @@ type
     P: array [1..18] of longword;
     S: array [1.. 4, 0..255] of longword;
     function F(Input: longword): longword;
-  public
-    { Initialization of a key is needed before performing any encryption
-      or decryption of data. }
-    procedure Initialize(const Key: string);
     { These two should speak for themselves, Xl and Xr are the first and
         the second 32 bits of data you want to encrypt or decrypt, P and S
         are the P-array and the S-boxes which you currently are using.
@@ -61,8 +60,14 @@ type
         Note that the data is not copied or stored before the Blowfish al-
         gorithm  is applied to it  and  that you have to perform a loop in
         order to encrypt or decrypt more data than 8 bytes. }
-    procedure Encode(pXl, pXr: Plongword);
-    procedure Decode(pXl, pXr: Plongword);
+    procedure Encode(pXl, pXr: Plongword); overload;
+    procedure Decode(pXl, pXr: Plongword); overload;
+  public
+    { Initialization of a key is needed before performing any encryption
+      or decryption of data. }
+    constructor Create(const Key: string);
+    procedure Encode(Data: PByte; Count: longint); overload;
+    procedure Decode(Data: PByte; Count: longint); overload;
   end;
 
 
@@ -260,7 +265,7 @@ const
 
 { TBlowFish class }
 
-procedure TBlowFish.Initialize(const Key: string);
+constructor TBlowFish.Create(const Key: string);
 var
   i, j, k: longint;
   Data, Datal, Datar: longword;
@@ -394,6 +399,38 @@ begin
 
   pXl^ := Xl;
   pXr^ := Xr;
+end;
+
+procedure TBlowFish.Encode(Data: PByte; Count: longint);
+var
+I: longint;
+begin
+  if (Count mod 8) = 0 then
+  begin
+    I := 0;
+    while I < Count do
+    begin
+      Encode(@Data[I], @Data[I + 4]);
+      Inc(I, 8);
+    end;
+  end else
+    SetExitStatus(esBlowFishError);
+end;
+
+procedure TBlowFish.Decode(Data: PByte; Count: longint);
+var
+I: longint;
+begin
+  if (Count mod 8) = 0 then
+  begin
+    I := 0;
+    while I < Count do
+    begin
+      Decode(@Data[I], @Data[I + 4]);
+      Inc(I, 8);
+    end;
+  end else
+    SetExitStatus(esBlowFishError);
 end;
 
 end.
