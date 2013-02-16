@@ -37,6 +37,9 @@ uses
 type
   { TBufStream }
   TBufStream = class(TObject)
+  private
+    TBlowFish
+
   protected
     FHandle: THandle;
     FBuffer: array of byte;
