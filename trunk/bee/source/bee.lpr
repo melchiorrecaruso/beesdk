@@ -71,10 +71,10 @@ var
   procedure CtrlHandler(sig: cint);
   begin
     case sig of
-      SIGINT:  App.Terminate;
-      SIGQUIT: App.Terminate;
-      SIGKILL: App.Terminate;
-      SIGSTOP: App.Terminate;
+      SIGINT:  Application.Terminate;
+      SIGQUIT: Application.Terminate;
+      SIGKILL: Application.Terminate;
+      SIGSTOP: Application.Terminate;
     end;
   end;
   {$ENDIF}

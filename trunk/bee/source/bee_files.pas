@@ -158,7 +158,7 @@ procedure DoFlush(Stream: pointer; Data: pointer;
 implementation
 
 uses
-   Bee_Interface;
+  Bee_Interface;
 
 procedure DoFill(Stream: pointer; Data: pointer; Size: longint);
 begin

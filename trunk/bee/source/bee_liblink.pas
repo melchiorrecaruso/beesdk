@@ -49,8 +49,7 @@ type
   TStreamRead  = function(Stream: pointer; Data: pointer; DataSize: longint): longint;
   TStreamWrite = function(Stream: pointer; Data: pointer; DataSize: longint): longint;
 
-function  RangeEncoder_Create
-  (aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
+function  RangeEncoder_Create(aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
 
 procedure RangeEncoder_Destroy     (Self: pointer); cdecl; external;
 procedure RangeEncoder_StartEncode (Self: pointer); cdecl; external;

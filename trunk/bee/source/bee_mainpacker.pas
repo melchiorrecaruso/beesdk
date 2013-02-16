@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2013 Andrew Filinsky and Melchiorre Caruso.
+  Copyright (c) 2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
     TStreamCoder class, stream encoder/decoder;
 
   Modifyed:
+
+   v0.8.0 build 1864 - 2013.02.16 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -46,9 +48,9 @@ type
   TArchiveProgressEvent = procedure(Value: longint) of object;
 
 type
-  { THeaderCoder class }
+  { TStreamCoder class }
 
-  THeaderCoder = class
+  TStreamCoder = class
   private
     FBuffer: array of byte;
     FCoder: pointer;
@@ -69,9 +71,9 @@ type
     property OnProgress: TArchiveProgressEvent read FOnProgressEvent write FOnProgressEvent;
   end;
 
-  { THeaderEncoder class }
+  { TStreamEncoder class }
 
-  THeaderEncoder = class(THeaderCoder)
+  TStreamEncoder = class(TStreamCoder)
   private
     FStream: TFileWriter;
   public
@@ -81,9 +83,9 @@ type
     function Encode(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
   end;
 
-  { THeaderDecoder class }
+  { TStreamDecoder class }
 
-  THeaderDecoder = class(THeaderCoder)
+  TStreamDecoder = class(TStreamCoder)
   private
     FStream: TFileReader;
   public
@@ -98,27 +100,27 @@ implementation
 uses
   Bee_Crc, Bee_BufStream;
 
-/// THeaderCoder class
+/// TStreamCoder class
 
-constructor THeaderCoder.Create;
+constructor TStreamCoder.Create;
 begin
   inherited Create;
   SetLength(FBuffer, 0);
 end;
 
-destructor THeaderCoder.Destroy;
+destructor TStreamCoder.Destroy;
 begin
   SetLength(FBuffer, 0);
   inherited Destroy;
 end;
 
-procedure THeaderCoder.DoProgress(Value: longint);
+procedure TStreamCoder.DoProgress(Value: longint);
 begin
   if Assigned(FOnProgressEvent) then
     FOnProgressEvent(Value);
 end;
 
-procedure THeaderCoder.SetDictionaryLevel(Value: longint);
+procedure TStreamCoder.SetDictionaryLevel(Value: longint);
 begin
   if Value <> FDictionaryLevel then
   begin
@@ -127,13 +129,13 @@ begin
   end;
 end;
 
-procedure THeaderCoder.SetCompressionTable(const Value: TTableParameters);
+procedure TStreamCoder.SetCompressionTable(const Value: TTableParameters);
 begin
   FCompressionTable := Value;
   BaseCoder_SetTable(FModeller, @FCompressionTable);
 end;
 
-procedure THeaderCoder.FreshModeller(SolidCompression: boolean);
+procedure TStreamCoder.FreshModeller(SolidCompression: boolean);
 begin
   if SolidCompression = FALSE then
     BaseCoder_FreshFlexible(FModeller)
@@ -141,9 +143,9 @@ begin
     BaseCoder_FreshSolid(FModeller);
 end;
 
-/// THeaderEncoder class
+/// TStreamEncoder class
 
-constructor THeaderEncoder.Create(Stream: TFileWriter);
+constructor TStreamEncoder.Create(Stream: TFileWriter);
 begin
   inherited Create;
   FStream   := Stream;
@@ -151,14 +153,14 @@ begin
   FModeller := BaseCoder_Create(FCoder);
 end;
 
-destructor THeaderEncoder.Destroy;
+destructor TStreamEncoder.Destroy;
 begin
   BaseCoder_Destroy(FModeller);
   RangeEncoder_Destroy(FCoder);
   inherited Destroy;
 end;
 
-function THeaderEncoder.Copy(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
+function TStreamEncoder.Copy(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
 var
   Count:  int64;
   Readed: longint;
@@ -188,7 +190,7 @@ begin
   end;
 end;
 
-function THeaderEncoder.Encode(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
+function TStreamEncoder.Encode(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
 var
   Count:  int64;
   Readed: longint;
@@ -219,9 +221,9 @@ begin
   end;
 end;
 
-  { TheaderDecoder class }
+  { TStreamDecoder class }
 
-constructor THeaderDecoder.Create(Stream: TFileReader);
+constructor TStreamDecoder.Create(Stream: TFileReader);
 begin
   inherited Create;
   FStream   := Stream;
@@ -229,14 +231,14 @@ begin
   FModeller := BaseCoder_Create(FCoder);
 end;
 
-destructor THeaderDecoder.Destroy;
+destructor TStreamDecoder.Destroy;
 begin
   BaseCoder_Destroy(FModeller);
   RangeDecoder_Destroy(FCoder);
   inherited Destroy;
 end;
 
-function THeaderDecoder.Copy(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
+function TStreamDecoder.Copy(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
 var
   Count:  int64;
   Readed: longint;
@@ -266,7 +268,7 @@ begin
   end;
 end;
 
-function THeaderDecoder.Decode(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
+function TStreamDecoder.Decode(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
 var
   Count:  int64;
   Writed: longint;

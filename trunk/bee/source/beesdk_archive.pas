@@ -247,13 +247,13 @@ type
     FTestTempArchive: boolean;
     FThreshold: int64;
   private
-    FEncoder: THeaderEncoder;
+    FEncoder: TStreamEncoder;
     procedure InitEncoder      (Item: TArchiveItem);
     procedure EncodeFromArchive(Item: TArchiveItem);
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
   private
-    FDecoder: THeaderDecoder;
+    FDecoder: TStreamDecoder;
     procedure InitDecoder      (Item: TArchiveItem);
     procedure DecodeToNul      (Item: TArchiveItem);
     procedure DecodeToSwap     (Item: TArchiveItem);
@@ -1136,7 +1136,7 @@ begin
     FSwapWriter := TFileWriter.Create(FSwapName, FOnRequestBlankImage, 0);
     FSwapWriter.WriteDWord(beexArchiveMarker);
 
-    FDecoder := THeaderDecoder.Create(FArchiveReader);
+    FDecoder := TStreamDecoder.Create(FArchiveReader);
     FDecoder.OnProgress := DoProgress;
     for I := 0 to FArchiveItems.Count - 1 do
       if ExitStatus = esNoError then
@@ -1211,7 +1211,7 @@ begin
       FTempWriter    := TFileWriter.Create(FArchiveName, FOnRequestBlankImage, FThreshold);
       FTempWriter.WriteDWord(beexArchiveMarker);
 
-      FEncoder := THeaderEncoder.Create(FTempWriter);
+      FEncoder := TStreamEncoder.Create(FTempWriter);
       FEncoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
         if ExitStatus = esNoError then
@@ -1638,7 +1638,7 @@ begin
     if ExitStatus = esNoError then
     begin
       CheckSequences4Extract;
-      FDecoder := THeaderDecoder.Create(FArchiveReader);
+      FDecoder := TStreamDecoder.Create(FArchiveReader);
       FDecoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
         if ExitStatus = esNoError then
@@ -1674,7 +1674,7 @@ begin
     if ExitStatus = esNoError then
     begin
       CheckSequences4Extract;
-      FDecoder := THeaderDecoder.Create(FArchiveReader);
+      FDecoder := TStreamDecoder.Create(FArchiveReader);
       FDecoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
         if ExitStatus = esNoError then
@@ -1763,7 +1763,7 @@ begin
       FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
       FTempWriter.WriteDWord(beexArchiveMarker);
 
-      FEncoder := THeaderEncoder.Create(FTempWriter);
+      FEncoder := TStreamEncoder.Create(FTempWriter);
       FEncoder.OnProgress := DoProgress;
       for I := 0 to FArchiveItems.Count - 1 do
         if ExitStatus = esNoError then
@@ -1897,7 +1897,7 @@ begin
           end;
         end;
 
-        FEncoder := THeaderEncoder.Create(FTempWriter);
+        FEncoder := TStreamEncoder.Create(FTempWriter);
         FEncoder.OnProgress := DoProgress;
         for I := 0 to FArchiveItems.Count - 1 do
           if ExitStatus = esNoError then
@@ -2149,7 +2149,7 @@ begin
       if FIsNeededToSwap then OpenSwap;
       if ExitStatus = esNoError then
       begin
-        FEncoder := THeaderEncoder.Create(FTempWriter);
+        FEncoder := TStreamEncoder.Create(FTempWriter);
         FEncoder.OnProgress := DoProgress;
         for I := 0 to FArchiveItems.Count - 1 do
           if ExitStatus = esNoError then
