@@ -36,8 +36,8 @@ interface
 uses
   Math,                             { Max (), Min (), ...                      }
   Bee_Codec,                        { TSecondaryFCodec, ...                    }
-  BeeLib_Assembler,                 { Low-level routines ...                   }
-  BeeLib_Configuration;             { TTable, TTableCol, ...                   }
+  Bee_Assembler,                    { Low-level routines ...                   }
+  Bee_Configuration;                { TTable, TTableCol, ...                   }
 
 const
   BitChain  = 4;                    { Size of data portion, bit                }

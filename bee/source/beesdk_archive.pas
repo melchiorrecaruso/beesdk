@@ -18,9 +18,12 @@
 
 { Contains:
 
-  Modifyed:
-}
+   TArchiver, main class.
 
+  Modifyed:
+
+    v0.8.0 build 1864 - 2013.02.16 by Melchiorre Caruso.
+}
 
 unit BeeSDK_Archive;
 
@@ -39,7 +42,7 @@ uses
 
 const
   /// beex archive marker
-  beexArchiveMarker = $1A656542;
+  beexArchiveMarker = $78454542;
 
   /// beex archive version
   beexVersionNeededToRead    = $50;
@@ -113,11 +116,13 @@ type
 
   TArchiveEncryptionFlags = set of TArchiveEncryptionFlag;
 
+  /// archive item tag
   TArchiveItemTag = (aitNone, aitAdd, aitUpdate, aitDecode, aitDecodeAndUpdate);
 
+  /// archive item
   TArchiveItem = class(TObject)
   protected
-    // Item property
+    // item property
     FFileName: string;
     FFlags: TArchiveItemFlags;
     FVersionNeededToExtract: longword;
@@ -125,19 +130,19 @@ type
     FLastModifiedTime: longint;
     FAttributes: longword;
     FComment: string;
-    // Data descriptor property
+    // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
     FDiskNumber: longword;
     FDiskSeek: int64;
     FCRC32: longword;
-    // Compression property
+    // compression property
     FCompressionFlags: TArchiveCompressionFlags;
     FCompressionMethod: TArchiveCompressionMethod;
     FCompressionLevel: TArchiveCompressionLevel;
     FDictionaryLevel: TArchiveDictionaryLevel;
     FCompressionTable: TTableParameters;
-    // Encryption property
+    // encryption property
     FEncryptionFlags: TArchiveEncryptionFlags;
     FEncryptionMethod: TArchiveEncryptionMethod;
   protected
@@ -145,14 +150,13 @@ type
     FTag: TArchiveItemTag;
     FExternalFileName: string;
     FExternalFileSize: int64;
-    function GetSolidCompression: boolean;
+    function GetCompressionBlock: boolean;
   public {methods}
     constructor Create(const aFileName: string);
     constructor Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
     procedure Update(SearchRec: TCustomSearchRec);
   public {property}
-    // Item property
     property FileName: string read FFileName;
     property Flags: TArchiveItemFlags read FFlags;
     property VersionNeededToExtract: longword read FVersionNeededToExtract;
@@ -160,24 +164,25 @@ type
     property LastModifiedTime: longint read FLastModifiedTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
-    // Data property
+    // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
     property DiskNumber: longword read FDiskNumber;
     property DiskSeek: int64 read FDiskSeek;
     property CRC32: longword read FCRC32;
-    // Compression property
+    // compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
     property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod;
     property CompressionLevel: TArchiveCompressionLevel read FCompressionLevel;
     property DictionaryLevel: TArchiveDictionaryLevel read FDictionaryLevel;
-    property SolidCompression: boolean read GetSolidCompression;
+    property CompressionBlock: boolean read GetCompressionBlock;
     property CompressionTable: TTableParameters read FCompressionTable;
-    // Encryption property
+    // encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
     property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
   end;
 
+  /// archive item list
   TArchiveItems = class(TObject)
   private {private}
     FItems: TList;
@@ -198,9 +203,11 @@ type
     property Items[Index: longint]: TArchiveItem read GetItem;
   end;
 
-  TArchiveMessageEvent = procedure(const aMessage: string) of object;
-
+  /// ...
   TArchiveConfirm = (arcOk, arcCancel, arcQuit);
+
+  /// archive events
+  TArchiveMessageEvent = procedure(const aMessage: string) of object;
 
   TArchiveRenameEvent = procedure(Item: TArchiveItem;
     var RenameAs: string; var Confirm: TArchiveConfirm) of object;
@@ -214,38 +221,36 @@ type
   TArchiveUpdateEvent = procedure(SearchRec: TCustomSearchRec;
     var UpdateAs: string; var Confirm: TArchiveConfirm) of object;
 
-  // a class for each command
-
+  /// archive manager
   TArchiver = class(TObject)
   private
     FSuspended: boolean;
+    FTerminated: boolean;
     FIsNeededToRun: boolean;
     FIsNeededToSwap: boolean;
     FIsNeededToSave: boolean;
     FProcessedSize: int64;
     FTotalSize: int64;
-
+    // filenames and streams
     FArchiveName: string;
     FArchiveReader: TFileReader;
-    FArchiveItems: TArchiveItems;
-    FSearchRecs: TList;
-    FSelfExtractorStream: TMemoryStream;
-
-
     FSwapName: string;
     FSwapReader: TFileReader;
     FSwapWriter: TFileWriter;
-
     FTempName: string;
     FTempWriter: TFileWriter;
-
+    FSfxName: string;
+    FSfxStream: TMemoryStream;
+    // options
     FWorkDirectory: string;
     FCompressionParams: string;
     FEncryptionParams: string;
-    FSelfExtractor: string;
     FArchiveComment: string;
     FTestTempArchive: boolean;
-    FThreshold: int64;
+    FVolumeSize: int64;
+    // items
+    FArchiveItems: TArchiveItems;
+    FSearchRecs: TList;
   private
     FEncoder: TStreamEncoder;
     procedure InitEncoder      (Item: TArchiveItem);
@@ -323,12 +328,10 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-
     procedure OpenArchive(const aArchiveName: string);
     procedure CloseArchive;
-
-    procedure Terminate;
     procedure Suspend(Value: boolean);
+    procedure Terminate;
 
     procedure UnTagAll;
     procedure UnTag(Index: longint);
@@ -344,24 +347,15 @@ type
     procedure DeleteTagged;
     procedure UpdateTagged;
   public
-    property ArchiveName: string
-      read FArchiveName write SetArchiveName;
-    property ArchiveComment: string
-      read FArchiveComment write FArchiveComment;
-    property SelfExtractor: string
-      read FSelfExtractor write SetSelfExtractor;
-
-    property CompressionParams: string
-      read FCompressionParams write FCompressionParams;
-    property EncryptionParams: string
-      read FEncryptionParams write FEncryptionParams;
-
-    property WorkDirectory: string
-      read FWorkDirectory write SetWorkDirectory;
-    property TestTempArchive: boolean
-      read FTestTempArchive write FTestTempArchive;
-    property Threshold: int64 read FThreshold write FThreshold;
-
+    property ArchiveName: string read FArchiveName write SetArchiveName;
+    property ArchiveComment: string read FArchiveComment write FArchiveComment;
+    property ArchiveSelfExtractor: string read FSfxName write FSfxName;
+    property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
+    property CompressionParams: string read FCompressionParams write FCompressionParams;
+    property EncryptionParams: string read FEncryptionParams write FEncryptionParams;
+    property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
+    property VolumeSize: int64 read FVolumeSize write FVolumeSize;
+  public
     property OnRequestBlankImage: TFileWriterRequestBlankImageEvent
       read FOnRequestBlankImage write FOnRequestBlankImage;
     property OnRequestImage: TFileReaderRequestImageEvent
@@ -444,7 +438,7 @@ begin
   Result := 'm0a';
   if Item.CompressionMethod <> acmNone then
   begin
-    if Item.SolidCompression then
+    if Item.CompressionBlock then
     begin
       Result[1] := 's';
     end;
@@ -597,7 +591,7 @@ begin
   if (aefEncryptionMethod  in FEncryptionFlags)     then Stream.WriteInfWord(Ord(FEncryptionMethod));
 end;
 
-function TArchiveItem.GetSolidCompression: boolean;
+function TArchiveItem.GetCompressionBlock: boolean;
 begin
   Result := acfCompressionBlock in FCompressionFlags;
 end;
@@ -634,7 +628,7 @@ var
   Lo, Med, Hi, I: longint;
 begin
   Item.FPosition := FItems.Add(Item);
-  if FNames.Count > 0 then
+  if FNames.Count <> 0 then
   begin
     Lo := 0;
     Hi := FNames.Count - 1;
@@ -679,9 +673,7 @@ begin
   while Hi >= Lo do
   begin
     Med := (Lo + Hi) div 2;
-    I := AnsiCompareFileName(FileName,
-      TArchiveItem(FNames[Med]).FileName);
-
+    I := AnsiCompareFileName(FileName, TArchiveItem(FNames[Med]).FileName);
     if I > 0 then
       Lo := Med + 1
     else
@@ -748,6 +740,7 @@ begin
   inherited Create;
   Randomize;
 
+  FTerminated      := TRUE;
   FSuspended       := FALSE;
   FIsNeededToRun   := FALSE;
   FIsNeededToSwap  := FALSE;
@@ -755,16 +748,13 @@ begin
 
   FArchiveName     := '';
   FArchiveReader   := nil;
-
   FSwapName        := '';
   FSwapReader      := nil;
   FSwapWriter      := nil;
-
   FTempName        := '';
   FTempWriter      := nil;
 
-  FArchiveItems    := TArchiveItems.Create;
-  FSearchRecs      := TList.Create;
+
 
   FWorkDirectory      := '';
   FCompressionParams  := '';
@@ -773,6 +763,10 @@ begin
   FArchiveComment     := '';
   FTestTempArchive    := FALSE;
   FThreshold          := 0;
+
+  // items list
+  FArchiveItems    := TArchiveItems.Create;
+  FSearchRecs      := TList.Create;
 end;
 
 destructor TArchiver.Destroy;
@@ -798,7 +792,7 @@ begin
     if acfCompressionTable in Item.FCompressionFlags then
       FEncoder.CompressionTable := Item.CompressionTable;
 
-    FEncoder.FreshModeller(Item.SolidCompression);
+    FEncoder.FreshModeller(Item.CompressionBlock);
   end;
 end;
 
@@ -857,7 +851,7 @@ begin
     if acfCompressionTable in Item.FCompressionFlags then
       FDecoder.CompressionTable := Item.CompressionTable;
 
-    FDecoder.FreshModeller(Item.SolidCompression);
+    FDecoder.FreshModeller(Item.CompressionBlock);
   end;
 end;
 
@@ -1285,7 +1279,8 @@ end;
 procedure TArchiver.Terminate;
 begin
   SetExitStatus(esUserAbortError);
-  Suspend(FALSE);
+  FSuspended  := FALSE;
+  FTerminated := TRUE;
 end;
 
 procedure TArchiver.Suspend(Value: boolean);
@@ -1328,7 +1323,7 @@ begin
   Result := -1;
   for  I := Index downto 0 do
   begin
-    if FArchiveItems.Items[I].SolidCompression = FALSE then
+    if FArchiveItems.Items[I].CompressionBlock = FALSE then
     begin
       Result := I;
       Break;
@@ -1342,7 +1337,7 @@ var
 begin
   Result := -1;
   for  I := Index to FArchiveItems.Count - 1 do
-    if FArchiveItems.Items[I].SolidCompression = FALSE then
+    if FArchiveItems.Items[I].CompressionBlock = FALSE then
     begin
       Result := I;
       Break;

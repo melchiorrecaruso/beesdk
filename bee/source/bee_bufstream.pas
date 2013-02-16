@@ -32,20 +32,22 @@ unit Bee_BufStream;
 interface
 
 uses
-  Classes;
+  Classes,
+  Bee_BlowFish;
 
 type
   { TBufStream }
   TBufStream = class(TObject)
   private
-    TBlowFish
-
+    FBlowFish: TBlowFish;
   protected
     FHandle: THandle;
     FBuffer: array of byte;
   public
     constructor Create(aHandle: THandle);
     destructor Destroy; override;
+  property
+    BlowFish: TBlowFish read FBlowFish write FBlowFish;
   end;
 
   { TReadBufStream }
@@ -108,7 +110,8 @@ end;
 constructor TBufStream.Create(aHandle: THandle);
 begin
   inherited Create;
-  FHandle := aHandle;
+  FBlowFish := nil;
+  FHandle   := aHandle;
   SetLength(FBuffer, 0);
 end;
 
@@ -176,11 +179,15 @@ procedure TReadBufStream.FillBuffer;
 begin
   FBufferIndex := 0;
   FBufferSize  := FileRead(FHandle, FBuffer[0], Length(FBuffer));
+
   if FBufferSize = -1 then
   begin
     FBufferSize := 0;
     SetExitStatus(esFillStreamError);
   end;
+
+  if Assigned(FBlowFish) then
+    FBlowFish.Decode(@FBuffer[0], Length(FBuffer));
 end;
 
 { TWriteBufStream class }
@@ -226,6 +233,9 @@ end;
 
 procedure TWriteBufStream.FlushBuffer;
 begin
+  if Assigned(FBlowFish) then
+    FBlowFish.Encode(@FBuffer[0], Length(FBuffer));
+
   if FBufferIndex > 0 then
   begin
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
@@ -248,136 +258,6 @@ begin
       SetExitStatus(esResizeStreamError);
   end;
 end;
-
-(*
-{ TReadBlowFishBufStream class }
-
-constructor TReadBlowFishBufStream.Create(ASource: TStream; ACapacity: longint);
-begin
-  FBFK := False;
-  FBF  := TBlowFish.Create;
-  inherited Create(ASource, ACapacity);
-end;
-
-constructor TReadBlowFishBufStream.Create(ASource: TStream);
-begin
-  FBFK := False;
-  FBF  := TBlowFish.Create;
-  inherited Create(ASource);
-end;
-
-destructor TReadBlowFishBufStream.Destroy;
-begin
-  inherited Destroy;
-  FBF.Destroy;
-end;
-
-procedure TReadBlowFishBufStream.FillBuffer;
-var
-  I: longint;
-begin
-  inherited FillBuffer;
-  if FBFK then
-  begin
-    I := 0;
-    while I < FBufferSize do
-    begin
-      FBF.Decode(@FBuffer[I], @FBuffer[I + 4]);
-      Inc(I, 8);
-    end;
-  end;
-end;
-
-procedure TReadBlowFishBufStream.SetCapacity(const AValue: longint);
-begin
-  if (AValue mod 8) = 0 then
-  begin
-    inherited SetCapacity(AValue);
-  end;
-end;
-
-procedure TReadBlowFishBufStream.StartDecode(const Value: string);
-begin
-  FBFK := Length(Value) >= MinBlowFishKeyLength;
-  if FBFK then
-  begin
-    FBufferSize   := 0;
-    FBufferReaded := 0;
-    FBF.Initialize(Value);
-  end;
-end;
-
-procedure TReadBlowFishBufStream.FinishDecode;
-begin
-  FBufferSize   := 0;
-  FBufferReaded := 0;
-  FBFK := False;
-end;
-
-{ TWriteBlowFishBufStream class }
-
-constructor TWriteBlowFishBufStream.Create(ASource: TStream; ACapacity: longint);
-begin
-  FBFK := False;
-  FBF  := TBlowFish.Create;
-  inherited Create(ASource, ACapacity);
-end;
-
-constructor TWriteBlowFishBufStream.Create(ASource: TStream);
-begin
-  FBFK := False;
-  FBF  := TBlowFish.Create;
-  inherited Create(ASource);
-end;
-
-destructor TWriteBlowFishBufStream.Destroy;
-begin
-  inherited Destroy;
-  FBF.Destroy;
-end;
-
-procedure TWriteBlowFishBufStream.FlushBuffer;
-var
-  I: longint;
-begin
-  if FBFK then
-  begin
-    I := 0;
-    while I < FBufferSize do
-    begin
-      FBF.Encode(@FBuffer[I], @FBuffer[I + 4]);
-      Inc(I, 8);
-    end;
-    FBufferSize := I;
-  end;
-  inherited FlushBuffer;
-end;
-
-procedure TWriteBlowFishBufStream.SetCapacity(const AValue: longint);
-begin
-  if (AValue mod 8) = 0 then
-  begin
-    inherited SetCapacity(AValue);
-  end;
-end;
-
-procedure TWriteBlowFishBufStream.StartEncode(const Value: string);
-begin
-  FlushBuffer;
-  // set key ...
-  FBFK := Length(Value) >= MinBlowFishKeyLength;
-  if FBFK then
-  begin
-    FBF.Initialize(Value);
-  end;
-end;
-
-procedure TWriteBlowFishBufStream.FinishEncode;
-begin
-  FlushBuffer;
-  FBFK := False;
-end;
-*)
 
 end.
 

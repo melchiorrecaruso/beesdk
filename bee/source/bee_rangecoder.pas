@@ -1,6 +1,7 @@
 {
   Copyright (c) 2003 Evgeny Shelwien;
-  Copyright (c) 2003-2010 Andrew Filinsky
+  Copyright (c) 2003-2012 Andrew Filinsky;
+  Copyright (c) 2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +28,8 @@
     It uses MulDiv opcode extension.
 
   (C) 2003 Evgeny Shelwien;
-  (C) 2003-2010 Andrew Filinsky.
+  (C) 2003-2012 Andrew Filinsky;
+  (C) 2013 Melchiorre Caruso.
 
   Created:
 
@@ -43,7 +45,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
   
-    v0.8.0 build 1100 - 2011.08.02 by Melchiorre Caruso.
+    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
 unit Bee_RangeCoder;
@@ -53,20 +55,20 @@ unit Bee_RangeCoder;
 interface
 
 uses
-  Classes;
+  Bee_BufStream;
 
 type
   { Array of Frequencyes }
 
   TFreq = array of longword;
 
-function  RangeEncoder_Create      (aStream: TStream): pointer;
+function  RangeEncoder_Create      (aStream: TWriteBufStream): pointer;
 procedure RangeEncoder_Destroy     (Self: pointer);
 procedure RangeEncoder_StartEncode (Self: pointer);
 procedure RangeEncoder_FinishEncode(Self: pointer);
 function  RangeEncoder_Update      (Self: pointer; const Freq: TFreq; aSymbol: longword): longword;
 
-function  RangeDecoder_Create      (aStream: TStream): pointer;
+function  RangeDecoder_Create      (aStream: TReadBufStream): pointer;
 procedure RangeDecoder_Destroy     (Self: pointer);
 procedure RangeDecoder_StartDecode (Self: pointer);
 procedure RangeDecoder_FinishDecode(Self: pointer);
@@ -86,7 +88,7 @@ type
   { TRangeCoder }
 
   TRangeCoder = packed record
-    FStream: TStream;
+    FStream: TBufStream;
     Range:   longword;
     Low:     longword;
     Code:    longword;
@@ -97,7 +99,7 @@ type
 
 { TRangeCoder }
 
-function TRangeCoder_Create(aStream: TStream): pointer;
+function TRangeCoder_Create(aStream: TWriteBufStream): pointer;
 begin
   Result := GetMem(SizeOf(TRangeCoder));
   with TRangeCoder(Result^) do
@@ -134,12 +136,15 @@ begin
 end;
 
 procedure TRangeCoder_ShiftLow(Self: pointer);
+var
+  Value: byte;
 begin
   with TRangeCoder(Self^) do
   begin
     if (Low < Thres) or (Carry <> 0) then
     begin
-      FStream.Write(Cache + Carry, 1);
+      Value := Cache + Carry;
+      FStream.Write(@Value, 1);
       while FFNum <> 0 do
       begin
         FStream.Write(Carry - 1);
@@ -184,6 +189,25 @@ begin
   end;
 end;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function TRangeCoder.UpdateSymbol(Self: TRangeCoder; const Freq: TFreq; aSymbol: longword): longword;
 var
   CumFreq, TotFreq, I: longword;
@@ -209,24 +233,6 @@ begin
   Result := aSymbol;
 end;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 procedure TRangeCoder.Decode(CumFreq, Freq, TotFreq: longword);
 begin
   Code  := Code - MulDiv(Range, CumFreq, TotFreq);
@@ -242,8 +248,6 @@ function TRangeCoder.GetFreq(TotFreq: longword): longword;
 begin
   Result := MulDecDiv(Code + 1, TotFreq, Range);
 end;
-
-
 
 function TSecondaryDecoder.UpdateSymbol(const Freq: TFreq; aSymbol: longword): longword;
 var
@@ -270,6 +274,19 @@ begin
   Decode(SumFreq, Freq[aSymbol], TotFreq);
   // Return Result...
   Result := aSymbol;
+end;
+
+function TRangeCoder.InputByte: Cardinal;
+var
+  Value: Byte;
+begin
+  FStream.Read (Value, 1);
+  Result := Value;
+end;
+
+procedure TRangeCoder.OutputByte (aValue: Cardinal);
+begin
+  FStream.Write (aValue, 1);
 end;
 
 end.
