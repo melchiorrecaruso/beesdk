@@ -1521,12 +1521,14 @@ var
   I: longint;
 begin
   for I := 0 to FArchiveItems.Count - 1 do
-    if ExitStatus = esNoError then
-      if FArchiveItems.Items[I].FTag = aitUpdate then
-      begin
-        FIsNeededToRun := TRUE;
-        Break;
-      end;
+  begin
+    if ExitStatus <> esNoError then Break;
+    if FArchiveItems.Items[I].FTag = aitUpdate then
+    begin
+      FIsNeededToRun := TRUE;
+      Break;
+    end;
+  end;
 end;
 
 procedure TArchiver.CheckTags4Extract;
@@ -1534,35 +1536,23 @@ var
   I: longint;
   Item: TArchiveItem;
   Confirm: TArchiveConfirm;
-  ExtractAs: string;
 begin
   for I := 0 to FArchiveItems.Count - 1 do
-    if ExitStatus = esNoError then
+  begin
+    if ExitStatus <> esNoError then Break;
+    Item := FArchiveItems.Items[I];
+    if Item.FTag = aitUpdate then
     begin
-      Item := FArchiveItems.Items[I];
-      if Item.FTag = aitUpdate then
-      begin
-        repeat
-          DoExtract(Item, ExtractAs, Confirm);
-          case Confirm of
-            arcOk:     if FileNameIsValid(ExtractAs) then
-                       begin
-                         FIsNeededToRun         := TRUE;
-                         Item.FExternalFileName := ExtractAs;
-                         Break;
-                       end;
-            arcCancel: begin
-                         Item.FTag:= aitNone;
-                         Break;
-                       end;
-            arcQuit:   begin
-                         SetExitStatus(esUserAbortError);
-                         Break;
-                       end;
-          end;
-        until TRUE;
+      //repeat
+        DoExtract(Item, Item.FExternalFileName, Confirm);
+      //until FileNameIsValid(Item.FExternalFileName) = FALSE;
+      case Confirm of
+        arcOk:     FIsNeededToRun := TRUE;
+        arcCancel: Item.FTag      := aitNone;
+        arcQuit:   SetExitStatus(esUserAbortError);
       end;
     end;
+  end;
 end;
 
 procedure TArchiver.CheckSequences4Extract;
@@ -1616,32 +1606,27 @@ begin
   CheckTags4Extract;
   if FIsNeededToRun then
   begin
-    if ExitStatus = esNoError then
+    CheckSequences4Extract;
+    FDecoder := TStreamDecoder.Create(FArchiveReader);
+    FDecoder.OnProgress := DoProgress;
+    for I := 0 to FArchiveItems.Count - 1 do
     begin
-      CheckSequences4Extract;
-      FDecoder := TStreamDecoder.Create(FArchiveReader);
-      FDecoder.OnProgress := DoProgress;
-      for I := 0 to FArchiveItems.Count - 1 do
-        if ExitStatus = esNoError then
-        begin
-          Item := FArchiveItems.Items[I];
-          InitDecoder(Item);
-          case Item.FTag of
-            aitUpdate: begin
-                DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
-                DecodeToFile(Item);
-              end;
-            aitDecode: begin
-                DoMessage(Format(cmDecoding, [Item.FExternalFileName]));
-                DecodeToNul(Item);
-              end;
-            else SetExitStatus(esCaseError);
-          end;
-        end;
-      FreeAndNil(FDecoder);
+      if ExitStatus <> esNoError then Break;
+      Item := FArchiveItems.Items[I];
+      InitDecoder(Item);
+      case Item.FTag of
+        aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
+        aitDecode: DoMessage(Format(cmDecoding,   [Item.FExternalFileName]));
+      end;
+      case Item.FTag of
+        aitUpdate: DecodeToFile(Item);
+        aitDecode: DecodeToNul (Item);
+        else SetExitStatus(esCaseError);
+      end;
     end;
-    UnTagAll;
+    FreeAndNil(FDecoder);
   end;
+  UnTagAll;
 end;
 
 procedure TArchiver.TestTagged;
@@ -1652,32 +1637,27 @@ begin
   CheckTags4Test;
   if FIsNeededToRun then
   begin
-    if ExitStatus = esNoError then
+    CheckSequences4Extract;
+    FDecoder := TStreamDecoder.Create(FArchiveReader);
+    FDecoder.OnProgress := DoProgress;
+    for I := 0 to FArchiveItems.Count - 1 do
     begin
-      CheckSequences4Extract;
-      FDecoder := TStreamDecoder.Create(FArchiveReader);
-      FDecoder.OnProgress := DoProgress;
-      for I := 0 to FArchiveItems.Count - 1 do
-        if ExitStatus = esNoError then
-        begin
-          Item := FArchiveItems.Items[I];
-          InitDecoder(Item);
-          case Item.FTag of
-            aitUpdate: begin
-              DoMessage(Format(cmTesting, [Item.FileName]));
-              DecodeToNul(Item);
-            end;
-            aitDecode: begin
-              DoMessage(Format(cmDecoding, [Item.FileName]));
-              DecodeToNul(Item);
-            end;
-            else SetExitStatus(esCaseError);
-          end;
-        end;
-      FreeAndNil(FDecoder);
+      if ExitStatus <> esNoError then Break;
+      Item := FArchiveItems.Items[I];
+      InitDecoder(Item);
+      case Item.FTag of
+        aitUpdate: DoMessage(Format(cmTesting,  [Item.FileName]));
+        aitDecode: DoMessage(Format(cmDecoding, [Item.FileName]));
+      end;
+      case Item.FTag of
+        aitUpdate: DecodeToNul(Item);
+        aitDecode: DecodeToNul(Item);
+        else SetExitStatus(esCaseError);
+      end;
     end;
-    UnTagAll;
+    FreeAndNil(FDecoder);
   end;
+  UnTagAll;
 end;
 
 // TArchiver # RENAME #
