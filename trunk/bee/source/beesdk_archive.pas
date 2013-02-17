@@ -1544,16 +1544,23 @@ begin
       begin
         repeat
           DoExtract(Item, ExtractAs, Confirm);
-        until (Confirm <> arcOk) or (FileNameIsValid(ExtractAs));
-
-        case Confirm of
-          arcOk: begin
-            FIsNeededToRun         := TRUE;
-            Item.FExternalFileName := ExtractAs;
+          case Confirm of
+            arcOk:     if FileNameIsValid(ExtractAs) then
+                       begin
+                         FIsNeededToRun         := TRUE;
+                         Item.FExternalFileName := ExtractAs;
+                         Break;
+                       end;
+            arcCancel: begin
+                         Item.FTag:= aitNone;
+                         Break;
+                       end;
+            arcQuit:   begin
+                         SetExitStatus(esUserAbortError);
+                         Break;
+                       end;
           end;
-          arcCancel: Item.FTag:= aitNone;
-          arcQuit: SetExitStatus(esUserAbortError);
-        end;
+        until TRUE;
       end;
     end;
 end;
