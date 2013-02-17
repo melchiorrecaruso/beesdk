@@ -344,7 +344,11 @@ end;
 
 function FileNameIsValid(const FileName : string): boolean;
 const
+  {$IFDEF MSWINDOWS}
   InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
+  {$ELSE}
+  InvalidCharacters: set of char = [PathDelim];
+  {$ENDIF}
 var
   I: longint;
 begin
