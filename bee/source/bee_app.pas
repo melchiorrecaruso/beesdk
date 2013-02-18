@@ -116,7 +116,7 @@ end;
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1659 archiver utility, Feb 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1885 archiver utility, Feb 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -312,6 +312,10 @@ end;
 procedure TBeeApp.DoRename(Item: TArchiveItem;
   var RenameAs: string; var Confirm: TArchiveConfirm);
 begin
+
+
+  //BUG:0002    FileNameIsValid  &  FileNameFind
+
   Write(#8#8#8#8#8#8, ParamToOem('Rename file "'
     + RenameAs + '" as (empty to skip): '));
 
