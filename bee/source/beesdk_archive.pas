@@ -1053,11 +1053,11 @@ begin
     begin
       CurrentItem := FArchiveItems.Items[I];
       /// Item property ///
-      if not(aifVersionNeededToExtract in CurrentItem.Flags) then CurrentItem.FVersionNeededToExtract := PreviusItem.FVersionNeededToExtract;
-      if not(aifUncompressedSize       in CurrentItem.Flags) then CurrentItem.FUncompressedSize       := PreviusItem.FUncompressedSize;
-      if not(aifLastModifiedTime       in CurrentItem.Flags) then CurrentItem.FLastModifiedTime       := PreviusItem.FLastModifiedTime;
-      if not(aifAttributes             in CurrentItem.Flags) then CurrentItem.FAttributes             := PreviusItem.FAttributes;
-      if not(aifComment                in CurrentItem.Flags) then CurrentItem.FComment                := PreviusItem.FComment;
+      if not(aifVersionNeededToExtract in CurrentItem.FFlags) then CurrentItem.FVersionNeededToExtract := PreviusItem.FVersionNeededToExtract;
+      if not(aifUncompressedSize       in CurrentItem.FFlags) then CurrentItem.FUncompressedSize       := PreviusItem.FUncompressedSize;
+      if not(aifLastModifiedTime       in CurrentItem.FFlags) then CurrentItem.FLastModifiedTime       := PreviusItem.FLastModifiedTime;
+      if not(aifAttributes             in CurrentItem.FFlags) then CurrentItem.FAttributes             := PreviusItem.FAttributes;
+      if not(aifComment                in CurrentItem.FFlags) then CurrentItem.FComment                := PreviusItem.FComment;
       /// Data descryptor property ///
       if not(adfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
       if not(adfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
