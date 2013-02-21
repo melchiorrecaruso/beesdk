@@ -983,19 +983,20 @@ begin
         aStream.ImagesNumber := LocatorDisksNumber;
         aStream.ImageNumber  := LocatorDiskNumber;
         aStream.SeekFromBeginning(LocatorDiskSeek);
-        if aStream.ReadDWord = beexArchiveMarker then
-          repeat
-            Marker := aStream.ReadInfWord;
-            case Marker of
-              aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
-              aitBinding: begin
-                BindingFlags := TArchiveBindingFlags(longword(aStream.ReadInfWord));
-                if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString;
-              end;
-              aitEnd: Check := TRUE;
-              else    Break;
+        repeat
+          Marker := aStream.ReadInfWord;
+          case Marker of
+            aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
+            aitBinding: begin
+              BindingFlags := TArchiveBindingFlags(longword(aStream.ReadInfWord));
+              if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString else FArchiveComment := '';
+              // ...
             end;
-          until Marker = aitEnd;
+            aitLocator: Check := TRUE;
+            aitEnd:     Check := TRUE;
+            else        Break;
+          end;
+        until Marker = aitEnd;
       end;
   end;
 
