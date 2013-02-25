@@ -41,12 +41,10 @@ uses
   Bee_Configuration;
 
 const
-  /// beex archive marker
-  beexArchiveMarker = $78454542;
-
-  /// beex archive version
-  beexVersionNeededToRead    = $50;
-  beexVersionNeededToExtract = $50;
+  /// beex archive markers
+  beex_DATA_Marker       = $78454542;
+  beex_CENTRALDIR_Marker = $78454542;
+  beex_MAGIKSEEK_Marker  = $78454542;
 
   /// archive item type
   aitItem    = $01;
@@ -57,6 +55,7 @@ const
 type
   /// archive locator flag
   TArchiveLocatorFlag = (
+    alfVersionNeededToRead,
     alfDisksNumber,
     alfDiskNumber);
 
@@ -64,6 +63,7 @@ type
 
   /// archive binding flag
   TArchiveBindingFlag = (
+    abfVersionNeededToRead,
     abfComment);
 
   TArchiveBindingFlags = set of TArchiveBindingFlag;
@@ -407,12 +407,23 @@ begin
   Result := SelfPath + DefaultCfgName;
 end;
 
+
+
+
 function GetVersionNeededToExtract(Item: TArchiveItem): longword;
 begin
-  Result := beexVersionNeededToExtract;
-
+  Result := $50;
 end;
 
+function GetItemVersionNeededToRead(Flag: TArchiveBindingFlag): longword; overload;
+begin
+  Result := $50;
+end;
+
+function GetItemVersionNeededToRead(Flag: TArchiveLocatorFlag): longword; overload;
+begin
+  Result := $50;
+end;
 
 
 
@@ -907,50 +918,54 @@ var
   LocatorDiskSeek: int64;
   MagikSeek: int64;
 begin
-  LocatorFlags      := [];
+  LocatorFlags      := [alfVersionNeededToRead];
   LocatorDiskSeek   := aStream.SeekFromCurrent;
   LocatorDiskNumber := aStream.CurrentImage;
   if LocatorDiskNumber <> 1 then
     Include(LocatorFlags,  alfDiskNumber);
-
+  // write central directory items
   PackCentralDirectory;
-  aStream.WriteDWord(beexArchiveMarker);
+  aStream.WriteDWord(beexArchiveMarker2);
   for I := 0 to FArchiveItems.Count - 1 do
   begin
     aStream.WriteInfWord(aitItem);
     FArchiveItems.Items[I].Write(aStream);
   end;
-
-  BindingFlags := [];
+  // write central directory binding
+  BindingFlags := [abfVersionNeededToRead];
   if Length(FArchiveComment) > 0 then
     Include(BindingFlags, abfComment);
 
   aStream.WriteInfWord(aitBinding);
   aStream.WriteInfWord(longword(BindingFlags));
+  if (abfVersionNeededToRead in BindingFlags) then
+    aStream.WriteInfWord(beexVersionNeededToRead);
   if (abfComment in BindingFlags) then
     aStream.WriteInfString(FArchiveComment);
   aStream.WriteInfWord(aitEnd);
-
+  // write central directory locator
   if aStream.Threshold > 0 then
     if (aStream.Threshold - aStream.SeekFromCurrent) < 512 then
-    begin
       aStream.CreateNewImage;
-    end;
-
   MagikSeek := aStream.SeekFromCurrent;
-  LocatorDisksNumber := aStream.CurrentImage;
-  if LocatorDisksNumber <> 1 then
-    Include(LocatorFlags, alfDisksNumber);
+
+
+
+
+
 
   aStream.WriteInfWord(aitLocator);
-  aStream.WriteInfWord(beexVersionNeededToRead);
   aStream.WriteInfWord(longword(LocatorFlags));
-  if (alfDisksNumber in LocatorFlags) then aStream.WriteInfWord(LocatorDisksNumber);
-  if (alfDiskNumber  in LocatorFlags) then aStream.WriteInfWord(LocatorDiskNumber);
+  if (alfVersionNeededToRead in LocatorFlags) then
+    aStream.WriteInfWord(beexVersionNeededToRead);
+  if (alfDisksNumber in LocatorFlags) then
+    aStream.WriteInfWord(LocatorDisksNumber);
+  if (alfDiskNumber  in LocatorFlags) then
+    aStream.WriteInfWord(LocatorDiskNumber);
   aStream.WriteInfWord(LocatorDiskSeek);
   aStream.WriteInfWord(aitEnd);
-
-  aStream.WriteDWord(beexArchiveMarker);
+  // write magikseek
+  aStream.WriteDWord(beexArchiveMarker3);
   aStream.WriteDWord(longword(aStream.SeekFromCurrent - MagikSeek + SizeOf(longword)));
 end;
 
