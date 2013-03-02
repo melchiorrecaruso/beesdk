@@ -415,12 +415,12 @@ begin
   Result := $50;
 end;
 
-function GetItemVersionNeededToRead(Flag: TArchiveBindingFlag): longword; overload;
+function GetVersionNeededToRead(Flag: TArchiveBindingFlags): longword; overload;
 begin
   Result := $50;
 end;
 
-function GetItemVersionNeededToRead(Flag: TArchiveLocatorFlag): longword; overload;
+function GetVersionNeededToRead(Flag: TArchiveLocatorFlags): longword; overload;
 begin
   Result := $50;
 end;
@@ -925,7 +925,7 @@ begin
     Include(LocatorFlags,  alfDiskNumber);
   // write central directory items
   PackCentralDirectory;
-  aStream.WriteDWord(beexArchiveMarker2);
+  aStream.WriteDWord(beex_CENTRALDIR_Marker);
   for I := 0 to FArchiveItems.Count - 1 do
   begin
     aStream.WriteInfWord(aitItem);
@@ -939,7 +939,7 @@ begin
   aStream.WriteInfWord(aitBinding);
   aStream.WriteInfWord(longword(BindingFlags));
   if (abfVersionNeededToRead in BindingFlags) then
-    aStream.WriteInfWord(beexVersionNeededToRead);
+    aStream.WriteInfWord(GetVersionNeededToRead(BindingFlags));
   if (abfComment in BindingFlags) then
     aStream.WriteInfString(FArchiveComment);
   aStream.WriteInfWord(aitEnd);
@@ -949,15 +949,13 @@ begin
       aStream.CreateNewImage;
   MagikSeek := aStream.SeekFromCurrent;
 
-
-
-
-
-
+  LocatorDisksNumber := aStream.CurrentImage;
+  if LocatorDisksNumber <> 1 then
+    Include(LocatorFlags, alfDisksNumber);
   aStream.WriteInfWord(aitLocator);
   aStream.WriteInfWord(longword(LocatorFlags));
   if (alfVersionNeededToRead in LocatorFlags) then
-    aStream.WriteInfWord(beexVersionNeededToRead);
+    aStream.WriteInfWord(GetVersionNeededToRead(LocatorFlags));
   if (alfDisksNumber in LocatorFlags) then
     aStream.WriteInfWord(LocatorDisksNumber);
   if (alfDiskNumber  in LocatorFlags) then
@@ -965,7 +963,7 @@ begin
   aStream.WriteInfWord(LocatorDiskSeek);
   aStream.WriteInfWord(aitEnd);
   // write magikseek
-  aStream.WriteDWord(beexArchiveMarker3);
+  aStream.WriteDWord(beex_MAGIKSEEK_Marker);
   aStream.WriteDWord(longword(aStream.SeekFromCurrent - MagikSeek + SizeOf(longword)));
 end;
 
