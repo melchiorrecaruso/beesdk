@@ -44,6 +44,8 @@ const
   /// beex archive markers
   beex_DATA_Marker       = $78454542;
   beex_CENTRALDIR_Marker = $78454542;
+  beex_CENTRALDIR_END    = $78454542;
+
   beex_MAGIKSEEK_Marker  = $78454542;
 
   /// archive item type
@@ -969,7 +971,7 @@ end;
 
 procedure TArchiver.ReadCentralDirectory(aStream: TFileReader);
 var
-  Check: boolean;
+  CHECK: boolean;
   Marker: longword;
   LocatorDisksNumber: longword;
   LocatorDiskNumber: longword;
@@ -977,15 +979,17 @@ var
   LocatorFlags: TArchiveLocatorFlags;
   BindingFlags: TArchiveBindingFlags;
 begin
-  Check := FALSE;
+  CHECK := FALSE;
   // Read Marker
   aStream.SeekFromEnd(-2*SizeOf(longword));
-  if aStream.ReadDWord = beexArchiveMarker then
+  if aStream.ReadDWord = beex_MAGIKSEEK_Marker then
   begin
     // Read MagikSeek
     aStream.SeekFromEnd(-aStream.ReadDWord);
     // Read Locator Marker
     if aStream.ReadInfWord = aitLocator then
+    begin
+
       if aStream.ReadInfWord <= beexVersionNeededToRead then
       begin
         LocatorFlags := TArchiveLocatorFlags(longword(aStream.ReadInfWord));
@@ -1005,15 +1009,16 @@ begin
               if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString else FArchiveComment := '';
               // ...
             end;
-            aitLocator: Check := TRUE;
-            aitEnd:     Check := TRUE;
+            aitLocator: CHECK := TRUE;
+            aitEnd:     CHECK := TRUE;
             else        Break;
           end;
         until Marker = aitEnd;
       end;
-  end;
 
-  if Check = FALSE then
+    end;
+
+  if CHECK = FALSE then
     SetExitStatus(esArchiveTypeError)
   else
     UnPackCentralDirectory;
