@@ -41,38 +41,37 @@ uses
   Bee_Configuration;
 
 const
-  /// beex archive markers
-  beex_DATA_Marker       = $78454542;
-  beex_CENTRALDIR_Marker = $78454542;
-  beex_CENTRALDIR_END    = $78454542;
+  /// archive markers
+  BEEX_ARCHIVE_DATA                 = $78454542;
+  BEEX_ARCHIVE_CENTRALDIR           = $78454542;
+  BEEX_ARCHIVE_CENTRALDIR_SEEK      = $78454542;
+  BEEX_ARCHIVE_CENTRALDIR_MAGIKSEEK = $78454542;
 
-  beex_MAGIKSEEK_Marker  = $78454542;
-
-  /// archive item type
-  aitItem    = $01;
-  aitBinding = $02;
-  aitLocator = $7E;
-  aitEnd     = $7F;
+  /// archive central directory item type
+  acditITEM         = $01;
+  acditITEMSBINDING = $02;
+  acditLEVEL        = $03;
+  acditEND          = $7F;
 
 type
-  /// archive locator flag
-  TArchiveLocatorFlag = (
-    alfVersionNeededToRead,
-    alfDisksNumber,
-    alfDiskNumber);
+  /// archive central directory seek flag
+  TArchiveCentralDirectorySeekFlag = (
+    acdsfVersionNeededToRead,
+    acdsfDisksNumber,
+    acdsfDiskNumber);
 
-  TArchiveLocatorFlags = set of TArchiveLocatorFlag;
+  TArchiveCentralDirectorySeekFlags = set of TArchiveCentralDirectorySeekFlag;
 
-  /// archive binding flag
-  TArchiveBindingFlag = (
-    abfVersionNeededToRead,
-    abfComment);
+  /// archive binding item flag
+  TArchiveBindingItemFlag = (
+    abifVersionNeededToRead,
+    abifComment);
 
-  TArchiveBindingFlags = set of TArchiveBindingFlag;
+  TArchiveBindingItemFlags = set of TArchiveBindingItemFlag;
 
   /// archive item flag
   TArchiveItemFlag = (
-    aifVersionNeededToExtract,
+    aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
     aifAttributes,
@@ -127,7 +126,7 @@ type
     // item property
     FFileName: string;
     FFlags: TArchiveItemFlags;
-    FVersionNeededToExtract: longword;
+    FVersionNeededToRead: longword;
     FUncompressedSize: int64;
     FLastModifiedTime: longint;
     FAttributes: longword;
@@ -161,7 +160,7 @@ type
   public {property}
     property FileName: string read FFileName;
     property Flags: TArchiveItemFlags read FFlags;
-    property VersionNeededToExtract: longword read FVersionNeededToExtract;
+    property VersionNeededToRead: longword read FVersionNeededToRead;
     property UncompressedSize: int64 read FUncompressedSize;
     property LastModifiedTime: longint read FLastModifiedTime;
     property Attributes: longword read FAttributes;
@@ -184,11 +183,33 @@ type
     property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
   end;
 
-  /// archive item list
-  TArchiveItems = class(TObject)
+  /// archive level
+  TArchiveLevel = class(TObject)
   private {private}
     FItems: TList;
     FNames: TList;
+    FComment: string;
+  private { methods}
+    function GetCount : longint;
+    function GetItem(Index: longint): TArchiveItem;
+    function GetNameIndex(const FileName: string): longint;
+  public {methods}
+    constructor Create;
+    destructor Destroy; override;
+    function Add(Item : TArchiveItem): longint;
+    procedure Delete(Index: longint);
+    procedure Clear;
+    function Find(const FileName: string): longint;
+  public {properties}
+    property Count: longint read GetCount;
+    property Items[Index: longint]: TArchiveItem read GetItem;
+    property Comment: string read FComment write FComment;
+  end;
+
+  /// archive levels
+  TArchiveLevels = class(TObject)
+  private {private}
+    FLevels: TList;
   private { methods}
     function GetCount : longint;
     function GetItem(Index: longint): TArchiveItem;
@@ -409,20 +430,17 @@ begin
   Result := SelfPath + DefaultCfgName;
 end;
 
-
-
-
-function GetVersionNeededToExtract(Item: TArchiveItem): longword;
+function GetVersionNeededToRead(Item: TArchiveItem): longword; overload;
 begin
   Result := $50;
 end;
 
-function GetVersionNeededToRead(Flag: TArchiveBindingFlags): longword; overload;
+function GetVersionNeededToRead(Flag: TArchiveBindingItemFlags): longword; overload;
 begin
   Result := $50;
 end;
 
-function GetVersionNeededToRead(Flag: TArchiveLocatorFlags): longword; overload;
+function GetVersionNeededToRead(Flag: TArchiveCentralDirectorySeekFlags): longword; overload;
 begin
   Result := $50;
 end;
@@ -490,16 +508,16 @@ begin
   FFileName := aFileName;
   /// Item property ///
   FFlags := [
-    aifVersionNeededToExtract,
+    aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
     aifAttributes,
     aifComment];
-  FVersionNeededToExtract :=  0;
-  FUncompressedSize       :=  0;
-  FLastModifiedTime       :=  0;
-  FAttributes             :=  0;
-  FComment                := '';
+  FVersionNeededToRead :=  0;
+  FUncompressedSize    :=  0;
+  FLastModifiedTime    :=  0;
+  FAttributes          :=  0;
+  FComment             := '';
   /// Data descriptor property ///
   FDataDescriptorFlags := [
     adfCompressedSize,
@@ -541,11 +559,11 @@ begin
   FFileName := Stream.ReadInfString;
   /// Item property ///
   FFlags    := TArchiveItemFlags(longword(Stream.ReadInfWord));
-  if (aifVersionNeededToExtract in FFlags) then FVersionNeededToExtract := Stream.ReadInfWord;
-  if (aifUncompressedSize       in FFlags) then FUncompressedSize       := Stream.ReadInfWord;
-  if (aifLastModifiedTime       in FFlags) then FLastModifiedTime       := Stream.ReadInfWord;
-  if (aifAttributes             in FFlags) then FAttributes             := Stream.ReadInfWord;
-  if (aifComment                in FFlags) then FComment                := Stream.ReadInfString;
+  if (aifVersionNeededToRead in FFlags) then FVersionNeededToRead := Stream.ReadInfWord;
+  if (aifUncompressedSize    in FFlags) then FUncompressedSize    := Stream.ReadInfWord;
+  if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := Stream.ReadInfWord;
+  if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
+  if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
   /// Data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (adfCompressedSize    in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -568,11 +586,11 @@ begin
   Stream.WriteInfString(FFileName);
   /// Item property ///
   Stream.WriteInfWord(longword(FFlags));
-  if (aifVersionNeededToExtract  in FFlags) then Stream.WriteInfWord(FVersionNeededToExtract);
-  if (aifUncompressedSize        in FFlags) then Stream.WriteInfWord(FUncompressedSize);
-  if (aifLastModifiedTime        in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
-  if (aifAttributes              in FFlags) then Stream.WriteInfWord(FAttributes);
-  if (aifComment                 in FFlags) then Stream.WriteInfString(FComment);
+  if (aifVersionNeededToRead in FFlags) then Stream.WriteInfWord(FVersionNeededToRead);
+  if (aifUncompressedSize    in FFlags) then Stream.WriteInfWord(FUncompressedSize);
+  if (aifLastModifiedTime    in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
+  if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
+  if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
   /// Data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (adfCompressedSize    in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
@@ -913,8 +931,8 @@ end;
 procedure TArchiver.WriteCentralDirectory(aStream: TFileWriter);
 var
   I: longword;
-  BindingFlags: TArchiveBindingFlags;
-  LocatorFlags: TArchiveLocatorFlags;
+  BindingFlags: TArchiveBindingItemFlags;
+  LocatorFlags: TArchiveCentralDirectorySeekFlags;
   LocatorDisksNumber: longword;
   LocatorDiskNumber: longword;
   LocatorDiskSeek: int64;
