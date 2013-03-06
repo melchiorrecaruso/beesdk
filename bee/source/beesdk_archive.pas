@@ -183,8 +183,8 @@ type
     property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
   end;
 
-  /// archive level
-  TArchiveLevel = class(TObject)
+  /// archive items
+  TArchiveItems = class(TObject)
   private {private}
     FItems: TList;
     FNames: TList;
@@ -206,6 +206,7 @@ type
     property Comment: string read FComment write FComment;
   end;
 
+  (*
   /// archive levels
   TArchiveLevels = class(TObject)
   private {private}
@@ -225,6 +226,7 @@ type
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
   end;
+  *)
 
   /// ...
   TArchiveConfirm = (arcOk, arcCancel, arcQuit);
@@ -932,15 +934,18 @@ procedure TArchiver.WriteCentralDirectory(aStream: TFileWriter);
 var
   I: longword;
   BindingFlags: TArchiveBindingItemFlags;
-  LocatorFlags: TArchiveCentralDirectorySeekFlags;
-  LocatorDisksNumber: longword;
-  LocatorDiskNumber: longword;
-  LocatorDiskSeek: int64;
-  MagikSeek: int64;
+  CentralDirectorySeekFlags: TArchiveCentralDirectorySeekFlags;
+  CentralDirectorySeekDisksNumber: longword;
+  CentralDirectorySeekDiskNumber: longword;
+  CentralDirectorySeekDiskSeek: int64;
+  CentralDirectoryMagikSeek: int64;
 begin
-  LocatorFlags      := [alfVersionNeededToRead];
+  CentralDirectorySeekFlags      := [acdsfVersionNeededToRead];
   LocatorDiskSeek   := aStream.SeekFromCurrent;
   LocatorDiskNumber := aStream.CurrentImage;
+
+
+
   if LocatorDiskNumber <> 1 then
     Include(LocatorFlags,  alfDiskNumber);
   // write central directory items
