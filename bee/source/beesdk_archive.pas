@@ -183,8 +183,8 @@ type
     property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
   end;
 
-  /// archive items
-  TArchiveItems = class(TObject)
+  /// archive level
+  TArchiveLevel = class(TObject)
   private {private}
     FItems: TList;
     FNames: TList;
@@ -193,6 +193,8 @@ type
     function GetCount : longint;
     function GetItem(Index: longint): TArchiveItem;
     function GetNameIndex(const FileName: string): longint;
+    procedure Read(Stream: TFileReader);
+    procedure Write(Stream: TFileWriter);
   public {methods}
     constructor Create;
     destructor Destroy; override;
@@ -206,9 +208,8 @@ type
     property Comment: string read FComment write FComment;
   end;
 
-  (*
-  /// archive levels
-  TArchiveLevels = class(TObject)
+  /// archive central directory
+  TArchiveCentralDirectory = class(TObject)
   private {private}
     FLevels: TList;
   private { methods}
@@ -226,7 +227,9 @@ type
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
   end;
-  *)
+
+  // archive central direcotry seek
+
 
   /// ...
   TArchiveConfirm = (arcOk, arcCancel, arcQuit);
@@ -269,7 +272,6 @@ type
     FWorkDirectory: string;
     FCompressionParams: string;
     FEncryptionParams: string;
-    FArchiveComment: string;
     FTestTempArchive: boolean;
     FVolumeSize: int64;
     // items
@@ -373,7 +375,6 @@ type
     property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
 
     property ArchiveName: string read FArchiveName write SetArchiveName;
-    property ArchiveComment: string read FArchiveComment write FArchiveComment;
     property SelfExtractor: string read FSfxName write FSfxName;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
     property CompressionParams: string read FCompressionParams write FCompressionParams;
@@ -776,7 +777,6 @@ begin
   FWorkDirectory     := '';
   FCompressionParams := '';
   FEncryptionParams  := '';
-  FArchiveComment    := '';
   FTestTempArchive   := FALSE;
   FVolumeSize        := 0;
   // items list
@@ -995,21 +995,48 @@ procedure TArchiver.ReadCentralDirectory(aStream: TFileReader);
 var
   CHECK: boolean;
   Marker: longword;
-  LocatorDisksNumber: longword;
-  LocatorDiskNumber: longword;
-  LocatorDiskSeek: longword;
-  LocatorFlags: TArchiveLocatorFlags;
-  BindingFlags: TArchiveBindingFlags;
+  CDSDisksNumber: longword;
+  CDSDiskNumber: longword;
+  CDSDiskSeek: longword;
+  CDSFlags: TArchiveCentralDirectorySeekFlags;
+  BindingFlags: TArchiveBindingItemFlags;
 begin
   CHECK := FALSE;
-  // Read Marker
+
   aStream.SeekFromEnd(-2*SizeOf(longword));
-  if aStream.ReadDWord = beex_MAGIKSEEK_Marker then
+  // read central directory magik seek marker
+  if aStream.ReadDWord = BEEX_ARCHIVE_CENTRALDIR_MAGIKSEEK then
   begin
-    // Read MagikSeek
+    // read central directory magik seek
     aStream.SeekFromEnd(-aStream.ReadDWord);
-    // Read Locator Marker
-    if aStream.ReadInfWord = aitLocator then
+
+    Marker := aStream.ReadDWord;
+    if Marker = BEEX_ARCHIVE_CENTRALDIR_SEEK then
+    begin
+
+
+
+
+
+
+
+      Marker := aStream.ReadDWord;
+    end;
+
+    if Marker = BEEX_ARCHIVE_CENTRALDIR then
+    begin
+
+
+    end;
+
+
+
+
+
+
+
+
+    if  = aitLocator then
     begin
 
       if aStream.ReadInfWord <= beexVersionNeededToRead then
@@ -1039,6 +1066,7 @@ begin
       end;
 
     end;
+  end;
 
   if CHECK = FALSE then
     SetExitStatus(esArchiveTypeError)
