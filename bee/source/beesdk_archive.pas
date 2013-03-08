@@ -934,62 +934,61 @@ procedure TArchiver.WriteCentralDirectory(aStream: TFileWriter);
 var
   I: longword;
   BindingFlags: TArchiveBindingItemFlags;
-  CentralDirectorySeekFlags: TArchiveCentralDirectorySeekFlags;
-  CentralDirectorySeekDisksNumber: longword;
-  CentralDirectorySeekDiskNumber: longword;
-  CentralDirectorySeekDiskSeek: int64;
-  CentralDirectoryMagikSeek: int64;
+  CDSFlags: TArchiveCentralDirectorySeekFlags;
+  CDSDisksNumber: longword;
+  CDSDiskNumber: longword;
+  CDSDiskSeek: int64;
+  CDMS: int64;
 begin
-  CentralDirectorySeekFlags      := [acdsfVersionNeededToRead];
-  LocatorDiskSeek   := aStream.SeekFromCurrent;
-  LocatorDiskNumber := aStream.CurrentImage;
-
-
-
-  if LocatorDiskNumber <> 1 then
-    Include(LocatorFlags,  alfDiskNumber);
+  CDSFlags      := [acdsfVersionNeededToRead];
+  CDSDiskSeek   := aStream.SeekFromCurrent;
+  CDSDiskNumber := aStream.CurrentImage;
+  if CDSDiskNumber <> 1 then
+    Include(CDSFlags,  acdsfDiskNumber);
   // write central directory items
+  aStream.WriteDWord(BEEX_ARCHIVE_CENTRALDIR);
+
   PackCentralDirectory;
-  aStream.WriteDWord(beex_CENTRALDIR_Marker);
   for I := 0 to FArchiveItems.Count - 1 do
   begin
-    aStream.WriteInfWord(aitItem);
+    aStream.WriteInfWord(acditITEM);
     FArchiveItems.Items[I].Write(aStream);
   end;
-  // write central directory binding
-  BindingFlags := [abfVersionNeededToRead];
-  if Length(FArchiveComment) > 0 then
-    Include(BindingFlags, abfComment);
+  BindingFlags := [abifVersionNeededToRead];
+  if Length(FArchiveItems.Comment) > 0 then
+    Include(BindingFlags, abifComment);
 
-  aStream.WriteInfWord(aitBinding);
+  aStream.WriteInfWord(acditITEMSBINDING);
   aStream.WriteInfWord(longword(BindingFlags));
-  if (abfVersionNeededToRead in BindingFlags) then
+  if (abifVersionNeededToRead in BindingFlags) then
     aStream.WriteInfWord(GetVersionNeededToRead(BindingFlags));
-  if (abfComment in BindingFlags) then
-    aStream.WriteInfString(FArchiveComment);
-  aStream.WriteInfWord(aitEnd);
-  // write central directory locator
+  if (abifComment in BindingFlags) then
+    aStream.WriteInfString(FArchiveItems.Comment);
+  aStream.WriteInfWord(acditEND);
+
+  // write central directory seek
   if aStream.Threshold > 0 then
     if (aStream.Threshold - aStream.SeekFromCurrent) < 512 then
       aStream.CreateNewImage;
-  MagikSeek := aStream.SeekFromCurrent;
 
-  LocatorDisksNumber := aStream.CurrentImage;
-  if LocatorDisksNumber <> 1 then
-    Include(LocatorFlags, alfDisksNumber);
-  aStream.WriteInfWord(aitLocator);
-  aStream.WriteInfWord(longword(LocatorFlags));
-  if (alfVersionNeededToRead in LocatorFlags) then
-    aStream.WriteInfWord(GetVersionNeededToRead(LocatorFlags));
-  if (alfDisksNumber in LocatorFlags) then
-    aStream.WriteInfWord(LocatorDisksNumber);
-  if (alfDiskNumber  in LocatorFlags) then
-    aStream.WriteInfWord(LocatorDiskNumber);
-  aStream.WriteInfWord(LocatorDiskSeek);
-  aStream.WriteInfWord(aitEnd);
+  CDMS := aStream.SeekFromCurrent;
+  CDSDisksNumber := aStream.CurrentImage;
+  if CDSDisksNumber <> 1 then
+    Include(CDSFlags, acdsfDisksNumber);
+
+  aStream.WriteDWord(BEEX_ARCHIVE_CENTRALDIR_SEEK);
+  aStream.WriteInfWord(longword(CDSFlags));
+  if (acdsfVersionNeededToRead in CDSFlags) then
+    aStream.WriteInfWord(GetVersionNeededToRead(CDSFlags));
+  if (acdsfDisksNumber in CDSFlags) then
+    aStream.WriteInfWord(CDSDisksNumber);
+  if (acdsfDiskNumber in CDSFlags) then
+    aStream.WriteInfWord(CDSDiskNumber);
+  aStream.WriteInfWord(CDSDiskSeek);
+  aStream.WriteInfWord(acditEND);
   // write magikseek
-  aStream.WriteDWord(beex_MAGIKSEEK_Marker);
-  aStream.WriteDWord(longword(aStream.SeekFromCurrent - MagikSeek + SizeOf(longword)));
+  aStream.WriteDWord(BEEX_ARCHIVE_CENTRALDIR_MAGIKSEEK);
+  aStream.WriteDWord(longword(aStream.SeekFromCurrent - CDMS + SizeOf(longword)));
 end;
 
 procedure TArchiver.ReadCentralDirectory(aStream: TFileReader);
