@@ -50,7 +50,6 @@ const
   /// archive central directory item type
   acditITEM         = $01;
   acditITEMSBINDING = $02;
-  acditLEVEL        = $03;
   acditEND          = $7F;
 
 type
@@ -184,7 +183,7 @@ type
   end;
 
   /// archive level
-  TArchiveLevel = class(TObject)
+  TArchiveItems = class(TObject)
   private {private}
     FItems: TList;
     FNames: TList;
@@ -193,11 +192,11 @@ type
     function GetCount : longint;
     function GetItem(Index: longint): TArchiveItem;
     function GetNameIndex(const FileName: string): longint;
-    procedure Read(Stream: TFileReader);
-    procedure Write(Stream: TFileWriter);
   public {methods}
     constructor Create;
     destructor Destroy; override;
+    constructor Read(Stream: TFileReader);
+    procedure Write(Stream: TFileWriter);
     function Add(Item : TArchiveItem): longint;
     procedure Delete(Index: longint);
     procedure Clear;
