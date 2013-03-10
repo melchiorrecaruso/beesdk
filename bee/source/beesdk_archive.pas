@@ -42,17 +42,25 @@ uses
 
 const
   /// archive markers
-  BEEX_ARCHIVE_DATA                 = $78454542;
-  BEEX_ARCHIVE_CENTRALDIR           = $78454542;
-  BEEX_ARCHIVE_CENTRALDIR_SEEK      = $78454542;
-  BEEX_ARCHIVE_CENTRALDIR_MAGIKSEEK = $78454542;
+  ARCHIVE_DATA_MARKER                 = $78454542;
+  ARCHIVE_CENTRALDIR_MARKER           = $78454542;
+  ARCHIVE_CENTRALDIR_END_MARKER       = $78454542;
+  ARCHIVE_CENTRALDIR_SEEK_MARKER      = $78454542;
+  ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER = $78454542;
 
   /// archive central directory item type
-  acditITEM         = $01;
-  acditITEMSBINDING = $02;
+  acditFILE         = $01;
+  acditDIRECTORY    = $02;
   acditEND          = $7F;
 
 type
+  /// archive central directory end flag
+  TArchiveCentralDirectoryEndFlag = (
+    acdefVersionNeededToRead,
+    acdefComment);
+
+  TArchiveCentralDirectoryEndFlags = set of TArchiveCentralDirectoryEndFlag;
+
   /// archive central directory seek flag
   TArchiveCentralDirectorySeekFlag = (
     acdsfVersionNeededToRead,
@@ -61,20 +69,14 @@ type
 
   TArchiveCentralDirectorySeekFlags = set of TArchiveCentralDirectorySeekFlag;
 
-  /// archive binding item flag
-  TArchiveBindingItemFlag = (
-    abifVersionNeededToRead,
-    abifComment);
-
-  TArchiveBindingItemFlags = set of TArchiveBindingItemFlag;
-
   /// archive item flag
   TArchiveItemFlag = (
     aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
     aifAttributes,
-    aifComment);
+    aifComment,
+    aifLevel);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -130,6 +132,7 @@ type
     FLastModifiedTime: longint;
     FAttributes: longword;
     FComment: string;
+    FLevel: longword;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -182,7 +185,7 @@ type
     property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
   end;
 
-  /// archive level
+  /// archive items
   TArchiveItems = class(TObject)
   private {private}
     FItems: TList;
@@ -205,26 +208,6 @@ type
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Comment: string read FComment write FComment;
-  end;
-
-  /// archive central directory
-  TArchiveCentralDirectory = class(TObject)
-  private {private}
-    FLevels: TList;
-  private { methods}
-    function GetCount : longint;
-    function GetItem(Index: longint): TArchiveItem;
-    function GetNameIndex(const FileName: string): longint;
-  public {methods}
-    constructor Create;
-    destructor Destroy; override;
-    function Add(Item : TArchiveItem): longint;
-    procedure Delete(Index: longint);
-    procedure Clear;
-    function Find(const FileName: string): longint;
-  public {properties}
-    property Count: longint read GetCount;
-    property Items[Index: longint]: TArchiveItem read GetItem;
   end;
 
   // archive central direcotry seek
@@ -437,7 +420,7 @@ begin
   Result := $50;
 end;
 
-function GetVersionNeededToRead(Flag: TArchiveBindingItemFlags): longword; overload;
+function GetVersionNeededToRead(Flag: TArchiveCentralDirectoryEndFlags): longword; overload;
 begin
   Result := $50;
 end;
@@ -520,6 +503,7 @@ begin
   FLastModifiedTime    :=  0;
   FAttributes          :=  0;
   FComment             := '';
+  FLevel               :=  0;
   /// Data descriptor property ///
   FDataDescriptorFlags := [
     adfCompressedSize,
@@ -566,6 +550,7 @@ begin
   if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := Stream.ReadInfWord;
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
+  if (aifLevel               in FFlags) then FLevel               := Stream.ReadInfWord;
   /// Data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (adfCompressedSize    in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -593,6 +578,7 @@ begin
   if (aifLastModifiedTime    in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
   if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
+  if (aifLevel               in FFlags) then Stream.WriteInfWord(FLevel);
   /// Data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (adfCompressedSize    in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
