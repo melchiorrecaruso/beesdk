@@ -64,15 +64,9 @@ type
   var
     I: longint;
   begin
-    for I := 0 to m_prefix_mask do
-    begin
-      m_last_position_lookup[I] := 0;
-    end;
+    for I := 0 to m_prefix_mask do m_last_position_lookup     [I] := 0;
+    for I := 0 to m_buffer_mask do m_self_addressed_dictionary[I] := 0;
 
-    for I := 0 to m_buffer_mask do
-    begin
-      m_self_addressed_dictionary[I] := 0;
-    end;
     m_context := 0;
     m_index   := 0;
   end;
@@ -80,7 +74,7 @@ type
 // Several following functions and classes are taken from open source
 // http://balz.sourceforge.net/ and written by Ilia Muraviev. I found
 // it very convenient. I added only some cosmetic changes.
-
+(*
 procedure ExeTransform(var Data; y: longint; n: longint);
 var
   Buf: array [0..$FFFFFFF] of byte absolute Data;
@@ -124,14 +118,15 @@ begin
   end;
 end;
 
+*)
 
 //source: http://balz.sourceforge.net/
 
 type
   TPredictor = class
   private
-    P1: word;
-    P2: word;
+    p1: word;
+    p2: word;
   public
     constructor Create;
     function P: longint;
@@ -140,25 +135,25 @@ type
 
   constructor TPredictor.Create;
   begin
-    P1 := 1 shl 15;
-    P2 := 1 shl 15;
+    p1 := 1 shl 15;
+    p2 := 1 shl 15;
   end;
 
   function TPredictor.P: longint;
   begin
-    Result :=  P1 + P2;
+    Result :=  p1 + p2;
   end;
 
   procedure TPredictor.Update(Bit: longint);
   begin
     if boolean(Bit) then
     begin
-      P1 := P1 + ((not P1) shr 3);
-      P2 := P2 + ((not P2) shr 6);
+      p1 := p1 + word((not p1) shr 3);
+      p2 := p2 + word((not p2) shr 6);
     end else
     begin
-      P1 := P1 - (P1 shr 3);
-      P2 := P2 - (P2 shr 6);
+      p1 := p1 - word(p1 shr 3);
+      p2 := p2 - word(p2 shr 6);
     end;
   end;
 
@@ -173,6 +168,7 @@ type
   public
     constructor Create;
     procedure Encode(P: longint; Bit: longint);
+    procedure Flush;
   end;
 
   constructor TEncoder.Create;
@@ -191,15 +187,52 @@ type
     else
       x1 := xmid + 1;
 
+    while (x1 xor x2) < (1 shl 24) do
+    begin
+      // writeByte(x2 >> 24);
+      x1 := x1 shl 8;
+      x2 := x2 shl 8 + 255;
+    end;
+  end;
 
-       MatchesMask('','');
+  procedure TEncoder.Flush;
+  var
+    I: longint;
+  begin
+    for I := 0 to 3 do
+    begin
+      // writeByte(x2 >> 24);
+      x2 := x2 shl 8;
+    end;
+  end;
 
+type
+  TDecoder = class
+  private
+    x:  longword;
+    x1: longword;
+    x2: longword;
+  public
+    constructor Create;
+    procedure Init;
 
 
   end;
 
+  constructor TDecoder.Create;
+  begin
+    x1 := 0;
+    x2 := longword(-1);
+  end;
+
+  procedure TDecoder.Init;
+  var
+    I: longint;
+  begin
 
 
+
+  end;
 
 
 
