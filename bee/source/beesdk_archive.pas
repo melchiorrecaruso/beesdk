@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1864 - 2013.02.16 by Melchiorre Caruso.
+    v0.8.0 build 1895 - 2013.03.14 by Melchiorre Caruso.
 }
 
 unit BeeSDK_Archive;
@@ -57,6 +57,7 @@ type
   /// archive central directory end flag
   TArchiveCentralDirectoryEndFlag = (
     acdefVersionNeededToRead,
+    acdefLastModifiedTime,
     acdefComment);
 
   TArchiveCentralDirectoryEndFlags = set of TArchiveCentralDirectoryEndFlag;
@@ -76,7 +77,8 @@ type
     aifLastModifiedTime,
     aifAttributes,
     aifComment,
-    aifLevel);
+    aifLevel,
+    aifLevelTime);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -133,6 +135,7 @@ type
     FAttributes: longword;
     FComment: string;
     FLevel: longword;
+    FLevelTime: longint;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -150,6 +153,7 @@ type
     FEncryptionMethod: TArchiveEncryptionMethod;
   protected
     FPosition: longint;
+    FDown: TArchiveItem;
     FTag: TArchiveItemTag;
     FExternalFileName: string;
     FExternalFileSize: int64;
@@ -167,6 +171,8 @@ type
     property LastModifiedTime: longint read FLastModifiedTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
+    property Level: longword read FLevel;
+    property LevelTime: longint read FLevelTime;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -185,17 +191,28 @@ type
     property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
   end;
 
-  /// archive items
-  TArchiveItems = class(TObject)
-  private {private}
+  /// archive central directory
+  TArchiveCentralDirectory = class(TObject)
+  private
     FItems: TList;
-    FNames: TList;
-    FComment: string;
-  private { methods}
+    FItemsAux: TList;
+    // central directory end property
+    FCDE_Flags: TArchiveCentralDirectoryEndFlags;
+    FCDE_LastModifiedTime: longint;
+    FCDE_Comment: string;
+    // central directory seek property
+    FCDS_Flags: TArchiveCentralDirectorySeekFlags;
+    FCDS_DisksNumber: longword;
+    FCDS_DiskNumber: longword;
+    FCDS_DiskSeek: int64;
+    // central directory magik seek property
+    FCDMS_DiskSeek: int64;
+  private
     function GetCount : longint;
     function GetItem(Index: longint): TArchiveItem;
-    function GetNameIndex(const FileName: string): longint;
-  public {methods}
+    function GetIndexOf(const FileName: string): longint;
+    procedure SetComment(const Value: string);
+  public
     constructor Create;
     destructor Destroy; override;
     constructor Read(Stream: TFileReader);
@@ -204,14 +221,13 @@ type
     procedure Delete(Index: longint);
     procedure Clear;
     function Find(const FileName: string): longint;
-  public {properties}
+  public
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
-    property Comment: string read FComment write FComment;
+
+    // property LastModifiedTime: longint read FCDE_LastModifiedTime;
+    // property Comment: string read FCDE_Comment;
   end;
-
-  // archive central direcotry seek
-
 
   /// ...
   TArchiveConfirm = (arcOk, arcCancel, arcQuit);
@@ -257,7 +273,7 @@ type
     FTestTempArchive: boolean;
     FVolumeSize: int64;
     // items
-    FArchiveItems: TArchiveItems;
+    FCentralDirectory: TArchiveCentralDirectory;
     FSearchRecs: TList;
   private
     FEncoder: TStreamEncoder;
@@ -504,6 +520,7 @@ begin
   FAttributes          :=  0;
   FComment             := '';
   FLevel               :=  0;
+  FLevelTime           :=  0;
   /// Data descriptor property ///
   FDataDescriptorFlags := [
     adfCompressedSize,
@@ -601,34 +618,40 @@ begin
   Result := acfCompressionBlock in FCompressionFlags;
 end;
 
-// TArchiveItems class
+// TArchiveCentralDirectory class
 
-constructor TArchiveItems.Create;
+constructor TArchiveCentralDirectory.Create;
 begin
   inherited Create;
   FItems := TList.Create;
-  FNames := TList.Create;
+  FItemsAux := TList.Create;
+
+  FCDE_LastModifiedTime := DateTimeToFileDate(Now);
+  FCDE_Comment := '';
 end;
 
-destructor TArchiveItems.Destroy;
+destructor TArchiveCentralDirectory.Destroy;
 begin
   Clear;
   FItems.Destroy;
-  FNames.Destroy;
+  FItemsAux.Destroy;
   inherited Destroy;
 end;
 
-procedure TArchiveItems.Clear;
+procedure TArchiveCentralDirectory.Clear;
 var
   I: longint;
 begin
   for I := 0 to FItems.Count - 1 do
     TArchiveItem(FItems[I]).Destroy;
   FItems.Clear;
-  FNames.Clear;
+  FItemsAux.Clear;
+
+  FCDE_LastModifiedTime := DateTimeToFileDate(Now);
+  FCDE_Comment := '';
 end;
 
-function TArchiveItems.Add(Item: TArchiveItem): longint;
+function TArchiveCentralDirectory.Add(Item: TArchiveItem): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
@@ -1072,11 +1095,13 @@ begin
     begin
       CurrentItem := FArchiveItems.Items[I];
       /// Item property ///
-      if CurrentItem.FVersionNeededToExtract = PreviusItem.FVersionNeededToExtract then Exclude(CurrentItem.FFlags, aifVersionNeededToExtract) else Include(CurrentItem.FFlags, aifVersionNeededToExtract);
-      if CurrentItem.FUncompressedSize       = PreviusItem.FUncompressedSize       then Exclude(CurrentItem.FFlags, aifUncompressedSize)       else Include(CurrentItem.FFlags, aifUncompressedSize);
-      if CurrentItem.FLastModifiedTime       = PreviusItem.FLastModifiedTime       then Exclude(CurrentItem.FFlags, aifLastModifiedTime)       else Include(CurrentItem.FFlags, aifLastModifiedTime);
-      if CurrentItem.FAttributes             = PreviusItem.FAttributes             then Exclude(CurrentItem.FFlags, aifAttributes)             else Include(CurrentItem.FFlags, aifAttributes);
-      if CurrentItem.FComment                = PreviusItem.FComment                then Exclude(CurrentItem.FFlags, aifComment)                else Include(CurrentItem.FFlags, aifComment);
+      if CurrentItem.FVersionNeededToRead = PreviusItem.FVersionNeededToRead then Exclude(CurrentItem.FFlags, aifVersionNeededToRead) else Include(CurrentItem.FFlags, aifVersionNeededToRead);
+      if CurrentItem.FUncompressedSize    = PreviusItem.FUncompressedSize    then Exclude(CurrentItem.FFlags, aifUncompressedSize)    else Include(CurrentItem.FFlags, aifUncompressedSize);
+      if CurrentItem.FLastModifiedTime    = PreviusItem.FLastModifiedTime    then Exclude(CurrentItem.FFlags, aifLastModifiedTime)    else Include(CurrentItem.FFlags, aifLastModifiedTime);
+      if CurrentItem.FAttributes          = PreviusItem.FAttributes          then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
+      if CurrentItem.FComment             = PreviusItem.FComment             then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
+      if CurrentItem.FLevel               = PreviusItem.FLevel               then Exclude(CurrentItem.FFlags, aifLevel)               else Include(CurrentItem.FFlags, aifLevel);
+      if CurrentItem.FLevelTime           = PreviusItem.FLevelTime           then Exclude(CurrentItem.FFlags, aifLevelTime)           else Include(CurrentItem.FFlags, aifLevelTime);
       /// Data descriptor property ///
       if CurrentItem.FCompressedSize   = PreviusItem.FCompressedSize then Exclude(CurrentItem.FDataDescriptorFlags, adfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, adfCompressedSize);
       if CurrentItem.FDiskNumber       = PreviusItem.FDiskNumber     then Exclude(CurrentItem.FDataDescriptorFlags, adfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, adfDiskNumber);
@@ -1107,11 +1132,13 @@ begin
     begin
       CurrentItem := FArchiveItems.Items[I];
       /// Item property ///
-      if not(aifVersionNeededToExtract in CurrentItem.FFlags) then CurrentItem.FVersionNeededToExtract := PreviusItem.FVersionNeededToExtract;
-      if not(aifUncompressedSize       in CurrentItem.FFlags) then CurrentItem.FUncompressedSize       := PreviusItem.FUncompressedSize;
-      if not(aifLastModifiedTime       in CurrentItem.FFlags) then CurrentItem.FLastModifiedTime       := PreviusItem.FLastModifiedTime;
-      if not(aifAttributes             in CurrentItem.FFlags) then CurrentItem.FAttributes             := PreviusItem.FAttributes;
-      if not(aifComment                in CurrentItem.FFlags) then CurrentItem.FComment                := PreviusItem.FComment;
+      if not(aifVersionNeededToRead in CurrentItem.FFlags) then CurrentItem.FVersionNeededToRead := PreviusItem.FVersionNeededToRead;
+      if not(aifUncompressedSize    in CurrentItem.FFlags) then CurrentItem.FUncompressedSize    := PreviusItem.FUncompressedSize;
+      if not(aifLastModifiedTime    in CurrentItem.FFlags) then CurrentItem.FLastModifiedTime    := PreviusItem.FLastModifiedTime;
+      if not(aifAttributes          in CurrentItem.FFlags) then CurrentItem.FAttributes          := PreviusItem.FAttributes;
+      if not(aifComment             in CurrentItem.FFlags) then CurrentItem.FComment             := PreviusItem.FComment;
+      if not(aifLevel               in CurrentItem.FFlags) then CurrentItem.FLevel               := PreviusItem.FLevel;
+      if not(aifLevelTime           in CurrentItem.FFlags) then CurrentItem.FLevelTime           := PreviusItem.FLevelTime;
       /// Data descryptor property ///
       if not(adfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
       if not(adfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
@@ -1979,6 +2006,7 @@ end;
 
 procedure TArchiver.CheckTags4Update;
 var
+  X: longint;
   I, J: longint;
   Item: TCustomSearchRec;
   Confirm: TArchiveConfirm;
