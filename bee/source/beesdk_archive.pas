@@ -656,7 +656,11 @@ var
   Lo, Med, Hi, I: longint;
 begin
   Item.FPosition := FItems.Add(Item);
-  if FNames.Count <> 0 then
+
+
+
+
+  if FItemsAux.Count <> 0 then
   begin
     Lo := 0;
     Hi := FNames.Count - 1;
