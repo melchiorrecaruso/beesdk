@@ -538,7 +538,7 @@ begin
   if ParamCount > 0 then ProcessCommand(ParamStr(1));
   // catch options, archive name and name of files
   if ParamCount > 1 then
-    for I := 1 to ParamCount do
+    for I := 2 to ParamCount do
     begin
       S := ParamStr(I);
       if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
