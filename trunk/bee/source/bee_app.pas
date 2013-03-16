@@ -189,6 +189,7 @@ begin
 
       esArchiveTypeError : DoMessage(Cr + Format(emArchiveTypeError,  [TimeDifference(StartTime)]));
       esArchiveVerError  : DoMessage(Cr + Format(emArchiveVerError,   [TimeDifference(StartTime)]));
+      esArchiveCDError   : DoMessage(Cr + Format(emArchiveCDError,    [TimeDifference(StartTime)]));
       esCRCError         : DoMessage(Cr + Format(emCRCError,          [TimeDifference(StartTime)]));
       esCaseError        : DoMessage(Cr + Format(emCaseError,         [TimeDifference(StartTime)]));
       esLoadConfigError  : DoMessage(Cr + Format(emLoadConfigError,   [TimeDifference(StartTime)]));
