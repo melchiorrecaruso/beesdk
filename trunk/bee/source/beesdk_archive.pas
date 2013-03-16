@@ -50,7 +50,6 @@ const
 
   /// archive central directory item type
   acditFILE         = $01;
-  acditDIRECTORY    = $02;
   acditEND          = $7F;
 
 type
@@ -76,9 +75,7 @@ type
     aifUncompressedSize,
     aifLastModifiedTime,
     aifAttributes,
-    aifComment,
-    aifLevel,
-    aifLevelTime);
+    aifComment);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -134,8 +131,6 @@ type
     FLastModifiedTime: longint;
     FAttributes: longword;
     FComment: string;
-    FLevel: longword;
-    FLevelTime: longint;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -152,8 +147,7 @@ type
     FEncryptionFlags: TArchiveEncryptionFlags;
     FEncryptionMethod: TArchiveEncryptionMethod;
   protected
-    FPosition: longint;
-    FDown: TArchiveItem;
+    FIndex: longint;
     FTag: TArchiveItemTag;
     FExternalFileName: string;
     FExternalFileSize: int64;
@@ -171,8 +165,6 @@ type
     property LastModifiedTime: longint read FLastModifiedTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
-    property Level: longword read FLevel;
-    property LevelTime: longint read FLevelTime;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -195,7 +187,7 @@ type
   TArchiveCentralDirectory = class(TObject)
   private
     FItems: TList;
-    FItemsAux: TList;
+    FItemsBranch: TList;
     // central directory end property
     FCDE_Flags: TArchiveCentralDirectoryEndFlags;
     FCDE_LastModifiedTime: longint;
@@ -215,12 +207,12 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    constructor Read(Stream: TFileReader);
+    procedure Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
     function Add(Item : TArchiveItem): longint;
     procedure Delete(Index: longint);
     procedure Clear;
-    function Find(const FileName: string): longint;
+    function IndexOf(const FileName: string): longint;
   public
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
@@ -519,8 +511,6 @@ begin
   FLastModifiedTime    :=  0;
   FAttributes          :=  0;
   FComment             := '';
-  FLevel               :=  0;
-  FLevelTime           :=  0;
   /// Data descriptor property ///
   FDataDescriptorFlags := [
     adfCompressedSize,
@@ -541,8 +531,8 @@ begin
   FEncryptionFlags   := [];
   FEncryptionMethod  := aemNone;
   /// Reserved property ///
+  FIndex             := -1;
   FTag               := aitAdd;
-  FPosition          := -1;
   FExternalFileName  := '';
   FExternalFileSize  :=  0;
 end;
@@ -567,7 +557,6 @@ begin
   if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := Stream.ReadInfWord;
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
-  if (aifLevel               in FFlags) then FLevel               := Stream.ReadInfWord;
   /// Data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (adfCompressedSize    in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -595,7 +584,6 @@ begin
   if (aifLastModifiedTime    in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
   if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
-  if (aifLevel               in FFlags) then Stream.WriteInfWord(FLevel);
   /// Data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (adfCompressedSize    in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
@@ -624,7 +612,7 @@ constructor TArchiveCentralDirectory.Create;
 begin
   inherited Create;
   FItems := TList.Create;
-  FItemsAux := TList.Create;
+  FItemsBranch := TList.Create;
 
   FCDE_LastModifiedTime := DateTimeToFileDate(Now);
   FCDE_Comment := '';
@@ -634,7 +622,7 @@ destructor TArchiveCentralDirectory.Destroy;
 begin
   Clear;
   FItems.Destroy;
-  FItemsAux.Destroy;
+  FItemsBranch.Destroy;
   inherited Destroy;
 end;
 
@@ -645,30 +633,25 @@ begin
   for I := 0 to FItems.Count - 1 do
     TArchiveItem(FItems[I]).Destroy;
   FItems.Clear;
-  FItemsAux.Clear;
-
-  FCDE_LastModifiedTime := DateTimeToFileDate(Now);
-  FCDE_Comment := '';
+  FItemsBranch.Clear;
 end;
 
 function TArchiveCentralDirectory.Add(Item: TArchiveItem): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
-  Item.FPosition := FItems.Add(Item);
+  // Item.Up := nil;
+  Item.FIndex := FItems.Add(Item);
 
-
-
-
-  if FItemsAux.Count <> 0 then
+  if FItemsBranch.Count <> 0 then
   begin
     Lo := 0;
-    Hi := FNames.Count - 1;
+    Hi := FItemsBranch.Count - 1;
     while Hi >= Lo do
     begin
       Med := (Lo + Hi) div 2;
       I := AnsiCompareFileName(Item.FileName,
-        TArchiveItem(FNames[Med]).FileName);
+        TArchiveItem(FItemsBranch[Med]).FileName);
 
       if I > 0 then
         Lo := Med + 1
@@ -681,31 +664,33 @@ begin
 
     if Hi = -2 then
     begin
+      // new layer:  FItemsBranch[Med].Up := Item;
       SetExitStatus(esUnknowError);
-      FNames.Insert(Med + 1, Item);
     end else
     begin
       if I > 0 then
-        FNames.Insert(Med + 1, Item)
+        FItemsBranch.Insert(Med + 1, Item)
       else
-        FNames.Insert(Med, Item);
+        FItemsBranch.Insert(Med, Item);
     end;
   end else
-    FNames.Add(Item);
+    FItemsBranch.Add(Item);
 
-   Result := Item.FPosition;
+  Result := Item.FIndex;
 end;
 
-function TArchiveItems.GetNameIndex(const FileName: string): longint;
+function TArchiveCentralDirectory.GetIndexOf(const FileName: string): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
   Lo := 0;
-  Hi := FNames.Count - 1;
+  Hi := FItemsBranch.Count - 1;
   while Hi >= Lo do
   begin
     Med := (Lo + Hi) div 2;
-    I := AnsiCompareFileName(FileName, TArchiveItem(FNames[Med]).FileName);
+    I := AnsiCompareFileName(FileName,
+      TArchiveItem(FItemsBranch[Med]).FileName);
+
     if I > 0 then
       Lo := Med + 1
     else
@@ -714,21 +699,18 @@ begin
       else
         Hi := -2;
   end;
+
   Result := -1;
   if Hi = -2 then
     Result := Med;
 end;
 
-function TArchiveItems.Find(const FileName: string): longint;
+function TArchiveCentralDirectory.IndexOf(const FileName: string): longint;
 begin
-  Result := GetNameIndex(FileName);
-  if Result <> -1 then
-  begin
-    Result := TArchiveItem(FNames[Result]).FPosition;
-  end;
+  Result := TArchiveItem(FItemsBranch[GetIndexOf(FileName)]).FIndex;
 end;
 
-procedure TArchiveItems.Delete(Index: longint);
+procedure TArchiveCentralDirectory.Delete(Index: longint);
 var
   I: longint;
   Item, Next: TArchiveItem;
@@ -750,19 +732,31 @@ begin
     end;
   end;
 
-  FNames.Delete(GetNameIndex(Item.FileName));
-  FItems.Delete(Item.FPosition);
+  FItemsBranch.Delete(GetIndexOf(Item.FileName));
+  FItems.Delete(Item.FIndex);
   Item.Destroy;
 end;
 
-function TArchiveItems.GetCount: longint;
+function TArchiveCentralDirectory.GetCount: longint;
 begin
   Result := FItems.Count;
 end;
 
-function TArchiveItems.GetItem(Index: longint): TArchiveItem;
+function TArchiveCentralDirectory.GetItem(Index: longint): TArchiveItem;
 begin
   Result := TArchiveItem(FItems[Index]);
+end;
+
+procedure TArchiveCentralDirectory.Read(Stream: TFileReader);
+begin
+
+
+end;
+
+procedure TArchiveCentralDirectory.Write(Stream: TFileWriter);
+begin
+
+
 end;
 
 // TArchiver class
