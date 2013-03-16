@@ -188,6 +188,7 @@ begin
       esUserAbortError   : DoMessage(Cr + Format(emUserAbortError,    [TimeDifference(StartTime)]));
 
       esArchiveTypeError : DoMessage(Cr + Format(emArchiveTypeError,  [TimeDifference(StartTime)]));
+      esArchiveVerError  : DoMessage(Cr + Format(emArchiveVerError,   [TimeDifference(StartTime)]));
       esCRCError         : DoMessage(Cr + Format(emCRCError,          [TimeDifference(StartTime)]));
       esCaseError        : DoMessage(Cr + Format(emCaseError,         [TimeDifference(StartTime)]));
       esLoadConfigError  : DoMessage(Cr + Format(emLoadConfigError,   [TimeDifference(StartTime)]));
