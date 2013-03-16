@@ -116,7 +116,7 @@ end;
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1895 archiver utility, Mar 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1903 archiver utility, Mar 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -639,6 +639,7 @@ begin
       DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize),
         SizeToStr(TotalPackedSize), TotalFiles]));
     end;
+    DoMessage(Cr + Format('Last modified time: %16s', [FileTimeToString(FArchiver.LastModifiedTime)]));
     ItemToList.Destroy;
   end;
   CloseArchive;

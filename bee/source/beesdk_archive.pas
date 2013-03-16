@@ -281,6 +281,7 @@ type
     function GetItem(Index: longint): TArchiveItem;
     function GetComment: string;
     function GetCount: longint;
+    function GetLastModifiedTime: longint;
   private
     FEncoder: TStreamEncoder;
     procedure InitEncoder      (Item: TArchiveItem);
@@ -368,6 +369,8 @@ type
     property VolumeSize: int64 read FVolumeSize write FVolumeSize;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
+
+    property LastModifiedTime: longint read GetLastModifiedTime;
   end;
 
 function CompressionMethodToStr(Item: TArchiveItem): string;
@@ -383,19 +386,41 @@ uses
   Bee_Interface;
 
 function GetCompressionMethod(const Params: string): TArchiveCompressionMethod;
+var
+  S: string;
 begin
   Result := acmNone;
+  S := '|' + LowerCase(Params) + '|';
+  if Pos('|m=0|',   S) > 0 then Result := acmNone else
+  if Pos('|m=1|',   S) > 0 then Result := acmBee  else
+  if Pos('|store|', S) > 0 then Result := acmNone else
+  if Pos('|bee|',   S) > 0 then Result := acmBee;
+end;
+
+function GetCompressionLevel(const Params: string): TArchiveCompressionLevel;
+var
+  S: string;
+begin
+  Result := aclFast;
+  S := '|' + LowerCase(Params) + '|';
+  if Pos('|l=1|',    S) > 0 then Result := aclFast    else
+  if Pos('|l=2|',    S) > 0 then Result := aclNormal  else
+  if Pos('|l=3|',    S) > 0 then Result := aclMaximum else
+  if Pos('|fast|'  , S) > 0 then Result := aclFast    else
+  if Pos('|normal|', S) > 0 then Result := aclNormal  else
+  if Pos('|max|',    S) > 0 then Result := aclMaximum;
 end;
 
 function GetCompressionBlock(const Params: string): int64;
 begin
   Result := 0;
+
+
+
+
 end;
 
-function GetCompressionLevel(const Params: string): TArchiveCompressionLevel;
-begin
-  Result := aclFast;
-end;
+
 
 function GetDictionaryLevel(const Params: string): TArchiveDictionaryLevel;
 begin
@@ -696,7 +721,11 @@ end;
 
 function TArchiveCentralDirectory.IndexOf(const FileName: string): longint;
 begin
-  Result := TArchiveItem(FItemsAux[GetIndexOf(FileName)]).FIndex;
+  Result := GetIndexOf(FileName);
+  if Result <> -1 then
+  begin
+    Result := TArchiveItem(FItemsAux[Result]).FIndex;
+  end;
 end;
 
 procedure TArchiveCentralDirectory.Delete(Index: longint);
@@ -881,7 +910,7 @@ begin
 
   // [6] read central directory end marker
   if ExitStatus = esNoError then
-    if Stream.ReadInfWord <> ARCHIVE_CENTRALDIR_END_MARKER then
+    if Stream.ReadDWord <> ARCHIVE_CENTRALDIR_END_MARKER then
       SetExitStatus(esArchiveTypeError);
 
   // [7] read central directory end
@@ -1400,6 +1429,11 @@ end;
 function TArchiver.GetItem(Index: longint): TArchiveItem;
 begin
   Result := FCentralDirectory.Items[Index];
+end;
+
+function TArchiver.GetLastModifiedTime: longint;
+begin
+  Result := FCentralDirectory.LastModifiedTime;
 end;
 
 // TArchiver # SET PROPERTY #
