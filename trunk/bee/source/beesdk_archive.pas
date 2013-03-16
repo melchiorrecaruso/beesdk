@@ -198,7 +198,7 @@ type
     FCDS_DiskNumber: longword;
     FCDS_DiskSeek: int64;
     // central directory magik seek property
-    FCDMS_DiskSeek: int64;
+    FCDMS_DiskSeek: longint;
   private
     function GetCount : longint;
     function GetItem(Index: longint): TArchiveItem;
@@ -382,7 +382,6 @@ uses
   Bee_Assembler,
   Bee_Interface;
 
-
 function GetCompressionMethod(const Params: string): TArchiveCompressionMethod;
 begin
   Result := acmNone;
@@ -420,23 +419,18 @@ end;
 
 function GetVersionNeededToRead(Item: TArchiveItem): longword; overload;
 begin
-  Result := $50;
+  Result := 80;
 end;
 
 function GetVersionNeededToRead(Flags: TArchiveCentralDirectoryEndFlags): longword; overload;
 begin
-  Result := $50;
+  Result := 80;
 end;
 
 function GetVersionNeededToRead(Flags: TArchiveCentralDirectorySeekFlags): longword; overload;
 begin
-  Result := $50;
+  Result := 80;
 end;
-
-
-
-
-
 
 function CompressionMethodToStr(Item: TArchiveItem): string;
 begin
@@ -918,17 +912,14 @@ procedure TArchiveCentralDirectory.Write(Stream: TFileWriter);
 var
   I: longword;
 begin
-  // [0] store central directory magik seek
-  FCDMS_DiskSeek  := Stream.SeekFromCurrent;
-
-  // [1] store central directory seek
+  // [0] store central directory seek
   FCDS_Flags      := [acdsfVersionNeededToRead];
   FCDS_DiskSeek   := Stream.SeekFromCurrent;
   FCDS_DiskNumber := Stream.CurrentImage;
   if FCDS_DiskNumber <> 1 then
     Include(FCDS_Flags,  acdsfDiskNumber);
 
-  // [2] write central directory items
+  // [1] write central directory items
   Stream.WriteDWord(ARCHIVE_CENTRALDIR_MARKER);
   Pack;
   for I := 0 to FItems.Count - 1 do
@@ -938,7 +929,7 @@ begin
   end;
   Stream.WriteInfWord(acditEND);
 
-  // [3] write central directory end
+  // [2] write central directory end
   FCDE_Flags := [acdefVersionNeededToRead, acdefLastModifiedTime];
   FCDE_LastModifiedTime := DateTimeToFileDate(Now);
   if Length(FCDE_Comment) > 0 then
@@ -953,26 +944,25 @@ begin
   if (acdefComment in FCDE_Flags) then
     Stream.WriteInfString(FCDE_Comment);
 
-  // [0.1] write central directory seek
+  // [3] multi-spanning support
   if Stream.Threshold > 0 then
-  begin
     if (Stream.Threshold - Stream.SeekFromCurrent) < 512 then Stream.CreateNewImage;
 
-    FCDMS_DiskSeek   := Stream.SeekFromCurrent;
-    FCDS_DisksNumber := Stream.CurrentImage;
-    if FCDS_DisksNumber <> 1 then
-      Include(FCDS_Flags, acdsfDisksNumber);
+  // [0.1] write central directory seek
+  FCDMS_DiskSeek   := Stream.SeekFromCurrent;
+  FCDS_DisksNumber := Stream.CurrentImage;
+  if FCDS_DisksNumber <> 1 then
+    Include(FCDS_Flags, acdsfDisksNumber);
 
-    Stream.WriteDWord(ARCHIVE_CENTRALDIR_SEEK_MARKER);
-    Stream.WriteInfWord(longword(FCDS_Flags));
-    if (acdsfVersionNeededToRead in FCDS_Flags) then
-      Stream.WriteInfWord(GetVersionNeededToRead(FCDS_Flags));
-    if (acdsfDisksNumber in FCDS_Flags) then
-      Stream.WriteInfWord(FCDS_DisksNumber);
-    if (acdsfDiskNumber in FCDS_Flags) then
-      Stream.WriteInfWord(FCDS_DiskNumber);
-    Stream.WriteInfWord(FCDS_DiskSeek);
-  end;
+  Stream.WriteDWord(ARCHIVE_CENTRALDIR_SEEK_MARKER);
+  Stream.WriteInfWord(longword(FCDS_Flags));
+  if (acdsfVersionNeededToRead in FCDS_Flags) then
+    Stream.WriteInfWord(GetVersionNeededToRead(FCDS_Flags));
+  if (acdsfDisksNumber in FCDS_Flags) then
+    Stream.WriteInfWord(FCDS_DisksNumber);
+  if (acdsfDiskNumber in FCDS_Flags) then
+    Stream.WriteInfWord(FCDS_DiskNumber);
+  Stream.WriteInfWord(FCDS_DiskSeek);
 
   // [4] write magikseek
   Stream.WriteDWord(ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER);
