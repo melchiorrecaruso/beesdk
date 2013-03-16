@@ -342,7 +342,7 @@ var
   I: longint;
 begin
   UpdateAs := FCommandLine.cdOption + SearchRec.Name;
-  I := FArchiver.Find(UpdateAs);
+  I := FArchiver.IndexOf(UpdateAs);
   if I <> -1 then
     Item := FArchiver.Items[I];
 
@@ -364,7 +364,7 @@ begin
     umAddAutoRename: begin
       StartIndex := 0;
       StartName  := UpdateAs;
-      while FArchiver.Find(UpdateAs) <> -1 do
+      while FArchiver.IndexOf(UpdateAs) <> -1 do
         UpdateAs := GenerateAlternativeFileName(StartName, StartIndex);
       Confirm := arcOk;
     end;
@@ -444,7 +444,7 @@ begin
     FArchiver.SelfExtractor := FCommandLine.sfxOption;
   // archive comment
   if clcOption in FCommandLine.Options then
-    FArchiver.ArchiveComment := FCommandLine.acOption;
+    FArchiver.Comment := FCommandLine.acOption;
   // test temporary archive
   if cltOption in FCommandLine.Options then
     FArchiver.TestTempArchive := FCommandLine.tOption;
