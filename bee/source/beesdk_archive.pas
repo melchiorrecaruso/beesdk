@@ -203,7 +203,6 @@ type
     function GetCount : longint;
     function GetItem(Index: longint): TArchiveItem;
     function GetIndexOf(const FileName: string): longint;
-    procedure SetComment(const Value: string);
   private
     procedure Pack;
     procedure UnPack;
@@ -219,9 +218,8 @@ type
   public
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
-
-    // property LastModifiedTime: longint read FCDE_LastModifiedTime;
-    // property Comment: string read FCDE_Comment;
+    property LastModifiedTime: longint read FCDE_LastModifiedTime;
+    property Comment: string read FCDE_Comment write FCDE_Comment;
   end;
 
   /// ...
@@ -271,6 +269,19 @@ type
     FCentralDirectory: TArchiveCentralDirectory;
     FSearchRecs: TList;
   private
+    procedure SetComment(const Value: string);
+    procedure SetArchiveName(const Value: string);
+    procedure SetWorkDirectory(const Value: string);
+    procedure SetSfxName(const Value: string);
+
+    function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
+    function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
+    function GetBackTear(Index: longint): longint;
+    function GetNextTear(Index: longint): longint;
+    function GetItem(Index: longint): TArchiveItem;
+    function GetComment: string;
+    function GetCount: longint;
+  private
     FEncoder: TStreamEncoder;
     procedure InitEncoder      (Item: TArchiveItem);
     procedure EncodeFromArchive(Item: TArchiveItem);
@@ -283,29 +294,11 @@ type
     procedure DecodeToSwap     (Item: TArchiveItem);
     procedure DecodeToFile     (Item: TArchiveItem);
   private
-    procedure Swapping;
-    procedure TestTemporaryArchive;
-    procedure SaveTemporaryArchive;
-  private
-    procedure SetArchiveName(const Value: string);
-    procedure SetWorkDirectory(const Value: string);
-    procedure SetSfxName(const Value: string);
-
-    function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
-    function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
-    function GetBackTear(Index: longint): longint;
-    function GetNextTear(Index: longint): longint;
-    function GetItem(Index: longint): TArchiveItem;
-    function GetCount: longint;
-
-  private
     FOnRequestBlankImage: TFileWriterRequestBlankImageEvent;
-    procedure DoRequestBlankImage(ImageNumber: longint;
-      var Abort : Boolean);
+    procedure DoRequestBlankImage(ImageNumber: longint; var Abort : Boolean);
   private
     FOnRequestImage: TFileReaderRequestImageEvent;
-    procedure DoRequestImage(ImageNumber: longint;
-      var ImageName: string; var Abort: boolean);
+    procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
   private
     FOnMessage: TArchiveMessageEvent;
     procedure DoMessage(const Message: string);
@@ -330,11 +323,15 @@ type
     procedure CheckTags4Update;
     procedure CheckSequences4Update;
     procedure Configure;
+  private
+    procedure Swapping;
+    procedure TestTemporaryArchive;
+    procedure SaveTemporaryArchive;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure OpenArchive(const aArchiveName: string);
     procedure CloseArchive;
+    procedure OpenArchive(const aArchiveName: string);
     procedure Suspend(Value: boolean);
     procedure Terminate;
 
@@ -344,14 +341,13 @@ type
     procedure Tag(Index: longint); overload;
     procedure Tag(SearchRec: TCustomSearchRec); overload;
     function IsTagged(Index: longint): boolean;
-    function Find(const aFileName: string): longint;
+    function IndexOf(const aFileName: string): longint;
 
     procedure TestTagged;
     procedure ExtractTagged;
     procedure RenameTagged;
     procedure DeleteTagged;
     procedure UpdateTagged;
-
   public
     property OnRequestBlankImage: TFileWriterRequestBlankImageEvent read FOnRequestBlankImage write FOnRequestBlankImage;
     property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
@@ -361,8 +357,9 @@ type
     property OnRename: TArchiveRenameEvent read FOnRename write FOnRename;
     property OnDelete: TArchiveDeleteEvent read FOnDelete write FOnDelete;
     property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
-
+  public
     property ArchiveName: string read FArchiveName write SetArchiveName;
+    property Comment: string read GetComment write SetComment;
     property SelfExtractor: string read FSfxName write FSfxName;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
     property CompressionParams: string read FCompressionParams write FCompressionParams;
@@ -745,6 +742,77 @@ begin
   Result := TArchiveItem(FItems[Index]);
 end;
 
+procedure TArchiveCentralDirectory.Pack;
+var
+  I: longint;
+  CurrentItem: TArchiveItem;
+  PreviusItem: TArchiveItem;
+begin
+  if FItems.Count > 0 then
+  begin
+    PreviusItem := FItems.Items[0];
+    for I := 1 to FItems.Count - 1 do
+    begin
+      CurrentItem := FItems.Items[I];
+      /// Item property ///
+      if CurrentItem.FVersionNeededToRead = PreviusItem.FVersionNeededToRead then Exclude(CurrentItem.FFlags, aifVersionNeededToRead) else Include(CurrentItem.FFlags, aifVersionNeededToRead);
+      if CurrentItem.FUncompressedSize    = PreviusItem.FUncompressedSize    then Exclude(CurrentItem.FFlags, aifUncompressedSize)    else Include(CurrentItem.FFlags, aifUncompressedSize);
+      if CurrentItem.FLastModifiedTime    = PreviusItem.FLastModifiedTime    then Exclude(CurrentItem.FFlags, aifLastModifiedTime)    else Include(CurrentItem.FFlags, aifLastModifiedTime);
+      if CurrentItem.FAttributes          = PreviusItem.FAttributes          then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
+      if CurrentItem.FComment             = PreviusItem.FComment             then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
+      /// Data descriptor property ///
+      if CurrentItem.FCompressedSize   = PreviusItem.FCompressedSize then Exclude(CurrentItem.FDataDescriptorFlags, adfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, adfCompressedSize);
+      if CurrentItem.FDiskNumber       = PreviusItem.FDiskNumber     then Exclude(CurrentItem.FDataDescriptorFlags, adfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, adfDiskNumber);
+      if CurrentItem.FDiskseek         = PreviusItem.FDiskSeek       then Exclude(CurrentItem.FDataDescriptorFlags, adfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, adfDiskSeek);
+      if CurrentItem.FCRC32            = PreviusItem.FCRC32          then Exclude(CurrentItem.FDataDescriptorFlags, adfCRC32)          else Include(CurrentItem.FDataDescriptorFlags, adfCRC32);
+      /// Compression property ///
+      if CurrentItem.FCompressionMethod = PreviusItem.FCompressionMethod then Exclude(CurrentItem.FCompressionFlags, acfCompressionMethod) else Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
+      if CurrentItem.FCompressionLevel  = PreviusItem.FCompressionLevel  then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevel)  else Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
+      if CurrentItem.FDictionaryLevel   = PreviusItem.FDictionaryLevel   then Exclude(CurrentItem.FCompressionFlags, acfDictionaryLevel)   else Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
+      /// Encryption property ///
+      if CurrentItem.FEncryptionMethod  = PreviusItem.FEncryptionMethod  then Exclude(CurrentItem.FEncryptionFlags, aefEncryptionMethod)   else Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);                  ;
+
+      PreviusItem := CurrentItem;
+    end;
+  end;
+end;
+
+procedure TArchiveCentralDirectory.UnPack;
+var
+  I: longint;
+  CurrentItem: TArchiveItem;
+  PreviusItem: TArchiveItem;
+begin
+  if FItems.Count > 0 then
+  begin
+    PreviusItem := FItems.Items[0];
+    for I := 1 to FItems.Count - 1 do
+    begin
+      CurrentItem := FItems.Items[I];
+      /// Item property ///
+      if not(aifVersionNeededToRead in CurrentItem.FFlags) then CurrentItem.FVersionNeededToRead := PreviusItem.FVersionNeededToRead;
+      if not(aifUncompressedSize    in CurrentItem.FFlags) then CurrentItem.FUncompressedSize    := PreviusItem.FUncompressedSize;
+      if not(aifLastModifiedTime    in CurrentItem.FFlags) then CurrentItem.FLastModifiedTime    := PreviusItem.FLastModifiedTime;
+      if not(aifAttributes          in CurrentItem.FFlags) then CurrentItem.FAttributes          := PreviusItem.FAttributes;
+      if not(aifComment             in CurrentItem.FFlags) then CurrentItem.FComment             := PreviusItem.FComment;
+      /// Data descryptor property ///
+      if not(adfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
+      if not(adfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
+      if not(adfDiskSeek       in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskSeek       := PreviusItem.FDiskSeek;
+      if not(adfCRC32          in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCRC32          := PreviusItem.FCRC32;
+      /// Compression property ///
+      if not(acfCompressionMethod in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionMethod := PreviusItem.FCompressionMethod;
+      if not(acfCompressionLevel  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionLevel  := PreviusItem.FCompressionLevel;
+      if not(acfDictionaryLevel   in CurrentItem.FCompressionFlags) then CurrentItem.FDictionaryLevel   := PreviusItem.FDictionaryLevel;
+      if not(acfCompressionTable  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionTable  := PreviusItem.FCompressionTable;
+      /// Encryption property ///
+      if not(aefEncryptionMethod in CurrentItem.FEncryptionFlags) then CurrentItem.FEncryptionMethod := PreviusItem.FEncryptionMethod;
+
+      PreviusItem := CurrentItem;
+    end;
+  end;
+end;
+
 procedure TArchiveCentralDirectory.Read(Stream: TFileReader);
 const
   CDSFULL = [acdsfVersionNeededToRead, acdsfDisksNumber,      acdsfDiskNumber];
@@ -752,22 +820,30 @@ const
 var
   MARKER: longword;
 begin
-  Stream.SeekFromEnd(-2*SizeOf(DWord));
-  // read central directory magik seek marker
-  MARKER := Stream.ReadDWord;
-  if MARKER <> ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER then
-    SetExitStatus(esArchiveTypeError);
+  // [0] seek on read central directory magik seek
+  if ExitStatus = esNoError then
+    Stream.SeekFromEnd(-2*SizeOf(DWord));
 
+  // [1] read central directory magik seek marker
+  if ExitStatus = esNoError then
+    if Stream.ReadDWord <> ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER then
+      SetExitStatus(esArchiveTypeError);
+
+  // [2] seek on central directory marker (or seek marker)
+  if ExitStatus = esNoError then
+    Stream.SeekFromEnd(-Stream.ReadDWord);
+
+  // [3] read central directory marker (or seek marker)
   if ExitStatus = esNoError then
   begin
-    // read central directory magik seek
-    Stream.SeekFromEnd(-Stream.ReadDWord);
-    // read central directory marker (or seek marker)
     MARKER := Stream.ReadDWord;
     if MARKER <> ARCHIVE_CENTRALDIR_MARKER then
       if MARKER <> ARCHIVE_CENTRALDIR_SEEK_MARKER then
         SetExitStatus(esArchiveTypeError);
+  end;
 
+  // [4] read central directory seek
+  if ExitStatus = esNoError then
     if MARKER = ARCHIVE_CENTRALDIR_SEEK_MARKER then
     begin
       FCDS_Flags := TArchiveCentralDirectorySeekFlags(longword(Stream.ReadInfWord));
@@ -777,67 +853,130 @@ begin
 
       if ExitStatus = esNoError then
       begin
+        FCDS_DisksNumber := 1;
         if (acdsfDisksNumber in FCDS_Flags) then
-          FCDS_DisksNumber := Stream.ReadInfWord else FCDS_DisksNumber := 1;
+          FCDS_DisksNumber := Stream.ReadInfWord;
 
+        FCDS_DiskNumber  := 1;
         if (acdsfDiskNumber  in FCDS_Flags) then
-          FCDS_DiskNumber := Stream.ReadInfWord else FCDS_DiskNumber  := 1;
+          FCDS_DiskNumber := Stream.ReadInfWord;
 
         FCDS_DiskSeek := Stream.ReadInfWord;
-        // seek on central directory marker
+        // [4.1] seek on central directory marker
         Stream.ImagesNumber :=   FCDS_DisksNumber;
         Stream.ImageNumber  :=   FCDS_DiskNumber;
         Stream.SeekFromBeginning(FCDS_DiskSeek);
-        // read central directory marker
+        // [4.2] read central directory marker
         MARKER := Stream.ReadDWord;
+        if MARKER <> ARCHIVE_CENTRALDIR_MARKER then
+          SetExitStatus(esArchiveTypeError);
       end;
     end;
 
-    // read central directory structure
-    if MARKER = ARCHIVE_CENTRALDIR_MARKER then
+  // [5] read central directory items
+  if MARKER = ARCHIVE_CENTRALDIR_MARKER then
+    while ExitStatus = esNoError do
     begin
-      repeat
-        MARKER := Stream.ReadInfWord;
-        case MARKER of
-          acditFILE: Add(TArchiveItem.Read(Stream));
-          else       Break;
-        end;
-      until MARKER = acditEND;
-
-      if MARKER <> acditEND then
-        SetExitStatus(esArchiveTypeError);
+      MARKER := Stream.ReadInfWord;
+      case MARKER of
+        acditFILE: Add(TArchiveItem.Read(Stream));
+        acditEND:  Break;
+        else       SetExitStatus(esArchiveTypeError);
+      end;
     end;
 
-    // read central directory end marker
-    MARKER := Stream.ReadInfWord;
-    if MARKER <> ARCHIVE_CENTRALDIR_END_MARKER then
+  // [6] read central directory end marker
+  if ExitStatus = esNoError then
+    if Stream.ReadInfWord <> ARCHIVE_CENTRALDIR_END_MARKER then
       SetExitStatus(esArchiveTypeError);
+
+  // [7] read central directory end
+  if ExitStatus = esNoError then
+  begin
+    FCDE_Flags := TArchiveCentralDirectoryEndFlags(longword(Stream.ReadInfWord));
+    if (acdefVersionNeededToRead in FCDE_Flags) then
+      if Stream.ReadInfWord > GetVersionNeededToRead(CDEFULL) then
+        SetExitStatus(esArchiveVerError);
 
     if ExitStatus = esNoError then
     begin
-      FCDE_Flags := TArchiveCentralDirectoryEndFlags(longword(Stream.ReadInfWord));
-      if (acdefVersionNeededToRead in FCDE_Flags) then
-        if Stream.ReadInfWord > GetVersionNeededToRead(CDEFULL) then
-          SetExitStatus(esArchiveVerError);
+      FCDE_LastModifiedTime := 0;
+      if (acdefLastModifiedTime in FCDE_Flags) then
+        FCDE_LastModifiedTime := Stream.ReadInfWord;
 
-      if ExitStatus = esNoError then
-      begin
-        if (acdefLastModifiedTime in FCDE_Flags) then
-          FCDE_LastModifiedTime := Stream.ReadInfWord else FCDE_LastModifiedTime := 0;
-
-        if (acdefComment  in FCDE_Flags) then
-          FCDE_Comment := Stream.ReadInfString else FCDE_comment := '';
-      end;
+      FCDE_Comment := '';
+      if (acdefComment  in FCDE_Flags) then
+        FCDE_Comment := Stream.ReadInfString;
     end;
-
-    if ExitStatus = esNoError then UnPack;
   end;
+
+  // [8] unpack central directory
+  if ExitStatus = esNoError then UnPack;
 end;
 
 procedure TArchiveCentralDirectory.Write(Stream: TFileWriter);
+var
+  I: longword;
 begin
+  // [0] store central directory magik seek
+  FCDMS_DiskSeek  := Stream.SeekFromCurrent;
 
+  // [1] store central directory seek
+  FCDS_Flags      := [acdsfVersionNeededToRead];
+  FCDS_DiskSeek   := Stream.SeekFromCurrent;
+  FCDS_DiskNumber := Stream.CurrentImage;
+  if FCDS_DiskNumber <> 1 then
+    Include(FCDS_Flags,  acdsfDiskNumber);
 
+  // [2] write central directory items
+  Stream.WriteDWord(ARCHIVE_CENTRALDIR_MARKER);
+  Pack;
+  for I := 0 to FItems.Count - 1 do
+  begin
+    Stream.WriteInfWord(acditFILE);
+    TArchiveItem(FItems[I]).Write(Stream);
+  end;
+  Stream.WriteInfWord(acditEND);
+
+  // [3] write central directory end
+  FCDE_Flags := [acdefVersionNeededToRead, acdefLastModifiedTime];
+  FCDE_LastModifiedTime := DateTimeToFileDate(Now);
+  if Length(FCDE_Comment) > 0 then
+    Include(FCDE_Flags, acdefComment);
+
+  Stream.WriteDWord(ARCHIVE_CENTRALDIR_END_MARKER);
+  Stream.WriteInfWord(longword(FCDE_Flags));
+  if (acdefVersionNeededToRead in FCDE_Flags) then
+    Stream.WriteInfWord(GetVersionNeededToRead(FCDE_Flags));
+  if (acdefLastModifiedTime in FCDE_Flags) then
+    Stream.WriteInfWord(FCDE_LastModifiedTime);
+  if (acdefComment in FCDE_Flags) then
+    Stream.WriteInfString(FCDE_Comment);
+
+  // [0.1] write central directory seek
+  if Stream.Threshold > 0 then
+  begin
+    if (Stream.Threshold - Stream.SeekFromCurrent) < 512 then Stream.CreateNewImage;
+
+    FCDMS_DiskSeek   := Stream.SeekFromCurrent;
+    FCDS_DisksNumber := Stream.CurrentImage;
+    if FCDS_DisksNumber <> 1 then
+      Include(FCDS_Flags, acdsfDisksNumber);
+
+    Stream.WriteDWord(ARCHIVE_CENTRALDIR_SEEK_MARKER);
+    Stream.WriteInfWord(longword(FCDS_Flags));
+    if (acdsfVersionNeededToRead in FCDS_Flags) then
+      Stream.WriteInfWord(GetVersionNeededToRead(FCDS_Flags));
+    if (acdsfDisksNumber in FCDS_Flags) then
+      Stream.WriteInfWord(FCDS_DisksNumber);
+    if (acdsfDiskNumber in FCDS_Flags) then
+      Stream.WriteInfWord(FCDS_DiskNumber);
+    Stream.WriteInfWord(FCDS_DiskSeek);
+  end;
+
+  // [4] write magikseek
+  Stream.WriteDWord(ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER);
+  Stream.WriteDWord(longword(Stream.SeekFromCurrent - FCDMS_DiskSeek + SizeOf(DWord)));
 end;
 
 // TArchiver class
@@ -1002,7 +1141,7 @@ begin
   FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
   case Item.CompressionMethod of
     acmBee: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
-    else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
+    else    FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
   end;
   Stream.Destroy;
   if Item.FCRC32 <> CRC then
@@ -1015,144 +1154,6 @@ begin
   end;
 end;
 
-// TArchiver # READ/WRITE CENTRAL DIRECTORY #
-
-procedure TArchiver.WriteCentralDirectory(aStream: TFileWriter);
-var
-  I: longword;
-  BindingFlags: TArchiveBindingItemFlags;
-  CDSFlags: TArchiveCentralDirectorySeekFlags;
-  CDSDisksNumber: longword;
-  CDSDiskNumber: longword;
-  CDSDiskSeek: int64;
-  CDMS: int64;
-begin
-  CDSFlags      := [acdsfVersionNeededToRead];
-  CDSDiskSeek   := aStream.SeekFromCurrent;
-  CDSDiskNumber := aStream.CurrentImage;
-  if CDSDiskNumber <> 1 then
-    Include(CDSFlags,  acdsfDiskNumber);
-  // write central directory items
-  aStream.WriteDWord(BEEX_ARCHIVE_CENTRALDIR);
-
-  PackCentralDirectory;
-  for I := 0 to FArchiveItems.Count - 1 do
-  begin
-    aStream.WriteInfWord(acditITEM);
-    FArchiveItems.Items[I].Write(aStream);
-  end;
-  BindingFlags := [abifVersionNeededToRead];
-  if Length(FArchiveItems.Comment) > 0 then
-    Include(BindingFlags, abifComment);
-
-  aStream.WriteInfWord(acditITEMSBINDING);
-  aStream.WriteInfWord(longword(BindingFlags));
-  if (abifVersionNeededToRead in BindingFlags) then
-    aStream.WriteInfWord(GetVersionNeededToRead(BindingFlags));
-  if (abifComment in BindingFlags) then
-    aStream.WriteInfString(FArchiveItems.Comment);
-  aStream.WriteInfWord(acditEND);
-
-  // write central directory seek
-  if aStream.Threshold > 0 then
-    if (aStream.Threshold - aStream.SeekFromCurrent) < 512 then
-      aStream.CreateNewImage;
-
-  CDMS := aStream.SeekFromCurrent;
-  CDSDisksNumber := aStream.CurrentImage;
-  if CDSDisksNumber <> 1 then
-    Include(CDSFlags, acdsfDisksNumber);
-
-  aStream.WriteDWord(BEEX_ARCHIVE_CENTRALDIR_SEEK);
-  aStream.WriteInfWord(longword(CDSFlags));
-  if (acdsfVersionNeededToRead in CDSFlags) then
-    aStream.WriteInfWord(GetVersionNeededToRead(CDSFlags));
-  if (acdsfDisksNumber in CDSFlags) then
-    aStream.WriteInfWord(CDSDisksNumber);
-  if (acdsfDiskNumber in CDSFlags) then
-    aStream.WriteInfWord(CDSDiskNumber);
-  aStream.WriteInfWord(CDSDiskSeek);
-  aStream.WriteInfWord(acditEND);
-  // write magikseek
-  aStream.WriteDWord(BEEX_ARCHIVE_CENTRALDIR_MAGIKSEEK);
-  aStream.WriteDWord(longword(aStream.SeekFromCurrent - CDMS + SizeOf(longword)));
-end;
-
-procedure TArchiver.PackCentralDirectory;
-var
-  I: longint;
-  CurrentItem: TArchiveItem;
-  PreviusItem: TArchiveItem;
-begin
-  if FArchiveItems.Count > 0 then
-  begin
-    PreviusItem := FArchiveItems.Items[0];
-    for I := 1 to FArchiveItems.Count - 1 do
-    begin
-      CurrentItem := FArchiveItems.Items[I];
-      /// Item property ///
-      if CurrentItem.FVersionNeededToRead = PreviusItem.FVersionNeededToRead then Exclude(CurrentItem.FFlags, aifVersionNeededToRead) else Include(CurrentItem.FFlags, aifVersionNeededToRead);
-      if CurrentItem.FUncompressedSize    = PreviusItem.FUncompressedSize    then Exclude(CurrentItem.FFlags, aifUncompressedSize)    else Include(CurrentItem.FFlags, aifUncompressedSize);
-      if CurrentItem.FLastModifiedTime    = PreviusItem.FLastModifiedTime    then Exclude(CurrentItem.FFlags, aifLastModifiedTime)    else Include(CurrentItem.FFlags, aifLastModifiedTime);
-      if CurrentItem.FAttributes          = PreviusItem.FAttributes          then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
-      if CurrentItem.FComment             = PreviusItem.FComment             then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
-      if CurrentItem.FLevel               = PreviusItem.FLevel               then Exclude(CurrentItem.FFlags, aifLevel)               else Include(CurrentItem.FFlags, aifLevel);
-      if CurrentItem.FLevelTime           = PreviusItem.FLevelTime           then Exclude(CurrentItem.FFlags, aifLevelTime)           else Include(CurrentItem.FFlags, aifLevelTime);
-      /// Data descriptor property ///
-      if CurrentItem.FCompressedSize   = PreviusItem.FCompressedSize then Exclude(CurrentItem.FDataDescriptorFlags, adfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, adfCompressedSize);
-      if CurrentItem.FDiskNumber       = PreviusItem.FDiskNumber     then Exclude(CurrentItem.FDataDescriptorFlags, adfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, adfDiskNumber);
-      if CurrentItem.FDiskseek         = PreviusItem.FDiskSeek       then Exclude(CurrentItem.FDataDescriptorFlags, adfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, adfDiskSeek);
-      if CurrentItem.FCRC32            = PreviusItem.FCRC32          then Exclude(CurrentItem.FDataDescriptorFlags, adfCRC32)          else Include(CurrentItem.FDataDescriptorFlags, adfCRC32);
-      /// Compression property ///
-      if CurrentItem.FCompressionMethod = PreviusItem.FCompressionMethod then Exclude(CurrentItem.FCompressionFlags, acfCompressionMethod) else Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-      if CurrentItem.FCompressionLevel  = PreviusItem.FCompressionLevel  then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevel)  else Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
-      if CurrentItem.FDictionaryLevel   = PreviusItem.FDictionaryLevel   then Exclude(CurrentItem.FCompressionFlags, acfDictionaryLevel)   else Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
-      /// Encryption property ///
-      if CurrentItem.FEncryptionMethod  = PreviusItem.FEncryptionMethod  then Exclude(CurrentItem.FEncryptionFlags, aefEncryptionMethod)   else Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);                  ;
-
-      PreviusItem := CurrentItem;
-    end;
-  end;
-end;
-
-procedure TArchiver.UnPackCentralDirectory;
-var
-  I: longint;
-  CurrentItem: TArchiveItem;
-  PreviusItem: TArchiveItem;
-begin
-  if FArchiveItems.Count > 0 then
-  begin
-    PreviusItem := FArchiveItems.Items[0];
-    for I := 1 to FArchiveItems.Count - 1 do
-    begin
-      CurrentItem := FArchiveItems.Items[I];
-      /// Item property ///
-      if not(aifVersionNeededToRead in CurrentItem.FFlags) then CurrentItem.FVersionNeededToRead := PreviusItem.FVersionNeededToRead;
-      if not(aifUncompressedSize    in CurrentItem.FFlags) then CurrentItem.FUncompressedSize    := PreviusItem.FUncompressedSize;
-      if not(aifLastModifiedTime    in CurrentItem.FFlags) then CurrentItem.FLastModifiedTime    := PreviusItem.FLastModifiedTime;
-      if not(aifAttributes          in CurrentItem.FFlags) then CurrentItem.FAttributes          := PreviusItem.FAttributes;
-      if not(aifComment             in CurrentItem.FFlags) then CurrentItem.FComment             := PreviusItem.FComment;
-      if not(aifLevel               in CurrentItem.FFlags) then CurrentItem.FLevel               := PreviusItem.FLevel;
-      if not(aifLevelTime           in CurrentItem.FFlags) then CurrentItem.FLevelTime           := PreviusItem.FLevelTime;
-      /// Data descryptor property ///
-      if not(adfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
-      if not(adfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
-      if not(adfDiskSeek       in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskSeek       := PreviusItem.FDiskSeek;
-      if not(adfCRC32          in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCRC32          := PreviusItem.FCRC32;
-      /// Compression property ///
-      if not(acfCompressionMethod in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionMethod := PreviusItem.FCompressionMethod;
-      if not(acfCompressionLevel  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionLevel  := PreviusItem.FCompressionLevel;
-      if not(acfDictionaryLevel   in CurrentItem.FCompressionFlags) then CurrentItem.FDictionaryLevel   := PreviusItem.FDictionaryLevel;
-      if not(acfCompressionTable  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionTable  := PreviusItem.FCompressionTable;
-      /// Encryption property ///
-      if not(aefEncryptionMethod in CurrentItem.FEncryptionFlags) then CurrentItem.FEncryptionMethod := PreviusItem.FEncryptionMethod;
-
-      PreviusItem := CurrentItem;
-    end;
-  end;
-end;
-
 // TArchiver # OPEN/CLOSE ARCHIVE #
 
 procedure TArchiver.OpenArchive(const aArchiveName: string);
@@ -1162,11 +1163,11 @@ begin
   begin
     DoMessage(Format(cmOpening, [aArchiveName]));
     FArchiveReader := TFileReader.Create(aArchiveName, FOnRequestImage);
-    ReadCentralDirectory(FArchiveReader);
+    FCentralDirectory.Read(FArchiveReader);
     if ExitStatus = esNoError then
     begin
       FArchiveName := aArchiveName;
-      if FArchiveItems.Count = 0 then
+      if FCentralDirectory.Count = 0 then
         SetExitStatus(esArchiveTypeError);
     end;
 
@@ -1187,15 +1188,15 @@ begin
 
   FSwapName   := GenerateFileName(FWorkDirectory);
   FSwapWriter := TFileWriter.Create(FSwapName, FOnRequestBlankImage, 0);
-  FSwapWriter.WriteDWord(beexArchiveMarker);
+  FSwapWriter.WriteDWord(ARCHIVE_DATA_MARKER);
 
   FDecoder := TStreamDecoder.Create(FArchiveReader);
   FDecoder.OnProgress := DoProgress;
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
 
-    Item := FArchiveItems.Items[I];
+    Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitDecode, aitDecodeAndUpdate] then
     begin
       InitDecoder(Item);
@@ -1253,29 +1254,29 @@ begin
     begin
       FTotalSize     := 0;
       FProcessedSize := 0;
-      for I := 0 to FArchiveItems.Count - 1 do
+      for I := 0 to FCentralDirectory.Count - 1 do
       begin
-        FArchiveItems.Items[I].FTag := aitUpdate;
-        Inc(FTotalSize, FArchiveItems.Items[I].CompressedSize);
+        FCentralDirectory.Items[I].FTag := aitUpdate;
+        Inc(FTotalSize, FCentralDirectory.Items[I].CompressedSize);
       end;
 
       FArchiveReader := TFileReader.Create(FTempName, FOnRequestImage);
       FTempWriter    := TFileWriter.Create(FArchiveName, FOnRequestBlankImage, FVolumeSize);
-      FTempWriter.WriteDWord(beexArchiveMarker);
+      FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
 
       FEncoder := TStreamEncoder.Create(FTempWriter);
       FEncoder.OnProgress := DoProgress;
-      for I := 0 to FArchiveItems.Count - 1 do
+      for I := 0 to FCentralDirectory.Count - 1 do
         if ExitStatus = esNoError then
         begin
-          Item := FArchiveItems.Items[I];
+          Item := FCentralDirectory.Items[I];
           case Item.FTag of
             aitUpdate: DoMessage(Format(cmSplitting, [Item.FileName]));
           end;
           EncodeFromArchive(Item);
         end;
       FreeAndNil(FEncoder);
-      WriteCentralDirectory(FTempWriter);
+      FCentralDirectory.Write(FTempWriter);
 
       FreeAndNil(FTempWriter);
       FreeAndNil(FArchiveReader);
@@ -1307,7 +1308,7 @@ begin
       TestTemporaryArchive;
     SaveTemporaryArchive;
   end;
-  FArchiveItems.Clear;
+  FCentralDirectory.Clear;
   FSearchRecs.Clear;
 
   FArchiveName := '';
@@ -1322,9 +1323,9 @@ end;
 
 // TArchiver # FIND #
 
-function TArchiver.Find(const aFileName: string): longint;
+function TArchiver.IndexOf(const aFileName: string): longint;
 begin
-  Result := FArchiveItems.Find(aFileName);
+  Result := FCentralDirectory.IndexOf(aFileName);
 end;
 
 // TArchiver # SUSPEND/TERMINATE #
@@ -1348,7 +1349,7 @@ var
 begin
   Result := -1;
   for  I := Index downto 0 do
-    if FArchiveItems.Items[I].FTag = aTag then
+    if FCentralDirectory.Items[I].FTag = aTag then
     begin
       Result := I;
       Break;
@@ -1360,8 +1361,8 @@ var
   I: longint;
 begin
   Result := -1;
-  for  I := Index to FArchiveItems.Count - 1 do
-    if FArchiveItems.Items[I].FTag = aTag then
+  for  I := Index to FCentralDirectory.Count - 1 do
+    if FCentralDirectory.Items[I].FTag = aTag then
     begin
       Result := I;
       Break;
@@ -1375,7 +1376,7 @@ begin
   Result := -1;
   for  I := Index downto 0 do
   begin
-    if FArchiveItems.Items[I].CompressionBlock = FALSE then
+    if FCentralDirectory.Items[I].CompressionBlock = FALSE then
     begin
       Result := I;
       Break;
@@ -1388,22 +1389,27 @@ var
   I: longint;
 begin
   Result := -1;
-  for  I := Index to FArchiveItems.Count - 1 do
-    if FArchiveItems.Items[I].CompressionBlock = FALSE then
+  for  I := Index to FCentralDirectory.Count - 1 do
+    if FCentralDirectory.Items[I].CompressionBlock = FALSE then
     begin
       Result := I;
       Break;
     end;
 end;
 
+function TArchiver.GetComment: string;
+begin
+  Result := FCentralDirectory.Comment;
+end;
+
 function TArchiver.GetCount: longint;
 begin
-  Result := FArchiveItems.Count;
+  Result := FCentralDirectory.Count;
 end;
 
 function TArchiver.GetItem(Index: longint): TArchiveItem;
 begin
-  Result := FArchiveItems.Items[Index];
+  Result := FCentralDirectory.Items[Index];
 end;
 
 // TArchiver # SET PROPERTY #
@@ -1411,6 +1417,11 @@ end;
 procedure TArchiver.SetArchiveName(const Value: string);
 begin
   OpenArchive(Value);
+end;
+
+procedure TArchiver.SetComment(const Value: string);
+begin
+  FCentralDirectory.Comment := Value;
 end;
 
 procedure TArchiver.SetSfxName(const Value: string);
@@ -1507,24 +1518,24 @@ procedure TArchiver.TagAll;
 var
   I: longint;
 begin
-  for I := 0 to FArchiveItems.Count - 1 do Tag(I);
+  for I := 0 to FCentralDirectory.Count - 1 do Tag(I);
 end;
 
 procedure TArchiver.Tag(Index: longint);
 begin
-  FArchiveItems.Items[Index].FTag := aitUpdate;
+  FCentralDirectory.Items[Index].FTag := aitUpdate;
 end;
 
 procedure TArchiver.UnTagAll;
 var
   I: longint;
 begin
-  for I := 0 to FArchiveItems.Count - 1 do UnTag(I);
+  for I := 0 to FCentralDirectory.Count - 1 do UnTag(I);
 end;
 
 procedure TArchiver.UnTag(Index: longint);
 begin
-  FArchiveItems.Items[Index].FTag := aitNone;
+  FCentralDirectory.Items[Index].FTag := aitNone;
 end;
 
 procedure TArchiver.Tag(SearchRec: TCustomSearchRec);
@@ -1534,7 +1545,7 @@ end;
 
 function TArchiver.IsTagged(Index: longint): boolean;
 begin
-  Result := FArchiveItems.Items[Index].FTag = aitUpdate;
+  Result := FCentralDirectory.Items[Index].FTag = aitUpdate;
 end;
 
 // TArchiver # EXTRACT #
@@ -1543,10 +1554,10 @@ procedure TArchiver.CheckTags4Test;
 var
   I: longint;
 begin
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
-    if FArchiveItems.Items[I].FTag = aitUpdate then
+    if FCentralDirectory.Items[I].FTag = aitUpdate then
     begin
       FIsNeededToRun := TRUE;
       Break;
@@ -1561,11 +1572,11 @@ var
   Confirm: TArchiveConfirm;
   ExtractAs: string;
 begin
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
 
-    Item := FArchiveItems.Items[I];
+    Item := FCentralDirectory.Items[I];
     if Item.FTag = aitUpdate then
     begin
       Confirm := arcCancel;
@@ -1593,21 +1604,21 @@ var
   Item: TArchiveItem;
 begin
   // STEP2: find sequences and tag ...
-  I := GetBackTag(FArchiveItems.Count - 1, aitUpdate);
+  I := GetBackTag(FCentralDirectory.Count - 1, aitUpdate);
   while I > -1 do
   begin
     BackTear := GetBackTear(I);
     NextTear := GetNextTear(I + 1);
 
     if NextTear = -1 then
-      NextTear := FArchiveItems.Count;
+      NextTear := FCentralDirectory.Count;
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
       NextTear := GetBackTag(NextTear - 1, aitUpdate);
       for J := BackTear to NextTear do
       begin
-        Item := FArchiveItems.Items[J];
+        Item := FCentralDirectory.Items[J];
         case Item.FTag of
           aitNone: Item.FTag := aitDecode;
         end;
@@ -1620,9 +1631,9 @@ begin
   // STEP2: calculate bytes to process ...
   FTotalSize     := 0;
   FProcessedSize := 0;
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
-    Item := FArchiveItems.Items[I];
+    Item := FCentralDirectory.Items[I];
     case Item.FTag of
       aitUpdate: Inc(FTotalSize, Item.UncompressedSize);
       aitDecode: Inc(FTotalSize, Item.UncompressedSize);
@@ -1641,10 +1652,10 @@ begin
     CheckSequences4Extract;
     FDecoder := TStreamDecoder.Create(FArchiveReader);
     FDecoder.OnProgress := DoProgress;
-    for I := 0 to FArchiveItems.Count - 1 do
+    for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
-      Item := FArchiveItems.Items[I];
+      Item := FCentralDirectory.Items[I];
       InitDecoder(Item);
       case Item.FTag of
         aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
@@ -1671,10 +1682,10 @@ begin
     CheckSequences4Extract;
     FDecoder := TStreamDecoder.Create(FArchiveReader);
     FDecoder.OnProgress := DoProgress;
-    for I := 0 to FArchiveItems.Count - 1 do
+    for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
-      Item := FArchiveItems.Items[I];
+      Item := FCentralDirectory.Items[I];
       InitDecoder(Item);
       case Item.FTag of
         aitUpdate: DoMessage(Format(cmTesting,  [Item.FFileName]));
@@ -1699,11 +1710,11 @@ var
   Confirm: TArchiveConfirm;
   RenameAs: string;
 begin
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
 
-    Item := FArchiveItems.Items[I];
+    Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitUpdate] then
     begin
       Confirm := arcCancel;
@@ -1733,9 +1744,9 @@ begin
   // STEP2: calculate bytes to process ...
   FTotalSize     := 0;
   FProcessedSize := 0;
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
-    Inc(FTotalSize, FArchiveItems.Items[I].CompressedSize);
+    Inc(FTotalSize, FCentralDirectory.Items[I].CompressedSize);
   end;
 end;
 
@@ -1749,14 +1760,14 @@ begin
   begin
     FTempName   := GenerateFileName(FWorkDirectory);
     FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
-    FTempWriter.WriteDWord(beexArchiveMarker);
+    FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
 
     FEncoder := TStreamEncoder.Create(FTempWriter);
     FEncoder.OnProgress := DoProgress;
-    for I := 0 to FArchiveItems.Count - 1 do
+    for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
-      Item := FArchiveItems.Items[I];
+      Item := FCentralDirectory.Items[I];
       case Item.FTag of
         aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
         aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
@@ -1766,7 +1777,7 @@ begin
     end;
     FreeandNil(FEncoder);
     if ExitStatus = esNoError then
-      WriteCentralDirectory(FTempWriter);
+      FCentralDirectory.Write(FTempWriter);
   end;
 end;
 
@@ -1778,11 +1789,11 @@ var
   Item: TArchiveItem;
   Confirm: TArchiveConfirm;
 begin
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
 
-    Item := FArchiveItems.Items[I];
+    Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitUpdate] then
     begin
       Confirm := arcCancel;
@@ -1807,21 +1818,21 @@ var
   Item: TArchiveItem;
 begin
   // STEP1: find sequences and set tag ...
-  I := GetBackTag(FArchiveItems.Count - 1, aitUpdate);
+  I := GetBackTag(FCentralDirectory.Count - 1, aitUpdate);
   while I > -1 do
   begin
     BackTear := GetBackTear(I);
     NextTear := GetNextTear(I + 1);
 
     if NextTear = -1 then
-      NextTear := FArchiveItems.Count;
+      NextTear := FCentralDirectory.Count;
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
       NextTear := GetBackTag(NextTear - 1, aitNone);
       for J := BackTear to NextTear do
       begin
-        Item := FArchiveItems.Items[J];
+        Item := FCentralDirectory.Items[J];
         case Item.FTag of
           aitNone:   Item.FTag := aitDecode;
           aitUpdate: Item.FTag := aitDecodeAndUpdate;
@@ -1837,9 +1848,9 @@ begin
   // STEP2: calculate bytes to process ...
   FTotalSize     := 0;
   FProcessedSize := 0;
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
-    Item := FArchiveItems.Items[J];
+    Item := FCentralDirectory.Items[J];
     case Item.FTag of
       aitNone:            Inc(FTotalSize, Item.CompressedSize);
     //aitUpdate:          nothing to do
@@ -1860,28 +1871,28 @@ begin
     CheckSequences4Delete;
     FTempName   := GenerateFileName(FWorkDirectory);
     FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
-    FTempWriter.WriteDWord(beexArchiveMarker);
+    FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
 
     if FIsNeededToSwap then Swapping;
-    for I := FArchiveItems.Count - 1 downto 0 do
+    for I := FCentralDirectory.Count - 1 downto 0 do
     begin
       if ExitStatus = esNoError then Break;
 
-      Item := FArchiveItems.Items[I];
+      Item := FCentralDirectory.Items[I];
       if Item.FTag in [aitUpdate, aitDecodeAndUpdate] then
       begin
         DoMessage(Format(cmDeleting, [Item.FileName]));
-        FArchiveItems.Delete(I);
+        FCentralDirectory.Delete(I);
       end;
     end;
 
     FEncoder := TStreamEncoder.Create(FTempWriter);
     FEncoder.OnProgress := DoProgress;
-    for I := 0 to FArchiveItems.Count - 1 do
+    for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
 
-      Item := FArchiveItems.Items[I];
+      Item := FCentralDirectory.Items[I];
       InitDecoder(Item);
       case Item.FTag of
         aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
@@ -1895,7 +1906,7 @@ begin
     end;
     FreeandNil(FEncoder);
     if ExitStatus = esNoError then
-      WriteCentralDirectory(FTempWriter);
+      FCentralDirectory.Write(FTempWriter);
   end;
 end;
 
@@ -1940,9 +1951,9 @@ begin
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
   Block := GetCompressionBlock(FCompressionParams);
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
-    CurrentItem := FArchiveItems.Items[I];
+    CurrentItem := FCentralDirectory.Items[I];
     if CurrentItem.FTag = aitAdd then
     begin
       // compression method
@@ -1994,7 +2005,7 @@ begin
         Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
         CurrentItem.FEncryptionMethod := GetEncryptionMethod(FEncryptionParams);
       end;
-      CurrentItem.FVersionNeededToExtract := GetVersionNeededToExtract(CurrentItem);
+      CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);
     end;
   end;
   FreeAndNil(Configuration);
@@ -2024,16 +2035,16 @@ begin
 
     case Confirm of
       arcOk: begin
-        I := Find(UpdateAs);
+        I := IndexOf(UpdateAs);
         if I = -1 then
         begin
-          I := FArchiveItems.Add(TArchiveItem.Create(UpdateAs));
+          I := FCentralDirectory.Add(TArchiveItem.Create(UpdateAs));
         end else
         begin
-          if FArchiveItems.Items[I].FTag = aitNone then
-            FArchiveItems.Items[I].FTag := aitUpdate;
+          if FCentralDirectory.Items[I].FTag = aitNone then
+            FCentralDirectory.Items[I].FTag := aitUpdate;
         end;
-        FArchiveItems.Items[I].Update(Item);
+        FCentralDirectory.Items[I].Update(Item);
         FIsNeededToRun  := TRUE;
         FIsNeededToSave := TRUE;
       end;
@@ -2054,21 +2065,21 @@ var
   I, J, BackTear, NextTear: longint;
 begin
   // STEP2: find sequences and tag ...
-  I := GetBackTag(FArchiveItems.Count - 1, aitUpdate);
+  I := GetBackTag(FCentralDirectory.Count - 1, aitUpdate);
   while I > -1 do
   begin
     BackTear := GetBackTear(I);
     NextTear := GetNextTear(I + 1);
 
     if NextTear = -1 then
-      NextTear := FArchiveItems.Count;
+      NextTear := FCentralDirectory.Count;
     // if is solid sequences
     if (NextTear - BackTear) > 1 then
     begin
       NextTear := GetBackTag(NextTear - 1, aitNone);
       for J := BackTear to NextTear do
       begin
-        Item := FArchiveItems.Items[J];
+        Item := FCentralDirectory.Items[J];
         case Item.FTag of
           aitNone:            Item.FTag := aitDecode;
           aitUpdate:          Item.FTag := aitDecodeAndUpdate;
@@ -2084,9 +2095,9 @@ begin
   // STEP3: calculate bytes to process ...
   FTotalSize     := 0;
   FProcessedSize := 0;
-  for I := 0 to FArchiveItems.Count - 1 do
+  for I := 0 to FCentralDirectory.Count - 1 do
   begin
-    Item := FArchiveItems.Items[I];
+    Item := FCentralDirectory.Items[I];
     case Item.FTag of
       aitNone:            Inc(FTotalSize, Item.CompressedSize);
       aitAdd:             Inc(FTotalSize, Item.FExternalFileSize);
@@ -2108,16 +2119,16 @@ begin
     CheckSequences4Update;
     FTempName   := GenerateFileName(FWorkDirectory);
     FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
-    FTempWriter.WriteDWord(beexArchiveMarker);
+    FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
 
     if FIsNeededToSwap then Swapping;
     FEncoder := TStreamEncoder.Create(FTempWriter);
     FEncoder.OnProgress := DoProgress;
-    for I := 0 to FArchiveItems.Count - 1 do
+    for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
 
-      Item := FArchiveItems.Items[I];
+      Item := FCentralDirectory.Items[I];
       InitEncoder(Item);
       case Item.FTag of
         aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
@@ -2137,7 +2148,7 @@ begin
     end;
     FreeAndNil(FEncoder);
     if ExitStatus = esNoError then
-      WriteCentralDirectory(FTempWriter);
+      FCentralDirectory.Write(FTempWriter);
   end;
 end;
 
