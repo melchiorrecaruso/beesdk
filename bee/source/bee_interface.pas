@@ -51,9 +51,10 @@ const
 
   esArchiveTypeError  = 301;  emArchiveTypeError  = 'Archive type error (exit code #301) - time elapsed %s seconds.';
   esArchiveVerError   = 302;  emArchiveVerError   = 'Archive version error (exit code #302) - time elapsed %s seconds.';
-  esCRCError          = 303;  emCRCError          = 'CRC error (exit code #303) - time elapsed %s seconds.';
-  esCaseError         = 304;  emCaseError         = 'Case statement error (exit code #304) - time elapsed %s seconds.';
-  esLoadConfigError   = 305;  emLoadConfigError   = 'Load configuration error (exit code #305) - time elapsed %s seconds.';
+  esArchiveCDError    = 303;  emArchiveCDError    = 'Archive central directory error (exit code #303) - time elapsed %s seconds.';
+  esCRCError          = 304;  emCRCError          = 'CRC error (exit code #304) - time elapsed %s seconds.';
+  esCaseError         = 305;  emCaseError         = 'Case statement error (exit code #305) - time elapsed %s seconds.';
+  esLoadConfigError   = 306;  emLoadConfigError   = 'Load configuration error (exit code #306) - time elapsed %s seconds.';
 
 var
   ExitStatus: longint = esNoError;
