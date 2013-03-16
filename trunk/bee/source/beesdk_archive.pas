@@ -187,7 +187,7 @@ type
   TArchiveCentralDirectory = class(TObject)
   private
     FItems: TList;
-    FItemsBranch: TList;
+    FItemsAux: TList;
     // central directory end property
     FCDE_Flags: TArchiveCentralDirectoryEndFlags;
     FCDE_LastModifiedTime: longint;
@@ -428,12 +428,12 @@ begin
   Result := $50;
 end;
 
-function GetVersionNeededToRead(Flag: TArchiveCentralDirectoryEndFlags): longword; overload;
+function GetVersionNeededToRead(Flags: TArchiveCentralDirectoryEndFlags): longword; overload;
 begin
   Result := $50;
 end;
 
-function GetVersionNeededToRead(Flag: TArchiveCentralDirectorySeekFlags): longword; overload;
+function GetVersionNeededToRead(Flags: TArchiveCentralDirectorySeekFlags): longword; overload;
 begin
   Result := $50;
 end;
@@ -612,7 +612,7 @@ constructor TArchiveCentralDirectory.Create;
 begin
   inherited Create;
   FItems := TList.Create;
-  FItemsBranch := TList.Create;
+  FItemsAux := TList.Create;
 
   FCDE_LastModifiedTime := DateTimeToFileDate(Now);
   FCDE_Comment := '';
@@ -622,7 +622,7 @@ destructor TArchiveCentralDirectory.Destroy;
 begin
   Clear;
   FItems.Destroy;
-  FItemsBranch.Destroy;
+  FItemsAux.Destroy;
   inherited Destroy;
 end;
 
@@ -633,7 +633,7 @@ begin
   for I := 0 to FItems.Count - 1 do
     TArchiveItem(FItems[I]).Destroy;
   FItems.Clear;
-  FItemsBranch.Clear;
+  FItemsAux.Clear;
 end;
 
 function TArchiveCentralDirectory.Add(Item: TArchiveItem): longint;
@@ -643,15 +643,15 @@ begin
   // Item.Up := nil;
   Item.FIndex := FItems.Add(Item);
 
-  if FItemsBranch.Count <> 0 then
+  if FItemsAux.Count <> 0 then
   begin
     Lo := 0;
-    Hi := FItemsBranch.Count - 1;
+    Hi := FItemsAux.Count - 1;
     while Hi >= Lo do
     begin
       Med := (Lo + Hi) div 2;
       I := AnsiCompareFileName(Item.FileName,
-        TArchiveItem(FItemsBranch[Med]).FileName);
+        TArchiveItem(FItemsAux[Med]).FileName);
 
       if I > 0 then
         Lo := Med + 1
@@ -669,12 +669,12 @@ begin
     end else
     begin
       if I > 0 then
-        FItemsBranch.Insert(Med + 1, Item)
+        FItemsAux.Insert(Med + 1, Item)
       else
-        FItemsBranch.Insert(Med, Item);
+        FItemsAux.Insert(Med, Item);
     end;
   end else
-    FItemsBranch.Add(Item);
+    FItemsAux.Add(Item);
 
   Result := Item.FIndex;
 end;
@@ -684,12 +684,12 @@ var
   Lo, Med, Hi, I: longint;
 begin
   Lo := 0;
-  Hi := FItemsBranch.Count - 1;
+  Hi := FItemsAux.Count - 1;
   while Hi >= Lo do
   begin
     Med := (Lo + Hi) div 2;
     I := AnsiCompareFileName(FileName,
-      TArchiveItem(FItemsBranch[Med]).FileName);
+      TArchiveItem(FItemsAux[Med]).FileName);
 
     if I > 0 then
       Lo := Med + 1
@@ -707,7 +707,7 @@ end;
 
 function TArchiveCentralDirectory.IndexOf(const FileName: string): longint;
 begin
-  Result := TArchiveItem(FItemsBranch[GetIndexOf(FileName)]).FIndex;
+  Result := TArchiveItem(FItemsAux[GetIndexOf(FileName)]).FIndex;
 end;
 
 procedure TArchiveCentralDirectory.Delete(Index: longint);
@@ -732,7 +732,7 @@ begin
     end;
   end;
 
-  FItemsBranch.Delete(GetIndexOf(Item.FileName));
+  FItemsAux.Delete(GetIndexOf(Item.FileName));
   FItems.Delete(Item.FIndex);
   Item.Destroy;
 end;
@@ -748,7 +748,114 @@ begin
 end;
 
 procedure TArchiveCentralDirectory.Read(Stream: TFileReader);
+const
+  CDSFULL = [acdsfVersionNeededToRead, acdsfDisksNumber,      acdsfDiskNumber];
+  CDEFULL = [acdefVersionNeededToRead, acdefLastModifiedTime, acdefComment];
+var
+  MARKER: longword;
 begin
+  Stream.SeekFromEnd(-2*SizeOf(DWord));
+  // read central directory magik seek marker
+  if Stream.ReadDWord <> ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER then
+    SetExitStatus(esArchiveTypeError);
+
+  if ExitStatus = esNoError then
+  begin
+    // read central directory magik seek
+    Stream.SeekFromEnd(-Stream.ReadDWord);
+    // read central directory marker (seek marker)
+    MARKER := Stream.ReadDWord;
+    if MARKER <> ARCHIVE_CENTRALDIR_MARKER then
+      if MARKER <> ARCHIVE_CENTRALDIR_SEEK_MARKER then
+        SetExitStatus(esArchiveTypeError);
+
+    if MARKER = ARCHIVE_CENTRALDIR_SEEK_MARKER then
+    begin
+      FCDS_Flags := TArchiveCentralDirectorySeekFlags(longword(Stream.ReadInfWord));
+      if (acdsfVersionNeededToRead in FCDS_Flags) then
+        if Stream.ReadInfWord > GetVersionNeededToRead(CDSFULL) then
+          SetExitStatus(esArchiveVerError);
+
+
+
+
+    end;
+
+
+
+
+  end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (acdsfDisksNumber in FCDE_Flags) then FCDE_DisksNumber := aStream.ReadInfWord else FCDE_DisksNumber := 1;
+        if (acdsfDiskNumber  in FCDE_Flags) then FCDE_DiskNumber  := aStream.ReadInfWord else FCDE_DiskNumber  := 1;
+
+
+        LocatorDiskSeek := aStream.ReadInfWord;
+               // Read CentralDirectory
+               aStream.ImagesNumber := LocatorDisksNumber;
+               aStream.ImageNumber  := LocatorDiskNumber;
+               aStream.SeekFromBeginning(LocatorDiskSeek);
+
+
+
+
+      MARKER := aStream.ReadDWord;
+    end;
+
+    if Marker = ARCHIVE_CENTRALDIR_MARKER then
+    begin
+
+
+    end;
+
+
+
+
+
+
+
+
+      if  = aitLocator then
+      begin
+
+
+          repeat
+            Marker := aStream.ReadInfWord;
+            case Marker of
+              aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
+              aitBinding: begin
+                BindingFlags := TArchiveBindingFlags(longword(aStream.ReadInfWord));
+                if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString else FArchiveComment := '';
+                // ...
+              end;
+              aitLocator: CHECK := TRUE;
+              aitEnd:     CHECK := TRUE;
+              else        Break;
+            end;
+          until Marker = aitEnd;
+        end;
+
+      end;
+    end;
+
+    if CHECK = 3 then
+      SetExitStatus(esArchiveTypeError)
+    else
+      UnPackCentralDirectory;
+  end;
 
 
 end;
@@ -786,7 +893,7 @@ begin
   FTestTempArchive   := FALSE;
   FVolumeSize        := 0;
   // items list
-  FArchiveItems      := TArchiveItems.Create;
+  FCentralDirectory  := TArchiveCentralDirectory.Create;
   FSearchRecs        := TList.Create;
 end;
 
@@ -995,89 +1102,6 @@ begin
   // write magikseek
   aStream.WriteDWord(BEEX_ARCHIVE_CENTRALDIR_MAGIKSEEK);
   aStream.WriteDWord(longword(aStream.SeekFromCurrent - CDMS + SizeOf(longword)));
-end;
-
-procedure TArchiver.ReadCentralDirectory(aStream: TFileReader);
-var
-  CHECK: boolean;
-  Marker: longword;
-  CDSDisksNumber: longword;
-  CDSDiskNumber: longword;
-  CDSDiskSeek: longword;
-  CDSFlags: TArchiveCentralDirectorySeekFlags;
-  BindingFlags: TArchiveBindingItemFlags;
-begin
-  CHECK := FALSE;
-
-  aStream.SeekFromEnd(-2*SizeOf(longword));
-  // read central directory magik seek marker
-  if aStream.ReadDWord = BEEX_ARCHIVE_CENTRALDIR_MAGIKSEEK then
-  begin
-    // read central directory magik seek
-    aStream.SeekFromEnd(-aStream.ReadDWord);
-
-    Marker := aStream.ReadDWord;
-    if Marker = BEEX_ARCHIVE_CENTRALDIR_SEEK then
-    begin
-
-
-
-
-
-
-
-      Marker := aStream.ReadDWord;
-    end;
-
-    if Marker = BEEX_ARCHIVE_CENTRALDIR then
-    begin
-
-
-    end;
-
-
-
-
-
-
-
-
-    if  = aitLocator then
-    begin
-
-      if aStream.ReadInfWord <= beexVersionNeededToRead then
-      begin
-        LocatorFlags := TArchiveLocatorFlags(longword(aStream.ReadInfWord));
-        if (alfDisksNumber in LocatorFlags) then LocatorDisksNumber := aStream.ReadInfWord else LocatorDisksNumber := 1;
-        if (alfDiskNumber  in LocatorFlags) then LocatorDiskNumber  := aStream.ReadInfWord else LocatorDiskNumber  := 1;
-        LocatorDiskSeek := aStream.ReadInfWord;
-        // Read CentralDirectory
-        aStream.ImagesNumber := LocatorDisksNumber;
-        aStream.ImageNumber  := LocatorDiskNumber;
-        aStream.SeekFromBeginning(LocatorDiskSeek);
-        repeat
-          Marker := aStream.ReadInfWord;
-          case Marker of
-            aitItem:    FArchiveItems.Add(TArchiveItem.Read(aStream));
-            aitBinding: begin
-              BindingFlags := TArchiveBindingFlags(longword(aStream.ReadInfWord));
-              if (abfComment in BindingFlags) then FArchiveComment := aStream.ReadInfString else FArchiveComment := '';
-              // ...
-            end;
-            aitLocator: CHECK := TRUE;
-            aitEnd:     CHECK := TRUE;
-            else        Break;
-          end;
-        until Marker = aitEnd;
-      end;
-
-    end;
-  end;
-
-  if CHECK = FALSE then
-    SetExitStatus(esArchiveTypeError)
-  else
-    UnPackCentralDirectory;
 end;
 
 procedure TArchiver.PackCentralDirectory;
