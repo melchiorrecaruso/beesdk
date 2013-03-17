@@ -503,18 +503,18 @@ end;
 
 function DateTimeToString(X: TDateTime): string;
 begin
-  SysUtils.DateTimeToString(Result, 'yyyy-mm-dd hh:nn:ss', X);
+  Result := FormatDateTime('yyyy-mm-dd hh:nn:ss', X);
 end;
 
 function DateTimeToString(X: TDateTime; const Format: string): string;
 begin
-  SysUtils.DateTimeToString(Result, Format, X);
+  Result := FormatDateTime(Format, X);
 end;
 
 function FileTimeToString(X: longint): string;
 begin
   try
-    Result := DateTimeToString(SysUtils.FileDateToDateTime(X));
+    Result := Bee_Common.DateTimeToString(SysUtils.FileDateToDateTime(X));
   except
     Result := '????-??-?? ??:??:??';
   end;
@@ -523,7 +523,7 @@ end;
 function FileTimeToString(X: longint; const Format: string): string;
 begin
   try
-    Result := DateTimeToString(SysUtils.FileDateToDateTime(X), Format);
+    Result := Bee_Common.DateTimeToString(SysUtils.FileDateToDateTime(X), Format);
   except
     Result := '????-??-?? ??:??:??';
   end;

@@ -386,60 +386,111 @@ uses
   Bee_Interface;
 
 function GetCompressionMethod(const Params: string): TArchiveCompressionMethod;
-var
-  S: string;
 begin
   Result := acmNone;
-  S := '|' + LowerCase(Params) + '|';
-  if Pos('|m=0|',   S) > 0 then Result := acmNone else
-  if Pos('|m=1|',   S) > 0 then Result := acmBee  else
-  if Pos('|store|', S) > 0 then Result := acmNone else
-  if Pos('|bee|',   S) > 0 then Result := acmBee;
+  if Pos('|m0|',  Params) > 0 then Result := acmNone else
+  if Pos('|m1|',  Params) > 0 then Result := acmBee;
 end;
 
 function GetCompressionLevel(const Params: string): TArchiveCompressionLevel;
-var
-  S: string;
 begin
   Result := aclFast;
-  S := '|' + LowerCase(Params) + '|';
-  if Pos('|l=1|',    S) > 0 then Result := aclFast    else
-  if Pos('|l=2|',    S) > 0 then Result := aclNormal  else
-  if Pos('|l=3|',    S) > 0 then Result := aclMaximum else
-  if Pos('|fast|'  , S) > 0 then Result := aclFast    else
-  if Pos('|normal|', S) > 0 then Result := aclNormal  else
-  if Pos('|max|',    S) > 0 then Result := aclMaximum;
+  if Pos('|l1|',  Params) > 0 then Result := aclFast   else
+  if Pos('|l2|',  Params) > 0 then Result := aclNormal else
+  if Pos('|l3|',  Params) > 0 then Result := aclMaximum;
 end;
-
-function GetCompressionBlock(const Params: string): int64;
-begin
-  Result := 0;
-
-
-
-
-end;
-
-
 
 function GetDictionaryLevel(const Params: string): TArchiveDictionaryLevel;
 begin
-  Result := adl2MB;
+  Result := adl20MB;
+  if Pos('|d0|',  Params) > 0 then Result := adl2MB   else
+  if Pos('|d1|',  Params) > 0 then Result := adl5MB   else
+  if Pos('|d2|',  Params) > 0 then Result := adl10MB  else
+  if Pos('|d3|',  Params) > 0 then Result := adl20MB  else
+  if Pos('|d4|',  Params) > 0 then Result := adl40MB  else
+  if Pos('|d5|',  Params) > 0 then Result := adl80MB  else
+  if Pos('|d6|',  Params) > 0 then Result := adl160MB else
+  if Pos('|d7|',  Params) > 0 then Result := adl320MB else
+  if Pos('|d8|',  Params) > 0 then Result := adl640MB else
+  if Pos('|d9|',  Params) > 0 then Result := adl1280MB;
+end;
+
+function GetCompressionBlock(const Params: string): int64;
+const
+  MaxBlock = $FFFFFFFFFFFFFFFF;
+begin
+  Result := 0;
+  if Pos('|s0|',  Params) > 0 then Result := $0          else
+  if Pos('|s1|',  Params) > 0 then Result := $100000     else
+  if Pos('|s2|',  Params) > 0 then Result := $200000     else
+  if Pos('|s3|',  Params) > 0 then Result := $400000     else
+  if Pos('|s4|',  Params) > 0 then Result := $800000     else
+  if Pos('|s5|',  Params) > 0 then Result := $1000000    else
+  if Pos('|s6|',  Params) > 0 then Result := $2000000    else
+  if Pos('|s7|',  Params) > 0 then Result := $4000000    else
+  if Pos('|s8|',  Params) > 0 then Result := $8000000    else
+  if Pos('|s9|',  Params) > 0 then Result := $10000000   else
+  if Pos('|s10|', Params) > 0 then Result := $20000000   else
+  if Pos('|s11|', Params) > 0 then Result := $40000000   else
+  if Pos('|s12|', Params) > 0 then Result := $80000000   else
+  if Pos('|s13|', Params) > 0 then Result := $100000000  else
+  if Pos('|s14|', Params) > 0 then Result := $200000000  else
+  if Pos('|s15|', Params) > 0 then Result := $400000000  else
+  if Pos('|s16|', Params) > 0 then Result := $800000000  else
+  if Pos('|s17|', Params) > 0 then Result := $1000000000 else
+  if Pos('|s18|', Params) > 0 then Result := MaxBlock    else
+  if Pos('|s|',   Params) > 0 then Result := MaxBlock;
 end;
 
 function GetForceFileExtension(const Params: string): string;
+var
+  I: longint;
 begin
   Result := '';
+  if Pos('|f=', Params) > 0 then
+  begin
+    for I := Pos('|f=', Params) + 3 to Length(Params) do
+    begin
+      if Params[I] <> '|' then
+        Result := Result + Params[I]
+      else
+        Break;
+    end;
+    if Length(Result) > 0 then
+      Result := '.' + Result;
+  end;
+end;
+
+function GetConfigurationFileName(const Params: string): string;
+var
+  I: longint;
+begin
+  Result := '';
+  if Pos('|cfg=', Params) > 0 then
+    for I := Pos('|cfg=', Params) + 5 to Length(Params) do
+    begin
+      if Params[I] <> '|' then
+        Result := Result + Params[I]
+      else
+        Break;
+    end;
+
+  if Result = '' then
+    Result := DefaultCfgName;
+
+  if FileExists(Result) = FALSE then
+  begin
+    Result :=  SelfPath + Result;
+    if FileExists(Result) = FALSE then
+      SetExitStatus(esCmdLineError);
+  end;
 end;
 
 function GetEncryptionMethod(const Params: string): TArchiveEncryptionMethod;
 begin
   Result := aemNone;
-end;
-
-function GetConfigurationFileName(const Params: string): string;
-begin
-  Result := SelfPath + DefaultCfgName;
+  if Pos('|m0|', Params) > 0 then Result := aemNone else
+  if Pos('|m1|', Params) > 0 then Result := aemBlowFish;
 end;
 
 function GetVersionNeededToRead(Item: TArchiveItem): longword; overload;
