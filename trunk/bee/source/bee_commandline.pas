@@ -161,10 +161,10 @@ begin
   if UpCase(S) = 'UPDATE'         then Result := 1 else
   if UpCase(S) = 'REPLACE'        then Result := 2 else
   if UpCase(S) = 'QUERY'          then Result := 3 else
-  if UpCase(S) = 'ADD&UPDATE'     then Result := 4 else
-  if UpCase(S) = 'ADD&REPLACE'    then Result := 5 else
-  if UpCase(S) = 'ADD&QUERY'      then Result := 6 else
-  if UpCase(S) = 'ADD&AUTORENAME' then Result := 7 else Result := -1;
+  if UpCase(S) = 'ADD|UPDATE'     then Result := 4 else
+  if UpCase(S) = 'ADD|REPLACE'    then Result := 5 else
+  if UpCase(S) = 'ADD|QUERY'      then Result := 6 else
+  if UpCase(S) = 'ADD|AUTORENAME' then Result := 7 else Result := -1;
 end;
 
 function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;

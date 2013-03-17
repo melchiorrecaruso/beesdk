@@ -392,31 +392,31 @@ uses
 function GetCompressionMethod(const Params: string): TArchiveCompressionMethod;
 begin
   Result := acmBee;
-  if Pos('|m0|',  Params) > 0 then Result := acmNone else
-  if Pos('|m1|',  Params) > 0 then Result := acmBee;
+  if Pos('|m0|', Params) > 0 then Result := acmNone else
+  if Pos('|m1|', Params) > 0 then Result := acmBee;
 end;
 
 function GetCompressionLevel(const Params: string): TArchiveCompressionLevel;
 begin
   Result := aclFast;
-  if Pos('|l1|',  Params) > 0 then Result := aclFast   else
-  if Pos('|l2|',  Params) > 0 then Result := aclNormal else
-  if Pos('|l3|',  Params) > 0 then Result := aclMaximum;
+  if Pos('|l1|', Params) > 0 then Result := aclFast   else
+  if Pos('|l2|', Params) > 0 then Result := aclNormal else
+  if Pos('|l3|', Params) > 0 then Result := aclMaximum;
 end;
 
 function GetDictionaryLevel(const Params: string): TArchiveDictionaryLevel;
 begin
   Result := adl20MB;
-  if Pos('|d0|',  Params) > 0 then Result := adl2MB   else
-  if Pos('|d1|',  Params) > 0 then Result := adl5MB   else
-  if Pos('|d2|',  Params) > 0 then Result := adl10MB  else
-  if Pos('|d3|',  Params) > 0 then Result := adl20MB  else
-  if Pos('|d4|',  Params) > 0 then Result := adl40MB  else
-  if Pos('|d5|',  Params) > 0 then Result := adl80MB  else
-  if Pos('|d6|',  Params) > 0 then Result := adl160MB else
-  if Pos('|d7|',  Params) > 0 then Result := adl320MB else
-  if Pos('|d8|',  Params) > 0 then Result := adl640MB else
-  if Pos('|d9|',  Params) > 0 then Result := adl1280MB;
+  if Pos('|d0|', Params) > 0 then Result := adl2MB   else
+  if Pos('|d1|', Params) > 0 then Result := adl5MB   else
+  if Pos('|d2|', Params) > 0 then Result := adl10MB  else
+  if Pos('|d3|', Params) > 0 then Result := adl20MB  else
+  if Pos('|d4|', Params) > 0 then Result := adl40MB  else
+  if Pos('|d5|', Params) > 0 then Result := adl80MB  else
+  if Pos('|d6|', Params) > 0 then Result := adl160MB else
+  if Pos('|d7|', Params) > 0 then Result := adl320MB else
+  if Pos('|d8|', Params) > 0 then Result := adl640MB else
+  if Pos('|d9|', Params) > 0 then Result := adl1280MB;
 end;
 
 function GetCompressionBlock(const Params: string): TArchiveCompressionBlock; overload;
@@ -444,7 +444,7 @@ begin
   if Pos('|s19|', Params) > 0 then Result := acb256GB else
   if Pos('|s20|', Params) > 0 then Result := acb512GB else
   if Pos('|s21|', Params) > 0 then Result := acb1TB   else
-  if Pos('|s|',   Params) > 0 then Result := acb1TB   else
+  if Pos('|s|',   Params) > 0 then Result := acb1TB;
 end;
 
 function GetCompressionBlock(CompressionBlock: TArchiveCompressionBlock): int64; overload;
