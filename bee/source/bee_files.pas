@@ -150,10 +150,8 @@ type
     property Items[Index: longint]: TCustomSearchRec read GetItem;
   end;
 
-procedure DoFill (Stream: pointer; Data: pointer;
-  Size: longint); {$IFDEF cppDLL} cdecl; {$ENDIF}
-procedure DoFlush(Stream: pointer; Data: pointer;
-  Size: longint); {$IFDEF cppDLL} cdecl; {$ENDIF}
+procedure DoFill (Stream: pointer; Data: pointer; Size: longint); {$IFDEF cLIB} cdecl; {$ENDIF}
+procedure DoFlush(Stream: pointer; Data: pointer; Size: longint); {$IFDEF cLIB} cdecl; {$ENDIF}
 
 implementation
 
@@ -284,8 +282,12 @@ begin
 
     if Result < Count then
     begin
-      OpenImage(FImageNumber + 1);
-      if ExitStatus <> esNoError then Break;
+      if FImageNumber < FImagesNumber then
+      begin
+        OpenImage(FImageNumber + 1);
+        if ExitStatus <> esNoError then Break;
+      end else
+        Break;
     end;
   until Result = Count;
 end;
