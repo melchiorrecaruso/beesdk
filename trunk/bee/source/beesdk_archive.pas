@@ -98,6 +98,10 @@ type
   TArchiveDictionaryLevel = (adl2MB, adl5MB, adl10MB, adl20MB, adl40MB, adl80MB,
     adl160MB, adl320MB, adl640MB, adl1280MB);
 
+  TArchiveCompressionBlock = (acb0MB, acb1MB, acb2MB, acb4MB, acb8MB, acb16MB,
+    acb32MB, acb64MB, acb128MB, acb256MB, acb512MB, acb1GB, acb2GB, acb4GB,
+    acb8GB, acb16GB, acb32GB, acb64GB, acb128GB, acb256GB, acb512GB, acb1TB);
+
   /// archive compression flag
   TArchiveCompressionFlag = (
     acfCompressionMethod,
@@ -142,6 +146,7 @@ type
     FCompressionMethod: TArchiveCompressionMethod;
     FCompressionLevel: TArchiveCompressionLevel;
     FDictionaryLevel: TArchiveDictionaryLevel;
+    FCompressionBlock: TArchiveCompressionBlock;
     FCompressionTable: TTableParameters;
     // encryption property
     FEncryptionFlags: TArchiveEncryptionFlags;
@@ -151,7 +156,6 @@ type
     FTag: TArchiveItemTag;
     FExternalFileName: string;
     FExternalFileSize: int64;
-    function GetCompressionBlock: boolean;
   public {methods}
     constructor Create(const aFileName: string);
     constructor Read(Stream: TFileReader);
@@ -176,7 +180,7 @@ type
     property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod;
     property CompressionLevel: TArchiveCompressionLevel read FCompressionLevel;
     property DictionaryLevel: TArchiveDictionaryLevel read FDictionaryLevel;
-    property CompressionBlock: boolean read GetCompressionBlock;
+    property CompressionBlock: TArchiveCompressionBlock read FCompressionBlock;
     property CompressionTable: TTableParameters read FCompressionTable;
     // encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
@@ -387,7 +391,7 @@ uses
 
 function GetCompressionMethod(const Params: string): TArchiveCompressionMethod;
 begin
-  Result := acmNone;
+  Result := acmBee;
   if Pos('|m0|',  Params) > 0 then Result := acmNone else
   if Pos('|m1|',  Params) > 0 then Result := acmBee;
 end;
@@ -415,31 +419,40 @@ begin
   if Pos('|d9|',  Params) > 0 then Result := adl1280MB;
 end;
 
-function GetCompressionBlock(const Params: string): int64;
-const
-  MaxBlock = $FFFFFFFFFFFFFFFF;
+function GetCompressionBlock(const Params: string): TArchiveCompressionBlock; overload;
 begin
-  Result := 0;
-  if Pos('|s0|',  Params) > 0 then Result := $0          else
-  if Pos('|s1|',  Params) > 0 then Result := $100000     else
-  if Pos('|s2|',  Params) > 0 then Result := $200000     else
-  if Pos('|s3|',  Params) > 0 then Result := $400000     else
-  if Pos('|s4|',  Params) > 0 then Result := $800000     else
-  if Pos('|s5|',  Params) > 0 then Result := $1000000    else
-  if Pos('|s6|',  Params) > 0 then Result := $2000000    else
-  if Pos('|s7|',  Params) > 0 then Result := $4000000    else
-  if Pos('|s8|',  Params) > 0 then Result := $8000000    else
-  if Pos('|s9|',  Params) > 0 then Result := $10000000   else
-  if Pos('|s10|', Params) > 0 then Result := $20000000   else
-  if Pos('|s11|', Params) > 0 then Result := $40000000   else
-  if Pos('|s12|', Params) > 0 then Result := $80000000   else
-  if Pos('|s13|', Params) > 0 then Result := $100000000  else
-  if Pos('|s14|', Params) > 0 then Result := $200000000  else
-  if Pos('|s15|', Params) > 0 then Result := $400000000  else
-  if Pos('|s16|', Params) > 0 then Result := $800000000  else
-  if Pos('|s17|', Params) > 0 then Result := $1000000000 else
-  if Pos('|s18|', Params) > 0 then Result := MaxBlock    else
-  if Pos('|s|',   Params) > 0 then Result := MaxBlock;
+  Result := acb0MB;
+  if Pos('|s0|',  Params) > 0 then Result := acb0MB   else
+  if Pos('|s1|',  Params) > 0 then Result := acb1MB   else
+  if Pos('|s2|',  Params) > 0 then Result := acb2MB   else
+  if Pos('|s3|',  Params) > 0 then Result := acb4MB   else
+  if Pos('|s4|',  Params) > 0 then Result := acb8MB   else
+  if Pos('|s5|',  Params) > 0 then Result := acb16MB  else
+  if Pos('|s6|',  Params) > 0 then Result := acb32MB  else
+  if Pos('|s7|',  Params) > 0 then Result := acb64MB  else
+  if Pos('|s8|',  Params) > 0 then Result := acb128MB else
+  if Pos('|s9|',  Params) > 0 then Result := acb256MB else
+  if Pos('|s10|', Params) > 0 then Result := acb512MB else
+  if Pos('|s11|', Params) > 0 then Result := acb1GB   else
+  if Pos('|s12|', Params) > 0 then Result := acb2GB   else
+  if Pos('|s13|', Params) > 0 then Result := acb4GB   else
+  if Pos('|s14|', Params) > 0 then Result := acb8GB   else
+  if Pos('|s15|', Params) > 0 then Result := acb16GB  else
+  if Pos('|s16|', Params) > 0 then Result := acb32GB  else
+  if Pos('|s17|', Params) > 0 then Result := acb64GB  else
+  if Pos('|s18|', Params) > 0 then Result := acb128GB else
+  if Pos('|s19|', Params) > 0 then Result := acb256GB else
+  if Pos('|s20|', Params) > 0 then Result := acb512GB else
+  if Pos('|s21|', Params) > 0 then Result := acb1TB   else
+  if Pos('|s|',   Params) > 0 then Result := acb1TB   else
+end;
+
+function GetCompressionBlock(CompressionBlock: TArchiveCompressionBlock): int64; overload;
+begin
+  if CompressionBlock = acb0MB then
+    Result := 0
+  else
+    Result := int64(1) shl (19 + Ord(CompressionBlock));
 end;
 
 function GetForceFileExtension(const Params: string): string;
@@ -510,14 +523,14 @@ end;
 
 function CompressionMethodToStr(Item: TArchiveItem): string;
 begin
-  Result := 'm0a';
+  Result := 'm0 ';
   if Item.CompressionMethod <> acmNone then
   begin
-    if Item.CompressionBlock then
+    if Item.CompressionBlock <> acb0MB then
     begin
       Result[1] := 's';
     end;
-    Result[2] := char(byte('0') + Ord(Item.CompressionLevel));
+    Result[2] := char(byte('1') + Ord(Item.CompressionLevel));
     Result[3] := char(byte('a') + Ord(Item.DictionaryLevel ));
   end;
 end;
@@ -591,6 +604,7 @@ begin
   FCompressionMethod := acmNone;
   FCompressionLevel  := aclFast;
   FDictionaryLevel   := adl2MB;
+  FCompressionBlock  := acb0MB;
   FCompressionTable  := DefaultTableParameters;
   /// Encryption property ///
   FEncryptionFlags   := [];
@@ -616,7 +630,7 @@ constructor TArchiveItem.Read(Stream: TFileReader);
 begin
   FFileName := Stream.ReadInfString;
   /// Item property ///
-  FFlags    := TArchiveItemFlags(longword(Stream.ReadInfWord));
+  FFlags  := TArchiveItemFlags(longword(Stream.ReadInfWord));
   if (aifVersionNeededToRead in FFlags) then FVersionNeededToRead := Stream.ReadInfWord;
   if (aifUncompressedSize    in FFlags) then FUncompressedSize    := Stream.ReadInfWord;
   if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := Stream.ReadInfWord;
@@ -631,8 +645,9 @@ begin
   /// Compression property ///
   FCompressionFlags := TArchiveCompressionFlags(longword(Stream.ReadInfWord));
   if (acfCompressionMethod in FCompressionFlags)    then FCompressionMethod := TArchiveCompressionMethod(Stream.ReadInfWord);
-  if (acfCompressionLevel  in FCompressionFlags)    then FCompressionLevel  := TArchiveCompressionLevel(Stream.ReadInfWord);
-  if (acfDictionaryLevel   in FCompressionFlags)    then FDictionaryLevel   := TArchiveDictionaryLevel(Stream.ReadInfWord);
+  if (acfCompressionLevel  in FCompressionFlags)    then FCompressionLevel  := TArchiveCompressionLevel (Stream.ReadInfWord);
+  if (acfDictionaryLevel   in FCompressionFlags)    then FDictionaryLevel   := TArchiveDictionaryLevel  (Stream.ReadInfWord);
+  if (acfCompressionBlock  in FCompressionFlags)    then FCompressionBlock  := TArchiveCompressionBlock (Stream.ReadInfWord);
   if (acfCompressionTable  in FCompressionFlags)    then Stream.Read(@FCompressionTable, SizeOf(TTableParameters));
   /// Encryption property ///
   FEncryptionFlags := TArchiveEncryptionFlags(longword(Stream.ReadInfWord));
@@ -660,15 +675,11 @@ begin
   if (acfCompressionMethod in FCompressionFlags)    then Stream.WriteInfWord(Ord(FCompressionMethod));
   if (acfCompressionLevel  in FCompressionFlags)    then Stream.WriteInfWord(Ord(FCompressionLevel));
   if (acfDictionaryLevel   in FCompressionFlags)    then Stream.WriteInfWord(Ord(FDictionaryLevel));
+  if (acfCompressionBlock  in FCompressionFlags)    then Stream.WriteInfWord(Ord(FCompressionBlock));
   if (acfCompressionTable  in FCompressionFlags)    then Stream.Write(@FCompressionTable, SizeOf(TTableParameters));
   /// Encryption property ///
   Stream.WriteInfWord(longword(FEncryptionFlags));
   if (aefEncryptionMethod  in FEncryptionFlags)     then Stream.WriteInfWord(Ord(FEncryptionMethod));
-end;
-
-function TArchiveItem.GetCompressionBlock: boolean;
-begin
-  Result := acfCompressionBlock in FCompressionFlags;
 end;
 
 // TArchiveCentralDirectory class
@@ -843,6 +854,7 @@ begin
       if CurrentItem.FCompressionMethod = PreviusItem.FCompressionMethod then Exclude(CurrentItem.FCompressionFlags, acfCompressionMethod) else Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
       if CurrentItem.FCompressionLevel  = PreviusItem.FCompressionLevel  then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevel)  else Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
       if CurrentItem.FDictionaryLevel   = PreviusItem.FDictionaryLevel   then Exclude(CurrentItem.FCompressionFlags, acfDictionaryLevel)   else Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
+      if CurrentItem.FCompressionBlock  = PreviusItem.FCompressionBlock  then Exclude(CurrentItem.FCompressionFlags, acfCompressionBlock)  else Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
       /// Encryption property ///
       if CurrentItem.FEncryptionMethod  = PreviusItem.FEncryptionMethod  then Exclude(CurrentItem.FEncryptionFlags, aefEncryptionMethod)   else Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);                  ;
 
@@ -878,6 +890,7 @@ begin
       if not(acfCompressionMethod in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionMethod := PreviusItem.FCompressionMethod;
       if not(acfCompressionLevel  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionLevel  := PreviusItem.FCompressionLevel;
       if not(acfDictionaryLevel   in CurrentItem.FCompressionFlags) then CurrentItem.FDictionaryLevel   := PreviusItem.FDictionaryLevel;
+      if not(acfCompressionBlock  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionBlock  := PreviusItem.FCompressionBlock;
       if not(acfCompressionTable  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionTable  := PreviusItem.FCompressionTable;
       /// Encryption property ///
       if not(aefEncryptionMethod in CurrentItem.FEncryptionFlags) then CurrentItem.FEncryptionMethod := PreviusItem.FEncryptionMethod;
@@ -1103,7 +1116,7 @@ begin
     if acfCompressionTable in Item.FCompressionFlags then
       FEncoder.CompressionTable := Item.CompressionTable;
 
-    FEncoder.FreshModeller(Item.CompressionBlock);
+    FEncoder.FreshModeller(Item.CompressionBlock <> acb0MB);
   end;
 end;
 
@@ -1128,7 +1141,7 @@ begin
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
   case Item.FCompressionMethod of
     acmBee: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC32);
-    else     FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC32);
+    else    FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC32);
   end;
   Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
 end;
@@ -1145,7 +1158,7 @@ begin
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
   case Item.CompressionMethod of
     acmBee: FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
-    else     FEncoder.Copy  (Stream, Item.FUncompressedSize, Item.FCRC32);
+    else    FEncoder.Copy  (Stream, Item.FUncompressedSize, Item.FCRC32);
   end;
   Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
 
@@ -1162,7 +1175,7 @@ begin
     if acfCompressionTable in Item.FCompressionFlags then
       FDecoder.CompressionTable := Item.CompressionTable;
 
-    FDecoder.FreshModeller(Item.CompressionBlock);
+    FDecoder.FreshModeller(Item.CompressionBlock <> acb0MB);
   end;
 end;
 
@@ -1176,7 +1189,7 @@ begin
   Item.FDiskSeek   := FSwapWriter.SeekFromCurrent;
   case Item.CompressionMethod of
     acmBee: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
-    else     FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
+    else    FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
   end;
 
   if Item.FCRC32 <> CRC then
@@ -1446,7 +1459,7 @@ begin
   Result := -1;
   for  I := Index downto 0 do
   begin
-    if FCentralDirectory.Items[I].CompressionBlock = FALSE then
+    if FCentralDirectory.Items[I].CompressionBlock = acb0MB then
     begin
       Result := I;
       Break;
@@ -1460,7 +1473,7 @@ var
 begin
   Result := -1;
   for  I := Index to FCentralDirectory.Count - 1 do
-    if FCentralDirectory.Items[I].CompressionBlock = FALSE then
+    if FCentralDirectory.Items[I].CompressionBlock = acb0MB then
     begin
       Result := I;
       Break;
@@ -1539,11 +1552,8 @@ end;
 procedure TArchiver.DoProgress(Value: longint);
 begin
   Inc(FProcessedSize, Value);
-  if (FProcessedSize and $FFFF) = 0 then
-  begin
-    if Assigned(FOnProgress) then
-      FOnProgress(Round((FProcessedSize/FTotalSize)*100));
-  end;
+  if Assigned(FOnProgress) then
+    FOnProgress(Round((FProcessedSize/FTotalSize)*100));
 
   while FSuspended do Sleep(250);
 end;
@@ -1737,6 +1747,7 @@ begin
         aitDecode: DoMessage(Format(cmDecoding,   [Item.FFileName]));
       end;
       case Item.FTag of
+        aitNone  : ;
         aitUpdate: DecodeToFile(Item);
         aitDecode: DecodeToNul (Item);
         else SetExitStatus(esCaseError);
@@ -1767,6 +1778,7 @@ begin
         aitDecode: DoMessage(Format(cmDecoding, [Item.FFileName]));
       end;
       case Item.FTag of
+        aitNone  : ;
         aitUpdate: DecodeToNul(Item);
         aitDecode: DecodeToNul(Item);
         else SetExitStatus(esCaseError);
@@ -2025,7 +2037,7 @@ begin
   Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetDictionaryLevel (FCompressionParams)));
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
-  Block := GetCompressionBlock(FCompressionParams);
+  Block := GetCompressionBlock(GetCompressionBlock(FCompressionParams));
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     CurrentItem := FCentralDirectory.Items[I];
@@ -2036,12 +2048,13 @@ begin
       CurrentItem.FCompressionMethod := GetCompressionMethod(FCompressionParams);
       // compression level
       Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
-      CurrentItem.FCompressionLevel := GetCompressionLevel (FCompressionParams);
+      CurrentItem.FCompressionLevel := GetCompressionLevel(FCompressionParams);
       // dictionary level
       Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
-      CurrentItem.FDictionaryLevel := GetDictionaryLevel  (FCompressionParams);
-      // default compression block flag
-      Exclude(CurrentItem.FCompressionFlags, acfCompressionBlock);
+      CurrentItem.FDictionaryLevel := GetDictionaryLevel(FCompressionParams);
+      // compression block
+      Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
+      CurrentItem.FCompressionBlock := GetCompressionBlock(FCompressionParams);
       // default compression table flag
       Exclude(CurrentItem.FCompressionFlags, acfCompressionTable);
 
@@ -2052,14 +2065,16 @@ begin
       else
         CurrentFileExt := GetForceFileExtension(FCompressionParams);
 
-      // solid compression option
+      // compression block option
       if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
       begin
-        Dec(Block, CurrentItem.UncompressedSize);
+        Dec(Block, CurrentItem.FExternalFileSize);
         if Block < 0 then
-          Block := GetCompressionBlock(FCompressionParams)
-        else
-          Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
+        begin
+          Block := GetCompressionBlock(GetCompressionBlock(FCompressionParams));
+          CurrentItem.FCompressionBlock := acb0MB;
+        end;
+
       end else
       begin
         // BEE compression method
@@ -2071,7 +2086,8 @@ begin
           else
             CurrentItem.FCompressionTable := DefaultTableParameters;
         end;
-        Block := GetCompressionBlock(FCompressionParams);
+        Block := GetCompressionBlock(GetCompressionBlock(FCompressionParams));
+        CurrentItem.FCompressionBlock := acb0MB;
       end;
 
       // encryption method
