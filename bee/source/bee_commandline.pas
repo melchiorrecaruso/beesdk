@@ -284,7 +284,9 @@ end;
 procedure TCommandLine.ProcessCPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FcpOption := S;
+  FcpOption := FcpOption + '|' + LowerCase(S) + '|';
+  while Pos('||', FcpOption) > 0 do
+    Delete(FcpOption, Pos('||', FcpOption), 1);
 
   if Command in [cAdd] then
   begin
@@ -297,7 +299,9 @@ end;
 procedure TCommandLine.ProcessEPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FepOption := S;
+  FepOption := FepOption + '|' + LowerCase(S) + '|';
+  while Pos('||', FepOption) > 0 do
+    Delete(FepOption, Pos('||', FepOption), 1);
 
   if Command in [cAdd] then
   begin

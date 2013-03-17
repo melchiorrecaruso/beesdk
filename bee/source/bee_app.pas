@@ -631,7 +631,7 @@ begin
       begin
         Item := ItemToList.Items[I];
         DoMessage(Format('%16s %7s %12s %12s %3s %s', [
-          FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
+          Bee_Common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
           SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
           CompressionMethodToStr(Item), Item.FileName]));
       end;
@@ -639,7 +639,7 @@ begin
       DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize),
         SizeToStr(TotalPackedSize), TotalFiles]));
     end;
-    DoMessage(Cr + Format('Last modified time: %16s', [FileTimeToString(FArchiver.LastModifiedTime)]));
+    DoMessage(Cr + Format('Last modified time: %16s', [Bee_Common.FileTimeToString(FArchiver.LastModifiedTime)]));
     ItemToList.Destroy;
   end;
   CloseArchive;
