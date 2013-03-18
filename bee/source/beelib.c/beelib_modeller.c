@@ -31,7 +31,7 @@ typedef PNode *PPNode;           // Array of nodes...
 
 struct TBaseCoder {
           void *Codec;
-   unsigned int DictLevel;
+            int DictLevel;
    unsigned int Symbol;
    unsigned int Pos;
             int LowestPos;       // Maximal heap Size
@@ -390,7 +390,7 @@ void BaseCoder_FreshSolid(PBaseCoder Self)
     Self->ListCount = 0;
 }
 
-void BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel)
+void BaseCoder_SetDictionary(PBaseCoder Self, int32 aDictLevel)
 {
   if (aDictLevel != Self->DictLevel)
   {

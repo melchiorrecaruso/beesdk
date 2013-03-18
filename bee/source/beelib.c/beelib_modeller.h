@@ -35,7 +35,7 @@ typedef struct TBaseCoder *PBaseCoder;
   PBaseCoder BaseCoder_Create       (void *aCodec);
         void BaseCoder_Destroy      (PBaseCoder Self);
         void BaseCoder_SetTable     (PBaseCoder Self, const TTableParameters *T);
-        void BaseCoder_SetDictionary(PBaseCoder Self, uint32 aDictLevel);
+        void BaseCoder_SetDictionary(PBaseCoder Self, int32 aDictLevel);
         void BaseCoder_FreshFlexible(PBaseCoder Self);
         void BaseCoder_FreshSolid   (PBaseCoder Self);
        int32 BaseCoder_Encode       (PBaseCoder Self, uint8 *Buffer, int32 BufSize);

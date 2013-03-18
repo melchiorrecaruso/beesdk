@@ -122,11 +122,9 @@ end;
 
 procedure TStreamCoder.SetDictionaryLevel(Value: longint);
 begin
-  if Value <> FDictionaryLevel then
-  begin
-    FDictionaryLevel := Value;
-    BaseCoder_SetDictionary(FModeller, FDictionaryLevel);
-  end;
+  Writeln('SetDictionaryLevel=', Value);
+  FDictionaryLevel := Value;
+  BaseCoder_SetDictionary(FModeller, FDictionaryLevel);
 end;
 
 procedure TStreamCoder.SetCompressionTable(const Value: TTableParameters);
@@ -138,9 +136,14 @@ end;
 procedure TStreamCoder.FreshModeller(SolidCompression: boolean);
 begin
   if SolidCompression = FALSE then
-    BaseCoder_FreshFlexible(FModeller)
-  else
+  begin
+    Writeln('FreshModeller');
+    BaseCoder_FreshFlexible(FModeller);
+  end else
+  begin
+    Writeln('BaseCoder_FreshSolid');
     BaseCoder_FreshSolid(FModeller);
+  end;
 end;
 
 /// TStreamEncoder class

@@ -57,7 +57,7 @@ typedef int32 (*PStreamWrite) (void*, void*, int32);
 typedef uint32 TTableCol[TABLESIZE + 1];
 
 struct TTable{
-  int32 Level;
+  uint32 Level;
   TTableCol T[TABLECOLS + 1];
 };
 
