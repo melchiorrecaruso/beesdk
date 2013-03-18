@@ -110,14 +110,21 @@ end;
 constructor TBufStream.Create(aHandle: THandle);
 begin
   inherited Create;
-  FBlowFish := nil;
   FHandle   := aHandle;
+  {$IFDEF DIRECTSTREAM}
+
+  {$ELSE}
+  FBlowFish := nil;
   SetLength(FBuffer, 0);
+  {$ENDIF}
 end;
 
 destructor TBufStream.Destroy;
 begin
+  {$IFDEF DIRECTSTREAM}
+  {$ELSE}
   SetLength(FBuffer, 0);
+  {$ENDIF}
   inherited Destroy;
 end;
 
@@ -126,22 +133,30 @@ end;
 constructor TReadBufStream.Create(aHandle: THandle);
 begin
   inherited Create(aHandle);
-
+  {$IFDEF DIRECTSTREAM}
+  {$ELSE}
   ClearBuffer;
   SetLength(FBuffer, 4*MinBufferCapacity);
+  {$ENDIF}
 end;
 
 procedure TReadBufStream.ClearBuffer;
 begin
+  {$IFDEF DIRECTSTREAM}
+  {$ELSE}
   FPosition    := 0;
   FBufferSize  := 0;
   FBufferIndex := 0;
+  {$ENDIF}
 end;
 
 function TReadBufStream.Read(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
+  {$IFDEF DIRECTSTREAM}
+  Result := FileRead(FHandle, Data[0], Count);
+  {$ELSE}
   Result := 0;
   repeat
     if FBufferIndex = FBufferSize then
@@ -156,27 +171,38 @@ begin
     Inc(Result, I);
   until Result = Count;
   Inc(FPosition, Result);
+  {$ENDIF}
 end;
 
 procedure TReadBufStream.SeekFromBeginning(const Offset: int64);
 begin
+  {$IFDEF DIRECTSTREAM}
+  FileSeek(FHandle, Offset, fsFromBeginning);
+  {$ELSE}
   if FPosition <> OffSet then
   begin
     FPosition    := FileSeek(FHandle, Offset, fsFromBeginning);
     FBufferSize  := 0;
     FBufferIndex := 0;
   end;
+  {$ENDIF}
 end;
 
 procedure TReadBufStream.SeekFromEnd(const Offset: int64);
 begin
+  {$IFDEF DIRECTSTREAM}
+  FileSeek(FHandle, Offset, fsFromEnd);
+  {$ELSE}
   FPosition    := FileSeek(FHandle, Offset, fsFromEnd);
   FBufferSize  := 0;
   FBufferIndex := 0;
+  {$ENDIF}
 end;
 
 procedure TReadBufStream.FillBuffer;
 begin
+  {$IFDEF DIRECTSTREAM}
+  {$ELSE}
   FBufferIndex := 0;
   FBufferSize  := FileRead(FHandle, FBuffer[0], Length(FBuffer));
 
@@ -188,6 +214,7 @@ begin
 
   if Assigned(FBlowFish) then
     FBlowFish.Decode(@FBuffer[0], Length(FBuffer));
+  {$ENDIF}
 end;
 
 { TWriteBufStream class }
@@ -195,21 +222,29 @@ end;
 constructor TWriteBufStream.Create(aHandle: THandle);
 begin
   inherited Create(aHandle);
-
+  {$IFDEF DIRECTSTREAM}
+  {$ELSE}
   ClearBuffer;
   SetLength(FBuffer, MaxBufferCapacity);
+  {$ENDIF}
 end;
 
 procedure TWriteBufStream.ClearBuffer;
 begin
+  {$IFDEF DIRECTSTREAM}
+  {$ELSE}
   FPosition    := 0;
   FBufferIndex := 0;
+  {$ENDIF}
 end;
 
 function TWriteBufStream.Write(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
+  {$IFDEF DIRECTSTREAM}
+  Result := FileWrite(FHandle, Data[0], Count);
+  {$ELSE}
   Result := 0;
   repeat
     if FBufferIndex = Length(FBuffer) then
@@ -224,15 +259,22 @@ begin
     Inc(Result, I);
   until Result = Count;
   Inc(FPosition, Result);
+  {$ENDIF}
 end;
 
 function TWriteBufStream.SeekFromCurrent: int64;
 begin
+  {$IFDEF DIRECTSTREAM}
+  Result := FileSeek(FHandle, 0, fsFromCurrent);
+  {$ELSE}
   Result := FPosition;
+  {$ENDIF}
 end;
 
 procedure TWriteBufStream.FlushBuffer;
 begin
+  {$IFDEF DIRECTSTREAM}
+  {$ELSE}
   if Assigned(FBlowFish) then
     FBlowFish.Encode(@FBuffer[0], Length(FBuffer));
 
@@ -243,10 +285,14 @@ begin
 
     FBufferIndex := 0;
   end;
+  {$ENDIF}
 end;
 
 procedure TWriteBufStream.SetSize(const NewSize: int64);
 begin
+  {$IFDEF DIRECTSTREAM}
+  FileTruncate(FHandle, NewSize);
+  {$ELSE}
   FlushBuffer;
   if ExitStatus = esNoError then
   begin
@@ -257,6 +303,7 @@ begin
     end else
       SetExitStatus(esResizeStreamError);
   end;
+  {$ENDIF}
 end;
 
 end.

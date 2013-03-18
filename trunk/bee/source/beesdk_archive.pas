@@ -1110,13 +1110,23 @@ procedure TArchiver.InitEncoder(Item: TArchiveItem);
 begin
   if Item.CompressionMethod = acmBee then
   begin
+
+    Writeln('okA');
+
     if acfDictionaryLevel in Item.FCompressionFlags then
       FEncoder.DictionaryLevel := Ord(Item.DictionaryLevel);
+
+    Writeln('okB');
+
 
     if acfCompressionTable in Item.FCompressionFlags then
       FEncoder.CompressionTable := Item.CompressionTable;
 
+    Writeln('okC');
+
     FEncoder.FreshModeller(Item.CompressionBlock <> acb0MB);
+
+    Writeln('okD');
   end;
 end;
 
@@ -2220,7 +2230,13 @@ begin
       if ExitStatus <> esNoError then Break;
 
       Item := FCentralDirectory.Items[I];
+
+      Writeln('ok0');
+
       InitEncoder(Item);
+
+      Writeln('ok1');
+
       case Item.FTag of
         aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
         aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
@@ -2228,6 +2244,9 @@ begin
         aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
         aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
       end;
+
+      Writeln('ok2');
+
       case Item.FTag of
         aitNone:            EncodeFromArchive(Item);
         aitAdd:             EncodeFromFile   (Item);
