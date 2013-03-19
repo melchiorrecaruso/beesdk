@@ -32,6 +32,9 @@ unit BeeSDK_Archive;
 interface
 
 uses
+  Sha1,
+  Crc,
+
   Classes,
   SysUtils,
   Bee_Files,
@@ -79,7 +82,7 @@ type
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
-  /// archive data descriptor flag
+  /// archive item data descriptor flag
   TArchiveDataDescriptorFlag = (
     adfCompressedSize,
     adfDiskNumber,
@@ -87,6 +90,20 @@ type
     adfCRC32);
 
   TArchiveDataDescriptorFlags = set of TArchiveDataDescriptorFlag;
+
+  /// archive check integrity method
+  TArchiveIntegrityCheckMethod = (aicCRC32, aicCRC64, aicSHA1);
+
+  /// archive check integrity flag
+  TArchiveIntegrityCheckFlag = (
+    aicfCRC32,
+    aicfCRC32Aux,
+    aicfCRC64,
+    aicfCRC64Aux,
+    aicfSHA1,
+    aicfSHA1Aux);
+
+  TArchiveIntegrityCheckFlags = set of TArchiveIntegrityCheckFlag;
 
   /// archive compression method
   TArchiveCompressionMethod = (acmNone, acmBee);
@@ -140,7 +157,15 @@ type
     FCompressedSize: int64;
     FDiskNumber: longword;
     FDiskSeek: int64;
+    // data check integrity property
+    FDataIntegrityCheckFlags: TArchiveIntegrityCheckMethod
+    FIntegrityCheckMethod: TArchiveIntegrityCheckMethod;
     FCRC32: longword;
+    FCRC32Aux: longword;
+    FCRC64: qword;
+    FCRC64Aux: qword;
+    FSHA1: TSHA1Digest;
+    FSHA1Aux: TSHA1Digest;
     // compression property
     FCompressionFlags: TArchiveCompressionFlags;
     FCompressionMethod: TArchiveCompressionMethod;
