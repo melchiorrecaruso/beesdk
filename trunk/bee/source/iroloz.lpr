@@ -215,7 +215,7 @@ type
   public
     constructor Create;
     procedure Init;
-
+    function Decode(P: longint): longint;
 
   end;
 
@@ -229,10 +229,110 @@ type
   var
     I: longint;
   begin
+    for I := 0 to 3 do
+    begin
+      // x := (x shl 8) + readByte;
+    end;
+  end;
+
+   function TDecoder.Decode(P: longint): longint;
+   var
+     xmid: longword;
+     Bit: longint;
+   begin
+     xmid := x1 + ((x2 - x1) * (P shr 17));
+     Bit := longint(x <= xmid);
+
+     if boolean(Bit) then
+       x2:= xmid
+     else
+       x1 := xmid + 1;
+
+     while (x1 xor x2) < (1 << 24) do
+     begin
+       x1 := (x1 shl 8);
+       x2 := (x2 shl 8) + 255;
+       // x  := (x  shl 8) + readByte;
+     end;
+
+     Result := Bit;
+   end;
+
+type
+  TPPM = class
+  private
+    pliteral: array[0..255, 0..255] of TPredictor;
+    plength:  array[0..255, 0..255] of TPredictor;
+    pstep:    array[0..255] of TPredictor;
+    pbit:     array[0..1] of TPredictor;
+  public
+    Encoder: TEncoder;
+    Decoder: TDecoder;
+  public
+    constructor Create;
+    destructor Destroy; override;
 
 
+
+    procedure EncodeBit(Bit: byte; Context: byte);
+    procedure EncodeLiteral(value: byte; Context: byte);
 
   end;
+
+  constructor TPPM.Create;
+  var
+    I, J: longint;
+  begin
+    inherited Create;
+    for I := 0 to 255 do
+      for J := 0 to 255 do
+      begin
+        pliteral[I, J] := TPredictor.Create;
+        plength [I, J] := TPredictor.Create;
+      end;
+
+    for I := 0 to 255 do pstep[I] := TPredictor.Create;
+    for I := 0 to 1   do pbit [I] := TPredictor.Create;
+  end;
+
+  destructor TPPM.Destroy;
+  var
+    I, J: longint;
+  begin
+    for I := 0 to 255 do
+      for J := 0 to 255 do
+      begin
+        pliteral[I, J].Destroy;
+        plength [I, J].Destroy;
+      end;
+
+    for I := 0 to 255 do pstep[I].Destroy;
+    for I := 0 to 1   do pbit [I].Destroy;
+    inherited Destroy;
+  end;
+
+  procedure TPPM.EncodeBit(bit: byte; context: byte);
+  begin
+    Encoder.Encode(pbit[context].P, bit);
+    pbit[context].Update(bit);
+  end;
+
+  procedure TPPM.EncodeLiteral(value: byte; Context: byte);
+  var
+    I, J: longint;
+    bit: longint;
+  begin
+    J := 1;
+    for I := 7 downto 0 do
+    begin
+      bit := (value shr I) and 1;
+      Encoder.
+
+
+    end;
+  end;
+
+
 
 
 
