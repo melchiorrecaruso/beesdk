@@ -395,79 +395,56 @@ uses
 
 function GetCompressionMethod(Params: string): TArchiveCompressionMethod;
 begin
-  Result := acmBee;
-  if Pos('|m=', Params) > 0 then
-  begin
-    for I := Pos('|m=', Params) + 3 to Length(Params) do
-    begin
-      if Params[I] <> '|' then
-        Result := Result + Params[I]
-      else
-        Break;
-    end;
-    if Length(Result) > 0 then
-      Result := '.' + Result;
-  end;
-
-
-
-  if Pos('|m0|', Params) > 0 then Result := acmNone else
-  if Pos('|m1|', Params) > 0 then Result := acmBee;
-end;
-
-function GetCompressionLevel(const Params: string): longint;
-begin
-  Result := 1;
-  if Pos('|l1|', Params) > 0 then Result := 1 else
-  if Pos('|l2|', Params) > 0 then Result := 2 else
-  if Pos('|l3|', Params) > 0 then Result := 3;
-end;
-
-function GetDictionaryLevel(const Params: string): longint;
-begin
-  Result := 3;
-  if Pos('|d0|', Params) > 0 then Result := 0 else
-  if Pos('|d1|', Params) > 0 then Result := 1 else
-  if Pos('|d2|', Params) > 0 then Result := 2 else
-  if Pos('|d3|', Params) > 0 then Result := 3 else
-  if Pos('|d4|', Params) > 0 then Result := 4 else
-  if Pos('|d5|', Params) > 0 then Result := 5 else
-  if Pos('|d6|', Params) > 0 then Result := 6 else
-  if Pos('|d7|', Params) > 0 then Result := 7 else
-  if Pos('|d8|', Params) > 0 then Result := 8 else
-  if Pos('|d9|', Params) > 0 then Result := 9;
+  if Pos('|m=0|', Params) > 0 then Result := acmNone else
+  if Pos('|m=1|', Params) > 0 then Result := acmBee  else Result := acmBee;
 end;
 
 function GetCompressionBlock(const Params: string): int64;
 begin
-  Result := 0;
+  if Pos('|s=0|',  Params) > 0 then Result := 0            else
+  if Pos('|s=1|',  Params) > 0 then Result := $100000      else
+  if Pos('|s=2|',  Params) > 0 then Result := $200000      else
+  if Pos('|s=3|',  Params) > 0 then Result := $400000      else
+  if Pos('|s=4|',  Params) > 0 then Result := $800000      else
+  if Pos('|s=5|',  Params) > 0 then Result := $1000000     else
+  if Pos('|s=6|',  Params) > 0 then Result := $2000000     else
+  if Pos('|s=7|',  Params) > 0 then Result := $4000000     else
+  if Pos('|s=8|',  Params) > 0 then Result := $8000000     else
+  if Pos('|s=9|',  Params) > 0 then Result := $10000000    else
+  if Pos('|s=10|', Params) > 0 then Result := $20000000    else
+  if Pos('|s=11|', Params) > 0 then Result := $40000000    else
+  if Pos('|s=12|', Params) > 0 then Result := $80000000    else
+  if Pos('|s=13|', Params) > 0 then Result := $100000000   else
+  if Pos('|s=14|', Params) > 0 then Result := $200000000   else
+  if Pos('|s=15|', Params) > 0 then Result := $400000000   else
+  if Pos('|s=16|', Params) > 0 then Result := $800000000   else
+  if Pos('|s=17|', Params) > 0 then Result := $1000000000  else
+  if Pos('|s=18|', Params) > 0 then Result := $2000000000  else
+  if Pos('|s=19|', Params) > 0 then Result := $4000000000  else
+  if Pos('|s=20|', Params) > 0 then Result := $8000000000  else
+  if Pos('|s=21|', Params) > 0 then Result := $10000000000 else
+  if Pos('|s=22|', Params) > 0 then Result := $20000000000 else Result := 0;
+end;
 
+function GetCompressionLevel(const Params: string): longint;
+begin
+  if Pos('|l=1|', Params) > 0 then Result := 1 else
+  if Pos('|l=2|', Params) > 0 then Result := 2 else
+  if Pos('|l=3|', Params) > 0 then Result := 3 else Result := 1;
+end;
 
-
-
-  if Pos('|s0|',  Params) > 0 then Result := 0   else
-  if Pos('|s1|',  Params) > 0 then Result := $100000   else
-  if Pos('|s2|',  Params) > 0 then Result := $200000   else
-  if Pos('|s3|',  Params) > 0 then Result := $200000   else
-  if Pos('|s4|',  Params) > 0 then Result := acb8MB   else
-  if Pos('|s5|',  Params) > 0 then Result := acb16MB  else
-  if Pos('|s6|',  Params) > 0 then Result := acb32MB  else
-  if Pos('|s7|',  Params) > 0 then Result := acb64MB  else
-  if Pos('|s8|',  Params) > 0 then Result := acb128MB else
-  if Pos('|s9|',  Params) > 0 then Result := acb256MB else
-  if Pos('|s10|', Params) > 0 then Result := acb512MB else
-  if Pos('|s11|', Params) > 0 then Result := acb1GB   else
-  if Pos('|s12|', Params) > 0 then Result := acb2GB   else
-  if Pos('|s13|', Params) > 0 then Result := acb4GB   else
-  if Pos('|s14|', Params) > 0 then Result := acb8GB   else
-  if Pos('|s15|', Params) > 0 then Result := acb16GB  else
-  if Pos('|s16|', Params) > 0 then Result := acb32GB  else
-  if Pos('|s17|', Params) > 0 then Result := acb64GB  else
-  if Pos('|s18|', Params) > 0 then Result := acb128GB else
-  if Pos('|s19|', Params) > 0 then Result := acb256GB else
-  if Pos('|s20|', Params) > 0 then Result := acb512GB else
-  if Pos('|s21|', Params) > 0 then Result := acb1TB   else
-  if Pos('|s|',   Params) > 0 then Result := acb1TB;
+function GetCompressionLevelAuxLevel(const Params: string): longint;
+begin
+  if Pos('|d=0|', Params) > 0 then Result := 0 else
+  if Pos('|d=1|', Params) > 0 then Result := 1 else
+  if Pos('|d=2|', Params) > 0 then Result := 2 else
+  if Pos('|d=3|', Params) > 0 then Result := 3 else
+  if Pos('|d=4|', Params) > 0 then Result := 4 else
+  if Pos('|d=5|', Params) > 0 then Result := 5 else
+  if Pos('|d=6|', Params) > 0 then Result := 6 else
+  if Pos('|d=7|', Params) > 0 then Result := 7 else
+  if Pos('|d=8|', Params) > 0 then Result := 8 else
+  if Pos('|d=9|', Params) > 0 then Result := 9 else Result := 3;
 end;
 
 function GetForceFileExtension(const Params: string): string;
@@ -516,9 +493,8 @@ end;
 
 function GetEncryptionMethod(const Params: string): TArchiveEncryptionMethod;
 begin
-  Result := aemNone;
-  if Pos('|m0|', Params) > 0 then Result := aemNone else
-  if Pos('|m1|', Params) > 0 then Result := aemBlowFish;
+  if Pos('|m=0|', Params) > 0 then Result := aemNone     else
+  if Pos('|m=1|', Params) > 0 then Result := aemBlowFish else Result := aemNone;
 end;
 
 function GetVersionNeededToRead(Item: TArchiveItem): longword; overload;
@@ -541,12 +517,12 @@ begin
   Result := 'm0 ';
   if Item.CompressionMethod <> acmNone then
   begin
-    if Item.CompressionBlock <> acb0MB then
+    if Item.CompressionBlock <> 0 then
     begin
       Result[1] := 's';
     end;
-    Result[2] := char(byte('1') + Ord(Item.CompressionLevel));
-    Result[3] := char(byte('a') + Ord(Item.DictionaryLevel ));
+    Result[2] := char(byte('1') + Item.FCompressionLevel   );
+    Result[3] := char(byte('a') + Item.FCompressionLevelAux);
   end;
 end;
 
@@ -592,43 +568,48 @@ constructor TArchiveItem.Create(const aFileName: string);
 begin
   inherited Create;
   FFileName := aFileName;
-  /// Item property ///
+  /// item property ///
   FFlags := [
     aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
     aifAttributes,
     aifComment];
-  FVersionNeededToRead :=  0;
-  FUncompressedSize    :=  0;
-  FLastModifiedTime    :=  0;
-  FAttributes          :=  0;
-  FComment             := '';
-  /// Data descriptor property ///
+  FVersionNeededToRead  :=  0;
+  FUncompressedSize     :=  0;
+  FLastModifiedTime     :=  0;
+  FAttributes           :=  0;
+  FComment              := '';
+  /// data descriptor property ///
   FDataDescriptorFlags := [
-    adfCompressedSize,
-    adfDiskNumber,
-    adfDiskSeek,
-    adfCRC32];
-  FCompressedSize    :=  0;
-  FDiskNumber        :=  1;
-  FDiskSeek          :=  0;
-  FCRC32             :=  0;
-  /// Compression property ///
-  FCompressionFlags  := [];
-  FCompressionMethod := acmNone;
-  FCompressionLevel  := aclFast;
-  FDictionaryLevel   := adl2MB;
-  FCompressionBlock  := acb0MB;
-  FCompressionTable  := DefaultTableParameters;
-  /// Encryption property ///
-  FEncryptionFlags   := [];
-  FEncryptionMethod  := aemNone;
-  /// Reserved property ///
-  FIndex             := -1;
-  FTag               := aitAdd;
-  FExternalFileName  := '';
-  FExternalFileSize  :=  0;
+    addfCompressedSize,
+    addfDiskNumber,
+    addfDiskSeek,
+    addfCheckMethod,
+    addfCheckDigest,
+    addfCheckDigestAux];
+  FCompressedSize       := 0;
+  FDiskNumber           := 0;
+  FDiskSeek             := 0;
+  FCheckMethod          := acimNone;
+  FCheckDigest          := nil;
+  FCheckDigestAux       := nil;;
+  /// compression property ///
+  FCompressionFlags     := [];
+  FCompressionMethod    := acmNone;
+  FCompressionBlock     := 0;
+  FCompressionLevel     := 0;
+  FCompressionLevelAux  := 0;
+  FCompressionFilter    := nil;
+  FCompressionFilterAux := nil;
+  /// encryption property ///
+  FEncryptionFlags      := [];
+  FEncryptionMethod     := aemNone;
+  /// reserved property ///
+  FIndex                := -1;
+  FTag                  := aitAdd;
+  FExternalFileName     := '';
+  FExternalFileSize     :=  0;
 end;
 
 procedure TArchiveItem.Update(SearchRec: TCustomSearchRec);
