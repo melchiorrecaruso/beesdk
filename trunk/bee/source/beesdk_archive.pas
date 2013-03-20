@@ -82,50 +82,31 @@ type
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
-  /// archive item data descriptor flag
+  /// archive check method
+  TArchiveCheckMethod = (acimNone, acimCRC32, acimCRC64, acimSHA1);
+
+  /// archive data descriptor flag
   TArchiveDataDescriptorFlag = (
-    adfCompressedSize,
-    adfDiskNumber,
-    adfDiskSeek,
-    adfCRC32);
+    addfCompressedSize,
+    addfDiskNumber,
+    addfDiskSeek,
+    addfCheckMethod,
+    addfCheckDigest,
+    addfCheckDigestAux);
 
   TArchiveDataDescriptorFlags = set of TArchiveDataDescriptorFlag;
-
-  /// archive check integrity method
-  TArchiveIntegrityCheckMethod = (aicCRC32, aicCRC64, aicSHA1);
-
-  /// archive check integrity flag
-  TArchiveIntegrityCheckFlag = (
-    aicfCRC32,
-    aicfCRC32Aux,
-    aicfCRC64,
-    aicfCRC64Aux,
-    aicfSHA1,
-    aicfSHA1Aux);
-
-  TArchiveIntegrityCheckFlags = set of TArchiveIntegrityCheckFlag;
 
   /// archive compression method
   TArchiveCompressionMethod = (acmNone, acmBee);
 
-  /// archive compression level
-  TArchiveCompressionLevel = (aclFast, aclNormal, aclMaximum);
-
-  /// archive dictionary level
-  TArchiveDictionaryLevel = (adl2MB, adl5MB, adl10MB, adl20MB, adl40MB, adl80MB,
-    adl160MB, adl320MB, adl640MB, adl1280MB);
-
-  TArchiveCompressionBlock = (acb0MB, acb1MB, acb2MB, acb4MB, acb8MB, acb16MB,
-    acb32MB, acb64MB, acb128MB, acb256MB, acb512MB, acb1GB, acb2GB, acb4GB,
-    acb8GB, acb16GB, acb32GB, acb64GB, acb128GB, acb256GB, acb512GB, acb1TB);
-
   /// archive compression flag
   TArchiveCompressionFlag = (
     acfCompressionMethod,
-    acfCompressionLevel,
-    acfDictionaryLevel,
     acfCompressionBlock,
-    acfCompressionTable);
+    acfCompressionLevel,
+    acfCompressionLevelAux,
+    acfCompressionFilter,
+    acfCompressionFilterAux);
 
   TArchiveCompressionFlags = set of TArchiveCompressionFlag;
 
@@ -157,22 +138,17 @@ type
     FCompressedSize: int64;
     FDiskNumber: longword;
     FDiskSeek: int64;
-    // data check integrity property
-    FDataIntegrityCheckFlags: TArchiveIntegrityCheckMethod
-    FIntegrityCheckMethod: TArchiveIntegrityCheckMethod;
-    FCRC32: longword;
-    FCRC32Aux: longword;
-    FCRC64: qword;
-    FCRC64Aux: qword;
-    FSHA1: TSHA1Digest;
-    FSHA1Aux: TSHA1Digest;
+    FCheckMethod: TArchiveCheckMethod;
+    FCheckDigest: PByte;
+    FCheckDigestAux: PByte;
     // compression property
     FCompressionFlags: TArchiveCompressionFlags;
     FCompressionMethod: TArchiveCompressionMethod;
-    FCompressionLevel: TArchiveCompressionLevel;
-    FDictionaryLevel: TArchiveDictionaryLevel;
-    FCompressionBlock: TArchiveCompressionBlock;
-    FCompressionTable: TTableParameters;
+    FCompressionBlock: int64;
+    FCompressionLevel: longint;
+    FCompressionLevelAux: longint;
+    FCompressionFilter: PByte;
+    FCompressionFilterAux: PByte;
     // encryption property
     FEncryptionFlags: TArchiveEncryptionFlags;
     FEncryptionMethod: TArchiveEncryptionMethod;
@@ -199,14 +175,17 @@ type
     property CompressedSize: int64 read FCompressedSize;
     property DiskNumber: longword read FDiskNumber;
     property DiskSeek: int64 read FDiskSeek;
-    property CRC32: longword read FCRC32;
+    property CheckMethod: TArchiveCheckMethod read FCheckMethod;
+    property CheckDigest: PByte read FCheckDigest;
+    property CheckDigestAux: PByte read FCheckDigestAux;
     // compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
     property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod;
-    property CompressionLevel: TArchiveCompressionLevel read FCompressionLevel;
-    property DictionaryLevel: TArchiveDictionaryLevel read FDictionaryLevel;
-    property CompressionBlock: TArchiveCompressionBlock read FCompressionBlock;
-    property CompressionTable: TTableParameters read FCompressionTable;
+    property CompressionBlock: int64 read FCompressionBlock;
+    property CompressionLevel: longint read FCompressionLevel;
+    property CompressionLevelAux: longint read FCompressionLevelAux;
+    property CompressionFilter: PByte read FCompressionFilter;
+    property CompressionFilterAux: PByte read FCompressionFilterAux;
     // encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
     property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
@@ -414,43 +393,62 @@ uses
   Bee_Assembler,
   Bee_Interface;
 
-function GetCompressionMethod(const Params: string): TArchiveCompressionMethod;
+function GetCompressionMethod(Params: string): TArchiveCompressionMethod;
 begin
   Result := acmBee;
+  if Pos('|m=', Params) > 0 then
+  begin
+    for I := Pos('|m=', Params) + 3 to Length(Params) do
+    begin
+      if Params[I] <> '|' then
+        Result := Result + Params[I]
+      else
+        Break;
+    end;
+    if Length(Result) > 0 then
+      Result := '.' + Result;
+  end;
+
+
+
   if Pos('|m0|', Params) > 0 then Result := acmNone else
   if Pos('|m1|', Params) > 0 then Result := acmBee;
 end;
 
-function GetCompressionLevel(const Params: string): TArchiveCompressionLevel;
+function GetCompressionLevel(const Params: string): longint;
 begin
-  Result := aclFast;
-  if Pos('|l1|', Params) > 0 then Result := aclFast   else
-  if Pos('|l2|', Params) > 0 then Result := aclNormal else
-  if Pos('|l3|', Params) > 0 then Result := aclMaximum;
+  Result := 1;
+  if Pos('|l1|', Params) > 0 then Result := 1 else
+  if Pos('|l2|', Params) > 0 then Result := 2 else
+  if Pos('|l3|', Params) > 0 then Result := 3;
 end;
 
-function GetDictionaryLevel(const Params: string): TArchiveDictionaryLevel;
+function GetDictionaryLevel(const Params: string): longint;
 begin
-  Result := adl20MB;
-  if Pos('|d0|', Params) > 0 then Result := adl2MB   else
-  if Pos('|d1|', Params) > 0 then Result := adl5MB   else
-  if Pos('|d2|', Params) > 0 then Result := adl10MB  else
-  if Pos('|d3|', Params) > 0 then Result := adl20MB  else
-  if Pos('|d4|', Params) > 0 then Result := adl40MB  else
-  if Pos('|d5|', Params) > 0 then Result := adl80MB  else
-  if Pos('|d6|', Params) > 0 then Result := adl160MB else
-  if Pos('|d7|', Params) > 0 then Result := adl320MB else
-  if Pos('|d8|', Params) > 0 then Result := adl640MB else
-  if Pos('|d9|', Params) > 0 then Result := adl1280MB;
+  Result := 3;
+  if Pos('|d0|', Params) > 0 then Result := 0 else
+  if Pos('|d1|', Params) > 0 then Result := 1 else
+  if Pos('|d2|', Params) > 0 then Result := 2 else
+  if Pos('|d3|', Params) > 0 then Result := 3 else
+  if Pos('|d4|', Params) > 0 then Result := 4 else
+  if Pos('|d5|', Params) > 0 then Result := 5 else
+  if Pos('|d6|', Params) > 0 then Result := 6 else
+  if Pos('|d7|', Params) > 0 then Result := 7 else
+  if Pos('|d8|', Params) > 0 then Result := 8 else
+  if Pos('|d9|', Params) > 0 then Result := 9;
 end;
 
-function GetCompressionBlock(const Params: string): TArchiveCompressionBlock; overload;
+function GetCompressionBlock(const Params: string): int64;
 begin
-  Result := acb0MB;
-  if Pos('|s0|',  Params) > 0 then Result := acb0MB   else
-  if Pos('|s1|',  Params) > 0 then Result := acb1MB   else
-  if Pos('|s2|',  Params) > 0 then Result := acb2MB   else
-  if Pos('|s3|',  Params) > 0 then Result := acb4MB   else
+  Result := 0;
+
+
+
+
+  if Pos('|s0|',  Params) > 0 then Result := 0   else
+  if Pos('|s1|',  Params) > 0 then Result := $100000   else
+  if Pos('|s2|',  Params) > 0 then Result := $200000   else
+  if Pos('|s3|',  Params) > 0 then Result := $200000   else
   if Pos('|s4|',  Params) > 0 then Result := acb8MB   else
   if Pos('|s5|',  Params) > 0 then Result := acb16MB  else
   if Pos('|s6|',  Params) > 0 then Result := acb32MB  else
@@ -470,14 +468,6 @@ begin
   if Pos('|s20|', Params) > 0 then Result := acb512GB else
   if Pos('|s21|', Params) > 0 then Result := acb1TB   else
   if Pos('|s|',   Params) > 0 then Result := acb1TB;
-end;
-
-function GetCompressionBlock(CompressionBlock: TArchiveCompressionBlock): int64; overload;
-begin
-  if CompressionBlock = acb0MB then
-    Result := 0
-  else
-    Result := int64(1) shl (19 + Ord(CompressionBlock));
 end;
 
 function GetForceFileExtension(const Params: string): string;
