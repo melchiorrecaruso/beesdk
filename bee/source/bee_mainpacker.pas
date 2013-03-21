@@ -55,19 +55,15 @@ type
     FBuffer: array of byte;
     FCoder: pointer;
     FModeller: pointer;
-    FDictionaryLevel: longint;
-    FCompressionTable: TTableParameters;
     FOnProgressEvent: TArchiveProgressEvent;
-    procedure SetDictionaryLevel(Value: longint);
-    procedure SetCompressionTable(const Value: TTableParameters);
     procedure DoProgress(Value: longint);
   public
     constructor Create;
     destructor Destroy; override;
+    procedure SetDictionaryLevel(Value: longint);
+    procedure SetCompressionTable(const Table: string);
     procedure FreshModeller(SolidCompression: boolean);
   public
-    property DictionaryLevel: longint read FDictionaryLevel write SetDictionaryLevel;
-    property CompressionTable: TTableParameters read FCompressionTable write SetCompressionTable;
     property OnProgress: TArchiveProgressEvent read FOnProgressEvent write FOnProgressEvent;
   end;
 
@@ -79,8 +75,8 @@ type
   public
     constructor Create(Stream: TFileWriter);
     destructor Destroy; override;
-    function Copy  (Stream: TFileReader; const Size: int64; var CRC: longword): int64;
-    function Encode(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
+    function Copy  (Stream: TFileReader; const Size: int64): int64;
+    function Encode(Stream: TFileReader; const Size: int64): int64;
   end;
 
   { TStreamDecoder class }
@@ -91,8 +87,8 @@ type
   public
     constructor Create(Stream: TFileReader);
     destructor Destroy; override;
-    function Copy  (Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
-    function Decode(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
+    function Copy  (Stream: TFileWriter; const Size: int64): int64;
+    function Decode(Stream: TFileWriter; const Size: int64): int64;
   end;
 
 implementation
@@ -122,28 +118,23 @@ end;
 
 procedure TStreamCoder.SetDictionaryLevel(Value: longint);
 begin
-  Writeln('SetDictionaryLevel=', Value);
-  FDictionaryLevel := Value;
-  BaseCoder_SetDictionary(FModeller, FDictionaryLevel);
+  BaseCoder_SetDictionary(FModeller, Value);
 end;
 
-procedure TStreamCoder.SetCompressionTable(const Value: TTableParameters);
+procedure TStreamCoder.SetCompressionTable(const Table: string);
 begin
-  FCompressionTable := Value;
-  BaseCoder_SetTable(FModeller, @FCompressionTable);
+  if Length(Table) = High(TTableParameters) then
+  begin
+    BaseCoder_SetTable(FModeller, @Table[1]);
+  end;
 end;
 
 procedure TStreamCoder.FreshModeller(SolidCompression: boolean);
 begin
   if SolidCompression = FALSE then
-  begin
-    Writeln('FreshModeller');
-    BaseCoder_FreshFlexible(FModeller);
-  end else
-  begin
-    Writeln('BaseCoder_FreshSolid');
+    BaseCoder_FreshFlexible(FModeller)
+  else
     BaseCoder_FreshSolid(FModeller);
-  end;
 end;
 
 /// TStreamEncoder class
@@ -163,7 +154,7 @@ begin
   inherited Destroy;
 end;
 
-function TStreamEncoder.Copy(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
+function TStreamEncoder.Copy(Stream: TFileReader; const Size: int64): int64;
 var
   Count:  int64;
   Readed: longint;
