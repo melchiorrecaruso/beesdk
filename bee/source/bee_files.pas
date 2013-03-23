@@ -295,7 +295,7 @@ end;
 procedure TFileReader.Seek(aImageNumber: longint; const Offset: int64);
 begin
   SetImageNumber(aImageNumber);
-  SeekFromBeginning(Offset);
+  Seek(Offset, fsFromBeginning);
 end;
 
 procedure TFileReader.SetImagesNumber(Value: longint);
