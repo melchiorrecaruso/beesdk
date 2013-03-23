@@ -35,6 +35,7 @@ uses
   Classes,
   SysUtils,
   // ---
+  Bee_BufStream,
   Bee_Files,
   Bee_Interface,
   Bee_Configuration,
@@ -45,248 +46,226 @@ uses
   {$ENDIF}
 
 type
-  TArchiveProgressEvent = procedure(Value: longint) of object;
+  TCoderProgressEvent = procedure(Value: longint) of object;
 
 type
-  { TStreamCoder class }
+  { TCoders classes }
 
-  TStreamCoder = class
+  TBaseCoder = class
   private
-    FBuffer: array of byte;
-    FCoder: pointer;
-    FModeller: pointer;
-    FOnProgressEvent: TArchiveProgressEvent;
+    FStream: TBufStream;
+    FOnProgressEvent: TCoderProgressEvent;
     procedure DoProgress(Value: longint);
   public
-    constructor Create;
-    destructor Destroy; override;
-    procedure SetDictionaryLevel(Value: longint);
-    procedure SetCompressionTable(const Table: string);
-    procedure FreshModeller(SolidCompression: boolean);
+    constructor Create(Stream: TBufStream);
+    procedure SetCompressionLevel(Value: longint); virtual abstract;
+    procedure SetCompressionLevelAux(Value: longint); virtual abstract;
+    procedure SetCompressionFilter(const Filter: string); virtual abstract;
+    procedure SetCompressionFilterAux(const Filter: string); virtual abstract;
+    function Encode(Stream: TFileReader; const Size: int64): int64; virtual abstract;
+    function Decode(Stream: TFileWriter; const Size: int64): int64; virtual abstract;
+    function Copy  (Stream: TFileReader; const Size: int64): int64; virtual overload;
+    function Copy  (Stream: TFileWriter; const Size: int64): int64; virtual overload;
   public
-    property OnProgress: TArchiveProgressEvent read FOnProgressEvent write FOnProgressEvent;
+    property OnProgress: TCoderProgressEvent read FOnProgressEvent write FOnProgressEvent;
   end;
 
-  { TStreamEncoder class }
-
-  TStreamEncoder = class(TStreamCoder)
+  TBeeCoder = class(TBaseCoder)
   private
-    FStream: TFileWriter;
+    FCoder: pointer;
+    FModeller: pointer;
   public
-    constructor Create(Stream: TFileWriter);
-    destructor Destroy; override;
-    function Copy  (Stream: TFileReader; const Size: int64): int64;
-    function Encode(Stream: TFileReader; const Size: int64): int64;
+    procedure SetCompressionLevelAux(Value: longint); override;
+    procedure SetCompressionFilter(const Filter: string); override;
+    procedure FreshFlexible;
+    procedure FreshSolid;
   end;
 
-  { TStreamDecoder class }
-
-  TStreamDecoder = class(TStreamCoder)
-  private
-    FStream: TFileReader;
+  TBeeEncoder = class(TBeeCoder)
   public
-    constructor Create(Stream: TFileReader);
+    constructor Create(Stream: TBufStream);
     destructor Destroy; override;
-    function Copy  (Stream: TFileWriter; const Size: int64): int64;
-    function Decode(Stream: TFileWriter; const Size: int64): int64;
+    function Encode(Stream: TFileReader; const Size: int64): int64; override;
+  end;
+
+  TBeeDecoder = class(TBeeCoder)
+  public
+    constructor Create(Stream: TBufStream);
+    destructor Destroy; override;
+    function Decode(Stream: TFileWriter; const Size: int64): int64; override;
   end;
 
 implementation
 
 uses
-  Bee_Crc, Bee_BufStream;
+  Bee_Common;
 
-/// TStreamCoder class
+/// TBaseCoder class
 
-constructor TStreamCoder.Create;
+constructor TBaseCoder.Create(Stream: TBufStream);
 begin
   inherited Create;
-  SetLength(FBuffer, 0);
+  FStream := Stream;
 end;
 
-destructor TStreamCoder.Destroy;
-begin
-  SetLength(FBuffer, 0);
-  inherited Destroy;
-end;
-
-procedure TStreamCoder.DoProgress(Value: longint);
+procedure TBaseCoder.DoProgress(Value: longint); inline;
 begin
   if Assigned(FOnProgressEvent) then
     FOnProgressEvent(Value);
 end;
 
-procedure TStreamCoder.SetDictionaryLevel(Value: longint);
+function TBaseCoder.Copy(Stream: TFileReader; const Size: int64): int64;
+var
+  Count:  int64;
+  Buffer: TBuffer;
+  Readed: longint;
+begin
+  Result := 0;
+  if Size > 0 then
+  begin
+    Count := Size div SizeOf(TBuffer);
+    while (Count <> 0) and (ExitStatus = esNoError) do
+    begin
+      Readed :=  Stream.Read (@Buffer[0], SizeOf(TBuffer));
+      Readed := FStream.Write(@Buffer[0], Readed);
+      Inc(Result, Readed);
+      DoProgress(Readed);
+      Dec(Count);
+    end;
+    Readed :=  Stream.Read (@Buffer[0], Size mod SizeOf(TBuffer));
+    Readed := FStream.Write(@Buffer[0], Readed);
+    Inc(Result, Readed);
+    DoProgress(Readed);
+  end;
+end;
+
+function TBaseCoder.Copy(Stream: TFileWriter; const Size: int64): int64;
+var
+  Count:  int64;
+  Buffer: TBuffer;
+  Readed: longint;
+begin
+  Result := 0;
+  if Size > 0 then
+  begin
+    Count := Size div SizeOf(TBuffer);
+    while (Count <> 0) and (ExitStatus = esNoError) do
+    begin
+      Readed := FStream.Read (@Buffer[0], SizeOf(TBuffer));
+      Readed :=  Stream.Write(@Buffer[0], Readed);
+      Inc(Result, Readed);
+      DoProgress(Readed);
+      Dec(Count);
+    end;
+    Readed := FStream.Read (@Buffer[0], Size mod SizeOf(TBuffer));
+    Readed :=  Stream.Write(@Buffer[0], Readed);
+    Inc(Result, Readed);
+    DoProgress(Readed);
+  end;
+end;
+
+/// TBeeCoder class
+
+procedure TBeeCoder.SetCompressionLevelAux(Value: longint);
 begin
   BaseCoder_SetDictionary(FModeller, Value);
 end;
 
-procedure TStreamCoder.SetCompressionTable(const Table: string);
+procedure TBeeCoder.SetCompressionFilter(const Filter: string);
 begin
-  if Length(Table) = High(TTableParameters) then
-  begin
-    BaseCoder_SetTable(FModeller, @Table[1]);
-  end;
+  BaseCoder_SetTable(FModeller, @Filter[1]);
 end;
 
-procedure TStreamCoder.FreshModeller(SolidCompression: boolean);
+procedure TBeeCoder.FreshFlexible;
 begin
-  if SolidCompression = FALSE then
-    BaseCoder_FreshFlexible(FModeller)
-  else
-    BaseCoder_FreshSolid(FModeller);
+  BaseCoder_FreshFlexible(FModeller)
 end;
 
-/// TStreamEncoder class
-
-constructor TStreamEncoder.Create(Stream: TFileWriter);
+procedure TBeeCoder.FreshSolid;
 begin
-  inherited Create;
-  FStream   := Stream;
+  BaseCoder_FreshSolid(FModeller);
+end;
+
+/// TBeeEncoder class
+
+constructor TBeeEncoder.Create(Stream: TBufStream);
+begin
+  inherited Create(Stream);
   FCoder    := RangeEncoder_Create(FStream, @DoFlush);
   FModeller := BaseCoder_Create(FCoder);
 end;
 
-destructor TStreamEncoder.Destroy;
+destructor TBeeEncoder.Destroy;
 begin
   BaseCoder_Destroy(FModeller);
   RangeEncoder_Destroy(FCoder);
   inherited Destroy;
 end;
 
-function TStreamEncoder.Copy(Stream: TFileReader; const Size: int64): int64;
+function TBeeEncoder.Encode(Stream: TFileReader; const Size: int64): int64;
 var
   Count:  int64;
-  Readed: longint;
-  Writed: longint;
-begin
-  Result := 0;
-  CRC    := 0;
-  if Size > 0 then
-  begin
-    CRC := longword(-1);
-    SetLength(FBuffer, GetCapacity(Size));
-    Count  := Size div Length(FBuffer);
-    while (Count <> 0) and (ExitStatus = esNoError) do
-    begin
-      Readed :=  Stream.Read (@FBuffer[0], Length(FBuffer));
-      Writed := FStream.Write(@FBuffer[0], Readed);
-      UpdateCrc32(CRC,        @FBuffer[0], Writed);
-      Inc(Result, Writed);
-      DoProgress(Writed);
-      Dec(Count);
-    end;
-    Readed :=  Stream.Read (@FBuffer[0], Size mod Length(FBuffer));
-    Writed := FStream.Write(@FBuffer[0], Readed);
-    UpdateCRC32(CRC,        @FBuffer[0], Writed);
-    Inc(Result, Writed);
-    DoProgress(Writed);
-  end;
-end;
-
-function TStreamEncoder.Encode(Stream: TFileReader; const Size: int64; var CRC: longword): int64;
-var
-  Count:  int64;
+  Buffer: TBuffer;
   Readed: longint;
 begin
   Result := 0;
-  CRC    := 0;
   if Size > 0 then
   begin
-    CRC := longword(-1);
     RangeEncoder_StartEncode(FCoder);
-    SetLength(FBuffer, GetCapacity(Size));
-    Count  := Size div Length(FBuffer);
+    Count := Size div SizeOf(TBuffer);
     while (Count <> 0) and (ExitStatus = esNoError) do
     begin
-      Readed := Stream.Read      (@FBuffer[0], Length(FBuffer));
-      BaseCoder_Encode(FModeller, @FBuffer[0], Readed);
-      UpdateCrc32(CRC,            @FBuffer[0], Readed);
+      Readed := Stream.Read      (@Buffer[0], SizeOf(TBuffer));
+      BaseCoder_Encode(FModeller, @Buffer[0], Readed);
       Inc(Result, Readed);
       DoProgress(Readed);
       Dec(Count);
     end;
-    Readed := Stream.Read      (@FBuffer[0], Size mod Length(FBuffer));
-    BaseCoder_Encode(FModeller, @FBuffer[0], Readed);
-    UpdateCRC32(CRC,            @FBuffer[0], Readed);
+    Readed := Stream.Read      (@Buffer[0], Size mod SizeOf(TBuffer));
+    BaseCoder_Encode(FModeller, @Buffer[0], Readed);
     Inc(Result, Readed);
     DoProgress(Readed);
     RangeEncoder_FinishEncode(FCoder);
   end;
 end;
 
-  { TStreamDecoder class }
+/// TBeeDecoder class
 
-constructor TStreamDecoder.Create(Stream: TFileReader);
+constructor TBeeDecoder.Create(Stream: TBufStream);
 begin
-  inherited Create;
-  FStream   := Stream;
+  inherited Create(Stream);
   FCoder    := RangeDecoder_Create(FStream, @DoFill);
   FModeller := BaseCoder_Create(FCoder);
 end;
 
-destructor TStreamDecoder.Destroy;
+destructor TBeeDecoder.Destroy;
 begin
   BaseCoder_Destroy(FModeller);
   RangeDecoder_Destroy(FCoder);
   inherited Destroy;
 end;
 
-function TStreamDecoder.Copy(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
+function TBeeDecoder.Decode(Stream: TFileWriter; const Size: int64): int64;
 var
   Count:  int64;
-  Readed: longint;
+  Buffer: TBuffer;
   Writed: longint;
 begin
   Result := 0;
-  CRC    := 0;
   if Size > 0 then
   begin
-    CRC := longword(-1);
-    SetLength(FBuffer, GetCapacity(Size));
-    Count  := Size div Length(FBuffer);
-    while (Count <> 0) and (ExitStatus = esNoError) do
-    begin
-      Readed := FStream.Read (@FBuffer[0], Length(FBuffer));
-      Writed :=  Stream.Write(@FBuffer[0], Readed);
-      UpdateCrc32(CRC,        @FBuffer[0], Writed);
-      Inc(Result, Writed);
-      DoProgress(Writed);
-      Dec(Count);
-    end;
-    Readed := FStream.Read (@FBuffer[0], Size mod Length(FBuffer));
-    Writed :=  Stream.Write(@FBuffer[0], Readed);
-    UpdateCRC32(CRC,        @FBuffer[0], Writed);
-    Inc(Result, Writed);
-    DoProgress(Writed);
-  end;
-end;
-
-function TStreamDecoder.Decode(Stream: TFileWriter; const Size: int64; var CRC: longword): int64;
-var
-  Count:  int64;
-  Writed: longint;
-begin
-  Result := 0;
-  CRC    := 0;
-  if Size > 0 then
-  begin
-    CRC := longword(-1);
     RangeDecoder_StartDecode(FCoder);
-    SetLength(FBuffer, GetCapacity(Size));
-    Count  := Size div Length(FBuffer);
+    Count := Size div SizeOf(TBuffer);
     while (Count <> 0) and (ExitStatus = esNoError) do
     begin
-      BaseCoder_Decode(FModeller, @FBuffer[0], Length(FBuffer));
-      Writed := Stream.Write(     @FBuffer[0], Length(FBuffer));
-      UpdateCrc32(CRC,            @FBuffer[0], Writed);
+      BaseCoder_Decode(FModeller, @Buffer[0], SizeOf(TBuffer));
+      Writed := Stream.Write(     @Buffer[0], SizeOf(TBuffer));
       Inc(Result, Writed);
       DoProgress(Writed);
       Dec(Count);
     end;
-    BaseCoder_Decode(FModeller, @FBuffer[0], Size mod Length(FBuffer));
-    Writed := Stream.Write(     @FBuffer[0], Size mod Length(FBuffer));
-    UpdateCRC32(CRC,            @FBuffer[0], Writed);
+    BaseCoder_Decode(FModeller, @Buffer[0], Size mod SizeOf(TBuffer));
+    Writed := Stream.Write(     @Buffer[0], Size mod SizeOf(TBuffer));
     Inc(Result, Writed);
     DoProgress(Writed);
     RangeDecoder_FinishDecode(FCoder);

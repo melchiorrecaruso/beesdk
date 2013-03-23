@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v0.8.0 build 1913 - 2013.03.23 by Melchiorre Caruso.
 }
 
 unit Bee_BufStream;
@@ -32,131 +32,296 @@ unit Bee_BufStream;
 interface
 
 uses
-  Classes,
-  Bee_BlowFish;
+  Crc,
+  Sha1,
+  BlowFish;
+
+const
+  DefaultBufferSize = 4096;
 
 type
-  { TBufStream }
-  TBufStream = class(TObject)
-  private
-    FBlowFish: TBlowFish;
-  protected
-    FHandle: THandle;
-    FBuffer: array of byte;
+  TBuffer = array [0..DefaultBufferSize -1] of byte;
+
+  { TBaseHash class }
+
+  TBaseHash = class(TObject)
   public
-    constructor Create(aHandle: THandle);
-    destructor Destroy; override;
-  property
-    BlowFish: TBlowFish read FBlowFish write FBlowFish;
+    procedure Update(Data: PByte; Count: longint); virtual;
+    function GetHash: string; virtual;
   end;
 
-  { TReadBufStream }
+  { TCRC32Hash class }
+
+  TCRC32Hash = class(TBaseHash)
+  private
+    FCRC: longword;
+  public
+    constructor Create;
+    procedure Update(Data: PByte; Count: longint); override;
+    function GetHash: string; override;
+  end;
+
+  { TCRC64Hash class }
+
+  TCRC64Hash = class(TBaseHash)
+  private
+    FCRC: qword;
+  public
+    constructor Create;
+    procedure Update(Data: PByte; Count: longint); override;
+    function GetHash: string; override;
+  end;
+
+  { TSHA1Hash class }
+
+  TSHA1Hash = class(TBaseHash)
+  private
+    FCTX: TSHA1Context;
+    FDigest: TSHA1Digest;
+  public
+    constructor Create;
+    procedure Update(Data: PByte; Count: longint); override;
+    function GetHash: string; override;
+  end;
+
+  { TBaseCipher class }
+
+  TBaseCipher = class(TObject)
+  public
+    function Encrypt(const Data: TBuffer; Count: longint): longint; virtual;
+    function Decrypt(const Data: TBuffer; Count: longint): longint; virtual;
+  end;
+
+  { TBlowFishCipher class }
+
+  TBlowFishCipher = class(TBaseCipher)
+  private
+    FBlowFish: TBlowFish;
+  public
+    constructor Create(const Key: string);
+    destructor Destroy; override;
+    function Encrypt(const Data: TBuffer; Count: longint): longint; override;
+    function Decrypt(const Data: TBuffer; Count: longint): longint; override;
+  end;
+
+  { TBufStream class }
+
+  TBufStream = class(TObject)
+  private
+    FHash: TBaseHash;
+    FCipher: TBaseCipher;
+    FBuffer: TBuffer;
+  protected
+    FHandle: THandle;
+  public
+    constructor Create(Handle: THandle);
+    function Read(Data: PByte; Count: longint): longint; virtual; abstract;
+    function Write(Data: PByte; Count: longint): longint; virtual; abstract;
+    function SeekFromBeginning(const Offset: int64): int64; virtual; abstract;
+    function SeekFromEnd(const Offset: int64): int64; virtual; abstract;
+    function SeekFromCurrent: int64; virtual; abstract;
+  public
+    property Hash: TBaseHash read FHash write FHash;
+    property Cipher: TBaseCipher read FCipher write FCipher;
+  end;
+
+  { TReadBufStream class }
+
   TReadBufStream = class(TBufStream)
   private
-    FPosition: int64;
-    FBufferSize: longint;
     FBufferIndex: longint;
+    FBufferSize: longint;
+    FPosition: int64;
   protected
     procedure FillBuffer;
     procedure ClearBuffer;
   public
-    constructor Create(aHandle: THandle);
-    function Read(Data: PByte; Count: longint): longint; virtual;
-    procedure SeekFromBeginning(const Offset: int64); virtual;
-    procedure SeekFromEnd      (const Offset: int64); virtual;
+    constructor Create(Handle: THandle);
+    function Read(Data: PByte; Count: longint): longint; override;
+    function SeekFromBeginning(const Offset: int64): int64; override;
+    function SeekFromEnd(const Offset: int64): int64;  override;
   end;
 
-  { TWriteBufStream }
+  { TWriteBufStream class }
+
   TWriteBufStream = class(TBufStream)
   private
-    FPosition: int64;
     FBufferIndex: longint;
+    FPosition: int64;
   protected
     procedure FlushBuffer;
     procedure ClearBuffer;
     procedure SetSize(const NewSize: int64); virtual;
   public
-    constructor Create(aHandle: THandle);
-    function Write(Data: PByte; Count: longint): longint; virtual;
-    function SeekFromCurrent: int64; virtual;
+    constructor Create(Handle: THandle);
+    function Write(Data: PByte; Count: longint): longint; override;
+    function SeekFromCurrent: int64;  override;
   end;
-
-  function GetCapacity(const Size: int64): longint;
 
 implementation
 
 uses
   Math,
   SysUtils,
+  Bee_Common,
   Bee_Interface;
 
-const
-  MinBufferCapacity = 1024;
-  MaxBufferCapacity = 1024*1024;
+/// TBaseHash class
 
-function GetCapacity(const Size: int64): longint;
+procedure TBaseHash.Update(Data: PByte; Count: longint);
 begin
-  Result := MinBufferCapacity;
-  if Size > Result then
-  begin
-    Result := MaxBufferCapacity;
-    while (Size div Result) = 0 do
-      Result := Result div 2;
-  end;
+  // nothing to do
 end;
 
-{ TBufStream class }
+function TBaseHash.GetHash: string;
+begin
+  Result := '';
+end;
 
-constructor TBufStream.Create(aHandle: THandle);
+/// TCRC32Hash class
+
+constructor TCRC32Hash.Create;
+begin
+  FCRC := crc32(0, nil, 0);
+end;
+
+procedure TCRC32Hash.Update(Data: PByte; Count: longint);
+begin
+  FCRC := crc32(FCRC, Data, Count);
+end;
+
+function TCRC32Hash.GetHash: string;
+begin
+  Result := Hex(FCRC, SizeOf(FCRC));
+end;
+
+/// TCRC64Hash class
+
+constructor TCRC64Hash.Create;
+begin
+  FCRC := crc64(0, nil, 0);
+end;
+
+procedure TCRC64Hash.Update(Data: PByte; Count: longint);
+begin
+  FCRC := crc64(FCRC, Data, Count);
+end;
+
+function TCRC64Hash.GetHash: string;
+begin
+  Result := Hex(FCRC, SizeOf(FCRC));
+end;
+
+/// TSHA1Hash class
+
+constructor TSHA1Hash.Create;
+begin
+  SHA1Init(FCTX);
+end;
+
+procedure TSHA1Hash.Update(Data: PByte; Count: longint);
+begin
+  SHA1Update(FCTX, Data, Count);
+end;
+
+function TSHA1Hash.GetHash: string;
+var
+  Digest: TSHA1Digest;
+begin
+  SHA1Final(FCTX, Digest);
+  Result := SHA1Print(Digest);
+end;
+
+/// TBaseCipher class
+
+function TBaseCipher.Encrypt(const Data: TBuffer; Count: longint): longint;
+begin
+  // nothing to do
+end;
+
+function TBaseCipher.Decrypt(const Data: TBuffer; Count: longint): longint;
+begin
+  // nothing to do
+end;
+
+/// TBlowFishCipher class
+
+constructor TBlowFishCipher.Create(const Key: string);
+var
+  I: longint;
+  K: TBlowFishKey;
+  KLEn: longint;
 begin
   inherited Create;
-  FHandle   := aHandle;
-  {$IFDEF DIRECTSTREAM}
-
-  {$ELSE}
-  FBlowFish := nil;
-  SetLength(FBuffer, 0);
-  {$ENDIF}
+  KLen := Min(Length(Key), Length(K));
+  for I := 1 to KLen do
+  begin
+    K[I -1] := byte(Key[I]);
+  end;
+  FBlowFish := TBlowFish.Create(K, KLen);
 end;
 
-destructor TBufStream.Destroy;
+destructor TBlowFishCipher.Destroy;
 begin
-  {$IFDEF DIRECTSTREAM}
-  {$ELSE}
-  SetLength(FBuffer, 0);
-  {$ENDIF}
+  FBlowFish.Destroy;
   inherited Destroy;
 end;
 
-{ TReadBufStream class }
-
-constructor TReadBufStream.Create(aHandle: THandle);
+function TBlowFishCipher.Encrypt(const Data: TBuffer; Count: longint): longint;
+var
+  Block: ^TBFBlock;
 begin
-  inherited Create(aHandle);
-  {$IFDEF DIRECTSTREAM}
-  {$ELSE}
+  Result := 0;
+  while Result < Count do
+  begin
+    Block := @Data[Result];
+    FBlowFish.Encrypt(Block^);
+    Inc(Result, 8);
+  end;
+end;
+
+function TBlowFishCipher.Decrypt(const Data: TBuffer; Count: longint): longint;
+var
+  Block : ^TBFBlock;
+begin
+  Result := 0;
+  while Result < Count do
+  begin
+    Block := @Data[Result];
+    FBlowFish.Decrypt(Block^);
+    Inc(Result, 8);
+  end;
+end;
+
+/// TBufStream class
+
+constructor TBufStream.Create(Handle: THandle);
+begin
+  inherited Create;
+  FHandle := Handle;
+  FHash   := nil;
+  FCipher := nil;
+end;
+
+/// TReadBufStream class
+
+constructor TReadBufStream.Create(Handle: THandle);
+begin
+  inherited Create(Handle);
   ClearBuffer;
-  SetLength(FBuffer, 4*MinBufferCapacity);
-  {$ENDIF}
 end;
 
 procedure TReadBufStream.ClearBuffer;
 begin
-  {$IFDEF DIRECTSTREAM}
-  {$ELSE}
-  FPosition    := 0;
-  FBufferSize  := 0;
   FBufferIndex := 0;
-  {$ENDIF}
+  FBufferSize  := 0;
+  FPosition    := 0;
 end;
 
 function TReadBufStream.Read(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
-  {$IFDEF DIRECTSTREAM}
-  Result := FileRead(FHandle, Data[0], Count);
-  {$ELSE}
   Result := 0;
   repeat
     if FBufferIndex = FBufferSize then
@@ -171,139 +336,107 @@ begin
     Inc(Result, I);
   until Result = Count;
   Inc(FPosition, Result);
-  {$ENDIF}
+
+  if Assigned(FHash) then
+    FHash.Update(Data, Result);
 end;
 
-procedure TReadBufStream.SeekFromBeginning(const Offset: int64);
+function TReadBufStream.SeekFromBeginning(const Offset: int64): int64;
 begin
-  {$IFDEF DIRECTSTREAM}
-  FileSeek(FHandle, Offset, fsFromBeginning);
-  {$ELSE}
-  if FPosition <> OffSet then
+  if FPosition <> Offset then
   begin
-    FPosition    := FileSeek(FHandle, Offset, fsFromBeginning);
-    FBufferSize  := 0;
     FBufferIndex := 0;
+    FBufferSize  := 0;
+    FPosition    := FileSeek(FHandle, Offset, fsFromBeginning);
   end;
-  {$ENDIF}
 end;
 
-procedure TReadBufStream.SeekFromEnd(const Offset: int64);
+function TReadBufStream.SeekFromEnd(const Offset: int64): int64;
 begin
-  {$IFDEF DIRECTSTREAM}
-  FileSeek(FHandle, Offset, fsFromEnd);
-  {$ELSE}
-  FPosition    := FileSeek(FHandle, Offset, fsFromEnd);
-  FBufferSize  := 0;
   FBufferIndex := 0;
-  {$ENDIF}
+  FBufferSize  := 0;
+  FPosition    := FileSeek(FHandle, Offset, fsFromBeginning);
 end;
 
 procedure TReadBufStream.FillBuffer;
 begin
-  {$IFDEF DIRECTSTREAM}
-  {$ELSE}
   FBufferIndex := 0;
-  FBufferSize  := FileRead(FHandle, FBuffer[0], Length(FBuffer));
-
-  if FBufferSize = -1 then
+  FBufferSize  := FileRead(FHandle, FBuffer[0], SizeOf(FBuffer));
+  if FBufferSize > -1 then
   begin
-    FBufferSize := 0;
+    if Assigned(FCipher) then
+      Cipher.Decrypt(FBuffer, FBufferSize);
+  end else
+  begin
     SetExitStatus(esFillStreamError);
+    FBufferSize := 0;
   end;
-
-  if Assigned(FBlowFish) then
-    FBlowFish.Decode(@FBuffer[0], Length(FBuffer));
-  {$ENDIF}
 end;
 
-{ TWriteBufStream class }
+/// TWriteBufStream class
 
-constructor TWriteBufStream.Create(aHandle: THandle);
+constructor TWriteBufStream.Create(Handle: THandle);
 begin
-  inherited Create(aHandle);
-  {$IFDEF DIRECTSTREAM}
-  {$ELSE}
+  inherited Create(Handle);
   ClearBuffer;
-  SetLength(FBuffer, MaxBufferCapacity);
-  {$ENDIF}
 end;
 
 procedure TWriteBufStream.ClearBuffer;
 begin
-  {$IFDEF DIRECTSTREAM}
-  {$ELSE}
-  FPosition    := 0;
   FBufferIndex := 0;
-  {$ENDIF}
+  FPosition    := 0;
 end;
 
 function TWriteBufStream.Write(Data: PByte; Count: longint): longint;
 var
   I: longint;
 begin
-  {$IFDEF DIRECTSTREAM}
-  Result := FileWrite(FHandle, Data[0], Count);
-  {$ELSE}
   Result := 0;
   repeat
-    if FBufferIndex = Length(FBuffer) then
+    if FBufferIndex = SizeOf(FBuffer) then
     begin
       FlushBuffer;
       if ExitStatus <> esNoError then Break;
     end;
-    I := Min(Count - Result, Length(FBuffer) - FBufferIndex);
+    I := Min(Count - Result, SizeOf(FBuffer) - FBufferIndex);
 
     Move(Data[Result], FBuffer[FBufferIndex], I);
     Inc(FBufferIndex, I);
     Inc(Result, I);
   until Result = Count;
   Inc(FPosition, Result);
-  {$ENDIF}
+
+  if Assigned(FHash) then
+    FHash.Update(Data, Count);
 end;
 
 function TWriteBufStream.SeekFromCurrent: int64;
 begin
-  {$IFDEF DIRECTSTREAM}
-  Result := FileSeek(FHandle, 0, fsFromCurrent);
-  {$ELSE}
   Result := FPosition;
-  {$ENDIF}
 end;
 
 procedure TWriteBufStream.FlushBuffer;
 begin
-  {$IFDEF DIRECTSTREAM}
-  {$ELSE}
-  if Assigned(FBlowFish) then
-    FBlowFish.Encode(@FBuffer[0], Length(FBuffer));
-
   if FBufferIndex > 0 then
   begin
+    if Assigned(FCipher) then
+      FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
+
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
       SetExitStatus(esFlushStreamError);
-
-    FBufferIndex := 0;
   end;
-  {$ENDIF}
+  FBufferIndex := 0;
 end;
 
 procedure TWriteBufStream.SetSize(const NewSize: int64);
 begin
-  {$IFDEF DIRECTSTREAM}
-  FileTruncate(FHandle, NewSize);
-  {$ELSE}
   FlushBuffer;
-  if ExitStatus = esNoError then
+  if FileTruncate(FHandle, NewSize) then
   begin
-    if FileTruncate(FHandle, NewSize) then
-    begin
-      FPosition    := NewSize;
-      FBufferIndex := 0;
-    end else
-      SetExitStatus(esResizeStreamError);
-  end;
-  {$ENDIF}
+    FBufferIndex := 0;
+    FPosition    := NewSize;
+  end else
+    SetExitStatus(esResizeStreamError);
 end;
 
 end.

@@ -37,6 +37,7 @@ uses
 
   Classes,
   SysUtils,
+  Bee_BufStream,
   Bee_Files,
   Bee_Common,
   Bee_MainPacker,
@@ -291,14 +292,19 @@ type
     function GetCount: longint;
     function GetLastModifiedTime: longint;
   private
-    FEncoder: TStreamEncoder;
-    procedure InitEncoder      (Item: TArchiveItem);
+    FHash: TBaseHash;
+    FCipher: TBaseCipher;
+    procedure CreateHash  (Stream: TBufStream; Item: TArchiveItem);
+    procedure CreateCipher(Stream: TBufStream; Item: TArchiveItem);
+    function  FreeHash    (Stream: TBufStream): string;
+    function  FreeCipher  (Stream: TBufStream): string;
+  private
+    FCoder: TBaseCoder;
+    procedure InitCoder        (Item: TArchiveItem);
     procedure EncodeFromArchive(Item: TArchiveItem);
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
-  private
-    FDecoder: TStreamDecoder;
-    procedure InitDecoder      (Item: TArchiveItem);
+
     procedure DecodeToNul      (Item: TArchiveItem);
     procedure DecodeToSwap     (Item: TArchiveItem);
     procedure DecodeToFile     (Item: TArchiveItem);
@@ -312,7 +318,7 @@ type
     FOnMessage: TArchiveMessageEvent;
     procedure DoMessage(const Message: string);
   private
-    FOnProgress: TArchiveProgressEvent;
+    FOnProgress: TCoderProgressEvent;
     procedure DoProgress(Value: longint);
   private
     FOnExtract: TArchiveExtractEvent;
@@ -361,7 +367,7 @@ type
     property OnRequestBlankImage: TFileWriterRequestBlankImageEvent read FOnRequestBlankImage write FOnRequestBlankImage;
     property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
     property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
-    property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
+    property OnProgress: TCoderProgressEvent read FOnProgress write FOnProgress;
     property OnExtract: TArchiveExtractEvent read FOnExtract write FOnExtract;
     property OnRename: TArchiveRenameEvent read FOnRename write FOnRename;
     property OnDelete: TArchiveDeleteEvent read FOnDelete write FOnDelete;
@@ -498,6 +504,11 @@ function GetEncryptionMethod(const Params: string): TArchiveEncryptionMethod;
 begin
   if Pos('|m=0|', Params) > 0 then Result := aemNone     else
   if Pos('|m=1|', Params) > 0 then Result := aemBlowFish else Result := aemNone;
+end;
+
+function GetEncryptionKey(const Params: string): string;
+begin
+  Result := '1234';
 end;
 
 //
@@ -1131,56 +1142,81 @@ end;
 
 // TArchiver # ENCODE/DECODE #
 
-procedure TArchiver.InitEncoder(Item: TArchiveItem);
-var
-  I, Len: longint;
+procedure TArchiver.CreateHash(Stream: TBufStream; Item: TArchiveItem);
 begin
-  if Item.CompressionMethod = acmBee then
-  begin
-    if acfCompressionLevelAux in Item.FCompressionFlags then
-      FEncoder.DictionaryLevel := Item.CompressionLevelAux;
+  case Item.CheckMethod of
+    acimCRC32: Stream.Hash := TCRC32Hash.Create;
+    acimCRC64: Stream.Hash := TCRC64Hash.Create;
+    acimSHA1:  Stream.Hash := TSHA1Hash.Create;
+    else       Stream.Hash := TBaseHash.Create;
+  end;
+end;
 
-    if acfCompressionFilter in Item.FCompressionFlags then
-    begin
-      Len := Min(
-        Length(Item.CompressionFilter),
-        Length(FEncoder.CompressionTable));
+function TArchiver.DestroyHash(Stream: TBufStream): string;
+begin
+  Result := Stream.Hash.GetHash;
+  Stream.Hash.Destroy;
+  Stream.Hash := nil;
+end;
 
-      for I := 0 to Len do
-      begin
-        FEncoder.CompressionTable[I] := byte(Item.CompressionFilter[I]);
-      end;
+procedure TArchiver.CreateCipher(Stream: TBufStream; Item: TArchiveItem);
+begin
+  case Item.EncryptionMethod of
+    aemBlowFish: Stream := TBlowFishCipher.Create(GetEncryptionKey(EncryptionParams));
+    else         Stream := TBaseCipher.Create;
+  end;
+end;
+
+procedure TArchiver.FreeCipher(Stream: TBufStream; Item: TArchiveItem);
+begin
+  Stream.Cipher.Destroy;
+  Stream.Cipher := nil;
+end;
+
+procedure TArchiver.InitCoder(Item: TArchiveItem);
+begin
+  case Item.CompressionMethod of
+    acmBee: begin
+      if acfCompressionLevelAux in Item.FCompressionFlags then
+        FCoder.SetCompressionLevelAux(Item.CompressionLevelAux);
+
+      if acfCompressionFilter in Item.FCompressionFlags then
+        FCoder.SetCompressionFilter(Item.CompressionFilter);
+
+      if Item.CompressionBlock = 0 then
+        TBeeCoder(FCoder).FreshFlexible
+      else
+        TBeeCoder(FCoder).FreshSolid;
     end;
-    FEncoder.FreshModeller(Item.CompressionBlock <> 0);
   end;
 end;
 
 procedure TArchiver.EncodeFromArchive(Item: TArchiveItem);
-var
-  NulCRC: longword;
 begin
   FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
 
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
   begin
-    FEncoder.Copy(FArchiveReader, Item.FCompressedSize, NulCRC);
+    FCoder.Copy(FArchiveReader, Item.FCompressedSize);
   end;
 end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
-var
-  CRC32: longword;
 begin
   FSwapReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
-
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
+
+  CreateHash(FSwapReader, Item);
+  CreateHash(FTempWriter, Item);
   case Item.FCompressionMethod of
-    acmBee: FEncoder.Encode(FSwapReader, Item.FUncompressedSize, Item.FCRC32);
-    else    FEncoder.Copy  (FSwapReader, Item.FUncompressedSize, Item.FCRC32);
+    acmBee: FCoder.Encode(FSwapReader, Item.FUncompressedSize);
+    else    FCoder.Copy  (FSwapReader, Item.FUncompressedSize);
   end;
   Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
+  Item.CheckDigest     := DestroyHash(FSwapReader);
+  Item.CheckDigestAux  := DestroyHash(FTempWriter);
 end;
 
 procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
