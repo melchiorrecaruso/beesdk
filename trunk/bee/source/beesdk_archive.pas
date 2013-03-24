@@ -292,12 +292,15 @@ type
     function GetCount: longint;
     function GetLastModifiedTime: longint;
   private
-    FHash: TBaseHash;
-    FCipher: TBaseCipher;
-    procedure CreateHash  (Stream: TBufStream; Item: TArchiveItem);
-    procedure CreateCipher(Stream: TBufStream; Item: TArchiveItem);
-    function  FreeHash    (Stream: TBufStream): string;
-    function  FreeCipher  (Stream: TBufStream): string;
+    FHashReader: TBaseHash;
+    FHashWriter: TBaseHash;
+    FCipherReader: TBaseCipher;
+    FCipherWriter: TBaseCipher;
+    procedure InitHashRead  (Stream: TBufStream; Method: TArchiveCheckMethod);
+    procedure InitHashWrite (Stream: TBufStream; Method: TArchiveCheckMethod);
+
+    procedure InitCipherRead (Stream: TBufStream; Method: TArchiveEncryptionMethod);
+    procedure InitCipherWrite(Stream: TBufStream; Method: TArchiveEncryptionMethod);
   private
     FCoder: TBaseCoder;
     procedure InitCoder        (Item: TArchiveItem);
@@ -1142,13 +1145,16 @@ end;
 
 // TArchiver # ENCODE/DECODE #
 
-procedure TArchiver.CreateHash(Stream: TBufStream; Item: TArchiveItem);
+procedure TArchiver.InitHash(Stream: TBufStream; Method: TArchiveEncryptionMethod);
 begin
-  case Item.CheckMethod of
-    acimCRC32: Stream.Hash := TCRC32Hash.Create;
-    acimCRC64: Stream.Hash := TCRC64Hash.Create;
-    acimSHA1:  Stream.Hash := TSHA1Hash.Create;
-    else       Stream.Hash := TBaseHash.Create;
+  if Assigned(Hash) then
+    FreeAndNil(Hash);
+
+  case Algorithm of
+    haCRC32: Hash := TCRC32Hash.Create;
+    haCRC64: Hash := TCRC64Hash.Create;
+    haSHA1:  Hash := TSHA1Hash.Create;
+    else     Hash := TBaseHash.Create;
   end;
 end;
 
