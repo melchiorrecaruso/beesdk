@@ -85,12 +85,14 @@ type
     function Finalize: string; override;
   end;
 
+  THashAlgorithm = (haNone, haCRC32, haCRC64, haSHA1);
+
   { TBaseCipher class }
 
   TBaseCipher = class(TObject)
   public
-    function Encrypt(const Data: TBuffer; Count: longint): longint; virtual;
-    function Decrypt(const Data: TBuffer; Count: longint): longint; virtual;
+    function Encrypt(const Data: TBuffer; Count: longint): longint; virtual; abstract;
+    function Decrypt(const Data: TBuffer; Count: longint): longint; virtual; abstract;
   end;
 
   { TBlowFishCipher class }
@@ -105,35 +107,27 @@ type
     function Decrypt(const Data: TBuffer; Count: longint): longint; override;
   end;
 
+  TCipherAlgorithm = (caNone, caBlowFish);
+
   { TBufStream class }
-
-  TBufStreamReadEvent  = procedure(Data: PByte; Count: longint) of object;
-  TBufStreamFillEvent  = function (Data: TBuffer; Count: longint): longint of object;
-
-  TBufStreamWriteEvent = procedure(Data: PByte; Count: longint) of object;
-  TBufStreamFlushEvent = function (Data: TBuffer; Count: longint): longint of object;
 
   TBufStream = class(TObject)
   private
     FBuffer: TBuffer;
-    FOnReadEvent: TBufStreamReadEvent;
-    FOnFillEvent: TBufStreamFillEvent;
-    FOnWriteEvent: TBufStreamWriteEvent;
-    FOnFlushEvent: TBufStreamFlushEvent;
+    FHash: TBaseHash;
+    FCipher: TBaseCipher;
   protected
     FHandle: THandle;
   public
     constructor Create(Handle: THandle);
+    destructor Destroy; override;
     function Read(Data: PByte; Count: longint): longint; virtual; abstract;
     function Write(Data: PByte; Count: longint): longint; virtual; abstract;
-    function SeekFromBeginning(const Offset: int64): int64; virtual; abstract;
-    function SeekFromEnd(const Offset: int64): int64; virtual; abstract;
-    function SeekFromCurrent: int64; virtual; abstract;
-  public
-    property OnReadEvent: TBufStreamReadEvent read FOnReadEvent write FOnReadEvent;
-    property OnFillEvent: TBufStreamFillEvent read FOnFillEvent write FOnFillEvent;
-    property OnWriteEvent: TBufStreamWriteEvent read FOnWriteEvent write FOnWriteEvent;
-    property OnFlushEvent: TBufStreamFlushEvent read FOnFlushEvent write FOnFlushEvent;
+    function Seek(const Offset: int64; Origin: longint): int64; virtual; abstract;
+
+    procedure SetCipher(Algorithm: TCipherAlgorithm; const Key: string);
+    procedure SetHash(Algorithm: THashAlgorithm);
+    function  GetHashDigest: string;
   end;
 
   { TReadBufStream class }
@@ -144,13 +138,12 @@ type
     FBufferSize: longint;
     FPosition: int64;
   protected
-    procedure FillBuffer;
     procedure ClearBuffer;
+    procedure FillBuffer;
   public
     constructor Create(Handle: THandle);
     function Read(Data: PByte; Count: longint): longint; override;
-    function SeekFromBeginning(const Offset: int64): int64; override;
-    function SeekFromEnd(const Offset: int64): int64;  override;
+    function Seek(const Offset: int64; Origin: longint): int64; override;
   end;
 
   { TWriteBufStream class }
@@ -160,13 +153,13 @@ type
     FBufferIndex: longint;
     FPosition: int64;
   protected
-    procedure FlushBuffer;
     procedure ClearBuffer;
+    procedure FlushBuffer;
     procedure SetSize(const NewSize: int64); virtual;
   public
     constructor Create(Handle: THandle);
     function Write(Data: PByte; Count: longint): longint; override;
-    function SeekFromCurrent: int64;  override;
+    function Seek(const Offset: int64; Origin: longint): int64;  override;
   end;
 
 implementation
@@ -231,18 +224,6 @@ begin
   Result := SHA1Print(Digest);
 end;
 
-/// TBaseCipher class
-
-function TBaseCipher.Encrypt(const Data: TBuffer; Count: longint): longint;
-begin
-  // nothing to do
-end;
-
-function TBaseCipher.Decrypt(const Data: TBuffer; Count: longint): longint;
-begin
-  // nothing to do
-end;
-
 /// TBlowFishCipher class
 
 constructor TBlowFishCipher.Create(const Key: string);
@@ -297,11 +278,50 @@ end;
 constructor TBufStream.Create(Handle: THandle);
 begin
   inherited Create;
-  FHandle       := Handle;
-  FOnReadEvent  := nil;
-  FOnFillEvent  := nil;
-  FOnWriteEvent := nil;
-  FOnFlushEvent := nil;
+  FHandle := Handle;
+  FHash   := nil;
+  FCipher := nil;
+end;
+
+destructor TBufStream.Destroy;
+begin
+  if Assigned(FHash) then
+    FreeAndNil(FHash);
+  if Assigned(FCipher) then
+    FreeAndNil(FCipher);
+  inherited Destroy;
+end;
+
+procedure TBufStream.SetHash(Algorithm: THashAlgorithm);
+begin
+  if Assigned(FHash) then
+    FreeAndNil(FHash);
+  case Algorithm of
+    haCRC32: FHash := TCRC32Hash.Create;
+    haCRC64: FHash := TCRC64Hash.Create;
+    haSHA1:  FHash := TSHA1Hash.Create;
+    else     FHash := nil;
+  end;
+  if Assigned(FHash) then
+    FHash.Initialize;
+end;
+
+procedure TBufStream.SetCipher(Algorithm: TCipherAlgorithm; const Key: string);
+begin
+  if Assigned(FCipher) then
+    FreeAndNil(FCipher);
+  case Algorithm of
+    caBlowFish: FCipher := TBlowFishCipher.Create(Key);
+    else        FCipher := nil;
+  end;
+end;
+
+function TBufStream.GetHashDigest: string;
+begin
+  if Assigned(FHash) then
+    Result := FHash.Finalize
+  else
+    Result := '';
 end;
 
 /// TReadBufStream class
@@ -338,25 +358,15 @@ begin
   until Result = Count;
   Inc(FPosition, Result);
 
-  if Assigned(FOnReadEvent) then
-    FOnReadEvent(Data, Result);
+  if Assigned(FHash) then
+    FHash.Update(Data, Result);
 end;
 
-function TReadBufStream.SeekFromBeginning(const Offset: int64): int64;
-begin
-  if FPosition <> Offset then
-  begin
-    FBufferIndex := 0;
-    FBufferSize  := 0;
-    FPosition    := FileSeek(FHandle, Offset, fsFromBeginning);
-  end;
-end;
-
-function TReadBufStream.SeekFromEnd(const Offset: int64): int64;
+function TReadBufStream.Seek(const Offset: int64; Origin: longint): int64;
 begin
   FBufferIndex := 0;
   FBufferSize  := 0;
-  FPosition    := FileSeek(FHandle, Offset, fsFromBeginning);
+  FPosition    := FileSeek(FHandle, Offset, Origin);
 end;
 
 procedure TReadBufStream.FillBuffer;
@@ -365,8 +375,8 @@ begin
   FBufferSize  := FileRead(FHandle, FBuffer[0], SizeOf(FBuffer));
   if FBufferSize > -1 then
   begin
-    if Assigned(FOnFillEvent) then
-      FOnFillEvent(FBuffer, FBufferSize);
+    if Assigned(FCipher) then
+      FCipher.Decrypt(FBuffer, FBufferSize);
   end else
   begin
     SetExitStatus(esFillStreamError);
@@ -407,11 +417,11 @@ begin
   until Result = Count;
   Inc(FPosition, Result);
 
-  if Assigned(FOnWriteEvent) then
-    FOnWriteEvent(Data, Count);
+  if Assigned(FHash) then
+    FHash.Update(Data, Count);
 end;
 
-function TWriteBufStream.SeekFromCurrent: int64;
+function TWriteBufStream.Seek(const Offset: int64; Origin: longint): int64;
 begin
   Result := FPosition;
 end;
@@ -420,8 +430,8 @@ procedure TWriteBufStream.FlushBuffer;
 begin
   if FBufferIndex > 0 then
   begin
-    if Assigned(FOnFlushEvent) then
-      FBufferIndex := FOnFlushEvent(FBuffer, FBufferIndex);
+    if Assigned(FCipher) then
+      FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
 
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
       SetExitStatus(esFlushStreamError);

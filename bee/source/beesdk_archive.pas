@@ -292,16 +292,6 @@ type
     function GetCount: longint;
     function GetLastModifiedTime: longint;
   private
-    FHashReader: TBaseHash;
-    FHashWriter: TBaseHash;
-    FCipherReader: TBaseCipher;
-    FCipherWriter: TBaseCipher;
-    procedure InitHashRead  (Stream: TBufStream; Method: TArchiveCheckMethod);
-    procedure InitHashWrite (Stream: TBufStream; Method: TArchiveCheckMethod);
-
-    procedure InitCipherRead (Stream: TBufStream; Method: TArchiveEncryptionMethod);
-    procedure InitCipherWrite(Stream: TBufStream; Method: TArchiveEncryptionMethod);
-  private
     FCoder: TBaseCoder;
     procedure InitCoder        (Item: TArchiveItem);
     procedure EncodeFromArchive(Item: TArchiveItem);
@@ -1145,42 +1135,43 @@ end;
 
 // TArchiver # ENCODE/DECODE #
 
-procedure TArchiver.InitHash(Stream: TBufStream; Method: TArchiveEncryptionMethod);
-begin
-  if Assigned(Hash) then
-    FreeAndNil(Hash);
+(*
 
-  case Algorithm of
-    haCRC32: Hash := TCRC32Hash.Create;
-    haCRC64: Hash := TCRC64Hash.Create;
-    haSHA1:  Hash := TSHA1Hash.Create;
-    else     Hash := TBaseHash.Create;
+function TArchiver.CreateHash(Item: TArchiveItem): TBaseHash;
+begin
+  case Item.CheckMethod of
+    acimCRC32: Result := TCRC32Hash.Create;
+    acimCRC64: Result := TCRC64Hash.Create;
+    acimSHA1:  Result := TSHA1Hash.Create;
+    else       Result := TBaseHash.Create;
   end;
 end;
 
-function TArchiver.DestroyHash(Stream: TBufStream): string;
-begin
-  Result := Stream.Hash.GetHash;
-  Stream.Hash.Destroy;
-  Stream.Hash := nil;
-end;
-
-procedure TArchiver.CreateCipher(Stream: TBufStream; Item: TArchiveItem);
+function TArchiver.CreateCipher(Item: TArchiveItem): TBaseCipher;
 begin
   case Item.EncryptionMethod of
-    aemBlowFish: Stream := TBlowFishCipher.Create(GetEncryptionKey(EncryptionParams));
-    else         Stream := TBaseCipher.Create;
+    aemBlowFish: Result := TBlowFishCipher.Create(GetEncryptionKey(EncryptionParams));
+    else         Result := TBaseCipher.Create;
   end;
 end;
 
-procedure TArchiver.FreeCipher(Stream: TBufStream; Item: TArchiveItem);
+procedure TArchiver.CreateCoder(Item: TArchiveItem; Stream: TBufStream);
 begin
-  Stream.Cipher.Destroy;
-  Stream.Cipher := nil;
-end;
+  if Assigned(FCoder) then
+    case Item.CompressionMethod of
+      acmBee:  if not(FCoder is TBeeCoder)  then FreeAndNil(FCoder);
+      acmNone: if not(FCoder is TBaseCoder) then FreeAndNil(FCoder);
+    end;
 
-procedure TArchiver.InitCoder(Item: TArchiveItem);
-begin
+  if not Assigned(FCoder) then
+    case Item.CompressionMethod of
+      acmBee:  FCoder := TBeeCoder.Create(Stream);
+      acmNone: FCoder := TBaseCoder.Create(Stream);
+    end;
+
+
+
+
   case Item.CompressionMethod of
     acmBee: begin
       if acfCompressionLevelAux in Item.FCompressionFlags then
@@ -1197,44 +1188,106 @@ begin
   end;
 end;
 
+*)
+
 procedure TArchiver.EncodeFromArchive(Item: TArchiveItem);
 begin
+  // seek on data
   FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
-
+  // save item disknumber and diskseek
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
+  // copy ---
   begin
     FCoder.Copy(FArchiveReader, Item.FCompressedSize);
   end;
 end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
+var
+  FHashAux: TBaseHash;
+  FCipher: TBaseCipher;
 begin
+  // seek on data
   FSwapReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
+  // save item disknumber and diskseek
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
 
-  CreateHash(FSwapReader, Item);
-  CreateHash(FTempWriter, Item);
+  // hashAux ---
+  case Item.CheckMethod of
+    acimCRC32: FHashAux := TCRC32Hash.Create;
+    acimCRC64: FHashAux := TCRC64Hash.Create;
+    acimSHA1:  FHashAux := TSHA1Hash.Create;
+    else       FHashAux := nil;
+  end;
+  FHashAux.Initialize;
+  FTempWriter.OnWriteEvent := FHashAux.Update;
+
+  // encoder ---
+  if Assigned(FCoder) then
+    case Item.FCompressionMethod of
+     acmBee: if not (FCoder is TBeeCoder) then FreeAndNil(FCoder);
+    end;
+
+  if not Assigned(FCoder) then
+    case Item.FCompressionMethod of
+      acmBee: FCoder := TBeeCoder.Create(FTempWriter);
+      else    FCoder := TBaseCoder.Create(FTempWriter);
+    end;
+
+  // encode ---
   case Item.FCompressionMethod of
     acmBee: FCoder.Encode(FSwapReader, Item.FUncompressedSize);
     else    FCoder.Copy  (FSwapReader, Item.FUncompressedSize);
   end;
   Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
-  Item.CheckDigest     := DestroyHash(FSwapReader);
-  Item.CheckDigestAux  := DestroyHash(FTempWriter);
+
+  // store digest ---
+  Item.FCheckDigestAux := FHashAux.Finalize;
+  FreeandNil(FHashAux);
+
+  FTempWriter.OnWriteEvent := nil;
 end;
 
 procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
 var
   Stream: TFileReader;
+  FHash: TBaseHash;
+  FHashAux: TBaseHash;
 begin
+  // opean stream
   Stream := TFileReader.Create(Item.FExternalFileName, FOnRequestImage);
-
+  // save uncompressed size
   Item.FUncompressedSize := Item.FExternalFileSize;
-
+  // save item disknumber and diskseek
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
+
+  // hash ---
+   case Item.CheckMethod of
+     acimCRC32: FHash := TCRC32Hash.Create;
+     acimCRC64: FHash := TCRC64Hash.Create;
+     acimSHA1:  FHash := TSHA1Hash.Create;
+     else       FHash := nil;
+   end;
+   FHash.Initialize;
+   Stream.OnReadEvent := FHash.Update;
+
+  // hashAux ---
+  case Item.CheckMethod of
+    acimCRC32: FHashAux := TCRC32Hash.Create;
+    acimCRC64: FHashAux := TCRC64Hash.Create;
+    acimSHA1:  FHashAux := TSHA1Hash.Create;
+    else       FHashAux := nil;
+  end;
+  FHashAux.Initialize;
+  FTempWriter.OnWriteEvent := FHashAux.Update;
+
+
+
+
+
   case Item.CompressionMethod of
     acmBee: FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
     else    FEncoder.Copy  (Stream, Item.FUncompressedSize, Item.FCRC32);

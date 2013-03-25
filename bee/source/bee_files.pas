@@ -117,7 +117,7 @@ type
     constructor Create;
     destructor Destroy; override;
     function Write(Data: PByte; Count: longint): longint;  override;
-    function SeekFromCurrent: int64; override;
+    function Seek(const Offset: int64; Origin: longint): int64; override;
   end;
 
   { TCustomSearchRec }
@@ -476,7 +476,7 @@ begin
   Result := Count;
 end;
 
-function TNulWriter.SeekFromCurrent: int64;
+function TNulWriter.Seek(const Offset: int64; Origin: longint): int64;
 begin
   Result := FNulSize;
 end;
