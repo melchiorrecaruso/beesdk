@@ -116,7 +116,7 @@ end;
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1912 archiver utility, Mar 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1917 archiver utility, Apr 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -183,7 +183,7 @@ begin
       esResizeStreamError: DoMessage(Cr + Format(emResizeStreamError, [TimeDifference(StartTime)]));
       esSplitStreamError : DoMessage(Cr + Format(emSplitStreamError,  [TimeDifference(StartTime)]));
       esRenameTempError  : DoMessage(Cr + Format(emRenameTempError,   [TimeDifference(StartTime)]));
-      esBlowFishError    : DoMessage(Cr + Format(emBlowFishError,     [TimeDifference(StartTime)]));
+      esRequestDiskError : DoMessage(Cr + Format(emRequestDiskError,  [TimeDifference(StartTime)]));
 
       esUserAbortError   : DoMessage(Cr + Format(emUserAbortError,    [TimeDifference(StartTime)]));
 
