@@ -45,10 +45,12 @@ uses
   Bee_BufStream;
 
 type
-  { TFileReader }
+  TFileProgressEvent = procedure(Processed: longint) of object;
 
   TFileReaderRequestImageEvent = procedure(ImageNumber: longint;
      var ImageName: string; var Abort: boolean) of object;
+
+  { TFileReader }
 
   TFileReader = class(TReadBufStream)
   private
@@ -56,8 +58,8 @@ type
     FImageNumber: longint;
     FImagesNumber: longint;
     FOnRequestImage: TFileReaderRequestImageEvent;
-    procedure OpenImage(Value: longint);
-    function RequestImage(Value: longint): string;
+    procedure DoOpenImage(Value: longint);
+    function DoRequestImage(Value: longint): string;
     function GetImageName(Value: longint): string;
     procedure SetImageNumber(Value: longint);
     procedure SetImagesNumber(Value: longint);
@@ -65,10 +67,10 @@ type
     constructor Create(const aFileName: string;
        aRequestImage: TFileReaderRequestImageEvent);
     destructor Destroy; override;
-
     function ReadDWord: dword;
     function ReadInfWord: qword;
     function ReadInfString: string;
+    function ReadInfArray: string;
     function Read(Data: PByte; Count: longint): longint; override;
     procedure Seek(aImageNumber: longint; const Offset: int64);
   public
@@ -78,7 +80,7 @@ type
 
   { TFileWriter }
 
-  TFileWriterRequestBlankImageEvent = procedure(ImageNumber: longint;
+  TFileWriterRequestBlankImageEvent = procedure(aImageNumber: longint;
      var Abort : Boolean) of object;
 
   TFileWriter = class(TWriteBufStream)
@@ -88,7 +90,7 @@ type
     FCurrentImage: longint;
     FCurrentImageSize: int64;
     FOnRequestBlankImage: TFileWriterRequestBlankImageEvent;
-    function RequestImage(Value: longint): string;
+    function DoRequestImage(Value: longint): string;
     function GetImageName(Value: longint): string;
   public
     constructor Create(const aFileName: string; aRequestBlankImage:
@@ -99,6 +101,7 @@ type
     procedure WriteDWord(Data: dword);
     procedure WriteInfWord(Data: qword);
     procedure WriteInfString(const Data: string);
+    procedure WriteInfArray(const Data: string);
     function Write(Data: PByte; Count: longint): longint; override;
   public
     property Threshold: int64 read FThreshold;
@@ -111,8 +114,6 @@ type
   TNulWriter = class(TFileWriter)
   private
     FNulSize: int64;
-  protected
-    procedure SetSize(const NewSize: int64); override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -150,23 +151,10 @@ type
     property Items[Index: longint]: TCustomSearchRec read GetItem;
   end;
 
-procedure DoFill (Stream: pointer; Data: pointer; Size: longint); {$IFDEF cLIB} cdecl; {$ENDIF}
-procedure DoFlush(Stream: pointer; Data: pointer; Size: longint); {$IFDEF cLIB} cdecl; {$ENDIF}
-
 implementation
 
 uses
   Bee_Interface;
-
-procedure DoFill(Stream: pointer; Data: pointer; Size: longint);
-begin
-  TFileReader(Stream).Read(Data, Size);
-end;
-
-procedure DoFlush(Stream: pointer; Data: pointer; Size: longint);
-begin
-  TFileWriter(Stream).Write(Data, Size);
-end;
 
 { TFileReader class }
 
@@ -181,7 +169,7 @@ begin
   FImagesNumber   := 1;
   FOnRequestImage := aRequestImage;
 
-  ImageName := RequestImage(FImageNumber);
+  ImageName := DoRequestImage(FImageNumber);
   if ExitStatus = esNoError then
   begin
     FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
@@ -204,7 +192,7 @@ begin
     Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [Value]));
 end;
 
-function TFileReader.RequestImage(Value: longint): string;
+function TFileReader.DoRequestImage(Value: longint): string;
 var
   Abort: boolean;
 begin
@@ -221,7 +209,7 @@ begin
   end;
 end;
 
-procedure TFileReader.OpenImage(Value: longint);
+procedure TFileReader.DoOpenImage(Value: longint);
 var
   ImageName: string;
 begin
@@ -229,7 +217,7 @@ begin
   FileClose(FHandle);
 
   FImageNumber := Value;
-  ImageName := RequestImage(FImageNumber);
+  ImageName := DoRequestImage(FImageNumber);
   if ExitStatus = esNoError then
   begin
     FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
@@ -274,6 +262,22 @@ begin
   end;
 end;
 
+function TFileReader.ReadInfArray: string;
+var
+  Arr: array of byte;
+  ArrLen: longint;
+begin
+  ArrLen := ReadInfWord;
+  if ArrLen > 0 then
+  begin
+    SetLength(Arr, ArrLen);
+    Read(@Arr[0], ArrLen);
+    Result := Hex(Arr[0], ArrLen);
+    SetLength(Arr, 0);
+  end else
+    Result := '';
+end;
+
 function TFileReader.Read(Data: PByte; Count: longint): longint;
 begin
   Result := 0;
@@ -284,7 +288,7 @@ begin
     begin
       if FImageNumber < FImagesNumber then
       begin
-        OpenImage(FImageNumber + 1);
+        DoOpenImage(FImageNumber + 1);
         if ExitStatus <> esNoError then Break;
       end else
         Break;
@@ -306,7 +310,7 @@ end;
 procedure TFileReader.SetImageNumber(Value: longint);
 begin
   if FImageNumber <> Value then
-    OpenImage(Value);
+    DoOpenImage(Value);
 end;
 
 { TFileWriter class }
@@ -323,7 +327,7 @@ begin
   FCurrentImageSize    := 0;
   FOnRequestBlankImage := aRequestBlankImage;
 
-  ImageName := RequestImage(FCurrentImage);
+  ImageName := DoRequestImage(FCurrentImage);
   if ExitStatus = esNoError then
   begin
     if ExtractFilePath(ImageName) <> '' then
@@ -378,12 +382,30 @@ begin
   end;
 end;
 
+procedure TFileWriter.WriteInfArray(const Data: string);
+var
+  Arr: array of byte;
+  ArrLen: longint;
+begin
+  ArrLen := Length(Data) div 2;
+  WriteInfWord(ArrLen);
+  if ArrLen > 0 then
+  begin
+    SetLength(Arr, ArrLen);
+    if HexToData(Data, Arr[0], ArrLen) then
+    begin
+      Write(@Arr[0], ArrLen);
+    end;
+    SetLength(Arr, 0);
+  end;
+end;
+
 function TFileWriter.GetImageName(Value: longint): string;
 begin
   Result := ChangeFileExt(FFileName, '.' + Format('%.3d', [Value]));
 end;
 
-function TFileWriter.RequestImage(Value: longint): string;
+function TFileWriter.DoRequestImage(Value: longint): string;
 var
   Abort: boolean;
 begin
@@ -413,7 +435,7 @@ begin
   if ExitStatus = esNoError then
   begin
     Inc(FCurrentImage);
-    ImageName := RequestImage(FCurrentImage);
+    ImageName := DoRequestImage(FCurrentImage);
 
     if ExitStatus = esNoError then
     begin
@@ -463,11 +485,6 @@ end;
 destructor TNulWriter.Destroy;
 begin
   // nothing to do
-end;
-
-procedure TNulWriter.SetSize(const NewSize: int64);
-begin
-  FNulSize := NewSize;
 end;
 
 function TNulWriter.Write(Data: PByte; Count: longint): longint;

@@ -38,9 +38,11 @@ uses
   Classes,
   SysUtils,
   Bee_BufStream,
+  Bee_Crc,
+  Bee_BlowFish,
+
   Bee_Files,
   Bee_Common,
-  Bee_MainPacker,
   Bee_CommandLine,
   Bee_Configuration;
 
@@ -83,9 +85,6 @@ type
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
-  /// archive check method
-  TArchiveCheckMethod = (acimNone, acimCRC32, acimCRC64, acimSHA1);
-
   /// archive data descriptor flag
   TArchiveDataDescriptorFlag = (
     addfCompressedSize,
@@ -97,22 +96,16 @@ type
 
   TArchiveDataDescriptorFlags = set of TArchiveDataDescriptorFlag;
 
-  /// archive compression method
-  TArchiveCompressionMethod = (acmNone, acmBee);
-
   /// archive compression flag
   TArchiveCompressionFlag = (
     acfCompressionMethod,
-    acfCompressionBlock,
     acfCompressionLevel,
     acfCompressionLevelAux,
     acfCompressionFilter,
-    acfCompressionFilterAux);
+    acfCompressionFilterAux,
+    acfCompressionBlock);
 
   TArchiveCompressionFlags = set of TArchiveCompressionFlag;
-
-  /// archive encryption method
-  TArchiveEncryptionMethod = (aemNone, aemBlowFish);
 
   /// archive encryption flag
   TArchiveEncryptionFlag = (
@@ -139,20 +132,20 @@ type
     FCompressedSize: int64;
     FDiskNumber: longword;
     FDiskSeek: int64;
-    FCheckMethod: TArchiveCheckMethod;
+    FCheckMethod: THashAlgorithm;
     FCheckDigest: string;
     FCheckDigestAux: string;
     // compression property
     FCompressionFlags: TArchiveCompressionFlags;
-    FCompressionMethod: TArchiveCompressionMethod;
-    FCompressionBlock: int64;
+    FCompressionMethod: TCoderAlgorithm;
     FCompressionLevel: longint;
     FCompressionLevelAux: longint;
     FCompressionFilter: string;
     FCompressionFilterAux: string;
+    FCompressionBlock: int64;
     // encryption property
     FEncryptionFlags: TArchiveEncryptionFlags;
-    FEncryptionMethod: TArchiveEncryptionMethod;
+    FEncryptionMethod: TCipherAlgorithm;
   protected
     FTag: TArchiveItemTag;
     FIndex: longint;
@@ -176,12 +169,12 @@ type
     property CompressedSize: int64 read FCompressedSize;
     property DiskNumber: longword read FDiskNumber;
     property DiskSeek: int64 read FDiskSeek;
-    property CheckMethod: TArchiveCheckMethod read FCheckMethod;
+    property CheckMethod: THashAlgorithm read FCheckMethod;
     property CheckDigest: string read FCheckDigest;
     property CheckDigestAux: string read FCheckDigestAux;
     // compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
-    property CompressionMethod: TArchiveCompressionMethod read FCompressionMethod;
+    property CompressionMethod: TCoderAlgorithm read FCompressionMethod;
     property CompressionBlock: int64 read FCompressionBlock;
     property CompressionLevel: longint read FCompressionLevel;
     property CompressionLevelAux: longint read FCompressionLevelAux;
@@ -189,7 +182,7 @@ type
     property CompressionFilterAux: string read FCompressionFilterAux;
     // encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
-    property EncryptionMethod: TArchiveEncryptionMethod read FEncryptionMethod;
+    property EncryptionMethod: TCipherAlgorithm read FEncryptionMethod;
   end;
 
   /// archive central directory
@@ -235,6 +228,9 @@ type
   TArchiveConfirm = (arcOk, arcCancel, arcQuit);
 
   /// archive events
+
+  TArchiveProgressEvent = procedure(Percentage: longint) of object;
+
   TArchiveMessageEvent = procedure(const aMessage: string) of object;
 
   TArchiveRenameEvent = procedure(Item: TArchiveItem;
@@ -292,8 +288,6 @@ type
     function GetCount: longint;
     function GetLastModifiedTime: longint;
   private
-    FCoder: TBaseCoder;
-    procedure InitCoder        (Item: TArchiveItem);
     procedure EncodeFromArchive(Item: TArchiveItem);
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
@@ -311,7 +305,7 @@ type
     FOnMessage: TArchiveMessageEvent;
     procedure DoMessage(const Message: string);
   private
-    FOnProgress: TCoderProgressEvent;
+    FOnProgress: TArchiveProgressEvent;
     procedure DoProgress(Value: longint);
   private
     FOnExtract: TArchiveExtractEvent;
@@ -360,7 +354,7 @@ type
     property OnRequestBlankImage: TFileWriterRequestBlankImageEvent read FOnRequestBlankImage write FOnRequestBlankImage;
     property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
     property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
-    property OnProgress: TCoderProgressEvent read FOnProgress write FOnProgress;
+    property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
     property OnExtract: TArchiveExtractEvent read FOnExtract write FOnExtract;
     property OnRename: TArchiveRenameEvent read FOnRename write FOnRename;
     property OnDelete: TArchiveDeleteEvent read FOnDelete write FOnDelete;
@@ -395,10 +389,10 @@ uses
 
 //
 
-function GetCompressionMethod(Params: string): TArchiveCompressionMethod;
+function GetCompressionMethod(Params: string): TCoderAlgorithm;
 begin
-  if Pos('|m=0|', Params) > 0 then Result := acmNone else
-  if Pos('|m=1|', Params) > 0 then Result := acmBee  else Result := acmBee;
+  if Pos('|m=0|', Params) > 0 then Result := caCopy else
+  if Pos('|m=1|', Params) > 0 then Result := caBee  else Result := caBee;
 end;
 
 function GetCompressionBlock(const Params: string): int64;
@@ -493,10 +487,10 @@ begin
   end;
 end;
 
-function GetEncryptionMethod(const Params: string): TArchiveEncryptionMethod;
+function GetEncryptionMethod(const Params: string): TCipherAlgorithm;
 begin
-  if Pos('|m=0|', Params) > 0 then Result := aemNone     else
-  if Pos('|m=1|', Params) > 0 then Result := aemBlowFish else Result := aemNone;
+  if Pos('|m=0|', Params) > 0 then Result := caNone     else
+  if Pos('|m=1|', Params) > 0 then Result := caBlowFish else Result := caNone;
 end;
 
 function GetEncryptionKey(const Params: string): string;
@@ -524,7 +518,7 @@ end;
 function CompressionMethodToStr(Item: TArchiveItem): string;
 begin
   Result := 'm0 ';
-  if Item.CompressionMethod <> acmNone then
+  if Item.CompressionMethod <> caCopy then
   begin
     if Item.CompressionBlock <> 0 then
     begin
@@ -602,12 +596,12 @@ begin
   FCompressedSize       := 0;
   FDiskNumber           := 0;
   FDiskSeek             := 0;
-  FCheckMethod          := acimNone;
+  FCheckMethod          := haNone;
   FCheckDigest          := '';
   FCheckDigestAux       := '';
   /// compression property ///
   FCompressionFlags     := [];
-  FCompressionMethod    := acmNone;
+  FCompressionMethod    := caCopy;
   FCompressionBlock     := 0;
   FCompressionLevel     := 0;
   FCompressionLevelAux  := 0;
@@ -615,7 +609,7 @@ begin
   FCompressionFilterAux := '';
   /// encryption property ///
   FEncryptionFlags      := [];
-  FEncryptionMethod     := aemNone;
+  FEncryptionMethod     := caNone;
   /// reserved property ///
   FTag                  := aitAdd;
   FIndex                := -1;
@@ -648,20 +642,20 @@ begin
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
   if (addfDiskNumber     in FDataDescriptorFlags) then FDiskNumber     := Stream.ReadInfWord;
   if (addfDiskSeek       in FDataDescriptorFlags) then FDiskSeek       := Stream.ReadInfWord;
-  if (addfCheckMethod    in FDataDescriptorFlags) then FCheckMethod    := TArchiveCheckMethod(Stream.ReadInfWord);
+  if (addfCheckMethod    in FDataDescriptorFlags) then FCheckMethod    := THashAlgorithm(Stream.ReadInfWord);
   if (addfCheckDigest    in FDataDescriptorFlags) then FCheckDigest    := Stream.ReadInfString;
   if (addfCheckDigestAux in FDataDescriptorFlags) then FCheckDigestAux := Stream.ReadInfString;
   /// compression property ///
   FCompressionFlags := TArchiveCompressionFlags(longword(Stream.ReadInfWord));
-  if (acfCompressionMethod    in FCompressionFlags) then FCompressionMethod    := TArchiveCompressionMethod(Stream.ReadInfWord);
-  if (acfCompressionBlock     in FCompressionFlags) then FCompressionBlock     := Stream.ReadInfWord;
+  if (acfCompressionMethod    in FCompressionFlags) then FCompressionMethod    := TCoderAlgorithm(Stream.ReadInfWord);
   if (acfCompressionLevel     in FCompressionFlags) then FCompressionLevel     := Stream.ReadInfWord;
   if (acfCompressionLevelAux  in FCompressionFlags) then FCompressionLevelAux  := Stream.ReadInfWord;
-  if (acfCompressionFilter    in FCompressionFlags) then FCompressionFilter    := Stream.ReadInfString;
-  if (acfCompressionFilterAux in FCompressionFlags) then FCompressionFilterAux := Stream.ReadInfString;
+  if (acfCompressionFilter    in FCompressionFlags) then FCompressionFilter    := Stream.ReadInfArray;
+  if (acfCompressionFilterAux in FCompressionFlags) then FCompressionFilterAux := Stream.ReadInfArray;
+  if (acfCompressionBlock     in FCompressionFlags) then FCompressionBlock     := Stream.ReadInfWord;
   /// encryption property ///
   FEncryptionFlags := TArchiveEncryptionFlags(longword(Stream.ReadInfWord));
-  if (aefEncryptionMethod  in FEncryptionFlags) then FEncryptionMethod := TArchiveEncryptionMethod(Stream.ReadInfWord);
+  if (aefEncryptionMethod  in FEncryptionFlags) then FEncryptionMethod := TCipherAlgorithm(Stream.ReadInfWord);
 end;
 
 procedure TArchiveItem.Write(Stream: TFileWriter);
@@ -685,11 +679,11 @@ begin
   /// compression property ///
   Stream.WriteInfWord(longword(FCompressionFlags));
   if (acfCompressionMethod    in FCompressionFlags) then Stream.WriteInfWord(Ord(FCompressionMethod));
-  if (acfCompressionBlock     in FCompressionFlags) then Stream.WriteInfWord(FCompressionBlock);
   if (acfCompressionLevel     in FCompressionFlags) then Stream.WriteInfWord(FCompressionLevel);
   if (acfCompressionLevelAux  in FCompressionFlags) then Stream.WriteInfWord(FCompressionLevelAux);
-  if (acfCompressionFilter    in FCompressionFlags) then Stream.WriteInfString(FCompressionFilter);
-  if (acfCompressionFilterAux in FCompressionFlags) then Stream.WriteInfString(FCompressionFilterAux);
+  if (acfCompressionFilter    in FCompressionFlags) then Stream.WriteInfArray(FCompressionFilter);
+  if (acfCompressionFilterAux in FCompressionFlags) then Stream.WriteInfArray(FCompressionFilterAux);
+  if (acfCompressionBlock     in FCompressionFlags) then Stream.WriteInfWord(FCompressionBlock);
   /// encryption property ///
   Stream.WriteInfWord(longword(FEncryptionFlags));
   if (aefEncryptionMethod  in FEncryptionFlags) then Stream.WriteInfWord(Ord(FEncryptionMethod));
@@ -808,31 +802,11 @@ end;
 procedure TArchiveCentralDirectory.Delete(Index: longint);
 var
   I: longint;
-  Item, Next: TArchiveItem;
+  Item: TArchiveItem;
 begin
   Item := Items[Index];
   if Index < FItems.Count - 1 then
-  begin
-    Next := Items[Index + 1];
-
-    if(not(acfCompressionBlock in Item.CompressionFlags)) and
-      (   (acfCompressionBlock in Next.CompressionFlags)) then
-      Exclude(Next.FCompressionFlags, acfCompressionBlock);
-
-    if(   (acfCompressionFilter in Item.CompressionFlags)) and
-      (not(acfCompressionFilter in Next.CompressionFlags)) then
-    begin
-      Next.FCompressionFilter := Item.FCompressionFilter;
-      Include(Next.FCompressionFlags, acfCompressionFilter);
-    end;
-
-    if(   (acfCompressionFilterAux in Item.CompressionFlags)) and
-      (not(acfCompressionFilterAux in Next.CompressionFlags)) then
-    begin
-      Next.FCompressionFilterAux := Item.FCompressionFilterAux;
-      Include(Next.FCompressionFlags, acfCompressionFilterAux);
-    end;
-  end;
+    Items[Index + 1].FCompressionBlock := Item.FCompressionBlock;
 
   FItemsAux.Delete(GetIndexOf(Item.FileName));
   FItems.Delete(Item.FIndex);
@@ -938,7 +912,7 @@ var
 begin
   // [0] seek on read central directory magik seek
   if ExitStatus = esNoError then
-    Stream.SeekFromEnd(-2*SizeOf(DWord));
+    Stream.Seek(-2*SizeOf(DWord), fsFromEnd);
 
   // [1] read central directory magik seek marker
   if ExitStatus = esNoError then
@@ -947,7 +921,7 @@ begin
 
   // [2] seek on central directory marker (or seek marker)
   if ExitStatus = esNoError then
-    Stream.SeekFromEnd(-Stream.ReadDWord);
+    Stream.Seek(-Stream.ReadDWord, fsFromEnd);
 
   // [3] read central directory marker (or seek marker)
   if ExitStatus = esNoError then
@@ -979,9 +953,9 @@ begin
 
         FCDS_DiskSeek := Stream.ReadInfWord;
         // [4.1] seek on central directory marker
-        Stream.ImagesNumber :=   FCDS_DisksNumber;
-        Stream.ImageNumber  :=   FCDS_DiskNumber;
-        Stream.SeekFromBeginning(FCDS_DiskSeek);
+        Stream.ImagesNumber := FCDS_DisksNumber;
+        Stream.ImageNumber  := FCDS_DiskNumber;
+        Stream.Seek           (FCDS_DiskSeek, fsFromBeginning);
         // [4.2] read central directory marker
         MARKER := Stream.ReadDWord;
         if MARKER <> ARCHIVE_CENTRALDIR_MARKER then
@@ -1036,7 +1010,7 @@ var
 begin
   // [0] store central directory seek
   FCDS_Flags      := [acdsfVersionNeededToRead];
-  FCDS_DiskSeek   := Stream.SeekFromCurrent;
+  FCDS_DiskSeek   := Stream.Seek(0, fsFromCurrent);
   FCDS_DiskNumber := Stream.CurrentImage;
   if FCDS_DiskNumber <> 1 then
     Include(FCDS_Flags,  acdsfDiskNumber);
@@ -1068,10 +1042,11 @@ begin
 
   // [3] multi-spanning support
   if Stream.Threshold > 0 then
-    if (Stream.Threshold - Stream.SeekFromCurrent) < 512 then Stream.CreateNewImage;
+    if (Stream.Threshold - Stream.Seek(0, fsFromCurrent)) < 512 then
+      Stream.CreateNewImage;
 
   // [0.1] write central directory seek
-  FCDMS_DiskSeek   := Stream.SeekFromCurrent;
+  FCDMS_DiskSeek   := Stream.Seek(0, fsFromCurrent);
   FCDS_DisksNumber := Stream.CurrentImage;
   if FCDS_DisksNumber <> 1 then
     Include(FCDS_Flags, acdsfDisksNumber);
@@ -1088,7 +1063,8 @@ begin
 
   // [4] write magikseek
   Stream.WriteDWord(ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER);
-  Stream.WriteDWord(longword(Stream.SeekFromCurrent - FCDMS_DiskSeek + SizeOf(DWord)));
+  Stream.WriteDWord(longword(Stream.Seek(0, fsFromCurrent)
+    - FCDMS_DiskSeek + SizeOf(DWord)));
 end;
 
 // TArchiver class
@@ -1135,232 +1111,235 @@ end;
 
 // TArchiver # ENCODE/DECODE #
 
-(*
-
-function TArchiver.CreateHash(Item: TArchiveItem): TBaseHash;
-begin
-  case Item.CheckMethod of
-    acimCRC32: Result := TCRC32Hash.Create;
-    acimCRC64: Result := TCRC64Hash.Create;
-    acimSHA1:  Result := TSHA1Hash.Create;
-    else       Result := TBaseHash.Create;
-  end;
-end;
-
-function TArchiver.CreateCipher(Item: TArchiveItem): TBaseCipher;
-begin
-  case Item.EncryptionMethod of
-    aemBlowFish: Result := TBlowFishCipher.Create(GetEncryptionKey(EncryptionParams));
-    else         Result := TBaseCipher.Create;
-  end;
-end;
-
-procedure TArchiver.CreateCoder(Item: TArchiveItem; Stream: TBufStream);
-begin
-  if Assigned(FCoder) then
-    case Item.CompressionMethod of
-      acmBee:  if not(FCoder is TBeeCoder)  then FreeAndNil(FCoder);
-      acmNone: if not(FCoder is TBaseCoder) then FreeAndNil(FCoder);
-    end;
-
-  if not Assigned(FCoder) then
-    case Item.CompressionMethod of
-      acmBee:  FCoder := TBeeCoder.Create(Stream);
-      acmNone: FCoder := TBaseCoder.Create(Stream);
-    end;
-
-
-
-
-  case Item.CompressionMethod of
-    acmBee: begin
-      if acfCompressionLevelAux in Item.FCompressionFlags then
-        FCoder.SetCompressionLevelAux(Item.CompressionLevelAux);
-
-      if acfCompressionFilter in Item.FCompressionFlags then
-        FCoder.SetCompressionFilter(Item.CompressionFilter);
-
-      if Item.CompressionBlock = 0 then
-        TBeeCoder(FCoder).FreshFlexible
-      else
-        TBeeCoder(FCoder).FreshSolid;
-    end;
-  end;
-end;
-
-*)
-
 procedure TArchiver.EncodeFromArchive(Item: TArchiveItem);
+var
+  Count: int64;
+  Buffer: TBuffer;
 begin
-  // seek on data
   FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
-  // save item disknumber and diskseek
   Item.FDiskNumber := FTempWriter.CurrentImage;
-  Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
-  // copy ---
+  Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
+
+  FArchiveReader.SetHash  (haNone);
+  FArchiveReader.SetCipher(caNone, '');
+  FArchiveReader.SetCoder (caCopy);
+
+  FTempWriter   .SetHash  (haNone);
+  FTempWriter   .SetCipher(caNone, '');
+  FTempWriter   .SetCoder (caCopy);
+
+  Count := Item.FCompressedSize div SizeOf(Buffer);
+  while (Count <> 0) and (ExitStatus = esNoError) do
   begin
-    FCoder.Copy(FArchiveReader, Item.FCompressedSize);
+    FArchiveReader.Read (@Buffer[0], SizeOf(Buffer));
+    FTempWriter   .Write(@Buffer[0], SizeOf(Buffer));
+    DoProgress(SizeOf(Buffer));
+    Dec(Count);
   end;
+  Count := Item.FCompressedSize mod SizeOf(Buffer);
+  FArchiveReader.Read (@Buffer[0], Count);
+  FTempWriter   .Write(@Buffer[0], Count);
+  DoProgress(SizeOf(Buffer));
 end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
 var
-  FHashAux: TBaseHash;
-  FCipher: TBaseCipher;
+  Count: int64;
+  Buffer: TBuffer;
 begin
-  // seek on data
   FSwapReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
-  // save item disknumber and diskseek
   Item.FDiskNumber := FTempWriter.CurrentImage;
-  Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
+  Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
 
-  // hashAux ---
-  case Item.CheckMethod of
-    acimCRC32: FHashAux := TCRC32Hash.Create;
-    acimCRC64: FHashAux := TCRC64Hash.Create;
-    acimSHA1:  FHashAux := TSHA1Hash.Create;
-    else       FHashAux := nil;
+  FSwapReader.SetHash  (Item.CheckMethod);
+  FSwapReader.SetCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FSwapReader.SetCoder (caCopy);
+
+  FTempWriter.SetHash  (Item.CheckMethod);
+  FTempWriter.SetCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FTempWriter.SetCoder (Item.CompressionMethod);
+  FTempWriter.SetCompressionLevel    (Item.CompressionLevel);
+  FTempWriter.SetCompressionLevelAux (Item.CompressionLevelAux);
+  FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
+  FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
+  FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
+
+  Count := Item.FUncompressedSize div SizeOf(Buffer);
+  while (Count <> 0) and (ExitStatus = esNoError) do
+  begin
+    FSwapReader.Read  (@Buffer[0], SizeOf(Buffer));
+    FTempWriter.Encode(@Buffer[0], SizeOf(Buffer));
+    DoProgress(SizeOf(Buffer));
+    Dec(Count);
   end;
-  FHashAux.Initialize;
-  FTempWriter.OnWriteEvent := FHashAux.Update;
+  Count := Item.FUncompressedSize mod SizeOf(Buffer);
+  FSwapReader.Read  (@Buffer[0], Count);
+  FTempWriter.Encode(@Buffer[0], Count);
+  DoProgress(SizeOf(Buffer));
 
-  // encoder ---
-  if Assigned(FCoder) then
-    case Item.FCompressionMethod of
-     acmBee: if not (FCoder is TBeeCoder) then FreeAndNil(FCoder);
-    end;
-
-  if not Assigned(FCoder) then
-    case Item.FCompressionMethod of
-      acmBee: FCoder := TBeeCoder.Create(FTempWriter);
-      else    FCoder := TBaseCoder.Create(FTempWriter);
-    end;
-
-  // encode ---
-  case Item.FCompressionMethod of
-    acmBee: FCoder.Encode(FSwapReader, Item.FUncompressedSize);
-    else    FCoder.Copy  (FSwapReader, Item.FUncompressedSize);
-  end;
-  Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
-
-  // store digest ---
-  Item.FCheckDigestAux := FHashAux.Finalize;
-  FreeandNil(FHashAux);
-
-  FTempWriter.OnWriteEvent := nil;
+  Item.FCompressedSize := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
+  Item.FCheckDigest    := FSwapReader.GetHashDigest;
+  Item.FCheckDigestAux := FTempWriter.GetHashDigest;
 end;
 
 procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
 var
+  Count: int64;
+  Buffer: TBuffer;
   Stream: TFileReader;
-  FHash: TBaseHash;
-  FHashAux: TBaseHash;
 begin
-  // opean stream
   Stream := TFileReader.Create(Item.FExternalFileName, FOnRequestImage);
-  // save uncompressed size
-  Item.FUncompressedSize := Item.FExternalFileSize;
-  // save item disknumber and diskseek
   Item.FDiskNumber := FTempWriter.CurrentImage;
-  Item.FDiskSeek   := FTempWriter.SeekFromCurrent;
+  Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
 
-  // hash ---
-   case Item.CheckMethod of
-     acimCRC32: FHash := TCRC32Hash.Create;
-     acimCRC64: FHash := TCRC64Hash.Create;
-     acimSHA1:  FHash := TSHA1Hash.Create;
-     else       FHash := nil;
-   end;
-   FHash.Initialize;
-   Stream.OnReadEvent := FHash.Update;
+       Stream.SetHash  (Item.CheckMethod);
+       Stream.SetCipher(caNone, '');
+       Stream.SetCoder (caCopy);
 
-  // hashAux ---
-  case Item.CheckMethod of
-    acimCRC32: FHashAux := TCRC32Hash.Create;
-    acimCRC64: FHashAux := TCRC64Hash.Create;
-    acimSHA1:  FHashAux := TSHA1Hash.Create;
-    else       FHashAux := nil;
-  end;
-  FHashAux.Initialize;
-  FTempWriter.OnWriteEvent := FHashAux.Update;
+  FTempWriter.SetHash  (Item.CheckMethod);
+  FTempWriter.SetCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FTempWriter.SetCoder (Item.CompressionMethod);
+  FTempWriter.SetCompressionLevel    (Item.CompressionLevel);
+  FTempWriter.SetCompressionLevelAux (Item.CompressionLevelAux);
+  FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
+  FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
+  FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
 
-
-
-
-
-  case Item.CompressionMethod of
-    acmBee: FEncoder.Encode(Stream, Item.FUncompressedSize, Item.FCRC32);
-    else    FEncoder.Copy  (Stream, Item.FUncompressedSize, Item.FCRC32);
-  end;
-  Item.FCompressedSize := FTempWriter.SeekFromCurrent - Item.FDiskSeek;
-
-  Stream.Destroy;
-end;
-
-procedure TArchiver.InitDecoder(Item: TArchiveItem);
-begin
-  if Item.CompressionMethod = acmBee then
+  Count := Item.FExternalFileSize div SizeOf(Buffer);
+  while (Count <> 0) and (ExitStatus = esNoError) do
   begin
-    if acfDictionaryLevel in Item.FCompressionFlags then
-      FDecoder.DictionaryLevel := Ord(Item.DictionaryLevel);
-
-    if acfCompressionTable in Item.FCompressionFlags then
-      FDecoder.CompressionTable := Item.CompressionTable;
-
-    FDecoder.FreshModeller(Item.CompressionBlock <> acb0MB);
+         Stream.Read  (@Buffer[0], SizeOf(Buffer));
+    FTempWriter.Encode(@Buffer[0], SizeOf(Buffer));
+    DoProgress(SizeOf(Buffer));
+    Dec(Count);
   end;
+  Count := Item.FExternalFileSize mod SizeOf(Buffer);
+       Stream.Read  (@Buffer[0], Count);
+  FTempWriter.Encode(@Buffer[0], Count);
+  DoProgress(SizeOf(Buffer));
+
+  Item.FUncompressedSize := Item.FExternalFileSize;
+  Item.FCompressedSize   := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
+  Item.FCheckDigest      :=      Stream.GetHashDigest;
+  Item.FCheckDigestAux   := FTempWriter.GetHashDigest;
+  FreeAndNil(Stream);
 end;
 
 procedure TArchiver.DecodeToSwap(Item: TArchiveItem);
 var
-  CRC: longword;
+  Count: int64;
+  Buffer: TBuffer;
 begin
   FArchiveReader.Seek(Item.DiskNumber, Item.DiskSeek);
-
   Item.FDiskNumber := FSwapWriter.CurrentImage;
-  Item.FDiskSeek   := FSwapWriter.SeekFromCurrent;
-  case Item.CompressionMethod of
-    acmBee: FDecoder.Decode(FSwapWriter, Item.FUncompressedSize, CRC);
-    else    FDecoder.Copy  (FSwapWriter, Item.FUncompressedSize, CRC);
-  end;
+  Item.FDiskSeek   := FSwapWriter.Seek(0, fsFromCurrent);
 
-  if Item.FCRC32 <> CRC then
-    SetExitStatus(esCrcError);
+  FArchiveReader.SetHash  (Item.CheckMethod);
+  FArchiveReader.SetCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FArchiveReader.SetCoder (Item.CompressionMethod);
+  FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
+  FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
+  FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
+  FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
+  FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
+
+  FSwapWriter   .SetHash  (Item.CheckMethod);
+  FSwapWriter   .SetCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FSwapWriter   .SetCoder (caCopy);
+
+  Count := Item.FUncompressedSize div SizeOf(Buffer);
+  while (Count <> 0) and (ExitStatus = esNoError) do
+  begin
+    FArchiveReader.Decode(@Buffer[0], SizeOf(Buffer));
+    FSwapWriter   .Write (@Buffer[0], SizeOf(Buffer));
+    DoProgress(SizeOf(Buffer));
+    Dec(Count);
+  end;
+  Count := Item.FUncompressedSize mod SizeOf(Buffer);
+  FArchiveReader.Decode(@Buffer[0], Count);
+  FSwapWriter   .Write (@Buffer[0], Count);
+  DoProgress(SizeOf(Buffer));
+
+  if (Item.CheckDigest    <>    FSwapWriter.GetHashDigest) or
+     (Item.CheckDigestAux <> FArchiveReader.GetHashDigest) then SetExitStatus(esCrcError);
 end;
 
 procedure TArchiver.DecodeToNul(Item: TArchiveItem);
 var
-  CRC: longword;
+  Count: int64;
+  Buffer: TBuffer;
   Stream: TFileWriter;
 begin
   Stream := TNulWriter.Create;
 
-  FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
-  case Item.CompressionMethod of
-    acmBee: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
-    else     FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
-  end;
-  Stream.Destroy;
+  FArchiveReader.Seek     (Item.FDiskNumber, Item.FDiskSeek);
+  FArchiveReader.SetHash  (Item.CheckMethod);
+  FArchiveReader.SetCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FArchiveReader.SetCoder (Item.CompressionMethod);
+  FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
+  FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
+  FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
+  FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
+  FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
+          Stream.SetHash  (Item.CheckMethod);
+          Stream.SetCipher(caNone, '');
+          Stream.SetCoder (caCopy);
 
-  if Item.FCRC32 <> CRC then
-    SetExitStatus(esCrcError);
+  Count := Item.FUncompressedSize div SizeOf(Buffer);
+  while (Count <> 0) and (ExitStatus = esNoError) do
+  begin
+    FArchiveReader.Decode(@Buffer[0], SizeOf(Buffer));
+            Stream.Write (@Buffer[0], SizeOf(Buffer));
+    DoProgress(SizeOf(Buffer));
+    Dec(Count);
+  end;
+  Count := Item.FUncompressedSize mod SizeOf(Buffer);
+  FArchiveReader.Decode(@Buffer[0], Count);
+          Stream.Write (@Buffer[0], Count);
+  DoProgress(SizeOf(Buffer));
+
+  if (Item.CheckDigest    <>         Stream.GetHashDigest) or
+     (Item.CheckDigestAux <> FArchiveReader.GetHashDigest) then SetExitStatus(esCrcError);
+  FreeAndNil(Stream);
 end;
 
 procedure TArchiver.DecodeToFile(Item: TArchiveItem);
 var
-  CRC: longword;
+  Count: int64;
+  Buffer: TBuffer;
   Stream: TFileWriter;
 begin
   Stream := TFileWriter.Create(Item.FExternalFileName, FOnRequestBlankImage, 0);
 
-  FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
-  case Item.CompressionMethod of
-    acmBee: FDecoder.Decode(Stream, Item.FUncompressedSize, CRC);
-    else    FDecoder.Copy  (Stream, Item.FUncompressedSize, CRC);
+  FArchiveReader.Seek     (Item.FDiskNumber, Item.FDiskSeek);
+  FArchiveReader.SetHash  (Item.CheckMethod);
+  FArchiveReader.SetCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FArchiveReader.SetCoder (Item.CompressionMethod);
+  FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
+  FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
+  FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
+  FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
+  FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
+          Stream.SetHash  (Item.CheckMethod);
+          Stream.SetCipher(caNone, '');
+          Stream.SetCoder (caCopy);
+
+  Count := Item.FUncompressedSize div SizeOf(Buffer);
+  while (Count <> 0) and (ExitStatus = esNoError) do
+  begin
+    FArchiveReader.Decode(@Buffer[0], SizeOf(Buffer));
+            Stream.Write (@Buffer[0], SizeOf(Buffer));
+    DoProgress(SizeOf(Buffer));
+    Dec(Count);
   end;
-  Stream.Destroy;
-  if Item.FCRC32 <> CRC then
-    SetExitStatus(esCrcError);
+  Count := Item.FUncompressedSize mod SizeOf(Buffer);
+  FArchiveReader.Decode(@Buffer[0], Count);
+          Stream.Write (@Buffer[0], Count);
+  DoProgress(SizeOf(Buffer));
+
+  if (Item.CheckDigest    <>         Stream.GetHashDigest) or
+     (Item.CheckDigestAux <> FArchiveReader.GetHashDigest) then SetExitStatus(esCrcError);
+  FreeAndNil(Stream);
 
   if ExitStatus = esNoError then
   begin
@@ -1404,29 +1383,19 @@ begin
   FSwapName   := GenerateFileName(FWorkDirectory);
   FSwapWriter := TFileWriter.Create(FSwapName, FOnRequestBlankImage, 0);
   FSwapWriter.WriteDWord(ARCHIVE_DATA_MARKER);
-
-  FDecoder := TStreamDecoder.Create(FArchiveReader);
-  FDecoder.OnProgress := DoProgress;
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
-
     Item := FCentralDirectory.Items[I];
-    if Item.FTag in [aitDecode, aitDecodeAndUpdate] then
-    begin
-      InitDecoder(Item);
-      case Item.FTag of
-        aitDecode:          DoMessage(Format(cmSwapping, [Item.FFileName]));
-        aitDecodeAndUpdate: DoMessage(Format(cmDecoding, [Item.FFileName]));
-      end;
-
-      case Item.FTag of
-        aitDecode:          DecodeToSwap(Item);
-        aitDecodeAndUpdate: DecodeToNul (Item);
-      end;
+    case Item.FTag of
+      aitDecode:          DoMessage(Format(cmSwapping, [Item.FFileName]));
+      aitDecodeAndUpdate: DoMessage(Format(cmDecoding, [Item.FFileName]));
+    end;
+    case Item.FTag of
+      aitDecode:          DecodeToSwap(Item);
+      aitDecodeAndUpdate: DecodeToNul(Item);
     end;
   end;
-  FreeAndNil(FDecoder);
   FreeAndNil(FSwapWriter);
 
   if ExitStatus = esNoError then
@@ -1460,7 +1429,6 @@ end;
 procedure TArchiver.SaveTemporaryArchive;
 var
   I: longint;
-  Item: TArchiveItem;
 begin
   SysUtils.DeleteFile(FSwapName);
   if ExitStatus = esNoError then
@@ -1470,27 +1438,19 @@ begin
       FTotalSize     := 0;
       FProcessedSize := 0;
       for I := 0 to FCentralDirectory.Count - 1 do
-      begin
-        FCentralDirectory.Items[I].FTag := aitUpdate;
         Inc(FTotalSize, FCentralDirectory.Items[I].CompressedSize);
-      end;
 
       FArchiveReader := TFileReader.Create(FTempName, FOnRequestImage);
       FTempWriter    := TFileWriter.Create(FArchiveName, FOnRequestBlankImage, FVolumeSize);
       FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
 
-      FEncoder := TStreamEncoder.Create(FTempWriter);
-      FEncoder.OnProgress := DoProgress;
       for I := 0 to FCentralDirectory.Count - 1 do
-        if ExitStatus = esNoError then
-        begin
-          Item := FCentralDirectory.Items[I];
-          case Item.FTag of
-            aitUpdate: DoMessage(Format(cmSplitting, [Item.FileName]));
-          end;
-          EncodeFromArchive(Item);
-        end;
-      FreeAndNil(FEncoder);
+      begin
+        if ExitStatus <> esNoError then Break;
+
+        DoMessage(Format(cmSplitting, [FCentralDirectory.Items[I].FileName]));
+        EncodeFromArchive(FCentralDirectory.Items[I]);
+      end;
       FCentralDirectory.Write(FTempWriter);
 
       FreeAndNil(FTempWriter);
@@ -1505,7 +1465,6 @@ begin
     end;
   end;
 
-  // ---
   if ExitStatus in [esNoError, esUserAbortError] then
     SysUtils.DeleteFile(FTempName);
 end;
@@ -1591,7 +1550,7 @@ begin
   Result := -1;
   for  I := Index downto 0 do
   begin
-    if FCentralDirectory.Items[I].CompressionBlock = acb0MB then
+    if FCentralDirectory.Items[I].CompressionBlock = 0 then
     begin
       Result := I;
       Break;
@@ -1605,7 +1564,7 @@ var
 begin
   Result := -1;
   for  I := Index to FCentralDirectory.Count - 1 do
-    if FCentralDirectory.Items[I].CompressionBlock = acb0MB then
+    if FCentralDirectory.Items[I].CompressionBlock = 0 then
     begin
       Result := I;
       Break;
@@ -1867,25 +1826,19 @@ begin
   if FIsNeededToRun then
   begin
     CheckSequences4Extract;
-    FDecoder := TStreamDecoder.Create(FArchiveReader);
-    FDecoder.OnProgress := DoProgress;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-      InitDecoder(Item);
       case Item.FTag of
         aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
         aitDecode: DoMessage(Format(cmDecoding,   [Item.FFileName]));
       end;
       case Item.FTag of
-        aitNone  : ;
         aitUpdate: DecodeToFile(Item);
         aitDecode: DecodeToNul (Item);
-        else SetExitStatus(esCaseError);
       end;
     end;
-    FreeAndNil(FDecoder);
   end;
 end;
 
@@ -1898,25 +1851,19 @@ begin
   if FIsNeededToRun then
   begin
     CheckSequences4Extract;
-    FDecoder := TStreamDecoder.Create(FArchiveReader);
-    FDecoder.OnProgress := DoProgress;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-      InitDecoder(Item);
       case Item.FTag of
         aitUpdate: DoMessage(Format(cmTesting,  [Item.FFileName]));
         aitDecode: DoMessage(Format(cmDecoding, [Item.FFileName]));
       end;
       case Item.FTag of
-        aitNone  : ;
         aitUpdate: DecodeToNul(Item);
         aitDecode: DecodeToNul(Item);
-        else SetExitStatus(esCaseError);
       end;
     end;
-    FreeAndNil(FDecoder);
   end;
 end;
 
@@ -1964,9 +1911,7 @@ begin
   FTotalSize     := 0;
   FProcessedSize := 0;
   for I := 0 to FCentralDirectory.Count - 1 do
-  begin
     Inc(FTotalSize, FCentralDirectory.Items[I].CompressedSize);
-  end;
 end;
 
 procedure TArchiver.RenameTagged;
@@ -1981,8 +1926,6 @@ begin
     FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
     FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
 
-    FEncoder := TStreamEncoder.Create(FTempWriter);
-    FEncoder.OnProgress := DoProgress;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
@@ -1990,11 +1933,9 @@ begin
       case Item.FTag of
         aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
         aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
-        else SetExitStatus(esCaseError);
       end;
       EncodeFromArchive(Item);
     end;
-    FreeandNil(FEncoder);
     if ExitStatus = esNoError then
       FCentralDirectory.Write(FTempWriter);
   end;
@@ -2096,7 +2037,6 @@ begin
     for I := FCentralDirectory.Count - 1 downto 0 do
     begin
       if ExitStatus = esNoError then Break;
-
       Item := FCentralDirectory.Items[I];
       if Item.FTag in [aitUpdate, aitDecodeAndUpdate] then
       begin
@@ -2105,14 +2045,10 @@ begin
       end;
     end;
 
-    FEncoder := TStreamEncoder.Create(FTempWriter);
-    FEncoder.OnProgress := DoProgress;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
-
       Item := FCentralDirectory.Items[I];
-      InitDecoder(Item);
       case Item.FTag of
         aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
         aitDecode: DoMessage(Format(cmEncoding, [Item.FileName]));
@@ -2120,10 +2056,8 @@ begin
       case Item.FTag of
         aitNone:   EncodeFromArchive(Item);
         aitDecode: EncodeFromSwap   (Item);
-        else SetExitStatus(esCaseError);
       end;
     end;
-    FreeandNil(FEncoder);
     if ExitStatus = esNoError then
       FCentralDirectory.Write(FTempWriter);
   end;
@@ -2165,11 +2099,11 @@ begin
 
   CurrentFileExt := '.';
   Configuration.Selector('\main');
-  Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(GetCompressionLevel(FCompressionParams)));
-  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetDictionaryLevel (FCompressionParams)));
+  Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(GetCompressionLevel   (FCompressionParams)));
+  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetCompressionLevelAux(FCompressionParams)));
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
-  Block := GetCompressionBlock(GetCompressionBlock(FCompressionParams));
+  Block := GetCompressionBlock(FCompressionParams);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     CurrentItem := FCentralDirectory.Items[I];
@@ -2182,13 +2116,13 @@ begin
       Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
       CurrentItem.FCompressionLevel := GetCompressionLevel(FCompressionParams);
       // dictionary level
-      Include(CurrentItem.FCompressionFlags, acfDictionaryLevel);
-      CurrentItem.FDictionaryLevel := GetDictionaryLevel(FCompressionParams);
+      Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
+      CurrentItem.FCompressionLevelAux := GetCompressionLevelAux(FCompressionParams);
       // compression block
       Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
       CurrentItem.FCompressionBlock := GetCompressionBlock(FCompressionParams);
       // default compression table flag
-      Exclude(CurrentItem.FCompressionFlags, acfCompressionTable);
+      Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter);
 
       // force file extension option
       PreviousFileExt := CurrentFileExt;
@@ -2203,27 +2137,27 @@ begin
         Dec(Block, CurrentItem.FExternalFileSize);
         if Block < 0 then
         begin
-          Block := GetCompressionBlock(GetCompressionBlock(FCompressionParams));
-          CurrentItem.FCompressionBlock := acb0MB;
+          Block := GetCompressionBlock(FCompressionParams);
+          CurrentItem.FCompressionBlock := 0;
         end;
 
       end else
       begin
         // BEE compression method
-        if CurrentItem.FCompressionMethod = acmBee then
+        if CurrentItem.FCompressionMethod = caBee then
         begin
-          Include(CurrentItem.FCompressionFlags, acfCompressionTable);
+          Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
           if Configuration.GetTable(CurrentFileExt, CurrentTable) then
-            CurrentItem.FCompressionTable := CurrentTable
+            CurrentItem.FCompressionFilter := Hex(CurrentTable, SizeOf(CurrentTable))
           else
-            CurrentItem.FCompressionTable := DefaultTableParameters;
+            CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
         end;
-        Block := GetCompressionBlock(GetCompressionBlock(FCompressionParams));
-        CurrentItem.FCompressionBlock := acb0MB;
+        Block := GetCompressionBlock(FCompressionParams);
+        CurrentItem.FCompressionBlock := 0;
       end;
 
       // encryption method
-      if GetEncryptionMethod(FEncryptionParams) <> aemNone then
+      if GetEncryptionMethod(FEncryptionParams) <> caNone then
       begin
         Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
         CurrentItem.FEncryptionMethod := GetEncryptionMethod(FEncryptionParams);
@@ -2345,20 +2279,10 @@ begin
     FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
 
     if FIsNeededToSwap then Swapping;
-    FEncoder := TStreamEncoder.Create(FTempWriter);
-    FEncoder.OnProgress := DoProgress;
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
       if ExitStatus <> esNoError then Break;
-
       Item := FCentralDirectory.Items[I];
-
-      Writeln('ok0');
-
-      InitEncoder(Item);
-
-      Writeln('ok1');
-
       case Item.FTag of
         aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
         aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
@@ -2367,18 +2291,14 @@ begin
         aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
       end;
 
-      Writeln('ok2');
-
       case Item.FTag of
         aitNone:            EncodeFromArchive(Item);
         aitAdd:             EncodeFromFile   (Item);
         aitUpdate:          EncodeFromFile   (Item);
         aitDecode:          EncodeFromSwap   (Item);
         aitDecodeAndUpdate: EncodeFromFile   (Item);
-        else SetExitStatus(esCaseError);
       end;
     end;
-    FreeAndNil(FEncoder);
     if ExitStatus = esNoError then
       FCentralDirectory.Write(FTempWriter);
   end;
