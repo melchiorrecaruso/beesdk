@@ -196,14 +196,17 @@ function TFileReader.DoRequestImage(Value: longint): string;
 var
   Abort: boolean;
 begin
+  Writeln('DoRequestImage');
+
   Result := GetImageName(Value);
   while FileExists(Result) = FALSE do
   begin
     Abort := TRUE;
     if Assigned(FOnRequestImage) then
       FOnRequestImage(Value, Result, Abort);
+
     if Abort then
-      SetExitStatus(esUserAbortError);
+      SetExitStatus(esRequestDiskError);
 
     if ExitStatus <> esNoError then Break;
   end;
@@ -286,6 +289,10 @@ begin
 
     if Result < Count then
     begin
+      Writeln(FImageNumber);
+      Writeln(FImagesNumber);
+
+
       if FImageNumber < FImagesNumber then
       begin
         DoOpenImage(FImageNumber + 1);

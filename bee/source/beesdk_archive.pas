@@ -391,8 +391,8 @@ uses
 
 function GetCompressionMethod(Params: string): TCoderAlgorithm;
 begin
-  if Pos('|m=0|', Params) > 0 then Result := caCopy else
-  if Pos('|m=1|', Params) > 0 then Result := caBee  else Result := caBee;
+  if Pos('{m=0}', Params) > 0 then Result := caCopy else
+  if Pos('{m=1}', Params) > 0 then Result := caBee  else Result := caBee;
 end;
 
 function GetCompressionBlock(const Params: string): int64;
@@ -910,18 +910,26 @@ const
 var
   MARKER: longword;
 begin
+  Writeln('OK0');
+
   // [0] seek on read central directory magik seek
   if ExitStatus = esNoError then
     Stream.Seek(-2*SizeOf(DWord), fsFromEnd);
+
+  Writeln('OK1');
 
   // [1] read central directory magik seek marker
   if ExitStatus = esNoError then
     if Stream.ReadDWord <> ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER then
       SetExitStatus(esArchiveTypeError);
 
+  Writeln('OK2');
+
   // [2] seek on central directory marker (or seek marker)
   if ExitStatus = esNoError then
     Stream.Seek(-Stream.ReadDWord, fsFromEnd);
+
+  Writeln('OK3');
 
   // [3] read central directory marker (or seek marker)
   if ExitStatus = esNoError then
@@ -931,6 +939,8 @@ begin
       if MARKER <> ARCHIVE_CENTRALDIR_SEEK_MARKER then
         SetExitStatus(esArchiveTypeError);
   end;
+
+  Writeln('OK4');
 
   // [4] read central directory seek
   if ExitStatus = esNoError then
@@ -1163,6 +1173,7 @@ begin
   FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
   FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
   FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
+  FTempWriter.InitializeCoder;
 
   Count := Item.FUncompressedSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
@@ -1175,6 +1186,7 @@ begin
   Count := Item.FUncompressedSize mod SizeOf(Buffer);
   FSwapReader.Read  (@Buffer[0], Count);
   FTempWriter.Encode(@Buffer[0], Count);
+  FTempWriter.FinalizeCoder;
   DoProgress(SizeOf(Buffer));
 
   Item.FCompressedSize := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
@@ -1204,6 +1216,7 @@ begin
   FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
   FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
   FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
+  FTempWriter.InitializeCoder;
 
   Count := Item.FExternalFileSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
@@ -1216,7 +1229,8 @@ begin
   Count := Item.FExternalFileSize mod SizeOf(Buffer);
        Stream.Read  (@Buffer[0], Count);
   FTempWriter.Encode(@Buffer[0], Count);
-  DoProgress(SizeOf(Buffer));
+  FTempWriter.FinalizeCoder;
+  DoProgress(Count);
 
   Item.FUncompressedSize := Item.FExternalFileSize;
   Item.FCompressedSize   := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;

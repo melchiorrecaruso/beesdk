@@ -34,6 +34,7 @@ interface
 uses
   Bee_Crc,
   Bee_BlowFish,
+  Bee_Configuration,
   Bee_Interface;
 
 type
@@ -305,14 +306,12 @@ end;
 
 procedure TBeeCoder.SetCompressionFilter(const Filter: string);
 var
-  Table: array of byte;
+  Table: TTableParameters;
 begin
-  SetLength(Table, Length(Filter) div 2);
-  if HexToData(Filter, Table[0], Length(Table)) then
+  if HexToData(Filter, Table[1], SizeOf(Table)) then
   begin
-    BaseCoder_SetTable(FModeller, @Table[0]);
+    BaseCoder_SetTable(FModeller, @Table[1]);
   end;
-  SetLength(Table, 0);
 end;
 
 procedure TBeeCoder.SetCompressionFilterAux(const Filter: string);
@@ -603,8 +602,8 @@ end;
 
 function TWriteBufStream.Seek(const Offset: int64; Origin: longint): int64;
 begin
-  FBufferIndex := 0;
-  Result       := FileSeek(FHandle, Offset, Origin);
+  FlushBuffer;
+  Result := FileSeek(FHandle, Offset, Origin);
 end;
 
 procedure TWriteBufStream.SetCoder(Algorithm: TCoderAlgorithm);
