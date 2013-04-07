@@ -72,7 +72,7 @@ type
     function ReadInfString: string;
     function ReadInfArray: string;
     function Read(Data: PByte; Count: longint): longint; override;
-    procedure Seek(aImageNumber: longint; const Offset: int64);
+    function Seek(const Offset: int64; Origin: longint; ImageNum: longint): int64; overload;
   public
     property ImagesNumber: longint read FImagesNumber write SetImagesNumber;
     property ImageNumber: longint read FImageNumber write SetImageNumber;
@@ -160,8 +160,6 @@ uses
 
 constructor TFileReader.Create(const aFileName: string;
   aRequestImage: TFileReaderRequestImageEvent);
-var
-  ImageName: string;
 begin
   inherited Create(THandle(-1));
   FFileName       := aFileName;
@@ -169,10 +167,9 @@ begin
   FImagesNumber   := 1;
   FOnRequestImage := aRequestImage;
 
-  ImageName := DoRequestImage(FImageNumber);
   if ExitStatus = esNoError then
   begin
-    FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
+    FHandle := FileOpen(FFileName, fmOpenRead or fmShareDenyWrite);
     if FHandle = -1 then
       SetExitStatus(esOpenStreamError);
   end;
@@ -196,8 +193,6 @@ function TFileReader.DoRequestImage(Value: longint): string;
 var
   Abort: boolean;
 begin
-  Writeln('DoRequestImage');
-
   Result := GetImageName(Value);
   while FileExists(Result) = FALSE do
   begin
@@ -206,7 +201,7 @@ begin
       FOnRequestImage(Value, Result, Abort);
 
     if Abort then
-      SetExitStatus(esRequestDiskError);
+      SetExitStatus(esUserAbortError);
 
     if ExitStatus <> esNoError then Break;
   end;
@@ -220,7 +215,7 @@ begin
   FileClose(FHandle);
 
   FImageNumber := Value;
-  ImageName := DoRequestImage(FImageNumber);
+  ImageName := GetImageName(FImageNumber);
   if ExitStatus = esNoError then
   begin
     FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
@@ -270,12 +265,16 @@ var
   Arr: array of byte;
   ArrLen: longint;
 begin
+  Result := ReadInfString;
+  Writeln(Result);
+  Exit;
+
   ArrLen := ReadInfWord;
   if ArrLen > 0 then
   begin
     SetLength(Arr, ArrLen);
     Read(@Arr[0], ArrLen);
-    Result := Hex(Arr[0], ArrLen);
+    Result := Hex(Arr, ArrLen);
     SetLength(Arr, 0);
   end else
     Result := '';
@@ -289,10 +288,6 @@ begin
 
     if Result < Count then
     begin
-      Writeln(FImageNumber);
-      Writeln(FImagesNumber);
-
-
       if FImageNumber < FImagesNumber then
       begin
         DoOpenImage(FImageNumber + 1);
@@ -303,10 +298,10 @@ begin
   until Result = Count;
 end;
 
-procedure TFileReader.Seek(aImageNumber: longint; const Offset: int64);
+function TFileReader.Seek(const Offset: int64; Origin: longint; ImageNum: longint): int64;
 begin
-  SetImageNumber(aImageNumber);
-  Seek(Offset, fsFromBeginning);
+  SetImageNumber(ImageNum);
+  Result := Seek(Offset, Origin);
 end;
 
 procedure TFileReader.SetImagesNumber(Value: longint);
@@ -394,12 +389,17 @@ var
   Arr: array of byte;
   ArrLen: longint;
 begin
+  WriteInfString(Data);
+  Writeln(Data);
+  Exit;
+
+
   ArrLen := Length(Data) div 2;
   WriteInfWord(ArrLen);
   if ArrLen > 0 then
   begin
     SetLength(Arr, ArrLen);
-    if HexToData(Data, Arr[0], ArrLen) then
+    if HexToData(Data, Arr, ArrLen) then
     begin
       Write(@Arr[0], ArrLen);
     end;

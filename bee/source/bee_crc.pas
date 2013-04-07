@@ -38,9 +38,18 @@ type
 
   TBaseHash = class(TObject)
   public
-    procedure Initialize; virtual; abstract;
+    procedure Start; virtual; abstract;
+    function  Finish: string; virtual; abstract;
     procedure Update(Data: PByte; Count: longint); virtual; abstract;
-    function Finalize: string; virtual; abstract;
+  end;
+
+  { TNulHash class }
+
+  TNulHash = class(TBaseHash)
+  public
+    procedure Start; override;
+    function  Finish: string; override;
+    procedure Update(Data: PByte; Count: longint); override;
   end;
 
   { TCRC32Hash class }
@@ -49,9 +58,9 @@ type
   private
     FCRC: longword;
   public
-    procedure Initialize; override;
+    procedure Start; override;
+    function  Finish: string; override;
     procedure Update(Data: PByte; Count: longint); override;
-    function Finalize: string; override;
   end;
 
   { TCRC64Hash class }
@@ -60,9 +69,9 @@ type
   private
     FCRC: qword;
   public
-    procedure Initialize; override;
+    procedure Start; override;
+    function  Finish: string; override;
     procedure Update(Data: PByte; Count: longint); override;
-    function Finalize: string; override;
   end;
 
   { TSHA1Hash class }
@@ -72,23 +81,45 @@ type
     FCTX: TSHA1Context;
     FDigest: TSHA1Digest;
   public
-    procedure Initialize; override;
+    procedure Start; override;
+    function  Finish: string; override;
     procedure Update(Data: PByte; Count: longint); override;
-    function Finalize: string; override;
   end;
 
-  THashAlgorithm = (haNone, haCRC32, haCRC64, haSHA1);
+  THashAlgorithm = (haNul, haCRC32, haCRC64, haSHA1);
 
 implementation
 
 uses
   Bee_Common;
 
+/// TNulHash class
+
+procedure TNulHash.Start;
+begin
+  // nothing to do
+end;
+
+function TNulHash.Finish: string;
+begin
+  Result := '';
+end;
+
+procedure TNulHash.Update(Data: PByte; Count: longint);
+begin
+  // nothing to do
+end;
+
 /// TCRC32Hash class
 
-procedure TCRC32Hash.Initialize;
+procedure TCRC32Hash.Start;
 begin
   FCRC := crc32(0, nil, 0);
+end;
+
+function TCRC32Hash.Finish: string;
+begin
+  Result := Hex(FCRC, SizeOf(FCRC));
 end;
 
 procedure TCRC32Hash.Update(Data: PByte; Count: longint);
@@ -96,16 +127,16 @@ begin
   FCRC := crc32(FCRC, Data, Count);
 end;
 
-function TCRC32Hash.Finalize: string;
-begin
-  Result := Hex(FCRC, SizeOf(FCRC));
-end;
-
 /// TCRC64Hash class
 
-procedure TCRC64Hash.Initialize;
+procedure TCRC64Hash.Start;
 begin
   FCRC := crc64(0, nil, 0);
+end;
+
+function TCRC64Hash.Finish: string;
+begin
+  Result := Hex(FCRC, SizeOf(FCRC));
 end;
 
 procedure TCRC64Hash.Update(Data: PByte; Count: longint);
@@ -113,29 +144,24 @@ begin
   FCRC := crc64(FCRC, Data, Count);
 end;
 
-function TCRC64Hash.Finalize: string;
-begin
-  Result := Hex(FCRC, SizeOf(FCRC));
-end;
-
 /// TSHA1Hash class
 
-procedure TSHA1Hash.Initialize;
+procedure TSHA1Hash.Start;
 begin
   SHA1Init(FCTX);
 end;
 
-procedure TSHA1Hash.Update(Data: PByte; Count: longint);
-begin
-  SHA1Update(FCTX, Data, Count);
-end;
-
-function TSHA1Hash.Finalize: string;
+function TSHA1Hash.Finish: string;
 var
   Digest: TSHA1Digest;
 begin
   SHA1Final(FCTX, Digest);
   Result := SHA1Print(Digest);
+end;
+
+procedure TSHA1Hash.Update(Data: PByte; Count: longint);
+begin
+  SHA1Update(FCTX, Data, Count);
 end;
 
 end.
