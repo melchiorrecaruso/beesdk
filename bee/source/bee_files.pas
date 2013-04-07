@@ -45,8 +45,6 @@ uses
   Bee_BufStream;
 
 type
-  TFileProgressEvent = procedure(Processed: longint) of object;
-
   TFileReaderRequestImageEvent = procedure(ImageNumber: longint;
      var ImageName: string; var Abort: boolean) of object;
 
@@ -107,18 +105,6 @@ type
     property Threshold: int64 read FThreshold;
     property CurrentImage: longint read FCurrentImage;
     property CurrentImageSize: int64 read FCurrentImageSize;
-  end;
-
-  { TNulWriter }
-
-  TNulWriter = class(TFileWriter)
-  private
-    FNulSize: int64;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    function Write(Data: PByte; Count: longint): longint;  override;
-    function Seek(const Offset: int64; Origin: longint): int64; override;
   end;
 
   { TCustomSearchRec }
@@ -262,20 +248,14 @@ end;
 
 function TFileReader.ReadInfArray: string;
 var
-  Arr: array of byte;
   ArrLen: longint;
+  Arr: TByteArray;
 begin
-  Result := ReadInfString;
-  Writeln(Result);
-  Exit;
-
   ArrLen := ReadInfWord;
   if ArrLen > 0 then
   begin
-    SetLength(Arr, ArrLen);
     Read(@Arr[0], ArrLen);
     Result := Hex(Arr, ArrLen);
-    SetLength(Arr, 0);
   end else
     Result := '';
 end;
@@ -386,25 +366,16 @@ end;
 
 procedure TFileWriter.WriteInfArray(const Data: string);
 var
-  Arr: array of byte;
   ArrLen: longint;
+  Arr: TByteArray;
 begin
-  WriteInfString(Data);
-  Writeln(Data);
-  Exit;
-
-
   ArrLen := Length(Data) div 2;
   WriteInfWord(ArrLen);
   if ArrLen > 0 then
-  begin
-    SetLength(Arr, ArrLen);
     if HexToData(Data, Arr, ArrLen) then
     begin
       Write(@Arr[0], ArrLen);
     end;
-    SetLength(Arr, 0);
-  end;
 end;
 
 function TFileWriter.GetImageName(Value: longint): string;
@@ -480,29 +451,6 @@ begin
       Inc(Result, I);
     until Result = Count;
   end;
-end;
-
-{ TNulWriter class }
-
-constructor TNulWriter.Create;
-begin
-  FNulSize := 0;
-end;
-
-destructor TNulWriter.Destroy;
-begin
-  // nothing to do
-end;
-
-function TNulWriter.Write(Data: PByte; Count: longint): longint;
-begin
-  Inc(FNulSize, Count);
-  Result := Count;
-end;
-
-function TNulWriter.Seek(const Offset: int64; Origin: longint): int64;
-begin
-  Result := FNulSize;
 end;
 
 { TCustomSearchRec class }

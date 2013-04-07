@@ -36,9 +36,9 @@ type
 
   TBaseCoder = class(TObject)
   private
-    FHandle: pointer;
+    FStream: pointer;
   public
-    constructor Create(Handle: pointer);
+    constructor Create(Stream: pointer);
     procedure SetCompressionLevel(Value: longint); virtual abstract;
     procedure SetCompressionLevelAux(Value: longint); virtual abstract;
     procedure SetCompressionFilter(const Value: string); virtual abstract;
@@ -83,7 +83,7 @@ type
 
   TBeeEncoder = class(TBeeCoder)
   public
-    constructor Create(Handle: pointer);
+    constructor Create(Stream: pointer);
     destructor Destroy; override;
 
     procedure Start; override;
@@ -93,7 +93,7 @@ type
 
   TBeeDecoder = class(TBeeCoder)
   public
-    constructor Create(Handle: pointer);
+    constructor Create(Stream: pointer);
     destructor Destroy; override;
 
     procedure Start; override;
@@ -107,33 +107,23 @@ implementation
 
 uses
   SysUtils,
+  Bee_BufStream,
   Bee_Common,
   Bee_Configuration,
   Bee_Interface,
   {$IFDEF cLib}
-    Bee_LibLink;
+  Bee_LibLink;
   {$ELSE}
-    Bee_Modeller;
+  Bee_Modeller;
   {$ENDIF}
 
-procedure DoFill(Handle: pointer; Data: PByte; Size: longint);
-{$IFDEF cLIB} cdecl; {$ENDIF}
-begin
-  FileRead(THandle(Handle^), Data, Size);
-end;
-
-procedure DoFlush(Handle: pointer; Data: PByte; Size: longint);
-{$IFDEF cLIB} cdecl; {$ENDIF}
-begin
-  FileWrite(THandle(Handle^), Data, Size);
-end;
 
 /// TBaseCoder abstract class
 
-constructor TBaseCoder.Create(Handle: pointer);
+constructor TBaseCoder.Create(Stream: pointer);
 begin
   inherited Create;
-  FHandle := Handle;
+  FStream := Stream;
 end;
 
 /// TStoreCoder class
@@ -175,12 +165,12 @@ end;
 
 function TStoreCoder.Encode(Data: PByte; Count: longint): longint;
 begin
-  Result := FileWrite(THandle(FHandle^), Data, Count);
+  Result := TBufStream(FStream).Write(Data, Count);
 end;
 
 function TStoreCoder.Decode(Data: PByte; Count: longint): longint;
 begin
-  Result := FileRead(THandle(FHandle^), Data, Count);
+  Result := TBufStream(FStream).Read(Data, Count);
 end;
 
 /// TBeeCoder class
@@ -220,10 +210,10 @@ end;
 
 /// TBeeEncoder class
 
-constructor TBeeEncoder.Create(Handle: pointer);
+constructor TBeeEncoder.Create(Stream: pointer);
 begin
-  inherited Create(Handle);
-  FCoder    := RangeEncoder_Create(Handle, @DoFlush);
+  inherited Create(Stream);
+  FCoder    := RangeEncoder_Create(Stream, @DoFlush);
   FModeller := BaseCoder_Create(FCoder);
 end;
 
@@ -251,10 +241,10 @@ end;
 
 /// TBeeDecoder class
 
-constructor TBeeDecoder.Create(Handle: pointer);
+constructor TBeeDecoder.Create(Stream: pointer);
 begin
-  inherited Create(Handle);
-  FCoder    := RangeDecoder_Create(Handle, @DoFill);
+  inherited Create(Stream);
+  FCoder    := RangeDecoder_Create(Stream, @DoFill);
   FModeller := BaseCoder_Create(FCoder);
 end;
 

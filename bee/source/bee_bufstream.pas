@@ -50,7 +50,6 @@ type
     FCipher: TBaseCipher;
     FCipherStarted: boolean;
     FCoder: TBaseCoder;
-    FCoderStarted: boolean;
   public
     constructor Create(Handle: THandle);
     destructor Destroy; override;
@@ -65,7 +64,7 @@ type
     procedure FinishCipher;
 
     procedure StartCoder(Algorithm: TCoderAlgorithm); virtual abstract;
-    procedure FinishCoder; virtual;
+    procedure FinishCoder; virtual abstract;
     procedure SetCompressionLevel(Value: longint);
     procedure SetCompressionLevelAux(Value: longint);
     procedure SetCompressionFilter(const Value: string);
@@ -114,11 +113,33 @@ type
     function Encode(Data: PByte; Count: longint): longint;
   end;
 
+  { TNulBufStream }
+
+  TNulBufStream = class(TWriteBufStream)
+  public
+    constructor Create;
+    function Write(Data: PByte; Count: longint): longint;  override;
+    function Seek(const Offset: int64; Origin: longint): int64; override;
+  end;
+
+  function DoFill (Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF cLIB} cdecl; {$ENDIF}
+  function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF cLIB} cdecl; {$ENDIF}
+
 implementation
 
 uses
-  SysUtils,
-  Math;
+  Math,
+  SysUtils;
+
+function DoFill(Stream: pointer; Data: PByte; Size: longint): longint;
+begin
+  Result := TBufStream(Stream).Read(Data, Size);
+end;
+
+function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint;
+begin
+  Result := TBufStream(Stream).Write(Data, Size);
+end;
 
 /// TBufStream abstract class
 
@@ -130,8 +151,7 @@ begin
   FHashStarted   := FALSE;
   FCipher        := TNulCipher.Create;
   FCipherStarted := FALSE;
-  FCoder         := TStoreCoder.Create(@FHandle);
-  FCoderStarted  := FALSE;
+  FCoder         := TStoreCoder.Create(Self);
 end;
 
 destructor TBufStream.Destroy;
@@ -174,10 +194,10 @@ begin
     haSHA1:  FHash := TSHA1Hash.Create;
     haCRC64: FHash := TCRC64Hash.Create;
     haCRC32: FHash := TCRC32Hash.Create;
-    else     FHash := TNulHash.Create;
+    haNul:   FHash := TNulHash.Create;
   end;
   FHash.Start;
-  FHashStarted := TRUE;
+  FHashStarted := Algorithm <> haNul;
 end;
 
 function TBufStream.FinishHash: string;
@@ -194,7 +214,7 @@ begin
   FreeAndNil(FCipher);
   case Algorithm of
     caBlowFish: TBlowFishCipher.Create(Key);
-    else        TNulCipher.Create;
+    caNul:      TNulCipher.Create;
   end;
   FCipherStarted := Algorithm <> caNul;
 end;
@@ -202,11 +222,6 @@ end;
 procedure TBufStream.FinishCipher;
 begin
   FCipherStarted := FALSE;
-end;
-
-procedure TBufStream.FinishCoder;
-begin
-  FCoder.Finish;
 end;
 
 /// TReadBufStream class
@@ -229,8 +244,8 @@ begin
   FBufferSize  := FileRead(FHandle, FBuffer[0], SizeOf(FBuffer));
   if FBufferSize > -1 then
   begin
-    if FCipherStarted then
-      FCipher.Decrypt(FBuffer, FBufferSize);
+    // if FCipherStarted then
+    //   FCipher.Decrypt(FBuffer, FBufferSize);
   end else
   begin
     SetExitStatus(esFillStreamError);
@@ -287,13 +302,11 @@ begin
     end;
 
   FCoder.Start;
-  FCoderStarted := TRUE;
 end;
 
 procedure TReadBufStream.FinishCoder;
 begin
-  inherited FinishCoder;
-  FCoderStarted := FALSE;
+  FCoder.Finish;
 end;
 
 function TReadBufStream.Decode(Data: PByte; Count: longint): longint;
@@ -316,10 +329,10 @@ end;
 
 procedure TWriteBufStream.FlushBuffer;
 begin
-  if FBufferIndex <> 0 then
+  if FBufferIndex > 0 then
   begin
-    if Assigned(FCipher) then
-      FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
+    //if Assigned(FCipher) then
+    //  FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
 
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
       SetExitStatus(esFlushStreamError);
@@ -346,7 +359,7 @@ begin
   until Result = Count;
 
   if FHashStarted then
-    FHash.Update(Data, Count);
+    FHash.Update(Data, Result);
 end;
 
 function TWriteBufStream.Seek(const Offset: int64; Origin: longint): int64;
@@ -375,18 +388,35 @@ begin
     end;
 
   FCoder.Start;
-  FCoderStarted := TRUE;
 end;
 
 procedure TWriteBufStream.FinishCoder;
 begin
-  inherited FinishCoder;
-  FCoderStarted := FALSE;
+  FCoder.Finish;
 end;
 
 function TWriteBufStream.Encode(Data: PByte; Count: longint): longint;
 begin
   Result := FCoder.Encode(Data, Count);
+end;
+
+{ TNulBufStream class }
+
+constructor TNulBufStream.Create;
+begin
+  inherited Create(THandle(-1));
+end;
+
+function TNulBufStream.Write(Data: PByte; Count: longint): longint;
+begin
+  Result := Count;
+  if FHashStarted then
+    FHash.Update(Data, Count);
+end;
+
+function TNulBufStream.Seek(const Offset: int64; Origin: longint): int64;
+begin
+  Result := 0;
 end;
 
 end.
