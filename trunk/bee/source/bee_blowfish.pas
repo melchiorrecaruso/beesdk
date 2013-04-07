@@ -46,6 +46,14 @@ type
     function Decrypt(const Data: TBuffer; Count: longint): longint; virtual; abstract;
   end;
 
+  { NulCipher class }
+
+  TNulCipher = class(TBaseCipher)
+  public
+    function Encrypt(const Data: TBuffer; Count: longint): longint; override;
+    function Decrypt(const Data: TBuffer; Count: longint): longint; override;
+  end;
+
   { TBlowFishCipher class }
 
   TBlowFishCipher = class(TBaseCipher)
@@ -58,12 +66,24 @@ type
     function Decrypt(const Data: TBuffer; Count: longint): longint; override;
   end;
 
-  TCipherAlgorithm = (caNone, caBlowFish);
+  TCipherAlgorithm = (caNul, caBlowFish);
 
 implementation
 
 uses
   Math;
+
+/// TNulCipher class
+
+function TNulCipher.Encrypt(const Data: TBuffer; Count: longint): longint;
+begin
+  Result := Count;
+end;
+
+function TNulCipher.Decrypt(const Data: TBuffer; Count: longint): longint;
+begin
+  Result := Count;
+end;
 
 /// TBlowFishCipher class
 
@@ -71,7 +91,7 @@ constructor TBlowFishCipher.Create(const Key: string);
 var
   I: longint;
   K: TBlowFishKey;
-  KLEn: longint;
+  KLen: longint;
 begin
   inherited Create;
   KLen := Min(Length(Key), Length(K));
@@ -103,7 +123,7 @@ end;
 
 function TBlowFishCipher.Decrypt(const Data: TBuffer; Count: longint): longint;
 var
-  Block : ^TBFBlock;
+  Block: ^TBFBlock;
 begin
   Result := 0;
   while Result < Count do

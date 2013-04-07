@@ -286,7 +286,7 @@ begin
   Delete(S, 1, 3);
   FcpOption := FcpOption + '|' + LowerCase(S) + '|';
   while Pos('||', FcpOption) > 0 do
-    Delete(FcpOption, Pos('||', FcpOption), 1);
+    Delete(FcpOption, Pos('|', FcpOption), 1);
 
   if Command in [cAdd] then
   begin
