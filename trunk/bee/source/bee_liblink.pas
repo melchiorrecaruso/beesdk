@@ -46,8 +46,8 @@ interface
 {$link beelib.c\obj\release\beelib_stream.o}
 
 type
-  TStreamRead  = function(Handle: pointer; Data: PByte; Count: longint): longint;
-  TStreamWrite = function(Handle: pointer; Data: PByte; Count: longint): longint;
+  TStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
+  TStreamWrite = function(Stream: pointer; Data: PByte; Count: longint): longint;
 
 function  RangeEncoder_Create(aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
 

@@ -79,7 +79,6 @@ type
   TSHA1Hash = class(TBaseHash)
   private
     FCTX: TSHA1Context;
-    FDigest: TSHA1Digest;
   public
     procedure Start; override;
     function  Finish: string; override;
@@ -156,12 +155,12 @@ var
   Digest: TSHA1Digest;
 begin
   SHA1Final(FCTX, Digest);
-  Result := SHA1Print(Digest);
+  Result := UpCase(SHA1Print(Digest));
 end;
 
 procedure TSHA1Hash.Update(Data: PByte; Count: longint);
 begin
-  SHA1Update(FCTX, Data, Count);
+  SHA1Update(FCTX, Data[0], Count);
 end;
 
 end.

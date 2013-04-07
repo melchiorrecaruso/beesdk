@@ -32,9 +32,6 @@ unit BeeSDK_Archive;
 interface
 
 uses
-  Sha1,
-  Crc,
-
   Classes,
   SysUtils,
 
@@ -387,6 +384,7 @@ implementation
 
 uses
   Math,
+  Bee_BufStream,
   Bee_Assembler,
   Bee_Interface;
 
@@ -503,7 +501,7 @@ end;
 
 function GetCheckMethod(const Params: string): THashAlgorithm;
 begin
-  Result := haCrc32;
+  Result := haCRC32;
 end;
 
 //
@@ -1197,9 +1195,9 @@ var
   Buffer: TBuffer;
   Stream: TFileReader;
 begin
-  Stream := TFileReader.Create(Item.FExternalFileName, FOnRequestImage);
-  Item.FDiskNumber := FTempWriter.CurrentImage;
+  Stream := TFileReader.Create(Item.FExternalFileName, nil);
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
+  Item.FDiskNumber := FTempWriter.CurrentImage;
 
        Stream.StartHash  (Item.CheckMethod);
        Stream.StartCipher(caNul, '');
@@ -1284,11 +1282,11 @@ procedure TArchiver.DecodeToNul(Item: TArchiveItem);
 var
   Count: int64;
   Buffer: TBuffer;
-  Stream: TFileWriter;
+  Stream: TNulBufStream;
 begin
-  Stream := TNulWriter.Create;
+  Stream := TNulBufStream.Create;
 
-  FArchiveReader.Seek       (Item.FDiskNumber, Item.FDiskSeek);
+  FArchiveReader.Seek       (Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
   FArchiveReader.StartHash  (Item.CheckMethod);
   FArchiveReader.StartCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
   FArchiveReader.StartCoder (Item.CompressionMethod);
@@ -1304,9 +1302,9 @@ begin
   Count := Item.FUncompressedSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
   begin
-    FArchiveReader.Decode(@Buffer[0], SizeOf(Buffer));
-            Stream.Write (@Buffer[0], SizeOf(Buffer));
-    DoProgress(SizeOf(Buffer));
+    FArchiveReader.Decode(@Buffer[0], SizeOF(Buffer));
+             Stream.Write(@Buffer[0], SizeOF(Buffer));
+    DoProgress(SizeOF(Buffer));
     Dec(Count);
   end;
   Count := Item.FUncompressedSize mod SizeOf(Buffer);
@@ -1314,15 +1312,10 @@ begin
   begin
     FArchiveReader.Decode(@Buffer[0], Count);
             Stream.Write (@Buffer[0], Count);
-    FArchiveReader.FinishCoder;
     DoProgress(Count);
   end;
   FArchiveReader.FinishCoder;
   FArchiveReader.FinishCipher;
-
-
-  Writeln(FArchiveReader.FinishHash);
-  Writeln(        Stream.FinishHash);
 
   if (Item.FCheckDigestAux <> FArchiveReader.FinishHash) then SetExitStatus(esCrcError);
   if (Item.FCheckDigest    <>         Stream.FinishHash) then SetExitStatus(esCrcError);
