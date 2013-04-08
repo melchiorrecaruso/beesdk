@@ -287,7 +287,7 @@ end;
 procedure TCommandLine.ProcessCPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FcpOption := FcpOption + ':' + LowerCase(S) + ':';
+  FcpOption := FcpOption + ':' + UpperCase(S) + ':';
   while Pos('::', FcpOption) > 0 do
     Delete(FcpOption, Pos(':', FcpOption), 1);
 
@@ -302,7 +302,7 @@ end;
 procedure TCommandLine.ProcessCKPOption(var S: string);
 begin
   Delete(S, 1, 4);
-  FckpOption := FckpOption + ':' + LowerCase(S) + ':';
+  FckpOption := FckpOption + ':' + UpperCase(S) + ':';
   while Pos('::', FckpOption) > 0 do
     Delete(FckpOption, Pos(':', FckpOption), 1);
 
@@ -317,7 +317,7 @@ end;
 procedure TCommandLine.ProcessEPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FepOption := FepOption + ':' + LowerCase(S) + ':';
+  FepOption := FepOption + ':' + UpperCase(S) + ':';
   while Pos('::', FepOption) > 0 do
     Delete(FepOption, Pos('::', FepOption), 1);
 
