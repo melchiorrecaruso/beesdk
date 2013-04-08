@@ -73,9 +73,9 @@ type
   // TCommandLineOptions
 
   TCommandLineOption = (
-    clcOption, clcdOption,  clcpOption,  clepOption, clppOption,
-    clrOption, clsfxOption, clslsOption, clssOption, cltOption,
-    cluOption, clvOption,   clwdOption,  clxOption, clyOption);
+    clcOption, clcdOption,  clcpOption,  clckpOption, clepOption, clppOption,
+    clrOption, clsfxOption, clslsOption, clssOption,  cltOption,  cluOption,
+    clvOption, clwdOption,  clxOption,   clyOption);
 
   TCommandLineOptions = set of TCommandLineOption;
 
@@ -88,6 +88,7 @@ type
     FacOption: string;
     FcdOption: string;
     FcpOption: string;
+    FckpOption: string;
     FepOption: string;
     FppOption: TProcessPriority;
     FrOption: TRecursiveMethod;
@@ -105,6 +106,7 @@ type
     procedure ProcessCommand(const S: string);
     procedure ProcessACOption (var S: string);
     procedure ProcessCDOption (var S: string);
+    procedure ProcessCKPOption(var S: string);
     procedure ProcessCPOption (var S: string);
     procedure ProcessEPOption (var S: string);
     procedure ProcessPPOption (var S: string);
@@ -130,6 +132,7 @@ type
     property acOption: string read FacOption;
     property cdOption: string read FcdOption;
     property cpOption: string read FcpOption;
+    property ckpOption: string read FckpOption;
     property epOption: string read FepOption;
     property ppOption: TProcessPriority read FppOption;
     property rOption: TRecursiveMethod read FrOption;
@@ -161,10 +164,10 @@ begin
   if UpCase(S) = 'UPDATE'         then Result := 1 else
   if UpCase(S) = 'REPLACE'        then Result := 2 else
   if UpCase(S) = 'QUERY'          then Result := 3 else
-  if UpCase(S) = 'ADD|UPDATE'     then Result := 4 else
-  if UpCase(S) = 'ADD|REPLACE'    then Result := 5 else
-  if UpCase(S) = 'ADD|QUERY'      then Result := 6 else
-  if UpCase(S) = 'ADD|AUTORENAME' then Result := 7 else Result := -1;
+  if UpCase(S) = 'ADD:UPDATE'     then Result := 4 else
+  if UpCase(S) = 'ADD:REPLACE'    then Result := 5 else
+  if UpCase(S) = 'ADD:QUERY'      then Result := 6 else
+  if UpCase(S) = 'ADD:AUTORENAME' then Result := 7 else Result := -1;
 end;
 
 function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
@@ -284,9 +287,9 @@ end;
 procedure TCommandLine.ProcessCPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FcpOption := FcpOption + '|' + LowerCase(S) + '|';
-  while Pos('||', FcpOption) > 0 do
-    Delete(FcpOption, Pos('|', FcpOption), 1);
+  FcpOption := FcpOption + ':' + LowerCase(S) + ':';
+  while Pos('::', FcpOption) > 0 do
+    Delete(FcpOption, Pos(':', FcpOption), 1);
 
   if Command in [cAdd] then
   begin
@@ -296,12 +299,27 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
+procedure TCommandLine.ProcessCKPOption(var S: string);
+begin
+  Delete(S, 1, 4);
+  FckpOption := FckpOption + ':' + LowerCase(S) + ':';
+  while Pos('::', FckpOption) > 0 do
+    Delete(FckpOption, Pos(':', FckpOption), 1);
+
+  if Command in [cAdd] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, clckpOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
 procedure TCommandLine.ProcessEPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FepOption := FepOption + '|' + LowerCase(S) + '|';
-  while Pos('||', FepOption) > 0 do
-    Delete(FepOption, Pos('||', FepOption), 1);
+  FepOption := FepOption + ':' + LowerCase(S) + ':';
+  while Pos('::', FepOption) > 0 do
+    Delete(FepOption, Pos('::', FepOption), 1);
 
   if Command in [cAdd] then
   begin

@@ -90,6 +90,7 @@ type
     addfDiskSeek,
     addfCheckMethod,
     addfCheckDigest,
+    addfCheckMethodAux,
     addfCheckDigestAux);
 
   TArchiveDataDescriptorFlags = set of TArchiveDataDescriptorFlag;
@@ -132,6 +133,7 @@ type
     FDiskSeek: int64;
     FCheckMethod: THashAlgorithm;
     FCheckDigest: string;
+    FCheckMethodAux: THashAlgorithm;
     FCheckDigestAux: string;
     // compression property
     FCompressionFlags: TArchiveCompressionFlags;
@@ -169,6 +171,7 @@ type
     property DiskSeek: int64 read FDiskSeek;
     property CheckMethod: THashAlgorithm read FCheckMethod;
     property CheckDigest: string read FCheckDigest;
+    property CheckMethodAux: THashAlgorithm read FCheckMethodAux;
     property CheckDigestAux: string read FCheckDigestAux;
     // compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
@@ -374,7 +377,7 @@ type
     property LastModifiedTime: longint read GetLastModifiedTime;
   end;
 
-function CompressionMethodToStr(Item: TArchiveItem): string;
+function CoderAlgorithmToStr(Item: TArchiveItem): string;
 function VersionToStr(Version: longword): string;
 function RatioToStr(const PackedSize, Size: int64): string;
 function SizeToStr(const Size: int64): string;
@@ -388,72 +391,70 @@ uses
   Bee_Assembler,
   Bee_Interface;
 
-//
+// ---
 
-function GetCompressionMethod(Params: string): TCoderAlgorithm;
+function GetCoderAlgorithm(Params: string): TCoderAlgorithm;
 begin
-  if Pos('|m=0|', Params) > 0 then Result := caStore else
-  if Pos('|m=1|', Params) > 0 then Result := caBee   else Result := caBee;
+  if Pos(':STORE:', Params) > 0 then Result := caStore else
+  if Pos(':BEE:',   Params) > 0 then Result := caBee   else Result := caBee;
 end;
 
-function GetCompressionBlock(const Params: string): int64;
+function GetCoderBlock(const Params: string): int64;
 begin
-  if Pos('|s=0|',  Params) > 0 then Result := 0            else
-  if Pos('|s=1|',  Params) > 0 then Result := $100000      else
-  if Pos('|s=2|',  Params) > 0 then Result := $200000      else
-  if Pos('|s=3|',  Params) > 0 then Result := $400000      else
-  if Pos('|s=4|',  Params) > 0 then Result := $800000      else
-  if Pos('|s=5|',  Params) > 0 then Result := $1000000     else
-  if Pos('|s=6|',  Params) > 0 then Result := $2000000     else
-  if Pos('|s=7|',  Params) > 0 then Result := $4000000     else
-  if Pos('|s=8|',  Params) > 0 then Result := $8000000     else
-  if Pos('|s=9|',  Params) > 0 then Result := $10000000    else
-  if Pos('|s=10|', Params) > 0 then Result := $20000000    else
-  if Pos('|s=11|', Params) > 0 then Result := $40000000    else
-  if Pos('|s=12|', Params) > 0 then Result := $80000000    else
-  if Pos('|s=13|', Params) > 0 then Result := $100000000   else
-  if Pos('|s=14|', Params) > 0 then Result := $200000000   else
-  if Pos('|s=15|', Params) > 0 then Result := $400000000   else
-  if Pos('|s=16|', Params) > 0 then Result := $800000000   else
-  if Pos('|s=17|', Params) > 0 then Result := $1000000000  else
-  if Pos('|s=18|', Params) > 0 then Result := $2000000000  else
-  if Pos('|s=19|', Params) > 0 then Result := $4000000000  else
-  if Pos('|s=20|', Params) > 0 then Result := $8000000000  else
-  if Pos('|s=21|', Params) > 0 then Result := $10000000000 else
-  if Pos('|s=22|', Params) > 0 then Result := $20000000000 else Result := 0;
+  if Pos(':B1mb:',   Params) > 0 then Result := $100000      else
+  if Pos(':B2mb:',   Params) > 0 then Result := $200000      else
+  if Pos(':B4mb:',   Params) > 0 then Result := $400000      else
+  if Pos(':B8mb:',   Params) > 0 then Result := $800000      else
+  if Pos(':B16mb:',  Params) > 0 then Result := $1000000     else
+  if Pos(':B32mb:',  Params) > 0 then Result := $2000000     else
+  if Pos(':B64mb:',  Params) > 0 then Result := $4000000     else
+  if Pos(':B128mb:', Params) > 0 then Result := $8000000     else
+  if Pos(':B256mb:', Params) > 0 then Result := $10000000    else
+  if Pos(':B512mb:', Params) > 0 then Result := $20000000    else
+  if Pos(':B1gb:',   Params) > 0 then Result := $40000000    else
+  if Pos(':B2gb:',   Params) > 0 then Result := $80000000    else
+  if Pos(':B4gb:',   Params) > 0 then Result := $100000000   else
+  if Pos(':B8gb:',   Params) > 0 then Result := $200000000   else
+  if Pos(':B16gb:',  Params) > 0 then Result := $400000000   else
+  if Pos(':B32gb:',  Params) > 0 then Result := $800000000   else
+  if Pos(':B64gb:',  Params) > 0 then Result := $1000000000  else
+  if Pos(':B128gb:', Params) > 0 then Result := $2000000000  else
+  if Pos(':B256GB:', Params) > 0 then Result := $4000000000  else
+  if Pos(':B512GB:', Params) > 0 then Result := $8000000000  else
+  if Pos(':B1TB:',   Params) > 0 then Result := $10000000000 else Result := 0;
 end;
 
-function GetCompressionLevel(const Params: string): longint;
+function GetCoderLevel(const Params: string): longint;
 begin
-  if Pos('|l=1|', Params) > 0 then Result := 1 else
-  if Pos('|l=2|', Params) > 0 then Result := 2 else
-  if Pos('|l=3|', Params) > 0 then Result := 3 else Result := 1;
+  if Pos(':L1:', Params) > 0 then Result := 1 else
+  if Pos(':L2:', Params) > 0 then Result := 2 else
+  if Pos(':L3:', Params) > 0 then Result := 3 else Result := 1;
 end;
 
-function GetCompressionLevelAux(const Params: string): longint;
+function GetCoderLevelAux(const Params: string): longint;
 begin
-  if Pos('|d=0|', Params) > 0 then Result := 0 else
-  if Pos('|d=1|', Params) > 0 then Result := 1 else
-  if Pos('|d=2|', Params) > 0 then Result := 2 else
-  if Pos('|d=3|', Params) > 0 then Result := 3 else
-  if Pos('|d=4|', Params) > 0 then Result := 4 else
-  if Pos('|d=5|', Params) > 0 then Result := 5 else
-  if Pos('|d=6|', Params) > 0 then Result := 6 else
-  if Pos('|d=7|', Params) > 0 then Result := 7 else
-  if Pos('|d=8|', Params) > 0 then Result := 8 else
-  if Pos('|d=9|', Params) > 0 then Result := 9 else Result := 3;
+  if Pos(':LA0:', Params) > 0 then Result := 0 else
+  if Pos(':LA1:', Params) > 0 then Result := 1 else
+  if Pos(':LA2:', Params) > 0 then Result := 2 else
+  if Pos(':LA3:', Params) > 0 then Result := 3 else
+  if Pos(':LA4:', Params) > 0 then Result := 4 else
+  if Pos(':LA5:', Params) > 0 then Result := 5 else
+  if Pos(':LA6:', Params) > 0 then Result := 6 else
+  if Pos(':LA7:', Params) > 0 then Result := 7 else
+  if Pos(':LA8:', Params) > 0 then Result := 8 else
+  if Pos(':LA9:', Params) > 0 then Result := 9 else Result := 3;
 end;
 
-function GetForceFileExtension(const Params: string): string;
+function GetCoderFilterExt(const Params: string): string;
 var
   I: longint;
 begin
   Result := '';
-  if Pos('|f=', Params) > 0 then
+  if Pos(':f=', Params) > 0 then
   begin
-    for I := Pos('|f=', Params) + 3 to Length(Params) do
+    for I := Pos(':f=', Params) + 3 to Length(Params) do
     begin
-      if Params[I] <> '|' then
+      if Params[I] <> ':' then
         Result := Result + Params[I]
       else
         Break;
@@ -463,15 +464,15 @@ begin
   end;
 end;
 
-function GetConfigurationFileName(const Params: string): string;
+function GetCoderConfiguration(const Params: string): string;
 var
   I: longint;
 begin
   Result := '';
-  if Pos('|cfg=', Params) > 0 then
-    for I := Pos('|cfg=', Params) + 5 to Length(Params) do
+  if Pos(':c=', Params) > 0 then
+    for I := Pos(':c=', Params) + 3 to Length(Params) do
     begin
-      if Params[I] <> '|' then
+      if Params[I] <> ':' then
         Result := Result + Params[I]
       else
         Break;
@@ -488,23 +489,46 @@ begin
   end;
 end;
 
-function GetEncryptionMethod(const Params: string): TCipherAlgorithm;
+function GetCipherAlgorithm(const Params: string): TCipherAlgorithm;
 begin
-  if Pos('|m=0|', Params) > 0 then Result := caNul      else
-  if Pos('|m=1|', Params) > 0 then Result := caBlowFish else Result := caNul;
+  if Pos(':a=none:',     Params) > 0 then Result := caNul      else
+  if Pos(':a=blowfish:', Params) > 0 then Result := caBlowFish else Result := caNul;
 end;
 
-function GetEncryptionKey(const Params: string): string;
+function GetCipherKey(const Params: string): string;
+var
+  I: longint;
 begin
-  Result := '12345678';
+  Result := '';
+  if Pos(':k=', Params) > 0 then
+  begin
+    for I := Pos(':k=', Params) + 3 to Length(Params) do
+    begin
+      if Params[I] <> ':' then
+        Result := Result + Params[I]
+      else
+        Break;
+    end;
+  end;
 end;
 
-function GetCheckMethod(const Params: string): THashAlgorithm;
+function GetHashAlgorithm(const Params: string): THashAlgorithm;
 begin
-  Result := haCRC32;
+  if Pos(':a=none:',  Params) > 0 then Result := haNul   else
+  if Pos(':a=crc32:', Params) > 0 then Result := haCRC32 else
+  if Pos(':a=crc64:', Params) > 0 then Result := haCRC64 else
+  if Pos(':a=sha1:',  Params) > 0 then Result := haSha1  else Result := haCRC32;
 end;
 
-//
+function GetHashAlgorithmAux(const Params: string): THashAlgorithm;
+begin
+  if Pos(':aa=none:',  Params) > 0 then Result := haNul   else
+  if Pos(':aa=crc32:', Params) > 0 then Result := haCRC32 else
+  if Pos(':aa=crc64:', Params) > 0 then Result := haCRC64 else
+  if Pos(':aa=sha1:',  Params) > 0 then Result := haSha1  else Result := haCRC32;
+end;
+
+// ---
 
 function GetVersionNeededToRead(Item: TArchiveItem): longword; overload;
 begin
@@ -521,21 +545,23 @@ begin
   Result := 80;
 end;
 
-function CompressionMethodToStr(Item: TArchiveItem): string;
-begin
-  Result := 'm0 ';
-  if Item.CompressionMethod <> caStore then
-  begin
-    if Item.CompressionBlock <> 0 then
-    begin
-      Result[1] := 's';
-    end;
-    Result[2] := char(byte('1') + Item.FCompressionLevel   );
-    Result[3] := char(byte('a') + Item.FCompressionLevelAux);
-  end;
-end;
+// ---
 
-//
+function CoderAlgorithmToStr(Item: TArchiveItem): string;
+begin
+  case Item.CompressionMethod of
+    caStore: Result := 'STORE';
+    caBee:   Result := 'BEE';
+  end;
+
+  Result := Result + ':L'  + IntToStr(Item.CompressionLevel);
+  Result := Result + ':LA' + IntToStr(Item.CompressionLevelAux);
+
+  if Item.CompressionBlock <> 0 then
+    Result := Result + ':SOLID'
+  else
+    Result := Result + ':MASTER';
+end;
 
 function VersionToStr(Version: longword): string;
 begin
@@ -598,12 +624,14 @@ begin
     addfDiskSeek,
     addfCheckMethod,
     addfCheckDigest,
+    addfCheckMethodAux,
     addfCheckDigestAux];
   FCompressedSize       := 0;
   FDiskNumber           := 0;
   FDiskSeek             := 0;
   FCheckMethod          := haNul;
   FCheckDigest          := '';
+  FCheckMethodAux       := haNul;
   FCheckDigestAux       := '';
   /// compression property ///
   FCompressionFlags     := [];
@@ -650,6 +678,7 @@ begin
   if (addfDiskSeek       in FDataDescriptorFlags) then FDiskSeek       := Stream.ReadInfWord;
   if (addfCheckMethod    in FDataDescriptorFlags) then FCheckMethod    := THashAlgorithm(Stream.ReadInfWord);
   if (addfCheckDigest    in FDataDescriptorFlags) then FCheckDigest    := Stream.ReadInfArray;
+  if (addfCheckMethodAux in FDataDescriptorFlags) then FCheckMethodAux := THashAlgorithm(Stream.ReadInfWord);
   if (addfCheckDigestAux in FDataDescriptorFlags) then FCheckDigestAux := Stream.ReadInfArray;
   /// compression property ///
   FCompressionFlags := TArchiveCompressionFlags(longword(Stream.ReadInfWord));
@@ -681,6 +710,7 @@ begin
   if (addfDiskSeek       in FDataDescriptorFlags) then Stream.WriteInfWord(FDiskSeek);
   if (addfCheckMethod    in FDataDescriptorFlags) then Stream.WriteInfWord(Ord(FCheckMethod));
   if (addfCheckDigest    in FDataDescriptorFlags) then Stream.WriteInfArray(FCheckDigest);
+  if (addfCheckMethodAux in FDataDescriptorFlags) then Stream.WriteInfWord(Ord(FCheckMethodAux));
   if (addfCheckDigestAux in FDataDescriptorFlags) then Stream.WriteInfArray(FCheckDigestAux);
   /// compression property ///
   Stream.WriteInfWord(longword(FCompressionFlags));
@@ -853,6 +883,7 @@ begin
       if CurrentItem.FDiskseek            = PreviusItem.FDiskSeek       then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, addfDiskSeek);
       if CurrentItem.FCheckMethod         = PreviusItem.FCheckMethod    then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethod)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethod);
       if CurrentItem.FCheckDigest         = PreviusItem.FCheckDigest    then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigest)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigest);
+      if CurrentItem.FCheckMethodAux      = PreviusItem.FCheckMethodAux then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux);
       if CurrentItem.FCheckDigestAux      = PreviusItem.FCheckDigestAux then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux);
       /// compression property ///
       if CurrentItem.FCompressionMethod    = PreviusItem.FCompressionMethod    then Exclude(CurrentItem.FCompressionFlags, acfCompressionMethod)    else Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
@@ -893,6 +924,7 @@ begin
       if not(addfDiskSeek       in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskSeek       := PreviusItem.FDiskSeek;
       if not(addfCheckMethod    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckMethod    := PreviusItem.FCheckMethod;
       if not(addfCheckDigest    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckDigest    := PreviusItem.FCheckDigest;
+      if not(addfCheckMethodAux in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckMethodAux := PreviusItem.FCheckMethodAux;
       if not(addfCheckDigestAux in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckDigestAux := PreviusItem.FCheckDigestAux;
       /// compression property ///
       if not(acfCompressionMethod    in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionMethod    := PreviusItem.FCompressionMethod;
@@ -1159,11 +1191,11 @@ begin
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
 
   FSwapReader.StartHash  (Item.CheckMethod);
-  FSwapReader.StartCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FSwapReader.StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
   FSwapReader.StartCoder (caStore);
 
   FTempWriter.StartHash  (Item.CheckMethod);
-  FTempWriter.StartCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FTempWriter.StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
   FTempWriter.StartCoder (Item.CompressionMethod);
   FTempWriter.SetCompressionLevel    (Item.CompressionLevel);
   FTempWriter.SetCompressionLevelAux (Item.CompressionLevelAux);
@@ -1203,9 +1235,9 @@ begin
        Stream.StartCipher(caNul, '');
        Stream.StartCoder (caStore);
 
-  FTempWriter.StartHash  (Item.CheckMethod);
-  FTempWriter.StartCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
-  FTempWriter.StartCoder (Item.CompressionMethod);
+  FTempWriter.StartHash              (Item.CheckMethodAux);
+  FTempWriter.StartCipher            (Item.EncryptionMethod, GetCipherKey(EncryptionParams));
+  FTempWriter.StartCoder             (Item.CompressionMethod);
   FTempWriter.SetCompressionLevel    (Item.CompressionLevel);
   FTempWriter.SetCompressionLevelAux (Item.CompressionLevelAux);
   FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
@@ -1248,7 +1280,7 @@ begin
   Item.FDiskSeek   := FSwapWriter.Seek(0, fsFromCurrent);
 
   FArchiveReader.StartHash  (Item.CheckMethod);
-  FArchiveReader.StartCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FArchiveReader.StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
   FArchiveReader.StartCoder (Item.CompressionMethod);
   FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
   FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
@@ -1257,7 +1289,7 @@ begin
   FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
 
   FSwapWriter   .StartHash  (Item.CheckMethod);
-  FSwapWriter   .StartCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FSwapWriter   .StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
   FSwapWriter   .StartCoder (caStore);
 
   Count := Item.FUncompressedSize div SizeOf(Buffer);
@@ -1285,16 +1317,16 @@ var
   Stream: TNulBufStream;
 begin
   Stream := TNulBufStream.Create;
-
-  FArchiveReader.Seek       (Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
-  FArchiveReader.StartHash  (Item.CheckMethod);
-  FArchiveReader.StartCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
-  FArchiveReader.StartCoder (Item.CompressionMethod);
+  FArchiveReader.Seek                   (Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
+  FArchiveReader.StartHash              (haNul);
+  FArchiveReader.StartCipher            (Item.EncryptionMethod, GetCipherKey(EncryptionParams));
+  FArchiveReader.StartCoder             (Item.CompressionMethod);
   FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
   FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
   FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
   FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
   FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
+
           Stream.StartHash  (Item.CheckMethod);
           Stream.StartCipher(caNul, '');
           Stream.StartCoder (caStore);
@@ -1303,7 +1335,7 @@ begin
   while (Count <> 0) and (ExitStatus = esNoError) do
   begin
     FArchiveReader.Decode(@Buffer[0], SizeOF(Buffer));
-             Stream.Write(@Buffer[0], SizeOF(Buffer));
+            Stream.Write (@Buffer[0], SizeOF(Buffer));
     DoProgress(SizeOF(Buffer));
     Dec(Count);
   end;
@@ -1317,8 +1349,11 @@ begin
   FArchiveReader.FinishCoder;
   FArchiveReader.FinishCipher;
 
-  if (Item.FCheckDigestAux <> FArchiveReader.FinishHash) then SetExitStatus(esCrcError);
-  if (Item.FCheckDigest    <>         Stream.FinishHash) then SetExitStatus(esCrcError);
+  if Item.CheckMethod <> haNul then
+    if Item.FCheckDigest <> Stream.FinishHash then
+    begin
+     SetExitStatus(esCrcError);
+    end;
 
   FreeAndNil(Stream);
 end;
@@ -1333,7 +1368,7 @@ begin
 
   FArchiveReader.Seek     (Item.FDiskNumber, Item.FDiskSeek);
   FArchiveReader.StartHash  (Item.CheckMethod);
-  FArchiveReader.StartCipher(Item.EncryptionMethod, GetEncryptionKey(EncryptionParams));
+  FArchiveReader.StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
   FArchiveReader.StartCoder (Item.CompressionMethod);
   FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
   FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
@@ -2114,18 +2149,18 @@ var
   Configuration: TConfiguration;
 begin
   Configuration := TConfiguration.Create;
-  if FileExists(GetConfigurationFileName(FCompressionParams)) then
-    Configuration.LoadFromFile(GetConfigurationFileName(FCompressionParams))
+  if FileExists(GetCoderConfiguration(FCompressionParams)) then
+    Configuration.LoadFromFile(GetCoderConfiguration(FCompressionParams))
   else
     SetExitStatus(esLoadConfigError);
 
   CurrentFileExt := '.';
   Configuration.Selector('\main');
-  Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(GetCompressionLevel   (FCompressionParams)));
-  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetCompressionLevelAux(FCompressionParams)));
+  Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(GetCoderLevel   (FCompressionParams)));
+  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetCoderLevelAux(FCompressionParams)));
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
-  Block := GetCompressionBlock(FCompressionParams);
+  Block := GetCoderBlock(FCompressionParams);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     CurrentItem := FCentralDirectory.Items[I];
@@ -2133,25 +2168,25 @@ begin
     begin
       // compression method
       Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-      CurrentItem.FCompressionMethod := GetCompressionMethod(FCompressionParams);
+      CurrentItem.FCompressionMethod := GetCoderAlgorithm(FCompressionParams);
       // compression level
       Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
-      CurrentItem.FCompressionLevel := GetCompressionLevel(FCompressionParams);
+      CurrentItem.FCompressionLevel := GetCoderLevel(FCompressionParams);
       // dictionary level
       Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
-      CurrentItem.FCompressionLevelAux := GetCompressionLevelAux(FCompressionParams);
+      CurrentItem.FCompressionLevelAux := GetCoderLevelAux(FCompressionParams);
       // compression block
       Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
-      CurrentItem.FCompressionBlock := GetCompressionBlock(FCompressionParams);
+      CurrentItem.FCompressionBlock := GetCoderBlock(FCompressionParams);
       // default compression table flag
       Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter);
 
       // force file extension option
       PreviousFileExt := CurrentFileExt;
-      if GetForceFileExtension(FCompressionParams) = '' then
+      if GetCoderFilterExt(FCompressionParams) = '' then
         CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
       else
-        CurrentFileExt := GetForceFileExtension(FCompressionParams);
+        CurrentFileExt := GetCoderFilterExt(FCompressionParams);
 
       // compression block option
       if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
@@ -2159,7 +2194,7 @@ begin
         Dec(Block, CurrentItem.FExternalFileSize);
         if Block < 0 then
         begin
-          Block := GetCompressionBlock(FCompressionParams);
+          Block := GetCoderBlock(FCompressionParams);
           CurrentItem.FCompressionBlock := 0;
         end;
 
@@ -2174,19 +2209,20 @@ begin
           else
             CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
         end;
-        Block := GetCompressionBlock(FCompressionParams);
+        Block := GetCoderBlock(FCompressionParams);
         CurrentItem.FCompressionBlock := 0;
       end;
 
       // encryption method
-      if GetEncryptionMethod(FEncryptionParams) <> caNul then
+      if GetCipherAlgorithm(FEncryptionParams) <> caNul then
       begin
         Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
-        CurrentItem.FEncryptionMethod := GetEncryptionMethod(FEncryptionParams);
+        CurrentItem.FEncryptionMethod := GetCipherAlgorithm(FEncryptionParams);
       end;
 
       // check method
-      CurrentItem.FCheckMethod := GetCheckMethod(FCheckParams);
+      CurrentItem.FCheckMethod    := GetHashAlgorithm   (FCheckParams);
+      CurrentItem.FCheckMethodAux := GetHashAlgorithmAux(FCheckParams);
       // version needed to read
       CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);
     end;

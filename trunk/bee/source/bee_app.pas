@@ -116,7 +116,7 @@ end;
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1917 archiver utility, Apr 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1920 archiver utility, Apr 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -632,7 +632,7 @@ begin
         DoMessage(Format('%16s %7s %12s %12s %3s %s', [
           Bee_Common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
           SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
-          CompressionMethodToStr(Item), Item.FileName]));
+          CoderAlgorithmToStr(Item), Item.FileName]));
       end;
       DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
       DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize),
