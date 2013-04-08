@@ -401,27 +401,27 @@ end;
 
 function GetCoderBlock(const Params: string): int64;
 begin
-  if Pos(':B1mb:',   Params) > 0 then Result := $100000      else
-  if Pos(':B2mb:',   Params) > 0 then Result := $200000      else
-  if Pos(':B4mb:',   Params) > 0 then Result := $400000      else
-  if Pos(':B8mb:',   Params) > 0 then Result := $800000      else
-  if Pos(':B16mb:',  Params) > 0 then Result := $1000000     else
-  if Pos(':B32mb:',  Params) > 0 then Result := $2000000     else
-  if Pos(':B64mb:',  Params) > 0 then Result := $4000000     else
-  if Pos(':B128mb:', Params) > 0 then Result := $8000000     else
-  if Pos(':B256mb:', Params) > 0 then Result := $10000000    else
-  if Pos(':B512mb:', Params) > 0 then Result := $20000000    else
-  if Pos(':B1gb:',   Params) > 0 then Result := $40000000    else
-  if Pos(':B2gb:',   Params) > 0 then Result := $80000000    else
-  if Pos(':B4gb:',   Params) > 0 then Result := $100000000   else
-  if Pos(':B8gb:',   Params) > 0 then Result := $200000000   else
-  if Pos(':B16gb:',  Params) > 0 then Result := $400000000   else
-  if Pos(':B32gb:',  Params) > 0 then Result := $800000000   else
-  if Pos(':B64gb:',  Params) > 0 then Result := $1000000000  else
-  if Pos(':B128gb:', Params) > 0 then Result := $2000000000  else
-  if Pos(':B256GB:', Params) > 0 then Result := $4000000000  else
-  if Pos(':B512GB:', Params) > 0 then Result := $8000000000  else
-  if Pos(':B1TB:',   Params) > 0 then Result := $10000000000 else Result := 0;
+  if Pos(':1MB:',   Params) > 0 then Result := $100000      else
+  if Pos(':2MB:',   Params) > 0 then Result := $200000      else
+  if Pos(':4MB:',   Params) > 0 then Result := $400000      else
+  if Pos(':8MB:',   Params) > 0 then Result := $800000      else
+  if Pos(':16MB:',  Params) > 0 then Result := $1000000     else
+  if Pos(':32MB:',  Params) > 0 then Result := $2000000     else
+  if Pos(':64MB:',  Params) > 0 then Result := $4000000     else
+  if Pos(':128MB:', Params) > 0 then Result := $8000000     else
+  if Pos(':256MB:', Params) > 0 then Result := $10000000    else
+  if Pos(':512MB:', Params) > 0 then Result := $20000000    else
+  if Pos(':1GB:',   Params) > 0 then Result := $40000000    else
+  if Pos(':2GB:',   Params) > 0 then Result := $80000000    else
+  if Pos(':4GB:',   Params) > 0 then Result := $100000000   else
+  if Pos(':8GB:',   Params) > 0 then Result := $200000000   else
+  if Pos(':16GB:',  Params) > 0 then Result := $400000000   else
+  if Pos(':32GB:',  Params) > 0 then Result := $800000000   else
+  if Pos(':64GB:',  Params) > 0 then Result := $1000000000  else
+  if Pos(':128GB:', Params) > 0 then Result := $2000000000  else
+  if Pos(':256GB:', Params) > 0 then Result := $4000000000  else
+  if Pos(':512GB:', Params) > 0 then Result := $8000000000  else
+  if Pos(':1TB:',   Params) > 0 then Result := $10000000000 else Result := 0;
 end;
 
 function GetCoderLevel(const Params: string): longint;
