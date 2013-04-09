@@ -387,8 +387,8 @@ implementation
 
 uses
   Math,
-  Bee_BufStream,
   Bee_Assembler,
+  Bee_BufStream,
   Bee_Interface;
 
 // ---
@@ -491,8 +491,8 @@ end;
 
 function GetCipherAlgorithm(const Params: string): TCipherAlgorithm;
 begin
-  if Pos(':a=none:',     Params) > 0 then Result := caNul      else
-  if Pos(':a=blowfish:', Params) > 0 then Result := caBlowFish else Result := caNul;
+  if Pos(':none:',     Params) > 0 then Result := caNul      else
+  if Pos(':blowfish:', Params) > 0 then Result := caBlowFish else Result := caNul;
 end;
 
 function GetCipherKey(const Params: string): string;
@@ -517,7 +517,8 @@ begin
   if Pos(':a=none:',  Params) > 0 then Result := haNul   else
   if Pos(':a=crc32:', Params) > 0 then Result := haCRC32 else
   if Pos(':a=crc64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':a=sha1:',  Params) > 0 then Result := haSha1  else Result := haCRC32;
+  if Pos(':a=sha1:',  Params) > 0 then Result := haSHA1  else
+  if Pos(':a=md5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
 end;
 
 function GetHashAlgorithmAux(const Params: string): THashAlgorithm;
@@ -525,7 +526,8 @@ begin
   if Pos(':aa=none:',  Params) > 0 then Result := haNul   else
   if Pos(':aa=crc32:', Params) > 0 then Result := haCRC32 else
   if Pos(':aa=crc64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':aa=sha1:',  Params) > 0 then Result := haSha1  else Result := haCRC32;
+  if Pos(':aa=sha1:',  Params) > 0 then Result := haSHA1  else
+  if Pos(':aa=md5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
 end;
 
 // ---

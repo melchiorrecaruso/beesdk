@@ -289,7 +289,7 @@ begin
   Delete(S, 1, 3);
   FcpOption := FcpOption + ':' + UpperCase(S) + ':';
   while Pos('::', FcpOption) > 0 do
-    Delete(FcpOption, Pos(':', FcpOption), 1);
+    Delete(FcpOption, Pos('::', FcpOption), 1);
 
   if Command in [cAdd] then
   begin
@@ -304,7 +304,7 @@ begin
   Delete(S, 1, 4);
   FckpOption := FckpOption + ':' + UpperCase(S) + ':';
   while Pos('::', FckpOption) > 0 do
-    Delete(FckpOption, Pos(':', FckpOption), 1);
+    Delete(FckpOption, Pos('::', FckpOption), 1);
 
   if Command in [cAdd] then
   begin
@@ -571,6 +571,9 @@ begin
         else
         if Pos('-CD', UpperCase(S)) = 1 then
           ProcessCDOption(S)
+        else
+        if Pos('-CKP', UpperCase(S)) = 1 then
+          ProcessCKPOption(S)
         else
         if Pos('-CP', UpperCase(S)) = 1 then
           ProcessCPOption(S)

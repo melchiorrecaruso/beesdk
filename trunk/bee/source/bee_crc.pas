@@ -31,6 +31,7 @@ interface
 
 uses
   Crc,
+  Md5,
   Sha1;
 
 type
@@ -85,7 +86,18 @@ type
     procedure Update(Data: PByte; Count: longint); override;
   end;
 
-  THashAlgorithm = (haNul, haCRC32, haCRC64, haSHA1);
+  { TMD5Hash class }
+
+  TMD5Hash = class(TBaseHash)
+  private
+    FCTX: TMD5Context;
+  public
+    procedure Start; override;
+    function  Finish: string; override;
+    procedure Update(Data: PByte; Count: longint); override;
+  end;
+
+  THashAlgorithm = (haNul, haCRC32, haCRC64, haSHA1, haMD5);
 
 implementation
 
@@ -161,6 +173,26 @@ end;
 procedure TSHA1Hash.Update(Data: PByte; Count: longint);
 begin
   SHA1Update(FCTX, Data[0], Count);
+end;
+
+/// TMD5Hash class
+
+procedure TMD5Hash.Start;
+begin
+  MD5Init(FCTX);
+end;
+
+function TMD5Hash.Finish: string;
+var
+  Digest: TMD5Digest;
+begin
+  MD5Final(FCTX, Digest);
+  Result := UpCase(MD5Print(Digest));
+end;
+
+procedure TMD5Hash.Update(Data: PByte; Count: longint);
+begin
+  MD5Update(FCTX, Data[0], Count);
 end;
 
 end.
