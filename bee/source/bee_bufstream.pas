@@ -44,7 +44,6 @@ type
   protected
     FHandle: THandle;
   private
-    FBuffer: TBuffer;
     FHash: TBaseHash;
     FHashStarted: boolean;
     FCipher: TBaseCipher;
@@ -76,6 +75,7 @@ type
 
   TReadBufStream = class(TBufStream)
   private
+    FBuffer: TBuffer;
     FBufferIndex: longint;
     FBufferSize: longint;
   protected
@@ -97,6 +97,7 @@ type
 
   TWriteBufStream = class(TBufStream)
   private
+    FBuffer: TBuffer;
     FBufferIndex: longint;
   protected
     procedure ClearBuffer;
@@ -191,6 +192,7 @@ procedure TBufStream.StartHash(Algorithm: THashAlgorithm);
 begin
   FreeAndNil(FHash);
   case Algorithm of
+    haMD5:   FHash := TMD5Hash.Create;
     haSHA1:  FHash := TSHA1Hash.Create;
     haCRC64: FHash := TCRC64Hash.Create;
     haCRC32: FHash := TCRC32Hash.Create;
