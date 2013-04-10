@@ -132,12 +132,12 @@ uses
   Math,
   SysUtils;
 
-function DoFill(Stream: pointer; Data: PByte; Size: longint): longint;
+function DoFill(Stream: pointer; Data: PByte; Size: longint): longint; inline;
 begin
   Result := TBufStream(Stream).Read(Data, Size);
 end;
 
-function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint;
+function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; inline;
 begin
   Result := TBufStream(Stream).Write(Data, Size);
 end;
@@ -192,11 +192,11 @@ procedure TBufStream.StartHash(Algorithm: THashAlgorithm);
 begin
   FreeAndNil(FHash);
   case Algorithm of
-    haMD5:   FHash := TMD5Hash.Create;
-    haSHA1:  FHash := TSHA1Hash.Create;
-    haCRC64: FHash := TCRC64Hash.Create;
-    haCRC32: FHash := TCRC32Hash.Create;
     haNul:   FHash := TNulHash.Create;
+    haCRC32: FHash := TCRC32Hash.Create;
+    haCRC64: FHash := TCRC64Hash.Create;
+    haSHA1:  FHash := TSHA1Hash.Create;
+    haMD5:   FHash := TMD5Hash.Create;
   end;
   FHash.Start;
   FHashStarted := Algorithm <> haNul;
@@ -215,8 +215,8 @@ procedure TBufStream.StartCipher(Algorithm: TCipherAlgorithm; const Key: string)
 begin
   FreeAndNil(FCipher);
   case Algorithm of
-    caBlowFish: TBlowFishCipher.Create(Key);
-    caNul:      TNulCipher.Create;
+    caNul:      FCipher := TNulCipher.Create;
+    caBlowFish: FCipher := TBlowFishCipher.Create(Key);
   end;
   FCipherStarted := Algorithm <> caNul;
 end;
@@ -246,8 +246,8 @@ begin
   FBufferSize  := FileRead(FHandle, FBuffer[0], SizeOf(FBuffer));
   if FBufferSize > -1 then
   begin
-    // if FCipherStarted then
-    //   FCipher.Decrypt(FBuffer, FBufferSize);
+     if FCipherStarted then
+       FCipher.Decrypt(FBuffer, FBufferSize);
   end else
   begin
     SetExitStatus(esFillStreamError);
@@ -293,16 +293,15 @@ end;
 procedure TReadBufStream.StartCoder(Algorithm: TCoderAlgorithm);
 begin
   case Algorithm of
-    caBee: if not(FCoder is TBeeDecoder) then FreeAndNil(FCoder);
-    else   if not(FCoder is TStoreCoder) then FreeAndNil(FCoder);
+    caStore: if not(FCoder is TStoreCoder) then FreeAndNil(FCoder);
+    caBee:   if not(FCoder is TBeeDecoder) then FreeAndNil(FCoder);
   end;
 
   if FCoder = nil then
     case Algorithm of
-      caBee: FCoder := TBeeDecoder.Create(Self);
-      else   FCoder := TStoreCoder.Create(Self);
+      caStore: FCoder := TStoreCoder.Create(Self);
+      caBee:   FCoder := TBeeDecoder.Create(Self);
     end;
-
   FCoder.Start;
 end;
 
@@ -333,8 +332,8 @@ procedure TWriteBufStream.FlushBuffer;
 begin
   if FBufferIndex > 0 then
   begin
-    //if Assigned(FCipher) then
-    //  FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
+    if FCipherStarted then
+      FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
 
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
       SetExitStatus(esFlushStreamError);

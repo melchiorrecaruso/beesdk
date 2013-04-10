@@ -42,16 +42,16 @@ type
 
   TBaseCipher = class(TObject)
   public
-    function Encrypt(const Data: TBuffer; Count: longint): longint; virtual; abstract;
-    function Decrypt(const Data: TBuffer; Count: longint): longint; virtual; abstract;
+    function Encrypt(var Data: TBuffer; Count: longint): longint; virtual; abstract;
+    function Decrypt(var Data: TBuffer; Count: longint): longint; virtual; abstract;
   end;
 
   { NulCipher class }
 
   TNulCipher = class(TBaseCipher)
   public
-    function Encrypt(const Data: TBuffer; Count: longint): longint; override;
-    function Decrypt(const Data: TBuffer; Count: longint): longint; override;
+    function Encrypt(var Data: TBuffer; Count: longint): longint; override;
+    function Decrypt(var Data: TBuffer; Count: longint): longint; override;
   end;
 
   { TBlowFishCipher class }
@@ -62,8 +62,8 @@ type
   public
     constructor Create(const Key: string);
     destructor Destroy; override;
-    function Encrypt(const Data: TBuffer; Count: longint): longint; override;
-    function Decrypt(const Data: TBuffer; Count: longint): longint; override;
+    function Encrypt(var Data: TBuffer; Count: longint): longint; override;
+    function Decrypt(var Data: TBuffer; Count: longint): longint; override;
   end;
 
   TCipherAlgorithm = (caNul, caBlowFish);
@@ -75,12 +75,12 @@ uses
 
 /// TNulCipher class
 
-function TNulCipher.Encrypt(const Data: TBuffer; Count: longint): longint;
+function TNulCipher.Encrypt(var Data: TBuffer; Count: longint): longint;
 begin
   Result := Count;
 end;
 
-function TNulCipher.Decrypt(const Data: TBuffer; Count: longint): longint;
+function TNulCipher.Decrypt(var Data: TBuffer; Count: longint): longint;
 begin
   Result := Count;
 end;
@@ -96,9 +96,7 @@ begin
   inherited Create;
   KLen := Min(Length(Key), Length(K));
   for I := 1 to KLen do
-  begin
-    K[I -1] := byte(Key[I]);
-  end;
+    K[I - 1] := byte(Key[I]);
   FBlowFish := TBlowFish.Create(K, KLen);
 end;
 
@@ -108,7 +106,7 @@ begin
   inherited Destroy;
 end;
 
-function TBlowFishCipher.Encrypt(const Data: TBuffer; Count: longint): longint;
+function TBlowFishCipher.Encrypt(var Data: TBuffer; Count: longint): longint;
 var
   Block: ^TBFBlock;
 begin
@@ -121,7 +119,7 @@ begin
   end;
 end;
 
-function TBlowFishCipher.Decrypt(const Data: TBuffer; Count: longint): longint;
+function TBlowFishCipher.Decrypt(var Data: TBuffer; Count: longint): longint;
 var
   Block: ^TBFBlock;
 begin

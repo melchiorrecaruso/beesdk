@@ -395,12 +395,14 @@ uses
 
 function GetCoderAlgorithm(Params: string): TCoderAlgorithm;
 begin
-  if Pos(':STORE:', Params) > 0 then Result := caStore else
-  if Pos(':BEE:',   Params) > 0 then Result := caBee   else Result := caBee;
+  Params := UpCase(Params);
+  if Pos(':NONE:', Params) > 0 then Result := caStore else
+  if Pos(':BEE:',  Params) > 0 then Result := caBee   else Result := caBee;
 end;
 
-function GetCoderBlock(const Params: string): int64;
+function GetCoderBlock(Params: string): int64;
 begin
+  Params := UpCase(Params);
   if Pos(':1MB:',   Params) > 0 then Result := $100000      else
   if Pos(':2MB:',   Params) > 0 then Result := $200000      else
   if Pos(':4MB:',   Params) > 0 then Result := $400000      else
@@ -424,15 +426,17 @@ begin
   if Pos(':1TB:',   Params) > 0 then Result := $10000000000 else Result := 0;
 end;
 
-function GetCoderLevel(const Params: string): longint;
+function GetCoderLevel(Params: string): longint;
 begin
+  Params := UpCase(Params);
   if Pos(':L1:', Params) > 0 then Result := 1 else
   if Pos(':L2:', Params) > 0 then Result := 2 else
   if Pos(':L3:', Params) > 0 then Result := 3 else Result := 1;
 end;
 
-function GetCoderLevelAux(const Params: string): longint;
+function GetCoderLevelAux(Params: string): longint;
 begin
+  Params := UpCase(Params);
   if Pos(':LA0:', Params) > 0 then Result := 0 else
   if Pos(':LA1:', Params) > 0 then Result := 1 else
   if Pos(':LA2:', Params) > 0 then Result := 2 else
@@ -450,9 +454,9 @@ var
   I: longint;
 begin
   Result := '';
-  if Pos(':f=', Params) > 0 then
+  if Pos(':F=', UpCase(Params)) > 0 then
   begin
-    for I := Pos(':f=', Params) + 3 to Length(Params) do
+    for I := Pos(':F=', UpCase(Params)) + 3 to Length(Params) do
     begin
       if Params[I] <> ':' then
         Result := Result + Params[I]
@@ -469,8 +473,8 @@ var
   I: longint;
 begin
   Result := '';
-  if Pos(':c=', Params) > 0 then
-    for I := Pos(':c=', Params) + 3 to Length(Params) do
+  if Pos(':C=', UpCase(Params)) > 0 then
+    for I := Pos(':C=', UpCase(Params)) + 3 to Length(Params) do
     begin
       if Params[I] <> ':' then
         Result := Result + Params[I]
@@ -489,20 +493,14 @@ begin
   end;
 end;
 
-function GetCipherAlgorithm(const Params: string): TCipherAlgorithm;
-begin
-  if Pos(':none:',     Params) > 0 then Result := caNul      else
-  if Pos(':blowfish:', Params) > 0 then Result := caBlowFish else Result := caNul;
-end;
-
 function GetCipherKey(const Params: string): string;
 var
   I: longint;
 begin
   Result := '';
-  if Pos(':k=', Params) > 0 then
+  if Pos(':K=', UpCase(Params)) > 0 then
   begin
-    for I := Pos(':k=', Params) + 3 to Length(Params) do
+    for I := Pos(':K=', UpCase(Params)) + 3 to Length(Params) do
     begin
       if Params[I] <> ':' then
         Result := Result + Params[I]
@@ -512,22 +510,37 @@ begin
   end;
 end;
 
-function GetHashAlgorithm(const Params: string): THashAlgorithm;
+function GetCipherAlgorithm(const Params: string): TCipherAlgorithm;
 begin
-  if Pos(':a=none:',  Params) > 0 then Result := haNul   else
-  if Pos(':a=crc32:', Params) > 0 then Result := haCRC32 else
-  if Pos(':a=crc64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':a=sha1:',  Params) > 0 then Result := haSHA1  else
-  if Pos(':a=md5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
+  if GetCipherKey(Params) <> '' then
+    Result := caBlowFish;
+
+  if Pos(':NONE:',     UpCase(Params)) > 0 then Result := caNul      else
+  if Pos(':BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish else Result := caNul;
+
+  if Result <> caNul then
+    if Length(GetCipherKey(Params)) < 4 then
+      SetExitStatus(esCmdLineError);
 end;
 
-function GetHashAlgorithmAux(const Params: string): THashAlgorithm;
+function GetHashAlgorithm(Params: string): THashAlgorithm;
 begin
-  if Pos(':aa=none:',  Params) > 0 then Result := haNul   else
-  if Pos(':aa=crc32:', Params) > 0 then Result := haCRC32 else
-  if Pos(':aa=crc64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':aa=sha1:',  Params) > 0 then Result := haSHA1  else
-  if Pos(':aa=md5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
+  Params := UpCase(Params);
+  if Pos(':a=NONE:',  Params) > 0 then Result := haNul   else
+  if Pos(':a=CRC32:', Params) > 0 then Result := haCRC32 else
+  if Pos(':a=CRC64:', Params) > 0 then Result := haCRC64 else
+  if Pos(':a=SHA1:',  Params) > 0 then Result := haSHA1  else
+  if Pos(':a=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
+end;
+
+function GetHashAlgorithmAux(Params: string): THashAlgorithm;
+begin
+  Params := UpCase(Params);
+  if Pos(':aa=NONE:',  Params) > 0 then Result := haNul   else
+  if Pos(':aa=CRC32:', Params) > 0 then Result := haCRC32 else
+  if Pos(':aa=CRC64:', Params) > 0 then Result := haCRC64 else
+  if Pos(':aa=SHA1:',  Params) > 0 then Result := haSHA1  else
+  if Pos(':aa=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
 end;
 
 // ---
@@ -636,7 +649,13 @@ begin
   FCheckMethodAux       := haNul;
   FCheckDigestAux       := '';
   /// compression property ///
-  FCompressionFlags     := [];
+  FCompressionFlags     := [
+    acfCompressionMethod,
+    acfCompressionLevel,
+    acfCompressionLevelAux,
+    acfCompressionFilter,
+    acfCompressionFilterAux,
+    acfCompressionBlock];
   FCompressionMethod    := caStore;
   FCompressionBlock     := 0;
   FCompressionLevel     := 0;
@@ -644,7 +663,8 @@ begin
   FCompressionFilter    := '';
   FCompressionFilterAux := '';
   /// encryption property ///
-  FEncryptionFlags      := [];
+  FEncryptionFlags      := [
+    aefEncryptionMethod];
   FEncryptionMethod     := caNul;
   /// reserved property ///
   FTag                  := aitAdd;
@@ -867,7 +887,7 @@ var
   CurrentItem: TArchiveItem;
   PreviusItem: TArchiveItem;
 begin
-  if FItems.Count > 0 then
+  if FItems.Count > 1 then
   begin
     PreviusItem := FItems.Items[0];
     for I := 1 to FItems.Count - 1 do
@@ -908,7 +928,7 @@ var
   CurrentItem: TArchiveItem;
   PreviusItem: TArchiveItem;
 begin
-  if FItems.Count > 0 then
+  if FItems.Count > 1 then
   begin
     PreviusItem := FItems.Items[0];
     for I := 1 to FItems.Count - 1 do
@@ -1323,6 +1343,10 @@ begin
   FArchiveReader.StartHash              (haNul);
   FArchiveReader.StartCipher            (Item.EncryptionMethod, GetCipherKey(EncryptionParams));
   FArchiveReader.StartCoder             (Item.CompressionMethod);
+
+
+  Writeln(Item.CompressionMethod);
+
   FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
   FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
   FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
@@ -1350,6 +1374,12 @@ begin
   end;
   FArchiveReader.FinishCoder;
   FArchiveReader.FinishCipher;
+
+  Writeln(FProcessedSize);
+  Writeln(FTotalSize);
+
+  Writeln(Item.FCheckDigest);
+  Writeln(Stream.FinishHash);
 
   if Item.CheckMethod <> haNul then
     if Item.FCheckDigest <> Stream.FinishHash then
@@ -2216,15 +2246,10 @@ begin
       end;
 
       // encryption method
-      if GetCipherAlgorithm(FEncryptionParams) <> caNul then
-      begin
-        Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
-        CurrentItem.FEncryptionMethod := GetCipherAlgorithm(FEncryptionParams);
-      end;
-
+      CurrentItem.FEncryptionMethod    := GetCipherAlgorithm(FEncryptionParams);
       // check method
-      CurrentItem.FCheckMethod    := GetHashAlgorithm   (FCheckParams);
-      CurrentItem.FCheckMethodAux := GetHashAlgorithmAux(FCheckParams);
+      CurrentItem.FCheckMethod         := GetHashAlgorithm   (FCheckParams);
+      CurrentItem.FCheckMethodAux      := GetHashAlgorithmAux(FCheckParams);
       // version needed to read
       CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);
     end;
