@@ -435,6 +435,8 @@ begin
   // compression mode
   if clcpOption in FCommandLine.Options then
     FArchiver.CompressionParams := FCommandLine.cpOption;
+  if clckpOption in FCommandLine.Options then
+    FArchiver.CheckParams := FCommandLine.ckpOption;
   // encryption mode
   if clepOption in FCommandLine.Options then
     FArchiver.EncryptionParams := FCommandLine.epOption;

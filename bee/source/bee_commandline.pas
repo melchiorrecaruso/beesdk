@@ -287,7 +287,7 @@ end;
 procedure TCommandLine.ProcessCPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FcpOption := FcpOption + ':' + UpperCase(S) + ':';
+  FcpOption := FcpOption + ':' + S + ':';
   while Pos('::', FcpOption) > 0 do
     Delete(FcpOption, Pos('::', FcpOption), 1);
 
@@ -302,7 +302,7 @@ end;
 procedure TCommandLine.ProcessCKPOption(var S: string);
 begin
   Delete(S, 1, 4);
-  FckpOption := FckpOption + ':' + UpperCase(S) + ':';
+  FckpOption := FckpOption + ':' + S + ':';
   while Pos('::', FckpOption) > 0 do
     Delete(FckpOption, Pos('::', FckpOption), 1);
 
@@ -317,11 +317,11 @@ end;
 procedure TCommandLine.ProcessEPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  FepOption := FepOption + ':' + UpperCase(S) + ':';
+  FepOption := FepOption + ':' + S + ':';
   while Pos('::', FepOption) > 0 do
     Delete(FepOption, Pos('::', FepOption), 1);
 
-  if Command in [cAdd] then
+  if Command in [cAdd, cDelete, cExtract, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
       Include(FOptions, clepOption);
