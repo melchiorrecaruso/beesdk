@@ -516,7 +516,8 @@ begin
     Result := caBlowFish;
 
   if Pos(':NONE:',     UpCase(Params)) > 0 then Result := caNul      else
-  if Pos(':BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish;
+  if Pos(':BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish else
+  if Pos(':IDEA:',     UpCase(Params)) > 0 then Result := caIdea;
 
   if Result <> caNul then
     if Length(GetCipherKey(Params)) < 4 then

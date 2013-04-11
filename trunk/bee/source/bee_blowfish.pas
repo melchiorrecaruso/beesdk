@@ -30,7 +30,8 @@ unit Bee_BlowFish;
 interface
 
 uses
-  BlowFish;
+  BlowFish,
+  Idea;
 
 const
   DefaultBufferSize = 4096;
@@ -66,7 +67,19 @@ type
     function Decrypt(var Data: TBuffer; Count: longint): longint; override;
   end;
 
-  TCipherAlgorithm = (caNul, caBlowFish);
+  { TIdeaCipher class }
+
+  TIdeaCipher = class(TBaseCipher)
+  private
+    FKey: TIDEAKey;
+  public
+    constructor CreateEn(const Key: string);
+    constructor CreateDe(const Key: string);
+    function Encrypt(var Data: TBuffer; Count: longint): longint; override;
+    function Decrypt(var Data: TBuffer; Count: longint): longint; override;
+  end;
+
+  TCipherAlgorithm = (caNul, caBlowFish, caIdea);
 
 implementation
 
@@ -115,7 +128,7 @@ begin
   begin
     Block := @Data[Result];
     FBlowFish.Encrypt(Block^);
-    Inc(Result, 8);
+    Inc(Result,  SizeOf(TBFBlock));
   end;
 end;
 
@@ -128,7 +141,75 @@ begin
   begin
     Block := @Data[Result];
     FBlowFish.Decrypt(Block^);
-    Inc(Result, 8);
+    Inc(Result, SizeOf(TBFBlock));
+  end;
+end;
+
+/// TIdeaCipher class
+
+constructor TIdeaCipher.CreateEn(const Key: string);
+var
+  K: TIdeaCryptKey;
+  KLen: Integer;
+begin
+  KLen := Length(Key);
+  if KLen > SizeOf(K) then
+    KLen := SizeOf(K);
+  FillChar(K, SizeOf(K),0);
+  Move(Key[1], K, KLen);
+
+  EnKeyIdea(K, FKey);
+end;
+
+constructor TIdeaCipher.CreateDe(const Key: string);
+var
+  K: TIdeaCryptKey;
+  KLen: Integer;
+  Z: TIDEAKey;
+begin
+  KLen := Length(Key);
+  if KLen > SizeOf(K) then
+    KLen := SizeOf(K);
+  FillChar(K, SizeOf(K),0);
+  Move(Key[1], K, KLen);
+
+  EnKeyIdea(K, Z);
+  DeKeyIdea(Z, FKey);
+end;
+
+function TIdeaCipher.Encrypt(var Data: TBuffer; Count: longint): longint;
+var
+  Cache: TBuffer;
+  InPtr:  ^TIDEACryptData;
+  OutPtr: ^TIDEACryptData;
+begin
+  Move(Data[0], Cache[0], Count);
+
+  Result := 0;
+  while Result < Count do
+  begin
+    InPtr  := @Cache[Result];
+    OutPtr := @Data [Result];
+    CipherIdea(InPtr^, OutPtr^, FKey);
+    Inc(Result, SizeOf(TIDEACryptData));
+  end;
+end;
+
+function TIdeaCipher.Decrypt(var Data: TBuffer; Count: longint): longint;
+var
+  Cache: TBuffer;
+  InPtr:  ^TIDEACryptData;
+  OutPtr: ^TIDEACryptData;
+begin
+  Move(Data[0], Cache[0], Count);
+
+  Result := 0;
+  while Result < Count do
+  begin
+    InPtr  := @Cache[Result];
+    OutPtr := @Data [Result];
+    CipherIdea(InPtr^, OutPtr^, FKey);
+    Inc(Result, SizeOf(TIDEACryptData));
   end;
 end;
 

@@ -59,7 +59,7 @@ type
     procedure StartHash(Algorithm: THashAlgorithm);
     function  FinishHash: string;
 
-    procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); virtual;
+    procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); virtual; abstract;
     procedure FinishCipher; virtual; abstract;
 
     procedure StartCoder(Algorithm: TCoderAlgorithm); virtual abstract;
@@ -86,7 +86,7 @@ type
     function Read(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
 
-    procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); override;
+    procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string);
     procedure FinishCipher; override;
 
     procedure StartCoder(Algorithm: TCoderAlgorithm); override;
@@ -109,7 +109,7 @@ type
     function Write(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
 
-    procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); override;
+    procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string);
     procedure FinishCipher; override;
 
     procedure StartCoder(Algorithm: TCoderAlgorithm); override;
@@ -215,16 +215,6 @@ begin
   FHashStarted := FALSE;
 end;
 
-procedure TBufStream.StartCipher(Algorithm: TCipherAlgorithm; const Key: string);
-begin
-  FreeAndNil(FCipher);
-  case Algorithm of
-    caNul:      FCipher := TNulCipher.Create;
-    caBlowFish: FCipher := TBlowFishCipher.Create(Key);
-  end;
-  FCipherStarted := Algorithm <> caNul;
-end;
-
 /// TReadBufStream class
 
 constructor TReadBufStream.Create(Handle: THandle);
@@ -286,7 +276,13 @@ end;
 procedure TReadBufStream.StartCipher(Algorithm: TCipherAlgorithm; const Key: string);
 begin
   ClearBuffer;
-  inherited StartCipher(Algorithm, Key);
+  FreeAndNil(FCipher);
+  case Algorithm of
+    caNul:      FCipher := TNulCipher.Create;
+    caBlowFish: FCipher := TBlowFishCipher.Create(Key);
+    caIdea:     FCipher := TIdeaCipher.CreateDe(Key);
+  end;
+  FCipherStarted := Algorithm <> caNul;
 end;
 
 procedure TReadBufStream.FinishCipher;
@@ -377,7 +373,13 @@ end;
 procedure TWriteBufStream.StartCipher(Algorithm: TCipherAlgorithm; const Key: string);
 begin
   FlushBuffer;
-  inherited StartCipher(Algorithm, Key);
+  FreeAndNil(FCipher);
+  case Algorithm of
+    caNul:      FCipher := TNulCipher.Create;
+    caBlowFish: FCipher := TBlowFishCipher.Create(Key);
+    caIdea:     FCipher := TIdeaCipher.CreateEn(Key);
+  end;
+  FCipherStarted := Algorithm <> caNul;
 end;
 
 procedure TWriteBufStream.FinishCipher;
