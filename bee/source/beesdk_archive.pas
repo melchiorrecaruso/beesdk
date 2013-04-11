@@ -516,7 +516,7 @@ begin
     Result := caBlowFish;
 
   if Pos(':NONE:',     UpCase(Params)) > 0 then Result := caNul      else
-  if Pos(':BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish else Result := caNul;
+  if Pos(':BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish;
 
   if Result <> caNul then
     if Length(GetCipherKey(Params)) < 4 then
@@ -1344,9 +1344,6 @@ begin
   FArchiveReader.StartCipher            (Item.EncryptionMethod, GetCipherKey(EncryptionParams));
   FArchiveReader.StartCoder             (Item.CompressionMethod);
 
-
-  Writeln(Item.CompressionMethod);
-
   FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
   FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
   FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
@@ -1374,12 +1371,6 @@ begin
   end;
   FArchiveReader.FinishCoder;
   FArchiveReader.FinishCipher;
-
-  Writeln(FProcessedSize);
-  Writeln(FTotalSize);
-
-  Writeln(Item.FCheckDigest);
-  Writeln(Stream.FinishHash);
 
   if Item.CheckMethod <> haNul then
     if Item.FCheckDigest <> Stream.FinishHash then

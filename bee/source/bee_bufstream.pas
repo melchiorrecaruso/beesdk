@@ -60,7 +60,7 @@ type
     function  FinishHash: string;
 
     procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); virtual;
-    procedure FinishCipher;
+    procedure FinishCipher; virtual; abstract;
 
     procedure StartCoder(Algorithm: TCoderAlgorithm); virtual abstract;
     procedure FinishCoder; virtual abstract;
@@ -87,6 +87,8 @@ type
     function Seek(const Offset: int64; Origin: longint): int64; override;
 
     procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); override;
+    procedure FinishCipher; override;
+
     procedure StartCoder(Algorithm: TCoderAlgorithm); override;
     procedure FinishCoder; override;
 
@@ -108,6 +110,8 @@ type
     function Seek(const Offset: int64; Origin: longint): int64; override;
 
     procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); override;
+    procedure FinishCipher; override;
+
     procedure StartCoder(Algorithm: TCoderAlgorithm); override;
     procedure FinishCoder; override;
 
@@ -221,11 +225,6 @@ begin
   FCipherStarted := Algorithm <> caNul;
 end;
 
-procedure TBufStream.FinishCipher;
-begin
-  FCipherStarted := FALSE;
-end;
-
 /// TReadBufStream class
 
 constructor TReadBufStream.Create(Handle: THandle);
@@ -288,6 +287,12 @@ procedure TReadBufStream.StartCipher(Algorithm: TCipherAlgorithm; const Key: str
 begin
   ClearBuffer;
   inherited StartCipher(Algorithm, Key);
+end;
+
+procedure TReadBufStream.FinishCipher;
+begin
+  ClearBuffer;
+  FCipherStarted := FALSE;
 end;
 
 procedure TReadBufStream.StartCoder(Algorithm: TCoderAlgorithm);
@@ -373,6 +378,12 @@ procedure TWriteBufStream.StartCipher(Algorithm: TCipherAlgorithm; const Key: st
 begin
   FlushBuffer;
   inherited StartCipher(Algorithm, Key);
+end;
+
+procedure TWriteBufStream.FinishCipher;
+begin
+  FlushBuffer;
+  FCipherStarted := FALSE;
 end;
 
 procedure TWriteBufStream.StartCoder(Algorithm: TCoderAlgorithm);
