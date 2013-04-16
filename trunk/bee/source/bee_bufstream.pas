@@ -62,6 +62,7 @@ type
     procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); virtual; abstract;
     procedure FinishCipher; virtual; abstract;
 
+    procedure InitCoder;
     procedure StartCoder(Algorithm: TCoderAlgorithm); virtual abstract;
     procedure FinishCoder; virtual abstract;
     procedure SetCompressionLevel(Value: longint);
@@ -215,6 +216,11 @@ begin
   FHashStarted := FALSE;
 end;
 
+procedure TBufStream.InitCoder;
+begin
+  FCoder.Init;
+end;
+
 /// TReadBufStream class
 
 constructor TReadBufStream.Create(Handle: THandle);
@@ -294,14 +300,16 @@ end;
 procedure TReadBufStream.StartCoder(Algorithm: TCoderAlgorithm);
 begin
   case Algorithm of
-    caStore: if not(FCoder is TStoreCoder) then FreeAndNil(FCoder);
-    caBee:   if not(FCoder is TBeeDecoder) then FreeAndNil(FCoder);
+    caStore: if not(FCoder is TStoreCoder)  then FreeAndNil(FCoder);
+    caBee:   if not(FCoder is TBeeDecoder)  then FreeAndNil(FCoder);
+    caPpmd:  if not(FCoder is TPpmdDecoder) then FreeAndNil(FCoder);
   end;
 
   if FCoder = nil then
     case Algorithm of
-      caStore: FCoder := TStoreCoder.Create(Self);
-      caBee:   FCoder := TBeeDecoder.Create(Self);
+      caStore: FCoder := TStoreCoder .Create(Self);
+      caBee:   FCoder := TBeeDecoder .Create(Self);
+      caPpmd:  FCoder := TPpmdDecoder.Create(Self);
     end;
   FCoder.Start;
 end;
@@ -391,14 +399,16 @@ end;
 procedure TWriteBufStream.StartCoder(Algorithm: TCoderAlgorithm);
 begin
   case Algorithm of
-    caBee:   if not(FCoder is TBeeEncoder) then FreeAndNil(FCoder);
-    caStore: if not(FCoder is TStoreCoder) then FreeAndNil(FCoder);
+    caStore: if not(FCoder is TStoreCoder)  then FreeAndNil(FCoder);
+    caBee:   if not(FCoder is TBeeEncoder)  then FreeAndNil(FCoder);
+    caPpmd:  if not(FCoder is TPpmdEncoder) then FreeAndNil(FCoder);
   end;
 
   if FCoder = nil then
     case Algorithm of
-      caBee:   FCoder := TBeeEncoder.Create(Self);
-      caStore: FCoder := TStoreCoder.Create(Self);
+      caStore: FCoder := TStoreCoder .Create(Self);
+      caBee:   FCoder := TBeeEncoder .Create(Self);
+      caPpmd:  FCoder := TPpmdEncoder.Create(Self);
     end;
 
   FCoder.Start;

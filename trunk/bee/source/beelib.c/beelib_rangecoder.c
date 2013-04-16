@@ -3,36 +3,36 @@
 
 /* Range coder const definitions */
 
-#define TOP      16777216
-#define NUM      4
-#define THRES    4278190080
+#define TOP   16777216L
+#define NUM   4L
+#define THRES 4278190080U
 
 /* TRangeEncoder struct/methods implementation */
 
-struct TRangeEncoder {
+struct TBeeRangeEnc {
   PWriteStream FStream;
-        uint32 FRange;
-        uint32 FLow;
-        uint32 FCode;
-        uint32 FCarry;
-        uint32 FCache;
-        uint32 FFNum;
+      uint32_t FRange;
+      uint32_t FLow;
+      uint32_t FCode;
+      uint32_t FCarry;
+      uint32_t FCache;
+      uint32_t FFNum;
 };
 
-PRangeEncoder RangeEncoder_Create(void *aStream, PStreamWrite aStreamWrite)
+PBeeRangeEnc BeeRangeEnc_Create(void *aStream, PStreamWrite aStreamWrite)
 {
-  PRangeEncoder Self = malloc(sizeof(struct TRangeEncoder));
+  PBeeRangeEnc Self = malloc(sizeof(struct TBeeRangeEnc));
   Self->FStream      = WriteStream_Create(aStream, aStreamWrite);
   return Self;
 }
 
-void RangeEncoder_Destroy(PRangeEncoder Self)
+void BeeRangeEnc_Destroy(PBeeRangeEnc Self)
 {
   WriteStream_Destroy(Self->FStream);
   free(Self);
 }
 
-void RangeEncoder_StartEncode(PRangeEncoder Self)
+void BeeRangeEnc_StartEncode(PBeeRangeEnc Self)
 {
   Self->FRange = 0xFFFFFFFF;
   Self->FLow   = 0;
@@ -40,7 +40,7 @@ void RangeEncoder_StartEncode(PRangeEncoder Self)
   Self->FCarry = 0;
 }
 
-static inline void RangeEncoder_ShiftLow(PRangeEncoder Self)
+static inline void RangeEncoder_ShiftLow(PBeeRangeEnc Self)
 {
   if ((Self->FLow < THRES) || (Self->FCarry != 0))
   {
@@ -59,12 +59,12 @@ static inline void RangeEncoder_ShiftLow(PRangeEncoder Self)
   Self->FLow <<= 8;
 }
 
-static inline void RangeEncoder_Encode(PRangeEncoder Self, uint32 CumFreq,  uint32 Freq,  uint32 TotFreq)
+static inline void RangeEncoder_Encode(PBeeRangeEnc Self, uint32_t CumFreq,  uint32_t Freq,  uint32_t TotFreq)
 {
-  uint32 Temp   = Self->FLow;
-  Self->FLow   += MulDiv(Self->FRange, CumFreq, TotFreq);
-  Self->FCarry += (uint32)(Self->FLow < Temp);
-  Self->FRange  = MulDiv(Self->FRange, Freq, TotFreq);
+  uint32_t Temp = Self->FLow;
+  Self->FLow   += _MulDiv(Self->FRange, CumFreq, TotFreq);
+  Self->FCarry += (uint32_t)(Self->FLow < Temp);
+  Self->FRange  = _MulDiv(Self->FRange, Freq, TotFreq);
   while (Self->FRange < TOP)
   {
     Self->FRange <<= 8;
@@ -72,9 +72,9 @@ static inline void RangeEncoder_Encode(PRangeEncoder Self, uint32 CumFreq,  uint
   }
 }
 
-void RangeEncoder_FinishEncode(PRangeEncoder Self)
+void BeeRangeEnc_FinishEncode(PBeeRangeEnc Self)
 {
-  int32 I;
+  int32_t I;
   for (I = 0; I <= NUM; I++)
   {
     RangeEncoder_ShiftLow(Self);
@@ -82,17 +82,17 @@ void RangeEncoder_FinishEncode(PRangeEncoder Self)
   WriteStream_FlushBuffer(Self->FStream);
 }
 
-inline uint32 RangeEncoder_Update(PRangeEncoder Self, TFreq Freq, uint32 aSymbol)
+inline uint32_t BeeRangeEnc_Update(PBeeRangeEnc Self, TFreq Freq, uint32_t aSymbol)
 {
   // Count CumFreq...
-  uint32 CumFreq = 0, I = 0;
+  uint32_t CumFreq = 0, I = 0;
   while (I < aSymbol)
   {
     CumFreq += Freq[I];
     I++;
   }
   // Count TotFreq...
-  uint32 TotFreq = CumFreq;
+  uint32_t TotFreq = CumFreq;
   I = TFREQSIZE;
   do
   {
@@ -108,57 +108,57 @@ inline uint32 RangeEncoder_Update(PRangeEncoder Self, TFreq Freq, uint32 aSymbol
 
 /* TRangeDecoder struct/methods implementation */
 
-struct TRangeDecoder {
+struct TBeeRangeDec {
   PReadStream FStream;
-       uint32 FRange;
-       uint32 FLow;
-       uint32 FCode;
-       uint32 FCarry;
-       uint32 FCache;
-       uint32 FFNum;
+     uint32_t FRange;
+     uint32_t FLow;
+     uint32_t FCode;
+     uint32_t FCarry;
+     uint32_t FCache;
+     uint32_t FFNum;
 };
 
-PRangeDecoder RangeDecoder_Create(void *aStream, PStreamRead aStreamRead)
+PBeeRangeDec BeeRangeDec_Create(void *aStream, PStreamRead aStreamRead)
 {
-  PRangeDecoder Self = malloc(sizeof(struct TRangeDecoder));
+  PBeeRangeDec Self = malloc(sizeof(struct TBeeRangeDec));
   Self->FStream      = ReadStream_Create(aStream, aStreamRead);
   return Self;
 }
 
-void RangeDecoder_Destroy(PRangeDecoder Self)
+void BeeRangeDec_Destroy(PBeeRangeDec Self)
 {
   ReadStream_Destroy(Self->FStream);
   free(Self);
 }
 
-void RangeDecoder_StartDecode(PRangeDecoder Self)
+void BeeRangeDec_StartDecode(PBeeRangeDec Self)
 {
   Self->FRange = 0xFFFFFFFF;
   Self->FLow   = 0;
   Self->FFNum  = 0;
   Self->FCarry = 0;
 
-  int32 I;
+  int32_t I;
   for (I = 0; I <= NUM; I++)
   {
     Self->FCode = (Self->FCode << 8) + ReadStream_Read(Self->FStream);
   }
 }
 
-void RangeDecoder_FinishDecode(PRangeDecoder Self)
+void BeeRangeDec_FinishDecode(PBeeRangeDec Self)
 {
   ReadStream_ClearBuffer(Self->FStream);
 }
 
-inline uint32 RangeDecoder_GetFreq(PRangeDecoder Self, uint32 TotFreq)
+inline uint32_t BeeRangeDec_GetFreq(PBeeRangeDec Self, uint32_t TotFreq)
 {
-  return MulDecDiv(Self->FCode + 1, TotFreq, Self->FRange);
+  return _MulDecDiv(Self->FCode + 1, TotFreq, Self->FRange);
 }
 
-static inline void RangeDecoder_Decode(PRangeDecoder Self, uint32 CumFreq, uint32 Freq, uint32 TotFreq)
+static inline void RangeDecoder_Decode(PBeeRangeDec Self, uint32_t CumFreq, uint32_t Freq, uint32_t TotFreq)
 {
-  Self->FCode -= MulDiv(Self->FRange, CumFreq, TotFreq);
-  Self->FRange = MulDiv(Self->FRange,    Freq, TotFreq);
+  Self->FCode -= _MulDiv(Self->FRange, CumFreq, TotFreq);
+  Self->FRange = _MulDiv(Self->FRange,    Freq, TotFreq);
 
   while (Self->FRange < TOP)
   {
@@ -167,9 +167,9 @@ static inline void RangeDecoder_Decode(PRangeDecoder Self, uint32 CumFreq, uint3
   }
 }
 
-inline uint32 RangeDecoder_Update(PRangeDecoder Self, TFreq Freq, uint32 aSymbol)
+inline uint32_t BeeRangeDec_Update(PBeeRangeDec Self, TFreq Freq, uint32_t aSymbol)
 {
-  uint32 CumFreq = 0, TotFreq = 0, SumFreq = 0;
+  uint32_t CumFreq = 0, TotFreq = 0, SumFreq = 0;
 
   // Count TotFreq...
   aSymbol = TFREQSIZE;
@@ -181,7 +181,7 @@ inline uint32 RangeDecoder_Update(PRangeDecoder Self, TFreq Freq, uint32 aSymbol
   while (!(aSymbol == 0));
 
   // Count CumFreq...
-  CumFreq = RangeDecoder_GetFreq(Self, TotFreq);
+  CumFreq = BeeRangeDec_GetFreq(Self, TotFreq);
 
   // Search aSymbol...
   SumFreq = 0;

@@ -3,16 +3,16 @@
 
 /* Default buffer capacity */
 
-#define DEFAULT_BUFFER_CAPACITY 4096
+#define DEFAULT_BUFFER_CAPACITY 4096L
 
 /* TReadStream struct/methods implemetation */
 
 struct TReadStream {
          void *Stream;
    PStreamRead StreamRead;
-         int32 BufferSize;
-         int32 BufferReaded;
-         uint8 Buffer[DEFAULT_BUFFER_CAPACITY];
+       int32_t BufferSize;
+       int32_t BufferReaded;
+       uint8_t Buffer[DEFAULT_BUFFER_CAPACITY];
 };
 
 PReadStream ReadStream_Create(void *aStream, PStreamRead aStreamRead)
@@ -43,9 +43,9 @@ inline void ReadStream_FillBuffer(PReadStream Self)
   Self->BufferReaded = 0;
 }
 
-inline uint8 ReadStream_Read(PReadStream Self)
+inline uint8_t ReadStream_Read(PReadStream Self)
 {
-  uint8 result = 0;
+  uint8_t result = 0;
   if (Self->BufferReaded < Self->BufferSize)
   {
     result = Self->Buffer[Self->BufferReaded];
@@ -68,8 +68,8 @@ inline uint8 ReadStream_Read(PReadStream Self)
 struct TWriteStream {
          void *Stream;
   PStreamWrite StreamWrite;
-         int32 BufferSize;
-         uint8 Buffer[DEFAULT_BUFFER_CAPACITY];
+         int32_t BufferSize;
+         uint8_t Buffer[DEFAULT_BUFFER_CAPACITY];
 };
 
 PWriteStream WriteStream_Create(void *aStream, PStreamWrite aStreamWrite)
@@ -101,7 +101,7 @@ inline void WriteStream_FlushBuffer(PWriteStream Self)
   }
 }
 
-inline void WriteStream_Write(PWriteStream Self, uint8 Data)
+inline void WriteStream_Write(PWriteStream Self, uint8_t Data)
 {
   if (Self->BufferSize == DEFAULT_BUFFER_CAPACITY)
   {

@@ -26,25 +26,14 @@
 #ifndef BEELIB_COMMON_H
 #define BEELIB_COMMON_H
 
-// ------------------------------------------------------------------ //
-//  Configuration integer types                                       //
-// ------------------------------------------------------------------ //
-
-#define uint64 long long unsigned int
-#define  int64 long long   signed int
-
-#define uint32      long unsigned int
-#define  int32      long   signed int
-
-#define uint8            unsigned char
-#define  int8              signed char
+#include <stdint.h>
 
 // ------------------------------------------------------------------ //
 //  Interface definitions                                             //
 // ------------------------------------------------------------------ //
 
-typedef int32 (*PStreamRead)  (void*, void*, int32);
-typedef int32 (*PStreamWrite) (void*, void*, int32);
+typedef int32_t (*PStreamRead ) (void*, void*, int32_t);
+typedef int32_t (*PStreamWrite) (void*, void*, int32_t);
 
 // ------------------------------------------------------------------ //
 //  Configuration table types                                         //
@@ -54,14 +43,14 @@ typedef int32 (*PStreamWrite) (void*, void*, int32);
 #define TABLECOLS        1  // array [0.. 1]
 #define TABLEPARAMETERS 42  // array [0..42]
 
-typedef uint32 TTableCol[TABLESIZE + 1];
+typedef uint32_t TTableCol[TABLESIZE + 1];
 
 struct TTable{
-  uint32 Level;
+  uint32_t Level;
   TTableCol T[TABLECOLS + 1];
 };
 
-typedef uint8 TTableParameters[TABLEPARAMETERS + 1];
+typedef uint8_t TTableParameters[TABLEPARAMETERS + 1];
 
 // ------------------------------------------------------------------ //
 //  Default table parameters                                          //
@@ -77,13 +66,13 @@ static const TTableParameters DefaultTableParameters = {
 //  Default dictionary level                                          //
 // ------------------------------------------------------------------ //
 
-static const int32 DefaultDictionaryLevel = 2;
+static const int32_t DefaultDictionaryLevel = 2;
 
 // ------------------------------------------------------------------ //
 //  Common routine                                                    //
 // ------------------------------------------------------------------ //
 
-inline uint32 MulDiv   (uint32 A, uint32 B, uint32 C);
-inline uint32 MulDecDiv(uint32 A, uint32 B, uint32 C);
+inline uint32_t _MulDiv   (uint32_t A, uint32_t B, uint32_t C);
+inline uint32_t _MulDecDiv(uint32_t A, uint32_t B, uint32_t C);
 
 #endif // BEELIB_COMMON_H
