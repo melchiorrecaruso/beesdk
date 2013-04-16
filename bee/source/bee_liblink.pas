@@ -40,37 +40,58 @@ interface
 //{$linklib libgcc}
 {$ENDIF}
 
+// beelib link
 {$link beelib.c\obj\release\beelib_common.o}
 {$link beelib.c\obj\release\beelib_modeller.o}
 {$link beelib.c\obj\release\beelib_rangecoder.o}
 {$link beelib.c\obj\release\beelib_stream.o}
 
+// ppmdlib link
+
+{$link beelib.c\obj\release\main.o}
+{$link beelib.c\obj\release\Ppmd7.o}
+{$link beelib.c\obj\release\Ppmd7Dec.o}
+{$link beelib.c\obj\release\Ppmd7Enc.o}
+
 type
   TStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
   TStreamWrite = function(Stream: pointer; Data: PByte; Count: longint): longint;
 
-function  RangeEncoder_Create(aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
+// beelib interface
+function  BeeRangeEnc_Create       (aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
+procedure BeeRangeEnc_Destroy      (Self: pointer); cdecl; external;
+procedure BeeRangeEnc_StartEncode  (Self: pointer); cdecl; external;
+procedure BeeRangeEnc_FinishEncode (Self: pointer); cdecl; external;
+function  BeeRangeEnc_Update       (Self: pointer; Freq: pointer; aSymbol: longword): longword; cdecl; external;
 
-procedure RangeEncoder_Destroy     (Self: pointer); cdecl; external;
-procedure RangeEncoder_StartEncode (Self: pointer); cdecl; external;
-procedure RangeEncoder_FinishEncode(Self: pointer); cdecl; external;
-function  RangeEncoder_Update      (Self: pointer; Freq: pointer; aSymbol: longword): longword; cdecl; external;
+function  BeeRangeDec_Create       (aStream: pointer; aStreamRead: TStreamRead): pointer; cdecl; external;
+procedure BeeRangeDec_Destroy      (Self: pointer); cdecl; external;
+procedure BeeRangeDec_StartDecode  (Self: pointer); cdecl; external;
+procedure BeeRangeDec_FinishDecode (Self: pointer); cdecl; external;
 
-function  RangeDecoder_Create
-   (aStream: pointer; aStreamRead: TStreamRead): pointer; cdecl; external;
+function  BeeModeller_Create       (aCoder: pointer): pointer; cdecl; external;
+procedure BeeModeller_Destroy      (Self :pointer); cdecl; external;
+procedure BeeModeller_Init         (Self: pointer; MemLev: longword; Table: pointer); cdecl; external;
+function  BeeModeller_Encode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
+function  BeeModeller_Decode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 
-procedure RangeDecoder_Destroy     (Self: pointer); cdecl; external;
-procedure RangeDecoder_StartDecode (Self: pointer); cdecl; external;
-procedure RangeDecoder_FinishDecode(Self: pointer); cdecl; external;
+// ppmdlib interface
+function  PpmdRangeEnc_Create      (aStream: pointer; aStreamWrite: TStreamWrite): pointer; cdecl; external;
+procedure PpmdRangeEnc_Destroy     (Self: pointer); cdecl; external;
+procedure PpmdRangeEnc_StartEncode (Self: pointer); cdecl; external;
+procedure PpmdRangeEnc_FinishEncode(Self: pointer); cdecl; external;
 
-function  BaseCoder_Create       (aCoder: pointer): pointer; cdecl; external;
-procedure BaseCoder_Destroy      (Self :pointer); cdecl; external;
-procedure BaseCoder_SetTable     (Self: pointer; Table: pointer); cdecl; external;
-procedure BaseCoder_SetDictionary(Self: pointer; Level: longint); cdecl; external;
-procedure BaseCoder_FreshFlexible(Self: pointer); cdecl; external;
-procedure BaseCoder_FreshSolid   (Self: pointer); cdecl; external;
-function  BaseCoder_Encode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
-function  BaseCoder_Decode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
+function  PpmdRangeDec_Create      (aStream: pointer; aStreamRead: TStreamRead): pointer; cdecl; external;
+procedure PpmdRangeDec_Destroy     (Self: pointer); cdecl; external;
+procedure PpmdRangeDec_StartDecode (Self: pointer); cdecl; external;
+procedure PpmdRangeDec_FinishDecode(Self: pointer); cdecl; external;
+
+function  PpmdModeller_Create: pointer; cdecl; external;
+procedure PpmdModeller_Destroy     (Self: pointer); cdecl; external;
+procedure PpmdModeller_Init        (Self: pointer; MemLev: longword; ModOrd: longword); cdecl; external;
+
+function  PpmdModeller_Encode      (Self: pointer; RangeEnc: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
+function  PpmdModeller_Decode      (Self: pointer; RangeEnc: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 
 implementation
 

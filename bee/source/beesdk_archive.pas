@@ -397,7 +397,8 @@ function GetCoderAlgorithm(Params: string): TCoderAlgorithm;
 begin
   Params := UpCase(Params);
   if Pos(':NONE:', Params) > 0 then Result := caStore else
-  if Pos(':BEE:',  Params) > 0 then Result := caBee   else Result := caBee;
+  if Pos(':BEE:',  Params) > 0 then Result := caBee   else
+  if Pos(':PPMD:', Params) > 0 then Result := caPpmd  else Result := caBee;
 end;
 
 function GetCoderBlock(Params: string): int64;
@@ -512,6 +513,7 @@ end;
 
 function GetCipherAlgorithm(const Params: string): TCipherAlgorithm;
 begin
+  Result := caNul;
   if GetCipherKey(Params) <> '' then
     Result := caBlowFish;
 
@@ -568,6 +570,7 @@ begin
   case Item.CompressionMethod of
     caStore: Result := 'STORE';
     caBee:   Result := 'BEE';
+    caPpmd:  Result := 'PPMD';
   end;
 
   Result := Result + ':L'  + IntToStr(Item.CompressionLevel);
@@ -1266,6 +1269,7 @@ begin
   FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
   FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
   FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
+  FTempWriter.InitCoder;
 
   Count := Item.FExternalFileSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
@@ -1350,6 +1354,7 @@ begin
   FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
   FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
   FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
+  FArchiveReader.InitCoder;
 
           Stream.StartHash  (Item.CheckMethod);
           Stream.StartCipher(caNul, '');
@@ -1376,7 +1381,7 @@ begin
   if Item.CheckMethod <> haNul then
     if Item.FCheckDigest <> Stream.FinishHash then
     begin
-     SetExitStatus(esCrcError);
+      SetExitStatus(esCrcError);
     end;
 
   FreeAndNil(Stream);

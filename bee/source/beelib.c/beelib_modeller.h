@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2010-2012 Melchiorre Caruso
+  Copyright (c) 2010-2013 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,15 +30,12 @@
 
 /* TBaseCoder struct/methods */
 
-typedef struct TBaseCoder *PBaseCoder;
+typedef struct TBeeModeller *PBeeModeller;
 
-  PBaseCoder BaseCoder_Create       (void *aCodec);
-        void BaseCoder_Destroy      (PBaseCoder Self);
-        void BaseCoder_SetTable     (PBaseCoder Self, const TTableParameters *T);
-        void BaseCoder_SetDictionary(PBaseCoder Self, int32 aDictLevel);
-        void BaseCoder_FreshFlexible(PBaseCoder Self);
-        void BaseCoder_FreshSolid   (PBaseCoder Self);
-       int32 BaseCoder_Encode       (PBaseCoder Self, uint8 *Buffer, int32 BufSize);
-       int32 BaseCoder_Decode       (PBaseCoder Self, uint8 *Buffer, int32 BufSize);
+  PBeeModeller BeeModeller_Create (void *aCodec);
+          void BeeModeller_Destroy(PBeeModeller Self);
+          void BeeModeller_Init   (PBeeModeller Self, uint32_t DictLevel, const TTableParameters *T);
+      uint32_t BeeModeller_Encode (PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize);
+      uint32_t BeeModeller_Decode (PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize);
 
 #endif /* BEELIB_MODELLER_H */

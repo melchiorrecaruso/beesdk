@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2010-2012 Melchiorre Caruso
+  Copyright (c) 2010-2013 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,31 +31,31 @@
 
 /* Array of Frequencyes */
 
-typedef uint32 *TFreq;
+typedef uint32_t *TFreq;
 
-/* TRangeEncoder struct/methods */
+/* TBeeRangeEnc struct/methods */
 
-typedef struct TRangeEncoder *PRangeEncoder;
+typedef struct TBeeRangeEnc *PBeeRangeEnc;
 
-  PRangeEncoder RangeEncoder_Create      (void *aStream, PStreamWrite aStreamWrite);
-           void RangeEncoder_Destroy     (PRangeEncoder Self);
-           void RangeEncoder_StartEncode (PRangeEncoder Self);
-           void RangeEncoder_FinishEncode(PRangeEncoder Self);
-         uint32 RangeEncoder_Update      (PRangeEncoder Self, TFreq Freq, uint32 aSymbol);
+  PBeeRangeEnc BeeRangeEnc_Create      (void *aStream, PStreamWrite aStreamWrite);
+          void BeeRangeEnc_Destroy     (PBeeRangeEnc Self);
+          void BeeRangeEnc_StartEncode (PBeeRangeEnc Self);
+          void BeeRangeEnc_FinishEncode(PBeeRangeEnc Self);
+      uint32_t BeeRangeEnc_Update      (PBeeRangeEnc Self, TFreq Freq, uint32_t aSymbol);
 
- /* TRangeDecoder struct/methods */
+ /* TBeeRangeDec struct/methods */
 
-typedef struct TRangeDecoder *PRangeDecoder;
+typedef struct TBeeRangeDec *PBeeRangeDec;
 
-  PRangeDecoder RangeDecoder_Create      (void *aStream, PStreamRead aStreamRead);
-           void RangeDecoder_Destroy     (PRangeDecoder Self);
-           void RangeDecoder_StartDecode (PRangeDecoder Self);
-           void RangeDecoder_FinishDecode(PRangeDecoder Self);
-         uint32 RangeDecoder_GetFreq     (PRangeDecoder Self, uint32 TotFreq);
-         uint32 RangeDecoder_Update      (PRangeDecoder Self, TFreq Freq, uint32 aSymbol);
+  PBeeRangeDec BeeRangeDec_Create      (void *aStream, PStreamRead aStreamRead);
+          void BeeRangeDec_Destroy     (PBeeRangeDec Self);
+          void BeeRangeDec_StartDecode (PBeeRangeDec Self);
+          void BeeRangeDec_FinishDecode(PBeeRangeDec Self);
+      uint32_t BeeRangeDec_GetFreq     (PBeeRangeDec Self, uint32_t TotFreq);
+      uint32_t BeeRangeDec_Update      (PBeeRangeDec Self, TFreq Freq, uint32_t aSymbol);
 
-/* RangeCoder_Update definition */
+/* BeeRangeCod_Update definition */
 
-typedef uint32 (*PRangeCoder_Update) (void*, uint32*, uint32);
+typedef uint32_t (*PRangeCod_Update) (void*, uint32_t*, uint32_t);
 
 #endif //  BEELIB_RANGECODER_H

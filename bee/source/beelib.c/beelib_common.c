@@ -4,7 +4,7 @@
 //  Common routine                                                    //
 // ------------------------------------------------------------------ //
 
-inline uint32 MulDiv   (uint32 A, uint32 B, uint32 C)
+inline uint32_t _MulDiv (uint32_t A, uint32_t B, uint32_t C)
 {
   asm volatile (
     "movl %1, %%eax;"
@@ -18,7 +18,7 @@ inline uint32 MulDiv   (uint32 A, uint32 B, uint32 C)
   return A;
 }
 
-inline uint32 MulDecDiv(uint32 A, uint32 B, uint32 C)
+inline uint32_t _MulDecDiv(uint32_t A, uint32_t B, uint32_t C)
 {
   asm volatile (
     "movl %1, %%eax;"

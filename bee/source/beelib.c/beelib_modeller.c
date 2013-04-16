@@ -3,9 +3,6 @@
 #include "beelib_modeller.h"
 #include "beelib_rangecoder.h"
 
-#define min(X, Y) ((X) < (Y) ? (X) : (Y))
-#define max(X, Y) ((X) > (Y) ? (X) : (Y))
-
 #define BITCHAIN   4             // Size of data portion, bit
 #define MAXSYMBOL 15             // Size of source alphabet, symbols
 #define INCREMENT  8             // Increment of symbol frequency
@@ -13,11 +10,12 @@
 /* PPM modeller's node information */
 
 struct TNode{
-  unsigned short int K;          // frequency of This symbol
-  unsigned char C;               // This symbol itself
-  unsigned char D;               // Used FOR incoming data storage
+  uint16_t K;               // frequency of This symbol
+   uint8_t C;               // This symbol itself
+   uint8_t D;               // Used FOR incoming data storage
+
   union {
-    int A;                       // source address
+   int32_t A;                    // source address
     struct TNode *Tear;          // Next free node
   };
   struct TNode *Next;            // Next node of This or high level
@@ -29,51 +27,51 @@ typedef PNode *PPNode;           // Array of nodes...
 
 /* TBaseCoder PPM modeller struct/methods implementation */
 
-struct TBaseCoder {
+struct TBeeModeller {
           void *Codec;
-            int DictLevel;
-   unsigned int Symbol;
-   unsigned int Pos;
-            int LowestPos;       // Maximal heap Size
-   unsigned int MaxCounter;      // Current heap Size
-   unsigned int SafeCounter;     // Safe heap Size
-   unsigned int Counter;
+       uint32_t DictLevel;
+       uint32_t Symbol;
+       uint32_t Pos;
+        int32_t LowestPos;       // Maximal heap Size
+       uint32_t MaxCounter;      // Current heap Size
+       uint32_t SafeCounter;     // Safe heap Size
+       uint32_t Counter;
 
           PNode Heap;
          PPNode Cuts;
          PPNode List;
-   unsigned int ListCount;
+       uint32_t ListCount;
 
           PNode Root;
           PNode CurrentFreeNode;
           PNode LastFreeNode;
           PNode Tear;
 
-   unsigned int IncreaseIndex;
-   unsigned int I;
-   unsigned int R;
-   unsigned int Q;
+       uint32_t IncreaseIndex;
+       uint32_t I;
+       uint32_t R;
+       uint32_t Q;
 
           TFreq Freq;             // symbol frequencyes
      TTableCol *Part;             // Part of parameters Table
   struct TTable Table;            // parameters Table
 };
 
-PBaseCoder BaseCoder_Create(void *aCodec)
+PBeeModeller BeeModeller_Create(void *aCodec)
 {
-  PBaseCoder Self = malloc(sizeof(struct TBaseCoder));
+  PBeeModeller Self = malloc(sizeof(struct TBeeModeller));
 
   Self->Codec     = aCodec;
   Self->DictLevel = 0;
-  Self->Freq      = malloc(sizeof(uint32)*(MAXSYMBOL + 1));
+  Self->Freq      = malloc(sizeof(uint32_t)*(MAXSYMBOL + 1));
   Self->Heap      = NULL;
   Self->Cuts      = NULL;
-  Self->List      = malloc(sizeof(uint32)*(MAXSYMBOL + 1));
+  Self->List      = malloc(sizeof(uint32_t)*(MAXSYMBOL + 1));
 
   return Self;
 }
 
-void BaseCoder_Destroy(PBaseCoder Self)
+void BeeModeller_Destroy(PBeeModeller Self)
 {
   free(Self->Freq);
   free(Self->Heap);
@@ -82,14 +80,14 @@ void BaseCoder_Destroy(PBaseCoder Self)
   free(Self);
 }
 
-static inline void BaseCoder_Add(PBaseCoder Self, uint32 aSymbol)
+static inline void BaseCoder_Add(PBeeModeller Self, uint32_t aSymbol)
 {
   Self->Pos++;
   Self->LowestPos++;
   Self->Heap[Self->Pos & Self->MaxCounter].D = aSymbol;
 }
 
-static inline void BaseCoder_CreateChild(PBaseCoder Self, PNode Parent)
+static inline void BaseCoder_CreateChild(PBeeModeller Self, PNode Parent)
 {
   Self->Counter++;
   PNode result = Self->CurrentFreeNode;
@@ -120,7 +118,7 @@ static inline void BaseCoder_CreateChild(PBaseCoder Self, PNode Parent)
   result->K    = INCREMENT;
 }
 
-static inline void BaseCoder_CutTail(PBaseCoder Self, PPNode I, PPNode J)
+static inline void BaseCoder_CutTail(PBeeModeller Self, PPNode I, PPNode J)
 {
   PNode P = Self->Tear;
   do
@@ -134,7 +132,7 @@ static inline void BaseCoder_CutTail(PBaseCoder Self, PPNode I, PPNode J)
   Self->Tear = P;
 }
 
-static inline void BaseCoder_Cut(PBaseCoder Self)
+static inline void BaseCoder_Cut(PBeeModeller Self)
 {
   if (Self->Cuts == NULL)
   {
@@ -147,7 +145,7 @@ static inline void BaseCoder_Cut(PBaseCoder Self)
 
   (*I) = Self->Root;
 
-  int32 Bound = (Self->SafeCounter * 3) / 4;
+  int32_t Bound = (Self->SafeCounter * 3) / 4;
   PNode P = NULL;
   do
   {
@@ -183,7 +181,7 @@ static inline void BaseCoder_Cut(PBaseCoder Self)
   Self->ListCount = 0;
 }
 
-static inline PNode BaseCoder_Tail(PBaseCoder Self, PNode Node)
+static inline PNode BaseCoder_Tail(PBeeModeller Self, PNode Node)
 {
   Node->A = Self->Pos;
   PNode result = Node->Up;
@@ -192,7 +190,7 @@ static inline PNode BaseCoder_Tail(PBaseCoder Self, PNode Node)
     BaseCoder_CreateChild(Self, Node);
   else
   {
-    uint8 C = Self->Symbol;
+    uint8_t C = Self->Symbol;
     if (result->C != C)
       for (;;)
       {
@@ -216,13 +214,13 @@ static inline PNode BaseCoder_Tail(PBaseCoder Self, PNode Node)
   return result;
 }
 
-static inline void BaseCoder_Account(PBaseCoder Self)
+static inline void BaseCoder_Account(PBeeModeller Self)
 {
   Self->I = 0;
   Self->Q = 0;
   Self->IncreaseIndex = 0;
 
-  uint32 J = 0, K = 0;
+  uint32_t J = 0, K = 0;
   do
   {
     PNode P = Self->List[Self->I];
@@ -291,10 +289,10 @@ static inline void BaseCoder_Account(PBaseCoder Self)
   Self->ListCount = Self->I;
 }
 
-static inline void BaseCoder_Step(PBaseCoder Self, PRangeCoder_Update Update)
+static inline void BaseCoder_Step(PBeeModeller Self, PRangeCod_Update Update)
 {
   // ClearLongword(&Freq[0], MaxSymbol + 1);
-  int32 H;
+  int32_t H;
   for (H = 0; H < MAXSYMBOL + 1; H++)
     Self->Freq[H] = 0;
 
@@ -305,7 +303,7 @@ static inline void BaseCoder_Step(PBaseCoder Self, PRangeCoder_Update Update)
 
   // Update aSymbol...
   // AddLongword(&Freq[0], MaxSymbol + 1, (R >> BitChain) + 1);
-  uint32 I = 0, J = (Self->R >> BITCHAIN) + 1;
+  uint32_t I = 0, J = (Self->R >> BITCHAIN) + 1;
   do
   {
     Self->Freq[I] += J;
@@ -321,7 +319,7 @@ static inline void BaseCoder_Step(PBaseCoder Self, PRangeCoder_Update Update)
   if (Self->ListCount > 0)
   {
     // Update frequencies...
-    uint32 I = 0;
+    uint32_t I = 0;
     do
     {
       P = Self->List[I];
@@ -358,7 +356,7 @@ static inline void BaseCoder_Step(PBaseCoder Self, PRangeCoder_Update Update)
   }
 }
 
-void BaseCoder_FreshFlexible(PBaseCoder Self)
+void BaseCoder_FreshFlexible(PBeeModeller Self)
 {
   Self->Tear            = NULL;
   Self->CurrentFreeNode = &(Self->Heap[0]);
@@ -376,10 +374,10 @@ void BaseCoder_FreshFlexible(PBaseCoder Self)
   Self->Root->K    = INCREMENT;
   Self->Root->C    = 0;
   Self->Root->A    = 1;
-  Self->LowestPos  = - ((int32) Self->MaxCounter);
+  Self->LowestPos  = - ((int32_t) Self->MaxCounter);
 }
 
-void BaseCoder_FreshSolid(PBaseCoder Self)
+void BaseCoder_FreshSolid(PBeeModeller Self)
 {
   if (Self->Counter > 1)
   {
@@ -390,11 +388,12 @@ void BaseCoder_FreshSolid(PBaseCoder Self)
     Self->ListCount = 0;
 }
 
-void BaseCoder_SetDictionary(PBaseCoder Self, int32 aDictLevel)
+void BaseCoder_SetDictionary(PBeeModeller Self, uint32_t aDictLevel)
 {
+  if (aDictLevel > 9) { aDictLevel = 9; }
   if (aDictLevel != Self->DictLevel)
   {
-	Self->DictLevel   = min(max(0, aDictLevel), 9);
+	Self->DictLevel   = aDictLevel;
 	Self->MaxCounter  = (1 << ( 17 + Self->DictLevel)) - 1;
     Self->SafeCounter = Self->MaxCounter - 64;
 
@@ -407,17 +406,17 @@ void BaseCoder_SetDictionary(PBaseCoder Self, int32 aDictLevel)
   BaseCoder_FreshFlexible(Self);
 }
 
-void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
+void BaseCoder_SetTable(PBeeModeller Self, const TTableParameters *T)
 {
-  Self->Table.Level = (uint32)(*T)[0] & 0xF;
+  Self->Table.Level = (uint32_t)(*T)[0] & 0xF;
 
-  uint32 I = 1;
-  uint32 J , K;
+  uint32_t I = 1;
+  uint32_t J , K;
 
   for (J = 0; J <= TABLECOLS; J++)
     for (K = 0; K <= TABLESIZE; K++)
     {
-      Self->Table.T[J][K] = (int32)(*T)[I] + 1;
+      Self->Table.T[J][K] = (int32_t)(*T)[I] + 1;
       I++;
     }
 
@@ -434,11 +433,11 @@ void BaseCoder_SetTable(PBaseCoder Self, const TTableParameters *T)
   }
 }
 
-static inline uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol, PRangeCoder_Update Update)
+static inline uint32_t BaseCoder_Update(PBeeModeller Self, uint32_t aSymbol, PRangeCod_Update Update)
 {
   Self->Part = &(Self->Table.T[0]);
 
-  uint32 result = 0;
+  uint32_t result = 0;
   Self->Symbol = aSymbol >> 0x4;
   BaseCoder_Step(Self, Update);
 
@@ -457,7 +456,7 @@ static inline uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol, PRangeCod
   if (Self->ListCount > Self->Table.Level)
   {
     // MoveLongwordUnchecked(List[1], List[0], ListCount - 1);
-    uint32 H;
+    uint32_t H;
     for (H = 1; H < Self->ListCount; H++)
       Self->List[H - 1] = Self->List[H];
   }
@@ -468,22 +467,28 @@ static inline uint32 BaseCoder_Update(PBaseCoder Self, uint32 aSymbol, PRangeCod
   return result;
 }
 
-inline int32 BaseCoder_Encode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
+inline void BeeModeller_Init(PBeeModeller Self, uint32_t DictLevel, const TTableParameters *T)
 {
-  int32 I;
-  for  (I = 0; I < BufSize; I++)
+  BaseCoder_SetTable(Self, T);
+  BaseCoder_SetDictionary(Self, DictLevel);
+}
+
+inline uint32_t BeeModeller_Encode(PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize)
+{
+  uint32_t I;
+  for (I = 0; I < BufSize; I++)
   {
-    BaseCoder_Update(Self, Buffer[I], (PRangeCoder_Update)RangeEncoder_Update);
+    BaseCoder_Update(Self, Buffer[I], (PRangeCod_Update)BeeRangeEnc_Update);
   }
   return I;
 };
 
-inline int32 BaseCoder_Decode(PBaseCoder Self, uint8 *Buffer, int32 BufSize)
+inline uint32_t BeeModeller_Decode(PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize)
 {
-  int32 I;
-  for  (I = 0; I < BufSize; I++)
+  uint32_t I;
+  for (I = 0; I < BufSize; I++)
   {
-    Buffer[I] = BaseCoder_Update(Self, 0, (PRangeCoder_Update)RangeDecoder_Update);
+    Buffer[I] = BaseCoder_Update(Self, 0, (PRangeCod_Update)BeeRangeDec_Update);
   }
   return I;
 };

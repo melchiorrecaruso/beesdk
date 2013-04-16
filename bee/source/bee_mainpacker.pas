@@ -37,14 +37,20 @@ type
   TBaseCoder = class(TObject)
   private
     FStream: pointer;
+    FLevel: longword;
+    FLevelAux: longword;
+    FFilter: string;
+    FFilterAux: string;
+    FBlock: int64;
   public
     constructor Create(Stream: pointer);
-    procedure SetCompressionLevel(Value: longint); virtual abstract;
-    procedure SetCompressionLevelAux(Value: longint); virtual abstract;
-    procedure SetCompressionFilter(const Value: string); virtual abstract;
-    procedure SetCompressionFilterAux(const Value: string); virtual abstract;
-    procedure SetCompressionBlock(const Value: int64); virtual abstract;
+    procedure SetCompressionLevel(Value: longword); virtual;
+    procedure SetCompressionLevelAux(Value: longword); virtual;
+    procedure SetCompressionFilter(const Value: string); virtual;
+    procedure SetCompressionFilterAux(const Value: string); virtual;
+    procedure SetCompressionBlock(const Value: int64); virtual;
 
+    procedure Init; virtual abstract;
     procedure Start; virtual abstract;
     procedure Finish; virtual abstract;
     function  Encode(Data: PByte; Count: longint): longint; virtual abstract;
@@ -55,12 +61,7 @@ type
 
   TStoreCoder = class(TBaseCoder)
   public
-    procedure SetCompressionLevel(Value: longint); override;
-    procedure SetCompressionLevelAux(Value: longint); override;
-    procedure SetCompressionFilter(const Value: string); override;
-    procedure SetCompressionFilterAux(const Value: string); override;
-    procedure SetCompressionBlock(const Value: int64); override;
-
+    procedure Init; override;
     procedure Start; override;
     procedure Finish; override;
     function Encode(Data: PByte; Count: longint): longint; override;
@@ -74,11 +75,7 @@ type
     FCoder: pointer;
     FModeller: pointer;
   public
-    procedure SetCompressionLevel(Value: longint); override;
-    procedure SetCompressionLevelAux(Value: longint); override;
-    procedure SetCompressionFilter(const Filter: string); override;
-    procedure SetCompressionFilterAux(const Filter: string); override;
-    procedure SetCompressionBlock(const Value: int64); override;
+    procedure Init; override;
   end;
 
   TBeeEncoder = class(TBeeCoder)
@@ -101,7 +98,37 @@ type
     function Decode(Data: PByte; Count: longint): longint; override;
   end;
 
-  TCoderAlgorithm = (caStore, caBee);
+  { TPpmdCoder classes }
+
+  TPpmdCoder = class(TBaseCoder)
+  private
+    FCoder: pointer;
+    FModeller: pointer;
+  public
+    procedure Init; override;
+  end;
+
+  TPpmdEncoder = class(TPpmdCoder)
+  public
+    constructor Create(Stream: pointer);
+    destructor Destroy; override;
+
+    procedure Start; override;
+    procedure Finish; override;
+    function Encode(Data: PByte; Count: longint): longint; override;
+  end;
+
+  TPpmdDecoder = class(TPpmdCoder)
+  public
+    constructor Create(Stream: pointer);
+    destructor Destroy; override;
+
+    procedure Start; override;
+    procedure Finish; override;
+    function Decode(Data: PByte; Count: longint): longint; override;
+  end;
+
+  TCoderAlgorithm = (caStore, caBee, caPpmd);
 
 implementation
 
@@ -117,38 +144,47 @@ uses
   Bee_Modeller;
   {$ENDIF}
 
-
 /// TBaseCoder abstract class
 
 constructor TBaseCoder.Create(Stream: pointer);
 begin
   inherited Create;
-  FStream := Stream;
+  FStream    := Stream;
+  FLevel     :=  0;
+  FLevelAux  :=  0;
+  FFilter    := '';
+  FFilterAux := '';
+  FBlock     :=  0;
+end;
+
+procedure TBaseCoder.SetCompressionLevel(Value: longword);
+begin
+  FLevel := Value;
+end;
+
+procedure TBaseCoder.SetCompressionLevelAux(Value: longword);
+begin
+  FLevelAux := Value;
+end;
+
+procedure TBaseCoder.SetCompressionFilter(const Value: string);
+begin
+  FFilter := Value;
+end;
+
+procedure TBaseCoder.SetCompressionFilterAux(const Value: string);
+begin
+  FFilterAux := Value;
+end;
+
+procedure TBaseCoder.SetCompressionBlock(const Value: int64);
+begin
+  FBlock := Value;
 end;
 
 /// TStoreCoder class
 
-procedure TStoreCoder.SetCompressionLevel(Value: longint);
-begin
-  // nothing to do
-end;
-
-procedure TStoreCoder.SetCompressionLevelAux(Value: longint);
-begin
-  // nothing to do
-end;
-
-procedure TStoreCoder.SetCompressionFilter(const Value: string);
-begin
-  // nothing to do
-end;
-
-procedure TStoreCoder.SetCompressionFilterAux(const Value: string);
-begin
-  // nothing to do
-end;
-
-procedure TStoreCoder.SetCompressionBlock(const Value: int64);
+procedure TStoreCoder.Init;
 begin
   // nothing to do
 end;
@@ -175,37 +211,15 @@ end;
 
 /// TBeeCoder class
 
-procedure TBeeCoder.SetCompressionLevel(Value: longint);
-begin
-  // nothing to do
-end;
-
-procedure TBeeCoder.SetCompressionLevelAux(Value: longint);
-begin
-  BaseCoder_SetDictionary(FModeller, Value);
-end;
-
-procedure TBeeCoder.SetCompressionFilter(const Filter: string);
+procedure TBeeCoder.Init;
 var
   Table: TTableParameters;
 begin
-  if HexToData(Filter, Table[1], SizeOf(Table)) then
+  if not HexToData(FFilter, Table[1], SizeOf(Table)) then
   begin
-    BaseCoder_SetTable(FModeller, @Table[1]);
+    Table := DefaultTableParameters;
   end;
-end;
-
-procedure TBeeCoder.SetCompressionFilterAux(const Filter: string);
-begin
-  // nothing to do
-end;
-
-procedure TBeeCoder.SetCompressionBlock(const Value: int64);
-begin
-  if Value = 0 then
-    BaseCoder_FreshFlexible(FModeller)
-  else
-    BaseCoder_FreshSolid(FModeller);
+  BeeModeller_Init(FModeller, FLevelAux, @Table[1]);
 end;
 
 /// TBeeEncoder class
@@ -213,30 +227,30 @@ end;
 constructor TBeeEncoder.Create(Stream: pointer);
 begin
   inherited Create(Stream);
-  FCoder    := RangeEncoder_Create(Stream, @DoFlush);
-  FModeller := BaseCoder_Create(FCoder);
+  FCoder    := BeeRangeEnc_Create(Stream, @DoFlush);
+  FModeller := BeeModeller_Create(FCoder);
 end;
 
 destructor TBeeEncoder.Destroy;
 begin
-  BaseCoder_Destroy(FModeller);
-  RangeEncoder_Destroy(FCoder);
+  BeeModeller_Destroy(FModeller);
+  BeeRangeEnc_Destroy(FCoder);
   inherited Destroy;
 end;
 
 procedure TBeeEncoder.Start;
 begin
-  RangeEncoder_StartEncode(FCoder);
+  BeeRangeEnc_StartEncode(FCoder);
 end;
 
 procedure TBeeEncoder.Finish;
 begin
-  RangeEncoder_FinishEncode(FCoder);
+  BeeRangeEnc_FinishEncode(FCoder);
 end;
 
 function TBeeEncoder.Encode(Data: PByte; Count: longint): longint;
 begin
-  Result := BaseCoder_Encode(FModeller, Data, Count);
+  Result := BeeModeller_Encode(FModeller, Data, Count);
 end;
 
 /// TBeeDecoder class
@@ -244,30 +258,99 @@ end;
 constructor TBeeDecoder.Create(Stream: pointer);
 begin
   inherited Create(Stream);
-  FCoder    := RangeDecoder_Create(Stream, @DoFill);
-  FModeller := BaseCoder_Create(FCoder);
+  FCoder    := BeeRangeDec_Create(Stream, @DoFill);
+  FModeller := BeeModeller_Create(FCoder);
 end;
 
 destructor TBeeDecoder.Destroy;
 begin
-  BaseCoder_Destroy(FModeller);
-  RangeDecoder_Destroy(FCoder);
+  BeeModeller_Destroy(FModeller);
+  BeeRangeDec_Destroy(FCoder);
   inherited Destroy;
 end;
 
 procedure TBeeDecoder.Start;
 begin
-  RangeDecoder_StartDecode(FCoder);
+  BeeRangeDec_StartDecode(FCoder);
 end;
 
 procedure TBeeDecoder.Finish;
 begin
-  RangeDecoder_FinishDecode(FCoder);
+  BeeRangeDec_FinishDecode(FCoder);
 end;
 
 function TBeeDecoder.Decode(Data: PByte; Count: longint): longint;
 begin
-  Result := BaseCoder_Decode(FModeller, Data, Count);
+  Result := BeeModeller_Decode(FModeller, Data, Count);
+end;
+
+{ TPpmdCoder class }
+
+procedure TPpmdCoder.Init;
+begin
+  PpmdModeller_Init(FModeller, 16*33554432, 10);
+end;
+
+{ TPpmdEncoder class }
+
+constructor TPpmdEncoder.Create(Stream: pointer);
+begin
+  inherited Create(Stream);
+  FCoder    := PpmdRangeEnc_Create(Stream, @DoFlush);
+  FModeller := PpmdModeller_Create;
+end;
+
+destructor TPpmdEncoder.Destroy;
+begin
+  PpmdModeller_Destroy(FModeller);
+  PpmdRangeEnc_Destroy(FCoder);
+  inherited Destroy;
+end;
+
+procedure TPpmdEncoder.Start;
+begin
+  PpmdRangeEnc_StartEncode(FCoder);
+end;
+
+procedure TPpmdEncoder.Finish;
+begin
+  PpmdRangeEnc_FinishEncode(FCoder);
+end;
+
+function TPpmdEncoder.Encode(Data: PByte; Count: longint): longint;
+begin
+  Result := PpmdModeller_Encode(FModeller, FCoder, Data, Count);
+end;
+
+{ TPpmdDecoder class }
+
+constructor TPpmdDecoder.Create(Stream: pointer);
+begin
+  inherited Create(Stream);
+  FCoder    := PpmdRangeDec_Create(Stream, @DoFill);
+  FModeller := PpmdModeller_Create;
+end;
+
+destructor TPpmdDecoder.Destroy;
+begin
+  PpmdModeller_Destroy(FModeller);
+  PpmdRangeDec_Destroy(FCoder);
+  inherited Destroy;
+end;
+
+procedure TPpmdDecoder.Start;
+begin
+  PpmdRangeDec_StartDecode(FCoder);
+end;
+
+procedure TPpmdDecoder.Finish;
+begin
+  PpmdRangeDec_FinishDecode(FCoder);
+end;
+
+function TPpmdDecoder.Decode(Data: PByte; Count: longint): longint;
+begin
+  Result := PpmdModeller_Decode(FModeller, FCoder, Data, Count);
 end;
 
 end.
