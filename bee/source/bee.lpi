@@ -109,7 +109,6 @@
       <Unit2>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="259"/>
@@ -122,10 +121,11 @@
       <Unit3>
         <Filename Value="bee_liblink.pas"/>
         <UnitName Value="Bee_LibLink"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="41"/>
-        <CursorPos X="75" Y="89"/>
+        <TopLine Value="32"/>
+        <CursorPos X="51" Y="48"/>
         <UsageCount Value="42"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
