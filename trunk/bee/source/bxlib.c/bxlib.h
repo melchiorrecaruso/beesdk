@@ -26,18 +26,6 @@
 #ifndef BXLIB_H
 #define BXLIB_H
 
-#include "bxlib_bee_common.h"
-
-/* TBeeModeller struct/methods */
-
-typedef struct TBeeModeller *PBeeModeller;
-
-  PBeeModeller BeeModeller_Create (void *aCodec);
-          void BeeModeller_Destroy(PBeeModeller Self);
-          void BeeModeller_Init   (PBeeModeller Self, uint32_t DictLevel, const TTableParameters *T);
-      uint32_t BeeModeller_Encode (PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize);
-      uint32_t BeeModeller_Decode (PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize);
-
 #include "bxlib_stream.h"
 #include "bxlib_ppmd7.h"
 
