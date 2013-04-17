@@ -33,6 +33,7 @@
 		<Unit filename="bxlib.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="bxlib.h" />
 		<Unit filename="bxlib_bee_common.c">
 			<Option compilerVar="CC" />
 		</Unit>
