@@ -138,7 +138,7 @@ uses
   Bee_Common,
   Bee_Configuration,
   Bee_Interface,
-  {$IFDEF cLib}
+  {$IFDEF LIBBX}
   Bee_LibBx;
   {$ELSE}
   Bee_Modeller;
