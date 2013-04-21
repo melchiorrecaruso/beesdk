@@ -40,15 +40,15 @@ interface
 //{$linklib libgcc}
 {$ENDIF}
 
-{$link bxlib.c\obj\release\bxlib_stream.o}
+{$link ..\temp\bxlib_stream.o}
 // bee coder link
-{$link bxlib.c\obj\release\bxlib_bee_common.o}
-{$link bxlib.c\obj\release\bxlib_bee_modeller.o}
-{$link bxlib.c\obj\release\bxlib_bee_rangecoder.o}
+{$link ..\temp\bxlib_bee_common.o}
+{$link ..\temp\bxlib_bee_modeller.o}
+{$link ..\temp\bxlib_bee_rangecoder.o}
 // ppmd coder link
-{$link bxlib.c\obj\release\bxlib_ppmd_common.o}
-{$link bxlib.c\obj\release\bxlib_ppmd_modeller.o}
-{$link bxlib.c\obj\release\bxlib_ppmd_rangecoder.o}
+{$link ..\temp\bxlib_ppmd_common.o}
+{$link ..\temp\bxlib_ppmd_modeller.o}
+{$link ..\temp\bxlib_ppmd_rangecoder.o}
 
 type
   TStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
