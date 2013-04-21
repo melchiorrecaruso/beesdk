@@ -29,7 +29,7 @@
 
 unit Bee_Assembler;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 interface
 

@@ -27,7 +27,7 @@
 
 unit Bee_BufStream;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 interface
 

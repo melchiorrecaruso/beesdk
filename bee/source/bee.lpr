@@ -39,7 +39,7 @@
 
 program Bee;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 uses
   Classes,

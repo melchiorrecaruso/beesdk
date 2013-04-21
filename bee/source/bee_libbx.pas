@@ -25,9 +25,9 @@
     v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
 }
 
-unit Bee_LibLink;
+unit Bee_LibBx;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 interface
 

@@ -25,7 +25,7 @@
 
 unit Bee_BlowFish;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 interface
 

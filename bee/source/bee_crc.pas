@@ -25,7 +25,7 @@
 
 unit Bee_Crc;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 interface
 
