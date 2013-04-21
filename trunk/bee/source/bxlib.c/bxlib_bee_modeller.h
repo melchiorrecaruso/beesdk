@@ -23,8 +23,8 @@
 
 */
 
-#ifndef BEELIB_MODELLER_H
-#define BEELIB_MODELLER_H
+#ifndef BXLIB_BEE_MODELLER_H
+#define BXLIB_BEE_MODELLER_H
 
 #include "bxlib_bee_common.h"
 
@@ -38,4 +38,4 @@ typedef struct TBeeModeller *PBeeModeller;
       uint32_t BeeModeller_Encode (PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize);
       uint32_t BeeModeller_Decode (PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize);
 
-#endif /* BEELIB_MODELLER_H */
+#endif /* BXLIB_BEE_MODELLER_H */

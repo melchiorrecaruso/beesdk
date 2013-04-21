@@ -288,7 +288,7 @@ end;
 
 procedure TPpmdCoder.Init;
 begin
-  PpmdModeller_Init(FModeller, 16*33554432, 10);
+  PpmdModeller_Start(FModeller, 33554432, 6);
 end;
 
 { TPpmdEncoder class }

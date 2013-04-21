@@ -80,14 +80,14 @@ void BeeModeller_Destroy(PBeeModeller Self)
   free(Self);
 }
 
-static inline void BaseCoder_Add(PBeeModeller Self, uint32_t aSymbol)
+static inline void BeeModeller_Add(PBeeModeller Self, uint32_t aSymbol)
 {
   Self->Pos++;
   Self->LowestPos++;
   Self->Heap[Self->Pos & Self->MaxCounter].D = aSymbol;
 }
 
-static inline void BaseCoder_CreateChild(PBeeModeller Self, PNode Parent)
+static inline void BeeModeller_CreateChild(PBeeModeller Self, PNode Parent)
 {
   Self->Counter++;
   PNode result = Self->CurrentFreeNode;
@@ -118,7 +118,7 @@ static inline void BaseCoder_CreateChild(PBeeModeller Self, PNode Parent)
   result->K    = INCREMENT;
 }
 
-static inline void BaseCoder_CutTail(PBeeModeller Self, PPNode I, PPNode J)
+static inline void BeeModeller_CutTail(PBeeModeller Self, PPNode I, PPNode J)
 {
   PNode P = Self->Tear;
   do
@@ -132,7 +132,7 @@ static inline void BaseCoder_CutTail(PBeeModeller Self, PPNode I, PPNode J)
   Self->Tear = P;
 }
 
-static inline void BaseCoder_Cut(PBeeModeller Self)
+static inline void BeeModeller_Cut(PBeeModeller Self)
 {
   if (Self->Cuts == NULL)
   {
@@ -175,19 +175,19 @@ static inline void BaseCoder_Cut(PBeeModeller Self)
   while (!((I == J) || (Bound < 0)));
 
   if (I != J)
-    BaseCoder_CutTail(Self, I, J);
+    BeeModeller_CutTail(Self, I, J);
 
   Self->Counter = ((Self->SafeCounter * 3) / 4) - Bound + 1;
   Self->ListCount = 0;
 }
 
-static inline PNode BaseCoder_Tail(PBeeModeller Self, PNode Node)
+static inline PNode BeeModeller_Tail(PBeeModeller Self, PNode Node)
 {
   Node->A = Self->Pos;
   PNode result = Node->Up;
 
   if (result == NULL)
-    BaseCoder_CreateChild(Self, Node);
+    BeeModeller_CreateChild(Self, Node);
   else
   {
     uint8_t C = Self->Symbol;
@@ -198,7 +198,7 @@ static inline PNode BaseCoder_Tail(PBeeModeller Self, PNode Node)
         result  = result->Next;
         if (result == NULL)
         {
-          BaseCoder_CreateChild(Self, Node);
+          BeeModeller_CreateChild(Self, Node);
           break;
         }
         else
@@ -214,7 +214,7 @@ static inline PNode BaseCoder_Tail(PBeeModeller Self, PNode Node)
   return result;
 }
 
-static inline void BaseCoder_Account(PBeeModeller Self)
+static inline void BeeModeller_Account(PBeeModeller Self)
 {
   Self->I = 0;
   Self->Q = 0;
@@ -278,7 +278,7 @@ static inline void BaseCoder_Account(PBeeModeller Self)
       if (P->A > Self->LowestPos)
       {
         // Determined context, encountered at first time ...
-		BaseCoder_CreateChild(Self, P);
+		BeeModeller_CreateChild(Self, P);
         K = Self->R / (*(Self->Part))[0] << 8;
         Self->Freq[P->Up->C] += Self->R - K;
         Self->R = K;
@@ -289,7 +289,7 @@ static inline void BaseCoder_Account(PBeeModeller Self)
   Self->ListCount = Self->I;
 }
 
-static inline void BaseCoder_Step(PBeeModeller Self, PRangeCod_Update Update)
+static inline void BeeModeller_Step(PBeeModeller Self, PRangeCod_Update Update)
 {
   // ClearLongword(&Freq[0], MaxSymbol + 1);
   int32_t H;
@@ -299,7 +299,7 @@ static inline void BaseCoder_Step(PBeeModeller Self, PRangeCod_Update Update)
   Self->R = MAXFREQ - MAXSYMBOL - 1;
 
   if (Self->ListCount > 0)
-    BaseCoder_Account(Self);
+    BeeModeller_Account(Self);
 
   // Update aSymbol...
   // AddLongword(&Freq[0], MaxSymbol + 1, (R >> BitChain) + 1);
@@ -313,7 +313,7 @@ static inline void BaseCoder_Step(PBeeModeller Self, PRangeCod_Update Update)
 
   Self->Symbol = Update(Self->Codec, Self->Freq, Self->Symbol);
 
-  BaseCoder_Add(Self, Self->Symbol);
+  BeeModeller_Add(Self, Self->Symbol);
 
   PNode P = NULL;
   if (Self->ListCount > 0)
@@ -343,7 +343,7 @@ static inline void BaseCoder_Step(PBeeModeller Self, PRangeCod_Update Update)
     J = I;
     do
     {
-      P = BaseCoder_Tail(Self, Self->List[I]);
+      P = BeeModeller_Tail(Self, Self->List[I]);
       if (P != NULL)
       {
         Self->List[J] = P;
@@ -356,7 +356,7 @@ static inline void BaseCoder_Step(PBeeModeller Self, PRangeCod_Update Update)
   }
 }
 
-void BaseCoder_FreshFlexible(PBeeModeller Self)
+void BeeModeller_FreshFlexible(PBeeModeller Self)
 {
   Self->Tear            = NULL;
   Self->CurrentFreeNode = &(Self->Heap[0]);
@@ -377,7 +377,7 @@ void BaseCoder_FreshFlexible(PBeeModeller Self)
   Self->LowestPos  = - ((int32_t) Self->MaxCounter);
 }
 
-void BaseCoder_FreshSolid(PBeeModeller Self)
+void BeeModeller_FreshSolid(PBeeModeller Self)
 {
   if (Self->Counter > 1)
   {
@@ -388,7 +388,7 @@ void BaseCoder_FreshSolid(PBeeModeller Self)
     Self->ListCount = 0;
 }
 
-void BaseCoder_SetDictionary(PBeeModeller Self, uint32_t aDictLevel)
+void BeeModeller_SetDictionary(PBeeModeller Self, uint32_t aDictLevel)
 {
   if (aDictLevel > 9) { aDictLevel = 9; }
   if (aDictLevel != Self->DictLevel)
@@ -403,10 +403,10 @@ void BaseCoder_SetDictionary(PBeeModeller Self, uint32_t aDictLevel)
 	free(Self->Heap);
 	Self->Heap = malloc(sizeof(struct TNode)*(Self->MaxCounter + 1));
   }
-  BaseCoder_FreshFlexible(Self);
+  BeeModeller_FreshFlexible(Self);
 }
 
-void BaseCoder_SetTable(PBeeModeller Self, const TTableParameters *T)
+void BeeModeller_SetTable(PBeeModeller Self, const TTableParameters *T)
 {
   Self->Table.Level = (uint32_t)(*T)[0] & 0xF;
 
@@ -433,24 +433,24 @@ void BaseCoder_SetTable(PBeeModeller Self, const TTableParameters *T)
   }
 }
 
-static inline uint32_t BaseCoder_Update(PBeeModeller Self, uint32_t aSymbol, PRangeCod_Update Update)
+static inline uint32_t BeeModeller_Update(PBeeModeller Self, uint32_t aSymbol, PRangeCod_Update Update)
 {
   Self->Part = &(Self->Table.T[0]);
 
   uint32_t result = 0;
   Self->Symbol = aSymbol >> 0x4;
-  BaseCoder_Step(Self, Update);
+  BeeModeller_Step(Self, Update);
 
   result = Self->Symbol << 4;
   Self->Part = &(Self->Table.T[1]);
   Self->Symbol = aSymbol & 0xF;
-  BaseCoder_Step(Self, Update);
+  BeeModeller_Step(Self, Update);
 
   result += Self->Symbol;
 
   // Reduce Tree...
   if (Self->SafeCounter < Self->Counter)
-    BaseCoder_Cut(Self);
+    BeeModeller_Cut(Self);
 
   // Update NodeList...
   if (Self->ListCount > Self->Table.Level)
@@ -469,8 +469,8 @@ static inline uint32_t BaseCoder_Update(PBeeModeller Self, uint32_t aSymbol, PRa
 
 inline void BeeModeller_Init(PBeeModeller Self, uint32_t DictLevel, const TTableParameters *T)
 {
-  BaseCoder_SetTable(Self, T);
-  BaseCoder_SetDictionary(Self, DictLevel);
+  BeeModeller_SetTable(Self, T);
+  BeeModeller_SetDictionary(Self, DictLevel);
 }
 
 inline uint32_t BeeModeller_Encode(PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize)
@@ -478,7 +478,7 @@ inline uint32_t BeeModeller_Encode(PBeeModeller Self, uint8_t *Buffer, uint32_t 
   uint32_t I;
   for (I = 0; I < BufSize; I++)
   {
-    BaseCoder_Update(Self, Buffer[I], (PRangeCod_Update)BeeRangeEnc_Update);
+    BeeModeller_Update(Self, Buffer[I], (PRangeCod_Update)BeeRangeEnc_Update);
   }
   return I;
 };
@@ -488,7 +488,7 @@ inline uint32_t BeeModeller_Decode(PBeeModeller Self, uint8_t *Buffer, uint32_t 
   uint32_t I;
   for (I = 0; I < BufSize; I++)
   {
-    Buffer[I] = BaseCoder_Update(Self, 0, (PRangeCod_Update)BeeRangeDec_Update);
+    Buffer[I] = BeeModeller_Update(Self, 0, (PRangeCod_Update)BeeRangeDec_Update);
   }
   return I;
 };
