@@ -23,10 +23,10 @@
 
 */
 
-#ifndef BXLIB_BEE_MODELLER_H
-#define BXLIB_BEE_MODELLER_H
+#ifndef LIBBX_BEE_MODELLER_H
+#define LIBBX_BEE_MODELLER_H
 
-#include "bxlib_bee_common.h"
+#include "libbx_bee_common.h"
 
 /* TBaseCoder struct/methods */
 
@@ -38,4 +38,4 @@ typedef struct TBeeModeller *PBeeModeller;
       uint32_t BeeModeller_Encode (PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize);
       uint32_t BeeModeller_Decode (PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize);
 
-#endif /* BXLIB_BEE_MODELLER_H */
+#endif /* LIBBX_BEE_MODELLER_H */

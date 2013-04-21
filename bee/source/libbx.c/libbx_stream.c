@@ -1,5 +1,5 @@
+#include "libbx_stream.h"
 #include <stdlib.h>
-#include "bxlib_stream.h"
 
 /* Default buffer capacity */
 

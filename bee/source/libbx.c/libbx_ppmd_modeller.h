@@ -23,11 +23,11 @@
 
 */
 
-#ifndef BXLIB_PPMD_MODELLER_H
-#define BXLIB_PPMD_MODELLER_H
+#ifndef LIBBX_PPMD_MODELLER_H
+#define LIBBX_PPMD_MODELLER_H
 
-#include "bxlib_ppmd_rangecoder.h"
-#include "bxlib_stream.h"
+#include "libbx_ppmd_rangecoder.h"
+#include "libbx_stream.h"
 #include "stdint.h"
 
 typedef struct TPpmdModeller *PPpmdModeller;
@@ -39,4 +39,4 @@ typedef struct TPpmdModeller *PPpmdModeller;
         int32_t PpmdModeller_Encode (PPpmdModeller Self, PPpmdRangeEnc RangeEnc, uint8_t *Buffer, int32_t BufSize);
         int32_t PpmdModeller_Decode (PPpmdModeller Self, PPpmdRangeDec RangeDec, uint8_t *Buffer, int32_t BufSize);
 
-#endif //  BXLIB_PPMD_MODELLER_H
+#endif /* LIBBX_PPMD_MODELLER_H */

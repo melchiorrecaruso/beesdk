@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
-#include "bxlib_bee_modeller.h"
-#include "bxlib_bee_rangecoder.h"
+#include "libbx_bee_modeller.h"
+#include "libbx_bee_rangecoder.h"
 
 #define BITCHAIN   4             // Size of data portion, bit
 #define MAXSYMBOL 15             // Size of source alphabet, symbols
