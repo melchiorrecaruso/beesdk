@@ -20,10 +20,10 @@
 
 */
 
-#ifndef BXLIB_PPMD_COMMON_H
-#define BXLIB_PPMD_COMMON_H
+#ifndef LIBBX_PPMD_COMMON_H
+#define LIBBX_PPMD_COMMON_H
 
 #define TRUE  1
 #define FALSE 0
 
-#endif //  BXLIB_PPMD_COMMON_H
+#endif /* LIBBX_PPMD_COMMON_H */

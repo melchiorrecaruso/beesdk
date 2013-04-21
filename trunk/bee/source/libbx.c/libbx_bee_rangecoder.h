@@ -20,12 +20,12 @@
 
 */
 
-#ifndef BXLIB_BEE_RANGECODER_H
-#define BXLIB_BEE_RANGECODER_H
+#ifndef LIBBX_BEE_RANGECODER_H
+#define LIBBX_BEE_RANGECODER_H
 
 #include "stdint.h"
-#include "bxlib_stream.h"
-#include "bxlib_bee_common.h"
+#include "libbx_stream.h"
+#include "libbx_bee_common.h"
 
 #define MAXFREQ   16777215
 #define TFREQSIZE 16
@@ -59,4 +59,4 @@ typedef struct TBeeRangeDec *PBeeRangeDec;
 
 typedef uint32_t (*PRangeCod_Update) (void*, uint32_t*, uint32_t);
 
-#endif //  BXLIB_BEE_RANGECODER_H
+#endif /* LIBBX_BEE_RANGECODER_H */

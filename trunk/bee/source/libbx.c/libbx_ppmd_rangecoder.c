@@ -1,5 +1,5 @@
-#include "bxlib_ppmd_rangecoder.h"
-#include "bxlib_ppmd_common.h"
+#include "libbx_ppmd_rangecoder.h"
+#include "libbx_ppmd_common.h"
 #include <stdlib.h>
 #include <memory.h>
 

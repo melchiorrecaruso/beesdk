@@ -23,8 +23,8 @@
 
 */
 
-#ifndef BXLIB_BEE_COMMON_H
-#define BXLIB_BEE_COMMON_H
+#ifndef LIBBX_BEE_COMMON_H
+#define LIBBX_BEE_COMMON_H
 
 #include <stdint.h>
 
@@ -75,4 +75,4 @@ static const int32_t DefaultDictionaryLevel = 2;
 inline uint32_t _MulDiv   (uint32_t A, uint32_t B, uint32_t C);
 inline uint32_t _MulDecDiv(uint32_t A, uint32_t B, uint32_t C);
 
-#endif // BXLIB_BEE_COMMON_H
+#endif /* LIBBX_BEE_COMMON_H */

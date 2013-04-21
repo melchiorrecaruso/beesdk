@@ -20,10 +20,10 @@
 
 */
 
-#ifndef BXLIB_STREAM_H
-#define BXLIB_STREAM_H
+#ifndef LIBBX_STREAM_H
+#define LIBBX_STREAM_H
 
-#include "bxlib_bee_common.h"
+#include "libbx_bee_common.h"
 
 /* TReadStream struct/methods implementation */
 
@@ -45,4 +45,4 @@ typedef struct TWriteStream *PWriteStream;
           void WriteStream_FlushBuffer(PWriteStream Self);
           void WriteStream_Write      (PWriteStream Self, uint8_t Data);
 
-#endif // BEELIB_STREAM_H
+#endif // LIBBX_STREAM_H

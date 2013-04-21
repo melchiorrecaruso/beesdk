@@ -1,4 +1,4 @@
-#include "bxlib_bee_common.h"
+#include "libbx_bee_common.h"
 
 // ------------------------------------------------------------------ //
 //  Common routine                                                    //

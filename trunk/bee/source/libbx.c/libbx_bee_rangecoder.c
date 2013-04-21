@@ -1,4 +1,4 @@
-#include "bxlib_bee_rangecoder.h"
+#include "libbx_bee_rangecoder.h"
 #include <stdlib.h>
 
 /* Range coder const definitions */

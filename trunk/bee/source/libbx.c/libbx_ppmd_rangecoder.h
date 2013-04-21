@@ -20,10 +20,10 @@
 
 */
 
-#ifndef BXLIB_PPMD_RANGECODER_H
-#define BXLIB_PPMD_RANGECODER_H
+#ifndef LIBBX_PPMD_RANGECODER_H
+#define LIBBX_PPMD_RANGECODER_H
 
-#include "bxlib_stream.h"
+#include "libbx_stream.h"
 #include "stdint.h"
 
 /* TPpmdRangeEncoder struct/methods */
@@ -52,5 +52,5 @@ typedef struct TPpmdRangeDec *PPpmdRangeDec;
       uint32_t PpmdRangeDec_GetThreshold(PPpmdRangeDec Self, uint32_t total);
       uint32_t PpmdRangeDec_DecodeBit(PPpmdRangeDec Self, uint32_t size0);
 
-#endif //  BXLIB_PPMD_RANGECODER_H
+#endif /* LIBBX_PPMD_RANGECODER_H */
 
