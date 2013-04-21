@@ -128,8 +128,8 @@ type
     function Seek(const Offset: int64; Origin: longint): int64; override;
   end;
 
-  function DoFill (Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF cLIB} cdecl; {$ENDIF}
-  function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF cLIB} cdecl; {$ENDIF}
+  function DoFill (Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF LIBBX} cdecl; {$ENDIF}
+  function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF LIBBX} cdecl; {$ENDIF}
 
 implementation
 
