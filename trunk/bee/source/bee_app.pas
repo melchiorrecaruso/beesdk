@@ -34,7 +34,7 @@
 
 unit Bee_App;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 interface
 

@@ -27,7 +27,7 @@
 
 unit Bee_Interface;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 interface
 

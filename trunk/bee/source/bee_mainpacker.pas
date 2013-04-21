@@ -27,7 +27,7 @@
 
 unit Bee_MainPacker;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 interface
 
@@ -139,7 +139,7 @@ uses
   Bee_Configuration,
   Bee_Interface,
   {$IFDEF cLib}
-  Bee_LibLink;
+  Bee_LibBx;
   {$ELSE}
   Bee_Modeller;
   {$ENDIF}

@@ -32,7 +32,7 @@
 
 unit Bee_Common;
 
-{$I compiler.inc}
+{$I bee_compiler.inc}
 
 interface
 
