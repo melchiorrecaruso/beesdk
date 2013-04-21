@@ -98,7 +98,6 @@
       <Unit1>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5"/>
@@ -145,8 +144,8 @@
         <UnitName Value="Bee_App"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="12"/>
-        <CursorPos X="9" Y="37"/>
+        <TopLine Value="96"/>
+        <CursorPos X="41" Y="119"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -154,6 +153,7 @@
       <Unit6>
         <Filename Value="bee_blowfish.pas"/>
         <UnitName Value="Bee_BlowFish"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
@@ -164,7 +164,7 @@
       </Unit6>
       <Unit7>
         <Filename Value="bee_libbx.pas"/>
-        <UnitName Value="Bee_LibLink"/>
+        <UnitName Value="Bee_LibBx"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
@@ -366,7 +366,7 @@
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="../distribution/beex"/>
+      <Filename Value="../distribution/bx"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
