@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include "bxlib_bee_rangecoder.h"
+#include <stdlib.h>
 
 /* Range coder const definitions */
 
@@ -40,7 +40,7 @@ void BeeRangeEnc_StartEncode(PBeeRangeEnc Self)
   Self->FCarry = 0;
 }
 
-static inline void RangeEncoder_ShiftLow(PBeeRangeEnc Self)
+static inline void BeeRangeEnc_ShiftLow(PBeeRangeEnc Self)
 {
   if ((Self->FLow < THRES) || (Self->FCarry != 0))
   {
@@ -59,7 +59,7 @@ static inline void RangeEncoder_ShiftLow(PBeeRangeEnc Self)
   Self->FLow <<= 8;
 }
 
-static inline void RangeEncoder_Encode(PBeeRangeEnc Self, uint32_t CumFreq,  uint32_t Freq,  uint32_t TotFreq)
+static inline void BeeRangeEnc_Encode(PBeeRangeEnc Self, uint32_t CumFreq,  uint32_t Freq,  uint32_t TotFreq)
 {
   uint32_t Temp = Self->FLow;
   Self->FLow   += _MulDiv(Self->FRange, CumFreq, TotFreq);
@@ -68,7 +68,7 @@ static inline void RangeEncoder_Encode(PBeeRangeEnc Self, uint32_t CumFreq,  uin
   while (Self->FRange < TOP)
   {
     Self->FRange <<= 8;
-    RangeEncoder_ShiftLow(Self);
+    BeeRangeEnc_ShiftLow(Self);
   }
 }
 
@@ -77,7 +77,7 @@ void BeeRangeEnc_FinishEncode(PBeeRangeEnc Self)
   int32_t I;
   for (I = 0; I <= NUM; I++)
   {
-    RangeEncoder_ShiftLow(Self);
+    BeeRangeEnc_ShiftLow(Self);
   }
   WriteStream_FlushBuffer(Self->FStream);
 }
@@ -101,7 +101,7 @@ inline uint32_t BeeRangeEnc_Update(PBeeRangeEnc Self, TFreq Freq, uint32_t aSymb
   }
   while (!(I == aSymbol));
   // Encode...
-  RangeEncoder_Encode(Self, CumFreq, Freq[aSymbol], TotFreq);
+  BeeRangeEnc_Encode(Self, CumFreq, Freq[aSymbol], TotFreq);
   // Return result...
   return aSymbol;
 }
@@ -121,7 +121,7 @@ struct TBeeRangeDec {
 PBeeRangeDec BeeRangeDec_Create(void *aStream, PStreamRead aStreamRead)
 {
   PBeeRangeDec Self = malloc(sizeof(struct TBeeRangeDec));
-  Self->FStream      = ReadStream_Create(aStream, aStreamRead);
+  Self->FStream     = ReadStream_Create(aStream, aStreamRead);
   return Self;
 }
 
@@ -155,7 +155,7 @@ inline uint32_t BeeRangeDec_GetFreq(PBeeRangeDec Self, uint32_t TotFreq)
   return _MulDecDiv(Self->FCode + 1, TotFreq, Self->FRange);
 }
 
-static inline void RangeDecoder_Decode(PBeeRangeDec Self, uint32_t CumFreq, uint32_t Freq, uint32_t TotFreq)
+static inline void BeeRangeDec_Decode(PBeeRangeDec Self, uint32_t CumFreq, uint32_t Freq, uint32_t TotFreq)
 {
   Self->FCode -= _MulDiv(Self->FRange, CumFreq, TotFreq);
   Self->FRange = _MulDiv(Self->FRange,    Freq, TotFreq);
@@ -193,7 +193,7 @@ inline uint32_t BeeRangeDec_Update(PBeeRangeDec Self, TFreq Freq, uint32_t aSymb
   }
 
   // Finish Decode...
-  RangeDecoder_Decode(Self, SumFreq, Freq[aSymbol], TotFreq);
+  BeeRangeDec_Decode(Self, SumFreq, Freq[aSymbol], TotFreq);
 
   // Return Result...
   return aSymbol;

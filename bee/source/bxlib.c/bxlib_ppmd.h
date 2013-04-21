@@ -14,9 +14,7 @@ EXTERN_C_BEGIN
   #define PPMD_32BIT
 #endif
 
-#define PPMD_INT_BITS 7
-#define PPMD_PERIOD_BITS 7
-#define PPMD_BIN_SCALE (1 << (PPMD_INT_BITS + PPMD_PERIOD_BITS))
+
 
 #define PPMD_GET_MEAN_SPEC(summ, shift, round) (((summ) + (1 << ((shift) - (round)))) >> (shift))
 #define PPMD_GET_MEAN(summ) PPMD_GET_MEAN_SPEC((summ), PPMD_PERIOD_BITS, 2)

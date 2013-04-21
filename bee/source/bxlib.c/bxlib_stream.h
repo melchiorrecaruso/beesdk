@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2010-2012 Melchiorre Caruso
+  Copyright (c) 2010-2013 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 */
 
-#ifndef BEELIB_STREAM_H
-#define BEELIB_STREAM_H
+#ifndef BXLIB_STREAM_H
+#define BXLIB_STREAM_H
 
 #include "bxlib_bee_common.h"
 

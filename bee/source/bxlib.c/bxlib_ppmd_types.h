@@ -93,8 +93,7 @@ typedef size_t SizeT;
 #endif
 
 typedef int Bool;
-#define True 1
-#define False 0
+
 
 
 #ifdef _WIN32

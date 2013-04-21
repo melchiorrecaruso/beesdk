@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2010-2012 Melchiorre Caruso
+  Copyright (c) 2010-2013 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 
 */
 
-#ifndef BEELIB_COMMON_H
-#define BEELIB_COMMON_H
+#ifndef BXLIB_BEE_COMMON_H
+#define BXLIB_BEE_COMMON_H
 
 #include <stdint.h>
 
@@ -75,4 +75,4 @@ static const int32_t DefaultDictionaryLevel = 2;
 inline uint32_t _MulDiv   (uint32_t A, uint32_t B, uint32_t C);
 inline uint32_t _MulDecDiv(uint32_t A, uint32_t B, uint32_t C);
 
-#endif // BEELIB_COMMON_H
+#endif // BXLIB_BEE_COMMON_H

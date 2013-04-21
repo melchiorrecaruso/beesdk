@@ -40,16 +40,15 @@ interface
 //{$linklib libgcc}
 {$ENDIF}
 
-{$link bxlib.c\obj\release\bxlib.o}
 {$link bxlib.c\obj\release\bxlib_stream.o}
 // bee coder link
 {$link bxlib.c\obj\release\bxlib_bee_common.o}
 {$link bxlib.c\obj\release\bxlib_bee_modeller.o}
 {$link bxlib.c\obj\release\bxlib_bee_rangecoder.o}
 // ppmd coder link
-{$link bxlib.c\obj\release\bxlib_ppmd7.o}
-{$link bxlib.c\obj\release\bxlib_ppmd7_dec.o}
-{$link bxlib.c\obj\release\bxlib_ppmd7_enc.o}
+{$link bxlib.c\obj\release\bxlib_ppmd_common.o}
+{$link bxlib.c\obj\release\bxlib_ppmd_modeller.o}
+{$link bxlib.c\obj\release\bxlib_ppmd_rangecoder.o}
 
 type
   TStreamRead  = function(Stream: pointer; Data: PByte; Count: longint): longint;
@@ -86,7 +85,7 @@ procedure PpmdRangeDec_FinishDecode(Self: pointer); cdecl; external;
 
 function  PpmdModeller_Create: pointer; cdecl; external;
 procedure PpmdModeller_Destroy     (Self: pointer); cdecl; external;
-procedure PpmdModeller_Init        (Self: pointer; MemLev: longword; ModOrd: longword); cdecl; external;
+procedure PpmdModeller_Start       (Self: pointer; MemLev: longword; ModOrd: longword); cdecl; external;
 
 function  PpmdModeller_Encode      (Self: pointer; RangeEnc: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 function  PpmdModeller_Decode      (Self: pointer; RangeEnc: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
