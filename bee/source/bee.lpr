@@ -79,6 +79,8 @@ var
   end;
   {$ENDIF}
 
+{$R *.res}
+
 begin
   SetCtrlCHandler(@CtrlHandler);
   Application := TBeeApp.Create;
