@@ -215,11 +215,18 @@ procedure TBeeCoder.Init;
 var
   Table: TTableParameters;
 begin
-  if not HexToData(FFilter, Table[1], SizeOf(Table)) then
+  if (FLevel < 1) or (FLevel > 3) then
+    SetExitStatus(esCmdLineError);
+
+  if (FLevelAux < 0) or (FLevelAux > 9) then
+    SetExitStatus(esCmdLineError);
+
+  if ExitStatus = esNoError then
   begin
-    Table := DefaultTableParameters;
+    if not HexToData(FFilter, Table[1], SizeOf(Table)) then
+      Table := DefaultTableParameters;
+    BeeModeller_Init(FModeller, FLevelAux, @Table[1]);
   end;
-  BeeModeller_Init(FModeller, FLevelAux, @Table[1]);
 end;
 
 /// TBeeEncoder class
@@ -288,7 +295,14 @@ end;
 
 procedure TPpmdCoder.Init;
 begin
-  PpmdModeller_Start(FModeller, 33554432, 6);
+  if (FLevel < 2) or (FLevel > 64) then
+    SetExitStatus(esCmdLineError);
+
+  if (FLevelAux < 2048) or (FLevelAux > 4294967296) then
+    SetExitStatus(esCmdLineError);
+
+  if ExitStatus = esNoError then
+    PpmdModeller_Start(FModeller, FLevelAux, FLevel);
 end;
 
 { TPpmdEncoder class }

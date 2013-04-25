@@ -150,6 +150,7 @@ type
   end;
 
   function GetUpdateMethod(const S: string): longint;
+  function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
 
 implementation
 

@@ -36,6 +36,7 @@ const
   esUnknowError       = 101;  emUnknowError       = 'Unknow error (exit code #101) - time elapsed %s seconds.';
   esCmdLineError      = 102;  emCmdLineError      = 'Command line error (exit code #102) - time elapsed %s seconds.';
   esAllocMemError     = 103;  emAllocMemError     = 'Allocation memory error (exit code #103) - time elapsed %s seconds.';
+  esUserAbortError    = 104;  emUserAbortError    = 'User abort error (exit code #104) - time elapsed %s seconds.';
 
   esCreateStreamError = 201;  emCreateStreamError = 'Create stream error (exit code #201) - time elapsed %s seconds.';
   esOpenStreamError   = 202;  emOpenStreamError   = 'Open stream error (exit code #202) - time elapsed %s seconds.';
@@ -46,13 +47,14 @@ const
   esRenameTempError   = 207;  emRenameTempError   = 'Rename temporary archive error (exit code #207) - time elapsed %s seconds.';
   esRequestDiskError  = 208;  emRequestDiskError  = 'Request disk error (exit code #208) - time elapsed %s seconds.';
 
-  esUserAbortError    = 255;  emUserAbortError    = 'User abort error (exit code #255) - time elapsed %s seconds.';
-
   esArchiveTypeError  = 301;  emArchiveTypeError  = 'Archive type error (exit code #301) - time elapsed %s seconds.';
   esArchiveVerError   = 302;  emArchiveVerError   = 'Archive version error (exit code #302) - time elapsed %s seconds.';
   esArchiveCDError    = 303;  emArchiveCDError    = 'Archive central directory error (exit code #303) - time elapsed %s seconds.';
-  esCRCError          = 304;  emCRCError          = 'CRC error (exit code #304) - time elapsed %s seconds.';
-  esLoadConfigError   = 305;  emLoadConfigError   = 'Load configuration error (exit code #305) - time elapsed %s seconds.';
+
+  esHashError         = 401;  emHashError         = 'Check integrity error (exit code #401) - time elapsed %s seconds.';
+
+  esLoadConfigError   = 501;  emLoadConfigError   = 'Load configuration error (exit code #501) - time elapsed %s seconds.';
+
 
 var
   ExitStatus: longint = esNoError;
