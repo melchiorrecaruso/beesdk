@@ -41,20 +41,22 @@ type
     FLevelAux: longword;
     FFilter: string;
     FFilterAux: string;
-    FBlock: int64;
+    procedure SetLevel(Value: longword); virtual;
+    procedure SetLevelAux(Value: longword); virtual;
+    procedure SetFilter(const Value: string); virtual;
+    procedure SetFilterAux(const Value: string); virtual;
   public
     constructor Create(Stream: pointer);
-    procedure SetCompressionLevel(Value: longword); virtual;
-    procedure SetCompressionLevelAux(Value: longword); virtual;
-    procedure SetCompressionFilter(const Value: string); virtual;
-    procedure SetCompressionFilterAux(const Value: string); virtual;
-    procedure SetCompressionBlock(const Value: int64); virtual;
-
     procedure Init; virtual abstract;
     procedure Start; virtual abstract;
     procedure Finish; virtual abstract;
     function  Encode(Data: PByte; Count: longint): longint; virtual abstract;
     function  Decode(Data: PByte; Count: longint): longint; virtual abstract;
+  public
+    property Level: longword read FLevel write SetLevel;
+    property LevelAux: longword read FLevelAux write SetLevelAux;
+    property Filter: string read FFilter write SetFilterAux;
+    property FilterAux: string read FFilterAux write SetFilterAux;
   end;
 
   { TStoreCoder class }
@@ -74,7 +76,10 @@ type
   private
     FCoder: pointer;
     FModeller: pointer;
+    procedure SetLevel(Value: longword); override;
+    procedure SetLevelAux(Value: longword); override;
   public
+    constructor Create(Stream: pointer);
     procedure Init; override;
   end;
 
@@ -104,7 +109,10 @@ type
   private
     FCoder: pointer;
     FModeller: pointer;
+    procedure SetLevel(Value: longword); override;
+    procedure SetLevelAux(Value: longword); override;
   public
+    constructor Create(Stream: pointer);
     procedure Init; override;
   end;
 
@@ -137,7 +145,6 @@ uses
   Bee_BufStream,
   Bee_Common,
   Bee_Configuration,
-  Bee_Interface,
   {$IFDEF LIBBX}
   Bee_LibBx;
   {$ELSE}
@@ -154,32 +161,26 @@ begin
   FLevelAux  :=  0;
   FFilter    := '';
   FFilterAux := '';
-  FBlock     :=  0;
 end;
 
-procedure TBaseCoder.SetCompressionLevel(Value: longword);
+procedure TBaseCoder.SetLevel(Value: longword);
 begin
   FLevel := Value;
 end;
 
-procedure TBaseCoder.SetCompressionLevelAux(Value: longword);
+procedure TBaseCoder.SetLevelAux(Value: longword);
 begin
   FLevelAux := Value;
 end;
 
-procedure TBaseCoder.SetCompressionFilter(const Value: string);
+procedure TBaseCoder.SetFilter(const Value: string);
 begin
   FFilter := Value;
 end;
 
-procedure TBaseCoder.SetCompressionFilterAux(const Value: string);
+procedure TBaseCoder.SetFilterAux(const Value: string);
 begin
   FFilterAux := Value;
-end;
-
-procedure TBaseCoder.SetCompressionBlock(const Value: int64);
-begin
-  FBlock := Value;
 end;
 
 /// TStoreCoder class
@@ -211,22 +212,35 @@ end;
 
 /// TBeeCoder class
 
+constructor TBeeCoder.Create(Stream: pointer);
+begin
+  inherited Create(Stream);
+  FFilter    := Hex(DefaultTableParameters, SizeOf(TTableParameters));
+  FLevelAux  := 3;
+  FLevel     := 1;
+end;
+
+procedure TBeeCoder.SetLevel(Value: longword);
+begin
+  if (1 <= Value) and (Value <= 3) then
+    inherited SetLevel(Value)
+end;
+
+procedure TBeeCoder.SetLevelAux(Value: longword);
+begin
+  if (0 <= Value) and (Value <= 9) then
+    inherited SetLevelAux(Value)
+end;
+
 procedure TBeeCoder.Init;
 var
   Table: TTableParameters;
 begin
-  if (FLevel < 1) or (FLevel > 3) then
-    SetExitStatus(esCmdLineError);
-
-  if (FLevelAux < 0) or (FLevelAux > 9) then
-    SetExitStatus(esCmdLineError);
-
-  if ExitStatus = esNoError then
+  if not HexToData(FFilter, Table[1], SizeOf(Table)) then
   begin
-    if not HexToData(FFilter, Table[1], SizeOf(Table)) then
-      Table := DefaultTableParameters;
-    BeeModeller_Init(FModeller, FLevelAux, @Table[1]);
+    Table := DefaultTableParameters;
   end;
+  BeeModeller_Init(FModeller, FLevelAux, @Table[1]);
 end;
 
 /// TBeeEncoder class
@@ -293,16 +307,28 @@ end;
 
 { TPpmdCoder class }
 
+constructor TPpmdCoder.Create(Stream: pointer);
+begin
+  inherited Create(Stream);
+  FLevelAux := 2048;
+  FLevel := 2;
+end;
+
+procedure TPpmdCoder.SetLevel(Value: longword);
+begin
+  if (2 <= Value) and (Value <= 64) then
+    inherited SetLevel(Value);
+end;
+
+procedure TPpmdCoder.SetLevelAux(Value: longword);
+begin
+  if ($800 <= Value) and (Value <= $FFFFFFDB) then
+    inherited SetLevelAux(Value);
+end;
+
 procedure TPpmdCoder.Init;
 begin
-  if (FLevel < 2) or (FLevel > 64) then
-    SetExitStatus(esCmdLineError);
-
-  if (FLevelAux < 2048) or (FLevelAux > 4294967296) then
-    SetExitStatus(esCmdLineError);
-
-  if ExitStatus = esNoError then
-    PpmdModeller_Start(FModeller, FLevelAux, FLevel);
+  PpmdModeller_Start(FModeller, FLevelAux, FLevel);
 end;
 
 { TPpmdEncoder class }
