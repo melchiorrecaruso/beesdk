@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
+
 #include "libbx_bee_modeller.h"
 #include "libbx_bee_rangecoder.h"
 
@@ -356,7 +357,7 @@ static inline void BeeModeller_Step(PBeeModeller Self, PRangeCod_Update Update)
   }
 }
 
-void BeeModeller_FreshFlexible(PBeeModeller Self)
+static void BeeModeller_FreshFlexible(PBeeModeller Self)
 {
   Self->Tear            = NULL;
   Self->CurrentFreeNode = &(Self->Heap[0]);
@@ -377,7 +378,7 @@ void BeeModeller_FreshFlexible(PBeeModeller Self)
   Self->LowestPos  = - ((int32_t) Self->MaxCounter);
 }
 
-void BeeModeller_FreshSolid(PBeeModeller Self)
+static void BeeModeller_FreshSolid(PBeeModeller Self)
 {
   if (Self->Counter > 1)
   {
@@ -390,19 +391,16 @@ void BeeModeller_FreshSolid(PBeeModeller Self)
 
 void BeeModeller_SetDictionary(PBeeModeller Self, uint32_t aDictLevel)
 {
-  if (aDictLevel > 9) { aDictLevel = 9; }
-  if (aDictLevel != Self->DictLevel)
-  {
-	Self->DictLevel   = aDictLevel;
-	Self->MaxCounter  = (1 << ( 17 + Self->DictLevel)) - 1;
-    Self->SafeCounter = Self->MaxCounter - 64;
+  Self->DictLevel   = aDictLevel;
+  Self->MaxCounter  = (1 << ( 17 + Self->DictLevel)) - 1;
+  Self->SafeCounter = Self->MaxCounter - 64;
 
-	free(Self->Cuts);
-	Self->Cuts = NULL;
+  free(Self->Cuts);
+  Self->Cuts = NULL;
 
-	free(Self->Heap);
-	Self->Heap = malloc(sizeof(struct TNode)*(Self->MaxCounter + 1));
-  }
+  free(Self->Heap);
+  Self->Heap = malloc(sizeof(struct TNode)*(Self->MaxCounter + 1));
+
   BeeModeller_FreshFlexible(Self);
 }
 
@@ -469,8 +467,8 @@ static inline uint32_t BeeModeller_Update(PBeeModeller Self, uint32_t aSymbol, P
 
 inline void BeeModeller_Init(PBeeModeller Self, uint32_t DictLevel, const TTableParameters *T)
 {
-  BeeModeller_SetTable(Self, T);
   BeeModeller_SetDictionary(Self, DictLevel);
+  BeeModeller_SetTable(Self, T);
 }
 
 inline uint32_t BeeModeller_Encode(PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize)

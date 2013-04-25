@@ -33,7 +33,7 @@ uses
   Idea, BlowFish;
 
 const
-  DefaultBufferSize = (*4096*) 131072;
+  DefaultBufferSize = 4096;// 131072;
 
 type
   TBuffer = array [0.. DefaultBufferSize -1] of byte;

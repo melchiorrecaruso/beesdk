@@ -401,122 +401,96 @@ begin
   if Pos(':PPMD:', Params) > 0 then Result := caPpmd  else Result := caBee;
 end;
 
-function GetCoderBlock(Params: string): int64;
+function ExtractWord(const Params: string; const K: string): qword;
+var
+  I: longint;
+  S: string;
 begin
-  Params := UpCase(Params);
-  if Pos(':1MB:',   Params) > 0 then Result := $100000      else
-  if Pos(':2MB:',   Params) > 0 then Result := $200000      else
-  if Pos(':4MB:',   Params) > 0 then Result := $400000      else
-  if Pos(':8MB:',   Params) > 0 then Result := $800000      else
-  if Pos(':16MB:',  Params) > 0 then Result := $1000000     else
-  if Pos(':32MB:',  Params) > 0 then Result := $2000000     else
-  if Pos(':64MB:',  Params) > 0 then Result := $4000000     else
-  if Pos(':128MB:', Params) > 0 then Result := $8000000     else
-  if Pos(':256MB:', Params) > 0 then Result := $10000000    else
-  if Pos(':512MB:', Params) > 0 then Result := $20000000    else
-  if Pos(':1GB:',   Params) > 0 then Result := $40000000    else
-  if Pos(':2GB:',   Params) > 0 then Result := $80000000    else
-  if Pos(':4GB:',   Params) > 0 then Result := $100000000   else
-  if Pos(':8GB:',   Params) > 0 then Result := $200000000   else
-  if Pos(':16GB:',  Params) > 0 then Result := $400000000   else
-  if Pos(':32GB:',  Params) > 0 then Result := $800000000   else
-  if Pos(':64GB:',  Params) > 0 then Result := $1000000000  else
-  if Pos(':128GB:', Params) > 0 then Result := $2000000000  else
-  if Pos(':256GB:', Params) > 0 then Result := $4000000000  else
-  if Pos(':512GB:', Params) > 0 then Result := $8000000000  else
-  if Pos(':1TB:',   Params) > 0 then Result := $10000000000 else Result := 0;
+  S := '';
+  if Pos(K, UpCase(Params)) > 0 then
+  begin
+    for I := Pos(K, UpCase(Params)) + Length(K) to Length(Params) do
+      if Params[I] <> ':' then
+        S := S + Params[I]
+      else
+        Break;
+  end;
+  if TryStrWithMultToQWord(S, Result) = FALSE then Result := 0;
 end;
 
-function GetCoderLevel(Params: string): longint;
-begin
-  Params := UpCase(Params);
-  if Pos(':L1:', Params) > 0 then Result := 1 else
-  if Pos(':L2:', Params) > 0 then Result := 2 else
-  if Pos(':L3:', Params) > 0 then Result := 3 else Result := 1;
-end;
-
-function GetCoderLevelAux(Params: string): longint;
-begin
-  Params := UpCase(Params);
-  if Pos(':LA0:', Params) > 0 then Result := 0 else
-  if Pos(':LA1:', Params) > 0 then Result := 1 else
-  if Pos(':LA2:', Params) > 0 then Result := 2 else
-  if Pos(':LA3:', Params) > 0 then Result := 3 else
-  if Pos(':LA4:', Params) > 0 then Result := 4 else
-  if Pos(':LA5:', Params) > 0 then Result := 5 else
-  if Pos(':LA6:', Params) > 0 then Result := 6 else
-  if Pos(':LA7:', Params) > 0 then Result := 7 else
-  if Pos(':LA8:', Params) > 0 then Result := 8 else
-  if Pos(':LA9:', Params) > 0 then Result := 9 else Result := 3;
-end;
-
-function GetCoderFilterExt(const Params: string): string;
+function ExtractStr(const Params: string; const K: string): string;
 var
   I: longint;
 begin
   Result := '';
-  if Pos(':F=', UpCase(Params)) > 0 then
+  if Pos(K, UpCase(Params)) > 0 then
   begin
-    for I := Pos(':F=', UpCase(Params)) + 3 to Length(Params) do
-    begin
+    for I := Pos(K, UpCase(Params)) + Length(K) to Length(Params) do
       if Params[I] <> ':' then
         Result := Result + Params[I]
       else
         Break;
-    end;
-    if Length(Result) > 0 then
-      Result := '.' + Result;
   end;
+end;
+
+function GetCoderBlock(Params: string): qword;
+begin
+  Result := ExtractWord(Params, ':BLOCK=');
+end;
+
+function GetCoderLevel(const Params: string): longword;
+var
+  I: TCoderAlgorithm;
+begin
+  Result := ExtractWord(Params, ':LEVEL=');
+  if Result = 0 then
+    case GetCoderAlgorithm(Params) of
+      caStore: Result := 0;
+      caBee:   Result := 1;
+      caPpmd:  Result := 2;
+    end;
+end;
+
+function GetCoderLevelAux(Params: string): longword;
+begin
+  Result := ExtractWord(Params, ':LEVEL.AUX=');
+    if Result = 0 then
+    case GetCoderAlgorithm(Params) of
+      caStore: Result := 0;
+      caBee:   Result := 0;
+      caPpmd:  Result := 2048;
+    end;
+end;
+
+function GetCoderFilter(const Params: string): string;
+begin
+  Result := ExtractStr(Params, ':FILTER=');
+end;
+
+function GetCoderFilterAux(const Params: string): string;
+begin
+  Result := ExtractStr(Params, ':FILTER.AUX');
 end;
 
 function GetCoderConfiguration(const Params: string): string;
-var
-  I: longint;
 begin
-  Result := '';
-  if Pos(':C=', UpCase(Params)) > 0 then
-    for I := Pos(':C=', UpCase(Params)) + 3 to Length(Params) do
-    begin
-      if Params[I] <> ':' then
-        Result := Result + Params[I]
-      else
-        Break;
-    end;
-
+  Result := ExtractStr(Params, ':CONFIG=');
   if Result = '' then
     Result := DefaultCfgName;
-
-  if FileExists(Result) = FALSE then
-  begin
-    Result :=  SelfPath + Result;
-    if FileExists(Result) = FALSE then
-      SetExitStatus(esCmdLineError);
-  end;
 end;
 
 function GetCipherKey(const Params: string): string;
-var
-  I: longint;
 begin
-  Result := '';
-  if Pos(':K=', UpCase(Params)) > 0 then
-  begin
-    for I := Pos(':K=', UpCase(Params)) + 3 to Length(Params) do
-    begin
-      if Params[I] <> ':' then
-        Result := Result + Params[I]
-      else
-        Break;
-    end;
-  end;
+  Result := ExtractStr(Params, ':KEY=');
 end;
 
-function GetCipherAlgorithm(const Params: string): TCipherAlgorithm;
+function GetCipherAlgorithm(Params: string): TCipherAlgorithm;
 begin
   Result := caNul;
   if GetCipherKey(Params) <> '' then
     Result := caBlowFish;
 
+  Params := UpCase(Params);
   if Pos(':NONE:',     UpCase(Params)) > 0 then Result := caNul      else
   if Pos(':BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish else
   if Pos(':IDEA:',     UpCase(Params)) > 0 then Result := caIdea;
@@ -1261,6 +1235,8 @@ begin
        Stream.StartCipher(caNul, '');
        Stream.StartCoder (caStore);
 
+
+
   FTempWriter.StartHash              (Item.CheckMethodAux);
   FTempWriter.StartCipher            (Item.EncryptionMethod, GetCipherKey(EncryptionParams));
   FTempWriter.StartCoder             (Item.CompressionMethod);
@@ -1271,6 +1247,7 @@ begin
   FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
   FTempWriter.InitCoder;
 
+
   Count := Item.FExternalFileSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
   begin
@@ -1280,7 +1257,7 @@ begin
     Dec(Count);
   end;
   Count := Item.FExternalFileSize mod SizeOf(Buffer);
-  if Count <> 0 then
+  if (Count <> 0) and (ExitStatus = esNoError) then
   begin
          Stream.Read  (@Buffer[0], Count);
     FTempWriter.Encode(@Buffer[0], Count);
@@ -1334,7 +1311,7 @@ begin
   DoProgress(SizeOf(Buffer));
 
   if (Item.CheckDigest    <>    FSwapWriter.FinishHash) or
-     (Item.CheckDigestAux <> FArchiveReader.FinishHash) then SetExitStatus(esCrcError);
+     (Item.CheckDigestAux <> FArchiveReader.FinishHash) then SetExitStatus(esHashError);
 end;
 
 procedure TArchiver.DecodeToNul(Item: TArchiveItem);
@@ -1381,7 +1358,7 @@ begin
   if Item.CheckMethod <> haNul then
     if Item.FCheckDigest <> Stream.FinishHash then
     begin
-      SetExitStatus(esCrcError);
+      SetExitStatus(esHashError);
     end;
 
   FreeAndNil(Stream);
@@ -1424,7 +1401,7 @@ begin
   DoProgress(SizeOf(Buffer));
 
   if (Item.CheckDigest    <>         Stream.FinishHash) or
-     (Item.CheckDigestAux <> FArchiveReader.FinishHash) then SetExitStatus(esCrcError);
+     (Item.CheckDigestAux <> FArchiveReader.FinishHash) then SetExitStatus(esHashError);
   FreeAndNil(Stream);
 
   if ExitStatus = esNoError then
@@ -2209,14 +2186,15 @@ begin
       CurrentItem.FCompressionBlock := GetCoderBlock(FCompressionParams);
       // default compression table flag
       Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter);
-
+      CurrentItem.FCompressionFilter := '';
+      Exclude(CurrentItem.FCompressionFlags, acfCompressionFilterAux);
+      CurrentItem.FCompressionFilterAux := '';
       // force file extension option
       PreviousFileExt := CurrentFileExt;
-      if GetCoderFilterExt(FCompressionParams) = '' then
+      if GetCoderFilter(FCompressionParams) = '' then
         CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
       else
-        CurrentFileExt := GetCoderFilterExt(FCompressionParams);
-
+        CurrentFileExt := GetCoderFilter(FCompressionParams);
       // compression block option
       if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
       begin
@@ -2226,21 +2204,29 @@ begin
           Block := GetCoderBlock(FCompressionParams);
           CurrentItem.FCompressionBlock := 0;
         end;
-
       end else
       begin
-        // BEE compression method
-        if CurrentItem.FCompressionMethod = caBee then
-        begin
-          Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
-          if Configuration.GetTable(CurrentFileExt, CurrentTable) then
-            CurrentItem.FCompressionFilter := Hex(CurrentTable, SizeOf(CurrentTable))
-          else
-            CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
-        end;
         Block := GetCoderBlock(FCompressionParams);
         CurrentItem.FCompressionBlock := 0;
       end;
+      // BEE compression method
+      if CurrentItem.FCompressionMethod = caBee then
+      begin
+        Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
+        if Configuration.GetTable(CurrentFileExt, CurrentTable) then
+          CurrentItem.FCompressionFilter := Hex(CurrentTable, SizeOf(CurrentTable))
+        else
+          CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
+      end;
+
+      Writeln('CurrentItem.Method    = ', CurrentItem.FCompressionMethod);
+      Writeln('CurrentItem.Block     = ', CurrentItem.FCompressionBlock);
+      Writeln('CurrentItem.Level     = ', CurrentItem.FCompressionLevel);
+      Writeln('CurrentItem.LevelAux  = ', CurrentItem.FCompressionLevelAux);
+      Writeln('CurrentItem.Filter    = ', CurrentItem.FCompressionFilter);
+      Writeln('CurrentItem.FilterAux = ', CurrentItem.FCompressionFilterAux);
+
+
 
       // encryption method
       CurrentItem.FEncryptionMethod    := GetCipherAlgorithm(FEncryptionParams);
