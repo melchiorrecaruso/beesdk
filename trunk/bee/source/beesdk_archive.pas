@@ -439,26 +439,40 @@ begin
 end;
 
 function GetCoderLevel(const Params: string): longword;
-var
-  I: TCoderAlgorithm;
 begin
-  Result := ExtractWord(Params, ':LEVEL=');
-  if Result = 0 then
+  if Pos(':LEVEL=', UpCase(Params)) > 0 then
+  begin
+    Result := ExtractWord(Params, ':LEVEL=');
+    case GetCoderAlgorithm(Params) of
+      caStore: if ( 0 < Result) or (Result < 0) then SetExitStatus(esCmdLineError);
+      caBee:   if ( 3 < Result) or (Result < 1) then SetExitStatus(esCmdLineError);
+      caPpmd:  if (64 < Result) or (Result < 2) then SetExitStatus(esCmdLineError);
+    end;
+  end else
+    // default level
     case GetCoderAlgorithm(Params) of
       caStore: Result := 0;
       caBee:   Result := 1;
-      caPpmd:  Result := 2;
+      caPpmd:  Result := 3;
     end;
 end;
 
 function GetCoderLevelAux(Params: string): longword;
 begin
-  Result := ExtractWord(Params, ':LEVEL.AUX=');
-    if Result = 0 then
+  if Pos(':LEVEL.AUX=', UpCase(Params)) > 0 then
+  begin
+    Result := ExtractWord(Params, ':LEVEL.AUX=');
+    case GetCoderAlgorithm(Params) of
+      caStore: if (        0 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
+      caBee:   if (        9 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
+      caPpmd:  if ($FFFFFFDB < Result) or (Result < $800) then SetExitStatus(esCmdLineError);
+    end;
+  end else
+    // default level.aux
     case GetCoderAlgorithm(Params) of
       caStore: Result := 0;
-      caBee:   Result := 0;
-      caPpmd:  Result := 2048;
+      caBee:   Result := 2;
+      caPpmd:  Result := $400000;
     end;
 end;
 
@@ -1201,7 +1215,6 @@ begin
   FTempWriter.SetCompressionLevelAux (Item.CompressionLevelAux);
   FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
   FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
-  FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
 
   Count := Item.FUncompressedSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
@@ -1244,7 +1257,6 @@ begin
   FTempWriter.SetCompressionLevelAux (Item.CompressionLevelAux);
   FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
   FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
-  FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
   FTempWriter.InitCoder;
 
 
@@ -1290,7 +1302,6 @@ begin
   FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
   FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
   FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
-  FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
 
   FSwapWriter   .StartHash  (Item.CheckMethod);
   FSwapWriter   .StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
@@ -1330,7 +1341,6 @@ begin
   FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
   FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
   FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
-  FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
   FArchiveReader.InitCoder;
 
           Stream.StartHash  (Item.CheckMethod);
@@ -1380,7 +1390,6 @@ begin
   FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
   FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
   FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
-  FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
 
           Stream.StartHash  (Item.CheckMethod);
           Stream.StartCipher(caNul, '');
@@ -2219,12 +2228,12 @@ begin
           CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
       end;
 
-      Writeln('CurrentItem.Method    = ', CurrentItem.FCompressionMethod);
-      Writeln('CurrentItem.Block     = ', CurrentItem.FCompressionBlock);
-      Writeln('CurrentItem.Level     = ', CurrentItem.FCompressionLevel);
-      Writeln('CurrentItem.LevelAux  = ', CurrentItem.FCompressionLevelAux);
-      Writeln('CurrentItem.Filter    = ', CurrentItem.FCompressionFilter);
-      Writeln('CurrentItem.FilterAux = ', CurrentItem.FCompressionFilterAux);
+      Writeln(' -->CurrentItem.Method    = ', CurrentItem.FCompressionMethod);
+      Writeln(' -->CurrentItem.Block     = ', CurrentItem.FCompressionBlock);
+      Writeln(' -->CurrentItem.Level     = ', CurrentItem.FCompressionLevel);
+      Writeln(' -->CurrentItem.LevelAux  = ', CurrentItem.FCompressionLevelAux);
+      Writeln(' -->CurrentItem.Filter    = ', CurrentItem.FCompressionFilter);
+      Writeln(' -->CurrentItem.FilterAux = ', CurrentItem.FCompressionFilterAux);
 
 
 

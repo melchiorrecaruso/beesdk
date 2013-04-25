@@ -69,7 +69,6 @@ type
     procedure SetCompressionLevelAux(Value: longint);
     procedure SetCompressionFilter(const Value: string);
     procedure SetCompressionFilterAux(const Value: string);
-    procedure SetCompressionBlock(const Value: int64);
   end;
 
   { TReadBufStream class }
@@ -170,27 +169,22 @@ end;
 
 procedure TBufStream.SetCompressionLevel(Value: longint);
 begin
-  FCoder.SetCompressionLevel(Value);
+  FCoder.Level := Value;
 end;
 
 procedure TBufStream.SetCompressionLevelAux(Value: longint);
 begin
-  FCoder.SetCompressionLevelAux(Value);
+  FCoder.LevelAux := Value;
 end;
 
 procedure TBufStream.SetCompressionFilter(const Value: string);
 begin
-  FCoder.SetCompressionFilter(Value);
+  FCoder.Filter := Value;
 end;
 
 procedure TBufStream.SetCompressionFilterAux(const Value: string);
 begin
-  FCoder.SetCompressionFilterAux(Value);
-end;
-
-procedure TBufStream.SetCompressionBlock(const Value: int64);
-begin
-  FCoder.SetCompressionBlock(Value);
+  FCoder.FilterAux := Value;
 end;
 
 procedure TBufStream.StartHash(Algorithm: THashAlgorithm);
