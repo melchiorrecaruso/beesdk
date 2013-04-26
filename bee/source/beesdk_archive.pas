@@ -396,12 +396,12 @@ uses
 function GetCoderAlgorithm(Params: string): TCoderAlgorithm;
 begin
   Params := UpCase(Params);
-  if Pos(':NONE:', Params) > 0 then Result := caStore else
-  if Pos(':BEE:',  Params) > 0 then Result := caBee   else
-  if Pos(':PPMD:', Params) > 0 then Result := caPpmd  else Result := caBee;
+  if Pos(':METHOD=NONE:', Params) > 0 then Result := caStore else
+  if Pos(':METHOD=BEE:',  Params) > 0 then Result := caBee   else
+  if Pos(':METHOD=PPMD:', Params) > 0 then Result := caPpmd  else Result := caBee;
 end;
 
-function ExtractWord(const Params: string; const K: string): qword;
+function ExtractQWord(const Params: string; const K: string): qword;
 var
   I: longint;
   S: string;
@@ -435,14 +435,14 @@ end;
 
 function GetCoderBlock(Params: string): qword;
 begin
-  Result := ExtractWord(Params, ':BLOCK=');
+  Result := ExtractQWord(Params, ':BLOCK=');
 end;
 
 function GetCoderLevel(const Params: string): longword;
 begin
   if Pos(':LEVEL=', UpCase(Params)) > 0 then
   begin
-    Result := ExtractWord(Params, ':LEVEL=');
+    Result := ExtractQWord(Params, ':LEVEL=');
     case GetCoderAlgorithm(Params) of
       caStore: if ( 0 < Result) or (Result < 0) then SetExitStatus(esCmdLineError);
       caBee:   if ( 3 < Result) or (Result < 1) then SetExitStatus(esCmdLineError);
@@ -461,7 +461,7 @@ function GetCoderLevelAux(Params: string): longword;
 begin
   if Pos(':LEVEL.AUX=', UpCase(Params)) > 0 then
   begin
-    Result := ExtractWord(Params, ':LEVEL.AUX=');
+    Result := ExtractQWord(Params, ':LEVEL.AUX=');
     case GetCoderAlgorithm(Params) of
       caStore: if (        0 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
       caBee:   if (        9 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
@@ -472,7 +472,7 @@ begin
     case GetCoderAlgorithm(Params) of
       caStore: Result := 0;
       caBee:   Result := 2;
-      caPpmd:  Result := $400000;
+      caPpmd:  Result := $100000;
     end;
 end;
 
@@ -483,7 +483,7 @@ end;
 
 function GetCoderFilterAux(const Params: string): string;
 begin
-  Result := ExtractStr(Params, ':FILTER.AUX');
+  Result := ExtractStr(Params, ':FILTER.AUX=');
 end;
 
 function GetCoderConfiguration(const Params: string): string;
@@ -505,9 +505,9 @@ begin
     Result := caBlowFish;
 
   Params := UpCase(Params);
-  if Pos(':NONE:',     UpCase(Params)) > 0 then Result := caNul      else
-  if Pos(':BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish else
-  if Pos(':IDEA:',     UpCase(Params)) > 0 then Result := caIdea;
+  if Pos(':METHOD=NONE:',     UpCase(Params)) > 0 then Result := caNul      else
+  if Pos(':METHOD=BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish else
+  if Pos(':METHOD=IDEA:',     UpCase(Params)) > 0 then Result := caIdea;
 
   if Result <> caNul then
     if Length(GetCipherKey(Params)) < 4 then
@@ -517,21 +517,21 @@ end;
 function GetHashAlgorithm(Params: string): THashAlgorithm;
 begin
   Params := UpCase(Params);
-  if Pos(':a=NONE:',  Params) > 0 then Result := haNul   else
-  if Pos(':a=CRC32:', Params) > 0 then Result := haCRC32 else
-  if Pos(':a=CRC64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':a=SHA1:',  Params) > 0 then Result := haSHA1  else
-  if Pos(':a=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
+  if Pos(':METHOD=NONE:',  Params) > 0 then Result := haNul   else
+  if Pos(':METHOD=CRC32:', Params) > 0 then Result := haCRC32 else
+  if Pos(':METHOD=CRC64:', Params) > 0 then Result := haCRC64 else
+  if Pos(':METHOD=SHA1:',  Params) > 0 then Result := haSHA1  else
+  if Pos(':METHOD=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
 end;
 
 function GetHashAlgorithmAux(Params: string): THashAlgorithm;
 begin
   Params := UpCase(Params);
-  if Pos(':aa=NONE:',  Params) > 0 then Result := haNul   else
-  if Pos(':aa=CRC32:', Params) > 0 then Result := haCRC32 else
-  if Pos(':aa=CRC64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':aa=SHA1:',  Params) > 0 then Result := haSHA1  else
-  if Pos(':aa=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
+  if Pos(':METHOD.AUX=NONE:',  Params) > 0 then Result := haNul   else
+  if Pos(':METHOD.AUX=CRC32:', Params) > 0 then Result := haCRC32 else
+  if Pos(':METHOD.AUX=CRC64:', Params) > 0 then Result := haCRC64 else
+  if Pos(':METHOD.AUX=SHA1:',  Params) > 0 then Result := haSHA1  else
+  if Pos(':METHOD.AUX=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
 end;
 
 // ---
@@ -556,18 +556,14 @@ end;
 function CoderAlgorithmToStr(Item: TArchiveItem): string;
 begin
   case Item.CompressionMethod of
-    caStore: Result := 'STORE';
+    caStore: Result := 'NONE';
     caBee:   Result := 'BEE';
     caPpmd:  Result := 'PPMD';
   end;
 
-  Result := Result + ':L'  + IntToStr(Item.CompressionLevel);
-  Result := Result + ':LA' + IntToStr(Item.CompressionLevelAux);
-
-  if Item.CompressionBlock <> 0 then
-    Result := Result + ':SOLID'
-  else
-    Result := Result + ':MASTER';
+  Result := Result + ':LEV='     + IntToStr(Item.CompressionLevel);
+  Result := Result + ':LEV.AUX=' + IntToStr(Item.CompressionLevelAux);
+  Result := Result + ':BLOCK='   + IntToStr(Item.CompressionBlock);
 end;
 
 function VersionToStr(Version: longword): string;
@@ -2167,7 +2163,7 @@ begin
   if FileExists(GetCoderConfiguration(FCompressionParams)) then
     Configuration.LoadFromFile(GetCoderConfiguration(FCompressionParams))
   else
-    SetExitStatus(esLoadConfigError);
+    SetExitStatus(esConfigError);
 
   CurrentFileExt := '.';
   Configuration.Selector('\main');

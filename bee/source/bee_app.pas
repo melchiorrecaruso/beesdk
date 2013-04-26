@@ -116,7 +116,7 @@ end;
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1932 archiver utility, Apr 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1970 archiver utility, May 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -170,30 +170,7 @@ begin
     end;
 
   if FCommandLine.Command <> cHelp then
-    case ExitStatus of
-      esNoError          : DoMessage(Cr + Format(emNoError,           [TimeDifference(StartTime)]));
-      esUnknowError      : DoMessage(Cr + Format(emUnknowError,       [TimeDifference(StartTime)]));
-      esCmdLineError     : DoMessage(Cr + Format(emCmdLineError,      [TimeDifference(StartTime)]));
-      esAllocMemError    : DoMessage(Cr + Format(emAllocMemError,     [TimeDifference(StartTime)]));
-
-      esCreateStreamError: DoMessage(Cr + Format(emCreateStreamError, [TimeDifference(StartTime)]));
-      esOpenStreamError  : DoMessage(Cr + Format(emOpenStreamError,   [TimeDifference(StartTime)]));
-      esFillStreamError  : DoMessage(Cr + Format(emFillStreamError,   [TimeDifference(StartTime)]));
-      esFlushStreamError : DoMessage(Cr + Format(emFlushStreamError,  [TimeDifference(StartTime)]));
-      esResizeStreamError: DoMessage(Cr + Format(emResizeStreamError, [TimeDifference(StartTime)]));
-      esSplitStreamError : DoMessage(Cr + Format(emSplitStreamError,  [TimeDifference(StartTime)]));
-      esRenameTempError  : DoMessage(Cr + Format(emRenameTempError,   [TimeDifference(StartTime)]));
-      esRequestDiskError : DoMessage(Cr + Format(emRequestDiskError,  [TimeDifference(StartTime)]));
-
-      esUserAbortError   : DoMessage(Cr + Format(emUserAbortError,    [TimeDifference(StartTime)]));
-
-      esArchiveTypeError : DoMessage(Cr + Format(emArchiveTypeError,  [TimeDifference(StartTime)]));
-      esArchiveVerError  : DoMessage(Cr + Format(emArchiveVerError,   [TimeDifference(StartTime)]));
-      esArchiveCDError   : DoMessage(Cr + Format(emArchiveCDError,    [TimeDifference(StartTime)]));
-      esHashError        : DoMessage(Cr + Format(emHashError,         [TimeDifference(StartTime)]));
-      esLoadConfigError  : DoMessage(Cr + Format(emLoadConfigError,   [TimeDifference(StartTime)]));
-      else                 DoMessage(Cr + Format(emUnknowError,       [TimeDifference(StartTime)]));
-    end;
+      DoMessage(Cr + Format(GetExitMessage, [TimeDifference(StartTime)]));
 end;
 
 procedure TBeeApp.Terminate;
@@ -435,6 +412,7 @@ begin
   // compression mode
   if clcpOption in FCommandLine.Options then
     FArchiver.CompressionParams := FCommandLine.cpOption;
+  // check data integrity mode
   if clckpOption in FCommandLine.Options then
     FArchiver.CheckParams := FCommandLine.ckpOption;
   // encryption mode
@@ -444,7 +422,7 @@ begin
   if clsfxOption in FCommandLine.Options then
     FArchiver.SelfExtractor := FCommandLine.sfxOption;
   // archive comment
-  if clcOption in FCommandLine.Options then
+  if clacOption in FCommandLine.Options then
     FArchiver.Comment := FCommandLine.acOption;
   // test temporary archive
   if cltOption in FCommandLine.Options then
@@ -474,8 +452,9 @@ begin
   DoMessage('  t: test integrity of archive files');
   DoMessage('  x: extract files from archive with path name');
   DoMessage('<Switches>');
-  DoMessage('  -c{comment}: set archive comment');
+  DoMessage('  -ac{comment}: set archive comment');
   DoMessage('  -cd{path}: set current archive directory');
+  DoMessage('  -ckp{parameters}: set check interity parameters');
   DoMessage('  -cp{parameters}: set compression parameters');
   DoMessage('  -ep{parameters}: set encryption parameters');
   DoMessage('  -pp{parameters}: set process Priority ');

@@ -73,9 +73,9 @@ type
   // TCommandLineOptions
 
   TCommandLineOption = (
-    clcOption, clcdOption,  clcpOption,  clckpOption, clepOption, clppOption,
-    clrOption, clsfxOption, clslsOption, clssOption,  cltOption,  cluOption,
-    clvOption, clwdOption,  clxOption,   clyOption);
+    clacOption, clcdOption,  clcpOption,  clckpOption, clepOption, clppOption,
+    clrOption,  clsfxOption, clslsOption, clssOption,  cltOption,  cluOption,
+    clvOption,  clwdOption,  clxOption,   clyOption);
 
   TCommandLineOptions = set of TCommandLineOption;
 
@@ -264,7 +264,7 @@ begin
   if Command in [cAdd, cDelete, cRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clcOption);
+      Include(FOptions, clacOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -533,7 +533,7 @@ begin
   FArchiveName := S;
   if FileExists(FArchiveName) = FALSE then
     if ExtractFileExt(FArchiveName) = '' then
-      FArchiveName := ChangeFileExt(FArchiveName, '.beex');
+      FArchiveName := ChangeFileExt(FArchiveName, '.bx');
 
   if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
   begin
