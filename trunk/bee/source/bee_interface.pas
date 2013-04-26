@@ -32,34 +32,34 @@ unit Bee_Interface;
 interface
 
 const
-  esNoError           =   0;  emNoError           = 'Everything went ok - time elapsed %s seconds.';
-  esUnknowError       = 101;  emUnknowError       = 'Unknow error (exit code #101) - time elapsed %s seconds.';
-  esCmdLineError      = 102;  emCmdLineError      = 'Command line error (exit code #102) - time elapsed %s seconds.';
-  esAllocMemError     = 103;  emAllocMemError     = 'Allocation memory error (exit code #103) - time elapsed %s seconds.';
-  esUserAbortError    = 104;  emUserAbortError    = 'User abort error (exit code #104) - time elapsed %s seconds.';
+  esNoError           =   0;
+  esCmdLineError      = 101;
+  esAllocMemError     = 102;
+  esUnknowError       = 103;
 
-  esCreateStreamError = 201;  emCreateStreamError = 'Create stream error (exit code #201) - time elapsed %s seconds.';
-  esOpenStreamError   = 202;  emOpenStreamError   = 'Open stream error (exit code #202) - time elapsed %s seconds.';
-  esFillStreamError   = 203;  emFillStreamError   = 'Fill stream error (exit code #203) - time elapsed %s seconds.';
-  esFlushStreamError  = 204;  emFlushStreamError  = 'Flush stream error (exit code #204) - time elapsed %s seconds.';
-  esResizeStreamError = 205;  emResizeStreamError = 'Resize stream error (exit code #205) - time elapsed %s seconds.';
-  esSplitStreamError  = 206;  emSplitStreamError  = 'Split stream error (exit code #206) - time elapsed %s seconds.';
-  esRenameTempError   = 207;  emRenameTempError   = 'Rename temporary archive error (exit code #207) - time elapsed %s seconds.';
-  esRequestDiskError  = 208;  emRequestDiskError  = 'Request disk error (exit code #208) - time elapsed %s seconds.';
+  esArchiveTypeError  = 111;
+  esArchiveVerError   = 112;
+  esArchiveCDError    = 113;
 
-  esArchiveTypeError  = 301;  emArchiveTypeError  = 'Archive type error (exit code #301) - time elapsed %s seconds.';
-  esArchiveVerError   = 302;  emArchiveVerError   = 'Archive version error (exit code #302) - time elapsed %s seconds.';
-  esArchiveCDError    = 303;  emArchiveCDError    = 'Archive central directory error (exit code #303) - time elapsed %s seconds.';
+  esHashError         = 131;
+  esConfigError       = 132;
 
-  esHashError         = 401;  emHashError         = 'Check integrity error (exit code #401) - time elapsed %s seconds.';
+  esCreateStreamError = 201;
+  esOpenStreamError   = 202;
+  esFillStreamError   = 203;
+  esFlushStreamError  = 204;
+  esResizeStreamError = 205;
+  esSplitStreamError  = 206;
+  esRenameTempError   = 207;
+  esRequestDiskError  = 208;
 
-  esLoadConfigError   = 501;  emLoadConfigError   = 'Load configuration error (exit code #501) - time elapsed %s seconds.';
-
+  esUserAbortError    = 255;
 
 var
   ExitStatus: longint = esNoError;
 
   procedure SetExitStatus(aExitStatus: longint);
+  function GetExitMessage: string;
 
 implementation
 
@@ -67,6 +67,36 @@ implementation
   begin
     if ExitStatus = esNoError then
       ExitStatus := aExitStatus;
+  end;
+
+  function GetExitMessage: string;
+  begin
+    case ExitStatus of
+      esNoError:           Result := 'Everything went ok - time elapsed %s seconds.';
+      esCmdLineError:      Result := 'Command line error (exit code #101) - time elapsed %s seconds.';
+      esAllocMemError:     Result := 'Allocation memory error (exit code #102) - time elapsed %s seconds.';
+      esUnknowError:       Result := 'Unknow error (exit code #103) - time elapsed %s seconds.';
+
+      esArchiveTypeError:  Result := 'Archive type error (exit code #111) - time elapsed %s seconds.';
+      esArchiveVerError:   Result := 'Archive version error (exit code #112) - time elapsed %s seconds.';
+      esArchiveCDError:    Result := 'Archive central directory error (exit code #113) - time elapsed %s seconds.';
+
+      esHashError:         Result :=  'Check integrity error (exit code #131) - time elapsed %s seconds.';
+      esConfigError:       Result :=  'Load configuration error (exit code #132) - time elapsed %s seconds.';
+
+      esCreateStreamError: Result := 'Create stream error (exit code #201) - time elapsed %s seconds.';
+      esOpenStreamError:   Result := 'Open stream error (exit code #202) - time elapsed %s seconds.';
+      esFillStreamError:   Result := 'Fill stream error (exit code #203) - time elapsed %s seconds.';
+      esFlushStreamError:  Result := 'Flush stream error (exit code #204) - time elapsed %s seconds.';
+      esResizeStreamError: Result := 'Resize stream error (exit code #205) - time elapsed %s seconds.';
+      esSplitStreamError:  Result := 'Split stream error (exit code #206) - time elapsed %s seconds.';
+      esRenameTempError:   Result := 'Rename temporary archive error (exit code #207) - time elapsed %s seconds.';
+      esRequestDiskError:  Result := 'Request disk error (exit code #208) - time elapsed %s seconds.';
+
+      esUserAbortError:    Result := 'User abort error (exit code #255) - time elapsed %s seconds.';
+
+    else Result := 'Unknow exit code (exit code #????) - time elapsed %s seconds.';
+    end;
   end;
 
 end.
