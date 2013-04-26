@@ -18,11 +18,11 @@
 
 { Contains:
 
-    Bee archiver library link.
+    LibBx archiver library link.
 
   Modifyed:
 
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v0.8.0 build 1970 - 2013.04.26 by Melchiorre Caruso.
 }
 
 unit Bee_LibBx;

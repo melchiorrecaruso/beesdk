@@ -75,7 +75,7 @@ type
   TCommandLineOption = (
     clacOption, clcdOption,  clcpOption,  clckpOption, clepOption, clppOption,
     clrOption,  clsfxOption, clslsOption, clssOption,  cltOption,  cluOption,
-    clvOption,  clwdOption,  clxOption,   clyOption);
+    clvmOption, clvsOption,  clwdOption,  clxOption,   clyOption);
 
   TCommandLineOptions = set of TCommandLineOption;
 
@@ -97,7 +97,8 @@ type
     FssOption: boolean;
     FtOption: boolean;
     FuOption: TUpdateMethod;
-    FvOption: qword;
+    FvmOption: boolean;
+    FvsOption: qword;
     FwdOption: string;
     FxOptions: TStringList;
     FyOption: boolean;
@@ -116,7 +117,8 @@ type
     procedure ProcessSSOption (var S: string);
     procedure ProcessTOption  (var S: string);
     procedure ProcessUOption  (var S: string);
-    procedure ProcessVOption  (var S: string);
+    procedure ProcessVSOption (var S: string);
+    procedure ProcessVMOption (var S: string);
     procedure ProcessWDOption (var S: string);
     procedure ProcessXOption  (var S: string);
     procedure ProcessYOption  (var S: string);
@@ -141,7 +143,8 @@ type
     property ssOption: boolean read FssOption;
     property tOption: boolean read FtOption;
     property uOption: TUpdateMethod read FuOption;
-    property vOption: qword read FvOption;
+    property vmOption: boolean read FvmOption;
+    property vsOption: qword read FvsOption;
     property wdOption: string read FwdOption;
     property xOptions: TStringList read FxOptions;
     property yOption: boolean read FyOption;
@@ -161,14 +164,14 @@ uses
 
 function GetUpdateMethod(const S: string): longint;
 begin
-  if UpCase(S) = 'ADD'            then Result := 0 else
-  if UpCase(S) = 'UPDATE'         then Result := 1 else
-  if UpCase(S) = 'REPLACE'        then Result := 2 else
-  if UpCase(S) = 'QUERY'          then Result := 3 else
-  if UpCase(S) = 'ADD:UPDATE'     then Result := 4 else
-  if UpCase(S) = 'ADD:REPLACE'    then Result := 5 else
-  if UpCase(S) = 'ADD:QUERY'      then Result := 6 else
-  if UpCase(S) = 'ADD:AUTORENAME' then Result := 7 else Result := -1;
+  if UpCase(S) = 'ADD'           then Result := 0 else
+  if UpCase(S) = 'UPDATE'        then Result := 1 else
+  if UpCase(S) = 'REPLACE'       then Result := 2 else
+  if UpCase(S) = 'QUERY'         then Result := 3 else
+  if UpCase(S) = 'ADDUPDATE'     then Result := 4 else
+  if UpCase(S) = 'ADDREPLACE'    then Result := 5 else
+  if UpCase(S) = 'ADDQUERY'      then Result := 6 else
+  if UpCase(S) = 'ADDAUTORENAME' then Result := 7 else Result := -1;
 end;
 
 function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
@@ -457,22 +460,38 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessVOption(var S: string);
+procedure TCommandLine.ProcessVMOption(var S: string);
+begin
+  Delete(S, 1, 3);
+  if S = '' then
+    FvmOption := TRUE
+  else
+    SetExitStatus(esCmdLineError);
+
+  if Command in [cList] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, clvmOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessVSOption(var S: string);
 var
   I: longint;
 begin
-  Delete(S, 1, 2);
+  Delete(S, 1, 3);
   for I := 1 to Length(S) do
     if S[I] in ['.', ','] then
       S[I] := DecimalSeparator;
 
-  if TryStrWithMultToQWord(S, FvOption) = FALSE then
+  if TryStrWithMultToQWord(S, FvsOption) = FALSE then
     SetExitStatus(esCmdLineError);
 
   if FCommand in [cAdd, cDelete, cRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clvOption);
+      Include(FOptions, clvsOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -603,8 +622,11 @@ begin
         if Pos('-U', UpperCase(S)) = 1 then
           ProcessUOption(S)
         else
-        if Pos('-V', UpperCase(S)) = 1 then
-          ProcessVOption(S)
+        if Pos('-VM', UpperCase(S)) = 1 then
+          ProcessVMOption(S)
+        else
+        if Pos('-VS', UpperCase(S)) = 1 then
+          ProcessVSOption(S)
         else
         if Pos('-WD', UpperCase(S)) = 1 then
           ProcessWDOption(S)

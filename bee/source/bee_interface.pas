@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v0.8.0 build 1970 - 2013.04.26 by Melchiorre Caruso.
 }
 
 unit Bee_Interface;
@@ -58,16 +58,10 @@ const
 var
   ExitStatus: longint = esNoError;
 
+  function  GetExitMessage: string;
   procedure SetExitStatus(aExitStatus: longint);
-  function GetExitMessage: string;
 
 implementation
-
-  procedure SetExitStatus(aExitStatus: longint);
-  begin
-    if ExitStatus = esNoError then
-      ExitStatus := aExitStatus;
-  end;
 
   function GetExitMessage: string;
   begin
@@ -81,8 +75,8 @@ implementation
       esArchiveVerError:   Result := 'Archive version error (exit code #112) - time elapsed %s seconds.';
       esArchiveCDError:    Result := 'Archive central directory error (exit code #113) - time elapsed %s seconds.';
 
-      esHashError:         Result :=  'Check integrity error (exit code #131) - time elapsed %s seconds.';
-      esConfigError:       Result :=  'Load configuration error (exit code #132) - time elapsed %s seconds.';
+      esHashError:         Result := 'Check integrity error (exit code #131) - time elapsed %s seconds.';
+      esConfigError:       Result := 'Load configuration error (exit code #132) - time elapsed %s seconds.';
 
       esCreateStreamError: Result := 'Create stream error (exit code #201) - time elapsed %s seconds.';
       esOpenStreamError:   Result := 'Open stream error (exit code #202) - time elapsed %s seconds.';
@@ -94,8 +88,15 @@ implementation
       esRequestDiskError:  Result := 'Request disk error (exit code #208) - time elapsed %s seconds.';
 
       esUserAbortError:    Result := 'User abort error (exit code #255) - time elapsed %s seconds.';
+      else                 Result := 'Unknow exit code (exit code #???) - time elapsed %s seconds.';
+    end;
+  end;
 
-    else Result := 'Unknow exit code (exit code #????) - time elapsed %s seconds.';
+  procedure SetExitStatus(aExitStatus: longint);
+  begin
+    if ExitStatus = esNoError then
+    begin
+      ExitStatus := aExitStatus;
     end;
   end;
 

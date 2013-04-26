@@ -138,8 +138,8 @@ type
     // compression property
     FCompressionFlags: TArchiveCompressionFlags;
     FCompressionMethod: TCoderAlgorithm;
-    FCompressionLevel: longint;
-    FCompressionLevelAux: longint;
+    FCompressionLevel: longword;
+    FCompressionLevelAux: longword;
     FCompressionFilter: string;
     FCompressionFilterAux: string;
     FCompressionBlock: int64;
@@ -177,13 +177,15 @@ type
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
     property CompressionMethod: TCoderAlgorithm read FCompressionMethod;
     property CompressionBlock: int64 read FCompressionBlock;
-    property CompressionLevel: longint read FCompressionLevel;
-    property CompressionLevelAux: longint read FCompressionLevelAux;
+    property CompressionLevel: longword read FCompressionLevel;
+    property CompressionLevelAux: longword read FCompressionLevelAux;
     property CompressionFilter: string read FCompressionFilter;
     property CompressionFilterAux: string read FCompressionFilterAux;
     // encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
     property EncryptionMethod: TCipherAlgorithm read FEncryptionMethod;
+    //
+    property Index: longint read FIndex;
   end;
 
   /// archive central directory
@@ -271,6 +273,7 @@ type
     FEncryptionParams: string;
     FCheckParams: string;
     FTestTempArchive: boolean;
+    FVerboseMode: boolean;
     FVolumeSize: int64;
     // items
     FCentralDirectory: TArchiveCentralDirectory;
@@ -370,6 +373,7 @@ type
     property EncryptionParams: string read FEncryptionParams write FEncryptionParams;
     property CheckParams: string read FCheckParams write FCheckParams;
     property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
+    property VerboseMode: boolean read FVerboseMode write FVerboseMode;
     property VolumeSize: int64 read FVolumeSize write FVolumeSize;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
@@ -377,7 +381,14 @@ type
     property LastModifiedTime: longint read GetLastModifiedTime;
   end;
 
-function CoderAlgorithmToStr(Item: TArchiveItem): string;
+function CompressionMethodToStr   (Item: TArchiveItem): string;
+function CompressionLevelToStr    (Item: TArchiveItem): string;
+function CompressionLevelAuxToStr (Item: TArchiveItem): string;
+function CompressionFilterToStr   (Item: TArchiveItem): string;
+function CompressionFilterAuxToStr(Item: TArchiveItem): string;
+function CompressionBlockToStr    (Item: TArchiveItem): string;
+
+
 function VersionToStr(Version: longword): string;
 function RatioToStr(const PackedSize, Size: int64): string;
 function SizeToStr(const Size: int64): string;
@@ -386,8 +397,6 @@ function AttrToStr(Attr: longint): string;
 implementation
 
 uses
-  Math,
-  Bee_Assembler,
   Bee_BufStream,
   Bee_Interface;
 
@@ -552,6 +561,21 @@ begin
 end;
 
 // ---
+
+function CompressionMethodToStr(Item: TArchiveItem): string;
+begin
+
+
+end;
+
+function CompressionLevelToStr    (Item: TArchiveItem): string;
+function CompressionLevelAuxToStr (Item: TArchiveItem): string;
+function CompressionFilterToStr   (Item: TArchiveItem): string;
+function CompressionFilterAuxToStr(Item: TArchiveItem): string;
+function CompressionBlockToStr    (Item: TArchiveItem): string;
+
+
+
 
 function CoderAlgorithmToStr(Item: TArchiveItem): string;
 begin
@@ -1142,6 +1166,7 @@ begin
   FCheckParams       := '';
   FTestTempArchive   := FALSE;
   FVolumeSize        := 0;
+  FVerboseMode       := FALSE;
   // items list
   FCentralDirectory  := TArchiveCentralDirectory.Create;
   FSearchRecs        := TList.Create;
@@ -2224,13 +2249,15 @@ begin
           CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
       end;
 
-      Writeln(' -->CurrentItem.Method    = ', CurrentItem.FCompressionMethod);
-      Writeln(' -->CurrentItem.Block     = ', CurrentItem.FCompressionBlock);
-      Writeln(' -->CurrentItem.Level     = ', CurrentItem.FCompressionLevel);
-      Writeln(' -->CurrentItem.LevelAux  = ', CurrentItem.FCompressionLevelAux);
-      Writeln(' -->CurrentItem.Filter    = ', CurrentItem.FCompressionFilter);
-      Writeln(' -->CurrentItem.FilterAux = ', CurrentItem.FCompressionFilterAux);
-
+      if FVerboseMode then
+      begin
+        Writeln(' -->CurrentItem.Method    = ', CurrentItem.FCompressionMethod);
+        Writeln(' -->CurrentItem.Block     = ', CurrentItem.FCompressionBlock);
+        Writeln(' -->CurrentItem.Level     = ', CurrentItem.FCompressionLevel);
+        Writeln(' -->CurrentItem.LevelAux  = ', CurrentItem.FCompressionLevelAux);
+        Writeln(' -->CurrentItem.Filter    = ', CurrentItem.FCompressionFilter);
+        Writeln(' -->CurrentItem.FilterAux = ', CurrentItem.FCompressionFilterAux);
+      end;
 
 
       // encryption method
