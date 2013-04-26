@@ -91,7 +91,6 @@ type
 implementation
 
 uses
-  Math,
   SysUtils,
   Bee_Interface;
 
@@ -427,9 +426,12 @@ begin
   // test temporary archive
   if cltOption in FCommandLine.Options then
     FArchiver.TestTempArchive := FCommandLine.tOption;
+  // verbose mode
+  if clvmOption in FCommandLine.Options then
+    FArchiver.VerboseMode := FCommandLine.vmOption;
   // volume size
-  if clvOption in FCommandLine.Options then
-    FArchiver.VolumeSize := FCommandLine.vOption;
+  if clvsOption in FCommandLine.Options then
+    FArchiver.VolumeSize := FCommandLine.vsOption;
 end;
 
 procedure TBeeApp.CloseArchive;
@@ -464,7 +466,8 @@ begin
   DoMessage('  -ss: stop switches parsing');
   DoMessage('  -t: Test temorary archive after process');
   DoMessage('  -u{parameters}: update files method');
-  DoMessage('  -v{size}[b|k|m|g]: create volumes ');
+  DoMessage('  -vm: verbose mode ');
+  DoMessage('  -vs{size}[b|k|m|g]: create volumes ');
   DoMessage('  -wd[{path}]: set temporany work directory');
   DoMessage('  -x{names}: eXclude filenames');
   DoMessage('  -y: assume yes on all queries');
@@ -605,21 +608,58 @@ begin
       if FCommandLine.slsOption then
         ItemToList.Sort(CompareFilePath);
 
-      DoMessage(Cr + '   Date      Time     Attr          Size       Packed MTD Name                 ');
-      DoMessage(     '---------- -------- ------- ------------ ------------ --- ---------------------');
-      for I := 0 to ItemToList.Count - 1 do
+      if FCommandLine.vmOption then
       begin
-        Item := ItemToList.Items[I];
-        DoMessage(Format('%16s %7s %12s %12s %3s %s', [
-          Bee_Common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
-          SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
-          CoderAlgorithmToStr(Item), Item.FileName]));
+        for I := 0 to ItemToList.Count - 1 do
+        begin
+          if ExitStatus <> esNoError then Break;
+
+          Item := ItemToList.Items[I];
+          DoMessage(Format(Cr + 'Index: %u',         [Item.Index]));
+          DoMessage(Format(     'Name: %s',          [Item.FileName]));
+          DoMessage(Format(     'Size: %u',          [Item.UncompressedSize]));
+          DoMessage(Format(     'Packed: %u',        [Item.CompressedSize]));
+          DoMessage(Format(     'Ratio: %s',         [RatioToStr(Item.CompressedSize, Item.UncompressedSize)]));
+          DoMessage(Format(     'Last modified: %s', [Bee_Common.FileTimeToString(Item.LastModifiedTime)]));
+          DoMessage(Format(     'Attributes: %s',    [AttrToStr(Item.Attributes)]));
+          DoMessage(Format(     'Comment: %s',       [Item.Comment]));
+
+          DoMessage(Format(     'Disk number: %u',      [Item.DiskNumber]));
+          DoMessage(Format(     'Disk seek: %u',        [Item.DiskSeek]));
+          DoMessage(Format(     'Check method: %u',     [Item.CheckMethod]));
+          DoMessage(Format(     'Check digest: %s',     [Item.CheckDigest]));
+          DoMessage(Format(     'Check method aux: %u', [Item.CheckMethodAux]));
+          DoMessage(Format(     'Check digest aux: %s', [Item.CheckDigestAux]));
+
+          DoMessage(Format(     'Compression method: %s',     [CoderAlgorithmToStr(Item)]));
+          DoMessage(Format(     'Compression level: %u',      [Item.CompressionLevel]));
+          DoMessage(Format(     'Compression level aux: %u',  [Item.CompressionLevelAux]));
+          DoMessage(Format(     'Compression filter: %s',     [Item.CompressionFilter]));
+          DoMessage(Format(     'Compression filter aux: %s', [Item.CompressionFilterAux]));
+          DoMessage(Format(     'Compression block: %u',      [Item.CompressionBlock]));
+
+          DoMessage(Format(     'Encryption method: %u',     [Item.EncryptionMethod]));
+        end;
+
+      end else
+      begin
+        DoMessage(Cr + '   Date      Time     Attr          Size       Packed Name                 ');
+        DoMessage(     '---------- -------- ------- ------------ ------------ ---------------------');
+        for I := 0 to ItemToList.Count - 1 do
+        begin
+          if ExitStatus <> esNoError then Break;
+
+          Item := ItemToList.Items[I];
+          DoMessage(Format('%16s %7s %12s %12s %s', [
+            Bee_Common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
+            SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize), Item.FileName]));
+        end;
+        DoMessage('---------- -------- ------- ------------ ------------ ---------------------');
+        DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s %d file(s)', [SizeToStr(TotalSize),
+          SizeToStr(TotalPackedSize), TotalFiles]));
       end;
-      DoMessage('---------- -------- ------- ------------ ------------ --- ---------------------');
-      DoMessage(StringOfChar(' ', 27) + Format(' %12s %12s     %d file(s)', [SizeToStr(TotalSize),
-        SizeToStr(TotalPackedSize), TotalFiles]));
     end;
-    DoMessage(Cr + Format('Last modified time: %16s', [Bee_Common.FileTimeToString(FArchiver.LastModifiedTime)]));
+    DoMessage(Format(Cr + 'Last archive modified time: %16s', [Bee_Common.FileTimeToString(FArchiver.LastModifiedTime)]));
     ItemToList.Destroy;
   end;
   CloseArchive;
