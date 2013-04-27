@@ -381,13 +381,9 @@ type
     property LastModifiedTime: longint read GetLastModifiedTime;
   end;
 
-function CompressionMethodToStr   (Item: TArchiveItem): string;
-function CompressionLevelToStr    (Item: TArchiveItem): string;
-function CompressionLevelAuxToStr (Item: TArchiveItem): string;
-function CompressionFilterToStr   (Item: TArchiveItem): string;
-function CompressionFilterAuxToStr(Item: TArchiveItem): string;
-function CompressionBlockToStr    (Item: TArchiveItem): string;
-
+function CoderMethodToStr(Method: TCoderAlgorithm ): string;
+function HashMethodToStr(Method: THashAlgorithm): string;
+function CipherMethodToStr(Method: TCipherAlgorithm): string;
 
 function VersionToStr(Version: longword): string;
 function RatioToStr(const PackedSize, Size: int64): string;
@@ -562,32 +558,36 @@ end;
 
 // ---
 
-function CompressionMethodToStr(Item: TArchiveItem): string;
+function CoderMethodToStr(Method: TCoderAlgorithm): string;
 begin
-
-
-end;
-
-function CompressionLevelToStr    (Item: TArchiveItem): string;
-function CompressionLevelAuxToStr (Item: TArchiveItem): string;
-function CompressionFilterToStr   (Item: TArchiveItem): string;
-function CompressionFilterAuxToStr(Item: TArchiveItem): string;
-function CompressionBlockToStr    (Item: TArchiveItem): string;
-
-
-
-
-function CoderAlgorithmToStr(Item: TArchiveItem): string;
-begin
-  case Item.CompressionMethod of
+  case Method of
     caStore: Result := 'NONE';
     caBee:   Result := 'BEE';
     caPpmd:  Result := 'PPMD';
+    else     Result := '???';
   end;
+end;
 
-  Result := Result + ':LEV='     + IntToStr(Item.CompressionLevel);
-  Result := Result + ':LEV.AUX=' + IntToStr(Item.CompressionLevelAux);
-  Result := Result + ':BLOCK='   + IntToStr(Item.CompressionBlock);
+function HashMethodToStr(Method: THashAlgorithm): string;
+begin
+  case Method of
+    haNul:   Result := 'NONE';
+    haCRC32: Result := 'CRC32';
+    haCRC64: Result := 'CRC64';
+    haSHA1:  Result := 'SHA1';
+    haMD5:   Result := 'MD5';
+    else     Result := '???';
+  end;
+end;
+
+function CipherMethodToStr(Method: TCipherAlgorithm): string;
+begin
+  case Method of
+    caNul:      Result := 'NONE';
+    caBlowFish: Result := 'BLOWFISH';
+    caIdea:     Result := 'IDEA';
+    else        Result := '???';
+  end;
 end;
 
 function VersionToStr(Version: longword): string;
@@ -906,19 +906,19 @@ begin
     begin
       CurrentItem := FItems.Items[I];
       /// item property ///
-      if CurrentItem.FVersionNeededToRead = PreviusItem.FVersionNeededToRead then Exclude(CurrentItem.FFlags, aifVersionNeededToRead) else Include(CurrentItem.FFlags, aifVersionNeededToRead);
-      if CurrentItem.FUncompressedSize    = PreviusItem.FUncompressedSize    then Exclude(CurrentItem.FFlags, aifUncompressedSize)    else Include(CurrentItem.FFlags, aifUncompressedSize);
-      if CurrentItem.FLastModifiedTime    = PreviusItem.FLastModifiedTime    then Exclude(CurrentItem.FFlags, aifLastModifiedTime)    else Include(CurrentItem.FFlags, aifLastModifiedTime);
-      if CurrentItem.FAttributes          = PreviusItem.FAttributes          then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
-      if CurrentItem.FComment             = PreviusItem.FComment             then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
+      if CurrentItem.FVersionNeededToRead  = PreviusItem.FVersionNeededToRead  then Exclude(CurrentItem.FFlags, aifVersionNeededToRead) else Include(CurrentItem.FFlags, aifVersionNeededToRead);
+      if CurrentItem.FUncompressedSize     = PreviusItem.FUncompressedSize     then Exclude(CurrentItem.FFlags, aifUncompressedSize)    else Include(CurrentItem.FFlags, aifUncompressedSize);
+      if CurrentItem.FLastModifiedTime     = PreviusItem.FLastModifiedTime     then Exclude(CurrentItem.FFlags, aifLastModifiedTime)    else Include(CurrentItem.FFlags, aifLastModifiedTime);
+      if CurrentItem.FAttributes           = PreviusItem.FAttributes           then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
+      if CurrentItem.FComment              = PreviusItem.FComment              then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
       /// data descriptor property ///
-      if CurrentItem.FCompressedSize      = PreviusItem.FCompressedSize then Exclude(CurrentItem.FDataDescriptorFlags, addfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, addfCompressedSize);
-      if CurrentItem.FDiskNumber          = PreviusItem.FDiskNumber     then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, addfDiskNumber);
-      if CurrentItem.FDiskseek            = PreviusItem.FDiskSeek       then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, addfDiskSeek);
-      if CurrentItem.FCheckMethod         = PreviusItem.FCheckMethod    then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethod)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethod);
-      if CurrentItem.FCheckDigest         = PreviusItem.FCheckDigest    then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigest)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigest);
-      if CurrentItem.FCheckMethodAux      = PreviusItem.FCheckMethodAux then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux);
-      if CurrentItem.FCheckDigestAux      = PreviusItem.FCheckDigestAux then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux);
+      if CurrentItem.FCompressedSize       = PreviusItem.FCompressedSize       then Exclude(CurrentItem.FDataDescriptorFlags, addfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, addfCompressedSize);
+      if CurrentItem.FDiskNumber           = PreviusItem.FDiskNumber           then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, addfDiskNumber);
+      if CurrentItem.FDiskseek             = PreviusItem.FDiskSeek             then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, addfDiskSeek);
+      if CurrentItem.FCheckMethod          = PreviusItem.FCheckMethod          then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethod)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethod);
+      if CurrentItem.FCheckDigest          = PreviusItem.FCheckDigest          then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigest)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigest);
+      if CurrentItem.FCheckMethodAux       = PreviusItem.FCheckMethodAux       then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux);
+      if CurrentItem.FCheckDigestAux       = PreviusItem.FCheckDigestAux       then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux);
       /// compression property ///
       if CurrentItem.FCompressionMethod    = PreviusItem.FCompressionMethod    then Exclude(CurrentItem.FCompressionFlags, acfCompressionMethod)    else Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
       if CurrentItem.FCompressionBlock     = PreviusItem.FCompressionBlock     then Exclude(CurrentItem.FCompressionFlags, acfCompressionBlock)     else Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
@@ -927,7 +927,7 @@ begin
       if CurrentItem.FCompressionFilter    = PreviusItem.FCompressionFilter    then Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter)    else Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
       if CurrentItem.FCompressionFilterAux = PreviusItem.FCompressionFilterAux then Exclude(CurrentItem.FCompressionFlags, acfCompressionFilterAux) else Include(CurrentItem.FCompressionFlags, acfCompressionFilterAux);
       /// encryption property ///
-      if CurrentItem.FEncryptionMethod = PreviusItem.FEncryptionMethod then Exclude(CurrentItem.FEncryptionFlags, aefEncryptionMethod)   else Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
+      if CurrentItem.FEncryptionMethod     = PreviusItem.FEncryptionMethod     then Exclude(CurrentItem.FEncryptionFlags, aefEncryptionMethod)      else Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
 
       PreviusItem := CurrentItem;
     end;
@@ -1737,8 +1737,9 @@ procedure TArchiver.DoProgress(Value: longint);
 begin
   Inc(FProcessedSize, Value);
   if Assigned(FOnProgress) then
+  begin
     FOnProgress(Round((FProcessedSize/FTotalSize)*100));
-
+  end;
   while FSuspended do Sleep(250);
 end;
 
@@ -1923,10 +1924,13 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-      case Item.FTag of
-        aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
-        aitDecode: DoMessage(Format(cmDecoding,   [Item.FFileName]));
-      end;
+
+      if FVerboseMode then
+        case Item.FTag of
+          aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
+          aitDecode: DoMessage(Format(cmDecoding,   [Item.FFileName]));
+        end;
+
       case Item.FTag of
         aitUpdate: DecodeToFile(Item);
         aitDecode: DecodeToNul (Item);
@@ -1948,10 +1952,13 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-      case Item.FTag of
-        aitUpdate: DoMessage(Format(cmTesting,  [Item.FFileName]));
-        aitDecode: DoMessage(Format(cmDecoding, [Item.FFileName]));
-      end;
+
+      if FVerboseMode then
+        case Item.FTag of
+          aitUpdate: DoMessage(Format(cmTesting,  [Item.FFileName]));
+          aitDecode: DoMessage(Format(cmDecoding, [Item.FFileName]));
+        end;
+
       case Item.FTag of
         aitUpdate: DecodeToNul(Item);
         aitDecode: DecodeToNul(Item);
@@ -2023,10 +2030,13 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-      case Item.FTag of
-        aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
-        aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
-      end;
+
+      if FVerboseMode then
+        case Item.FTag of
+          aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
+          aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
+        end;
+
       EncodeFromArchive(Item);
     end;
     if ExitStatus = esNoError then
@@ -2142,10 +2152,13 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-      case Item.FTag of
-        aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
-        aitDecode: DoMessage(Format(cmEncoding, [Item.FileName]));
-      end;
+
+      if FVerboseMode then
+        case Item.FTag of
+          aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
+          aitDecode: DoMessage(Format(cmEncoding, [Item.FileName]));
+        end;
+
       case Item.FTag of
         aitNone:   EncodeFromArchive(Item);
         aitDecode: EncodeFromSwap   (Item);
@@ -2248,17 +2261,6 @@ begin
         else
           CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
       end;
-
-      if FVerboseMode then
-      begin
-        Writeln(' -->CurrentItem.Method    = ', CurrentItem.FCompressionMethod);
-        Writeln(' -->CurrentItem.Block     = ', CurrentItem.FCompressionBlock);
-        Writeln(' -->CurrentItem.Level     = ', CurrentItem.FCompressionLevel);
-        Writeln(' -->CurrentItem.LevelAux  = ', CurrentItem.FCompressionLevelAux);
-        Writeln(' -->CurrentItem.Filter    = ', CurrentItem.FCompressionFilter);
-        Writeln(' -->CurrentItem.FilterAux = ', CurrentItem.FCompressionFilterAux);
-      end;
-
 
       // encryption method
       CurrentItem.FEncryptionMethod    := GetCipherAlgorithm(FEncryptionParams);
@@ -2387,13 +2389,15 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-      case Item.FTag of
-        aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
-        aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
-        aitUpdate:          DoMessage(Format(cmUpdating, [Item.FileName]));
-        aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
-        aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
-      end;
+
+      if FVerboseMode then
+        case Item.FTag of
+          aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
+          aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
+          aitUpdate:          DoMessage(Format(cmUpdating, [Item.FileName]));
+          aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
+          aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
+        end;
 
       case Item.FTag of
         aitNone:            EncodeFromArchive(Item);

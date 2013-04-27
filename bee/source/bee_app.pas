@@ -115,7 +115,7 @@ end;
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1970 archiver utility, May 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1972 archiver utility, May 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -482,7 +482,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
+    DoMessage(Format(cmWorking, ['...']));
     Scanner := TFileScanner.Create;
     for I := 0 to FCommandLine.FileMasks.Count - 1 do
       Scanner.Scan(
@@ -506,7 +506,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
+    DoMessage(Format(cmWorking, ['...']));
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
@@ -530,7 +530,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
+    DoMessage(Format(cmWorking, ['...']));
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
@@ -551,7 +551,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
+    DoMessage(Format(cmWorking, ['...']));
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
@@ -578,7 +578,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmScanning, ['...']));
+    DoMessage(Format(cmWorking, ['...']));
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
@@ -613,32 +613,29 @@ begin
         for I := 0 to ItemToList.Count - 1 do
         begin
           if ExitStatus <> esNoError then Break;
-
           Item := ItemToList.Items[I];
-          DoMessage(Format(Cr + 'Index: %u',         [Item.Index]));
-          DoMessage(Format(     'Name: %s',          [Item.FileName]));
-          DoMessage(Format(     'Size: %u',          [Item.UncompressedSize]));
-          DoMessage(Format(     'Packed: %u',        [Item.CompressedSize]));
-          DoMessage(Format(     'Ratio: %s',         [RatioToStr(Item.CompressedSize, Item.UncompressedSize)]));
-          DoMessage(Format(     'Last modified: %s', [Bee_Common.FileTimeToString(Item.LastModifiedTime)]));
-          DoMessage(Format(     'Attributes: %s',    [AttrToStr(Item.Attributes)]));
-          DoMessage(Format(     'Comment: %s',       [Item.Comment]));
-
-          DoMessage(Format(     'Disk number: %u',      [Item.DiskNumber]));
-          DoMessage(Format(     'Disk seek: %u',        [Item.DiskSeek]));
-          DoMessage(Format(     'Check method: %u',     [Item.CheckMethod]));
-          DoMessage(Format(     'Check digest: %s',     [Item.CheckDigest]));
-          DoMessage(Format(     'Check method aux: %u', [Item.CheckMethodAux]));
-          DoMessage(Format(     'Check digest aux: %s', [Item.CheckDigestAux]));
-
-          DoMessage(Format(     'Compression method: %s',     [CoderAlgorithmToStr(Item)]));
-          DoMessage(Format(     'Compression level: %u',      [Item.CompressionLevel]));
-          DoMessage(Format(     'Compression level aux: %u',  [Item.CompressionLevelAux]));
-          DoMessage(Format(     'Compression filter: %s',     [Item.CompressionFilter]));
+          DoMessage(Format(Cr + '                 Index: %u', [Item.Index]));
+          DoMessage(Format(     '                  Path: %s', [ExtractFilePath(Item.FileName)]));
+          DoMessage(Format(     '                  Name: %s', [ExtractFileName(Item.FileName)]));
+          DoMessage(Format(     '                  Size: %s', [SizeToStr(Item.UncompressedSize)]));
+          DoMessage(Format(     '           Packed size: %s', [SizeToStr(Item.CompressedSize)]));
+          DoMessage(Format(     '                 Ratio: %s', [RatioToStr(Item.CompressedSize, Item.UncompressedSize)]));
+          DoMessage(Format(     '    Last modified time: %s', [FileTimeToString(Item.LastModifiedTime)]));
+          DoMessage(Format(     '            Attributes: %s', [AttrToStr(Item.Attributes)]));
+          DoMessage(Format(     '               Comment: %s', [Item.Comment]));
+          DoMessage(Format(     '           Disk number: %u', [Item.DiskNumber]));
+          DoMessage(Format(     '         Disk position: %u', [Item.DiskSeek]));
+          DoMessage(Format(     '          Check method: %s', [HashMethodTostr(Item.CheckMethod)]));
+          DoMessage(Format(     '          Check digest: %s', [Item.CheckDigest]));
+          DoMessage(Format(     '      Check method aux: %s', [HashMethodToStr(Item.CheckMethodAux)]));
+          DoMessage(Format(     '      Check digest aux: %s', [Item.CheckDigestAux]));
+          DoMessage(Format(     '    Compression method: %s', [CoderMethodToStr(Item.CompressionMethod)]));
+          DoMessage(Format(     '     Compression level: %u', [Item.CompressionLevel]));
+          DoMessage(Format(     ' Compression level aux: %u', [Item.CompressionLevelAux]));
+          DoMessage(Format(     '    Compression filter: %s', [Item.CompressionFilter]));
           DoMessage(Format(     'Compression filter aux: %s', [Item.CompressionFilterAux]));
-          DoMessage(Format(     'Compression block: %u',      [Item.CompressionBlock]));
-
-          DoMessage(Format(     'Encryption method: %u',     [Item.EncryptionMethod]));
+          DoMessage(Format(     '     Compression block: %u', [Item.CompressionBlock]));
+          DoMessage(Format(     '     Encryption method: %s', [CipherMethodTostr(Item.EncryptionMethod)]));
         end;
 
       end else
@@ -648,7 +645,6 @@ begin
         for I := 0 to ItemToList.Count - 1 do
         begin
           if ExitStatus <> esNoError then Break;
-
           Item := ItemToList.Items[I];
           DoMessage(Format('%16s %7s %12s %12s %s', [
             Bee_Common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
@@ -659,7 +655,7 @@ begin
           SizeToStr(TotalPackedSize), TotalFiles]));
       end;
     end;
-    DoMessage(Format(Cr + 'Last archive modified time: %16s', [Bee_Common.FileTimeToString(FArchiver.LastModifiedTime)]));
+    DoMessage(Format(Cr + 'Last modified time: %16s', [Bee_Common.FileTimeToString(FArchiver.LastModifiedTime)]));
     ItemToList.Destroy;
   end;
   CloseArchive;
