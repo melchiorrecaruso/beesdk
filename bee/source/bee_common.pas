@@ -55,7 +55,7 @@ const
 
   cmCreating          = 'Creating   %s';
   cmOpening           = 'Opening    %s';
-  cmWorking           = 'Working    %s';
+  cmScanning          = 'Scanning   %s';
   cmAdding            = 'Adding     %s';
   cmUpdating          = 'Updating   %s';
   cmCopying           = 'Copying    %s';
