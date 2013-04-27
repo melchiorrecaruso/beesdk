@@ -1166,7 +1166,7 @@ begin
   FCheckParams       := '';
   FTestTempArchive   := FALSE;
   FVolumeSize        := 0;
-  FVerboseMode       := TRUE;
+  FVerboseMode       := FALSE;
   // items list
   FCentralDirectory  := TArchiveCentralDirectory.Create;
   FSearchRecs        := TList.Create;
@@ -1515,6 +1515,7 @@ begin
       Tester.TagAll;
       Tester.TestTagged;
     end;
+    Tester.CloseArchive;
     Tester.Destroy;
   end;
 end;
@@ -1925,12 +1926,10 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-
-      if FVerboseMode then
-        case Item.FTag of
-          aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
-          aitDecode: DoMessage(Format(cmDecoding,   [Item.FFileName]));
-        end;
+      case Item.FTag of
+        aitUpdate: DoMessage(Format(cmExtracting, [Item.FExternalFileName]));
+        aitDecode: DoMessage(Format(cmDecoding,   [Item.FFileName]));
+      end;
 
       case Item.FTag of
         aitUpdate: DecodeToFile(Item);
@@ -1953,12 +1952,10 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-
-      if FVerboseMode then
-        case Item.FTag of
-          aitUpdate: DoMessage(Format(cmTesting,  [Item.FFileName]));
-          aitDecode: DoMessage(Format(cmDecoding, [Item.FFileName]));
-        end;
+      case Item.FTag of
+        aitUpdate: DoMessage(Format(cmTesting,  [Item.FFileName]));
+        aitDecode: DoMessage(Format(cmDecoding, [Item.FFileName]));
+      end;
 
       case Item.FTag of
         aitUpdate: DecodeToNul(Item);
@@ -2031,12 +2028,10 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-
-      if FVerboseMode then
-        case Item.FTag of
-          aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
-          aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
-        end;
+      case Item.FTag of
+        aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
+        aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
+      end;
 
       EncodeFromArchive(Item);
     end;
@@ -2153,12 +2148,10 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-
-      if FVerboseMode then
-        case Item.FTag of
-          aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
-          aitDecode: DoMessage(Format(cmEncoding, [Item.FileName]));
-        end;
+      case Item.FTag of
+        aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
+        aitDecode: DoMessage(Format(cmEncoding, [Item.FileName]));
+      end;
 
       case Item.FTag of
         aitNone:   EncodeFromArchive(Item);
@@ -2390,15 +2383,13 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-
-      if FVerboseMode then
-        case Item.FTag of
-          aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
-          aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
-          aitUpdate:          DoMessage(Format(cmUpdating, [Item.FileName]));
-          aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
-          aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
-        end;
+      case Item.FTag of
+        aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
+        aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
+        aitUpdate:          DoMessage(Format(cmUpdating, [Item.FileName]));
+        aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
+        aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
+      end;
 
       case Item.FTag of
         aitNone:            EncodeFromArchive(Item);
