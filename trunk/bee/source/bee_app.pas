@@ -482,7 +482,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmWorking, ['...']));
+    DoMessage(Format(cmScanning, ['...']));
     Scanner := TFileScanner.Create;
     for I := 0 to FCommandLine.FileMasks.Count - 1 do
       Scanner.Scan(
@@ -506,7 +506,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmWorking, ['...']));
+    DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
@@ -530,7 +530,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmWorking, ['...']));
+    DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
@@ -551,7 +551,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmWorking, ['...']));
+    DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
@@ -578,7 +578,7 @@ begin
   OpenArchive;
   if ExitStatus = esNoError then
   begin
-    DoMessage(Format(cmWorking, ['...']));
+    DoMessage(Format(cmScanning, ['...']));
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);

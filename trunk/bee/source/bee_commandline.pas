@@ -399,7 +399,10 @@ begin
   if S = '' then
     FslsOption := TRUE
   else
-    SetExitStatus(esCmdLineError);
+    if S = '-' then
+      FslsOption := FALSE
+    else
+      SetExitStatus(esCmdLineError);
 
   if FCommand in [cList] then
   begin
@@ -415,7 +418,10 @@ begin
   if S = '' then
     FssOption := TRUE
   else
-    SetExitStatus(esCmdLineError);
+    if S = '-' then
+      FssOption := FALSE
+    else
+      SetExitStatus(esCmdLineError);
 
   if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
   begin
@@ -431,7 +437,10 @@ begin
   if S = '' then
     FtOption := TRUE
   else
-    SetExitStatus(esCmdLineError);
+    if S = '-' then
+      FtOption := FALSE
+    else
+      SetExitStatus(esCmdLineError);
 
   if Command in [cAdd, cDelete, cRename] then
   begin
@@ -466,9 +475,12 @@ begin
   if S = '' then
     FvmOption := TRUE
   else
-    SetExitStatus(esCmdLineError);
+    if S ='-' then
+      FvmOption := FALSE
+    else
+      SetExitStatus(esCmdLineError);
 
-  if Command in [cList] then
+  if Command in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
       Include(FOptions, clvmOption);
@@ -536,7 +548,10 @@ begin
   if S = '' then
     FyOption := TRUE
   else
-    SetExitStatus(esCmdLineError);
+    if S = '-' then
+      FyOption := FALSE
+    else
+      SetExitStatus(esCmdLineError);
 
   if Command in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
   begin

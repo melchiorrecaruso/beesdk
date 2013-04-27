@@ -403,7 +403,7 @@ begin
   Params := UpCase(Params);
   if Pos(':METHOD=NONE:', Params) > 0 then Result := caStore else
   if Pos(':METHOD=BEE:',  Params) > 0 then Result := caBee   else
-  if Pos(':METHOD=PPMD:', Params) > 0 then Result := caPpmd  else Result := caBee;
+  if Pos(':METHOD=PPMD:', Params) > 0 then Result := caPpmd  else Result := caPpmd;
 end;
 
 function ExtractQWord(const Params: string; const K: string): qword;
@@ -436,11 +436,6 @@ begin
       else
         Break;
   end;
-end;
-
-function GetCoderBlock(Params: string): qword;
-begin
-  Result := ExtractQWord(Params, ':BLOCK=');
 end;
 
 function GetCoderLevel(const Params: string): longword;
@@ -489,6 +484,11 @@ end;
 function GetCoderFilterAux(const Params: string): string;
 begin
   Result := ExtractStr(Params, ':FILTER.AUX=');
+end;
+
+function GetCoderBlock(Params: string): qword;
+begin
+  Result := ExtractQWord(Params, ':BLOCK=');
 end;
 
 function GetCoderConfiguration(const Params: string): string;
@@ -1166,7 +1166,7 @@ begin
   FCheckParams       := '';
   FTestTempArchive   := FALSE;
   FVolumeSize        := 0;
-  FVerboseMode       := FALSE;
+  FVerboseMode       := TRUE;
   // items list
   FCentralDirectory  := TArchiveCentralDirectory.Create;
   FSearchRecs        := TList.Create;
@@ -1737,9 +1737,10 @@ procedure TArchiver.DoProgress(Value: longint);
 begin
   Inc(FProcessedSize, Value);
   if Assigned(FOnProgress) then
-  begin
-    FOnProgress(Round((FProcessedSize/FTotalSize)*100));
-  end;
+    if (FProcessedSize and $FFFF) = 0 then
+    begin
+      FOnProgress(Round((FProcessedSize/FTotalSize)*100));
+    end;
   while FSuspended do Sleep(250);
 end;
 
