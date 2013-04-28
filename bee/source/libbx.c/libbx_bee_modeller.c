@@ -357,7 +357,7 @@ static inline void BeeModeller_Step(PBeeModeller Self, PRangeCod_Update Update)
   }
 }
 
-static void BeeModeller_FreshFlexible(PBeeModeller Self)
+void BeeModeller_FreshFlexible(PBeeModeller Self)
 {
   Self->Tear            = NULL;
   Self->CurrentFreeNode = &(Self->Heap[0]);
@@ -378,7 +378,7 @@ static void BeeModeller_FreshFlexible(PBeeModeller Self)
   Self->LowestPos  = - ((int32_t) Self->MaxCounter);
 }
 
-static void BeeModeller_FreshSolid(PBeeModeller Self)
+void BeeModeller_FreshSolid(PBeeModeller Self)
 {
   if (Self->Counter > 1)
   {
@@ -389,7 +389,7 @@ static void BeeModeller_FreshSolid(PBeeModeller Self)
     Self->ListCount = 0;
 }
 
-void BeeModeller_SetDictionary(PBeeModeller Self, uint32_t aDictLevel)
+void BeeModeller_SetDictionaryLevel(PBeeModeller Self, uint32_t aDictLevel)
 {
   Self->DictLevel   = aDictLevel;
   Self->MaxCounter  = (1 << ( 17 + Self->DictLevel)) - 1;
@@ -404,7 +404,7 @@ void BeeModeller_SetDictionary(PBeeModeller Self, uint32_t aDictLevel)
   BeeModeller_FreshFlexible(Self);
 }
 
-void BeeModeller_SetTable(PBeeModeller Self, const TTableParameters *T)
+void BeeModeller_SetTableParameters(PBeeModeller Self, const TTableParameters *T)
 {
   Self->Table.Level = (uint32_t)(*T)[0] & 0xF;
 
@@ -463,12 +463,6 @@ static inline uint32_t BeeModeller_Update(PBeeModeller Self, uint32_t aSymbol, P
 
   Self->List[Self->ListCount - 1] = Self->Root;
   return result;
-}
-
-inline void BeeModeller_Init(PBeeModeller Self, uint32_t DictLevel, const TTableParameters *T)
-{
-  BeeModeller_SetDictionary(Self, DictLevel);
-  BeeModeller_SetTable(Self, T);
 }
 
 inline uint32_t BeeModeller_Encode(PBeeModeller Self, uint8_t *Buffer, uint32_t BufSize)

@@ -99,12 +99,10 @@
       <Unit1>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1516"/>
-        <CursorPos X="57" Y="1556"/>
-        <FoldState Value=" T3qL0F12ET p0.50K13E piYn107C13]Bbnf09]9jDjW0g112]B7mV0b TK~S0a8"/>
+        <TopLine Value="1187"/>
+        <CursorPos X="60" Y="1285"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -114,9 +112,10 @@
         <UnitName Value="Bee_MainPacker"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="175"/>
-        <CursorPos X="3" Y="139"/>
-        <UsageCount Value="64"/>
+        <TopLine Value="229"/>
+        <CursorPos X="5" Y="254"/>
+        <FoldState Value=" T3kc0384B+"/>
+        <UsageCount Value="66"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
@@ -125,9 +124,9 @@
         <UnitName Value="Bee_BufStream"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="391"/>
-        <CursorPos X="68" Y="171"/>
-        <UsageCount Value="40"/>
+        <TopLine Value="193"/>
+        <CursorPos X="5" Y="216"/>
+        <UsageCount Value="42"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
@@ -138,18 +137,19 @@
         <WindowIndex Value="0"/>
         <TopLine Value="131"/>
         <CursorPos X="43" Y="65"/>
-        <UsageCount Value="33"/>
+        <UsageCount Value="35"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="556"/>
-        <CursorPos X="33" Y="573"/>
-        <UsageCount Value="32"/>
+        <TopLine Value="607"/>
+        <CursorPos X="70" Y="620"/>
+        <UsageCount Value="34"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
@@ -160,7 +160,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="56"/>
         <CursorPos X="51" Y="81"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
@@ -169,9 +169,9 @@
         <UnitName Value="Bee_LibBx"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="25"/>
-        <CursorPos X="27" Y="16"/>
-        <UsageCount Value="31"/>
+        <TopLine Value="52"/>
+        <CursorPos X="37" Y="74"/>
+        <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
@@ -180,9 +180,9 @@
         <UnitName Value="Bee_Common"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="33"/>
+        <TopLine Value="103"/>
         <CursorPos X="35" Y="58"/>
-        <UsageCount Value="30"/>
+        <UsageCount Value="32"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
@@ -193,7 +193,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="294"/>
         <CursorPos X="46" Y="154"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
@@ -204,8 +204,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="453"/>
         <CursorPos X="1" Y="545"/>
-        <FoldState Value=" T3l40n7 piakF0D5 pj2jR0H5]IdjP0Ho"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
@@ -216,7 +215,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="75"/>
         <CursorPos X="65" Y="100"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
@@ -226,7 +225,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
@@ -237,132 +236,124 @@
         <WindowIndex Value="0"/>
         <TopLine Value="42"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="26" Column="78" TopLine="24"/>
+        <Caret Line="271" Column="31" TopLine="251"/>
       </Position1>
       <Position2>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="235" Column="4" TopLine="233"/>
+        <Caret Line="276" Column="17" TopLine="251"/>
       </Position2>
       <Position3>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="276" Column="17" TopLine="233"/>
+        <Caret Line="376" Column="71" TopLine="333"/>
       </Position3>
       <Position4>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="376" Column="71" TopLine="333"/>
+        <Caret Line="1557" Column="20" TopLine="1522"/>
       </Position4>
       <Position5>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1169" Column="15" TopLine="1126"/>
+        <Caret Line="1570" Column="26" TopLine="1544"/>
       </Position5>
       <Position6>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1928" Column="22" TopLine="1885"/>
+        <Filename Value="bee_files.pas"/>
+        <Caret Line="166" Column="22" TopLine="144"/>
       </Position6>
       <Position7>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1956" Column="22" TopLine="1913"/>
+        <Caret Line="1558" Column="25" TopLine="1442"/>
       </Position7>
       <Position8>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="2034" Column="22" TopLine="1991"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="78" Column="24" TopLine="61"/>
       </Position8>
       <Position9>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="2156" Column="22" TopLine="2113"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="222" Column="1" TopLine="24"/>
       </Position9>
       <Position10>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="2393" Column="22" TopLine="2350"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="219" Column="19" TopLine="206"/>
       </Position10>
       <Position11>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="278" Column="31" TopLine="251"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="56" Column="33" TopLine="36"/>
       </Position11>
       <Position12>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="376" Column="71" TopLine="333"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="229" Column="36" TopLine="198"/>
       </Position12>
       <Position13>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1169" Column="15" TopLine="1126"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="80" Column="36" TopLine="61"/>
       </Position13>
       <Position14>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1928" Column="22" TopLine="1885"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="242" Column="7" TopLine="217"/>
       </Position14>
       <Position15>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="20" Column="23" TopLine="16"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="83" Column="31" TopLine="58"/>
       </Position15>
       <Position16>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="276" Column="17" TopLine="233"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="61" Column="53" TopLine="24"/>
       </Position16>
       <Position17>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="376" Column="71" TopLine="333"/>
+        <Filename Value="bee_bufstream.pas"/>
+        <Caret Line="215" Column="10" TopLine="187"/>
       </Position17>
       <Position18>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1169" Column="30" TopLine="1126"/>
+        <Filename Value="bee_bufstream.pas"/>
+        <Caret Line="190" Column="41" TopLine="173"/>
       </Position18>
       <Position19>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1928" Column="1" TopLine="1901"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="263" Column="64" TopLine="235"/>
       </Position19>
       <Position20>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1946" Column="24" TopLine="1924"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="298" Column="64" TopLine="273"/>
       </Position20>
       <Position21>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="2016" Column="20" TopLine="2000"/>
+        <Caret Line="1556" Column="57" TopLine="1219"/>
       </Position21>
       <Position22>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="2147" Column="16" TopLine="2123"/>
+        <Caret Line="1273" Column="1" TopLine="1219"/>
       </Position22>
       <Position23>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="2366" Column="12" TopLine="2352"/>
+        <Filename Value="bee.lpr"/>
+        <Caret Line="89" Column="1" TopLine="39"/>
       </Position23>
       <Position24>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="271" Column="31" TopLine="251"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="344" Column="1" TopLine="325"/>
       </Position24>
       <Position25>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="276" Column="17" TopLine="251"/>
+        <Caret Line="2179" Column="5" TopLine="2145"/>
       </Position25>
       <Position26>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="376" Column="71" TopLine="333"/>
+        <Caret Line="2178" Column="1" TopLine="2156"/>
       </Position26>
       <Position27>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1557" Column="20" TopLine="1522"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="330" Column="44" TopLine="294"/>
       </Position27>
       <Position28>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1570" Column="26" TopLine="1544"/>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="625" Column="126" TopLine="605"/>
       </Position28>
-      <Position29>
-        <Filename Value="bee_files.pas"/>
-        <Caret Line="166" Column="22" TopLine="144"/>
-      </Position29>
-      <Position30>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1558" Column="25" TopLine="1442"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

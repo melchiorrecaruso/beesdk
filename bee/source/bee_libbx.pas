@@ -68,7 +68,12 @@ procedure BeeRangeDec_FinishDecode (Self: pointer); cdecl; external;
 
 function  BeeModeller_Create       (aCoder: pointer): pointer; cdecl; external;
 procedure BeeModeller_Destroy      (Self :pointer); cdecl; external;
-procedure BeeModeller_Init         (Self: pointer; MemLev: longword; Table: pointer); cdecl; external;
+
+procedure BeeModeller_SetTableParameters(Self: pointer; TableParapeters: pointer); cdecl; external;
+procedure BeeModeller_SetDictionaryLevel(Self: pointer; DictLevel: longword); cdecl; external;
+procedure BeeModeller_FreshFlexible     (Self: pointer); cdecl; external;
+procedure BeeModeller_FreshSolid        (Self: pointer); cdecl; external;
+
 function  BeeModeller_Encode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 function  BeeModeller_Decode       (Self: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 
@@ -85,7 +90,9 @@ procedure PpmdRangeDec_FinishDecode(Self: pointer); cdecl; external;
 
 function  PpmdModeller_Create: pointer; cdecl; external;
 procedure PpmdModeller_Destroy     (Self: pointer); cdecl; external;
-procedure PpmdModeller_Start       (Self: pointer; MemLev: longword; ModOrd: longword); cdecl; external;
+
+procedure PpmdModeller_SetMemSize  (Self: pointer; MemSize: longword); cdecl; external;
+procedure PpmdModeller_SetModelOrd (Self: pointer; ModelOrd: longword); cdecl; external;
 
 function  PpmdModeller_Encode      (Self: pointer; RangeEnc: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
 function  PpmdModeller_Decode      (Self: pointer; RangeEnc: pointer; Buffer: pointer; BufSize: longint): longint; cdecl; external;
