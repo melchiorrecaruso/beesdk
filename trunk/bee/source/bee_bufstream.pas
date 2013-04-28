@@ -62,13 +62,13 @@ type
     procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); virtual; abstract;
     procedure FinishCipher; virtual; abstract;
 
-    procedure InitCoder;
     procedure StartCoder(Algorithm: TCoderAlgorithm); virtual abstract;
     procedure FinishCoder; virtual abstract;
     procedure SetCompressionLevel(Value: longint);
     procedure SetCompressionLevelAux(Value: longint);
     procedure SetCompressionFilter(const Value: string);
     procedure SetCompressionFilterAux(const Value: string);
+    procedure SetCompressionBlock(const Value: int64);
   end;
 
   { TReadBufStream class }
@@ -187,6 +187,11 @@ begin
   FCoder.FilterAux := Value;
 end;
 
+procedure TBufStream.SetCompressionBlock(const Value: int64);
+begin
+  FCoder.Block := Value;
+end;
+
 procedure TBufStream.StartHash(Algorithm: THashAlgorithm);
 begin
   FreeAndNil(FHash);
@@ -208,11 +213,6 @@ begin
   else
     Result := '';
   FHashStarted := FALSE;
-end;
-
-procedure TBufStream.InitCoder;
-begin
-  FCoder.Init;
 end;
 
 /// TReadBufStream class

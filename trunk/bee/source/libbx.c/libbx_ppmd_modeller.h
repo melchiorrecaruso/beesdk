@@ -34,7 +34,9 @@ typedef struct TPpmdModeller *PPpmdModeller;
 
   PPpmdModeller PpmdModeller_Create ();
            void PpmdModeller_Destroy(PPpmdModeller Self);
-           void PpmdModeller_Start  (PPpmdModeller Self, uint32_t MemLev, uint32_t ModOrd);
+
+           void PpmdModeller_SetMemSize  (PPpmdModeller Self, uint32_t MemSize);
+           void PpmdModeller_SetModelOrd (PPpmdModeller Self, uint32_t ModelOrd);
 
         int32_t PpmdModeller_Encode (PPpmdModeller Self, PPpmdRangeEnc RangeEnc, uint8_t *Buffer, int32_t BufSize);
         int32_t PpmdModeller_Decode (PPpmdModeller Self, PPpmdRangeDec RangeDec, uint8_t *Buffer, int32_t BufSize);

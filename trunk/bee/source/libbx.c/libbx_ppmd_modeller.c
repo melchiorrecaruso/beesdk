@@ -1056,10 +1056,14 @@ void PpmdModeller_Destroy(PPpmdModeller Self)
   free(Self);
 };
 
-void PpmdModeller_Start(PPpmdModeller Self, uint32_t MemLev, uint32_t ModOrd)
+void PpmdModeller_SetMemSize(PPpmdModeller Self, uint32_t MemSize)
 {
-  PpmdModeller_Alloc(Self, MemLev);
-  PpmdModeller_Init(Self, ModOrd);
+  PpmdModeller_Alloc(Self, MemSize);
+};
+
+void PpmdModeller_SetModelOrd(PPpmdModeller Self, uint32_t ModelOrd)
+{
+  PpmdModeller_Init(Self, ModelOrd);
 };
 
 inline int32_t PpmdModeller_Encode(PPpmdModeller Self, PPpmdRangeEnc RangeEnc, uint8_t *Buffer, int32_t BufSize)

@@ -614,28 +614,20 @@ begin
         begin
           if ExitStatus <> esNoError then Break;
           Item := ItemToList.Items[I];
-          DoMessage(Format(Cr + '                 Index: %u', [Item.Index]));
-          DoMessage(Format(     '                  Path: %s', [ExtractFilePath(Item.FileName)]));
-          DoMessage(Format(     '                  Name: %s', [ExtractFileName(Item.FileName)]));
-          DoMessage(Format(     '                  Size: %s', [SizeToStr(Item.UncompressedSize)]));
-          DoMessage(Format(     '           Packed size: %s', [SizeToStr(Item.CompressedSize)]));
-          DoMessage(Format(     '                 Ratio: %s', [RatioToStr(Item.CompressedSize, Item.UncompressedSize)]));
-          DoMessage(Format(     '    Last modified time: %s', [FileTimeToString(Item.LastModifiedTime)]));
-          DoMessage(Format(     '            Attributes: %s', [AttrToStr(Item.Attributes)]));
-          DoMessage(Format(     '               Comment: %s', [Item.Comment]));
-          DoMessage(Format(     '           Disk number: %u', [Item.DiskNumber]));
-          DoMessage(Format(     '         Disk position: %u', [Item.DiskSeek]));
-          DoMessage(Format(     '          Check method: %s', [HashMethodTostr(Item.CheckMethod)]));
-          DoMessage(Format(     '          Check digest: %s', [Item.CheckDigest]));
-          DoMessage(Format(     '      Check method aux: %s', [HashMethodToStr(Item.CheckMethodAux)]));
-          DoMessage(Format(     '      Check digest aux: %s', [Item.CheckDigestAux]));
-          DoMessage(Format(     '    Compression method: %s', [CoderMethodToStr(Item.CompressionMethod)]));
-          DoMessage(Format(     '     Compression level: %u', [Item.CompressionLevel]));
-          DoMessage(Format(     ' Compression level aux: %u', [Item.CompressionLevelAux]));
-          DoMessage(Format(     '    Compression filter: %s', [Item.CompressionFilter]));
-          DoMessage(Format(     'Compression filter aux: %s', [Item.CompressionFilterAux]));
-          DoMessage(Format(     '     Compression block: %u', [Item.CompressionBlock]));
-          DoMessage(Format(     '     Encryption method: %s', [CipherMethodTostr(Item.EncryptionMethod)]));
+          DoMessage(Format(Cr + '                   Index: %u',       [Item.Index]));
+          DoMessage(Format(     '                    Name: %s',       [Item.FileName]));
+          DoMessage(Format(     '       Size/Packed/Ratio: %u/%u/%s', [Item.UncompressedSize, Item.CompressedSize,
+                                                                       RatioToStr(Item.CompressedSize, Item.UncompressedSize)]));
+          DoMessage(Format(     '      Last modified time: %s',       [FileTimeToString(Item.LastModifiedTime)]));
+          DoMessage(Format(     '              Attributes: %s',       [AttrToStr(Item.Attributes)]));
+          DoMessage(Format(     '                 Comment: %s',       [Item.Comment]));
+          DoMessage(Format(     '    Disk number/position: %u/%u',    [Item.DiskNumber, Item.DiskSeek]));
+          DoMessage(Format(     '     Check method/digest: %s/%s',    [HashMethodTostr(Item.CheckMethod), Item.CheckDigest]));
+          DoMessage(Format(     ' Check method/digest aux: %s/%s',    [HashMethodToStr(Item.CheckMethodAux), Item.CheckDigestAux]));
+          DoMessage(Format(     'Compression method/block: %s/%u',    [CoderMethodToStr(Item.CompressionMethod), Item.CompressionBlock]));
+          DoMessage(Format(     '   Compression level/aux: %u/%u',    [Item.CompressionLevel, Item.CompressionLevelAux]));
+          DoMessage(Format(     '  Compression filter/aux: %s/%s',    [Item.CompressionFilter, Item.CompressionFilterAux]));
+          DoMessage(Format(     '       Encryption method: %s',       [CipherMethodTostr(Item.EncryptionMethod)]));
         end;
 
       end else

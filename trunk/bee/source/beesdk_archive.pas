@@ -1269,8 +1269,6 @@ begin
        Stream.StartCipher(caNul, '');
        Stream.StartCoder (caStore);
 
-
-
   FTempWriter.StartHash              (Item.CheckMethodAux);
   FTempWriter.StartCipher            (Item.EncryptionMethod, GetCipherKey(EncryptionParams));
   FTempWriter.StartCoder             (Item.CompressionMethod);
@@ -1278,7 +1276,7 @@ begin
   FTempWriter.SetCompressionLevelAux (Item.CompressionLevelAux);
   FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
   FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
-  FTempWriter.InitCoder;
+  FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
 
 
   Count := Item.FExternalFileSize div SizeOf(Buffer);
@@ -1362,7 +1360,7 @@ begin
   FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
   FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
   FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
-  FArchiveReader.InitCoder;
+  FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
 
           Stream.StartHash  (Item.CheckMethod);
           Stream.StartCipher(caNul, '');
@@ -2172,13 +2170,18 @@ begin
     ExtractFileExt(TCustomSearchRec(Item2).Name));
 
   if Result = 0 then
-  begin
-    if TCustomSearchRec(Item1).Size < TCustomSearchRec(Item2).Size then
-      Result := -1
-    else
-      if TCustomSearchRec(Item1).Size > TCustomSearchRec(Item2).Size then
-        Result :=  1;
-  end;
+    Result := AnsiCompareFileName(
+      ExtractFileName(TCustomSearchRec(Item1).Name),
+      ExtractFileName(TCustomSearchRec(Item2).Name));
+
+  // if Result = 0 then
+  // begin
+  //   if TCustomSearchRec(Item1).Size < TCustomSearchRec(Item2).Size then
+  //     Result := -1
+  //   else
+  //     if TCustomSearchRec(Item1).Size > TCustomSearchRec(Item2).Size then
+  //       Result := 1;
+  // end;
 end;
 
 procedure TArchiver.Configure;
