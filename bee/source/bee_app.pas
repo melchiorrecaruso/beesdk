@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v0.8.0 build 1978 - 2013.04.26 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -40,9 +40,11 @@ interface
 
 uses
   Classes,
-  Bee_Files,
-  Bee_Common,
+  SysUtils,
   Bee_CommandLine,
+  Bee_Common,
+  Bee_Files,
+  Bee_Interface,
   BeeSDK_Archive;
 
 type
@@ -90,32 +92,12 @@ type
 
 implementation
 
-uses
-  SysUtils,
-  Bee_Interface;
-
-{ help functions }
-
-function CompareFilePath(P1, P2: pointer): longint;
-begin
-  Result := AnsiCompareFileName(
-    ExtractFilePath(TArchiveItem(P1).FileName),
-    ExtractFilePath(TArchiveItem(P2).FileName));
-
-  if Result = 0 then
-  begin
-    Result := CompareText(
-      ExtractFileName(TArchiveItem(P1).FileName),
-      ExtractFileName(TArchiveItem(P2).FileName));
-  end;
-end;
-
 { TBeeApp class }
 
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1972 archiver utility, May 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1978 archiver utility, May 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -169,7 +151,7 @@ begin
     end;
 
   if FCommandLine.Command <> cHelp then
-      DoMessage(Cr + Format(GetExitMessage, [TimeDifference(StartTime)]));
+    DoMessage(Cr + Format(GetExitMessage, [TimeDifference(StartTime)]));
 end;
 
 procedure TBeeApp.Terminate;
@@ -288,17 +270,24 @@ end;
 
 procedure TBeeApp.DoRename(Item: TArchiveItem;
   var RenameAs: string; var Confirm: TArchiveConfirm);
+var
+  Answer: string;
 begin
-
-
-  //BUG:0002    FileNameIsValid  &  FileNameFind
-
   Write(#8#8#8#8#8#8, ParamToOem('Rename file "'
     + RenameAs + '" as (empty to skip): '));
 
-  Readln(RenameAs);
-  // convert oem to param
-  RenameAs := OemToParam(RenameAs);
+  Confirm := arcCancel;
+  repeat
+    Readln(Answer);
+    if Answer = '' then Break;
+    if FArchiver.IndexOf(Answer) = -1 then
+    begin
+      // convert oem to param
+      RenameAs := OemToParam(Answer);
+      Confirm  := arcOk;
+      Break;
+    end;
+  until TRUE;
 end;
 
 procedure TBeeApp.DoDelete(Item: TArchiveItem;
@@ -565,6 +554,20 @@ begin
   CloseArchive;
 end;
 
+function CompareFilePath(P1, P2: pointer): longint;
+begin
+  Result := AnsiCompareFileName(
+    ExtractFilePath(TArchiveItem(P1).FileName),
+    ExtractFilePath(TArchiveItem(P2).FileName));
+
+  if Result = 0 then
+  begin
+    Result := CompareText(
+      ExtractFileName(TArchiveItem(P1).FileName),
+      ExtractFileName(TArchiveItem(P2).FileName));
+  end;
+end;
+
 procedure TBeeApp.ListShell;
 var
   I: longint;
@@ -616,18 +619,26 @@ begin
           Item := ItemToList.Items[I];
           DoMessage(Format(Cr + '                   Index: %u',       [Item.Index]));
           DoMessage(Format(     '                    Name: %s',       [Item.FileName]));
-          DoMessage(Format(     '       Size/Packed/Ratio: %u/%u/%s', [Item.UncompressedSize, Item.CompressedSize,
+          if Item.UncompressedSize > 0 then
+            DoMessage(Format(   '       Size/Packed/Ratio: %s/%s/%s', [SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize),
                                                                        RatioToStr(Item.CompressedSize, Item.UncompressedSize)]));
           DoMessage(Format(     '      Last modified time: %s',       [FileTimeToString(Item.LastModifiedTime)]));
           DoMessage(Format(     '              Attributes: %s',       [AttrToStr(Item.Attributes)]));
-          DoMessage(Format(     '                 Comment: %s',       [Item.Comment]));
+          if Item.Comment <> '' then
+            DoMessage(Format(   '                 Comment: %s',       [Item.Comment]));
           DoMessage(Format(     '    Disk number/position: %u/%u',    [Item.DiskNumber, Item.DiskSeek]));
-          DoMessage(Format(     '     Check method/digest: %s/%s',    [HashMethodTostr(Item.CheckMethod), Item.CheckDigest]));
-          DoMessage(Format(     ' Check method/digest aux: %s/%s',    [HashMethodToStr(Item.CheckMethodAux), Item.CheckDigestAux]));
-          DoMessage(Format(     'Compression method/block: %s/%u',    [CoderMethodToStr(Item.CompressionMethod), Item.CompressionBlock]));
-          DoMessage(Format(     '   Compression level/aux: %u/%u',    [Item.CompressionLevel, Item.CompressionLevelAux]));
-          DoMessage(Format(     '  Compression filter/aux: %s/%s',    [Item.CompressionFilter, Item.CompressionFilterAux]));
-          DoMessage(Format(     '       Encryption method: %s',       [CipherMethodTostr(Item.EncryptionMethod)]));
+          if Ord(Item.CheckMethod) <> 0 then
+            DoMessage(Format(   '     Check method/digest: %s/%s',    [HashMethodTostr(Item.CheckMethod), Item.CheckDigest]));
+          if Ord(Item.CheckMethodAux) <> 0 then
+            DoMessage(Format(   ' Check method/digest aux: %s/%s',    [HashMethodToStr(Item.CheckMethodAux), Item.CheckDigestAux]));
+          if Ord(Item.CompressionMethod) <> 0 then
+          begin
+            DoMessage(Format(   'Compression method/block: %s/%u',    [CoderMethodToStr(Item.CompressionMethod), Item.CompressionBlock]));
+            DoMessage(Format(   '   Compression level/aux: %u/%u',    [Item.CompressionLevel, Item.CompressionLevelAux]));
+            DoMessage(Format(   '  Compression filter/aux: %s/%s',    [Item.CompressionFilter, Item.CompressionFilterAux]));
+          end;
+          if Ord(Item.EncryptionMethod) <> 0 then
+            DoMessage(Format(   '       Encryption method: %s',       [CipherMethodTostr(Item.EncryptionMethod)]));
         end;
 
       end else
