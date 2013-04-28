@@ -176,11 +176,11 @@ type
     // compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
     property CompressionMethod: TCoderAlgorithm read FCompressionMethod;
-    property CompressionBlock: int64 read FCompressionBlock;
     property CompressionLevel: longword read FCompressionLevel;
     property CompressionLevelAux: longword read FCompressionLevelAux;
     property CompressionFilter: string read FCompressionFilter;
     property CompressionFilterAux: string read FCompressionFilterAux;
+    property CompressionBlock: int64 read FCompressionBlock;
     // encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
     property EncryptionMethod: TCipherAlgorithm read FEncryptionMethod;
@@ -401,9 +401,9 @@ uses
 function GetCoderAlgorithm(Params: string): TCoderAlgorithm;
 begin
   Params := UpCase(Params);
-  if Pos(':METHOD=NONE:', Params) > 0 then Result := caStore else
-  if Pos(':METHOD=BEE:',  Params) > 0 then Result := caBee   else
-  if Pos(':METHOD=PPMD:', Params) > 0 then Result := caPpmd  else Result := caPpmd;
+  if Pos(':M=NONE:', Params) > 0 then Result := caStore else
+  if Pos(':M=BEE:',  Params) > 0 then Result := caBee   else
+  if Pos(':M=PPMD:', Params) > 0 then Result := caPpmd  else Result := caPpmd;
 end;
 
 function ExtractQWord(const Params: string; const K: string): qword;
@@ -440,9 +440,9 @@ end;
 
 function GetCoderLevel(const Params: string): longword;
 begin
-  if Pos(':LEVEL=', UpCase(Params)) > 0 then
+  if Pos(':L=', UpCase(Params)) > 0 then
   begin
-    Result := ExtractQWord(Params, ':LEVEL=');
+    Result := ExtractQWord(Params, ':L=');
     case GetCoderAlgorithm(Params) of
       caStore: if ( 0 < Result) or (Result < 0) then SetExitStatus(esCmdLineError);
       caBee:   if ( 3 < Result) or (Result < 1) then SetExitStatus(esCmdLineError);
@@ -459,9 +459,9 @@ end;
 
 function GetCoderLevelAux(Params: string): longword;
 begin
-  if Pos(':LEVEL.AUX=', UpCase(Params)) > 0 then
+  if Pos(':LA=', UpCase(Params)) > 0 then
   begin
-    Result := ExtractQWord(Params, ':LEVEL.AUX=');
+    Result := ExtractQWord(Params, ':LA=');
     case GetCoderAlgorithm(Params) of
       caStore: if (        0 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
       caBee:   if (        9 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
@@ -478,29 +478,29 @@ end;
 
 function GetCoderFilter(const Params: string): string;
 begin
-  Result := ExtractStr(Params, ':FILTER=');
+  Result := ExtractStr(Params, ':F=');
 end;
 
 function GetCoderFilterAux(const Params: string): string;
 begin
-  Result := ExtractStr(Params, ':FILTER.AUX=');
+  Result := ExtractStr(Params, ':FA');
 end;
 
 function GetCoderBlock(Params: string): qword;
 begin
-  Result := ExtractQWord(Params, ':BLOCK=');
+  Result := ExtractQWord(Params, ':B=');
 end;
 
 function GetCoderConfiguration(const Params: string): string;
 begin
-  Result := ExtractStr(Params, ':CONFIG=');
+  Result := ExtractStr(Params, ':C=');
   if Result = '' then
     Result := DefaultCfgName;
 end;
 
 function GetCipherKey(const Params: string): string;
 begin
-  Result := ExtractStr(Params, ':KEY=');
+  Result := ExtractStr(Params, ':K=');
 end;
 
 function GetCipherAlgorithm(Params: string): TCipherAlgorithm;
@@ -510,9 +510,9 @@ begin
     Result := caBlowFish;
 
   Params := UpCase(Params);
-  if Pos(':METHOD=NONE:',     UpCase(Params)) > 0 then Result := caNul      else
-  if Pos(':METHOD=BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish else
-  if Pos(':METHOD=IDEA:',     UpCase(Params)) > 0 then Result := caIdea;
+  if Pos(':M=NONE:',     UpCase(Params)) > 0 then Result := caNul      else
+  if Pos(':M=BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish else
+  if Pos(':M=IDEA:',     UpCase(Params)) > 0 then Result := caIdea;
 
   if Result <> caNul then
     if Length(GetCipherKey(Params)) < 4 then
@@ -522,21 +522,21 @@ end;
 function GetHashAlgorithm(Params: string): THashAlgorithm;
 begin
   Params := UpCase(Params);
-  if Pos(':METHOD=NONE:',  Params) > 0 then Result := haNul   else
-  if Pos(':METHOD=CRC32:', Params) > 0 then Result := haCRC32 else
-  if Pos(':METHOD=CRC64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':METHOD=SHA1:',  Params) > 0 then Result := haSHA1  else
-  if Pos(':METHOD=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
+  if Pos(':M=NONE:',  Params) > 0 then Result := haNul   else
+  if Pos(':M=CRC32:', Params) > 0 then Result := haCRC32 else
+  if Pos(':M=CRC64:', Params) > 0 then Result := haCRC64 else
+  if Pos(':M=SHA1:',  Params) > 0 then Result := haSHA1  else
+  if Pos(':M=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
 end;
 
 function GetHashAlgorithmAux(Params: string): THashAlgorithm;
 begin
   Params := UpCase(Params);
-  if Pos(':METHOD.AUX=NONE:',  Params) > 0 then Result := haNul   else
-  if Pos(':METHOD.AUX=CRC32:', Params) > 0 then Result := haCRC32 else
-  if Pos(':METHOD.AUX=CRC64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':METHOD.AUX=SHA1:',  Params) > 0 then Result := haSHA1  else
-  if Pos(':METHOD.AUX=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
+  if Pos(':MA=NONE:',  Params) > 0 then Result := haNul   else
+  if Pos(':MA=CRC32:', Params) > 0 then Result := haCRC32 else
+  if Pos(':MA=CRC64:', Params) > 0 then Result := haCRC64 else
+  if Pos(':MA=SHA1:',  Params) > 0 then Result := haSHA1  else
+  if Pos(':MA=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
 end;
 
 // ---
@@ -871,12 +871,12 @@ end;
 
 procedure TArchiveCentralDirectory.Delete(Index: longint);
 var
-  I: longint;
   Item: TArchiveItem;
 begin
   Item := Items[Index];
-  if Index < FItems.Count - 1 then
-    Items[Index + 1].FCompressionBlock := Item.FCompressionBlock;
+  if Item.CompressionBlock = 0 then
+    if Index < FItems.Count - 1 then
+      Items[Index + 1].FCompressionBlock := 0;
 
   FItemsAux.Delete(GetIndexOf(Item.FileName));
   FItems.Delete(Item.FIndex);
@@ -921,11 +921,11 @@ begin
       if CurrentItem.FCheckDigestAux       = PreviusItem.FCheckDigestAux       then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux);
       /// compression property ///
       if CurrentItem.FCompressionMethod    = PreviusItem.FCompressionMethod    then Exclude(CurrentItem.FCompressionFlags, acfCompressionMethod)    else Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-      if CurrentItem.FCompressionBlock     = PreviusItem.FCompressionBlock     then Exclude(CurrentItem.FCompressionFlags, acfCompressionBlock)     else Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
       if CurrentItem.FCompressionLevel     = PreviusItem.FCompressionLevel     then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevel)     else Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
       if CurrentItem.FCompressionLevelAux  = PreviusItem.FCompressionLevelAux  then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevelAux)  else Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
       if CurrentItem.FCompressionFilter    = PreviusItem.FCompressionFilter    then Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter)    else Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
       if CurrentItem.FCompressionFilterAux = PreviusItem.FCompressionFilterAux then Exclude(CurrentItem.FCompressionFlags, acfCompressionFilterAux) else Include(CurrentItem.FCompressionFlags, acfCompressionFilterAux);
+      if CurrentItem.FCompressionBlock     = PreviusItem.FCompressionBlock     then Exclude(CurrentItem.FCompressionFlags, acfCompressionBlock)     else Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
       /// encryption property ///
       if CurrentItem.FEncryptionMethod     = PreviusItem.FEncryptionMethod     then Exclude(CurrentItem.FEncryptionFlags, aefEncryptionMethod)      else Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
 
@@ -962,11 +962,11 @@ begin
       if not(addfCheckDigestAux in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckDigestAux := PreviusItem.FCheckDigestAux;
       /// compression property ///
       if not(acfCompressionMethod    in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionMethod    := PreviusItem.FCompressionMethod;
-      if not(acfCompressionBlock     in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionBlock     := PreviusItem.FCompressionBlock;
       if not(acfCompressionLevel     in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionLevel     := PreviusItem.FCompressionLevel;
       if not(acfCompressionLevelAux  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionLevelAux  := PreviusItem.FCompressionLevelAux;
       if not(acfCompressionFilter    in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionFilter    := PreviusItem.FCompressionFilter;
       if not(acfCompressionFilterAux in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionFilterAux := PreviusItem.FCompressionFilterAux;
+      if not(acfCompressionBlock     in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionBlock     := PreviusItem.FCompressionBlock;
       /// encryption property ///
       if not(aefEncryptionMethod in CurrentItem.FEncryptionFlags) then CurrentItem.FEncryptionMethod := PreviusItem.FEncryptionMethod;
 
@@ -1277,7 +1277,6 @@ begin
   FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
   FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
   FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
-
 
   Count := Item.FExternalFileSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
@@ -2173,15 +2172,6 @@ begin
     Result := AnsiCompareFileName(
       ExtractFileName(TCustomSearchRec(Item1).Name),
       ExtractFileName(TCustomSearchRec(Item2).Name));
-
-  // if Result = 0 then
-  // begin
-  //   if TCustomSearchRec(Item1).Size < TCustomSearchRec(Item2).Size then
-  //     Result := -1
-  //   else
-  //     if TCustomSearchRec(Item1).Size > TCustomSearchRec(Item2).Size then
-  //       Result := 1;
-  // end;
 end;
 
 procedure TArchiver.Configure;

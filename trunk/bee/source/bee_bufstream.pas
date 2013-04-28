@@ -57,10 +57,12 @@ type
     function Seek(const Offset: int64; Origin: longint): int64; virtual; abstract;
 
     procedure StartHash(Algorithm: THashAlgorithm);
-    function  FinishHash: string;
+    procedure FinishHash;
+    function  Digest: string;
 
     procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); virtual; abstract;
     procedure FinishCipher; virtual; abstract;
+
 
     procedure StartCoder(Algorithm: TCoderAlgorithm); virtual abstract;
     procedure FinishCoder; virtual abstract;
@@ -69,6 +71,9 @@ type
     procedure SetCompressionFilter(const Value: string);
     procedure SetCompressionFilterAux(const Value: string);
     procedure SetCompressionBlock(const Value: int64);
+  public
+    property  Hash: TBaseHash read FHash;
+
   end;
 
   { TReadBufStream class }
@@ -206,12 +211,12 @@ begin
   FHashStarted := Algorithm <> haNul;
 end;
 
-function TBufStream.FinishHash: string;
+procedure TBufStream.FinishHash;
 begin
   if FHashStarted then
-    Result := FHash.Finish
-  else
-    Result := '';
+  begin
+    FHash.Finish;
+  end;
   FHashStarted := FALSE;
 end;
 
