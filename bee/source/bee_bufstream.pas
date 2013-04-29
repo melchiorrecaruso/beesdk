@@ -45,10 +45,19 @@ type
     FHandle: THandle;
   private
     FHash: TBaseHash;
-    FHashStarted: boolean;
+    FHashMethod: THashAlgorithm;
+    FHashDigest: string;
     FCipher: TBaseCipher;
-    FCipherStarted: boolean;
+    FCipherMethod: TCipherAlgorithm;
+    FCipherKey: string;
     FCoder: TBaseCoder;
+    FCoderMethod: TCoderAlgorithm;
+    FCoderLevel: longword;
+    FCoderLevelAux: longword;
+    FCoderFilter: string;
+    FCoderFilterAux: string;
+    FCoderBlock: int64;
+    procedure SetCoderMethod(Value: TCoderAlgorithm);
   public
     constructor Create(Handle: THandle);
     destructor Destroy; override;
@@ -56,24 +65,19 @@ type
     function Write(Data: PByte; Count: longint): longint; virtual; abstract;
     function Seek(const Offset: int64; Origin: longint): int64; virtual; abstract;
 
-    procedure StartHash(Algorithm: THashAlgorithm);
-    procedure FinishHash;
-    function  Digest: string;
-
-    procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string); virtual; abstract;
-    procedure FinishCipher; virtual; abstract;
-
-
-    procedure StartCoder(Algorithm: TCoderAlgorithm); virtual abstract;
-    procedure FinishCoder; virtual abstract;
-    procedure SetCompressionLevel(Value: longint);
-    procedure SetCompressionLevelAux(Value: longint);
-    procedure SetCompressionFilter(const Value: string);
-    procedure SetCompressionFilterAux(const Value: string);
-    procedure SetCompressionBlock(const Value: int64);
+    procedure BeginUpdate; virtual;
+    procedure EndUpdate; virtual;
   public
-    property  Hash: TBaseHash read FHash;
-
+    property HashMethod: THashAlgorithm read FHashMethod write FHashMethod;
+    property HashDigest: string read FHashDigest;
+    property CipherMethod: TCipherAlgorithm read FCipherMethod write FCipherMethod;
+    property CipherKey: string read FCipherKey write FCipherKey;
+    property CoderMethod: TCoderAlgorithm read FCoderMethod write FCoderMethod;
+    property CoderLevel: longword read FCoderLevel write FCoderLevel;
+    property CoderLevelAux: longword read FCoderLevelAux write FCoderLevelAux;
+    property CoderFilter: string read FCoderFilter write FCoderFilter;
+    property CoderFilterAux: string read FCoderFilterAux write FCoderFilterAux;
+    property CoderBlock: int64 read FCoderBlock write FCoderBlock;
   end;
 
   { TReadBufStream class }
@@ -90,14 +94,9 @@ type
     constructor Create(Handle: THandle);
     function Read(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
-
-    procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string);
-    procedure FinishCipher; override;
-
-    procedure StartCoder(Algorithm: TCoderAlgorithm); override;
-    procedure FinishCoder; override;
-
     function Decode(Data: PByte; Count: longint): longint;
+    procedure BeginUpdate; override;
+    procedure EndUpdate; override;
   end;
 
   { TWriteBufStream class }
@@ -113,14 +112,9 @@ type
     constructor Create(Handle: THandle);
     function Write(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
-
-    procedure StartCipher(Algorithm: TCipherAlgorithm; const Key: string);
-    procedure FinishCipher; override;
-
-    procedure StartCoder(Algorithm: TCoderAlgorithm); override;
-    procedure FinishCoder; override;
-
     function Encode(Data: PByte; Count: longint): longint;
+    procedure BeginUpdate; override;
+    procedure EndUpdate; override;
   end;
 
   { TNulBufStream }
@@ -157,67 +151,48 @@ constructor TBufStream.Create(Handle: THandle);
 begin
   inherited Create;
   FHandle        := Handle;
-  FHash          := TNulHash.Create;
-  FHashStarted   := FALSE;
-  FCipher        := TNulCipher.Create;
-  FCipherStarted := FALSE;
-  FCoder         := TStoreCoder.Create(Self);
+  FHash          := nil;
+  FHashMethod    := haNul;
+  FCipher        := nil;
+  FCipherMethod  := caNul;
+  FCoder         := nil;
+  FCoderMethod   := caStore;
 end;
 
 destructor TBufStream.Destroy;
 begin
-  FreeAndNil(FHash);
-  FreeAndNil(FCipher);
-  FreeAndNil(FCoder);
+  if Assigned(FHash) then
+    FreeAndNil(FHash);
+  if Assigned(FCipher) then
+    FreeAndNil(FCipher);
+  if Assigned(FCoder)then
+    FreeAndNil(FCoder);
   inherited Destroy;
 end;
 
-procedure TBufStream.SetCompressionLevel(Value: longint);
+procedure TBufStream.BeginUpdate;
 begin
-  FCoder.Level := Value;
-end;
-
-procedure TBufStream.SetCompressionLevelAux(Value: longint);
-begin
-  FCoder.LevelAux := Value;
-end;
-
-procedure TBufStream.SetCompressionFilter(const Value: string);
-begin
-  FCoder.Filter := Value;
-end;
-
-procedure TBufStream.SetCompressionFilterAux(const Value: string);
-begin
-  FCoder.FilterAux := Value;
-end;
-
-procedure TBufStream.SetCompressionBlock(const Value: int64);
-begin
-  FCoder.Block := Value;
-end;
-
-procedure TBufStream.StartHash(Algorithm: THashAlgorithm);
-begin
-  FreeAndNil(FHash);
-  case Algorithm of
-    haNul:   FHash := TNulHash.Create;
+  FHashDigest := '';
+  if Assigned(FHash) then
+    FreeAndNil(FHash);
+  case FHashMethod of
     haCRC32: FHash := TCRC32Hash.Create;
     haCRC64: FHash := TCRC64Hash.Create;
-    haSHA1:  FHash := TSHA1Hash.Create;
-    haMD5:   FHash := TMD5Hash.Create;
+    haSHA1:  FHash := TSHA1Hash .Create;
+    haMD5:   FHash := TMD5Hash  .Create;
+    else     FHash := nil;
   end;
-  FHash.Start;
-  FHashStarted := Algorithm <> haNul;
+  if Assigned(FHash) then
+    FHash.Start;
 end;
 
-procedure TBufStream.FinishHash;
+procedure TBufStream.EndUpdate;
 begin
-  if FHashStarted then
+  if Assigned(FHash) then
   begin
-    FHash.Finish;
+    FHashDigest := FHash.Finish;
+    FreeAndNil(FHash);
   end;
-  FHashStarted := FALSE;
 end;
 
 /// TReadBufStream class
@@ -238,15 +213,12 @@ procedure TReadBufStream.FillBuffer;
 begin
   FBufferIndex := 0;
   FBufferSize  := FileRead(FHandle, FBuffer[0], SizeOf(FBuffer));
-  if FBufferSize > -1 then
+  if FBufferSize = -1 then
   begin
-     if FCipherStarted then
-       FCipher.Decrypt(FBuffer, FBufferSize);
-  end else
-  begin
-    SetExitStatus(esFillStreamError);
     FBufferSize := 0;
+    SetExitStatus(esFillStreamError);
   end;
+  FCipher.Decrypt(FBuffer, FBufferSize);
 end;
 
 function TReadBufStream.Read(Data: PByte; Count: longint): longint;
@@ -267,7 +239,7 @@ begin
     Inc(Result, I);
   until Result = Count;
 
-  if FHashStarted then
+  if FHashMethod <> haNul then
     FHash.Update(Data, Result);
 end;
 
@@ -278,44 +250,51 @@ begin
   Result       := FileSeek(FHandle, Offset, Origin);
 end;
 
-procedure TReadBufStream.StartCipher(Algorithm: TCipherAlgorithm; const Key: string);
+procedure TReadBufStream.BeginUpdate;
 begin
   ClearBuffer;
-  FreeAndNil(FCipher);
-  case Algorithm of
-    caNul:      FCipher := TNulCipher.Create;
-    caBlowFish: FCipher := TBlowFishCipher.Create(Key);
-    caIdea:     FCipher := TIdeaCipher.CreateDe(Key);
-  end;
-  FCipherStarted := Algorithm <> caNul;
-end;
-
-procedure TReadBufStream.FinishCipher;
-begin
-  ClearBuffer;
-  FCipherStarted := FALSE;
-end;
-
-procedure TReadBufStream.StartCoder(Algorithm: TCoderAlgorithm);
-begin
-  case Algorithm of
-    caStore: if not(FCoder is TStoreCoder)  then FreeAndNil(FCoder);
-    caBee:   if not(FCoder is TBeeDecoder)  then FreeAndNil(FCoder);
-    caPpmd:  if not(FCoder is TPpmdDecoder) then FreeAndNil(FCoder);
+  inherited BeginUpdate;
+  if Assigned(FCipher) then
+    FreeAndNil(FCipher);
+  case FCipherMethod of
+    caBlowFish: FCipher := TBlowFishCipher.Create(FCipherKey);
+    caIdea:     FCipher := TIdeaCipher.CreateDe(FCipherKey);
+    else        FCipher := nil;
   end;
 
-  if FCoder = nil then
-    case Algorithm of
+  if Assigned(FCoder) then
+    case FCoderMethod of
+      caStore: if not (FCoder is TBaseCoder) then FreeAndNil(FCoder);
+      caBee:   if not (FCoder is TBeeCoder)  then FreeAndNil(FCoder);
+      caPpmd:  if not (FCoder is TPpmdCoder) then FreeAndNil(FCoder);
+    end;
+
+  if not Assigned(FCoder) then
+    case FCoderMethod of
       caStore: FCoder := TStoreCoder .Create(Self);
       caBee:   FCoder := TBeeDecoder .Create(Self);
       caPpmd:  FCoder := TPpmdDecoder.Create(Self);
     end;
+
+  if FCoderBlock = 0 then
+  begin
+    FCoder.Level     := FCoderLevel;
+    FCoder.LevelAux  := FCoderLevelAux;
+    FCoder.Filter    := FCoderFilter;
+    FCoder.FilterAux := FCoderFilterAux;
+    FCoder.Block     := FCoderBlock;
+  end;
   FCoder.Start;
 end;
 
-procedure TReadBufStream.FinishCoder;
+procedure TReadBufStream.EndUpdate;
 begin
-  FCoder.Finish;
+  if Assigned(FCoder) then
+    FCoder.Finish;
+  if Assigned(FCipher) then
+    FreeAndNil(FCipher);
+  ClearBuffer;
+  inherited EndUpdate;
 end;
 
 function TReadBufStream.Decode(Data: PByte; Count: longint): longint;
@@ -340,11 +319,11 @@ procedure TWriteBufStream.FlushBuffer;
 begin
   if FBufferIndex > 0 then
   begin
-    if FCipherStarted then
-      FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
-
+    FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
+    begin
       SetExitStatus(esFlushStreamError);
+    end;
   end;
   FBufferIndex := 0;
 end;
@@ -367,7 +346,7 @@ begin
     Inc(Result, I);
   until Result = Count;
 
-  if FHashStarted then
+  if FHashMethod <> haNul then
     FHash.Update(Data, Result);
 end;
 
@@ -377,39 +356,26 @@ begin
   Result := FileSeek(FHandle, Offset, Origin);
 end;
 
-procedure TWriteBufStream.StartCipher(Algorithm: TCipherAlgorithm; const Key: string);
+procedure TWriteBufStream.StartCipher(const Key: string);
 begin
   FlushBuffer;
-  FreeAndNil(FCipher);
-  case Algorithm of
-    caNul:      FCipher := TNulCipher.Create;
-    caBlowFish: FCipher := TBlowFishCipher.Create(Key);
-    caIdea:     FCipher := TIdeaCipher.CreateEn(Key);
-  end;
-  FCipherStarted := Algorithm <> caNul;
+  inherited StartCipher(Key);
 end;
 
 procedure TWriteBufStream.FinishCipher;
 begin
   FlushBuffer;
-  FCipherStarted := FALSE;
+  inherited FinishCipher;
 end;
 
-procedure TWriteBufStream.StartCoder(Algorithm: TCoderAlgorithm);
+procedure TWriteBufStream.StartCoder;
 begin
-  case Algorithm of
-    caStore: if not(FCoder is TStoreCoder)  then FreeAndNil(FCoder);
-    caBee:   if not(FCoder is TBeeEncoder)  then FreeAndNil(FCoder);
-    caPpmd:  if not(FCoder is TPpmdEncoder) then FreeAndNil(FCoder);
+  FreeAndNil(FCoder);
+  case FCoderMethod of
+    caStore: FCoder := TStoreCoder .Create(Self);
+    caBee:   FCoder := TBeeEncoder .Create(Self);
+    caPpmd:  FCoder := TPpmdEncoder.Create(Self);
   end;
-
-  if FCoder = nil then
-    case Algorithm of
-      caStore: FCoder := TStoreCoder .Create(Self);
-      caBee:   FCoder := TBeeEncoder .Create(Self);
-      caPpmd:  FCoder := TPpmdEncoder.Create(Self);
-    end;
-
   FCoder.Start;
 end;
 
@@ -433,8 +399,7 @@ end;
 function TNulBufStream.Write(Data: PByte; Count: longint): longint;
 begin
   Result := Count;
-  if FHashStarted then
-    FHash.Update(Data, Count);
+  FHash.Update(Data, Count);
 end;
 
 function TNulBufStream.Seek(const Offset: int64; Origin: longint): int64;

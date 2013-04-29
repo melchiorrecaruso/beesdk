@@ -1190,6 +1190,8 @@ var
   Count: int64;
   Buffer: TBuffer;
 begin
+  (*
+
   FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
@@ -1214,6 +1216,9 @@ begin
   FArchiveReader.Read (@Buffer[0], Count);
   FTempWriter   .Write(@Buffer[0], Count);
   DoProgress(SizeOf(Buffer));
+
+  *)
+
 end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
@@ -1221,6 +1226,8 @@ var
   Count: int64;
   Buffer: TBuffer;
 begin
+  (*
+
   FSwapReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
@@ -1253,6 +1260,8 @@ begin
   Item.FCompressedSize := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
   Item.FCheckDigest    := FSwapReader.FinishHash;
   Item.FCheckDigestAux := FTempWriter.FinishHash;
+
+  *)
 end;
 
 procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
@@ -1265,19 +1274,26 @@ begin
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
   Item.FDiskNumber := FTempWriter.CurrentImage;
 
-       Stream.StartHash  (Item.CheckMethod);
-       Stream.StartCipher(caNul, '');
-       Stream.StartCoder (caStore);
+  Stream.HashMethod   := Item.CheckMethod;
+  Stream.CoderMethod  := caStore;
+  Stream.CipherMethod := caNul;
 
-  FTempWriter.StartHash              (Item.CheckMethodAux);
-  FTempWriter.StartCipher            (Item.EncryptionMethod, GetCipherKey(EncryptionParams));
-  FTempWriter.StartCoder             (Item.CompressionMethod);
-  FTempWriter.SetCompressionLevel    (Item.CompressionLevel);
-  FTempWriter.SetCompressionLevelAux (Item.CompressionLevelAux);
-  FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
-  FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
-  FTempWriter.SetCompressionBlock    (Item.CompressionBlock);
+  FTempWriter.HashMethod     := Item.CheckMethodAux;
+  FTempWriter.CipherMethod   := Item.EncryptionMethod;
+  FTempWriter.CoderMethod    := Item.CompressionMethod;
+  FTempWriter.CoderLevel     := Item.CompressionLevel;
+  FTempWriter.CoderLevelAux  := Item.CompressionLevelAux;
+  FTempWriter.CoderFilter    := Item.CompressionFilter;
+  FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
+  FTempWriter.CoderBlock     := Item.CompressionBlock;
 
+  FTempWriter.StartHash;
+  FTempWriter.StartCipher(GetCipherKey(EncryptionParams));
+  FTempWriter.StartCoder;
+
+  Stream.StartHash;
+  Stream.StartCipher('');
+  Stream.StartCoder;
   Count := Item.FExternalFileSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
   begin
@@ -1293,10 +1309,16 @@ begin
     FTempWriter.Encode(@Buffer[0], Count);
     DoProgress(Count);
   end;
+  Stream.FinishCoder;
+  Stream.FinishCipher;
+  Stream.FinishHash;
+
   FTempWriter.FinishCoder;
   FTempWriter.FinishCipher;
-  Item.FCheckDigestAux   := FTempWriter.FinishHash;
-  Item.FCheckDigest      :=      Stream.FinishHash;
+  FTempWriter.FinishHash;
+
+  Item.FCheckDigestAux   := FTempWriter.HashDigest;
+  Item.FCheckDigest      :=      Stream.HashDigest;
 
   Item.FUncompressedSize := Item.FExternalFileSize;
   Item.FCompressedSize   := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
@@ -1309,6 +1331,8 @@ var
   Count: int64;
   Buffer: TBuffer;
 begin
+  (*
+
   FArchiveReader.Seek(Item.DiskNumber, Item.DiskSeek);
   Item.FDiskNumber := FSwapWriter.CurrentImage;
   Item.FDiskSeek   := FSwapWriter.Seek(0, fsFromCurrent);
@@ -1341,6 +1365,7 @@ begin
 
   if (Item.CheckDigest    <>    FSwapWriter.FinishHash) or
      (Item.CheckDigestAux <> FArchiveReader.FinishHash) then SetExitStatus(esHashError);
+  *)
 end;
 
 procedure TArchiver.DecodeToNul(Item: TArchiveItem);
@@ -1350,20 +1375,31 @@ var
   Stream: TNulBufStream;
 begin
   Stream := TNulBufStream.Create;
-  FArchiveReader.Seek                   (Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
-  FArchiveReader.StartHash              (haNul);
-  FArchiveReader.StartCipher            (Item.EncryptionMethod, GetCipherKey(EncryptionParams));
-  FArchiveReader.StartCoder             (Item.CompressionMethod);
+  FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
 
-  FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
-  FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
-  FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
-  FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
-  FArchiveReader.SetCompressionBlock    (Item.CompressionBlock);
+  FArchiveReader.HashMethod     := haNul;
+  FArchiveReader.CipherMethod   := Item.EncryptionMethod;
+  FArchiveReader.CoderMethod    := Item.CompressionMethod;
+  FArchiveReader.CoderLevel     := Item.CompressionLevel;
+  FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
+  FArchiveReader.CoderFilter    := Item.CompressionFilter;
+  FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
+  FArchiveReader.CoderBlock     := Item.CompressionBlock;
 
-          Stream.StartHash  (Item.CheckMethod);
-          Stream.StartCipher(caNul, '');
-          Stream.StartCoder (caStore);
+  FArchiveReader.StartHash;
+  FArchiveReader.StartCipher(GetCipherKey(EncryptionParams));
+  FArchiveReader.StartCoder;
+
+
+
+
+  Stream.HashMethod   := Item.CheckMethod;
+  Stream.CipherMethod := caNul;
+  Stream.CoderMethod  := caStore;
+
+  Stream.StartHash;
+  Stream.StartCipher('');
+  Stream.StartCoder;
 
   Count := Item.FUncompressedSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
@@ -1382,9 +1418,10 @@ begin
   end;
   FArchiveReader.FinishCoder;
   FArchiveReader.FinishCipher;
+  FArchiveReader.FinishHash;
 
   if Item.CheckMethod <> haNul then
-    if Item.FCheckDigest <> Stream.FinishHash then
+    if Item.FCheckDigest <> Stream.HashDigest then
     begin
       SetExitStatus(esHashError);
     end;
@@ -1398,6 +1435,8 @@ var
   Buffer: TBuffer;
   Stream: TFileWriter;
 begin
+
+  (*
   Stream := TFileWriter.Create(Item.FExternalFileName, FOnRequestBlankImage, 0);
 
   FArchiveReader.Seek     (Item.FDiskNumber, Item.FDiskSeek);
@@ -1436,6 +1475,8 @@ begin
     FileSetAttr(Item.FExternalFileName, Item.FAttributes);
     FileSetDate(Item.FExternalFileName, Item.FLastModifiedTime);
   end;
+
+  *)
 end;
 
 // TArchiver # OPEN/CLOSE ARCHIVE #

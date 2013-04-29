@@ -46,14 +46,6 @@ type
     function Decrypt(var Data: TBuffer; Count: longint): longint; virtual; abstract;
   end;
 
-  { NulCipher class }
-
-  TNulCipher = class(TBaseCipher)
-  public
-    function Encrypt(var Data: TBuffer; Count: longint): longint; override;
-    function Decrypt(var Data: TBuffer; Count: longint): longint; override;
-  end;
-
   { TBlowFishCipher class }
 
   TBlowFishCipher = class(TBaseCipher)
@@ -84,18 +76,6 @@ implementation
 
 uses
   Math;
-
-/// TNulCipher class
-
-function TNulCipher.Encrypt(var Data: TBuffer; Count: longint): longint;
-begin
-  Result := Count;
-end;
-
-function TNulCipher.Decrypt(var Data: TBuffer; Count: longint): longint;
-begin
-  Result := Count;
-end;
 
 /// TBlowFishCipher class
 

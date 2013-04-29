@@ -61,7 +61,7 @@ type
     property Block: int64 read FBlock write SetBlock;
   end;
 
-  { TStoreCoder class }
+  { TStoreCoder classes }
 
   TStoreCoder = class(TBaseCoder)
   public
@@ -88,7 +88,6 @@ type
   public
     constructor Create(Stream: pointer);
     destructor Destroy; override;
-
     procedure Start; override;
     procedure Finish; override;
     function Encode(Data: PByte; Count: longint): longint; override;
@@ -98,7 +97,6 @@ type
   public
     constructor Create(Stream: pointer);
     destructor Destroy; override;
-
     procedure Start; override;
     procedure Finish; override;
     function Decode(Data: PByte; Count: longint): longint; override;
@@ -121,7 +119,6 @@ type
   public
     constructor Create(Stream: pointer);
     destructor Destroy; override;
-
     procedure Start; override;
     procedure Finish; override;
     function Encode(Data: PByte; Count: longint): longint; override;
@@ -131,7 +128,6 @@ type
   public
     constructor Create(Stream: pointer);
     destructor Destroy; override;
-
     procedure Start; override;
     procedure Finish; override;
     function Decode(Data: PByte; Count: longint): longint; override;
