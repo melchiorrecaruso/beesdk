@@ -1190,20 +1190,20 @@ var
   Count: int64;
   Buffer: TBuffer;
 begin
-  (*
-
   FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
 
-  FArchiveReader.StartHash  (haNul);
-  FArchiveReader.StartCipher(caNul, '');
-  FArchiveReader.StartCoder (caStore);
+  FArchiveReader.HashMethod   := haNul;
+  FArchiveReader.CipherMethod := caNul;
+  FArchiveReader.CoderMethod  := caStore;
 
-  FTempWriter   .StartHash  (haNul);
-  FTempWriter   .StartCipher(caNul, '');
-  FTempWriter   .StartCoder (caStore);
+  FTempWriter   .HashMethod   := haNul;
+  FTempWriter   .CipherMethod := caNul;
+  FTempWriter   .CoderMethod  := caStore;
 
+  FTempWriter.StartSession;
+  FArchiveReader.StartSession;
   Count := Item.FCompressedSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
   begin
@@ -1212,13 +1212,15 @@ begin
     DoProgress(SizeOf(Buffer));
     Dec(Count);
   end;
-  Count := Item.FCompressedSize mod SizeOf(Buffer);
-  FArchiveReader.Read (@Buffer[0], Count);
-  FTempWriter   .Write(@Buffer[0], Count);
-  DoProgress(SizeOf(Buffer));
-
-  *)
-
+  if (Count <> 0) and (ExitStatus = esNoError) then
+  begin
+    Count := Item.FCompressedSize mod SizeOf(Buffer);
+    FArchiveReader.Read (@Buffer[0], Count);
+    FTempWriter   .Write(@Buffer[0], Count);
+    DoProgress(SizeOf(Buffer));
+  end;
+  FArchiveReader.EndSession;
+  FTempWriter.EndSession;
 end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
@@ -1305,7 +1307,7 @@ begin
     FTempWriter.Encode(@Buffer[0], Count);
     DoProgress(Count);
   end;
-  FTempWriter.endSession;
+  FTempWriter.EndSession;
   Stream.EndSession;
 
   Item.FCheckDigestAux   := FTempWriter.HashDigest;
