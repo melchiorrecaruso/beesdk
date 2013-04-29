@@ -42,19 +42,8 @@ type
     FDigest: string;
   public
     procedure Start;  virtual; abstract;
-    procedure Finish; virtual; abstract;
+    function  Finish: string; virtual; abstract;
     procedure Update(Data: PByte; Count: longint); virtual; abstract;
-  public
-    property Digest: string read FDigest;
-  end;
-
-  { TNulHash class }
-
-  TNulHash = class(TBaseHash)
-  public
-    procedure Start;  override;
-    procedure Finish; override;
-    procedure Update(Data: PByte; Count: longint); override;
   end;
 
   { TCRC32Hash class }
@@ -64,7 +53,7 @@ type
     FCRC: longword;
   public
     procedure Start;  override;
-    procedure Finish; override;
+    function  Finish: string; override;
     procedure Update(Data: PByte; Count: longint); override;
   end;
 
@@ -75,7 +64,7 @@ type
     FCRC: qword;
   public
     procedure Start;  override;
-    procedure Finish; override;
+   function  Finish: string; override;
     procedure Update(Data: PByte; Count: longint); override;
   end;
 
@@ -86,7 +75,7 @@ type
     FCTX: TSHA1Context;
   public
     procedure Start;  override;
-    procedure Finish; override;
+   function  Finish: string; override;
     procedure Update(Data: PByte; Count: longint); override;
   end;
 
@@ -97,7 +86,7 @@ type
     FCTX: TMD5Context;
   public
     procedure Start;  override;
-    procedure Finish; override;
+    function  Finish: string; override;
     procedure Update(Data: PByte; Count: longint); override;
   end;
 
@@ -108,23 +97,6 @@ implementation
 uses
   Bee_Common;
 
-/// TNulHash class
-
-procedure TNulHash.Start;
-begin
-  // nothing to do
-end;
-
-procedure TNulHash.Finish;
-begin
-  FDigest := '';
-end;
-
-procedure TNulHash.Update(Data: PByte; Count: longint);
-begin
-  // nothing to do
-end;
-
 /// TCRC32Hash class
 
 procedure TCRC32Hash.Start;
@@ -132,9 +104,9 @@ begin
   FCRC := crc32(0, nil, 0);
 end;
 
-procedure TCRC32Hash.Finish;
+function TCRC32Hash.Finish: string;
 begin
-  FDigest := Hex(FCRC, SizeOf(FCRC));
+  Result := Hex(FCRC, SizeOf(FCRC));
 end;
 
 procedure TCRC32Hash.Update(Data: PByte; Count: longint);
@@ -149,9 +121,9 @@ begin
   FCRC := crc64(0, nil, 0);
 end;
 
-procedure TCRC64Hash.Finish;
+function TCRC64Hash.Finish: string;
 begin
-  FDigest := Hex(FCRC, SizeOf(FCRC));
+  Result := Hex(FCRC, SizeOf(FCRC));
 end;
 
 procedure TCRC64Hash.Update(Data: PByte; Count: longint);
@@ -166,12 +138,12 @@ begin
   SHA1Init(FCTX);
 end;
 
-procedure TSHA1Hash.Finish;
+function TSHA1Hash.Finish: string;
 var
   Digest: TSHA1Digest;
 begin
   SHA1Final(FCTX, Digest);
-  FDigest := UpCase(SHA1Print(Digest));
+  Result := UpCase(SHA1Print(Digest));
 end;
 
 procedure TSHA1Hash.Update(Data: PByte; Count: longint);
@@ -186,12 +158,12 @@ begin
   MD5Init(FCTX);
 end;
 
-procedure TMD5Hash.Finish;
+function TMD5Hash.Finish: string;
 var
   Digest: TMD5Digest;
 begin
   MD5Final(FCTX, Digest);
-  FDigest := UpCase(MD5Print(Digest));
+  Result := UpCase(MD5Print(Digest));
 end;
 
 procedure TMD5Hash.Update(Data: PByte; Count: longint);
