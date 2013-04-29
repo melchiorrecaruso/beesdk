@@ -1274,12 +1274,13 @@ begin
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
   Item.FDiskNumber := FTempWriter.CurrentImage;
 
-  Stream.HashMethod   := Item.CheckMethod;
-  Stream.CoderMethod  := caStore;
-  Stream.CipherMethod := caNul;
+  Stream.HashMethod          := Item.CheckMethod;
+  Stream.CipherMethod        := caNul;
+  Stream.CoderMethod         := caStore;
 
   FTempWriter.HashMethod     := Item.CheckMethodAux;
   FTempWriter.CipherMethod   := Item.EncryptionMethod;
+  FTempWriter.CipherKey      := GetCipherKey(EncryptionParams);
   FTempWriter.CoderMethod    := Item.CompressionMethod;
   FTempWriter.CoderLevel     := Item.CompressionLevel;
   FTempWriter.CoderLevelAux  := Item.CompressionLevelAux;
@@ -1287,13 +1288,8 @@ begin
   FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
   FTempWriter.CoderBlock     := Item.CompressionBlock;
 
-  FTempWriter.StartHash;
-  FTempWriter.StartCipher(GetCipherKey(EncryptionParams));
-  FTempWriter.StartCoder;
-
-  Stream.StartHash;
-  Stream.StartCipher('');
-  Stream.StartCoder;
+  Stream.StartSession;
+  FTempWriter.StartSession;
   Count := Item.FExternalFileSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
   begin
@@ -1309,13 +1305,8 @@ begin
     FTempWriter.Encode(@Buffer[0], Count);
     DoProgress(Count);
   end;
-  Stream.FinishCoder;
-  Stream.FinishCipher;
-  Stream.FinishHash;
-
-  FTempWriter.FinishCoder;
-  FTempWriter.FinishCipher;
-  FTempWriter.FinishHash;
+  FTempWriter.endSession;
+  Stream.EndSession;
 
   Item.FCheckDigestAux   := FTempWriter.HashDigest;
   Item.FCheckDigest      :=      Stream.HashDigest;
@@ -1377,8 +1368,13 @@ begin
   Stream := TNulBufStream.Create;
   FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
 
+  Stream.HashMethod             := Item.CheckMethod;
+  Stream.CipherMethod           := caNul;
+  Stream.CoderMethod            := caStore;
+
   FArchiveReader.HashMethod     := haNul;
   FArchiveReader.CipherMethod   := Item.EncryptionMethod;
+  FArchiveReader.CipherKey      := GetCipherKey(EncryptionParams);
   FArchiveReader.CoderMethod    := Item.CompressionMethod;
   FArchiveReader.CoderLevel     := Item.CompressionLevel;
   FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
@@ -1386,21 +1382,8 @@ begin
   FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
   FArchiveReader.CoderBlock     := Item.CompressionBlock;
 
-  FArchiveReader.StartHash;
-  FArchiveReader.StartCipher(GetCipherKey(EncryptionParams));
-  FArchiveReader.StartCoder;
-
-
-
-
-  Stream.HashMethod   := Item.CheckMethod;
-  Stream.CipherMethod := caNul;
-  Stream.CoderMethod  := caStore;
-
-  Stream.StartHash;
-  Stream.StartCipher('');
-  Stream.StartCoder;
-
+  Stream.StartSession;
+  FArchiveReader.StartSession;
   Count := Item.FUncompressedSize div SizeOf(Buffer);
   while (Count <> 0) and (ExitStatus = esNoError) do
   begin
@@ -1416,9 +1399,8 @@ begin
             Stream.Write (@Buffer[0], Count);
     DoProgress(Count);
   end;
-  FArchiveReader.FinishCoder;
-  FArchiveReader.FinishCipher;
-  FArchiveReader.FinishHash;
+  FArchiveReader.EndSession;
+  Stream.EndSession;
 
   if Item.CheckMethod <> haNul then
     if Item.FCheckDigest <> Stream.HashDigest then
@@ -1776,10 +1758,9 @@ procedure TArchiver.DoProgress(Value: longint);
 begin
   Inc(FProcessedSize, Value);
   if Assigned(FOnProgress) then
-    if (FProcessedSize and $FFFF) = 0 then
-    begin
-      FOnProgress(Round((FProcessedSize/FTotalSize)*100));
-    end;
+  begin
+    FOnProgress(Round((FProcessedSize/FTotalSize)*100));
+  end;
   while FSuspended do Sleep(250);
 end;
 

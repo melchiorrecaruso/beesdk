@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <memory.h>
 
-#define PPMD_32BIT
+// #define PPMD_32BIT
 
 #define PPMD_INT_BITS 7
 #define PPMD_PERIOD_BITS 7
