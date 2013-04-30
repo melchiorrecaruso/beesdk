@@ -40,6 +40,7 @@ uses
   Bee_MainPacker,
 
   Bee_Files,
+  Bee_BufStream,
   Bee_Common,
   Bee_CommandLine,
   Bee_Configuration;
@@ -293,10 +294,10 @@ type
     function GetCount: longint;
     function GetLastModifiedTime: longint;
   private
+    procedure Encode           (Reader: TBufStream; Writer: TBufStream; const Size: int64);
     procedure EncodeFromArchive(Item: TArchiveItem);
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
-
     procedure DecodeToNul      (Item: TArchiveItem);
     procedure DecodeToSwap     (Item: TArchiveItem);
     procedure DecodeToFile     (Item: TArchiveItem);
@@ -393,18 +394,9 @@ function AttrToStr(Attr: longint): string;
 implementation
 
 uses
-  Bee_BufStream,
   Bee_Interface;
 
 // ---
-
-function GetCoderAlgorithm(Params: string): TCoderAlgorithm;
-begin
-  Params := UpCase(Params);
-  if Pos(':M=NONE:', Params) > 0 then Result := caStore else
-  if Pos(':M=BEE:',  Params) > 0 then Result := caBee   else
-  if Pos(':M=PPMD:', Params) > 0 then Result := caPpmd  else Result := caPpmd;
-end;
 
 function ExtractQWord(const Params: string; const K: string): qword;
 var
@@ -436,6 +428,20 @@ begin
       else
         Break;
   end;
+end;
+
+function GetCoderAlgorithm(const Params: string): TCoderAlgorithm;
+var
+  S: string;
+begin
+  if Pos(':M=', UpCase(Params)) > 0 then
+  begin
+    S := Upcase(ExtractStr(Params, ':M='));
+    if S = 'NONE' then Result := caStore else
+    if S = 'BEE'  then Result := caBee   else
+    if S = 'PPMD' then Result := caPpmd  else SetExitStatus(esCmdLineError);
+  end else
+    Result := caPpmd;
 end;
 
 function GetCoderLevel(const Params: string): longword;
@@ -503,16 +509,21 @@ begin
   Result := ExtractStr(Params, ':K=');
 end;
 
-function GetCipherAlgorithm(Params: string): TCipherAlgorithm;
+function GetCipherAlgorithm(const Params: string): TCipherAlgorithm;
+var
+  S: string;
 begin
   Result := caNul;
   if GetCipherKey(Params) <> '' then
     Result := caBlowFish;
 
-  Params := UpCase(Params);
-  if Pos(':M=NONE:',     UpCase(Params)) > 0 then Result := caNul      else
-  if Pos(':M=BLOWFISH:', UpCase(Params)) > 0 then Result := caBlowFish else
-  if Pos(':M=IDEA:',     UpCase(Params)) > 0 then Result := caIdea;
+  if Pos(':M=', UpCase(Params)) > 0 then
+  begin
+    S := UpCase(ExtractStr(Params, ':M='));
+    if S = 'NONE'     then Result := caNul      else
+    if S = 'BLOWFISH' then Result := caBlowFish else
+    if S = 'IDEA'     then Result := caIdea     else SetExitStatus(esCmdLineError);
+  end;
 
   if Result <> caNul then
     if Length(GetCipherKey(Params)) < 4 then
@@ -520,23 +531,35 @@ begin
 end;
 
 function GetHashAlgorithm(Params: string): THashAlgorithm;
+var
+  S: string;
 begin
-  Params := UpCase(Params);
-  if Pos(':M=NONE:',  Params) > 0 then Result := haNul   else
-  if Pos(':M=CRC32:', Params) > 0 then Result := haCRC32 else
-  if Pos(':M=CRC64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':M=SHA1:',  Params) > 0 then Result := haSHA1  else
-  if Pos(':M=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
+  Result := haCRC32;
+  if Pos(':M=', UpCase(Params)) > 0 then
+  begin
+    S := UpCase(ExtractStr(Params, ':M='));
+    if S = 'NONE'  then Result := haNul   else
+    if S = 'CRC32' then Result := haCRC32 else
+    if S = 'CRC64' then Result := haCRC64 else
+    if S = 'SHA1'  then Result := haSHA1  else
+    if S = 'MD5'   then Result := haMD5   else SetExitStatus(esCmdLineError);
+  end;
 end;
 
 function GetHashAlgorithmAux(Params: string): THashAlgorithm;
+var
+  S: string;
 begin
-  Params := UpCase(Params);
-  if Pos(':MA=NONE:',  Params) > 0 then Result := haNul   else
-  if Pos(':MA=CRC32:', Params) > 0 then Result := haCRC32 else
-  if Pos(':MA=CRC64:', Params) > 0 then Result := haCRC64 else
-  if Pos(':MA=SHA1:',  Params) > 0 then Result := haSHA1  else
-  if Pos(':MA=MD5:',   Params) > 0 then Result := haMD5   else Result := haCRC32;
+  Result := haCRC32;
+  if Pos(':MA=', UpCase(Params)) > 0 then
+  begin
+    S := UpCase(ExtractStr(Params, ':MA='));
+    if S = 'NONE'  then Result := haNul   else
+    if S = 'CRC32' then Result := haCRC32 else
+    if S = 'CRC64' then Result := haCRC64 else
+    if S = 'SHA1'  then Result := haSHA1  else
+    if S = 'MD5'   then Result := haMD5   else SetExitStatus(esCmdLineError);
+  end;
 end;
 
 // ---
@@ -1185,12 +1208,35 @@ end;
 
 // TArchiver # ENCODE/DECODE #
 
-procedure TArchiver.EncodeFromArchive(Item: TArchiveItem);
+procedure TArchiver.Encode(Reader: TBufStream; Writer: TBufStream; const Size: int64); inline;
 var
   Count: int64;
   Buffer: TBuffer;
 begin
-  FArchiveReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
+  Reader.StartSession;
+  Writer.StartSession;
+  Count := Size div SizeOf(Buffer);
+  while (Count <> 0) and (ExitStatus = esNoError) do
+  begin
+    Reader.Decode(@Buffer[0], SizeOf(Buffer));
+    Writer.Encode(@Buffer[0], SizeOf(Buffer));
+    DoProgress(SizeOf(Buffer));
+    Dec(Count);
+  end;
+  Count := Size mod SizeOf(Buffer);
+  if (Count <> 0) and (ExitStatus = esNoError) then
+  begin
+    Reader.Decode(@Buffer[0], Count);
+    Writer.Encode(@Buffer[0], Count);
+    DoProgress(Count);
+  end;
+  Writer.EndSession;
+  Reader.EndSession;
+end;
+
+procedure TArchiver.EncodeFromArchive(Item: TArchiveItem);
+begin
+  FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
 
@@ -1198,87 +1244,54 @@ begin
   FArchiveReader.CipherMethod := caNul;
   FArchiveReader.CoderMethod  := caStore;
 
-  FTempWriter   .HashMethod   := haNul;
-  FTempWriter   .CipherMethod := caNul;
-  FTempWriter   .CoderMethod  := caStore;
-
-  FTempWriter.StartSession;
-  FArchiveReader.StartSession;
-  Count := Item.FCompressedSize div SizeOf(Buffer);
-  while (Count <> 0) and (ExitStatus = esNoError) do
+  FTempWriter.HashMethod      := haNul;
+  FTempWriter.CipherMethod    := caNul;
+  FTempWriter.CoderMethod     := caStore;
   begin
-    FArchiveReader.Read (@Buffer[0], SizeOf(Buffer));
-    FTempWriter   .Write(@Buffer[0], SizeOf(Buffer));
-    DoProgress(SizeOf(Buffer));
-    Dec(Count);
+    Encode(FArchiveReader, FTempWriter, Item.FCompressedSize);
   end;
-  if (Count <> 0) and (ExitStatus = esNoError) then
-  begin
-    Count := Item.FCompressedSize mod SizeOf(Buffer);
-    FArchiveReader.Read (@Buffer[0], Count);
-    FTempWriter   .Write(@Buffer[0], Count);
-    DoProgress(SizeOf(Buffer));
-  end;
-  FArchiveReader.EndSession;
-  FTempWriter.EndSession;
 end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
-var
-  Count: int64;
-  Buffer: TBuffer;
 begin
-  (*
+  FSwapReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
+  Item.FDiskSeek              := FTempWriter.Seek(0, fsFromCurrent);
+  Item.FDiskNumber            := FTempWriter.CurrentImage;
 
-  FSwapReader.Seek(Item.FDiskNumber, Item.FDiskSeek);
-  Item.FDiskNumber := FTempWriter.CurrentImage;
-  Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
+  FSwapReader.HashMethod      := Item.CheckMethod;
+  FSwapReader.CipherMethod    := Item.EncryptionMethod;
+  FSwapReader.CipherKey       := GetCipherKey(EncryptionParams);
+  FSwapReader.CoderMethod     := caStore;
 
-  FSwapReader.StartHash  (Item.CheckMethod);
-  FSwapReader.StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
-  FSwapReader.StartCoder (caStore);
-
-  FTempWriter.StartHash  (Item.CheckMethod);
-  FTempWriter.StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
-  FTempWriter.StartCoder (Item.CompressionMethod);
-  FTempWriter.SetCompressionLevel    (Item.CompressionLevel);
-  FTempWriter.SetCompressionLevelAux (Item.CompressionLevelAux);
-  FTempWriter.SetCompressionFilter   (Item.CompressionFilter);
-  FTempWriter.SetCompressionFilterAux(Item.CompressionFilterAux);
-
-  Count := Item.FUncompressedSize div SizeOf(Buffer);
-  while (Count <> 0) and (ExitStatus = esNoError) do
+  FTempWriter.HashMethod      := Item.CheckMethod;
+  FTempWriter.CipherMethod    := Item.EncryptionMethod;
+  FTempWriter.CipherKey       := GetCipherKey(EncryptionParams);
+  FTempWriter.CoderMethod     := Item.CompressionMethod;
+  FTempWriter.CoderLevel      := Item.CompressionLevel;
+  FTempWriter.CoderLevelAux   := Item.CompressionLevelAux;
+  FTempWriter.CoderFilter     := Item.CompressionFilter;
+  FTempWriter.CoderFilterAux  := Item.CompressionFilterAux;
+  FTempWriter.CoderBlock      := Item.CompressionBlock;
   begin
-    FSwapReader.Read  (@Buffer[0], SizeOf(Buffer));
-    FTempWriter.Encode(@Buffer[0], SizeOf(Buffer));
-    DoProgress(SizeOf(Buffer));
-    Dec(Count);
+    Encode(FSwapReader, FTempWriter, Item.FUnCompressedSize);
   end;
-  Count := Item.FUncompressedSize mod SizeOf(Buffer);
-  FSwapReader.Read  (@Buffer[0], Count);
-  FTempWriter.Encode(@Buffer[0], Count);
-  DoProgress(SizeOf(Buffer));
-
-  Item.FCompressedSize := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
-  Item.FCheckDigest    := FSwapReader.FinishHash;
-  Item.FCheckDigestAux := FTempWriter.FinishHash;
-
-  *)
+  //Item.FCheckDigest        := FSwapReader.HashDigest;
+  //Item.FCheckDigestAux     := FTempWriter.HashDigest;
+  Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
+  //Item.FUncompressedSize   := Item.FExternalFileSize;
 end;
 
 procedure TArchiver.EncodeFromFile(Item: TArchiveItem);
 var
-  Count: int64;
-  Buffer: TBuffer;
-  Stream: TFileReader;
+  Source: TFileReader;
 begin
-  Stream := TFileReader.Create(Item.FExternalFileName, nil);
-  Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
-  Item.FDiskNumber := FTempWriter.CurrentImage;
+  Source := TFileReader.Create(Item.FExternalFileName, nil);
+  Item.FDiskSeek             := FTempWriter.Seek(0, fsFromCurrent);
+  Item.FDiskNumber           := FTempWriter.CurrentImage;
 
-  Stream.HashMethod          := Item.CheckMethod;
-  Stream.CipherMethod        := caNul;
-  Stream.CoderMethod         := caStore;
+  Source.HashMethod          := Item.CheckMethod;
+  Source.CipherMethod        := caNul;
+  Source.CoderMethod         := caStore;
 
   FTempWriter.HashMethod     := Item.CheckMethodAux;
   FTempWriter.CipherMethod   := Item.EncryptionMethod;
@@ -1289,34 +1302,14 @@ begin
   FTempWriter.CoderFilter    := Item.CompressionFilter;
   FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
   FTempWriter.CoderBlock     := Item.CompressionBlock;
-
-  Stream.StartSession;
-  FTempWriter.StartSession;
-  Count := Item.FExternalFileSize div SizeOf(Buffer);
-  while (Count <> 0) and (ExitStatus = esNoError) do
   begin
-         Stream.Read  (@Buffer[0], SizeOf(Buffer));
-    FTempWriter.Encode(@Buffer[0], SizeOf(Buffer));
-    DoProgress(SizeOf(Buffer));
-    Dec(Count);
+    Encode(Source, FTempWriter, Item.FExternalFileSize);
   end;
-  Count := Item.FExternalFileSize mod SizeOf(Buffer);
-  if (Count <> 0) and (ExitStatus = esNoError) then
-  begin
-         Stream.Read  (@Buffer[0], Count);
-    FTempWriter.Encode(@Buffer[0], Count);
-    DoProgress(Count);
-  end;
-  FTempWriter.EndSession;
-  Stream.EndSession;
-
-  Item.FCheckDigestAux   := FTempWriter.HashDigest;
-  Item.FCheckDigest      :=      Stream.HashDigest;
-
-  Item.FUncompressedSize := Item.FExternalFileSize;
-  Item.FCompressedSize   := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
-
-  FreeAndNil(Stream);
+  Item.FCheckDigest          :=      Source.HashDigest;
+  Item.FCheckDigestAux       := FTempWriter.HashDigest;
+  Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
+  Item.FUncompressedSize     := Item.FExternalFileSize;
+  FreeAndNil(Source);
 end;
 
 procedure TArchiver.DecodeToSwap(Item: TArchiveItem);
@@ -1365,14 +1358,14 @@ procedure TArchiver.DecodeToNul(Item: TArchiveItem);
 var
   Count: int64;
   Buffer: TBuffer;
-  Stream: TNulBufStream;
+  Destination: TNulBufStream;
 begin
-  Stream := TNulBufStream.Create;
+  Destination := TNulBufStream.Create;
   FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
 
-  Stream.HashMethod             := Item.CheckMethod;
-  Stream.CipherMethod           := caNul;
-  Stream.CoderMethod            := caStore;
+  Destination.HashMethod        := Item.CheckMethod;
+  Destination.CipherMethod      := caNul;
+  Destination.CoderMethod       := caStore;
 
   FArchiveReader.HashMethod     := haNul;
   FArchiveReader.CipherMethod   := Item.EncryptionMethod;
@@ -1383,34 +1376,17 @@ begin
   FArchiveReader.CoderFilter    := Item.CompressionFilter;
   FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
   FArchiveReader.CoderBlock     := Item.CompressionBlock;
-
-  Stream.StartSession;
-  FArchiveReader.StartSession;
-  Count := Item.FUncompressedSize div SizeOf(Buffer);
-  while (Count <> 0) and (ExitStatus = esNoError) do
   begin
-    FArchiveReader.Decode(@Buffer[0], SizeOF(Buffer));
-            Stream.Write (@Buffer[0], SizeOF(Buffer));
-    DoProgress(SizeOF(Buffer));
-    Dec(Count);
+    Encode(FArchiveReader, Destination, Item.FUncompressedSize);
   end;
-  Count := Item.FUncompressedSize mod SizeOf(Buffer);
-  if Count <> 0 then
-  begin
-    FArchiveReader.Decode(@Buffer[0], Count);
-            Stream.Write (@Buffer[0], Count);
-    DoProgress(Count);
-  end;
-  FArchiveReader.EndSession;
-  Stream.EndSession;
 
   if Item.CheckMethod <> haNul then
-    if Item.FCheckDigest <> Stream.HashDigest then
+    if Item.FCheckDigest <> Destination.HashDigest then
     begin
       SetExitStatus(esHashError);
     end;
 
-  FreeAndNil(Stream);
+  FreeAndNil(Destination);
 end;
 
 procedure TArchiver.DecodeToFile(Item: TArchiveItem);

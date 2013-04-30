@@ -62,8 +62,9 @@ type
     destructor Destroy; override;
     function Read(Data: PByte; Count: longint): longint; virtual; abstract;
     function Write(Data: PByte; Count: longint): longint; virtual; abstract;
+    function Decode(Data: PByte; Count: longint): longint; virtual; abstract;
+    function Encode(Data: PByte; Count: longint): longint; virtual; abstract;
     function Seek(const Offset: int64; Origin: longint): int64; virtual; abstract;
-
     procedure StartSession; virtual;
     procedure EndSession; virtual;
   public
@@ -92,9 +93,8 @@ type
   public
     constructor Create(Handle: THandle);
     function Read(Data: PByte; Count: longint): longint; override;
+    function Decode(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
-    function Decode(Data: PByte; Count: longint): longint;
-
     procedure StartSession; override;
     procedure EndSession; override;
   end;
@@ -111,9 +111,8 @@ type
   public
     constructor Create(Handle: THandle);
     function Write(Data: PByte; Count: longint): longint; override;
+    function Encode(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
-    function Encode(Data: PByte; Count: longint): longint;
-
     procedure StartSession; override;
     procedure EndSession; override;
   end;
@@ -259,7 +258,7 @@ begin
     FreeAndNil(FCipher);
   case FCipherMethod of
     caBlowFish: FCipher := TBlowFishCipher.Create(FCipherKey);
-    caIdea:     FCipher := TIdeaCipher.CreateDe(FCipherKey);
+    caIdea:     FCipher := TIdeaCipher.CreateDec(FCipherKey);
   end;
 
   if Assigned(FCoder) then
@@ -321,6 +320,7 @@ begin
   begin
     if Assigned(FCipher) then
       FBufferIndex := FCipher.Encrypt(FBuffer, FBufferIndex);
+
     if FBufferIndex <> FileWrite(FHandle, FBuffer[0], FBufferIndex)  then
     begin
       SetExitStatus(esFlushStreamError);
@@ -365,8 +365,7 @@ begin
     FreeAndNil(FCipher);
   case FCipherMethod of
     caBlowFish: FCipher := TBlowFishCipher.Create(FCipherKey);
-    caIdea:     FCipher := TIdeaCipher.CreateEn(FCipherKey);
-    else        FCipher := nil;
+    caIdea:     FCipher := TIdeaCipher.CreateEnc(FCipherKey);
   end;
 
   if Assigned(FCoder) then
@@ -380,7 +379,7 @@ begin
     case FCoderMethod of
       caStore: FCoder := TStoreCoder .Create(Self);
       caBee:   FCoder := TBeeEncoder .Create(Self);
-      caPpmd:  FCoder := TPpmdencoder.Create(Self);
+      caPpmd:  FCoder := TPpmdEncoder.Create(Self);
     end;
 
   if FCoderBlock = 0 then
@@ -419,7 +418,8 @@ end;
 function TNulBufStream.Write(Data: PByte; Count: longint): longint;
 begin
   Result := Count;
-  FHash.Update(Data, Count);
+  if Assigned(FHash) then
+    FHash.Update(Data, Count);
 end;
 
 function TNulBufStream.Seek(const Offset: int64; Origin: longint): int64;
