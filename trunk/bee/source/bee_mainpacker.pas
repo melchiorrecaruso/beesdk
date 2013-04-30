@@ -77,11 +77,12 @@ type
   private
     FCoder: pointer;
     FModeller: pointer;
+
     procedure SetLevelAux(Value: longword); override;
     procedure SetFilter(const Value: string); override;
-    procedure SetBlock(const Value: int64); override;
   public
     constructor Create(Stream: pointer);
+    procedure Start; override;
   end;
 
   TBeeEncoder = class(TBeeCoder)
@@ -110,9 +111,9 @@ type
     FModeller: pointer;
     procedure SetLevel(Value: longword); override;
     procedure SetLevelAux(Value: longword); override;
-    procedure SetBlock(const Value: int64); override;
   public
     constructor Create(Stream: pointer);
+    procedure Start; override;
   end;
 
   TPpmdEncoder = class(TPpmdCoder)
@@ -217,26 +218,19 @@ end;
 
 procedure TBeeCoder.SetLevelAux(Value: longword);
 begin
-  if Value <> FLevelAux then
-    if (0 <= Value) and (Value <= 9) then
-    begin
-      inherited SetLevelAux(Value);
-    end;
+  if (0 <= Value) and (Value <= 9) then
+    inherited SetLevelAux(Value);
 end;
 
 procedure TBeeCoder.SetFilter(const Value: string);
 begin
-  if Value <> FFilter then
-  begin
-    inherited SetFilter(Value);
-  end;
+  inherited SetFilter(Value);
 end;
 
-procedure TBeeCoder.SetBlock(const Value: int64);
+procedure TBeeCoder.Start;
 var
   Table: TTableParameters;
 begin
-  inherited SetBlock(Value);
   if FBlock = 0 then
   begin
     if not HexToData(FFilter, Table[1], SizeOf(Table)) then
@@ -268,6 +262,7 @@ end;
 
 procedure TBeeEncoder.Start;
 begin
+  inherited Start;
   BeeRangeEnc_StartEncode(FCoder);
 end;
 
@@ -299,6 +294,7 @@ end;
 
 procedure TBeeDecoder.Start;
 begin
+  inherited Start;
   BeeRangeDec_StartDecode(FCoder);
 end;
 
@@ -324,22 +320,17 @@ end;
 procedure TPpmdCoder.SetLevel(Value: longword);
 begin
   if (2 <= Value) and (Value <= 64) then
-  begin
     inherited SetLevel(Value);
-  end;
 end;
 
 procedure TPpmdCoder.SetLevelAux(Value: longword);
 begin
   if ($800 <= Value) and (Value <= $FFFFFFDB) then
-  begin
     inherited SetLevelAux(Value);
-  end;
 end;
 
-procedure TPpmdCoder.SetBlock(const Value: int64);
+procedure TPpmdCoder.Start;
 begin
-  inherited SetBlock(Value);
   if FBlock = 0 then
   begin
     PpmdModeller_SetMemSize (FModeller, FLevelAux);
@@ -365,6 +356,7 @@ end;
 
 procedure TPpmdEncoder.Start;
 begin
+  inherited Start;
   PpmdRangeEnc_StartEncode(FCoder);
 end;
 
@@ -396,6 +388,7 @@ end;
 
 procedure TPpmdDecoder.Start;
 begin
+  inherited Start;
   PpmdRangeDec_StartDecode(FCoder);
 end;
 

@@ -64,8 +64,8 @@ type
   private
     FKey: TIDEAKey;
   public
-    constructor CreateEn(const Key: string);
-    constructor CreateDe(const Key: string);
+    constructor CreateEnc(const Key: string);
+    constructor CreateDec(const Key: string);
     function Encrypt(var Data: TBuffer; Count: longint): longint; override;
     function Decrypt(var Data: TBuffer; Count: longint): longint; override;
   end;
@@ -126,7 +126,7 @@ end;
 
 /// TIdeaCipher class
 
-constructor TIdeaCipher.CreateEn(const Key: string);
+constructor TIdeaCipher.CreateEnc(const Key: string);
 var
   K: TIdeaCryptKey;
   KLen: Integer;
@@ -140,7 +140,7 @@ begin
   EnKeyIdea(K, FKey);
 end;
 
-constructor TIdeaCipher.CreateDe(const Key: string);
+constructor TIdeaCipher.CreateDec(const Key: string);
 var
   K: TIdeaCryptKey;
   KLen: Integer;
