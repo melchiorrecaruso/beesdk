@@ -1706,13 +1706,15 @@ begin
     FOnMessage(Message);
 end;
 
-procedure TArchiver.DoProgress(Value: longint);
+procedure TArchiver.DoProgress(Value: longint); inline;
 begin
   Inc(FProcessedSize, Value);
   if Assigned(FOnProgress) then
-  begin
-    FOnProgress(Round((FProcessedSize/FTotalSize)*100));
-  end;
+    if word(FProcessedSize) = 0 then
+    begin
+      FOnProgress(Round((FProcessedSize/FTotalSize)*100));
+    end;
+
   while FSuspended do Sleep(250);
 end;
 
