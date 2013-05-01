@@ -1309,49 +1309,37 @@ begin
   Item.FCheckDigestAux       := FTempWriter.HashDigest;
   Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
   Item.FUncompressedSize     := Item.FExternalFileSize;
+
   FreeAndNil(Source);
 end;
 
 procedure TArchiver.DecodeToSwap(Item: TArchiveItem);
-var
-  Count: int64;
-  Buffer: TBuffer;
 begin
-  (*
-
-  FArchiveReader.Seek(Item.DiskNumber, Item.DiskSeek);
-  Item.FDiskNumber := FSwapWriter.CurrentImage;
+  FArchiveReader.Seek(Item.DiskSeek, fsFromBeginning, Item.DiskNumber);
   Item.FDiskSeek   := FSwapWriter.Seek(0, fsFromCurrent);
+  Item.FDiskNumber := FSwapWriter.CurrentImage;
 
-  FArchiveReader.StartHash  (Item.CheckMethod);
-  FArchiveReader.StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
-  FArchiveReader.StartCoder (Item.CompressionMethod);
-  FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
-  FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
-  FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
-  FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
+  FArchiveReader.HashMethod     := Item.CheckMethod;
+  FArchiveReader.CipherMethod   := Item.EncryptionMethod;
+  FArchiveReader.CipherKey      := GetCipherKey(EncryptionParams);
+  FArchiveReader.CoderMethod    := Item.CompressionMethod;
+  FArchiveReader.CoderLevel     := Item.CompressionLevel;
+  FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
+  FArchiveReader.CoderFilter    := Item.CompressionFilter;
+  FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
+  FArchiveReader.CoderBlock     := Item.CompressionBlock;
 
-  FSwapWriter   .StartHash  (Item.CheckMethod);
-  FSwapWriter   .StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
-  FSwapWriter   .StartCoder (caStore);
-
-  Count := Item.FUncompressedSize div SizeOf(Buffer);
-  while (Count <> 0) and (ExitStatus = esNoError) do
+  FSwapWriter.HashMethod        := Item.CheckMethod;
+  FSwapWriter.CipherMethod      := Item.EncryptionMethod;
+  FSwapWriter.CipherKey         := GetCipherKey(EncryptionParams);
+  FSwapWriter.CoderMethod       := caStore;
   begin
-    FArchiveReader.Decode(@Buffer[0], SizeOf(Buffer));
-    FSwapWriter   .Write (@Buffer[0], SizeOf(Buffer));
-    DoProgress(SizeOf(Buffer));
-    Dec(Count);
+    Encode(FArchiveReader, FSwapWriter, Item.UncompressedSize);
   end;
-  Count := Item.FUncompressedSize mod SizeOf(Buffer);
-  FArchiveReader.Decode(@Buffer[0], Count);
-  FSwapWriter   .Write (@Buffer[0], Count);
-  FArchiveReader.FinishCoder;
-  DoProgress(SizeOf(Buffer));
 
-  if (Item.CheckDigest    <>    FSwapWriter.FinishHash) or
-     (Item.CheckDigestAux <> FArchiveReader.FinishHash) then SetExitStatus(esHashError);
-  *)
+  if Item.CheckMethod <> haNul then
+    if Item.CheckDigest <> FSwapWriter.HashDigest then
+      SetExitStatus(esHashError);
 end;
 
 procedure TArchiver.DecodeToNul(Item: TArchiveItem);
@@ -1382,61 +1370,44 @@ begin
 
   if Item.CheckMethod <> haNul then
     if Item.FCheckDigest <> Destination.HashDigest then
-    begin
       SetExitStatus(esHashError);
-    end;
-
   FreeAndNil(Destination);
 end;
 
 procedure TArchiver.DecodeToFile(Item: TArchiveItem);
 var
-  Count: int64;
-  Buffer: TBuffer;
-  Stream: TFileWriter;
+  Destination: TFileWriter;
 begin
+  Destination := TFileWriter.Create(Item.FExternalFileName, FOnRequestBlankImage, 0);
+  FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
 
-  (*
-  Stream := TFileWriter.Create(Item.FExternalFileName, FOnRequestBlankImage, 0);
+  Destination.HashMethod        := Item.CheckMethod;
+  Destination.CipherMethod      := caNul;
+  Destination.CoderMethod       := caStore;
 
-  FArchiveReader.Seek     (Item.FDiskNumber, Item.FDiskSeek);
-  FArchiveReader.StartHash  (Item.CheckMethod);
-  FArchiveReader.StartCipher(Item.EncryptionMethod, GetCipherKey(EncryptionParams));
-  FArchiveReader.StartCoder (Item.CompressionMethod);
-  FArchiveReader.SetCompressionLevel    (Item.CompressionLevel);
-  FArchiveReader.SetCompressionLevelAux (Item.CompressionLevelAux);
-  FArchiveReader.SetCompressionFilter   (Item.CompressionFilter);
-  FArchiveReader.SetCompressionFilterAux(Item.CompressionFilterAux);
-
-          Stream.StartHash  (Item.CheckMethod);
-          Stream.StartCipher(caNul, '');
-          Stream.StartCoder (caStore);
-
-  Count := Item.FUncompressedSize div SizeOf(Buffer);
-  while (Count <> 0) and (ExitStatus = esNoError) do
+  FArchiveReader.HashMethod     := haNul;
+  FArchiveReader.CipherMethod   := Item.EncryptionMethod;
+  FArchiveReader.CipherKey      := GetCipherKey(EncryptionParams);
+  FArchiveReader.CoderMethod    := Item.CompressionMethod;
+  FArchiveReader.CoderLevel     := Item.CompressionLevel;
+  FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
+  FArchiveReader.CoderFilter    := Item.CompressionFilter;
+  FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
+  FArchiveReader.CoderBlock     := Item.CompressionBlock;
   begin
-    FArchiveReader.Decode(@Buffer[0], SizeOf(Buffer));
-            Stream.Write (@Buffer[0], SizeOf(Buffer));
-    DoProgress(SizeOf(Buffer));
-    Dec(Count);
+    Encode(FArchiveReader, Destination, Item.UncompressedSize);
   end;
-  Count := Item.FUncompressedSize mod SizeOf(Buffer);
-  FArchiveReader.Decode(@Buffer[0], Count);
-          Stream.Write (@Buffer[0], Count);
-  FArchiveReader.FinishCoder;
-  DoProgress(SizeOf(Buffer));
 
-  if (Item.CheckDigest    <>         Stream.FinishHash) or
-     (Item.CheckDigestAux <> FArchiveReader.FinishHash) then SetExitStatus(esHashError);
-  FreeAndNil(Stream);
+  if Item.CheckMethod <> haNul then
+    if Item.FCheckDigest <> Destination.HashDigest then
+      SetExitStatus(esHashError);
+  FreeAndNil(Destination);
 
   if ExitStatus = esNoError then
   begin
-    FileSetAttr(Item.FExternalFileName, Item.FAttributes);
     FileSetDate(Item.FExternalFileName, Item.FLastModifiedTime);
+    FileSetAttr(Item.FExternalFileName, Item.FAttributes);
   end;
-
-  *)
 end;
 
 // TArchiver # OPEN/CLOSE ARCHIVE #
@@ -1482,6 +1453,7 @@ begin
       aitDecode:          DoMessage(Format(cmSwapping, [Item.FFileName]));
       aitDecodeAndUpdate: DoMessage(Format(cmDecoding, [Item.FFileName]));
     end;
+
     case Item.FTag of
       aitDecode:          DecodeToSwap(Item);
       aitDecodeAndUpdate: DecodeToNul(Item);
