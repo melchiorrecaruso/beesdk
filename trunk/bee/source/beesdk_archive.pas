@@ -1113,11 +1113,13 @@ begin
   // [1] write central directory items
   Stream.WriteDWord(ARCHIVE_CENTRALDIR_MARKER);
   Pack;
-  for I := 0 to FItems.Count - 1 do
-  begin
-    Stream.WriteInfWord(acditFILE);
-    TArchiveItem(FItems[I]).Write(Stream);
-  end;
+
+  if FItems.Count > 0 then
+    for I := 0 to FItems.Count - 1 do
+    begin
+      Stream.WriteInfWord(acditFILE);
+      TArchiveItem(FItems[I]).Write(Stream);
+    end;
   Stream.WriteInfWord(acditEND);
 
   // [2] write central directory end
@@ -1423,8 +1425,8 @@ begin
     if ExitStatus = esNoError then
     begin
       FArchiveName := aArchiveName;
-      if FCentralDirectory.Count = 0 then
-        SetExitStatus(esArchiveTypeError);
+      //if FCentralDirectory.Count = 0 then
+      //  SetExitStatus(esArchiveTypeError);
     end;
 
   end else
@@ -1450,12 +1452,12 @@ begin
     if ExitStatus <> esNoError then Break;
     Item := FCentralDirectory.Items[I];
     case Item.FTag of
-      aitDecode:          DoMessage(Format(cmSwapping, [Item.FFileName]));
+      aitDecode:    DoMessage(Format(cmSwapping, [Item.FFileName]));
       aitDecAndUpd: DoMessage(Format(cmDecoding, [Item.FFileName]));
     end;
 
     case Item.FTag of
-      aitDecode:          DecodeToSwap(Item);
+      aitDecode:    DecodeToSwap(Item);
       aitDecAndUpd: DecodeToNul(Item);
     end;
   end;
@@ -2106,10 +2108,14 @@ begin
     begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-      if Item.FTag in [aitUpdate, aitDecAndUpd] then
-      begin
-        DoMessage(Format(cmDeleting, [Item.FileName]));
-        FCentralDirectory.Delete(I);
+      case Item.FTag of
+        aitUpdate:    DoMessage(Format(cmDeleting, [Item.FileName]));
+        aitDecAndUpd: DoMessage(Format(cmDeleting, [Item.FileName]));
+      end;
+
+      case Item.FTag of
+        aitUpdate:    FCentralDirectory.Delete(I);
+        aitDecAndUpd: FCentralDirectory.Delete(I);
       end;
     end;
 
