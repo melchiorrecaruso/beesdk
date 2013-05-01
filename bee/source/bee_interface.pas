@@ -36,6 +36,7 @@ const
   esCmdLineError      = 101;
   esAllocMemError     = 102;
   esUnknowError       = 103;
+  esCaseError         = 104;
 
   esArchiveTypeError  = 111;
   esArchiveVerError   = 112;
@@ -70,6 +71,7 @@ implementation
       esCmdLineError:      Result := 'Command line error (exit code #101) - time elapsed %s seconds.';
       esAllocMemError:     Result := 'Allocation memory error (exit code #102) - time elapsed %s seconds.';
       esUnknowError:       Result := 'Unknow error (exit code #103) - time elapsed %s seconds.';
+      esCaseError:         Result := 'Case statement error (exit code #104) - time elapsed %s seconds.';
 
       esArchiveTypeError:  Result := 'Archive type error (exit code #111) - time elapsed %s seconds.';
       esArchiveVerError:   Result := 'Archive version error (exit code #112) - time elapsed %s seconds.';

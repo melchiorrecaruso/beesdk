@@ -114,7 +114,7 @@ type
   TArchiveEncryptionFlags = set of TArchiveEncryptionFlag;
 
   /// archive item tag
-  TArchiveItemTag = (aitNone, aitAdd, aitUpdate, aitDecode, aitDecodeAndUpdate);
+  TArchiveItemTag = (aitNone, aitAdd, aitUpdate, aitDecode, aitDecAndUpd);
 
   /// archive item
   TArchiveItem = class(TObject)
@@ -1451,12 +1451,12 @@ begin
     Item := FCentralDirectory.Items[I];
     case Item.FTag of
       aitDecode:          DoMessage(Format(cmSwapping, [Item.FFileName]));
-      aitDecodeAndUpdate: DoMessage(Format(cmDecoding, [Item.FFileName]));
+      aitDecAndUpd: DoMessage(Format(cmDecoding, [Item.FFileName]));
     end;
 
     case Item.FTag of
       aitDecode:          DecodeToSwap(Item);
-      aitDecodeAndUpdate: DecodeToNul(Item);
+      aitDecAndUpd: DecodeToNul(Item);
     end;
   end;
   FreeAndNil(FSwapWriter);
@@ -1816,7 +1816,6 @@ begin
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
-
     Item := FCentralDirectory.Items[I];
     if Item.FTag = aitUpdate then
     begin
@@ -1903,6 +1902,7 @@ begin
       case Item.FTag of
         aitUpdate: DecodeToFile(Item);
         aitDecode: DecodeToNul (Item);
+        else       SetExitStatus(esCaseError);
       end;
     end;
   end;
@@ -1929,6 +1929,7 @@ begin
       case Item.FTag of
         aitUpdate: DecodeToNul(Item);
         aitDecode: DecodeToNul(Item);
+        else       SetExitStatus(esCaseError);
       end;
     end;
   end;
@@ -1946,7 +1947,6 @@ begin
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
-
     Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitUpdate] then
     begin
@@ -2000,6 +2000,7 @@ begin
       case Item.FTag of
         aitNone:   DoMessage(Format(cmCopying,  [Item.FileName]));
         aitUpdate: DoMessage(Format(cmRenaming, [Item.FileName]));
+        else       SetExitStatus(esCaseError);
       end;
 
       EncodeFromArchive(Item);
@@ -2020,7 +2021,6 @@ begin
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
-
     Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitUpdate] then
     begin
@@ -2063,7 +2063,7 @@ begin
         Item := FCentralDirectory.Items[J];
         case Item.FTag of
           aitNone:   Item.FTag := aitDecode;
-          aitUpdate: Item.FTag := aitDecodeAndUpdate;
+          aitUpdate: Item.FTag := aitDecAndUpd;
         end;
         if Item.FTag in [aitDecode] then
           FIsNeededToSwap := TRUE;
@@ -2083,7 +2083,7 @@ begin
       aitNone:            Inc(FTotalSize, Item.CompressedSize);
     //aitUpdate:          nothing to do
       aitDecode:          Inc(FTotalSize, Item.UncompressedSize * 2);
-      aitDecodeAndUpdate: Inc(FTotalSize, Item.UncompressedSize);
+      aitDecAndUpd: Inc(FTotalSize, Item.UncompressedSize);
     end;
   end;
 end;
@@ -2104,9 +2104,9 @@ begin
     if FIsNeededToSwap then Swapping;
     for I := FCentralDirectory.Count - 1 downto 0 do
     begin
-      if ExitStatus = esNoError then Break;
+      if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
-      if Item.FTag in [aitUpdate, aitDecodeAndUpdate] then
+      if Item.FTag in [aitUpdate, aitDecAndUpd] then
       begin
         DoMessage(Format(cmDeleting, [Item.FileName]));
         FCentralDirectory.Delete(I);
@@ -2125,6 +2125,7 @@ begin
       case Item.FTag of
         aitNone:   EncodeFromArchive(Item);
         aitDecode: EncodeFromSwap   (Item);
+        else       SetExitStatus(esCaseError);
       end;
     end;
     if ExitStatus = esNoError then
@@ -2304,9 +2305,9 @@ begin
         Item := FCentralDirectory.Items[J];
         case Item.FTag of
           aitNone:            Item.FTag := aitDecode;
-          aitUpdate:          Item.FTag := aitDecodeAndUpdate;
+          aitUpdate:          Item.FTag := aitDecAndUpd;
         //aitDecode:          nothing to do
-        //aitDecodeAndUpdate: nothing to do
+        //aitDecAndUpd: nothing to do
         end;
       end;
       I := BackTear;
@@ -2325,7 +2326,7 @@ begin
       aitAdd:             Inc(FTotalSize, Item.FExternalFileSize);
       aitUpdate:          Inc(FTotalSize, Item.FExternalFileSize);
       aitDecode:          Inc(FTotalSize, Item.UncompressedSize + Item.UncompressedSize);
-      aitDecodeAndUpdate: Inc(FTotalSize, Item.UncompressedSize + Item.FExternalFileSize);
+      aitDecAndUpd: Inc(FTotalSize, Item.UncompressedSize + Item.FExternalFileSize);
     end;
   end;
 end;
@@ -2349,19 +2350,20 @@ begin
       if ExitStatus <> esNoError then Break;
       Item := FCentralDirectory.Items[I];
       case Item.FTag of
-        aitNone:            DoMessage(Format(cmCopying,  [Item.FileName]));
-        aitAdd:             DoMessage(Format(cmAdding,   [Item.FileName]));
-        aitUpdate:          DoMessage(Format(cmUpdating, [Item.FileName]));
-        aitDecode:          DoMessage(Format(cmEncoding, [Item.FileName]));
-        aitDecodeAndUpdate: DoMessage(Format(cmUpdating, [Item.FileName]));
+        aitNone:      DoMessage(Format(cmCopying,  [Item.FileName]));
+        aitAdd:       DoMessage(Format(cmAdding,   [Item.FileName]));
+        aitUpdate:    DoMessage(Format(cmUpdating, [Item.FileName]));
+        aitDecode:    DoMessage(Format(cmEncoding, [Item.FileName]));
+        aitDecAndUpd: DoMessage(Format(cmUpdating, [Item.FileName]));
       end;
 
       case Item.FTag of
-        aitNone:            EncodeFromArchive(Item);
-        aitAdd:             EncodeFromFile   (Item);
-        aitUpdate:          EncodeFromFile   (Item);
-        aitDecode:          EncodeFromSwap   (Item);
-        aitDecodeAndUpdate: EncodeFromFile   (Item);
+        aitNone:      EncodeFromArchive(Item);
+        aitAdd:       EncodeFromFile   (Item);
+        aitUpdate:    EncodeFromFile   (Item);
+        aitDecode:    EncodeFromSwap   (Item);
+        aitDecAndUpd: EncodeFromFile   (Item);
+        else          SetExitStatus(esCaseError);
       end;
     end;
     if ExitStatus = esNoError then
