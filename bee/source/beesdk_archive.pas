@@ -1904,6 +1904,7 @@ begin
       end;
 
       case Item.FTag of
+        aitNone:;  // nothing to do
         aitUpdate: DecodeToFile(Item);
         aitDecode: DecodeToNul (Item);
         else       SetExitStatus(esCaseError);
