@@ -220,8 +220,8 @@ var
   StartIndex: longint;
 begin
   case FCommandLine.Command of
-    cExtract : ExtractAs := ExtractAs + ExtractFileName(                       Item.FileName);
-    cXextract: ExtractAs := ExtractAs + DeleteFilePath (FCommandLine.cdOption, Item.FileName);
+    cExtract : ExtractAs := ExtractFileName(                       Item.FileName);
+    cXextract: ExtractAs := DeleteFilePath (FCommandLine.cdOption, Item.FileName);
   end;
 
   Confirm := arcCancel;
