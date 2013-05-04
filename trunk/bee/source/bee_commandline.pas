@@ -73,9 +73,9 @@ type
   // TCommandLineOptions
 
   TCommandLineOption = (
-    clacOption, clcdOption,  clcpOption,  clckpOption, clepOption, clppOption,
-    clrOption,  clsfxOption, clslsOption, clssOption,  cltOption,  cluOption,
-    clvmOption, clvsOption,  clwdOption,  clxOption,   clyOption);
+    clacOption, clcdOption, clcpOption,  clckpOption, clepOption,
+    clppOption, clrOption,  clsfxOption, clslsOption, clssOption,  cltOption,
+    cluOption,  clvmOption, clvsOption,  clwdOption,  clxOption,   clyOption);
 
   TCommandLineOptions = set of TCommandLineOption;
 
@@ -164,17 +164,17 @@ uses
 
 function GetUpdateMethod(const S: string): longint;
 begin
-  if UpCase(S) = 'ADD'           then Result := 0 else
-  if UpCase(S) = 'UPDATE'        then Result := 1 else
-  if UpCase(S) = 'REPLACE'       then Result := 2 else
-  if UpCase(S) = 'QUERY'         then Result := 3 else
-  if UpCase(S) = 'ADDUPDATE'     then Result := 4 else
-  if UpCase(S) = 'ADDREPLACE'    then Result := 5 else
-  if UpCase(S) = 'ADDQUERY'      then Result := 6 else
-  if UpCase(S) = 'ADDAUTORENAME' then Result := 7 else Result := -1;
+  if UpCase(S) = '0' then Result := 0 else
+  if UpCase(S) = '1' then Result := 1 else
+  if UpCase(S) = '2' then Result := 2 else
+  if UpCase(S) = '3' then Result := 3 else
+  if UpCase(S) = '4' then Result := 4 else
+  if UpCase(S) = '5' then Result := 5 else
+  if UpCase(S) = '6' then Result := 6 else
+  if UpCase(S) = '7' then Result := 7 else Result := -1;
 end;
 
-function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
+function TryStrWithMultToQWord(var S: string; out Q: qword) : boolean;
 var
   I: longint;
   J: extended;
@@ -601,60 +601,26 @@ begin
       if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
       begin
         // options...
-        if Pos('-AC', UpperCase(S)) = 1 then
-          ProcessACOption(S)
-        else
-        if Pos('-CD', UpperCase(S)) = 1 then
-          ProcessCDOption(S)
-        else
-        if Pos('-CKP', UpperCase(S)) = 1 then
-          ProcessCKPOption(S)
-        else
-        if Pos('-CP', UpperCase(S)) = 1 then
-          ProcessCPOption(S)
-        else
-        if Pos('-EP', UpperCase(S)) = 1 then
-          ProcessEPOption(S)
-        else
-        if Pos('-PP', UpperCase(S)) = 1 then
-          ProcessPPOption(S)
-        else
-        if Pos('-R', UpperCase(S)) = 1 then
-          ProcessROption(S)
-        else
-        if Pos('-SFX', UpperCase(S)) = 1 then
-          ProcessSFXOption(S)
-        else
-        if Pos('-SLS', UpperCase(S)) = 1 then
-          ProcessSLSOption(S)
-        else
-        if Pos('-SS', UpperCase(S)) = 1 then
-          ProcessSSOption(S)
-        else
-        if Pos('-T', UpperCase(S)) = 1 then
-          ProcessTOption(S)
-        else
-        if Pos('-U', UpperCase(S)) = 1 then
-          ProcessUOption(S)
-        else
-        if Pos('-VM', UpperCase(S)) = 1 then
-          ProcessVMOption(S)
-        else
-        if Pos('-VS', UpperCase(S)) = 1 then
-          ProcessVSOption(S)
-        else
-        if Pos('-WD', UpperCase(S)) = 1 then
-          ProcessWDOption(S)
-        else
-        if Pos('-X', UpperCase(S)) = 1 then
-          ProcessXOption(S)
-        else
-        if Pos('-Y', UpperCase(S)) = 1 then
-          ProcessYOption(S)
-        else
+        if Pos('-AC',  UpperCase(S)) = 1 then ProcessACOption (S) else
+        if Pos('-CD',  UpperCase(S)) = 1 then ProcessCDOption (S) else
+        if Pos('-CKP', UpperCase(S)) = 1 then ProcessCKPOption(S) else
+        if Pos('-CP',  UpperCase(S)) = 1 then ProcessCPOption (S) else
+        if Pos('-EP',  UpperCase(S)) = 1 then ProcessEPOption (S) else
+        if Pos('-PP',  UpperCase(S)) = 1 then ProcessPPOption (S) else
+        if Pos('-R',   UpperCase(S)) = 1 then ProcessROption  (S) else
+        if Pos('-SFX', UpperCase(S)) = 1 then ProcessSFXOption(S) else
+        if Pos('-SLS', UpperCase(S)) = 1 then ProcessSLSOption(S) else
+        if Pos('-SS',  UpperCase(S)) = 1 then ProcessSSOption (S) else
+        if Pos('-T',   UpperCase(S)) = 1 then ProcessTOption  (S) else
+        if Pos('-U',   UpperCase(S)) = 1 then ProcessUOption  (S) else
+        if Pos('-VM',  UpperCase(S)) = 1 then ProcessVMOption (S) else
+        if Pos('-VS',  UpperCase(S)) = 1 then ProcessVSOption (S) else
+        if Pos('-WD',  UpperCase(S)) = 1 then ProcessWDOption (S) else
+        if Pos('-X',   UpperCase(S)) = 1 then ProcessXOption  (S) else
+        if Pos('-Y',   UpperCase(S)) = 1 then ProcessYOption  (S) else
           SetExitStatus(esCmdLineError);
-      end else
 
+      end else
         if FArchiveName = '' then
           ProcessArchiveName(S)
         else

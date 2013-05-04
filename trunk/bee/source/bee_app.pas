@@ -113,7 +113,7 @@ begin
   FCommandLine := TCommandLine.Create;
   FCommandLine.Execute;
   { set update method }
-  FUpdateMethod := umAddUpdate;
+  FUpdateMethod := umAddQuery;
   if cluOption in FCommandLine.Options then
     FUpdateMethod := FCommandLine.uOption;
   { set if assume yes on all queries }
@@ -220,8 +220,8 @@ var
   StartIndex: longint;
 begin
   case FCommandLine.Command of
-    cExtract : ExtractAs := ExtractFileName(                       Item.FileName);
-    cXextract: ExtractAs := DeleteFilePath (FCommandLine.cdOption, Item.FileName);
+    cExtract : ExtractAs := ExtractAs + ExtractFileName(                       Item.FileName);
+    cXextract: ExtractAs := ExtractAs + DeleteFilePath (FCommandLine.cdOption, Item.FileName);
   end;
 
   Confirm := arcCancel;
