@@ -126,12 +126,12 @@ type
     FList: TList;
     function GetCount: integer;
     function GetItem(Index: longint): TCustomSearchRec;
-    procedure RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMethod);
+    procedure RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: boolean);
     function CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMethod);
+    procedure Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: boolean);
     procedure Clear;
     property Count: integer read GetCount;
     property Items[Index: longint]: TCustomSearchRec read GetItem;
@@ -499,7 +499,7 @@ begin
   Result.LastModifiedTime := Rec.Time;
 end;
 
-procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMethod);
+procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: boolean);
 var
   Error: longint;
   Rec: TSearchRec;
@@ -510,19 +510,10 @@ begin
   Mask := ExcludeTrailingBackSlash(Mask);
   if DirectoryExists(Mask) then
   begin
-    Recursive := rmFull;
+    Recursive := TRUE;
     Mask := IncludeTrailingBackSlash(Mask) + '*';
   end;
   RecPath := ExtractFilePath(Mask);
-
-  //  recursive rmWildCard mode...
-  if Recursive = rmWildCard then
-  begin
-    if FileNameHasWildCards(Mask) then
-      Recursive := rmFull
-    else
-      Recursive := rmNone;
-  end;
 
   // search filemask ...
   Error := FindFirst(RecPath + '*', faAnyFile, Rec);
@@ -535,7 +526,7 @@ begin
         if not FileNameMatch(RecName, ExcludeMasks, Recursive) then
           FList.Add(CreateItem(RecPath, Rec));
     end else
-      if (Recursive <> rmNone) and (Rec.Name <> '.') and (Rec.Name <> '..') then
+      if (Recursive) and (Rec.Name <> '.') and (Rec.Name <> '..') then
         RecursiveScan(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), ExcludeMasks, Recursive);
 
     Error := FindNext(Rec);
@@ -543,7 +534,7 @@ begin
   FindClose(Rec);
 end;
 
-procedure TFileScanner.Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: TRecursiveMethod);
+procedure TFileScanner.Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: boolean);
 var
   I: longint;
   Masks: TStringList;

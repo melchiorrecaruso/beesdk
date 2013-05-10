@@ -71,9 +71,6 @@ const
   cmRenaming          = 'Renaming   %s';
   cmLoading           = 'Loading    %s';
 
-type
-  TRecursiveMethod = (rmNone, rmWildCard, rmFull);
-
 function SelfName: string;
 function SelfPath: string;
 
@@ -81,8 +78,8 @@ function GetDriveFreeSpace(const FileName: string): int64;
 
 { filename handling routines }
 
-function FileNameMatch(const FileName,         Mask:  string;      Recursive: TRecursiveMethod): boolean; overload;
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMethod): boolean; overload;
+function FileNameMatch(const FileName,         Mask:  string;      Recursive: boolean): boolean; overload;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean; overload;
 
 
 function FileNameHasWildcards(const FileName: string): boolean;
@@ -100,10 +97,9 @@ function DeleteFilePath(const FilePath, FileName: string): string;
 function DeleteFileDrive(const FileName: string): string;
 
 
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMethod);
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: boolean);
 
 {  }
-
 
 
 { time handling routines }
@@ -261,7 +257,7 @@ begin
         end;
 end;
 
-function FileNameMatch(const FileName, Mask: string; Recursive: TRecursiveMethod): boolean;
+function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean;
 var
   iFileDrive: string;
   iFilePath:  string;
@@ -290,15 +286,7 @@ begin
     end;
   end;
 
-  if Recursive = rmWildCard then
-  begin
-    if FileNameHasWildCards(Mask) then
-      Recursive := rmFull
-    else
-      Recursive := rmNone;
-  end;
-
-  if Recursive = rmFull then
+  if Recursive then
   begin
     iMaskPath := iMaskPath + '*';
   end;
@@ -307,7 +295,7 @@ begin
              MatchPattern(PChar(iFileName), PChar(iMaskName));
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: TRecursiveMethod): boolean;
+function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean;
 var
   I: longint;
 begin
@@ -409,7 +397,7 @@ begin
     Delete(Result, 1, 1);
 end;
 
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: TRecursiveMethod);
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: boolean);
 var
   I:     longint;
   Error: longint;

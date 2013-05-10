@@ -476,8 +476,9 @@ begin
     for I := 0 to FCommandLine.FileMasks.Count - 1 do
       Scanner.Scan(
         FCommandLine.FileMasks[I],
+        FCommandLine.rOption[I],
         FCommandLine.xOptions,
-        FCommandLine.rOption);
+        FCommandLine.xrOption[I]);
 
     for I := 0 to Scanner.Count - 1 do
       FArchiver.Tag(Scanner.Items[I]);
