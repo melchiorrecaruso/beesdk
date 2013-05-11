@@ -126,12 +126,13 @@ type
     FList: TList;
     function GetCount: integer;
     function GetItem(Index: longint): TCustomSearchRec;
-    procedure RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: boolean);
+    procedure RecursiveScan(Mask: string; Recursive: boolean);
     function CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: boolean);
+    procedure Add(const Mask: string; Recursive: boolean);
+    procedure Delete(const Mask: string; Recursive: boolean);
     procedure Clear;
     property Count: integer read GetCount;
     property Items[Index: longint]: TCustomSearchRec read GetItem;
@@ -499,7 +500,7 @@ begin
   Result.LastModifiedTime := Rec.Time;
 end;
 
-procedure TFileScanner.RecursiveScan(Mask: string; ExcludeMasks: TStringList; Recursive: boolean);
+procedure TFileScanner.RecursiveScan(Mask: string; Recursive: boolean);
 var
   Error: longint;
   Rec: TSearchRec;
@@ -523,18 +524,17 @@ begin
     if (Rec.Attr and faDirectory) = 0 then
     begin
       if FileNameMatch(RecName, Mask, Recursive) then
-        if not FileNameMatch(RecName, ExcludeMasks, Recursive) then
-          FList.Add(CreateItem(RecPath, Rec));
+        FList.Add(CreateItem(RecPath, Rec));
     end else
       if (Recursive) and (Rec.Name <> '.') and (Rec.Name <> '..') then
-        RecursiveScan(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), ExcludeMasks, Recursive);
+        RecursiveScan(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), Recursive);
 
     Error := FindNext(Rec);
   end; // end while error ...
   FindClose(Rec);
 end;
 
-procedure TFileScanner.Scan(const Mask: string; ExcludeMasks: TStringList; Recursive: boolean);
+procedure TFileScanner.Add(const Mask: string; Recursive: boolean);
 var
   I: longint;
   Masks: TStringList;
@@ -542,9 +542,23 @@ begin
   Masks := TStringList.Create;
   ExpandFileMask(Mask, Masks, Recursive);
   for I := 0 to Masks.Count - 1 do
-  begin
-    RecursiveScan(Masks[I], ExcludeMasks, Recursive);
-  end;
+    RecursiveScan(Masks[I], Recursive);
+  Masks.Free;
+end;
+
+procedure TFileScanner.Delete(const Mask: string; Recursive: boolean);
+var
+  I, J: longint;
+  Masks: TStringList;
+begin
+  Masks := TStringList.Create;
+  ExpandFileMask(Mask, Masks, Recursive);
+  for I := Count -1 downto 0 do
+    for J := 0 to Masks.Count -1 do
+      if FileNameMatch(Items[I].Name, Masks[J], Recursive) then
+      begin
+        FList.Delete(I);
+      end;
   Masks.Free;
 end;
 
