@@ -474,12 +474,9 @@ begin
     DoMessage(Format(cmScanning, ['...']));
     Scanner := TFileScanner.Create;
     for I := 0 to FCommandLine.FileMasks.Count - 1 do
-      Scanner.Scan(
-        FCommandLine.FileMasks[I],
-        FCommandLine.rOption[I],
-        FCommandLine.xOptions,
-        FCommandLine.xrOption[I]);
-
+      Scanner.Add(FCommandLine.FileMasks[I], FCommandLine.rOption[I]);
+    for I := 0 to FCommandLine.xOptions.Count - 1 do
+      Scanner.Delete(FCommandLine.xOptions[I], FCommandLine.xrOption[I]);
     for I := 0 to Scanner.Count - 1 do
       FArchiver.Tag(Scanner.Items[I]);
     FreeAndNil(Scanner);
@@ -500,6 +497,10 @@ begin
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
         FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
+
+
+
+
 
     for I := 0 to FArchiver.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
