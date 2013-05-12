@@ -436,8 +436,6 @@ begin
     if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
 
-
-
 { time handling routines }
 
 function TimeDifference(X: double): string;

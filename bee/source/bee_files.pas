@@ -543,11 +543,9 @@ begin
   ExpandFileMask(Mask, Masks, Recursive);
   for I := 0 to Masks.Count - 1 do
   begin
-    Writeln('MASK = ', Masks[I]);
     RecursiveScan(Masks[I], Recursive);
   end;
   Masks.Free;
-  HALT;
 end;
 
 procedure TFileScanner.Delete(const Mask: string; Recursive: boolean);
@@ -557,8 +555,8 @@ var
 begin
   Masks := TStringList.Create;
   ExpandFileMask(Mask, Masks, Recursive);
-  for I := Count -1 downto 0 do
-    for J := 0 to Masks.Count -1 do
+  for I := Count - 1 downto 0 do
+    for J := 0 to Masks.Count - 1 do
       if FileNameMatch(Items[I].Name, Masks[J], Recursive) then
       begin
         FList.Delete(I);
