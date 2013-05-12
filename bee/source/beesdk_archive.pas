@@ -371,6 +371,7 @@ type
     property OnRename: TArchiveRenameEvent read FOnRename write FOnRename;
     property OnDelete: TArchiveDeleteEvent read FOnDelete write FOnDelete;
     property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
+    property OnComment: TArchiveCommentEvent read FOnComment write FOnComment;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property Comment: string read GetComment write SetComment;
@@ -1722,6 +1723,24 @@ begin
     end;
 
   while FSuspended do Sleep(250);
+end;
+
+procedure TArchiver.DoComment(Item: TArchiveItem);
+var
+  CommentAs: string;
+  Confirm: TArchiveConfirm;
+begin
+  if Assigned(FOnComment) then
+  begin
+    Confirm   := arcCancel;
+    CommentAs := Item.Comment;
+    FOnComment(Item, CommentAs, Confirm);
+    case Confirm of
+      arcOk:   Item.FComment := CommentAs;
+      //arcCancel:
+      arcQuit: SetExitStatus(esUserAbortError);
+    end;
+  end;
 end;
 
 // TArchiveWriter class
