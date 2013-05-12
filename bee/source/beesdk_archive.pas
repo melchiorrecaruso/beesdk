@@ -323,20 +323,23 @@ type
     procedure CheckSequences4Extract;
   private
     FOnRename: TArchiveRenameEvent;
+    function  DoRename(Item: TArchiveItem): TArchiveConfirm;
     procedure CheckTags4Rename;
     procedure CheckSequences4Rename;
   private
     FOnDelete: TArchiveDeleteEvent;
+    function  DoDelete(Item: TArchiveItem): TArchiveConfirm;
     procedure CheckTags4Delete;
     procedure CheckSequences4Delete;
   private
     FOnUpdate: TArchiveUpdateEvent;
+    function  DoUpdate(Item: TCustomSearchRec): TArchiveConfirm;
     procedure CheckTags4Update;
     procedure CheckSequences4Update;
     procedure Configure;
   private
     FOnComment: TArchiveCommentEvent;
-    procedure DoComment(Item: TArchiveItem);
+    function DoComment(Item: TArchiveItem): TArchiveConfirm;
   private
     procedure Swapping;
     procedure TestTemporaryArchive;
@@ -1725,20 +1728,18 @@ begin
   while FSuspended do Sleep(250);
 end;
 
-procedure TArchiver.DoComment(Item: TArchiveItem);
+function TArchiver.DoComment(Item: TArchiveItem): TArchiveConfirm;
 var
   CommentAs: string;
-  Confirm: TArchiveConfirm;
 begin
+  Result := arcCancel;
   if Assigned(FOnComment) then
   begin
-    Confirm   := arcCancel;
     CommentAs := Item.Comment;
-    FOnComment(Item, CommentAs, Confirm);
-    case Confirm of
-      arcOk:   Item.FComment := CommentAs;
-      //arcCancel:
-      arcQuit: SetExitStatus(esUserAbortError);
+    FOnComment(Item, CommentAs, Result);
+    if Result = arcOk then
+    begin
+      Item.FComment := CommentAs;
     end;
   end;
 end;
@@ -1967,12 +1968,27 @@ end;
 
 // TArchiver # RENAME #
 
+function TArchiver.DoRename(Item: TArchiveItem): TArchiveConfirm;
+var
+  RenameAs: string;
+begin
+  Result := arcCancel;
+  if Assigned(FOnRename) then
+  begin
+    RenameAs := Item.FFileName;
+    FOnRename(Item, RenameAs, Result);
+    if Result = arcOk then
+    begin
+      DoComment(Item);
+      Item.FFileName := RenameAs;
+    end;
+  end;
+end;
+
 procedure TArchiver.CheckTags4Rename;
 var
   I: longint;
   Item: TArchiveItem;
-  Confirm: TArchiveConfirm;
-  RenameAs: string;
 begin
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
@@ -1980,16 +1996,17 @@ begin
     Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitUpdate] then
     begin
-      Confirm := arcCancel;
-      if Assigned(FOnRename) then
-      begin
-        RenameAs := Item.FFileName;
-        FOnRename(Item, RenameAs, Confirm);
+      case  of
+        arcOk: begin
+          FIsNeededToRun  := TRUE;
+          FIsNeededToSave := TRUE;
+        end;
+        arcCancel: Item.FTag := aitNone;
+        arcQuit:   SetExitStatus(esUserAbortError);
       end;
 
-      case Confirm of
+      case DoRename(Item) of
         arcOk: begin
-          Item.FFileName  := RenameAs;
           FIsNeededToRun  := TRUE;
           FIsNeededToSave := TRUE;
         end;
@@ -2042,11 +2059,19 @@ end;
 
 // TArchiver # DELETE #
 
+function TArchiver.DoDelete(Item: TArchiveItem): TArchiveConfirm;
+begin
+  Result := arcCancel;
+  if Assigned(FOnDelete) then
+  begin
+    FOnDelete(Item, Result);
+  end;
+end;
+
 procedure TArchiver.CheckTags4Delete;
 var
   I: longint;
   Item: TArchiveItem;
-  Confirm: TArchiveConfirm;
 begin
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
@@ -2054,11 +2079,7 @@ begin
     Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitUpdate] then
     begin
-      Confirm := arcCancel;
-      if Assigned(FOnDelete) then
-        FOnDelete(Item, Confirm);
-
-      case Confirm of
+      case DoDelete(Item) of
         arcOk: begin
           FIsNeededToRun  := TRUE;
           FIsNeededToSave := TRUE;
@@ -2268,40 +2289,42 @@ begin
   FreeAndNil(Configuration);
 end;
 
-procedure TArchiver.CheckTags4Update;
+function TArchiver.DoUpdate(Item: TCustomSearchRec): TArchiveConfirm;
 var
-  X: longint;
-  I, J: longint;
-  Item: TCustomSearchRec;
-  Confirm: TArchiveConfirm;
+  I: longint;
   UpdateAs: string;
 begin
+  Result := arcCancel;
+  if Assigned(FOnUpdate) then
+  begin
+    UpdateAs := Item.Name;
+    FOnUpdate(Item, UpdateAs, Result);
+    if Result = arcOk then
+    begin
+      I := IndexOf(UpdateAs);
+      if I = -1 then
+        I := FCentralDirectory.Add(TArchiveItem.Create(UpdateAs))
+      else
+        if FCentralDirectory.Items[I].FTag = aitNone then
+          FCentralDirectory.Items[I].FTag := aitUpdate;
+      FCentralDirectory.Items[I].Update(Item);
+      DoComment(FCentralDirectory.Items[I]);
+    end;
+  end;
+end;
+
+procedure TArchiver.CheckTags4Update;
+var
+  I: longint;
+  Item: TCustomSearchRec;
+begin
   FSearchRecs.Sort(@CompareCustomSearchRec);
-  for J := 0 to FSearchRecs.Count - 1 do
+  for I := 0 to FSearchRecs.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
-
-    Item := TCustomSearchRec(FSearchRecs.Items[J]);
-
-    Confirm := arcCancel;
-    if Assigned(FOnUpdate) then
-    begin
-      UpdateAs := Item.Name;
-      FOnUpdate(Item, UpdateAs, Confirm);
-    end;
-
-    case Confirm of
+    Item := TCustomSearchRec(FSearchRecs.Items[I]);
+    case DoUpdate(Item) of
       arcOk: begin
-        I := IndexOf(UpdateAs);
-        if I = -1 then
-        begin
-          I := FCentralDirectory.Add(TArchiveItem.Create(UpdateAs));
-        end else
-        begin
-          if FCentralDirectory.Items[I].FTag = aitNone then
-            FCentralDirectory.Items[I].FTag := aitUpdate;
-        end;
-        FCentralDirectory.Items[I].Update(Item);
         FIsNeededToRun  := TRUE;
         FIsNeededToSave := TRUE;
       end;
@@ -2310,8 +2333,8 @@ begin
     end;
   end;
 
-  for J := 0 to FSearchRecs.Count - 1 do
-    TCustomSearchRec(FSearchRecs[J]).Destroy;
+  for I := 0 to FSearchRecs.Count - 1 do
+    TCustomSearchRec(FSearchRecs[I]).Destroy;
   FSearchRecs.Clear;
   Configure;
 end;
