@@ -542,8 +542,12 @@ begin
   Masks := TStringList.Create;
   ExpandFileMask(Mask, Masks, Recursive);
   for I := 0 to Masks.Count - 1 do
+  begin
+    Writeln('MASK = ', Masks[I]);
     RecursiveScan(Masks[I], Recursive);
+  end;
   Masks.Free;
+  HALT;
 end;
 
 procedure TFileScanner.Delete(const Mask: string; Recursive: boolean);

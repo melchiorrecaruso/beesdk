@@ -57,6 +57,7 @@ type
     FCommandLine: TCommandLine;
     FUpdateMethod: TUpdateMethod;
     FAssumeYesOnAllQueries: boolean;
+    procedure TagItems;
     { Help routines}
     function QueryToUser(const Message: string;
       var Confirm: TArchiveConfirm): boolean;
@@ -77,12 +78,10 @@ type
     procedure OpenArchive;
     procedure CloseArchive;
     { shells routines}
+    procedure CustomShell;
     procedure EncodeShell;
-    procedure DecodeShell(TestMode: boolean);
-    procedure DeleteShell;
     procedure HelpShell;
     procedure ListShell;
-    procedure RenameShell;
   public
     constructor Create;
     destructor Destroy; override;
@@ -97,7 +96,7 @@ implementation
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 1986 archiver utility, May 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 1991 archiver utility, May 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -140,14 +139,15 @@ begin
   DoMessage(FSelfName);
   if ExitStatus = esNoError then
     case FCommandLine.Command of
-      cAdd     : EncodeShell;
-      cDelete  : DeleteShell;
-      cExtract : DecodeShell(FALSE);
-      cHelp    : HelpShell;
-      cList    : ListShell;
-      cRename  : RenameShell;
-      cTest    : DecodeShell(TRUE);
-      cxExtract: DecodeShell(FALSE);
+      cAdd:       EncodeShell;
+      cDelete:    CustomShell;
+      cExtract:   CustomShell;
+      cHelp:      HelpShell;
+      cList:      ListShell;
+      cRename:    CustomShell;
+      cTest:      CustomShell;
+      cQuickTest: CustomShell;
+      cxExtract:  CustomShell;
     end;
 
   if FCommandLine.Command <> cHelp then
@@ -430,6 +430,43 @@ end;
 
 { shell procedures }
 
+procedure TBeeApp.TagItems;
+var
+  I, J: longint;
+begin
+  for I := 0 to FArchiver.Count - 1 do
+    for J := 0 to FCommandLine.FileMasks.Count - 1 do
+      if FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.FileMasks[J], FCommandLine.rOption[J]) then FArchiver.Tag(I);
+
+  for I := 0 to FArchiver.Count - 1 do
+    for J := 0 to FCommandLine.xOptions.Count - 1 do
+      if FileNameMatch(FArchiver.Items[I].FileName,
+        FCommandLine.xOptions[J], FCommandLine.xrOption[J]) then FArchiver.UnTag(I);
+end;
+
+procedure TBeeApp.CustomShell;
+var
+  I, J: longint;
+begin
+  OpenArchive;
+  if ExitStatus = esNoError then
+  begin
+    DoMessage(Format(cmScanning, ['...']));
+
+    TagItems;
+    case FCommandLine.Command of
+      cDelete:    FArchiver.DeleteTagged;
+      cExtract:   FArchiver.ExtractTagged;
+      cQuickTest: FArchiver.TestTagged;
+      cRename:    FArchiver.RenameTagged;
+      cTest:      FArchiver.TestTagged;
+      cxExtract:  FArchiver.ExtractTagged;
+    end;
+  end;
+  CloseArchive;
+end;
+
 procedure TBeeApp.HelpShell;
 begin
   DoMessage(Cr + 'Usage: Bee <command> [<switches>...] <archive-name> [<file-names>...]');
@@ -486,76 +523,6 @@ begin
   CloseArchive;
 end;
 
-procedure TBeeApp.DecodeShell(TestMode: boolean);
-var
-  I: longint;
-begin
-  OpenArchive;
-  if ExitStatus = esNoError then
-  begin
-    DoMessage(Format(cmScanning, ['...']));
-    for I := 0 to FArchiver.Count - 1 do
-      if FileNameMatch(FArchiver.Items[I].FileName,
-        FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
-
-
-
-
-
-    for I := 0 to FArchiver.Count - 1 do
-      if FileNameMatch(FArchiver.Items[I].FileName,
-        FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
-
-    case TestMode of
-      FALSE: FArchiver.ExtractTagged;
-      TRUE:  FArchiver.TestTagged;
-    end;
-  end;
-  CloseArchive;
-end;
-
-procedure TBeeApp.DeleteShell;
-var
-  I: longint;
-begin
-  OpenArchive;
-  if ExitStatus = esNoError then
-  begin
-    DoMessage(Format(cmScanning, ['...']));
-    for I := 0 to FArchiver.Count - 1 do
-      if FileNameMatch(FArchiver.Items[I].FileName,
-        FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
-
-    for I := 0 to FArchiver.Count - 1 do
-      if  FileNameMatch(FArchiver.Items[I].FileName,
-        FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
-
-    FArchiver.DeleteTagged;
-  end;
-  CloseArchive;
-end;
-
-procedure TBeeApp.RenameShell;
-var
-  I: longint;
-begin
-  OpenArchive;
-  if ExitStatus = esNoError then
-  begin
-    DoMessage(Format(cmScanning, ['...']));
-    for I := 0 to FArchiver.Count - 1 do
-      if FileNameMatch(FArchiver.Items[I].FileName,
-        FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
-
-    for I := 0 to FArchiver.Count - 1 do
-      if  FileNameMatch(FArchiver.Items[I].FileName,
-        FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
-
-    FArchiver.RenameTagged;
-  end;
-  CloseArchive;
-end;
-
 function CompareFilePath(P1, P2: pointer): longint;
 begin
   Result := AnsiCompareFileName(
@@ -584,13 +551,7 @@ begin
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
-    for I := 0 to FArchiver.Count - 1 do
-      if FileNameMatch(FArchiver.Items[I].FileName,
-        FCommandLine.FileMasks, FCommandLine.rOption) then FArchiver.Tag(I);
-
-    for I := 0 to FArchiver.Count - 1 do
-      if  FileNameMatch(FArchiver.Items[I].FileName,
-        FCommandLine.xOptions, FCommandLine.rOption) then FArchiver.UnTag(I);
+    TagItems;
 
     TotalSize       := 0;
     TotalPackedSize := 0;

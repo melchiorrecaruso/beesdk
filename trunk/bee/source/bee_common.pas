@@ -78,10 +78,7 @@ function GetDriveFreeSpace(const FileName: string): int64;
 
 { filename handling routines }
 
-function FileNameMatch(const FileName,         Mask:  string;      Recursive: boolean): boolean; overload;
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean; overload;
-
-
+function FileNameMatch(const FileName, Mask:  string; Recursive: boolean): boolean;
 function FileNameHasWildcards(const FileName: string): boolean;
 function FileNamePos(const FilePath, FileName: string): longint;
 function FileNameIsValid(const FileName: string): boolean;
@@ -295,20 +292,6 @@ begin
              MatchPattern(PChar(iFileName), PChar(iMaskName));
 end;
 
-function FileNameMatch(const FileName: string; Masks: TStringList; Recursive: boolean): boolean;
-var
-  I: longint;
-begin
-  Result := False;
-  for I := 0 to Masks.Count - 1 do
-  begin
-    if FileNameMatch(FileName, Masks[I], Recursive) then
-    begin
-      Result := True;
-      Break;
-    end;
-  end;
-end;
 
 function FileNameHasWildcards(const FileName: string): boolean;
 begin
@@ -415,8 +398,8 @@ begin
   {$ENDIF}
 
   FirstSlash := 0;
-  LastSlash := 0;
-  Card := False;
+  LastSlash  := 0;
+  Card       := False;
 
   for I := 1 to Length(Mask) do
     if Card = False then
