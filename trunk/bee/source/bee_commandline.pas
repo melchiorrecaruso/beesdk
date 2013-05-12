@@ -74,9 +74,10 @@ type
   // TCommandLineOptions
 
   TCommandLineOption = (
-    clacOption, clcdOption,  clcpOption,  clckpOption, clepOption, clppOption,
-    clrOption,  clsfxOption, clslsOption, clssOption,  cltOption,  cluOption,
-    clvmOption, clvsOption,  clwdOption,  clxOption,   clxrOption, clyOption);
+    clacOption, clcdOption,  clcpOption,  clckpOption, clepOption, clfcOption,
+    clppOption, clrOption,   clsfxOption, clslsOption, clssOption, cltOption,
+    cluOption,  clvmOption,  clvsOption,  clwdOption,  clxOption,  clxrOption,
+    clyOption);
 
   TCommandLineOptions = set of TCommandLineOption;
 
@@ -91,6 +92,9 @@ type
     FcpOption: string;
     FckpOption: string;
     FepOption: string;
+    FfcOption: string;
+
+
     FppOption: TProcessPriority;
     FrOption: string;
     FsfxOption: string;
@@ -116,6 +120,7 @@ type
     procedure ProcessCKPOption(var S: string);
     procedure ProcessCPOption (var S: string);
     procedure ProcessEPOption (var S: string);
+    procedure ProcessFCOption (var S: string);
     procedure ProcessPPOption (var S: string);
     procedure ProcessROption  (var S: string);
     procedure ProcessSFXOption(var S: string);
@@ -143,6 +148,7 @@ type
     property cpOption: string read FcpOption;
     property ckpOption: string read FckpOption;
     property epOption: string read FepOption;
+    property fcOption: string read FfcOption;
     property ppOption: TProcessPriority read FppOption;
     property rOption[Index: longint]: boolean read GetrOption;
     property sfxOption: string read FsfxOption;
@@ -353,6 +359,28 @@ begin
   begin
     if ExitStatus = esNoError then
       Include(FOptions, clepOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessFCOption(var S: string);
+begin
+  if Pos('-FC@:', UpperCase(S)) = 1 then
+  begin
+    Delete(S, 1, 5);
+    FfcOption := LoadFromFile(S);
+  end else
+    if Pos('-FC:', UpperCase(S)) = 1 then
+    begin
+      Delete(S, 1, 4);
+      FfcOption := S;
+    end else
+      SetExitStatus(esCmdLineError);
+
+  if Command in [cAdd, cDelete, cRename] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, clfcOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -680,24 +708,29 @@ begin
       if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
       begin
         // options...
-        if Pos('-AC@:',  UpperCase(S)) = 1 then ProcessACOption (S) else
+        if Pos('-AC@',   UpperCase(S)) = 1 then ProcessACOption (S) else
         if Pos('-AC:',   UpperCase(S)) = 1 then ProcessACOption (S) else
+
         if Pos('-CD:',   UpperCase(S)) = 1 then ProcessCDOption (S) else
         if Pos('-CKP:',  UpperCase(S)) = 1 then ProcessCKPOption(S) else
         if Pos('-CP:',   UpperCase(S)) = 1 then ProcessCPOption (S) else
         if Pos('-EP:',   UpperCase(S)) = 1 then ProcessEPOption (S) else
+
+        if Pos('-FC@',   UpperCase(S)) = 1 then ProcessFCOption (S) else
+        if Pos('-FC:',   UpperCase(S)) = 1 then ProcessFCOption (S) else
+
         if Pos('-PP:',   UpperCase(S)) = 1 then ProcessPPOption (S) else
         if Pos('-R:',    UpperCase(S)) = 1 then ProcessROption  (S) else
         if Pos('-R',     UpperCase(S)) = 1 then ProcessROption  (S) else
 
-        if Pos('-SFX@:', UpperCase(S)) = 1 then ProcessSFXOption(S) else
+        if Pos('-SFX@',  UpperCase(S)) = 1 then ProcessSFXOption(S) else
 
         if Pos('-SLS',   UpperCase(S)) = 1 then ProcessSLSOption(S) else
         if Pos('-SS',    UpperCase(S)) = 1 then ProcessSSOption (S) else
         if Pos('-T',     UpperCase(S)) = 1 then ProcessTOption  (S) else
         if Pos('-U:',    UpperCase(S)) = 1 then ProcessUOption  (S) else
         if Pos('-VM',    UpperCase(S)) = 1 then ProcessVMOption (S) else
-        if Pos('-VS',    UpperCase(S)) = 1 then ProcessVSOption (S) else
+        if Pos('-VS:',   UpperCase(S)) = 1 then ProcessVSOption (S) else
         if Pos('-WD:',   UpperCase(S)) = 1 then ProcessWDOption (S) else
 
         if Pos('-XR:',   UpperCase(S)) = 1 then ProcessXROption (S) else

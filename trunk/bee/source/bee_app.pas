@@ -421,6 +421,9 @@ begin
   // volume size
   if clvsOption in FCommandLine.Options then
     FArchiver.VolumeSize := FCommandLine.vsOption;
+
+
+
 end;
 
 procedure TBeeApp.CloseArchive;

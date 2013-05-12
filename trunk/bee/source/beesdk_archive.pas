@@ -246,6 +246,9 @@ type
   TArchiveDeleteEvent = procedure(Item: TArchiveItem;
     var Confirm: TArchiveConfirm) of object;
 
+  TArchiveCommentEvent = procedure(Item: TArchiveItem;
+    var CommentAs: string; var Confirm: TArchiveConfirm) of object;
+
   TArchiveUpdateEvent = procedure(SearchRec: TCustomSearchRec;
     var UpdateAs: string; var Confirm: TArchiveConfirm) of object;
 
@@ -331,6 +334,9 @@ type
     procedure CheckTags4Update;
     procedure CheckSequences4Update;
     procedure Configure;
+  private
+    FOnComment: TArchiveCommentEvent;
+    procedure DoComment(Item: TArchiveItem);
   private
     procedure Swapping;
     procedure TestTemporaryArchive;
@@ -1710,7 +1716,7 @@ procedure TArchiver.DoProgress(Value: longint); inline;
 begin
   Inc(FProcessedSize, Value);
   if Assigned(FOnProgress) then
-    if word(FProcessedSize) = 0 then
+    if Word(FProcessedSize) = 0 then
     begin
       FOnProgress(Round((FProcessedSize/FTotalSize)*100));
     end;
