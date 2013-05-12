@@ -80,7 +80,8 @@ type
     aifUncompressedSize,
     aifLastModifiedTime,
     aifAttributes,
-    aifComment);
+    aifComment,
+    aifLayer);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -127,6 +128,7 @@ type
     FLastModifiedTime: longint;
     FAttributes: longword;
     FComment: string;
+    FLayer: longword;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -165,6 +167,7 @@ type
     property LastModifiedTime: longint read FLastModifiedTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
+    property Layer: longword read FLayer;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -677,6 +680,7 @@ begin
   FLastModifiedTime     :=  0;
   FAttributes           :=  0;
   FComment              := '';
+  FLayer                :=  0;
   /// data descriptor property ///
   FDataDescriptorFlags := [
     addfCompressedSize,
@@ -738,6 +742,7 @@ begin
   if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := Stream.ReadInfWord;
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
+  if (aifLayer               in FFlags) then FLayer               := Stream.ReadInfWord;
   /// data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -770,6 +775,7 @@ begin
   if (aifLastModifiedTime    in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
   if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
+  if (aifLayer               in FFlags) then Stream.WriteInfWord(FLayer);
   /// data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (addfCompressedSize in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
@@ -944,6 +950,7 @@ begin
       if CurrentItem.FLastModifiedTime     = PreviusItem.FLastModifiedTime     then Exclude(CurrentItem.FFlags, aifLastModifiedTime)    else Include(CurrentItem.FFlags, aifLastModifiedTime);
       if CurrentItem.FAttributes           = PreviusItem.FAttributes           then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
       if CurrentItem.FComment              = PreviusItem.FComment              then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
+      if CurrentItem.FLayer                = PreviusItem.FLayer                then Exclude(CurrentItem.FFlags, aifLayer)               else Include(CurrentItem.FFlags, aifLayer);
       /// data descriptor property ///
       if CurrentItem.FCompressedSize       = PreviusItem.FCompressedSize       then Exclude(CurrentItem.FDataDescriptorFlags, addfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, addfCompressedSize);
       if CurrentItem.FDiskNumber           = PreviusItem.FDiskNumber           then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, addfDiskNumber);
@@ -985,6 +992,7 @@ begin
       if not(aifLastModifiedTime    in CurrentItem.FFlags) then CurrentItem.FLastModifiedTime    := PreviusItem.FLastModifiedTime;
       if not(aifAttributes          in CurrentItem.FFlags) then CurrentItem.FAttributes          := PreviusItem.FAttributes;
       if not(aifComment             in CurrentItem.FFlags) then CurrentItem.FComment             := PreviusItem.FComment;
+      if not(aifLayer               in CurrentItem.FFlags) then CurrentItem.FLayer               := PreviusItem.FLayer;
       /// data descryptor property ///
       if not(addfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
       if not(addfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
@@ -1979,8 +1987,9 @@ begin
     FOnRename(Item, RenameAs, Result);
     if Result = arcOk then
     begin
-      DoComment(Item);
-      Item.FFileName := RenameAs;
+      Result := DoComment(Item);
+      if Result = arcOk then
+        Item.FFileName := RenameAs;
     end;
   end;
 end;
@@ -1996,15 +2005,6 @@ begin
     Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitUpdate] then
     begin
-      case  of
-        arcOk: begin
-          FIsNeededToRun  := TRUE;
-          FIsNeededToSave := TRUE;
-        end;
-        arcCancel: Item.FTag := aitNone;
-        arcQuit:   SetExitStatus(esUserAbortError);
-      end;
-
       case DoRename(Item) of
         arcOk: begin
           FIsNeededToRun  := TRUE;
@@ -2308,7 +2308,7 @@ begin
         if FCentralDirectory.Items[I].FTag = aitNone then
           FCentralDirectory.Items[I].FTag := aitUpdate;
       FCentralDirectory.Items[I].Update(Item);
-      DoComment(FCentralDirectory.Items[I]);
+      Result := DoComment(FCentralDirectory.Items[I]);
     end;
   end;
 end;

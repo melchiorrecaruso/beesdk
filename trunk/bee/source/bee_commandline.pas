@@ -74,10 +74,10 @@ type
   // TCommandLineOptions
 
   TCommandLineOption = (
-    clacOption, clcdOption,  clcpOption,  clckpOption, clepOption, clfcOption,
-    clppOption, clrOption,   clsfxOption, clslsOption, clssOption, cltOption,
-    cluOption,  clvmOption,  clvsOption,  clwdOption,  clxOption,  clxrOption,
-    clyOption);
+    clcOption,  clcdOption,  clcpOption,  clckpOption, clepOption, clhcOption,
+    cllOption,  clppOption,  clrOption,   clsfxOption, clslsOption, clssOption,
+    cltOption,  cluOption,   clvmOption,  clvsOption,  clwdOption,  clxOption,
+    clxrOption, clyOption);
 
   TCommandLineOptions = set of TCommandLineOption;
 
@@ -87,12 +87,13 @@ type
   protected
     FCommand: TCommand;
     FOptions: TCommandLineOptions;
-    FacOption: string;
+    FcOption: string;
     FcdOption: string;
     FcpOption: string;
     FckpOption: string;
     FepOption: string;
-    FfcOption: string;
+    FhcOption: string;
+    FlOption: longword;
 
 
     FppOption: TProcessPriority;
@@ -115,12 +116,14 @@ type
     function  GetrOption(Index: longint): boolean;
     function  GetxrOption(Index: longint): boolean;
     procedure ProcessCommand(const S: string);
-    procedure ProcessACOption (var S: string);
+    procedure ProcessCOption (var S: string);
     procedure ProcessCDOption (var S: string);
     procedure ProcessCKPOption(var S: string);
     procedure ProcessCPOption (var S: string);
     procedure ProcessEPOption (var S: string);
-    procedure ProcessFCOption (var S: string);
+    procedure ProcessHCOption (var S: string);
+    procedure ProcessLOption  (var S: string);
+
     procedure ProcessPPOption (var S: string);
     procedure ProcessROption  (var S: string);
     procedure ProcessSFXOption(var S: string);
@@ -143,12 +146,13 @@ type
   public
     property Command: TCommand read FCommand;
     property Options: TCommandLineOptions read FOptions;
-    property acOption: string read FacOption;
+    property cOption: string read FcOption;
     property cdOption: string read FcdOption;
     property cpOption: string read FcpOption;
     property ckpOption: string read FckpOption;
     property epOption: string read FepOption;
-    property fcOption: string read FfcOption;
+    property hcOption: string read FhcOption;
+    property lOption: longword read FlOption;
     property ppOption: TProcessPriority read FppOption;
     property rOption[Index: longint]: boolean read GetrOption;
     property sfxOption: string read FsfxOption;
@@ -280,24 +284,24 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessACOption(var S: string);
+procedure TCommandLine.ProcessCOption(var S: string);
 begin
   if Pos('-AC@:', UpperCase(S)) = 1 then
   begin
     Delete(S, 1, 5);
-    FacOption := LoadFromFile(S);
+    FcOption := LoadFromFile(S);
   end else
     if Pos('-AC:', UpperCase(S)) = 1 then
     begin
       Delete(S, 1, 4);
-      FacOption := S;
+      FcOption := S;
     end else
       SetExitStatus(esCmdLineError);
 
   if Command in [cAdd, cDelete, cRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clacOption);
+      Include(FOptions, clcOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -363,24 +367,42 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessFCOption(var S: string);
+procedure TCommandLine.ProcessHCOption(var S: string);
 begin
   if Pos('-FC@:', UpperCase(S)) = 1 then
   begin
     Delete(S, 1, 5);
-    FfcOption := LoadFromFile(S);
+    FhcOption := LoadFromFile(S);
   end else
     if Pos('-FC:', UpperCase(S)) = 1 then
     begin
       Delete(S, 1, 4);
-      FfcOption := S;
+      FhcOption := S;
     end else
       SetExitStatus(esCmdLineError);
 
   if Command in [cAdd, cDelete, cRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clfcOption);
+      Include(FOptions, clhcOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessLOption(var S: string);
+var
+  Q: qword;
+begin
+  Delete(S, 1, 3);
+  if TryStrToQWord(S, Q) then
+    FlOption := Q
+  else
+    SetExitStatus(esCmdLineError);
+
+  if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, cllOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -708,18 +730,19 @@ begin
       if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
       begin
         // options...
-        if Pos('-AC@',   UpperCase(S)) = 1 then ProcessACOption (S) else
-        if Pos('-AC:',   UpperCase(S)) = 1 then ProcessACOption (S) else
+        if Pos('-C@',    UpperCase(S)) = 1 then ProcessCOption (S) else
+        if Pos('-C:',    UpperCase(S)) = 1 then ProcessCOption (S) else
 
         if Pos('-CD:',   UpperCase(S)) = 1 then ProcessCDOption (S) else
-        if Pos('-CKP:',  UpperCase(S)) = 1 then ProcessCKPOption(S) else
-        if Pos('-CP:',   UpperCase(S)) = 1 then ProcessCPOption (S) else
-        if Pos('-EP:',   UpperCase(S)) = 1 then ProcessEPOption (S) else
+        if Pos('-CK:',   UpperCase(S)) = 1 then ProcessCKPOption(S) else
+        if Pos('-CM:',   UpperCase(S)) = 1 then ProcessCPOption (S) else
+        if Pos('-CP:',   UpperCase(S)) = 1 then ProcessEPOption (S) else
 
-        if Pos('-FC@',   UpperCase(S)) = 1 then ProcessFCOption (S) else
-        if Pos('-FC:',   UpperCase(S)) = 1 then ProcessFCOption (S) else
+        if Pos('-HC@',   UpperCase(S)) = 1 then ProcessHCOption (S) else
+        if Pos('-HC:',   UpperCase(S)) = 1 then ProcessHCOption (S) else
+        if Pos('-L:',    UpperCase(S)) = 1 then ProcessLOption  (S) else
 
-        if Pos('-PP:',   UpperCase(S)) = 1 then ProcessPPOption (S) else
+        if Pos('-P:',    UpperCase(S)) = 1 then ProcessPPOption (S) else
         if Pos('-R:',    UpperCase(S)) = 1 then ProcessROption  (S) else
         if Pos('-R',     UpperCase(S)) = 1 then ProcessROption  (S) else
 
