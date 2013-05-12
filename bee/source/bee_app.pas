@@ -410,8 +410,8 @@ begin
   if clsfxOption in FCommandLine.Options then
     FArchiver.SelfExtractor := FCommandLine.sfxOption;
   // archive comment
-  if clacOption in FCommandLine.Options then
-    FArchiver.Comment := FCommandLine.acOption;
+  if clcOption in FCommandLine.Options then
+    FArchiver.Comment := FCommandLine.cOption;
   // test temporary archive
   if cltOption in FCommandLine.Options then
     FArchiver.TestTempArchive := FCommandLine.tOption;
