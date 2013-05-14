@@ -209,7 +209,8 @@ type
     // central directory magik seek property
     FCDMS_DiskSeek: longint;
   private
-    function GetCount : longint;
+    function GetLayers: longint;
+    function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
     function GetIndexOf(const FileName: string): longint;
   private
@@ -225,6 +226,7 @@ type
     procedure Clear;
     function IndexOf(const FileName: string): longint;
   public
+    property Layers: longint read GetLayers;
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property LastModifiedTime: longint read FCDE_LastModifiedTime;
@@ -674,7 +676,8 @@ begin
     aifUncompressedSize,
     aifLastModifiedTime,
     aifAttributes,
-    aifComment];
+    aifComment,
+    aifLayer];
   FVersionNeededToRead  :=  0;
   FUncompressedSize     :=  0;
   FLastModifiedTime     :=  0;
