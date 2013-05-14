@@ -81,7 +81,8 @@ type
     aifLastModifiedTime,
     aifAttributes,
     aifComment,
-    aifLayer);
+    aifLayer,
+    aifLayerModifiedTime);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -129,6 +130,7 @@ type
     FAttributes: longword;
     FComment: string;
     FLayer: longword;
+    FLayerModifiedTime: longint;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -168,6 +170,7 @@ type
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
     property Layer: longword read FLayer;
+    property LayerModifiedTime: longint read FLayerModifiedTime;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -209,7 +212,6 @@ type
     // central directory magik seek property
     FCDMS_DiskSeek: longint;
   private
-    function GetLayers: longint;
     function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
     function GetIndexOf(const FileName: string): longint;
@@ -226,7 +228,6 @@ type
     procedure Clear;
     function IndexOf(const FileName: string): longint;
   public
-    property Layers: longint read GetLayers;
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property LastModifiedTime: longint read FCDE_LastModifiedTime;
@@ -677,13 +678,15 @@ begin
     aifLastModifiedTime,
     aifAttributes,
     aifComment,
-    aifLayer];
-  FVersionNeededToRead  :=  0;
-  FUncompressedSize     :=  0;
-  FLastModifiedTime     :=  0;
-  FAttributes           :=  0;
-  FComment              := '';
-  FLayer                :=  0;
+    aifLayer,
+    aifLayerModifiedTime];
+  FVersionNeededToRead :=  0;
+  FUncompressedSize    :=  0;
+  FLastModifiedTime    :=  0;
+  FAttributes          :=  0;
+  FComment             := '';
+  FLayer               :=  0;
+  FLayerModifiedTime   :=  0;
   /// data descriptor property ///
   FDataDescriptorFlags := [
     addfCompressedSize,
@@ -728,11 +731,12 @@ end;
 procedure TArchiveItem.Update(SearchRec: TCustomSearchRec);
 begin
   /// item property ///
-  FLastModifiedTime := SearchRec.LastModifiedTime;
-  FAttributes       := SearchRec.Attributes;
+  FLastModifiedTime  := SearchRec.LastModifiedTime;
+  FAttributes        := SearchRec.Attributes;
+  FLayerModifiedTime := DateTimeToFileDate(Now);
   /// reserved property ///
-  FExternalFileName := SearchRec.Name;
-  FExternalFileSize := SearchRec.Size;
+  FExternalFileName  := SearchRec.Name;
+  FExternalFileSize  := SearchRec.Size;
 end;
 
 constructor TArchiveItem.Read(Stream: TFileReader);
