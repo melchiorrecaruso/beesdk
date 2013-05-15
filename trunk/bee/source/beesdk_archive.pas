@@ -364,7 +364,7 @@ type
     procedure Tag(Index: longint); overload;
     procedure Tag(SearchRec: TCustomSearchRec); overload;
     function IsTagged(Index: longint): boolean;
-    function IndexOf(const aFileName: string): longint;
+    function IndexOf(const aFileName: string; Layer: longint): longint;
 
     procedure TestTagged;
     procedure ExtractTagged;
