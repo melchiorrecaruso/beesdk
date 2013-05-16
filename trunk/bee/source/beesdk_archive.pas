@@ -152,8 +152,8 @@ type
     FEncryptionFlags: TArchiveEncryptionFlags;
     FEncryptionMethod: TCipherAlgorithm;
   protected
-    FTag: TArchiveItemTag;
     FIndex: longint;
+    FTag: TArchiveItemTag;
     FExternalFileName: string;
     FExternalFileSize: int64;
   public {methods}
@@ -364,7 +364,7 @@ type
     procedure Tag(Index: longint); overload;
     procedure Tag(SearchRec: TCustomSearchRec); overload;
     function IsTagged(Index: longint): boolean;
-    function IndexOf(const aFileName: string; Layer: longint): longint;
+    function IndexOf(const aFileName: string): longint;
 
     procedure TestTagged;
     procedure ExtractTagged;
@@ -841,9 +841,7 @@ function TArchiveCentralDirectory.Add(Item: TArchiveItem): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
-  // Item.Up := nil;
   Item.FIndex := FItems.Add(Item);
-
   if FItemsAux.Count <> 0 then
   begin
     Lo := 0;
@@ -865,8 +863,9 @@ begin
 
     if Hi = -2 then
     begin
-      // new layer:  FItemsBranch[Med].Up := Item;
-      SetExitStatus(esUnknowError);
+      // store in auxlist only last layer
+      if Item.Layer > TArchiveItem(FItemsAux[Med]).Layer then
+        FItemsAux.Items[Med] := Item;
     end else
     begin
       if I > 0 then
@@ -917,14 +916,29 @@ end;
 
 procedure TArchiveCentralDirectory.Delete(Index: longint);
 var
+  I: longint;
   Item: TArchiveItem;
+  ItemAux: TArchiveItem;
 begin
   Item := Items[Index];
   if Item.CompressionBlock = 0 then
     if Index < FItems.Count - 1 then
       Items[Index + 1].FCompressionBlock := 0;
 
-  FItemsAux.Delete(GetIndexOf(Item.FileName));
+  ItemAux := nil;
+  if Item.Layer > 0 then
+    for I := Item.Index - 1 downto 0 do
+      if TArchiveItem(FItems[I]).Layer = Item.Layer - 1 then
+        if AnsiCompareFileName(TArchiveItem(FItems[I]).FileName, Item.FileName) = 0 then
+        begin
+          ItemAux := TArchiveItem(FItems[I]);
+          Break;
+        end;
+
+  if ItemAux <> nil then
+    FItemsAux.Items[GetIndexOf(Item.FileName)] := ItemAux
+  else
+    FItemsAux.Delete(GetIndexOf(Item.FileName));
   FItems.Delete(Item.FIndex);
   Item.Destroy;
 end;
