@@ -153,6 +153,7 @@ type
     FEncryptionMethod: TCipherAlgorithm;
   protected
     FIndex: longint;
+    FIndexAux: longint;
     FTag: TArchiveItemTag;
     FExternalFileName: string;
     FExternalFileSize: int64;
@@ -215,6 +216,7 @@ type
     function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
     function GetIndexOf(const FileName: string): longint;
+    function CompareItems(Item1, Item2: TArchiveItem): longint;
   private
     procedure Pack;
     procedure UnPack;
@@ -724,6 +726,7 @@ begin
   /// reserved property ///
   FTag                  := aitAdd;
   FIndex                := -1;
+  FIndexAux             := -1;
   FExternalFileName     := '';
   FExternalFileSize     :=  0;
 end;
@@ -837,6 +840,15 @@ begin
   FItemsAux.Clear;
 end;
 
+function TArchiveCentralDirectory.CompareItems(Item1, Item2: TArchiveItem): longint;
+begin
+  Result := AnsiCompareFileName(Item1.FileName, Item2.FileName);
+  if Result = 0 then
+  begin
+    Result := Item1.Layer - Item2.Layer;
+  end;
+end;
+
 function TArchiveCentralDirectory.Add(Item: TArchiveItem): longint;
 var
   Lo, Med, Hi, I: longint;
@@ -849,8 +861,7 @@ begin
     while Hi >= Lo do
     begin
       Med := (Lo + Hi) div 2;
-      I := AnsiCompareFileName(Item.FileName,
-        TArchiveItem(FItemsAux[Med]).FileName);
+      I := CompareItems(Item, TArchiveItem(FItemsAux[Med]));
 
       if I > 0 then
         Lo := Med + 1
@@ -863,9 +874,7 @@ begin
 
     if Hi = -2 then
     begin
-      // store in auxlist only last layer
-      if Item.Layer > TArchiveItem(FItemsAux[Med]).Layer then
-        FItemsAux.Items[Med] := Item;
+      SetExitStatus(esUnknowError);
     end else
     begin
       if I > 0 then
@@ -874,7 +883,7 @@ begin
         FItemsAux.Insert(Med, Item);
     end;
   end else
-    FItemsAux.Add(Item);
+    Item.FIndexAux := FItemsAux.Add(Item);
 
   Result := Item.FIndex;
 end;
@@ -888,8 +897,7 @@ begin
   while Hi >= Lo do
   begin
     Med := (Lo + Hi) div 2;
-    I := AnsiCompareFileName(FileName,
-      TArchiveItem(FItemsAux[Med]).FileName);
+    I := AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Med]).FileName);
 
     if I > 0 then
       Lo := Med + 1
@@ -902,7 +910,14 @@ begin
 
   Result := -1;
   if Hi = -2 then
+  begin
+    while Med < FItemsAux.Count - 2 do
+      if AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Med + 1]).FileName) = 0 then
+        Inc(Med)
+      else
+        Break;
     Result := Med;
+  end;
 end;
 
 function TArchiveCentralDirectory.IndexOf(const FileName: string): longint;
@@ -918,27 +933,13 @@ procedure TArchiveCentralDirectory.Delete(Index: longint);
 var
   I: longint;
   Item: TArchiveItem;
-  ItemAux: TArchiveItem;
 begin
   Item := Items[Index];
   if Item.CompressionBlock = 0 then
     if Index < FItems.Count - 1 then
       Items[Index + 1].FCompressionBlock := 0;
 
-  ItemAux := nil;
-  if Item.Layer > 0 then
-    for I := Item.Index - 1 downto 0 do
-      if TArchiveItem(FItems[I]).Layer = Item.Layer - 1 then
-        if AnsiCompareFileName(TArchiveItem(FItems[I]).FileName, Item.FileName) = 0 then
-        begin
-          ItemAux := TArchiveItem(FItems[I]);
-          Break;
-        end;
-
-  if ItemAux <> nil then
-    FItemsAux.Items[GetIndexOf(Item.FileName)] := ItemAux
-  else
-    FItemsAux.Delete(GetIndexOf(Item.FileName));
+  FItemsAux.Delete(GetIndexOf(Item.FileName));
   FItems.Delete(Item.FIndex);
   Item.Destroy;
 end;
