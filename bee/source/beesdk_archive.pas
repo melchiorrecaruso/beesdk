@@ -32,11 +32,13 @@ unit BeeSDK_Archive;
 interface
 
 uses
+  Math,
   Classes,
   SysUtils,
 
   Bee_Crc,
   Bee_BlowFish,
+  Bee_Interface,
   Bee_MainPacker,
 
   Bee_Files,
@@ -224,9 +226,9 @@ type
     destructor Destroy; override;
     procedure Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
-    function Add(Item : TArchiveItem): longint;
-    procedure Delete(Index: longint);
     procedure Clear;
+    procedure Delete(Index: longint);
+    function Add(Item : TArchiveItem): longint;
     function IndexOf(const FileName: string; Layer: longword): longint;
   public
     property Items[Index: longint]: TArchiveItem read GetItem;
@@ -286,7 +288,7 @@ type
     FTestTempArchive: boolean;
     FVerboseMode: boolean;
     FVolumeSize: int64;
-    FLayer: longword;
+    FCreateNewLayer: boolean;
     // items
     FCentralDirectory: TArchiveCentralDirectory;
     FSearchRecs: TList;
@@ -366,7 +368,7 @@ type
     procedure Tag(Index: longint); overload;
     procedure Tag(SearchRec: TCustomSearchRec); overload;
     function IsTagged(Index: longint): boolean;
-    function IndexOf(const aFileName: string): longint;
+    function IndexOf(const aFileName: string; MaxLayer: longword): longint;
 
     procedure TestTagged;
     procedure ExtractTagged;
@@ -394,6 +396,7 @@ type
     property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
     property VerboseMode: boolean read FVerboseMode write FVerboseMode;
     property VolumeSize: int64 read FVolumeSize write FVolumeSize;
+    property CreateNewLayer: boolean read FCreateNewLayer write FCreateNewLayer;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
@@ -410,9 +413,6 @@ function SizeToStr(const Size: int64): string;
 function AttrToStr(Attr: longint): string;
 
 implementation
-
-uses
-  Bee_Interface;
 
 // ---
 
@@ -1232,6 +1232,7 @@ begin
   FTestTempArchive   := FALSE;
   FVolumeSize        := 0;
   FVerboseMode       := FALSE;
+  FCreateNewLayer       := FALSE;
   // items list
   FCentralDirectory  := TArchiveCentralDirectory.Create;
   FSearchRecs        := TList.Create;
@@ -1605,9 +1606,21 @@ end;
 
 // TArchiver # FIND #
 
-function TArchiver.IndexOf(const aFileName: string): longint;
+function TArchiver.IndexOf(const aFileName: string; MaxLayer: longword): longint;
 begin
-  Result := FCentralDirectory.IndexOf(aFileName, 0);
+  Result := FCentralDirectory.GetIndexAuxOf(aFileName, 0);
+  if Result <> -1 then
+  begin
+
+
+
+
+    Result := FCentralDirectory.Items[Result].FIndex;
+  end;
+
+
+
+
 end;
 
 // TArchiver # SUSPEND/TERMINATE #
@@ -2229,8 +2242,10 @@ end;
 procedure TArchiver.Configure;
 var
   I: longint;
-  Block: int64;
+  CurrentBlock: int64;
   CurrentItem: TArchiveItem;
+  CurrentLayer: longword;
+  CurrentLayerModifiedTime: longword;
   CurrentTable: TTableParameters;
   CurrentFileExt: string;
   PreviousFileExt: string;
@@ -2248,7 +2263,9 @@ begin
   Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetCoderLevelAux(FCompressionParams)));
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
-  Block := GetCoderBlock(FCompressionParams);
+  CurrentLayer             := 0;
+  CurrentLayerModifiedTime := DateTimeToFileDate(Now);
+  CurrentBlock := GetCoderBlock(FCompressionParams);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     CurrentItem := FCentralDirectory.Items[I];
@@ -2263,7 +2280,7 @@ begin
       // dictionary level
       Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
       CurrentItem.FCompressionLevelAux := GetCoderLevelAux(FCompressionParams);
-      // compression block
+      // compression CurrentBlock
       Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
       CurrentItem.FCompressionBlock := GetCoderBlock(FCompressionParams);
       // default compression table flag
@@ -2280,15 +2297,15 @@ begin
       // compression block option
       if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
       begin
-        Dec(Block, CurrentItem.FExternalFileSize);
-        if Block < 0 then
+        Dec(CurrentBlock, CurrentItem.FExternalFileSize);
+        if CurrentBlock < 0 then
         begin
-          Block := GetCoderBlock(FCompressionParams);
+          CurrentBlock := GetCoderBlock(FCompressionParams);
           CurrentItem.FCompressionBlock := 0;
         end;
       end else
       begin
-        Block := GetCoderBlock(FCompressionParams);
+        CurrentBlock := GetCoderBlock(FCompressionParams);
         CurrentItem.FCompressionBlock := 0;
       end;
       // BEE compression method
@@ -2300,7 +2317,6 @@ begin
         else
           CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
       end;
-
       // encryption method
       CurrentItem.FEncryptionMethod    := GetCipherAlgorithm(FEncryptionParams);
       // check method
@@ -2308,6 +2324,15 @@ begin
       CurrentItem.FCheckMethodAux      := GetHashAlgorithmAux(FCheckParams);
       // version needed to read
       CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);
+      // layer
+      CurrentItem.FLayer               := CurrentLayer;
+      CurrentItem.FLastModifiedTime    := CurrentLayerModifiedTime;
+    end else
+    begin
+      if FCreateNewLayer then
+        CurrentLayer := Max(CurrentLayer, CurrentItem.FLayer + 1)
+      else
+        CurrentLayer := Max(CurrentLayer, CurrentItem.FLayer);
     end;
   end;
   FreeAndNil(Configuration);
@@ -2326,11 +2351,13 @@ begin
     if Result = arcOk then
     begin
       I := IndexOf(UpdateAs);
-      if I = -1 then
+      if (I = -1) or FCreateNewLayer then
         I := FCentralDirectory.Add(TArchiveItem.Create(UpdateAs))
       else
         if FCentralDirectory.Items[I].FTag = aitNone then
           FCentralDirectory.Items[I].FTag := aitUpdate;
+
+
       FCentralDirectory.Items[I].Update(Item);
       Result := DoComment(FCentralDirectory.Items[I]);
     end;
