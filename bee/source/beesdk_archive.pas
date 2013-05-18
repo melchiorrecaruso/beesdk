@@ -153,7 +153,6 @@ type
     FEncryptionMethod: TCipherAlgorithm;
   protected
     FIndex: longint;
-    FIndexAux: longint;
     FTag: TArchiveItemTag;
     FExternalFileName: string;
     FExternalFileSize: int64;
@@ -215,8 +214,8 @@ type
   private
     function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
-    function GetIndexOf(const FileName: string): longint;
-    function CompareItems(Item1, Item2: TArchiveItem): longint;
+    function GetIndexAuxOf(const FileName: string; Layer: longword): longint;
+    function GetIndexOf(const FileName: string; Layer: longword): longint;
   private
     procedure Pack;
     procedure UnPack;
@@ -228,12 +227,12 @@ type
     function Add(Item : TArchiveItem): longint;
     procedure Delete(Index: longint);
     procedure Clear;
-    function IndexOf(const FileName: string): longint;
+    function IndexOf(const FileName: string; Layer: longword): longint;
   public
-    property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
-    property LastModifiedTime: longint read FCDE_LastModifiedTime;
+    property Count: longint read GetCount;
     property Comment: string read FCDE_Comment write FCDE_Comment;
+    property LastModifiedTime: longint read FCDE_LastModifiedTime;
   end;
 
   /// ...
@@ -287,6 +286,7 @@ type
     FTestTempArchive: boolean;
     FVerboseMode: boolean;
     FVolumeSize: int64;
+    FLayer: longword;
     // items
     FCentralDirectory: TArchiveCentralDirectory;
     FSearchRecs: TList;
@@ -726,7 +726,6 @@ begin
   /// reserved property ///
   FTag                  := aitAdd;
   FIndex                := -1;
-  FIndexAux             := -1;
   FExternalFileName     := '';
   FExternalFileSize     :=  0;
 end;
@@ -736,7 +735,6 @@ begin
   /// item property ///
   FLastModifiedTime  := SearchRec.LastModifiedTime;
   FAttributes        := SearchRec.Attributes;
-  FLayerModifiedTime := DateTimeToFileDate(Now);
   /// reserved property ///
   FExternalFileName  := SearchRec.Name;
   FExternalFileSize  := SearchRec.Size;
@@ -753,6 +751,7 @@ begin
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
   if (aifLayer               in FFlags) then FLayer               := Stream.ReadInfWord;
+  if (aifLayerModifiedTime   in FFlags) then FLayerModifiedTime   := Stream.ReadInfWord;
   /// data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -786,6 +785,7 @@ begin
   if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
   if (aifLayer               in FFlags) then Stream.WriteInfWord(FLayer);
+  if (aifLayerModifiedTime   in FFlags) then Stream.WriteInfWord(FLayerModifiedTime);
   /// data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (addfCompressedSize in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
@@ -840,15 +840,6 @@ begin
   FItemsAux.Clear;
 end;
 
-function TArchiveCentralDirectory.CompareItems(Item1, Item2: TArchiveItem): longint;
-begin
-  Result := AnsiCompareFileName(Item1.FileName, Item2.FileName);
-  if Result = 0 then
-  begin
-    Result := Item1.Layer - Item2.Layer;
-  end;
-end;
-
 function TArchiveCentralDirectory.Add(Item: TArchiveItem): longint;
 var
   Lo, Med, Hi, I: longint;
@@ -861,7 +852,11 @@ begin
     while Hi >= Lo do
     begin
       Med := (Lo + Hi) div 2;
-      I := CompareItems(Item, TArchiveItem(FItemsAux[Med]));
+      I := AnsiCompareFileName(Item.FileName, TArchiveItem(FItemsAux[Med]).FileName);
+      if I = 0 then
+      begin
+        I := Item.FLayer - TArchiveItem(FItemsAux[Med]).FLayer;
+      end;
 
       if I > 0 then
         Lo := Med + 1
@@ -883,12 +878,11 @@ begin
         FItemsAux.Insert(Med, Item);
     end;
   end else
-    Item.FIndexAux := FItemsAux.Add(Item);
-
+    FItemsAux.Add(Item);
   Result := Item.FIndex;
 end;
 
-function TArchiveCentralDirectory.GetIndexOf(const FileName: string): longint;
+function TArchiveCentralDirectory.GetIndexAuxOf(const FileName: string; Layer: longword): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
@@ -898,6 +892,10 @@ begin
   begin
     Med := (Lo + Hi) div 2;
     I := AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Med]).FileName);
+    if I = 0 then
+    begin
+      I := Layer - TArchiveItem(FItemsAux[Med]).FLayer;
+    end;
 
     if I > 0 then
       Lo := Med + 1
@@ -911,22 +909,22 @@ begin
   Result := -1;
   if Hi = -2 then
   begin
-    while Med < FItemsAux.Count - 2 do
-      if AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Med + 1]).FileName) = 0 then
-        Inc(Med)
-      else
-        Break;
     Result := Med;
   end;
 end;
 
-function TArchiveCentralDirectory.IndexOf(const FileName: string): longint;
+function TArchiveCentralDirectory.GetIndexOf(const FileName: string; Layer: longword): longint;
 begin
-  Result := GetIndexOf(FileName);
+  Result := GetIndexAuxOf(FileName, Layer);
   if Result <> -1 then
   begin
     Result := TArchiveItem(FItemsAux[Result]).FIndex;
   end;
+end;
+
+function TArchiveCentralDirectory.IndexOf(const FileName: string; Layer: longword): longint;
+begin
+  Result := GetIndexOf(FileName, Layer);
 end;
 
 procedure TArchiveCentralDirectory.Delete(Index: longint);
@@ -939,7 +937,7 @@ begin
     if Index < FItems.Count - 1 then
       Items[Index + 1].FCompressionBlock := 0;
 
-  FItemsAux.Delete(GetIndexOf(Item.FileName));
+  FItemsAux.Delete(GetIndexAuxOf(Item.FileName, Item.FLayer));
   FItems.Delete(Item.FIndex);
   Item.Destroy;
 end;
@@ -973,6 +971,7 @@ begin
       if CurrentItem.FAttributes           = PreviusItem.FAttributes           then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
       if CurrentItem.FComment              = PreviusItem.FComment              then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
       if CurrentItem.FLayer                = PreviusItem.FLayer                then Exclude(CurrentItem.FFlags, aifLayer)               else Include(CurrentItem.FFlags, aifLayer);
+      if CurrentItem.FLayerModifiedTime    = PreviusItem.FLayerModifiedTime    then Exclude(CurrentItem.FFlags, aifLayerModifiedTime)   else Include(CurrentItem.FFlags, aifLayerModifiedTime);
       /// data descriptor property ///
       if CurrentItem.FCompressedSize       = PreviusItem.FCompressedSize       then Exclude(CurrentItem.FDataDescriptorFlags, addfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, addfCompressedSize);
       if CurrentItem.FDiskNumber           = PreviusItem.FDiskNumber           then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, addfDiskNumber);
@@ -1015,6 +1014,7 @@ begin
       if not(aifAttributes          in CurrentItem.FFlags) then CurrentItem.FAttributes          := PreviusItem.FAttributes;
       if not(aifComment             in CurrentItem.FFlags) then CurrentItem.FComment             := PreviusItem.FComment;
       if not(aifLayer               in CurrentItem.FFlags) then CurrentItem.FLayer               := PreviusItem.FLayer;
+      if not(aifLayerModifiedTime   in CurrentItem.FFlags) then CurrentItem.FLayerModifiedTime   := PreviusItem.FLayerModifiedTime;
       /// data descryptor property ///
       if not(addfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
       if not(addfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
@@ -1243,7 +1243,9 @@ var
 begin
   FCentralDirectory.Destroy;
   for I := 0 to FSearchRecs.Count - 1 do
+  begin
     TCustomSearchRec(FSearchRecs[I]).Destroy;
+  end;
   FSearchRecs.Destroy;
   inherited Destroy;
 end;
@@ -1591,9 +1593,9 @@ begin
   FCentralDirectory.Clear;
   FSearchRecs.Clear;
 
-  FArchiveName := '';
-  FSwapName    := '';
-  FTempName    := '';
+  FArchiveName    := '';
+  FSwapName       := '';
+  FTempName       := '';
 
   FSuspended      := FALSE;
   FIsNeededToRun  := FALSE;
@@ -1605,7 +1607,7 @@ end;
 
 function TArchiver.IndexOf(const aFileName: string): longint;
 begin
-  Result := FCentralDirectory.IndexOf(aFileName);
+  Result := FCentralDirectory.IndexOf(aFileName, 0);
 end;
 
 // TArchiver # SUSPEND/TERMINATE #
