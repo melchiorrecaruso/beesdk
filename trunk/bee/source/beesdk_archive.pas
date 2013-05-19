@@ -49,24 +49,29 @@ uses
 
 const
   /// archive markers
-  ARCHIVE_DATA_MARKER                 = $78454542;
-  ARCHIVE_CENTRALDIR_MARKER           = $78454542;
-  ARCHIVE_CENTRALDIR_END_MARKER       = $78454542;
-  ARCHIVE_CENTRALDIR_SEEK_MARKER      = $78454542;
-  ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER = $78454542;
-
-  /// archive central directory item type
-  acditFILE         = $01;
-  acditEND          = $7F;
+  ARCHIVE_DATA_MARKER                      = $78454542;
+  ARCHIVE_CENTRALDIR_MARKER                = $78454542;
+  ARCHIVE_CENTRALDIR_LAYER_MARKER          = $01;
+  ARCHIVE_CENTRALDIR_LAYER_ITEM_MARKER     = $02;
+  ARCHIVE_CENTRALDIR_SEEK_MARKER           = $78454542;
+  ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER      = $78454542;
 
 type
-  /// archive central directory end flag
-  TArchiveCentralDirectoryEndFlag = (
-    acdefVersionNeededToRead,
-    acdefLastModifiedTime,
-    acdefComment);
+  /// archive central directory layer flag
+  TArchiveCentralDirectoryLayerFlag = (
+    acdlfVersionNeededToRead,
+    acdlfLastModifiedTime,
+    acdlfComment);
 
-  TArchiveCentralDirectoryEndFlags = set of TArchiveCentralDirectoryEndFlag;
+  TArchiveCentralDirectoryLayerFlags = set of TArchiveCentralDirectoryLayerFlag;
+
+  /// archive central directory flag
+  TArchiveCentralDirectoryFlag = (
+    acdfVersionNeededToRead,
+    acdfLastModifiedTime,
+    acdfComment);
+
+  TArchiveCentralDirectoryFlags = set of TArchiveCentralDirectoryFlag;
 
   /// archive central directory seek flag
   TArchiveCentralDirectorySeekFlag = (
@@ -81,10 +86,9 @@ type
     aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
+    aifLastStoredTime,
     aifAttributes,
-    aifComment,
-    aifLayer,
-    aifLayerModifiedTime);
+    aifComment);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -129,10 +133,9 @@ type
     FVersionNeededToRead: longword;
     FUncompressedSize: int64;
     FLastModifiedTime: longint;
+    FLastStoredTime: longint;
     FAttributes: longword;
     FComment: string;
-    FLayer: longword;
-    FLayerModifiedTime: longint;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -169,10 +172,9 @@ type
     property VersionNeededToRead: longword read FVersionNeededToRead;
     property UncompressedSize: int64 read FUncompressedSize;
     property LastModifiedTime: longint read FLastModifiedTime;
+    property LastStoredTime: longint read FLastStoredTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
-    property Layer: longword read FLayer;
-    property LayerModifiedTime: longint read FLayerModifiedTime;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -197,27 +199,52 @@ type
     property Index: longint read FIndex;
   end;
 
-  /// archive central directory
-  TArchiveCentralDirectory = class(TObject)
+  /// archive central directory layer
+  TArchiveCentralDirectoryLayer = class(TObject)
   private
     FItems: TList;
     FItemsAux: TList;
-    // central directory end property
-    FCDE_Flags: TArchiveCentralDirectoryEndFlags;
-    FCDE_LastModifiedTime: longint;
-    FCDE_Comment: string;
-    // central directory seek property
-    FCDS_Flags: TArchiveCentralDirectorySeekFlags;
-    FCDS_DisksNumber: longword;
-    FCDS_DiskNumber: longword;
-    FCDS_DiskSeek: int64;
-    // central directory magik seek property
-    FCDMS_DiskSeek: longint;
+    FFlags: TArchiveCentralDirectoryLayerFlags;
+    FLastModifiedTime: longint;
+    FComment: string;
   private
     function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
-    function GetIndexAuxOf(const FileName: string; Layer: longword): longint;
-    function GetIndexOf(const FileName: string; Layer: longword): longint;
+    function GetIndexAuxOf(const FileName: string): longint;
+    function GetIndexOf(const FileName: string): longint;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Read(Stream: TFileReader): longword;
+    procedure Write(Stream: TFileWriter);
+
+    function IndexOf(const FileName: string): longint;
+    function Add(Item : TArchiveItem): longint;
+    procedure Delete(Index: longint);
+    procedure Clear;
+  public
+    property Count: longint read GetCount;
+    property Items[Index: longint]: TArchiveItem read GetItem;
+    property Comment: string read FComment write FComment;
+    property LastModifiedTime: longint read FLastModifiedTime;
+  end;
+
+  TArchiveCentralDirectory = class(TObject)
+  private
+    FItems: TList;
+    // central directory seek property
+    FSeekFlags: TArchiveCentralDirectorySeekFlags;
+    FDisksNumber: longword;
+    FDiskNumber: longword;
+    FDiskSeek: int64;
+    // central directory end property
+    FFlags: TArchiveCentralDirectoryFlags;
+    FLastModifiedTime: longint;
+    FComment: string;
+    // central directory magik seek property
+    FMagikSeek: longint;
+    function GetCount: longint;
+    function GetItem(Index: longint): TArchiveCentralDirectoryLayer;
   private
     procedure Pack;
     procedure UnPack;
@@ -227,14 +254,11 @@ type
     procedure Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
     procedure Clear;
-    procedure Delete(Index: longint);
-    function Add(Item : TArchiveItem): longint;
-    function IndexOf(const FileName: string; Layer: longword): longint;
   public
-    property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
-    property Comment: string read FCDE_Comment write FCDE_Comment;
-    property LastModifiedTime: longint read FCDE_LastModifiedTime;
+    property Items[Index: longint]: TArchiveCentralDirectoryLayer read GetItem;
+    property Comment: string read FComment write FComment;
+    property LastModifiedTime: longint read FLastModifiedTime;
   end;
 
   /// ...
@@ -290,7 +314,7 @@ type
     FVolumeSize: int64;
     FCreateNewLayer: boolean;
     // items
-    FCentralDirectory: TArchiveCentralDirectory;
+    FCentralDirectory: TArchiveCentralDirectoryLayer;
     FSearchRecs: TList;
   private
     procedure SetComment(const Value: string);
@@ -368,7 +392,7 @@ type
     procedure Tag(Index: longint); overload;
     procedure Tag(SearchRec: TCustomSearchRec); overload;
     function IsTagged(Index: longint): boolean;
-    function IndexOf(const aFileName: string; MaxLayer: longword): longint;
+    function IndexOf(const aFileName: string): longint;
 
     procedure TestTagged;
     procedure ExtractTagged;
@@ -587,7 +611,12 @@ begin
   Result := 80;
 end;
 
-function GetVersionNeededToRead(Flags: TArchiveCentralDirectoryEndFlags): longword; overload;
+function GetVersionNeededToRead(Flags: TArchiveCentralDirectoryLayerFlags): longword; overload;
+begin
+  Result := 80;
+end;
+
+function GetVersionNeededToRead(Flags: TArchiveCentralDirectoryFlags): longword; overload;
 begin
   Result := 80;
 end;
@@ -678,17 +707,15 @@ begin
     aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
+    aifLastStoredTime,
     aifAttributes,
-    aifComment,
-    aifLayer,
-    aifLayerModifiedTime];
+    aifComment];
   FVersionNeededToRead :=  0;
   FUncompressedSize    :=  0;
   FLastModifiedTime    :=  0;
+  FLastStoredTime      :=  0;
   FAttributes          :=  0;
   FComment             := '';
-  FLayer               :=  0;
-  FLayerModifiedTime   :=  0;
   /// data descriptor property ///
   FDataDescriptorFlags := [
     addfCompressedSize,
@@ -748,10 +775,9 @@ begin
   if (aifVersionNeededToRead in FFlags) then FVersionNeededToRead := Stream.ReadInfWord;
   if (aifUncompressedSize    in FFlags) then FUncompressedSize    := Stream.ReadInfWord;
   if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := Stream.ReadInfWord;
+  if (aifLastStoredTime      in FFlags) then FLastStoredTime      := Stream.ReadInfWord;
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
-  if (aifLayer               in FFlags) then FLayer               := Stream.ReadInfWord;
-  if (aifLayerModifiedTime   in FFlags) then FLayerModifiedTime   := Stream.ReadInfWord;
   /// data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -782,10 +808,9 @@ begin
   if (aifVersionNeededToRead in FFlags) then Stream.WriteInfWord(FVersionNeededToRead);
   if (aifUncompressedSize    in FFlags) then Stream.WriteInfWord(FUncompressedSize);
   if (aifLastModifiedTime    in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
+  if (aifLastStoredTime      in FFlags) then Stream.WriteInfWord(FLastStoredTime);
   if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
-  if (aifLayer               in FFlags) then Stream.WriteInfWord(FLayer);
-  if (aifLayerModifiedTime   in FFlags) then Stream.WriteInfWord(FLayerModifiedTime);
   /// data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (addfCompressedSize in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
@@ -808,19 +833,18 @@ begin
   if (aefEncryptionMethod  in FEncryptionFlags) then Stream.WriteInfWord(Ord(FEncryptionMethod));
 end;
 
-// TArchiveCentralDirectory class
+// TArchiveCentralDirectoryLayer class
 
-constructor TArchiveCentralDirectory.Create;
+constructor TArchiveCentralDirectoryLayer.Create;
 begin
   inherited Create;
   FItems := TList.Create;
   FItemsAux := TList.Create;
-  // central direcotry end
-  FCDE_LastModifiedTime := DateTimeToFileDate(Now);
-  FCDE_Comment := '';
+  FLastModifiedTime := 0;
+  FComment := '';
 end;
 
-destructor TArchiveCentralDirectory.Destroy;
+destructor TArchiveCentralDirectoryLayer.Destroy;
 begin
   Clear;
   FItems.Destroy;
@@ -828,19 +852,19 @@ begin
   inherited Destroy;
 end;
 
-procedure TArchiveCentralDirectory.Clear;
+procedure TArchiveCentralDirectoryLayer.Clear;
 var
   I: longint;
 begin
   for I := 0 to FItems.Count - 1 do
-  begin
     TArchiveItem(FItems[I]).Destroy;
-  end;
   FItems.Clear;
   FItemsAux.Clear;
+  FLastModifiedTime := 0;
+  FComment := '';
 end;
 
-function TArchiveCentralDirectory.Add(Item: TArchiveItem): longint;
+function TArchiveCentralDirectoryLayer.Add(Item: TArchiveItem): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
@@ -853,10 +877,6 @@ begin
     begin
       Med := (Lo + Hi) div 2;
       I := AnsiCompareFileName(Item.FileName, TArchiveItem(FItemsAux[Med]).FileName);
-      if I = 0 then
-      begin
-        I := Item.FLayer - TArchiveItem(FItemsAux[Med]).FLayer;
-      end;
 
       if I > 0 then
         Lo := Med + 1
@@ -882,7 +902,7 @@ begin
   Result := Item.FIndex;
 end;
 
-function TArchiveCentralDirectory.GetIndexAuxOf(const FileName: string; Layer: longword): longint;
+function TArchiveCentralDirectoryLayer.GetIndexAuxOf(const FileName: string): longint;
 var
   Lo, Med, Hi, I: longint;
 begin
@@ -892,10 +912,6 @@ begin
   begin
     Med := (Lo + Hi) div 2;
     I := AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Med]).FileName);
-    if I = 0 then
-    begin
-      I := Layer - TArchiveItem(FItemsAux[Med]).FLayer;
-    end;
 
     if I > 0 then
       Lo := Med + 1
@@ -913,21 +929,21 @@ begin
   end;
 end;
 
-function TArchiveCentralDirectory.GetIndexOf(const FileName: string; Layer: longword): longint;
+function TArchiveCentralDirectoryLayer.GetIndexOf(const FileName: string): longint;
 begin
-  Result := GetIndexAuxOf(FileName, Layer);
+  Result := GetIndexAuxOf(FileName);
   if Result <> -1 then
   begin
     Result := TArchiveItem(FItemsAux[Result]).FIndex;
   end;
 end;
 
-function TArchiveCentralDirectory.IndexOf(const FileName: string; Layer: longword): longint;
+function TArchiveCentralDirectoryLayer.IndexOf(const FileName: string): longint;
 begin
-  Result := GetIndexOf(FileName, Layer);
+  Result := GetIndexOf(FileName);
 end;
 
-procedure TArchiveCentralDirectory.Delete(Index: longint);
+procedure TArchiveCentralDirectoryLayer.Delete(Index: longint);
 var
   I: longint;
   Item: TArchiveItem;
@@ -937,59 +953,154 @@ begin
     if Index < FItems.Count - 1 then
       Items[Index + 1].FCompressionBlock := 0;
 
-  FItemsAux.Delete(GetIndexAuxOf(Item.FileName, Item.FLayer));
+  FItemsAux.Delete(GetIndexAuxOf(Item.FileName));
   FItems.Delete(Item.FIndex);
   Item.Destroy;
+  // update indexs
+  for I := 0 to FItems.Count - 1 do
+    TArchiveItem(FItems[I]).FIndex := I;
 end;
 
-function TArchiveCentralDirectory.GetCount: longint;
+function TArchiveCentralDirectoryLayer.GetCount: longint;
 begin
   Result := FItems.Count;
 end;
 
-function TArchiveCentralDirectory.GetItem(Index: longint): TArchiveItem;
+function TArchiveCentralDirectoryLayer.GetItem(Index: longint): TArchiveItem;
 begin
   Result := TArchiveItem(FItems[Index]);
 end;
 
-procedure TArchiveCentralDirectory.Pack;
+function TArchiveCentralDirectoryLayer.Read(Stream: TFileReader): longword;
+const
+  CDLFULL = [acdlfVersionNeededToRead, acdlfLastModifiedTime, acdlfComment];
+begin
+  // [0] read central directory layer
+  if ExitStatus = esNoError then
+  begin
+    FFlags := TArchiveCentralDirectoryLayerFlags(longword(Stream.ReadInfWord));
+    if (acdlfVersionNeededToRead in FFlags) then
+      if Stream.ReadInfWord > GetVersionNeededToRead(CDLFULL) then
+        SetExitStatus(esArchiveVerError);
+
+    if ExitStatus = esNoError then
+    begin
+      FLastModifiedTime := 0;
+      if (acdlfLastModifiedTime in FFlags) then
+        FLastModifiedTime := Stream.ReadInfWord;
+
+      FComment := '';
+      if (acdlfComment  in FFlags) then
+        FComment := Stream.ReadInfString;
+    end;
+  end;
+  // [1] read central directory layer items
+  while ExitStatus = esNoError do
+  begin
+    Result := Stream.ReadInfWord;
+    if Result = ARCHIVE_CENTRALDIR_LAYER_ITEM_MARKER then
+      Add(TArchiveItem.Read(Stream))
+    else
+      Break;
+  end;
+end;
+
+procedure TArchiveCentralDirectoryLayer.Write(Stream: TFileWriter);
+var
+  I: longword;
+begin
+  // [0] write central directory layer
+  FFlags := [acdlfVersionNeededToRead, acdlfLastModifiedTime];
+  if FLastModifiedTime = 0 then
+    FLastModifiedTime := DateTimeToFileDate(Now);
+  if Length(FComment) > 0 then
+    Include(FFlags, acdlfComment);
+
+  Stream.WriteInfWord(longword(FFlags));
+  if (acdlfVersionNeededToRead in FFlags) then
+    Stream.WriteInfWord(GetVersionNeededToRead(FFlags));
+  if (acdlfLastModifiedTime in FFlags) then
+    Stream.WriteInfWord(FLastModifiedTime);
+  if (acdlfComment in FFlags) then
+    Stream.WriteInfString(FComment);
+  // [1] write central directory layer items
+  if FItems.Count > 0 then
+    for I := 0 to FItems.Count - 1 do
+    begin
+      Stream.WriteInfWord(ARCHIVE_CENTRALDIR_LAYER_ITEM_MARKER);
+      TArchiveItem(FItems[I]).Write(Stream);
+    end;
+end;
+
+// TArchiveCentralDirectory class
+
+constructor TArchiveCentralDirectory.Create;
+begin
+  inherited Create;
+  FItems := TList.Create;
+  FLastModifiedTime := 0;
+  FComment := '';
+end;
+
+destructor TArchiveCentralDirectory.Destroy;
+begin
+  Clear;
+  FItems.Destroy;
+  inherited Destroy;
+end;
+
+procedure TArchiveCentralDirectory.Clear;
 var
   I: longint;
-  CurrentItem: TArchiveItem;
-  PreviusItem: TArchiveItem;
 begin
-  if FItems.Count > 1 then
-  begin
-    PreviusItem := FItems.Items[0];
-    for I := 1 to FItems.Count - 1 do
-    begin
-      CurrentItem := FItems.Items[I];
-      /// item property ///
-      if CurrentItem.FVersionNeededToRead  = PreviusItem.FVersionNeededToRead  then Exclude(CurrentItem.FFlags, aifVersionNeededToRead) else Include(CurrentItem.FFlags, aifVersionNeededToRead);
-      if CurrentItem.FUncompressedSize     = PreviusItem.FUncompressedSize     then Exclude(CurrentItem.FFlags, aifUncompressedSize)    else Include(CurrentItem.FFlags, aifUncompressedSize);
-      if CurrentItem.FLastModifiedTime     = PreviusItem.FLastModifiedTime     then Exclude(CurrentItem.FFlags, aifLastModifiedTime)    else Include(CurrentItem.FFlags, aifLastModifiedTime);
-      if CurrentItem.FAttributes           = PreviusItem.FAttributes           then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
-      if CurrentItem.FComment              = PreviusItem.FComment              then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
-      if CurrentItem.FLayer                = PreviusItem.FLayer                then Exclude(CurrentItem.FFlags, aifLayer)               else Include(CurrentItem.FFlags, aifLayer);
-      if CurrentItem.FLayerModifiedTime    = PreviusItem.FLayerModifiedTime    then Exclude(CurrentItem.FFlags, aifLayerModifiedTime)   else Include(CurrentItem.FFlags, aifLayerModifiedTime);
-      /// data descriptor property ///
-      if CurrentItem.FCompressedSize       = PreviusItem.FCompressedSize       then Exclude(CurrentItem.FDataDescriptorFlags, addfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, addfCompressedSize);
-      if CurrentItem.FDiskNumber           = PreviusItem.FDiskNumber           then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, addfDiskNumber);
-      if CurrentItem.FDiskseek             = PreviusItem.FDiskSeek             then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, addfDiskSeek);
-      if CurrentItem.FCheckMethod          = PreviusItem.FCheckMethod          then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethod)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethod);
-      if CurrentItem.FCheckDigest          = PreviusItem.FCheckDigest          then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigest)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigest);
-      if CurrentItem.FCheckMethodAux       = PreviusItem.FCheckMethodAux       then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux);
-      if CurrentItem.FCheckDigestAux       = PreviusItem.FCheckDigestAux       then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux);
-      /// compression property ///
-      if CurrentItem.FCompressionMethod    = PreviusItem.FCompressionMethod    then Exclude(CurrentItem.FCompressionFlags, acfCompressionMethod)    else Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-      if CurrentItem.FCompressionLevel     = PreviusItem.FCompressionLevel     then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevel)     else Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
-      if CurrentItem.FCompressionLevelAux  = PreviusItem.FCompressionLevelAux  then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevelAux)  else Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
-      if CurrentItem.FCompressionFilter    = PreviusItem.FCompressionFilter    then Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter)    else Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
-      if CurrentItem.FCompressionFilterAux = PreviusItem.FCompressionFilterAux then Exclude(CurrentItem.FCompressionFlags, acfCompressionFilterAux) else Include(CurrentItem.FCompressionFlags, acfCompressionFilterAux);
-      if CurrentItem.FCompressionBlock     = PreviusItem.FCompressionBlock     then Exclude(CurrentItem.FCompressionFlags, acfCompressionBlock)     else Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
-      /// encryption property ///
-      if CurrentItem.FEncryptionMethod     = PreviusItem.FEncryptionMethod     then Exclude(CurrentItem.FEncryptionFlags, aefEncryptionMethod)      else Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
+  for I := 0 to FItems.Count - 1 do
+    TArchiveCentralDirectoryLayer(FItems[I]).Destroy;
+  FItems.Clear;
+  FLastModifiedTime := 0;
+  FComment := '';
+end;
 
+procedure TArchiveCentralDirectory.Pack;
+var
+  I, J: longint;
+  CurrentLayer: TArchiveCentralDirectoryLayer;
+  CurrentItem:  TArchiveItem;
+  PreviusItem:  TArchiveItem;
+begin
+  PreviusItem := nil;
+  for I := 0 to FItems.Count - 1 do
+  begin
+    CurrentLayer := TArchiveCentralDirectoryLayer(FItems[I]);
+    for J := 0 to CurrentLayer.Count - 1 do
+    begin
+      CurrentItem := CurrentLayer.Items[J];
+      if PreviusItem <> nil then
+      begin
+        /// item property ///
+        if CurrentItem.FVersionNeededToRead  = PreviusItem.FVersionNeededToRead  then Exclude(CurrentItem.FFlags, aifVersionNeededToRead) else Include(CurrentItem.FFlags, aifVersionNeededToRead);
+        if CurrentItem.FUncompressedSize     = PreviusItem.FUncompressedSize     then Exclude(CurrentItem.FFlags, aifUncompressedSize)    else Include(CurrentItem.FFlags, aifUncompressedSize);
+        if CurrentItem.FLastModifiedTime     = PreviusItem.FLastModifiedTime     then Exclude(CurrentItem.FFlags, aifLastModifiedTime)    else Include(CurrentItem.FFlags, aifLastModifiedTime);
+        if CurrentItem.FLastStoredTime       = PreviusItem.FLastStoredTime       then Exclude(CurrentItem.FFlags, aifLastStoredTime)      else Include(CurrentItem.FFlags, aifLastStoredTime);
+        if CurrentItem.FAttributes           = PreviusItem.FAttributes           then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
+        if CurrentItem.FComment              = PreviusItem.FComment              then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
+        /// data descriptor property ///
+        if CurrentItem.FCompressedSize       = PreviusItem.FCompressedSize       then Exclude(CurrentItem.FDataDescriptorFlags, addfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, addfCompressedSize);
+        if CurrentItem.FDiskNumber           = PreviusItem.FDiskNumber           then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, addfDiskNumber);
+        if CurrentItem.FDiskseek             = PreviusItem.FDiskSeek             then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, addfDiskSeek);
+        if CurrentItem.FCheckMethod          = PreviusItem.FCheckMethod          then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethod)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethod);
+        if CurrentItem.FCheckDigest          = PreviusItem.FCheckDigest          then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigest)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigest);
+        if CurrentItem.FCheckMethodAux       = PreviusItem.FCheckMethodAux       then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux);
+        if CurrentItem.FCheckDigestAux       = PreviusItem.FCheckDigestAux       then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigestAux);
+        /// compression property ///
+        if CurrentItem.FCompressionMethod    = PreviusItem.FCompressionMethod    then Exclude(CurrentItem.FCompressionFlags, acfCompressionMethod)    else Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
+        if CurrentItem.FCompressionLevel     = PreviusItem.FCompressionLevel     then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevel)     else Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
+        if CurrentItem.FCompressionLevelAux  = PreviusItem.FCompressionLevelAux  then Exclude(CurrentItem.FCompressionFlags, acfCompressionLevelAux)  else Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
+        if CurrentItem.FCompressionFilter    = PreviusItem.FCompressionFilter    then Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter)    else Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
+        if CurrentItem.FCompressionFilterAux = PreviusItem.FCompressionFilterAux then Exclude(CurrentItem.FCompressionFlags, acfCompressionFilterAux) else Include(CurrentItem.FCompressionFlags, acfCompressionFilterAux);
+        if CurrentItem.FCompressionBlock     = PreviusItem.FCompressionBlock     then Exclude(CurrentItem.FCompressionFlags, acfCompressionBlock)     else Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
+        /// encryption property ///
+        if CurrentItem.FEncryptionMethod     = PreviusItem.FEncryptionMethod     then Exclude(CurrentItem.FEncryptionFlags, aefEncryptionMethod)      else Include(CurrentItem.FEncryptionFlags, aefEncryptionMethod);
+      end;
       PreviusItem := CurrentItem;
     end;
   end;
@@ -997,42 +1108,45 @@ end;
 
 procedure TArchiveCentralDirectory.UnPack;
 var
-  I: longint;
+  I, J: longint;
+  CurrentLayer: TArchiveCentralDirectoryLayer;
   CurrentItem: TArchiveItem;
   PreviusItem: TArchiveItem;
 begin
-  if FItems.Count > 1 then
+  PreviusItem := nil;
+  for I := 0 to FItems.Count - 1 do
   begin
-    PreviusItem := FItems.Items[0];
-    for I := 1 to FItems.Count - 1 do
+    CurrentLayer := TArchiveCentralDirectoryLayer(FItems[I]);
+    for J := 0 to CurrentLayer.Count - 1 do
     begin
-      CurrentItem := FItems.Items[I];
-      /// item property ///
-      if not(aifVersionNeededToRead in CurrentItem.FFlags) then CurrentItem.FVersionNeededToRead := PreviusItem.FVersionNeededToRead;
-      if not(aifUncompressedSize    in CurrentItem.FFlags) then CurrentItem.FUncompressedSize    := PreviusItem.FUncompressedSize;
-      if not(aifLastModifiedTime    in CurrentItem.FFlags) then CurrentItem.FLastModifiedTime    := PreviusItem.FLastModifiedTime;
-      if not(aifAttributes          in CurrentItem.FFlags) then CurrentItem.FAttributes          := PreviusItem.FAttributes;
-      if not(aifComment             in CurrentItem.FFlags) then CurrentItem.FComment             := PreviusItem.FComment;
-      if not(aifLayer               in CurrentItem.FFlags) then CurrentItem.FLayer               := PreviusItem.FLayer;
-      if not(aifLayerModifiedTime   in CurrentItem.FFlags) then CurrentItem.FLayerModifiedTime   := PreviusItem.FLayerModifiedTime;
-      /// data descryptor property ///
-      if not(addfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
-      if not(addfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
-      if not(addfDiskSeek       in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskSeek       := PreviusItem.FDiskSeek;
-      if not(addfCheckMethod    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckMethod    := PreviusItem.FCheckMethod;
-      if not(addfCheckDigest    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckDigest    := PreviusItem.FCheckDigest;
-      if not(addfCheckMethodAux in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckMethodAux := PreviusItem.FCheckMethodAux;
-      if not(addfCheckDigestAux in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckDigestAux := PreviusItem.FCheckDigestAux;
-      /// compression property ///
-      if not(acfCompressionMethod    in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionMethod    := PreviusItem.FCompressionMethod;
-      if not(acfCompressionLevel     in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionLevel     := PreviusItem.FCompressionLevel;
-      if not(acfCompressionLevelAux  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionLevelAux  := PreviusItem.FCompressionLevelAux;
-      if not(acfCompressionFilter    in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionFilter    := PreviusItem.FCompressionFilter;
-      if not(acfCompressionFilterAux in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionFilterAux := PreviusItem.FCompressionFilterAux;
-      if not(acfCompressionBlock     in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionBlock     := PreviusItem.FCompressionBlock;
-      /// encryption property ///
-      if not(aefEncryptionMethod in CurrentItem.FEncryptionFlags) then CurrentItem.FEncryptionMethod := PreviusItem.FEncryptionMethod;
-
+      CurrentItem := CurrentLayer.Items[J];
+      if PreviusItem <> nil then
+      begin
+        /// item property ///
+        if not(aifVersionNeededToRead in CurrentItem.FFlags) then CurrentItem.FVersionNeededToRead := PreviusItem.FVersionNeededToRead;
+        if not(aifUncompressedSize    in CurrentItem.FFlags) then CurrentItem.FUncompressedSize    := PreviusItem.FUncompressedSize;
+        if not(aifLastModifiedTime    in CurrentItem.FFlags) then CurrentItem.FLastModifiedTime    := PreviusItem.FLastModifiedTime;
+        if not(aifLastStoredTime      in CurrentItem.FFlags) then CurrentItem.FLastStoredTime      := PreviusItem.FLastStoredTime;
+        if not(aifAttributes          in CurrentItem.FFlags) then CurrentItem.FAttributes          := PreviusItem.FAttributes;
+        if not(aifComment             in CurrentItem.FFlags) then CurrentItem.FComment             := PreviusItem.FComment;
+        /// data descryptor property ///
+        if not(addfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
+        if not(addfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
+        if not(addfDiskSeek       in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskSeek       := PreviusItem.FDiskSeek;
+        if not(addfCheckMethod    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckMethod    := PreviusItem.FCheckMethod;
+        if not(addfCheckDigest    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckDigest    := PreviusItem.FCheckDigest;
+        if not(addfCheckMethodAux in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckMethodAux := PreviusItem.FCheckMethodAux;
+        if not(addfCheckDigestAux in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckDigestAux := PreviusItem.FCheckDigestAux;
+        /// compression property ///
+        if not(acfCompressionMethod    in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionMethod    := PreviusItem.FCompressionMethod;
+        if not(acfCompressionLevel     in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionLevel     := PreviusItem.FCompressionLevel;
+        if not(acfCompressionLevelAux  in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionLevelAux  := PreviusItem.FCompressionLevelAux;
+        if not(acfCompressionFilter    in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionFilter    := PreviusItem.FCompressionFilter;
+        if not(acfCompressionFilterAux in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionFilterAux := PreviusItem.FCompressionFilterAux;
+        if not(acfCompressionBlock     in CurrentItem.FCompressionFlags) then CurrentItem.FCompressionBlock     := PreviusItem.FCompressionBlock;
+        /// encryption property ///
+        if not(aefEncryptionMethod in CurrentItem.FEncryptionFlags) then CurrentItem.FEncryptionMethod := PreviusItem.FEncryptionMethod;
+      end;
       PreviusItem := CurrentItem;
     end;
   end;
@@ -1040,8 +1154,8 @@ end;
 
 procedure TArchiveCentralDirectory.Read(Stream: TFileReader);
 const
-  CDSFULL = [acdsfVersionNeededToRead, acdsfDisksNumber,      acdsfDiskNumber];
-  CDEFULL = [acdefVersionNeededToRead, acdefLastModifiedTime, acdefComment];
+  CDFULL  = [acdfVersionNeededToRead,  acdfLastModifiedTime, acdfComment];
+  CDSFULL = [acdsfVersionNeededToRead, acdsfDisksNumber,     acdsfDiskNumber];
 var
   MARKER: longword;
 begin
@@ -1071,26 +1185,26 @@ begin
   if ExitStatus = esNoError then
     if MARKER = ARCHIVE_CENTRALDIR_SEEK_MARKER then
     begin
-      FCDS_Flags := TArchiveCentralDirectorySeekFlags(longword(Stream.ReadInfWord));
-      if (acdsfVersionNeededToRead in FCDS_Flags) then
+      FSeekFlags := TArchiveCentralDirectorySeekFlags(longword(Stream.ReadInfWord));
+      if (acdsfVersionNeededToRead in FSeekFlags) then
         if Stream.ReadInfWord > GetVersionNeededToRead(CDSFULL) then
           SetExitStatus(esArchiveVerError);
 
       if ExitStatus = esNoError then
       begin
-        FCDS_DisksNumber := 1;
-        if (acdsfDisksNumber in FCDS_Flags) then
-          FCDS_DisksNumber := Stream.ReadInfWord;
+        FDisksNumber := 1;
+        if (acdsfDisksNumber in FSeekFlags) then
+          FDisksNumber := Stream.ReadInfWord;
 
-        FCDS_DiskNumber  := 1;
-        if (acdsfDiskNumber  in FCDS_Flags) then
-          FCDS_DiskNumber := Stream.ReadInfWord;
+        FDiskNumber  := 1;
+        if (acdsfDiskNumber  in FSeekFlags) then
+          FDiskNumber := Stream.ReadInfWord;
 
-        FCDS_DiskSeek := Stream.ReadInfWord;
+        FDiskSeek := Stream.ReadInfWord;
         // [4.1] seek on central directory marker
-        Stream.ImagesNumber := FCDS_DisksNumber;
-        Stream.ImageNumber  := FCDS_DiskNumber;
-        Stream.Seek           (FCDS_DiskSeek, fsFromBeginning);
+        Stream.ImagesNumber := FDisksNumber;
+        Stream.ImageNumber  := FDiskNumber;
+        Stream.Seek           (FDiskSeek, fsFromBeginning);
         // [4.2] read central directory marker
         MARKER := Stream.ReadDWord;
         if MARKER <> ARCHIVE_CENTRALDIR_MARKER then
@@ -1098,42 +1212,43 @@ begin
       end;
     end;
 
-  // [5] read central directory items
-  if MARKER = ARCHIVE_CENTRALDIR_MARKER then
-    while ExitStatus = esNoError do
-    begin
-      MARKER := Stream.ReadInfWord;
-      case MARKER of
-        acditFILE: Add(TArchiveItem.Read(Stream));
-        acditEND:  Break;
-        else       SetExitStatus(esArchiveTypeError);
-      end;
-    end;
-
-  // [6] read central directory end marker
+  // [5] read central directory
   if ExitStatus = esNoError then
-    if Stream.ReadDWord <> ARCHIVE_CENTRALDIR_END_MARKER then
-      SetExitStatus(esArchiveTypeError);
+    if MARKER = ARCHIVE_CENTRALDIR_MARKER then
+    begin
+      FFlags := TArchiveCentralDirectoryFlags(longword(Stream.ReadInfWord));
+      if (acdfVersionNeededToRead in FFlags) then
+        if Stream.ReadInfWord > GetVersionNeededToRead(CDFULL) then
+          SetExitStatus(esArchiveVerError);
 
-  // [7] read central directory end
+      if ExitStatus = esNoError then
+      begin
+        FLastModifiedTime := 0;
+        if (acdfLastModifiedTime in FFlags) then
+          FLastModifiedTime := Stream.ReadInfWord;
+
+        FComment := '';
+        if (acdfComment  in FFlags) then
+          FComment := Stream.ReadInfString;
+      end;
+    end;;
+
+  // [6] read central directory layers
   if ExitStatus = esNoError then
   begin
-    FCDE_Flags := TArchiveCentralDirectoryEndFlags(longword(Stream.ReadInfWord));
-    if (acdefVersionNeededToRead in FCDE_Flags) then
-      if Stream.ReadInfWord > GetVersionNeededToRead(CDEFULL) then
-        SetExitStatus(esArchiveVerError);
-
-    if ExitStatus = esNoError then
+    MARKER := Stream.ReadInfWord;
+    while MARKER = ARCHIVE_CENTRALDIR_LAYER_MARKER do
     begin
-      FCDE_LastModifiedTime := 0;
-      if (acdefLastModifiedTime in FCDE_Flags) then
-        FCDE_LastModifiedTime := Stream.ReadInfWord;
-
-      FCDE_Comment := '';
-      if (acdefComment  in FCDE_Flags) then
-        FCDE_Comment := Stream.ReadInfString;
+      FItems.Add(TArchiveCentralDirectoryLayer.Create);
+      MARKER := TArchiveCentralDirectoryLayer(FItems.Last).Read(Stream);
     end;
   end;
+
+  // [7] check central directory seek marker
+  if ExitStatus = esNoError then
+    if MARKER <> ARCHIVE_CENTRALDIR_SEEK_MARKER then
+      if MARKER <> ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER then
+        SetExitStatus(esArchiveTypeError);
 
   // [8] unpack central directory
   if ExitStatus = esNoError then UnPack;
@@ -1234,7 +1349,7 @@ begin
   FVerboseMode       := FALSE;
   FCreateNewLayer       := FALSE;
   // items list
-  FCentralDirectory  := TArchiveCentralDirectory.Create;
+  FCentralDirectory  := TArchiveCentralDirectoryLayer.Create;
   FSearchRecs        := TList.Create;
 end;
 
@@ -1606,21 +1721,9 @@ end;
 
 // TArchiver # FIND #
 
-function TArchiver.IndexOf(const aFileName: string; MaxLayer: longword): longint;
+function TArchiver.IndexOf(const aFileName: string): longint;
 begin
-  Result := FCentralDirectory.GetIndexAuxOf(aFileName, 0);
-  if Result <> -1 then
-  begin
-
-
-
-
-    Result := FCentralDirectory.Items[Result].FIndex;
-  end;
-
-
-
-
+  Result := FCentralDirectory.GetIndexOf(aFileName);
 end;
 
 // TArchiver # SUSPEND/TERMINATE #
@@ -2244,8 +2347,6 @@ var
   I: longint;
   CurrentBlock: int64;
   CurrentItem: TArchiveItem;
-  CurrentLayer: longword;
-  CurrentLayerModifiedTime: longword;
   CurrentTable: TTableParameters;
   CurrentFileExt: string;
   PreviousFileExt: string;
@@ -2263,8 +2364,6 @@ begin
   Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetCoderLevelAux(FCompressionParams)));
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
-  CurrentLayer             := 0;
-  CurrentLayerModifiedTime := DateTimeToFileDate(Now);
   CurrentBlock := GetCoderBlock(FCompressionParams);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
@@ -2324,15 +2423,6 @@ begin
       CurrentItem.FCheckMethodAux      := GetHashAlgorithmAux(FCheckParams);
       // version needed to read
       CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);
-      // layer
-      CurrentItem.FLayer               := CurrentLayer;
-      CurrentItem.FLastModifiedTime    := CurrentLayerModifiedTime;
-    end else
-    begin
-      if FCreateNewLayer then
-        CurrentLayer := Max(CurrentLayer, CurrentItem.FLayer + 1)
-      else
-        CurrentLayer := Max(CurrentLayer, CurrentItem.FLayer);
     end;
   end;
   FreeAndNil(Configuration);
