@@ -49,22 +49,13 @@ uses
 
 const
   /// archive markers
-  ARCHIVE_DATA_MARKER                      = $78454542;
-  ARCHIVE_CENTRALDIR_MARKER                = $78454542;
-  ARCHIVE_CENTRALDIR_LAYER_MARKER          = $01;
-  ARCHIVE_CENTRALDIR_LAYER_ITEM_MARKER     = $02;
-  ARCHIVE_CENTRALDIR_SEEK_MARKER           = $78454542;
-  ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER      = $78454542;
+  ARCHIVE_MARKER                      = $78454542;
+  ARCHIVE_CENTRALDIR_MARKER           = $78454542;
+  ARCHIVE_CENTRALDIR_ITEM_MARKER      = $78454542;
+  ARCHIVE_CENTRALDIR_SEEK_MARKER      = $78454542;
+  ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER = $78454542;
 
 type
-  /// archive central directory layer flag
-  TArchiveCentralDirectoryLayerFlag = (
-    acdlfVersionNeededToRead,
-    acdlfLastModifiedTime,
-    acdlfComment);
-
-  TArchiveCentralDirectoryLayerFlags = set of TArchiveCentralDirectoryLayerFlag;
-
   /// archive central directory flag
   TArchiveCentralDirectoryFlag = (
     acdfVersionNeededToRead,
