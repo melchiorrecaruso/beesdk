@@ -124,7 +124,7 @@ type
     FFlags: TArchiveItemFlags;
     FVersionNeededToRead: longword;
     FUncompressedSize: int64;
-    FLastModifiedTime: TDateTime;
+    FLastModifiedTime: longword;
     FAttributes: longword;
     FComment: string;
     FLowLayer: longword;
@@ -164,7 +164,7 @@ type
     property Flags: TArchiveItemFlags read FFlags;
     property VersionNeededToRead: longword read FVersionNeededToRead;
     property UncompressedSize: int64 read FUncompressedSize;
-    property LastModifiedTime: TDateTime read FLastModifiedTime;
+    property LastModifiedTime: longword read FLastModifiedTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
     property LowLayer: longword read FLowLayer;
@@ -749,7 +749,7 @@ begin
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
   if (aifLowLayer            in FFlags) then FLowLayer            := Stream.ReadInfWord;
-  if (aifLastStoredTime      in FFlags) then FLastStoredTime      := Stream.ReadInfWord;
+  if (aifHighLayer           in FFlags) then FHighLayer           := Stream.ReadInfWord;
   /// data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -780,9 +780,10 @@ begin
   if (aifVersionNeededToRead in FFlags) then Stream.WriteInfWord(FVersionNeededToRead);
   if (aifUncompressedSize    in FFlags) then Stream.WriteInfWord(FUncompressedSize);
   if (aifLastModifiedTime    in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
-  if (aifLastStoredTime      in FFlags) then Stream.WriteInfWord(FLastStoredTime);
   if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
+  if (aifLowLayer            in FFlags) then Stream.WriteInfWord(FLowLayer);
+  if (aifHighLayer           in FFlags) then Stream.WriteInfWord(FHighLayer);
   /// data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (addfCompressedSize in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
