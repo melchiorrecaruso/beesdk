@@ -77,9 +77,10 @@ type
     aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
-    aifLastStoredTime,
     aifAttributes,
-    aifComment);
+    aifComment,
+    aifLowLayer,
+    aifHighLayer);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -123,10 +124,11 @@ type
     FFlags: TArchiveItemFlags;
     FVersionNeededToRead: longword;
     FUncompressedSize: int64;
-    FLastModifiedTime: longint;
-    FLastStoredTime: longint;
+    FLastModifiedTime: TDateTime;
     FAttributes: longword;
     FComment: string;
+    FLowLayer: longword;
+    FHighLayer: longword;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -162,10 +164,11 @@ type
     property Flags: TArchiveItemFlags read FFlags;
     property VersionNeededToRead: longword read FVersionNeededToRead;
     property UncompressedSize: int64 read FUncompressedSize;
-    property LastModifiedTime: longint read FLastModifiedTime;
-    property LastStoredTime: longint read FLastStoredTime;
+    property LastModifiedTime: TDateTime read FLastModifiedTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
+    property LowLayer: longword read FLowLayer;
+    property HighLayer: longword read FHighLayer;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -190,23 +193,35 @@ type
     property Index: longint read FIndex;
   end;
 
-  /// archive central directory layer
-  TArchiveCentralDirectoryLayer = class(TObject)
+  /// archive central directory
+  TArchiveCentralDirectory = class(TObject)
   private
     FItems: TList;
     FItemsAux: TList;
-    FFlags: TArchiveCentralDirectoryLayerFlags;
-    FLastModifiedTime: longint;
+    FCurrentLayer: longword;
+    // central directory property
+    FFlags: TArchiveCentralDirectoryFlags;
+    FLastModifiedTime: TDateTime;
     FComment: string;
+    // central directory seek property
+    FSeekFlags: TArchiveCentralDirectorySeekFlags;
+    FDisksNumber: longword;
+    FDiskNumber: longword;
+    FDiskSeek: int64;
+    // central directory magik seek property
+    FMagikSeek: longint;
   private
+    procedure Pack;
+    procedure UnPack;
     function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
     function GetIndexAuxOf(const FileName: string): longint;
     function GetIndexOf(const FileName: string): longint;
+    function CompareItem(Item1, Item2: TArchiveItem): longint;
   public
     constructor Create;
     destructor Destroy; override;
-    function Read(Stream: TFileReader): longword;
+    procedure Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
 
     function IndexOf(const FileName: string): longint;
@@ -217,39 +232,8 @@ type
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Comment: string read FComment write FComment;
-    property LastModifiedTime: longint read FLastModifiedTime;
-  end;
-
-  TArchiveCentralDirectory = class(TObject)
-  private
-    FItems: TList;
-    // central directory seek property
-    FSeekFlags: TArchiveCentralDirectorySeekFlags;
-    FDisksNumber: longword;
-    FDiskNumber: longword;
-    FDiskSeek: int64;
-    // central directory end property
-    FFlags: TArchiveCentralDirectoryFlags;
-    FLastModifiedTime: longint;
-    FComment: string;
-    // central directory magik seek property
-    FMagikSeek: longint;
-    function GetCount: longint;
-    function GetItem(Index: longint): TArchiveCentralDirectoryLayer;
-  private
-    procedure Pack;
-    procedure UnPack;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Read(Stream: TFileReader);
-    procedure Write(Stream: TFileWriter);
-    procedure Clear;
-  public
-    property Count: longint read GetCount;
-    property Items[Index: longint]: TArchiveCentralDirectoryLayer read GetItem;
-    property Comment: string read FComment write FComment;
-    property LastModifiedTime: longint read FLastModifiedTime;
+    property LastModifiedTime: TDateTime read FLastModifiedTime;
+    property CurrentLayer: longword read FCurrentLayer;
   end;
 
   /// ...
@@ -303,9 +287,8 @@ type
     FTestTempArchive: boolean;
     FVerboseMode: boolean;
     FVolumeSize: int64;
-    FCreateNewLayer: boolean;
-    // items
-    FCentralDirectory: TArchiveCentralDirectoryLayer;
+    FCurrentLayer: longword;
+    // new items
     FSearchRecs: TList;
   private
     procedure SetComment(const Value: string);
@@ -411,7 +394,7 @@ type
     property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
     property VerboseMode: boolean read FVerboseMode write FVerboseMode;
     property VolumeSize: int64 read FVolumeSize write FVolumeSize;
-    property CreateNewLayer: boolean read FCreateNewLayer write FCreateNewLayer;
+    property CurrentLayer: longword read FCurrentLayer write FCurrentLayer;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
@@ -602,11 +585,6 @@ begin
   Result := 80;
 end;
 
-function GetVersionNeededToRead(Flags: TArchiveCentralDirectoryLayerFlags): longword; overload;
-begin
-  Result := 80;
-end;
-
 function GetVersionNeededToRead(Flags: TArchiveCentralDirectoryFlags): longword; overload;
 begin
   Result := 80;
@@ -698,15 +676,17 @@ begin
     aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
-    aifLastStoredTime,
     aifAttributes,
-    aifComment];
+    aifComment,
+    aifLowLayer,
+    aifHighLayer];
   FVersionNeededToRead :=  0;
   FUncompressedSize    :=  0;
   FLastModifiedTime    :=  0;
-  FLastStoredTime      :=  0;
   FAttributes          :=  0;
   FComment             := '';
+  FLowLayer            :=  0;
+  FHighLayer           :=  0;
   /// data descriptor property ///
   FDataDescriptorFlags := [
     addfCompressedSize,
@@ -766,9 +746,10 @@ begin
   if (aifVersionNeededToRead in FFlags) then FVersionNeededToRead := Stream.ReadInfWord;
   if (aifUncompressedSize    in FFlags) then FUncompressedSize    := Stream.ReadInfWord;
   if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := Stream.ReadInfWord;
-  if (aifLastStoredTime      in FFlags) then FLastStoredTime      := Stream.ReadInfWord;
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
+  if (aifLowLayer            in FFlags) then FLowLayer            := Stream.ReadInfWord;
+  if (aifLastStoredTime      in FFlags) then FLastStoredTime      := Stream.ReadInfWord;
   /// data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
