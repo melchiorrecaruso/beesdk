@@ -41,6 +41,7 @@ uses
   Classes,
   DateUtils,
   SysUtils,
+
   Bee_Common,
   Bee_CommandLine,
   Bee_BufStream;
@@ -115,7 +116,7 @@ type
     Name: string;
     Size: int64;
     Attributes: longint;
-    LastModifiedTime: qword;
+    LastModifiedTime: int64;
   public
     constructor CreateFrom(Item: TCustomSearchRec);
   end;
@@ -498,7 +499,15 @@ begin
   Result.Name             := RecPath + Rec.Name;
   Result.Size             := Rec.Size;
   Result.Attributes       := Rec.Attr;
-  Result.LastModifiedTime := DateTimeToUnix(FileDateToDateTime(Rec.Time));
+  {$IFDEF MSWINDOWS}
+  Result.LastModifiedTime := DateTimeToUnix(DosDateTimeToDateTime(Rec.Time));
+  {$ENDIF}
+  {$IFDEF MAC}
+  Result.LastModifiedTime := DateTimeToUnix(MacTimeToDateTime(Rec.Time));
+  {$ENDIF}
+  {$IFDEF UNIX}
+  Result.LastModifiedTime := Rec.Time;
+  {$ENDIF}
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; Recursive: boolean);

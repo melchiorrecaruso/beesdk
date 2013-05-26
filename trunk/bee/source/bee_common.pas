@@ -83,20 +83,6 @@ function FileNameHasWildcards(const FileName: string): boolean;
 function FileNamePos(const FilePath, FileName: string): longint;
 function FileNameIsValid(const FileName: string): boolean;
 
-// 4x faster than dateutils version
-function UNIXTimeToDateTimeFAST(UnixTime: LongWord): TDateTime;
-begin
-Result := (UnixTime / 86400) + 25569;
-end;
-
-// 10x faster than dateutils version
-function DateTimeToUNIXTimeFAST(DelphiTime : TDateTime): LongWord;
-begin
-Result := Round((DelphiTime - 25569) * 86400);
-end;
-
-
-
 function GenerateFileName(const FilePath: string): string;
 function GenerateAlternativeFileName(const FileName: string;
   var StartIndex: longint): string;
