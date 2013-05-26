@@ -125,11 +125,11 @@ type
     FFlags: TArchiveItemFlags;
     FVersionNeededToRead: longword;
     FUncompressedSize: int64;
-    FLastModifiedTime: qword;
-    FAttributes: longword;
+    FLastModifiedTime: int64;
+    FAttributes: longint;
     FComment: string;
-    FLowTime: qword;
-    FHighTime: qword;
+    FLowTime: int64;
+    FHighTime: int64;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -165,11 +165,11 @@ type
     property Flags: TArchiveItemFlags read FFlags;
     property VersionNeededToRead: longword read FVersionNeededToRead;
     property UncompressedSize: int64 read FUncompressedSize;
-    property LastModifiedTime: qword read FLastModifiedTime;
-    property Attributes: longword read FAttributes;
+    property LastModifiedTime: int64 read FLastModifiedTime;
+    property Attributes: longint read FAttributes;
     property Comment: string read FComment;
-    property LowTime: qword read FLowTime;
-    property HighTime: qword read FHighTime;
+    property LowTime: int64 read FLowTime;
+    property HighTime: int64 read FHighTime;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -199,10 +199,10 @@ type
   private
     FItems: TList;
     FItemsAux: TList;
-    FCurrentTime: qword;
+    FCurrentTime: int64;
     // central directory property
     FFlags: TArchiveCentralDirectoryFlags;
-    FLastModifiedTime: qword;
+    FLastModifiedTime: int64;
     FComment: string;
     // central directory seek property
     FSeekFlags: TArchiveCentralDirectorySeekFlags;
@@ -233,8 +233,8 @@ type
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Comment: string read FComment write FComment;
-    property LastModifiedTime: qword read FLastModifiedTime;
-    property CurrentTime: qword read FCurrentTime;
+    property LastModifiedTime: int64 read FLastModifiedTime;
+    property CurrentTime: int64 read FCurrentTime;
   end;
 
   /// ...
@@ -288,7 +288,7 @@ type
     FTestTempArchive: boolean;
     FVerboseMode: boolean;
     FVolumeSize: int64;
-    FCurrentTime: qword;
+    FCurrentTime: int64;
     // new items
     FSearchRecs: TList;
     FCentralDirectory: TArchiveCentralDirectory;
@@ -305,7 +305,7 @@ type
     function GetItem(Index: longint): TArchiveItem;
     function GetComment: string;
     function GetCount: longint;
-    function GetLastModifiedTime: qword;
+    function GetLastModifiedTime: int64;
   private
     procedure Encode           (Reader: TBufStream; Writer: TBufStream; const Size: int64);
     procedure EncodeFromArchive(Item: TArchiveItem);
@@ -396,11 +396,11 @@ type
     property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
     property VerboseMode: boolean read FVerboseMode write FVerboseMode;
     property VolumeSize: int64 read FVolumeSize write FVolumeSize;
-    property CurrentTime: qword read FCurrentTime write FCurrentTime;
+    property CurrentTime: int64 read FCurrentTime write FCurrentTime;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
-    property LastModifiedTime: qword read GetLastModifiedTime;
+    property LastModifiedTime: int64 read GetLastModifiedTime;
   end;
 
 function CoderMethodToStr(Method: TCoderAlgorithm ): string;
@@ -1692,7 +1692,7 @@ begin
   Result := FCentralDirectory.Items[Index];
 end;
 
-function TArchiver.GetLastModifiedTime: qword;
+function TArchiver.GetLastModifiedTime: int64;
 begin
   Result := FCentralDirectory.LastModifiedTime;
 end;
