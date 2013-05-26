@@ -127,8 +127,8 @@ type
     FLastModifiedTime: qword;
     FAttributes: longword;
     FComment: string;
-    FLowTime: qword;
-    FHighTime: qword;
+    FLowTime: longword;
+    FHighTime: longword;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -167,8 +167,8 @@ type
     property LastModifiedTime: qword read FLastModifiedTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
-    property LowTime: qword read FLowTime;
-    property HighTime: qword read FHighTime;
+    property LowTime: longword read FLowTime;
+    property HighTime: longword read FHighTime;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -198,7 +198,7 @@ type
   private
     FItems: TList;
     FItemsAux: TList;
-    FCurrentLayer: longword;
+    FCurrentTime: longword;
     // central directory property
     FFlags: TArchiveCentralDirectoryFlags;
     FLastModifiedTime: TDateTime;
@@ -233,7 +233,7 @@ type
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Comment: string read FComment write FComment;
     property LastModifiedTime: TDateTime read FLastModifiedTime;
-    property CurrentLayer: longword read FCurrentLayer;
+    property CurrentTime: longword read FCurrentTime;
   end;
 
   /// ...
@@ -920,8 +920,7 @@ begin
   Result := AnsiCompareFileName(Item1.FileName, Item2.FileName);
   if Result = 0 then
   begin
-
-
+    Result := Item1.LowTime - Item2.LowTime;
   end;
 end;
 
@@ -965,23 +964,29 @@ end;
 
 function TArchiveCentralDirectory.GetIndexAuxOf(const FileName: string): longint;
 var
-  Lo, Med, Hi, I: longint;
+  Lo, Mid, Hi, I: longint;
 begin
   Lo := 0;
   Hi := FItemsAux.Count - 1;
   while Hi >= Lo do
   begin
-    Med := (Lo + Hi) div 2;
-    I := AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Med]).FileName);
-    // filtro per data
+    Mid := (Lo + Hi) div 2;
 
-
+    I := AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Mid]).FileName);
+    if I = 0 then
+    begin
+      if I < TArchiveItem(FItemsAux[Mid]).LowTime  then
+        I := -1
+      else
+        if I > TArchiveItem(FItemsAux[Mid]).HighTime then
+          I := 1
+    end;
 
     if I > 0 then
-      Lo := Med + 1
+      Lo := Mid + 1
     else
       if I < 0 then
-        Hi := Med - 1
+        Hi := Mid - 1
       else
         Hi := -2;
   end;
@@ -989,11 +994,11 @@ begin
   Result := -1;
   if Hi = -2 then
   begin
-    Result := Med;
+    Result := Mid;
   end;
 end;
 
-function TArchiveCentralDirectoryLayer.GetIndexOf(const FileName: string): longint;
+function TArchiveCentralDirectory.GetIndexOf(const FileName: string): longint;
 begin
   Result := GetIndexAuxOf(FileName);
   if Result <> -1 then
@@ -1002,12 +1007,12 @@ begin
   end;
 end;
 
-function TArchiveCentralDirectoryLayer.IndexOf(const FileName: string): longint;
+function TArchiveCentralDirectory.IndexOf(const FileName: string): longint;
 begin
   Result := GetIndexOf(FileName);
 end;
 
-procedure TArchiveCentralDirectoryLayer.Delete(Index: longint);
+procedure TArchiveCentralDirectory.Delete(Index: longint);
 var
   I: longint;
   Item: TArchiveItem;
@@ -1020,88 +1025,19 @@ begin
   FItemsAux.Delete(GetIndexAuxOf(Item.FileName));
   FItems.Delete(Item.FIndex);
   Item.Destroy;
-  // update indexs
   for I := 0 to FItems.Count - 1 do
     TArchiveItem(FItems[I]).FIndex := I;
 end;
 
-function TArchiveCentralDirectoryLayer.GetCount: longint;
+function TArchiveCentralDirectory.GetCount: longint;
 begin
   Result := FItems.Count;
 end;
 
-function TArchiveCentralDirectoryLayer.GetItem(Index: longint): TArchiveItem;
+function TArchiveCentralDirectory.GetItem(Index: longint): TArchiveItem;
 begin
   Result := TArchiveItem(FItems[Index]);
 end;
-
-function TArchiveCentralDirectoryLayer.Read(Stream: TFileReader): longword;
-const
-  CDLFULL = [acdlfVersionNeededToRead, acdlfLastModifiedTime, acdlfComment];
-begin
-  // [0] read central directory layer
-  if ExitStatus = esNoError then
-  begin
-    FFlags := TArchiveCentralDirectoryLayerFlags(longword(Stream.ReadInfWord));
-    if (acdlfVersionNeededToRead in FFlags) then
-      if Stream.ReadInfWord > GetVersionNeededToRead(CDLFULL) then
-        SetExitStatus(esArchiveVerError);
-
-    if ExitStatus = esNoError then
-    begin
-      FLastModifiedTime := 0;
-      if (acdlfLastModifiedTime in FFlags) then
-        FLastModifiedTime := Stream.ReadInfWord;
-
-      FComment := '';
-      if (acdlfComment  in FFlags) then
-        FComment := Stream.ReadInfString;
-    end;
-  end;
-  // [1] read central directory layer items
-  while ExitStatus = esNoError do
-  begin
-    Result := Stream.ReadInfWord;
-    if Result = ARCHIVE_CENTRALDIR_LAYER_ITEM_MARKER then
-      Add(TArchiveItem.Read(Stream))
-    else
-      Break;
-  end;
-end;
-
-procedure TArchiveCentralDirectoryLayer.Write(Stream: TFileWriter);
-var
-  I: longword;
-begin
-  // [0] write central directory layer
-  FFlags := [acdlfVersionNeededToRead, acdlfLastModifiedTime];
-  if FLastModifiedTime = 0 then
-    FLastModifiedTime := DateTimeToFileDate(Now);
-  if Length(FComment) > 0 then
-    Include(FFlags, acdlfComment);
-
-  Stream.WriteInfWord(longword(FFlags));
-  if (acdlfVersionNeededToRead in FFlags) then
-    Stream.WriteInfWord(GetVersionNeededToRead(FFlags));
-  if (acdlfLastModifiedTime in FFlags) then
-    Stream.WriteInfWord(FLastModifiedTime);
-  if (acdlfComment in FFlags) then
-    Stream.WriteInfString(FComment);
-  // [1] write central directory layer items
-  if FItems.Count > 0 then
-    for I := 0 to FItems.Count - 1 do
-    begin
-      Stream.WriteInfWord(ARCHIVE_CENTRALDIR_LAYER_ITEM_MARKER);
-      TArchiveItem(FItems[I]).Write(Stream);
-    end;
-end;
-
-// TArchiveCentralDirectory class
-
-
-
-
-
 
 procedure TArchiveCentralDirectory.Read(Stream: TFileReader);
 const
@@ -1184,14 +1120,14 @@ begin
       end;
     end;;
 
-  // [6] read central directory layers
+  // [6] read central directory items
   if ExitStatus = esNoError then
   begin
     MARKER := Stream.ReadInfWord;
-    while MARKER = ARCHIVE_CENTRALDIR_LAYER_MARKER do
+    while MARKER = ARCHIVE_CENTRALDIR_ITEM_MARKER do
     begin
-      FItems.Add(TArchiveCentralDirectoryLayer.Create);
-      MARKER := TArchiveCentralDirectoryLayer(FItems.Last).Read(Stream);
+      Add(TArchiveItem.Read(Stream));
+      MARKER := Stream.ReadInfWord;
     end;
   end;
 
@@ -1216,25 +1152,13 @@ begin
   if FCDS_DiskNumber <> 1 then
     Include(FCDS_Flags,  acdsfDiskNumber);
 
-  // [1] write central directory items
-  Stream.WriteDWord(ARCHIVE_CENTRALDIR_MARKER);
-  Pack;
-
-  if FItems.Count > 0 then
-    for I := 0 to FItems.Count - 1 do
-    begin
-      Stream.WriteInfWord(acditFILE);
-      TArchiveItem(FItems[I]).Write(Stream);
-    end;
-  Stream.WriteInfWord(acditEND);
-
-  // [2] write central directory end
+  // [1] write central directory
   FCDE_Flags := [acdefVersionNeededToRead, acdefLastModifiedTime];
   FCDE_LastModifiedTime := DateTimeToFileDate(Now);
   if Length(FCDE_Comment) > 0 then
     Include(FCDE_Flags, acdefComment);
 
-  Stream.WriteDWord(ARCHIVE_CENTRALDIR_END_MARKER);
+  Stream.WriteDWord(ARCHIVE_CENTRALDIR_MARKER);
   Stream.WriteInfWord(longword(FCDE_Flags));
   if (acdefVersionNeededToRead in FCDE_Flags) then
     Stream.WriteInfWord(GetVersionNeededToRead(FCDE_Flags));
@@ -1242,6 +1166,24 @@ begin
     Stream.WriteInfWord(FCDE_LastModifiedTime);
   if (acdefComment in FCDE_Flags) then
     Stream.WriteInfString(FCDE_Comment);
+
+
+
+
+
+
+
+  // [1] write central directory items
+
+  Pack;
+  if FItems.Count > 0 then
+    for I := 0 to FItems.Count - 1 do
+    begin
+      Stream.WriteInfWord(ARCHIVE_CENTRALDIR_LAYER_ITEM_MARKER);
+      TArchiveItem(FItems[I]).Write(Stream);
+    end;
+
+
 
   // [3] multi-spanning support
   if Stream.Threshold > 0 then
