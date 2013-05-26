@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1895 - 2013.03.14 by Melchiorre Caruso.
+    v0.8.0 build 1895 - 2013.05.26 by Melchiorre Caruso.
 }
 
 unit BeeSDK_Archive;
@@ -35,6 +35,7 @@ uses
   Math,
   Classes,
   SysUtils,
+  DateUtils,
 
   Bee_Crc,
   Bee_BlowFish,
@@ -127,8 +128,8 @@ type
     FLastModifiedTime: qword;
     FAttributes: longword;
     FComment: string;
-    FLowTime: longword;
-    FHighTime: longword;
+    FLowTime: qword;
+    FHighTime: qword;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -167,8 +168,8 @@ type
     property LastModifiedTime: qword read FLastModifiedTime;
     property Attributes: longword read FAttributes;
     property Comment: string read FComment;
-    property LowTime: longword read FLowTime;
-    property HighTime: longword read FHighTime;
+    property LowTime: qword read FLowTime;
+    property HighTime: qword read FHighTime;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -198,10 +199,10 @@ type
   private
     FItems: TList;
     FItemsAux: TList;
-    FCurrentTime: longword;
+    FCurrentTime: qword;
     // central directory property
     FFlags: TArchiveCentralDirectoryFlags;
-    FLastModifiedTime: TDateTime;
+    FLastModifiedTime: qword;
     FComment: string;
     // central directory seek property
     FSeekFlags: TArchiveCentralDirectorySeekFlags;
@@ -232,8 +233,8 @@ type
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Comment: string read FComment write FComment;
-    property LastModifiedTime: TDateTime read FLastModifiedTime;
-    property CurrentTime: longword read FCurrentTime;
+    property LastModifiedTime: qword read FLastModifiedTime;
+    property CurrentTime: qword read FCurrentTime;
   end;
 
   /// ...
@@ -287,9 +288,10 @@ type
     FTestTempArchive: boolean;
     FVerboseMode: boolean;
     FVolumeSize: int64;
-    FCurrentLayer: longword;
+    FCurrentTime: qword;
     // new items
     FSearchRecs: TList;
+    FCentralDirectory: TArchiveCentralDirectory;
   private
     procedure SetComment(const Value: string);
     procedure SetArchiveName(const Value: string);
@@ -303,7 +305,7 @@ type
     function GetItem(Index: longint): TArchiveItem;
     function GetComment: string;
     function GetCount: longint;
-    function GetLastModifiedTime: longint;
+    function GetLastModifiedTime: qword;
   private
     procedure Encode           (Reader: TBufStream; Writer: TBufStream; const Size: int64);
     procedure EncodeFromArchive(Item: TArchiveItem);
@@ -394,11 +396,11 @@ type
     property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
     property VerboseMode: boolean read FVerboseMode write FVerboseMode;
     property VolumeSize: int64 read FVolumeSize write FVolumeSize;
-    property CurrentLayer: longword read FCurrentLayer write FCurrentLayer;
+    property CurrentTime: qword read FCurrentTime write FCurrentTime;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
-    property LastModifiedTime: longint read GetLastModifiedTime;
+    property LastModifiedTime: qword read GetLastModifiedTime;
   end;
 
 function CoderMethodToStr(Method: TCoderAlgorithm ): string;
@@ -1146,70 +1148,57 @@ var
   I: longword;
 begin
   // [0] store central directory seek
-  FCDS_Flags      := [acdsfVersionNeededToRead];
-  FCDS_DiskSeek   := Stream.Seek(0, fsFromCurrent);
-  FCDS_DiskNumber := Stream.CurrentImage;
-  if FCDS_DiskNumber <> 1 then
-    Include(FCDS_Flags,  acdsfDiskNumber);
+  FSeekFlags  := [acdsfVersionNeededToRead];
+  FDiskSeek   := Stream.Seek(0, fsFromCurrent);
+  FDiskNumber := Stream.CurrentImage;
+  if FDiskNumber <> 1 then
+    Include(FSeekFlags,  acdsfDiskNumber);
 
   // [1] write central directory
-  FCDE_Flags := [acdefVersionNeededToRead, acdefLastModifiedTime];
-  FCDE_LastModifiedTime := DateTimeToFileDate(Now);
-  if Length(FCDE_Comment) > 0 then
-    Include(FCDE_Flags, acdefComment);
+  FFlags := [acdfVersionNeededToRead, acdfLastModifiedTime];
+  FLastModifiedTime := DateTimeToUnix(Now);
+  if Length(FComment) > 0 then
+    Include(FFlags, acdfComment);
 
   Stream.WriteDWord(ARCHIVE_CENTRALDIR_MARKER);
-  Stream.WriteInfWord(longword(FCDE_Flags));
-  if (acdefVersionNeededToRead in FCDE_Flags) then
-    Stream.WriteInfWord(GetVersionNeededToRead(FCDE_Flags));
-  if (acdefLastModifiedTime in FCDE_Flags) then
-    Stream.WriteInfWord(FCDE_LastModifiedTime);
-  if (acdefComment in FCDE_Flags) then
-    Stream.WriteInfString(FCDE_Comment);
+  Stream.WriteInfWord(longword(FFlags));
+  if (acdfVersionNeededToRead in FFlags) then
+    Stream.WriteInfWord(GetVersionNeededToRead(FFlags));
+  if (acdfLastModifiedTime in FFlags) then
+    Stream.WriteInfWord(FLastModifiedTime);
+  if (acdfComment in FFlags) then
+    Stream.WriteInfString(FComment);
 
-
-
-
-
-
-
-  // [1] write central directory items
-
+  // [2] write central directory items
   Pack;
   if FItems.Count > 0 then
     for I := 0 to FItems.Count - 1 do
     begin
-      Stream.WriteInfWord(ARCHIVE_CENTRALDIR_LAYER_ITEM_MARKER);
+      Stream.WriteInfWord(ARCHIVE_CENTRALDIR_ITEM_MARKER);
       TArchiveItem(FItems[I]).Write(Stream);
     end;
-
-
 
   // [3] multi-spanning support
   if Stream.Threshold > 0 then
     if (Stream.Threshold - Stream.Seek(0, fsFromCurrent)) < 512 then
       Stream.CreateNewImage;
 
-  // [0.1] write central directory seek
-  FCDMS_DiskSeek   := Stream.Seek(0, fsFromCurrent);
-  FCDS_DisksNumber := Stream.CurrentImage;
-  if FCDS_DisksNumber <> 1 then
-    Include(FCDS_Flags, acdsfDisksNumber);
-
+  FMagikSeek := Stream.Seek(0, fsFromCurrent);
+  // [4] write central directory seek
   Stream.WriteDWord(ARCHIVE_CENTRALDIR_SEEK_MARKER);
-  Stream.WriteInfWord(longword(FCDS_Flags));
-  if (acdsfVersionNeededToRead in FCDS_Flags) then
-    Stream.WriteInfWord(GetVersionNeededToRead(FCDS_Flags));
-  if (acdsfDisksNumber in FCDS_Flags) then
-    Stream.WriteInfWord(FCDS_DisksNumber);
-  if (acdsfDiskNumber in FCDS_Flags) then
-    Stream.WriteInfWord(FCDS_DiskNumber);
-  Stream.WriteInfWord(FCDS_DiskSeek);
+  Stream.WriteInfWord(longword(FSeekFlags));
+  if (acdsfVersionNeededToRead in FSeekFlags) then
+    Stream.WriteInfWord(GetVersionNeededToRead(FSeekFlags));
+  if (acdsfDisksNumber in FSeekFlags) then
+    Stream.WriteInfWord(FDisksNumber);
+  if (acdsfDiskNumber in FSeekFlags) then
+    Stream.WriteInfWord(FDiskNumber);
+  Stream.WriteInfWord(FDiskSeek);
 
-  // [4] write magikseek
+  // [5] write magikseek
   Stream.WriteDWord(ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER);
   Stream.WriteDWord(longword(Stream.Seek(0, fsFromCurrent)
-    - FCDMS_DiskSeek + SizeOf(DWord)));
+    - FMagikSeek + SizeOf(DWord)));
 end;
 
 // TArchiver class
@@ -1240,9 +1229,9 @@ begin
   FTestTempArchive   := FALSE;
   FVolumeSize        := 0;
   FVerboseMode       := FALSE;
-  FCreateNewLayer       := FALSE;
+  FCurrentTime       := 0;
   // items list
-  FCentralDirectory  := TArchiveCentralDirectoryLayer.Create;
+  FCentralDirectory  := TArchiveCentralDirectory.Create;
   FSearchRecs        := TList.Create;
 end;
 
@@ -1497,7 +1486,7 @@ begin
 
   FSwapName   := GenerateFileName(FWorkDirectory);
   FSwapWriter := TFileWriter.Create(FSwapName, FOnRequestBlankImage, 0);
-  FSwapWriter.WriteDWord(ARCHIVE_DATA_MARKER);
+  FSwapWriter.WriteDWord(ARCHIVE_MARKER);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     if ExitStatus <> esNoError then Break;
@@ -1559,7 +1548,7 @@ begin
 
       FArchiveReader := TFileReader.Create(FTempName, FOnRequestImage);
       FTempWriter    := TFileWriter.Create(FArchiveName, FOnRequestBlankImage, FVolumeSize);
-      FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
+      FTempWriter.WriteDWord(ARCHIVE_MARKER);
 
       for I := 0 to FCentralDirectory.Count - 1 do
       begin
@@ -1703,7 +1692,7 @@ begin
   Result := FCentralDirectory.Items[Index];
 end;
 
-function TArchiver.GetLastModifiedTime: longint;
+function TArchiver.GetLastModifiedTime: qword;
 begin
   Result := FCentralDirectory.LastModifiedTime;
 end;
@@ -2071,7 +2060,7 @@ begin
   begin
     FTempName   := GenerateFileName(FWorkDirectory);
     FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
-    FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
+    FTempWriter.WriteDWord(ARCHIVE_MARKER);
 
     for I := 0 to FCentralDirectory.Count - 1 do
     begin
@@ -2183,7 +2172,7 @@ begin
     CheckSequences4Delete;
     FTempName   := GenerateFileName(FWorkDirectory);
     FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
-    FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
+    FTempWriter.WriteDWord(ARCHIVE_MARKER);
 
     if FIsNeededToSwap then Swapping;
     for I := FCentralDirectory.Count - 1 downto 0 do

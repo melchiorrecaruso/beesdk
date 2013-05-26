@@ -39,6 +39,7 @@ interface
 uses
   Math,
   Classes,
+  DateUtils,
   SysUtils,
   Bee_Common,
   Bee_CommandLine,
@@ -114,7 +115,7 @@ type
     Name: string;
     Size: int64;
     Attributes: longint;
-    LastModifiedTime: longint;
+    LastModifiedTime: qword;
   public
     constructor CreateFrom(Item: TCustomSearchRec);
   end;
@@ -497,7 +498,7 @@ begin
   Result.Name             := RecPath + Rec.Name;
   Result.Size             := Rec.Size;
   Result.Attributes       := Rec.Attr;
-  Result.LastModifiedTime := Rec.Time;
+  Result.LastModifiedTime := DateTimeToUnix(FileDateToDateTime(Rec.Time));
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; Recursive: boolean);
