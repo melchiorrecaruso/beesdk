@@ -123,7 +123,7 @@ type
     // item property
     FFileName: string;
     FFlags: TArchiveItemFlags;
-    FVersionNeededToRead: longword;
+    FVersionNeededToRead: longint;
     FUncompressedSize: int64;
     FLastModifiedTime: int64;
     FAttributes: longint;
@@ -133,7 +133,7 @@ type
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
-    FDiskNumber: longword;
+    FDiskNumber: longint;
     FDiskSeek: int64;
     FCheckMethod: THashAlgorithm;
     FCheckDigest: string;
@@ -142,8 +142,8 @@ type
     // compression property
     FCompressionFlags: TArchiveCompressionFlags;
     FCompressionMethod: TCoderAlgorithm;
-    FCompressionLevel: longword;
-    FCompressionLevelAux: longword;
+    FCompressionLevel: longint;
+    FCompressionLevelAux: longint;
     FCompressionFilter: string;
     FCompressionFilterAux: string;
     FCompressionBlock: int64;
@@ -163,7 +163,7 @@ type
   public {property}
     property FileName: string read FFileName;
     property Flags: TArchiveItemFlags read FFlags;
-    property VersionNeededToRead: longword read FVersionNeededToRead;
+    property VersionNeededToRead: longint read FVersionNeededToRead;
     property UncompressedSize: int64 read FUncompressedSize;
     property LastModifiedTime: int64 read FLastModifiedTime;
     property Attributes: longint read FAttributes;
@@ -173,7 +173,7 @@ type
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
-    property DiskNumber: longword read FDiskNumber;
+    property DiskNumber: longint read FDiskNumber;
     property DiskSeek: int64 read FDiskSeek;
     property CheckMethod: THashAlgorithm read FCheckMethod;
     property CheckDigest: string read FCheckDigest;
@@ -182,8 +182,8 @@ type
     // compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
     property CompressionMethod: TCoderAlgorithm read FCompressionMethod;
-    property CompressionLevel: longword read FCompressionLevel;
-    property CompressionLevelAux: longword read FCompressionLevelAux;
+    property CompressionLevel: longint read FCompressionLevel;
+    property CompressionLevelAux: longint read FCompressionLevelAux;
     property CompressionFilter: string read FCompressionFilter;
     property CompressionFilterAux: string read FCompressionFilterAux;
     property CompressionBlock: int64 read FCompressionBlock;
@@ -206,8 +206,8 @@ type
     FComment: string;
     // central directory seek property
     FSeekFlags: TArchiveCentralDirectorySeekFlags;
-    FDisksNumber: longword;
-    FDiskNumber: longword;
+    FDisksNumber: longint;
+    FDiskNumber: longint;
     FDiskSeek: int64;
     // central directory magik seek property
     FMagikSeek: longint;
@@ -216,25 +216,24 @@ type
     procedure UnPack;
     function GetCount: longint;
     function GetItem(Index: longint): TArchiveItem;
-    function GetIndexAuxOf(const FileName: string): longint;
     function GetIndexOf(const FileName: string): longint;
+    function GetIndexAuxOf(const FileName: string): longint;
     function CompareItem(Item1, Item2: TArchiveItem): longint;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
-
     function IndexOf(const FileName: string): longint;
     function Add(Item : TArchiveItem): longint;
     procedure Delete(Index: longint);
     procedure Clear;
   public
-    property Count: longint read GetCount;
-    property Items[Index: longint]: TArchiveItem read GetItem;
     property Comment: string read FComment write FComment;
-    property LastModifiedTime: int64 read FLastModifiedTime;
+    property Count: longint read GetCount;
     property CurrentTime: int64 read FCurrentTime;
+    property Items[Index: longint]: TArchiveItem read GetItem;
+    property LastModifiedTime: int64 read FLastModifiedTime;
   end;
 
   /// ...
@@ -714,11 +713,11 @@ begin
     acfCompressionFilterAux,
     acfCompressionBlock];
   FCompressionMethod    := caStore;
-  FCompressionBlock     := 0;
   FCompressionLevel     := 0;
   FCompressionLevelAux  := 0;
   FCompressionFilter    := '';
   FCompressionFilterAux := '';
+  FCompressionBlock     := 0;
   /// encryption property ///
   FEncryptionFlags      := [
     aefEncryptionMethod];
@@ -813,10 +812,10 @@ end;
 constructor TArchiveCentralDirectory.Create;
 begin
   inherited Create;
-  FItems := TList.Create;
+  FItems    := TList.Create;
   FItemsAux := TList.Create;
-  FLastModifiedTime := 0;
-  FComment := '';
+  FLastModifiedTime :=  0;
+  FComment  := '';
 end;
 
 destructor TArchiveCentralDirectory.Destroy;
@@ -922,13 +921,14 @@ begin
   Result := AnsiCompareFileName(Item1.FileName, Item2.FileName);
   if Result = 0 then
   begin
-    Result := Item1.LowTime - Item2.LowTime;
+    Result := Item1.LowTime  - Item2.LowTime;
+    //Result := Item1.HighTime - Item2.HighTime;
   end;
 end;
 
 function TArchiveCentralDirectory.Add(Item: TArchiveItem): longint;
 var
-  Lo, Med, Hi, I: longint;
+  Lo, Mid, Hi, I: longint;
 begin
   Item.FIndex := FItems.Add(Item);
   if FItemsAux.Count <> 0 then
@@ -937,14 +937,14 @@ begin
     Hi := FItemsAux.Count - 1;
     while Hi >= Lo do
     begin
-      Med := (Lo + Hi) div 2;
-      I := CompareItem(Item, TArchiveItem(FItemsAux[Med]));
+      Mid := (Lo + Hi) div 2;
+      I := CompareItem(Item, TArchiveItem(FItemsAux[Mid]));
 
       if I > 0 then
-        Lo := Med + 1
+        Lo := Mid + 1
       else
         if I < 0 then
-          Hi := Med - 1
+          Hi := Mid - 1
         else
           Hi := -2;
     end;
@@ -955,9 +955,9 @@ begin
     end else
     begin
       if I > 0 then
-        FItemsAux.Insert(Med + 1, Item)
+        FItemsAux.Insert(Mid + 1, Item)
       else
-        FItemsAux.Insert(Med, Item);
+        FItemsAux.Insert(Mid, Item);
     end;
   end else
     FItemsAux.Add(Item);
@@ -977,10 +977,10 @@ begin
     I := AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Mid]).FileName);
     if I = 0 then
     begin
-      if I < TArchiveItem(FItemsAux[Mid]).LowTime  then
+      if FCurrentTime < TArchiveItem(FItemsAux[Mid]).LowTime then
         I := -1
       else
-        if I > TArchiveItem(FItemsAux[Mid]).HighTime then
+        if FCurrentTime > TArchiveItem(FItemsAux[Mid]).HighTime then
           I := 1
     end;
 
@@ -1027,6 +1027,7 @@ begin
   FItemsAux.Delete(GetIndexAuxOf(Item.FileName));
   FItems.Delete(Item.FIndex);
   Item.Destroy;
+
   for I := 0 to FItems.Count - 1 do
     TArchiveItem(FItems[I]).FIndex := I;
 end;
@@ -2323,12 +2324,11 @@ begin
     if Result = arcOk then
     begin
       I := IndexOf(UpdateAs);
-      if (I = -1) or FCreateNewLayer then
+      if I = -1 then
         I := FCentralDirectory.Add(TArchiveItem.Create(UpdateAs))
       else
         if FCentralDirectory.Items[I].FTag = aitNone then
           FCentralDirectory.Items[I].FTag := aitUpdate;
-
 
       FCentralDirectory.Items[I].Update(Item);
       Result := DoComment(FCentralDirectory.Items[I]);
@@ -2422,7 +2422,7 @@ begin
     CheckSequences4Update;
     FTempName   := GenerateFileName(FWorkDirectory);
     FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
-    FTempWriter.WriteDWord(ARCHIVE_DATA_MARKER);
+    FTempWriter.WriteDWord(ARCHIVE_MARKER);
 
     if FIsNeededToSwap then Swapping;
     for I := 0 to FCentralDirectory.Count - 1 do
