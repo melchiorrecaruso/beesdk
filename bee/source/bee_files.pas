@@ -117,6 +117,7 @@ type
     Size: int64;
     Attributes: longint;
     LastModifiedTime: int64;
+    LastStoredTime: int64;
   public
     constructor CreateFrom(Item: TCustomSearchRec);
   end;
@@ -465,6 +466,7 @@ begin
   Size             := Item.Size;
   Attributes       := Item.Attributes;
   LastModifiedTime := Item.LastModifiedTime;
+  LastStoredTime   := Item.LastStoredTime;
 end;
 
 { TFileScanner class }
@@ -508,6 +510,7 @@ begin
   {$IFDEF UNIX}
   Result.LastModifiedTime := Rec.Time;
   {$ENDIF}
+  Result.LastStoredTime   := DateTimeToUnix(Now);
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; Recursive: boolean);

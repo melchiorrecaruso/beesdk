@@ -78,10 +78,11 @@ type
     aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
+    aifLastStoredTime,
     aifAttributes,
     aifComment,
-    aifLowTime,
-    aifHighTime);
+    aifLowLayer,
+    aifHighLayer);
 
   TArchiveItemFlags = set of TArchiveItemFlag;
 
@@ -126,10 +127,11 @@ type
     FVersionNeededToRead: longint;
     FUncompressedSize: int64;
     FLastModifiedTime: int64;
+    FLastStoredTime: int64;
     FAttributes: longint;
     FComment: string;
-    FLowTime: int64;
-    FHighTime: int64;
+    FLowLayer: longint;
+    FHighLayer: longint;
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
@@ -166,10 +168,11 @@ type
     property VersionNeededToRead: longint read FVersionNeededToRead;
     property UncompressedSize: int64 read FUncompressedSize;
     property LastModifiedTime: int64 read FLastModifiedTime;
+    property LastStoredTime: int64 read FLastStoredTime;
     property Attributes: longint read FAttributes;
     property Comment: string read FComment;
-    property LowTime: int64 read FLowTime;
-    property HighTime: int64 read FHighTime;
+    property LowLayer: longint read FLowLayer;
+    property HighLayer: longint read FHighLayer;
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
@@ -199,7 +202,6 @@ type
   private
     FItems: TList;
     FItemsAux: TList;
-    FCurrentTime: int64;
     // central directory property
     FFlags: TArchiveCentralDirectoryFlags;
     FLastModifiedTime: int64;
@@ -229,11 +231,10 @@ type
     procedure Delete(Index: longint);
     procedure Clear;
   public
-    property Comment: string read FComment write FComment;
     property Count: longint read GetCount;
-    property CurrentTime: int64 read FCurrentTime;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property LastModifiedTime: int64 read FLastModifiedTime;
+    property Comment: string read FComment write FComment;
   end;
 
   /// ...
@@ -287,7 +288,7 @@ type
     FTestTempArchive: boolean;
     FVerboseMode: boolean;
     FVolumeSize: int64;
-    FCurrentTime: int64;
+    FNewLayer: boolean;
     // new items
     FSearchRecs: TList;
     FCentralDirectory: TArchiveCentralDirectory;
@@ -395,7 +396,7 @@ type
     property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
     property VerboseMode: boolean read FVerboseMode write FVerboseMode;
     property VolumeSize: int64 read FVolumeSize write FVolumeSize;
-    property CurrentTime: int64 read FCurrentTime write FCurrentTime;
+    property NewLayer: boolean read FNewLayer write FNewLayer;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property Count: longint read GetCount;
 
@@ -677,17 +678,19 @@ begin
     aifVersionNeededToRead,
     aifUncompressedSize,
     aifLastModifiedTime,
+    aifLastStoredTime,
     aifAttributes,
     aifComment,
-    aifLowTime,
-    aifHighTime];
+    aifLowLayer,
+    aifHighLayer];
   FVersionNeededToRead :=  0;
   FUncompressedSize    :=  0;
   FLastModifiedTime    :=  0;
+  FLastStoredTime      :=  0;
   FAttributes          :=  0;
   FComment             := '';
-  FLowTime             :=  0;
-  FHighTime            :=  0;
+  FLowLayer            :=  0;
+  FHighLayer           :=  0;
   /// data descriptor property ///
   FDataDescriptorFlags := [
     addfCompressedSize,
@@ -733,6 +736,7 @@ procedure TArchiveItem.Update(SearchRec: TCustomSearchRec);
 begin
   /// item property ///
   FLastModifiedTime  := SearchRec.LastModifiedTime;
+  FLastStoredTime    := SearchRec.LastStoredTime;
   FAttributes        := SearchRec.Attributes;
   /// reserved property ///
   FExternalFileName  := SearchRec.Name;
@@ -747,10 +751,11 @@ begin
   if (aifVersionNeededToRead in FFlags) then FVersionNeededToRead := Stream.ReadInfWord;
   if (aifUncompressedSize    in FFlags) then FUncompressedSize    := Stream.ReadInfWord;
   if (aifLastModifiedTime    in FFlags) then FLastModifiedTime    := Stream.ReadInfWord;
+  if (aifLastStoredTime      in FFlags) then FLastStoredTime      := Stream.ReadInfWord;
   if (aifAttributes          in FFlags) then FAttributes          := Stream.ReadInfWord;
   if (aifComment             in FFlags) then FComment             := Stream.ReadInfString;
-  if (aifLowTime             in FFlags) then FLowTime             := Stream.ReadInfWord;
-  if (aifHighTime            in FFlags) then FHighTime            := Stream.ReadInfWord;
+  if (aifLowLayer            in FFlags) then FLowLayer            := Stream.ReadInfWord;
+  if (aifHighLayer           in FFlags) then FHighLayer           := Stream.ReadInfWord;
   /// data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
@@ -781,10 +786,11 @@ begin
   if (aifVersionNeededToRead in FFlags) then Stream.WriteInfWord(FVersionNeededToRead);
   if (aifUncompressedSize    in FFlags) then Stream.WriteInfWord(FUncompressedSize);
   if (aifLastModifiedTime    in FFlags) then Stream.WriteInfWord(FLastModifiedTime);
+  if (aifLastStoredTime      in FFlags) then Stream.WriteInfWord(FLastStoredTime);
   if (aifAttributes          in FFlags) then Stream.WriteInfWord(FAttributes);
   if (aifComment             in FFlags) then Stream.WriteInfString(FComment);
-  if (aifLowTime             in FFlags) then Stream.WriteInfWord(FLowTime);
-  if (aifHighTime            in FFlags) then Stream.WriteInfWord(FHighTime);
+  if (aifLowLayer            in FFlags) then Stream.WriteInfWord(FLowLayer);
+  if (aifHighLayer           in FFlags) then Stream.WriteInfWord(FHighLayer);
   /// data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (addfCompressedSize in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
@@ -853,10 +859,11 @@ begin
       if CurrentItem.FVersionNeededToRead  = PreviusItem.FVersionNeededToRead  then Exclude(CurrentItem.FFlags, aifVersionNeededToRead) else Include(CurrentItem.FFlags, aifVersionNeededToRead);
       if CurrentItem.FUncompressedSize     = PreviusItem.FUncompressedSize     then Exclude(CurrentItem.FFlags, aifUncompressedSize)    else Include(CurrentItem.FFlags, aifUncompressedSize);
       if CurrentItem.FLastModifiedTime     = PreviusItem.FLastModifiedTime     then Exclude(CurrentItem.FFlags, aifLastModifiedTime)    else Include(CurrentItem.FFlags, aifLastModifiedTime);
+      if CurrentItem.FLastStoredTime       = PreviusItem.FLastStoredTime       then Exclude(CurrentItem.FFlags, aifLastStoredTime)      else Include(CurrentItem.FFlags, aifLastStoredTime);
       if CurrentItem.FAttributes           = PreviusItem.FAttributes           then Exclude(CurrentItem.FFlags, aifAttributes)          else Include(CurrentItem.FFlags, aifAttributes);
       if CurrentItem.FComment              = PreviusItem.FComment              then Exclude(CurrentItem.FFlags, aifComment)             else Include(CurrentItem.FFlags, aifComment);
-      if CurrentItem.FLowTime              = PreviusItem.FLowTime              then Exclude(CurrentItem.FFlags, aifLowTime)             else Include(CurrentItem.FFlags, aifLowTime);
-      if CurrentItem.FHighTime             = PreviusItem.FHighTime             then Exclude(CurrentItem.FFlags, aifHighTime)            else Include(CurrentItem.FFlags, aifHighTime);
+      if CurrentItem.FLowLayer             = PreviusItem.FLowLayer             then Exclude(CurrentItem.FFlags, aifLowLayer)            else Include(CurrentItem.FFlags, aifLowLayer);
+      if CurrentItem.FHighLayer            = PreviusItem.FHighLayer            then Exclude(CurrentItem.FFlags, aifHighLayer)           else Include(CurrentItem.FFlags, aifHighLayer);
       /// data descriptor property ///
       if CurrentItem.FCompressedSize       = PreviusItem.FCompressedSize       then Exclude(CurrentItem.FDataDescriptorFlags, addfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, addfCompressedSize);
       if CurrentItem.FDiskNumber           = PreviusItem.FDiskNumber           then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, addfDiskNumber);
@@ -892,10 +899,11 @@ begin
       if not(aifVersionNeededToRead in CurrentItem.FFlags) then CurrentItem.FVersionNeededToRead := PreviusItem.FVersionNeededToRead;
       if not(aifUncompressedSize    in CurrentItem.FFlags) then CurrentItem.FUncompressedSize    := PreviusItem.FUncompressedSize;
       if not(aifLastModifiedTime    in CurrentItem.FFlags) then CurrentItem.FLastModifiedTime    := PreviusItem.FLastModifiedTime;
+      if not(aifLastStoredTime      in CurrentItem.FFlags) then CurrentItem.FLastStoredTime      := PreviusItem.FLastStoredTime;
       if not(aifAttributes          in CurrentItem.FFlags) then CurrentItem.FAttributes          := PreviusItem.FAttributes;
       if not(aifComment             in CurrentItem.FFlags) then CurrentItem.FComment             := PreviusItem.FComment;
-      if not(aifLowTime             in CurrentItem.FFlags) then CurrentItem.FLowTime             := PreviusItem.FLowTime;
-      if not(aifHighTime            in CurrentItem.FFlags) then CurrentItem.FHighTime            := PreviusItem.FHighTime;
+      if not(aifLowLayer            in CurrentItem.FFlags) then CurrentItem.FLowLayer            := PreviusItem.FLowLayer;
+      if not(aifHighLayer           in CurrentItem.FFlags) then CurrentItem.FHighLayer           := PreviusItem.FHighLayer;
       /// data descryptor property ///
       if not(addfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
       if not(addfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
@@ -921,8 +929,8 @@ begin
   Result := AnsiCompareFileName(Item1.FileName, Item2.FileName);
   if Result = 0 then
   begin
-    Result := Item1.LowTime  - Item2.LowTime;
-    //Result := Item1.HighTime - Item2.HighTime;
+    Result := Item1.LowLayer  - Item2.LowLayer;
+    //Result := Item1.HighLayer - Item2.HighLayer;
   end;
 end;
 
@@ -977,11 +985,7 @@ begin
     I := AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Mid]).FileName);
     if I = 0 then
     begin
-      if FCurrentTime < TArchiveItem(FItemsAux[Mid]).LowTime then
-        I := -1
-      else
-        if FCurrentTime > TArchiveItem(FItemsAux[Mid]).HighTime then
-          I := 1
+      I := 0 - TArchiveItem(FItemsAux[Mid]).LowLayer;
     end;
 
     if I > 0 then
@@ -1230,7 +1234,7 @@ begin
   FTestTempArchive   := FALSE;
   FVolumeSize        := 0;
   FVerboseMode       := FALSE;
-  FCurrentTime       := 0;
+  FNewLayer          := FALSE;
   // items list
   FCentralDirectory  := TArchiveCentralDirectory.Create;
   FSearchRecs        := TList.Create;
