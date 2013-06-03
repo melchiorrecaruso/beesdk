@@ -111,18 +111,17 @@ type
 
   { TCustomSearchRec }
 
-  TCustomSearchRec = class
-  public
+  TCustomSearchRec = record
     Name: string;
     Size: int64;
     Attributes: longint;
     LastModifiedTime: int64;
     LastStoredTime: int64;
-  public
-    constructor CreateFrom(Item: TCustomSearchRec);
   end;
 
-  { TFileScanner }
+  PCustomSearchRec = ^TCustomSearchRec;
+
+  { TSearchRecList }
 
   TFileScanner = class
   private
@@ -130,7 +129,7 @@ type
     function GetCount: integer;
     function GetItem(Index: longint): TCustomSearchRec;
     procedure RecursiveScan(Mask: string; Recursive: boolean);
-    function CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
+    function New(const RecPath: string; const Rec: TSearchRec): PCustomSearchRec;
   public
     constructor Create;
     destructor Destroy; override;
@@ -457,18 +456,6 @@ begin
   end;
 end;
 
-{ TCustomSearchRec class }
-
-constructor TCustomSearchRec.CreateFrom(Item: TCustomSearchRec);
-begin
-  inherited Create;
-  Name             := Item.Name;
-  Size             := Item.Size;
-  Attributes       := Item.Attributes;
-  LastModifiedTime := Item.LastModifiedTime;
-  LastStoredTime   := Item.LastStoredTime;
-end;
-
 { TFileScanner class }
 
 constructor TFileScanner.Create;
@@ -490,27 +477,27 @@ var
 begin
   for I := 0 to FList.Count - 1 do
   begin
-    TCustomSearchRec(FList[I]).Destroy;
+    FreeMem(FList[I]);
   end;
   FList.Clear;
 end;
 
-function TFileScanner.CreateItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
+function TFileScanner.New(const RecPath: string; const Rec: TSearchRec): PCustomSearchRec;
 begin
-  Result                  := TCustomSearchRec.Create;
-  Result.Name             := RecPath + Rec.Name;
-  Result.Size             := Rec.Size;
-  Result.Attributes       := Rec.Attr;
+  Result                   := GetMem(SizeOf(TCustomSearchRec));
+  Result^.Name             := RecPath + Rec.Name;
+  Result^.Size             := Rec.Size;
+  Result^.Attributes       := Rec.Attr;
   {$IFDEF MSWINDOWS}
-  Result.LastModifiedTime := DateTimeToUnix(DosDateTimeToDateTime(Rec.Time));
+  Result^.LastModifiedTime := DateTimeToUnix(DosDateTimeToDateTime(Rec.Time));
   {$ENDIF}
   {$IFDEF MAC}
-  Result.LastModifiedTime := DateTimeToUnix(MacTimeToDateTime(Rec.Time));
+  Result^.LastModifiedTime := DateTimeToUnix(MacTimeToDateTime(Rec.Time));
   {$ENDIF}
   {$IFDEF UNIX}
-  Result.LastModifiedTime := Rec.Time;
+  Result^.LastModifiedTime := Rec.Time;
   {$ENDIF}
-  Result.LastStoredTime   := DateTimeToUnix(Now);
+  Result^.LastStoredTime   := DateTimeToUnix(Now);
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; Recursive: boolean);
@@ -537,7 +524,7 @@ begin
     if (Rec.Attr and faDirectory) = 0 then
     begin
       if FileNameMatch(RecName, Mask, Recursive) then
-        FList.Add(CreateItem(RecPath, Rec));
+        FList.Add(New(RecPath, Rec));
     end else
       if (Recursive) and (Rec.Name <> '.') and (Rec.Name <> '..') then
         RecursiveScan(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), Recursive);

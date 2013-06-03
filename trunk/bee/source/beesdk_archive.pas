@@ -289,8 +289,9 @@ type
     FVerboseMode: boolean;
     FVolumeSize: int64;
     FNewLayer: boolean;
-    // new items
-    FSearchRecs: TList;
+    // file scanner
+    FFileScanner: TFileScanner;
+    // central directory
     FCentralDirectory: TArchiveCentralDirectory;
   private
     procedure SetComment(const Value: string);
@@ -837,7 +838,9 @@ var
   I: longint;
 begin
   for I := 0 to FItems.Count - 1 do
+  begin
     TArchiveItem(FItems[I]).Destroy;
+  end;
   FItems.Clear;
   FItemsAux.Clear;
   FLastModifiedTime := 0;
@@ -1235,9 +1238,10 @@ begin
   FVolumeSize        := 0;
   FVerboseMode       := FALSE;
   FNewLayer          := FALSE;
-  // items list
+  // file scanner
+  FFileScanner       := TFileScanner.Create;
+  // central direcotry
   FCentralDirectory  := TArchiveCentralDirectory.Create;
-  FSearchRecs        := TList.Create;
 end;
 
 destructor TArchiver.Destroy;
@@ -1245,11 +1249,7 @@ var
   I: longint;
 begin
   FCentralDirectory.Destroy;
-  for I := 0 to FSearchRecs.Count - 1 do
-  begin
-    TCustomSearchRec(FSearchRecs[I]).Destroy;
-  end;
-  FSearchRecs.Destroy;
+  FFilescanner.Destroy;
   inherited Destroy;
 end;
 
@@ -1581,6 +1581,8 @@ begin
 end;
 
 procedure TArchiver.CloseArchive;
+var
+  I: longint;
 begin
   if Assigned(FArchiveReader) then FreeAndNil(FArchiveReader);
   if Assigned(FSwapReader)    then FreeAndNil(FSwapReader);
@@ -1594,7 +1596,7 @@ begin
     SaveTemporaryArchive;
   end;
   FCentralDirectory.Clear;
-  FSearchRecs.Clear;
+  FFileScanner.Clear;
 
   FArchiveName    := '';
   FSwapName       := '';
@@ -1844,9 +1846,9 @@ begin
   FCentralDirectory.Items[Index].FTag := aitNone;
 end;
 
-procedure TArchiver.Tag(SearchRec: TCustomSearchRec);
+procedure TArchiver.Tag(const SearchRec: TCustomSearchRec);
 begin
-  FSearchRecs.Add(TCustomSearchRec.CreateFrom(SearchRec));
+  FSearchRecs.Add(SearchRec);
 end;
 
 function TArchiver.IsTagged(Index: longint): boolean;
