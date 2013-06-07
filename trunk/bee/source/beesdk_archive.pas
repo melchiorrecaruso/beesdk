@@ -737,7 +737,6 @@ procedure TArchiveItem.Update(SearchRec: TCustomSearchRec);
 begin
   /// item property ///
   FLastModifiedTime  := SearchRec.LastModifiedTime;
-  FLastStoredTime    := SearchRec.LastStoredTime;
   FAttributes        := SearchRec.Attributes;
   /// reserved property ///
   FExternalFileName  := SearchRec.Name;
@@ -1846,7 +1845,7 @@ begin
   FCentralDirectory.Items[Index].FTag := aitNone;
 end;
 
-procedure TArchiver.Tag(const SearchRec: TCustomSearchRec);
+procedure TArchiver.Tag(SearchRec: TCustomSearchRec);
 begin
   FSearchRecs.Add(SearchRec);
 end;
@@ -2458,4 +2457,4 @@ begin
 end;
 
 end.
-
+
