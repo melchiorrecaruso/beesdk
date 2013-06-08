@@ -97,9 +97,9 @@
         <UnitName Value="BeeSDK_Archive"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1830"/>
+        <TopLine Value="46"/>
         <CursorPos X="60" Y="1839"/>
-        <FoldState Value=" T8oG228 T3qW0F9 piXjP0JB]9cjg0A114]Bal40C2]BTK_K0a."/>
+        <FoldState Value=" T8oG228 T3qW0F9 piXjP0JB]9cjg0A114 TK_K0aF"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -122,7 +122,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="434"/>
         <CursorPos X="60" Y="54"/>
-        <FoldState Value=" T3lg0s3 pibkD0X023."/>
         <UsageCount Value="77"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -155,9 +154,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="530"/>
-        <CursorPos X="44" Y="549"/>
-        <FoldState Value=" T7iBGO1 T3kH0F8 piejU0G9]9bjW036[95D0F14"/>
+        <TopLine Value="50"/>
+        <CursorPos X="25" Y="118"/>
+        <FoldState Value=" T7iBGO1 T3kH0F8 piejU0G9]9bjW036[95D0F5M"/>
         <UsageCount Value="76"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
