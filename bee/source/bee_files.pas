@@ -114,8 +114,8 @@ type
   TCustomSearchRec = class(TObject)
     Name: string;
     Size: int64;
-    Attributes: longint;
     LastModifiedTime: int64;
+    Attributes: longint;
   end;
 
   { TSearchRecList }
