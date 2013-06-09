@@ -1843,7 +1843,7 @@ end;
 
 procedure TArchiver.Tag(SearchRec: TCustomSearchRec);
 begin
-  FSearchRecs.Add(SearchRec);
+  DoUpdate(SearchRec);
 end;
 
 function TArchiver.IsTagged(Index: longint): boolean;
@@ -2335,31 +2335,19 @@ begin
       Result := DoComment(FCentralDirectory.Items[I]);
     end;
   end;
+
+  case Result of
+    arcOk: begin
+      FIsNeededToRun  := TRUE;
+      FIsNeededToSave := TRUE;
+    end;
+  //arcCancel: nothing to do
+    arcQuit: SetExitStatus(esUserAbortError);
+  end;
 end;
 
 procedure TArchiver.CheckTags4Update;
-var
-  I: longint;
-  Item: TCustomSearchRec;
 begin
-  FSearchRecs.Sort(@CompareCustomSearchRec);
-  for I := 0 to FSearchRecs.Count - 1 do
-  begin
-    if ExitStatus <> esNoError then Break;
-    Item := TCustomSearchRec(FSearchRecs.Items[I]);
-    case DoUpdate(Item) of
-      arcOk: begin
-        FIsNeededToRun  := TRUE;
-        FIsNeededToSave := TRUE;
-      end;
-    //arcCancel: nothing to do
-      arcQuit: SetExitStatus(esUserAbortError);
-    end;
-  end;
-
-  for I := 0 to FSearchRecs.Count - 1 do
-    TCustomSearchRec(FSearchRecs[I]).Destroy;
-  FSearchRecs.Clear;
   Configure;
 end;
 
