@@ -482,7 +482,6 @@ begin
   Result                  := TCustomSearchRec.Create;
   Result.Name             := RecPath + Rec.Name;
   Result.Size             := Rec.Size;
-  Result.Attributes       := Rec.Attr;
   {$IFDEF MSWINDOWS}
   Result.LastModifiedTime := DateTimeToUnix(DosDateTimeToDateTime(Rec.Time));
   {$ENDIF}
@@ -492,6 +491,7 @@ begin
   {$IFDEF UNIX}
   Result.LastModifiedTime := Rec.Time;
   {$ENDIF}
+  Result.Attributes       := Rec.Attr;
 end;
 
 procedure TFileScanner.RecursiveScan(Mask: string; Recursive: boolean);

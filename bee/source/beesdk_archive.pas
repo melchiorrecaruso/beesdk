@@ -226,10 +226,10 @@ type
     destructor Destroy; override;
     procedure Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
-    function IndexOf(const FileName: string): longint;
     function Add(Item : TArchiveItem): longint;
     procedure Delete(Index: longint);
     procedure Clear;
+    function IndexOf(const FileName: string): longint;
   public
     property Count: longint read GetCount;
     property Items[Index: longint]: TArchiveItem read GetItem;
@@ -238,28 +238,29 @@ type
   end;
 
   /// ...
+
   TArchiveConfirm = (arcOk, arcCancel, arcQuit);
 
   /// archive events
 
   TArchiveProgressEvent = procedure(Percentage: longint) of object;
 
-  TArchiveMessageEvent = procedure(const aMessage: string) of object;
-
-  TArchiveRenameEvent = procedure(Item: TArchiveItem;
-    var RenameAs: string; var Confirm: TArchiveConfirm) of object;
-
-  TArchiveExtractEvent = procedure(Item: TArchiveItem;
-    var ExtractAs: string; var Confirm: TArchiveConfirm) of object;
-
-  TArchiveDeleteEvent = procedure(Item: TArchiveItem;
-    var Confirm: TArchiveConfirm) of object;
+  TArchiveMessageEvent = procedure(const Msg: string) of object;
 
   TArchiveCommentEvent = procedure(Item: TArchiveItem;
     var CommentAs: string; var Confirm: TArchiveConfirm) of object;
 
   TArchiveUpdateEvent = procedure(SearchRec: TCustomSearchRec;
     var UpdateAs: string; var Confirm: TArchiveConfirm) of object;
+
+  TArchiveDeleteEvent = procedure(Item: TArchiveItem;
+    var Confirm: TArchiveConfirm) of object;
+
+  TArchiveExtractEvent = procedure(Item: TArchiveItem;
+    var ExtractAs: string; var Confirm: TArchiveConfirm) of object;
+
+  TArchiveRenameEvent = procedure(Item: TArchiveItem;
+    var RenameAs: string; var Confirm: TArchiveConfirm) of object;
 
   /// archive manager
   TArchiver = class(TObject)
@@ -294,11 +295,6 @@ type
     // central directory
     FCentralDirectory: TArchiveCentralDirectory;
   private
-    procedure SetComment(const Value: string);
-    procedure SetArchiveName(const Value: string);
-    procedure SetWorkDirectory(const Value: string);
-    procedure SetSfxName(const Value: string);
-
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
@@ -307,6 +303,11 @@ type
     function GetComment: string;
     function GetCount: longint;
     function GetLastModifiedTime: int64;
+
+    procedure SetComment(const Value: string);
+    procedure SetArchiveName(const Value: string);
+    procedure SetWorkDirectory(const Value: string);
+    procedure SetSfxName(const Value: string);
   private
     procedure Encode           (Reader: TBufStream; Writer: TBufStream; const Size: int64);
     procedure EncodeFromArchive(Item: TArchiveItem);
@@ -316,41 +317,34 @@ type
     procedure DecodeToSwap     (Item: TArchiveItem);
     procedure DecodeToFile     (Item: TArchiveItem);
   private
+    FOnProgress: TArchiveProgressEvent;
+    FOnMessage: TArchiveMessageEvent;
+    FOnComment: TArchiveCommentEvent;
+    FOnUpdate: TArchiveUpdateEvent;
+    FOnDelete: TArchiveDeleteEvent;
+    FOnExtract: TArchiveExtractEvent;
+    FOnRename: TArchiveRenameEvent;
     FOnRequestBlankImage: TFileWriterRequestBlankImageEvent;
-    procedure DoRequestBlankImage(ImageNumber: longint; var Abort : Boolean);
-  private
     FOnRequestImage: TFileReaderRequestImageEvent;
+    procedure DoProgress(Value: longint);
+    procedure DoMessage(const Message: string);
+    function DoComment(Item: TArchiveItem): TArchiveConfirm;
+    function DoUpdate(Item: TCustomSearchRec): TArchiveConfirm;
+    function DoDelete(Item: TArchiveItem): TArchiveConfirm;
+    function DoRename(Item: TArchiveItem): TArchiveConfirm;
+    procedure DoRequestBlankImage(ImageNumber: longint; var Abort : Boolean);
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
   private
-    FOnMessage: TArchiveMessageEvent;
-    procedure DoMessage(const Message: string);
-  private
-    FOnProgress: TArchiveProgressEvent;
-    procedure DoProgress(Value: longint);
-  private
-    FOnExtract: TArchiveExtractEvent;
+    procedure Configure;
+    procedure CheckTags4Update;
+    procedure CheckSequences4Update;
+    procedure CheckTags4Delete;
+    procedure CheckSequences4Delete;
     procedure CheckTags4Test;
     procedure CheckTags4Extract;
     procedure CheckSequences4Extract;
-  private
-    FOnRename: TArchiveRenameEvent;
-    function  DoRename(Item: TArchiveItem): TArchiveConfirm;
     procedure CheckTags4Rename;
     procedure CheckSequences4Rename;
-  private
-    FOnDelete: TArchiveDeleteEvent;
-    function  DoDelete(Item: TArchiveItem): TArchiveConfirm;
-    procedure CheckTags4Delete;
-    procedure CheckSequences4Delete;
-  private
-    FOnUpdate: TArchiveUpdateEvent;
-    function  DoUpdate(Item: TCustomSearchRec): TArchiveConfirm;
-    procedure CheckTags4Update;
-    procedure CheckSequences4Update;
-    procedure Configure;
-  private
-    FOnComment: TArchiveCommentEvent;
-    function DoComment(Item: TArchiveItem): TArchiveConfirm;
   private
     procedure Swapping;
     procedure TestTemporaryArchive;
@@ -358,10 +352,9 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+
     procedure CloseArchive;
     procedure OpenArchive(const aArchiveName: string);
-    procedure Suspend(Value: boolean);
-    procedure Terminate;
 
     procedure UnTagAll;
     procedure UnTag(Index: longint);
@@ -376,6 +369,9 @@ type
     procedure RenameTagged;
     procedure DeleteTagged;
     procedure UpdateTagged;
+
+    procedure Terminate;
+    procedure Suspend(Value: boolean);
   public
     property OnRequestBlankImage: TFileWriterRequestBlankImageEvent read FOnRequestBlankImage write FOnRequestBlankImage;
     property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
