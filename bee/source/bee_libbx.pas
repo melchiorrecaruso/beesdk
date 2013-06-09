@@ -34,7 +34,9 @@ interface
 {$IFDEF MSWINDOWS}
   {$linklib libmsvcrt}
 {$ENDIF}
-
+{$IFDEF MAC}
+  {$linklib libmsvcrt}
+{$ENDIF}
 {$IFDEF UNIX}
 //{$linklib libmath}
 //{$linklib libgcc}
@@ -99,4 +101,4 @@ function  PpmdModeller_Decode      (Self: pointer; RangeEnc: pointer; Buffer: po
 
 implementation
 
-end.
+end.
