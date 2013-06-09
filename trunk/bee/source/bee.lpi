@@ -84,10 +84,11 @@
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="27" Y="47"/>
+        <TopLine Value="42"/>
+        <CursorPos X="19" Y="48"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -95,12 +96,11 @@
       <Unit1>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2224"/>
-        <CursorPos X="7" Y="2346"/>
-        <FoldState Value=" T3qS0F9 piXjP0JB]9cjg0A114r p0*e0D3 pjBjW0P5]TbjZ0L211 TK_G0aK"/>
+        <TopLine Value="2301"/>
+        <CursorPos X="38" Y="2307"/>
+        <FoldState Value=" T3qS0F9 piXjP0JB]9cjg0A114 TK_G0a:"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -123,7 +123,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="446"/>
         <CursorPos X="61" Y="99"/>
-        <FoldState Value=" T3kW0J4 pibjN0K332f"/>
         <UsageCount Value="81"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -133,8 +132,8 @@
         <UnitName Value="Bee_LibBx"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="16"/>
-        <CursorPos X="14" Y="38"/>
+        <TopLine Value="22"/>
+        <CursorPos X="39" Y="34"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -155,7 +154,7 @@
         <UnitName Value="Bee_Files"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="366"/>
+        <TopLine Value="459"/>
         <CursorPos X="71" Y="480"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
@@ -306,15 +305,15 @@
       </Position27>
       <Position28>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="298" Column="1" TopLine="331"/>
+        <Caret Line="1846" Column="14" TopLine="1823"/>
       </Position28>
       <Position29>
         <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1846" Column="14" TopLine="1823"/>
+        <Caret Line="1852" Column="5" TopLine="1835"/>
       </Position29>
       <Position30>
-        <Filename Value="beesdk_archive.pas"/>
-        <Caret Line="1852" Column="5" TopLine="1835"/>
+        <Filename Value="bee.lpr"/>
+        <Caret Line="47" Column="27" TopLine="32"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -338,6 +337,7 @@
     </Parsing>
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
+      <TargetOS Value="linux"/>
       <Optimizations>
         <VariablesInRegisters Value="True"/>
         <UncertainOptimizations Value="True"/>
