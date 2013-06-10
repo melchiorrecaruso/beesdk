@@ -38,8 +38,8 @@ interface
   {$linklib libmsvcrt}
 {$ENDIF}
 {$IFDEF UNIX}
-//{$linklib libmath}
-//{$linklib libgcc}
+  {$linklib libc}
+  {$linklib libm}
 {$ENDIF}
 
 {$link libbx.c\libbx_stream.o}
