@@ -118,7 +118,7 @@ type
     Attributes: longint;
   end;
 
-  { TSearchRecList }
+  { TFileScanner }
 
   TFileScanner = class(TObject)
   private
@@ -473,7 +473,7 @@ var
   I: longint;
 begin
   for I := 0 to FList.Count - 1 do
-   TCustomSearchRec(FList[I]).Destroy;
+    TCustomSearchRec(FList[I]).Destroy;
   FList.Clear;
 end;
 

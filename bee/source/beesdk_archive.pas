@@ -290,10 +290,9 @@ type
     FVerboseMode: boolean;
     FVolumeSize: int64;
     FNewLayer: boolean;
-    // file scanner
-    FFileScanner: TFileScanner;
     // central directory
     FCentralDirectory: TArchiveCentralDirectory;
+    FCentralDirectoryNews: TList;
   private
     function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
@@ -1233,18 +1232,17 @@ begin
   FVolumeSize        := 0;
   FVerboseMode       := FALSE;
   FNewLayer          := FALSE;
-  // file scanner
-  FFileScanner       := TFileScanner.Create;
-  // central direcotry
-  FCentralDirectory  := TArchiveCentralDirectory.Create;
+  // central direcotry items
+  FCentralDirectory     := TArchiveCentralDirectory.Create;
+  FCentralDirectoryNews := TList.Create;
 end;
 
 destructor TArchiver.Destroy;
 var
   I: longint;
 begin
+  FCentralDirectoryNews.Destroy;
   FCentralDirectory.Destroy;
-  FFilescanner.Destroy;
   inherited Destroy;
 end;
 
@@ -1590,8 +1588,10 @@ begin
       TestTemporaryArchive;
     SaveTemporaryArchive;
   end;
+  for I := 0 to FCentralDirectoryNews.Count - 1 do
+    TCustomSearchRec(FCentralDirectoryNews[I]).Destroy;
+  FCentralDirectoryNews.Clear;
   FCentralDirectory.Clear;
-  FFileScanner.Clear;
 
   FArchiveName    := '';
   FSwapName       := '';
@@ -1842,8 +1842,16 @@ begin
 end;
 
 procedure TArchiver.Tag(SearchRec: TCustomSearchRec);
+var
+  Item: TCustomSearchRec;
 begin
-  DoUpdate(SearchRec);
+  Item                  := TCustomSearchRec.Create;
+  Item.Name             := SearchRec.Name;
+  Item.Size             := SearchRec.Size;
+  Item.LastModifiedTime := SearchRec.LastModifiedTime;
+  Item.Attributes       := Searchrec.Attributes;
+
+  FCentralDirectoryNews.Add(Item);
 end;
 
 function TArchiver.IsTagged(Index: longint): boolean;
@@ -2348,6 +2356,10 @@ end;
 
 procedure TArchiver.CheckTags4Update;
 begin
+  FCentralDirectoryNews.Sort(CompareCustomSearchRec);
+
+
+
   Configure;
 end;
 
