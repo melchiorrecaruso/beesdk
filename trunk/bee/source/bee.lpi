@@ -95,9 +95,10 @@
       <Unit1>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1843"/>
+        <TopLine Value="2235"/>
         <CursorPos X="49" Y="2301"/>
         <FoldState Value=" T3qR0F9 piXjP0JB]9cjg0A3 pjGja0X5]9FkJ084[a580G[R4Kk10u0245"/>
         <UsageCount Value="100"/>
@@ -109,7 +110,7 @@
         <UnitName Value="Bee_MainPacker"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="246"/>
+        <TopLine Value="344"/>
         <CursorPos X="1" Y="389"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
@@ -118,11 +119,10 @@
       <Unit3>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="96"/>
-        <CursorPos X="41" Y="99"/>
+        <TopLine Value="46"/>
+        <CursorPos X="60" Y="17"/>
         <UsageCount Value="86"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -132,7 +132,7 @@
         <UnitName Value="Bee_LibBx"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="40"/>
+        <TopLine Value="11"/>
         <CursorPos X="8" Y="17"/>
         <UsageCount Value="85"/>
         <Loaded Value="True"/>
@@ -197,7 +197,7 @@
         <Filename Value="..\..\..\..\Applications\fpc\source\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="324"/>
+        <TopLine Value="317"/>
         <CursorPos X="42" Y="317"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
