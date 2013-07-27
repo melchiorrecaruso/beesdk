@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="9"/>
@@ -114,9 +114,9 @@
       <SmartLinkUnit Value="True"/>
       <TargetOS Value="linux"/>
       <Optimizations>
+        <OptimizationLevel Value="3"/>
         <VariablesInRegisters Value="True"/>
         <UncertainOptimizations Value="True"/>
-        <OptimizationLevel Value="3"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>
