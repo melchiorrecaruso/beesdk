@@ -9,6 +9,7 @@
       </Flags>
       <MainUnit Value="0"/>
       <UseAppBundle Value="False"/>
+      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <MinorVersionNr Value="8"/>
@@ -26,7 +27,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="bee.include;$(ProjOutDir)"/>
-            <Libraries Value="C:/MinGW32/lib;C:/MinGW32/lib/gcc/mingw32/4.6.1;C:/Program Files/MinGW32/lib;C:/Program Files/MinGW32/lib/gcc/mingw32/4.6.1"/>
+            <Libraries Value="C:/MinGW32/lib/;C:/MinGW32/lib/gcc/mingw32/4.6.1/;C:/Program Files/MinGW32/lib/;C:/Program Files/MinGW32/lib/gcc/mingw32/4.6.1/"/>
             <UnitOutputDirectory Value="../temp"/>
           </SearchPaths>
           <Parsing>
@@ -78,7 +79,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="1">
+    <Units Count="2">
       <Unit0>
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -89,6 +90,18 @@
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
+      <Unit1>
+        <Filename Value="beesdk_archive.pas"/>
+        <UnitName Value="BeeSDK_Archive"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit1>
     </Units>
     <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
@@ -99,7 +112,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <Libraries Value="C:/MinGW32/lib;C:/MinGW32/lib/gcc/mingw32/4.6.1;C:/Program Files/MinGW32/lib;C:/Program Files/MinGW32/lib/gcc/mingw32/4.6.1"/>
+      <Libraries Value="C:/MinGW32/lib/;C:/MinGW32/lib/gcc/mingw32/4.6.1/;C:/Program Files/MinGW32/lib/;C:/Program Files/MinGW32/lib/gcc/mingw32/4.6.1/"/>
       <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
     <Parsing>
@@ -112,7 +125,6 @@
     </Parsing>
     <CodeGeneration>
       <SmartLinkUnit Value="True"/>
-      <TargetOS Value="linux"/>
       <Optimizations>
         <OptimizationLevel Value="3"/>
         <VariablesInRegisters Value="True"/>
@@ -160,4 +172,4 @@
     </Exceptions>
   </Debugging>
   <EditorMacros Count="0"/>
-</CONFIG>
+</CONFIG>
