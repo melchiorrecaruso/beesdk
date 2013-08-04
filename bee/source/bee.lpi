@@ -84,16 +84,18 @@
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Bee"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="29"/>
-        <CursorPos X="22" Y="49"/>
+        <TopLine Value="55"/>
+        <CursorPos X="1" Y="87"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -103,7 +105,16 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="2" HistoryIndex="1">
+      <Position1>
+        <Filename Value="bee.lpr"/>
+        <Caret Line="49" Column="22" TopLine="29"/>
+      </Position1>
+      <Position2>
+        <Filename Value="bee.lpr"/>
+        <Caret Line="87" Column="1" TopLine="55"/>
+      </Position2>
+    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
@@ -112,7 +123,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <Libraries Value="C:/MinGW32/lib/;C:/MinGW32/lib/gcc/mingw32/4.6.1/;C:/Program Files/MinGW32/lib/;C:/Program Files/MinGW32/lib/gcc/mingw32/4.6.1/"/>
+      <Libraries Value="C:/MinGW32/lib/;C:/MinGW32/lib/gcc/mingw32/4.7.1/"/>
       <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
     <Parsing>
