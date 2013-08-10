@@ -464,70 +464,81 @@ end;
 
 function GetCoderLevel(const Params: string): longword;
 begin
-  if Pos('/L', UpCase(Params)) > 0 then
-  begin
-    Result := ExtractQWord(Params, '/L');
-    case GetCoderAlgorithm(Params) of
-      caStore: if ( 0 < Result) or (Result < 0) then SetExitStatus(esCmdLineError);
-      caBee:   if ( 3 < Result) or (Result < 1) then SetExitStatus(esCmdLineError);
-      caPpmd:  if (64 < Result) or (Result < 2) then SetExitStatus(esCmdLineError);
+  case GetCoderMethod(Params) of
+    caBee: begin
+      if Pos('/L', UpCase(Params)) > 0 then
+        Result := ExtractQWord(Params, '/L')
+      else
+        Result := 1;
+
+      if (3 < Result) or (Result < 1) then
+        SetExitStatus(esCmdLineError);
     end;
-  end else
-    // default level
-    case GetCoderAlgorithm(Params) of
-      caStore: Result := 0;
-      caBee:   Result := 1;
-      caPpmd:  Result := 3;
+    caPpmd: begin
+      if Pos('/L', UpCase(Params)) > 0 then
+        Result := ExtractQWord(Params, '/L')
+      else
+        Result := 6;
+
+      if (64 < Result) or (Result < 2) then
+        SetExitStatus(esCmdLineError);
     end;
+  end;
 end;
 
-function GetCoderLevelAux(Params: string): longword;
+function GetCoderAuxLevel(Params: string): longword;
 begin
-  if Pos('/D', UpCase(Params)) > 0 then
-  begin
-    Result := ExtractQWord(Params, '/D');
-    case GetCoderAlgorithm(Params) of
-      caStore: if (        0 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
-      caBee:   if (        9 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
-      caPpmd:  if ($FFFFFFDB < Result) or (Result < $800) then SetExitStatus(esCmdLineError);
+  case GetCoderMethod(Params) of
+    caBee: begin
+      if Pos('/AL', UpCase(Params)) > 0 then
+        Result := ExtractQWord(Params, '/AL')
+      else
+        Result := 3;
+
+      if (9 < Result) or (Result < 0) then
+        SetExitStatus(esCmdLineError);
     end;
-  end else
-    // default level.aux
-    case GetCoderAlgorithm(Params) of
-      caStore: Result := 0;
-      caBee:   Result := 2;
-      caPpmd:  Result := $100000;
+    caPpmd: begin
+      if Pos('/AL', UpCase(Params)) > 0 then
+        Result := ExtractQWord(Params, '/AL')
+      else
+        Result := $200000;
+
+      if ($800 < Result) or (Result < $FFFFFFDB) then
+        SetExitStatus(esCmdLineError);
     end;
+  end;
+
 end;
 
 function GetCoderFilter(const Params: string): string;
 begin
-  Result := ExtractStr(Params, ':F=');
+  Result := ExtractStr(Params, '/F');
 end;
 
-function GetCoderFilterAux(const Params: string): string;
+function GetCoderAuxFilter(const Params: string): string;
 begin
-  Result := ExtractStr(Params, ':FA');
+  Result := ExtractStr(Params, '/AF');
 end;
 
 function GetCoderBlock(Params: string): qword;
 begin
-  Result := ExtractQWord(Params, ':B=');
+  Result := ExtractQWord(Params, '/B');
 end;
 
 function GetCoderConfiguration(const Params: string): string;
 begin
-  Result := ExtractStr(Params, ':C=');
+  Result := ExtractStr(Params, '/C');
   if Result = '' then
     Result := DefaultCfgName;
 end;
 
 function GetCipherKey(const Params: string): string;
 begin
-  Result := ExtractStr(Params, ':K=');
+  Result := ExtractStr(Params, '/P');
 end;
 
-function GetCipherAlgorithm(const Params: string): TCipherAlgorithm;
+function GetCipherMethod(const Params: string): TCipherAlgorithm;
 var
   S: string;
 begin
@@ -535,9 +546,9 @@ begin
   if GetCipherKey(Params) <> '' then
     Result := caBlowFish;
 
-  if Pos(':M=', UpCase(Params)) > 0 then
+  if Pos('/M', UpCase(Params)) > 0 then
   begin
-    S := UpCase(ExtractStr(Params, ':M='));
+    S := UpCase(ExtractStr(Params, '/M'));
     if S = '0' then Result := caNul      else
     if S = '1' then Result := caBlowFish else
     if S = '2' then Result := caIdea     else SetExitStatus(esCmdLineError);
@@ -548,14 +559,14 @@ begin
       SetExitStatus(esCmdLineError);
 end;
 
-function GetHashAlgorithm(Params: string): THashAlgorithm;
+function GetHashMethod(Params: string): THashAlgorithm;
 var
   S: string;
 begin
   Result := haCRC32;
-  if Pos(':M=', UpCase(Params)) > 0 then
+  if Pos('/M', UpCase(Params)) > 0 then
   begin
-    S := UpCase(ExtractStr(Params, ':M='));
+    S := UpCase(ExtractStr(Params, '/M'));
     if S = '0' then Result := haNul   else
     if S = '1' then Result := haCRC32 else
     if S = '2' then Result := haCRC64 else
@@ -564,14 +575,14 @@ begin
   end;
 end;
 
-function GetHashAlgorithmAux(Params: string): THashAlgorithm;
+function GetHashAuxMethod(Params: string): THashAlgorithm;
 var
   S: string;
 begin
   Result := haCRC32;
-  if Pos(':MA=', UpCase(Params)) > 0 then
+  if Pos('/AM=', UpCase(Params)) > 0 then
   begin
-    S := UpCase(ExtractStr(Params, ':MA='));
+    S := UpCase(ExtractStr(Params, '/AM='));
     if S = '0' then Result := haNul   else
     if S = '1' then Result := haCRC32 else
     if S = '2' then Result := haCRC64 else
@@ -2263,7 +2274,7 @@ begin
   CurrentFileExt := '.';
   Configuration.Selector('\main');
   Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(GetCoderLevel   (FCompressionParams)));
-  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetCoderLevelAux(FCompressionParams)));
+  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetCoderAuxLevel(FCompressionParams)));
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
   CurrentBlock := GetCoderBlock(FCompressionParams);
@@ -2274,13 +2285,13 @@ begin
     begin
       // compression method
       Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-      CurrentItem.FCompressionMethod := GetCoderAlgorithm(FCompressionParams);
+      CurrentItem.FCompressionMethod := GetCoderMethod(FCompressionParams);
       // compression level
       Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
       CurrentItem.FCompressionLevel := GetCoderLevel(FCompressionParams);
       // dictionary level
       Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
-      CurrentItem.FCompressionLevelAux := GetCoderLevelAux(FCompressionParams);
+      CurrentItem.FCompressionLevelAux := GetCoderAuxLevel(FCompressionParams);
       // compression CurrentBlock
       Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
       CurrentItem.FCompressionBlock := GetCoderBlock(FCompressionParams);
@@ -2319,10 +2330,10 @@ begin
           CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
       end;
       // encryption method
-      CurrentItem.FEncryptionMethod    := GetCipherAlgorithm(FEncryptionParams);
+      CurrentItem.FEncryptionMethod    := GetCipherMethod (FEncryptionParams);
       // check method
-      CurrentItem.FCheckMethod         := GetHashAlgorithm   (FCheckParams);
-      CurrentItem.FCheckMethodAux      := GetHashAlgorithmAux(FCheckParams);
+      CurrentItem.FCheckMethod         := GetHashMethod   (FCheckParams);
+      CurrentItem.FCheckMethodAux      := GetHashAuxMethod(FCheckParams);
       // version needed to read
       CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);
     end;

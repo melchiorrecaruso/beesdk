@@ -325,23 +325,8 @@ end;
 
 procedure TPpmdCoder.SetLevelAux(Value: longword);
 begin
-  if (0 <= Value) and (Value <= 14) then
-    case Value of
-      0: inherited SetLevelAux(   2*1024*1024);
-      1: inherited SetLevelAux(   4*1024*1024);
-      2: inherited SetLevelAux(   8*1024*1024);
-      3: inherited SetLevelAux(  16*1024*1024);
-      4: inherited SetLevelAux(  32*1024*1024);
-      5: inherited SetLevelAux(  64*1024*1024);
-      6: inherited SetLevelAux( 128*1024*1024);
-      7: inherited SetLevelAux( 256*1024*1024);
-      8: inherited SetLevelAux( 512*1024*1024);
-      9: inherited SetLevelAux(1024*1024*1024);
-     10: inherited SetLevelAux(1280*1024*1024);
-     11: inherited SetLevelAux(1536*1024*1024);
-     12: inherited SetLevelAux(1792*1024*1024);
-     13: inherited SetLevelAux(2048*1024*1024);
-    end;
+  if ($800 <= Value) and (Value <= $FFFFFFDB) then
+    inherited SetLevelAux(Value);
 end;
 
 procedure TPpmdCoder.Start;
