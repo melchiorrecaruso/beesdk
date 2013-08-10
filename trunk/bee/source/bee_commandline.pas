@@ -469,13 +469,25 @@ end;
 
 procedure TCommandLine.ProcessSFXOption(var S: string);
 begin
-  Delete(S, 1, 6);
-  FsfxOption := S;
-  if FCommand = cAdd then
-    if FileExists(FsfxOption) = FALSE then
-      SetExitStatus(esCmdLineError);
+  Delete(S, 1, 4);
+  if S = '' then
+  begin
+    {$IFDEF MSWINDOWS}
+      S := 'bxwin.sfx';
+    {$ELSE}
+      {$IFDEF UNIX}
+        S := 'bxlinux.sfx';
+      {$ELSE}
+        -TODO-
+      {$ENDIF}
+    {$ENDIF}
+  end;
 
-  if FCommand in [cAdd, cDelete] then
+  FsfxOption := SelfPath + S;
+  if FileExists(FsfxOption) = FALSE then
+    SetExitStatus(esCmdLineError);
+
+  if FCommand in [cAdd, cDelete, cRename] then
   begin
     if ExitStatus = esNoError then
       Include(FOptions, clsfxOption);

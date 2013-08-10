@@ -316,21 +316,25 @@ type
     procedure DecodeToSwap     (Item: TArchiveItem);
     procedure DecodeToFile     (Item: TArchiveItem);
   private
-    FOnProgress: TArchiveProgressEvent;
+    FOnCommentItem: TArchiveCommentEvent;
+    FOnDeleteItem: TArchiveDeleteEvent;
+    FOnExtractItem: TArchiveExtractEvent;
+    FOnRenameItem: TArchiveRenameEvent;
+    FOnUpdateItem: TArchiveUpdateEvent;
+
     FOnMessage: TArchiveMessageEvent;
-    FOnComment: TArchiveCommentEvent;
-    FOnUpdate: TArchiveUpdateEvent;
-    FOnDelete: TArchiveDeleteEvent;
-    FOnExtract: TArchiveExtractEvent;
-    FOnRename: TArchiveRenameEvent;
+    FOnProgress: TArchiveProgressEvent;
     FOnRequestBlankImage: TFileWriterRequestBlankImageEvent;
     FOnRequestImage: TFileReaderRequestImageEvent;
-    procedure DoProgress(Value: longint);
+
+    function DoCommentItem(Item: TArchiveItem): TArchiveConfirm;
+    function DoDeleteItem (Item: TArchiveItem): TArchiveConfirm;
+    function DoExtractItem(Item: TArchiveItem): TArchiveConfirm;
+    function DoRenameItem (Item: TArchiveItem): TArchiveConfirm;
+    function DoUpdateItem (Item: TCustomSearchRec): TArchiveConfirm;
+
     procedure DoMessage(const Message: string);
-    function DoComment(Item: TArchiveItem): TArchiveConfirm;
-    function DoUpdate(Item: TCustomSearchRec): TArchiveConfirm;
-    function DoDelete(Item: TArchiveItem): TArchiveConfirm;
-    function DoRename(Item: TArchiveItem): TArchiveConfirm;
+    procedure DoProgress(Value: longint);
     procedure DoRequestBlankImage(ImageNumber: longint; var Abort : Boolean);
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
   private
@@ -376,11 +380,11 @@ type
     property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
     property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
     property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
-    property OnExtract: TArchiveExtractEvent read FOnExtract write FOnExtract;
-    property OnRename: TArchiveRenameEvent read FOnRename write FOnRename;
-    property OnDelete: TArchiveDeleteEvent read FOnDelete write FOnDelete;
-    property OnUpdate: TArchiveUpdateEvent read FOnUpdate write FOnUpdate;
-    property OnComment: TArchiveCommentEvent read FOnComment write FOnComment;
+    property OnItemExtract: TArchiveExtractEvent read FOnExtractItem write FOnExtractItem;
+    property OnItemRename: TArchiveRenameEvent read FOnRenameItem write FOnRenameItem;
+    property OnItemDelete: TArchiveDeleteEvent read FOnDeleteItem write FOnDeleteItem;
+    property OnItemUpdate: TArchiveUpdateEvent read FOnUpdateItem write FOnUpdateItem;
+    property OnItemComment: TArchiveCommentEvent read FOnCommentItem write FOnCommentItem;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property Comment: string read GetComment write SetComment;
@@ -421,7 +425,7 @@ begin
   if Pos(K, UpCase(Params)) > 0 then
   begin
     for I := Pos(K, UpCase(Params)) + Length(K) to Length(Params) do
-      if Params[I] <> ':' then
+      if Params[I] <> '/' then
         S := S + Params[I]
       else
         Break;
@@ -437,32 +441,32 @@ begin
   if Pos(K, UpCase(Params)) > 0 then
   begin
     for I := Pos(K, UpCase(Params)) + Length(K) to Length(Params) do
-      if Params[I] <> ':' then
+      if Params[I] <> '/' then
         Result := Result + Params[I]
       else
         Break;
   end;
 end;
 
-function GetCoderAlgorithm(const Params: string): TCoderAlgorithm;
+function GetCoderMethod(const Params: string): TCoderAlgorithm;
 var
   S: string;
 begin
-  if Pos(':M=', UpCase(Params)) > 0 then
+  if Pos('/M', UpCase(Params)) > 0 then
   begin
-    S := Upcase(ExtractStr(Params, ':M='));
-    if S = 'NONE' then Result := caStore else
-    if S = 'BEE'  then Result := caBee   else
-    if S = 'PPMD' then Result := caPpmd  else SetExitStatus(esCmdLineError);
+    S := Upcase(ExtractStr(Params,'/M'));
+    if S = '0' then Result := caStore else
+    if S = '1' then Result := caBee   else
+    if S = '2' then Result := caPpmd  else SetExitStatus(esCmdLineError);
   end else
-    Result := caPpmd;
+    Result := caBee;
 end;
 
 function GetCoderLevel(const Params: string): longword;
 begin
-  if Pos(':L=', UpCase(Params)) > 0 then
+  if Pos('/L', UpCase(Params)) > 0 then
   begin
-    Result := ExtractQWord(Params, ':L=');
+    Result := ExtractQWord(Params, '/L');
     case GetCoderAlgorithm(Params) of
       caStore: if ( 0 < Result) or (Result < 0) then SetExitStatus(esCmdLineError);
       caBee:   if ( 3 < Result) or (Result < 1) then SetExitStatus(esCmdLineError);
@@ -479,9 +483,9 @@ end;
 
 function GetCoderLevelAux(Params: string): longword;
 begin
-  if Pos(':LA=', UpCase(Params)) > 0 then
+  if Pos('/D', UpCase(Params)) > 0 then
   begin
-    Result := ExtractQWord(Params, ':LA=');
+    Result := ExtractQWord(Params, '/D');
     case GetCoderAlgorithm(Params) of
       caStore: if (        0 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
       caBee:   if (        9 < Result) or (Result <    0) then SetExitStatus(esCmdLineError);
@@ -534,9 +538,9 @@ begin
   if Pos(':M=', UpCase(Params)) > 0 then
   begin
     S := UpCase(ExtractStr(Params, ':M='));
-    if S = 'NONE'     then Result := caNul      else
-    if S = 'BLOWFISH' then Result := caBlowFish else
-    if S = 'IDEA'     then Result := caIdea     else SetExitStatus(esCmdLineError);
+    if S = '0' then Result := caNul      else
+    if S = '1' then Result := caBlowFish else
+    if S = '2' then Result := caIdea     else SetExitStatus(esCmdLineError);
   end;
 
   if Result <> caNul then
@@ -552,11 +556,11 @@ begin
   if Pos(':M=', UpCase(Params)) > 0 then
   begin
     S := UpCase(ExtractStr(Params, ':M='));
-    if S = 'NONE'  then Result := haNul   else
-    if S = 'CRC32' then Result := haCRC32 else
-    if S = 'CRC64' then Result := haCRC64 else
-    if S = 'SHA1'  then Result := haSHA1  else
-    if S = 'MD5'   then Result := haMD5   else SetExitStatus(esCmdLineError);
+    if S = '0' then Result := haNul   else
+    if S = '1' then Result := haCRC32 else
+    if S = '2' then Result := haCRC64 else
+    if S = '3' then Result := haSHA1  else
+    if S = '4' then Result := haMD5   else SetExitStatus(esCmdLineError);
   end;
 end;
 
@@ -568,11 +572,11 @@ begin
   if Pos(':MA=', UpCase(Params)) > 0 then
   begin
     S := UpCase(ExtractStr(Params, ':MA='));
-    if S = 'NONE'  then Result := haNul   else
-    if S = 'CRC32' then Result := haCRC32 else
-    if S = 'CRC64' then Result := haCRC64 else
-    if S = 'SHA1'  then Result := haSHA1  else
-    if S = 'MD5'   then Result := haMD5   else SetExitStatus(esCmdLineError);
+    if S = '0' then Result := haNul   else
+    if S = '1' then Result := haCRC32 else
+    if S = '2' then Result := haCRC64 else
+    if S = '3' then Result := haSHA1  else
+    if S = '4' then Result := haMD5   else SetExitStatus(esCmdLineError);
   end;
 end;
 
@@ -1760,15 +1764,15 @@ begin
   while FSuspended do Sleep(250);
 end;
 
-function TArchiver.DoComment(Item: TArchiveItem): TArchiveConfirm;
+function TArchiver.DoCommentItem(Item: TArchiveItem): TArchiveConfirm;
 var
   CommentAs: string;
 begin
   Result := arcCancel;
-  if Assigned(FOnComment) then
+  if Assigned(FOnCommentItem) then
   begin
     CommentAs := Item.Comment;
-    FOnComment(Item, CommentAs, Result);
+    FOnCommentItem(Item, CommentAs, Result);
     if Result = arcOk then
     begin
       Item.FComment := CommentAs;
@@ -1861,19 +1865,10 @@ end;
 
 // TArchiver # EXTRACT #
 
-procedure TArchiver.CheckTags4Test;
-var
-  I: longint;
+function TArchiver.DoExtractItem(Item: TArchiveItem): TArchiveConfirm;
 begin
-  for I := 0 to FCentralDirectory.Count - 1 do
-  begin
-    if ExitStatus <> esNoError then Break;
-    if FCentralDirectory.Items[I].FTag = aitUpdate then
-    begin
-      FIsNeededToRun := TRUE;
-      Break;
-    end;
-  end;
+
+
 end;
 
 procedure TArchiver.CheckTags4Extract;
@@ -1890,10 +1885,10 @@ begin
     if Item.FTag = aitUpdate then
     begin
       Confirm := arcCancel;
-      if Assigned(FOnExtract) then
+      if Assigned(FOnExtractItem) then
       begin
         ExtractAs := Item.FFileName;
-        FOnExtract(Item, ExtractAs, Confirm);
+        FOnExtractItem(Item, ExtractAs, Confirm);
       end;
 
       case Confirm of
@@ -1904,6 +1899,21 @@ begin
         arcCancel: Item.FTag := aitNone;
         arcQuit:   SetExitStatus(esUserAbortError);
       end;
+    end;
+  end;
+end;
+
+procedure TArchiver.CheckTags4Test;
+var
+  I: longint;
+begin
+  for I := 0 to FCentralDirectory.Count - 1 do
+  begin
+    if ExitStatus <> esNoError then Break;
+    if FCentralDirectory.Items[I].FTag = aitUpdate then
+    begin
+      FIsNeededToRun := TRUE;
+      Break;
     end;
   end;
 end;
@@ -2008,18 +2018,18 @@ end;
 
 // TArchiver # RENAME #
 
-function TArchiver.DoRename(Item: TArchiveItem): TArchiveConfirm;
+function TArchiver.DoRenameItem(Item: TArchiveItem): TArchiveConfirm;
 var
   RenameAs: string;
 begin
   Result := arcCancel;
-  if Assigned(FOnRename) then
+  if Assigned(FOnRenameItem) then
   begin
     RenameAs := Item.FFileName;
-    FOnRename(Item, RenameAs, Result);
+    FOnRenameItem(Item, RenameAs, Result);
     if Result = arcOk then
     begin
-      Result := DoComment(Item);
+      Result := DoCommentItem(Item);
       if Result = arcOk then
         Item.FFileName := RenameAs;
     end;
@@ -2037,7 +2047,7 @@ begin
     Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitUpdate] then
     begin
-      case DoRename(Item) of
+      case DoRenameItem(Item) of
         arcOk: begin
           FIsNeededToRun  := TRUE;
           FIsNeededToSave := TRUE;
@@ -2091,12 +2101,12 @@ end;
 
 // TArchiver # DELETE #
 
-function TArchiver.DoDelete(Item: TArchiveItem): TArchiveConfirm;
+function TArchiver.DoDeleteItem(Item: TArchiveItem): TArchiveConfirm;
 begin
   Result := arcCancel;
-  if Assigned(FOnDelete) then
+  if Assigned(FOnDeleteItem) then
   begin
-    FOnDelete(Item, Result);
+    FOnDeleteItem(Item, Result);
   end;
 end;
 
@@ -2111,7 +2121,7 @@ begin
     Item := FCentralDirectory.Items[I];
     if Item.FTag in [aitUpdate] then
     begin
-      case DoDelete(Item) of
+      case DoDeleteItem(Item) of
         arcOk: begin
           FIsNeededToRun  := TRUE;
           FIsNeededToSave := TRUE;
@@ -2320,16 +2330,16 @@ begin
   FreeAndNil(Configuration);
 end;
 
-function TArchiver.DoUpdate(Item: TCustomSearchRec): TArchiveConfirm;
+function TArchiver.DoUpdateItem(Item: TCustomSearchRec): TArchiveConfirm;
 var
   I: longint;
   UpdateAs: string;
 begin
   Result := arcCancel;
-  if Assigned(FOnUpdate) then
+  if Assigned(FOnUpdateItem) then
   begin
     UpdateAs := Item.Name;
-    FOnUpdate(Item, UpdateAs, Result);
+    FOnUpdateItem(Item, UpdateAs, Result);
     if Result = arcOk then
     begin
       I := IndexOf(UpdateAs);
@@ -2340,7 +2350,7 @@ begin
           FCentralDirectory.Items[I].FTag := aitUpdate;
 
       FCentralDirectory.Items[I].Update(Item);
-      Result := DoComment(FCentralDirectory.Items[I]);
+      Result := DoCommentItem(FCentralDirectory.Items[I]);
     end;
   end;
 
