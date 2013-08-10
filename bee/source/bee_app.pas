@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1978 - 2013.04.26 by Melchiorre Caruso.
+    v0.8.0 build 2020 - 2013.08.05 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -41,6 +41,7 @@ interface
 uses
   Classes,
   SysUtils,
+
   Bee_CommandLine,
   Bee_Common,
   Bee_Files,
@@ -74,6 +75,8 @@ type
     procedure DoDelete(Item: TArchiveItem; var Confirm: TArchiveConfirm);
     procedure DoUpdate(SearchRec: TCustomSearchRec;
       var UpdateAs: string; var Confirm: TArchiveConfirm);
+    procedure DoComment(Item: TArchiveItem; var CommentAs: string;
+      var Confirm: TArchiveConfirm);
     { Open/close routines}
     procedure OpenArchive;
     procedure CloseArchive;
@@ -85,8 +88,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Execute;
     procedure Terminate;
+    procedure Execute;
   end;
 
 implementation
@@ -96,7 +99,7 @@ implementation
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 2013 archiver utility, Jun 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 2020 archiver utility, Aug 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -104,10 +107,11 @@ begin
   FArchiver.OnRequestImage      := DoRequestImage;
   FArchiver.OnProgress          := DoProgress;
   FArchiver.OnMessage           := DoMessage;
-  FArchiver.OnExtract           := DoExtract;
-  FArchiver.OnRename            := DoRename;
-  FArchiver.OnDelete            := DoDelete;
-  FArchiver.OnUpdate            := DoUpdate;
+  FArchiver.OnItemExtract       := DoExtract;
+  FArchiver.OnItemRename        := DoRename;
+  FArchiver.OnItemDelete        := DoDelete;
+  FArchiver.OnItemUpdate        := DoUpdate;
+  FArchiver.OnItemComment       := DoComment;
   { load command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.Execute;
@@ -158,6 +162,8 @@ procedure TBeeApp.Terminate;
 begin
   FArchiver.Terminate;
 end;
+
+{ TBeeApp class events }
 
 procedure TBeeApp.DoRequestBlankDisk(DiskNumber: longint; var Abort : Boolean);
 var
@@ -354,6 +360,12 @@ begin
   end;
 end;
 
+procedure TBeeApp.DoComment(Item: TArchiveItem; var CommentAs: string;
+  var Confirm: TArchiveConfirm);
+begin
+  Confirm := arcCancel;
+end;
+
 function TBeeApp.QueryToUser(const Message: string;
   var Confirm: TArchiveConfirm): boolean;
 var
@@ -424,6 +436,8 @@ begin
 
 
 
+
+
 end;
 
 procedure TBeeApp.CloseArchive;
@@ -449,8 +463,6 @@ begin
 end;
 
 procedure TBeeApp.CustomShell;
-var
-  I, J: longint;
 begin
   OpenArchive;
   if ExitStatus = esNoError then
@@ -459,12 +471,12 @@ begin
 
     TagItems;
     case FCommandLine.Command of
-      cDelete:    FArchiver.DeleteTagged;
+      cDelete:    FArchiver. DeleteTagged;
       cExtract:   FArchiver.ExtractTagged;
-      cQuickTest: FArchiver.TestTagged;
-      cRename:    FArchiver.RenameTagged;
-      cTest:      FArchiver.TestTagged;
       cxExtract:  FArchiver.ExtractTagged;
+      cRename:    FArchiver. RenameTagged;
+      cQuickTest: FArchiver.   TestTagged;
+      cTest:      FArchiver.   TestTagged;
     end;
   end;
   CloseArchive;
@@ -493,7 +505,7 @@ begin
   DoMessage('  -sfx[{sfx-name}]: create self-extracting archive');
   DoMessage('  -sls: show list sorted by filename - for l (list) command');
   DoMessage('  -ss: stop switches parsing');
-  DoMessage('  -t: Test temorary archive after process');
+  DoMessage('  -t: Test temporary archive after process');
   DoMessage('  -u{parameters}: update files method');
   DoMessage('  -vm: verbose mode ');
   DoMessage('  -vs{size}[b|k|m|g]: create volumes ');
@@ -520,7 +532,6 @@ begin
     for I := 0 to Scanner.Count - 1 do
       FArchiver.Tag(Scanner.Items[I]);
     FreeAndNil(Scanner);
-
     FArchiver.UpdateTagged;
   end;
   CloseArchive;
@@ -631,4 +642,4 @@ begin
 end;
 
 end.
-
+
