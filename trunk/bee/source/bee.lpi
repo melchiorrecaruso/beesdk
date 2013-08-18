@@ -86,7 +86,7 @@
         <UnitName Value="Bee"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="50"/>
+        <TopLine Value="48"/>
         <CursorPos X="42" Y="59"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -95,9 +95,10 @@
       <Unit1>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="273"/>
+        <TopLine Value="380"/>
         <CursorPos X="1" Y="419"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
@@ -106,12 +107,11 @@
       <Unit2>
         <Filename Value="bee_commandline.pas"/>
         <UnitName Value="Bee_CommandLine"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="297"/>
-        <CursorPos X="1" Y="328"/>
-        <FoldState Value=" T3lN0n313j"/>
+        <TopLine Value="403"/>
+        <CursorPos X="1" Y="460"/>
+        <FoldState Value=" T3lN0n317 piZlL0D4e"/>
         <UsageCount Value="15"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
