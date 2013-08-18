@@ -99,7 +99,7 @@ implementation
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 2020 archiver utility, Aug 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 2022 archiver utility, Aug 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -124,8 +124,8 @@ begin
   if clyOption in FCommandLine.Options then
     FAssumeYesOnAllQueries := FCommandLine.yOption;
   { set thread priority }
-  if clppOption in FCommandLine.Options then
-    SetPriority(Ord(FCommandLine.ppOption));
+  if clpOption in FCommandLine.Options then
+    SetPriority(Ord(FCommandLine.pOption));
 end;
 
 destructor TBeeApp.Destroy;
@@ -379,7 +379,7 @@ begin
       Readln(Answer);
       Answer := UpperCase(OemToParam(Answer));
       if Length(Answer) = 1 then
-        if Pos(Answer, 'YNQA') > -1 then
+        if Pos(Answer, 'YNQA') > 0 then
         begin
           case Answer[1] of
             'Y': Confirm := arcOk;
@@ -389,12 +389,13 @@ begin
           Break;
         end;
 
-      if GetUpdateMethod(Answer) <> -1 then
-      begin
-        FUpdateMethod := TUpdateMethod(GetUpdateMethod(Answer));
-        Result := FALSE;
-        Break;
-      end;
+      if Length(Answer) = 1 then
+        if Pos(Answer, '01234567') > 0 then
+        begin
+          FUpdateMethod := TUpdateMethod(StrToInt(Answer));
+          Result := FALSE;
+          Break;
+        end;
       Write(#8#8#8#8#8#8, ParamToOem('Yes, No, or Quit? '));
     until TRUE;
   end else
@@ -410,14 +411,14 @@ begin
   if clwdOption in FCommandLine.Options then
     FArchiver.WorkDirectory := FCommandLine.wdOption;
   // compression mode
-  if clcpOption in FCommandLine.Options then
-    FArchiver.CompressionParams := FCommandLine.cpOption;
+  if clencOption in FCommandLine.Options then
+    FArchiver.CompressionParams := FCommandLine.encOption;
   // check data integrity mode
-  if clckpOption in FCommandLine.Options then
-    FArchiver.CheckParams := FCommandLine.ckpOption;
+  if clchkOption in FCommandLine.Options then
+    FArchiver.CheckParams := FCommandLine.chkOption;
   // encryption mode
-  if clepOption in FCommandLine.Options then
-    FArchiver.EncryptionParams := FCommandLine.epOption;
+  if clcphOption in FCommandLine.Options then
+    FArchiver.EncryptionParams := FCommandLine.cphOption;
   // self extractor
   if clsfxOption in FCommandLine.Options then
     FArchiver.SelfExtractor := FCommandLine.sfxOption;
@@ -431,8 +432,8 @@ begin
   if clvmOption in FCommandLine.Options then
     FArchiver.VerboseMode := FCommandLine.vmOption;
   // volume size
-  if clvsOption in FCommandLine.Options then
-    FArchiver.VolumeSize := FCommandLine.vsOption;
+  if clvOption in FCommandLine.Options then
+    FArchiver.VolumeSize := FCommandLine.vOption;
 
 
 
@@ -484,7 +485,7 @@ end;
 
 procedure TBeeApp.HelpShell;
 begin
-  DoMessage(Cr + 'Usage: Bee <command> [<switches>...] <archive-name> [<file-names>...]');
+  DoMessage(Cr + 'Usage: BX <command> [<switches>...] <archive-name> [<file-names>...]');
   DoMessage(Cr + '<Commands>');
   DoMessage('  a: add files to archive');
   DoMessage('  d: delete files from archive');
@@ -495,24 +496,27 @@ begin
   DoMessage('  t: test integrity of archive files');
   DoMessage('  x: extract files from archive with path name');
   DoMessage('<Switches>');
-  DoMessage('  -ac{comment}: set archive comment');
-  DoMessage('  -cd{path}: set current archive directory');
-  DoMessage('  -ckp{parameters}: set check interity parameters');
-  DoMessage('  -cp{parameters}: set compression parameters');
-  DoMessage('  -ep{parameters}: set encryption parameters');
-  DoMessage('  -pp{parameters}: set process Priority ');
-  DoMessage('  -r[-|w]: recurse subdirectories');
-  DoMessage('  -sfx[{sfx-name}]: create self-extracting archive');
+  DoMessage('  -c: set archive comment');
+  DoMessage('  -cd: set current archive directory');
+  DoMessage('  -chk: set check interity parameters');
+  DoMessage('  -cph: set cipher parameters');
+  DoMessage('  -enc: set encoder parameters');
+  DoMessage('  -p: set process Priority ');
+  DoMessage('  -r: recurse subdirectories');
+  DoMessage('  -sfx: create self-extracting archive');
   DoMessage('  -sls: show list sorted by filename - for l (list) command');
   DoMessage('  -ss: stop switches parsing');
-  DoMessage('  -t: Test temporary archive after process');
-  DoMessage('  -u{parameters}: update files method');
+  DoMessage('  -t: test temporary archive after process');
+  DoMessage('  -u: update files method');
   DoMessage('  -vm: verbose mode ');
-  DoMessage('  -vs{size}[b|k|m|g]: create volumes ');
-  DoMessage('  -wd[{path}]: set temporany work directory');
-  DoMessage('  -x{names}: eXclude filenames');
+  DoMessage('  -v: create volumes ');
+  DoMessage('  -wd: set temporany work directory');
+  DoMessage('  -x: exclude filenames');
+  DoMessage('  -xr: exclude recursing subdirectories');
   DoMessage('  -y: assume yes on all queries');
-  DoMessage(Cr + 'Use BeeOpt to make most optimal parameters.');
+  
+
+
 end;
 
 procedure TBeeApp.EncodeShell;
@@ -585,7 +589,7 @@ begin
 
     if ItemToList.Count > 0 then
     begin
-      if FCommandLine.slsOption then
+      if FCommandLine.slOption then
         ItemToList.Sort(CompareFilePath);
 
       if FCommandLine.vmOption then
@@ -642,4 +646,4 @@ begin
 end;
 
 end.
-
+
