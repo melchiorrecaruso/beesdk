@@ -416,38 +416,6 @@ implementation
 
 // ---
 
-function ExtractQWord(const Params: string; const K: string): qword;
-var
-  I: longint;
-  S: string;
-begin
-  S := '';
-  if Pos(K, UpCase(Params)) > 0 then
-  begin
-    for I := Pos(K, UpCase(Params)) + Length(K) to Length(Params) do
-      if Params[I] <> '/' then
-        S := S + Params[I]
-      else
-        Break;
-  end;
-  if TryStrWithMultToQWord(S, Result) = FALSE then Result := 0;
-end;
-
-function ExtractStr(const Params: string; const K: string): string;
-var
-  I: longint;
-begin
-  Result := '';
-  if Pos(K, UpCase(Params)) > 0 then
-  begin
-    for I := Pos(K, UpCase(Params)) + Length(K) to Length(Params) do
-      if Params[I] <> '/' then
-        Result := Result + Params[I]
-      else
-        Break;
-  end;
-end;
-
 function GetCoderMethod(const Params: string): TCoderAlgorithm;
 var
   S: string;
@@ -2474,4 +2442,4 @@ begin
 end;
 
 end.
-
+
