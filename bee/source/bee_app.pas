@@ -99,7 +99,7 @@ implementation
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 2022 archiver utility, Aug 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 2024 archiver utility, Aug 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -508,8 +508,8 @@ begin
   DoMessage('  -ss: stop switches parsing');
   DoMessage('  -t: test temporary archive after process');
   DoMessage('  -u: update files method');
-  DoMessage('  -vm: verbose mode ');
   DoMessage('  -v: create volumes ');
+  DoMessage('  -vm: verbose mode ');
   DoMessage('  -wd: set temporany work directory');
   DoMessage('  -x: exclude filenames');
   DoMessage('  -xr: exclude recursing subdirectories');

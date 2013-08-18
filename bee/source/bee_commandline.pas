@@ -281,7 +281,7 @@ begin
   end;
 end;
 
-function LoadFromFile(const FileName: string): string;
+function ExtractStrFromFile(const FileName: string): string;
 var
   T: TStringList;
 begin
@@ -327,17 +327,12 @@ end;
 
 procedure TCommandLine.ProcessCOption(var S: string);
 begin
-  if Pos('-AC@:', UpperCase(S)) = 1 then
+  if Pos('-C/', UpperCase(S)) = 1 then
   begin
-    Delete(S, 1, 5);
-    FcOption := LoadFromFile(S);
+    Delete(S, 1, 2);
+    FcOption := S;
   end else
-    if Pos('-AC:', UpperCase(S)) = 1 then
-    begin
-      Delete(S, 1, 4);
-      FcOption := S;
-    end else
-      SetExitStatus(esCmdLineError);
+   SetExitStatus(esCmdLineError);
 
   if Command in [cAdd, cDelete, cRename] then
   begin
@@ -763,34 +758,23 @@ begin
         if Pos('-C/',    UpperCase(S)) = 1 then ProcessCOption  (S) else
         if Pos('-CD/',   UpperCase(S)) = 1 then ProcessCDOption (S) else
         if Pos('-CHK/',  UpperCase(S)) = 1 then ProcessCHKOption(S) else
-
-
-
-        if Pos('-CM:',   UpperCase(S)) = 1 then ProcessENCOption (S) else
-        if Pos('-CP:',   UpperCase(S)) = 1 then ProcessCPHOption (S) else
-
-
-
-        if Pos('-L:',    UpperCase(S)) = 1 then ProcessLOption  (S) else
-
-        if Pos('-P:',    UpperCase(S)) = 1 then ProcessPOption (S) else
-        if Pos('-R:',    UpperCase(S)) = 1 then ProcessROption  (S) else
+        if Pos('-CPH/',  UpperCase(S)) = 1 then ProcessCPHOption(S) else
+        if Pos('-ENC/',  UpperCase(S)) = 1 then ProcessENCOption(S) else
+        if Pos('-L/',    UpperCase(S)) = 1 then ProcessLOption  (S) else
+        if Pos('-P/',    UpperCase(S)) = 1 then ProcessPOption  (S) else
+        if Pos('-R/',    UpperCase(S)) = 1 then ProcessROption  (S) else
         if Pos('-R',     UpperCase(S)) = 1 then ProcessROption  (S) else
-
-        if Pos('-SFX@',  UpperCase(S)) = 1 then ProcessSFXOption(S) else
-
-        if Pos('-SLS',   UpperCase(S)) = 1 then ProcessSLOption(S) else
+        if Pos('-SFX/',  UpperCase(S)) = 1 then ProcessSFXOption(S) else
+        if Pos('-SL/',   UpperCase(S)) = 1 then ProcessSLOption (S) else
         if Pos('-SS',    UpperCase(S)) = 1 then ProcessSSOption (S) else
         if Pos('-T',     UpperCase(S)) = 1 then ProcessTOption  (S) else
-        if Pos('-U:',    UpperCase(S)) = 1 then ProcessUOption  (S) else
+        if Pos('-U/',    UpperCase(S)) = 1 then ProcessUOption  (S) else
+        if Pos('-V/',    UpperCase(S)) = 1 then ProcessVOption  (S) else
         if Pos('-VM',    UpperCase(S)) = 1 then ProcessVMOption (S) else
-        if Pos('-VS:',   UpperCase(S)) = 1 then ProcessVOption (S) else
-        if Pos('-WD:',   UpperCase(S)) = 1 then ProcessWDOption (S) else
-
-        if Pos('-XR:',   UpperCase(S)) = 1 then ProcessXROption (S) else
+        if Pos('-WD/',   UpperCase(S)) = 1 then ProcessWDOption (S) else
+        if Pos('-X/',    UpperCase(S)) = 1 then ProcessXOption  (S) else
+        if Pos('-XR/',   UpperCase(S)) = 1 then ProcessXROption (S) else
         if Pos('-XR',    UpperCase(S)) = 1 then ProcessXROption (S) else
-        if Pos('-X:',    UpperCase(S)) = 1 then ProcessXOption  (S) else
-
         if Pos('-Y',     UpperCase(S)) = 1 then ProcessYOption  (S) else
           SetExitStatus(esCmdLineError);
 
