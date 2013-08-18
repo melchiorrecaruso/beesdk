@@ -327,12 +327,10 @@ end;
 
 procedure TCommandLine.ProcessCOption(var S: string);
 begin
-  if Pos('-C/', UpperCase(S)) = 1 then
-  begin
-    Delete(S, 1, 2);
-    FcOption := S;
-  end else
-   SetExitStatus(esCmdLineError);
+  Delete(S, 1, 2);
+  FcOption := FcOption + '/' + S + '/';
+  while Pos('//', FcOption) > 0 do
+    Delete(FcOption, Pos('//', FcOption), 1);
 
   if Command in [cAdd, cDelete, cRename] then
   begin
@@ -361,9 +359,24 @@ end;
 procedure TCommandLine.ProcessENCOption(var S: string);
 begin
   Delete(S, 1, 4);
-  FencOption := FencOption + ':' + S + ':';
-  while Pos('::', FencOption) > 0 do
-    Delete(FencOption, Pos('::', FencOption), 1);
+  FencOption := FencOption + '/' + S + '/';
+  while Pos('//', FencOption) > 0 do
+    Delete(FencOption, Pos('//', FencOption), 1);
+
+  if Command in [cAdd] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, clencOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessCHKOption(var S: string);
+begin
+  Delete(S, 1, 4);
+  FchkOption := FchkOption + '/' + S + '/';
+  while Pos('//', FchkOption) > 0 do
+    Delete(FchkOption, Pos('//', FchkOption), 1);
 
   if Command in [cAdd] then
   begin
@@ -373,32 +386,17 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCHKOption(var S: string);
-begin
-  Delete(S, 1, 6);
-  FchkOption := FchkOption + ':' + S + ':';
-  while Pos('::', FchkOption) > 0 do
-    Delete(FchkOption, Pos('::', FchkOption), 1);
-
-  if Command in [cAdd] then
-  begin
-    if ExitStatus = esNoError then
-      Include(FOptions, clcphOption);
-  end else
-    SetExitStatus(esCmdLineError);
-end;
-
 procedure TCommandLine.ProcessCPHOption(var S: string);
 begin
   Delete(S, 1, 4);
-  FcphOption := FcphOption + ':' + S + ':';
-  while Pos('::', FcphOption) > 0 do
-    Delete(FcphOption, Pos('::', FcphOption), 1);
+  FcphOption := FcphOption + '/' + S + '/';
+  while Pos('//', FcphOption) > 0 do
+    Delete(FcphOption, Pos('//', FcphOption), 1);
 
   if Command in [cAdd, cDelete, cExtract, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clencOption);
+      Include(FOptions, clcphOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -423,7 +421,7 @@ end;
 
 procedure TCommandLine.ProcessPOption(var S: string);
 begin
-  Delete(S, 1, 4);
+  Delete(S, 1, 3);
   if Length(S) = 1 then
     case S[1] of
       '0': FpOption := ppIdle;
@@ -466,7 +464,7 @@ begin
     Delete(S, 1, 2);
     FrOption := 'ALL';
   end else
-    if Pos('-R:', UpperCase(S)) = 1 then
+    if Pos('-R/', UpperCase(S)) = 1 then
     begin
       Delete(S, 1, 3);
       FrOption := S;
