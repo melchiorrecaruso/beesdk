@@ -90,8 +90,6 @@ type
     procedure Update(Data: PByte; Count: longint); override;
   end;
 
-  THashAlgorithm = (haNul, haCRC32, haCRC64, haSHA1, haMD5);
-
 implementation
 
 uses
@@ -171,4 +169,4 @@ begin
   MD5Update(FCTX, Data[0], Count);
 end;
 
-end.
+end.

@@ -70,8 +70,6 @@ type
     function Decrypt(var Data: TBuffer; Count: longint): longint; override;
   end;
 
-  TCipherAlgorithm = (caNul, caBlowFish, caIdea);
-
 implementation
 
 uses
@@ -192,4 +190,4 @@ begin
   end;
 end;
 
-end.
+end.

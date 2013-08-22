@@ -137,13 +137,13 @@ type
     FCompressedSize: int64;
     FDiskNumber: longint;
     FDiskSeek: int64;
-    FCheckMethod: THashAlgorithm;
+    FCheckMethod: longword;
     FCheckDigest: string;
-    FCheckMethodAux: THashAlgorithm;
+    FCheckMethodAux: longword;
     FCheckDigestAux: string;
     // compression property
     FCompressionFlags: TArchiveCompressionFlags;
-    FCompressionMethod: TCoderAlgorithm;
+    FCompressionMethod: longint;
     FCompressionLevel: longint;
     FCompressionLevelAux: longint;
     FCompressionFilter: string;
@@ -151,7 +151,7 @@ type
     FCompressionBlock: int64;
     // encryption property
     FEncryptionFlags: TArchiveEncryptionFlags;
-    FEncryptionMethod: TCipherAlgorithm;
+    FEncryptionMethod: longword;
   protected
     FIndex: longint;
     FTag: TArchiveItemTag;
@@ -178,13 +178,13 @@ type
     property CompressedSize: int64 read FCompressedSize;
     property DiskNumber: longint read FDiskNumber;
     property DiskSeek: int64 read FDiskSeek;
-    property CheckMethod: THashAlgorithm read FCheckMethod;
+    property CheckMethod: longword read FCheckMethod;
     property CheckDigest: string read FCheckDigest;
-    property CheckMethodAux: THashAlgorithm read FCheckMethodAux;
+    property CheckMethodAux: longword read FCheckMethodAux;
     property CheckDigestAux: string read FCheckDigestAux;
     // compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
-    property CompressionMethod: TCoderAlgorithm read FCompressionMethod;
+    property CompressionMethod: longint read FCompressionMethod;
     property CompressionLevel: longint read FCompressionLevel;
     property CompressionLevelAux: longint read FCompressionLevelAux;
     property CompressionFilter: string read FCompressionFilter;
@@ -192,7 +192,7 @@ type
     property CompressionBlock: int64 read FCompressionBlock;
     // encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
-    property EncryptionMethod: TCipherAlgorithm read FEncryptionMethod;
+    property EncryptionMethod: longword read FEncryptionMethod;
     //
     property Index: longint read FIndex;
   end;
@@ -243,15 +243,8 @@ type
 
   /// archive events
 
-  TArchiveProgressEvent = procedure(Percentage: longint) of object;
-
-  TArchiveMessageEvent = procedure(const Msg: string) of object;
-
-  TArchiveCommentEvent = procedure(Item: TArchiveItem;
+  TArchiveCommentEvent = procedure (Item: TArchiveItem;
     var CommentAs: string; var Confirm: TArchiveConfirm) of object;
-
-  TArchiveUpdateEvent = procedure(SearchRec: TCustomSearchRec;
-    var UpdateAs: string; var Confirm: TArchiveConfirm) of object;
 
   TArchiveDeleteEvent = procedure(Item: TArchiveItem;
     var Confirm: TArchiveConfirm) of object;
@@ -259,8 +252,15 @@ type
   TArchiveExtractEvent = procedure(Item: TArchiveItem;
     var ExtractAs: string; var Confirm: TArchiveConfirm) of object;
 
+  TArchiveMessageEvent = procedure(const Msg: string) of object;
+
+  TArchiveProgressEvent = procedure(Percentage: longint) of object;
+
   TArchiveRenameEvent = procedure(Item: TArchiveItem;
     var RenameAs: string; var Confirm: TArchiveConfirm) of object;
+
+  TArchiveUpdateEvent = procedure(SearchRec: TCustomSearchRec;
+    var UpdateAs: string; var Confirm: TArchiveConfirm) of object;
 
   /// archive manager
   TArchiver = class(TObject)
@@ -285,6 +285,7 @@ type
     FWorkDirectory: string;
     FCompressionParams: string;
     FEncryptionParams: string;
+    FPassword: string;
     FCheckParams: string;
     FTestTempArchive: boolean;
     FVerboseMode: boolean;
@@ -293,52 +294,54 @@ type
     // central directory
     FCentralDirectory: TArchiveCentralDirectory;
     FCentralDirectoryNews: TList;
+    // events
+    FOnCommentItem: TArchiveCommentEvent;
+    FOnDeleteItem: TArchiveDeleteEvent;
+    FOnExtractItem: TArchiveExtractEvent;
+    FOnMessage: TArchiveMessageEvent;
+    FOnProgress: TArchiveProgressEvent;
+    FOnRenameItem: TArchiveRenameEvent;
+    FOnRequestBlankImage: TFileWriterRequestBlankImageEvent;
+    FOnRequestImage: TFileReaderRequestImageEvent;
+    FOnUpdateItem: TArchiveUpdateEvent;
   private
-    function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
-    function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
-    function GetBackTear(Index: longint): longint;
-    function GetNextTear(Index: longint): longint;
-    function GetItem(Index: longint): TArchiveItem;
+    function  DoCommentItem(Item: TArchiveItem): TArchiveConfirm;
+    function  DoDeleteItem (Item: TArchiveItem): TArchiveConfirm;
+    function  DoExtractItem(Item: TArchiveItem): TArchiveConfirm;
+    procedure DoMessage(const Message: string);
+    procedure DoProgress(Value: longint);
+    function  DoRenameItem (Item: TArchiveItem): TArchiveConfirm;
+    procedure DoRequestBlankImage(ImageNumber: longint; var Abort : Boolean);
+    procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
+    function  DoUpdateItem (Item: TCustomSearchRec): TArchiveConfirm;
+
+    procedure SetArchiveName(const Value: string);
+    procedure SetComment(const Value: string);
+    procedure SetSfxName(const Value: string);
+    procedure SetWorkDirectory(const Value: string);
+
     function GetComment: string;
     function GetCount: longint;
+    function GetItem(Index: longint): TArchiveItem;
     function GetLastModifiedTime: int64;
+    function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
+    function GetBackTear(Index: longint): longint;
+    function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
+    function GetNextTear(Index: longint): longint;
 
-    procedure SetComment(const Value: string);
-    procedure SetArchiveName(const Value: string);
-    procedure SetWorkDirectory(const Value: string);
-    procedure SetSfxName(const Value: string);
-  private
-    procedure Encode           (Reader: TBufStream; Writer: TBufStream; const Size: int64);
+    procedure Encode(Reader: TBufStream; Writer: TBufStream; const Size: int64);
     procedure EncodeFromArchive(Item: TArchiveItem);
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
     procedure DecodeToNul      (Item: TArchiveItem);
     procedure DecodeToSwap     (Item: TArchiveItem);
     procedure DecodeToFile     (Item: TArchiveItem);
-  private
-    FOnCommentItem: TArchiveCommentEvent;
-    FOnDeleteItem: TArchiveDeleteEvent;
-    FOnExtractItem: TArchiveExtractEvent;
-    FOnRenameItem: TArchiveRenameEvent;
-    FOnUpdateItem: TArchiveUpdateEvent;
 
-    FOnMessage: TArchiveMessageEvent;
-    FOnProgress: TArchiveProgressEvent;
-    FOnRequestBlankImage: TFileWriterRequestBlankImageEvent;
-    FOnRequestImage: TFileReaderRequestImageEvent;
-
-    function DoCommentItem(Item: TArchiveItem): TArchiveConfirm;
-    function DoDeleteItem (Item: TArchiveItem): TArchiveConfirm;
-    function DoExtractItem(Item: TArchiveItem): TArchiveConfirm;
-    function DoRenameItem (Item: TArchiveItem): TArchiveConfirm;
-    function DoUpdateItem (Item: TCustomSearchRec): TArchiveConfirm;
-
-    procedure DoMessage(const Message: string);
-    procedure DoProgress(Value: longint);
-    procedure DoRequestBlankImage(ImageNumber: longint; var Abort : Boolean);
-    procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
-  private
     procedure Configure;
+    procedure Swapping;
+    procedure SaveTemporaryArchive;
+    procedure TestTemporaryArchive;
+
     procedure CheckTags4Update;
     procedure CheckSequences4Update;
     procedure CheckTags4Delete;
@@ -348,64 +351,57 @@ type
     procedure CheckSequences4Extract;
     procedure CheckTags4Rename;
     procedure CheckSequences4Rename;
-  private
-    procedure Swapping;
-    procedure TestTemporaryArchive;
-    procedure SaveTemporaryArchive;
   public
     constructor Create;
     destructor Destroy; override;
 
     procedure CloseArchive;
-    procedure OpenArchive(const aArchiveName: string);
-
-    procedure UnTagAll;
-    procedure UnTag(Index: longint);
-    procedure TagAll;
-    procedure Tag(Index: longint); overload;
-    procedure Tag(SearchRec: TCustomSearchRec); overload;
-    function IsTagged(Index: longint): boolean;
-    function IndexOf(const aFileName: string): longint;
-
-    procedure TestTagged;
     procedure ExtractTagged;
-    procedure RenameTagged;
     procedure DeleteTagged;
-    procedure UpdateTagged;
-
-    procedure Terminate;
+    function IndexOf(const aFileName: string): longint;
+    function IsTagged(Index: longint): boolean;
+    procedure OpenArchive(const aArchiveName: string);
+    procedure RenameTagged;
     procedure Suspend(Value: boolean);
-  public
-    property OnRequestBlankImage: TFileWriterRequestBlankImageEvent read FOnRequestBlankImage write FOnRequestBlankImage;
-    property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
-    property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
-    property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
-    property OnItemExtract: TArchiveExtractEvent read FOnExtractItem write FOnExtractItem;
-    property OnItemRename: TArchiveRenameEvent read FOnRenameItem write FOnRenameItem;
-    property OnItemDelete: TArchiveDeleteEvent read FOnDeleteItem write FOnDeleteItem;
-    property OnItemUpdate: TArchiveUpdateEvent read FOnUpdateItem write FOnUpdateItem;
-    property OnItemComment: TArchiveCommentEvent read FOnCommentItem write FOnCommentItem;
+    procedure Tag(SearchRec: TCustomSearchRec); overload;
+    procedure Tag(Index: longint); overload;
+    procedure TagAll;
+    procedure Terminate;
+    procedure TestTagged;
+    procedure UnTag(Index: longint);
+    procedure UnTagAll;
+    procedure UpdateTagged;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property Comment: string read GetComment write SetComment;
-    property SelfExtractor: string read FSfxName write FSfxName;
-    property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
+    property Count: longint read GetCount;
+    property CheckParams: string read FCheckParams write FCheckParams;
     property CompressionParams: string read FCompressionParams write FCompressionParams;
     property EncryptionParams: string read FEncryptionParams write FEncryptionParams;
-    property CheckParams: string read FCheckParams write FCheckParams;
-    property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
-    property VerboseMode: boolean read FVerboseMode write FVerboseMode;
-    property VolumeSize: int64 read FVolumeSize write FVolumeSize;
-    property NewLayer: boolean read FNewLayer write FNewLayer;
     property Items[Index: longint]: TArchiveItem read GetItem;
-    property Count: longint read GetCount;
-
     property LastModifiedTime: int64 read GetLastModifiedTime;
+    property NewLayer: boolean read FNewLayer write FNewLayer;
+    property Password: string read FPassword write FPassword;
+    property SelfExtractor: string read FSfxName write FSfxName;
+    property TestTempArchive: boolean read FTestTempArchive write FTestTempArchive;
+    property VolumeSize: int64 read FVolumeSize write FVolumeSize;
+    property VerboseMode: boolean read FVerboseMode write FVerboseMode;
+    property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
+  public
+    property OnItemComment: TArchiveCommentEvent read FOnCommentItem write FOnCommentItem;
+    property OnItemDelete: TArchiveDeleteEvent read FOnDeleteItem write FOnDeleteItem;
+    property OnItemExtract: TArchiveExtractEvent read FOnExtractItem write FOnExtractItem;
+    property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
+    property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
+    property OnItemRename: TArchiveRenameEvent read FOnRenameItem write FOnRenameItem;
+    property OnRequestBlankImage: TFileWriterRequestBlankImageEvent read FOnRequestBlankImage write FOnRequestBlankImage;
+    property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
+    property OnItemUpdate: TArchiveUpdateEvent read FOnUpdateItem write FOnUpdateItem;
   end;
 
-function CoderMethodToStr(Method: TCoderAlgorithm ): string;
-function HashMethodToStr(Method: THashAlgorithm): string;
-function CipherMethodToStr(Method: TCipherAlgorithm): string;
+function CoderMethodToStr (Method: longint): string;
+function HashMethodToStr  (Method: longint): string;
+function CipherMethodToStr(Method: longint): string;
 
 function VersionToStr(Version: longword): string;
 function RatioToStr(const PackedSize, Size: int64): string;
@@ -413,151 +409,6 @@ function SizeToStr(const Size: int64): string;
 function AttrToStr(Attr: longint): string;
 
 implementation
-
-// ---
-
-function GetCoderMethod(const Params: string): TCoderAlgorithm;
-var
-  S: string;
-begin
-  if Pos('/M', UpCase(Params)) > 0 then
-  begin
-    S := Upcase(ExtractStr(Params,'/M'));
-    if S = '0' then Result := caStore else
-    if S = '1' then Result := caBee   else
-    if S = '2' then Result := caPpmd  else SetExitStatus(esCmdLineError);
-  end else
-    Result := caBee;
-end;
-
-function GetCoderLevel(const Params: string): longword;
-begin
-  case GetCoderMethod(Params) of
-    caBee: begin
-      if Pos('/L', UpCase(Params)) > 0 then
-        Result := ExtractQWord(Params, '/L')
-      else
-        Result := 1;
-
-      if (3 < Result) or (Result < 1) then
-        SetExitStatus(esCmdLineError);
-    end;
-    caPpmd: begin
-      if Pos('/L', UpCase(Params)) > 0 then
-        Result := ExtractQWord(Params, '/L')
-      else
-        Result := 6;
-
-      if (64 < Result) or (Result < 2) then
-        SetExitStatus(esCmdLineError);
-    end;
-  end;
-end;
-
-function GetCoderAuxLevel(Params: string): longword;
-begin
-  case GetCoderMethod(Params) of
-    caBee: begin
-      if Pos('/AL', UpCase(Params)) > 0 then
-        Result := ExtractQWord(Params, '/AL')
-      else
-        Result := 3;
-
-      if (9 < Result) or (Result < 0) then
-        SetExitStatus(esCmdLineError);
-    end;
-    caPpmd: begin
-      if Pos('/AL', UpCase(Params)) > 0 then
-        Result := ExtractQWord(Params, '/AL')
-      else
-        Result := $200000;
-
-      if ($800 < Result) or (Result < $FFFFFFDB) then
-        SetExitStatus(esCmdLineError);
-    end;
-  end;
-
-end;
-
-function GetCoderFilter(const Params: string): string;
-begin
-  Result := ExtractStr(Params, '/F');
-end;
-
-function GetCoderAuxFilter(const Params: string): string;
-begin
-  Result := ExtractStr(Params, '/AF');
-end;
-
-function GetCoderBlock(Params: string): qword;
-begin
-  Result := ExtractQWord(Params, '/B');
-end;
-
-function GetCoderConfiguration(const Params: string): string;
-begin
-  Result := ExtractStr(Params, '/C');
-  if Result = '' then
-    Result := DefaultCfgName;
-end;
-
-function GetCipherKey(const Params: string): string;
-begin
-  Result := ExtractStr(Params, '/P');
-end;
-
-function GetCipherMethod(const Params: string): TCipherAlgorithm;
-var
-  S: string;
-begin
-  Result := caNul;
-  if GetCipherKey(Params) <> '' then
-    Result := caBlowFish;
-
-  if Pos('/M', UpCase(Params)) > 0 then
-  begin
-    S := UpCase(ExtractStr(Params, '/M'));
-    if S = '0' then Result := caNul      else
-    if S = '1' then Result := caBlowFish else
-    if S = '2' then Result := caIdea     else SetExitStatus(esCmdLineError);
-  end;
-
-  if Result <> caNul then
-    if Length(GetCipherKey(Params)) < 4 then
-      SetExitStatus(esCmdLineError);
-end;
-
-function GetHashMethod(Params: string): THashAlgorithm;
-var
-  S: string;
-begin
-  Result := haCRC32;
-  if Pos('/M', UpCase(Params)) > 0 then
-  begin
-    S := UpCase(ExtractStr(Params, '/M'));
-    if S = '0' then Result := haNul   else
-    if S = '1' then Result := haCRC32 else
-    if S = '2' then Result := haCRC64 else
-    if S = '3' then Result := haSHA1  else
-    if S = '4' then Result := haMD5   else SetExitStatus(esCmdLineError);
-  end;
-end;
-
-function GetHashAuxMethod(Params: string): THashAlgorithm;
-var
-  S: string;
-begin
-  Result := haCRC32;
-  if Pos('/AM=', UpCase(Params)) > 0 then
-  begin
-    S := UpCase(ExtractStr(Params, '/AM='));
-    if S = '0' then Result := haNul   else
-    if S = '1' then Result := haCRC32 else
-    if S = '2' then Result := haCRC64 else
-    if S = '3' then Result := haSHA1  else
-    if S = '4' then Result := haMD5   else SetExitStatus(esCmdLineError);
-  end;
-end;
 
 // ---
 
@@ -578,43 +429,43 @@ end;
 
 // ---
 
-function CoderMethodToStr(Method: TCoderAlgorithm): string;
+function CoderMethodToStr(Method: longint): string;
 begin
+  Result := '???';
   case Method of
-    caStore: Result := 'NONE';
-    caBee:   Result := 'BEE';
-    caPpmd:  Result := 'PPMD';
-    else     Result := '???';
+    0:  Result := 'NONE';
+    1:  Result := 'BEE';
+    2:  Result := 'PPMD';
   end;
 end;
 
-function HashMethodToStr(Method: THashAlgorithm): string;
+function HashMethodToStr(Method: longint): string;
 begin
+  Result := '???';
   case Method of
-    haNul:   Result := 'NONE';
-    haCRC32: Result := 'CRC32';
-    haCRC64: Result := 'CRC64';
-    haSHA1:  Result := 'SHA1';
-    haMD5:   Result := 'MD5';
-    else     Result := '???';
+    0: Result := 'NONE';
+    1: Result := 'CRC32';
+    2: Result := 'CRC64';
+    3: Result := 'SHA1';
+    4: Result := 'MD5';
   end;
 end;
 
-function CipherMethodToStr(Method: TCipherAlgorithm): string;
+function CipherMethodToStr(Method: longint): string;
 begin
+  Result := '???';
   case Method of
-    caNul:      Result := 'NONE';
-    caBlowFish: Result := 'BLOWFISH';
-    caIdea:     Result := 'IDEA';
-    else        Result := '???';
+    0: Result := 'NONE';
+    1: Result := 'BLOWFISH';
+    2: Result := 'IDEA';
   end;
 end;
 
 function VersionToStr(Version: longword): string;
 begin
+  Result := '?.?.?';
   case Version of
     80:  Result := '0.8.0';
-    else Result := '?.?.?';
   end;
 end;
 
@@ -682,9 +533,9 @@ begin
   FCompressedSize       := 0;
   FDiskNumber           := 0;
   FDiskSeek             := 0;
-  FCheckMethod          := haNul;
+  FCheckMethod          := 0;
   FCheckDigest          := '';
-  FCheckMethodAux       := haNul;
+  FCheckMethodAux       := 0;
   FCheckDigestAux       := '';
   /// compression property ///
   FCompressionFlags     := [
@@ -694,7 +545,7 @@ begin
     acfCompressionFilter,
     acfCompressionFilterAux,
     acfCompressionBlock];
-  FCompressionMethod    := caStore;
+  FCompressionMethod    := 0;
   FCompressionLevel     := 0;
   FCompressionLevelAux  := 0;
   FCompressionFilter    := '';
@@ -703,7 +554,7 @@ begin
   /// encryption property ///
   FEncryptionFlags      := [
     aefEncryptionMethod];
-  FEncryptionMethod     := caNul;
+  FEncryptionMethod     := 0;
   /// reserved property ///
   FTag                  := aitAdd;
   FIndex                := -1;
@@ -739,13 +590,13 @@ begin
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
   if (addfDiskNumber     in FDataDescriptorFlags) then FDiskNumber     := Stream.ReadInfWord;
   if (addfDiskSeek       in FDataDescriptorFlags) then FDiskSeek       := Stream.ReadInfWord;
-  if (addfCheckMethod    in FDataDescriptorFlags) then FCheckMethod    := THashAlgorithm(Stream.ReadInfWord);
+  if (addfCheckMethod    in FDataDescriptorFlags) then FCheckMethod    := Stream.ReadInfWord;
   if (addfCheckDigest    in FDataDescriptorFlags) then FCheckDigest    := Stream.ReadInfArray;
-  if (addfCheckMethodAux in FDataDescriptorFlags) then FCheckMethodAux := THashAlgorithm(Stream.ReadInfWord);
+  if (addfCheckMethodAux in FDataDescriptorFlags) then FCheckMethodAux := Stream.ReadInfWord;
   if (addfCheckDigestAux in FDataDescriptorFlags) then FCheckDigestAux := Stream.ReadInfArray;
   /// compression property ///
   FCompressionFlags := TArchiveCompressionFlags(longword(Stream.ReadInfWord));
-  if (acfCompressionMethod    in FCompressionFlags) then FCompressionMethod    := TCoderAlgorithm(Stream.ReadInfWord);
+  if (acfCompressionMethod    in FCompressionFlags) then FCompressionMethod    := Stream.ReadInfWord;
   if (acfCompressionLevel     in FCompressionFlags) then FCompressionLevel     := Stream.ReadInfWord;
   if (acfCompressionLevelAux  in FCompressionFlags) then FCompressionLevelAux  := Stream.ReadInfWord;
   if (acfCompressionFilter    in FCompressionFlags) then FCompressionFilter    := Stream.ReadInfArray;
@@ -753,7 +604,7 @@ begin
   if (acfCompressionBlock     in FCompressionFlags) then FCompressionBlock     := Stream.ReadInfWord;
   /// encryption property ///
   FEncryptionFlags := TArchiveEncryptionFlags(longword(Stream.ReadInfWord));
-  if (aefEncryptionMethod  in FEncryptionFlags) then FEncryptionMethod := TCipherAlgorithm(Stream.ReadInfWord);
+  if (aefEncryptionMethod  in FEncryptionFlags) then FEncryptionMethod := Stream.ReadInfWord;
 end;
 
 procedure TArchiveItem.Write(Stream: TFileWriter);
@@ -1263,13 +1114,13 @@ begin
   Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
 
-  FArchiveReader.HashMethod   := haNul;
-  FArchiveReader.CipherMethod := caNul;
-  FArchiveReader.CoderMethod  := caStore;
+  FArchiveReader.HashMethod   := 0;
+  FArchiveReader.CipherMethod := 0;
+  FArchiveReader.CoderMethod  := 0;
 
-  FTempWriter.HashMethod      := haNul;
-  FTempWriter.CipherMethod    := caNul;
-  FTempWriter.CoderMethod     := caStore;
+  FTempWriter.HashMethod      := 0;
+  FTempWriter.CipherMethod    := 0;
+  FTempWriter.CoderMethod     := 0;
   begin
     Encode(FArchiveReader, FTempWriter, Item.FCompressedSize);
   end;
@@ -1283,12 +1134,12 @@ begin
 
   FSwapReader.HashMethod      := Item.CheckMethod;
   FSwapReader.CipherMethod    := Item.EncryptionMethod;
-  FSwapReader.CipherKey       := GetCipherKey(EncryptionParams);
-  FSwapReader.CoderMethod     := caStore;
+  FSwapReader.CipherKey       := FPassword;
+  FSwapReader.CoderMethod     := 0;
 
   FTempWriter.HashMethod      := Item.CheckMethod;
   FTempWriter.CipherMethod    := Item.EncryptionMethod;
-  FTempWriter.CipherKey       := GetCipherKey(EncryptionParams);
+  FTempWriter.CipherKey       := FPassword;
   FTempWriter.CoderMethod     := Item.CompressionMethod;
   FTempWriter.CoderLevel      := Item.CompressionLevel;
   FTempWriter.CoderLevelAux   := Item.CompressionLevelAux;
@@ -1313,12 +1164,12 @@ begin
   Item.FDiskNumber           := FTempWriter.CurrentImage;
 
   Source.HashMethod          := Item.CheckMethod;
-  Source.CipherMethod        := caNul;
-  Source.CoderMethod         := caStore;
+  Source.CipherMethod        := 0;
+  Source.CoderMethod         := 0;
 
   FTempWriter.HashMethod     := Item.CheckMethodAux;
   FTempWriter.CipherMethod   := Item.EncryptionMethod;
-  FTempWriter.CipherKey      := GetCipherKey(EncryptionParams);
+  FTempWriter.CipherKey      := ExtractEncryptionPassword(EncryptionParams);
   FTempWriter.CoderMethod    := Item.CompressionMethod;
   FTempWriter.CoderLevel     := Item.CompressionLevel;
   FTempWriter.CoderLevelAux  := Item.CompressionLevelAux;
@@ -1344,7 +1195,7 @@ begin
 
   FArchiveReader.HashMethod     := Item.CheckMethod;
   FArchiveReader.CipherMethod   := Item.EncryptionMethod;
-  FArchiveReader.CipherKey      := GetCipherKey(EncryptionParams);
+  FArchiveReader.CipherKey      := FPassword;
   FArchiveReader.CoderMethod    := Item.CompressionMethod;
   FArchiveReader.CoderLevel     := Item.CompressionLevel;
   FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
@@ -1354,13 +1205,13 @@ begin
 
   FSwapWriter.HashMethod        := Item.CheckMethod;
   FSwapWriter.CipherMethod      := Item.EncryptionMethod;
-  FSwapWriter.CipherKey         := GetCipherKey(EncryptionParams);
-  FSwapWriter.CoderMethod       := caStore;
+  FSwapWriter.CipherKey         := FPassword;
+  FSwapWriter.CoderMethod       := 0;
   begin
     Encode(FArchiveReader, FSwapWriter, Item.UncompressedSize);
   end;
 
-  if Item.CheckMethod <> haNul then
+  if Item.CheckMethod <> 0 then
     if Item.CheckDigest <> FSwapWriter.HashDigest then
       SetExitStatus(esHashError);
 end;
@@ -1375,12 +1226,12 @@ begin
   FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
 
   Destination.HashMethod        := Item.CheckMethod;
-  Destination.CipherMethod      := caNul;
-  Destination.CoderMethod       := caStore;
+  Destination.CipherMethod      := 0;
+  Destination.CoderMethod       := 0;
 
-  FArchiveReader.HashMethod     := haNul;
+  FArchiveReader.HashMethod     := 0;
   FArchiveReader.CipherMethod   := Item.EncryptionMethod;
-  FArchiveReader.CipherKey      := GetCipherKey(EncryptionParams);
+  FArchiveReader.CipherKey      := FPassword;
   FArchiveReader.CoderMethod    := Item.CompressionMethod;
   FArchiveReader.CoderLevel     := Item.CompressionLevel;
   FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
@@ -1391,7 +1242,7 @@ begin
     Encode(FArchiveReader, Destination, Item.FUncompressedSize);
   end;
 
-  if Item.CheckMethod <> haNul then
+  if Item.CheckMethod <> 0 then
     if Item.FCheckDigest <> Destination.HashDigest then
       SetExitStatus(esHashError);
   FreeAndNil(Destination);
@@ -1405,12 +1256,12 @@ begin
   FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
 
   Destination.HashMethod        := Item.CheckMethod;
-  Destination.CipherMethod      := caNul;
-  Destination.CoderMethod       := caStore;
+  Destination.CipherMethod      := 0;
+  Destination.CoderMethod       := 0;
 
-  FArchiveReader.HashMethod     := haNul;
+  FArchiveReader.HashMethod     := 0;
   FArchiveReader.CipherMethod   := Item.EncryptionMethod;
-  FArchiveReader.CipherKey      := GetCipherKey(EncryptionParams);
+  FArchiveReader.CipherKey      := FPassword;
   FArchiveReader.CoderMethod    := Item.CompressionMethod;
   FArchiveReader.CoderLevel     := Item.CompressionLevel;
   FArchiveReader.CoderLevelAux  := Item.CompressionLevelAux;
@@ -1421,7 +1272,7 @@ begin
     Encode(FArchiveReader, Destination, Item.UncompressedSize);
   end;
 
-  if Item.CheckMethod <> haNul then
+  if Item.CheckMethod <> 0 then
     if Item.FCheckDigest <> Destination.HashDigest then
       SetExitStatus(esHashError);
   FreeAndNil(Destination);
@@ -2234,18 +2085,18 @@ var
   Configuration: TConfiguration;
 begin
   Configuration := TConfiguration.Create;
-  if FileExists(GetCoderConfiguration(FCompressionParams)) then
-    Configuration.LoadFromFile(GetCoderConfiguration(FCompressionParams))
+  if FileExists(ExtractCompressionConfig(FCompressionParams)) then
+    Configuration.LoadFromFile(ExtractCompressionConfig(FCompressionParams))
   else
     SetExitStatus(esConfigError);
 
   CurrentFileExt := '.';
   Configuration.Selector('\main');
-  Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(GetCoderLevel   (FCompressionParams)));
-  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(GetCoderAuxLevel(FCompressionParams)));
+  Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(ExtractCompressionLevel   (FCompressionParams)));
+  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(ExtractCompressionAuxLevel(FCompressionParams)));
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
-  CurrentBlock := GetCoderBlock(FCompressionParams);
+  CurrentBlock := ExtractCompressionBlock(FCompressionParams);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     CurrentItem := FCentralDirectory.Items[I];
@@ -2253,16 +2104,16 @@ begin
     begin
       // compression method
       Include(CurrentItem.FCompressionFlags, acfCompressionMethod);
-      CurrentItem.FCompressionMethod := GetCoderMethod(FCompressionParams);
+      CurrentItem.FCompressionMethod := ExtractCompressionMethod(FCompressionParams);
       // compression level
       Include(CurrentItem.FCompressionFlags, acfCompressionLevel);
-      CurrentItem.FCompressionLevel := GetCoderLevel(FCompressionParams);
+      CurrentItem.FCompressionLevel := ExtractCompressionLevel(FCompressionParams);
       // dictionary level
       Include(CurrentItem.FCompressionFlags, acfCompressionLevelAux);
-      CurrentItem.FCompressionLevelAux := GetCoderAuxLevel(FCompressionParams);
+      CurrentItem.FCompressionLevelAux := ExtractCompressionAuxLevel(FCompressionParams);
       // compression CurrentBlock
       Include(CurrentItem.FCompressionFlags, acfCompressionBlock);
-      CurrentItem.FCompressionBlock := GetCoderBlock(FCompressionParams);
+      CurrentItem.FCompressionBlock := ExtractCompressionBlock(FCompressionParams);
       // default compression table flag
       Exclude(CurrentItem.FCompressionFlags, acfCompressionFilter);
       CurrentItem.FCompressionFilter := '';
@@ -2270,26 +2121,26 @@ begin
       CurrentItem.FCompressionFilterAux := '';
       // force file extension option
       PreviousFileExt := CurrentFileExt;
-      if GetCoderFilter(FCompressionParams) = '' then
+      if ExtractCompressionFilter(FCompressionParams) = '' then
         CurrentFileExt := ExtractFileExt(CurrentItem.FExternalFileName)
       else
-        CurrentFileExt := GetCoderFilter(FCompressionParams);
+        CurrentFileExt := ExtractCompressionFilter(FCompressionParams);
       // compression block option
       if AnsiCompareFileName(CurrentFileExt, PreviousFileExt) = 0 then
       begin
         Dec(CurrentBlock, CurrentItem.FExternalFileSize);
         if CurrentBlock < 0 then
         begin
-          CurrentBlock := GetCoderBlock(FCompressionParams);
+          CurrentBlock := ExtractCompressionBlock(FCompressionParams);
           CurrentItem.FCompressionBlock := 0;
         end;
       end else
       begin
-        CurrentBlock := GetCoderBlock(FCompressionParams);
+        CurrentBlock := ExtractCompressionBlock(FCompressionParams);
         CurrentItem.FCompressionBlock := 0;
       end;
       // BEE compression method
-      if CurrentItem.FCompressionMethod = caBee then
+      if CurrentItem.FCompressionMethod = 1 then
       begin
         Include(CurrentItem.FCompressionFlags, acfCompressionFilter);
         if Configuration.GetTable(CurrentFileExt, CurrentTable) then
@@ -2298,10 +2149,10 @@ begin
           CurrentItem.FCompressionFilter := Hex(DefaultTableParameters, SizeOf(CurrentTable));
       end;
       // encryption method
-      CurrentItem.FEncryptionMethod    := GetCipherMethod (FEncryptionParams);
+      CurrentItem.FEncryptionMethod    := ExtractEncryptionMethod(FEncryptionParams);
       // check method
-      CurrentItem.FCheckMethod         := GetHashMethod   (FCheckParams);
-      CurrentItem.FCheckMethodAux      := GetHashAuxMethod(FCheckParams);
+      CurrentItem.FCheckMethod         := ExtractCheckMethod   (FCheckParams);
+      CurrentItem.FCheckMethodAux      := ExtractCheckAuxMethod(FCheckParams);
       // version needed to read
       CurrentItem.FVersionNeededToRead := GetVersionNeededToRead(CurrentItem);
     end;

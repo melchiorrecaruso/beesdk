@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v0.8.0 build 2028 - 2013.08.21 by Melchiorre Caruso.
 }
 
 unit Bee_CommandLine;
@@ -38,14 +38,15 @@ uses
 
 type
   // Command:
-  //   cAdd      Add files
-  //   cDelete   Delete files
-  //   cExtract  Extract file
-  //   cHelp     Show Help
-  //   cList     List files
-  //   cRename   Rename files
-  //   cTest     Test files
-  //   cXextract Extract files with full paths
+  //   cAdd       Add files
+  //   cDelete    Delete files
+  //   cExtract   Extract file
+  //   cHelp      Show Help
+  //   cList      List files
+  //   cQuickTest Quick test files
+  //   cRename    Rename files
+  //   cTest      Test files
+  //   cXextract  Extract files with full paths
 
   TCommand = (cAdd, cDelete, cExtract, cHelp, cList,
     cQuickTest, cRename, cTest, cXextract);
@@ -63,35 +64,29 @@ type
   TUpdateMethod = (umAdd, umUpdate, umReplace, umQuery, umAddUpdate,
     umAddReplace, umAddQuery, umAddAutoRename);
 
-  // Process Priority:
-  //   ppIdle
-  //   ppNormal
-  //   ppHigh
-  //   ppRealTime
-
-  TProcessPriority = (ppIdle, ppNormal, ppHigh, ppRealTime);
-
   // TCommandLineOptions
 
   TCommandLineOption = (
+    claccOption,
+    clbOption,
     clcOption,
+    clccOption,
     clcdOption,
-    clchkOption,
-    clcphOption,
-    clencOption,
+    clciOption,
+    cleOption,
     cllOption,
     clpOption,
     clrOption,
+    clrxOption,
     clsfxOption,
     clslOption,
     clssOption,
     cltOption,
     cluOption,
     clvOption,
-    clvmOption,
-    clwdOption,
+    clvbOption,
+    clwOption,
     clxOption,
-    clxrOption,
     clyOption);
 
   TCommandLineOptions = set of TCommandLineOption;
@@ -102,49 +97,59 @@ type
   protected
     FCommand: TCommand;
     FOptions: TCommandLineOptions;
+
+    FaccOption: string;
+    FbOption: boolean;
     FcOption: string;
+    FccOption: string;
     FcdOption: string;
-    FchkOption: string;
-    FcphOption: string;
-    FencOption: string;
-    FlOption: longword;
-    FpOption: TProcessPriority;
+    FciOption: string;
+    FeOption: string;
+    FlOption: longint;
+    FpOption: string;
     FrOption: string;
+    FrxOption: string;
     FsfxOption: string;
     FslOption: boolean;
     FssOption: boolean;
     FtOption: boolean;
     FuOption: TUpdateMethod;
     FvOption: qword;
-    FvmOption: boolean;
-    FwdOption: string;
+    FvbOption: boolean;
+    FwOption: string;
     FxOptions: TStringList;
-    FxrOption: string;
     FyOption: boolean;
+
     FArchiveName: string;
     FFileMasks: TStringList;
-    function  GetrOption(Index: longint): boolean;
-    function  GetxrOption(Index: longint): boolean;
+
+    function  GetrOption (Index: longint): boolean;
+    function  GetrxOption(Index: longint): boolean;
+
     procedure ProcessCommand(const S: string);
+    procedure ProcessACCOption(var S: string);
+    procedure ProcessBOption(var S: string);
     procedure ProcessCOption(var S: string);
+    procedure ProcessCCOption(var S: string);
     procedure ProcessCDOption(var S: string);
-    procedure ProcessCHKOption(var S: string);
-    procedure ProcessCPHOption(var S: string);
-    procedure ProcessENCOption (var S: string);
+    procedure ProcessCIOption(var S: string);
+    procedure ProcessEOption(var S: string);
+    procedure ProcessIOption(var S: string);
     procedure ProcessLOption(var S: string);
     procedure ProcessPOption(var S: string);
     procedure ProcessROption(var S: string);
+    procedure ProcessRXOption(var S: string);
     procedure ProcessSFXOption(var S: string);
     procedure ProcessSLOption(var S: string);
     procedure ProcessSSOption(var S: string);
     procedure ProcessTOption(var S: string);
     procedure ProcessUOption(var S: string);
     procedure ProcessVOption(var S: string);
-    procedure ProcessVMOption(var S: string);
-    procedure ProcessWDOption(var S: string);
+    procedure ProcessVBOption(var S: string);
+    procedure ProcessWOption(var S: string);
     procedure ProcessXOption(var S: string);
-    procedure ProcessXROption(var S: string);
     procedure ProcessYOption(var S: string);
+
     procedure ProcessArchiveName(var S: string);
     procedure ProcessFileMasks(const S: string);
   public
@@ -155,24 +160,26 @@ type
     property Command: TCommand read FCommand;
     property Options: TCommandLineOptions read FOptions;
 
+    property accOption: string read FaccOption;
+    property bOption: boolean read FbOption;
     property cOption: string read FcOption;
+    property ccOption: string read FccOption;
     property cdOption: string read FcdOption;
-    property chkOption: string read FchkOption;
-    property cphOption: string read FcphOption;
-    property encOption: string read FencOption;
-    property lOption: longword read FlOption;
-    property pOption: TProcessPriority read FpOption;
+    property ciOption: string read FciOption;
+    property eOption: string read FeOption;
+    property lOption: longint read FlOption;
+    property pOption: string read FpOption;
     property rOption[Index: longint]: boolean read GetrOption;
+    property rxOption[Index: longint]: boolean read GetrxOption;
     property sfxOption: string read FsfxOption;
     property slOption: boolean read FslOption;
     property ssOption: boolean read FssOption;
     property tOption: boolean read FtOption;
     property uOption: TUpdateMethod read FuOption;
     property vOption: qword read FvOption;
-    property vmOption: boolean read FvmOption;
-    property wdOption: string read FwdOption;
+    property vbOption: boolean read FvbOption;
+    property wOption: string read FwOption;
     property xOptions: TStringList read FxOptions;
-    property xrOption[Index: longint]: boolean read GetxrOption;
     property yOption: boolean read FyOption;
 
     property ArchiveName: string read FArchiveName;
@@ -184,7 +191,17 @@ type
   function ExtractQWord(const Params: string; const K: string): qword;
   function ExtractDWord(const Params: string; const K: string): dword;
   function ExtractStr(const Params: string; const K: string): string;
-
+  function ExtractCompressionMethod(const Params: string): longword;
+  function ExtractCompressionLevel(const Params: string): longword;
+  function ExtractCompressionAuxLevel(Params: string): longword;
+  function ExtractCompressionFilter(const Params: string): string;
+  function ExtractCompressionAuxFilter(const Params: string): string;
+  function ExtractCompressionBlock(Params: string): qword;
+  function ExtractCompressionConfig(const Params: string): string;
+  function ExtractEncryptionMethod(const Params: string): longword;
+  function ExtractEncryptionPassword(const Params: string): string;
+  function ExtractCheckMethod(Params: string): longword;
+  function ExtractCheckAuxMethod(Params: string): longword;
 
 implementation
 
@@ -287,10 +304,161 @@ var
 begin
   T := TStringList.Create;
   T.LoadFromFile(FileName);
-  Result:= T.Text;
+  Result := T.Text;
   T.Free;
 end;
 
+function ExtractCompressionMethod(const Params: string): longword;
+var
+  S: string;
+begin
+  Result := 1;
+  if Pos('/M', UpCase(Params)) > 0 then
+  begin
+    S := UpCase(ExtractStr(Params,'/M'));
+    if S = '0' then Result := 0 else
+    if S = '1' then Result := 1 else
+    if S = '2' then Result := 2 else SetExitStatus(esCmdLineError);
+  end;
+end;
+
+function ExtractCompressionLevel(const Params: string): longword;
+begin
+  case ExtractCompressionMethod(Params) of
+    1:
+    begin
+      if Pos('/L', UpCase(Params)) > 0 then
+        Result := ExtractQWord(Params, '/L')
+      else
+        Result := 1;
+
+      if (3 < Result) or (Result < 1) then
+        SetExitStatus(esCmdLineError);
+    end;
+    2:
+    begin
+      if Pos('/L', UpCase(Params)) > 0 then
+        Result := ExtractQWord(Params, '/L')
+      else
+        Result := 6;
+
+      if (64 < Result) or (Result < 2) then
+        SetExitStatus(esCmdLineError);
+    end;
+
+    else SetExitStatus(esCmdLineError);
+  end;
+end;
+
+function ExtractCompressionAuxLevel(Params: string): longword;
+begin
+  case ExtractCompressionMethod(Params) of
+    1:
+    begin
+      if Pos('/AL', UpCase(Params)) > 0 then
+        Result := ExtractQWord(Params, '/AL')
+      else
+        Result := 3;
+
+      if (9 < Result) or (Result < 0) then
+        SetExitStatus(esCmdLineError);
+    end;
+    2:
+    begin
+      if Pos('/AL', UpCase(Params)) > 0 then
+        Result := ExtractQWord(Params, '/AL')
+      else
+        Result := $200000;
+
+      if ($800 < Result) or (Result < $FFFFFFDB) then
+        SetExitStatus(esCmdLineError);
+    end;
+
+    else SetExitStatus(esCmdLineError);
+  end;
+end;
+
+function ExtractCompressionFilter(const Params: string): string;
+begin
+  Result := ExtractStr(Params, '/F');
+end;
+
+function ExtractCompressionAuxFilter(const Params: string): string;
+begin
+  Result := ExtractStr(Params, '/AF');
+end;
+
+function ExtractCompressionBlock(Params: string): qword;
+begin
+  Result := ExtractQWord(Params, '/B');
+end;
+
+function ExtractCompressionConfig(const Params: string): string;
+begin
+  Result := ExtractStr(Params, '/C');
+  if Result = '' then
+    Result := SelfPath + DefaultCfgName;
+end;
+
+function ExtractEncryptionMethod(const Params: string): longword;
+var
+  S: string;
+begin
+  Result := 0;
+  if ExtractEncryptionPassword(Params) <> '' then
+  begin
+    Result := 1;
+  end;
+
+  if Pos('/M', UpCase(Params)) > 0 then
+  begin
+    S := UpCase(ExtractStr(Params, '/M'));
+    if S = '0' then Result := 0 else
+    if S = '1' then Result := 1 else
+    if S = '2' then Result := 2 else SetExitStatus(esCmdLineError);
+  end;
+
+  if Result <> 0 then
+    if Length(ExtractEncryptionPassword(Params)) < 4 then
+      SetExitStatus(esCmdLineError);
+end;
+
+function ExtractEncryptionPassword(const Params: string): string;
+begin
+  Result := ExtractStr(Params, '/P');
+end;
+
+function ExtractCheckMethod(Params: string): longword;
+var
+  S: string;
+begin
+  Result := 1;
+  if Pos('/M', UpCase(Params)) > 0 then
+  begin
+    S := UpCase(ExtractStr(Params, '/M'));
+    if S = '0' then Result := 0 else
+    if S = '1' then Result := 1 else
+    if S = '2' then Result := 2 else
+    if S = '3' then Result := 3 else
+    if S = '4' then Result := 4 else SetExitStatus(esCmdLineError);
+  end;
+end;
+
+function ExtractCheckAuxMethod(Params: string): longword;
+var
+  S: string;
+begin
+  Result := 1;
+  if Pos('/AM=', UpCase(Params)) > 0 then
+  begin
+    S := UpCase(ExtractStr(Params, '/AM='));
+    if S = '0' then Result := 0 else
+    if S = '1' then Result := 1 else
+    if S = '2' then Result := 2 else
+    if S = '3' then Result := 3 else
+    if S = '4' then Result := 4 else SetExitStatus(esCmdLineError);
+  end;
+end;
 
 // ---
 
@@ -299,6 +467,7 @@ begin
   inherited Create;
   FCommand     := cHelp;
   FOptions     := [];
+
   FxOptions    := TStringList.Create;
   FArchiveName := '';
   FFileMasks   := TStringList.Create;
@@ -325,17 +494,87 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCOption(var S: string);
+procedure TCommandLine.ProcessACCOption(var S: string);
 begin
-  Delete(S, 1, 2);
-  FcOption := FcOption + '/' + S + '/';
-  while Pos('//', FcOption) > 0 do
-    Delete(FcOption, Pos('//', FcOption), 1);
+  Delete(S, 1, 5);
+  if Pos('!', S) = 1 then
+  begin
+    Delete(S, 1, 1);
+    FaccOption := S;
+  end else
+    if Pos('@', S) = 1 then
+    begin
+      Delete(S, 1, 1);
+      if FileExists(S) then
+      begin
+        FaccOption := ExtractStrFromFile(S);
+      end else
+        SetExitStatus(esCmdLineError);
+    end else
+      SetExitStatus(esCmdLineError);
 
   if Command in [cAdd, cDelete, cRename] then
   begin
     if ExitStatus = esNoError then
+      Include(FOptions, claccOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessBOption(var S: string);
+begin
+  Delete(S, 1, 2);
+  if S = '' then
+    FbOption := TRUE
+  else
+    SetExitStatus(esCmdLineError);
+
+  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, clbOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessCOption(var S: string);
+begin
+  Delete(S, 1, 3);
+  FcOption := FcOption + '/' + S + '/';
+  while Pos('//', FcOption) > 0 do
+    Delete(FcOption, Pos('//', FcOption), 1);
+
+  if Command in [cAdd] then
+  begin
+    if ExitStatus = esNoError then
       Include(FOptions, clcOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessCCOption(var S: string);
+begin
+  Delete(S, 1, 4);
+  if Pos('!', S) = 1 then
+  begin
+    Delete(S, 1, 1);
+    FccOption := S;
+  end else
+    if Pos('@', S) = 1 then
+    begin
+      Delete(S, 1, 1);
+      if FileExists(S) then
+      begin
+        FccOption := ExtractStrFromFile(S);
+      end else
+        SetExitStatus(esCmdLineError);
+    end else
+      SetExitStatus(esCmdLineError);
+
+  if Command in [cAdd, cDelete, cRename] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, clccOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -348,7 +587,7 @@ begin
   else
     FcdOption := '';
 
-  if Command in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  if Command in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
       Include(FOptions, clcdOption);
@@ -356,62 +595,76 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessENCOption(var S: string);
+procedure TCommandLine.ProcessCIOption(var S: string);
 begin
   Delete(S, 1, 4);
-  FencOption := FencOption + '/' + S + '/';
-  while Pos('//', FencOption) > 0 do
-    Delete(FencOption, Pos('//', FencOption), 1);
+  FciOption := FciOption + '/' + S + '/';
+  while Pos('//', FciOption) > 0 do
+    Delete(FciOption, Pos('//', FciOption), 1);
 
   if Command in [cAdd] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clencOption);
+      Include(FOptions, clciOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCHKOption(var S: string);
+procedure TCommandLine.ProcessEOption(var S: string);
 begin
-  Delete(S, 1, 4);
-  FchkOption := FchkOption + '/' + S + '/';
-  while Pos('//', FchkOption) > 0 do
-    Delete(FchkOption, Pos('//', FchkOption), 1);
+  Delete(S, 1, 3);
+  FeOption := FeOption + '/' + S + '/';
+  while Pos('//', FeOption) > 0 do
+    Delete(FeOption, Pos('//', FeOption), 1);
 
   if Command in [cAdd] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clchkOption);
+    begin
+      Include(FOptions, cleOption);
+      Include(FOptions, clpOption);
+      FpOption := ExtractEncryptionPassword(FeOption);
+    end;
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCPHOption(var S: string);
+procedure TCommandLine.ProcessIOption(var S: string);
 begin
-  Delete(S, 1, 4);
-  FcphOption := FcphOption + '/' + S + '/';
-  while Pos('//', FcphOption) > 0 do
-    Delete(FcphOption, Pos('//', FcphOption), 1);
-
-  if Command in [cAdd, cDelete, cExtract, cRename, cTest, cXextract] then
+  Delete(S, 1, 3);
+  if Pos('!', S) = 1 then
   begin
-    if ExitStatus = esNoError then
-      Include(FOptions, clcphOption);
+    Delete(S, 1, 1);
+    FFileMasks.Add(S);
+  end else
+    if Pos('@', S) = 1 then
+    begin
+      Delete(S,1, 1);
+      if FileExists(S) then
+        FFileMasks.LoadFromFile(S)
+      else
+        SetExitStatus(esCmdLineError);
+    end else
+      SetExitStatus(esCmdLineError);
+
+  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  begin
+    // nothing to do
   end else
     SetExitStatus(esCmdLineError);
 end;
 
 procedure TCommandLine.ProcessLOption(var S: string);
 var
-  Q: qword;
+  I: longint;
 begin
   Delete(S, 1, 3);
-  if TryStrToQWord(S, Q) then
-    FlOption := Q
+  if TryStrToInt(S, I) then
+    FlOption := I
   else
     SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
       Include(FOptions, cllOption);
@@ -422,17 +675,9 @@ end;
 procedure TCommandLine.ProcessPOption(var S: string);
 begin
   Delete(S, 1, 3);
-  if Length(S) = 1 then
-    case S[1] of
-      '0': FpOption := ppIdle;
-      '1': FpOption := ppNormal;
-      '2': FpOption := ppHigh;
-      '3': FpOption := ppRealTime;
-      else SetExitStatus(esCmdLineError);
-    end
-  else SetExitStatus(esCmdLineError);
+  FpOption := S;
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  if Command in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
       Include(FOptions, clpOption);
@@ -440,43 +685,90 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-function  TCommandLine.GetrOption(Index: longint): boolean;
-begin
-  if FrOption = '' then
-    Result := FALSE
-  else
-    if UpCase(FrOption) = 'ALL' then
-      Result := TRUE
-    else
-      if Length(FrOption) <= (Index + 1) then
-      begin
-        if UpCase(FrOption[Index + 1]) in ['Y', 'N'] then
-          Result := UpCase(FrOption[Index + 1]) = 'Y'
-        else
-          SetExitStatus(esCmdLineError);
-      end;
-end;
-
 procedure TCommandLine.ProcessROption(var S: string);
+var
+  I: longint;
 begin
-  if UpCase(S) = '-R' then
+  if UpperCase(S) = '-R' then
   begin
-    Delete(S, 1, 2);
-    FrOption := 'ALL';
-  end else
-    if Pos('-R/', UpperCase(S)) = 1 then
-    begin
-      Delete(S, 1, 3);
-      FrOption := S;
-    end else
+    if FrOption = '' then
+      FrOption := 'A'
+    else
       SetExitStatus(esCmdLineError);
+  end else
+  begin
+    Delete(S, 1, 3);
+    FrOption := FrOption + S;
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+    for I := 1 to Length(FrOption) do
+      if (FrOption[I] in ['N', 'Y']) = FALSE then
+        SetExitStatus(esCmdLineError);
+  end;
+
+  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
       Include(FOptions, clrOption);
   end else
     SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessRXOption(var S: string);
+var
+  I: longint;
+begin
+  if UpperCase(S) = '-RX' then
+  begin
+    if FrxOption = '' then
+      FrxOption := 'A'
+    else
+      SetExitStatus(esCmdLineError);
+  end else
+  begin
+    Delete(S, 1, 4);
+    FrxOption := FrxOption + S;
+
+    for I := 1 to Length(FrxOption) do
+      if (FrxOption[I] in ['N', 'Y']) = FALSE then
+        SetExitStatus(esCmdLineError);
+  end;
+
+  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, clrxOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
+function  TCommandLine.GetrOption(Index: longint): boolean;
+begin
+  Result := FALSE;
+  if FrOption = 'A' then
+    Result := TRUE
+  else
+    if Index < Length(FrOption) then
+    begin
+      if FrOption[Index + 1] in ['Y', 'N'] then
+        Result := FrOption[Index + 1] = 'Y'
+      else
+        SetExitStatus(esCmdLineError);
+    end;
+end;
+
+function  TCommandLine.GetrxOption(Index: longint): boolean;
+begin
+  Result := FALSE;
+  if FrxOption = 'A' then
+    Result := TRUE
+  else
+    if Index < Length(FrxOption) then
+    begin
+      if FrxOption[Index + 1] in ['Y', 'N'] then
+        Result := FrxOption[Index + 1] = 'Y'
+      else
+        SetExitStatus(esCmdLineError);
+    end;
 end;
 
 procedure TCommandLine.ProcessSFXOption(var S: string);
@@ -509,14 +801,11 @@ end;
 
 procedure TCommandLine.ProcessSLOption(var S: string);
 begin
-  Delete(S, 1, 4);
+  Delete(S, 1, 3);
   if S = '' then
     FslOption := TRUE
   else
-    if S = '-' then
-      FslOption := FALSE
-    else
-      SetExitStatus(esCmdLineError);
+    SetExitStatus(esCmdLineError);
 
   if FCommand in [cList] then
   begin
@@ -532,12 +821,9 @@ begin
   if S = '' then
     FssOption := TRUE
   else
-    if S = '-' then
-      FssOption := FALSE
-    else
-      SetExitStatus(esCmdLineError);
+    SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
       Include(FOptions, clssOption);
@@ -551,10 +837,7 @@ begin
   if S = '' then
     FtOption := TRUE
   else
-    if S = '-' then
-      FtOption := FALSE
-    else
-      SetExitStatus(esCmdLineError);
+    SetExitStatus(esCmdLineError);
 
   if Command in [cAdd, cDelete, cRename] then
   begin
@@ -582,30 +865,11 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessVMOption(var S: string);
-begin
-  Delete(S, 1, 3);
-  if S = '' then
-    FvmOption := TRUE
-  else
-    if S ='-' then
-      FvmOption := FALSE
-    else
-      SetExitStatus(esCmdLineError);
-
-  if Command in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
-  begin
-    if ExitStatus = esNoError then
-      Include(FOptions, clvmOption);
-  end else
-    SetExitStatus(esCmdLineError);
-end;
-
 procedure TCommandLine.ProcessVOption(var S: string);
 var
   I: longint;
 begin
-  Delete(S, 1, 4);
+  Delete(S, 1, 3);
   for I := 1 to Length(S) do
     if S[I] in ['.', ','] then
       S[I] := DecimalSeparator;
@@ -621,20 +885,36 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessWDOption(var S: string);
+procedure TCommandLine.ProcessVBOption(var S: string);
 begin
-  Delete(S, 1, 4);
-  FwdOption := ExcludeTrailingBackslash(S);
-  if FwdOption = '' then
-    FwdOption := ExcludeTrailingBackSlash(GetTempDir)
+  Delete(S, 1, 3);
+  if S = '' then
+    FvbOption := TRUE
   else
-    if DirectoryExists(FwdOption) = FALSE then
+    SetExitStatus(esCmdLineError);
+
+  if Command in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  begin
+    if ExitStatus = esNoError then
+      Include(FOptions, clvbOption);
+  end else
+    SetExitStatus(esCmdLineError);
+end;
+
+procedure TCommandLine.ProcessWOption(var S: string);
+begin
+  Delete(S, 1, 3);
+  FwOption := ExcludeTrailingBackSlash(S);
+  if FwOption = '' then
+    FwOption := ExcludeTrailingBackSlash(GetTempDir)
+  else
+    if DirectoryExists(FwOption) = FALSE then
       SetExitStatus(esCmdLineError);
 
   if FCommand in [cAdd, cDelete, cRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clwdOption);
+      Include(FOptions, clwOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -642,54 +922,25 @@ end;
 procedure TCommandLine.ProcessXOption(var S: string);
 begin
   Delete(S, 1, 3);
-  if Length(S) > 0 then
-    FxOptions.Add(S)
-  else
-    SetExitStatus(esCmdLineError);
-
-  if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  if Pos('!', S) = 1 then
   begin
-    if ExitStatus = esNoError then
-      Include(FOptions, clxOption);
+    Delete(S, 1, 1);
+    FxOptions.Add(S);
   end else
-    SetExitStatus(esCmdLineError);
-end;
-
-function  TCommandLine.GetxrOption(Index: longint): boolean;
-begin
-  if FxrOption = '' then
-    Result := FALSE
-  else
-    if UpCase(FxrOption) = 'ALL' then
-      Result := TRUE
-    else
-      if Length(FxrOption) <= (Index + 1) then
-      begin
-        if UpCase(FxrOption[Index + 1]) in ['Y', 'N'] then
-          Result := UpCase(FxrOption[Index + 1]) = 'Y'
-        else
-          SetExitStatus(esCmdLineError);
-      end;
-end;
-
-procedure TCommandLine.ProcessXROption(var S: string);
-begin
-  if UpCase(S) = '-XR' then
-  begin
-    Delete(S, 1, 3);
-    FxrOption := 'ALL';
-  end else
-    if Pos('-XR:', UpperCase(S)) = 1 then
+    if Pos('@', S) = 1 then
     begin
-      Delete(S, 1, 4);
-      FxrOption := S;
+      Delete(S,1, 1);
+      if FileExists(S) then
+        FxOptions.LoadFromFile(S)
+      else
+        SetExitStatus(esCmdLineError);
     end else
       SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clxrOption);
+      Include(FOptions, clxOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
@@ -700,12 +951,9 @@ begin
   if S = '' then
     FyOption := TRUE
   else
-    if S = '-' then
-      FyOption := FALSE
-    else
-      SetExitStatus(esCmdLineError);
+    SetExitStatus(esCmdLineError);
 
-  if Command in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  if Command in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
   begin
     if ExitStatus = esNoError then
       Include(FOptions, clyOption);
@@ -715,16 +963,15 @@ end;
 
 procedure TCommandLine.ProcessArchiveName(var S: string);
 begin
-  FssOption := TRUE;
   FArchiveName := S;
   if FileExists(FArchiveName) = FALSE then
     if ExtractFileExt(FArchiveName) = '' then
       FArchiveName := ChangeFileExt(FArchiveName, '.bx');
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cRename, cTest, cXextract] then
+  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
   begin
     // check if archive exists
-    if FCommand in [cDelete, cExtract, cList, cRename, cTest, cXextract] then
+    if FCommand in [cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
       if FileExists(FArchiveName) = FALSE then
         SetExitStatus(esCmdLineError);
   end else
@@ -750,29 +997,33 @@ begin
     for I := 2 to ParamCount do
     begin
       S := ParamStr(I);
-      if (not FssOption) and (Length(S) > 1) and (S[1] = '-') then
+      if (S[1] = '-') and (FssOption = FALSE) then
       begin
         // options...
+        if Pos('-ACC/',  UpperCase(S)) = 1 then ProcessACCOption(S) else
+        if Pos('-B',     UpperCase(S)) = 1 then ProcessBOption  (S) else
         if Pos('-C/',    UpperCase(S)) = 1 then ProcessCOption  (S) else
+        if Pos('-CC/',   UpperCase(S)) = 1 then ProcessCCOption (S) else
         if Pos('-CD/',   UpperCase(S)) = 1 then ProcessCDOption (S) else
-        if Pos('-CHK/',  UpperCase(S)) = 1 then ProcessCHKOption(S) else
-        if Pos('-CPH/',  UpperCase(S)) = 1 then ProcessCPHOption(S) else
-        if Pos('-ENC/',  UpperCase(S)) = 1 then ProcessENCOption(S) else
+        if Pos('-CI/',   UpperCase(S)) = 1 then ProcessCIOption (S) else
+        if Pos('-E/',    UpperCase(S)) = 1 then ProcessEOption  (S) else
+        if Pos('-I/',    UpperCase(S)) = 1 then ProcessIOption  (S) else
         if Pos('-L/',    UpperCase(S)) = 1 then ProcessLOption  (S) else
         if Pos('-P/',    UpperCase(S)) = 1 then ProcessPOption  (S) else
+        if Pos('-RX/',   UpperCase(S)) = 1 then ProcessRXOption (S) else
+        if Pos('-RX',    UpperCase(S)) = 1 then ProcessRXOption (S) else
         if Pos('-R/',    UpperCase(S)) = 1 then ProcessROption  (S) else
         if Pos('-R',     UpperCase(S)) = 1 then ProcessROption  (S) else
         if Pos('-SFX/',  UpperCase(S)) = 1 then ProcessSFXOption(S) else
-        if Pos('-SL/',   UpperCase(S)) = 1 then ProcessSLOption (S) else
+        if Pos('-SFX',   UpperCase(S)) = 1 then ProcessSFXOption(S) else
+        if Pos('-SL',    UpperCase(S)) = 1 then ProcessSLOption (S) else
         if Pos('-SS',    UpperCase(S)) = 1 then ProcessSSOption (S) else
         if Pos('-T',     UpperCase(S)) = 1 then ProcessTOption  (S) else
         if Pos('-U/',    UpperCase(S)) = 1 then ProcessUOption  (S) else
         if Pos('-V/',    UpperCase(S)) = 1 then ProcessVOption  (S) else
-        if Pos('-VM',    UpperCase(S)) = 1 then ProcessVMOption (S) else
-        if Pos('-WD/',   UpperCase(S)) = 1 then ProcessWDOption (S) else
+        if Pos('-VB',    UpperCase(S)) = 1 then ProcessVBOption (S) else
+        if Pos('-W/',    UpperCase(S)) = 1 then ProcessWOption  (S) else
         if Pos('-X/',    UpperCase(S)) = 1 then ProcessXOption  (S) else
-        if Pos('-XR/',   UpperCase(S)) = 1 then ProcessXROption (S) else
-        if Pos('-XR',    UpperCase(S)) = 1 then ProcessXROption (S) else
         if Pos('-Y',     UpperCase(S)) = 1 then ProcessYOption  (S) else
           SetExitStatus(esCmdLineError);
 
@@ -790,11 +1041,11 @@ begin
     if FCommand in [cAdd, cDelete, cRename] then
       SetExitStatus(esCmdLineError)
     else
-      if FCommand in [cExtract, cList, cTest, cXextract] then
+      if FCommand in [cExtract, cList, cQuickTest, cTest, cXextract] then
       begin
-        FFileMasks.Add('*');
-        FrOption := 'ALL';
+        FrOption := 'A';
         Include(FOptions, clrOption);
+        FFileMasks.Add('*');
       end;
   end;
 end;
