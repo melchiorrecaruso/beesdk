@@ -119,7 +119,7 @@ function OemToParam(const Param: string): string;
 
 { system control }
 
-function SetPriority(Priority: longint): boolean; { Priority is 0..3 }
+function SetIdlePriority: boolean; { Priority is 0..3 }
 procedure SetCtrlCHandler(CtrlHandler: pointer);
 
 
@@ -578,14 +578,10 @@ end;
 { system control }
 
 
-function SetPriority(Priority: longint): boolean;
+function SetIdlePriority: boolean;
 {$IFDEF MSWINDOWS}
-const
-  PriorityValue: array [0..3] of longint = (IDLE_PRIORITY_CLASS,
-    NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS);
 begin
-  Result := SetPriorityClass(GetCurrentProcess,
-    PriorityValue[Max(0, Min(Priority, 3))]);
+  Result := SetPriorityClass(GetCurrentProcess, IDLE_PRIORITY_CLASS);
 end;
 {$ENDIF}
 {$IFDEF UNIX}
@@ -711,4 +707,4 @@ end;
 
      *)
 
-end.
+end.

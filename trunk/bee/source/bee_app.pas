@@ -99,14 +99,14 @@ implementation
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 2024 archiver utility, Aug 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 2031 archiver utility, Aug 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
   FArchiver.OnRequestBlankImage := DoRequestBlankDisk;
   FArchiver.OnRequestImage      := DoRequestImage;
-  FArchiver.OnProgress          := DoProgress;
   FArchiver.OnMessage           := DoMessage;
+  FArchiver.OnProgress          := DoProgress;
   FArchiver.OnItemExtract       := DoExtract;
   FArchiver.OnItemRename        := DoRename;
   FArchiver.OnItemDelete        := DoDelete;
@@ -115,6 +115,9 @@ begin
   { load command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.Execute;
+  { set idle priority }
+  if clbOption in FCommandLine.Options then
+    SetIdlePriority;
   { set update method }
   FUpdateMethod := umAddQuery;
   if cluOption in FCommandLine.Options then
@@ -123,9 +126,6 @@ begin
   FAssumeYesOnAllQueries := FALSE;
   if clyOption in FCommandLine.Options then
     FAssumeYesOnAllQueries := FCommandLine.yOption;
-  { set thread priority }
-  if clpOption in FCommandLine.Options then
-    SetPriority(Ord(FCommandLine.pOption));
 end;
 
 destructor TBeeApp.Destroy;
@@ -360,10 +360,15 @@ begin
   end;
 end;
 
-procedure TBeeApp.DoComment(Item: TArchiveItem; var CommentAs: string;
-  var Confirm: TArchiveConfirm);
+procedure TBeeApp.DoComment(Item: TArchiveItem;
+  var CommentAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcCancel;
+  if clccOption in FCommandLine.Options then
+  begin
+    Confirm := arcOk;
+    CommentAs := FCommandLine.ccOption;
+  end;
 end;
 
 function TBeeApp.QueryToUser(const Message: string;
@@ -407,38 +412,39 @@ end;
 procedure TBeeApp.OpenArchive;
 begin
   FArchiver.OpenArchive(FCommandLine.ArchiveName);
-  // work directory
-  if clwdOption in FCommandLine.Options then
-    FArchiver.WorkDirectory := FCommandLine.wdOption;
+  // archive comment
+  if claccOption in FCommandLine.Options then
+    FArchiver.Comment := FCommandLine.accOption;
   // compression mode
-  if clencOption in FCommandLine.Options then
-    FArchiver.CompressionParams := FCommandLine.encOption;
+  if clcOption in FCommandLine.Options then
+    FArchiver.CompressionParams := FCommandLine.cOption;
   // check data integrity mode
-  if clchkOption in FCommandLine.Options then
-    FArchiver.CheckParams := FCommandLine.chkOption;
+  if clciOption in FCommandLine.Options then
+    FArchiver.CheckParams := FCommandLine.ciOption;
   // encryption mode
-  if clcphOption in FCommandLine.Options then
-    FArchiver.EncryptionParams := FCommandLine.cphOption;
+  if cleOption in FCommandLine.Options then
+    FArchiver.EncryptionParams := FCommandLine.eOption;
+  // current layer
+  if cllOption in FCommandLine.Options then
+    FArchiver.NewLayer := FCommandLine.lOption = -1;
+  // password
+  if clpOption in FCommandLine.Options then
+    FArchiver.Password := FCommandLine.pOption;
   // self extractor
   if clsfxOption in FCommandLine.Options then
     FArchiver.SelfExtractor := FCommandLine.sfxOption;
-  // archive comment
-  if clcOption in FCommandLine.Options then
-    FArchiver.Comment := FCommandLine.cOption;
   // test temporary archive
   if cltOption in FCommandLine.Options then
     FArchiver.TestTempArchive := FCommandLine.tOption;
-  // verbose mode
-  if clvmOption in FCommandLine.Options then
-    FArchiver.VerboseMode := FCommandLine.vmOption;
   // volume size
   if clvOption in FCommandLine.Options then
     FArchiver.VolumeSize := FCommandLine.vOption;
-
-
-
-
-
+  // verbose mode
+  if clvbOption in FCommandLine.Options then
+    FArchiver.VerboseMode := FCommandLine.vbOption;
+  // work directory
+  if clwOption in FCommandLine.Options then
+    FArchiver.WorkDirectory := FCommandLine.wOption;
 end;
 
 procedure TBeeApp.CloseArchive;
@@ -460,7 +466,7 @@ begin
   for I := 0 to FArchiver.Count - 1 do
     for J := 0 to FCommandLine.xOptions.Count - 1 do
       if FileNameMatch(FArchiver.Items[I].FileName,
-        FCommandLine.xOptions[J], FCommandLine.xrOption[J]) then FArchiver.UnTag(I);
+        FCommandLine.xOptions[J], FCommandLine.rxOption[J]) then FArchiver.UnTag(I);
 end;
 
 procedure TBeeApp.CustomShell;
@@ -496,12 +502,14 @@ begin
   DoMessage('  t: test integrity of archive files');
   DoMessage('  x: extract files from archive with path name');
   DoMessage('<Switches>');
-  DoMessage('  -c: set archive comment');
+  DoMessage('  -acc: set archive comment');
+  DoMessage('  -b: work in Background');
+  DoMessage('  -cc: set comment');
   DoMessage('  -cd: set current archive directory');
-  DoMessage('  -chk: set check interity parameters');
-  DoMessage('  -cph: set cipher parameters');
-  DoMessage('  -enc: set encoder parameters');
-  DoMessage('  -p: set process Priority ');
+  DoMessage('  -ci: set check interity parameters');
+  DoMessage('  -e: set encryption parameters');
+  DoMessage('  -c: set compression parameters');
+  DoMessage('  -p: set Password ');
   DoMessage('  -r: recurse subdirectories');
   DoMessage('  -sfx: create self-extracting archive');
   DoMessage('  -sls: show list sorted by filename - for l (list) command');
@@ -509,14 +517,10 @@ begin
   DoMessage('  -t: test temporary archive after process');
   DoMessage('  -u: update files method');
   DoMessage('  -v: create volumes ');
-  DoMessage('  -vm: verbose mode ');
-  DoMessage('  -wd: set temporany work directory');
+  DoMessage('  -vb: verbose mode ');
+  DoMessage('  -w: set temporany work directory');
   DoMessage('  -x: exclude filenames');
-  DoMessage('  -xr: exclude recursing subdirectories');
   DoMessage('  -y: assume yes on all queries');
-  
-
-
 end;
 
 procedure TBeeApp.EncodeShell;
@@ -532,7 +536,7 @@ begin
     for I := 0 to FCommandLine.FileMasks.Count - 1 do
       Scanner.Add(FCommandLine.FileMasks[I], FCommandLine.rOption[I]);
     for I := 0 to FCommandLine.xOptions.Count - 1 do
-      Scanner.Delete(FCommandLine.xOptions[I], FCommandLine.xrOption[I]);
+      Scanner.Delete(FCommandLine.xOptions[I], FCommandLine.rxOption[I]);
     for I := 0 to Scanner.Count - 1 do
       FArchiver.Tag(Scanner.Items[I]);
     FreeAndNil(Scanner);
@@ -592,7 +596,7 @@ begin
       if FCommandLine.slOption then
         ItemToList.Sort(CompareFilePath);
 
-      if FCommandLine.vmOption then
+      if FCommandLine.vbOption then
       begin
         for I := 0 to ItemToList.Count - 1 do
         begin

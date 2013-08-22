@@ -134,8 +134,6 @@ type
     function Decode(Data: PByte; Count: longint): longint; override;
   end;
 
-  TCoderAlgorithm = (caStore, caBee, caPpmd);
-
 implementation
 
 uses
@@ -402,4 +400,4 @@ begin
   Result := PpmdModeller_Decode(FModeller, FCoder, Data, Count);
 end;
 
-end.
+end.

@@ -45,13 +45,13 @@ type
     FHandle: THandle;
   private
     FHash: TBaseHash;
-    FHashMethod: THashAlgorithm;
+    FHashMethod: longword;
     FHashDigest: string;
     FCipher: TBaseCipher;
-    FCipherMethod: TCipherAlgorithm;
+    FCipherMethod: longword;
     FCipherKey: string;
     FCoder: TBaseCoder;
-    FCoderMethod: TCoderAlgorithm;
+    FCoderMethod: longword;
     FCoderLevel: longword;
     FCoderLevelAux: longword;
     FCoderFilter: string;
@@ -68,11 +68,11 @@ type
     procedure StartSession; virtual;
     procedure EndSession; virtual;
   public
-    property HashMethod: THashAlgorithm read FHashMethod write FHashMethod;
+    property HashMethod: longword read FHashMethod write FHashMethod;
     property HashDigest: string read FHashDigest;
-    property CipherMethod: TCipherAlgorithm read FCipherMethod write FCipherMethod;
+    property CipherMethod: longword read FCipherMethod write FCipherMethod;
     property CipherKey: string read FCipherKey write FCipherKey;
-    property CoderMethod: TCoderAlgorithm read FCoderMethod write FCoderMethod;
+    property CoderMethod: longword read FCoderMethod write FCoderMethod;
     property CoderLevel: longword read FCoderLevel write FCoderLevel;
     property CoderLevelAux: longword read FCoderLevelAux write FCoderLevelAux;
     property CoderFilter: string read FCoderFilter write FCoderFilter;
@@ -152,11 +152,11 @@ begin
   inherited Create;
   FHandle        := Handle;
   FHash          := nil;
-  FHashMethod    := haNul;
+  FHashMethod    := 0;
   FCipher        := nil;
-  FCipherMethod  := caNul;
+  FCipherMethod  := 0;
   FCoder         := nil;
-  FCoderMethod   := caStore;
+  FCoderMethod   := 0;
 end;
 
 destructor TBufStream.Destroy;
@@ -176,10 +176,10 @@ begin
   if Assigned(FHash) then
     FreeAndNil(FHash);
   case FHashMethod of
-    haCRC32: FHash := TCRC32Hash.Create;
-    haCRC64: FHash := TCRC64Hash.Create;
-    haSHA1:  FHash := TSHA1Hash .Create;
-    haMD5:   FHash := TMD5Hash  .Create;
+    1: FHash := TCRC32Hash.Create;
+    2: FHash := TCRC64Hash.Create;
+    3: FHash := TSHA1Hash .Create;
+    4: FHash := TMD5Hash  .Create;
   end;
   if Assigned(FHash) then
     FHash.Start;
@@ -257,22 +257,22 @@ begin
   if Assigned(FCipher) then
     FreeAndNil(FCipher);
   case FCipherMethod of
-    caBlowFish: FCipher := TBlowFishCipher.Create(FCipherKey);
-    caIdea:     FCipher := TIdeaCipher.CreateDec(FCipherKey);
+    1: FCipher := TBlowFishCipher.Create(FCipherKey);
+    2: FCipher := TIdeaCipher.CreateDec(FCipherKey);
   end;
 
   if Assigned(FCoder) then
     case FCoderMethod of
-      caStore: if not (FCoder is TStoreCoder ) then FreeAndNil(FCoder);
-      caBee:   if not (FCoder is TBeeDecoder ) then FreeAndNil(FCoder);
-      caPpmd:  if not (FCoder is TPpmdDeCoder) then FreeAndNil(FCoder);
+      0: if not (FCoder is TStoreCoder ) then FreeAndNil(FCoder);
+      1: if not (FCoder is TBeeDecoder ) then FreeAndNil(FCoder);
+      2: if not (FCoder is TPpmdDeCoder) then FreeAndNil(FCoder);
     end;
 
   if not Assigned(FCoder) then
     case FCoderMethod of
-      caStore: FCoder := TStoreCoder .Create(Self);
-      caBee:   FCoder := TBeeDecoder .Create(Self);
-      caPpmd:  FCoder := TPpmdDecoder.Create(Self);
+      0: FCoder := TStoreCoder .Create(Self);
+      1: FCoder := TBeeDecoder .Create(Self);
+      2: FCoder := TPpmdDecoder.Create(Self);
     end;
 
   if FCoderBlock = 0 then
@@ -364,22 +364,22 @@ begin
   if Assigned(FCipher) then
     FreeAndNil(FCipher);
   case FCipherMethod of
-    caBlowFish: FCipher := TBlowFishCipher.Create(FCipherKey);
-    caIdea:     FCipher := TIdeaCipher.CreateEnc(FCipherKey);
+    1: FCipher := TBlowFishCipher.Create(FCipherKey);
+    2: FCipher := TIdeaCipher.CreateEnc(FCipherKey);
   end;
 
   if Assigned(FCoder) then
     case FCoderMethod of
-      caStore: if not (FCoder is TStoreCoder ) then FreeAndNil(FCoder);
-      caBee:   if not (FCoder is TBeeEncoder ) then FreeAndNil(FCoder);
-      caPpmd:  if not (FCoder is TPpmdEnCoder) then FreeAndNil(FCoder);
+      0: if not (FCoder is TStoreCoder ) then FreeAndNil(FCoder);
+      1: if not (FCoder is TBeeEncoder ) then FreeAndNil(FCoder);
+      2: if not (FCoder is TPpmdEnCoder) then FreeAndNil(FCoder);
     end;
 
   if not Assigned(FCoder) then
     case FCoderMethod of
-      caStore: FCoder := TStoreCoder .Create(Self);
-      caBee:   FCoder := TBeeEncoder .Create(Self);
-      caPpmd:  FCoder := TPpmdEncoder.Create(Self);
+      0: FCoder := TStoreCoder .Create(Self);
+      1: FCoder := TBeeEncoder .Create(Self);
+      2: FCoder := TPpmdEncoder.Create(Self);
     end;
 
   if FCoderBlock = 0 then
@@ -428,4 +428,4 @@ begin
 end;
 
 end.
-
+
