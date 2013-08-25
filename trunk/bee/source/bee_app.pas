@@ -99,7 +99,7 @@ implementation
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 2031 archiver utility, Aug 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 2033 archiver utility, Aug 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
@@ -480,47 +480,13 @@ begin
     case FCommandLine.Command of
       cDelete:    FArchiver. DeleteTagged;
       cExtract:   FArchiver.ExtractTagged;
-      cxExtract:  FArchiver.ExtractTagged;
-      cRename:    FArchiver. RenameTagged;
       cQuickTest: FArchiver.   TestTagged;
+      cRename:    FArchiver. RenameTagged;
       cTest:      FArchiver.   TestTagged;
+      cxExtract:  FArchiver.ExtractTagged;
     end;
   end;
   CloseArchive;
-end;
-
-procedure TBeeApp.HelpShell;
-begin
-  DoMessage(Cr + 'Usage: BX <command> [<switches>...] <archive-name> [<file-names>...]');
-  DoMessage(Cr + '<Commands>');
-  DoMessage('  a: add files to archive');
-  DoMessage('  d: delete files from archive');
-  DoMessage('  e: extract files from archive');
-  DoMessage('  h: show this help');
-  DoMessage('  l: list contents of archive');
-  DoMessage('  r: rename files in archive');
-  DoMessage('  t: test integrity of archive files');
-  DoMessage('  x: extract files from archive with path name');
-  DoMessage('<Switches>');
-  DoMessage('  -acc: set archive comment');
-  DoMessage('  -b: work in Background');
-  DoMessage('  -cc: set comment');
-  DoMessage('  -cd: set current archive directory');
-  DoMessage('  -ci: set check interity parameters');
-  DoMessage('  -e: set encryption parameters');
-  DoMessage('  -c: set compression parameters');
-  DoMessage('  -p: set Password ');
-  DoMessage('  -r: recurse subdirectories');
-  DoMessage('  -sfx: create self-extracting archive');
-  DoMessage('  -sls: show list sorted by filename - for l (list) command');
-  DoMessage('  -ss: stop switches parsing');
-  DoMessage('  -t: test temporary archive after process');
-  DoMessage('  -u: update files method');
-  DoMessage('  -v: create volumes ');
-  DoMessage('  -vb: verbose mode ');
-  DoMessage('  -w: set temporany work directory');
-  DoMessage('  -x: exclude filenames');
-  DoMessage('  -y: assume yes on all queries');
 end;
 
 procedure TBeeApp.EncodeShell;
@@ -557,6 +523,40 @@ begin
       ExtractFileName(TArchiveItem(P1).FileName),
       ExtractFileName(TArchiveItem(P2).FileName));
   end;
+end;
+
+procedure TBeeApp.HelpShell;
+begin
+  DoMessage(Cr + 'Usage: BX <command> [<switches>...] <archive-name> [<file-names>...]');
+  DoMessage(Cr + '<Commands>');
+  DoMessage('  a: add files to archive');
+  DoMessage('  d: delete files from archive');
+  DoMessage('  e: extract files from archive');
+  DoMessage('  h: show this help');
+  DoMessage('  l: list contents of archive');
+  DoMessage('  r: rename files in archive');
+  DoMessage('  t: test integrity of archive files');
+  DoMessage('  x: extract files from archive with path name');
+  DoMessage('<Switches>');
+  DoMessage('  -acc: set archive comment');
+  DoMessage('  -b: work in Background');
+  DoMessage('  -c: set compression parameters');
+  DoMessage('  -cc: set comment');
+  DoMessage('  -cd: set current archive directory');
+  DoMessage('  -ci: set check interity parameters');
+  DoMessage('  -e: set encryption parameters');
+  DoMessage('  -p: set Password ');
+  DoMessage('  -r: recurse subdirectories');
+  DoMessage('  -sfx: create self-extracting archive');
+  DoMessage('  -sl: show list sorted by filename - for l (list) command');
+  DoMessage('  -ss: stop switches parsing');
+  DoMessage('  -t: test temporary archive after process');
+  DoMessage('  -u: update files method');
+  DoMessage('  -v: create volumes ');
+  DoMessage('  -vb: verbose mode ');
+  DoMessage('  -w: set temporany work directory');
+  DoMessage('  -x: exclude filenames');
+  DoMessage('  -y: assume yes on all queries');
 end;
 
 procedure TBeeApp.ListShell;
