@@ -775,7 +775,7 @@ begin
     {$ENDIF}
   end else
     if Pos('-SFX/', UpCase(S)) = 1 then
-      Delete(S, 1, 5);
+      Delete(S, 1, 5)
     else
       SetExitStatus(esCmdLineError);
 
@@ -899,12 +899,14 @@ begin
   begin
     FwOption := ExcludeTrailingBackSlash(GetTempDir)
   end else
-  begin
-    Delete(S, 1, 3);
-    FwOption := ExcludeTrailingBackSlash(S);
-    if DirectoryExists(FwOption) = FALSE then
+    if Pos('-W/', UpCase(S)) = 1 then
+    begin
+      Delete(S, 1, 3);
+      FwOption := ExcludeTrailingBackSlash(S);
+      if DirectoryExists(FwOption) = FALSE then
+         SetExitStatus(esCmdLineError);
+    end else
       SetExitStatus(esCmdLineError);
-  end;
 
   if FCommand in [cAdd, cDelete, cRename] then
   begin
@@ -1018,6 +1020,7 @@ begin
         if Pos('-V/',    UpperCase(S)) = 1 then ProcessVOption  (S) else
         if Pos('-VB',    UpperCase(S)) = 1 then ProcessVBOption (S) else
         if Pos('-W/',    UpperCase(S)) = 1 then ProcessWOption  (S) else
+        if Pos('-W',     UpperCase(S)) = 1 then ProcessWOption  (S) else
         if Pos('-X/',    UpperCase(S)) = 1 then ProcessXOption  (S) else
         if Pos('-Y',     UpperCase(S)) = 1 then ProcessYOption  (S) else
           SetExitStatus(esCmdLineError);
