@@ -22,7 +22,7 @@
 
   Modifyed:
 
-   v0.8.0 build 1864 - 2013.02.16 by Melchiorre Caruso.
+   v0.8.0 build 2033 - 2013.08.26 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -77,7 +77,6 @@ type
   private
     FCoder: pointer;
     FModeller: pointer;
-
     procedure SetLevelAux(Value: longword); override;
     procedure SetFilter(const Value: string); override;
   public
@@ -153,8 +152,8 @@ constructor TBaseCoder.Create(Stream: pointer);
 begin
   inherited Create;
   FStream    := Stream;
-  FLevel     := longword(-1);
-  FLevelAux  := longword(-1);
+  FLevel     :=  0;
+  FLevelAux  :=  0;
   FFilter    := '';
   FFilterAux := '';
   FBlock     :=  0;
@@ -216,8 +215,7 @@ end;
 
 procedure TBeeCoder.SetLevelAux(Value: longword);
 begin
-  if (0 <= Value) and (Value <= 9) then
-    inherited SetLevelAux(Value);
+  inherited SetLevelAux(Value);
 end;
 
 procedure TBeeCoder.SetFilter(const Value: string);
@@ -317,14 +315,12 @@ end;
 
 procedure TPpmdCoder.SetLevel(Value: longword);
 begin
-  if (2 <= Value) and (Value <= 64) then
-    inherited SetLevel(Value);
+  inherited SetLevel(Value);
 end;
 
 procedure TPpmdCoder.SetLevelAux(Value: longword);
 begin
-  if ($800 <= Value) and (Value <= $FFFFFFDB) then
-    inherited SetLevelAux(Value);
+  inherited SetLevelAux(Value);
 end;
 
 procedure TPpmdCoder.Start;

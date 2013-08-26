@@ -29,7 +29,7 @@
     v0.7.9 build 0301 - 2007.01.23 by Andrew Filinsky;
     v0.7.9 build 0316 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 2020 - 2013.08.05 by Melchiorre Caruso.
+    v0.8.0 build 2033 - 2013.08.26 by Melchiorre Caruso.
 }
 
 unit Bee_App;
@@ -99,7 +99,7 @@ implementation
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 2033 archiver utility, Aug 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 2035 archiver utility, Aug 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;

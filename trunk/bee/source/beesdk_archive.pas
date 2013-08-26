@@ -2092,8 +2092,8 @@ begin
 
   CurrentFileExt := '.';
   Configuration.Selector('\main');
-  Configuration.CurrentSection.Values['Method']     := IntToStr(Ord(ExtractCompressionLevel   (FCompressionParams)));
-  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(Ord(ExtractCompressionAuxLevel(FCompressionParams)));
+  Configuration.CurrentSection.Values['Method']     := IntToStr(ExtractCompressionLevel   (FCompressionParams));
+  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(ExtractCompressionAuxLevel(FCompressionParams));
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
   CurrentBlock := ExtractCompressionBlock(FCompressionParams);
@@ -2195,12 +2195,23 @@ begin
 end;
 
 procedure TArchiver.CheckTags4Update;
+var
+  I: longint;
+  Item: TCustomSearchRec;
 begin
   FCentralDirectoryNews.Sort(CompareCustomSearchRec);
+  for I := 0 to FCentralDirectoryNews.Count - 1 do
+  begin
+    if ExitStatus <> esNoError then Break;
+    Item := FCentralDirectoryNews.Items[I];
+    case DoUpdateItem(Item) of
+    //arcOk:     nothing to do
+    //arcCancel: nothing to do
+      arcQuit:   SetExitStatus(esUserAbortError);
+    end;
+  end;
 
-
-
-  Configure;
+  if ExitStatus <> esNoError then Configure;
 end;
 
 procedure TArchiver.CheckSequences4Update;
@@ -2243,10 +2254,10 @@ begin
   begin
     Item := FCentralDirectory.Items[I];
     case Item.FTag of
-      aitNone:            Inc(FTotalSize, Item.CompressedSize);
-      aitAdd:             Inc(FTotalSize, Item.FExternalFileSize);
-      aitUpdate:          Inc(FTotalSize, Item.FExternalFileSize);
-      aitDecode:          Inc(FTotalSize, Item.UncompressedSize + Item.UncompressedSize);
+      aitNone:      Inc(FTotalSize, Item.CompressedSize);
+      aitAdd:       Inc(FTotalSize, Item.FExternalFileSize);
+      aitUpdate:    Inc(FTotalSize, Item.FExternalFileSize);
+      aitDecode:    Inc(FTotalSize, Item.UncompressedSize + Item.UncompressedSize);
       aitDecAndUpd: Inc(FTotalSize, Item.UncompressedSize + Item.FExternalFileSize);
     end;
   end;
@@ -2258,8 +2269,11 @@ var
   Item: TArchiveItem;
 begin
   CheckTags4Update;
+  Writeln('Start1');
+
   if FIsNeededToRun then
   begin
+    Writeln('Start2');
     CheckSequences4Update;
     FTempName   := GenerateFileName(FWorkDirectory);
     FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);

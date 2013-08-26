@@ -161,12 +161,9 @@ end;
 
 destructor TBufStream.Destroy;
 begin
-  if Assigned(FHash) then
-    FreeAndNil(FHash);
-  if Assigned(FCipher) then
-    FreeAndNil(FCipher);
-  if Assigned(FCoder)then
-    FreeAndNil(FCoder);
+  if Assigned(FHash)   then FreeAndNil(FHash);
+  if Assigned(FCipher) then FreeAndNil(FCipher);
+  if Assigned(FCoder)  then FreeAndNil(FCoder);
   inherited Destroy;
 end;
 
