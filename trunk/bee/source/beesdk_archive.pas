@@ -163,6 +163,8 @@ type
     procedure Write(Stream: TFileWriter);
     procedure Update(SearchRec: TCustomSearchRec);
   public {property}
+    property Index: longint read FIndex;
+    // ---
     property FileName: string read FFileName;
     property Flags: TArchiveItemFlags read FFlags;
     property VersionNeededToRead: longint read FVersionNeededToRead;
@@ -193,8 +195,6 @@ type
     // encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
     property EncryptionMethod: longword read FEncryptionMethod;
-    //
-    property Index: longint read FIndex;
   end;
 
   /// archive central directory

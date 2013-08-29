@@ -64,7 +64,7 @@ type
     FCRC: qword;
   public
     procedure Start;  override;
-   function  Finish: string; override;
+    function  Finish: string; override;
     procedure Update(Data: PByte; Count: longint); override;
   end;
 

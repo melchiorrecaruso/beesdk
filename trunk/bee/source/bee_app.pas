@@ -99,7 +99,7 @@ implementation
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 2035 archiver utility, Aug 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 2037 archiver utility, Aug 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
