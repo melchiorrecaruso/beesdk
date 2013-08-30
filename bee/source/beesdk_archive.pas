@@ -121,6 +121,10 @@ type
   /// archive item
   TArchiveItem = class(TObject)
   protected
+    FIndex: longint;
+    FTag: TArchiveItemTag;
+    FExternalFileName: string;
+    FExternalFileSize: int64;
     // item property
     FFileName: string;
     FFlags: TArchiveItemFlags;
@@ -137,9 +141,9 @@ type
     FCompressedSize: int64;
     FDiskNumber: longint;
     FDiskSeek: int64;
-    FCheckMethod: longword;
+    FCheckMethod: longint;
     FCheckDigest: string;
-    FCheckMethodAux: longword;
+    FCheckMethodAux: longint;
     FCheckDigestAux: string;
     // compression property
     FCompressionFlags: TArchiveCompressionFlags;
@@ -151,12 +155,7 @@ type
     FCompressionBlock: int64;
     // encryption property
     FEncryptionFlags: TArchiveEncryptionFlags;
-    FEncryptionMethod: longword;
-  protected
-    FIndex: longint;
-    FTag: TArchiveItemTag;
-    FExternalFileName: string;
-    FExternalFileSize: int64;
+    FEncryptionMethod: longint;
   public {methods}
     constructor Create(const aFileName: string);
     constructor Read(Stream: TFileReader);
@@ -180,9 +179,9 @@ type
     property CompressedSize: int64 read FCompressedSize;
     property DiskNumber: longint read FDiskNumber;
     property DiskSeek: int64 read FDiskSeek;
-    property CheckMethod: longword read FCheckMethod;
+    property CheckMethod: longint read FCheckMethod;
     property CheckDigest: string read FCheckDigest;
-    property CheckMethodAux: longword read FCheckMethodAux;
+    property CheckMethodAux: longint read FCheckMethodAux;
     property CheckDigestAux: string read FCheckDigestAux;
     // compression property
     property CompressionFlags: TArchiveCompressionFlags read FCompressionFlags;
@@ -194,7 +193,7 @@ type
     property CompressionBlock: int64 read FCompressionBlock;
     // encryption property
     property EncryptionFlags: TArchiveEncryptionFlags read FEncryptionFlags;
-    property EncryptionMethod: longword read FEncryptionMethod;
+    property EncryptionMethod: longint read FEncryptionMethod;
   end;
 
   /// archive central directory
@@ -220,21 +219,20 @@ type
     function GetItem(Index: longint): TArchiveItem;
     function GetIndexOf(const FileName: string): longint;
     function GetIndexAuxOf(const FileName: string): longint;
-    function CompareItem(Item1, Item2: TArchiveItem): longint;
   public
     constructor Create;
     destructor Destroy; override;
+    procedure Clear;
+    procedure Delete(Index: longint);
+    function Add(Item : TArchiveItem): longint;
+    function IndexOf(const FileName: string): longint;
     procedure Read(Stream: TFileReader);
     procedure Write(Stream: TFileWriter);
-    function Add(Item : TArchiveItem): longint;
-    procedure Delete(Index: longint);
-    procedure Clear;
-    function IndexOf(const FileName: string): longint;
   public
     property Count: longint read GetCount;
+    property Comment: string read FComment write FComment;
     property Items[Index: longint]: TArchiveItem read GetItem;
     property LastModifiedTime: int64 read FLastModifiedTime;
-    property Comment: string read FComment write FComment;
   end;
 
   /// ...
@@ -282,15 +280,15 @@ type
     FSfxName: string;
     FSfxStream: TMemoryStream;
     // options
-    FWorkDirectory: string;
+    FCheckParams: string;
     FCompressionParams: string;
     FEncryptionParams: string;
+    FNewLayer: boolean;
     FPassword: string;
-    FCheckParams: string;
     FTestTempArchive: boolean;
     FVerboseMode: boolean;
     FVolumeSize: int64;
-    FNewLayer: boolean;
+    FWorkDirectory: string;
     // central directory
     FCentralDirectory: TArchiveCentralDirectory;
     FCentralDirectoryNews: TList;
@@ -322,14 +320,14 @@ type
 
     function GetComment: string;
     function GetCount: longint;
-    function GetItem(Index: longint): TArchiveItem;
-    function GetLastModifiedTime: int64;
-    function GetBackTag(Index: longint; aTag: TArchiveItemTag): longint;
+    function GetItem    (Index: longint): TArchiveItem;
+    function GetBackTag (Index: longint; aTag: TArchiveItemTag): longint;
     function GetBackTear(Index: longint): longint;
-    function GetNextTag(Index: longint; aTag: TArchiveItemTag): longint;
+    function GetNextTag (Index: longint; aTag: TArchiveItemTag): longint;
     function GetNextTear(Index: longint): longint;
+    function GetLastModifiedTime: int64;
 
-    procedure Encode(Reader: TBufStream; Writer: TBufStream; const Size: int64);
+    procedure XXcode(Reader: TBufStream; Writer: TBufStream; const Size: int64);
     procedure EncodeFromArchive(Item: TArchiveItem);
     procedure EncodeFromSwap   (Item: TArchiveItem);
     procedure EncodeFromFile   (Item: TArchiveItem);
@@ -355,22 +353,26 @@ type
     constructor Create;
     destructor Destroy; override;
 
+    procedure OpenArchive(const aArchiveName: string);
     procedure CloseArchive;
+
     procedure ExtractTagged;
     procedure DeleteTagged;
-    function IndexOf(const aFileName: string): longint;
-    function IsTagged(Index: longint): boolean;
-    procedure OpenArchive(const aArchiveName: string);
     procedure RenameTagged;
-    procedure Suspend(Value: boolean);
+    procedure TestTagged;
+    procedure UpdateTagged;
+
+    procedure TagAll;
     procedure Tag(SearchRec: TCustomSearchRec); overload;
     procedure Tag(Index: longint); overload;
-    procedure TagAll;
-    procedure Terminate;
-    procedure TestTagged;
     procedure UnTag(Index: longint);
     procedure UnTagAll;
-    procedure UpdateTagged;
+
+    function IsTagged(Index: longint): boolean;
+    function IndexOf(const aFileName: string): longint;
+
+    procedure Suspend(Value: boolean);
+    procedure Terminate;
   public
     property ArchiveName: string read FArchiveName write SetArchiveName;
     property Comment: string read GetComment write SetComment;
@@ -388,15 +390,15 @@ type
     property VerboseMode: boolean read FVerboseMode write FVerboseMode;
     property WorkDirectory: string read FWorkDirectory write SetWorkDirectory;
   public
-    property OnItemComment: TArchiveCommentEvent read FOnCommentItem write FOnCommentItem;
-    property OnItemDelete: TArchiveDeleteEvent read FOnDeleteItem write FOnDeleteItem;
-    property OnItemExtract: TArchiveExtractEvent read FOnExtractItem write FOnExtractItem;
+    property OnCommentItem: TArchiveCommentEvent read FOnCommentItem write FOnCommentItem;
+    property OnDeleteItem: TArchiveDeleteEvent read FOnDeleteItem write FOnDeleteItem;
+    property OnExtractItem: TArchiveExtractEvent read FOnExtractItem write FOnExtractItem;
     property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
     property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
-    property OnItemRename: TArchiveRenameEvent read FOnRenameItem write FOnRenameItem;
+    property OnRenameItem: TArchiveRenameEvent read FOnRenameItem write FOnRenameItem;
     property OnRequestBlankImage: TFileWriterRequestBlankImageEvent read FOnRequestBlankImage write FOnRequestBlankImage;
     property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
-    property OnItemUpdate: TArchiveUpdateEvent read FOnUpdateItem write FOnUpdateItem;
+    property OnUpdateItem: TArchiveUpdateEvent read FOnUpdateItem write FOnUpdateItem;
   end;
 
 function CoderMethodToStr (Method: longint): string;
@@ -433,7 +435,7 @@ function CoderMethodToStr(Method: longint): string;
 begin
   Result := '???';
   case Method of
-    0:  Result := 'NONE';
+    0:  Result := 'STORE';
     1:  Result := 'BEE';
     2:  Result := 'PPMD';
   end;
@@ -604,7 +606,7 @@ begin
   if (acfCompressionBlock     in FCompressionFlags) then FCompressionBlock     := Stream.ReadInfWord;
   /// encryption property ///
   FEncryptionFlags := TArchiveEncryptionFlags(longword(Stream.ReadInfWord));
-  if (aefEncryptionMethod  in FEncryptionFlags) then FEncryptionMethod := Stream.ReadInfWord;
+  if (aefEncryptionMethod in FEncryptionFlags) then FEncryptionMethod := Stream.ReadInfWord;
 end;
 
 procedure TArchiveItem.Write(Stream: TFileWriter);
@@ -625,13 +627,13 @@ begin
   if (addfCompressedSize in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
   if (addfDiskNumber     in FDataDescriptorFlags) then Stream.WriteInfWord(FDiskNumber);
   if (addfDiskSeek       in FDataDescriptorFlags) then Stream.WriteInfWord(FDiskSeek);
-  if (addfCheckMethod    in FDataDescriptorFlags) then Stream.WriteInfWord(Ord(FCheckMethod));
+  if (addfCheckMethod    in FDataDescriptorFlags) then Stream.WriteInfWord(FCheckMethod);
   if (addfCheckDigest    in FDataDescriptorFlags) then Stream.WriteInfArray(FCheckDigest);
-  if (addfCheckMethodAux in FDataDescriptorFlags) then Stream.WriteInfWord(Ord(FCheckMethodAux));
+  if (addfCheckMethodAux in FDataDescriptorFlags) then Stream.WriteInfWord(FCheckMethodAux);
   if (addfCheckDigestAux in FDataDescriptorFlags) then Stream.WriteInfArray(FCheckDigestAux);
   /// compression property ///
   Stream.WriteInfWord(longword(FCompressionFlags));
-  if (acfCompressionMethod    in FCompressionFlags) then Stream.WriteInfWord(Ord(FCompressionMethod));
+  if (acfCompressionMethod    in FCompressionFlags) then Stream.WriteInfWord(FCompressionMethod);
   if (acfCompressionLevel     in FCompressionFlags) then Stream.WriteInfWord(FCompressionLevel);
   if (acfCompressionLevelAux  in FCompressionFlags) then Stream.WriteInfWord(FCompressionLevelAux);
   if (acfCompressionFilter    in FCompressionFlags) then Stream.WriteInfArray(FCompressionFilter);
@@ -639,7 +641,7 @@ begin
   if (acfCompressionBlock     in FCompressionFlags) then Stream.WriteInfWord(FCompressionBlock);
   /// encryption property ///
   Stream.WriteInfWord(longword(FEncryptionFlags));
-  if (aefEncryptionMethod  in FEncryptionFlags) then Stream.WriteInfWord(Ord(FEncryptionMethod));
+  if (aefEncryptionMethod in FEncryptionFlags) then Stream.WriteInfWord(FEncryptionMethod);
 end;
 
 // TArchiveCentralDirectory class
@@ -649,7 +651,7 @@ begin
   inherited Create;
   FItems    := TList.Create;
   FItemsAux := TList.Create;
-  FLastModifiedTime :=  0;
+  FLastModifiedTime := 0;
   FComment  := '';
 end;
 
@@ -666,9 +668,8 @@ var
   I: longint;
 begin
   for I := 0 to FItems.Count - 1 do
-  begin
     TArchiveItem(FItems[I]).Destroy;
-  end;
+
   FItems.Clear;
   FItemsAux.Clear;
   FLastModifiedTime := 0;
@@ -755,7 +756,7 @@ begin
     end;
 end;
 
-function TArchiveCentralDirectory.CompareItem(Item1, Item2: TArchiveItem): longint;
+function CompareItem(Item1, Item2: TArchiveItem): longint;
 begin
   Result := AnsiCompareFileName(Item1.FileName, Item2.FileName);
   if Result = 0 then
@@ -1058,14 +1059,15 @@ begin
   FSfxName           := '';
   FSfxStream         := nil;
   // options
-  FWorkDirectory     := '';
+  FCheckParams       := '';
   FCompressionParams := '';
   FEncryptionParams  := '';
-  FCheckParams       := '';
-  FTestTempArchive   := FALSE;
-  FVolumeSize        := 0;
-  FVerboseMode       := FALSE;
   FNewLayer          := FALSE;
+  FPassword          := '';
+  FTestTempArchive   := FALSE;
+  FVerboseMode       := FALSE;
+  FVolumeSize        := 0;
+  FWorkDirectory     := '';
   // central direcotry items
   FCentralDirectory     := TArchiveCentralDirectory.Create;
   FCentralDirectoryNews := TList.Create;
@@ -1075,6 +1077,7 @@ destructor TArchiver.Destroy;
 var
   I: longint;
 begin
+  // Free ---
   FCentralDirectoryNews.Destroy;
   FCentralDirectory.Destroy;
   inherited Destroy;
@@ -1082,7 +1085,7 @@ end;
 
 // TArchiver # ENCODE/DECODE #
 
-procedure TArchiver.Encode(Reader: TBufStream; Writer: TBufStream; const Size: int64); inline;
+procedure TArchiver.XXcode(Reader: TBufStream; Writer: TBufStream; const Size: int64); inline;
 var
   Count: int64;
   Buffer: TBuffer;
@@ -1111,8 +1114,8 @@ end;
 procedure TArchiver.EncodeFromArchive(Item: TArchiveItem);
 begin
   FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
-  Item.FDiskNumber := FTempWriter.CurrentImage;
   Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
+  Item.FDiskNumber := FTempWriter.CurrentImage;
 
   FArchiveReader.HashMethod   := 0;
   FArchiveReader.CipherMethod := 0;
@@ -1122,7 +1125,7 @@ begin
   FTempWriter.CipherMethod    := 0;
   FTempWriter.CoderMethod     := 0;
   begin
-    Encode(FArchiveReader, FTempWriter, Item.FCompressedSize);
+    XXcode(FArchiveReader, FTempWriter, Item.FCompressedSize);
   end;
 end;
 
@@ -1147,7 +1150,7 @@ begin
   FTempWriter.CoderFilterAux  := Item.CompressionFilterAux;
   FTempWriter.CoderBlock      := Item.CompressionBlock;
   begin
-    Encode(FSwapReader, FTempWriter, Item.FUnCompressedSize);
+    XXcode(FSwapReader, FTempWriter, Item.FUnCompressedSize);
   end;
   //Item.FCheckDigest        := FSwapReader.HashDigest;
   //Item.FCheckDigestAux     := FTempWriter.HashDigest;
@@ -1177,7 +1180,7 @@ begin
   FTempWriter.CoderFilterAux := Item.CompressionFilterAux;
   FTempWriter.CoderBlock     := Item.CompressionBlock;
   begin
-    Encode(Source, FTempWriter, Item.FExternalFileSize);
+    XXcode(Source, FTempWriter, Item.FExternalFileSize);
   end;
   Item.FCheckDigest          :=      Source.HashDigest;
   Item.FCheckDigestAux       := FTempWriter.HashDigest;
@@ -1208,7 +1211,7 @@ begin
   FSwapWriter.CipherKey         := FPassword;
   FSwapWriter.CoderMethod       := 0;
   begin
-    Encode(FArchiveReader, FSwapWriter, Item.UncompressedSize);
+    XXcode(FArchiveReader, FSwapWriter, Item.UncompressedSize);
   end;
 
   if Item.CheckMethod <> 0 then
@@ -1239,7 +1242,7 @@ begin
   FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
   FArchiveReader.CoderBlock     := Item.CompressionBlock;
   begin
-    Encode(FArchiveReader, Destination, Item.FUncompressedSize);
+    XXcode(FArchiveReader, Destination, Item.FUncompressedSize);
   end;
 
   if Item.CheckMethod <> 0 then
@@ -1269,7 +1272,7 @@ begin
   FArchiveReader.CoderFilterAux := Item.CompressionFilterAux;
   FArchiveReader.CoderBlock     := Item.CompressionBlock;
   begin
-    Encode(FArchiveReader, Destination, Item.UncompressedSize);
+    XXcode(FArchiveReader, Destination, Item.UncompressedSize);
   end;
 
   if Item.CheckMethod <> 0 then
@@ -1300,7 +1303,6 @@ begin
       //if FCentralDirectory.Count = 0 then
       //  SetExitStatus(esArchiveTypeError);
     end;
-
   end else
   begin
     DoMessage(Format(cmCreating, [aArchiveName]));
@@ -2096,6 +2098,8 @@ begin
   Configuration.CurrentSection.Values['Dictionary'] := IntToStr(ExtractCompressionAuxLevel(FCompressionParams));
   Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
 
+  Writeln(FCompressionParams);
+
   CurrentBlock := ExtractCompressionBlock(FCompressionParams);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
@@ -2190,7 +2194,7 @@ begin
       FIsNeededToSave := TRUE;
     end;
   //arcCancel: nothing to do
-    arcQuit: SetExitStatus(esUserAbortError);
+    arcQuit:   SetExitStatus(esUserAbortError);
   end;
 end;
 
@@ -2211,7 +2215,7 @@ begin
     end;
   end;
 
-  if ExitStatus <> esNoError then Configure;
+  if ExitStatus = esNoError then Configure;
 end;
 
 procedure TArchiver.CheckSequences4Update;
@@ -2269,11 +2273,8 @@ var
   Item: TArchiveItem;
 begin
   CheckTags4Update;
-  Writeln('Start1');
-
   if FIsNeededToRun then
   begin
-    Writeln('Start2');
     CheckSequences4Update;
     FTempName   := GenerateFileName(FWorkDirectory);
     FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
