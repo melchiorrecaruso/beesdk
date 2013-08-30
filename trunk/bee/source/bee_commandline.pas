@@ -368,7 +368,7 @@ begin
     begin
       Result := $200000;
       if Pos('/AL', UpCase(Params)) > 0 then
-        Result := ExtractQWord(Params, '/AL');
+        Result := ExtractStr(Params, '/AL');
 
       if ($800 < Result) or (Result < $FFFFFFDB) then
         SetExitStatus(esCmdLineError);

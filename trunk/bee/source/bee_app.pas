@@ -99,19 +99,19 @@ implementation
 constructor TBeeApp.Create;
 begin
   inherited Create;
-  FSelfName := 'The Bee 0.8.0 build 2037 archiver utility, Aug 2013' + Cr +
+  FSelfName := 'The Bee 0.8.0 build 2039 archiver utility, Aug 2013' + Cr +
                '(C) 1999-2013 Andrew Filinsky and Melchiorre Caruso';
   { set archiver events }
   FArchiver := TArchiver.Create;
-  FArchiver.OnRequestBlankImage := DoRequestBlankDisk;
-  FArchiver.OnRequestImage      := DoRequestImage;
+  FArchiver.OnCommentItem       := DoComment;
+  FArchiver.OnDeleteItem        := DoDelete;
+  FArchiver.OnExtractItem       := DoExtract;
   FArchiver.OnMessage           := DoMessage;
   FArchiver.OnProgress          := DoProgress;
-  FArchiver.OnItemExtract       := DoExtract;
-  FArchiver.OnItemRename        := DoRename;
-  FArchiver.OnItemDelete        := DoDelete;
-  FArchiver.OnItemUpdate        := DoUpdate;
-  FArchiver.OnItemComment       := DoComment;
+  FArchiver.OnRenameItem        := DoRename;
+  FArchiver.OnRequestBlankImage := DoRequestBlankDisk;
+  FArchiver.OnRequestImage      := DoRequestImage;
+  FArchiver.OnUpdateItem        := DoUpdate;
   { load command line }
   FCommandLine := TCommandLine.Create;
   FCommandLine.Execute;
@@ -363,10 +363,9 @@ end;
 procedure TBeeApp.DoComment(Item: TArchiveItem;
   var CommentAs: string; var Confirm: TArchiveConfirm);
 begin
-  Confirm := arcCancel;
+  Confirm := arcOk;
   if clccOption in FCommandLine.Options then
   begin
-    Confirm := arcOk;
     CommentAs := FCommandLine.ccOption;
   end;
 end;
