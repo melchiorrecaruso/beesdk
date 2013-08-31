@@ -44,7 +44,7 @@ uses
 
   Bee_Files,
   Bee_BufStream,
-  Bee_Common,
+  bx_Common,
   Bee_CommandLine,
   Bee_Configuration;
 
@@ -401,14 +401,14 @@ type
     property OnUpdateItem: TArchiveUpdateEvent read FOnUpdateItem write FOnUpdateItem;
   end;
 
-function CoderMethodToStr (Method: longint): string;
-function HashMethodToStr  (Method: longint): string;
-function CipherMethodToStr(Method: longint): string;
+function CheckMethodToStr  (Method: longint): string;
+function CompressionMethodToStr (Method: longint): string;
+function EncryptionMethodToStr(Method: longint): string;
 
-function VersionToStr(Version: longword): string;
+function AttrToStr(Attr: longint): string;
 function RatioToStr(const PackedSize, Size: int64): string;
 function SizeToStr(const Size: int64): string;
-function AttrToStr(Attr: longint): string;
+function VersionToStr(Version: longword): string;
 
 implementation
 
@@ -431,17 +431,7 @@ end;
 
 // ---
 
-function CoderMethodToStr(Method: longint): string;
-begin
-  Result := '???';
-  case Method of
-    0:  Result := 'STORE';
-    1:  Result := 'BEE';
-    2:  Result := 'PPMD';
-  end;
-end;
-
-function HashMethodToStr(Method: longint): string;
+function CheckMethodToStr(Method: longint): string;
 begin
   Result := '???';
   case Method of
@@ -453,7 +443,17 @@ begin
   end;
 end;
 
-function CipherMethodToStr(Method: longint): string;
+function CompressionMethodToStr(Method: longint): string;
+begin
+  Result := '???';
+  case Method of
+    0:  Result := 'STORE';
+    1:  Result := 'BEE';
+    2:  Result := 'PPMD';
+  end;
+end;
+
+function EncryptionMethodToStr(Method: longint): string;
 begin
   Result := '???';
   case Method of
@@ -463,12 +463,16 @@ begin
   end;
 end;
 
-function VersionToStr(Version: longword): string;
+function AttrToStr(Attr: longint): string;
 begin
-  Result := '?.?.?';
-  case Version of
-    80:  Result := '0.8.0';
-  end;
+  Result := 'RHSVDAL';
+  if Attr and faReadOnly  = 0 then Result[1] := '.';
+  if Attr and faHidden    = 0 then Result[2] := '.';
+  if Attr and faSysFile   = 0 then Result[3] := '.';
+  if Attr and faVolumeId  = 0 then Result[4] := '.';
+  if Attr and faDirectory = 0 then Result[5] := '.';
+  if Attr and faArchive   = 0 then Result[6] := '.';
+  if Attr and faSymLink   = 0 then Result[7] := '.';
 end;
 
 function RatioToStr(const PackedSize, Size: int64): string;
@@ -487,16 +491,12 @@ begin
     Result := Format('%u', [0]);
 end;
 
-function AttrToStr(Attr: longint): string;
+function VersionToStr(Version: longword): string;
 begin
-  Result := 'RHSVDAL';
-  if Attr and faReadOnly  = 0 then Result[1] := '.';
-  if Attr and faHidden    = 0 then Result[2] := '.';
-  if Attr and faSysFile   = 0 then Result[3] := '.';
-  if Attr and faVolumeId  = 0 then Result[4] := '.';
-  if Attr and faDirectory = 0 then Result[5] := '.';
-  if Attr and faArchive   = 0 then Result[6] := '.';
-  if Attr and faSymLink   = 0 then Result[7] := '.';
+  Result := '?.?.?';
+  case Version of
+    80:  Result := '0.8.0';
+  end;
 end;
 
 // TArchiveItem class
@@ -761,7 +761,7 @@ begin
   Result := AnsiCompareFileName(Item1.FileName, Item2.FileName);
   if Result = 0 then
   begin
-    Result := Item1.LowLayer  - Item2.LowLayer;
+    //Result := Item1.LowLayer  - Item2.LowLayer;
     //Result := Item1.HighLayer - Item2.HighLayer;
   end;
 end;
@@ -817,7 +817,7 @@ begin
     I := AnsiCompareFileName(FileName, TArchiveItem(FItemsAux[Mid]).FileName);
     if I = 0 then
     begin
-      I := 0 - TArchiveItem(FItemsAux[Mid]).LowLayer;
+      // I := 0 - TArchiveItem(FItemsAux[Mid]).LowLayer;
     end;
 
     if I > 0 then
@@ -962,12 +962,11 @@ begin
   // [6] read central directory items
   if ExitStatus = esNoError then
   begin
-    MARKER := Stream.ReadInfWord;
+    MARKER := Stream.ReadDWord;
     while MARKER = ARCHIVE_CENTRALDIR_ITEM_MARKER do
     begin
       Add(TArchiveItem.Read(Stream));
-      MARKER := Stream.ReadInfWord;
-      Writeln(MARKER);
+      MARKER := Stream.ReadDWord;
     end;
   end;
 
@@ -980,8 +979,6 @@ begin
     if MARKER <> ARCHIVE_CENTRALDIR_SEEK_MARKER then
       if MARKER <> ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER then
         SetExitStatus(esArchiveTypeError);
-
-  Writeln(ExitStatus);
 
   // [8] unpack central directory
   if ExitStatus = esNoError then UnPack;
@@ -1018,13 +1015,13 @@ begin
   if FItems.Count > 0 then
     for I := 0 to FItems.Count - 1 do
     begin
-      Stream.WriteInfWord(ARCHIVE_CENTRALDIR_ITEM_MARKER);
+      Stream.WriteDWord(ARCHIVE_CENTRALDIR_ITEM_MARKER);
       TArchiveItem(FItems[I]).Write(Stream);
     end;
 
   // [3] multi-spanning support
   if Stream.Threshold > 0 then
-    if (Stream.Threshold - Stream.Seek(0, fsFromCurrent)) < 512 then
+    if (Stream.Threshold - Stream.Seek(0, fsFromCurrent)) < 1024 then
       Stream.CreateNewImage;
 
   FMagikSeek := Stream.Seek(0, fsFromCurrent);
