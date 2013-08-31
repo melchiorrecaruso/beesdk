@@ -27,10 +27,10 @@
     v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 1280 - 2011.02.15 by Melchiorre Caruso.
+    v0.8.0 build 2041 - 2011.08.31 by Melchiorre Caruso.
 }
 
-unit Bee_Common;
+unit bxCommon;
 
 {$I bee_compiler.inc}
 
@@ -39,7 +39,6 @@ interface
 uses
   Classes,
   SysUtils,
-  {$IFNDEF FPC} Math, {$ENDIF}
   {$IFDEF UNIX} BaseUnix; {$ENDIF}
   {$IFDEF MSWINDOWS} Windows; {$ENDIF}
 
@@ -48,8 +47,17 @@ const
 
   { Default file names }
 
-  DefaultCfgName      = 'bee.ini';
-  DefaultSfxName      = 'bee.sfx';
+  DefaultConfigFileName  = 'bx.ini';
+
+  {$IFDEF MSWINDOWS}
+    DefaultSfxFileName   = 'bxwin.sfx';
+  {$ELSE}
+    {$IFDEF UNIX}
+      DefaultSfxFileName = 'bxlinux.sfx';
+    {$ELSE}
+       -TODO-
+    {$ENDIF}
+  {$ENDIF}
 
   { Messages }
 
@@ -74,38 +82,34 @@ const
 function SelfName: string;
 function SelfPath: string;
 
+{ disk/file routines }
+
 function GetDriveFreeSpace(const FileName: string): int64;
+function SizeOfFile(const FileName: string): int64;
 
 { filename handling routines }
 
-function FileNameMatch(const FileName, Mask:  string; Recursive: boolean): boolean;
-function FileNameHasWildcards(const FileName: string): boolean;
-function FileNamePos(const FilePath, FileName: string): longint;
-function FileNameIsValid(const FileName: string): boolean;
-
-function GenerateFileName(const FilePath: string): string;
-function GenerateAlternativeFileName(const FileName: string;
-  var StartIndex: longint): string;
-
-
-function DeleteFilePath(const FilePath, FileName: string): string;
 function DeleteFileDrive(const FileName: string): string;
-
+function DeleteFilePath(const FilePath, FileName: string): string;
 
 procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: boolean);
 
-{  }
+function FileNameIsValid(const FileName: string): boolean;
+function FileNameHasWildcards(const FileName: string): boolean;
+function FileNameMatch(const FileName, Mask:  string; Recursive: boolean): boolean;
+function FileNamePos(const FilePath, FileName: string): longint;
 
+function GenerateAltFileName(const FileName: string; var StartIndex: longint): string;
+function GenerateFileName(const FilePath: string): string;
 
 { time handling routines }
 
-function TimeDifference(X: double): string;
-function TimeToStr(T: longint): string;
 function DateTimeToString(X: TDateTime): string; overload;
 function DateTimeToString(X: TDateTime; const Format: string): string; overload;
 function FileTimeToString(X: longint): string; overload;
 function FileTimeToString(X: longint; const Format: string): string; overload;
-function SizeOfFile(const FileName: string): int64;
+function TimeDifference(X: double): string;
+function TimeToStr(T: longint): string;
 
 { hex routines }
 
@@ -114,70 +118,13 @@ function HexToData(const S: string; var Data; Count: longint): boolean;
 
 { oem-ansi charset functions }
 
-function ParamToOem(const Param: string): string;
 function OemToParam(const Param: string): string;
+function ParamToOem(const Param: string): string;
 
 { system control }
 
-function SetIdlePriority: boolean; { Priority is 0..3 }
 procedure SetCtrlCHandler(CtrlHandler: pointer);
-
-
-(*
-;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{ directory handling routines }
-
-
-
-
-
-{ string, pchar routines }
-
-function StringToPChar(const aValue: string): PChar;
-function PCharToString(aValue: PChar): string;
-
-
-
-function ReverseString(const Str: string): string;
-
-
-
-
-
-{ low level functions }
-
-function CreateText(var T: Text; const Name: string): boolean;
-function AppendText(var T: Text; const Name: string): boolean;
-function OpenText(var T: Text; const Name: string): boolean;
-function WriteText(const FileName, S: string): boolean;
-
-function SizeOfFile(const FileName: string): int64;
-
-
-
-
-*)
+function  SetIdlePriority: boolean;
 
 implementation
 
@@ -194,6 +141,8 @@ function SelfPath: string;
 begin
   Result := ExtractFilePath(ParamStr(0));
 end;
+
+{ file routines }
 
 function GetDriveFreeSpace(const FileName: string): int64;
 {$IFDEF MSWINDOWS}
@@ -222,6 +171,131 @@ begin
     Result := int64(FStats.f_bavail) * int64(FStats.f_bsize);
   {$IFEND}
 {$ENDIF}
+end;
+
+function SizeOfFile(const FileName: string): int64;
+var
+  Err: longint;
+  Rec: TSearchRec;
+begin
+  Err := SysUtils.FindFirst(FileName, faAnyFile, Rec);
+  if (Err = 0) and ((Rec.Attr and faDirectory) = 0) then
+    Result := Rec.Size
+  else
+    Result := -1;
+  SysUtils.FindClose(Rec);
+end;
+
+{ filename handling routines }
+
+function DeleteFileDrive(const FileName: string): string;
+var
+  Drive: string;
+begin
+  Result := FileName;
+  if Length(Result) > 0 then
+  begin
+    Drive := ExtractFileDrive(FileName);
+    System.Delete(Result, 1, Length(Drive));
+    while Pos(PathDelim, Result) = 1 do
+      Delete(Result, 1, 1);
+  end;
+end;
+
+function DeleteFilePath(const FilePath, FileName: string): string;
+begin
+  Result := FileName;
+  if FileNamePos(FilePath, Result) = 1 then
+    Delete(Result, 1, Length(FilePath));
+end;
+
+procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: boolean);
+var
+  I:     longint;
+  Error: longint;
+  Rec:   TSearchRec;
+  Card:  boolean;
+  LastSlash: longint;
+  FirstSlash: longint;
+  FolderName: string;
+  FolderPath: string;
+begin
+  {$IFDEF FILENAMECASESENSITIVE}
+  Masks.CaseSensitive := TRUE;
+  {$ELSE}
+  Masks.CaseSensitive := FALSE;
+  {$ENDIF}
+
+  FirstSlash := 0;
+  LastSlash  := 0;
+  Card       := False;
+
+  for I := 1 to Length(Mask) do
+    if Card = False then
+    begin
+      if Mask[I] in ['*', '?'] then
+        Card := True
+      else
+        if Mask[I] = PathDelim then
+          FirstSlash := I;
+    end else
+    if Mask[I] = PathDelim then
+    begin
+      LastSlash := I;
+      Break;
+    end;
+
+  if LastSlash > 0 then
+  begin
+    FolderPath := Copy(Mask, 1, FirstSlash);
+    FolderName := Copy(Mask, FirstSlash + 1, LastSlash - (FirstSlash + 1));
+    Error      := SysUtils.FindFirst(FolderPath + '*', faAnyFile, Rec);
+    while Error = 0 do
+    begin
+      if (Rec.Attr and faDirectory) = faDirectory then
+        if (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
+          if FileNameMatch(Rec.Name, FolderName, Recursive) then
+            ExpandFileMask(FolderPath + Rec.Name + Copy(Mask, LastSlash,
+              (Length(Mask) + 1) - LastSlash), Masks, Recursive);
+
+      Error := SysUtils.FindNext(Rec);
+    end;
+    SysUtils.FindClose(Rec);
+  end else
+    if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
+end;
+
+function FileNameIsValid(const FileName : string): boolean;
+const
+  {$IFDEF MSWINDOWS}
+  InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
+  {$ELSE}
+  InvalidCharacters: set of char = [PathDelim];
+  {$ENDIF}
+var
+  I: longint;
+begin
+  Result := Length(FileName) > 0;
+  if Result then
+    for I := 1 to Length(FileName) do
+    begin
+      Result := not (FileName[I] in InvalidCharacters);
+      if Result = FALSE then Break;
+    end;
+end;
+
+function FileNameHasWildcards(const FileName: string): boolean;
+const
+  WildcardCharacters: set of char = ['*', '?'];
+var
+  I: longint;
+begin
+  Result := FALSE;
+  for I := 1 to Length(FileName) do
+  begin
+    Result := FileName[I] in WildcardCharacters;
+    if Result = TRUE then Break;
+  end;
 end;
 
 function MatchPattern(Element, Pattern: PChar): boolean;
@@ -289,18 +363,6 @@ begin
              MatchPattern(PChar(iFileName), PChar(iMaskName));
 end;
 
-
-function FileNameHasWildcards(const FileName: string): boolean;
-begin
-  if System.Pos('*', FileName) > 0 then
-    Result := True
-  else
-    if System.Pos('?', FileName) > 0 then
-      Result := True
-    else
-      Result := False;
-end;
-
 function FileNamePos(const FilePath, FileName: string): longint;
 begin
   {$IFDEF FILENAMECASESENSITIVE}
@@ -310,25 +372,12 @@ begin
   {$ENDIF}
 end;
 
-function FileNameIsValid(const FileName : string): boolean;
-const
-  {$IFDEF MSWINDOWS}
-  InvalidCharacters: set of char = ['\', '/', ':', '*', '?', '"', '<', '>', '|'];
-  {$ELSE}
-  InvalidCharacters: set of char = [PathDelim];
-  {$ENDIF}
-var
-  I: longint;
+function GenerateAltFileName(const FileName: string; var StartIndex: longint): string;
 begin
-  Result := FileName <> '';
-  if Result then
-    for I := 1 to Length(FileName) do
-    begin
-      Result := not (FileName[I] in InvalidCharacters) ;
-      if not Result then Break;
-    end;
+  Inc(StartIndex);
+  Result := ChangeFileExt(FileName, '_' +
+    IntToStr(StartIndex) + ExtractFileExt(FileName));
 end;
-
 
 function GenerateFileName(const FilePath: string): string;
 var
@@ -345,95 +394,35 @@ begin
   until FileAge(Result) = -1;
 end;
 
-function GenerateAlternativeFileName(const FileName: string;
-  var StartIndex: longint): string;
-begin
-  Inc(StartIndex);
-  Result := ChangeFileExt(FileName, '_' +
-      IntToStr(StartIndex) + ExtractFileExt(FileName));
-end;
-
-function DeleteFilePath(const FilePath, FileName: string): string;
-begin
-  Result := FileName;
-  if FileNamePos(FilePath, Result) = 1 then
-  begin
-    Delete(Result, 1, Length(FilePath));
-  end;
-end;
-
-function DeleteFileDrive(const FileName: string): string;
-var
-  Drive: string;
-begin
-  Result := FileName;
-  if Length(Result) > 0 then
-  begin
-    Drive := ExtractFileDrive(Result);
-    System.Delete(Result, 1, Length(Drive));
-  end;
-
-  while Pos(PathDelim, Result) = 1 do
-    Delete(Result, 1, 1);
-end;
-
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: boolean);
-var
-  I:     longint;
-  Error: longint;
-  Rec:   TSearchRec;
-  Card:  boolean;
-  LastSlash: longint;
-  FirstSlash: longint;
-  FolderName: string;
-  FolderPath: string;
-begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Masks.CaseSensitive := True;
-  {$ELSE}
-  Masks.CaseSensitive := False;
-  {$ENDIF}
-
-  FirstSlash := 0;
-  LastSlash  := 0;
-  Card       := False;
-
-  for I := 1 to Length(Mask) do
-    if Card = False then
-    begin
-      if Mask[I] in ['*', '?'] then
-        Card := True
-      else
-        if Mask[I] = PathDelim then
-          FirstSlash := I;
-    end else
-    if Mask[I] = PathDelim then
-    begin
-      LastSlash := I;
-      Break;
-    end;
-
-  if LastSlash > 0 then
-  begin
-    FolderPath := Copy(Mask, 1, FirstSlash);
-    FolderName := Copy(Mask, FirstSlash + 1, LastSlash - (FirstSlash + 1));
-    Error      := SysUtils.FindFirst(FolderPath + '*', faAnyFile, Rec);
-    while Error = 0 do
-    begin
-      if ((Rec.Attr and faDirectory) = faDirectory) and
-          (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
-        if FileNameMatch(Rec.Name, FolderName, Recursive) then
-          ExpandFileMask(FolderPath + Rec.Name + Copy(Mask, LastSlash,
-            (Length(Mask) + 1) - LastSlash), Masks, Recursive);
-
-      Error := SysUtils.FindNext(Rec);
-    end;
-    SysUtils.FindClose(Rec);
-  end else
-    if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
-end;
-
 { time handling routines }
+
+function DateTimeToString(X: TDateTime): string;
+begin
+  Result := FormatDateTime('yyyy-mm-dd hh:nn:ss', X);
+end;
+
+function DateTimeToString(X: TDateTime; const Format: string): string;
+begin
+  Result := FormatDateTime(Format, X);
+end;
+
+function FileTimeToString(X: longint): string;
+begin
+  try
+    Result := Bee_Common.DateTimeToString(SysUtils.FileDateToDateTime(X));
+  except
+    Result := '????-??-?? ??:??:??';
+  end;
+end;
+
+function FileTimeToString(X: longint; const Format: string): string;
+begin
+  try
+    Result := Bee_Common.DateTimeToString(SysUtils.FileDateToDateTime(X), Format);
+  except
+    Result := '????-??-?? ??:??:??';
+  end;
+end;
 
 function TimeDifference(X: double): string;
 begin
@@ -465,34 +454,6 @@ begin
     S := IntToStr(ZS);
 
   Result := H + ':' + M + ':' + S;
-end;
-
-function DateTimeToString(X: TDateTime): string;
-begin
-  Result := FormatDateTime('yyyy-mm-dd hh:nn:ss', X);
-end;
-
-function DateTimeToString(X: TDateTime; const Format: string): string;
-begin
-  Result := FormatDateTime(Format, X);
-end;
-
-function FileTimeToString(X: longint): string;
-begin
-  try
-    Result := Bee_Common.DateTimeToString(SysUtils.FileDateToDateTime(X));
-  except
-    Result := '????-??-?? ??:??:??';
-  end;
-end;
-
-function FileTimeToString(X: longint; const Format: string): string;
-begin
-  try
-    Result := Bee_Common.DateTimeToString(SysUtils.FileDateToDateTime(X), Format);
-  except
-    Result := '????-??-?? ??:??:??';
-  end;
 end;
 
 { hex routines }
@@ -532,63 +493,37 @@ begin
   Result := True;
 end;
 
-function SizeOfFile(const FileName: string): int64;
-var
-  Err: longint;
-  Rec: TSearchRec;
-begin
-  Err := SysUtils.FindFirst(FileName, faAnyFile, Rec);
-  if (Err = 0) and ((Rec.Attr and faDirectory) = 0) then
-    Result := Rec.Size
-  else
-    Result := -1;
-  SysUtils.FindClose(Rec);
-end;
-
 { oem-ansi charset functions }
-
-function ParamToOem(const Param: string): string;
-begin
-  if Length(Param) <> 0 then
-  begin
-    {$IFDEF MSWINDOWS}
-    SetLength(Result, Length(Param));
-    CharToOem(PChar(Param), PChar(Result));
-    {$ELSE}
-    Result := Param;
-    {$ENDIF}
-  end else
-    Result := '';
-end;
 
 function OemToParam(const Param: string): string;
 begin
-  if Length(Param) <> 0 then
-  begin
-    {$IFDEF MSWINDOWS}
-    SetLength(Result, Length(Param));
-    OemToChar(PChar(Param), PChar(Result));
-    {$ELSE}
+  {$IFDEF MSWINDOWS}
+    if Length(Param) > 0 then
+    begin
+      SetLength(Result, Length(Param));
+      OemToChar(PChar(Param), PChar(Result));
+    end else
+      Result := '';
+  {$ELSE}
     Result := Param;
-    {$ENDIF}
-  end else
-    Result := '';
+  {$ENDIF}
+end;
+
+function ParamToOem(const Param: string): string;
+begin
+  {$IFDEF MSWINDOWS}
+    if Length(Param) > 0 then
+    begin
+      SetLength(Result, Length(Param));
+      CharToOem(PChar(Param), PChar(Result));
+    end else
+      Result := '';
+  {$ELSE}
+    Result := Param;
+  {$ENDIF}
 end;
 
 { system control }
-
-
-function SetIdlePriority: boolean;
-{$IFDEF MSWINDOWS}
-begin
-  Result := SetPriorityClass(GetCurrentProcess, IDLE_PRIORITY_CLASS);
-end;
-{$ENDIF}
-{$IFDEF UNIX}
-begin
-  // ...
-end;
-{$ENDIF}
 
 procedure SetCtrlCHandler(CtrlHandler: pointer);
 {$IFDEF UNIX}
@@ -609,102 +544,14 @@ begin
 {$ENDIF}
 end;
 
-
-
-(*
-
-
-
-
-implementation
-
-
-
-{ filename handling routines }
-
-
-
-function FileNameLastPos(const Substr, Str: string): longint;
+function SetIdlePriority: boolean;
 begin
-  Result := FileNamePos(ReverseString(SubStr), ReverseString(Str));
-  if (Result <> 0) then
-  begin
-    Result := Length(Str) - Length(SubStr) - Result + 2;
-  end;
+  {$IFDEF MSWINDOWS}
+    Result := SetPriorityClass(GetCurrentProcess, IDLE_PRIORITY_CLASS);
+  {$ENDIF}
+  {$IFDEF UNIX}
+  // TO DO
+  {$ENDIF}
 end;
-
-
-
-function FileNameHasDrive(const FileName: string): boolean;
-begin
-  Result := Length(ExtractFileDrive(FileName)) > 0;
-  if (Result = FALSE) and (Length(FileName) > 0) then
-    Result := FileName[1] in AllowDirectorySeparators;
-end;
-
-
-
-
-
-
-
-
-{ directory handling routines }
-
-
-
-
-
-
-
-
-
-
-
-{ low level functions }
-
-function CreateText(var T: Text; const Name: string): boolean;
-begin
-  {$I-}
-  Assign(T, Name);
-  Rewrite(T);
-  {$I+}
-  Result := IOResult = 0;
-end;
-
-function AppendText(var T: Text; const Name: string): boolean;
-begin
-  {$I-}
-  Assign(T, Name);
-  Append(T);
-  {$I+}
-  Result := IOResult = 0;
-end;
-
-function OpenText(var T: Text; const Name: string): boolean;
-begin
-  {$I-}
-  Assign(T, Name);
-  Reset(T);
-  {$I+}
-  Result := IOResult = 0;
-end;
-
-function WriteText(const FileName, S: string): boolean;
-var
-  T: Text;
-begin
-  if AppendText(T, FileName) or CreateText(T, FileName) then
-  begin
-    Write(T, S);
-    Close(T);
-    Result := True;
-  end else
-    Result := False;
-end;
-
-
-
-     *)
 
 end.
