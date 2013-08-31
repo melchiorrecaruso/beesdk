@@ -353,6 +353,8 @@ begin
 end;
 
 function ExtractCompressionAuxLevel(Params: string): longword;
+var
+  q: qword;
 begin
   case ExtractCompressionMethod(Params) of
     1:
@@ -368,7 +370,8 @@ begin
     begin
       Result := $200000;
       if Pos('/AL', UpCase(Params)) > 0 then
-        Result := ExtractStr(Params, '/AL');
+        if TryStrWithMultToQWord(ExtractStr(Params, '/AL'), q) = FALSE then
+           SetExitStatus(esCmdLineError);
 
       if ($800 < Result) or (Result < $FFFFFFDB) then
         SetExitStatus(esCmdLineError);
