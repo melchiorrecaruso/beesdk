@@ -273,7 +273,13 @@ begin
         DoOpenImage(FImageNumber + 1);
         if ExitStatus <> esNoError then Break;
       end else
+      begin
+        Writeln('ERROR');
+
+
+        SetExitStatus(esReadStreamError);
         Break;
+      end;
     end;
   until Result = Count;
 end;

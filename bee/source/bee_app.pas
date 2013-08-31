@@ -612,17 +612,17 @@ begin
             DoMessage(Format(   '                 Comment: %s',       [Item.Comment]));
           DoMessage(Format(     '    Disk number/position: %u/%u',    [Item.DiskNumber, Item.DiskSeek]));
           if Ord(Item.CheckMethod) <> 0 then
-            DoMessage(Format(   '     Check method/digest: %s/%s',    [HashMethodTostr(Item.CheckMethod), Item.CheckDigest]));
+            DoMessage(Format(   '     Check method/digest: %s/%s',    [CheckMethodTostr(Item.CheckMethod), Item.CheckDigest]));
           if Ord(Item.CheckMethodAux) <> 0 then
-            DoMessage(Format(   ' Check method/digest aux: %s/%s',    [HashMethodToStr(Item.CheckMethodAux), Item.CheckDigestAux]));
+            DoMessage(Format(   ' Check method/digest aux: %s/%s',    [CheckMethodToStr(Item.CheckMethodAux), Item.CheckDigestAux]));
           if Ord(Item.CompressionMethod) <> 0 then
           begin
-            DoMessage(Format(   'Compression method/block: %s/%u',    [CoderMethodToStr(Item.CompressionMethod), Item.CompressionBlock]));
+            DoMessage(Format(   'Compression method/block: %s/%u',    [CompressionMethodToStr(Item.CompressionMethod), Item.CompressionBlock]));
             DoMessage(Format(   '   Compression level/aux: %u/%u',    [Item.CompressionLevel, Item.CompressionLevelAux]));
             DoMessage(Format(   '  Compression filter/aux: %s/%s',    [Item.CompressionFilter, Item.CompressionFilterAux]));
           end;
           if Ord(Item.EncryptionMethod) <> 0 then
-            DoMessage(Format(   '       Encryption method: %s',       [CipherMethodTostr(Item.EncryptionMethod)]));
+            DoMessage(Format(   '       Encryption method: %s',       [EncryptionMethodTostr(Item.EncryptionMethod)]));
         end;
 
       end else

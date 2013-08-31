@@ -48,12 +48,14 @@ const
 
   esCreateStreamError = 201;
   esOpenStreamError   = 202;
-  esFillStreamError   = 203;
-  esFlushStreamError  = 204;
-  esResizeStreamError = 205;
-  esSplitStreamError  = 206;
-  esRenameTempError   = 207;
-  esRequestDiskError  = 208;
+  esReadStreamError   = 203;
+  esWriteStreamError  = 204;
+  esFillStreamError   = 205;
+  esFlushStreamError  = 206;
+  esResizeStreamError = 207;
+  esSplitStreamError  = 208;
+  esRenameTempError   = 209;
+  esRequestDiskError  = 210;
 
   esUserAbortError    = 255;
 
@@ -84,12 +86,15 @@ implementation
 
       esCreateStreamError: Result := 'Create stream error (exit code #201) - time elapsed %s seconds.';
       esOpenStreamError:   Result := 'Open stream error (exit code #202) - time elapsed %s seconds.';
-      esFillStreamError:   Result := 'Fill stream error (exit code #203) - time elapsed %s seconds.';
-      esFlushStreamError:  Result := 'Flush stream error (exit code #204) - time elapsed %s seconds.';
-      esResizeStreamError: Result := 'Resize stream error (exit code #205) - time elapsed %s seconds.';
-      esSplitStreamError:  Result := 'Split stream error (exit code #206) - time elapsed %s seconds.';
-      esRenameTempError:   Result := 'Rename temporary archive error (exit code #207) - time elapsed %s seconds.';
-      esRequestDiskError:  Result := 'Request disk error (exit code #208) - time elapsed %s seconds.';
+      esReadStreamError:   Result := 'Read stream error (exit code #203) - time elapsed %s seconds.';
+      esWriteStreamError:  Result := 'Write stream error (exit code #204) - time elapsed %s seconds.';
+
+      esFillStreamError:   Result := 'Fill stream error (exit code #205) - time elapsed %s seconds.';
+      esFlushStreamError:  Result := 'Flush stream error (exit code #206) - time elapsed %s seconds.';
+      esResizeStreamError: Result := 'Resize stream error (exit code #207) - time elapsed %s seconds.';
+      esSplitStreamError:  Result := 'Split stream error (exit code #208) - time elapsed %s seconds.';
+      esRenameTempError:   Result := 'Rename temporary archive error (exit code #209) - time elapsed %s seconds.';
+      esRequestDiskError:  Result := 'Request disk error (exit code #210) - time elapsed %s seconds.';
 
       esUserAbortError:    Result := 'User abort error (exit code #255) - time elapsed %s seconds.';
       else                 Result := 'Unknow exit code (exit code #???) - time elapsed %s seconds.';
@@ -104,4 +109,4 @@ implementation
     end;
   end;
 
-end.
+end.
