@@ -957,7 +957,7 @@ begin
         if (acdfComment  in FFlags) then
           FComment := Stream.ReadInfString;
       end;
-    end;;
+    end;
 
   // [6] read central directory items
   if ExitStatus = esNoError then
@@ -967,14 +967,21 @@ begin
     begin
       Add(TArchiveItem.Read(Stream));
       MARKER := Stream.ReadInfWord;
+      Writeln(MARKER);
     end;
   end;
+
+  Writeln(Count);
+  Writeln(ExitStatus);
+  Writeln(MARKER, ' ', ARCHIVE_CENTRALDIR_SEEK_MARKER);
 
   // [7] check central directory seek marker
   if ExitStatus = esNoError then
     if MARKER <> ARCHIVE_CENTRALDIR_SEEK_MARKER then
       if MARKER <> ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER then
         SetExitStatus(esArchiveTypeError);
+
+  Writeln(ExitStatus);
 
   // [8] unpack central directory
   if ExitStatus = esNoError then UnPack;
@@ -2087,20 +2094,21 @@ var
   Configuration: TConfiguration;
 begin
   Configuration := TConfiguration.Create;
-  if FileExists(ExtractCompressionConfig(FCompressionParams)) then
-    Configuration.LoadFromFile(ExtractCompressionConfig(FCompressionParams))
-  else
-    SetExitStatus(esConfigError);
+  if ExtractCompressionMethod(FCompressionParams) = 1 then
+  begin
+    if FileExists(ExtractCompressionConfig(FCompressionParams)) then
+      Configuration.LoadFromFile(ExtractCompressionConfig(FCompressionParams))
+    else
+      SetExitStatus(esConfigError);
+
+    Configuration.Selector('\main');
+    Configuration.CurrentSection.Values['Method']     := IntToStr(ExtractCompressionLevel   (FCompressionParams));
+    Configuration.CurrentSection.Values['Dictionary'] := IntToStr(ExtractCompressionAuxLevel(FCompressionParams));
+    Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
+  end;
 
   CurrentFileExt := '.';
-  Configuration.Selector('\main');
-  Configuration.CurrentSection.Values['Method']     := IntToStr(ExtractCompressionLevel   (FCompressionParams));
-  Configuration.CurrentSection.Values['Dictionary'] := IntToStr(ExtractCompressionAuxLevel(FCompressionParams));
-  Configuration.Selector('\m' + Configuration.CurrentSection.Values['Method']);
-
-  Writeln(FCompressionParams);
-
-  CurrentBlock := ExtractCompressionBlock(FCompressionParams);
+  CurrentBlock   := ExtractCompressionBlock(FCompressionParams);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
     CurrentItem := FCentralDirectory.Items[I];

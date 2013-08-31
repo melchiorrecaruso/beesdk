@@ -191,10 +191,6 @@ type
     property FileMasks: TStringList read FFileMasks;
   end;
 
-  function TryStrWithMultToQWord(var S: string; out Q : qword) : boolean;
-  function ExtractQWord(const Params: string; const K: string): qword;
-  function ExtractDWord(const Params: string; const K: string): dword;
-  function ExtractStr(const Params: string; const K: string): string;
   function ExtractCompressionMethod(const Params: string): longword;
   function ExtractCompressionLevel(const Params: string): longword;
   function ExtractCompressionAuxLevel(Params: string): longword;
@@ -212,7 +208,7 @@ implementation
 uses
   Math,
   SysUtils,
-  Bee_Common,
+  Bx_Common,
   Bee_Interface;
 
 function TryStrWithMultToQWord(var S: string; out Q: qword) : boolean;
@@ -280,7 +276,9 @@ begin
       else
         Break;
   end;
-  if TryStrWithMultToQWord(S, Result) = FALSE then Result := 0;
+
+  if TryStrWithMultToQWord(S, Result) = FALSE then
+    SetExitStatus(esCmdLineError);
 end;
 
 function ExtractDWord(const Params: string; const K: string): dword;
@@ -353,8 +351,6 @@ begin
 end;
 
 function ExtractCompressionAuxLevel(Params: string): longword;
-var
-  q: qword;
 begin
   case ExtractCompressionMethod(Params) of
     1:
@@ -368,12 +364,11 @@ begin
     end;
     2:
     begin
-      Result := $200000;
+      Result := $800;
       if Pos('/AL', UpCase(Params)) > 0 then
-        if TryStrWithMultToQWord(ExtractStr(Params, '/AL'), q) = FALSE then
-           SetExitStatus(esCmdLineError);
+        Result := ExtractQWord(Params, '/AL');
 
-      if ($800 < Result) or (Result < $FFFFFFDB) then
+      if ($FFFFFFDB < Result) or (Result < $800) then
         SetExitStatus(esCmdLineError);
     end;
     else SetExitStatus(esCmdLineError);
@@ -382,32 +377,48 @@ end;
 
 function ExtractCompressionFilter(const Params: string): string;
 begin
-  Result := ExtractStr(Params, '/F');
+  if Pos('/F', UpCase(Params)) > 0 then
+    Result := ExtractStr(Params, '/F')
+  else
+    Result := '';
 end;
 
 function ExtractCompressionAuxFilter(const Params: string): string;
 begin
-  Result := ExtractStr(Params, '/AF');
+  if Pos('/AF', UpCase(Params)) > 0 then
+    Result := ExtractStr(Params, '/AF')
+  else
+    Result := '';
 end;
 
 function ExtractCompressionBlock(Params: string): qword;
 begin
-  Result := ExtractQWord(Params, '/B');
+  if Pos('/B', UpCase(Params)) > 0 then
+    Result := ExtractQWord(Params, '/B')
+  else
+    Result := 0;
 end;
 
 function ExtractCompressionConfig(const Params: string): string;
 begin
-  Result := ExtractStr(Params, '/C');
+  if Pos('/C', UpCase(Params)) > 0 then
+    Result := ExtractStr(Params, '/C')
+  else
+    Result := '';
+
   if Result = '' then
-    Result := SelfPath + DefaultCfgName;
+    Result := SelfPath + DefaultConfigFileName;
 end;
 
 function ExtractEncryptionMethod(const Params: string): longword;
 var
   S: string;
 begin
-  Result := 0;
-  if ExtractEncryptionPassword(Params) <> '' then Result := 1;
+  if ExtractEncryptionPassword(Params) = '' then
+    Result := 0
+  else
+    Result := 1;
+
   if Pos('/M', UpCase(Params)) > 0 then
   begin
     S := UpCase(ExtractStr(Params, '/M'));
@@ -423,7 +434,10 @@ end;
 
 function ExtractEncryptionPassword(const Params: string): string;
 begin
-  Result := ExtractStr(Params, '/P');
+  if Pos('/P', UpCase(Params)) > 0 then
+    Result := ExtractStr(Params, '/P')
+  else
+    Result := '';
 end;
 
 function ExtractCheckMethod(Params: string): longword;
