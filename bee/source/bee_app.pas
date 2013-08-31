@@ -249,7 +249,7 @@ begin
       StartIndex := 0;
       StartName  := ExtractAs;
       while FileExists(ExtractAs) = TRUE do
-        ExtractAs := GenerateAlternativeFileName(StartName, StartIndex);
+        ExtractAs := GenerateAltFileName(StartName, StartIndex);
       Confirm := arcOk;
     end;
     umQuery        : begin
@@ -335,7 +335,7 @@ begin
       StartIndex := 0;
       StartName  := UpdateAs;
       while FArchiver.IndexOf(UpdateAs) <> -1 do
-        UpdateAs := GenerateAlternativeFileName(StartName, StartIndex);
+        UpdateAs := GenerateAltFileName(StartName, StartIndex);
       Confirm := arcOk;
     end;
     umAddQuery     : begin

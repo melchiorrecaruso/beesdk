@@ -30,7 +30,7 @@
     v0.8.0 build 2041 - 2011.08.31 by Melchiorre Caruso.
 }
 
-unit bxCommon;
+unit bx_Common;
 
 {$I bee_compiler.inc}
 
@@ -409,7 +409,7 @@ end;
 function FileTimeToString(X: longint): string;
 begin
   try
-    Result := Bee_Common.DateTimeToString(SysUtils.FileDateToDateTime(X));
+    Result := bx_Common.DateTimeToString(SysUtils.FileDateToDateTime(X));
   except
     Result := '????-??-?? ??:??:??';
   end;
@@ -418,7 +418,7 @@ end;
 function FileTimeToString(X: longint; const Format: string): string;
 begin
   try
-    Result := Bee_Common.DateTimeToString(SysUtils.FileDateToDateTime(X), Format);
+    Result := bx_Common.DateTimeToString(SysUtils.FileDateToDateTime(X), Format);
   except
     Result := '????-??-?? ??:??:??';
   end;
