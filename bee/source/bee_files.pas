@@ -223,15 +223,18 @@ var
 begin
   Result := 0;
   Count  := 0;
-  repeat
-    Read(@Last, 1);
+  while Read(@Last, 1) = 1 do
+  begin
     Temp   := Last and $7F;
     Temp   := Temp shl (7 * Count);
     Result := Result or Temp;
 
-    if (Last and $80) = 0 then Break;
+    if (Last and $80) = 0 then
+    begin
+      Break;
+    end;
     Inc(Count);
-  until ExitStatus <> esNoError;
+  end;
 end;
 
 function TFileReader.ReadInfString: string;
@@ -273,10 +276,7 @@ begin
         DoOpenImage(FImageNumber + 1);
         if ExitStatus <> esNoError then Break;
       end else
-      begin
-        SetExitStatus(esReadStreamError);
         Break;
-      end;
     end;
   until Result = Count;
 end;
