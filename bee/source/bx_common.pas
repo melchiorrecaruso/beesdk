@@ -27,7 +27,7 @@
     v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 2041 - 2011.08.31 by Melchiorre Caruso.
+    v0.8.0 build 2045 - 2013.09.01 by Melchiorre Caruso.
 }
 
 unit bx_Common;
@@ -58,26 +58,6 @@ const
        -TODO-
     {$ENDIF}
   {$ENDIF}
-
-  { Messages }
-
-  cmCreating          = 'Creating   %s';
-  cmOpening           = 'Opening    %s';
-  cmScanning          = 'Scanning   %s';
-  cmAdding            = 'Adding     %s';
-  cmUpdating          = 'Updating   %s';
-  cmCopying           = 'Copying    %s';
-  cmSplitting         = 'Splitting  %s';
-  cmEncoding          = 'Encoding   %s';
-  cmExtracting        = 'Extracting %s';
-  cmTesting           = 'Testing    %s';
-  cmDecoding          = 'Decoding   %s';
-  cmDeleting          = 'Deleting   %s';
-  cmChecking          = 'Checking   %s';
-  cmListing           = 'Listing    %s';
-  cmSwapping          = 'Swapping   %s';
-  cmRenaming          = 'Renaming   %s';
-  cmLoading           = 'Loading    %s';
 
 function SelfName: string;
 function SelfPath: string;

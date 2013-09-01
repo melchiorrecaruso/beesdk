@@ -18,7 +18,7 @@
 
 { Contains:
 
-    ExitStaus, run time application exit status;
+    Messages and run time application exit status;
 
   Modifyed:
 
@@ -32,6 +32,28 @@ unit bx_Messages;
 interface
 
 const
+  { Messages }
+
+  cmCreating   = 'Creating   %s';
+  cmOpening    = 'Opening    %s';
+  cmScanning   = 'Scanning   %s';
+  cmAdding     = 'Adding     %s';
+  cmUpdating   = 'Updating   %s';
+  cmCopying    = 'Copying    %s';
+  cmSplitting  = 'Splitting  %s';
+  cmEncoding   = 'Encoding   %s';
+  cmExtracting = 'Extracting %s';
+  cmTesting    = 'Testing    %s';
+  cmDecoding   = 'Decoding   %s';
+  cmDeleting   = 'Deleting   %s';
+  cmChecking   = 'Checking   %s';
+  cmListing    = 'Listing    %s';
+  cmSwapping   = 'Swapping   %s';
+  cmRenaming   = 'Renaming   %s';
+  cmLoading    = 'Loading    %s';
+
+  { ExitStatus }
+
   esNoError           =   0;
   esCmdLineError      = 101;
   esAllocMemError     = 102;
@@ -104,9 +126,7 @@ implementation
   procedure SetExitStatus(aExitStatus: longint);
   begin
     if ExitStatus = esNoError then
-    begin
       ExitStatus := aExitStatus;
-    end;
   end;
 
 end.
