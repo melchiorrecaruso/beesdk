@@ -50,11 +50,11 @@ uses
 
 const
   /// archive markers
-  ARCHIVE_MARKER                      = $78454542;
-  ARCHIVE_CENTRALDIR_MARKER           = $78454542;
-  ARCHIVE_CENTRALDIR_ITEM_MARKER      = $78454542;
-  ARCHIVE_CENTRALDIR_SEEK_MARKER      = $78454542;
-  ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER = $78454542;
+  ARCHIVE_MARKER                      = $42582120;
+  ARCHIVE_CENTRALDIR_MARKER           = $42584321;
+  ARCHIVE_CENTRALDIR_ITEM_MARKER      = $42584921;
+  ARCHIVE_CENTRALDIR_SEEK_MARKER      = $42585321;
+  ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER = $42584d21;
 
 type
   /// archive central directory flag
@@ -969,10 +969,6 @@ begin
       MARKER := Stream.ReadDWord;
     end;
   end;
-
-  Writeln(Count);
-  Writeln(ExitStatus);
-  Writeln(MARKER, ' ', ARCHIVE_CENTRALDIR_SEEK_MARKER);
 
   // [7] check central directory seek marker
   if ExitStatus = esNoError then
