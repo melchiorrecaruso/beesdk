@@ -25,7 +25,7 @@
     v0.8.0 build 2245 - 2013.09.01 by Melchiorre Caruso.
 }
 
-unit BeeSDK_Archive;
+unit bx_Archiver;
 
 {$I bee_compiler.inc}
 
