@@ -43,7 +43,7 @@ uses
 
   Bee_Files,
   Bee_BufStream,
-  Bee_CommandLine,
+
   Bee_Configuration;
 
 const
@@ -411,6 +411,7 @@ function VersionToStr(Version: longword): string;
 implementation
 
 uses
+  bx_CommandLine,
   bx_Common,
   bx_Messages;
 
