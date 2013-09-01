@@ -117,7 +117,6 @@
       <Unit3>
         <Filename Value="beesdk_archive.pas"/>
         <UnitName Value="BeeSDK_Archive"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="33"/>
@@ -130,9 +129,10 @@
       <Unit4>
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="194"/>
+        <TopLine Value="443"/>
         <CursorPos X="19" Y="234"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
@@ -144,13 +144,13 @@
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="63"/>
-        <CursorPos X="24" Y="89"/>
+        <CursorPos X="71" Y="97"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="beesdk_archive.pas"/>
         <Caret Line="894" Column="28" TopLine="837"/>
@@ -267,10 +267,6 @@
         <Filename Value="bee_files.pas"/>
         <Caret Line="277" Column="23" TopLine="245"/>
       </Position29>
-      <Position30>
-        <Filename Value="bee_files.pas"/>
-        <Caret Line="234" Column="37" TopLine="241"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
