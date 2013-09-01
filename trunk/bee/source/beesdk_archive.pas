@@ -39,12 +39,10 @@ uses
 
   Bee_Crc,
   Bee_BlowFish,
-  Bee_Interface,
   Bee_MainPacker,
 
   Bee_Files,
   Bee_BufStream,
-  bx_Common,
   Bee_CommandLine,
   Bee_Configuration;
 
@@ -411,6 +409,10 @@ function SizeToStr(const Size: int64): string;
 function VersionToStr(Version: longword): string;
 
 implementation
+
+uses
+  bx_Common,
+  bx_Messages;
 
 // ---
 
