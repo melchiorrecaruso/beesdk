@@ -42,11 +42,14 @@ uses
   Classes,
   SysUtils,
 
-  Bee_CommandLine,
-  Bee_Common,
-  Bee_Files,
-  Bee_Interface,
-  BeeSDK_Archive;
+  bx_Archiver,
+  bx_CommandLine,
+  bx_Common,
+  bx_Messages,
+
+  Bee_Files;
+
+
 
 type
   { TBeeApp class }
@@ -634,7 +637,7 @@ begin
           if ExitStatus <> esNoError then Break;
           Item := ItemToList.Items[I];
           DoMessage(Format('%16s %7s %12s %12s %s', [
-            Bee_Common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
+            bx_Common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
             SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize), Item.FileName]));
         end;
         DoMessage('---------- -------- ------- ------------ ------------ ---------------------');
@@ -642,7 +645,7 @@ begin
           SizeToStr(TotalPackedSize), TotalFiles]));
       end;
     end;
-    DoMessage(Format(Cr + 'Last modified time: %16s', [Bee_Common.FileTimeToString(FArchiver.LastModifiedTime)]));
+    DoMessage(Format(Cr + 'Last modified time: %16s', [bx_Common.FileTimeToString(FArchiver.LastModifiedTime)]));
     ItemToList.Destroy;
   end;
   CloseArchive;

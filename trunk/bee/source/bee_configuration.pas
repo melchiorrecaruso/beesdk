@@ -101,7 +101,7 @@ type
 implementation
 
 uses
-  Bee_Common;
+  bx_Common;
 
 { Class:  TConfiguration | methods }
 { Domain: public                   }
@@ -224,13 +224,13 @@ end;
 
 procedure TConfigSection.PutData(const Name: string; var Data; aCount: longint);
 begin
-  Values[Name] := Bee_Common.Hex(Data, aCount);
+  Values[Name] := bx_Common.Hex(Data, aCount);
 end;
 
 function TConfigSection.GetData(const Name: string; var Data; aCount: longint): boolean;
 begin
   FillChar(Data, aCount, 0);
-  Result := Bee_Common.HexToData(Values[Name], Data, aCount);
+  Result := bx_Common.HexToData(Values[Name], Data, aCount);
 end;
 
-end.
+end.

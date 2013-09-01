@@ -34,8 +34,7 @@ interface
 uses
   Bee_Crc,
   Bee_BlowFish,
-  Bee_MainPacker,
-  Bee_Interface;
+  Bee_MainPacker;
 
 type
   { TBufStream abstract class }
@@ -133,7 +132,8 @@ implementation
 
 uses
   Math,
-  SysUtils;
+  SysUtils,
+  bx_Messages;
 
 function DoFill(Stream: pointer; Data: PByte; Size: longint): longint; inline;
 begin

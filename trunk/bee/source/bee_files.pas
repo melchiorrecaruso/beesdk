@@ -42,8 +42,8 @@ uses
   DateUtils,
   SysUtils,
 
+  bx_CommandLine,
   bx_Common,
-  Bee_CommandLine,
   Bee_BufStream;
 
 type
@@ -140,7 +140,7 @@ type
 implementation
 
 uses
-  Bee_Interface;
+  bx_Messages;
 
 { TFileReader class }
 

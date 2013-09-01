@@ -208,8 +208,8 @@ implementation
 uses
   Math,
   SysUtils,
-  Bx_Common,
-  Bee_Interface;
+  bx_Common,
+  bx_Messages;
 
 function TryStrWithMultToQWord(var S: string; out Q: qword) : boolean;
 var
