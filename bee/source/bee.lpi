@@ -121,7 +121,6 @@
         <WindowIndex Value="0"/>
         <TopLine Value="33"/>
         <CursorPos X="41" Y="57"/>
-        <FoldState Value=" T3qT039451115\"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -129,10 +128,9 @@
       <Unit4>
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="443"/>
+        <TopLine Value="261"/>
         <CursorPos X="19" Y="234"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
@@ -140,11 +138,12 @@
       </Unit4>
       <Unit5>
         <Filename Value="bee_interface.pas"/>
-        <UnitName Value="Bee_Interface"/>
+        <UnitName Value="bx_Messages"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="63"/>
-        <CursorPos X="71" Y="97"/>
+        <TopLine Value="13"/>
+        <CursorPos X="49" Y="21"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
