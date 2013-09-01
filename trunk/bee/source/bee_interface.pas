@@ -18,14 +18,14 @@
 
 { Contains:
 
-    ExitStaus, run time application exit status.
+    ExitStaus, run time application exit status;
 
   Modifyed:
 
-    v0.8.0 build 1970 - 2013.04.26 by Melchiorre Caruso.
+    v0.8.0 build 2245 - 2013.09.01 by Melchiorre Caruso.
 }
 
-unit Bee_Interface;
+unit bx_Messages;
 
 {$I bee_compiler.inc}
 
