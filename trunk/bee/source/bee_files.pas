@@ -42,7 +42,7 @@ uses
   DateUtils,
   SysUtils,
 
-  Bee_Common,
+  bx_Common,
   Bee_CommandLine,
   Bee_BufStream;
 
@@ -231,7 +231,7 @@ begin
 
     if (Last and $80) = 0 then Break;
     Inc(Count);
-  until FALSE;
+  until ExitStatus <> esNoError;
 end;
 
 function TFileReader.ReadInfString: string;
@@ -274,9 +274,6 @@ begin
         if ExitStatus <> esNoError then Break;
       end else
       begin
-        Writeln('ERROR');
-
-
         SetExitStatus(esReadStreamError);
         Break;
       end;
