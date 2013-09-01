@@ -93,7 +93,7 @@ type
 implementation
 
 uses
-  Bee_Common;
+  bx_Common;
 
 /// TCRC32Hash class
 

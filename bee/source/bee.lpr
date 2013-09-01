@@ -45,7 +45,7 @@ uses
   Classes,
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
-  Bee_Common,
+  bx_Common,
   Bee_App;
 
 var
@@ -84,4 +84,4 @@ begin
   Application := TBeeApp.Create;
   Application.Execute;
   Application.Destroy;
-end.
+end.

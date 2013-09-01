@@ -138,7 +138,7 @@ implementation
 uses
   SysUtils,
   Bee_BufStream,
-  Bee_Common,
+  bx_Common,
   Bee_Configuration,
   {$IFDEF LIBBX}
   Bee_LibBx;
