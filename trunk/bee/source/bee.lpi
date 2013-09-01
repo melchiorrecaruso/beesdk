@@ -95,10 +95,11 @@
       <Unit1>
         <Filename Value="bee_commandline.pas"/>
         <UnitName Value="Bee_CommandLine"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="182"/>
-        <CursorPos X="1" Y="193"/>
+        <TopLine Value="2"/>
+        <CursorPos X="8" Y="28"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -119,8 +120,8 @@
         <UnitName Value="BeeSDK_Archive"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="390"/>
-        <CursorPos X="17" Y="414"/>
+        <TopLine Value="255"/>
+        <CursorPos X="35" Y="25"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -139,10 +140,9 @@
       <Unit5>
         <Filename Value="bx_messages.pas"/>
         <UnitName Value="bx_Messages"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
+        <TopLine Value="10"/>
         <CursorPos X="18" Y="21"/>
         <FoldState Value=" T3j52W1X"/>
         <UsageCount Value="10"/>
@@ -154,7 +154,7 @@
         <UnitName Value="bx_Common"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
+        <TopLine Value="16"/>
         <CursorPos X="26" Y="65"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
