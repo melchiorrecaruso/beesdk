@@ -25,7 +25,7 @@
     v0.8.0 build 2031 - 2013.08.22 by Melchiorre Caruso.
 }
 
-unit Bee_CommandLine;
+unit bx_CommandLine;
 
 {$I bee_compiler.inc}
 

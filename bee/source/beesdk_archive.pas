@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 1895 - 2013.05.26 by Melchiorre Caruso.
+    v0.8.0 build 2245 - 2013.09.01 by Melchiorre Caruso.
 }
 
 unit BeeSDK_Archive;
@@ -48,11 +48,11 @@ uses
 
 const
   /// archive markers
-  ARCHIVE_MARKER                      = $42582120;
-  ARCHIVE_CENTRALDIR_MARKER           = $42584321;
-  ARCHIVE_CENTRALDIR_ITEM_MARKER      = $42584921;
-  ARCHIVE_CENTRALDIR_SEEK_MARKER      = $42585321;
-  ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER = $42584d21;
+  ARCHIVE_MARKER                      = $42583030;
+  ARCHIVE_CENTRALDIR_MARKER           = $42583130;
+  ARCHIVE_CENTRALDIR_ITEM_MARKER      = $42583330;
+  ARCHIVE_CENTRALDIR_SEEK_MARKER      = $42583530;
+  ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER = $42583730;
 
 type
   /// archive central directory flag
