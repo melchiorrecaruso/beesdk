@@ -79,7 +79,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -95,10 +95,9 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="606"/>
+        <TopLine Value="331"/>
         <CursorPos X="58" Y="648"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
@@ -107,7 +106,7 @@
       <Unit2>
         <Filename Value="bee_files.pas"/>
         <UnitName Value="Bee_Files"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="118"/>
         <CursorPos X="14" Y="143"/>
@@ -118,7 +117,7 @@
       <Unit3>
         <Filename Value="bx_messages.pas"/>
         <UnitName Value="bx_Messages"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="22"/>
         <CursorPos X="18" Y="21"/>
@@ -129,9 +128,9 @@
       <Unit4>
         <Filename Value="bx_common.pas"/>
         <UnitName Value="bx_Common"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="16"/>
+        <TopLine Value="17"/>
         <CursorPos X="26" Y="65"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -140,7 +139,7 @@
       <Unit5>
         <Filename Value="bx_commandline.pas"/>
         <UnitName Value="bx_CommandLine"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="187"/>
         <CursorPos X="18" Y="210"/>
@@ -151,7 +150,7 @@
       <Unit6>
         <Filename Value="bee_crc.pas"/>
         <UnitName Value="Bee_Crc"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="71"/>
         <CursorPos X="5" Y="96"/>
@@ -162,7 +161,7 @@
       <Unit7>
         <Filename Value="bee_bufstream.pas"/>
         <UnitName Value="Bee_BufStream"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="14"/>
         <CursorPos X="18" Y="37"/>
@@ -173,7 +172,7 @@
       <Unit8>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="116"/>
         <CursorPos X="17" Y="141"/>
@@ -184,7 +183,7 @@
       <Unit9>
         <Filename Value="bee_configuration.pas"/>
         <UnitName Value="Bee_Configuration"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="187"/>
         <CursorPos X="15" Y="233"/>
@@ -192,8 +191,20 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="bx_archiver.pas"/>
+        <UnitName Value="bx_Archiver"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1350"/>
+        <CursorPos X="40" Y="1324"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit10>
     </Units>
-    <JumpHistory Count="16" HistoryIndex="15">
+    <JumpHistory Count="15" HistoryIndex="14">
       <Position1>
         <Filename Value="bee_files.pas"/>
         <Caret Line="277" Column="23" TopLine="245"/>
@@ -215,49 +226,45 @@
         <Caret Line="45" Column="25" TopLine="23"/>
       </Position5>
       <Position6>
-        <Filename Value="bee_files.pas"/>
-        <Caret Line="234" Column="19" TopLine="261"/>
+        <Filename Value="bee_crc.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position6>
       <Position7>
-        <Filename Value="bee_crc.pas"/>
+        <Filename Value="bee_bufstream.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
       </Position7>
       <Position8>
         <Filename Value="bee_bufstream.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="136" Column="14" TopLine="109"/>
       </Position8>
       <Position9>
-        <Filename Value="bee_bufstream.pas"/>
-        <Caret Line="136" Column="14" TopLine="109"/>
+        <Filename Value="bee_mainpacker.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position9>
       <Position10>
-        <Filename Value="bee_mainpacker.pas"/>
+        <Filename Value="bee_configuration.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
       </Position10>
       <Position11>
         <Filename Value="bee_configuration.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="104" Column="5" TopLine="79"/>
       </Position11>
       <Position12>
-        <Filename Value="bee_configuration.pas"/>
-        <Caret Line="104" Column="5" TopLine="79"/>
-      </Position12>
-      <Position13>
         <Filename Value="bee_files.pas"/>
         <Caret Line="44" Column="1" TopLine="21"/>
+      </Position12>
+      <Position13>
+        <Filename Value="bee_app.pas"/>
+        <Caret Line="46" Column="5" TopLine="21"/>
       </Position13>
       <Position14>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="46" Column="5" TopLine="21"/>
+        <Caret Line="50" Column="13" TopLine="23"/>
       </Position14>
       <Position15>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="50" Column="13" TopLine="23"/>
-      </Position15>
-      <Position16>
-        <Filename Value="bee_app.pas"/>
         <Caret Line="640" Column="15" TopLine="606"/>
-      </Position16>
+      </Position15>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
