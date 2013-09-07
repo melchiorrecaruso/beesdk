@@ -1307,7 +1307,7 @@ begin
       //  SetExitStatus(esArchiveTypeError);
     end;
   end else
-  begin                               0
+  begin
     DoMessage(Format(cmCreating, [aArchiveName]));
     FArchiveName := aArchiveName;
   end;
