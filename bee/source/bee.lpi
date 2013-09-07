@@ -79,7 +79,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="10">
+    <Units Count="9">
       <Unit0>
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -95,7 +95,7 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="331"/>
         <CursorPos X="58" Y="648"/>
@@ -128,7 +128,7 @@
       <Unit4>
         <Filename Value="bx_commandline.pas"/>
         <UnitName Value="bx_CommandLine"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="187"/>
         <CursorPos X="18" Y="210"/>
@@ -139,11 +139,10 @@
       <Unit5>
         <Filename Value="bee_bufstream.pas"/>
         <UnitName Value="Bee_BufStream"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="27"/>
-        <CursorPos X="15" Y="50"/>
+        <TopLine Value="9"/>
+        <CursorPos X="47" Y="49"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -151,7 +150,7 @@
       <Unit6>
         <Filename Value="bee_mainpacker.pas"/>
         <UnitName Value="Bee_MainPacker"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="116"/>
         <CursorPos X="17" Y="141"/>
@@ -162,9 +161,10 @@
       <Unit7>
         <Filename Value="bee_configuration.pas"/>
         <UnitName Value="Bee_Configuration"/>
-        <EditorIndex Value="7"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="187"/>
+        <TopLine Value="188"/>
         <CursorPos X="15" Y="233"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
@@ -181,19 +181,8 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
-      <Unit9>
-        <Filename Value="bee_blowfish.pas"/>
-        <UnitName Value="Bee_BlowFish"/>
-        <EditorIndex Value="4"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="19"/>
-        <CursorPos X="37" Y="21"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit9>
     </Units>
-    <JumpHistory Count="21" HistoryIndex="20">
+    <JumpHistory Count="20" HistoryIndex="19">
       <Position1>
         <Filename Value="bee_files.pas"/>
         <Caret Line="277" Column="23" TopLine="245"/>
@@ -259,25 +248,21 @@
         <Caret Line="46" Column="20" TopLine="21"/>
       </Position16>
       <Position17>
-        <Filename Value="bee_blowfish.pas"/>
-        <Caret Line="45" Column="14" TopLine="28"/>
+        <Filename Value="bee_bufstream.pas"/>
+        <Caret Line="179" Column="28" TopLine="151"/>
       </Position17>
       <Position18>
         <Filename Value="bee_bufstream.pas"/>
-        <Caret Line="179" Column="28" TopLine="151"/>
+        <Caret Line="49" Column="25" TopLine="26"/>
       </Position18>
       <Position19>
         <Filename Value="bee_bufstream.pas"/>
-        <Caret Line="49" Column="25" TopLine="26"/>
+        <Caret Line="36" Column="3" TopLine="12"/>
       </Position19>
       <Position20>
         <Filename Value="bee_bufstream.pas"/>
-        <Caret Line="36" Column="3" TopLine="12"/>
-      </Position20>
-      <Position21>
-        <Filename Value="bee_bufstream.pas"/>
         <Caret Line="50" Column="25" TopLine="27"/>
-      </Position21>
+      </Position20>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

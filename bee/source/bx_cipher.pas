@@ -22,10 +22,10 @@
 
   Modifyed:
 
-    v0.8.0 build 1864 - 2013.02.16 by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.07by Melchiorre Caruso.
 }
 
-unit Bee_BlowFish;
+unit bx_Cipher;
 
 {$I bee_compiler.inc}
 
