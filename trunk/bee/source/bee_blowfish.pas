@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2006-2013 Melchiorre Caruso.
+  Copyright (c) 2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 }
 
 { Contains:
+
+    Ciphers.
 
   Modifyed:
 
@@ -38,9 +40,9 @@ const
 type
   TBuffer = array [0.. DefaultBufferSize -1] of byte;
 
-  { TBaseCipher class }
+  { TCipher class }
 
-  TBaseCipher = class(TObject)
+  TCipher = class(TObject)
   public
     function Encrypt(var Data: TBuffer; Count: longint): longint; virtual; abstract;
     function Decrypt(var Data: TBuffer; Count: longint): longint; virtual; abstract;
@@ -48,7 +50,7 @@ type
 
   { TBlowFishCipher class }
 
-  TBlowFishCipher = class(TBaseCipher)
+  TBlowFishCipher = class(TCipher)
   private
     FBlowFish: TBlowFish;
   public
@@ -60,7 +62,7 @@ type
 
   { TIdeaCipher class }
 
-  TIdeaCipher = class(TBaseCipher)
+  TIdeaCipher = class(TCipher)
   private
     FKey: TIDEAKey;
   public

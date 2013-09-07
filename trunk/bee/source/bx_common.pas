@@ -27,7 +27,7 @@
     v0.7.8 build 0154 - 2005.07.23 by Melchiorre Caruso;
     v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
 
-    v0.8.0 build 2045 - 2013.09.01 by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.07 by Melchiorre Caruso.
 }
 
 unit bx_Common;

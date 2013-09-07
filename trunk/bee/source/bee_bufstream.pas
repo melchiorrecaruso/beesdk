@@ -32,7 +32,8 @@ unit Bee_BufStream;
 interface
 
 uses
-  Bee_Crc,
+  bx_HashGen
+  ,
   Bee_BlowFish,
   Bee_MainPacker;
 
@@ -46,7 +47,7 @@ type
     FHash: THashGen;
     FHashMethod: longword;
     FHashDigest: string;
-    FCipher: TBaseCipher;
+    FCipher: TCipher;
     FCipherMethod: longword;
     FCipherKey: string;
     FCoder: TBaseCoder;
