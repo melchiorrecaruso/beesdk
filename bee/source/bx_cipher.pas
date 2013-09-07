@@ -22,7 +22,7 @@
 
   Modifyed:
 
-    v0.8.0 build 2060 - 2013.09.07by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.07 by Melchiorre Caruso.
 }
 
 unit bx_Cipher;
@@ -32,7 +32,8 @@ unit bx_Cipher;
 interface
 
 uses
-  Idea, BlowFish;
+  BlowFish,
+  Idea;
 
 const
   DefaultBufferSize = 4096;

@@ -18,11 +18,11 @@
 
 { Contains:
 
-    TCommandLine class.
+    Command line parser.
 
   Modifyed:
 
-    v0.8.0 build 2031 - 2013.08.22 by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.07 by Melchiorre Caruso.
 }
 
 unit bx_CommandLine;
@@ -35,81 +35,64 @@ uses
   Classes;
 
 type
-  // Command:
-  //   cAdd       Add files
-  //   cDelete    Delete files
-  //   cExtract   Extract file
-  //   cHelp      Show Help
-  //   cList      List files
-  //   cQuickTest Quick test files
-  //   cRename    Rename files
-  //   cTest      Test files
-  //   cXextract  Extract files with full paths
+  // TCommand
 
   TCommand = (
-    cAdd,
-    cDelete,
-    cExtract,
-    cHelp,
-    cList,
-    cQuickTest,
-    cRename,
-    cTest,
-    cXextract);
+    cmAdd,       // cmAdd        Add files
+    cmDelete,    // cmDelete     Delete files
+    cmExtract,   // cmExtract    Extract file
+    cmHelp,      // cmHelp       Show Help
+    cmList,      // cmList       List files
+    cmQuickTest, // cmQuickTest  Quick test files
+    cmRename,    // cmRename     Rename files
+    cmTest,      // cmTest       Test files
+    cmXextract); // cmXextract   Extract files with full paths
 
-  // Update Method:
-  //   umAdd           Add only new files
-  //   umUpdate        Update only existing files
-  //   umReplace       Replace only existing files
-  //   umQuery         Query always
-  //   umAddUpdate     Add and update existing files
-  //   umAddReplace    Add and replace existing files
-  //   umAddQuery      Add and query if already exists
-  //   umAddAutoRename Add and rename if already exists
+  // TSwitch
+
+  TSwitch = (
+    swaccOption, // accOption  Set archive comment
+    swbOption,   //   bOption  Set work in background
+    swcOption,   //   cOption  Set compression parameters
+    swccOption,  //  ccOption  Set comment
+    swcdOption,  //  cdOption  Set current archive directory
+    swciOption,  //  ciOption  Set check integrity parameters
+    sweOption,   //   eOption  Set encryption parameters
+    swlOption,   //   lOption  Set current archive layer
+    swpOption,   //   pOption  Ses password
+    swrOption,   //   rOption  Recurse subdirectories
+    swrxOption,  //  rxOption  Recurse subdirectories for "x" switch
+    swsfxOption, // sfxOption  Create self-extracting archive
+    swslOption,  //  slOption  Show list sorted by filename - for "l" (list) command
+    swsOption,   //   sOption  Stop switches parsing
+    swtOption,   //   tOption  Test temporary archive after process
+    swuOption,   //   uOption  Update files method
+    swvOption,   //   vOption  Create volumes
+    swvbOption,  //  vbOption  Verbose mode
+    swwOption,   //   wOption  Set temporary work directory
+    swxOption,   //   xOption  Exclude filenames
+    swyOption);  //   yOption  Assume "yes" on all queries
+
+  TSwitches = set of TSwitch;
+
+  // TUpdateMethod
 
   TUpdateMethod = (
-    umAdd,
-    umUpdate,
-    umReplace,
-    umQuery,
-    umAddUpdate,
-    umAddReplace,
-    umAddQuery,
-    umAddAutoRename);
+    umAdd,            // umAdd            Add only new files
+    umUpdate,         // umUpdate         Update only existing files
+    umReplace,        // umReplace        Replace only existing files
+    umQuery,          // umQuery          Query always
+    umAddUpdate,      // umAddUpdate      Add and update existing files
+    umAddReplace,     // umAddReplace     Add and replace existing files
+    umAddQuery,       // umAddQuery       Add and query if already exists
+    umAddAutoRename); // umAddAutoRename  Add and rename if already exists
 
-  // TCommandLineOptions
+  // TCommandLineParser class
 
-  TCommandLineOption = (
-    claccOption,
-    clbOption,
-    clcOption,
-    clccOption,
-    clcdOption,
-    clciOption,
-    cleOption,
-    cllOption,
-    clpOption,
-    clrOption,
-    clrxOption,
-    clsfxOption,
-    clslOption,
-    clssOption,
-    cltOption,
-    cluOption,
-    clvOption,
-    clvbOption,
-    clwOption,
-    clxOption,
-    clyOption);
-
-  TCommandLineOptions = set of TCommandLineOption;
-
-  // TCommandLine class
-
-  TCommandLine = class
+  TCommandLineParser = class
   protected
     FCommand: TCommand;
-    FOptions: TCommandLineOptions;
+    FOptions: TSwitches;
     FaccOption: string;
     FbOption: boolean;
     FcOption: string;
@@ -165,7 +148,7 @@ type
     destructor Destroy; override;
     procedure Execute;
     property Command: TCommand read FCommand;
-    property Options: TCommandLineOptions read FOptions;
+    property Options: TSwitches read FOptions;
     property accOption: string read FaccOption;
     property bOption: boolean read FbOption;
     property cOption: string read FcOption;
@@ -474,38 +457,38 @@ end;
 
 // ---
 
-constructor TCommandLine.Create;
+constructor TCommandLineParser.Create;
 begin
   inherited Create;
-  FCommand     := cHelp;
+  FCommand     := cmHelp;
   FOptions     := [];
   FxOptions    := TStringList.Create;
   FArchiveName := '';
   FFileMasks   := TStringList.Create;
 end;
 
-destructor TCommandLine.Destroy;
+destructor TCommandLineParser.Destroy;
 begin
   FxOptions.Destroy;
   FFileMasks.Destroy;
   inherited Destroy;
 end;
 
-procedure TCommandLine.ProcessCommand(const S: string);
+procedure TCommandLineParser.ProcessCommand(const S: string);
 begin
-  if UpCase(S[1]) = 'A' then FCommand := cAdd       else
-  if UpCase(S[1]) = 'D' then FCommand := cDelete    else
-  if UpCase(S[1]) = 'E' then FCommand := cExtract   else
-  if UpCase(S[1]) = 'H' then FCommand := cHelp      else
-  if UpCase(S[1]) = 'L' then FCommand := cList      else
-  if UpCase(S[1]) = 'Q' then FCommand := cQuickTest else
-  if UpCase(S[1]) = 'R' then FCommand := cRename    else
-  if UpCase(S[1]) = 'T' then FCommand := cTest      else
-  if UpCase(S[1]) = 'X' then FCommand := cXextract  else
+  if UpCase(S[1]) = 'A' then FCommand := cmAdd       else
+  if UpCase(S[1]) = 'D' then FCommand := cmDelete    else
+  if UpCase(S[1]) = 'E' then FCommand := cmExtract   else
+  if UpCase(S[1]) = 'H' then FCommand := cmHelp      else
+  if UpCase(S[1]) = 'L' then FCommand := cmList      else
+  if UpCase(S[1]) = 'Q' then FCommand := cmQuickTest else
+  if UpCase(S[1]) = 'R' then FCommand := cmRename    else
+  if UpCase(S[1]) = 'T' then FCommand := cmTest      else
+  if UpCase(S[1]) = 'X' then FCommand := cmXextract  else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessACCOption(var S: string);
+procedure TCommandLineParser.ProcessACCOption(var S: string);
 begin
   Delete(S, 1, 5);
   if Pos('!', S) = 1 then
@@ -524,15 +507,15 @@ begin
     end else
       SetExitStatus(esCmdLineError);
 
-  if Command in [cAdd, cDelete, cRename] then
+  if Command in [cmAdd, cmDelete, cmRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, claccOption);
+      Include(FOptions, swaccOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessBOption(var S: string);
+procedure TCommandLineParser.ProcessBOption(var S: string);
 begin
   Delete(S, 1, 2);
   if S = '' then
@@ -540,30 +523,30 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if FCommand in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clbOption);
+      Include(FOptions, swbOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCOption(var S: string);
+procedure TCommandLineParser.ProcessCOption(var S: string);
 begin
   Delete(S, 1, 3);
   FcOption := FcOption + '/' + S + '/';
   while Pos('//', FcOption) > 0 do
     Delete(FcOption, Pos('//', FcOption), 1);
 
-  if Command in [cAdd] then
+  if Command in [cmAdd] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clcOption);
+      Include(FOptions, swcOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCCOption(var S: string);
+procedure TCommandLineParser.ProcessCCOption(var S: string);
 begin
   Delete(S, 1, 4);
   if Pos('!', S) = 1 then
@@ -582,15 +565,15 @@ begin
     end else
       SetExitStatus(esCmdLineError);
 
-  if Command in [cAdd, cDelete, cRename] then
+  if Command in [cmAdd, cmDelete, cmRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clccOption);
+      Include(FOptions, swccOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCDOption(var S: string);
+procedure TCommandLineParser.ProcessCDOption(var S: string);
 begin
   Delete(S, 1, 4);
   if Length(S) > 0 then
@@ -598,44 +581,44 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if Command in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if Command in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clcdOption);
+      Include(FOptions, swcdOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessCIOption(var S: string);
+procedure TCommandLineParser.ProcessCIOption(var S: string);
 begin
   Delete(S, 1, 4);
   FciOption := FciOption + '/' + S + '/';
   while Pos('//', FciOption) > 0 do
     Delete(FciOption, Pos('//', FciOption), 1);
 
-  if Command in [cAdd] then
+  if Command in [cmAdd] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clciOption);
+      Include(FOptions, swciOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessEOption(var S: string);
+procedure TCommandLineParser.ProcessEOption(var S: string);
 begin
   Delete(S, 1, 3);
   FeOption := FeOption + '/' + S + '/';
   while Pos('//', FeOption) > 0 do
     Delete(FeOption, Pos('//', FeOption), 1);
 
-  if Command in [cAdd] then
+  if Command in [cmAdd] then
   begin
     if ExitStatus = esNoError then
     begin
-      Include(FOptions, cleOption);
+      Include(FOptions, sweOption);
       if ExtractEncryptionPassword(FeOption) <> '' then
       begin
-        Include(FOptions, clpOption);
+        Include(FOptions, swpOption);
         FpOption := ExtractEncryptionPassword(FeOption);
       end;
     end;
@@ -643,7 +626,7 @@ begin
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessIOption(var S: string);
+procedure TCommandLineParser.ProcessIOption(var S: string);
 begin
   Delete(S, 1, 3);
   if Pos('!', S) = 1 then
@@ -661,14 +644,14 @@ begin
     end else
       SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if FCommand in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     // nothing to do
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessLOption(var S: string);
+procedure TCommandLineParser.ProcessLOption(var S: string);
 var
   I: longint;
 begin
@@ -676,28 +659,28 @@ begin
   if TryStrToInt(S, FlOption) = FALSE then
     SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if FCommand in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, cllOption);
+      Include(FOptions, swlOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessPOption(var S: string);
+procedure TCommandLineParser.ProcessPOption(var S: string);
 begin
   Delete(S, 1, 3);
   FpOption := S;
 
-  if Command in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if Command in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clpOption);
+      Include(FOptions, swpOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessROption(var S: string);
+procedure TCommandLineParser.ProcessROption(var S: string);
 var
   I: longint;
 begin
@@ -719,15 +702,15 @@ begin
     end else
       SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if FCommand in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clrOption);
+      Include(FOptions, swrOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessRXOption(var S: string);
+procedure TCommandLineParser.ProcessRXOption(var S: string);
 var
   I: longint;
 begin
@@ -749,15 +732,15 @@ begin
     end else
       SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if FCommand in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clrxOption);
+      Include(FOptions, swrxOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-function  TCommandLine.GetrOption(Index: longint): boolean;
+function  TCommandLineParser.GetrOption(Index: longint): boolean;
 begin
   Result := FALSE;
   if FrOption = 'A' then
@@ -767,7 +750,7 @@ begin
       Result := FrOption[Index + 1] = 'Y';
 end;
 
-function  TCommandLine.GetrxOption(Index: longint): boolean;
+function  TCommandLineParser.GetrxOption(Index: longint): boolean;
 begin
   Result := FALSE;
   if FrxOption = 'A' then
@@ -777,7 +760,7 @@ begin
       Result := FrxOption[Index + 1] = 'Y';
 end;
 
-procedure TCommandLine.ProcessSFXOption(var S: string);
+procedure TCommandLineParser.ProcessSFXOption(var S: string);
 begin
   if UpCase(S) = '-SFX' then
   begin
@@ -800,15 +783,15 @@ begin
   if FileExists(FsfxOption) = FALSE then
     SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cRename] then
+  if FCommand in [cmAdd, cmDelete, cmRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clsfxOption);
+      Include(FOptions, swsfxOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessSLOption(var S: string);
+procedure TCommandLineParser.ProcessSLOption(var S: string);
 begin
   Delete(S, 1, 3);
   if S = '' then
@@ -816,15 +799,15 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if FCommand in [cList] then
+  if FCommand in [cmList] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clslOption);
+      Include(FOptions, swlOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessSSOption(var S: string);
+procedure TCommandLineParser.ProcessSSOption(var S: string);
 begin
   Delete(S, 1, 3);
   if S = '' then
@@ -832,15 +815,15 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if FCommand in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clssOption);
+      Include(FOptions, swsOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessTOption(var S: string);
+procedure TCommandLineParser.ProcessTOption(var S: string);
 begin
   Delete(S, 1, 2);
   if S = '' then
@@ -848,15 +831,15 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if Command in [cAdd, cDelete, cRename] then
+  if Command in [cmAdd, cmDelete, cmRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, cltOption);
+      Include(FOptions, swtOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessUOption(var S: string);
+procedure TCommandLineParser.ProcessUOption(var S: string);
 var
   I: longint;
 begin
@@ -866,15 +849,15 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cExtract, cXextract] then
+  if FCommand in [cmAdd, cmExtract, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, cluOption);
+      Include(FOptions, swuOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessVOption(var S: string);
+procedure TCommandLineParser.ProcessVOption(var S: string);
 var
   I: longint;
 begin
@@ -886,15 +869,15 @@ begin
   if TryStrWithMultToQWord(S, FvOption) = FALSE then
     SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cRename] then
+  if FCommand in [cmAdd, cmDelete, cmRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clvOption);
+      Include(FOptions, swvOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessVBOption(var S: string);
+procedure TCommandLineParser.ProcessVBOption(var S: string);
 begin
   Delete(S, 1, 3);
   if S = '' then
@@ -902,15 +885,15 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if Command in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if Command in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clvbOption);
+      Include(FOptions, swvbOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessWOption(var S: string);
+procedure TCommandLineParser.ProcessWOption(var S: string);
 begin
   if UpCase(S) = '-W' then
   begin
@@ -925,15 +908,15 @@ begin
     end else
       SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cRename] then
+  if FCommand in [cmAdd, cmDelete, cmRename] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clwOption);
+      Include(FOptions, swwOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessXOption(var S: string);
+procedure TCommandLineParser.ProcessXOption(var S: string);
 begin
   Delete(S, 1, 3);
   if Pos('!', S) = 1 then
@@ -951,15 +934,15 @@ begin
     end else
       SetExitStatus(esCmdLineError);
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if FCommand in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clxOption);
+      Include(FOptions, swxOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessYOption(var S: string);
+procedure TCommandLineParser.ProcessYOption(var S: string);
 begin
   Delete(S, 1, 2);
   if S = '' then
@@ -967,39 +950,39 @@ begin
   else
     SetExitStatus(esCmdLineError);
 
-  if Command in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if Command in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     if ExitStatus = esNoError then
-      Include(FOptions, clyOption);
+      Include(FOptions, swyOption);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessArchiveName(var S: string);
+procedure TCommandLineParser.ProcessArchiveName(var S: string);
 begin
   FArchiveName := S;
   if FileExists(FArchiveName) = FALSE then
     if ExtractFileExt(FArchiveName) = '' then
       FArchiveName := ChangeFileExt(FArchiveName, '.bx');
 
-  if FCommand in [cAdd, cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+  if FCommand in [cmAdd, cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
   begin
     // check if archive exists
-    if FCommand in [cDelete, cExtract, cList, cQuickTest, cRename, cTest, cXextract] then
+    if FCommand in [cmDelete, cmExtract, cmList, cmQuickTest, cmRename, cmTest, cmXextract] then
       if FileExists(FArchiveName) = FALSE then
         SetExitStatus(esCmdLineError);
   end else
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.ProcessFileMasks(const S: string);
+procedure TCommandLineParser.ProcessFileMasks(const S: string);
 begin
   FFileMasks.Add(S);
-  if FCommand in [cHelp] then
+  if FCommand in [cmHelp] then
     SetExitStatus(esCmdLineError);
 end;
 
-procedure TCommandLine.Execute;
+procedure TCommandLineParser.Execute;
 var
   I: longint;
   S: string;
@@ -1053,13 +1036,13 @@ begin
   // check file masks
   if FFileMasks.Count = 0 then
   begin
-    if FCommand in [cAdd, cDelete, cRename] then
+    if FCommand in [cmAdd, cmDelete, cmRename] then
       SetExitStatus(esCmdLineError)
     else
-      if FCommand in [cExtract, cList, cQuickTest, cTest, cXextract] then
+      if FCommand in [cmExtract, cmList, cmQuickTest, cmTest, cmXextract] then
       begin
         FrOption := 'A';
-        Include(FOptions, clrOption);
+        Include(FOptions, swrOption);
         FFileMasks.Add('*');
       end;
   end;

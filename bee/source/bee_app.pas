@@ -58,7 +58,7 @@ type
   private
     FSelfName: string;
     FArchiver: TArchiver;
-    FCommandLine: TCommandLine;
+    FCommandLine: TCommandLineParser;
     FUpdateMethod: TUpdateMethod;
     FAssumeYesOnAllQueries: boolean;
     procedure TagItems;
@@ -116,18 +116,18 @@ begin
   FArchiver.OnRequestImage      := DoRequestImage;
   FArchiver.OnUpdateItem        := DoUpdate;
   { load command line }
-  FCommandLine := TCommandLine.Create;
+  FCommandLine := TCommandLineParser.Create;
   FCommandLine.Execute;
   { set idle priority }
-  if clbOption in FCommandLine.Options then
+  if swbOption in FCommandLine.Options then
     SetIdlePriority;
   { set update method }
   FUpdateMethod := umAddQuery;
-  if cluOption in FCommandLine.Options then
+  if swuOption in FCommandLine.Options then
     FUpdateMethod := FCommandLine.uOption;
   { set if assume yes on all queries }
   FAssumeYesOnAllQueries := FALSE;
-  if clyOption in FCommandLine.Options then
+  if swyOption in FCommandLine.Options then
     FAssumeYesOnAllQueries := FCommandLine.yOption;
 end;
 
@@ -146,18 +146,18 @@ begin
   DoMessage(FSelfName);
   if ExitStatus = esNoError then
     case FCommandLine.Command of
-      cAdd:       EncodeShell;
-      cDelete:    CustomShell;
-      cExtract:   CustomShell;
-      cHelp:      HelpShell;
-      cList:      ListShell;
-      cRename:    CustomShell;
-      cTest:      CustomShell;
-      cQuickTest: CustomShell;
-      cxExtract:  CustomShell;
+      cmAdd:       EncodeShell;
+      cmDelete:    CustomShell;
+      cmExtract:   CustomShell;
+      cmHelp:      HelpShell;
+      cmList:      ListShell;
+      cmRename:    CustomShell;
+      cmTest:      CustomShell;
+      cmQuickTest: CustomShell;
+      cmxExtract:  CustomShell;
     end;
 
-  if FCommandLine.Command <> cHelp then
+  if FCommandLine.Command <> cmHelp then
     DoMessage(Cr + Format(GetExitMessage, [TimeDifference(StartTime)]));
 end;
 
@@ -229,8 +229,8 @@ var
   StartIndex: longint;
 begin
   case FCommandLine.Command of
-    cExtract : ExtractAs := ExtractFileName(                       Item.FileName);
-    cXextract: ExtractAs := DeleteFilePath (FCommandLine.cdOption, Item.FileName);
+    cmExtract : ExtractAs := ExtractFileName(                       Item.FileName);
+    cmXextract: ExtractAs := DeleteFilePath (FCommandLine.cdOption, Item.FileName);
   end;
 
   Confirm := arcCancel;
@@ -367,7 +367,7 @@ procedure TBeeApp.DoComment(Item: TArchiveItem;
   var CommentAs: string; var Confirm: TArchiveConfirm);
 begin
   Confirm := arcOk;
-  if clccOption in FCommandLine.Options then
+  if swccOption in FCommandLine.Options then
   begin
     CommentAs := FCommandLine.ccOption;
   end;
@@ -415,37 +415,37 @@ procedure TBeeApp.OpenArchive;
 begin
   FArchiver.OpenArchive(FCommandLine.ArchiveName);
   // archive comment
-  if claccOption in FCommandLine.Options then
+  if swaccOption in FCommandLine.Options then
     FArchiver.Comment := FCommandLine.accOption;
   // compression mode
-  if clcOption in FCommandLine.Options then
+  if swcOption in FCommandLine.Options then
     FArchiver.CompressionParams := FCommandLine.cOption;
   // check data integrity mode
-  if clciOption in FCommandLine.Options then
+  if swciOption in FCommandLine.Options then
     FArchiver.CheckParams := FCommandLine.ciOption;
   // encryption mode
-  if cleOption in FCommandLine.Options then
+  if sweOption in FCommandLine.Options then
     FArchiver.EncryptionParams := FCommandLine.eOption;
   // current layer
-  if cllOption in FCommandLine.Options then
+  if swlOption in FCommandLine.Options then
     FArchiver.NewLayer := FCommandLine.lOption = -1;
   // password
-  if clpOption in FCommandLine.Options then
+  if swpOption in FCommandLine.Options then
     FArchiver.Password := FCommandLine.pOption;
   // self extractor
-  if clsfxOption in FCommandLine.Options then
+  if swsfxOption in FCommandLine.Options then
     FArchiver.SelfExtractor := FCommandLine.sfxOption;
   // test temporary archive
-  if cltOption in FCommandLine.Options then
+  if swtOption in FCommandLine.Options then
     FArchiver.TestTempArchive := FCommandLine.tOption;
   // volume size
-  if clvOption in FCommandLine.Options then
+  if swvOption in FCommandLine.Options then
     FArchiver.VolumeSize := FCommandLine.vOption;
   // verbose mode
-  if clvbOption in FCommandLine.Options then
+  if swvbOption in FCommandLine.Options then
     FArchiver.VerboseMode := FCommandLine.vbOption;
   // work directory
-  if clwOption in FCommandLine.Options then
+  if swwOption in FCommandLine.Options then
     FArchiver.WorkDirectory := FCommandLine.wOption;
 end;
 
@@ -480,12 +480,12 @@ begin
 
     TagItems;
     case FCommandLine.Command of
-      cDelete:    FArchiver. DeleteTagged;
-      cExtract:   FArchiver.ExtractTagged;
-      cQuickTest: FArchiver.   TestTagged;
-      cRename:    FArchiver. RenameTagged;
-      cTest:      FArchiver.   TestTagged;
-      cxExtract:  FArchiver.ExtractTagged;
+      cmDelete:    FArchiver. DeleteTagged;
+      cmExtract:   FArchiver.ExtractTagged;
+      cmQuickTest: FArchiver.   TestTagged;
+      cmRename:    FArchiver. RenameTagged;
+      cmTest:      FArchiver.   TestTagged;
+      cmxExtract:  FArchiver.ExtractTagged;
     end;
   end;
   CloseArchive;
@@ -556,7 +556,7 @@ begin
   DoMessage('  -u: update files method');
   DoMessage('  -v: create volumes ');
   DoMessage('  -vb: verbose mode ');
-  DoMessage('  -w: set temporany work directory');
+  DoMessage('  -w: set temporary work directory');
   DoMessage('  -x: exclude filenames');
   DoMessage('  -y: assume yes on all queries');
 end;
