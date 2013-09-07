@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2006-2013 Melchiorre Caruso.
+  Copyright (c) 2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,12 +18,14 @@
 
 { Contains:
 
+    Hash generators.
+
   Modifyed:
 
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.07 by Melchiorre Caruso.
 }
 
-unit Bee_Crc;
+unit bx_HashGen;
 
 {$I bee_compiler.inc}
 
@@ -35,9 +37,9 @@ uses
   Sha1;
 
 type
-  { TBaseHash class }
+  { THashGen class }
 
-  TBaseHash = class(TObject)
+  THashGen = class(TObject)
   private
     FDigest: string;
   public
@@ -46,9 +48,9 @@ type
     procedure Update(Data: PByte; Count: longint); virtual; abstract;
   end;
 
-  { TCRC32Hash class }
+  { TCRC32HashGen class }
 
-  TCRC32Hash = class(TBaseHash)
+  TCRC32HashGen = class(THashGen)
   private
     FCRC: longword;
   public
@@ -57,9 +59,9 @@ type
     procedure Update(Data: PByte; Count: longint); override;
   end;
 
-  { TCRC64Hash class }
+  { TCRC64HashGen class }
 
-  TCRC64Hash = class(TBaseHash)
+  TCRC64HashGen = class(THashGen)
   private
     FCRC: qword;
   public
@@ -68,20 +70,20 @@ type
     procedure Update(Data: PByte; Count: longint); override;
   end;
 
-  { TSHA1Hash class }
+  { TSHA1HashGen class }
 
-  TSHA1Hash = class(TBaseHash)
+  TSHA1HashGen = class(THashGen)
   private
     FCTX: TSHA1Context;
   public
     procedure Start;  override;
-   function  Finish: string; override;
+    function  Finish: string; override;
     procedure Update(Data: PByte; Count: longint); override;
   end;
 
-  { TMD5Hash class }
+  { TMD5HashGen class }
 
-  TMD5Hash = class(TBaseHash)
+  TMD5HashGen = class(THashGen)
   private
     FCTX: TMD5Context;
   public
@@ -95,48 +97,48 @@ implementation
 uses
   bx_Common;
 
-/// TCRC32Hash class
+/// TCRC32HashGen class
 
-procedure TCRC32Hash.Start;
+procedure TCRC32HashGen.Start;
 begin
   FCRC := crc32(0, nil, 0);
 end;
 
-function TCRC32Hash.Finish: string;
+function TCRC32HashGen.Finish: string;
 begin
   Result := Hex(FCRC, SizeOf(FCRC));
 end;
 
-procedure TCRC32Hash.Update(Data: PByte; Count: longint);
+procedure TCRC32HashGen.Update(Data: PByte; Count: longint);
 begin
   FCRC := crc32(FCRC, Data, Count);
 end;
 
-/// TCRC64Hash class
+/// TCRC64HashGen class
 
-procedure TCRC64Hash.Start;
+procedure TCRC64HashGen.Start;
 begin
   FCRC := crc64(0, nil, 0);
 end;
 
-function TCRC64Hash.Finish: string;
+function TCRC64HashGen.Finish: string;
 begin
   Result := Hex(FCRC, SizeOf(FCRC));
 end;
 
-procedure TCRC64Hash.Update(Data: PByte; Count: longint);
+procedure TCRC64HashGen.Update(Data: PByte; Count: longint);
 begin
   FCRC := crc64(FCRC, Data, Count);
 end;
 
-/// TSHA1Hash class
+/// TSHA1HashGen class
 
-procedure TSHA1Hash.Start;
+procedure TSHA1HashGen.Start;
 begin
   SHA1Init(FCTX);
 end;
 
-function TSHA1Hash.Finish: string;
+function TSHA1HashGen.Finish: string;
 var
   Digest: TSHA1Digest;
 begin
@@ -144,19 +146,19 @@ begin
   Result := UpCase(SHA1Print(Digest));
 end;
 
-procedure TSHA1Hash.Update(Data: PByte; Count: longint);
+procedure TSHA1HashGen.Update(Data: PByte; Count: longint);
 begin
   SHA1Update(FCTX, Data[0], Count);
 end;
 
-/// TMD5Hash class
+/// TMD5HashGen class
 
-procedure TMD5Hash.Start;
+procedure TMD5HashGen.Start;
 begin
   MD5Init(FCTX);
 end;
 
-function TMD5Hash.Finish: string;
+function TMD5HashGen.Finish: string;
 var
   Digest: TMD5Digest;
 begin
@@ -164,7 +166,7 @@ begin
   Result := UpCase(MD5Print(Digest));
 end;
 
-procedure TMD5Hash.Update(Data: PByte; Count: longint);
+procedure TMD5HashGen.Update(Data: PByte; Count: longint);
 begin
   MD5Update(FCTX, Data[0], Count);
 end;

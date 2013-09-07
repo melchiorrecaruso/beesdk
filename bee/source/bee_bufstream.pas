@@ -43,7 +43,7 @@ type
   protected
     FHandle: THandle;
   private
-    FHash: TBaseHash;
+    FHash: THashGen;
     FHashMethod: longword;
     FHashDigest: string;
     FCipher: TBaseCipher;
@@ -173,10 +173,10 @@ begin
   if Assigned(FHash) then
     FreeAndNil(FHash);
   case FHashMethod of
-    1: FHash := TCRC32Hash.Create;
-    2: FHash := TCRC64Hash.Create;
-    3: FHash := TSHA1Hash .Create;
-    4: FHash := TMD5Hash  .Create;
+    1: FHash := TCRC32HashGen.Create;
+    2: FHash := TCRC64HashGen.Create;
+    3: FHash := TSHA1HashGen .Create;
+    4: FHash := TMD5HashGen  .Create;
   end;
   if Assigned(FHash) then
     FHash.Start;
