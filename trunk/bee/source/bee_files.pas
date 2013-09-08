@@ -1,5 +1,5 @@
 {
-  Copyright (c) 1999-2013 Andrew Filinsky and Melchiorre Caruso.
+  Copyright (c) 2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,11 +23,8 @@
     TNulWriter  class, TStream-similar output stream, but works with 'nul' file.
 
   Modifyed:
-
-    v0.7.8 build 0148 - 2005.06.23 by Andrew Filinsky;
-    v0.7.9 build 0298 - 2006.01.05 by Melchiorre Caruso;
   
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.08 by Melchiorre Caruso.
 }
 
 unit Bee_Files;
