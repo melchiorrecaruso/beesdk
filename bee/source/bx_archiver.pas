@@ -39,8 +39,8 @@ uses
   bx_BufStream,
   bx_HashGen,
   bx_Cipher,
+  bx_Coder,
   bx_Configuration,
-  Bee_MainPacker,
 
   Bee_Files;
 

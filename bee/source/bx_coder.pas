@@ -25,7 +25,7 @@
    v0.8.0 build 2060 - 2013.09.08 by Melchiorre Caruso.
 }
 
-unit Bee_MainPacker;
+unit bx_Coder;
 
 {$I bx_compiler.inc}
 
@@ -132,7 +132,7 @@ uses
   bx_Common,
   bx_Messages,
   {$IFDEF LIBBX}
-  Bee_LibBx;
+  bx_LibLink;
   {$ELSE}
   Bee_Modeller;
   {$ENDIF}
