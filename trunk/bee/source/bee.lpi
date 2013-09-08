@@ -79,7 +79,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="7">
+    <Units Count="8">
       <Unit0>
         <Filename Value="bee.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -95,7 +95,7 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="41" Y="6"/>
@@ -117,10 +117,11 @@
       <Unit3>
         <Filename Value="bx_archiver.pas"/>
         <UnitName Value="bx_Archiver"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="27"/>
-        <CursorPos X="26" Y="38"/>
+        <TopLine Value="22"/>
+        <CursorPos X="1" Y="44"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -128,10 +129,10 @@
       <Unit4>
         <Filename Value="bx_bufstream.pas"/>
         <UnitName Value="bx_BufStream"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="31"/>
-        <CursorPos X="14" Y="52"/>
+        <TopLine Value="16"/>
+        <CursorPos X="14" Y="37"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -150,7 +151,6 @@
       <Unit6>
         <Filename Value="bx_messages.pas"/>
         <UnitName Value="bx_Messages"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="52"/>
@@ -159,8 +159,19 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="bx_coder.pas"/>
+        <UnitName Value="bx_Coder"/>
+        <EditorIndex Value="5"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="114"/>
+        <CursorPos X="13" Y="135"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit7>
     </Units>
-    <JumpHistory Count="17" HistoryIndex="16">
+    <JumpHistory Count="20" HistoryIndex="19">
       <Position1>
         <Filename Value="bee_app.pas"/>
         <Caret Line="160" Column="32" TopLine="137"/>
@@ -229,6 +240,18 @@
         <Filename Value="bx_bufstream.pas"/>
         <Caret Line="41" Column="49" TopLine="55"/>
       </Position17>
+      <Position18>
+        <Filename Value="bx_bufstream.pas"/>
+        <Caret Line="52" Column="14" TopLine="31"/>
+      </Position18>
+      <Position19>
+        <Filename Value="bx_coder.pas"/>
+        <Caret Line="28" Column="14" TopLine="7"/>
+      </Position19>
+      <Position20>
+        <Filename Value="bx_archiver.pas"/>
+        <Caret Line="38" Column="26" TopLine="27"/>
+      </Position20>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

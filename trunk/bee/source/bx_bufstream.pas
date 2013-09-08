@@ -33,8 +33,8 @@ interface
 
 uses
   bx_Cipher,
-  bx_HashGen,
-  Bee_MainPacker;
+  bx_Coder,
+  bx_HashGen;
 
 type
   { TBufStream abstract class }
