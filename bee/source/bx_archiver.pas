@@ -40,9 +40,8 @@ uses
   bx_Cipher,
   bx_Coder,
   bx_Configuration,
-  bx_Stream,
-
-  Bee_Files;
+  bx_FileStream,
+  bx_Stream;
 
 const
   /// archive markers

@@ -45,11 +45,8 @@ uses
   bx_Archiver,
   bx_CommandLine,
   bx_Common,
-  bx_Messages,
-
-  Bee_Files;
-
-
+  bx_FileStream,
+  bx_Messages;
 
 type
   { TBeeApp class }
