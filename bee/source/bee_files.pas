@@ -27,7 +27,7 @@
     v0.8.0 build 2060 - 2013.09.08 by Melchiorre Caruso.
 }
 
-unit Bee_Files;
+unit bx_Files;
 
 {$I bx_compiler.inc}
 
@@ -136,6 +136,7 @@ implementation
 
 uses
   Math,
+  // ---
   bx_Messages;
 
 { TFileReader class }
