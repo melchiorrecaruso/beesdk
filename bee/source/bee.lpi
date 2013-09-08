@@ -95,10 +95,9 @@
       <Unit1>
         <Filename Value="bee_app.pas"/>
         <UnitName Value="Bee_App"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="28"/>
+        <TopLine Value="34"/>
         <CursorPos X="17" Y="48"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
@@ -118,6 +117,7 @@
       <Unit3>
         <Filename Value="bx_messages.pas"/>
         <UnitName Value="bx_Messages"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="52"/>
@@ -139,7 +139,7 @@
       </Unit4>
       <Unit5>
         <Filename Value="bx_filestream.pas"/>
-        <UnitName Value="bx_Files"/>
+        <UnitName Value="bx_FileStream"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="9"/>
@@ -149,7 +149,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
     </Units>
-    <JumpHistory Count="23" HistoryIndex="22">
+    <JumpHistory Count="22" HistoryIndex="21">
       <Position1>
         <Filename Value="bx_archiver.pas"/>
         <Caret Line="89" Column="17" TopLine="67"/>
@@ -236,12 +236,8 @@
       </Position21>
       <Position22>
         <Filename Value="bee_app.pas"/>
-        <Caret Line="1" Column="100" TopLine="175"/>
-      </Position22>
-      <Position23>
-        <Filename Value="bee_app.pas"/>
         <Caret Line="43" Column="21" TopLine="29"/>
-      </Position23>
+      </Position22>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
