@@ -22,12 +22,12 @@
 
   Modifyed:
 
-    v0.8.0 build 2060 - 2013.09.07 by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.08 by Melchiorre Caruso.
 }
 
 unit bx_HashGen;
 
-{$I bee_compiler.inc}
+{$I bx_compiler.inc}
 
 interface
 

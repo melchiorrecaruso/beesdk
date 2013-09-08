@@ -18,19 +18,19 @@
 
 { Contains:
 
-    Bee configuration support.
+    Bee algorithm configuration support.
 
   Modifyed:
 
     v0.7.8 build 0153 - 2005.07.08 by Andrew Filinsky;
     v0.7.9 build 0312 - 2007.02.16 by Andrew Filinsky;
 
-    v0.8.0 build 1864 - 2013.02.15 by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.08 by Melchiorre Caruso.
 }
 
-unit Bee_Configuration;
+unit bx_Configuration;
 
-{$I bee_compiler.inc}
+{$I bx_compiler.inc}
 
 interface
 
@@ -79,9 +79,9 @@ const
 type
   TConfigSection = class(TStringList)
   public
-    function GetTable(const Ext: string; var T: TTableParameters): boolean;
-    procedure PutData(const Name: string; var Data; aCount: longint);
-    function  GetData(const Name: string; var Data; aCount: longint): boolean;
+    function  GetTable(const Ext: string; var T: TTableParameters): boolean;
+    procedure PutData (const Name: string; var Data; aCount: longint);
+    function  GetData (const Name: string; var Data; aCount: longint): boolean;
   end;
 
   TConfiguration = class(TStringList)
@@ -91,11 +91,11 @@ type
     destructor Destroy; override;
     procedure LoadFromFile(const FileName: string); override;
     procedure SaveToFile(const FileName: string); override;
-    function GetTable(const Ext: string; var T: TTableParameters): boolean;
-    procedure PutData(const Name: string; var Data; aCount: longint);
-    function  GetData(const Name: string; var Data; aCount: longint): boolean;
+    function  GetTable(const Ext: string; var T: TTableParameters): boolean;
+    procedure PutData (const Name: string; var Data; aCount: longint);
+    function  GetData (const Name: string; var Data; aCount: longint): boolean;
     procedure Selector(const Name: string);
-    function Split(const S: string; var Name, Value: string): boolean;
+    function  Split (const S: string; var Name, Value: string): boolean;
   end;
 
 implementation

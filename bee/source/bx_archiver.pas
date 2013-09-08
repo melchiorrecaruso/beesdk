@@ -27,7 +27,7 @@
 
 unit bx_Archiver;
 
-{$I bee_compiler.inc}
+{$I bx_compiler.inc}
 
 interface
 
@@ -37,8 +37,8 @@ uses
   SysUtils,
   DateUtils,
 
-  Bee_Crc,
-  Bee_BlowFish,
+  bx_HashGen,
+  bx_Cipher,
   Bee_MainPacker,
 
   Bee_Files,

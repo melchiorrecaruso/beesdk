@@ -27,7 +27,7 @@
 
 unit Bee_LibBx;
 
-{$I bee_compiler.inc}
+{$I bx_compiler.inc}
 
 interface
 

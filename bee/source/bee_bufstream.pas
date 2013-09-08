@@ -27,14 +27,15 @@
 
 unit Bee_BufStream;
 
-{$I bee_compiler.inc}
+{$I bx_compiler.inc}
 
 interface
 
 uses
-  bx_HashGen
-  ,
-  Bee_BlowFish,
+  bx_Cipher,
+  bx_HashGen,
+
+
   Bee_MainPacker;
 
 type
