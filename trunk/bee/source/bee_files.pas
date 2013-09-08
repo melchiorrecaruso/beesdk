@@ -32,7 +32,7 @@
 
 unit Bee_Files;
 
-{$I bee_compiler.inc}
+{$I bx_compiler.inc}
 
 interface
 

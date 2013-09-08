@@ -27,7 +27,7 @@
 
 unit bx_CommandLine;
 
-{$I bee_compiler.inc}
+{$I bx_compiler.inc}
 
 interface
 
