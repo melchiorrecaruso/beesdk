@@ -41,7 +41,7 @@ interface
 uses
   Classes,
   SysUtils,
-
+  // ---
   bx_Archiver,
   bx_CommandLine,
   bx_Common,
@@ -112,7 +112,7 @@ begin
   FArchiver.OnMessage           := DoMessage;
   FArchiver.OnProgress          := DoProgress;
   FArchiver.OnRenameItem        := DoRename;
-  FArchiver.OnRequestBlankImage := DoRequestBlankDisk;
+  FArchiver.OnRequestBlankDisk  := DoRequestBlankDisk;
   FArchiver.OnRequestImage      := DoRequestImage;
   FArchiver.OnUpdateItem        := DoUpdate;
   { load command line }
@@ -613,7 +613,7 @@ begin
           DoMessage(Format(     '              Attributes: %s',       [AttrToStr(Item.Attributes)]));
           if Item.Comment <> '' then
             DoMessage(Format(   '                 Comment: %s',       [Item.Comment]));
-          DoMessage(Format(     '    Disk number/position: %u/%u',    [Item.DiskNumber, Item.DiskSeek]));
+          DoMessage(Format(     '    Disk number/position: %u/%u',    [Item.ImageNumber, Item.ImageSeek]));
           if Ord(Item.CheckMethod) <> 0 then
             DoMessage(Format(   '     Check method/digest: %s/%s',    [CheckMethodTostr(Item.CheckMethod), Item.CheckDigest]));
           if Ord(Item.CheckMethodAux) <> 0 then

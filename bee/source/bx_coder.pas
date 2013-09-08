@@ -127,15 +127,15 @@ implementation
 uses
   SysUtils,
   // ---
-  bx_BufStream,
   bx_Configuration,
   bx_Common,
   bx_Messages,
   {$IFDEF LIBBX}
-  bx_LibLink;
+  bx_LibLink,
   {$ELSE}
   Bee_Modeller;
   {$ENDIF}
+  bx_Stream;
 
 /// TCoder abstract class
 

@@ -36,16 +36,13 @@ uses
   DateUtils,
   SysUtils,
   // ---
-  bx_BufStream,
   bx_HashGen,
   bx_Cipher,
   bx_Coder,
   bx_Configuration,
+  bx_Stream,
 
   Bee_Files;
-
-
-
 
 const
   /// archive markers
@@ -67,8 +64,8 @@ type
   /// archive central directory seek flag
   TArchiveCentralDirectorySeekFlag = (
     acdsfVersionNeededToRead,
-    acdsfDisksNumber,
-    acdsfDiskNumber);
+    acdsfImagesNumber,
+    acdsfImageNumber);
 
   TArchiveCentralDirectorySeekFlags = set of TArchiveCentralDirectorySeekFlag;
 
@@ -88,8 +85,8 @@ type
   /// archive data descriptor flag
   TArchiveDataDescriptorFlag = (
     addfCompressedSize,
-    addfDiskNumber,
-    addfDiskSeek,
+    addfImageNumber,
+    addfImageSeek,
     addfCheckMethod,
     addfCheckDigest,
     addfCheckMethodAux,
@@ -138,8 +135,8 @@ type
     // data descriptor property
     FDataDescriptorFlags: TArchiveDataDescriptorFlags;
     FCompressedSize: int64;
-    FDiskNumber: longint;
-    FDiskSeek: int64;
+    FImageNumber: longint;
+    FImageSeek: int64;
     FCheckMethod: longint;
     FCheckDigest: string;
     FCheckMethodAux: longint;
@@ -176,8 +173,8 @@ type
     // data descriptor property
     property DadaDescriptorFlags: TArchiveDataDescriptorFlags read FDataDescriptorFlags;
     property CompressedSize: int64 read FCompressedSize;
-    property DiskNumber: longint read FDiskNumber;
-    property DiskSeek: int64 read FDiskSeek;
+    property ImageNumber: longint read FImageNumber;
+    property ImageSeek: int64 read FImageSeek;
     property CheckMethod: longint read FCheckMethod;
     property CheckDigest: string read FCheckDigest;
     property CheckMethodAux: longint read FCheckMethodAux;
@@ -206,9 +203,9 @@ type
     FComment: string;
     // central directory seek property
     FSeekFlags: TArchiveCentralDirectorySeekFlags;
-    FDisksNumber: longint;
-    FDiskNumber: longint;
-    FDiskSeek: int64;
+    FImagesNumber: longint;
+    FImageNumber: longint;
+    FImageSeek: int64;
     // central directory magik seek property
     FMagikSeek: longint;
   private
@@ -298,7 +295,7 @@ type
     FOnMessage: TArchiveMessageEvent;
     FOnProgress: TArchiveProgressEvent;
     FOnRenameItem: TArchiveRenameEvent;
-    FOnRequestBlankImage: TFileWriterRequestBlankImageEvent;
+    FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
     FOnRequestImage: TFileReaderRequestImageEvent;
     FOnUpdateItem: TArchiveUpdateEvent;
   private
@@ -308,7 +305,7 @@ type
     procedure DoMessage(const Message: string);
     procedure DoProgress(Value: longint);
     function  DoRenameItem (Item: TArchiveItem): TArchiveConfirm;
-    procedure DoRequestBlankImage(ImageNumber: longint; var Abort : Boolean);
+    procedure DoRequestBlankDisk(ImageNumber: longint; var Abort : Boolean);
     procedure DoRequestImage(ImageNumber: longint; var ImageName: string; var Abort: boolean);
     function  DoUpdateItem (Item: TCustomSearchRec): TArchiveConfirm;
 
@@ -395,7 +392,7 @@ type
     property OnMessage: TArchiveMessageEvent read FOnMessage write FOnMessage;
     property OnProgress: TArchiveProgressEvent read FOnProgress write FOnProgress;
     property OnRenameItem: TArchiveRenameEvent read FOnRenameItem write FOnRenameItem;
-    property OnRequestBlankImage: TFileWriterRequestBlankImageEvent read FOnRequestBlankImage write FOnRequestBlankImage;
+    property OnRequestBlankDisk: TFileWriterRequestBlankDiskEvent read FOnRequestBlankDisk write FOnRequestBlankDisk;
     property OnRequestImage: TFileReaderRequestImageEvent read FOnRequestImage write FOnRequestImage;
     property OnUpdateItem: TArchiveUpdateEvent read FOnUpdateItem write FOnUpdateItem;
   end;
@@ -530,15 +527,15 @@ begin
   /// data descriptor property ///
   FDataDescriptorFlags := [
     addfCompressedSize,
-    addfDiskNumber,
-    addfDiskSeek,
+    addfImageNumber,
+    addfImageSeek,
     addfCheckMethod,
     addfCheckDigest,
     addfCheckMethodAux,
     addfCheckDigestAux];
   FCompressedSize       := 0;
-  FDiskNumber           := 0;
-  FDiskSeek             := 0;
+  FImageNumber           := 0;
+  FImageSeek             := 0;
   FCheckMethod          := 0;
   FCheckDigest          := '';
   FCheckMethodAux       := 0;
@@ -594,8 +591,8 @@ begin
   /// data descryptor property ///
   FDataDescriptorFlags := TArchiveDataDescriptorFlags(longword(Stream.ReadInfWord));
   if (addfCompressedSize in FDataDescriptorFlags) then FCompressedSize := Stream.ReadInfWord;
-  if (addfDiskNumber     in FDataDescriptorFlags) then FDiskNumber     := Stream.ReadInfWord;
-  if (addfDiskSeek       in FDataDescriptorFlags) then FDiskSeek       := Stream.ReadInfWord;
+  if (addfImageNumber     in FDataDescriptorFlags) then FImageNumber     := Stream.ReadInfWord;
+  if (addfImageSeek       in FDataDescriptorFlags) then FImageSeek       := Stream.ReadInfWord;
   if (addfCheckMethod    in FDataDescriptorFlags) then FCheckMethod    := Stream.ReadInfWord;
   if (addfCheckDigest    in FDataDescriptorFlags) then FCheckDigest    := Stream.ReadInfArray;
   if (addfCheckMethodAux in FDataDescriptorFlags) then FCheckMethodAux := Stream.ReadInfWord;
@@ -629,8 +626,8 @@ begin
   /// data descriptor property ///
   Stream.WriteInfWord(longword(FDataDescriptorFlags));
   if (addfCompressedSize in FDataDescriptorFlags) then Stream.WriteInfWord(FCompressedSize);
-  if (addfDiskNumber     in FDataDescriptorFlags) then Stream.WriteInfWord(FDiskNumber);
-  if (addfDiskSeek       in FDataDescriptorFlags) then Stream.WriteInfWord(FDiskSeek);
+  if (addfImageNumber     in FDataDescriptorFlags) then Stream.WriteInfWord(FImageNumber);
+  if (addfImageSeek       in FDataDescriptorFlags) then Stream.WriteInfWord(FImageSeek);
   if (addfCheckMethod    in FDataDescriptorFlags) then Stream.WriteInfWord(FCheckMethod);
   if (addfCheckDigest    in FDataDescriptorFlags) then Stream.WriteInfArray(FCheckDigest);
   if (addfCheckMethodAux in FDataDescriptorFlags) then Stream.WriteInfWord(FCheckMethodAux);
@@ -702,8 +699,8 @@ begin
       if CurrentItem.FHighLayer            = PreviusItem.FHighLayer            then Exclude(CurrentItem.FFlags, aifHighLayer)           else Include(CurrentItem.FFlags, aifHighLayer);
       /// data descriptor property ///
       if CurrentItem.FCompressedSize       = PreviusItem.FCompressedSize       then Exclude(CurrentItem.FDataDescriptorFlags, addfCompressedSize) else Include(CurrentItem.FDataDescriptorFlags, addfCompressedSize);
-      if CurrentItem.FDiskNumber           = PreviusItem.FDiskNumber           then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskNumber)     else Include(CurrentItem.FDataDescriptorFlags, addfDiskNumber);
-      if CurrentItem.FDiskseek             = PreviusItem.FDiskSeek             then Exclude(CurrentItem.FDataDescriptorFlags, addfDiskSeek)       else Include(CurrentItem.FDataDescriptorFlags, addfDiskSeek);
+      if CurrentItem.FImageNumber           = PreviusItem.FImageNumber           then Exclude(CurrentItem.FDataDescriptorFlags, addfImageNumber)     else Include(CurrentItem.FDataDescriptorFlags, addfImageNumber);
+      if CurrentItem.FImageSeek             = PreviusItem.FImageSeek             then Exclude(CurrentItem.FDataDescriptorFlags, addfImageSeek)       else Include(CurrentItem.FDataDescriptorFlags, addfImageSeek);
       if CurrentItem.FCheckMethod          = PreviusItem.FCheckMethod          then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethod)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethod);
       if CurrentItem.FCheckDigest          = PreviusItem.FCheckDigest          then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckDigest)    else Include(CurrentItem.FDataDescriptorFlags, addfCheckDigest);
       if CurrentItem.FCheckMethodAux       = PreviusItem.FCheckMethodAux       then Exclude(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux) else Include(CurrentItem.FDataDescriptorFlags, addfCheckMethodAux);
@@ -742,8 +739,8 @@ begin
       if not(aifHighLayer           in CurrentItem.FFlags) then CurrentItem.FHighLayer           := PreviusItem.FHighLayer;
       /// data descryptor property ///
       if not(addfCompressedSize in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCompressedSize := PreviusItem.FCompressedSize;
-      if not(addfDiskNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskNumber     := PreviusItem.FDiskNumber;
-      if not(addfDiskSeek       in CurrentItem.FDataDescriptorFlags) then CurrentItem.FDiskSeek       := PreviusItem.FDiskSeek;
+      if not(addfImageNumber     in CurrentItem.FDataDescriptorFlags) then CurrentItem.FImageNumber     := PreviusItem.FImageNumber;
+      if not(addfImageSeek       in CurrentItem.FDataDescriptorFlags) then CurrentItem.FImageSeek       := PreviusItem.FImageSeek;
       if not(addfCheckMethod    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckMethod    := PreviusItem.FCheckMethod;
       if not(addfCheckDigest    in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckDigest    := PreviusItem.FCheckDigest;
       if not(addfCheckMethodAux in CurrentItem.FDataDescriptorFlags) then CurrentItem.FCheckMethodAux := PreviusItem.FCheckMethodAux;
@@ -885,7 +882,7 @@ end;
 procedure TArchiveCentralDirectory.Read(Stream: TFileReader);
 const
   CDFULL  = [acdfVersionNeededToRead,  acdfLastModifiedTime, acdfComment];
-  CDSFULL = [acdsfVersionNeededToRead, acdsfDisksNumber,     acdsfDiskNumber];
+  CDSFULL = [acdsfVersionNeededToRead, acdsfImagesNumber,     acdsfImageNumber];
 var
   MARKER: longword;
 begin
@@ -922,19 +919,19 @@ begin
 
       if ExitStatus = esNoError then
       begin
-        FDisksNumber := 1;
-        if (acdsfDisksNumber in FSeekFlags) then
-          FDisksNumber := Stream.ReadInfWord;
+        FImagesNumber := 1;
+        if (acdsfImagesNumber in FSeekFlags) then
+          FImagesNumber := Stream.ReadInfWord;
 
-        FDiskNumber  := 1;
-        if (acdsfDiskNumber  in FSeekFlags) then
-          FDiskNumber := Stream.ReadInfWord;
+        FImageNumber  := 1;
+        if (acdsfImageNumber  in FSeekFlags) then
+          FImageNumber := Stream.ReadInfWord;
 
-        FDiskSeek := Stream.ReadInfWord;
+        FImageSeek := Stream.ReadInfWord;
         // [4.1] seek on central directory marker
-        Stream.ImagesNumber := FDisksNumber;
-        Stream.ImageNumber  := FDiskNumber;
-        Stream.Seek           (FDiskSeek, fsFromBeginning);
+        Stream.ImagesNumber := FImagesNumber;
+        Stream.ImageNumber  := FImageNumber;
+        Stream.Seek           (FImageSeek, fsFromBeginning);
         // [4.2] read central directory marker
         MARKER := Stream.ReadDWord;
         if MARKER <> ARCHIVE_CENTRALDIR_MARKER then
@@ -990,10 +987,10 @@ var
 begin
   // [0] store central directory seek
   FSeekFlags  := [acdsfVersionNeededToRead];
-  FDiskSeek   := Stream.Seek(0, fsFromCurrent);
-  FDiskNumber := Stream.CurrentImage;
-  if FDiskNumber <> 1 then
-    Include(FSeekFlags,  acdsfDiskNumber);
+  FImageSeek   := Stream.Seek(0, fsFromCurrent);
+  FImageNumber := Stream.CurrentImage;
+  if FImageNumber <> 1 then
+    Include(FSeekFlags,  acdsfImageNumber);
 
   // [1] write central directory
   FFlags := [acdfVersionNeededToRead, acdfLastModifiedTime];
@@ -1030,11 +1027,11 @@ begin
   Stream.WriteInfWord(longword(FSeekFlags));
   if (acdsfVersionNeededToRead in FSeekFlags) then
     Stream.WriteInfWord(GetVersionNeededToRead(FSeekFlags));
-  if (acdsfDisksNumber in FSeekFlags) then
-    Stream.WriteInfWord(FDisksNumber);
-  if (acdsfDiskNumber in FSeekFlags) then
-    Stream.WriteInfWord(FDiskNumber);
-  Stream.WriteInfWord(FDiskSeek);
+  if (acdsfImagesNumber in FSeekFlags) then
+    Stream.WriteInfWord(FImagesNumber);
+  if (acdsfImageNumber in FSeekFlags) then
+    Stream.WriteInfWord(FImageNumber);
+  Stream.WriteInfWord(FImageSeek);
 
   // [5] write magikseek
   Stream.WriteDWord(ARCHIVE_CENTRALDIR_MAGIKSEEK_MARKER);
@@ -1117,9 +1114,9 @@ end;
 
 procedure TArchiver.EncodeFromArchive(Item: TArchiveItem);
 begin
-  FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
-  Item.FDiskSeek   := FTempWriter.Seek(0, fsFromCurrent);
-  Item.FDiskNumber := FTempWriter.CurrentImage;
+  FArchiveReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
+  Item.FImageSeek   := FTempWriter.Seek(0, fsFromCurrent);
+  Item.FImageNumber := FTempWriter.CurrentImage;
 
   FArchiveReader.HashMethod   := 0;
   FArchiveReader.CipherMethod := 0;
@@ -1135,9 +1132,9 @@ end;
 
 procedure TArchiver.EncodeFromSwap(Item: TArchiveItem);
 begin
-  FSwapReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
-  Item.FDiskSeek              := FTempWriter.Seek(0, fsFromCurrent);
-  Item.FDiskNumber            := FTempWriter.CurrentImage;
+  FSwapReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
+  Item.FImageSeek              := FTempWriter.Seek(0, fsFromCurrent);
+  Item.FImageNumber            := FTempWriter.CurrentImage;
 
   FSwapReader.HashMethod      := Item.CheckMethod;
   FSwapReader.CipherMethod    := Item.EncryptionMethod;
@@ -1158,7 +1155,7 @@ begin
   end;
   //Item.FCheckDigest        := FSwapReader.HashDigest;
   //Item.FCheckDigestAux     := FTempWriter.HashDigest;
-  Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
+  Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
   //Item.FUncompressedSize   := Item.FExternalFileSize;
 end;
 
@@ -1167,8 +1164,8 @@ var
   Source: TFileReader;
 begin
   Source := TFileReader.Create(Item.FExternalFileName, nil);
-  Item.FDiskSeek             := FTempWriter.Seek(0, fsFromCurrent);
-  Item.FDiskNumber           := FTempWriter.CurrentImage;
+  Item.FImageSeek             := FTempWriter.Seek(0, fsFromCurrent);
+  Item.FImageNumber           := FTempWriter.CurrentImage;
 
   Source.HashMethod          := Item.CheckMethod;
   Source.CipherMethod        := 0;
@@ -1188,7 +1185,7 @@ begin
   end;
   Item.FCheckDigest          :=      Source.HashDigest;
   Item.FCheckDigestAux       := FTempWriter.HashDigest;
-  Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FDiskSeek;
+  Item.FCompressedSize       := FTempWriter.Seek(0, fsFromCurrent) - Item.FImageSeek;
   Item.FUncompressedSize     := Item.FExternalFileSize;
 
   FreeAndNil(Source);
@@ -1196,9 +1193,9 @@ end;
 
 procedure TArchiver.DecodeToSwap(Item: TArchiveItem);
 begin
-  FArchiveReader.Seek(Item.DiskSeek, fsFromBeginning, Item.DiskNumber);
-  Item.FDiskSeek   := FSwapWriter.Seek(0, fsFromCurrent);
-  Item.FDiskNumber := FSwapWriter.CurrentImage;
+  FArchiveReader.Seek(Item.ImageSeek, fsFromBeginning, Item.ImageNumber);
+  Item.FImageSeek   := FSwapWriter.Seek(0, fsFromCurrent);
+  Item.FImageNumber := FSwapWriter.CurrentImage;
 
   FArchiveReader.HashMethod     := Item.CheckMethod;
   FArchiveReader.CipherMethod   := Item.EncryptionMethod;
@@ -1230,7 +1227,7 @@ var
   Destination: TNulBufStream;
 begin
   Destination := TNulBufStream.Create;
-  FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
+  FArchiveReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
 
   Destination.HashMethod        := Item.CheckMethod;
   Destination.CipherMethod      := 0;
@@ -1259,8 +1256,8 @@ procedure TArchiver.DecodeToFile(Item: TArchiveItem);
 var
   Destination: TFileWriter;
 begin
-  Destination := TFileWriter.Create(Item.FExternalFileName, FOnRequestBlankImage, 0);
-  FArchiveReader.Seek(Item.FDiskSeek, fsFromBeginning, Item.FDiskNumber);
+  Destination := TFileWriter.Create(Item.FExternalFileName, FOnRequestBlankDisk, 0);
+  FArchiveReader.Seek(Item.FImageSeek, fsFromBeginning, Item.FImageNumber);
 
   Destination.HashMethod        := Item.CheckMethod;
   Destination.CipherMethod      := 0;
@@ -1323,7 +1320,7 @@ begin
   if ExitStatus <> esNoError then Exit;
 
   FSwapName   := GenerateFileName(FWorkDirectory);
-  FSwapWriter := TFileWriter.Create(FSwapName, FOnRequestBlankImage, 0);
+  FSwapWriter := TFileWriter.Create(FSwapName, FOnRequestBlankDisk, 0);
   FSwapWriter.WriteDWord(ARCHIVE_MARKER);
   for I := 0 to FCentralDirectory.Count - 1 do
   begin
@@ -1352,7 +1349,7 @@ begin
   if ExitStatus = esNoError then
   begin
     Tester := TArchiver.Create;
-    Tester.OnRequestBlankImage := OnRequestBlankImage;
+    Tester.OnRequestBlankDisk := OnRequestBlankDisk;
     Tester.OnRequestImage      := OnRequestImage;
     Tester.OnProgress          := OnProgress;
     Tester.OnMessage           := OnMessage;
@@ -1385,7 +1382,7 @@ begin
         Inc(FTotalSize, FCentralDirectory.Items[I].CompressedSize);
 
       FArchiveReader := TFileReader.Create(FTempName, FOnRequestImage);
-      FTempWriter    := TFileWriter.Create(FArchiveName, FOnRequestBlankImage, FVolumeSize);
+      FTempWriter    := TFileWriter.Create(FArchiveName, FOnRequestBlankDisk, FVolumeSize);
       FTempWriter.WriteDWord(ARCHIVE_MARKER);
 
       for I := 0 to FCentralDirectory.Count - 1 do
@@ -1567,11 +1564,11 @@ end;
 
 // TArchiver # DO EVENT #
 
-procedure TArchiver.DoRequestBlankImage(ImageNumber: longint; var Abort : Boolean);
+procedure TArchiver.DoRequestBlankDisk(ImageNumber: longint; var Abort : Boolean);
 begin
   Abort := TRUE;
-  if Assigned(FOnRequestImage) then
-    FOnRequestBlankImage(ImageNumber, Abort);
+  if Assigned(FOnRequestBlankDisk) then
+    FOnRequestBlankDisk(ImageNumber, Abort);
 end;
 
 procedure TArchiver.DoRequestImage(ImageNumber: longint;
@@ -1915,7 +1912,7 @@ begin
   if FIsNeededToRun then
   begin
     FTempName   := GenerateFileName(FWorkDirectory);
-    FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
+    FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankDisk, 0);
     FTempWriter.WriteDWord(ARCHIVE_MARKER);
 
     for I := 0 to FCentralDirectory.Count - 1 do
@@ -2027,7 +2024,7 @@ begin
   begin
     CheckSequences4Delete;
     FTempName   := GenerateFileName(FWorkDirectory);
-    FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
+    FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankDisk, 0);
     FTempWriter.WriteDWord(ARCHIVE_MARKER);
 
     if FIsNeededToSwap then Swapping;
@@ -2282,7 +2279,7 @@ begin
   begin
     CheckSequences4Update;
     FTempName   := GenerateFileName(FWorkDirectory);
-    FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankImage, 0);
+    FTempWriter := TFileWriter.Create(FTempName, FOnRequestBlankDisk, 0);
     FTempWriter.WriteDWord(ARCHIVE_MARKER);
 
     if FIsNeededToSwap then Swapping;
