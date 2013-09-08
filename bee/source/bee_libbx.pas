@@ -18,14 +18,14 @@
 
 { Contains:
 
-    LibBx archiver library link.
+    Bx library link.
 
   Modifyed:
 
-    v0.8.0 build 1970 - 2013.04.26 by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.08 by Melchiorre Caruso.
 }
 
-unit Bee_LibBx;
+unit bx_LibLink;
 
 {$I bx_compiler.inc}
 
