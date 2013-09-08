@@ -18,11 +18,11 @@
 
 { Contains:
 
-    TStreamCoder class, stream encoder/decoder;
+    TCoder class, stream encoder/decoder;
 
   Modifyed:
 
-   v0.8.0 build 2033 - 2013.08.26 by Melchiorre Caruso.
+   v0.8.0 build 2060 - 2013.09.08 by Melchiorre Caruso.
 }
 
 unit Bee_MainPacker;
@@ -32,9 +32,9 @@ unit Bee_MainPacker;
 interface
 
 type
-  { TBaseCoder abstract class }
+  { TCoder abstract class }
 
-  TBaseCoder = class(TObject)
+  TCoder = class(TObject)
   private
     FStream: pointer;
     FLevel: longword;
@@ -51,8 +51,8 @@ type
     constructor Create(Stream: pointer);
     procedure Start; virtual abstract;
     procedure Finish; virtual abstract;
-    function  Encode(Data: PByte; Count: longint): longint; virtual abstract;
-    function  Decode(Data: PByte; Count: longint): longint; virtual abstract;
+    function Encode(Data: PByte; Count: longint): longint; virtual abstract;
+    function Decode(Data: PByte; Count: longint): longint; virtual abstract;
   public
     property Level: longword read FLevel write SetLevel;
     property LevelAux: longword read FLevelAux write SetLevelAux;
@@ -63,7 +63,7 @@ type
 
   { TStoreCoder classes }
 
-  TStoreCoder = class(TBaseCoder)
+  TStoreCoder = class(TCoder)
   public
     procedure Start; override;
     procedure Finish; override;
@@ -73,7 +73,7 @@ type
 
   { TBeeCoder classes }
 
-  TBeeCoder = class(TBaseCoder)
+  TBeeCoder = class(TCoder)
   private
     FCoder: pointer;
     FModeller: pointer;
@@ -104,7 +104,7 @@ type
 
   { TPpmdCoder classes }
 
-  TPpmdCoder = class(TBaseCoder)
+  TPpmdCoder = class(TCoder)
   private
     FCoder: pointer;
     FModeller: pointer;
@@ -137,6 +137,7 @@ implementation
 
 uses
   SysUtils,
+  // ---
   bx_BufStream,
   bx_Configuration,
   bx_Common,
@@ -146,9 +147,9 @@ uses
   Bee_Modeller;
   {$ENDIF}
 
-/// TBaseCoder abstract class
+/// TCoder abstract class
 
-constructor TBaseCoder.Create(Stream: pointer);
+constructor TCoder.Create(Stream: pointer);
 begin
   inherited Create;
   FStream    := Stream;
@@ -159,27 +160,27 @@ begin
   FBlock     :=  0;
 end;
 
-procedure TBaseCoder.SetLevel(Value: longword);
+procedure TCoder.SetLevel(Value: longword);
 begin
   FLevel := Value;
 end;
 
-procedure TBaseCoder.SetLevelAux(Value: longword);
+procedure TCoder.SetLevelAux(Value: longword);
 begin
   FLevelAux := Value;
 end;
 
-procedure TBaseCoder.SetFilter(const Value: string);
+procedure TCoder.SetFilter(const Value: string);
 begin
   FFilter := Value;
 end;
 
-procedure TBaseCoder.SetFilterAux(const Value: string);
+procedure TCoder.SetFilterAux(const Value: string);
 begin
   FFilterAux := Value;
 end;
 
-procedure TBaseCoder.SetBlock(const Value: int64);
+procedure TCoder.SetBlock(const Value: int64);
 begin
   FBlock := Value;
 end;

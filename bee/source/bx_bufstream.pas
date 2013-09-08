@@ -49,7 +49,7 @@ type
     FCipher: TCipher;
     FCipherMethod: longword;
     FCipherKey: string;
-    FCoder: TBaseCoder;
+    FCoder: TCoder;
     FCoderMethod: longword;
     FCoderLevel: longword;
     FCoderLevelAux: longword;
