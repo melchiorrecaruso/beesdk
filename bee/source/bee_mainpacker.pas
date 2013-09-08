@@ -137,9 +137,9 @@ implementation
 
 uses
   SysUtils,
-  Bee_BufStream,
+  bx_BufStream,
+  bx_Configuration,
   bx_Common,
-  Bee_Configuration,
   {$IFDEF LIBBX}
   Bee_LibBx;
   {$ELSE}

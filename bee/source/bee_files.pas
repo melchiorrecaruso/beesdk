@@ -37,14 +37,12 @@ unit Bee_Files;
 interface
 
 uses
-  Math,
   Classes,
-  DateUtils,
   SysUtils,
-
+  // ---
+  bx_BufStream,
   bx_CommandLine,
-  bx_Common,
-  Bee_BufStream;
+  bx_Common;
 
 type
   TFileReaderRequestImageEvent = procedure(ImageNumber: longint;
@@ -140,6 +138,7 @@ type
 implementation
 
 uses
+  Math,
   bx_Messages;
 
 { TFileReader class }

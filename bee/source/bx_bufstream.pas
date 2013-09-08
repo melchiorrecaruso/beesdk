@@ -34,8 +34,6 @@ interface
 uses
   bx_Cipher,
   bx_HashGen,
-
-
   Bee_MainPacker;
 
 type
