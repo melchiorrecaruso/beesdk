@@ -18,7 +18,7 @@
 
 { Contains:
 
-    TCoder class, stream encoder/decoder;
+    TCoder class, data encoder/decoder;
 
   Modifyed:
 
@@ -42,11 +42,6 @@ type
     FFilter: string;
     FFilterAux: string;
     FBlock: int64;
-    procedure SetLevel(Value: longword); virtual;
-    procedure SetLevelAux(Value: longword); virtual;
-    procedure SetFilter(const Value: string); virtual;
-    procedure SetFilterAux(const Value: string); virtual;
-    procedure SetBlock(const Value: int64); virtual;
   public
     constructor Create(Stream: pointer);
     procedure Start; virtual abstract;
@@ -54,11 +49,11 @@ type
     function Encode(Data: PByte; Count: longint): longint; virtual abstract;
     function Decode(Data: PByte; Count: longint): longint; virtual abstract;
   public
-    property Level: longword read FLevel write SetLevel;
-    property LevelAux: longword read FLevelAux write SetLevelAux;
-    property Filter: string read FFilter write SetFilter;
-    property FilterAux: string read FFilterAux write SetFilterAux;
-    property Block: int64 read FBlock write SetBlock;
+    property Level: longword read FLevel write FLevel;
+    property LevelAux: longword read FLevelAux write FLevelAux;
+    property Filter: string read FFilter write FFilter;
+    property FilterAux: string read FFilterAux write FFilterAux;
+    property Block: int64 read FBlock write FBlock;
   end;
 
   { TStoreCoder classes }
@@ -77,10 +72,7 @@ type
   private
     FCoder: pointer;
     FModeller: pointer;
-    procedure SetLevelAux(Value: longword); override;
-    procedure SetFilter(const Value: string); override;
   public
-    constructor Create(Stream: pointer);
     procedure Start; override;
   end;
 
@@ -108,10 +100,7 @@ type
   private
     FCoder: pointer;
     FModeller: pointer;
-    procedure SetLevel(Value: longword); override;
-    procedure SetLevelAux(Value: longword); override;
   public
-    constructor Create(Stream: pointer);
     procedure Start; override;
   end;
 
@@ -141,6 +130,7 @@ uses
   bx_BufStream,
   bx_Configuration,
   bx_Common,
+  bx_Messages,
   {$IFDEF LIBBX}
   Bee_LibBx;
   {$ELSE}
@@ -153,36 +143,11 @@ constructor TCoder.Create(Stream: pointer);
 begin
   inherited Create;
   FStream    := Stream;
-  FLevel     :=  0;
-  FLevelAux  :=  0;
+  FLevel     := 0;
+  FLevelAux  := 0;
   FFilter    := '';
   FFilterAux := '';
-  FBlock     :=  0;
-end;
-
-procedure TCoder.SetLevel(Value: longword);
-begin
-  FLevel := Value;
-end;
-
-procedure TCoder.SetLevelAux(Value: longword);
-begin
-  FLevelAux := Value;
-end;
-
-procedure TCoder.SetFilter(const Value: string);
-begin
-  FFilter := Value;
-end;
-
-procedure TCoder.SetFilterAux(const Value: string);
-begin
-  FFilterAux := Value;
-end;
-
-procedure TCoder.SetBlock(const Value: int64);
-begin
-  FBlock := Value;
+  FBlock     := 0;
 end;
 
 /// TStoreCoder class
@@ -209,31 +174,15 @@ end;
 
 /// TBeeCoder class
 
-constructor TBeeCoder.Create(Stream: pointer);
-begin
-  inherited Create(Stream);
-end;
-
-procedure TBeeCoder.SetLevelAux(Value: longword);
-begin
-  inherited SetLevelAux(Value);
-end;
-
-procedure TBeeCoder.SetFilter(const Value: string);
-begin
-  inherited SetFilter(Value);
-end;
-
 procedure TBeeCoder.Start;
 var
   Table: TTableParameters;
 begin
   if FBlock = 0 then
   begin
-    if not HexToData(FFilter, Table[1], SizeOf(Table)) then
-    begin
-      Table := DefaultTableParameters;
-    end;
+    if HexToData(FFilter, Table[1], SizeOf(Table)) = FALSE then
+      SetExitStatus(esBeeFilterError);
+
     BeeModeller_SetTableParameters(FModeller, @Table[1]);
     BeeModeller_SetDictionaryLevel(FModeller, FLevelAux);
     BeeModeller_FreshFlexible(FModeller);
@@ -306,23 +255,6 @@ begin
 end;
 
 { TPpmdCoder class }
-
-constructor TPpmdCoder.Create(Stream: pointer);
-begin
-  inherited Create(Stream);
-  FLevelAux := 2;
-  FLevel := 2;
-end;
-
-procedure TPpmdCoder.SetLevel(Value: longword);
-begin
-  inherited SetLevel(Value);
-end;
-
-procedure TPpmdCoder.SetLevelAux(Value: longword);
-begin
-  inherited SetLevelAux(Value);
-end;
 
 procedure TPpmdCoder.Start;
 begin
