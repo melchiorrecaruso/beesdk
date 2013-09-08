@@ -25,7 +25,7 @@
     v0.8.0 build 2060 - 2013.09.08 by Melchiorre Caruso.
 }
 
-unit bx_BufStream;
+unit bx_Stream;
 
 {$I bx_compiler.inc}
 

@@ -37,9 +37,9 @@ uses
   Classes,
   SysUtils,
   // ---
-  bx_BufStream,
   bx_CommandLine,
-  bx_Common;
+  bx_Common,
+  bx_Stream;
 
 type
   TFileReaderRequestImageEvent = procedure(ImageNumber: longint;
@@ -75,7 +75,7 @@ type
 
   { TFileWriter }
 
-  TFileWriterRequestBlankImageEvent = procedure(aImageNumber: longint;
+  TFileWriterRequestBlankDiskEvent = procedure(aImageNumber: longint;
      var Abort : Boolean) of object;
 
   TFileWriter = class(TWriteBufStream)
@@ -84,12 +84,12 @@ type
     FThreshold: int64;
     FCurrentImage: longint;
     FCurrentImageSize: int64;
-    FOnRequestBlankImage: TFileWriterRequestBlankImageEvent;
+    FOnRequestBlankImage: TFileWriterRequestBlankDiskEvent;
     function DoRequestImage(Value: longint): string;
     function GetImageName(Value: longint): string;
   public
     constructor Create(const aFileName: string; aRequestBlankImage:
-      TFileWriterRequestBlankImageEvent; const aThreshold: int64);
+      TFileWriterRequestBlankDiskEvent; const aThreshold: int64);
     destructor Destroy; override;
     procedure CreateNewImage;
 
@@ -297,7 +297,7 @@ end;
 { TFileWriter class }
 
 constructor TFileWriter.Create(const aFileName: string; aRequestBlankImage:
-  TFileWriterRequestBlankImageEvent; const aThreshold: int64);
+  TFileWriterRequestBlankDiskEvent; const aThreshold: int64);
 var
   ImageName: string;
 begin
