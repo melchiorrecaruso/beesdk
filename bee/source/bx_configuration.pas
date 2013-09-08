@@ -61,7 +61,7 @@ type
 // -------------------------------------------------------------------------- //
 
 const
-  DefaultDictionaryLevel: longword = $0002;
+  DefaultDictionaryLevel: longword = $0003;
   DefaultTableParameters: TTableParameters =
     (  3, 163, 157,  65,  93, 117, 135, 109, 126, 252, 172, 252, 152, 227, 249,
      249, 253, 196,  27,  82,  93,  74, 182, 245,  40,  67,  77, 143, 133, 135,

@@ -79,6 +79,8 @@ const
   esRenameTempError   = 209;
   esRequestDiskError  = 210;
 
+  esBeeFilterError    = 230;
+
   esUserAbortError    = 255;
 
 var
