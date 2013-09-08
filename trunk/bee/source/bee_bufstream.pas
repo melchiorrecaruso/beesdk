@@ -22,10 +22,10 @@
 
   Modifyed:
 
-    v0.8.0 build 1980 - 2013.04.29 by Melchiorre Caruso.
+    v0.8.0 build 2060 - 2013.09.08 by Melchiorre Caruso.
 }
 
-unit Bee_BufStream;
+unit bx_BufStream;
 
 {$I bx_compiler.inc}
 
@@ -124,6 +124,7 @@ type
   public
     constructor Create;
     function Write(Data: PByte; Count: longint): longint;  override;
+    function Encode(Data: PByte; Count: longint): longint; override;
     function Seek(const Offset: int64; Origin: longint): int64; override;
   end;
 
@@ -415,6 +416,13 @@ begin
 end;
 
 function TNulBufStream.Write(Data: PByte; Count: longint): longint;
+begin
+  Result := Count;
+  if Assigned(FHash) then
+    FHash.Update(Data, Count);
+end;
+
+function TNulBufStream.Encode(Data: PByte; Count: longint): longint;
 begin
   Result := Count;
   if Assigned(FHash) then
