@@ -75,7 +75,7 @@ type
 
   { TFileWriter }
 
-  TFileWriterRequestBlankDiskEvent = procedure(aImageNumber: longint;
+  TFileWriterRequestBlankDiskEvent = procedure(DiskNumber: longint;
      var Abort : Boolean) of object;
 
   TFileWriter = class(TWriteBufStream)
@@ -84,7 +84,7 @@ type
     FThreshold: int64;
     FCurrentImage: longint;
     FCurrentImageSize: int64;
-    FOnRequestBlankImage: TFileWriterRequestBlankDiskEvent;
+    FOnRequestBlankDisk: TFileWriterRequestBlankDiskEvent;
     function DoRequestImage(Value: longint): string;
     function GetImageName(Value: longint): string;
   public
@@ -148,18 +148,13 @@ begin
   FImageNumber    := 1;
   FImagesNumber   := 1;
   FOnRequestImage := aRequestImage;
-
-  if ExitStatus = esNoError then
-  begin
-    FHandle := FileOpen(FFileName, fmOpenRead or fmShareDenyWrite);
-    if FHandle = -1 then
-      SetExitStatus(esOpenStreamError);
-  end;
+  DoOpenImage(FImagesNumber);
 end;
 
 destructor TFileReader.Destroy;
 begin
-  FileClose(FHandle);
+  if FHandle <> -1 then
+    FileClose(FHandle);
   inherited Destroy;
 end;
 
@@ -176,7 +171,7 @@ var
   Abort: boolean;
 begin
   Result := GetImageName(Value);
-  while FileExists(Result) = FALSE do
+  while (FileExists(Result) = FALSE) and (ExitStatus = esNoError) do
   begin
     Abort := TRUE;
     if Assigned(FOnRequestImage) then
@@ -184,23 +179,19 @@ begin
 
     if Abort then
       SetExitStatus(esUserAbortError);
-
-    if ExitStatus <> esNoError then Break;
   end;
 end;
 
 procedure TFileReader.DoOpenImage(Value: longint);
-var
-  ImageName: string;
 begin
-  ClearBuffer;
-  FileClose(FHandle);
-
-  FImageNumber := Value;
-  ImageName := GetImageName(FImageNumber);
   if ExitStatus = esNoError then
   begin
-    FHandle := FileOpen(ImageName, fmOpenRead or fmShareDenyWrite);
+    ClearBuffer;
+    if FHandle <> -1 then
+      FileClose(FHandle);
+
+    FImageNumber := Value;
+    FHandle := FileOpen(GetImageName(FImageNumber), fmOpenRead or fmShareDenyWrite);
     if FHandle = -1 then
       SetExitStatus(esOpenStreamError);
   end;
@@ -306,7 +297,7 @@ begin
   FThreshold           := Max(0, aThreshold);
   FCurrentImage        := 1;
   FCurrentImageSize    := 0;
-  FOnRequestBlankImage := aRequestBlankImage;
+  FOnRequestBlankDisk := aRequestBlankImage;
 
   ImageName := DoRequestImage(FCurrentImage);
   if ExitStatus = esNoError then
@@ -391,8 +382,8 @@ begin
     while GetDriveFreeSpace(Result) <= FThreshold do
     begin
       Abort := TRUE;
-      if Assigned(FOnRequestBlankImage) then
-        FOnRequestBlankImage(Value, Abort);
+      if Assigned(FOnRequestBlankDisk) then
+        FOnRequestBlankDisk(Value, Abort);
       if Abort then
         SetExitStatus(esUserAbortError);
 
