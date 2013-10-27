@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Package Version="3">
+    <PathDelim Value="\"/>
+    <Name Value="beegui_package"/>
+    <Author Value="Melchiorre Caruso"/>
+    <CompilerOptions>
+      <Version Value="10"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="packages.include"/>
+        <OtherUnitFiles Value="..\..\..\bee\source"/>
+        <UnitOutputDirectory Value="$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)"/>
+        <SrcPath Value="..\..\..\bee\source"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <SyntaxMode Value="Delphi"/>
+          <CStyleOperator Value="False"/>
+          <AllowLabel Value="False"/>
+          <CPPInline Value="False"/>
+        </SyntaxOptions>
+      </Parsing>
+      <CodeGeneration>
+        <SmartLinkUnit Value="True"/>
+        <Optimizations>
+          <VariablesInRegisters Value="True"/>
+          <UncertainOptimizations Value="True"/>
+          <OptimizationLevel Value="3"/>
+        </Optimizations>
+      </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <UseLineInfoUnit Value="False"/>
+        </Debugging>
+      </Linking>
+      <Other>
+        <Verbosity>
+          <ShoLineNum Value="True"/>
+        </Verbosity>
+        <CompilerMessages>
+          <UseMsgFile Value="True"/>
+        </CompilerMessages>
+        <CompilerPath Value="$(CompPath)"/>
+        <ExecuteBefore>
+          <ScanForFPCMsgs Value="True"/>
+          <ScanForMakeMsgs Value="True"/>
+          <ShowAllMessages Value="True"/>
+        </ExecuteBefore>
+        <ExecuteAfter>
+          <ScanForFPCMsgs Value="True"/>
+          <ScanForMakeMsgs Value="True"/>
+          <ShowAllMessages Value="True"/>
+        </ExecuteAfter>
+      </Other>
+    </CompilerOptions>
+    <License Value="GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+"/>
+    <Version Major="1" Release="6" Build="190"/>
+    <Files Count="12">
+      <Item1>
+        <Filename Value="beegui_addtreeviewmgr.lrs"/>
+        <Type Value="LRS"/>
+      </Item1>
+      <Item2>
+        <Filename Value="beegui_addtreeviewmgr.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_AddTreeViewMgr"/>
+      </Item2>
+      <Item3>
+        <Filename Value="beegui_archivefolderbox.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_ArchiveFolderBox"/>
+      </Item3>
+      <Item4>
+        <Filename Value="beegui_archivelistviewmgr.lrs"/>
+        <Type Value="LRS"/>
+      </Item4>
+      <Item5>
+        <Filename Value="beegui_archivelistviewmgr.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_ArchiveListViewMgr"/>
+      </Item5>
+      <Item6>
+        <Filename Value="beegui_foldertreeviewmgr.lrs"/>
+        <Type Value="LRS"/>
+      </Item6>
+      <Item7>
+        <Filename Value="beegui_foldertreeviewmgr.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_FolderTreeViewMgr"/>
+      </Item7>
+      <Item8>
+        <Filename Value="beegui_iconlist.lrs"/>
+        <Type Value="LRS"/>
+      </Item8>
+      <Item9>
+        <Filename Value="beegui_iconlist.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_IconList"/>
+      </Item9>
+      <Item10>
+        <Filename Value="beegui_process.lrs"/>
+        <Type Value="LRS"/>
+      </Item10>
+      <Item11>
+        <Filename Value="beegui_process.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="BeeGui_Process"/>
+      </Item11>
+      <Item12>
+        <Filename Value="beegui_archivefolderbox.lrs"/>
+        <Type Value="LRS"/>
+      </Item12>
+    </Files>
+    <Type Value="RunAndDesignTime"/>
+    <RequiredPkgs Count="2">
+      <Item1>
+        <PackageName Value="LCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item2>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <DestinationDirectory Value="$(TestDir)\publishedpackage\"/>
+      <IgnoreBinaries Value="False"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
