@@ -2,31 +2,50 @@
 using Gtk;
 using Granite.Widgets;
 
-int main (string[] args) {
-    Gtk.init (ref args);
- 
-    // the window:
-    var window = new Window (WindowType.TOPLEVEL);
-    window.title = "BX Manager";
-    window.set_default_size (600, 400);
-    window.window_position = WindowPosition.CENTER;
-    window.destroy.connect (Gtk.main_quit);
- 
+public class MainWindow : Window {
+  private string archivename;
+  public MainWindow () {
+    this.title = "BX Manager";
+    this.set_default_size (600, 400);
+    this.window_position = WindowPosition.CENTER;          
+  }
+
+  private void CreateWidgets () {
     // the toolbar:
     var toolbar = new Toolbar (); 
-    toolbar.get_style_context ().add_class (STYLE_CLASS_PRIMARY_TOOLBAR);   	    
-    
+    toolbar.get_style_context ().add_class (STYLE_CLASS_PRIMARY_TOOLBAR);  
+
     var newbtn = new ToolButton.from_stock (Stock.NEW); 
-		newbtn.clicked.connect (() => {	
-          string archivename = archivesavedialog ();		
-		});
-	toolbar.add (newbtn);	
+	newbtn.clicked.connect (() => {	
+      archivename = archivesavedialog ();		
+	});
+	toolbar.add (newbtn);
 
     var openbtn = new ToolButton.from_stock (Stock.OPEN);
-		openbtn.clicked.connect (() => {
-          string archivename = archiveopendialog ();			
-		});
+	openbtn.clicked.connect (() => {
+      archivename = archiveopendialog ();			
+    });
 	toolbar.add (openbtn);
+
+    var addbtn = new ToolButton.from_stock (Stock.GO_DOWN);
+	openbtn.clicked.connect (() => {
+      // add form			
+    });
+    toolbar.add (addbtn);
+
+    var extractbtn = new ToolButton.from_stock (Stock.GO_UP);
+	extractbtn.clicked.connect (() => {
+      // extract form			
+    });
+    toolbar.add (extractbtn);
+
+    var findbtn = new ToolButton.from_stock (Stock.FIND);
+	findbtn.clicked.connect (() => {
+      // find form			
+    });
+    toolbar.add (findbtn);
+
+
 
     var spacer = new ToolItem ();
     spacer.set_expand (true);
@@ -36,6 +55,7 @@ int main (string[] args) {
 	var sharemenu_item_1 = new Gtk.MenuItem.with_label ("Item-1");
 	sharemenu.add (sharemenu_item_1);
     var sharemenu_separator_1 = new Gtk.SeparatorMenuItem ();
+   
     sharemenu.add (sharemenu_separator_1);	
     var sharemenu_item_2 = new Gtk.MenuItem.with_label ("Item-2");
 	sharemenu.add (sharemenu_item_2);		
@@ -52,17 +72,28 @@ int main (string[] args) {
     var menubtn  = new Granite.Widgets.ToolButtonWithMenu (new Image.from_icon_name ("document-properties", IconSize.MENU), "Menu", mainmenu);
     toolbar.add (menubtn);
     
-
-    
     // the treeview:
     var treeview  = new TreeView ();
     var listmodel = new ListStore (4, typeof (string), typeof (string), typeof (string), typeof (string));
     treeview.set_model (listmodel);
 
     treeview.insert_column_with_attributes (-1, "Filename", new CellRendererText (), "text", 0);
+    treeview.get_column(0).clicked.connect (() => {	
+      // ordina per nome		
+	});    
     treeview.insert_column_with_attributes (-1, "Size",     new CellRendererText (), "text", 1);
+    treeview.get_column(1).clicked.connect (() => {	
+      // ordina per size		
+	});
     treeview.insert_column_with_attributes (-1, "Type",     new CellRendererText (), "text", 2);
+    treeview.get_column(2).clicked.connect (() => {	
+      // ordina per type		
+	});
     treeview.insert_column_with_attributes (-1, "Modified", new CellRendererText (), "text", 3);
+    treeview.get_column(3).clicked.connect (() => {	
+      // ordina per type		
+	});
+    treeview.set_headers_clickable (true);
 
     TreeIter iter;
     listmodel.append (out iter);
@@ -76,9 +107,17 @@ int main (string[] args) {
     vbox.pack_start (toolbar, false, true, 0);
     vbox.pack_start (treeview, true, true, 0);
        
-      
-    window.add (vbox);              
-    window.show_all ();
+    this.add (vbox);
+    this.show_all ();         
+  }
+
+  public static int main (string[] args) {
+    Gtk.init (ref args);
+    var window = new MainWindow ();
+    window.destroy.connect (Gtk.main_quit);
+    window.CreateWidgets ();
+    window.show ();
     Gtk.main ();
     return 0;
+  }
 }
