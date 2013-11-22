@@ -84,7 +84,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="3">
+    <Units Count="1">
       <Unit0>
         <Filename Value="bx.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -98,29 +98,6 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
-      <Unit1>
-        <Filename Value="bx_src\bx_archiver.pas"/>
-        <UnitName Value="bx_Archiver"/>
-        <EditorIndex Value="2"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="821"/>
-        <CursorPos X="53" Y="868"/>
-        <FoldState Value=" T3qE0811"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit1>
-      <Unit2>
-        <Filename Value="bx_src\bx_liblink.pas"/>
-        <UnitName Value="bx_LibLink"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="25"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit2>
     </Units>
     <JumpHistory Count="3" HistoryIndex="2">
       <Position1>
@@ -143,10 +120,10 @@
       <Filename Value="../release/bx"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="bx_src;$(ProjOutDir)"/>
-      <Libraries Value="bx_src/libbx.c"/>
-      <OtherUnitFiles Value="bx_src"/>
-      <UnitOutputDirectory Value="../.temp"/>
+      <IncludeFiles Value="bx-src;$(ProjOutDir)"/>
+      <Libraries Value="bx-src/libbx.c"/>
+      <OtherUnitFiles Value="bx-src"/>
+      <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
