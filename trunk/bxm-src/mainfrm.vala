@@ -3,7 +3,7 @@ using Gtk;
 using Granite.Widgets;
 
 public class MainWindow : Window {
-  private string archivename;
+  
   public MainWindow () {
     this.title = "BX Manager";
     this.set_default_size (600, 400);
@@ -17,13 +17,13 @@ public class MainWindow : Window {
 
     var newbtn = new ToolButton.from_stock (Stock.NEW); 
 	newbtn.clicked.connect (() => {	
-      archivename = archivesavedialog ();		
+      stdout.printf(archivesavedialog () + "\n");		
 	});
 	toolbar.add (newbtn);
 
     var openbtn = new ToolButton.from_stock (Stock.OPEN);
 	openbtn.clicked.connect (() => {
-      archivename = archiveopendialog ();			
+      stdout.printf(archiveopendialog () + "\n");			
     });
 	toolbar.add (openbtn);
 
@@ -46,17 +46,15 @@ public class MainWindow : Window {
     toolbar.add (findbtn);
 
 
-
     var spacer = new ToolItem ();
     spacer.set_expand (true);
     toolbar.add (spacer);
 
     var sharemenu = new Gtk.Menu ();    	
 	var sharemenu_item_1 = new Gtk.MenuItem.with_label ("Item-1");
-	sharemenu.add (sharemenu_item_1);
+	sharemenu.add (sharemenu_item_1);    
     var sharemenu_separator_1 = new Gtk.SeparatorMenuItem ();
-   
-    sharemenu.add (sharemenu_separator_1);	
+    sharemenu.add (sharemenu_separator_1);	   
     var sharemenu_item_2 = new Gtk.MenuItem.with_label ("Item-2");
 	sharemenu.add (sharemenu_item_2);		
     var sharebtn  = new Granite.Widgets.ToolButtonWithMenu (new Image.from_icon_name ("document-export", IconSize.MENU), "Share", sharemenu);
@@ -79,21 +77,38 @@ public class MainWindow : Window {
 
     treeview.insert_column_with_attributes (-1, "Filename", new CellRendererText (), "text", 0);
     treeview.get_column(0).clicked.connect (() => {	
-      // ordina per nome		
+    // ordina per nome		
 	});    
     treeview.insert_column_with_attributes (-1, "Size",     new CellRendererText (), "text", 1);
     treeview.get_column(1).clicked.connect (() => {	
-      // ordina per size		
+    // ordina per size		
 	});
     treeview.insert_column_with_attributes (-1, "Type",     new CellRendererText (), "text", 2);
     treeview.get_column(2).clicked.connect (() => {	
-      // ordina per type		
+    // ordina per type		
 	});
     treeview.insert_column_with_attributes (-1, "Modified", new CellRendererText (), "text", 3);
     treeview.get_column(3).clicked.connect (() => {	
-      // ordina per type		
+    // ordina per type		
 	});
-    treeview.set_headers_clickable (true);
+    treeview.headers_clickable = true;    
+    treeview.fixed_height_mode = true;
+    treeview.show_expanders    = true;
+
+    var treeviewmenu = new Gtk.Menu ();  
+    var treeviewmenu_item_1 = new Gtk.MenuItem.with_label ("Item-1");
+	treeviewmenu.add (treeviewmenu_item_1);    
+    var treeviewmenu_item_2 = new Gtk.MenuItem.with_label ("Item-2");
+	treeviewmenu.add (treeviewmenu_item_2);
+
+    treeview.row_activated.connect(() => {	
+      stdout.printf("row_activated\n");
+    });
+
+
+
+
+
 
     TreeIter iter;
     listmodel.append (out iter);
