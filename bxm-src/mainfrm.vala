@@ -1,3 +1,33 @@
+/*
+  Copyright (c) 2013 Melchiorre Caruso.
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+/* 
+  Contains:
+
+    BX Manager main form.
+
+  Fist release:
+
+    v1.0 build 0027 - 2013.11.23 by Melchiorre Caruso.
+
+  Modifyed:
+
+*/
 
 using Gtk;
 using Granite.Widgets;
@@ -28,20 +58,20 @@ public class MainWindow : Window {
 	toolbar.add (openbtn);
 
     var addbtn = new ToolButton.from_stock (Stock.GO_DOWN);
-	openbtn.clicked.connect (() => {
-      // add form			
+	addbtn.clicked.connect (() => {
+      stdout.printf("add form show\n"); 	
     });
     toolbar.add (addbtn);
 
     var extractbtn = new ToolButton.from_stock (Stock.GO_UP);
 	extractbtn.clicked.connect (() => {
-      // extract form			
+      stdout.printf("extract form show\n"); 			
     });
     toolbar.add (extractbtn);
 
     var findbtn = new ToolButton.from_stock (Stock.FIND);
 	findbtn.clicked.connect (() => {
-      // find form			
+      stdout.printf("find form show\n"); 			
     });
     toolbar.add (findbtn);
 
@@ -65,8 +95,11 @@ public class MainWindow : Window {
 	mainmenu.add (mainmenu_item_1);
     var mainmenu_separator_1 = new Gtk.SeparatorMenuItem ();
     mainmenu.add (mainmenu_separator_1);	
-    var mainmenu_item_2 = new Gtk.MenuItem.with_label ("Item-2");
-	mainmenu.add (mainmenu_item_2);		
+    var mainmenu_about = new Gtk.MenuItem.with_label ("About");
+    mainmenu_about.activate.connect (() => {	
+      aboutdialog (); 	
+    });	    
+    mainmenu.add (mainmenu_about);		
     var menubtn  = new Granite.Widgets.ToolButtonWithMenu (new Image.from_icon_name ("document-properties", IconSize.MENU), "Menu", mainmenu);
     toolbar.add (menubtn);
     
@@ -91,15 +124,33 @@ public class MainWindow : Window {
     treeview.get_column(3).clicked.connect (() => {	
     // ordina per type		
 	});
-    treeview.headers_clickable = true;    
-    treeview.fixed_height_mode = true;
-    treeview.show_expanders    = true;
+    treeview.headers_clickable = true;            
 
     var treeviewmenu = new Gtk.Menu ();  
     var treeviewmenu_item_1 = new Gtk.MenuItem.with_label ("Item-1");
-	treeviewmenu.add (treeviewmenu_item_1);    
+    treeviewmenu_item_1.activate.connect (() => {	
+      stdout.printf("treeview menu item 1 anctivated\n"); 	
+    });
+  	treeviewmenu.add (treeviewmenu_item_1);    
+    
     var treeviewmenu_item_2 = new Gtk.MenuItem.with_label ("Item-2");
+    treeviewmenu_item_2.activate.connect (() => {	
+      stdout.printf("treeview menu item 2 anctivated\n"); 	
+    });
 	treeviewmenu.add (treeviewmenu_item_2);
+    this.add (treeviewmenu);
+
+    treeview.button_press_event.connect ((event) => {  
+      if (event.button == 3) {
+		treeviewmenu.show_all ();
+        treeviewmenu.popup (null, null, null, event.button, event.time);			
+	    return true;
+	  }
+      stdout.printf("button_press_event\n");
+      return false;
+    });
+    
+ 
 
     treeview.row_activated.connect(() => {	
       stdout.printf("row_activated\n");
