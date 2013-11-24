@@ -39,6 +39,7 @@
         <Filename Value="bxm.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="bxm"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -222,12 +223,11 @@
         <ComponentName Value="MainFrm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="bxm_mainfrm"/>
-        <IsVisibleTab Value="True"/>
+        <UnitName Value="bxm_MainFrm"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="56"/>
-        <CursorPos X="28" Y="88"/>
+        <TopLine Value="1"/>
+        <CursorPos X="15" Y="1"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -240,8 +240,8 @@
         <UnitName Value="bxm_AboutFrm"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="46"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <CursorPos X="43" Y="41"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit24>
@@ -257,6 +257,7 @@
         <CursorPos X="11" Y="185"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit25>
     </Units>
     <JumpHistory Count="8" HistoryIndex="7">
