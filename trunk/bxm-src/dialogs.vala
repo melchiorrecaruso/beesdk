@@ -103,7 +103,8 @@ void aboutdialog () {
   dialog.comments = "The user interface for BX archiver";
   dialog.copyright = "Copyright © 2013 Melchiorre Caruso";
   dialog.version = "1.0";
-    
+
+  //dialog.license_type = Gtk.License.GPL_2_0;   
   dialog.license = 
 
 "BX is free software; you can redistribute it and/or modify it under the 
@@ -118,7 +119,7 @@ more details.
 
 You should have received a copy of the GNU Lesser General Public License 
 along with BX; if not, write to the Free Software Foundation, Inc., 
-51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA";
+51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"; 
 
   dialog.wrap_license  = true;
   dialog.website       = "http://www.beegui.org";

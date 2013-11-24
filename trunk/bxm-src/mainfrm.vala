@@ -37,7 +37,9 @@ public class MainWindow : Window {
   public MainWindow () {
     this.title = "BX Manager";
     this.set_default_size (600, 400);
-    this.window_position = WindowPosition.CENTER;          
+    this.window_position = WindowPosition.CENTER;
+
+    this.CreateWidgets ();          
   }
 
   private void CreateWidgets () {
@@ -47,7 +49,14 @@ public class MainWindow : Window {
 
     var newbtn = new ToolButton.from_stock (Stock.NEW); 
 	newbtn.clicked.connect (() => {	
-      stdout.printf(archivesavedialog () + "\n");		
+      stdout.printf(archivesavedialog () + "\n");
+
+
+      var addfrm = new AddWindow ();
+      addfrm.set_modal (true);
+      addfrm.run ();
+      addfrm.close ();
+		
 	});
 	toolbar.add (newbtn);
 
@@ -108,21 +117,25 @@ public class MainWindow : Window {
     var listmodel = new ListStore (4, typeof (string), typeof (string), typeof (string), typeof (string));
     treeview.set_model (listmodel);
 
+    treeview.get_selection ().set_mode (Gtk.SelectionMode.MULTIPLE);
+    
+
+
     treeview.insert_column_with_attributes (-1, "Filename", new CellRendererText (), "text", 0);
     treeview.get_column(0).clicked.connect (() => {	
-    // ordina per nome		
+      stdout.printf("treeview column(0) clicked\n"); 		
 	});    
     treeview.insert_column_with_attributes (-1, "Size",     new CellRendererText (), "text", 1);
     treeview.get_column(1).clicked.connect (() => {	
-    // ordina per size		
+      stdout.printf("treeview column(1) clicked\n"); 	
 	});
     treeview.insert_column_with_attributes (-1, "Type",     new CellRendererText (), "text", 2);
     treeview.get_column(2).clicked.connect (() => {	
-    // ordina per type		
+      stdout.printf("treeview column(2) clicked\n"); 	
 	});
     treeview.insert_column_with_attributes (-1, "Modified", new CellRendererText (), "text", 3);
     treeview.get_column(3).clicked.connect (() => {	
-    // ordina per type		
+      stdout.printf("treeview column(3) clicked\n"); 	
 	});
     treeview.headers_clickable = true;            
 
@@ -138,7 +151,7 @@ public class MainWindow : Window {
       stdout.printf("treeview menu item 2 anctivated\n"); 	
     });
 	treeviewmenu.add (treeviewmenu_item_2);
-    this.add (treeviewmenu);
+    // this.add (treeviewmenu);
 
     treeview.button_press_event.connect ((event) => {  
       if (event.button == 3) {
@@ -176,14 +189,13 @@ public class MainWindow : Window {
     this.add (vbox);
     this.show_all ();         
   }
+}
 
-  public static int main (string[] args) {
-    Gtk.init (ref args);
-    var window = new MainWindow ();
-    window.destroy.connect (Gtk.main_quit);
-    window.CreateWidgets ();
-    window.show ();
-    Gtk.main ();
-    return 0;
-  }
+int main (string[] args) {
+  Gtk.init (ref args);
+  var window = new MainWindow ();
+  window.destroy.connect (Gtk.main_quit);
+  window.show ();
+  Gtk.main ();
+  return 0;
 }
