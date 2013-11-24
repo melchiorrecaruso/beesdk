@@ -210,7 +210,7 @@ begin
       I := 0;
   end;
 
-  if CompareFileName('.@folderopen', FileName) = 0 then
+  if AnsiCompareFileName('.@folderopen', FileName) = 0 then
   begin
     I := I or SHGFI_OPENICON;
   end;
@@ -253,4 +253,4 @@ initialization
 
   {$I bxm_iconlist.lrs}
 
-end.
+end.

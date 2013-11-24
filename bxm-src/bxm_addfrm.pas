@@ -176,8 +176,13 @@ begin
   RootArrow.ArrowType            := atRight;
   AdvancedOptionsArrow.ArrowType := atRight;
 
+  {$IFDEF MSWINDOWS}
+  Constraints.MinHeight := 300;
+  Constraints.MaxHeight := 300;
+  {$ELSE}
   Constraints.MinHeight := 320;
   Constraints.MaxHeight := 320;
+  {$ENDIF}
   Constraints.MinWidth  := 500;
   Constraints.MaxWidth  := 500;
 end;
@@ -188,12 +193,15 @@ begin
   if AdvancedOptionsPanel.Visible then
   begin
     AdvancedOptionsArrow.ArrowType := atDown;
-    Constraints.MinHeight := Constraints.MinHeight + AdvancedOptionsPanel.Height;
+    Constraints.MaxHeight := Constraints.MaxHeight + AdvancedOptionsPanel.Height;
+    Constraints.MinHeight := Constraints.MaxHeight;
   end else
   begin
     AdvancedOptionsArrow.ArrowType := atRight;
-    Constraints.MaxHeight := Constraints.MaxHeight - AdvancedOptionsPanel.Height;
+    Constraints.MinHeight := Constraints.MinHeight - AdvancedOptionsPanel.Height;
+    Constraints.MaxHeight := Constraints.MinHeight;
   end;
+  Height := Constraints.MaxHeight;
 end;
 
 procedure TAddFrm.RootArrowClick(Sender: TObject);
@@ -202,12 +210,15 @@ begin
   if RootPanel.Visible then
   begin
     RootArrow.ArrowType := atDown;
-    Constraints.MinHeight := Constraints.MinHeight + RootPanel.Height;
+    Constraints.MaxHeight := Constraints.MaxHeight + RootPanel.Height;
+    Constraints.MinHeight := Constraints.MaxHeight;
   end else
   begin
     RootArrow.ArrowType := atRight;
-    Constraints.MaxHeight := Constraints.MaxHeight - RootPanel.Height;
+    Constraints.MinHeight := Constraints.MinHeight - RootPanel.Height;
+    Constraints.MaxHeight := Constraints.MinHeight;
   end;
+  Height := Constraints.MaxHeight;
 end;
 
 procedure TAddFrm.ArchiveWithPasswordCheckClick(Sender: TObject);
@@ -341,4 +352,4 @@ initialization
 
   {$i bxm_addfrm.lrs}
 
-end.
+end.
