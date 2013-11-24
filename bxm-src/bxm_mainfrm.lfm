@@ -1,12 +1,14 @@
 object MainFrm: TMainFrm
-  Left = 494
-  Height = 311
-  Top = 293
-  Width = 589
+  Left = 484
+  Height = 300
+  Top = 287
+  Width = 600
   AlphaBlend = True
   Caption = 'BX Manager'
-  ClientHeight = 311
-  ClientWidth = 589
+  ClientHeight = 300
+  ClientWidth = 600
+  Constraints.MinHeight = 250
+  Constraints.MinWidth = 400
   OnCreate = FormCreate
   ParentFont = True
   LCLVersion = '1.3'
@@ -14,7 +16,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 36
     Top = 0
-    Width = 589
+    Width = 600
     Align = alTop
     AutoSize = True
     OnClick = Image1Click
@@ -43,12 +45,13 @@ object MainFrm: TMainFrm
     Left = 3
     Height = 34
     Top = 2
-    Width = 514
+    Width = 525
     Align = alNone
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
     BorderSpacing.Left = 3
     BorderSpacing.Top = 2
+    BorderSpacing.Bottom = 1
     ButtonHeight = 34
     ButtonWidth = 34
     Caption = 'ToolBar1'
@@ -99,7 +102,7 @@ object MainFrm: TMainFrm
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 517
+    Left = 528
     Height = 34
     Top = 2
     Width = 69
@@ -108,6 +111,7 @@ object MainFrm: TMainFrm
     AutoSize = True
     BorderSpacing.Top = 2
     BorderSpacing.Right = 3
+    BorderSpacing.Bottom = 1
     ButtonHeight = 34
     ButtonWidth = 34
     Caption = 'ToolBar2'
@@ -123,6 +127,7 @@ object MainFrm: TMainFrm
       Top = 0
       Caption = 'ShareButton'
       ImageIndex = 5
+      OnClick = ShareButtonClick
     end
     object MenuButton: TToolButton
       Left = 35
@@ -140,8 +145,8 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     Left = 0
     Height = 26
-    Top = 37
-    Width = 589
+    Top = 38
+    Width = 600
     DragReorder = False
     Sections = <    
       item
@@ -173,9 +178,9 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 248
-    Top = 63
-    Width = 589
+    Height = 236
+    Top = 64
+    Width = 600
     Anchors = [akTop, akLeft, akRight, akBottom]
     AutoSort = False
     AutoWidthLastColumn = True
@@ -191,7 +196,7 @@ object MainFrm: TMainFrm
       item
       end    
       item
-        Width = 389
+        Width = 400
       end>
     ReadOnly = True
     ScrollBars = ssAutoVertical
@@ -207,23 +212,22 @@ object MainFrm: TMainFrm
     AnchorSideRight.Side = asrBottom
     Left = 0
     Height = 1
-    Top = 36
-    Width = 589
+    Top = 37
+    Width = 600
     Anchors = [akTop, akLeft, akRight]
     Brush.Color = clDefault
     Pen.Color = clGray
   end
   object MainMenu: TPopupMenu
+    AutoPopup = False
+    OnClose = MainMenuClose
     left = 24
     top = 80
     object MenuItem1: TMenuItem
       Caption = 'New'
     end
     object MenuItem5: TMenuItem
-      Caption = 'Open'
-    end
-    object MenuItem4: TMenuItem
-      Caption = '-'
+      Caption = 'Preferences'
     end
     object MenuItem3: TMenuItem
       Caption = '-'
@@ -305,14 +309,14 @@ object MainFrm: TMainFrm
       6EFF43786BFF43786CFF43786BFF5D7770FFA3A3A3FFFF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00E2E2E2FFDFDF
-      DFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFE2E2E2FFFF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00BABABAFFB2B2B2FFB2B2B2FFB2B2
       B2FFB2B2B2FFB2B2B2FFB2B2B2FFB2B2B2FFB8B8B8FFFF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00B1B1B1FFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFB6B6B6FFE1E1E1FFFF00FF00FF00FF00FF00FF00FF00
+      FFFFFFFFFFFFFFFFFFFFB6B6B6FFFF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00BDBD
       BDFFAFAFAFFFFBFBFBFFF9F9F9FFF9F9F9FFF9F9F9FFF9F9F9FFF9F9F9FFFCFC
       FCFFB5B5B5FFAFAFAFFFAFAFAFFFAFAFAFFFAFAFAFFFAFAFAFFFAFAFAFFFAFAF
@@ -416,8 +420,8 @@ object MainFrm: TMainFrm
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00DDD3DDFF6D6D6DFF6D6D6DFFDBDBDBFFFF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00EAE0
-      EAFFEAE0EAFFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
@@ -477,7 +481,7 @@ object MainFrm: TMainFrm
       FF00FF00FF00FF00FF00FF00FF00FF00FF006F6F6FFF525252FF525252FF7575
       75FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-      FF00FF00FF00FF00FF00FF00FF00ECECECFFECECECFFFF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
@@ -669,7 +673,19 @@ object MainFrm: TMainFrm
     }
   end
   object ShareMenu: TPopupMenu
+    AutoPopup = False
+    OnPopup = ShareMenuPopup
     left = 88
     top = 80
+    object MenuItem6: TMenuItem
+      Caption = 'Send archive via email'
+      OnClick = MenuItem6Click
+    end
+    object MenuItem7: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem8: TMenuItem
+      Caption = 'Print archive content'
+    end
   end
 end

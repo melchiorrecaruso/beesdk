@@ -34,7 +34,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="26">
+    <Units Count="28">
       <Unit0>
         <Filename Value="bxm.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -43,8 +43,9 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="21" Y="8"/>
-        <UsageCount Value="42"/>
+        <UsageCount Value="44"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="bxm_mainfrm.pas"/>
@@ -55,7 +56,7 @@
         <UnitName Value="bxm_mainfrm"/>
         <TopLine Value="65"/>
         <CursorPos X="3" Y="100"/>
-        <UsageCount Value="42"/>
+        <UsageCount Value="44"/>
       </Unit1>
       <Unit2>
         <Filename Value="test_main.pas"/>
@@ -223,14 +224,14 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="bxm_MainFrm"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="15" Y="1"/>
-        <UsageCount Value="12"/>
+        <TopLine Value="80"/>
+        <CursorPos X="3" Y="117"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
         <Filename Value="bxm-src/bxm_aboutfrm.pas"/>
@@ -242,8 +243,9 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="43" Y="41"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit24>
       <Unit25>
         <Filename Value="bxm-src/bxm_addfrm.pas"/>
@@ -251,15 +253,33 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="bxm_AddFrm"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="171"/>
         <CursorPos X="11" Y="185"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit25>
+      <Unit26>
+        <Filename Value="../../lazarus/lcl/menus.pp"/>
+        <UnitName Value="Menus"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="378"/>
+        <CursorPos X="15" Y="398"/>
+        <UsageCount Value="10"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="../../lazarus/lcl/forms.pp"/>
+        <UnitName Value="Forms"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="32"/>
+        <CursorPos X="3" Y="52"/>
+        <UsageCount Value="10"/>
+      </Unit27>
     </Units>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="22" HistoryIndex="21">
       <Position1>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
@@ -292,6 +312,62 @@
         <Filename Value="bxm-src/bxm_addfrm.pas"/>
         <Caret Line="213" Column="34" TopLine="193"/>
       </Position8>
+      <Position9>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="1" Column="15" TopLine="1"/>
+      </Position9>
+      <Position10>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="77" Column="18" TopLine="62"/>
+      </Position10>
+      <Position11>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="69" Column="91" TopLine="60"/>
+      </Position11>
+      <Position12>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="79" Column="53" TopLine="62"/>
+      </Position12>
+      <Position13>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="103" Column="50" TopLine="68"/>
+      </Position13>
+      <Position14>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="82" Column="59" TopLine="68"/>
+      </Position14>
+      <Position15>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="84" Column="59" TopLine="70"/>
+      </Position15>
+      <Position16>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="94" Column="3" TopLine="75"/>
+      </Position16>
+      <Position17>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="95" Column="3" TopLine="76"/>
+      </Position17>
+      <Position18>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="97" Column="3" TopLine="78"/>
+      </Position18>
+      <Position19>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="88" Column="3" TopLine="70"/>
+      </Position19>
+      <Position20>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="87" Column="3" TopLine="69"/>
+      </Position20>
+      <Position21>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="84" Column="45" TopLine="69"/>
+      </Position21>
+      <Position22>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="75" Column="25" TopLine="69"/>
+      </Position22>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -304,9 +380,18 @@
       <OtherUnitFiles Value="bxm-src"/>
       <UnitOutputDirectory Value="../temp"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <SyntaxMode Value="Delphi"/>
+        <CStyleOperator Value="False"/>
+        <AllowLabel Value="False"/>
+        <CPPInline Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
     <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
       <Optimizations>
-        <OptimizationLevel Value="0"/>
+        <OptimizationLevel Value="3"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>
@@ -314,6 +399,7 @@
         <GenerateDebugInfo Value="False"/>
         <StripSymbols Value="True"/>
       </Debugging>
+      <LinkSmart Value="True"/>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>

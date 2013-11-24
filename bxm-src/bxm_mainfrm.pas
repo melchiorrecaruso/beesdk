@@ -20,9 +20,11 @@ type
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
-    MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
     MainMenu: TPopupMenu;
+    MenuItem6: TMenuItem;
+    MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
     ShareMenu: TPopupMenu;
     Shape1: TShape;
     ToolBar1: TToolBar;
@@ -36,10 +38,14 @@ type
     FindButton: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure Image1Click(Sender: TObject);
+    procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem6Click(Sender: TObject);
     procedure Shape2ChangeBounds(Sender: TObject);
     procedure NewButtonClick(Sender: TObject);
+    procedure ShareButtonClick(Sender: TObject);
+    procedure ShareMenuPopup(Sender: TObject);
   private
     { private declarations }
   public
@@ -71,20 +77,34 @@ end;
 
 procedure TMainFrm.MenuButtonClick(Sender: TObject);
 begin
+  MenuButton.Down := TRUE;
+  MainMenu.PopUp(Left + ToolBar2.Left + MenuButton.Left, Top + 59);
+end;
 
+procedure TMainFrm.MainMenuClose(Sender: TObject);
+begin
+  MenuButton.Down := FALSE;
+end;
 
+procedure TMainFrm.ShareButtonClick(Sender: TObject);
+begin
+  ShareButton.Down := TRUE;
+  ShareMenu.PopUp(Left + ToolBar2.Left + ShareButton.Left, Top  + 59);
+end;
 
-
-  MainMenu.PopUp;
-
-
-
-
+procedure TMainFrm.ShareMenuPopup(Sender: TObject);
+begin
+  ShareButton.Down := FALSE;
 end;
 
 procedure TMainFrm.MenuItem2Click(Sender: TObject);
 begin
   AboutFrm.ShowModal;
+end;
+
+procedure TMainFrm.MenuItem6Click(Sender: TObject);
+begin
+
 end;
 
 procedure TMainFrm.Shape2ChangeBounds(Sender: TObject);
@@ -96,7 +116,6 @@ procedure TMainFrm.NewButtonClick(Sender: TObject);
 begin
   AddFrm.ShowModal;
 end;
-
 
 end.
 
