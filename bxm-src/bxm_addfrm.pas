@@ -108,7 +108,7 @@ type
 
     FilesImages: TImageList;
     // ---
-    PopupMenu: TPopupMenu;
+    FilesPopupMenu: TPopupMenu;
     PopupMenu_AddFolder: TMenuItem;
     PopupMenu_N2: TMenuItem;
     PopupMenu_AddFiles: TMenuItem;
@@ -175,7 +175,11 @@ begin
   // ---
   RootArrow.ArrowType            := atRight;
   AdvancedOptionsArrow.ArrowType := atRight;
-  Height := 320;
+
+  Constraints.MinHeight := 320;
+  Constraints.MaxHeight := 320;
+  Constraints.MinWidth  := 500;
+  Constraints.MaxWidth  := 500;
 end;
 
 procedure TAddFrm.AdvancedOptionsArrowClick(Sender: TObject);
@@ -184,11 +188,25 @@ begin
   if AdvancedOptionsPanel.Visible then
   begin
     AdvancedOptionsArrow.ArrowType := atDown;
-    Height := Height + AdvancedOptionsPanel.Height;
+    Constraints.MinHeight := Constraints.MinHeight + AdvancedOptionsPanel.Height;
   end else
   begin
     AdvancedOptionsArrow.ArrowType := atRight;
-    Height := Height - AdvancedOptionsPanel.Height;
+    Constraints.MaxHeight := Constraints.MaxHeight - AdvancedOptionsPanel.Height;
+  end;
+end;
+
+procedure TAddFrm.RootArrowClick(Sender: TObject);
+begin
+  RootPanel.Visible := not RootPanel.Visible;
+  if RootPanel.Visible then
+  begin
+    RootArrow.ArrowType := atDown;
+    Constraints.MinHeight := Constraints.MinHeight + RootPanel.Height;
+  end else
+  begin
+    RootArrow.ArrowType := atRight;
+    Constraints.MaxHeight := Constraints.MaxHeight - RootPanel.Height;
   end;
 end;
 
@@ -273,19 +291,7 @@ begin
     end;
 end;
 
-procedure TAddFrm.RootArrowClick(Sender: TObject);
-begin
-  RootPanel.Visible := not RootPanel.Visible;
-  if RootPanel.Visible then
-  begin
-    RootArrow.ArrowType := atDown;
-    Height := Height + RootPanel.Height;
-  end else
-  begin
-    RootArrow.ArrowType := atRight;
-    Height := Height - RootPanel.Height;
-  end;
-end;
+
 
 procedure TAddFrm.FilesSelectionChanged(Sender: TObject);
 begin

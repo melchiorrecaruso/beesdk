@@ -7,13 +7,20 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lazcontrols, bxm_mainfrm
+  Forms,
+  lazcontrols,
+
+  bxm_addfrm,
+  bxm_aboutFrm,
+  bxm_mainfrm
   { you can add units after this };
 
 begin
   RequireDerivedFormResource := True;
   Application.Initialize;
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TMainFrm,  MainFrm);
+  Application.CreateForm(TAddFrm,   AddFrm);
+  Application.CreateForm(TAboutFrm, AboutFrm);
   Application.Run;
 end.
 
