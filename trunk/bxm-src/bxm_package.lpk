@@ -9,7 +9,7 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <OtherUnitFiles Value="package;..\bx_src"/>
+        <OtherUnitFiles Value="..\bx-src"/>
         <UnitOutputDirectory Value="$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Parsing>
@@ -148,4 +148,4 @@
       <IgnoreBinaries Value="False"/>
     </PublishOptions>
   </Package>
-</CONFIG>
+</CONFIG>
