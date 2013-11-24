@@ -10,9 +10,9 @@ uses
 
 type
 
-  { TForm1 }
+  { TMainFrm }
 
-  TForm1 = class(TForm)
+  TMainFrm = class(TForm)
     HeaderControl1: THeaderControl;
     Image1: TImage;
     ImageList: TImageList;
@@ -47,28 +47,29 @@ type
   end;
 
 var
-  Form1: TForm1;
+  MainFrm: TMainFrm;
 
 implementation
 
 uses
-  bxm_AboutFrm;
+  bxm_AboutFrm,
+  bxm_AddFrm;
 
 {$R *.lfm}
 
-{ TForm1 }
+{ TMainFrm }
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TMainFrm.FormCreate(Sender: TObject);
 begin
 
 end;
 
-procedure TForm1.Image1Click(Sender: TObject);
+procedure TMainFrm.Image1Click(Sender: TObject);
 begin
 
 end;
 
-procedure TForm1.MenuButtonClick(Sender: TObject);
+procedure TMainFrm.MenuButtonClick(Sender: TObject);
 begin
 
 
@@ -81,24 +82,19 @@ begin
 
 end;
 
-procedure TForm1.MenuItem2Click(Sender: TObject);
-var
-  About: TAboutFrm;
+procedure TMainFrm.MenuItem2Click(Sender: TObject);
 begin
-  About := TAboutFrm.Create(Self);
-  About.ShowModal;
-  About.Destroy;
+  AboutFrm.ShowModal;
 end;
 
-procedure TForm1.Shape2ChangeBounds(Sender: TObject);
+procedure TMainFrm.Shape2ChangeBounds(Sender: TObject);
 begin
 
 end;
 
-procedure TForm1.NewButtonClick(Sender: TObject);
+procedure TMainFrm.NewButtonClick(Sender: TObject);
 begin
-
-
+  AddFrm.ShowModal;
 end;
 
 

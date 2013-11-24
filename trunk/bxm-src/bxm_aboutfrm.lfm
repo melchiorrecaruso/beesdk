@@ -1,7 +1,7 @@
 object AboutFrm: TAboutFrm
-  Left = 529
+  Left = 515
   Height = 330
-  Top = 212
+  Top = 304
   Width = 430
   ActiveControl = BtnOk
   BorderStyle = bsDialog
@@ -13,6 +13,47 @@ object AboutFrm: TAboutFrm
   Constraints.MinHeight = 330
   Constraints.MinWidth = 430
   LCLVersion = '1.3'
+  object LicensePanel: TPanel
+    AnchorSideLeft.Control = Logo
+    AnchorSideTop.Control = Version
+    AnchorSideRight.Control = Logo
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Copyright
+    AnchorSideBottom.Side = asrBottom
+    Left = 12
+    Height = 94
+    Top = 175
+    Width = 406
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
+    ClientHeight = 94
+    ClientWidth = 406
+    Color = clNone
+    ParentColor = False
+    TabOrder = 2
+    Visible = False
+    object License: TMemo
+      Left = 2
+      Height = 90
+      Top = 2
+      Width = 402
+      Align = alClient
+      BorderStyle = bsNone
+      Color = clInactiveBorder
+      Lines.Strings = (
+        'BX is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.'
+        ''
+        'BX is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.'
+        ''
+        'You should have received a copy of the GNU Lesser General Public License along with BX; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.'
+      )
+      ParentFont = False
+      ReadOnly = True
+      ScrollBars = ssAutoBoth
+      TabOrder = 0
+    end
+  end
   object BtnOk: TBitBtn
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Logo
@@ -617,66 +658,15 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Logo
     AnchorSideRight.Side = asrBottom
     Left = 12
-    Height = 13
+    Height = 15
     Top = 254
     Width = 406
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Top = 22
     Caption = 'Copyright (c) 2013 Melchiorre Caruso'
-    Font.Height = 10
     Layout = tlCenter
     ParentColor = False
     ParentFont = False
-  end
-  object LicensePanel: TPanel
-    AnchorSideLeft.Control = Logo
-    AnchorSideTop.Control = Version
-    AnchorSideRight.Control = Logo
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = Copyright
-    AnchorSideBottom.Side = asrBottom
-    Left = 12
-    Height = 92
-    Top = 175
-    Width = 406
-    Anchors = [akTop, akLeft, akRight, akBottom]
-    BevelInner = bvRaised
-    BevelOuter = bvLowered
-    ClientHeight = 92
-    ClientWidth = 406
-    Color = clNone
-    ParentColor = False
-    TabOrder = 2
-    Visible = False
-    object License: TMemo
-      Left = 2
-      Height = 88
-      Top = 2
-      Width = 402
-      Align = alClient
-      BorderStyle = bsNone
-      Color = clInactiveBorder
-      Font.Height = 10
-      Lines.Strings = (
-        'BX is free software; you can redistribute it and/or modify it under the '
-        'terms of the GNU Lesser General Public License as published by the Free '
-        'Software Foundation; either version 2.1 of the License, or (at your option) '
-        'any later version.'
-        ''
-        'BX is distributed in the hope that it will be useful, but WITHOUT '
-        'ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS'
-        'FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for '
-        'more details.'
-        ''
-        'You should have received a copy of the GNU Lesser General Public License '
-        'along with Geary; if not, write to the Free Software Foundation, Inc., '
-        '51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA'
-      )
-      ParentFont = False
-      ReadOnly = True
-      ScrollBars = ssAutoBoth
-      TabOrder = 0
-    end
   end
 end

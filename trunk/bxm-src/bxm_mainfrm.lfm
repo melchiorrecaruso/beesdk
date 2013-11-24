@@ -1,7 +1,7 @@
-object Form1: TForm1
-  Left = 467
+object MainFrm: TMainFrm
+  Left = 494
   Height = 311
-  Top = 138
+  Top = 293
   Width = 589
   AlphaBlend = True
   Caption = 'BX Manager'
@@ -158,7 +158,6 @@ object Form1: TForm1
         Visible = True
       end>
     Anchors = [akTop, akLeft, akRight]
-    Font.Color = clWindowText
     Font.Style = [fsBold]
     ParentFont = False
   end
