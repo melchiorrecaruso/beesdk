@@ -38,6 +38,7 @@ uses
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   Classes,
+  DateUtils,
   SysUtils;
 
 const
@@ -577,4 +578,4 @@ begin
   {$ENDIF}
 end;
 
-end.
+end.
