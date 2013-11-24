@@ -1,4 +1,4 @@
-unit bxm_mainfrm;
+unit bxm_MainFrm;
 
 {$mode objfpc}{$H+}
 
