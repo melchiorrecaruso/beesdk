@@ -1,0 +1,59 @@
+# depslib dependency file v1.0
+1375564449 source:/home/quacquero/Repositories/bx/trunk/libbx.c/libbx_bee_common.c
+	"libbx_bee_common.h"
+
+1375564449 /home/quacquero/Repositories/bx/trunk/libbx.c/libbx_bee_common.h
+	<stdint.h>
+
+1380960848 source:/home/quacquero/Repositories/bx/trunk/libbx.c/libbx_bee_modeller.c
+	<pthread.h>
+	<math.h>
+	<stdlib.h>
+	<stdio.h>
+	"libbx_bee_modeller.h"
+	"libbx_bee_rangecoder.h"
+
+1380913791 /home/quacquero/Repositories/bx/trunk/libbx.c/libbx_bee_modeller.h
+	"libbx_bee_common.h"
+
+1380976108 /home/quacquero/Repositories/bx/trunk/libbx.c/libbx_bee_rangecoder.h
+	"stdint.h"
+	"libbx_stream.h"
+	"libbx_bee_common.h"
+
+1375564449 /home/quacquero/Repositories/bx/trunk/libbx.c/libbx_stream.h
+	"libbx_bee_common.h"
+
+1375564449 source:/home/quacquero/Repositories/bx/trunk/libbx.c/libbx_bee_rangecoder.c
+	"libbx_bee_rangecoder.h"
+	<stdlib.h>
+
+1375564449 source:/home/quacquero/Repositories/bx/trunk/libbx.c/libbx_ppmd_common.c
+
+1375564449 source:/home/quacquero/Repositories/bx/trunk/libbx.c/libbx_ppmd_modeller.c
+	"libbx_ppmd_modeller.h"
+	"libbx_ppmd_common.h"
+	<stdlib.h>
+	<memory.h>
+
+1375564449 /home/quacquero/Repositories/bx/trunk/libbx.c/libbx_ppmd_modeller.h
+	"libbx_ppmd_rangecoder.h"
+	"libbx_stream.h"
+	"stdint.h"
+
+1375564449 /home/quacquero/Repositories/bx/trunk/libbx.c/libbx_ppmd_rangecoder.h
+	"libbx_stream.h"
+	"stdint.h"
+
+1375564449 /home/quacquero/Repositories/bx/trunk/libbx.c/libbx_ppmd_common.h
+
+1375564449 source:/home/quacquero/Repositories/bx/trunk/libbx.c/libbx_ppmd_rangecoder.c
+	"libbx_ppmd_rangecoder.h"
+	"libbx_ppmd_common.h"
+	<stdlib.h>
+	<memory.h>
+
+1380907228 source:/home/quacquero/Repositories/bx/trunk/libbx.c/libbx_stream.c
+	"libbx_stream.h"
+	<stdlib.h>
+
