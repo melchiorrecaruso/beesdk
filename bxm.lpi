@@ -42,7 +42,7 @@
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="8" Y="14"/>
+        <CursorPos X="21" Y="8"/>
         <UsageCount Value="40"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -253,14 +253,14 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="184"/>
-        <CursorPos X="1" Y="212"/>
+        <TopLine Value="171"/>
+        <CursorPos X="11" Y="185"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit25>
     </Units>
-    <JumpHistory Count="7" HistoryIndex="6">
+    <JumpHistory Count="8" HistoryIndex="7">
       <Position1>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
@@ -289,6 +289,10 @@
         <Filename Value="bxm.lpr"/>
         <Caret Line="17" Column="45" TopLine="1"/>
       </Position7>
+      <Position8>
+        <Filename Value="bxm-src/bxm_addfrm.pas"/>
+        <Caret Line="213" Column="34" TopLine="193"/>
+      </Position8>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
