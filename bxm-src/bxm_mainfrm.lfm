@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 484
+  Left = 383
   Height = 300
-  Top = 287
+  Top = 179
   Width = 600
   AlphaBlend = True
   Caption = 'BX Manager'

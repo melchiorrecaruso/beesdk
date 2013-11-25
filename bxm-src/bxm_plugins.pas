@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2008-2011 Melchiorre Caruso
+  Copyright (c) 2013 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 { Contains:
 
-    TSevenZipApp class.
+    TParser class.
 
   Modifyed:
 
-    v0.1.40 build 0642 - 2010.01.23 by Melchiorre Caruso.
+    v0.1.0 build 0642 - 2011.11.25 by Melchiorre Caruso.
 }
 
 unit bxm_plugins;
@@ -32,232 +32,101 @@ unit bxm_plugins;
 interface
 
 uses
-  Process,
   Classes,
-  SysUtils,
-  Bee_Types,
-  Bee_Common,
-  Bee_Interface,
-  Bee_CommandLine;
-
-const
-  SevenZipPluginVer = '7Zip Plugin ver 0.1.40';
-
-  SevenZipPluginSupport =
-    '|7z|zip|gz|gzip|tgz|bz2|bzip2|tbz2|tbz|tar|lzma' +
-    '|rar|cab|arj|z|taz|cpio|rpm|deb|lzh|lha|chm|chw' +
-    '|hxs|iso|msi|doc|xls|ppt|wim|swm|dmg|xar|hfs|';
+  SysUtils;
 
 type
-  { TProcessOutput }
+  { TParser }
 
-  TProcessOutput = procedure(FOutput: TStringList) of object;
-
-  { TSevenZipApp }
-
-  TSevenZipApp = class(TApp)
+  TParser = class(TThread)
   private
-    FCommandLine: TCommandLine;
-    FMemOutputProc: TProcessOutput;
-    procedure ProcessListOutput(FOutput: TStringList);
-    procedure ProcessTestOutput(FOutput: TStringList);
-    function CheckCommandLine: string;
-    procedure CheckOverwrite;
+    FCommandLine: string;
+    FMessages: TStringList;
+    function GetCount: longint;
+    function GetMessage(index: longint): string;
   public
-    constructor Create(aParams: TStringList);
+    constructor Create(const CommandLine: string);
     destructor Destroy; override;
     procedure Execute; override;
+  public
+    property Count: longint read GetCount;
+    property Messages[index: longint]: string read GetMessage;
   end;
 
 { plugins routines }
 
-function SevenZipPlugin: string; overload;
-function SevenZipPlugin(const aArchiveName: string): boolean; overload;
-
 implementation
 
 uses
-  Bee_Consts;
+  Process;
 
-const
-  SevenZipPathMark     = 'Path = ';
-  SevenZipSizeMark     = 'Size = ';
-  SevenZipPackedMark   = 'Packed Size = ';
-  SevenZipTimeMark     = 'Modified = ';
-  SevenZipAttrMark     = 'Attributes = ';
-  SevenZipCRCMarck     = 'CRC = ';
-  SevenZipPasswordMark = 'Encrypted = ';
-  SevenZipMethodMark   = 'Method = ';
-  SevenZipBlockMark    = 'Block = ';
+/// TParser class ...
 
-  SevenZipListMark     = 'Listing archive: ';
-  SevenZipCommentMark  = 'Comment = ';
-  SevenZipErrorMark    = 'Error: ';
-
-{ SevenZipPlungin function }
-
-function SevenZipPlugin: string;
+constructor TParser.Create(const CommandLine: string);
 begin
-  {$IFDEF UXIX}
-     Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7za';
-  {$ELSE}
-  {$IFDEF MSWINDOWS}
-    Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7z.exe';
-  {$ELSE}
-    Result := '';
-  {$ENDIF}
-  {$ENDIF}
-  if FileExists(Result) then
-  begin
-    Result := ExtractFileName(Result);
-  end;
+  inherited Create(FALSE);
+  FCommandLine := CommandLine;
+  FMessages := TStringList.Create;
 end;
 
-function SevenZipPlugin(const aArchiveName: string): boolean; overload;
-var
-  FExtention: string;
+destructor TParser.Destroy;
 begin
-  Result     := False;
-  FExtention := ExtractFileExt(aArchiveName);
-  if Length(FExtention) > 0 then
-  begin
-    FExtention    := LowerCase(FExtention) + '|';
-    FExtention[1] := '|';
-    if Pos(FExtention, SevenZipPluginSupport) > 0 then
-    begin
-      Result := True;
-    end;
-  end;
-end;
-
-/// TSevenZipApp class ...
-
-constructor TSevenZipApp.Create(aParams: TStringList);
-begin
-  inherited Create(aParams);
-  FCommandLine := TCommandLine.Create;
-  FCommandLine.Process(FParams);
-end;
-
-destructor TSevenZipApp.Destroy;
-begin
-  FCommandLine.Destroy;
+  FMessages.Clear;
+  FMessages.Destroy;
   inherited Destroy;
 end;
 
-function TSevenZipApp.CheckCommandLine: string;
+procedure TParser.Execute;
 var
-  I: integer;
+  Count: longint;
+  FMem: TMemoryStream;
+  FProcess: TProcess;
+  Readed: int64;
 begin
-  ProcessMessage(SevenZipPluginVer);
-  case FCommandLine.Command of
-    'L':
-    begin
-      FMemOutputProc := ProcessListOutput;
-      Result := SevenZipPlugin + ' l -slt';
-    end;
-    'T':
-    begin
-      FMemOutputProc := ProcessTestOutput;
-      Result := SevenZipPlugin + ' t';
-    end;
-    'E':
-    begin
-      FMemOutputProc := ProcessTestOutput;
-      Result := SevenZipPlugin + ' e';
-    end;
-    'X':
-    begin
-      FMemOutputProc := ProcessTestOutput;
-      Result := SevenZipPlugin + ' x';
-    end;
+  FMessages.Clear;
+  FMem := TMemoryStream.Create;
+  FProcess := TProcess.Create(nil);
+  FProcess.CommandLine := FCommandLine;
+  FProcess.Options := [poNoConsole, poUsePipes];
+
+  Readed := 0;
+  FProcess.Execute;
+  while FProcess.Running do
+  begin
+    FMem.SetSize(Readed + 2048);
+    Count := FProcess.Output.Read((FMem.Memory + Readed)^, 2048);
+
+    if Count > 0 then
+      Inc(Readed, Count)
     else
-    begin
-      ProcessFatalError(SevenZipPluginVer + ' - error : command line unsupported', 255);
-      FMemOutputProc := nil;
-    end;
+      Sleep(100);
   end;
 
-  if Assigned(FMemOutputProc) then
-  begin
-    if FCommandLine.rOption then
-      Result := Result + ' -r';
+  repeat
+    FMem.SetSize(Readed + 2048);
+    Count := FProcess.Output.Read((FMem.Memory + Readed)^, 2048);
 
-    Result := Result + ' "' + FCommandLine.ArchiveName + '"';
-    for I := 0 to FCommandLine.FileMasks.Count - 1 do
-    begin
-      Result := Result + ' "' + FCommandLine.FileMasks[I] + '"';
-    end;
-  end
-  else
-    Result := '';
+    if Count > 0 then
+      Inc(Readed, Count);
+  until Count <= 0;
+  FMem.SetSize(Readed);
+  FMessages.LoadFromStream(FMem);
+  FProcess.Free;
+  FMem.Free;
 end;
 
-procedure TSevenZipApp.Execute;
-var
-  Count:      integer;
-  BytesRead:  int64;
-  FProcess:   TProcess;
-  FCommandLine: string;
-  FMemOutput: TMemoryStream;
-  FMemOutputStrings: TStringList;
+function TParser.GetMessage(index: longint): string;
 begin
-  inherited Execute;
-  FCommandLine := CheckCommandLine;
-  if Assigned(FMemOutputProc) then
-  begin
-    FMemOutput := TMemoryStream.Create;
-    FProcess   := TProcess.Create(nil);
-    FProcess.CommandLine := FCommandLine;
-    FProcess.Options := [poNoConsole, poUsePipes];
-
-    BytesRead := 0;
-    FProcess.Execute;
-    while FProcess.Running do
-    begin
-      FMemOutput.SetSize(BytesRead + 2048);
-      Count := FProcess.Output.Read((FMemOutput.Memory + BytesRead)^, 2048);
-
-      if Count > 0 then
-        Inc(BytesRead, Count)
-      else
-        Sleep(100);
-
-      if FTerminated then
-      begin
-        FProcess.Terminate(255);
-      end;
-    end;
-
-    repeat
-      FMemOutput.SetSize(BytesRead + 2048);
-      Count := FProcess.Output.Read((FMemOutput.Memory + BytesRead)^, 2048);
-      if Count > 0 then
-      begin
-        Inc(BytesRead, Count);
-      end;
-    until Count <= 0;
-    FMemOutput.SetSize(BytesRead);
-
-    if not FTerminated then
-    begin
-      FMemOutputStrings := TStringList.Create;
-      FMemOutputStrings.LoadFromStream(FMemOutput);
-      FMemOutputProc(FMemOutputStrings);
-      FMemOutputStrings.Free;
-    end;
-    FProcess.Free;
-    FMemOutput.Free;
-  end;
-
-  if FCode = ccSuccesful then
-    ProcessMessage(Cr + 'Everything went ok - ' + TimeDifference(FStartTime) +
-      ' seconds')
-  else
-    ProcessMessage(Cr + 'Process aborted - ' + TimeDifference(FStartTime) + ' seconds');
-
-  FTerminated := True;
+  Result := FMessages[index];
 end;
+
+function TParser.GetCount: longint;
+begin
+  Result := FMessages.Count;
+end;
+
+
+
 
 procedure TSevenZipApp.ProcessListOutput(FOutput: TStringList);
 var
@@ -449,9 +318,5 @@ begin
   ProcessMessage(FOutput.Text);
 end;
 
-procedure TSevenZipApp.CheckOverwrite;
-begin
-
-end;
 
 end.

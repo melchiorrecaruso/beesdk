@@ -9,7 +9,7 @@ interface
 uses
   bxm_AddTreeViewMgr, bxm_FolderTreeViewMgr, bxm_IconList, bxm_Process, 
   bxm_AppViewer, bxm_ArchiveFolderBox, bxm_ArchiveListViewMgr, bxm_Consts, 
-  bxm_Messages, bxm_SysUtils, LazarusPackageIntf;
+  bxm_Messages, bxm_SysUtils, bxm_plugins, LazarusPackageIntf;
 
 implementation
 

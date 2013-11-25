@@ -57,7 +57,7 @@
     <License Value="GNU GENERAL PUBLIC LICENSE Version 2, June 1991
 "/>
     <Version Major="1" Release="6" Build="190"/>
-    <Files Count="16">
+    <Files Count="17">
       <Item1>
         <Filename Value="bxm_addtreeviewmgr.lrs"/>
         <Type Value="LRS"/>
@@ -128,6 +128,10 @@
         <Filename Value="bxm_sysutils.pas"/>
         <UnitName Value="bxm_SysUtils"/>
       </Item16>
+      <Item17>
+        <Filename Value="bxm_plugins.pas"/>
+        <UnitName Value="bxm_plugins"/>
+      </Item17>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">
