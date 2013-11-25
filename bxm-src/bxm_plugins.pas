@@ -27,7 +27,7 @@
 
 unit bxm_plugins;
 
-{$I Compiler.inc}
+{$I bxm_compiler.inc}
 
 interface
 
@@ -98,13 +98,13 @@ const
 
 function SevenZipPlugin: string;
 begin
-  {$IFDEF UNIX}
-  // Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7za';
+  {$IFDEF UXIX}
+     Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7za';
   {$ELSE}
   {$IFDEF MSWINDOWS}
-  // Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7z.exe';
+    Result := IncludeTrailingBackSlash(GetApplicationPluginsDir) + '7z.exe';
   {$ELSE}
-  Result := '';
+    Result := '';
   {$ENDIF}
   {$ENDIF}
   if FileExists(Result) then
@@ -454,4 +454,4 @@ begin
 
 end;
 
-end.
+end.
