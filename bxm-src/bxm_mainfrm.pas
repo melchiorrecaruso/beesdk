@@ -114,7 +114,9 @@ end;
 
 procedure TMainFrm.NewButtonClick(Sender: TObject);
 begin
-  AddFrm.ShowModal;
+
+
+
 end;
 
 end.
