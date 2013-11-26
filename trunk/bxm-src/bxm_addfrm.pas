@@ -30,18 +30,20 @@ unit bxm_AddFrm;
 interface
 
 uses
-  Forms,
-  Menus,
+  Arrow,
   Buttons,
-  Dialogs,
   Classes,
-  SysUtils,
-  Graphics,
-  Controls,
-  StdCtrls,
   ComCtrls,
+  Controls,
+  Dialogs,
+  ExtCtrls,
+  Forms,
+  Graphics,
   IniFiles,
-  LResources, EditBtn, ExtCtrls, Arrow, DividerBevel,
+  LResources,
+  Menus,
+  StdCtrls,
+  SysUtils,
   // ---
   bxm_AddTreeViewMgr;
 
@@ -50,129 +52,77 @@ type
   { TAddFrm class }
 
   TAddFrm = class(TForm)
+    AndvancedOptionsLabel: TLabel;
     AdvancedOptionsArrow: TArrow;
+    AdvancedOptionsPanel: TPanel;
+    ArchiveNameComboBox: TComboBox;
+    ArchiveNameLabel: TLabel;
     ArchiveWithPassword: TEdit;
     ArchiveWithPasswordCheck: TCheckBox;
-    CompressionMethod: TComboBox;
-    CompressionMethodLabel: TLabel;
-    AdvancedOptionsPanel: TPanel;
-    RecurseSubdirectories: TCheckBox;
-    Root: TEdit;
-    RootPanel: TPanel;
-    RootArrow: TArrow;
-    BtnHelp: TBitBtn;
-
     BtnCancel: TBitBtn;
     BtnDelete: TBitBtn;
-    BtnFiles:  TBitBtn;
+    BtnFiles: TBitBtn;
     BtnFolder: TBitBtn;
-    BtnOk:     TBitBtn;
+    BtnHelp: TBitBtn;
+    BtnOk: TBitBtn;
     BtnPlusMinus: TBitBtn;
     BtnSave: TBitBtn;
-
-
-    ArchiveNameLabel: TLabel;
-    ArchiveNameComboBox: TComboBox;
-    FilesLabel: TLabel;
-    FilesPanel: TPanel;
-    FilesMgr: TAddTreeViewMgr;
+    CompressionMethod: TComboBox;
+    CompressionMethodLabel: TLabel;
     Files: TTreeView;
-    AndvancedOptionsLabel: TLabel;
+    FilesImages: TImageList;
+    FilesLabel: TLabel;
+    FilesMgr: TAddTreeViewMgr;
+    FilesPanel: TPanel;
+    FilesPopupMenu: TPopupMenu;
+    OpenDialog: TOpenDialog;
+    PopupMenu_AddFiles: TMenuItem;
+    PopupMenu_AddFolder: TMenuItem;
+    PopupMenu_Delete: TMenuItem;
+    PopupMenu_N1: TMenuItem;
+    PopupMenu_N2: TMenuItem;
+    PopupMenu_PlusMinus: TMenuItem;
+    RecurseSubdirectories: TCheckBox;
+    Root: TEdit;
+    RootArrow: TArrow;
     RootLabel: TLabel;
+    RootPanel: TPanel;
+    SaveDialog: TSaveDialog;
+    SelectFilesDialog: TOpenDialog;
     UpdateMethod: TComboBox;
     UpdateMethodLabel: TLabel;
-    UpDown1: TUpDown;
-
-
-
-
-
-
-
-
-
-
-
-    OpenDialog: TOpenDialog;
-
-
-
-
-
-    SelectFilesDialog: TOpenDialog;
-    SaveDialog: TSaveDialog;
-
-
-
-
-
-    FilesImages: TImageList;
-    // ---
-    FilesPopupMenu: TPopupMenu;
-    PopupMenu_AddFolder: TMenuItem;
-    PopupMenu_N2: TMenuItem;
-    PopupMenu_AddFiles: TMenuItem;
-    PopupMenu_N1: TMenuItem;
-    PopupMenu_PlusMinus: TMenuItem;
-    PopupMenu_Delete: TMenuItem;
+    UpDown: TUpDown;
     UseCurrentArchiveDirectory: TCheckBox;
-
     procedure AdvancedOptionsArrowClick(Sender: TObject);
     procedure ArchiveWithPasswordCheckClick(Sender: TObject);
-
-
-
-    procedure FormCreate(Sender: TObject);
-    procedure FilesSelectionChanged(Sender: TObject);
-    procedure FormDropFiles(Sender: TObject; const FileNames: array of String);
-
-
-
-
-
-
-
-    procedure PopupMenu_AddFolderClick(Sender: TObject);
-    procedure PopupMenu_AddFilesClick(Sender: TObject);
-
-    procedure PopupMenu_PlusMinusClick(Sender: TObject);
-
-    procedure PopupMenu_DeleteClick(Sender: TObject);
-    procedure RootArrowClick(Sender: TObject);
-
-
-
-
-
-    procedure UpDownClick(Sender: TObject; Button: TUDBtnType);
     procedure BtnSaveClick(Sender: TObject);
-  public
-    { public declarations }
+    procedure FilesSelectionChanged(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDropFiles(Sender: TObject; const FileNames: array of String);
+    procedure PopupMenu_AddFilesClick(Sender: TObject);
+    procedure PopupMenu_AddFolderClick(Sender: TObject);
+    procedure PopupMenu_DeleteClick(Sender: TObject);
+    procedure PopupMenu_PlusMinusClick(Sender: TObject);
+    procedure RootArrowClick(Sender: TObject);
+    procedure UpDownClick(Sender: TObject; Button: TUDBtnType);
   private
     { private declarations }
     FArchivePath: string;
-    function GetArchiveName: string;
-    procedure SetArchiveName(Value: string);
   public
-    property ArchiveName: string Read GetArchiveName Write SetArchiveName;
+    { public declarations }
   end;
-
-var
-  AddFrm: TAddFrm;
 
 implementation
 
 uses
   bxm_Consts,
-  bxm_SysUtils,
-  bxm_Messages;
+  bxm_Messages,
+  bxm_SysUtils;
 
 { TAddFrm class }
 
 procedure TAddFrm.FormCreate(Sender: TObject);
 begin
-  SetLength(FArchivePath, 0);
-  // ---
   RootArrow.ArrowType            := atRight;
   AdvancedOptionsArrow.ArrowType := atRight;
 
@@ -187,50 +137,11 @@ begin
   Constraints.MaxWidth  := 500;
 end;
 
-procedure TAddFrm.AdvancedOptionsArrowClick(Sender: TObject);
-begin
-  AdvancedOptionsPanel.Visible := not AdvancedOptionsPanel.Visible;
-  if AdvancedOptionsPanel.Visible then
-  begin
-    AdvancedOptionsArrow.ArrowType := atDown;
-    Constraints.MaxHeight := Constraints.MaxHeight + AdvancedOptionsPanel.Height;
-    Constraints.MinHeight := Constraints.MaxHeight;
-  end else
-  begin
-    AdvancedOptionsArrow.ArrowType := atRight;
-    Constraints.MinHeight := Constraints.MinHeight - AdvancedOptionsPanel.Height;
-    Constraints.MaxHeight := Constraints.MinHeight;
-  end;
-  Height := Constraints.MaxHeight;
-end;
-
-procedure TAddFrm.RootArrowClick(Sender: TObject);
-begin
-  RootPanel.Visible := not RootPanel.Visible;
-  if RootPanel.Visible then
-  begin
-    RootArrow.ArrowType := atDown;
-    Constraints.MaxHeight := Constraints.MaxHeight + RootPanel.Height;
-    Constraints.MinHeight := Constraints.MaxHeight;
-  end else
-  begin
-    RootArrow.ArrowType := atRight;
-    Constraints.MinHeight := Constraints.MinHeight - RootPanel.Height;
-    Constraints.MaxHeight := Constraints.MinHeight;
-  end;
-  Height := Constraints.MaxHeight;
-end;
-
-procedure TAddFrm.ArchiveWithPasswordCheckClick(Sender: TObject);
-begin
-  ArchiveWithPassword.Enabled := ArchiveWithPasswordCheck.Checked;
-end;
-
 procedure TAddFrm.BtnSaveClick(Sender: TObject);
 var
   S: string;
 begin
-  SaveDialog.FileName := ArchiveName;
+  SaveDialog.FileName := FArchivePath + ArchiveNameComboBox.Text;
   if SaveDialog.Execute then
   begin
     S := SaveDialog.FileName;
@@ -238,15 +149,8 @@ begin
       1: S := ChangeFileExt(S, '.bee');
       2: S := ChangeFileExt(S, '.exe');
     end;
-    ArchiveName := S;
-  end;
-end;
-
-procedure TAddFrm.UpDownClick(Sender: TObject; Button: TUDBtnType);
-begin
-  case Button of
-    btNext: FilesMgr.Spin := FilesMgr.Spin - 1;
-    btPrev: FilesMgr.Spin := FilesMgr.Spin + 1;
+    FArchivePath := ExtractFilePath(S);
+    ArchiveNameComboBox.Text := ExtractFileName(S);
   end;
 end;
 
@@ -302,8 +206,6 @@ begin
     end;
 end;
 
-
-
 procedure TAddFrm.FilesSelectionChanged(Sender: TObject);
 begin
   if Files.Selected = nil then
@@ -321,7 +223,7 @@ begin
   end;
 
   BtnPlusMinus.Enabled := PopupMenu_PlusMinus.Enabled;
-  BtnDelete.Enabled    := PopupMenu_Delete.Enabled;
+  BtnDelete.Enabled := PopupMenu_Delete.Enabled;
 end;
 
 procedure TAddFrm.FormDropFiles(Sender: TObject; const FileNames: array of String);
@@ -337,19 +239,55 @@ begin
   end;
 end;
 
-procedure TAddFrm.SetArchiveName(Value: string);
+procedure TAddFrm.RootArrowClick(Sender: TObject);
 begin
-  FArchivePath := ExtractFilePath(Value);
-  ArchiveNameComboBox.Text := ExtractFileName(Value);
+  RootPanel.Visible := not RootPanel.Visible;
+  if RootPanel.Visible then
+  begin
+    RootArrow.ArrowType := atDown;
+    Constraints.MaxHeight := Constraints.MaxHeight + RootPanel.Height;
+    Constraints.MinHeight := Constraints.MaxHeight;
+  end else
+  begin
+    RootArrow.ArrowType := atRight;
+    Constraints.MinHeight := Constraints.MinHeight - RootPanel.Height;
+    Constraints.MaxHeight := Constraints.MinHeight;
+  end;
+  Height := Constraints.MaxHeight;
 end;
 
-function TAddFrm.GetArchiveName: string;
+procedure TAddFrm.UpDownClick(Sender: TObject; Button: TUDBtnType);
 begin
-  Result := FArchivePath + ArchiveNameComboBox.Text;
+  case Button of
+    btNext: FilesMgr.Spin := FilesMgr.Spin - 1;
+    btPrev: FilesMgr.Spin := FilesMgr.Spin + 1;
+  end;
+end;
+
+procedure TAddFrm.AdvancedOptionsArrowClick(Sender: TObject);
+begin
+  AdvancedOptionsPanel.Visible := not AdvancedOptionsPanel.Visible;
+  if AdvancedOptionsPanel.Visible then
+  begin
+    AdvancedOptionsArrow.ArrowType := atDown;
+    Constraints.MaxHeight := Constraints.MaxHeight + AdvancedOptionsPanel.Height;
+    Constraints.MinHeight := Constraints.MaxHeight;
+  end else
+  begin
+    AdvancedOptionsArrow.ArrowType := atRight;
+    Constraints.MinHeight := Constraints.MinHeight - AdvancedOptionsPanel.Height;
+    Constraints.MaxHeight := Constraints.MinHeight;
+  end;
+  Height := Constraints.MaxHeight;
+end;
+
+procedure TAddFrm.ArchiveWithPasswordCheckClick(Sender: TObject);
+begin
+  ArchiveWithPassword.Enabled := ArchiveWithPasswordCheck.Checked;
 end;
 
 initialization
 
   {$i bxm_addfrm.lrs}
 
-end.
+end.

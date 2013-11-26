@@ -53,8 +53,6 @@ type
     property Messages[index: longint]: string read GetMessage;
   end;
 
-{ plugins routines }
-
 implementation
 
 uses
@@ -110,6 +108,7 @@ begin
       Inc(Readed, Count);
   until Count <= 0;
   FMem.SetSize(Readed);
+
   FMessages.LoadFromStream(FMem);
   FProcess.Free;
   FMem.Free;
@@ -127,6 +126,8 @@ end;
 
 
 
+
+(*
 
 procedure TSevenZipApp.ProcessListOutput(FOutput: TStringList);
 var
@@ -317,6 +318,8 @@ procedure TSevenZipApp.ProcessTestOutput(FOutput: TStringList);
 begin
   ProcessMessage(FOutput.Text);
 end;
+
+*)
 
 
 end.
