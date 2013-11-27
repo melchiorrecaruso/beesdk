@@ -1,25 +1,25 @@
 object MainFrm: TMainFrm
-  Left = 365
-  Height = 300
-  Top = 163
+  Left = 445
+  Height = 335
+  Top = 290
   Width = 600
   AlphaBlend = True
   Caption = 'BX Manager'
-  ClientHeight = 300
+  ClientHeight = 335
   ClientWidth = 600
   Constraints.MinHeight = 250
   Constraints.MinWidth = 400
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   ParentFont = True
   LCLVersion = '1.3'
-  object Image1: TImage
+  object BackGround: TImage
     Left = 0
     Height = 36
     Top = 0
     Width = 600
     Align = alTop
     AutoSize = True
-    OnClick = Image1Click
     ParentShowHint = False
     Picture.Data = {
       1754506F727461626C654E6574776F726B477261706869636401000089504E47
@@ -36,12 +36,12 @@ object MainFrm: TMainFrm
       FF0002FFFFFF0002FFFFFF0076AB637D681729560000000049454E44AE426082
     }
     Stretch = True
-    Visible = False
+    Transparent = True
   end
-  object ToolBar1: TToolBar
+  object ToolBar: TToolBar
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
-    AnchorSideRight.Control = ToolBar2
+    AnchorSideRight.Control = ToolBarMenu
     Left = 3
     Height = 34
     Top = 2
@@ -54,7 +54,7 @@ object MainFrm: TMainFrm
     BorderSpacing.Bottom = 1
     ButtonHeight = 34
     ButtonWidth = 34
-    Caption = 'ToolBar1'
+    Caption = 'ToolBar'
     EdgeBorders = []
     EdgeInner = esNone
     EdgeOuter = esRaised
@@ -98,7 +98,7 @@ object MainFrm: TMainFrm
       ImageIndex = 4
     end
   end
-  object ToolBar2: TToolBar
+  object ToolBarMenu: TToolBar
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
@@ -114,7 +114,7 @@ object MainFrm: TMainFrm
     BorderSpacing.Bottom = 1
     ButtonHeight = 34
     ButtonWidth = 34
-    Caption = 'ToolBar2'
+    Caption = 'ToolBarMenu'
     EdgeBorders = []
     EdgeInner = esNone
     EdgeOuter = esRaised
@@ -139,7 +139,7 @@ object MainFrm: TMainFrm
   end
   object HeaderControl1: THeaderControl
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Shape1
+    AnchorSideTop.Control = Shape
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
@@ -169,7 +169,7 @@ object MainFrm: TMainFrm
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object ListView1: TListView
+  object ListView: TListView
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = HeaderControl1
     AnchorSideTop.Side = asrBottom
@@ -178,7 +178,7 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 236
+    Height = 271
     Top = 64
     Width = 600
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -196,7 +196,7 @@ object MainFrm: TMainFrm
       item
       end    
       item
-        Width = 400
+        Width = 398
       end>
     ReadOnly = True
     ScrollBars = ssAutoVertical
@@ -204,9 +204,9 @@ object MainFrm: TMainFrm
     TabOrder = 3
     ViewStyle = vsReport
   end
-  object Shape1: TShape
+  object Shape: TShape
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = ToolBar1
+    AnchorSideTop.Control = ToolBar
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom

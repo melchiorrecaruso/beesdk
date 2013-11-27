@@ -1,7 +1,7 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TAddFrm','FORMDATA',[
-  'TPF0'#7'TAddFrm'#6'AddFrm'#4'Left'#3#21#2#6'Height'#3#246#1#3'Top'#3#253#0#5
+  'TPF0'#7'TAddFrm'#6'AddFrm'#4'Left'#3'4'#2#6'Height'#3#246#1#3'Top'#3#167#0#5
   +'Width'#3#244#1#14'AllowDropFiles'#9#11'BorderIcons'#11#12'biSystemMenu'#0#7
   +'Caption'#6#24'Archive Name and Options'#12'ClientHeight'#3#246#1#11'ClientW'
   +'idth'#3#244#1#20'Constraints.MaxWidth'#3#244#1#20'Constraints.MinWidth'#3

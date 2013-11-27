@@ -18,6 +18,8 @@
 
 { Contains:
 
+    Tick form class.
+
   Modifyed:
 
 }
@@ -29,37 +31,38 @@ unit bxm_TickFrm;
 interface
 
 uses
-  Menus,
-  Forms,
-  Classes,
-  Dialogs,
   Buttons,
-  IniFiles,
-  SysUtils,
-  Graphics,
-  Controls,
+  Dialogs,
+  Classes,
   ComCtrls,
-  StdCtrls,
+  Controls,
+  Graphics,
   ExtCtrls,
-  LResources;
+  Forms,
+  IniFiles,
+  LResources,
+  Menus,
+  StdCtrls, Arrow,
+  SysUtils;
 
 type
 
   { TTickFrm }
 
   TTickFrm = class(TForm)
+    Arrow1: TArrow;
 
 
 
-    Bevel: TBevel;
     ElapsedTime: TLabel;
     ElapsedTimeLabel: TLabel;
-    FontDialog: TFontDialog;
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
     GeneralSizeUnit: TLabel;
     GeneralPanel: TPanel;
+    Label1: TLabel;
     Msg: TLabel;
+    ReportPanel: TPanel;
     ProcessedSize: TLabel;
     ProcessedSizeLabel: TLabel;
     ProcessedSizeUnit: TLabel;
@@ -69,19 +72,8 @@ type
     Speed: TLabel;
     SpeedLabel: TLabel;
     SpeedUnit: TLabel;
-    Popup_Idle: TMenuItem;
-    Popup_TimeCritical: TMenuItem;
-    Popup_Higher: TMenuItem;
-    Popup_Normal: TMenuItem;
-    Popup:   TPopupMenu;
-    SaveDialog: TSaveDialog;
     Tick: TProgressBar;
     Timer:   TIdleTimer;
-    // ---
-    BtnSave: TBitBtn;
-    BtnFont: TBitBtn;
-    BtnPriority: TBitBtn;
-    BtnPauseRun: TBitBtn;
     BtnCancel: TBitBtn;
     // ---
     procedure FormCreate(Sender: TObject);
@@ -91,19 +83,9 @@ type
     // ---
     procedure PanelChanged(Sender: TObject);
     // ---
-    procedure PopupClick(Sender: TObject);
-    // ---
-    procedure BtnFontClick(Sender: TObject);
-    procedure BtnSaveClick(Sender: TObject);
-    procedure BtnPriorityClick(Sender: TObject);
-    procedure BtnPauseRunClick(Sender: TObject);
-    procedure BtnCancelClick(Sender: TObject);
-    // ---
     procedure OnTimer(Sender: TObject);
     procedure OnTerminate;
     procedure OnExecute;
-    procedure OnRename;
-    procedure OnList;
   private
     { private declarations }
     FCanClose:  boolean;
@@ -124,10 +106,11 @@ type
     { public declarations }
   end;
 
-var
-  TickFrm: TTickFrm;
+  function TickShowModal: longint;
 
 implementation
+
+{$R *.lfm}
 
 uses
   bxm_SysUtils;
@@ -137,6 +120,18 @@ var
   rsBtnRunCaption:    string = 'Run';
   rsBtnCancelCaption: string = 'Cancel';
   rsBtnCloseCaption:  string = 'Close';
+
+function TickShowModal: longint;
+var
+  Tick: TTickFrm;
+begin
+  Tick := TTickFrm.Create(nil);
+  Result := Tick.ShowModal;
+  if Result = mrOk then
+  begin
+
+  end;
+end;
 
 { TTickFrm class }
 
@@ -180,16 +175,6 @@ begin
 
 end;
 
-procedure TTickFrm.PopupClick(Sender: TObject);
-begin
-  Popup_Idle.Checked         := Sender = Popup_Idle;
-  Popup_Normal.Checked       := Sender = Popup_Normal;
-  Popup_Higher.Checked       := Sender = Popup_Higher;
-  Popup_TimeCritical.Checked := Sender = Popup_TimeCritical;
-
-
-end;
-
 procedure TTickFrm.PanelChanged(Sender: TObject);
 var
   I: integer;
@@ -203,24 +188,19 @@ begin
 
   if GeneralPanel.Visible then
   begin
-    BtnSave.Enabled   := False;
-    BtnFont.Enabled   := False;
+
     BtnCancel.Kind    := bkCancel;
     BtnCancel.Caption := rsBtnCancelCaption;
 
-    BtnPriority.Enabled := True;
-    BtnPauseRun.Enabled := True;
-    BtnPauseRun.Caption := rsBtnPauseCaption;
+
+
   end else
   begin
-    BtnSave.Enabled   := True;
-    BtnFont.Enabled   := True;
+
     BtnCancel.Kind    := bkClose;
     BtnCancel.Caption := rsBtnCloseCaption;
 
-    BtnPriority.Enabled := False;
-    BtnPauseRun.Enabled := False;
-    BtnPauseRun.Caption := rsBtnPauseCaption;
+
   end;
   BtnCancel.Cancel := True;
   ActiveControl    := BtnCancel;
@@ -262,50 +242,6 @@ end;
  // Buttons Click Routines                                                   //
  //                                                                          //
  // ------------------------------------------------------------------------ //
-
-procedure TTickFrm.BtnPauseRunClick(Sender: TObject);
-begin
-
-end;
-
-procedure TTickFrm.BtnPriorityClick(Sender: TObject);
-begin
-
-end;
-
-procedure TTickFrm.BtnFontClick(Sender: TObject);
-begin
-  FontDialog.Font := Report.Font;
-  if FontDialog.Execute then
-  begin
-    Report.Font := FontDialog.Font;
-  end;
-end;
-
-procedure TTickFrm.BtnSaveClick(Sender: TObject);
-var
-  FileName: string;
-begin
-  SaveDialog.FileName := '';
-  SaveDialog.Filter   :=
-    'Txt file  (*.txt)|*.txt|' + 'Log file  (*.log)|*.log|' +
-    'All files (*.*)|*.*|';
-
-  if SaveDialog.Execute then
-  begin
-    FileName := SaveDialog.FileName;
-    case SaveDialog.FilterIndex of
-      1: FileName := ChangeFileExt(FileName, '.txt');
-      2: FileName := ChangeFileExt(FileName, '.log');
-    end;
-    Report.Lines.SaveToFile(FileName);
-  end;
-end;
-
-procedure TTickFrm.BtnCancelClick(Sender: TObject);
-begin
-  Close;
-end;
 
  // ------------------------------------------------------------------------ //
  //                                                                          //
@@ -438,9 +374,5 @@ end;
   end;
 
   *)
-
-initialization
-
-  {$I bxm_tickfrm.lrs}
 
 end.

@@ -1,17 +1,15 @@
 program bxm;
 
-{$mode objfpc}{$H+}
+{$I bxm_compiler.inc}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Interfaces, // this includes the LCL widgetset
+  Interfaces,
   Forms,
   lazcontrols,
 
-  bxm_addfrm,
-  bxm_aboutFrm,
   bxm_mainfrm
   { you can add units after this };
 
@@ -19,7 +17,6 @@ begin
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.CreateForm(TMainFrm,  MainFrm);
-  Application.CreateForm(TAboutFrm, AboutFrm);
   Application.Run;
 end.
 

@@ -1,7 +1,7 @@
 object TickFrm: TTickFrm
-  Left = 301
+  Left = 607
   Height = 386
-  Top = 134
+  Top = 308
   Width = 571
   Caption = '0% Processing...'
   ClientHeight = 386
@@ -19,118 +19,23 @@ object TickFrm: TTickFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 485
-    Height = 28
-    Top = 352
-    Width = 80
+    Left = 481
+    Height = 27
+    Top = 353
+    Width = 84
     Anchors = [akRight, akBottom]
     AutoSize = True
     BorderSpacing.Around = 6
     Cancel = True
-    Caption = 'Blocca'
-    Constraints.MinWidth = 80
+    Caption = 'Close'
+    Constraints.MaxHeight = 27
+    Constraints.MaxWidth = 84
+    Constraints.MinHeight = 27
+    Constraints.MinWidth = 84
     Default = True
     Kind = bkAbort
     ModalResult = 3
-    OnClick = BtnCancelClick
     TabOrder = 0
-  end
-  object BtnPriority: TBitBtn
-    AnchorSideTop.Control = BtnCancel
-    AnchorSideRight.Control = BtnPauseRun
-    AnchorSideBottom.Control = BtnCancel
-    AnchorSideBottom.Side = asrBottom
-    Left = 318
-    Height = 28
-    Top = 352
-    Width = 80
-    Anchors = [akTop, akRight, akBottom]
-    AutoSize = True
-    BorderSpacing.Left = 6
-    BorderSpacing.Right = 6
-    Caption = 'Priority'
-    Constraints.MinWidth = 80
-    Glyph.Data = {
-      46020000424D460200000000000036000000280000000F0000000B0000000100
-      18000000000010020000C40E0000C40E00000000000000000000FF00FFFF00FF
-      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-      FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00
-      0000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FF
-      FF00FFFF00FFFF00FFFF00FF000000000000000000FF00FFFF00FFFF00FFFF00
-      FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FFFF00FF00000000000000
-      0000000000000000FF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FF
-      FF00FFFF00FF000000000000000000000000000000000000000000FF00FFFF00
-      FFFF00FFFF00FF000000FF00FFFF00FFFF00FF00000000000000000000000000
-      0000000000000000000000000000FF00FFFF00FFFF00FF000000FF00FFFF00FF
-      0000000000000000000000000000000000000000000000000000000000000000
-      00FF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FF
-      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-      FFFF00FFFF00FF000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF00FFFF00FF
-      FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-      FFFF00FFFF00FF000000
-    }
-    Layout = blGlyphRight
-    OnClick = BtnPriorityClick
-    PopupMenu = Popup
-    Spacing = 5
-    TabOrder = 2
-  end
-  object BtnPauseRun: TBitBtn
-    AnchorSideTop.Control = BtnCancel
-    AnchorSideRight.Control = BtnCancel
-    AnchorSideBottom.Control = BtnCancel
-    AnchorSideBottom.Side = asrBottom
-    Left = 404
-    Height = 28
-    Top = 352
-    Width = 75
-    Anchors = [akTop, akRight, akBottom]
-    AutoSize = True
-    BorderSpacing.Left = 6
-    BorderSpacing.Right = 6
-    Caption = 'Pause'
-    Constraints.MinWidth = 75
-    OnClick = BtnPauseRunClick
-    TabOrder = 1
-  end
-  object BtnSave: TBitBtn
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = BtnCancel
-    AnchorSideBottom.Control = BtnCancel
-    AnchorSideBottom.Side = asrBottom
-    Left = 6
-    Height = 28
-    Top = 352
-    Width = 75
-    Anchors = [akTop, akLeft, akBottom]
-    AutoSize = True
-    BorderSpacing.Left = 6
-    BorderSpacing.Right = 6
-    Caption = ' Save'
-    Constraints.MinWidth = 75
-    OnClick = BtnSaveClick
-    TabOrder = 4
-  end
-  object BtnFont: TBitBtn
-    AnchorSideLeft.Control = BtnSave
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = BtnCancel
-    AnchorSideBottom.Control = BtnCancel
-    AnchorSideBottom.Side = asrBottom
-    Left = 87
-    Height = 28
-    Top = 352
-    Width = 75
-    Anchors = [akTop, akLeft, akBottom]
-    AutoSize = True
-    BorderSpacing.Left = 6
-    BorderSpacing.Right = 6
-    Caption = 'Font'
-    Constraints.MinWidth = 75
-    OnClick = BtnFontClick
-    TabOrder = 3
   end
   object GeneralPanel: TPanel
     Left = 24
@@ -141,7 +46,7 @@ object TickFrm: TTickFrm
     BevelOuter = bvLowered
     ClientHeight = 128
     ClientWidth = 433
-    TabOrder = 5
+    TabOrder = 1
     object RemainingTime: TLabel
       AnchorSideLeft.Control = ElapsedTimeLabel
       AnchorSideLeft.Side = asrBottom
@@ -412,28 +317,52 @@ object TickFrm: TTickFrm
       TabOrder = 0
     end
   end
-  object Bevel: TBevel
-    AnchorSideLeft.Control = BtnSave
-    AnchorSideRight.Control = BtnCancel
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = BtnCancel
-    Left = 6
-    Height = 2
-    Top = 340
-    Width = 559
-    Anchors = [akLeft, akRight, akBottom]
-    BorderSpacing.Bottom = 10
+  object ReportPanel: TPanel
+    Left = 48
+    Height = 30
+    Top = 216
+    Width = 373
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
+    Caption = 'ReportPanel'
+    ClientHeight = 30
+    ClientWidth = 373
+    TabOrder = 2
+    object Report: TMemo
+      Left = 2
+      Height = 26
+      Top = 2
+      Width = 369
+      Align = alClient
+      Anchors = []
+      BorderStyle = bsNone
+      ReadOnly = True
+      ScrollBars = ssAutoBoth
+      TabOrder = 0
+      WordWrap = False
+    end
   end
-  object Report: TMemo
+  object Arrow1: TArrow
     Left = 24
-    Height = 106
-    Top = 160
-    Width = 433
-    Anchors = []
-    ReadOnly = True
-    ScrollBars = ssAutoBoth
-    TabOrder = 6
-    WordWrap = False
+    Height = 13
+    Top = 180
+    Width = 13
+    AntiAliasingMode = amOn
+    ArrowColor = clMenuText
+    ArrowType = atRight
+    Constraints.MaxHeight = 13
+    Constraints.MaxWidth = 13
+    Constraints.MinHeight = 13
+    Constraints.MinWidth = 13
+    ShadowType = stNone
+  end
+  object Label1: TLabel
+    Left = 56
+    Height = 14
+    Top = 180
+    Width = 40
+    Caption = 'Details'
+    ParentColor = False
   end
   object Timer: TIdleTimer
     Enabled = False
@@ -441,41 +370,5 @@ object TickFrm: TTickFrm
     OnTimer = OnTimer
     left = 496
     top = 32
-  end
-  object SaveDialog: TSaveDialog
-    Options = [ofPathMustExist, ofEnableSizing, ofViewDetail]
-    left = 496
-    top = 88
-  end
-  object FontDialog: TFontDialog
-    MinFontSize = 0
-    MaxFontSize = 0
-    left = 496
-    top = 144
-  end
-  object Popup: TPopupMenu
-    AutoPopup = False
-    left = 496
-    top = 200
-    object Popup_Idle: TMenuItem
-      Caption = 'Idle'
-      ShortCut = 16432
-      OnClick = PopupClick
-    end
-    object Popup_Normal: TMenuItem
-      Caption = 'Normal'
-      ShortCut = 16433
-      OnClick = PopupClick
-    end
-    object Popup_Higher: TMenuItem
-      Caption = 'Higher'
-      ShortCut = 16434
-      OnClick = PopupClick
-    end
-    object Popup_TimeCritical: TMenuItem
-      Caption = 'Time critical'
-      ShortCut = 16435
-      OnClick = PopupClick
-    end
   end
 end
