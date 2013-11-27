@@ -18,7 +18,7 @@
 
 { Contains:
 
-    BeeGui Add form.
+    Add form class.
 
   Modifyed:
 }
@@ -45,7 +45,9 @@ uses
   StdCtrls,
   SysUtils,
   // ---
-  bxm_AddTreeViewMgr;
+
+  bxm_AddTreeViewMgr,
+  bxm_Plugins;
 
 type
 
@@ -112,12 +114,50 @@ type
     { public declarations }
   end;
 
+  function AddShowModal(PCL: TParserCommandLine): longint;
+
 implementation
+
+{$R *.lfm}
 
 uses
   bxm_Consts,
   bxm_Messages,
   bxm_SysUtils;
+
+function AddShowModal(PCL: TParserCommandLine): longint;
+var
+  Add: TAddFrm;
+  i: longint;
+begin
+  Add := TAddFrm.Create(nil);
+  Add.FArchivePath := ExtractFilePath(PCL.ArchiveName);
+  Add.ArchiveNameComboBox.Text := ExtractFileName(PCL.ArchiveName);
+
+  Result := Add.ShowModal;
+  if Result = mrOk then
+  begin
+    PCL.Command := cAdd;
+    PCL.CompressionMode := TCompressionMode(
+      Ord(Add.CompressionMethod.ItemIndex));
+
+    for i := 0 to Add.Files.Items.Count - 1 do
+      if Add.Files.Items[i].ImageIndex = 1 then
+        PCL.ExcludedFileMasks.Add(Add.Files.Items[i].Text);
+
+    if Add.ArchiveWithPasswordCheck.Checked then
+      PCL.Password := Add.ArchiveWithPassword.Text;
+
+    PCL.Recursive := Add.RecurseSubdirectories.Checked;
+    PCL.UpdateMode := TUpdateMode(Ord(Add.UpdateMethod.ItemIndex));
+    PCL.ArchiveName := Add.FArchivePath + Add.ArchiveNameComboBox.Text;
+
+    for i := 0 to Add.Files.Items.Count - 1 do
+      if Add.Files.Items[i].ImageIndex = 0 then
+        PCL.FileMasks.Add(Add.Files.Items[i].Text);
+  end;
+  Add.Destroy;
+end;
 
 { TAddFrm class }
 
@@ -285,9 +325,5 @@ procedure TAddFrm.ArchiveWithPasswordCheckClick(Sender: TObject);
 begin
   ArchiveWithPassword.Enabled := ArchiveWithPasswordCheck.Checked;
 end;
-
-initialization
-
-  {$i bxm_addfrm.lrs}
 
 end.

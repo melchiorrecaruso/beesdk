@@ -18,7 +18,7 @@
 
 { Contains:
 
-    AboutTo form.
+    AboutTo form class.
 
   Modifyed:
 
@@ -63,10 +63,24 @@ type
     { private declarations }
   end;
 
-var
-  AboutFrm: TAboutFrm;
+  function AboutShowModal: longint;
 
 implementation
+
+{$R *.lfm}
+
+function AboutShowModal: longint;
+var
+  About: TAboutFrm;
+begin
+  About := TAboutFrm.Create(nil);
+  Result := About.ShowModal;
+  if Result = mrOk then
+  begin
+
+
+  end;
+end;
 
 { TAboutFrm class }
 
@@ -84,9 +98,5 @@ procedure TAboutFrm.BtnOkClick(Sender: TObject);
 begin
   Close;
 end;
-
-initialization
-
-  {$I bxm_aboutfrm.lrs}
 
 end.
