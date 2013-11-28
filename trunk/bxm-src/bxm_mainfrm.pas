@@ -57,9 +57,9 @@ type
     ImageList: TImageList;
     ListView: TListView;
     MenuItem1: TMenuItem;
-    MenuItem2: TMenuItem;
-    MenuItem3: TMenuItem;
-    MenuItem5: TMenuItem;
+    AboutMenuItem: TMenuItem;
+    NulMenuItem: TMenuItem;
+    PreferencesMenuItem: TMenuItem;
     MainMenu: TPopupMenu;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
@@ -79,12 +79,12 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
-    procedure MenuItem2Click(Sender: TObject);
+    procedure AboutMenuItemClick(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
     procedure Shape2ChangeBounds(Sender: TObject);
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
-    procedure ShareMenuPopup(Sender: TObject);
+    procedure ShareMenuClose(Sender: TObject);
   private
     { private declarations }
     ParserCommandLine: TParserCommandLine;
@@ -133,12 +133,12 @@ begin
   ShareMenu.PopUp(Left + ToolBarMenu.Left + ShareButton.Left, Top  + 59);
 end;
 
-procedure TMainFrm.ShareMenuPopup(Sender: TObject);
+procedure TMainFrm.ShareMenuClose(Sender: TObject);
 begin
   ShareButton.Down := FALSE;
 end;
 
-procedure TMainFrm.MenuItem2Click(Sender: TObject);
+procedure TMainFrm.AboutMenuItemClick(Sender: TObject);
 begin
   AboutShowModal;
 end;
@@ -158,7 +158,7 @@ begin
   ParserCommandLine.Clear;
   if AddShowModal(ParserCommandLine) = mrOk then
   begin
-    TickShowModal;
+    TickShowModal(ParserCommandLine);
 
 
 

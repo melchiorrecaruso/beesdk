@@ -1,11 +1,13 @@
 object TickFrm: TTickFrm
-  Left = 556
-  Height = 386
-  Top = 275
-  Width = 571
+  Left = 485
+  Height = 371
+  Top = 252
+  Width = 460
   Caption = '0% Processing...'
-  ClientHeight = 386
-  ClientWidth = 571
+  ClientHeight = 371
+  ClientWidth = 460
+  Constraints.MaxWidth = 460
+  Constraints.MinWidth = 460
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -18,9 +20,9 @@ object TickFrm: TTickFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 481
+    Left = 370
     Height = 27
-    Top = 353
+    Top = 338
     Width = 84
     Anchors = [akRight, akBottom]
     AutoSize = True
@@ -34,307 +36,34 @@ object TickFrm: TTickFrm
     ModalResult = 11
     TabOrder = 0
   end
-  object GeneralPanel: TPanel
-    Left = 88
-    Height = 128
-    Top = 32
-    Width = 433
-    BevelInner = bvRaised
-    BevelOuter = bvLowered
-    ClientHeight = 128
-    ClientWidth = 433
-    TabOrder = 1
-    object RemainingTime: TLabel
-      AnchorSideLeft.Control = ElapsedTimeLabel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = RemainingTimeLabel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = RemainingTimeLabel
-      AnchorSideBottom.Side = asrBottom
-      Left = 144
-      Height = 14
-      Top = 24
-      Width = 51
-      Anchors = [akTop, akLeft, akBottom]
-      BorderSpacing.Left = 20
-      BorderSpacing.Right = 10
-      Caption = '00:00:00'
-      Color = clBtnFace
-      Layout = tlBottom
-      ParentColor = False
-      Transparent = False
-    end
-    object ElapsedTime: TLabel
-      AnchorSideLeft.Control = ElapsedTimeLabel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = ElapsedTimeLabel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = ElapsedTimeLabel
-      AnchorSideBottom.Side = asrBottom
-      Left = 144
-      Height = 14
-      Top = 8
-      Width = 51
-      Alignment = taCenter
-      Anchors = [akTop, akLeft, akBottom]
-      BorderSpacing.Left = 20
-      BorderSpacing.Right = 20
-      Caption = '00:00:00'
-      Color = clBtnFace
-      Layout = tlBottom
-      ParentColor = False
-      Transparent = False
-    end
-    object ElapsedTimeLabel: TLabel
-      AnchorSideLeft.Control = GeneralPanel
-      AnchorSideTop.Control = GeneralPanel
-      AnchorSideRight.Side = asrBottom
-      Left = 8
-      Height = 14
-      Top = 8
-      Width = 116
-      BorderSpacing.Left = 6
-      BorderSpacing.Top = 6
-      BorderSpacing.Right = 1
-      BorderSpacing.Bottom = 2
-      Caption = 'Time elapsed:####'
-      Color = clBtnFace
-      Layout = tlBottom
-      ParentColor = False
-      Transparent = False
-    end
-    object RemainingTimeLabel: TLabel
-      AnchorSideLeft.Control = GeneralPanel
-      AnchorSideTop.Control = ElapsedTimeLabel
-      AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Side = asrBottom
-      Left = 8
-      Height = 14
-      Top = 24
-      Width = 91
-      BorderSpacing.Left = 6
-      BorderSpacing.Top = 2
-      BorderSpacing.Right = 6
-      BorderSpacing.Bottom = 2
-      Caption = 'Remaining time:'
-      Color = clBtnFace
-      Layout = tlBottom
-      ParentColor = False
-      Transparent = False
-    end
-    object GeneralSizeLabel: TLabel
-      AnchorSideLeft.Control = ElapsedTime
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = GeneralPanel
-      AnchorSideRight.Control = GeneralSize
-      Left = 189
-      Height = 14
-      Top = 8
-      Width = 102
-      Anchors = [akTop, akRight]
-      BorderSpacing.Left = 30
-      BorderSpacing.Top = 6
-      BorderSpacing.Right = 20
-      BorderSpacing.Bottom = 2
-      Caption = 'Total size:#####'
-      Color = clBtnFace
-      Layout = tlBottom
-      ParentColor = False
-      Transparent = False
-    end
-    object ProcessedSizeLabel: TLabel
-      AnchorSideLeft.Control = GeneralSizeLabel
-      AnchorSideTop.Control = GeneralSizeLabel
-      AnchorSideTop.Side = asrBottom
-      Left = 189
-      Height = 14
-      Top = 24
-      Width = 85
-      BorderSpacing.Top = 2
-      BorderSpacing.Bottom = 2
-      Caption = 'Processed size:'
-      Color = clBtnFace
-      Layout = tlBottom
-      ParentColor = False
-      Transparent = False
-    end
-    object SpeedLabel: TLabel
-      AnchorSideLeft.Control = ProcessedSizeLabel
-      AnchorSideTop.Control = ProcessedSizeLabel
-      AnchorSideTop.Side = asrBottom
-      Left = 189
-      Height = 14
-      Top = 40
-      Width = 39
-      BorderSpacing.Top = 2
-      BorderSpacing.Bottom = 2
-      Caption = 'Speed:'
-      Color = clBtnFace
-      ParentColor = False
-      Transparent = False
-    end
-    object GeneralSize: TLabel
-      AnchorSideLeft.Control = GeneralSizeLabel
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = GeneralSizeLabel
-      AnchorSideRight.Control = GeneralSizeUnit
-      AnchorSideBottom.Control = GeneralSizeLabel
-      AnchorSideBottom.Side = asrBottom
-      Left = 311
-      Height = 14
-      Top = 8
-      Width = 50
-      Alignment = taRightJustify
-      Anchors = [akTop, akRight, akBottom]
-      BorderSpacing.Left = 15
-      BorderSpacing.Right = 25
-      Caption = '---'
-      Color = clBtnFace
-      Constraints.MinWidth = 50
-      ParentColor = False
-      Transparent = False
-    end
-    object ProcessedSize: TLabel
-      AnchorSideLeft.Control = GeneralSize
-      AnchorSideTop.Control = ProcessedSizeLabel
-      AnchorSideRight.Control = GeneralSize
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = ProcessedSizeLabel
-      AnchorSideBottom.Side = asrBottom
-      Left = 311
-      Height = 14
-      Top = 24
-      Width = 50
-      Alignment = taRightJustify
-      Anchors = [akTop, akLeft, akRight, akBottom]
-      Caption = '---'
-      Color = clBtnFace
-      Constraints.MinWidth = 50
-      ParentColor = False
-      Transparent = False
-    end
-    object Speed: TLabel
-      AnchorSideLeft.Control = GeneralSize
-      AnchorSideTop.Control = SpeedLabel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = SpeedLabel
-      AnchorSideBottom.Side = asrBottom
-      Left = 311
-      Height = 14
-      Top = 40
-      Width = 50
-      Alignment = taRightJustify
-      Anchors = [akTop, akLeft, akBottom]
-      Caption = '---'
-      Color = clBtnFace
-      Constraints.MinWidth = 50
-      ParentColor = False
-      Transparent = False
-    end
-    object SpeedUnit: TLabel
-      AnchorSideLeft.Control = GeneralSizeUnit
-      AnchorSideTop.Control = Speed
-      AnchorSideRight.Control = GeneralPanel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = Speed
-      AnchorSideBottom.Side = asrBottom
-      Left = 386
-      Height = 14
-      Top = 40
-      Width = 39
-      Anchors = [akTop, akLeft, akRight, akBottom]
-      BorderSpacing.Right = 6
-      Caption = 'KB/s'
-      Color = clBtnFace
-      ParentColor = False
-      Transparent = False
-    end
-    object ProcessedSizeUnit: TLabel
-      AnchorSideLeft.Control = GeneralSizeUnit
-      AnchorSideTop.Control = ProcessedSize
-      AnchorSideRight.Control = GeneralPanel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = ProcessedSize
-      AnchorSideBottom.Side = asrBottom
-      Left = 386
-      Height = 14
-      Top = 24
-      Width = 35
-      Anchors = [akTop, akLeft, akRight, akBottom]
-      BorderSpacing.Right = 10
-      Caption = 'KB'
-      Color = clBtnFace
-      ParentColor = False
-      Transparent = False
-    end
-    object GeneralSizeUnit: TLabel
-      AnchorSideTop.Control = GeneralSize
-      AnchorSideRight.Control = GeneralPanel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = GeneralSize
-      AnchorSideBottom.Side = asrBottom
-      Left = 386
-      Height = 14
-      Top = 8
-      Width = 35
-      Anchors = [akTop, akRight, akBottom]
-      BorderSpacing.Right = 10
-      Caption = 'KB##'
-      Color = clBtnFace
-      ParentColor = False
-      Transparent = False
-    end
-    object TickLabel: TLabel
-      Left = 8
-      Height = 18
-      Top = 76
-      Width = 417
-      Align = alBottom
-      BorderSpacing.Left = 6
-      BorderSpacing.Top = 2
-      BorderSpacing.Right = 6
-      BorderSpacing.Bottom = 2
-      Caption = '...'
-      Color = clBtnFace
-      Constraints.MaxHeight = 18
-      Constraints.MinHeight = 18
-      Layout = tlBottom
-      ParentColor = False
-      Transparent = False
-    end
-    object TickProgressBar: TProgressBar
-      Left = 8
-      Height = 20
-      Top = 100
-      Width = 417
-      Align = alBottom
-      BorderSpacing.Around = 6
-      Constraints.MaxHeight = 20
-      Constraints.MinHeight = 20
-      TabOrder = 0
-    end
-  end
   object ReportPanel: TPanel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = DetailsLabel
     AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 92
-    Top = 204
-    Width = 373
+    Height = 150
+    Top = 155
+    Width = 448
+    Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 10
+    BorderSpacing.Right = 6
     BevelInner = bvRaised
     BevelOuter = bvLowered
     Caption = 'ReportPanel'
-    ClientHeight = 92
-    ClientWidth = 373
-    TabOrder = 2
+    ClientHeight = 150
+    ClientWidth = 448
+    Constraints.MaxHeight = 150
+    Constraints.MinHeight = 150
+    TabOrder = 1
+    Visible = False
     object Report: TMemo
       Left = 2
-      Height = 88
+      Height = 146
       Top = 2
-      Width = 369
+      Width = 444
       Align = alClient
       Anchors = []
       BorderStyle = bsNone
@@ -346,19 +75,21 @@ object TickFrm: TTickFrm
   end
   object DetailsArrow: TArrow
     AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
     Left = 6
     Height = 13
-    Top = 180
+    Top = 130
     Width = 13
     AntiAliasingMode = amOn
-    Anchors = [akLeft]
     ArrowColor = clMenuText
     ArrowType = atRight
     BorderSpacing.Left = 6
+    BorderSpacing.Top = 130
     Constraints.MaxHeight = 13
     Constraints.MaxWidth = 13
     Constraints.MinHeight = 13
     Constraints.MinWidth = 13
+    OnClick = DetailsArrowClick
     ShadowType = stNone
   end
   object DetailsLabel: TLabel
@@ -366,18 +97,207 @@ object TickFrm: TTickFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = DetailsArrow
     Left = 21
-    Height = 14
-    Top = 180
-    Width = 120
+    Height = 15
+    Top = 130
+    Width = 115
     BorderSpacing.Left = 2
     Caption = 'Description of update'
+    ParentColor = False
+  end
+  object Image: TImage
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    Left = 10
+    Height = 41
+    Top = 25
+    Width = 44
+    AntialiasingMode = amOn
+    AutoSize = True
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 25
+    Picture.Data = {
+      1754506F727461626C654E6574776F726B47726170686963E20B000089504E47
+      0D0A1A0A0000000D494844520000002C0000002908060000004E49CBB2000000
+      017352474200AECE1CE9000000097048597300000DD700000DD70142289B7800
+      00000774494D4507DD0B1C15132C46B1308D00000B744944415458C3CD996D8C
+      9CD755C77FE7DCFB3C33DE5D7BEDC44EE2CA75929294F48552C5266A25504B23
+      557CE1258817C1079434B181F05E118AA081909412A404073E44A25F50AB1454
+      505A5110050A8222505A4A6B3722344D1A1C77D74E9DAC6DFCB2BBB333F79EC3
+      877B67E6D937F723AC7676669EE79979FEF7DCFFF99FFF392B0B0B0B0EE01796
+      481F7D8CBC7812CCF87FF1A34A387033F1EE0790DDD7022063C0C33FF835F6DE
+      1098BBF566085A3F21E3DFC9DBF246A65F2A323DD7BD0EC03BC7C6AF7DC3419F
+      9EF3759F1170E7F2D74EB27436D1FB95470188E3D3E9D449666FBB05FBE22710
+      CF5330B201946C58C8BAF3B235E03148F709C6C99F2E607720000A08AE91D983
+      8739FB85AF4D9638019C73C6CFBF0C96F14954BDAE7443043B78A4BE301F2F42
+      A6417247A47C5EEA85BED5D60BE00A5A23E282A365811717C9396F066CE61BB6
+      6B0B68DEBD4101E6068EE0F57DF9A3F553567741507164B233F58BAC9C730FB8
+      286E52172675850A68C1B611B06F0B767380CD0B607330133C09D905372DBBEC
+      63862822A0EA20860647D551AD6C53C550DC03390B9E03AAA04110F76960DCB7
+      89F024112A27D645747C9D602E6473720A648B845BBE8BE6D63B886F7D373A7F
+      1DB4FD9A1809BB7086D189CF323AF1F7A4575F2204475B0A3015F0C0280B79A8
+      E88D87C8A78E131A270645C4B78FB099ADA3C434AAE595D584C8095216526E68
+      DEF1C3CC7CDFCF426F06D34846486E781A27ADA2D71E24BEE71E7A77DE835FB9
+      C0EAD38F32FCAF7FA1691D6F1477250F416E3CCCCC91C7B9F8EBEF26C4C261A9
+      49691D999D52C23A192BEB9FDD1D43B104A3A4F8BE3732F7BEC791F9EB481A30
+      CB60694B2E99670C480E3AB7871D3FF57BD8E917597EEA41C2E533980B72D321
+      668F3E81343DDCB5701DC1AD267127C2BA9912533DF28E02A4A1305C1378C33B
+      D9F9FE8F637B6E60886396108110228D655AA0175B7AB1A1051A774288888059
+      62E806AFBF8D9D0FFC2979DF6D70E321E68E1C6334BEA7975C2CBC2DFCBD4AD2
+      7987B78ED7C4CA098643086F7A1773F71D23792E4011822821B48CBEFA6FACFC
+      FBA749274F6097CE21A145AFD94F3CF856DA3BBE9FF69643644B644FE4BC86C7
+      865DBFF411404862B865A08F5B550FAD9B9CF95649D7C93D879C85D148E09A6F
+      63EEDEC71979C22D21A24402E9F967B8FC670F235796088DD30B82EC508C35B8
+      FC0DF2B38B5CF9D2DFA27B6F64F6277F8BE6C01B4962581E923416F1EBD0C972
+      954A13447D1336DDC4E14E01B20A78B816D979FF93640CCF430468B465E5CF1F
+      E5CA1FFF02EDDA6BF4669CB62F847E20344AD353624F68FA427F56D18B8B5C7C
+      E208ABFFF0149188009687581E8E11768A6295B25CCAF3D5393C7ECA60C9198D
+      9CF61D3F003BF790F35AD9166958FEE4630C3FFF17B43346E84168048D811021
+      442584F28851D0206803A8307CF1CBA5FAC938B3BB0F70377236C8F590B19DAC
+      8D15DFAB58836761B4A6ECBAEBFD981A6246D01EA3AF3EC3E09F9E62C70C8418
+      0851105544C2D470B814C9322725585B86F086DBD97DFF13245F031B6D55EDF1
+      5C391C6A29F76D007B05EC755FCC84348278E3DB90B687DBA0E8AAB65CFAD843
+      F47A426894100455ED38A352524BD916F2C819AE0A7AF3EDECBEFF188935DC46
+      DB5B4AEB9A21909CD751621A619FEA7009B463A6B46FFF5E24B6149182C1173F
+      83AC9E27CC064405D1124944100FE55E52223C8EB2BFEECDCCDFF761D04064A6
+      43C40D58572EE366B096B14146728651BF16AD2D28E11D23E0220475963F798C
+      CB4F1F2B80445115FA334A888A869A06123AF497E2BCBC24AD38B0F81CAFFEEA
+      7BA785B44BDB6248F064909D567235455617EE57A144C73A28105A67360848B1
+      7E8E162315041541AA6FAD612DD775CC4FB10A42AF076D536F951D46094B06A3
+      5CBA1B07824F22AF385A6DE94695885BAA84400875BBA316201DBB27A12459E1
+      7B013DF6BDEE55016A74833B9A8DBC9661942600C3F8C6C137741C8E4ADD999A
+      53DB573AB3093077AD267A0AB49C133C0BD9BA6D85D63549D9E2518251C68719
+      B24D7075BB11331F4BEF04E8B4A9997626627EB54A17F00A369B168FEA520C3A
+      BEBE3DF2B2384F86A4842443DD8938A25BF4749D3729434A5E833D8DB078B19D
+      418520536DDE9EC3128050CC4E12565620AD81952C285F90339EBD7031952F15
+      845E2BF45BD046A6DBBD45236056BCC96864AC0CA68A34AE62FDBED046D0E093
+      F6CBB7F3C3CE940E39C36060DCF4F1E7F0D1DAB6B229B1C1876B9C7DF808F9E4
+      974AEEF85650AB13B312DD9535B8F6037FC8CC1D77821B121BFEE7537FC2F2C7
+      7E9F461D1741C4AB5BB36D2891C106905733B6ECD8A504EEE4E1C2D660C30E24
+      CD73F6B7EFC3BF7E1CE90B9D9DDCACB3197286940CDD7D033387DF55BEDB0D4D
+      D7B3FCB9BF2628D50F972A27E6DB9B9F7C3661E7122C273CE522E29B84B3D220
+      F4119FE79B0FBE8FF4FC7FD06F21AA23523B97CEC3DDB1E4E46C0C4799E58171
+      CD2FFE2E962F816724F4B12B9718BEF02C41EA774C6EEBDFAAD255C577A92B05
+      C13644B60FECE19507EF26BD708299D9406CAA4A686DF93B2309C3C9C0301BAB
+      4367D78F1CA5FFA6B7E17616C1119B63E923BF4913A1515017A423B3DD4AB7CE
+      ADB95B2788DDADB0750FF711E0F4DF72988493B2934CC8EE24811C1D8B4E569F
+      9C1F8C8CE5813377D751F6FCC4CFE1FE2A9091B08BD12B8B2CFFEB67681B29CD
+      A9746D825D4587055CBDD8002FAFBB931B0933855B79159733ECF9F19F66C7A1
+      EFE6B5273FC8E0B5059A5669DC2775C6AA7C8D86C0FC755CFF810FD17FF3ED78
+      3E53DC5A98019BE5CC233F4A7F56689AD2E22352E8685EABF31680ABA2215110
+      ABDC09530B55C0D6815C3887E72BB89FA67FEB4DBCFE8FFE86D5FFFC3C97FEF9
+      2F597DE939464B67F094887BF6B2E33B0FB3EF3D7731F31DEFC4D3393C2DD61C
+      9805D9C7990FFF0C61F99BB4BD406CCBC0A50095EA0F26566503E0A6B4241EA6
+      939D89A08719601FA71FBA17CF230E3CFC51B469F1D179C8E7C12E32F3965BD9
+      F1EDBF01D222B157A2341AE0B68A36860F5F2A090610AE01E639FDC811F20B5F
+      606E36D206290317A4981033301075A491CD8009E0013C0AA45A76C6E0D9C7E2
+      43F7622F7F99A0C2A907EE62FF2F3F467BE026E01CE4657C746EDA5E0D378CCD
+      4663CDDE85DB3CC3D30BBCF2C4DD84A553CCCD37B451084A313C66B5644BB129
+      01D82AC21AAB5D50C1A3E3269828365861E177EE25BF7C9CB9F9485061B0729A
+      850FFE183387DFCBF5F73D88F6AE45C21A6E578A904FA69F11B40732033EC3E8
+      C279963EF121AE3CF357CCCE44FABB03B11983ADB992430996386285161AD93A
+      C2128B1D44048D467F565878E41EEC1BC799DB13E9F78B530B7D27CE296BCFFF
+      23FFFDF39FA577CBEDEC3C7C27B36FFF1E9ABD0791D8E266D8CA25D285B35CF9
+      CADFB17CFC730C5E3A41BFA7CC5FD7D0062106A9BA5B4C53B107558CB216D071
+      9B0823828B408010A009CA5C54ECDCB3E8EE40D357B4154254C40435A3DD11E8
+      27189E7B968B9FFE0AE79F7E1CEB54A63208546223343D61F7BE1E4DEB442D83
+      C218C651F56AA7157267282BA59198CC9D37A984F8841651407B52E682A17417
+      1A15091063F940AE8B6F73C4B2319171EF0EF01DD5D2F78550BCAE42994EBAE3
+      797C408A15AD36D53B166E4B95F0711FA90AEA882A41050952BBA03AD10C358B
+      45AA0D1C0B5FB3DDB87AD296BAD7DA399E8158F5BE2AC50196ABEAE4C76B5255
+      6C9B28A1E0413B03E5D26894A857BA683D5E5F8B8E17583CEC6482BE69225840
+      8A157FE908D8B837A8A65F4BC46B97052615ACAE6B5AE360306069698978C37E
+      1697461C38F83AB4590F661261ED347C756FA5F2BEE8E72428535339AEE81437
+      E83E065E9F6BA43DFBE45AA9D2662367E1D405C2FEFD2C2E2EB277EFDE0E257E
+      F0282F7EEA49BEFEF28B259051CB243C96317EE1AFA051502DC7356839AF32B9
+      767C0CC093176E27C772518175C7ACB838CF8E252B76607C6DB232E9DFB30F7E
+      E8E8945EE37F7B5DBC7891CB972F33180C30B375FF08F9BFF80921A0AAF4FB7D
+      76EEDCC9FCFC3C00FF0B45A48F2089AAC64B0000000049454E44AE426082
+    }
+  end
+  object TickProgressBar: TProgressBar
+    AnchorSideLeft.Control = ActionLabel
+    AnchorSideTop.Control = ArchiveLabel
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 74
+    Height = 12
+    Top = 74
+    Width = 376
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Top = 6
+    BorderSpacing.Right = 10
+    Constraints.MaxHeight = 12
+    Constraints.MinHeight = 12
+    TabOrder = 2
+  end
+  object TickLabel: TLabel
+    AnchorSideLeft.Control = ActionLabel
+    AnchorSideTop.Control = TickProgressBar
+    AnchorSideTop.Side = asrBottom
+    Left = 74
+    Height = 18
+    Top = 92
+    Width = 192
+    AutoSize = False
+    BorderSpacing.Top = 6
+    BorderSpacing.Right = 6
+    BorderSpacing.Bottom = 2
+    Caption = 'Testing archive, please wait ...'
+    Constraints.MaxHeight = 18
+    Constraints.MinHeight = 18
+    Layout = tlBottom
+    ParentColor = False
+  end
+  object ActionLabel: TLabel
+    AnchorSideLeft.Control = Image
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = Owner
+    Left = 74
+    Height = 18
+    Top = 20
+    Width = 109
+    BorderSpacing.Left = 20
+    BorderSpacing.Top = 20
+    Caption = 'Testing archive'
+    Font.Height = 15
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object ArchiveLabel: TLabel
+    AnchorSideLeft.Control = ActionLabel
+    AnchorSideTop.Control = ActionLabel
+    AnchorSideTop.Side = asrBottom
+    Left = 74
+    Height = 15
+    Top = 53
+    Width = 47
+    BorderSpacing.Top = 15
+    Caption = 'Archive:'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object ArchiveNameLabel: TLabel
+    AnchorSideLeft.Control = ArchiveLabel
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = ArchiveLabel
+    AnchorSideBottom.Control = ArchiveLabel
+    AnchorSideBottom.Side = asrBottom
+    Left = 123
+    Height = 15
+    Top = 53
+    Width = 51
+    BorderSpacing.Left = 2
+    Caption = 'testing.bx'
     ParentColor = False
   end
   object Timer: TIdleTimer
     Enabled = False
     Interval = 250
     OnTimer = OnTimer
-    left = 480
-    top = 224
+    left = 8
+    top = 312
   end
 end

@@ -224,17 +224,6 @@ begin
   end;
 end;
 
-procedure TAddFrm.PopupMenu_PlusMinusClick(Sender: TObject);
-var
-  I: longint;
-begin
-  for I := Files.Items.Count - 1 downto 0 do
-    if Files.Items[I].Selected then
-    begin
-      FilesMgr.PlusMinus(I);
-    end;
-end;
-
 procedure TAddFrm.PopupMenu_DeleteClick(Sender: TObject);
 var
   I: longint;
@@ -243,6 +232,17 @@ begin
     if FilesMgr.MultiSelected[I] then
     begin
       FilesMgr.DeleteFile(I);
+    end;
+end;
+
+procedure TAddFrm.PopupMenu_PlusMinusClick(Sender: TObject);
+var
+  I: longint;
+begin
+  for I := Files.Items.Count - 1 downto 0 do
+    if Files.Items[I].Selected then
+    begin
+      FilesMgr.PlusMinus(I);
     end;
 end;
 

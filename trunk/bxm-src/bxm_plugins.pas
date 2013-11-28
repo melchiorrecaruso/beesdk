@@ -36,9 +36,15 @@ uses
   SysUtils;
 
 type
+  { TCommand }
+
   TCommand = (cAdd, cDelete, cExtract, cList, cTest, cxExtract);
 
+  { TCompressionMode }
+
   TCompressionMode = (cmStore, cmFastest, cmFast, cmNormal, cmBest, cmMaximum);
+
+  { TCompressionMode }
 
   TUpdateMode = (umAdd, umUpdate, umAddAndUpdate);
 

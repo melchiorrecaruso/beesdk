@@ -44,7 +44,9 @@ uses
   LResources,
   Menus,
   StdCtrls,
-  SysUtils;
+  SysUtils,
+  // ---
+  bxm_Plugins;
 
 type
 
@@ -54,56 +56,32 @@ type
     BtnCancel: TBitBtn;
     DetailsArrow: TArrow;
     DetailsLabel: TLabel;
-    ElapsedTime: TLabel;
-    ElapsedTimeLabel: TLabel;
-    GeneralPanel: TPanel;
-    GeneralSize: TLabel;
-    GeneralSizeLabel: TLabel;
-    GeneralSizeUnit: TLabel;
-    ProcessedSize: TLabel;
-    ProcessedSizeLabel: TLabel;
-    ProcessedSizeUnit: TLabel;
-    RemainingTime: TLabel;
-    RemainingTimeLabel: TLabel;
+    Image: TImage;
+    ActionLabel: TLabel;
+    ArchiveLabel: TLabel;
+    ArchiveNameLabel: TLabel;
     Report: TMemo;
     ReportPanel: TPanel;
-    Speed: TLabel;
-    SpeedLabel: TLabel;
-    SpeedUnit: TLabel;
+    TickLabel: TLabel;
     TickProgressBar: TProgressBar;
     Timer:   TIdleTimer;
-
-    TickLabel: TLabel;
-
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
-    procedure PanelChanged(Sender: TObject);
+    procedure DetailsArrowClick(Sender: TObject);
     procedure OnTimer(Sender: TObject);
     procedure OnTerminate;
     procedure OnExecute;
   private
     { private declarations }
-    FCanClose:  boolean;
-    FSuspended: boolean;
-    FProgressOnTitle: boolean;
-  private
-    { private declarations }
-    function GetFrmCanShow: boolean;
-    function GetFrmCanClose: boolean;
+    Parser: TParser;
   public
     { public declarations }
-    property FrmCanShow: boolean Read GetFrmCanShow;
-    property FrmCanClose: boolean Read GetFrmCanClose;
-    property ProgressOnTitle: boolean Read FProgressOnTitle Write FProgressOnTitle;
-  public
-    { public declarations }
-  public
-    { public declarations }
+    function ShowModal(PCL: TParserCommandLine): longint; overload;
   end;
 
-  function TickShowModal: longint;
+  function TickShowModal(PCL: TParserCommandLine): longint;
 
 implementation
 
@@ -112,20 +90,15 @@ implementation
 uses
   bxm_SysUtils;
 
+function TickShowModal(PCL: TParserCommandLine): longint;
 var
-  rsBtnPauseCaption:  string = 'Pause';
-  rsBtnRunCaption:    string = 'Run';
-  rsBtnCancelCaption: string = 'Cancel';
-  rsBtnCloseCaption:  string = 'Close';
-
-function TickShowModal: longint;
-var
-  TickProgressBar: TTickFrm;
+  Tick: TTickFrm;
 begin
-  TickProgressBar := TTickFrm.Create(nil);
-  Result := TickProgressBar.ShowModal;
+  Tick := TTickFrm.Create(nil);
+  Result := Tick.ShowModal(PCL);
   if Result = mrOk then
   begin
+
 
   end;
 end;
@@ -134,18 +107,31 @@ end;
 
 procedure TTickFrm.FormCreate(Sender: TObject);
 begin
+  DetailsArrow.ArrowType := atRight;
 
-
-  FCanClose    := False;
-  FSuspended   := False;
-
-  {$IFDEF UNIX}
-  TickProgressBar.Smooth := True;
+  {$IFDEF MSWINDOWS}
+  TickProgressBar.Smooth := FALSE;
+  {$ELSE}
+  TickProgressBar.Smooth := TRUE;
   {$ENDIF}
-  FProgressOnTitle := False;
+
+  {$IFDEF MSWINDOWS}
+  Constraints.MinHeight  := 185;
+  Constraints.MaxHeight  := 185;
+  {$ELSE}
+  Constraints.MinHeight  := 205;
+  Constraints.MaxHeight  := 205;
+  {$ENDIF}
+  Constraints.MinWidth   := 450;
+  Constraints.MaxWidth   := 450;
 end;
 
 procedure TTickFrm.FormDestroy(Sender: TObject);
+begin
+
+end;
+
+procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
 
 end;
@@ -155,39 +141,33 @@ begin
 
 end;
 
-procedure TTickFrm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
-var
-  I: boolean;
+function TTickFrm.ShowModal(PCL: TParserCommandLine): longint;
 begin
+  Report.Clear;
+  Report.Append(PCL.CommandLine);
 
+
+  //Parser := TParser.Create(PCL.CommandLine);
+  //Parser.Execute;
+
+  Result := ShowModal;
 end;
 
-function TTickFrm.GetFrmCanClose: boolean;
+procedure TTickFrm.DetailsArrowClick(Sender: TObject);
 begin
-
-end;
-
-function TTickFrm.GetFrmCanShow: boolean;
-begin
-
-end;
-
-procedure TTickFrm.PanelChanged(Sender: TObject);
-var
-  I: integer;
-begin
-
-  if GeneralPanel.Visible then
+  ReportPanel.Visible := not ReportPanel.Visible;
+  if ReportPanel.Visible then
   begin
-    BtnCancel.Kind    := bkCancel;
-    BtnCancel.Caption := rsBtnCancelCaption;
+    DetailsArrow.ArrowType := atDown;
+    Constraints.MaxHeight := Constraints.MaxHeight + ReportPanel.Height;
+    Constraints.MinHeight := Constraints.MaxHeight;
   end else
   begin
-    BtnCancel.Kind    := bkClose;
-    BtnCancel.Caption := rsBtnCloseCaption;
+    DetailsArrow.ArrowType := atRight;
+    Constraints.MinHeight := Constraints.MinHeight - ReportPanel.Height;
+    Constraints.MaxHeight := Constraints.MinHeight;
   end;
-  BtnCancel.Cancel := True;
-  ActiveControl    := BtnCancel;
+  Height := Constraints.MaxHeight;
 end;
 
  // ------------------------------------------------------------------------ //
@@ -210,16 +190,9 @@ begin
 end;
 
 procedure TTickFrm.OnTerminate;
-var
-  P: PChar;
-  I: integer;
 begin
 
 end;
-
-
-
-
 
  // ------------------------------------------------------------------------ //
  //                                                                          //

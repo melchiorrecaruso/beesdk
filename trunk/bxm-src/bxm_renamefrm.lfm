@@ -1,7 +1,7 @@
 object RenameFrm: TRenameFrm
-  Left = 471
+  Left = 444
   Height = 110
-  Top = 137
+  Top = 347
   Width = 315
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
@@ -18,7 +18,7 @@ object RenameFrm: TRenameFrm
     Left = 6
     Height = 15
     Top = 6
-    Width = 33
+    Width = 32
     Alignment = taRightJustify
     BorderSpacing.Around = 6
     Caption = 'From:'
@@ -31,10 +31,10 @@ object RenameFrm: TRenameFrm
     AnchorSideTop.Control = ToFileName
     AnchorSideRight.Control = ToFileName
     AnchorSideBottom.Side = asrBottom
-    Left = 22
+    Left = 23
     Height = 15
     Top = 27
-    Width = 17
+    Width = 15
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     BorderSpacing.Right = 6
@@ -50,10 +50,10 @@ object RenameFrm: TRenameFrm
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 48
+    Left = 47
     Height = 15
     Top = 6
-    Width = 261
+    Width = 262
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 3
     BorderSpacing.Around = 6
@@ -70,10 +70,10 @@ object RenameFrm: TRenameFrm
     AnchorSideTop.Control = FromFileName
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Left = 45
+    Left = 44
     Height = 27
     Top = 27
-    Width = 264
+    Width = 265
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
