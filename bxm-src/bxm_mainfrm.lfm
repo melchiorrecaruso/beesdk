@@ -196,7 +196,7 @@ object MainFrm: TMainFrm
       item
       end    
       item
-        Width = 398
+        Width = 400
       end>
     ReadOnly = True
     ScrollBars = ssAutoVertical
@@ -226,15 +226,15 @@ object MainFrm: TMainFrm
     object MenuItem1: TMenuItem
       Caption = 'New'
     end
-    object MenuItem5: TMenuItem
+    object PreferencesMenuItem: TMenuItem
       Caption = 'Preferences'
     end
-    object MenuItem3: TMenuItem
+    object NulMenuItem: TMenuItem
       Caption = '-'
     end
-    object MenuItem2: TMenuItem
+    object AboutMenuItem: TMenuItem
       Caption = 'About'
-      OnClick = MenuItem2Click
+      OnClick = AboutMenuItemClick
     end
   end
   object ImageList: TImageList
@@ -674,7 +674,7 @@ object MainFrm: TMainFrm
   end
   object ShareMenu: TPopupMenu
     AutoPopup = False
-    OnPopup = ShareMenuPopup
+    OnClose = ShareMenuClose
     left = 88
     top = 80
     object MenuItem6: TMenuItem
