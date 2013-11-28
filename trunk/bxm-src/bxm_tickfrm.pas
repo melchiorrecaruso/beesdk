@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2003-2009 Andrew Filinsky and Melchiorre Caruso
+  Copyright (c) 2013 Melchiorre Caruso
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU GeneralPage Public License as published by
@@ -31,6 +31,7 @@ unit bxm_TickFrm;
 interface
 
 uses
+  Arrow,
   Buttons,
   Dialogs,
   Classes,
@@ -42,7 +43,7 @@ uses
   IniFiles,
   LResources,
   Menus,
-  StdCtrls, Arrow,
+  StdCtrls,
   SysUtils;
 
 type
@@ -50,39 +51,35 @@ type
   { TTickFrm }
 
   TTickFrm = class(TForm)
-    Arrow1: TArrow;
-
-
-
+    BtnCancel: TBitBtn;
+    DetailsArrow: TArrow;
+    DetailsLabel: TLabel;
     ElapsedTime: TLabel;
     ElapsedTimeLabel: TLabel;
+    GeneralPanel: TPanel;
     GeneralSize: TLabel;
     GeneralSizeLabel: TLabel;
     GeneralSizeUnit: TLabel;
-    GeneralPanel: TPanel;
-    Label1: TLabel;
-    Msg: TLabel;
-    ReportPanel: TPanel;
     ProcessedSize: TLabel;
     ProcessedSizeLabel: TLabel;
     ProcessedSizeUnit: TLabel;
     RemainingTime: TLabel;
     RemainingTimeLabel: TLabel;
     Report: TMemo;
+    ReportPanel: TPanel;
     Speed: TLabel;
     SpeedLabel: TLabel;
     SpeedUnit: TLabel;
-    Tick: TProgressBar;
+    TickProgressBar: TProgressBar;
     Timer:   TIdleTimer;
-    BtnCancel: TBitBtn;
-    // ---
+
+    TickLabel: TLabel;
+
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
-    // ---
     procedure PanelChanged(Sender: TObject);
-    // ---
     procedure OnTimer(Sender: TObject);
     procedure OnTerminate;
     procedure OnExecute;
@@ -123,10 +120,10 @@ var
 
 function TickShowModal: longint;
 var
-  Tick: TTickFrm;
+  TickProgressBar: TTickFrm;
 begin
-  Tick := TTickFrm.Create(nil);
-  Result := Tick.ShowModal;
+  TickProgressBar := TTickFrm.Create(nil);
+  Result := TickProgressBar.ShowModal;
   if Result = mrOk then
   begin
 
@@ -143,7 +140,7 @@ begin
   FSuspended   := False;
 
   {$IFDEF UNIX}
-  Tick.Smooth := True;
+  TickProgressBar.Smooth := True;
   {$ENDIF}
   FProgressOnTitle := False;
 end;
@@ -180,27 +177,14 @@ var
   I: integer;
 begin
 
-
-
-
-
-
-
   if GeneralPanel.Visible then
   begin
-
     BtnCancel.Kind    := bkCancel;
     BtnCancel.Caption := rsBtnCancelCaption;
-
-
-
   end else
   begin
-
     BtnCancel.Kind    := bkClose;
     BtnCancel.Caption := rsBtnCloseCaption;
-
-
   end;
   BtnCancel.Cancel := True;
   ActiveControl    := BtnCancel;
@@ -314,7 +298,7 @@ end;
       begin
         Report.Append(Data.Msg);
       end;
-      Msg.Caption := Data.Msg;
+      TickLabel.Caption := Data.Msg;
     end;
   end;
   
@@ -345,7 +329,7 @@ end;
 
   procedure TTickFrm.OnTick;
   begin
-    Tick.Position := FInterfaces.OnTick.Data.Percentage;
+    TickProgressBar.Position := FInterfaces.OnTick.Data.Percentage;
     Caption := Format(rsProcessStatus, [FInterfaces.OnTick.Data.Percentage]);
     if FOnlyAForm then
     begin

@@ -1,17 +1,16 @@
 object TickFrm: TTickFrm
-  Left = 607
+  Left = 556
   Height = 386
-  Top = 308
+  Top = 275
   Width = 571
   Caption = '0% Processing...'
   ClientHeight = 386
   ClientWidth = 571
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  ParentFont = True
   ShowInTaskBar = stAlways
   LCLVersion = '1.3'
   object BtnCancel: TBitBtn
@@ -26,21 +25,19 @@ object TickFrm: TTickFrm
     Anchors = [akRight, akBottom]
     AutoSize = True
     BorderSpacing.Around = 6
-    Cancel = True
     Caption = 'Close'
     Constraints.MaxHeight = 27
     Constraints.MaxWidth = 84
     Constraints.MinHeight = 27
     Constraints.MinWidth = 84
     Default = True
-    Kind = bkAbort
-    ModalResult = 3
+    ModalResult = 11
     TabOrder = 0
   end
   object GeneralPanel: TPanel
-    Left = 24
+    Left = 88
     Height = 128
-    Top = 24
+    Top = 32
     Width = 433
     BevelInner = bvRaised
     BevelOuter = bvLowered
@@ -287,7 +284,7 @@ object TickFrm: TTickFrm
       ParentColor = False
       Transparent = False
     end
-    object Msg: TLabel
+    object TickLabel: TLabel
       Left = 8
       Height = 18
       Top = 76
@@ -305,7 +302,7 @@ object TickFrm: TTickFrm
       ParentColor = False
       Transparent = False
     end
-    object Tick: TProgressBar
+    object TickProgressBar: TProgressBar
       Left = 8
       Height = 20
       Top = 100
@@ -318,19 +315,24 @@ object TickFrm: TTickFrm
     end
   end
   object ReportPanel: TPanel
-    Left = 48
-    Height = 30
-    Top = 216
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = DetailsLabel
+    AnchorSideTop.Side = asrBottom
+    Left = 6
+    Height = 92
+    Top = 204
     Width = 373
+    BorderSpacing.Left = 6
+    BorderSpacing.Top = 10
     BevelInner = bvRaised
     BevelOuter = bvLowered
     Caption = 'ReportPanel'
-    ClientHeight = 30
+    ClientHeight = 92
     ClientWidth = 373
     TabOrder = 2
     object Report: TMemo
       Left = 2
-      Height = 26
+      Height = 88
       Top = 2
       Width = 369
       Align = alClient
@@ -342,33 +344,40 @@ object TickFrm: TTickFrm
       WordWrap = False
     end
   end
-  object Arrow1: TArrow
-    Left = 24
+  object DetailsArrow: TArrow
+    AnchorSideLeft.Control = Owner
+    Left = 6
     Height = 13
     Top = 180
     Width = 13
     AntiAliasingMode = amOn
+    Anchors = [akLeft]
     ArrowColor = clMenuText
     ArrowType = atRight
+    BorderSpacing.Left = 6
     Constraints.MaxHeight = 13
     Constraints.MaxWidth = 13
     Constraints.MinHeight = 13
     Constraints.MinWidth = 13
     ShadowType = stNone
   end
-  object Label1: TLabel
-    Left = 56
+  object DetailsLabel: TLabel
+    AnchorSideLeft.Control = DetailsArrow
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = DetailsArrow
+    Left = 21
     Height = 14
     Top = 180
-    Width = 40
-    Caption = 'Details'
+    Width = 120
+    BorderSpacing.Left = 2
+    Caption = 'Description of update'
     ParentColor = False
   end
   object Timer: TIdleTimer
     Enabled = False
     Interval = 250
     OnTimer = OnTimer
-    left = 496
-    top = 32
+    left = 480
+    top = 224
   end
 end
