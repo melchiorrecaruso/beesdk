@@ -293,11 +293,4 @@ object TickFrm: TTickFrm
     Caption = 'testing.bx'
     ParentColor = False
   end
-  object Timer: TIdleTimer
-    Enabled = False
-    Interval = 250
-    OnTimer = OnTimer
-    left = 8
-    top = 312
-  end
 end

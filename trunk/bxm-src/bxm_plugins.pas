@@ -38,15 +38,11 @@ uses
 type
   { TCommand }
 
-  TCommand = (cAdd, cDelete, cExtract, cList, cTest, cxExtract);
+  TCommand = (cNone, cAdd, cDelete, cExtract, cList, cTest, cxExtract);
 
   { TCompressionMode }
 
-  TCompressionMode = (cmStore, cmFastest, cmFast, cmNormal, cmBest, cmMaximum);
-
-  { TCompressionMode }
-
-  TUpdateMode = (umAdd, umUpdate, umAddAndUpdate);
+  TCompressionMode = (cmStore, cmFastest, cmFast, cmNormal, cmMaximum, cmUltra);
 
   { TParserCommandLine }
 
@@ -54,10 +50,7 @@ type
   private
     FCommand: TCommand;
     FCompressionMode: TCompressionMode;
-    FExcludedFileMasks: TStringList;
     FPassword: string;
-    FRecursive: boolean;
-    FUpdateMode: TUpdateMode;
     FArchiveName: string;
     FFileMasks: TStringList;
     function GetCommandLine: string;
@@ -69,10 +62,7 @@ type
     property CommandLine: string read GetCommandLine;
     property Command: TCommand read FCommand write FCommand;
     property CompressionMode: TCompressionMode read FCompressionMode write FCompressionMode;
-    property ExcludedFileMasks: TStringList read FExcludedFileMasks;
     property Password: string read FPassword write FPassword;
-    property Recursive: boolean read FRecursive write FRecursive;
-    property UpdateMode: TUpdateMode read FUpdateMode write FUpdateMode;
     property ArchiveName: string read FArchiveName write FArchiveName;
     property FileMasks: TStringList read FFileMasks;
   end;
@@ -104,25 +94,20 @@ uses
 constructor TParserCommandLine.Create;
 begin
   inherited Create;
-  FExcludedFileMasks := TStringList.Create;
   FFileMasks := TStringList.Create;
 end;
 
 procedure TParserCommandLine.Clear;
 begin
-  FCommand := cAdd;
+  FCommand := cNone;
   FCompressionMode := cmNormal;
-  FExcludedFileMasks.Clear;
   FPassword := '';
-  FRecursive := True;
-  FUpdateMode := umAddAndUpdate;
   FArchiveName := '';
   FFileMasks.Clear;
 end;
 
 destructor TParserCommandLine.Destroy;
 begin
-  FExcludedFileMasks.Destroy;
   FFileMasks.Destroy;
   inherited Destroy;
 end;
@@ -131,48 +116,37 @@ function TParserCommandLine.GetCommandLine: string;
 var
   i: longint;
 begin
-  Result := '7z';
-  case FCommand of
-    cAdd:      Result := Result + ' a -y';
-    cDelete:   Result := Result + ' d -y';
-    cExtract:  Result := Result + ' e -y';
-    cList:     Result := Result + ' l -y -stl';
-    cTest:     Result := Result + ' t -y';
-    cxExtract: Result := Result + ' x -y';
+  Result := '';
+  if FCommand <> cNone then
+  begin
+    Result := '7z';
+    case FCommand of
+      cAdd:      Result := Result + ' a -y';
+      cDelete:   Result := Result + ' d -y';
+      cExtract:  Result := Result + ' e -y';
+      cList:     Result := Result + ' l -y -stl';
+      cTest:     Result := Result + ' t -y';
+      cxExtract: Result := Result + ' x -y';
+    end;
+
+    if FCommand in [cAdd] then
+      case FCompressionMode of
+        cmStore:   Result := Result + ' -mx0';
+        cmFastest: Result := Result + ' -mx1';
+        cmFast:    Result := Result + ' -mx3';
+        cmNormal:  Result := Result + ' -mx5';
+        cmMaximum: Result := Result + ' -mx7';
+        cmUltra:   Result := Result + ' -mx9';
+      end;
+
+    if FPassword <> '' then
+      Result := Result + ' "-p' + FPassword + '"';
+
+    Result := Result + ' "' + FArchiveName + '"';
+
+    for i := 0 to FFileMasks.Count - 1 do
+      Result := Result + ' "' + FFileMasks[i] + '"';
   end;
-
-  if FCommand in [cAdd, cExtract, cxExtract] then
-    case FUpdateMode of
-      umAdd:          Result := Result + ' -ur2';
-      umUpdate:       Result := Result + ' -uy2';
-      umAddAndUpdate: Result := Result + ' -ur2y2';
-    end;
-
-  if FCommand in [cAdd] then
-    case FCompressionMode of
-      cmStore:   Result := Result + ' ';
-      cmFastest: Result := Result + ' ';
-      cmFast:    Result := Result + ' ';
-      cmNormal:  Result := Result + ' ';
-      cmBest:    Result := Result + ' ';
-      cmMaximum: Result := Result + ' ';
-    end;
-
-  for i := 0 to  FExcludedFileMasks.Count - 1 do
-    Result := Result + ' "' + FExcludedFileMasks[i] + '"';
-
-  if FPassword <> '' then
-    Result := Result + ' "-p' + FPassword + '"';
-
-  if Recursive then
-    Result := Result + ' -r'
-  else
-    Result := Result + ' -r-';
-
-  Result := Result + ' "' + FArchiveName + '"';
-
-  for i := 0 to FFileMasks.Count - 1 do
-    Result := Result + ' "' + FFileMasks[i] + '"';
 end;
 
 /// TParser class ...

@@ -13,8 +13,6 @@ uses
   bxm_mainfrm
   { you can add units after this };
 
-{$R *.res}
-
 begin
   RequireDerivedFormResource := True;
   Application.Initialize;

@@ -64,7 +64,6 @@ type
     ReportPanel: TPanel;
     TickLabel: TLabel;
     TickProgressBar: TProgressBar;
-    Timer:   TIdleTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -144,7 +143,7 @@ end;
 function TTickFrm.ShowModal(PCL: TParserCommandLine): longint;
 begin
   Report.Clear;
-  Report.Append(PCL.CommandLine);
+  // Report.Append(PCL.CommandLine);
 
 
   //Parser := TParser.Create(PCL.CommandLine);

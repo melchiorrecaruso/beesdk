@@ -486,8 +486,8 @@ object AddFrm: TAddFrm
         'Fastest'
         'Fast'
         'Normal'
-        'Best'
         'Maximum'
+        'Ultra'
       )
       Style = csDropDownList
       TabOrder = 3
@@ -628,7 +628,7 @@ object AddFrm: TAddFrm
   object OpenDialog: TOpenDialog
     Filter = 'Ini file (*.ini)|*.ini|All files (*.*)|*'
     FilterIndex = 0
-    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
+    Options = [ofHideReadOnly, ofAllowMultiSelect, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     left = 192
   end
   object SaveDialog: TSaveDialog

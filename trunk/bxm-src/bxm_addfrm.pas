@@ -121,6 +121,8 @@ implementation
 {$R *.lfm}
 
 uses
+  bx_FileStream,
+
   bxm_Consts,
   bxm_Messages,
   bxm_SysUtils;
@@ -129,6 +131,7 @@ function AddShowModal(PCL: TParserCommandLine): longint;
 var
   Add: TAddFrm;
   i: longint;
+  Scanner: TFileScanner;
 begin
   Add := TAddFrm.Create(nil);
   Add.FArchivePath := ExtractFilePath(PCL.ArchiveName);
@@ -137,24 +140,39 @@ begin
   Result := Add.ShowModal;
   if Result = mrOk then
   begin
+    Add.Visible := FALSE;
     PCL.Command := cAdd;
     PCL.CompressionMode := TCompressionMode(
       Ord(Add.CompressionMethod.ItemIndex));
 
-    for i := 0 to Add.Files.Items.Count - 1 do
-      if Add.Files.Items[i].ImageIndex = 1 then
-        PCL.ExcludedFileMasks.Add(Add.Files.Items[i].Text);
-
     if Add.ArchiveWithPasswordCheck.Checked then
       PCL.Password := Add.ArchiveWithPassword.Text;
 
-    PCL.Recursive := Add.RecurseSubdirectories.Checked;
-    PCL.UpdateMode := TUpdateMode(Ord(Add.UpdateMethod.ItemIndex));
-    PCL.ArchiveName := Add.FArchivePath + Add.ArchiveNameComboBox.Text;
+    PCL.ArchiveName := Add.FArchivePath +
+      Add.ArchiveNameComboBox.Text;
 
+    Writeln('Scanning-START');
+    Writeln(SetCurrentDir(Add.Root.Text));
+    Scanner := TFileScanner.Create;
+    try
     for i := 0 to Add.Files.Items.Count - 1 do
       if Add.Files.Items[i].ImageIndex = 0 then
-        PCL.FileMasks.Add(Add.Files.Items[i].Text);
+        Scanner.Add(Add.Files.Items[i].Text,
+          Add.RecurseSubdirectories.Checked);
+    except
+
+    end;
+
+    Writeln('Scanning-STEP1');
+    for i := 0 to Add.Files.Items.Count - 1 do
+      if Add.Files.Items[i].ImageIndex = 1 then
+        Scanner.Delete(Add.Files.Items[i].Text,
+          Add.RecurseSubdirectories.Checked);
+    Writeln('Scanning-STEP2');
+    for i := 0 to Scanner.Count - 1 do
+      PCL.FileMasks.Add(Scanner.Items[i].Name);
+    Scanner.Destroy;
+    Writeln('Scanning-END');
   end;
   Add.Destroy;
 end;
@@ -230,9 +248,7 @@ var
 begin
   for I := FilesMgr.Count - 1 downto 0 do
     if FilesMgr.MultiSelected[I] then
-    begin
       FilesMgr.DeleteFile(I);
-    end;
 end;
 
 procedure TAddFrm.PopupMenu_PlusMinusClick(Sender: TObject);
@@ -241,9 +257,7 @@ var
 begin
   for I := Files.Items.Count - 1 downto 0 do
     if Files.Items[I].Selected then
-    begin
       FilesMgr.PlusMinus(I);
-    end;
 end;
 
 procedure TAddFrm.FilesSelectionChanged(Sender: TObject);
@@ -271,12 +285,10 @@ var
   I: longint;
 begin
   for I := Low(FileNames) to High(FileNames) do
-  begin
     if DirectoryExists(FileNames[I]) then
       FilesMgr.AddFolder(FileNames[I])
     else
       FilesMgr.AddFile(FileNames[I]);
-  end;
 end;
 
 procedure TAddFrm.RootArrowClick(Sender: TObject);
