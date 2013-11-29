@@ -491,6 +491,9 @@ var
   Rec: TSearchRec;
   Error: longint;
 begin
+  Writeln('SCANNING... ', Mask);
+
+
   // directory and recursive mode ...
   Mask := ExcludeTrailingBackSlash(Mask);
   if DirectoryExists(Mask) then
