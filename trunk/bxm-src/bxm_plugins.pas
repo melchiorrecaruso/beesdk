@@ -87,10 +87,60 @@ type
     property OnTerminate: TNotifyEvent read FOnTerminate write FOnTerminate;
   end;
 
+  TParserItem = class(TObject)
+  public
+    ItemIndex: longint;
+    ItemName:     string;
+    ItemPath:     string;
+    ItemType:     string;
+    ItemSize:     int64;
+    ItemPacked:   int64;
+    ItemAttr:     longint;
+    ItemTime:     int64;
+    ItemComm:     string;
+    ItemHash:     string;
+    ItemMethod:   string;
+  end;
+
+  { TParserList }
+
+  TParserList = class
+  private
+    FList: TList;
+    FParser: TParser;
+    function GetCount: longint;
+    function GetItem(index: longint): TParserItem;
+  public
+    constructor Create(Parser: TParser);
+    destructor Destroy; override;
+    procedure Execute;
+  public
+    property Count: longint read GetCount;
+    property Items[index: longint]: TParserItem read GetItem;
+  end;
+
 implementation
 
 uses
   Dialogs;
+
+const
+  SevenZipPathMark     = 'Path = ';
+  SevenZipSizeMark     = 'Size = ';
+  SevenZipPackedMark   = 'Packed Size = ';
+  SevenZipTimeMark     = 'Modified = ';
+  SevenZipAttrMark     = 'Attributes = ';
+  SevenZipCRCMarck     = 'CRC = ';
+  SevenZipPasswordMark = 'Encrypted = ';
+  SevenZipMethodMark   = 'Method = ';
+  SevenZipBlockMark    = 'Block = ';
+
+  SevenZipListMark     = 'Listing archive: ';
+  SevenZipCommentMark  = 'Comment = ';
+  SevenZipErrorMark    = 'Error: ';
+
+
+
 
 /// TParserCommandLine class ...
 
@@ -235,9 +285,61 @@ begin
   Result := FMessages.Count;
 end;
 
-(*
+{ TParserList }
 
-procedure TSevenZipApp.ProcessListOutput(FOutput: TStringList);
+constructor TParserList.Create(Parser: TParser);
+begin
+  inherited Create;
+  FList   := TList.Create;
+  FParser := Parser;
+end;
+
+destructor TParserList.Destroy;
+var
+  i: longint;
+begin
+  for i := 0 to FList.Count -1 do
+    TParserItem(FList[i]).Destroy;
+  FList.Clear;
+  FList.Destroy;
+end;
+
+function TParserList.GetCount: longint;
+begin
+  Result := FList.Count;
+end;
+
+function TParserList.GetItem(index: longint): TParserItem;
+begin
+  Result := TParserItem(FList[index]);
+end;
+
+procedure TParserList.Execute;
+var
+  i: longint;
+  S: string;
+begin
+  i := 0;
+  while I < FParser.Count do
+  begin
+    S := FParser.Messages[i];
+    // Search "error" message ...
+    if FileNamePos(SevenZipErrorMark, S) = 1 then
+    begin
+      ShowMessage(S);
+    end else
+      // Search list marker ...
+      if FileNamePos(SevenZipListMark, S) = 1 then
+      begin
+        ProcessMessage(msgOpening + FCommandLine.ArchiveName);
+        ProcessMessage(msgScanning + '...');
+      end else
+
+
+  end;
+end;
+
+procedure ProcessListOutput(FOutput: TStringList);
 var
   I:  integer;
   ItemStr: string;
@@ -248,19 +350,9 @@ begin
   while I < FOutput.Count do
   begin
     ItemStr := FOutput.Strings[I];
-    // Error
-    if FileNamePos(SevenZipErrorMark, ItemStr) = 1 then
-    begin
-      Delete(ItemStr, 1, Length(SevenZipErrorMark));
-      ProcessFatalError(ItemStr, 255);
-    end
-    else
-    // List archive
-    if FileNamePos(SevenZipListMark, ItemStr) = 1 then
-    begin
-      ProcessMessage(msgOpening + FCommandLine.ArchiveName);
-      ProcessMessage(msgScanning + '...');
-    end
+
+
+
     else
     // File Path - New
     if FileNamePos(SevenZipPathMark, ItemStr) = 1 then

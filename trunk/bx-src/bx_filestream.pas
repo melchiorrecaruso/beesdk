@@ -109,6 +109,7 @@ type
   { TCustomSearchRec }
 
   TCustomSearchRec = class(TObject)
+  public
     Name: string;
     Size: int64;
     Time: int64;
