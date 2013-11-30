@@ -3,20 +3,21 @@ program bxm;
 {$I bxm_compiler.inc}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UNIX}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}
   Interfaces,
   Forms,
   lazcontrols,
 
-  bxm_mainfrm
-  { you can add units after this };
+  bxm_mainfrm;
 
 begin
-  RequireDerivedFormResource := True;
+  RequireDerivedFormResource := TRUE;
   Application.Initialize;
-  Application.CreateForm(TMainFrm,  MainFrm);
+  Application.CreateForm(TMainFrm, MainFrm);
   Application.Run;
 end.
+
+
 

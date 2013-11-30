@@ -5,7 +5,6 @@ object AboutFrm: TAboutFrm
   Width = 430
   ActiveControl = BtnOk
   AlphaBlend = True
-  BorderStyle = bsDialog
   Caption = 'About to...'
   ClientHeight = 330
   ClientWidth = 430
@@ -72,7 +71,7 @@ object AboutFrm: TAboutFrm
     Constraints.MaxHeight = 27
     Constraints.MinHeight = 27
     Constraints.MinWidth = 84
-    OnClick = BtnOkClick
+    ModalResult = 11
     TabOrder = 0
   end
   object BtnLicense: TBitBtn

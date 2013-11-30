@@ -110,72 +110,24 @@ type
   private
     { private declarations }
     FArchivePath: string;
+    function GetArchiveName: string;
+    procedure SetArchiveName(const Value: string);
   public
     { public declarations }
+    property ArchiveName: string read GetArchiveName write SetArchiveName;
   end;
 
-  function AddShowModal(PCL: TParserCommandLine): longint;
+var
+  AddFrm: TAddFrm;
 
 implementation
 
 {$R *.lfm}
 
 uses
-  bx_FileStream,
-
   bxm_Consts,
   bxm_Messages,
   bxm_SysUtils;
-
-function AddShowModal(PCL: TParserCommandLine): longint;
-var
-  Add: TAddFrm;
-  i: longint;
-  Scanner: TFileScanner;
-begin
-  Add := TAddFrm.Create(nil);
-  Add.FArchivePath := ExtractFilePath(PCL.ArchiveName);
-  Add.ArchiveNameComboBox.Text := ExtractFileName(PCL.ArchiveName);
-
-  Result := Add.ShowModal;
-  if Result = mrOk then
-  begin
-    Add.Visible := FALSE;
-    PCL.Command := cAdd;
-    PCL.CompressionMode := TCompressionMode(
-      Ord(Add.CompressionMethod.ItemIndex));
-
-    if Add.ArchiveWithPasswordCheck.Checked then
-      PCL.Password := Add.ArchiveWithPassword.Text;
-
-    PCL.ArchiveName := Add.FArchivePath +
-      Add.ArchiveNameComboBox.Text;
-
-    Writeln('Scanning-START');
-    Writeln(SetCurrentDir(Add.Root.Text));
-    Scanner := TFileScanner.Create;
-    try
-    for i := 0 to Add.Files.Items.Count - 1 do
-      if Add.Files.Items[i].ImageIndex = 0 then
-        Scanner.Add(Add.Files.Items[i].Text,
-          Add.RecurseSubdirectories.Checked);
-    except
-
-    end;
-
-    Writeln('Scanning-STEP1');
-    for i := 0 to Add.Files.Items.Count - 1 do
-      if Add.Files.Items[i].ImageIndex = 1 then
-        Scanner.Delete(Add.Files.Items[i].Text,
-          Add.RecurseSubdirectories.Checked);
-    Writeln('Scanning-STEP2');
-    for i := 0 to Scanner.Count - 1 do
-      PCL.FileMasks.Add(Scanner.Items[i].Name);
-    Scanner.Destroy;
-    Writeln('Scanning-END');
-  end;
-  Add.Destroy;
-end;
 
 { TAddFrm class }
 
@@ -193,6 +145,19 @@ begin
   {$ENDIF}
   Constraints.MinWidth  := 500;
   Constraints.MaxWidth  := 500;
+
+  FArchivePath := '';
+end;
+
+function TAddFrm.GetArchiveName: string;
+begin
+  Result := FArchivePath + ArchiveNameComboBox.Text;
+end;
+
+procedure TAddFrm.SetArchiveName(const Value: string);
+begin
+  FArchivePath             := ExtractFilePath(Value);
+  ArchiveNameComboBox.Text := ExtractFileName(Value);
 end;
 
 procedure TAddFrm.BtnSaveClick(Sender: TObject);

@@ -122,8 +122,8 @@ type
     FList: TList;
     function GetCount: integer;
     function GetItem(Index: longint): TCustomSearchRec;
-    function New(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
-    procedure RecursiveScan(Mask: string; Recursive: boolean);
+    function AddItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
+    procedure Scan(Mask: string; Recursive: boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -142,6 +142,7 @@ uses
   {$IFDEF MSWINDOWS}
   DateUtils,
   {$ENDIF}
+  FileUtil,
   Math,
   // ---
   bx_Messages;
@@ -475,7 +476,7 @@ begin
   FList.Clear;
 end;
 
-function TFileScanner.New(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
+function TFileScanner.AddItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
 begin
   Result      := TCustomSearchRec.Create;
   Result.Name := RecPath + Rec.Name;
@@ -484,16 +485,13 @@ begin
   Result.Attr := Rec.Attr;
 end;
 
-procedure TFileScanner.RecursiveScan(Mask: string; Recursive: boolean);
+procedure TFileScanner.Scan(Mask: string; Recursive: boolean);
 var
   RecName: string;
   RecPath: string;
   Rec: TSearchRec;
   Error: longint;
 begin
-  Writeln('SCANNING... ', Mask);
-
-
   // directory and recursive mode ...
   Mask := ExcludeTrailingBackSlash(Mask);
   if DirectoryExists(Mask) then
@@ -504,17 +502,30 @@ begin
   RecPath := ExtractFilePath(Mask);
 
   // search filemask ...
-  Error := FindFirst(RecPath + '*', faAnyFile, Rec);
+  Error := FindFirst(
+    RecPath + '*',
+    faReadOnly  or
+    faHidden    or
+    faSysFile   or
+    faVolumeId  or
+    faDirectory or
+    faArchive   or
+    faSymLink   or
+    faAnyFile,
+    Rec);
+
   while Error = 0 do
   begin
     RecName := RecPath + Rec.Name;
-    if (Rec.Attr and faDirectory) = 0 then
+    if (Recursive) and ((Rec.Attr and faDirectory) = faDirectory) then
     begin
-      if FileNameMatch(RecName, Mask, Recursive) then
-        FList.Add(New(RecPath, Rec));
+      if (Rec.Attr and faSymLink) = 0 then
+        if (Rec.Name <> '.') and (Rec.Name <> '..') then
+          Scan(IncludeTrailingBackSlash(RecName) +
+            ExtractFileName(Mask), Recursive);
     end else
-      if (Recursive) and (Rec.Name <> '.') and (Rec.Name <> '..') then
-        RecursiveScan(IncludeTrailingBackSlash(RecName) + ExtractFileName(Mask), Recursive);
+      if FileNameMatch(RecName, Mask, Recursive) then
+        FList.Add(AddItem(RecPath, Rec));
 
     Error := FindNext(Rec);
   end; // end while error ...
@@ -522,31 +533,19 @@ begin
 end;
 
 procedure TFileScanner.Add(const Mask: string; Recursive: boolean);
-var
-  I: longint;
-  Masks: TStringList;
 begin
-  Masks := TStringList.Create;
-  ExpandFileMask(Mask, Masks, Recursive);
-  for I := 0 to Masks.Count - 1 do
-    RecursiveScan(Masks[I], Recursive);
-  Masks.Free;
+  Scan(Mask, Recursive);
 end;
 
 procedure TFileScanner.Delete(const Mask: string; Recursive: boolean);
 var
-  I, J: longint;
-  Masks: TStringList;
+  i: longint;
 begin
-  Masks := TStringList.Create;
-  ExpandFileMask(Mask, Masks, Recursive);
-  for I := 0 to Masks.Count - 1 do
-    for J := Count - 1 downto 0 do
-      if FileNameMatch(Items[J].Name, Masks[I], Recursive) then
-      begin
-        FList.Delete(I);
-      end;
-  Masks.Free;
+  for I := Count - 1 downto 0 do
+    if FileNameMatch(Items[i].Name, Mask, Recursive) then
+    begin
+      FList.Delete(I);
+    end;
 end;
 
 procedure TFileScanner.Sort(Compare: TListSortCompare);

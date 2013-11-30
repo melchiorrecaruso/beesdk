@@ -70,8 +70,6 @@ function SizeOfFile(const FileName: string): int64;
 function DeleteFileDrive(const FileName: string): string;
 function DeleteFilePath(const FilePath, FileName: string): string;
 
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: boolean);
-
 //function FileNameIsValid(const FileName: string): boolean;
 //function FilePathIsValid(const FileName: string): boolean;
 
@@ -189,62 +187,6 @@ begin
   Result := FileName;
   if FileNamePos(FilePath, Result) = 1 then
     Delete(Result, 1, Length(FilePath));
-end;
-
-procedure ExpandFileMask(const Mask: string; Masks: TStringList; Recursive: boolean);
-var
-  I:     longint;
-  Error: longint;
-  Rec:   TSearchRec;
-  Card:  boolean;
-  LastSlash: longint;
-  FirstSlash: longint;
-  FolderName: string;
-  FolderPath: string;
-begin
-  {$IFDEF FILENAMECASESENSITIVE}
-  Masks.CaseSensitive := TRUE;
-  {$ELSE}
-  Masks.CaseSensitive := FALSE;
-  {$ENDIF}
-
-  FirstSlash := 0;
-  LastSlash  := 0;
-  Card       := False;
-
-  for I := 1 to Length(Mask) do
-    if Card = False then
-    begin
-      if Mask[I] in ['*', '?'] then
-        Card := True
-      else
-        if Mask[I] = PathDelim then
-          FirstSlash := I;
-    end else
-    if Mask[I] = PathDelim then
-    begin
-      LastSlash := I;
-      Break;
-    end;
-
-  if LastSlash > 0 then
-  begin
-    FolderPath := Copy(Mask, 1, FirstSlash);
-    FolderName := Copy(Mask, FirstSlash + 1, LastSlash - (FirstSlash + 1));
-    Error      := SysUtils.FindFirst(FolderPath + '*', faAnyFile, Rec);
-    while Error = 0 do
-    begin
-      if (Rec.Attr and faDirectory) = faDirectory then
-        if (Rec.Name[1] <> '.') and (Rec.Name[1] <> '..') then
-          if FileNameMatch(Rec.Name, FolderName, Recursive) then
-            ExpandFileMask(FolderPath + Rec.Name + Copy(Mask, LastSlash,
-              (Length(Mask) + 1) - LastSlash), Masks, Recursive);
-
-      Error := SysUtils.FindNext(Rec);
-    end;
-    SysUtils.FindClose(Rec);
-  end else
-    if Masks.IndexOf(Mask) = -1 then Masks.Add(Mask);
 end;
 
 function FileNameIsValid(const FileName: string): boolean;
@@ -578,4 +520,4 @@ begin
   {$ENDIF}
 end;
 
-end.
+end.

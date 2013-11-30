@@ -64,6 +64,7 @@ type
     ReportPanel: TPanel;
     TickLabel: TLabel;
     TickProgressBar: TProgressBar;
+    Timer: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -75,12 +76,14 @@ type
   private
     { private declarations }
     Parser: TParser;
+    procedure DoTerminate(Sender: TObject);
   public
     { public declarations }
-    function ShowModal(PCL: TParserCommandLine): longint; overload;
+    function ShowModal(Parser: TParser): longint; overload;
   end;
 
-  function TickShowModal(PCL: TParserCommandLine): longint;
+var
+  TickFrm: TTickFrm;
 
 implementation
 
@@ -88,19 +91,6 @@ implementation
 
 uses
   bxm_SysUtils;
-
-function TickShowModal(PCL: TParserCommandLine): longint;
-var
-  Tick: TTickFrm;
-begin
-  Tick := TTickFrm.Create(nil);
-  Result := Tick.ShowModal(PCL);
-  if Result = mrOk then
-  begin
-
-
-  end;
-end;
 
 { TTickFrm class }
 
@@ -140,14 +130,30 @@ begin
 
 end;
 
-function TTickFrm.ShowModal(PCL: TParserCommandLine): longint;
+procedure TTickFrm.DoTerminate(Sender: TObject);
+var
+  i: longint;
+begin
+  if TParser(Sender).Count > 0 then
+  begin
+    for i := 0 to TParser(Sender).Count - 1 do
+      Report.Append(TParser(Sender).Messages[i]);
+
+    if ReportPanel.Visible = FALSE then
+      DetailsArrowClick(Self);
+  end;
+end;
+
+function TTickFrm.ShowModal(Parser: TParser): longint;
+var
+  i: longint;
 begin
   Report.Clear;
-  // Report.Append(PCL.CommandLine);
+
+  Parser.OnTerminate := DoTerminate;
+  Parser.Execute;
 
 
-  //Parser := TParser.Create(PCL.CommandLine);
-  //Parser.Execute;
 
   Result := ShowModal;
 end;

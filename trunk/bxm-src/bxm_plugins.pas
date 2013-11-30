@@ -33,6 +33,7 @@ interface
 
 uses
   Classes,
+  Process,
   SysUtils;
 
 type
@@ -53,13 +54,12 @@ type
     FPassword: string;
     FArchiveName: string;
     FFileMasks: TStringList;
-    function GetCommandLine: string;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Clear;
+    function GetCommandLine: string;
   public
-    property CommandLine: string read GetCommandLine;
     property Command: TCommand read FCommand write FCommand;
     property CompressionMode: TCompressionMode read FCompressionMode write FCompressionMode;
     property Password: string read FPassword write FPassword;
@@ -71,38 +71,45 @@ type
 
   TParser = class(TThread)
   private
-    FCommandLine: string;
     FMessages: TStringList;
+    FOnTerminate: TNotifyEvent;
+    FPCL: TParserCommandLine;
+    FProcess: TProcess;
     function GetCount: longint;
     function GetMessage(index: longint): string;
   public
-    constructor Create(const CommandLine: string);
+    constructor Create(PCL: TParserCommandLine);
     destructor Destroy; override;
     procedure Execute; override;
   public
     property Count: longint read GetCount;
     property Messages[index: longint]: string read GetMessage;
+    property OnTerminate: TNotifyEvent read FOnTerminate write FOnTerminate;
   end;
 
 implementation
 
 uses
-  Process;
+  Dialogs;
 
 /// TParserCommandLine class ...
 
 constructor TParserCommandLine.Create;
 begin
   inherited Create;
-  FFileMasks := TStringList.Create;
+  FCommand         := cNone;
+  FCompressionMode := cmNormal;
+  FPassword        := '';
+  FArchiveName     := '';
+  FFileMasks       := TStringList.Create;
 end;
 
 procedure TParserCommandLine.Clear;
 begin
-  FCommand := cNone;
+  FCommand         := cNone;
   FCompressionMode := cmNormal;
-  FPassword := '';
-  FArchiveName := '';
+  FPassword        := '';
+  FArchiveName     := '';
   FFileMasks.Clear;
 end;
 
@@ -124,7 +131,7 @@ begin
       cAdd:      Result := Result + ' a -y';
       cDelete:   Result := Result + ' d -y';
       cExtract:  Result := Result + ' e -y';
-      cList:     Result := Result + ' l -y -stl';
+      cList:     Result := Result + ' l -y -slt';
       cTest:     Result := Result + ' t -y';
       cxExtract: Result := Result + ' x -y';
     end;
@@ -151,16 +158,21 @@ end;
 
 /// TParser class ...
 
-constructor TParser.Create(const CommandLine: string);
+constructor TParser.Create(PCL: TParserCommandLine);
 begin
-  inherited Create(FALSE);
-  FCommandLine := CommandLine;
-  FMessages := TStringList.Create;
+  inherited Create(TRUE);
+  FMessages    := TStringList.Create;
+  FOnTerminate := nil;
+  FPCL         := PCL;
+  FProcess     := TProcess.Create(nil);
 end;
 
 destructor TParser.Destroy;
 begin
   FMessages.Destroy;
+  FOnTerminate := nil;
+  FPCL         := nil;
+  FProcess.Destroy;
   inherited Destroy;
 end;
 
@@ -171,37 +183,46 @@ var
   FProcess: TProcess;
   Readed: int64;
 begin
-  FMessages.Clear;
+
   FMem := TMemoryStream.Create;
   FProcess := TProcess.Create(nil);
-  FProcess.CommandLine := FCommandLine;
-  FProcess.Options := [poNoConsole, poUsePipes];
+  try
+    FMessages.Clear;
+    ShowMessage(FPCL.GetCommandLine);
 
-  Readed := 0;
-  FProcess.Execute;
-  while FProcess.Running do
-  begin
-    FMem.SetSize(Readed + 2048);
-    Count := FProcess.Output.Read((FMem.Memory + Readed)^, 2048);
+    FProcess.CommandLine := FPCL.GetCommandLine;
+    FProcess.Options := [poNoConsole, poUsePipes];
 
-    if Count > 0 then
-      Inc(Readed, Count)
-    else
-      Sleep(100);
+    Readed := 0;
+    FProcess.Execute;
+    while FProcess.Running do
+    begin
+      FMem.SetSize(Readed + 2048);
+      Count := FProcess.Output.Read((FMem.Memory + Readed)^, 2048);
+
+      if Count > 0 then
+        Inc(Readed, Count)
+      else
+        Sleep(100);
+    end;
+
+    repeat
+      FMem.SetSize(Readed + 2048);
+      Count := FProcess.Output.Read((FMem.Memory + Readed)^, 2048);
+
+      if Count > 0 then
+        Inc(Readed, Count);
+    until Count <= 0;
+    FMem.SetSize(Readed);
+
+    FMessages.LoadFromStream(FMem);
+  finally
+    FProcess.Free;
+    FMem.Free;
   end;
 
-  repeat
-    FMem.SetSize(Readed + 2048);
-    Count := FProcess.Output.Read((FMem.Memory + Readed)^, 2048);
-
-    if Count > 0 then
-      Inc(Readed, Count);
-  until Count <= 0;
-  FMem.SetSize(Readed);
-
-  FMessages.LoadFromStream(FMem);
-  FProcess.Free;
-  FMem.Free;
+  if Assigned(FOnTerminate) then
+    FOnTerminate(Self);
 end;
 
 function TParser.GetMessage(index: longint): string;
