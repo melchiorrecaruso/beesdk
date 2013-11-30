@@ -1,5 +1,5 @@
 object AddFrm: TAddFrm
-  Left = 564
+  Left = 565
   Height = 502
   Top = 159
   Width = 500
@@ -44,7 +44,7 @@ object AddFrm: TAddFrm
     AutoSize = True
     BorderSpacing.Around = 6
     Cancel = True
-    Caption = 'Annulla'
+    Caption = 'Cancel'
     Constraints.MinWidth = 84
     ModalResult = 2
     TabOrder = 0

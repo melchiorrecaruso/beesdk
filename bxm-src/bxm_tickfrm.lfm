@@ -1,7 +1,7 @@
 object TickFrm: TTickFrm
-  Left = 485
+  Left = 500
   Height = 371
-  Top = 252
+  Top = 222
   Width = 460
   Caption = '0% Processing...'
   ClientHeight = 371
@@ -292,5 +292,9 @@ object TickFrm: TTickFrm
     BorderSpacing.Left = 2
     Caption = 'testing.bx'
     ParentColor = False
+  end
+  object Timer: TTimer
+    left = 8
+    top = 312
   end
 end

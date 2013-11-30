@@ -57,36 +57,17 @@ type
     Logo: TImage;
     Naming: TLabel;
     Version: TLabel;
-    procedure BtnOkClick(Sender: TObject);
     procedure BtnLicenseClick(Sender: TObject);
   private
     { private declarations }
   end;
 
-  function AboutShowModal: longint;
+var
+  AboutFrm: TAboutFrm;
 
 implementation
 
 {$R *.lfm}
-
-function AboutShowModal: longint;
-var
-  About: TAboutFrm;
-begin
-  About := TAboutFrm.Create(nil);
-  Result := About.ShowModal;
-  if Result = mrOk then
-  begin
-
-
-
-
-
-
-
-
-  end;
-end;
 
 { TAboutFrm class }
 
@@ -97,12 +78,6 @@ begin
     BtnLicense.Color := clActiveBorder
   else
     BtnLicense.Color := clDefault;
-
-end;
-
-procedure TAboutFrm.BtnOkClick(Sender: TObject);
-begin
-  Close;
 end;
 
 end.
