@@ -89,6 +89,9 @@ type
     procedure ShareMenuClose(Sender: TObject);
   private
     { private declarations }
+    ParserCommandLine: TParserCommandLine;
+    Parser: TParser;
+    ParserList: TParserList;
   public
     { public declarations }
     procedure DisableButtons;
@@ -113,12 +116,20 @@ uses
 
 procedure TMainFrm.FormCreate(Sender: TObject);
 begin
+  ParserCommandLine := TParserCommandLine.Create;
+  Parser := TParser.Create(ParserCommandLine);
+  ParserList := TParserList.Create(Parser);
+
   DisableButtons;
 end;
 
 procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
 
+
+  ParserList.Destroy;
+  Parser.Destroy;
+  ParserCommandLine.Destroy;
 end;
 
 procedure TMainFrm.DisableButtons;
@@ -180,22 +191,15 @@ begin
 end;
 
 procedure TMainFrm.OpenButtonClick(Sender: TObject);
-var
-  Parser: TParser;
-  ParserCommandLine: TParserCommandLine;
 begin
   if OpenDialog.Execute then
   begin
     DisableButtons;
 
-    ParserCommandLine := TParserCommandLine.Create;
+    ParserCommandLine.Clear;
     ParserCommandLine.Command := cList;
     ParserCommandLine.ArchiveName := OpenDialog.FileName;
 
-
-
-
-    Parser := TParser.Create(ParserCommandLine);
     TickFrm := TTickFrm.Create(Self);
     if TickFrm.ShowModal(Parser) = mrOk then
     begin
@@ -204,8 +208,15 @@ begin
     end;
     TickFrm.Destroy;
 
-    Parser.Destroy;
-    ParserCommandLine.Destroy;
+    ParserList.Clear;
+    ParserList.Execute;
+
+
+
+
+
+
+
 
 
     EnableButtons;
@@ -223,8 +234,6 @@ end;
 procedure TMainFrm.NewButtonClick(Sender: TObject);
 var
   I: longint;
-  Parser: TParser;
-  ParserCommandLine: TParserCommandLine;
   Scanner: TFileScanner;
 begin
   ParserCommandLine := TParserCommandLine.Create;

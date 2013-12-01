@@ -89,17 +89,17 @@ type
 
   TParserItem = class(TObject)
   public
-    ItemIndex: longint;
-    ItemName:     string;
-    ItemPath:     string;
-    ItemType:     string;
-    ItemSize:     int64;
-    ItemPacked:   int64;
-    ItemAttr:     longint;
-    ItemTime:     int64;
-    ItemComm:     string;
-    ItemHash:     string;
-    ItemMethod:   string;
+    ItemName:   string;
+    ItemPath:   string;
+    ItemType:   string;
+    ItemSize:   int64;
+    ItemPacked: int64;
+    ItemAttr:   longint;
+    ItemTime:   int64;
+    ItemComm:   string;
+    ItemHash:   string;
+    ItemCypher: string;
+    ItemMethod: string;
   end;
 
   { TParserList }
@@ -109,38 +109,22 @@ type
     FList: TList;
     FParser: TParser;
     function GetCount: longint;
-    function GetItem(index: longint): TParserItem;
+    function GetItem(Index: longint): TParserItem;
   public
     constructor Create(Parser: TParser);
     destructor Destroy; override;
     procedure Execute;
+    procedure Clear;
   public
     property Count: longint read GetCount;
-    property Items[index: longint]: TParserItem read GetItem;
+    property Items[Index: longint]: TParserItem read GetItem;
   end;
 
 implementation
 
 uses
+  bx_Common,
   Dialogs;
-
-const
-  SevenZipPathMark     = 'Path = ';
-  SevenZipSizeMark     = 'Size = ';
-  SevenZipPackedMark   = 'Packed Size = ';
-  SevenZipTimeMark     = 'Modified = ';
-  SevenZipAttrMark     = 'Attributes = ';
-  SevenZipCRCMarck     = 'CRC = ';
-  SevenZipPasswordMark = 'Encrypted = ';
-  SevenZipMethodMark   = 'Method = ';
-  SevenZipBlockMark    = 'Block = ';
-
-  SevenZipListMark     = 'Listing archive: ';
-  SevenZipCommentMark  = 'Comment = ';
-  SevenZipErrorMark    = 'Error: ';
-
-
-
 
 /// TParserCommandLine class ...
 
@@ -295,13 +279,18 @@ begin
 end;
 
 destructor TParserList.Destroy;
+begin
+  Clear;
+  FList.Destroy;
+end;
+
+procedure TParserList.Clear;
 var
   i: longint;
 begin
   for i := 0 to FList.Count -1 do
     TParserItem(FList[i]).Destroy;
   FList.Clear;
-  FList.Destroy;
 end;
 
 function TParserList.GetCount: longint;
@@ -309,217 +298,144 @@ begin
   Result := FList.Count;
 end;
 
-function TParserList.GetItem(index: longint): TParserItem;
+function TParserList.GetItem(Index: longint): TParserItem;
 begin
-  Result := TParserItem(FList[index]);
+  Result := TParserItem(FList[Index]);
 end;
 
 procedure TParserList.Execute;
 var
-  i: longint;
+  I, K: longint;
+  Item: TParserItem;
   S: string;
 begin
-  i := 0;
+  K := 0;
+  I := 0;
+  while (I < FParser.Count) and (K < 7) do
+  begin
+    S := FParser.Messages[I];
+    if FileNamePos('7-Zip '           , S) = 1 then Inc(K);
+    if FileNamePos('Listing archive: ', S) = 1 then Inc(K);
+    if FileNamePos('--'           ,     S) = 1 then Inc(K);
+    if FileNamePos('Path = ',           S) = 1 then Inc(K);
+    if FileNamePos('Type = ',           S) = 1 then Inc(K);
+    if FileNamePos('Physical Size = ' , S) = 1 then Inc(K);
+    if FileNamePos('----------' ,       S) = 1 then Inc(K);
+    Inc(I);
+  end;
+
   while I < FParser.Count do
   begin
-    S := FParser.Messages[i];
+    S := FParser.Messages[I];
     // Search "error" message ...
-    if FileNamePos(SevenZipErrorMark, S) = 1 then
+    if FileNamePos('Error: ', S) = 1 then
     begin
       ShowMessage(S);
     end else
-      // Search list marker ...
-      if FileNamePos(SevenZipListMark, S) = 1 then
-      begin
-        ProcessMessage(msgOpening + FCommandLine.ArchiveName);
-        ProcessMessage(msgScanning + '...');
+
+    if FileNamePos('Path = ', S) = 1 then
+    begin
+      Writeln(S);
+      Delete(S, 1, Length('Path = '));
+
+      Item := TParserItem.Create;
+      Item.ItemPath := ExtractFilePath(S);
+      Item.ItemName := ExtractFileName(S);
+      FList.Add(Item);
+    end else
+
+    if FileNamePos('Size = ', S) = 1 then
+    begin
+      Writeln(S);
+      Delete(S, 1, Length('Size = '));
+      try
+        if Length(S) > 0 then
+          Item.ItemSize := StrToInt(S)
+        else
+          Item.ItemSize := 0;
+      except
+        ShowMessage('ERROR');
+        Item.ItemSize := -1;
+      end;
+    end else
+
+    if FileNamePos('Packed Size = ', S) = 1 then
+    begin
+      Writeln(S);
+      Delete(S, 1, Length('Packed Size = '));
+      try
+        if Length(S) > 0 then
+          Item.ItemPacked := StrToInt(S)
+        else
+          Item.ItemPacked := 0;
+      except
+        Item.ItemPacked := -1;
+      end;
+    end;
+
+    if FileNamePos('Modified = ', S) = 1 then
+    begin
+      Writeln(S);
+      Delete(S, 1, Length('Modified = '));
+      try
+        Item.ItemTime := DateTimeToFileDate(StrToDateTime(S));
+      except
+         Item.ItemTime := 0;
+      end;
+    end;
+
+    if FileNamePos('Attributes = ', S) = 1 then
+    begin
+      Writeln(S);
+      Delete(S, 1, Length('Attributes = '));
+      Item.ItemAttr := 0;
+      if Pos('D', S) > 0 then
+        Item.ItemAttr := Item.ItemAttr or faDirectory;
+      if Pos('R', S) > 0 then
+        Item.ItemAttr := Item.ItemAttr or faReadOnly;
+      if Pos('H', S) > 0 then
+        Item.ItemAttr := Item.ItemAttr or faHidden;
+      if Pos('S', S) > 0 then
+        Item.ItemAttr := Item.ItemAttr or faSysFile;
+      if Pos('A', S) > 0 then
+        Item.ItemAttr := Item.ItemAttr or faArchive;
       end else
 
-
-  end;
-end;
-
-procedure ProcessListOutput(FOutput: TStringList);
-var
-  I:  integer;
-  ItemStr: string;
-  ItemStrSwap: string;
-  FI: TFileInfoExtra;
-begin
-  I := 0;
-  while I < FOutput.Count do
-  begin
-    ItemStr := FOutput.Strings[I];
-
-
-
-    else
-    // File Path - New
-    if FileNamePos(SevenZipPathMark, ItemStr) = 1 then
+    if FileNamePos('Encrypted = ', S) = 1 then
     begin
-      Delete(ItemStr, 1, Length(SevenZipPathMark));
+      Writeln(S);
+      Delete(S, 1, Length('Encrypted = '));
+      if S = '-' then
+        Item.ItemCypher := 'No'
+      else
+        if S = '+' then
+          Item.ItemCypher := 'Yes'
+        else
+          Item.ItemCypher := '?';
+    end else
 
-      FI.FileName     := StringToPChar(ExtractFileName(ItemStr));
-      FI.FilePath     := StringToPChar(ExtractFilePath(ItemStr));
-      FI.FileSize     := 0;
-      FI.FilePacked   := 0;
-      FI.FileRatio    := 0;
-      FI.FileAttr     := 0;
-      FI.FileTime     := 0;
-      FI.FileComm     := StringToPChar('');
-      FI.FileCrc      := 0;
-      FI.FileMethod   := StringToPChar('');
-      FI.FileVersion  := StringToPChar('');
-      FI.FilePassword := StringToPChar('');
-      FI.FilePosition := -1;
+    if FileNamePos('CRC = ', S) = 1 then
+    begin
+      Writeln(S);
+      Delete(S, 1, Length('CRC = '));
+      Item.ItemHash := S;
+    end else
 
-      Inc(I);
-      while I < FOutput.Count do
-      begin
-        ItemStr := FOutput.Strings[I];
-        // File Size
-        if FileNamePos(SevenZipSizeMark, ItemStr) = 1 then
-        begin
-          Delete(ItemStr, 1, Length(SevenZipSizeMark));
-          try
-            if Length(ItemStr) > 0 then
-              FI.FileSize := StrToInt(ItemStr)
-            else
-              FI.FileSize := 0;
+    if FileNamePos('Method = ', S) = 1 then
+    begin
+      Writeln(S);
+      Delete(S, 1, Length('Method = '));
+      Item.ItemMethod := S;
+    end else
 
-            if FI.FileSize > 0 then
-              if FI.FilePacked > 0 then
-              begin
-                FI.FileRatio := Round(100 * (FI.FilePacked / FI.FileSize));
-              end;
-          except
-            ProcessFatalError('Error: reading file size', 255);
-            FI.FileSize := -1;
-          end;
-        end
-        else
-        // File Packed Size
-        if FileNamePos(SevenZipPackedMark, ItemStr) = 1 then
-        begin
-          Delete(ItemStr, 1, Length(SevenZipPackedMark));
-          try
-            if Length(ItemStr) > 0 then
-              FI.FilePacked := StrToInt(ItemStr)
-            else
-              FI.FilePacked := 0;
-
-            if FI.FileSize > 0 then
-              if FI.FilePacked > 0 then
-              begin
-                FI.FileRatio := Round(100 * (FI.FilePacked / FI.FileSize));
-              end;
-          except
-            ProcessFatalError('Error: reading file packed-size', 255);
-            FI.FilePacked := -1;
-          end;
-        end
-        else
-        // File Time
-        if FileNamePos(SevenZipTimeMark, ItemStr) = 1 then
-        begin
-          Delete(ItemStr, 1, Length(SevenZipTimeMark));
-          SetLength(ItemStr, 16);
-          ItemStrSwap := ItemStr;
-          ItemStr[1]  := ItemStrSwap[9];
-          ItemStr[2]  := ItemStrSwap[10];
-          ItemStr[3]  := '/';
-          ItemStr[4]  := ItemStrSwap[6];
-          ItemStr[5]  := ItemStrSwap[7];
-          ItemStr[6]  := '/';
-          ItemStr[7]  := ItemStrSwap[1];
-          ItemStr[8]  := ItemStrSwap[2];
-          ItemStr[9]  := ItemStrSwap[3];
-          ItemStr[10] := ItemStrSwap[4];
-          ItemStr[14] := '.';
-          try
-            FI.FileTime := DateTimeToFileDate(StrToDateTime(ItemStr));
-          except
-            ProcessFatalError('Error: reading file date-time', 255);
-            FI.FileTime := -1;
-          end;
-        end
-        else
-        // File Attributes
-        if FileNamePos(SevenZipAttrMark, ItemStr) = 1 then
-        begin
-          Delete(ItemStr, 1, Length(SevenZipAttrMark));
-
-          if Pos('D', ItemStr) > 0 then
-            FI.FileAttr := FI.FileAttr or faDirectory;
-          if Pos('R', ItemStr) > 0 then
-            FI.FileAttr := FI.FileAttr or faReadOnly;
-          if Pos('H', ItemStr) > 0 then
-            FI.FileAttr := FI.FileAttr or faHidden;
-          if Pos('S', ItemStr) > 0 then
-            FI.FileAttr := FI.FileAttr or faSysFile;
-          if Pos('A', ItemStr) > 0 then
-            FI.FileAttr := FI.FileAttr or faArchive;
-
-        end
-        else
-        // File Password
-        if FileNamePos(SevenZipPasswordMark, ItemStr) = 1 then
-        begin
-          Delete(ItemStr, 1, Length(SevenZipPasswordMark));
-          if ItemStr = '-' then
-            FI.FilePassword := 'No'
-          else
-          if ItemStr = '+' then
-            FI.FilePassword := 'Yes'
-          else
-            FI.FilePassword := '?';
-        end
-        else
-        // File Comment
-        if FileNamePos(SevenZipCommentMark, ItemStr) = 1 then
-        begin
-          Delete(ItemStr, 1, Length(SevenZipCommentMark));
-          FI.FileComm := StringToPChar(ItemStr);
-        end
-        else
-        // File Method
-        if FileNamePos(SevenZipMethodMark, ItemStr) = 1 then
-        begin
-          Delete(ItemStr, 1, Length(SevenZipMethodMark));
-          FI.FileMethod := StringToPChar(ItemStr);
-        end
-        else
-        // Error
-        if FileNamePos(SevenZipErrorMark, ItemStr) = 1 then
-        begin
-          ProcessFatalError(ItemStr, 255);
-          Break;
-        end
-        else
-        // Next -->
-        if FileNamePos(SevenZipPathMark, ItemStr) = 1 then
-        begin
-          Dec(I);
-          Break;
-        end;
-        Inc(I);
-      end;
-      // ---
-      if (FI.FileAttr and faDirectory) = 0 then
-      begin
-        ProcessList(FI, FCommandLine.vOption);
-      end;
+    if FileNamePos('Comment = ', S) = 1 then
+    begin
+      Writeln(S);
+      Delete(S, 1, Length('Comment = '));
+      Item.ItemComm := S;
     end;
     Inc(I);
   end;
 end;
-
-procedure TSevenZipApp.ProcessTestOutput(FOutput: TStringList);
-begin
-  ProcessMessage(FOutput.Text);
-end;
-
-*)
-
 
 end.
