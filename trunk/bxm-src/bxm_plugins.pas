@@ -92,10 +92,10 @@ type
     ItemName:   string;
     ItemPath:   string;
     ItemType:   string;
-    ItemSize:   int64;
-    ItemPacked: int64;
-    ItemAttr:   longint;
-    ItemTime:   int64;
+    ItemSize:   string;
+    ItemPacked: string;
+    ItemAttr:   string;
+    ItemTime:   string;
     ItemComm:   string;
     ItemHash:   string;
     ItemCypher: string;
@@ -138,6 +138,12 @@ begin
   FFileMasks       := TStringList.Create;
 end;
 
+destructor TParserCommandLine.Destroy;
+begin
+  FFileMasks.Destroy;
+  inherited Destroy;
+end;
+
 procedure TParserCommandLine.Clear;
 begin
   FCommand         := cNone;
@@ -145,12 +151,6 @@ begin
   FPassword        := '';
   FArchiveName     := '';
   FFileMasks.Clear;
-end;
-
-destructor TParserCommandLine.Destroy;
-begin
-  FFileMasks.Destroy;
-  inherited Destroy;
 end;
 
 function TParserCommandLine.GetCommandLine: string;
@@ -222,7 +222,7 @@ begin
   FProcess := TProcess.Create(nil);
   try
     FMessages.Clear;
-    ShowMessage(FPCL.GetCommandLine);
+    // ShowMessage(FPCL.GetCommandLine);
 
     FProcess.CommandLine := FPCL.GetCommandLine;
     FProcess.Options := [poNoConsole, poUsePipes];
@@ -335,9 +335,7 @@ begin
 
     if FileNamePos('Path = ', S) = 1 then
     begin
-      Writeln(S);
       Delete(S, 1, Length('Path = '));
-
       Item := TParserItem.Create;
       Item.ItemPath := ExtractFilePath(S);
       Item.ItemName := ExtractFileName(S);
@@ -346,91 +344,48 @@ begin
 
     if FileNamePos('Size = ', S) = 1 then
     begin
-      Writeln(S);
       Delete(S, 1, Length('Size = '));
-      try
-        if Length(S) > 0 then
-          Item.ItemSize := StrToInt(S)
-        else
-          Item.ItemSize := 0;
-      except
-        ShowMessage('ERROR');
-        Item.ItemSize := -1;
-      end;
+      Item.ItemSize := S;
     end else
 
     if FileNamePos('Packed Size = ', S) = 1 then
     begin
-      Writeln(S);
       Delete(S, 1, Length('Packed Size = '));
-      try
-        if Length(S) > 0 then
-          Item.ItemPacked := StrToInt(S)
-        else
-          Item.ItemPacked := 0;
-      except
-        Item.ItemPacked := -1;
-      end;
+      Item.ItemPacked := S;
     end;
 
     if FileNamePos('Modified = ', S) = 1 then
     begin
-      Writeln(S);
       Delete(S, 1, Length('Modified = '));
-      try
-        Item.ItemTime := DateTimeToFileDate(StrToDateTime(S));
-      except
-         Item.ItemTime := 0;
-      end;
+      Item.ItemTime := S;
     end;
 
     if FileNamePos('Attributes = ', S) = 1 then
     begin
-      Writeln(S);
       Delete(S, 1, Length('Attributes = '));
-      Item.ItemAttr := 0;
-      if Pos('D', S) > 0 then
-        Item.ItemAttr := Item.ItemAttr or faDirectory;
-      if Pos('R', S) > 0 then
-        Item.ItemAttr := Item.ItemAttr or faReadOnly;
-      if Pos('H', S) > 0 then
-        Item.ItemAttr := Item.ItemAttr or faHidden;
-      if Pos('S', S) > 0 then
-        Item.ItemAttr := Item.ItemAttr or faSysFile;
-      if Pos('A', S) > 0 then
-        Item.ItemAttr := Item.ItemAttr or faArchive;
-      end else
+      Item.ItemAttr := S;
+    end;
 
     if FileNamePos('Encrypted = ', S) = 1 then
     begin
-      Writeln(S);
       Delete(S, 1, Length('Encrypted = '));
-      if S = '-' then
-        Item.ItemCypher := 'No'
-      else
-        if S = '+' then
-          Item.ItemCypher := 'Yes'
-        else
-          Item.ItemCypher := '?';
+      Item.ItemCypher := S;
     end else
 
     if FileNamePos('CRC = ', S) = 1 then
     begin
-      Writeln(S);
       Delete(S, 1, Length('CRC = '));
       Item.ItemHash := S;
     end else
 
     if FileNamePos('Method = ', S) = 1 then
     begin
-      Writeln(S);
       Delete(S, 1, Length('Method = '));
       Item.ItemMethod := S;
     end else
 
     if FileNamePos('Comment = ', S) = 1 then
     begin
-      Writeln(S);
       Delete(S, 1, Length('Comment = '));
       Item.ItemComm := S;
     end;
