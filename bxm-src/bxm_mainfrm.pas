@@ -42,19 +42,22 @@ uses
   FileUtil,
   Forms,
   Graphics,
-  Menus,
+  Menus, Grids,
   SysUtils,
   // ---
-  bxm_Plugins;
+  bxm_Plugins,
+  bxm_ArchiveListViewMgr,
+  bxm_ArchiveFolderBox;
 
 type
 
   { TMainFrm }
 
   TMainFrm = class(TForm)
-    HeaderControl: THeaderControl;
     BackGround: TImage;
+    HeaderControl: THeaderControl;
     ImageList: TImageList;
+    IconList: TImageList;
     ListView: TListView;
     MenuItem1: TMenuItem;
     AboutMenuItem: TMenuItem;
@@ -78,6 +81,8 @@ type
     FindButton: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
+      Section: THeaderSection; Width: Integer; State: TSectionTrackState);
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
@@ -87,6 +92,10 @@ type
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
     procedure ShareMenuClose(Sender: TObject);
+
+
+
+
   private
     { private declarations }
     ParserCommandLine: TParserCommandLine;
@@ -116,6 +125,13 @@ uses
 
 procedure TMainFrm.FormCreate(Sender: TObject);
 begin
+  ListView.Columns[0].Width := HeaderControl.Sections[0].Width;
+  ListView.Columns[1].Width := HeaderControl.Sections[1].Width;
+  ListView.Columns[2].Width := HeaderControl.Sections[2].Width;
+  ListView.Columns[3].Width := HeaderControl.Sections[3].Width;
+
+
+
   ParserCommandLine := TParserCommandLine.Create;
   Parser := TParser.Create(ParserCommandLine);
   ParserList := TParserList.Create(Parser);
@@ -132,6 +148,12 @@ begin
   ParserCommandLine.Destroy;
 end;
 
+procedure TMainFrm.HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
+  Section: THeaderSection; Width: Integer;State: TSectionTrackState);
+begin
+  ListView.Columns[Section.Index].Width := Width;
+end;
+
 procedure TMainFrm.DisableButtons;
 begin
   ToolBar.Buttons[0].Enabled := TRUE;
@@ -140,7 +162,6 @@ begin
   ToolBar.Buttons[3].Enabled := FALSE;
   ToolBar.Buttons[4].Enabled := FALSE;
 
-  HeaderControl.Enabled := FALSE;
   ListView.Enabled := FALSE;
 end;
 
@@ -152,8 +173,7 @@ begin
   ToolBar.Buttons[3].Enabled := TRUE;
   ToolBar.Buttons[4].Enabled := TRUE;
 
-  HeaderControl.Enabled := TRUE;
-  ListView.Enabled := FALSE;
+  ListView.Enabled := TRUE;
 end;
 
 procedure TMainFrm.MenuButtonClick(Sender: TObject);
@@ -178,6 +198,12 @@ begin
   ShareButton.Down := FALSE;
 end;
 
+
+
+
+
+
+
 procedure TMainFrm.AboutMenuItemClick(Sender: TObject);
 begin
   AboutFrm := TAboutFrm.Create(Self);
@@ -191,6 +217,9 @@ begin
 end;
 
 procedure TMainFrm.OpenButtonClick(Sender: TObject);
+var
+  I: longint;
+  A: TListItem;
 begin
   if OpenDialog.Execute then
   begin
@@ -200,16 +229,34 @@ begin
     ParserCommandLine.Command := cList;
     ParserCommandLine.ArchiveName := OpenDialog.FileName;
 
-    TickFrm := TTickFrm.Create(Self);
-    if TickFrm.ShowModal(Parser) = mrOk then
-    begin
+    //TickFrm := TTickFrm.Create(Self);
+    //if TickFrm.ShowModal(Parser) = mrOk then
+    //begin
 
+    Parser.Execute;
 
-    end;
-    TickFrm.Destroy;
+    //end;
+    //TickFrm.Destroy;
 
     ParserList.Clear;
     ParserList.Execute;
+
+
+
+
+
+    ListView.BeginUpdate;
+    ListView.Clear;
+    // StringGrid.RowCount := ParserList.Count;
+    for I := 0 to ParserList.Count - 1 do
+    begin
+      A := ListView.Items.Add;
+      A.ImageIndex := 0;
+      A.Caption :=
+        ParserList.Items[I].ItemPath +
+        ParserList.Items[I].ItemName;
+    end;
+    ListView.EndUpdate;
 
 
 

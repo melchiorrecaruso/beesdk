@@ -132,12 +132,12 @@ end;
 
 procedure TTickFrm.DoTerminate(Sender: TObject);
 var
-  i: longint;
+  I: longint;
 begin
   if TParser(Sender).Count > 0 then
   begin
-    for i := 0 to TParser(Sender).Count - 1 do
-      Report.Append(TParser(Sender).Messages[i]);
+    for I := 0 to TParser(Sender).Count - 1 do
+      Report.Append(TParser(Sender).Messages[I]);
 
     if ReportPanel.Visible = FALSE then
       DetailsArrowClick(Self);
@@ -145,17 +145,14 @@ begin
 end;
 
 function TTickFrm.ShowModal(Parser: TParser): longint;
-var
-  i: longint;
 begin
   Report.Clear;
 
   Parser.OnTerminate := DoTerminate;
   Parser.Execute;
-
-
-
-  Result := ShowModal;
+  begin
+    Result := ShowModal;
+  end;
 end;
 
 procedure TTickFrm.DetailsArrowClick(Sender: TObject);

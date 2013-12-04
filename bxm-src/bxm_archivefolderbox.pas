@@ -70,8 +70,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TArchiveFolderBox.DrawItem(Index: integer; ARect: TRect;
-  State: TOwnerDrawState);
+procedure TArchiveFolderBox.DrawItem(Index: integer; ARect: TRect; State: TOwnerDrawState);
 var
   Bitmap: TBitmap;
   Offset: integer;
