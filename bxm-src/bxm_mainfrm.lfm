@@ -1,12 +1,12 @@
 object MainFrm: TMainFrm
   Left = 461
-  Height = 448
+  Height = 452
   Top = 209
-  Width = 690
+  Width = 844
   AlphaBlend = True
   Caption = 'BX Manager'
-  ClientHeight = 448
-  ClientWidth = 690
+  ClientHeight = 452
+  ClientWidth = 844
   Constraints.MinHeight = 250
   Constraints.MinWidth = 400
   OnCreate = FormCreate
@@ -17,7 +17,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 36
     Top = 0
-    Width = 690
+    Width = 844
     Align = alTop
     AutoSize = True
     ParentShowHint = False
@@ -45,7 +45,7 @@ object MainFrm: TMainFrm
     Left = 3
     Height = 34
     Top = 2
-    Width = 615
+    Width = 769
     Align = alNone
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
@@ -103,7 +103,7 @@ object MainFrm: TMainFrm
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 618
+    Left = 772
     Height = 34
     Top = 2
     Width = 69
@@ -147,7 +147,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 1
     Top = 37
-    Width = 690
+    Width = 844
     Anchors = [akTop, akLeft, akRight]
     Brush.Color = clDefault
     Pen.Color = clGray
@@ -161,7 +161,7 @@ object MainFrm: TMainFrm
     Left = 0
     Height = 26
     Top = 38
-    Width = 690
+    Width = 844
     DragReorder = False
     Sections = <    
       item
@@ -188,14 +188,21 @@ object MainFrm: TMainFrm
         Text = 'Date Modified'
         Width = 150
         Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Path'
+        Width = 5000
+        Visible = True
       end>
+    OnSectionClick = HeaderControlSectionClick
     OnSectionTrack = HeaderControlSectionTrack
     Anchors = [akTop, akLeft, akRight]
     Font.Style = [fsBold]
     Constraints.MinHeight = 26
     ParentFont = False
   end
-  object ListView: TListView
+  object StringGrid: TStringGrid
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = HeaderControl
     AnchorSideTop.Side = asrBottom
@@ -204,30 +211,24 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 384
+    Height = 388
     Top = 64
-    Width = 690
+    Width = 844
     Anchors = [akTop, akLeft, akRight, akBottom]
-    AutoWidthLastColumn = True
     BorderStyle = bsNone
-    Columns = <    
-      item
-      end    
-      item
-      end    
-      item
-      end    
-      item
-        Width = 540
-      end>
-    MultiSelect = True
-    ReadOnly = True
-    RowSelect = True
+    ColCount = 0
+    FixedCols = 0
+    FixedRows = 0
+    GridLineWidth = 0
+    MouseWheelOption = mwGrid
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSizing, goRowMoving, goRowSelect, goSmoothScroll]
+    RowCount = 0
     ScrollBars = ssAutoVertical
-    ShowColumnHeaders = False
-    SmallImages = IconList
     TabOrder = 3
-    ViewStyle = vsReport
+    TitleStyle = tsNative
+    UseXORFeatures = True
+    OnCompareCells = StringGridCompareCells
+    OnDrawCell = StringGridDrawCell
   end
   object MainMenu: TPopupMenu
     AutoPopup = False
@@ -704,43 +705,10 @@ object MainFrm: TMainFrm
     left = 216
     top = 80
   end
-  object IconList: TImageList
-    left = 280
+  object IconList: TIconList
+    BlendColor = clFuchsia
+    BkColor = clFuchsia
+    left = 288
     top = 80
-    Bitmap = {
-      4C69010000001000000010000000FFFFFFFFFFFFFFFFC4C4C4FFC0C0C0FFC0C0
-      C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0
-      C0FFC4C4C4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBEBEBEFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFBEBEBEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBDBDBDFFF3F3F3FFF0F0
-      F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF3F3
-      F3FFBDBDBDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBBBBBBFFF2F2F2FFC6C6
-      C6FFC6C6C6FFCBCBCBFFC7C7C7FFC2C2C2FFC6C6C6FFCBCBCBFFEEEEEEFFF2F2
-      F2FFBBBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB9B9B9FFF0F0F0FFC3C3
-      C3FFC7C7C7FFC7C7C7FFC7C7C7FFC7C7C7FFC5C5C5FFC4C4C4FFC0C0C0FFF0F0
-      F0FFB9B9B9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB8B8B8FFEFEFEFFFC5C5
-      C5FFBEBEBEFFD1D1D1FFEBEBEBFFEBEBEBFFEBEBEBFFEBEBEBFFEBEBEBFFEFEF
-      EFFFB8B8B8FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6B6B6FFEDEDEDFFE6E6
-      E6FFE6E6E6FFE6E6E6FFE6E6E6FFE6E6E6FFE8E8E8FFE9E9E9FFE9E9E9FFEDED
-      EDFFB6B6B6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB4B4B4FFECECECFFBDBD
-      BDFFC1C1C1FFC1C1C1FFC1C1C1FFC1C1C1FFBFBFBFFFBEBEBEFFBABABAFFECEC
-      ECFFB4B4B4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB3B3B3FFEAEAEAFFBDBD
-      BDFFBEBEBEFFC1C1C1FFBEBEBEFFB8B8B8FFBDBDBDFFC1C1C1FFBDBDBDFFEAEA
-      EAFFB3B3B3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB1B1B1FFE9E9E9FFB6B6
-      B6FFC1C1C1FFC0C0C0FFBABABAFFBBBBBBFFBABABAFFC6C6C6FFE4E4E4FFE9E9
-      E9FFB1B1B1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB0B0B0FFE7E7E7FFDFDF
-      DFFFE0E0E0FFE0E0E0FFE0E0E0FFE0E0E0FFE1E1E1FFE2E2E2FFE2E2E2FFE7E7
-      E7FFB0B0B0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAEAEAEFFE5E5E5FFB5B5
-      B5FFB9B9B9FFB9B9B9FFB9B9B9FFB9B9B9FFB7B7B7FFB6B6B6FFB2B2B2FFE5E5
-      E5FFAEAEAEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACACACFFE3E3E3FFB0B0
-      B0FFB9B9B9FFB5B5B5FFB0B0B0FFB5B5B5FFB9B9B9FFB6B6B6FFCBCBCBFFE3E3
-      E3FFACACACFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFABABABFFE1E1E1FFAEAE
-      AEFFB7B7B7FFB3B3B3FFAFAFAFFFBBBBBBFFC6C6C6FFDCDCDCFFDCDCDCFFE1E1
-      E1FFABABABFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA9A9A9FFE9E9E9FFE9E9
-      E9FFE9E9E9FFE9E9E9FFE9E9E9FFE9E9E9FFE9E9E9FFE9E9E9FFE9E9E9FFE9E9
-      E9FFA9A9A9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAEAEAEFFA8A8A8FFA8A8
-      A8FFA8A8A8FFA8A8A8FFA8A8A8FFA8A8A8FFA8A8A8FFA8A8A8FFA8A8A8FFA8A8
-      A8FFAEAEAEFFFFFFFFFFFFFFFFFF
-    }
   end
 end
