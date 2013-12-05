@@ -339,6 +339,7 @@ begin
       Item := TParserItem.Create;
       Item.ItemPath := ExtractFilePath(S);
       Item.ItemName := ExtractFileName(S);
+      Item.ItemType := ExtractFileExt(S);
       FList.Add(Item);
     end else
 

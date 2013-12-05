@@ -47,7 +47,8 @@ uses
   // ---
   bxm_Plugins,
   bxm_ArchiveListViewMgr,
-  bxm_ArchiveFolderBox;
+  bxm_ArchiveFolderBox,
+  bxm_IconList;
 
 type
 
@@ -56,9 +57,8 @@ type
   TMainFrm = class(TForm)
     BackGround: TImage;
     HeaderControl: THeaderControl;
+    IconList: TIconList;
     ImageList: TImageList;
-    IconList: TImageList;
-    ListView: TListView;
     MenuItem1: TMenuItem;
     AboutMenuItem: TMenuItem;
     NulMenuItem: TMenuItem;
@@ -70,6 +70,7 @@ type
     MenuItem8: TMenuItem;
     ShareMenu: TPopupMenu;
     Shape: TShape;
+    StringGrid: TStringGrid;
     ToolBar: TToolBar;
     ToolBarMenu: TToolBar;
     NewButton: TToolButton;
@@ -81,6 +82,8 @@ type
     FindButton: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure HeaderControlSectionClick(HeaderControl: TCustomHeaderControl;
+      Section: THeaderSection);
     procedure HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
       Section: THeaderSection; Width: Integer; State: TSectionTrackState);
     procedure MainMenuClose(Sender: TObject);
@@ -92,10 +95,10 @@ type
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
     procedure ShareMenuClose(Sender: TObject);
-
-
-
-
+    procedure StringGridCompareCells(Sender: TObject; ACol, ARow, BCol,
+      BRow: Integer; var Result: integer);
+    procedure StringGridDrawCell(Sender: TObject; aCol, aRow: Integer;
+      aRect: TRect; aState: TGridDrawState);
   private
     { private declarations }
     ParserCommandLine: TParserCommandLine;
@@ -124,34 +127,47 @@ uses
 { TMainFrm }
 
 procedure TMainFrm.FormCreate(Sender: TObject);
+var
+  I: longint;
 begin
-  ListView.Columns[0].Width := HeaderControl.Sections[0].Width;
-  ListView.Columns[1].Width := HeaderControl.Sections[1].Width;
-  ListView.Columns[2].Width := HeaderControl.Sections[2].Width;
-  ListView.Columns[3].Width := HeaderControl.Sections[3].Width;
-
-
-
   ParserCommandLine := TParserCommandLine.Create;
   Parser := TParser.Create(ParserCommandLine);
   ParserList := TParserList.Create(Parser);
+
+  IconList.IconFolder :=
+    ExtractFilePath(ParamStr(0)) + 'smallicons';
+
+  StringGrid.FocusRectVisible := FALSE;
+  StringGrid.Columns.Clear;
+  for I := 0 to HeaderControl.Sections.Count - 1 do
+  begin
+    StringGrid.Columns.Add;
+  end;
+  StringGrid.FixedCols:= 0;
+  StringGrid.RowCount := 0;
+  StringGrid.FixedRows:= 0;
 
   DisableButtons;
 end;
 
 procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
-
-
   ParserList.Destroy;
   Parser.Destroy;
   ParserCommandLine.Destroy;
 end;
 
+procedure TMainFrm.HeaderControlSectionClick(
+  HeaderControl: TCustomHeaderControl; Section: THeaderSection);
+begin
+  StringGrid.SortColRow(TRUE, Section.Index);
+end;
+
 procedure TMainFrm.HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
   Section: THeaderSection; Width: Integer;State: TSectionTrackState);
 begin
-  ListView.Columns[Section.Index].Width := Width;
+  if Section.Index < StringGrid.ColCount then
+    StringGrid.ColWidths[Section.Index] := Width;
 end;
 
 procedure TMainFrm.DisableButtons;
@@ -162,7 +178,8 @@ begin
   ToolBar.Buttons[3].Enabled := FALSE;
   ToolBar.Buttons[4].Enabled := FALSE;
 
-  ListView.Enabled := FALSE;
+  HeaderControl.Enabled := FALSE;
+  StringGrid.Enabled := FALSE;
 end;
 
 procedure TMainFrm.EnableButtons;
@@ -173,7 +190,8 @@ begin
   ToolBar.Buttons[3].Enabled := TRUE;
   ToolBar.Buttons[4].Enabled := TRUE;
 
-  ListView.Enabled := TRUE;
+  HeaderControl.Enabled := TRUE;
+  StringGrid.Enabled := TRUE;
 end;
 
 procedure TMainFrm.MenuButtonClick(Sender: TObject);
@@ -198,11 +216,43 @@ begin
   ShareButton.Down := FALSE;
 end;
 
+procedure TMainFrm.StringGridCompareCells(Sender: TObject;
+  ACol, ARow, BCol, BRow: Integer; var Result: integer);
+begin
+  if ACOL = BCOL then
+    Result := AnsiCompareFileName(StringGrid.Cells[ACol, ARow], StringGrid.Cells[BCol, BRow]);
+end;
 
+procedure TMainFrm.StringGridDrawCell(Sender: TObject; aCol, aRow: Integer;
+  aRect: TRect; aState: TGridDrawState);
+var
+  B:  TBitmap;
+  I: longint;
+  R: TRect;
+begin
+  for I := 0 to StringGrid.ColCount - 1 do
+    StringGrid.ColWidths[I] := HeaderControl.Sections[I].Width;
 
+  if aCol = 0 then
+  begin
+    B := TBitmap.Create;
+    try
+      IconList.GetBitmap(IconList.FileIcon(
+        StringGrid.Cells[aCol, aRow], 0), B);
 
+      R.Top := aRect.Top + (StringGrid.DefaultRowHeight - B.Height) div 2;
+      R.Left := aRect.Left + 2;
+      R.Right := R.Left + B.Width;
+      R.Bottom := R.Top + B.Height;
 
-
+      StringGrid.Canvas.Clear;
+      StringGrid.Canvas.StretchDraw(R, B);
+      StringGrid.Canvas.TextOut(R.Right + 4, R.Top, StringGrid.Cells[aCol, aRow]);
+    finally
+      B.Free;
+    end;
+  end;
+end;
 
 procedure TMainFrm.AboutMenuItemClick(Sender: TObject);
 begin
@@ -219,7 +269,6 @@ end;
 procedure TMainFrm.OpenButtonClick(Sender: TObject);
 var
   I: longint;
-  A: TListItem;
 begin
   if OpenDialog.Execute then
   begin
@@ -241,37 +290,21 @@ begin
     ParserList.Clear;
     ParserList.Execute;
 
-
-
-
-
-    ListView.BeginUpdate;
-    ListView.Clear;
-    // StringGrid.RowCount := ParserList.Count;
-    for I := 0 to ParserList.Count - 1 do
+    StringGrid.BeginUpdate;
+    StringGrid.RowCount := ParserList.Count;
+    for I := 0 to StringGrid.RowCount - 1 do
     begin
-      A := ListView.Items.Add;
-      A.ImageIndex := 0;
-      A.Caption :=
-        ParserList.Items[I].ItemPath +
-        ParserList.Items[I].ItemName;
+      StringGrid.Cells[0, I] := ParserList.Items[I].ItemName;
+      StringGrid.Cells[1, I] := ParserList.Items[I].ItemSize;
+      StringGrid.Cells[2, I] := ParserList.Items[I].ItemType;
+      StringGrid.Cells[3, I] := ParserList.Items[I].ItemTime;
+      StringGrid.Cells[4, I] := ParserList.Items[I].ItemPath;
     end;
-    ListView.EndUpdate;
-
-
-
-
-
-
-
-
-
+    StringGrid.EndUpdate;
     EnableButtons;
   end;
 
 end;
-
-
 
 procedure TMainFrm.Shape2ChangeBounds(Sender: TObject);
 begin
