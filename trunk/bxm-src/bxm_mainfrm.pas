@@ -57,8 +57,8 @@ type
   TMainFrm = class(TForm)
     BackGround: TImage;
     HeaderControl: THeaderControl;
-    IconList: TIconList;
     ImageList: TImageList;
+    IconList: TImageList;
     MenuItem1: TMenuItem;
     AboutMenuItem: TMenuItem;
     NulMenuItem: TMenuItem;
@@ -133,9 +133,6 @@ begin
   ParserCommandLine := TParserCommandLine.Create;
   Parser := TParser.Create(ParserCommandLine);
   ParserList := TParserList.Create(Parser);
-
-  IconList.IconFolder :=
-    ExtractFilePath(ParamStr(0)) + 'smallicons';
 
   StringGrid.FocusRectVisible := FALSE;
   StringGrid.Columns.Clear;
@@ -223,6 +220,32 @@ begin
     Result := AnsiCompareFileName(StringGrid.Cells[ACol, ARow], StringGrid.Cells[BCol, BRow]);
 end;
 
+function GetIconIndex(const FileExt: string): longint;
+var
+  S: string;
+begin
+  Result := 15;
+
+  if FileExt = '.avi'         then Result := 0;
+  if FileExt = '.bat'         then Result := 1;
+  if FileExt = '.bmp'         then Result := 2;
+  if FileExt = '.cddrive'     then Result := 3;
+  if FileExt = '.doc'         then Result := 4;
+  if FileExt = '.exe'         then Result := 5;
+  if FileExt = '.folderclose' then Result := 6;
+  if FileExt = '.folderopen'  then Result := 7;
+  if FileExt = '.harddrive'   then Result := 8;
+  if FileExt = '.html'        then Result := 9;
+  if FileExt = '.mp3'         then Result := 10;
+  if FileExt = '.pkg'         then Result := 11;
+  if FileExt = '.ppd'         then Result := 12;
+  if FileExt = '.ttf'         then Result := 13;
+  if FileExt = '.txt'         then Result := 14;
+  if FileExt = '.unknow'      then Result := 15;
+  if FileExt = '.wab'         then Result := 16;
+  if FileExt = '.xls'         then Result := 17;
+end;
+
 procedure TMainFrm.StringGridDrawCell(Sender: TObject; aCol, aRow: Integer;
   aRect: TRect; aState: TGridDrawState);
 var
@@ -237,8 +260,7 @@ begin
   begin
     B := TBitmap.Create;
     try
-      IconList.GetBitmap(IconList.FileIcon(
-        StringGrid.Cells[aCol, aRow], 0), B);
+      IconList.GetBitmap(GetIconIndex(LowerCase(ExtractFileExt(StringGrid.Cells[aCol, aRow]))), B);
 
       R.Top := aRect.Top + (StringGrid.DefaultRowHeight - B.Height) div 2;
       R.Left := aRect.Left + 2;
