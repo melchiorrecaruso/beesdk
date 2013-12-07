@@ -83,6 +83,7 @@ type
     FindButton: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure HeaderControlSectionClick(HeaderControl: TCustomHeaderControl;
       Section: THeaderSection);
     procedure HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
@@ -155,6 +156,15 @@ procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
   ParserList.Destroy;
   ParserCommandLine.Destroy;
+end;
+
+procedure TMainFrm.FormResize(Sender: TObject);
+begin
+  HeaderControl.Sections[4].Width :=
+    - HeaderControl.Sections[0].Width
+    - HeaderControl.Sections[1].Width
+    - HeaderControl.Sections[2].Width
+    - HeaderControl.Sections[3].Width + HeaderControl.Width + 5;
 end;
 
 procedure TMainFrm.HeaderControlSectionClick(
@@ -257,7 +267,9 @@ begin
   ToolBar.Buttons[4].Enabled := FALSE;
 
   HeaderControl.Enabled := FALSE;
+  HeaderControl.Visible := FALSE;
   StringGrid.Enabled := FALSE;
+  StringGrid.Visible := TRUE;
 end;
 
 procedure TMainFrm.DisableButtons;
@@ -269,7 +281,9 @@ begin
   ToolBar.Buttons[4].Enabled := FALSE;
 
   HeaderControl.Enabled := FALSE;
+  HeaderControl.Visible := FALSE;
   StringGrid.Enabled := FALSE;
+  StringGrid.Visible := TRUE;
 end;
 
 procedure TMainFrm.EnableButtons;
@@ -281,7 +295,9 @@ begin
   ToolBar.Buttons[4].Enabled := TRUE;
 
   HeaderControl.Enabled := TRUE;
+  HeaderControl.Visible := TRUE;
   StringGrid.Enabled := TRUE;
+  StringGrid.Visible := TRUE;
 end;
 
 procedure TMainFrm.MenuButtonClick(Sender: TObject);
