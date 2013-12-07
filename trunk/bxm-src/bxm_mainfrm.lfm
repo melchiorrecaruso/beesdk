@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 461
+  Left = 408
   Height = 452
-  Top = 209
+  Top = 192
   Width = 844
   AlphaBlend = True
   Caption = 'BX Manager'
@@ -1287,5 +1287,13 @@ object MainFrm: TMainFrm
       000000000000161635FF17177EFF0B0B9CFF0102A3FF0101A2FF0B0B9CFF1E1E
       87FF222241FF0000000000000000
     }
+  end
+  object IdleTimer: TIdleTimer
+    Enabled = False
+    OnTimer = IdleTimerTimer
+    OnStartTimer = IdleTimerStartTimer
+    OnStopTimer = IdleTimerStopTimer
+    left = 344
+    top = 80
   end
 end

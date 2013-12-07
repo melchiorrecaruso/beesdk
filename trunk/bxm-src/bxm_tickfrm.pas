@@ -53,33 +53,31 @@ type
   { TTickFrm }
 
   TTickFrm = class(TForm)
-    BtnCancel: TBitBtn;
     DetailsArrow: TArrow;
+    BtnCancel: TBitBtn;
     DetailsLabel: TLabel;
     Image: TImage;
     ActionLabel: TLabel;
-    ArchiveLabel: TLabel;
-    ArchiveNameLabel: TLabel;
-    Report: TMemo;
-    ReportPanel: TPanel;
+    DetailsReport: TMemo;
+    DetailsPanel: TPanel;
     TickLabel: TLabel;
     TickProgressBar: TProgressBar;
     Timer: TTimer;
+    procedure BtnCancelClick(Sender: TObject);
+    procedure DetailsLabelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormDestroy(Sender: TObject);
     procedure DetailsArrowClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure OnTimer(Sender: TObject);
     procedure OnTerminate;
     procedure OnExecute;
   private
     { private declarations }
-    Parser: TParser;
-    procedure DoTerminate(Sender: TObject);
   public
     { public declarations }
-    function ShowModal(Parser: TParser): longint; overload;
   end;
 
 var
@@ -97,7 +95,6 @@ uses
 procedure TTickFrm.FormCreate(Sender: TObject);
 begin
   DetailsArrow.ArrowType := atRight;
-
   {$IFDEF MSWINDOWS}
   TickProgressBar.Smooth := FALSE;
   {$ELSE}
@@ -108,11 +105,21 @@ begin
   Constraints.MinHeight  := 185;
   Constraints.MaxHeight  := 185;
   {$ELSE}
-  Constraints.MinHeight  := 205;
-  Constraints.MaxHeight  := 205;
+  Constraints.MinHeight  := 165;
+  Constraints.MaxHeight  := 165;
   {$ENDIF}
-  Constraints.MinWidth   := 450;
-  Constraints.MaxWidth   := 450;
+  Constraints.MinWidth   := 500;
+  Constraints.MaxWidth   := 500;
+end;
+
+procedure TTickFrm.DetailsLabelClick(Sender: TObject);
+begin
+
+end;
+
+procedure TTickFrm.BtnCancelClick(Sender: TObject);
+begin
+  Close;
 end;
 
 procedure TTickFrm.FormDestroy(Sender: TObject);
@@ -130,47 +137,29 @@ begin
 
 end;
 
-procedure TTickFrm.DoTerminate(Sender: TObject);
-var
-  I: longint;
+procedure TTickFrm.FormShow(Sender: TObject);
 begin
-  if TParser(Sender).Count > 0 then
-  begin
-    for I := 0 to TParser(Sender).Count - 1 do
-      Report.Append(TParser(Sender).Messages[I]);
 
-    if ReportPanel.Visible = FALSE then
-      DetailsArrowClick(Self);
-  end;
-end;
-
-function TTickFrm.ShowModal(Parser: TParser): longint;
-begin
-  Report.Clear;
-
-  Parser.OnTerminate := DoTerminate;
-  Parser.Execute;
-  begin
-    Result := ShowModal;
-  end;
 end;
 
 procedure TTickFrm.DetailsArrowClick(Sender: TObject);
 begin
-  ReportPanel.Visible := not ReportPanel.Visible;
-  if ReportPanel.Visible then
+  DetailsPanel.Visible := not DetailsPanel.Visible;
+  if DetailsPanel.Visible then
   begin
     DetailsArrow.ArrowType := atDown;
-    Constraints.MaxHeight := Constraints.MaxHeight + ReportPanel.Height;
+    Constraints.MaxHeight := Constraints.MaxHeight + DetailsPanel.Height;
     Constraints.MinHeight := Constraints.MaxHeight;
   end else
   begin
     DetailsArrow.ArrowType := atRight;
-    Constraints.MinHeight := Constraints.MinHeight - ReportPanel.Height;
+    Constraints.MinHeight := Constraints.MinHeight - DetailsPanel.Height;
     Constraints.MaxHeight := Constraints.MinHeight;
   end;
   Height := Constraints.MaxHeight;
 end;
+
+
 
  // ------------------------------------------------------------------------ //
  //                                                                          //
@@ -243,7 +232,7 @@ end;
     FCommandLine.Log := True;
     with FInterfaces.OnFatalError do
     begin
-      Report.Append(Data.Msg);
+      DetailsReport.Append(Data.Msg);
     end;
   end;
   
@@ -252,7 +241,7 @@ end;
     FCommandLine.Log := True;
     with FInterfaces.OnError do
     begin
-      Report.Append(Data.Msg);
+      DetailsReport.Append(Data.Msg);
     end;
   end;
   
@@ -261,7 +250,7 @@ end;
     FCommandLine.Log := True;
     with FInterfaces.OnWarning do
     begin
-      Report.Append(Data.Msg);
+      DetailsReport.Append(Data.Msg);
     end;
   end;
 
@@ -271,7 +260,7 @@ end;
     begin
       if FCommandLine.Log then
       begin
-        Report.Append(Data.Msg);
+        DetailsReport.Append(Data.Msg);
       end;
       TickLabel.Caption := Data.Msg;
     end;

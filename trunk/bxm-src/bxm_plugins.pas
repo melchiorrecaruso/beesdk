@@ -72,19 +72,20 @@ type
   TParser = class(TThread)
   private
     FMessages: TStringList;
-    FOnTerminate: TNotifyEvent;
     FPCL: TParserCommandLine;
     FProcess: TProcess;
+    FTerminated: boolean;
     function GetCount: longint;
     function GetMessage(index: longint): string;
   public
     constructor Create(PCL: TParserCommandLine);
     destructor Destroy; override;
     procedure Execute; override;
+    procedure Terminate;
   public
     property Count: longint read GetCount;
     property Messages[index: longint]: string read GetMessage;
-    property OnTerminate: TNotifyEvent read FOnTerminate write FOnTerminate;
+    property Terminated: boolean read FTerminated;
   end;
 
   TParserItem = class(TObject)
@@ -107,13 +108,12 @@ type
   TParserList = class
   private
     FList: TList;
-    FParser: TParser;
     function GetCount: longint;
     function GetItem(Index: longint): TParserItem;
   public
-    constructor Create(Parser: TParser);
+    constructor Create;
     destructor Destroy; override;
-    procedure Execute;
+    procedure Execute(Parser: TParser);
     procedure Clear;
   public
     property Count: longint read GetCount;
@@ -196,17 +196,15 @@ constructor TParser.Create(PCL: TParserCommandLine);
 begin
   inherited Create(TRUE);
   FMessages    := TStringList.Create;
-  FOnTerminate := nil;
   FPCL         := PCL;
-  FProcess     := TProcess.Create(nil);
+  FProcess     := nil;
+  FTerminated  := FALSE;
 end;
 
 destructor TParser.Destroy;
 begin
   FMessages.Destroy;
-  FOnTerminate := nil;
-  FPCL         := nil;
-  FProcess.Destroy;
+  FPCL := nil;
   inherited Destroy;
 end;
 
@@ -251,12 +249,17 @@ begin
 
     FMessages.LoadFromStream(FMem);
   finally
-    FProcess.Free;
+    FreeAndNil(FProcess);
     FMem.Free;
   end;
 
-  if Assigned(FOnTerminate) then
-    FOnTerminate(Self);
+  FTerminated := TRUE;
+end;
+
+procedure TParser.Terminate;
+begin
+  if Assigned(FProcess) then
+    FProcess.Terminate(255);
 end;
 
 function TParser.GetMessage(index: longint): string;
@@ -271,11 +274,10 @@ end;
 
 { TParserList }
 
-constructor TParserList.Create(Parser: TParser);
+constructor TParserList.Create;
 begin
   inherited Create;
-  FList   := TList.Create;
-  FParser := Parser;
+  FList := TList.Create;
 end;
 
 destructor TParserList.Destroy;
@@ -303,7 +305,7 @@ begin
   Result := TParserItem(FList[Index]);
 end;
 
-procedure TParserList.Execute;
+procedure TParserList.Execute(Parser: TParser);
 var
   I, K: longint;
   Item: TParserItem;
@@ -311,9 +313,9 @@ var
 begin
   K := 0;
   I := 0;
-  while (I < FParser.Count) and (K < 7) do
+  while (I < Parser.Count) and (K < 7) do
   begin
-    S := FParser.Messages[I];
+    S := Parser.Messages[I];
     if FileNamePos('7-Zip '           , S) = 1 then Inc(K);
     if FileNamePos('Listing archive: ', S) = 1 then Inc(K);
     if FileNamePos('--'           ,     S) = 1 then Inc(K);
@@ -324,9 +326,9 @@ begin
     Inc(I);
   end;
 
-  while I < FParser.Count do
+  while I < Parser.Count do
   begin
-    S := FParser.Messages[I];
+    S := Parser.Messages[I];
     // Search "error" message ...
     if FileNamePos('Error: ', S) = 1 then
     begin

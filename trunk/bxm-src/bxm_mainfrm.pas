@@ -57,6 +57,7 @@ type
   TMainFrm = class(TForm)
     BackGround: TImage;
     HeaderControl: THeaderControl;
+    IdleTimer: TIdleTimer;
     ImageList: TImageList;
     IconList: TImageList;
     MenuItem1: TMenuItem;
@@ -86,6 +87,9 @@ type
       Section: THeaderSection);
     procedure HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
       Section: THeaderSection; Width: Integer; State: TSectionTrackState);
+    procedure IdleTimerStartTimer(Sender: TObject);
+    procedure IdleTimerStopTimer(Sender: TObject);
+    procedure IdleTimerTimer(Sender: TObject);
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
@@ -102,10 +106,11 @@ type
   private
     { private declarations }
     ParserCommandLine: TParserCommandLine;
-    Parser: TParser;
     ParserList: TParserList;
+    Parser: TParser;
   public
     { public declarations }
+    procedure DefaultButtons;
     procedure DisableButtons;
     procedure EnableButtons;
   end;
@@ -131,8 +136,7 @@ var
   I: longint;
 begin
   ParserCommandLine := TParserCommandLine.Create;
-  Parser := TParser.Create(ParserCommandLine);
-  ParserList := TParserList.Create(Parser);
+  ParserList := TParserList.Create;
 
   StringGrid.FocusRectVisible := FALSE;
   StringGrid.Columns.Clear;
@@ -144,13 +148,12 @@ begin
   StringGrid.RowCount := 0;
   StringGrid.FixedRows:= 0;
 
-  DisableButtons;
+  DefaultButtons;
 end;
 
 procedure TMainFrm.FormDestroy(Sender: TObject);
 begin
   ParserList.Destroy;
-  Parser.Destroy;
   ParserCommandLine.Destroy;
 end;
 
@@ -167,10 +170,100 @@ begin
     StringGrid.ColWidths[Section.Index] := Width;
 end;
 
-procedure TMainFrm.DisableButtons;
+procedure TMainFrm.IdleTimerStartTimer(Sender: TObject);
+begin
+  DisableButtons;
+  StringGrid.Clear;
+
+  if
+
+  TickFrm := TTickFrm. Create(Self);
+  with TickFrm.ActionLabel do
+    case ParserCommandLine.Command of
+      cNone:     Caption := '???';
+      cAdd:      Caption := 'Adding files';
+      cDelete:   Caption := 'Deleting files';
+      cExtract:  Caption := 'Extracting files';
+      cList:     Caption := 'Listing archive';
+      cTest:     Caption := 'Testing files';
+      cxExtract: Caption := 'Extracting files';
+    end;
+  TickFrm.Show;
+
+
+  Parser := TParser.Create(ParserCommandLine);
+  Parser.Resume;
+end;
+
+procedure TMainFrm.IdleTimerTimer(Sender: TObject);
+begin
+
+  if TickFrm.Visible = FALSE then
+  begin
+    ShowMessage('ABORTED');
+    Parser.Terminate;
+  end;
+
+
+
+  if Parser.Terminated then
+    IdleTimer.Enabled := FALSE;
+end;
+
+procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
+var
+  I: longint;
+begin
+
+  if ParserCommandLine.Command in [cList] then
+  begin
+    ParserList.Clear;
+    ParserList.Execute(Parser);
+    StringGrid.BeginUpdate;
+    StringGrid.RowCount := ParserList.Count;
+    for I := 0 to StringGrid.RowCount - 1 do
+    begin
+      StringGrid.Cells[0, I] := ParserList.Items[I].ItemName;
+      StringGrid.Cells[1, I] := ParserList.Items[I].ItemSize;
+      StringGrid.Cells[2, I] := ParserList.Items[I].ItemType;
+      StringGrid.Cells[3, I] := ParserList.Items[I].ItemTime;
+      StringGrid.Cells[4, I] := ParserList.Items[I].ItemPath;
+    end;
+    StringGrid.EndUpdate;
+  end else
+
+    if ParserCommandLine.Command in [cAdd, cDelete] then
+    begin
+
+    end else
+      if ParserCommandLine.Command in [cExtract, cTest, cxExtract] then
+      begin
+
+      end;
+
+  FreeAndNil(Parser);
+
+  FreeAndNil(TickFrm);
+
+  EnableButtons;
+end;
+
+procedure TMainFrm.DefaultButtons;
 begin
   ToolBar.Buttons[0].Enabled := TRUE;
   ToolBar.Buttons[1].Enabled := TRUE;
+  ToolBar.Buttons[2].Enabled := FALSE;
+  ToolBar.Buttons[3].Enabled := FALSE;
+  ToolBar.Buttons[4].Enabled := FALSE;
+
+  HeaderControl.Enabled := FALSE;
+  StringGrid.Enabled := FALSE;
+end;
+
+procedure TMainFrm.DisableButtons;
+begin
+  ToolBar.Buttons[0].Enabled := FALSE;
+  ToolBar.Buttons[1].Enabled := FALSE;
   ToolBar.Buttons[2].Enabled := FALSE;
   ToolBar.Buttons[3].Enabled := FALSE;
   ToolBar.Buttons[4].Enabled := FALSE;
@@ -260,7 +353,8 @@ begin
   begin
     B := TBitmap.Create;
     try
-      IconList.GetBitmap(GetIconIndex(LowerCase(ExtractFileExt(StringGrid.Cells[aCol, aRow]))), B);
+      IconList.GetBitmap(GetIconIndex(LowerCase(
+        ExtractFileExt(StringGrid.Cells[aCol, aRow]))), B);
 
       R.Top := aRect.Top + (StringGrid.DefaultRowHeight - B.Height) div 2;
       R.Left := aRect.Left + 2;
@@ -294,36 +388,13 @@ var
 begin
   if OpenDialog.Execute then
   begin
-    DisableButtons;
+
 
     ParserCommandLine.Clear;
     ParserCommandLine.Command := cList;
     ParserCommandLine.ArchiveName := OpenDialog.FileName;
 
-    //TickFrm := TTickFrm.Create(Self);
-    //if TickFrm.ShowModal(Parser) = mrOk then
-    //begin
-
-    Parser.Execute;
-
-    //end;
-    //TickFrm.Destroy;
-
-    ParserList.Clear;
-    ParserList.Execute;
-
-    StringGrid.BeginUpdate;
-    StringGrid.RowCount := ParserList.Count;
-    for I := 0 to StringGrid.RowCount - 1 do
-    begin
-      StringGrid.Cells[0, I] := ParserList.Items[I].ItemName;
-      StringGrid.Cells[1, I] := ParserList.Items[I].ItemSize;
-      StringGrid.Cells[2, I] := ParserList.Items[I].ItemType;
-      StringGrid.Cells[3, I] := ParserList.Items[I].ItemTime;
-      StringGrid.Cells[4, I] := ParserList.Items[I].ItemPath;
-    end;
-    StringGrid.EndUpdate;
-    EnableButtons;
+    IdleTimer.Enabled := TRUE;
   end;
 
 end;
