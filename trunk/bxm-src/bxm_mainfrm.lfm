@@ -192,7 +192,7 @@ object MainFrm: TMainFrm
       item
         Alignment = taLeftJustify
         Text = ' Path'
-        Width = 5000
+        Width = 200
         Visible = True
       end>
     OnSectionClick = HeaderControlSectionClick
@@ -214,6 +214,7 @@ object MainFrm: TMainFrm
     Height = 388
     Top = 64
     Width = 844
+    AlternateColor = clMenuBar
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderStyle = bsNone
     ColCount = 0
@@ -226,7 +227,6 @@ object MainFrm: TMainFrm
     ScrollBars = ssAutoVertical
     TabOrder = 3
     TitleStyle = tsNative
-    UseXORFeatures = True
     OnCompareCells = StringGridCompareCells
     OnDrawCell = StringGridDrawCell
   end
