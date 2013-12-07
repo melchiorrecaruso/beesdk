@@ -16,7 +16,8 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
     The data compression utility.
 
@@ -38,7 +39,7 @@ uses
   Classes,
   // ---
   bx_Application,
-  bx_Common;
+  bx_Common, bx_filescanner;
 
 var
   Application: TBxApplication;
@@ -76,4 +77,4 @@ begin
   Application := TBxApplication.Create;
   Application.Execute;
   Application.Destroy;
-end.
+end.

@@ -64,7 +64,6 @@ function SelfPath: string;
 function GetDriveFreeSpace(const FileName: string): int64;
 function SizeOfFile(const FileName: string): int64;
 
-
 { filename handling routines }
 
 function DeleteFileDrive(const FileName: string): string;
@@ -520,4 +519,4 @@ begin
   {$ENDIF}
 end;
 
-end.
+end.

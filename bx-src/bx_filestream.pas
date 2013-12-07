@@ -106,44 +106,12 @@ type
     property CurrentImageSize: int64 read FCurrentImageSize;
   end;
 
-  { TCustomSearchRec }
-
-  TCustomSearchRec = class(TObject)
-  public
-    Name: string;
-    Size: int64;
-    Time: int64;
-    Attr: longint;
-  end;
-
-  { TFileScanner }
-
-  TFileScanner = class(TObject)
-  private
-    FList: TList;
-    function GetCount: integer;
-    function GetItem(Index: longint): TCustomSearchRec;
-    function AddItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
-    procedure Scan(Mask: string; Recursive: boolean);
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Add(const Mask: string; Recursive: boolean);
-    procedure Clear;
-    procedure Delete(const Mask: string; Recursive: boolean);
-    procedure Sort(Compare: TListSortCompare);
-  public
-    property Count: integer read GetCount;
-    property Items[Index: longint]: TCustomSearchRec read GetItem;
-  end;
-
 implementation
 
 uses
   {$IFDEF MSWINDOWS}
   DateUtils,
   {$ENDIF}
-  FileUtil,
   Math,
   // ---
   bx_Messages;
@@ -453,115 +421,4 @@ begin
   end;
 end;
 
-{ TFileScanner class }
-
-constructor TFileScanner.Create;
-begin
-  inherited Create;
-  FList := TList.Create;
-end;
-
-destructor TFileScanner.Destroy;
-begin
-  Clear;
-  FList.Destroy;
-  inherited Destroy;
-end;
-
-procedure TFileScanner.Clear;
-var
-  I: longint;
-begin
-  for I := 0 to FList.Count - 1 do
-    TCustomSearchRec(FList[I]).Destroy;
-  FList.Clear;
-end;
-
-function TFileScanner.AddItem(const RecPath: string; const Rec: TSearchRec): TCustomSearchRec;
-begin
-  Result      := TCustomSearchRec.Create;
-  Result.Name := RecPath + Rec.Name;
-  Result.Size := Rec.Size;
-  Result.Time := FileTimeToUnix(Rec.Time);
-  Result.Attr := Rec.Attr;
-end;
-
-procedure TFileScanner.Scan(Mask: string; Recursive: boolean);
-var
-  RecName: string;
-  RecPath: string;
-  Rec: TSearchRec;
-  Error: longint;
-begin
-  // directory and recursive mode ...
-  Mask := ExcludeTrailingBackSlash(Mask);
-  if DirectoryExists(Mask) then
-  begin
-    Recursive := TRUE;
-    Mask := IncludeTrailingBackSlash(Mask) + '*';
-  end;
-  RecPath := ExtractFilePath(Mask);
-
-  // search filemask ...
-  Error := FindFirst(
-    RecPath + '*',
-    faReadOnly  or
-    faHidden    or
-    faSysFile   or
-    faVolumeId  or
-    faDirectory or
-    faArchive   or
-    faSymLink   or
-    faAnyFile,
-    Rec);
-
-  while Error = 0 do
-  begin
-    RecName := RecPath + Rec.Name;
-    if (Recursive) and ((Rec.Attr and faDirectory) = faDirectory) then
-    begin
-      if (Rec.Attr and faSymLink) = 0 then
-        if (Rec.Name <> '.') and (Rec.Name <> '..') then
-          Scan(IncludeTrailingBackSlash(RecName) +
-            ExtractFileName(Mask), Recursive);
-    end else
-      if FileNameMatch(RecName, Mask, Recursive) then
-        FList.Add(AddItem(RecPath, Rec));
-
-    Error := FindNext(Rec);
-  end; // end while error ...
-  FindClose(Rec);
-end;
-
-procedure TFileScanner.Add(const Mask: string; Recursive: boolean);
-begin
-  Scan(Mask, Recursive);
-end;
-
-procedure TFileScanner.Delete(const Mask: string; Recursive: boolean);
-var
-  i: longint;
-begin
-  for I := Count - 1 downto 0 do
-    if FileNameMatch(Items[i].Name, Mask, Recursive) then
-    begin
-      FList.Delete(I);
-    end;
-end;
-
-procedure TFileScanner.Sort(Compare: TListSortCompare);
-begin
-  FList.Sort(Compare);
-end;
-
-function TFileScanner.GetCount: longint;
-begin
-  Result := FList.Count;
-end;
-
-function TFileScanner.GetItem(Index:longint): TCustomSearchRec;
-begin
-  Result := TCustomSearchRec(FList.Items[Index]);
-end;
-
-end.
+end.

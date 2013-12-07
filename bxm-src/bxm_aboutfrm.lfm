@@ -21,32 +21,40 @@ object AboutFrm: TAboutFrm
     AnchorSideBottom.Control = Copyright
     AnchorSideBottom.Side = asrBottom
     Left = 12
-    Height = 94
-    Top = 175
+    Height = 86
+    Top = 177
     Width = 406
     Anchors = [akTop, akLeft, akRight, akBottom]
     BevelInner = bvRaised
     BevelOuter = bvLowered
-    ClientHeight = 94
+    ClientHeight = 86
     ClientWidth = 406
     Color = clNone
     ParentColor = False
     TabOrder = 2
     Visible = False
-    object License: TMemo
+    object LicenseMemo: TMemo
       Left = 2
-      Height = 90
+      Height = 82
       Top = 2
       Width = 402
       Align = alClient
       BorderStyle = bsNone
       Color = clInactiveBorder
       Lines.Strings = (
-        'BX is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.'
+        'BX is free software; you can redistribute it and/or modify it under the terms of '
+        'the GNU Lesser General Public License as published by the Free Software '
+        'Foundation; either version 2.1 of the License, or (at your option) any later '
+        'version.'
         ''
-        'BX is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.'
+        'BX is distributed in the hope that it will be useful, but WITHOUT ANY '
+        'WARRANTY; without even the implied warranty of MERCHANTABILITY or '
+        'FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public '
+        'License for more details.'
         ''
-        'You should have received a copy of the GNU Lesser General Public License along with BX; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.'
+        'You should have received a copy of the GNU Lesser General Public License '
+        'along with BX; if not, write to the Free Software Foundation, Inc., 51 Franklin '
+        'St, Fifth Floor, Boston, MA  02110-1301 USA.'
       )
       ParentFont = False
       ReadOnly = True
@@ -372,7 +380,7 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Logo
     AnchorSideRight.Side = asrBottom
     Left = 12
-    Height = 17
+    Height = 19
     Top = 152
     Width = 406
     Alignment = taCenter
@@ -391,8 +399,8 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Logo
     AnchorSideRight.Side = asrBottom
     Left = 12
-    Height = 15
-    Top = 175
+    Height = 13
+    Top = 177
     Width = 406
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
@@ -408,7 +416,7 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Logo
     AnchorSideRight.Side = asrBottom
     Left = 12
-    Height = 15
+    Height = 13
     Top = 196
     Width = 406
     Alignment = taCenter
@@ -426,8 +434,8 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrCenter
     Left = 12
-    Height = 15
-    Top = 217
+    Height = 13
+    Top = 215
     Width = 406
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
@@ -446,8 +454,8 @@ object AboutFrm: TAboutFrm
     AnchorSideRight.Control = Logo
     AnchorSideRight.Side = asrBottom
     Left = 12
-    Height = 15
-    Top = 254
+    Height = 13
+    Top = 250
     Width = 406
     Alignment = taCenter
     Anchors = [akTop, akLeft, akRight]
@@ -457,4 +465,4 @@ object AboutFrm: TAboutFrm
     ParentColor = False
     ParentFont = False
   end
-end
+end

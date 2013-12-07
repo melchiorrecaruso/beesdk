@@ -41,6 +41,7 @@ uses
   // ---
   bx_Cipher,
   bx_Configuration,
+  bx_FileScanner,
   bx_FileStream,
   bx_Stream;
 
@@ -160,7 +161,7 @@ type
     procedure Tag;
     function  Tagged: boolean;
     procedure UnTag;
-    procedure Update(Rec: TCustomSearchRec);
+    procedure Update(Rec: PFileScannerItem);
     procedure Write(Stream: TFileWriter);
   public {property}
     property Index: longint read FIndex;
@@ -325,7 +326,7 @@ type
     procedure TestTagged;
     procedure UpdateTagged;
 
-    procedure New(Rec: TCustomSearchRec; const RecName: string);
+    procedure New(Rec: PFileScannerItem; const RecName: string);
     function  Find(const AFilename: string): TArchiveItem;
 
     procedure Suspend(Value: boolean);
@@ -571,15 +572,15 @@ begin
   Exclude(FTags, aitUpdate);
 end;
 
-procedure TArchiveItem.Update(Rec: TCustomSearchRec);
+procedure TArchiveItem.Update(Rec: PFileScannerItem);
 begin
   /// item property ///
-  FLastModifiedTime := Rec.Time;
+  FLastModifiedTime := Rec^.ItemTime;
   FLastStoredTime   := DateTimeToUnix(Now);
-  FAttributes       := Rec.Attr;
+  FAttributes       := Rec^.ItemAttr;
   /// reserved property ///
-  FExternalFileName := Rec.Name;
-  FExternalFileSize := Rec.Size;
+  FExternalFileName := Rec^.ItemName;
+  FExternalFileSize := Rec^.itemSize;
   // auto-tag //
   Include(FTags, aitUpdate);
 end;
@@ -1511,7 +1512,7 @@ end;
 
 // TArchiver # TAG #
 
-procedure TArchiver.New(Rec: TCustomSearchRec; const RecName: string);
+procedure TArchiver.New(Rec: PFileScannerItem; const RecName: string);
 var
   Item: TArchiveItem;
 begin
@@ -1994,4 +1995,4 @@ begin
 end;
 
 end.
-
+

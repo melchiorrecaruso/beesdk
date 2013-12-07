@@ -1,7 +1,7 @@
 object MainFrm: TMainFrm
-  Left = 408
+  Left = 280
   Height = 452
-  Top = 192
+  Top = 162
   Width = 844
   AlphaBlend = True
   Caption = 'BX Manager'
@@ -173,25 +173,25 @@ object MainFrm: TMainFrm
       end    
       item
         Alignment = taLeftJustify
-        Text = 'Size'
+        Text = ' Size'
         Width = 120
         Visible = True
       end    
       item
         Alignment = taLeftJustify
-        Text = 'Type'
+        Text = ' Type'
         Width = 120
         Visible = True
       end    
       item
         Alignment = taLeftJustify
-        Text = 'Date Modified'
+        Text = ' Date Modified'
         Width = 150
         Visible = True
       end    
       item
         Alignment = taLeftJustify
-        Text = 'Path'
+        Text = ' Path'
         Width = 5000
         Visible = True
       end>
