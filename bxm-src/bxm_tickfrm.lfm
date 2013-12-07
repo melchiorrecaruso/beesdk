@@ -1,17 +1,18 @@
 object TickFrm: TTickFrm
-  Left = 500
-  Height = 371
-  Top = 222
-  Width = 460
+  Left = 338
+  Height = 310
+  Top = 258
+  Width = 450
   Caption = '0% Processing...'
-  ClientHeight = 371
-  ClientWidth = 460
-  Constraints.MaxWidth = 460
-  Constraints.MinWidth = 460
+  ClientHeight = 310
+  ClientWidth = 450
+  Constraints.MaxWidth = 450
+  Constraints.MinWidth = 450
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   ParentFont = True
   ShowInTaskBar = stAlways
   LCLVersion = '1.3'
@@ -20,50 +21,51 @@ object TickFrm: TTickFrm
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 370
+    Left = 353
     Height = 27
-    Top = 338
+    Top = 270
     Width = 84
     Anchors = [akRight, akBottom]
     AutoSize = True
-    BorderSpacing.Around = 6
+    BorderSpacing.Right = 13
+    BorderSpacing.Bottom = 13
     Caption = 'Close'
     Constraints.MaxHeight = 27
     Constraints.MaxWidth = 84
     Constraints.MinHeight = 27
     Constraints.MinWidth = 84
     Default = True
-    ModalResult = 11
+    OnClick = BtnCancelClick
     TabOrder = 0
   end
-  object ReportPanel: TPanel
-    AnchorSideLeft.Control = Owner
+  object DetailsPanel: TPanel
+    AnchorSideLeft.Control = Image
+    AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = DetailsLabel
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 6
+    Left = 74
     Height = 150
-    Top = 155
-    Width = 448
+    Top = 108
+    Width = 363
     Anchors = [akTop, akLeft, akRight]
-    BorderSpacing.Left = 6
-    BorderSpacing.Top = 10
-    BorderSpacing.Right = 6
+    BorderSpacing.Left = 15
+    BorderSpacing.Right = 13
     BevelInner = bvRaised
     BevelOuter = bvLowered
-    Caption = 'ReportPanel'
+    Caption = 'DetailsPanel'
     ClientHeight = 150
-    ClientWidth = 448
+    ClientWidth = 363
     Constraints.MaxHeight = 150
     Constraints.MinHeight = 150
     TabOrder = 1
     Visible = False
-    object Report: TMemo
+    object DetailsReport: TMemo
       Left = 2
       Height = 146
       Top = 2
-      Width = 444
+      Width = 359
       Align = alClient
       Anchors = []
       BorderStyle = bsNone
@@ -73,48 +75,30 @@ object TickFrm: TTickFrm
       WordWrap = False
     end
   end
-  object DetailsArrow: TArrow
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Owner
-    Left = 6
-    Height = 13
-    Top = 130
-    Width = 13
-    AntiAliasingMode = amOn
-    ArrowColor = clMenuText
-    ArrowType = atRight
-    BorderSpacing.Left = 6
-    BorderSpacing.Top = 130
-    Constraints.MaxHeight = 13
-    Constraints.MaxWidth = 13
-    Constraints.MinHeight = 13
-    Constraints.MinWidth = 13
-    OnClick = DetailsArrowClick
-    ShadowType = stNone
-  end
   object DetailsLabel: TLabel
     AnchorSideLeft.Control = DetailsArrow
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = DetailsArrow
-    Left = 21
+    Left = 89
     Height = 15
-    Top = 130
-    Width = 115
+    Top = 93
+    Width = 35
     BorderSpacing.Left = 2
-    Caption = 'Description of update'
+    Caption = 'Details'
     ParentColor = False
+    OnClick = DetailsLabelClick
   end
   object Image: TImage
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
-    Left = 10
+    Left = 15
     Height = 41
-    Top = 25
+    Top = 20
     Width = 44
     AntialiasingMode = amOn
     AutoSize = True
-    BorderSpacing.Left = 10
-    BorderSpacing.Top = 25
+    BorderSpacing.Left = 15
+    BorderSpacing.Top = 20
     Picture.Data = {
       1754506F727461626C654E6574776F726B47726170686963E20B000089504E47
       0D0A1A0A0000000D494844520000002C0000002908060000004E49CBB2000000
@@ -215,32 +199,36 @@ object TickFrm: TTickFrm
     }
   end
   object TickProgressBar: TProgressBar
-    AnchorSideLeft.Control = ActionLabel
-    AnchorSideTop.Control = ArchiveLabel
+    AnchorSideLeft.Control = Image
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = ActionLabel
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 74
     Height = 12
-    Top = 74
-    Width = 376
+    Top = 45
+    Width = 363
     Anchors = [akTop, akLeft, akRight]
-    BorderSpacing.Top = 6
-    BorderSpacing.Right = 10
+    BorderSpacing.Left = 15
+    BorderSpacing.Top = 13
+    BorderSpacing.Right = 13
     Constraints.MaxHeight = 12
     Constraints.MinHeight = 12
     TabOrder = 2
   end
   object TickLabel: TLabel
-    AnchorSideLeft.Control = ActionLabel
+    AnchorSideLeft.Control = Image
+    AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = TickProgressBar
     AnchorSideTop.Side = asrBottom
     Left = 74
     Height = 18
-    Top = 92
+    Top = 61
     Width = 192
     AutoSize = False
-    BorderSpacing.Top = 6
+    BorderSpacing.Left = 15
+    BorderSpacing.Top = 4
     BorderSpacing.Right = 6
     BorderSpacing.Bottom = 2
     Caption = 'Testing archive, please wait ...'
@@ -255,43 +243,34 @@ object TickFrm: TTickFrm
     AnchorSideTop.Control = Owner
     Left = 74
     Height = 18
-    Top = 20
+    Top = 14
     Width = 109
-    BorderSpacing.Left = 20
-    BorderSpacing.Top = 20
+    BorderSpacing.Left = 15
+    BorderSpacing.Top = 14
     Caption = 'Testing archive'
     Font.Height = 15
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
   end
-  object ArchiveLabel: TLabel
-    AnchorSideLeft.Control = ActionLabel
-    AnchorSideTop.Control = ActionLabel
-    AnchorSideTop.Side = asrBottom
-    Left = 74
-    Height = 15
-    Top = 53
-    Width = 47
-    BorderSpacing.Top = 15
-    Caption = 'Archive:'
-    Font.Style = [fsBold]
-    ParentColor = False
-    ParentFont = False
-  end
-  object ArchiveNameLabel: TLabel
-    AnchorSideLeft.Control = ArchiveLabel
+  object DetailsArrow: TArrow
+    AnchorSideLeft.Control = Image
     AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = ArchiveLabel
-    AnchorSideBottom.Control = ArchiveLabel
-    AnchorSideBottom.Side = asrBottom
-    Left = 123
-    Height = 15
-    Top = 53
-    Width = 51
-    BorderSpacing.Left = 2
-    Caption = 'testing.bx'
-    ParentColor = False
+    AnchorSideTop.Control = Owner
+    Left = 74
+    Height = 13
+    Top = 93
+    Width = 13
+    ArrowColor = clMenuText
+    ArrowType = atRight
+    BorderSpacing.Left = 15
+    BorderSpacing.Top = 93
+    Constraints.MaxHeight = 13
+    Constraints.MaxWidth = 13
+    Constraints.MinHeight = 13
+    Constraints.MinWidth = 13
+    OnClick = DetailsArrowClick
+    ShadowType = stIn
   end
   object Timer: TTimer
     left = 8
