@@ -42,6 +42,7 @@ uses
   bx_CommandLine,
   bx_Common,
   bx_FileStream,
+  bx_FileScanner,
   bx_Messages;
 
 type
@@ -61,7 +62,7 @@ type
     procedure CommentItem(Item: TArchiveItem);
     procedure ExtractItem(Item: TArchiveItem);
     procedure RenameItem (Item: TArchiveItem);
-    procedure UpdateItem(Rec: TCustomSearchRec);
+    procedure UpdateItem(Rec: PFileScannerItem);
     { Events routines}
     procedure DoMessage(const Message: string);
     procedure DoPercentage(Percentage: longint);
@@ -310,13 +311,13 @@ begin
   until ExitStatus = esNoError;
 end;
 
-procedure TBxApplication.UpdateItem(Rec: TCustomSearchRec);
+procedure TBxApplication.UpdateItem(Rec: PFileScannerItem);
 var
   Index: longint;
   Item: TArchiveItem;
   ItemName: string;
 begin
-  ItemName := FCommandLine.SwitchCD + Rec.Name;
+  ItemName := FCommandLine.SwitchCD + Rec^.ItemName;
   Item     := FArchiver.Find(ItemName);
   // Update method...
   case FUpdateMethod of
@@ -330,14 +331,14 @@ begin
     end;
     umUpdate: begin
       if Item <> nil then
-        if Item.LastModifiedTime < Rec.Time then
+        if Item.LastModifiedTime < Rec^.ItemTime then
           Item.Update(Rec);
     end;
     umAddUpdate: begin
       if Item = nil then
         FArchiver.New(Rec, ItemName)
       else
-        if Item.LastModifiedTime < Rec.Time then
+        if Item.LastModifiedTime < Rec^.ItemTime then
           Item.Update(Rec);
     end;
     umAddReplace: begin
@@ -518,21 +519,21 @@ begin
   CloseArchive;
 end;
 
-function CompareCustomSearchRec(Item1, Item2: pointer): longint;
+function CompareCustomSearchRec(P1, P2: pointer): longint;
 begin
   Result := AnsiCompareFileName(
-    ExtractFileExt(TCustomSearchRec(Item1).Name),
-    ExtractFileExt(TCustomSearchRec(Item2).Name));
+    ExtractFileExt(PFileScannerItem(P1)^.ItemName),
+    ExtractFileExt(PFileScannerItem(P2)^.ItemName));
 
   if Result = 0 then
     Result := AnsiCompareFileName(
-      ExtractFileName(TCustomSearchRec(Item1).Name),
-      ExtractFileName(TCustomSearchRec(Item2).Name));
+      ExtractFileName(PFileScannerItem(P1)^.ItemName),
+      ExtractFileName(PFileScannerItem(P2)^.ItemName));
 
   if Result = 0 then
     Result := AnsiCompareFileName(
-      ExtractFilePath(TCustomSearchRec(Item1).Name),
-      ExtractFilePath(TCustomSearchRec(Item2).Name));
+      ExtractFilePath(PFileScannerItem(P1)^.ItemName),
+      ExtractFilePath(PFileScannerItem(P2)^.ItemName));
 end;
 
 procedure TBxApplication.EncodeShell;
@@ -745,4 +746,4 @@ begin
 end;
 
 end.
-
+

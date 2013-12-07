@@ -123,7 +123,7 @@ implementation
 {$R *.lfm}
 
 uses
-  bx_FileStream,
+  bx_FileScanner,
 
   bxm_AddFrm,
   bxm_AboutFrm,
@@ -175,7 +175,7 @@ begin
   DisableButtons;
   StringGrid.Clear;
 
-  if
+
 
   TickFrm := TTickFrm. Create(Self);
   with TickFrm.ActionLabel do
