@@ -42,7 +42,8 @@ uses
   FileUtil,
   Forms,
   Graphics,
-  Menus, Grids, FileCtrl, DBGrids,
+  Menus,
+  StdCtrls,
   SysUtils,
   // ---
   bxm_Plugins,
@@ -84,9 +85,10 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
-
-    procedure HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
-      Section: THeaderSection; Width: Integer; State: TSectionTrackState);
+    procedure HeaderControlSectionResize(HeaderControl: TCustomHeaderControl;
+      Section: THeaderSection);
+    procedure HeaderControlSectionSeparatorDblClick(
+      HeaderControl: TCustomHeaderControl; Section: THeaderSection);
     procedure IdleTimerStartTimer(Sender: TObject);
     procedure IdleTimerStopTimer(Sender: TObject);
     procedure IdleTimerTimer(Sender: TObject);
@@ -94,9 +96,7 @@ type
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
-    procedure MenuItem6Click(Sender: TObject);
     procedure OpenButtonClick(Sender: TObject);
-    procedure Shape2ChangeBounds(Sender: TObject);
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
     procedure ShareMenuClose(Sender: TObject);
@@ -107,6 +107,8 @@ type
     Parser: TParser;
   public
     { public declarations }
+    procedure Adjust;
+
     procedure DefaultButtons;
     procedure DisableButtons;
     procedure EnableButtons;
@@ -138,8 +140,14 @@ begin
 
   ListView.Columns.Clear;
   for I := 0 to HeaderControl.Sections.Count - 1 do
+  begin
     ListView.Columns.Add;
-  FormResize(Self);
+  end;
+
+  {$IFDEF MSWINDOWS}
+  {$ENDIF}
+
+  Adjust;
   DefaultButtons;
 end;
 
@@ -150,26 +158,57 @@ begin
 end;
 
 procedure TMainFrm.FormResize(Sender: TObject);
-var
-  I, J, SectionWidth: longint;
 begin
-  for I := HeaderControl.Sections.Count - 1 downto 0 do
-  begin
-    SectionWidth := HeaderControl.Width - 16;
-    for J := 0 to I - 1 do
-      Dec(SectionWidth, HeaderControl.Sections[J].Width);
-    HeaderControl.Sections[I].Width := SectionWidth;
-    if SectionWidth > 0 then Break;
-  end;
-
-  for I := 0 to HeaderControl.Sections.Count - 1 do
-    ListView.Columns[I].Width := HeaderControl.Sections[I].Width;
+  Adjust;
 end;
 
-procedure TMainFrm.HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
-  Section: THeaderSection; Width: Integer; State: TSectionTrackState);
+procedure TMainFrm.HeaderControlSectionResize(
+  HeaderControl: TCustomHeaderControl; Section: THeaderSection);
 begin
-  FormResize(Self);
+  Adjust;
+end;
+
+procedure TMainFrm.HeaderControlSectionSeparatorDblClick(
+  HeaderControl: TCustomHeaderControl; Section: THeaderSection);
+begin
+  ListView.Columns[Section.Index].AutoSize := TRUE;
+  begin
+    Section.Width := ListView.Columns[Section.Index].Width;
+  end;
+  ListView.Columns[Section.Index].AutoSize := FALSE;
+  Adjust;
+end;
+
+procedure TMainFrm.Adjust;
+var
+  I, J, ColumnWidth: longint;
+begin
+  ListView.BeginUpdate;
+  Listview.ScrollBars := ssNone;
+  HeaderControl.Sections[4].Width :=
+    - HeaderControl.Sections[0].Width
+    - HeaderControl.Sections[1].Width
+    - HeaderControl.Sections[2].Width
+    - HeaderControl.Sections[3].Width + HeaderControl.Width + 1000;
+
+  for I := 0 to HeaderControl.Sections.Count - 1 do
+     ListView.Columns[I].Width := HeaderControl.Sections[I].Width;
+
+  for I := ListView.Columns.Count - 1 downto 0 do
+  begin
+    ColumnWidth := ListView.Width - 20;
+    for J := 0 to I - 1 do
+      Dec(ColumnWidth, ListView.Columns[J].Width);
+
+    if ColumnWidth > 0 then
+    begin
+      ListView.Columns[I].Width := ColumnWidth;
+      Break;
+    end else
+      ListView.Columns[I].Width := 0;
+  end;
+  Listview.ScrollBars := ssAutoVertical;
+  ListView.EndUpdate;
 end;
 
 procedure TMainFrm.IdleTimerStartTimer(Sender: TObject);
@@ -204,21 +243,41 @@ begin
     Parser.Terminate;
   end;
 
-
-
   if Parser.Terminated then
     IdleTimer.Enabled := FALSE;
 end;
 
 procedure TMainFrm.ListViewData(Sender: TObject; Item: TListItem);
+var
+  ItemExt: string;
 begin
-  Item.Caption     := ParserList.Items[Item.Index].ItemName;
-  Item.SubItems.Add(ParserList.Items[Item.Index].ItemSize);
-  Item.SubItems.Add(ParserList.Items[Item.Index].ItemType);
-  Item.SubItems.Add(ParserList.Items[Item.Index].ItemTime);
-  Item.SubItems.Add(ParserList.Items[Item.Index].ItemPath);
+  Item.Caption   := ' ' + ParserList.Items[Item.Index].ItemName;
+  Item.SubItems.Add(' ' + ParserList.Items[Item.Index].ItemSize);
+  Item.SubItems.Add(' ' + ParserList.Items[Item.Index].ItemType);
+  Item.SubItems.Add(' ' + ParserList.Items[Item.Index].ItemTime);
+  Item.SubItems.Add(' ' + ParserList.Items[Item.Index].ItemPath);
 
-  Item.ImageIndex := 0;
+  ItemExt := LowerCase(ExtractFileExt(
+    ParserList.Items[Item.Index].ItemName));
+
+  if ItemExt = '.avi'         then Item.ImageIndex := 0  else
+  if ItemExt = '.bat'         then Item.ImageIndex := 1  else
+  if ItemExt = '.bmp'         then Item.ImageIndex := 2  else
+  if ItemExt = '.cddrive'     then Item.ImageIndex := 3  else
+  if ItemExt = '.doc'         then Item.ImageIndex := 4  else
+  if ItemExt = '.exe'         then Item.ImageIndex := 5  else
+  if ItemExt = '.folderclose' then Item.ImageIndex := 6  else
+  if ItemExt = '.folderopen'  then Item.ImageIndex := 7  else
+  if ItemExt = '.harddrive'   then Item.ImageIndex := 8  else
+  if ItemExt = '.html'        then Item.ImageIndex := 9  else
+  if ItemExt = '.mp3'         then Item.ImageIndex := 10 else
+  if ItemExt = '.pkg'         then Item.ImageIndex := 11 else
+  if ItemExt = '.ppd'         then Item.ImageIndex := 12 else
+  if ItemExt = '.ttf'         then Item.ImageIndex := 13 else
+  if ItemExt = '.txt'         then Item.ImageIndex := 14 else
+  if ItemExt = '.unknow'      then Item.ImageIndex := 15 else
+  if ItemExt = '.wab'         then Item.ImageIndex := 16 else
+  if ItemExt = '.xls'         then Item.ImageIndex := 17 else Item.ImageIndex := 15;
 end;
 
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
@@ -232,10 +291,7 @@ begin
     ParserList.Clear;
     ParserList.Execute(Parser);
 
-    ListView.BeginUpdate;
     ListView.Items.Count := ParserList.Count;
-    ListView.EndUpdate;
-
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then
@@ -248,7 +304,6 @@ begin
       end;
 
   FreeAndNil(Parser);
-
   FreeAndNil(TickFrm);
 
   EnableButtons;
@@ -297,9 +352,15 @@ begin
 end;
 
 procedure TMainFrm.MenuButtonClick(Sender: TObject);
+const
+  {$IFDEF MSWINDOWS}
+  T = 59; L = 3;
+  {$ELSE}
+  T = 59; L = 0;
+  {$ENDIF}
 begin
   MenuButton.Down := TRUE;
-  MainMenu.PopUp(Left + ToolBarMenu.Left + MenuButton.Left, Top + 59);
+  MainMenu.PopUp(Left + ToolBarMenu.Left + MenuButton.Left + L, Top + T);
 end;
 
 procedure TMainFrm.MainMenuClose(Sender: TObject);
@@ -308,48 +369,21 @@ begin
 end;
 
 procedure TMainFrm.ShareButtonClick(Sender: TObject);
+const
+  {$IFDEF MSWINDOWS}
+  T = 59; L = 3;
+  {$ELSE}
+  T = 59; L = 0;
+  {$ENDIF}
 begin
   ShareButton.Down := TRUE;
-  ShareMenu.PopUp(Left + ToolBarMenu.Left + ShareButton.Left, Top  + 59);
+  ShareMenu.PopUp(Left + ToolBarMenu.Left + ShareButton.Left + L, Top  + T);
 end;
 
 procedure TMainFrm.ShareMenuClose(Sender: TObject);
 begin
   ShareButton.Down := FALSE;
 end;
-
-function GetIconIndex(const FileExt: string): longint;
-var
-  S: string;
-begin
-  Result := 15;
-
-  if FileExt = '.avi'         then Result := 0;
-  if FileExt = '.bat'         then Result := 1;
-  if FileExt = '.bmp'         then Result := 2;
-  if FileExt = '.cddrive'     then Result := 3;
-  if FileExt = '.doc'         then Result := 4;
-  if FileExt = '.exe'         then Result := 5;
-  if FileExt = '.folderclose' then Result := 6;
-  if FileExt = '.folderopen'  then Result := 7;
-  if FileExt = '.harddrive'   then Result := 8;
-  if FileExt = '.html'        then Result := 9;
-  if FileExt = '.mp3'         then Result := 10;
-  if FileExt = '.pkg'         then Result := 11;
-  if FileExt = '.ppd'         then Result := 12;
-  if FileExt = '.ttf'         then Result := 13;
-  if FileExt = '.txt'         then Result := 14;
-  if FileExt = '.unknow'      then Result := 15;
-  if FileExt = '.wab'         then Result := 16;
-  if FileExt = '.xls'         then Result := 17;
-end;
-
-
-
-
-
-
-
 
 procedure TMainFrm.AboutMenuItemClick(Sender: TObject);
 begin
@@ -358,31 +392,18 @@ begin
   AboutFrm.Destroy;
 end;
 
-procedure TMainFrm.MenuItem6Click(Sender: TObject);
-begin
-
-end;
-
 procedure TMainFrm.OpenButtonClick(Sender: TObject);
 var
   I: longint;
 begin
   if OpenDialog.Execute then
   begin
-
-
     ParserCommandLine.Clear;
     ParserCommandLine.Command := cList;
     ParserCommandLine.ArchiveName := OpenDialog.FileName;
-
+    // START
     IdleTimer.Enabled := TRUE;
   end;
-
-end;
-
-procedure TMainFrm.Shape2ChangeBounds(Sender: TObject);
-begin
-
 end;
 
 procedure TMainFrm.NewButtonClick(Sender: TObject);

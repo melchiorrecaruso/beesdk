@@ -56,12 +56,11 @@ object MainFrm: TMainFrm
     BorderSpacing.Left = 3
     BorderSpacing.Top = 2
     BorderSpacing.Bottom = 1
+    BorderWidth = 1
     ButtonHeight = 34
     ButtonWidth = 34
     Caption = 'ToolBar'
     EdgeBorders = []
-    EdgeInner = esNone
-    EdgeOuter = esRaised
     Images = ImageList
     Indent = 0
     TabOrder = 0
@@ -199,7 +198,8 @@ object MainFrm: TMainFrm
         Width = 200
         Visible = True
       end>
-    OnSectionTrack = HeaderControlSectionTrack
+    OnSectionResize = HeaderControlSectionResize
+    OnSectionSeparatorDblClick = HeaderControlSectionSeparatorDblClick
     Anchors = [akTop, akLeft, akRight]
     Font.Style = [fsBold]
     Constraints.MinHeight = 26
@@ -697,7 +697,6 @@ object MainFrm: TMainFrm
     top = 80
     object MenuItem6: TMenuItem
       Caption = 'Send archive via email'
-      OnClick = MenuItem6Click
     end
     object MenuItem7: TMenuItem
       Caption = '-'

@@ -1,10 +1,11 @@
 object AboutFrm: TAboutFrm
-  Left = 515
+  Left = 434
   Height = 330
-  Top = 304
+  Top = 243
   Width = 430
   ActiveControl = BtnOk
   AlphaBlend = True
+  BorderIcons = [biSystemMenu]
   Caption = 'About to...'
   ClientHeight = 330
   ClientWidth = 430
