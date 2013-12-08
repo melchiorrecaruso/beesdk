@@ -3,6 +3,7 @@ object TickFrm: TTickFrm
   Height = 310
   Top = 258
   Width = 450
+  BorderIcons = [biSystemMenu, biMinimize]
   Caption = '0% Processing...'
   ClientHeight = 310
   ClientWidth = 450
@@ -47,7 +48,7 @@ object TickFrm: TTickFrm
     AnchorSideRight.Side = asrBottom
     Left = 74
     Height = 150
-    Top = 108
+    Top = 106
     Width = 363
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 15
@@ -80,9 +81,9 @@ object TickFrm: TTickFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = DetailsArrow
     Left = 89
-    Height = 15
+    Height = 13
     Top = 93
-    Width = 35
+    Width = 32
     BorderSpacing.Left = 2
     Caption = 'Details'
     ParentColor = False
@@ -207,7 +208,7 @@ object TickFrm: TTickFrm
     AnchorSideRight.Side = asrBottom
     Left = 74
     Height = 12
-    Top = 45
+    Top = 42
     Width = 363
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Left = 15
@@ -224,7 +225,7 @@ object TickFrm: TTickFrm
     AnchorSideTop.Side = asrBottom
     Left = 74
     Height = 18
-    Top = 61
+    Top = 58
     Width = 192
     AutoSize = False
     BorderSpacing.Left = 15
@@ -242,9 +243,9 @@ object TickFrm: TTickFrm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
     Left = 74
-    Height = 18
+    Height = 15
     Top = 14
-    Width = 109
+    Width = 92
     BorderSpacing.Left = 15
     BorderSpacing.Top = 14
     Caption = 'Testing archive'
@@ -276,4 +277,4 @@ object TickFrm: TTickFrm
     left = 8
     top = 312
   end
-end
+end
