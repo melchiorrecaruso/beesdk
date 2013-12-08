@@ -1,11 +1,11 @@
 object MainFrm: TMainFrm
-  Left = 334
-  Height = 452
-  Top = 175
+  Left = 463
+  Height = 453
+  Top = 223
   Width = 844
   AlphaBlend = True
   Caption = 'BX Manager'
-  ClientHeight = 452
+  ClientHeight = 453
   ClientWidth = 844
   Constraints.MinHeight = 250
   Constraints.MinWidth = 400
@@ -213,7 +213,7 @@ object MainFrm: TMainFrm
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 388
+    Height = 389
     Top = 64
     Width = 844
     AlternateColor = clMenuBar
@@ -225,7 +225,7 @@ object MainFrm: TMainFrm
     FixedRows = 0
     GridLineWidth = 0
     MouseWheelOption = mwGrid
-    Options = [goVertLine, goRangeSelect, goRowSelect, goSmoothScroll, goDontScrollPartCell]
+    Options = [goVertLine, goRowSelect, goSmoothScroll, goDontScrollPartCell, goRowHighlight]
     RowCount = 0
     ScrollBars = ssAutoVertical
     TabAdvance = aaNone
@@ -233,6 +233,9 @@ object MainFrm: TMainFrm
     TitleStyle = tsNative
     OnCompareCells = StringGridCompareCells
     OnDrawCell = StringGridDrawCell
+    OnKeyDown = StringGridKeyDown
+    OnMouseDown = StringGridMouseDown
+    OnSelectCell = StringGridSelectCell
   end
   object MainMenu: TPopupMenu
     AutoPopup = False

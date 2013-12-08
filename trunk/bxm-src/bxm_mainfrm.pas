@@ -42,7 +42,7 @@ uses
   FileUtil,
   Forms,
   Graphics,
-  Menus, Grids,
+  Menus, Grids, FileCtrl, DBGrids,
   SysUtils,
   // ---
   bxm_Plugins,
@@ -104,11 +104,19 @@ type
       BRow: Integer; var Result: integer);
     procedure StringGridDrawCell(Sender: TObject; aCol, aRow: Integer;
       aRect: TRect; aState: TGridDrawState);
+    procedure StringGridKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure StringGridMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure StringGridSelectCell(Sender: TObject; aCol, aRow: Integer;
+      var CanSelect: Boolean);
   private
     { private declarations }
     ParserCommandLine: TParserCommandLine;
     ParserList: TParserList;
     Parser: TParser;
+
+    Selection: array of boolean;
   public
     { public declarations }
     procedure DefaultButtons;
@@ -118,6 +126,7 @@ type
 
 var
   MainFrm: TMainFrm;
+  FirstPoint, ThisPoint: TPoint;
 
 implementation
 
@@ -177,15 +186,17 @@ procedure TMainFrm.HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl
   Section: THeaderSection; Width: Integer;State: TSectionTrackState);
 begin
   if Section.Index < StringGrid.ColCount then
+  begin
     StringGrid.ColWidths[Section.Index] := Width;
+    FormResize(Self);
+  end;
 end;
 
 procedure TMainFrm.IdleTimerStartTimer(Sender: TObject);
 begin
   DisableButtons;
+
   StringGrid.Clear;
-
-
 
   TickFrm := TTickFrm. Create(Self);
   with TickFrm.ActionLabel do
@@ -223,14 +234,17 @@ end;
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
   I: longint;
+  Item: TListItem;
 begin
 
   if ParserCommandLine.Command in [cList] then
   begin
     ParserList.Clear;
     ParserList.Execute(Parser);
+
     StringGrid.BeginUpdate;
     StringGrid.RowCount := ParserList.Count;
+    SetLength(Selection, ParserList.Count);
     for I := 0 to StringGrid.RowCount - 1 do
     begin
       StringGrid.Cells[0, I] := ParserList.Items[I].ItemName;
@@ -238,8 +252,11 @@ begin
       StringGrid.Cells[2, I] := ParserList.Items[I].ItemType;
       StringGrid.Cells[3, I] := ParserList.Items[I].ItemTime;
       StringGrid.Cells[4, I] := ParserList.Items[I].ItemPath;
+
+      Selection[I] := FALSE;
     end;
     StringGrid.EndUpdate;
+
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then
@@ -355,8 +372,7 @@ begin
   if FileExt = '.xls'         then Result := 17;
 end;
 
-procedure TMainFrm.StringGridDrawCell(Sender: TObject; aCol, aRow: Integer;
-  aRect: TRect; aState: TGridDrawState);
+procedure TMainFrm.StringGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
 var
   B:  TBitmap;
   I: longint;
@@ -377,6 +393,17 @@ begin
       R.Right := R.Left + B.Width;
       R.Bottom := R.Top + B.Height;
 
+      if Selection[aRow] = TRUE then
+      begin
+        StringGrid.Canvas.Brush.Color := clHighlight;
+        StringGrid.Canvas.Font.Color  := clHighlightText;
+      end else
+      begin
+        StringGrid.Canvas.Brush.Color := clDefault;
+        StringGrid.Canvas.Font.Color  := clDefault;
+      end;
+
+
       StringGrid.Canvas.Clear;
       StringGrid.Canvas.StretchDraw(R, B);
       StringGrid.Canvas.TextOut(R.Right + 4, R.Top, StringGrid.Cells[aCol, aRow]);
@@ -384,6 +411,28 @@ begin
       B.Free;
     end;
   end;
+end;
+
+procedure TMainFrm.StringGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+
+end;
+
+procedure TMainFrm.StringGridMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbLeft then
+  begin
+
+
+
+  end;
+
+
+end;
+
+procedure TMainFrm.StringGridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
+begin
+
 end;
 
 procedure TMainFrm.AboutMenuItemClick(Sender: TObject);
@@ -425,8 +474,8 @@ var
   I: longint;
   Scanner: TFileScanner;
 begin
-  ParserCommandLine := TParserCommandLine.Create;
-  Parser := TParser.Create(ParserCommandLine);
+
+
   AddFrm := TAddFrm.Create(Self);
 
   (*
@@ -475,9 +524,6 @@ begin
 
   *)
   AddFrm.Destroy;
-
-  Parser.Destroy;
-  ParserCommandLine.Destroy;
 end;
 
 end.
