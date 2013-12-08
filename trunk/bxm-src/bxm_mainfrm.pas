@@ -356,7 +356,7 @@ const
   {$IFDEF MSWINDOWS}
   T = 59; L = 3;
   {$ELSE}
-  T = 59; L = 0;
+  T = 59; L = 1;
   {$ENDIF}
 begin
   MenuButton.Down := TRUE;
@@ -373,7 +373,7 @@ const
   {$IFDEF MSWINDOWS}
   T = 59; L = 3;
   {$ELSE}
-  T = 59; L = 0;
+  T = 59; L = 1;
   {$ENDIF}
 begin
   ShareButton.Down := TRUE;
