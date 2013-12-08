@@ -374,12 +374,29 @@ end;
 
 procedure TMainFrm.StringGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
 var
-  B:  TBitmap;
+  B: TBitmap;
   I: longint;
   R: TRect;
 begin
   for I := 0 to StringGrid.ColCount - 1 do
     StringGrid.ColWidths[I] := HeaderControl.Sections[I].Width;
+
+  if Selection[aRow] = TRUE then
+  begin
+    StringGrid.Canvas.Brush.Color := clHighlight;
+    StringGrid.Canvas.Font.Color  := clHighlightText;
+  end else
+  begin
+    if (aRow mod 2) = 1 then
+    begin
+      StringGrid.Canvas.Brush.Color := clMenuBar;
+      StringGrid.Canvas.Font.Color  := clDefault;
+    end else
+    begin
+      StringGrid.Canvas.Brush.Color := clDefault;
+      StringGrid.Canvas.Font.Color  := clDefault;
+    end;
+  end;
 
   if aCol = 0 then
   begin
@@ -393,15 +410,6 @@ begin
       R.Right := R.Left + B.Width;
       R.Bottom := R.Top + B.Height;
 
-      if Selection[aRow] = TRUE then
-      begin
-        StringGrid.Canvas.Brush.Color := clHighlight;
-        StringGrid.Canvas.Font.Color  := clHighlightText;
-      end else
-      begin
-        StringGrid.Canvas.Brush.Color := clDefault;
-        StringGrid.Canvas.Font.Color  := clDefault;
-      end;
 
 
       StringGrid.Canvas.Clear;
@@ -410,7 +418,13 @@ begin
     finally
       B.Free;
     end;
+  end else
+  begin
+    StringGrid.Canvas.Clear;
+    StringGrid.Canvas.TextOut(aRect.Right, aRect.Top, StringGrid.Cells[aCol, aRow]);
   end;
+
+
 end;
 
 procedure TMainFrm.StringGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
