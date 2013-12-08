@@ -60,6 +60,7 @@ type
     IdleTimer: TIdleTimer;
     ImageList: TImageList;
     IconList: TImageList;
+    ListView: TListView;
     MenuItem1: TMenuItem;
     AboutMenuItem: TMenuItem;
     NulMenuItem: TMenuItem;
@@ -71,7 +72,6 @@ type
     MenuItem8: TMenuItem;
     ShareMenu: TPopupMenu;
     Shape: TShape;
-    StringGrid: TStringGrid;
     ToolBar: TToolBar;
     ToolBarMenu: TToolBar;
     NewButton: TToolButton;
@@ -84,13 +84,13 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    procedure HeaderControlSectionClick(HeaderControl: TCustomHeaderControl;
-      Section: THeaderSection);
+
     procedure HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
       Section: THeaderSection; Width: Integer; State: TSectionTrackState);
     procedure IdleTimerStartTimer(Sender: TObject);
     procedure IdleTimerStopTimer(Sender: TObject);
     procedure IdleTimerTimer(Sender: TObject);
+    procedure ListViewData(Sender: TObject; Item: TListItem);
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
@@ -100,23 +100,11 @@ type
     procedure NewButtonClick(Sender: TObject);
     procedure ShareButtonClick(Sender: TObject);
     procedure ShareMenuClose(Sender: TObject);
-    procedure StringGridCompareCells(Sender: TObject; ACol, ARow, BCol,
-      BRow: Integer; var Result: integer);
-    procedure StringGridDrawCell(Sender: TObject; aCol, aRow: Integer;
-      aRect: TRect; aState: TGridDrawState);
-    procedure StringGridKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure StringGridMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure StringGridSelectCell(Sender: TObject; aCol, aRow: Integer;
-      var CanSelect: Boolean);
   private
     { private declarations }
     ParserCommandLine: TParserCommandLine;
     ParserList: TParserList;
     Parser: TParser;
-
-    Selection: array of boolean;
   public
     { public declarations }
     procedure DefaultButtons;
@@ -148,16 +136,10 @@ begin
   ParserCommandLine := TParserCommandLine.Create;
   ParserList := TParserList.Create;
 
-  StringGrid.FocusRectVisible := FALSE;
-  StringGrid.Columns.Clear;
+  ListView.Columns.Clear;
   for I := 0 to HeaderControl.Sections.Count - 1 do
-  begin
-    StringGrid.Columns.Add;
-  end;
-  StringGrid.FixedCols:= 0;
-  StringGrid.RowCount := 0;
-  StringGrid.FixedRows:= 0;
-
+    ListView.Columns.Add;
+  FormResize(Self);
   DefaultButtons;
 end;
 
@@ -168,35 +150,32 @@ begin
 end;
 
 procedure TMainFrm.FormResize(Sender: TObject);
+var
+  I, J, SectionWidth: longint;
 begin
-  HeaderControl.Sections[4].Width :=
-    - HeaderControl.Sections[0].Width
-    - HeaderControl.Sections[1].Width
-    - HeaderControl.Sections[2].Width
-    - HeaderControl.Sections[3].Width + HeaderControl.Width + 5;
-end;
+  for I := HeaderControl.Sections.Count - 1 downto 0 do
+  begin
+    SectionWidth := HeaderControl.Width - 16;
+    for J := 0 to I - 1 do
+      Dec(SectionWidth, HeaderControl.Sections[J].Width);
+    HeaderControl.Sections[I].Width := SectionWidth;
+    if SectionWidth > 0 then Break;
+  end;
 
-procedure TMainFrm.HeaderControlSectionClick(
-  HeaderControl: TCustomHeaderControl; Section: THeaderSection);
-begin
-  StringGrid.SortColRow(TRUE, Section.Index);
+  for I := 0 to HeaderControl.Sections.Count - 1 do
+    ListView.Columns[I].Width := HeaderControl.Sections[I].Width;
 end;
 
 procedure TMainFrm.HeaderControlSectionTrack(HeaderControl: TCustomHeaderControl;
-  Section: THeaderSection; Width: Integer;State: TSectionTrackState);
+  Section: THeaderSection; Width: Integer; State: TSectionTrackState);
 begin
-  if Section.Index < StringGrid.ColCount then
-  begin
-    StringGrid.ColWidths[Section.Index] := Width;
-    FormResize(Self);
-  end;
+  FormResize(Self);
 end;
 
 procedure TMainFrm.IdleTimerStartTimer(Sender: TObject);
 begin
   DisableButtons;
-
-  StringGrid.Clear;
+  ListView.Items.Clear;
 
   TickFrm := TTickFrm. Create(Self);
   with TickFrm.ActionLabel do
@@ -231,6 +210,17 @@ begin
     IdleTimer.Enabled := FALSE;
 end;
 
+procedure TMainFrm.ListViewData(Sender: TObject; Item: TListItem);
+begin
+  Item.Caption     := ParserList.Items[Item.Index].ItemName;
+  Item.SubItems.Add(ParserList.Items[Item.Index].ItemSize);
+  Item.SubItems.Add(ParserList.Items[Item.Index].ItemType);
+  Item.SubItems.Add(ParserList.Items[Item.Index].ItemTime);
+  Item.SubItems.Add(ParserList.Items[Item.Index].ItemPath);
+
+  Item.ImageIndex := 0;
+end;
+
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
   I: longint;
@@ -242,20 +232,9 @@ begin
     ParserList.Clear;
     ParserList.Execute(Parser);
 
-    StringGrid.BeginUpdate;
-    StringGrid.RowCount := ParserList.Count;
-    SetLength(Selection, ParserList.Count);
-    for I := 0 to StringGrid.RowCount - 1 do
-    begin
-      StringGrid.Cells[0, I] := ParserList.Items[I].ItemName;
-      StringGrid.Cells[1, I] := ParserList.Items[I].ItemSize;
-      StringGrid.Cells[2, I] := ParserList.Items[I].ItemType;
-      StringGrid.Cells[3, I] := ParserList.Items[I].ItemTime;
-      StringGrid.Cells[4, I] := ParserList.Items[I].ItemPath;
-
-      Selection[I] := FALSE;
-    end;
-    StringGrid.EndUpdate;
+    ListView.BeginUpdate;
+    ListView.Items.Count := ParserList.Count;
+    ListView.EndUpdate;
 
   end else
 
@@ -285,8 +264,8 @@ begin
 
   HeaderControl.Enabled := FALSE;
   HeaderControl.Visible := FALSE;
-  StringGrid.Enabled := FALSE;
-  StringGrid.Visible := TRUE;
+  ListView.Enabled := FALSE;
+  ListView.Visible := TRUE;
 end;
 
 procedure TMainFrm.DisableButtons;
@@ -299,8 +278,8 @@ begin
 
   HeaderControl.Enabled := FALSE;
   HeaderControl.Visible := FALSE;
-  StringGrid.Enabled := FALSE;
-  StringGrid.Visible := TRUE;
+  ListView.Enabled := FALSE;
+  ListView.Visible := TRUE;
 end;
 
 procedure TMainFrm.EnableButtons;
@@ -313,8 +292,8 @@ begin
 
   HeaderControl.Enabled := TRUE;
   HeaderControl.Visible := TRUE;
-  StringGrid.Enabled := TRUE;
-  StringGrid.Visible := TRUE;
+  ListView.Enabled := TRUE;
+  ListView.Visible := TRUE;
 end;
 
 procedure TMainFrm.MenuButtonClick(Sender: TObject);
@@ -337,13 +316,6 @@ end;
 procedure TMainFrm.ShareMenuClose(Sender: TObject);
 begin
   ShareButton.Down := FALSE;
-end;
-
-procedure TMainFrm.StringGridCompareCells(Sender: TObject;
-  ACol, ARow, BCol, BRow: Integer; var Result: integer);
-begin
-  if ACOL = BCOL then
-    Result := AnsiCompareFileName(StringGrid.Cells[ACol, ARow], StringGrid.Cells[BCol, BRow]);
 end;
 
 function GetIconIndex(const FileExt: string): longint;
@@ -372,82 +344,12 @@ begin
   if FileExt = '.xls'         then Result := 17;
 end;
 
-procedure TMainFrm.StringGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
-var
-  B: TBitmap;
-  I: longint;
-  R: TRect;
-begin
-  for I := 0 to StringGrid.ColCount - 1 do
-    StringGrid.ColWidths[I] := HeaderControl.Sections[I].Width;
-
-  if Selection[aRow] = TRUE then
-  begin
-    StringGrid.Canvas.Brush.Color := clHighlight;
-    StringGrid.Canvas.Font.Color  := clHighlightText;
-  end else
-  begin
-    if (aRow mod 2) = 1 then
-    begin
-      StringGrid.Canvas.Brush.Color := clMenuBar;
-      StringGrid.Canvas.Font.Color  := clDefault;
-    end else
-    begin
-      StringGrid.Canvas.Brush.Color := clDefault;
-      StringGrid.Canvas.Font.Color  := clDefault;
-    end;
-  end;
-
-  if aCol = 0 then
-  begin
-    B := TBitmap.Create;
-    try
-      IconList.GetBitmap(GetIconIndex(LowerCase(
-        ExtractFileExt(StringGrid.Cells[aCol, aRow]))), B);
-
-      R.Top := aRect.Top + (StringGrid.DefaultRowHeight - B.Height) div 2;
-      R.Left := aRect.Left + 2;
-      R.Right := R.Left + B.Width;
-      R.Bottom := R.Top + B.Height;
 
 
 
-      StringGrid.Canvas.Clear;
-      StringGrid.Canvas.StretchDraw(R, B);
-      StringGrid.Canvas.TextOut(R.Right + 4, R.Top, StringGrid.Cells[aCol, aRow]);
-    finally
-      B.Free;
-    end;
-  end else
-  begin
-    StringGrid.Canvas.Clear;
-    StringGrid.Canvas.TextOut(aRect.Right, aRect.Top, StringGrid.Cells[aCol, aRow]);
-  end;
-
-
-end;
-
-procedure TMainFrm.StringGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-
-end;
-
-procedure TMainFrm.StringGridMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  if Button = mbLeft then
-  begin
 
 
 
-  end;
-
-
-end;
-
-procedure TMainFrm.StringGridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
-begin
-
-end;
 
 procedure TMainFrm.AboutMenuItemClick(Sender: TObject);
 begin
