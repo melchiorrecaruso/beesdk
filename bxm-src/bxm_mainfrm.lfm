@@ -1,8 +1,10 @@
 object MainFrm: TMainFrm
-  Left = 463
+  Left = 345
   Height = 453
-  Top = 223
+  Top = 187
   Width = 844
+  HorzScrollBar.Visible = False
+  VertScrollBar.Visible = False
   AlphaBlend = True
   Caption = 'BX Manager'
   ClientHeight = 453
@@ -197,14 +199,13 @@ object MainFrm: TMainFrm
         Width = 200
         Visible = True
       end>
-    OnSectionClick = HeaderControlSectionClick
     OnSectionTrack = HeaderControlSectionTrack
     Anchors = [akTop, akLeft, akRight]
     Font.Style = [fsBold]
     Constraints.MinHeight = 26
     ParentFont = False
   end
-  object StringGrid: TStringGrid
+  object ListView: TListView
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = HeaderControl
     AnchorSideTop.Side = asrBottom
@@ -216,26 +217,24 @@ object MainFrm: TMainFrm
     Height = 389
     Top = 64
     Width = 844
-    AlternateColor = clMenuBar
     Anchors = [akTop, akLeft, akRight, akBottom]
-    AutoAdvance = aaNone
+    AutoSort = False
     BorderStyle = bsNone
-    ColCount = 0
-    FixedCols = 0
-    FixedRows = 0
-    GridLineWidth = 0
-    MouseWheelOption = mwGrid
-    Options = [goVertLine, goRowSelect, goSmoothScroll, goDontScrollPartCell, goRowHighlight]
-    RowCount = 0
+    Columns = <>
+    ColumnClick = False
+    IconOptions.WrapText = False
+    MultiSelect = True
+    OwnerData = True
+    ReadOnly = True
+    RowSelect = True
     ScrollBars = ssAutoVertical
-    TabAdvance = aaNone
+    ShowColumnHeaders = False
+    SmallImages = IconList
+    SortType = stData
     TabOrder = 3
-    TitleStyle = tsNative
-    OnCompareCells = StringGridCompareCells
-    OnDrawCell = StringGridDrawCell
-    OnKeyDown = StringGridKeyDown
-    OnMouseDown = StringGridMouseDown
-    OnSelectCell = StringGridSelectCell
+    ToolTips = False
+    ViewStyle = vsReport
+    OnData = ListViewData
   end
   object MainMenu: TPopupMenu
     AutoPopup = False
