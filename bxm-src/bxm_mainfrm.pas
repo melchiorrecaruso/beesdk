@@ -166,7 +166,8 @@ begin
   Adjust;
 end;
 
-procedure TMainFrm.HeaderControlSectionClick(HeaderControl: TCustomHeaderControl; Section: THeaderSection);
+procedure TMainFrm.HeaderControlSectionClick(
+  HeaderControl: TCustomHeaderControl; Section: THeaderSection);
 begin
   if ListView.SortColumn = Section.Index then
   begin
@@ -263,7 +264,8 @@ begin
     IdleTimer.Enabled := FALSE;
 end;
 
-procedure TMainFrm.ListViewCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
+procedure TMainFrm.ListViewCompare(Sender: TObject;
+  Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
 var
   P1, P2: TParserItem;
 begin
@@ -271,7 +273,7 @@ begin
 
   P1 := TParserItem(Item1);
   P2 := TParserItem(Item2);
-  case Data of
+  case ListView.SortColumn of
     0:   Compare := AnsiCompareFileName(P1.ItemName, P2.ItemName);
     1:   if P1.ItemSize > P2.ItemSize then
            Compare := 1
@@ -296,13 +298,7 @@ begin
 
   if ListView.SortDirection = sdDescending then
   begin
-    if Compare = 1 then
-      Compare := -1
-    else
-      if Compare = -1 then
-        Compare := 1
-      else
-        Compare := 0;
+    Compare := - Compare;
   end;
 end;
 
@@ -381,7 +377,7 @@ begin
   HeaderControl.Enabled := FALSE;
   HeaderControl.Visible := FALSE;
   ListView.Enabled := FALSE;
-  ListView.Visible := TRUE;
+  ListView.Visible := FALSE;
 end;
 
 procedure TMainFrm.DisableButtons;
@@ -395,7 +391,7 @@ begin
   HeaderControl.Enabled := FALSE;
   HeaderControl.Visible := FALSE;
   ListView.Enabled := FALSE;
-  ListView.Visible := TRUE;
+  ListView.Visible := FALSE;
 end;
 
 procedure TMainFrm.EnableButtons;
