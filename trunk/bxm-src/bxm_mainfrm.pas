@@ -85,6 +85,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure HeaderControlSectionClick(HeaderControl: TCustomHeaderControl;
+      Section: THeaderSection);
     procedure HeaderControlSectionResize(HeaderControl: TCustomHeaderControl;
       Section: THeaderSection);
     procedure HeaderControlSectionSeparatorDblClick(
@@ -92,6 +94,8 @@ type
     procedure IdleTimerStartTimer(Sender: TObject);
     procedure IdleTimerStopTimer(Sender: TObject);
     procedure IdleTimerTimer(Sender: TObject);
+    procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
+      Data: Integer; var Compare: Integer);
     procedure ListViewData(Sender: TObject; Item: TListItem);
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
@@ -160,6 +164,18 @@ end;
 procedure TMainFrm.FormResize(Sender: TObject);
 begin
   Adjust;
+end;
+
+procedure TMainFrm.HeaderControlSectionClick(HeaderControl: TCustomHeaderControl; Section: THeaderSection);
+begin
+  if ListView.SortColumn = Section.Index then
+  begin
+    if ListView.SortDirection = sdAscending then
+      ListView.SortDirection := sdDescending
+    else
+      ListView.SortDirection := sdAscending;
+  end;
+  ListView.SortColumn := Section.Index;
 end;
 
 procedure TMainFrm.HeaderControlSectionResize(
@@ -247,10 +263,55 @@ begin
     IdleTimer.Enabled := FALSE;
 end;
 
+procedure TMainFrm.ListViewCompare(Sender: TObject; Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
+var
+  P1, P2: TParserItem;
+begin
+  ShowMessage(IntTostr(Data));
+
+  P1 := TParserItem(Item1);
+  P2 := TParserItem(Item2);
+  case Data of
+    0:   Compare := AnsiCompareFileName(P1.ItemName, P2.ItemName);
+    1:   if P1.ItemSize > P2.ItemSize then
+           Compare := 1
+         else
+           if P1.ItemSize < P2.ItemSize then
+             Compare := -1
+           else
+             Compare := 0;
+
+    2:   Compare := AnsiCompareFileName(P1.ItemType, P2.ItemType);
+    3:   if P1.ItemTime > P2.ItemTime then
+           Compare := 1
+         else
+           if P1.ItemTime < P2.ItemTime then
+             Compare := -1
+           else
+             Compare := 0;
+
+    4:   Compare := AnsiCompareFileName(P1.ItemPath, P2.ItemPath);
+    else Compare := 0;
+  end;
+
+  if ListView.SortDirection = sdDescending then
+  begin
+    if Compare = 1 then
+      Compare := -1
+    else
+      if Compare = -1 then
+        Compare := 1
+      else
+        Compare := 0;
+  end;
+end;
+
 procedure TMainFrm.ListViewData(Sender: TObject; Item: TListItem);
 var
   ItemExt: string;
 begin
+  Item.Data := ParserList.Items[Item.Index];
+
   Item.Caption   := ' ' + ParserList.Items[Item.Index].ItemName;
   Item.SubItems.Add(' ' + ParserList.Items[Item.Index].ItemSize);
   Item.SubItems.Add(' ' + ParserList.Items[Item.Index].ItemType);

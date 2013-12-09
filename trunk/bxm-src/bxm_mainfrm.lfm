@@ -198,6 +198,7 @@ object MainFrm: TMainFrm
         Width = 200
         Visible = True
       end>
+    OnSectionClick = HeaderControlSectionClick
     OnSectionResize = HeaderControlSectionResize
     OnSectionSeparatorDblClick = HeaderControlSectionSeparatorDblClick
     Anchors = [akTop, akLeft, akRight]
@@ -218,7 +219,6 @@ object MainFrm: TMainFrm
     Top = 64
     Width = 844
     Anchors = [akTop, akLeft, akRight, akBottom]
-    AutoSort = False
     BorderStyle = bsNone
     Columns = <>
     ColumnClick = False
@@ -230,10 +230,11 @@ object MainFrm: TMainFrm
     ScrollBars = ssAutoVertical
     ShowColumnHeaders = False
     SmallImages = IconList
+    SortColumn = 0
     SortType = stData
     TabOrder = 3
-    ToolTips = False
     ViewStyle = vsReport
+    OnCompare = ListViewCompare
     OnData = ListViewData
   end
   object MainMenu: TPopupMenu
