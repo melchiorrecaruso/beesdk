@@ -231,9 +231,12 @@ object MainFrm: TMainFrm
     ShowColumnHeaders = False
     SmallImages = IconList
     SortColumn = 0
-    SortType = stText
+    SortType = stData
     TabOrder = 3
     ViewStyle = vsReport
+    OnClick = ListViewClick
+    OnCompare = ListViewCompare
+    OnSelectItem = ListViewSelectItem
   end
   object MainMenu: TPopupMenu
     AutoPopup = False
@@ -255,8 +258,8 @@ object MainFrm: TMainFrm
     end
   end
   object ImageList: TImageList
-    BlendColor = clFuchsia
-    BkColor = clFuchsia
+    BlendColor = clDefault
+    BkColor = clDefault
     Height = 22
     Masked = True
     Width = 22
@@ -710,6 +713,8 @@ object MainFrm: TMainFrm
     top = 80
   end
   object IconList: TImageList
+    BlendColor = clDefault
+    BkColor = clDefault
     left = 288
     top = 80
     Bitmap = {
