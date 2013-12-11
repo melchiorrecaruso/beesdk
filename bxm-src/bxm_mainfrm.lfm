@@ -219,23 +219,21 @@ object MainFrm: TMainFrm
     Top = 64
     Width = 844
     Anchors = [akTop, akLeft, akRight, akBottom]
+    AutoSort = False
     BorderStyle = bsNone
     Columns = <>
     ColumnClick = False
     IconOptions.WrapText = False
     MultiSelect = True
-    OwnerData = True
     ReadOnly = True
     RowSelect = True
     ScrollBars = ssAutoVertical
     ShowColumnHeaders = False
     SmallImages = IconList
     SortColumn = 0
-    SortType = stData
+    SortType = stText
     TabOrder = 3
     ViewStyle = vsReport
-    OnCompare = ListViewCompare
-    OnData = ListViewData
   end
   object MainMenu: TPopupMenu
     AutoPopup = False
