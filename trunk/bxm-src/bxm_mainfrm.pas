@@ -269,10 +269,8 @@ procedure TMainFrm.ListViewCompare(Sender: TObject;
 var
   P1, P2: TParserItem;
 begin
-  ShowMessage(IntTostr(Data));
-
-  P1 := TParserItem(Item1);
-  P2 := TParserItem(Item2);
+  P1 := TParserItem(Item1.Data);
+  P2 := TParserItem(Item2.Data);
   case ListView.SortColumn of
     0:   Compare := AnsiCompareFileName(P1.ItemName, P2.ItemName);
     1:   if P1.ItemSize > P2.ItemSize then
@@ -340,7 +338,6 @@ end;
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
 var
   I: longint;
-  Item: TListItem;
 begin
 
   if ParserCommandLine.Command in [cList] then
@@ -348,7 +345,10 @@ begin
     ParserList.Clear;
     ParserList.Execute(Parser);
 
-    ListView.Items.Count := ParserList.Count;
+    ListView.BeginUpdate;
+    for I := 0 to ParserList.Count - 1 do
+      ListViewData(ListView, ListView.Items.Add);
+    ListView.EndUpdate;
   end else
 
     if ParserCommandLine.Command in [cAdd, cDelete] then
