@@ -12,6 +12,8 @@ uses
 
   bxm_mainfrm;
 
+{$R *.res}
+
 begin
   RequireDerivedFormResource := TRUE;
   Application.Initialize;

@@ -94,9 +94,12 @@ type
     procedure IdleTimerStartTimer(Sender: TObject);
     procedure IdleTimerStopTimer(Sender: TObject);
     procedure IdleTimerTimer(Sender: TObject);
+    procedure ListViewClick(Sender: TObject);
     procedure ListViewCompare(Sender: TObject; Item1, Item2: TListItem;
       Data: Integer; var Compare: Integer);
     procedure ListViewData(Sender: TObject; Item: TListItem);
+    procedure ListViewSelectItem(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
     procedure MainMenuClose(Sender: TObject);
     procedure MenuButtonClick(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
@@ -264,6 +267,11 @@ begin
     IdleTimer.Enabled := FALSE;
 end;
 
+procedure TMainFrm.ListViewClick(Sender: TObject);
+begin
+
+end;
+
 procedure TMainFrm.ListViewCompare(Sender: TObject;
   Item1, Item2: TListItem; Data: Integer; var Compare: Integer);
 var
@@ -318,6 +326,7 @@ begin
   if ItemExt = '.avi'         then Item.ImageIndex := 0  else
   if ItemExt = '.bat'         then Item.ImageIndex := 1  else
   if ItemExt = '.bmp'         then Item.ImageIndex := 2  else
+  if ItemExt = '.png'         then Item.ImageIndex := 2  else
   if ItemExt = '.cddrive'     then Item.ImageIndex := 3  else
   if ItemExt = '.doc'         then Item.ImageIndex := 4  else
   if ItemExt = '.exe'         then Item.ImageIndex := 5  else
@@ -326,6 +335,7 @@ begin
   if ItemExt = '.harddrive'   then Item.ImageIndex := 8  else
   if ItemExt = '.html'        then Item.ImageIndex := 9  else
   if ItemExt = '.mp3'         then Item.ImageIndex := 10 else
+  if ItemExt = '.deb'         then Item.ImageIndex := 11 else
   if ItemExt = '.pkg'         then Item.ImageIndex := 11 else
   if ItemExt = '.ppd'         then Item.ImageIndex := 12 else
   if ItemExt = '.ttf'         then Item.ImageIndex := 13 else
@@ -333,6 +343,12 @@ begin
   if ItemExt = '.unknow'      then Item.ImageIndex := 15 else
   if ItemExt = '.wab'         then Item.ImageIndex := 16 else
   if ItemExt = '.xls'         then Item.ImageIndex := 17 else Item.ImageIndex := 15;
+end;
+
+procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem;
+  Selected: Boolean);
+begin
+
 end;
 
 procedure TMainFrm.IdleTimerStopTimer(Sender: TObject);
@@ -347,7 +363,9 @@ begin
 
     ListView.BeginUpdate;
     for I := 0 to ParserList.Count - 1 do
+    begin
       ListViewData(ListView, ListView.Items.Add);
+    end;
     ListView.EndUpdate;
   end else
 

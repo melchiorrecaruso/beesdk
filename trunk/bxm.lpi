@@ -7,6 +7,10 @@
       <Title Value="bxm"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+      </XPManifest>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <i18n>
@@ -42,8 +46,8 @@
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="20"/>
-        <UsageCount Value="152"/>
+        <CursorPos X="1" Y="22"/>
+        <UsageCount Value="153"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
@@ -56,7 +60,7 @@
         <UnitName Value="bxm_mainfrm"/>
         <TopLine Value="65"/>
         <CursorPos X="3" Y="100"/>
-        <UsageCount Value="152"/>
+        <UsageCount Value="153"/>
       </Unit1>
       <Unit2>
         <Filename Value="test_main.pas"/>
@@ -227,12 +231,11 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="267"/>
-        <CursorPos X="48" Y="275"/>
-        <FoldState Value=" T3lQ0U09111a"/>
+        <TopLine Value="316"/>
+        <CursorPos X="21" Y="338"/>
+        <FoldState Value=" T3lT0U0B111O"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
@@ -585,7 +588,7 @@
         <UsageCount Value="10"/>
       </Unit62>
     </Units>
-    <JumpHistory Count="5" HistoryIndex="4">
+    <JumpHistory Count="7" HistoryIndex="6">
       <Position1>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
         <Caret Line="166" Column="25" TopLine="154"/>
@@ -606,6 +609,14 @@
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
         <Caret Line="61" Column="114" TopLine="47"/>
       </Position5>
+      <Position6>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="357" Column="7" TopLine="324"/>
+      </Position6>
+      <Position7>
+        <Filename Value="bxm-src/bxm_mainfrm.pas"/>
+        <Caret Line="272" Column="3" TopLine="258"/>
+      </Position7>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
