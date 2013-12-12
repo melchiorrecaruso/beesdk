@@ -345,8 +345,8 @@ begin
   if ItemExt = '.xls'         then Item.ImageIndex := 17 else Item.ImageIndex := 15;
 end;
 
-procedure TMainFrm.ListViewSelectItem(Sender: TObject; Item: TListItem;
-  Selected: Boolean);
+procedure TMainFrm.ListViewSelectItem(Sender: TObject;
+  Item: TListItem; Selected: Boolean);
 begin
 
 end;
@@ -487,54 +487,39 @@ var
   Scanner: TFileScanner;
 begin
 
-
   AddFrm := TAddFrm.Create(Self);
 
-  (*
-  if Add.ShowModal = mrOk then
+  if AddFrm.ShowModal = mrOk then
   begin
-    Application.ProcessMessages;
-
+    ParserCommandLine.Clear;
     ParserCommandLine.Command := cAdd;
     ParserCommandLine.CompressionMode := TCompressionMode(
-      Ord(Add.CompressionMethod.ItemIndex));
+      Ord(AddFrm.CompressionMethod.ItemIndex));
 
-    if Add.ArchiveWithPasswordCheck.Checked then
-      ParserCommandLine.Password := Add.ArchiveWithPassword.Text;
+    if AddFrm.ArchiveWithPasswordCheck.Checked then
+      ParserCommandLine.Password := AddFrm.ArchiveWithPassword.Text;
 
-    ParserCommandLine.ArchiveName := Add.ArchiveName;
+    ParserCommandLine.ArchiveName := AddFrm.ArchiveName;
 
-    SetCurrentDir(Add.Root.Text);
+    SetCurrentDir(AddFrm.Root.Text);
     Scanner := TFileScanner.Create;
-    for i := 0 to Add.Files.Items.Count - 1 do
-      if Add.Files.Items[i].ImageIndex = 0 then
-        Scanner.Add(Add.Files.Items[i].Text,
-          Add.RecurseSubdirectories.Checked);
+    for i := 0 to AddFrm.Files.Items.Count - 1 do
+      if AddFrm.Files.Items[i].ImageIndex = 0 then
+        Scanner.Add(AddFrm.Files.Items[i].Text,
+          AddFrm.RecurseSubdirectories.Checked);
 
-    for i := 0 to Add.Files.Items.Count - 1 do
-      if Add.Files.Items[i].ImageIndex = 1 then
-        Scanner.Delete(Add.Files.Items[i].Text,
-          Add.RecurseSubdirectories.Checked);
+    for i := 0 to AddFrm.Files.Items.Count - 1 do
+      if AddFrm.Files.Items[i].ImageIndex = 1 then
+        Scanner.Delete(AddFrm.Files.Items[i].Text,
+          AddFrm.RecurseSubdirectories.Checked);
 
     for i := 0 to Scanner.Count - 1 do
-      ParserCommandLine.FileMasks.Add(Scanner.Items[i].Name);
+      ParserCommandLine.FileMasks.Add(Scanner.Items[i].ItemName);
     Scanner.Destroy;
 
-    Tick := TTickFrm.Create(Self);
-    if Tick.ShowModal(Parser) = mrOk then
-    begin
-      Application.ProcessMessages;
-
-
-
-
-
-    end;
-    Tick.Destroy;
+    // START
+    IdleTimer.Enabled := TRUE;
   end;
-
-
-  *)
   AddFrm.Destroy;
 end;
 

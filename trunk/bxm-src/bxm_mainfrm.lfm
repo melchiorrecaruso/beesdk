@@ -205,6 +205,7 @@ object MainFrm: TMainFrm
     Font.Style = [fsBold]
     Constraints.MinHeight = 26
     ParentFont = False
+    ParentShowHint = False
   end
   object ListView: TListView
     AnchorSideLeft.Control = Owner
