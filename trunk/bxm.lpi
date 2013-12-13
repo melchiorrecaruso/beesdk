@@ -302,8 +302,8 @@
         <UnitName Value="bxm_TickFrm"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="95"/>
-        <CursorPos X="3" Y="97"/>
+        <TopLine Value="32"/>
+        <CursorPos X="14" Y="49"/>
         <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -589,7 +589,7 @@
         <UsageCount Value="10"/>
       </Unit62>
     </Units>
-    <JumpHistory Count="17" HistoryIndex="16">
+    <JumpHistory Count="18" HistoryIndex="17">
       <Position1>
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
         <Caret Line="166" Column="25" TopLine="154"/>
@@ -658,6 +658,10 @@
         <Filename Value="bxm-src/bxm_mainfrm.pas"/>
         <Caret Line="518" Column="60" TopLine="501"/>
       </Position17>
+      <Position18>
+        <Filename Value="bxm-src/bxm_tickfrm.pas"/>
+        <Caret Line="97" Column="3" TopLine="95"/>
+      </Position18>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
