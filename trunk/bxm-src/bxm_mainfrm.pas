@@ -487,6 +487,8 @@ var
   Scanner: TFileScanner;
 begin
 
+  ListView
+
   AddFrm := TAddFrm.Create(Self);
 
   if AddFrm.ShowModal = mrOk then
