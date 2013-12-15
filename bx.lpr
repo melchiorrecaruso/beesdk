@@ -39,7 +39,7 @@ uses
   Classes,
   // ---
   bx_Application,
-  bx_Common, bx_filescanner;
+  bx_Common;
 
 var
   Application: TBxApplication;
@@ -77,4 +77,4 @@ begin
   Application := TBxApplication.Create;
   Application.Execute;
   Application.Destroy;
-end.
+end.

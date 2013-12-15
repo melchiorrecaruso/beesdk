@@ -156,7 +156,7 @@ type
     FExternalFileSize: int64;
     procedure InitFlags;
   public {methods}
-    constructor Create(const AFileName: string);
+    constructor Create(const ItemName: string);
     constructor Read(Stream: TFileReader);
     procedure Tag;
     function  Tagged: boolean;
@@ -326,8 +326,8 @@ type
     procedure TestTagged;
     procedure UpdateTagged;
 
-    procedure New(Rec: PFileScannerItem; const RecName: string);
-    function  Find(const AFilename: string): TArchiveItem;
+    function Add(const AItemName: string): TArchiveItem;
+    function Find(const AItemName: string): TArchiveItem;
 
     procedure Suspend(Value: boolean);
     procedure Terminate;
@@ -455,10 +455,10 @@ end;
 
 // TArchiveItem class
 
-constructor TArchiveItem.Create(const AFileName: string);
+constructor TArchiveItem.Create(const ItemName: string);
 begin
   inherited Create;
-  FFileName             := AFileName;
+  FFileName             := ItemName;
   /// item property ///
   FVersionNeededToRead  :=  0;
   FUncompressedSize     :=  0;
@@ -1512,22 +1512,21 @@ end;
 
 // TArchiver # TAG #
 
-procedure TArchiver.New(Rec: PFileScannerItem; const RecName: string);
-var
-  Item: TArchiveItem;
+function TArchiver.Add(const AItemName: string): TArchiveItem;
 begin
-  Item := TArchiveItem.Create(RecName);
-  Item.Update(Rec);
-  FCentralDirectory.Add(Item);
+  Result := TArchiveItem.Create(AItemName);
+  begin
+    FCentralDirectory.Add(Result);
+  end;
 end;
 
-function TArchiver.Find(const AFileName: string): TArchiveItem;
+function TArchiver.Find(const AItemName: string): TArchiveItem;
 var
   I: longint;
 begin
   Result := nil;
   for I := 0 to GetCount - 1 do
-    if AnsiCompareFileName(GetItem(I).FileName, AFileName) = 0 then
+    if AnsiCompareFileName(GetItem(I).FileName, AItemName) = 0 then
     begin
       Result := GetItem(I);
       Break;
@@ -1995,4 +1994,4 @@ begin
 end;
 
 end.
-
+
