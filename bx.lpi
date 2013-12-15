@@ -84,7 +84,7 @@
         <WorkingDirectory Value="C:\Documents and Settings\Quacquero\Desktop"/>
       </local>
     </RunParams>
-    <Units Count="14">
+    <Units Count="15">
       <Unit0>
         <Filename Value="bx.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -92,7 +92,7 @@
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="25" Y="20"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -100,11 +100,10 @@
       <Unit1>
         <Filename Value="bx-src\bx_filestream.pas"/>
         <UnitName Value="bx_FileStream"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="390"/>
-        <CursorPos X="12" Y="414"/>
+        <TopLine Value="1"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -112,10 +111,10 @@
       <Unit2>
         <Filename Value="bx-src\bx_common.pas"/>
         <UnitName Value="bx_Common"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="3" Y="20"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -124,10 +123,10 @@
         <Filename Value="bx-src\bx_filescanner.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="bx_FileScanner"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="56" Y="26"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="34"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -135,10 +134,10 @@
       <Unit4>
         <Filename Value="bx-src\bx_archiver.pas"/>
         <UnitName Value="bx_Archiver"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="14" Y="22"/>
+        <CursorPos X="45" Y="2"/>
         <FoldState Value=" T3pU03A pj3jW0Z61112P"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
@@ -147,10 +146,10 @@
       <Unit5>
         <Filename Value="bx-src\bx_application.pas"/>
         <UnitName Value="bx_Application"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="56" Y="26"/>
+        <CursorPos X="45" Y="2"/>
         <FoldState Value=" T3kP0Y4 pjKkL0L0331511 T0mEB50111]322[65[D6[8837"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
@@ -159,10 +158,11 @@
       <Unit6>
         <Filename Value="bx-src\bx_stream.pas"/>
         <UnitName Value="bx_Stream"/>
-        <EditorIndex Value="13"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="25" Y="15"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -170,10 +170,10 @@
       <Unit7>
         <Filename Value="bx-src\bx_cipher.pas"/>
         <UnitName Value="bx_Cipher"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="7"/>
-        <CursorPos X="30" Y="21"/>
+        <TopLine Value="1"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -181,10 +181,10 @@
       <Unit8>
         <Filename Value="bx-src\bx_coder.pas"/>
         <UnitName Value="bx_Coder"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="19" Y="22"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -192,10 +192,10 @@
       <Unit9>
         <Filename Value="bx-src\bx_commandline.pas"/>
         <UnitName Value="bx_CommandLine"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="7"/>
-        <CursorPos X="5" Y="22"/>
+        <TopLine Value="1"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -203,10 +203,10 @@
       <Unit10>
         <Filename Value="bx-src\bx_configuration.pas"/>
         <UnitName Value="bx_Configuration"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="25" Y="22"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -214,10 +214,10 @@
       <Unit11>
         <Filename Value="bx-src\bx_hashgen.pas"/>
         <UnitName Value="bx_HashGen"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="4"/>
-        <CursorPos X="32" Y="19"/>
+        <TopLine Value="1"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -225,10 +225,10 @@
       <Unit12>
         <Filename Value="bx-src\bx_liblink.pas"/>
         <UnitName Value="bx_LibLink"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="3" Y="20"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -236,14 +236,24 @@
       <Unit13>
         <Filename Value="bx-src\bx_messages.pas"/>
         <UnitName Value="bx_Messages"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="3" Y="20"/>
+        <CursorPos X="45" Y="2"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="bx-src\bx_compiler.inc"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="45" Y="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit14>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
