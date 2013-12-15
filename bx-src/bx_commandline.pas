@@ -16,13 +16,14 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
-    Command line parser.
+    TCommandLineParser class.
 
   Fist release:
 
-    v1.0 build 0027 - 2013.11.09 by Melchiorre Caruso.
+    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -1105,4 +1106,4 @@ begin
 end;
 
 end.
-
+

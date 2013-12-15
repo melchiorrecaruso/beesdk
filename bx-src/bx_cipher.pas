@@ -16,13 +16,14 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
-    Ciphers.
+    TCipher classes.
 
   Fist release:
 
-    v1.0 build 0010 - 2013.09.11 by Melchiorre Caruso.
+    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -188,4 +189,4 @@ begin
   end;
 end;
 
-end.
+end.
