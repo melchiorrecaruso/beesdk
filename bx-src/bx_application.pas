@@ -590,7 +590,9 @@ begin
     Scanner.Sort(CompareCustomSearchRec);
     for I := 0 to Scanner.Count - 1 do
     begin
-      UpdateItem(Scanner.Items[I]);
+      // UpdateItem(Scanner.Items[I]);
+      Writeln('SCANNER = ', Scanner.Items[I]^.ItemName);
+
       if ExitStatus <> esNoError then Break;
     end;
     FArchiver.UpdateTagged;

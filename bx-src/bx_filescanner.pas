@@ -150,10 +150,10 @@ begin
   while Error = 0 do
   begin
     RecName := RecPath + Rec.Name;
-    if (Recursive) and ((Rec.Attr and faDirectory) = faDirectory) then
+    if (Rec.Attr and faDirectory) = faDirectory then
     begin
       if (Rec.Attr and faSymLink) = 0 then
-        if (Rec.Name <> '.') and (Rec.Name <> '..') then
+        if (Recursive) and (Rec.Name <> '.') and (Rec.Name <> '..') then
           Scan(IncludeTrailingBackSlash(RecName) +
             ExtractFileName(FileMask), Recursive);
     end else

@@ -19,7 +19,7 @@
 {
   Contains:
 
-    BX library link.
+    Bx library link.
 
   Fist release:
 
