@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2013 Melchiorre Caruso.
+  Copyright (c) 2010-2013 Melchiorre Caruso.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -16,19 +16,20 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
     Compiler directives.
 
   Fist release:
 
-    v1.0 build 0010 - 2013.09.11 by Melchiorre Caruso.
+    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
 
   Modifyed:
 
 }
 
-{$DEFINE DEBUG}
+{*$DEFINE DEBUG}
 {$DEFINE LIBBX}
 {$INLINE OFF}
 
@@ -40,4 +41,4 @@
   {$ELSE}
     todo: define filenamecasesensitive
   {$ENDIF}
-{$ENDIF}
+{$ENDIF}
