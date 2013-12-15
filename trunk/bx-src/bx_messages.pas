@@ -16,13 +16,14 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
     Messages and exit status run-time routines.
 
   Fist release:
 
-    v1.0 build 0012 - 2013.09.12 by Melchiorre Caruso.
+    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -189,4 +190,4 @@ begin
     ExitStatus := aExitStatus;
 end;
 
-end.
+end.

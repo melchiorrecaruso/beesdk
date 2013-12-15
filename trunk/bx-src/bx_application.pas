@@ -16,13 +16,14 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
     Bx archiver shell.
 
   Fist release:
 
-    v1.0 build 0027 - 2013.11.09 by Melchiorre Caruso.
+    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -228,37 +229,50 @@ begin
   case FUpdateMethod of
     umAdd: begin
       if FileExists(Item.ExternalFileName) = FALSE then
+      begin
         Item.Tag;
+      end;
     end;
     umReplace: begin
       if FileExists(Item.ExternalFileName) = TRUE then
+      begin
         Item.Tag;
+      end;
     end;
     umUpdate: begin
       if FileExists(Item.ExternalFileName) = TRUE then
         if Item.LastModifiedTime > FileTimeToUnix(FileAge(Item.ExternalFileName)) then
+        begin
           Item.Tag;
+        end;
     end;
     umAddUpdate: begin
       if FileExists(Item.ExternalFileName) = FALSE then
-        Item.Tag
-      else
+      begin
+        Item.Tag;
+      end else
         if Item.LastModifiedTime > FileTimeToUnix(FileAge(Item.ExternalFileName)) then
+        begin
           Item.Tag;
+        end;
     end;
     umAddReplace: begin
       Item.Tag;
     end;
     umAddAutoRename: begin
       Index := 0;
-      while FileExists(GenerateAltFileName(Item.ExternalFileName, Index)) = TRUE do Inc(Index);
+      while FileExists(GenerateAltFileName(Item.ExternalFileName, Index)) = TRUE do
+      begin
+        Inc(Index);
+      end;
       Item.ExternalFileName := GenerateAltFileName(Item.ExternalFileName, Index);
       Item.Tag;
     end;
     umAddQuery: begin
       if FileExists(Item.ExternalFileName) = FALSE then
-        Item.Tag
-      else
+      begin
+        Item.Tag;
+      end else
         case QueryHowToUpdate('Overwrite "' + Item.ExternalFileName + '"? ') of
           'Y': Item.Tag;
           'N': ; // nothing to do
@@ -325,30 +339,40 @@ begin
       if Item = nil then
       begin
         Item := FArchiver.Add(ItemName);
-        Item.Update(Rec);
+        Item.Tag(Rec);
       end;
     end;
     umReplace: begin
       if Item <> nil then
-        Item.Update(Rec);
+      begin
+        Item.Tag(Rec);
+      end;
     end;
     umUpdate: begin
       if Item <> nil then
         if Item.LastModifiedTime < Rec^.ItemTime then
-          Item.Update(Rec);
+        begin
+          Item.Tag(Rec);
+        end;
     end;
     umAddUpdate: begin
       if Item = nil then
-        FArchiver.New(Rec, ItemName)
-      else
+      begin
+        Item := FArchiver.Add(ItemName);
+        Item.Tag(Rec);
+      end else
         if Item.LastModifiedTime < Rec^.ItemTime then
-          Item.Update(Rec);
+        begin
+          Item.Tag(Rec);
+        end;
     end;
     umAddReplace: begin
       if Item = nil then
-        FArchiver.New(Rec, ItemName)
-      else
-        Item.Update(Rec);
+      begin
+        Item := FArchiver.Add(ItemName);
+        Item.Tag(Rec);
+      end else
+        Item.Tag(Rec);
     end;
     umAddAutoRename: begin
       Index := 0;
@@ -356,16 +380,19 @@ begin
       begin
         Inc(Index);
       end;
-      FArchiver.New(Rec, GenerateAltFileName(ItemName, Index));
+      Item := FArchiver.Add(GenerateAltFileName(ItemName, Index));
+      Item.Tag(Rec);
     end;
     umAddQuery: begin
       if Item = nil then
-        FArchiver.New(Rec, ItemName)
-      else
+      begin
+        Item := FArchiver.Add(ItemName);
+        Item.Tag(Rec);
+      end else
         case QueryHowToUpdate('Overwrite "' + Item.FileName + '"? ') of
-          'Y': Item.Update(Rec);
+          'Y': Item.Tag(Rec);
           'N': ;// nothing to do
-          'A': Item.Update(Rec);
+          'A': Item.Tag(Rec);
           'Q': ;// nothing to do
           else UpdateItem(Rec);
         end;
@@ -373,17 +400,23 @@ begin
     umQuery: begin
       if Item = nil then
         case QueryHowToUpdate('Add "' + ItemName + '"? ') of
-          'Y': FArchiver.New(Rec, ItemName);
+          'Y': begin
+            Item := FArchiver.Add(ItemName);
+            Item.Tag(Rec);
+          end;
           'N': ;// nothing to do
-          'A': FArchiver.New(Rec, ItemName);
+          'A': begin
+            Item := FArchiver.Add(ItemName);
+            Item.Tag(Rec);
+          end;
           'Q': ;// nothing to do
           else UpdateItem(Rec);
         end
       else
         case QueryHowToUpdate('Overwrite "' + Item.FileName  + '"? ') of
-          'Y': Item.Update(Rec);
+          'Y': Item.Tag(Rec);
           'N': ;// nothing to do
-          'A': Item.Update(Rec);
+          'A': Item.Tag(Rec);
           'Q': ;// nothing to do
           else UpdateItem(Rec);
         end;
@@ -548,30 +581,20 @@ begin
   if ExitStatus = esNoError then
   begin
     DoMessage(Format(cmScanning, ['...']));
+
     Scanner := TFileScanner.Create;
     for I := 0 to FCommandLine.FileMasks.Count - 1 do
       Scanner.Add(FCommandLine.FileMasks[I], FCommandLine.SwitchR[I]);
     for I := 0 to FCommandLine.SwitchX.Count - 1 do
       Scanner.Delete(FCommandLine.SwitchX[I], FCommandLine.SwitchRX[I]);
-
     Scanner.Sort(CompareCustomSearchRec);
     for I := 0 to Scanner.Count - 1 do
     begin
-
-
-
-
-
-
-
-
-
-
-
-
+      UpdateItem(Scanner.Items[I]);
+      if ExitStatus <> esNoError then Break;
     end;
-    FreeAndNil(Scanner);
     FArchiver.UpdateTagged;
+    FreeAndNil(Scanner);
   end;
   CloseArchive;
 end;
@@ -599,22 +622,6 @@ begin
     FArchiver. RenameTagged;
   end;
   CloseArchive;
-end;
-
-
-
-function CompareFilePath(P1, P2: pointer): longint;
-begin
-  Result := AnsiCompareFileName(
-    ExtractFilePath(TArchiveItem(P1).FileName),
-    ExtractFilePath(TArchiveItem(P2).FileName));
-
-  if Result = 0 then
-  begin
-    Result := CompareText(
-      ExtractFileName(TArchiveItem(P1).FileName),
-      ExtractFileName(TArchiveItem(P2).FileName));
-  end;
 end;
 
 procedure TBxApplication.HelpShell;
@@ -649,6 +656,20 @@ begin
   DoMessage('  -w: set temporary work directory');
   DoMessage('  -x: exclude filenames');
   DoMessage('  -y: assume yes on all queries' + LineEnding);
+end;
+
+function CompareFilePath(P1, P2: pointer): longint;
+begin
+  Result := AnsiCompareFileName(
+    ExtractFilePath(TArchiveItem(P1).FileName),
+    ExtractFilePath(TArchiveItem(P2).FileName));
+
+  if Result = 0 then
+  begin
+    Result := CompareText(
+      ExtractFileName(TArchiveItem(P1).FileName),
+      ExtractFileName(TArchiveItem(P2).FileName));
+  end;
 end;
 
 procedure TBxApplication.ListShell;
@@ -749,4 +770,4 @@ begin
 end;
 
 end.
-
+

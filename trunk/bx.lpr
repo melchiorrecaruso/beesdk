@@ -23,7 +23,7 @@
 
   Fist release:
 
-    v1.0 build 0020 - 2013.10.06 by Melchiorre Caruso.
+    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -77,4 +77,4 @@ begin
   Application := TBxApplication.Create;
   Application.Execute;
   Application.Destroy;
-end.
+end.

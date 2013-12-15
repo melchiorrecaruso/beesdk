@@ -16,13 +16,14 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
-    TArchiver, main class.
+    TArchiver class.
 
   Fist release:
 
-    v1.0 build 0017 - 2013.11.08 by Melchiorre Caruso.
+    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -156,12 +157,12 @@ type
     FExternalFileSize: int64;
     procedure InitFlags;
   public {methods}
-    constructor Create(const ItemName: string);
+    constructor Create(const aItemName: string);
     constructor Read(Stream: TFileReader);
-    procedure Tag;
+    procedure Tag; overload;
+    procedure Tag(Rec: PFileScannerItem); overload;
     function  Tagged: boolean;
     procedure UnTag;
-    procedure Update(Rec: PFileScannerItem);
     procedure Write(Stream: TFileWriter);
   public {property}
     property Index: longint read FIndex;
@@ -326,8 +327,8 @@ type
     procedure TestTagged;
     procedure UpdateTagged;
 
-    function Add(const AItemName: string): TArchiveItem;
-    function Find(const AItemName: string): TArchiveItem;
+    function Add(const aItemName: string): TArchiveItem;
+    function Find(const aItemName: string): TArchiveItem;
 
     procedure Suspend(Value: boolean);
     procedure Terminate;
@@ -455,10 +456,10 @@ end;
 
 // TArchiveItem class
 
-constructor TArchiveItem.Create(const ItemName: string);
+constructor TArchiveItem.Create(const aItemName: string);
 begin
   inherited Create;
-  FFileName             := ItemName;
+  FFileName             := aItemName;
   /// item property ///
   FVersionNeededToRead  :=  0;
   FUncompressedSize     :=  0;
@@ -486,7 +487,7 @@ begin
   /// reserved property ///
   FExternalFileName     := '';
   FExternalFileSize     :=  0;
-  FTags                 := [aitUpdate];
+  FTags                 := [];
 end;
 
 constructor TArchiveItem.Read(Stream: TFileReader);
@@ -562,17 +563,7 @@ begin
   Include(FTags, aitUpdate);
 end;
 
-function TArchiveItem.Tagged: boolean;
-begin
-  Result := aitUpdate in FTags;
-end;
-
-procedure TArchiveItem.UnTag;
-begin
-  Exclude(FTags, aitUpdate);
-end;
-
-procedure TArchiveItem.Update(Rec: PFileScannerItem);
+procedure TArchiveItem.Tag(Rec: PFileScannerItem);
 begin
   /// item property ///
   FLastModifiedTime := Rec^.ItemTime;
@@ -581,8 +572,18 @@ begin
   /// reserved property ///
   FExternalFileName := Rec^.ItemName;
   FExternalFileSize := Rec^.itemSize;
-  // auto-tag //
+  // tag //
   Include(FTags, aitUpdate);
+end;
+
+function TArchiveItem.Tagged: boolean;
+begin
+  Result := aitUpdate in FTags;
+end;
+
+procedure TArchiveItem.UnTag;
+begin
+  Exclude(FTags, aitUpdate);
 end;
 
 procedure TArchiveItem.Write(Stream: TFileWriter);
@@ -740,6 +741,7 @@ begin
   if Item.CompressionBlock = 0 then
     if Index < FItems.Count - 1 then
       Items[Index + 1].FCompressionBlock := 0;
+
   FreeandNil(Item);
   FItems.Delete(Index);
 end;
@@ -1398,11 +1400,6 @@ begin
   Result := FCentralDirectory.Comment;
 end;
 
-procedure TArchiver.SetComment(const Value: string);
-begin
-  FCentralDirectory.Comment := Value;
-end;
-
 function TArchiver.GetCount: longint;
 begin
   Result := FCentralDirectory.Count;
@@ -1428,6 +1425,11 @@ end;
 procedure TArchiver.SetSfxName(const Value: string);
 begin
   FSfxName := Value;
+end;
+
+procedure TArchiver.SetComment(const Value: string);
+begin
+  FCentralDirectory.Comment := Value;
 end;
 
 procedure TArchiver.SetWorkDirectory(const Value: string);
@@ -1467,9 +1469,6 @@ begin
   if Assigned(FOnPercentage) then
     FOnPercentage(Round((FProcessedSize/FTotalSize)*100));
 end;
-
-
-
 
 // TArchiveWriter class
 (*
@@ -1512,21 +1511,21 @@ end;
 
 // TArchiver # TAG #
 
-function TArchiver.Add(const AItemName: string): TArchiveItem;
+function TArchiver.Add(const aItemName: string): TArchiveItem;
 begin
-  Result := TArchiveItem.Create(AItemName);
+  Result := TArchiveItem.Create(aItemName);
   begin
     FCentralDirectory.Add(Result);
   end;
 end;
 
-function TArchiver.Find(const AItemName: string): TArchiveItem;
+function TArchiver.Find(const aItemName: string): TArchiveItem;
 var
   I: longint;
 begin
   Result := nil;
   for I := 0 to GetCount - 1 do
-    if AnsiCompareFileName(GetItem(I).FileName, AItemName) = 0 then
+    if AnsiCompareFileName(GetItem(I).FileName, aItemName) = 0 then
     begin
       Result := GetItem(I);
       Break;
@@ -1994,4 +1993,4 @@ begin
 end;
 
 end.
-
+

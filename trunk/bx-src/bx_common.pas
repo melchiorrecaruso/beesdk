@@ -16,13 +16,14 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Contains:
+{
+  Contains:
 
     Various helper routines.
 
   Fist release:
 
-    v1.0 build 0027 - 2013.09.11 by Melchiorre Caruso.
+    v1.0 build 2153 - 2013.12.15 by Melchiorre Caruso.
 
   Modifyed:
 
@@ -284,8 +285,8 @@ begin
   {$ELSE}
   iFilePath := ExtractFilePath(UpperCase(FileName));
   iFileName := ExtractFileName(UpperCase(FileName));
-  iMaskPath := ExtractFilePath(UpperCase(Mask));
-  iMaskName := ExtractFileName(UpperCase(Mask));
+  iMaskPath := ExtractFilePath(UpperCase(FileMask));
+  iMaskName := ExtractFileName(UpperCase(FileMask));
   {$ENDIF}
 
   if ExtractFileDrive(iMaskPath) = '' then
