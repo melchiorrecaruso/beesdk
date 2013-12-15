@@ -323,7 +323,10 @@ begin
   case FUpdateMethod of
     umAdd: begin
       if Item = nil then
-        FArchiver.New(Rec, ItemName);
+      begin
+        Item := FArchiver.Add(ItemName);
+        Item.Update(Rec);
+      end;
     end;
     umReplace: begin
       if Item <> nil then
@@ -746,4 +749,4 @@ begin
 end;
 
 end.
-
+

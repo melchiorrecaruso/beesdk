@@ -72,8 +72,8 @@ function DeleteFilePath(const FilePath, FileName: string): string;
 //function FileNameIsValid(const FileName: string): boolean;
 //function FilePathIsValid(const FileName: string): boolean;
 
-function FileNameHasWildcards(const FileName: string): boolean;
-function FileNameMatch(const FileName, Mask:  string; Recursive: boolean): boolean;
+function FileMaskHasWildcards(const FileMask: string): boolean;
+function FileNameMatch(const FileName, FileMask:  string; Recursive: boolean): boolean;
 function FileNamePos(const FilePath, FileName: string): longint;
 
 function GenerateAltFileName(const FileName: string; Index: longint): string;
@@ -227,16 +227,16 @@ begin
     Result := Pos(PathDelim + PathDelim, FilePath) > 0;
 end;
 
-function FileNameHasWildcards(const FileName: string): boolean;
+function FileMaskHasWildcards(const FileMask: string): boolean;
 const
   WildcardCharacters: set of char = ['*', '?'];
 var
   I: longint;
 begin
   Result := FALSE;
-  for I := 1 to Length(FileName) do
+  for I := 1 to Length(FileMask) do
   begin
-    Result := FileName[I] in WildcardCharacters;
+    Result := FileMask[I] in WildcardCharacters;
     if Result = TRUE then Break;
   end;
 end;
@@ -268,7 +268,7 @@ begin
         end;
 end;
 
-function FileNameMatch(const FileName, Mask: string; Recursive: boolean): boolean;
+function FileNameMatch(const FileName, FileMask: string; Recursive: boolean): boolean;
 var
   iFileDrive: string;
   iFilePath:  string;
@@ -279,8 +279,8 @@ begin
   {$IFDEF FILENAMECASESENSITIVE}
   iFilePath := ExtractFilePath(FileName);
   iFileName := ExtractFileName(FileName);
-  iMaskPath := ExtractFilePath(Mask);
-  iMaskName := ExtractFileName(Mask);
+  iMaskPath := ExtractFilePath(FileMask);
+  iMaskName := ExtractFileName(FileMask);
   {$ELSE}
   iFilePath := ExtractFilePath(UpperCase(FileName));
   iFileName := ExtractFileName(UpperCase(FileName));
