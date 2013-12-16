@@ -47,7 +47,7 @@ type
 
   { TFileScannerItem }
 
-  TFileScannerItem = packed record
+  TFileScannerItem = record
     ItemName: string;
     ItemSize: int64;
     ItemTime: int64;
@@ -157,8 +157,10 @@ begin
           Scan(IncludeTrailingBackSlash(RecName) +
             ExtractFileName(FileMask), Recursive);
     end else
+    begin
       if FileNameMatch(RecName, FileMask, Recursive) then
         FList.Add(AddItem(RecPath, Rec));
+    end;
 
     Error := FindNext(Rec);
   end; // end while error ...
