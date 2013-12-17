@@ -123,10 +123,11 @@
         <Filename Value="bx-src\bx_filescanner.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="bx_FileScanner"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="124"/>
-        <CursorPos X="10" Y="175"/>
+        <TopLine Value="38"/>
+        <CursorPos X="40" Y="50"/>
         <UsageCount Value="43"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -211,7 +212,6 @@
       <Unit11>
         <Filename Value="bx-src\bx_hashgen.pas"/>
         <UnitName Value="bx_HashGen"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="73"/>

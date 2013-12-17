@@ -43,7 +43,7 @@ uses
 type
   { TFileScannerItem }
 
-  TFileScannerItem = class
+  TFileScannerItem = class(TObject)
   private
     FFileName: string;
     FFileSize: int64;
@@ -115,7 +115,7 @@ var
   I: longint;
 begin
   for I := 0 to FList.Count - 1 do
-    FreeMem(FList[I]);
+    TFileScannerItem(FList[I]).Destroy;
   FList.Clear;
 end;
 
@@ -132,12 +132,17 @@ var
   Error: longint;
 begin
   // directory and recursive mode ...
-  if FileMask <> '' then
-    if FileMask[Length(FileMask)] = PathDelim then
-    begin
-      Recursive := TRUE;
-      FileMask  := IncludeTrailingPathDelimiter(FileMask) + '*';
-    end;
+  if DirectoryExists(FileMask) then
+  begin
+    Recursive := TRUE;
+    FileMask  := IncludeTrailingPathDelimiter(FileMask) + '*';
+  end else
+    if FileMask <> '' then
+      if FileMask[Length(FileMask)] = PathDelim then
+      begin
+        Recursive := TRUE;
+        FileMask  := IncludeTrailingPathDelimiter(FileMask) + '*';
+      end;
 
   RecPath := ExtractFilePath(FileMask);
   while FileMaskHasWildcards(RecPath) do
