@@ -41,17 +41,21 @@ uses
   SysUtils;
 
 type
-  { PFileScannerItem }
-
-  PFileScannerItem = ^TFileScannerItem;
-
   { TFileScannerItem }
 
-  TFileScannerItem = record
-    ItemName: string;
-    ItemSize: int64;
-    ItemTime: int64;
-    ItemAttr: longint;
+  TFileScannerItem = class
+  private
+    FFileName: string;
+    FFileSize: int64;
+    FFileTime: int64;
+    FFileAttr: longint;
+  public
+    constructor Create(const RecPath: string; const Rec: TSearchRec);
+  public
+    property FileName: string read FFileName;
+    property FileSize: int64 read FFileSize;
+    property FileTime: int64 read FFileTime;
+    property FileAttr: longint read FFileAttr;
   end;
 
   { TFileScanner }
@@ -60,8 +64,8 @@ type
   private
     FList: TList;
     function GetCount: integer;
-    function GetItem(Index: longint): PFileScannerItem;
-    function AddItem(const RecPath: string; const Rec: TSearchRec): PFileScannerItem;
+    function GetItem(Index: longint): TFileScannerItem;
+    function AddItem(const RecPath: string; const Rec: TSearchRec): TFileScannerItem;
     procedure Scan(FileMask: string; Recursive: boolean);
   public
     constructor Create;
@@ -72,13 +76,24 @@ type
     procedure Sort(Compare: TListSortCompare);
   public
     property Count: integer read GetCount;
-    property Items[Index: longint]: PFileScannerItem read GetItem;
+    property Items[Index: longint]: TFileScannerItem read GetItem;
   end;
 
 implementation
 
 uses
   bx_Common;
+
+{ TFileScannerItem class }
+
+constructor TFilescannerItem.Create(const RecPath: string; const Rec: TSearchRec);
+begin
+  inherited Create;
+  FFileName := RecPath + Rec.Name;
+  FFileSize := Rec.Size;
+  FFileTime := DateTimeToUnix(FileDateToDateTime(Rec.Time));
+  FFileAttr := Rec.Attr;
+end;
 
 { TFileScanner class }
 
@@ -104,13 +119,9 @@ begin
   FList.Clear;
 end;
 
-function TFileScanner.AddItem(const RecPath: string; const Rec: TSearchRec): PFileScannerItem;
+function TFileScanner.AddItem(const RecPath: string; const Rec: TSearchRec): TFileScannerItem;
 begin
-  GetMem(Result, SizeOf(TFileScannerItem));
-  Result^.ItemName := RecPath + Rec.Name;
-  Result^.ItemSize := Rec.Size;
-  Result^.ItemTime := DateTimeToUnix(FileDateToDateTime(Rec.Time));
-  Result^.ItemAttr := Rec.Attr;
+  Result := TFileScannerItem.Create(RecPath, Rec);
 end;
 
 procedure TFileScanner.Scan(FileMask: string; Recursive: boolean);
@@ -177,7 +188,7 @@ var
   I: longint;
 begin
   for I := Count - 1 downto 0 do
-    if FileNameMatch(Items[I]^.ItemName, FileMask, Recursive) then
+    if FileNameMatch(Items[I].FileName, FileMask, Recursive) then
     begin
       FList.Delete(I);
     end;
@@ -193,7 +204,7 @@ begin
   Result := FList.Count;
 end;
 
-function TFileScanner.GetItem(Index:longint): PFileScannerItem;
+function TFileScanner.GetItem(Index:longint): TFileScannerItem;
 begin
   Result := FList.Items[Index];
 end;

@@ -160,7 +160,7 @@ type
     constructor Create(const aItemName: string);
     constructor Read(Stream: TFileReader);
     procedure Tag; overload;
-    procedure Tag(Rec: PFileScannerItem); overload;
+    procedure Tag(Rec: TFileScannerItem); overload;
     function  Tagged: boolean;
     procedure UnTag;
     procedure Write(Stream: TFileWriter);
@@ -563,15 +563,15 @@ begin
   Include(FTags, aitUpdate);
 end;
 
-procedure TArchiveItem.Tag(Rec: PFileScannerItem);
+procedure TArchiveItem.Tag(Rec: TFileScannerItem);
 begin
   /// item property ///
-  FLastModifiedTime := Rec^.ItemTime;
+  FLastModifiedTime := Rec.FileTime;
   FLastStoredTime   := DateTimeToUnix(Now);
-  FAttributes       := Rec^.ItemAttr;
+  FAttributes       := Rec.FileAttr;
   /// reserved property ///
-  FExternalFileName := Rec^.ItemName;
-  FExternalFileSize := Rec^.itemSize;
+  FExternalFileName := Rec.FileName;
+  FExternalFileSize := Rec.FileSize;
   // tag //
   Include(FTags, aitUpdate);
 end;
