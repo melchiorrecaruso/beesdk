@@ -63,7 +63,7 @@ type
     procedure CommentItem(Item: TArchiveItem);
     procedure ExtractItem(Item: TArchiveItem);
     procedure RenameItem (Item: TArchiveItem);
-    procedure UpdateItem(Rec: PFileScannerItem);
+    procedure UpdateItem(Rec: TFileScannerItem);
     { Events routines}
     procedure DoMessage(const Message: string);
     procedure DoPercentage(Percentage: longint);
@@ -325,13 +325,13 @@ begin
   until ExitStatus = esNoError;
 end;
 
-procedure TBxApplication.UpdateItem(Rec: PFileScannerItem);
+procedure TBxApplication.UpdateItem(Rec: TFileScannerItem);
 var
   Index: longint;
   Item: TArchiveItem;
   ItemName: string;
 begin
-  ItemName := FCommandLine.SwitchCD + Rec^.ItemName;
+  ItemName := FCommandLine.SwitchCD + Rec.FileName;
   Item     := FArchiver.Find(ItemName);
   // Update method...
   case FUpdateMethod of
@@ -350,7 +350,7 @@ begin
     end;
     umUpdate: begin
       if Item <> nil then
-        if Item.LastModifiedTime < Rec^.ItemTime then
+        if Item.LastModifiedTime < Rec.FileTime then
         begin
           Item.Tag(Rec);
         end;
@@ -361,7 +361,7 @@ begin
         Item := FArchiver.Add(ItemName);
         Item.Tag(Rec);
       end else
-        if Item.LastModifiedTime < Rec^.ItemTime then
+        if Item.LastModifiedTime < Rec.FileTime then
         begin
           Item.Tag(Rec);
         end;
@@ -558,18 +558,18 @@ end;
 function CompareCustomSearchRec(P1, P2: pointer): longint;
 begin
   Result := AnsiCompareFileName(
-    ExtractFileExt(PFileScannerItem(P1)^.ItemName),
-    ExtractFileExt(PFileScannerItem(P2)^.ItemName));
+    ExtractFileExt(TFileScannerItem(P1).FileName),
+    ExtractFileExt(TFileScannerItem(P2).FileName));
 
   if Result = 0 then
     Result := AnsiCompareFileName(
-      ExtractFileName(PFileScannerItem(P1)^.ItemName),
-      ExtractFileName(PFileScannerItem(P2)^.ItemName));
+      ExtractFileName(TFileScannerItem(P1).FileName),
+      ExtractFileName(TFileScannerItem(P2).FileName));
 
   if Result = 0 then
     Result := AnsiCompareFileName(
-      ExtractFilePath(PFileScannerItem(P1)^.ItemName),
-      ExtractFilePath(PFileScannerItem(P2)^.ItemName));
+      ExtractFilePath(TFileScannerItem(P1).FileName),
+      ExtractFilePath(TFileScannerItem(P2).FileName));
 end;
 
 procedure TBxApplication.EncodeShell;
