@@ -38,7 +38,6 @@ interface
 uses
   {$IFDEF UNIX} BaseUnix, {$ENDIF}
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  Classes,
   DateUtils,
   SysUtils;
 
@@ -496,7 +495,7 @@ begin
 {$ENDIF}
 
 {$IFDEF MSWINDOWS}
-  Windows.SetConsoleCtrlHandler(CtrlHandler, True);
+  // Windows.SetConsoleCtrlHandler(CtrlHandler, True);
 {$ENDIF}
 end;
 
