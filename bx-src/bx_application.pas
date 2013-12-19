@@ -587,7 +587,7 @@ begin
       Scanner.Add(FCommandLine.FileMasks[I], FCommandLine.SwitchR[I]);
     for I := 0 to FCommandLine.SwitchX.Count - 1 do
       Scanner.Delete(FCommandLine.SwitchX[I], FCommandLine.SwitchRX[I]);
-    Scanner.Sort(CompareCustomSearchRec);
+    Scanner.Sort(@CompareCustomSearchRec);
     for I := 0 to Scanner.Count - 1 do
     begin
       UpdateItem(Scanner.Items[I]);
@@ -708,14 +708,14 @@ begin
     end;
 
     if FCommandLine.SwitchSL then
-      ItemToList.Sort(CompareFilePath);
+      ItemToList.Sort(@CompareFilePath);
 
     if FCommandLine.SwitchVB then
     begin
       for I := 0 to ItemToList.Count - 1 do
       begin
         if ExitStatus <> esNoError then Break;
-        Item := ItemToList.Items[I];
+        Item := TArchiveItem(ItemToList.Items[I]);
         DoMessage(Format(     '                   Index: %u',       [Item.Index]));
         DoMessage(Format(     '                    Name: %s',       [Item.FileName]));
         if Item.UncompressedSize > 0 then
@@ -747,7 +747,7 @@ begin
       for I := 0 to ItemToList.Count - 1 do
       begin
         if ExitStatus <> esNoError then Break;
-        Item := ItemToList.Items[I];
+        Item := TArchiveItem(ItemToList.Items[I]);
         DoMessage(Format('%16s %7s %12s %12s %s', [
           bx_Common.FileTimeToString(Item.LastModifiedTime), AttrToStr(Item.Attributes),
           SizeToStr(Item.UncompressedSize), SizeToStr(Item.CompressedSize), Item.FileName]));

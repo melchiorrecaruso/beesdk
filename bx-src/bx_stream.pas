@@ -141,12 +141,12 @@ uses
   // ---
   bx_Messages;
 
-function DoFill(Stream: pointer; Data: PByte; Size: longint): longint; inline;
+function DoFill(Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF LIBBX} cdecl; {$ENDIF} inline;
 begin
   Result := TBufStream(Stream).Read(Data, Size);
 end;
 
-function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; inline;
+function DoFlush(Stream: pointer; Data: PByte; Size: longint): longint; {$IFDEF LIBBX} cdecl; {$ENDIF} inline;
 begin
   Result := TBufStream(Stream).Write(Data, Size);
 end;

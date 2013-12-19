@@ -960,14 +960,14 @@ end;
 procedure TArchiver.xxcode(Reader: TBufStream; Writer: TBufStream; const Size: int64); inline;
 var
   Buffer: TBuffer;
-  Count: int64;
+  Count_: int64;
   X: double;
 begin
   X := Time;
   Reader.StartSession;
   Writer.StartSession;
-  Count := Size div SizeOf(Buffer);
-  while (Count > 0) and (ExitStatus = esNoError) do
+  Count_ := Size div SizeOf(Buffer);
+  while (Count_ > 0) and (ExitStatus = esNoError) do
   begin
     Reader.Decode(@Buffer[0], SizeOf(Buffer));
     Writer.Encode(@Buffer[0], SizeOf(Buffer));
@@ -980,14 +980,14 @@ begin
         DoPercentage;
         X := Time;
       end;
-    Dec(Count);
+    Dec(Count_);
   end;
-  Count := Size mod SizeOf(Buffer);
-  if Count > 0 then
+  Count_ := Size mod SizeOf(Buffer);
+  if Count_ > 0 then
   begin
-    Reader.Decode(@Buffer[0], Count);
-    Writer.Encode(@Buffer[0], Count);
-    Inc(FProcessedSize, Count);
+    Reader.Decode(@Buffer[0], Count_);
+    Writer.Encode(@Buffer[0], Count_);
+    Inc(FProcessedSize, Count_);
   end;
   Writer.EndSession;
   Reader.EndSession;
@@ -1103,7 +1103,7 @@ end;
 
 procedure TArchiver.DecodeToNul(Item: TArchiveItem);
 var
-  Count: int64;
+  Count_: int64;
   Buffer: TBuffer;
   Destination: TNulBufStream;
 begin

@@ -211,7 +211,7 @@ end;
 
 function TFileScanner.GetItem(Index:longint): TFileScannerItem;
 begin
-  Result := FList.Items[Index];
+  Result := TFileScannerItem(FList.Items[Index]);
 end;
 
 end.
